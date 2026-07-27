@@ -9492,7 +9492,15 @@ function _atmMatchesMember(m,title,tokens){
   if(new RegExp(`#${_atmEscRe(name)}(?![가-힣])`).test(title))return true; // #이름(단일음절도 해시태그는 허용)
   if(m.en){
     const parts=m.en.toLowerCase().split(/[^a-z0-9]+/).filter(Boolean);
-    if(parts.length===1&&tokens.includes(parts[0]))return true;
+    if(parts.length===1){
+      if(tokens.includes(parts[0]))return true;
+      // 성+이름 사이 띄어쓰기 대응 (예: "seong hyeon" → "seonghyeon")
+      for(let i=0;i<tokens.length;i++){
+        let joined=tokens[i];
+        for(let j=i+1;j<tokens.length&&joined.length<parts[0].length;j++)joined+=tokens[j];
+        if(joined===parts[0])return true;
+      }
+    }
     if(parts.length>1){
       for(let i=0;i<=tokens.length-parts.length;i++){if(parts.every((p,j)=>tokens[i+j]===p))return true;}
     }
