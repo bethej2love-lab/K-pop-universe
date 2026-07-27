@@ -271,6 +271,18 @@
     font-family:inherit;transition:all .15s;
   }
   .sp-type.active{background:rgba(140,162,255,0.18);color:rgba(195,210,255,0.95);}
+  #sp-gens .sp-type{position:relative;}
+  .sp-gen-info{position:absolute;top:1px;right:2px;font-size:8px;line-height:1;padding:2px;
+    color:rgba(140,162,255,0.5);cursor:pointer;}
+  .sp-gen-info:hover{color:rgba(195,210,255,0.9);}
+  .sp-gen-info.active{color:rgba(195,210,255,1);}
+  .sp-gen-detail{display:none;margin-top:6px;padding:8px 9px;border-radius:8px;background:rgba(255,255,255,0.045);}
+  .sp-gen-detail.open{display:block;}
+  .sp-gen-detail-hd{font-size:10px;color:rgba(180,196,255,0.8);margin-bottom:5px;}
+  .sp-gen-detail-list{font-size:10px;line-height:1.7;color:rgba(160,180,220,0.62);
+    max-height:88px;overflow-y:auto;}
+  .sp-gen-grp{cursor:pointer;text-decoration:underline;text-decoration-color:rgba(140,162,255,0.28);text-underline-offset:2px;}
+  .sp-gen-grp:hover,.sp-gen-grp:active{color:rgba(200,214,255,0.95);text-decoration-color:rgba(180,196,255,0.6);}
   .sp-gen-note{font-size:9px;line-height:1.5;color:rgba(120,140,188,0.42);margin-top:7px;}
   .sp-reset{
     background:none;border:none;cursor:pointer;padding:1px 0;
@@ -1664,13 +1676,14 @@
   <div class="sp-sec">
     <div class="sp-sec-lbl" data-i18n="genLabel">세대</div>
     <div class="sp-types" id="sp-gens">
-      <button class="sp-type active" data-gen="1">1세대</button>
-      <button class="sp-type active" data-gen="2">2세대</button>
-      <button class="sp-type active" data-gen="3">3세대</button>
-      <button class="sp-type active" data-gen="4">4세대</button>
-      <button class="sp-type active" data-gen="5">5세대</button>
+      <button class="sp-type active" data-gen="1">1세대<span class="sp-gen-info" data-gen-info="1" title="자세히" aria-label="1세대 그룹 목록 보기">ⓘ</span></button>
+      <button class="sp-type active" data-gen="2">2세대<span class="sp-gen-info" data-gen-info="2" title="자세히" aria-label="2세대 그룹 목록 보기">ⓘ</span></button>
+      <button class="sp-type active" data-gen="3">3세대<span class="sp-gen-info" data-gen-info="3" title="자세히" aria-label="3세대 그룹 목록 보기">ⓘ</span></button>
+      <button class="sp-type active" data-gen="4">4세대<span class="sp-gen-info" data-gen-info="4" title="자세히" aria-label="4세대 그룹 목록 보기">ⓘ</span></button>
+      <button class="sp-type active" data-gen="5">5세대<span class="sp-gen-info" data-gen-info="5" title="자세히" aria-label="5세대 그룹 목록 보기">ⓘ</span></button>
     </div>
-    <div class="sp-gen-note" data-i18n="genNote">세대 구분은 그룹의 국내 공식 데뷔 연도를 기준으로 한 K-pop Universe 자체 분류입니다. 업계 및 팬덤에서 공식적으로 합의된 단일 기준은 아닙니다.</div>
+    <div class="sp-gen-detail" id="sp-gen-detail"></div>
+    <div class="sp-gen-note" data-i18n="genNote">재미로 봐주세요</div>
   </div>
   <div class="sp-row">
     <span class="sp-lbl" data-i18n="inactive">비활동/탈퇴 멤버</span>
@@ -2173,7 +2186,7 @@ let regColorAttr=null,spkColorAttr=null;
 let currentLang=localStorage.getItem('kpu_lang')||'ko';
 const T={
   ko:{sp_title:'설정',debutYr:'데뷔 연도',birthYr:'멤버 생년',grpType:'그룹 유형',
-      genLabel:'세대',genNote:'세대 구분은 그룹의 국내 공식 데뷔 연도를 기준으로 한 K-pop Universe 자체 분류입니다. 업계 및 팬덤에서 공식적으로 합의된 단일 기준은 아닙니다.',
+      genLabel:'세대',genNote:'재미로 봐주세요',
       all:'전체',girl:'걸그룹',boy:'보이그룹',coed:'혼성그룹',inactive:'비활동/탈퇴 멤버',reset:'↺ 초기화',
       searchPH:'그룹 · 멤버 검색…',mobileTitle:'케이팝 아이돌 지형도',srGroup:'그룹',
       preparing:'준비 중',gcAgency:'소속',gcDebut:'데뷔',gcFandom:'팬덤',gcLeader:'리더',gcMember:'멤버',gcSNS:'공식',
@@ -2181,7 +2194,7 @@ const T={
       idxSortName:'이름 (가나다순)',idxSortDebut:'데뷔연도',idxSortAgency:'소속사',idxSortMembers:'멤버 수',
       idxSortBirth:'생년',idxSortGroup:'그룹명',idxSortNation:'국적',ppTitle:'내 프로필',ppNick:'닉네임',ppNickPH:'닉네임을 입력하세요',ppNickErr:'닉네임을 입력해주세요',ppBio:'한 줄 소개',ppBioPH:'선택사항',ppColor:'내 별 색상',ppFavLabel:'좋아요 공개',ppFavSub:'다른 사람들이 볼 수 있어요',ppSyncLabel:'다른 기기와 동기화',ppSyncSub:'다른 기기에서도 좋아요가 유지돼요',ppGoogleBtn:'구글로 연결하기',ppXBtn:'X로 연결하기',ppLinked:'계정에 연결됨 ✓',ppSave:'저장'},
   en:{sp_title:'Settings',debutYr:'Debut Year',birthYr:'Birth Year',grpType:'Group Type',
-      genLabel:'Generation',genNote:'Generation classification is K-pop Universe’s own grouping based on each group’s official domestic debut year. It is not an officially agreed-upon industry or fandom standard.',
+      genLabel:'Generation',genNote:'Just for fun',
       all:'All',girl:'Girl Groups',boy:'Boy Groups',coed:'Coed Groups',inactive:'Inactive / Left',reset:'↺ Reset',
       searchPH:'Search groups · members…',mobileTitle:'K-pop Idol Map',srGroup:'Group',
       preparing:'Coming soon',gcAgency:'Agency',gcDebut:'Debut',gcFandom:'Fandom',gcLeader:'Leader',gcMember:'Members',gcSNS:'Official',
@@ -5305,6 +5318,7 @@ function closeCards(){
   _clearMemberCardLines();
   closeConnCard();
   _memberNavStack=[];
+  _gcFromGenList=null;
   if(isMob()){closeMobSheet();}
   else{closeMemberPanel(false);closeSidePanel();}
   clearFocus();_openGCko=null;_openTArtist=null;
@@ -5755,7 +5769,18 @@ function _ttGoBack(){
   }
 }
 document.getElementById('tt-back').addEventListener('click',e=>{e.stopPropagation();if(isMob()&&_cardStack.length>1){_popMobCard();}else{_ttGoBack();}});
-document.getElementById('gc-back').addEventListener('click',e=>{e.stopPropagation();_popMobCard();});
+document.getElementById('gc-back').addEventListener('click',e=>{
+  e.stopPropagation();
+  if(_gcFromGenList!=null){
+    const g=_gcFromGenList;
+    closeCards();
+    document.getElementById('settings-panel').classList.add('open');
+    ['tab-settings','dh-settings-btn'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.add('active');});
+    _renderGenDetail(g);
+    return;
+  }
+  _popMobCard();
+});
 
 function positionCard(el,cx,cy,cardW,estH){
   const W=window.innerWidth,H=window.innerHeight;
@@ -6801,6 +6826,55 @@ document.querySelectorAll('.sp-type[data-gen]').forEach(btn=>{
     btn.classList.toggle('active',filterCfg.generations.has(g));
     applyFilter();
   });
+});
+// 세대 버튼의 ⓘ 아이콘 — 우주 필터(버튼 본체 클릭)와는 별개로, 그 세대의 연도 범위·그룹 목록을 훑어볼 수 있는 보기 전용 패널.
+// 한 번에 하나만 펼치고(다시 누르면 접힘) 공간을 적게 차지하도록 스크롤 박스 안에 넣는다.
+const _GEN_META={1:'~2003',2:'2004–2011',3:'2012–2017',4:'2018–2022',5:'2023~'};
+let _openGenInfo=null;
+// 뒤로 돌아갈 세대 번호. null이 아니면 그룹 카드의 ‹ 버튼이 "세대 목록으로 돌아가기"로 동작함(closeCards()에서 초기화).
+let _gcFromGenList=null;
+function _renderGenDetail(g){
+  const detail=document.getElementById('sp-gen-detail');
+  document.querySelectorAll('.sp-gen-info').forEach(i=>i.classList.toggle('active',+i.dataset.genInfo===g));
+  _openGenInfo=g;
+  const names=Object.entries(GROUPS||{})
+    .filter(([,v])=>_groupGeneration(v.debut)===g)
+    .sort((a,b)=>(parseInt(a[1].debut)||0)-(parseInt(b[1].debut)||0))
+    .map(([ko])=>ko);
+  const list=names.length
+    ?names.map(ko=>`<span class="sp-gen-grp" data-gko="${ko}">${ko}</span>`).join(', ')
+    :'해당하는 그룹이 없어요';
+  detail.innerHTML=`<div class="sp-gen-detail-hd">${g}세대 · ${_GEN_META[g]} · ${names.length}개 그룹</div>`
+    +`<div class="sp-gen-detail-list">${list}</div>`;
+  detail.classList.add('open');
+}
+document.querySelectorAll('.sp-gen-info').forEach(icon=>{
+  icon.addEventListener('click',e=>{
+    e.stopPropagation();
+    const g=+icon.dataset.genInfo;
+    if(_openGenInfo===g){ // 같은 세대 다시 클릭 → 접기
+      _openGenInfo=null;
+      document.querySelectorAll('.sp-gen-info').forEach(i=>i.classList.remove('active'));
+      const detail=document.getElementById('sp-gen-detail');
+      detail.classList.remove('open');detail.innerHTML='';
+      return;
+    }
+    _renderGenDetail(g);
+  });
+});
+// 세대 목록의 그룹명을 클릭하면 해당 그룹 카드를 연다 — 설정 패널은 닫지 않고 그대로 둔 채(z-index가
+// 카드보다 위라 계속 보임) 카드의 ‹ 버튼으로 다시 이 목록으로 돌아올 수 있게 한다.
+document.getElementById('sp-gen-detail').addEventListener('click',e=>{
+  const t=e.target.closest('.sp-gen-grp');
+  if(!t)return;
+  e.stopPropagation();
+  const ko=t.dataset.gko;
+  if(!GROUPS[ko])return;
+  _gcFromGenList=_openGenInfo;
+  const bm=bubbleMeshes.find(b=>b.ko===ko);
+  if(bm)flyToBubble(bm.mesh.position,bm.radius);
+  showGC(ko,window.innerWidth/2,window.innerHeight*0.4);
+  document.getElementById('gc-back').style.display='block';
 });
 document.getElementById('sp-inactive-chk').addEventListener('change',e=>{
   e.stopPropagation();filterCfg.showInactive=e.target.checked;applyFilter();

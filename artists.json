@@ -10113,6 +10113,16 @@
       "ko": "크래비티",
       "en": "CRAVITY"
     },
+    "groups": [
+      {
+        "ko": "크래비티",
+        "en": "CRAVITY"
+      },
+      {
+        "ko": "엑스원",
+        "en": "X1"
+      }
+    ],
     "co": "Starship",
     "active": true,
     "color": [
@@ -13524,6 +13534,31 @@
     },
     "links": {
       "namu": "https://namu.wiki/w/제프"
+    }
+  },
+  {
+    "name": {
+      "ko": "금동현",
+      "en": "Keum Donghyun"
+    },
+    "group": {
+      "ko": "이펙스",
+      "en": "EPEX"
+    },
+    "co": "C9엔터테인먼트",
+    "active": false,
+    "color": [
+      80,
+      190,
+      200
+    ],
+    "bday": "2003.05.14",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/금동현"
     }
   },
   {
@@ -18079,8 +18114,8 @@
   },
   {
     "name": {
-      "ko": "조승연",
-      "en": "Cho Seungyoun"
+      "ko": "우즈(조승연)",
+      "en": "WOODZ (Cho Seungyoun)"
     },
     "group": {
       "ko": "엑스원",
@@ -18097,6 +18132,9 @@
     "nat": {
       "ko": "한국",
       "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/WOODZ"
     }
   },
   {
@@ -18293,28 +18331,6 @@
       180
     ],
     "bday": "2002.10.26",
-    "nat": {
-      "ko": "한국",
-      "en": "KR"
-    }
-  },
-  {
-    "name": {
-      "ko": "송형준",
-      "en": "Song Hyeongjun"
-    },
-    "group": {
-      "ko": "엑스원",
-      "en": "X1"
-    },
-    "co": "스타쉽엔터테인먼트",
-    "active": false,
-    "color": [
-      70,
-      100,
-      180
-    ],
-    "bday": "2002.11.30",
     "nat": {
       "ko": "한국",
       "en": "KR"
@@ -19751,5 +19767,228 @@
     "links": {
       "namu": "https://namu.wiki/w/정세민(IDID)"
     }
+  },
+  {
+    "name": { "ko": "링링", "en": "RingRing" },
+    "group": { "ko": "키라스", "en": "KIIRAS" },
+    "co": "린브랜딩",
+    "active": true,
+    "color": [235, 150, 175],
+    "bday": "2005.04.20",
+    "nat": { "ko": "말레이시아", "en": "MY" },
+    "leader": true,
+    "links": { "namu": "https://namu.wiki/w/링링(KIIRAS)" }
+  },
+  {
+    "name": { "ko": "쿠루미", "en": "Kurumi" },
+    "group": { "ko": "키라스", "en": "KIIRAS" },
+    "co": "린브랜딩",
+    "active": true,
+    "color": [235, 150, 175],
+    "bday": "2006.06.20",
+    "nat": { "ko": "일본", "en": "JP" },
+    "links": { "namu": "https://namu.wiki/w/쿠루미(KIIRAS)" }
+  },
+  {
+    "name": { "ko": "하린", "en": "Harin" },
+    "group": { "ko": "키라스", "en": "KIIRAS" },
+    "co": "린브랜딩",
+    "active": true,
+    "color": [235, 150, 175],
+    "bday": "2008.01.03",
+    "nat": { "ko": "한국", "en": "KR" },
+    "links": { "namu": "https://namu.wiki/w/하린(KIIRAS)" }
+  },
+  {
+    "name": { "ko": "카일리", "en": "Kylie" },
+    "group": { "ko": "키라스", "en": "KIIRAS" },
+    "co": "린브랜딩",
+    "active": true,
+    "color": [235, 150, 175],
+    "bday": "2008.05.17",
+    "nat": { "ko": "한국", "en": "KR" },
+    "links": { "namu": "https://namu.wiki/w/카일리(KIIRAS)" }
+  },
+  {
+    "name": { "ko": "도연", "en": "Doyeon" },
+    "group": { "ko": "키라스", "en": "KIIRAS" },
+    "co": "린브랜딩",
+    "active": true,
+    "color": [235, 150, 175],
+    "bday": "2009.12.26",
+    "nat": { "ko": "한국", "en": "KR" },
+    "links": { "namu": "https://namu.wiki/w/도연(KIIRAS)" }
+  },
+  {
+    "name": { "ko": "로아", "en": "Roa" },
+    "group": { "ko": "키라스", "en": "KIIRAS" },
+    "co": "린브랜딩",
+    "active": true,
+    "color": [235, 150, 175],
+    "bday": "2011.10.16",
+    "nat": { "ko": "한국", "en": "KR" },
+    "links": { "namu": "https://namu.wiki/w/로아(KIIRAS)" }
+  },
+  {
+    "name": { "ko": "진현주", "en": "Jin Hyeonju" },
+    "group": { "ko": "유니스", "en": "UNIS" },
+    "co": "F&F엔터테인먼트",
+    "active": true,
+    "color": [78, 188, 224],
+    "bday": "2001.11.03",
+    "nat": { "ko": "한국", "en": "KR" },
+    "leader": true,
+    "links": { "namu": "https://namu.wiki/w/진현주" }
+  },
+  {
+    "name": { "ko": "나나", "en": "Nana" },
+    "group": { "ko": "유니스", "en": "UNIS" },
+    "co": "F&F엔터테인먼트",
+    "active": true,
+    "color": [78, 188, 224],
+    "bday": "2007.06.06",
+    "nat": { "ko": "일본", "en": "JP" },
+    "links": { "namu": "https://namu.wiki/w/나나(UNIS)" }
+  },
+  {
+    "name": { "ko": "젤리당카", "en": "Gehlee Dangca" },
+    "group": { "ko": "유니스", "en": "UNIS" },
+    "co": "F&F엔터테인먼트",
+    "active": true,
+    "color": [78, 188, 224],
+    "bday": "2007.08.19",
+    "nat": { "ko": "필리핀", "en": "PH" },
+    "links": { "namu": "https://namu.wiki/w/젤리당카" }
+  },
+  {
+    "name": { "ko": "코토코", "en": "Kotoko" },
+    "group": { "ko": "유니스", "en": "UNIS" },
+    "co": "F&F엔터테인먼트",
+    "active": true,
+    "color": [78, 188, 224],
+    "bday": "2007.10.28",
+    "nat": { "ko": "일본", "en": "JP" },
+    "links": { "namu": "https://namu.wiki/w/코토코(UNIS)" }
+  },
+  {
+    "name": { "ko": "방윤하", "en": "Bang Yunha" },
+    "group": { "ko": "유니스", "en": "UNIS" },
+    "co": "F&F엔터테인먼트",
+    "active": true,
+    "color": [78, 188, 224],
+    "bday": "2009.02.28",
+    "nat": { "ko": "한국", "en": "KR" },
+    "links": { "namu": "https://namu.wiki/w/방윤하" }
+  },
+  {
+    "name": { "ko": "엘리시아", "en": "Elisia" },
+    "group": { "ko": "유니스", "en": "UNIS" },
+    "co": "F&F엔터테인먼트",
+    "active": true,
+    "color": [78, 188, 224],
+    "bday": "2009.04.18",
+    "nat": { "ko": "필리핀", "en": "PH" },
+    "links": { "namu": "https://namu.wiki/w/엘리시아(UNIS)" }
+  },
+  {
+    "name": { "ko": "오윤아", "en": "Oh Yuna" },
+    "group": { "ko": "유니스", "en": "UNIS" },
+    "co": "F&F엔터테인먼트",
+    "active": true,
+    "color": [78, 188, 224],
+    "bday": "2009.10.07",
+    "nat": { "ko": "한국", "en": "KR" },
+    "links": { "namu": "https://namu.wiki/w/오윤아(UNIS)" }
+  },
+  {
+    "name": { "ko": "임서원", "en": "Lim Seowon" },
+    "group": { "ko": "유니스", "en": "UNIS" },
+    "co": "F&F엔터테인먼트",
+    "active": true,
+    "color": [78, 188, 224],
+    "bday": "2011.01.27",
+    "nat": { "ko": "한국", "en": "KR" },
+    "links": { "namu": "https://namu.wiki/w/임서원" }
+  },
+  {
+    "name": { "ko": "히토미", "en": "Hitomi" },
+    "group": { "ko": "세이마이네임", "en": "SAY MY NAME" },
+    "co": "iNKODE",
+    "active": true,
+    "color": [126, 104, 168],
+    "bday": "2001.10.06",
+    "nat": { "ko": "일본", "en": "JP" },
+    "leader": true,
+    "links": { "namu": "https://namu.wiki/w/혼다 히토미" }
+  },
+  {
+    "name": { "ko": "슈이", "en": "Shuyi" },
+    "group": { "ko": "세이마이네임", "en": "SAY MY NAME" },
+    "co": "iNKODE",
+    "active": true,
+    "color": [126, 104, 168],
+    "bday": "2004.06.06",
+    "nat": { "ko": "중국", "en": "CN" },
+    "links": { "namu": "https://namu.wiki/w/슈이" }
+  },
+  {
+    "name": { "ko": "메이", "en": "Mei" },
+    "group": { "ko": "세이마이네임", "en": "SAY MY NAME" },
+    "co": "iNKODE",
+    "active": true,
+    "color": [126, 104, 168],
+    "bday": "2005.09.27",
+    "nat": { "ko": "일본", "en": "JP" },
+    "links": { "namu": "https://namu.wiki/w/메이(SAY MY NAME)" }
+  },
+  {
+    "name": { "ko": "카니", "en": "Kani" },
+    "group": { "ko": "세이마이네임", "en": "SAY MY NAME" },
+    "co": "iNKODE",
+    "active": true,
+    "color": [126, 104, 168],
+    "bday": "2005.12.26",
+    "nat": { "ko": "태국", "en": "TH" },
+    "links": { "namu": "https://namu.wiki/w/카니(SAY MY NAME)" }
+  },
+  {
+    "name": { "ko": "소하", "en": "Soha" },
+    "group": { "ko": "세이마이네임", "en": "SAY MY NAME" },
+    "co": "iNKODE",
+    "active": true,
+    "color": [126, 104, 168],
+    "bday": "2006.07.26",
+    "nat": { "ko": "한국", "en": "KR" },
+    "links": { "namu": "https://namu.wiki/w/소하(SAY MY NAME)" }
+  },
+  {
+    "name": { "ko": "도희", "en": "Dohee" },
+    "group": { "ko": "세이마이네임", "en": "SAY MY NAME" },
+    "co": "iNKODE",
+    "active": true,
+    "color": [126, 104, 168],
+    "bday": "2006.12.09",
+    "nat": { "ko": "한국", "en": "KR" },
+    "links": { "namu": "https://namu.wiki/w/도희(SAY MY NAME)" }
+  },
+  {
+    "name": { "ko": "준휘", "en": "Junhwi" },
+    "group": { "ko": "세이마이네임", "en": "SAY MY NAME" },
+    "co": "iNKODE",
+    "active": true,
+    "color": [126, 104, 168],
+    "bday": "2007.06.11",
+    "nat": { "ko": "한국", "en": "KR" },
+    "links": { "namu": "https://namu.wiki/w/준휘" }
+  },
+  {
+    "name": { "ko": "승주", "en": "Seungju" },
+    "group": { "ko": "세이마이네임", "en": "SAY MY NAME" },
+    "co": "iNKODE",
+    "active": true,
+    "color": [126, 104, 168],
+    "bday": "2010.09.24",
+    "nat": { "ko": "한국", "en": "KR" },
+    "links": { "namu": "https://namu.wiki/w/승주(SAY MY NAME)" }
   }
 ]
