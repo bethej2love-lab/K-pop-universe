@@ -1698,6 +1698,7 @@
     <button class="sp-yt-sync" id="sp-yt-sync">전체 동기화 (공식 + 외부 채널)</button>
     <button class="sp-yt-sync" id="sp-yt-reclassify" style="margin-top:4px;opacity:.8;">Shorts 자동 감지 (기존 영상)</button>
     <button class="sp-yt-sync" id="sp-yt-fix-live" style="margin-top:4px;opacity:.8;">라이브 오분류 정리 (외부채널)</button>
+    <button class="sp-yt-sync" id="sp-yt-sweep-banned" style="margin-top:4px;opacity:.8;">밴 인물 언급 영상 노출 제외 정리</button>
     <button class="sp-yt-sync" id="sp-yt-autotag" style="margin-top:4px;opacity:.8;">멤버 자동 태깅 (같은 그룹, 미태깅분)</button>
     <button class="sp-yt-sync" id="sp-yt-fix-highlight" style="margin-top:4px;opacity:.8;">그룹 "하이라이트" 오매칭 정리</button>
     <button class="sp-yt-sync" id="sp-hidden-vids-btn" style="margin-top:4px;opacity:.8;">노출 제외 영상 목록</button>
@@ -9558,6 +9559,35 @@ async function _ytFixMisclassifiedLive(){
   }
 }
 
+// 밴 인물(성범죄 등) 언급 영상은 동기화 시점부터 걸러지지만(sync-time skip), 그 밴 목록이 생기기 전에
+// 이미 들어가 있던 기존 행은 그대로 남아있을 수 있음 — 카드 열 때마다 매번 title ILIKE로 재검사하면
+// (와일드카드 LIKE라 인덱스를 못 타서) 느려지므로, 이 버튼으로 한 번 훑어서 hidden 처리해두고
+// 평소 조회는 content_flag만 보게 한다(load()의 인덱스 타는 등호 비교 한 줄로 충분해짐).
+async function _ytSweepBannedVideos(){
+  if(!sb){_ytSetProg('Supabase 연결 없음');return;}
+  const btn=document.getElementById('sp-yt-sweep-banned');
+  if(btn)btn.disabled=true;
+  try{
+    _ytSetProg('밴 인물 언급 영상 조회 중…');
+    const{data:rows,error}=await sb.from(_YT_TABLE)
+      .select('id,title,group_ko')
+      .or('content_flag.is.null,content_flag.neq.hidden');
+    if(error){_ytSetProg('조회 실패: '+error.message);return;}
+    if(!rows?.length){_ytSetProg('검사할 영상이 없어요');return;}
+    const toHide=rows.filter(v=>_isBannedVideoTitle(v.title,v.group_ko)).map(v=>v.id);
+    if(!toHide.length){_ytSetProg(`검사 완료 — ${rows.length}개 중 해당 없음`);return;}
+    for(let i=0;i<toHide.length;i+=200){
+      const{error:ue}=await sb.from(_YT_TABLE).update({content_flag:'hidden'}).in('id',toHide.slice(i,i+200));
+      if(ue)throw new Error(ue.message);
+    }
+    _ytSetProg(`완료! ${rows.length}개 중 ${toHide.length}개 노출 제외 처리함(노출 제외 영상 목록에서 검토 가능)`);
+  }catch(e){
+    _ytSetProg('오류: '+e.message);
+  }finally{
+    if(btn)btn.disabled=false;
+  }
+}
+
 async function _ytReclassifyShorts(){
   const key=_ytApiKey();
   if(!key){_ytSetProg('API 키를 먼저 입력해주세요');return;}
@@ -10402,12 +10432,15 @@ function _makeChVidController(contId){
       }
       // "그룹 멤버 안 나옴" 플래그(무관) 영상은 어느 뷰에서도 이 그룹/멤버 콘텐츠로 노출하지 않음
       q=q.or('content_flag.is.null,content_flag.neq.무관');
-      // 노출 제외(hidden)·밴 인물 언급 영상은 화면엔 항상 _filterBannedVideos로 걸러왔지만, 총 개수(count)는
-      // 이 필터들을 안 거친 쿼리 결과 그대로였어서 실제 보이는 개수보다 많게 표시되는 문제가 있었음 —
-      // count가 실제 노출 개수와 일치하도록 쿼리 단계에서부터 똑같이 제외한다.
+      // 노출 제외(hidden)는 카드 열 때마다 나가는 이 쿼리에서 count까지 정확히 반영해야 함(안 그러면
+      // 실제 보이는 개수보다 많게 표시됨) — content_flag는 인덱스를 타는 등호 비교라 저렴함.
       q=q.or('content_flag.is.null,content_flag.neq.hidden');
-      _BANNED_VIDEO_NAMES_GLOBAL.forEach(n=>{q=q.not('title','ilike',`%${n}%`);});
-      (_BANNED_VIDEO_NAMES_SCOPED[ko]||[]).forEach(n=>{q=q.not('title','ilike',`%${n}%`);});
+      // 밴 인물 언급 영상은 예전엔 여기서 매번 title ILIKE '%단어%'를 10번 걸었었는데, 앞에 와일드카드가
+      // 붙은 LIKE는 인덱스를 못 타서 카드를 열 때마다 테이블 전체를 훑어야 해 느려짐 — 이제 동기화 시점에
+      // 이미 걸러지고(sync-time skip), 기존에 이미 들어간 것은 "성범죄 언급 영상 정리" 관리자 버튼으로
+      // content_flag='hidden' 처리해두는 방식으로 옮겨서, 여기선 위 hidden 체크 하나로 충분하게 했다.
+      // 최근 동기화 직후처럼 아직 안 걸러진 게 있을 드문 경우를 대비해 화면 표시 단계(_filterBannedVideos)의
+      // 클라이언트 사이드 체크는 안전망으로 그대로 남겨둠(48개 이하 페이지 단위라 비용 거의 없음).
       // 멤버 카드는 '기타' 플래그 영상을 화면에서 아예 안 보여주므로(그룹 카드는 후순위로만 밀 뿐 계속 보임),
       // count도 멤버 카드일 때만 '기타'를 같이 빼야 실제 노출 개수와 맞음
       if(state.memberKo)q=q.or('content_flag.is.null,content_flag.neq.기타');
@@ -11281,6 +11314,7 @@ document.getElementById('vid-tag-thumb-refresh').addEventListener('click',async 
   });
   document.getElementById('sp-yt-reclassify')?.addEventListener('click',_ytReclassifyShorts);
   document.getElementById('sp-yt-fix-live')?.addEventListener('click',_ytFixMisclassifiedLive);
+  document.getElementById('sp-yt-sweep-banned')?.addEventListener('click',_ytSweepBannedVideos);
   document.getElementById('sp-yt-autotag')?.addEventListener('click',_ytAutoTagMembers);
   document.getElementById('sp-yt-fix-highlight')?.addEventListener('click',_ytFixHighlightMistag);
   document.getElementById('sp-hidden-vids-btn')?.addEventListener('click',_openHiddenVids);
