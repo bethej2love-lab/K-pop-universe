@@ -1697,6 +1697,7 @@
     <input type="text" class="sp-yt-key" id="sp-yt-key" placeholder="API 키 (AIzaSy...)" autocomplete="off" spellcheck="false">
     <button class="sp-yt-sync" id="sp-yt-sync">전체 동기화 (공식 + 외부 채널)</button>
     <button class="sp-yt-sync" id="sp-yt-reclassify" style="margin-top:4px;opacity:.8;">Shorts 자동 감지 (기존 영상)</button>
+    <button class="sp-yt-sync" id="sp-yt-fix-live" style="margin-top:4px;opacity:.8;">라이브 오분류 정리 (외부채널)</button>
     <button class="sp-yt-sync" id="sp-yt-autotag" style="margin-top:4px;opacity:.8;">멤버 자동 태깅 (같은 그룹, 미태깅분)</button>
     <button class="sp-yt-sync" id="sp-yt-fix-highlight" style="margin-top:4px;opacity:.8;">그룹 "하이라이트" 오매칭 정리</button>
     <button class="sp-yt-sync" id="sp-hidden-vids-btn" style="margin-top:4px;opacity:.8;">노출 제외 영상 목록</button>
@@ -9508,6 +9509,33 @@ async function _ytSyncAll(){
 
 function _ytSetProg(msg){const el=document.getElementById('sp-yt-prog');if(el)el.textContent=msg;}
 
+// ── 라이브 오분류 정리 ── 예전엔 외부 채널 동기화(_extBuildRows)가 제목으로 분류 안 되는(other) 영상을
+// 전부 라이브로 강제 편입시켰음(잡지사 인터뷰 등이 라이브 탭에 섞여 나오던 원인). 그 리맵은 없앴지만
+// 이미 그렇게 저장된 기존 행은 남아있으므로, category='live'인 행을 제목으로 다시 판정해 실제로는
+// LIVE/CONCERT/직캠 등 키워드가 없는 것만 other로 되돌린다. API 키 불필요(제목만 재검사).
+async function _ytFixMisclassifiedLive(){
+  if(!sb){_ytSetProg('Supabase 연결 없음');return;}
+  const btn=document.getElementById('sp-yt-fix-live');
+  if(btn)btn.disabled=true;
+  try{
+    _ytSetProg('라이브 오분류 영상 조회 중…');
+    const{data:rows,error}=await sb.from(_YT_TABLE).select('id,title').eq('category','live');
+    if(error){_ytSetProg('조회 실패: '+error.message);return;}
+    if(!rows?.length){_ytSetProg('라이브로 태깅된 영상이 없어요');return;}
+    const toFix=rows.filter(v=>_ytClassify(v.title||'')!=='live').map(v=>v.id);
+    if(!toFix.length){_ytSetProg(`검사 완료 — ${rows.length}개 모두 정상 분류돼 있었어요`);return;}
+    for(let i=0;i<toFix.length;i+=200){
+      const{error:ue}=await sb.from(_YT_TABLE).update({category:'other'}).in('id',toFix.slice(i,i+200));
+      if(ue)throw new Error(ue.message);
+    }
+    _ytSetProg(`완료! 라이브 ${rows.length}개 중 ${toFix.length}개를 기타로 되돌림`);
+  }catch(e){
+    _ytSetProg('오류: '+e.message);
+  }finally{
+    if(btn)btn.disabled=false;
+  }
+}
+
 async function _ytReclassifyShorts(){
   const key=_ytApiKey();
   if(!key){_ytSetProg('API 키를 먼저 입력해주세요');return;}
@@ -9762,7 +9790,7 @@ function _extBuildRows(vids){
     }
     rows.push({
       id:v.id,title:v.title,thumb:v.thumb,published_at:v.published_at,
-      category:v.category==='other'?'live':v.category,
+      category:v.category,
       group_ko:match.primaryGroup,members,with_groups:withGroups,with_members:withMembers
     });
   }
@@ -10950,6 +10978,7 @@ document.getElementById('vid-tag-thumb-refresh').addEventListener('click',async 
     if(btn)btn.disabled=false;
   });
   document.getElementById('sp-yt-reclassify')?.addEventListener('click',_ytReclassifyShorts);
+  document.getElementById('sp-yt-fix-live')?.addEventListener('click',_ytFixMisclassifiedLive);
   document.getElementById('sp-yt-autotag')?.addEventListener('click',_ytAutoTagMembers);
   document.getElementById('sp-yt-fix-highlight')?.addEventListener('click',_ytFixHighlightMistag);
   document.getElementById('sp-hidden-vids-btn')?.addEventListener('click',_openHiddenVids);
