@@ -2821,5 +2821,92 @@
       "youtube": "https://youtube.com/@bap2012",
       "namu": "https://namu.wiki/w/B.A.P"
     }
+  },
+  "데일리디렉션": {
+    "en": "DAILY:DIRECTION",
+    "debut": "2026.02.23",
+    "co": "ODDWAVE",
+    "color": [150, 160, 190],
+    "gender": "m",
+    "fandom": { "ko": "델리", "en": "DELLY" },
+    "links": {
+      "youtube": "https://www.youtube.com/@DAILYDIRECTION_official",
+      "instagram": "https://www.instagram.com/daily_direction_official",
+      "x": "https://x.com/_official_DD",
+      "tiktok": "https://www.tiktok.com/@daily_direction",
+      "weverse": "https://weverse.io/dailydirection",
+      "namu": "https://namu.wiki/w/DAILY:DIRECTION"
+    }
+  },
+  "베이온": {
+    "en": "VAYONN",
+    "debut": "2026.07.06",
+    "co": "iNKODE",
+    "color": [49, 195, 231],
+    "gender": "m",
+    "links": {
+      "youtube": "https://youtube.com/@VAY-ONN",
+      "instagram": "https://instagram.com/vayonn_inkode",
+      "x": "https://x.com/VAYONN_inkode",
+      "tiktok": "https://tiktok.com/@vayonn_inkode",
+      "namu": "https://namu.wiki/w/VAYONN"
+    }
+  },
+  "우당탕탕소녀단": {
+    "en": "UDTT",
+    "debut": "2025.04.29",
+    "co": "tt music",
+    "color": [208, 16, 51],
+    "gender": "f",
+    "links": {
+      "youtube": "https://www.youtube.com/@udtt_official",
+      "instagram": "https://www.instagram.com/udtt._.official",
+      "x": "https://x.com/udtt_official",
+      "tiktok": "https://www.tiktok.com/@udtt_official",
+      "namu": "https://namu.wiki/w/UDTT"
+    }
+  },
+  "메이딘": {
+    "en": "MADEIN",
+    "debut": "2024.09.03",
+    "co": "143엔터테인먼트",
+    "color": [190, 175, 190],
+    "gender": "f",
+    "fandom": { "ko": "메이비", "en": "MABY" },
+    "links": {
+      "youtube": "https://www.youtube.com/@MADEIN_U",
+      "instagram": "https://www.instagram.com/we.madein.u",
+      "x": "https://x.com/MADEIN_u",
+      "tiktok": "https://www.tiktok.com/@madein_u",
+      "namu": "https://namu.wiki/w/MADEIN"
+    }
+  },
+  "키비츠": {
+    "en": "Keyveatz",
+    "debut": "2026.06.30",
+    "co": "AOMG",
+    "color": [45, 45, 50],
+    "gender": "f",
+    "links": {
+      "youtube": "https://youtube.com/@Keyveatz",
+      "instagram": "https://instagram.com/keyveatz",
+      "x": "https://x.com/Keyveatz",
+      "tiktok": "https://tiktok.com/@keyveatz",
+      "namu": "https://namu.wiki/w/Keyveatz"
+    }
+  },
+  "도드리": {
+    "en": "dodree",
+    "debut": "2026.01.21",
+    "co": "INNIT엔터테인먼트",
+    "color": [120, 87, 133],
+    "gender": "f",
+    "links": {
+      "youtube": "https://www.youtube.com/@dodree_INNIT",
+      "instagram": "https://www.instagram.com/dodree_innit",
+      "x": "https://x.com/dodree_INNIT",
+      "tiktok": "https://www.tiktok.com/@dodree_innit",
+      "namu": "https://namu.wiki/w/dodree"
+    }
   }
 }

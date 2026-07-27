@@ -1712,6 +1712,12 @@
       <button class="sp-yt-sync" id="sp-yt-backfill-btn" style="opacity:.8;">이 채널만 백필 실행</button>
       <button class="sp-yt-sync" id="sp-yt-backfill-priority-btn" style="opacity:.8;">음악방송 6개 채널 순서대로 백필 (M2·엠넷·뮤직뱅크·쇼음악중심·인기가요·쇼챔피언)</button>
     </div>
+    <div style="margin-top:8px;padding-top:8px;border-top:0.5px solid rgba(255,255,255,0.1)">
+      <div style="font-size:10px;color:rgba(155,178,228,0.5);margin-bottom:2px">영상 URL로 직접 추가</div>
+      <input type="text" class="sp-yt-key" id="sp-yt-manual-url" placeholder="유튜브 영상 URL">
+      <input type="text" class="sp-yt-key" id="sp-yt-manual-group" placeholder="그룹명(자동인식 안 되면 입력, 예: 티아라)">
+      <button class="sp-yt-sync" id="sp-yt-manual-add-btn" style="opacity:.8;">이 영상 추가</button>
+    </div>
     <div class="sp-yt-prog" id="sp-yt-prog"></div>
   </div>
 </div>
@@ -2056,9 +2062,10 @@ dirLight.position.set(3,2,-1);
 scene.add(dirLight);
 
 // ── Glow texture ──────────────────────────────────
-// 밤하늘 별처럼: 중심에서 부드럽게 퍼지는 radial glow + 상하좌우로 가늘고 긴 렌즈 플레어(십자 빛갈라짐)
-function makeGlowTex(withFlare){
-  if(withFlare===undefined)withFlare=true;
+// 토이스토리 밤하늘 별처럼: 십자 빛갈라짐(렌즈 플레어) 없이, 중심에서 부드럽게 퍼지는 radial glow만으로
+// 은은하게 — 십자는 사진/망원경 렌즈 특유의 테크니컬한 이펙트라 오히려 인위적으로 도드라져서 뺐음.
+// 자연스러운 변화는 이 텍스처가 아니라 makePointsMat의 별마다 다른 크기 지터 + 은은한 숨쉬기(트윙클)로 준다.
+function makeGlowTex(){
   const sz=128,c0=sz/2;
   const c=document.createElement('canvas');c.width=sz;c.height=sz;
   const cx=c.getContext('2d');
@@ -2083,36 +2090,9 @@ function makeGlowTex(withFlare){
   glow.addColorStop(1,    'rgba(255,255,255,0)');
   cx.fillStyle=glow;
   cx.fillRect(0,0,sz,sz);
-  // 십자 플레어: 가로/세로 각각 얇은 띠를 여러 겹 겹쳐서, 길이 방향(가운데일수록 밝음)과
-  // 두께 방향(가운데 줄일수록 밝음) 둘 다 자연스럽게 페이드되는 얇고 긴 빛줄기를 만든다.
-  if(withFlare){
-    cx.globalCompositeOperation='lighter';
-    const halfW=4,peak=0.28;
-    for(let d=-halfW;d<=halfW;d++){
-      const vf=Math.exp(-(d/(halfW*0.62))*(d/(halfW*0.62)));
-      const a=peak*vf;
-      if(a<0.004)continue;
-      const gH=cx.createLinearGradient(0,c0+d,sz,c0+d);
-      gH.addColorStop(0,   'rgba(255,255,255,0)');
-      gH.addColorStop(0.5, `rgba(255,255,255,${a})`);
-      gH.addColorStop(1,   'rgba(255,255,255,0)');
-      cx.fillStyle=gH;
-      cx.fillRect(0,c0+d,sz,1);
-      const gV=cx.createLinearGradient(c0+d,0,c0+d,sz);
-      gV.addColorStop(0,   'rgba(255,255,255,0)');
-      gV.addColorStop(0.5, `rgba(255,255,255,${a})`);
-      gV.addColorStop(1,   'rgba(255,255,255,0)');
-      cx.fillStyle=gV;
-      cx.fillRect(c0+d,0,1,sz);
-    }
-    cx.globalCompositeOperation='source-over';
-  }
   return new THREE.CanvasTexture(c);
 }
 const glowTex=makeGlowTex();
-// 멤버 별 코어 전용 — 십자 플레어를 텍스처에 고정으로 굽지 않고, 별마다 다른 세기(일부는 아예 없음)로
-// 셰이더에서 얹기 위해 십자 없는 순수 radial glow만 따로 준비한다(makePointsMat의 flareStrength 참고).
-const glowTexNoFlare=makeGlowTex(false);
 
 // 멤버 코어가 실제 빛처럼 번져 보이게 하는 '블룸 흉내' 레이어용 — 뚜렷한 코어 없이
 // 아주 넓고 부드럽게만 퍼지는 텍스처. glowTex 점 뒤에 훨씬 크게 additive로 겹쳐 그려서
@@ -2772,7 +2752,7 @@ async function buildUniverse(){
   });
 
   // ── Member points (fixed pixel size, camera-distance independent) ──
-  function makePointsMat(tex,sizeW,opacity,sizeClamp,useHaloScale,useFlareVariance){
+  function makePointsMat(tex,sizeW,opacity,sizeClamp,useHaloScale){
     const mat=new THREE.PointsMaterial({
       size:sizeW/Math.min(window.devicePixelRatio,2),map:tex,vertexColors:true,
       transparent:true,opacity,
@@ -2782,58 +2762,28 @@ async function buildUniverse(){
     // 카메라를 아주 가까이 붙였을 때 gl_PointSize가 한없이 커지는 걸 막는다.
     // iOS Safari 등 일부 모바일 GPU는 큰 point sprite를 깨끗하게 클램프하지 못하고
     // 여러 개로 쪼개진 것처럼 깜빡이며 렌더링하는 버그가 있음 — 상한을 걸어 예방.
-    // + 십자 플레어가 모든 별에서 똑같은 방향/굵기로 보이면 인위적으로 느껴져서,
-    // 정점별 랜덤 시드(flareSeed)로 UV를 회전시켜 방향을, 크기를 살짝씩 지터시켜 정도를 다르게 만든다.
-    // + my 별의 "숨쉬듯 살짝 커졌다 작아지는" 효과를 멤버 별에도 적용 — 단, 전부 같은 위상으로 숨쉬면
-    // 한꺼번에 맥동하는 것처럼 부자연스러워서 flareSeed로 별마다 위상을 어긋나게 한다(진폭은 my 별보다 살짝 작게).
+    // + 정점별 랜덤 시드(flareSeed)로 별마다 크기를 살짝씩 지터시켜(_fJit) 획일적으로 안 보이게 하고,
+    // my 별의 "숨쉬듯 살짝 커졌다 작아지는" 효과(_breathe)도 멤버 별에 적용한다 — 전부 같은 위상으로
+    // 숨쉬면 한꺼번에 맥동하는 것처럼 부자연스러워서 flareSeed로 별마다 위상을 어긋나게 한다.
     // + halo 레이어에 한해서만(useHaloScale) haloScale 속성으로 개별 별의 번짐 정도를 줄일 수 있게 함 —
     // 우주에 홀로 멀리 떠 있는 탈퇴/비활동 멤버가 빈 배경 대비로 유난히 도드라지는 것을 완화하기 위함
     // (코어 별 자체 크기/밝기는 그대로 둬서 "덜 중요해 보이는" 인상은 안 주도록).
-    // + useFlareVariance(멤버 별 코어 한정): 회전만으로는 십자가 4방향 대칭이라 체감 다양성이 적어서,
-    // 십자 자체를 텍스처에 굽지 않고 셰이더에서 별마다 다른 세기로 얹는다 — flareSeed를 회전/지터와는
-    // 다른 값으로 다시 해싱해 약 35%는 아예 십자가 없고 나머지는 세기가 제각각이도록(smoothstep) 만든다.
     mat.onBeforeCompile=shader=>{
       shader.uniforms.uTime={value:0};
       shader.vertexShader=shader.vertexShader
         .replace(
           'uniform float size;\nuniform float scale;',
-          'uniform float size;\nuniform float scale;\nuniform float uTime;\nattribute float flareSeed;\nvarying float vFlareAngle;'+(useHaloScale?'\nattribute float haloScale;':'')+(useFlareVariance?'\nvarying float vFlareStrength;':'')
+          'uniform float size;\nuniform float scale;\nuniform float uTime;\nattribute float flareSeed;'+(useHaloScale?'\nattribute float haloScale;':'')
         )
         .replace(
           'gl_PointSize = size;',
-          `vFlareAngle = flareSeed * 6.2831853;\n\t\tfloat _fJit = 0.85 + 0.3 * fract(sin(flareSeed*78.233)*43758.5453);\n\t\tfloat _breathe = 1.0 + ${isMob()?'0.0':'0.03'} * sin(uTime*1.15 + flareSeed*6.2831853);\n\t\t`+(useFlareVariance?'vFlareStrength = smoothstep(0.35, 1.0, fract(sin(flareSeed*12.9898)*43758.5453));\n\t\t':'')+`gl_PointSize = size * _fJit * _breathe${useHaloScale?' * haloScale':''};`
+          `float _fJit = 0.85 + 0.3 * fract(sin(flareSeed*78.233)*43758.5453);\n\t\tfloat _breathe = 1.0 + ${isMob()?'0.0':'0.03'} * sin(uTime*1.15 + flareSeed*6.2831853);\n\t\tgl_PointSize = size * _fJit * _breathe${useHaloScale?' * haloScale':''};`
         )
         .replace(
           'if ( isPerspective ) gl_PointSize *= ( scale / - mvPosition.z );',
           `if ( isPerspective ) gl_PointSize *= ( scale / - mvPosition.z );\n\t\tgl_PointSize = min( gl_PointSize, ${sizeClamp.toFixed(1)} );`
         );
-      mat.userData.shader=shader;
-      shader.fragmentShader=shader.fragmentShader
-        .replace(
-          'uniform vec3 diffuse;\nuniform float opacity;',
-          'uniform vec3 diffuse;\nuniform float opacity;\nvarying float vFlareAngle;'+(useFlareVariance?'\nvarying float vFlareStrength;':'')
-        )
-        .replace(
-          '#include <map_particle_fragment>',
-          `#if defined( USE_MAP ) || defined( USE_ALPHAMAP )
-	vec2 _pc = gl_PointCoord - vec2(0.5);
-	float _ca = cos(vFlareAngle), _sa = sin(vFlareAngle);
-	_pc = vec2(_pc.x*_ca - _pc.y*_sa, _pc.x*_sa + _pc.y*_ca) + vec2(0.5);
-	vec2 uv = ( uvTransform * vec3( _pc.x, 1.0 - _pc.y, 1 ) ).xy;
-#endif
-#ifdef USE_MAP
-	vec4 mapTexel = texture2D( map, uv );
-	diffuseColor *= mapTexelToLinear( mapTexel );
-#endif
-#ifdef USE_ALPHAMAP
-	diffuseColor.a *= texture2D( alphaMap, uv ).g;
-#endif`+(useFlareVariance?`
-	float _lx = _pc.x - 0.5, _ly = _pc.y - 0.5;
-	float _wSig = 0.0194;
-	float _hArm = exp(-(_ly*_ly)/(_wSig*_wSig)) * max(0.0, 1.0 - abs(_lx)*2.0);
-	float _vArm = exp(-(_lx*_lx)/(_wSig*_wSig)) * max(0.0, 1.0 - abs(_ly)*2.0);
-	diffuseColor.a += (_hArm + _vArm) * 0.28 * vFlareStrength;`:'')
-        );
+      mat.userData.shader=shader; // 매 프레임 uTime 갱신(_syncPtsTime)이 이 참조로 breathe 애니메이션을 굴림
     };
     return mat;
   }
@@ -2846,7 +2796,7 @@ async function buildUniverse(){
     for(let i=0;i<flareSeeds.length;i++)flareSeeds[i]=Math.random();
     geo.setAttribute('flareSeed',new THREE.BufferAttribute(flareSeeds,1));
     geo.setAttribute('haloScale',new THREE.BufferAttribute(new Float32Array(haloScale),1));
-    const mat=makePointsMat(glowTexNoFlare,sizeW,opacity,46.0,false,true);
+    const mat=makePointsMat(glowTex,sizeW,opacity,46.0,false);
     const pts=new THREE.Points(geo,mat);
     scene.add(pts);
     // 후처리 블룸 없이 '빛이 실제로 번지는' 느낌을 내기 위한 halo 레이어 — 같은 geometry(포지션/컬러)를
@@ -10131,17 +10081,93 @@ async function _ytBackfillPriorityChannels(fromYear,toYear){
     for(const ch of channels){
       if(remaining<=0)break;
       _ytSetProg(`[6채널 백필] ${ch.name} 시작… (남은 예산 ${remaining}회)`);
-      const result=await _ytBackfillChannelCore(ch,fromYear,toYear,remaining,p=>{
-        _ytSetProg(`[6채널 백필] ${ch.name} ${fromYear}~${toYear} — 검색 ${p.calls}회째 (+${p.added}개)`);
-      });
-      remaining-=result.calls;
-      summary.push(`${ch.name} +${result.added}${result.done?'✓완료':'(이어받을 예정)'}`);
+      // 채널 하나가 실패해도(채널ID 조회 실패 등) 나머지 채널은 계속 진행해야 하므로 채널별로 개별 처리 —
+      // 예전엔 여기에 try/catch가 없어서 첫 채널이 실패하면 전체가 즉시 중단되고 나머지는 시도조차 안 됐음.
+      try{
+        const result=await _ytBackfillChannelCore(ch,fromYear,toYear,remaining,p=>{
+          _ytSetProg(`[6채널 백필] ${ch.name} ${fromYear}~${toYear} — 검색 ${p.calls}회째 (+${p.added}개)`);
+        });
+        remaining-=result.calls;
+        summary.push(`${ch.name} +${result.added}${result.done?'✓완료':'(이어받을 예정)'}`);
+      }catch(e){
+        console.error(`[6채널 백필] ${ch.name} 실패:`,e.message);
+        summary.push(`${ch.name} 오류(${e.message})`);
+      }
     }
     _ytSetProg(`[6채널 백필] ${summary.join(' / ')}`);
   }catch(e){
     _ytSetProg('[6채널 백필] 오류: '+e.message);
   }finally{
     _backfilling=false;
+    if(btn)btn.disabled=false;
+  }
+}
+
+// ── URL로 영상 직접 추가 ── 자동 동기화(채널 훑기)로 안 잡히는 특정 영상 하나를 수동으로 넣고 싶을 때 씀.
+// 같은 yt_channel_videos 테이블에 저장되므로, 어느 채널에서 왔든 그룹/멤버 카드의 영상 그리드에서
+// 자동 동기화된 다른 영상들과 자연스럽게 섞여서 노출된다(별도 취급 없음).
+function _ytParseVideoId(input){
+  const t=(input||'').trim();
+  const m=t.match(/(?:v=|youtu\.be\/|shorts\/)([a-zA-Z0-9_-]{11})/);
+  if(m)return m[1];
+  if(/^[a-zA-Z0-9_-]{11}$/.test(t))return t; // URL 없이 영상 ID만 붙여넣은 경우
+  return null;
+}
+async function _ytAddVideoByUrl(){
+  const key=_ytApiKey();
+  if(!key){_ytSetProg('API 키를 먼저 입력해주세요');return;}
+  if(!sb){_ytSetProg('Supabase 연결 없음');return;}
+  const urlEl=document.getElementById('sp-yt-manual-url');
+  const groupEl=document.getElementById('sp-yt-manual-group');
+  const btn=document.getElementById('sp-yt-manual-add-btn');
+  const vid=_ytParseVideoId(urlEl?.value);
+  if(!vid){_ytSetProg('유튜브 URL(또는 영상 ID)을 올바르게 입력해주세요');return;}
+  if(btn)btn.disabled=true;
+  try{
+    _ytSetProg('[영상 추가] 정보 조회 중…');
+    const r=await fetch(`https://www.googleapis.com/youtube/v3/videos?part=snippet&id=${vid}&key=${key}`);
+    if(!r.ok)throw new Error('YouTube API 오류 '+r.status);
+    const d=await r.json();
+    if(d.error)throw new Error(d.error.message);
+    const item=d.items?.[0];
+    if(!item)throw new Error('영상을 찾을 수 없어요(비공개/삭제됐을 수 있음)');
+    const title=item.snippet.title||'';
+    if(_isBannedVideoTitle(title))throw new Error('제외 대상 인물이 언급된 영상이라 추가할 수 없어요');
+    const th=item.snippet.thumbnails||{};
+    const hiTh=th.maxres||th.standard||th.high;
+    const isShortThumb=!!(hiTh&&hiTh.height>hiTh.width);
+    let category=isShortThumb?'short':_ytClassify(title);
+    if(category==='skip')category='other'; // 수동으로 콕 집어 추가하는 거라 티저/음원이어도 그냥 기타로 저장(스킵하지 않음)
+    const thumb=isShortThumb?(hiTh.url||th.medium?.url||''):(th.medium?.url||th.high?.url||th.default?.url||'');
+    const publishedAt=(item.snippet.publishedAt||'').slice(0,10);
+    const manualGroup=(groupEl?.value||'').trim();
+    let groupKo=null,members=[],withGroups=[],withMembers=[];
+    if(manualGroup){
+      if(!GROUPS[manualGroup])throw new Error(`"${manualGroup}"는 등록된 그룹명이 아니에요(정확한 한글 그룹명을 입력해주세요)`);
+      groupKo=manualGroup;
+      // 입력한 그룹 기준으로 제목에서 멤버만 추가로 추출(그룹 자체는 이미 확정이므로 매칭 결과 무관하게 그대로 씀)
+      const match=_m2ParseTitle(title);
+      if(match)members=match.membersByGroup[groupKo]||[];
+    }else{
+      const match=_m2ParseTitle(title);
+      if(!match)throw new Error('제목에서 그룹을 자동으로 인식하지 못했어요 — "그룹명" 칸에 직접 입력하고 다시 시도해주세요');
+      groupKo=match.primaryGroup;
+      members=match.membersByGroup[groupKo]||[];
+      for(const gko of match.withGroups){
+        const sec=match.membersByGroup[gko]||[];
+        if(sec.length)sec.forEach(mko=>withMembers.push(`${mko}(${gko})`));
+        else withGroups.push(gko);
+      }
+    }
+    const row={id:vid,title,thumb,published_at:publishedAt,category,group_ko:groupKo,members,with_groups:withGroups,with_members:withMembers};
+    const{error}=await sb.from(_YT_TABLE).upsert(row,{onConflict:'id'});
+    if(error)throw new Error(error.message);
+    _ytSetProg(`[영상 추가] 완료! "${_cleanTitle(title)}" → ${groupKo}`);
+    if(urlEl)urlEl.value='';
+    if(groupEl)groupEl.value='';
+  }catch(e){
+    _ytSetProg('[영상 추가] 오류: '+e.message);
+  }finally{
     if(btn)btn.disabled=false;
   }
 }
@@ -11274,6 +11300,7 @@ document.getElementById('vid-tag-thumb-refresh').addEventListener('click',async 
     const toYear=+document.getElementById('sp-yt-backfill-to').value;
     _ytBackfillPriorityChannels(fromYear,toYear);
   });
+  document.getElementById('sp-yt-manual-add-btn')?.addEventListener('click',_ytAddVideoByUrl);
 })();
 
 // ── 동기화 채널 목록 (그룹/멤버 공식 + 그외 외부 채널 두 탭 — 전부 로컬 데이터, DB 조회 없음) ──

@@ -20206,5 +20206,329 @@
     "bday": "1996.10.15",
     "nat": { "ko": "한국", "en": "KR" },
     "links": { "namu": "https://namu.wiki/w/젤로" }
+  },
+  {
+    "name": { "ko": "EN KIM", "en": "En Kim" },
+    "group": { "ko": "데일리디렉션", "en": "DAILY:DIRECTION" },
+    "co": "ODDWAVE",
+    "active": true,
+    "color": [150, 160, 190],
+    "bday": "2002.06.15",
+    "nat": { "ko": "한국", "en": "KR" },
+    "leader": true,
+    "links": { "namu": "https://namu.wiki/w/EN%20KIM" }
+  },
+  {
+    "name": { "ko": "김주형", "en": "Kim Juhyeong" },
+    "group": { "ko": "데일리디렉션", "en": "DAILY:DIRECTION" },
+    "co": "ODDWAVE",
+    "active": true,
+    "color": [150, 160, 190],
+    "bday": "2003.03.15",
+    "nat": { "ko": "한국", "en": "KR" },
+    "links": { "namu": "https://namu.wiki/w/김주형(DAILY:DIRECTION)" }
+  },
+  {
+    "name": { "ko": "임지환", "en": "Im Jihwan" },
+    "group": { "ko": "데일리디렉션", "en": "DAILY:DIRECTION" },
+    "co": "ODDWAVE",
+    "active": true,
+    "color": [150, 160, 190],
+    "bday": "2003.05.24",
+    "nat": { "ko": "한국", "en": "KR" },
+    "links": { "namu": "https://namu.wiki/w/임지환(DAILY:DIRECTION)" }
+  },
+  {
+    "name": { "ko": "E-VAN", "en": "E-Van" },
+    "group": { "ko": "데일리디렉션", "en": "DAILY:DIRECTION" },
+    "co": "ODDWAVE",
+    "active": true,
+    "color": [150, 160, 190],
+    "bday": "2004.06.10",
+    "nat": { "ko": "한국", "en": "KR" },
+    "links": { "namu": "https://namu.wiki/w/E-VAN" }
+  },
+  {
+    "name": { "ko": "이원우", "en": "Lee Wonwoo" },
+    "group": { "ko": "데일리디렉션", "en": "DAILY:DIRECTION" },
+    "co": "ODDWAVE",
+    "active": true,
+    "color": [150, 160, 190],
+    "bday": "2005.10.16",
+    "nat": { "ko": "한국", "en": "KR" },
+    "links": { "namu": "https://namu.wiki/w/이원우(DAILY:DIRECTION)" }
+  },
+  {
+    "name": { "ko": "장윤석", "en": "Jang Yoonseok" },
+    "group": { "ko": "데일리디렉션", "en": "DAILY:DIRECTION" },
+    "co": "ODDWAVE",
+    "active": true,
+    "color": [150, 160, 190],
+    "bday": "2007.04.02",
+    "nat": { "ko": "한국", "en": "KR" },
+    "links": { "namu": "https://namu.wiki/w/장윤석(DAILY:DIRECTION)" }
+  },
+  {
+    "name": { "ko": "마사토", "en": "Masato" },
+    "group": { "ko": "베이온", "en": "VAYONN" },
+    "co": "iNKODE",
+    "active": true,
+    "color": [49, 195, 231],
+    "bday": "2003.09.21",
+    "nat": { "ko": "일본", "en": "JP" },
+    "links": { "namu": "https://namu.wiki/w/마사토(VAYONN)" }
+  },
+  {
+    "name": { "ko": "센", "en": "Sen" },
+    "group": { "ko": "베이온", "en": "VAYONN" },
+    "co": "iNKODE",
+    "active": true,
+    "color": [49, 195, 231],
+    "bday": "2005.12.25",
+    "nat": { "ko": "일본", "en": "JP" },
+    "leader": true,
+    "links": { "namu": "https://namu.wiki/w/센(VAYONN)" }
+  },
+  {
+    "name": { "ko": "아양", "en": "Ayang" },
+    "group": { "ko": "베이온", "en": "VAYONN" },
+    "co": "iNKODE",
+    "active": true,
+    "color": [49, 195, 231],
+    "bday": "2006.01.05",
+    "nat": { "ko": "중국", "en": "CN" },
+    "links": { "namu": "https://namu.wiki/w/아양(VAYONN)" }
+  },
+  {
+    "name": { "ko": "진위", "en": "Jinwi" },
+    "group": { "ko": "베이온", "en": "VAYONN" },
+    "co": "iNKODE",
+    "active": true,
+    "color": [49, 195, 231],
+    "bday": "2006.03.10",
+    "nat": { "ko": "중국", "en": "CN" },
+    "links": { "namu": "https://namu.wiki/w/진위(VAYONN)" }
+  },
+  {
+    "name": { "ko": "테루", "en": "Teru" },
+    "group": { "ko": "베이온", "en": "VAYONN" },
+    "co": "iNKODE",
+    "active": true,
+    "color": [49, 195, 231],
+    "bday": "2007.10.19",
+    "nat": { "ko": "일본", "en": "JP" },
+    "links": { "namu": "https://namu.wiki/w/테루(VAYONN)" }
+  },
+  {
+    "name": { "ko": "마노", "en": "Mano" },
+    "group": { "ko": "베이온", "en": "VAYONN" },
+    "co": "iNKODE",
+    "active": true,
+    "color": [49, 195, 231],
+    "bday": "2009.02.27",
+    "nat": { "ko": "한국", "en": "KR" },
+    "links": { "namu": "https://namu.wiki/w/마노(VAYONN)" }
+  },
+  {
+    "name": { "ko": "리사코", "en": "Risako" },
+    "group": { "ko": "우당탕탕소녀단", "en": "UDTT" },
+    "co": "tt music",
+    "active": true,
+    "color": [208, 16, 51],
+    "bday": "1997.06.07",
+    "nat": { "ko": "일본", "en": "JP" },
+    "leader": true,
+    "links": { "namu": "https://namu.wiki/w/리사코(UDTT)" }
+  },
+  {
+    "name": { "ko": "한채희", "en": "Han Chaehee" },
+    "group": { "ko": "우당탕탕소녀단", "en": "UDTT" },
+    "co": "tt music",
+    "active": true,
+    "color": [208, 16, 51],
+    "bday": "2001.11.13",
+    "nat": { "ko": "한국", "en": "KR" },
+    "links": { "namu": "https://namu.wiki/w/한채희" }
+  },
+  {
+    "name": { "ko": "구한나", "en": "Gu Hanna" },
+    "group": { "ko": "우당탕탕소녀단", "en": "UDTT" },
+    "co": "tt music",
+    "active": true,
+    "color": [208, 16, 51],
+    "bday": "2004.01.20",
+    "nat": { "ko": "한국", "en": "KR" },
+    "links": { "namu": "https://namu.wiki/w/구한나(UDTT)" }
+  },
+  {
+    "name": { "ko": "우정", "en": "Woojung" },
+    "group": { "ko": "우당탕탕소녀단", "en": "UDTT" },
+    "co": "tt music",
+    "active": true,
+    "color": [208, 16, 51],
+    "bday": "2005.02.17",
+    "nat": { "ko": "중국", "en": "CN" },
+    "links": { "namu": "https://namu.wiki/w/우정(UDTT)" }
+  },
+  {
+    "name": { "ko": "권예진", "en": "Kwon Yejin" },
+    "group": { "ko": "우당탕탕소녀단", "en": "UDTT" },
+    "co": "tt music",
+    "active": true,
+    "color": [208, 16, 51],
+    "bday": "2006.06.26",
+    "nat": { "ko": "한국", "en": "KR" },
+    "links": { "namu": "https://namu.wiki/w/권예진" }
+  },
+  {
+    "name": { "ko": "마시로", "en": "Mashiro" },
+    "group": { "ko": "메이딘", "en": "MADEIN" },
+    "co": "143엔터테인먼트",
+    "active": true,
+    "color": [190, 175, 190],
+    "bday": "1999.12.16",
+    "nat": { "ko": "일본", "en": "JP" },
+    "leader": true,
+    "links": { "namu": "https://namu.wiki/w/마시로(MADEIN)" }
+  },
+  {
+    "name": { "ko": "미유", "en": "Miyu" },
+    "group": { "ko": "메이딘", "en": "MADEIN" },
+    "co": "143엔터테인먼트",
+    "active": true,
+    "color": [190, 175, 190],
+    "bday": "2003.01.09",
+    "nat": { "ko": "일본", "en": "JP" },
+    "links": { "namu": "https://namu.wiki/w/미유(MADEIN)" }
+  },
+  {
+    "name": { "ko": "김수혜", "en": "Kim Suhye" },
+    "group": { "ko": "메이딘", "en": "MADEIN" },
+    "co": "143엔터테인먼트",
+    "active": true,
+    "color": [190, 175, 190],
+    "bday": "2004.12.13",
+    "nat": { "ko": "한국", "en": "KR" },
+    "links": { "namu": "https://namu.wiki/w/김수혜(2004)" }
+  },
+  {
+    "name": { "ko": "오가은", "en": "Oh Gaeun" },
+    "group": { "ko": "메이딘", "en": "MADEIN" },
+    "co": "143엔터테인먼트",
+    "active": true,
+    "color": [190, 175, 190],
+    "bday": "2005.11.08",
+    "nat": { "ko": "한국", "en": "KR" },
+    "links": { "namu": "https://namu.wiki/w/오가은" }
+  },
+  {
+    "name": { "ko": "강예서", "en": "Kang Yeseo" },
+    "group": { "ko": "메이딘", "en": "MADEIN" },
+    "co": "143엔터테인먼트",
+    "active": true,
+    "color": [190, 175, 190],
+    "bday": "2005.08.22",
+    "nat": { "ko": "한국", "en": "KR" },
+    "links": { "namu": "https://namu.wiki/w/강예서" }
+  },
+  {
+    "name": { "ko": "세리나", "en": "Serina" },
+    "group": { "ko": "메이딘", "en": "MADEIN" },
+    "co": "143엔터테인먼트",
+    "active": true,
+    "color": [190, 175, 190],
+    "bday": "2006.05.03",
+    "nat": { "ko": "일본", "en": "JP" },
+    "links": { "namu": "https://namu.wiki/w/세리나(MADEIN)" }
+  },
+  {
+    "name": { "ko": "나고미", "en": "Nagomi" },
+    "group": { "ko": "메이딘", "en": "MADEIN" },
+    "co": "143엔터테인먼트",
+    "active": true,
+    "color": [190, 175, 190],
+    "bday": "2007.07.02",
+    "nat": { "ko": "일본", "en": "JP" },
+    "links": { "namu": "https://namu.wiki/w/나고미(MADEIN)" }
+  },
+  {
+    "name": { "ko": "손주원", "en": "Son Juwon" },
+    "group": { "ko": "키비츠", "en": "Keyveatz" },
+    "co": "AOMG",
+    "active": true,
+    "color": [45, 45, 50],
+    "bday": "2006.09.16",
+    "nat": { "ko": "한국", "en": "KR" },
+    "leader": true,
+    "links": { "namu": "https://namu.wiki/w/손주원" }
+  },
+  {
+    "name": { "ko": "강예슬", "en": "Kang Yeseul" },
+    "group": { "ko": "키비츠", "en": "Keyveatz" },
+    "co": "AOMG",
+    "active": true,
+    "color": [45, 45, 50],
+    "bday": "2006.10.15",
+    "nat": { "ko": "한국", "en": "KR" },
+    "links": { "namu": "https://namu.wiki/w/강예슬(Keyveatz)" }
+  },
+  {
+    "name": { "ko": "유이", "en": "Yui" },
+    "group": { "ko": "키비츠", "en": "Keyveatz" },
+    "co": "AOMG",
+    "active": true,
+    "color": [45, 45, 50],
+    "bday": "2007.09.16",
+    "nat": { "ko": "일본", "en": "JP" },
+    "links": { "namu": "https://namu.wiki/w/유이(Keyveatz)" }
+  },
+  {
+    "name": { "ko": "김유나", "en": "Kim Yuna" },
+    "group": { "ko": "키비츠", "en": "Keyveatz" },
+    "co": "AOMG",
+    "active": true,
+    "color": [45, 45, 50],
+    "bday": "2008.08.13",
+    "nat": { "ko": "한국", "en": "KR" },
+    "links": { "namu": "https://namu.wiki/w/김유나(Keyveatz)" }
+  },
+  {
+    "name": { "ko": "엄지원", "en": "Eom Jiwon" },
+    "group": { "ko": "키비츠", "en": "Keyveatz" },
+    "co": "AOMG",
+    "active": true,
+    "color": [45, 45, 50],
+    "bday": "2009.09.21",
+    "nat": { "ko": "한국", "en": "KR" },
+    "links": { "namu": "https://namu.wiki/w/엄지원(Keyveatz)" }
+  },
+  {
+    "name": { "ko": "나영주", "en": "Na Youngju" },
+    "group": { "ko": "도드리", "en": "dodree" },
+    "co": "INNIT엔터테인먼트",
+    "active": true,
+    "color": [120, 87, 133],
+    "bday": "2001.02.21",
+    "nat": { "ko": "한국", "en": "KR" },
+    "links": { "namu": "https://namu.wiki/w/나영주" }
+  },
+  {
+    "name": { "ko": "이송현", "en": "Lee Songhyun" },
+    "group": { "ko": "도드리", "en": "dodree" },
+    "co": "INNIT엔터테인먼트",
+    "active": true,
+    "color": [120, 87, 133],
+    "bday": "2004.10.28",
+    "nat": { "ko": "한국", "en": "KR" },
+    "links": { "namu": "https://namu.wiki/w/이송현" }
+  },
+  {
+    "name": { "ko": "라일락", "en": "Lilac" },
+    "group": { "ko": "도드리", "en": "dodree" },
+    "co": "INNIT엔터테인먼트",
+    "active": true,
+    "color": [120, 87, 133],
+    "nat": { "ko": "한국", "en": "KR" },
+    "links": { "namu": "https://namu.wiki/w/라일락(dodree)" }
   }
 ]
