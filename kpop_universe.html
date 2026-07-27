@@ -9615,16 +9615,32 @@ const _ATM_KOREAN_SURNAMES=new Set(['김','이','박','최','정','강','조','�
   '황보','제갈','남궁','선우']);
 function _atmEscRe(s){return s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');}
 function _atmTokenize(title){return(title||'').toLowerCase().split(/[^a-z0-9]+/).filter(Boolean);}
+// 트리플에스처럼 등록된 이름 자체가 "성+이름"(예: 김채원)인 그룹은, 영상 제목에서 성 없이 이름만
+// 쓰는(흔한) 표기를 못 잡는 문제가 있었음 — 반대로 프로미스나인처럼 이름만 등록된 경우는 제목에 성이
+// 붙어도 이미 아래 surRe로 잡혔음. 등록명이 알려진 성으로 시작하면 성을 뗀 나머지도 매칭 대상에 넣는다.
+// 2글자 성(황보/제갈/남궁/선우)을 1글자 성보다 먼저 검사해 "남궁"을 "남"+"궁OO"로 잘못 자르지 않게 함.
+function _atmStripSurname(nameChars){
+  const two=nameChars.length>=4?nameChars.slice(0,2).join(''):null;
+  if(two&&_ATM_KOREAN_SURNAMES.has(two))return nameChars.slice(2).join('');
+  if(nameChars.length>=3&&_ATM_KOREAN_SURNAMES.has(nameChars[0]))return nameChars.slice(1).join('');
+  return null;
+}
 function _atmMatchesMember(m,title,tokens){
   const name=m.ko;
   if(!name)return false;
-  const multiChar=[...name].length>1;
+  const nameChars=[...name];
+  const multiChar=nameChars.length>1;
+  const particles=['이','가','은','는','을','를','과','와','도','만','의','에','께','님','씨','아','야','랑','한테','에게'].map(_atmEscRe).join('|');
   if(multiChar){
     if(new RegExp(`(?<![가-힣])${_atmEscRe(name)}(?![가-힣])`).test(title))return true; // 이름 단독
-    const particles=['이','가','은','는','을','를','과','와','도','만','의','에','께','님','씨','아','야','랑','한테','에게'].map(_atmEscRe).join('|');
-    if(new RegExp(`(?<![가-힣])${_atmEscRe(name)}(?:${particles})?(?![가-힣])`).test(title))return true; // 이름+조사
-    const surRe=new RegExp(`([가-힣])${_atmEscRe(name)}(?:${particles})?(?![가-힣])`,'g');
+    if(new RegExp(`(?<![가-힣])${_atmEscRe(name)}(?:${particles}){0,2}(?![가-힣])`).test(title))return true; // 이름+조사
+    const surRe=new RegExp(`([가-힣])${_atmEscRe(name)}(?:${particles}){0,2}(?![가-힣])`,'g');
     let sm;while((sm=surRe.exec(title))){if(_ATM_KOREAN_SURNAMES.has(sm[1]))return true;} // 성+이름(+조사)
+    const givenOnly=_atmStripSurname(nameChars);
+    if(givenOnly&&givenOnly.length>=2){
+      if(new RegExp(`(?<![가-힣])${_atmEscRe(givenOnly)}(?:${particles}){0,2}(?![가-힣])`).test(title))return true; // 등록명이 성+이름인데 제목엔 이름만
+      if(new RegExp(`#${_atmEscRe(givenOnly)}(?![가-힣])`).test(title))return true; // #이름(성 뺀 버전)
+    }
   }
   if(new RegExp(`#${_atmEscRe(name)}(?![가-힣])`).test(title))return true; // #이름(단일음절도 해시태그는 허용)
   if(m.en){
@@ -9640,6 +9656,13 @@ function _atmMatchesMember(m,title,tokens){
     }
     if(parts.length>1){
       for(let i=0;i<=tokens.length-parts.length;i++){if(parts.every((p,j)=>tokens[i+j]===p))return true;}
+      // 영문명도 한글과 같은 이유로 "성" 파트(보통 첫 단어)를 뺀 나머지만 제목에 있어도 잡히게 함
+      const rest=parts.slice(1);
+      if(rest.length===1){
+        if(tokens.includes(rest[0]))return true;
+      }else if(rest.length>1){
+        for(let i=0;i<=tokens.length-rest.length;i++){if(rest.every((p,j)=>tokens[i+j]===p))return true;}
+      }
     }
   }
   return false;
