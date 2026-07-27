@@ -9924,8 +9924,17 @@ async function _ytSyncExtChannels(){
   _extSyncing=true;
   const setProg=msg=>{_ytSetProg(msg);};
   let totalAdded=0,totalSkipped=0,errors=0;
-  for(let ci=0;ci<_EXT_CHANNELS.length;ci++){
-    const ch=_EXT_CHANNELS[ci];
+  // 쿼터는 실행 한 번당 공유되는 자원이라, 목록 앞쪽(M2·Mnet처럼 영상이 아주 많은 채널)이 매번 쿼터를
+  // 다 써버리면 뒤쪽 채널(뮤직뱅크 등)은 이 실행에서 아예 시작도 못 해보고 매번 밀림 — 그러면 그 채널은
+  // "이어받기" 체크포인트가 있어도 영원히 이어받을 기회가 없음. 지난번에 중단된(이어받을 게 있는) 채널을
+  // 목록 맨 앞으로 당겨서, 이번 실행의 쿼터를 걔가 먼저 쓰게 한다(공평하게 돌아가며 진행되도록).
+  const _orderedChannels=[..._EXT_CHANNELS].sort((a,b)=>{
+    const aResume=localStorage.getItem(`kpu_ext_resume_${a.handle}`)?1:0;
+    const bResume=localStorage.getItem(`kpu_ext_resume_${b.handle}`)?1:0;
+    return bResume-aResume;
+  });
+  for(let ci=0;ci<_orderedChannels.length;ci++){
+    const ch=_orderedChannels[ci];
     const prefix=`[${ci+1}/${_EXT_CHANNELS.length}] ${ch.name}`;
     try{
       setProg(`${prefix} 채널 정보 가져오는 중…`);
