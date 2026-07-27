@@ -938,6 +938,11 @@
   .mp-bias-chip:hover{color:rgba(240,248,255,1);}
   .mp-bias-chip:hover{background:rgba(255,255,255,0.10);border-color:rgba(255,255,255,0.22);}
   .gc-ch-more-wrap{min-height:1px;font-size:11px;color:rgba(155,178,228,0.45);text-align:center;padding:8px 0 2px;}
+  .gc-ch-more-loading{display:inline-flex;align-items:center;gap:5px;}
+  .gc-ch-more-loading .dot{width:5px;height:5px;border-radius:50%;background:rgba(155,178,228,0.65);animation:gc-more-bounce 1s ease-in-out infinite;}
+  .gc-ch-more-loading .dot:nth-child(2){animation-delay:.15s;}
+  .gc-ch-more-loading .dot:nth-child(3){animation-delay:.3s;}
+  @keyframes gc-more-bounce{0%,80%,100%{transform:translateY(0);opacity:.4;}40%{transform:translateY(-4px);opacity:1;}}
   .gc-ch-msg{font-size:12px;color:rgba(155,178,228,0.45);text-align:center;padding:10px 0;line-height:1.6;}
   @keyframes gc-shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
   .gc-ch-skeleton{border-radius:6px;overflow:hidden;background:rgba(255,255,255,0.04);}
@@ -1680,6 +1685,7 @@
     <button class="sp-yt-sync" id="sp-yt-sync">전체 동기화 (공식 + 외부 채널)</button>
     <button class="sp-yt-sync" id="sp-yt-reclassify" style="margin-top:4px;opacity:.8;">Shorts 자동 감지 (기존 영상)</button>
     <button class="sp-yt-sync" id="sp-yt-autotag" style="margin-top:4px;opacity:.8;">멤버 자동 태깅 (같은 그룹, 미태깅분)</button>
+    <button class="sp-yt-sync" id="sp-yt-fix-highlight" style="margin-top:4px;opacity:.8;">그룹 "하이라이트" 오매칭 정리</button>
     <button class="sp-yt-sync" id="sp-hidden-vids-btn" style="margin-top:4px;opacity:.8;">노출 제외 영상 목록</button>
     <button class="sp-yt-sync" id="sp-ext-channels-btn" style="margin-top:4px;opacity:.8;">동기화 채널 목록</button>
     <div class="sp-yt-prog" id="sp-yt-prog"></div>
@@ -9606,7 +9612,10 @@ const _EXT_CHANNELS=[
 ];
 
 // 제목에서 그룹/멤버 매칭. 토큰 경계 기준으로 GROUPS/ARTISTS 데이터와 대조.
-function _m2ParseTitle(title){
+function _m2ParseTitle(rawTitle){
+  // "[하이라이트]"는 그룹명이 아니라 "요약본" 의미의 영상 태그로 흔히 쓰여 그룹 하이라이트로 오매칭되기 쉬움 —
+  // 매칭 전에 이 태그 표기(대괄호/괄호/꺾쇠)를 제거해 그룹명 토큰 매칭에서 아예 배제한다.
+  const title=rawTitle.replace(/[\[(<【]\s*하이라이트\s*[\])>】]/g,' ');
   // 특수문자를 공백으로 치환해 토큰 경계 확보, 앞뒤 공백 추가
   const norm=' '+title.toUpperCase().replace(/[^가-힣a-zA-Z0-9]/g,' ').replace(/\s+/g,' ')+' ';
   function hit(name){
@@ -9684,6 +9693,58 @@ function _extBuildRows(vids){
     });
   }
   return{rows,skipped};
+}
+
+// ── 그룹 "하이라이트" 오매칭 정리 ── "[하이라이트]"(요약본 태그)가 그룹명으로 오매칭되던 버그가
+// _m2ParseTitle에 있었음. 그 버그로 잘못 group_ko='하이라이트'가 찍힌 기존 행(외부 채널 동기화분)을
+// 고쳐진 로직으로 재판정한다. 재판정 결과 다른 그룹이 나오면 그쪽으로 재배정(안전한 UPDATE)하고,
+// 아무 그룹도 안 나오면 — 진짜 하이라이트 공식 채널 영상일 가능성을 배제할 수 없어 삭제 대신
+// content_flag='hidden' 처리(기존 "노출 제외 영상 목록" 패널에서 admin이 검토/복원 가능, 되돌릴 수 있음).
+async function _ytFixHighlightMistag(){
+  if(!sb){_ytSetProg('Supabase 연결 없음');return;}
+  const btn=document.getElementById('sp-yt-fix-highlight');
+  if(btn)btn.disabled=true;
+  try{
+    _ytSetProg('하이라이트 오매칭 영상 조회 중…');
+    const{data:rows,error}=await sb.from(_YT_TABLE)
+      .select('id,title,members,with_members,with_groups')
+      .eq('group_ko','하이라이트')
+      .or('content_flag.is.null,content_flag.neq.hidden');
+    if(error){_ytSetProg('조회 실패: '+error.message);return;}
+    if(!rows?.length){_ytSetProg('하이라이트로 태깅된 영상이 없어요');return;}
+    let reassigned=0,hidden=0,checked=0;
+    for(const v of rows){
+      checked++;
+      const match=_m2ParseTitle(v.title||'');
+      if(match&&match.primaryGroup==='하이라이트')continue; // 여전히 하이라이트가 맞음 — 그대로 둠
+      if(match){
+        // 다른 그룹으로 재판정됨 — 그쪽으로 재배정
+        const members=match.membersByGroup[match.primaryGroup]||[];
+        const withGroups=[],withMembers=[];
+        for(const gko of match.withGroups){
+          const sec=match.membersByGroup[gko]||[];
+          if(sec.length)sec.forEach(mko=>withMembers.push(`${mko}(${gko})`));
+          else withGroups.push(gko);
+        }
+        const{error:ue}=await sb.from(_YT_TABLE).update({
+          group_ko:match.primaryGroup,members,with_groups:withGroups,with_members:withMembers
+        }).eq('id',v.id);
+        if(ue)console.error(`[하이라이트 정리] id=${v.id} 재배정 실패:`,ue.message);
+        else reassigned++;
+      }else{
+        // 어느 그룹과도 안 맞음 — 삭제 대신 노출 제외 처리(복원 가능)
+        const{error:ue}=await sb.from(_YT_TABLE).update({content_flag:'hidden'}).eq('id',v.id);
+        if(ue)console.error(`[하이라이트 정리] id=${v.id} 노출 제외 실패:`,ue.message);
+        else hidden++;
+      }
+      if(checked%20===0)_ytSetProg(`검사 중… ${checked}/${rows.length}개 (재배정 ${reassigned} / 노출제외 ${hidden})`);
+    }
+    _ytSetProg(`완료! 하이라이트 ${rows.length}개 중 재배정 ${reassigned}개, 노출 제외 ${hidden}개 (노출 제외 영상 목록에서 검토 가능)`);
+  }catch(e){
+    _ytSetProg('오류: '+e.message);
+  }finally{
+    if(btn)btn.disabled=false;
+  }
 }
 
 let _extSyncing=false;
@@ -9920,7 +9981,7 @@ function _makeChVidController(contId){
     // (그래야 이 페이지가 항상 그리드의 마지막이라는 가정이 깨지지 않고, 빠른 연타로 같은 페이지가 중복 로드되지 않음)
     if(!reset&&state.appendLock)return;
     state.appendLock=true; // 응답을 기다리는 동안에도 즉시 잠가서 연타로 인한 중복 요청을 막는다
-    if(!reset&&moreWrap)moreWrap.textContent='불러오는 중…'; // 무한 스크롤로 다음 페이지 가져오는 동안 표시
+    if(!reset&&moreWrap)moreWrap.innerHTML='<div class="gc-ch-more-loading"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>'; // 무한 스크롤로 다음 페이지 가져오는 동안 표시
     if(reset){
       state.gen++;
       grid.innerHTML='<div class="gc-ch-skeleton featured"><div class="gc-ch-skeleton-thumb"></div><div class="gc-ch-skeleton-title"></div><div class="gc-ch-skeleton-title short"></div></div>'
@@ -10513,6 +10574,16 @@ function _groupGcVids(items,featured,startPos,startCat,avoidWiden){
   for(let i=0;i<arr.length;i++){
     let v=arr[i];
     let c=v.category==='short'?'short':'norm';
+    // 가로(랜딩) 영상은 짝지을 수 있어도 일정 확률로 단독 2열폭 카드로 키워 썸네일 크기에 변화를 준다
+    // (멤버 카드처럼 같은 카테고리가 쭉 이어질 때 계속 같은 크기로만 나오는 걸 막기 위함).
+    // avoidWiden(카드 넓게 보기 모드)에선 이미 패널 자체가 넓어서 추가로 안 키운다.
+    if(!avoidWiden&&pos===0&&c==='norm'&&Math.random()<0.28){
+      v._wide=true;
+      renderList.push(v);
+      lastItem=v;
+      pos=0;cat=null;
+      continue;
+    }
     if(pos===1&&cat!==c){
       let swapIdx=-1;
       if(avoidWiden){
@@ -10806,6 +10877,7 @@ document.getElementById('vid-tag-thumb-refresh').addEventListener('click',async 
   });
   document.getElementById('sp-yt-reclassify')?.addEventListener('click',_ytReclassifyShorts);
   document.getElementById('sp-yt-autotag')?.addEventListener('click',_ytAutoTagMembers);
+  document.getElementById('sp-yt-fix-highlight')?.addEventListener('click',_ytFixHighlightMistag);
   document.getElementById('sp-hidden-vids-btn')?.addEventListener('click',_openHiddenVids);
   document.getElementById('sp-ext-channels-btn')?.addEventListener('click',_openExtChannels);
 })();
