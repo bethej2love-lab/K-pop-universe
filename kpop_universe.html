@@ -2047,7 +2047,8 @@ scene.add(dirLight);
 
 // ── Glow texture ──────────────────────────────────
 // 밤하늘 별처럼: 중심에서 부드럽게 퍼지는 radial glow + 상하좌우로 가늘고 긴 렌즈 플레어(십자 빛갈라짐)
-function makeGlowTex(){
+function makeGlowTex(withFlare){
+  if(withFlare===undefined)withFlare=true;
   const sz=128,c0=sz/2;
   const c=document.createElement('canvas');c.width=sz;c.height=sz;
   const cx=c.getContext('2d');
@@ -2074,29 +2075,34 @@ function makeGlowTex(){
   cx.fillRect(0,0,sz,sz);
   // 십자 플레어: 가로/세로 각각 얇은 띠를 여러 겹 겹쳐서, 길이 방향(가운데일수록 밝음)과
   // 두께 방향(가운데 줄일수록 밝음) 둘 다 자연스럽게 페이드되는 얇고 긴 빛줄기를 만든다.
-  cx.globalCompositeOperation='lighter';
-  const halfW=4,peak=0.28;
-  for(let d=-halfW;d<=halfW;d++){
-    const vf=Math.exp(-(d/(halfW*0.62))*(d/(halfW*0.62)));
-    const a=peak*vf;
-    if(a<0.004)continue;
-    const gH=cx.createLinearGradient(0,c0+d,sz,c0+d);
-    gH.addColorStop(0,   'rgba(255,255,255,0)');
-    gH.addColorStop(0.5, `rgba(255,255,255,${a})`);
-    gH.addColorStop(1,   'rgba(255,255,255,0)');
-    cx.fillStyle=gH;
-    cx.fillRect(0,c0+d,sz,1);
-    const gV=cx.createLinearGradient(c0+d,0,c0+d,sz);
-    gV.addColorStop(0,   'rgba(255,255,255,0)');
-    gV.addColorStop(0.5, `rgba(255,255,255,${a})`);
-    gV.addColorStop(1,   'rgba(255,255,255,0)');
-    cx.fillStyle=gV;
-    cx.fillRect(c0+d,0,1,sz);
+  if(withFlare){
+    cx.globalCompositeOperation='lighter';
+    const halfW=4,peak=0.28;
+    for(let d=-halfW;d<=halfW;d++){
+      const vf=Math.exp(-(d/(halfW*0.62))*(d/(halfW*0.62)));
+      const a=peak*vf;
+      if(a<0.004)continue;
+      const gH=cx.createLinearGradient(0,c0+d,sz,c0+d);
+      gH.addColorStop(0,   'rgba(255,255,255,0)');
+      gH.addColorStop(0.5, `rgba(255,255,255,${a})`);
+      gH.addColorStop(1,   'rgba(255,255,255,0)');
+      cx.fillStyle=gH;
+      cx.fillRect(0,c0+d,sz,1);
+      const gV=cx.createLinearGradient(c0+d,0,c0+d,sz);
+      gV.addColorStop(0,   'rgba(255,255,255,0)');
+      gV.addColorStop(0.5, `rgba(255,255,255,${a})`);
+      gV.addColorStop(1,   'rgba(255,255,255,0)');
+      cx.fillStyle=gV;
+      cx.fillRect(c0+d,0,1,sz);
+    }
+    cx.globalCompositeOperation='source-over';
   }
-  cx.globalCompositeOperation='source-over';
   return new THREE.CanvasTexture(c);
 }
 const glowTex=makeGlowTex();
+// 멤버 별 코어 전용 — 십자 플레어를 텍스처에 고정으로 굽지 않고, 별마다 다른 세기(일부는 아예 없음)로
+// 셰이더에서 얹기 위해 십자 없는 순수 radial glow만 따로 준비한다(makePointsMat의 flareStrength 참고).
+const glowTexNoFlare=makeGlowTex(false);
 
 // 멤버 코어가 실제 빛처럼 번져 보이게 하는 '블룸 흉내' 레이어용 — 뚜렷한 코어 없이
 // 아주 넓고 부드럽게만 퍼지는 텍스처. glowTex 점 뒤에 훨씬 크게 additive로 겹쳐 그려서
@@ -2752,11 +2758,11 @@ async function buildUniverse(){
     scene.add(line);
     const mid=posA.clone().lerp(posB,0.5);
     const bm=bubbleMeshes.find(b=>b.ko===shareKo);
-    connLines.push({line,mid,baseOp:mat.opacity,grpKo:shareKo,posA,posB,bm});
+    connLines.push({line,mid,baseOp:mat.opacity,grpKo:shareKo,posA,posB,bm,artA,artB});
   });
 
   // ── Member points (fixed pixel size, camera-distance independent) ──
-  function makePointsMat(tex,sizeW,opacity,sizeClamp,useHaloScale){
+  function makePointsMat(tex,sizeW,opacity,sizeClamp,useHaloScale,useFlareVariance){
     const mat=new THREE.PointsMaterial({
       size:sizeW/Math.min(window.devicePixelRatio,2),map:tex,vertexColors:true,
       transparent:true,opacity,
@@ -2773,16 +2779,19 @@ async function buildUniverse(){
     // + halo 레이어에 한해서만(useHaloScale) haloScale 속성으로 개별 별의 번짐 정도를 줄일 수 있게 함 —
     // 우주에 홀로 멀리 떠 있는 탈퇴/비활동 멤버가 빈 배경 대비로 유난히 도드라지는 것을 완화하기 위함
     // (코어 별 자체 크기/밝기는 그대로 둬서 "덜 중요해 보이는" 인상은 안 주도록).
+    // + useFlareVariance(멤버 별 코어 한정): 회전만으로는 십자가 4방향 대칭이라 체감 다양성이 적어서,
+    // 십자 자체를 텍스처에 굽지 않고 셰이더에서 별마다 다른 세기로 얹는다 — flareSeed를 회전/지터와는
+    // 다른 값으로 다시 해싱해 약 35%는 아예 십자가 없고 나머지는 세기가 제각각이도록(smoothstep) 만든다.
     mat.onBeforeCompile=shader=>{
       shader.uniforms.uTime={value:0};
       shader.vertexShader=shader.vertexShader
         .replace(
           'uniform float size;\nuniform float scale;',
-          'uniform float size;\nuniform float scale;\nuniform float uTime;\nattribute float flareSeed;\nvarying float vFlareAngle;'+(useHaloScale?'\nattribute float haloScale;':'')
+          'uniform float size;\nuniform float scale;\nuniform float uTime;\nattribute float flareSeed;\nvarying float vFlareAngle;'+(useHaloScale?'\nattribute float haloScale;':'')+(useFlareVariance?'\nvarying float vFlareStrength;':'')
         )
         .replace(
           'gl_PointSize = size;',
-          `vFlareAngle = flareSeed * 6.2831853;\n\t\tfloat _fJit = 0.85 + 0.3 * fract(sin(flareSeed*78.233)*43758.5453);\n\t\tfloat _breathe = 1.0 + ${isMob()?'0.0':'0.03'} * sin(uTime*1.15 + flareSeed*6.2831853);\n\t\tgl_PointSize = size * _fJit * _breathe${useHaloScale?' * haloScale':''};`
+          `vFlareAngle = flareSeed * 6.2831853;\n\t\tfloat _fJit = 0.85 + 0.3 * fract(sin(flareSeed*78.233)*43758.5453);\n\t\tfloat _breathe = 1.0 + ${isMob()?'0.0':'0.03'} * sin(uTime*1.15 + flareSeed*6.2831853);\n\t\t`+(useFlareVariance?'vFlareStrength = smoothstep(0.35, 1.0, fract(sin(flareSeed*12.9898)*43758.5453));\n\t\t':'')+`gl_PointSize = size * _fJit * _breathe${useHaloScale?' * haloScale':''};`
         )
         .replace(
           'if ( isPerspective ) gl_PointSize *= ( scale / - mvPosition.z );',
@@ -2792,7 +2801,7 @@ async function buildUniverse(){
       shader.fragmentShader=shader.fragmentShader
         .replace(
           'uniform vec3 diffuse;\nuniform float opacity;',
-          'uniform vec3 diffuse;\nuniform float opacity;\nvarying float vFlareAngle;'
+          'uniform vec3 diffuse;\nuniform float opacity;\nvarying float vFlareAngle;'+(useFlareVariance?'\nvarying float vFlareStrength;':'')
         )
         .replace(
           '#include <map_particle_fragment>',
@@ -2808,7 +2817,12 @@ async function buildUniverse(){
 #endif
 #ifdef USE_ALPHAMAP
 	diffuseColor.a *= texture2D( alphaMap, uv ).g;
-#endif`
+#endif`+(useFlareVariance?`
+	float _lx = _pc.x - 0.5, _ly = _pc.y - 0.5;
+	float _wSig = 0.0194;
+	float _hArm = exp(-(_ly*_ly)/(_wSig*_wSig)) * max(0.0, 1.0 - abs(_lx)*2.0);
+	float _vArm = exp(-(_lx*_lx)/(_wSig*_wSig)) * max(0.0, 1.0 - abs(_ly)*2.0);
+	diffuseColor.a += (_hArm + _vArm) * 0.28 * vFlareStrength;`:'')
         );
     };
     return mat;
@@ -2822,7 +2836,7 @@ async function buildUniverse(){
     for(let i=0;i<flareSeeds.length;i++)flareSeeds[i]=Math.random();
     geo.setAttribute('flareSeed',new THREE.BufferAttribute(flareSeeds,1));
     geo.setAttribute('haloScale',new THREE.BufferAttribute(new Float32Array(haloScale),1));
-    const mat=makePointsMat(glowTex,sizeW,opacity,46.0,false);
+    const mat=makePointsMat(glowTexNoFlare,sizeW,opacity,46.0,false,true);
     const pts=new THREE.Points(geo,mat);
     scene.add(pts);
     // 후처리 블룸 없이 '빛이 실제로 번지는' 느낌을 내기 위한 halo 레이어 — 같은 geometry(포지션/컬러)를
@@ -3100,7 +3114,7 @@ function animate(){
     }
   }
   controls.update();
-  connLines.forEach(({line,mid,baseOp,grpKo,posA,posB,bm})=>{
+  connLines.forEach(({line,mid,baseOp,grpKo,posA,posB,bm,artA,artB})=>{
     // 즐겨찾기(내 우주 모드) 등으로 멤버/행성이 실시간 이동할 때 선 끝점이 예전 자리에 덩그러니 남지 않도록 매 프레임 동기화
     const posAttr=line.geometry.attributes.position;
     posAttr.array[0]=posA.x;posAttr.array[1]=posA.y;posAttr.array[2]=posA.z;
@@ -3114,9 +3128,12 @@ function animate(){
       // 해체/서바이벌 프로젝트 그룹(survivalShow)은 행성 자체가 0.4배로 옅게 표시되므로,
       // 그 그룹 내 멤버 연결선도 같은 비율로 옅게 해서 행성-선 투명도가 어긋나 보이지 않게 함
       const survivalDim=(GROUPS[grpKo]||{}).survivalShow?0.4:1;
-      // 즐겨찾기 하이라이트(favMode) 등으로 그 그룹 행성이 흐려질 때 연결선도 행성의 실제 현재 밝기(focusAlpha)를 그대로 따라가게 함
-      const focusDim=bm?bm.mesh._focusAlpha??1:1;
-      const tgt=(focusGroupKo?(isFocused?baseOp*2.4:baseOp*0.18):baseOp)*survivalDim*focusDim;
+      // 행성/별이 필터·레거시 감쇠·즐겨찾기 하이라이트 등으로 흐려지거나 사라지면 그 사이를 잇는 선도
+      // 정확히 같은 비율로 같이 사라지게 함 — 예전엔 그룹 행성의 focusAlpha만 반영해서, 필터에 걸려
+      // 행성/별이 안 보여도 선만 덩그러니 남는 경우가 있었음(filterAlpha/legacyAlpha, 멤버 개별 alpha 누락).
+      const bmAlpha=bm?(bm.mesh._filterAlpha??1)*(bm.mesh._focusAlpha??1)*(bm.mesh._legacyAlpha??1):1;
+      const memAlpha=(artA?._filterAlpha??1)*(artA?._focusAlpha??1)*(artB?._filterAlpha??1)*(artB?._focusAlpha??1);
+      const tgt=(focusGroupKo?(isFocused?baseOp*2.4:baseOp*0.18):baseOp)*survivalDim*bmAlpha*memAlpha;
       line.material.opacity+=(tgt-line.material.opacity)*0.10;
     }
   });
@@ -3610,11 +3627,23 @@ function isMob(){return window.innerWidth<=768;}
 // (정규식 리터럴에 U+2028/2029를 직접 쓰면 소스 파일 자체가 깨지므로 charCode로 안전하게 구성)
 const _TITLE_BREAK_RE=new RegExp('['+['\r','\n',String.fromCharCode(0x2028),String.fromCharCode(0x2029)].join('')+']+');
 function _cleanTitle(t){return(t||'').replace(_TITLE_BREAK_RE,' ').replace(/ {2,}/g,' ').trim();}
-// 성범죄로 퇴출된 인물(승리, 태일) 관련 영상은 이 우주에 어떤 형태로도 노출되지 않아야 함 — 제목에 이름이
-// 언급된 영상은 동기화 단계(_ytFetchNewVideos)와 표시 단계(그룹/멤버/연결 카드 영상 목록) 양쪽에서 모두 걸러냄.
-// (그룹 구분 없이 전역 적용 — 특정 채널에만 국한하지 않음)
-function _isBannedVideoTitle(t){return /승리|seungri|태일|taeil/i.test(t||'');}
-function _filterBannedVideos(list){return(list||[]).filter(v=>!_isBannedVideoTitle(v.title)&&v.content_flag!=='hidden');}
+// 성범죄로 퇴출된 인물(승리, 태일 등) 관련 영상은 이 우주에 어떤 형태로도 노출되지 않아야 함 — 제목에 이름이
+// 언급된 영상은 동기화 단계(_ytFetchNewVideos)와 표시 단계(그룹/멤버/연결 카드 영상 목록, 총 개수 계산) 양쪽에서 걸러냄.
+// GLOBAL: 어느 채널에서 봐도 항상 거름 — 일반 단어와 안 겹치는 표기만 여기 둠.
+// SCOPED: "승리"(victory), "힘찬"('힘차다'의 관형사형) 같은 표기는 흔한 일반 단어와 철자가 완전히 같아서
+// 전역으로 걸면 다른 그룹의 멀쩡한 영상까지 오탐됨 — 실제 그 인물 소속이었던 그룹의 채널에서만 거름.
+// "크리스"(한글)는 "크리스마스"와 겹쳐서 엑소 채널 안에서도(자기네 크리스마스 콘텐츠) 오탐되므로 아예 뺐고,
+// 영문 표기(kris)는 그런 충돌이 없어 전역으로 둠.
+const _BANNED_VIDEO_NAMES_GLOBAL=['seungri','태일','taeil','himchan','종훈','jonghun','kris'];
+const _BANNED_VIDEO_NAMES_SCOPED={'빅뱅':['승리'],'비에이피':['힘찬']};
+const _bannedGlobalRe=new RegExp(_BANNED_VIDEO_NAMES_GLOBAL.join('|'),'i');
+function _isBannedVideoTitle(t,ko){
+  const title=t||'';
+  if(_bannedGlobalRe.test(title))return true;
+  const scoped=ko&&_BANNED_VIDEO_NAMES_SCOPED[ko];
+  return!!(scoped&&new RegExp(scoped.join('|'),'i').test(title));
+}
+function _filterBannedVideos(list,ko){return(list||[]).filter(v=>!_isBannedVideoTitle(v.title,ko)&&v.content_flag!=='hidden');}
 
 let _lbPlaylist=null,_lbIdx=-1,_lbCtx=null;
 let _lbSpeed=1; // 우측 탭존을 꾹 누르는 동안의 배속 (1 또는 2)
@@ -9904,7 +9933,7 @@ const _CONTENT_FORMAT_ORDER=['릴레이댄스',"It's Live",'리무진서비스',
 // 써야 함 — 데스크톱에서는 그룹 카드+멤버 카드가 동시에 도킹돼 화면에 같이 떠 있을 수 있어서, 상태를
 // 전역 변수 하나로 공유하면 한쪽을 열 때 다른 쪽의 페이지네이션/옵저버가 깨짐.
 function _makeChVidController(contId){
-  let state={ko:null,memberKo:null,filter:'all',sortMode:'recommend',viewMode:'category',formatFilter:null,formats:[],offset:0,total:0,pos:0,cat:null,gen:0,appendLock:false,trailingEl:null,hasMore:false,allVids:[]};
+  let state={ko:null,memberKo:null,filter:'all',sortMode:'recommend',viewMode:'category',formatFilter:null,formats:[],offset:0,total:0,pos:0,cat:null,gen:0,appendLock:false,trailingEl:null,hasMore:false,allVids:[],wrapEnd:0,wrapPhase:false};
   let observer=null;
   let _selMode=false;
   let _selIds=new Set();
@@ -10094,6 +10123,10 @@ function _makeChVidController(contId){
       }else{
         state.offset=0;
       }
+      // 새로고침(랜덤 시작)이 골라준 지점 이전(0~여기)은 무한스크롤이 끝까지 내려간 뒤에 처음으로 돌아가
+      // 마저 보여줘야 함 — 안 그러면 그 앞쪽 구간은 이 세션에서 영영 안 불러와짐(끝까지 내려도 스크롤이
+      // 한쪽 방향으로만 진행되고 되돌아오지 않아서, 실제로는 있는데 안 보이는 영상이 생기는 문제였음).
+      state.wrapEnd=state.offset;state.wrapPhase=false;
       // 그리드가 새로 비워졌으므로 행 정렬 추적 상태도 초기화
       state.pos=0;state.cat=null;state.trailingEl=null;state.allVids=[];
     }
@@ -10120,6 +10153,15 @@ function _makeChVidController(contId){
       }
       // "그룹 멤버 안 나옴" 플래그(무관) 영상은 어느 뷰에서도 이 그룹/멤버 콘텐츠로 노출하지 않음
       q=q.or('content_flag.is.null,content_flag.neq.무관');
+      // 노출 제외(hidden)·밴 인물 언급 영상은 화면엔 항상 _filterBannedVideos로 걸러왔지만, 총 개수(count)는
+      // 이 필터들을 안 거친 쿼리 결과 그대로였어서 실제 보이는 개수보다 많게 표시되는 문제가 있었음 —
+      // count가 실제 노출 개수와 일치하도록 쿼리 단계에서부터 똑같이 제외한다.
+      q=q.or('content_flag.is.null,content_flag.neq.hidden');
+      _BANNED_VIDEO_NAMES_GLOBAL.forEach(n=>{q=q.not('title','ilike',`%${n}%`);});
+      (_BANNED_VIDEO_NAMES_SCOPED[ko]||[]).forEach(n=>{q=q.not('title','ilike',`%${n}%`);});
+      // 멤버 카드는 '기타' 플래그 영상을 화면에서 아예 안 보여주므로(그룹 카드는 후순위로만 밀 뿐 계속 보임),
+      // count도 멤버 카드일 때만 '기타'를 같이 빼야 실제 노출 개수와 맞음
+      if(state.memberKo)q=q.or('content_flag.is.null,content_flag.neq.기타');
       if(state.searchQ)q=q.ilike('title',`%${state.searchQ}%`);
       if(state.viewMode==='format'){
         if(state.formatFilter)q=q.contains('content_formats',[state.formatFilter]);
@@ -10148,7 +10190,7 @@ function _makeChVidController(contId){
       // DB 조회는 무한스크롤 페이지네이션이 어긋나지 않도록 published_at desc로 고정하되(offset 기반이라 정렬이
       // 흔들리면 중복/누락 발생), '추천순'일 땐 화면에 보여줄 순서만 페이지 단위로 섞어서 업로드 시기가 몰려
       // 보이지 않게 함. '업로드순'은 이 DB 정렬을 그대로 보여줘야 하므로 셔플하지 않음.
-      let vids=_filterBannedVideos(data||[]);
+      let vids=_filterBannedVideos(data||[],ko);
       // 멤버 카드에서는 '기타' 플래그 영상을 아예 노출하지 않음(그룹 카드에서는 후순위로만 밀림)
       if(state.memberKo)vids=vids.filter(v=>v.content_flag!=='기타');
       if(state.sortMode!=='latest')vids=_shuffle(vids);
@@ -10177,7 +10219,18 @@ function _makeChVidController(contId){
       const{nodes:pageNodes,pendingProbe}=renderItems(g.renderList,grid);
       state.allVids=state.allVids.concat(g.renderList); // 라이트박스 스와이프 넘기기용으로 지금까지 불러온 영상 누적
       state.offset=offset+(data?.length||0);
-      const hasMore=state.offset<state.total;
+      let hasMore;
+      if(!state.wrapPhase&&state.wrapEnd>0&&state.offset>=state.total){
+        // 정방향(랜덤 시작점→끝)을 다 돈 상태 — 시작점 이전(0~wrapEnd)이 아직 안 보였으니 처음으로 돌아가 마저 불러온다
+        state.offset=0;
+        state.wrapPhase=true;
+        hasMore=true;
+      }else if(state.wrapPhase){
+        hasMore=state.offset<state.wrapEnd;
+        if(!hasMore)state.wrapEnd=0; // 한 바퀴 다 돌았으니 리셋
+      }else{
+        hasMore=state.offset<state.total;
+      }
       state.hasMore=hasMore;
       resolveTrailing(g,pageNodes,hasMore,incomingTrailingEl);
       // moreWrap은 그리드 맨 아래 센티널: 스크롤로 뷰포트 근처에 들어오면 IntersectionObserver가
@@ -10211,7 +10264,7 @@ function _makeChVidController(contId){
     if(!sb)return;
     // 멤버 카드는 미태깅 그룹 영상(MV·Shorts·토크쇼 등)이 뒤섞여 첫 화면이 지저분해지지 않도록
     // "라이브"(무대 직캠 위주) 탭에서 시작 — 그룹 카드는 그대로 "전체"
-    state={ko,memberKo:memberKo||null,filter:memberKo?'live':'all',onlyMe:false,searchQ:'',sortMode:'recommend',viewMode:'category',formatFilter:null,formats:[],offset:0,total:0,pos:0,cat:null,gen:state.gen+1,appendLock:false,trailingEl:null,hasMore:false,allVids:[],_liveFallbackDone:false};
+    state={ko,memberKo:memberKo||null,filter:memberKo?'live':'all',onlyMe:false,searchQ:'',sortMode:'recommend',viewMode:'category',formatFilter:null,formats:[],offset:0,total:0,pos:0,cat:null,gen:state.gen+1,appendLock:false,trailingEl:null,hasMore:false,allVids:[],_liveFallbackDone:false,wrapEnd:0,wrapPhase:false};
     cont.innerHTML=`<div class="gc-ch-hd"><div class="gc-ch-filters"></div><div class="gc-ch-sort-wrap"><button class="gc-ch-sort-btn" title="정렬" aria-haspopup="true" aria-expanded="false">⋮</button><div class="gc-ch-sort-menu"><button class="gc-ch-sort-item" data-sort="recommend"><span class="chk">✓</span>추천순</button><button class="gc-ch-sort-item" data-sort="latest"><span class="chk">✓</span>업로드순</button><div class="gc-ch-sort-divider" style="display:none"></div><button class="gc-ch-view-toggle" style="display:none"><span class="chk">✓</span>콘텐츠별 보기</button></div></div><button class="gc-ch-refresh" title="새로고침">↻</button></div><div class="gc-ch-search-wrap" style="display:none"><input class="gc-ch-search" placeholder="영상 검색…" autocomplete="off" spellcheck="false"><button class="gc-ch-search-clear" aria-label="검색어 지우기">\xD7</button></div><div class="gc-ch-grid"></div><div class="gc-ch-more-wrap"></div>`;
     _exitSelMode();
     const filEl=cont.querySelector('.gc-ch-filters');

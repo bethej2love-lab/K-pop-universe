@@ -2747,5 +2747,79 @@
       "weverse": "https://weverse.io/saymyname/feed",
       "namu": "https://namu.wiki/w/SAY%20MY%20NAME(%EC%95%84%EC%9D%B4%EB%8F%8C)"
     }
+  },
+  "하이키": {
+    "en": "H1-KEY",
+    "debut": "2022.01.05",
+    "co": "초이크리에이티브랩",
+    "color": [200, 219, 242],
+    "gender": "f",
+    "fandom": { "ko": "마이키", "en": "M1-KEY" },
+    "links": {
+      "youtube": "https://www.youtube.com/@H1KEY_official",
+      "instagram": "https://www.instagram.com/h1key_official",
+      "x": "https://x.com/H1KEY_official",
+      "tiktok": "https://www.tiktok.com/@h1key_choi",
+      "namu": "https://namu.wiki/w/H1-KEY"
+    }
+  },
+  "피프티피프티": {
+    "en": "FIFTY FIFTY",
+    "debut": "2022.11.18",
+    "co": "어트랙트",
+    "color": [247, 127, 180],
+    "gender": "f",
+    "fandom": { "ko": "트웨니", "en": "TWENY" },
+    "links": {
+      "youtube": "https://www.youtube.com/@WE_FIFTYFIFTY",
+      "instagram": "https://www.instagram.com/we_fiftyfifty",
+      "x": "https://x.com/we_fiftyfifty",
+      "tiktok": "https://www.tiktok.com/@we_fiftyfifty",
+      "weverse": "https://weverse.io/fiftyfifty/",
+      "namu": "https://namu.wiki/w/FIFTY%20FIFTY"
+    }
+  },
+  "유스피어": {
+    "en": "USPEER",
+    "debut": "2025.06.04",
+    "co": "MW엔터테인먼트",
+    "color": [108, 185, 100],
+    "gender": "f",
+    "fandom": { "ko": "유스티", "en": "USTIE" },
+    "links": {
+      "youtube": "https://www.youtube.com/@uspeerofficial",
+      "instagram": "https://www.instagram.com/uspeer.official",
+      "x": "https://x.com/USPEER_official",
+      "tiktok": "https://www.tiktok.com/@uspeer.official",
+      "namu": "https://namu.wiki/w/USPEER"
+    }
+  },
+  "비원에이포": {
+    "en": "B1A4",
+    "debut": "2011.04.23",
+    "co": "비원에이포컴퍼니",
+    "color": [175, 168, 157],
+    "gender": "m",
+    "fandom": { "ko": "바나", "en": "BANA" },
+    "links": {
+      "youtube": "https://www.youtube.com/@chB1A4",
+      "instagram": "https://www.instagram.com/b1a4ganatanatda",
+      "x": "https://x.com/_B1A4OFFICIAL",
+      "tiktok": "https://www.tiktok.com/@official_b1a4",
+      "weverse": "https://weverse.io/b1a4",
+      "namu": "https://namu.wiki/w/B1A4"
+    }
+  },
+  "비에이피": {
+    "en": "B.A.P",
+    "debut": "2012.01.27",
+    "co": "MA엔터테인먼트",
+    "color": [134, 229, 127],
+    "gender": "m",
+    "fandom": { "ko": "베이비", "en": "B.A.B.Y" },
+    "links": {
+      "youtube": "https://youtube.com/@bap2012",
+      "namu": "https://namu.wiki/w/B.A.P"
+    }
   }
 }

@@ -12266,28 +12266,6 @@
   },
   {
     "name": {
-      "ko": "크리스",
-      "en": "Kris"
-    },
-    "group": {
-      "ko": "엑소",
-      "en": "EXO"
-    },
-    "co": "무소속",
-    "active": false,
-    "color": [
-      190,
-      60,
-      65
-    ],
-    "bday": "1990.11.06",
-    "nat": {
-      "ko": "캐나다",
-      "en": "CA"
-    }
-  },
-  {
-    "name": {
       "ko": "타오",
       "en": "Tao"
     },
@@ -18948,31 +18926,6 @@
   },
   {
     "name": {
-      "ko": "최종훈",
-      "en": "Choi Jonghun"
-    },
-    "group": {
-      "ko": "에프티아일랜드",
-      "en": "FTISLAND"
-    },
-    "co": "무소속",
-    "active": false,
-    "color": [
-      230,
-      200,
-      60
-    ],
-    "bday": "1990.03.07",
-    "nat": {
-      "ko": "한국",
-      "en": "KR"
-    },
-    "links": {
-      "namu": "https://namu.wiki/w/최종훈(1990)"
-    }
-  },
-  {
-    "name": {
       "ko": "송승현",
       "en": "Song Seunghyun"
     },
@@ -19990,5 +19943,268 @@
     "bday": "2010.09.24",
     "nat": { "ko": "한국", "en": "KR" },
     "links": { "namu": "https://namu.wiki/w/승주(SAY MY NAME)" }
+  },
+  {
+    "name": { "ko": "서이", "en": "Seoi" },
+    "group": { "ko": "하이키", "en": "H1-KEY" },
+    "co": "초이크리에이티브랩",
+    "active": true,
+    "color": [200, 219, 242],
+    "bday": "2000.02.12",
+    "nat": { "ko": "한국", "en": "KR" },
+    "leader": true,
+    "links": { "namu": "https://namu.wiki/w/서이" }
+  },
+  {
+    "name": { "ko": "리이나", "en": "Riina" },
+    "group": { "ko": "하이키", "en": "H1-KEY" },
+    "co": "초이크리에이티브랩",
+    "active": true,
+    "color": [200, 219, 242],
+    "bday": "2001.02.21",
+    "nat": { "ko": "한국", "en": "KR" },
+    "links": { "namu": "https://namu.wiki/w/리이나" }
+  },
+  {
+    "name": { "ko": "휘서", "en": "Hwiseo" },
+    "group": { "ko": "하이키", "en": "H1-KEY" },
+    "co": "초이크리에이티브랩",
+    "active": true,
+    "color": [200, 219, 242],
+    "bday": "2002.07.31",
+    "nat": { "ko": "한국", "en": "KR" },
+    "links": { "namu": "https://namu.wiki/w/휘서" }
+  },
+  {
+    "name": { "ko": "옐", "en": "Yel" },
+    "group": { "ko": "하이키", "en": "H1-KEY" },
+    "co": "초이크리에이티브랩",
+    "active": true,
+    "color": [200, 219, 242],
+    "bday": "2004.12.25",
+    "nat": { "ko": "한국", "en": "KR" },
+    "links": { "namu": "https://namu.wiki/w/옐(H1-KEY)" }
+  },
+  {
+    "name": { "ko": "시탈라", "en": "Sitala" },
+    "group": { "ko": "하이키", "en": "H1-KEY" },
+    "co": "초이크리에이티브랩",
+    "active": true,
+    "color": [200, 219, 242],
+    "bday": "1996.04.23",
+    "nat": { "ko": "태국", "en": "TH" },
+    "links": { "namu": "https://namu.wiki/w/시탈라" }
+  },
+  {
+    "name": { "ko": "키나", "en": "Kina" },
+    "group": { "ko": "피프티피프티", "en": "FIFTY FIFTY" },
+    "co": "어트랙트",
+    "active": true,
+    "color": [247, 127, 180],
+    "bday": "2002.07.09",
+    "nat": { "ko": "한국", "en": "KR" },
+    "links": { "namu": "https://namu.wiki/w/키나(FIFTY%20FIFTY)" }
+  },
+  {
+    "name": { "ko": "예원", "en": "Yewon" },
+    "group": { "ko": "피프티피프티", "en": "FIFTY FIFTY" },
+    "co": "어트랙트",
+    "active": true,
+    "color": [247, 127, 180],
+    "bday": "2005.03.18",
+    "nat": { "ko": "한국", "en": "KR" },
+    "links": { "namu": "https://namu.wiki/w/예원(FIFTY%20FIFTY)" }
+  },
+  {
+    "name": { "ko": "하나", "en": "Hana" },
+    "group": { "ko": "피프티피프티", "en": "FIFTY FIFTY" },
+    "co": "어트랙트",
+    "active": true,
+    "color": [247, 127, 180],
+    "bday": "2006.09.05",
+    "nat": { "ko": "한국", "en": "KR" },
+    "links": { "namu": "https://namu.wiki/w/하나(FIFTY%20FIFTY)" }
+  },
+  {
+    "name": { "ko": "아테나", "en": "Athena" },
+    "group": { "ko": "피프티피프티", "en": "FIFTY FIFTY" },
+    "co": "어트랙트",
+    "active": true,
+    "color": [247, 127, 180],
+    "bday": "2007.03.15",
+    "nat": { "ko": "한국·스웨덴", "en": "KR·SE" },
+    "links": { "namu": "https://namu.wiki/w/아테나(FIFTY%20FIFTY)" }
+  },
+  {
+    "name": { "ko": "문샤넬", "en": "Moon Chanel" },
+    "group": { "ko": "피프티피프티", "en": "FIFTY FIFTY" },
+    "co": "어트랙트",
+    "active": true,
+    "color": [247, 127, 180],
+    "bday": "2003.06.14",
+    "nat": { "ko": "한국·미국", "en": "KR·US" },
+    "links": { "namu": "https://namu.wiki/w/문샤넬" }
+  },
+  {
+    "name": { "ko": "소이", "en": "Soi" },
+    "group": { "ko": "유스피어", "en": "USPEER" },
+    "co": "MW엔터테인먼트",
+    "active": true,
+    "color": [108, 185, 100],
+    "bday": "2007.03.11",
+    "nat": { "ko": "한국", "en": "KR" },
+    "links": { "namu": "https://namu.wiki/w/소이(USPEER)" }
+  },
+  {
+    "name": { "ko": "시안", "en": "Sian" },
+    "group": { "ko": "유스피어", "en": "USPEER" },
+    "co": "MW엔터테인먼트",
+    "active": true,
+    "color": [108, 185, 100],
+    "bday": "2007.08.18",
+    "nat": { "ko": "한국", "en": "KR" },
+    "leader": true,
+    "links": { "namu": "https://namu.wiki/w/시안(USPEER)" }
+  },
+  {
+    "name": { "ko": "서유", "en": "Seoyu" },
+    "group": { "ko": "유스피어", "en": "USPEER" },
+    "co": "MW엔터테인먼트",
+    "active": true,
+    "color": [108, 185, 100],
+    "bday": "2007.11.26",
+    "nat": { "ko": "한국", "en": "KR" },
+    "links": { "namu": "https://namu.wiki/w/서유(USPEER)" }
+  },
+  {
+    "name": { "ko": "다온", "en": "Daon" },
+    "group": { "ko": "유스피어", "en": "USPEER" },
+    "co": "MW엔터테인먼트",
+    "active": true,
+    "color": [108, 185, 100],
+    "bday": "2008.07.07",
+    "nat": { "ko": "한국", "en": "KR" },
+    "links": { "namu": "https://namu.wiki/w/다온(USPEER)" }
+  },
+  {
+    "name": { "ko": "채나", "en": "Chaena" },
+    "group": { "ko": "유스피어", "en": "USPEER" },
+    "co": "MW엔터테인먼트",
+    "active": true,
+    "color": [108, 185, 100],
+    "bday": "2009.06.08",
+    "nat": { "ko": "한국", "en": "KR" },
+    "links": { "namu": "https://namu.wiki/w/채나(USPEER)" }
+  },
+  {
+    "name": { "ko": "로아", "en": "Roa" },
+    "group": { "ko": "유스피어", "en": "USPEER" },
+    "co": "MW엔터테인먼트",
+    "active": true,
+    "color": [108, 185, 100],
+    "bday": "2009.10.28",
+    "nat": { "ko": "한국", "en": "KR" },
+    "links": { "namu": "https://namu.wiki/w/로아(USPEER)" }
+  },
+  {
+    "name": { "ko": "신우", "en": "Sinu" },
+    "group": { "ko": "비원에이포", "en": "B1A4" },
+    "co": "비원에이포컴퍼니",
+    "active": true,
+    "color": [175, 168, 157],
+    "bday": "1991.06.16",
+    "nat": { "ko": "한국", "en": "KR" },
+    "links": { "namu": "https://namu.wiki/w/신우" }
+  },
+  {
+    "name": { "ko": "산들", "en": "Sandeul" },
+    "group": { "ko": "비원에이포", "en": "B1A4" },
+    "co": "비원에이포컴퍼니",
+    "active": true,
+    "color": [175, 168, 157],
+    "bday": "1992.03.20",
+    "nat": { "ko": "한국", "en": "KR" },
+    "links": { "namu": "https://namu.wiki/w/산들" }
+  },
+  {
+    "name": { "ko": "공찬", "en": "Gongchan" },
+    "group": { "ko": "비원에이포", "en": "B1A4" },
+    "co": "비원에이포컴퍼니",
+    "active": true,
+    "color": [175, 168, 157],
+    "bday": "1993.08.14",
+    "nat": { "ko": "한국", "en": "KR" },
+    "links": { "namu": "https://namu.wiki/w/공찬" }
+  },
+  {
+    "name": { "ko": "진영", "en": "Jinyoung" },
+    "group": { "ko": "비원에이포", "en": "B1A4" },
+    "co": "무소속",
+    "active": false,
+    "color": [175, 168, 157],
+    "bday": "1991.11.18",
+    "nat": { "ko": "한국", "en": "KR" },
+    "links": { "namu": "https://namu.wiki/w/진영(배우)" }
+  },
+  {
+    "name": { "ko": "바로", "en": "Baro" },
+    "group": { "ko": "비원에이포", "en": "B1A4" },
+    "co": "무소속",
+    "active": false,
+    "color": [175, 168, 157],
+    "bday": "1992.09.05",
+    "nat": { "ko": "한국", "en": "KR" },
+    "links": { "namu": "https://namu.wiki/w/차선우" }
+  },
+  {
+    "name": { "ko": "방용국", "en": "Bang Yongguk" },
+    "group": { "ko": "비에이피", "en": "B.A.P" },
+    "co": "MA엔터테인먼트",
+    "active": true,
+    "color": [134, 229, 127],
+    "bday": "1990.03.31",
+    "nat": { "ko": "한국", "en": "KR" },
+    "leader": true,
+    "links": { "namu": "https://namu.wiki/w/방용국" }
+  },
+  {
+    "name": { "ko": "정대현", "en": "Jung Daehyun" },
+    "group": { "ko": "비에이피", "en": "B.A.P" },
+    "co": "MA엔터테인먼트",
+    "active": true,
+    "color": [134, 229, 127],
+    "bday": "1993.06.28",
+    "nat": { "ko": "한국", "en": "KR" },
+    "links": { "namu": "https://namu.wiki/w/정대현(가수)" }
+  },
+  {
+    "name": { "ko": "유영재", "en": "Yoo Youngjae" },
+    "group": { "ko": "비에이피", "en": "B.A.P" },
+    "co": "MA엔터테인먼트",
+    "active": true,
+    "color": [134, 229, 127],
+    "bday": "1994.01.24",
+    "nat": { "ko": "한국", "en": "KR" },
+    "links": { "namu": "https://namu.wiki/w/유영재" }
+  },
+  {
+    "name": { "ko": "문종업", "en": "Moon Jongup" },
+    "group": { "ko": "비에이피", "en": "B.A.P" },
+    "co": "MA엔터테인먼트",
+    "active": true,
+    "color": [134, 229, 127],
+    "bday": "1995.02.06",
+    "nat": { "ko": "한국", "en": "KR" },
+    "links": { "namu": "https://namu.wiki/w/문종업" }
+  },
+  {
+    "name": { "ko": "젤로", "en": "Zelo" },
+    "group": { "ko": "비에이피", "en": "B.A.P" },
+    "co": "MA엔터테인먼트",
+    "active": true,
+    "color": [134, 229, 127],
+    "bday": "1996.10.15",
+    "nat": { "ko": "한국", "en": "KR" },
+    "links": { "namu": "https://namu.wiki/w/젤로" }
   }
 ]
