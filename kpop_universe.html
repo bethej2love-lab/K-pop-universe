@@ -2312,7 +2312,11 @@ function _refreshOpenCardText(){
 }
 const filterCfg={debutLo:2000,debutHi:2026,bdayLo:1985,bdayHi:2012,gender:'all',showInactive:true,generations:new Set([1,2,3,4,5])};
 // 그룹 세대 구분 — 데뷔 연도 기준 K-pop Universe 자체 분류(업계·팬덤 공식 기준 아님)
-function _groupGeneration(debut){
+// 연도 컷만으로는 안 맞는 케이스(예: 동방신기는 2003년 데뷔라 연도상 1세대지만, 실제로는
+// 1세대가 아니라 2세대의 시작으로 보는 게 일반적)는 그룹명 기준 예외로 덮어씀.
+const _GEN_OVERRIDE={'동방신기':2};
+function _groupGeneration(debut,ko){
+  if(ko&&_GEN_OVERRIDE[ko]!==undefined)return _GEN_OVERRIDE[ko];
   const y=parseInt(String(debut))||2020;
   if(y<=2003)return 1;
   if(y<=2011)return 2;
@@ -6140,7 +6144,7 @@ function applyFilter(){
   // 1단계: 그룹 레벨 필터 (데뷔연도·성별·세대)
   bubbleMeshes.forEach(({mesh,ko,info})=>{
     const yr=parseInt(info.debut)||2020;
-    const ok=(gender==='all'||info.gender===gender)&&yr>=debutLo&&yr<=debutHi&&generations.has(_groupGeneration(info.debut));
+    const ok=(gender==='all'||info.gender===gender)&&yr>=debutLo&&yr<=debutHi&&generations.has(_groupGeneration(info.debut,ko));
     mesh._filterTarget=ok?1:0;
   });
   // 2단계: 멤버 레벨 필터 (생년·비활동)
@@ -6849,7 +6853,7 @@ function _renderGenDetail(g){
   document.querySelectorAll('.sp-gen-info').forEach(i=>i.classList.toggle('active',+i.dataset.genInfo===g));
   _openGenInfo=g;
   const names=Object.entries(GROUPS||{})
-    .filter(([,v])=>_groupGeneration(v.debut)===g)
+    .filter(([ko,v])=>_groupGeneration(v.debut,ko)===g)
     .sort((a,b)=>(parseInt(a[1].debut)||0)-(parseInt(b[1].debut)||0))
     .map(([ko])=>ko);
   const list=names.length
@@ -9804,6 +9808,17 @@ const _EXT_CHANNELS=[
   {handle:'thekstarnextdoor', url:'https://www.youtube.com/@thekstarnextdoor',  name:'thekstarnextdoor'},
 ];
 
+// 프로젝트 유닛(여러 그룹 소속 멤버가 모여 결성한 한시적 유닛, 자체 행성은 없음) — 영상 제목에 유닛명이
+// 언급되면 실제 소속 그룹으로 나눠 배정한다. gko는 _ytGroupKoFor와 동일 관례(실존 그룹이면 그 그룹,
+// 무소속 솔로면 본인 이름)를 그대로 씀 — 보아처럼 GROUPS에 없는 솔로도 이 매핑 안에서는 정상 동작한다.
+const _PROJECT_UNITS={
+  'V8':[{mko:'디에잇',gko:'세븐틴'},{mko:'버논',gko:'세븐틴'}],
+  'GOT THE BEAT':[{mko:'보아',gko:'보아'},{mko:'태연',gko:'소녀시대'},{mko:'효연',gko:'소녀시대'},
+    {mko:'슬기',gko:'레드벨벳'},{mko:'웬디',gko:'레드벨벳'},{mko:'카리나',gko:'에스파'},{mko:'윈터',gko:'에스파'}],
+  '씨스타19':[{mko:'효린',gko:'씨스타'},{mko:'보라',gko:'씨스타'}],
+  '오렌지캬라멜':[{mko:'레이나',gko:'애프터스쿨'},{mko:'나나',gko:'애프터스쿨'},{mko:'리지',gko:'애프터스쿨'}],
+  '태티서':[{mko:'태연',gko:'소녀시대'},{mko:'티파니',gko:'소녀시대'},{mko:'서현',gko:'소녀시대'}]
+};
 // 제목에서 그룹/멤버 매칭. 토큰 경계 기준으로 GROUPS/ARTISTS 데이터와 대조.
 function _m2ParseTitle(rawTitle){
   // "[하이라이트]"는 그룹명이 아니라 "요약본" 의미의 영상 태그로 흔히 쓰여 그룹 하이라이트로 오매칭되기 쉬움 —
@@ -9826,6 +9841,18 @@ function _m2ParseTitle(rawTitle){
     if(seen.has(ko))continue;
     if(tokens.some(t=>hit(t))){matchedGroupKos.push(ko);seen.add(ko);}
   }
+  // 유닛명(V8, GOT the beat 등) 매칭 — 유닛 자체는 그룹이 아니라, 실제 소속 그룹/멤버로 나눠 합류시킴.
+  // 제목에 유닛명만 있고 개별 멤버 이름은 없는 경우까지 커버하기 위해, 유닛 멤버를 "그 멤버 이름이
+  // 제목에 직접 있었던 것"처럼 membersByGroup에 강제로 합쳐 넣는다(아래 멤버 추출 루프에서 union).
+  const unitExtraMembers={}; // gko -> Set(mko)
+  Object.entries(_PROJECT_UNITS).forEach(([unitName,members])=>{
+    if(!hit(unitName))return;
+    members.forEach(({mko,gko})=>{
+      if(!seen.has(gko)){matchedGroupKos.push(gko);seen.add(gko);}
+      if(!unitExtraMembers[gko])unitExtraMembers[gko]=new Set();
+      unitExtraMembers[gko].add(mko);
+    });
+  });
   // "이름(그룹명)" 패턴에서 그룹명이 우리 시스템에 없는 경우 → 타 소속 동명이인 신호
   const knownGroupTokens=new Set();
   Object.entries(GROUPS).forEach(([ko,v])=>{
@@ -9861,6 +9888,8 @@ function _m2ParseTitle(rawTitle){
   const membersByGroup={};
   for(const gko of matchedGroupKos){
     const matched=ARTISTS.filter(a=>a.group.ko===gko&&[a.name.ko,a.name.en].filter(Boolean).some(t=>hit(t))).map(a=>a.name.ko);
+    const extra=unitExtraMembers[gko];
+    if(extra)extra.forEach(mko=>{if(!matched.includes(mko))matched.push(mko);});
     membersByGroup[gko]=matched;
   }
   return{primaryGroup:matchedGroupKos[0],withGroups:matchedGroupKos.slice(1),membersByGroup};
