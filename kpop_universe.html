@@ -876,8 +876,6 @@
   .hv-info{flex:1;min-width:0;}
   .hv-group{font-size:10.5px;color:rgba(155,178,228,0.55);margin-bottom:2px;}
   .hv-title{font-size:11.5px;color:rgba(210,225,255,0.80);line-height:1.4;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;}
-  .hv-restore{flex-shrink:0;padding:4px 10px;border-radius:8px;border:0.5px solid rgba(100,180,120,0.35);background:rgba(100,180,120,0.09);color:rgba(145,220,165,0.85);font-size:11px;font-family:inherit;cursor:pointer;transition:background .13s;}
-  .hv-restore:hover{background:rgba(100,180,120,0.20);}
   #hidden-vids-empty{font-size:12px;color:rgba(155,178,228,0.45);text-align:center;padding:32px 0;}
   #ext-channels-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.52);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:81;display:none;align-items:center;justify-content:center;}
   #ext-channels-overlay.open{display:flex;}
@@ -1025,7 +1023,7 @@
   /* ── Responsive: desktop panel positions ────────── */
   @media(min-width:769px){
     #tabbar{display:none;}
-    #settings-panel{top:58px;bottom:auto;right:0;width:320px;border-radius:16px 0 0 16px;}
+    #settings-panel{top:58px;bottom:auto;right:0;width:320px;border-radius:16px 0 0 16px;max-height:calc(100vh - 78px);overflow-y:auto;}
     #search-wrap{top:58px;bottom:auto;left:auto;right:0;transform:none;width:320px;}
   }
   /* ── Journal sidebar ─────────────────────────────── */
@@ -1398,11 +1396,11 @@
   .pp-save-btn:hover{background:rgba(115,145,255,0.18);border-color:rgba(120,150,255,0.32);color:rgba(220,230,255,0.92);}  .pp-save-btn:active{background:rgba(115,145,255,0.22);transform:scale(0.97);transition:transform .07s;}
   #tab-profile.pp-set,#dh-profile-btn.pp-set{font-size:11px;font-weight:700;letter-spacing:.01em;}
   /* ── 즐겨찾기 해제 확인 / 기념일 날짜 수정 / 계정 연결 확인 팝업 ────── */
-  #unfav-confirm-overlay,#date-edit-overlay,#link-confirm-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.52);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:70;display:none;align-items:center;justify-content:center;}
-  #unfav-confirm-overlay.open,#date-edit-overlay.open,#link-confirm-overlay.open{display:flex;}
-  #unfav-confirm-panel,#date-edit-panel,#link-confirm-panel{width:min(280px,calc(100vw - 40px));background:rgba(13,17,34,0.97);backdrop-filter:blur(40px) saturate(180%);-webkit-backdrop-filter:blur(40px) saturate(180%);border-radius:18px;box-shadow:0 16px 56px rgba(0,0,0,0.72);border:0.5px solid rgba(255,255,255,0.10);padding:20px;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
-  #unfav-confirm-msg,#link-confirm-msg{font-size:12px;color:rgba(160,182,222,0.72);line-height:1.5;margin-top:8px;}
-  #unfav-confirm-btns,#link-confirm-btns{display:flex;gap:8px;margin-top:18px;}
+  #unfav-confirm-overlay,#date-edit-overlay,#link-confirm-overlay,#logout-confirm-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.52);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:70;display:none;align-items:center;justify-content:center;}
+  #unfav-confirm-overlay.open,#date-edit-overlay.open,#link-confirm-overlay.open,#logout-confirm-overlay.open{display:flex;}
+  #unfav-confirm-panel,#date-edit-panel,#link-confirm-panel,#logout-confirm-panel{width:min(280px,calc(100vw - 40px));background:rgba(13,17,34,0.97);backdrop-filter:blur(40px) saturate(180%);-webkit-backdrop-filter:blur(40px) saturate(180%);border-radius:18px;box-shadow:0 16px 56px rgba(0,0,0,0.72);border:0.5px solid rgba(255,255,255,0.10);padding:20px;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
+  #unfav-confirm-msg,#link-confirm-msg,#logout-confirm-msg{font-size:12px;color:rgba(160,182,222,0.72);line-height:1.5;margin-top:8px;}
+  #unfav-confirm-btns,#link-confirm-btns,#logout-confirm-btns{display:flex;gap:8px;margin-top:18px;}
   #pp-x-link{margin-top:18px;}
   #pp-linked-state{font-size:11px;color:rgba(130,200,160,0.85);margin-top:10px;letter-spacing:.02em;}
   .uc-btn{flex:1;padding:10px;border-radius:10px;font-family:inherit;font-size:12px;font-weight:700;letter-spacing:.03em;cursor:pointer;position:relative;overflow:hidden;transition:background .15s,border-color .15s,color .15s,transform .2s ease-out;background:rgba(255,255,255,0.05);border:0.5px solid rgba(255,255,255,0.09);color:rgba(180,200,238,0.72);}
@@ -1501,14 +1499,24 @@
   #feed-close:active{color:rgba(200,218,255,0.85);transform:scale(0.86);transition:transform .07s;}
   #feed-body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;background:rgba(8,11,24,0.78);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);padding-bottom:calc(env(safe-area-inset-bottom,0px) + 80px);}
   .feed-section-ttl{font-size:10px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:rgba(120,148,205,0.45);padding:22px 20px 8px;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
-  .feed-item{display:flex;align-items:center;gap:10px;padding:11px 20px;border-bottom:0.5px solid rgba(255,255,255,0.05);cursor:pointer;position:relative;overflow:hidden;transition:background .13s;-webkit-tap-highlight-color:transparent;}
-  .feed-item:active{background:rgba(255,255,255,0.04);}
-  .feed-item-icon{font-size:15px;flex-shrink:0;width:24px;text-align:center;}
-  .feed-item-thumb{width:44px;height:28px;border-radius:5px;object-fit:cover;flex-shrink:0;background:rgba(255,255,255,0.06);}
-  .feed-item-main{flex:1;min-width:0;}
-  .feed-item-title{font-size:12px;font-weight:600;color:rgba(215,228,255,0.88);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
-  .feed-item-sub{font-size:10px;color:rgba(120,148,200,0.55);margin-top:2px;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
-  .feed-item-chev{color:rgba(130,155,200,0.28);font-size:13px;flex-shrink:0;line-height:1;}
+  /* 기념일 스트립(인스타 스토리 스타일 가로 스크롤) */
+  .feed-strip{display:flex;gap:14px;overflow-x:auto;padding:2px 20px 18px;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
+  .feed-strip::-webkit-scrollbar{display:none;}
+  .feed-strip-item{display:flex;flex-direction:column;align-items:center;gap:6px;flex-shrink:0;width:66px;cursor:pointer;position:relative;-webkit-tap-highlight-color:transparent;}
+  .feed-strip-thumb-wrap{width:60px;height:60px;border-radius:50%;padding:2px;flex-shrink:0;position:relative;overflow:hidden;background:conic-gradient(from 180deg,#ff8a5c,#ff5c8a,#8a5cff,#5c9aff,#ff8a5c);}
+  .feed-strip-thumb{width:100%;height:100%;border-radius:50%;object-fit:cover;display:block;border:2px solid #0b0f1f;box-sizing:border-box;}
+  .feed-strip-icon{width:100%;height:100%;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;background:rgba(16,20,38,0.96);border:2px solid #0b0f1f;box-sizing:border-box;}
+  .feed-strip-name{font-size:9.5px;font-weight:600;color:rgba(215,228,255,0.85);text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:66px;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
+  .feed-strip-sub{font-size:8.5px;color:rgba(120,148,200,0.55);text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:66px;margin-top:-4px;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
+  /* Discovery 피드(인스타 피드 스타일 세로 스크롤 큰 카드) */
+  .feed-card{cursor:pointer;position:relative;overflow:hidden;-webkit-tap-highlight-color:transparent;border-bottom:0.5px solid rgba(255,255,255,0.06);transition:background .13s;}
+  .feed-card:active{background:rgba(255,255,255,0.035);}
+  .feed-card-thumb-wrap{width:100%;aspect-ratio:16/9;background:rgba(255,255,255,0.05);position:relative;overflow:hidden;}
+  .feed-card-thumb{width:100%;height:100%;object-fit:cover;display:block;}
+  .feed-card-icon-fallback{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:34px;background:linear-gradient(135deg,rgba(100,130,255,0.16),rgba(255,255,255,0.03));}
+  .feed-card-cap{padding:10px 20px 18px;}
+  .feed-card-title{font-size:12.5px;font-weight:600;color:rgba(220,232,255,0.92);line-height:1.4;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
+  .feed-card-sub{font-size:10.5px;color:rgba(130,155,205,0.6);margin-top:3px;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
   /* ── Onboarding hint ─────────────────────────────── */
   #onboard-hint{
     position:fixed;z-index:39;pointer-events:none;
@@ -1717,6 +1725,7 @@
       <div style="font-size:10px;color:rgba(155,178,228,0.5);margin-bottom:2px">영상 URL로 직접 추가</div>
       <input type="text" class="sp-yt-key" id="sp-yt-manual-url" placeholder="유튜브 영상 URL">
       <input type="text" class="sp-yt-key" id="sp-yt-manual-group" placeholder="그룹명(자동인식 안 되면 입력, 예: 티아라)">
+      <input type="text" class="sp-yt-key" id="sp-yt-manual-members" placeholder="멤버명(자동인식 안 되면 입력, 쉼표로 여러 명, 예: 지연,소연)">
       <button class="sp-yt-sync" id="sp-yt-manual-add-btn" style="opacity:.8;">이 영상 추가</button>
     </div>
     <div class="sp-yt-prog" id="sp-yt-prog"></div>
@@ -1881,6 +1890,7 @@
       <button id="pp-x-link" class="pp-save-btn" data-i18n="ppXBtn">X로 연결하기</button>
       <button id="pp-google-link" class="pp-save-btn" data-i18n="ppGoogleBtn">구글로 연결하기</button>
       <div id="pp-linked-state" style="display:none" data-i18n="ppLinked">계정에 연결됨 ✓</div>
+      <button id="pp-logout-btn" class="pp-save-btn" style="display:none;color:rgba(255,160,170,0.85);border-color:rgba(255,95,110,0.20)" data-i18n="ppLogout">로그아웃</button>
     </div>
     <button id="pp-save" class="pp-save-btn" data-i18n="ppSave">저장</button>
   </div>
@@ -1892,6 +1902,16 @@
     <div id="link-confirm-btns">
       <button id="link-confirm-cancel" class="uc-btn">취소</button>
       <button id="link-confirm-ok" class="uc-btn uc-btn-primary">계속할게요</button>
+    </div>
+  </div>
+</div>
+<div id="logout-confirm-overlay">
+  <div id="logout-confirm-panel">
+    <div class="pp-title">로그아웃할까요?</div>
+    <div id="logout-confirm-msg">로그아웃하면 이 브라우저는 새 방문자 상태로 돌아가요. 계정에 연결된 좋아요·플레이리스트·북마크·프로필은 서버에 안전하게 남아있고, 같은 계정으로 다시 로그인하면 그대로 불러와져요.</div>
+    <div id="logout-confirm-btns">
+      <button id="logout-confirm-cancel" class="uc-btn">취소</button>
+      <button id="logout-confirm-ok" class="uc-btn uc-btn-danger">로그아웃</button>
     </div>
   </div>
 </div>
@@ -2190,7 +2210,7 @@ const T={
       preparing:'준비 중',gcAgency:'소속',gcDebut:'데뷔',gcFandom:'팬덤',gcLeader:'리더',gcMember:'멤버',gcSNS:'공식',
       idxTitle:'인덱스',idxGroupTab:'그룹',idxMemberTab:'멤버',idxSearchPH:'그룹명 검색…',idxSearchPHMember:'멤버명 검색…',
       idxSortName:'이름 (가나다순)',idxSortDebut:'데뷔연도',idxSortAgency:'소속사',idxSortMembers:'멤버 수',
-      idxSortBirth:'생년',idxSortGroup:'그룹명',idxSortNation:'국적',ppTitle:'내 프로필',ppNick:'닉네임',ppNickPH:'닉네임을 입력하세요',ppNickErr:'닉네임을 입력해주세요',ppBio:'한 줄 소개',ppBioPH:'선택사항',ppColor:'내 별 색상',ppFavLabel:'좋아요 공개',ppFavSub:'다른 사람들이 볼 수 있어요',ppSyncLabel:'다른 기기와 동기화',ppSyncSub:'다른 기기에서도 좋아요가 유지돼요',ppGoogleBtn:'구글로 연결하기',ppXBtn:'X로 연결하기',ppLinked:'계정에 연결됨 ✓',ppSave:'저장'},
+      idxSortBirth:'생년',idxSortGroup:'그룹명',idxSortNation:'국적',ppTitle:'내 프로필',ppNick:'닉네임',ppNickPH:'닉네임을 입력하세요',ppNickErr:'닉네임을 입력해주세요',ppBio:'한 줄 소개',ppBioPH:'선택사항',ppColor:'내 별 색상',ppFavLabel:'좋아요 공개',ppFavSub:'다른 사람들이 볼 수 있어요',ppSyncLabel:'다른 기기와 동기화',ppSyncSub:'다른 기기에서도 좋아요가 유지돼요',ppGoogleBtn:'구글로 연결하기',ppXBtn:'X로 연결하기',ppLinked:'계정에 연결됨 ✓',ppLogout:'로그아웃',ppSave:'저장'},
   en:{sp_title:'Settings',debutYr:'Debut Year',birthYr:'Birth Year',grpType:'Group Type',
       genLabel:'Generation',genNote:'Just for fun',
       all:'All',girl:'Girl Groups',boy:'Boy Groups',coed:'Coed Groups',inactive:'Inactive / Left',reset:'↺ Reset',
@@ -2198,7 +2218,7 @@ const T={
       preparing:'Coming soon',gcAgency:'Agency',gcDebut:'Debut',gcFandom:'Fandom',gcLeader:'Leader',gcMember:'Members',gcSNS:'Official',
       idxTitle:'Index',idxGroupTab:'Groups',idxMemberTab:'Members',idxSearchPH:'Search group name…',idxSearchPHMember:'Search member name…',
       idxSortName:'Name (A–Z)',idxSortDebut:'Debut Year',idxSortAgency:'Agency',idxSortMembers:'Member Count',
-      idxSortBirth:'Birth Year',idxSortGroup:'Group',idxSortNation:'Nationality',ppTitle:'My Profile',ppNick:'Nickname',ppNickPH:'Enter nickname',ppNickErr:'Nickname is required',ppBio:'Bio',ppBioPH:'Optional',ppColor:'Star Color',ppFavLabel:'Public Likes',ppFavSub:'Others can see your likes',ppSyncLabel:'Sync Across Devices',ppSyncSub:'Likes stay synced across your devices',ppGoogleBtn:'Connect with Google',ppXBtn:'Connect with X',ppLinked:'Account Connected ✓',ppSave:'Save'}
+      idxSortBirth:'Birth Year',idxSortGroup:'Group',idxSortNation:'Nationality',ppTitle:'My Profile',ppNick:'Nickname',ppNickPH:'Enter nickname',ppNickErr:'Nickname is required',ppBio:'Bio',ppBioPH:'Optional',ppColor:'Star Color',ppFavLabel:'Public Likes',ppFavSub:'Others can see your likes',ppSyncLabel:'Sync Across Devices',ppSyncSub:'Likes stay synced across your devices',ppGoogleBtn:'Connect with Google',ppXBtn:'Connect with X',ppLinked:'Account Connected ✓',ppLogout:'Log Out',ppSave:'Save'}
 };
 function applyLang(){
   document.body.classList.toggle('lang-en',currentLang==='en');
@@ -3146,7 +3166,7 @@ function animate(){
     const f=-(Math.cos(Math.PI*t)-1)/2;
     mesh.material.uniforms.uFillOp.value=f*(0.68+zoomBoost*0.28);
     mesh.material.uniforms.uBaseOp.value=0;
-    mesh.material.uniforms.uFresnelMult.value=0.26+zoomBoost*0.32;
+    mesh.material.uniforms.uFresnelMult.value=0.21+zoomBoost*0.32;
     mesh.material.uniforms.uSpecMult.value=1.6+zoomBoost*8.0;
     mesh.material.uniforms.uSpecPow.value=55.0+zoomBoost*240.0;
     mesh.material.uniforms.uAmbient.value=0.46-zoomBoost*0.08;
@@ -7030,7 +7050,7 @@ window.addEventListener('mousemove',e=>{
     if(e.clientX<rect.left||e.clientX>rect.right||e.clientY<rect.top||e.clientY>rect.bottom){
       _tipEl.style.opacity='0';return;
     }
-    const _overPanel=document.elementsFromPoint(e.clientX,e.clientY).some(el=>el.closest('#tt,#gc,#side-panel,#member-panel,#journal-sidebar,#desktop-header,#settings-panel,#search-wrap,#conn-panel,#yt-lightbox,#profile-overlay,#vid-tag-overlay,#pp-bias-emoji-overlay,#link-confirm-overlay,#unfav-confirm-overlay,#date-edit-overlay'));
+    const _overPanel=document.elementsFromPoint(e.clientX,e.clientY).some(el=>el.closest('#tt,#gc,#side-panel,#member-panel,#journal-sidebar,#desktop-header,#settings-panel,#search-wrap,#conn-panel,#yt-lightbox,#profile-overlay,#vid-tag-overlay,#pp-bias-emoji-overlay,#link-confirm-overlay,#logout-confirm-overlay,#unfav-confirm-overlay,#date-edit-overlay'));
     if(_overPanel){_tipEl.style.opacity='0';return;}
     // 1. 멤버 별 이름 — 행성이 충분히 가까울 때만
     let nearArtist=null,nearPx=Infinity;
@@ -8225,6 +8245,7 @@ function openProfilePanel(){
   document.getElementById('pp-google-link').style.display=_isLinked?'none':'';
   document.getElementById('pp-x-link').style.display=_isLinked?'none':'';
   document.getElementById('pp-linked-state').style.display=_isLinked?'':'none';
+  document.getElementById('pp-logout-btn').style.display=_isLinked?'':'none';
   _closeBiasSearch();
   _renderBiasChips();
   setTimeout(()=>document.getElementById('pp-nick').focus(),80);
@@ -8746,7 +8767,8 @@ async function _migrateLocalToServer(userId){
     fav_dates:favDates,
     scraps:scraps,
     bookmarks:bookmarks,
-    profile:myProfile
+    profile:myProfile,
+    concert_log:concertLog
   };
   // upsert 대신 insert: 이미 행이 있으면 23505(unique_violation)로 실패하는 게 곧 "이미 마이그레이션됨" 신호.
   // 재시도로 두 번 실행돼도 서버 데이터를 로컬의 오래된 스냅샷으로 덮어쓸 위험이 없음(첫 성공만 유효).
@@ -8765,6 +8787,7 @@ async function _pullServerToLocal(userId){
   scraps=data.scraps||[];
   bookmarks=data.bookmarks||[];
   myProfile=data.profile||null;
+  concertLog=data.concert_log||[];
   localStorage.setItem(FAV_KEY_G,JSON.stringify([...favGroups]));
   localStorage.setItem(FAV_KEY_M,JSON.stringify([...favMembers]));
   localStorage.setItem(FAV_KEY_C,JSON.stringify([...favConnections]));
@@ -8772,6 +8795,7 @@ async function _pullServerToLocal(userId){
   localStorage.setItem(SCRAP_KEY,JSON.stringify(scraps));
   localStorage.setItem(BOOKMARK_KEY,JSON.stringify(bookmarks));
   localStorage.setItem(PROFILE_KEY,JSON.stringify(myProfile));
+  localStorage.setItem(CONCERT_LOG_KEY,JSON.stringify(concertLog));
   return true;
 }
 
@@ -8822,15 +8846,15 @@ async function initSupabaseSync(){
       if(!error&&!data)await _migrateLocalToServer(session.user.id);
       localStorage.setItem(SB_LAST_UID_KEY,session.user.id);
     }else{
-      // 구글 연결된 계정 — 이 브라우저가 마지막으로 동기화했던 UID와 다르면
-      // "새 기기에서 로그인해 기존 계정을 불러온" 상황이므로 서버 데이터로 로컬을 덮어씀.
+      // 구글/X로 연결된 계정 — 계정 ID가 항상 기준이 되도록, 앱을 열 때마다 매번 서버 데이터로
+      // 로컬을 갱신한다(기기 A에서 바꾼 즐겨찾기/플레이리스트/북마크/최애가 기기 B에도 반영되도록).
+      // "새 기기 인식했을 때만" pull하면 그 이후 기기별로 서서히 어긋나는 문제가 있었음.
       // 데이터 손실 가능성에 대한 확인은 버튼 클릭 시점(연결 시도 전)에 이미 안내했으므로 여기서는 조용히 pull.
       const lastKnownUid=localStorage.getItem(SB_LAST_UID_KEY);
-      if(lastKnownUid!==session.user.id){
-        await _pullServerToLocal(session.user.id);
-        localStorage.setItem(SB_LAST_UID_KEY,session.user.id);
-        _gaEvent('link_account_success',{});
-      }
+      const isNewDeviceForThisAccount=lastKnownUid!==session.user.id;
+      await _pullServerToLocal(session.user.id);
+      localStorage.setItem(SB_LAST_UID_KEY,session.user.id);
+      if(isNewDeviceForThisAccount)_gaEvent('link_account_success',{});
     }
   }catch(e){
     _authAlert('initSupabaseSync 예외: '+(e&&e.message||e));
@@ -8879,6 +8903,35 @@ async function _handleAccountLink(provider){
 }
 document.getElementById('pp-google-link').addEventListener('click',e=>{e.stopPropagation();_handleAccountLink('google');});
 document.getElementById('pp-x-link').addEventListener('click',e=>{e.stopPropagation();_handleAccountLink('x');});
+
+// ── 로그아웃 — 연결된 계정 세션만 종료하고, 이 브라우저는 새 익명 방문자로 되돌린다.
+// 서버(user_data)에 저장된 데이터는 그대로 두고 로컬 캐시만 비워서, 재로그인 시 서버에서 다시 받아오게 한다.
+function _confirmLogout(){
+  return new Promise(resolve=>{
+    _logoutConfirmResolve=resolve;
+    document.getElementById('logout-confirm-overlay').classList.add('open');
+  });
+}
+let _logoutConfirmResolve=null;
+function _closeLogoutConfirm(ok){
+  document.getElementById('logout-confirm-overlay').classList.remove('open');
+  if(_logoutConfirmResolve){_logoutConfirmResolve(ok);_logoutConfirmResolve=null;}
+}
+document.getElementById('logout-confirm-ok').addEventListener('click',e=>{e.stopPropagation();_closeLogoutConfirm(true);});
+document.getElementById('logout-confirm-cancel').addEventListener('click',e=>{e.stopPropagation();_closeLogoutConfirm(false);});
+document.getElementById('logout-confirm-overlay').addEventListener('click',e=>{e.stopPropagation();if(e.target===e.currentTarget)_closeLogoutConfirm(false);});
+document.getElementById('logout-confirm-overlay').addEventListener('pointerdown',e=>e.stopPropagation());
+
+async function _handleLogout(){
+  if(!sb)return;
+  const ok=await _confirmLogout();
+  if(!ok)return;
+  try{await sb.auth.signOut();}catch(e){console.error('signOut 실패',e);}
+  [FAV_KEY_G,FAV_KEY_M,FAV_KEY_C,FAV_DATE_KEY,SCRAP_KEY,BOOKMARK_KEY,PROFILE_KEY,CONCERT_LOG_KEY,SB_LAST_UID_KEY]
+    .forEach(k=>localStorage.removeItem(k));
+  location.reload();
+}
+document.getElementById('pp-logout-btn').addEventListener('click',e=>{e.stopPropagation();_handleLogout();});
 
 // ── 그룹/멤버 카드 상태 한 줄: 실시간 시청자 수 + 즐겨찾기 인기 지표를 한 자리에서 번갈아 표시 ──
 const _gcStatusState={group:{presence:'',favcount:''},member:{presence:'',favcount:''}};
@@ -8993,7 +9046,7 @@ buildUniverse().catch(err=>{
 });
 
 // ── 탐험 피드 ──────────────────────────────────────────────────────────
-// Discovery/Constellations는 랜덤 추천이라 열 때마다 다시 뽑으면 방금 본 내용이 계속 바뀌어 정신없고
+// Discovery는 랜덤 추천이라 열 때마다 다시 뽑으면 방금 본 내용이 계속 바뀌어 정신없고
 // 다시 보고 싶어도 못 찾음 — 마지막 생성 후 3분 안에는 같은 내용을 유지하고, 3분 지나야 새로 뽑는다.
 let _feedDiscoveryBuiltAt=0;
 const _FEED_DISCOVERY_TTL=3*60*1000;
@@ -9008,7 +9061,6 @@ function _openFeedOverlay(){
   const now=Date.now();
   if(now-_feedDiscoveryBuiltAt>_FEED_DISCOVERY_TTL){
     _buildFeedDiscovery();
-    _buildFeedConnections();
     _feedDiscoveryBuiltAt=now;
   }
   if(!el._bound){el._bound=true;
@@ -9033,29 +9085,51 @@ function _closeFeedOverlay(){
   document.getElementById('dh-feed-btn')?.classList.remove('active');
 }
 
-function _appendFeedItem(container,icon,title,sub,onClick,thumbUrl){
+// 기념일 스트립(인스타 스토리 스타일 원형 아바타) 항목 — Today's Anniversary 전용
+function _appendAnnivStripItem(container,icon,name,sub,onClick,thumbUrl){
   const item=document.createElement('div');
-  item.className='feed-item';
-  item.innerHTML='<div class="feed-item-icon">'+icon+'</div>'
-    +'<div class="feed-item-main"><div class="feed-item-title">'+_cleanTitle(title)+'</div>'
-    +(sub?'<div class="feed-item-sub">'+sub+'</div>':'')+'</div>'
-    +'<div class="feed-item-chev">›</div>';
+  item.className='feed-strip-item';
+  item.innerHTML='<div class="feed-strip-thumb-wrap"><div class="feed-strip-icon">'+icon+'</div></div>'
+    +'<div class="feed-strip-name">'+_cleanTitle(name)+'</div>'
+    +(sub?'<div class="feed-strip-sub">'+sub+'</div>':'');
   item.addEventListener('click',onClick);
   item.addEventListener('touchstart',e=>_lbRipple(item,e),{passive:true});
   item.addEventListener('mousedown',e=>_lbRipple(item,e));
   container.appendChild(item);
-  if(thumbUrl)_setFeedItemThumb(item,thumbUrl);
+  if(thumbUrl)_setAnnivStripThumb(item,thumbUrl);
   return item;
 }
-// 이모지 아이콘 자리를 실제 영상 썸네일로 교체(구할 수 있을 때만) — 못 구하면 이모지 그대로 유지
-function _setFeedItemThumb(item,thumbUrl){
-  if(!thumbUrl)return;
-  const iconEl=item.querySelector('.feed-item-icon');
-  if(!iconEl)return;
+function _setAnnivStripThumb(item,thumbUrl){
+  const wrap=item.querySelector('.feed-strip-thumb-wrap');
+  if(!wrap||!thumbUrl)return;
   const img=document.createElement('img');
-  img.className='feed-item-thumb';img.loading='lazy';img.alt='';
+  img.className='feed-strip-thumb';img.loading='lazy';img.alt='';
   img.src=thumbUrl;
-  iconEl.replaceWith(img);
+  wrap.innerHTML='';
+  wrap.appendChild(img);
+}
+// Discovery 피드(인스타 피드 스타일 큰 썸네일 카드) 항목 — 썸네일을 못 구하면 이모지 폴백 유지
+function _appendFeedCard(container,icon,title,sub,onClick,thumbUrl){
+  const item=document.createElement('div');
+  item.className='feed-card';
+  item.innerHTML='<div class="feed-card-thumb-wrap"><div class="feed-card-icon-fallback">'+icon+'</div></div>'
+    +'<div class="feed-card-cap"><div class="feed-card-title">'+_cleanTitle(title)+'</div>'
+    +(sub?'<div class="feed-card-sub">'+sub+'</div>':'')+'</div>';
+  item.addEventListener('click',onClick);
+  item.addEventListener('touchstart',e=>_lbRipple(item,e),{passive:true});
+  item.addEventListener('mousedown',e=>_lbRipple(item,e));
+  container.appendChild(item);
+  if(thumbUrl)_setFeedCardThumb(item,thumbUrl);
+  return item;
+}
+function _setFeedCardThumb(item,thumbUrl){
+  const wrap=item.querySelector('.feed-card-thumb-wrap');
+  if(!wrap||!thumbUrl)return;
+  const img=document.createElement('img');
+  img.className='feed-card-thumb';img.loading='lazy';img.alt='';
+  img.src=thumbUrl;
+  wrap.innerHTML='';
+  wrap.appendChild(img);
 }
 // 그룹/멤버를 대표하는 영상 썸네일 하나(스크랩 최다, 없으면 랜덤)를 비동기로 가져온다 —
 // _fetchDiscoverThumb·그룹/멤버 카드 대표영상 선정과 동일한 규칙 재사용.
@@ -9131,25 +9205,26 @@ function _buildFeedAnniversaries(){
   bdayHits.forEach(a=>{
     const mName=isKo?a.name.ko:(a.name.en||a.name.ko);
     const gName=isKo?a.group.ko:(a.group.en||a.group.ko);
-    const age=now.getFullYear()-parseInt(a.bday.split('.')[0]);
-    const sub=gName+(age>0?`  ·  ${age}${isKo?'세':' y.o.'}`:'');
-    const item=_appendFeedItem(list,'🎂',mName,sub,()=>_feedNav(()=>{
+    const byear=parseInt(a.bday.split('.')[0]);
+    const age=now.getFullYear()-byear;
+    const sub=gName+(age>0?(isKo?`  ·  ${byear}년생 (${age}세)`:`  ·  Born ${byear} (${age})`):'');
+    const item=_appendAnnivStripItem(list,'🎂',mName,sub,()=>_feedNav(()=>{
       if(a._worldPos)flyTo(a._worldPos);
       if(isMob()){showT(a,window.innerWidth/2,window.innerHeight*0.4,false,false,false);openMobSheet(document.getElementById('tt'));}
       else showT(a,window.innerWidth/2,window.innerHeight/2);
     }));
-    _fetchTopVideoThumb(_ytGroupKoFor(a),a.name.ko).then(t=>_setFeedItemThumb(item,t));
+    _fetchTopVideoThumb(_ytGroupKoFor(a),a.name.ko).then(t=>_setAnnivStripThumb(item,t));
   });
   debutHits.forEach(([ko,info])=>{
     const name=isKo?ko:(info.en||ko);
     const n=now.getFullYear()-parseInt(String(info.debut).split('.')[0]);
     const sub=isKo?`데뷔 ${n}주년`:`${n}th debut anniversary`;
-    const item=_appendFeedItem(list,'🎉',name,sub,()=>_feedNav(()=>{
+    const item=_appendAnnivStripItem(list,'🎉',name,sub,()=>_feedNav(()=>{
       const bm=bubbleMeshes.find(b=>b.ko===ko);if(bm)flyToBubble(bm.mesh.position,bm.radius);
       if(isMob()){showGC(ko,window.innerWidth/2,window.innerHeight*0.4,false,false,null,false);openMobSheet(document.getElementById('gc'));}
       else showGC(ko,window.innerWidth/2,window.innerHeight/2);
     }));
-    _fetchTopVideoThumb(ko,null).then(t=>_setFeedItemThumb(item,t));
+    _fetchTopVideoThumb(ko,null).then(t=>_setAnnivStripThumb(item,t));
   });
 }
 
@@ -9175,7 +9250,7 @@ async function _buildFeedFormatPick(list){
       if(!vids.length)continue;
       const songs=vids.map(v=>({t:v.title,u:vidUrl(v)}));
       const thumb=vids[Math.floor(Math.random()*vids.length)].thumb;
-      const item=_appendFeedItem(list,'🎞️',`${fmt} 모아보기`,`여러 그룹 · ${songs.length}개 영상`,()=>_feedNav(()=>{
+      const item=_appendFeedCard(list,'🎞️',`${fmt} 모아보기`,`여러 그룹 · ${songs.length}개 영상`,()=>_feedNav(()=>{
         openLightbox(songs[0].u,isShorts(songs[0].u),songs,0,{});
       }),thumb);
       list.insertBefore(item,list.firstChild); // 다른 항목보다 앞서 눈에 띄게
@@ -9198,12 +9273,12 @@ function _buildFeedDiscovery(){
     const name=isKo?ko:(info.en||ko);
     const sub=(info.debut?info.debut.slice(0,4)+(isKo?'년 데뷔':' debut'):'')
               +(info.co?'  ·  '+info.co:'');
-    const item=_appendFeedItem(list,'🎵',name,sub,()=>_feedNav(()=>{
+    const item=_appendFeedCard(list,'🎵',name,sub,()=>_feedNav(()=>{
       const bm=bubbleMeshes.find(b=>b.ko===ko);if(bm)flyToBubble(bm.mesh.position,bm.radius);
       if(isMob()){showGC(ko,window.innerWidth/2,window.innerHeight*0.4,false,false,null,false);openMobSheet(document.getElementById('gc'));}
       else showGC(ko,window.innerWidth/2,window.innerHeight/2);
     }));
-    _fetchTopVideoThumb(ko,null).then(t=>_setFeedItemThumb(item,t));
+    _fetchTopVideoThumb(ko,null).then(t=>_setFeedCardThumb(item,t));
   }
 
   // 2. 랜덤 멤버
@@ -9212,12 +9287,12 @@ function _buildFeedDiscovery(){
     const a=actArtists[Math.floor(Math.random()*actArtists.length)];
     const mName=isKo?a.name.ko:(a.name.en||a.name.ko);
     const mGrps=_artistGroups(a).map(g=>isKo?g.ko:(g.en||g.ko)).join(' · ');
-    const item=_appendFeedItem(list,'👤',mName,mGrps,()=>_feedNav(()=>{
+    const item=_appendFeedCard(list,'👤',mName,mGrps,()=>_feedNav(()=>{
       if(a._worldPos)flyTo(a._worldPos);
       if(isMob()){showT(a,window.innerWidth/2,window.innerHeight*0.4,false,false,false);openMobSheet(document.getElementById('tt'));}
       else showT(a,window.innerWidth/2,window.innerHeight/2);
     }));
-    _fetchTopVideoThumb(_ytGroupKoFor(a),a.name.ko).then(t=>_setFeedItemThumb(item,t));
+    _fetchTopVideoThumb(_ytGroupKoFor(a),a.name.ko).then(t=>_setFeedCardThumb(item,t));
   }
 
   // 3. 랜덤 연결
@@ -9259,7 +9334,7 @@ function _buildFeedDiscovery(){
     const connSub=isKo?'연결 보기':'View connection';
     const connVid=connSong?.u?ytId(connSong.u):null;
     const connThumb=connVid?`https://img.youtube.com/vi/${connVid}/mqdefault.jpg`:null;
-    _appendFeedItem(list,'🔗',connLabel,connSub,()=>_feedNav(()=>{
+    _appendFeedCard(list,'🔗',connLabel,connSub,()=>_feedNav(()=>{
       if(artA._worldPos)flyTo(artA._worldPos);
       if(isMob()){showT(artA,window.innerWidth/2,window.innerHeight*0.4,false,false,false);openMobSheet(document.getElementById('tt'));}
       else showT(artA,window.innerWidth/2,window.innerHeight/2);
@@ -9288,7 +9363,7 @@ function _buildFeedDiscovery(){
       :(isKo?pick.artist.name.ko:(pick.artist.name.en||pick.artist.name.ko));
     const vVid=song.u?ytId(song.u):null;
     const vThumb=vVid?`https://img.youtube.com/vi/${vVid}/mqdefault.jpg`:null;
-    _appendFeedItem(list,'🎬',song.t,vSub,()=>_feedNav(()=>{
+    _appendFeedCard(list,'🎬',song.t,vSub,()=>_feedNav(()=>{
       if(pick.type==='group'){
         const bm=bubbleMeshes.find(b=>b.ko===pick.gko);if(bm)flyToBubble(bm.mesh.position,bm.radius);
         openLightbox(song.u,isShorts(song.u),list_,list_.indexOf(song),{groupKo:pick.gko});
@@ -9309,65 +9384,6 @@ function _buildFeedDiscovery(){
       }
     }),vThumb);
   }
-}
-
-// 콜라보 영상 증거가 있는 연결 하나를 뽑아 "Constellations" 섹션에 보여줌(_buildFeedDiscovery의
-// 랜덤 항목들과 분리된 전용 카테고리) — 기념일 섹션처럼 후보가 없으면 섹션 자체를 숨김.
-function _buildFeedConnections(){
-  const section=document.getElementById('feed-connections-section');
-  const list=document.getElementById('feed-connections');
-  if(!section||!list)return;
-  const isKo=currentLang==='ko';
-  list.innerHTML='';
-  // connections.json 로드 시 3D 연결선을 그릴 때 쓰는 것과 동일한 해석 로직(이중소속 c.group
-  // disambiguation 포함)으로 artA/artB를 정확히 찾는다 — 이름만으로 찾으면 동명이인 있을 때 틀릴 수 있음
-  function _resolveConnPair(c){
-    const candA=(ARTISTS||[]).filter(a=>a.name.ko===c.a);
-    const candB=(ARTISTS||[]).filter(a=>a.name.ko===c.b);
-    let artA,artB,shareKo;
-    if(c.group){
-      outer: for(const ca of candA){
-        if(!_artistGroups(ca).some(g=>g.ko===c.group))continue;
-        for(const cb of candB){
-          if(_artistGroups(cb).some(g=>g.ko===c.group)){artA=ca;artB=cb;shareKo=c.group;break outer;}
-        }
-      }
-    }else{
-      for(const ca of candA){const cb=candB.find(b=>b.group.ko===ca.group.ko);if(cb){artA=ca;artB=cb;shareKo=ca.group.ko;break;}}
-    }
-    if(!artA||!artB)return null;
-    const bName=shareKo===artA.group.ko?artB.name.ko:`${artB.name.ko}(${shareKo})`;
-    return{artA,artB,bName};
-  }
-  const mConns=_rawConnData.filter(c=>c.type==='member');
-  // 연결은 있어도(같은 그룹 등) 실제 콜라보 영상 증거(with 태그된 곡)가 없는 경우가 많아서
-  // "연결 보기"를 눌렀을 때 빈 화면으로 이어지는 걸 막기 위해, 실제 영상이 있는 연결만 후보로 씀.
-  // 이 항목이 있다 없다 하지 않도록, 유효한 연결이 하나라도 있으면 반드시 찾아낼 때까지 전체를 훑는다.
-  let connPick=null,connSong=null;
-  for(const c of _shuffle([...mConns])){
-    const resolved=_resolveConnPair(c);
-    if(resolved){
-      const songs=_getCollabSongs(resolved.artA,[resolved.bName]);
-      if(songs.length){connPick={c,...resolved};connSong=songs[0];break;}
-    }
-  }
-  if(!connPick){section.style.display='none';return;}
-  section.style.display='';
-  const{c,artA,bName}=connPick;
-  const connLabel=c.a+' ↔ '+c.b;
-  const connSub=isKo?'연결 보기':'View connection';
-  const connVid=connSong?.u?ytId(connSong.u):null;
-  const connThumb=connVid?`https://img.youtube.com/vi/${connVid}/mqdefault.jpg`:null;
-  _appendFeedItem(list,'🔗',connLabel,connSub,()=>_feedNav(()=>{
-    if(artA._worldPos)flyTo(artA._worldPos);
-    if(isMob()){showT(artA,window.innerWidth/2,window.innerHeight*0.4,false,false,false);openMobSheet(document.getElementById('tt'));}
-    else showT(artA,window.innerWidth/2,window.innerHeight/2);
-    openConnCard(artA);
-    _connSelected=[bName];
-    _updateConnLines3d();
-    _applyConnFocus();
-    _buildConnContent(isMob()?connSheetBody:connPanelInner);
-  }),connThumb);
 }
 
 // ── YouTube 채널 영상 (Supabase 연동) ─────────────────────────────
@@ -10149,6 +10165,7 @@ async function _ytAddVideoByUrl(){
   if(!sb){_ytSetProg('Supabase 연결 없음');return;}
   const urlEl=document.getElementById('sp-yt-manual-url');
   const groupEl=document.getElementById('sp-yt-manual-group');
+  const membersEl=document.getElementById('sp-yt-manual-members');
   const btn=document.getElementById('sp-yt-manual-add-btn');
   const vid=_ytParseVideoId(urlEl?.value);
   if(!vid){_ytSetProg('유튜브 URL(또는 영상 ID)을 올바르게 입력해주세요');return;}
@@ -10171,6 +10188,7 @@ async function _ytAddVideoByUrl(){
     const thumb=isShortThumb?(hiTh.url||th.medium?.url||''):(th.medium?.url||th.high?.url||th.default?.url||'');
     const publishedAt=(item.snippet.publishedAt||'').slice(0,10);
     const manualGroup=(groupEl?.value||'').trim();
+    const manualMembers=(membersEl?.value||'').split(',').map(s=>s.trim()).filter(Boolean);
     let groupKo=null,members=[],withGroups=[],withMembers=[];
     if(manualGroup){
       if(!GROUPS[manualGroup])throw new Error(`"${manualGroup}"는 등록된 그룹명이 아니에요(정확한 한글 그룹명을 입력해주세요)`);
@@ -10189,12 +10207,21 @@ async function _ytAddVideoByUrl(){
         else withGroups.push(gko);
       }
     }
+    // 제목에 멤버 이름이 안 그대로 실려있거나(별명·영문 표기 등) 자동 인식이 틀렸을 때, 직접 입력한
+    // 멤버명으로 덮어씀 — 해당 그룹의 실제 멤버인지 검증해서 오타로 엉뚱한 이름이 들어가는 걸 막는다.
+    if(manualMembers.length){
+      const groupMemberKos=new Set(ARTISTS.filter(a=>_artistGroups(a).some(g=>g.ko===groupKo)).map(a=>a.name.ko));
+      const invalid=manualMembers.filter(mko=>!groupMemberKos.has(mko));
+      if(invalid.length)throw new Error(`"${invalid.join(', ')}"는 ${groupKo}의 등록된 멤버명이 아니에요(정확한 한글 이름을 입력해주세요)`);
+      members=manualMembers;
+    }
     const row={id:vid,title,thumb,published_at:publishedAt,category,group_ko:groupKo,members,with_groups:withGroups,with_members:withMembers};
     const{error}=await sb.from(_YT_TABLE).upsert(row,{onConflict:'id'});
     if(error)throw new Error(error.message);
-    _ytSetProg(`[영상 추가] 완료! "${_cleanTitle(title)}" → ${groupKo}`);
+    _ytSetProg(`[영상 추가] 완료! "${_cleanTitle(title)}" → ${groupKo}${members.length?' / '+members.join(', '):''}`);
     if(urlEl)urlEl.value='';
     if(groupEl)groupEl.value='';
+    if(membersEl)membersEl.value='';
   }catch(e){
     _ytSetProg('[영상 추가] 오류: '+e.message);
   }finally{
@@ -11148,6 +11175,11 @@ function _closeVidTagModal(){
   const hideBadge=document.getElementById('vid-tag-hidden-badge');
   if(hideBtn){hideBtn.textContent='노출 제외';hideBtn.classList.remove('restore');}
   if(hideBadge)hideBadge.classList.remove('visible');
+  // 노출 제외 목록에서 연필 버튼으로 열었을 수 있으니, 그 목록이 열려있으면 최신 상태로 다시 불러온다
+  // (편집으로 복원됐거나 다른 조건이 바뀌면 목록에서 바로 빠져야 하므로).
+  if(document.getElementById('hidden-vids-overlay')?.classList.contains('open')){
+    _loadHiddenVids(document.getElementById('hidden-vids-search')?.value||'');
+  }
 }
 document.getElementById('vid-tag-cancel').addEventListener('click',e=>{e.stopPropagation();_closeVidTagModal();});
 document.getElementById('vid-tag-overlay').addEventListener('click',e=>{e.stopPropagation();if(e.target===e.currentTarget)_closeVidTagModal();});
@@ -11398,39 +11430,45 @@ document.getElementById('ext-channels-close')?.addEventListener('click',()=>docu
 
 // ── 노출 제외 영상 목록 ──
 // 숨김 처리된 영상이 수천 건 쌓이다 보니 스크롤만으로는 원하는 영상을 찾기 어려워서 검색을 추가함.
-// 클라이언트에서 이미 받은 목록만 거르면 건수가 서버 기본 제한(1000건 등)에 걸려 누락될 수 있으니,
-// 검색어가 있으면 매번 서버에 title/group_ko ilike로 다시 질의한다(디바운스).
+// 건수가 서버 기본 응답 제한(1000건 등)을 넘을 수 있으니, range()로 여러 페이지를 이어붙여 전부 가져온다
+// — 언제든 다시 편집·복원될 수 있는 목록이라 일부만 보이면 안 됨.
 let _hvSearchGen=0;
 async function _loadHiddenVids(searchTerm){
   const myGen=++_hvSearchGen;
   const list=document.getElementById('hidden-vids-list');
   list.innerHTML='<div id="hidden-vids-empty">불러오는 중…</div>';
-  let q=sb.from(_YT_TABLE).select('id,title,thumb,group_ko').eq('content_flag','hidden');
   const term=(searchTerm||'').trim();
-  if(term)q=q.or(`title.ilike.%${term}%,group_ko.ilike.%${term}%`);
-  q=q.order('group_ko').order('title').limit(500);
-  const{data,error}=await q;
-  if(myGen!==_hvSearchGen)return; // 그 사이 검색어가 또 바뀜 — 이 결과는 버림
-  if(error||!data?.length){
-    list.innerHTML=`<div id="hidden-vids-empty">${error?'오류: '+error.message:(term?'검색 결과가 없어요':'노출 제외된 영상이 없어요')}</div>`;
+  const PAGE=1000;
+  let all=[],from=0;
+  while(true){
+    let q=sb.from(_YT_TABLE).select('id,title,thumb,group_ko').eq('content_flag','hidden');
+    if(term)q=q.or(`title.ilike.%${term}%,group_ko.ilike.%${term}%`);
+    q=q.order('group_ko').order('title').range(from,from+PAGE-1);
+    const{data,error}=await q;
+    if(myGen!==_hvSearchGen)return; // 그 사이 검색어가 또 바뀜 — 이 결과는 버림
+    if(error){
+      list.innerHTML=`<div id="hidden-vids-empty">오류: ${error.message}</div>`;
+      return;
+    }
+    all=all.concat(data||[]);
+    if(!data||data.length<PAGE)break;
+    from+=PAGE;
+  }
+  if(!all.length){
+    list.innerHTML=`<div id="hidden-vids-empty">${term?'검색 결과가 없어요':'노출 제외된 영상이 없어요'}</div>`;
     return;
   }
   list.innerHTML='';
-  data.forEach(v=>{
+  all.forEach(v=>{
     const item=document.createElement('div');item.className='hv-item';
     const img=document.createElement('img');img.className='hv-thumb';img.src=v.thumb||'';img.loading='lazy';
     const info=document.createElement('div');info.className='hv-info';
     const grp=document.createElement('div');grp.className='hv-group';grp.textContent=v.group_ko||'';
     const ttl=document.createElement('div');ttl.className='hv-title';ttl.textContent=v.title||'';
     info.appendChild(grp);info.appendChild(ttl);
-    const btn=document.createElement('button');btn.className='hv-restore';btn.textContent='복원';
-    btn.addEventListener('click',async()=>{
-      btn.disabled=true;btn.textContent='…';
-      const{error:ue}=await sb.from(_YT_TABLE).update({content_flag:null}).eq('id',v.id);
-      if(ue){btn.disabled=false;btn.textContent='복원';return;}
-      item.style.opacity='0.3';item.style.pointerEvents='none';btn.textContent='완료';
-    });
-    item.appendChild(img);item.appendChild(info);item.appendChild(btn);
+    const editBtn=document.createElement('button');editBtn.className='vid-edit-btn';editBtn.type='button';editBtn.textContent='✎';
+    editBtn.addEventListener('click',e=>{e.stopPropagation();_openVidTagModal({id:v.id,title:v.title},v.group_ko);});
+    item.appendChild(img);item.appendChild(info);item.appendChild(editBtn);
     list.appendChild(item);
   });
 }
@@ -11515,15 +11553,11 @@ _totopBtn.addEventListener('click',e=>{
   <div id="feed-body">
     <div class="feed-section" id="feed-anniv-section" style="display:none">
       <div class="feed-section-ttl">🎂 Today's Anniversary</div>
-      <div id="feed-anniv"></div>
+      <div id="feed-anniv" class="feed-strip"></div>
     </div>
     <div class="feed-section">
       <div class="feed-section-ttl">✨ Discovery</div>
-      <div id="feed-discovery"></div>
-    </div>
-    <div class="feed-section" id="feed-connections-section" style="display:none">
-      <div class="feed-section-ttl">🌌 Constellations</div>
-      <div id="feed-connections"></div>
+      <div id="feed-discovery" class="feed-grid"></div>
     </div>
   </div>
 </div>
