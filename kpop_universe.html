@@ -10867,8 +10867,10 @@ function _makeChVidController(contId){
 const _gcChVidCtl=_makeChVidController('gc-ch-vid');
 const _ttChVidCtl=_makeChVidController('tv');
 async function _buildGcChVid(ko){
-  const info=GROUPS[ko];
-  if(!info?.links?.youtube||!sb){const cont=document.getElementById('gc-ch-vid');if(cont)cont.innerHTML='';return;}
+  // 아이오아이처럼 공식 채널이 없는(links.youtube 없음) 그룹도 외부채널(M2·음방 등) 태깅분으로
+  // 영상이 쌓일 수 있음 — 멤버 카드 쪽은 이미 "그룹이 실존하면"(공식 채널 여부 무관) 그리드를 시도하는데,
+  // 그룹 카드만 공식 채널 유무로 아예 걸러버려서 태깅된 영상이 있어도 그리드 자체를 안 그리던 버그였음.
+  if(!sb){const cont=document.getElementById('gc-ch-vid');if(cont)cont.innerHTML='';return;}
   _gcChVidCtl.build(ko);
 }
 
