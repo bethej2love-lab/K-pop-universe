@@ -338,6 +338,11 @@
   .tg:hover{color:#d0e8ff;}
   .tg.tg-past{color:rgba(150,165,200,0.42);}
   .tg.tg-past:hover{color:#d0e8ff;}
+  /* 프로젝트 유닛(V8·갓더비트 등) 표기 — 실제 그룹/행성은 아니라서 평소엔 .tg보다 어둡게 표시하고,
+     클릭하면 이동(navigate) 대신 멤버 카드 안 영상 그리드를 유닛 관련 영상으로 필터링한다(active로 표시). */
+  .tg-unit{font-size:13px;color:rgba(150,165,200,0.42);letter-spacing:.05em;font-weight:500;text-transform:uppercase;cursor:pointer;width:fit-content;transition:color .12s;}
+  .tg-unit:hover{color:#d0e8ff;}
+  .tg-unit.active{color:#d0e8ff;}
   .tg.tg-nogroup{cursor:default;}
   .tg.tg-nogroup:hover{color:#aec8e8;}
   .tco{font-size:14px;color:#88aac8;margin-bottom:10px;}
@@ -1704,11 +1709,8 @@
     <div class="sp-sec-lbl">YouTube 채널 영상</div>
     <input type="text" class="sp-yt-key" id="sp-yt-key" placeholder="API 키 (AIzaSy...)" autocomplete="off" spellcheck="false">
     <button class="sp-yt-sync" id="sp-yt-sync">전체 동기화 (공식 + 외부 채널)</button>
-    <button class="sp-yt-sync" id="sp-yt-reclassify" style="margin-top:4px;opacity:.8;">Shorts 자동 감지 (기존 영상)</button>
-    <button class="sp-yt-sync" id="sp-yt-fix-live" style="margin-top:4px;opacity:.8;">라이브 오분류 정리 (외부채널)</button>
     <button class="sp-yt-sync" id="sp-yt-sweep-banned" style="margin-top:4px;opacity:.8;">밴 인물 언급 영상 노출 제외 정리</button>
     <button class="sp-yt-sync" id="sp-yt-autotag" style="margin-top:4px;opacity:.8;">멤버 자동 태깅 (같은 그룹, 미태깅분)</button>
-    <button class="sp-yt-sync" id="sp-yt-fix-highlight" style="margin-top:4px;opacity:.8;">그룹 "하이라이트" 오매칭 정리</button>
     <button class="sp-yt-sync" id="sp-hidden-vids-btn" style="margin-top:4px;opacity:.8;">노출 제외 영상 목록</button>
     <button class="sp-yt-sync" id="sp-ext-channels-btn" style="margin-top:4px;opacity:.8;">동기화 채널 목록</button>
     <div style="margin-top:8px;padding-top:8px;border-top:0.5px solid rgba(255,255,255,0.1)">
@@ -2281,6 +2283,12 @@ function _refreshOpenCardText(){
         closeCards();showGC(g.ko,gx,gy);
       });
       _tgEl.appendChild(sp);
+    });
+    _unitTagsFor(a).forEach(unitName=>{
+      const sep=document.createElement('span');sep.textContent=' · ';sep.style.cssText='color:rgba(150,170,210,0.45);pointer-events:none;';_tgEl.appendChild(sep);
+      const usp=document.createElement('span');usp.className='tg-unit';usp.textContent=unitName;
+      usp.addEventListener('click',_onUnitTagClick(usp,unitName));
+      _tgEl.appendChild(usp);
     });}
     const tcoEl=document.getElementById('tco');tcoEl.innerHTML='';
     const _tcoParts=[];
@@ -5880,6 +5888,12 @@ function showT(a,cx,cy,keepNavStack,urlMode,pushMobNav,noFly){
     sp.textContent=currentLang==='ko'?g.ko:(g.en||g.ko);
     sp.addEventListener('click',_makeGcClickFn(g.ko));
     tgEl.appendChild(sp);
+  });
+  _unitTagsFor(a).forEach(unitName=>{
+    if(tgEl.childNodes.length){const sep=document.createElement('span');sep.textContent=' · ';sep.style.cssText='color:rgba(150,170,210,0.45);pointer-events:none;';tgEl.appendChild(sep);}
+    const usp=document.createElement('span');usp.className='tg-unit';usp.textContent=unitName;
+    usp.addEventListener('click',_onUnitTagClick(usp,unitName));
+    tgEl.appendChild(usp);
   });
   const tcoEl=document.getElementById('tco');tcoEl.innerHTML='';
   const _tcoParts=[];
@@ -9585,33 +9599,6 @@ async function _sbFetchAll(buildQuery,pageSize=1000){
   return{data:rows,error:null};
 }
 
-// ── 라이브 오분류 정리 ── 예전엔 외부 채널 동기화(_extBuildRows)가 제목으로 분류 안 되는(other) 영상을
-// 전부 라이브로 강제 편입시켰음(잡지사 인터뷰 등이 라이브 탭에 섞여 나오던 원인). 그 리맵은 없앴지만
-// 이미 그렇게 저장된 기존 행은 남아있으므로, category='live'인 행을 제목으로 다시 판정해 실제로는
-// LIVE/CONCERT/직캠 등 키워드가 없는 것만 other로 되돌린다. API 키 불필요(제목만 재검사).
-async function _ytFixMisclassifiedLive(){
-  if(!sb){_ytSetProg('Supabase 연결 없음');return;}
-  const btn=document.getElementById('sp-yt-fix-live');
-  if(btn)btn.disabled=true;
-  try{
-    _ytSetProg('라이브 오분류 영상 조회 중…');
-    const{data:rows,error}=await _sbFetchAll(()=>sb.from(_YT_TABLE).select('id,title').eq('category','live').order('id'));
-    if(error){_ytSetProg('조회 실패: '+error.message);return;}
-    if(!rows?.length){_ytSetProg('라이브로 태깅된 영상이 없어요');return;}
-    const toFix=rows.filter(v=>_ytClassify(v.title||'')!=='live').map(v=>v.id);
-    if(!toFix.length){_ytSetProg(`검사 완료 — ${rows.length}개 모두 정상 분류돼 있었어요`);return;}
-    for(let i=0;i<toFix.length;i+=200){
-      const{error:ue}=await sb.from(_YT_TABLE).update({category:'other'}).in('id',toFix.slice(i,i+200));
-      if(ue)throw new Error(ue.message);
-    }
-    _ytSetProg(`완료! 라이브 ${rows.length}개 중 ${toFix.length}개를 기타로 되돌림`);
-  }catch(e){
-    _ytSetProg('오류: '+e.message);
-  }finally{
-    if(btn)btn.disabled=false;
-  }
-}
-
 // 밴 인물(성범죄 등) 언급 영상은 동기화 시점부터 걸러지지만(sync-time skip), 그 밴 목록이 생기기 전에
 // 이미 들어가 있던 기존 행은 그대로 남아있을 수 있음 — 카드 열 때마다 매번 title ILIKE로 재검사하면
 // (와일드카드 LIKE라 인덱스를 못 타서) 느려지므로, 이 버튼으로 한 번 훑어서 hidden 처리해두고
@@ -9645,48 +9632,6 @@ async function _ytSweepBannedVideos(){
     }
     localStorage.setItem('kpu_banned_sweep_version',version);
     _ytSetProg(`완료! ${rows.length}개 중 ${toHide.length}개 노출 제외 처리함(노출 제외 영상 목록에서 검토 가능)`);
-  }catch(e){
-    _ytSetProg('오류: '+e.message);
-  }finally{
-    if(btn)btn.disabled=false;
-  }
-}
-
-async function _ytReclassifyShorts(){
-  const key=_ytApiKey();
-  if(!key){_ytSetProg('API 키를 먼저 입력해주세요');return;}
-  if(!sb){_ytSetProg('Supabase 연결 없음');return;}
-  const btn=document.getElementById('sp-yt-reclassify');
-  if(btn)btn.disabled=true;
-  _ytSetProg('Shorts 감지 중...');
-  try{
-    // 신규 동기화 영상은 이미 썸네일 종횡비로 자동 감지되므로(이 버튼은 그 로직이 생기기 전 레거시
-    // 행 전용 마이그레이션), category='short'로 이미 맞게 태깅된 행까지 매번 재검사할 필요가 없다.
-    const{data:all,error}=await _sbFetchAll(()=>sb.from(_YT_TABLE).select('id').neq('category','short').order('id'));
-    if(error)throw new Error(error.message);
-    if(!all?.length){_ytSetProg('검사할 영상이 없어요(short 아닌 행 없음)');if(btn)btn.disabled=false;return;}
-    let updated=0;
-    for(let i=0;i<all.length;i+=50){
-      const ids=all.slice(i,i+50).map(v=>v.id).join(',');
-      const r=await fetch(`https://www.googleapis.com/youtube/v3/videos?part=snippet&id=${ids}&key=${key}`);
-      if(!r.ok)throw new Error('YouTube API 오류 '+r.status);
-      const d=await r.json();
-      if(d.error)throw new Error(d.error.message);
-      const shortIds=[];
-      for(const item of(d.items||[])){
-        const th=item.snippet?.thumbnails||{};
-        const hiTh=th.maxres||th.standard||th.high;
-        if(hiTh?.height>hiTh?.width)shortIds.push(item.id);
-      }
-      if(shortIds.length){
-        const{error:ue}=await sb.from(_YT_TABLE).update({category:'short'}).in('id',shortIds);
-        if(ue)throw new Error(ue.message);
-        updated+=shortIds.length;
-      }
-      _ytSetProg(`Shorts 감지 중… ${Math.min(i+50,all.length)}/${all.length}개 (${updated}개 감지)`);
-      if(i+50<all.length)await new Promise(res=>setTimeout(res,100));
-    }
-    _ytSetProg(`완료! ${updated}개 Shorts 재분류됨`);
   }catch(e){
     _ytSetProg('오류: '+e.message);
   }finally{
@@ -9861,14 +9806,62 @@ const _EXT_CHANNELS=[
 // 프로젝트 유닛(여러 그룹 소속 멤버가 모여 결성한 한시적 유닛, 자체 행성은 없음) — 영상 제목에 유닛명이
 // 언급되면 실제 소속 그룹으로 나눠 배정한다. gko는 _ytGroupKoFor와 동일 관례(실존 그룹이면 그 그룹,
 // 무소속 솔로면 본인 이름)를 그대로 씀 — 보아처럼 GROUPS에 없는 솔로도 이 매핑 안에서는 정상 동작한다.
+// names: 제목에 실제로 쓰이는 표기 전부(영문 약칭+한글 표기) — "V8"만 등록해두면 "브이에잇"으로만
+// 쓰인 제목(자체 채널에 흔함)은 못 잡아서 한글 표기를 별도로 추가해둠.
 const _PROJECT_UNITS={
-  'V8':[{mko:'디에잇',gko:'세븐틴'},{mko:'버논',gko:'세븐틴'}],
-  'GOT THE BEAT':[{mko:'보아',gko:'보아'},{mko:'태연',gko:'소녀시대'},{mko:'효연',gko:'소녀시대'},
-    {mko:'슬기',gko:'레드벨벳'},{mko:'웬디',gko:'레드벨벳'},{mko:'카리나',gko:'에스파'},{mko:'윈터',gko:'에스파'}],
-  '씨스타19':[{mko:'효린',gko:'씨스타'},{mko:'보라',gko:'씨스타'}],
-  '오렌지캬라멜':[{mko:'레이나',gko:'애프터스쿨'},{mko:'나나',gko:'애프터스쿨'},{mko:'리지',gko:'애프터스쿨'}],
-  '태티서':[{mko:'태연',gko:'소녀시대'},{mko:'티파니',gko:'소녀시대'},{mko:'서현',gko:'소녀시대'}]
+  'V8':{names:['V8','브이에잇'],members:[{mko:'디에잇',gko:'세븐틴'},{mko:'버논',gko:'세븐틴'}]},
+  'GOT THE BEAT':{names:['GOT THE BEAT','갓더비트'],members:[{mko:'보아',gko:'보아'},{mko:'태연',gko:'소녀시대'},{mko:'효연',gko:'소녀시대'},
+    {mko:'슬기',gko:'레드벨벳'},{mko:'웬디',gko:'레드벨벳'},{mko:'카리나',gko:'에스파'},{mko:'윈터',gko:'에스파'}]},
+  '씨스타19':{names:['씨스타19'],members:[{mko:'효린',gko:'씨스타'},{mko:'보라',gko:'씨스타'}]},
+  '오렌지캬라멜':{names:['오렌지캬라멜'],members:[{mko:'레이나',gko:'애프터스쿨'},{mko:'나나',gko:'애프터스쿨'},{mko:'리지',gko:'애프터스쿨'}]},
+  '태티서':{names:['태티서'],members:[{mko:'태연',gko:'소녀시대'},{mko:'티파니',gko:'소녀시대'},{mko:'서현',gko:'소녀시대'}]}
 };
+// 유닛 태그 클릭 핸들러 — 그룹 카드/행성을 새로 만들지 않는 대신, 멤버 카드 안의 영상 그리드를
+// "같은 유닛의 다른 멤버가 같이 나온 영상만"으로 필터링해서 유닛 관련 콘텐츠를 모아 보여준다.
+// 같은 유닛 태그를 다시 누르면 해제(토글), 태연처럼 유닛이 2개(갓더비트/태티서)면 서로 배타적으로 전환.
+function _onUnitTagClick(usp,unitName){
+  return e=>{
+    e.stopPropagation();
+    const wasActive=usp.classList.contains('active');
+    document.querySelectorAll('#tg .tg-unit.active').forEach(el=>el.classList.remove('active'));
+    if(!wasActive)usp.classList.add('active');
+    _ttChVidCtl.setUnitFilter(unitName);
+    document.getElementById('tv')?.scrollIntoView({behavior:'smooth',block:'start'});
+  };
+}
+// 멤버 카드 그룹 태그(#tg) 옆에 소속 프로젝트 유닛명을 텍스트로만 병기하기 위한 조회 — 유닛을 별도
+// 행성/그룹으로 승격하지 않고 표기만 하기로 확정한 방향(V8 요청 때 사용자가 결정, 나머지 유닛도 동일 적용).
+function _unitTagsFor(a){
+  const groupKos=new Set(_artistGroups(a).map(g=>g.ko));
+  return Object.keys(_PROJECT_UNITS).filter(unitName=>
+    _PROJECT_UNITS[unitName].members.some(({mko,gko})=>mko===a.name.ko&&groupKos.has(gko))
+  );
+}
+// 유닛 태그 클릭 시 영상 그리드 필터링에 쓸 "나머지 유닛 멤버" 목록 — 같은 채널(그룹) 소속인지 여부에 따라
+// members(same)/with_members(cross, "이름(그룹)" 포맷) 중 어느 컬럼에서 찾아야 하는지가 갈리므로 나눠서 반환.
+function _unitOtherMembers(unitName,memberKo,ko){
+  const unit=_PROJECT_UNITS[unitName];
+  if(!unit)return{same:[],cross:[]};
+  const same=[],cross=[];
+  unit.members.forEach(({mko,gko})=>{
+    if(mko===memberKo&&gko===ko)return; // 본인 제외
+    if(gko===ko)same.push(mko);else cross.push(`${mko}(${gko})`);
+  });
+  return{same,cross};
+}
+// 제목에 프로젝트 유닛명(한글/영문 표기 아무거나)이 있으면 그중 지금 채널(ko)에 속하는 멤버만 추려서
+// 반환 — 태그 모달에서 체크박스 기본값을 정할 때(_openVidTagModal), _m2ParseTitle과 별개로 자체 채널
+// 영상에도 같은 유닛 인식을 적용하기 위한 경량 버전(그룹/멤버 역추론 등 나머지 로직은 필요 없음).
+function _unitMembersFromTitle(title,ko){
+  const norm=' '+(title||'').toUpperCase().replace(/[^가-힣a-zA-Z0-9]/g,' ').replace(/\s+/g,' ')+' ';
+  const hit=name=>norm.includes(' '+name.toUpperCase()+' ');
+  const result=new Set();
+  Object.values(_PROJECT_UNITS).forEach(unit=>{
+    if(!unit.names.some(hit))return;
+    unit.members.forEach(({mko,gko})=>{if(gko===ko)result.add(mko);});
+  });
+  return result;
+}
 // 제목에서 그룹/멤버 매칭. 토큰 경계 기준으로 GROUPS/ARTISTS 데이터와 대조.
 function _m2ParseTitle(rawTitle){
   // "[하이라이트]"는 그룹명이 아니라 "요약본" 의미의 영상 태그로 흔히 쓰여 그룹 하이라이트로 오매칭되기 쉬움 —
@@ -9895,9 +9888,9 @@ function _m2ParseTitle(rawTitle){
   // 제목에 유닛명만 있고 개별 멤버 이름은 없는 경우까지 커버하기 위해, 유닛 멤버를 "그 멤버 이름이
   // 제목에 직접 있었던 것"처럼 membersByGroup에 강제로 합쳐 넣는다(아래 멤버 추출 루프에서 union).
   const unitExtraMembers={}; // gko -> Set(mko)
-  Object.entries(_PROJECT_UNITS).forEach(([unitName,members])=>{
-    if(!hit(unitName))return;
-    members.forEach(({mko,gko})=>{
+  Object.values(_PROJECT_UNITS).forEach(unit=>{
+    if(!unit.names.some(hit))return;
+    unit.members.forEach(({mko,gko})=>{
       if(!seen.has(gko)){matchedGroupKos.push(gko);seen.add(gko);}
       if(!unitExtraMembers[gko])unitExtraMembers[gko]=new Set();
       unitExtraMembers[gko].add(mko);
@@ -9967,58 +9960,6 @@ function _extBuildRows(vids){
   return{rows,skipped};
 }
 
-// ── 그룹 "하이라이트" 오매칭 정리 ── "[하이라이트]"(요약본 태그)가 그룹명으로 오매칭되던 버그가
-// _m2ParseTitle에 있었음. 그 버그로 잘못 group_ko='하이라이트'가 찍힌 기존 행(외부 채널 동기화분)을
-// 고쳐진 로직으로 재판정한다. 재판정 결과 다른 그룹이 나오면 그쪽으로 재배정(안전한 UPDATE)하고,
-// 아무 그룹도 안 나오면 — 진짜 하이라이트 공식 채널 영상일 가능성을 배제할 수 없어 삭제 대신
-// content_flag='hidden' 처리(기존 "노출 제외 영상 목록" 패널에서 admin이 검토/복원 가능, 되돌릴 수 있음).
-async function _ytFixHighlightMistag(){
-  if(!sb){_ytSetProg('Supabase 연결 없음');return;}
-  const btn=document.getElementById('sp-yt-fix-highlight');
-  if(btn)btn.disabled=true;
-  try{
-    _ytSetProg('하이라이트 오매칭 영상 조회 중…');
-    const{data:rows,error}=await _sbFetchAll(()=>sb.from(_YT_TABLE)
-      .select('id,title,members,with_members,with_groups')
-      .eq('group_ko','하이라이트')
-      .or('content_flag.is.null,content_flag.neq.hidden')
-      .order('id'));
-    if(error){_ytSetProg('조회 실패: '+error.message);return;}
-    if(!rows?.length){_ytSetProg('하이라이트로 태깅된 영상이 없어요');return;}
-    let reassigned=0,hidden=0,checked=0;
-    for(const v of rows){
-      checked++;
-      const match=_m2ParseTitle(v.title||'');
-      if(match&&match.primaryGroup==='하이라이트')continue; // 여전히 하이라이트가 맞음 — 그대로 둠
-      if(match){
-        // 다른 그룹으로 재판정됨 — 그쪽으로 재배정
-        const members=match.membersByGroup[match.primaryGroup]||[];
-        const withGroups=[],withMembers=[];
-        for(const gko of match.withGroups){
-          const sec=match.membersByGroup[gko]||[];
-          if(sec.length)sec.forEach(mko=>withMembers.push(`${mko}(${gko})`));
-          else withGroups.push(gko);
-        }
-        const{error:ue}=await sb.from(_YT_TABLE).update({
-          group_ko:match.primaryGroup,members,with_groups:withGroups,with_members:withMembers
-        }).eq('id',v.id);
-        if(ue)console.error(`[하이라이트 정리] id=${v.id} 재배정 실패:`,ue.message);
-        else reassigned++;
-      }else{
-        // 어느 그룹과도 안 맞음 — 삭제 대신 노출 제외 처리(복원 가능)
-        const{error:ue}=await sb.from(_YT_TABLE).update({content_flag:'hidden'}).eq('id',v.id);
-        if(ue)console.error(`[하이라이트 정리] id=${v.id} 노출 제외 실패:`,ue.message);
-        else hidden++;
-      }
-      if(checked%20===0)_ytSetProg(`검사 중… ${checked}/${rows.length}개 (재배정 ${reassigned} / 노출제외 ${hidden})`);
-    }
-    _ytSetProg(`완료! 하이라이트 ${rows.length}개 중 재배정 ${reassigned}개, 노출 제외 ${hidden}개 (노출 제외 영상 목록에서 검토 가능)`);
-  }catch(e){
-    _ytSetProg('오류: '+e.message);
-  }finally{
-    if(btn)btn.disabled=false;
-  }
-}
 
 let _extSyncing=false;
 async function _ytSyncExtChannels(){
@@ -10315,11 +10256,30 @@ const _CONTENT_FORMAT_ORDER=['릴레이댄스',"It's Live",'리무진서비스',
 
 // ── 그룹 카드 YouTube 영상 섹션 ──
 // 그룹 카드의 "채널 영상" 섹션(필터 탭 + 무한스크롤 그리드)을 컨테이너 하나당 독립된 상태로 만들어주는 팩토리.
+// 영상 그리드가 들어있는 패널은 데스크톱(사이드패널)/모바일(바텀시트·카드스택)에 따라 실제로 스크롤되는
+// 조상 엘리먼트가 다름 — 태깅 저장 후 스크롤 위치를 되돌리려면 그때그때 실제 스크롤 컨테이너를 찾아야 함.
+function _findScrollAncestor(el){
+  let p=el?.parentElement;
+  while(p&&p!==document.body){
+    const cs=getComputedStyle(p);
+    if((cs.overflowY==='auto'||cs.overflowY==='scroll')&&p.scrollHeight>p.clientHeight)return p;
+    p=p.parentElement;
+  }
+  return document.scrollingElement||document.documentElement;
+}
+// load()가 pendingProbe(쇼츠 오분류 백그라운드 재확인)를 만나면 appendLock을 settlePage 완료 후에야
+// 풀어주는데, 그 settlePage는 await 없이 fire-and-forget으로 걸어놔서 load()의 반환(resolve)이 락 해제보다
+// 먼저 끝날 수 있음 — 이 상태에서 바로 다음 load(ko,false)를 부르면 락에 걸려 아무 것도 안 하고 조용히
+// 리턴돼버리므로, 다음 페이지를 이어받기 전엔 락이 풀릴 때까지 짧게 기다려준다(최대 5초 안전 상한).
+async function _waitAppendUnlock(state,maxMs=5000){
+  const t0=performance.now();
+  while(state.appendLock&&performance.now()-t0<maxMs)await new Promise(r=>setTimeout(r,50));
+}
 // 그룹 카드(#gc-ch-vid)와, 아이유처럼 소속 그룹이 없는 솔로 아티스트의 멤버 카드(#tv)가 각자 별도 인스턴스를
 // 써야 함 — 데스크톱에서는 그룹 카드+멤버 카드가 동시에 도킹돼 화면에 같이 떠 있을 수 있어서, 상태를
 // 전역 변수 하나로 공유하면 한쪽을 열 때 다른 쪽의 페이지네이션/옵저버가 깨짐.
 function _makeChVidController(contId){
-  let state={ko:null,memberKo:null,filter:'all',sortMode:'recommend',viewMode:'category',formatFilter:null,formats:[],offset:0,total:0,pos:0,cat:null,gen:0,appendLock:false,trailingEl:null,hasMore:false,allVids:[],wrapEnd:0,wrapPhase:false};
+  let state={ko:null,memberKo:null,filter:'all',sortMode:'recommend',viewMode:'category',formatFilter:null,formats:[],offset:0,total:0,pos:0,cat:null,gen:0,appendLock:false,trailingEl:null,hasMore:false,allVids:[],wrapEnd:0,wrapPhase:false,unitFilter:null};
   let observer=null;
   let _selMode=false;
   let _selIds=new Set();
@@ -10525,7 +10485,13 @@ function _makeChVidController(contId){
       const featuredP=(reset&&state.sortMode!=='latest')
         ?_pickFeaturedVidFromDB(ko,state.memberKo,state.onlyMe,filter,state.viewMode,state.formatFilter):Promise.resolve(null);
       let q=sb.from(_YT_TABLE).select('id,title,thumb,category,content_flag,members,with_members,with_groups',{count:'exact'});
-      if(state.memberKo&&state.onlyMe){
+      if(state.unitFilter){
+        // 유닛(예: V8) 태그 클릭 시: 이 멤버 채널 영상 중 같은 유닛의 다른 멤버가 같이 태깅된 것만 —
+        // 같은 그룹 소속 유닛원은 members 배열, 다른 그룹 소속 유닛원은 with_members(이름(그룹) 포맷)에 있음.
+        const{same,cross}=_unitOtherMembers(state.unitFilter,state.memberKo,ko);
+        const ors=[...same.map(n=>`members.cs.{${n}}`),...cross.map(s=>`with_members.cs.{${s}}`)];
+        q=q.eq('group_ko',ko).or(ors.join(','));
+      }else if(state.memberKo&&state.onlyMe){
         // Only 토글: members = {name} 정확히 일치 + 외부인 포함 영상 제외
         q=q.eq('group_ko',ko).contains('members',[state.memberKo]).containedBy('members',[state.memberKo])
           .or('content_flag.is.null,content_flag.neq.외부인');
@@ -10653,7 +10619,7 @@ function _makeChVidController(contId){
     if(!sb)return;
     // 멤버 카드는 미태깅 그룹 영상(MV·Shorts·토크쇼 등)이 뒤섞여 첫 화면이 지저분해지지 않도록
     // "라이브"(무대 직캠 위주) 탭에서 시작 — 그룹 카드는 그대로 "전체"
-    state={ko,memberKo:memberKo||null,filter:memberKo?'live':'all',onlyMe:false,searchQ:'',sortMode:'recommend',viewMode:'category',formatFilter:null,formats:[],offset:0,total:0,pos:0,cat:null,gen:state.gen+1,appendLock:false,trailingEl:null,hasMore:false,allVids:[],_liveFallbackDone:false,wrapEnd:0,wrapPhase:false};
+    state={ko,memberKo:memberKo||null,filter:memberKo?'live':'all',onlyMe:false,searchQ:'',sortMode:'recommend',viewMode:'category',formatFilter:null,formats:[],offset:0,total:0,pos:0,cat:null,gen:state.gen+1,appendLock:false,trailingEl:null,hasMore:false,allVids:[],_liveFallbackDone:false,wrapEnd:0,wrapPhase:false,unitFilter:null};
     cont.innerHTML=`<div class="gc-ch-hd"><div class="gc-ch-filters"></div><div class="gc-ch-sort-wrap"><button class="gc-ch-sort-btn" title="정렬" aria-haspopup="true" aria-expanded="false">⋮</button><div class="gc-ch-sort-menu"><button class="gc-ch-sort-item" data-sort="recommend"><span class="chk">✓</span>추천순</button><button class="gc-ch-sort-item" data-sort="latest"><span class="chk">✓</span>업로드순</button><div class="gc-ch-sort-divider" style="display:none"></div><button class="gc-ch-view-toggle" style="display:none"><span class="chk">✓</span>콘텐츠별 보기</button></div></div><button class="gc-ch-refresh" title="새로고침">↻</button></div><div class="gc-ch-search-wrap" style="display:none"><input class="gc-ch-search" placeholder="영상 검색…" autocomplete="off" spellcheck="false"><button class="gc-ch-search-clear" aria-label="검색어 지우기">\xD7</button></div><div class="gc-ch-grid"></div><div class="gc-ch-more-wrap"></div>`;
     _exitSelMode();
     const filEl=cont.querySelector('.gc-ch-filters');
@@ -10816,12 +10782,37 @@ function _makeChVidController(contId){
     load(ko,true);
   }
 
-  // 관리자가 태깅 모달에서 저장했을 때, 지금 이 컨트롤러가 그 영상의 채널을 보여주고 있으면 새로고침
-  function reloadIfShowing(ko){
-    if(state.ko===ko)load(ko,true);
+  // 관리자가 태깅 모달에서 저장했을 때, 지금 이 컨트롤러가 그 영상의 채널을 보여주고 있으면 새로고침.
+  // 예전엔 load(ko,true) 한 번으로 그리드를 통째로 비우고 처음(offset 0) 한 페이지만 다시 그려서,
+  // 무한스크롤로 한참 내려가 있던 관리자가 저장 직후 맨 위로 튕기고 그 지점까지 또 스크롤해야 했음.
+  // 저장 전까지 불러온 만큼(offset)을 그대로 다시 이어받고 스크롤 위치도 복원해서, 화면상으론
+  // "영상 하나 태깅해도 방금 보던 자리 그대로"가 되게 한다.
+  async function reloadIfShowing(ko){
+    if(state.ko!==ko)return;
+    const cont=document.getElementById(contId);
+    const scroller=_findScrollAncestor(cont);
+    const prevScrollTop=scroller?.scrollTop||0;
+    const prevOffset=state.offset;
+    const targetGen=state.gen+1; // load(ko,true) 내부에서 state.gen++ 하므로 그 직후 값과 같아짐
+    await load(ko,true);
+    await _waitAppendUnlock(state);
+    // 안전장치로 최대 페이지 수를 캡 — hasMore/offset 계산이 어긋나는 예외 상황에서도 무한루프로 안 빠지게
+    for(let guard=0;guard<500&&state.gen===targetGen&&state.hasMore&&state.offset<prevOffset;guard++){
+      await load(ko,false);
+      await _waitAppendUnlock(state);
+    }
+    if(state.gen===targetGen&&scroller)scroller.scrollTop=prevScrollTop;
   }
 
-  return{build,reloadIfShowing};
+  // 멤버 카드의 유닛 태그(V8 등) 클릭 시 호출 — 같은 유닛을 다시 누르면 해제(토글), 다른 유닛을 누르면 교체.
+  function setUnitFilter(unitName){
+    if(!state.ko)return;
+    state.unitFilter=(state.unitFilter===unitName)?null:unitName;
+    state.offset=0;
+    load(state.ko,true);
+  }
+
+  return{build,reloadIfShowing,setUnitFilter};
 }
 const _gcChVidCtl=_makeChVidController('gc-ch-vid');
 const _ttChVidCtl=_makeChVidController('tv');
@@ -11201,12 +11192,15 @@ async function _openVidTagModal(v,ko){
   // 솔로 아티스트(체크박스가 본인 하나뿐)는 안 눌러도 항상 본인 출연이 자명하므로 기본 체크 — 실수로 안 누르면
   // members가 비어서 연결 카드용 콜라보 쿼리(ownQ)가 이 영상 자체를 못 찾는 문제가 있었음.
   const _soloChannel=groupMembers.length===1;
+  // 세븐틴 "브이에잇"처럼 제목에 프로젝트 유닛명만 있고 개별 멤버 이름은 없는 자체 채널 영상은,
+  // _m2ParseTitle(외부 채널 자동 태깅)과 별개로 이 모달에서도 유닛 멤버를 미리 체크해준다.
+  const unitGuess=_unitMembersFromTitle(v.title,ko);
   groupMembers.forEach(a=>{
     const label=document.createElement('label');
     label.className='vid-tag-mem';
     const cb=document.createElement('input');
     cb.type='checkbox';cb.value=a.name.ko;
-    if(_soloChannel)cb.checked=true;
+    if(_soloChannel||unitGuess.has(a.name.ko))cb.checked=true;
     label.appendChild(cb);
     label.appendChild(document.createTextNode(a.name.ko));
     membersEl.appendChild(label);
@@ -11223,7 +11217,12 @@ async function _openVidTagModal(v,ko){
     if(!_vidTagTarget||_vidTagTarget.id!==v.id)return; // 응답 오는 사이 모달이 닫히거나 다른 영상으로 전환됨
     if(!error&&data){
       const savedMembers=new Set(data.members||[]);
-      membersEl.querySelectorAll('input[type=checkbox]').forEach(cb=>{cb.checked=_soloChannel||savedMembers.has(cb.value);});
+      // 아직 아무도 태깅 안 된(=관리자가 손댄 적 없는) 영상일 때만 유닛 추정치를 기본값으로 유지 —
+      // 이미 저장된 태깅이 있으면(유닛 멤버를 일부러 뺐을 수도 있으니) DB 값을 그대로 따른다.
+      const useGuess=savedMembers.size===0&&!_soloChannel;
+      membersEl.querySelectorAll('input[type=checkbox]').forEach(cb=>{
+        cb.checked=_soloChannel||savedMembers.has(cb.value)||(useGuess&&unitGuess.has(cb.value));
+      });
       _vidTagWithSelected=(data.with_members||[]).map(str=>{
         const m=str.match(/^(.*)\((.*)\)$/);
         return m?{ko:m[1],groupKo:m[2]}:null;
@@ -11424,11 +11423,8 @@ document.getElementById('vid-tag-thumb-refresh').addEventListener('click',async 
     await _ytSyncExtChannels();
     if(btn)btn.disabled=false;
   });
-  document.getElementById('sp-yt-reclassify')?.addEventListener('click',_ytReclassifyShorts);
-  document.getElementById('sp-yt-fix-live')?.addEventListener('click',_ytFixMisclassifiedLive);
   document.getElementById('sp-yt-sweep-banned')?.addEventListener('click',_ytSweepBannedVideos);
   document.getElementById('sp-yt-autotag')?.addEventListener('click',_ytAutoTagMembers);
-  document.getElementById('sp-yt-fix-highlight')?.addEventListener('click',_ytFixHighlightMistag);
   document.getElementById('sp-hidden-vids-btn')?.addEventListener('click',_openHiddenVids);
   document.getElementById('sp-ext-channels-btn')?.addEventListener('click',_openExtChannels);
   const backfillSel=document.getElementById('sp-yt-backfill-ch');
