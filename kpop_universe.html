@@ -1720,6 +1720,7 @@
         <input type="number" class="sp-yt-key" id="sp-yt-backfill-from" placeholder="시작연도 예:2009" style="margin-top:0;flex:1;">
         <input type="number" class="sp-yt-key" id="sp-yt-backfill-to" placeholder="끝연도 예:2013" style="margin-top:0;flex:1;">
       </div>
+      <input type="text" class="sp-yt-key" id="sp-yt-backfill-query" placeholder="검색어(그룹명, 비우면 기존처럼 채널 전체)">
       <button class="sp-yt-sync" id="sp-yt-backfill-btn" style="opacity:.8;">이 채널만 백필 실행</button>
       <button class="sp-yt-sync" id="sp-yt-backfill-priority-btn" style="opacity:.8;">음악방송 6개 채널 순서대로 백필 (M2·엠넷·뮤직뱅크·쇼음악중심·인기가요·쇼챔피언)</button>
     </div>
@@ -4277,10 +4278,15 @@ function _makeWithLine(song,ctx){
     const gInfo=GROUPS[gko];
     const gk=currentLang==='ko'?gko:((gInfo&&gInfo.en)||gko);
     line.appendChild(_makeGCChip(gko,gk));
-    members.forEach(m=>{
-      line.appendChild(document.createTextNode(' '));
-      line.appendChild(_makeMemberChip(m));
-    });
+    // 활동 멤버 전원이 이 영상에 다 태깅돼 있으면(그룹 전체 출연) 한 명씩 나열할 필요 없이 그룹명만으로 충분함
+    const activeRoster=ARTISTS.filter(a=>a.group.ko===gko&&a.active!==false);
+    const isFullGroup=activeRoster.length>0&&members.length>=activeRoster.length;
+    if(!isFullGroup){
+      members.forEach(m=>{
+        line.appendChild(document.createTextNode(' '));
+        line.appendChild(_makeMemberChip(m));
+      });
+    }
   });
   if(hasOrig){
     const label=currentLang==='ko'?'원곡':'Original';
@@ -9887,6 +9893,17 @@ function _unitMembersFromTitle(title,ko){
   });
   return result;
 }
+// 이름 매칭에 쓸 후보 목록(한글/영문 + 성 뗀 버전) — 김소혜처럼 등록명이 "성+이름"인데 직캠 제목엔
+// 성 없이 "소혜"로만 나오는 경우가 매우 흔함(특히 자체 채널이 없어 전량 외부채널 파싱에만 의존하는
+// 아이오아이 같은 해체/프로젝트 그룹). _ytAutoTagMembers(자체 채널용)의 _atmStripSurname은 이미
+// 이 처리를 하고 있었는데, 외부채널 파싱(_m2ParseTitle)엔 빠져있어서 "성 없이 쓰인 이름"이 전부
+// 그룹 매칭 실패로 이어져 영상 자체가 skip(저장 안 됨)되는 문제가 있었음 — 여기도 동일하게 적용.
+function _m2NameVariants(a){
+  const variants=[a.name.ko,a.name.en].filter(Boolean);
+  const stripped=_atmStripSurname([...a.name.ko]);
+  if(stripped&&stripped.length>=2)variants.push(stripped);
+  return variants;
+}
 // 제목에서 그룹/멤버 매칭. 토큰 경계 기준으로 GROUPS/ARTISTS 데이터와 대조.
 function _m2ParseTitle(rawTitle){
   // "[하이라이트]"는 그룹명이 아니라 "요약본" 의미의 영상 태그로 흔히 쓰여 그룹 하이라이트로 오매칭되기 쉬움 —
@@ -9940,7 +9957,7 @@ function _m2ParseTitle(rawTitle){
     const inferred=new Map(); // groupKo -> [memberKo]
     for(const a of ARTISTS){
       if(!GROUPS[a.group.ko])continue;
-      const names=[a.name.ko,a.name.en].filter(Boolean);
+      const names=_m2NameVariants(a);
       if(names.some(t=>hit(t))&&!names.some(t=>hasForeignGroupSuffix(t))){
         if(!inferred.has(a.group.ko))inferred.set(a.group.ko,[]);
         inferred.get(a.group.ko).push(a.name.ko);
@@ -9955,7 +9972,7 @@ function _m2ParseTitle(rawTitle){
   // 각 매칭 그룹에서 멤버 추출
   const membersByGroup={};
   for(const gko of matchedGroupKos){
-    const matched=ARTISTS.filter(a=>a.group.ko===gko&&[a.name.ko,a.name.en].filter(Boolean).some(t=>hit(t))).map(a=>a.name.ko);
+    const matched=ARTISTS.filter(a=>a.group.ko===gko&&_m2NameVariants(a).some(t=>hit(t))).map(a=>a.name.ko);
     const extra=unitExtraMembers[gko];
     if(extra)extra.forEach(mko=>{if(!matched.includes(mko))matched.push(mko);});
     membersByGroup[gko]=matched;
@@ -10061,20 +10078,26 @@ async function _ytSyncExtChannels(){
 let _backfilling=false;
 // 채널 하나를 지정한 호출 예산(callBudget) 안에서만 백필하는 공용 코어 — 단일 채널용 버튼과
 // "여러 채널 순서대로" 버튼이 둘 다 이걸 재사용한다(여러 채널 버튼은 예산을 채널끼리 나눠 씀).
-async function _ytBackfillChannelCore(ch,fromYear,toYear,callBudget,onProg){
+// query(그룹명 등 검색어)가 있으면 순수 channelId+날짜 필터 대신 실제 텍스트 검색(q=)을 같이 건다.
+// search.list는 q 없이 channelId+날짜만으로 필터링하면 완전한 열거를 보장하지 않는 것으로 보임
+// (M2처럼 업로드가 극단적으로 많은 채널에서, 분명 존재하는 영상인데도 그 구간이 totalResults:0으로
+// 통째로 안 잡히는 게 실측으로 확인됨 — 이 자체가 유튜브 쪽 한계라 채널+날짜만으론 못 고침).
+// q를 같이 넣으면 실제 검색엔진 인덱스를 타서 훨씬 안정적으로 잡힌다는 게 흔히 보고되는 우회법이라
+// 채널 전체 백필과 별개로, 그룹명으로 좁혀 찾는 옵션을 추가함 — query가 비면 기존 동작 그대로.
+async function _ytBackfillChannelCore(ch,fromYear,toYear,callBudget,onProg,query){
   const key=_ytApiKey();
-  const resumeKey=`kpu_backfill_${ch.handle}_${fromYear}_${toYear}`;
+  const resumeKey=`kpu_backfill_${ch.handle}_${fromYear}_${toYear}`+(query?`_q_${query}`:'');
   const channelId=await _ytGetChannelId(ch.url,key);
   const publishedAfter=`${fromYear}-01-01T00:00:00Z`;
   const publishedBefore=`${toYear}-12-31T23:59:59Z`;
-  // 지난번에 이 채널+연도 구간에서 중단된 지점이 있으면 처음이 아니라 거기서부터 이어받는다
+  // 지난번에 이 채널+연도 구간(+검색어)에서 중단된 지점이 있으면 처음이 아니라 거기서부터 이어받는다
   let pageToken=localStorage.getItem(resumeKey)||'';
   let added=0,skipped=0,calls=0,done=false;
   do{
     if(calls>=callBudget)break; // done=false 상태로 빠져나감 → 호출부가 중단 처리(체크포인트 저장)
     let d;
     try{
-      const url=`https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${channelId}&type=video&order=date&publishedAfter=${publishedAfter}&publishedBefore=${publishedBefore}&maxResults=50&key=${key}`+(pageToken?'&pageToken='+pageToken:'');
+      const url=`https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${channelId}&type=video&order=date&publishedAfter=${publishedAfter}&publishedBefore=${publishedBefore}&maxResults=50&key=${key}`+(query?`&q=${encodeURIComponent(query)}`:'')+(pageToken?'&pageToken='+pageToken:'');
       const r=await fetch(url);
       if(!r.ok)throw new Error('YouTube API 오류 '+r.status);
       d=await r.json();
@@ -10120,7 +10143,7 @@ async function _ytBackfillChannelCore(ch,fromYear,toYear,callBudget,onProg){
   else if(pageToken)localStorage.setItem(resumeKey,pageToken); // 중단 지점 저장 — 다음 실행 때 여기서 이어받음
   return{added,skipped,calls,done};
 }
-async function _ytBackfillByDateRange(handle,fromYear,toYear){
+async function _ytBackfillByDateRange(handle,fromYear,toYear,query){
   if(_backfilling)return;
   const key=_ytApiKey();
   if(!key){_ytSetProg('API 키를 먼저 입력해주세요');return;}
@@ -10131,15 +10154,16 @@ async function _ytBackfillByDateRange(handle,fromYear,toYear){
   _backfilling=true;
   const btn=document.getElementById('sp-yt-backfill-btn');
   if(btn)btn.disabled=true;
+  const label=query?`${ch.name}(검색어:${query})`:ch.name;
   try{
-    _ytSetProg(`[백필] ${ch.name} 채널 정보 확인 중…`);
+    _ytSetProg(`[백필] ${label} 채널 정보 확인 중…`);
     const CALL_CAP=90; // 호출당 100유닛 — 하루 무료 쿼터(10,000) 중 이 기능에 쓸 안전선(나머지는 일반 동기화용으로 남김)
     const result=await _ytBackfillChannelCore(ch,fromYear,toYear,CALL_CAP,p=>{
-      _ytSetProg(`[백필] ${ch.name} ${fromYear}~${toYear} — 검색 ${p.calls}회째 (+${p.added}개, 스킵 ${p.skipped}개)`);
-    });
+      _ytSetProg(`[백필] ${label} ${fromYear}~${toYear} — 검색 ${p.calls}회째 (+${p.added}개, 스킵 ${p.skipped}개)`);
+    },query);
     _ytSetProg(result.done
-      ?`[백필] 완료! ${ch.name} ${fromYear}~${toYear} — 총 +${result.added}개 (스킵 ${result.skipped}개)`
-      :`[백필] 이번엔 여기까지(다음에 이어받음) — ${ch.name} ${fromYear}~${toYear}, +${result.added}개 (스킵 ${result.skipped}개)`);
+      ?`[백필] 완료! ${label} ${fromYear}~${toYear} — 총 +${result.added}개 (스킵 ${result.skipped}개)`
+      :`[백필] 이번엔 여기까지(다음에 이어받음) — ${label} ${fromYear}~${toYear}, +${result.added}개 (스킵 ${result.skipped}개)`);
   }catch(e){
     _ytSetProg('[백필] 오류: '+e.message);
   }finally{
@@ -10150,7 +10174,7 @@ async function _ytBackfillByDateRange(handle,fromYear,toYear){
 // 뮤직뱅크·인기가요처럼 아주 큰(2만 개 이상) 음악방송 채널 6개를 우선순위로 지정 — 순서대로 예산을
 // 나눠 쓰며 진행하고, 이미 이어받는 중인 채널을 맨 앞으로 당겨서 골고루 진행되게 한다.
 const _BACKFILL_PRIORITY_HANDLES=['MnetM2','Mnet','KBSKpop','MBCkpop','SBSKPOP','ALLTHEKPOP'];
-async function _ytBackfillPriorityChannels(fromYear,toYear){
+async function _ytBackfillPriorityChannels(fromYear,toYear,query){
   if(_backfilling)return;
   const key=_ytApiKey();
   if(!key){_ytSetProg('API 키를 먼저 입력해주세요');return;}
@@ -10161,10 +10185,11 @@ async function _ytBackfillPriorityChannels(fromYear,toYear){
   if(btn)btn.disabled=true;
   try{
     const channels=_BACKFILL_PRIORITY_HANDLES.map(h=>_EXT_CHANNELS.find(c=>c.handle===h)).filter(Boolean);
+    const qSuffix=query?`_q_${query}`:'';
     // 지난번에 중단된(이어받을 게 있는) 채널을 앞으로 당겨서, 아직 시작도 안 한 채널만 계속 밀리지 않게 함
     channels.sort((a,b)=>{
-      const aR=localStorage.getItem(`kpu_backfill_${a.handle}_${fromYear}_${toYear}`)?1:0;
-      const bR=localStorage.getItem(`kpu_backfill_${b.handle}_${fromYear}_${toYear}`)?1:0;
+      const aR=localStorage.getItem(`kpu_backfill_${a.handle}_${fromYear}_${toYear}${qSuffix}`)?1:0;
+      const bR=localStorage.getItem(`kpu_backfill_${b.handle}_${fromYear}_${toYear}${qSuffix}`)?1:0;
       return bR-aR;
     });
     const TOTAL_BUDGET=90; // 하루 무료 쿼터 안전선을 6개 채널이 나눠 씀 — 한 번에 다 안 끝나고 여러 번에 걸쳐 진행됨
@@ -10178,7 +10203,7 @@ async function _ytBackfillPriorityChannels(fromYear,toYear){
       try{
         const result=await _ytBackfillChannelCore(ch,fromYear,toYear,remaining,p=>{
           _ytSetProg(`[6채널 백필] ${ch.name} ${fromYear}~${toYear} — 검색 ${p.calls}회째 (+${p.added}개)`);
-        });
+        },query);
         remaining-=result.calls;
         summary.push(`${ch.name} +${result.added}${result.done?'✓완료':'(이어받을 예정)'}`);
       }catch(e){
@@ -11460,12 +11485,14 @@ document.getElementById('vid-tag-thumb-refresh').addEventListener('click',async 
     const handle=backfillSel?.value;
     const fromYear=+document.getElementById('sp-yt-backfill-from').value;
     const toYear=+document.getElementById('sp-yt-backfill-to').value;
-    if(handle)_ytBackfillByDateRange(handle,fromYear,toYear);
+    const query=(document.getElementById('sp-yt-backfill-query')?.value||'').trim();
+    if(handle)_ytBackfillByDateRange(handle,fromYear,toYear,query||undefined);
   });
   document.getElementById('sp-yt-backfill-priority-btn')?.addEventListener('click',()=>{
     const fromYear=+document.getElementById('sp-yt-backfill-from').value;
     const toYear=+document.getElementById('sp-yt-backfill-to').value;
-    _ytBackfillPriorityChannels(fromYear,toYear);
+    const query=(document.getElementById('sp-yt-backfill-query')?.value||'').trim();
+    _ytBackfillPriorityChannels(fromYear,toYear,query||undefined);
   });
   document.getElementById('sp-yt-manual-add-btn')?.addEventListener('click',_ytAddVideoByUrl);
 })();
