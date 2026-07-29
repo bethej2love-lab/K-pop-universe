@@ -1710,7 +1710,7 @@
     <input type="text" class="sp-yt-key" id="sp-yt-key" placeholder="API 키 (AIzaSy...)" autocomplete="off" spellcheck="false">
     <button class="sp-yt-sync" id="sp-yt-sync">전체 동기화 (공식 + 외부 채널)</button>
     <button class="sp-yt-sync" id="sp-yt-sweep-banned" style="margin-top:4px;opacity:.8;">밴 인물 언급 영상 노출 제외 정리</button>
-    <button class="sp-yt-sync" id="sp-yt-autotag" style="margin-top:4px;opacity:.8;">멤버 자동 태깅 (같은 그룹, 미태깅분)</button>
+    <button class="sp-yt-sync" id="sp-yt-autotag" style="margin-top:4px;opacity:.8;">멤버+콜라보 자동 태깅 (미태깅분)</button>
     <button class="sp-yt-sync" id="sp-hidden-vids-btn" style="margin-top:4px;opacity:.8;">노출 제외 영상 목록</button>
     <button class="sp-yt-sync" id="sp-ext-channels-btn" style="margin-top:4px;opacity:.8;">동기화 채널 목록</button>
     <div style="margin-top:8px;padding-top:8px;border-top:0.5px solid rgba(255,255,255,0.1)">
@@ -9639,9 +9639,11 @@ async function _ytSweepBannedVideos(){
   }
 }
 
-// ── 멤버 자동 태깅(같은 그룹 미태깅분) — 2026-07-21에 스크래치패드 스크립트로 1회성으로 돌렸던
-// 매칭 로직(성+이름 실명표기/조사/해시태그/영문 토큰) 그대로 앱에 내장. with_members(콜라보,
-// 타 그룹 멤버 언급)는 "원곡"/"커버" 오탐 판별이 더 까다로워서 이 버튼 범위에서는 제외.
+// ── 멤버+콜라보 자동 태깅(미태깅분) — 2026-07-21에 스크래치패드 스크립트로 1회성으로 돌렸던
+// 매칭 로직(성+이름 실명표기/조사/해시태그/영문 토큰) 그대로 앱에 내장. 2026-07-29에 콜라보
+// 감지(with_members/with_groups)도 추가— 자체 채널 챌린지 영상은 "챌린지"라는 표시 없이 바로
+// 다른 그룹 멤버 이름만 나오는 경우가 많고, 로스터가 계속 늘어나서 예전엔 못 잡던 이름이 새로
+// 잡히기도 하므로, 외부채널 태깅에 쓰던 _m2ParseTitle을 그대로 재사용해 같이 훑는다.
 const _ATM_KOREAN_SURNAMES=new Set(['김','이','박','최','정','강','조','윤','장','임','한','오','서','신','권','황','안','송','전','홍',
   '유','고','문','양','손','배','백','허','남','심','노','하','곽','성','차','주','우','구','민','류','나',
   '진','지','엄','채','원','천','방','공','현','함','변','염','여','추','도','소','석','선','설','마','길','연','위','표','명','기',
@@ -9713,31 +9715,54 @@ async function _ytAutoTagMembers(){
       const members=ARTISTS.filter(a=>a.group.ko===gko).map(a=>({ko:a.name.ko,en:a.name.en}));
       if(!members.length)continue;
       _ytSetProg(`[${gi+1}/${groupKos.length}] ${gko}: 미태깅 영상 조회 중…`);
-      // with_members(콜라보)는 이 버튼 범위 밖이라 members만 비어있으면 대상으로 삼는다 — 예전엔
-      // .or()를 두 번 체이닝해서 "members도 비고 AND with_members도 빈" 행만 걸렸는데, 그러면 이미
-      // with_members가 채워진(외부채널에서 콜라보로 먼저 태깅된) 영상은 자기 그룹 members가 비어있어도
-      // 대상에서 빠지는 버그가 있었음.
+      // 같은 그룹 멤버(members)가 비어있거나, 콜라보(with_members/with_groups)가 아직 하나도 안 잡힌
+      // 행을 대상으로 삼는다 — 자체 채널 챌린지 영상처럼 제목에 "챌린지" 같은 표시 없이 바로 다른 그룹
+      // 멤버 이름만 나오는 경우도 있고, 로스터가 그때그때 늘어나서 예전엔 매칭 안 되던 이름이 이제는
+      // 잡힐 수 있으므로, 이미 콜라보가 채워진 행이 아니면 계속 재검사 대상이 된다.
+      // 4개 조건을 .or() 한 번에 다 넣어야 OR로 묶임 — .or()를 여러 번 체이닝하면 AND로 묶여서
+      // "members도 비고 AND with_members도 빈" 행만 걸리는 버그가 났던 적이 있었음(같은 실수 재발 방지).
       const{data:rows,error}=await _sbFetchAll(()=>sb.from(_YT_TABLE)
-        .select('id,title,members,with_members')
+        .select('id,title,members,with_members,with_groups')
         .eq('group_ko',gko)
-        .or('members.eq.{},members.is.null')
+        .or('members.eq.{},members.is.null,with_members.eq.{},with_members.is.null')
         .order('id'));
       if(error){console.error(`[자동 태깅] ${gko} 조회 실패:`,error.message);continue;}
       if(!rows?.length)continue;
       const updates=[];
       rows.forEach(v=>{
         const title=v.title||'';
-        const tokens=_atmTokenize(title);
-        const hit=members.filter(m=>_atmMatchesMember(m,title,tokens)).map(m=>m.ko);
-        if(hit.length)updates.push({id:v.id,members:[...new Set(hit)]});
+        const patch={};
+        if(!v.members?.length){
+          const tokens=_atmTokenize(title);
+          const hit=members.filter(m=>_atmMatchesMember(m,title,tokens)).map(m=>m.ko);
+          if(hit.length)patch.members=[...new Set(hit)];
+        }
+        // 콜라보(다른 그룹 멤버 언급) 감지 — 외부채널 태깅에 이미 쓰던 _m2ParseTitle을 그대로 재사용.
+        // group_ko는 절대 안 건드림(자체 채널 영상의 소속은 항상 그 채널 그룹으로 고정) — 매칭된 그룹 중
+        // 지금 채널(gko) 자신은 제외하고 "다른" 그룹만 with_groups/with_members로 채운다.
+        if(!v.with_members?.length&&!v.with_groups?.length){
+          const match=_m2ParseTitle(title);
+          if(match){
+            const otherGkos=[match.primaryGroup,...match.withGroups].filter(og=>og&&og!==gko);
+            const withGroups=[],withMembers=[];
+            otherGkos.forEach(og=>{
+              const sec=match.membersByGroup[og]||[];
+              if(sec.length)sec.forEach(mko=>withMembers.push(`${mko}(${og})`));
+              else withGroups.push(og);
+            });
+            if(withMembers.length)patch.with_members=withMembers;
+            if(withGroups.length)patch.with_groups=withGroups;
+          }
+        }
+        if(Object.keys(patch).length)updates.push({id:v.id,patch});
       });
       grandChecked+=rows.length;
       if(updates.length){
-        // update()는 지정한 컬럼(members)만 바꾸므로 upsert와 달리 다른 NOT NULL 컬럼 값을 건드릴
-        // 위험이 없음 — 청크 안에서 순차 await 대신 병렬로 날려 왕복 대기 시간만 줄인다.
+        // update()는 지정한 컬럼만 바꾸므로 upsert와 달리 다른 NOT NULL 컬럼 값을 건드릴 위험이 없음 —
+        // 청크 안에서 순차 await 대신 병렬로 날려 왕복 대기 시간만 줄인다.
         for(let i=0;i<updates.length;i+=200){
           const chunk=updates.slice(i,i+200);
-          const results=await Promise.all(chunk.map(u=>sb.from(_YT_TABLE).update({members:u.members}).eq('id',u.id)));
+          const results=await Promise.all(chunk.map(u=>sb.from(_YT_TABLE).update(u.patch).eq('id',u.id)));
           results.forEach((r,idx)=>{if(r.error)console.error(`[자동 태깅] ${gko} id=${chunk[idx].id} 업데이트 실패:`,r.error.message);});
         }
         grandMatched+=updates.length;
