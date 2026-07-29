@@ -3079,11 +3079,15 @@ function animate(){
   // (안 보이고 조작도 안 되니 시각적 차이는 없고, 그만큼 스크롤 등 카드 쪽 인터랙션에 CPU/GPU 여유가 생김)
   // document.getElementById로 직접 조회하는 이유: mobSheetEl 등의 const는 이 함수보다 뒤에 선언되는데
   // animate()는 스크립트 로드 시 즉시 한 번 호출되므로, 그 시점엔 아직 TDZ라 참조하면 에러가 남.
+  // yt-lightbox는 데스크톱에서도 화면 전체를 거의 불투명하게(rgba(0,0,0,0.9)) 덮는 풀스크린 오버레이라,
+  // 열려 있는 동안은 기기 종류와 무관하게 뒤의 3D 우주가 안 보임 — 그런데도 계속 풀 렌더링을 돌리면
+  // 안 보이는 화면 그리는 데 GPU/CPU를 써서 정작 그 위에서 재생 중인 유튜브 영상이 끊기게 됨.
+  if(document.getElementById('yt-lightbox').classList.contains('open'))return;
+  // 나머지(모바일 바텀시트류)는 모바일 레이아웃에서만 화면을 덮으므로 기존대로 모바일 한정 스킵
   if(isMob()&&(
     document.getElementById('mob-sheet').classList.contains('bs-open')||
     document.getElementById('mob-card-stack').classList.contains('bs-open')||
-    document.getElementById('conn-sheet').classList.contains('bs-open')||
-    document.getElementById('yt-lightbox').classList.contains('open')
+    document.getElementById('conn-sheet').classList.contains('bs-open')
   )){
     return;
   }
@@ -4709,10 +4713,10 @@ async function _enrichMemberVideosFromApi(a,tv,baseSongs,basePersonalSongs){
   const withKey=`${memberKo}(${a.group.ko})`; // 타 채널에서 콜라보로 태깅될 때 쓰는 표시용 키는 원래 그룹 표기 그대로
   try{
     const[ownQ,withQ,generalQ]=await Promise.all([
-      sb.from(_YT_TABLE).select('id,title,category,group_ko,members,with_members').eq('group_ko',groupKo).contains('members',[memberKo]),
-      sb.from(_YT_TABLE).select('id,title,category,group_ko,members,with_members').contains('with_members',[withKey]),
+      sb.from(_YT_TABLE).select('id,title,category,group_ko,members,with_members,content_flag').eq('group_ko',groupKo).contains('members',[memberKo]),
+      sb.from(_YT_TABLE).select('id,title,category,group_ko,members,with_members,content_flag').contains('with_members',[withKey]),
       // 멤버 태깅 없는 그룹 전체 영상 — 모든 멤버 카드에 노출
-      sb.from(_YT_TABLE).select('id,title,category,group_ko,members,with_members').eq('group_ko',groupKo).filter('members','eq','{}'),
+      sb.from(_YT_TABLE).select('id,title,category,group_ko,members,with_members,content_flag').eq('group_ko',groupKo).filter('members','eq','{}'),
     ]);
     if(ownQ.error)throw new Error(ownQ.error.message);
     if(withQ.error)throw new Error(withQ.error.message);
@@ -4765,13 +4769,13 @@ async function _fetchApiCollabData(anchor){
   const withKey=`${memberKo}(${anchor.group.ko})`; // 타 채널 콜라보 태깅 표시용 키는 원래 그룹 표기 그대로
   try{
     const[ownQ,taggedQ,groupTagQ,reverseGroupTagQ]=await Promise.all([
-      sb.from(_YT_TABLE).select('id,title,category,group_ko,members,with_members').eq('group_ko',groupKo).contains('members',[memberKo]),
-      sb.from(_YT_TABLE).select('id,title,category,group_ko,members,with_members').contains('with_members',[withKey]),
+      sb.from(_YT_TABLE).select('id,title,category,group_ko,members,with_members,content_flag').eq('group_ko',groupKo).contains('members',[memberKo]),
+      sb.from(_YT_TABLE).select('id,title,category,group_ko,members,with_members,content_flag').contains('with_members',[withKey]),
       // 아이유의 팔레트, 뉴진스편처럼 개별 멤버가 아니라 그룹 전체가 with_groups로 태깅된 내 채널 영상
-      sb.from(_YT_TABLE).select('id,title,category,group_ko,with_groups').eq('group_ko',groupKo).not('with_groups','eq','{}'),
+      sb.from(_YT_TABLE).select('id,title,category,group_ko,with_groups,content_flag').eq('group_ko',groupKo).not('with_groups','eq','{}'),
       // 반대 방향: 다른 채널(예: 아이유)이 내 그룹 전체를 with_groups로 태깅한 경우 — 이게 없으면
       // 그룹으로 태깅된 쪽(예: (여자)아이들 개별 멤버)에는 이 콜라보가 전혀 안 보이는 비대칭이 생김.
-      sb.from(_YT_TABLE).select('id,title,category,group_ko,with_groups').contains('with_groups',[anchor.group.ko])
+      sb.from(_YT_TABLE).select('id,title,category,group_ko,with_groups,content_flag').contains('with_groups',[anchor.group.ko])
     ]);
     if(ownQ.error)throw new Error(ownQ.error.message);
     if(taggedQ.error)throw new Error(taggedQ.error.message);
@@ -9154,6 +9158,7 @@ async function _fetchTopVideoThumb(gko,memberKo){
     q=memberKo?q.eq('group_ko',gko).or(`members.eq.{},members.cs.{${memberKo}}`)
               :q.or(`and(group_ko.eq.${gko},members.eq.{}),with_groups.cs.{${gko}}`);
     q=q.or('content_flag.is.null,content_flag.neq.무관');
+    q=q.or('content_flag.is.null,content_flag.neq.hidden'); // 노출 제외 처리된 영상이 대표 썸네일로 뽑히면 안 됨
     const{data,error}=await q.order('published_at',{ascending:false}).limit(12);
     if(error||!data?.length)return null;
     const vidUrl=v=>v.category==='short'?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;
@@ -9173,7 +9178,8 @@ async function _pickFeaturedVidFromDB(ko,memberKo,onlyMe,filter,viewMode,formatF
     let q=sb.from(_YT_TABLE)
       .select('id,title,thumb,category,content_flag,members,with_members,with_groups')
       .or('content_flag.is.null,content_flag.neq.기타')
-      .or('content_flag.is.null,content_flag.neq.무관');
+      .or('content_flag.is.null,content_flag.neq.무관')
+      .or('content_flag.is.null,content_flag.neq.hidden'); // 노출 제외 처리된 영상이 대표(하트 최다) 영상으로 뽑히면 안 됨
     if(viewMode==='format'&&formatFilter){
       q=q.contains('content_formats',[formatFilter]);
     }else if(filter&&filter!=='all'){
@@ -9562,6 +9568,23 @@ async function _ytSyncAll(){
 
 function _ytSetProg(msg){const el=document.getElementById('sp-yt-prog');if(el)el.textContent=msg;}
 
+// 유지보수 버튼들이 조회하는 행 수가 PostgREST 기본 응답 상한(보통 1000행)을 넘으면 나머지가 조용히
+// 누락되므로, range()로 계속 이어받아 매칭되는 행을 전부 모아온다. buildQuery는 매 페이지 range()를
+// 새로 붙일 수 있도록 아직 실행 안 된 쿼리를 새로 만들어 반환하는 함수여야 하고, 페이지 간 순서가
+// 흔들리면 일부 행이 중복되거나 빠질 수 있어 반드시 order()를 포함해야 한다.
+async function _sbFetchAll(buildQuery,pageSize=1000){
+  const rows=[];let from=0;
+  while(true){
+    const{data,error}=await buildQuery().range(from,from+pageSize-1);
+    if(error)return{data:null,error};
+    if(!data?.length)break;
+    rows.push(...data);
+    if(data.length<pageSize)break;
+    from+=pageSize;
+  }
+  return{data:rows,error:null};
+}
+
 // ── 라이브 오분류 정리 ── 예전엔 외부 채널 동기화(_extBuildRows)가 제목으로 분류 안 되는(other) 영상을
 // 전부 라이브로 강제 편입시켰음(잡지사 인터뷰 등이 라이브 탭에 섞여 나오던 원인). 그 리맵은 없앴지만
 // 이미 그렇게 저장된 기존 행은 남아있으므로, category='live'인 행을 제목으로 다시 판정해 실제로는
@@ -9572,7 +9595,7 @@ async function _ytFixMisclassifiedLive(){
   if(btn)btn.disabled=true;
   try{
     _ytSetProg('라이브 오분류 영상 조회 중…');
-    const{data:rows,error}=await sb.from(_YT_TABLE).select('id,title').eq('category','live');
+    const{data:rows,error}=await _sbFetchAll(()=>sb.from(_YT_TABLE).select('id,title').eq('category','live').order('id'));
     if(error){_ytSetProg('조회 실패: '+error.message);return;}
     if(!rows?.length){_ytSetProg('라이브로 태깅된 영상이 없어요');return;}
     const toFix=rows.filter(v=>_ytClassify(v.title||'')!=='live').map(v=>v.id);
@@ -9593,23 +9616,34 @@ async function _ytFixMisclassifiedLive(){
 // 이미 들어가 있던 기존 행은 그대로 남아있을 수 있음 — 카드 열 때마다 매번 title ILIKE로 재검사하면
 // (와일드카드 LIKE라 인덱스를 못 타서) 느려지므로, 이 버튼으로 한 번 훑어서 hidden 처리해두고
 // 평소 조회는 content_flag만 보게 한다(load()의 인덱스 타는 등호 비교 한 줄로 충분해짐).
+// 이후로 밴 대상이 새로 늘어나지 않는 한(=_BANNED_VIDEO_NAMES_* 코드가 안 바뀐 한) 이미 훑은 기존 행에서
+// 새로 걸릴 게 없으므로(신규 동기화분은 sync-time skip으로 애초에 안 들어옴), 밴 목록 버전이 그대로면
+// 전체 테이블 재스캔을 건너뛴다 — 테이블이 커질수록 매번 전량 스캔하는 비용을 아끼기 위함.
+function _ytBannedListVersion(){return _BANNED_VIDEO_NAMES_GLOBAL.join(',')+'|'+JSON.stringify(_BANNED_VIDEO_NAMES_SCOPED);}
 async function _ytSweepBannedVideos(){
   if(!sb){_ytSetProg('Supabase 연결 없음');return;}
   const btn=document.getElementById('sp-yt-sweep-banned');
   if(btn)btn.disabled=true;
   try{
+    const version=_ytBannedListVersion();
+    if(localStorage.getItem('kpu_banned_sweep_version')===version){
+      _ytSetProg('밴 목록 변경 없음 — 스킵함(코드의 밴 목록을 수정했을 때만 다시 돌리면 됩니다)');
+      return;
+    }
     _ytSetProg('밴 인물 언급 영상 조회 중…');
-    const{data:rows,error}=await sb.from(_YT_TABLE)
+    const{data:rows,error}=await _sbFetchAll(()=>sb.from(_YT_TABLE)
       .select('id,title,group_ko')
-      .or('content_flag.is.null,content_flag.neq.hidden');
+      .or('content_flag.is.null,content_flag.neq.hidden')
+      .order('id'));
     if(error){_ytSetProg('조회 실패: '+error.message);return;}
-    if(!rows?.length){_ytSetProg('검사할 영상이 없어요');return;}
+    if(!rows?.length){_ytSetProg('검사할 영상이 없어요');localStorage.setItem('kpu_banned_sweep_version',version);return;}
     const toHide=rows.filter(v=>_isBannedVideoTitle(v.title,v.group_ko)).map(v=>v.id);
-    if(!toHide.length){_ytSetProg(`검사 완료 — ${rows.length}개 중 해당 없음`);return;}
+    if(!toHide.length){_ytSetProg(`검사 완료 — ${rows.length}개 중 해당 없음`);localStorage.setItem('kpu_banned_sweep_version',version);return;}
     for(let i=0;i<toHide.length;i+=200){
       const{error:ue}=await sb.from(_YT_TABLE).update({content_flag:'hidden'}).in('id',toHide.slice(i,i+200));
       if(ue)throw new Error(ue.message);
     }
+    localStorage.setItem('kpu_banned_sweep_version',version);
     _ytSetProg(`완료! ${rows.length}개 중 ${toHide.length}개 노출 제외 처리함(노출 제외 영상 목록에서 검토 가능)`);
   }catch(e){
     _ytSetProg('오류: '+e.message);
@@ -9626,9 +9660,11 @@ async function _ytReclassifyShorts(){
   if(btn)btn.disabled=true;
   _ytSetProg('Shorts 감지 중...');
   try{
-    const{data:all,error}=await sb.from(_YT_TABLE).select('id').order('id');
+    // 신규 동기화 영상은 이미 썸네일 종횡비로 자동 감지되므로(이 버튼은 그 로직이 생기기 전 레거시
+    // 행 전용 마이그레이션), category='short'로 이미 맞게 태깅된 행까지 매번 재검사할 필요가 없다.
+    const{data:all,error}=await _sbFetchAll(()=>sb.from(_YT_TABLE).select('id').neq('category','short').order('id'));
     if(error)throw new Error(error.message);
-    if(!all?.length){_ytSetProg('동기화된 영상 없음');if(btn)btn.disabled=false;return;}
+    if(!all?.length){_ytSetProg('검사할 영상이 없어요(short 아닌 행 없음)');if(btn)btn.disabled=false;return;}
     let updated=0;
     for(let i=0;i<all.length;i+=50){
       const ids=all.slice(i,i+50).map(v=>v.id).join(',');
@@ -9732,11 +9768,15 @@ async function _ytAutoTagMembers(){
       const members=ARTISTS.filter(a=>a.group.ko===gko).map(a=>({ko:a.name.ko,en:a.name.en}));
       if(!members.length)continue;
       _ytSetProg(`[${gi+1}/${groupKos.length}] ${gko}: 미태깅 영상 조회 중…`);
-      const{data:rows,error}=await sb.from(_YT_TABLE)
+      // with_members(콜라보)는 이 버튼 범위 밖이라 members만 비어있으면 대상으로 삼는다 — 예전엔
+      // .or()를 두 번 체이닝해서 "members도 비고 AND with_members도 빈" 행만 걸렸는데, 그러면 이미
+      // with_members가 채워진(외부채널에서 콜라보로 먼저 태깅된) 영상은 자기 그룹 members가 비어있어도
+      // 대상에서 빠지는 버그가 있었음.
+      const{data:rows,error}=await _sbFetchAll(()=>sb.from(_YT_TABLE)
         .select('id,title,members,with_members')
         .eq('group_ko',gko)
         .or('members.eq.{},members.is.null')
-        .or('with_members.eq.{},with_members.is.null');
+        .order('id'));
       if(error){console.error(`[자동 태깅] ${gko} 조회 실패:`,error.message);continue;}
       if(!rows?.length)continue;
       const updates=[];
@@ -9748,12 +9788,12 @@ async function _ytAutoTagMembers(){
       });
       grandChecked+=rows.length;
       if(updates.length){
+        // update()는 지정한 컬럼(members)만 바꾸므로 upsert와 달리 다른 NOT NULL 컬럼 값을 건드릴
+        // 위험이 없음 — 청크 안에서 순차 await 대신 병렬로 날려 왕복 대기 시간만 줄인다.
         for(let i=0;i<updates.length;i+=200){
           const chunk=updates.slice(i,i+200);
-          for(const u of chunk){
-            const{error:ue}=await sb.from(_YT_TABLE).update({members:u.members}).eq('id',u.id);
-            if(ue)console.error(`[자동 태깅] ${gko} id=${u.id} 업데이트 실패:`,ue.message);
-          }
+          const results=await Promise.all(chunk.map(u=>sb.from(_YT_TABLE).update({members:u.members}).eq('id',u.id)));
+          results.forEach((r,idx)=>{if(r.error)console.error(`[자동 태깅] ${gko} id=${chunk[idx].id} 업데이트 실패:`,r.error.message);});
         }
         grandMatched+=updates.length;
       }
@@ -9938,10 +9978,11 @@ async function _ytFixHighlightMistag(){
   if(btn)btn.disabled=true;
   try{
     _ytSetProg('하이라이트 오매칭 영상 조회 중…');
-    const{data:rows,error}=await sb.from(_YT_TABLE)
+    const{data:rows,error}=await _sbFetchAll(()=>sb.from(_YT_TABLE)
       .select('id,title,members,with_members,with_groups')
       .eq('group_ko','하이라이트')
-      .or('content_flag.is.null,content_flag.neq.hidden');
+      .or('content_flag.is.null,content_flag.neq.hidden')
+      .order('id'));
     if(error){_ytSetProg('조회 실패: '+error.message);return;}
     if(!rows?.length){_ytSetProg('하이라이트로 태깅된 영상이 없어요');return;}
     let reassigned=0,hidden=0,checked=0;
