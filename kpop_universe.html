@@ -953,7 +953,7 @@
   .gc-ch-more-loading .dot:nth-child(2){animation-delay:.15s;}
   .gc-ch-more-loading .dot:nth-child(3){animation-delay:.3s;}
   @keyframes gc-more-bounce{0%,80%,100%{transform:translateY(0);opacity:.4;}40%{transform:translateY(-4px);opacity:1;}}
-  .gc-ch-msg{font-size:12px;color:rgba(155,178,228,0.45);text-align:center;padding:10px 0;line-height:1.6;}
+  .gc-ch-msg{grid-column:1/-1;font-size:12px;color:rgba(155,178,228,0.45);text-align:center;padding:10px 0;line-height:1.6;}
   @keyframes gc-shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
   .gc-ch-skeleton{border-radius:6px;overflow:hidden;background:rgba(255,255,255,0.04);}
   .gc-ch-skeleton.featured{grid-column:span 2;}
@@ -3958,6 +3958,13 @@ function closeLightbox(){
   _lbCurVideoUrl='';
   _lbSpeed=1;
   document.getElementById('yt-lb-speed-badge').classList.remove('is-on');
+  // 라이트박스가 카드 위를 완전히 덮고 있는 동안 영상을 클릭할 때의 자동 스크롤(scrollIntoView)이나
+  // 카드 재렌더링으로 밑에 깔린 시트의 scrollTop이 사용자 모르게 바뀌어 있을 수 있음 — 그 상태에서
+  // _lastScroll이 실제 위치와 어긋나면 닫은 뒤 위로 스크롤해도 탭바가 다시 안 뜨는 경우가 있었음.
+  // 닫을 때마다 탭바를 무조건 보이는 상태로 되돌리고, 각 시트의 스크롤 추적값도 현재 위치로 재동기화한다.
+  const tb=document.getElementById('tabbar');
+  if(tb&&tb.classList.contains('tab-hidden')){tb.classList.remove('tab-hidden');_retractSheets();}
+  [mobSheetInner,mobCardStackInner,connSheetInner].forEach(el=>{if(el)el._lastScroll=el.scrollTop;});
 }
 document.getElementById('yt-lightbox').addEventListener('pointerdown',e=>e.stopPropagation());
 document.getElementById('yt-lightbox').addEventListener('click',e=>{e.stopPropagation();if(!document.getElementById('yt-lb-wrap').contains(e.target))closeLightbox();});
@@ -6030,10 +6037,13 @@ function _renderGcMemberList(ko,cx,cy){
   memListEl.innerHTML='';
   const allMembers=ARTISTS.filter(a=>_artistGroups(a).some(g=>g.ko===ko));
   const hasInactive=allMembers.some(a=>!a.active);
-  labelEl.classList.toggle('toggleable',hasInactive);
-  labelEl.classList.toggle('on',hasInactive&&_gcShowInactive);
-  labelEl.title=hasInactive?(currentLang==='ko'?'눌러서 비활동/탈퇴 멤버 보기':'Click to show inactive members'):'';
-  (hasInactive&&_gcShowInactive?allMembers:allMembers.filter(a=>a.active))
+  // 해체 등으로 전원이 비활동 상태인 그룹은 "활동 멤버만" 필터링하면 아무도 안 남아 카드가 텅 비어
+  // 보이므로, 이 경우엔 토글 없이 기본값으로 전원 노출(글자색은 기존 비활동 스타일 그대로 어둡게 유지).
+  const noActiveMembers=allMembers.length>0&&!allMembers.some(a=>a.active);
+  labelEl.classList.toggle('toggleable',hasInactive&&!noActiveMembers);
+  labelEl.classList.toggle('on',hasInactive&&!noActiveMembers&&_gcShowInactive);
+  labelEl.title=(hasInactive&&!noActiveMembers)?(currentLang==='ko'?'눌러서 비활동/탈퇴 멤버 보기':'Click to show inactive members'):'';
+  (noActiveMembers||(hasInactive&&_gcShowInactive)?allMembers:allMembers.filter(a=>a.active))
     .sort((a,b)=>{
       if(a.active!==b.active)return a.active?-1:1; // 활동 멤버 먼저, 비활동/탈퇴 멤버는 맨 뒤로
       return (a.bday||'9999-99-99')<(b.bday||'9999-99-99')?-1:1;
@@ -10520,7 +10530,7 @@ function _makeChVidController(contId){
           load(ko,true);
           return;
         }
-        grid.innerHTML='<div class="gc-ch-msg">아직 동기화된 영상이 없어요<br><small style="opacity:.7">설정에서 채널 영상 동기화</small></div>';
+        grid.innerHTML='<div class="gc-ch-msg">아직 등록된 영상이 없어요</div>';
         releaseLock();
         return;
       }
