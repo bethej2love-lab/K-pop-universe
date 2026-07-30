@@ -1789,6 +1789,7 @@
     <button class="sp-yt-sync" id="sp-yt-sweep-banned" style="margin-top:4px;opacity:.8;">밴 인물 언급 영상 노출 제외 정리</button>
     <button class="sp-yt-sync" id="sp-hlfix-btn" style="margin-top:4px;opacity:.8;">하이라이트 오염 정리</button>
     <button class="sp-yt-sync" id="sp-lunafix-btn" style="margin-top:4px;opacity:.8;">에프엑스 LUNA(원어스) 오염 정리</button>
+    <button class="sp-yt-sync" id="sp-hjfix-btn" style="margin-top:4px;opacity:.8;">크래비티 형준/SS501 김형준 오염 정리</button>
     <button class="sp-yt-sync" id="sp-yt-autotag" style="margin-top:4px;opacity:.8;">멤버+콜라보 자동 태깅 (미태깅분)</button>
     <button class="sp-yt-sync" id="sp-hidden-vids-btn" style="margin-top:4px;opacity:.8;">노출 제외 영상 목록</button>
     <button class="sp-yt-sync" id="sp-ext-channels-btn" style="margin-top:4px;opacity:.8;">동기화 채널 목록</button>
@@ -9995,6 +9996,40 @@ async function _ytFixOneusLunaMistag(){
   }
 }
 
+// SS501 "김형준"의 성 뗀 변형("형준")이 크래비티 "형준"의 실제 활동명과 완전히 겹쳐서, 크래비티 자체
+// 채널의 "형준" 언급 영상마다 SS501 김형준이 함께 출연한 것처럼 잘못 태깅된 사고 정리(2026-07-30).
+// _m2NameVariants에서 이런 충돌이 앞으로는 안 생기게 고쳤지만, 이미 오염된 기존 행은 남아있어 별도 정리.
+async function _ytFixHyeongjunSS501Mistag(){
+  if(!sb){_ytSetProg('Supabase 연결 없음');return;}
+  const btn=document.getElementById('sp-hjfix-btn');
+  if(btn)btn.disabled=true;
+  try{
+    _ytSetProg('[형준/SS501 오염 정리] 조회 중…');
+    const{data:rows,error}=await _sbFetchAll(()=>sb.from(_YT_TABLE)
+      .select('id,with_members')
+      .eq('group_ko','크래비티')
+      .contains('with_members',['김형준(SS501)'])
+      .order('id'));
+    if(error){_ytSetProg('조회 실패: '+error.message);return;}
+    if(!rows?.length){_ytSetProg('해당하는 영상이 없어요');return;}
+    let done=0;
+    for(const v of rows){
+      const withMembers=(v.with_members||[]).filter(w=>w!=='김형준(SS501)');
+      const{error:ue}=await sb.from(_YT_TABLE).update({with_members:withMembers}).eq('id',v.id);
+      if(ue)throw new Error(ue.message);
+      done++;
+      _ytSetProg(`[형준/SS501 오염 정리] ${done}/${rows.length}개 처리 중…`);
+    }
+    _ytSetProg(`완료! ${done}개에서 SS501 김형준 오태깅 제거함`);
+    _gcChVidCtl.reloadIfShowing('크래비티');
+    _ttChVidCtl.reloadIfShowing('크래비티');
+  }catch(e){
+    _ytSetProg('오류: '+e.message);
+  }finally{
+    if(btn)btn.disabled=false;
+  }
+}
+
 // ── 그룹명 변경 반영 ── groups.json/artists.json에서 그룹의 group.ko 표기를 바꾸면(예: "슈퍼노바" →
 // "슈퍼노바(초신성)"), 그 그룹 자체 채널의 기존 group_ko 컬럼값과, 다른 채널이 이 그룹/사람을 게스트로
 // 태깅할 때 쓰는 with_members("이름(그룹)")/with_groups(그룹명 그대로) 안의 예전 표기가 그대로 남아있어서
@@ -10540,10 +10575,19 @@ function _unitMembersFromTitle(title,ko){
 // 아이오아이 같은 해체/프로젝트 그룹). _ytAutoTagMembers(자체 채널용)의 _atmStripSurname은 이미
 // 이 처리를 하고 있었는데, 외부채널 파싱(_m2ParseTitle)엔 빠져있어서 "성 없이 쓰인 이름"이 전부
 // 그룹 매칭 실패로 이어져 영상 자체가 skip(저장 안 됨)되는 문제가 있었음 — 여기도 동일하게 적용.
+// 크래비티 "형준"(실제 활동명)과 SS501 "김형준"(성 뗀 변형이 "형준")이 겹쳐서, 크래비티 자체 채널의
+// "형준" 언급 영상마다 SS501 김형준이 함께 출연한 것처럼 잘못 태깅되는 사고가 있었음(2026-07-30, 50개
+// 행 오염). 성을 뗀 변형이 다른 아티스트의 실제 활동명과 완전히 겹치면, 그 모호한 변형은 매칭에 쓰지
+// 않는다 — "형준"이라는 단어는 실제로 그 이름을 쓰는 크래비티 멤버로만 해석되어야 하고, 성이 있는
+// 이름(김형준)을 줄인 변형이 그 자리를 가로채면 안 됨. ARTISTS는 로드 후 안 바뀌므로 아티스트당 한
+// 번만 계산해 캐시.
+const _m2VariantsCache=new WeakMap();
 function _m2NameVariants(a){
+  if(_m2VariantsCache.has(a))return _m2VariantsCache.get(a);
   const variants=[a.name.ko,a.name.en].filter(Boolean);
   const stripped=_atmStripSurname([...a.name.ko]);
-  if(stripped&&stripped.length>=2)variants.push(stripped);
+  if(stripped&&stripped.length>=2&&!ARTISTS.some(o=>o!==a&&o.name.ko===stripped))variants.push(stripped);
+  _m2VariantsCache.set(a,variants);
   return variants;
 }
 // 제목에서 그룹/멤버 매칭. 토큰 경계 기준으로 GROUPS/ARTISTS 데이터와 대조.
@@ -12355,6 +12399,7 @@ document.getElementById('vid-tag-thumb-refresh').addEventListener('click',async 
   document.getElementById('sp-yt-sweep-banned')?.addEventListener('click',_ytSweepBannedVideos);
   document.getElementById('sp-hlfix-btn')?.addEventListener('click',_ytSweepHighlightMistag);
   document.getElementById('sp-lunafix-btn')?.addEventListener('click',_ytFixOneusLunaMistag);
+  document.getElementById('sp-hjfix-btn')?.addEventListener('click',_ytFixHyeongjunSS501Mistag);
   document.getElementById('sp-yt-autotag')?.addEventListener('click',_ytAutoTagMembers);
   document.getElementById('sp-hidden-vids-btn')?.addEventListener('click',_openHiddenVids);
   document.getElementById('sp-ext-channels-btn')?.addEventListener('click',_openExtChannels);
