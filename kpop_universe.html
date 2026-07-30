@@ -432,6 +432,11 @@
     font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;
   }
   #mob-card-stack.bs-open{transform:translateY(0);}
+  /* mob-sheet(첫 카드)의 100%(bs-full) 상태가 그 위로 쌓이는 카드(mob-card-stack)에도 그대로 이어지도록
+     동일한 규칙을 mob-card-stack에도 적용 — 안 그러면 첫 카드를 100%로 봐놓고 다음 카드를 열었을 때
+     60vh로 뚝 떨어져서 답답해 보이는 문제가 있었음. */
+  #mob-card-stack.bs-full{min-height:calc(var(--mob-vh,100vh) - var(--sheet-bottom,73px));max-height:calc(var(--mob-vh,100vh) - var(--sheet-bottom,73px));border-radius:0;}
+  #mob-card-stack.bs-full #mob-card-stack-inner{max-height:calc(var(--mob-vh,100vh) - var(--sheet-bottom,73px) - 24px);}
   #mob-card-stack-inner{overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;max-height:calc(60vh - 24px);overscroll-behavior:contain;width:100%;box-sizing:border-box;position:relative;}
   #mob-card-stack-inner>#tt,#mob-card-stack-inner>#gc{
     position:static!important;display:block!important;
@@ -862,6 +867,8 @@
   .gc-ch-sel-btn.active{background:rgba(100,160,255,0.18);border-color:rgba(100,160,255,0.4);color:#a8d0ff;}
   #admin-bulk-bar{position:fixed;bottom:76px;left:50%;transform:translateX(-50%);background:rgba(14,20,40,0.96);border:1px solid rgba(100,160,255,0.28);border-radius:22px;padding:9px 16px;display:flex;align-items:center;gap:10px;z-index:9990;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:0 4px 28px rgba(0,0,0,0.55);font-size:12.5px;color:#9ab8e0;white-space:nowrap;transition:opacity .18s;}
   #admin-bulk-bar.hidden{display:none;}
+  #admin-bulk-edit-btn{background:rgba(120,160,255,0.16);border:1px solid rgba(140,180,255,0.32);border-radius:13px;color:#a8c4ff;font-size:12px;padding:5px 14px;cursor:pointer;font-family:inherit;}
+  #admin-bulk-edit-btn:active{opacity:.7;}
   #admin-bulk-hide-btn{background:rgba(255,65,65,0.16);border:1px solid rgba(255,100,100,0.32);border-radius:13px;color:#ff9898;font-size:12px;padding:5px 14px;cursor:pointer;font-family:inherit;}
   #admin-bulk-hide-btn:active{opacity:.7;}
   #admin-bulk-cancel-btn{background:none;border:none;color:rgba(140,165,210,0.55);font-size:12px;cursor:pointer;padding:4px 2px;font-family:inherit;}
@@ -886,6 +893,31 @@
   .hv-group{font-size:10.5px;color:rgba(155,178,228,0.55);margin-bottom:2px;}
   .hv-title{font-size:11.5px;color:rgba(210,225,255,0.80);line-height:1.4;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;}
   #hidden-vids-empty{font-size:12px;color:rgba(155,178,228,0.45);text-align:center;padding:32px 0;}
+  #wonkok-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.52);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:81;display:none;align-items:center;justify-content:center;}
+  #wonkok-overlay.open{display:flex;}
+  #wonkok-panel{width:min(520px,calc(100vw - 32px));max-height:82vh;display:flex;flex-direction:column;background:rgba(13,17,34,0.97);backdrop-filter:blur(40px);-webkit-backdrop-filter:blur(40px);border-radius:18px;box-shadow:0 16px 56px rgba(0,0,0,0.72);border:0.5px solid rgba(255,255,255,0.10);}
+  #wonkok-hd{display:flex;align-items:center;justify-content:space-between;padding:16px 18px 10px;flex-shrink:0;}
+  #wonkok-hd-title{font-size:13.5px;font-weight:600;color:rgba(220,230,255,0.9);}
+  #wonkok-close{background:none;border:none;color:rgba(180,195,230,0.6);font-size:18px;cursor:pointer;padding:0;line-height:1;}
+  #wonkok-desc{font-size:11px;color:rgba(155,178,228,0.55);line-height:1.5;padding:0 18px 12px;flex-shrink:0;}
+  #wonkok-scan-btn{margin:0 18px;flex-shrink:0;}
+  #wonkok-status{font-size:11.5px;color:rgba(155,178,228,0.7);padding:8px 18px 0;min-height:14px;flex-shrink:0;}
+  #wonkok-toolbar{display:flex;align-items:center;gap:10px;padding:10px 18px;border-bottom:0.5px solid rgba(255,255,255,0.08);flex-shrink:0;}
+  #wonkok-select-all-row{display:flex;align-items:center;gap:6px;font-size:11.5px;color:rgba(185,205,245,0.75);cursor:pointer;white-space:nowrap;}
+  #wonkok-count{flex:1;font-size:11.5px;color:rgba(155,178,228,0.55);}
+  #wonkok-apply-btn{background:rgba(255,190,140,0.16);border:1px solid rgba(255,190,140,0.32);border-radius:10px;color:#ffd8ab;font-size:11.5px;padding:6px 12px;cursor:pointer;font-family:inherit;white-space:nowrap;}
+  #wonkok-apply-btn:active{opacity:.7;}
+  #wonkok-apply-btn:disabled{opacity:.4;cursor:default;}
+  #wonkok-list{overflow-y:auto;padding:8px 0;}
+  .wk-item{display:flex;align-items:center;gap:10px;padding:8px 16px;transition:background .12s;}
+  .wk-item:hover{background:rgba(255,255,255,0.04);}
+  .wk-item input[type=checkbox]{flex-shrink:0;accent-color:rgba(255,190,140,0.9);}
+  .wk-thumb{width:80px;flex-shrink:0;aspect-ratio:16/9;object-fit:cover;border-radius:5px;background:rgba(255,255,255,0.06);}
+  .wk-info{flex:1;min-width:0;}
+  .wk-group{font-size:10.5px;color:rgba(155,178,228,0.55);margin-bottom:2px;}
+  .wk-group b{color:rgba(255,190,140,0.85);font-weight:600;}
+  .wk-title{font-size:11.5px;color:rgba(210,225,255,0.80);line-height:1.4;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;}
+  #wonkok-empty{font-size:12px;color:rgba(155,178,228,0.45);text-align:center;padding:32px 0;}
   #ext-channels-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.52);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:81;display:none;align-items:center;justify-content:center;}
   #ext-channels-overlay.open{display:flex;}
   #ext-channels-panel{width:min(420px,calc(100vw - 32px));max-height:82vh;display:flex;flex-direction:column;background:rgba(13,17,34,0.97);backdrop-filter:blur(40px);-webkit-backdrop-filter:blur(40px);border-radius:18px;box-shadow:0 16px 56px rgba(0,0,0,0.72);border:0.5px solid rgba(255,255,255,0.10);}
@@ -1717,6 +1749,7 @@
     <button class="sp-yt-sync" id="sp-yt-autotag" style="margin-top:4px;opacity:.8;">멤버+콜라보 자동 태깅 (미태깅분)</button>
     <button class="sp-yt-sync" id="sp-hidden-vids-btn" style="margin-top:4px;opacity:.8;">노출 제외 영상 목록</button>
     <button class="sp-yt-sync" id="sp-ext-channels-btn" style="margin-top:4px;opacity:.8;">동기화 채널 목록</button>
+    <button class="sp-yt-sync" id="sp-wonkok-btn" style="margin-top:4px;opacity:.8;">원곡: 오태깅 의심 목록</button>
     <div style="margin-top:8px;padding-top:8px;border-top:0.5px solid rgba(255,255,255,0.1)">
       <div style="font-size:10px;color:rgba(155,178,228,0.5);margin-bottom:2px">과거 영상 백필 (search API, 쿼터 많이 씀)</div>
       <select class="sp-yt-key" id="sp-yt-backfill-ch"></select>
@@ -1757,6 +1790,7 @@
 </div>
 <div id="admin-bulk-bar" class="hidden">
   <span id="admin-bulk-count">0개 선택됨</span>
+  <button id="admin-bulk-edit-btn">편집</button>
   <button id="admin-bulk-hide-btn">노출 제외</button>
   <button id="admin-bulk-cancel-btn">취소</button>
 </div>
@@ -1768,6 +1802,23 @@
     </div>
     <input type="text" id="hidden-vids-search" placeholder="제목·그룹 검색…" autocomplete="off" spellcheck="false">
     <div id="hidden-vids-list"></div>
+  </div>
+</div>
+<div id="wonkok-overlay">
+  <div id="wonkok-panel">
+    <div id="wonkok-hd">
+      <span id="wonkok-hd-title">원곡: 오태깅 의심 목록</span>
+      <button id="wonkok-close">✕</button>
+    </div>
+    <div id="wonkok-desc">제목에 "원곡"이 들어간 영상 중, 그 절을 빼면 태깅된 멤버 이름이 더 이상 제목에서 안 잡히는 것만 후보로 추림(= 실제로는 다른 사람이 그 멤버의 노래를 커버한 영상일 가능성이 높음). 스캔은 시간이 좀 걸릴 수 있음.</div>
+    <button id="wonkok-scan-btn" class="uc-btn">스캔 시작</button>
+    <div id="wonkok-status"></div>
+    <div id="wonkok-toolbar" style="display:none">
+      <label id="wonkok-select-all-row"><input type="checkbox" id="wonkok-select-all" checked>전체 선택</label>
+      <span id="wonkok-count"></span>
+      <button id="wonkok-apply-btn">선택 항목 무관 처리</button>
+    </div>
+    <div id="wonkok-list"></div>
   </div>
 </div>
 <div id="mob-sheet">
@@ -1927,9 +1978,12 @@
 </div>
 <div id="vid-tag-overlay">
   <div id="vid-tag-panel">
-    <div class="pp-title">출연 멤버 지정<span id="vid-tag-hidden-badge">노출 제외됨</span></div>
+    <div class="pp-title"><span id="vid-tag-title-text">출연 멤버 지정</span><span id="vid-tag-hidden-badge">노출 제외됨</span></div>
     <div id="vid-tag-vidtitle"></div>
-    <div style="font-size:10px;color:rgba(155,178,228,0.45);margin-bottom:8px">선택 없음 = 그룹 전체 영상 (그룹·멤버 카드 모두 노출)</div>
+    <div id="vid-tag-single-hint" style="font-size:10px;color:rgba(155,178,228,0.45);margin-bottom:8px">선택 없음 = 그룹 전체 영상 (그룹·멤버 카드 모두 노출)</div>
+    <label id="vid-tag-bulk-overwrite-row" style="display:none;align-items:center;gap:6px;cursor:pointer;font-size:11.5px;color:rgba(255,190,140,0.85);margin-bottom:10px;padding:8px 10px;border-radius:8px;background:rgba(255,190,140,0.08);border:0.5px solid rgba(255,190,140,0.25)">
+      <input type="checkbox" id="vid-tag-bulk-overwrite" style="accent-color:rgba(255,190,140,0.9)">멤버/콜라보 태그도 덮어쓰기(선택한 영상 전체를 아래 체크값으로 교체 — 끄면 태그는 그대로 두고 포맷·플래그만 적용)
+    </label>
     <div id="vid-tag-members"></div>
     <div class="pp-section" style="margin-top:14px">
       <label class="pp-label" for="vid-tag-with-search">타 그룹 멤버 (선택)</label>
@@ -3648,7 +3702,10 @@ function _isBannedVideoTitle(t,ko){
   const scoped=ko&&_BANNED_VIDEO_NAMES_SCOPED[ko];
   return!!(scoped&&new RegExp(scoped.join('|'),'i').test(title));
 }
-function _filterBannedVideos(list,ko){return(list||[]).filter(v=>!_isBannedVideoTitle(v.title,ko)&&v.content_flag!=='hidden');}
+// content_flag==='무관'은 관리자가 "이 태그(멤버/콜라보) 자동인식이 틀렸다"고 정정한 표시 — 영상 그리드
+// 쪽은 이미 쿼리 단계에서 걸러내는데, 연결 카드(_fetchApiCollabData)는 이 체크가 빠져있어서 태그를
+// 무관 처리해도 members/with_members 배열 값이 그대로 남아있으면 연결 카드에 유령처럼 계속 뜨는 버그가 있었음.
+function _filterBannedVideos(list,ko){return(list||[]).filter(v=>!_isBannedVideoTitle(v.title,ko)&&v.content_flag!=='hidden'&&v.content_flag!=='무관');}
 
 let _lbPlaylist=null,_lbIdx=-1,_lbCtx=null;
 let _lbSpeed=1; // 우측 탭존을 꾹 누르는 동안의 배속 (1 또는 2)
@@ -4579,7 +4636,9 @@ function openMobSheet(cardEl){
     mobCardStackInner.scrollTop=0;
     mobCardStackInner.appendChild(cardEl);
 
-    // mob-card-stack 200px 아래서 슬라이드업
+    // mob-card-stack 200px 아래서 슬라이드업 — 직전 카드가 100%(bs-full)였으면 새 카드도 그 상태를
+    // 그대로 물려받아서 열림(안 그러면 100%로 보다가 다음 카드 열 때마다 60vh로 도로 쪼그라듦)
+    mobCardStackEl.classList.toggle('bs-full',_sheetFull);
     mobCardStackEl.style.display='block';
     mobCardStackEl.style.transition='none';
     mobCardStackEl.style.transform='translateY(200px)';
@@ -4663,6 +4722,10 @@ function _popMobCard(){
       const old=mobCardStackInner.querySelector('#tt,#gc');
       if(old){document.body.appendChild(old);old.style.display='none';}
 
+      // mob-card-stack이 접히면서 mob-sheet가 다시 화면 맨 위로 드러나므로, 카드 스택 위에서 스와이프로
+      // 바뀌었을 수 있는 _sheetFull 상태를 mob-sheet 자신의 클래스에도 반영해준다(안 그러면 mob-card-stack
+      // 스와이프 상태만 최신이고 mob-sheet는 예전 상태로 남아있을 수 있음).
+      mobSheetEl.classList.toggle('bs-full',_sheetFull);
       // mob-sheet의 클론 등을 실제 카드로 교체 (같은 타입이었던 경우)
       const prevEl=document.getElementById(prev.type==='gc'?'gc':'tt');
       if(prevEl.parentElement!==mobSheetInner){
@@ -5293,88 +5356,76 @@ connSheetEl.addEventListener('touchend',e=>{
   else connSheetEl.style.transform='';
 },{passive:true});
 
-let _mcsDragY=0,_mcsDragging=false;
-mobCardStackEl.addEventListener('touchstart',e=>{_mcsDragY=e.touches[0].clientY;_mcsDragging=true;e.stopPropagation();},{passive:true});
-mobCardStackEl.addEventListener('touchmove',e=>{
-  if(!_mcsDragging)return;e.stopPropagation();
-  const dy=e.touches[0].clientY-_mcsDragY;
-  if(dy>0&&mobCardStackInner.scrollTop<=0){
-    if(e.cancelable)e.preventDefault();
-    mobCardStackEl.style.transition='none';mobCardStackEl.style.transform=`translateY(${dy}px)`;
-    mobSheetEl.style.transition='none';mobSheetEl.style.transform=`translateY(${dy}px)`;
-  }
-},{passive:false});
-mobCardStackEl.addEventListener('touchend',e=>{
-  if(!_mcsDragging)return;_mcsDragging=false;e.stopPropagation();
-  const dy=e.changedTouches[0].clientY-_mcsDragY;
-  mobCardStackEl.style.transition='';mobSheetEl.style.transition='';
-  if(dy>80&&mobCardStackInner.scrollTop<=0){
-    closeMobSheet();
-  }else{
-    mobCardStackEl.style.transform='';mobSheetEl.style.transform='';
-  }
-},{passive:true});
-
-// 스와이프 (3단계: 닫힘 ↔ 반쯤 ↔ 꽉 참)
-let _sheetDragY=0,_sheetDragging=false,_sheetDragFromTop=0,_sheetFull=false;
-let _sheetScrolled=false,_sheetScrollTopAtStart=0;
-// 드래그 중 실제 스크롤이 발생하면 플래그 — touchend에서 시트 조작 억제에 사용
-mobSheetInner.addEventListener('scroll',()=>{if(_sheetDragging)_sheetScrolled=true;},{passive:true});
-mobSheetEl.addEventListener('touchstart',e=>{
-  _sheetDragY=e.touches[0].clientY;
-  _sheetDragFromTop=e.touches[0].clientY-mobSheetEl.getBoundingClientRect().top;
-  _sheetDragging=true;
-  _sheetScrolled=false;
-  _sheetScrollTopAtStart=mobSheetInner.scrollTop;
-  e.stopPropagation();
-},{passive:true});
-mobSheetEl.addEventListener('touchmove',e=>{
-  if(!_sheetDragging)return;e.stopPropagation();
-  const dy=e.touches[0].clientY-_sheetDragY;
-  // 콘텐츠 스크롤 중이거나 시작 시점에 이미 스크롤된 상태면 시트 조작 안 함
-  if(_sheetScrolled||_sheetScrollTopAtStart>0)return;
-  if(dy<0&&!_sheetFull&&mobSheetInner.scrollTop<=0){
-    // 위로 드래그 (반쯤→꽉 참) — 콘텐츠 맨 위에서 어디서든 가능
-    if(e.cancelable)e.preventDefault();
-    mobSheetEl.style.transition='none';
-    mobSheetEl.style.transform=`translateY(${dy*0.35}px)`;
-  }else if(dy>0&&mobSheetInner.scrollTop<=0){
-    // 아래로 드래그
-    if(e.cancelable)e.preventDefault();
-    mobSheetEl.style.transition='none';
-    mobSheetEl.style.transform=`translateY(${dy}px)`;
-  }
-},{passive:false});
-mobSheetEl.addEventListener('touchend',e=>{
-  if(!_sheetDragging)return;_sheetDragging=false;e.stopPropagation();
-  const dy=e.changedTouches[0].clientY-_sheetDragY;
-  mobSheetEl.style.transition='';
-  // 스크롤이 발생했거나 시작 시 스크롤된 상태였으면 시트 크기 변경 없이 복귀
-  if(_sheetScrolled||_sheetScrollTopAtStart>0){
-    mobSheetEl.style.transform='';
-    return;
-  }
-  if(dy<-60&&!_sheetFull&&mobSheetInner.scrollTop<=0){
-    // 위로 충분히 → 꽉 참 (핸들 영역 제한 제거: 콘텐츠 맨 위에서 어디서든)
-    _sheetFull=true;
-    mobSheetEl.style.transform='';
-    mobSheetEl.classList.add('bs-full');
-  }else if(_sheetFull&&dy>0&&mobSheetInner.scrollTop<=0){
-    if(dy>150){
-      closeMobSheet();
-    }else if(dy>60){
-      _sheetFull=false;
-      mobSheetEl.classList.remove('bs-full');
-      mobSheetEl.style.transform='';
-    }else{
-      mobSheetEl.style.transform='';
+// 반쯤(60vh) ↔ 꽉 참(bs-full) 스와이프를 시트 엘리먼트 하나에 붙이는 공용 함수. mob-sheet(첫 카드)와
+// mob-card-stack(2번째 이후 카드가 재사용하는 오버레이) 둘 다 이 함수로 똑같이 동작하게 만들어야
+// "첫 카드를 100%로 펼쳐놓고 다음 카드를 열면 60vh로 도로 쪼그라드는" 불일치가 안 생김 — _sheetFull은
+// 두 엘리먼트가 공유하는 단일 상태이고(mob-card-stack은 카드 단계마다 새로 생기는 게 아니라 계속
+// 재활용되는 하나의 오버레이라 이렇게 해도 됨), 어느 쪽이 화면 맨 위에 있든 같은 상태를 반영한다.
+// syncEl을 주면(mob-card-stack이 mob-sheet 위에 겹쳐있을 때) 반쯤 상태에서 아래로 끌 때 밑에 깔린
+// 시트도 같이 움직여서 두 겹이 한 덩어리로 빠지는 것처럼 보이게 한다(가득 찬 상태에선 이미 화면을
+// 다 덮고 있어 밑 시트를 같이 움직일 필요가 없음).
+function _wireSheetSwipe(sheetEl,innerEl,onDismiss,syncEl){
+  let dragY=0,dragging=false,scrolled=false,scrollTopAtStart=0;
+  innerEl.addEventListener('scroll',()=>{if(dragging)scrolled=true;},{passive:true});
+  sheetEl.addEventListener('touchstart',e=>{
+    dragY=e.touches[0].clientY;
+    dragging=true;scrolled=false;
+    scrollTopAtStart=innerEl.scrollTop;
+    e.stopPropagation();
+  },{passive:true});
+  sheetEl.addEventListener('touchmove',e=>{
+    if(!dragging)return;e.stopPropagation();
+    const dy=e.touches[0].clientY-dragY;
+    if(scrolled||scrollTopAtStart>0)return;
+    if(dy<0&&!_sheetFull&&innerEl.scrollTop<=0){
+      // 위로 드래그 (반쯤→꽉 참) — 콘텐츠 맨 위에서 어디서든 가능
+      if(e.cancelable)e.preventDefault();
+      sheetEl.style.transition='none';
+      sheetEl.style.transform=`translateY(${dy*0.35}px)`;
+    }else if(dy>0&&innerEl.scrollTop<=0){
+      // 아래로 드래그
+      if(e.cancelable)e.preventDefault();
+      sheetEl.style.transition='none';
+      sheetEl.style.transform=`translateY(${dy}px)`;
+      if(syncEl&&!_sheetFull){syncEl.style.transition='none';syncEl.style.transform=`translateY(${dy}px)`;}
     }
-  }else if(!_sheetFull&&dy>80&&mobSheetInner.scrollTop<=0){
-    closeMobSheet();
-  }else{
-    mobSheetEl.style.transform='';
-  }
-},{passive:true});
+  },{passive:false});
+  sheetEl.addEventListener('touchend',e=>{
+    if(!dragging)return;dragging=false;e.stopPropagation();
+    const dy=e.changedTouches[0].clientY-dragY;
+    sheetEl.style.transition='';
+    if(syncEl)syncEl.style.transition='';
+    if(scrolled||scrollTopAtStart>0){
+      sheetEl.style.transform='';
+      if(syncEl)syncEl.style.transform='';
+      return;
+    }
+    if(dy<-60&&!_sheetFull&&innerEl.scrollTop<=0){
+      // 위로 충분히 → 꽉 참 (핸들 영역 제한 제거: 콘텐츠 맨 위에서 어디서든)
+      _sheetFull=true;
+      sheetEl.style.transform='';
+      sheetEl.classList.add('bs-full');
+    }else if(_sheetFull&&dy>0&&innerEl.scrollTop<=0){
+      if(dy>150){
+        onDismiss();
+      }else if(dy>60){
+        _sheetFull=false;
+        sheetEl.classList.remove('bs-full');
+        sheetEl.style.transform='';
+      }else{
+        sheetEl.style.transform='';
+      }
+    }else if(!_sheetFull&&dy>80&&innerEl.scrollTop<=0){
+      onDismiss();
+    }else{
+      sheetEl.style.transform='';
+      if(syncEl)syncEl.style.transform='';
+    }
+  },{passive:true});
+}
+let _sheetFull=false;
+_wireSheetSwipe(mobCardStackEl,mobCardStackInner,closeMobSheet,mobSheetEl);
+_wireSheetSwipe(mobSheetEl,mobSheetInner,closeMobSheet);
 function closeCards(){
   _clearMemberCardLines();
   closeConnCard();
@@ -5829,9 +5880,19 @@ function _ttGoBack(){
     _buildConnContent(isMob()?connSheetBody:connPanelInner);
   }
 }
-document.getElementById('tt-back').addEventListener('click',e=>{e.stopPropagation();if(isMob()&&_cardStack.length>1){_popMobCard();}else{_ttGoBack();}});
+document.getElementById('tt-back').addEventListener('click',e=>{
+  e.stopPropagation();
+  // 연결 카드는 _cardStack에 안 들어가는 별도 오버레이라, 열려있는 채로 뒤로가기를 누르면 밑에 깔린
+  // 카드 스택만 팝되고 연결 카드는 안 닫힌 채 그대로 남아있는 문제가 있었음 — 뒤로가기 한 번은 항상
+  // 제일 위에 떠있는 겹(연결 카드)부터 벗겨내도록 함. 단, _memberNavStack이 쌓여있으면(연결 카드에서
+  // 콜라보 칩 눌러 다른 멤버로 넘어온 상태) _ttGoBack()이 이전 멤버 복원 + 그 사람 연결 카드 재오픈을
+  // 한 번에 처리하는 게 맞으므로 그쪽 우선순위를 그대로 둔다.
+  if(isMob()&&connSheetEl.classList.contains('bs-open')&&!_memberNavStack.length){closeConnCard();return;}
+  if(isMob()&&_cardStack.length>1){_popMobCard();}else{_ttGoBack();}
+});
 document.getElementById('gc-back').addEventListener('click',e=>{
   e.stopPropagation();
+  if(isMob()&&connSheetEl.classList.contains('bs-open')){closeConnCard();return;}
   if(_gcFromGenList!=null){
     const g=_gcFromGenList;
     closeCards();
@@ -6192,6 +6253,11 @@ document.getElementById('tt').addEventListener('click',e=>e.stopPropagation());
 document.getElementById('gc').addEventListener('click',e=>e.stopPropagation());
 document.getElementById('tabbar').addEventListener('click',e=>e.stopPropagation());
 document.getElementById('settings-panel').addEventListener('click',e=>e.stopPropagation());
+// admin-bulk-bar는 body 바로 아래 떠있는 fixed 바라 mobSheet/mobCardStack/connSheet 어디에도 안 속해서,
+// 여기서 버블링을 안 끊으면 window 클릭 핸들러(3D 씬 레이캐스팅)까지 그대로 전달됨 — 좌표상 캔버스 범위
+// 안이면(거의 항상 그럼, 캔버스가 풀스크린이라) "빈 우주 공간 클릭"으로 처리돼 열려있던 카드가 closeCards()로
+// 닫혀버리는 버그가 있었음(노출 제외/편집 버튼 누를 때마다 카드가 사라짐).
+document.getElementById('admin-bulk-bar').addEventListener('click',e=>e.stopPropagation());
 
 // ── Filter ────────────────────────────────────────
 function applyFilter(){
@@ -9197,7 +9263,7 @@ async function _fetchTopVideoThumb(gko,memberKo){
   try{
     let q=sb.from(_YT_TABLE).select('id,thumb,category');
     q=memberKo?q.eq('group_ko',gko).or(`members.eq.{},members.cs.{${memberKo}}`)
-              :q.or(`and(group_ko.eq.${gko},members.eq.{}),with_groups.cs.{${gko}}`);
+              :q.or(`group_ko.eq.${gko},with_groups.cs.{${gko}}`);
     q=q.or('content_flag.is.null,content_flag.neq.무관');
     q=q.or('content_flag.is.null,content_flag.neq.hidden'); // 노출 제외 처리된 영상이 대표 썸네일로 뽑히면 안 됨
     const{data,error}=await q.order('published_at',{ascending:false}).limit(12);
@@ -9232,7 +9298,7 @@ async function _pickFeaturedVidFromDB(ko,memberKo,onlyMe,filter,viewMode,formatF
     }else if(memberKo){
       q=q.eq('group_ko',ko).or(`members.eq.{},members.cs.{${memberKo}}`);
     }else{
-      q=q.or(`and(group_ko.eq.${ko},members.eq.{}),with_groups.cs.{${ko}}`);
+      q=q.or(`group_ko.eq.${ko},with_groups.cs.{${ko}}`);
     }
     const{data}=await q;
     if(!data?.length)return null;
@@ -9665,6 +9731,137 @@ async function _ytSweepBannedVideos(){
     if(btn)btn.disabled=false;
   }
 }
+
+// ── "원곡: X" 오태깅 의심 목록 ── 다른 사람이 부른 커버 영상 제목에 "(원곡 : 이름)" 식으로 원곡자를
+// 표기해둔 걸, 자동 태깅이 "그 원곡자가 출연한다"고 잘못 읽어 group_ko/members를 원곡자 쪽으로 붙여버리는
+// 경우가 실측으로 다수 확인됨(예: 다른 가수의 커버 무대인데 원곡 아티스트의 그룹 카드에 노출됨).
+// "(원곡...)" 절을 통째로 지운 뒤에도 그 멤버 이름이 제목에 남아있으면(본인이 직접 부른 커버라 실명이나
+// 영문 표기가 따로 있는 경우) 정상으로 보고, 안 남아있으면(원곡자로만 언급된 것) 오태깅 후보로 분류한다.
+// 완전 자동 처리는 안 하고(오탐 있음 확인됨) 관리자가 후보 목록을 보고 체크박스로 골라 확정하게 한다.
+function _wonkokStripClause(title){
+  let out='',i=0;
+  while(i<title.length){
+    if(title[i]==='('){
+      let depth=0,j=i;
+      for(;j<title.length;j++){
+        if(title[j]==='(')depth++;
+        else if(title[j]===')'){depth--;if(depth===0)break;}
+      }
+      const inner=title.slice(i+1,Math.min(j,title.length));
+      if(/^\s*원곡\s*[:：]?/.test(inner)){i=j<title.length?j+1:title.length;continue;}
+    }
+    out+=title[i];i++;
+  }
+  return out;
+}
+function _wonkokNorm(title){return' '+(title||'').toUpperCase().replace(/[^가-힣a-zA-Z0-9]/g,' ').replace(/\s+/g,' ')+' ';}
+function _wonkokHit(norm,name){
+  if(!name||name.length<2)return false;
+  const n=name.toUpperCase().replace(/[^가-힣a-zA-Z0-9]/g,' ').replace(/\s+/g,' ').trim();
+  return n&&norm.includes(' '+n+' ');
+}
+let _wonkokCandidates=[];
+let _wonkokScanning=false;
+async function _wonkokScan(){
+  if(_wonkokScanning||!sb)return;
+  _wonkokScanning=true;
+  const btn=document.getElementById('wonkok-scan-btn');
+  const statusEl=document.getElementById('wonkok-status');
+  if(btn)btn.disabled=true;
+  document.getElementById('wonkok-toolbar').style.display='none';
+  document.getElementById('wonkok-list').innerHTML='';
+  try{
+    statusEl.textContent='조회 중… (시간이 좀 걸릴 수 있음)';
+    const{data:rows,error}=await _sbFetchAll(()=>sb.from(_YT_TABLE)
+      .select('id,title,group_ko,members,thumb,content_flag')
+      .ilike('title','%원곡%')
+      .not('members','eq','{}')
+      .or('content_flag.is.null,content_flag.neq.무관')
+      .or('content_flag.is.null,content_flag.neq.hidden')
+      .order('id'));
+    if(error){statusEl.textContent='조회 실패: '+error.message;return;}
+    statusEl.textContent=`${rows?.length||0}개 후보 검사 중…`;
+    const candidates=(rows||[]).filter(v=>{
+      const strippedNorm=_wonkokNorm(_wonkokStripClause(v.title||''));
+      return!(v.members||[]).some(mko=>{
+        const artist=ARTISTS.find(a=>a.group.ko===v.group_ko&&a.name.ko===mko);
+        const variants=artist?_m2NameVariants(artist):[mko];
+        return variants.some(variant=>_wonkokHit(strippedNorm,variant));
+      });
+    });
+    _wonkokCandidates=candidates;
+    statusEl.textContent=`스캔 완료 — 전체 ${rows?.length||0}개 중 오태깅 의심 ${candidates.length}개`;
+    _renderWonkokList();
+  }catch(e){
+    statusEl.textContent='오류: '+e.message;
+  }finally{
+    _wonkokScanning=false;
+    if(btn)btn.disabled=false;
+  }
+}
+function _renderWonkokList(){
+  const listEl=document.getElementById('wonkok-list');
+  const toolbarEl=document.getElementById('wonkok-toolbar');
+  listEl.innerHTML='';
+  if(!_wonkokCandidates.length){
+    listEl.innerHTML='<div id="wonkok-empty">의심 후보가 없어요</div>';
+    toolbarEl.style.display='none';
+    return;
+  }
+  toolbarEl.style.display='flex';
+  document.getElementById('wonkok-select-all').checked=true;
+  _wonkokCandidates.forEach(v=>{
+    const item=document.createElement('div');item.className='wk-item';item.dataset.vidId=v.id;
+    const cb=document.createElement('input');cb.type='checkbox';cb.checked=true;
+    cb.addEventListener('change',_updateWonkokCount);
+    const img=document.createElement('img');img.className='wk-thumb';img.src=v.thumb||'';img.loading='lazy';
+    const info=document.createElement('div');info.className='wk-info';
+    const grp=document.createElement('div');grp.className='wk-group';
+    grp.innerHTML=`${v.group_ko||''} · <b>${(v.members||[]).join(', ')}</b>`;
+    const ttl=document.createElement('div');ttl.className='wk-title';ttl.textContent=v.title||'';
+    info.appendChild(grp);info.appendChild(ttl);
+    const editBtn=document.createElement('button');editBtn.className='vid-edit-btn';editBtn.type='button';editBtn.textContent='✎';
+    editBtn.title='직접 재태깅';
+    editBtn.addEventListener('click',e=>{e.stopPropagation();_openVidTagModal({id:v.id,title:v.title},v.group_ko);});
+    item.appendChild(cb);item.appendChild(img);item.appendChild(info);item.appendChild(editBtn);
+    listEl.appendChild(item);
+  });
+  _updateWonkokCount();
+}
+function _updateWonkokCount(){
+  const total=_wonkokCandidates.length;
+  const checked=document.querySelectorAll('#wonkok-list .wk-item input[type=checkbox]:checked').length;
+  document.getElementById('wonkok-count').textContent=`${checked}/${total}개 선택됨`;
+  const applyBtn=document.getElementById('wonkok-apply-btn');
+  if(applyBtn)applyBtn.disabled=checked===0;
+  const allEl=document.getElementById('wonkok-select-all');
+  if(allEl)allEl.checked=checked===total&&total>0;
+}
+document.getElementById('wonkok-select-all')?.addEventListener('change',e=>{
+  document.querySelectorAll('#wonkok-list .wk-item input[type=checkbox]').forEach(cb=>{cb.checked=e.target.checked;});
+  _updateWonkokCount();
+});
+document.getElementById('wonkok-apply-btn')?.addEventListener('click',async()=>{
+  if(!sb)return;
+  const btn=document.getElementById('wonkok-apply-btn');
+  const items=[...document.querySelectorAll('#wonkok-list .wk-item')].filter(el=>el.querySelector('input[type=checkbox]').checked);
+  const ids=items.map(el=>el.dataset.vidId).filter(Boolean);
+  if(!ids.length)return;
+  btn.disabled=true;btn.textContent='처리 중…';
+  const{error}=await sb.from(_YT_TABLE).update({content_flag:'무관'}).in('id',ids);
+  if(error){btn.disabled=false;btn.textContent='선택 항목 무관 처리';alert('오류: '+error.message);return;}
+  const idSet=new Set(ids);
+  _wonkokCandidates=_wonkokCandidates.filter(v=>!idSet.has(v.id));
+  items.forEach(el=>el.remove());
+  document.getElementById('wonkok-status').textContent=`${ids.length}개 무관 처리 완료 — 남은 후보 ${_wonkokCandidates.length}개`;
+  btn.textContent='선택 항목 무관 처리';
+  _updateWonkokCount();
+  if(!_wonkokCandidates.length)_renderWonkokList();
+});
+document.getElementById('wonkok-scan-btn')?.addEventListener('click',_wonkokScan);
+document.getElementById('wonkok-overlay')?.addEventListener('click',e=>{if(e.target===e.currentTarget)e.currentTarget.classList.remove('open');});
+document.getElementById('wonkok-close')?.addEventListener('click',()=>document.getElementById('wonkok-overlay').classList.remove('open'));
+document.getElementById('sp-wonkok-btn')?.addEventListener('click',()=>{document.getElementById('wonkok-overlay').classList.add('open');});
 
 // ── 멤버+콜라보 자동 태깅(미태깅분) — 2026-07-21에 스크래치패드 스크립트로 1회성으로 돌렸던
 // 매칭 로직(성+이름 실명표기/조사/해시태그/영문 토큰) 그대로 앱에 내장. 2026-07-29에 콜라보
@@ -10407,6 +10604,7 @@ function _makeChVidController(contId){
       bar.classList.remove('hidden');
       document.getElementById('admin-bulk-count').textContent=`${_selIds.size}개 선택됨`;
       window._adminBulkExitFn=_exitSelMode; // 전역 핸들러에서 이 컨트롤러의 종료 함수 호출 가능하게 노출
+      window._adminBulkKo=state.ko; // 일괄 편집 모달이 이 그룹의 멤버 체크박스를 그릴 수 있게 노출
     }else{
       bar.classList.add('hidden');
     }
@@ -10453,7 +10651,10 @@ function _makeChVidController(contId){
   function _buildGridWithList(v,ownGko,selfKo){
     const withList=[];
     (v.members||[]).forEach(n=>{if(n!==selfKo)withList.push(n);});
-    (v.with_members||[]).forEach(n=>withList.push(n));
+    // 멤버 카드가 "다른 그룹 채널에 이 멤버가 게스트 태깅된 영상"까지 끌어오면서(위 쿼리 변경), 그 영상의
+    // with_members엔 지금 보고 있는 본인이 "이름(그룹)" 형식으로 그대로 들어있는 경우가 생김 —
+    // "함께한 멤버" 줄에 본인 이름이 뜨는 것을 막기 위해 자기 자신 표기는 제외.
+    (v.with_members||[]).forEach(n=>{if(n!==`${selfKo}(${ownGko})`)withList.push(n);});
     (v.with_groups||[]).forEach(gko=>{
       ARTISTS.filter(a=>_artistGroups(a).some(g=>g.ko===gko)).forEach(a=>{
         const tok=a.group.ko===ownGko?a.name.ko:`${a.name.ko}(${gko})`;
@@ -10613,12 +10814,16 @@ function _makeChVidController(contId){
         q=q.eq('group_ko',ko).contains('members',[state.memberKo]).containedBy('members',[state.memberKo])
           .or('content_flag.is.null,content_flag.neq.외부인');
       }else if(state.memberKo){
-        // 멤버 카드: 태깅 안 된(그룹 전체) 영상 + 이 멤버가 직접 태깅된 영상까지 포함
-        q=q.eq('group_ko',ko).or(`members.eq.{},members.cs.{${state.memberKo}}`);
+        // 멤버 카드: 태깅 안 된(그룹 전체) 영상 + 이 멤버가 직접 태깅된 영상 + 다른 그룹 채널에 이 멤버가
+        // with_members로 게스트 출연 태깅된 영상까지 포함 — 그룹 카드가 with_groups로 콜라보를 끌어오는 것과
+        // 대칭되는 처리. 이게 빠져있으면 자체 채널 영상은 아직 없고 다른 그룹 채널 콘텐츠(챌린지·직캠 등)에
+        // 개인 태깅으로만 쌓인 신인 그룹(예: 넥스지)은 그룹 카드엔 (with_groups로) 뭔가 보여도 멤버 카드는 텅 비어 보였음.
+        q=q.or(`and(group_ko.eq.${ko},members.eq.{}),and(group_ko.eq.${ko},members.cs.{${state.memberKo}}),with_members.cs.{${state.memberKo}(${ko})}`);
       }else{
-        // 그룹 카드: 내 채널의 태깅 안 된 영상(특정 멤버 태깅된 건 그 멤버 개인 카드로) + 다른 채널 영상인데
-        // 아이유 팔레트처럼 우리 그룹 전체가 with_groups로 태깅된 경우도 같이 노출
-        q=q.or(`and(group_ko.eq.${ko},members.eq.{}),with_groups.cs.{${ko}}`);
+        // 그룹 카드: 내 채널 영상은 멤버 태깅 여부와 무관하게 전부 노출(그룹 전체가 나오는 영상이든
+        // 특정 멤버 몇 명만 나오는 영상이든 다 그룹 콘텐츠) + 다른 채널 영상인데 아이유 팔레트처럼
+        // 우리 그룹 전체가 with_groups로 태깅된 경우도 같이 노출
+        q=q.or(`group_ko.eq.${ko},with_groups.cs.{${ko}}`);
       }
       // "그룹 멤버 안 나옴" 플래그(무관) 영상은 어느 뷰에서도 이 그룹/멤버 콘텐츠로 노출하지 않음
       q=q.or('content_flag.is.null,content_flag.neq.무관');
@@ -11274,6 +11479,7 @@ function _updateAdminUI(){
   if(sec)sec.style.display=_isAdmin()?'':'none';
 }
 let _vidTagTarget=null;
+let _vidTagBulkIds=null; // 일괄 편집 모드일 때만 채워지는 영상 id 배열(null이면 단일 영상 모드)
 let _vidTagWithSelected=[]; // [{ko,groupKo}] — 타 그룹 멤버 검색/선택 결과
 let _vidTagGroupsSelected=[]; // [groupKo,...] — "아이유의 팔레트, 뉴진스편"처럼 그룹 전체가 출연할 때(with_groups)
 function _renderVidTagChips(){
@@ -11300,10 +11506,58 @@ function _renderVidTagChips(){
     chipsEl.appendChild(chip);
   });
 }
-async function _openVidTagModal(v,ko){
-  _vidTagTarget={id:v.id,ko};
+// 관리자가 그리드에서 여러 영상을 선택(#admin-bulk-bar "편집")했을 때 쓰는 일괄 편집 모드.
+// 단일 편집과 같은 모달을 재사용하되, 특정 영상 하나의 기존 태깅값을 불러오지 않고(영상마다 다를 수
+// 있으므로) 빈 상태에서 시작 — 저장 시 "멤버/콜라보 태그도 덮어쓰기" 체크 여부로 members/with_members/
+// with_groups를 건드릴지 말지 결정한다(끄면 포맷·플래그만 선택한 영상 전체에 적용, 기존 태그는 보존).
+function _openVidTagModalBulk(ids,ko){
+  _vidTagTarget={id:null,ko};
+  _vidTagBulkIds=[...ids];
   _vidTagWithSelected=[];
   _vidTagGroupsSelected=[];
+  document.getElementById('vid-tag-title-text').textContent=`${ids.length}개 영상 일괄 편집`;
+  document.getElementById('vid-tag-vidtitle').textContent='';
+  document.getElementById('vid-tag-single-hint').style.display='none';
+  const overwriteRow=document.getElementById('vid-tag-bulk-overwrite-row');
+  overwriteRow.style.display='flex';
+  document.getElementById('vid-tag-bulk-overwrite').checked=false;
+  const membersEl=document.getElementById('vid-tag-members');
+  membersEl.innerHTML='';
+  const groupMembers=ARTISTS.filter(a=>_artistGroups(a).some(g=>g.ko===ko));
+  groupMembers.forEach(a=>{
+    const label=document.createElement('label');
+    label.className='vid-tag-mem';
+    const cb=document.createElement('input');
+    cb.type='checkbox';cb.value=a.name.ko;
+    label.appendChild(cb);
+    label.appendChild(document.createTextNode(a.name.ko));
+    membersEl.appendChild(label);
+  });
+  document.getElementById('vid-tag-with-search').value='';
+  document.getElementById('vid-tag-with-results').innerHTML='';
+  _renderVidTagChips();
+  const catEl=document.getElementById('vid-tag-cat');
+  if(catEl)catEl.value='';
+  const etcEl=document.getElementById('vid-tag-flag-etc');
+  const extEl=document.getElementById('vid-tag-flag-ext');
+  const nomemEl=document.getElementById('vid-tag-flag-nomem');
+  if(etcEl)etcEl.checked=false;
+  if(extEl)extEl.checked=false;
+  if(nomemEl)nomemEl.checked=false;
+  document.getElementById('vid-tag-hide').style.display='none';
+  document.getElementById('vid-tag-hidden-badge').classList.remove('visible');
+  document.getElementById('vid-tag-status').textContent='';
+  document.getElementById('vid-tag-overlay').classList.add('open');
+}
+async function _openVidTagModal(v,ko){
+  _vidTagTarget={id:v.id,ko};
+  _vidTagBulkIds=null;
+  _vidTagWithSelected=[];
+  _vidTagGroupsSelected=[];
+  document.getElementById('vid-tag-title-text').textContent='출연 멤버 지정';
+  document.getElementById('vid-tag-single-hint').style.display='';
+  document.getElementById('vid-tag-bulk-overwrite-row').style.display='none';
+  document.getElementById('vid-tag-hide').style.display='';
   document.getElementById('vid-tag-vidtitle').textContent=_cleanTitle(v.title);
   const membersEl=document.getElementById('vid-tag-members');
   membersEl.innerHTML='';
@@ -11369,6 +11623,7 @@ async function _openVidTagModal(v,ko){
 function _closeVidTagModal(){
   document.getElementById('vid-tag-overlay').classList.remove('open');
   _vidTagTarget=null;
+  _vidTagBulkIds=null;
   const hideBtn=document.getElementById('vid-tag-hide');
   const hideBadge=document.getElementById('vid-tag-hidden-badge');
   if(hideBtn){hideBtn.textContent='노출 제외';hideBtn.classList.remove('restore');}
@@ -11432,7 +11687,6 @@ document.getElementById('vid-tag-save').addEventListener('click',async e=>{
   const statusEl=document.getElementById('vid-tag-status');
   const members=[...document.querySelectorAll('#vid-tag-members input:checked')].map(cb=>cb.value);
   const withMembers=_vidTagWithSelected.map(m=>`${m.ko}(${m.groupKo})`);
-  statusEl.textContent='저장 중…';
   const withGroups=[..._vidTagGroupsSelected];
   const catEl=document.getElementById('vid-tag-cat');
   const category=catEl?catEl.value:undefined;
@@ -11440,7 +11694,34 @@ document.getElementById('vid-tag-save').addEventListener('click',async e=>{
   const extEl=document.getElementById('vid-tag-flag-ext');
   const nomemEl=document.getElementById('vid-tag-flag-nomem');
   const contentFlag=etcEl?.checked?'기타':extEl?.checked?'외부인':nomemEl?.checked?'무관':null;
-  const{id,ko}=_vidTagTarget;
+  const{ko}=_vidTagTarget;
+  statusEl.textContent='저장 중…';
+  if(_vidTagBulkIds){
+    // 일괄 편집: 손댄 항목만 반영 — "덮어쓰기" 체크 안 하면 members/with_members/with_groups는 그대로 두고,
+    // 플래그 체크박스를 하나도 안 눌렀으면 content_flag도 건드리지 않는다(영상마다 기존 상태가 달라서
+    // 단일 편집처럼 "빈 값 = 명시적으로 지움"으로 해석하면 선택한 영상 전체의 기존 태그/플래그가 조용히
+    // 날아가는 사고가 날 수 있음).
+    const overwriteTags=document.getElementById('vid-tag-bulk-overwrite').checked;
+    const updatePayload={};
+    if(overwriteTags){updatePayload.members=members;updatePayload.with_members=withMembers;updatePayload.with_groups=withGroups;}
+    if(category)updatePayload.category=category;
+    if(etcEl?.checked||extEl?.checked||nomemEl?.checked)updatePayload.content_flag=contentFlag;
+    if(!Object.keys(updatePayload).length){statusEl.textContent='변경할 항목을 선택해주세요';return;}
+    const ids=_vidTagBulkIds;
+    const{error}=await sb.from(_YT_TABLE).update(updatePayload).in('id',ids);
+    if(error){statusEl.textContent='저장 실패: '+error.message;return;}
+    statusEl.textContent=`${ids.length}개 저장됨`;
+    setTimeout(()=>{
+      _closeVidTagModal();
+      window._adminBulkExitFn?.();
+      _gcChVidCtl.reloadIfShowing(ko);
+      _ttChVidCtl.reloadIfShowing(ko);
+      withGroups.forEach(gko=>_gcChVidCtl.reloadIfShowing(gko));
+      _refreshOpenCardCollab();
+    },500);
+    return;
+  }
+  const{id}=_vidTagTarget;
   const updatePayload={members,with_members:withMembers,with_groups:withGroups,content_flag:contentFlag};
   if(category!==undefined)updatePayload.category=category||null;
   const{error}=await sb.from(_YT_TABLE).update(updatePayload).eq('id',id);
@@ -11458,7 +11739,7 @@ document.getElementById('vid-tag-save').addEventListener('click',async e=>{
 });
 document.getElementById('vid-tag-hide').addEventListener('click',async e=>{
   e.stopPropagation();
-  if(!_vidTagTarget||!sb)return;
+  if(!_vidTagTarget||!sb||_vidTagBulkIds)return;
   const statusEl=document.getElementById('vid-tag-status');
   const hideBtn=document.getElementById('vid-tag-hide');
   const hideBadge=document.getElementById('vid-tag-hidden-badge');
@@ -11689,6 +11970,12 @@ document.getElementById('hidden-vids-close')?.addEventListener('click',()=>docum
 // ── 어드민 일괄 선택 플로팅 바 ──
 document.getElementById('admin-bulk-cancel-btn')?.addEventListener('click',()=>{
   window._adminBulkExitFn?.();
+});
+document.getElementById('admin-bulk-edit-btn')?.addEventListener('click',()=>{
+  if(!sb||!_isAdmin())return;
+  const ids=[...document.querySelectorAll('.gc-ch-item.admin-selected')].map(el=>el.dataset.vidId).filter(Boolean);
+  if(!ids.length||!window._adminBulkKo)return;
+  _openVidTagModalBulk(ids,window._adminBulkKo);
 });
 document.getElementById('admin-bulk-hide-btn')?.addEventListener('click',async()=>{
   if(!sb||!_isAdmin())return;
