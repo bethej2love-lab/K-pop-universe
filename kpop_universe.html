@@ -942,6 +942,17 @@
   .nm-group b{color:rgba(255,150,150,0.85);font-weight:600;}
   .nm-title{font-size:11.5px;color:rgba(210,225,255,0.80);line-height:1.4;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;}
   #nomem-empty{font-size:12px;color:rgba(155,178,228,0.45);text-align:center;padding:32px 0;}
+  /* z-index:50 — #yt-lightbox(67)보다 반드시 낮아야 함: 이 목록 안에서 영상을 탭하면 라이트박스가
+     이 오버레이 위로 열려야 하는데(#feed-list-overlay는 admin 목록들과 달리 라이트박스를 직접 여는
+     용도), 다른 관리자 목록 오버레이(81~82)와 같은 값을 쓰면 라이트박스가 뒤로 숨는 사고가 남 */
+  #feed-list-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.52);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:50;display:none;align-items:center;justify-content:center;}
+  #feed-list-overlay.open{display:flex;}
+  #feed-list-panel{width:min(560px,calc(100vw - 32px));max-height:82vh;display:flex;flex-direction:column;background:rgba(13,17,34,0.97);backdrop-filter:blur(40px);-webkit-backdrop-filter:blur(40px);border-radius:18px;box-shadow:0 16px 56px rgba(0,0,0,0.72);border:0.5px solid rgba(255,255,255,0.10);}
+  #feed-list-hd{display:flex;align-items:flex-start;justify-content:space-between;padding:16px 18px 12px;flex-shrink:0;gap:10px;}
+  #feed-list-hd-title{font-size:13.5px;font-weight:600;color:rgba(220,230,255,0.9);}
+  #feed-list-sub{font-size:11px;color:rgba(155,178,228,0.55);margin-top:3px;}
+  #feed-list-close{background:none;border:none;color:rgba(180,195,230,0.6);font-size:18px;cursor:pointer;padding:0;line-height:1;flex-shrink:0;}
+  #feed-list-grid{overflow-y:auto;padding:0 14px 16px;}
   #ext-channels-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.52);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:81;display:none;align-items:center;justify-content:center;}
   #ext-channels-overlay.open{display:flex;}
   #ext-channels-panel{width:min(420px,calc(100vw - 32px));max-height:82vh;display:flex;flex-direction:column;background:rgba(13,17,34,0.97);backdrop-filter:blur(40px);-webkit-backdrop-filter:blur(40px);border-radius:18px;box-shadow:0 16px 56px rgba(0,0,0,0.72);border:0.5px solid rgba(255,255,255,0.10);}
@@ -1770,6 +1781,8 @@
     <input type="text" class="sp-yt-key" id="sp-yt-key" placeholder="API 키 (AIzaSy...)" autocomplete="off" spellcheck="false">
     <button class="sp-yt-sync" id="sp-yt-sync">전체 동기화 (공식 + 외부 채널)</button>
     <button class="sp-yt-sync" id="sp-yt-sweep-banned" style="margin-top:4px;opacity:.8;">밴 인물 언급 영상 노출 제외 정리</button>
+    <button class="sp-yt-sync" id="sp-hlfix-btn" style="margin-top:4px;opacity:.8;">하이라이트 오염 정리</button>
+    <button class="sp-yt-sync" id="sp-lunafix-btn" style="margin-top:4px;opacity:.8;">에프엑스 LUNA(원어스) 오염 정리</button>
     <button class="sp-yt-sync" id="sp-yt-autotag" style="margin-top:4px;opacity:.8;">멤버+콜라보 자동 태깅 (미태깅분)</button>
     <button class="sp-yt-sync" id="sp-hidden-vids-btn" style="margin-top:4px;opacity:.8;">노출 제외 영상 목록</button>
     <button class="sp-yt-sync" id="sp-ext-channels-btn" style="margin-top:4px;opacity:.8;">동기화 채널 목록</button>
@@ -1869,6 +1882,18 @@
       <button id="nomem-apply-btn">선택 항목 무관 해제</button>
     </div>
     <div id="nomem-list"></div>
+  </div>
+</div>
+<div id="feed-list-overlay">
+  <div id="feed-list-panel">
+    <div id="feed-list-hd">
+      <div>
+        <div id="feed-list-hd-title"></div>
+        <div id="feed-list-sub"></div>
+      </div>
+      <button id="feed-list-close">✕</button>
+    </div>
+    <div id="feed-list-grid" class="gc-ch-grid"></div>
   </div>
 </div>
 <div id="mob-sheet">
@@ -9318,6 +9343,39 @@ function _setFeedCardThumb(item,thumbUrl){
   wrap.innerHTML='';
   wrap.appendChild(img);
 }
+// 탐색 피드의 "모아보기"류 카드(포맷 모아보기, 세대별 직캠 모음)는 눌렀을 때 바로 첫 영상 라이트박스로
+// 들어가버리면 안에 뭐가 있는지 훑어볼 방법이 없었음 — 그룹/멤버 카드의 "채널 영상" 그리드와 같은
+// .gc-ch-grid/.gc-ch-item 스타일로 목록부터 보여주고, 그중 하나를 탭하면 그 영상부터 라이트박스가 열림
+// (라이트박스 안에서는 기존처럼 위아래 스와이프로 같은 목록 안을 계속 넘길 수 있음).
+function _openFeedListOverlay(title,sub,songs){
+  document.getElementById('feed-list-hd-title').textContent=title;
+  document.getElementById('feed-list-sub').textContent=sub||'';
+  const grid=document.getElementById('feed-list-grid');
+  grid.innerHTML='';
+  songs.forEach((s,idx)=>{
+    const shortFlag=isShorts(s.u);
+    const item=document.createElement('div');
+    item.className='gc-ch-item'+(shortFlag?' is-short':'');
+    const img=document.createElement('img');
+    img.className='gc-ch-thumb';img.loading='lazy';img.decoding='async';
+    img.src=s.thumb||`https://img.youtube.com/vi/${ytId(s.u)}/mqdefault.jpg`;
+    img.alt=_cleanTitle(s.t);
+    const titleEl=document.createElement('div');
+    titleEl.className='tv-sm-title';titleEl.textContent=_cleanTitle(s.t);
+    addMarquee(titleEl);
+    item.appendChild(img);item.appendChild(titleEl);
+    item.addEventListener('click',e=>{
+      e.stopPropagation();
+      openLightbox(s.u,shortFlag,songs,idx,{});
+    });
+    grid.appendChild(item);
+  });
+  document.getElementById('feed-list-overlay').classList.add('open');
+}
+function _closeFeedListOverlay(){document.getElementById('feed-list-overlay').classList.remove('open');}
+document.getElementById('feed-list-close')?.addEventListener('click',e=>{e.stopPropagation();_closeFeedListOverlay();});
+document.getElementById('feed-list-overlay')?.addEventListener('click',e=>{if(e.target===e.currentTarget)_closeFeedListOverlay();});
+document.getElementById('feed-list-overlay')?.addEventListener('pointerdown',e=>e.stopPropagation());
 // 그룹/멤버를 대표하는 영상 썸네일 하나(스크랩 최다, 없으면 랜덤)를 비동기로 가져온다 —
 // _fetchDiscoverThumb·그룹/멤버 카드 대표영상 선정과 동일한 규칙 재사용.
 async function _fetchTopVideoThumb(gko,memberKo){
@@ -9437,10 +9495,11 @@ async function _buildFeedFormatPick(list){
       if(error||!data?.length)continue;
       const vids=_filterBannedVideos(data);
       if(!vids.length)continue;
-      const songs=vids.map(v=>({t:v.title,u:vidUrl(v)}));
+      const songs=vids.map(v=>({t:v.title,u:vidUrl(v),thumb:v.thumb}));
       const thumb=vids[Math.floor(Math.random()*vids.length)].thumb;
-      const item=_appendFeedCard(list,'🎞️',`${fmt} 모아보기`,`여러 그룹 · ${songs.length}개 영상`,()=>_feedNav(()=>{
-        openLightbox(songs[0].u,isShorts(songs[0].u),songs,0,{});
+      const label=`${fmt} 모아보기`,sub=`여러 그룹 · ${songs.length}개 영상`;
+      const item=_appendFeedCard(list,'🎞️',label,sub,()=>_feedNav(()=>{
+        _openFeedListOverlay(label,sub,songs);
       }),thumb);
       list.insertBefore(item,list.firstChild); // 다른 항목보다 앞서 눈에 띄게
       return;
@@ -9476,11 +9535,11 @@ async function _buildFeedGenCamPick(list){
       if(error)continue;
       const vids=_filterBannedVideos(data||[]);
       if(vids.length<6)continue; // 컬렉션이라 부르기엔 너무 적으면 다음 조합으로
-      const songs=vids.map(v=>({t:v.title,u:vidUrl(v)}));
+      const songs=vids.map(v=>({t:v.title,u:vidUrl(v),thumb:v.thumb}));
       const thumb=vids[Math.floor(Math.random()*vids.length)].thumb;
-      const label=`${gen}세대 ${gender==='f'?'여돌':'남돌'} 직캠 모음`;
-      const item=_appendFeedCard(list,'🎥',label,`여러 그룹 · ${songs.length}개 영상`,()=>_feedNav(()=>{
-        openLightbox(songs[0].u,isShorts(songs[0].u),songs,0,{});
+      const label=`${gen}세대 ${gender==='f'?'여돌':'남돌'} 직캠 모음`,sub=`여러 그룹 · ${songs.length}개 영상`;
+      const item=_appendFeedCard(list,'🎥',label,sub,()=>_feedNav(()=>{
+        _openFeedListOverlay(label,sub,songs);
       }),thumb);
       list.insertBefore(item,list.firstChild); // 다른 항목보다 앞서 눈에 띄게
       return;
@@ -9828,6 +9887,94 @@ async function _ytSweepBannedVideos(){
     }
     localStorage.setItem('kpu_banned_sweep_version',version);
     _ytSetProg(`완료! ${rows.length}개 중 ${toHide.length}개 노출 제외 처리함(노출 제외 영상 목록에서 검토 가능)`);
+  }catch(e){
+    _ytSetProg('오류: '+e.message);
+  }finally{
+    if(btn)btn.disabled=false;
+  }
+}
+
+// ── 하이라이트 오염 정리 ── "하이라이트"가 그룹명이 아니라 "요약본" 의미의 관용구(릴댄 하이라이트,
+// 하이라이트 모음 등)로 쓰인 영상이 그룹 하이라이트로 잘못 태깅되는 문제를 실측으로 확인(2026-07-30) —
+// _m2ParseTitle의 하이라이트 제외 정규식을 이미 넓혔으니, 그 기준으로 다시 검사해서 더 이상 안 걸리는
+// 기존 행은 무관 처리한다("그룹 멤버 안 나옴 목록"에서 검토 가능).
+async function _ytSweepHighlightMistag(){
+  if(!sb){_ytSetProg('Supabase 연결 없음');return;}
+  const btn=document.getElementById('sp-hlfix-btn');
+  if(btn)btn.disabled=true;
+  try{
+    _ytSetProg('[하이라이트 정리] 조회 중…');
+    const{data:rows,error}=await _sbFetchAll(()=>sb.from(_YT_TABLE)
+      .select('id,title')
+      .eq('group_ko','하이라이트')
+      .or('content_flag.is.null,content_flag.neq.무관')
+      .order('id'));
+    if(error){_ytSetProg('조회 실패: '+error.message);return;}
+    if(!rows?.length){_ytSetProg('검사할 영상이 없어요');return;}
+    const toFlag=rows.filter(v=>{
+      const match=_m2ParseTitle(v.title);
+      return !match||(match.primaryGroup!=='하이라이트'&&!(match.withGroups||[]).includes('하이라이트'));
+    }).map(v=>v.id);
+    if(!toFlag.length){_ytSetProg(`검사 완료 — ${rows.length}개 중 오염 없음`);return;}
+    for(let i=0;i<toFlag.length;i+=200){
+      const{error:ue}=await sb.from(_YT_TABLE).update({content_flag:'무관'}).in('id',toFlag.slice(i,i+200));
+      if(ue)throw new Error(ue.message);
+    }
+    _ytSetProg(`완료! ${rows.length}개 중 ${toFlag.length}개 무관 처리함("그룹 멤버 안 나옴 목록"에서 확인 가능)`);
+  }catch(e){
+    _ytSetProg('오류: '+e.message);
+  }finally{
+    if(btn)btn.disabled=false;
+  }
+}
+
+// ── 에프엑스 LUNA(원어스) 오염 정리 ── 원어스의 "월하미인(LUNA)" 커버·직캠 영상들이 곡명에 들어간
+// "LUNA" 때문에 f(x) 루나로 대량 오태깅된 걸 실측으로 확인(2026-07-30, 총 66건). 이런 건 "그룹멤버안나옴"으로
+// 숨기는 대신 실제 소속인 원어스로 옮기는 게 맞아서(사용자가 요청한 방향), group_ko를 원어스로 재배정하고
+// 개별 멤버는 with_members(이미 있으면)나 제목에서 이름을 찾아 넣는다 — 못 찾으면 멤버 미지정(그룹 전체 영상).
+async function _ytFixOneusLunaMistag(){
+  if(!sb){_ytSetProg('Supabase 연결 없음');return;}
+  const btn=document.getElementById('sp-lunafix-btn');
+  if(btn)btn.disabled=true;
+  const ONEUS_MEMBERS=[
+    {ko:'환웅',re:/환웅|HWANWOONG/i},
+    {ko:'이도',re:/이도|LEEDO/i},
+    {ko:'건희',re:/건희|KEONHEE/i},
+    {ko:'서호',re:/서호|SEOHO/i},
+    {ko:'레이븐',re:/레이븐|RAVN|RAVEN/i},
+    {ko:'시온',re:/시온|XION/i},
+  ];
+  try{
+    _ytSetProg('[LUNA 오염 정리] 조회 중…');
+    const{data:rows,error}=await _sbFetchAll(()=>sb.from(_YT_TABLE)
+      .select('id,title,with_members')
+      .eq('group_ko','에프엑스')
+      .ilike('title','%LUNA%')
+      .or('title.ilike.%원어스%,title.ilike.%ONEUS%')
+      .order('id'));
+    if(error){_ytSetProg('조회 실패: '+error.message);return;}
+    if(!rows?.length){_ytSetProg('해당하는 영상이 없어요');return;}
+    let done=0;
+    for(const v of rows){
+      let member=null;
+      const wm=(v.with_members||[]).find(w=>w.endsWith('(원어스)'));
+      if(wm)member=wm.slice(0,-('(원어스)'.length));
+      else{
+        const found=ONEUS_MEMBERS.find(m=>m.re.test(v.title));
+        if(found)member=found.ko;
+      }
+      const{error:ue}=await sb.from(_YT_TABLE).update({
+        group_ko:'원어스',
+        members:member?[member]:[],
+        with_members:[],
+      }).eq('id',v.id);
+      if(ue)throw new Error(ue.message);
+      done++;
+      _ytSetProg(`[LUNA 오염 정리] ${done}/${rows.length}개 처리 중…`);
+    }
+    _ytSetProg(`완료! ${done}개를 원어스로 재배정함`);
+    _gcChVidCtl.reloadIfShowing('에프엑스');
+    _gcChVidCtl.reloadIfShowing('원어스');
   }catch(e){
     _ytSetProg('오류: '+e.message);
   }finally{
@@ -10395,9 +10542,14 @@ const _GROUP_TITLE_CONFLICT_EXCLUDE={
   '슈퍼노바(초신성)':[/aespa/i,/에스파/],
 };
 function _m2ParseTitle(rawTitle){
-  // "[하이라이트]"는 그룹명이 아니라 "요약본" 의미의 영상 태그로 흔히 쓰여 그룹 하이라이트로 오매칭되기 쉬움 —
-  // 매칭 전에 이 태그 표기(대괄호/괄호/꺾쇠)를 제거해 그룹명 토큰 매칭에서 아예 배제한다.
-  const title=rawTitle.replace(/[\[(<【]\s*하이라이트\s*[\])>】]/g,' ');
+  // "하이라이트"는 그룹명이 아니라 "요약본" 의미로도 흔히 쓰여 그룹 하이라이트로 오매칭되기 쉬움 — 실측으로
+  // "OO '노래' 릴댄 하이라이트 | 릴레이댄스"(릴레이댄스 코너 고정 문구), "OO 무대 하이라이트 모음"류가
+  // 대량으로 하이라이트 그룹에 잘못 태깅되는 걸 확인함(2026-07-30). 대괄호로 감싼 경우([하이라이트])뿐
+  // 아니라 이런 평문 관용구도 매칭 전에 제거한다 — 한 제목에 여러 번 나올 수 있어 전부(g) 제거.
+  const title=rawTitle
+    .replace(/[\[(<【]\s*하이라이트\s*[\])>】]/g,' ')
+    .replace(/(릴댄|무대|커버|비하인드|메이킹|리허설|티저|예능)\s*하이라이트/g,' ')
+    .replace(/하이라이트\s*모음/g,' ');
   // 특수문자를 공백으로 치환해 토큰 경계 확보, 앞뒤 공백 추가
   const norm=' '+title.toUpperCase().replace(/[^가-힣a-zA-Z0-9]/g,' ').replace(/\s+/g,' ')+' ';
   function hit(name){
@@ -12138,6 +12290,8 @@ document.getElementById('vid-tag-thumb-refresh').addEventListener('click',async 
     if(btn)btn.disabled=false;
   });
   document.getElementById('sp-yt-sweep-banned')?.addEventListener('click',_ytSweepBannedVideos);
+  document.getElementById('sp-hlfix-btn')?.addEventListener('click',_ytSweepHighlightMistag);
+  document.getElementById('sp-lunafix-btn')?.addEventListener('click',_ytFixOneusLunaMistag);
   document.getElementById('sp-yt-autotag')?.addEventListener('click',_ytAutoTagMembers);
   document.getElementById('sp-hidden-vids-btn')?.addEventListener('click',_openHiddenVids);
   document.getElementById('sp-ext-channels-btn')?.addEventListener('click',_openExtChannels);
