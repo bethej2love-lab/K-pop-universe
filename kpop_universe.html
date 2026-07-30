@@ -4940,7 +4940,12 @@ async function _enrichMemberVideosFromApi(a,tv,baseSongs,basePersonalSongs){
     console.error('멤버 API 영상 로드 실패',e);
   }
 }
+// artists.json songs는 로드 후 바뀌지 않는 정적 데이터라, 같은 아티스트에 대해 이 결과는 항상 동일함.
+// 연결 카드를 열 때마다(그리고 정렬 비교마다) ARTISTS 1200여 명 전체 + 각자의 songs 배열을 매번 다시
+// 훑으면 콜라보가 많은 멤버일수록 눈에 띄게 느려져서, 아티스트별로 한 번만 계산해 영구 캐시한다.
+const _songsFeaturingCache=new WeakMap();
 function _getSongsFeaturingArtist(a){
+  if(_songsFeaturingCache.has(a))return _songsFeaturingCache.get(a);
   const myName=a.name.ko;
   const res=[];
   ARTISTS.forEach(other=>{
@@ -4949,6 +4954,7 @@ function _getSongsFeaturingArtist(a){
       if((sg.with||[]).includes(myName))res.push({...sg,_owner:other});
     });
   });
+  _songsFeaturingCache.set(a,res);
   return res;
 }
 // 연결 카드도 그룹/멤버 카드처럼 artists.json 수동 등록분(with) + Supabase members/with_members(관리자 태깅분)을
@@ -5244,12 +5250,17 @@ function _buildConnContent(container){
   const sameGroupNames=allCollabNames.filter(n=>!n.includes('('));
   const otherGroupNames=allCollabNames.filter(n=>n.includes('('));
 
+  // 콜라보 영상 수는 이름별로 한 번만 계산해서 재사용 — _getCollabSongs가 내부적으로 전체 콜라보
+  // 목록을 필터링하는 무거운 함수라, 정렬 비교(.sort) 콜백 안에서 그때그때 다시 부르면 이름이
+  // 많을수록(N log N 비교) 같은 계산을 수십~수백 번 반복하게 되어 연결 카드가 느려지는 원인이었다.
+  const _collabCountCache=new Map();
+  const _collabCount=name=>{
+    if(!_collabCountCache.has(name))_collabCountCache.set(name,_getCollabSongs(_connAnchor,[name],false).length);
+    return _collabCountCache.get(name);
+  };
+
   // 같은 그룹: 콜라보 영상 수 내림차순 정렬
-  sameGroupNames.sort((a,b)=>{
-    const cntA=_getCollabSongs(_connAnchor,[a],false).length;
-    const cntB=_getCollabSongs(_connAnchor,[b],false).length;
-    return cntB-cntA||a.localeCompare(b,'ko');
-  });
+  sameGroupNames.sort((a,b)=>_collabCount(b)-_collabCount(a)||a.localeCompare(b,'ko'));
 
   // 타 그룹: 그룹별 묶기
   const otherByGroup=new Map();
@@ -5262,17 +5273,11 @@ function _buildConnContent(container){
   });
   // 그룹 내 멤버도 콜라보 수 내림차순
   otherByGroup.forEach((names,gko)=>{
-    names.sort((a,b)=>{
-      const cntA=_getCollabSongs(_connAnchor,[a],false).length;
-      const cntB=_getCollabSongs(_connAnchor,[b],false).length;
-      return cntB-cntA||a.localeCompare(b,'ko');
-    });
+    names.sort((a,b)=>_collabCount(b)-_collabCount(a)||a.localeCompare(b,'ko'));
   });
   // 그룹 칩 순서: 그룹 내 최다 콜라보 수 기준 내림차순
   const otherGroupsSorted=[...otherByGroup.keys()].sort((a,b)=>{
-    const topA=_getCollabSongs(_connAnchor,[otherByGroup.get(a)[0]],false).length;
-    const topB=_getCollabSongs(_connAnchor,[otherByGroup.get(b)[0]],false).length;
-    return topB-topA||a.localeCompare(b,'ko');
+    return _collabCount(otherByGroup.get(b)[0])-_collabCount(otherByGroup.get(a)[0])||a.localeCompare(b,'ko');
   });
 
   // 멤버 칩 하나 빌드 (같은 그룹 / 타 그룹 펼침 양쪽 공용)
