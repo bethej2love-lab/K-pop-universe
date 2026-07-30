@@ -918,6 +918,30 @@
   .wk-group b{color:rgba(255,190,140,0.85);font-weight:600;}
   .wk-title{font-size:11.5px;color:rgba(210,225,255,0.80);line-height:1.4;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;}
   #wonkok-empty{font-size:12px;color:rgba(155,178,228,0.45);text-align:center;padding:32px 0;}
+  #nomem-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.52);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:81;display:none;align-items:center;justify-content:center;}
+  #nomem-overlay.open{display:flex;}
+  #nomem-panel{width:min(520px,calc(100vw - 32px));max-height:82vh;display:flex;flex-direction:column;background:rgba(13,17,34,0.97);backdrop-filter:blur(40px);-webkit-backdrop-filter:blur(40px);border-radius:18px;box-shadow:0 16px 56px rgba(0,0,0,0.72);border:0.5px solid rgba(255,255,255,0.10);}
+  #nomem-hd{display:flex;align-items:center;justify-content:space-between;padding:16px 18px 10px;flex-shrink:0;}
+  #nomem-hd-title{font-size:13.5px;font-weight:600;color:rgba(220,230,255,0.9);}
+  #nomem-close{background:none;border:none;color:rgba(180,195,230,0.6);font-size:18px;cursor:pointer;padding:0;line-height:1;}
+  #nomem-desc{font-size:11px;color:rgba(155,178,228,0.55);line-height:1.5;padding:0 18px 12px;flex-shrink:0;}
+  #nomem-status{font-size:11.5px;color:rgba(155,178,228,0.7);padding:0 18px 8px;min-height:14px;flex-shrink:0;}
+  #nomem-toolbar{display:flex;align-items:center;gap:10px;padding:10px 18px;border-bottom:0.5px solid rgba(255,255,255,0.08);flex-shrink:0;}
+  #nomem-select-all-row{display:flex;align-items:center;gap:6px;font-size:11.5px;color:rgba(185,205,245,0.75);cursor:pointer;white-space:nowrap;}
+  #nomem-count{flex:1;font-size:11.5px;color:rgba(155,178,228,0.55);}
+  #nomem-apply-btn{background:rgba(255,120,120,0.16);border:1px solid rgba(255,120,120,0.32);border-radius:10px;color:#ffb0b0;font-size:11.5px;padding:6px 12px;cursor:pointer;font-family:inherit;white-space:nowrap;}
+  #nomem-apply-btn:active{opacity:.7;}
+  #nomem-apply-btn:disabled{opacity:.4;cursor:default;}
+  #nomem-list{overflow-y:auto;padding:8px 0;}
+  .nm-item{display:flex;align-items:center;gap:10px;padding:8px 16px;transition:background .12s;}
+  .nm-item:hover{background:rgba(255,255,255,0.04);}
+  .nm-item input[type=checkbox]{flex-shrink:0;accent-color:rgba(255,120,120,0.9);}
+  .nm-thumb{width:80px;flex-shrink:0;aspect-ratio:16/9;object-fit:cover;border-radius:5px;background:rgba(255,255,255,0.06);}
+  .nm-info{flex:1;min-width:0;}
+  .nm-group{font-size:10.5px;color:rgba(155,178,228,0.55);margin-bottom:2px;}
+  .nm-group b{color:rgba(255,150,150,0.85);font-weight:600;}
+  .nm-title{font-size:11.5px;color:rgba(210,225,255,0.80);line-height:1.4;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;}
+  #nomem-empty{font-size:12px;color:rgba(155,178,228,0.45);text-align:center;padding:32px 0;}
   #ext-channels-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.52);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:81;display:none;align-items:center;justify-content:center;}
   #ext-channels-overlay.open{display:flex;}
   #ext-channels-panel{width:min(420px,calc(100vw - 32px));max-height:82vh;display:flex;flex-direction:column;background:rgba(13,17,34,0.97);backdrop-filter:blur(40px);-webkit-backdrop-filter:blur(40px);border-radius:18px;box-shadow:0 16px 56px rgba(0,0,0,0.72);border:0.5px solid rgba(255,255,255,0.10);}
@@ -1750,6 +1774,16 @@
     <button class="sp-yt-sync" id="sp-hidden-vids-btn" style="margin-top:4px;opacity:.8;">노출 제외 영상 목록</button>
     <button class="sp-yt-sync" id="sp-ext-channels-btn" style="margin-top:4px;opacity:.8;">동기화 채널 목록</button>
     <button class="sp-yt-sync" id="sp-wonkok-btn" style="margin-top:4px;opacity:.8;">원곡: 오태깅 의심 목록</button>
+    <button class="sp-yt-sync" id="sp-nomem-btn" style="margin-top:4px;opacity:.8;">그룹 멤버 안 나옴(무관) 목록</button>
+    <div style="margin-top:8px;padding-top:8px;border-top:0.5px solid rgba(255,255,255,0.1)">
+      <div style="font-size:10px;color:rgba(155,178,228,0.5);margin-bottom:2px">그룹명 변경 반영(group.ko 수정 시 기존 태깅 데이터 이전)</div>
+      <input type="text" class="sp-yt-key" id="sp-groupmig-old" placeholder="이전 표기 (예: 슈퍼노바)">
+      <input type="text" class="sp-yt-key" id="sp-groupmig-new" placeholder="새 표기 (예: 슈퍼노바(초신성))">
+      <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:11px;color:rgba(185,205,245,0.7);margin-top:6px">
+        <input type="checkbox" id="sp-groupmig-groupko" style="accent-color:rgba(155,178,228,0.9)">group_ko 컬럼(그룹 자체 채널)도 함께 변경
+      </label>
+      <button class="sp-yt-sync" id="sp-groupmig-btn" style="opacity:.8;margin-top:6px;">그룹명 변경 반영</button>
+    </div>
     <div style="margin-top:8px;padding-top:8px;border-top:0.5px solid rgba(255,255,255,0.1)">
       <div style="font-size:10px;color:rgba(155,178,228,0.5);margin-bottom:2px">과거 영상 백필 (search API, 쿼터 많이 씀)</div>
       <select class="sp-yt-key" id="sp-yt-backfill-ch"></select>
@@ -1819,6 +1853,22 @@
       <button id="wonkok-apply-btn">선택 항목 무관 처리</button>
     </div>
     <div id="wonkok-list"></div>
+  </div>
+</div>
+<div id="nomem-overlay">
+  <div id="nomem-panel">
+    <div id="nomem-hd">
+      <span id="nomem-hd-title">그룹 멤버 안 나옴(무관) 처리 목록</span>
+      <button id="nomem-close">✕</button>
+    </div>
+    <div id="nomem-desc">content_flag가 '무관'으로 표시된 영상 전체 목록. 원래는 "이 그룹 채널 콘텐츠인데 멤버 자동인식만 틀림" 용도인데, 완전히 다른 그룹 소속 영상을 억지로 여기로 우회 처리한 경우가 섞여있을 수 있음 — 그런 건 ✎ 눌러서 "소속 그룹"을 실제 그룹으로 바로 옮겨줄 것.</div>
+    <div id="nomem-status"></div>
+    <div id="nomem-toolbar" style="display:none">
+      <label id="nomem-select-all-row"><input type="checkbox" id="nomem-select-all">전체 선택</label>
+      <span id="nomem-count"></span>
+      <button id="nomem-apply-btn">선택 항목 무관 해제</button>
+    </div>
+    <div id="nomem-list"></div>
   </div>
 </div>
 <div id="mob-sheet">
@@ -1984,6 +2034,15 @@
     <label id="vid-tag-bulk-overwrite-row" style="display:none;align-items:center;gap:6px;cursor:pointer;font-size:11.5px;color:rgba(255,190,140,0.85);margin-bottom:10px;padding:8px 10px;border-radius:8px;background:rgba(255,190,140,0.08);border:0.5px solid rgba(255,190,140,0.25)">
       <input type="checkbox" id="vid-tag-bulk-overwrite" style="accent-color:rgba(255,190,140,0.9)">멤버/콜라보 태그도 덮어쓰기(선택한 영상 전체를 아래 체크값으로 교체 — 끄면 태그는 그대로 두고 포맷·플래그만 적용)
     </label>
+    <div class="pp-section" style="margin-top:0 0 10px">
+      <label class="pp-label" for="vid-tag-group-ko">소속 그룹(완전히 다른 그룹 영상이면 여기서 바로 옮기기)</label>
+      <input id="vid-tag-group-ko" type="text" class="pp-input" list="vid-tag-group-list" placeholder="그룹명" autocomplete="off">
+      <datalist id="vid-tag-group-list"></datalist>
+    </div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+      <label class="pp-label" style="margin:0">출연 멤버</label>
+      <button type="button" id="vid-tag-members-all" style="background:none;border:none;color:rgba(155,178,228,0.75);font-size:10.5px;cursor:pointer;text-decoration:underline;padding:0;">전체 선택</button>
+    </div>
     <div id="vid-tag-members"></div>
     <div class="pp-section" style="margin-top:14px">
       <label class="pp-label" for="vid-tag-with-search">타 그룹 멤버 (선택)</label>
@@ -9776,6 +9835,71 @@ async function _ytSweepBannedVideos(){
   }
 }
 
+// ── 그룹명 변경 반영 ── groups.json/artists.json에서 그룹의 group.ko 표기를 바꾸면(예: "슈퍼노바" →
+// "슈퍼노바(초신성)"), 그 그룹 자체 채널의 기존 group_ko 컬럼값과, 다른 채널이 이 그룹/사람을 게스트로
+// 태깅할 때 쓰는 with_members("이름(그룹)")/with_groups(그룹명 그대로) 안의 예전 표기가 그대로 남아있어서
+// _findArtistByConnName이 새 group.ko로 더 이상 못 찾는 문제가 생김 — 연결 카드에 이름은 뜨는데
+// 실제로 눌러보면 조합 영상이 하나도 없는 걸로 보이는 버그의 원인 중 하나(2026-07-30에 실측으로 확인:
+// 슈퍼노바 그룹명 변경 직후 "광수(슈퍼노바)" 잔재 발견 + 보아처럼 GROUPS에 없는 솔로가 _ytGroupKoFor
+// 관례상 "보아(보아)"로 잘못 태깅된 과거 데이터도 별도로 발견됨).
+// group_ko 컬럼 자체는 "그 그룹의 진짜 group.ko 값이 바뀐 경우"에만 체크박스로 같이 바꾸고, 기본은
+// with_members/with_groups 안의 표기만 고친다(보아 케이스처럼 group_ko='보아'가 원래 의도된 값인
+// 경우까지 잘못 건드리지 않기 위함).
+async function _ytMigrateGroupName(){
+  if(!sb){_ytSetProg('Supabase 연결 없음');return;}
+  const oldName=(document.getElementById('sp-groupmig-old')?.value||'').trim();
+  const newName=(document.getElementById('sp-groupmig-new')?.value||'').trim();
+  const alsoGroupKo=!!document.getElementById('sp-groupmig-groupko')?.checked;
+  if(!oldName||!newName){_ytSetProg('이전/새 표기를 모두 입력해주세요');return;}
+  if(oldName===newName){_ytSetProg('이전/새 표기가 같아요');return;}
+  const btn=document.getElementById('sp-groupmig-btn');
+  if(btn)btn.disabled=true;
+  try{
+    let changed=0;
+    if(alsoGroupKo){
+      _ytSetProg('[그룹명 변경] group_ko 컬럼 일괄 변경 중…');
+      const{error,count}=await sb.from(_YT_TABLE).update({group_ko:newName}).eq('group_ko',oldName).select('id',{count:'exact'});
+      if(error)throw new Error(error.message);
+      changed+=count||0;
+    }
+    _ytSetProg('[그룹명 변경] with_members 태그 조회 중… (전체 스캔이라 시간이 좀 걸릴 수 있음)');
+    const{data:wmRows,error:wmErr}=await _sbFetchAll(()=>sb.from(_YT_TABLE)
+      .select('id,with_members').not('with_members','eq','{}').order('id'));
+    if(wmErr)throw new Error(wmErr.message);
+    const oldSuffix=`(${oldName})`,newSuffix=`(${newName})`;
+    const wmUpdates=[];
+    (wmRows||[]).forEach(r=>{
+      let touched=false;
+      const next=(r.with_members||[]).map(w=>{
+        if(w.endsWith(oldSuffix)){touched=true;return w.slice(0,-oldSuffix.length)+newSuffix;}
+        return w;
+      });
+      if(touched)wmUpdates.push({id:r.id,with_members:next});
+    });
+    for(let i=0;i<wmUpdates.length;i++){
+      _ytSetProg(`[그룹명 변경] with_members 수정 중… (${i+1}/${wmUpdates.length})`);
+      const{error}=await sb.from(_YT_TABLE).update({with_members:wmUpdates[i].with_members}).eq('id',wmUpdates[i].id);
+      if(error)throw new Error(error.message);
+    }
+    changed+=wmUpdates.length;
+    _ytSetProg('[그룹명 변경] with_groups 태그 조회 중…');
+    const{data:wgRows,error:wgErr}=await sb.from(_YT_TABLE).select('id,with_groups').contains('with_groups',[oldName]);
+    if(wgErr)throw new Error(wgErr.message);
+    const wgUpdates=(wgRows||[]).map(r=>({id:r.id,with_groups:(r.with_groups||[]).map(g=>g===oldName?newName:g)}));
+    for(let i=0;i<wgUpdates.length;i++){
+      _ytSetProg(`[그룹명 변경] with_groups 수정 중… (${i+1}/${wgUpdates.length})`);
+      const{error}=await sb.from(_YT_TABLE).update({with_groups:wgUpdates[i].with_groups}).eq('id',wgUpdates[i].id);
+      if(error)throw new Error(error.message);
+    }
+    changed+=wgUpdates.length;
+    _ytSetProg(`완료! "${oldName}" → "${newName}" 총 ${changed}건 반영함(group_ko ${alsoGroupKo?'포함':'제외'}, with_members ${wmUpdates.length}건, with_groups ${wgUpdates.length}건)`);
+  }catch(e){
+    _ytSetProg('오류: '+e.message);
+  }finally{
+    if(btn)btn.disabled=false;
+  }
+}
+
 // ── "원곡: X" 오태깅 의심 목록 ── 다른 사람이 부른 커버 영상 제목에 "(원곡 : 이름)" 식으로 원곡자를
 // 표기해둔 걸, 자동 태깅이 "그 원곡자가 출연한다"고 잘못 읽어 group_ko/members를 원곡자 쪽으로 붙여버리는
 // 경우가 실측으로 다수 확인됨(예: 다른 가수의 커버 무대인데 원곡 아티스트의 그룹 카드에 노출됨).
@@ -9906,6 +10030,102 @@ document.getElementById('wonkok-scan-btn')?.addEventListener('click',_wonkokScan
 document.getElementById('wonkok-overlay')?.addEventListener('click',e=>{if(e.target===e.currentTarget)e.currentTarget.classList.remove('open');});
 document.getElementById('wonkok-close')?.addEventListener('click',()=>document.getElementById('wonkok-overlay').classList.remove('open'));
 document.getElementById('sp-wonkok-btn')?.addEventListener('click',()=>{document.getElementById('wonkok-overlay').classList.add('open');});
+document.getElementById('sp-groupmig-btn')?.addEventListener('click',_ytMigrateGroupName);
+
+// ── "그룹 멤버 안 나옴(무관)" 목록 ── content_flag='무관'인 영상 전체를 그냥 나열해서 검토하게 함.
+// 원래 취지(같은 그룹 채널인데 멤버 자동인식만 틀림)를 벗어나, 완전히 다른 그룹 영상을 억지로 이
+// 플래그로 우회 처리한 경우를 찾아내기 위한 목록 — 각 항목의 ✎로 편집 모달을 열면 이제 "소속 그룹"
+// 필드로 바로 옮길 수 있음(원래 회피용으로 쓰던 조합 대신 근본적으로 고치는 용도).
+let _nomemRows=[];
+let _nomemLoading=false;
+async function _nomemLoad(){
+  if(_nomemLoading||!sb)return;
+  _nomemLoading=true;
+  const statusEl=document.getElementById('nomem-status');
+  document.getElementById('nomem-toolbar').style.display='none';
+  document.getElementById('nomem-list').innerHTML='';
+  try{
+    statusEl.textContent='조회 중…';
+    const{data:rows,error}=await _sbFetchAll(()=>sb.from(_YT_TABLE)
+      .select('id,title,group_ko,members,with_members,thumb')
+      .eq('content_flag','무관')
+      .order('id'));
+    if(error){statusEl.textContent='조회 실패: '+error.message;return;}
+    _nomemRows=rows||[];
+    statusEl.textContent=`총 ${_nomemRows.length}개`;
+    _renderNomemList();
+  }catch(e){
+    statusEl.textContent='오류: '+e.message;
+  }finally{
+    _nomemLoading=false;
+  }
+}
+function _renderNomemList(){
+  const listEl=document.getElementById('nomem-list');
+  const toolbarEl=document.getElementById('nomem-toolbar');
+  listEl.innerHTML='';
+  if(!_nomemRows.length){
+    listEl.innerHTML='<div id="nomem-empty">무관 처리된 영상이 없어요</div>';
+    toolbarEl.style.display='none';
+    return;
+  }
+  toolbarEl.style.display='flex';
+  document.getElementById('nomem-select-all').checked=false;
+  _nomemRows.forEach(v=>{
+    const item=document.createElement('div');item.className='nm-item';item.dataset.vidId=v.id;
+    const cb=document.createElement('input');cb.type='checkbox';
+    cb.addEventListener('change',_updateNomemCount);
+    const img=document.createElement('img');img.className='nm-thumb';img.src=v.thumb||'';img.loading='lazy';
+    const info=document.createElement('div');info.className='nm-info';
+    const grp=document.createElement('div');grp.className='nm-group';
+    const withTxt=[...(v.members||[]),...(v.with_members||[])].join(', ');
+    grp.innerHTML=`<b>${v.group_ko||''}</b>${withTxt?' · '+withTxt:''}`;
+    const ttl=document.createElement('div');ttl.className='nm-title';ttl.textContent=v.title||'';
+    info.appendChild(grp);info.appendChild(ttl);
+    const editBtn=document.createElement('button');editBtn.className='vid-edit-btn';editBtn.type='button';editBtn.textContent='✎';
+    editBtn.title='편집(소속 그룹 변경 가능)';
+    editBtn.addEventListener('click',e=>{e.stopPropagation();_openVidTagModal({id:v.id,title:v.title},v.group_ko);});
+    item.appendChild(cb);item.appendChild(img);item.appendChild(info);item.appendChild(editBtn);
+    listEl.appendChild(item);
+  });
+  _updateNomemCount();
+}
+function _updateNomemCount(){
+  const total=_nomemRows.length;
+  const checked=document.querySelectorAll('#nomem-list .nm-item input[type=checkbox]:checked').length;
+  document.getElementById('nomem-count').textContent=`${checked}/${total}개 선택됨`;
+  const applyBtn=document.getElementById('nomem-apply-btn');
+  if(applyBtn)applyBtn.disabled=checked===0;
+  const allEl=document.getElementById('nomem-select-all');
+  if(allEl)allEl.checked=checked===total&&total>0;
+}
+document.getElementById('nomem-select-all')?.addEventListener('change',e=>{
+  document.querySelectorAll('#nomem-list .nm-item input[type=checkbox]').forEach(cb=>{cb.checked=e.target.checked;});
+  _updateNomemCount();
+});
+document.getElementById('nomem-apply-btn')?.addEventListener('click',async()=>{
+  if(!sb)return;
+  const btn=document.getElementById('nomem-apply-btn');
+  const items=[...document.querySelectorAll('#nomem-list .nm-item')].filter(el=>el.querySelector('input[type=checkbox]').checked);
+  const ids=items.map(el=>el.dataset.vidId).filter(Boolean);
+  if(!ids.length)return;
+  btn.disabled=true;btn.textContent='처리 중…';
+  const{error}=await sb.from(_YT_TABLE).update({content_flag:null}).in('id',ids);
+  if(error){btn.disabled=false;btn.textContent='선택 항목 무관 해제';alert('오류: '+error.message);return;}
+  const idSet=new Set(ids);
+  _nomemRows=_nomemRows.filter(v=>!idSet.has(v.id));
+  items.forEach(el=>el.remove());
+  document.getElementById('nomem-status').textContent=`${ids.length}개 무관 해제 완료 — 남은 ${_nomemRows.length}개`;
+  btn.textContent='선택 항목 무관 해제';
+  _updateNomemCount();
+  if(!_nomemRows.length)_renderNomemList();
+});
+document.getElementById('nomem-overlay')?.addEventListener('click',e=>{if(e.target===e.currentTarget)e.currentTarget.classList.remove('open');});
+document.getElementById('nomem-close')?.addEventListener('click',()=>document.getElementById('nomem-overlay').classList.remove('open'));
+document.getElementById('sp-nomem-btn')?.addEventListener('click',()=>{
+  document.getElementById('nomem-overlay').classList.add('open');
+  _nomemLoad();
+});
 
 // ── 멤버+콜라보 자동 태깅(미태깅분) — 2026-07-21에 스크래치패드 스크립트로 1회성으로 돌렸던
 // 매칭 로직(성+이름 실명표기/조사/해시태그/영문 토큰) 그대로 앱에 내장. 2026-07-29에 콜라보
@@ -10167,6 +10387,13 @@ function _m2NameVariants(a){
   return variants;
 }
 // 제목에서 그룹/멤버 매칭. 토큰 경계 기준으로 GROUPS/ARTISTS 데이터와 대조.
+// 그룹명이 실제로는 다른 유명한 곡/개념과 완전히 겹쳐서 오매칭 위험이 큰 경우 — 발견될 때마다 여기 추가.
+// 슈퍼노바(초신성, 2007년 데뷔 1세대 보이그룹)의 영문명 "Supernova"가 에스파의 2024년 타이틀곡 "Supernova"와
+// 글자 그대로 같아서, 그 곡 커버·직캠·챌린지 영상이 대량으로 이 그룹에 잘못 태깅될 위험이 있음 —
+// 제목에 aespa/에스파가 같이 있으면 이 그룹으로는 매칭하지 않는다.
+const _GROUP_TITLE_CONFLICT_EXCLUDE={
+  '슈퍼노바(초신성)':[/aespa/i,/에스파/],
+};
 function _m2ParseTitle(rawTitle){
   // "[하이라이트]"는 그룹명이 아니라 "요약본" 의미의 영상 태그로 흔히 쓰여 그룹 하이라이트로 오매칭되기 쉬움 —
   // 매칭 전에 이 태그 표기(대괄호/괄호/꺾쇠)를 제거해 그룹명 토큰 매칭에서 아예 배제한다.
@@ -10186,6 +10413,8 @@ function _m2ParseTitle(rawTitle){
   const seen=new Set();
   for(const{ko,tokens}of groupsSorted){
     if(seen.has(ko))continue;
+    const conflicts=_GROUP_TITLE_CONFLICT_EXCLUDE[ko];
+    if(conflicts&&conflicts.some(re=>re.test(title)))continue;
     if(tokens.some(t=>hit(t))){matchedGroupKos.push(ko);seen.add(ko);}
   }
   // 유닛명(V8, GOT the beat 등) 매칭 — 유닛 자체는 그룹이 아니라, 실제 소속 그룹/멤버로 나눠 합류시킴.
@@ -11550,6 +11779,44 @@ function _renderVidTagChips(){
     chipsEl.appendChild(chip);
   });
 }
+// 소속 그룹 드롭다운(datalist) 채우기 — GROUPS는 런타임에 안 바뀌므로 모달을 처음 열 때 한 번만 채운다.
+let _vidTagGroupListBuilt=false;
+function _ensureVidTagGroupList(){
+  if(_vidTagGroupListBuilt)return;
+  _vidTagGroupListBuilt=true;
+  const dl=document.getElementById('vid-tag-group-list');
+  dl.innerHTML=Object.keys(GROUPS).sort((a,b)=>a.localeCompare(b,'ko')).map(ko=>`<option value="${ko}"></option>`).join('');
+}
+// 체크박스 목록을 gko 기준으로 새로 그린다 — 단일/일괄 모달이 공용으로 쓰고, "소속 그룹" 필드를 완전히
+// 다른 그룹으로 바꿨을 때도 이걸로 다시 그려서 새 그룹의 멤버 목록이 뜨게 한다(그동안 체크했던 건
+// 어차피 잘못된 그룹 기준이었으므로 전부 미체크로 리셋).
+let _vidTagRenderedGko=null;
+function _renderVidTagMemberCheckboxes(gko,{soloAutoCheck=false,unitGuess=null,savedMembers=null}={}){
+  _vidTagRenderedGko=gko;
+  const membersEl=document.getElementById('vid-tag-members');
+  membersEl.innerHTML='';
+  const groupMembers=ARTISTS.filter(a=>_artistGroups(a).some(g=>g.ko===gko));
+  groupMembers.forEach(a=>{
+    const label=document.createElement('label');
+    label.className='vid-tag-mem';
+    const cb=document.createElement('input');
+    cb.type='checkbox';cb.value=a.name.ko;
+    if(soloAutoCheck||unitGuess?.has(a.name.ko)||savedMembers?.has(a.name.ko))cb.checked=true;
+    label.appendChild(cb);
+    label.appendChild(document.createTextNode(a.name.ko));
+    membersEl.appendChild(label);
+  });
+}
+document.getElementById('vid-tag-members-all')?.addEventListener('click',e=>{
+  e.stopPropagation();
+  document.querySelectorAll('#vid-tag-members input[type=checkbox]').forEach(cb=>{cb.checked=true;});
+});
+document.getElementById('vid-tag-group-ko')?.addEventListener('change',e=>{
+  const gko=e.target.value.trim();
+  if(!gko||!GROUPS[gko]||gko===_vidTagRenderedGko)return;
+  // 완전히 다른 그룹으로 옮기는 경우라, 기존 members 체크는 잘못된 그룹 기준이므로 새 그룹 멤버로만 다시 그림
+  _renderVidTagMemberCheckboxes(gko);
+});
 // 관리자가 그리드에서 여러 영상을 선택(#admin-bulk-bar "편집")했을 때 쓰는 일괄 편집 모드.
 // 단일 편집과 같은 모달을 재사용하되, 특정 영상 하나의 기존 태깅값을 불러오지 않고(영상마다 다를 수
 // 있으므로) 빈 상태에서 시작 — 저장 시 "멤버/콜라보 태그도 덮어쓰기" 체크 여부로 members/with_members/
@@ -11565,18 +11832,9 @@ function _openVidTagModalBulk(ids,ko){
   const overwriteRow=document.getElementById('vid-tag-bulk-overwrite-row');
   overwriteRow.style.display='flex';
   document.getElementById('vid-tag-bulk-overwrite').checked=false;
-  const membersEl=document.getElementById('vid-tag-members');
-  membersEl.innerHTML='';
-  const groupMembers=ARTISTS.filter(a=>_artistGroups(a).some(g=>g.ko===ko));
-  groupMembers.forEach(a=>{
-    const label=document.createElement('label');
-    label.className='vid-tag-mem';
-    const cb=document.createElement('input');
-    cb.type='checkbox';cb.value=a.name.ko;
-    label.appendChild(cb);
-    label.appendChild(document.createTextNode(a.name.ko));
-    membersEl.appendChild(label);
-  });
+  _ensureVidTagGroupList();
+  document.getElementById('vid-tag-group-ko').value=ko;
+  _renderVidTagMemberCheckboxes(ko);
   document.getElementById('vid-tag-with-search').value='';
   document.getElementById('vid-tag-with-results').innerHTML='';
   _renderVidTagChips();
@@ -11603,8 +11861,8 @@ async function _openVidTagModal(v,ko){
   document.getElementById('vid-tag-bulk-overwrite-row').style.display='none';
   document.getElementById('vid-tag-hide').style.display='';
   document.getElementById('vid-tag-vidtitle').textContent=_cleanTitle(v.title);
-  const membersEl=document.getElementById('vid-tag-members');
-  membersEl.innerHTML='';
+  _ensureVidTagGroupList();
+  document.getElementById('vid-tag-group-ko').value=ko;
   const groupMembers=ARTISTS.filter(a=>_artistGroups(a).some(g=>g.ko===ko));
   // 솔로 아티스트(체크박스가 본인 하나뿐)는 안 눌러도 항상 본인 출연이 자명하므로 기본 체크 — 실수로 안 누르면
   // members가 비어서 연결 카드용 콜라보 쿼리(ownQ)가 이 영상 자체를 못 찾는 문제가 있었음.
@@ -11612,16 +11870,7 @@ async function _openVidTagModal(v,ko){
   // 세븐틴 "브이에잇"처럼 제목에 프로젝트 유닛명만 있고 개별 멤버 이름은 없는 자체 채널 영상은,
   // _m2ParseTitle(외부 채널 자동 태깅)과 별개로 이 모달에서도 유닛 멤버를 미리 체크해준다.
   const unitGuess=_unitMembersFromTitle(v.title,ko);
-  groupMembers.forEach(a=>{
-    const label=document.createElement('label');
-    label.className='vid-tag-mem';
-    const cb=document.createElement('input');
-    cb.type='checkbox';cb.value=a.name.ko;
-    if(_soloChannel||unitGuess.has(a.name.ko))cb.checked=true;
-    label.appendChild(cb);
-    label.appendChild(document.createTextNode(a.name.ko));
-    membersEl.appendChild(label);
-  });
+  _renderVidTagMemberCheckboxes(ko,{soloAutoCheck:_soloChannel,unitGuess});
   document.getElementById('vid-tag-with-search').value='';
   document.getElementById('vid-tag-with-results').innerHTML='';
   _renderVidTagChips();
@@ -11637,7 +11886,9 @@ async function _openVidTagModal(v,ko){
       // 아직 아무도 태깅 안 된(=관리자가 손댄 적 없는) 영상일 때만 유닛 추정치를 기본값으로 유지 —
       // 이미 저장된 태깅이 있으면(유닛 멤버를 일부러 뺐을 수도 있으니) DB 값을 그대로 따른다.
       const useGuess=savedMembers.size===0&&!_soloChannel;
-      membersEl.querySelectorAll('input[type=checkbox]').forEach(cb=>{
+      // 응답 오는 사이 관리자가 "소속 그룹"을 다른 그룹으로 이미 바꿨으면(체크박스가 새 그룹 기준으로
+      // 다시 그려진 상태), 이 예전 그룹 기준 저장값을 덮어쓰지 않는다.
+      if(_vidTagRenderedGko===ko)document.querySelectorAll('#vid-tag-members input[type=checkbox]').forEach(cb=>{
         cb.checked=_soloChannel||savedMembers.has(cb.value)||(useGuess&&unitGuess.has(cb.value));
       });
       _vidTagWithSelected=(data.with_members||[]).map(str=>{
@@ -11676,6 +11927,11 @@ function _closeVidTagModal(){
   // (편집으로 복원됐거나 다른 조건이 바뀌면 목록에서 바로 빠져야 하므로).
   if(document.getElementById('hidden-vids-overlay')?.classList.contains('open')){
     _loadHiddenVids(document.getElementById('hidden-vids-search')?.value||'');
+  }
+  // 무관 목록에서 연필 버튼으로 열었을 수 있으니, 그 목록이 열려있으면 최신 상태로 다시 불러온다
+  // (소속 그룹을 옮기거나 무관 플래그를 지웠으면 목록에서 바로 빠져야 하므로).
+  if(document.getElementById('nomem-overlay')?.classList.contains('open')){
+    _nomemLoad();
   }
 }
 document.getElementById('vid-tag-cancel').addEventListener('click',e=>{e.stopPropagation();_closeVidTagModal();});
@@ -11739,6 +11995,15 @@ document.getElementById('vid-tag-save').addEventListener('click',async e=>{
   const nomemEl=document.getElementById('vid-tag-flag-nomem');
   const contentFlag=etcEl?.checked?'기타':extEl?.checked?'외부인':nomemEl?.checked?'무관':null;
   const{ko}=_vidTagTarget;
+  // 소속 그룹(group_ko) 자체를 완전히 다른 그룹으로 옮기는 경우 — 자동 태깅이 아예 엉뚱한 그룹으로
+  // 잘못 물었을 때(예: "원곡: X그룹" 오태깅) "그룹멤버안나옴+타그룹멤버 크로스태그"로 우회하지 않고
+  // 여기서 바로 소속을 바로잡을 수 있게 함.
+  const groupKoInput=(document.getElementById('vid-tag-group-ko')?.value||'').trim();
+  let newGko=null;
+  if(groupKoInput&&groupKoInput!==ko){
+    if(!GROUPS[groupKoInput]){statusEl.textContent=`"${groupKoInput}"는 등록된 그룹명이 아니에요(정확한 그룹명을 입력해주세요)`;return;}
+    newGko=groupKoInput;
+  }
   statusEl.textContent='저장 중…';
   if(_vidTagBulkIds){
     // 일괄 편집: 손댄 항목만 반영 — "덮어쓰기" 체크 안 하면 members/with_members/with_groups는 그대로 두고,
@@ -11750,6 +12015,7 @@ document.getElementById('vid-tag-save').addEventListener('click',async e=>{
     if(overwriteTags){updatePayload.members=members;updatePayload.with_members=withMembers;updatePayload.with_groups=withGroups;}
     if(category)updatePayload.category=category;
     if(etcEl?.checked||extEl?.checked||nomemEl?.checked)updatePayload.content_flag=contentFlag;
+    if(newGko)updatePayload.group_ko=newGko;
     if(!Object.keys(updatePayload).length){statusEl.textContent='변경할 항목을 선택해주세요';return;}
     const ids=_vidTagBulkIds;
     const{error}=await sb.from(_YT_TABLE).update(updatePayload).in('id',ids);
@@ -11761,6 +12027,7 @@ document.getElementById('vid-tag-save').addEventListener('click',async e=>{
       _gcChVidCtl.reloadIfShowing(ko);
       _ttChVidCtl.reloadIfShowing(ko);
       withGroups.forEach(gko=>_gcChVidCtl.reloadIfShowing(gko));
+      if(newGko){_gcChVidCtl.reloadIfShowing(newGko);_ttChVidCtl.reloadIfShowing(newGko);}
       _refreshOpenCardCollab();
     },500);
     return;
@@ -11768,6 +12035,7 @@ document.getElementById('vid-tag-save').addEventListener('click',async e=>{
   const{id}=_vidTagTarget;
   const updatePayload={members,with_members:withMembers,with_groups:withGroups,content_flag:contentFlag};
   if(category!==undefined)updatePayload.category=category||null;
+  if(newGko)updatePayload.group_ko=newGko;
   const{error}=await sb.from(_YT_TABLE).update(updatePayload).eq('id',id);
   if(error){statusEl.textContent='저장 실패: '+error.message;return;}
   statusEl.textContent='저장됨';
@@ -11778,6 +12046,8 @@ document.getElementById('vid-tag-save').addEventListener('click',async e=>{
     _ttChVidCtl.reloadIfShowing(ko);
     // with_groups로 새로 태깅된 그룹의 카드가 지금 열려있다면(예: 아이유 팔레트 뉴진스편 → 뉴진스 그룹 카드), 거기도 갱신
     withGroups.forEach(gko=>_gcChVidCtl.reloadIfShowing(gko));
+    // 소속 그룹을 실제로 옮겼다면 새 그룹 카드도 갱신(그래야 이 영상이 새 소속 카드에 바로 나타남)
+    if(newGko){_gcChVidCtl.reloadIfShowing(newGko);_ttChVidCtl.reloadIfShowing(newGko);}
     _refreshOpenCardCollab(); // with 태그 추가/변경으로 "연결" 버튼 노출 여부가 바뀌었을 수 있으니 갱신
   },500);
 });
