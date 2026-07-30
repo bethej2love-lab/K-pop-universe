@@ -11551,6 +11551,54 @@ function _makeChVidController(contId){
     if(state.gen===targetGen&&scroller)scroller.scrollTop=prevScrollTop;
   }
 
+  // 태깅 모달에서 영상 하나만 편집·저장했을 때 쓰는 "부분 갱신" — reloadIfShowing처럼 그리드를 통째로
+  // 재조회하지 않고, 지금 이 그리드에 이미 떠있는 그 카드 하나만 직접 고친다(제목·함께한 멤버 텍스트만
+  // 바꿔치기, 네트워크 요청 없음). 더 이상 지금 필터/탭 조건에 안 맞게 됐으면(멤버 체크 해제, 소속 변경,
+  // 노출제외/무관/기타 처리 등) 그 카드만 바로 제거 — 기존 "일괄 노출 제외"가 이미 하던 것과 같은 방식.
+  // "콘텐츠별 보기"는 그리드가 content_formats 값을 안 들고 있어서 클라이언트에서 조건을 재확인할 수
+  // 없으므로 이때만 예외적으로 reloadIfShowing으로 폴백한다.
+  function patchItem(ko,id,newRow){
+    if(state.ko!==ko)return;
+    if(state.viewMode==='format'){reloadIfShowing(ko);return;}
+    const cont=document.getElementById(contId);
+    const el=cont?.querySelector(`.gc-ch-item[data-vid-id="${id}"]`);
+    if(!el)return; // 지금 이 그리드에 안 떠있던 영상이면(원래 안 보이던 것) 손댈 게 없음
+    const members=newRow.members||[],withMembers=newRow.with_members||[],withGroups=newRow.with_groups||[];
+    const flag=newRow.content_flag;
+    let stillQualifies=true;
+    if(flag==='hidden'||flag==='무관')stillQualifies=false;
+    if(state.memberKo&&flag==='기타')stillQualifies=false;
+    if(stillQualifies){
+      if(state.memberKo&&state.onlyMe){
+        stillQualifies=members.length===1&&members[0]===state.memberKo;
+      }else if(state.memberKo){
+        stillQualifies=members.length===0||members.includes(state.memberKo)||withMembers.includes(`${state.memberKo}(${ko})`);
+      }else{
+        stillQualifies=members.length===0||withGroups.includes(ko);
+      }
+    }
+    if(stillQualifies&&state.filter!=='all'&&newRow.category!==state.filter)stillQualifies=false;
+    // 카드 비율(가로/세로)이 바뀌면 2열 짝맞춤이 어긋날 수 있어 안전하게 제거 쪽으로 처리
+    if(stillQualifies&&el.classList.contains('is-short')!==(newRow.category==='short'))stillQualifies=false;
+    if(!stillQualifies){el.remove();return;}
+    const titleEl=el.querySelector('.tv-sm-title');
+    if(titleEl){
+      const clean=_cleanTitle(newRow.title||'');
+      titleEl.textContent=clean;
+      addMarquee(titleEl);
+      const img=el.querySelector('.gc-ch-thumb');
+      if(img)img.alt=clean;
+    }
+    const withList=_buildGridWithList({members,with_members:withMembers,with_groups:withGroups},ko,state.memberKo);
+    const newLine=_makeWithLine({t:newRow.title,with:withList},{groupKo:ko});
+    const oldLine=el.querySelector('.tv-with-line');
+    if(oldLine&&newLine)oldLine.replaceWith(newLine);
+    else if(oldLine&&!newLine)oldLine.remove();
+    else if(!oldLine&&newLine){
+      const anchor=el.querySelector('.scrap-btn')||el.querySelector('.bookmark-btn');
+      if(anchor)anchor.before(newLine);else el.appendChild(newLine);
+    }
+  }
   // 멤버 카드의 유닛 태그(V8 등) 클릭 시 호출 — 같은 유닛을 다시 누르면 해제(토글), 다른 유닛을 누르면 교체.
   function setUnitFilter(unitName){
     if(!state.ko)return;
@@ -11559,7 +11607,7 @@ function _makeChVidController(contId){
     load(state.ko,true);
   }
 
-  return{build,reloadIfShowing,setUnitFilter};
+  return{build,reloadIfShowing,patchItem,setUnitFilter};
 }
 const _gcChVidCtl=_makeChVidController('gc-ch-vid');
 const _ttChVidCtl=_makeChVidController('tv');
@@ -12191,14 +12239,16 @@ document.getElementById('vid-tag-save').addEventListener('click',async e=>{
   const{error}=await sb.from(_YT_TABLE).update(updatePayload).eq('id',id);
   if(error){statusEl.textContent='저장 실패: '+error.message;return;}
   statusEl.textContent='저장됨';
+  const patchedRow={title:document.getElementById('vid-tag-vidtitle').textContent,members,with_members:withMembers,with_groups:withGroups,content_flag:contentFlag,category:category||null};
   setTimeout(()=>{
     _closeVidTagModal();
-    // members가 채워졌으니 그 영상을 보여주고 있던 채널 섹션(그룹 카드든, 솔로 멤버 카드든)에서 자동으로 빠짐
-    _gcChVidCtl.reloadIfShowing(ko);
-    _ttChVidCtl.reloadIfShowing(ko);
-    // with_groups로 새로 태깅된 그룹의 카드가 지금 열려있다면(예: 아이유 팔레트 뉴진스편 → 뉴진스 그룹 카드), 거기도 갱신
+    // 원래 소속(ko) 그리드는 재조회 없이 이 카드 하나만 직접 고침(제목/함께한 멤버 갱신 또는 조건 안 맞으면
+    // 카드만 제거) — 매번 그리드를 통째로 다시 불러오던 걸 없애서 저장 후 로딩 지연/화면 깜빡임을 없앰.
+    _gcChVidCtl.patchItem(ko,id,patchedRow);
+    _ttChVidCtl.patchItem(ko,id,patchedRow);
+    // with_groups로 새로 태깅된 그룹이나 소속을 통째로 옮긴 새 그룹은, 그 카드에 이 영상이 "처음 나타나는"
+    // 경우라 부분 갱신으로는 못 채워 넣음 — 이 두 케이스만 예외적으로 재조회.
     withGroups.forEach(gko=>_gcChVidCtl.reloadIfShowing(gko));
-    // 소속 그룹을 실제로 옮겼다면 새 그룹 카드도 갱신(그래야 이 영상이 새 소속 카드에 바로 나타남)
     if(newGko){_gcChVidCtl.reloadIfShowing(newGko);_ttChVidCtl.reloadIfShowing(newGko);}
     _refreshOpenCardCollab(); // with 태그 추가/변경으로 "연결" 버튼 노출 여부가 바뀌었을 수 있으니 갱신
   },500);

@@ -5825,13 +5825,16 @@
       148,
       185
     ],
-    "bday": "2004.11.25",
+    "bday": "2002.03.20",
     "nat": {
       "ko": "일본",
       "en": "JP"
     },
     "sparkle": false,
-    "songs": []
+    "songs": [],
+    "links": {
+      "namu": "https://namu.wiki/w/루카(BABYMONSTER)"
+    }
   },
   {
     "name": {
@@ -5854,18 +5857,21 @@
       148,
       185
     ],
-    "bday": "2004.03.03",
+    "bday": "2005.08.26",
     "nat": {
       "ko": "태국",
       "en": "TH"
     },
     "sparkle": false,
-    "songs": []
+    "songs": [],
+    "links": {
+      "namu": "https://namu.wiki/w/파리타"
+    }
   },
   {
     "name": {
       "ko": "아사",
-      "en": "Ahyeon"
+      "en": "Asa"
     },
     "group": {
       "ko": "베이비몬스터",
@@ -5883,13 +5889,16 @@
       148,
       185
     ],
-    "bday": "2006.04.03",
+    "bday": "2006.04.17",
     "nat": {
-      "ko": "한국",
-      "en": "KR"
+      "ko": "일본",
+      "en": "JP"
     },
     "sparkle": false,
-    "songs": []
+    "songs": [],
+    "links": {
+      "namu": "https://namu.wiki/w/아사(BABYMONSTER)"
+    }
   },
   {
     "name": {
@@ -5912,13 +5921,16 @@
       148,
       185
     ],
-    "bday": "2005.01.06",
+    "bday": "2009.02.17",
     "nat": {
-      "ko": "한국",
-      "en": "KR"
+      "ko": "태국",
+      "en": "TH"
     },
     "sparkle": false,
-    "songs": []
+    "songs": [],
+    "links": {
+      "namu": "https://namu.wiki/w/치키타"
+    }
   },
   {
     "name": {
@@ -5941,13 +5953,16 @@
       148,
       185
     ],
-    "bday": "2004.09.28",
+    "bday": "2007.10.17",
     "nat": {
       "ko": "한국",
       "en": "KR"
     },
     "sparkle": false,
-    "songs": []
+    "songs": [],
+    "links": {
+      "namu": "https://namu.wiki/w/라미(BABYMONSTER)"
+    }
   },
   {
     "name": {
@@ -5970,18 +5985,21 @@
       148,
       185
     ],
-    "bday": "2007.04.22",
+    "bday": "2008.08.14",
     "nat": {
       "ko": "한국",
       "en": "KR"
     },
     "sparkle": false,
-    "songs": []
+    "songs": [],
+    "links": {
+      "namu": "https://namu.wiki/w/로라(BABYMONSTER)"
+    }
   },
   {
     "name": {
-      "ko": "하나",
-      "en": "Hana"
+      "ko": "아현",
+      "en": "Ahyeon"
     },
     "group": {
       "ko": "베이비몬스터",
@@ -5999,13 +6017,16 @@
       148,
       185
     ],
-    "bday": "2007.04.06",
+    "bday": "2007.04.11",
     "nat": {
       "ko": "한국",
       "en": "KR"
     },
     "sparkle": false,
-    "songs": []
+    "songs": [],
+    "links": {
+      "namu": "https://namu.wiki/w/아현"
+    }
   },
   {
     "name": {
@@ -24912,6 +24933,87 @@
   },
   {
     "name": {
+      "ko": "박재석",
+      "en": "Park Jaeseok"
+    },
+    "group": {
+      "ko": "골든차일드",
+      "en": "Golden Child"
+    },
+    "co": "울림엔터테인먼트",
+    "active": false,
+    "color": [
+      225,
+      185,
+      80
+    ],
+    "bday": "1995.11.20",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "sparkle": false,
+    "songs": [],
+    "links": {
+      "namu": "https://namu.wiki/w/%EB%B0%95%EC%9E%AC%EC%84%9D(1995)"
+    }
+  },
+  {
+    "name": {
+      "ko": "김지범",
+      "en": "Kim Jibeom"
+    },
+    "group": {
+      "ko": "골든차일드",
+      "en": "Golden Child"
+    },
+    "co": "울림엔터테인먼트",
+    "active": false,
+    "color": [
+      225,
+      185,
+      80
+    ],
+    "bday": "1999.02.03",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "sparkle": false,
+    "songs": [],
+    "links": {
+      "namu": "https://namu.wiki/w/%EA%B9%80%EC%A7%80%EB%B2%94"
+    }
+  },
+  {
+    "name": {
+      "ko": "최보민",
+      "en": "Choi Bomin"
+    },
+    "group": {
+      "ko": "골든차일드",
+      "en": "Golden Child"
+    },
+    "co": "울림엔터테인먼트",
+    "active": false,
+    "color": [
+      225,
+      185,
+      80
+    ],
+    "bday": "2000.08.24",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "sparkle": false,
+    "songs": [],
+    "links": {
+      "namu": "https://namu.wiki/w/%EC%B5%9C%EB%B3%B4%EB%AF%BC"
+    }
+  },
+  {
+    "name": {
       "ko": "JR",
       "en": "JR"
     },
@@ -26023,7 +26125,7 @@
       "en": "Yoonhak"
     },
     "group": {
-      "ko": "슈퍼노바",
+      "ko": "슈퍼노바(초신성)",
       "en": "Supernova"
     },
     "co": "SV엔터테인먼트",
@@ -26050,7 +26152,7 @@
       "en": "Sungje"
     },
     "group": {
-      "ko": "슈퍼노바",
+      "ko": "슈퍼노바(초신성)",
       "en": "Supernova"
     },
     "co": "SV엔터테인먼트",
@@ -26077,7 +26179,7 @@
       "en": "Kwangsoo"
     },
     "group": {
-      "ko": "슈퍼노바",
+      "ko": "슈퍼노바(초신성)",
       "en": "Supernova"
     },
     "co": "SV엔터테인먼트",
@@ -26104,7 +26206,7 @@
       "en": "Jihyuk"
     },
     "group": {
-      "ko": "슈퍼노바",
+      "ko": "슈퍼노바(초신성)",
       "en": "Supernova"
     },
     "co": "SV엔터테인먼트",
@@ -26131,7 +26233,7 @@
       "en": "Geonil"
     },
     "group": {
-      "ko": "슈퍼노바",
+      "ko": "슈퍼노바(초신성)",
       "en": "Supernova"
     },
     "co": "SV엔터테인먼트",
@@ -31088,6 +31190,1809 @@
     "nat": {
       "ko": "한국",
       "en": "KR"
+    }
+  },
+  {
+    "name": {
+      "ko": "건일",
+      "en": "Geonil"
+    },
+    "group": {
+      "ko": "엑스디너리 히어로즈",
+      "en": "Xdinary Heroes"
+    },
+    "co": "JYP엔터테인먼트",
+    "active": true,
+    "color": [
+      180,
+      60,
+      70
+    ],
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "sparkle": false,
+    "songs": [],
+    "bday": "1998.07.24",
+    "links": {
+      "namu": "https://namu.wiki/w/건일(Xdinary Heroes)"
+    }
+  },
+  {
+    "name": {
+      "ko": "정수",
+      "en": "Jeongsu"
+    },
+    "group": {
+      "ko": "엑스디너리 히어로즈",
+      "en": "Xdinary Heroes"
+    },
+    "co": "JYP엔터테인먼트",
+    "active": true,
+    "color": [
+      180,
+      60,
+      70
+    ],
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "sparkle": false,
+    "songs": [],
+    "bday": "2001.06.26",
+    "links": {
+      "namu": "https://namu.wiki/w/정수(Xdinary Heroes)"
+    }
+  },
+  {
+    "name": {
+      "ko": "가온",
+      "en": "Gaon"
+    },
+    "group": {
+      "ko": "엑스디너리 히어로즈",
+      "en": "Xdinary Heroes"
+    },
+    "co": "JYP엔터테인먼트",
+    "active": true,
+    "color": [
+      180,
+      60,
+      70
+    ],
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "sparkle": false,
+    "songs": [],
+    "bday": "2002.01.14",
+    "links": {
+      "namu": "https://namu.wiki/w/가온(Xdinary Heroes)"
+    }
+  },
+  {
+    "name": {
+      "ko": "O.de",
+      "en": "O.de"
+    },
+    "group": {
+      "ko": "엑스디너리 히어로즈",
+      "en": "Xdinary Heroes"
+    },
+    "co": "JYP엔터테인먼트",
+    "active": true,
+    "color": [
+      180,
+      60,
+      70
+    ],
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "sparkle": false,
+    "songs": [],
+    "bday": "2002.06.11",
+    "links": {
+      "namu": "https://namu.wiki/w/O.de"
+    }
+  },
+  {
+    "name": {
+      "ko": "Jun Han",
+      "en": "Jun Han"
+    },
+    "group": {
+      "ko": "엑스디너리 히어로즈",
+      "en": "Xdinary Heroes"
+    },
+    "co": "JYP엔터테인먼트",
+    "active": true,
+    "color": [
+      180,
+      60,
+      70
+    ],
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "sparkle": false,
+    "songs": [],
+    "bday": "2002.08.18",
+    "links": {
+      "namu": "https://namu.wiki/w/Jun Han"
+    }
+  },
+  {
+    "name": {
+      "ko": "주연",
+      "en": "Juyeon"
+    },
+    "group": {
+      "ko": "엑스디너리 히어로즈",
+      "en": "Xdinary Heroes"
+    },
+    "co": "JYP엔터테인먼트",
+    "active": true,
+    "color": [
+      180,
+      60,
+      70
+    ],
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "sparkle": false,
+    "songs": [],
+    "bday": "2002.09.12",
+    "links": {
+      "namu": "https://namu.wiki/w/주연(Xdinary Heroes)"
+    }
+  },
+  {
+    "name": {
+      "ko": "차오루",
+      "en": "Chaoru"
+    },
+    "group": {
+      "ko": "피에스타",
+      "en": "FIESTAR"
+    },
+    "co": "로엔엔터테인먼트",
+    "active": true,
+    "color": [
+      220,
+      150,
+      60
+    ],
+    "nat": {
+      "ko": "중국",
+      "en": "CN"
+    },
+    "sparkle": false,
+    "songs": [],
+    "bday": "1987.08.30",
+    "links": {
+      "namu": "https://namu.wiki/w/차오루"
+    }
+  },
+  {
+    "name": {
+      "ko": "김재이",
+      "en": "Kim Jaei"
+    },
+    "group": {
+      "ko": "피에스타",
+      "en": "FIESTAR"
+    },
+    "co": "로엔엔터테인먼트",
+    "active": true,
+    "color": [
+      220,
+      150,
+      60
+    ],
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "sparkle": false,
+    "songs": [],
+    "bday": "1989.09.05",
+    "links": {
+      "namu": "https://namu.wiki/w/김재이"
+    }
+  },
+  {
+    "name": {
+      "ko": "린지",
+      "en": "Linzy"
+    },
+    "group": {
+      "ko": "피에스타",
+      "en": "FIESTAR"
+    },
+    "co": "로엔엔터테인먼트",
+    "active": true,
+    "color": [
+      220,
+      150,
+      60
+    ],
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "sparkle": false,
+    "songs": [],
+    "bday": "1989.10.22",
+    "links": {
+      "namu": "https://namu.wiki/w/린지(가수)"
+    }
+  },
+  {
+    "name": {
+      "ko": "YEL",
+      "en": "YEL"
+    },
+    "group": {
+      "ko": "피에스타",
+      "en": "FIESTAR"
+    },
+    "co": "로엔엔터테인먼트",
+    "active": true,
+    "color": [
+      220,
+      150,
+      60
+    ],
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "sparkle": false,
+    "songs": [],
+    "bday": "1990.08.10",
+    "links": {
+      "namu": "https://namu.wiki/w/YEL"
+    }
+  },
+  {
+    "name": {
+      "ko": "예지",
+      "en": "Yezi"
+    },
+    "group": {
+      "ko": "피에스타",
+      "en": "FIESTAR"
+    },
+    "co": "로엔엔터테인먼트",
+    "active": true,
+    "color": [
+      220,
+      150,
+      60
+    ],
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "sparkle": false,
+    "songs": [],
+    "bday": "1994.08.26",
+    "links": {
+      "namu": "https://namu.wiki/w/예지(1994)"
+    }
+  },
+  {
+    "name": {
+      "ko": "체스카",
+      "en": "Cheska"
+    },
+    "group": {
+      "ko": "피에스타",
+      "en": "FIESTAR"
+    },
+    "co": "로엔엔터테인먼트",
+    "active": true,
+    "color": [
+      220,
+      150,
+      60
+    ],
+    "nat": {
+      "ko": "미국",
+      "en": "US"
+    },
+    "sparkle": false,
+    "songs": [],
+    "bday": "1992.03.11",
+    "links": {
+      "namu": "https://namu.wiki/w/체스카"
+    }
+  },
+  {
+    "name": {
+      "ko": "나나",
+      "en": "Nana"
+    },
+    "group": {
+      "ko": "우아",
+      "en": "WOOAH"
+    },
+    "co": "H music 엔터테인먼트",
+    "active": true,
+    "color": [
+      140,
+      190,
+      220
+    ],
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "sparkle": false,
+    "songs": [],
+    "bday": "2001.03.09",
+    "links": {
+      "namu": "https://namu.wiki/w/나나(WOOAH)"
+    }
+  },
+  {
+    "name": {
+      "ko": "우연",
+      "en": "Wooyeon"
+    },
+    "group": {
+      "ko": "우아",
+      "en": "WOOAH"
+    },
+    "co": "H music 엔터테인먼트",
+    "active": true,
+    "color": [
+      140,
+      190,
+      220
+    ],
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "sparkle": false,
+    "songs": [],
+    "bday": "2003.02.11",
+    "links": {
+      "namu": "https://namu.wiki/w/우연(WOOAH)"
+    }
+  },
+  {
+    "name": {
+      "ko": "소라",
+      "en": "Sora"
+    },
+    "group": {
+      "ko": "우아",
+      "en": "WOOAH"
+    },
+    "co": "H music 엔터테인먼트",
+    "active": true,
+    "color": [
+      140,
+      190,
+      220
+    ],
+    "nat": {
+      "ko": "일본",
+      "en": "JP"
+    },
+    "sparkle": false,
+    "songs": [],
+    "bday": "2003.08.30",
+    "links": {
+      "namu": "https://namu.wiki/w/소라(WOOAH)"
+    }
+  },
+  {
+    "name": {
+      "ko": "루시",
+      "en": "Lucy"
+    },
+    "group": {
+      "ko": "우아",
+      "en": "WOOAH"
+    },
+    "co": "H music 엔터테인먼트",
+    "active": true,
+    "color": [
+      140,
+      190,
+      220
+    ],
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "sparkle": false,
+    "songs": [],
+    "bday": "2004.04.09",
+    "links": {
+      "namu": "https://namu.wiki/w/루시(WOOAH)"
+    }
+  },
+  {
+    "name": {
+      "ko": "민서",
+      "en": "Minseo"
+    },
+    "group": {
+      "ko": "우아",
+      "en": "WOOAH"
+    },
+    "co": "H music 엔터테인먼트",
+    "active": true,
+    "color": [
+      140,
+      190,
+      220
+    ],
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "sparkle": false,
+    "songs": [],
+    "bday": "2004.08.12",
+    "links": {
+      "namu": "https://namu.wiki/w/민서(WOOAH)"
+    }
+  },
+  {
+    "name": {
+      "ko": "송이",
+      "en": "Songyi"
+    },
+    "group": {
+      "ko": "우아",
+      "en": "WOOAH"
+    },
+    "co": "H music 엔터테인먼트",
+    "active": false,
+    "color": [
+      140,
+      190,
+      220
+    ],
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "sparkle": false,
+    "songs": [],
+    "bday": "2004.09.25",
+    "links": {
+      "namu": "https://namu.wiki/w/박송이"
+    }
+  },
+  {
+    "name": {
+      "ko": "김연희",
+      "en": "Kim Yeonhee"
+    },
+    "group": {
+      "ko": "로켓펀치",
+      "en": "Rocket Punch"
+    },
+    "co": "울림엔터테인먼트",
+    "active": true,
+    "color": [
+      235,
+      110,
+      90
+    ],
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "sparkle": false,
+    "songs": [],
+    "bday": "2000.12.06",
+    "links": {
+      "namu": "https://namu.wiki/w/김연희"
+    }
+  },
+  {
+    "name": {
+      "ko": "김수윤",
+      "en": "Kim Suyun"
+    },
+    "group": {
+      "ko": "로켓펀치",
+      "en": "Rocket Punch"
+    },
+    "co": "울림엔터테인먼트",
+    "active": true,
+    "color": [
+      235,
+      110,
+      90
+    ],
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "sparkle": false,
+    "songs": [],
+    "bday": "2001.03.17",
+    "links": {
+      "namu": "https://namu.wiki/w/김수윤(2001)"
+    }
+  },
+  {
+    "name": {
+      "ko": "서윤경",
+      "en": "Seo Yunkyung"
+    },
+    "group": {
+      "ko": "로켓펀치",
+      "en": "Rocket Punch"
+    },
+    "co": "울림엔터테인먼트",
+    "active": true,
+    "color": [
+      235,
+      110,
+      90
+    ],
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "sparkle": false,
+    "songs": [],
+    "bday": "2001.11.01",
+    "links": {
+      "namu": "https://namu.wiki/w/서윤경"
+    }
+  },
+  {
+    "name": {
+      "ko": "소희",
+      "en": "Sohee"
+    },
+    "group": {
+      "ko": "로켓펀치",
+      "en": "Rocket Punch"
+    },
+    "co": "울림엔터테인먼트",
+    "active": true,
+    "color": [
+      235,
+      110,
+      90
+    ],
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "sparkle": false,
+    "songs": [],
+    "bday": "2003.08.14",
+    "links": {
+      "namu": "https://namu.wiki/w/김소희(2003)"
+    }
+  },
+  {
+    "name": {
+      "ko": "다현",
+      "en": "Dahyun"
+    },
+    "group": {
+      "ko": "로켓펀치",
+      "en": "Rocket Punch"
+    },
+    "co": "울림엔터테인먼트",
+    "active": true,
+    "color": [
+      235,
+      110,
+      90
+    ],
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "sparkle": false,
+    "songs": [],
+    "bday": "2005.04.29",
+    "links": {
+      "namu": "https://namu.wiki/w/정다현"
+    }
+  },
+  {
+    "name": {
+      "ko": "타카하시 쥬리",
+      "en": "Takahashi Juri"
+    },
+    "group": {
+      "ko": "로켓펀치",
+      "en": "Rocket Punch"
+    },
+    "co": "울림엔터테인먼트",
+    "active": false,
+    "color": [
+      235,
+      110,
+      90
+    ],
+    "nat": {
+      "ko": "일본",
+      "en": "JP"
+    },
+    "sparkle": false,
+    "songs": [],
+    "bday": "1997.10.03",
+    "links": {
+      "namu": "https://namu.wiki/w/타카하시 쥬리"
+    }
+  },
+  {
+    "name": {
+      "ko": "나고은",
+      "en": "Na Goeun"
+    },
+    "group": {
+      "ko": "퍼플키스",
+      "en": "PURPLE KISS"
+    },
+    "co": "RBW",
+    "active": true,
+    "color": [
+      165,
+      120,
+      200
+    ],
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "sparkle": false,
+    "songs": [],
+    "bday": "1999.09.03",
+    "links": {
+      "namu": "https://namu.wiki/w/나고은"
+    }
+  },
+  {
+    "name": {
+      "ko": "장은성",
+      "en": "Jang Eunsung"
+    },
+    "group": {
+      "ko": "퍼플키스",
+      "en": "PURPLE KISS"
+    },
+    "co": "RBW",
+    "active": true,
+    "color": [
+      165,
+      120,
+      200
+    ],
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "sparkle": false,
+    "songs": [],
+    "bday": "2000.02.11",
+    "links": {
+      "namu": "https://namu.wiki/w/장은성(2000)"
+    }
+  },
+  {
+    "name": {
+      "ko": "이레",
+      "en": "Ireh"
+    },
+    "group": {
+      "ko": "퍼플키스",
+      "en": "PURPLE KISS"
+    },
+    "co": "RBW",
+    "active": true,
+    "color": [
+      165,
+      120,
+      200
+    ],
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "sparkle": false,
+    "songs": [],
+    "bday": "2002.04.30",
+    "links": {
+      "namu": "https://namu.wiki/w/이레(2002)"
+    }
+  },
+  {
+    "name": {
+      "ko": "모리 코유키",
+      "en": "Mori Koyuki"
+    },
+    "group": {
+      "ko": "퍼플키스",
+      "en": "PURPLE KISS"
+    },
+    "co": "RBW",
+    "active": true,
+    "color": [
+      165,
+      120,
+      200
+    ],
+    "nat": {
+      "ko": "일본",
+      "en": "JP"
+    },
+    "sparkle": false,
+    "songs": [],
+    "bday": "2002.11.06",
+    "links": {
+      "namu": "https://namu.wiki/w/모리 코유키"
+    }
+  },
+  {
+    "name": {
+      "ko": "채인",
+      "en": "Chaein"
+    },
+    "group": {
+      "ko": "퍼플키스",
+      "en": "PURPLE KISS"
+    },
+    "co": "RBW",
+    "active": true,
+    "color": [
+      165,
+      120,
+      200
+    ],
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "sparkle": false,
+    "songs": [],
+    "bday": "2002.12.05",
+    "links": {
+      "namu": "https://namu.wiki/w/채인"
+    }
+  },
+  {
+    "name": {
+      "ko": "수안",
+      "en": "Suan"
+    },
+    "group": {
+      "ko": "퍼플키스",
+      "en": "PURPLE KISS"
+    },
+    "co": "RBW",
+    "active": true,
+    "color": [
+      165,
+      120,
+      200
+    ],
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "sparkle": false,
+    "songs": [],
+    "bday": "2003.07.11",
+    "links": {
+      "namu": "https://namu.wiki/w/수안(2003)"
+    }
+  },
+  {
+    "name": {
+      "ko": "박지은",
+      "en": "Swan"
+    },
+    "group": {
+      "ko": "퍼플키스",
+      "en": "PURPLE KISS"
+    },
+    "co": "RBW",
+    "active": false,
+    "color": [
+      165,
+      120,
+      200
+    ],
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "sparkle": false,
+    "songs": [],
+    "bday": "1997.09.04",
+    "links": {
+      "namu": "https://namu.wiki/w/박지은(1997)"
+    }
+  },
+  {
+    "name": {
+      "ko": "도은",
+      "en": "Doeun"
+    },
+    "group": {
+      "ko": "영파씨",
+      "en": "YOUNG POSSE"
+    },
+    "co": "DSP미디어",
+    "active": true,
+    "color": [
+      235,
+      200,
+      60
+    ],
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "sparkle": false,
+    "songs": [],
+    "bday": "2007.12.24",
+    "links": {
+      "namu": "https://namu.wiki/w/도은(YOUNG POSSE)"
+    }
+  },
+  {
+    "name": {
+      "ko": "정선혜",
+      "en": "Jung Seonhye"
+    },
+    "group": {
+      "ko": "영파씨",
+      "en": "YOUNG POSSE"
+    },
+    "co": "DSP미디어",
+    "active": true,
+    "color": [
+      235,
+      200,
+      60
+    ],
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "sparkle": false,
+    "songs": [],
+    "bday": "2004.04.12",
+    "links": {
+      "namu": "https://namu.wiki/w/정선혜(YOUNG POSSE)"
+    }
+  },
+  {
+    "name": {
+      "ko": "한지은",
+      "en": "Han Jieun"
+    },
+    "group": {
+      "ko": "영파씨",
+      "en": "YOUNG POSSE"
+    },
+    "co": "DSP미디어",
+    "active": true,
+    "color": [
+      235,
+      200,
+      60
+    ],
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "sparkle": false,
+    "songs": [],
+    "bday": "2009.11.05",
+    "links": {
+      "namu": "https://namu.wiki/w/한지은(YOUNG POSSE)"
+    }
+  },
+  {
+    "name": {
+      "ko": "COLD",
+      "en": "COLD"
+    },
+    "group": {
+      "ko": "영파씨",
+      "en": "YOUNG POSSE"
+    },
+    "co": "DSP미디어",
+    "active": true,
+    "color": [
+      235,
+      200,
+      60
+    ],
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "sparkle": false,
+    "songs": [],
+    "links": {
+      "namu": "https://namu.wiki/w/COLD(YOUNG POSSE)"
+    }
+  },
+  {
+    "name": {
+      "ko": "OTB",
+      "en": "OTB"
+    },
+    "group": {
+      "ko": "영파씨",
+      "en": "YOUNG POSSE"
+    },
+    "co": "DSP미디어",
+    "active": true,
+    "color": [
+      235,
+      200,
+      60
+    ],
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "sparkle": false,
+    "songs": [],
+    "links": {
+      "namu": "https://namu.wiki/w/OTB(YOUNG POSSE)"
+    }
+  },
+  {
+    "name": {
+      "ko": "XXL",
+      "en": "XXL"
+    },
+    "group": {
+      "ko": "영파씨",
+      "en": "YOUNG POSSE"
+    },
+    "co": "DSP미디어",
+    "active": true,
+    "color": [
+      235,
+      200,
+      60
+    ],
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "sparkle": false,
+    "songs": [],
+    "links": {
+      "namu": "https://namu.wiki/w/XXL(YOUNG POSSE)"
+    }
+  },
+  {
+    "name": {
+      "ko": "소연",
+      "en": "Soyeon"
+    },
+    "group": {
+      "ko": "라붐",
+      "en": "LABOUM"
+    },
+    "co": "인터파크뮤직플러스",
+    "active": true,
+    "color": [
+      230,
+      160,
+      190
+    ],
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "sparkle": false,
+    "songs": [],
+    "bday": "1994.05.04",
+    "links": {
+      "namu": "https://namu.wiki/w/소연(1994)"
+    }
+  },
+  {
+    "name": {
+      "ko": "진예",
+      "en": "Jinye"
+    },
+    "group": {
+      "ko": "라붐",
+      "en": "LABOUM"
+    },
+    "co": "인터파크뮤직플러스",
+    "active": true,
+    "color": [
+      230,
+      160,
+      190
+    ],
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "sparkle": false,
+    "songs": [],
+    "bday": "1994.06.09",
+    "links": {
+      "namu": "https://namu.wiki/w/진예"
+    }
+  },
+  {
+    "name": {
+      "ko": "해인",
+      "en": "Haein"
+    },
+    "group": {
+      "ko": "라붐",
+      "en": "LABOUM"
+    },
+    "co": "인터파크뮤직플러스",
+    "active": true,
+    "color": [
+      230,
+      160,
+      190
+    ],
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "sparkle": false,
+    "songs": [],
+    "bday": "1995.05.19",
+    "links": {
+      "namu": "https://namu.wiki/w/해인"
+    }
+  },
+  {
+    "name": {
+      "ko": "솔빈",
+      "en": "Solbin"
+    },
+    "group": {
+      "ko": "라붐",
+      "en": "LABOUM"
+    },
+    "co": "인터파크뮤직플러스",
+    "active": true,
+    "color": [
+      230,
+      160,
+      190
+    ],
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "sparkle": false,
+    "songs": [],
+    "bday": "1997.08.19",
+    "links": {
+      "namu": "https://namu.wiki/w/솔빈"
+    }
+  },
+  {
+    "name": {
+      "ko": "율희",
+      "en": "Yulhee"
+    },
+    "group": {
+      "ko": "라붐",
+      "en": "LABOUM"
+    },
+    "co": "인터파크뮤직플러스",
+    "active": false,
+    "color": [
+      230,
+      160,
+      190
+    ],
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "sparkle": false,
+    "songs": [],
+    "bday": "1997.11.27",
+    "links": {
+      "namu": "https://namu.wiki/w/율희"
+    }
+  },
+  {
+    "name": {
+      "ko": "유정",
+      "en": "Yujeong"
+    },
+    "group": {
+      "ko": "라붐",
+      "en": "LABOUM"
+    },
+    "co": "인터파크뮤직플러스",
+    "active": false,
+    "color": [
+      230,
+      160,
+      190
+    ],
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "sparkle": false,
+    "songs": [],
+    "bday": "1992.02.14",
+    "links": {
+      "namu": "https://namu.wiki/w/김유정(1992)"
+    }
+  },
+  {
+    "name": {
+      "ko": "김도훈",
+      "en": "Kim Dohun"
+    },
+    "group": {
+      "ko": "아이덴티티",
+      "en": "idntt"
+    },
+    "co": "모드하우스",
+    "active": true,
+    "color": [
+      100,
+      110,
+      130
+    ],
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "sparkle": false,
+    "songs": [],
+    "bday": "2003.03.03",
+    "links": {
+      "namu": "https://namu.wiki/w/김도훈(idntt)"
+    }
+  },
+  {
+    "name": {
+      "ko": "김성준",
+      "en": "Kim Seongjun"
+    },
+    "group": {
+      "ko": "아이덴티티",
+      "en": "idntt"
+    },
+    "co": "모드하우스",
+    "active": true,
+    "color": [
+      100,
+      110,
+      130
+    ],
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "sparkle": false,
+    "songs": [],
+    "bday": "2006.09.26",
+    "links": {
+      "namu": "https://namu.wiki/w/김성준(idntt)"
+    }
+  },
+  {
+    "name": {
+      "ko": "김은성",
+      "en": "Kim Eunseong"
+    },
+    "group": {
+      "ko": "아이덴티티",
+      "en": "idntt"
+    },
+    "co": "모드하우스",
+    "active": true,
+    "color": [
+      100,
+      110,
+      130
+    ],
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "sparkle": false,
+    "songs": [],
+    "bday": "2004.05.10",
+    "links": {
+      "namu": "https://namu.wiki/w/김은성(idntt)"
+    }
+  },
+  {
+    "name": {
+      "ko": "김주호",
+      "en": "Kim Juho"
+    },
+    "group": {
+      "ko": "아이덴티티",
+      "en": "idntt"
+    },
+    "co": "모드하우스",
+    "active": true,
+    "color": [
+      100,
+      110,
+      130
+    ],
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "sparkle": false,
+    "songs": [],
+    "bday": "2006.07.28",
+    "links": {
+      "namu": "https://namu.wiki/w/김주호(idntt)"
+    }
+  },
+  {
+    "name": {
+      "ko": "김희주",
+      "en": "Kim Heeju"
+    },
+    "group": {
+      "ko": "아이덴티티",
+      "en": "idntt"
+    },
+    "co": "모드하우스",
+    "active": true,
+    "color": [
+      100,
+      110,
+      130
+    ],
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "sparkle": false,
+    "songs": [],
+    "bday": "2006.10.25",
+    "links": {
+      "namu": "https://namu.wiki/w/김희주(idntt)"
+    }
+  },
+  {
+    "name": {
+      "ko": "이규혁",
+      "en": "Lee Gyuhyuk"
+    },
+    "group": {
+      "ko": "아이덴티티",
+      "en": "idntt"
+    },
+    "co": "모드하우스",
+    "active": true,
+    "color": [
+      100,
+      110,
+      130
+    ],
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "sparkle": false,
+    "songs": [],
+    "bday": "2010.08.06",
+    "links": {
+      "namu": "https://namu.wiki/w/이규혁(idntt)"
+    }
+  },
+  {
+    "name": {
+      "ko": "이재영",
+      "en": "Lee Jaeyoung"
+    },
+    "group": {
+      "ko": "아이덴티티",
+      "en": "idntt"
+    },
+    "co": "모드하우스",
+    "active": true,
+    "color": [
+      100,
+      110,
+      130
+    ],
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "sparkle": false,
+    "songs": [],
+    "bday": "2007.10.03",
+    "links": {
+      "namu": "https://namu.wiki/w/이재영(idntt)"
+    }
+  },
+  {
+    "name": {
+      "ko": "이주헌",
+      "en": "Lee Juheon"
+    },
+    "group": {
+      "ko": "아이덴티티",
+      "en": "idntt"
+    },
+    "co": "모드하우스",
+    "active": true,
+    "color": [
+      100,
+      110,
+      130
+    ],
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "sparkle": false,
+    "songs": [],
+    "bday": "2008.10.11",
+    "links": {
+      "namu": "https://namu.wiki/w/이주헌(idntt)"
+    }
+  },
+  {
+    "name": {
+      "ko": "이환희",
+      "en": "Lee Hwanhee"
+    },
+    "group": {
+      "ko": "아이덴티티",
+      "en": "idntt"
+    },
+    "co": "모드하우스",
+    "active": true,
+    "color": [
+      100,
+      110,
+      130
+    ],
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "sparkle": false,
+    "songs": [],
+    "bday": "2009.07.11",
+    "links": {
+      "namu": "https://namu.wiki/w/이환희(idntt)"
+    }
+  },
+  {
+    "name": {
+      "ko": "최경빈",
+      "en": "Choi Kyeongbin"
+    },
+    "group": {
+      "ko": "아이덴티티",
+      "en": "idntt"
+    },
+    "co": "모드하우스",
+    "active": true,
+    "color": [
+      100,
+      110,
+      130
+    ],
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "sparkle": false,
+    "songs": [],
+    "bday": "2008.09.04",
+    "links": {
+      "namu": "https://namu.wiki/w/최경빈(idntt)"
+    }
+  },
+  {
+    "name": {
+      "ko": "토와",
+      "en": "Towa"
+    },
+    "group": {
+      "ko": "아이덴티티",
+      "en": "idntt"
+    },
+    "co": "모드하우스",
+    "active": true,
+    "color": [
+      100,
+      110,
+      130
+    ],
+    "nat": {
+      "ko": "일본",
+      "en": "JP"
+    },
+    "sparkle": false,
+    "songs": [],
+    "bday": "2006.04.09",
+    "links": {
+      "namu": "https://namu.wiki/w/토와(idntt)"
+    }
+  },
+  {
+    "name": {
+      "ko": "정용화",
+      "en": "Jung Yonghwa"
+    },
+    "group": {
+      "ko": "씨엔블루",
+      "en": "CNBLUE"
+    },
+    "co": "FNC엔터테인먼트",
+    "active": true,
+    "color": [
+      70,
+      110,
+      180
+    ],
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "sparkle": false,
+    "songs": [],
+    "bday": "1989.06.22",
+    "links": {
+      "namu": "https://namu.wiki/w/정용화"
+    }
+  },
+  {
+    "name": {
+      "ko": "이종현",
+      "en": "Lee Jonghyun"
+    },
+    "group": {
+      "ko": "씨엔블루",
+      "en": "CNBLUE"
+    },
+    "co": "FNC엔터테인먼트",
+    "active": true,
+    "color": [
+      70,
+      110,
+      180
+    ],
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "sparkle": false,
+    "songs": [],
+    "bday": "1990.05.15",
+    "links": {
+      "namu": "https://namu.wiki/w/이종현(1990)"
+    }
+  },
+  {
+    "name": {
+      "ko": "강민혁",
+      "en": "Kang Minhyuk"
+    },
+    "group": {
+      "ko": "씨엔블루",
+      "en": "CNBLUE"
+    },
+    "co": "FNC엔터테인먼트",
+    "active": true,
+    "color": [
+      70,
+      110,
+      180
+    ],
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "sparkle": false,
+    "songs": [],
+    "bday": "1991.06.28",
+    "links": {
+      "namu": "https://namu.wiki/w/강민혁"
+    }
+  },
+  {
+    "name": {
+      "ko": "이정신",
+      "en": "Lee Jungshin"
+    },
+    "group": {
+      "ko": "씨엔블루",
+      "en": "CNBLUE"
+    },
+    "co": "FNC엔터테인먼트",
+    "active": true,
+    "color": [
+      70,
+      110,
+      180
+    ],
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "sparkle": false,
+    "songs": [],
+    "bday": "1991.09.15",
+    "links": {
+      "namu": "https://namu.wiki/w/이정신"
+    }
+  },
+  {
+    "name": {
+      "ko": "라라",
+      "en": "Lara"
+    },
+    "group": {
+      "ko": "드림노트",
+      "en": "Dreamnote"
+    },
+    "co": "iMe KOREA",
+    "active": true,
+    "color": [
+      140,
+      200,
+      160
+    ],
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "sparkle": false,
+    "songs": [],
+    "bday": "2000.08.09",
+    "links": {
+      "namu": "https://namu.wiki/w/문신애"
+    }
+  },
+  {
+    "name": {
+      "ko": "미소",
+      "en": "Miso"
+    },
+    "group": {
+      "ko": "드림노트",
+      "en": "Dreamnote"
+    },
+    "co": "iMe KOREA",
+    "active": true,
+    "color": [
+      140,
+      200,
+      160
+    ],
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "sparkle": false,
+    "songs": [],
+    "bday": "2000.10.25",
+    "links": {
+      "namu": "https://namu.wiki/w/미소(드림노트)"
+    }
+  },
+  {
+    "name": {
+      "ko": "보니",
+      "en": "Boni"
+    },
+    "group": {
+      "ko": "드림노트",
+      "en": "Dreamnote"
+    },
+    "co": "iMe KOREA",
+    "active": true,
+    "color": [
+      140,
+      200,
+      160
+    ],
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "sparkle": false,
+    "songs": [],
+    "bday": "1999.10.30",
+    "links": {
+      "namu": "https://namu.wiki/w/보니(드림노트)"
+    }
+  },
+  {
+    "name": {
+      "ko": "수민",
+      "en": "Sumin"
+    },
+    "group": {
+      "ko": "드림노트",
+      "en": "Dreamnote"
+    },
+    "co": "iMe KOREA",
+    "active": true,
+    "color": [
+      140,
+      200,
+      160
+    ],
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "sparkle": false,
+    "songs": [],
+    "bday": "2001.09.07",
+    "links": {
+      "namu": "https://namu.wiki/w/수민(드림노트)"
+    }
+  },
+  {
+    "name": {
+      "ko": "페이지",
+      "en": "Page"
+    },
+    "group": {
+      "ko": "드림노트",
+      "en": "Dreamnote"
+    },
+    "co": "iMe KOREA",
+    "active": true,
+    "color": [
+      140,
+      200,
+      160
+    ],
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "sparkle": false,
+    "songs": [],
+    "links": {
+      "namu": "https://namu.wiki/w/페이지(드림노트)"
+    }
+  },
+  {
+    "name": {
+      "ko": "BLUE",
+      "en": "BLUE"
+    },
+    "group": {
+      "ko": "드림노트",
+      "en": "Dreamnote"
+    },
+    "co": "iMe KOREA",
+    "active": true,
+    "color": [
+      140,
+      200,
+      160
+    ],
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "sparkle": false,
+    "songs": [],
+    "links": {
+      "namu": "https://namu.wiki/w/BLUE(드림노트)"
+    }
+  },
+  {
+    "name": {
+      "ko": "Dreamlike",
+      "en": "Dreamlike"
+    },
+    "group": {
+      "ko": "드림노트",
+      "en": "Dreamnote"
+    },
+    "co": "iMe KOREA",
+    "active": true,
+    "color": [
+      140,
+      200,
+      160
+    ],
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "sparkle": false,
+    "songs": [],
+    "links": {
+      "namu": "https://namu.wiki/w/Dreamlike(드림노트)"
+    }
+  },
+  {
+    "name": {
+      "ko": "유하빈",
+      "en": "Yoo Habin"
+    },
+    "group": {
+      "ko": "드림노트",
+      "en": "Dreamnote"
+    },
+    "co": "iMe KOREA",
+    "active": false,
+    "color": [
+      140,
+      200,
+      160
+    ],
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "sparkle": false,
+    "songs": [],
+    "bday": "2002.03.10",
+    "links": {
+      "namu": "https://namu.wiki/w/유하빈"
+    }
+  },
+  {
+    "name": {
+      "ko": "안한별",
+      "en": "An Hanbyul"
+    },
+    "group": {
+      "ko": "드림노트",
+      "en": "Dreamnote"
+    },
+    "co": "iMe KOREA",
+    "active": false,
+    "color": [
+      140,
+      200,
+      160
+    ],
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "sparkle": false,
+    "songs": [],
+    "bday": "2003.10.13",
+    "links": {
+      "namu": "https://namu.wiki/w/안한별"
     }
   }
 ]
