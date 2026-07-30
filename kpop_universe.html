@@ -874,7 +874,7 @@
   #admin-bulk-cancel-btn{background:none;border:none;color:rgba(140,165,210,0.55);font-size:12px;cursor:pointer;padding:4px 2px;font-family:inherit;}
   /* tv-sm/tv-big-wrap은 스크랩(오른쪽4px)/북마크(오른쪽34px) 버튼이 이미 오른쪽을 쓰므로 왼쪽에 배치 */
   .tv-sm .vid-edit-btn,#tv-big-wrap .vid-edit-btn{position:absolute;top:4px;left:4px;z-index:3;}
-  #vid-tag-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.52);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:80;display:none;align-items:center;justify-content:center;}
+  #vid-tag-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.52);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:82;display:none;align-items:center;justify-content:center;}
   #vid-tag-overlay.open{display:flex;}
   #hidden-vids-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.52);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:81;display:none;align-items:center;justify-content:center;}
   #hidden-vids-overlay.open{display:flex;}
@@ -4819,7 +4819,10 @@ async function _enrichMemberVideosFromApi(a,tv,baseSongs,basePersonalSongs){
     if(ownQ.error)throw new Error(ownQ.error.message);
     if(withQ.error)throw new Error(withQ.error.message);
     if(generalQ.error)throw new Error(generalQ.error.message);
-    const rows=_filterBannedVideos([...(ownQ.data||[]),...(withQ.data||[]),...(generalQ.data||[])]);
+    // 멤버 카드는 '기타' 플래그 영상을 아예 노출하지 않음(Supabase 연결된 정상 경로인 _makeChVidController의
+    // load()와 동일한 규칙 — 그룹 전체의 잡다한 굿즈/시즌그리팅류 콘텐츠가 모든 멤버 카드에 뜨는 걸 막음).
+    const rows=_filterBannedVideos([...(ownQ.data||[]),...(withQ.data||[]),...(generalQ.data||[])])
+      .filter(v=>v.content_flag!=='기타');
     if(!rows.length)return;
     const render=()=>{
       if(_openTArtist!==a)return; // 그 사이 다른 멤버 카드로 이동함
@@ -9386,11 +9389,52 @@ async function _buildFeedFormatPick(list){
   }
 }
 
+// 세대×성별 직캠 모아보기 — n세대 여돌/남돌의 직캠 계열 콘텐츠(안방1열/MPD입덕직캠/최애직캠/얼빡직캠/
+// 쇼챔직캠/UNFILTERED CAM)만 그룹 무관하게 모아서 보여줌. _buildFeedFormatPick과 같은 방식으로
+// 시간대(1시간 단위) 기준 순환시켜 매번 열 때마다 다른 조합이 뜨게 하고, 결과가 너무 적은 조합(1세대처럼
+// 그룹 수 자체가 적은 경우)은 다음 조합으로 넘어간다.
+const _CAM_FORMATS=['안방1열/단독샷/페이스캠','MPD/입덕직캠','음중/최애직캠','원테이크/얼빡직캠','쇼챔직캠','UNFILTERED CAM'];
+const _GEN_CAM_COMBOS=[1,2,3,4,5].flatMap(gen=>[{gen,gender:'f'},{gen,gender:'m'}]);
+async function _buildFeedGenCamPick(list){
+  if(!sb)return;
+  const vidUrl=v=>v.category==='short'?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;
+  const hourIdx=Math.floor(Date.now()/3600000);
+  for(let i=0;i<_GEN_CAM_COMBOS.length;i++){
+    const{gen,gender}=_GEN_CAM_COMBOS[(hourIdx+i)%_GEN_CAM_COMBOS.length];
+    const groupKos=Object.entries(GROUPS||{})
+      .filter(([ko,info])=>info.gender===gender&&_groupGeneration(info.debut,ko)===gen)
+      .map(([ko])=>ko);
+    if(!groupKos.length)continue;
+    try{
+      const{data,error}=await sb.from(_YT_TABLE)
+        .select('id,title,thumb,category,content_flag,group_ko')
+        .in('group_ko',groupKos)
+        .overlaps('content_formats',_CAM_FORMATS)
+        .or('content_flag.is.null,content_flag.neq.기타')
+        .or('content_flag.is.null,content_flag.neq.무관')
+        .order('published_at',{ascending:false})
+        .limit(500); // 그리드 아니라 라이트박스 스와이프 목록이라 페이지네이션 불필요 — 폭주 방지용 넉넉한 상한만
+      if(error)continue;
+      const vids=_filterBannedVideos(data||[]);
+      if(vids.length<6)continue; // 컬렉션이라 부르기엔 너무 적으면 다음 조합으로
+      const songs=vids.map(v=>({t:v.title,u:vidUrl(v)}));
+      const thumb=vids[Math.floor(Math.random()*vids.length)].thumb;
+      const label=`${gen}세대 ${gender==='f'?'여돌':'남돌'} 직캠 모음`;
+      const item=_appendFeedCard(list,'🎥',label,`여러 그룹 · ${songs.length}개 영상`,()=>_feedNav(()=>{
+        openLightbox(songs[0].u,isShorts(songs[0].u),songs,0,{});
+      }),thumb);
+      list.insertBefore(item,list.firstChild); // 다른 항목보다 앞서 눈에 띄게
+      return;
+    }catch(e){/* 다음 조합으로 */}
+  }
+}
+
 function _buildFeedDiscovery(){
   const list=document.getElementById('feed-discovery');
   list.innerHTML='';
   const isKo=currentLang==='ko';
   _buildFeedFormatPick(list);
+  _buildFeedGenCamPick(list);
 
   // 1. 랜덤 그룹
   const gKeys=Object.keys(GROUPS||{});
