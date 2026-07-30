@@ -451,6 +451,10 @@
   #yt-lb-video-box{position:relative;width:100%;aspect-ratio:16/9;}
   #yt-lb-video-box.is-shorts{aspect-ratio:9/16;width:min(54vw,420px);margin:0 auto;}
   #yt-lb-iframe{width:100%;height:100%;border:none;border-radius:8px;display:block;}
+  #yt-lb-loading{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;opacity:0;transition:opacity .15s ease;z-index:1;}
+  #yt-lb-loading.show{opacity:1;transition-delay:.12s;}
+  .yt-lb-spinner{width:32px;height:32px;border-radius:50%;border:2.5px solid rgba(255,255,255,0.18);border-top-color:rgba(255,255,255,0.85);animation:yt-lb-spin .7s linear infinite;}
+  @keyframes yt-lb-spin{to{transform:rotate(360deg);}}
   /* 우측 중단 영역을 눌러 2배속을 토글하는 탭존 — 위/아래 모서리는 유튜브 자체 버튼(설정·전체화면 등)이
      눌리도록 터치 감지 영역에서 비워둠(정확한 크기는 실기기 테스트로 조정 필요) */
   #yt-lb-speed-zone{position:absolute;top:52px;right:0;bottom:80px;width:22%;cursor:pointer;z-index:1;touch-action:none;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;}
@@ -1730,6 +1734,8 @@
       <input type="text" class="sp-yt-key" id="sp-yt-manual-group" placeholder="그룹명(자동인식 안 되면 입력, 예: 티아라)">
       <input type="text" class="sp-yt-key" id="sp-yt-manual-members" placeholder="멤버명(자동인식 안 되면 입력, 쉼표로 여러 명, 예: 지연,소연)">
       <button class="sp-yt-sync" id="sp-yt-manual-add-btn" style="opacity:.8;">이 영상 추가</button>
+      <textarea class="sp-yt-key" id="sp-yt-manual-urls-batch" rows="4" placeholder="여러 개 한 번에: 영상 URL을 한 줄에 하나씩 붙여넣기 (위 그룹명/멤버명 칸을 채우면 전부 동일하게 적용됨)" style="resize:vertical;font-family:inherit;margin-top:6px;"></textarea>
+      <button class="sp-yt-sync" id="sp-yt-manual-batch-add-btn" style="opacity:.8;">여러 개 한 번에 추가</button>
     </div>
     <div class="sp-yt-prog" id="sp-yt-prog"></div>
   </div>
@@ -1782,6 +1788,7 @@
     <button id="yt-lb-close" aria-label="동영상 닫기">✕</button>
     <div id="yt-lb-video-box">
       <iframe id="yt-lb-iframe" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>
+      <div id="yt-lb-loading" aria-hidden="true"><div class="yt-lb-spinner"></div></div>
       <div id="yt-lb-speed-zone" aria-hidden="true"></div>
       <div id="yt-lb-speed-badge">2×</div>
       <div id="yt-lb-tap-cap" aria-hidden="true"></div>
@@ -3649,6 +3656,16 @@ let _lbSpeed=1; // 우측 탭존을 꾹 누르는 동안의 배속 (1 또는 2)
 let _lbMuted=localStorage.getItem('kpu_lb_muted')!=='0'; // 기본 무음
 let _lbAutoUnmuteT=null; // 다음/이전(스와이프·버튼) 전환 시 무음→소리 복구 타이머
 let _lbNeedUnmute=false; // 소리 모드에서 isAdvance 전환 시 재생 시작 후 unMute 필요 여부
+let _lbLoadingT=null; // 영상 전환 시 로딩 스피너 표시용 폴백 타이머(재생 시작 신호가 안 올 경우 대비)
+function _lbShowLoading(){
+  clearTimeout(_lbLoadingT);
+  document.getElementById('yt-lb-loading').classList.add('show');
+  _lbLoadingT=setTimeout(()=>{document.getElementById('yt-lb-loading').classList.remove('show');},5000);
+}
+function _lbHideLoading(){
+  clearTimeout(_lbLoadingT);
+  document.getElementById('yt-lb-loading').classList.remove('show');
+}
 function _updateLbMuteBtn(){
   const btn=document.getElementById('yt-lb-mute');
   if(!btn)return;
@@ -3681,6 +3698,7 @@ function openLightbox(url,shorts,playlist,idx,ctx,isAdvance){
   // 브라우저가 "제스처 없이 소리 자동재생"으로 보고 다시 차단하는 경우가 많음 — 그럴 땐 일단 무음으로
   // 안전하게 자동재생시키고, 재생 시작 직후 unMute 커맨드로 소리를 복구(유저가 버튼으로 켜는 것과 동일 동작).
   const startMuted=_lbMuted?1:(isAdvance?1:0);
+  _lbShowLoading();
   iframe.src=`https://www.youtube.com/embed/${vid}?autoplay=1&mute=${startMuted}&controls=1&playsinline=1&modestbranding=1&iv_load_policy=3&rel=0&enablejsapi=1&vq=hd1080`;
   clearTimeout(_lbAutoUnmuteT);
   // 소리 모드에서 isAdvance(스와이프·버튼) 전환: mute=1로 시작해서 자동재생 확보 후
@@ -3923,17 +3941,19 @@ function _lbGo(delta){
 // YouTube IFrame API 이벤트 수신 — onStateChange 1(재생 시작) 즉시 unMute
 // 고정 타이머보다 신뢰성 높음: 플레이어가 실제로 재생을 시작한 순간에만 실행
 window.addEventListener('message',e=>{
-  if(!_lbNeedUnmute)return;
   try{
     const d=JSON.parse(e.data);
     // YouTube sends {event:'infoDelivery', info:{playerState:1}} when playback starts
     if(d.event==='infoDelivery'&&d.info?.playerState===1){
-      _lbNeedUnmute=false;
-      clearTimeout(_lbAutoUnmuteT);
-      const iframe=document.getElementById('yt-lb-iframe');
-      if(iframe.contentWindow){
-        iframe.contentWindow.postMessage(JSON.stringify({event:'command',func:'unMute',args:[]}),'*');
-        iframe.contentWindow.postMessage(JSON.stringify({event:'command',func:'setVolume',args:[100]}),'*');
+      _lbHideLoading();
+      if(_lbNeedUnmute){
+        _lbNeedUnmute=false;
+        clearTimeout(_lbAutoUnmuteT);
+        const iframe=document.getElementById('yt-lb-iframe');
+        if(iframe.contentWindow){
+          iframe.contentWindow.postMessage(JSON.stringify({event:'command',func:'unMute',args:[]}),'*');
+          iframe.contentWindow.postMessage(JSON.stringify({event:'command',func:'setVolume',args:[100]}),'*');
+        }
       }
     }
   }catch(_){}
@@ -3961,6 +3981,7 @@ document.getElementById('yt-lb-rotate').addEventListener('click',e=>{
 });
 function closeLightbox(){
   clearTimeout(_lbAutoUnmuteT);
+  _lbHideLoading();
   const lb=document.getElementById('yt-lightbox');
   lb.classList.remove('open');
   document.getElementById('yt-lb-iframe').src='';
@@ -10230,6 +10251,52 @@ function _ytParseVideoId(input){
   if(/^[a-zA-Z0-9_-]{11}$/.test(t))return t; // URL 없이 영상 ID만 붙여넣은 경우
   return null;
 }
+// videoId 하나를 조회해서 DB에 저장할 row를 만드는 공용 코어 — 단일 추가 버튼과 일괄(여러 개) 추가
+// 버튼이 둘 다 이걸 재사용한다. manualGroup/manualMembers는 자동인식이 틀렸을 때 덮어쓸 값(둘 다 선택사항).
+async function _ytBuildManualVideoRow(key,vid,manualGroup,manualMembers){
+  const r=await fetch(`https://www.googleapis.com/youtube/v3/videos?part=snippet&id=${vid}&key=${key}`);
+  if(!r.ok)throw new Error('YouTube API 오류 '+r.status);
+  const d=await r.json();
+  if(d.error)throw new Error(d.error.message);
+  const item=d.items?.[0];
+  if(!item)throw new Error('영상을 찾을 수 없어요(비공개/삭제됐을 수 있음)');
+  const title=item.snippet.title||'';
+  if(_isBannedVideoTitle(title))throw new Error('제외 대상 인물이 언급된 영상이라 추가할 수 없어요');
+  const th=item.snippet.thumbnails||{};
+  const hiTh=th.maxres||th.standard||th.high;
+  const isShortThumb=!!(hiTh&&hiTh.height>hiTh.width);
+  let category=isShortThumb?'short':_ytClassify(title);
+  if(category==='skip')category='other'; // 수동으로 콕 집어 추가하는 거라 티저/음원이어도 그냥 기타로 저장(스킵하지 않음)
+  const thumb=isShortThumb?(hiTh.url||th.medium?.url||''):(th.medium?.url||th.high?.url||th.default?.url||'');
+  const publishedAt=(item.snippet.publishedAt||'').slice(0,10);
+  let groupKo=null,members=[],withGroups=[],withMembers=[];
+  if(manualGroup){
+    if(!GROUPS[manualGroup])throw new Error(`"${manualGroup}"는 등록된 그룹명이 아니에요(정확한 한글 그룹명을 입력해주세요)`);
+    groupKo=manualGroup;
+    // 입력한 그룹 기준으로 제목에서 멤버만 추가로 추출(그룹 자체는 이미 확정이므로 매칭 결과 무관하게 그대로 씀)
+    const match=_m2ParseTitle(title);
+    if(match)members=match.membersByGroup[groupKo]||[];
+  }else{
+    const match=_m2ParseTitle(title);
+    if(!match)throw new Error('제목에서 그룹을 자동으로 인식하지 못했어요 — "그룹명" 칸에 직접 입력하고 다시 시도해주세요');
+    groupKo=match.primaryGroup;
+    members=match.membersByGroup[groupKo]||[];
+    for(const gko of match.withGroups){
+      const sec=match.membersByGroup[gko]||[];
+      if(sec.length)sec.forEach(mko=>withMembers.push(`${mko}(${gko})`));
+      else withGroups.push(gko);
+    }
+  }
+  // 제목에 멤버 이름이 안 그대로 실려있거나(별명·영문 표기 등) 자동 인식이 틀렸을 때, 직접 입력한
+  // 멤버명으로 덮어씀 — 해당 그룹의 실제 멤버인지 검증해서 오타로 엉뚱한 이름이 들어가는 걸 막는다.
+  if(manualMembers&&manualMembers.length){
+    const groupMemberKos=new Set(ARTISTS.filter(a=>_artistGroups(a).some(g=>g.ko===groupKo)).map(a=>a.name.ko));
+    const invalid=manualMembers.filter(mko=>!groupMemberKos.has(mko));
+    if(invalid.length)throw new Error(`"${invalid.join(', ')}"는 ${groupKo}의 등록된 멤버명이 아니에요(정확한 한글 이름을 입력해주세요)`);
+    members=manualMembers;
+  }
+  return{id:vid,title,thumb,published_at:publishedAt,category,group_ko:groupKo,members,with_groups:withGroups,with_members:withMembers};
+}
 async function _ytAddVideoByUrl(){
   const key=_ytApiKey();
   if(!key){_ytSetProg('API 키를 먼저 입력해주세요');return;}
@@ -10243,59 +10310,59 @@ async function _ytAddVideoByUrl(){
   if(btn)btn.disabled=true;
   try{
     _ytSetProg('[영상 추가] 정보 조회 중…');
-    const r=await fetch(`https://www.googleapis.com/youtube/v3/videos?part=snippet&id=${vid}&key=${key}`);
-    if(!r.ok)throw new Error('YouTube API 오류 '+r.status);
-    const d=await r.json();
-    if(d.error)throw new Error(d.error.message);
-    const item=d.items?.[0];
-    if(!item)throw new Error('영상을 찾을 수 없어요(비공개/삭제됐을 수 있음)');
-    const title=item.snippet.title||'';
-    if(_isBannedVideoTitle(title))throw new Error('제외 대상 인물이 언급된 영상이라 추가할 수 없어요');
-    const th=item.snippet.thumbnails||{};
-    const hiTh=th.maxres||th.standard||th.high;
-    const isShortThumb=!!(hiTh&&hiTh.height>hiTh.width);
-    let category=isShortThumb?'short':_ytClassify(title);
-    if(category==='skip')category='other'; // 수동으로 콕 집어 추가하는 거라 티저/음원이어도 그냥 기타로 저장(스킵하지 않음)
-    const thumb=isShortThumb?(hiTh.url||th.medium?.url||''):(th.medium?.url||th.high?.url||th.default?.url||'');
-    const publishedAt=(item.snippet.publishedAt||'').slice(0,10);
     const manualGroup=(groupEl?.value||'').trim();
     const manualMembers=(membersEl?.value||'').split(',').map(s=>s.trim()).filter(Boolean);
-    let groupKo=null,members=[],withGroups=[],withMembers=[];
-    if(manualGroup){
-      if(!GROUPS[manualGroup])throw new Error(`"${manualGroup}"는 등록된 그룹명이 아니에요(정확한 한글 그룹명을 입력해주세요)`);
-      groupKo=manualGroup;
-      // 입력한 그룹 기준으로 제목에서 멤버만 추가로 추출(그룹 자체는 이미 확정이므로 매칭 결과 무관하게 그대로 씀)
-      const match=_m2ParseTitle(title);
-      if(match)members=match.membersByGroup[groupKo]||[];
-    }else{
-      const match=_m2ParseTitle(title);
-      if(!match)throw new Error('제목에서 그룹을 자동으로 인식하지 못했어요 — "그룹명" 칸에 직접 입력하고 다시 시도해주세요');
-      groupKo=match.primaryGroup;
-      members=match.membersByGroup[groupKo]||[];
-      for(const gko of match.withGroups){
-        const sec=match.membersByGroup[gko]||[];
-        if(sec.length)sec.forEach(mko=>withMembers.push(`${mko}(${gko})`));
-        else withGroups.push(gko);
-      }
-    }
-    // 제목에 멤버 이름이 안 그대로 실려있거나(별명·영문 표기 등) 자동 인식이 틀렸을 때, 직접 입력한
-    // 멤버명으로 덮어씀 — 해당 그룹의 실제 멤버인지 검증해서 오타로 엉뚱한 이름이 들어가는 걸 막는다.
-    if(manualMembers.length){
-      const groupMemberKos=new Set(ARTISTS.filter(a=>_artistGroups(a).some(g=>g.ko===groupKo)).map(a=>a.name.ko));
-      const invalid=manualMembers.filter(mko=>!groupMemberKos.has(mko));
-      if(invalid.length)throw new Error(`"${invalid.join(', ')}"는 ${groupKo}의 등록된 멤버명이 아니에요(정확한 한글 이름을 입력해주세요)`);
-      members=manualMembers;
-    }
-    const row={id:vid,title,thumb,published_at:publishedAt,category,group_ko:groupKo,members,with_groups:withGroups,with_members:withMembers};
+    const row=await _ytBuildManualVideoRow(key,vid,manualGroup,manualMembers);
     const{error}=await sb.from(_YT_TABLE).upsert(row,{onConflict:'id'});
     if(error)throw new Error(error.message);
-    _ytSetProg(`[영상 추가] 완료! "${_cleanTitle(title)}" → ${groupKo}${members.length?' / '+members.join(', '):''}`);
+    _ytSetProg(`[영상 추가] 완료! "${_cleanTitle(row.title)}" → ${row.group_ko}${row.members.length?' / '+row.members.join(', '):''}`);
     if(urlEl)urlEl.value='';
     if(groupEl)groupEl.value='';
     if(membersEl)membersEl.value='';
   }catch(e){
     _ytSetProg('[영상 추가] 오류: '+e.message);
   }finally{
+    if(btn)btn.disabled=false;
+  }
+}
+let _manualBatchAdding=false;
+async function _ytAddVideosBatch(){
+  if(_manualBatchAdding)return;
+  const key=_ytApiKey();
+  if(!key){_ytSetProg('API 키를 먼저 입력해주세요');return;}
+  if(!sb){_ytSetProg('Supabase 연결 없음');return;}
+  const batchEl=document.getElementById('sp-yt-manual-urls-batch');
+  const groupEl=document.getElementById('sp-yt-manual-group');
+  const membersEl=document.getElementById('sp-yt-manual-members');
+  const btn=document.getElementById('sp-yt-manual-batch-add-btn');
+  const lines=(batchEl?.value||'').split('\n').map(s=>s.trim()).filter(Boolean);
+  if(!lines.length){_ytSetProg('붙여넣은 URL이 없어요');return;}
+  const manualGroup=(groupEl?.value||'').trim();
+  const manualMembers=(membersEl?.value||'').split(',').map(s=>s.trim()).filter(Boolean);
+  _manualBatchAdding=true;
+  if(btn)btn.disabled=true;
+  let ok=0,fail=0;
+  const failLines=[];
+  try{
+    for(let i=0;i<lines.length;i++){
+      const line=lines[i];
+      _ytSetProg(`[일괄 추가] ${i+1}/${lines.length}개째 처리 중… (성공 ${ok} / 실패 ${fail})`);
+      const vid=_ytParseVideoId(line);
+      if(!vid){fail++;failLines.push(`${line} (URL 인식 실패)`);continue;}
+      try{
+        const row=await _ytBuildManualVideoRow(key,vid,manualGroup,manualMembers);
+        const{error}=await sb.from(_YT_TABLE).upsert(row,{onConflict:'id'});
+        if(error)throw new Error(error.message);
+        ok++;
+      }catch(e){
+        fail++;failLines.push(`${line} (${e.message})`);
+      }
+      if(i<lines.length-1)await new Promise(res=>setTimeout(res,150)); // API 호출 간 살짝 텀
+    }
+    _ytSetProg(`[일괄 추가] 완료 — 성공 ${ok}개 / 실패 ${fail}개`+(failLines.length?` (실패: ${failLines.slice(0,5).join(' / ')}${failLines.length>5?' 외 '+(failLines.length-5)+'건':''})`:''));
+    if(ok>0&&batchEl)batchEl.value=failLines.length?failLines.map(f=>f.split(' (')[0]).join('\n'):'';
+  }finally{
+    _manualBatchAdding=false;
     if(btn)btn.disabled=false;
   }
 }
@@ -11497,6 +11564,7 @@ document.getElementById('vid-tag-thumb-refresh').addEventListener('click',async 
     _ytBackfillPriorityChannels(fromYear,toYear,query||undefined);
   });
   document.getElementById('sp-yt-manual-add-btn')?.addEventListener('click',_ytAddVideoByUrl);
+  document.getElementById('sp-yt-manual-batch-add-btn')?.addEventListener('click',_ytAddVideosBatch);
 })();
 
 // ── 동기화 채널 목록 (그룹/멤버 공식 + 그외 외부 채널 두 탭 — 전부 로컬 데이터, DB 조회 없음) ──
