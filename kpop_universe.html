@@ -1790,6 +1790,7 @@
     <button class="sp-yt-sync" id="sp-hlfix-btn" style="margin-top:4px;opacity:.8;">하이라이트 오염 정리</button>
     <button class="sp-yt-sync" id="sp-lunafix-btn" style="margin-top:4px;opacity:.8;">에프엑스 LUNA(원어스) 오염 정리</button>
     <button class="sp-yt-sync" id="sp-hjfix-btn" style="margin-top:4px;opacity:.8;">크래비티 형준/SS501 김형준 오염 정리</button>
+    <button class="sp-yt-sync" id="sp-collabfix-btn" style="margin-top:4px;opacity:.8;">콜라보 오태깅 재검증(전체)</button>
     <button class="sp-yt-sync" id="sp-yt-autotag" style="margin-top:4px;opacity:.8;">멤버+콜라보 자동 태깅 (미태깅분)</button>
     <button class="sp-yt-sync" id="sp-hidden-vids-btn" style="margin-top:4px;opacity:.8;">노출 제외 영상 목록</button>
     <button class="sp-yt-sync" id="sp-ext-channels-btn" style="margin-top:4px;opacity:.8;">동기화 채널 목록</button>
@@ -10030,6 +10031,61 @@ async function _ytFixHyeongjunSS501Mistag(){
   }
 }
 
+// "형준/SS501 김형준" 사고와 같은 계열 — 단일음절 멤버(예: 올아워즈 "온"/"On")의 영문 표기가 "on"처럼
+// 흔한 영단어와 겹치거나, 서로 다른 그룹에 동명이인 멤버(예: 크래비티 "성민"/Seongmin ↔ 슈퍼주니어
+// "성민"/Sungmin)가 있어서, 정작 그 그룹 이름은 제목에 전혀 없는데도 다른 그룹의 콜라보로 잘못
+// 태깅되는 사고가 반복 발견됨(예: 크래비티 자체 채널 영상 다수, 2026-07-31). _m2ParseTitle에 단일음절
+// 멤버 해시태그 전용 매칭 + 자기 채널(selfGko) 동명이인 우선 처리를 추가해 앞으로는 안 생기지만, 이미
+// 오염된 기존 with_members/with_groups는 남아있으므로, 전체 영상을 고친 알고리즘으로 다시 검증해서
+// 더 이상 근거가 없는 콜라보 태그만 제거한다(group_ko/members는 절대 안 건드림).
+async function _ytSweepAmbiguousCollabMistag(){
+  if(!sb){_ytSetProg('Supabase 연결 없음');return;}
+  const btn=document.getElementById('sp-collabfix-btn');
+  if(btn)btn.disabled=true;
+  try{
+    _ytSetProg('[콜라보 오태깅 재검증] 조회 중…');
+    const{data:rows,error}=await _sbFetchAll(()=>sb.from(_YT_TABLE)
+      .select('id,title,group_ko,with_members,with_groups')
+      .or('with_members.neq.{},with_groups.neq.{}')
+      .order('id'));
+    if(error){_ytSetProg('조회 실패: '+error.message);return;}
+    if(!rows?.length){_ytSetProg('검사할 영상이 없어요');return;}
+    const updates=[];
+    rows.forEach(v=>{
+      const match=_m2ParseTitle(v.title||'',v.group_ko);
+      const validGroups=new Set(),validMembers=new Set();
+      if(match){
+        const otherGkos=[match.primaryGroup,...match.withGroups].filter(og=>og&&og!==v.group_ko);
+        otherGkos.forEach(og=>{
+          const sec=match.membersByGroup[og]||[];
+          if(sec.length)sec.forEach(mko=>validMembers.add(`${mko}(${og})`));
+          else validGroups.add(og);
+        });
+      }
+      const curWG=v.with_groups||[],curWM=v.with_members||[];
+      const newWG=curWG.filter(g=>validGroups.has(g));
+      const newWM=curWM.filter(m=>validMembers.has(m));
+      const patch={};
+      if(newWG.length!==curWG.length)patch.with_groups=newWG;
+      if(newWM.length!==curWM.length)patch.with_members=newWM;
+      if(Object.keys(patch).length)updates.push({id:v.id,patch});
+    });
+    if(!updates.length){_ytSetProg(`검사 완료 — ${rows.length}개 중 오염 없음`);return;}
+    for(let i=0;i<updates.length;i+=200){
+      const chunk=updates.slice(i,i+200);
+      const results=await Promise.all(chunk.map(u=>sb.from(_YT_TABLE).update(u.patch).eq('id',u.id)));
+      const failed=results.find(r=>r.error);
+      if(failed)throw new Error(failed.error.message);
+      _ytSetProg(`[콜라보 오태깅 재검증] ${Math.min(i+200,updates.length)}/${updates.length}개 처리 중…`);
+    }
+    _ytSetProg(`완료! ${rows.length}개 중 ${updates.length}개에서 근거 없는 콜라보 태그 제거함`);
+  }catch(e){
+    _ytSetProg('오류: '+e.message);
+  }finally{
+    if(btn)btn.disabled=false;
+  }
+}
+
 // ── 그룹명 변경 반영 ── groups.json/artists.json에서 그룹의 group.ko 표기를 바꾸면(예: "슈퍼노바" →
 // "슈퍼노바(초신성)"), 그 그룹 자체 채널의 기존 group_ko 컬럼값과, 다른 채널이 이 그룹/사람을 게스트로
 // 태깅할 때 쓰는 with_members("이름(그룹)")/with_groups(그룹명 그대로) 안의 예전 표기가 그대로 남아있어서
@@ -10424,7 +10480,7 @@ async function _ytAutoTagMembers(){
         // group_ko는 절대 안 건드림(자체 채널 영상의 소속은 항상 그 채널 그룹으로 고정) — 매칭된 그룹 중
         // 지금 채널(gko) 자신은 제외하고 "다른" 그룹만 with_groups/with_members로 채운다.
         if(!v.with_members?.length&&!v.with_groups?.length){
-          const match=_m2ParseTitle(title);
+          const match=_m2ParseTitle(title,gko);
           if(match){
             const otherGkos=[match.primaryGroup,...match.withGroups].filter(og=>og&&og!==gko);
             const withGroups=[],withMembers=[];
@@ -10598,7 +10654,7 @@ function _m2NameVariants(a){
 const _GROUP_TITLE_CONFLICT_EXCLUDE={
   '슈퍼노바(초신성)':[/aespa/i,/에스파/],
 };
-function _m2ParseTitle(rawTitle){
+function _m2ParseTitle(rawTitle,selfGko){
   // "하이라이트"는 그룹명이 아니라 "요약본" 의미로도 흔히 쓰여 그룹 하이라이트로 오매칭되기 쉬움 — 실측으로
   // "OO '노래' 릴댄 하이라이트 | 릴레이댄스"(릴레이댄스 코너 고정 문구), "OO 무대 하이라이트 모음"류가
   // 대량으로 하이라이트 그룹에 잘못 태깅되는 걸 확인함(2026-07-30). 대괄호로 감싼 경우([하이라이트])뿐
@@ -10613,6 +10669,18 @@ function _m2ParseTitle(rawTitle){
     if(!name||name.length<2)return false;
     const n=name.toUpperCase().replace(/[^가-힣a-zA-Z0-9]/g,' ').replace(/\s+/g,' ');
     return norm.includes(' '+n+' ');
+  }
+  // "New"(뉴/더보이즈), "On"(온/올아워즈), "Key"(키/샤이니), "Q"(큐/더보이즈)처럼 등록명이 한 글자(단일음절)인
+  // 멤버는 영문 로마자 표기가 흔한 영단어와 겹쳐서, 제목에 그 단어가 평범하게 쓰였을 뿐인데도 멤버 언급으로
+  // 오매칭되는 사고가 반복됨(예: "On a street in Spain" 제목이 크래비티 영상인데 올아워즈 "온"으로 잘못
+  // 콜라보 태깅됨, 2026-07-31 실측). 단일음절 멤버는 해시태그로 명시된 경우만 매칭을 인정한다.
+  function hitHashtag(name){
+    if(!name)return false;
+    return new RegExp(`#${_atmEscRe(name)}(?![가-힣a-zA-Z0-9])`,'i').test(title);
+  }
+  function memberHit(a,names){
+    if([...a.name.ko].length===1)return names.some(t=>hitHashtag(t));
+    return names.some(t=>hit(t));
   }
   // 긴 이름 우선 정렬 (부분 매칭 방지)
   const groupsSorted=Object.entries(GROUPS)
@@ -10658,12 +10726,18 @@ function _m2ParseTitle(rawTitle){
     for(const a of ARTISTS){
       if(!GROUPS[a.group.ko])continue;
       const names=_m2NameVariants(a);
-      if(names.some(t=>hit(t))&&!names.some(t=>hasForeignGroupSuffix(t))){
+      if(memberHit(a,names)&&!names.some(t=>hasForeignGroupSuffix(t))){
         if(!inferred.has(a.group.ko))inferred.set(a.group.ko,[]);
         inferred.get(a.group.ko).push(a.name.ko);
       }
     }
     if(!inferred.size)return null;
+    // 그룹명이 아예 없이 멤버 이름 하나만으로 그룹을 역추론한 상황 — 이 영상이 원래 어느 채널 소속인지
+    // (selfGko) 이미 알고 있고 그 그룹도 같은 이름으로 걸렸다면, 동명이인(예: 크래비티 "성민" ↔
+    // 슈퍼주니어 "성민")을 엉뚱하게 다른 그룹 콜라보로 엮는 걸 막기 위해 다른 그룹 추론은 버린다.
+    if(selfGko&&inferred.has(selfGko)){
+      for(const gko of[...inferred.keys()]){if(gko!==selfGko)inferred.delete(gko);}
+    }
     const result=[];
     for(const[gko,members]of inferred){result.push({gko,members});}
     return{primaryGroup:result[0].gko,withGroups:result.slice(1).map(r=>r.gko),
@@ -12400,6 +12474,7 @@ document.getElementById('vid-tag-thumb-refresh').addEventListener('click',async 
   document.getElementById('sp-hlfix-btn')?.addEventListener('click',_ytSweepHighlightMistag);
   document.getElementById('sp-lunafix-btn')?.addEventListener('click',_ytFixOneusLunaMistag);
   document.getElementById('sp-hjfix-btn')?.addEventListener('click',_ytFixHyeongjunSS501Mistag);
+  document.getElementById('sp-collabfix-btn')?.addEventListener('click',_ytSweepAmbiguousCollabMistag);
   document.getElementById('sp-yt-autotag')?.addEventListener('click',_ytAutoTagMembers);
   document.getElementById('sp-hidden-vids-btn')?.addEventListener('click',_openHiddenVids);
   document.getElementById('sp-ext-channels-btn')?.addEventListener('click',_openExtChannels);
