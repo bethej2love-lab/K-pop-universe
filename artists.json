@@ -11399,11 +11399,11 @@
       "en": "Zhang Hao"
     },
     "group": {
-      "ko": "제로베이스원",
-      "en": "ZEROBASEONE"
+      "ko": "앤더블",
+      "en": "AND2BLE"
     },
-    "co": "웨이크원",
-    "active": false,
+    "co": "YH엔터테인먼트",
+    "active": true,
     "color": [
       120,
       150,
@@ -11416,7 +11416,17 @@
     },
     "links": {
       "namu": "https://namu.wiki/w/장하오"
-    }
+    },
+    "groups": [
+      {
+        "ko": "앤더블",
+        "en": "AND2BLE"
+      },
+      {
+        "ko": "제로베이스원",
+        "en": "ZEROBASEONE"
+      }
+    ]
   },
   {
     "name": {
@@ -11424,11 +11434,11 @@
       "en": "Ricky"
     },
     "group": {
-      "ko": "제로베이스원",
-      "en": "ZEROBASEONE"
+      "ko": "앤더블",
+      "en": "AND2BLE"
     },
-    "co": "웨이크원",
-    "active": false,
+    "co": "YH엔터테인먼트",
+    "active": true,
     "color": [
       120,
       150,
@@ -11441,7 +11451,17 @@
     },
     "links": {
       "namu": "https://namu.wiki/w/리키(AND2BLE)"
-    }
+    },
+    "groups": [
+      {
+        "ko": "앤더블",
+        "en": "AND2BLE"
+      },
+      {
+        "ko": "제로베이스원",
+        "en": "ZEROBASEONE"
+      }
+    ]
   },
   {
     "name": {
@@ -11449,11 +11469,11 @@
       "en": "Gyuvin"
     },
     "group": {
-      "ko": "제로베이스원",
-      "en": "ZEROBASEONE"
+      "ko": "앤더블",
+      "en": "AND2BLE"
     },
-    "co": "웨이크원",
-    "active": false,
+    "co": "YH엔터테인먼트",
+    "active": true,
     "color": [
       120,
       150,
@@ -11466,7 +11486,17 @@
     },
     "links": {
       "namu": "https://namu.wiki/w/김규빈"
-    }
+    },
+    "groups": [
+      {
+        "ko": "앤더블",
+        "en": "AND2BLE"
+      },
+      {
+        "ko": "제로베이스원",
+        "en": "ZEROBASEONE"
+      }
+    ]
   },
   {
     "name": {
@@ -11474,11 +11504,11 @@
       "en": "Yujin"
     },
     "group": {
-      "ko": "제로베이스원",
-      "en": "ZEROBASEONE"
+      "ko": "앤더블",
+      "en": "AND2BLE"
     },
-    "co": "웨이크원",
-    "active": false,
+    "co": "YH엔터테인먼트",
+    "active": true,
     "color": [
       120,
       150,
@@ -11491,7 +11521,17 @@
     },
     "links": {
       "namu": "https://namu.wiki/w/한유진"
-    }
+    },
+    "groups": [
+      {
+        "ko": "앤더블",
+        "en": "AND2BLE"
+      },
+      {
+        "ko": "제로베이스원",
+        "en": "ZEROBASEONE"
+      }
+    ]
   },
   {
     "name": {
@@ -17541,7 +17581,17 @@
     },
     "links": {
       "namu": "https://namu.wiki/w/전소민(KARD)"
-    }
+    },
+    "groups": [
+      {
+        "ko": "카드",
+        "en": "KARD"
+      },
+      {
+        "ko": "에이프릴",
+        "en": "APRIL"
+      }
+    ]
   },
   {
     "name": {
@@ -30380,116 +30430,6 @@
   },
   {
     "name": {
-      "ko": "장하오",
-      "en": "Zhang Hao"
-    },
-    "group": {
-      "ko": "앤더블",
-      "en": "AND2BLE"
-    },
-    "co": "YH엔터테인먼트",
-    "active": true,
-    "color": [
-      190,
-      215,
-      80
-    ],
-    "bday": "2000.07.25",
-    "nat": {
-      "ko": "중국",
-      "en": "CN"
-    }
-  },
-  {
-    "name": {
-      "ko": "유승언",
-      "en": "Yoo Seungeon"
-    },
-    "group": {
-      "ko": "앤더블",
-      "en": "AND2BLE"
-    },
-    "co": "YH엔터테인먼트",
-    "active": true,
-    "color": [
-      190,
-      215,
-      80
-    ],
-    "bday": "2004.01.02",
-    "nat": {
-      "ko": "한국",
-      "en": "KR"
-    }
-  },
-  {
-    "name": {
-      "ko": "리키",
-      "en": "Rikey"
-    },
-    "group": {
-      "ko": "앤더블",
-      "en": "AND2BLE"
-    },
-    "co": "YH엔터테인먼트",
-    "active": true,
-    "color": [
-      190,
-      215,
-      80
-    ],
-    "bday": "2004.05.20",
-    "nat": {
-      "ko": "중국",
-      "en": "CN"
-    }
-  },
-  {
-    "name": {
-      "ko": "김규빈",
-      "en": "Kim Gyubin"
-    },
-    "group": {
-      "ko": "앤더블",
-      "en": "AND2BLE"
-    },
-    "co": "YH엔터테인먼트",
-    "active": true,
-    "color": [
-      190,
-      215,
-      80
-    ],
-    "bday": "2004.08.30",
-    "nat": {
-      "ko": "한국",
-      "en": "KR"
-    }
-  },
-  {
-    "name": {
-      "ko": "한유진",
-      "en": "Han Yujin"
-    },
-    "group": {
-      "ko": "앤더블",
-      "en": "AND2BLE"
-    },
-    "co": "YH엔터테인먼트",
-    "active": true,
-    "color": [
-      190,
-      215,
-      80
-    ],
-    "bday": "2007.03.20",
-    "nat": {
-      "ko": "한국",
-      "en": "KR"
-    }
-  },
-  {
-    "name": {
       "ko": "마농",
       "en": "Manon"
     },
@@ -34850,6 +34790,1221 @@
     },
     "links": {
       "namu": "https://namu.wiki/w/장성식"
+    }
+  },
+  {
+    "name": {
+      "ko": "민재",
+      "en": "Minjae"
+    },
+    "group": {
+      "ko": "싸이커스",
+      "en": "xikers"
+    },
+    "co": "KQ엔터테인먼트",
+    "active": true,
+    "color": [
+      76,
+      136,
+      186
+    ],
+    "bday": "2003.04.10",
+    "nat": {
+      "ko": "대한민국",
+      "en": "KR"
+    },
+    "leader": true,
+    "links": {
+      "namu": "https://namu.wiki/w/민재(xikers)"
+    }
+  },
+  {
+    "name": {
+      "ko": "준민",
+      "en": "Junmin"
+    },
+    "group": {
+      "ko": "싸이커스",
+      "en": "xikers"
+    },
+    "co": "KQ엔터테인먼트",
+    "active": true,
+    "color": [
+      83,
+      143,
+      193
+    ],
+    "bday": "2003.05.24",
+    "nat": {
+      "ko": "대한민국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/준민"
+    }
+  },
+  {
+    "name": {
+      "ko": "수민",
+      "en": "Sooming"
+    },
+    "group": {
+      "ko": "싸이커스",
+      "en": "xikers"
+    },
+    "co": "KQ엔터테인먼트",
+    "active": true,
+    "color": [
+      90,
+      150,
+      200
+    ],
+    "bday": "2004.04.07",
+    "nat": {
+      "ko": "대한민국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/수민(xikers)"
+    }
+  },
+  {
+    "name": {
+      "ko": "진식",
+      "en": "Jinsik"
+    },
+    "group": {
+      "ko": "싸이커스",
+      "en": "xikers"
+    },
+    "co": "KQ엔터테인먼트",
+    "active": true,
+    "color": [
+      97,
+      157,
+      207
+    ],
+    "bday": "2004.07.30",
+    "nat": {
+      "ko": "대한민국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/진식(xikers)"
+    }
+  },
+  {
+    "name": {
+      "ko": "현우",
+      "en": "Hyunwoo"
+    },
+    "group": {
+      "ko": "싸이커스",
+      "en": "xikers"
+    },
+    "co": "KQ엔터테인먼트",
+    "active": true,
+    "color": [
+      104,
+      164,
+      214
+    ],
+    "bday": "2004.12.04",
+    "nat": {
+      "ko": "대한민국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/현우(xikers)"
+    }
+  },
+  {
+    "name": {
+      "ko": "정훈",
+      "en": "Jeonghoon"
+    },
+    "group": {
+      "ko": "싸이커스",
+      "en": "xikers"
+    },
+    "co": "KQ엔터테인먼트",
+    "active": true,
+    "color": [
+      80,
+      140,
+      190
+    ],
+    "bday": "2005.07.05",
+    "nat": {
+      "ko": "대한민국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/정훈(xikers)"
+    }
+  },
+  {
+    "name": {
+      "ko": "세은",
+      "en": "Sean"
+    },
+    "group": {
+      "ko": "싸이커스",
+      "en": "xikers"
+    },
+    "co": "KQ엔터테인먼트",
+    "active": true,
+    "color": [
+      100,
+      160,
+      210
+    ],
+    "bday": "2005.08.17",
+    "nat": {
+      "ko": "대한민국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/세은(xikers)"
+    }
+  },
+  {
+    "name": {
+      "ko": "유준",
+      "en": "Yujun"
+    },
+    "group": {
+      "ko": "싸이커스",
+      "en": "xikers"
+    },
+    "co": "KQ엔터테인먼트",
+    "active": true,
+    "color": [
+      86,
+      146,
+      196
+    ],
+    "bday": "2005.10.05",
+    "nat": {
+      "ko": "대한민국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/유준(xikers)"
+    }
+  },
+  {
+    "name": {
+      "ko": "헌터",
+      "en": "Hunter"
+    },
+    "group": {
+      "ko": "싸이커스",
+      "en": "xikers"
+    },
+    "co": "KQ엔터테인먼트",
+    "active": true,
+    "color": [
+      76,
+      136,
+      186
+    ],
+    "bday": "2005.10.05",
+    "nat": {
+      "ko": "태국",
+      "en": "TH"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/헌터(xikers)"
+    }
+  },
+  {
+    "name": {
+      "ko": "예찬",
+      "en": "Yechan"
+    },
+    "group": {
+      "ko": "싸이커스",
+      "en": "xikers"
+    },
+    "co": "KQ엔터테인먼트",
+    "active": true,
+    "color": [
+      83,
+      143,
+      193
+    ],
+    "bday": "2005.10.21",
+    "nat": {
+      "ko": "대한민국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/예찬(xikers)"
+    }
+  },
+  {
+    "name": {
+      "ko": "이수진",
+      "en": "Soojin"
+    },
+    "group": {
+      "ko": "위클리",
+      "en": "Weeekly"
+    },
+    "co": "IST엔터테인먼트",
+    "active": true,
+    "color": [
+      216,
+      106,
+      136
+    ],
+    "bday": "2001.12.12",
+    "nat": {
+      "ko": "대한민국",
+      "en": "KR"
+    },
+    "leader": true,
+    "links": {
+      "namu": "https://namu.wiki/w/이수진(2001)"
+    }
+  },
+  {
+    "name": {
+      "ko": "먼데이",
+      "en": "Monday"
+    },
+    "group": {
+      "ko": "위클리",
+      "en": "Weeekly"
+    },
+    "co": "IST엔터테인먼트",
+    "active": true,
+    "color": [
+      223,
+      113,
+      143
+    ],
+    "bday": "2002.05.10",
+    "nat": {
+      "ko": "대한민국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/LUNEDI"
+    }
+  },
+  {
+    "name": {
+      "ko": "박소은",
+      "en": "Soeun"
+    },
+    "group": {
+      "ko": "위클리",
+      "en": "Weeekly"
+    },
+    "co": "IST엔터테인먼트",
+    "active": true,
+    "color": [
+      230,
+      120,
+      150
+    ],
+    "bday": "2002.10.26",
+    "nat": {
+      "ko": "대한민국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/박소은(2002)"
+    }
+  },
+  {
+    "name": {
+      "ko": "이재희",
+      "en": "Jaehee"
+    },
+    "group": {
+      "ko": "위클리",
+      "en": "Weeekly"
+    },
+    "co": "IST엔터테인먼트",
+    "active": true,
+    "color": [
+      237,
+      127,
+      157
+    ],
+    "bday": "2004.03.18",
+    "nat": {
+      "ko": "대한민국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/이재희(2004)"
+    }
+  },
+  {
+    "name": {
+      "ko": "지한",
+      "en": "Jihan"
+    },
+    "group": {
+      "ko": "위클리",
+      "en": "Weeekly"
+    },
+    "co": "IST엔터테인먼트",
+    "active": true,
+    "color": [
+      244,
+      134,
+      164
+    ],
+    "bday": "2004.07.12",
+    "nat": {
+      "ko": "대한민국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/한지효(2004)"
+    }
+  },
+  {
+    "name": {
+      "ko": "조아",
+      "en": "Zoa"
+    },
+    "group": {
+      "ko": "위클리",
+      "en": "Weeekly"
+    },
+    "co": "IST엔터테인먼트",
+    "active": true,
+    "color": [
+      220,
+      110,
+      140
+    ],
+    "bday": "2005.05.31",
+    "nat": {
+      "ko": "대한민국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/조혜원(2005)"
+    }
+  },
+  {
+    "name": {
+      "ko": "신지윤",
+      "en": "Jiyoon"
+    },
+    "group": {
+      "ko": "위클리",
+      "en": "Weeekly"
+    },
+    "co": "IST엔터테인먼트",
+    "active": false,
+    "color": [
+      240,
+      130,
+      160
+    ],
+    "bday": "2002.03.02",
+    "nat": {
+      "ko": "대한민국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/신지윤"
+    }
+  },
+  {
+    "name": {
+      "ko": "케이타",
+      "en": "Keita"
+    },
+    "group": {
+      "ko": "이븐",
+      "en": "EVNNE"
+    },
+    "co": "젤리피쉬엔터테인먼트",
+    "active": true,
+    "color": [
+      66,
+      176,
+      156
+    ],
+    "bday": "2001.07.04",
+    "nat": {
+      "ko": "일본",
+      "en": "JP"
+    },
+    "leader": true,
+    "links": {
+      "namu": "https://namu.wiki/w/케이타(EVNNE)"
+    }
+  },
+  {
+    "name": {
+      "ko": "박한빈",
+      "en": "Park Hanbin"
+    },
+    "group": {
+      "ko": "이븐",
+      "en": "EVNNE"
+    },
+    "co": "젤리피쉬엔터테인먼트",
+    "active": true,
+    "color": [
+      73,
+      183,
+      163
+    ],
+    "bday": "2002.03.01",
+    "nat": {
+      "ko": "대한민국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/박한빈(EVNNE)"
+    }
+  },
+  {
+    "name": {
+      "ko": "이정현",
+      "en": "Lee Junghyun"
+    },
+    "group": {
+      "ko": "이븐",
+      "en": "EVNNE"
+    },
+    "co": "젤리피쉬엔터테인먼트",
+    "active": true,
+    "color": [
+      80,
+      190,
+      170
+    ],
+    "bday": "2002.09.11",
+    "nat": {
+      "ko": "대한민국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/이정현(EVNNE)"
+    }
+  },
+  {
+    "name": {
+      "ko": "문정현",
+      "en": "Moon Junghyun"
+    },
+    "group": {
+      "ko": "이븐",
+      "en": "EVNNE"
+    },
+    "co": "젤리피쉬엔터테인먼트",
+    "active": true,
+    "color": [
+      87,
+      197,
+      177
+    ],
+    "bday": "2005.03.31",
+    "nat": {
+      "ko": "대한민국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/문정현(EVNNE)"
+    }
+  },
+  {
+    "name": {
+      "ko": "박지후",
+      "en": "Park Jihoo"
+    },
+    "group": {
+      "ko": "이븐",
+      "en": "EVNNE"
+    },
+    "co": "젤리피쉬엔터테인먼트",
+    "active": true,
+    "color": [
+      94,
+      204,
+      184
+    ],
+    "bday": "2006.07.14",
+    "nat": {
+      "ko": "대한민국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/박지후(EVNNE)"
+    }
+  },
+  {
+    "name": {
+      "ko": "유승언",
+      "en": "Yoo Seungeon"
+    },
+    "group": {
+      "ko": "앤더블",
+      "en": "AND2BLE"
+    },
+    "co": "YH엔터테인먼트",
+    "active": true,
+    "color": [
+      70,
+      180,
+      160
+    ],
+    "bday": "2004.01.02",
+    "nat": {
+      "ko": "대한민국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/유승언"
+    },
+    "groups": [
+      {
+        "ko": "앤더블",
+        "en": "AND2BLE"
+      },
+      {
+        "ko": "이븐",
+        "en": "EVNNE"
+      }
+    ]
+  },
+  {
+    "name": {
+      "ko": "지윤서",
+      "en": "Ji Yunseo"
+    },
+    "group": {
+      "ko": "이븐",
+      "en": "EVNNE"
+    },
+    "co": "젤리피쉬엔터테인먼트",
+    "active": false,
+    "color": [
+      90,
+      200,
+      180
+    ],
+    "bday": "2004.10.15",
+    "nat": {
+      "ko": "대한민국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/지윤서"
+    }
+  },
+  {
+    "name": {
+      "ko": "은호",
+      "en": "Eunho"
+    },
+    "group": {
+      "ko": "유나이트",
+      "en": "YOUNITE"
+    },
+    "co": "파라뮤직",
+    "active": true,
+    "color": [
+      186,
+      156,
+      76
+    ],
+    "bday": "2001.03.25",
+    "nat": {
+      "ko": "대한민국",
+      "en": "KR"
+    },
+    "leader": true,
+    "links": {
+      "namu": "https://namu.wiki/w/은호(YOUNITE)"
+    }
+  },
+  {
+    "name": {
+      "ko": "스티브",
+      "en": "Steve"
+    },
+    "group": {
+      "ko": "유나이트",
+      "en": "YOUNITE"
+    },
+    "co": "파라뮤직",
+    "active": true,
+    "color": [
+      193,
+      163,
+      83
+    ],
+    "bday": "2002.03.09",
+    "nat": {
+      "ko": "대한민국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/스티브(YOUNITE)"
+    }
+  },
+  {
+    "name": {
+      "ko": "형석",
+      "en": "Hyeongseok"
+    },
+    "group": {
+      "ko": "유나이트",
+      "en": "YOUNITE"
+    },
+    "co": "파라뮤직",
+    "active": true,
+    "color": [
+      200,
+      170,
+      90
+    ],
+    "bday": "2002.11.06",
+    "nat": {
+      "ko": "대한민국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/형석(YOUNITE)"
+    }
+  },
+  {
+    "name": {
+      "ko": "우노",
+      "en": "Uno"
+    },
+    "group": {
+      "ko": "유나이트",
+      "en": "YOUNITE"
+    },
+    "co": "파라뮤직",
+    "active": true,
+    "color": [
+      207,
+      177,
+      97
+    ],
+    "bday": "2003.04.05",
+    "nat": {
+      "ko": "대한민국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/우노(YOUNITE)"
+    }
+  },
+  {
+    "name": {
+      "ko": "DEY",
+      "en": "DEY"
+    },
+    "group": {
+      "ko": "유나이트",
+      "en": "YOUNITE"
+    },
+    "co": "파라뮤직",
+    "active": true,
+    "color": [
+      214,
+      184,
+      104
+    ],
+    "bday": "2003.06.11",
+    "nat": {
+      "ko": "대한민국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/DEY"
+    }
+  },
+  {
+    "name": {
+      "ko": "경문",
+      "en": "Kyeongmoon"
+    },
+    "group": {
+      "ko": "유나이트",
+      "en": "YOUNITE"
+    },
+    "co": "파라뮤직",
+    "active": true,
+    "color": [
+      190,
+      160,
+      80
+    ],
+    "bday": "2003.06.29",
+    "nat": {
+      "ko": "대한민국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/경문"
+    }
+  },
+  {
+    "name": {
+      "ko": "시온",
+      "en": "Sion"
+    },
+    "group": {
+      "ko": "유나이트",
+      "en": "YOUNITE"
+    },
+    "co": "파라뮤직",
+    "active": true,
+    "color": [
+      210,
+      180,
+      100
+    ],
+    "bday": "2004.10.19",
+    "nat": {
+      "ko": "대한민국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/시온(YOUNITE)"
+    }
+  },
+  {
+    "name": {
+      "ko": "현승",
+      "en": "Hyunseung"
+    },
+    "group": {
+      "ko": "유나이트",
+      "en": "YOUNITE"
+    },
+    "co": "파라뮤직",
+    "active": false,
+    "color": [
+      196,
+      166,
+      86
+    ],
+    "bday": "2002.10.15",
+    "nat": {
+      "ko": "대한민국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/김현승(2002)"
+    }
+  },
+  {
+    "name": {
+      "ko": "은상",
+      "en": "Eunsang"
+    },
+    "group": {
+      "ko": "유나이트",
+      "en": "YOUNITE"
+    },
+    "co": "파라뮤직",
+    "active": false,
+    "color": [
+      186,
+      156,
+      76
+    ],
+    "bday": "2002.10.26",
+    "nat": {
+      "ko": "대한민국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/이은상(2002)"
+    }
+  },
+  {
+    "name": {
+      "ko": "명호",
+      "en": "Myeongho"
+    },
+    "group": {
+      "ko": "에잇턴",
+      "en": "8TURN"
+    },
+    "co": "MNH엔터테인먼트",
+    "active": true,
+    "color": [
+      96,
+      106,
+      216
+    ],
+    "bday": "2001.10.12",
+    "nat": {
+      "ko": "대한민국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/명호"
+    }
+  },
+  {
+    "name": {
+      "ko": "재윤",
+      "en": "Jaeyoon"
+    },
+    "group": {
+      "ko": "에잇턴",
+      "en": "8TURN"
+    },
+    "co": "MNH엔터테인먼트",
+    "active": true,
+    "color": [
+      103,
+      113,
+      223
+    ],
+    "bday": "2002.07.02",
+    "nat": {
+      "ko": "대한민국·뉴질랜드",
+      "en": "KR·NZ"
+    },
+    "leader": true,
+    "links": {
+      "namu": "https://namu.wiki/w/재윤(8TURN)"
+    }
+  },
+  {
+    "name": {
+      "ko": "민호",
+      "en": "Minho"
+    },
+    "group": {
+      "ko": "에잇턴",
+      "en": "8TURN"
+    },
+    "co": "MNH엔터테인먼트",
+    "active": true,
+    "color": [
+      110,
+      120,
+      230
+    ],
+    "bday": "2002.10.14",
+    "nat": {
+      "ko": "대한민국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/민호(8TURN)"
+    }
+  },
+  {
+    "name": {
+      "ko": "윤성",
+      "en": "Yoonsung"
+    },
+    "group": {
+      "ko": "에잇턴",
+      "en": "8TURN"
+    },
+    "co": "MNH엔터테인먼트",
+    "active": true,
+    "color": [
+      117,
+      127,
+      237
+    ],
+    "bday": "2003.11.13",
+    "nat": {
+      "ko": "대한민국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/윤성(8TURN)"
+    }
+  },
+  {
+    "name": {
+      "ko": "해민",
+      "en": "Haemin"
+    },
+    "group": {
+      "ko": "에잇턴",
+      "en": "8TURN"
+    },
+    "co": "MNH엔터테인먼트",
+    "active": true,
+    "color": [
+      124,
+      134,
+      244
+    ],
+    "bday": "2004.03.16",
+    "nat": {
+      "ko": "대한민국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/해민"
+    }
+  },
+  {
+    "name": {
+      "ko": "경민",
+      "en": "Kyeongmin"
+    },
+    "group": {
+      "ko": "에잇턴",
+      "en": "8TURN"
+    },
+    "co": "MNH엔터테인먼트",
+    "active": true,
+    "color": [
+      100,
+      110,
+      220
+    ],
+    "bday": "2004.10.28",
+    "nat": {
+      "ko": "대한민국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/경민(8TURN)"
+    }
+  },
+  {
+    "name": {
+      "ko": "윤규",
+      "en": "Yoonkyu"
+    },
+    "group": {
+      "ko": "에잇턴",
+      "en": "8TURN"
+    },
+    "co": "MNH엔터테인먼트",
+    "active": true,
+    "color": [
+      120,
+      130,
+      240
+    ],
+    "bday": "2005.09.07",
+    "nat": {
+      "ko": "대한민국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/윤규"
+    }
+  },
+  {
+    "name": {
+      "ko": "승헌",
+      "en": "Seungheon"
+    },
+    "group": {
+      "ko": "에잇턴",
+      "en": "8TURN"
+    },
+    "co": "MNH엔터테인먼트",
+    "active": true,
+    "color": [
+      106,
+      116,
+      226
+    ],
+    "bday": "2007.05.15",
+    "nat": {
+      "ko": "대한민국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/승헌"
+    }
+  },
+  {
+    "name": {
+      "ko": "윤채경",
+      "en": "Yoon Chaekyung"
+    },
+    "group": {
+      "ko": "에이프릴",
+      "en": "APRIL"
+    },
+    "co": "DSP미디어",
+    "active": true,
+    "color": [
+      221,
+      126,
+      156
+    ],
+    "bday": "1996.07.07",
+    "nat": {
+      "ko": "대한민국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/윤채경"
+    }
+  },
+  {
+    "name": {
+      "ko": "김채원",
+      "en": "Kim Chaewon"
+    },
+    "group": {
+      "ko": "에이프릴",
+      "en": "APRIL"
+    },
+    "co": "DSP미디어",
+    "active": true,
+    "color": [
+      228,
+      133,
+      163
+    ],
+    "bday": "1997.11.08",
+    "nat": {
+      "ko": "대한민국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/김채원(1997)"
+    }
+  },
+  {
+    "name": {
+      "ko": "이나은",
+      "en": "Naeun"
+    },
+    "group": {
+      "ko": "에이프릴",
+      "en": "APRIL"
+    },
+    "co": "DSP미디어",
+    "active": true,
+    "color": [
+      235,
+      140,
+      170
+    ],
+    "bday": "1999.05.05",
+    "nat": {
+      "ko": "대한민국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/이나은"
+    }
+  },
+  {
+    "name": {
+      "ko": "양예나",
+      "en": "Yena"
+    },
+    "group": {
+      "ko": "에이프릴",
+      "en": "APRIL"
+    },
+    "co": "DSP미디어",
+    "active": true,
+    "color": [
+      242,
+      147,
+      177
+    ],
+    "bday": "2000.05.22",
+    "nat": {
+      "ko": "대한민국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/양예나"
+    }
+  },
+  {
+    "name": {
+      "ko": "레이첼",
+      "en": "Rachel"
+    },
+    "group": {
+      "ko": "에이프릴",
+      "en": "APRIL"
+    },
+    "co": "DSP미디어",
+    "active": true,
+    "color": [
+      249,
+      154,
+      184
+    ],
+    "bday": "2000.08.28",
+    "nat": {
+      "ko": "대한민국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/레이첼(2000)"
+    }
+  },
+  {
+    "name": {
+      "ko": "이진솔",
+      "en": "Jinsol"
+    },
+    "group": {
+      "ko": "에이프릴",
+      "en": "APRIL"
+    },
+    "co": "DSP미디어",
+    "active": true,
+    "color": [
+      225,
+      130,
+      160
+    ],
+    "bday": "2001.12.04",
+    "nat": {
+      "ko": "대한민국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/이진솔"
+    }
+  },
+  {
+    "name": {
+      "ko": "이현주",
+      "en": "Lee Hyunjoo"
+    },
+    "group": {
+      "ko": "에이프릴",
+      "en": "APRIL"
+    },
+    "co": "DSP미디어",
+    "active": false,
+    "color": [
+      245,
+      150,
+      180
+    ],
+    "bday": "1998.02.05",
+    "nat": {
+      "ko": "대한민국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/이현주(배우)"
     }
   }
 ]
