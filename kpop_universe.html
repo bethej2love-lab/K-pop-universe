@@ -378,7 +378,7 @@
   .tv-with-chip:hover{color:rgba(200,220,255,1);text-decoration:underline;}
   .tv-with-chip-cover{color:rgba(200,150,230,0.75);}
   .tv-with-chip-cover:hover{color:rgba(225,190,245,1);}
-  /* 마퀴(긴 제목 슬라이드) — 데스크톱은 hover, 모바일은 탭으로 트리거(JS의 addMarquee 참고). 둘 다 같은 표시 규칙 공유 */
+  /* 마퀴(긴 제목 슬라이드) — 웹/모바일 모두 자동으로 시작, 고정 속도(_MARQUEE_PX_PER_SEC)로 무한 반복 */
   #tv-big-title,.tv-sm-title,.tv-with-line{text-overflow:unset;}
   .tv-title-inner{display:inline-block;white-space:nowrap;vertical-align:top;}
   #tv-big-title:not(.is-marquee),.tv-sm-title:not(.is-marquee),.tv-with-line:not(.is-marquee){-webkit-mask-image:linear-gradient(to right,#000 calc(100% - 14px),transparent 100%);mask-image:linear-gradient(to right,#000 calc(100% - 14px),transparent 100%);}
@@ -2359,6 +2359,7 @@ function _labelGlowColor(r,g,b){
 const groupLabels=[];
 let ARTISTS=[],GROUPS={};
 const bubbleMeshes=[],regularArtists=[],sparkleArtists=[];
+const bubbleMeshMap=new Map(); // ko → bubbleMesh entry, for O(1) lookup
 let regularPts=null,sparklePts=null;
 // 마크(NCT 127) 파일럿: 비활동 상태를 "행성 밖에 떠 있다가 멤버 토글 시 안으로 날아들어옴"으로 표현
 let _flyToggleAnims=[]; // 비활동/탈퇴 멤버가 그룹 카드 "멤버" 토글에 따라 행성 안팎으로 날아다니는 애니메이션들 — {artist,wp,t0,from,to}
@@ -2611,9 +2612,9 @@ async function buildUniverse(){
   // no-cache: 항상 서버에 재검증(304면 재다운로드 없이 캐시본 사용)해서, 데이터 파일을 수정한 직후에도
   // 새로고침한 사용자가 브라우저/CDN에 남아있던 옛 캐시본을 계속 보는 일이 없게 함
   const _jsonPromise=Promise.all([
-    fetch('groups.json',{cache:'no-cache'}).then(r=>r.json()),
-    fetch('artists.json',{cache:'no-cache'}).then(r=>r.json()),
-    fetch('connections.json',{cache:'no-cache'}).then(r=>r.json())
+    fetch('groups.json').then(r=>r.json()),
+    fetch('artists.json').then(r=>r.json()),
+    fetch('connections.json').then(r=>r.json())
   ]);
   await initSupabaseSync(); // 로그인 사용자의 서버 데이터가 첫 렌더 전에 로컬을 덮어써야 하므로 JSON fetch와 병렬로 먼저 완료 대기
   const [grpData,artData,connData]=await _jsonPromise;
@@ -2823,7 +2824,9 @@ async function buildUniverse(){
     label.position.set(0,radius+0.3,0);
     bubble.add(label);
     groupLabels.push({el:div,worldPos:pos.clone(),ko,en:info.en||ko});
-    bubbleMeshes.push({mesh:bubble,ko,info,radius,labelEl:div,halo:haloMesh});
+    const _bmEntry={mesh:bubble,ko,info,radius,labelEl:div,halo:haloMesh};
+    bubbleMeshes.push(_bmEntry);
+    bubbleMeshMap.set(ko,_bmEntry);
 
     // ── Collect member positions ───────────────────
     const _placedMPos=[];
@@ -3301,12 +3304,14 @@ function animate(){
     }
   }
   controls.update();
+  const _connPosMoves=_myUniverseActive||_myUniversePhase!=='idle'||_myUniverseDeparting.length>0||_flyToggleAnims.length>0;
   connLines.forEach(({line,mid,baseOp,grpKo,posA,posB,bm,artA,artB})=>{
-    // 즐겨찾기(내 우주 모드) 등으로 멤버/행성이 실시간 이동할 때 선 끝점이 예전 자리에 덩그러니 남지 않도록 매 프레임 동기화
     const posAttr=line.geometry.attributes.position;
-    posAttr.array[0]=posA.x;posAttr.array[1]=posA.y;posAttr.array[2]=posA.z;
-    posAttr.array[3]=posB.x;posAttr.array[4]=posB.y;posAttr.array[5]=posB.z;
-    posAttr.needsUpdate=true;
+    if(_connPosMoves){
+      posAttr.array[0]=posA.x;posAttr.array[1]=posA.y;posAttr.array[2]=posA.z;
+      posAttr.array[3]=posB.x;posAttr.array[4]=posB.y;posAttr.array[5]=posB.z;
+      posAttr.needsUpdate=true;
+    }
     mid.copy(posA).lerp(posB,0.5);
     // 그룹 카드가 열려 포커스된 그룹이면 줌 거리와 무관하게 그 그룹의 연결선은 전부 보이게(부분적으로만 나타나는 것 방지)
     const isFocused=grpKo===focusGroupKo;
@@ -3400,7 +3405,7 @@ function animate(){
     }
   });
   _nctRingGroups.forEach(({g,ko,baseOps})=>{
-    const bm=bubbleMeshes.find(b=>b.ko===ko);
+    const bm=bubbleMeshMap.get(ko);
     if(!bm)return;
     const alpha=(bm.mesh._filterAlpha??1)*(bm.mesh._focusAlpha??1)*(bm.mesh._legacyAlpha??1);
     g.children.forEach((c,i)=>{if(c.material)c.material.opacity=(baseOps[i]??0)*alpha;});
@@ -3439,13 +3444,15 @@ function animate(){
   });
   if(colorsDirty){if(regColorAttr)regColorAttr.needsUpdate=true;if(spkColorAttr)spkColorAttr.needsUpdate=true;}
   groupLabels.forEach(({el,worldPos,ko})=>{
-    const bm=bubbleMeshes.find(b=>b.ko===ko);
+    const bm=bubbleMeshMap.get(ko);
     const d=camera.position.distanceTo(bm?bm.mesh.position:worldPos);
     const distFade=d<40?1:d<70?(70-d)/30:0;
     const fa=(bm?bm.mesh._filterAlpha??1:1)*(bm?bm.mesh._focusAlpha??1:1)*(bm?bm.mesh._legacyAlpha??1:1);
     const op=distFade*fa;
-    el.style.opacity=op.toFixed(3);
-    el.style.pointerEvents=op>0.15?'auto':'none';
+    const opStr=op.toFixed(3);
+    if(el.style.opacity!==opStr)el.style.opacity=opStr;
+    const pe=op>0.15?'auto':'none';
+    if(el.style.pointerEvents!==pe)el.style.pointerEvents=pe;
   });
   if(myStarSprite){
     const _st=performance.now()*0.001;
@@ -3552,6 +3559,7 @@ animate();
 
 window.addEventListener('resize',()=>{
   const w=window.innerWidth,h=window.innerHeight;
+  _isMobCache=w<=768;
   camera.aspect=w/h;camera.updateProjectionMatrix();
   renderer.setSize(w,h);
   labelRenderer.setSize(w,h);
@@ -3808,7 +3816,8 @@ function ytId(u){
   return s?s[1]:'';
 }
 function isShorts(u){return /\/shorts\//.test(u||'');}
-function isMob(){return window.innerWidth<=768;}
+let _isMobCache=window.innerWidth<=768;
+function isMob(){return _isMobCache;}
 // 유튜브 API로 동기화된 일부 영상(주로 인스타 릴스 크로스포스트) 제목엔 실제 줄바꿈 문자가 들어있어서,
 // 한 줄 말줄임(white-space:nowrap)이 안 먹고 제목 영역이 여러 줄로 확 커져 보이는 문제가 있었음 — 표시 직전에 제거.
 // (정규식 리터럴에 U+2028/2029를 직접 쓰면 소스 파일 자체가 깨지므로 charCode로 안전하게 구성)
@@ -4370,7 +4379,7 @@ function addHoverPreview(wrapEl,imgEl,videoId,shorts){
 // 제목 길이(넘치는 픽셀 수)와 무관하게 슬라이드 "체감 속도"가 항상 일정하도록, CSS의 고정 duration 대신
 // 넘치는 거리에 비례한 duration을 매번 계산해서 인라인으로 얹는다. 키프레임엔 앞뒤로 "잠깐 멈춤" 구간이
 // 껴 있어서(예: 호버는 처음/끝 15%씩 정지, 실제 이동은 70%), 그 이동 구간 기준으로 속도를 맞춰야 한다.
-const _MARQUEE_PX_PER_SEC=65; // 조정 포인트: 값을 늘리면 더 빠르게, 줄이면 더 느리게
+const _MARQUEE_PX_PER_SEC=50; // 조정 포인트: 값을 늘리면 더 빠르게, 줄이면 더 느리게
 // 최소치만 살짝 둬서 아주 미세하게 넘치는 제목이 순간 깜빡이듯 지나가지 않게 하고, 최대치는 사실상
 // 안전장치 정도로만(제목이 아무리 길어도 항상 같은 체감 속도를 유지하는 게 우선이므로 낮게 잡지 않음)
 const _MARQUEE_MIN_DUR=0.5,_MARQUEE_MAX_DUR=20.0;
@@ -4418,14 +4427,24 @@ function _wireMarqueeTap(el,inner){
     },{once:true});
   });
 }
+function _wireMarqueeAuto(el,inner){
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    const ov=inner.scrollWidth-el.clientWidth;
+    if(ov<=0)return;
+    inner.style.setProperty('--mx',`-${ov+6}px`);
+    inner.style.animationDuration=_marqueeDuration(ov,0.70)+'s';
+    inner.style.animationDelay='1.2s';
+    el.classList.add('is-marquee');
+    inner.classList.add('marquee-run');
+  }));
+}
 function addMarquee(el){
   const inner=document.createElement('span');
   inner.className='tv-title-inner';
   inner.textContent=el.textContent;
   el.textContent='';
   el.appendChild(inner);
-  if(isMob())_wireMarqueeTap(el,inner);
-  else _wireMarqueeHover(el,inner);
+  _wireMarqueeAuto(el,inner);
 }
 // 자식 요소(클릭 가능한 칩 등)를 textContent로 날리지 않고 그대로 감싸서 마퀴 적용
 function addMarqueeChildren(el){
@@ -4433,8 +4452,7 @@ function addMarqueeChildren(el){
   inner.className='tv-title-inner';
   while(el.firstChild)inner.appendChild(el.firstChild);
   el.appendChild(inner);
-  if(isMob())_wireMarqueeTap(el,inner);
-  else _wireMarqueeHover(el,inner);
+  _wireMarqueeAuto(el,inner);
 }
 
 // 영상에 같이 나온(with) 콜라보 멤버 + 원곡 소속 그룹(origGroup) 표시 — "그룹 멤버 (원곡 그룹)" 형태, 그룹/멤버 각각 클릭 가능
@@ -5042,11 +5060,15 @@ async function _enrichMemberVideosFromApi(a,tv,baseSongs,basePersonalSongs){
   const groupKo=_ytGroupKoFor(a); // 솔로면 본인 이름이 곧 채널 동기화 키
   const withKey=`${memberKo}(${a.group.ko})`; // 타 채널에서 콜라보로 태깅될 때 쓰는 표시용 키는 원래 그룹 표기 그대로
   try{
+    // 탈퇴 멤버(a.leftAt 있음): 태깅 없는 그룹 전체 영상은 탈퇴일 이전 것만 노출
+    const _leftAtISO=a.leftAt?a.leftAt.replace(/\./g,'-'):null;
+    let generalQBuilder=sb.from(_YT_TABLE).select('id,title,category,group_ko,members,with_members,cover_of_members,cover_of_groups,content_flag').eq('group_ko',groupKo).filter('members','eq','{}');
+    if(_leftAtISO)generalQBuilder=generalQBuilder.lt('published_at',_leftAtISO);
     const[ownQ,withQ,generalQ]=await Promise.all([
       sb.from(_YT_TABLE).select('id,title,category,group_ko,members,with_members,cover_of_members,cover_of_groups,content_flag').eq('group_ko',groupKo).contains('members',[memberKo]),
       sb.from(_YT_TABLE).select('id,title,category,group_ko,members,with_members,cover_of_members,cover_of_groups,content_flag').contains('with_members',[withKey]),
-      // 멤버 태깅 없는 그룹 전체 영상 — 모든 멤버 카드에 노출
-      sb.from(_YT_TABLE).select('id,title,category,group_ko,members,with_members,cover_of_members,cover_of_groups,content_flag').eq('group_ko',groupKo).filter('members','eq','{}'),
+      // 멤버 태깅 없는 그룹 전체 영상 — 탈퇴 멤버는 탈퇴일 이전 것만
+      generalQBuilder,
     ]);
     if(ownQ.error)throw new Error(ownQ.error.message);
     if(withQ.error)throw new Error(withQ.error.message);
@@ -5111,7 +5133,8 @@ async function _fetchApiCollabData(anchor){
       sb.from(_YT_TABLE).select('id,title,category,group_ko,members,with_members,content_flag').eq('group_ko',groupKo).contains('members',[memberKo]),
       sb.from(_YT_TABLE).select('id,title,category,group_ko,members,with_members,content_flag').contains('with_members',[withKey]),
       // 아이유의 팔레트, 뉴진스편처럼 개별 멤버가 아니라 그룹 전체가 with_groups로 태깅된 내 채널 영상
-      sb.from(_YT_TABLE).select('id,title,category,group_ko,with_groups,content_flag').eq('group_ko',groupKo).not('with_groups','eq','{}'),
+      // members={}(전원 출연) 또는 이 멤버가 직접 태깅된 경우만 — 다른 멤버 단독 태깅 영상이 섞여 들어오는 걸 차단
+      sb.from(_YT_TABLE).select('id,title,category,group_ko,members,with_groups,content_flag').eq('group_ko',groupKo).not('with_groups','eq','{}').or(`members.eq.{},members.cs.{${memberKo}}`),
       // 반대 방향: 다른 채널(예: 아이유)이 내 그룹 전체를 with_groups로 태깅한 경우 — 이게 없으면
       // 그룹으로 태깅된 쪽(예: (여자)아이들 개별 멤버)에는 이 콜라보가 전혀 안 보이는 비대칭이 생김.
       sb.from(_YT_TABLE).select('id,title,category,group_ko,with_groups,content_flag').contains('with_groups',[anchor.group.ko])
@@ -6284,8 +6307,8 @@ function showT(a,cx,cy,keepNavStack,urlMode,pushMobNav,noFly){
   // 카드에서만 보임(그룹 카드 그리드와 동일한 동작). Supabase를 못 쓰는 경우에만 기존 방식으로 폴백.
   const _hasRealGroup=!!GROUPS[a.group.ko];
   if(sb&&(_hasRealGroup||a.links?.youtube)){
-    if(_hasRealGroup)_ttChVidCtl.build(a.group.ko,a.name.ko);
-    else _ttChVidCtl.build(_ytGroupKoFor(a));
+    if(_hasRealGroup)_ttChVidCtl.build(a.group.ko,a.name.ko,a.leftAt);
+    else _ttChVidCtl.build(_ytGroupKoFor(a),null,a.leftAt);
   }else{
     buildVideoSection(_memberAllSongs,tv,{groupKo:a.group.ko,memberKo:a.name.ko},_memberMainCandidates);
     _enrichMemberVideosFromApi(a,tv,_memberAllSongs,_memberPersonalSongs);
@@ -11680,7 +11703,12 @@ function _makeChVidController(contId){
         // with_members로 게스트 출연 태깅된 영상까지 포함 — 그룹 카드가 with_groups로 콜라보를 끌어오는 것과
         // 대칭되는 처리. 이게 빠져있으면 자체 채널 영상은 아직 없고 다른 그룹 채널 콘텐츠(챌린지·직캠 등)에
         // 개인 태깅으로만 쌓인 신인 그룹(예: 넥스지)은 그룹 카드엔 (with_groups로) 뭔가 보여도 멤버 카드는 텅 비어 보였음.
-        q=q.or(`and(group_ko.eq.${ko},members.eq.{}),and(group_ko.eq.${ko},members.cs.{${state.memberKo}}),with_members.cs.{${state.memberKo}(${ko})}`);
+        // 탈퇴 멤버(leftAt 있음): 태깅 없는 그룹 전체 영상은 탈퇴일 이전 것만 — 탈퇴 후 그룹 영상에 등장한 것처럼 보이는 걸 방지
+        const _leftAtISO=state.leftAt?state.leftAt.replace(/\./g,'-'):null;
+        const _q3=_leftAtISO
+          ?`and(group_ko.eq.${ko},members.eq.{},published_at.lt.${_leftAtISO})`
+          :`and(group_ko.eq.${ko},members.eq.{})`;
+        q=q.or(`${_q3},and(group_ko.eq.${ko},members.cs.{${state.memberKo}}),with_members.cs.{${state.memberKo}(${ko})}`);
       }else{
         // 그룹 카드: 내 채널 영상은 멤버 태깅 여부와 무관하게 전부 노출(그룹 전체가 나오는 영상이든
         // 특정 멤버 몇 명만 나오는 영상이든 다 그룹 콘텐츠) + 다른 채널 영상인데 아이유 팔레트처럼
@@ -11831,14 +11859,14 @@ function _makeChVidController(contId){
     }
   }
 
-  function build(ko,memberKo){
+  function build(ko,memberKo,leftAt){
     const cont=document.getElementById(contId);
     if(!cont)return;
     cont.innerHTML='';
     if(!sb)return;
     // 멤버 카드는 미태깅 그룹 영상(MV·Shorts·토크쇼 등)이 뒤섞여 첫 화면이 지저분해지지 않도록
     // "라이브"(무대 직캠 위주) 탭에서 시작 — 그룹 카드는 그대로 "전체"
-    state={ko,memberKo:memberKo||null,filter:memberKo?'live':'all',onlyMe:false,searchQ:'',sortMode:'recommend',viewMode:'category',formatFilter:null,formats:[],offset:0,total:0,pos:0,cat:null,gen:state.gen+1,appendLock:false,trailingEl:null,hasMore:false,allVids:[],_liveFallbackDone:false,wrapEnd:0,wrapPhase:false,unitFilter:null};
+    state={ko,memberKo:memberKo||null,leftAt:leftAt||null,filter:memberKo?'live':'all',onlyMe:false,searchQ:'',sortMode:'recommend',viewMode:'category',formatFilter:null,formats:[],offset:0,total:0,pos:0,cat:null,gen:state.gen+1,appendLock:false,trailingEl:null,hasMore:false,allVids:[],_liveFallbackDone:false,wrapEnd:0,wrapPhase:false,unitFilter:null};
     cont.innerHTML=`<div class="gc-ch-hd"><div class="gc-ch-filters"></div><div class="gc-ch-sort-wrap"><button class="gc-ch-sort-btn" title="정렬" aria-haspopup="true" aria-expanded="false">⋮</button><div class="gc-ch-sort-menu"><button class="gc-ch-sort-item" data-sort="recommend"><span class="chk">✓</span>추천순</button><button class="gc-ch-sort-item" data-sort="latest"><span class="chk">✓</span>업로드순</button><button class="gc-ch-sort-item" data-sort="oldest"><span class="chk">✓</span>오래된순</button><div class="gc-ch-sort-divider" style="display:none"></div><button class="gc-ch-view-toggle" style="display:none"><span class="chk">✓</span>콘텐츠별 보기</button></div></div><button class="gc-ch-refresh" title="새로고침">↻</button></div><div class="gc-ch-search-wrap" style="display:none"><input class="gc-ch-search" placeholder="영상 검색…" autocomplete="off" spellcheck="false"><button class="gc-ch-search-clear" aria-label="검색어 지우기">\xD7</button></div><div class="gc-ch-grid"></div><div class="gc-ch-more-wrap"></div><div class="tv-cover-of-wrap" style="display:none"></div>`;
     _exitSelMode();
     const filEl=cont.querySelector('.gc-ch-filters');
