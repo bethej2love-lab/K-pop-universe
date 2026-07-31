@@ -1791,6 +1791,7 @@
     <button class="sp-yt-sync" id="sp-lunafix-btn" style="margin-top:4px;opacity:.8;">에프엑스 LUNA(원어스) 오염 정리 (일회용)</button>
     <button class="sp-yt-sync" id="sp-hjfix-btn" style="margin-top:4px;opacity:.8;">크래비티 형준/SS501 김형준 오염 정리 (일회용)</button>
     <button class="sp-yt-sync" id="sp-collabfix-btn" style="margin-top:4px;opacity:.8;">콜라보 오태깅 재검증(전체)</button>
+    <button class="sp-yt-sync" id="sp-desc-backfill-btn" style="margin-top:4px;opacity:.8;">설명란(description) 채우기 (일회용)</button>
     <button class="sp-yt-sync" id="sp-yt-autotag" style="margin-top:4px;opacity:.8;">멤버+콜라보 자동 태깅 (미태깅분)</button>
     <button class="sp-yt-sync" id="sp-hidden-vids-btn" style="margin-top:4px;opacity:.8;">노출 제외 영상 목록</button>
     <button class="sp-yt-sync" id="sp-ext-channels-btn" style="margin-top:4px;opacity:.8;">동기화 채널 목록</button>
@@ -9794,6 +9795,7 @@ async function _ytFetchNewVideos(uploadsId,key,sinceId,onProg,startPageToken){
       vids.push({
         id:vid,
         title:item.snippet.title||'',
+        description:item.snippet.description||'', // part=snippet 응답에 이미 포함돼있던 걸 그냥 버렸었음 — 쿼터 추가 비용 없이 태깅 보조 텍스트로 재사용
         thumb:isShortThumb?(hiTh.url||th.medium?.url||''):(th.medium?.url||th.high?.url||th.default?.url||''),
         published_at:(item.snippet.publishedAt||'').slice(0,10),
         category:cat
@@ -10462,6 +10464,46 @@ function _atmMatchesMember(m,title,tokens){
   }
   return false;
 }
+// 2026-07-31 이전에 동기화된 기존 행은 description 컬럼이 아예 없어서(그때는 저장 안 하고 버렸음) NULL임 —
+// 이후 동기화분은 자동으로 채워지지만, 이미 들어간 기존 영상들은 한 번 따로 채워줘야 함. videos.list는
+// id를 콤마로 최대 50개까지 한 번에 조회 가능해서(쿼터 1로 50개 처리) 영상 하나당 별도 호출보다 훨씬 저렴함.
+async function _ytBackfillDescriptions(){
+  if(!sb){_ytSetProg('Supabase 연결 없음');return;}
+  const key=_ytApiKey();
+  if(!key){_ytSetProg('설정에서 유튜브 API 키를 먼저 입력해주세요');return;}
+  const btn=document.getElementById('sp-desc-backfill-btn');
+  if(btn)btn.disabled=true;
+  try{
+    _ytSetProg('[설명란 채우기] 대상 조회 중…');
+    const{data:rows,error}=await _sbFetchAll(()=>sb.from(_YT_TABLE).select('id').is('description',null).order('id'));
+    if(error){_ytSetProg('조회 실패: '+error.message);return;}
+    if(!rows?.length){_ytSetProg('채울 설명란이 없어요(이미 다 채워짐)');return;}
+    let done=0,failed=0;
+    for(let i=0;i<rows.length;i+=50){
+      const chunk=rows.slice(i,i+50);
+      try{
+        const r=await fetch(`https://www.googleapis.com/youtube/v3/videos?part=snippet&id=${chunk.map(c=>c.id).join(',')}&key=${key}`);
+        if(!r.ok)throw new Error('YouTube API 오류 '+r.status);
+        const d=await r.json();
+        if(d.error)throw new Error(d.error.message);
+        const byId=new Map((d.items||[]).map(item=>[item.id,item.snippet?.description||'']));
+        // 삭제/비공개돼 응답에 아예 없는 영상도 빈 문자열로 채워서 다음 실행 때 재조회 대상(NULL)에서 빠지게 함
+        await Promise.all(chunk.map(c=>sb.from(_YT_TABLE).update({description:byId.get(c.id)??''}).eq('id',c.id)));
+        done+=chunk.length;
+      }catch(e){
+        failed+=chunk.length;
+        console.error('[설명란 채우기] 청크 실패:',e.message);
+      }
+      _ytSetProg(`[설명란 채우기] ${Math.min(i+50,rows.length)}/${rows.length}개 처리 중…(실패 ${failed})`);
+      await new Promise(res=>setTimeout(res,80));
+    }
+    _ytSetProg(`완료! ${rows.length}개 중 ${done}개 채움(실패 ${failed}) — 이제 "멤버+콜라보 자동 태깅"을 돌리면 설명란도 같이 참고함`);
+  }catch(e){
+    _ytSetProg('오류: '+e.message);
+  }finally{
+    if(btn)btn.disabled=false;
+  }
+}
 async function _ytAutoTagMembers(){
   if(!sb){_ytSetProg('Supabase 연결 없음');return;}
   const btn=document.getElementById('sp-yt-autotag');
@@ -10481,7 +10523,7 @@ async function _ytAutoTagMembers(){
       // 4개 조건을 .or() 한 번에 다 넣어야 OR로 묶임 — .or()를 여러 번 체이닝하면 AND로 묶여서
       // "members도 비고 AND with_members도 빈" 행만 걸리는 버그가 났던 적이 있었음(같은 실수 재발 방지).
       const{data:rows,error}=await _sbFetchAll(()=>sb.from(_YT_TABLE)
-        .select('id,title,members,with_members,with_groups')
+        .select('id,title,description,members,with_members,with_groups')
         .eq('group_ko',gko)
         .eq('tags_manual',false) // 관리자가 태그 모달에서 직접 저장한 행은 자동 태깅이 절대 건드리지 않음
         .or('members.eq.{},members.is.null,with_members.eq.{},with_members.is.null')
@@ -10493,8 +10535,13 @@ async function _ytAutoTagMembers(){
         const title=v.title||'';
         const patch={};
         if(!v.members?.length){
-          const tokens=_atmTokenize(title);
-          const hit=members.filter(m=>_atmMatchesMember(m,title,tokens)).map(m=>m.ko);
+          // 자체 채널 멤버 매칭은 제목뿐 아니라 설명란(description)도 같이 훑는다 — 제목엔 이름이 없어도
+          // 설명란 끝의 해시태그 나열(#세림 #앨런 ...)로 출연자를 밝히는 경우가 많음(2026-07-31 추가).
+          // 콜라보(다른 그룹) 추론은 설명란까지 넓히면 소개문구/SNS 링크 등 관련 없는 텍스트가 섞여
+          // 오탐 위험이 커서 의도적으로 제목만 그대로 쓴다 — 아래 _m2ParseTitle(title,gko) 참고.
+          const searchText=v.description?`${title}\n${v.description}`:title;
+          const tokens=_atmTokenize(searchText);
+          const hit=members.filter(m=>_atmMatchesMember(m,searchText,tokens)).map(m=>m.ko);
           if(hit.length)patch.members=[...new Set(hit)];
         }
         // 콜라보(다른 그룹 멤버 언급) 감지 — 외부채널 태깅에 이미 쓰던 _m2ParseTitle을 그대로 재사용.
@@ -10586,6 +10633,8 @@ const _EXT_CHANNELS=[
   {handle:'findyourKODE',     url:'https://www.youtube.com/@findyourKODE',      name:'findyourKODE'},
   {handle:'TEO_universe',     url:'https://www.youtube.com/@TEO_universe',      name:'TEO_universe'},
   {handle:'thekstarnextdoor', url:'https://www.youtube.com/@thekstarnextdoor',  name:'thekstarnextdoor'},
+  // ── 신규 추가 (2026-07-31) ──
+  {handle:'GoldenDiscOfficial',url:'https://www.youtube.com/@GoldenDiscOfficial',name:'골든디스크'},
 ];
 
 // 프로젝트 유닛(여러 그룹 소속 멤버가 모여 결성한 한시적 유닛, 자체 행성은 없음) — 영상 제목에 유닛명이
@@ -10789,7 +10838,7 @@ function _extBuildRows(vids){
       else{withGroups.push(gko);}
     }
     rows.push({
-      id:v.id,title:v.title,thumb:v.thumb,published_at:v.published_at,
+      id:v.id,title:v.title,description:v.description||'',thumb:v.thumb,published_at:v.published_at,
       category:v.category,
       group_ko:match.primaryGroup,members,with_groups:withGroups,with_members:withMembers
     });
@@ -10913,7 +10962,7 @@ async function _ytBackfillChannelCore(ch,fromYear,toYear,callBudget,onProg,query
       let cat=isShortThumb?'short':_ytClassify(item.snippet.title||'');
       if(cat==='skip')continue;
       vids.push({
-        id:vid,title:item.snippet.title||'',
+        id:vid,title:item.snippet.title||'',description:item.snippet.description||'',
         thumb:isShortThumb?(hiTh.url||th.medium?.url||''):(th.medium?.url||th.high?.url||th.default?.url||''),
         published_at:(item.snippet.publishedAt||'').slice(0,10),category:cat
       });
@@ -11069,7 +11118,8 @@ async function _ytBuildManualVideoRow(key,vid,manualGroup,manualMembers){
     if(invalid.length)throw new Error(`"${invalid.join(', ')}"는 ${groupKo}의 등록된 멤버명이 아니에요(정확한 한글 이름을 입력해주세요)`);
     members=manualMembers;
   }
-  return{id:vid,title,thumb,published_at:publishedAt,category,group_ko:groupKo,members,with_groups:withGroups,with_members:withMembers};
+  const description=item.snippet.description||'';
+  return{id:vid,title,description,thumb,published_at:publishedAt,category,group_ko:groupKo,members,with_groups:withGroups,with_members:withMembers};
 }
 async function _ytAddVideoByUrl(){
   const key=_ytApiKey();
@@ -11359,15 +11409,11 @@ function _makeChVidController(contId){
       grid.innerHTML='<div class="gc-ch-skeleton featured"><div class="gc-ch-skeleton-thumb"></div><div class="gc-ch-skeleton-title"></div><div class="gc-ch-skeleton-title short"></div></div>'
         +Array(6).fill('<div class="gc-ch-skeleton"><div class="gc-ch-skeleton-thumb"></div><div class="gc-ch-skeleton-title"></div><div class="gc-ch-skeleton-title short"></div></div>').join('');
       if(moreWrap)moreWrap.innerHTML='';
-      if(randomize&&state.total>_YT_PAGE){
-        state.offset=Math.floor(Math.random()*(state.total-_YT_PAGE));
-      }else{
+      if(!randomize){
         state.offset=0;
+        state.wrapEnd=0;state.wrapPhase=false;
       }
-      // 새로고침(랜덤 시작)이 골라준 지점 이전(0~여기)은 무한스크롤이 끝까지 내려간 뒤에 처음으로 돌아가
-      // 마저 보여줘야 함 — 안 그러면 그 앞쪽 구간은 이 세션에서 영영 안 불러와짐(끝까지 내려도 스크롤이
-      // 한쪽 방향으로만 진행되고 되돌아오지 않아서, 실제로는 있는데 안 보이는 영상이 생기는 문제였음).
-      state.wrapEnd=state.offset;state.wrapPhase=false;
+      // randomize(↻) 케이스의 offset/wrapEnd는 아래에서 청크를 뽑은 뒤에 정해짐
       // 그리드가 새로 비워졌으므로 행 정렬 추적 상태도 초기화
       state.pos=0;state.cat=null;state.trailingEl=null;state.allVids=[];
     }
@@ -11375,10 +11421,8 @@ function _makeChVidController(contId){
     // gen이 그대로일 때만(그 사이 다른 그룹/새로고침으로 전환되지 않았을 때만) 이 호출이 건 잠금을 해제한다
     const releaseLock=()=>{if(myGen===state.gen)state.appendLock=false;};
     const{filter,offset}=state;
-    try{
-      // featured 선택을 메인 쿼리와 병렬 실행 — 전체 영상 중 하트 최다 영상을 페이지네이션 무관하게 찾음
-      const featuredP=(reset&&state.sortMode==='recommend')
-        ?_pickFeaturedVidFromDB(ko,state.memberKo,state.onlyMe,filter,state.viewMode,state.formatFilter):Promise.resolve(null);
+    // 필터 조건만 담당(정렬/범위는 호출부에서 붙임) — 청크 랜덤 샘플링 시 같은 조건으로 여러 번 독립 호출해야 함
+    function buildBaseQuery(){
       let q=sb.from(_YT_TABLE).select('id,title,thumb,category,content_flag,members,with_members,with_groups',{count:'exact'});
       if(state.unitFilter){
         // 유닛(예: V8) 태그 클릭 시: 이 멤버 채널 영상 중 같은 유닛의 다른 멤버가 같이 태깅된 것만 —
@@ -11422,8 +11466,41 @@ function _makeChVidController(contId){
       }else if(filter!=='all'){
         q=q.eq('category',filter);
       }
-      q=q.order('published_at',{ascending:state.sortMode==='oldest'}).range(offset,offset+_YT_PAGE-1);
-      const[{data,error,count},_featuredFromDB]=await Promise.all([q,featuredP]);
+      return q;
+    }
+    try{
+      // featured 선택을 메인 쿼리와 병렬 실행 — 전체 영상 중 하트 최다 영상을 페이지네이션 무관하게 찾음.
+      // ↻ 새로고침(randomize)일 땐 건너뜀 — 하트 최다 영상은 항상 고정이라 이걸 계속 맨 앞에 꽂아두면
+      // 아무리 새로고침을 눌러도 대표 영상이 매번 똑같아서 "새로고침이 반복된다"고 느껴지는 원인이었음
+      // (2026-07-31). 카드를 처음 열 때(reset만, randomize 아님)는 대표 영상을 보여주는 게 여전히 맞음.
+      const featuredP=(reset&&state.sortMode==='recommend'&&!randomize)
+        ?_pickFeaturedVidFromDB(ko,state.memberKo,state.onlyMe,filter,state.viewMode,state.formatFilter):Promise.resolve(null);
+      const ordered=q=>q.order('published_at',{ascending:state.sortMode==='oldest'});
+      let mainP;
+      const isChunkedRandomize=reset&&randomize&&state.total>_YT_PAGE;
+      if(isChunkedRandomize){
+        // 한 지점에서 48개를 연속으로(날짜순) 긁어오면 매번 비슷한 시기의 영상들이 뭉텅이로 같이 나와서
+        // "새로고침해도 특정 영상이 계속 눈에 띈다"는 문제가 있었음(2026-07-31) — 대신 서로 다른 랜덤
+        // 지점 6곳에서 8개씩 나눠 가져와 합치면 훨씬 넓게 흩어져서 매번 다양하게 보임.
+        const CHUNKS=6,chunkSize=Math.ceil(_YT_PAGE/CHUNKS);
+        const maxOff=Math.max(0,state.total-chunkSize);
+        const chunkOffsets=Array.from({length:CHUNKS},()=>Math.floor(Math.random()*(maxOff+1)));
+        mainP=Promise.all(chunkOffsets.map(off=>ordered(buildBaseQuery()).range(off,off+chunkSize-1)))
+          .then(results=>{
+            const firstError=results.find(r=>r.error);
+            if(firstError)return{data:null,error:firstError.error,count:null};
+            const seen=new Set(),merged=[];
+            results.forEach(r=>(r.data||[]).forEach(v=>{if(!seen.has(v.id)){seen.add(v.id);merged.push(v);}}));
+            return{data:merged,error:null,count:results[0]?.count};
+          });
+        // 청크 사이에 안 보여준 구간이 남으므로, 기존 wrap 방식과 같은 취지로 가장 앞쪽 청크 이전
+        // 구간(0~min)은 무한스크롤이 끝까지 내려간 뒤 처음으로 돌아가 마저 채워주게 한다.
+        state.offset=Math.max(...chunkOffsets)+chunkSize;
+        state.wrapEnd=Math.min(...chunkOffsets);state.wrapPhase=false;
+      }else{
+        mainP=ordered(buildBaseQuery()).range(offset,offset+_YT_PAGE-1);
+      }
+      const[{data,error,count},_featuredFromDB]=await Promise.all([mainP,featuredP]);
       if(myGen!==state.gen)return; // 대기 중 다른 그룹/새로고침으로 전환됨: 그쪽이 이미 자신의 잠금을 걸어놨으므로 여기선 해제하지 않는다
       if(error)throw new Error(error.message);
       if(reset)grid.innerHTML='';
@@ -11472,7 +11549,9 @@ function _makeChVidController(contId){
       state.pos=g.endPos;state.cat=g.endCat;
       const{nodes:pageNodes,pendingProbe}=renderItems(g.renderList,grid);
       state.allVids=state.allVids.concat(g.renderList); // 라이트박스 스와이프 넘기기용으로 지금까지 불러온 영상 누적
-      state.offset=offset+(data?.length||0);
+      // 청크 랜덤 샘플링 라운드는 이미 위에서 state.offset(가장 먼 청크 끝)을 정확히 정해뒀으므로 여기서
+      // 다시 계산하면 안 됨(그 방식은 "연속 구간 하나"를 가정한 offset+개수 공식이라 청크엔 안 맞음).
+      if(!isChunkedRandomize)state.offset=offset+(data?.length||0);
       let hasMore;
       if(!state.wrapPhase&&state.wrapEnd>0&&state.offset>=state.total){
         // 정방향(랜덤 시작점→끝)을 다 돈 상태 — 시작점 이전(0~wrapEnd)이 아직 안 보였으니 처음으로 돌아가 마저 불러온다
@@ -12499,6 +12578,7 @@ document.getElementById('vid-tag-thumb-refresh').addEventListener('click',async 
   document.getElementById('sp-lunafix-btn')?.addEventListener('click',_ytFixOneusLunaMistag);
   document.getElementById('sp-hjfix-btn')?.addEventListener('click',_ytFixHyeongjunSS501Mistag);
   document.getElementById('sp-collabfix-btn')?.addEventListener('click',_ytSweepAmbiguousCollabMistag);
+  document.getElementById('sp-desc-backfill-btn')?.addEventListener('click',_ytBackfillDescriptions);
   document.getElementById('sp-yt-autotag')?.addEventListener('click',_ytAutoTagMembers);
   document.getElementById('sp-hidden-vids-btn')?.addEventListener('click',_openHiddenVids);
   document.getElementById('sp-ext-channels-btn')?.addEventListener('click',_openExtChannels);
