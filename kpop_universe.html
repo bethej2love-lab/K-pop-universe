@@ -861,8 +861,8 @@
   /* 모바일은 손가락 탭 대상이라 22px는 너무 작아서 잘 안 눌림 — 터치 타겟 권장 최소치에 가깝게 키움 */
   @media(max-width:768px){.vid-edit-btn{width:32px;height:32px;font-size:15px;}}
   /* ── 어드민 일괄 선택 모드 ── */
-  .gc-ch-item.admin-selected{outline:2px solid rgba(100,180,255,0.9);outline-offset:-2px;}
-  .gc-ch-item.admin-selected::after{content:'✓';position:absolute;top:4px;right:4px;width:20px;height:20px;border-radius:50%;background:rgba(60,140,255,0.92);color:#fff;font-size:12px;font-weight:700;line-height:20px;text-align:center;z-index:5;pointer-events:none;}
+  .gc-ch-item.admin-selected,.tv-conn-selectable.admin-selected{outline:2px solid rgba(100,180,255,0.9);outline-offset:-2px;}
+  .gc-ch-item.admin-selected::after,.tv-conn-selectable.admin-selected::after{content:'✓';position:absolute;top:4px;right:4px;width:20px;height:20px;border-radius:50%;background:rgba(60,140,255,0.92);color:#fff;font-size:12px;font-weight:700;line-height:20px;text-align:center;z-index:5;pointer-events:none;}
   .gc-ch-sel-btn{background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.15);border-radius:14px;color:rgba(180,200,230,0.75);font-size:10.5px;padding:3px 9px;cursor:pointer;white-space:nowrap;font-family:inherit;}
   .gc-ch-sel-btn.active{background:rgba(100,160,255,0.18);border-color:rgba(100,160,255,0.4);color:#a8d0ff;}
   #admin-bulk-bar{position:fixed;bottom:76px;left:50%;transform:translateX(-50%);background:rgba(14,20,40,0.96);border:1px solid rgba(100,160,255,0.28);border-radius:22px;padding:9px 16px;display:flex;align-items:center;gap:10px;z-index:9990;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:0 4px 28px rgba(0,0,0,0.55);font-size:12.5px;color:#9ab8e0;white-space:nowrap;transition:opacity .18s;}
@@ -4472,6 +4472,20 @@ function _makeWithLine(song,ctx){
   addMarqueeChildren(line);
   return line;
 }
+// 어드민 전용 다중 선택 — 연결 카드(ctx.selectable)에서만 켜짐. 선택 모드 중엔 클릭이 라이트박스 대신
+// 선택 토글로 동작하고, 하단 admin-bulk-bar(그룹/멤버 카드 그리드와 동일한 바)를 그대로 재사용한다.
+function _connApplySelectable(box,s,ctx){
+  if(!ctx?.selectable||!_isAdmin()||!s._apiId)return false;
+  box.classList.add('tv-conn-selectable');
+  box.dataset.vidId=s._apiId;
+  if(_connSelIds.has(s._apiId))box.classList.add('admin-selected'); // "Only" 토글 등으로 다시 그려져도 선택 상태 유지
+  return true;
+}
+function _connSelToggle(box,s){
+  if(_connSelIds.has(s._apiId)){_connSelIds.delete(s._apiId);box.classList.remove('admin-selected');}
+  else{_connSelIds.add(s._apiId);box.classList.add('admin-selected');}
+  _connUpdateBulkBar();
+}
 function makeSmallThumb(s,allSongs,idx,ctx){
   const vid=ytId(s.u);
   const shorts=isShorts(s.u);
@@ -4494,8 +4508,13 @@ function makeSmallThumb(s,allSongs,idx,ctx){
     editBtn.addEventListener('click',e=>{e.stopPropagation();_openVidTagModal({id:s._apiId,title:s.t},s._apiGroupKo);});
     box.appendChild(editBtn);
   }
+  const selectable=_connApplySelectable(box,s,ctx);
   addHoverPreview(box,img,vid,shorts);
-  box.addEventListener('click',e=>{e.stopPropagation();openLightbox(s.u,shorts,allSongs,allSongs.indexOf(s),ctx);});
+  box.addEventListener('click',e=>{
+    e.stopPropagation();
+    if(selectable&&_connSelMode){_connSelToggle(box,s);return;}
+    openLightbox(s.u,shorts,allSongs,allSongs.indexOf(s),ctx);
+  });
   return box;
 }
 
@@ -4568,8 +4587,15 @@ function buildVideoSection(songs,containerEl,ctx,mainCandidates){
         editBtn.addEventListener('click',e=>{e.stopPropagation();_openVidTagModal({id:first._apiId,title:first.t},first._apiGroupKo);});
         bigWrap.appendChild(editBtn);
       }
-      addHoverPreview(bigWrap,big,ytId(first.u),false);
-      bigWrap.addEventListener('click',e=>{e.stopPropagation();openLightbox(first.u,isShorts(first.u),all,all.indexOf(first),ctx);});
+      {
+        const _selectable=_connApplySelectable(bigWrap,first,ctx);
+        addHoverPreview(bigWrap,big,ytId(first.u),false);
+        bigWrap.addEventListener('click',e=>{
+          e.stopPropagation();
+          if(_selectable&&_connSelMode){_connSelToggle(bigWrap,first);return;}
+          openLightbox(first.u,isShorts(first.u),all,all.indexOf(first),ctx);
+        });
+      }
       containerEl.appendChild(bigWrap);
       _renderMixedVidGrid(all.filter(s=>s!==first),containerEl,all,ctx);
     }else{
@@ -4600,8 +4626,15 @@ function buildVideoSection(songs,containerEl,ctx,mainCandidates){
     editBtn.addEventListener('click',e=>{e.stopPropagation();_openVidTagModal({id:first._apiId,title:first.t},first._apiGroupKo);});
     bigWrap.appendChild(editBtn);
   }
-  addHoverPreview(bigWrap,big,ytId(first.u),firstShorts);
-  bigWrap.addEventListener('click',e=>{e.stopPropagation();openLightbox(first.u,firstShorts,all,all.indexOf(first),ctx);});
+  {
+    const _selectable=_connApplySelectable(bigWrap,first,ctx);
+    addHoverPreview(bigWrap,big,ytId(first.u),firstShorts);
+    bigWrap.addEventListener('click',e=>{
+      e.stopPropagation();
+      if(_selectable&&_connSelMode){_connSelToggle(bigWrap,first);return;}
+      openLightbox(first.u,firstShorts,all,all.indexOf(first),ctx);
+    });
+  }
   containerEl.appendChild(bigWrap);
   _renderMixedVidGrid(all.filter(s=>s!==first),containerEl,all,ctx);
 }
@@ -4846,6 +4879,28 @@ function _popMobCard(){
 let _connAnchor=null,_connSelected=[],_connLines3d=[],_connPanelShifted=false;
 let _connExactOnly=false; // "Only" 토글 — 선택된 조합이 정확히(±더도 덜도 없이) 나온 영상만 보기
 let _connSelectedGroups=new Set(); // 타 그룹 묶음 칩에서 "그룹 단위"로 선택된 그룹(펼침 상태도 겸함)
+// 어드민 전용 — 연결 카드 영상 목록 다중 선택(그룹/멤버 카드 그리드의 선택 모드와 같은 톤, 별개 상태로 관리)
+let _connSelMode=false;
+const _connSelIds=new Set();
+function _connExitSelMode(){
+  _connSelMode=false;_connSelIds.clear();
+  document.querySelectorAll('.tv-conn-selectable.admin-selected').forEach(el=>el.classList.remove('admin-selected'));
+  document.querySelectorAll('.conn-sel-toggle').forEach(b=>{b.classList.remove('active');b.textContent='선택';});
+  document.getElementById('admin-bulk-bar')?.classList.add('hidden');
+  if(window._adminBulkExitFn===_connExitSelMode)window._adminBulkExitFn=null;
+}
+function _connUpdateBulkBar(){
+  const bar=document.getElementById('admin-bulk-bar');
+  if(!bar)return;
+  if(_connSelIds.size>0){
+    bar.classList.remove('hidden');
+    document.getElementById('admin-bulk-count').textContent=`${_connSelIds.size}개 선택됨`;
+    window._adminBulkExitFn=_connExitSelMode;
+    window._adminBulkKo=_connAnchor?_connAnchor.group.ko:null;
+  }else{
+    bar.classList.add('hidden');
+  }
+}
 // 연결 카드 콜라보 칩(꾹 누르기/↗)으로 다른 멤버 카드로 넘어갔을 때 "뒤로" 갈 수 있도록 이전 상태를 쌓아두는 스택
 let _memberNavStack=[];
 const connPanelEl=document.getElementById('conn-panel');
@@ -5379,10 +5434,22 @@ function _buildConnContent(container){
     });
     vidLblRow.appendChild(onlyBtn);
   }
+  if(_isAdmin()){
+    const selBtn=document.createElement('button');
+    selBtn.type='button';
+    selBtn.className='gc-ch-sel-btn conn-sel-toggle'+(_connSelMode?' active':'');
+    selBtn.textContent=_connSelMode?'선택 중':'선택';
+    selBtn.addEventListener('click',e=>{
+      e.stopPropagation();
+      if(_connSelMode)_connExitSelMode();
+      else{_connSelMode=true;selBtn.classList.add('active');selBtn.textContent='선택 중';}
+    });
+    vidLblRow.appendChild(selBtn);
+  }
   container.appendChild(vidLblRow);
   const vidDiv=document.createElement('div');
   const songs=_getCollabSongs(_connAnchor,_connSelected,_connExactOnly,_connSelectedGroups);
-  const _connCtx=_connAnchor?{groupKo:_connAnchor.group.ko,memberKo:_connAnchor.name.ko}:undefined;
+  const _connCtx=_connAnchor?{groupKo:_connAnchor.group.ko,memberKo:_connAnchor.name.ko,selectable:_isAdmin()}:undefined;
   if(songs.length)buildVideoSection(songs,vidDiv,_connCtx);
   else{
     const e2=document.createElement('div');e2.className='conn-no-video';
@@ -5396,6 +5463,7 @@ function _buildConnContent(container){
 
 function openConnCard(artist){
   _connAnchor=artist;_connSelected=[];_connExactOnly=false;_connSelectedGroups=new Set();_updateConnLines3d();
+  _connExitSelMode(); // 다른 앵커로 넘어가면 이전 선택 상태를 들고 가지 않게 초기화
   if(!_connApiCache.has(_connCacheKey(artist)))_enrichConnCardFromApi(artist); // 즉시 표시 후 백그라운드로 API 콜라보 데이터 보강
   if(isMob()){
     document.getElementById('journal-sidebar').classList.remove('open'); // 마이페이지가 열려있는 채로 연결 카드를 열어도 카드가 위로 뜨도록
@@ -5424,6 +5492,7 @@ function openConnCard(artist){
 }
 function closeConnCard(){
   _clearConnLines3d();
+  _connExitSelMode();
   if(_connAnchor&&_connSelected.length)setFocus(_connAnchor.group.ko);
   _connAnchor=null;_connSelected=[];
   if(isMob()){
@@ -10412,6 +10481,16 @@ const _ATM_KOREAN_SURNAMES=new Set(['김','이','박','최','정','강','조','�
   '황보','제갈','남궁','선우']);
 function _atmEscRe(s){return s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');}
 function _atmTokenize(title){return(title||'').toLowerCase().split(/[^a-z0-9]+/).filter(Boolean);}
+// 단일음절이 아니어도(_atmMatchesMember의 multiChar 보호를 안 받는 이름이어도) 아주 흔한 단어/영어 축약형과
+// 겹쳐서 평문 매칭 시 대량 오탐이 나는 이름 — 발견될 때마다 여기 추가. 해시태그로 명시된 경우만 인정한다.
+// "여름"(우주소녀) — 그냥 "여름"(summer)이라는 흔한 단어라 무관한 영상에 계속 걸림, 심지어 온앤오프 자체
+// 곡 제목("여름 쏙")에도 우연히 들어있어 그쪽 채널까지 오염시킴.
+// "아이엠"(몬스타엑스) — 영문 "I.M"이 "I'm"(아포스트로피도 비문자라 토큰화하면 "i"+"m"으로 갈라짐)과 완전히
+// 겹쳐서 "I'm ~"으로 시작하는 흔한 캡션이 전부 잡힘(2026-07-31, 둘 다 실측으로 대량 오염 확인).
+// "가을"(아이브)/"하늘"(키스오브라이프)/"바다"(S.E.S.) — 계절/자연을 뜻하는 흔한 단어를 그대로 활동명으로
+// 쓰는 경우도 같은 위험군이라 같이 등록(여름 케이스 수정 검증 중 "가을"이 무관한 제목에 실제로 잡히는 걸
+// 발견해서 같이 발견된 나머지도 선제적으로 추가함). 비(솔로)/봄(앳하트)은 이미 1글자라 별도 규칙으로 보호됨.
+const _ATM_HASHTAG_ONLY_NAMES=new Set(['여름','아이엠','가을','하늘','바다']);
 // 트리플에스처럼 등록된 이름 자체가 "성+이름"(예: 김채원)인 그룹은, 영상 제목에서 성 없이 이름만
 // 쓰는(흔한) 표기를 못 잡는 문제가 있었음 — 반대로 프로미스나인처럼 이름만 등록된 경우는 제목에 성이
 // 붙어도 이미 아래 surRe로 잡혔음. 등록명이 알려진 성으로 시작하면 성을 뗀 나머지도 매칭 대상에 넣는다.
@@ -10425,8 +10504,9 @@ function _atmStripSurname(nameChars){
 function _atmMatchesMember(m,title,tokens){
   const name=m.ko;
   if(!name)return false;
+  const hashtagOnly=_ATM_HASHTAG_ONLY_NAMES.has(name);
   const nameChars=[...name];
-  const multiChar=nameChars.length>1;
+  const multiChar=nameChars.length>1&&!hashtagOnly;
   const particles=['이','가','은','는','을','를','과','와','도','만','의','에','께','님','씨','아','야','랑','한테','에게'].map(_atmEscRe).join('|');
   if(multiChar){
     if(new RegExp(`(?<![가-힣])${_atmEscRe(name)}(?![가-힣])`).test(title))return true; // 이름 단독
@@ -10439,9 +10519,15 @@ function _atmMatchesMember(m,title,tokens){
       if(new RegExp(`#${_atmEscRe(givenOnly)}(?![가-힣])`).test(title))return true; // #이름(성 뺀 버전)
     }
   }
-  if(new RegExp(`#${_atmEscRe(name)}(?![가-힣])`).test(title))return true; // #이름(단일음절도 해시태그는 허용)
+  if(new RegExp(`#${_atmEscRe(name)}(?![가-힣])`).test(title))return true; // #이름(단일음절/흔한 이름도 해시태그는 허용)
   if(m.en){
     const parts=m.en.toLowerCase().split(/[^a-z0-9]+/).filter(Boolean);
+    if(hashtagOnly){
+      // 흔한 단어/영어 축약형과 겹치는 이름은 평문 토큰 매칭을 아예 안 하고 영문 해시태그(#IM 등, 점/공백
+      // 다 뗀 압축형)만 인정 — "I'm"이 "I.M"으로 잘못 잡히는 사고 재발 방지.
+      const compact=parts.join('');
+      return compact?new RegExp(`#${_atmEscRe(compact)}(?![가-힣a-z0-9])`,'i').test(title):false;
+    }
     if(parts.length===1){
       if(tokens.includes(parts[0]))return true;
       // 성+이름 사이 띄어쓰기 대응 (예: "seong hyeon" → "seonghyeon")
@@ -10513,7 +10599,11 @@ async function _ytAutoTagMembers(){
     let grandMatched=0,grandChecked=0;
     for(let gi=0;gi<groupKos.length;gi++){
       const gko=groupKos[gi];
-      const members=ARTISTS.filter(a=>a.group.ko===gko).map(a=>({ko:a.name.ko,en:a.name.en}));
+      // a.group.ko(주 소속)만 보면 유연정(주 소속 아이오아이, 겸임 우주소녀)처럼 이중소속 멤버가 겸임 그룹
+      // 채널에서는 영원히 로스터에 안 잡혀 자동 태깅 대상에서 빠짐 — 겸임 소속까지 보는 _artistGroups로 판정
+      // (2026-07-31, 우주소녀 채널의 유연정 단독 영상이 계속 미태깅으로 남아 다른 멤버 카드에도 "그룹 전체
+      // 미태깅 영상"으로 잘못 노출되던 문제의 원인).
+      const members=ARTISTS.filter(a=>_artistGroups(a).some(g=>g.ko===gko)).map(a=>({ko:a.name.ko,en:a.name.en}));
       if(!members.length)continue;
       _ytSetProg(`[${gi+1}/${groupKos.length}] ${gko}: 미태깅 영상 조회 중…`);
       // 같은 그룹 멤버(members)가 비어있거나, 콜라보(with_members/with_groups)가 아직 하나도 안 잡힌
@@ -10718,12 +10808,18 @@ function _m2NameVariants(a){
 }
 // 제목에서 그룹/멤버 매칭. 토큰 경계 기준으로 GROUPS/ARTISTS 데이터와 대조.
 // 그룹명이 실제로는 다른 유명한 곡/개념과 완전히 겹쳐서 오매칭 위험이 큰 경우 — 발견될 때마다 여기 추가.
-// 슈퍼노바(초신성, 2007년 데뷔 1세대 보이그룹)의 영문명 "Supernova"가 에스파의 2024년 타이틀곡 "Supernova"와
-// 글자 그대로 같아서, 그 곡 커버·직캠·챌린지 영상이 대량으로 이 그룹에 잘못 태깅될 위험이 있음 —
-// 제목에 aespa/에스파가 같이 있으면 이 그룹으로는 매칭하지 않는다.
+// 슈퍼노바(초신성, 2007년 데뷔 1세대 보이그룹)의 영문명 "Supernova"가 아이브×David Guetta의 2024년 곡
+// "Supernova Love"와 글자 그대로 겹쳐서, 그 곡을 커버·챌린지한 다른 그룹들(아이브·베리베리·빌리·에스파·
+// 세븐틴·리센느 등) 영상이 실제로 대량 오매칭되는 걸 실측으로 확인(2026-07-31, IVE 자체 채널·타 채널
+// 챌린지 영상 다수). 처음엔 에스파 곡으로 오해해 aespa/에스파만 걸러뒀었는데 진짜 원곡은 아이브 쪽이었음.
 const _GROUP_TITLE_CONFLICT_EXCLUDE={
-  '슈퍼노바(초신성)':[/aespa/i,/에스파/],
+  '슈퍼노바(초신성)':[/aespa/i,/에스파/,/david\s*guetta/i,/데이비드\s*게타/,/supernova\s*love/i,/아이브|\bIVE\b/i],
 };
+// 위 정규식 목록으로도 다 못 거르는 경우(제목이 그냥 "Supernova"+다른 그룹 해시태그만 있고 곡명/원곡
+// 아티스트 언급이 없는 챌린지 영상들)를 위한 2차 방어선 — 이 그룹이 "다른 실존 그룹과 같이" 매칭됐으면
+// (니치한 2007년 데뷔 그룹이 최근 데뷔한 그룹과 실제로 콜라보할 가능성은 사실상 없으므로) 무조건 버린다.
+// 제목에 이 그룹 하나만 단독으로 매칭됐을 때는(자기 채널 영상 등) 그대로 인정한다.
+const _GROUP_AMBIGUOUS_IF_COMATCHED=new Set(['슈퍼노바(초신성)']);
 function _m2ParseTitle(rawTitle,selfGko){
   // "하이라이트"는 그룹명이 아니라 "요약본" 의미로도 흔히 쓰여 그룹 하이라이트로 오매칭되기 쉬움 — 실측으로
   // "OO '노래' 릴댄 하이라이트 | 릴레이댄스"(릴레이댄스 코너 고정 문구), "OO 무대 하이라이트 모음"류가
@@ -10744,12 +10840,15 @@ function _m2ParseTitle(rawTitle,selfGko){
   // 멤버는 영문 로마자 표기가 흔한 영단어와 겹쳐서, 제목에 그 단어가 평범하게 쓰였을 뿐인데도 멤버 언급으로
   // 오매칭되는 사고가 반복됨(예: "On a street in Spain" 제목이 크래비티 영상인데 올아워즈 "온"으로 잘못
   // 콜라보 태깅됨, 2026-07-31 실측). 단일음절 멤버는 해시태그로 명시된 경우만 매칭을 인정한다.
+  // _ATM_HASHTAG_ONLY_NAMES(여름/아이엠 등)는 단일음절은 아니지만 마찬가지로 흔한 단어/영어 축약형과
+  // 겹치는 이름이라 같은 방식(해시태그만 인정)으로 보호한다 — 영문 쪽은 점/공백 뗀 압축형(#IM)까지 인정.
   function hitHashtag(name){
     if(!name)return false;
-    return new RegExp(`#${_atmEscRe(name)}(?![가-힣a-zA-Z0-9])`,'i').test(title);
+    return new RegExp(`#${_atmEscRe(name)}(?![가-힣a-zA-Z0-9])`,'i').test(title)
+      ||new RegExp(`#${_atmEscRe(name.replace(/[^가-힣a-zA-Z0-9]/g,''))}(?![가-힣a-zA-Z0-9])`,'i').test(title);
   }
   function memberHit(a,names){
-    if([...a.name.ko].length===1)return names.some(t=>hitHashtag(t));
+    if([...a.name.ko].length===1||_ATM_HASHTAG_ONLY_NAMES.has(a.name.ko))return names.some(t=>hitHashtag(t));
     return names.some(t=>hit(t));
   }
   // 긴 이름 우선 정렬 (부분 매칭 방지)
@@ -10776,6 +10875,20 @@ function _m2ParseTitle(rawTitle,selfGko){
       unitExtraMembers[gko].add(mko);
     });
   });
+  // 흔한 곡/유행어와 겹치는 그룹(_GROUP_AMBIGUOUS_IF_COMATCHED)이 다른 실존 그룹과 "같이" 매칭됐으면
+  // 그 다른 그룹의 콜라보로 착각한 오매칭일 확률이 압도적으로 높으므로(단독 매칭일 때만 인정) 제거.
+  // selfGko(지금 이 영상이 실제로 속한 채널)가 주어졌는데 그 그룹명 자체는 제목에 없고(멤버 이름만
+  // 있거나 자체 채널 영상이라 아예 그룹명이 안 적힌 경우) 이 애매한 그룹만 덩그러니 매칭된 경우도
+  // 마찬가지로 버린다 — "내 채널 영상인데 텍스트로만 보면 엉뚱한 그룹이 유일한 매칭"인 상황은 거의
+  // 항상 이런 단어 충돌이지, 진짜 콜라보가 아님(2026-07-31, 에스파·비투비 채널에서 실측 확인).
+  if(matchedGroupKos.length>1||(selfGko&&matchedGroupKos.length===1&&!matchedGroupKos.includes(selfGko))){
+    for(const gko of[...matchedGroupKos]){
+      if(_GROUP_AMBIGUOUS_IF_COMATCHED.has(gko)){
+        matchedGroupKos.splice(matchedGroupKos.indexOf(gko),1);
+        seen.delete(gko);
+      }
+    }
+  }
   // "이름(그룹명)" 패턴에서 그룹명이 우리 시스템에 없는 경우 → 타 소속 동명이인 신호
   const knownGroupTokens=new Set();
   Object.entries(GROUPS).forEach(([ko,v])=>{
@@ -12728,14 +12841,14 @@ document.getElementById('admin-bulk-cancel-btn')?.addEventListener('click',()=>{
 });
 document.getElementById('admin-bulk-edit-btn')?.addEventListener('click',()=>{
   if(!sb||!_isAdmin())return;
-  const ids=[...document.querySelectorAll('.gc-ch-item.admin-selected')].map(el=>el.dataset.vidId).filter(Boolean);
+  const ids=[...document.querySelectorAll('.gc-ch-item.admin-selected,.tv-conn-selectable.admin-selected')].map(el=>el.dataset.vidId).filter(Boolean);
   if(!ids.length||!window._adminBulkKo)return;
   _openVidTagModalBulk(ids,window._adminBulkKo);
 });
 document.getElementById('admin-bulk-hide-btn')?.addEventListener('click',async()=>{
   if(!sb||!_isAdmin())return;
   const btn=document.getElementById('admin-bulk-hide-btn');
-  const selectedItems=[...document.querySelectorAll('.gc-ch-item.admin-selected')];
+  const selectedItems=[...document.querySelectorAll('.gc-ch-item.admin-selected,.tv-conn-selectable.admin-selected')];
   if(!selectedItems.length)return;
   const ids=selectedItems.map(el=>el.dataset.vidId).filter(Boolean);
   if(!ids.length)return;
