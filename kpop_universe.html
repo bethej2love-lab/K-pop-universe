@@ -929,6 +929,24 @@
   .wk-group b{color:rgba(255,190,140,0.85);font-weight:600;}
   .wk-title{font-size:11.5px;color:rgba(210,225,255,0.80);line-height:1.4;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;}
   #wonkok-empty{font-size:12px;color:rgba(155,178,228,0.45);text-align:center;padding:32px 0;}
+  #hnn-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.52);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:81;display:none;align-items:center;justify-content:center;}
+  #hnn-overlay.open{display:flex;}
+  #hnn-panel{width:min(520px,calc(100vw - 32px));max-height:82vh;display:flex;flex-direction:column;background:rgba(13,17,34,0.97);backdrop-filter:blur(40px);-webkit-backdrop-filter:blur(40px);border-radius:18px;box-shadow:0 16px 56px rgba(0,0,0,0.72);border:0.5px solid rgba(255,255,255,0.10);}
+  #hnn-hd{display:flex;align-items:center;justify-content:space-between;padding:16px 18px 10px;flex-shrink:0;}
+  #hnn-hd-title{font-size:13.5px;font-weight:600;color:rgba(220,230,255,0.9);}
+  #hnn-close{background:none;border:none;color:rgba(180,195,230,0.6);font-size:18px;cursor:pointer;padding:0;line-height:1;}
+  #hnn-desc{font-size:11px;color:rgba(155,178,228,0.55);line-height:1.5;padding:0 18px 12px;flex-shrink:0;}
+  #hnn-scan-btn{margin:0 18px;flex-shrink:0;}
+  #hnn-status{font-size:11.5px;color:rgba(155,178,228,0.7);padding:8px 18px 0;min-height:14px;flex-shrink:0;}
+  #hnn-list{overflow-y:auto;padding:8px 0;}
+  #hnn-empty{font-size:12px;color:rgba(155,178,228,0.45);text-align:center;padding:32px 0;}
+  .hnn-item{display:flex;align-items:center;gap:10px;padding:8px 16px;transition:background .12s;cursor:pointer;}
+  .hnn-item:hover{background:rgba(255,255,255,0.04);}
+  .hnn-rank{width:22px;flex-shrink:0;text-align:center;font-size:11px;font-weight:700;color:rgba(155,178,228,0.4);}
+  .hnn-info{flex:1;min-width:0;}
+  .hnn-name{font-size:12px;color:rgba(220,230,255,0.9);font-weight:600;}
+  .hnn-name b{color:rgba(255,150,150,0.95);}
+  .hnn-sub{font-size:10.5px;color:rgba(155,178,228,0.55);margin-top:2px;}
   #avs-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.52);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:81;display:none;align-items:center;justify-content:center;}
   #avs-overlay.open{display:flex;}
   #avs-panel{width:min(520px,calc(100vw - 32px));max-height:82vh;display:flex;flex-direction:column;background:rgba(13,17,34,0.97);backdrop-filter:blur(40px);-webkit-backdrop-filter:blur(40px);border-radius:18px;box-shadow:0 16px 56px rgba(0,0,0,0.72);border:0.5px solid rgba(255,255,255,0.10);}
@@ -1824,6 +1842,7 @@
     <button class="sp-yt-sync" id="sp-hlfix-btn" style="margin-top:4px;opacity:.8;">하이라이트 그룹 오염 재검증(전체)</button>
     <button class="sp-yt-sync" id="sp-collabfix-btn" style="margin-top:4px;opacity:.8;">콜라보 오태깅 재검증(전체)</button>
     <button class="sp-yt-sync" id="sp-membersfix-btn" style="margin-top:4px;opacity:.8;">자체 멤버 태깅 재검증(전체)</button>
+    <button class="sp-yt-sync" id="sp-hnn-btn" style="margin-top:4px;opacity:.8;">동명이인/흔한단어 오염 의심 스캔</button>
     <button class="sp-yt-sync" id="sp-yt-autotag" style="margin-top:4px;opacity:.8;">멤버+콜라보 자동 태깅 (미태깅분)</button>
     <button class="sp-yt-sync" id="sp-hidden-vids-btn" style="margin-top:4px;opacity:.8;">노출 제외 영상 목록</button>
     <button class="sp-yt-sync" id="sp-ext-channels-btn" style="margin-top:4px;opacity:.8;">동기화 채널 목록</button>
@@ -1913,6 +1932,18 @@
       <button id="wonkok-apply-btn">선택 항목 원곡 커버로 이동</button>
     </div>
     <div id="wonkok-list"></div>
+  </div>
+</div>
+<div id="hnn-overlay">
+  <div id="hnn-panel">
+    <div id="hnn-hd">
+      <span id="hnn-hd-title">동명이인/흔한단어 오염 의심 스캔</span>
+      <button id="hnn-close">✕</button>
+    </div>
+    <div id="hnn-desc">전체 영상의 members/with_members를 집계해서, 같은 그룹 내 다른 멤버들보다 비정상적으로 많이 태깅된 이름(자체 채널)이나 여러 그룹에 걸쳐 과도하게 콜라보로 잡힌 이름(with_members)을 건수 내림차순으로 보여줌. 자동으로 고치지는 않음 — 눈으로 보고 흔한 단어/동명이인 의심되면 코드의 화이트리스트에 추가한 뒤 재검증 버튼을 돌릴 것. 이미 화이트리스트에 있는 이름은 목록에서 제외됨.</div>
+    <button id="hnn-scan-btn" class="uc-btn">스캔 시작</button>
+    <div id="hnn-status"></div>
+    <div id="hnn-list"></div>
   </div>
 </div>
 <div id="avs-overlay">
@@ -10303,6 +10334,104 @@ async function _ytSweepMembersMistag(){
     if(btn)btn.disabled=false;
   }
 }
+
+// ── 동명이인/흔한단어 오염 의심 스캔(admin) ── "이유"(에버글로우, "reason"과 겹침)처럼 흔한 단어/동명이인
+// 이름이 대량 오태깅되는 사고가 반복 발견돼서(_ATM_HASHTAG_ONLY_NAMES에 발견될 때마다 하나씩 추가하는 중),
+// 사람이 우연히 발견하길 기다리는 대신 통계로 의심 후보를 먼저 찾아내는 감사(audit) 도구.
+// 자동으로 고치지는 않음 — 판단은 사람이 하고, 확정되면 코드의 화이트리스트에 추가 후 기존 재검증
+// 버튼(콜라보/자체 멤버)으로 정리하는 흐름.
+// ① 자체 채널(members): 같은 그룹 안에서 유독 한 멤버만 태깅 건수가 비정상적으로 많으면(그룹 내
+//    중앙값 대비) 의심 — 진짜 인기 많아서 그런 거면 그룹 내에서도 어느 정도 고르게 높을 텐데, 흔한
+//    단어/동명이인 오염이면 그 한 명만 튐.
+// ② 콜라보(with_members): 여러 그룹 채널에 걸쳐 게스트로 잡힌 총 건수 — 진짜 인기 콜라보 멤버도 있을 수
+//    있지만, 너무 높으면(수십~수백 건) 흔한 단어 오염 가능성을 의심해볼 근거가 됨.
+async function _hnnScan(){
+  if(!sb){document.getElementById('hnn-status').textContent='Supabase 연결 없음';return;}
+  const btn=document.getElementById('hnn-scan-btn');
+  const statusEl=document.getElementById('hnn-status');
+  if(btn)btn.disabled=true;
+  document.getElementById('hnn-list').innerHTML='';
+  try{
+    statusEl.textContent='전체 태깅 집계 중… (시간이 좀 걸릴 수 있음)';
+    const{data:rows,error}=await _sbFetchAll(()=>sb.from(_YT_TABLE)
+      .select('group_ko,members,with_members')
+      .order('id'));
+    if(error){statusEl.textContent='조회 실패: '+error.message;return;}
+    const ownCounts=new Map(); // "mko gko" -> count
+    const crossCounts=new Map(); // "mko gko" -> count (with_members 파싱)
+    (rows||[]).forEach(v=>{
+      (v.members||[]).forEach(mko=>{
+        const k=mko+' '+v.group_ko;
+        ownCounts.set(k,(ownCounts.get(k)||0)+1);
+      });
+      (v.with_members||[]).forEach(entry=>{
+        const m=/^(.*)\(([^()]*)\)$/.exec(entry);
+        if(!m)return;
+        const k=m[1]+' '+m[2];
+        crossCounts.set(k,(crossCounts.get(k)||0)+1);
+      });
+    });
+    // ① 그룹별 자체 채널 태깅 건수 이상치 — 같은 그룹 내 중앙값과 비교
+    const byGroup=new Map(); // gko -> [{mko,count}]
+    ownCounts.forEach((count,k)=>{
+      const[mko,gko]=k.split(' ');
+      if(_ATM_HASHTAG_ONLY_NAMES.has(mko))return;
+      if(!byGroup.has(gko))byGroup.set(gko,[]);
+      byGroup.get(gko).push({mko,count});
+    });
+    const ownSuspects=[];
+    byGroup.forEach((list,gko)=>{
+      if(list.length<2)return; // 비교할 다른 멤버가 있어야 함
+      const sorted=[...list].sort((a,b)=>a.count-b.count);
+      const median=sorted[Math.floor(sorted.length/2)].count;
+      list.forEach(({mko,count})=>{
+        if(count>=15&&count>Math.max(median*3,median+15)){
+          ownSuspects.push({mko,gko,count,median,type:'own'});
+        }
+      });
+    });
+    // ② 콜라보(with_members) 총량 이상치 — 자체 화이트리스트 이름 제외, 절대 건수 기준 상위만
+    const crossSuspects=[];
+    crossCounts.forEach((count,k)=>{
+      const[mko,gko]=k.split(' ');
+      if(_ATM_HASHTAG_ONLY_NAMES.has(mko))return;
+      if(count>=15)crossSuspects.push({mko,gko,count,type:'cross'});
+    });
+    const combined=[...ownSuspects,...crossSuspects].sort((a,b)=>b.count-a.count).slice(0,60);
+    statusEl.textContent=`집계 완료 — 의심 후보 ${combined.length}개(자체 ${ownSuspects.length} / 콜라보 ${crossSuspects.length})`;
+    _renderHnnList(combined);
+  }catch(e){
+    statusEl.textContent='오류: '+e.message;
+  }finally{
+    if(btn)btn.disabled=false;
+  }
+}
+function _renderHnnList(list){
+  const listEl=document.getElementById('hnn-list');
+  listEl.innerHTML='';
+  if(!list.length){
+    listEl.innerHTML='<div id="hnn-empty">의심 후보가 없어요</div>';
+    return;
+  }
+  list.forEach((s,i)=>{
+    const item=document.createElement('div');item.className='hnn-item';
+    const rank=document.createElement('div');rank.className='hnn-rank';rank.textContent=String(i+1);
+    const info=document.createElement('div');info.className='hnn-info';
+    const name=document.createElement('div');name.className='hnn-name';
+    name.innerHTML=`${s.mko} <span style="color:rgba(155,178,228,0.6);font-weight:400;">(${s.gko})</span> — <b>${s.count}건</b>`;
+    const sub=document.createElement('div');sub.className='hnn-sub';
+    sub.textContent=s.type==='own'
+      ?`자체 채널 태깅 — 같은 그룹 내 중앙값 ${s.median}건 대비 이상치`
+      :`다른 채널 콜라보(with_members) 총 ${s.count}건`;
+    info.appendChild(name);info.appendChild(sub);
+    item.appendChild(rank);item.appendChild(info);
+    listEl.appendChild(item);
+  });
+}
+document.getElementById('hnn-scan-btn')?.addEventListener('click',_hnnScan);
+document.getElementById('hnn-overlay')?.addEventListener('click',e=>{if(e.target===e.currentTarget)e.currentTarget.classList.remove('open');});
+document.getElementById('hnn-close')?.addEventListener('click',()=>document.getElementById('hnn-overlay').classList.remove('open'));
+document.getElementById('sp-hnn-btn')?.addEventListener('click',()=>{document.getElementById('hnn-overlay').classList.add('open');});
 
 // ── 그룹명 변경 반영 ── groups.json/artists.json에서 그룹의 group.ko 표기를 바꾸면(예: "슈퍼노바" →
 // "슈퍼노바(초신성)"), 그 그룹 자체 채널의 기존 group_ko 컬럼값과, 다른 채널이 이 그룹/사람을 게스트로
