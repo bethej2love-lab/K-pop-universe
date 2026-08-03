@@ -1812,6 +1812,7 @@
     <button class="sp-yt-sync" id="sp-lunafix-btn" style="margin-top:4px;opacity:.8;">에프엑스 LUNA(원어스) 오염 정리 (일회용)</button>
     <button class="sp-yt-sync" id="sp-hjfix-btn" style="margin-top:4px;opacity:.8;">크래비티 형준/SS501 김형준 오염 정리 (일회용)</button>
     <button class="sp-yt-sync" id="sp-collabfix-btn" style="margin-top:4px;opacity:.8;">콜라보 오태깅 재검증(전체)</button>
+    <button class="sp-yt-sync" id="sp-membersfix-btn" style="margin-top:4px;opacity:.8;">자체 멤버 태깅 재검증(전체)</button>
     <button class="sp-yt-sync" id="sp-desc-backfill-btn" style="margin-top:4px;opacity:.8;">설명란(description) 채우기 (일회용)</button>
     <button class="sp-yt-sync" id="sp-yt-autotag" style="margin-top:4px;opacity:.8;">멤버+콜라보 자동 태깅 (미태깅분)</button>
     <button class="sp-yt-sync" id="sp-hidden-vids-btn" style="margin-top:4px;opacity:.8;">노출 제외 영상 목록</button>
@@ -10293,6 +10294,51 @@ async function _ytSweepAmbiguousCollabMistag(){
   }
 }
 
+// _ytSweepAmbiguousCollabMistag와 같은 계열이지만 with_members/with_groups(다른 그룹 콜라보)가 아니라
+// members(자기 채널 자체 출연자) 컬럼을 재검증한다 — "이유"(에버글로우)처럼 흔한 단어와 겹치는 이름이
+// _ATM_HASHTAG_ONLY_NAMES에 새로 추가되면, 이미 members에 평문 매칭으로 잘못 들어간 값은 이걸로 걷어낸다.
+// _ytAutoTagMembers는 members가 "비어있는" 행만 채우므로 이미 채워진(오염된) 행은 절대 건드리지 않음 —
+// 그래서 별도 재검증 스윕이 필요함. tags_manual=true(관리자 직접 저장)는 여기서도 절대 안 건드림.
+async function _ytSweepMembersMistag(){
+  if(!sb){_ytSetProg('Supabase 연결 없음');return;}
+  const btn=document.getElementById('sp-membersfix-btn');
+  if(btn)btn.disabled=true;
+  try{
+    _ytSetProg('[자체 멤버 태깅 재검증] 조회 중…');
+    const{data:rows,error}=await _sbFetchAll(()=>sb.from(_YT_TABLE)
+      .select('id,title,description,group_ko,members')
+      .eq('tags_manual',false)
+      .not('members','eq','{}')
+      .order('id'));
+    if(error){_ytSetProg('조회 실패: '+error.message);return;}
+    if(!rows?.length){_ytSetProg('검사할 영상이 없어요');return;}
+    const updates=[];
+    rows.forEach(v=>{
+      const roster=ARTISTS.filter(a=>_artistGroups(a).some(g=>g.ko===v.group_ko)).map(a=>({ko:a.name.ko,en:a.name.en}));
+      if(!roster.length)return;
+      const searchText=v.description?`${v.title||''}\n${v.description}`:(v.title||'');
+      const tokens=_atmTokenize(searchText);
+      const validSet=new Set(roster.filter(m=>_atmMatchesMember(m,searchText,tokens)).map(m=>m.ko));
+      const curM=v.members||[];
+      const newM=curM.filter(mko=>validSet.has(mko));
+      if(newM.length!==curM.length)updates.push({id:v.id,patch:{members:newM}});
+    });
+    if(!updates.length){_ytSetProg(`검사 완료 — ${rows.length}개 중 오염 없음`);return;}
+    for(let i=0;i<updates.length;i+=200){
+      const chunk=updates.slice(i,i+200);
+      const results=await Promise.all(chunk.map(u=>sb.from(_YT_TABLE).update(u.patch).eq('id',u.id)));
+      const failed=results.find(r=>r.error);
+      if(failed)throw new Error(failed.error.message);
+      _ytSetProg(`[자체 멤버 태깅 재검증] ${Math.min(i+200,updates.length)}/${updates.length}개 처리 중…`);
+    }
+    _ytSetProg(`완료! ${rows.length}개 중 ${updates.length}개에서 근거 없는 멤버 태그 제거함`);
+  }catch(e){
+    _ytSetProg('오류: '+e.message);
+  }finally{
+    if(btn)btn.disabled=false;
+  }
+}
+
 // ── 그룹명 변경 반영 ── groups.json/artists.json에서 그룹의 group.ko 표기를 바꾸면(예: "슈퍼노바" →
 // "슈퍼노바(초신성)"), 그 그룹 자체 채널의 기존 group_ko 컬럼값과, 다른 채널이 이 그룹/사람을 게스트로
 // 태깅할 때 쓰는 with_members("이름(그룹)")/with_groups(그룹명 그대로) 안의 예전 표기가 그대로 남아있어서
@@ -10430,7 +10476,7 @@ async function _wonkokScan(){
     const rows=[];
     for(let i=0;i<hitIds.length;i+=200){
       const{data,error}=await sb.from(_YT_TABLE)
-        .select('id,title,group_ko,members,thumb,content_flag,cover_of_members')
+        .select('id,title,group_ko,members,thumb,content_flag,cover_of_members,cover_of_groups')
         .in('id',hitIds.slice(i,i+200));
       if(error){statusEl.textContent='조회 실패: '+error.message;return;}
       rows.push(...(data||[]));
@@ -10498,8 +10544,12 @@ document.getElementById('wonkok-select-all')?.addEventListener('change',e=>{
   _updateWonkokCount();
 });
 // 후보로 잡힌 members는 "(원곡: ...)" 절 안에서만 이름이 매치돼 들어간 것 — 실제 출연이 아니라 원곡자
-// 표기이므로, members에서 빼고 cover_of_members로 옮겨야 "원곡:" 표시가 정확해진다(content_flag='무관'만
+// 표기이므로, members에서 빼고 cover_of로 옮겨야 "원곡:" 표시가 정확해진다(content_flag='무관'만
 // 찍으면 members가 그대로 남아 연결 카드 등에 유령처럼 계속 걸리는 문제가 있었음).
+// 개인(cover_of_members) vs 그룹(cover_of_groups) 중 어디로 넣을지는 그 사람이 "진짜 솔로"인지로 판단한다
+// — GROUPS에 실존하지 않는 소속(아이유의 "솔로" 같은 placeholder)이면 진짜 솔로 아티스트라 개인 귀속이 맞고,
+// 실존하는 그룹 소속 멤버면 그 멤버 개인 원곡인 경우는 드물고 보통 "그 그룹의 노래"를 캡션에 멤버 이름과
+// 함께 적은 것뿐이므로 그룹 귀속으로 넣는다(사용자 확인, 2026-08-03).
 const APPLY_BTN_LABEL='선택 항목 원곡 커버로 이동';
 document.getElementById('wonkok-apply-btn')?.addEventListener('click',async()=>{
   if(!sb)return;
@@ -10512,8 +10562,15 @@ document.getElementById('wonkok-apply-btn')?.addEventListener('click',async()=>{
   const targets=_wonkokCandidates.filter(v=>idSet.has(v.id));
   try{
     for(const v of targets){
-      const newCover=[...new Set([...(v.cover_of_members||[]),...(v.members||[]).map(mko=>`${mko}(${v.group_ko})`)])];
-      const{error}=await sb.from(_YT_TABLE).update({members:[],cover_of_members:newCover}).eq('id',v.id);
+      const newCoverMembers=new Set(v.cover_of_members||[]);
+      const newCoverGroups=new Set(v.cover_of_groups||[]);
+      (v.members||[]).forEach(mko=>{
+        const artist=ARTISTS.find(a=>a.group.ko===v.group_ko&&a.name.ko===mko);
+        const isRealSolo=artist&&!GROUPS[artist.group.ko];
+        if(isRealSolo)newCoverMembers.add(`${mko}(${v.group_ko})`);
+        else newCoverGroups.add(v.group_ko);
+      });
+      const{error}=await sb.from(_YT_TABLE).update({members:[],cover_of_members:[...newCoverMembers],cover_of_groups:[...newCoverGroups]}).eq('id',v.id);
       if(error)throw error;
     }
   }catch(e){
@@ -10663,7 +10720,9 @@ function _atmTokenize(title){return(title||'').toLowerCase().split(/[^a-z0-9]+/)
 // "가을"(아이브)/"하늘"(키스오브라이프)/"바다"(S.E.S.) — 계절/자연을 뜻하는 흔한 단어를 그대로 활동명으로
 // 쓰는 경우도 같은 위험군이라 같이 등록(여름 케이스 수정 검증 중 "가을"이 무관한 제목에 실제로 잡히는 걸
 // 발견해서 같이 발견된 나머지도 선제적으로 추가함). 비(솔로)/봄(앳하트)은 이미 1글자라 별도 규칙으로 보호됨.
-const _ATM_HASHTAG_ONLY_NAMES=new Set(['여름','아이엠','가을','하늘','바다']);
+// "이유"(에버글로우) — "이유"가 "reason"이라는 흔한 단어라 무관한 제목("헤어진 이유", "안 되는 이유" 등)에
+// 대량으로 걸림(2026-08-03, 사용자 제보로 발견).
+const _ATM_HASHTAG_ONLY_NAMES=new Set(['여름','아이엠','가을','하늘','바다','이유']);
 // 트리플에스처럼 등록된 이름 자체가 "성+이름"(예: 김채원)인 그룹은, 영상 제목에서 성 없이 이름만
 // 쓰는(흔한) 표기를 못 잡는 문제가 있었음 — 반대로 프로미스나인처럼 이름만 등록된 경우는 제목에 성이
 // 붙어도 이미 아래 surRe로 잡혔음. 등록명이 알려진 성으로 시작하면 성을 뗀 나머지도 매칭 대상에 넣는다.
@@ -12996,6 +13055,7 @@ document.getElementById('vid-tag-thumb-refresh').addEventListener('click',async 
   document.getElementById('sp-lunafix-btn')?.addEventListener('click',_ytFixOneusLunaMistag);
   document.getElementById('sp-hjfix-btn')?.addEventListener('click',_ytFixHyeongjunSS501Mistag);
   document.getElementById('sp-collabfix-btn')?.addEventListener('click',_ytSweepAmbiguousCollabMistag);
+  document.getElementById('sp-membersfix-btn')?.addEventListener('click',_ytSweepMembersMistag);
   document.getElementById('sp-desc-backfill-btn')?.addEventListener('click',_ytBackfillDescriptions);
   document.getElementById('sp-yt-autotag')?.addEventListener('click',_ytAutoTagMembers);
   document.getElementById('sp-hidden-vids-btn')?.addEventListener('click',_openHiddenVids);
