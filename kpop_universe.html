@@ -929,6 +929,31 @@
   .wk-group b{color:rgba(255,190,140,0.85);font-weight:600;}
   .wk-title{font-size:11.5px;color:rgba(210,225,255,0.80);line-height:1.4;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;}
   #wonkok-empty{font-size:12px;color:rgba(155,178,228,0.45);text-align:center;padding:32px 0;}
+  #cf-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.52);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:81;display:none;align-items:center;justify-content:center;}
+  #cf-overlay.open{display:flex;}
+  #cf-panel{width:min(520px,calc(100vw - 32px));max-height:82vh;display:flex;flex-direction:column;background:rgba(13,17,34,0.97);backdrop-filter:blur(40px);-webkit-backdrop-filter:blur(40px);border-radius:18px;box-shadow:0 16px 56px rgba(0,0,0,0.72);border:0.5px solid rgba(255,255,255,0.10);}
+  #cf-hd{display:flex;align-items:center;justify-content:space-between;padding:16px 18px 10px;flex-shrink:0;}
+  #cf-hd-title{font-size:13.5px;font-weight:600;color:rgba(220,230,255,0.9);}
+  #cf-close{background:none;border:none;color:rgba(180,195,230,0.6);font-size:18px;cursor:pointer;padding:0;line-height:1;}
+  #cf-desc{font-size:11px;color:rgba(155,178,228,0.55);line-height:1.5;padding:0 18px 12px;flex-shrink:0;}
+  #cf-scan-btn{margin:0 18px;flex-shrink:0;}
+  #cf-status{font-size:11.5px;color:rgba(155,178,228,0.7);padding:8px 18px 0;min-height:14px;flex-shrink:0;}
+  #cf-toolbar{display:flex;align-items:center;gap:10px;padding:10px 18px;border-bottom:0.5px solid rgba(255,255,255,0.08);flex-shrink:0;}
+  #cf-select-all-row{display:flex;align-items:center;gap:6px;font-size:11.5px;color:rgba(185,205,245,0.75);cursor:pointer;white-space:nowrap;}
+  #cf-count{flex:1;font-size:11.5px;color:rgba(155,178,228,0.55);}
+  #cf-apply-btn{background:rgba(140,220,255,0.16);border:1px solid rgba(140,220,255,0.32);border-radius:10px;color:#a8e0ff;font-size:11.5px;padding:6px 12px;cursor:pointer;font-family:inherit;white-space:nowrap;}
+  #cf-apply-btn:active{opacity:.7;}
+  #cf-apply-btn:disabled{opacity:.4;cursor:default;}
+  #cf-list{overflow-y:auto;padding:8px 0;}
+  .cf-item{display:flex;align-items:center;gap:10px;padding:8px 16px;transition:background .12s;}
+  .cf-item:hover{background:rgba(255,255,255,0.04);}
+  .cf-item input[type=checkbox]{flex-shrink:0;accent-color:rgba(140,220,255,0.9);}
+  .cf-thumb{width:80px;flex-shrink:0;aspect-ratio:16/9;object-fit:cover;border-radius:5px;background:rgba(255,255,255,0.06);}
+  .cf-info{flex:1;min-width:0;}
+  .cf-group{font-size:10.5px;color:rgba(155,178,228,0.55);margin-bottom:2px;}
+  .cf-group b{color:rgba(140,220,255,0.85);font-weight:600;}
+  .cf-title{font-size:11.5px;color:rgba(210,225,255,0.80);line-height:1.4;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;}
+  #cf-empty{font-size:12px;color:rgba(155,178,228,0.45);text-align:center;padding:32px 0;}
   #hnn-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.52);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:81;display:none;align-items:center;justify-content:center;}
   #hnn-overlay.open{display:flex;}
   #hnn-panel{width:min(520px,calc(100vw - 32px));max-height:82vh;display:flex;flex-direction:column;background:rgba(13,17,34,0.97);backdrop-filter:blur(40px);-webkit-backdrop-filter:blur(40px);border-radius:18px;box-shadow:0 16px 56px rgba(0,0,0,0.72);border:0.5px solid rgba(255,255,255,0.10);}
@@ -1855,6 +1880,7 @@
     <button class="sp-yt-sync" id="sp-hidden-vids-btn" style="margin-top:4px;opacity:.8;">노출 제외 영상 목록</button>
     <button class="sp-yt-sync" id="sp-ext-channels-btn" style="margin-top:4px;opacity:.8;">동기화 채널 목록</button>
     <button class="sp-yt-sync" id="sp-wonkok-btn" style="margin-top:4px;opacity:.8;">원곡: 오태깅 의심 목록</button>
+    <button class="sp-yt-sync" id="sp-cover-fix-btn" style="margin-top:4px;opacity:.8;">원곡 with→cover 오태깅 이동</button>
     <button class="sp-yt-sync" id="sp-avs-btn" style="margin-top:4px;opacity:.8;">전체 영상 검색</button>
     <button class="sp-yt-sync" id="sp-nomem-btn" style="margin-top:4px;opacity:.8;">그룹 멤버 안 나옴(무관) 목록</button>
     <button class="sp-yt-sync" id="sp-hitgs-everglow-fix-btn" style="margin-top:4px;opacity:.8;">힛지스 이유 → 에버글로우 오분류 수정 (일회용)</button>
@@ -1933,6 +1959,23 @@
       <button id="wonkok-apply-btn">선택 항목 원곡 커버로 이동</button>
     </div>
     <div id="wonkok-list"></div>
+  </div>
+</div>
+<div id="cf-overlay">
+  <div id="cf-panel">
+    <div id="cf-hd">
+      <span id="cf-hd-title">원곡 with→cover 오태깅 이동</span>
+      <button id="cf-close">✕</button>
+    </div>
+    <div id="cf-desc">제목에 "원곡"/"커버"/"cover"가 들어간 영상 중, 원곡자로 언급된 그룹/멤버가 with_members/with_groups에 잘못 태깅된 것을 찾아 cover_of_members/cover_of_groups로 이동합니다. tags_manual=true인 행은 건너뜁니다.</div>
+    <button id="cf-scan-btn" class="uc-btn">스캔 시작</button>
+    <div id="cf-status"></div>
+    <div id="cf-toolbar" style="display:none">
+      <label id="cf-select-all-row"><input type="checkbox" id="cf-select-all" checked>전체 선택</label>
+      <span id="cf-count"></span>
+      <button id="cf-apply-btn">선택 항목 cover_of로 이동</button>
+    </div>
+    <div id="cf-list"></div>
   </div>
 </div>
 <div id="hnn-overlay">
@@ -5192,7 +5235,7 @@ async function _fetchApiCollabData(anchor){
       sb.from(_YT_TABLE).select('id,title,category,group_ko,members,with_members,content_flag').eq('group_ko',groupKo).contains('members',[memberKo]),
       sb.from(_YT_TABLE).select('id,title,category,group_ko,members,with_members,content_flag').contains('with_members',[withKey]),
       // 아이유의 팔레트, 뉴진스편처럼 개별 멤버가 아니라 그룹 전체가 with_groups로 태깅된 내 채널 영상
-      sb.from(_YT_TABLE).select('id,title,category,group_ko,with_groups,content_flag').eq('group_ko',groupKo).not('with_groups','eq','{}'),
+      sb.from(_YT_TABLE).select('id,title,category,group_ko,members,with_groups,content_flag').eq('group_ko',groupKo).not('with_groups','eq','{}'),
       // 반대 방향: 다른 채널(예: 아이유)이 내 그룹 전체를 with_groups로 태깅한 경우 — 이게 없으면
       // 그룹으로 태깅된 쪽(예: (여자)아이들 개별 멤버)에는 이 콜라보가 전혀 안 보이는 비대칭이 생김.
       sb.from(_YT_TABLE).select('id,title,category,group_ko,with_groups,content_flag').contains('with_groups',[anchor.group.ko])
@@ -5211,6 +5254,9 @@ async function _fetchApiCollabData(anchor){
     });
     // with_groups 태깅 영상: 태깅된 그룹을 "지금 그 그룹 멤버 전원"으로 펼쳐서 콜라보 후보에 포함
     _filterBannedVideos(groupTagQ.data||[]).forEach(v=>{
+      // members가 명시돼 있으면(태깅 완료) 현재 앵커가 그 목록에 없으면 이 멤버 카드와 무관한 영상 — 건너뜀.
+      // members가 비어있으면(미태깅) 누가 나왔는지 모르므로 기존처럼 전 멤버 카드에 표시.
+      if((v.members||[]).length>0&&!v.members.includes(memberKo))return;
       const withList=(v.with_groups||[]).flatMap(gko=>
         ARTISTS.filter(a=>_artistGroups(a).some(g=>g.ko===gko))
           .map(a=>a.group.ko===anchor.group.ko?a.name.ko:`${a.name.ko}(${a.group.ko})`)
@@ -10792,6 +10838,174 @@ document.getElementById('wonkok-overlay')?.addEventListener('click',e=>{if(e.tar
 document.getElementById('wonkok-close')?.addEventListener('click',()=>document.getElementById('wonkok-overlay').classList.remove('open'));
 document.getElementById('sp-wonkok-btn')?.addEventListener('click',()=>{document.getElementById('wonkok-overlay').classList.add('open');});
 
+// ── with→cover 오태깅 이동 ── 제목에 "원곡/커버/cover" 절이 있고, 원곡자로 언급된 그룹/멤버가
+// with_members/with_groups에 잘못 들어있는 행을 찾아 cover_of_members/cover_of_groups로 이동.
+// wonkok 툴은 members 컬럼 대상, 이 툴은 with_ 컬럼(콜라보 태깅)이 대상이라는 점이 다름.
+let _cfCandidates=[];
+let _cfScanning=false;
+async function _cfScan(){
+  if(_cfScanning||!sb)return;
+  _cfScanning=true;
+  const btn=document.getElementById('cf-scan-btn');
+  const statusEl=document.getElementById('cf-status');
+  if(btn)btn.disabled=true;
+  document.getElementById('cf-toolbar').style.display='none';
+  document.getElementById('cf-list').innerHTML='';
+  try{
+    statusEl.textContent='제목 목록 조회 중… (시간이 좀 걸릴 수 있음)';
+    const idTitleRows=[];
+    let lastId=null;
+    while(true){
+      let q=sb.from(_YT_TABLE).select('id,title').order('id').limit(1000);
+      if(lastId!==null)q=q.gt('id',lastId);
+      const{data,error:idErr}=await q;
+      if(idErr){statusEl.textContent='조회 실패: '+idErr.message;return;}
+      if(!data?.length)break;
+      idTitleRows.push(...data);
+      statusEl.textContent=`제목 목록 조회 중… (${idTitleRows.length}개)`;
+      if(data.length<1000)break;
+      lastId=data[data.length-1].id;
+    }
+    const _cfIndicatorRe=/원곡|커버|cover/i;
+    const hitIds=idTitleRows.filter(v=>_cfIndicatorRe.test(v.title||'')).map(v=>v.id);
+    if(!hitIds.length){
+      _cfCandidates=[];
+      statusEl.textContent='스캔 완료 — 후보 0개';
+      _renderCfList();
+      return;
+    }
+    statusEl.textContent=`"원곡/커버" 포함 ${hitIds.length}개 상세 조회 중…`;
+    const rows=[];
+    for(let i=0;i<hitIds.length;i+=200){
+      const{data,error}=await sb.from(_YT_TABLE)
+        .select('id,title,group_ko,thumb,with_members,with_groups,cover_of_members,cover_of_groups')
+        .in('id',hitIds.slice(i,i+200))
+        .eq('tags_manual',false); // 관리자가 직접 확정한 태그는 건드리지 않음
+      if(error){statusEl.textContent='조회 실패: '+error.message;return;}
+      rows.push(...(data||[]));
+    }
+    const filtered=rows.filter(v=>(v.with_members||[]).length>0||(v.with_groups||[]).length>0);
+    statusEl.textContent=`${filtered.length}개 후보 검사 중…`;
+    const candidates=[];
+    for(const v of filtered){
+      const clause=_wonkokClauseContent(v.title||'');
+      if(!clause)continue;
+      const clauseNorm=_wonkokNorm(clause);
+      const toMoveMem=(v.with_members||[]).filter(s=>{
+        const m=s.match(/^(.*)\((.*)\)$/);
+        if(!m)return false;
+        const[,mko,gko]=m;
+        const artist=ARTISTS.find(a=>a.group.ko===gko&&a.name.ko===mko);
+        const variants=artist?_m2NameVariants(artist):[mko];
+        return variants.some(variant=>_wonkokHit(clauseNorm,variant));
+      });
+      const toMoveGrp=(v.with_groups||[]).filter(gko=>{
+        if(_wonkokHit(clauseNorm,gko))return true;
+        const en=(GROUPS[gko]||{}).en||'';
+        return en&&_wonkokHit(clauseNorm,_wonkokNorm(en));
+      });
+      if(toMoveMem.length||toMoveGrp.length)candidates.push({...v,toMoveMem,toMoveGrp});
+    }
+    _cfCandidates=candidates;
+    statusEl.textContent=`스캔 완료 — 오태깅 의심 ${candidates.length}개`;
+    _renderCfList();
+  }catch(e){
+    statusEl.textContent='오류: '+e.message;
+  }finally{
+    _cfScanning=false;
+    if(btn)btn.disabled=false;
+  }
+}
+function _renderCfList(){
+  const listEl=document.getElementById('cf-list');
+  const toolbarEl=document.getElementById('cf-toolbar');
+  listEl.innerHTML='';
+  if(!_cfCandidates.length){
+    listEl.innerHTML='<div id="cf-empty">의심 후보가 없어요</div>';
+    toolbarEl.style.display='none';
+    return;
+  }
+  toolbarEl.style.display='flex';
+  document.getElementById('cf-select-all').checked=true;
+  _cfCandidates.forEach(v=>{
+    const item=document.createElement('div');item.className='cf-item';item.dataset.vidId=v.id;
+    const cb=document.createElement('input');cb.type='checkbox';cb.checked=true;
+    cb.addEventListener('change',_updateCfCount);
+    const img=document.createElement('img');img.className='cf-thumb';img.src=v.thumb||'';img.loading='lazy';
+    const info=document.createElement('div');info.className='cf-info';
+    const grp=document.createElement('div');grp.className='cf-group';
+    const moveParts=[];
+    if(v.toMoveMem.length)moveParts.push(`<b>${v.toMoveMem.map(s=>s.replace(/\(.*\)$/,'')).join(', ')}</b>`);
+    if(v.toMoveGrp.length)moveParts.push(`<b>${v.toMoveGrp.join(', ')} (그룹)</b>`);
+    grp.innerHTML=`${v.group_ko||''} · with→cover: ${moveParts.join(', ')}`;
+    const ttl=document.createElement('div');ttl.className='cf-title';ttl.textContent=v.title||'';
+    info.appendChild(grp);info.appendChild(ttl);
+    const editBtn=document.createElement('button');editBtn.className='vid-edit-btn';editBtn.type='button';editBtn.textContent='✎';
+    editBtn.title='직접 재태깅';
+    editBtn.addEventListener('click',e=>{e.stopPropagation();_openVidTagModal({id:v.id,title:v.title},v.group_ko);});
+    item.appendChild(cb);item.appendChild(img);item.appendChild(info);item.appendChild(editBtn);
+    listEl.appendChild(item);
+  });
+  _updateCfCount();
+}
+function _updateCfCount(){
+  const total=_cfCandidates.length;
+  const checked=document.querySelectorAll('#cf-list .cf-item input[type=checkbox]:checked').length;
+  document.getElementById('cf-count').textContent=`${checked}/${total}개 선택됨`;
+  const applyBtn=document.getElementById('cf-apply-btn');
+  if(applyBtn)applyBtn.disabled=checked===0;
+  const allEl=document.getElementById('cf-select-all');
+  if(allEl)allEl.checked=checked===total&&total>0;
+}
+document.getElementById('cf-select-all')?.addEventListener('change',e=>{
+  document.querySelectorAll('#cf-list .cf-item input[type=checkbox]').forEach(cb=>{cb.checked=e.target.checked;});
+  _updateCfCount();
+});
+const CF_APPLY_LABEL='선택 항목 cover_of로 이동';
+document.getElementById('cf-apply-btn')?.addEventListener('click',async()=>{
+  if(!sb)return;
+  const btn=document.getElementById('cf-apply-btn');
+  const items=[...document.querySelectorAll('#cf-list .cf-item')].filter(el=>el.querySelector('input[type=checkbox]').checked);
+  const ids=items.map(el=>el.dataset.vidId).filter(Boolean);
+  if(!ids.length)return;
+  btn.disabled=true;btn.textContent='처리 중…';
+  const idSet=new Set(ids);
+  const targets=_cfCandidates.filter(v=>idSet.has(v.id));
+  try{
+    for(const v of targets){
+      const moveMemSet=new Set(v.toMoveMem);
+      const moveGrpSet=new Set(v.toMoveGrp);
+      const newWith=(v.with_members||[]).filter(s=>!moveMemSet.has(s));
+      const newWithGrp=(v.with_groups||[]).filter(g=>!moveGrpSet.has(g));
+      const newCoverMem=new Set(v.cover_of_members||[]);
+      const newCoverGrp=new Set(v.cover_of_groups||[]);
+      v.toMoveMem.forEach(s=>newCoverMem.add(s));
+      v.toMoveGrp.forEach(g=>newCoverGrp.add(g));
+      const{error}=await sb.from(_YT_TABLE).update({
+        with_members:newWith,
+        with_groups:newWithGrp,
+        cover_of_members:[...newCoverMem],
+        cover_of_groups:[...newCoverGrp]
+      }).eq('id',v.id);
+      if(error)throw error;
+    }
+  }catch(e){
+    btn.disabled=false;btn.textContent=CF_APPLY_LABEL;
+    document.getElementById('cf-status').textContent='오류: '+e.message;
+    return;
+  }
+  _cfCandidates=_cfCandidates.filter(v=>!idSet.has(v.id));
+  items.forEach(el=>el.remove());
+  document.getElementById('cf-status').textContent=`${ids.length}개 이동 완료 — 남은 후보 ${_cfCandidates.length}개`;
+  btn.textContent=CF_APPLY_LABEL;
+  _updateCfCount();
+  if(!_cfCandidates.length)_renderCfList();
+});
+document.getElementById('cf-scan-btn')?.addEventListener('click',_cfScan);
+document.getElementById('cf-overlay')?.addEventListener('click',e=>{if(e.target===e.currentTarget)e.currentTarget.classList.remove('open');});
+document.getElementById('cf-close')?.addEventListener('click',()=>document.getElementById('cf-overlay').classList.remove('open'));
+document.getElementById('sp-cover-fix-btn')?.addEventListener('click',()=>{document.getElementById('cf-overlay').classList.add('open');});
+
 // ── 전체 영상 검색(admin) ── 그룹/멤버 무관하게 title 검색. 3글자 이상은 서버 ILIKE(트라이그램 인덱스로
 // 빠름), 1~2글자는 인덱스 가속이 안 되므로(pg_trgm은 3글자 미만 패턴을 못 씀) id/title/group_ko/thumb/
 // category 전량을 한 번 키셋 페이지네이션으로 캐시해서 브라우저에서 검색한다 — "원곡" 스캔 타임아웃을
@@ -12959,6 +13173,7 @@ let _vidTagWithSelected=[]; // [{ko,groupKo}] — 타 그룹 멤버 검색/선�
 let _vidTagGroupsSelected=[]; // [groupKo,...] — "아이유의 팔레트, 뉴진스편"처럼 그룹 전체가 출연할 때(with_groups)
 let _vidTagCoverSelected=[]; // [{ko,groupKo}] — 커버 영상의 원곡자(멤버) 지정
 let _vidTagCoverGroupsSelected=[]; // [groupKo,...] — 원곡이 그룹 단위 곡일 때
+let _vidTagOrigManual=false; // DB에서 불러온 기존 tags_manual 값 — 트리거 우회 two-step 저장에 사용
 function _renderVidTagChips(){
   const chipsEl=document.getElementById('vid-tag-with-chips');
   chipsEl.innerHTML='';
@@ -13048,6 +13263,7 @@ document.getElementById('vid-tag-group-ko')?.addEventListener('change',e=>{
 // 있으므로) 빈 상태에서 시작 — 저장 시 "멤버/콜라보 태그도 덮어쓰기" 체크 여부로 members/with_members/
 // with_groups를 건드릴지 말지 결정한다(끄면 포맷·플래그만 선택한 영상 전체에 적용, 기존 태그는 보존).
 function _openVidTagModalBulk(ids,ko){
+  _vidTagOrigManual=false;
   _vidTagTarget={id:null,ko};
   _vidTagBulkIds=[...ids];
   _vidTagWithSelected=[];
@@ -13113,7 +13329,7 @@ async function _openVidTagModal(v,ko){
   // 카드에 넘어온 v에는 members/with_members가 안 실려있는 경우가 많아서(그룹 카드 그리드는 해당 컬럼을
   // 아예 select하지 않음), 모달을 열 때 저장된 값을 DB에서 직접 불러와 체크박스/칩에 반영한다.
   if(sb){
-    const{data,error}=await sb.from(_YT_TABLE).select('members,with_members,with_groups,cover_of_members,cover_of_groups,category,content_flag').eq('id',v.id).maybeSingle();
+    const{data,error}=await sb.from(_YT_TABLE).select('members,with_members,with_groups,cover_of_members,cover_of_groups,category,content_flag,tags_manual').eq('id',v.id).maybeSingle();
     if(!_vidTagTarget||_vidTagTarget.id!==v.id)return; // 응답 오는 사이 모달이 닫히거나 다른 영상으로 전환됨
     if(!error&&data){
       const savedMembers=new Set(data.members||[]);
@@ -13135,6 +13351,7 @@ async function _openVidTagModal(v,ko){
         return m?{ko:m[1],groupKo:m[2]}:null;
       }).filter(Boolean);
       _vidTagCoverGroupsSelected=data.cover_of_groups||[];
+      _vidTagOrigManual=!!data.tags_manual;
       _renderVidTagChips();
       const catEl=document.getElementById('vid-tag-cat');
       if(catEl)catEl.value=data.category||'';
@@ -13158,6 +13375,7 @@ function _closeVidTagModal(){
   document.getElementById('vid-tag-overlay').classList.remove('open');
   _vidTagTarget=null;
   _vidTagBulkIds=null;
+  _vidTagOrigManual=false;
   const hideBtn=document.getElementById('vid-tag-hide');
   const hideBadge=document.getElementById('vid-tag-hidden-badge');
   if(hideBtn){hideBtn.textContent='노출 제외';hideBtn.classList.remove('restore');}
@@ -13302,8 +13520,18 @@ document.getElementById('vid-tag-save').addEventListener('click',async e=>{
     if(newGko)updatePayload.group_ko=newGko;
     if(!Object.keys(updatePayload).length){statusEl.textContent='변경할 항목을 선택해주세요';return;}
     const ids=_vidTagBulkIds;
-    const{error}=await sb.from(_YT_TABLE).update(updatePayload).in('id',ids);
-    if(error){statusEl.textContent='저장 실패: '+error.message;return;}
+    if(overwriteTags){
+      // tags_manual=true인 행도 있을 수 있어서 트리거를 우회하는 two-step 저장:
+      // 1) tags_manual=false로 잠금 해제 → 트리거 조건 불만족으로 모든 컬럼 변경 허용
+      // 2) tags_manual=true로 재잠금
+      const{error:e1}=await sb.from(_YT_TABLE).update({...updatePayload,tags_manual:false}).in('id',ids);
+      if(e1){statusEl.textContent='저장 실패: '+e1.message;return;}
+      const{error:e2}=await sb.from(_YT_TABLE).update({tags_manual:true}).in('id',ids);
+      if(e2){statusEl.textContent='저장 실패: '+e2.message;return;}
+    }else{
+      const{error}=await sb.from(_YT_TABLE).update(updatePayload).in('id',ids);
+      if(error){statusEl.textContent='저장 실패: '+error.message;return;}
+    }
     statusEl.textContent=`${ids.length}개 저장됨`;
     setTimeout(()=>{
       _closeVidTagModal();
@@ -13324,8 +13552,18 @@ document.getElementById('vid-tag-save').addEventListener('click',async e=>{
   const updatePayload={members,with_members:withMembers,with_groups:withGroups,cover_of_members:coverMembers,cover_of_groups:coverGroups,content_flag:contentFlag,tags_manual:true};
   if(category!==undefined)updatePayload.category=category||null;
   if(newGko)updatePayload.group_ko=newGko;
-  const{error}=await sb.from(_YT_TABLE).update(updatePayload).eq('id',id);
-  if(error){statusEl.textContent='저장 실패: '+error.message;return;}
+  if(_vidTagOrigManual){
+    // 기존 행이 tags_manual=true였으므로 DB 트리거를 우회하는 two-step 저장:
+    // 1) tags_manual=false → 트리거 조건(OLD.tags_manual=true) 해제 → 모든 컬럼 변경 허용
+    // 2) tags_manual=true → 다시 잠금
+    const{error:e1}=await sb.from(_YT_TABLE).update({...updatePayload,tags_manual:false}).eq('id',id);
+    if(e1){statusEl.textContent='저장 실패: '+e1.message;return;}
+    const{error:e2}=await sb.from(_YT_TABLE).update({tags_manual:true}).eq('id',id);
+    if(e2){statusEl.textContent='저장 실패: '+e2.message;return;}
+  }else{
+    const{error}=await sb.from(_YT_TABLE).update(updatePayload).eq('id',id);
+    if(error){statusEl.textContent='저장 실패: '+error.message;return;}
+  }
   statusEl.textContent='저장됨';
   const patchedRow={title:document.getElementById('vid-tag-vidtitle').textContent,members,with_members:withMembers,with_groups:withGroups,cover_of_members:coverMembers,cover_of_groups:coverGroups,content_flag:contentFlag,category:category||null};
   setTimeout(()=>{
