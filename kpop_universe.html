@@ -378,7 +378,7 @@
   .tv-with-chip:hover{color:rgba(200,220,255,1);text-decoration:underline;}
   .tv-with-chip-cover{color:rgba(200,150,230,0.75);}
   .tv-with-chip-cover:hover{color:rgba(225,190,245,1);}
-  /* 마퀴(긴 제목 슬라이드) — 웹/모바일 모두 자동으로 시작, 고정 속도(_MARQUEE_PX_PER_SEC)로 무한 반복 */
+  /* 마퀴(긴 제목 슬라이드) — 데스크톱은 hover, 모바일은 탭으로 트리거(JS의 addMarquee 참고). 둘 다 같은 표시 규칙 공유 */
   #tv-big-title,.tv-sm-title,.tv-with-line{text-overflow:unset;}
   .tv-title-inner{display:inline-block;white-space:nowrap;vertical-align:top;}
   #tv-big-title:not(.is-marquee),.tv-sm-title:not(.is-marquee),.tv-with-line:not(.is-marquee){-webkit-mask-image:linear-gradient(to right,#000 calc(100% - 14px),transparent 100%);mask-image:linear-gradient(to right,#000 calc(100% - 14px),transparent 100%);}
@@ -415,7 +415,7 @@
     z-index:63;pointer-events:all;overflow:hidden;
     box-sizing:border-box;
     transform:translateY(calc(100% + var(--sheet-bottom,73px)));
-    transition:transform .32s cubic-bezier(0.32,0.72,0,1),max-height .18s cubic-bezier(0.4,0,0.2,1),min-height .18s cubic-bezier(0.4,0,0.2,1),border-radius .32s,bottom .18s cubic-bezier(0.4,0,0.2,1);
+    transition:transform .32s cubic-bezier(0.32,0.72,0,1),max-height .32s cubic-bezier(0.32,0.72,0,1),min-height .32s cubic-bezier(0.32,0.72,0,1),border-radius .32s cubic-bezier(0.32,0.72,0,1),bottom .32s cubic-bezier(0.32,0.72,0,1);
     will-change:transform;
   }
   #mob-sheet.bs-open{transform:translateY(0);}
@@ -431,7 +431,7 @@
     box-shadow:0 1px 0 rgba(255,255,255,0.06) inset,0 -8px 32px rgba(0,0,0,0.55);
     z-index:64;pointer-events:all;
     transform:translateY(calc(100% + var(--sheet-bottom,73px)));
-    transition:transform .32s cubic-bezier(0.32,0.72,0,1),bottom .18s cubic-bezier(0.4,0,0.2,1),min-height .18s cubic-bezier(0.4,0,0.2,1),max-height .18s cubic-bezier(0.4,0,0.2,1);
+    transition:transform .32s cubic-bezier(0.32,0.72,0,1),bottom .32s cubic-bezier(0.32,0.72,0,1),min-height .32s cubic-bezier(0.32,0.72,0,1),max-height .32s cubic-bezier(0.32,0.72,0,1),border-radius .32s cubic-bezier(0.32,0.72,0,1);
     will-change:transform;
     font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;
   }
@@ -441,7 +441,7 @@
      60vh로 뚝 떨어져서 답답해 보이는 문제가 있었음. */
   #mob-card-stack.bs-full{min-height:calc(var(--mob-vh,100vh) - var(--sheet-bottom,73px));max-height:calc(var(--mob-vh,100vh) - var(--sheet-bottom,73px));border-radius:0;}
   #mob-card-stack.bs-full #mob-card-stack-inner{max-height:calc(var(--mob-vh,100vh) - var(--sheet-bottom,73px) - 24px);}
-  #mob-card-stack-inner{overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;max-height:calc(60vh - 24px);overscroll-behavior:contain;width:100%;box-sizing:border-box;position:relative;}
+  #mob-card-stack-inner{overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;max-height:calc(60vh - 24px);overscroll-behavior:contain;width:100%;box-sizing:border-box;position:relative;transition:max-height .32s cubic-bezier(0.32,0.72,0,1);}
   #mob-card-stack-inner>#tt,#mob-card-stack-inner>#gc{
     position:static!important;display:block!important;
     max-width:100%!important;width:100%!important;
@@ -535,7 +535,7 @@
     .gc-ch-refresh{font-size:20px;padding:6px 8px;}
   }
   #mob-sheet-handle{width:36px;height:4px;background:rgba(255,255,255,0.14);border-radius:2px;margin:10px auto 6px;display:block;}
-  #mob-sheet-inner{overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;max-height:calc(60vh - 24px);overscroll-behavior:contain;width:100%;box-sizing:border-box;position:relative;}
+  #mob-sheet-inner{overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;max-height:calc(60vh - 24px);overscroll-behavior:contain;width:100%;box-sizing:border-box;position:relative;transition:max-height .32s cubic-bezier(0.32,0.72,0,1);}
   #mob-sheet-inner::-webkit-scrollbar{-webkit-appearance:none;width:2px;}
   #mob-sheet-inner::-webkit-scrollbar-track{background:transparent;}
   #mob-sheet-inner::-webkit-scrollbar-thumb{-webkit-appearance:none;background:rgba(180,200,240,0.07);border-radius:2px;}
@@ -929,31 +929,6 @@
   .wk-group b{color:rgba(255,190,140,0.85);font-weight:600;}
   .wk-title{font-size:11.5px;color:rgba(210,225,255,0.80);line-height:1.4;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;}
   #wonkok-empty{font-size:12px;color:rgba(155,178,228,0.45);text-align:center;padding:32px 0;}
-  #cf-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.52);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:81;display:none;align-items:center;justify-content:center;}
-  #cf-overlay.open{display:flex;}
-  #cf-panel{width:min(520px,calc(100vw - 32px));max-height:82vh;display:flex;flex-direction:column;background:rgba(13,17,34,0.97);backdrop-filter:blur(40px);-webkit-backdrop-filter:blur(40px);border-radius:18px;box-shadow:0 16px 56px rgba(0,0,0,0.72);border:0.5px solid rgba(255,255,255,0.10);}
-  #cf-hd{display:flex;align-items:center;justify-content:space-between;padding:16px 18px 10px;flex-shrink:0;}
-  #cf-hd-title{font-size:13.5px;font-weight:600;color:rgba(220,230,255,0.9);}
-  #cf-close{background:none;border:none;color:rgba(180,195,230,0.6);font-size:18px;cursor:pointer;padding:0;line-height:1;}
-  #cf-desc{font-size:11px;color:rgba(155,178,228,0.55);line-height:1.5;padding:0 18px 12px;flex-shrink:0;}
-  #cf-scan-btn{margin:0 18px;flex-shrink:0;}
-  #cf-status{font-size:11.5px;color:rgba(155,178,228,0.7);padding:8px 18px 0;min-height:14px;flex-shrink:0;}
-  #cf-toolbar{display:flex;align-items:center;gap:10px;padding:10px 18px;border-bottom:0.5px solid rgba(255,255,255,0.08);flex-shrink:0;}
-  #cf-select-all-row{display:flex;align-items:center;gap:6px;font-size:11.5px;color:rgba(185,205,245,0.75);cursor:pointer;white-space:nowrap;}
-  #cf-count{flex:1;font-size:11.5px;color:rgba(155,178,228,0.55);}
-  #cf-apply-btn{background:rgba(140,220,255,0.16);border:1px solid rgba(140,220,255,0.32);border-radius:10px;color:#a8e0ff;font-size:11.5px;padding:6px 12px;cursor:pointer;font-family:inherit;white-space:nowrap;}
-  #cf-apply-btn:active{opacity:.7;}
-  #cf-apply-btn:disabled{opacity:.4;cursor:default;}
-  #cf-list{overflow-y:auto;padding:8px 0;}
-  .cf-item{display:flex;align-items:center;gap:10px;padding:8px 16px;transition:background .12s;}
-  .cf-item:hover{background:rgba(255,255,255,0.04);}
-  .cf-item input[type=checkbox]{flex-shrink:0;accent-color:rgba(140,220,255,0.9);}
-  .cf-thumb{width:80px;flex-shrink:0;aspect-ratio:16/9;object-fit:cover;border-radius:5px;background:rgba(255,255,255,0.06);}
-  .cf-info{flex:1;min-width:0;}
-  .cf-group{font-size:10.5px;color:rgba(155,178,228,0.55);margin-bottom:2px;}
-  .cf-group b{color:rgba(140,220,255,0.85);font-weight:600;}
-  .cf-title{font-size:11.5px;color:rgba(210,225,255,0.80);line-height:1.4;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;}
-  #cf-empty{font-size:12px;color:rgba(155,178,228,0.45);text-align:center;padding:32px 0;}
   #nomem-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.52);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:81;display:none;align-items:center;justify-content:center;}
   #nomem-overlay.open{display:flex;}
   #nomem-panel{width:min(520px,calc(100vw - 32px));max-height:82vh;display:flex;flex-direction:column;background:rgba(13,17,34,0.97);backdrop-filter:blur(40px);-webkit-backdrop-filter:blur(40px);border-radius:18px;box-shadow:0 16px 56px rgba(0,0,0,0.72);border:0.5px solid rgba(255,255,255,0.10);}
@@ -1221,12 +1196,12 @@
     box-shadow:0 1px 0 rgba(255,255,255,0.06) inset,0 -8px 32px rgba(0,0,0,0.60);
     z-index:65;pointer-events:all;
     transform:translateY(calc(100% + var(--sheet-bottom,73px)));
-    transition:transform .32s cubic-bezier(0.32,0.72,0,1),bottom .18s cubic-bezier(0.4,0,0.2,1),min-height .18s cubic-bezier(0.4,0,0.2,1),max-height .18s cubic-bezier(0.4,0,0.2,1);
+    transition:transform .32s cubic-bezier(0.32,0.72,0,1),bottom .32s cubic-bezier(0.32,0.72,0,1),min-height .32s cubic-bezier(0.32,0.72,0,1),max-height .32s cubic-bezier(0.32,0.72,0,1),border-radius .32s cubic-bezier(0.32,0.72,0,1);
     font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;
   }
   #conn-sheet.bs-open{transform:translateY(0);}
   @media(min-width:769px){#conn-sheet{display:none!important;}}
-  #conn-sheet-inner{overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;max-height:calc(60vh - 24px);overscroll-behavior:contain;}
+  #conn-sheet-inner{overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;max-height:calc(60vh - 24px);overscroll-behavior:contain;transition:max-height .32s cubic-bezier(0.32,0.72,0,1);}
   #conn-sheet .conn-inner{padding:16px 28px 14px 28px;}
   /* ── Mob filter sheet ───────────────────────────── */
   #mob-filter-sheet{
@@ -1842,7 +1817,6 @@
     <button class="sp-yt-sync" id="sp-hidden-vids-btn" style="margin-top:4px;opacity:.8;">노출 제외 영상 목록</button>
     <button class="sp-yt-sync" id="sp-ext-channels-btn" style="margin-top:4px;opacity:.8;">동기화 채널 목록</button>
     <button class="sp-yt-sync" id="sp-wonkok-btn" style="margin-top:4px;opacity:.8;">원곡: 오태깅 의심 목록</button>
-    <button class="sp-yt-sync" id="sp-cover-fix-btn" style="margin-top:4px;opacity:.8;">원곡 with→cover 오태깅 이동</button>
     <button class="sp-yt-sync" id="sp-nomem-btn" style="margin-top:4px;opacity:.8;">그룹 멤버 안 나옴(무관) 목록</button>
     <div style="margin-top:8px;padding-top:8px;border-top:0.5px solid rgba(255,255,255,0.1)">
       <div style="font-size:10px;color:rgba(155,178,228,0.5);margin-bottom:2px">그룹명 변경 반영(group.ko 수정 시 기존 태깅 데이터 이전)</div>
@@ -1927,23 +1901,6 @@
       <button id="wonkok-apply-btn">선택 항목 무관 처리</button>
     </div>
     <div id="wonkok-list"></div>
-  </div>
-</div>
-<div id="cf-overlay">
-  <div id="cf-panel">
-    <div id="cf-hd">
-      <span id="cf-hd-title">원곡 with→cover 오태깅 이동</span>
-      <button id="cf-close">✕</button>
-    </div>
-    <div id="cf-desc">제목에 "원곡"이 들어간 영상 중, 원곡자로 언급된 그룹/멤버가 with_members/with_groups에 잘못 태깅된 것을 찾아 cover_of_members/cover_of_groups로 이동. 원곡 절("원곡: X", "(원곡: X)" 등)에서 이름을 추출해 with 태그와 비교함.</div>
-    <button id="cf-scan-btn" class="uc-btn">스캔 시작</button>
-    <div id="cf-status"></div>
-    <div id="cf-toolbar" style="display:none">
-      <label id="cf-select-all-row"><input type="checkbox" id="cf-select-all" checked>전체 선택</label>
-      <span id="cf-count"></span>
-      <button id="cf-apply-btn">선택 항목 cover_of로 이동</button>
-    </div>
-    <div id="cf-list"></div>
   </div>
 </div>
 <div id="nomem-overlay">
@@ -2402,7 +2359,6 @@ function _labelGlowColor(r,g,b){
 const groupLabels=[];
 let ARTISTS=[],GROUPS={};
 const bubbleMeshes=[],regularArtists=[],sparkleArtists=[];
-const bubbleMeshMap=new Map(); // ko → bubbleMesh entry, for O(1) lookup
 let regularPts=null,sparklePts=null;
 // 마크(NCT 127) 파일럿: 비활동 상태를 "행성 밖에 떠 있다가 멤버 토글 시 안으로 날아들어옴"으로 표현
 let _flyToggleAnims=[]; // 비활동/탈퇴 멤버가 그룹 카드 "멤버" 토글에 따라 행성 안팎으로 날아다니는 애니메이션들 — {artist,wp,t0,from,to}
@@ -2655,9 +2611,9 @@ async function buildUniverse(){
   // no-cache: 항상 서버에 재검증(304면 재다운로드 없이 캐시본 사용)해서, 데이터 파일을 수정한 직후에도
   // 새로고침한 사용자가 브라우저/CDN에 남아있던 옛 캐시본을 계속 보는 일이 없게 함
   const _jsonPromise=Promise.all([
-    fetch('groups.json').then(r=>r.json()),
-    fetch('artists.json').then(r=>r.json()),
-    fetch('connections.json').then(r=>r.json())
+    fetch('groups.json',{cache:'no-cache'}).then(r=>r.json()),
+    fetch('artists.json',{cache:'no-cache'}).then(r=>r.json()),
+    fetch('connections.json',{cache:'no-cache'}).then(r=>r.json())
   ]);
   await initSupabaseSync(); // 로그인 사용자의 서버 데이터가 첫 렌더 전에 로컬을 덮어써야 하므로 JSON fetch와 병렬로 먼저 완료 대기
   const [grpData,artData,connData]=await _jsonPromise;
@@ -2867,9 +2823,7 @@ async function buildUniverse(){
     label.position.set(0,radius+0.3,0);
     bubble.add(label);
     groupLabels.push({el:div,worldPos:pos.clone(),ko,en:info.en||ko});
-    const _bmEntry={mesh:bubble,ko,info,radius,labelEl:div,halo:haloMesh};
-    bubbleMeshes.push(_bmEntry);
-    bubbleMeshMap.set(ko,_bmEntry);
+    bubbleMeshes.push({mesh:bubble,ko,info,radius,labelEl:div,halo:haloMesh});
 
     // ── Collect member positions ───────────────────
     const _placedMPos=[];
@@ -3317,8 +3271,6 @@ function _dismissOnboardHint(){
 }
 
 // ── Animate ───────────────────────────────────────
-let _isMobCache=window.innerWidth<=768;
-function isMob(){return _isMobCache;}
 function animate(){
   requestAnimationFrame(animate);
   // 모바일에서 카드/라이트박스가 화면을 사실상 다 덮고 조작도 막혀있는 동안은 3D 렌더링을 완전히 건너뛴다.
@@ -3349,14 +3301,12 @@ function animate(){
     }
   }
   controls.update();
-  const _connPosMoves=_myUniverseActive||_myUniversePhase!=='idle'||_myUniverseDeparting.length>0||_flyToggleAnims.length>0;
   connLines.forEach(({line,mid,baseOp,grpKo,posA,posB,bm,artA,artB})=>{
+    // 즐겨찾기(내 우주 모드) 등으로 멤버/행성이 실시간 이동할 때 선 끝점이 예전 자리에 덩그러니 남지 않도록 매 프레임 동기화
     const posAttr=line.geometry.attributes.position;
-    if(_connPosMoves){
-      posAttr.array[0]=posA.x;posAttr.array[1]=posA.y;posAttr.array[2]=posA.z;
-      posAttr.array[3]=posB.x;posAttr.array[4]=posB.y;posAttr.array[5]=posB.z;
-      posAttr.needsUpdate=true;
-    }
+    posAttr.array[0]=posA.x;posAttr.array[1]=posA.y;posAttr.array[2]=posA.z;
+    posAttr.array[3]=posB.x;posAttr.array[4]=posB.y;posAttr.array[5]=posB.z;
+    posAttr.needsUpdate=true;
     mid.copy(posA).lerp(posB,0.5);
     // 그룹 카드가 열려 포커스된 그룹이면 줌 거리와 무관하게 그 그룹의 연결선은 전부 보이게(부분적으로만 나타나는 것 방지)
     const isFocused=grpKo===focusGroupKo;
@@ -3450,7 +3400,7 @@ function animate(){
     }
   });
   _nctRingGroups.forEach(({g,ko,baseOps})=>{
-    const bm=bubbleMeshMap.get(ko);
+    const bm=bubbleMeshes.find(b=>b.ko===ko);
     if(!bm)return;
     const alpha=(bm.mesh._filterAlpha??1)*(bm.mesh._focusAlpha??1)*(bm.mesh._legacyAlpha??1);
     g.children.forEach((c,i)=>{if(c.material)c.material.opacity=(baseOps[i]??0)*alpha;});
@@ -3489,15 +3439,13 @@ function animate(){
   });
   if(colorsDirty){if(regColorAttr)regColorAttr.needsUpdate=true;if(spkColorAttr)spkColorAttr.needsUpdate=true;}
   groupLabels.forEach(({el,worldPos,ko})=>{
-    const bm=bubbleMeshMap.get(ko);
+    const bm=bubbleMeshes.find(b=>b.ko===ko);
     const d=camera.position.distanceTo(bm?bm.mesh.position:worldPos);
     const distFade=d<40?1:d<70?(70-d)/30:0;
     const fa=(bm?bm.mesh._filterAlpha??1:1)*(bm?bm.mesh._focusAlpha??1:1)*(bm?bm.mesh._legacyAlpha??1:1);
     const op=distFade*fa;
-    const opStr=op.toFixed(3);
-    if(el.style.opacity!==opStr)el.style.opacity=opStr;
-    const pe=op>0.15?'auto':'none';
-    if(el.style.pointerEvents!==pe)el.style.pointerEvents=pe;
+    el.style.opacity=op.toFixed(3);
+    el.style.pointerEvents=op>0.15?'auto':'none';
   });
   if(myStarSprite){
     const _st=performance.now()*0.001;
@@ -3604,7 +3552,6 @@ animate();
 
 window.addEventListener('resize',()=>{
   const w=window.innerWidth,h=window.innerHeight;
-  _isMobCache=w<=768;
   camera.aspect=w/h;camera.updateProjectionMatrix();
   renderer.setSize(w,h);
   labelRenderer.setSize(w,h);
@@ -3802,8 +3749,25 @@ function doSearch(q){
       hits.push({type:'member',name:dispName,sub:dispSub,pos:a._worldPos,data:a,score:s});
     }
   });
-  const _isChosung=/^[ㄱ-ㅎ]+$/.test(q);
-  hits.sort((a,b)=>{const sd=a.score-b.score;if(sd!==0)return sd;return _isChosung?a.name.localeCompare(b.name,'ko'):0;});
+  // 프로젝트 유닛(태티서·V8 등)은 자체 행성/카드가 없으므로, 유닛명으로 검색하면 실제 소속 멤버들을
+  // 결과에 넣되 sub 태그만 원래 그룹 대신 유닛명으로 바꿔서 보여준다(예: "태티서" 검색 → 태연/티파니/서현,
+  // 태그는 "소녀시대"가 아니라 "태티서").
+  Object.keys(_PROJECT_UNITS).forEach(unitName=>{
+    const unit=_PROJECT_UNITS[unitName];
+    const csU=_csScore(unitName,q);
+    const aliasScores=unit.names.map(n=>_mScore(n,q,ql));
+    const nameMatches=unit.names.some(n=>n.includes(q)||n.toLowerCase().includes(ql));
+    if(unitName.includes(q)||nameMatches||csU<99){
+      const s=Math.min(_mScore(unitName,q,ql),...aliasScores,csU);
+      unit.members.forEach(({mko,gko})=>{
+        const a=ARTISTS.find(x=>x.name.ko===mko&&_artistGroups(x).some(g=>g.ko===gko));
+        if(!a)return;
+        const dispName=(_hasLatin&&a.name.en)?a.name.en:(currentLang==='ko'?a.name.ko:(a.name.en||a.name.ko));
+        hits.push({type:'member',name:dispName,sub:unitName,pos:a._worldPos,data:a,score:s});
+      });
+    }
+  });
+  hits.sort((a,b)=>{const sd=a.score-b.score;if(sd!==0)return sd;return a.name.localeCompare(b.name,'ko');});
   _renderSearchHits(hits.slice(0,40),res,mobSearch,false);
   if(mobSearch){
     res.classList.add('open');
@@ -3861,6 +3825,7 @@ function ytId(u){
   return s?s[1]:'';
 }
 function isShorts(u){return /\/shorts\//.test(u||'');}
+function isMob(){return window.innerWidth<=768;}
 // 유튜브 API로 동기화된 일부 영상(주로 인스타 릴스 크로스포스트) 제목엔 실제 줄바꿈 문자가 들어있어서,
 // 한 줄 말줄임(white-space:nowrap)이 안 먹고 제목 영역이 여러 줄로 확 커져 보이는 문제가 있었음 — 표시 직전에 제거.
 // (정규식 리터럴에 U+2028/2029를 직접 쓰면 소스 파일 자체가 깨지므로 charCode로 안전하게 구성)
@@ -4422,7 +4387,7 @@ function addHoverPreview(wrapEl,imgEl,videoId,shorts){
 // 제목 길이(넘치는 픽셀 수)와 무관하게 슬라이드 "체감 속도"가 항상 일정하도록, CSS의 고정 duration 대신
 // 넘치는 거리에 비례한 duration을 매번 계산해서 인라인으로 얹는다. 키프레임엔 앞뒤로 "잠깐 멈춤" 구간이
 // 껴 있어서(예: 호버는 처음/끝 15%씩 정지, 실제 이동은 70%), 그 이동 구간 기준으로 속도를 맞춰야 한다.
-const _MARQUEE_PX_PER_SEC=50; // 조정 포인트: 값을 늘리면 더 빠르게, 줄이면 더 느리게
+const _MARQUEE_PX_PER_SEC=65; // 조정 포인트: 값을 늘리면 더 빠르게, 줄이면 더 느리게
 // 최소치만 살짝 둬서 아주 미세하게 넘치는 제목이 순간 깜빡이듯 지나가지 않게 하고, 최대치는 사실상
 // 안전장치 정도로만(제목이 아무리 길어도 항상 같은 체감 속도를 유지하는 게 우선이므로 낮게 잡지 않음)
 const _MARQUEE_MIN_DUR=0.5,_MARQUEE_MAX_DUR=20.0;
@@ -4470,24 +4435,14 @@ function _wireMarqueeTap(el,inner){
     },{once:true});
   });
 }
-function _wireMarqueeAuto(el,inner){
-  requestAnimationFrame(()=>requestAnimationFrame(()=>{
-    const ov=inner.scrollWidth-el.clientWidth;
-    if(ov<=0)return;
-    inner.style.setProperty('--mx',`-${ov+6}px`);
-    inner.style.animationDuration=_marqueeDuration(ov,0.70)+'s';
-    inner.style.animationDelay='1.2s';
-    el.classList.add('is-marquee');
-    inner.classList.add('marquee-run');
-  }));
-}
 function addMarquee(el){
   const inner=document.createElement('span');
   inner.className='tv-title-inner';
   inner.textContent=el.textContent;
   el.textContent='';
   el.appendChild(inner);
-  _wireMarqueeAuto(el,inner);
+  if(isMob())_wireMarqueeTap(el,inner);
+  else _wireMarqueeHover(el,inner);
 }
 // 자식 요소(클릭 가능한 칩 등)를 textContent로 날리지 않고 그대로 감싸서 마퀴 적용
 function addMarqueeChildren(el){
@@ -4495,7 +4450,8 @@ function addMarqueeChildren(el){
   inner.className='tv-title-inner';
   while(el.firstChild)inner.appendChild(el.firstChild);
   el.appendChild(inner);
-  _wireMarqueeAuto(el,inner);
+  if(isMob())_wireMarqueeTap(el,inner);
+  else _wireMarqueeHover(el,inner);
 }
 
 // 영상에 같이 나온(with) 콜라보 멤버 + 원곡 소속 그룹(origGroup) 표시 — "그룹 멤버 (원곡 그룹)" 형태, 그룹/멤버 각각 클릭 가능
@@ -4568,8 +4524,9 @@ function _makeWithLine(song,ctx){
     const isFullGroup=activeRoster.length>0&&members.length>=activeRoster.length;
     // 지금 보고 있는 카드 자신의 그룹이면 그룹칩이 중복 정보라 생략(예: 코르티스 카드에서 "코르티스 성현
     // 건호"가 아니라 그냥 "성현 건호"만) — 다만 그 그룹 전원이 나온 경우엔 칩이 유일한 정보원이라 그대로 둠
-    // (안 그러면 빈 줄이 됨).
-    const skipChip=gko===ctx.groupKo&&!isFullGroup;
+    // (안 그러면 빈 줄이 됨). 아이유처럼 GROUPS에 실존하지 않는 가짜 "솔로" placeholder 그룹도 마찬가지로
+    // 칩을 생략 — "솔로 아이유"처럼 의미 없는 라벨이 붙는 걸 방지.
+    const skipChip=(gko===ctx.groupKo||!GROUPS[gko])&&!isFullGroup;
     if(!skipChip){
       const gInfo=GROUPS[gko];
       const gk=currentLang==='ko'?gko:((gInfo&&gInfo.en)||gko);
@@ -5103,15 +5060,11 @@ async function _enrichMemberVideosFromApi(a,tv,baseSongs,basePersonalSongs){
   const groupKo=_ytGroupKoFor(a); // 솔로면 본인 이름이 곧 채널 동기화 키
   const withKey=`${memberKo}(${a.group.ko})`; // 타 채널에서 콜라보로 태깅될 때 쓰는 표시용 키는 원래 그룹 표기 그대로
   try{
-    // 탈퇴 멤버(a.leftAt 있음): 태깅 없는 그룹 전체 영상은 탈퇴일 이전 것만 노출
-    const _leftAtISO=a.leftAt?a.leftAt.replace(/\./g,'-'):null;
-    let generalQBuilder=sb.from(_YT_TABLE).select('id,title,category,group_ko,members,with_members,cover_of_members,cover_of_groups,content_flag').eq('group_ko',groupKo).filter('members','eq','{}');
-    if(_leftAtISO)generalQBuilder=generalQBuilder.lt('published_at',_leftAtISO);
     const[ownQ,withQ,generalQ]=await Promise.all([
       sb.from(_YT_TABLE).select('id,title,category,group_ko,members,with_members,cover_of_members,cover_of_groups,content_flag').eq('group_ko',groupKo).contains('members',[memberKo]),
       sb.from(_YT_TABLE).select('id,title,category,group_ko,members,with_members,cover_of_members,cover_of_groups,content_flag').contains('with_members',[withKey]),
-      // 멤버 태깅 없는 그룹 전체 영상 — 탈퇴 멤버는 탈퇴일 이전 것만
-      generalQBuilder,
+      // 멤버 태깅 없는 그룹 전체 영상 — 모든 멤버 카드에 노출
+      sb.from(_YT_TABLE).select('id,title,category,group_ko,members,with_members,cover_of_members,cover_of_groups,content_flag').eq('group_ko',groupKo).filter('members','eq','{}'),
     ]);
     if(ownQ.error)throw new Error(ownQ.error.message);
     if(withQ.error)throw new Error(withQ.error.message);
@@ -5176,8 +5129,7 @@ async function _fetchApiCollabData(anchor){
       sb.from(_YT_TABLE).select('id,title,category,group_ko,members,with_members,content_flag').eq('group_ko',groupKo).contains('members',[memberKo]),
       sb.from(_YT_TABLE).select('id,title,category,group_ko,members,with_members,content_flag').contains('with_members',[withKey]),
       // 아이유의 팔레트, 뉴진스편처럼 개별 멤버가 아니라 그룹 전체가 with_groups로 태깅된 내 채널 영상
-      // members={}(전원 출연) 또는 이 멤버가 직접 태깅된 경우만 — 다른 멤버 단독 태깅 영상이 섞여 들어오는 걸 차단
-      sb.from(_YT_TABLE).select('id,title,category,group_ko,members,with_groups,content_flag').eq('group_ko',groupKo).not('with_groups','eq','{}').or(`members.eq.{},members.cs.{${memberKo}}`),
+      sb.from(_YT_TABLE).select('id,title,category,group_ko,with_groups,content_flag').eq('group_ko',groupKo).not('with_groups','eq','{}'),
       // 반대 방향: 다른 채널(예: 아이유)이 내 그룹 전체를 with_groups로 태깅한 경우 — 이게 없으면
       // 그룹으로 태깅된 쪽(예: (여자)아이들 개별 멤버)에는 이 콜라보가 전혀 안 보이는 비대칭이 생김.
       sb.from(_YT_TABLE).select('id,title,category,group_ko,with_groups,content_flag').contains('with_groups',[anchor.group.ko])
@@ -6350,8 +6302,8 @@ function showT(a,cx,cy,keepNavStack,urlMode,pushMobNav,noFly){
   // 카드에서만 보임(그룹 카드 그리드와 동일한 동작). Supabase를 못 쓰는 경우에만 기존 방식으로 폴백.
   const _hasRealGroup=!!GROUPS[a.group.ko];
   if(sb&&(_hasRealGroup||a.links?.youtube)){
-    if(_hasRealGroup)_ttChVidCtl.build(a.group.ko,a.name.ko,a.leftAt);
-    else _ttChVidCtl.build(_ytGroupKoFor(a),null,a.leftAt);
+    if(_hasRealGroup)_ttChVidCtl.build(a.group.ko,a.name.ko);
+    else _ttChVidCtl.build(_ytGroupKoFor(a));
   }else{
     buildVideoSection(_memberAllSongs,tv,{groupKo:a.group.ko,memberKo:a.name.ko},_memberMainCandidates);
     _enrichMemberVideosFromApi(a,tv,_memberAllSongs,_memberPersonalSongs);
@@ -7582,8 +7534,13 @@ renderer.domElement.addEventListener('touchend',e=>{
   const _inPlanetMode=_hitPlanet&&_hitPlanet.mesh.material.uniforms.uFillOp.value>0.12;
   if(!_inPlanetMode){
     // 가까이 줌인된 투명 행성 or 행성 밖 → 멤버 점 체크
+    // 행성을 직접 안 맞춘 탭(진짜 빈 우주 클릭 포함)은 여기로 들어오므로, 후보 멤버 자신의 소속 행성이
+    // 아직 불투명(줌아웃) 상태라면 화면상 가까이 찍혀도 후보에서 제외한다 — 안 그러면 카드를 닫으려고
+    // 빈 우주를 눌렀는데 화면에 압축돼 보이던 먼 그룹의 멤버가 대신 선택되는 문제가 있었음.
     let nearArtist=null,nearPx=Infinity;
     ARTISTS.forEach(a=>{
+      const _abm=bubbleMeshes.find(b=>b.ko===a.group.ko);
+      if(_abm&&_abm.mesh.material.uniforms.uFillOp.value>0.12)return;
       const _wps=a._worldPositions||[];
       const _chk=_wps.length?_wps.map(wp=>wp.pos):(a._worldPos?[a._worldPos]:[]);
       _chk.forEach(pos=>{
@@ -7702,6 +7659,10 @@ window.addEventListener('click',e=>{
   function nearestMember(){
     let nearArtist=null,nearPx=Infinity;
     ARTISTS.forEach(a=>{
+      // 후보 멤버 자신의 소속 행성이 아직 불투명(줌아웃) 상태면 화면상 가까이 찍혀도 제외 —
+      // 빈 우주를 눌러 카드를 닫으려는데 멀리 압축돼 보이던 그룹의 멤버가 대신 선택되는 것 방지
+      const _abm=bubbleMeshes.find(b=>b.ko===a.group.ko);
+      if(_abm&&_abm.mesh.material.uniforms.uFillOp.value>0.12)return;
       const _wps=a._worldPositions||[];
       const _chk=_wps.length?_wps.map(wp=>wp.pos):(a._worldPos?[a._worldPos]:[]);
       _chk.forEach(pos=>{
@@ -10529,159 +10490,6 @@ document.getElementById('wonkok-close')?.addEventListener('click',()=>document.g
 document.getElementById('sp-wonkok-btn')?.addEventListener('click',()=>{document.getElementById('wonkok-overlay').classList.add('open');});
 document.getElementById('sp-groupmig-btn')?.addEventListener('click',_ytMigrateGroupName);
 
-// ── "원곡 with→cover 오태깅 이동" ── 커버 영상 제목에 "(원곡: 소녀시대)" 식으로 원곡자를
-// 표기해둔 걸, 자동 태깅이 with_members/with_groups에 넣어버린 경우를 찾아
-// cover_of_members/cover_of_groups로 이동.
-function _cfExtractWonkokText(title){
-  let combined='';
-  const t=title||'';
-  // 괄호/대괄호 안 원곡 절: (원곡: X) 또는 [원곡: X]
-  t.replace(/[(\[]\s*원곡자?\s*[^(\[)\]]*/g,m=>{combined+=' '+m;});
-  // 괄호 없이: 원곡: X 또는 원곡 - X (최대 60자)
-  t.replace(/원곡자?\s*[:：\-~]\s*.{0,60}/g,m=>{combined+=' '+m;});
-  return _wonkokNorm(combined);
-}
-let _cfCandidates=[];
-let _cfScanning=false;
-async function _cfScan(){
-  if(_cfScanning||!sb)return;
-  _cfScanning=true;
-  const btn=document.getElementById('cf-scan-btn');
-  const statusEl=document.getElementById('cf-status');
-  if(btn)btn.disabled=true;
-  document.getElementById('cf-toolbar').style.display='none';
-  document.getElementById('cf-list').innerHTML='';
-  try{
-    statusEl.textContent='조회 중… (시간이 좀 걸릴 수 있음)';
-    const{data:rows,error}=await _sbFetchAll(()=>sb.from(_YT_TABLE)
-      .select('id,title,group_ko,members,with_members,with_groups,cover_of_members,cover_of_groups,thumb,content_flag')
-      .ilike('title','%원곡%')
-      .or('with_members.neq.{},with_groups.neq.{}')
-      .or('content_flag.is.null,content_flag.neq.hidden')
-      .order('id'));
-    if(error){statusEl.textContent='조회 실패: '+error.message;return;}
-    statusEl.textContent=`${rows?.length||0}개 후보 검사 중…`;
-    const candidates=[];
-    for(const v of(rows||[])){
-      const wonkokText=_cfExtractWonkokText(v.title||'');
-      if(!wonkokText.trim())continue;
-      const toMoveMem=[];
-      const toMoveGrp=[];
-      for(const wm of(v.with_members||[])){
-        // with_members 형식: "멤버명(그룹)" — 멤버명만 추출
-        const memberName=wm.replace(/\s*\([^)]*\)$/,'').trim();
-        if(memberName.length>=2&&_wonkokHit(wonkokText,memberName))toMoveMem.push(wm);
-      }
-      for(const wg of(v.with_groups||[])){
-        const gInfo=GROUPS[wg];
-        const names=[wg,gInfo?.en].filter(Boolean);
-        if(names.some(n=>n.length>=2&&_wonkokHit(wonkokText,n)))toMoveGrp.push(wg);
-      }
-      if(toMoveMem.length||toMoveGrp.length){
-        candidates.push({...v,toMoveMem,toMoveGrp});
-      }
-    }
-    _cfCandidates=candidates;
-    statusEl.textContent=`스캔 완료 — 전체 ${rows?.length||0}개 중 오태깅 의심 ${candidates.length}개`;
-    _renderCfList();
-  }catch(e){
-    statusEl.textContent='오류: '+e.message;
-  }finally{
-    _cfScanning=false;
-    if(btn)btn.disabled=false;
-  }
-}
-function _renderCfList(){
-  const listEl=document.getElementById('cf-list');
-  const toolbarEl=document.getElementById('cf-toolbar');
-  listEl.innerHTML='';
-  if(!_cfCandidates.length){
-    listEl.innerHTML='<div id="cf-empty">의심 후보가 없어요</div>';
-    toolbarEl.style.display='none';
-    return;
-  }
-  toolbarEl.style.display='flex';
-  document.getElementById('cf-select-all').checked=true;
-  _cfCandidates.forEach(v=>{
-    const item=document.createElement('div');item.className='cf-item';item.dataset.vidId=v.id;
-    const cb=document.createElement('input');cb.type='checkbox';cb.checked=true;
-    cb.addEventListener('change',_updateCfCount);
-    const img=document.createElement('img');img.className='cf-thumb';img.src=v.thumb||'';img.loading='lazy';
-    const info=document.createElement('div');info.className='cf-info';
-    const grp=document.createElement('div');grp.className='cf-group';
-    const moveLabel=[...v.toMoveMem,...v.toMoveGrp].join(', ');
-    grp.innerHTML=`${v.group_ko||''} · <b>${moveLabel}</b> → cover_of`;
-    const ttl=document.createElement('div');ttl.className='cf-title';ttl.textContent=v.title||'';
-    info.appendChild(grp);info.appendChild(ttl);
-    const editBtn=document.createElement('button');editBtn.className='vid-edit-btn';editBtn.type='button';editBtn.textContent='✎';
-    editBtn.title='직접 재태깅';
-    editBtn.addEventListener('click',e=>{e.stopPropagation();_openVidTagModal({id:v.id,title:v.title},v.group_ko);});
-    item.appendChild(cb);item.appendChild(img);item.appendChild(info);item.appendChild(editBtn);
-    listEl.appendChild(item);
-  });
-  _updateCfCount();
-}
-function _updateCfCount(){
-  const total=_cfCandidates.length;
-  const checked=document.querySelectorAll('#cf-list .cf-item input[type=checkbox]:checked').length;
-  document.getElementById('cf-count').textContent=`${checked}/${total}개 선택됨`;
-  const applyBtn=document.getElementById('cf-apply-btn');
-  if(applyBtn)applyBtn.disabled=checked===0;
-  const allEl=document.getElementById('cf-select-all');
-  if(allEl)allEl.checked=checked===total&&total>0;
-}
-document.getElementById('cf-select-all')?.addEventListener('change',e=>{
-  document.querySelectorAll('#cf-list .cf-item input[type=checkbox]').forEach(cb=>{cb.checked=e.target.checked;});
-  _updateCfCount();
-});
-document.getElementById('cf-apply-btn')?.addEventListener('click',async()=>{
-  if(!sb)return;
-  const btn=document.getElementById('cf-apply-btn');
-  const statusEl=document.getElementById('cf-status');
-  const items=[...document.querySelectorAll('#cf-list .cf-item')].filter(el=>el.querySelector('input[type=checkbox]').checked);
-  const ids=items.map(el=>el.dataset.vidId).filter(Boolean);
-  if(!ids.length)return;
-  btn.disabled=true;btn.textContent='처리 중…';
-  try{
-    const idSet=new Set(ids);
-    const toProcess=_cfCandidates.filter(v=>idSet.has(v.id));
-    let done=0;
-    for(const v of toProcess){
-      const moveMemSet=new Set(v.toMoveMem);
-      const moveGrpSet=new Set(v.toMoveGrp);
-      const newWithMem=(v.with_members||[]).filter(x=>!moveMemSet.has(x));
-      const newWithGrp=(v.with_groups||[]).filter(x=>!moveGrpSet.has(x));
-      const covMemSet=new Set(v.cover_of_members||[]);
-      const covGrpSet=new Set(v.cover_of_groups||[]);
-      v.toMoveMem.forEach(x=>covMemSet.add(x));
-      v.toMoveGrp.forEach(x=>covGrpSet.add(x));
-      const{error}=await sb.from(_YT_TABLE).update({
-        with_members:newWithMem,
-        with_groups:newWithGrp,
-        cover_of_members:[...covMemSet],
-        cover_of_groups:[...covGrpSet],
-      }).eq('id',v.id);
-      if(error)throw new Error(error.message);
-      done++;
-      statusEl.textContent=`처리 중… (${done}/${toProcess.length})`;
-    }
-    const processedSet=new Set(ids);
-    _cfCandidates=_cfCandidates.filter(v=>!processedSet.has(v.id));
-    items.forEach(el=>el.remove());
-    statusEl.textContent=`${ids.length}개 cover_of로 이동 완료 — 남은 후보 ${_cfCandidates.length}개`;
-  }catch(e){
-    statusEl.textContent='오류: '+e.message;
-  }finally{
-    btn.disabled=false;btn.textContent='선택 항목 cover_of로 이동';
-    _updateCfCount();
-    if(!_cfCandidates.length)_renderCfList();
-  }
-});
-document.getElementById('cf-scan-btn')?.addEventListener('click',_cfScan);
-document.getElementById('cf-overlay')?.addEventListener('click',e=>{if(e.target===e.currentTarget)e.currentTarget.classList.remove('open');});
-document.getElementById('cf-close')?.addEventListener('click',()=>document.getElementById('cf-overlay').classList.remove('open'));
-document.getElementById('sp-cover-fix-btn')?.addEventListener('click',()=>{document.getElementById('cf-overlay').classList.add('open');});
-
 // ── "그룹 멤버 안 나옴(무관)" 목록 ── content_flag='무관'인 영상 전체를 그냥 나열해서 검토하게 함.
 // 원래 취지(같은 그룹 채널인데 멤버 자동인식만 틀림)를 벗어나, 완전히 다른 그룹 영상을 억지로 이
 // 플래그로 우회 처리한 경우를 찾아내기 위한 목록 — 각 항목의 ✎로 편집 모달을 열면 이제 "소속 그룹"
@@ -11737,7 +11545,11 @@ function _makeChVidController(contId){
   // 그룹/멤버 카드의 자체 영상 그리드에도 연결 카드처럼 "함께한 멤버" 줄이 뜨게 하기 위함.
   function _buildGridWithList(v,ownGko,selfKo){
     const withList=[];
-    (v.members||[]).forEach(n=>{if(n!==selfKo)withList.push(n);});
+    // v.members는 이 영상에 태깅된 "자기 그룹" 멤버들 — 멤버 카드(selfKo 있음)에선 본인만 빼고 나머지
+    // 그룹원은 실제로 "함께한 멤버"라 보여줄 값어치가 있지만, 그룹 카드(selfKo 없음)에선 전부 자기
+    // 그룹 소속이라 "함께한" 정보가 아님(특히 멤버 전체 선택 시 그룹명 자기 자신이 칩으로 뜨는 문제로 이어짐) —
+    // 그룹 카드에서는 아예 통째로 제외.
+    if(selfKo)(v.members||[]).forEach(n=>{if(n!==selfKo)withList.push(n);});
     // 멤버 카드가 "다른 그룹 채널에 이 멤버가 게스트 태깅된 영상"까지 끌어오면서(위 쿼리 변경), 그 영상의
     // with_members엔 지금 보고 있는 본인이 "이름(그룹)" 형식으로 그대로 들어있는 경우가 생김 —
     // "함께한 멤버" 줄에 본인 이름이 뜨는 것을 막기 위해 자기 자신 표기는 제외.
@@ -11899,12 +11711,7 @@ function _makeChVidController(contId){
         // with_members로 게스트 출연 태깅된 영상까지 포함 — 그룹 카드가 with_groups로 콜라보를 끌어오는 것과
         // 대칭되는 처리. 이게 빠져있으면 자체 채널 영상은 아직 없고 다른 그룹 채널 콘텐츠(챌린지·직캠 등)에
         // 개인 태깅으로만 쌓인 신인 그룹(예: 넥스지)은 그룹 카드엔 (with_groups로) 뭔가 보여도 멤버 카드는 텅 비어 보였음.
-        // 탈퇴 멤버(leftAt 있음): 태깅 없는 그룹 전체 영상은 탈퇴일 이전 것만 — 탈퇴 후 그룹 영상에 등장한 것처럼 보이는 걸 방지
-        const _leftAtISO=state.leftAt?state.leftAt.replace(/\./g,'-'):null;
-        const _q3=_leftAtISO
-          ?`and(group_ko.eq.${ko},members.eq.{},published_at.lt.${_leftAtISO})`
-          :`and(group_ko.eq.${ko},members.eq.{})`;
-        q=q.or(`${_q3},and(group_ko.eq.${ko},members.cs.{${state.memberKo}}),with_members.cs.{${state.memberKo}(${ko})}`);
+        q=q.or(`and(group_ko.eq.${ko},members.eq.{}),and(group_ko.eq.${ko},members.cs.{${state.memberKo}}),with_members.cs.{${state.memberKo}(${ko})}`);
       }else{
         // 그룹 카드: 내 채널 영상은 멤버 태깅 여부와 무관하게 전부 노출(그룹 전체가 나오는 영상이든
         // 특정 멤버 몇 명만 나오는 영상이든 다 그룹 콘텐츠) + 다른 채널 영상인데 아이유 팔레트처럼
@@ -11979,6 +11786,11 @@ function _makeChVidController(contId){
           return;
         }
         grid.innerHTML='<div class="gc-ch-msg">아직 등록된 영상이 없어요</div>';
+        // 직전 검색/탭이 hasMore=true로 끝났을 수 있어(다음 페이지가 더 있던 상태) 여기서 안 꺼주면,
+        // 방금 그려진 빈 그리드의 more-wrap 센티널이 바로 화면에 들어와 tryLoadMore가 그 stale
+        // hasMore를 보고 불필요한 다음 페이지 로딩(점점점 스피너)을 또 돌림 — "없어요" 메시지와
+        // 로딩 모션이 동시에 뜨는 원인이었음.
+        state.hasMore=false;
         releaseLock();
         return;
       }
@@ -12055,14 +11867,14 @@ function _makeChVidController(contId){
     }
   }
 
-  function build(ko,memberKo,leftAt){
+  function build(ko,memberKo){
     const cont=document.getElementById(contId);
     if(!cont)return;
     cont.innerHTML='';
     if(!sb)return;
     // 멤버 카드는 미태깅 그룹 영상(MV·Shorts·토크쇼 등)이 뒤섞여 첫 화면이 지저분해지지 않도록
     // "라이브"(무대 직캠 위주) 탭에서 시작 — 그룹 카드는 그대로 "전체"
-    state={ko,memberKo:memberKo||null,leftAt:leftAt||null,filter:memberKo?'live':'all',onlyMe:false,searchQ:'',sortMode:'recommend',viewMode:'category',formatFilter:null,formats:[],offset:0,total:0,pos:0,cat:null,gen:state.gen+1,appendLock:false,trailingEl:null,hasMore:false,allVids:[],_liveFallbackDone:false,wrapEnd:0,wrapPhase:false,unitFilter:null};
+    state={ko,memberKo:memberKo||null,filter:memberKo?'live':'all',onlyMe:false,searchQ:'',sortMode:'recommend',viewMode:'category',formatFilter:null,formats:[],offset:0,total:0,pos:0,cat:null,gen:state.gen+1,appendLock:false,trailingEl:null,hasMore:false,allVids:[],_liveFallbackDone:false,wrapEnd:0,wrapPhase:false,unitFilter:null};
     cont.innerHTML=`<div class="gc-ch-hd"><div class="gc-ch-filters"></div><div class="gc-ch-sort-wrap"><button class="gc-ch-sort-btn" title="정렬" aria-haspopup="true" aria-expanded="false">⋮</button><div class="gc-ch-sort-menu"><button class="gc-ch-sort-item" data-sort="recommend"><span class="chk">✓</span>추천순</button><button class="gc-ch-sort-item" data-sort="latest"><span class="chk">✓</span>업로드순</button><button class="gc-ch-sort-item" data-sort="oldest"><span class="chk">✓</span>오래된순</button><div class="gc-ch-sort-divider" style="display:none"></div><button class="gc-ch-view-toggle" style="display:none"><span class="chk">✓</span>콘텐츠별 보기</button></div></div><button class="gc-ch-refresh" title="새로고침">↻</button></div><div class="gc-ch-search-wrap" style="display:none"><input class="gc-ch-search" placeholder="영상 검색…" autocomplete="off" spellcheck="false"><button class="gc-ch-search-clear" aria-label="검색어 지우기">\xD7</button></div><div class="gc-ch-grid"></div><div class="gc-ch-more-wrap"></div><div class="tv-cover-of-wrap" style="display:none"></div>`;
     _exitSelMode();
     const filEl=cont.querySelector('.gc-ch-filters');

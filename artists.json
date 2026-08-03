@@ -27264,7 +27264,17 @@
     "songs": [],
     "links": {
       "namu": "https://namu.wiki/w/%EB%B9%84%EB%B2%94(%EB%B8%94%EB%9D%BD%EB%B9%84)"
-    }
+    },
+    "groups": [
+      {
+        "ko": "블락비",
+        "en": "Block B"
+      },
+      {
+        "ko": "블락비 바스타즈",
+        "en": "Block B Bastarz"
+      }
+    ]
   },
   {
     "name": {
@@ -27318,7 +27328,17 @@
     "songs": [],
     "links": {
       "namu": "https://namu.wiki/w/%EC%9C%A0%EA%B6%8C(%EB%B8%94%EB%9D%BD%EB%B9%84)"
-    }
+    },
+    "groups": [
+      {
+        "ko": "블락비",
+        "en": "Block B"
+      },
+      {
+        "ko": "블락비 바스타즈",
+        "en": "Block B Bastarz"
+      }
+    ]
   },
   {
     "name": {
@@ -27399,7 +27419,17 @@
     "songs": [],
     "links": {
       "namu": "https://namu.wiki/w/%ED%94%BC%EC%98%A4(%EB%B8%94%EB%9D%BD%EB%B9%84)"
-    }
+    },
+    "groups": [
+      {
+        "ko": "블락비",
+        "en": "Block B"
+      },
+      {
+        "ko": "블락비 바스타즈",
+        "en": "Block B Bastarz"
+      }
+    ]
   },
   {
     "name": {
@@ -36005,6 +36035,1231 @@
     },
     "links": {
       "namu": "https://namu.wiki/w/이현주(배우)"
+    }
+  },
+  {
+    "name": {
+      "ko": "하빛",
+      "en": "Habit"
+    },
+    "group": {
+      "ko": "트렌드지",
+      "en": "TRENDZ"
+    },
+    "co": "글로벌에이치미디어",
+    "active": true,
+    "color": [
+      90,
+      150,
+      205
+    ],
+    "bday": "1999.06.07",
+    "nat": {
+      "ko": "대한민국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/하빛(TRENDZ)"
+    }
+  },
+  {
+    "name": {
+      "ko": "리온",
+      "en": "Rion"
+    },
+    "group": {
+      "ko": "트렌드지",
+      "en": "TRENDZ"
+    },
+    "co": "글로벌에이치미디어",
+    "active": true,
+    "color": [
+      90,
+      150,
+      205
+    ],
+    "bday": "2000.07.25",
+    "nat": {
+      "ko": "대한민국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/리온(TRENDZ)"
+    }
+  },
+  {
+    "name": {
+      "ko": "윤우",
+      "en": "Yunwoo"
+    },
+    "group": {
+      "ko": "트렌드지",
+      "en": "TRENDZ"
+    },
+    "co": "글로벌에이치미디어",
+    "active": true,
+    "color": [
+      90,
+      150,
+      205
+    ],
+    "bday": "2000.08.28",
+    "nat": {
+      "ko": "대한민국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/윤우(TRENDZ)"
+    }
+  },
+  {
+    "name": {
+      "ko": "조한국",
+      "en": "Jo Hanguk"
+    },
+    "group": {
+      "ko": "트렌드지",
+      "en": "TRENDZ"
+    },
+    "co": "글로벌에이치미디어",
+    "active": true,
+    "color": [
+      90,
+      150,
+      205
+    ],
+    "bday": "2002.04.03",
+    "nat": {
+      "ko": "대한민국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/조한국(TRENDZ)"
+    }
+  },
+  {
+    "name": {
+      "ko": "라엘",
+      "en": "Rael"
+    },
+    "group": {
+      "ko": "트렌드지",
+      "en": "TRENDZ"
+    },
+    "co": "글로벌에이치미디어",
+    "active": true,
+    "color": [
+      90,
+      150,
+      205
+    ],
+    "bday": "2003.09.29",
+    "nat": {
+      "ko": "대한민국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/라엘(TRENDZ)"
+    }
+  },
+  {
+    "name": {
+      "ko": "은일",
+      "en": "Eunil"
+    },
+    "group": {
+      "ko": "트렌드지",
+      "en": "TRENDZ"
+    },
+    "co": "글로벌에이치미디어",
+    "active": true,
+    "color": [
+      90,
+      150,
+      205
+    ],
+    "bday": "2003.11.21",
+    "nat": {
+      "ko": "대한민국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/은일(TRENDZ)"
+    }
+  },
+  {
+    "name": {
+      "ko": "정예찬",
+      "en": "Jeong Yechan"
+    },
+    "group": {
+      "ko": "트렌드지",
+      "en": "TRENDZ"
+    },
+    "co": "글로벌에이치미디어",
+    "active": true,
+    "color": [
+      90,
+      150,
+      205
+    ],
+    "bday": "2005.10.27",
+    "nat": {
+      "ko": "대한민국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/정예찬(TRENDZ)"
+    }
+  },
+  {
+    "name": {
+      "ko": "미유",
+      "en": "Miyu"
+    },
+    "group": {
+      "ko": "라임라잇",
+      "en": "LIMELIGHT"
+    },
+    "co": "143엔터테인먼트",
+    "active": true,
+    "color": [
+      230,
+      190,
+      90
+    ],
+    "bday": "2003.01.09",
+    "nat": {
+      "ko": "일본",
+      "en": "JP"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/미유(LIMELIGHT)"
+    }
+  },
+  {
+    "name": {
+      "ko": "수혜",
+      "en": "Suhye"
+    },
+    "group": {
+      "ko": "라임라잇",
+      "en": "LIMELIGHT"
+    },
+    "co": "143엔터테인먼트",
+    "active": true,
+    "color": [
+      230,
+      190,
+      90
+    ],
+    "bday": "2004.12.13",
+    "nat": {
+      "ko": "대한민국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/수혜(LIMELIGHT)"
+    }
+  },
+  {
+    "name": {
+      "ko": "가은",
+      "en": "Gaeun"
+    },
+    "group": {
+      "ko": "라임라잇",
+      "en": "LIMELIGHT"
+    },
+    "co": "143엔터테인먼트",
+    "active": true,
+    "color": [
+      230,
+      190,
+      90
+    ],
+    "bday": "2005.11.08",
+    "nat": {
+      "ko": "대한민국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/가은(LIMELIGHT)"
+    }
+  },
+  {
+    "name": {
+      "ko": "비비",
+      "en": "Bibi"
+    },
+    "group": {
+      "ko": "힛지스",
+      "en": "HITGS"
+    },
+    "co": "H music 엔터테인먼트",
+    "active": true,
+    "color": [
+      230,
+      120,
+      150
+    ],
+    "bday": "2006.06.03",
+    "nat": {
+      "ko": "중국",
+      "en": "CN"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/비비(HITGS)"
+    }
+  },
+  {
+    "name": {
+      "ko": "서진",
+      "en": "Seojin"
+    },
+    "group": {
+      "ko": "힛지스",
+      "en": "HITGS"
+    },
+    "co": "H music 엔터테인먼트",
+    "active": true,
+    "color": [
+      230,
+      120,
+      150
+    ],
+    "bday": "2008.04.16",
+    "nat": {
+      "ko": "대한민국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/서진(HITGS)"
+    }
+  },
+  {
+    "name": {
+      "ko": "서희",
+      "en": "Seohui"
+    },
+    "group": {
+      "ko": "힛지스",
+      "en": "HITGS"
+    },
+    "co": "H music 엔터테인먼트",
+    "active": true,
+    "color": [
+      230,
+      120,
+      150
+    ],
+    "bday": "2009.05.11",
+    "nat": {
+      "ko": "대한민국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/서희(HITGS)"
+    }
+  },
+  {
+    "name": {
+      "ko": "혜린",
+      "en": "Hyerin"
+    },
+    "group": {
+      "ko": "힛지스",
+      "en": "HITGS"
+    },
+    "co": "H music 엔터테인먼트",
+    "active": true,
+    "color": [
+      230,
+      120,
+      150
+    ],
+    "bday": "2009.12.10",
+    "nat": {
+      "ko": "대한민국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/혜린(HITGS)"
+    }
+  },
+  {
+    "name": {
+      "ko": "이유",
+      "en": "Iyu"
+    },
+    "group": {
+      "ko": "힛지스",
+      "en": "HITGS"
+    },
+    "co": "H music 엔터테인먼트",
+    "active": true,
+    "color": [
+      230,
+      120,
+      150
+    ],
+    "bday": "2010.03.26",
+    "nat": {
+      "ko": "대한민국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/이유(HITGS)"
+    }
+  },
+  {
+    "name": {
+      "ko": "국초록",
+      "en": "Guk Chorok"
+    },
+    "group": {
+      "ko": "아워벌스데이",
+      "en": "OURBIRTHDAY"
+    },
+    "co": "INNIT엔터테인먼트",
+    "active": true,
+    "color": [
+      235,
+      160,
+      120
+    ],
+    "bday": "2005.07.28",
+    "nat": {
+      "ko": "대한민국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/국초록(OURBIRTHDAY)"
+    }
+  },
+  {
+    "name": {
+      "ko": "신혜원",
+      "en": "Sin Hyewon"
+    },
+    "group": {
+      "ko": "아워벌스데이",
+      "en": "OURBIRTHDAY"
+    },
+    "co": "INNIT엔터테인먼트",
+    "active": true,
+    "color": [
+      235,
+      160,
+      120
+    ],
+    "bday": "2005.10.05",
+    "nat": {
+      "ko": "대한민국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/신혜원(OURBIRTHDAY)"
+    }
+  },
+  {
+    "name": {
+      "ko": "조혜진",
+      "en": "Jo Hyejin"
+    },
+    "group": {
+      "ko": "아워벌스데이",
+      "en": "OURBIRTHDAY"
+    },
+    "co": "INNIT엔터테인먼트",
+    "active": true,
+    "color": [
+      235,
+      160,
+      120
+    ],
+    "bday": "2007.10.24",
+    "nat": {
+      "ko": "대한민국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/조혜진(OURBIRTHDAY)"
+    }
+  },
+  {
+    "name": {
+      "ko": "유",
+      "en": "Yu"
+    },
+    "group": {
+      "ko": "아워벌스데이",
+      "en": "OURBIRTHDAY"
+    },
+    "co": "INNIT엔터테인먼트",
+    "active": true,
+    "color": [
+      235,
+      160,
+      120
+    ],
+    "bday": "2008.08.21",
+    "nat": {
+      "ko": "일본",
+      "en": "JP"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/유(OURBIRTHDAY)"
+    }
+  },
+  {
+    "name": {
+      "ko": "베이비",
+      "en": "Baby"
+    },
+    "group": {
+      "ko": "아워벌스데이",
+      "en": "OURBIRTHDAY"
+    },
+    "co": "INNIT엔터테인먼트",
+    "active": true,
+    "color": [
+      235,
+      160,
+      120
+    ],
+    "bday": "2009.02.10",
+    "nat": {
+      "ko": "대만",
+      "en": "TW"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/베이비(OURBIRTHDAY)"
+    }
+  },
+  {
+    "name": {
+      "ko": "아치라야",
+      "en": "Architaya"
+    },
+    "group": {
+      "ko": "아워벌스데이",
+      "en": "OURBIRTHDAY"
+    },
+    "co": "INNIT엔터테인먼트",
+    "active": true,
+    "color": [
+      235,
+      160,
+      120
+    ],
+    "bday": "2009.08.18",
+    "nat": {
+      "ko": "태국",
+      "en": "TH"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/아치라야(OURBIRTHDAY)"
+    }
+  },
+  {
+    "name": {
+      "ko": "키라라",
+      "en": "Kirara"
+    },
+    "group": {
+      "ko": "아워벌스데이",
+      "en": "OURBIRTHDAY"
+    },
+    "co": "INNIT엔터테인먼트",
+    "active": true,
+    "color": [
+      235,
+      160,
+      120
+    ],
+    "bday": "2010.12.17",
+    "nat": {
+      "ko": "일본",
+      "en": "JP"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/키라라(OURBIRTHDAY)"
+    }
+  },
+  {
+    "name": {
+      "ko": "종우",
+      "en": "Jongwoo"
+    },
+    "group": {
+      "ko": "원팩트",
+      "en": "ONE PACT"
+    },
+    "co": "ARMADA 엔터테인먼트",
+    "active": true,
+    "color": [
+      180,
+      70,
+      80
+    ],
+    "bday": "2000.06.12",
+    "nat": {
+      "ko": "대한민국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/종우(ONE PACT)"
+    }
+  },
+  {
+    "name": {
+      "ko": "제이 창",
+      "en": "Jay Chang"
+    },
+    "group": {
+      "ko": "원팩트",
+      "en": "ONE PACT"
+    },
+    "co": "ARMADA 엔터테인먼트",
+    "active": true,
+    "color": [
+      180,
+      70,
+      80
+    ],
+    "bday": "2001.03.08",
+    "nat": {
+      "ko": "미국",
+      "en": "US"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/제이 창(ONE PACT)"
+    }
+  },
+  {
+    "name": {
+      "ko": "성민",
+      "en": "Seongmin"
+    },
+    "group": {
+      "ko": "원팩트",
+      "en": "ONE PACT"
+    },
+    "co": "ARMADA 엔터테인먼트",
+    "active": true,
+    "color": [
+      180,
+      70,
+      80
+    ],
+    "bday": "2001.08.25",
+    "nat": {
+      "ko": "대한민국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/성민(ONE PACT)"
+    }
+  },
+  {
+    "name": {
+      "ko": "태그",
+      "en": "Tag"
+    },
+    "group": {
+      "ko": "원팩트",
+      "en": "ONE PACT"
+    },
+    "co": "ARMADA 엔터테인먼트",
+    "active": true,
+    "color": [
+      180,
+      70,
+      80
+    ],
+    "bday": "2002.09.30",
+    "nat": {
+      "ko": "대한민국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/태그(ONE PACT)"
+    }
+  },
+  {
+    "name": {
+      "ko": "예담",
+      "en": "Yedam"
+    },
+    "group": {
+      "ko": "원팩트",
+      "en": "ONE PACT"
+    },
+    "co": "ARMADA 엔터테인먼트",
+    "active": true,
+    "color": [
+      180,
+      70,
+      80
+    ],
+    "bday": "2003.01.19",
+    "nat": {
+      "ko": "대한민국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/예담(ONE PACT)"
+    }
+  },
+  {
+    "name": {
+      "ko": "채솔",
+      "en": "Chaesol"
+    },
+    "group": {
+      "ko": "시그니처",
+      "en": "cignature"
+    },
+    "co": "J9 엔터테인먼트",
+    "active": true,
+    "color": [
+      150,
+      110,
+      190
+    ],
+    "bday": "1998.07.14",
+    "nat": {
+      "ko": "대한민국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/채솔(cignature)"
+    }
+  },
+  {
+    "name": {
+      "ko": "지원",
+      "en": "Jiwon"
+    },
+    "group": {
+      "ko": "시그니처",
+      "en": "cignature"
+    },
+    "co": "J9 엔터테인먼트",
+    "active": true,
+    "color": [
+      150,
+      110,
+      190
+    ],
+    "bday": "1999.04.01",
+    "nat": {
+      "ko": "대한민국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/지원(cignature)"
+    }
+  },
+  {
+    "name": {
+      "ko": "셀린",
+      "en": "Celine"
+    },
+    "group": {
+      "ko": "시그니처",
+      "en": "cignature"
+    },
+    "co": "J9 엔터테인먼트",
+    "active": true,
+    "color": [
+      150,
+      110,
+      190
+    ],
+    "bday": "2000.06.20",
+    "nat": {
+      "ko": "대한민국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/셀린(cignature)"
+    }
+  },
+  {
+    "name": {
+      "ko": "클로이",
+      "en": "Chloe"
+    },
+    "group": {
+      "ko": "시그니처",
+      "en": "cignature"
+    },
+    "co": "J9 엔터테인먼트",
+    "active": true,
+    "color": [
+      150,
+      110,
+      190
+    ],
+    "bday": "2001.01.06",
+    "nat": {
+      "ko": "대한민국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/클로이(cignature)"
+    }
+  },
+  {
+    "name": {
+      "ko": "벨",
+      "en": "Belle"
+    },
+    "group": {
+      "ko": "시그니처",
+      "en": "cignature"
+    },
+    "co": "J9 엔터테인먼트",
+    "active": true,
+    "color": [
+      150,
+      110,
+      190
+    ],
+    "bday": "2001.11.03",
+    "nat": {
+      "ko": "대한민국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/벨(cignature)"
+    }
+  },
+  {
+    "name": {
+      "ko": "세미",
+      "en": "Semi"
+    },
+    "group": {
+      "ko": "시그니처",
+      "en": "cignature"
+    },
+    "co": "J9 엔터테인먼트",
+    "active": true,
+    "color": [
+      150,
+      110,
+      190
+    ],
+    "bday": "2002.04.10",
+    "nat": {
+      "ko": "대한민국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/세미(cignature)"
+    }
+  },
+  {
+    "name": {
+      "ko": "도희",
+      "en": "Dohee"
+    },
+    "group": {
+      "ko": "시그니처",
+      "en": "cignature"
+    },
+    "co": "J9 엔터테인먼트",
+    "active": true,
+    "color": [
+      150,
+      110,
+      190
+    ],
+    "bday": "2002.08.01",
+    "nat": {
+      "ko": "대한민국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/도희(cignature)"
+    }
+  },
+  {
+    "name": {
+      "ko": "예아",
+      "en": "Yea"
+    },
+    "group": {
+      "ko": "시그니처",
+      "en": "cignature"
+    },
+    "co": "J9 엔터테인먼트",
+    "active": false,
+    "color": [
+      150,
+      110,
+      190
+    ],
+    "bday": "1999.10.09",
+    "nat": {
+      "ko": "대한민국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/예아(cignature)"
+    }
+  },
+  {
+    "name": {
+      "ko": "선",
+      "en": "Sun"
+    },
+    "group": {
+      "ko": "시그니처",
+      "en": "cignature"
+    },
+    "co": "J9 엔터테인먼트",
+    "active": false,
+    "color": [
+      150,
+      110,
+      190
+    ],
+    "bday": "2000.02.07",
+    "nat": {
+      "ko": "대한민국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/선(cignature)"
+    }
+  },
+  {
+    "name": {
+      "ko": "나캠든",
+      "en": "Camden"
+    },
+    "group": {
+      "ko": "앰퍼샌드원",
+      "en": "AMPERS&ONE"
+    },
+    "co": "FNC엔터테인먼트",
+    "active": true,
+    "color": [
+      110,
+      150,
+      190
+    ],
+    "bday": "2001.06.09",
+    "nat": {
+      "ko": "미국",
+      "en": "US"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/나캠든(AMPERS&ONE)"
+    }
+  },
+  {
+    "name": {
+      "ko": "브라이언",
+      "en": "Brian"
+    },
+    "group": {
+      "ko": "앰퍼샌드원",
+      "en": "AMPERS&ONE"
+    },
+    "co": "FNC엔터테인먼트",
+    "active": true,
+    "color": [
+      110,
+      150,
+      190
+    ],
+    "bday": "2002.08.27",
+    "nat": {
+      "ko": "캐나다",
+      "en": "CA"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/브라이언(AMPERS&ONE)"
+    }
+  },
+  {
+    "name": {
+      "ko": "최지호",
+      "en": "Choi Jiho"
+    },
+    "group": {
+      "ko": "앰퍼샌드원",
+      "en": "AMPERS&ONE"
+    },
+    "co": "FNC엔터테인먼트",
+    "active": true,
+    "color": [
+      110,
+      150,
+      190
+    ],
+    "bday": "2004.06.10",
+    "nat": {
+      "ko": "대한민국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/최지호(AMPERS&ONE)"
+    }
+  },
+  {
+    "name": {
+      "ko": "윤시윤",
+      "en": "Yun Siyun"
+    },
+    "group": {
+      "ko": "앰퍼샌드원",
+      "en": "AMPERS&ONE"
+    },
+    "co": "FNC엔터테인먼트",
+    "active": true,
+    "color": [
+      110,
+      150,
+      190
+    ],
+    "bday": "2005.01.08",
+    "nat": {
+      "ko": "대한민국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/윤시윤(AMPERS&ONE)"
+    }
+  },
+  {
+    "name": {
+      "ko": "카이렐",
+      "en": "Kyrell"
+    },
+    "group": {
+      "ko": "앰퍼샌드원",
+      "en": "AMPERS&ONE"
+    },
+    "co": "FNC엔터테인먼트",
+    "active": true,
+    "color": [
+      110,
+      150,
+      190
+    ],
+    "bday": "2005.07.03",
+    "nat": {
+      "ko": "미국",
+      "en": "US"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/카이렐(AMPERS&ONE)"
+    }
+  },
+  {
+    "name": {
+      "ko": "마카야",
+      "en": "Makaya"
+    },
+    "group": {
+      "ko": "앰퍼샌드원",
+      "en": "AMPERS&ONE"
+    },
+    "co": "FNC엔터테인먼트",
+    "active": true,
+    "color": [
+      110,
+      150,
+      190
+    ],
+    "bday": "2006.01.21",
+    "nat": {
+      "ko": "호주",
+      "en": "AU"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/마카야(AMPERS&ONE)"
+    }
+  },
+  {
+    "name": {
+      "ko": "김승모",
+      "en": "Kim Seungmo"
+    },
+    "group": {
+      "ko": "앰퍼샌드원",
+      "en": "AMPERS&ONE"
+    },
+    "co": "FNC엔터테인먼트",
+    "active": true,
+    "color": [
+      110,
+      150,
+      190
+    ],
+    "bday": "2006.07.03",
+    "nat": {
+      "ko": "대한민국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/김승모(AMPERS&ONE)"
+    }
+  },
+  {
+    "name": {
+      "ko": "정유진",
+      "en": "Jung Yoo-jin"
+    },
+    "group": {
+      "ko": "쥬얼리",
+      "en": "Jewelry"
+    },
+    "co": "스타제국",
+    "active": false,
+    "color": [
+      220,
+      200,
+      160
+    ],
+    "bday": "1982.03.31",
+    "nat": {
+      "ko": "대한민국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/%EC%A0%95%EC%9C%A0%EC%A7%84(%EC%A5%AC%EC%96%BC%EB%A6%AC)"
+    }
+  },
+  {
+    "name": {
+      "ko": "전은미",
+      "en": "Jeon Eun-mi"
+    },
+    "group": {
+      "ko": "쥬얼리",
+      "en": "Jewelry"
+    },
+    "co": "스타제국",
+    "active": false,
+    "color": [
+      220,
+      200,
+      160
+    ],
+    "bday": "1984.09.29",
+    "nat": {
+      "ko": "대한민국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/%EC%A0%84%EC%9D%80%EB%AF%B8(%EC%A5%AC%EC%96%BC%EB%A6%AC)"
+    }
+  },
+  {
+    "name": {
+      "ko": "이지현",
+      "en": "Lee Ji-hyun"
+    },
+    "group": {
+      "ko": "쥬얼리",
+      "en": "Jewelry"
+    },
+    "co": "스타제국",
+    "active": false,
+    "color": [
+      220,
+      200,
+      160
+    ],
+    "bday": "1983.10.12",
+    "nat": {
+      "ko": "대한민국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/%EC%9D%B4%EC%A7%80%ED%98%84(%EC%A5%AC%EC%96%BC%EB%A6%AC)"
+    }
+  },
+  {
+    "name": {
+      "ko": "조민아",
+      "en": "Cho Min-ah"
+    },
+    "group": {
+      "ko": "쥬얼리",
+      "en": "Jewelry"
+    },
+    "co": "스타제국",
+    "active": false,
+    "color": [
+      220,
+      200,
+      160
+    ],
+    "bday": "1984.06.23",
+    "nat": {
+      "ko": "대한민국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/%EC%A1%B0%EB%AF%BC%EC%95%84(%EC%A5%AC%EC%96%BC%EB%A6%AC)"
+    }
+  },
+  {
+    "name": {
+      "ko": "박정아",
+      "en": "Park Jung-ah"
+    },
+    "group": {
+      "ko": "쥬얼리",
+      "en": "Jewelry"
+    },
+    "co": "스타제국",
+    "active": false,
+    "color": [
+      220,
+      200,
+      160
+    ],
+    "bday": "1981.02.24",
+    "nat": {
+      "ko": "대한민국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/%EB%B0%95%EC%A0%95%EC%95%84(%EC%A5%AC%EC%96%BC%EB%A6%AC)"
+    }
+  },
+  {
+    "name": {
+      "ko": "서인영",
+      "en": "Seo In-young"
+    },
+    "group": {
+      "ko": "쥬얼리",
+      "en": "Jewelry"
+    },
+    "co": "스타제국",
+    "active": false,
+    "color": [
+      220,
+      200,
+      160
+    ],
+    "bday": "1984.09.03",
+    "nat": {
+      "ko": "대한민국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/%EC%84%9C%EC%9D%B8%EC%98%81(%EC%A5%AC%EC%96%BC%EB%A6%AC)"
     }
   }
 ]

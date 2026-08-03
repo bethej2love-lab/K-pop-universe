@@ -4709,5 +4709,161 @@
       "instagram": "https://www.instagram.com/official.april_jp",
       "namu": "https://namu.wiki/w/APRIL"
     }
+  },
+  "트렌드지": {
+    "en": "TRENDZ",
+    "debut": "2022.01.05",
+    "co": "글로벌에이치미디어",
+    "color": [
+      90,
+      150,
+      205
+    ],
+    "gender": "m",
+    "links": {
+      "x": "https://x.com/trendz_offcl",
+      "instagram": "https://www.instagram.com/trendz_offcl/",
+      "youtube": "https://youtube.com/c/TRENDZ_OFFCL",
+      "namu": "https://namu.wiki/w/TRENDZ"
+    }
+  },
+  "라임라잇": {
+    "en": "LIMELIGHT",
+    "debut": "2023.02.14",
+    "co": "143엔터테인먼트",
+    "color": [
+      230,
+      190,
+      90
+    ],
+    "gender": "f",
+    "links": {
+      "x": "https://x.com/LimeLightseoul",
+      "instagram": "https://www.instagram.com/limelightseoul",
+      "tiktok": "https://www.tiktok.com/@limelightseoul",
+      "namu": "https://namu.wiki/w/LIMELIGHT"
+    }
+  },
+  "힛지스": {
+    "en": "HITGS",
+    "debut": "2025.04.28",
+    "co": "H music 엔터테인먼트",
+    "color": [
+      230,
+      120,
+      150
+    ],
+    "gender": "f",
+    "fandom": {
+      "ko": "HITG",
+      "en": "HITG"
+    },
+    "links": {
+      "x": "https://x.com/HITGS_offcl",
+      "instagram": "https://www.instagram.com/hitgs_offcl",
+      "tiktok": "https://www.tiktok.com/@hitgs.offcl",
+      "youtube": "https://www.youtube.com/@hitgs_offcl",
+      "namu": "https://namu.wiki/w/HITGS"
+    }
+  },
+  "아워벌스데이": {
+    "en": "OURBIRTHDAY",
+    "debut": "2026.08.19",
+    "co": "INNIT엔터테인먼트",
+    "color": [
+      235,
+      160,
+      120
+    ],
+    "gender": "f",
+    "links": {
+      "x": "https://x.com/OBD_offcl",
+      "instagram": "https://www.instagram.com/ourbirthday_official",
+      "tiktok": "https://www.tiktok.com/@ourbirthday_official",
+      "youtube": "https://www.youtube.com/@OURBIRTHDAY",
+      "namu": "https://namu.wiki/w/OURBIRTHDAY"
+    }
+  },
+  "원팩트": {
+    "en": "ONE PACT",
+    "debut": "2023.11.30",
+    "co": "ARMADA 엔터테인먼트",
+    "color": [
+      180,
+      70,
+      80
+    ],
+    "gender": "m",
+    "fandom": {
+      "ko": "앤하트",
+      "en": "&♥"
+    },
+    "links": {
+      "x": "https://x.com/onepact_",
+      "instagram": "https://www.instagram.com/0nepact",
+      "tiktok": "https://www.tiktok.com/@0nepact",
+      "youtube": "https://www.youtube.com/channel/UCb7q-fXh21T-pq02dC9H3xg",
+      "namu": "https://namu.wiki/w/ONE%20PACT"
+    }
+  },
+  "시그니처": {
+    "en": "cignature",
+    "debut": "2020.02.04",
+    "co": "J9 엔터테인먼트",
+    "color": [
+      150,
+      110,
+      190
+    ],
+    "gender": "f",
+    "fandom": {
+      "ko": "signfan",
+      "en": "signfan"
+    },
+    "links": {
+      "x": "https://x.com/cignature_J9",
+      "instagram": "https://www.instagram.com/cignature_j9",
+      "tiktok": "https://www.tiktok.com/@cignature_j9",
+      "youtube": "https://www.youtube.com/@cignatureJ9",
+      "namu": "https://namu.wiki/w/cignature"
+    }
+  },
+  "앰퍼샌드원": {
+    "en": "AMPERS&ONE",
+    "debut": "2023.11.15",
+    "co": "FNC엔터테인먼트",
+    "color": [
+      110,
+      150,
+      190
+    ],
+    "gender": "m",
+    "fandom": {
+      "ko": "앤디어",
+      "en": "Andear"
+    },
+    "links": {
+      "x": "https://x.com/_AMPERSANDONE_",
+      "instagram": "https://www.instagram.com/ampersandone_official",
+      "tiktok": "https://www.tiktok.com/@ampersandone",
+      "youtube": "https://www.youtube.com/@AMPERSANDONE",
+      "namu": "https://namu.wiki/w/앰퍼샌드원"
+    }
+  },
+  "블락비 바스타즈": {
+    "en": "Block B Bastarz",
+    "debut": "2015.04.14",
+    "co": "KQ 엔터테인먼트",
+    "survivalShow": true,
+    "projectRing": true,
+    "color": [
+      195,
+      175,
+      60
+    ],
+    "gender": "m",
+    "links": {
+      "namu": "https://namu.wiki/w/블락비 바스타즈"
+    }
   }
 }
