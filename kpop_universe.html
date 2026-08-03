@@ -1850,15 +1850,6 @@
     <button class="sp-yt-sync" id="sp-avs-btn" style="margin-top:4px;opacity:.8;">전체 영상 검색</button>
     <button class="sp-yt-sync" id="sp-nomem-btn" style="margin-top:4px;opacity:.8;">그룹 멤버 안 나옴(무관) 목록</button>
     <div style="margin-top:8px;padding-top:8px;border-top:0.5px solid rgba(255,255,255,0.1)">
-      <div style="font-size:10px;color:rgba(155,178,228,0.5);margin-bottom:2px">그룹명 변경 반영(group.ko 수정 시 기존 태깅 데이터 이전)</div>
-      <input type="text" class="sp-yt-key" id="sp-groupmig-old" placeholder="이전 표기 (예: 슈퍼노바)">
-      <input type="text" class="sp-yt-key" id="sp-groupmig-new" placeholder="새 표기 (예: 슈퍼노바(초신성))">
-      <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:11px;color:rgba(185,205,245,0.7);margin-top:6px">
-        <input type="checkbox" id="sp-groupmig-groupko" style="accent-color:rgba(155,178,228,0.9)">group_ko 컬럼(그룹 자체 채널)도 함께 변경
-      </label>
-      <button class="sp-yt-sync" id="sp-groupmig-btn" style="opacity:.8;margin-top:6px;">그룹명 변경 반영</button>
-    </div>
-    <div style="margin-top:8px;padding-top:8px;border-top:0.5px solid rgba(255,255,255,0.1)">
       <div style="font-size:10px;color:rgba(155,178,228,0.5);margin-bottom:2px">과거 영상 백필 (search API, 쿼터 많이 씀)</div>
       <select class="sp-yt-key" id="sp-yt-backfill-ch"></select>
       <div style="display:flex;gap:4px;margin-top:5px;">
@@ -10352,32 +10343,22 @@ async function _hnnScan(){
   if(btn)btn.disabled=true;
   document.getElementById('hnn-list').innerHTML='';
   try{
-    statusEl.textContent='전체 태깅 집계 중… (시간이 좀 걸릴 수 있음)';
-    const{data:rows,error}=await _sbFetchAll(()=>sb.from(_YT_TABLE)
-      .select('group_ko,members,with_members')
-      .order('id'));
-    if(error){statusEl.textContent='조회 실패: '+error.message;return;}
-    const ownCounts=new Map(); // "mko gko" -> count
-    const crossCounts=new Map(); // "mko gko" -> count (with_members 파싱)
-    (rows||[]).forEach(v=>{
-      (v.members||[]).forEach(mko=>{
-        const k=mko+' '+v.group_ko;
-        ownCounts.set(k,(ownCounts.get(k)||0)+1);
-      });
-      (v.with_members||[]).forEach(entry=>{
-        const m=/^(.*)\(([^()]*)\)$/.exec(entry);
-        if(!m)return;
-        const k=m[1]+' '+m[2];
-        crossCounts.set(k,(crossCounts.get(k)||0)+1);
-      });
-    });
+    // 예전엔 전체 영상을 브라우저로 다 받아와서(수만 건, 요청 100번+) 직접 집계했는데 너무 오래 걸림 —
+    // 카운팅(GROUP BY)은 Postgres가 훨씬 빠르므로 서버 쪽 함수(hnn_own_channel_counts/
+    // hnn_cross_channel_counts, 미리 SQL 에디터에서 생성해둬야 함)에 위임해서 이미 집계된 결과만 받는다.
+    statusEl.textContent='집계 중…';
+    const[{data:ownRows,error:ownErr},{data:crossRows,error:crossErr}]=await Promise.all([
+      sb.rpc('hnn_own_channel_counts'),
+      sb.rpc('hnn_cross_channel_counts')
+    ]);
+    if(ownErr){statusEl.textContent='조회 실패(자체 채널 집계 함수 생성 필요할 수 있음): '+ownErr.message;return;}
+    if(crossErr){statusEl.textContent='조회 실패(콜라보 집계 함수 생성 필요할 수 있음): '+crossErr.message;return;}
     // ① 그룹별 자체 채널 태깅 건수 이상치 — 같은 그룹 내 중앙값과 비교
     const byGroup=new Map(); // gko -> [{mko,count}]
-    ownCounts.forEach((count,k)=>{
-      const[mko,gko]=k.split(' ');
+    (ownRows||[]).forEach(({mko,gko,cnt})=>{
       if(_ATM_HASHTAG_ONLY_NAMES.has(mko))return;
       if(!byGroup.has(gko))byGroup.set(gko,[]);
-      byGroup.get(gko).push({mko,count});
+      byGroup.get(gko).push({mko,count:Number(cnt)});
     });
     const ownSuspects=[];
     byGroup.forEach((list,gko)=>{
@@ -10391,12 +10372,10 @@ async function _hnnScan(){
       });
     });
     // ② 콜라보(with_members) 총량 이상치 — 자체 화이트리스트 이름 제외, 절대 건수 기준 상위만
-    const crossSuspects=[];
-    crossCounts.forEach((count,k)=>{
-      const[mko,gko]=k.split(' ');
-      if(_ATM_HASHTAG_ONLY_NAMES.has(mko))return;
-      if(count>=15)crossSuspects.push({mko,gko,count,type:'cross'});
-    });
+    const crossSuspects=(crossRows||[])
+      .filter(({mko})=>!_ATM_HASHTAG_ONLY_NAMES.has(mko))
+      .map(({mko,gko,cnt})=>({mko,gko,count:Number(cnt),type:'cross'}))
+      .filter(s=>s.count>=15);
     const combined=[...ownSuspects,...crossSuspects].sort((a,b)=>b.count-a.count).slice(0,60);
     statusEl.textContent=`집계 완료 — 의심 후보 ${combined.length}개(자체 ${ownSuspects.length} / 콜라보 ${crossSuspects.length})`;
     _renderHnnList(combined);
@@ -10432,71 +10411,6 @@ document.getElementById('hnn-scan-btn')?.addEventListener('click',_hnnScan);
 document.getElementById('hnn-overlay')?.addEventListener('click',e=>{if(e.target===e.currentTarget)e.currentTarget.classList.remove('open');});
 document.getElementById('hnn-close')?.addEventListener('click',()=>document.getElementById('hnn-overlay').classList.remove('open'));
 document.getElementById('sp-hnn-btn')?.addEventListener('click',()=>{document.getElementById('hnn-overlay').classList.add('open');});
-
-// ── 그룹명 변경 반영 ── groups.json/artists.json에서 그룹의 group.ko 표기를 바꾸면(예: "슈퍼노바" →
-// "슈퍼노바(초신성)"), 그 그룹 자체 채널의 기존 group_ko 컬럼값과, 다른 채널이 이 그룹/사람을 게스트로
-// 태깅할 때 쓰는 with_members("이름(그룹)")/with_groups(그룹명 그대로) 안의 예전 표기가 그대로 남아있어서
-// _findArtistByConnName이 새 group.ko로 더 이상 못 찾는 문제가 생김 — 연결 카드에 이름은 뜨는데
-// 실제로 눌러보면 조합 영상이 하나도 없는 걸로 보이는 버그의 원인 중 하나(2026-07-30에 실측으로 확인:
-// 슈퍼노바 그룹명 변경 직후 "광수(슈퍼노바)" 잔재 발견 + 보아처럼 GROUPS에 없는 솔로가 _ytGroupKoFor
-// 관례상 "보아(보아)"로 잘못 태깅된 과거 데이터도 별도로 발견됨).
-// group_ko 컬럼 자체는 "그 그룹의 진짜 group.ko 값이 바뀐 경우"에만 체크박스로 같이 바꾸고, 기본은
-// with_members/with_groups 안의 표기만 고친다(보아 케이스처럼 group_ko='보아'가 원래 의도된 값인
-// 경우까지 잘못 건드리지 않기 위함).
-async function _ytMigrateGroupName(){
-  if(!sb){_ytSetProg('Supabase 연결 없음');return;}
-  const oldName=(document.getElementById('sp-groupmig-old')?.value||'').trim();
-  const newName=(document.getElementById('sp-groupmig-new')?.value||'').trim();
-  const alsoGroupKo=!!document.getElementById('sp-groupmig-groupko')?.checked;
-  if(!oldName||!newName){_ytSetProg('이전/새 표기를 모두 입력해주세요');return;}
-  if(oldName===newName){_ytSetProg('이전/새 표기가 같아요');return;}
-  const btn=document.getElementById('sp-groupmig-btn');
-  if(btn)btn.disabled=true;
-  try{
-    let changed=0;
-    if(alsoGroupKo){
-      _ytSetProg('[그룹명 변경] group_ko 컬럼 일괄 변경 중…');
-      const{error,count}=await sb.from(_YT_TABLE).update({group_ko:newName}).eq('group_ko',oldName).select('id',{count:'exact'});
-      if(error)throw new Error(error.message);
-      changed+=count||0;
-    }
-    _ytSetProg('[그룹명 변경] with_members 태그 조회 중… (전체 스캔이라 시간이 좀 걸릴 수 있음)');
-    const{data:wmRows,error:wmErr}=await _sbFetchAll(()=>sb.from(_YT_TABLE)
-      .select('id,with_members').not('with_members','eq','{}').order('id'));
-    if(wmErr)throw new Error(wmErr.message);
-    const oldSuffix=`(${oldName})`,newSuffix=`(${newName})`;
-    const wmUpdates=[];
-    (wmRows||[]).forEach(r=>{
-      let touched=false;
-      const next=(r.with_members||[]).map(w=>{
-        if(w.endsWith(oldSuffix)){touched=true;return w.slice(0,-oldSuffix.length)+newSuffix;}
-        return w;
-      });
-      if(touched)wmUpdates.push({id:r.id,with_members:next});
-    });
-    for(let i=0;i<wmUpdates.length;i++){
-      _ytSetProg(`[그룹명 변경] with_members 수정 중… (${i+1}/${wmUpdates.length})`);
-      const{error}=await sb.from(_YT_TABLE).update({with_members:wmUpdates[i].with_members}).eq('id',wmUpdates[i].id);
-      if(error)throw new Error(error.message);
-    }
-    changed+=wmUpdates.length;
-    _ytSetProg('[그룹명 변경] with_groups 태그 조회 중…');
-    const{data:wgRows,error:wgErr}=await sb.from(_YT_TABLE).select('id,with_groups').contains('with_groups',[oldName]);
-    if(wgErr)throw new Error(wgErr.message);
-    const wgUpdates=(wgRows||[]).map(r=>({id:r.id,with_groups:(r.with_groups||[]).map(g=>g===oldName?newName:g)}));
-    for(let i=0;i<wgUpdates.length;i++){
-      _ytSetProg(`[그룹명 변경] with_groups 수정 중… (${i+1}/${wgUpdates.length})`);
-      const{error}=await sb.from(_YT_TABLE).update({with_groups:wgUpdates[i].with_groups}).eq('id',wgUpdates[i].id);
-      if(error)throw new Error(error.message);
-    }
-    changed+=wgUpdates.length;
-    _ytSetProg(`완료! "${oldName}" → "${newName}" 총 ${changed}건 반영함(group_ko ${alsoGroupKo?'포함':'제외'}, with_members ${wmUpdates.length}건, with_groups ${wgUpdates.length}건)`);
-  }catch(e){
-    _ytSetProg('오류: '+e.message);
-  }finally{
-    if(btn)btn.disabled=false;
-  }
-}
 
 // ── "원곡: X" 오태깅 의심 목록 ── 다른 사람이 부른 커버 영상 제목에 "(원곡 : 이름)" 식으로 원곡자를
 // 표기해둔 걸, 자동 태깅이 "그 원곡자가 출연한다"고 잘못 읽어 group_ko/members를 원곡자 쪽으로 붙여버리는
@@ -10571,7 +10485,8 @@ async function _wonkokScan(){
     for(let i=0;i<hitIds.length;i+=200){
       const{data,error}=await sb.from(_YT_TABLE)
         .select('id,title,group_ko,members,thumb,content_flag,cover_of_members,cover_of_groups')
-        .in('id',hitIds.slice(i,i+200));
+        .in('id',hitIds.slice(i,i+200))
+        .eq('tags_manual',false); // 관리자가 이미 직접 확정한 태그는 오태깅 후보로 다시 흔들지 않음
       if(error){statusEl.textContent='조회 실패: '+error.message;return;}
       rows.push(...(data||[]));
     }
@@ -10707,7 +10622,7 @@ document.getElementById('wonkok-apply-btn')?.addEventListener('click',async()=>{
     }
   }catch(e){
     btn.disabled=false;btn.textContent=APPLY_BTN_LABEL;
-    alert('오류: '+e.message);
+    document.getElementById('wonkok-status').textContent='오류: '+e.message;
     return;
   }
   _wonkokCandidates=_wonkokCandidates.filter(v=>!idSet.has(v.id));
@@ -10810,7 +10725,6 @@ document.getElementById('sp-avs-btn')?.addEventListener('click',()=>{
   document.getElementById('avs-status').textContent='';
   document.getElementById('avs-search').focus();
 });
-document.getElementById('sp-groupmig-btn')?.addEventListener('click',_ytMigrateGroupName);
 
 // ── "그룹 멤버 안 나옴(무관)" 목록 ── content_flag='무관'인 영상 전체를 그냥 나열해서 검토하게 함.
 // 원래 취지(같은 그룹 채널인데 멤버 자동인식만 틀림)를 벗어나, 완전히 다른 그룹 영상을 억지로 이
@@ -10902,7 +10816,7 @@ document.getElementById('nomem-apply-btn')?.addEventListener('click',async()=>{
   if(!ids.length)return;
   btn.disabled=true;btn.textContent='처리 중…';
   const{error}=await sb.from(_YT_TABLE).update({content_flag:null}).in('id',ids);
-  if(error){btn.disabled=false;btn.textContent='선택 항목 무관 해제';alert('오류: '+error.message);return;}
+  if(error){btn.disabled=false;btn.textContent='선택 항목 무관 해제';document.getElementById('nomem-status').textContent='오류: '+error.message;return;}
   const idSet=new Set(ids);
   _nomemRows=_nomemRows.filter(v=>!idSet.has(v.id));
   items.forEach(el=>el.remove());
@@ -11647,6 +11561,12 @@ async function _ytBuildManualVideoRow(key,vid,manualGroup,manualMembers){
   const description=item.snippet.description||'';
   return{id:vid,title,description,thumb,published_at:publishedAt,category,group_ko:groupKo,members,with_groups:withGroups,with_members:withMembers};
 }
+// 이미 존재하는 행이 tags_manual=true(관리자가 태그 모달에서 직접 확정)면, 수동 추가가 upsert로
+// 그 위를 덮어써버리는 사고를 막기 위한 사전 체크 — 재백필 등으로 같은 id가 다시 들어올 때 특히 위험.
+async function _ytExistingTagsManual(vid){
+  const{data}=await sb.from(_YT_TABLE).select('tags_manual').eq('id',vid).maybeSingle();
+  return!!data?.tags_manual;
+}
 async function _ytAddVideoByUrl(){
   const key=_ytApiKey();
   if(!key){_ytSetProg('API 키를 먼저 입력해주세요');return;}
@@ -11662,6 +11582,10 @@ async function _ytAddVideoByUrl(){
     _ytSetProg('[영상 추가] 정보 조회 중…');
     const manualGroup=(groupEl?.value||'').trim();
     const manualMembers=(membersEl?.value||'').split(',').map(s=>s.trim()).filter(Boolean);
+    if(await _ytExistingTagsManual(vid)){
+      _ytSetProg('[영상 추가] 건너뜀 — 이미 관리자가 직접 확정한 태그가 있는 영상이에요(고치려면 ✎ 편집 버튼 사용)');
+      return;
+    }
     const row=await _ytBuildManualVideoRow(key,vid,manualGroup,manualMembers);
     const{error}=await sb.from(_YT_TABLE).upsert(row,{onConflict:'id'});
     if(error)throw new Error(error.message);
@@ -11691,15 +11615,16 @@ async function _ytAddVideosBatch(){
   const manualMembers=(membersEl?.value||'').split(',').map(s=>s.trim()).filter(Boolean);
   _manualBatchAdding=true;
   if(btn)btn.disabled=true;
-  let ok=0,fail=0;
+  let ok=0,fail=0,skipped=0;
   const failLines=[];
   try{
     for(let i=0;i<lines.length;i++){
       const line=lines[i];
-      _ytSetProg(`[일괄 추가] ${i+1}/${lines.length}개째 처리 중… (성공 ${ok} / 실패 ${fail})`);
+      _ytSetProg(`[일괄 추가] ${i+1}/${lines.length}개째 처리 중… (성공 ${ok} / 건너뜀 ${skipped} / 실패 ${fail})`);
       const vid=_ytParseVideoId(line);
       if(!vid){fail++;failLines.push(`${line} (URL 인식 실패)`);continue;}
       try{
+        if(await _ytExistingTagsManual(vid)){skipped++;continue;} // 이미 관리자가 직접 확정한 태그는 덮어쓰지 않음
         const row=await _ytBuildManualVideoRow(key,vid,manualGroup,manualMembers);
         const{error}=await sb.from(_YT_TABLE).upsert(row,{onConflict:'id'});
         if(error)throw new Error(error.message);
@@ -11709,7 +11634,7 @@ async function _ytAddVideosBatch(){
       }
       if(i<lines.length-1)await new Promise(res=>setTimeout(res,150)); // API 호출 간 살짝 텀
     }
-    _ytSetProg(`[일괄 추가] 완료 — 성공 ${ok}개 / 실패 ${fail}개`+(failLines.length?` (실패: ${failLines.slice(0,5).join(' / ')}${failLines.length>5?' 외 '+(failLines.length-5)+'건':''})`:''));
+    _ytSetProg(`[일괄 추가] 완료 — 성공 ${ok}개 / 이미 확정돼 건너뜀 ${skipped}개 / 실패 ${fail}개`+(failLines.length?` (실패: ${failLines.slice(0,5).join(' / ')}${failLines.length>5?' 외 '+(failLines.length-5)+'건':''})`:''));
     if(ok>0&&batchEl)batchEl.value=failLines.length?failLines.map(f=>f.split(' (')[0]).join('\n'):'';
   }finally{
     _manualBatchAdding=false;
@@ -13331,22 +13256,19 @@ async function _loadHiddenVids(searchTerm){
   toolbarEl.style.display='none';
   list.innerHTML='<div id="hidden-vids-empty">불러오는 중…</div>';
   const term=(searchTerm||'').trim();
-  const PAGE=1000;
-  let all=[],from=0;
-  while(true){
+  // _sbFetchAll(id 기준 키셋 페이지네이션)을 재사용 — 원래 group_ko/title로 서버 정렬하던 걸 id 정렬로
+  // 바꾸고, 화면에 보여줄 순서는 다 받아온 뒤 클라이언트에서 정렬(결과 집합 자체가 작아서 비용 거의 없음).
+  const{data,error}=await _sbFetchAll(()=>{
     let q=sb.from(_YT_TABLE).select('id,title,thumb,group_ko').eq('content_flag','hidden');
     if(term)q=q.or(`title.ilike.%${term}%,group_ko.ilike.%${term}%`);
-    q=q.order('group_ko').order('title').range(from,from+PAGE-1);
-    const{data,error}=await q;
-    if(myGen!==_hvSearchGen)return; // 그 사이 검색어가 또 바뀜 — 이 결과는 버림
-    if(error){
-      list.innerHTML=`<div id="hidden-vids-empty">오류: ${error.message}</div>`;
-      return;
-    }
-    all=all.concat(data||[]);
-    if(!data||data.length<PAGE)break;
-    from+=PAGE;
+    return q.order('id');
+  });
+  if(myGen!==_hvSearchGen)return; // 그 사이 검색어가 또 바뀜 — 이 결과는 버림
+  if(error){
+    list.innerHTML=`<div id="hidden-vids-empty">오류: ${error.message}</div>`;
+    return;
   }
+  const all=(data||[]).sort((a,b)=>(a.group_ko||'').localeCompare(b.group_ko||'','ko')||(a.title||'').localeCompare(b.title||'','ko'));
   _hvRows=all;
   if(!all.length){
     list.innerHTML=`<div id="hidden-vids-empty">${term?'검색 결과가 없어요':'노출 제외된 영상이 없어요'}</div>`;
@@ -13392,7 +13314,7 @@ document.getElementById('hidden-vids-apply-btn')?.addEventListener('click',async
   if(!ids.length)return;
   btn.disabled=true;btn.textContent='처리 중…';
   const{error}=await sb.from(_YT_TABLE).update({content_flag:null}).in('id',ids);
-  if(error){btn.disabled=false;btn.textContent='선택 항목 노출 복원';alert('오류: '+error.message);return;}
+  if(error){btn.disabled=false;btn.textContent='선택 항목 노출 복원';_showShareToast('오류: '+error.message);return;}
   const idSet=new Set(ids);
   _hvRows=_hvRows.filter(v=>!idSet.has(String(v.id)));
   items.forEach(el=>el.remove());
@@ -13435,7 +13357,7 @@ document.getElementById('admin-bulk-hide-btn')?.addEventListener('click',async()
   if(!ids.length)return;
   btn.disabled=true;btn.textContent='처리 중…';
   const{error}=await sb.from(_YT_TABLE).update({content_flag:'hidden'}).in('id',ids);
-  if(error){btn.disabled=false;btn.textContent='노출 제외';alert('오류: '+error.message);return;}
+  if(error){btn.disabled=false;btn.textContent='노출 제외';_showShareToast('오류: '+error.message);return;}
   selectedItems.forEach(el=>el.remove());
   window._adminBulkExitFn?.();
   btn.disabled=false;btn.textContent='노출 제외';
