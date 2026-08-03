@@ -1898,7 +1898,7 @@
     <div id="wonkok-toolbar" style="display:none">
       <label id="wonkok-select-all-row"><input type="checkbox" id="wonkok-select-all" checked>전체 선택</label>
       <span id="wonkok-count"></span>
-      <button id="wonkok-apply-btn">선택 항목 무관 처리</button>
+      <button id="wonkok-apply-btn">선택 항목 원곡 커버로 이동</button>
     </div>
     <div id="wonkok-list"></div>
   </div>
@@ -10402,11 +10402,23 @@ async function _wonkokScan(){
     // 겹쳐 statement_timeout에 걸림 — 그래서 서버에는 title 패턴매칭을 아예 안 시키고, id·title만 가볍게
     // (필터 없는 순수 PK 순서 스캔이라 빠름) 전량 페이지네이션으로 받아온 뒤 "원곡" 포함 여부는
     // 클라이언트에서 문자열 검사로 판정한다. 매칭된 소수의 id만 골라 나머지 컬럼을 추가로 조회.
+    // _sbFetchAll의 .range()(=OFFSET) 페이지네이션은 뒤 페이지로 갈수록 앞의 모든 행을 훑고 버려야 해서
+    // 테이블이 크면 갈수록 느려지다 결국 타임아웃날 수 있음 — "마지막으로 받은 id 다음부터"만 이어받는
+    // 키셋 페이지네이션으로 바꿔서 페이지 위치와 무관하게 매 요청이 항상 가볍게(PK 인덱스 seek) 유지되게 함.
     statusEl.textContent='제목 목록 조회 중… (시간이 좀 걸릴 수 있음)';
-    const{data:idTitleRows,error:idErr}=await _sbFetchAll(()=>sb.from(_YT_TABLE)
-      .select('id,title')
-      .order('id'));
-    if(idErr){statusEl.textContent='조회 실패: '+idErr.message;return;}
+    const idTitleRows=[];
+    let _wkLastId=null;
+    while(true){
+      let q=sb.from(_YT_TABLE).select('id,title').order('id').limit(1000);
+      if(_wkLastId!==null)q=q.gt('id',_wkLastId);
+      const{data,error:idErr}=await q;
+      if(idErr){statusEl.textContent=`조회 실패(${idTitleRows.length}개까지 받음): `+idErr.message;return;}
+      if(!data?.length)break;
+      idTitleRows.push(...data);
+      statusEl.textContent=`제목 목록 조회 중… (${idTitleRows.length}개)`;
+      if(data.length<1000)break;
+      _wkLastId=data[data.length-1].id;
+    }
     const hitIds=(idTitleRows||[]).filter(v=>(v.title||'').includes('원곡')).map(v=>v.id);
     if(!hitIds.length){
       _wonkokCandidates=[];
@@ -10418,7 +10430,7 @@ async function _wonkokScan(){
     const rows=[];
     for(let i=0;i<hitIds.length;i+=200){
       const{data,error}=await sb.from(_YT_TABLE)
-        .select('id,title,group_ko,members,thumb,content_flag')
+        .select('id,title,group_ko,members,thumb,content_flag,cover_of_members')
         .in('id',hitIds.slice(i,i+200));
       if(error){statusEl.textContent='조회 실패: '+error.message;return;}
       rows.push(...(data||[]));
@@ -10485,6 +10497,10 @@ document.getElementById('wonkok-select-all')?.addEventListener('change',e=>{
   document.querySelectorAll('#wonkok-list .wk-item input[type=checkbox]').forEach(cb=>{cb.checked=e.target.checked;});
   _updateWonkokCount();
 });
+// 후보로 잡힌 members는 "(원곡: ...)" 절 안에서만 이름이 매치돼 들어간 것 — 실제 출연이 아니라 원곡자
+// 표기이므로, members에서 빼고 cover_of_members로 옮겨야 "원곡:" 표시가 정확해진다(content_flag='무관'만
+// 찍으면 members가 그대로 남아 연결 카드 등에 유령처럼 계속 걸리는 문제가 있었음).
+const APPLY_BTN_LABEL='선택 항목 원곡 커버로 이동';
 document.getElementById('wonkok-apply-btn')?.addEventListener('click',async()=>{
   if(!sb)return;
   const btn=document.getElementById('wonkok-apply-btn');
@@ -10492,13 +10508,23 @@ document.getElementById('wonkok-apply-btn')?.addEventListener('click',async()=>{
   const ids=items.map(el=>el.dataset.vidId).filter(Boolean);
   if(!ids.length)return;
   btn.disabled=true;btn.textContent='처리 중…';
-  const{error}=await sb.from(_YT_TABLE).update({content_flag:'무관'}).in('id',ids);
-  if(error){btn.disabled=false;btn.textContent='선택 항목 무관 처리';alert('오류: '+error.message);return;}
   const idSet=new Set(ids);
+  const targets=_wonkokCandidates.filter(v=>idSet.has(v.id));
+  try{
+    for(const v of targets){
+      const newCover=[...new Set([...(v.cover_of_members||[]),...(v.members||[]).map(mko=>`${mko}(${v.group_ko})`)])];
+      const{error}=await sb.from(_YT_TABLE).update({members:[],cover_of_members:newCover}).eq('id',v.id);
+      if(error)throw error;
+    }
+  }catch(e){
+    btn.disabled=false;btn.textContent=APPLY_BTN_LABEL;
+    alert('오류: '+e.message);
+    return;
+  }
   _wonkokCandidates=_wonkokCandidates.filter(v=>!idSet.has(v.id));
   items.forEach(el=>el.remove());
-  document.getElementById('wonkok-status').textContent=`${ids.length}개 무관 처리 완료 — 남은 후보 ${_wonkokCandidates.length}개`;
-  btn.textContent='선택 항목 무관 처리';
+  document.getElementById('wonkok-status').textContent=`${ids.length}개 커버로 이동 완료 — 남은 후보 ${_wonkokCandidates.length}개`;
+  btn.textContent=APPLY_BTN_LABEL;
   _updateWonkokCount();
   if(!_wonkokCandidates.length)_renderWonkokList();
 });
