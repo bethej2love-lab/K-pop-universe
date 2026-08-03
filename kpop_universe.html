@@ -245,6 +245,7 @@
   .sp-tog.on{background:rgba(160,180,255,0.18);color:rgba(200,215,255,0.95);}
   .sp-sec{padding:9px 0;}
   .sp-sec-lbl{font-size:11px;color:#7090b8;margin-bottom:6px;}
+  .sp-subsec-lbl{font-size:10px;color:rgba(155,178,228,0.5);margin-top:10px;margin-bottom:3px;padding-bottom:3px;border-bottom:0.5px solid rgba(255,255,255,0.08);letter-spacing:.03em;}
   .sp-dual{position:relative;height:18px;margin-top:6px;}
   .sp-dual::before{content:'';position:absolute;top:50%;left:0;right:0;height:1.5px;
     background:rgba(255,255,255,0.13);transform:translateY(-50%);border-radius:1px;pointer-events:none;}
@@ -880,30 +881,48 @@
   .tv-sm .vid-edit-btn,#tv-big-wrap .vid-edit-btn{position:absolute;top:4px;left:4px;z-index:3;}
   #vid-tag-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.52);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:82;display:none;align-items:center;justify-content:center;}
   #vid-tag-overlay.open{display:flex;}
-  #hidden-vids-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.52);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:81;display:none;align-items:center;justify-content:center;}
-  #hidden-vids-overlay.open{display:flex;}
-  #hidden-vids-panel{width:min(480px,calc(100vw - 32px));max-height:82vh;display:flex;flex-direction:column;background:rgba(13,17,34,0.97);backdrop-filter:blur(40px);-webkit-backdrop-filter:blur(40px);border-radius:18px;box-shadow:0 16px 56px rgba(0,0,0,0.72);border:0.5px solid rgba(255,255,255,0.10);}
-  #hidden-vids-hd{display:flex;align-items:center;justify-content:space-between;padding:16px 18px 14px;border-bottom:0.5px solid rgba(255,255,255,0.08);flex-shrink:0;}
-  #hidden-vids-hd-title{font-size:13.5px;font-weight:600;color:rgba(220,230,255,0.9);}
-  #hidden-vids-close{background:none;border:none;color:rgba(180,195,230,0.6);font-size:18px;cursor:pointer;padding:0;line-height:1;}
-  #hidden-vids-search{margin:12px 16px 0;padding:7px 10px;border-radius:8px;background:rgba(255,255,255,0.05);border:0.5px solid rgba(255,255,255,0.10);color:#c8daf0;font-size:11.5px;font-family:inherit;outline:none;flex-shrink:0;transition:border-color .15s,background .15s;}
-  #hidden-vids-search::placeholder{color:rgba(150,175,215,0.38);}
-  #hidden-vids-search:focus{border-color:rgba(150,185,255,0.28);background:rgba(255,255,255,0.075);}
-  #hidden-vids-toolbar{display:flex;align-items:center;gap:10px;padding:10px 18px;border-bottom:0.5px solid rgba(255,255,255,0.08);flex-shrink:0;}
-  #hidden-vids-select-all-row{display:flex;align-items:center;gap:6px;font-size:11.5px;color:rgba(185,205,245,0.75);cursor:pointer;white-space:nowrap;}
-  #hidden-vids-count{flex:1;font-size:11.5px;color:rgba(155,178,228,0.55);}
-  #hidden-vids-apply-btn{background:rgba(100,180,120,0.16);border:1px solid rgba(100,180,120,0.32);border-radius:10px;color:rgba(145,220,165,0.9);font-size:11.5px;padding:6px 12px;cursor:pointer;font-family:inherit;white-space:nowrap;}
-  #hidden-vids-apply-btn:active{opacity:.7;}
-  #hidden-vids-apply-btn:disabled{opacity:.4;cursor:default;}
-  #hidden-vids-list{overflow-y:auto;padding:8px 0;}
-  .hv-item{display:flex;align-items:center;gap:10px;padding:8px 16px;transition:background .12s;}
-  .hv-item:hover{background:rgba(255,255,255,0.04);}
-  .hv-item input[type=checkbox]{flex-shrink:0;accent-color:rgba(100,180,120,0.9);}
-  .hv-thumb{width:80px;flex-shrink:0;aspect-ratio:16/9;object-fit:cover;border-radius:5px;background:rgba(255,255,255,0.06);}
-  .hv-info{flex:1;min-width:0;}
-  .hv-group{font-size:10.5px;color:rgba(155,178,228,0.55);margin-bottom:2px;}
-  .hv-title{font-size:11.5px;color:rgba(210,225,255,0.80);line-height:1.4;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;}
-  #hidden-vids-empty{font-size:12px;color:rgba(155,178,228,0.45);text-align:center;padding:32px 0;}
+  #vm-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.52);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:81;display:none;align-items:center;justify-content:center;}
+  #vm-overlay.open{display:flex;}
+  #vm-panel{width:min(560px,calc(100vw - 32px));max-height:82vh;display:flex;flex-direction:column;background:rgba(13,17,34,0.97);backdrop-filter:blur(40px);-webkit-backdrop-filter:blur(40px);border-radius:18px;box-shadow:0 16px 56px rgba(0,0,0,0.72);border:0.5px solid rgba(255,255,255,0.10);}
+  #vm-hd{display:flex;align-items:center;justify-content:space-between;padding:14px 18px 0;flex-shrink:0;}
+  #vm-hd-title{font-size:13.5px;font-weight:600;color:rgba(220,230,255,0.9);}
+  #vm-close{background:none;border:none;color:rgba(180,195,230,0.6);font-size:18px;cursor:pointer;padding:0;line-height:1;}
+  #vm-tabs{display:flex;gap:5px;padding:10px 16px 0;flex-shrink:0;}
+  .vm-tab{flex:1;padding:6px 0;border-radius:8px;border:0.5px solid rgba(255,255,255,0.10);background:rgba(255,255,255,0.04);color:rgba(170,190,225,0.6);font-size:11px;font-weight:600;font-family:inherit;cursor:pointer;transition:background .13s,color .13s,border-color .13s;}
+  .vm-tab:hover{color:rgba(210,225,255,0.85);}
+  .vm-tab.active{background:rgba(155,178,228,0.18);border-color:rgba(170,195,255,0.35);color:#c8ddff;}
+  #vm-search{margin:8px 16px 0;padding:7px 10px;border-radius:8px;background:rgba(255,255,255,0.05);border:0.5px solid rgba(255,255,255,0.10);color:#c8daf0;font-size:11.5px;font-family:inherit;outline:none;flex-shrink:0;width:calc(100% - 32px);box-sizing:border-box;transition:border-color .15s,background .15s;}
+  #vm-search::placeholder{color:rgba(150,175,215,0.38);}
+  #vm-search:focus{border-color:rgba(150,185,255,0.28);background:rgba(255,255,255,0.075);}
+  #vm-status{font-size:11.5px;color:rgba(155,178,228,0.7);padding:5px 18px 0;min-height:16px;flex-shrink:0;}
+  #vm-toolbar{display:flex;align-items:center;gap:10px;padding:8px 18px;border-bottom:0.5px solid rgba(255,255,255,0.08);flex-shrink:0;}
+  #vm-select-all-row{display:flex;align-items:center;gap:6px;font-size:11.5px;color:rgba(185,205,245,0.75);cursor:pointer;white-space:nowrap;}
+  #vm-count{flex:1;font-size:11.5px;color:rgba(155,178,228,0.55);}
+  #vm-apply-btn{border-radius:10px;font-size:11.5px;padding:6px 12px;cursor:pointer;font-family:inherit;white-space:nowrap;border:1px solid;background:rgba(100,180,120,0.16);border-color:rgba(100,180,120,0.32);color:rgba(145,220,165,0.9);}
+  #vm-apply-btn:active{opacity:.7;}
+  #vm-apply-btn:disabled{opacity:.4;cursor:default;}
+  #vm-list{overflow-y:auto;padding:8px 0;flex:1;min-height:0;}
+  #vm-empty{font-size:12px;color:rgba(155,178,228,0.45);text-align:center;padding:32px 0;}
+  .vm-item{display:flex;align-items:center;gap:9px;padding:7px 14px;transition:background .12s;position:relative;}
+  .vm-item:hover{background:rgba(255,255,255,0.035);}
+  .vm-item input[type=checkbox]{flex-shrink:0;}
+  .vm-thumb{width:72px;flex-shrink:0;aspect-ratio:16/9;object-fit:cover;border-radius:5px;background:rgba(255,255,255,0.06);}
+  .vm-info{flex:1;min-width:0;}
+  .vm-group{font-size:10.5px;color:rgba(155,178,228,0.55);margin-bottom:2px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;}
+  .vm-title{font-size:11.5px;color:rgba(210,225,255,0.80);line-height:1.35;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;}
+  .vm-actions{display:flex;align-items:center;gap:4px;flex-shrink:0;}
+  .vm-flag-btn{font-size:10px;padding:3px 7px;border-radius:7px;border:0.5px solid;cursor:pointer;font-family:inherit;white-space:nowrap;transition:opacity .12s;}
+  .vm-flag-btn:hover{opacity:.75;}
+  .vm-flag-normal{background:rgba(100,180,120,0.12);border-color:rgba(100,180,120,0.35);color:rgba(145,220,165,0.9);}
+  .vm-flag-nomem{background:rgba(255,160,80,0.12);border-color:rgba(255,160,80,0.35);color:rgba(255,190,120,0.9);}
+  .vm-flag-hidden{background:rgba(220,90,90,0.12);border-color:rgba(220,90,90,0.35);color:rgba(240,150,150,0.9);}
+  .vm-flag-mini{position:absolute;right:36px;top:50%;transform:translateY(-50%);background:rgba(13,17,34,0.98);border:0.5px solid rgba(255,255,255,0.12);border-radius:9px;padding:5px;display:flex;flex-direction:column;gap:3px;z-index:10;box-shadow:0 4px 16px rgba(0,0,0,0.5);}
+  #vm-ch-inner{display:flex;flex-direction:column;flex:1;min-height:0;overflow:hidden;}
+  #vm-ch-tabs{display:flex;gap:5px;padding:8px 16px 0;flex-shrink:0;}
+  .vm-ch-tab{flex:1;padding:6px 0;border-radius:8px;border:0.5px solid rgba(255,255,255,0.10);background:rgba(255,255,255,0.04);color:rgba(170,190,225,0.6);font-size:11px;font-weight:600;font-family:inherit;cursor:pointer;transition:background .13s,color .13s,border-color .13s;}
+  .vm-ch-tab.active{background:rgba(155,178,228,0.18);border-color:rgba(170,195,255,0.35);color:#c8ddff;}
+  #vm-ch-count{font-size:10px;color:rgba(140,165,210,0.5);padding:5px 16px 0;}
+  #vm-ch-list{overflow-y:auto;padding:8px 0;flex:1;min-height:0;}
   #wonkok-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.52);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:81;display:none;align-items:center;justify-content:center;}
   #wonkok-overlay.open{display:flex;}
   #wonkok-panel{width:min(520px,calc(100vw - 32px));max-height:82vh;display:flex;flex-direction:column;background:rgba(13,17,34,0.97);backdrop-filter:blur(40px);-webkit-backdrop-filter:blur(40px);border-radius:18px;box-shadow:0 16px 56px rgba(0,0,0,0.72);border:0.5px solid rgba(255,255,255,0.10);}
@@ -979,46 +998,6 @@
   #hnn-apply-btn{background:rgba(255,150,150,0.16);border:1px solid rgba(255,150,150,0.32);border-radius:10px;color:#ffb8b8;font-size:11.5px;padding:6px 12px;cursor:pointer;font-family:inherit;white-space:nowrap;}
   #hnn-apply-btn:active{opacity:.7;}
   #hnn-apply-btn:disabled{opacity:.4;cursor:default;}
-  #avs-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.52);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:81;display:none;align-items:center;justify-content:center;}
-  #avs-overlay.open{display:flex;}
-  #avs-panel{width:min(520px,calc(100vw - 32px));max-height:82vh;display:flex;flex-direction:column;background:rgba(13,17,34,0.97);backdrop-filter:blur(40px);-webkit-backdrop-filter:blur(40px);border-radius:18px;box-shadow:0 16px 56px rgba(0,0,0,0.72);border:0.5px solid rgba(255,255,255,0.10);}
-  #avs-hd{display:flex;align-items:center;justify-content:space-between;padding:16px 18px 10px;flex-shrink:0;}
-  #avs-hd-title{font-size:13.5px;font-weight:600;color:rgba(220,230,255,0.9);}
-  #avs-close{background:none;border:none;color:rgba(180,195,230,0.6);font-size:18px;cursor:pointer;padding:0;line-height:1;}
-  #avs-desc{font-size:11px;color:rgba(155,178,228,0.55);line-height:1.5;padding:0 18px 12px;flex-shrink:0;}
-  #avs-search{margin:0 18px 10px;padding:7px 10px;border-radius:8px;background:rgba(255,255,255,0.05);border:0.5px solid rgba(255,255,255,0.10);color:#c8daf0;font-size:11.5px;font-family:inherit;outline:none;flex-shrink:0;transition:border-color .15s,background .15s;}
-  #avs-search::placeholder{color:rgba(150,175,215,0.38);}
-  #avs-search:focus{border-color:rgba(150,185,255,0.28);background:rgba(255,255,255,0.075);}
-  #avs-status{font-size:11.5px;color:rgba(155,178,228,0.7);padding:0 18px 8px;min-height:14px;flex-shrink:0;}
-  #avs-list{overflow-y:auto;padding:8px 0;}
-  #avs-empty{font-size:12px;color:rgba(155,178,228,0.45);text-align:center;padding:32px 0;}
-  #nomem-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.52);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:81;display:none;align-items:center;justify-content:center;}
-  #nomem-overlay.open{display:flex;}
-  #nomem-panel{width:min(520px,calc(100vw - 32px));max-height:82vh;display:flex;flex-direction:column;background:rgba(13,17,34,0.97);backdrop-filter:blur(40px);-webkit-backdrop-filter:blur(40px);border-radius:18px;box-shadow:0 16px 56px rgba(0,0,0,0.72);border:0.5px solid rgba(255,255,255,0.10);}
-  #nomem-hd{display:flex;align-items:center;justify-content:space-between;padding:16px 18px 10px;flex-shrink:0;}
-  #nomem-hd-title{font-size:13.5px;font-weight:600;color:rgba(220,230,255,0.9);}
-  #nomem-close{background:none;border:none;color:rgba(180,195,230,0.6);font-size:18px;cursor:pointer;padding:0;line-height:1;}
-  #nomem-desc{font-size:11px;color:rgba(155,178,228,0.55);line-height:1.5;padding:0 18px 12px;flex-shrink:0;}
-  #nomem-search{margin:0 18px 10px;padding:7px 10px;border-radius:8px;background:rgba(255,255,255,0.05);border:0.5px solid rgba(255,255,255,0.10);color:#c8daf0;font-size:11.5px;font-family:inherit;outline:none;flex-shrink:0;transition:border-color .15s,background .15s;}
-  #nomem-search::placeholder{color:rgba(150,175,215,0.38);}
-  #nomem-search:focus{border-color:rgba(150,185,255,0.28);background:rgba(255,255,255,0.075);}
-  #nomem-status{font-size:11.5px;color:rgba(155,178,228,0.7);padding:0 18px 8px;min-height:14px;flex-shrink:0;}
-  #nomem-toolbar{display:flex;align-items:center;gap:10px;padding:10px 18px;border-bottom:0.5px solid rgba(255,255,255,0.08);flex-shrink:0;}
-  #nomem-select-all-row{display:flex;align-items:center;gap:6px;font-size:11.5px;color:rgba(185,205,245,0.75);cursor:pointer;white-space:nowrap;}
-  #nomem-count{flex:1;font-size:11.5px;color:rgba(155,178,228,0.55);}
-  #nomem-apply-btn{background:rgba(255,120,120,0.16);border:1px solid rgba(255,120,120,0.32);border-radius:10px;color:#ffb0b0;font-size:11.5px;padding:6px 12px;cursor:pointer;font-family:inherit;white-space:nowrap;}
-  #nomem-apply-btn:active{opacity:.7;}
-  #nomem-apply-btn:disabled{opacity:.4;cursor:default;}
-  #nomem-list{overflow-y:auto;padding:8px 0;}
-  .nm-item{display:flex;align-items:center;gap:10px;padding:8px 16px;transition:background .12s;}
-  .nm-item:hover{background:rgba(255,255,255,0.04);}
-  .nm-item input[type=checkbox]{flex-shrink:0;accent-color:rgba(255,120,120,0.9);}
-  .nm-thumb{width:80px;flex-shrink:0;aspect-ratio:16/9;object-fit:cover;border-radius:5px;background:rgba(255,255,255,0.06);}
-  .nm-info{flex:1;min-width:0;}
-  .nm-group{font-size:10.5px;color:rgba(155,178,228,0.55);margin-bottom:2px;}
-  .nm-group b{color:rgba(255,150,150,0.85);font-weight:600;}
-  .nm-title{font-size:11.5px;color:rgba(210,225,255,0.80);line-height:1.4;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;}
-  #nomem-empty{font-size:12px;color:rgba(155,178,228,0.45);text-align:center;padding:32px 0;}
   /* z-index:50 — #yt-lightbox(67)보다 반드시 낮아야 함: 이 목록 안에서 영상을 탭하면 라이트박스가
      이 오버레이 위로 열려야 하는데(#feed-list-overlay는 admin 목록들과 달리 라이트박스를 직접 여는
      용도), 다른 관리자 목록 오버레이(81~82)와 같은 값을 쓰면 라이트박스가 뒤로 숨는 사고가 남 */
@@ -1037,28 +1016,12 @@
   #feed-list-grid.gc-ch-grid{grid-template-columns:repeat(3,1fr);gap:4px;align-items:start;}
   #feed-list-grid .gc-ch-item{border-radius:4px;}
   #feed-list-grid .tv-sm-title{display:none;}
-  #ext-channels-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.52);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:81;display:none;align-items:center;justify-content:center;}
-  #ext-channels-overlay.open{display:flex;}
-  #ext-channels-panel{width:min(420px,calc(100vw - 32px));max-height:82vh;display:flex;flex-direction:column;background:rgba(13,17,34,0.97);backdrop-filter:blur(40px);-webkit-backdrop-filter:blur(40px);border-radius:18px;box-shadow:0 16px 56px rgba(0,0,0,0.72);border:0.5px solid rgba(255,255,255,0.10);}
-  #ext-channels-hd{display:flex;align-items:center;justify-content:space-between;padding:16px 18px 14px;border-bottom:0.5px solid rgba(255,255,255,0.08);flex-shrink:0;}
-  #ext-channels-hd-title{font-size:13.5px;font-weight:600;color:rgba(220,230,255,0.9);}
-  #ext-channels-close{background:none;border:none;color:rgba(180,195,230,0.6);font-size:18px;cursor:pointer;padding:0;line-height:1;}
-  #ext-channels-tabs{display:flex;gap:6px;padding:12px 16px 0;flex-shrink:0;}
-  .ec-tab{flex:1;padding:7px 0;border-radius:8px;border:0.5px solid rgba(255,255,255,0.10);background:rgba(255,255,255,0.04);color:rgba(170,190,225,0.6);font-size:11.5px;font-weight:600;font-family:inherit;cursor:pointer;transition:background .13s,color .13s,border-color .13s;}
-  .ec-tab:hover{color:rgba(210,225,255,0.85);}
-  .ec-tab.active{background:rgba(155,178,228,0.18);border-color:rgba(170,195,255,0.35);color:#c8ddff;}
-  #ext-channels-search{margin:10px 16px 0;padding:7px 10px;border-radius:8px;background:rgba(255,255,255,0.05);border:0.5px solid rgba(255,255,255,0.10);color:#c8daf0;font-size:11.5px;font-family:inherit;outline:none;flex-shrink:0;transition:border-color .15s,background .15s;}
-  #ext-channels-search::placeholder{color:rgba(150,175,215,0.38);}
-  #ext-channels-search:focus{border-color:rgba(150,185,255,0.28);background:rgba(255,255,255,0.075);}
-  #ext-channels-list{overflow-y:auto;padding:8px 0;}
-  #ext-channels-count{font-size:10px;color:rgba(140,165,210,0.5);padding:8px 16px 0;}
   .ec-item{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:7px 16px;transition:background .12s;}
   .ec-item:hover{background:rgba(255,255,255,0.04);}
   .ec-name{font-size:12px;color:rgba(210,225,255,0.85);}
   .ec-handle{font-size:10.5px;color:rgba(155,178,228,0.5);}
   .ec-link{flex-shrink:0;font-size:11px;color:rgba(170,210,255,0.75);text-decoration:none;padding:3px 9px;border-radius:12px;border:0.5px solid rgba(170,210,255,0.25);background:rgba(170,210,255,0.06);}
   .ec-link:hover{background:rgba(170,210,255,0.14);}
-  #ext-channels-empty{font-size:12px;color:rgba(155,178,228,0.45);text-align:center;padding:32px 0;}
   #vid-tag-panel{width:min(320px,calc(100vw - 40px));max-height:82vh;overflow-y:auto;background:rgba(13,17,34,0.97);backdrop-filter:blur(40px) saturate(180%);-webkit-backdrop-filter:blur(40px) saturate(180%);border-radius:18px;box-shadow:0 16px 56px rgba(0,0,0,0.72);border:0.5px solid rgba(255,255,255,0.10);padding:20px;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
   #vid-tag-vidtitle{font-size:11px;color:rgba(160,182,222,0.65);margin:6px 0 14px;line-height:1.4;}
   #vid-tag-members{display:flex;flex-wrap:wrap;gap:7px;}
@@ -1868,59 +1831,79 @@
     <button class="sp-reset" id="sp-reset" data-i18n="reset">↺ 초기화</button>
   </div>
   <div class="sp-sec" id="sp-yt-sec" style="display:none">
-    <div class="sp-sec-lbl">YouTube 채널 영상</div>
+    <div class="sp-sec-lbl">YouTube 영상 관리</div>
+
+    <div class="sp-subsec-lbl">동기화</div>
     <input type="text" class="sp-yt-key" id="sp-yt-key" placeholder="API 키 (AIzaSy...)" autocomplete="off" spellcheck="false">
     <button class="sp-yt-sync" id="sp-yt-sync">전체 동기화 (공식 + 외부 채널)</button>
-    <button class="sp-yt-sync" id="sp-yt-sweep-banned" style="margin-top:4px;opacity:.8;">밴 인물 언급 영상 노출 제외 정리</button>
-    <button class="sp-yt-sync" id="sp-hlfix-btn" style="margin-top:4px;opacity:.8;">하이라이트 그룹 오염 재검증(전체)</button>
-    <button class="sp-yt-sync" id="sp-collabfix-btn" style="margin-top:4px;opacity:.8;">콜라보 오태깅 재검증(전체)</button>
-    <button class="sp-yt-sync" id="sp-membersfix-btn" style="margin-top:4px;opacity:.8;">자체 멤버 태깅 재검증(전체)</button>
-    <button class="sp-yt-sync" id="sp-hnn-btn" style="margin-top:4px;opacity:.8;">동명이인/흔한단어 오염 의심 스캔</button>
-    <button class="sp-yt-sync" id="sp-yt-autotag" style="margin-top:4px;opacity:.8;">멤버+콜라보 자동 태깅 (미태깅분)</button>
-    <button class="sp-yt-sync" id="sp-hidden-vids-btn" style="margin-top:4px;opacity:.8;">노출 제외 영상 목록</button>
-    <button class="sp-yt-sync" id="sp-ext-channels-btn" style="margin-top:4px;opacity:.8;">동기화 채널 목록</button>
-    <button class="sp-yt-sync" id="sp-wonkok-btn" style="margin-top:4px;opacity:.8;">원곡: 오태깅 의심 목록</button>
-    <button class="sp-yt-sync" id="sp-cover-fix-btn" style="margin-top:4px;opacity:.8;">원곡 with→cover 오태깅 이동</button>
-    <button class="sp-yt-sync" id="sp-avs-btn" style="margin-top:4px;opacity:.8;">전체 영상 검색</button>
-    <button class="sp-yt-sync" id="sp-nomem-btn" style="margin-top:4px;opacity:.8;">그룹 멤버 안 나옴(무관) 목록</button>
-    <button class="sp-yt-sync" id="sp-hitgs-everglow-fix-btn" style="margin-top:4px;opacity:.8;">힛지스 이유 → 에버글로우 오분류 수정 (일회용)</button>
-    <button class="sp-yt-sync" id="sp-everglow-junk-fix-btn" style="margin-top:4px;opacity:.8;">에버글로우 무관 영상(외부 예능 등) 삭제 (일회용)</button>
-    <div style="margin-top:8px;padding-top:8px;border-top:0.5px solid rgba(255,255,255,0.1)">
-      <div style="font-size:10px;color:rgba(155,178,228,0.5);margin-bottom:2px">과거 영상 백필 (search API, 쿼터 많이 씀)</div>
+    <button class="sp-yt-sync" id="sp-vm-btn" style="margin-top:4px;opacity:.8;">영상 관리 패널</button>
+    <div style="margin-top:6px;padding-top:6px;border-top:0.5px solid rgba(255,255,255,0.07)">
+      <div style="font-size:10px;color:rgba(155,178,228,0.4);margin-bottom:2px">과거 영상 백필 (search API, 쿼터 많이 씀)</div>
       <select class="sp-yt-key" id="sp-yt-backfill-ch"></select>
       <div style="display:flex;gap:4px;margin-top:5px;">
         <input type="number" class="sp-yt-key" id="sp-yt-backfill-from" placeholder="시작연도 예:2009" style="margin-top:0;flex:1;">
         <input type="number" class="sp-yt-key" id="sp-yt-backfill-to" placeholder="끝연도 예:2013" style="margin-top:0;flex:1;">
       </div>
-      <input type="text" class="sp-yt-key" id="sp-yt-backfill-query" placeholder="검색어(그룹명, 비우면 기존처럼 채널 전체)">
+      <input type="text" class="sp-yt-key" id="sp-yt-backfill-query" placeholder="검색어(그룹명, 비우면 채널 전체)">
       <button class="sp-yt-sync" id="sp-yt-backfill-btn" style="opacity:.8;">이 채널만 백필 실행</button>
-      <button class="sp-yt-sync" id="sp-yt-backfill-priority-btn" style="opacity:.8;">음악방송 6개 채널 순서대로 백필 (M2·엠넷·뮤직뱅크·쇼음악중심·인기가요·쇼챔피언)</button>
+      <button class="sp-yt-sync" id="sp-yt-backfill-priority-btn" style="opacity:.8;">음악방송 6개 채널 순서대로 백필</button>
     </div>
-    <div style="margin-top:8px;padding-top:8px;border-top:0.5px solid rgba(255,255,255,0.1)">
-      <div style="font-size:10px;color:rgba(155,178,228,0.5);margin-bottom:2px">영상 URL로 직접 추가</div>
+    <div style="margin-top:6px;padding-top:6px;border-top:0.5px solid rgba(255,255,255,0.07)">
+      <div style="font-size:10px;color:rgba(155,178,228,0.4);margin-bottom:2px">영상 URL로 직접 추가</div>
       <input type="text" class="sp-yt-key" id="sp-yt-manual-url" placeholder="유튜브 영상 URL">
       <input type="text" class="sp-yt-key" id="sp-yt-manual-group" placeholder="그룹명(자동인식 안 되면 입력, 예: 티아라)">
       <input type="text" class="sp-yt-key" id="sp-yt-manual-members" placeholder="멤버명(자동인식 안 되면 입력, 쉼표로 여러 명, 예: 지연,소연)">
       <button class="sp-yt-sync" id="sp-yt-manual-add-btn" style="opacity:.8;">이 영상 추가</button>
-      <textarea class="sp-yt-key" id="sp-yt-manual-urls-batch" rows="4" placeholder="여러 개 한 번에: 영상 URL을 한 줄에 하나씩 붙여넣기 (위 그룹명/멤버명 칸을 채우면 전부 동일하게 적용됨)" style="resize:vertical;font-family:inherit;margin-top:6px;"></textarea>
+      <textarea class="sp-yt-key" id="sp-yt-manual-urls-batch" rows="4" placeholder="여러 개 한 번에: URL을 한 줄에 하나씩" style="resize:vertical;font-family:inherit;margin-top:6px;"></textarea>
       <button class="sp-yt-sync" id="sp-yt-manual-batch-add-btn" style="opacity:.8;">여러 개 한 번에 추가</button>
     </div>
+
+    <div class="sp-subsec-lbl" style="margin-top:10px;">검수큐</div>
+    <button class="sp-yt-sync" id="sp-hnn-btn" style="opacity:.8;">동명이인/흔한단어 오염 의심 스캔</button>
+    <button class="sp-yt-sync" id="sp-hlfix-btn" style="margin-top:4px;opacity:.8;">strictSync 그룹 오염 의심 검수</button>
+    <button class="sp-yt-sync" id="sp-wonkok-btn" style="margin-top:4px;opacity:.8;">원곡 오태깅 의심 목록</button>
+    <button class="sp-yt-sync" id="sp-cover-fix-btn" style="margin-top:4px;opacity:.8;">원곡 with→cover 오태깅 이동</button>
+    <button class="sp-yt-sync" id="sp-hitgs-everglow-fix-btn" style="margin-top:4px;opacity:.6;font-size:10px;">힛지스/에버글로우 오분류 수정 (일회용)</button>
+    <button class="sp-yt-sync" id="sp-everglow-junk-fix-btn" style="margin-top:2px;opacity:.6;font-size:10px;">에버글로우 무관 영상 삭제 (일회용)</button>
+
+    <div class="sp-subsec-lbl" style="margin-top:10px;">데이터 정합성</div>
+    <button class="sp-yt-sync" id="sp-yt-autotag" style="opacity:.8;">멤버+콜라보 자동 태깅 (미태깅분)</button>
+    <button class="sp-yt-sync" id="sp-membersfix-btn" style="margin-top:4px;opacity:.8;">자체 멤버 태깅 재검증(전체)</button>
+    <button class="sp-yt-sync" id="sp-collabfix-btn" style="margin-top:4px;opacity:.8;">콜라보 오태깅 재검증(전체)</button>
+    <button class="sp-yt-sync" id="sp-yt-sweep-banned" style="margin-top:4px;opacity:.8;">밴 인물 언급 영상 노출 제외 정리</button>
+
     <div class="sp-yt-prog" id="sp-yt-prog"></div>
   </div>
 </div>
-<div id="ext-channels-overlay">
-  <div id="ext-channels-panel">
-    <div id="ext-channels-hd">
-      <span id="ext-channels-hd-title">동기화 채널 목록</span>
-      <button id="ext-channels-close">✕</button>
+<div id="vm-overlay">
+  <div id="vm-panel">
+    <div id="vm-hd">
+      <span id="vm-hd-title">영상 관리</span>
+      <button id="vm-close">✕</button>
     </div>
-    <div id="ext-channels-tabs">
-      <button class="ec-tab active" id="ec-tab-official" data-tab="official">그룹/멤버 공식</button>
-      <button class="ec-tab" id="ec-tab-ext" data-tab="ext">그외</button>
+    <div id="vm-tabs">
+      <button class="vm-tab active" data-tab="all">전체</button>
+      <button class="vm-tab" data-tab="nomem">무관</button>
+      <button class="vm-tab" data-tab="hidden">노출 제외</button>
+      <button class="vm-tab" data-tab="channels">동기화 채널</button>
+      <button class="vm-tab" data-tab="ss">검수</button>
     </div>
-    <input type="text" id="ext-channels-search" placeholder="채널명 검색…" autocomplete="off" spellcheck="false">
-    <div id="ext-channels-count"></div>
-    <div id="ext-channels-list"></div>
+    <input type="text" id="vm-search" placeholder="제목·그룹 검색…" autocomplete="off" spellcheck="false">
+    <div id="vm-status"></div>
+    <div id="vm-toolbar" style="display:none">
+      <label id="vm-select-all-row"><input type="checkbox" id="vm-select-all">전체 선택</label>
+      <span id="vm-count"></span>
+      <button id="vm-apply-btn"></button>
+    </div>
+    <div id="vm-list"></div>
+    <div id="vm-ch-inner" style="display:none">
+      <div id="vm-ch-tabs">
+        <button class="vm-ch-tab active" data-tab="official">그룹/멤버 공식</button>
+        <button class="vm-ch-tab" data-tab="ext">그외</button>
+      </div>
+      <div id="vm-ch-count"></div>
+      <div id="vm-ch-list"></div>
+    </div>
   </div>
 </div>
 <div id="admin-bulk-bar" class="hidden">
@@ -1928,21 +1911,6 @@
   <button id="admin-bulk-edit-btn">편집</button>
   <button id="admin-bulk-hide-btn">노출 제외</button>
   <button id="admin-bulk-cancel-btn">취소</button>
-</div>
-<div id="hidden-vids-overlay">
-  <div id="hidden-vids-panel">
-    <div id="hidden-vids-hd">
-      <span id="hidden-vids-hd-title">노출 제외 영상</span>
-      <button id="hidden-vids-close">✕</button>
-    </div>
-    <input type="text" id="hidden-vids-search" placeholder="제목·그룹 검색…" autocomplete="off" spellcheck="false">
-    <div id="hidden-vids-toolbar" style="display:none">
-      <label id="hidden-vids-select-all-row"><input type="checkbox" id="hidden-vids-select-all">전체 선택</label>
-      <span id="hidden-vids-count"></span>
-      <button id="hidden-vids-apply-btn">선택 항목 노출 복원</button>
-    </div>
-    <div id="hidden-vids-list"></div>
-  </div>
 </div>
 <div id="wonkok-overlay">
   <div id="wonkok-panel">
@@ -1993,35 +1961,6 @@
       <button id="hnn-apply-btn">선택 항목 화이트리스트 추가</button>
     </div>
     <div id="hnn-list"></div>
-  </div>
-</div>
-<div id="avs-overlay">
-  <div id="avs-panel">
-    <div id="avs-hd">
-      <span id="avs-hd-title">전체 영상 검색</span>
-      <button id="avs-close">✕</button>
-    </div>
-    <div id="avs-desc">그룹/멤버 무관하게 전체 영상 제목을 검색. 3글자 이상은 서버에서 바로 검색되고, 1~2글자는 최초 1회만 전체 목록을 받아와(느릴 수 있음, 새로고침 전까지 캐시됨) 그 이후로는 브라우저에서 즉시 검색. 최대 100개까지 표시.</div>
-    <input type="text" id="avs-search" placeholder="영상 제목 검색… (1글자부터)" autocomplete="off" spellcheck="false">
-    <div id="avs-status"></div>
-    <div id="avs-list"></div>
-  </div>
-</div>
-<div id="nomem-overlay">
-  <div id="nomem-panel">
-    <div id="nomem-hd">
-      <span id="nomem-hd-title">그룹 멤버 안 나옴(무관) 처리 목록</span>
-      <button id="nomem-close">✕</button>
-    </div>
-    <div id="nomem-desc">content_flag가 '무관'으로 표시된 영상 전체 목록. 원래는 "이 그룹 채널 콘텐츠인데 멤버 자동인식만 틀림" 용도인데, 완전히 다른 그룹 소속 영상을 억지로 여기로 우회 처리한 경우가 섞여있을 수 있음 — 그런 건 ✎ 눌러서 "소속 그룹"을 실제 그룹으로 바로 옮겨줄 것.</div>
-    <input type="text" id="nomem-search" placeholder="제목·그룹 검색…" autocomplete="off" spellcheck="false">
-    <div id="nomem-status"></div>
-    <div id="nomem-toolbar" style="display:none">
-      <label id="nomem-select-all-row"><input type="checkbox" id="nomem-select-all">전체 선택</label>
-      <span id="nomem-count"></span>
-      <button id="nomem-apply-btn">선택 항목 무관 해제</button>
-    </div>
-    <div id="nomem-list"></div>
   </div>
 </div>
 <div id="feed-list-overlay">
@@ -2462,6 +2401,7 @@ function _labelGlowColor(r,g,b){
 
 const groupLabels=[];
 let ARTISTS=[],GROUPS={};
+let _STRICT_SYNC_GROUPS=new Set(); // groups.json의 strictSync:true 그룹 — 로드 후 채워짐
 const bubbleMeshes=[],regularArtists=[],sparkleArtists=[];
 let regularPts=null,sparklePts=null;
 // 마크(NCT 127) 파일럿: 비활동 상태를 "행성 밖에 떠 있다가 멤버 토글 시 안으로 날아들어옴"으로 표현
@@ -2722,6 +2662,7 @@ async function buildUniverse(){
   await initSupabaseSync(); // 로그인 사용자의 서버 데이터가 첫 렌더 전에 로컬을 덮어써야 하므로 JSON fetch와 병렬로 먼저 완료 대기
   const [grpData,artData,connData]=await _jsonPromise;
   GROUPS=grpData;ARTISTS=artData;_rawConnData=connData;
+  _STRICT_SYNC_GROUPS=new Set(Object.entries(GROUPS).filter(([,v])=>v?.strictSync).map(([ko])=>ko));
   applyLang();
   renderFavList();_buildAnniversaryList();
   renderScrapList();
@@ -11012,7 +10953,6 @@ document.getElementById('sp-cover-fix-btn')?.addEventListener('click',()=>{docum
 // 고치며 확인한 방식(필터 없는 순수 PK 순서 스캔은 빠름)을 그대로 재사용. 캐시는 페이지를 새로고침하기
 // 전까지 유지(패널을 여러 번 열어도 매번 재조회하지 않음).
 let _avsAllRows=null;
-let _avsSearchTimer=null;
 async function _avsEnsureCache(){
   if(_avsAllRows)return _avsAllRows;
   const statusEl=document.getElementById('avs-status');
@@ -11032,176 +10972,266 @@ async function _avsEnsureCache(){
   _avsAllRows=rows;
   return rows;
 }
-function _avsRenderList(rows){
-  const listEl=document.getElementById('avs-list');
-  listEl.innerHTML='';
-  if(!rows.length){
-    listEl.innerHTML='<div id="avs-empty">검색 결과가 없어요</div>';
-    return;
-  }
-  rows.forEach(v=>{
-    const item=document.createElement('div');item.className='wk-item';item.dataset.vidId=v.id;
-    const img=document.createElement('img');img.className='wk-thumb';img.src=v.thumb||'';img.loading='lazy';
-    const info=document.createElement('div');info.className='wk-info';
-    const grp=document.createElement('div');grp.className='wk-group';grp.textContent=v.group_ko||'';
-    const ttl=document.createElement('div');ttl.className='wk-title';ttl.textContent=v.title||'';
-    info.appendChild(grp);info.appendChild(ttl);
-    const editBtn=document.createElement('button');editBtn.className='vid-edit-btn';editBtn.type='button';editBtn.textContent='✎';
-    editBtn.title='직접 재태깅';
-    editBtn.addEventListener('click',e=>{e.stopPropagation();_openVidTagModal({id:v.id,title:v.title},v.group_ko);});
-    item.appendChild(img);item.appendChild(info);item.appendChild(editBtn);
-    listEl.appendChild(item);
-  });
-}
-async function _avsSearch(q){
-  if(!sb)return;
-  const statusEl=document.getElementById('avs-status');
-  q=(q||'').trim();
-  if(!q){document.getElementById('avs-list').innerHTML='';statusEl.textContent='';return;}
-  try{
-    let hits;
-    if(q.length>=3){
-      statusEl.textContent='조회 중…';
-      const{data,error}=await sb.from(_YT_TABLE)
-        .select('id,title,group_ko,thumb,category')
-        .ilike('title',`%${q}%`)
-        .order('id')
-        .limit(100);
-      if(error){statusEl.textContent='조회 실패: '+error.message;return;}
-      hits=data||[];
-    }else{
-      statusEl.textContent='전체 목록 준비 중… (1~2글자 검색은 최초 1회만 느림)';
-      const all=await _avsEnsureCache();
-      hits=all.filter(v=>(v.title||'').includes(q)).slice(0,100);
-    }
-    _avsRenderList(hits);
-    statusEl.textContent=`${hits.length}개 표시${hits.length>=100?' (최대 100개)':''}`;
-  }catch(e){
-    statusEl.textContent='오류: '+e.message;
-  }
-}
-document.getElementById('avs-search')?.addEventListener('input',()=>{
-  clearTimeout(_avsSearchTimer);
-  const val=document.getElementById('avs-search').value;
-  _avsSearchTimer=setTimeout(()=>_avsSearch(val),300);
-});
-document.getElementById('avs-overlay')?.addEventListener('click',e=>{if(e.target===e.currentTarget)e.currentTarget.classList.remove('open');});
-document.getElementById('avs-close')?.addEventListener('click',()=>document.getElementById('avs-overlay').classList.remove('open'));
-document.getElementById('sp-avs-btn')?.addEventListener('click',()=>{
-  document.getElementById('avs-overlay').classList.add('open');
-  document.getElementById('avs-search').value='';
-  document.getElementById('avs-list').innerHTML='';
-  document.getElementById('avs-status').textContent='';
-  document.getElementById('avs-search').focus();
-});
 
-// ── "그룹 멤버 안 나옴(무관)" 목록 ── content_flag='무관'인 영상 전체를 그냥 나열해서 검토하게 함.
-// 원래 취지(같은 그룹 채널인데 멤버 자동인식만 틀림)를 벗어나, 완전히 다른 그룹 영상을 억지로 이
-// 플래그로 우회 처리한 경우를 찾아내기 위한 목록 — 각 항목의 ✎로 편집 모달을 열면 이제 "소속 그룹"
-// 필드로 바로 옮길 수 있음(원래 회피용으로 쓰던 조합 대신 근본적으로 고치는 용도).
-let _nomemRows=[];
-let _nomemLoading=false;
-let _nomemSearchGen=0;
-async function _nomemLoad(searchTerm){
-  if(!sb)return;
-  const myGen=++_nomemSearchGen;
-  _nomemLoading=true;
-  const term=(searchTerm||'').trim();
-  const statusEl=document.getElementById('nomem-status');
-  document.getElementById('nomem-toolbar').style.display='none';
-  document.getElementById('nomem-list').innerHTML='';
-  try{
-    statusEl.textContent='조회 중…';
-    let q=sb.from(_YT_TABLE).select('id,title,group_ko,members,with_members,thumb').eq('content_flag','무관');
-    if(term)q=q.or(`title.ilike.%${term}%,group_ko.ilike.%${term}%`);
-    const{data:rows,error}=await _sbFetchAll(()=>q.order('id'));
-    if(myGen!==_nomemSearchGen)return; // 그 사이 검색어가 또 바뀜 — 이 결과는 버림
-    if(error){statusEl.textContent='조회 실패: '+error.message;return;}
-    _nomemRows=rows||[];
-    statusEl.textContent=term?`검색 결과 ${_nomemRows.length}개`:`총 ${_nomemRows.length}개`;
-    _renderNomemList();
-  }catch(e){
-    if(myGen!==_nomemSearchGen)return;
-    statusEl.textContent='오류: '+e.message;
-  }finally{
-    if(myGen===_nomemSearchGen)_nomemLoading=false;
+// ── 영상 관리 통합 패널 ──
+let _vmTab='all';       // 'all' | 'nomem' | 'hidden' | 'channels'
+let _vmChTab='official'; // 'official' | 'ext'
+let _vmRows=[];
+let _vmSearchGen=0;
+let _vmSearchTimer=null;
+
+function _vmOpen(tab){
+  _vmTab=tab||'all';
+  document.querySelectorAll('.vm-tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===_vmTab));
+  document.getElementById('vm-search').value='';
+  document.getElementById('vm-overlay').classList.add('open');
+  _vmApplyTab();
+}
+function _vmApplyTab(){
+  const isCh=_vmTab==='channels';
+  document.getElementById('vm-list').style.display=isCh?'none':'';
+  document.getElementById('vm-ch-inner').style.display=isCh?'flex':'none';
+  // 검수 탭은 검색 불필요(그룹 필터로만 동작)
+  document.getElementById('vm-search').style.display=(isCh||_vmTab==='ss')?'none':'';
+  document.getElementById('vm-toolbar').style.display='none';
+  document.getElementById('vm-status').textContent='';
+  if(isCh){
+    _vmChTab='official';
+    document.querySelectorAll('.vm-ch-tab').forEach(t=>t.classList.toggle('active',t.dataset.tab==='official'));
+    _vmRenderChannels('');
+  }else{
+    _vmLoad();
   }
 }
-let _nomemSearchTimer=null;
-document.getElementById('nomem-search')?.addEventListener('input',e=>{
-  clearTimeout(_nomemSearchTimer);
-  const val=e.target.value;
-  _nomemSearchTimer=setTimeout(()=>_nomemLoad(val),350);
-});
-function _renderNomemList(){
-  const listEl=document.getElementById('nomem-list');
-  const toolbarEl=document.getElementById('nomem-toolbar');
+async function _vmLoad(searchTerm){
+  if(!sb)return;
+  const tab=_vmTab;
+  const myGen=++_vmSearchGen;
+  const statusEl=document.getElementById('vm-status');
+  const listEl=document.getElementById('vm-list');
+  const toolbarEl=document.getElementById('vm-toolbar');
+  toolbarEl.style.display='none';
   listEl.innerHTML='';
-  if(!_nomemRows.length){
-    const hasTerm=(document.getElementById('nomem-search')?.value||'').trim();
-    listEl.innerHTML=`<div id="nomem-empty">${hasTerm?'검색 결과가 없어요':'무관 처리된 영상이 없어요'}</div>`;
+  statusEl.textContent='조회 중…';
+  const term=(searchTerm!==undefined?searchTerm:(document.getElementById('vm-search').value||'')).trim();
+  try{
+    let rows;
+    if(tab==='all'){
+      // 전체 탭: avs-style (3+ chars → ilike, 1-2 → 캐시)
+      if(!term){_vmRows=[];listEl.innerHTML='<div style="padding:24px;text-align:center;color:rgba(155,178,228,0.45);font-size:12px;">제목이나 그룹명으로 검색하세요</div>';statusEl.textContent='';return;}
+      let hits;
+      if(term.length>=3){
+        const{data,error}=await sb.from(_YT_TABLE).select('id,title,group_ko,thumb,content_flag').ilike('title',`%${term}%`).order('id').limit(200);
+        if(myGen!==_vmSearchGen)return;
+        if(error){statusEl.textContent='조회 실패: '+error.message;return;}
+        hits=data||[];
+      }else{
+        const all=await _avsEnsureCache();
+        if(myGen!==_vmSearchGen)return;
+        hits=all.filter(v=>(v.title||'').includes(term)||(v.group_ko||'').includes(term)).slice(0,200);
+      }
+      _vmRows=hits;
+      statusEl.textContent=`${hits.length}개 표시${hits.length>=200?' (최대 200개)':''}`;
+      _vmRenderVideoList();
+      return;
+    }
+    if(tab==='ss'){
+      // strictSync 그룹 오염 검수 — tags_manual=false 행만 (관리자가 이미 확인한 건 제외)
+      const ssGkos=[..._STRICT_SYNC_GROUPS];
+      if(!ssGkos.length){statusEl.textContent='strictSync 그룹이 없어요';_vmRows=[];_vmRenderVideoList();return;}
+      // PostgREST에서 IN 필터는 .in() 메서드로 처리
+      const{data,error}=await _sbFetchAll(()=>sb.from(_YT_TABLE)
+        .select('id,title,group_ko,thumb,content_flag')
+        .in('group_ko',ssGkos)
+        .eq('tags_manual',false)
+        .order('id'));
+      if(myGen!==_vmSearchGen)return;
+      if(error){statusEl.textContent='조회 실패: '+error.message;return;}
+      const all=(data||[]).sort((a,b)=>(a.group_ko||'').localeCompare(b.group_ko||'','ko')||(a.title||'').localeCompare(b.title||'','ko'));
+      _vmRows=all;
+      statusEl.textContent=`검수 대상 ${all.length}개 (strictSync 그룹: ${ssGkos.join(', ')})`;
+      _vmRenderVideoList();
+      return;
+    }
+    // nomem / hidden 탭
+    const flag=tab==='nomem'?'무관':'hidden';
+    let q=sb.from(_YT_TABLE).select('id,title,group_ko,thumb,content_flag');
+    q=q.eq('content_flag',flag);
+    if(term)q=q.or(`title.ilike.%${term}%,group_ko.ilike.%${term}%`);
+    const{data,error}=await _sbFetchAll(()=>q.order('id'));
+    if(myGen!==_vmSearchGen)return;
+    if(error){statusEl.textContent='조회 실패: '+error.message;return;}
+    const all=(data||[]).sort((a,b)=>(a.group_ko||'').localeCompare(b.group_ko||'','ko')||(a.title||'').localeCompare(b.title||'','ko'));
+    _vmRows=all;
+    statusEl.textContent=term?`검색 결과 ${all.length}개`:`총 ${all.length}개`;
+    _vmRenderVideoList();
+  }catch(e){
+    if(myGen!==_vmSearchGen)return;
+    statusEl.textContent='오류: '+e.message;
+  }
+}
+function _vmRenderVideoList(){
+  const listEl=document.getElementById('vm-list');
+  const toolbarEl=document.getElementById('vm-toolbar');
+  const tab=_vmTab;
+  listEl.innerHTML='';
+  if(!_vmRows.length){
+    const emptyMsg=tab==='all'?'검색 결과가 없어요':tab==='nomem'?'무관 처리된 영상이 없어요':'노출 제외된 영상이 없어요';
+    listEl.innerHTML=`<div style="padding:24px;text-align:center;color:rgba(155,178,228,0.45);font-size:12px;">${emptyMsg}</div>`;
     toolbarEl.style.display='none';
     return;
   }
-  toolbarEl.style.display='flex';
-  document.getElementById('nomem-select-all').checked=false;
-  _nomemRows.forEach(v=>{
-    const item=document.createElement('div');item.className='nm-item';item.dataset.vidId=v.id;
-    const cb=document.createElement('input');cb.type='checkbox';
-    cb.addEventListener('change',_updateNomemCount);
-    const img=document.createElement('img');img.className='nm-thumb';img.src=v.thumb||'';img.loading='lazy';
-    const info=document.createElement('div');info.className='nm-info';
-    const grp=document.createElement('div');grp.className='nm-group';
-    const withTxt=[...(v.members||[]),...(v.with_members||[])].join(', ');
-    grp.innerHTML=`<b>${v.group_ko||''}</b>${withTxt?' · '+withTxt:''}`;
-    const ttl=document.createElement('div');ttl.className='nm-title';ttl.textContent=v.title||'';
+  const showCheckbox=tab==='nomem'||tab==='hidden'||tab==='ss';
+  if(showCheckbox){
+    toolbarEl.style.display='flex';
+    document.getElementById('vm-select-all-row').style.display='';
+    document.getElementById('vm-select-all').checked=false;
+    const applyLabel=tab==='nomem'?'선택 항목 무관 해제':tab==='ss'?'선택 항목 노출 제외':'선택 항목 노출 복원';
+    document.getElementById('vm-apply-btn').textContent=applyLabel;
+    _vmUpdateCount();
+  }else{
+    toolbarEl.style.display='none';
+  }
+  _vmRows.forEach(v=>{
+    const item=document.createElement('div');item.className='vm-item';item.dataset.vidId=v.id;
+    if(showCheckbox){
+      const cb=document.createElement('input');cb.type='checkbox';cb.style.flexShrink='0';
+      cb.addEventListener('change',_vmUpdateCount);
+      item.appendChild(cb);
+    }
+    const img=document.createElement('img');img.className='vm-thumb';img.src=v.thumb||`https://i.ytimg.com/vi/${v.id}/mqdefault.jpg`;img.loading='lazy';
+    const info=document.createElement('div');info.className='vm-info';
+    const grp=document.createElement('div');grp.className='vm-group';grp.textContent=v.group_ko||'';
+    const ttl=document.createElement('div');ttl.className='vm-title';ttl.textContent=v.title||'';
     info.appendChild(grp);info.appendChild(ttl);
+    const actions=document.createElement('div');actions.className='vm-actions';
+    // flag badge button (cycles normal→무관→hidden)
+    const flag=v.content_flag||null;
+    const flagBtn=document.createElement('button');flagBtn.className='vm-flag-btn';flagBtn.type='button';
+    if(!flag){flagBtn.textContent='정상';flagBtn.classList.add('vm-flag-normal');}
+    else if(flag==='무관'){flagBtn.textContent='무관';flagBtn.classList.add('vm-flag-nomem');}
+    else{flagBtn.textContent='숨김';flagBtn.classList.add('vm-flag-hidden');}
+    flagBtn.addEventListener('click',e=>{e.stopPropagation();_vmCycleFlagInline(v,flagBtn,item);});
+    // edit button
     const editBtn=document.createElement('button');editBtn.className='vid-edit-btn';editBtn.type='button';editBtn.textContent='✎';
-    editBtn.title='편집(소속 그룹 변경 가능)';
     editBtn.addEventListener('click',e=>{e.stopPropagation();_openVidTagModal({id:v.id,title:v.title},v.group_ko);});
-    item.appendChild(cb);item.appendChild(img);item.appendChild(info);item.appendChild(editBtn);
+    actions.appendChild(flagBtn);actions.appendChild(editBtn);
+    item.appendChild(img);item.appendChild(info);item.appendChild(actions);
     listEl.appendChild(item);
   });
-  _updateNomemCount();
+  if(showCheckbox)_vmUpdateCount();
 }
-function _updateNomemCount(){
-  const total=_nomemRows.length;
-  const checked=document.querySelectorAll('#nomem-list .nm-item input[type=checkbox]:checked').length;
-  document.getElementById('nomem-count').textContent=`${checked}/${total}개 선택됨`;
-  const applyBtn=document.getElementById('nomem-apply-btn');
-  if(applyBtn)applyBtn.disabled=checked===0;
-  const allEl=document.getElementById('nomem-select-all');
-  if(allEl)allEl.checked=checked===total&&total>0;
+function _vmCycleFlagInline(v,btn,item){
+  // cycle: normal(null) → 무관 → hidden → normal
+  const cur=v.content_flag||null;
+  const next=!cur?'무관':(cur==='무관'?'hidden':null);
+  _vmSetFlag(v,next,btn,item);
 }
-document.getElementById('nomem-select-all')?.addEventListener('change',e=>{
-  document.querySelectorAll('#nomem-list .nm-item input[type=checkbox]').forEach(cb=>{cb.checked=e.target.checked;});
-  _updateNomemCount();
-});
-document.getElementById('nomem-apply-btn')?.addEventListener('click',async()=>{
+async function _vmSetFlag(v,newFlag,btn,item){
   if(!sb)return;
-  const btn=document.getElementById('nomem-apply-btn');
-  const items=[...document.querySelectorAll('#nomem-list .nm-item')].filter(el=>el.querySelector('input[type=checkbox]').checked);
+  btn.disabled=true;
+  const{error}=await sb.from(_YT_TABLE).update({content_flag:newFlag}).eq('id',v.id);
+  if(error){btn.disabled=false;_showShareToast('오류: '+error.message);return;}
+  v.content_flag=newFlag;
+  btn.className='vm-flag-btn';
+  if(!newFlag){btn.textContent='정상';btn.classList.add('vm-flag-normal');}
+  else if(newFlag==='무관'){btn.textContent='무관';btn.classList.add('vm-flag-nomem');}
+  else{btn.textContent='숨김';btn.classList.add('vm-flag-hidden');}
+  btn.disabled=false;
+  // 탭 필터와 안 맞는 항목은 페이드 아웃 후 제거
+  const tab=_vmTab;
+  const mismatch=(tab==='nomem'&&newFlag!=='무관')||(tab==='hidden'&&newFlag!=='hidden');
+  if(mismatch){
+    item.style.opacity='0.3';
+    setTimeout(()=>{
+      _vmRows=_vmRows.filter(r=>r.id!==v.id);
+      item.remove();
+      _vmUpdateCount();
+      document.getElementById('vm-status').textContent=`총 ${_vmRows.length}개`;
+      if(!_vmRows.length)_vmRenderVideoList();
+    },500);
+  }
+}
+function _vmUpdateCount(){
+  const total=_vmRows.length;
+  const checked=document.querySelectorAll('#vm-list .vm-item input[type=checkbox]:checked').length;
+  document.getElementById('vm-count').textContent=`${checked}/${total}개 선택됨`;
+  const applyBtn=document.getElementById('vm-apply-btn');
+  if(applyBtn)applyBtn.disabled=checked===0;
+  const allEl=document.getElementById('vm-select-all');
+  if(allEl)allEl.checked=total>0&&checked===total;
+}
+function _vmRenderChannels(term){
+  const listEl=document.getElementById('vm-ch-list');
+  const q=(term||'').trim().toLowerCase();
+  const isOfficial=_vmChTab==='official';
+  const all=isOfficial?_officialChannels():_EXT_CHANNELS;
+  const rows=q?all.filter(ch=>ch.name.toLowerCase().includes(q)||(ch.handle||'').toLowerCase().includes(q)):all;
+  document.getElementById('vm-ch-count').textContent=`총 ${all.length}개 중 ${rows.length}개 표시`;
+  if(!rows.length){
+    listEl.innerHTML=`<div style="padding:16px;text-align:center;color:rgba(155,178,228,0.45);font-size:12px;">${q?'검색 결과가 없어요':'등록된 채널이 없어요'}</div>`;
+    return;
+  }
+  listEl.innerHTML='';
+  rows.forEach(ch=>{
+    const item=document.createElement('div');item.className='ec-item';
+    const info=document.createElement('div');
+    const name=document.createElement('div');name.className='ec-name';name.textContent=ch.name;
+    info.appendChild(name);
+    if(ch.handle){const handle=document.createElement('div');handle.className='ec-handle';handle.textContent='@'+ch.handle;info.appendChild(handle);}
+    const link=document.createElement('a');link.className='ec-link';link.href=ch.url;link.target='_blank';link.rel='noopener noreferrer';link.textContent='열기';
+    item.appendChild(info);item.appendChild(link);
+    listEl.appendChild(item);
+  });
+}
+
+// vm 패널 이벤트
+document.getElementById('vm-overlay')?.addEventListener('click',e=>{if(e.target===e.currentTarget)e.currentTarget.classList.remove('open');});
+document.getElementById('vm-close')?.addEventListener('click',()=>document.getElementById('vm-overlay').classList.remove('open'));
+document.querySelectorAll('.vm-tab').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    _vmTab=btn.dataset.tab;
+    document.querySelectorAll('.vm-tab').forEach(t=>t.classList.toggle('active',t===btn));
+    document.getElementById('vm-search').value='';
+    _vmApplyTab();
+  });
+});
+document.getElementById('vm-search')?.addEventListener('input',()=>{
+  clearTimeout(_vmSearchTimer);
+  const val=document.getElementById('vm-search').value;
+  _vmSearchTimer=setTimeout(()=>_vmLoad(val),300);
+});
+document.getElementById('vm-select-all')?.addEventListener('change',e=>{
+  document.querySelectorAll('#vm-list .vm-item input[type=checkbox]').forEach(cb=>{cb.checked=e.target.checked;});
+  _vmUpdateCount();
+});
+document.getElementById('vm-apply-btn')?.addEventListener('click',async()=>{
+  if(!sb)return;
+  const btn=document.getElementById('vm-apply-btn');
+  const items=[...document.querySelectorAll('#vm-list .vm-item')].filter(el=>el.querySelector('input[type=checkbox]')?.checked);
   const ids=items.map(el=>el.dataset.vidId).filter(Boolean);
   if(!ids.length)return;
   btn.disabled=true;btn.textContent='처리 중…';
-  const{error}=await sb.from(_YT_TABLE).update({content_flag:null}).in('id',ids);
-  if(error){btn.disabled=false;btn.textContent='선택 항목 무관 해제';document.getElementById('nomem-status').textContent='오류: '+error.message;return;}
+  const newFlag=_vmTab==='ss'?'hidden':null;
+  const{error}=await sb.from(_YT_TABLE).update({content_flag:newFlag}).in('id',ids);
+  const applyLabel=_vmTab==='nomem'?'선택 항목 무관 해제':_vmTab==='ss'?'선택 항목 노출 제외':'선택 항목 노출 복원';
+  if(error){btn.disabled=false;btn.textContent=applyLabel;document.getElementById('vm-status').textContent='오류: '+error.message;return;}
   const idSet=new Set(ids);
-  _nomemRows=_nomemRows.filter(v=>!idSet.has(v.id));
+  _vmRows=_vmRows.filter(v=>!idSet.has(v.id));
   items.forEach(el=>el.remove());
-  document.getElementById('nomem-status').textContent=`${ids.length}개 무관 해제 완료 — 남은 ${_nomemRows.length}개`;
-  btn.textContent='선택 항목 무관 해제';
-  _updateNomemCount();
-  if(!_nomemRows.length)_renderNomemList();
+  document.getElementById('vm-status').textContent=`${ids.length}개 처리 완료 — 남은 ${_vmRows.length}개`;
+  btn.textContent=applyLabel;
+  _vmUpdateCount();
+  if(!_vmRows.length)_vmRenderVideoList();
 });
-document.getElementById('nomem-overlay')?.addEventListener('click',e=>{if(e.target===e.currentTarget)e.currentTarget.classList.remove('open');});
-document.getElementById('nomem-close')?.addEventListener('click',()=>document.getElementById('nomem-overlay').classList.remove('open'));
-document.getElementById('sp-nomem-btn')?.addEventListener('click',()=>{
-  document.getElementById('nomem-overlay').classList.add('open');
-  const searchEl=document.getElementById('nomem-search');
-  if(searchEl)searchEl.value='';
-  _nomemLoad('');
+document.querySelectorAll('.vm-ch-tab').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    _vmChTab=btn.dataset.tab;
+    document.querySelectorAll('.vm-ch-tab').forEach(t=>t.classList.toggle('active',t===btn));
+    _vmRenderChannels('');
+  });
 });
+
 // 힛지스가 이 세션에 새로 추가되기 전에 외부 채널(뮤직뱅크/엠카운트다운 등) 동기화가 먼저 돌면서,
 // "이유"라는 이름이 당시엔 에버글로우에만 존재해서 힛지스 이유(IYOO) 직캠 5건이 group_ko='에버글로우'로
 // 잘못 분류돼 저장됐음(_m2ParseTitle의 멤버 이름 역추론 폴백 — 힛지스가 GROUPS에 없던 시점엔 "이유"가
@@ -11633,8 +11663,10 @@ function _m2ParseTitle(rawTitle,selfGko){
     if([...a.name.ko].length===1||_isHashtagOnlyName(a.name.ko))return names.some(t=>hitHashtag(t));
     return names.some(t=>hit(t));
   }
-  // 긴 이름 우선 정렬 (부분 매칭 방지)
+  // 긴 이름 우선 정렬 (부분 매칭 방지). strictSync 그룹은 제목 키워드 매칭에서 제외 — 자체 채널
+  // 동기화(_ytSyncGroup)로만 영상이 들어와야 하는 공통명사 이름 그룹이 외부 채널 영상 제목에서 오인식되는 걸 막음.
   const groupsSorted=Object.entries(GROUPS)
+    .filter(([ko])=>!_STRICT_SYNC_GROUPS.has(ko))
     .map(([ko,v])=>({ko,tokens:[ko,v.en].filter(Boolean)}))
     .sort((a,b)=>Math.max(...b.tokens.map(t=>t.length))-Math.max(...a.tokens.map(t=>t.length)));
   const matchedGroupKos=[];
@@ -13380,15 +13412,9 @@ function _closeVidTagModal(){
   const hideBadge=document.getElementById('vid-tag-hidden-badge');
   if(hideBtn){hideBtn.textContent='노출 제외';hideBtn.classList.remove('restore');}
   if(hideBadge)hideBadge.classList.remove('visible');
-  // 노출 제외 목록에서 연필 버튼으로 열었을 수 있으니, 그 목록이 열려있으면 최신 상태로 다시 불러온다
-  // (편집으로 복원됐거나 다른 조건이 바뀌면 목록에서 바로 빠져야 하므로).
-  if(document.getElementById('hidden-vids-overlay')?.classList.contains('open')){
-    _loadHiddenVids(document.getElementById('hidden-vids-search')?.value||'');
-  }
-  // 무관 목록에서 연필 버튼으로 열었을 수 있으니, 그 목록이 열려있으면 최신 상태로 다시 불러온다
-  // (소속 그룹을 옮기거나 무관 플래그를 지웠으면 목록에서 바로 빠져야 하므로).
-  if(document.getElementById('nomem-overlay')?.classList.contains('open')){
-    _nomemLoad(document.getElementById('nomem-search')?.value||'');
+  // 영상 관리 패널에서 연필 버튼으로 열었을 수 있으니, 열려있으면 현재 탭 기준으로 다시 불러온다.
+  if(document.getElementById('vm-overlay')?.classList.contains('open')){
+    _vmLoad();
   }
 }
 document.getElementById('vid-tag-cancel').addEventListener('click',e=>{e.stopPropagation();_closeVidTagModal();});
@@ -13667,12 +13693,13 @@ document.getElementById('vid-tag-thumb-refresh').addEventListener('click',async 
     if(btn)btn.disabled=false;
   });
   document.getElementById('sp-yt-sweep-banned')?.addEventListener('click',_ytSweepBannedVideos);
-  document.getElementById('sp-hlfix-btn')?.addEventListener('click',_ytSweepHighlightMistag);
+  // strictSync 도입 이후 _ytSweepHighlightMistag는 _m2ParseTitle이 하이라이트를 반환하지 않아 전체를
+  // 잘못 무관 처리하므로, 버튼을 vm 패널 검수 탭(수동 확인)으로 대체한다.
+  document.getElementById('sp-hlfix-btn')?.addEventListener('click',()=>_vmOpen('ss'));
   document.getElementById('sp-collabfix-btn')?.addEventListener('click',_ytSweepAmbiguousCollabMistag);
   document.getElementById('sp-membersfix-btn')?.addEventListener('click',_ytSweepMembersMistag);
   document.getElementById('sp-yt-autotag')?.addEventListener('click',_ytAutoTagMembers);
-  document.getElementById('sp-hidden-vids-btn')?.addEventListener('click',_openHiddenVids);
-  document.getElementById('sp-ext-channels-btn')?.addEventListener('click',_openExtChannels);
+  document.getElementById('sp-vm-btn')?.addEventListener('click',()=>_vmOpen());
   const backfillSel=document.getElementById('sp-yt-backfill-ch');
   if(backfillSel){
     backfillSel.innerHTML=_EXT_CHANNELS.map(c=>`<option value="${c.handle}">${c.name}</option>`).join('');
@@ -13707,147 +13734,7 @@ function _officialChannels(){
   });
   return[...groups,...solos];
 }
-let _extChannelsTab='official';
-function _renderExtChannels(term){
-  const list=document.getElementById('ext-channels-list');
-  const q=(term||'').trim().toLowerCase();
-  const isOfficial=_extChannelsTab==='official';
-  const all=isOfficial?_officialChannels():_EXT_CHANNELS;
-  const rows=q?all.filter(ch=>ch.name.toLowerCase().includes(q)||(ch.handle||'').toLowerCase().includes(q)):all;
-  document.getElementById('ext-channels-count').textContent=`총 ${all.length}개 중 ${rows.length}개 표시`;
-  if(!rows.length){
-    list.innerHTML=`<div id="ext-channels-empty">${q?'검색 결과가 없어요':'등록된 채널이 없어요'}</div>`;
-    return;
-  }
-  list.innerHTML='';
-  rows.forEach(ch=>{
-    const item=document.createElement('div');item.className='ec-item';
-    const info=document.createElement('div');
-    const name=document.createElement('div');name.className='ec-name';name.textContent=ch.name;
-    info.appendChild(name);
-    if(ch.handle){
-      const handle=document.createElement('div');handle.className='ec-handle';handle.textContent='@'+ch.handle;
-      info.appendChild(handle);
-    }
-    const link=document.createElement('a');link.className='ec-link';link.href=ch.url;link.target='_blank';link.rel='noopener noreferrer';link.textContent='열기';
-    item.appendChild(info);item.appendChild(link);
-    list.appendChild(item);
-  });
-}
-function _openExtChannels(){
-  _extChannelsTab='official';
-  document.querySelectorAll('.ec-tab').forEach(t=>t.classList.toggle('active',t.dataset.tab==='official'));
-  document.getElementById('ext-channels-search').value='';
-  document.getElementById('ext-channels-overlay').classList.add('open');
-  _renderExtChannels('');
-}
-document.querySelectorAll('.ec-tab').forEach(btn=>{
-  btn.addEventListener('click',()=>{
-    _extChannelsTab=btn.dataset.tab;
-    document.querySelectorAll('.ec-tab').forEach(t=>t.classList.toggle('active',t===btn));
-    document.getElementById('ext-channels-search').value='';
-    _renderExtChannels('');
-  });
-});
-document.getElementById('ext-channels-search')?.addEventListener('input',e=>_renderExtChannels(e.target.value));
-document.getElementById('ext-channels-overlay')?.addEventListener('click',e=>{if(e.target===e.currentTarget)e.currentTarget.classList.remove('open');});
-document.getElementById('ext-channels-close')?.addEventListener('click',()=>document.getElementById('ext-channels-overlay').classList.remove('open'));
 
-// ── 노출 제외 영상 목록 ──
-// 숨김 처리된 영상이 수천 건 쌓이다 보니 스크롤만으로는 원하는 영상을 찾기 어려워서 검색을 추가함.
-// 건수가 서버 기본 응답 제한(1000건 등)을 넘을 수 있으니, range()로 여러 페이지를 이어붙여 전부 가져온다
-// — 언제든 다시 편집·복원될 수 있는 목록이라 일부만 보이면 안 됨.
-let _hvSearchGen=0;
-let _hvRows=[];
-async function _loadHiddenVids(searchTerm){
-  const myGen=++_hvSearchGen;
-  const list=document.getElementById('hidden-vids-list');
-  const toolbarEl=document.getElementById('hidden-vids-toolbar');
-  toolbarEl.style.display='none';
-  list.innerHTML='<div id="hidden-vids-empty">불러오는 중…</div>';
-  const term=(searchTerm||'').trim();
-  // _sbFetchAll(id 기준 키셋 페이지네이션)을 재사용 — 원래 group_ko/title로 서버 정렬하던 걸 id 정렬로
-  // 바꾸고, 화면에 보여줄 순서는 다 받아온 뒤 클라이언트에서 정렬(결과 집합 자체가 작아서 비용 거의 없음).
-  const{data,error}=await _sbFetchAll(()=>{
-    let q=sb.from(_YT_TABLE).select('id,title,thumb,group_ko').eq('content_flag','hidden');
-    if(term)q=q.or(`title.ilike.%${term}%,group_ko.ilike.%${term}%`);
-    return q.order('id');
-  });
-  if(myGen!==_hvSearchGen)return; // 그 사이 검색어가 또 바뀜 — 이 결과는 버림
-  if(error){
-    list.innerHTML=`<div id="hidden-vids-empty">오류: ${error.message}</div>`;
-    return;
-  }
-  const all=(data||[]).sort((a,b)=>(a.group_ko||'').localeCompare(b.group_ko||'','ko')||(a.title||'').localeCompare(b.title||'','ko'));
-  _hvRows=all;
-  if(!all.length){
-    list.innerHTML=`<div id="hidden-vids-empty">${term?'검색 결과가 없어요':'노출 제외된 영상이 없어요'}</div>`;
-    return;
-  }
-  toolbarEl.style.display='flex';
-  document.getElementById('hidden-vids-select-all').checked=false;
-  list.innerHTML='';
-  all.forEach(v=>{
-    const item=document.createElement('div');item.className='hv-item';item.dataset.vidId=v.id;
-    const cb=document.createElement('input');cb.type='checkbox';
-    cb.addEventListener('change',_updateHvCount);
-    const img=document.createElement('img');img.className='hv-thumb';img.src=v.thumb||'';img.loading='lazy';
-    const info=document.createElement('div');info.className='hv-info';
-    const grp=document.createElement('div');grp.className='hv-group';grp.textContent=v.group_ko||'';
-    const ttl=document.createElement('div');ttl.className='hv-title';ttl.textContent=v.title||'';
-    info.appendChild(grp);info.appendChild(ttl);
-    const editBtn=document.createElement('button');editBtn.className='vid-edit-btn';editBtn.type='button';editBtn.textContent='✎';
-    editBtn.addEventListener('click',e=>{e.stopPropagation();_openVidTagModal({id:v.id,title:v.title},v.group_ko);});
-    item.appendChild(cb);item.appendChild(img);item.appendChild(info);item.appendChild(editBtn);
-    list.appendChild(item);
-  });
-  _updateHvCount();
-}
-function _updateHvCount(){
-  const total=_hvRows.length;
-  const checked=document.querySelectorAll('#hidden-vids-list .hv-item input[type=checkbox]:checked').length;
-  document.getElementById('hidden-vids-count').textContent=`${checked}/${total}개 선택됨`;
-  const applyBtn=document.getElementById('hidden-vids-apply-btn');
-  if(applyBtn)applyBtn.disabled=checked===0;
-  const allEl=document.getElementById('hidden-vids-select-all');
-  if(allEl)allEl.checked=checked===total&&total>0;
-}
-document.getElementById('hidden-vids-select-all')?.addEventListener('change',e=>{
-  document.querySelectorAll('#hidden-vids-list .hv-item input[type=checkbox]').forEach(cb=>{cb.checked=e.target.checked;});
-  _updateHvCount();
-});
-document.getElementById('hidden-vids-apply-btn')?.addEventListener('click',async()=>{
-  if(!sb)return;
-  const btn=document.getElementById('hidden-vids-apply-btn');
-  const items=[...document.querySelectorAll('#hidden-vids-list .hv-item')].filter(el=>el.querySelector('input[type=checkbox]').checked);
-  const ids=items.map(el=>el.dataset.vidId).filter(Boolean);
-  if(!ids.length)return;
-  btn.disabled=true;btn.textContent='처리 중…';
-  const{error}=await sb.from(_YT_TABLE).update({content_flag:null}).in('id',ids);
-  if(error){btn.disabled=false;btn.textContent='선택 항목 노출 복원';_showShareToast('오류: '+error.message);return;}
-  const idSet=new Set(ids);
-  _hvRows=_hvRows.filter(v=>!idSet.has(String(v.id)));
-  items.forEach(el=>el.remove());
-  btn.textContent='선택 항목 노출 복원';
-  _updateHvCount();
-  if(!_hvRows.length)_loadHiddenVids(document.getElementById('hidden-vids-search')?.value||'');
-});
-async function _openHiddenVids(){
-  if(!sb)return;
-  const overlay=document.getElementById('hidden-vids-overlay');
-  const searchEl=document.getElementById('hidden-vids-search');
-  searchEl.value='';
-  overlay.classList.add('open');
-  await _loadHiddenVids('');
-}
-let _hvSearchTimer=null;
-document.getElementById('hidden-vids-search')?.addEventListener('input',e=>{
-  clearTimeout(_hvSearchTimer);
-  const val=e.target.value;
-  _hvSearchTimer=setTimeout(()=>_loadHiddenVids(val),350);
-});
-document.getElementById('hidden-vids-overlay')?.addEventListener('click',e=>{if(e.target===e.currentTarget)e.currentTarget.classList.remove('open');});
-document.getElementById('hidden-vids-close')?.addEventListener('click',()=>document.getElementById('hidden-vids-overlay').classList.remove('open'));
 // ── 어드민 일괄 선택 플로팅 바 ──
 document.getElementById('admin-bulk-cancel-btn')?.addEventListener('click',()=>{
   window._adminBulkExitFn?.();
