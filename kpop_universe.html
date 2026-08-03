@@ -10397,17 +10397,35 @@ async function _wonkokScan(){
   document.getElementById('wonkok-toolbar').style.display='none';
   document.getElementById('wonkok-list').innerHTML='';
   try{
-    statusEl.textContent='조회 중… (시간이 좀 걸릴 수 있음)';
-    const{data:rows,error}=await _sbFetchAll(()=>sb.from(_YT_TABLE)
-      .select('id,title,group_ko,members,thumb,content_flag')
-      .ilike('title','%원곡%')
-      .not('members','eq','{}')
-      .or('content_flag.is.null,content_flag.neq.무관')
-      .or('content_flag.is.null,content_flag.neq.hidden')
+    // "title ILIKE '%원곡%'"는 검색어가 2글자라 pg_trgm 인덱스도 트라이그램을 못 뽑아 못 타고(3글자 미만
+    // 패턴은 인덱스 가속이 안 됨), 8만+ 행을 매번 통째로 순차스캔하면서 유니코드 대소문자무시 패턴매칭까지
+    // 겹쳐 statement_timeout에 걸림 — 그래서 서버에는 title 패턴매칭을 아예 안 시키고, id·title만 가볍게
+    // (필터 없는 순수 PK 순서 스캔이라 빠름) 전량 페이지네이션으로 받아온 뒤 "원곡" 포함 여부는
+    // 클라이언트에서 문자열 검사로 판정한다. 매칭된 소수의 id만 골라 나머지 컬럼을 추가로 조회.
+    statusEl.textContent='제목 목록 조회 중… (시간이 좀 걸릴 수 있음)';
+    const{data:idTitleRows,error:idErr}=await _sbFetchAll(()=>sb.from(_YT_TABLE)
+      .select('id,title')
       .order('id'));
-    if(error){statusEl.textContent='조회 실패: '+error.message;return;}
-    statusEl.textContent=`${rows?.length||0}개 후보 검사 중…`;
-    const candidates=(rows||[]).filter(v=>{
+    if(idErr){statusEl.textContent='조회 실패: '+idErr.message;return;}
+    const hitIds=(idTitleRows||[]).filter(v=>(v.title||'').includes('원곡')).map(v=>v.id);
+    if(!hitIds.length){
+      _wonkokCandidates=[];
+      statusEl.textContent=`스캔 완료 — 전체 ${idTitleRows?.length||0}개 중 "원곡" 포함 0개`;
+      _renderWonkokList();
+      return;
+    }
+    statusEl.textContent=`"원곡" 포함 ${hitIds.length}개 상세 조회 중…`;
+    const rows=[];
+    for(let i=0;i<hitIds.length;i+=200){
+      const{data,error}=await sb.from(_YT_TABLE)
+        .select('id,title,group_ko,members,thumb,content_flag')
+        .in('id',hitIds.slice(i,i+200));
+      if(error){statusEl.textContent='조회 실패: '+error.message;return;}
+      rows.push(...(data||[]));
+    }
+    const filtered=rows.filter(v=>(v.members||[]).length>0&&v.content_flag!=='무관'&&v.content_flag!=='hidden');
+    statusEl.textContent=`${filtered.length}개 후보 검사 중…`;
+    const candidates=filtered.filter(v=>{
       const strippedNorm=_wonkokNorm(_wonkokStripClause(v.title||''));
       return!(v.members||[]).some(mko=>{
         const artist=ARTISTS.find(a=>a.group.ko===v.group_ko&&a.name.ko===mko);
@@ -10416,7 +10434,7 @@ async function _wonkokScan(){
       });
     });
     _wonkokCandidates=candidates;
-    statusEl.textContent=`스캔 완료 — 전체 ${rows?.length||0}개 중 오태깅 의심 ${candidates.length}개`;
+    statusEl.textContent=`스캔 완료 — 전체 ${idTitleRows?.length||0}개 중 오태깅 의심 ${candidates.length}개`;
     _renderWonkokList();
   }catch(e){
     statusEl.textContent='오류: '+e.message;
