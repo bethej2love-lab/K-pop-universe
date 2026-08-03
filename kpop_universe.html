@@ -4557,16 +4557,20 @@ function _makeWithLine(song,ctx){
     if(b===ctx.groupKo)return 1;
     return a.localeCompare(b,'ko');
   });
-  groupKos.forEach((gko,gi)=>{
-    if(gi>0){const sep=document.createElement('span');sep.textContent=' · ';sep.style.color='rgba(120,145,195,0.35)';line.appendChild(sep);}
+  let _wlRenderedAny=false;
+  groupKos.forEach(gko=>{
     const members=byGroup.get(gko).sort((a,b)=>a.name.ko.localeCompare(b.name.ko,'ko'));
     // 활동 멤버 전원이 이 영상에 다 태깅돼 있으면(그룹 전체 출연) 한 명씩 나열할 필요 없이 그룹명만으로 충분함
     const activeRoster=ARTISTS.filter(a=>a.group.ko===gko&&a.active!==false);
     const isFullGroup=activeRoster.length>0&&members.length>=activeRoster.length;
-    // 지금 보고 있는 카드 자신의 그룹이면 그룹칩이 중복 정보라 생략(예: 코르티스 카드에서 "코르티스 성현
-    // 건호"가 아니라 그냥 "성현 건호"만) — 다만 그 그룹 전원이 나온 경우엔 칩이 유일한 정보원이라 그대로 둠
-    // (안 그러면 빈 줄이 됨). 아이유처럼 GROUPS에 실존하지 않는 가짜 "솔로" placeholder 그룹도 마찬가지로
-    // 칩을 생략 — "솔로 아이유"처럼 의미 없는 라벨이 붙는 걸 방지.
+    // 지금 보고 있는 카드 자신의 그룹인데 그 그룹 전원이 다 나온 경우엔 "함께한" 정보로서 의미가 없음
+    // (당연한 얘기라 표시할 값어치가 없음) — 이 그룹 항목 자체를 통째로 생략. 일부 멤버만 나온 경우는
+    // 아래에서 그 멤버 이름만 정상적으로 표시된다(그룹칩 없이 이름만 — "코르티스 성현 건호"가 아니라
+    // "성현 건호"만).
+    if(gko===ctx.groupKo&&isFullGroup)return;
+    if(_wlRenderedAny){const sep=document.createElement('span');sep.textContent=' · ';sep.style.color='rgba(120,145,195,0.35)';line.appendChild(sep);}
+    // 아이유처럼 GROUPS에 실존하지 않는 가짜 "솔로" placeholder 그룹도 칩을 생략 — "솔로 아이유"처럼
+    // 의미 없는 라벨이 붙는 걸 방지.
     const skipChip=(gko===ctx.groupKo||!GROUPS[gko])&&!isFullGroup;
     if(!skipChip){
       const gInfo=GROUPS[gko];
@@ -4579,7 +4583,9 @@ function _makeWithLine(song,ctx){
         line.appendChild(_makeMemberChip(m));
       });
     }
+    _wlRenderedAny=true;
   });
+  if(!_wlRenderedAny&&!hasOrig&&!hasCover)return null;
   if(hasOrig){
     const label=currentLang==='ko'?'원곡':'Original';
     const og=GROUPS[song.origGroup];
@@ -11694,11 +11700,11 @@ function _makeChVidController(contId){
   // 그룹/멤버 카드의 자체 영상 그리드에도 연결 카드처럼 "함께한 멤버" 줄이 뜨게 하기 위함.
   function _buildGridWithList(v,ownGko,selfKo){
     const withList=[];
-    // v.members는 이 영상에 태깅된 "자기 그룹" 멤버들 — 멤버 카드(selfKo 있음)에선 본인만 빼고 나머지
-    // 그룹원은 실제로 "함께한 멤버"라 보여줄 값어치가 있지만, 그룹 카드(selfKo 없음)에선 전부 자기
-    // 그룹 소속이라 "함께한" 정보가 아님(특히 멤버 전체 선택 시 그룹명 자기 자신이 칩으로 뜨는 문제로 이어짐) —
-    // 그룹 카드에서는 아예 통째로 제외.
-    if(selfKo)(v.members||[]).forEach(n=>{if(n!==selfKo)withList.push(n);});
+    // v.members는 이 영상에 태깅된 "자기 그룹" 멤버들 — 멤버 카드(selfKo 있음)에선 본인만 빼고 나머지,
+    // 그룹 카드(selfKo 없음)에선 전원 그대로 넣는다. 그룹 전체가 다 나온 경우("함께한" 정보로 의미 없음,
+    // 자기 그룹명 칩이 뜨는 문제로 이어짐)만 걸러내는 건 여기가 아니라 _makeWithLine에서 isFullGroup 기준으로
+    // 처리한다 — 여기서 통째로 빼버리면 "일부 멤버만 나온" 정상 케이스(원래 표시돼야 함)까지 같이 사라짐.
+    (v.members||[]).forEach(n=>{if(n!==selfKo)withList.push(n);});
     // 멤버 카드가 "다른 그룹 채널에 이 멤버가 게스트 태깅된 영상"까지 끌어오면서(위 쿼리 변경), 그 영상의
     // with_members엔 지금 보고 있는 본인이 "이름(그룹)" 형식으로 그대로 들어있는 경우가 생김 —
     // "함께한 멤버" 줄에 본인 이름이 뜨는 것을 막기 위해 자기 자신 표기는 제외.

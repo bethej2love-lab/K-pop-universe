@@ -4865,5 +4865,51 @@
     "links": {
       "namu": "https://namu.wiki/w/블락비 바스타즈"
     }
+  },
+  "플레이브": {
+    "en": "PLAVE",
+    "debut": "2023.03.12",
+    "co": "VLAST",
+    "virtualIdol": true,
+    "color": [
+      110,
+      200,
+      230
+    ],
+    "gender": "m",
+    "fandom": {
+      "ko": "PLLI",
+      "en": "PLLI"
+    },
+    "links": {
+      "x": "https://x.com/plave_official",
+      "instagram": "https://www.instagram.com/plave_official",
+      "tiktok": "https://www.tiktok.com/@plave_official",
+      "youtube": "https://youtube.com/@plave_official",
+      "namu": "https://namu.wiki/w/PLAVE"
+    }
+  },
+  "이세계아이돌": {
+    "en": "ISEGYE IDOL",
+    "debut": "2021.12.17",
+    "co": "패러블",
+    "virtualIdol": true,
+    "color": [
+      200,
+      140,
+      230
+    ],
+    "gender": "f",
+    "fandom": {
+      "ko": "이파리",
+      "en": "Ipari"
+    },
+    "links": {
+      "x": "https://x.com/isegyeidol_ofcl",
+      "instagram": "https://www.instagram.com/isegyeidol_ofcl/",
+      "tiktok": "https://www.tiktok.com/@isegyeidol_ofcl",
+      "youtube": "https://www.youtube.com/@isegyeidol_ofcl",
+      "namu": "https://namu.wiki/w/이세계아이돌"
+    }
   }
 }
