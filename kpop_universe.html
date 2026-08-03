@@ -1921,7 +1921,7 @@
       <span id="wonkok-hd-title">원곡: 오태깅 의심 목록</span>
       <button id="wonkok-close">✕</button>
     </div>
-    <div id="wonkok-desc">제목에 "원곡"이 들어간 영상 중, 그 절을 빼면 태깅된 멤버 이름이 더 이상 제목에서 안 잡히는 것만 후보로 추림(= 실제로는 다른 사람이 그 멤버의 노래를 커버한 영상일 가능성이 높음). 스캔은 시간이 좀 걸릴 수 있음.</div>
+    <div id="wonkok-desc">제목에 "원곡" 또는 "커버"/"cover"가 들어간 영상 중, 그 절을 빼면 태깅된 멤버 이름이 더 이상 제목에서 안 잡히는 것만 후보로 추림(= 실제로는 다른 사람이 그 멤버의 노래를 커버한 영상일 가능성이 높음). 스캔은 시간이 좀 걸릴 수 있음.</div>
     <button id="wonkok-scan-btn" class="uc-btn">스캔 시작</button>
     <div id="wonkok-status"></div>
     <div id="wonkok-toolbar" style="display:none">
@@ -9673,13 +9673,21 @@ function _openFeedListOverlay(title,sub,songs){
   document.getElementById('feed-list-sub').textContent=sub||'';
   const grid=document.getElementById('feed-list-grid');
   grid.innerHTML='';
-  // 오버레이를 먼저 열어서(display:none 상태에서 벗어난 뒤) 이미지를 채워 넣는다 — 순서가 반대였을 땐
-  // 최대 500개(위 _buildFeedFormatPick/_buildFeedGenCamPick의 limit) loading="lazy" <img>가 전부
-  // 숨겨진 채로 삽입됐다가 오버레이가 열리는 순간 한꺼번에 "화면 안"으로 취급돼서, 실제로는 순차적으로
-  // 로드돼야 할 lazy 이미지 요청이 무더기로 동시에 몰려 일부가 중간에 잘려/깨진 채로 디코딩되는
-  // 원인이었음(사용자 제보 — 인스타 탐색 탭 느낌의 정사각형 그리드에서 색상 줄무늬로 깨져 보이는 현상).
   document.getElementById('feed-list-overlay').classList.add('open');
-  songs.forEach((s,idx)=>{
+  // "(원곡: X)" 스캔이랑 같은 계열의 실측 문제 — 이 목록은 최대 500개(_buildFeedFormatPick/
+  // _buildFeedGenCamPick의 limit)까지 있을 수 있는데, loading="lazy" <img> 수백 개를 한 번에 DOM에
+  // 다 꽂아넣으면(오버레이를 먼저 열어도 마찬가지) 실제 화면 하나에 들어오는 근처 이미지 수십~수백 개가
+  // 동시에 네트워크 요청을 쏨 — 이게 헤드리스 브라우저 스크린샷으로 직접 재현해보니 대부분 전송 중간에
+  // 잘려서 깨진 채로 디코딩되는(색상 줄무늬) 원인이었음(사용자 제보, 2026-08-03). 24개씩(3열×8행)
+  // 나눠서 스크롤할 때만 다음 배치를 그리는 방식으로 바꿔서, 한 번에 뜨는 이미지 요청 수를 줄인다.
+  const BATCH=24;
+  let rendered=0;
+  const sentinel=document.createElement('div');
+  sentinel.style.cssText='grid-column:1/-1;height:1px;';
+  const observer=new IntersectionObserver(entries=>{
+    if(entries[0].isIntersecting)renderNextBatch();
+  },{root:grid,rootMargin:'600px 0px'});
+  function renderOne(s,idx){
     const shortFlag=isShorts(s.u);
     const item=document.createElement('div');
     item.className='gc-ch-item'+(shortFlag?' is-short':'');
@@ -9695,8 +9703,19 @@ function _openFeedListOverlay(title,sub,songs){
       e.stopPropagation();
       openLightbox(s.u,shortFlag,songs,idx,{});
     });
-    grid.appendChild(item);
-  });
+    return item;
+  }
+  function renderNextBatch(){
+    if(sentinel.parentNode)sentinel.remove();
+    const end=Math.min(rendered+BATCH,songs.length);
+    const frag=document.createDocumentFragment();
+    for(let i=rendered;i<end;i++)frag.appendChild(renderOne(songs[i],i));
+    grid.appendChild(frag);
+    rendered=end;
+    if(rendered<songs.length){grid.appendChild(sentinel);observer.observe(sentinel);}
+    else observer.disconnect();
+  }
+  renderNextBatch();
 }
 function _closeFeedListOverlay(){document.getElementById('feed-list-overlay').classList.remove('open');}
 document.getElementById('feed-list-close')?.addEventListener('click',e=>{e.stopPropagation();_closeFeedListOverlay();});
@@ -10357,9 +10376,7 @@ async function _ytSweepMembersMistag(){
     rows.forEach(v=>{
       const roster=ARTISTS.filter(a=>_artistGroups(a).some(g=>g.ko===v.group_ko)).map(a=>({ko:a.name.ko,en:a.name.en}));
       if(!roster.length)return;
-      const searchText=v.description?`${v.title||''}\n${v.description}`:(v.title||'');
-      const tokens=_atmTokenize(searchText);
-      const validSet=new Set(roster.filter(m=>_atmMatchesMember(m,searchText,tokens)).map(m=>m.ko));
+      const validSet=new Set(_atmResolveMembers(v.title,v.description,roster));
       const curM=v.members||[];
       const newM=curM.filter(mko=>validSet.has(mko));
       if(newM.length!==curM.length)updates.push({id:v.id,patch:{members:newM}});
@@ -10548,17 +10565,22 @@ document.getElementById('sp-hnn-btn')?.addEventListener('click',()=>{document.ge
 // "(원곡...)" 절을 통째로 지운 뒤에도 그 멤버 이름이 제목에 남아있으면(본인이 직접 부른 커버라 실명이나
 // 영문 표기가 따로 있는 경우) 정상으로 보고, 안 남아있으면(원곡자로만 언급된 것) 오태깅 후보로 분류한다.
 // 완전 자동 처리는 안 하고(오탐 있음 확인됨) 관리자가 후보 목록을 보고 체크박스로 골라 확정하게 한다.
+// 괄호는 "(...)" 뿐 아니라 "[Dance Cover] 아이브..."처럼 대괄호도 흔히 씀 — 둘 다 인식.
+const _WONKOK_BRACKETS={'(':')','[':']'};
 function _wonkokStripClause(title){
   let out='',i=0;
   while(i<title.length){
-    if(title[i]==='('){
+    const close=_WONKOK_BRACKETS[title[i]];
+    if(close){
       let depth=0,j=i;
       for(;j<title.length;j++){
-        if(title[j]==='(')depth++;
-        else if(title[j]===')'){depth--;if(depth===0)break;}
+        if(title[j]===title[i])depth++;
+        else if(title[j]===close){depth--;if(depth===0)break;}
       }
       const inner=title.slice(i+1,Math.min(j,title.length));
-      if(/^\s*원곡\s*[:：]?/.test(inner)){i=j<title.length?j+1:title.length;continue;}
+      // "(원곡: X)" 뿐 아니라 "(BTS 커버)"/"[Dance Cover]"처럼 괄호 안에 커버/cover 단어가 있는 경우도
+      // 같은 위험군이라 통째로 걷어낸다 — 원곡자 이름이 이 괄호 안에 커버 표시와 같이 적히는 관례가 흔함.
+      if(/^\s*원곡\s*[:：]?/.test(inner)||/커버|cover/i.test(inner)){i=j<title.length?j+1:title.length;continue;}
     }
     out+=title[i];i++;
   }
@@ -10603,10 +10625,13 @@ async function _wonkokScan(){
       if(data.length<1000)break;
       _wkLastId=data[data.length-1].id;
     }
-    const hitIds=(idTitleRows||[]).filter(v=>(v.title||'').includes('원곡')).map(v=>v.id);
+    // "원곡" 뿐 아니라 "커버"/"cover"(대소문자 무관)도 같은 위험군 — "(BTS 커버)"처럼 원곡자 이름을
+    // 커버 표시와 같은 괄호 안에 같이 적는 관례가 흔해서, 이것도 놓치면 안 됨(사용자 지적, 2026-08-03).
+    const _wonkokIndicatorRe=/원곡|커버|cover/i;
+    const hitIds=(idTitleRows||[]).filter(v=>_wonkokIndicatorRe.test(v.title||'')).map(v=>v.id);
     if(!hitIds.length){
       _wonkokCandidates=[];
-      statusEl.textContent=`스캔 완료 — 전체 ${idTitleRows?.length||0}개 중 "원곡" 포함 0개`;
+      statusEl.textContent=`스캔 완료 — 전체 ${idTitleRows?.length||0}개 중 "원곡/커버" 포함 0개`;
       _renderWonkokList();
       return;
     }
@@ -10645,15 +10670,19 @@ async function _wonkokScan(){
 function _wonkokClauseContent(title){
   let i=0;
   while(i<(title||'').length){
-    if(title[i]==='('){
+    const close=_WONKOK_BRACKETS[title[i]];
+    if(close){
       let depth=0,j=i;
       for(;j<title.length;j++){
-        if(title[j]==='(')depth++;
-        else if(title[j]===')'){depth--;if(depth===0)break;}
+        if(title[j]===title[i])depth++;
+        else if(title[j]===close){depth--;if(depth===0)break;}
       }
       const inner=title.slice(i+1,Math.min(j,title.length));
       const m=/^\s*원곡\s*[:：]?\s*/.exec(inner);
       if(m)return inner.slice(m[0].length).trim();
+      // "(BTS 커버)"류 — "원곡:" 같은 고정 접두사가 없어서 뗄 게 없으므로 괄호 안 전체를 그대로 반환
+      // (원곡자 이름이 커버 표시와 같은 괄호 안에 같이 적히는 관례를 그대로 활용).
+      if(/커버|cover/i.test(inner))return inner.trim();
       i=j<title.length?j+1:title.length;continue;
     }
     i++;
@@ -11055,6 +11084,20 @@ function _atmMatchesMember(m,title,tokens){
   }
   return false;
 }
+// 그룹 전체 로스터가 한꺼번에 매칭되는 경우를 채널 "시그니처 블록"(예: 리센느처럼 매 영상 설명란 끝에
+// 현재 멤버 전원 해시태그를 고정으로 붙이는 관행)으로 의심하고 제목 매칭 결과를 우선시하는 공용 헬퍼.
+// 실제로는 리브 한 명만 나오는 솔로 영상("리브다아ㅏ")인데도 설명란의 전원 해시태그 때문에 members에
+// 5명이 다 태깅돼 미나미 연결 카드에까지 리브 단독 영상이 섞여 나오던 오염 사고로 발견됨(2026-08-03).
+// 신규 태깅(_ytAutoTagMembers)과 재검증(_ytSweepMembersMistag) 양쪽이 이 헬퍼를 공유해야, 재검증
+// 버튼을 눌렀을 때 이미 오염된 기존 행도 같은 기준으로 걷어낼 수 있다.
+function _atmResolveMembers(title,description,roster){
+  const t=title||'';
+  const hitTitle=roster.filter(m=>_atmMatchesMember(m,t,_atmTokenize(t))).map(m=>m.ko);
+  const searchText=description?`${t}\n${description}`:t;
+  const hitFull=roster.filter(m=>_atmMatchesMember(m,searchText,_atmTokenize(searchText))).map(m=>m.ko);
+  if(roster.length>0&&hitFull.length===roster.length&&hitTitle.length<roster.length)return hitTitle;
+  return hitFull;
+}
 async function _ytAutoTagMembers(){
   if(!sb){_ytSetProg('Supabase 연결 없음');return;}
   const btn=document.getElementById('sp-yt-autotag');
@@ -11094,9 +11137,9 @@ async function _ytAutoTagMembers(){
           // 설명란 끝의 해시태그 나열(#세림 #앨런 ...)로 출연자를 밝히는 경우가 많음(2026-07-31 추가).
           // 콜라보(다른 그룹) 추론은 설명란까지 넓히면 소개문구/SNS 링크 등 관련 없는 텍스트가 섞여
           // 오탐 위험이 커서 의도적으로 제목만 그대로 쓴다 — 아래 _m2ParseTitle(title,gko) 참고.
-          const searchText=v.description?`${title}\n${v.description}`:title;
-          const tokens=_atmTokenize(searchText);
-          const hit=members.filter(m=>_atmMatchesMember(m,searchText,tokens)).map(m=>m.ko);
+          // 단, 설명란까지 포함했을 때 로스터 전원이 매칭되는데 제목만으로는 전원이 안 잡히면 채널
+          // 시그니처 블록일 가능성이 높다고 보고 제목 매칭만 신뢰함 — _atmResolveMembers 참고.
+          const hit=_atmResolveMembers(title,v.description,members);
           if(hit.length)patch.members=[...new Set(hit)];
         }
         // 콜라보(다른 그룹 멤버 언급) 감지 — 외부채널 태깅에 이미 쓰던 _m2ParseTitle을 그대로 재사용.
