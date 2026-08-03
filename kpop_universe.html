@@ -947,6 +947,13 @@
   .hnn-name{font-size:12px;color:rgba(220,230,255,0.9);font-weight:600;}
   .hnn-name b{color:rgba(255,150,150,0.95);}
   .hnn-sub{font-size:10.5px;color:rgba(155,178,228,0.55);margin-top:2px;}
+  .hnn-item input[type=checkbox]{flex-shrink:0;accent-color:rgba(255,150,150,0.9);margin-right:2px;}
+  #hnn-toolbar{display:flex;align-items:center;gap:10px;padding:10px 18px;border-bottom:0.5px solid rgba(255,255,255,0.08);flex-shrink:0;}
+  #hnn-select-all-row{display:flex;align-items:center;gap:6px;font-size:11.5px;color:rgba(185,205,245,0.75);cursor:pointer;white-space:nowrap;}
+  #hnn-count{flex:1;font-size:11.5px;color:rgba(155,178,228,0.55);}
+  #hnn-apply-btn{background:rgba(255,150,150,0.16);border:1px solid rgba(255,150,150,0.32);border-radius:10px;color:#ffb8b8;font-size:11.5px;padding:6px 12px;cursor:pointer;font-family:inherit;white-space:nowrap;}
+  #hnn-apply-btn:active{opacity:.7;}
+  #hnn-apply-btn:disabled{opacity:.4;cursor:default;}
   #avs-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.52);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:81;display:none;align-items:center;justify-content:center;}
   #avs-overlay.open{display:flex;}
   #avs-panel{width:min(520px,calc(100vw - 32px));max-height:82vh;display:flex;flex-direction:column;background:rgba(13,17,34,0.97);backdrop-filter:blur(40px);-webkit-backdrop-filter:blur(40px);border-radius:18px;box-shadow:0 16px 56px rgba(0,0,0,0.72);border:0.5px solid rgba(255,255,255,0.10);}
@@ -1931,9 +1938,14 @@
       <span id="hnn-hd-title">동명이인/흔한단어 오염 의심 스캔</span>
       <button id="hnn-close">✕</button>
     </div>
-    <div id="hnn-desc">전체 영상의 members/with_members를 집계해서, 같은 그룹 내 다른 멤버들보다 비정상적으로 많이 태깅된 이름(자체 채널)이나 여러 그룹에 걸쳐 과도하게 콜라보로 잡힌 이름(with_members)을 건수 내림차순으로 보여줌. 자동으로 고치지는 않음 — 눈으로 보고 흔한 단어/동명이인 의심되면 코드의 화이트리스트에 추가한 뒤 재검증 버튼을 돌릴 것. 이미 화이트리스트에 있는 이름은 목록에서 제외됨.</div>
+    <div id="hnn-desc">전체 영상의 members/with_members를 집계해서, 같은 그룹 내 다른 멤버들보다 비정상적으로 많이 태깅된 이름(자체 채널)이나 여러 그룹에 걸쳐 과도하게 콜라보로 잡힌 이름(with_members)을 건수 내림차순으로 보여줌. 의심되는 항목을 체크해서 "화이트리스트에 추가"하면 DB에 바로 저장되고(배포 필요 없음) 다음부터 해시태그로 명시된 경우만 태깅됨 — 추가 후 콜라보/자체 멤버 재검증 버튼을 눌러 기존 오염분을 정리할 것.</div>
     <button id="hnn-scan-btn" class="uc-btn">스캔 시작</button>
     <div id="hnn-status"></div>
+    <div id="hnn-toolbar" style="display:none">
+      <label id="hnn-select-all-row"><input type="checkbox" id="hnn-select-all">전체 선택</label>
+      <span id="hnn-count"></span>
+      <button id="hnn-apply-btn">선택 항목 화이트리스트 추가</button>
+    </div>
     <div id="hnn-list"></div>
   </div>
 </div>
@@ -9111,6 +9123,20 @@ try{
     auth:{flowType:'pkce',persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}
   });
 }catch(e){console.error('Supabase client init failed',e);}
+// 흔한단어/동명이인 화이트리스트 — 코드에 하드코딩된 _ATM_HASHTAG_ONLY_NAMES(재배포 필요)와 별개로,
+// "동명이인/흔한단어 오염 의심 스캔"에서 admin이 그 자리에서 바로 추가할 수 있게 DB 테이블도 같이 씀
+// (name_match_whitelist, name text primary key). 페이지 로드 시 한 번 받아와 하드코딩 목록과 합쳐서
+// 판단한다 — 실패해도(테이블 없음 등) 기존 하드코딩 보호는 그대로 유지됨(fail-open).
+const _ATM_DYNAMIC_HASHTAG_NAMES=new Set();
+async function _loadDynamicHashtagNames(){
+  if(!sb)return;
+  try{
+    const{data,error}=await sb.from('name_match_whitelist').select('name');
+    if(error||!data)return;
+    data.forEach(r=>{if(r.name)_ATM_DYNAMIC_HASHTAG_NAMES.add(r.name);});
+  }catch(e){}
+}
+_loadDynamicHashtagNames();
 
 // ── OAuth 리디렉트 진단용 임시 로깅 (기기별 로그인 실패 원인 파악용, 확인되면 제거) ──
 function _authAlert(msg){
@@ -10385,7 +10411,7 @@ async function _hnnScan(){
     const byGroup=new Map(); // gko -> [{mko,count}]
     ownCounts.forEach((count,k)=>{
       const[mko,gko]=k.split(' ');
-      if(_ATM_HASHTAG_ONLY_NAMES.has(mko))return;
+      if(_isHashtagOnlyName(mko))return;
       if(!byGroup.has(gko))byGroup.set(gko,[]);
       byGroup.get(gko).push({mko,count});
     });
@@ -10404,7 +10430,7 @@ async function _hnnScan(){
     const crossSuspects=[];
     crossCounts.forEach((count,k)=>{
       const[mko,gko]=k.split(' ');
-      if(_ATM_HASHTAG_ONLY_NAMES.has(mko))return;
+      if(_isHashtagOnlyName(mko))return;
       if(count>=15)crossSuspects.push({mko,gko,count,type:'cross'});
     });
     const combined=[...ownSuspects,...crossSuspects].sort((a,b)=>b.count-a.count).slice(0,60);
@@ -10416,31 +10442,76 @@ async function _hnnScan(){
     if(btn)btn.disabled=false;
   }
 }
+let _hnnCandidates=[];
 function _renderHnnList(list){
+  _hnnCandidates=list;
   const listEl=document.getElementById('hnn-list');
+  const toolbarEl=document.getElementById('hnn-toolbar');
   listEl.innerHTML='';
   if(!list.length){
     listEl.innerHTML='<div id="hnn-empty">의심 후보가 없어요</div>';
+    toolbarEl.style.display='none';
     return;
   }
+  toolbarEl.style.display='flex';
+  document.getElementById('hnn-select-all').checked=false;
   list.forEach((s,i)=>{
-    const item=document.createElement('div');item.className='hnn-item';
+    const item=document.createElement('div');item.className='hnn-item';item.dataset.name=s.mko;
+    item._hnnData=s;
+    const cb=document.createElement('input');cb.type='checkbox';
+    cb.addEventListener('change',_updateHnnCount);
     const rank=document.createElement('div');rank.className='hnn-rank';rank.textContent=String(i+1);
     const info=document.createElement('div');info.className='hnn-info';
     const name=document.createElement('div');name.className='hnn-name';
-    name.innerHTML=`${s.mko} <span style="color:rgba(155,178,228,0.6);font-weight:400;">(${s.gko})</span> — <b>${s.count}건</b>`;
+    name.innerHTML=s.mko+' <span style="color:rgba(155,178,228,0.6);font-weight:400;">('+s.gko+')</span> — <b>'+s.count+'건</b>';
     const sub=document.createElement('div');sub.className='hnn-sub';
     sub.textContent=s.type==='own'
-      ?`자체 채널 태깅 — 같은 그룹 내 중앙값 ${s.median}건 대비 이상치`
-      :`다른 채널 콜라보(with_members) 총 ${s.count}건`;
+      ?('자체 채널 태깅 — 같은 그룹 내 중앙값 '+s.median+'건 대비 이상치')
+      :('다른 채널 콜라보(with_members) 총 '+s.count+'건');
     info.appendChild(name);info.appendChild(sub);
-    item.appendChild(rank);item.appendChild(info);
+    item.appendChild(cb);item.appendChild(rank);item.appendChild(info);
     listEl.appendChild(item);
   });
+  _updateHnnCount();
 }
-document.getElementById('hnn-scan-btn')?.addEventListener('click',_hnnScan);
-document.getElementById('hnn-overlay')?.addEventListener('click',e=>{if(e.target===e.currentTarget)e.currentTarget.classList.remove('open');});
-document.getElementById('hnn-close')?.addEventListener('click',()=>document.getElementById('hnn-overlay').classList.remove('open'));
+function _updateHnnCount(){
+  const total=_hnnCandidates.length;
+  const checked=document.querySelectorAll('#hnn-list .hnn-item input[type=checkbox]:checked').length;
+  document.getElementById('hnn-count').textContent=checked+'/'+total+'개 선택됨';
+  const applyBtn=document.getElementById('hnn-apply-btn');
+  if(applyBtn)applyBtn.disabled=checked===0;
+  const allEl=document.getElementById('hnn-select-all');
+  if(allEl)allEl.checked=checked===total&&total>0;
+}
+document.getElementById('hnn-select-all')?.addEventListener('change',e=>{
+  document.querySelectorAll('#hnn-list .hnn-item input[type=checkbox]').forEach(cb=>{cb.checked=e.target.checked;});
+  _updateHnnCount();
+});
+// 체크된 이름들을 name_match_whitelist 테이블에 upsert — 이후 _isHashtagOnlyName이 즉시(재배포 없이)
+// 인식하도록 로컬 Set에도 바로 반영. 실제 기존 오염 데이터 정리는 여전히 콜라보/자체 멤버 재검증
+// 버튼을 관리자가 직접 눌러야 함(되돌리기 어려운 쓰기 작업이라 자동 연결하지 않음, 사용자 확인 2026-08-03).
+document.getElementById('hnn-apply-btn')?.addEventListener('click',async()=>{
+  if(!sb)return;
+  const btn=document.getElementById('hnn-apply-btn');
+  const items=[...document.querySelectorAll('#hnn-list .hnn-item')].filter(el=>el.querySelector('input[type=checkbox]').checked);
+  if(!items.length)return;
+  const names=[...new Set(items.map(el=>el.dataset.name).filter(Boolean))];
+  btn.disabled=true;btn.textContent='추가 중…';
+  try{
+    const{error}=await sb.from('name_match_whitelist').upsert(names.map(name=>({name})),{onConflict:'name'});
+    if(error)throw error;
+    names.forEach(n=>_ATM_DYNAMIC_HASHTAG_NAMES.add(n));
+    items.forEach(el=>el.remove());
+    _hnnCandidates=_hnnCandidates.filter(s=>!items.some(el=>el._hnnData===s));
+    document.getElementById('hnn-status').textContent=names.length+'개 화이트리스트에 추가 완료 — 콜라보/자체 멤버 재검증 버튼을 눌러 기존 오염분을 정리하세요. 남은 후보 '+_hnnCandidates.length+'개';
+    btn.textContent='선택 항목 화이트리스트 추가';
+    _updateHnnCount();
+    if(!_hnnCandidates.length)_renderHnnList([]);
+  }catch(e){
+    btn.disabled=false;btn.textContent='선택 항목 화이트리스트 추가';
+    document.getElementById('hnn-status').textContent='오류: '+e.message;
+  }
+});
 document.getElementById('sp-hnn-btn')?.addEventListener('click',()=>{document.getElementById('hnn-overlay').classList.add('open');});
 
 // ── "원곡: X" 오태깅 의심 목록 ── 다른 사람이 부른 커버 영상 제목에 "(원곡 : 이름)" 식으로 원곡자를
@@ -10895,6 +10966,8 @@ function _atmTokenize(title){return(title||'').toLowerCase().split(/[^a-z0-9]+/)
 // 겹쳐서 "성+이름 구조"로 오인식 → 성을 뗀 나머지("우리"/"사랑")가 그 자체로 극히 흔한 단어라 평문
 // 매칭 시 대량 오염됨(_atmStripSurname 로직이 원인, 사용자 제보로 발견).
 const _ATM_HASHTAG_ONLY_NAMES=new Set(['여름','아이엠','가을','하늘','바다','이유','Love','JIN','이런','뉴','고우리','유사랑']);
+// 하드코딩 목록 + DB(name_match_whitelist, admin이 스캔 화면에서 바로 추가) 목록을 합쳐서 판단.
+function _isHashtagOnlyName(name){return _ATM_HASHTAG_ONLY_NAMES.has(name)||_ATM_DYNAMIC_HASHTAG_NAMES.has(name);}
 // 트리플에스처럼 등록된 이름 자체가 "성+이름"(예: 김채원)인 그룹은, 영상 제목에서 성 없이 이름만
 // 쓰는(흔한) 표기를 못 잡는 문제가 있었음 — 반대로 프로미스나인처럼 이름만 등록된 경우는 제목에 성이
 // 붙어도 이미 아래 surRe로 잡혔음. 등록명이 알려진 성으로 시작하면 성을 뗀 나머지도 매칭 대상에 넣는다.
@@ -10908,7 +10981,7 @@ function _atmStripSurname(nameChars){
 function _atmMatchesMember(m,title,tokens){
   const name=m.ko;
   if(!name)return false;
-  const hashtagOnly=_ATM_HASHTAG_ONLY_NAMES.has(name);
+  const hashtagOnly=_isHashtagOnlyName(name);
   const nameChars=[...name];
   const multiChar=nameChars.length>1&&!hashtagOnly;
   const particles=['이','가','은','는','을','를','과','와','도','만','의','에','께','님','씨','아','야','랑','한테','에게'].map(_atmEscRe).join('|');
@@ -11212,7 +11285,7 @@ function _m2ParseTitle(rawTitle,selfGko){
       ||new RegExp(`#${_atmEscRe(name.replace(/[^가-힣a-zA-Z0-9]/g,''))}(?![가-힣a-zA-Z0-9])`,'i').test(title);
   }
   function memberHit(a,names){
-    if([...a.name.ko].length===1||_ATM_HASHTAG_ONLY_NAMES.has(a.name.ko))return names.some(t=>hitHashtag(t));
+    if([...a.name.ko].length===1||_isHashtagOnlyName(a.name.ko))return names.some(t=>hitHashtag(t));
     return names.some(t=>hit(t));
   }
   // 긴 이름 우선 정렬 (부분 매칭 방지)
