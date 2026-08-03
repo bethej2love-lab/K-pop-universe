@@ -37536,5 +37536,30 @@
     "links": {
       "namu": "https://namu.wiki/w/비챤(이세계아이돌)"
     }
+  },
+  {
+    "name": {
+      "ko": "여원",
+      "en": "Yeowon"
+    },
+    "group": {
+      "ko": "유스피어",
+      "en": "USPEER"
+    },
+    "co": "MW엔터테인먼트",
+    "active": false,
+    "color": [
+      108,
+      185,
+      100
+    ],
+    "bday": "2006.04.10",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/여원(USPEER)"
+    }
   }
 ]
