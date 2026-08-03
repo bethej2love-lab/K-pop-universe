@@ -10343,22 +10343,51 @@ async function _hnnScan(){
   if(btn)btn.disabled=true;
   document.getElementById('hnn-list').innerHTML='';
   try{
-    // 예전엔 전체 영상을 브라우저로 다 받아와서(수만 건, 요청 100번+) 직접 집계했는데 너무 오래 걸림 —
-    // 카운팅(GROUP BY)은 Postgres가 훨씬 빠르므로 서버 쪽 함수(hnn_own_channel_counts/
-    // hnn_cross_channel_counts, 미리 SQL 에디터에서 생성해둬야 함)에 위임해서 이미 집계된 결과만 받는다.
-    statusEl.textContent='집계 중…';
-    const[{data:ownRows,error:ownErr},{data:crossRows,error:crossErr}]=await Promise.all([
-      sb.rpc('hnn_own_channel_counts'),
-      sb.rpc('hnn_cross_channel_counts')
-    ]);
-    if(ownErr){statusEl.textContent='조회 실패(자체 채널 집계 함수 생성 필요할 수 있음): '+ownErr.message;return;}
-    if(crossErr){statusEl.textContent='조회 실패(콜라보 집계 함수 생성 필요할 수 있음): '+crossErr.message;return;}
+    // 전체를 한 번에 집계하는 RPC(hnn_*_counts)도 statement_timeout에 걸림 — 지금까지 계속 안전했던
+    // 패턴(id 구간을 작게 나눠 여러 번 요청)을 집계에도 그대로 적용한다. 먼저 id만 가볍게 전량
+    // 키셋 페이지네이션으로 받아와서(순수 PK 순서 스캔이라 빠름) 구간 경계를 만들고, 각 구간을
+    // hnn_*_counts_range(from,to) RPC로 따로 집계 요청해 브라우저에서 합산한다.
+    statusEl.textContent='id 목록 조회 중…';
+    const{data:idRows,error:idErr}=await _sbFetchAll(()=>sb.from(_YT_TABLE).select('id').order('id'));
+    if(idErr){statusEl.textContent='조회 실패: '+idErr.message;return;}
+    const ids=(idRows||[]).map(r=>r.id);
+    if(!ids.length){statusEl.textContent='집계할 영상이 없어요';return;}
+    const CHUNK=3000;
+    const ranges=[];
+    for(let i=0;i<ids.length;i+=CHUNK){
+      const chunkIds=ids.slice(i,i+CHUNK);
+      // id는 문자열(유튜브 영상 ID)이라 정렬 순서 그대로 첫/마지막 값을 경계로 씀 — 청크 바로 앞
+      // 경계는 그 이전 청크의 마지막 id(또는 맨 처음엔 빈 문자열, 모든 id보다 작다고 가정 가능하도록
+      // 첫 청크는 별도 처리).
+      ranges.push({from:i===0?'':ids[i-1],to:chunkIds[chunkIds.length-1]});
+    }
+    const ownCounts=new Map(); // "mko gko" -> count
+    const crossCounts=new Map();
+    for(let i=0;i<ranges.length;i++){
+      statusEl.textContent='집계 중… ('+(i+1)+'/'+ranges.length+'구간)';
+      const{from,to}=ranges[i];
+      const[{data:ownPart,error:ownErr},{data:crossPart,error:crossErr}]=await Promise.all([
+        sb.rpc('hnn_own_channel_counts_range',{p_from_id:from,p_to_id:to}),
+        sb.rpc('hnn_cross_channel_counts_range',{p_from_id:from,p_to_id:to})
+      ]);
+      if(ownErr){statusEl.textContent='조회 실패(자체 채널, 구간 '+(i+1)+'): '+ownErr.message;return;}
+      if(crossErr){statusEl.textContent='조회 실패(콜라보, 구간 '+(i+1)+'): '+crossErr.message;return;}
+      (ownPart||[]).forEach(({mko,gko,cnt})=>{
+        const k=mko+' '+gko;
+        ownCounts.set(k,(ownCounts.get(k)||0)+Number(cnt));
+      });
+      (crossPart||[]).forEach(({mko,gko,cnt})=>{
+        const k=mko+' '+gko;
+        crossCounts.set(k,(crossCounts.get(k)||0)+Number(cnt));
+      });
+    }
     // ① 그룹별 자체 채널 태깅 건수 이상치 — 같은 그룹 내 중앙값과 비교
     const byGroup=new Map(); // gko -> [{mko,count}]
-    (ownRows||[]).forEach(({mko,gko,cnt})=>{
+    ownCounts.forEach((count,k)=>{
+      const[mko,gko]=k.split(' ');
       if(_ATM_HASHTAG_ONLY_NAMES.has(mko))return;
       if(!byGroup.has(gko))byGroup.set(gko,[]);
-      byGroup.get(gko).push({mko,count:Number(cnt)});
+      byGroup.get(gko).push({mko,count});
     });
     const ownSuspects=[];
     byGroup.forEach((list,gko)=>{
@@ -10372,12 +10401,14 @@ async function _hnnScan(){
       });
     });
     // ② 콜라보(with_members) 총량 이상치 — 자체 화이트리스트 이름 제외, 절대 건수 기준 상위만
-    const crossSuspects=(crossRows||[])
-      .filter(({mko})=>!_ATM_HASHTAG_ONLY_NAMES.has(mko))
-      .map(({mko,gko,cnt})=>({mko,gko,count:Number(cnt),type:'cross'}))
-      .filter(s=>s.count>=15);
+    const crossSuspects=[];
+    crossCounts.forEach((count,k)=>{
+      const[mko,gko]=k.split(' ');
+      if(_ATM_HASHTAG_ONLY_NAMES.has(mko))return;
+      if(count>=15)crossSuspects.push({mko,gko,count,type:'cross'});
+    });
     const combined=[...ownSuspects,...crossSuspects].sort((a,b)=>b.count-a.count).slice(0,60);
-    statusEl.textContent=`집계 완료 — 의심 후보 ${combined.length}개(자체 ${ownSuspects.length} / 콜라보 ${crossSuspects.length})`;
+    statusEl.textContent='집계 완료 — 의심 후보 '+combined.length+'개(자체 '+ownSuspects.length+' / 콜라보 '+crossSuspects.length+')';
     _renderHnnList(combined);
   }catch(e){
     statusEl.textContent='오류: '+e.message;
