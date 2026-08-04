@@ -901,6 +901,9 @@
   #vm-apply-btn{border-radius:10px;font-size:11.5px;padding:6px 12px;cursor:pointer;font-family:inherit;white-space:nowrap;border:1px solid;background:rgba(100,180,120,0.16);border-color:rgba(100,180,120,0.32);color:rgba(145,220,165,0.9);}
   #vm-apply-btn:active{opacity:.7;}
   #vm-apply-btn:disabled{opacity:.4;cursor:default;}
+  #vm-edit-btn{border-radius:10px;font-size:11.5px;padding:6px 12px;cursor:pointer;font-family:inherit;white-space:nowrap;border:1px solid;background:rgba(120,160,255,0.16);border-color:rgba(140,180,255,0.32);color:#a8c4ff;}
+  #vm-edit-btn:active{opacity:.7;}
+  #vm-edit-btn:disabled{opacity:.4;cursor:default;}
   #vm-list{overflow-y:auto;padding:8px 0;flex:1;min-height:0;}
   #vm-empty{font-size:12px;color:rgba(155,178,228,0.45);text-align:center;padding:32px 0;}
   .vm-item{display:flex;align-items:center;gap:9px;padding:7px 14px;transition:background .12s;position:relative;}
@@ -1872,6 +1875,7 @@
     <button class="sp-yt-sync" id="sp-membersfix-btn" style="margin-top:4px;opacity:.8;">자체 멤버 태깅 재검증(전체)</button>
     <button class="sp-yt-sync" id="sp-collabfix-btn" style="margin-top:4px;opacity:.8;">콜라보 오태깅 재검증(전체)</button>
     <button class="sp-yt-sync" id="sp-yt-sweep-banned" style="margin-top:4px;opacity:.8;">밴 인물 언급 영상 노출 제외 정리</button>
+    <button class="sp-yt-sync" id="sp-junk-title-btn" style="margin-top:4px;opacity:.8;">"띵곡팔이" 제목 일괄 무관 처리</button>
 
     <div class="sp-yt-prog" id="sp-yt-prog"></div>
   </div>
@@ -1894,6 +1898,7 @@
     <div id="vm-toolbar" style="display:none">
       <label id="vm-select-all-row"><input type="checkbox" id="vm-select-all">전체 선택</label>
       <span id="vm-count"></span>
+      <button id="vm-edit-btn">편집</button>
       <button id="vm-apply-btn"></button>
     </div>
     <div id="vm-list"></div>
@@ -2400,6 +2405,23 @@ function _labelGlowColor(r,g,b){
   return `rgb(${Math.min(255,r*2.2|0)},${Math.min(255,g*2.2|0)},${Math.min(255,b*2.4|0)})`;
 }
 
+// 고인 멤버는 "현재 나이"를 계산하면 사실과 다르므로(예: 이미 세상을 떠난 사람이 계속 나이를 먹는 것처럼
+// 보임) died 필드가 있으면 사망 당시 나이로 고정 표시한다.
+function _ageChipText(a){
+  if(!a.bday)return null;
+  const[by,bm,bd]=a.bday.split('.').map(Number);
+  if(a.died){
+    const[dy,dm,dd]=a.died.split('.').map(Number);
+    let age=dy-by;
+    if(dm<bm||(dm===bm&&dd<bd))age--;
+    return `${a.bday} – ${a.died} (${age}${currentLang==='ko'?'세':'y.o.'})`;
+  }
+  const now=new Date();let age=now.getFullYear()-by;
+  if(now.getMonth()+1<bm||(now.getMonth()+1===bm&&now.getDate()<bd))age--;
+  return a.bday+(age>=0?` (${age}${currentLang==='ko'?'세':'y.o.'})`:' ');
+}
+// 고인 표기 — "故" 한자는 너무 무겁다는 피드백(2026-08-04)으로, 이름 뒤에 작은 별 하나만 은은하게 붙인다.
+function _deceasedMark(a){return a.died?' ✦':'';}
 const groupLabels=[];
 let ARTISTS=[],GROUPS={};
 let _STRICT_SYNC_GROUPS=new Set(); // groups.json의 strictSync:true 그룹 — 로드 후 채워짐
@@ -2499,7 +2521,7 @@ function _refreshOpenCardText(){
   const ttEl=document.getElementById('tt');
   if(ttEl.style.display!=='none'&&_openTArtist){
     const a=_openTArtist;
-    document.getElementById('tn').textContent=currentLang==='ko'?a.name.ko:(a.name.en||a.name.ko);
+    document.getElementById('tn').textContent=(currentLang==='ko'?a.name.ko:(a.name.en||a.name.ko))+_deceasedMark(a);
     {const _tgEl=document.getElementById('tg');const _aGrps=_artistGroups(a);
     _tgEl.innerHTML='';_tgEl.onclick=null;
     _aGrps.forEach((g,i)=>{
@@ -2527,10 +2549,7 @@ function _refreshOpenCardText(){
     const _tcoParts=[];
     if(a.co)_tcoParts.push({text:a.co,type:'agency',value:a.co});
     if(a.bday){
-      const[by,bm,bd]=a.bday.split('.').map(Number);
-      const now=new Date();let age=now.getFullYear()-by;
-      if(now.getMonth()+1<bm||(now.getMonth()+1===bm&&now.getDate()<bd))age--;
-      _tcoParts.push({text:a.bday+(age>=0?` (${age}${currentLang==='ko'?'세':'y.o.'})`:' '),type:'birthYear',value:String(by)});
+      _tcoParts.push({text:_ageChipText(a),type:'birthYear',value:a.bday.split('.')[0]});
     }
     if(a.nat){
       const n=a.nat;const natKo=typeof n==='object'?(n.ko||n.en):n;
@@ -3914,6 +3933,12 @@ function _isBannedVideoTitle(t,ko){
 // 쪽은 이미 쿼리 단계에서 걸러내는데, 연결 카드(_fetchApiCollabData)는 이 체크가 빠져있어서 태그를
 // 무관 처리해도 members/with_members 배열 값이 그대로 남아있으면 연결 카드에 유령처럼 계속 뜨는 버그가 있었음.
 function _filterBannedVideos(list,ko){return(list||[]).filter(v=>!_isBannedVideoTitle(v.title,ko)&&v.content_flag!=='hidden'&&v.content_flag!=='무관');}
+// "띵곡팔이" — 실제 케이팝 채널 콘텐츠가 아니라 유명곡을 짜깁기해 파는 저작권 우회형 재업로드 채널에서
+// 흔히 쓰는 문구 — 제목에 이 단어가 있으면 어느 그룹으로 매칭됐든 무조건 무관 처리한다(사용자 요청, 2026-08-04).
+// _isBannedVideoTitle과 달리 hidden이 아니라 무관 처리(행은 남기되 그룹/멤버 그리드에서만 제외)라 신규
+// 동기화 시 이 체크에 걸리면 content_flag를 '무관'으로 붙여서 저장한다 — 기존 행은 아래 스윕 버튼으로 정리.
+const _JUNK_TITLE_KEYWORDS_GLOBAL=['띵곡팔이'];
+function _isJunkVideoTitle(t){return!!t&&_JUNK_TITLE_KEYWORDS_GLOBAL.some(k=>t.includes(k));}
 
 let _lbPlaylist=null,_lbIdx=-1,_lbCtx=null;
 let _lbSpeed=1; // 우측 탭존을 꾹 누르는 동안의 배속 (1 또는 2)
@@ -6307,7 +6332,7 @@ function showT(a,cx,cy,keepNavStack,urlMode,pushMobNav,noFly){
   const ttBar=document.getElementById('tt-bar');
   if(gInfo&&gInfo.color){const[cr,cg,cb]=gInfo.color;ttBar.style.background=`linear-gradient(90deg,rgba(${cr},${cg},${cb},0.50),rgba(${cr},${cg},${cb},0.18))`;}
   else ttBar.style.background='rgba(160,180,220,0.22)';
-  document.getElementById('tn').textContent=currentLang==='ko'?a.name.ko:(a.name.en||a.name.ko);
+  document.getElementById('tn').textContent=(currentLang==='ko'?a.name.ko:(a.name.en||a.name.ko))+_deceasedMark(a);
   _renderGcLinks(a.links,'tt-links');
   const tgEl=document.getElementById('tg');
   tgEl.innerHTML='';tgEl.onclick=null;
@@ -6361,12 +6386,7 @@ function showT(a,cx,cy,keepNavStack,urlMode,pushMobNav,noFly){
   const _tcoParts=[];
   if(a.co)_tcoParts.push({text:a.co,type:'agency',value:a.co});
   if(a.bday){
-    const[by,bm,bd]=a.bday.split('.').map(Number);
-    const now=new Date();
-    let age=now.getFullYear()-by;
-    if(now.getMonth()+1<bm||(now.getMonth()+1===bm&&now.getDate()<bd))age--;
-    const bdayText=a.bday+(age>=0?` (${age}${currentLang==='ko'?'세':'y.o.'})`:' ');
-    _tcoParts.push({text:bdayText,type:'birthYear',value:String(by)});
+    _tcoParts.push({text:_ageChipText(a),type:'birthYear',value:a.bday.split('.')[0]});
   }
   if(a.nat){
     const n=a.nat;
@@ -6530,7 +6550,7 @@ function _renderGcMemberList(ko,cx,cy){
     })
     .forEach(m=>{
       const sp=document.createElement('span');sp.className='gc-mem-name'+(m.active?'':' gc-mem-inactive');
-      sp.textContent=currentLang==='ko'?m.name.ko:(m.name.en||m.name.ko);
+      sp.textContent=(currentLang==='ko'?m.name.ko:(m.name.en||m.name.ko))+_deceasedMark(m);
       if(_artistGroups(m).length>1)sp.title=_artistGroups(m).map(g=>g.ko).join(' · ');
       sp.addEventListener('click',e=>{
         e.stopPropagation();
@@ -10158,7 +10178,7 @@ async function _ytSyncGroup(ko,key,onProg,youtubeUrl){
   const uploadsId=await _ytGetUploadsId(url,key);
   const{vids}=await _ytFetchNewVideos(uploadsId,key,sinceId,onProg);
   if(vids.length){
-    const rows=vids.map(v=>({...v,group_ko:ko}));
+    const rows=vids.map(v=>({...v,group_ko:ko,...(_isJunkVideoTitle(v.title)?{content_flag:'무관'}:{})}));
     for(let i=0;i<rows.length;i+=200){
       const{error}=await sb.from(_YT_TABLE).upsert(rows.slice(i,i+200));
       if(error)throw new Error(error.message);
@@ -10263,6 +10283,35 @@ async function _ytSweepBannedVideos(){
     }
     localStorage.setItem('kpu_banned_sweep_version',version);
     _ytSetProg(`완료! ${rows.length}개 중 ${toHide.length}개 노출 제외 처리함(노출 제외 영상 목록에서 검토 가능)`);
+  }catch(e){
+    _ytSetProg('오류: '+e.message);
+  }finally{
+    if(btn)btn.disabled=false;
+  }
+}
+
+// 위 밴 인물 스윕과 같은 방식이지만 hidden이 아니라 무관 처리 — "띵곡팔이" 제목은 신규 동기화부터는
+// 자동으로 무관 붙지만(_ytSyncGroup/_extBuildRows), 이 코드가 배포되기 전에 이미 들어와 있던 기존 행은
+// 이 버튼으로 한 번 훑어서 정리한다.
+async function _ytSweepJunkTitles(){
+  if(!sb){_ytSetProg('Supabase 연결 없음');return;}
+  const btn=document.getElementById('sp-junk-title-btn');
+  if(btn)btn.disabled=true;
+  try{
+    _ytSetProg('[띵곡팔이 정리] 조회 중…');
+    const{data:rows,error}=await _sbFetchAll(()=>sb.from(_YT_TABLE)
+      .select('id,title')
+      .ilike('title','%띵곡팔이%')
+      .or('content_flag.is.null,content_flag.neq.무관')
+      .order('id'));
+    if(error){_ytSetProg('조회 실패: '+error.message);return;}
+    if(!rows?.length){_ytSetProg('해당하는 영상이 없어요');return;}
+    const ids=rows.map(v=>v.id);
+    for(let i=0;i<ids.length;i+=200){
+      const{error:ue}=await sb.from(_YT_TABLE).update({content_flag:'무관'}).in('id',ids.slice(i,i+200));
+      if(ue)throw new Error(ue.message);
+    }
+    _ytSetProg(`완료! "띵곡팔이" 포함 ${ids.length}개 무관 처리함`);
   }catch(e){
     _ytSetProg('오류: '+e.message);
   }finally{
@@ -11169,12 +11218,12 @@ function _vmRenderVideoList(){
     toolbarEl.style.display='none';
     return;
   }
-  const showCheckbox=tab==='nomem'||tab==='hidden'||tab==='ss';
+  const showCheckbox=tab==='nomem'||tab==='hidden'||tab==='ss'||tab==='all';
   if(showCheckbox){
     toolbarEl.style.display='flex';
     document.getElementById('vm-select-all-row').style.display='';
     document.getElementById('vm-select-all').checked=false;
-    const applyLabel=tab==='nomem'?'선택 항목 무관 해제':tab==='ss'?'선택 항목 노출 제외':'선택 항목 노출 복원';
+    const applyLabel=tab==='nomem'?'선택 항목 무관 해제':tab==='ss'?'선택 항목 노출 제외':tab==='hidden'?'선택 항목 노출 복원':'선택 항목 무관 처리';
     document.getElementById('vm-apply-btn').textContent=applyLabel;
     _vmUpdateCount();
   }else{
@@ -11300,17 +11349,45 @@ document.getElementById('vm-apply-btn')?.addEventListener('click',async()=>{
   const ids=items.map(el=>el.dataset.vidId).filter(Boolean);
   if(!ids.length)return;
   btn.disabled=true;btn.textContent='처리 중…';
-  const newFlag=_vmTab==='ss'?'hidden':null;
+  const newFlag=_vmTab==='ss'?'hidden':(_vmTab==='all'?'무관':null);
   const{error}=await sb.from(_YT_TABLE).update({content_flag:newFlag}).in('id',ids);
-  const applyLabel=_vmTab==='nomem'?'선택 항목 무관 해제':_vmTab==='ss'?'선택 항목 노출 제외':'선택 항목 노출 복원';
+  const applyLabel=_vmTab==='nomem'?'선택 항목 무관 해제':_vmTab==='ss'?'선택 항목 노출 제외':_vmTab==='hidden'?'선택 항목 노출 복원':'선택 항목 무관 처리';
   if(error){btn.disabled=false;btn.textContent=applyLabel;document.getElementById('vm-status').textContent='오류: '+error.message;return;}
   const idSet=new Set(ids);
-  _vmRows=_vmRows.filter(v=>!idSet.has(v.id));
-  items.forEach(el=>el.remove());
-  document.getElementById('vm-status').textContent=`${ids.length}개 처리 완료 — 남은 ${_vmRows.length}개`;
+  if(_vmTab==='all'){
+    // 전체 탭은 검색 결과 목록이라 플래그를 바꿔도 그대로 남아있어야 함(nomem/hidden 탭처럼 그 자체가
+    // "무관/숨김 목록"이 아니므로) — 행을 지우지 않고 배지와 체크박스만 갱신한다.
+    _vmRows.forEach(v=>{if(idSet.has(v.id))v.content_flag=newFlag;});
+    items.forEach(el=>{
+      const cb=el.querySelector('input[type=checkbox]');if(cb)cb.checked=false;
+      const flagBtn=el.querySelector('.vm-flag-btn');
+      if(flagBtn){flagBtn.className='vm-flag-btn vm-flag-nomem';flagBtn.textContent='무관';}
+    });
+    document.getElementById('vm-status').textContent=`${ids.length}개 무관 처리 완료`;
+  }else{
+    _vmRows=_vmRows.filter(v=>!idSet.has(v.id));
+    items.forEach(el=>el.remove());
+    document.getElementById('vm-status').textContent=`${ids.length}개 처리 완료 — 남은 ${_vmRows.length}개`;
+    if(!_vmRows.length)_vmRenderVideoList();
+  }
   btn.textContent=applyLabel;
   _vmUpdateCount();
-  if(!_vmRows.length)_vmRenderVideoList();
+});
+document.getElementById('vm-edit-btn')?.addEventListener('click',()=>{
+  if(!sb||!_isAdmin())return;
+  const ids=[...document.querySelectorAll('#vm-list .vm-item')].filter(el=>el.querySelector('input[type=checkbox]')?.checked).map(el=>el.dataset.vidId).filter(Boolean);
+  if(!ids.length)return;
+  const idSet=new Set(ids);
+  const selRows=_vmRows.filter(v=>idSet.has(v.id));
+  const kos=new Set(selRows.map(v=>v.group_ko).filter(Boolean));
+  const ko=selRows[0]?.group_ko||'';
+  _openVidTagModalBulk(ids,ko);
+  // 검색 결과가 여러 그룹에 걸쳐 있을 수 있는 전체 탭 특성상, 멤버 체크박스는 첫 영상의 그룹 기준으로만
+  // 그려짐 — "덮어쓰기"를 켜면 다른 그룹 영상까지 그 그룹 멤버로 잘못 씌워질 수 있어 미리 경고해둔다.
+  if(kos.size>1){
+    const statusEl=document.getElementById('vid-tag-status');
+    if(statusEl)statusEl.textContent=`선택한 영상이 ${kos.size}개 그룹에 걸쳐 있어요 — "멤버/콜라보 태그도 덮어쓰기"는 끄고 사용하세요`;
+  }
 });
 document.querySelectorAll('.vm-ch-tab').forEach(btn=>{
   btn.addEventListener('click',()=>{
@@ -11414,7 +11491,10 @@ function _atmTokenize(title){return(title||'').toLowerCase().split(/[^a-z0-9]+/)
 // "고우리"(레인보우)/"유사랑"(이즈나) — 새로 발견된 패턴: 이름 앞글자가 흔한 성씨(고/유)와 우연히
 // 겹쳐서 "성+이름 구조"로 오인식 → 성을 뗀 나머지("우리"/"사랑")가 그 자체로 극히 흔한 단어라 평문
 // 매칭 시 대량 오염됨(_atmStripSurname 로직이 원인, 사용자 제보로 발견).
-const _ATM_HASHTAG_ONLY_NAMES=new Set(['여름','아이엠','가을','하늘','바다','이유','Love','JIN','이런','뉴','고우리','유사랑']);
+// "종현"(샤이니)/"문빈"(아스트로)/"구하라"(카라)/"설리"(에프엑스) — 위와는 다른 이유로 등록: 동명이인/흔한
+// 단어 충돌이 아니라 고인이 된 멤버들이라, 평문 언급(추모글·회고 클립·다른 사람 언급 등)만으로 새 영상이
+// 계속 태깅되는 걸 원치 않는다는 요청(2026-08-04)에 따라 명시적 해시태그가 있을 때만 인정하게 제한.
+const _ATM_HASHTAG_ONLY_NAMES=new Set(['여름','아이엠','가을','하늘','바다','이유','Love','JIN','이런','뉴','고우리','유사랑','종현','문빈','구하라','설리']);
 // 하드코딩 목록 + DB(name_match_whitelist, admin이 스캔 화면에서 바로 추가) 목록을 합쳐서 판단.
 function _isHashtagOnlyName(name){return _ATM_HASHTAG_ONLY_NAMES.has(name)||_ATM_DYNAMIC_HASHTAG_NAMES.has(name);}
 // 트리플에스처럼 등록된 이름 자체가 "성+이름"(예: 김채원)인 그룹은, 영상 제목에서 성 없이 이름만
@@ -11427,6 +11507,10 @@ function _atmStripSurname(nameChars){
   if(nameChars.length>=3&&_ATM_KOREAN_SURNAMES.has(nameChars[0]))return nameChars.slice(1).join('');
   return null;
 }
+// "가인"(브라운아이드걸스)의 "성+이름" 매칭에서 흔한 성씨 "송"이 우연히 걸려 무관한 트롯 가수 "송가인"이
+// 대량으로 오태깅됨 — 가인의 실명은 "손가인"이라 "손"은 그대로 인정하고 "송"만 예외 처리한다
+// (2026-08-04, 사용자 제보). 이름별로 특정 성씨만 배제해야 하는 경우가 더 생기면 여기에 추가.
+const _ATM_SURNAME_EXCLUDE={'가인':new Set(['송'])};
 function _atmMatchesMember(m,title,tokens){
   const name=m.ko;
   if(!name)return false;
@@ -11438,7 +11522,8 @@ function _atmMatchesMember(m,title,tokens){
     if(new RegExp(`(?<![가-힣])${_atmEscRe(name)}(?![가-힣])`).test(title))return true; // 이름 단독
     if(new RegExp(`(?<![가-힣])${_atmEscRe(name)}(?:${particles}){0,2}(?![가-힣])`).test(title))return true; // 이름+조사
     const surRe=new RegExp(`([가-힣])${_atmEscRe(name)}(?:${particles}){0,2}(?![가-힣])`,'g');
-    let sm;while((sm=surRe.exec(title))){if(_ATM_KOREAN_SURNAMES.has(sm[1]))return true;} // 성+이름(+조사)
+    const surExclude=_ATM_SURNAME_EXCLUDE[name];
+    let sm;while((sm=surRe.exec(title))){if(_ATM_KOREAN_SURNAMES.has(sm[1])&&!(surExclude&&surExclude.has(sm[1])))return true;} // 성+이름(+조사)
     const givenOnly=_atmStripSurname(nameChars);
     if(givenOnly&&givenOnly.length>=2){
       if(new RegExp(`(?<![가-힣])${_atmEscRe(givenOnly)}(?:${particles}){0,2}(?![가-힣])`).test(title))return true; // 등록명이 성+이름인데 제목엔 이름만
@@ -11855,7 +11940,8 @@ function _extBuildRows(vids){
     rows.push({
       id:v.id,title:v.title,description:v.description||'',thumb:v.thumb,published_at:v.published_at,
       category:v.category,
-      group_ko:match.primaryGroup,members,with_groups:withGroups,with_members:withMembers
+      group_ko:match.primaryGroup,members,with_groups:withGroups,with_members:withMembers,
+      ...(_isJunkVideoTitle(v.title)?{content_flag:'무관'}:{})
     });
   }
   return{rows,skipped};
@@ -13782,6 +13868,7 @@ document.getElementById('vid-tag-thumb-refresh').addEventListener('click',async 
   });
   document.getElementById('sp-strictsync-sweep-btn')?.addEventListener('click',_ytSweepStrictSyncPollution);
   document.getElementById('sp-yt-sweep-banned')?.addEventListener('click',_ytSweepBannedVideos);
+  document.getElementById('sp-junk-title-btn')?.addEventListener('click',_ytSweepJunkTitles);
   // strictSync 도입 이후 _ytSweepHighlightMistag는 _m2ParseTitle이 하이라이트를 반환하지 않아 전체를
   // 잘못 무관 처리하므로, 버튼을 vm 패널 검수 탭(수동 확인)으로 대체한다.
   document.getElementById('sp-hlfix-btn')?.addEventListener('click',()=>_vmOpen('ss'));
