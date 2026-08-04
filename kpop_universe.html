@@ -950,6 +950,7 @@
   .wk-info{flex:1;min-width:0;}
   .wk-group{font-size:10.5px;color:rgba(155,178,228,0.55);margin-bottom:2px;}
   .wk-group b{color:rgba(255,190,140,0.85);font-weight:600;}
+  .wk-multigrp-badge{display:inline-block;font-size:9.5px;font-weight:600;color:rgba(255,150,150,0.95);background:rgba(255,90,90,0.14);border-radius:4px;padding:1px 5px;margin-right:4px;vertical-align:middle;}
   .wk-title{font-size:11.5px;color:rgba(210,225,255,0.80);line-height:1.4;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;}
   #wonkok-empty{font-size:12px;color:rgba(155,178,228,0.45);text-align:center;padding:32px 0;}
   #hnn-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.52);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:81;display:none;align-items:center;justify-content:center;}
@@ -1935,7 +1936,7 @@
       <span id="wonkok-hd-title">원곡 오태깅 의심 목록</span>
       <button id="wonkok-close">✕</button>
     </div>
-    <div id="wonkok-desc">제목에 "원곡" 또는 "커버"/"cover"가 들어간 영상 중, 그 절(괄호 안)에 태깅된 멤버/그룹 이름이 원곡자로 언급된 것만 후보로 추림 — members(자체 출연)뿐 아니라 with_members/with_groups(콜라보 태그)도 같이 검사. "Cover by X"처럼 by 뒤에 오는 이름은 원곡자가 아니라 실제 출연자로 보고 보호함. 스캔은 시간이 좀 걸릴 수 있음.</div>
+    <div id="wonkok-desc">제목에 "원곡" 또는 "커버"/"cover"가 들어간 영상 중, 그 절(괄호 안)에 태깅된 멤버/그룹 이름이 원곡자로 언급된 것만 후보로 추림 — members(자체 출연)뿐 아니라 with_members/with_groups(콜라보 태그)도 같이 검사. "Cover by X"처럼 by 뒤에 오는 이름은 원곡자가 아니라 실제 출연자로 보고 보호함. 추가로, with_members/with_groups에 서로 다른 그룹이 2개 이상 걸린 영상("여러 그룹 커버 감지" 표시)은 괄호 절이 없어도 커버 메들리로 보고 전부 후보에 포함함 — 진짜 다자간 콜라보일 수도 있으니 적용 전에 꼭 확인. 스캔은 시간이 좀 걸릴 수 있음.</div>
     <button id="wonkok-scan-btn" class="uc-btn">스캔 시작</button>
     <div id="wonkok-status"></div>
     <div id="wonkok-toolbar" style="display:none">
@@ -11021,7 +11022,9 @@ async function _wonkokScan(){
     const idTitleRows=[];
     let _wkLastId=null;
     while(true){
-      let q=sb.from(_YT_TABLE).select('id,title').order('id').limit(1000);
+      // group_ko/with_members/with_groups도 같이 가볍게 받아온다 — "여러 그룹 커버 메들리" 감지(아래
+      // multiGroupIds)에 필요. 배열 컬럼이라 있어도 payload가 크게 안 무거워짐.
+      let q=sb.from(_YT_TABLE).select('id,title,group_ko,with_members,with_groups').order('id').limit(1000);
       if(_wkLastId!==null)q=q.gt('id',_wkLastId);
       const{data,error:idErr}=await q;
       if(idErr){statusEl.textContent=`조회 실패(${idTitleRows.length}개까지 받음): `+idErr.message;return;}
@@ -11033,20 +11036,38 @@ async function _wonkokScan(){
     }
     const _wonkokIndicatorRe=/원곡|커버|cover/i;
     const hitIds=(idTitleRows||[]).filter(v=>_wonkokIndicatorRe.test(v.title||'')).map(v=>v.id);
-    if(!hitIds.length){
+    // "한 그룹이 여러 그룹 노래를 커버해서 그 원곡자들이 전부 with_members/with_groups(콜라보)로 잘못
+    // 들어간" 경우 — with_groups + with_members에서 뽑아낸 그룹이 자기 자신 빼고 2개 이상이면 후보로
+    // 삼는다. 실제로 한 영상에서 서로 다른 그룹 2곳 이상과 동시에 진짜 콜라보할 가능성보다, 커버
+    // 메들리에서 원곡자들이 콜라보로 오인식됐을 가능성이 훨씬 높음 — "(원곡: ...)" 괄호 절이 없어도
+    // (원곡 표기가 제목 여기저기 흩어져 있어 깔끔한 절로 안 묶여도) 이 구조적 신호만으로 잡는다
+    // (2026-08-04, 사용자 요청 — "한 그룹이 여러 그룹 노래를 커버한 경우에 다 with로 들어간 경우").
+    const multiGroupIds=[];
+    (idTitleRows||[]).forEach(v=>{
+      const gset=new Set(v.with_groups||[]);
+      (v.with_members||[]).forEach(s=>{
+        const m=s.match(/^(.*)\((.*)\)$/);
+        if(m)gset.add(m[2]);
+      });
+      gset.delete(v.group_ko);
+      if(gset.size>=2)multiGroupIds.push(v.id);
+    });
+    const multiGroupIdSet=new Set(multiGroupIds);
+    const allIds=[...new Set([...hitIds,...multiGroupIds])];
+    if(!allIds.length){
       _wonkokCandidates=[];
-      statusEl.textContent=`스캔 완료 — 전체 ${idTitleRows?.length||0}개 중 "원곡/커버" 포함 0개`;
+      statusEl.textContent=`스캔 완료 — 전체 ${idTitleRows?.length||0}개 중 후보 0개`;
       _renderWonkokList();
       return;
     }
-    statusEl.textContent=`"원곡/커버" 포함 ${hitIds.length}개 상세 조회 중…`;
+    statusEl.textContent=`후보 ${allIds.length}개 상세 조회 중…`;
     const rows=[];
-    for(let i=0;i<hitIds.length;i+=200){
+    for(let i=0;i<allIds.length;i+=200){
       // members(자체 출연)와 with_members/with_groups(콜라보 태그)를 한 쿼리로 같이 조회 — 예전엔 이걸
       // 두 도구가 따로 조회했음.
       const{data,error}=await sb.from(_YT_TABLE)
         .select('id,title,group_ko,members,with_members,with_groups,thumb,content_flag,cover_of_members,cover_of_groups')
-        .in('id',hitIds.slice(i,i+200))
+        .in('id',allIds.slice(i,i+200))
         .eq('tags_manual',false); // 관리자가 이미 직접 확정한 태그는 오태깅 후보로 다시 흔들지 않음
       if(error){statusEl.textContent='조회 실패: '+error.message;return;}
       rows.push(...(data||[]));
@@ -11056,33 +11077,42 @@ async function _wonkokScan(){
     const candidates=[];
     for(const v of filtered){
       const{origText,performerText}=_wonkokParseClause(v.title||'');
-      if(!origText)continue;
-      const origNorm=_wonkokNorm(origText);
-      const perfNorm=performerText?_wonkokNorm(performerText):null;
-      // members: 절을 뺀 나머지 제목에 이름이 안 남아있고(본인이 직접 부른 커버가 아니라는 뜻) + by 뒤
-      // 출연자 텍스트에도 없어야 진짜 "원곡자 크레딧만 있는" 오태깅으로 본다.
-      const strippedNorm=_wonkokNorm(_wonkokStripClause(v.title||''));
-      const toMoveMem=(v.members||[]).filter(mko=>{
-        if(perfNorm&&_wonkokNameHits(mko,v.group_ko,perfNorm))return false;
-        if(_wonkokNameHits(mko,v.group_ko,strippedNorm))return false;
-        return _wonkokNameHits(mko,v.group_ko,origNorm);
-      });
-      // with_members/with_groups: 원곡자 텍스트(by 앞)에 이름이 있으면 후보 — by 뒤(출연자 텍스트)에
-      // 있으면 실제 이 영상에 나온 사람이므로 후보에서 뺀다.
-      const toMoveWithMem=(v.with_members||[]).filter(s=>{
-        const m=s.match(/^(.*)\((.*)\)$/);
-        if(!m)return false;
-        const[,mko,gko]=m;
-        if(perfNorm&&_wonkokNameHits(mko,gko,perfNorm))return false;
-        return _wonkokNameHits(mko,gko,origNorm);
-      });
-      const toMoveWithGrp=(v.with_groups||[]).filter(gko=>{
-        const en=(GROUPS[gko]||{}).en||'';
-        if(perfNorm&&(_wonkokHit(perfNorm,gko)||(en&&_wonkokHit(perfNorm,en))))return false;
-        return _wonkokHit(origNorm,gko)||(en&&_wonkokHit(origNorm,en));
-      });
+      const isMultiGroupCover=multiGroupIdSet.has(v.id);
+      let toMoveMem=[],toMoveWithMem=[],toMoveWithGrp=[];
+      if(origText){
+        const origNorm=_wonkokNorm(origText);
+        const perfNorm=performerText?_wonkokNorm(performerText):null;
+        // members: 절을 뺀 나머지 제목에 이름이 안 남아있고(본인이 직접 부른 커버가 아니라는 뜻) + by 뒤
+        // 출연자 텍스트에도 없어야 진짜 "원곡자 크레딧만 있는" 오태깅으로 본다.
+        const strippedNorm=_wonkokNorm(_wonkokStripClause(v.title||''));
+        toMoveMem=(v.members||[]).filter(mko=>{
+          if(perfNorm&&_wonkokNameHits(mko,v.group_ko,perfNorm))return false;
+          if(_wonkokNameHits(mko,v.group_ko,strippedNorm))return false;
+          return _wonkokNameHits(mko,v.group_ko,origNorm);
+        });
+        // with_members/with_groups: 원곡자 텍스트(by 앞)에 이름이 있으면 후보 — by 뒤(출연자 텍스트)에
+        // 있으면 실제 이 영상에 나온 사람이므로 후보에서 뺀다.
+        toMoveWithMem=(v.with_members||[]).filter(s=>{
+          const m=s.match(/^(.*)\((.*)\)$/);
+          if(!m)return false;
+          const[,mko,gko]=m;
+          if(perfNorm&&_wonkokNameHits(mko,gko,perfNorm))return false;
+          return _wonkokNameHits(mko,gko,origNorm);
+        });
+        toMoveWithGrp=(v.with_groups||[]).filter(gko=>{
+          const en=(GROUPS[gko]||{}).en||'';
+          if(perfNorm&&(_wonkokHit(perfNorm,gko)||(en&&_wonkokHit(perfNorm,en))))return false;
+          return _wonkokHit(origNorm,gko)||(en&&_wonkokHit(origNorm,en));
+        });
+      }
+      if(isMultiGroupCover){
+        // 괄호 절 기반 판정과 별개로, 여러 그룹 커버 신호가 있으면 with_members/with_groups 전체를
+        // 원곡자 후보로 합침(이미 위에서 일부 골라졌으면 합집합).
+        toMoveWithMem=[...new Set([...toMoveWithMem,...(v.with_members||[])])];
+        toMoveWithGrp=[...new Set([...toMoveWithGrp,...(v.with_groups||[])])];
+      }
       if(toMoveMem.length||toMoveWithMem.length||toMoveWithGrp.length){
-        candidates.push({...v,toMoveMem,toMoveWithMem,toMoveWithGrp});
+        candidates.push({...v,toMoveMem,toMoveWithMem,toMoveWithGrp,isMultiGroupCover});
       }
     }
     _wonkokCandidates=candidates;
@@ -11122,7 +11152,8 @@ function _renderWonkokList(){
     if(namedMembers.length)parts.push(`<b>${namedMembers.join(', ')}</b> 개인으로 귀속`);
     if(v.toMoveWithMem.length)parts.push(`콜라보 <b>${v.toMoveWithMem.map(s=>s.replace(/\(.*\)$/,'')).join(', ')}</b> → 원곡자로`);
     if(v.toMoveWithGrp.length)parts.push(`콜라보 그룹 <b>${v.toMoveWithGrp.join(', ')}</b> → 원곡자로`);
-    grp.innerHTML=`${v.group_ko||''} · ${parts.join(' / ')}`;
+    const multiGroupBadge=v.isMultiGroupCover?'<span class="wk-multigrp-badge">여러 그룹 커버 감지</span> ':'';
+    grp.innerHTML=`${multiGroupBadge}${v.group_ko||''} · ${parts.join(' / ')}`;
     const ttl=document.createElement('div');ttl.className='wk-title';ttl.textContent=v.title||'';
     info.appendChild(grp);info.appendChild(ttl);
     const editBtn=document.createElement('button');editBtn.className='vid-edit-btn';editBtn.type='button';editBtn.textContent='✎';
