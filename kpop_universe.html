@@ -9813,7 +9813,11 @@ async function _pickFeaturedVidFromDB(ko,memberKo,onlyMe,filter,viewMode,formatF
       q=q.eq('category',filter);
     }
     if(memberKo&&onlyMe){
+      // load()의 Only 필터와 동일한 기준(members 외 with_members/with_groups도 비어있어야 진짜 단독) —
+      // 안 그러면 게스트가 있는 콜라보 영상이 대표 썸네일로 뽑힐 수 있음(2026-08-04).
       q=q.eq('group_ko',ko).contains('members',[memberKo]).containedBy('members',[memberKo])
+         .or('with_members.eq.{},with_members.is.null')
+         .or('with_groups.eq.{},with_groups.is.null')
          .or('content_flag.is.null,content_flag.neq.외부인');
     }else if(memberKo){
       q=q.eq('group_ko',ko).or(`members.eq.{},members.cs.{${memberKo}}`);
@@ -12613,8 +12617,13 @@ function _makeChVidController(contId){
         const ors=[...same.map(n=>`members.cs.{${n}}`),...cross.map(s=>`with_members.cs.{${s}}`)];
         q=q.eq('group_ko',ko).or(ors.join(','));
       }else if(state.memberKo&&state.onlyMe){
-        // Only 토글: members = {name} 정확히 일치 + 외부인 포함 영상 제외
+        // Only 토글: members = {name} 정확히 일치 + with_members/with_groups(다른 그룹 게스트) 없음 +
+        // 외부인 포함 플래그 없음. 예전엔 with_members/with_groups를 안 봐서, members는 본인 하나뿐이어도
+        // 다른 그룹 멤버가 with_members로 같이 태깅된 콜라보 영상(예: 코르티스 채널의 &TEAM 하루아 게스트
+        // 영상)이 그대로 "단독 출연"으로 잘못 걸러졌음(2026-08-04, 사용자 제보).
         q=q.eq('group_ko',ko).contains('members',[state.memberKo]).containedBy('members',[state.memberKo])
+          .or('with_members.eq.{},with_members.is.null')
+          .or('with_groups.eq.{},with_groups.is.null')
           .or('content_flag.is.null,content_flag.neq.외부인');
       }else if(state.memberKo){
         // 멤버 카드: 태깅 안 된(그룹 전체) 영상 + 이 멤버가 직접 태깅된 영상 + 다른 그룹 채널에 이 멤버가
@@ -13002,7 +13011,9 @@ function _makeChVidController(contId){
     if(state.memberKo&&flag==='기타')stillQualifies=false;
     if(stillQualifies){
       if(state.memberKo&&state.onlyMe){
-        stillQualifies=members.length===1&&members[0]===state.memberKo;
+        // load()의 Only 쿼리와 동일한 기준 — members 하나뿐이어도 with_members/with_groups(다른 그룹
+        // 게스트)나 '외부인' 플래그가 있으면 단독 출연이 아님(2026-08-04).
+        stillQualifies=members.length===1&&members[0]===state.memberKo&&!withMembers.length&&!withGroups.length&&flag!=='외부인';
       }else if(state.memberKo){
         stillQualifies=members.length===0||members.includes(state.memberKo)||withMembers.includes(`${state.memberKo}(${ko})`);
       }else{
@@ -13474,11 +13485,17 @@ function _renderVidTagChips(){
 }
 // 소속 그룹 드롭다운(datalist) 채우기 — GROUPS는 런타임에 안 바뀌므로 모달을 처음 열 때 한 번만 채운다.
 let _vidTagGroupListBuilt=false;
+// 아이유처럼 소속 그룹이 없는(GROUPS에 없는) 솔로 아티스트는 group_ko로 등록된 그룹명이 아니라 본인
+// 이름을 그대로 씀(_ytGroupKoFor 참고, 채널 동기화 키와 동일한 규칙) — "솔로 태그"(artists.json의
+// group.ko="솔로")는 여러 명이 공유하는 가짜 값이라 그대로 쓰면 안 됨.
+function _isValidVidGroupKo(gko){return!!GROUPS[gko]||ARTISTS.some(a=>a.name.ko===gko&&!GROUPS[a.group.ko]);}
 function _ensureVidTagGroupList(){
   if(_vidTagGroupListBuilt)return;
   _vidTagGroupListBuilt=true;
   const dl=document.getElementById('vid-tag-group-list');
-  dl.innerHTML=Object.keys(GROUPS).sort((a,b)=>a.localeCompare(b,'ko')).map(ko=>`<option value="${ko}"></option>`).join('');
+  const soloNames=[...new Set(ARTISTS.filter(a=>!GROUPS[a.group.ko]).map(a=>a.name.ko))];
+  const options=[...Object.keys(GROUPS),...soloNames].sort((a,b)=>a.localeCompare(b,'ko'));
+  dl.innerHTML=options.map(ko=>`<option value="${ko}"></option>`).join('');
 }
 // 체크박스 목록을 gko 기준으로 새로 그린다 — 단일/일괄 모달이 공용으로 쓰고, "소속 그룹" 필드를 완전히
 // 다른 그룹으로 바꿨을 때도 이걸로 다시 그려서 새 그룹의 멤버 목록이 뜨게 한다(그동안 체크했던 건
@@ -13506,8 +13523,10 @@ document.getElementById('vid-tag-members-all')?.addEventListener('click',e=>{
 });
 document.getElementById('vid-tag-group-ko')?.addEventListener('change',e=>{
   const gko=e.target.value.trim();
-  if(!gko||!GROUPS[gko]||gko===_vidTagRenderedGko)return;
+  if(!gko||!_isValidVidGroupKo(gko)||gko===_vidTagRenderedGko)return;
   // 완전히 다른 그룹으로 옮기는 경우라, 기존 members 체크는 잘못된 그룹 기준이므로 새 그룹 멤버로만 다시 그림
+  // (솔로 아티스트로 옮기면 로스터가 본인 하나도 없으니 자연히 빈 목록으로 그려짐 — 솔로 채널은 애초에
+  // "출연 멤버" 체크가 필요 없음, _hasRealGroup 관련 기존 처리와 동일한 맥락).
   _renderVidTagMemberCheckboxes(gko);
 });
 // 관리자가 그리드에서 여러 영상을 선택(#admin-bulk-bar "편집")했을 때 쓰는 일괄 편집 모드.
@@ -13726,7 +13745,7 @@ document.getElementById('vid-tag-save').addEventListener('click',async e=>{
   const groupKoInput=(document.getElementById('vid-tag-group-ko')?.value||'').trim();
   let newGko=null;
   if(groupKoInput&&groupKoInput!==ko){
-    if(!GROUPS[groupKoInput]){statusEl.textContent=`"${groupKoInput}"는 등록된 그룹명이 아니에요(정확한 그룹명을 입력해주세요)`;return;}
+    if(!_isValidVidGroupKo(groupKoInput)){statusEl.textContent=`"${groupKoInput}"는 등록된 그룹명/솔로 아티스트명이 아니에요(정확히 입력해주세요)`;return;}
     newGko=groupKoInput;
   }
   statusEl.textContent='저장 중…';
