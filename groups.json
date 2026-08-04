@@ -3214,6 +3214,7 @@
     "en": "god",
     "debut": "1999.01.13",
     "co": "젬스톤이앤엠",
+    "strictSync": true,
     "color": [
       200,
       160,
@@ -4913,6 +4914,20 @@
       "tiktok": "https://www.tiktok.com/@isegyeidol_ofcl",
       "youtube": "https://www.youtube.com/@isegyeidol_ofcl",
       "namu": "https://namu.wiki/w/이세계아이돌"
+    }
+  },
+  "부석순": {
+    "en": "BSS",
+    "debut": "2018.03.21",
+    "co": "HYBE",
+    "color": [
+      120,
+      185,
+      220
+    ],
+    "gender": "m",
+    "links": {
+      "namu": "https://namu.wiki/w/부석순"
     }
   }
 }

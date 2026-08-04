@@ -1010,6 +1010,13 @@
   .dq-junk-item{display:flex;align-items:center;gap:10px;padding:6px 18px;}
   .dq-junk-thumb{width:64px;height:36px;object-fit:cover;border-radius:6px;flex-shrink:0;background:rgba(255,255,255,0.05);}
   .dq-junk-ttl{font-size:11.5px;color:rgba(210,222,248,0.85);line-height:1.35;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;}
+  #dq-cross-sec{display:flex;flex-direction:column;min-height:0;flex-shrink:0;max-height:40%;border-top:0.5px solid rgba(255,255,255,0.08);margin-top:6px;}
+  #dq-cross-hd{font-size:11.5px;font-weight:600;color:rgba(220,230,255,0.85);padding:8px 18px 2px;flex-shrink:0;}
+  #dq-cross-status{font-size:11px;color:rgba(155,178,228,0.7);padding:0 18px 6px;min-height:14px;flex-shrink:0;}
+  #dq-cross-toolbar{display:flex;align-items:center;gap:10px;padding:6px 18px;border-bottom:0.5px solid rgba(255,255,255,0.08);flex-shrink:0;}
+  #dq-cross-remove-btn{border-radius:10px;font-size:11px;padding:5px 10px;cursor:pointer;font-family:inherit;white-space:nowrap;border:1px solid rgba(120,170,255,0.32);background:rgba(120,170,255,0.12);color:rgba(160,195,255,0.9);}
+  #dq-cross-remove-btn:disabled{opacity:.4;cursor:default;}
+  #dq-cross-list{overflow-y:auto;padding:8px 0;flex:1;min-height:0;}
   #hnn-select-all-row{display:flex;align-items:center;gap:6px;font-size:11.5px;color:rgba(185,205,245,0.75);cursor:pointer;white-space:nowrap;}
   #hnn-count{flex:1;font-size:11.5px;color:rgba(155,178,228,0.55);}
   #hnn-apply-btn{background:rgba(255,150,150,0.16);border:1px solid rgba(255,150,150,0.32);border-radius:10px;color:#ffb8b8;font-size:11.5px;padding:6px 12px;cursor:pointer;font-family:inherit;white-space:nowrap;}
@@ -1984,6 +1991,16 @@
         <button id="dq-junk-delete-btn">선택 삭제</button>
       </div>
       <div id="dq-junk-list"></div>
+      <div id="dq-cross-sec" style="display:none">
+        <div id="dq-cross-hd">콜라보 태그 오염 의심 <span style="font-weight:400;color:rgba(155,178,228,0.6);">(영상은 다른 그룹 것, with_groups에 이 그룹만 잘못 얹힘)</span></div>
+        <div id="dq-cross-status"></div>
+        <div id="dq-cross-toolbar" style="display:none">
+          <label id="dq-cross-select-all-row"><input type="checkbox" id="dq-cross-select-all">전체 선택</label>
+          <span id="dq-cross-count"></span>
+          <button id="dq-cross-remove-btn">선택 항목 태그만 제거</button>
+        </div>
+        <div id="dq-cross-list"></div>
+      </div>
     </div>
   </div>
 </div>
@@ -10720,9 +10737,21 @@ async function _dqScanGroupJunk(gko){
   if(error)return{error:error.message};
   const sig=_dqGroupSignalRegex(gko);
   const junk=sig?(rows||[]).filter(r=>!sig.test((r.title||'').normalize('NFKC'))):(rows||[]);
-  return{total:(rows||[]).length,junk};
+  // 자기 채널 태깅뿐 아니라, 다른 그룹 영상인데 with_groups(콜라보 태그)에 이 그룹이 잘못 얹힌 경우도
+  // 같이 잡는다 — 흔한 단어 그룹명(god 등)이 남의 영상 제목/설명에 우연히 등장해서 콜라보로 오태깅되는
+  // 패턴(2026-08-04, god/앰퍼샌드원 사례로 발견). 이건 영상 자체가 무관한 게 아니라 진짜 다른 그룹의
+  // 정상 영상이므로, 삭제/무관 처리가 아니라 with_groups에서 이 그룹 태그만 제거하는 게 맞는 조치.
+  const{data:crossRows,error:crossErr}=await _sbFetchAll(()=>sb.from(_YT_TABLE)
+    .select('id,title,thumb,group_ko,with_groups')
+    .neq('group_ko',gko)
+    .contains('with_groups',[gko])
+    .eq('tags_manual',false)
+    .order('id'));
+  if(crossErr)return{error:crossErr.message};
+  const crossJunk=sig?(crossRows||[]).filter(r=>!sig.test((r.title||'').normalize('NFKC'))):(crossRows||[]);
+  return{total:(rows||[]).length,junk,crossTotal:(crossRows||[]).length,crossJunk};
 }
-let _dqJunkGko=null,_dqJunkRows=[];
+let _dqJunkGko=null,_dqJunkRows=[],_dqCrossGko=null,_dqCrossRows=[];
 async function _dqOpenGroupJunk(gko){
   ['hnn-group-sec','hnn-member-lbl','hnn-toolbar','hnn-list','hnn-scan-btn','hnn-wl-sec'].forEach(id=>{
     const el=document.getElementById(id);if(el)el.style.display='none';
@@ -10732,11 +10761,17 @@ async function _dqOpenGroupJunk(gko){
   document.getElementById('dq-junk-status').textContent='';
   document.getElementById('dq-junk-toolbar').style.display='none';
   document.getElementById('dq-junk-list').innerHTML='';
-  const{total,junk,error}=await _dqScanGroupJunk(gko);
+  document.getElementById('dq-cross-sec').style.display='none';
+  document.getElementById('dq-cross-toolbar').style.display='none';
+  document.getElementById('dq-cross-list').innerHTML='';
+  const{total,junk,crossTotal,crossJunk,error}=await _dqScanGroupJunk(gko);
   if(error){document.getElementById('dq-junk-status').textContent='조회 실패: '+error;return;}
   document.getElementById('dq-junk-title').textContent=`${gko} — 무맥락 의심`;
   document.getElementById('dq-junk-status').textContent=`전체 ${total}개 중 무맥락 의심 ${junk.length}개(members/with_members 비어있고 그룹 관련 신호도 없는 행)`;
   _renderDqJunkList(gko,junk);
+  document.getElementById('dq-cross-sec').style.display='flex';
+  document.getElementById('dq-cross-status').textContent=`다른 그룹 영상에 콜라보로 잘못 얹힌 것 ${crossJunk.length}개 (전체 콜라보 태그 ${crossTotal}개 중)`;
+  _renderDqCrossList(gko,crossJunk);
 }
 function _renderDqJunkList(gko,rows){
   _dqJunkGko=gko;_dqJunkRows=rows;
@@ -10804,6 +10839,72 @@ document.getElementById('dq-junk-flag-btn')?.addEventListener('click',async()=>{
   if(error){document.getElementById('dq-junk-status').textContent='처리 실패: '+error.message;btn.disabled=false;return;}
   _dqJunkRemoveIds(ids);
   document.getElementById('dq-junk-status').textContent=`무관 처리 완료 — 남은 ${_dqJunkRows.length}개`;
+});
+function _renderDqCrossList(gko,rows){
+  _dqCrossGko=gko;_dqCrossRows=rows;
+  const listEl=document.getElementById('dq-cross-list');
+  const toolbarEl=document.getElementById('dq-cross-toolbar');
+  listEl.innerHTML='';
+  if(!rows.length){
+    listEl.innerHTML='<div style="padding:16px;text-align:center;color:rgba(155,178,228,0.45);font-size:11.5px;">의심 후보가 없어요</div>';
+    toolbarEl.style.display='none';
+    return;
+  }
+  toolbarEl.style.display='flex';
+  document.getElementById('dq-cross-select-all').checked=false;
+  rows.forEach(v=>{
+    const item=document.createElement('div');item.className='dq-junk-item';item.dataset.vidId=v.id;
+    const cb=document.createElement('input');cb.type='checkbox';cb.addEventListener('change',_updateDqCrossCount);
+    const img=document.createElement('img');img.className='dq-junk-thumb';img.src=v.thumb||`https://i.ytimg.com/vi/${v.id}/mqdefault.jpg`;img.loading='lazy';
+    const info=document.createElement('div');info.style.minWidth='0';
+    const grp=document.createElement('div');grp.style.cssText='font-size:10px;color:rgba(155,178,228,0.6);margin-bottom:2px;';
+    grp.textContent=`실제 그룹: ${v.group_ko||'?'}`;
+    const ttl=document.createElement('div');ttl.className='dq-junk-ttl';ttl.textContent=v.title||'';
+    info.appendChild(grp);info.appendChild(ttl);
+    item.appendChild(cb);item.appendChild(img);item.appendChild(info);
+    listEl.appendChild(item);
+  });
+  _updateDqCrossCount();
+}
+function _updateDqCrossCount(){
+  const total=_dqCrossRows.length;
+  const checked=document.querySelectorAll('#dq-cross-list .dq-junk-item input[type=checkbox]:checked').length;
+  document.getElementById('dq-cross-count').textContent=`${checked}/${total}개 선택됨`;
+  const btn=document.getElementById('dq-cross-remove-btn');
+  if(btn)btn.disabled=checked===0;
+  const allEl=document.getElementById('dq-cross-select-all');
+  if(allEl)allEl.checked=checked===total&&total>0;
+}
+document.getElementById('dq-cross-select-all')?.addEventListener('change',e=>{
+  document.querySelectorAll('#dq-cross-list .dq-junk-item input[type=checkbox]').forEach(cb=>{cb.checked=e.target.checked;});
+  _updateDqCrossCount();
+});
+function _dqCrossSelectedIds(){
+  return[...document.querySelectorAll('#dq-cross-list .dq-junk-item')].filter(el=>el.querySelector('input[type=checkbox]').checked).map(el=>el.dataset.vidId);
+}
+document.getElementById('dq-cross-remove-btn')?.addEventListener('click',async()=>{
+  if(!sb)return;
+  const ids=_dqCrossSelectedIds();
+  if(!ids.length)return;
+  const btn=document.getElementById('dq-cross-remove-btn');btn.disabled=true;
+  const idSet=new Set(ids);
+  const targets=_dqCrossRows.filter(r=>idSet.has(r.id));
+  try{
+    for(const v of targets){
+      const newWithGroups=(v.with_groups||[]).filter(g=>g!==_dqCrossGko);
+      const{error}=await sb.from(_YT_TABLE).update({with_groups:newWithGroups}).eq('id',v.id);
+      if(error)throw error;
+    }
+  }catch(e){
+    document.getElementById('dq-cross-status').textContent='처리 실패: '+e.message;
+    btn.disabled=false;
+    return;
+  }
+  _dqCrossRows=_dqCrossRows.filter(r=>!idSet.has(r.id));
+  ids.forEach(id=>document.querySelector(`#dq-cross-list .dq-junk-item[data-vid-id="${id}"]`)?.remove());
+  _updateDqCrossCount();
+  if(!_dqCrossRows.length)_renderDqCrossList(_dqCrossGko,[]);
+  document.getElementById('dq-cross-status').textContent=`태그 제거 완료 — 남은 ${_dqCrossRows.length}개`;
 });
 document.getElementById('dq-junk-back')?.addEventListener('click',()=>{
   document.getElementById('dq-junk-sec').style.display='none';
