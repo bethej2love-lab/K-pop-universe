@@ -1884,6 +1884,7 @@
     <div class="sp-subsec-lbl" style="margin-top:10px;">데이터 정합성</div>
     <button class="sp-yt-sync" id="sp-strictsync-sweep-btn" style="opacity:.8;">strictSync 그룹 키워드 오염 정리</button>
     <button class="sp-yt-sync" id="sp-yt-autotag" style="margin-top:4px;opacity:.8;">멤버+콜라보 자동 태깅 (미태깅분)</button>
+    <button class="sp-yt-sync" id="sp-yt-retag-all" style="margin-top:2px;opacity:.6;font-size:10px;">멤버+콜라보 재태깅 (기존 태깅분 포함, 일회용)</button>
     <button class="sp-yt-sync" id="sp-membersfix-btn" style="margin-top:4px;opacity:.8;">자체 멤버 태깅 재검증(전체)</button>
     <button class="sp-yt-sync" id="sp-collabfix-btn" style="margin-top:4px;opacity:.8;">콜라보 오태깅 재검증(전체)</button>
     <button class="sp-yt-sync" id="sp-yt-sweep-banned" style="margin-top:4px;opacity:.8;">밴 인물 언급 영상 숨김 정리</button>
@@ -10348,6 +10349,7 @@ async function _ytSweepBannedVideos(){
     _ytSetProg('밴 인물 언급 영상 조회 중…');
     const{data:rows,error}=await _sbFetchAll(()=>sb.from(_YT_TABLE)
       .select('id,title,group_ko')
+      .eq('tags_manual',false) // 관리자가 직접 저장한 행은 절대 안 건드림(2026-08-04, 사용자 요청으로 추가)
       .or('content_flag.is.null,content_flag.neq.hidden')
       .order('id'));
     if(error){_ytSetProg('조회 실패: '+error.message);return;}
@@ -10378,6 +10380,7 @@ async function _ytSweepJunkTitles(){
     _ytSetProg('[띵곡팔이 정리] 조회 중…');
     const{data:rows,error}=await _sbFetchAll(()=>sb.from(_YT_TABLE)
       .select('id,title')
+      .eq('tags_manual',false) // 관리자가 직접 저장한 행은 절대 안 건드림(2026-08-04, 사용자 요청으로 추가)
       .ilike('title','%띵곡팔이%')
       .or('content_flag.is.null,content_flag.neq.무관')
       .order('id'));
@@ -11538,7 +11541,8 @@ document.getElementById('sp-hitgs-everglow-fix-btn')?.addEventListener('click',a
   if(btn)btn.disabled=true;
   const ids=['AJNT5_XjEDc','hTGDBSGJWZM','dPgaGXAjLFc','Rn4KRbkcZ54','7VOOooMZGsk'];
   try{
-    const{error}=await sb.from(_YT_TABLE).update({group_ko:'힛지스',members:['이유'],with_members:[]}).in('id',ids);
+    // tags_manual=true(관리자가 이미 확인/수정한 행)는 건드리지 않음(2026-08-04, 사용자 요청으로 추가).
+    const{error}=await sb.from(_YT_TABLE).update({group_ko:'힛지스',members:['이유'],with_members:[]}).eq('tags_manual',false).in('id',ids);
     if(error)throw new Error(error.message);
     _ytSetProg(`완료! 힛지스 이유 영상 ${ids.length}건을 에버글로우에서 힛지스로 재분류함`);
   }catch(e){
@@ -11566,6 +11570,7 @@ document.getElementById('sp-everglow-junk-fix-btn')?.addEventListener('click',as
     const{data:rows,error}=await _sbFetchAll(()=>sb.from(_YT_TABLE)
       .select('id,title')
       .eq('group_ko','에버글로우')
+      .eq('tags_manual',false) // 관리자가 직접 저장한 행은 절대 안 건드림(2026-08-04, 사용자 요청으로 추가)
       .filter('members','eq','{}')
       .filter('with_members','eq','{}')
       .order('id'));
@@ -11598,6 +11603,8 @@ document.getElementById('sp-everglow-junk-fix-btn')?.addEventListener('click',as
 // 별도 차단함(2026-08-04, 사용자 제보로 발견) — 이 버튼은 그중 "이영지의 레인보우" 프로그램분만 이동.
 // 옮긴 뒤 members/with_members/with_groups는 레인보우 기준으로 잘못 잡혔던 값이라 초기화하고
 // tags_manual=true로 잠가서, 다음 자동 태깅/재검증이 다시 레인보우로 되돌리지 못하게 한다.
+// tags_manual=true(관리자가 이미 확인/수정한 행)는 조회 단계에서부터 아예 제외 — 트리거 우회 two-step도
+// 필요 없어짐(2026-08-04, 사용자 요청으로 추가: 이미 tags_manual=false로만 걸러서 가져오므로).
 document.getElementById('sp-yeongji-rainbow-fix-btn')?.addEventListener('click',async()=>{
   if(!sb){_ytSetProg('Supabase 연결 없음');return;}
   const btn=document.getElementById('sp-yeongji-rainbow-fix-btn');
@@ -11607,6 +11614,7 @@ document.getElementById('sp-yeongji-rainbow-fix-btn')?.addEventListener('click',
     const{data:rows,error}=await _sbFetchAll(()=>sb.from(_YT_TABLE)
       .select('id,title')
       .eq('group_ko','레인보우')
+      .eq('tags_manual',false)
       .ilike('title','%이영지%')
       .order('id'));
     if(error){_ytSetProg('조회 실패: '+error.message);return;}
@@ -11618,11 +11626,8 @@ document.getElementById('sp-yeongji-rainbow-fix-btn')?.addEventListener('click',
     let moved=0;
     for(let i=0;i<ids.length;i+=200){
       const chunk=ids.slice(i,i+200);
-      // tags_manual=true인 행이 섞여있을 수 있어 트리거 우회 two-step: 1) 잠금 해제 2) 실제 이동+재잠금
-      const{error:e1}=await sb.from(_YT_TABLE).update({tags_manual:false}).in('id',chunk);
-      if(e1){_ytSetProg(`이동 실패(${moved}개까지 완료): `+e1.message);return;}
-      const{error:e2}=await sb.from(_YT_TABLE).update({group_ko:'이영지',members:[],with_members:[],with_groups:[],tags_manual:true}).in('id',chunk);
-      if(e2){_ytSetProg(`이동 실패(${moved}개까지 완료): `+e2.message);return;}
+      const{error:ue}=await sb.from(_YT_TABLE).update({group_ko:'이영지',members:[],with_members:[],with_groups:[],tags_manual:true}).in('id',chunk);
+      if(ue){_ytSetProg(`이동 실패(${moved}개까지 완료): `+ue.message);return;}
       moved+=chunk.length;
       _ytSetProg(`이동 중… ${moved}/${ids.length}`);
     }
@@ -11649,6 +11654,7 @@ document.getElementById('sp-rainbow-junk-fix-btn')?.addEventListener('click',asy
     const{data:rows,error}=await _sbFetchAll(()=>sb.from(_YT_TABLE)
       .select('id,title')
       .eq('group_ko','레인보우')
+      .eq('tags_manual',false) // 관리자가 직접 저장한 행은 절대 안 건드림(2026-08-04, 사용자 요청으로 추가)
       .filter('members','eq','{}')
       .filter('with_members','eq','{}')
       .order('id'));
@@ -11872,6 +11878,85 @@ async function _ytAutoTagMembers(){
       _ytSetProg(`[${gi+1}/${groupKos.length}] ${gko}: ${updates.length}/${rows.length}개 매칭 (누적 ${grandMatched}개)`);
     }
     _ytSetProg(`완료! 미태깅 ${grandChecked}개 중 ${grandMatched}개 새로 태깅됨`);
+  }catch(e){
+    _ytSetProg('오류: '+e.message);
+  }finally{
+    if(btn)btn.disabled=false;
+  }
+}
+// 위 _ytAutoTagMembers는 members/with_members/with_groups가 "전부 비어있는" 행만 대상으로 삼아서,
+// 이미 뭔가 하나라도 태깅된 행은 그 뒤로 로스터가 늘거나 매칭 로직이 개선돼도(하시태그 화이트리스트
+// 추가, group_ko 버그 수정 등) 다시는 재검사되지 않는다. 이 버튼은 그룹당 전체 행(태깅 여부 무관)을
+// 다시 훑어서 "지금 매칭 로직이 새로 찾아내는 것"을 기존 값에 합쳐(추가만 함, 기존 값은 절대 안 지움)
+// 반영하는 일회용 재태깅이다. tags_manual=true(관리자가 직접 저장한 행)는 쿼리 단계에서부터 제외돼서
+// 절대 건드리지 않음(2026-08-04, 사용자가 가장 중요하게 강조한 조건).
+async function _ytRetagAllIncludingTagged(){
+  if(!sb){_ytSetProg('Supabase 연결 없음');return;}
+  const btn=document.getElementById('sp-yt-retag-all');
+  if(btn)btn.disabled=true;
+  try{
+    const groupKos=Object.keys(GROUPS);
+    let grandMatched=0,grandChecked=0;
+    for(let gi=0;gi<groupKos.length;gi++){
+      const gko=groupKos[gi];
+      const members=ARTISTS.filter(a=>_artistGroups(a).some(g=>g.ko===gko)).map(a=>({ko:a.name.ko,en:a.name.en}));
+      if(!members.length)continue;
+      _ytSetProg(`[${gi+1}/${groupKos.length}] ${gko}: 전체 영상 조회 중…`);
+      // 미태깅분 버튼과 달리 members/with_members 상태로 거르지 않고 이 그룹 전체를 다 훑는다 —
+      // tags_manual=false만 지켜지면 됨(관리자가 손댄 행은 여기서부터 절대 후보에 안 들어감).
+      const{data:rows,error}=await _sbFetchAll(()=>sb.from(_YT_TABLE)
+        .select('id,title,description,members,with_members,with_groups')
+        .eq('group_ko',gko)
+        .eq('tags_manual',false)
+        .order('id'));
+      if(error){console.error(`[재태깅] ${gko} 조회 실패:`,error.message);continue;}
+      if(!rows?.length)continue;
+      const updates=[];
+      rows.forEach(v=>{
+        const title=v.title||'';
+        const patch={};
+        // 자체 멤버: 새로 잡힌 이름을 기존 members에 합집합으로 더함(빼는 건 절대 안 함 — 삭제는
+        // 별도 재검증 버튼의 몫).
+        const curMembers=v.members||[];
+        const hit=_atmResolveMembers(title,v.description,members);
+        const unionMembers=[...new Set([...curMembers,...hit])];
+        if(unionMembers.length!==curMembers.length)patch.members=unionMembers;
+        // 콜라보: 새로 특정 멤버까지 잡히면 "그룹 전체" 표시(with_groups)를 그 멤버 표기(with_members)로
+        // 승격시키고, 여전히 그룹 단위로만 잡히면(그리고 이미 그 그룹 특정 멤버가 있는 게 아니면) 추가.
+        const match=_m2ParseTitle(title,gko);
+        if(match){
+          const otherGkos=[match.primaryGroup,...match.withGroups].filter(og=>og&&og!==gko);
+          let curWithMembers=[...(v.with_members||[])];
+          let curWithGroups=[...(v.with_groups||[])];
+          let changed=false;
+          otherGkos.forEach(og=>{
+            const sec=match.membersByGroup[og]||[];
+            if(sec.length){
+              sec.forEach(mko=>{
+                const tag=`${mko}(${og})`;
+                if(!curWithMembers.includes(tag)){curWithMembers.push(tag);changed=true;}
+              });
+              if(curWithGroups.includes(og)){curWithGroups=curWithGroups.filter(g=>g!==og);changed=true;}
+            }else if(!curWithGroups.includes(og)&&!curWithMembers.some(s=>s.endsWith(`(${og})`))){
+              curWithGroups.push(og);changed=true;
+            }
+          });
+          if(changed){patch.with_members=curWithMembers;patch.with_groups=curWithGroups;}
+        }
+        if(Object.keys(patch).length)updates.push({id:v.id,patch});
+      });
+      grandChecked+=rows.length;
+      if(updates.length){
+        for(let i=0;i<updates.length;i+=200){
+          const chunk=updates.slice(i,i+200);
+          const results=await Promise.all(chunk.map(u=>sb.from(_YT_TABLE).update(u.patch).eq('id',u.id)));
+          results.forEach((r,idx)=>{if(r.error)console.error(`[재태깅] ${gko} id=${chunk[idx].id} 업데이트 실패:`,r.error.message);});
+        }
+        grandMatched+=updates.length;
+      }
+      _ytSetProg(`[${gi+1}/${groupKos.length}] ${gko}: ${updates.length}/${rows.length}개 보강 (누적 ${grandMatched}개)`);
+    }
+    _ytSetProg(`완료! 전체 ${grandChecked}개 중 ${grandMatched}개에 새 태그 추가됨(수동 편집분은 전부 제외)`);
   }catch(e){
     _ytSetProg('오류: '+e.message);
   }finally{
@@ -14153,6 +14238,7 @@ document.getElementById('vid-tag-thumb-refresh').addEventListener('click',async 
   document.getElementById('sp-collabfix-btn')?.addEventListener('click',_ytSweepAmbiguousCollabMistag);
   document.getElementById('sp-membersfix-btn')?.addEventListener('click',_ytSweepMembersMistag);
   document.getElementById('sp-yt-autotag')?.addEventListener('click',_ytAutoTagMembers);
+  document.getElementById('sp-yt-retag-all')?.addEventListener('click',_ytRetagAllIncludingTagged);
   document.getElementById('sp-vm-btn')?.addEventListener('click',()=>_vmOpen());
   const backfillSel=document.getElementById('sp-yt-backfill-ch');
   if(backfillSel){
