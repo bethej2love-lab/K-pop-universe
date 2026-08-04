@@ -996,6 +996,13 @@
   .hnn-sub{font-size:10.5px;color:rgba(155,178,228,0.55);margin-top:2px;}
   .hnn-item input[type=checkbox]{flex-shrink:0;accent-color:rgba(255,150,150,0.9);margin-right:2px;}
   #hnn-toolbar{display:flex;align-items:center;gap:10px;padding:10px 18px;border-bottom:0.5px solid rgba(255,255,255,0.08);flex-shrink:0;}
+  .hnn-sec-lbl{font-size:10.5px;font-weight:700;letter-spacing:.02em;color:rgba(155,178,228,0.55);padding:10px 18px 4px;flex-shrink:0;}
+  #hnn-group-list{max-height:220px;overflow-y:auto;flex-shrink:0;border-bottom:0.5px solid rgba(255,255,255,0.08);}
+  .hnn-group-item{display:flex;align-items:center;gap:10px;padding:7px 18px;cursor:pointer;transition:background .12s;}
+  .hnn-group-item:hover{background:rgba(255,255,255,0.04);}
+  .hnn-group-name{font-size:12px;color:rgba(220,230,255,0.9);font-weight:600;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .hnn-group-stats{display:flex;gap:10px;flex-shrink:0;font-size:10.5px;color:rgba(155,178,228,0.6);}
+  .hnn-group-susp{color:rgba(255,150,150,0.9);font-weight:700;}
   #hnn-select-all-row{display:flex;align-items:center;gap:6px;font-size:11.5px;color:rgba(185,205,245,0.75);cursor:pointer;white-space:nowrap;}
   #hnn-count{flex:1;font-size:11.5px;color:rgba(155,178,228,0.55);}
   #hnn-apply-btn{background:rgba(255,150,150,0.16);border:1px solid rgba(255,150,150,0.32);border-radius:10px;color:#ffb8b8;font-size:11.5px;padding:6px 12px;cursor:pointer;font-family:inherit;white-space:nowrap;}
@@ -1229,6 +1236,10 @@
     font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;
   }
   #conn-sheet.bs-open{transform:translateY(0);}
+  /* 멤버 카드가 100%(bs-full)로 열려있는 상태에서 연결 카드를 열면 그 상태를 그대로 물려받아 100%로 열림
+     (mob-sheet/mob-card-stack의 bs-full 이어받기와 같은 패턴, 2026-08-04 사용자 요청). */
+  #conn-sheet.bs-full{min-height:calc(var(--mob-vh,100vh) - var(--sheet-bottom,73px));max-height:calc(var(--mob-vh,100vh) - var(--sheet-bottom,73px));border-radius:0;}
+  #conn-sheet.bs-full #conn-sheet-inner{max-height:calc(var(--mob-vh,100vh) - var(--sheet-bottom,73px) - 24px);}
   @media(min-width:769px){#conn-sheet{display:none!important;}}
   #conn-sheet-inner{overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;max-height:calc(60vh - 24px);overscroll-behavior:contain;transition:max-height .32s cubic-bezier(0.32,0.72,0,1);}
   #conn-sheet .conn-inner{padding:16px 28px 14px 28px;}
@@ -1954,12 +1965,17 @@
 <div id="hnn-overlay">
   <div id="hnn-panel">
     <div id="hnn-hd">
-      <span id="hnn-hd-title">동명이인/흔한단어 오염 의심 스캔</span>
+      <span id="hnn-hd-title">데이터 퀄리티</span>
       <button id="hnn-close">✕</button>
     </div>
-    <div id="hnn-desc">전체 영상의 members/with_members를 집계해서, 같은 그룹 내 다른 멤버들보다 비정상적으로 많이 태깅된 이름(자체 채널)이나 여러 그룹에 걸쳐 과도하게 콜라보로 잡힌 이름(with_members)을 건수 내림차순으로 보여줌. 의심되는 항목을 체크해서 "화이트리스트에 추가"하면 DB에 바로 저장되고(배포 필요 없음) 다음부터 해시태그로 명시된 경우만 태깅됨 — 추가 후 콜라보/자체 멤버 재검증 버튼을 눌러 기존 오염분을 정리할 것.</div>
+    <div id="hnn-desc">전체 영상을 그룹별/멤버별로 집계 — ① 그룹별 총 영상 개수·멤버(콜라보 포함) 미태깅 비율·동명이인 의심 건수를 오염 위험 높은 순으로 보여주고(그룹명 클릭하면 해당 그룹 카드로 이동), ② 그 아래에 같은 그룹 내 다른 멤버들보다 비정상적으로 많이 태깅된 이름(자체 채널)이나 여러 그룹에 걸쳐 과도하게 콜라보로 잡힌 이름(with_members)을 개별 건수 내림차순으로 보여줌. 의심되는 항목을 체크해서 "화이트리스트에 추가"하면 DB에 바로 저장되고(배포 필요 없음) 다음부터 해시태그로 명시된 경우만 태깅됨 — 추가 후 콜라보/자체 멤버 재검증 버튼을 눌러 기존 오염분을 정리할 것.</div>
     <button id="hnn-scan-btn" class="uc-btn">스캔 시작</button>
     <div id="hnn-status"></div>
+    <div id="hnn-group-sec" style="display:none">
+      <div class="hnn-sec-lbl">그룹별 요약 (오염 위험 높은 순)</div>
+      <div id="hnn-group-list"></div>
+    </div>
+    <div class="hnn-sec-lbl" id="hnn-member-lbl" style="display:none">멤버별 의심 후보</div>
     <div id="hnn-toolbar" style="display:none">
       <label id="hnn-select-all-row"><input type="checkbox" id="hnn-select-all">전체 선택</label>
       <span id="hnn-count"></span>
@@ -5572,6 +5588,22 @@ function _buildConnContent(container){
     const songs=_getCollabSongs(_connAnchor,[],false,new Set([gko]));
     if(songs.every(sg=>sg._groupWideOnly))_groupWideOnlySet.add(gko);
   });
+  // 그룹 두 개가 실제로 같은 영상에 함께 나온 적 있는지 미리 계산 — 겹치는 콜라보가 있을 때만 두 그룹을
+  // 동시에 펼쳐두고, 없으면 새 그룹을 열 때 이전에 열려있던 그룹은 자동으로 닫는다(자리 차지 줄이기,
+  // 2026-08-04 사용자 요청 — "성현+하루아"처럼 실제 겹치는 경우만 동시 비교 가능하면 됨).
+  const _coGroupPairs=new Set(); // "gkoA|gkoB"(정렬됨) 조합
+  _getCollabSongs(_connAnchor,[],false,new Set()).forEach(sg=>{
+    const gkosInSong=new Set();
+    (sg.with||[]).forEach(n=>{
+      const m=n.match(/^(.+)\((.+)\)$/);
+      if(m)gkosInSong.add(m[2]);
+    });
+    if(gkosInSong.size>1){
+      const arr=[...gkosInSong];
+      for(let i=0;i<arr.length;i++)for(let j=i+1;j<arr.length;j++)_coGroupPairs.add([arr[i],arr[j]].sort().join('|'));
+    }
+  });
+  function _groupsCoAppear(gkoA,gkoB){return _coGroupPairs.has([gkoA,gkoB].sort().join('|'));}
 
   // 멤버 칩 하나 빌드 (같은 그룹 / 타 그룹 펼침 양쪽 공용)
   function _makeConnChip(name){
@@ -5638,8 +5670,16 @@ function _buildConnContent(container){
 
     groupChip.addEventListener('click',e=>{
       e.stopPropagation();
-      if(_connSelectedGroups.has(gko))_connSelectedGroups.delete(gko);
-      else _connSelectedGroups.add(gko);
+      if(_connSelectedGroups.has(gko)){
+        _connSelectedGroups.delete(gko);
+      }else{
+        // 이미 열려있는 다른 그룹과 실제로 같이 나온 적(겹치는 콜라보) 없으면 자동으로 닫음 —
+        // 겹치는 콜라보가 있는 그룹끼리만 동시에 열어둬서 비교해서 볼 수 있게 함.
+        [..._connSelectedGroups].forEach(openedGko=>{
+          if(!_groupsCoAppear(gko,openedGko))_connSelectedGroups.delete(openedGko);
+        });
+        _connSelectedGroups.add(gko);
+      }
       _buildConnContent(container);
     });
 
@@ -5709,6 +5749,9 @@ function openConnCard(artist){
     document.getElementById('journal-sidebar').classList.remove('open'); // 마이페이지가 열려있는 채로 연결 카드를 열어도 카드가 위로 뜨도록
     _buildConnContent(connSheetBody);
     connSheetInner.scrollTop=0;
+    // 지금 열려있는 멤버 카드(mob-sheet/mob-card-stack)가 100%(bs-full)였으면 연결 카드도 그 상태를
+    // 그대로 물려받아 100%로 열림 — mob-card-stack이 이미 하는 것과 같은 패턴(2026-08-04).
+    connSheetEl.classList.toggle('bs-full',_sheetFull);
     connSheetEl.style.display='block';
     connSheetEl.style.transition='none';
     connSheetEl.style.transform='translateY(200px)';
@@ -10557,6 +10600,8 @@ async function _hnnScan(){
   const statusEl=document.getElementById('hnn-status');
   if(btn)btn.disabled=true;
   document.getElementById('hnn-list').innerHTML='';
+  document.getElementById('hnn-group-sec').style.display='none';
+  document.getElementById('hnn-group-list').innerHTML='';
   try{
     // 전체를 한 번에 집계하는 RPC(hnn_*_counts)도 statement_timeout에 걸림 — 지금까지 계속 안전했던
     // 패턴(id 구간을 작게 나눠 여러 번 요청)을 집계에도 그대로 적용한다. 먼저 id만 가볍게 전량
@@ -10578,15 +10623,18 @@ async function _hnnScan(){
     }
     const ownCounts=new Map(); // "mko gko" -> count
     const crossCounts=new Map();
+    const groupCounts=new Map(); // gko -> {total,untagged} — 데이터 퀄리티 그룹 요약용(2026-08-04)
     for(let i=0;i<ranges.length;i++){
       statusEl.textContent='집계 중… ('+(i+1)+'/'+ranges.length+'구간)';
       const{from,to}=ranges[i];
-      const[{data:ownPart,error:ownErr},{data:crossPart,error:crossErr}]=await Promise.all([
+      const[{data:ownPart,error:ownErr},{data:crossPart,error:crossErr},{data:dqPart,error:dqErr}]=await Promise.all([
         sb.rpc('hnn_own_channel_counts_range',{p_from_id:from,p_to_id:to}),
-        sb.rpc('hnn_cross_channel_counts_range',{p_from_id:from,p_to_id:to})
+        sb.rpc('hnn_cross_channel_counts_range',{p_from_id:from,p_to_id:to}),
+        sb.rpc('dq_group_counts_range',{p_from_id:from,p_to_id:to})
       ]);
       if(ownErr){statusEl.textContent='조회 실패(자체 채널, 구간 '+(i+1)+'): '+ownErr.message;return;}
       if(crossErr){statusEl.textContent='조회 실패(콜라보, 구간 '+(i+1)+'): '+crossErr.message;return;}
+      if(dqErr){statusEl.textContent='조회 실패(그룹 요약, 구간 '+(i+1)+'): '+dqErr.message;return;}
       (ownPart||[]).forEach(({mko,gko,cnt})=>{
         const k=mko+' '+gko;
         ownCounts.set(k,(ownCounts.get(k)||0)+Number(cnt));
@@ -10594,6 +10642,11 @@ async function _hnnScan(){
       (crossPart||[]).forEach(({mko,gko,cnt})=>{
         const k=mko+' '+gko;
         crossCounts.set(k,(crossCounts.get(k)||0)+Number(cnt));
+      });
+      (dqPart||[]).forEach(({gko,total_cnt,untagged_cnt})=>{
+        const cur=groupCounts.get(gko)||{total:0,untagged:0};
+        cur.total+=Number(total_cnt);cur.untagged+=Number(untagged_cnt);
+        groupCounts.set(gko,cur);
       });
     }
     // ① 그룹별 자체 채널 태깅 건수 이상치 — 같은 그룹 내 중앙값과 비교
@@ -10623,7 +10676,19 @@ async function _hnnScan(){
       if(count>=15)crossSuspects.push({mko,gko,count,type:'cross'});
     });
     const combined=[...ownSuspects,...crossSuspects].sort((a,b)=>b.count-a.count).slice(0,60);
-    statusEl.textContent='집계 완료 — 의심 후보 '+combined.length+'개(자체 '+ownSuspects.length+' / 콜라보 '+crossSuspects.length+')';
+    // 그룹별 요약 — 오염 의심 건수(잘린 60개가 아니라 ownSuspects/crossSuspects 전체 기준으로 그룹별 집계)
+    const suspectCountByGko=new Map();
+    [...ownSuspects,...crossSuspects].forEach(s=>{
+      suspectCountByGko.set(s.gko,(suspectCountByGko.get(s.gko)||0)+1);
+    });
+    const groupSummaries=[...groupCounts.entries()].map(([gko,{total,untagged}])=>({
+      gko,total,untagged,
+      untaggedRatio:total>0?untagged/total:0,
+      suspectCount:suspectCountByGko.get(gko)||0
+    // 오염 위험 높은 순: 의심 건수 → 미태깅 비율 → 총 영상 개수 순으로 내림차순 비교
+    })).sort((a,b)=>b.suspectCount-a.suspectCount||b.untaggedRatio-a.untaggedRatio||b.total-a.total);
+    statusEl.textContent='집계 완료 — 그룹 '+groupSummaries.length+'개 / 멤버별 의심 후보 '+combined.length+'개(자체 '+ownSuspects.length+' / 콜라보 '+crossSuspects.length+')';
+    _renderDqGroupList(groupSummaries);
     _renderHnnList(combined);
   }catch(e){
     statusEl.textContent='오류: '+e.message;
@@ -10631,18 +10696,49 @@ async function _hnnScan(){
     if(btn)btn.disabled=false;
   }
 }
+// 그룹별 요약 테이블 — 그룹명을 누르면 해당 그룹 카드로 바로 이동(관리자가 의심 그룹을 바로 확인할 수 있게).
+function _renderDqGroupList(list){
+  const secEl=document.getElementById('hnn-group-sec');
+  const listEl=document.getElementById('hnn-group-list');
+  listEl.innerHTML='';
+  if(!list.length){secEl.style.display='none';return;}
+  secEl.style.display='';
+  list.forEach(g=>{
+    const item=document.createElement('div');item.className='hnn-group-item';
+    const name=document.createElement('div');name.className='hnn-group-name';name.textContent=g.gko;
+    const stats=document.createElement('div');stats.className='hnn-group-stats';
+    const ratioPct=Math.round(g.untaggedRatio*100);
+    stats.innerHTML=`<span>영상 ${g.total}개</span><span>미태깅 ${ratioPct}%</span>`+
+      (g.suspectCount?`<span class="hnn-group-susp">의심 ${g.suspectCount}건</span>`:'');
+    item.appendChild(name);item.appendChild(stats);
+    item.addEventListener('click',()=>{
+      document.getElementById('hnn-overlay').classList.remove('open');
+      if(!GROUPS[g.gko])return; // 솔로 아티스트(본인 이름이 group_ko)는 그룹 카드가 없어 이동 생략
+      if(isMob()){
+        _navHistoryActive=true;showGC(g.gko,window.innerWidth/2,window.innerHeight*0.4,false,false,null,false);_navHistoryActive=false;
+        openMobSheet(document.getElementById('gc'));
+      }else{
+        showGC(g.gko,window.innerWidth/2,window.innerHeight*0.4);
+      }
+    });
+    listEl.appendChild(item);
+  });
+}
 let _hnnCandidates=[];
 function _renderHnnList(list){
   _hnnCandidates=list;
   const listEl=document.getElementById('hnn-list');
   const toolbarEl=document.getElementById('hnn-toolbar');
+  const lblEl=document.getElementById('hnn-member-lbl');
   listEl.innerHTML='';
   if(!list.length){
     listEl.innerHTML='<div id="hnn-empty">의심 후보가 없어요</div>';
     toolbarEl.style.display='none';
+    if(lblEl)lblEl.style.display='none';
     return;
   }
   toolbarEl.style.display='flex';
+  if(lblEl)lblEl.style.display='';
   document.getElementById('hnn-select-all').checked=false;
   list.forEach((s,i)=>{
     const item=document.createElement('div');item.className='hnn-item';item.dataset.name=s.mko;
