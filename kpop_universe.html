@@ -1878,6 +1878,8 @@
     <button class="sp-yt-sync" id="sp-cover-fix-btn" style="margin-top:4px;opacity:.8;">원곡 with→cover 오태깅 이동</button>
     <button class="sp-yt-sync" id="sp-hitgs-everglow-fix-btn" style="margin-top:4px;opacity:.6;font-size:10px;">힛지스/에버글로우 오분류 수정 (일회용)</button>
     <button class="sp-yt-sync" id="sp-everglow-junk-fix-btn" style="margin-top:2px;opacity:.6;font-size:10px;">에버글로우 무관 영상 삭제 (일회용)</button>
+    <button class="sp-yt-sync" id="sp-yeongji-rainbow-fix-btn" style="margin-top:2px;opacity:.6;font-size:10px;">이영지의 레인보우 → 이영지로 이동 (일회용)</button>
+    <button class="sp-yt-sync" id="sp-rainbow-junk-fix-btn" style="margin-top:2px;opacity:.6;font-size:10px;">레인보우 무관 영상 삭제 (일회용)</button>
 
     <div class="sp-subsec-lbl" style="margin-top:10px;">데이터 정합성</div>
     <button class="sp-yt-sync" id="sp-strictsync-sweep-btn" style="opacity:.8;">strictSync 그룹 키워드 오염 정리</button>
@@ -11586,6 +11588,89 @@ document.getElementById('sp-everglow-junk-fix-btn')?.addEventListener('click',as
     if(btn)btn.disabled=false;
   }
 });
+// KBS 음악 프로그램 "이영지의 레인보우"가 걸그룹 레인보우와 이름만 같아서(진행자 이영지는 레인보우
+// 소속이 아님) group_ko='레인보우'로 잘못 들어갔던 것을 이영지 본인 카드로 옮기는 일회용 버튼.
+// 레인보우 멤버 "노을"이 흔한 단어(석양)라 _m2ParseTitle의 멤버 이름 역추론 폴백에 걸려서, 제목에
+// "레인보우"조차 없는 무관한 영상까지 같이 오염됐던 원인은 _ATM_HASHTAG_ONLY_NAMES에 "노을" 추가로
+// 별도 차단함(2026-08-04, 사용자 제보로 발견) — 이 버튼은 그중 "이영지의 레인보우" 프로그램분만 이동.
+// 옮긴 뒤 members/with_members/with_groups는 레인보우 기준으로 잘못 잡혔던 값이라 초기화하고
+// tags_manual=true로 잠가서, 다음 자동 태깅/재검증이 다시 레인보우로 되돌리지 못하게 한다.
+document.getElementById('sp-yeongji-rainbow-fix-btn')?.addEventListener('click',async()=>{
+  if(!sb){_ytSetProg('Supabase 연결 없음');return;}
+  const btn=document.getElementById('sp-yeongji-rainbow-fix-btn');
+  if(btn)btn.disabled=true;
+  try{
+    _ytSetProg('이영지의 레인보우 조회 중…');
+    const{data:rows,error}=await _sbFetchAll(()=>sb.from(_YT_TABLE)
+      .select('id,title')
+      .eq('group_ko','레인보우')
+      .ilike('title','%이영지%')
+      .order('id'));
+    if(error){_ytSetProg('조회 실패: '+error.message);return;}
+    if(!rows?.length){_ytSetProg('이동할 영상이 없어요');return;}
+    if(!confirm(`"이영지의 레인보우" 관련 영상 ${rows.length}개를 이영지 카드로 옮길까요?\n예: ${rows[0].title.slice(0,40)}`)){
+      _ytSetProg('취소함');return;
+    }
+    const ids=rows.map(r=>r.id);
+    let moved=0;
+    for(let i=0;i<ids.length;i+=200){
+      const chunk=ids.slice(i,i+200);
+      // tags_manual=true인 행이 섞여있을 수 있어 트리거 우회 two-step: 1) 잠금 해제 2) 실제 이동+재잠금
+      const{error:e1}=await sb.from(_YT_TABLE).update({tags_manual:false}).in('id',chunk);
+      if(e1){_ytSetProg(`이동 실패(${moved}개까지 완료): `+e1.message);return;}
+      const{error:e2}=await sb.from(_YT_TABLE).update({group_ko:'이영지',members:[],with_members:[],with_groups:[],tags_manual:true}).in('id',chunk);
+      if(e2){_ytSetProg(`이동 실패(${moved}개까지 완료): `+e2.message);return;}
+      moved+=chunk.length;
+      _ytSetProg(`이동 중… ${moved}/${ids.length}`);
+    }
+    _ytSetProg(`완료! "이영지의 레인보우" ${moved}개를 이영지 카드로 옮김`);
+  }catch(e){
+    _ytSetProg('오류: '+e.message);
+  }finally{
+    if(btn)btn.disabled=false;
+  }
+});
+// "노을"/"현영"(성 뗀 "조현영") 같은 흔한 단어와 겹치는 레인보우 멤버 이름 때문에, 제목에 레인보우
+// 관련 신호가 전혀 없는 무관한 영상이 group_ko='레인보우'로 잘못 들어간 걸 정리하는 일회용 버튼 —
+// 에버글로우 무관 영상 삭제 버튼과 같은 방식(진짜 레인보우 신호가 하나도 없는 행만 삭제). "노을"/"현영"
+// 자체는 신호 목록에서 일부러 뺐음 — 그게 바로 오염 원인이라 신호로 넣으면 정리가 하나도 안 됨.
+// strictSync 오염 정리 버튼은 "제목에 레인보우/RAINBOW 토큰이 있는" 행만 잡아서 이 케이스는 못 잡음
+// (2026-08-04, 사용자 제보로 발견 — "노을" 수정 후에도 "더 있는 것 같다"는 재확인 끝에 찾음).
+const _RAINBOW_JUNK_SIGNAL=/레인보우|RAINBOW|레인너스|Rainerus|김재경|Jaekyung|고우리|Woori|조현영|Hyunyoung|김지숙|Jisook|오승아|Seungah|정윤혜|Yoonhye/i;
+document.getElementById('sp-rainbow-junk-fix-btn')?.addEventListener('click',async()=>{
+  if(!sb){_ytSetProg('Supabase 연결 없음');return;}
+  const btn=document.getElementById('sp-rainbow-junk-fix-btn');
+  if(btn)btn.disabled=true;
+  try{
+    _ytSetProg('레인보우 무관 영상 조회 중…');
+    const{data:rows,error}=await _sbFetchAll(()=>sb.from(_YT_TABLE)
+      .select('id,title')
+      .eq('group_ko','레인보우')
+      .filter('members','eq','{}')
+      .filter('with_members','eq','{}')
+      .order('id'));
+    if(error){_ytSetProg('조회 실패: '+error.message);return;}
+    const junk=(rows||[]).filter(r=>!_RAINBOW_JUNK_SIGNAL.test((r.title||'').normalize('NFKC')));
+    if(!junk.length){_ytSetProg('삭제할 무관 영상이 없어요');return;}
+    if(!confirm(`레인보우와 무관해 보이는 영상 ${junk.length}개를 삭제할까요? 되돌릴 수 없습니다.\n예: ${junk[0].title.slice(0,40)}`)){
+      _ytSetProg('취소함');return;
+    }
+    let deleted=0;
+    const ids=junk.map(r=>r.id);
+    for(let i=0;i<ids.length;i+=200){
+      const chunk=ids.slice(i,i+200);
+      const{error:delErr}=await sb.from(_YT_TABLE).delete().in('id',chunk);
+      if(delErr){_ytSetProg(`삭제 실패(${deleted}개까지 완료): `+delErr.message);return;}
+      deleted+=chunk.length;
+      _ytSetProg(`삭제 중… ${deleted}/${ids.length}`);
+    }
+    _ytSetProg(`완료! 레인보우 무관 영상 ${deleted}개 삭제함(전체 ${rows.length}개 중)`);
+  }catch(e){
+    _ytSetProg('오류: '+e.message);
+  }finally{
+    if(btn)btn.disabled=false;
+  }
+});
 
 // ── 멤버+콜라보 자동 태깅(미태깅분) — 2026-07-21에 스크래치패드 스크립트로 1회성으로 돌렸던
 // 매칭 로직(성+이름 실명표기/조사/해시태그/영문 토큰) 그대로 앱에 내장. 2026-07-29에 콜라보
@@ -11619,7 +11704,14 @@ function _atmTokenize(title){return(title||'').toLowerCase().split(/[^a-z0-9]+/)
 // "종현"(샤이니)/"문빈"(아스트로)/"구하라"(카라)/"설리"(에프엑스) — 위와는 다른 이유로 등록: 동명이인/흔한
 // 단어 충돌이 아니라 고인이 된 멤버들이라, 평문 언급(추모글·회고 클립·다른 사람 언급 등)만으로 새 영상이
 // 계속 태깅되는 걸 원치 않는다는 요청(2026-08-04)에 따라 명시적 해시태그가 있을 때만 인정하게 제한.
-const _ATM_HASHTAG_ONLY_NAMES=new Set(['여름','아이엠','가을','하늘','바다','이유','Love','JIN','이런','뉴','고우리','유사랑','종현','문빈','구하라','설리']);
+// "노을"(레인보우) — "노을"이 "석양"을 뜻하는 흔한 단어라 무관한 영상(감성 브이로그, 풍경 영상, 동명 곡
+// 등)에 대량으로 걸림 — 제목에 "레인보우"조차 없는 영상이 group_ko='레인보우'로 대거 오염된 원인
+// (_m2ParseTitle의 멤버 이름 역추론 폴백이 "노을"만 보고 그룹을 추론함, 2026-08-04 사용자 제보로 발견).
+// "여름"/"가을"/"하늘"/"바다"와 완전히 같은 패턴인데 그동안 빠져있었음.
+// "조현영"(레인보우) — "고우리"/"유사랑"과 똑같은 성씨-스트립 패턴: "조"(흔한 성씨)를 떼면 "현영"만
+// 남는데, 이건 레인보우와 무관한 유명 배우 이름이라 그 사람 관련 영상까지 레인보우로 오염됨
+// (2026-08-04, "노을" 수정 후 사용자가 "이거 말고도 더 있는 것 같다"고 재확인 요청해서 발견).
+const _ATM_HASHTAG_ONLY_NAMES=new Set(['여름','아이엠','가을','하늘','바다','이유','Love','JIN','이런','뉴','고우리','유사랑','종현','문빈','구하라','설리','노을','조현영']);
 // 하드코딩 목록 + DB(name_match_whitelist, admin이 스캔 화면에서 바로 추가) 목록을 합쳐서 판단.
 function _isHashtagOnlyName(name){return _ATM_HASHTAG_ONLY_NAMES.has(name)||_ATM_DYNAMIC_HASHTAG_NAMES.has(name);}
 // 트리플에스처럼 등록된 이름 자체가 "성+이름"(예: 김채원)인 그룹은, 영상 제목에서 성 없이 이름만
