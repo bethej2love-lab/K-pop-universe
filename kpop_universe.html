@@ -5127,9 +5127,27 @@ function _findArtistByConnName(withStr,anchorGroupKo){
   if(m)return ARTISTS.find(a=>a.name.ko===m[1]&&a.group.ko===m[2]);
   return ARTISTS.find(a=>a.name.ko===withStr&&a.group.ko===anchorGroupKo);
 }
+// 같은 영상이 여러 조회 경로(자체 채널 멤버 태그 vs 콜라보 그룹 태그 등)에서 각각 따로 발견되면,
+// 경로마다 with(함께한 사람) 목록이 서로 다른 "부분 정보"로 나뉘어 들어오는 경우가 있음(예: 에이프릴
+// 이진솔 카드 — 같은 영상이 ownQ(멤버 태그)와 groupTagQ(with_groups 태그) 양쪽에 동시에 걸려서, 하나는
+// with_groups 상대(피프틴앤드)를 담고 하나는 안 담음). 예전엔 먼저 찾은 것만 남기고 나머지를 통째로
+// 버려서, names 집계(칩 표시)엔 이미 반영된 상대가 실제 songs 배열에선 통째로 사라지는 "칩은 뜨는데
+// 눌러보면 영상이 없는" 유령 칩 버그가 있었음(2026-08-04, 사용자 제보로 발견). 이제 url이 겹치면
+// with를 합쳐서 어느 경로에서 온 정보든 안 사라지게 한다.
 function _dedupSongs(songs){
-  const seen=new Set();
-  return songs.filter(sg=>{if(seen.has(sg.u))return false;seen.add(sg.u);return true;});
+  const map=new Map();
+  const order=[];
+  songs.forEach(sg=>{
+    const key=sg.u||sg; // url 없는 항목(이론상 없어야 함)은 병합 대상 삼지 않고 각자 고유 취급
+    const existing=map.get(key);
+    if(!existing){
+      map.set(key,{...sg,with:sg.with?[...sg.with]:sg.with});
+      order.push(key);
+    }else if(sg.with?.length){
+      existing.with=[...new Set([...(existing.with||[]),...sg.with])];
+    }
+  });
+  return order.map(k=>map.get(k));
 }
 // Supabase yt_channel_videos 행을 artists.json songs 항목({t,u,with,type})과 같은 형태로 변환.
 // members/with_members 태깅은 [[project_kpop_map]] "영상 노출 로직 설계" 참고.
