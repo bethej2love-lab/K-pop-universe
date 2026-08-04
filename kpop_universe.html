@@ -1047,12 +1047,11 @@
   .vid-tag-chip button{background:none;border:none;color:rgba(220,230,250,0.7);cursor:pointer;font-size:12px;padding:0;line-height:1;}
   #vid-tag-status{font-size:11.5px;color:rgba(155,178,228,0.7);margin-top:10px;min-height:14px;}
   #vid-tag-btns{display:flex;gap:8px;margin-top:16px;}
-  #vid-tag-hide{margin-top:8px;width:100%;padding:7px;border-radius:10px;border:0.5px solid rgba(220,90,90,0.30);background:rgba(220,90,90,0.08);color:rgba(240,150,150,0.80);font-size:11.5px;font-family:inherit;cursor:pointer;transition:background .15s,color .15s;}
-  #vid-tag-hide:hover{background:rgba(220,90,90,0.16);color:rgba(255,175,175,0.95);}
-  #vid-tag-hide.restore{border-color:rgba(100,180,120,0.35);background:rgba(100,180,120,0.09);color:rgba(145,220,165,0.85);}
-  #vid-tag-hide.restore:hover{background:rgba(100,180,120,0.18);color:rgba(175,240,190,0.95);}
-  #vid-tag-hidden-badge{display:none;font-size:10px;padding:2px 7px;border-radius:4px;background:rgba(220,90,90,0.15);color:rgba(240,150,150,0.85);margin-left:6px;vertical-align:middle;}
-  #vid-tag-hidden-badge.visible{display:inline;}
+  #vid-tag-flag-toggles{display:flex;gap:8px;margin-top:10px;}
+  .vid-tag-flag-toggle{flex:1;padding:8px;border-radius:10px;border:0.5px solid rgba(255,255,255,0.14);background:rgba(255,255,255,0.04);color:rgba(185,205,245,0.65);font-size:11.5px;font-family:inherit;cursor:pointer;transition:background .15s,color .15s,border-color .15s;}
+  .vid-tag-flag-toggle:hover{background:rgba(255,255,255,0.09);}
+  .vid-tag-flag-toggle.vid-tag-flag-nomem.active{background:rgba(255,160,80,0.16);border-color:rgba(255,160,80,0.4);color:rgba(255,190,120,0.95);}
+  .vid-tag-flag-toggle.vid-tag-flag-hidden.active{background:rgba(220,90,90,0.16);border-color:rgba(220,90,90,0.4);color:rgba(240,150,150,0.95);}
   /* ── 최애(bias) ─────────────────────────────────── */
   #pp-bias-chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px;}
   #pp-bias-chips:empty{margin-bottom:0;}
@@ -1874,7 +1873,7 @@
     <button class="sp-yt-sync" id="sp-yt-autotag" style="margin-top:4px;opacity:.8;">멤버+콜라보 자동 태깅 (미태깅분)</button>
     <button class="sp-yt-sync" id="sp-membersfix-btn" style="margin-top:4px;opacity:.8;">자체 멤버 태깅 재검증(전체)</button>
     <button class="sp-yt-sync" id="sp-collabfix-btn" style="margin-top:4px;opacity:.8;">콜라보 오태깅 재검증(전체)</button>
-    <button class="sp-yt-sync" id="sp-yt-sweep-banned" style="margin-top:4px;opacity:.8;">밴 인물 언급 영상 노출 제외 정리</button>
+    <button class="sp-yt-sync" id="sp-yt-sweep-banned" style="margin-top:4px;opacity:.8;">밴 인물 언급 영상 숨김 정리</button>
     <button class="sp-yt-sync" id="sp-junk-title-btn" style="margin-top:4px;opacity:.8;">"띵곡팔이" 제목 일괄 무관 처리</button>
 
     <div class="sp-yt-prog" id="sp-yt-prog"></div>
@@ -1889,7 +1888,7 @@
     <div id="vm-tabs">
       <button class="vm-tab active" data-tab="all">전체</button>
       <button class="vm-tab" data-tab="nomem">무관</button>
-      <button class="vm-tab" data-tab="hidden">노출 제외</button>
+      <button class="vm-tab" data-tab="hidden">숨김</button>
       <button class="vm-tab" data-tab="channels">동기화 채널</button>
       <button class="vm-tab" data-tab="ss">검수</button>
     </div>
@@ -1915,7 +1914,7 @@
 <div id="admin-bulk-bar" class="hidden">
   <span id="admin-bulk-count">0개 선택됨</span>
   <button id="admin-bulk-edit-btn">편집</button>
-  <button id="admin-bulk-hide-btn">노출 제외</button>
+  <button id="admin-bulk-hide-btn">숨김</button>
   <button id="admin-bulk-cancel-btn">취소</button>
 </div>
 <div id="wonkok-overlay">
@@ -2138,7 +2137,7 @@
 </div>
 <div id="vid-tag-overlay">
   <div id="vid-tag-panel">
-    <div class="pp-title"><span id="vid-tag-title-text">출연 멤버 지정</span><span id="vid-tag-hidden-badge">노출 제외됨</span></div>
+    <div class="pp-title"><span id="vid-tag-title-text">출연 멤버 지정</span></div>
     <div id="vid-tag-vidtitle"></div>
     <div id="vid-tag-single-hint" style="font-size:10px;color:rgba(155,178,228,0.45);margin-bottom:8px">선택 없음 = 그룹 전체 영상 (그룹·멤버 카드 모두 노출)</div>
     <label id="vid-tag-bulk-overwrite-row" style="display:none;align-items:center;gap:6px;cursor:pointer;font-size:11.5px;color:rgba(255,190,140,0.85);margin-bottom:10px;padding:8px 10px;border-radius:8px;background:rgba(255,190,140,0.08);border:0.5px solid rgba(255,190,140,0.25)">
@@ -2185,16 +2184,16 @@
       <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:11.5px;color:rgba(185,205,245,0.75)">
         <input type="checkbox" id="vid-tag-flag-ext" style="accent-color:rgba(155,178,228,0.9)">외부인 포함
       </label>
-      <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:11.5px;color:rgba(185,205,245,0.75)">
-        <input type="checkbox" id="vid-tag-flag-nomem" style="accent-color:rgba(155,178,228,0.9)">그룹 멤버 안 나옴(제외)
-      </label>
+    </div>
+    <div id="vid-tag-flag-toggles">
+      <button type="button" id="vid-tag-flag-nomem-btn" class="vid-tag-flag-toggle vid-tag-flag-nomem">무관</button>
+      <button type="button" id="vid-tag-flag-hidden-btn" class="vid-tag-flag-toggle vid-tag-flag-hidden">숨김</button>
     </div>
     <div id="vid-tag-status"></div>
     <div id="vid-tag-btns">
       <button id="vid-tag-cancel" class="uc-btn">취소</button>
       <button id="vid-tag-save" class="uc-btn uc-btn-primary">저장</button>
     </div>
-    <button id="vid-tag-hide">노출 제외</button>
   </div>
 </div>
 <div id="pp-bias-emoji-overlay">
@@ -5205,7 +5204,9 @@ async function _fetchApiCollabData(anchor){
       sb.from(_YT_TABLE).select('id,title,category,group_ko,members,with_groups,content_flag').eq('group_ko',groupKo).not('with_groups','eq','{}'),
       // 반대 방향: 다른 채널(예: 아이유)이 내 그룹 전체를 with_groups로 태깅한 경우 — 이게 없으면
       // 그룹으로 태깅된 쪽(예: (여자)아이들 개별 멤버)에는 이 콜라보가 전혀 안 보이는 비대칭이 생김.
-      sb.from(_YT_TABLE).select('id,title,category,group_ko,with_groups,content_flag').contains('with_groups',[anchor.group.ko])
+      // members도 같이 받아온다 — 아래에서 그 채널 자체 멤버 매칭 결과가 있으면 로스터 전체 대신
+      // 그걸로 좁히는 데 씀(2026-08-04).
+      sb.from(_YT_TABLE).select('id,title,category,group_ko,members,with_groups,content_flag').contains('with_groups',[anchor.group.ko])
     ]);
     if(ownQ.error)throw new Error(ownQ.error.message);
     if(taggedQ.error)throw new Error(taggedQ.error.message);
@@ -5244,8 +5245,20 @@ async function _fetchApiCollabData(anchor){
     // _findArtistByConnName도 그 이름의 멤버를 못 찾아 클릭 시 이동/영상 매칭이 전부 실패하던 버그가 있었음.
     _filterBannedVideos(reverseGroupTagQ.data||[]).forEach(v=>{
       if(v.group_ko===groupKo)return; // 자기 채널(위 groupTagQ에서 이미 처리)은 중복 방지로 제외
-      let withList=ARTISTS.filter(a=>_artistGroups(a).some(g=>g.ko===v.group_ko)).map(a=>`${a.name.ko}(${v.group_ko})`);
-      let groupWide=true; // 그룹 로스터 전원으로 펼친 경우엔 특정 멤버가 확인된 게 아님
+      // with_groups는 그룹 단위로만 태깅됐어도(제목만 보고 특정 멤버까진 못 잡은 경우가 흔함 — 콜라보
+      // 상대 매칭은 제목만 보고 설명란은 안 봄), 이 영상 자체 채널(v.group_ko)의 자체 멤버 매칭(v.members)은
+      // 설명란까지 보고 확정된 값이라 더 정확할 수 있음 — 있으면 로스터 전체 대신 그걸로 좁힌다
+      // (2026-08-04, 사용자 제보 — 아일릿 채널 영상에서 "이로하"까지 특정 안 되고 "아일릿" 그룹으로만
+      // 뜨던 문제. 아일릿 자체 채널 매칭은 이미 "이로하"를 정확히 잡았는데 이 경로가 그 값을 안 쓰고
+      // 있었음).
+      let withList,groupWide;
+      if((v.members||[]).length){
+        withList=v.members.map(mko=>`${mko}(${v.group_ko})`);
+        groupWide=false; // 특정 멤버가 확인됨 — 더 이상 "그룹 전체" 취급 아님
+      }else{
+        withList=ARTISTS.filter(a=>_artistGroups(a).some(g=>g.ko===v.group_ko)).map(a=>`${a.name.ko}(${v.group_ko})`);
+        groupWide=true; // 그룹 로스터 전원으로 펼친 경우엔 특정 멤버가 확인된 게 아님
+      }
       if(!withList.length){
         // 그룹이 아니라 솔로 채널(아이유처럼 group.ko가 GROUPS에 없는 경우)이면 본인 하나만 추가 —
         // 이 경우는 후보가 아니라 확실히 그 사람 본인이므로 groupWide 표시를 안 함.
@@ -10282,7 +10295,7 @@ async function _ytSweepBannedVideos(){
       if(ue)throw new Error(ue.message);
     }
     localStorage.setItem('kpu_banned_sweep_version',version);
-    _ytSetProg(`완료! ${rows.length}개 중 ${toHide.length}개 노출 제외 처리함(노출 제외 영상 목록에서 검토 가능)`);
+    _ytSetProg(`완료! ${rows.length}개 중 ${toHide.length}개 숨김 처리함(숨김 목록에서 검토 가능)`);
   }catch(e){
     _ytSetProg('오류: '+e.message);
   }finally{
@@ -10346,7 +10359,7 @@ async function _ytSweepHighlightMistag(){
       const{error:ue}=await sb.from(_YT_TABLE).update({content_flag:'무관'}).in('id',toFlag.slice(i,i+200));
       if(ue)throw new Error(ue.message);
     }
-    _ytSetProg(`완료! ${rows.length}개 중 ${toFlag.length}개 무관 처리함("그룹 멤버 안 나옴 목록"에서 확인 가능)`);
+    _ytSetProg(`완료! ${rows.length}개 중 ${toFlag.length}개 무관 처리함(무관 목록에서 확인 가능)`);
   }catch(e){
     _ytSetProg('오류: '+e.message);
   }finally{
@@ -11213,7 +11226,7 @@ function _vmRenderVideoList(){
   const tab=_vmTab;
   listEl.innerHTML='';
   if(!_vmRows.length){
-    const emptyMsg=tab==='all'?'검색 결과가 없어요':tab==='nomem'?'무관 처리된 영상이 없어요':'노출 제외된 영상이 없어요';
+    const emptyMsg=tab==='all'?'검색 결과가 없어요':tab==='nomem'?'무관 처리된 영상이 없어요':'숨김 처리된 영상이 없어요';
     listEl.innerHTML=`<div style="padding:24px;text-align:center;color:rgba(155,178,228,0.45);font-size:12px;">${emptyMsg}</div>`;
     toolbarEl.style.display='none';
     return;
@@ -11223,7 +11236,7 @@ function _vmRenderVideoList(){
     toolbarEl.style.display='flex';
     document.getElementById('vm-select-all-row').style.display='';
     document.getElementById('vm-select-all').checked=false;
-    const applyLabel=tab==='nomem'?'선택 항목 무관 해제':tab==='ss'?'선택 항목 노출 제외':tab==='hidden'?'선택 항목 노출 복원':'선택 항목 무관 처리';
+    const applyLabel=tab==='nomem'?'선택 항목 무관 해제':tab==='ss'?'선택 항목 숨김':tab==='hidden'?'선택 항목 숨김 해제':'선택 항목 무관 처리';
     document.getElementById('vm-apply-btn').textContent=applyLabel;
     _vmUpdateCount();
   }else{
@@ -11351,7 +11364,7 @@ document.getElementById('vm-apply-btn')?.addEventListener('click',async()=>{
   btn.disabled=true;btn.textContent='처리 중…';
   const newFlag=_vmTab==='ss'?'hidden':(_vmTab==='all'?'무관':null);
   const{error}=await sb.from(_YT_TABLE).update({content_flag:newFlag}).in('id',ids);
-  const applyLabel=_vmTab==='nomem'?'선택 항목 무관 해제':_vmTab==='ss'?'선택 항목 노출 제외':_vmTab==='hidden'?'선택 항목 노출 복원':'선택 항목 무관 처리';
+  const applyLabel=_vmTab==='nomem'?'선택 항목 무관 해제':_vmTab==='ss'?'선택 항목 숨김':_vmTab==='hidden'?'선택 항목 숨김 해제':'선택 항목 무관 처리';
   if(error){btn.disabled=false;btn.textContent=applyLabel;document.getElementById('vm-status').textContent='오류: '+error.message;return;}
   const idSet=new Set(ids);
   if(_vmTab==='all'){
@@ -12358,7 +12371,12 @@ function _makeChVidController(contId){
       bar.classList.remove('hidden');
       document.getElementById('admin-bulk-count').textContent=`${_selIds.size}개 선택됨`;
       window._adminBulkExitFn=_exitSelMode; // 전역 핸들러에서 이 컨트롤러의 종료 함수 호출 가능하게 노출
-      window._adminBulkKo=state.ko; // 일괄 편집 모달이 이 그룹의 멤버 체크박스를 그릴 수 있게 노출
+      // state.ko(카드 자체 그룹)가 아니라 실제 선택된 영상들의 group_ko를 써야 함 — 멤버 카드는 게스트로
+      // 출연한 다른 채널 영상도 같이 보여주므로 카드 그룹과 영상 실제 소속이 다를 수 있음(개별 편집
+      // 버튼과 같은 원인의 버그, 2026-08-04). 선택 항목이 여러 그룹에 걸쳐 있으면 편집 모달에 경고 표시.
+      const selectedVids=state.allVids.filter(v=>_selIds.has(v.id));
+      window._adminBulkKo=selectedVids[0]?.group_ko||state.ko;
+      window._adminBulkMixedGko=new Set(selectedVids.map(v=>v.group_ko).filter(Boolean)).size>1;
     }else{
       bar.classList.add('hidden');
     }
@@ -12492,7 +12510,11 @@ function _makeChVidController(contId){
         const editBtn=document.createElement('button');
         editBtn.className='vid-edit-btn';editBtn.type='button';editBtn.textContent='✎';
         editBtn.setAttribute('aria-label','출연 멤버 지정');
-        editBtn.addEventListener('click',e=>{e.stopPropagation();_openVidTagModal(v,state.ko);});
+        // state.ko(지금 보고 있는 카드 자체의 그룹)가 아니라 이 영상의 실제 소속(v.group_ko)을 써야 함 —
+        // 멤버 카드는 본인이 게스트로 출연한 다른 채널 영상도 같이 보여주므로 카드 그룹과 영상 소속이
+        // 다를 수 있음(2026-08-04, 사용자 제보 — 성현 카드의 투모로우바이투게더 영상 편집 시 소속 그룹이
+        // 코르티스로 잘못 뜨던 문제).
+        editBtn.addEventListener('click',e=>{e.stopPropagation();_openVidTagModal(v,v.group_ko||state.ko);});
         item.appendChild(editBtn);
       }
       item.addEventListener('click',e=>{
@@ -13380,6 +13402,30 @@ let _vidTagGroupsSelected=[]; // [groupKo,...] — "아이유의 팔레트, 뉴�
 let _vidTagCoverSelected=[]; // [{ko,groupKo}] — 커버 영상의 원곡자(멤버) 지정
 let _vidTagCoverGroupsSelected=[]; // [groupKo,...] — 원곡이 그룹 단위 곡일 때
 let _vidTagOrigManual=false; // DB에서 불러온 기존 tags_manual 값 — 트리거 우회 two-step 저장에 사용
+// content_flag는 한 컬럼에 한 값만 들어가므로(null/기타/외부인/무관/hidden 중 하나) 체크박스 2개(기타/외부인)와
+// 토글 버튼 2개(무관/숨김)를 하나의 배타적 선택으로 묶어서 관리한다 — 예전엔 "숨김"만 별도 버튼으로 즉시
+// DB에 반영되고 나머지 셋은 저장 버튼을 눌러야 반영되는 등 취급이 달라서(2026-08-04, 사용자 피드백:
+// 무관/숨김의 "정도"가 안 맞음) 넷 다 저장 버튼을 눌러야 반영되는 걸로 통일했다.
+let _vidTagFlagChoice=null; // null | '기타' | '외부인' | '무관' | 'hidden'
+// 일괄 편집에서 "아무 플래그도 안 건드림"과 "명시적으로 정상으로 되돌림"을 구분하기 위한 플래그 —
+// 넷 중 하나라도 클릭하면 true가 돼서, 저장 시 선택 안 된 영상들의 기존 content_flag까지 건드리지 않던
+// 기존 동작을 그대로 유지한다.
+let _vidTagFlagTouched=false;
+function _vidTagApplyFlagUI(){
+  const etcEl=document.getElementById('vid-tag-flag-etc');
+  const extEl=document.getElementById('vid-tag-flag-ext');
+  const nomemBtn=document.getElementById('vid-tag-flag-nomem-btn');
+  const hiddenBtn=document.getElementById('vid-tag-flag-hidden-btn');
+  if(etcEl)etcEl.checked=_vidTagFlagChoice==='기타';
+  if(extEl)extEl.checked=_vidTagFlagChoice==='외부인';
+  if(nomemBtn)nomemBtn.classList.toggle('active',_vidTagFlagChoice==='무관');
+  if(hiddenBtn)hiddenBtn.classList.toggle('active',_vidTagFlagChoice==='hidden');
+}
+function _vidTagSetFlagChoice(v){
+  _vidTagFlagTouched=true;
+  _vidTagFlagChoice=(_vidTagFlagChoice===v)?null:v;
+  _vidTagApplyFlagUI();
+}
 function _renderVidTagChips(){
   const chipsEl=document.getElementById('vid-tag-with-chips');
   chipsEl.innerHTML='';
@@ -13492,14 +13538,9 @@ function _openVidTagModalBulk(ids,ko){
   _renderVidTagChips();
   const catEl=document.getElementById('vid-tag-cat');
   if(catEl)catEl.value='';
-  const etcEl=document.getElementById('vid-tag-flag-etc');
-  const extEl=document.getElementById('vid-tag-flag-ext');
-  const nomemEl=document.getElementById('vid-tag-flag-nomem');
-  if(etcEl)etcEl.checked=false;
-  if(extEl)extEl.checked=false;
-  if(nomemEl)nomemEl.checked=false;
-  document.getElementById('vid-tag-hide').style.display='none';
-  document.getElementById('vid-tag-hidden-badge').classList.remove('visible');
+  // 일괄 편집은 영상마다 기존 플래그가 다를 수 있어 빈 상태(미선택)로 시작 — touched는 false로 둬서
+  // 아무 것도 안 누르면 저장 시 content_flag를 아예 건드리지 않는다(기존 태그 보존).
+  _vidTagFlagChoice=null;_vidTagFlagTouched=false;_vidTagApplyFlagUI();
   document.getElementById('vid-tag-status').textContent='';
   document.getElementById('vid-tag-overlay').classList.add('open');
 }
@@ -13513,7 +13554,6 @@ async function _openVidTagModal(v,ko){
   document.getElementById('vid-tag-title-text').textContent='출연 멤버 지정';
   document.getElementById('vid-tag-single-hint').style.display='';
   document.getElementById('vid-tag-bulk-overwrite-row').style.display='none';
-  document.getElementById('vid-tag-hide').style.display='';
   document.getElementById('vid-tag-vidtitle').textContent=_cleanTitle(v.title);
   _ensureVidTagGroupList();
   document.getElementById('vid-tag-group-ko').value=ko;
@@ -13561,18 +13601,7 @@ async function _openVidTagModal(v,ko){
       _renderVidTagChips();
       const catEl=document.getElementById('vid-tag-cat');
       if(catEl)catEl.value=data.category||'';
-      const flag=data.content_flag||'';
-      const etcEl=document.getElementById('vid-tag-flag-etc');
-      const extEl=document.getElementById('vid-tag-flag-ext');
-      const nomemEl=document.getElementById('vid-tag-flag-nomem');
-      const isHidden=flag==='hidden';
-      if(etcEl)etcEl.checked=flag==='기타';
-      if(extEl)extEl.checked=flag==='외부인';
-      if(nomemEl)nomemEl.checked=flag==='무관';
-      const hideBtn=document.getElementById('vid-tag-hide');
-      const hideBadge=document.getElementById('vid-tag-hidden-badge');
-      if(hideBtn){hideBtn.textContent=isHidden?'노출 복원':'노출 제외';hideBtn.classList.toggle('restore',isHidden);}
-      if(hideBadge)hideBadge.classList.toggle('visible',isHidden);
+      _vidTagFlagChoice=data.content_flag||null;_vidTagFlagTouched=false;_vidTagApplyFlagUI();
     }
   }
   document.getElementById('vid-tag-status').textContent='';
@@ -13582,10 +13611,7 @@ function _closeVidTagModal(){
   _vidTagTarget=null;
   _vidTagBulkIds=null;
   _vidTagOrigManual=false;
-  const hideBtn=document.getElementById('vid-tag-hide');
-  const hideBadge=document.getElementById('vid-tag-hidden-badge');
-  if(hideBtn){hideBtn.textContent='노출 제외';hideBtn.classList.remove('restore');}
-  if(hideBadge)hideBadge.classList.remove('visible');
+  _vidTagFlagChoice=null;_vidTagFlagTouched=false;_vidTagApplyFlagUI();
   // 영상 관리 패널에서 연필 버튼으로 열었을 수 있으니, 열려있으면 현재 탭 기준으로 다시 불러온다.
   if(document.getElementById('vm-overlay')?.classList.contains('open')){
     _vmLoad();
@@ -13692,10 +13718,7 @@ document.getElementById('vid-tag-save').addEventListener('click',async e=>{
   const coverGroups=[..._vidTagCoverGroupsSelected];
   const catEl=document.getElementById('vid-tag-cat');
   const category=catEl?catEl.value:undefined;
-  const etcEl=document.getElementById('vid-tag-flag-etc');
-  const extEl=document.getElementById('vid-tag-flag-ext');
-  const nomemEl=document.getElementById('vid-tag-flag-nomem');
-  const contentFlag=etcEl?.checked?'기타':extEl?.checked?'외부인':nomemEl?.checked?'무관':null;
+  const contentFlag=_vidTagFlagChoice;
   const{ko}=_vidTagTarget;
   // 소속 그룹(group_ko) 자체를 완전히 다른 그룹으로 옮기는 경우 — 자동 태깅이 아예 엉뚱한 그룹으로
   // 잘못 물었을 때(예: "원곡: X그룹" 오태깅) "그룹멤버안나옴+타그룹멤버 크로스태그"로 우회하지 않고
@@ -13716,7 +13739,7 @@ document.getElementById('vid-tag-save').addEventListener('click',async e=>{
     const updatePayload={};
     if(overwriteTags){updatePayload.members=members;updatePayload.with_members=withMembers;updatePayload.with_groups=withGroups;updatePayload.cover_of_members=coverMembers;updatePayload.cover_of_groups=coverGroups;updatePayload.tags_manual=true;}
     if(category)updatePayload.category=category;
-    if(etcEl?.checked||extEl?.checked||nomemEl?.checked)updatePayload.content_flag=contentFlag;
+    if(_vidTagFlagTouched)updatePayload.content_flag=contentFlag;
     if(newGko)updatePayload.group_ko=newGko;
     if(!Object.keys(updatePayload).length){statusEl.textContent='변경할 항목을 선택해주세요';return;}
     const ids=_vidTagBulkIds;
@@ -13780,24 +13803,17 @@ document.getElementById('vid-tag-save').addEventListener('click',async e=>{
     _refreshOpenCoverOfSection(); // 원곡자 지정 추가/변경으로 "다른 아티스트의 커버" 섹션이 바뀌었을 수 있으니 갱신
   },500);
 });
-document.getElementById('vid-tag-hide').addEventListener('click',async e=>{
-  e.stopPropagation();
-  if(!_vidTagTarget||!sb||_vidTagBulkIds)return;
-  const statusEl=document.getElementById('vid-tag-status');
-  const hideBtn=document.getElementById('vid-tag-hide');
-  const hideBadge=document.getElementById('vid-tag-hidden-badge');
-  const isCurrentlyHidden=hideBtn.classList.contains('restore');
-  const newFlag=isCurrentlyHidden?null:'hidden';
-  statusEl.textContent='저장 중…';
-  const{ko,id}=_vidTagTarget;
-  const{error}=await sb.from(_YT_TABLE).update({content_flag:newFlag}).eq('id',id);
-  if(error){statusEl.textContent='저장 실패: '+error.message;return;}
-  setTimeout(()=>{
-    _closeVidTagModal();
-    _gcChVidCtl.reloadIfShowing(ko);
-    _ttChVidCtl.reloadIfShowing(ko);
-  },300);
+// 기타/외부인 포함(체크박스) + 무관/숨김(토글 버튼) — content_flag 컬럼 하나를 놓고 배타적으로 선택하는
+// 하나의 그룹이라, 넷 다 여기서 _vidTagFlagChoice 하나로 수렴시키고 저장 버튼을 눌러야 반영된다
+// (예전엔 숨김만 클릭 즉시 별도로 DB에 반영돼서 무관과 취급 "정도"가 달랐음 — 통일).
+document.getElementById('vid-tag-flag-etc').addEventListener('change',e=>{
+  _vidTagFlagTouched=true;_vidTagFlagChoice=e.target.checked?'기타':null;_vidTagApplyFlagUI();
 });
+document.getElementById('vid-tag-flag-ext').addEventListener('change',e=>{
+  _vidTagFlagTouched=true;_vidTagFlagChoice=e.target.checked?'외부인':null;_vidTagApplyFlagUI();
+});
+document.getElementById('vid-tag-flag-nomem-btn').addEventListener('click',e=>{e.stopPropagation();_vidTagSetFlagChoice('무관');});
+document.getElementById('vid-tag-flag-hidden-btn').addEventListener('click',e=>{e.stopPropagation();_vidTagSetFlagChoice('hidden');});
 // 썸네일이 아예 안 뜨는 개별 영상 하나만 유튜브에서 다시 조회해서 고치는 용도 —
 // "쇼츠 자동 감지"처럼 전체 영상을 다 훑지 않고 지금 열려있는 이 영상 하나만 갱신한다.
 document.getElementById('vid-tag-thumb-refresh').addEventListener('click',async e=>{
@@ -13920,6 +13936,13 @@ document.getElementById('admin-bulk-edit-btn')?.addEventListener('click',()=>{
   const ids=[...document.querySelectorAll('.gc-ch-item.admin-selected,.tv-conn-selectable.admin-selected')].map(el=>el.dataset.vidId).filter(Boolean);
   if(!ids.length||!window._adminBulkKo)return;
   _openVidTagModalBulk(ids,window._adminBulkKo);
+  // 멤버 카드는 게스트로 출연한 다른 채널 영상도 같이 보여주므로, 선택한 영상들이 실제로는 여러 그룹에
+  // 걸쳐 있을 수 있음 — 멤버 체크박스는 그 중 한 그룹 기준으로만 그려지므로 미리 경고해둔다(vm 패널의
+  // 같은 경고와 동일한 이유, 2026-08-04).
+  if(window._adminBulkMixedGko){
+    const statusEl=document.getElementById('vid-tag-status');
+    if(statusEl)statusEl.textContent='선택한 영상이 여러 그룹에 걸쳐 있어요 — "멤버/콜라보 태그도 덮어쓰기"는 끄고 사용하세요';
+  }
 });
 document.getElementById('admin-bulk-hide-btn')?.addEventListener('click',async()=>{
   if(!sb||!_isAdmin())return;
@@ -13930,10 +13953,10 @@ document.getElementById('admin-bulk-hide-btn')?.addEventListener('click',async()
   if(!ids.length)return;
   btn.disabled=true;btn.textContent='처리 중…';
   const{error}=await sb.from(_YT_TABLE).update({content_flag:'hidden'}).in('id',ids);
-  if(error){btn.disabled=false;btn.textContent='노출 제외';_showShareToast('오류: '+error.message);return;}
+  if(error){btn.disabled=false;btn.textContent='숨김';_showShareToast('오류: '+error.message);return;}
   selectedItems.forEach(el=>el.remove());
   window._adminBulkExitFn?.();
-  btn.disabled=false;btn.textContent='노출 제외';
+  btn.disabled=false;btn.textContent='숨김';
 });
 
 // 그룹/멤버/연결 카드 공통 "맨 위로" 버튼 — 스크롤로 아래로 많이 내려간 뒤 카드 맨 위로 쉽게 돌아가기 위함.
