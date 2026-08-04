@@ -5775,7 +5775,9 @@ function openConnCard(artist){
     const collapseEl=document.getElementById('conn-collapse');
     if(collapseEl)collapseEl.style.right=(memberRight+connW)+'px';
     _buildConnContent(connPanelInner);
-    connPanelInner.scrollTop=0;
+    // 실제로 스크롤되는 건 conn-panel-inner(패딩 래퍼)가 아니라 바깥 conn-panel 자체(overflow-y:auto가
+    // 거기 붙어있음) — 여기를 0으로 안 돌리면 이전 앵커에서 스크롤해둔 위치가 그대로 남아있었음.
+    connPanelEl.scrollTop=0;
     connPanelEl.classList.add('open');
     if(!_connPanelShifted){_connPanelShifted=true;_panWorld(2.5,400);}
   }
@@ -5800,6 +5802,7 @@ function closeConnCard(){
     const collapseEl=document.getElementById('conn-collapse');
     if(collapseEl)collapseEl.style.right='';
     if(_connPanelShifted){_connPanelShifted=false;_panWorld(-2.5,400);}
+    if(_totopScrollTarget===connPanelEl)_hideTotop(); // 스크롤해둔 채로 닫으면 버튼이 화면에 그대로 남던 것도 같이 정리
   }
 }
 // 연결 시트 스와이프 다운 닫기
@@ -12657,11 +12660,17 @@ function _makeChVidController(contId){
     // (_apiVidToSong과 동일한 이유, 2026-08-04).
     if(v.content_flag==='개별출연')return[];
     const withList=[];
-    // v.members는 이 영상에 태깅된 "자기 그룹" 멤버들 — 멤버 카드(selfKo 있음)에선 본인만 빼고 나머지,
-    // 그룹 카드(selfKo 없음)에선 전원 그대로 넣는다. 그룹 전체가 다 나온 경우("함께한" 정보로 의미 없음,
-    // 자기 그룹명 칩이 뜨는 문제로 이어짐)만 걸러내는 건 여기가 아니라 _makeWithLine에서 isFullGroup 기준으로
-    // 처리한다 — 여기서 통째로 빼버리면 "일부 멤버만 나온" 정상 케이스(원래 표시돼야 함)까지 같이 사라짐.
-    (v.members||[]).forEach(n=>{if(n!==selfKo)withList.push(n);});
+    // v.members는 "이 영상이 실제로 속한 채널(v.group_ko)"의 자체 로스터 매칭 결과 — 멤버 카드가 이
+    // 멤버의 게스트 출연 영상(다른 그룹 채널 소속)까지 끌어오면서 v.group_ko가 ownGko(카드 자체 그룹)와
+    // 다를 수 있다(_apiVidToSong과 동일한 이유로 그때만 그룹 표기를 붙임, 2026-08-04 — 성현 카드에서
+    // 투바투 게스트 영상의 members(연준)가 그룹 표기 없이 떠서 마치 코르티스 멤버인 것처럼 보이던 문제).
+    // 그룹 전체가 다 나온 경우("함께한" 정보로 의미 없음, 자기 그룹명 칩이 뜨는 문제로 이어짐)만 걸러내는
+    // 건 여기가 아니라 _makeWithLine에서 isFullGroup 기준으로 처리한다 — 여기서 통째로 빼버리면 "일부
+    // 멤버만 나온" 정상 케이스(원래 표시돼야 함)까지 같이 사라짐.
+    (v.members||[]).forEach(n=>{
+      if(n===selfKo&&v.group_ko===ownGko)return; // 본인 제외(자기 채널일 때만)
+      withList.push(v.group_ko===ownGko?n:`${n}(${v.group_ko})`);
+    });
     // 멤버 카드가 "다른 그룹 채널에 이 멤버가 게스트 태깅된 영상"까지 끌어오면서(위 쿼리 변경), 그 영상의
     // with_members엔 지금 보고 있는 본인이 "이름(그룹)" 형식으로 그대로 들어있는 경우가 생김 —
     // "함께한 멤버" 줄에 본인 이름이 뜨는 것을 막기 위해 자기 자신 표기는 제외.
@@ -12719,11 +12728,12 @@ function _makeChVidController(contId){
         const editBtn=document.createElement('button');
         editBtn.className='vid-edit-btn';editBtn.type='button';editBtn.textContent='✎';
         editBtn.setAttribute('aria-label','출연 멤버 지정');
-        // state.ko(지금 보고 있는 카드 자체의 그룹)가 아니라 이 영상의 실제 소속(v.group_ko)을 써야 함 —
-        // 멤버 카드는 본인이 게스트로 출연한 다른 채널 영상도 같이 보여주므로 카드 그룹과 영상 소속이
+        // state.ko(지금 보고 있는 카드 자체의 그룹)가 아니라 이 영상의 실제 소속(v.group_ko)을 폼에 써야
+        // 함 — 멤버 카드는 본인이 게스트로 출연한 다른 채널 영상도 같이 보여주므로 카드 그룹과 영상 소속이
         // 다를 수 있음(2026-08-04, 사용자 제보 — 성현 카드의 투모로우바이투게더 영상 편집 시 소속 그룹이
-        // 코르티스로 잘못 뜨던 문제).
-        editBtn.addEventListener('click',e=>{e.stopPropagation();_openVidTagModal(v,v.group_ko||state.ko);});
+        // 코르티스로 잘못 뜨던 문제). 단, 저장 후 "지금 보던 카드"를 그 자리에서 고치려면 state.ko(origin)도
+        // 같이 넘겨야 함 — 안 그러면 patchItem이 v.group_ko 기준으로만 찾다가 이 카드를 못 찾아 방치됨.
+        editBtn.addEventListener('click',e=>{e.stopPropagation();_openVidTagModal(v,v.group_ko||state.ko,state.ko);});
         item.appendChild(editBtn);
       }
       item.addEventListener('click',e=>{
@@ -12813,7 +12823,11 @@ function _makeChVidController(contId){
     function buildBaseQuery(){
       // count:'exact'는 첫 페이지(reset)에서만 요청 — state.total은 그 이후 "더보기" 페이지에서도 안 바뀌므로
       // 매 페이지마다 다시 정확한 총 개수를 계산시키는 건 낭비(카드 열 때마다/스크롤할 때마다 느려지는 원인 중 하나).
-      const selectCols='id,title,thumb,category,content_flag,members,with_members,with_groups,cover_of_members,cover_of_groups';
+      // group_ko도 반드시 선택해야 함 — 멤버 카드는 이 멤버가 다른 채널에 게스트로 출연한 영상까지
+      // 끌어오는데(아래 memberKo 분기), 그런 행의 실제 소속은 카드 자체 그룹(ko)과 다를 수 있음.
+      // group_ko가 없으면 "함께한 멤버" 표기와 편집 버튼의 소속 그룹이 전부 카드 자체 그룹으로 잘못
+      // 표시됨(2026-08-04, 사용자 제보 — 성현 카드에서 투바투 게스트 영상이 코르티스로 잘못 뜨던 문제).
+      const selectCols='id,title,thumb,category,content_flag,group_ko,members,with_members,with_groups,cover_of_members,cover_of_groups';
       let q=reset?sb.from(_YT_TABLE).select(selectCols,{count:'exact'}):sb.from(_YT_TABLE).select(selectCols);
       if(state.unitFilter){
         // 유닛(예: V8) 태그 클릭 시: 이 멤버 채널 영상 중 같은 유닛의 다른 멤버가 같이 태깅된 것만 —
@@ -13237,7 +13251,10 @@ function _makeChVidController(contId){
       const img=el.querySelector('.gc-ch-thumb');
       if(img)img.alt=clean;
     }
-    const withList=_buildGridWithList({members,with_members:withMembers,with_groups:withGroups},ko,state.memberKo);
+    // newRow를 그대로 넘김(group_ko/content_flag 포함) — 예전엔 members/with_members/with_groups만
+    // 추려서 넘기는 바람에 group_ko가 없어서 게스트 출연 영상의 함께한 멤버 줄이 "이름(undefined)"처럼
+    // 잘못 그려졌고, content_flag도 없어서 '개별출연' 처리가 이 경로에서만 안 먹혔음(2026-08-04).
+    const withList=_buildGridWithList(newRow,ko,state.memberKo);
     const newLine=_makeWithLine({t:newRow.title,with:withList,coverOfMembers:newRow.cover_of_members||[],coverOfGroups:newRow.cover_of_groups||[]},{groupKo:ko});
     const oldLine=el.querySelector('.tv-with-line');
     if(oldLine&&newLine)oldLine.replaceWith(newLine);
@@ -13770,8 +13787,13 @@ function _openVidTagModalBulk(ids,ko){
   document.getElementById('vid-tag-status').textContent='';
   document.getElementById('vid-tag-overlay').classList.add('open');
 }
-async function _openVidTagModal(v,ko){
-  _vidTagTarget={id:v.id,ko};
+async function _openVidTagModal(v,ko,originKo){
+  // ko: 폼에 보여줄/저장할 소속 그룹(영상의 실제 group_ko) — originKo: 저장 후 어느 카드를 그 자리에서
+  // 바로 고칠지(patchItem/reload 대상) 결정하는 "지금 보고 있던 카드"의 그룹. 멤버 카드가 다른 채널
+  // 게스트 출연 영상까지 보여주는 경우 이 둘이 다를 수 있어서(성현 카드에 뜬 투바투 영상처럼) 분리했다 —
+  // 안 그러면 폼엔 정확한 그룹이 뜨는데(ko) 저장 후엔 지금 보던 카드가 안 갱신되는 문제가 생김
+  // (2026-08-04, 사용자 제보로 발견).
+  _vidTagTarget={id:v.id,ko,originKo:originKo||ko};
   _vidTagBulkIds=null;
   _vidTagWithSelected=[];
   _vidTagGroupsSelected=[];
@@ -13945,7 +13967,7 @@ document.getElementById('vid-tag-save').addEventListener('click',async e=>{
   const catEl=document.getElementById('vid-tag-cat');
   const category=catEl?catEl.value:undefined;
   const contentFlag=_vidTagFlagChoice;
-  const{ko}=_vidTagTarget;
+  const{ko,originKo}=_vidTagTarget;
   // 소속 그룹(group_ko) 자체를 완전히 다른 그룹으로 옮기는 경우 — 자동 태깅이 아예 엉뚱한 그룹으로
   // 잘못 물었을 때(예: "원곡: X그룹" 오태깅) "그룹멤버안나옴+타그룹멤버 크로스태그"로 우회하지 않고
   // 여기서 바로 소속을 바로잡을 수 있게 함.
@@ -14014,16 +14036,24 @@ document.getElementById('vid-tag-save').addEventListener('click',async e=>{
     if(error){statusEl.textContent='저장 실패: '+error.message;return;}
   }
   statusEl.textContent='저장됨';
-  const patchedRow={title:document.getElementById('vid-tag-vidtitle').textContent,members,with_members:withMembers,with_groups:withGroups,cover_of_members:coverMembers,cover_of_groups:coverGroups,content_flag:contentFlag,category:category||null};
+  // group_ko도 같이 실어보내야 함 — patchItem 내부의 _buildGridWithList가 "이 영상이 실제로 속한
+  // 그룹"과 "지금 보는 카드의 그룹"이 다른지 판단할 때 필요(없으면 게스트 출연 영상의 함께한 멤버 줄이
+  // "이름(undefined)"처럼 잘못 그려짐, 2026-08-04).
+  const patchedRow={title:document.getElementById('vid-tag-vidtitle').textContent,group_ko:newGko||ko,members,with_members:withMembers,with_groups:withGroups,cover_of_members:coverMembers,cover_of_groups:coverGroups,content_flag:contentFlag,category:category||null};
   setTimeout(()=>{
     _closeVidTagModal();
-    // 원래 소속(ko) 그리드는 재조회 없이 이 카드 하나만 직접 고침(제목/함께한 멤버 갱신 또는 조건 안 맞으면
-    // 카드만 제거) — 매번 그리드를 통째로 다시 불러오던 걸 없애서 저장 후 로딩 지연/화면 깜빡임을 없앰.
-    _gcChVidCtl.patchItem(ko,id,patchedRow);
-    _ttChVidCtl.patchItem(ko,id,patchedRow);
-    // with_groups로 새로 태깅된 그룹이나 소속을 통째로 옮긴 새 그룹은, 그 카드에 이 영상이 "처음 나타나는"
-    // 경우라 부분 갱신으로는 못 채워 넣음 — 이 두 케이스만 예외적으로 재조회.
+    // 지금 보고 있던 카드(originKo) 그리드는 재조회 없이 이 카드 하나만 직접 고침(제목/함께한 멤버 갱신
+    // 또는 조건 안 맞으면 카드만 제거) — 매번 그리드를 통째로 다시 불러오던 걸 없애서 저장 후 로딩
+    // 지연/화면 깜빡임을 없앰. ko(영상의 실제 소속)가 아니라 originKo를 써야 함 — 멤버 카드에 뜬 다른
+    // 그룹 게스트 출연 영상을 편집한 경우 ko !== originKo라서, ko로 patchItem을 부르면 지금 보고 있는
+    // 카드(originKo)는 하나도 안 고쳐지고 조용히 방치됨(2026-08-04, 사용자 제보로 발견).
+    _gcChVidCtl.patchItem(originKo,id,patchedRow);
+    _ttChVidCtl.patchItem(originKo,id,patchedRow);
+    // with_groups로 새로 태깅된 그룹, 소속을 통째로 옮긴 새 그룹(newGko), 그리고 원래 실제 소속(ko, 지금
+    // 보던 카드와 다를 수 있음)은 그 카드에 이 영상이 "처음 나타나거나" originKo patchItem으로 못 덮는
+    // 케이스라 예외적으로 재조회.
     withGroups.forEach(gko=>_gcChVidCtl.reloadIfShowing(gko));
+    if(ko!==originKo){_gcChVidCtl.reloadIfShowing(ko);_ttChVidCtl.reloadIfShowing(ko);}
     if(newGko){_gcChVidCtl.reloadIfShowing(newGko);_ttChVidCtl.reloadIfShowing(newGko);}
     _refreshOpenCardCollab(); // with 태그 추가/변경으로 "연결" 버튼 노출 여부가 바뀌었을 수 있으니 갱신
     _refreshOpenCoverOfSection(); // 원곡자 지정 추가/변경으로 "다른 아티스트의 커버" 섹션이 바뀌었을 수 있으니 갱신
@@ -14221,7 +14251,10 @@ function _wireTotop(scrollEl){
 [mobSheetInner,mobCardStackInner,connSheetInner].forEach(_wireTotop);
 _wireTotop(document.getElementById('side-panel'));
 _wireTotop(memberPanelEl);
-_wireTotop(connPanelInner);
+// connPanelInner(패딩 래퍼)가 아니라 실제로 overflow-y:auto가 붙어 스크롤되는 conn-panel 자체에 리스너를
+// 달아야 함 — 이전엔 절대 스크롤되지 않는 안쪽 래퍼에 붙어있어서 scrollTop이 항상 0이라 버튼이 아예
+// 안 뜨고 있었음(2026-08-04, 사용자 제보 — "왜 또 사라짐").
+_wireTotop(connPanelEl);
 _totopBtn.addEventListener('click',e=>{
   e.stopPropagation();
   _totopScrollTarget?.scrollTo({top:0,behavior:'smooth'});
