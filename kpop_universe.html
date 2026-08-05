@@ -1912,6 +1912,7 @@
     <button class="sp-yt-sync" id="sp-yt-retag-all" style="margin-top:2px;opacity:.6;font-size:10px;">멤버+콜라보 재태깅 (기존 태깅분 포함, 일회용)</button>
     <button class="sp-yt-sync" id="sp-membersfix-btn" style="margin-top:4px;opacity:.8;">자체 멤버 태깅 재검증(전체)</button>
     <button class="sp-yt-sync" id="sp-collabfix-btn" style="margin-top:4px;opacity:.8;">콜라보 오태깅 재검증(전체)</button>
+    <button class="sp-yt-sync" id="sp-fix-jiukiki-btn" style="margin-top:2px;opacity:.6;font-size:10px;">"지유(키키)" 태그 강제 제거 — 수동편집분 포함(일회용)</button>
     <button class="sp-yt-sync" id="sp-yt-sweep-banned" style="margin-top:4px;opacity:.8;">밴 인물 언급 영상 숨김 정리</button>
 
     <div class="sp-yt-prog" id="sp-yt-prog"></div>
@@ -10608,6 +10609,50 @@ async function _ytSweepAmbiguousCollabMistag(){
   }
 }
 
+// 드림캐쳐 "지유" ↔ 키키 "지유" 동명이인 오염 전용 일회용 정리 — _ytSweepAmbiguousCollabMistag를
+// 두 번 돌려도 tags_manual=true(수동 편집 잠금)인 행은 절대 안 건드려서 남아있던 걸, 이 특정 문자열
+// "지유(키키)" 하나만 정확히 골라 with_members에서 제거한다(다른 필드·다른 콜라보 태그는 전혀 안 건드림).
+// 수동편집 잠금 행은 tags_manual=false→true 두 단계로 저장하는 기존 트리거 우회 패턴(_openVidTagModal
+// 저장부와 동일)을 그대로 씀 — 잠금 자체는 유지한 채 이 값만 쏙 빼는 것.
+// 평소 안전장치(수동편집 절대 안 건드림)를 이 케이스에 한해 의도적으로 우회하는 것이므로, 사용자가
+// 명시적으로 확인한 뒤에만 실행하는 일회용 버튼으로 둔다(2026-08-05).
+async function _ytForceRemoveJiuKiki(){
+  if(!sb){_ytSetProg('Supabase 연결 없음');return;}
+  const btn=document.getElementById('sp-fix-jiukiki-btn');
+  if(btn)btn.disabled=true;
+  const BAD='지유(키키)';
+  try{
+    _ytSetProg(`["${BAD}" 강제 제거] 조회 중…`);
+    const{data:rows,error}=await _sbFetchAll(()=>sb.from(_YT_TABLE)
+      .select('id,title,with_members,tags_manual')
+      .contains('with_members',[BAD])
+      .order('id'));
+    if(error){_ytSetProg('조회 실패: '+error.message);return;}
+    if(!rows?.length){_ytSetProg(`"${BAD}" 태그가 남은 영상이 없어요`);return;}
+    let fixed=0,manualCount=0,failed=0;
+    for(const v of rows){
+      const newWM=(v.with_members||[]).filter(m=>m!==BAD);
+      if(v.tags_manual){
+        manualCount++;
+        const{error:e1}=await sb.from(_YT_TABLE).update({with_members:newWM,tags_manual:false}).eq('id',v.id);
+        if(e1){console.error(`["${BAD}" 강제 제거] 실패`,v.id,e1.message);failed++;continue;}
+        const{error:e2}=await sb.from(_YT_TABLE).update({tags_manual:true}).eq('id',v.id);
+        if(e2){console.error(`["${BAD}" 강제 제거] 재잠금 실패`,v.id,e2.message);failed++;continue;}
+      }else{
+        const{error:e}=await sb.from(_YT_TABLE).update({with_members:newWM}).eq('id',v.id);
+        if(e){console.error(`["${BAD}" 강제 제거] 실패`,v.id,e.message);failed++;continue;}
+      }
+      fixed++;
+      _ytSetProg(`["${BAD}" 강제 제거] ${fixed}/${rows.length}개 처리 중…`);
+    }
+    _ytSetProg(`완료! 총 ${rows.length}개 중 ${fixed}개에서 "${BAD}" 태그 제거(수동편집 잠금 ${manualCount}개 포함, 잠금은 유지)`+(failed?` — 실패 ${failed}개(콘솔 확인)`:''));
+  }catch(e){
+    _ytSetProg('오류: '+e.message);
+  }finally{
+    if(btn)btn.disabled=false;
+  }
+}
+
 // _ytSweepAmbiguousCollabMistag와 같은 계열이지만 with_members/with_groups(다른 그룹 콜라보)가 아니라
 // members(자기 채널 자체 출연자) 컬럼을 재검증한다 — "이유"(에버글로우)처럼 흔한 단어와 겹치는 이름이
 // _ATM_HASHTAG_ONLY_NAMES에 새로 추가되면, 이미 members에 평문 매칭으로 잘못 들어간 값은 이걸로 걷어낸다.
@@ -12437,6 +12482,12 @@ function _m2ParseTitle(rawTitle,selfGko){
     const tags=title.match(/#[^\s#]+/g)||[];
     return tags.some(tag=>tag.slice(1).toUpperCase().replace(/[^가-힣a-zA-Z0-9]/g,'').includes(n));
   }
+  // hit()은 특수문자를 공백으로 치환하고 비교하는데, 그룹 영문명이 "15&"(피프틴앤드)처럼 특수문자로
+  // 흔한 단어/숫자를 보강한 이름이면 그 특수문자가 지워지면서 그냥 "15" 하나만 남아버려 날짜·순위·회차
+  // 등 무관한 숫자에 대량으로 오매칭된다(2026-08-05, 사용자 제보로 발견). 이런 토큰은 정규화하지 않은
+  // 원문 그대로 리터럴 부분 문자열로만 인정한다 — "15&"는 살아있어야 매칭되고 "15"만으로는 안 됨.
+  const _GROUP_TOKEN_LITERAL_ONLY=new Set(['15&']);
+  function hitLiteral(t){return title.toUpperCase().includes(t.toUpperCase());}
   // 긴 이름 우선 정렬 (부분 매칭 방지). strictSync 그룹은 제목 키워드 매칭에서 제외 — 자체 채널
   // 동기화(_ytSyncGroup)로만 영상이 들어와야 하는 공통명사 이름 그룹이 외부 채널 영상 제목에서 오인식되는 걸 막음.
   const groupsSorted=Object.entries(GROUPS)
@@ -12449,7 +12500,7 @@ function _m2ParseTitle(rawTitle,selfGko){
     if(seen.has(ko))continue;
     const conflicts=_GROUP_TITLE_CONFLICT_EXCLUDE[ko];
     if(conflicts&&conflicts.some(re=>re.test(title)))continue;
-    if(tokens.some(t=>hit(t))){matchedGroupKos.push(ko);seen.add(ko);}
+    if(tokens.some(t=>_GROUP_TOKEN_LITERAL_ONLY.has(t)?hitLiteral(t):hit(t))){matchedGroupKos.push(ko);seen.add(ko);}
   }
   // 유닛명(V8, GOT the beat 등) 매칭 — 유닛 자체는 그룹이 아니라, 실제 소속 그룹/멤버로 나눠 합류시킴.
   // 제목에 유닛명만 있고 개별 멤버 이름은 없는 경우까지 커버하기 위해, 유닛 멤버를 "그 멤버 이름이
@@ -14579,6 +14630,7 @@ document.getElementById('vid-tag-thumb-refresh').addEventListener('click',async 
   });
   document.getElementById('sp-yt-sweep-banned')?.addEventListener('click',_ytSweepBannedVideos);
   document.getElementById('sp-collabfix-btn')?.addEventListener('click',_ytSweepAmbiguousCollabMistag);
+  document.getElementById('sp-fix-jiukiki-btn')?.addEventListener('click',_ytForceRemoveJiuKiki);
   document.getElementById('sp-membersfix-btn')?.addEventListener('click',_ytSweepMembersMistag);
   document.getElementById('sp-yt-autotag')?.addEventListener('click',_ytAutoTagMembers);
   document.getElementById('sp-yt-retag-all')?.addEventListener('click',_ytRetagAllIncludingTagged);
