@@ -10554,14 +10554,20 @@ async function _ytSweepAmbiguousCollabMistag(){
   if(btn)btn.disabled=true;
   try{
     _ytSetProg('[콜라보 오태깅 재검증] 조회 중…');
+    // tags_manual 필터를 조회 단계에서 빼고 여기서 나눠 처리한다 — 예전엔 .eq('tags_manual',false)로
+    // 아예 안 봐서, "근거 없는 태그가 실제로 몇 개나 있는지"조차 알 수 없었음. 수동 편집 행은 여전히
+    // 절대 안 고치지만(아래 updates에 안 넣음), 몇 개나 걸렸는지는 세서 보여준다 — 관리자가 그 행들이
+    // 진짜 원인인지 직접 확인할 수 있게(2026-08-05, 사용자 제보 — "재검증 눌러도 오염 없다는데 실제로는
+    // 드림캐쳐 지유 영상에 키키 지유가 계속 남아있다"는 사례로 발견. 그 영상들이 tags_manual=true라
+    // 재검증 조회 대상에서부터 빠져있었을 가능성이 높음).
     const{data:rows,error}=await _sbFetchAll(()=>sb.from(_YT_TABLE)
-      .select('id,title,group_ko,with_members,with_groups')
-      .eq('tags_manual',false)
+      .select('id,title,group_ko,with_members,with_groups,tags_manual')
       .or('with_members.neq.{},with_groups.neq.{}')
       .order('id'));
     if(error){_ytSetProg('조회 실패: '+error.message);return;}
     if(!rows?.length){_ytSetProg('검사할 영상이 없어요');return;}
     const updates=[];
+    let manualSkipped=0;
     rows.forEach(v=>{
       const match=_m2ParseTitle(v.title||'',v.group_ko);
       const validGroups=new Set(),validMembers=new Set();
@@ -10579,9 +10585,14 @@ async function _ytSweepAmbiguousCollabMistag(){
       const patch={};
       if(newWG.length!==curWG.length)patch.with_groups=newWG;
       if(newWM.length!==curWM.length)patch.with_members=newWM;
-      if(Object.keys(patch).length)updates.push({id:v.id,patch});
+      if(!Object.keys(patch).length)return;
+      if(v.tags_manual){manualSkipped++;return;} // 수동 편집 행은 절대 안 고침 — 대신 개수만 집계
+      updates.push({id:v.id,patch});
     });
-    if(!updates.length){_ytSetProg(`검사 완료 — ${rows.length}개 중 오염 없음`);return;}
+    if(!updates.length){
+      _ytSetProg(`검사 완료 — ${rows.length}개 중 오염 없음`+(manualSkipped?` (단, 수동 편집이라 건드리지 않고 넘어간 것 ${manualSkipped}개 있음 — 직접 확인 필요)`:''));
+      return;
+    }
     for(let i=0;i<updates.length;i+=200){
       const chunk=updates.slice(i,i+200);
       const results=await Promise.all(chunk.map(u=>sb.from(_YT_TABLE).update(u.patch).eq('id',u.id)));
@@ -10589,7 +10600,7 @@ async function _ytSweepAmbiguousCollabMistag(){
       if(failed)throw new Error(failed.error.message);
       _ytSetProg(`[콜라보 오태깅 재검증] ${Math.min(i+200,updates.length)}/${updates.length}개 처리 중…`);
     }
-    _ytSetProg(`완료! ${rows.length}개 중 ${updates.length}개에서 근거 없는 콜라보 태그 제거함`);
+    _ytSetProg(`완료! ${rows.length}개 중 ${updates.length}개에서 근거 없는 콜라보 태그 제거함`+(manualSkipped?` (수동 편집이라 안 건드리고 넘어간 것 ${manualSkipped}개 — 직접 확인 필요)`:''));
   }catch(e){
     _ytSetProg('오류: '+e.message);
   }finally{
@@ -12288,7 +12299,9 @@ const _PROJECT_UNITS={
   'SJH':{names:['SUPER JUNIOR-HAPPY','슈퍼주니어-HAPPY','슈퍼주니어-해피','SJH'],members:[{mko:'이특',gko:'슈퍼주니어'},{mko:'예성',gko:'슈퍼주니어'},{mko:'신동',gko:'슈퍼주니어'},{mko:'은혁',gko:'슈퍼주니어'},{mko:'성민',gko:'슈퍼주니어'},{mko:'강인',gko:'슈퍼주니어'}]},
   'D&E':{names:['SUPER JUNIOR-D&E','슈퍼주니어-D&E','D&E','디앤이'],members:[{mko:'동해',gko:'슈퍼주니어'},{mko:'은혁',gko:'슈퍼주니어'}]},
   'L.S.S.':{names:['SUPER JUNIOR-L.S.S.','슈퍼주니어-L.S.S.','L.S.S.','LSS'],members:[{mko:'이특',gko:'슈퍼주니어'},{mko:'신동',gko:'슈퍼주니어'},{mko:'시원',gko:'슈퍼주니어'}]},
-  '83z':{names:['SUPER JUNIOR-83z','슈퍼주니어-83z','83z','팔삼즈'],members:[{mko:'이특',gko:'슈퍼주니어'},{mko:'희철',gko:'슈퍼주니어'}]}
+  '83z':{names:['SUPER JUNIOR-83z','슈퍼주니어-83z','83z','팔삼즈'],members:[{mko:'이특',gko:'슈퍼주니어'},{mko:'희철',gko:'슈퍼주니어'}]},
+  // 드림캐쳐 첫 공식 유닛(2026-08-05, 나무위키 대조) — 위와 동일 패턴.
+  '유아유':{names:['유아유','UAU'],members:[{mko:'지유',gko:'드림캐쳐'},{mko:'수아',gko:'드림캐쳐'},{mko:'유현',gko:'드림캐쳐'}]}
 };
 // 유닛 태그 클릭 핸들러 — 그룹 카드/행성을 새로 만들지 않는 대신, 멤버 카드 안의 영상 그리드를
 // "같은 유닛의 다른 멤버가 같이 나온 영상만"으로 필터링해서 유닛 관련 콘텐츠를 모아 보여준다.
