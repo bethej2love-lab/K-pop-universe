@@ -1027,6 +1027,18 @@
   #hnn-apply-btn{background:rgba(255,150,150,0.16);border:1px solid rgba(255,150,150,0.32);border-radius:10px;color:#ffb8b8;font-size:11.5px;padding:6px 12px;cursor:pointer;font-family:inherit;white-space:nowrap;}
   #hnn-apply-btn:active{opacity:.7;}
   #hnn-apply-btn:disabled{opacity:.4;cursor:default;}
+  /* 동명이인(이름 중복) 목록 — 위 "동명이인 오염 의심 스캔"과 다른 개념: 저건 영상 태깅이 실제로
+     잘못됐는지 DB를 훑어야 알 수 있는 거고, 이건 artists.json 로스터 안에서 같은 이름을 쓰는 사람이
+     몇 명인지만 보는 거라 로컬 데이터로 즉시 계산됨(스캔 불필요). 패널 열자마자 바로 보이게 맨 위에 둠. */
+  #hnn-dup-sec{flex-shrink:0;padding:0 18px 10px;border-bottom:0.5px solid rgba(255,255,255,0.08);}
+  #hnn-dup-list{max-height:180px;overflow-y:auto;margin-top:6px;}
+  .hnn-dup-item{padding:6px 0;border-top:0.5px solid rgba(255,255,255,0.05);}
+  .hnn-dup-item:first-child{border-top:none;}
+  .hnn-dup-name{font-size:12px;font-weight:600;color:rgba(220,230,255,0.9);margin-bottom:4px;}
+  .hnn-dup-people{display:flex;flex-wrap:wrap;gap:6px;}
+  .hnn-dup-person{font-size:11px;color:rgba(170,195,255,0.85);background:rgba(120,160,255,0.12);border:0.5px solid rgba(140,180,255,0.28);border-radius:8px;padding:3px 8px;cursor:pointer;}
+  .hnn-dup-person:hover{background:rgba(120,160,255,0.22);color:#fff;}
+  #hnn-dup-empty{font-size:11.5px;color:rgba(155,178,228,0.45);padding:6px 0;}
   /* z-index:50 — #yt-lightbox(67)보다 반드시 낮아야 함: 이 목록 안에서 영상을 탭하면 라이트박스가
      이 오버레이 위로 열려야 하는데(#feed-list-overlay는 admin 목록들과 달리 라이트박스를 직접 여는
      용도), 다른 관리자 목록 오버레이(81~82)와 같은 값을 쓰면 라이트박스가 뒤로 숨는 사고가 남 */
@@ -1967,7 +1979,16 @@
       <span id="hnn-hd-title">데이터 퀄리티</span>
       <button id="hnn-close">✕</button>
     </div>
-    <div id="hnn-desc">전체 영상을 그룹별/멤버별로 집계 — ① 그룹별 총 영상 개수·멤버(콜라보 포함) 미태깅 비율·동명이인 의심 건수를 미태깅 개수(절대값) 많은 순으로 보여줌(수동 편집할 그룹을 찾는 용도 — 그룹명 클릭하면 해당 그룹 카드로 이동, "정리" 누르면 그 그룹의 무맥락 의심 영상을 미리보고 삭제/무관 처리), ② 그 아래에 같은 그룹 내 다른 멤버들보다 비정상적으로 많이 태깅된 이름(자체 채널)이나 여러 그룹에 걸쳐 과도하게 콜라보로 잡힌 이름(with_members)을 개별 건수 내림차순으로 보여줌. 의심되는 항목을 체크해서 "화이트리스트에 추가"하면 DB에 바로 저장되고(배포 필요 없음) 다음부터 해시태그로 명시된 경우만 태깅됨 — 추가 후 콜라보/자체 멤버 재검증 버튼을 눌러 기존 오염분을 정리할 것. 그냥 인기가 많아서 튀는 것뿐이면 "확인함"을 눌러 다음 스캔부터 안 보이게 할 수 있음.</div>
+    <div id="hnn-dup-sec">
+      <div class="hnn-sec-lbl" style="padding:0 0 0;">동명이인(이름 중복) — 스캔 불필요, 로스터에서 바로 계산됨. 이름 누르면 카드로 이동</div>
+      <div id="hnn-dup-list"></div>
+    </div>
+    <div id="hnn-desc">
+      스캔 시작 → 그룹별 미태깅 비율·태깅 오염 의심 이름을 한 번에 찾아줌.<br>
+      그룹명 클릭 = 해당 카드로 이동 · "정리" = 무맥락 의심 영상 미리보기.<br>
+      의심 이름 체크 → "화이트리스트 추가" = 그 이름은 앞으로 해시태그로 명시된 경우만 태깅(DB 즉시 반영).<br>
+      추가 후엔 재검증 버튼으로 기존 오염분 정리 · 그냥 인기 많아서 튄 거면 "확인함"으로 넘기기.
+    </div>
     <div id="hnn-wl-sec">
       <div class="hnn-sec-lbl">흔한단어 보호 목록 (해시태그로만 인정 — ×를 눌러 제거 가능한 항목만 관리자가 추가한 것)</div>
       <div id="hnn-wl-list"></div>
@@ -9893,8 +9914,8 @@ async function _fetchTopVideoThumb(gko,memberKo){
   if(!sb||!gko)return null;
   try{
     let q=sb.from(_YT_TABLE).select('id,thumb,category');
-    q=memberKo?q.eq('group_ko',gko).or(`members.eq.{},members.cs.{${memberKo}}`)
-              :q.or(`group_ko.eq.${gko},with_groups.cs.{${gko}}`);
+    q=memberKo?q.eq('group_ko',gko).or(`members.eq.{},members.cs.{${_pgFilterVal(memberKo)}}`)
+              :q.or(`group_ko.eq.${_pgFilterVal(gko)},with_groups.cs.{${_pgFilterVal(gko)}}`);
     q=q.or('content_flag.is.null,content_flag.neq.무관');
     q=q.or('content_flag.is.null,content_flag.neq.hidden'); // 노출 제외 처리된 영상이 대표 썸네일로 뽑히면 안 됨
     const{data,error}=await q.order('published_at',{ascending:false}).limit(12);
@@ -9942,9 +9963,9 @@ async function _pickFeaturedVidFromDB(ko,memberKo,onlyMe,filter,viewMode,formatF
          .or('with_groups.eq.{},with_groups.is.null')
          .or('content_flag.is.null,content_flag.neq.외부인');
     }else if(memberKo){
-      q=q.eq('group_ko',ko).or(`members.eq.{},members.cs.{${memberKo}}`);
+      q=q.eq('group_ko',ko).or(`members.eq.{},members.cs.{${_pgFilterVal(memberKo)}}`);
     }else{
-      q=q.or(`group_ko.eq.${ko},with_groups.cs.{${ko}}`);
+      q=q.or(`group_ko.eq.${_pgFilterVal(ko)},with_groups.cs.{${_pgFilterVal(ko)}}`);
     }
     const{data}=await q;
     if(!data?.length)return null;
@@ -10236,6 +10257,14 @@ function _buildFeedDiscovery(){
 // ── YouTube 채널 영상 (Supabase 연동) ─────────────────────────────
 const _YT_TABLE='yt_channel_videos';
 const _YT_PAGE=48;
+
+// PostgREST or()/and() 필터 문자열에 그룹/멤버 이름을 그대로 이어붙이면, 이름에 콤마·마침표·괄호·콜론처럼
+// 필터 문법상 예약된 문자가 있을 때(예: "브브걸(브레이브걸스)", "JX(JYJ)", "슈퍼노바(초신성)") 필터 구문이
+// 깨진다. PostgREST가 이걸 곧바로 에러로 거부하지 않고 이상하게 해석해버리는 경우, 어떤 인덱스도 못 타는
+// 쿼리가 되어 DB가 statement_timeout에 걸릴 때까지 멈추는 사고로 이어진다(2026-08-05, 브브걸(브레이브걸스)
+// 유나 카드에서 영상이 하나도 안 뜨고 timeout 에러 발생 — 실측으로 원인 확정). 항상 큰따옴표로 감싸면
+// 특수문자가 없는 일반 값에도 무해하므로, or()/and() 필터 문자열에 들어가는 값은 전부 이걸 거친다.
+function _pgFilterVal(v){return '"'+String(v).replace(/\\/g,'\\\\').replace(/"/g,'\\"')+'"';}
 
 function _ytApiKey(){return(localStorage.getItem('kpu_yt_key')||'').trim();}
 
@@ -10615,6 +10644,51 @@ async function _ytSweepMembersMistag(){
 //    단어/동명이인 오염이면 그 한 명만 튐.
 // ② 콜라보(with_members): 여러 그룹 채널에 걸쳐 게스트로 잡힌 총 건수 — 진짜 인기 콜라보 멤버도 있을 수
 //    있지만, 너무 높으면(수십~수백 건) 흔한 단어 오염 가능성을 의심해볼 근거가 됨.
+// 그룹별 총계/쇼츠/미태깅 요약 — "스캔 시작"은 멤버별 오염 탐지까지 같이 하느라 느린데(own/cross
+// 채널 RPC가 배열 컬럼을 멤버 단위로 펼쳐야 해서 무거움), 이건 그룹 집계 RPC만 가볍게 돌려서 패널
+// 열자마자 자동으로 보여준다(2026-08-05, 사용자 요청 — 스캔 없이 그룹별 미태깅/쇼츠 확인하고 싶다는
+// 요청). 미태깅 판정은 기존 dq_group_counts_range(스캔에서 이미 쓰던 값)를 그대로 재사용해서 숫자가
+// "스캔 시작" 결과와 어긋나지 않게 하고, 쇼츠 개수만 새 RPC(dq_group_shorts_counts_range,
+// migration_view_count.sql 참고) 하나를 곁들인다. 실패해도 조용히 넘어감 — "스캔 시작"으로 다시 시도 가능.
+async function _renderHnnGroupCountsLight(){
+  if(!sb)return;
+  try{
+    const{data:idRows,error:idErr}=await _sbFetchAll(()=>sb.from(_YT_TABLE).select('id').order('id'));
+    if(idErr||!idRows?.length)return;
+    const ids=idRows.map(r=>r.id);
+    const CHUNK=3000;
+    const ranges=[];
+    for(let i=0;i<ids.length;i+=CHUNK){
+      const chunkIds=ids.slice(i,i+CHUNK);
+      ranges.push({from:i===0?'':ids[i-1],to:chunkIds[chunkIds.length-1]});
+    }
+    const groupCounts=new Map(); // gko -> {total,untagged,shorts}
+    for(const{from,to}of ranges){
+      const[{data:dqPart,error:dqErr},{data:shortsPart,error:shortsErr}]=await Promise.all([
+        sb.rpc('dq_group_counts_range',{p_from_id:from,p_to_id:to}),
+        sb.rpc('dq_group_shorts_counts_range',{p_from_id:from,p_to_id:to})
+      ]);
+      if(dqErr||shortsErr)continue;
+      (dqPart||[]).forEach(({gko,total_cnt,untagged_cnt})=>{
+        const cur=groupCounts.get(gko)||{total:0,untagged:0,shorts:0};
+        cur.total+=Number(total_cnt);cur.untagged+=Number(untagged_cnt);
+        groupCounts.set(gko,cur);
+      });
+      (shortsPart||[]).forEach(({gko,cnt})=>{
+        const cur=groupCounts.get(gko)||{total:0,untagged:0,shorts:0};
+        cur.shorts+=Number(cnt);
+        groupCounts.set(gko,cur);
+      });
+    }
+    if(_dqGroupSummaries.length)return; // 그 사이 "스캔 시작"으로 더 자세한 결과가 이미 떴으면 안 덮어씀
+    const summaries=[...groupCounts.entries()].map(([gko,{total,untagged,shorts}])=>({
+      gko,total,untagged,shorts,
+      untaggedRatio:total>0?untagged/total:0,
+      suspectCount:0
+    })).sort((a,b)=>b.untagged-a.untagged||b.total-a.total);
+    _renderDqGroupList(summaries);
+  }catch(e){console.error('[데이터 퀄리티] 라이트 그룹 요약 실패:',e.message);}
+}
 async function _hnnScan(){
   if(!sb){document.getElementById('hnn-status').textContent='Supabase 연결 없음';return;}
   const btn=document.getElementById('hnn-scan-btn');
@@ -10733,9 +10807,7 @@ async function _hnnScan(){
 // 바로 추가한 것)는 즉시 제거도 가능하게 한다(2026-08-04, 사용자 요청 — "필요에 따라 추가/삭제").
 // 흔한단어 보호 목록에 있는 이름으로 실제 ARTISTS 멤버를 찾아 그 멤버 카드로 이동 — 어느 그룹 소속인지
 // 이름 텍스트만 봐서는 안 보여서 바로 확인하러 갈 방법이 없었음(2026-08-04, 사용자 요청).
-function _dqGotoArtistByName(name){
-  const artist=ARTISTS.find(a=>a.name.ko===name||(a.name.en&&a.name.en.toLowerCase()===name.toLowerCase()));
-  if(!artist)return;
+function _dqGotoArtist(artist){
   document.getElementById('hnn-overlay').classList.remove('open');
   if(isMob()){
     _navHistoryActive=true;showT(artist,window.innerWidth/2,window.innerHeight*0.4,false,null,false);_navHistoryActive=false;
@@ -10743,6 +10815,40 @@ function _dqGotoArtistByName(name){
   }else{
     showT(artist,window.innerWidth/2,window.innerHeight*0.4);
   }
+}
+function _dqGotoArtistByName(name){
+  const artist=ARTISTS.find(a=>a.name.ko===name||(a.name.en&&a.name.en.toLowerCase()===name.toLowerCase()));
+  if(!artist)return;
+  _dqGotoArtist(artist);
+}
+// 동명이인(이름 중복) 목록 — artists.json 로스터 안에서 같은 이름(name.ko)을 쓰는 사람이 2명 이상이면
+// 전부 모아서 보여줌. 위 "동명이인 오염 의심 스캔"과 달리 DB를 전혀 안 건드리고 이미 로드된 ARTISTS
+// 배열만 훑는 거라 패널을 열자마자 즉시 계산해서 보여줄 수 있음(2026-08-05, 사용자 요청 — 스캔 버튼
+// 없이도 바로 확인 가능하게).
+function _renderHnnDuplicateNames(){
+  const listEl=document.getElementById('hnn-dup-list');
+  if(!listEl)return;
+  const byName=new Map();
+  ARTISTS.forEach(a=>{
+    if(!byName.has(a.name.ko))byName.set(a.name.ko,[]);
+    byName.get(a.name.ko).push(a);
+  });
+  const dups=[...byName.entries()].filter(([,list])=>list.length>1).sort((a,b)=>a[0].localeCompare(b[0],'ko'));
+  listEl.innerHTML='';
+  if(!dups.length){listEl.innerHTML='<div id="hnn-dup-empty">중복된 이름 없음</div>';return;}
+  dups.forEach(([name,list])=>{
+    const item=document.createElement('div');item.className='hnn-dup-item';
+    const nameEl=document.createElement('div');nameEl.className='hnn-dup-name';nameEl.textContent=`${name} (${list.length}명)`;
+    const peopleEl=document.createElement('div');peopleEl.className='hnn-dup-people';
+    list.forEach(a=>{
+      const chip=document.createElement('span');chip.className='hnn-dup-person';
+      chip.textContent=a.group.ko+(a.active===false?' · 비활동':'');
+      chip.addEventListener('click',()=>_dqGotoArtist(a));
+      peopleEl.appendChild(chip);
+    });
+    item.appendChild(nameEl);item.appendChild(peopleEl);
+    listEl.appendChild(item);
+  });
 }
 function _renderHnnWhitelist(){
   const listEl=document.getElementById('hnn-wl-list');
@@ -10806,7 +10912,7 @@ function _renderDqGroupList(list){
     const name=document.createElement('div');name.className='hnn-group-name';name.textContent=g.gko;
     const stats=document.createElement('div');stats.className='hnn-group-stats';
     const ratioPct=Math.round(g.untaggedRatio*100);
-    stats.innerHTML=`<span>영상 ${g.total}개</span><span>미태깅 ${ratioPct}%</span>`+
+    stats.innerHTML=`<span>영상 ${g.total}개</span><span>쇼츠 ${g.shorts||0}개</span><span>미태깅 ${ratioPct}%</span>`+
       (g.suspectCount?`<span class="hnn-group-susp">의심 ${g.suspectCount}건</span>`:'');
     const cleanBtn=document.createElement('button');cleanBtn.type='button';cleanBtn.className='hnn-group-clean-btn';cleanBtn.textContent='정리';
     cleanBtn.addEventListener('click',e=>{e.stopPropagation();_dqOpenGroupJunk(g.gko);});
@@ -11126,7 +11232,7 @@ document.getElementById('hnn-apply-btn')?.addEventListener('click',async()=>{
     document.getElementById('hnn-status').textContent='오류: '+e.message;
   }
 });
-document.getElementById('sp-hnn-btn')?.addEventListener('click',()=>{document.getElementById('hnn-overlay').classList.add('open');_renderHnnWhitelist();});
+document.getElementById('sp-hnn-btn')?.addEventListener('click',()=>{document.getElementById('hnn-overlay').classList.add('open');_renderHnnWhitelist();_renderHnnDuplicateNames();_renderHnnGroupCountsLight();});
 // "스캔 시작"/닫기 버튼이 실제로 _hnnScan을 호출/오버레이를 닫도록 연결하는 게 누락돼있었음
 // (오버레이 열기만 sp-hnn-btn에 연결돼있고 정작 안의 스캔 버튼엔 아무 리스너도 없었음 — 사용자
 // 제보로 발견, 2026-08-03).
@@ -11560,7 +11666,7 @@ async function _vmLoad(searchTerm){
     const flag=tab==='nomem'?'무관':'hidden';
     let q=sb.from(_YT_TABLE).select('id,title,group_ko,thumb,content_flag');
     q=q.eq('content_flag',flag);
-    if(term)q=q.or(`title.ilike.%${term}%,group_ko.ilike.%${term}%`);
+    if(term)q=q.or(`title.ilike.${_pgFilterVal('%'+term+'%')},group_ko.ilike.${_pgFilterVal('%'+term+'%')}`);
     const{data,error}=await _sbFetchAll(()=>q.order('id'));
     if(myGen!==_vmSearchGen)return;
     if(error){statusEl.textContent='조회 실패: '+error.message;return;}
@@ -13078,7 +13184,7 @@ function _makeChVidController(contId){
         // 유닛(예: V8) 태그 클릭 시: 이 멤버 채널 영상 중 같은 유닛의 다른 멤버가 같이 태깅된 것만 —
         // 같은 그룹 소속 유닛원은 members 배열, 다른 그룹 소속 유닛원은 with_members(이름(그룹) 포맷)에 있음.
         const{same,cross}=_unitOtherMembers(state.unitFilter,state.memberKo,ko);
-        const ors=[...same.map(n=>`members.cs.{${n}}`),...cross.map(s=>`with_members.cs.{${s}}`)];
+        const ors=[...same.map(n=>`members.cs.{${_pgFilterVal(n)}}`),...cross.map(s=>`with_members.cs.{${_pgFilterVal(s)}}`)];
         q=q.eq('group_ko',ko).or(ors.join(','));
       }else if(state.memberKo&&state.onlyMe){
         // Only 토글: members = {name} 정확히 일치 + with_members/with_groups(다른 그룹 게스트) 없음 +
@@ -13094,12 +13200,12 @@ function _makeChVidController(contId){
         // with_members로 게스트 출연 태깅된 영상까지 포함 — 그룹 카드가 with_groups로 콜라보를 끌어오는 것과
         // 대칭되는 처리. 이게 빠져있으면 자체 채널 영상은 아직 없고 다른 그룹 채널 콘텐츠(챌린지·직캠 등)에
         // 개인 태깅으로만 쌓인 신인 그룹(예: 넥스지)은 그룹 카드엔 (with_groups로) 뭔가 보여도 멤버 카드는 텅 비어 보였음.
-        q=q.or(`and(group_ko.eq.${ko},members.eq.{}),and(group_ko.eq.${ko},members.cs.{${state.memberKo}}),with_members.cs.{${state.memberKo}(${ko})}`);
+        q=q.or(`and(group_ko.eq.${_pgFilterVal(ko)},members.eq.{}),and(group_ko.eq.${_pgFilterVal(ko)},members.cs.{${_pgFilterVal(state.memberKo)}}),with_members.cs.{${_pgFilterVal(state.memberKo+'('+ko+')')}}`);
       }else{
         // 그룹 카드: 내 채널 영상은 멤버 태깅 여부와 무관하게 전부 노출(그룹 전체가 나오는 영상이든
         // 특정 멤버 몇 명만 나오는 영상이든 다 그룹 콘텐츠) + 다른 채널 영상인데 아이유 팔레트처럼
         // 우리 그룹 전체가 with_groups로 태깅된 경우도 같이 노출
-        q=q.or(`group_ko.eq.${ko},with_groups.cs.{${ko}}`);
+        q=q.or(`group_ko.eq.${_pgFilterVal(ko)},with_groups.cs.{${_pgFilterVal(ko)}}`);
       }
       // "그룹 멤버 안 나옴" 플래그(무관) 영상은 어느 뷰에서도 이 그룹/멤버 콘텐츠로 노출하지 않음
       q=q.or('content_flag.is.null,content_flag.neq.무관');
