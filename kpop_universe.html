@@ -4659,9 +4659,15 @@ function _makeWithLine(song,ctx){
   let _wlRenderedAny=false;
   groupKos.forEach(gko=>{
     const members=byGroup.get(gko).sort((a,b)=>a.name.ko.localeCompare(b.name.ko,'ko'));
-    // 활동 멤버 전원이 이 영상에 다 태깅돼 있으면(그룹 전체 출연) 한 명씩 나열할 필요 없이 그룹명만으로 충분함
-    const activeRoster=ARTISTS.filter(a=>a.group.ko===gko&&a.active!==false);
-    const isFullGroup=activeRoster.length>0&&members.length>=activeRoster.length;
+    // 활동 멤버 전원이 이 영상에 다 태깅돼 있으면(그룹 전체 출연) 한 명씩 나열할 필요 없이 그룹명만으로 충분함.
+    // 여자친구처럼 등록된 멤버 전원이 active:false인(완전 해체된) 그룹은 activeRoster가 항상 0명이라
+    // "활동 멤버 전원 태깅"이 영원히 성립 안 해서 늘 개별 이름으로만 풀어지던 사각지대가 있었음 —
+    // 이럴 땐 전체 로스터(활동 여부 무관)로 대신 비교한다(2026-08-05, 사용자 제보 — 르세라핌 카드의
+    // 여자친구 소원/예린/유주 3명 다 태깅된 영상이 계속 개별 이름으로만 뜨던 문제).
+    const fullRoster=ARTISTS.filter(a=>a.group.ko===gko);
+    const activeRoster=fullRoster.filter(a=>a.active!==false);
+    const compareRoster=activeRoster.length>0?activeRoster:fullRoster;
+    const isFullGroup=compareRoster.length>0&&members.length>=compareRoster.length;
     // 지금 보고 있는 카드 자신의 그룹인데 그 그룹 전원이 다 나온 경우엔 "함께한" 정보로서 의미가 없음
     // (당연한 얘기라 표시할 값어치가 없음) — 이 그룹 항목 자체를 통째로 생략. 일부 멤버만 나온 경우는
     // 아래에서 그 멤버 이름만 정상적으로 표시된다(그룹칩 없이 이름만 — "코르티스 성현 건호"가 아니라
@@ -12404,6 +12410,20 @@ function _m2ParseTitle(rawTitle,selfGko){
     if([...a.name.ko].length===1||_isHashtagOnlyName(a.name.ko))return names.some(t=>hitHashtag(t));
     return names.some(t=>hit(t));
   }
+  // 해시태그가 "성+이름"을 띄어쓰기 없이 그대로 붙여 쓰는 경우(예: "#HUHYUNJIN" = 허Huh+윤진Yunjin)가
+  // 흔한데, 등록명(name.en)은 보통 성 없이 이름만("Yunjin") 등록돼있어서 위 hit()의 단어 경계 매칭으론
+  // "HUHYUNJIN" 안에 파묻힌 "YUNJIN"을 못 찾았음 — 이미 그룹이 확정된 로스터 안에서만 쓰여서(아래
+  // "각 매칭 그룹에서 멤버 추출") 무관한 해시태그에 우연히 이름이 섞여 들어갈 위험이 상대적으로 낮고,
+  // 4자 미만 짧은 이름은 흔한 부분 문자열(예: "MIN")과 우연히 겹칠 위험이 커서 아예 제외한다
+  // (2026-08-05, 사용자 제보 — 르세라핌 허윤진 사례. #HUHYUNJIN이 버젓이 있는데도 특정이 안 돼서
+  // "르세라핌" 그룹 전체로만 태깅되던 문제).
+  function hitHashtagSubstring(name){
+    if(!name||name.length<4)return false;
+    const n=name.toUpperCase().replace(/[^가-힣a-zA-Z0-9]/g,'');
+    if(n.length<4)return false;
+    const tags=title.match(/#[^\s#]+/g)||[];
+    return tags.some(tag=>tag.slice(1).toUpperCase().replace(/[^가-힣a-zA-Z0-9]/g,'').includes(n));
+  }
   // 긴 이름 우선 정렬 (부분 매칭 방지). strictSync 그룹은 제목 키워드 매칭에서 제외 — 자체 채널
   // 동기화(_ytSyncGroup)로만 영상이 들어와야 하는 공통명사 이름 그룹이 외부 채널 영상 제목에서 오인식되는 걸 막음.
   const groupsSorted=Object.entries(GROUPS)
@@ -12489,7 +12509,7 @@ function _m2ParseTitle(rawTitle,selfGko){
   // 각 매칭 그룹에서 멤버 추출
   const membersByGroup={};
   for(const gko of matchedGroupKos){
-    const matched=ARTISTS.filter(a=>a.group.ko===gko&&_m2NameVariants(a).some(t=>hit(t))).map(a=>a.name.ko);
+    const matched=ARTISTS.filter(a=>a.group.ko===gko&&_m2NameVariants(a).some(t=>hit(t)||hitHashtagSubstring(t))).map(a=>a.name.ko);
     const extra=unitExtraMembers[gko];
     if(extra)extra.forEach(mko=>{if(!matched.includes(mko))matched.push(mko);});
     membersByGroup[gko]=matched;
