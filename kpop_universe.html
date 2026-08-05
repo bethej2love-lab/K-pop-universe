@@ -1912,9 +1912,8 @@
     <button class="sp-yt-sync" id="sp-yt-retag-all" style="margin-top:2px;opacity:.6;font-size:10px;">멤버+콜라보 재태깅 (기존 태깅분 포함, 일회용)</button>
     <button class="sp-yt-sync" id="sp-membersfix-btn" style="margin-top:4px;opacity:.8;">자체 멤버 태깅 재검증(전체)</button>
     <button class="sp-yt-sync" id="sp-collabfix-btn" style="margin-top:4px;opacity:.8;">콜라보 오태깅 재검증(전체)</button>
-    <button class="sp-yt-sync" id="sp-fix-jiukiki-btn" style="margin-top:2px;opacity:.6;font-size:10px;">"지유(키키)" 태그 강제 제거 — 수동편집분 포함(일회용)</button>
-    <button class="sp-yt-sync" id="sp-fix-kikijiu-btn" style="margin-top:2px;opacity:.6;font-size:10px;">키키로 잘못 배정된 드림캐쳐 지유 영상 재배정(일회용)</button>
     <button class="sp-yt-sync" id="sp-scan-namecollide-btn" style="margin-top:4px;opacity:.8;">동명이인 그룹 오배정 전체 스캔+재배정</button>
+    <button class="sp-yt-sync" id="sp-cleanup-15and-btn" style="margin-top:2px;opacity:.6;font-size:10px;">피프틴앤드 그룹 홈배정 재검증(일회용)</button>
     <button class="sp-yt-sync" id="sp-yt-sweep-banned" style="margin-top:4px;opacity:.8;">밴 인물 언급 영상 숨김 정리</button>
 
     <div class="sp-yt-prog" id="sp-yt-prog"></div>
@@ -10611,95 +10610,46 @@ async function _ytSweepAmbiguousCollabMistag(){
   }
 }
 
-// 드림캐쳐 "지유" ↔ 키키 "지유" 동명이인 오염 전용 일회용 정리 — _ytSweepAmbiguousCollabMistag를
-// 두 번 돌려도 tags_manual=true(수동 편집 잠금)인 행은 절대 안 건드려서 남아있던 걸, 이 특정 문자열
-// "지유(키키)" 하나만 정확히 골라 with_members에서 제거한다(다른 필드·다른 콜라보 태그는 전혀 안 건드림).
-// 수동편집 잠금 행은 tags_manual=false→true 두 단계로 저장하는 기존 트리거 우회 패턴(_openVidTagModal
-// 저장부와 동일)을 그대로 씀 — 잠금 자체는 유지한 채 이 값만 쏙 빼는 것.
-// 평소 안전장치(수동편집 절대 안 건드림)를 이 케이스에 한해 의도적으로 우회하는 것이므로, 사용자가
-// 명시적으로 확인한 뒤에만 실행하는 일회용 버튼으로 둔다(2026-08-05).
-async function _ytForceRemoveJiuKiki(){
+// 피프틴앤드처럼 그룹 영문명이 짧은 특수문자 조합("15&")이라 예전엔 특수문자가 정규화 과정에서 지워져
+// 그냥 "15"라는 흔한 숫자로 오매칭되던 그룹 — 그 버그로 group_ko 자체가 잘못 홈배정된(실제로는 날짜·
+// 순위·회차 등 무관한 숫자 "15"였을 뿐인) 기존 행을 정리한다(2026-08-05, 사용자 제보 — "영상에 '15'
+// 포함된 온갖 영상이 다 끌려온 게 가장 심각한 오염"). 공식 채널 동기화(_ytSyncGroup)로 들어온 진짜
+// 영상은 채널 자체가 근거라 title 재매칭과 무관하게 항상 정확한데, 피프틴앤드는 활동 기간이 워낙
+// 짧아 자체 채널 동기화 대상이 아니었고 전부 외부 방송 채널 동기화(_extBuildRows, title 매칭 기반)
+// 산물이라 이 재검증이 안전함 — 다른 그룹에 재사용할 땐 이 전제(자체 채널 동기화 이력이 없는 그룹인지)
+// 부터 확인할 것. 삭제 대신 content_flag='무관' 처리(기존 "무맥락 의심 영상 정리"와 같은 안전한 관례 —
+// 데이터는 남고 화면에서만 빠짐, 되돌릴 수 있음). tags_manual=true는 무조건 스킵.
+async function _ytCleanupGroupHomeMisassign(gko){
   if(!sb){_ytSetProg('Supabase 연결 없음');return;}
-  const btn=document.getElementById('sp-fix-jiukiki-btn');
+  const btn=document.getElementById('sp-cleanup-15and-btn');
   if(btn)btn.disabled=true;
-  const BAD='지유(키키)';
   try{
-    _ytSetProg(`["${BAD}" 강제 제거] 조회 중…`);
+    _ytSetProg(`[${gko} 그룹 홈배정 재검증] 조회 중…`);
     const{data:rows,error}=await _sbFetchAll(()=>sb.from(_YT_TABLE)
-      .select('id,title,with_members,tags_manual')
-      .contains('with_members',[BAD])
+      .select('id,title,group_ko,tags_manual')
+      .eq('group_ko',gko)
       .order('id'));
     if(error){_ytSetProg('조회 실패: '+error.message);return;}
-    if(!rows?.length){_ytSetProg(`"${BAD}" 태그가 남은 영상이 없어요`);return;}
-    let fixed=0,manualCount=0,failed=0;
+    if(!rows?.length){_ytSetProg('해당 그룹 영상이 없어요');return;}
+    let checked=0,flagged=0,manualSkipped=0,failed=0;
     for(const v of rows){
-      const newWM=(v.with_members||[]).filter(m=>m!==BAD);
-      if(v.tags_manual){
-        manualCount++;
-        const{error:e1}=await sb.from(_YT_TABLE).update({with_members:newWM,tags_manual:false}).eq('id',v.id);
-        if(e1){console.error(`["${BAD}" 강제 제거] 실패`,v.id,e1.message);failed++;continue;}
-        const{error:e2}=await sb.from(_YT_TABLE).update({tags_manual:true}).eq('id',v.id);
-        if(e2){console.error(`["${BAD}" 강제 제거] 재잠금 실패`,v.id,e2.message);failed++;continue;}
-      }else{
-        const{error:e}=await sb.from(_YT_TABLE).update({with_members:newWM}).eq('id',v.id);
-        if(e){console.error(`["${BAD}" 강제 제거] 실패`,v.id,e.message);failed++;continue;}
+      checked++;
+      const match=_m2ParseTitle(v.title||'');
+      if(match&&match.primaryGroup===gko){
+        _ytSetProg(`[${gko} 그룹 홈배정 재검증] ${checked}/${rows.length}개 확인 중… (무관 처리 ${flagged}개)`);
+        continue; // 여전히 정당한 매칭(제목에 진짜 그룹명이 있음) — 그대로 둠
       }
-      fixed++;
-      _ytSetProg(`["${BAD}" 강제 제거] ${fixed}/${rows.length}개 처리 중…`);
+      if(v.tags_manual){manualSkipped++;continue;}
+      try{
+        const{error:e}=await sb.from(_YT_TABLE).update({content_flag:'무관'}).eq('id',v.id);
+        if(e)throw e;
+        flagged++;
+      }catch(e){console.error(`[${gko} 그룹 홈배정 재검증] 실패`,v.id,e.message);failed++;}
+      _ytSetProg(`[${gko} 그룹 홈배정 재검증] ${checked}/${rows.length}개 확인 중… (무관 처리 ${flagged}개)`);
     }
-    _ytSetProg(`완료! 총 ${rows.length}개 중 ${fixed}개에서 "${BAD}" 태그 제거(수동편집 잠금 ${manualCount}개 포함, 잠금은 유지)`+(failed?` — 실패 ${failed}개(콘솔 확인)`:''));
-  }catch(e){
-    _ytSetProg('오류: '+e.message);
-  }finally{
-    if(btn)btn.disabled=false;
-  }
-}
-
-// 위 강제 제거로도 안 잡히던 진짜 원인 — with_members 태그가 아니라 소속 그룹(group_ko) 자체가
-// "키키"로 잘못 배정된 행들이었음(2026-08-05, 사용자가 편집 모달에서 직접 확인해 발견: 소속 그룹=키키,
-// 출연 멤버=지유(키키 로스터 기준 체크), 타 그룹 멤버=지유(드림캐쳐)). 실제로는 드림캐쳐 지유 단독
-// 직캠인데, 외부 채널 동기화 당시(_extBuildRows, selfGko 없이 _m2ParseTitle 실행) "지유"라는 이름이
-// 키키/드림캐쳐 양쪽에 동시에 걸려서 어느 한쪽이 임의로 primaryGroup(=group_ko)이 돼버린 결과 —
-// with_members만 지워봤자 group_ko 자체가 틀렸으니 계속 키키 지유 카드에도, (타 그룹 멤버 경로로)
-// 드림캐쳐 지유 카드에도 잘못 노출됐던 것.
-// 소속 그룹을 드림캐쳐로 바로잡고, 출연 멤버를 지유로, 타 그룹 멤버는 비운다. 제목에 "드림캐쳐"/
-// "Dreamcatcher"/"JIU"가 실제로 있는 것만 대상으로 삼아 한 번 더 확인(진짜 키키 단독 영상이 섞여
-// 들어가는 걸 방지). 수동편집 잠금 행은 위와 같은 두 단계 우회로 잠금은 유지한 채 값만 고친다.
-async function _ytFixKikiJiuMisassigned(){
-  if(!sb){_ytSetProg('Supabase 연결 없음');return;}
-  const btn=document.getElementById('sp-fix-kikijiu-btn');
-  if(btn)btn.disabled=true;
-  const CROSS='지유(드림캐쳐)';
-  try{
-    _ytSetProg('[키키→드림캐쳐 그룹 오배정 수정] 조회 중…');
-    const{data:rows,error}=await _sbFetchAll(()=>sb.from(_YT_TABLE)
-      .select('id,title,group_ko,members,with_members,tags_manual')
-      .eq('group_ko','키키')
-      .contains('with_members',[CROSS])
-      .order('id'));
-    if(error){_ytSetProg('조회 실패: '+error.message);return;}
-    if(!rows?.length){_ytSetProg('해당하는 영상이 없어요');return;}
-    const isReallyDreamcatcher=t=>/드림캐쳐|Dreamcatcher|JIU/i.test(t||'');
-    const targets=rows.filter(v=>isReallyDreamcatcher(v.title));
-    const skippedByTitle=rows.length-targets.length;
-    let fixed=0,manualCount=0,failed=0;
-    for(const v of targets){
-      const newWithMembers=(v.with_members||[]).filter(m=>m!==CROSS);
-      const patch={group_ko:'드림캐쳐',members:['지유'],with_members:newWithMembers};
-      if(v.tags_manual){
-        manualCount++;
-        const{error:e1}=await sb.from(_YT_TABLE).update({...patch,tags_manual:false}).eq('id',v.id);
-        if(e1){console.error('[키키→드림캐쳐 수정] 실패',v.id,e1.message);failed++;continue;}
-        const{error:e2}=await sb.from(_YT_TABLE).update({tags_manual:true}).eq('id',v.id);
-        if(e2){console.error('[키키→드림캐쳐 수정] 재잠금 실패',v.id,e2.message);failed++;continue;}
-      }else{
-        const{error:e}=await sb.from(_YT_TABLE).update(patch).eq('id',v.id);
-        if(e){console.error('[키키→드림캐쳐 수정] 실패',v.id,e.message);failed++;continue;}
-      }
-      fixed++;
-      _ytSetProg(`[키키→드림캐쳐 그룹 오배정 수정] ${fixed}/${targets.length}개 처리 중…`);
-    }
-    _ytSetProg(`완료! 그룹 오배정 후보 ${rows.length}개 중 ${fixed}개를 드림캐쳐로 재배정(수동편집 ${manualCount}개 포함)`+(skippedByTitle?`, 제목에 드림캐쳐 언급 없어서 건너뛴 것 ${skippedByTitle}개(직접 확인 필요)`:'')+(failed?` — 실패 ${failed}개(콘솔 확인)`:''));
+    _ytSetProg(`완료! ${gko} 소속 ${rows.length}개 중 ${flagged}개를 무관 처리(근거 없는 홈배정)`+
+      (manualSkipped?`, 수동편집이라 안 건드리고 넘어간 것 ${manualSkipped}개(직접 확인 필요)`:'')+
+      (failed?` — 실패 ${failed}개(콘솔 확인)`:''));
   }catch(e){
     _ytSetProg('오류: '+e.message);
   }finally{
@@ -14758,9 +14708,8 @@ document.getElementById('vid-tag-thumb-refresh').addEventListener('click',async 
   });
   document.getElementById('sp-yt-sweep-banned')?.addEventListener('click',_ytSweepBannedVideos);
   document.getElementById('sp-collabfix-btn')?.addEventListener('click',_ytSweepAmbiguousCollabMistag);
-  document.getElementById('sp-fix-jiukiki-btn')?.addEventListener('click',_ytForceRemoveJiuKiki);
-  document.getElementById('sp-fix-kikijiu-btn')?.addEventListener('click',_ytFixKikiJiuMisassigned);
   document.getElementById('sp-scan-namecollide-btn')?.addEventListener('click',_ytScanAmbiguousNameGroupMisassignment);
+  document.getElementById('sp-cleanup-15and-btn')?.addEventListener('click',()=>_ytCleanupGroupHomeMisassign('피프틴앤드'));
   document.getElementById('sp-membersfix-btn')?.addEventListener('click',_ytSweepMembersMistag);
   document.getElementById('sp-yt-autotag')?.addEventListener('click',_ytAutoTagMembers);
   document.getElementById('sp-yt-retag-all')?.addEventListener('click',_ytRetagAllIncludingTagged);
