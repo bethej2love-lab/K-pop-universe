@@ -800,18 +800,20 @@
   .gc-ch-filters{display:flex;gap:4px;flex-wrap:nowrap;flex:1;overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
   .gc-ch-filters::-webkit-scrollbar{display:none;}
   .gc-ch-filter{
-    background:rgba(255,255,255,0.055);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
-    border:0.5px solid rgba(255,255,255,0.14);border-radius:20px;padding:4px 11px;
+    background:linear-gradient(160deg,rgba(255,255,255,0.11),rgba(255,255,255,0.02));
+    backdrop-filter:blur(16px) saturate(140%);-webkit-backdrop-filter:blur(16px) saturate(140%);
+    border:0.5px solid rgba(255,255,255,0.16);border-radius:20px;padding:4px 11px;
     font-size:11px;color:rgba(192,214,240,0.65);cursor:pointer;font-family:inherit;
-    box-shadow:inset 0 1px 0 rgba(255,255,255,0.12);
-    transition:background .14s,border-color .14s,color .14s,transform .14s;
+    box-shadow:inset 0 1px 1px rgba(255,255,255,0.2),inset 0 -5px 8px -6px rgba(255,255,255,0.08),0 2px 5px rgba(0,0,0,0.14);
+    transition:background .14s,border-color .14s,color .14s,transform .14s,box-shadow .14s;
     white-space:nowrap;flex-shrink:0;
   }
-  .gc-ch-filter:hover{background:rgba(255,255,255,0.10);border-color:rgba(255,255,255,0.22);color:rgba(220,235,255,0.95);}
+  .gc-ch-filter:hover{background:linear-gradient(160deg,rgba(255,255,255,0.16),rgba(255,255,255,0.04));border-color:rgba(255,255,255,0.24);color:rgba(220,235,255,0.95);}
   .gc-ch-filter:active{transform:scale(0.93);}
   .gc-ch-filter.active{
-    background:rgba(155,178,228,0.22);color:#c8ddff;border-color:rgba(170,195,255,0.4);
-    box-shadow:inset 0 1px 0 rgba(255,255,255,0.22),0 0 10px rgba(155,178,228,0.25);
+    background:linear-gradient(160deg,rgba(190,212,255,0.4),rgba(140,170,230,0.14));
+    color:#eef4ff;border-color:rgba(205,222,255,0.5);font-weight:600;
+    box-shadow:inset 0 1px 1px rgba(255,255,255,0.4),inset 0 -6px 10px -6px rgba(120,150,220,0.3),0 3px 10px rgba(120,150,220,0.3);
   }
   @media(min-width:769px){
     .gc-ch-filter{font-size:9px;}
@@ -2569,7 +2571,11 @@ function _refreshOpenCardText(){
     _tgEl.innerHTML='';_tgEl.onclick=null;
     _aGrps.forEach((g,i)=>{
       if(i>0){const sep=document.createElement('span');sep.textContent=' · ';sep.style.cssText='color:rgba(150,170,210,0.45);pointer-events:none;';_tgEl.appendChild(sep);}
-      const sp=document.createElement('span');sp.className='tg'+((GROUPS[g.ko]||{}).survivalShow?' tg-past':'');
+      const sp=document.createElement('span');
+      // 그룹 자체가 해체(survivalShow)됐거나, 그룹은 멀쩡해도 이 멤버 본인이 탈퇴/비활동(active:false)이면
+      // 둘 다 "과거형"으로 흐리게 — 이펙스 금동현처럼 그룹은 활동 중인데 본인만 탈퇴한 경우, 예전엔 그룹
+      // 자체 해체 여부만 봐서 멀쩡한 밝기로 표시되던 걸 놓치고 있었음(2026-08-05, 사용자 제보).
+      sp.className='tg'+(((GROUPS[g.ko]||{}).survivalShow||a.active===false)?' tg-past':'');
       sp.textContent=currentLang==='ko'?g.ko:(g.en||g.ko);
       sp.addEventListener('click',e=>{
         e.stopPropagation();
@@ -6494,7 +6500,10 @@ function showT(a,cx,cy,keepNavStack,urlMode,pushMobNav,noFly){
     if(!GROUPS[g.ko])return; // 아이유의 "솔로"처럼 실존하지 않는 가짜 그룹 태그는 표시하지 않음 — SNS 링크 아이콘만 노출
     if(tgEl.childNodes.length){const sep=document.createElement('span');sep.textContent=' · ';sep.style.cssText='color:rgba(150,170,210,0.45);pointer-events:none;';tgEl.appendChild(sep);}
     const sp=document.createElement('span');
-    sp.className='tg'+(GROUPS[g.ko].survivalShow?' tg-past':'');
+    // 그룹 자체가 해체(survivalShow)됐거나, 그룹은 멀쩡해도 이 멤버 본인이 탈퇴/비활동(active:false)이면
+    // 둘 다 "과거형"으로 흐리게 — 이펙스 금동현처럼 그룹은 활동 중인데 본인만 탈퇴한 경우, 예전엔 그룹
+    // 자체 해체 여부만 봐서 멀쩡한 밝기로 표시되던 걸 놓치고 있었음(2026-08-05, 사용자 제보).
+    sp.className='tg'+((GROUPS[g.ko].survivalShow||a.active===false)?' tg-past':'');
     sp.textContent=currentLang==='ko'?g.ko:(g.en||g.ko);
     sp.addEventListener('click',_makeGcClickFn(g.ko));
     tgEl.appendChild(sp);
@@ -10014,7 +10023,7 @@ async function _buildFeedFormatPick(list){
       if(!vids.length)continue;
       const songs=vids.map(v=>({t:v.title,u:vidUrl(v),thumb:v.thumb}));
       const thumb=vids[Math.floor(Math.random()*vids.length)].thumb;
-      const label=`${fmt} 모아보기`,sub=`여러 그룹 · ${songs.length}개 영상`;
+      const label=`${fmt} 모아보기`,sub=`${songs.length}개 영상`;
       const item=_appendFeedCard(list,'🎞️',label,sub,()=>_feedNav(()=>{
         _openFeedListOverlay(label,sub,songs);
       }),thumb);
@@ -10054,7 +10063,7 @@ async function _buildFeedGenCamPick(list){
       if(vids.length<6)continue; // 컬렉션이라 부르기엔 너무 적으면 다음 조합으로
       const songs=vids.map(v=>({t:v.title,u:vidUrl(v),thumb:v.thumb}));
       const thumb=vids[Math.floor(Math.random()*vids.length)].thumb;
-      const label=`${gen}세대 ${gender==='f'?'여돌':'남돌'} 직캠 모음`,sub=`여러 그룹 · ${songs.length}개 영상`;
+      const label=`${gen}세대 ${gender==='f'?'여돌':'남돌'} 직캠 모음`,sub=`${songs.length}개 영상`;
       const item=_appendFeedCard(list,'🎥',label,sub,()=>_feedNav(()=>{
         _openFeedListOverlay(label,sub,songs);
       }),thumb);
@@ -10064,12 +10073,44 @@ async function _buildFeedGenCamPick(list){
   }
 }
 
+// 이번주 직캠 조회수 TOP 10 — _ytRefreshViewCounts가 "전체 동기화" 버튼을 누를 때마다 최근 14일치에
+// 채워두는 view_count 중, 발행일 7일 이내 & 라이브(직캠·무대) 카테고리만 추려서 조회수 내림차순 10개.
+// 동기화 버튼을 아직 한 번도 안 눌러서 view_count가 채워진 행이 없으면 자연스럽게 후보가 없어 카드
+// 자체가 안 뜬다(별도 빈 상태 처리 불필요). insertBefore로 맨 위에 끼어드는 다른 두 모아보기 카드와
+// 달리 이건 그냥 제자리에 둠 — 셋 다 맨 위 다툼을 하면 밀림 현상만 더 심해짐(2026-08-05).
+async function _buildFeedWeeklyTopCams(list){
+  if(!sb)return;
+  const vidUrl=v=>v.category==='short'?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;
+  const sinceDate=new Date(Date.now()-7*86400000).toISOString().slice(0,10);
+  try{
+    const{data,error}=await sb.from(_YT_TABLE)
+      .select('id,title,thumb,category,content_flag,view_count')
+      .eq('category','live')
+      .gte('published_at',sinceDate)
+      .not('view_count','is',null)
+      .or('content_flag.is.null,content_flag.neq.기타')
+      .or('content_flag.is.null,content_flag.neq.무관')
+      .or('content_flag.is.null,content_flag.neq.hidden')
+      .order('view_count',{ascending:false})
+      .limit(20);
+    if(error||!data?.length)return;
+    const vids=_filterBannedVideos(data);
+    if(vids.length<3)return; // 너무 적으면(연휴 등 업로드 가뭄) TOP 20이라 부르기 민망하니 생략
+    const songs=vids.map(v=>({t:v.title,u:vidUrl(v),thumb:v.thumb}));
+    const label='이번주 직캠 TOP 20',sub=`조회수 기준 · ${songs.length}개`;
+    _appendFeedCard(list,'🏆',label,sub,()=>_feedNav(()=>{
+      _openFeedListOverlay(label,sub,songs);
+    }),vids[0].thumb);
+  }catch(e){/* 카드 하나 실패했다고 탐험 탭 전체가 막히면 안 됨 — 조용히 무시 */}
+}
+
 function _buildFeedDiscovery(){
   const list=document.getElementById('feed-discovery');
   list.innerHTML='';
   const isKo=currentLang==='ko';
   _buildFeedFormatPick(list);
   _buildFeedGenCamPick(list);
+  _buildFeedWeeklyTopCams(list);
 
   // 1. 랜덤 그룹
   const gKeys=Object.keys(GROUPS||{});
@@ -10351,6 +10392,47 @@ async function _ytSyncAll(){
   }
   _ytSetProg(`공식 채널 완료 — ${targets.length}개`);
   _ytSyncing=false;
+}
+
+// 탐험 탭 "이번주 직캠 TOP 10"(_buildFeedWeeklyTopCams)에 쓸 조회수 갱신 — 서버 크론이 없는 정적
+// 페이지라 진짜 자동 갱신은 불가능해서, 이미 정기적으로 누르는 "전체 동기화" 버튼에 얹어 그때 같이
+// 갱신되게 한다(2026-08-05, 사용자 선택). 랭킹 윈도우(7일)보다 넉넉하게 최근 14일치만 갱신 대상으로
+// 삼아서 — 오래된 영상은 어차피 랭킹에 안 쓰이므로 쿼터 낭비를 줄인다. videos.list는 part 개수/id
+// 개수(최대 50개)와 무관하게 호출당 쿼터 1이라 저렴함.
+const VIEW_COUNT_WINDOW_DAYS=14;
+async function _ytRefreshViewCounts(){
+  const key=_ytApiKey();
+  if(!key||!sb)return;
+  _ytSetProg('조회수 갱신 대상 조회 중…');
+  const sinceDate=new Date(Date.now()-VIEW_COUNT_WINDOW_DAYS*86400000).toISOString().slice(0,10);
+  const{data:rows,error}=await _sbFetchAll(()=>sb.from(_YT_TABLE)
+    .select('id')
+    .gte('published_at',sinceDate)
+    .order('id'));
+  if(error){_ytSetProg('조회수 갱신 실패: '+error.message);return;}
+  if(!rows?.length){_ytSetProg('조회수 갱신: 최근 영상 없음');return;}
+  const ids=rows.map(r=>r.id);
+  const statsUpdates=[];
+  for(let i=0;i<ids.length;i+=50){
+    const chunk=ids.slice(i,i+50);
+    _ytSetProg(`조회수 조회 중… ${Math.min(i+50,ids.length)}/${ids.length}`);
+    try{
+      const r=await fetch(`https://www.googleapis.com/youtube/v3/videos?part=statistics&id=${chunk.join(',')}&key=${key}`);
+      if(!r.ok)throw new Error('YouTube API 오류 '+r.status);
+      const d=await r.json();
+      if(d.error)throw new Error(d.error.message);
+      (d.items||[]).forEach(it=>{
+        const vc=parseInt(it.statistics?.viewCount,10);
+        if(!isNaN(vc))statsUpdates.push({id:it.id,view_count:vc});
+      });
+    }catch(e){console.error('[조회수 갱신] 실패:',e.message);}
+  }
+  if(!statsUpdates.length){_ytSetProg('조회수 갱신: 반영할 값 없음');return;}
+  for(let i=0;i<statsUpdates.length;i+=200){
+    const{error:ue}=await sb.from(_YT_TABLE).upsert(statsUpdates.slice(i,i+200));
+    if(ue)console.error('[조회수 갱신] 저장 실패:',ue.message);
+  }
+  _ytSetProg(`조회수 갱신 완료 — ${statsUpdates.length}개`);
 }
 
 function _ytSetProg(msg){const el=document.getElementById('sp-yt-prog');if(el)el.textContent=msg;}
@@ -13391,15 +13473,21 @@ function _makeChVidController(contId){
     let stillQualifies=true;
     if(flag==='hidden'||flag==='무관')stillQualifies=false;
     if(state.memberKo&&flag==='기타')stillQualifies=false;
+    // "members가 비어있으면 그룹 전체 영상으로 이 그리드에 자격 있음" 규칙은 이 영상의 실제 소속
+    // (group_ko)이 지금 이 그리드(ko)와 같을 때만 성립함 — 편집 모달에서 소속 그룹 자체를 다른 그룹으로
+    // 바꿔 저장해도 members가 비어있으면(그룹 전체 태깅이라 흔함) 계속 원래 그리드에 남아있던 버그가
+    // 있었음(2026-08-05, 사용자 제보 — 단일 편집에서 그룹 바꿔 저장해도 화면이 안 바뀜). with_groups/
+    // with_members로 게스트 태깅된 경우는(소속이 달라도) 원래대로 그대로 자격 인정.
+    const isOwnChannel=!newRow.group_ko||newRow.group_ko===ko;
     if(stillQualifies){
       if(state.memberKo&&state.onlyMe){
         // load()의 Only 쿼리와 동일한 기준 — members 하나뿐이어도 with_members/with_groups(다른 그룹
         // 게스트)나 '외부인' 플래그가 있으면 단독 출연이 아님(2026-08-04).
-        stillQualifies=members.length===1&&members[0]===state.memberKo&&!withMembers.length&&!withGroups.length&&flag!=='외부인';
+        stillQualifies=isOwnChannel&&members.length===1&&members[0]===state.memberKo&&!withMembers.length&&!withGroups.length&&flag!=='외부인';
       }else if(state.memberKo){
-        stillQualifies=members.length===0||members.includes(state.memberKo)||withMembers.includes(`${state.memberKo}(${ko})`);
+        stillQualifies=(isOwnChannel&&members.length===0)||members.includes(state.memberKo)||withMembers.includes(`${state.memberKo}(${ko})`);
       }else{
-        stillQualifies=members.length===0||withGroups.includes(ko);
+        stillQualifies=(isOwnChannel&&members.length===0)||withGroups.includes(ko);
       }
     }
     if(stillQualifies&&state.filter!=='all'&&newRow.category!==state.filter)stillQualifies=false;
@@ -14305,6 +14393,7 @@ document.getElementById('vid-tag-thumb-refresh').addEventListener('click',async 
     if(btn)btn.disabled=true;
     await _ytSyncAll();
     await _ytSyncExtChannels();
+    await _ytRefreshViewCounts();
     if(btn)btn.disabled=false;
   });
   document.getElementById('sp-yt-sweep-banned')?.addEventListener('click',_ytSweepBannedVideos);

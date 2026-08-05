@@ -4929,5 +4929,79 @@
     "links": {
       "namu": "https://namu.wiki/w/부석순"
     }
+  },
+  "빅톤": {
+    "en": "VICTON",
+    "debut": "2016.11.09",
+    "co": "IST엔터테인먼트",
+    "survivalShow": true,
+    "color": [
+      0,
+      181,
+      226
+    ],
+    "gender": "m",
+    "fandom": {
+      "ko": "앨리스",
+      "en": "ALICE"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/VICTON"
+    }
+  },
+  "BAE173": {
+    "en": "BAE173",
+    "debut": "2020.11.19",
+    "co": "포켓돌스튜디오",
+    "survivalShow": true,
+    "color": [
+      43,
+      120,
+      190
+    ],
+    "gender": "m",
+    "fandom": {
+      "ko": "엘스",
+      "en": "ELSE"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/BAE173"
+    }
+  },
+  "뉴비트": {
+    "en": "NEWBEAT",
+    "debut": "2025.03.24",
+    "co": "비트인터렉티브",
+    "color": [
+      70,
+      112,
+      233
+    ],
+    "gender": "m",
+    "fandom": {
+      "ko": "뉴로",
+      "en": "NEURO"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/NEWBEAT"
+    }
+  },
+  "이프아이": {
+    "en": "ifeye",
+    "debut": "2025.04.08",
+    "co": "하이헷엔터테인먼트",
+    "color": [
+      42,
+      99,
+      149
+    ],
+    "gender": "f",
+    "fandom": {
+      "ko": "이포리",
+      "en": "ifory"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/ifeye"
+    }
   }
 }
