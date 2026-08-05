@@ -12494,6 +12494,7 @@ function _m2ParseTitle(rawTitle,selfGko){
   // 그룹 미매칭이면 멤버 이름으로 그룹 역추론
   if(!matchedGroupKos.length){
     const inferred=new Map(); // groupKo -> [memberKo]
+    const nameToGroups=new Map(); // 멤버명(한글) -> 그 이름으로 매칭된 groupKo 집합(동명이인 충돌 감지용)
     for(const a of ARTISTS){
       // 예전엔 GROUPS에 없는 그룹(아이유·보아처럼 group.ko="솔로"인 솔로 아티스트)을 통째로 건너뛰어서,
       // 제목에 진짜 그룹명 없이 솔로 아티스트 이름만 있는 콜라보(예: 자체 채널 영상에 "아이유"만 언급)가
@@ -12505,8 +12506,31 @@ function _m2ParseTitle(rawTitle,selfGko){
       if(memberHit(a,names)&&!names.some(t=>hasForeignGroupSuffix(t))){
         if(!inferred.has(a.group.ko))inferred.set(a.group.ko,[]);
         inferred.get(a.group.ko).push(a.name.ko);
+        if(!nameToGroups.has(a.name.ko))nameToGroups.set(a.name.ko,new Set());
+        nameToGroups.get(a.name.ko).add(a.group.ko);
       }
     }
+    if(!inferred.size)return null;
+    // 동명이인 충돌 처리 — 같은 한글 이름(예: "지유")이 서로 다른 그룹 멤버로 동시에 매칭되면, 제목엔
+    // 그 이름이 딱 한 번 나왔을 뿐인데 "누구인지" 그룹명 없이는 알 도리가 없다. selfGko가 그 충돌
+    // 그룹 중 하나면 그쪽만 인정하고(자기 채널이니 당연히 자기 소속으로 해석) 나머지 그룹에서는 그
+    // 이름을 빼고, selfGko로도 못 가르면(외부/모음 채널처럼 selfGko 자체가 이 두 그룹 중 하나가 아닌
+    // 경우 포함) 어느 쪽인지 알 도리가 없으므로 "둘 다 맞다"고 우기지 않고 양쪽 다 뺀다 — 드림캐쳐
+    // "지유"와 키키 "지유"가 외부 모음채널 영상에서 계속 서로에게 잘못 얹히던 원인이 이거였음(2026-08-05,
+    // 사용자 제보). 기존 selfGko 안전장치는 "그 그룹 전체"가 selfGko와 같을 때만 작동해서, selfGko가
+    // 아예 idol 그룹이 아닌 모음채널인 경우까지는 못 걸렀었음.
+    nameToGroups.forEach((gkos,name)=>{
+      if(gkos.size<2)return;
+      const keepGko=(selfGko&&gkos.has(selfGko))?selfGko:null;
+      gkos.forEach(gko=>{
+        if(gko===keepGko)return;
+        const list=inferred.get(gko);
+        if(!list)return;
+        const idx=list.indexOf(name);
+        if(idx!==-1)list.splice(idx,1);
+        if(!list.length)inferred.delete(gko);
+      });
+    });
     if(!inferred.size)return null;
     // 그룹명이 아예 없이 멤버 이름 하나만으로 그룹을 역추론한 상황 — 이 영상이 원래 어느 채널 소속인지
     // (selfGko) 이미 알고 있고 그 그룹도 같은 이름으로 걸렸다면, 동명이인(예: 크래비티 "성민" ↔
