@@ -38218,5 +38218,105 @@
     "links": {
       "namu": "https://namu.wiki/w/%EC%82%AC%EC%83%A4(%EC%9D%B4%ED%94%84%EC%95%84%EC%9D%B4)"
     }
+  },
+  {
+    "name": {
+      "ko": "우무티",
+      "en": "Wumuti"
+    },
+    "group": {
+      "ko": "엑스러브",
+      "en": "XLOV"
+    },
+    "co": "WM엔터테인먼트",
+    "active": true,
+    "color": [
+      70,
+      90,
+      190
+    ],
+    "bday": "1999.07.07",
+    "nat": {
+      "ko": "중국",
+      "en": "CN"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/%EC%9A%B0%EB%AC%B4%ED%8B%B0"
+    }
+  },
+  {
+    "name": {
+      "ko": "루이",
+      "en": "Rui"
+    },
+    "group": {
+      "ko": "엑스러브",
+      "en": "XLOV"
+    },
+    "co": "WM엔터테인먼트",
+    "active": true,
+    "color": [
+      70,
+      90,
+      190
+    ],
+    "bday": "2000.12.28",
+    "nat": {
+      "ko": "대만",
+      "en": "TW"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/%EB%A3%A8%EC%9D%B4"
+    }
+  },
+  {
+    "name": {
+      "ko": "현",
+      "en": "Hyun"
+    },
+    "group": {
+      "ko": "엑스러브",
+      "en": "XLOV"
+    },
+    "co": "WM엔터테인먼트",
+    "active": true,
+    "color": [
+      70,
+      90,
+      190
+    ],
+    "bday": "2002.07.26",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/%ED%98%84"
+    }
+  },
+  {
+    "name": {
+      "ko": "하루",
+      "en": "Haru"
+    },
+    "group": {
+      "ko": "엑스러브",
+      "en": "XLOV"
+    },
+    "co": "WM엔터테인먼트",
+    "active": true,
+    "color": [
+      70,
+      90,
+      190
+    ],
+    "bday": "2006.02.18",
+    "nat": {
+      "ko": "일본",
+      "en": "JP"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/%ED%95%98%EB%A3%A8"
+    }
   }
 ]
