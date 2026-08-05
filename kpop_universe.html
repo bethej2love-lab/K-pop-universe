@@ -960,7 +960,13 @@
   #wonkok-empty{font-size:12px;color:rgba(155,178,228,0.45);text-align:center;padding:32px 0;}
   #hnn-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.52);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:81;display:none;align-items:center;justify-content:center;}
   #hnn-overlay.open{display:flex;}
-  #hnn-panel{width:min(520px,calc(100vw - 32px));max-height:82vh;display:flex;flex-direction:column;background:rgba(13,17,34,0.97);backdrop-filter:blur(40px);-webkit-backdrop-filter:blur(40px);border-radius:18px;box-shadow:0 16px 56px rgba(0,0,0,0.72);border:0.5px solid rgba(255,255,255,0.10);}
+  #hnn-panel{width:min(520px,calc(100vw - 32px));max-height:82vh;display:flex;flex-direction:column;background:rgba(13,17,34,0.97);backdrop-filter:blur(40px);-webkit-backdrop-filter:blur(40px);border-radius:18px;box-shadow:0 16px 56px rgba(0,0,0,0.72);border:0.5px solid rgba(255,255,255,0.10);overflow:hidden;}
+  /* 헤더(hnn-hd)만 고정, 나머지 전부는 이 안에서 스크롤 — 예전엔 하위 섹션들(동명이인/설명/화이트리스트/
+     그룹요약/목록 등)이 패널의 직속 flex 자식으로 쌓여있어서 다 합친 높이가 max-height를 넘으면
+     내부 스크롤 없이 그냥 팝업 테두리 밖으로 뻐져나갔음(2026-08-05 사용자 제보 — "결과 내용 막 팝업
+     창 밖으로 나가고 레이아웃 엉망"). 그리고 세로 중앙 정렬(align-items:center)이라 넘친 만큼 위쪽도
+     화면 밖으로 밀려서 맨 위에 있던 동명이인 목록이 아예 안 보이거나 클릭 안 되는 원인이었음. */
+  #hnn-body{flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column;}
   #hnn-hd{display:flex;align-items:center;justify-content:space-between;padding:16px 18px 10px;flex-shrink:0;}
   #hnn-hd-title{font-size:13.5px;font-weight:600;color:rgba(220,230,255,0.9);}
   #hnn-close{background:none;border:none;color:rgba(180,195,230,0.6);font-size:18px;cursor:pointer;padding:0;line-height:1;}
@@ -1981,6 +1987,7 @@
       <span id="hnn-hd-title">데이터 퀄리티</span>
       <button id="hnn-close">✕</button>
     </div>
+    <div id="hnn-body">
     <div id="hnn-dup-sec">
       <div class="hnn-sec-lbl" style="padding:0 0 0;">동명이인(이름 중복) — 스캔 불필요, 로스터에서 바로 계산됨. 이름 누르면 카드로 이동</div>
       <div id="hnn-dup-list"></div>
@@ -2031,6 +2038,7 @@
         </div>
         <div id="dq-cross-list"></div>
       </div>
+    </div>
     </div>
   </div>
 </div>
@@ -7267,6 +7275,7 @@ function openMobFilterSheet(){
   if(fp.parentElement!==mobFilterSheetInner)mobFilterSheetInner.appendChild(fp);
   mobFilterSheetEl.style.display='block';
   mobFilterSheetEl.style.transform='';
+  _bringToFront(mobFilterSheetEl); // 정적 z-index(38)가 멤버/그룹 카드 시트(63/64)보다 낮아서 뒤로 가려지던 문제(2026-08-05 제보) — 항상 최근 실행 화면이 최상단이어야 함
   requestAnimationFrame(()=>mobFilterSheetEl.classList.add('bs-open'));
 }
 function closeMobFilterSheet(){
@@ -10306,10 +10315,14 @@ function _ytClassify(title){
 }
 
 async function _ytGetUploadsId(ytUrl,key){
+  // youtube.com/channel/UC...는 핸들이 아니라 채널ID 자체 직링크라 forHandle/forUsername으로 못 찾음
+  // (이즈나·제로베이스원·알파드라이브원·킥플립처럼 이 형식으로 등록된 그룹이 전부 "채널을 찾을 수
+  // 없습니다" 오류가 났었음, 2026-08-05 사용자 제보) — id= 파라미터로 바로 조회.
+  const cm=ytUrl.match(/youtube\.com\/channel\/([^/?#]+)/);
   const hm=ytUrl.match(/@([^/?#]+)/);
   const um=ytUrl.match(/youtube\.com\/(?:c\/|user\/)?([^/@?#\s]+)/);
   const slug=hm?hm[1]:(um?um[1]:null);
-  if(!slug)throw new Error('YouTube URL 파싱 실패: '+ytUrl);
+  if(!cm&&!slug)throw new Error('YouTube URL 파싱 실패: '+ytUrl);
   const tryParam=async param=>{
     const r=await fetch(`https://www.googleapis.com/youtube/v3/channels?part=contentDetails&${param}&key=${key}`);
     if(!r.ok)throw new Error('YouTube API 오류 '+r.status);
@@ -10317,10 +10330,11 @@ async function _ytGetUploadsId(ytUrl,key){
     if(d.error)throw new Error(d.error.message);
     return d.items?.[0]?.contentDetails?.relatedPlaylists?.uploads||null;
   };
+  let uploadsId=cm?await tryParam(`id=${encodeURIComponent(cm[1])}`):null;
   // @핸들 URL이면 forHandle을 우선 쓰지만, youtube.com/dlwlrma처럼 /c/,/user/,@ 없는 구식 커스텀 URL은
   // forUsername(옛 유튜브 아이디 시스템)에 없는 경우가 많아 못 찾을 수 있음 — forHandle을 먼저 시도하고
   // 안 되면 forUsername으로 재시도(아이유 채널에서 실제로 forUsername 단독으로는 조회 실패했음)
-  const uploadsId=await tryParam(`forHandle=${encodeURIComponent(slug)}`)||await tryParam(`forUsername=${encodeURIComponent(slug)}`);
+  if(!uploadsId&&slug)uploadsId=await tryParam(`forHandle=${encodeURIComponent(slug)}`)||await tryParam(`forUsername=${encodeURIComponent(slug)}`);
   if(!uploadsId)throw new Error('채널을 찾을 수 없습니다 ('+ytUrl+')');
   return uploadsId;
 }
@@ -10328,6 +10342,9 @@ async function _ytGetUploadsId(ytUrl,key){
 // 과거 영상 백필(search API)은 업로드 재생목록이 아니라 channelId로 검색해야 해서, 업로드 재생목록 id
 // 대신 채널 자체의 id가 필요함 — _ytGetUploadsId와 핸들 파싱 로직은 같고 뽑아내는 필드만 다름.
 async function _ytGetChannelId(ytUrl,key){
+  // /channel/UC...는 URL 안에 채널ID가 그대로 들어있어서 API 조회 없이 바로 씀
+  const cm=ytUrl.match(/youtube\.com\/channel\/([^/?#]+)/);
+  if(cm)return cm[1];
   const hm=ytUrl.match(/@([^/?#]+)/);
   const um=ytUrl.match(/youtube\.com\/(?:c\/|user\/)?([^/@?#\s]+)/);
   const slug=hm?hm[1]:(um?um[1]:null);
@@ -10400,10 +10417,23 @@ async function _ytSyncGroup(ko,key,onProg,youtubeUrl){
   // youtubeUrl이 명시적으로 오면 그걸 쓰고(아이유처럼 GROUPS에 없는 솔로 채널 동기화용), 아니면 기존처럼 그룹 링크 사용
   const url=youtubeUrl||GROUPS[ko]?.links?.youtube;
   if(!url)throw new Error('YouTube 링크 없음');
-  const{data:top}=await sb.from(_YT_TABLE).select('id').eq('group_ko',ko).order('published_at',{ascending:false}).limit(1);
-  const sinceId=top?.[0]?.id||null;
   const uploadsId=await _ytGetUploadsId(url,key);
-  const{vids}=await _ytFetchNewVideos(uploadsId,key,sinceId,onProg);
+  // 이어받기 체크포인트를 외부 채널 동기화(_ytSyncExtChannels)와 같은 방식(localStorage에 마지막으로
+  // 확인한 영상 ID를 직접 저장)으로 바꿈 — 예전엔 매번 DB에서 published_at(날짜만, 시분초 없음) 기준
+  // 최신 1개를 다시 추정했는데, 하루에 여러 개 올리는 업로드량 많은 채널(방탄소년단·스트레이키즈 등)은
+  // 같은 날짜 동률 때문에 엉뚱한 영상이 기준점으로 잡히거나, 그 영상이 나중에 삭제되면 그 기준점을
+  // 채널에서 영원히 못 찾아 매번 채널 전체를 처음부터 훑게 되는 문제가 있었음(2026-08-05, 업로드 많은
+  // 그룹들이 매번 오래 걸린다는 제보로 발견). localStorage에 북마크가 아직 없는(이 방식 도입 전) 그룹만
+  // DB 조회로 시작점을 잡아 첫 실행에 전체 재수집이 도는 것을 막고, 이후로는 localStorage만 쓴다.
+  const lsKey=`kpu_yt_last_${ko}`;
+  const resumeKey=`kpu_yt_resume_${ko}`;
+  let sinceId=localStorage.getItem(lsKey);
+  if(!sinceId){
+    const{data:top}=await sb.from(_YT_TABLE).select('id').eq('group_ko',ko).order('published_at',{ascending:false}).limit(1);
+    sinceId=top?.[0]?.id||null;
+  }
+  const resumeTok=localStorage.getItem(resumeKey)||'';
+  const{vids,done,interrupted,resumeToken}=await _ytFetchNewVideos(uploadsId,key,sinceId,onProg,resumeTok);
   if(vids.length){
     const rows=vids.map(v=>({...v,group_ko:ko,...(_isJunkVideoTitle(v.title)?{content_flag:'무관'}:{})}));
     for(let i=0;i<rows.length;i+=200){
@@ -10411,6 +10441,11 @@ async function _ytSyncGroup(ko,key,onProg,youtubeUrl){
       if(error)throw new Error(error.message);
     }
   }
+  // resumeTok 없이(=맨 최신부터) 시작한 실행이었을 때만 vids[0]가 진짜 "채널의 현재 최신 영상"이므로
+  // 그때만 북마크를 갱신한다 — 과거를 이어받는 중엔 건드리지 않음(_ytSyncExtChannels와 동일 원칙)
+  if(!resumeTok&&vids[0]?.id)localStorage.setItem(lsKey,vids[0].id);
+  if(done)localStorage.removeItem(resumeKey);
+  else if(interrupted&&resumeToken)localStorage.setItem(resumeKey,resumeToken);
   return vids.length;
 }
 
@@ -13077,6 +13112,18 @@ function _invalidateChVidCache(contId,ko){
   const prefix=contId+'|'+ko+'|';
   [..._chVidPageCache.keys()].forEach(k=>{if(k.startsWith(prefix))_chVidPageCache.delete(k);});
 }
+// 모바일 네트워크가 요청 도중 끊기거나(와이파이↔셀룰러 전환, 백그라운드 복귀 등) 멈춰버리면 fetch가
+// 에러도 안 내고 그냥 영원히 안 끝나는 경우가 있음 — 이땐 카드 탭을 눌러도 스켈레톤만 계속 떠 있고
+// 다음 탭을 눌러도 마찬가지로 멈춰서, 사용자 입장에선 "먹통"으로 보이고 새로고침해야만 풀림(2026-08-05
+// 제보, 웹은 네트워크가 안정적이라 덜 겪음). 일정 시간 안에 안 끝나면 타임아웃 에러로 강제 종료시켜서
+// load()의 기존 catch 블록(에러 메시지 표시 + 잠금 해제)이 처리하게 하면, 새로고침 없이 탭만 다시
+// 눌러도 정상적으로 재시도됨.
+function _withTimeout(promise,ms,msg){
+  return Promise.race([
+    promise,
+    new Promise((_,rej)=>setTimeout(()=>rej(new Error(msg||'응답이 없어요 — 네트워크 확인 후 다시 시도해주세요')),ms))
+  ]);
+}
 function _makeChVidController(contId){
   let state={ko:null,memberKo:null,filter:'all',sortMode:'recommend',viewMode:'category',formatFilter:null,formats:[],offset:0,total:0,pos:0,cat:null,gen:0,appendLock:false,trailingEl:null,hasMore:false,allVids:[],wrapEnd:0,wrapPhase:false,unitFilter:null};
   let observer=null;
@@ -13440,7 +13487,7 @@ function _makeChVidController(contId){
       }else{
         mainP=ordered(buildBaseQuery()).range(offset,offset+_YT_PAGE-1);
       }
-      const[{data,error,count},_featuredFromDB]=await Promise.all([mainP,featuredP]);
+      const[{data,error,count},_featuredFromDB]=await _withTimeout(Promise.all([mainP,featuredP]),15000);
       if(myGen!==state.gen)return; // 대기 중 다른 그룹/새로고침으로 전환됨: 그쪽이 이미 자신의 잠금을 걸어놨으므로 여기선 해제하지 않는다
       if(error)throw new Error(error.message);
       if(reset)grid.innerHTML='';
