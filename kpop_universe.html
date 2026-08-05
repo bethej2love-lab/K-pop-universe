@@ -1040,7 +1040,8 @@
      그룹/멤버 카드의 기본 .gc-ch-item/.gc-ch-thumb 그대로(가로 16:9, 쇼츠만 9:16) 원본 비율을
      살리는 쪽으로 되돌림 — 이 기본 패턴은 다른 그리드에서 이미 겹침 버그 없이 잘 동작해왔음.
      열만 3열로 좁혀서 인스타 탐색탭처럼 촘촘하게 보이게 함. */
-  #feed-list-grid.gc-ch-grid{grid-template-columns:repeat(3,1fr);gap:4px;align-items:start;}
+  #feed-list-grid.gc-ch-grid{grid-template-columns:repeat(2,1fr);gap:4px;align-items:start;}
+  @media(min-width:769px){#feed-list-grid.gc-ch-grid{grid-template-columns:repeat(3,1fr);}}
   #feed-list-grid .gc-ch-item{border-radius:4px;}
   #feed-list-grid .tv-sm-title{display:none;}
   .ec-item{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:7px 16px;transition:background .12s;}
@@ -4953,9 +4954,13 @@ function openMobSheet(cardEl){
 
   if(!isOpen){
     // ── 첫 오픈: mob-sheet에 카드, mob-card-stack 숨김 ──
+    // 기본을 100%(bs-full)로 열어서 카드 콘텐츠에 몰입하게 하되, 아래로 끌면 60%로 줄이거나
+    // 닫는 기존 스와이프 제스처(_wireSheetSwipe)는 그대로 남겨서 우주 뷰로 돌아가는 길을 열어둔다.
+    _sheetFull=true;
     _cardStack=[{type,data}];
     _placeInContainer(cardEl,mobSheetInner);
     mobCardStackEl.style.display='none';mobCardStackEl.classList.remove('bs-open');
+    mobSheetEl.classList.add('bs-full');
     mobSheetEl.style.display='block';
     requestAnimationFrame(()=>mobSheetEl.classList.add('bs-open'));
     if(_mobViewShift===0){const shiftPx=Math.round(window.innerHeight*0.32);_animMobViewShift(shiftPx,340);}
@@ -5692,8 +5697,9 @@ function _buildConnContent(container){
 
   const chipsDiv=document.createElement('div');chipsDiv.className='conn-chips';
 
-  // 같은 그룹 멤버 (개별 칩)
-  sameGroupNames.forEach(name=>chipsDiv.appendChild(_makeConnChip(name)));
+  // 같은 그룹 멤버 (개별 칩) — _collabCount가 0이면 그룹 전체 태깅으로만 끌려들어온 이름(실제로 그
+  // 멤버가 나왔다고 확인된 적 없음)이라 개별 칩으로 보여줄 근거가 없어 제외한다.
+  sameGroupNames.filter(name=>_collabCount(name)>0).forEach(name=>chipsDiv.appendChild(_makeConnChip(name)));
 
   // 타 그룹 멤버 (그룹 단위 묶음 칩) — 칩을 클릭하면 "그룹 선택"(펼침 겸용)이 되어, 그 그룹 멤버 중
   // 1명 이상 출연한 영상 전체가 먼저 뜨고, 펼쳐진 멤버 칩을 추가로 클릭하면 그 멤버 필수 출연으로 더 좁혀진다.
@@ -5728,9 +5734,13 @@ function _buildConnContent(container){
     groupWrap.appendChild(groupChip);
     // 특정 멤버가 확인된 경우에만 멤버 행 추가
     if(!isWideOnly){
+      // 그룹 내에서도 개별 확인 안 된 멤버(그룹 전체 태깅 영상으로만 끌려들어온 이름)는 제외 —
+      // 예: 코르티스 성현 × 아일릿에서 이로하는 개별 영상이 있지만 나머지 4명은 그룹 전체 등장
+      // 영상에만 있었다면, 이로하만 개별 칩으로 보여주고 나머지는 숨긴다.
+      const confirmedMembers=members.filter(name=>_collabCount(name)>0);
       const memberRow=document.createElement('div');
       memberRow.className='conn-group-members'+(isSelGroup?' open':'');
-      members.forEach(name=>memberRow.appendChild(_makeConnChip(name)));
+      confirmedMembers.forEach(name=>memberRow.appendChild(_makeConnChip(name)));
       groupWrap.appendChild(memberRow);
     }
     chipsDiv.appendChild(groupWrap);
@@ -9817,6 +9827,9 @@ function _openFeedListOverlay(title,sub,songs){
   // 나눠서 스크롤할 때만 다음 배치를 그리는 방식으로 바꿔서, 한 번에 뜨는 이미지 요청 수를 줄인다.
   const BATCH=24;
   let rendered=0;
+  // 모바일 2열에서는 그룹/멤버 카드 영상 그리드(_renderMixedVidGrid)와 같은 규칙으로 크기를 다양하게
+  // 섞는다 — 데스크톱은 그대로 3열 균일 그리드라 이 규칙을 적용하면 배치가 어긋나서 모바일에서만 켠다.
+  const _wideFlags=isMob()?_groupMixedVids(songs).map(e=>e.wide):null;
   const sentinel=document.createElement('div');
   sentinel.style.cssText='grid-column:1/-1;height:1px;';
   const observer=new IntersectionObserver(entries=>{
@@ -9825,7 +9838,7 @@ function _openFeedListOverlay(title,sub,songs){
   function renderOne(s,idx){
     const shortFlag=isShorts(s.u);
     const item=document.createElement('div');
-    item.className='gc-ch-item'+(shortFlag?' is-short':'');
+    item.className='gc-ch-item'+(shortFlag?' is-short':'')+(_wideFlags&&_wideFlags[idx]?' gc-ch-wide':'');
     const img=document.createElement('img');
     img.className='gc-ch-thumb';img.loading='lazy';img.decoding='async';
     img.src=s.thumb||`https://img.youtube.com/vi/${ytId(s.u)}/mqdefault.jpg`;
@@ -12071,7 +12084,17 @@ const _PROJECT_UNITS={
     {mko:'슬기',gko:'레드벨벳'},{mko:'웬디',gko:'레드벨벳'},{mko:'카리나',gko:'에스파'},{mko:'윈터',gko:'에스파'}]},
   '씨스타19':{names:['씨스타19'],members:[{mko:'효린',gko:'씨스타'},{mko:'보라',gko:'씨스타'}]},
   '오렌지캬라멜':{names:['오렌지캬라멜'],members:[{mko:'레이나',gko:'애프터스쿨'},{mko:'나나',gko:'애프터스쿨'},{mko:'리지',gko:'애프터스쿨'}]},
-  '태티서':{names:['태티서'],members:[{mko:'태연',gko:'소녀시대'},{mko:'티파니',gko:'소녀시대'},{mko:'서현',gko:'소녀시대'}]}
+  '태티서':{names:['태티서'],members:[{mko:'태연',gko:'소녀시대'},{mko:'티파니',gko:'소녀시대'},{mko:'서현',gko:'소녀시대'}]},
+  // 슈퍼주니어 공식 유닛 7종(2026-08-05, 나무위키 대조) — 태티서와 동일한 성격(자체 그룹사 소속 공식
+  // 서브유닛)이라 같은 방식 적용. "T"/"M"처럼 단일 알파벳만으로는 흔한 단어와 겹쳐 오매칭 위험이 커서
+  // names에 bare 단일 알파벳은 넣지 않고 "SUPER JUNIOR-T"/"SJT"처럼 붙여 쓴 형태만 등록한다.
+  'K.R.Y.':{names:['SUPER JUNIOR-K.R.Y.','슈퍼주니어-K.R.Y.','K.R.Y.','KRY'],members:[{mko:'규현',gko:'슈퍼주니어'},{mko:'려욱',gko:'슈퍼주니어'},{mko:'예성',gko:'슈퍼주니어'}]},
+  'SJT':{names:['SUPER JUNIOR-T','슈퍼주니어-T','SJT'],members:[{mko:'이특',gko:'슈퍼주니어'},{mko:'희철',gko:'슈퍼주니어'},{mko:'신동',gko:'슈퍼주니어'},{mko:'은혁',gko:'슈퍼주니어'},{mko:'성민',gko:'슈퍼주니어'},{mko:'강인',gko:'슈퍼주니어'}]},
+  'SJM':{names:['SUPER JUNIOR-M','슈퍼주니어-M','SJ-M','SJM','슈주엠'],members:[{mko:'은혁',gko:'슈퍼주니어'},{mko:'시원',gko:'슈퍼주니어'},{mko:'동해',gko:'슈퍼주니어'},{mko:'려욱',gko:'슈퍼주니어'},{mko:'규현',gko:'슈퍼주니어'},{mko:'성민',gko:'슈퍼주니어'},{mko:'한경',gko:'슈퍼주니어'}]},
+  'SJH':{names:['SUPER JUNIOR-HAPPY','슈퍼주니어-HAPPY','슈퍼주니어-해피','SJH'],members:[{mko:'이특',gko:'슈퍼주니어'},{mko:'예성',gko:'슈퍼주니어'},{mko:'신동',gko:'슈퍼주니어'},{mko:'은혁',gko:'슈퍼주니어'},{mko:'성민',gko:'슈퍼주니어'},{mko:'강인',gko:'슈퍼주니어'}]},
+  'D&E':{names:['SUPER JUNIOR-D&E','슈퍼주니어-D&E','D&E','디앤이'],members:[{mko:'동해',gko:'슈퍼주니어'},{mko:'은혁',gko:'슈퍼주니어'}]},
+  'L.S.S.':{names:['SUPER JUNIOR-L.S.S.','슈퍼주니어-L.S.S.','L.S.S.','LSS'],members:[{mko:'이특',gko:'슈퍼주니어'},{mko:'신동',gko:'슈퍼주니어'},{mko:'시원',gko:'슈퍼주니어'}]},
+  '83z':{names:['SUPER JUNIOR-83z','슈퍼주니어-83z','83z','팔삼즈'],members:[{mko:'이특',gko:'슈퍼주니어'},{mko:'희철',gko:'슈퍼주니어'}]}
 };
 // 유닛 태그 클릭 핸들러 — 그룹 카드/행성을 새로 만들지 않는 대신, 멤버 카드 안의 영상 그리드를
 // "같은 유닛의 다른 멤버가 같이 나온 영상만"으로 필터링해서 유닛 관련 콘텐츠를 모아 보여준다.
@@ -12111,7 +12134,14 @@ function _unitOtherMembers(unitName,memberKo,ko){
 // 영상에도 같은 유닛 인식을 적용하기 위한 경량 버전(그룹/멤버 역추론 등 나머지 로직은 필요 없음).
 function _unitMembersFromTitle(title,ko){
   const norm=' '+(title||'').toUpperCase().replace(/[^가-힣a-zA-Z0-9]/g,' ').replace(/\s+/g,' ')+' ';
-  const hit=name=>norm.includes(' '+name.toUpperCase()+' ');
+  // name도 title과 같은 규칙으로 정규화해야 함 — 안 그러면 "K.R.Y."/"D&E"처럼 특수문자가 낀 유닛명은
+  // norm에서 이미 공백으로 치환된 자리를 찾지 못해 절대 안 걸림(_m2ParseTitle의 hit()과 동일하게 맞춤).
+  // trim 필수 — "K.R.Y."처럼 끝이 특수문자인 이름은 정규화 후 끝에 공백이 남아서(마침표→공백) trim 없이
+  // 앞뒤에 공백을 덧붙이면 이중 공백이 되어 norm과 절대 안 맞음(실측으로 발견, 2026-08-05).
+  const hit=name=>{
+    const n=name.toUpperCase().replace(/[^가-힣a-zA-Z0-9]/g,' ').replace(/\s+/g,' ').trim();
+    return norm.includes(' '+n+' ');
+  };
   const result=new Set();
   Object.values(_PROJECT_UNITS).forEach(unit=>{
     if(!unit.names.some(hit))return;
@@ -12166,7 +12196,9 @@ function _m2ParseTitle(rawTitle,selfGko){
   const norm=' '+title.toUpperCase().replace(/[^가-힣a-zA-Z0-9]/g,' ').replace(/\s+/g,' ')+' ';
   function hit(name){
     if(!name||name.length<2)return false;
-    const n=name.toUpperCase().replace(/[^가-힣a-zA-Z0-9]/g,' ').replace(/\s+/g,' ');
+    // trim 필수 — "K.R.Y."처럼 끝이 특수문자인 이름은 정규화 후 끝에 공백이 남아서 trim 없이 앞뒤
+    // 공백을 덧붙이면 이중 공백이 되어 norm과 절대 안 맞음(2026-08-05, 슈퍼주니어 유닛 추가 중 발견).
+    const n=name.toUpperCase().replace(/[^가-힣a-zA-Z0-9]/g,' ').replace(/\s+/g,' ').trim();
     return norm.includes(' '+n+' ');
   }
   // "New"(뉴/더보이즈), "On"(온/올아워즈), "Key"(키/샤이니), "Q"(큐/더보이즈)처럼 등록명이 한 글자(단일음절)인
@@ -12242,7 +12274,12 @@ function _m2ParseTitle(rawTitle,selfGko){
   if(!matchedGroupKos.length){
     const inferred=new Map(); // groupKo -> [memberKo]
     for(const a of ARTISTS){
-      if(!GROUPS[a.group.ko])continue;
+      // 예전엔 GROUPS에 없는 그룹(아이유·보아처럼 group.ko="솔로"인 솔로 아티스트)을 통째로 건너뛰어서,
+      // 제목에 진짜 그룹명 없이 솔로 아티스트 이름만 있는 콜라보(예: 자체 채널 영상에 "아이유"만 언급)가
+      // 영원히 미태깅으로 남는 버그가 있었음(2026-08-05, 우즈×아이유 카드에서 실측 발견). a.group.ko를
+      // 그대로 키로 써도 여러 솔로 아티스트가 "솔로"라는 같은 값을 공유해서 한 그룹처럼 묶이지만, 아래
+      // membersByGroup은 그 버킷 안 이름 목록을 그대로 with_members에 "이름(솔로)" 형식으로 펼쳐 넣을
+      // 뿐이라 문제 없음 — _findArtistByConnName/_apiVidToSong의 withKey가 기대하는 것과 정확히 같은 형식.
       const names=_m2NameVariants(a);
       if(memberHit(a,names)&&!names.some(t=>hasForeignGroupSuffix(t))){
         if(!inferred.has(a.group.ko))inferred.set(a.group.ko,[]);
