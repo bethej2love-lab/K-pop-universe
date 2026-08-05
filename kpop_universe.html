@@ -1913,6 +1913,8 @@
     <button class="sp-yt-sync" id="sp-membersfix-btn" style="margin-top:4px;opacity:.8;">자체 멤버 태깅 재검증(전체)</button>
     <button class="sp-yt-sync" id="sp-collabfix-btn" style="margin-top:4px;opacity:.8;">콜라보 오태깅 재검증(전체)</button>
     <button class="sp-yt-sync" id="sp-fix-jiukiki-btn" style="margin-top:2px;opacity:.6;font-size:10px;">"지유(키키)" 태그 강제 제거 — 수동편집분 포함(일회용)</button>
+    <button class="sp-yt-sync" id="sp-fix-kikijiu-btn" style="margin-top:2px;opacity:.6;font-size:10px;">키키로 잘못 배정된 드림캐쳐 지유 영상 재배정(일회용)</button>
+    <button class="sp-yt-sync" id="sp-scan-namecollide-btn" style="margin-top:4px;opacity:.8;">동명이인 그룹 오배정 전체 스캔+재배정</button>
     <button class="sp-yt-sync" id="sp-yt-sweep-banned" style="margin-top:4px;opacity:.8;">밴 인물 언급 영상 숨김 정리</button>
 
     <div class="sp-yt-prog" id="sp-yt-prog"></div>
@@ -10653,6 +10655,132 @@ async function _ytForceRemoveJiuKiki(){
   }
 }
 
+// 위 강제 제거로도 안 잡히던 진짜 원인 — with_members 태그가 아니라 소속 그룹(group_ko) 자체가
+// "키키"로 잘못 배정된 행들이었음(2026-08-05, 사용자가 편집 모달에서 직접 확인해 발견: 소속 그룹=키키,
+// 출연 멤버=지유(키키 로스터 기준 체크), 타 그룹 멤버=지유(드림캐쳐)). 실제로는 드림캐쳐 지유 단독
+// 직캠인데, 외부 채널 동기화 당시(_extBuildRows, selfGko 없이 _m2ParseTitle 실행) "지유"라는 이름이
+// 키키/드림캐쳐 양쪽에 동시에 걸려서 어느 한쪽이 임의로 primaryGroup(=group_ko)이 돼버린 결과 —
+// with_members만 지워봤자 group_ko 자체가 틀렸으니 계속 키키 지유 카드에도, (타 그룹 멤버 경로로)
+// 드림캐쳐 지유 카드에도 잘못 노출됐던 것.
+// 소속 그룹을 드림캐쳐로 바로잡고, 출연 멤버를 지유로, 타 그룹 멤버는 비운다. 제목에 "드림캐쳐"/
+// "Dreamcatcher"/"JIU"가 실제로 있는 것만 대상으로 삼아 한 번 더 확인(진짜 키키 단독 영상이 섞여
+// 들어가는 걸 방지). 수동편집 잠금 행은 위와 같은 두 단계 우회로 잠금은 유지한 채 값만 고친다.
+async function _ytFixKikiJiuMisassigned(){
+  if(!sb){_ytSetProg('Supabase 연결 없음');return;}
+  const btn=document.getElementById('sp-fix-kikijiu-btn');
+  if(btn)btn.disabled=true;
+  const CROSS='지유(드림캐쳐)';
+  try{
+    _ytSetProg('[키키→드림캐쳐 그룹 오배정 수정] 조회 중…');
+    const{data:rows,error}=await _sbFetchAll(()=>sb.from(_YT_TABLE)
+      .select('id,title,group_ko,members,with_members,tags_manual')
+      .eq('group_ko','키키')
+      .contains('with_members',[CROSS])
+      .order('id'));
+    if(error){_ytSetProg('조회 실패: '+error.message);return;}
+    if(!rows?.length){_ytSetProg('해당하는 영상이 없어요');return;}
+    const isReallyDreamcatcher=t=>/드림캐쳐|Dreamcatcher|JIU/i.test(t||'');
+    const targets=rows.filter(v=>isReallyDreamcatcher(v.title));
+    const skippedByTitle=rows.length-targets.length;
+    let fixed=0,manualCount=0,failed=0;
+    for(const v of targets){
+      const newWithMembers=(v.with_members||[]).filter(m=>m!==CROSS);
+      const patch={group_ko:'드림캐쳐',members:['지유'],with_members:newWithMembers};
+      if(v.tags_manual){
+        manualCount++;
+        const{error:e1}=await sb.from(_YT_TABLE).update({...patch,tags_manual:false}).eq('id',v.id);
+        if(e1){console.error('[키키→드림캐쳐 수정] 실패',v.id,e1.message);failed++;continue;}
+        const{error:e2}=await sb.from(_YT_TABLE).update({tags_manual:true}).eq('id',v.id);
+        if(e2){console.error('[키키→드림캐쳐 수정] 재잠금 실패',v.id,e2.message);failed++;continue;}
+      }else{
+        const{error:e}=await sb.from(_YT_TABLE).update(patch).eq('id',v.id);
+        if(e){console.error('[키키→드림캐쳐 수정] 실패',v.id,e.message);failed++;continue;}
+      }
+      fixed++;
+      _ytSetProg(`[키키→드림캐쳐 그룹 오배정 수정] ${fixed}/${targets.length}개 처리 중…`);
+    }
+    _ytSetProg(`완료! 그룹 오배정 후보 ${rows.length}개 중 ${fixed}개를 드림캐쳐로 재배정(수동편집 ${manualCount}개 포함)`+(skippedByTitle?`, 제목에 드림캐쳐 언급 없어서 건너뛴 것 ${skippedByTitle}개(직접 확인 필요)`:'')+(failed?` — 실패 ${failed}개(콘솔 확인)`:''));
+  }catch(e){
+    _ytSetProg('오류: '+e.message);
+  }finally{
+    if(btn)btn.disabled=false;
+  }
+}
+
+// 지유/키키 사례를 "지유"라는 이름 하나에만 국한하지 않고, 로스터 전체의 동명이인(같은 name.ko를 쓰는
+// 서로 다른 그룹 멤버) 쌍 전부에 대해 같은 패턴(group_ko가 A인데 with_members에 동명이인의 B 표기가
+// 걸린 행)을 훑는 범용 스캔 — 외부 채널 동기화가 selfGko 없이 이름만으로 group_ko를 잘못 결정했던
+// 과거 오염을 이름 하나하나 수동 발견하지 않고 한 번에 찾기 위함(2026-08-05, 사용자 요청 — "이런
+// 동명이인 문제가 많을 듯, 근본적으로 바로잡을 대책 필요"). _m2ParseTitle 자체의 재발 방지(동명이인
+// 충돌을 selfGko로 못 가르면 양쪽 다 버림)는 이미 적용돼있어 새로 동기화되는 영상엔 안 생기고, 이건
+// 그 전에 이미 들어간 기존 행만 정리하는 스캔이다.
+// 판정 기준: 제목에 "재배정 대상 그룹" 이름/영문명만 있고 "현재 배정된 그룹" 이름/영문명은 없으면
+// 확실한 오배정으로 보고 자동 재배정. 둘 다 있거나 둘 다 없으면(제목만으론 못 가르는 진짜 애매한 경우)
+// 건드리지 않고 콘솔에 목록만 남긴다 — 잘못 재배정하는 것보다 애매한 채로 두는 게 안전함.
+// tags_manual=true(수동 편집) 행은 확신도와 무관하게 무조건 손대지 않는다 — 지유/키키 단일 케이스 때는
+// 우회해도 되는지 그때그때 확인받았지만, 이건 로스터 전체 동명이인 쌍을 한꺼번에 훑는 훨씬 넓은 범위라
+// 수동편집분은 전부 건드리지 말고 확인 목록에만 넣어달라는 요청(2026-08-05).
+async function _ytScanAmbiguousNameGroupMisassignment(){
+  if(!sb){_ytSetProg('Supabase 연결 없음');return;}
+  const btn=document.getElementById('sp-scan-namecollide-btn');
+  if(btn)btn.disabled=true;
+  try{
+    _ytSetProg('[동명이인 그룹 오배정 스캔] 동명이인 목록 계산 중…');
+    const nameToGroups=new Map();
+    ARTISTS.forEach(a=>{
+      if(!nameToGroups.has(a.name.ko))nameToGroups.set(a.name.ko,new Set());
+      nameToGroups.get(a.name.ko).add(a.group.ko);
+    });
+    const collisions=[...nameToGroups.entries()].filter(([,gkos])=>gkos.size>1);
+    if(!collisions.length){_ytSetProg('동명이인 자체가 없어요');return;}
+    const mentions=(t,gko)=>{
+      const info=GROUPS[gko]||{};
+      return[gko,info.en].filter(Boolean).some(tok=>new RegExp(_atmEscRe(tok),'i').test(t||''));
+    };
+    let pairsChecked=0,rowsFound=0,fixed=0,manualSkipped=0,failed=0;
+    const ambiguous=[];
+    for(const[name,gkoSet]of collisions){
+      const gkos=[...gkoSet];
+      for(let i=0;i<gkos.length;i++){
+        for(let j=0;j<gkos.length;j++){
+          if(i===j)continue;
+          const homeGko=gkos[i],otherGko=gkos[j];
+          const crossTag=`${name}(${otherGko})`;
+          pairsChecked++;
+          _ytSetProg(`[동명이인 그룹 오배정 스캔] ${pairsChecked}/${collisions.length*2}쌍 확인 중… (지금까지 ${fixed}개 재배정)`);
+          const{data:rows,error}=await sb.from(_YT_TABLE)
+            .select('id,title,group_ko,members,with_members,tags_manual')
+            .eq('group_ko',homeGko)
+            .contains('with_members',[crossTag]);
+          if(error||!rows?.length)continue;
+          for(const v of rows){
+            rowsFound++;
+            if(v.tags_manual){manualSkipped++;continue;} // 확신도 상관없이 무조건 스킵
+            const hasHome=mentions(v.title,homeGko),hasOther=mentions(v.title,otherGko);
+            if(!(hasOther&&!hasHome)){ambiguous.push({id:v.id,title:v.title,homeGko,otherGko});continue;}
+            const newWithMembers=(v.with_members||[]).filter(m=>m!==crossTag);
+            const patch={group_ko:otherGko,members:[name],with_members:newWithMembers};
+            try{
+              const{error:e}=await sb.from(_YT_TABLE).update(patch).eq('id',v.id);
+              if(e)throw e;
+              fixed++;
+            }catch(e){console.error('[동명이인 그룹 오배정 스캔] 실패',v.id,e.message);failed++;}
+          }
+        }
+      }
+    }
+    if(ambiguous.length){console.log('[동명이인 그룹 오배정 스캔] 애매해서 안 건드린 목록:',ambiguous);}
+    _ytSetProg(`완료! 동명이인 ${collisions.length}개, 발견된 오배정 후보 ${rowsFound}개 중 ${fixed}개 자동 재배정`+
+      (manualSkipped?`, 수동편집이라 안 건드리고 넘어간 것 ${manualSkipped}개(직접 확인 필요)`:'')+
+      (ambiguous.length?`, 제목만으론 판단 안 되는 애매한 것 ${ambiguous.length}개(콘솔에 목록 출력함, 직접 확인 필요)`:'')+
+      (failed?` — 실패 ${failed}개(콘솔 확인)`:''));
+  }catch(e){
+    _ytSetProg('오류: '+e.message);
+  }finally{
+    if(btn)btn.disabled=false;
+  }
+}
+
 // _ytSweepAmbiguousCollabMistag와 같은 계열이지만 with_members/with_groups(다른 그룹 콜라보)가 아니라
 // members(자기 채널 자체 출연자) 컬럼을 재검증한다 — "이유"(에버글로우)처럼 흔한 단어와 겹치는 이름이
 // _ATM_HASHTAG_ONLY_NAMES에 새로 추가되면, 이미 members에 평문 매칭으로 잘못 들어간 값은 이걸로 걷어낸다.
@@ -14631,6 +14759,8 @@ document.getElementById('vid-tag-thumb-refresh').addEventListener('click',async 
   document.getElementById('sp-yt-sweep-banned')?.addEventListener('click',_ytSweepBannedVideos);
   document.getElementById('sp-collabfix-btn')?.addEventListener('click',_ytSweepAmbiguousCollabMistag);
   document.getElementById('sp-fix-jiukiki-btn')?.addEventListener('click',_ytForceRemoveJiuKiki);
+  document.getElementById('sp-fix-kikijiu-btn')?.addEventListener('click',_ytFixKikiJiuMisassigned);
+  document.getElementById('sp-scan-namecollide-btn')?.addEventListener('click',_ytScanAmbiguousNameGroupMisassignment);
   document.getElementById('sp-membersfix-btn')?.addEventListener('click',_ytSweepMembersMistag);
   document.getElementById('sp-yt-autotag')?.addEventListener('click',_ytAutoTagMembers);
   document.getElementById('sp-yt-retag-all')?.addEventListener('click',_ytRetagAllIncludingTagged);
