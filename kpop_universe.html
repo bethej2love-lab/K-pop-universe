@@ -1072,7 +1072,7 @@
   #vid-tag-with-results{margin-top:4px;max-height:140px;overflow-y:auto;border-radius:10px;background:rgba(255,255,255,0.04);}
   #vid-tag-with-results:empty{display:none;}
   .vid-tag-with-opt{padding:7px 10px;font-size:12px;color:rgba(220,230,250,0.85);cursor:pointer;}
-  .vid-tag-with-opt:hover{background:rgba(255,255,255,0.08);}
+  .vid-tag-with-opt:hover,.vid-tag-with-opt.kbd-active{background:rgba(255,255,255,0.08);}
   .vid-tag-with-opt-group{color:rgba(255,190,140,0.9);font-weight:600;}
   #vid-tag-with-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;}
   #vid-tag-with-chips:empty{display:none;}
@@ -1185,7 +1185,7 @@
     transition:background .1s;
   }
   .sr-item:last-child{border-bottom:none;}
-  .sr-item:hover,.sr-item:active{background:rgba(255,255,255,0.09);}
+  .sr-item:hover,.sr-item:active,.sr-item.kbd-active{background:rgba(255,255,255,0.09);}
   .sr-item-name{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
   .sr-item-name.sr-group{color:#9ab8dc;}
   .sr-tag{font-size:10px;color:#9ab8dc;letter-spacing:.05em;text-transform:uppercase;flex-shrink:0;}
@@ -1880,7 +1880,7 @@
 
     <div class="sp-subsec-lbl">동기화</div>
     <input type="text" class="sp-yt-key" id="sp-yt-key" placeholder="API 키 (AIzaSy...)" autocomplete="off" spellcheck="false">
-    <button class="sp-yt-sync" id="sp-yt-sync">전체 동기화 (공식 + 외부 채널)</button>
+    <button class="sp-yt-sync" id="sp-yt-sync">1. 전체 동기화 (공식 + 외부 채널)</button>
     <button class="sp-yt-sync" id="sp-vm-btn" style="margin-top:4px;opacity:.8;">영상 관리 패널</button>
     <div style="margin-top:6px;padding-top:6px;border-top:0.5px solid rgba(255,255,255,0.07)">
       <div style="font-size:10px;color:rgba(155,178,228,0.4);margin-bottom:2px">과거 영상 백필 (search API, 쿼터 많이 씀)</div>
@@ -1907,13 +1907,13 @@
     <button class="sp-yt-sync" id="sp-hnn-btn" style="opacity:.8;">데이터 퀄리티</button>
     <button class="sp-yt-sync" id="sp-wonkok-btn" style="margin-top:4px;opacity:.8;">원곡 오태깅 의심 목록</button>
 
-    <div class="sp-subsec-lbl" style="margin-top:10px;">데이터 정합성</div>
-    <button class="sp-yt-sync" id="sp-yt-autotag" style="margin-top:4px;opacity:.8;">멤버+콜라보 자동 태깅 (미태깅분)</button>
-    <button class="sp-yt-sync" id="sp-yt-retag-all" style="margin-top:2px;opacity:.6;font-size:10px;">멤버+콜라보 재태깅 (기존 태깅분 포함, 일회용)</button>
+    <div class="sp-subsec-lbl" style="margin-top:10px;">데이터 정합성 — 매일(동기화 뒤 순서대로)</div>
+    <button class="sp-yt-sync" id="sp-yt-autotag" style="margin-top:4px;opacity:.8;">2. 멤버+콜라보 자동 태깅 (미태깅분)</button>
+    <button class="sp-yt-sync" id="sp-collabfix-btn" style="margin-top:4px;opacity:.8;">3. 콜라보 오태깅 재검증(전체)</button>
+    <button class="sp-yt-sync" id="sp-scan-namecollide-btn" style="margin-top:4px;opacity:.8;">4. 동명이인 그룹 오배정 전체 스캔+재배정</button>
+    <div class="sp-subsec-lbl" style="margin-top:10px;">데이터 정합성 — 필요할 때만</div>
     <button class="sp-yt-sync" id="sp-membersfix-btn" style="margin-top:4px;opacity:.8;">자체 멤버 태깅 재검증(전체)</button>
-    <button class="sp-yt-sync" id="sp-collabfix-btn" style="margin-top:4px;opacity:.8;">콜라보 오태깅 재검증(전체)</button>
-    <button class="sp-yt-sync" id="sp-scan-namecollide-btn" style="margin-top:4px;opacity:.8;">동명이인 그룹 오배정 전체 스캔+재배정</button>
-    <button class="sp-yt-sync" id="sp-cleanup-15and-btn" style="margin-top:2px;opacity:.6;font-size:10px;">피프틴앤드 그룹 홈배정 재검증(일회용)</button>
+    <button class="sp-yt-sync" id="sp-yt-retag-all" style="margin-top:2px;opacity:.6;font-size:10px;">멤버+콜라보 재태깅 (기존 태깅분 포함, 일회용)</button>
     <button class="sp-yt-sync" id="sp-yt-sweep-banned" style="margin-top:4px;opacity:.8;">밴 인물 언급 영상 숨김 정리</button>
 
     <div class="sp-yt-prog" id="sp-yt-prog"></div>
@@ -3930,14 +3930,36 @@ function doSearch(q){
   else{res.style.display='block';}
 }
 
+// 검색 결과 목록에 화살표(↑/↓)로 이동 + 엔터로 선택하는 공용 키보드 내비게이션 — 검색창 4곳(웹/모바일
+// 우주 검색, 관리자 태그 모달의 "타 그룹 멤버"/"원곡자" 검색)에서 전부 재사용(2026-08-05, 사용자 요청).
+// 검색어가 바뀌면(input 이벤트) 선택 인덱스를 리셋해서 이전 선택이 새로 렌더된 엉뚱한 항목에 안 눌어붙게 함.
+function _wireListKeyboardNav(inputEl,resultsEl,itemSelector,onEscape){
+  let idx=-1;
+  const items=()=>[...resultsEl.querySelectorAll(itemSelector)];
+  function setIdx(next){
+    const list=items();
+    if(!list.length){idx=-1;return;}
+    list.forEach(el=>el.classList.remove('kbd-active'));
+    idx=((next%list.length)+list.length)%list.length;
+    list[idx].classList.add('kbd-active');
+    list[idx].scrollIntoView({block:'nearest'});
+  }
+  inputEl.addEventListener('input',()=>{idx=-1;});
+  inputEl.addEventListener('keydown',e=>{
+    const list=items();
+    if(e.key==='ArrowDown'){if(list.length){e.preventDefault();setIdx(idx+1);}}
+    else if(e.key==='ArrowUp'){if(list.length){e.preventDefault();setIdx(idx-1);}}
+    else if(e.key==='Enter'){
+      const target=(idx>=0&&list[idx])?list[idx]:list[0];
+      if(target){e.preventDefault();target.click();}
+    }else if(e.key==='Escape'&&onEscape){onEscape();}
+  });
+}
 const _si=document.getElementById('search-input');
 const _sr=document.getElementById('search-results');
 _si.addEventListener('input',e=>{doSearch(e.target.value);_trackSearchDebounced(e.target.value);});
 _si.addEventListener('focus',()=>doSearch(_si.value)); // 빈 채로 포커스되면 최근 검색 표시
-_si.addEventListener('keydown',e=>{
-  if(e.key==='Escape'){_si.value='';_sr.style.display='none';}
-  if(e.key==='Enter'){const first=_sr.querySelector('.sr-item');if(first)first.click();}
-});
+_wireListKeyboardNav(_si,_sr,'.sr-item',()=>{_si.value='';_sr.style.display='none';});
 _si.addEventListener('click',e=>e.stopPropagation());
 _sr.addEventListener('click',e=>e.stopPropagation());
 document.getElementById('search-wrap').addEventListener('click',e=>e.stopPropagation());
@@ -3949,10 +3971,7 @@ _mobSi.addEventListener('input',e=>{
   doSearch(e.target.value); // 비어있으면 doSearch가 알아서 최근 검색 표시(없으면 목록 닫힘)
 });
 _mobSi.addEventListener('focus',()=>doSearch(_mobSi.value)); // 빈 채로 포커스되면 최근 검색 표시
-_mobSi.addEventListener('keydown',e=>{
-  if(e.key==='Escape')exitMobSearch();
-  if(e.key==='Enter'){const first=_mobSrEl.querySelector('.sr-item');if(first)first.click();}
-});
+_wireListKeyboardNav(_mobSi,_mobSrEl,'.sr-item',()=>exitMobSearch());
 _mobSi.addEventListener('click',e=>e.stopPropagation());
 _mobSrEl.addEventListener('click',e=>e.stopPropagation());
 _mobSrEl.addEventListener('pointerdown',e=>e.stopPropagation()); // 자동완성 탭 시 window pointerdown(closePanels) 차단
@@ -10610,53 +10629,6 @@ async function _ytSweepAmbiguousCollabMistag(){
   }
 }
 
-// 피프틴앤드처럼 그룹 영문명이 짧은 특수문자 조합("15&")이라 예전엔 특수문자가 정규화 과정에서 지워져
-// 그냥 "15"라는 흔한 숫자로 오매칭되던 그룹 — 그 버그로 group_ko 자체가 잘못 홈배정된(실제로는 날짜·
-// 순위·회차 등 무관한 숫자 "15"였을 뿐인) 기존 행을 정리한다(2026-08-05, 사용자 제보 — "영상에 '15'
-// 포함된 온갖 영상이 다 끌려온 게 가장 심각한 오염"). 공식 채널 동기화(_ytSyncGroup)로 들어온 진짜
-// 영상은 채널 자체가 근거라 title 재매칭과 무관하게 항상 정확한데, 피프틴앤드는 활동 기간이 워낙
-// 짧아 자체 채널 동기화 대상이 아니었고 전부 외부 방송 채널 동기화(_extBuildRows, title 매칭 기반)
-// 산물이라 이 재검증이 안전함 — 다른 그룹에 재사용할 땐 이 전제(자체 채널 동기화 이력이 없는 그룹인지)
-// 부터 확인할 것. 삭제 대신 content_flag='무관' 처리(기존 "무맥락 의심 영상 정리"와 같은 안전한 관례 —
-// 데이터는 남고 화면에서만 빠짐, 되돌릴 수 있음). tags_manual=true는 무조건 스킵.
-async function _ytCleanupGroupHomeMisassign(gko){
-  if(!sb){_ytSetProg('Supabase 연결 없음');return;}
-  const btn=document.getElementById('sp-cleanup-15and-btn');
-  if(btn)btn.disabled=true;
-  try{
-    _ytSetProg(`[${gko} 그룹 홈배정 재검증] 조회 중…`);
-    const{data:rows,error}=await _sbFetchAll(()=>sb.from(_YT_TABLE)
-      .select('id,title,group_ko,tags_manual')
-      .eq('group_ko',gko)
-      .order('id'));
-    if(error){_ytSetProg('조회 실패: '+error.message);return;}
-    if(!rows?.length){_ytSetProg('해당 그룹 영상이 없어요');return;}
-    let checked=0,flagged=0,manualSkipped=0,failed=0;
-    for(const v of rows){
-      checked++;
-      const match=_m2ParseTitle(v.title||'');
-      if(match&&match.primaryGroup===gko){
-        _ytSetProg(`[${gko} 그룹 홈배정 재검증] ${checked}/${rows.length}개 확인 중… (무관 처리 ${flagged}개)`);
-        continue; // 여전히 정당한 매칭(제목에 진짜 그룹명이 있음) — 그대로 둠
-      }
-      if(v.tags_manual){manualSkipped++;continue;}
-      try{
-        const{error:e}=await sb.from(_YT_TABLE).update({content_flag:'무관'}).eq('id',v.id);
-        if(e)throw e;
-        flagged++;
-      }catch(e){console.error(`[${gko} 그룹 홈배정 재검증] 실패`,v.id,e.message);failed++;}
-      _ytSetProg(`[${gko} 그룹 홈배정 재검증] ${checked}/${rows.length}개 확인 중… (무관 처리 ${flagged}개)`);
-    }
-    _ytSetProg(`완료! ${gko} 소속 ${rows.length}개 중 ${flagged}개를 무관 처리(근거 없는 홈배정)`+
-      (manualSkipped?`, 수동편집이라 안 건드리고 넘어간 것 ${manualSkipped}개(직접 확인 필요)`:'')+
-      (failed?` — 실패 ${failed}개(콘솔 확인)`:''));
-  }catch(e){
-    _ytSetProg('오류: '+e.message);
-  }finally{
-    if(btn)btn.disabled=false;
-  }
-}
-
 // 지유/키키 사례를 "지유"라는 이름 하나에만 국한하지 않고, 로스터 전체의 동명이인(같은 name.ko를 쓰는
 // 서로 다른 그룹 멤버) 쌍 전부에 대해 같은 패턴(group_ko가 A인데 with_members에 동명이인의 B 표기가
 // 걸린 행)을 훑는 범용 스캔 — 외부 채널 동기화가 selfGko 없이 이름만으로 group_ko를 잘못 결정했던
@@ -14429,6 +14401,10 @@ function _closeVidTagModal(){
 document.getElementById('vid-tag-cancel').addEventListener('click',e=>{e.stopPropagation();_closeVidTagModal();});
 document.getElementById('vid-tag-overlay').addEventListener('click',e=>{e.stopPropagation();if(e.target===e.currentTarget)_closeVidTagModal();});
 document.getElementById('vid-tag-overlay').addEventListener('pointerdown',e=>e.stopPropagation());
+// 완전히 일치하는 이름(특히 "혁"처럼 한 글자짜리 등록명)을 검색 결과 맨 앞으로 — 안 그러면 "도혁"/
+// "준혁"처럼 부분 일치하는 다른 이름들이 8개 상한을 먼저 채워버려서 정작 정확히 찾던 사람이 목록에서
+// 밀려나 안 보이는 문제가 있었음(2026-08-05, 사용자 제보 — "혁" 검색했는데 "혁(템페스트)"가 안 보임).
+function _vidTagExactMatch(a,q,qLower){return a.name.ko===q||(a.name.en||'').toLowerCase()===qLower;}
 document.getElementById('vid-tag-with-search').addEventListener('input',e=>{
   const q=e.target.value.trim();
   const resultsEl=document.getElementById('vid-tag-with-results');
@@ -14454,11 +14430,14 @@ document.getElementById('vid-tag-with-search').addEventListener('input',e=>{
     });
     resultsEl.appendChild(opt);
   });
+  // 완전히 일치하는 이름(특히 "혁"처럼 한 글자짜리 등록명)을 맨 앞으로 — 안 그러면 "도혁"/"준혁"처럼
+  // 부분 일치하는 다른 이름들이 8개 상한을 먼저 채워버려서 정작 정확히 찾던 사람이 목록에서 밀려나
+  // 안 보이는 문제가 있었음(2026-08-05, 사용자 제보 — "혁" 검색했는데 "혁(템페스트)"가 안 보임).
   const matches=ARTISTS.filter(a=>
     (a.name.ko.includes(q)||(a.name.en||'').toLowerCase().includes(qLower))&&
     !_artistGroups(a).some(g=>g.ko===_vidTagTarget.ko)&&
     !already.has(a.name.ko+'|'+a.group.ko)
-  ).slice(0,8);
+  ).sort((a,b)=>(_vidTagExactMatch(b,q,qLower)?1:0)-(_vidTagExactMatch(a,q,qLower)?1:0)).slice(0,8);
   matches.forEach(a=>{
     const opt=document.createElement('div');
     opt.className='vid-tag-with-opt';
@@ -14473,6 +14452,7 @@ document.getElementById('vid-tag-with-search').addEventListener('input',e=>{
     resultsEl.appendChild(opt);
   });
 });
+_wireListKeyboardNav(document.getElementById('vid-tag-with-search'),document.getElementById('vid-tag-with-results'),'.vid-tag-with-opt');
 // 원곡자 검색 — "함께한" 검색과 달리 이 영상 소속 그룹/멤버도 검색 대상에서 제외하지 않음(자기 채널에
 // 자기 멤버 곡을 다른 그룹이 커버한 영상이면 원곡자가 바로 이 채널 소속 멤버인 경우가 흔함).
 document.getElementById('vid-tag-cover-search').addEventListener('input',e=>{
@@ -14501,7 +14481,7 @@ document.getElementById('vid-tag-cover-search').addEventListener('input',e=>{
   const matches=ARTISTS.filter(a=>
     (a.name.ko.includes(q)||(a.name.en||'').toLowerCase().includes(qLower))&&
     !already.has(a.name.ko+'|'+a.group.ko)
-  ).slice(0,8);
+  ).sort((a,b)=>(_vidTagExactMatch(b,q,qLower)?1:0)-(_vidTagExactMatch(a,q,qLower)?1:0)).slice(0,8);
   matches.forEach(a=>{
     const opt=document.createElement('div');
     opt.className='vid-tag-with-opt';
@@ -14516,6 +14496,7 @@ document.getElementById('vid-tag-cover-search').addEventListener('input',e=>{
     resultsEl.appendChild(opt);
   });
 });
+_wireListKeyboardNav(document.getElementById('vid-tag-cover-search'),document.getElementById('vid-tag-cover-results'),'.vid-tag-with-opt');
 document.getElementById('vid-tag-save').addEventListener('click',async e=>{
   e.stopPropagation();
   if(!_vidTagTarget||!sb)return;
@@ -14709,7 +14690,6 @@ document.getElementById('vid-tag-thumb-refresh').addEventListener('click',async 
   document.getElementById('sp-yt-sweep-banned')?.addEventListener('click',_ytSweepBannedVideos);
   document.getElementById('sp-collabfix-btn')?.addEventListener('click',_ytSweepAmbiguousCollabMistag);
   document.getElementById('sp-scan-namecollide-btn')?.addEventListener('click',_ytScanAmbiguousNameGroupMisassignment);
-  document.getElementById('sp-cleanup-15and-btn')?.addEventListener('click',()=>_ytCleanupGroupHomeMisassign('피프틴앤드'));
   document.getElementById('sp-membersfix-btn')?.addEventListener('click',_ytSweepMembersMistag);
   document.getElementById('sp-yt-autotag')?.addEventListener('click',_ytAutoTagMembers);
   document.getElementById('sp-yt-retag-all')?.addEventListener('click',_ytRetagAllIncludingTagged);

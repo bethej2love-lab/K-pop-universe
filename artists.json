@@ -39668,5 +39668,155 @@
     "links": {
       "namu": "https://namu.wiki/w/%EB%8F%84%ED%98%81(NAZE)"
     }
+  },
+  {
+    "name": {
+      "ko": "김우진",
+      "en": "Kim Woojin"
+    },
+    "group": {
+      "ko": "스트레이키즈",
+      "en": "Stray Kids"
+    },
+    "co": "무소속",
+    "active": false,
+    "color": [
+      222,
+      192,
+      118
+    ],
+    "bday": "1997.04.08",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/김우진(가수)"
+    }
+  },
+  {
+    "name": {
+      "ko": "태환",
+      "en": "Taehwan"
+    },
+    "group": {
+      "ko": "키빗업",
+      "en": "KEYVITUP"
+    },
+    "co": "iNKODE",
+    "active": true,
+    "color": [
+      119,
+      46,
+      0
+    ],
+    "bday": "2004.06.06",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/%ED%83%9C%ED%99%98"
+    }
+  },
+  {
+    "name": {
+      "ko": "현민",
+      "en": "Hyeonmin"
+    },
+    "group": {
+      "ko": "키빗업",
+      "en": "KEYVITUP"
+    },
+    "co": "iNKODE",
+    "active": true,
+    "color": [
+      119,
+      46,
+      0
+    ],
+    "bday": "2006.05.16",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/%ED%98%84%EB%AF%BC"
+    }
+  },
+  {
+    "name": {
+      "ko": "세나",
+      "en": "Sena"
+    },
+    "group": {
+      "ko": "키빗업",
+      "en": "KEYVITUP"
+    },
+    "co": "iNKODE",
+    "active": true,
+    "color": [
+      119,
+      46,
+      0
+    ],
+    "bday": "2007.08.05",
+    "nat": {
+      "ko": "일본",
+      "en": "JP"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/%EC%84%B8%EB%82%98"
+    }
+  },
+  {
+    "name": {
+      "ko": "재인",
+      "en": "Jaein"
+    },
+    "group": {
+      "ko": "키빗업",
+      "en": "KEYVITUP"
+    },
+    "co": "iNKODE",
+    "active": true,
+    "color": [
+      119,
+      46,
+      0
+    ],
+    "bday": "2007.10.20",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/%EC%9E%AC%EC%9D%B8"
+    }
+  },
+  {
+    "name": {
+      "ko": "루키아",
+      "en": "Rukia"
+    },
+    "group": {
+      "ko": "키빗업",
+      "en": "KEYVITUP"
+    },
+    "co": "iNKODE",
+    "active": true,
+    "color": [
+      119,
+      46,
+      0
+    ],
+    "bday": "2009.05.31",
+    "nat": {
+      "ko": "일본",
+      "en": "JP"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/%EB%A3%A8%ED%82%A4%EC%95%84"
+    }
   }
 ]
