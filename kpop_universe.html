@@ -13242,7 +13242,13 @@ function _makeChVidController(contId){
       const featuredP=cacheHit?Promise.resolve(cached.featuredFromDB)
         :(reset&&state.sortMode==='recommend'&&!randomize)
         ?_pickFeaturedVidFromDB(ko,state.memberKo,state.onlyMe,filter,state.viewMode,state.formatFilter):Promise.resolve(null);
-      const ordered=q=>q.order('published_at',{ascending:state.sortMode==='oldest'});
+      // '미태깅 우선'(admin 전용): Postgres 배열 비교는 원소 없는 '{}'가 항상 더 작다고 취급하므로,
+      // members 오름차순 정렬만 걸어도 미태깅(members가 빈 배열) 행이 자연스럽게 맨 앞으로 온다 —
+      // 새 컬럼/마이그레이션 없이 기존 컬럼만으로 되는 정렬이라 이렇게 구현함(2026-08-05, 수동 편집
+      // 편의용 관리자 요청). 같은 미태깅 묶음/이미 태깅된 묶음 안에서는 최신순으로 2차 정렬.
+      const ordered=q=>state.sortMode==='untagged'
+        ?q.order('members',{ascending:true}).order('published_at',{ascending:false})
+        :q.order('published_at',{ascending:state.sortMode==='oldest'});
       let mainP;
       const isChunkedRandomize=reset&&randomize&&state.total>_YT_PAGE;
       if(cacheHit){
@@ -13387,6 +13393,11 @@ function _makeChVidController(contId){
         else{selBtn.classList.add('active');selBtn.textContent='취소';}
       });
       cont.querySelector('.gc-ch-hd').appendChild(selBtn);
+      // 미태깅 우선 정렬(admin 전용) — 수동 편집할 영상을 찾기 편하게, 정렬 메뉴 맨 아래(구분선 앞)에 추가
+      const untaggedItem=document.createElement('button');
+      untaggedItem.className='gc-ch-sort-item';untaggedItem.type='button';untaggedItem.dataset.sort='untagged';
+      untaggedItem.innerHTML='<span class="chk">✓</span>미태깅 우선';
+      cont.querySelector('.gc-ch-sort-divider')?.before(untaggedItem);
     }
     // 웹은 마우스 휠이 세로 스크롤 값만 보내서 가로 전용 스크롤 영역이 그냥 무시해버림 —
     // 세로 휠 델타를 가로 스크롤로 그대로 옮겨줘서 알약이 넘칠 때 휠로 넘길 수 있게 함
