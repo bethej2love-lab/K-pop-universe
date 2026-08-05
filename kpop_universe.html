@@ -10823,7 +10823,7 @@ async function _ytSweepMembersMistag(){
     rows.forEach(v=>{
       const roster=ARTISTS.filter(a=>_artistGroups(a).some(g=>g.ko===v.group_ko)).map(a=>({ko:a.name.ko,en:a.name.en}));
       if(!roster.length)return;
-      const validSet=new Set(_atmResolveMembers(v.title,v.description,roster));
+      const validSet=new Set(_atmResolveMembers(v.title,v.description,roster,v.group_ko));
       const curM=v.members||[];
       const newM=curM.filter(mko=>validSet.has(mko));
       if(newM.length!==curM.length)updates.push({id:v.id,patch:{members:newM}});
@@ -12193,10 +12193,27 @@ function _atmStripSurname(nameChars){
 // 대량으로 오태깅됨 — 가인의 실명은 "손가인"이라 "손"은 그대로 인정하고 "송"만 예외 처리한다
 // (2026-08-04, 사용자 제보). 이름별로 특정 성씨만 배제해야 하는 경우가 더 생기면 여기에 추가.
 const _ATM_SURNAME_EXCLUDE={'가인':new Set(['송'])};
-function _atmMatchesMember(m,title,tokens){
+// 흔한단어 보호 목록 중 고인이 된 멤버들(종현/문빈/구하라/설리)은 "흔한 단어와 겹쳐서"가 아니라 "평문
+// 언급만으로 새 영상이 계속 태깅되는 걸 원치 않는다"는 별개의 이유로 해시태그 전용이라(2026-08-04 사용자
+// 요청), 아래 "그룹명+직캠 문맥이면 평문도 인정" 완화 대상에서 반드시 제외해야 함 — 문맥이 아무리 맞아도
+// 이 넷은 계속 해시태그가 있어야만 인정.
+const _ATM_NO_CONTEXT_RELAX_NAMES=new Set(['종현','문빈','구하라','설리']);
+// 흔한단어라 평문 매칭을 막아둔 이름(가을 등)이라도, 제목에 소속 그룹명 + "직캠"이 같이 있으면 그 영상은
+// 거의 확실히 그 멤버 개인 직캠이라 오염 위험이 낮음 — 평문 매칭을 다시 허용한다(2026-08-05, 아이브
+// 가을 사례 — "아이브 가을 직캠"처럼 그룹명+직캠이 다 있는데도 해시태그가 없어서 계속 미태깅으로 남던
+// 문제). groupKo는 호출부에서 이 멤버가 속한 채널의 그룹으로 넘겨준다.
+function _atmContextRelaxesHashtagOnly(name,title,groupKo){
+  if(_ATM_NO_CONTEXT_RELAX_NAMES.has(name))return false;
+  if(!groupKo||!/직캠/.test(title))return false;
+  const g=GROUPS[groupKo];
+  if(!g)return false;
+  const toks=[groupKo,g.en].filter(Boolean);
+  return toks.some(t=>title.toUpperCase().includes(t.toUpperCase()));
+}
+function _atmMatchesMember(m,title,tokens,groupKo){
   const name=m.ko;
   if(!name)return false;
-  const hashtagOnly=_isHashtagOnlyName(name);
+  const hashtagOnly=_isHashtagOnlyName(name)&&!_atmContextRelaxesHashtagOnly(name,title,groupKo);
   const nameChars=[...name];
   const multiChar=nameChars.length>1&&!hashtagOnly;
   const particles=['이','가','은','는','을','를','과','와','도','만','의','에','께','님','씨','아','야','랑','한테','에게'].map(_atmEscRe).join('|');
@@ -12249,11 +12266,11 @@ function _atmMatchesMember(m,title,tokens){
 // 5명이 다 태깅돼 미나미 연결 카드에까지 리브 단독 영상이 섞여 나오던 오염 사고로 발견됨(2026-08-03).
 // 신규 태깅(_ytAutoTagMembers)과 재검증(_ytSweepMembersMistag) 양쪽이 이 헬퍼를 공유해야, 재검증
 // 버튼을 눌렀을 때 이미 오염된 기존 행도 같은 기준으로 걷어낼 수 있다.
-function _atmResolveMembers(title,description,roster){
+function _atmResolveMembers(title,description,roster,groupKo){
   const t=title||'';
-  const hitTitle=roster.filter(m=>_atmMatchesMember(m,t,_atmTokenize(t))).map(m=>m.ko);
+  const hitTitle=roster.filter(m=>_atmMatchesMember(m,t,_atmTokenize(t),groupKo)).map(m=>m.ko);
   const searchText=description?`${t}\n${description}`:t;
-  const hitFull=roster.filter(m=>_atmMatchesMember(m,searchText,_atmTokenize(searchText))).map(m=>m.ko);
+  const hitFull=roster.filter(m=>_atmMatchesMember(m,searchText,_atmTokenize(searchText),groupKo)).map(m=>m.ko);
   if(roster.length>0&&hitFull.length===roster.length&&hitTitle.length<roster.length)return hitTitle;
   return hitFull;
 }
@@ -12298,7 +12315,7 @@ async function _ytAutoTagMembers(){
           // 오탐 위험이 커서 의도적으로 제목만 그대로 쓴다 — 아래 _m2ParseTitle(title,gko) 참고.
           // 단, 설명란까지 포함했을 때 로스터 전원이 매칭되는데 제목만으로는 전원이 안 잡히면 채널
           // 시그니처 블록일 가능성이 높다고 보고 제목 매칭만 신뢰함 — _atmResolveMembers 참고.
-          const hit=_atmResolveMembers(title,v.description,members);
+          const hit=_atmResolveMembers(title,v.description,members,gko);
           if(hit.length)patch.members=[...new Set(hit)];
         }
         // 콜라보(다른 그룹 멤버 언급) 감지 — 외부채널 태깅에 이미 쓰던 _m2ParseTitle을 그대로 재사용.
@@ -12374,7 +12391,7 @@ async function _ytRetagAllIncludingTagged(){
         // 자체 멤버: 새로 잡힌 이름을 기존 members에 합집합으로 더함(빼는 건 절대 안 함 — 삭제는
         // 별도 재검증 버튼의 몫).
         const curMembers=v.members||[];
-        const hit=_atmResolveMembers(title,v.description,members);
+        const hit=_atmResolveMembers(title,v.description,members,gko);
         const unionMembers=[...new Set([...curMembers,...hit])];
         if(unionMembers.length!==curMembers.length)patch.members=unionMembers;
         // 콜라보: 새로 특정 멤버까지 잡히면 "그룹 전체" 표시(with_groups)를 그 멤버 표기(with_members)로
