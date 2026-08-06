@@ -1895,6 +1895,7 @@
     <div class="sp-subsec-lbl">동기화</div>
     <input type="text" class="sp-yt-key" id="sp-yt-key" placeholder="API 키 (AIzaSy...)" autocomplete="off" spellcheck="false">
     <button class="sp-yt-sync" id="sp-yt-sync">1. 전체 동기화 (공식 + 외부 채널)</button>
+    <button class="sp-yt-sync" id="sp-yt-viewcount-btn" style="margin-top:4px;opacity:.8;">조회수만 갱신(이번주 직캠 TOP용)</button>
     <button class="sp-yt-sync" id="sp-vm-btn" style="margin-top:4px;opacity:.8;">영상 관리 패널</button>
     <div style="margin-top:6px;padding-top:6px;border-top:0.5px solid rgba(255,255,255,0.07)">
       <div style="font-size:10px;color:rgba(155,178,228,0.4);margin-bottom:2px">과거 영상 백필 (search API, 쿼터 많이 씀)</div>
@@ -4824,15 +4825,42 @@ function _pickMainVideo(pool){
 // 대표영상을 뺀 "나머지" 목록을 그룹카드 영상그리드처럼 섞는다 — 순서상 같은 비율(가로/쇼츠)이
 // 연속될 때만 2개씩 짝짓고, 비율이 바뀌는 경계에서 홀로 남는 카드는 2열 폭으로 넓혀 빈칸 없이 채운다.
 // (그룹카드의 _groupGcVids와 동일한 규칙 — 페이지네이션이 없는 단발성 렌더링이라 간소화한 버전)
+// 데스크톱에서 쇼츠가 홀로 남아 2열 폭으로 넓어지면 세로로 과하게 커 보여서(2026-08-06, 사용자 제보),
+// _groupGcVids의 avoidWiden과 동일하게 넓히는 대신 뒤쪽에서 같은 비율(쇼츠) 영상을 찾아 앞으로 당겨와
+// 짝을 채운다. 가로 영상은 그대로 넓혀도 문제없다는 지적이라 안 건드림. 모바일은 패널 폭 자체가 좁아서
+// 넓어져도 덜 커 보이므로 기존처럼 그냥 넓힌다.
 function _groupMixedVids(items){
+  const avoidShortsWiden=!isMob();
+  const arr=items.slice();
   const out=[];let pos=0,cat=null,lastEntry=null;
-  items.forEach(s=>{
-    const c=isShorts(s.u)?'short':'norm';
-    if(pos===1&&cat!==c){if(lastEntry)lastEntry.wide=true;pos=0;cat=null;}
+  for(let i=0;i<arr.length;i++){
+    let s=arr[i];
+    let c=isShorts(s.u)?'short':'norm';
+    if(pos===1&&cat!==c){
+      let swapIdx=-1;
+      if(avoidShortsWiden&&cat==='short'){
+        for(let j=i+1;j<arr.length;j++){
+          if((isShorts(arr[j].u)?'short':'norm')===cat){swapIdx=j;break;}
+        }
+      }
+      if(swapIdx!==-1){
+        const[matched]=arr.splice(swapIdx,1);
+        arr.splice(i,0,matched);
+        s=matched;c=cat;
+      }else{
+        if(lastEntry)lastEntry.wide=true;
+        pos=0;cat=null;
+      }
+    }
     const entry={song:s,wide:false};
     out.push(entry);lastEntry=entry;pos=(pos+1)%2;cat=pos===1?c:null;
-  });
-  if(pos===1&&lastEntry)lastEntry.wide=true; // 마지막에 홀로 남으면(더 이어질 페이지가 없으므로) 바로 넓힘
+  }
+  if(pos===1&&lastEntry){
+    // 마지막에 홀로 남으면(더 이어질 페이지가 없으므로) 바로 넓히는데, 그게 쇼츠고 데스크톱이면
+    // 더 짝지을 상대가 뒤에 없으니(swap 불가) 넓히지 않고 1열 폭 그대로 둔다.
+    const lastIsShort=isShorts(lastEntry.song.u);
+    if(!(avoidShortsWiden&&lastIsShort))lastEntry.wide=true;
+  }
   return out;
 }
 function _renderMixedVidGrid(items,containerEl,all,ctx){
@@ -10225,6 +10253,106 @@ async function _buildFeedWeeklyTopCams(list){
   }catch(e){/* 카드 하나 실패했다고 탐험 탭 전체가 막히면 안 됨 — 조용히 무시 */}
 }
 
+// "이름(그룹)" 형식 문자열 배열을 화면 표시용 텍스트로 접는다(그룹 표기는 떼고 이름만) — cover_of_members/
+// with_members 둘 다 이 포맷을 씀. 그룹 자체가 통째로 태깅된 cover_of_groups/with_groups는 그룹명 그대로.
+function _feedFormatNameList(namesWithGroup,groupsOnly){
+  const names=(namesWithGroup||[]).map(s=>{const m=s.match(/^(.+)\((.+)\)$/);return m?m[1]:s;});
+  return[...names,...(groupsOnly||[])].join(', ');
+}
+// 오늘의 커버곡 — cover_of_members/cover_of_groups(원곡 원작자 태깅, 원곡 오태깅 정리 도구가 관리)가 지금까지
+// admin 검수용으로만 쓰이고 탐험 탭엔 전혀 안 나오고 있었음. "이 영상 사실 커버곡인데 원곡자는 OO"로
+// 노출해서 놀라움 포인트를 주는 카드(2026-08-06, 사용자 요청으로 신설).
+async function _buildFeedCoverSpotlight(list){
+  if(!sb)return;
+  try{
+    const{data,error}=await sb.from(_YT_TABLE)
+      .select('id,title,thumb,category,content_flag,group_ko,cover_of_members,cover_of_groups')
+      .or('cover_of_members.neq.{},cover_of_groups.neq.{}')
+      .or('content_flag.is.null,content_flag.neq.기타')
+      .or('content_flag.is.null,content_flag.neq.무관')
+      .or('content_flag.is.null,content_flag.neq.hidden')
+      .limit(200);
+    if(error||!data?.length)return;
+    const vids=_filterBannedVideos(data).filter(v=>(v.cover_of_members?.length)||(v.cover_of_groups?.length));
+    if(!vids.length)return;
+    const v=vids[Math.floor(Math.random()*vids.length)];
+    const vidUrl=v.category==='short'?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;
+    const label=_cleanTitle(v.title);
+    const sub=(currentLang==='ko'?'원곡: ':'Original: ')+_feedFormatNameList(v.cover_of_members,v.cover_of_groups);
+    // 다른 두 모아보기 카드와 달리 목록 팝업이 아니라 영상 하나짜리 스포트라이트라 라이트박스를 바로
+    // 여는 게 자연스러움 — insertBefore/_feedNav 안 쓰는 이유는 위 _buildFeedFormatPick과 동일하게,
+    // 탐험 탭을 안 닫고 그 위에 그냥 라이트박스만 띄우기 위함(2026-08-06).
+    _appendFeedCard(list,'🎤',label,sub,()=>{
+      openLightbox(vidUrl,v.category==='short',[{t:v.title,u:vidUrl,thumb:v.thumb}],0,{groupKo:v.group_ko});
+    },v.thumb);
+  }catch(e){/* 조용히 무시 */}
+}
+// 급상승 하트 영상 — YouTube API view_count 동기화(관리자가 눌러줘야만 채워짐)에 의존하지 않고, 앱
+// 안에서 사용자들이 직접 누른 하트 집계(_scrapCounts, 세션당 한 번 로드됨)로 "지금 인기 있는 영상"을
+// 보여주는 카드. 정확히는 실시간 증가율(velocity)까지는 못 재고 누적 하트 수 기준이지만, 최근 발행분
+// 위주로 좁혀서 "요즘 뜨는" 느낌을 살렸다(2026-08-06, 사용자 요청).
+async function _buildFeedTrendingHearts(list){
+  if(!sb||!_scrapCounts.size)return;
+  try{
+    const idOf=url=>url.includes('shorts/')?url.split('shorts/')[1]:url.split('v=')[1];
+    // 하트 많은 순 상위 후보만 실제 메타데이터 조회 대상으로 좁힘(테이블 전체를 안 훑어도 됨)
+    const topUrls=[..._scrapCounts.entries()].sort((a,b)=>b[1]-a[1]).slice(0,40);
+    const ids=[...new Set(topUrls.map(([url])=>idOf(url)).filter(Boolean))];
+    if(!ids.length)return;
+    const{data,error}=await sb.from(_YT_TABLE)
+      .select('id,title,thumb,category,content_flag')
+      .in('id',ids)
+      .or('content_flag.is.null,content_flag.neq.기타')
+      .or('content_flag.is.null,content_flag.neq.무관')
+      .or('content_flag.is.null,content_flag.neq.hidden');
+    if(error||!data?.length)return;
+    const vids=_filterBannedVideos(data);
+    if(!vids.length)return;
+    const countOf=v=>{
+      const url=v.category==='short'?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;
+      return _scrapCounts.get(url)||0;
+    };
+    vids.sort((a,b)=>countOf(b)-countOf(a));
+    const top=vids[0];
+    if(countOf(top)<=0)return;
+    const vidUrl=top.category==='short'?`https://youtube.com/shorts/${top.id}`:`https://www.youtube.com/watch?v=${top.id}`;
+    const label=_cleanTitle(top.title);
+    const sub=(currentLang==='ko'?`❤️ ${countOf(top)}개 · 인기 급상승`:`❤️ ${countOf(top)} · trending`);
+    _appendFeedCard(list,'🔥',label,sub,()=>{
+      openLightbox(vidUrl,top.category==='short',[{t:top.title,u:vidUrl,thumb:top.thumb}],0,{});
+    },top.thumb);
+  }catch(e){/* 조용히 무시 */}
+}
+// 콜라보 스포트라이트 — with_members/with_groups(다른 그룹 게스트 출연)가 태깅된 영상을 직접 카드로
+// 노출. "랜덤 연결"(3번, 연결 카드까지 들어가는 버전)과 달리 이건 영상 자체가 주인공이라 바로 라이트박스로
+// 연결됨(2026-08-06, 사용자 요청).
+async function _buildFeedCollabSpotlight(list){
+  if(!sb)return;
+  try{
+    const{data,error}=await sb.from(_YT_TABLE)
+      .select('id,title,thumb,category,content_flag,group_ko,with_members,with_groups')
+      .or('with_members.neq.{},with_groups.neq.{}')
+      .or('content_flag.is.null,content_flag.neq.기타')
+      .or('content_flag.is.null,content_flag.neq.무관')
+      .or('content_flag.is.null,content_flag.neq.hidden')
+      // 각자 따로 나온 컴필레이션은 "콜라보"라 부르기엔 부적절해서 제외 — content_flag가 NULL인 행이
+      // 대다수라 .neq()만 쓰면 SQL 3치 논리상 NULL도 통째로 걸러져버림(NULL != 값은 unknown), 위의 다른
+      // 제외 조건들처럼 반드시 is.null과 함께 or로 묶어야 함(2026-08-06, 작성 중 자체 검토로 발견).
+      .or('content_flag.is.null,content_flag.neq.개별출연')
+      .limit(300);
+    if(error||!data?.length)return;
+    const vids=_filterBannedVideos(data).filter(v=>(v.with_members?.length)||(v.with_groups?.length));
+    if(!vids.length)return;
+    const v=vids[Math.floor(Math.random()*vids.length)];
+    const vidUrl=v.category==='short'?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;
+    const label=_cleanTitle(v.title);
+    const sub=`${v.group_ko} × ${_feedFormatNameList(v.with_members,v.with_groups)}`;
+    _appendFeedCard(list,'🤝',label,sub,()=>{
+      openLightbox(vidUrl,v.category==='short',[{t:v.title,u:vidUrl,thumb:v.thumb}],0,{groupKo:v.group_ko});
+    },v.thumb);
+  }catch(e){/* 조용히 무시 */}
+}
+
 function _buildFeedDiscovery(){
   const list=document.getElementById('feed-discovery');
   list.innerHTML='';
@@ -10232,6 +10360,9 @@ function _buildFeedDiscovery(){
   _buildFeedFormatPick(list);
   _buildFeedGenCamPick(list);
   _buildFeedWeeklyTopCams(list);
+  _buildFeedCoverSpotlight(list);
+  _buildFeedTrendingHearts(list);
+  _buildFeedCollabSpotlight(list);
 
   // 1. 랜덤 그룹
   const gKeys=Object.keys(GROUPS||{});
@@ -13000,17 +13131,42 @@ async function _ytBackfillChannelCore(ch,fromYear,toYear,callBudget,onProg,query
     let d;
     try{
       const url=`https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${channelId}&type=video&order=date&publishedAfter=${publishedAfter}&publishedBefore=${publishedBefore}&maxResults=50&key=${key}`+(query?`&q=${encodeURIComponent(query)}`:'')+(pageToken?'&pageToken='+pageToken:'');
-      const r=await fetch(url);
-      if(!r.ok)throw new Error('YouTube API 오류 '+r.status);
-      d=await r.json();
-      if(d.error)throw new Error(d.error.message);
+      // 429(rateLimitExceeded)는 하루 쿼터 소진(403 quotaExceeded)과 달리 "너무 빨리 연속 호출"해서
+      // 걸리는 일시적인 제한이라, 몇 초만 쉬었다 다시 시도하면 대부분 풀린다 — 그런데 예전엔 429도 그냥
+      // 즉시 포기하고 다음 채널로 넘어가버려서, "6채널 순서대로" 버튼처럼 채널을 연달아 바로바로 호출하는
+      // 경로에서 한 번 걸리면 남은 채널이 전부 도미노로 같이 429나는 게 실측 확인됨(2026-08-06, 사용자 제보
+      // — 엠넷/뮤직뱅크/쇼음악중심이 연달아 전부 429). 429일 때만 지수 백오프로 최대 3번 재시도한다.
+      let r,attempt=0;
+      while(true){
+        r=await fetch(url);
+        if(r.status!==429||attempt>=3)break;
+        attempt++;
+        const waitMs=1000*Math.pow(2,attempt); // 2s,4s,8s
+        console.log(`[백필] ${ch.name} 429(요청 과다) — ${waitMs/1000}초 대기 후 재시도(${attempt}/3)`);
+        await new Promise(res=>setTimeout(res,waitMs));
+      }
+      // 예전엔 !r.ok면 응답 바디를 읽지도 않고 바로 던져서, quotaExceeded 같은 실제 에러 사유(d.error.errors[0].reason)가
+      // 콘솔에 전혀 안 남았음 — 0개로 끝나는 백필이 "쿼터 초과라 그런 건지, 진짜 그 구간에 영상이 없는 건지"
+      // 구분이 안 되던 원인(2026-08-06, 사용자 요청으로 진단 로그 추가). 상태 코드와 무관하게 항상 바디를 먼저
+      // 읽고, 실제 API 응답 전체를 콘솔에 남긴 뒤에 에러 여부를 판단한다.
+      d=await r.json().catch(()=>null);
+      if(!r.ok||d?.error){
+        const reason=d?.error?.errors?.[0]?.reason;
+        console.error(`[백필] ${ch.name} API 오류 — status:${r.status}, reason:${reason||'(없음)'}, 응답:`,d);
+        throw new Error(d?.error?.message||('YouTube API 오류 '+r.status));
+      }
+      // 정상 응답인데 결과가 비어있는 경우 — totalResults까지 같이 남겨서 "이 구간엔 진짜 없음"인지
+      // "필터 조건이 뭔가 어긋나서 못 찾음"인지 나중에 구분할 수 있게 함.
+      if(!d?.items?.length){
+        console.log(`[백필] ${ch.name} 빈 응답 — pageInfo:`,d?.pageInfo,`| 요청 구간: ${fromYear}~${toYear}`+(query?`, q="${query}"`:''));
+      }
     }catch(e){
       console.error(`[백필] ${ch.name} 검색 실패, 다음에 이어받음:`,e.message);
       break; // pageToken은 방금 실패한 페이지를 그대로 가리키므로 다음 호출에 그대로 넘기면 이어서 받음
     }
     calls++;
     const vids=[];
-    for(const item of(d.items||[])){
+    for(const item of(d?.items||[])){
       const vid=item.id?.videoId;
       if(!vid)continue;
       if(_isBannedVideoTitle(item.snippet.title))continue; // 성범죄로 퇴출된 인물 관련 영상은 백필 단계에서부터 저장하지 않음
@@ -13036,7 +13192,7 @@ async function _ytBackfillChannelCore(ch,fromYear,toYear,callBudget,onProg,query
         added+=rows.length;
       }
     }
-    pageToken=d.nextPageToken||'';
+    pageToken=d?.nextPageToken||'';
     if(!pageToken)done=true;
     if(onProg)onProg({added,skipped,calls});
     if(pageToken)await new Promise(res=>setTimeout(res,150));
@@ -13097,8 +13253,12 @@ async function _ytBackfillPriorityChannels(fromYear,toYear,query){
     const TOTAL_BUDGET=90; // 하루 무료 쿼터 안전선을 6개 채널이 나눠 씀 — 한 번에 다 안 끝나고 여러 번에 걸쳐 진행됨
     let remaining=TOTAL_BUDGET;
     const summary=[];
-    for(const ch of channels){
+    for(const[idx,ch] of channels.entries()){
       if(remaining<=0)break;
+      // 채널 사이에 짧게 쉬어줌 — 예전엔 채널이 끝나자마자 바로 다음 채널을 호출해서, 한 채널에서 429(요청
+      // 과다)가 나면 남은 채널이 전부 도미노로 같이 429나는 문제가 있었음(2026-08-06, 사용자 제보로 발견
+      // — 엠넷/뮤직뱅크/쇼음악중심 연쇄 429). 첫 채널은 바로 시작해도 되므로 idx>0일 때만 대기.
+      if(idx>0)await new Promise(res=>setTimeout(res,1200));
       _ytSetProg(`[6채널 백필] ${ch.name} 시작… (남은 예산 ${remaining}회)`);
       // 채널 하나가 실패해도(채널ID 조회 실패 등) 나머지 채널은 계속 진행해야 하므로 채널별로 개별 처리 —
       // 예전엔 여기에 try/catch가 없어서 첫 채널이 실패하면 전체가 즉시 중단되고 나머지는 시도조차 안 됐음.
@@ -13317,6 +13477,18 @@ function _withTimeout(promise,ms,msg){
 }
 function _makeChVidController(contId){
   let state={ko:null,memberKo:null,filter:'all',sortMode:'recommend',viewMode:'category',formatFilter:null,formats:[],offset:0,total:0,pos:0,cat:null,gen:0,appendLock:false,trailingEl:null,hasMore:false,allVids:[],wrapEnd:0,wrapPhase:false,unitFilter:null};
+  // 탈퇴/비활동(active:false) 멤버는 "그룹 전체(미태깅)" 영상까지 무제한으로 끌어오면 안 됨 — 탈퇴 이후
+  // 올라온, 그 멤버가 실제론 없는데 아직 개별 태깅이 안 됐을 뿐인 영상까지 멤버 카드에 새어 들어가는
+  // 원인이었음(2026-08-06, 사용자 제보 — (여자)아이들 전 멤버 수진 카드에 탈퇴 이후 최근 영상 노출).
+  // artists.json의 "left"(탈퇴일 — 나무위키 "이전 소속사" 계약기간 종료일 기반 근사치, 정확한 탈퇴일보다
+  // 며칠~몇 달 늦을 수 있음) 필드가 있으면 그 날짜까지의 미태깅 영상만 허용하고, 없으면(아직 못 채운
+  // 멤버) 안전하게 미태깅 영상 자체를 아예 안 준다(기존 방식 그대로 폴백).
+  function _memberVideoCutoff(memberKo,ko){
+    if(!memberKo)return{active:true};
+    const a=ARTISTS.find(x=>x.name.ko===memberKo&&_artistGroups(x).some(g=>g.ko===ko));
+    if(!a||a.active!==false)return{active:true};
+    return{active:false,left:a.left?a.left.replace(/\./g,'-'):null};
+  }
   let observer=null;
   let _selMode=false;
   let _selIds=new Set();
@@ -13526,7 +13698,10 @@ function _makeChVidController(contId){
     if(incomingTrailingEl)incomingTrailingEl.classList.toggle('gc-ch-wide',g.widenPrevTrailing);
     const newTrailing=g.endPos===1?pageNodes[pageNodes.length-1]:null;
     if(newTrailing&&!hasMore){
-      newTrailing.classList.add('gc-ch-wide');
+      // 더 이어질 페이지가 없어 짝지을 상대를 찾을 방법이 없는 진짜 마지막 예외 케이스 — 데스크톱에서
+      // 쇼츠라면 넓히는 대신 그냥 1열 폭 그대로 두고 옆 칸은 빈 채로 남긴다(2026-08-06, 위 _groupGcVids
+      // avoidShortsWiden과 동일한 이유 — 쇼츠가 2열 폭으로 넓어지면 세로로 과하게 커 보임).
+      if(!(!isMob()&&newTrailing.classList.contains('is-short')))newTrailing.classList.add('gc-ch-wide');
       state.trailingEl=null;
     }else{
       state.trailingEl=newTrailing;
@@ -13619,7 +13794,13 @@ function _makeChVidController(contId){
         // with_members로 게스트 출연 태깅된 영상까지 포함 — 그룹 카드가 with_groups로 콜라보를 끌어오는 것과
         // 대칭되는 처리. 이게 빠져있으면 자체 채널 영상은 아직 없고 다른 그룹 채널 콘텐츠(챌린지·직캠 등)에
         // 개인 태깅으로만 쌓인 신인 그룹(예: 넥스지)은 그룹 카드엔 (with_groups로) 뭔가 보여도 멤버 카드는 텅 비어 보였음.
-        q=q.or(`and(group_ko.eq.${_pgFilterVal(ko)},members.eq.{}),and(group_ko.eq.${_pgFilterVal(ko)},members.cs.{${_pgFilterVal(state.memberKo)}}),with_members.cs.{${_pgFilterVal(state.memberKo+'('+ko+')')}}`);
+        // 탈퇴/비활동 멤버는 "그룹 전체" 미태깅 영상 절에 탈퇴일 컷오프를 걸거나(위 _memberVideoCutoff
+        // 주석 참고), 탈퇴일을 아직 모르면 아예 뺀다.
+        const _cutoff=_memberVideoCutoff(state.memberKo,ko);
+        const ownGroupWideClause=_cutoff.active?`and(group_ko.eq.${_pgFilterVal(ko)},members.eq.{}),`
+          :_cutoff.left?`and(group_ko.eq.${_pgFilterVal(ko)},members.eq.{},published_at.lte.${_cutoff.left}),`
+          :'';
+        q=q.or(`${ownGroupWideClause}and(group_ko.eq.${_pgFilterVal(ko)},members.cs.{${_pgFilterVal(state.memberKo)}}),with_members.cs.{${_pgFilterVal(state.memberKo+'('+ko+')')}}`);
       }else{
         // 그룹 카드: 내 채널 영상은 멤버 태깅 여부와 무관하게 전부 노출(그룹 전체가 나오는 영상이든
         // 특정 멤버 몇 명만 나오는 영상이든 다 그룹 콘텐츠) + 다른 채널 영상인데 아이유 팔레트처럼
@@ -14046,7 +14227,14 @@ function _makeChVidController(contId){
         // 게스트)나 '외부인' 플래그가 있으면 단독 출연이 아님(2026-08-04).
         stillQualifies=isOwnChannel&&members.length===1&&members[0]===state.memberKo&&!withMembers.length&&!withGroups.length&&flag!=='외부인';
       }else if(state.memberKo){
-        stillQualifies=(isOwnChannel&&members.length===0)||members.includes(state.memberKo)||withMembers.includes(`${state.memberKo}(${ko})`);
+        // load()의 ownGroupWideClause와 동일한 기준 — 탈퇴/비활동 멤버는 "그룹 전체 미태깅" 자격을
+        // 탈퇴일 이전 영상에만 줌. 이 경로(태그 모달 저장 직후 즉시 반영)로 넘어오는 newRow엔
+        // published_at이 안 실려있어서(태그 모달이 발행일을 안 다루므로) 판단 불가 시엔 안전하게 자격
+        // 없음으로 처리 — load()에서 애초에 서버 쿼리로 걸러지므로 실제로는 거의 안 마주치는 경로.
+        const _cutoff=_memberVideoCutoff(state.memberKo,ko);
+        const ownGroupWideOk=isOwnChannel&&members.length===0&&
+          (_cutoff.active||(!!_cutoff.left&&!!newRow.published_at&&newRow.published_at<=_cutoff.left));
+        stillQualifies=ownGroupWideOk||members.includes(state.memberKo)||withMembers.includes(`${state.memberKo}(${ko})`);
       }else{
         stillQualifies=(isOwnChannel&&members.length===0)||withGroups.includes(ko);
       }
@@ -14391,7 +14579,11 @@ function _groupGcVids(items,featured,startPos,startCat,avoidWiden){
   // avoidWiden(넓게보기 모드): 홀로 남은 카드를 2칸 폭으로 넓히면(특히 쇼츠) 카드 폭이 넓어진 만큼
   // 세로로 과하게 커 보이므로, 넓히는 대신 뒤쪽에서 같은 비율(가로/쇼츠) 영상을 찾아 앞으로 당겨와
   // 짝을 채운다. 뒤에 같은 비율 영상이 하나도 안 남아있을 때만 기존처럼 넓히기로 폴백한다.
-  const arr=avoidWiden?items.slice():items;
+  // 쇼츠는 "넓게 보기" 토글 여부와 무관하게 데스크톱이면 항상 이 회피 로직을 태운다 — 기본 패널
+  // 폭에서도 쇼츠 하나가 2열 폭으로 넓어지면 세로로 과하게 커 보이는 건 마찬가지였음(2026-08-06,
+  // 사용자 제보). 가로(랜딩) 영상은 지금처럼 넓게보기 모드에서만 회피(원래도 불만 대상 아니었음).
+  const avoidShortsWiden=!isMob();
+  const arr=(avoidWiden||avoidShortsWiden)?items.slice():items;
   for(let i=0;i<arr.length;i++){
     let v=arr[i];
     let c=v.category==='short'?'short':'norm';
@@ -14407,7 +14599,7 @@ function _groupGcVids(items,featured,startPos,startCat,avoidWiden){
     }
     if(pos===1&&cat!==c){
       let swapIdx=-1;
-      if(avoidWiden){
+      if(avoidWiden||(avoidShortsWiden&&cat==='short')){
         for(let j=i+1;j<arr.length;j++){
           if((arr[j].category==='short'?'short':'norm')===cat){swapIdx=j;break;}
         }
@@ -14963,6 +15155,12 @@ document.getElementById('vid-tag-thumb-refresh').addEventListener('click',async 
     if(btn)btn.disabled=true;
     await _ytSyncAll();
     await _ytSyncExtChannels();
+    await _ytRefreshViewCounts();
+    if(btn)btn.disabled=false;
+  });
+  document.getElementById('sp-yt-viewcount-btn')?.addEventListener('click',async()=>{
+    const btn=document.getElementById('sp-yt-viewcount-btn');
+    if(btn)btn.disabled=true;
     await _ytRefreshViewCounts();
     if(btn)btn.disabled=false;
   });
