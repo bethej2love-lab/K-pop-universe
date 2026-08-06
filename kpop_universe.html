@@ -12661,13 +12661,25 @@ async function _ytAutoTagMembers(){
       // 4개 조건을 .or() 한 번에 다 넣어야 OR로 묶임 — .or()를 여러 번 체이닝하면 AND로 묶여서
       // "members도 비고 AND with_members도 빈" 행만 걸리는 버그가 났던 적이 있었음(같은 실수 재발 방지).
       const{data:rows,error}=await _sbFetchAll(()=>sb.from(_YT_TABLE)
-        .select('id,title,description,members,with_members,with_groups')
+        .select('id,title,members,with_members,with_groups')
         .eq('group_ko',gko)
         .eq('tags_manual',false) // 관리자가 태그 모달에서 직접 저장한 행은 자동 태깅이 절대 건드리지 않음
         .or('members.eq.{},members.is.null,with_members.eq.{},with_members.is.null')
         .order('id'));
       if(error){console.error(`[자동 태깅] ${gko} 조회 실패:`,error.message);continue;}
       if(!rows?.length)continue;
+      // description(설명란)은 members가 아직 빈 행에만 필요(콜라보 감지는 아래 _m2ParseTitle이 제목만
+      // 씀) — 위 select에서 아예 안 받아오고, 실제로 필요한 행 id만 추려서 별도로 가볍게 다시 받는다.
+      // 이 버튼은 "매일" 루틴이라 매번 그룹 전체를 훑는데, with_members만 비어있고 members는 이미 채워진
+      // 행까지 description을 통째로 받아오면 그 텍스트가 그냥 버려져서 egress 낭비였음(2026-08-06, 사용자
+      // 제보 — Supabase 무료 티어 egress 한도 초과, 관리자 스윕 쿼리들이 유력 원인으로 지목됨).
+      const needDescIds=rows.filter(v=>!v.members?.length).map(v=>v.id);
+      const descByIdText=new Map();
+      for(let i=0;i<needDescIds.length;i+=500){
+        const{data:descRows,error:descErr}=await sb.from(_YT_TABLE).select('id,description').in('id',needDescIds.slice(i,i+500));
+        if(descErr){console.error(`[자동 태깅] ${gko} description 조회 실패:`,descErr.message);continue;}
+        (descRows||[]).forEach(r=>descByIdText.set(r.id,r.description));
+      }
       const updates=[];
       rows.forEach(v=>{
         const title=v.title||'';
@@ -12679,7 +12691,7 @@ async function _ytAutoTagMembers(){
           // 오탐 위험이 커서 의도적으로 제목만 그대로 쓴다 — 아래 _m2ParseTitle(title,gko) 참고.
           // 단, 설명란까지 포함했을 때 로스터 전원이 매칭되는데 제목만으로는 전원이 안 잡히면 채널
           // 시그니처 블록일 가능성이 높다고 보고 제목 매칭만 신뢰함 — _atmResolveMembers 참고.
-          const hit=_atmResolveMembers(title,v.description,members,gko);
+          const hit=_atmResolveMembers(title,descByIdText.get(v.id),members,gko);
           if(hit.length)patch.members=[...new Set(hit)];
         }
         // 콜라보(다른 그룹 멤버 언급) 감지 — 외부채널 태깅에 이미 쓰던 _m2ParseTitle을 그대로 재사용.
@@ -13589,10 +13601,13 @@ async function _waitAppendUnlock(state,maxMs=5000){
 // 써야 함 — 데스크톱에서는 그룹 카드+멤버 카드가 동시에 도킹돼 화면에 같이 떠 있을 수 있어서, 상태를
 // 전역 변수 하나로 공유하면 한쪽을 열 때 다른 쪽의 페이지네이션/옵저버가 깨짐.
 // 같은 세션에서 방금 봤던 카드를 다시 열면(뒤로가기, 멤버 카드 간 이동 등) 첫 페이지를 처음부터
-// 다시 쿼리하지 않도록 짧게 캐시 — 탐험 피드 캐시와 동일한 3분 TTL 관례를 그대로 씀.
-// randomize(↻)는 항상 새로 뽑아야 하는 액션이라 캐시 대상에서 제외.
+// 다시 쿼리하지 않도록 캐시 — randomize(↻)는 항상 새로 뽑아야 하는 액션이라 캐시 대상에서 제외.
+// 원래 탐험 피드 캐시와 같은 3분이었는데, Supabase 무료 티어 egress 한도 초과(2026-08-06, 사용자 제보)
+// 이후 같은 카드를 여러 번 오가며 재조회하는 걸 더 줄이려고 15분으로 늘림 — 탐험 피드 캐시(_FEED_DISCOVERY_TTL,
+// "반복 새로고침처럼 느껴진다"는 오해로 한 번 없앴다가 사용자가 원상복구를 요청했던 별개의 캐시)는 이거랑
+// 다른 상수라 안 건드림.
 const _chVidPageCache=new Map(); // key -> {data,count,featuredFromDB,ts}
-const _CH_VID_CACHE_TTL=180000;
+const _CH_VID_CACHE_TTL=900000;
 function _chVidCacheKey(contId,ko,state){
   return[contId,ko,state.memberKo||'',state.filter,state.sortMode,state.viewMode,state.formatFilter||'',state.onlyMe?1:0,state.unitFilter||'',state.searchQ||''].join('|');
 }
