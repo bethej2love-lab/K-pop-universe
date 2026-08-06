@@ -1284,7 +1284,7 @@
   /* ── Mob filter sheet ───────────────────────────── */
   #mob-filter-sheet{
     display:none;position:fixed;left:0;right:0;
-    bottom:var(--sheet-bottom,73px);height:45vh;min-height:45vh;max-height:45vh;
+    bottom:var(--sheet-bottom,73px);height:58vh;min-height:58vh;max-height:58vh;
     border-radius:20px 20px 0 0;overflow:hidden;
     background:rgba(14,18,34,0.97);
     backdrop-filter:blur(36px);-webkit-backdrop-filter:blur(36px);
@@ -1297,7 +1297,7 @@
   }
   #mob-filter-sheet.bs-open{transform:translateY(0);}
   @media(min-width:769px){#mob-filter-sheet{display:none!important;}}
-  #mob-filter-sheet-inner{overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;max-height:calc(45vh - 40px);overscroll-behavior:contain;padding:0 20px 16px;}
+  #mob-filter-sheet-inner{overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;max-height:calc(58vh - 40px);overscroll-behavior:contain;padding:0 20px 16px;}
   #mob-filter-sheet #filter-panel{display:block!important;}
   .conn-handle{width:36px;height:4px;background:rgba(255,255,255,0.14);border-radius:2px;margin:10px auto 6px;display:block;}
   .conn-hd{display:flex;align-items:center;gap:8px;margin-bottom:13px;}
@@ -1919,6 +1919,8 @@
     <button class="sp-yt-sync" id="sp-scan-namecollide-btn" style="margin-top:4px;opacity:.8;">4. 동명이인 그룹 오배정 전체 스캔+재배정</button>
     <div class="sp-subsec-lbl" style="margin-top:10px;">데이터 정합성 — 필요할 때만</div>
     <button class="sp-yt-sync" id="sp-membersfix-btn" style="margin-top:4px;opacity:.8;">자체 멤버 태깅 재검증(전체)</button>
+    <button class="sp-yt-sync" id="sp-catfix-btn" style="margin-top:4px;opacity:.8;">영상 카테고리(라이브 등) 재분류(전체)</button>
+    <button class="sp-yt-sync" id="sp-titlenorm-btn" style="margin-top:4px;opacity:.8;">검색용 제목 정규화 백필</button>
     <button class="sp-yt-sync" id="sp-yt-retag-all" style="margin-top:2px;opacity:.6;font-size:10px;">멤버+콜라보 재태깅 (기존 태깅분 포함, 일회용)</button>
     <button class="sp-yt-sync" id="sp-btsjinfix-btn" style="margin-top:2px;opacity:.6;font-size:10px;">방탄소년단 '진' 오배정 정리 (일회용)</button>
     <button class="sp-yt-sync" id="sp-yt-sweep-banned" style="margin-top:4px;opacity:.8;">밴 인물 언급 영상 숨김 정리</button>
@@ -5348,6 +5350,23 @@ async function _fetchApiCollabData(anchor){
     if(groupTagQ.error)throw new Error(groupTagQ.error.message);
     if(reverseGroupTagQ.error)throw new Error(reverseGroupTagQ.error.message);
     const rows=_filterBannedVideos([...(ownQ.data||[]),...(taggedQ.data||[])]);
+    const groupTagRows=_filterBannedVideos(groupTagQ.data||[]);
+    const reverseGroupTagRows=_filterBannedVideos(reverseGroupTagQ.data||[]);
+    // DB category가 부정확해 실제론 쇼츠(세로)인데 가로로 표시될 수 있어 보정 — 멤버 카드
+    // (_enrichMemberVideosFromApi)/그룹 카드 채널 그리드(_makeChVidController)에 이미 있는 것과 동일한
+    // 보정 패스인데 연결 카드에만 빠져있었음 — 그래서 연결 카드에서만 쇼츠가 9:16 대신 기본 16:9 박스로
+    // 눌려 보이던 문제(2026-08-06, 사용자 제보). song 조립(아래 v.category==='short' 분기)보다 먼저 돌려서
+    // URL 형식(shorts/ vs watch?v=)에 바로 반영되게 함 — _probeShortsBatch는 refs 안 객체의 category를
+    // 직접 mutate하므로, 여기서 한 번만 돌리면 아래 rows/groupTagRows/reverseGroupTagRows 전부에 반영됨.
+    const uncertain=[...rows,...groupTagRows,...reverseGroupTagRows].filter(v=>v.category!=='short');
+    if(uncertain.length){
+      const correctedIds=await _probeShortsBatch(uncertain);
+      if(correctedIds.length){
+        sb.from(_YT_TABLE).update({category:'short'}).in('id',correctedIds).then(({error})=>{
+          if(error)console.error('연결 카드 쇼츠 분류 보정 저장 실패',error.message);
+        });
+      }
+    }
     const songs=[],names=new Set();
     rows.forEach(v=>{
       const song=_apiVidToSong(v,memberKo,groupKo);
@@ -5356,7 +5375,7 @@ async function _fetchApiCollabData(anchor){
       songs.push(song);
     });
     // with_groups 태깅 영상: 태깅된 그룹을 "지금 그 그룹 멤버 전원"으로 펼쳐서 콜라보 후보에 포함
-    _filterBannedVideos(groupTagQ.data||[]).forEach(v=>{
+    groupTagRows.forEach(v=>{
       // '개별출연'(컴필레이션 — 각자 따로 나온 영상)은 콜라보로 안 셈(2026-08-04).
       if(v.content_flag==='개별출연')return;
       // members가 명시돼 있으면(태깅 완료) 현재 앵커가 그 목록에 없으면 이 멤버 카드와 무관한 영상 — 건너뜀.
@@ -5380,7 +5399,7 @@ async function _fetchApiCollabData(anchor){
     // 그 채널 소속 멤버 전원을 "이름(그룹)" 포맷으로 펼쳐서 추가한다. 예전엔 그룹명 하나("르세라핌")를
     // 그대로 넣었는데, 괄호가 없다보니 _buildConnContent의 분류 로직에서 "같은 그룹 멤버"로 오분류되고
     // _findArtistByConnName도 그 이름의 멤버를 못 찾아 클릭 시 이동/영상 매칭이 전부 실패하던 버그가 있었음.
-    _filterBannedVideos(reverseGroupTagQ.data||[]).forEach(v=>{
+    reverseGroupTagRows.forEach(v=>{
       if(v.group_ko===groupKo)return; // 자기 채널(위 groupTagQ에서 이미 처리)은 중복 방지로 제외
       if(v.content_flag==='개별출연')return; // 컴필레이션 — 콜라보로 안 셈(2026-08-04)
       // with_groups는 그룹 단위로만 태깅됐어도(제목만 보고 특정 멤버까진 못 잡은 경우가 흔함 — 콜라보
@@ -5683,6 +5702,11 @@ function _buildConnContent(container){
     if(!otherByGroup.has(gko))otherByGroup.set(gko,[]);
     otherByGroup.get(gko).push(n);
   });
+  // '솔로'는 실제 그룹이 아니라 서로 무관한 솔로 아티스트들이 공유하는 placeholder(a.group.ko="솔로")라,
+  // 진짜 그룹처럼 접어서 클릭해야만 펼쳐지게 하면 직관적이지 않다(2026-08-06, 사용자 제보 — 아이유
+  // 콜라보가 "솔로" 칩을 눌러야만 보였음). 그룹 칩으로 안 묶고 같은 그룹 멤버 칩처럼 처음부터 펼쳐서 보여준다.
+  const soloNames=otherByGroup.get('솔로')||[];
+  otherByGroup.delete('솔로');
   // 그룹 내 멤버도 콜라보 수 내림차순
   otherByGroup.forEach((names,gko)=>{
     names.sort((a,b)=>_collabCount(b)-_collabCount(a)||a.localeCompare(b,'ko'));
@@ -5763,6 +5787,11 @@ function _buildConnContent(container){
   // 같은 그룹 멤버 (개별 칩) — _collabCount가 0이면 그룹 전체 태깅으로만 끌려들어온 이름(실제로 그
   // 멤버가 나왔다고 확인된 적 없음)이라 개별 칩으로 보여줄 근거가 없어 제외한다.
   sameGroupNames.filter(name=>_collabCount(name)>0).forEach(name=>chipsDiv.appendChild(_makeConnChip(name)));
+
+  // 솔로 아티스트 칩도 그룹 칩 없이 바로 펼쳐서 표시(위 soloNames 추출부 주석 참고)
+  soloNames.filter(name=>_collabCount(name)>0)
+    .sort((a,b)=>_collabCount(b)-_collabCount(a)||a.localeCompare(b,'ko'))
+    .forEach(name=>chipsDiv.appendChild(_makeConnChip(name)));
 
   // 타 그룹 멤버 (그룹 단위 묶음 칩) — 칩을 클릭하면 "그룹 선택"(펼침 겸용)이 되어, 그 그룹 멤버 중
   // 1명 이상 출연한 영상 전체가 먼저 뜨고, 펼쳐진 멤버 칩을 추가로 클릭하면 그 멤버 필수 출연으로 더 좁혀진다.
@@ -10305,13 +10334,35 @@ function _pgFilterVal(v){return '"'+String(v).replace(/\\/g,'\\\\').replace(/"/g
 
 function _ytApiKey(){return(localStorage.getItem('kpu_yt_key')||'').trim();}
 
+// 제목에 유니코드 "수학용 볼드체" 등 스타일드 문자(예: 𝐇𝐀𝐏𝐏𝐘 𝐁𝐈𝐑𝐓𝐇𝐃𝐀𝐘 — Shorts 제목 강조용으로 흔히 씀)가
+// 있으면, 겉보기엔 일반 알파벳과 똑같아 보여도 코드상 완전히 다른 문자라서 일반 ILIKE 검색으론 절대 못
+// 찾는다(2026-08-06, 사용자 제보 — 크래비티 카드에서 "birth" 검색이 스타일드 제목의 생일 축하 Shorts를
+// 하나도 못 찾던 문제. "happy" 검색은 우연히 같이 붙은 일반 텍스트 해시태그 때문에 걸렸을 뿐이었음).
+// 유니코드 NFKC 정규화가 이런 "Mathematical Alphanumeric Symbols" 블록을 일반 알파벳으로 자동 환원해주므로,
+// 저장할 때 이 정규화+소문자 버전을 title_norm 컬럼에 같이 저장해두고, 검색어도 똑같이 접어서 그 컬럼끼리
+// 비교한다(원래 title 컬럼은 화면 표시용으로 스타일 그대로 유지).
+function _titleNorm(title){return(title||'').normalize('NFKC').toLowerCase();}
+
+// "Performance Video"/"Dance Practice"류는 실제 무대가 아니라 스튜디오에서 미리 찍은 사전제작 콘텐츠
+// 포맷 이름이라, PERFORMANCE/LIVE 단어만 보고 라이브로 오분류되던 문제가 있었음(2026-08-06, 사용자 제보로
+// 실측 확인 — "Performance Video"만 761건, TWICE/NMIXX/베이비몬스터 등. "LIVE Dance Practice"류도 동일).
+// 직캠/팬캠/CONCERT/라이브처럼 더 확실한 신호가 같이 있으면 그쪽을 우선해서 그래도 라이브로 잡는다.
+const _YT_PRERECORDED_RE=/PERFORMANCE\s+VIDEO|DANCE\s+PRACTICE|PRACTICE\s+VIDEO|안무\s*영상|연습\s*영상|MIRRORED/;
+const _YT_STRONG_LIVE_RE=/\bCONCERT\b|\bFANCAM\b|라이브|직캠|팬캠/;
+// 음악방송(엠카운트다운/뮤직뱅크/인기가요/음악중심/쇼챔피언/THE SHOW) 이름이 제목에 있으면 "라이브"나
+// "직캠" 같은 단어가 따로 없어도 사실상 100% 방송 무대 영상이다 — 기존 정규식은 이 프로그램명들을 전혀
+// 몰라서 이런 영상이 대량으로 other에 방치돼있었음(2026-08-06, 실측 확인 — 'other'인데 제목에 이 방송명이
+// 있는 영상이 최소 1만7천여 건).
+const _YT_LIVE_SHOW_RE=/엠카운트다운|뮤직뱅크|인기가요|음악중심|쇼챔피언|M\s*COUNTDOWN|MUSIC\s*BANK|INKIGAYO|MUSIC\s*CORE|SHOW\s*CHAMPION|\bTHE\s+SHOW\b/;
 function _ytClassify(title){
   const t=(title||'').toUpperCase();
   if(/OFFICIAL\s+AUDIO|공식\s*음원/.test(t))return'skip';
   if(/\bTEASER\b|티저/.test(t))return'skip';
   if(/\bSHORTS?\b/.test(t)||/#SHORTS?/.test(t))return'short';
   if(/\bM\.?V\.?\b|\bMUSIC\s+VIDEO\b|뮤직?\s*비디오|뮤비/.test(t))return'mv';
-  if(/\bLIVE\b|\bCONCERT\b|\bPERFORMANCE\b|\bFANCAM\b|라이브|직캠|팬캠/.test(t))return'live';
+  const looksPrerecorded=_YT_PRERECORDED_RE.test(t);
+  if((!looksPrerecorded||_YT_STRONG_LIVE_RE.test(t))&&/\bLIVE\b|\bCONCERT\b|\bPERFORMANCE\b|\bFANCAM\b|라이브|직캠|팬캠/.test(t))return'live';
+  if(_YT_LIVE_SHOW_RE.test(t))return'live';
   return'other';
 }
 
@@ -10436,7 +10487,7 @@ async function _ytSyncGroup(ko,key,onProg,youtubeUrl){
   const resumeTok=localStorage.getItem(resumeKey)||'';
   const{vids,done,interrupted,resumeToken}=await _ytFetchNewVideos(uploadsId,key,sinceId,onProg,resumeTok);
   if(vids.length){
-    const rows=vids.map(v=>({...v,group_ko:ko,...(_isJunkVideoTitle(v.title)?{content_flag:'무관'}:{})}));
+    const rows=vids.map(v=>({...v,group_ko:ko,title_norm:_titleNorm(v.title),...(_isJunkVideoTitle(v.title)?{content_flag:'무관'}:{})}));
     for(let i=0;i<rows.length;i+=200){
       const{error}=await sb.from(_YT_TABLE).upsert(rows.slice(i,i+200));
       if(error)throw new Error(error.message);
@@ -10837,6 +10888,87 @@ async function _ytSweepMembersMistag(){
       _ytSetProg(`[자체 멤버 태깅 재검증] ${Math.min(i+200,updates.length)}/${updates.length}개 처리 중…`);
     }
     _ytSetProg(`완료! ${rows.length}개 중 ${updates.length}개에서 근거 없는 멤버 태그 제거함`);
+  }catch(e){
+    _ytSetProg('오류: '+e.message);
+  }finally{
+    if(btn)btn.disabled=false;
+  }
+}
+
+// 라이브(직캠/무대) 판정용 정규식(_ytClassify)이 채널 동기화 시점에 딱 한 번만 돌고 이후 재검증이
+// 전혀 없어서(쇼츠는 _probeShortsBatch로 썸네일 실측 보정이 있는 것과 대조적), "Performance Video"류
+// 사전제작 콘텐츠가 라이브로 오분류되거나, 반대로 음악방송 이름(엠카운트다운 등)만 있고 "직캠"/"라이브"
+// 단어가 없는 진짜 방송 무대 영상이 other로 방치되는 문제가 대량으로 쌓여있었음(2026-08-06, 사용자 제보
+// + 실측 확인: 'other'인데 방송명이 있는 영상 최소 1만7천여 건, 'live'인데 "Performance Video"인 영상
+// 761건). _ytClassify 자체를 고친 뒤(위 참고) 이미 저장된 기존 행에도 소급 적용하는 재분류 스윕.
+// 쇼츠(category='short')는 제목이 아니라 썸네일 실측으로 판정하는 게 더 정확해서 이 스윕 대상에서 제외
+// (제목만으로 재분류하면 "OOO Live"라는 제목의 쇼츠가 다시 live로 되돌아가는 식의 역행이 생길 수 있음).
+// tags_manual=true(관리자가 태그 모달에서 직접 category를 저장한 행)는 다른 재검증 버튼들과 동일하게
+// 절대 건드리지 않음.
+async function _ytSweepCategoryMistag(){
+  if(!sb){_ytSetProg('Supabase 연결 없음');return;}
+  const btn=document.getElementById('sp-catfix-btn');
+  if(btn)btn.disabled=true;
+  try{
+    _ytSetProg('[영상 카테고리 재분류] 조회 중…');
+    const{data:rows,error}=await _sbFetchAll(()=>sb.from(_YT_TABLE)
+      .select('id,title,category')
+      .eq('tags_manual',false)
+      .neq('category','short')
+      .order('id'));
+    if(error){_ytSetProg('조회 실패: '+error.message);return;}
+    if(!rows?.length){_ytSetProg('검사할 영상이 없어요');return;}
+    const updates=[];
+    rows.forEach(v=>{
+      const newCat=_ytClassify(v.title||'');
+      // skip은 동기화 시점에 "아예 저장하지 않는다"는 의미라 이미 저장된 행엔 적용 대상이 아니고,
+      // short는 위에서부터 조회 대상 자체를 제외했으므로(썸네일 실측 전용) 여기서도 만들지 않는다.
+      if(!newCat||newCat==='skip'||newCat==='short')return;
+      if(newCat===v.category)return;
+      updates.push({id:v.id,patch:{category:newCat}});
+    });
+    if(!updates.length){_ytSetProg(`검사 완료 — ${rows.length}개 중 바뀔 항목 없음`);return;}
+    for(let i=0;i<updates.length;i+=200){
+      const chunk=updates.slice(i,i+200);
+      const results=await Promise.all(chunk.map(u=>sb.from(_YT_TABLE).update(u.patch).eq('id',u.id)));
+      const failed=results.find(r=>r.error);
+      if(failed)throw new Error(failed.error.message);
+      _ytSetProg(`[영상 카테고리 재분류] ${Math.min(i+200,updates.length)}/${updates.length}개 처리 중…`);
+    }
+    _ytSetProg(`완료! ${rows.length}개 중 ${updates.length}개 카테고리 갱신함`);
+  }catch(e){
+    _ytSetProg('오류: '+e.message);
+  }finally{
+    if(btn)btn.disabled=false;
+  }
+}
+
+// title_norm(위 _titleNorm 참고) 백필 — 컬럼을 새로 추가한 직후엔 기존 행 전부 비어있음. 이후 신규
+// 동기화/수동추가는 저장 시점에 이미 자동으로 채우므로(_ytSyncGroup/_extBuildRows/_ytBuildManualVideoRow),
+// 이 버튼은 title_norm이 비어있는 행만 골라 채우는 범용 도구 — 컬럼 추가 직후 한 번 돌리면 그 뒤로는
+// 항상 대상이 없어 즉시 끝남(재실행해도 안전). title_norm은 title에서 기계적으로 계산되는 파생값이라
+// 관리자가 직접 편집하는 값이 아니므로, 다른 재검증 버튼들과 달리 tags_manual 여부와 무관하게 전부 채운다.
+async function _ytBackfillTitleNorm(){
+  if(!sb){_ytSetProg('Supabase 연결 없음');return;}
+  const btn=document.getElementById('sp-titlenorm-btn');
+  if(btn)btn.disabled=true;
+  try{
+    _ytSetProg('[검색용 제목 정규화 백필] 조회 중…');
+    const{data:rows,error}=await _sbFetchAll(()=>sb.from(_YT_TABLE)
+      .select('id,title')
+      .is('title_norm',null)
+      .order('id'));
+    if(error){_ytSetProg('조회 실패: '+error.message);return;}
+    if(!rows?.length){_ytSetProg('채울 영상이 없어요(이미 다 채워짐)');return;}
+    const updates=rows.map(v=>({id:v.id,patch:{title_norm:_titleNorm(v.title)}}));
+    for(let i=0;i<updates.length;i+=200){
+      const chunk=updates.slice(i,i+200);
+      const results=await Promise.all(chunk.map(u=>sb.from(_YT_TABLE).update(u.patch).eq('id',u.id)));
+      const failed=results.find(r=>r.error);
+      if(failed)throw new Error(failed.error.message);
+      _ytSetProg(`[검색용 제목 정규화 백필] ${Math.min(i+200,updates.length)}/${updates.length}개 처리 중…`);
+    }
+    _ytSetProg(`완료! ${updates.length}개 채움`);
   }catch(e){
     _ytSetProg('오류: '+e.message);
   }finally{
@@ -11840,7 +11972,7 @@ async function _vmLoad(searchTerm){
       if(!term){_vmRows=[];listEl.innerHTML='<div style="padding:24px;text-align:center;color:rgba(155,178,228,0.45);font-size:12px;">제목이나 그룹명으로 검색하세요</div>';statusEl.textContent='';return;}
       let hits;
       if(term.length>=3){
-        const{data,error}=await sb.from(_YT_TABLE).select('id,title,group_ko,thumb,content_flag').ilike('title',`%${term}%`).order('id').limit(200);
+        const{data,error}=await sb.from(_YT_TABLE).select('id,title,group_ko,thumb,content_flag').ilike('title_norm',`%${_titleNorm(term)}%`).order('id').limit(200);
         if(myGen!==_vmSearchGen)return;
         if(error){statusEl.textContent='조회 실패: '+error.message;return;}
         hits=data||[];
@@ -12788,7 +12920,7 @@ function _extBuildRows(vids){
       else{withGroups.push(gko);}
     }
     rows.push({
-      id:v.id,title:v.title,description:v.description||'',thumb:v.thumb,published_at:v.published_at,
+      id:v.id,title:v.title,title_norm:_titleNorm(v.title),description:v.description||'',thumb:v.thumb,published_at:v.published_at,
       category:v.category,
       group_ko:match.primaryGroup,members,with_groups:withGroups,with_members:withMembers,
       ...(_isJunkVideoTitle(v.title)?{content_flag:'무관'}:{})
@@ -13070,7 +13202,7 @@ async function _ytBuildManualVideoRow(key,vid,manualGroup,manualMembers){
     members=manualMembers;
   }
   const description=item.snippet.description||'';
-  return{id:vid,title,description,thumb,published_at:publishedAt,category,group_ko:groupKo,members,with_groups:withGroups,with_members:withMembers};
+  return{id:vid,title,title_norm:_titleNorm(title),description,thumb,published_at:publishedAt,category,group_ko:groupKo,members,with_groups:withGroups,with_members:withMembers};
 }
 // 이미 존재하는 행이 tags_manual=true(관리자가 태그 모달에서 직접 확정)면, 수동 추가가 upsert로
 // 그 위를 덮어써버리는 사고를 막기 위한 사전 체크 — 재백필 등으로 같은 id가 다시 들어올 때 특히 위험.
@@ -13474,15 +13606,24 @@ function _makeChVidController(contId){
     const releaseLock=()=>{if(myGen===state.gen)state.appendLock=false;};
     const{filter,offset}=state;
     // 필터 조건만 담당(정렬/범위는 호출부에서 붙임) — 청크 랜덤 샘플링 시 같은 조건으로 여러 번 독립 호출해야 함
-    function buildBaseQuery(){
-      // count:'exact'는 첫 페이지(reset)에서만 요청 — state.total은 그 이후 "더보기" 페이지에서도 안 바뀌므로
-      // 매 페이지마다 다시 정확한 총 개수를 계산시키는 건 낭비(카드 열 때마다/스크롤할 때마다 느려지는 원인 중 하나).
+    // forCount=true면 행 데이터 없이(head:true) 총 개수만 가볍게 물어보는 전용 변형 — 카드를 처음 열 때
+    // 배경에서 총 개수를 채우는 용도(아래 reset&&!randomize 분기)로 씀.
+    function buildBaseQuery(forCount){
+      // count:'exact'는 Postgres가 조건에 맞는 행을 전부 세야 해서 비싼데, 이 값은 초기 렌더링엔 안
+      // 쓰이고(총 개수 라벨은 스크롤 끝에 도달했을 때만 표시, hasMore는 아래에서 "이번 페이지가 꽉
+      // 찼는지"로 판단하도록 바꿈) 셔플(↻)의 랜덤 청크 샘플링에만 즉시 필요함 — 그래서 카드를 처음 열 때
+      // (reset, randomize 아님)는 이 함수에서 count를 아예 안 실어서 첫 페이지 응답을 빠르게 하고, 총
+      // 개수는 별도의 가벼운 head:true 전용 요청으로 백그라운드에서 채운다(2026-08-06, 사용자 요청 —
+      // 카드 첫 로딩 2초 단축). 셔플(reset&&randomize)일 땐 기존처럼 이 함수 자체에 count를 실어서 청크
+      // 계산에 바로 쓸 수 있게 한다.
       // group_ko도 반드시 선택해야 함 — 멤버 카드는 이 멤버가 다른 채널에 게스트로 출연한 영상까지
       // 끌어오는데(아래 memberKo 분기), 그런 행의 실제 소속은 카드 자체 그룹(ko)과 다를 수 있음.
       // group_ko가 없으면 "함께한 멤버" 표기와 편집 버튼의 소속 그룹이 전부 카드 자체 그룹으로 잘못
       // 표시됨(2026-08-04, 사용자 제보 — 성현 카드에서 투바투 게스트 영상이 코르티스로 잘못 뜨던 문제).
       const selectCols='id,title,thumb,category,content_flag,group_ko,members,with_members,with_groups,cover_of_members,cover_of_groups';
-      let q=reset?sb.from(_YT_TABLE).select(selectCols,{count:'exact'}):sb.from(_YT_TABLE).select(selectCols);
+      let q=forCount?sb.from(_YT_TABLE).select('id',{count:'exact',head:true})
+        :(reset&&randomize)?sb.from(_YT_TABLE).select(selectCols,{count:'exact'})
+        :sb.from(_YT_TABLE).select(selectCols);
       if(state.unitFilter){
         // 유닛(예: V8) 태그 클릭 시: 이 멤버 채널 영상 중 같은 유닛의 다른 멤버가 같이 태깅된 것만 —
         // 같은 그룹 소속 유닛원은 members 배열, 다른 그룹 소속 유닛원은 with_members(이름(그룹) 포맷)에 있음.
@@ -13524,7 +13665,7 @@ function _makeChVidController(contId){
       // 멤버 카드는 '기타' 플래그 영상을 화면에서 아예 안 보여주므로(그룹 카드는 후순위로만 밀 뿐 계속 보임),
       // count도 멤버 카드일 때만 '기타'를 같이 빼야 실제 노출 개수와 맞음
       if(state.memberKo)q=q.or('content_flag.is.null,content_flag.neq.기타');
-      if(state.searchQ)q=q.ilike('title',`%${state.searchQ}%`);
+      if(state.searchQ)q=q.ilike('title_norm',`%${_titleNorm(state.searchQ)}%`);
       if(state.viewMode==='format'){
         if(state.formatFilter)q=q.contains('content_formats',[state.formatFilter]);
       }else if(filter!=='all'){
@@ -13566,8 +13707,12 @@ function _makeChVidController(contId){
       }else if(isChunkedRandomize){
         // 한 지점에서 48개를 연속으로(날짜순) 긁어오면 매번 비슷한 시기의 영상들이 뭉텅이로 같이 나와서
         // "새로고침해도 특정 영상이 계속 눈에 띈다"는 문제가 있었음(2026-07-31) — 대신 서로 다른 랜덤
-        // 지점 6곳에서 8개씩 나눠 가져와 합치면 훨씬 넓게 흩어져서 매번 다양하게 보임.
-        const CHUNKS=6,chunkSize=Math.ceil(_YT_PAGE/CHUNKS);
+        // 지점에서 나눠 가져와 합치면 훨씬 넓게 흩어져서 매번 다양하게 보임.
+        // 처음엔 6곳×8개씩이었는데, 한 지점에서 8개를 "연속으로"(날짜순) 긁다 보니 그 8개는 여전히
+        // 같은 주/같은 이벤트 영상끼리 뭉쳐 보여서 "진짜 뒤죽박죽" 느낌이 약했음(2026-08-06, 사용자
+        // 제보). 지점 수를 늘리고 지점당 개수를 줄이면 그만큼 서로 다른 시기가 더 많이 섞여 들어가므로
+        // 24곳×2개로 바꿈 — 요청 수는 늘지만 각각 가벼운 조회라 병렬로 쏘면 체감 지연은 크지 않음.
+        const CHUNKS=24,chunkSize=Math.ceil(_YT_PAGE/CHUNKS);
         const maxOff=Math.max(0,state.total-chunkSize);
         const chunkOffsets=Array.from({length:CHUNKS},()=>Math.floor(Math.random()*(maxOff+1)));
         mainP=Promise.all(chunkOffsets.map(off=>ordered(buildBaseQuery()).range(off,off+chunkSize-1)))
@@ -13584,6 +13729,16 @@ function _makeChVidController(contId){
         state.wrapEnd=Math.min(...chunkOffsets);state.wrapPhase=false;
       }else{
         mainP=ordered(buildBaseQuery()).range(offset,offset+_YT_PAGE-1);
+      }
+      // 카드를 처음 열 때(reset, randomize 아님, 캐시도 아님)만: 정확한 총 개수를 그리드 렌더링과
+      // 분리된 별도 요청으로 백그라운드에서 가져와 나중에(총 개수 라벨/다음 셔플용) state.total을
+      // 채워 넣는다 — await 안 하므로 첫 화면 표시를 전혀 막지 않는다.
+      if(reset&&!randomize&&!cacheHit){
+        buildBaseQuery(true).then(({count:bgCount,error:bgErr})=>{
+          if(bgErr||bgCount==null)return;
+          if(myGen!==state.gen)return; // 그 사이 다른 카드/새로고침으로 전환됨
+          state.total=bgCount;
+        });
       }
       const[{data,error,count},_featuredFromDB]=await _withTimeout(Promise.all([mainP,featuredP]),15000);
       if(myGen!==state.gen)return; // 대기 중 다른 그룹/새로고침으로 전환됨: 그쪽이 이미 자신의 잠금을 걸어놨으므로 여기선 해제하지 않는다
@@ -13655,7 +13810,11 @@ function _makeChVidController(contId){
         hasMore=state.offset<state.wrapEnd;
         if(!hasMore)state.wrapEnd=0; // 한 바퀴 다 돌았으니 리셋
       }else{
-        hasMore=state.offset<state.total;
+        // count 없이 페이지네이션: 이번 페이지가 요청한 만큼(_YT_PAGE) 꽉 찼으면 아직 더 있다고 보고,
+        // 덜 찼으면 정확히 끝(표준 offset LIMIT+1 없이도 되는 이유는 .range()가 요청 개수를 그대로
+        // 반영하기 때문). wrapEnd가 0인 일반 순차 페이지네이션(초기 오픈+무한스크롤)에서만 타는 분기라
+        // 청크 랜덤(위 두 분기)엔 영향 없음(2026-08-06, 사용자 요청 — count:'exact' 비용 제거).
+        hasMore=(data?.length||0)>=_YT_PAGE;
       }
       state.hasMore=hasMore;
       resolveTrailing(g,pageNodes,hasMore,incomingTrailingEl);
@@ -14836,6 +14995,8 @@ document.getElementById('vid-tag-thumb-refresh').addEventListener('click',async 
   document.getElementById('sp-collabfix-btn')?.addEventListener('click',_ytSweepAmbiguousCollabMistag);
   document.getElementById('sp-scan-namecollide-btn')?.addEventListener('click',_ytScanAmbiguousNameGroupMisassignment);
   document.getElementById('sp-membersfix-btn')?.addEventListener('click',_ytSweepMembersMistag);
+  document.getElementById('sp-catfix-btn')?.addEventListener('click',_ytSweepCategoryMistag);
+  document.getElementById('sp-titlenorm-btn')?.addEventListener('click',_ytBackfillTitleNorm);
   document.getElementById('sp-yt-autotag')?.addEventListener('click',_ytAutoTagMembers);
   document.getElementById('sp-yt-retag-all')?.addEventListener('click',_ytRetagAllIncludingTagged);
   document.getElementById('sp-btsjinfix-btn')?.addEventListener('click',_ytFixBtsJinMisassignedRows);
