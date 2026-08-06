@@ -1921,8 +1921,7 @@
     <button class="sp-yt-sync" id="sp-membersfix-btn" style="margin-top:4px;opacity:.8;">자체 멤버 태깅 재검증(전체)</button>
     <button class="sp-yt-sync" id="sp-catfix-btn" style="margin-top:4px;opacity:.8;">영상 카테고리(라이브 등) 재분류(전체)</button>
     <button class="sp-yt-sync" id="sp-titlenorm-btn" style="margin-top:4px;opacity:.8;">검색용 제목 정규화 백필</button>
-    <button class="sp-yt-sync" id="sp-yt-retag-all" style="margin-top:2px;opacity:.6;font-size:10px;">멤버+콜라보 재태깅 (기존 태깅분 포함, 일회용)</button>
-    <button class="sp-yt-sync" id="sp-btsjinfix-btn" style="margin-top:2px;opacity:.6;font-size:10px;">방탄소년단 '진' 오배정 정리 (일회용)</button>
+    <button class="sp-yt-sync" id="sp-yt-retag-all" style="margin-top:4px;opacity:.8;">멤버+콜라보 재태깅(기존 태깅분 포함, 전체)</button>
     <button class="sp-yt-sync" id="sp-yt-sweep-banned" style="margin-top:4px;opacity:.8;">밴 인물 언급 영상 숨김 정리</button>
 
     <div class="sp-yt-prog" id="sp-yt-prog"></div>
@@ -10790,68 +10789,6 @@ async function _ytScanAmbiguousNameGroupMisassignment(){
   }
 }
 
-// 방탄소년단 "진" 전용 일회용 정리 — 그룹명 오배정(_ytScanAmbiguousNameGroupMisassignment)과 다르게 이건
-// "동명이인"(완전히 같은 이름)이 아니라 "진"이 로마자 표기 "Jin"으로 다른 사람 영문 이름(Woo Jin, Jin
-// Hyeonju 등)에 부분 포함되면서 group_ko 자체가 방탄소년단으로 잘못 배정된 옛날 데이터를 겨냥한다
-// (2026-08-05, 사용자 제보 — 박우진/권진아/진현주 영상이 group_ko=방탄소년단, members=[진]으로 깔려있고
-// with_members/with_groups는 영상마다 제각각 뒤섞여있었음). 현재 매칭 로직(_m2ParseTitle)은 1글자 이름을
-// 이미 해시태그 전용으로 막아놔서 이 오염이 새로 생기진 않지만, 그 보호가 생기기 전 데이터는 안 지워짐.
-// title에 방탄소년단/진이라는 확실한 근거가 없는 group_ko=방탄소년단+진 태깅 행만 골라, 지금 로직으로
-// 처음부터 다시 분류해서 group_ko/members/with_members/with_groups를 통째로 새로 계산한 값으로 덮어쓴다
-// (기존 값이 이미 뒤죽박죽이라 부분 패치보다 통째로 다시 만드는 쪽이 안전). tags_manual=true는 무조건 스킵.
-async function _ytFixBtsJinMisassignedRows(){
-  if(!sb){_ytSetProg('Supabase 연결 없음');return;}
-  const btn=document.getElementById('sp-btsjinfix-btn');
-  if(btn)btn.disabled=true;
-  try{
-    _ytSetProg('[방탄소년단 진 오배정 정리] 조회 중…');
-    const{data:rows,error}=await _sbFetchAll(()=>sb.from(_YT_TABLE)
-      .select('id,title,group_ko,members,with_members,with_groups,tags_manual')
-      .eq('group_ko','방탄소년단')
-      .contains('members',['진'])
-      .order('id'));
-    if(error){_ytSetProg('조회 실패: '+error.message);return;}
-    if(!rows?.length){_ytSetProg('검사할 영상이 없어요');return;}
-    // 제목에 진짜 방탄소년단/진 근거(해시태그 또는 그룹명 언급)가 있으면 절대 안 건드림
-    const legit=t=>/#진(?![가-힣])/.test(t||'')||/#jin(?![가-힣a-z0-9])/i.test(t||'')||/방탄소년단|BTS/i.test(t||'');
-    let manualSkipped=0;
-    const ambiguous=[];
-    const updates=[];
-    rows.forEach(v=>{
-      if(legit(v.title))return;
-      if(v.tags_manual){manualSkipped++;return;}
-      const match=_m2ParseTitle(v.title||'');
-      if(!match||!match.primaryGroup||match.primaryGroup==='방탄소년단'){ambiguous.push({id:v.id,title:v.title});return;}
-      const newGko=match.primaryGroup;
-      const newMembers=match.membersByGroup[newGko]||[];
-      const withMembers=[],withGroups=[];
-      match.withGroups.forEach(og=>{
-        const sec=match.membersByGroup[og]||[];
-        if(sec.length)sec.forEach(mko=>withMembers.push(`${mko}(${og})`));
-        else withGroups.push(og);
-      });
-      updates.push({id:v.id,patch:{group_ko:newGko,members:newMembers,with_members:withMembers,with_groups:withGroups}});
-    });
-    if(ambiguous.length)console.log('[방탄소년단 진 오배정 정리] 애매해서 안 건드린 목록:',ambiguous);
-    if(!updates.length){
-      _ytSetProg(`검사 완료 — ${rows.length}개 중 재배정 대상 없음`+(manualSkipped?`, 수동편집 스킵 ${manualSkipped}개`:'')+(ambiguous.length?`, 애매 ${ambiguous.length}개(콘솔 확인)`:''));
-      return;
-    }
-    for(let i=0;i<updates.length;i+=200){
-      const chunk=updates.slice(i,i+200);
-      const results=await Promise.all(chunk.map(u=>sb.from(_YT_TABLE).update(u.patch).eq('id',u.id)));
-      const failed=results.find(r=>r.error);
-      if(failed)throw new Error(failed.error.message);
-      _ytSetProg(`[방탄소년단 진 오배정 정리] ${Math.min(i+200,updates.length)}/${updates.length}개 처리 중…`);
-    }
-    _ytSetProg(`완료! ${rows.length}개 중 ${updates.length}개 재배정`+(manualSkipped?`, 수동편집이라 안 건드리고 넘어간 것 ${manualSkipped}개(직접 확인 필요)`:'')+(ambiguous.length?`, 제목만으론 판단 안 되는 애매한 것 ${ambiguous.length}개(콘솔에 목록 출력함, 직접 확인 필요)`:''));
-  }catch(e){
-    _ytSetProg('오류: '+e.message);
-  }finally{
-    if(btn)btn.disabled=false;
-  }
-}
-
 // _ytSweepAmbiguousCollabMistag와 같은 계열이지만 with_members/with_groups(다른 그룹 콜라보)가 아니라
 // members(자기 채널 자체 출연자) 컬럼을 재검증한다 — "이유"(에버글로우)처럼 흔한 단어와 겹치는 이름이
 // _ATM_HASHTAG_ONLY_NAMES에 새로 추가되면, 이미 members에 평문 매칭으로 잘못 들어간 값은 이걸로 걷어낸다.
@@ -12493,8 +12430,11 @@ async function _ytAutoTagMembers(){
 // 이미 뭔가 하나라도 태깅된 행은 그 뒤로 로스터가 늘거나 매칭 로직이 개선돼도(하시태그 화이트리스트
 // 추가, group_ko 버그 수정 등) 다시는 재검사되지 않는다. 이 버튼은 그룹당 전체 행(태깅 여부 무관)을
 // 다시 훑어서 "지금 매칭 로직이 새로 찾아내는 것"을 기존 값에 합쳐(추가만 함, 기존 값은 절대 안 지움)
-// 반영하는 일회용 재태깅이다. tags_manual=true(관리자가 직접 저장한 행)는 쿼리 단계에서부터 제외돼서
-// 절대 건드리지 않음(2026-08-04, 사용자가 가장 중요하게 강조한 조건).
+// 반영한다. tags_manual=true(관리자가 직접 저장한 행)는 쿼리 단계에서부터 제외돼서 절대 건드리지 않음
+// (2026-08-04, 사용자가 가장 중요하게 강조한 조건). "일회용"이 아니라 콜라보/자체 멤버 재검증 버튼과
+// 같은 계열의 범용 도구 — _m2ParseTitle 매칭 로직을 고칠 때마다(화이트리스트 추가, 버그 수정 등) 다시
+// 눌러야 그 개선이 기존 태깅분에도 소급 반영됨(2026-08-06, 라벨이 "일회용"으로 잘못 붙어있던 걸 사용자
+// 제보로 바로잡음 — 버튼 표기도 다른 재검증 버튼들과 동일한 "(전체)" 톤으로 통일).
 async function _ytRetagAllIncludingTagged(){
   if(!sb){_ytSetProg('Supabase 연결 없음');return;}
   const btn=document.getElementById('sp-yt-retag-all');
@@ -14999,7 +14939,6 @@ document.getElementById('vid-tag-thumb-refresh').addEventListener('click',async 
   document.getElementById('sp-titlenorm-btn')?.addEventListener('click',_ytBackfillTitleNorm);
   document.getElementById('sp-yt-autotag')?.addEventListener('click',_ytAutoTagMembers);
   document.getElementById('sp-yt-retag-all')?.addEventListener('click',_ytRetagAllIncludingTagged);
-  document.getElementById('sp-btsjinfix-btn')?.addEventListener('click',_ytFixBtsJinMisassignedRows);
   document.getElementById('sp-vm-btn')?.addEventListener('click',()=>_vmOpen());
   const backfillSel=document.getElementById('sp-yt-backfill-ch');
   if(backfillSel){
