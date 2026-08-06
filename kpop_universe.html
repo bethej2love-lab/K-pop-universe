@@ -2812,7 +2812,14 @@ async function buildUniverse(){
     fetch('artists.json',{cache:'no-cache'}).then(r=>r.json()),
     fetch('connections.json',{cache:'no-cache'}).then(r=>r.json())
   ]);
-  await initSupabaseSync(); // 로그인 사용자의 서버 데이터가 첫 렌더 전에 로컬을 덮어써야 하므로 JSON fetch와 병렬로 먼저 완료 대기
+  // 로그인 사용자의 서버 데이터가 첫 렌더 전에 로컬을 덮어써야 하므로 JSON fetch와 병렬로 먼저 완료 대기하지만,
+  // 내부의 auth 호출(getSession/signInAnonymously 등)엔 타임아웃이 없어서 네트워크가 불안정하면(특히 모바일)
+  // 영원히 안 끝나 로딩 화면에서 우주 진입 자체가 막혀버리는 사고가 있었음(2026-08-06, 사용자 제보 — 폰에서
+  // "auth getSession 에러" 뜨며 로딩 멈춤). 타임아웃을 걸어서, 인증 동기화가 안 되더라도(로그인 상태만
+  // 못 불러올 뿐) 우주 자체는 반드시 뜨게 한다.
+  await _withTimeout(initSupabaseSync(),10000,'로그인 동기화 시간 초과').catch(e=>{
+    console.error('[초기화] Supabase 인증 동기화 실패/시간초과 — 로그인 상태 없이 계속 진행:',e.message);
+  });
   const [grpData,artData,connData]=await _jsonPromise;
   GROUPS=grpData;ARTISTS=artData;_rawConnData=connData;
   _STRICT_SYNC_GROUPS=new Set(Object.entries(GROUPS).filter(([,v])=>v?.strictSync).map(([ko])=>ko));

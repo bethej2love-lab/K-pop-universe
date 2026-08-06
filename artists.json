@@ -1721,6 +1721,13 @@
       "ko": "있지",
       "en": "ITZY"
     },
+    "family": [
+      {
+        "rel": "언니",
+        "name": "이채연",
+        "group": "아이즈원"
+      }
+    ],
     "co": "JYP",
     "planet": "main",
     "x": 4640,
@@ -5251,6 +5258,13 @@
       "ko": "투모로우바이투게더",
       "en": "TOMORROW X TOGETHER"
     },
+    "family": [
+      {
+        "rel": "여동생",
+        "name": "휴닝바히에",
+        "group": "케플러"
+      }
+    ],
     "co": "HYBE",
     "planet": "main",
     "x": 7530,
@@ -10483,6 +10497,13 @@
       "ko": "아이즈원",
       "en": "IZ*ONE"
     },
+    "family": [
+      {
+        "rel": "여동생",
+        "name": "채령",
+        "group": "있지"
+      }
+    ],
     "co": "WM엔터테인먼트",
     "active": true,
     "color": [
@@ -11389,6 +11410,13 @@
       "ko": "케플러",
       "en": "Kep1er"
     },
+    "family": [
+      {
+        "rel": "오빠",
+        "name": "휴닝카이",
+        "group": "투모로우바이투게더"
+      }
+    ],
     "co": "IST엔터테인먼트",
     "active": true,
     "color": [
@@ -13978,6 +14006,13 @@
       "ko": "원어스",
       "en": "ONEUS"
     },
+    "family": [
+      {
+        "rel": "이란성 쌍둥이 형제",
+        "name": "동명",
+        "group": "원위"
+      }
+    ],
     "co": "B.WAVE 엔터테인먼트",
     "active": true,
     "color": [
@@ -15202,6 +15237,13 @@
       "ko": "인피니트",
       "en": "INFINITE"
     },
+    "family": [
+      {
+        "rel": "남동생",
+        "name": "이대열",
+        "group": "골든차일드"
+      }
+    ],
     "co": "인피니트컴퍼니",
     "active": true,
     "color": [
@@ -23448,6 +23490,13 @@
       "ko": "원위",
       "en": "ONEWE"
     },
+    "family": [
+      {
+        "rel": "이란성 쌍둥이 형제",
+        "name": "시온",
+        "group": "원어스"
+      }
+    ],
     "co": "RBW",
     "active": true,
     "color": [
@@ -25266,6 +25315,13 @@
       "ko": "골든차일드",
       "en": "Golden Child"
     },
+    "family": [
+      {
+        "rel": "형",
+        "name": "이성열",
+        "group": "인피니트"
+      }
+    ],
     "co": "울림엔터테인먼트",
     "active": true,
     "color": [
