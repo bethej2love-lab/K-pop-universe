@@ -716,11 +716,31 @@
   #gc-header-text{flex:1;min-width:0;}
   #gc-name{font-size:17px;font-weight:700;margin-bottom:2px;padding-right:0;letter-spacing:-.02em;color:#d8e4f6;}
   #gc-en{font-size:13px;letter-spacing:.1em;color:#7898b8;margin-bottom:0;text-transform:uppercase;font-weight:500;}
+  /* 고인 표기 — 우주에서 멤버가 실제로 발광하는 방식(코어+halo 그라디언트, makeGlowTex 참고)과 같은
+     느낌을 내는 작은 발광 점. 이모지/한자 대신 이걸 이름 뒤에 붙인다(2026-08-06, "이모티콘 댕강 붙인
+     느낌" 재피드백으로 교체). */
+  .deceased-star{display:inline-block;width:8px;height:8px;margin-left:5px;border-radius:50%;
+    vertical-align:middle;position:relative;top:-1px;flex-shrink:0;
+    background:radial-gradient(circle,rgba(255,255,255,1) 0%,rgba(255,255,255,0.95) 12%,rgba(255,255,255,0.55) 32%,rgba(255,255,255,0.16) 62%,rgba(255,255,255,0) 100%);
+    box-shadow:0 0 5px 1.5px rgba(255,255,255,0.42),0 0 11px 3px rgba(190,210,255,0.16);
+    animation:deceased-twinkle 2.8s ease-in-out infinite;}
+  @keyframes deceased-twinkle{0%,100%{opacity:0.72;transform:scale(0.9);}50%{opacity:1;transform:scale(1.1);}}
+  .gc-mem-name .deceased-star{width:6px;height:6px;margin-left:3px;}
   #gc-en-row{display:flex;align-items:center;justify-content:space-between;gap:8px;}
   #gc-links{display:flex;align-items:center;gap:9px;flex-shrink:0;}
   #tt-links{display:flex;align-items:center;gap:7px;flex-shrink:0;}
   #tt-links:not(:empty)::after{content:'·';color:rgba(120,145,195,0.4);font-size:10px;}
   #tt-links .gc-link-icon{width:14px;height:14px;}
+  .tt-family-wrap{position:relative;flex-shrink:0;}
+  #tt-family-btn{background:none;border:none;padding:2px 3px;font-size:10px;line-height:1;color:rgba(140,162,255,0.5);cursor:pointer;font-family:inherit;}
+  #tt-family-btn:hover{color:rgba(195,210,255,0.9);}
+  .tt-family-pop{display:none;position:absolute;left:0;top:calc(100% + 4px);min-width:150px;max-width:220px;
+    border-radius:10px;background:rgba(20,24,44,0.98);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+    border:0.5px solid rgba(255,255,255,0.10);box-shadow:0 8px 24px rgba(0,0,0,0.45);z-index:6;overflow:hidden;padding:4px;}
+  .tt-family-pop.open{display:block;}
+  .tt-family-row{padding:7px 8px;border-radius:6px;font-size:11.5px;color:rgba(200,218,240,0.8);cursor:pointer;
+    transition:background .12s,color .12s;white-space:nowrap;}
+  .tt-family-row:hover{background:rgba(255,255,255,0.07);color:rgba(220,235,255,0.95);}
   .gc-link-icon{
     display:flex;align-items:center;justify-content:center;
     width:16px;height:16px;color:rgba(150,175,220,0.60);
@@ -1816,7 +1836,7 @@
   </div>
 </div>
 <div id="fav-hint-callout">Start with Your Favorite!<span id="fhc-arrow"></span></div>
-<div id="tt"><div id="tt-bar"></div><button id="tt-back" class="conn-back-btn" style="display:none" aria-label="이전 멤버로 돌아가기">‹</button><span id="ttx" role="button" tabindex="0" aria-label="멤버 카드 닫기">×</span><div id="tt-name-row"><div class="tn" id="tn"></div><button id="tt-fav" class="fav-btn" aria-label="즐겨찾기"><svg viewBox="0 0 24 24"><path d="M12 21L10.55 19.7C5.4 15.1 2 12.1 2 8.5 2 5.4 4.4 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.6 3 22 5.4 22 8.5c0 3.6-3.4 6.6-8.55 11.2L12 21z"/></svg></button><button id="tt-bookmark" class="bookmark-btn" aria-label="북마크"><svg viewBox="0 0 24 24"><path d="M6 3h11a1 1 0 0 1 1 1v16.2l-6.5-4.6-6.5 4.6V4a1 1 0 0 1 1-1z"/></svg></button><button id="tt-share" class="share-btn" aria-label="공유"><svg viewBox="0 0 24 24"><path d="M12 15V4M12 4l-3.5 3.5M12 4l3.5 3.5"/><path d="M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"/></svg></button></div><div id="tg-row"><div id="tt-links"></div><div class="tg" id="tg"></div><button id="tt-conn-btn" class="tt-conn-btn" style="display:none">연결</button></div><div class="tco" id="tco"></div><div id="tt-status-line" class="gc-status-line"></div><div class="tm" id="tm"></div><div id="tt-nav"><button class="tt-nav-btn" id="tt-prev" aria-label="이전 멤버"><span class="nav-arr">‹</span><span id="tt-prev-name" class="nav-name"></span></button><span id="tt-counter"></span><button class="tt-nav-btn" id="tt-next" aria-label="다음 멤버"><span id="tt-next-name" class="nav-name"></span><span class="nav-arr">›</span></button></div><div id="tt-concert-row" class="concert-row"></div><div id="tv"></div></div>
+<div id="tt"><div id="tt-bar"></div><button id="tt-back" class="conn-back-btn" style="display:none" aria-label="이전 멤버로 돌아가기">‹</button><span id="ttx" role="button" tabindex="0" aria-label="멤버 카드 닫기">×</span><div id="tt-name-row"><div class="tn" id="tn"></div><button id="tt-fav" class="fav-btn" aria-label="즐겨찾기"><svg viewBox="0 0 24 24"><path d="M12 21L10.55 19.7C5.4 15.1 2 12.1 2 8.5 2 5.4 4.4 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.6 3 22 5.4 22 8.5c0 3.6-3.4 6.6-8.55 11.2L12 21z"/></svg></button><button id="tt-bookmark" class="bookmark-btn" aria-label="북마크"><svg viewBox="0 0 24 24"><path d="M6 3h11a1 1 0 0 1 1 1v16.2l-6.5-4.6-6.5 4.6V4a1 1 0 0 1 1-1z"/></svg></button><button id="tt-share" class="share-btn" aria-label="공유"><svg viewBox="0 0 24 24"><path d="M12 15V4M12 4l-3.5 3.5M12 4l3.5 3.5"/><path d="M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"/></svg></button></div><div id="tg-row"><div id="tt-links"></div><div class="tg" id="tg"></div><span id="tt-family-wrap" class="tt-family-wrap" style="display:none"><button id="tt-family-btn" type="button" aria-label="가족 관계">ⓘ</button><div id="tt-family-pop" class="tt-family-pop"></div></span><button id="tt-conn-btn" class="tt-conn-btn" style="display:none">연결</button></div><div class="tco" id="tco"></div><div id="tt-status-line" class="gc-status-line"></div><div class="tm" id="tm"></div><div id="tt-nav"><button class="tt-nav-btn" id="tt-prev" aria-label="이전 멤버"><span class="nav-arr">‹</span><span id="tt-prev-name" class="nav-name"></span></button><span id="tt-counter"></span><button class="tt-nav-btn" id="tt-next" aria-label="다음 멤버"><span id="tt-next-name" class="nav-name"></span><span class="nav-arr">›</span></button></div><div id="tt-concert-row" class="concert-row"></div><div id="tv"></div></div>
 <div id="gc">
   <div id="gc-bar"></div>
   <div id="gc-inner">
@@ -2516,8 +2536,18 @@ function _ageChipText(a){
   if(now.getMonth()+1<bm||(now.getMonth()+1===bm&&now.getDate()<bd))age--;
   return a.bday+(age>=0?` (${age}${currentLang==='ko'?'세':'y.o.'})`:' ');
 }
-// 고인 표기 — "故" 한자는 너무 무겁다는 피드백(2026-08-04)으로, 이름 뒤에 작은 별 하나만 은은하게 붙인다.
-function _deceasedMark(a){return a.died?' ✦':'';}
+// 고인 표기 — "故" 한자는 너무 무겁다는 피드백(2026-08-04)으로 별 하나만 붙이기로 했었는데, 유니코드
+// 문자(✦)를 이름 뒤에 텍스트로 그냥 붙인 거라 성의 없어 보인다는 재피드백(2026-08-06) — 우주에서 멤버들이
+// 실제로 발광하는 방식(부드러운 코어+halo, makeGlowTex 참고)과 같은 느낌으로 CSS 발광 점을 만들어 붙인다.
+// textContent를 쓰는 자리는 문자열로 합칠 수 없어서, 이름을 element로 세팅한 뒤 별도 span을 이어붙이는
+// 방식으로 호출부를 바꿔야 함 — 아래 _appendDeceasedStar 참고.
+function _appendDeceasedStar(el,a){
+  if(!a.died)return;
+  const star=document.createElement('span');
+  star.className='deceased-star';
+  star.title=currentLang==='ko'?`고인 · ${a.died}`:`In memoriam · ${a.died}`;
+  el.appendChild(star);
+}
 const groupLabels=[];
 let ARTISTS=[],GROUPS={};
 let _STRICT_SYNC_GROUPS=new Set(); // groups.json의 strictSync:true 그룹 — 로드 후 채워짐
@@ -2617,7 +2647,9 @@ function _refreshOpenCardText(){
   const ttEl=document.getElementById('tt');
   if(ttEl.style.display!=='none'&&_openTArtist){
     const a=_openTArtist;
-    document.getElementById('tn').textContent=(currentLang==='ko'?a.name.ko:(a.name.en||a.name.ko))+_deceasedMark(a);
+    const tnEl0=document.getElementById('tn');
+    tnEl0.textContent=currentLang==='ko'?a.name.ko:(a.name.en||a.name.ko);
+    _appendDeceasedStar(tnEl0,a);
     {const _tgEl=document.getElementById('tg');const _aGrps=_artistGroups(a);
     _tgEl.innerHTML='';_tgEl.onclick=null;
     _aGrps.forEach((g,i)=>{
@@ -6560,6 +6592,14 @@ document.getElementById('tt-back').addEventListener('click',e=>{
   if(isMob()&&connSheetEl.classList.contains('bs-open')&&!_memberNavStack.length){closeConnCard();return;}
   if(isMob()&&_cardStack.length>1){_popMobCard();}else{_ttGoBack();}
 });
+document.getElementById('tt-family-btn')?.addEventListener('click',e=>{
+  e.stopPropagation();
+  document.getElementById('tt-family-pop')?.classList.toggle('open');
+});
+document.addEventListener('click',e=>{
+  const wrap=document.getElementById('tt-family-wrap');
+  if(wrap&&!wrap.contains(e.target))document.getElementById('tt-family-pop')?.classList.remove('open');
+});
 document.getElementById('gc-back').addEventListener('click',e=>{
   e.stopPropagation();
   if(isMob()&&connSheetEl.classList.contains('bs-open')){closeConnCard();return;}
@@ -6605,7 +6645,9 @@ function showT(a,cx,cy,keepNavStack,urlMode,pushMobNav,noFly){
   const ttBar=document.getElementById('tt-bar');
   if(gInfo&&gInfo.color){const[cr,cg,cb]=gInfo.color;ttBar.style.background=`linear-gradient(90deg,rgba(${cr},${cg},${cb},0.50),rgba(${cr},${cg},${cb},0.18))`;}
   else ttBar.style.background='rgba(160,180,220,0.22)';
-  document.getElementById('tn').textContent=(currentLang==='ko'?a.name.ko:(a.name.en||a.name.ko))+_deceasedMark(a);
+  const tnEl=document.getElementById('tn');
+  tnEl.textContent=currentLang==='ko'?a.name.ko:(a.name.en||a.name.ko);
+  _appendDeceasedStar(tnEl,a);
   _renderGcLinks(a.links,'tt-links');
   const tgEl=document.getElementById('tg');
   tgEl.innerHTML='';tgEl.onclick=null;
@@ -6658,6 +6700,33 @@ function showT(a,cx,cy,keepNavStack,urlMode,pushMobNav,noFly){
     usp.addEventListener('click',_onUnitTagClick(usp,unitName));
     tgEl.appendChild(usp);
   });
+  // 가족 관계 — 있어도 그룹 태그 줄에 노골적으로 안 섞이게, 존재할 때만 작은 ⓘ 아이콘으로 표시하고
+  // 눌러야 각주처럼 살짝 팝업으로 나옴(2026-08-06, 사용자 요청). 나이/성별로 호칭을 계산하지 않고
+  // artists.json에 이미 화자 기준 호칭(오빠/언니/형/누나/동생 등)을 그대로 데이터에 넣어둔다.
+  {
+    const famWrap=document.getElementById('tt-family-wrap');
+    const famPop=document.getElementById('tt-family-pop');
+    famPop.innerHTML='';famPop.classList.remove('open');
+    if(a.family&&a.family.length){
+      famWrap.style.display='';
+      a.family.forEach(f=>{
+        const row=document.createElement('div');row.className='tt-family-row';
+        row.textContent=`${f.rel} ${f.name}`+(f.group?`(${f.group})`:'');
+        row.addEventListener('click',e=>{
+          e.stopPropagation();
+          famPop.classList.remove('open');
+          const target=ARTISTS.find(x=>x.name.ko===f.name&&(!f.group||_artistGroups(x).some(g=>g.ko===f.group)));
+          if(!target)return;
+          if(target._worldPos)flyTo(target._worldPos);
+          if(isMob()){showT(target,window.innerWidth/2,window.innerHeight*0.4,false,false,false);openMobSheet(document.getElementById('tt'));}
+          else showT(target,window.innerWidth/2,window.innerHeight/2);
+        });
+        famPop.appendChild(row);
+      });
+    }else{
+      famWrap.style.display='none';
+    }
+  }
   const tcoEl=document.getElementById('tco');tcoEl.innerHTML='';
   const _tcoParts=[];
   if(a.co)_tcoParts.push({text:a.co,type:'agency',value:a.co});
@@ -6826,7 +6895,8 @@ function _renderGcMemberList(ko,cx,cy){
     })
     .forEach(m=>{
       const sp=document.createElement('span');sp.className='gc-mem-name'+(m.active?'':' gc-mem-inactive');
-      sp.textContent=(currentLang==='ko'?m.name.ko:(m.name.en||m.name.ko))+_deceasedMark(m);
+      sp.textContent=currentLang==='ko'?m.name.ko:(m.name.en||m.name.ko);
+      _appendDeceasedStar(sp,m);
       if(_artistGroups(m).length>1)sp.title=_artistGroups(m).map(g=>g.ko).join(' · ');
       sp.addEventListener('click',e=>{
         e.stopPropagation();
@@ -13774,16 +13844,22 @@ function _makeChVidController(contId){
       grid.innerHTML='<div class="gc-ch-skeleton featured"><div class="gc-ch-skeleton-thumb"></div><div class="gc-ch-skeleton-title"></div><div class="gc-ch-skeleton-title short"></div></div>'
         +Array(6).fill('<div class="gc-ch-skeleton"><div class="gc-ch-skeleton-thumb"></div><div class="gc-ch-skeleton-title"></div><div class="gc-ch-skeleton-title short"></div></div>').join('');
       if(moreWrap)moreWrap.innerHTML='';
+      // offset/wrap 상태는 랜덤화 여부와 무관하게 일단 항상 0으로 리셋한다 — 결과가 한 페이지보다 많아서
+      // 청크 랜덤 샘플링을 타는 경우(아래 isChunkedRandomize)만 그 분기 안에서 자기 나름의 랜덤 오프셋으로
+      // 다시 덮어씀. 예전엔 "청크 분기에서 다시 정해지니까"라며 randomize일 땐 여기서 아예 안 건드렸는데,
+      // 결과가 한 페이지보다 적어(청크 분기를 안 타는 소규모 그룹/탭) 새로고침(↻)을 누르면 직전 페이지네이션에서
+      // 남은 offset이 그대로 남은 채 .range()가 호출돼, 그 offset이 실제 행 수보다 크면 PostgREST가
+      // "Requested range not satisfiable"로 응답하는 버그가 있었음(2026-08-06, 사용자 제보 — 아홉 즈언
+      // 멤버 카드 라이브 탭에서 새로고침 시 오류).
+      state.offset=0;
+      state.wrapEnd=0;state.wrapPhase=false;
       if(!randomize){
-        state.offset=0;
-        state.wrapEnd=0;state.wrapPhase=false;
         // 검색어/필터/탭이 바뀌었을 수 있으므로 이전 조합의 총 개수를 들고 있으면 안 됨 — 안 지우면
         // 새 검색 결과가 첫 페이지 안에 다 들어와도(hasMore=false) 맨 아래 "N개" 라벨이 검색 전
         // 전체 개수를 그대로 보여줌(2026-08-06, 사용자 제보). null이면 라벨은 allVids.length로
         // 대체되는데, hasMore=false 시점엔 그게 항상 이번 조합의 정확한 개수와 같다.
         state.total=null;
       }
-      // randomize(↻) 케이스의 offset/wrapEnd는 아래에서 청크를 뽑은 뒤에 정해짐
       // 그리드가 새로 비워졌으므로 행 정렬 추적 상태도 초기화
       state.pos=0;state.cat=null;state.trailingEl=null;state.allVids=[];
     }

@@ -6964,6 +6964,13 @@
       "ko": "에프엑스",
       "en": "f(x)"
     },
+    "family": [
+      {
+        "rel": "언니",
+        "name": "제시카",
+        "group": "소녀시대"
+      }
+    ],
     "co": "SM",
     "planet": "fx",
     "x": 11000,
@@ -13028,6 +13035,13 @@
       "ko": "아스트로",
       "en": "ASTRO"
     },
+    "family": [
+      {
+        "rel": "여동생",
+        "name": "문수아",
+        "group": "빌리"
+      }
+    ],
     "co": "판타지오",
     "active": false,
     "died": "2023.04.19",
@@ -15384,6 +15398,13 @@
       "ko": "빌리",
       "en": "Billlie"
     },
+    "family": [
+      {
+        "rel": "오빠",
+        "name": "문빈",
+        "group": "아스트로"
+      }
+    ],
     "co": "미스틱스토리",
     "active": true,
     "color": [
@@ -29847,6 +29868,13 @@
       "ko": "소녀시대",
       "en": "Girls' Generation"
     },
+    "family": [
+      {
+        "rel": "여동생",
+        "name": "크리스탈",
+        "group": "에프엑스"
+      }
+    ],
     "co": "SM",
     "active": false,
     "color": [
