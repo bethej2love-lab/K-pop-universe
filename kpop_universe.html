@@ -1617,6 +1617,8 @@
   #unfav-confirm-btns,#link-confirm-btns,#logout-confirm-btns{display:flex;gap:8px;margin-top:18px;}
   #pp-x-link{margin-top:18px;}
   #pp-linked-state{font-size:11px;color:rgba(130,200,160,0.85);margin-top:10px;letter-spacing:.02em;}
+  #pp-linked-state .pp-linked-provider{font-weight:700;margin-right:4px;}
+  #pp-linked-state .pp-linked-id{color:rgba(180,210,255,0.75);word-break:break-all;}
   .uc-btn{flex:1;padding:10px;border-radius:10px;font-family:inherit;font-size:12px;font-weight:700;letter-spacing:.03em;cursor:pointer;position:relative;overflow:hidden;transition:background .15s,border-color .15s,color .15s,transform .2s ease-out;background:rgba(255,255,255,0.05);border:0.5px solid rgba(255,255,255,0.09);color:rgba(180,200,238,0.72);}
   .uc-btn:hover{background:rgba(255,255,255,0.09);color:#fff;}
   .uc-btn-danger{background:rgba(255,95,110,0.14);border-color:rgba(255,95,110,0.30);color:rgba(255,160,170,0.92);}
@@ -2224,7 +2226,7 @@
       </div>
       <button id="pp-x-link" class="pp-save-btn" data-i18n="ppXBtn">X로 연결하기</button>
       <button id="pp-google-link" class="pp-save-btn" data-i18n="ppGoogleBtn">구글로 연결하기</button>
-      <div id="pp-linked-state" style="display:none" data-i18n="ppLinked">계정에 연결됨 ✓</div>
+      <div id="pp-linked-state" style="display:none"></div>
       <button id="pp-logout-btn" class="pp-save-btn" style="display:none;color:rgba(255,160,170,0.85);border-color:rgba(255,95,110,0.20)" data-i18n="ppLogout">로그아웃</button>
     </div>
     <button id="pp-save" class="pp-save-btn" data-i18n="ppSave">저장</button>
@@ -9140,8 +9142,28 @@ function openProfilePanel(){
   const _isLinked=window._sbSession&&window._sbSession.user.is_anonymous===false;
   document.getElementById('pp-google-link').style.display=_isLinked?'none':'';
   document.getElementById('pp-x-link').style.display=_isLinked?'none':'';
-  document.getElementById('pp-linked-state').style.display=_isLinked?'':'none';
   document.getElementById('pp-logout-btn').style.display=_isLinked?'':'none';
+  const linkedEl=document.getElementById('pp-linked-state');
+  if(_isLinked){
+    const u=window._sbSession.user;
+    const provider=u.app_metadata?.provider||(u.identities&&u.identities[0]?.provider)||'';
+    let providerLabel='',accountId='';
+    if(provider==='google'){
+      providerLabel='구글';
+      accountId=u.email||u.user_metadata?.email||'';
+    }else if(provider==='twitter'){
+      providerLabel='X';
+      const uname=u.user_metadata?.user_name||u.user_metadata?.preferred_username||'';
+      accountId=uname?'@'+uname:(u.email||'');
+    }else{
+      providerLabel=provider||'소셜';
+      accountId=u.email||'';
+    }
+    linkedEl.innerHTML=`<span class="pp-linked-provider">${providerLabel}로 연결됨 ✓</span><br><span class="pp-linked-id">${accountId}</span>`;
+    linkedEl.style.display='';
+  }else{
+    linkedEl.style.display='none';
+  }
   _closeBiasSearch();
   _renderBiasChips();
   setTimeout(()=>document.getElementById('pp-nick').focus(),80);
