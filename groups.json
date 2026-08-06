@@ -3983,26 +3983,6 @@
       "namu": "https://namu.wiki/w/SS501"
     }
   },
-  "더블에스301": {
-    "en": "Double S 301",
-    "debut": "2016.02.16",
-    "co": "인터파크뮤직 / Pony Canyon",
-    "survivalShow": true,
-    "projectRing": true,
-    "color": [
-      110,
-      180,
-      170
-    ],
-    "gender": "m",
-    "fandom": {
-      "ko": "트리플 S 301",
-      "en": "Triple S 301"
-    },
-    "links": {
-      "namu": "https://namu.wiki/w/Double%20S%20301"
-    }
-  },
   "아홉": {
     "en": "AHOF",
     "debut": "2025.07.01",
@@ -4854,22 +4834,6 @@
       "namu": "https://namu.wiki/w/앰퍼샌드원"
     }
   },
-  "블락비 바스타즈": {
-    "en": "Block B Bastarz",
-    "debut": "2015.04.14",
-    "co": "KQ 엔터테인먼트",
-    "survivalShow": true,
-    "projectRing": true,
-    "color": [
-      195,
-      175,
-      60
-    ],
-    "gender": "m",
-    "links": {
-      "namu": "https://namu.wiki/w/블락비 바스타즈"
-    }
-  },
   "플레이브": {
     "en": "PLAVE",
     "debut": "2023.03.12",
@@ -5220,6 +5184,152 @@
     },
     "links": {
       "namu": "https://namu.wiki/w/KEYVITUP"
+    }
+  },
+  "루네이트": {
+    "en": "LUN8",
+    "debut": "2023.06.15",
+    "co": "판타지오",
+    "color": [
+      120,
+      170,
+      210
+    ],
+    "gender": "m",
+    "fandom": {
+      "ko": "LUV8",
+      "en": "LUV8"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/LUN8"
+    }
+  },
+  "나우즈": {
+    "en": "NOWZ",
+    "debut": "2024.04.02",
+    "co": "큐브엔터테인먼트",
+    "color": [
+      90,
+      90,
+      90
+    ],
+    "gender": "m",
+    "fandom": {
+      "ko": "DAY_AND",
+      "en": "DAY_AND"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/NOWZ"
+    }
+  },
+  "파우": {
+    "en": "POW",
+    "debut": "2023.10.11",
+    "co": "그리드엔터테인먼트",
+    "color": [
+      253,
+      215,
+      90
+    ],
+    "gender": "m",
+    "fandom": {
+      "ko": "POWER",
+      "en": "POWER"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/POW"
+    }
+  },
+  "멜로디데이": {
+    "en": "Melody Day",
+    "debut": "2014.02.25",
+    "co": "크래커엔터테인먼트",
+    "survivalShow": true,
+    "color": [
+      210,
+      150,
+      168
+    ],
+    "gender": "f",
+    "fandom": {
+      "ko": "미투",
+      "en": "Me2"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/멜로디데이"
+    }
+  },
+  "크나큰": {
+    "en": "KNK",
+    "debut": "2016.03.03",
+    "co": "220엔터테인먼트",
+    "color": [
+      232,
+      79,
+      104
+    ],
+    "gender": "m",
+    "fandom": {
+      "ko": "팅커벨",
+      "en": "Tinkerbell"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/크나큰(아이돌)"
+    }
+  },
+  "체리블렛": {
+    "en": "Cherry Bullet",
+    "debut": "2019.01.21",
+    "co": "FNC엔터테인먼트",
+    "survivalShow": true,
+    "color": [
+      187,
+      60,
+      70
+    ],
+    "gender": "f",
+    "fandom": {
+      "ko": "룰렛",
+      "en": "Roulette"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/체리블렛"
+    }
+  },
+  "시크릿넘버": {
+    "en": "SECRET NUMBER",
+    "debut": "2020.05.19",
+    "co": "바인엔터테인먼트",
+    "color": [
+      60,
+      60,
+      65
+    ],
+    "gender": "f",
+    "fandom": {
+      "ko": "LOCKEY",
+      "en": "LOCKEY"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/SECRET NUMBER"
+    }
+  },
+  "엠씨엔디": {
+    "en": "MCND",
+    "debut": "2020.02.27",
+    "co": "티오피미디어",
+    "color": [
+      125,
+      185,
+      239
+    ],
+    "gender": "m",
+    "fandom": {
+      "ko": "GEM",
+      "en": "GEM"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/MCND"
     }
   }
 }

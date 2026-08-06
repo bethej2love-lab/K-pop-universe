@@ -10606,6 +10606,16 @@
       "ko": "아이오아이",
       "en": "I.O.I"
     },
+    "groups": [
+      {
+        "ko": "아이오아이",
+        "en": "I.O.I"
+      },
+      {
+        "ko": "프리스틴",
+        "en": "PRISTIN"
+      }
+    ],
     "co": "플레디스",
     "active": true,
     "color": [
@@ -27779,17 +27789,7 @@
     "links": {
       "instagram": "https://www.instagram.com/bbomb2011",
       "namu": "https://namu.wiki/w/%EB%B9%84%EB%B2%94(%EB%B8%94%EB%9D%BD%EB%B9%84)"
-    },
-    "groups": [
-      {
-        "ko": "블락비",
-        "en": "Block B"
-      },
-      {
-        "ko": "블락비 바스타즈",
-        "en": "Block B Bastarz"
-      }
-    ]
+    }
   },
   {
     "name": {
@@ -27844,17 +27844,7 @@
     "links": {
       "instagram": "https://www.instagram.com/uk_0530",
       "namu": "https://namu.wiki/w/%EC%9C%A0%EA%B6%8C(%EB%B8%94%EB%9D%BD%EB%B9%84)"
-    },
-    "groups": [
-      {
-        "ko": "블락비",
-        "en": "Block B"
-      },
-      {
-        "ko": "블락비 바스타즈",
-        "en": "Block B Bastarz"
-      }
-    ]
+    }
   },
   {
     "name": {
@@ -27938,17 +27928,7 @@
     "links": {
       "instagram": "https://www.instagram.com/pyojihoon_official",
       "namu": "https://namu.wiki/w/%ED%94%BC%EC%98%A4(%EB%B8%94%EB%9D%BD%EB%B9%84)"
-    },
-    "groups": [
-      {
-        "ko": "블락비",
-        "en": "Block B"
-      },
-      {
-        "ko": "블락비 바스타즈",
-        "en": "Block B Bastarz"
-      }
-    ]
+    }
   },
   {
     "name": {
@@ -29887,28 +29867,6 @@
   },
   {
     "name": {
-      "ko": "나영",
-      "en": "나영"
-    },
-    "group": {
-      "ko": "프리스틴",
-      "en": "PRISTIN"
-    },
-    "co": "플레디스",
-    "active": true,
-    "color": [
-      230,
-      150,
-      160
-    ],
-    "bday": "1995.12.18",
-    "nat": {
-      "ko": "한국",
-      "en": "KR"
-    }
-  },
-  {
-    "name": {
       "ko": "로아",
       "en": "로아"
     },
@@ -30279,17 +30237,7 @@
     "nat": {
       "ko": "한국",
       "en": "KR"
-    },
-    "groups": [
-      {
-        "ko": "SS501",
-        "en": "SS501"
-      },
-      {
-        "ko": "더블에스301",
-        "en": "Double S 301"
-      }
-    ]
+    }
   },
   {
     "name": {
@@ -30311,17 +30259,7 @@
     "nat": {
       "ko": "한국",
       "en": "KR"
-    },
-    "groups": [
-      {
-        "ko": "SS501",
-        "en": "SS501"
-      },
-      {
-        "ko": "더블에스301",
-        "en": "Double S 301"
-      }
-    ]
+    }
   },
   {
     "name": {
@@ -30365,17 +30303,7 @@
     "nat": {
       "ko": "한국",
       "en": "KR"
-    },
-    "groups": [
-      {
-        "ko": "SS501",
-        "en": "SS501"
-      },
-      {
-        "ko": "더블에스301",
-        "en": "Double S 301"
-      }
-    ]
+    }
   },
   {
     "name": {
@@ -40412,6 +40340,1076 @@
     },
     "links": {
       "namu": "https://namu.wiki/w/%EB%A3%A8%ED%82%A4%EC%95%84"
+    }
+  },
+  {
+    "name": {
+      "ko": "진수",
+      "en": "Jinsu"
+    },
+    "group": {
+      "ko": "루네이트",
+      "en": "LUN8"
+    },
+    "co": "판타지오",
+    "active": true,
+    "color": [
+      120,
+      170,
+      210
+    ],
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "songs": [],
+    "links": {
+      "namu": "https://namu.wiki/w/진수(LUN8)"
+    }
+  },
+  {
+    "name": {
+      "ko": "유우마",
+      "en": "Yuma"
+    },
+    "group": {
+      "ko": "루네이트",
+      "en": "LUN8"
+    },
+    "co": "판타지오",
+    "active": true,
+    "color": [
+      120,
+      170,
+      210
+    ],
+    "nat": {
+      "ko": "일본",
+      "en": "JP"
+    },
+    "songs": [],
+    "links": {
+      "namu": "https://namu.wiki/w/유우마(LUN8)"
+    }
+  },
+  {
+    "name": {
+      "ko": "카엘",
+      "en": "Kael"
+    },
+    "group": {
+      "ko": "루네이트",
+      "en": "LUN8"
+    },
+    "co": "판타지오",
+    "active": true,
+    "color": [
+      120,
+      170,
+      210
+    ],
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "songs": [],
+    "links": {
+      "namu": "https://namu.wiki/w/카엘(LUN8)"
+    }
+  },
+  {
+    "name": {
+      "ko": "타쿠마",
+      "en": "Takuma"
+    },
+    "group": {
+      "ko": "루네이트",
+      "en": "LUN8"
+    },
+    "co": "판타지오",
+    "active": true,
+    "color": [
+      120,
+      170,
+      210
+    ],
+    "nat": {
+      "ko": "일본",
+      "en": "JP"
+    },
+    "songs": [],
+    "links": {
+      "namu": "https://namu.wiki/w/타쿠마(LUN8)"
+    }
+  },
+  {
+    "name": {
+      "ko": "준우",
+      "en": "Junwoo"
+    },
+    "group": {
+      "ko": "루네이트",
+      "en": "LUN8"
+    },
+    "co": "판타지오",
+    "active": true,
+    "color": [
+      120,
+      170,
+      210
+    ],
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "songs": [],
+    "links": {
+      "namu": "https://namu.wiki/w/준우(LUN8)"
+    }
+  },
+  {
+    "name": {
+      "ko": "도현",
+      "en": "Dohyun"
+    },
+    "group": {
+      "ko": "루네이트",
+      "en": "LUN8"
+    },
+    "co": "판타지오",
+    "active": true,
+    "color": [
+      120,
+      170,
+      210
+    ],
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "songs": [],
+    "links": {
+      "namu": "https://namu.wiki/w/도현(LUN8)"
+    }
+  },
+  {
+    "name": {
+      "ko": "이안",
+      "en": "Ian"
+    },
+    "group": {
+      "ko": "루네이트",
+      "en": "LUN8"
+    },
+    "co": "판타지오",
+    "active": true,
+    "color": [
+      120,
+      170,
+      210
+    ],
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "songs": [],
+    "links": {
+      "namu": "https://namu.wiki/w/이안(LUN8)"
+    }
+  },
+  {
+    "name": {
+      "ko": "은섭",
+      "en": "Eunseop"
+    },
+    "group": {
+      "ko": "루네이트",
+      "en": "LUN8"
+    },
+    "co": "판타지오",
+    "active": false,
+    "color": [
+      120,
+      170,
+      210
+    ],
+    "bday": "2006.06.18",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "left": "2025.01.21",
+    "songs": [],
+    "links": {
+      "namu": "https://namu.wiki/w/은섭(LUN8)"
+    }
+  },
+  {
+    "name": {
+      "ko": "지은호",
+      "en": "Jieunho"
+    },
+    "group": {
+      "ko": "루네이트",
+      "en": "LUN8"
+    },
+    "co": "판타지오",
+    "active": false,
+    "color": [
+      120,
+      170,
+      210
+    ],
+    "bday": "2005.05.21",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "left": "2026.03.20",
+    "songs": [],
+    "links": {
+      "namu": "https://namu.wiki/w/지은호(LUN8)"
+    }
+  },
+  {
+    "name": {
+      "ko": "현빈",
+      "en": "Hyunbin"
+    },
+    "group": {
+      "ko": "나우즈",
+      "en": "NOWZ"
+    },
+    "co": "큐브엔터테인먼트",
+    "active": true,
+    "color": [
+      90,
+      90,
+      90
+    ],
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "songs": [],
+    "links": {
+      "namu": "https://namu.wiki/w/현빈(NOWZ)"
+    }
+  },
+  {
+    "name": {
+      "ko": "윤",
+      "en": "Yoon"
+    },
+    "group": {
+      "ko": "나우즈",
+      "en": "NOWZ"
+    },
+    "co": "큐브엔터테인먼트",
+    "active": true,
+    "color": [
+      90,
+      90,
+      90
+    ],
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "songs": [],
+    "links": {
+      "namu": "https://namu.wiki/w/윤(NOWZ)"
+    }
+  },
+  {
+    "name": {
+      "ko": "연우",
+      "en": "Yeonwoo"
+    },
+    "group": {
+      "ko": "나우즈",
+      "en": "NOWZ"
+    },
+    "co": "큐브엔터테인먼트",
+    "active": true,
+    "color": [
+      90,
+      90,
+      90
+    ],
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "songs": [],
+    "links": {
+      "namu": "https://namu.wiki/w/연우(NOWZ)"
+    }
+  },
+  {
+    "name": {
+      "ko": "진혁",
+      "en": "Jinhyuk"
+    },
+    "group": {
+      "ko": "나우즈",
+      "en": "NOWZ"
+    },
+    "co": "큐브엔터테인먼트",
+    "active": true,
+    "color": [
+      90,
+      90,
+      90
+    ],
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "songs": [],
+    "links": {
+      "namu": "https://namu.wiki/w/진혁(NOWZ)"
+    }
+  },
+  {
+    "name": {
+      "ko": "시윤",
+      "en": "Siyoon"
+    },
+    "group": {
+      "ko": "나우즈",
+      "en": "NOWZ"
+    },
+    "co": "큐브엔터테인먼트",
+    "active": true,
+    "color": [
+      90,
+      90,
+      90
+    ],
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "songs": [],
+    "links": {
+      "namu": "https://namu.wiki/w/시윤(NOWZ)"
+    }
+  },
+  {
+    "name": {
+      "ko": "요치",
+      "en": "Yochi"
+    },
+    "group": {
+      "ko": "파우",
+      "en": "POW"
+    },
+    "co": "그리드엔터테인먼트",
+    "active": true,
+    "color": [
+      253,
+      215,
+      90
+    ],
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "songs": [],
+    "links": {
+      "namu": "https://namu.wiki/w/요치"
+    }
+  },
+  {
+    "name": {
+      "ko": "현빈",
+      "en": "Hyunbin"
+    },
+    "group": {
+      "ko": "파우",
+      "en": "POW"
+    },
+    "co": "그리드엔터테인먼트",
+    "active": true,
+    "color": [
+      253,
+      215,
+      90
+    ],
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "songs": [],
+    "links": {
+      "namu": "https://namu.wiki/w/현빈(POW)"
+    }
+  },
+  {
+    "name": {
+      "ko": "정빈",
+      "en": "Jeongbin"
+    },
+    "group": {
+      "ko": "파우",
+      "en": "POW"
+    },
+    "co": "그리드엔터테인먼트",
+    "active": true,
+    "color": [
+      253,
+      215,
+      90
+    ],
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "songs": [],
+    "links": {
+      "namu": "https://namu.wiki/w/정빈"
+    }
+  },
+  {
+    "name": {
+      "ko": "동연",
+      "en": "Dongyeon"
+    },
+    "group": {
+      "ko": "파우",
+      "en": "POW"
+    },
+    "co": "그리드엔터테인먼트",
+    "active": true,
+    "color": [
+      253,
+      215,
+      90
+    ],
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "songs": [],
+    "links": {
+      "namu": "https://namu.wiki/w/동연(POW)"
+    }
+  },
+  {
+    "name": {
+      "ko": "홍",
+      "en": "Hong"
+    },
+    "group": {
+      "ko": "파우",
+      "en": "POW"
+    },
+    "co": "그리드엔터테인먼트",
+    "active": true,
+    "color": [
+      253,
+      215,
+      90
+    ],
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "songs": [],
+    "links": {
+      "namu": "https://namu.wiki/w/홍"
+    }
+  },
+  {
+    "name": {
+      "ko": "여은",
+      "en": "Yeoeun"
+    },
+    "group": {
+      "ko": "멜로디데이",
+      "en": "Melody Day"
+    },
+    "co": "크래커엔터테인먼트",
+    "active": false,
+    "color": [
+      210,
+      150,
+      168
+    ],
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "songs": [],
+    "links": {
+      "namu": "https://namu.wiki/w/여은"
+    }
+  },
+  {
+    "name": {
+      "ko": "나유민",
+      "en": "Yumin"
+    },
+    "group": {
+      "ko": "멜로디데이",
+      "en": "Melody Day"
+    },
+    "co": "크래커엔터테인먼트",
+    "active": false,
+    "color": [
+      210,
+      150,
+      168
+    ],
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "songs": [],
+    "links": {
+      "namu": "https://namu.wiki/w/나유민"
+    }
+  },
+  {
+    "name": {
+      "ko": "안예인",
+      "en": "Yein"
+    },
+    "group": {
+      "ko": "멜로디데이",
+      "en": "Melody Day"
+    },
+    "co": "크래커엔터테인먼트",
+    "active": false,
+    "color": [
+      210,
+      150,
+      168
+    ],
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "songs": [],
+    "links": {
+      "namu": "https://namu.wiki/w/안예인"
+    }
+  },
+  {
+    "name": {
+      "ko": "차희",
+      "en": "Chahee"
+    },
+    "group": {
+      "ko": "멜로디데이",
+      "en": "Melody Day"
+    },
+    "co": "크래커엔터테인먼트",
+    "active": false,
+    "color": [
+      210,
+      150,
+      168
+    ],
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "songs": [],
+    "links": {
+      "namu": "https://namu.wiki/w/차희"
+    }
+  },
+  {
+    "name": {
+      "ko": "김유진",
+      "en": "Youjin"
+    },
+    "group": {
+      "ko": "크나큰",
+      "en": "KNK"
+    },
+    "co": "220엔터테인먼트",
+    "active": true,
+    "color": [
+      232,
+      79,
+      104
+    ],
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "songs": [],
+    "links": {
+      "namu": "https://namu.wiki/w/김유진(1993)"
+    }
+  },
+  {
+    "name": {
+      "ko": "박서함",
+      "en": "Seokhwan"
+    },
+    "group": {
+      "ko": "크나큰",
+      "en": "KNK"
+    },
+    "co": "220엔터테인먼트",
+    "active": true,
+    "color": [
+      232,
+      79,
+      104
+    ],
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "songs": [],
+    "links": {
+      "namu": "https://namu.wiki/w/박서함"
+    }
+  },
+  {
+    "name": {
+      "ko": "오희준",
+      "en": "Heejun"
+    },
+    "group": {
+      "ko": "크나큰",
+      "en": "KNK"
+    },
+    "co": "220엔터테인먼트",
+    "active": true,
+    "color": [
+      232,
+      79,
+      104
+    ],
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "songs": [],
+    "links": {
+      "namu": "https://namu.wiki/w/우승(배우)"
+    }
+  },
+  {
+    "name": {
+      "ko": "이동원",
+      "en": "Dongwon"
+    },
+    "group": {
+      "ko": "크나큰",
+      "en": "KNK"
+    },
+    "co": "220엔터테인먼트",
+    "active": false,
+    "color": [
+      232,
+      79,
+      104
+    ],
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "songs": [],
+    "links": {
+      "namu": "https://namu.wiki/w/이동원(1994)"
+    }
+  },
+  {
+    "name": {
+      "ko": "미래",
+      "en": "Mirae"
+    },
+    "group": {
+      "ko": "체리블렛",
+      "en": "Cherry Bullet"
+    },
+    "co": "FNC엔터테인먼트",
+    "active": false,
+    "color": [
+      187,
+      60,
+      70
+    ],
+    "bday": "1998.03.26",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "left": "2019.12.13",
+    "songs": [],
+    "links": {
+      "namu": "https://namu.wiki/w/미래(체리블렛)"
+    }
+  },
+  {
+    "name": {
+      "ko": "코코로",
+      "en": "Kokoro"
+    },
+    "group": {
+      "ko": "체리블렛",
+      "en": "Cherry Bullet"
+    },
+    "co": "FNC엔터테인먼트",
+    "active": false,
+    "color": [
+      187,
+      60,
+      70
+    ],
+    "bday": "2000.11.01",
+    "nat": {
+      "ko": "일본",
+      "en": "JP"
+    },
+    "songs": [],
+    "links": {
+      "namu": "https://namu.wiki/w/코코로(체리블렛)"
+    }
+  },
+  {
+    "name": {
+      "ko": "린린",
+      "en": "Rinrin"
+    },
+    "group": {
+      "ko": "체리블렛",
+      "en": "Cherry Bullet"
+    },
+    "co": "FNC엔터테인먼트",
+    "active": false,
+    "color": [
+      187,
+      60,
+      70
+    ],
+    "bday": "2003.07.05",
+    "nat": {
+      "ko": "대만",
+      "en": "TW"
+    },
+    "songs": [],
+    "links": {
+      "namu": "https://namu.wiki/w/린린(체리블렛)"
+    }
+  },
+  {
+    "name": {
+      "ko": "데니스",
+      "en": "Denise"
+    },
+    "group": {
+      "ko": "시크릿넘버",
+      "en": "SECRET NUMBER"
+    },
+    "co": "바인엔터테인먼트",
+    "active": false,
+    "color": [
+      60,
+      60,
+      65
+    ],
+    "bday": "2001.01.11",
+    "nat": {
+      "ko": "미국",
+      "en": "US"
+    },
+    "left": "2022.02.01",
+    "songs": [],
+    "links": {
+      "namu": "https://namu.wiki/w/데니스(가수)"
+    }
+  },
+  {
+    "name": {
+      "ko": "레아",
+      "en": "Lea"
+    },
+    "group": {
+      "ko": "시크릿넘버",
+      "en": "SECRET NUMBER"
+    },
+    "co": "바인엔터테인먼트",
+    "active": false,
+    "color": [
+      60,
+      60,
+      65
+    ],
+    "bday": "1995.08.12",
+    "nat": {
+      "ko": "일본",
+      "en": "JP"
+    },
+    "left": "2025.04.02",
+    "songs": [],
+    "links": {
+      "namu": "https://namu.wiki/w/미즈키(모델)"
+    }
+  },
+  {
+    "name": {
+      "ko": "디타",
+      "en": "Dita"
+    },
+    "group": {
+      "ko": "시크릿넘버",
+      "en": "SECRET NUMBER"
+    },
+    "co": "바인엔터테인먼트",
+    "active": false,
+    "color": [
+      60,
+      60,
+      65
+    ],
+    "bday": "1996.12.25",
+    "nat": {
+      "ko": "인도네시아",
+      "en": "ID"
+    },
+    "left": "2025.04.04",
+    "songs": [],
+    "links": {
+      "namu": "https://namu.wiki/w/디타"
+    }
+  },
+  {
+    "name": {
+      "ko": "진희",
+      "en": "Jinny"
+    },
+    "group": {
+      "ko": "시크릿넘버",
+      "en": "SECRET NUMBER"
+    },
+    "co": "바인엔터테인먼트",
+    "active": true,
+    "color": [
+      60,
+      60,
+      65
+    ],
+    "bday": "1998.01.20",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "songs": [],
+    "links": {
+      "namu": "https://namu.wiki/w/진희(1998)"
+    }
+  },
+  {
+    "name": {
+      "ko": "민지",
+      "en": "Minji"
+    },
+    "group": {
+      "ko": "시크릿넘버",
+      "en": "SECRET NUMBER"
+    },
+    "co": "바인엔터테인먼트",
+    "active": true,
+    "color": [
+      60,
+      60,
+      65
+    ],
+    "bday": "1999.03.31",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "songs": [],
+    "links": {
+      "namu": "https://namu.wiki/w/멜로니(가수)"
+    }
+  },
+  {
+    "name": {
+      "ko": "수담",
+      "en": "Sudam"
+    },
+    "group": {
+      "ko": "시크릿넘버",
+      "en": "SECRET NUMBER"
+    },
+    "co": "바인엔터테인먼트",
+    "active": false,
+    "color": [
+      60,
+      60,
+      65
+    ],
+    "bday": "1999.11.09",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "left": "2025.12.12",
+    "songs": [],
+    "links": {
+      "namu": "https://namu.wiki/w/이수담"
+    }
+  },
+  {
+    "name": {
+      "ko": "주",
+      "en": "Ju"
+    },
+    "group": {
+      "ko": "시크릿넘버",
+      "en": "SECRET NUMBER"
+    },
+    "co": "바인엔터테인먼트",
+    "active": false,
+    "color": [
+      60,
+      60,
+      65
+    ],
+    "bday": "2000.03.24",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "left": "2026.04.08",
+    "songs": [],
+    "links": {
+      "namu": "https://namu.wiki/w/지영주(2000)"
+    }
+  },
+  {
+    "name": {
+      "ko": "캐슬제이",
+      "en": "Castle J"
+    },
+    "group": {
+      "ko": "엠씨엔디",
+      "en": "MCND"
+    },
+    "co": "티오피미디어",
+    "active": true,
+    "color": [
+      125,
+      185,
+      239
+    ],
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "songs": [],
+    "links": {
+      "namu": "https://namu.wiki/w/캐슬제이"
+    }
+  },
+  {
+    "name": {
+      "ko": "빅",
+      "en": "Big"
+    },
+    "group": {
+      "ko": "엠씨엔디",
+      "en": "MCND"
+    },
+    "co": "티오피미디어",
+    "active": true,
+    "color": [
+      125,
+      185,
+      239
+    ],
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "songs": [],
+    "links": {
+      "namu": "https://namu.wiki/w/빅(MCND)"
+    }
+  },
+  {
+    "name": {
+      "ko": "민재",
+      "en": "Minjae"
+    },
+    "group": {
+      "ko": "엠씨엔디",
+      "en": "MCND"
+    },
+    "co": "티오피미디어",
+    "active": true,
+    "color": [
+      125,
+      185,
+      239
+    ],
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "songs": [],
+    "links": {
+      "namu": "https://namu.wiki/w/민재(MCND)"
+    }
+  },
+  {
+    "name": {
+      "ko": "휘준",
+      "en": "Huijun"
+    },
+    "group": {
+      "ko": "엠씨엔디",
+      "en": "MCND"
+    },
+    "co": "티오피미디어",
+    "active": true,
+    "color": [
+      125,
+      185,
+      239
+    ],
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "songs": [],
+    "links": {
+      "namu": "https://namu.wiki/w/휘준"
+    }
+  },
+  {
+    "name": {
+      "ko": "윈",
+      "en": "Win"
+    },
+    "group": {
+      "ko": "엠씨엔디",
+      "en": "MCND"
+    },
+    "co": "티오피미디어",
+    "active": true,
+    "color": [
+      125,
+      185,
+      239
+    ],
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "songs": [],
+    "links": {
+      "namu": "https://namu.wiki/w/윈"
     }
   }
 ]

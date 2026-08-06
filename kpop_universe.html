@@ -878,6 +878,8 @@
   #admin-bulk-edit-btn:active{opacity:.7;}
   #admin-bulk-hide-btn{background:rgba(255,65,65,0.16);border:1px solid rgba(255,100,100,0.32);border-radius:13px;color:#ff9898;font-size:12px;padding:5px 14px;cursor:pointer;font-family:inherit;}
   #admin-bulk-hide-btn:active{opacity:.7;}
+  #admin-bulk-exclude-member-btn{background:rgba(255,170,60,0.16);border:1px solid rgba(255,185,90,0.32);border-radius:13px;color:#ffc98a;font-size:12px;padding:5px 14px;cursor:pointer;font-family:inherit;}
+  #admin-bulk-exclude-member-btn:active{opacity:.7;}
   #admin-bulk-cancel-btn{background:none;border:none;color:rgba(140,165,210,0.55);font-size:12px;cursor:pointer;padding:4px 2px;font-family:inherit;}
   /* tv-sm/tv-big-wrap은 스크랩(오른쪽4px)/북마크(오른쪽34px) 버튼이 이미 오른쪽을 쓰므로 왼쪽에 배치 */
   .tv-sm .vid-edit-btn,#tv-big-wrap .vid-edit-btn{position:absolute;top:4px;left:4px;z-index:3;}
@@ -1972,6 +1974,7 @@
 <div id="admin-bulk-bar" class="hidden">
   <span id="admin-bulk-count">0개 선택됨</span>
   <button id="admin-bulk-edit-btn">편집</button>
+  <button id="admin-bulk-exclude-member-btn" style="display:none">이 멤버 제외</button>
   <button id="admin-bulk-hide-btn">숨김</button>
   <button id="admin-bulk-cancel-btn">취소</button>
 </div>
@@ -5215,6 +5218,9 @@ function _connUpdateBulkBar(){
     document.getElementById('admin-bulk-count').textContent=`${_connSelIds.size}개 선택됨`;
     window._adminBulkExitFn=_connExitSelMode;
     window._adminBulkKo=_connAnchor?_connAnchor.group.ko:null;
+    window._adminBulkMemberKo=null; // 연결 카드는 "이 멤버 제외" 대상 멤버가 하나로 안 좁혀지므로 항상 숨김
+    const excludeBtn=document.getElementById('admin-bulk-exclude-member-btn');
+    if(excludeBtn)excludeBtn.style.display='none';
   }else{
     bar.classList.add('hidden');
   }
@@ -12411,7 +12417,9 @@ function _atmTokenize(title){return(title||'').toLowerCase().split(/[^a-z0-9]+/)
 // 방탄소년단 진의 name.ko는 "진"이라 'JIN'은 절대 매칭될 수 없는 죽은 항목이었음(2026-08-05, 사용자가
 // 박우진/권진아/진현주 영상에 방탄소년단 진이 잘못 얽혀있다고 제보하며 발견). 'Love'는 실제로 그 멤버의
 // name.ko 자체가 "Love"라 정상.
-const _ATM_HASHTAG_ONLY_NAMES=new Set(['여름','아이엠','가을','하늘','바다','이유','Love','진','이런','뉴','고우리','유사랑','종현','문빈','구하라','설리','노을','조현영','테오','바로','여정','온다']);
+const _ATM_HASHTAG_ONLY_NAMES=new Set(['여름','아이엠','가을','하늘','바다','이유','Love','진','이런','뉴','고우리','유사랑','종현','문빈','구하라','설리','노을','조현영','테오','바로','여정','온다','보니','미소']);
+// 보니/미소(드림노트): "알고 보니"/"어쩌다 보니"/"미소 짓다"처럼 흔한 관용구·단어의 일부로 대량 오매칭됨
+// (2026-08-06, 사용자 제보 — 실측 결과 보니 151건 중 상당수, 미소 76건 다수가 무관 예능/뉴스 클립).
 // 하드코딩 목록 + DB(name_match_whitelist, admin이 스캔 화면에서 바로 추가) 목록을 합쳐서 판단.
 function _isHashtagOnlyName(name){return _ATM_HASHTAG_ONLY_NAMES.has(name)||_ATM_DYNAMIC_HASHTAG_NAMES.has(name);}
 // 트리플에스처럼 등록된 이름 자체가 "성+이름"(예: 김채원)인 그룹은, 영상 제목에서 성 없이 이름만
@@ -12677,58 +12685,66 @@ async function _ytRetagAllIncludingTagged(){
 
 // ── 외부 채널 동기화 (M2·음방·직캠) ──
 function _ytApiKeyExt(){return(localStorage.getItem('kpu_ext_yt_key')||'').trim();}
+// tier: 'music'(공식/음악방송·직캠 — 무대·라이브 콘텐츠라 그룹명이 제목에 없어도 멤버 이름만으로
+// 그룹을 역추론해도 안전) vs 'variety'/'magazine'(예능·잡지 — 매 영상이 그때그때 다른 셀럽을 다루는
+// 채널이라 멤버 이름이 흔한 단어와 우연히 겹치면 위험. 그룹명/팬덤명이 제목에 literal로 없으면 멤버
+// 이름 평문 매칭만으론 그룹을 확정하지 않고, 해시태그 매칭만 인정 — 드림노트 "보니"/"미소"가 "알고
+// 보니"/변인 미소 같은 무관한 예능·뉴스 클립에 대량으로 얹히던 사고의 재발 방지, 2026-08-06 사용자 요청).
+// 아래 "신규 추가" 구간 중 성격이 불확실한 채널(재친구/findyourKODE/thekstarnextdoor/들어봐! 유리의 숲)은
+// 안전하게 variety로 기본 처리함 — 실제로 공식/음악 성격이면 music으로 바꿔도 됨.
 const _EXT_CHANNELS=[
   // ── 음악 방송 / 직캠 ──
-  {handle:'MnetM2',           url:'https://www.youtube.com/@MnetM2',           name:'M2'},
-  {handle:'Mnet',             url:'https://www.youtube.com/@Mnet',              name:'엠넷 (엠카운트다운)'},
-  {handle:'KBSKpop',          url:'https://www.youtube.com/@KBSKpop',           name:'뮤직뱅크'},
-  {handle:'MBCkpop',          url:'https://www.youtube.com/@MBCkpop',           name:'쇼음악중심'},
-  {handle:'SBSKPOP',          url:'https://www.youtube.com/@SBSKPOP',           name:'인기가요'},
-  {handle:'SBSKPOP_ZOOM',     url:'https://www.youtube.com/@SBSKPOP_ZOOM',      name:'인기가요 ZOOM'},
-  {handle:'ALLTHEKPOP',       url:'https://www.youtube.com/@ALLTHEKPOP',        name:'쇼챔피언'},
-  {handle:'thekpop',          url:'https://www.youtube.com/@thekpop',           name:'더 쇼'},
-  {handle:'STUDIOCHOOM',      url:'https://www.youtube.com/@STUDIOCHOOM',       name:'스튜디오 춤'},
-  {handle:'itsLiveOfficial',  url:'https://www.youtube.com/@itsLiveOfficial',   name:'잇츠라이브'},
-  {handle:'SoundBOMB360',     url:'https://www.youtube.com/@SoundBOMB360',      name:'사운드밤 360'},
+  {handle:'MnetM2',           url:'https://www.youtube.com/@MnetM2',           name:'M2',tier:'music'},
+  {handle:'Mnet',             url:'https://www.youtube.com/@Mnet',              name:'엠넷 (엠카운트다운)',tier:'music'},
+  {handle:'KBSKpop',          url:'https://www.youtube.com/@KBSKpop',           name:'뮤직뱅크',tier:'music'},
+  {handle:'MBCkpop',          url:'https://www.youtube.com/@MBCkpop',           name:'쇼음악중심',tier:'music'},
+  {handle:'SBSKPOP',          url:'https://www.youtube.com/@SBSKPOP',           name:'인기가요',tier:'music'},
+  {handle:'SBSKPOP_ZOOM',     url:'https://www.youtube.com/@SBSKPOP_ZOOM',      name:'인기가요 ZOOM',tier:'music'},
+  {handle:'ALLTHEKPOP',       url:'https://www.youtube.com/@ALLTHEKPOP',        name:'쇼챔피언',tier:'music'},
+  {handle:'thekpop',          url:'https://www.youtube.com/@thekpop',           name:'더 쇼',tier:'music'},
+  {handle:'STUDIOCHOOM',      url:'https://www.youtube.com/@STUDIOCHOOM',       name:'스튜디오 춤',tier:'music'},
+  {handle:'itsLiveOfficial',  url:'https://www.youtube.com/@itsLiveOfficial',   name:'잇츠라이브',tier:'music'},
+  {handle:'SoundBOMB360',     url:'https://www.youtube.com/@SoundBOMB360',      name:'사운드밤 360',tier:'music'},
   // ── 예능 ──
-  {handle:'ch117',            url:'https://www.youtube.com/@ch117',             name:'채널일일칠'},
-  {handle:'mmtg_official',    url:'https://www.youtube.com/@mmtg_official',     name:'MMTG'},
-  {handle:'Diggle',           url:'https://www.youtube.com/@Diggle',            name:'디글'},
-  {handle:'MBC_officialchannel',url:'https://www.youtube.com/@MBC_officialchannel',name:'MBC'},
-  {handle:'JTBCvoyage',       url:'https://www.youtube.com/@JTBCvoyage',        name:'JTBC voyage'},
-  {handle:'Pixid',            url:'https://www.youtube.com/@Pixid',             name:'픽시드'},
-  {handle:'idolhumandocu',    url:'https://www.youtube.com/@idolhumandocu',     name:'아이돌인간다큐'},
-  {handle:'ootbstudio',       url:'https://www.youtube.com/@ootbstudio',        name:'OOTB 스튜디오'},
-  {handle:'ddeunddeun',       url:'https://www.youtube.com/@ddeunddeun',        name:'뜬뜬'},
-  {handle:'15ya_egg',         url:'https://www.youtube.com/@15ya_egg',          name:'채널 십오야'},
-  {handle:'muply',            url:'https://www.youtube.com/@muply',             name:'뮤플리'},
-  {handle:'youngji_boxmedia', url:'https://www.youtube.com/@youngji_boxmedia',  name:'영지 박스미디어'},
-  {handle:'workman',          url:'https://www.youtube.com/@workman',           name:'워크맨'},
+  {handle:'ch117',            url:'https://www.youtube.com/@ch117',             name:'채널일일칠',tier:'variety'},
+  {handle:'mmtg_official',    url:'https://www.youtube.com/@mmtg_official',     name:'MMTG',tier:'variety'},
+  {handle:'Diggle',           url:'https://www.youtube.com/@Diggle',            name:'디글',tier:'variety'},
+  {handle:'MBC_officialchannel',url:'https://www.youtube.com/@MBC_officialchannel',name:'MBC',tier:'variety'},
+  {handle:'JTBCvoyage',       url:'https://www.youtube.com/@JTBCvoyage',        name:'JTBC voyage',tier:'variety'},
+  {handle:'Pixid',            url:'https://www.youtube.com/@Pixid',             name:'픽시드',tier:'variety'},
+  {handle:'idolhumandocu',    url:'https://www.youtube.com/@idolhumandocu',     name:'아이돌인간다큐',tier:'variety'},
+  {handle:'ootbstudio',       url:'https://www.youtube.com/@ootbstudio',        name:'OOTB 스튜디오',tier:'variety'},
+  {handle:'ddeunddeun',       url:'https://www.youtube.com/@ddeunddeun',        name:'뜬뜬',tier:'variety'},
+  {handle:'15ya_egg',         url:'https://www.youtube.com/@15ya_egg',          name:'채널 십오야',tier:'variety'},
+  {handle:'muply',            url:'https://www.youtube.com/@muply',             name:'뮤플리',tier:'variety'},
+  {handle:'youngji_boxmedia', url:'https://www.youtube.com/@youngji_boxmedia',  name:'영지 박스미디어',tier:'variety'},
+  {handle:'workman',          url:'https://www.youtube.com/@workman',           name:'워크맨',tier:'variety'},
   // ── 잡지 ──
-  {handle:'wkorea',           url:'https://www.youtube.com/@wkorea',            name:'W Korea'},
-  {handle:'VogueKorea',       url:'https://www.youtube.com/@VogueKorea',        name:'Vogue Korea'},
-  {handle:'ellemagazinekr',   url:'https://www.youtube.com/@ellemagazinekr',    name:'ELLE Korea'},
-  {handle:'HarpersBAZAARKorea',url:'https://www.youtube.com/@HarpersBAZAARKorea',name:"Harper's BAZAAR Korea"},
-  {handle:'marieclairekr',    url:'https://www.youtube.com/@marieclairekr',     name:'Marie Claire Korea'},
-  {handle:'cosmokorea',       url:'https://www.youtube.com/@cosmokorea',        name:'Cosmopolitan Korea'},
-  {handle:'GQKOREA',          url:'https://www.youtube.com/@GQKOREA',           name:'GQ Korea'},
-  {handle:'allurekorea',      url:'https://www.youtube.com/@allurekorea',       name:'Allure Korea'},
-  {handle:'DAZEDKOREA',       url:'https://www.youtube.com/@DAZEDKOREA',        name:'Dazed Korea'},
-  {handle:'ARENAKOREATV',     url:'https://www.youtube.com/@ARENAKOREATV',      name:'Arena Homme+ Korea'},
-  {handle:'singlesmania',     url:'https://www.youtube.com/@singlesmania',      name:'Singles'},
-  {handle:'ESQUIREKorea',     url:'https://www.youtube.com/@ESQUIREKorea',      name:'Esquire Korea'},
+  {handle:'wkorea',           url:'https://www.youtube.com/@wkorea',            name:'W Korea',tier:'magazine'},
+  {handle:'VogueKorea',       url:'https://www.youtube.com/@VogueKorea',        name:'Vogue Korea',tier:'magazine'},
+  {handle:'ellemagazinekr',   url:'https://www.youtube.com/@ellemagazinekr',    name:'ELLE Korea',tier:'magazine'},
+  {handle:'HarpersBAZAARKorea',url:'https://www.youtube.com/@HarpersBAZAARKorea',name:"Harper's BAZAAR Korea",tier:'magazine'},
+  {handle:'marieclairekr',    url:'https://www.youtube.com/@marieclairekr',     name:'Marie Claire Korea',tier:'magazine'},
+  {handle:'cosmokorea',       url:'https://www.youtube.com/@cosmokorea',        name:'Cosmopolitan Korea',tier:'magazine'},
+  {handle:'GQKOREA',          url:'https://www.youtube.com/@GQKOREA',           name:'GQ Korea',tier:'magazine'},
+  {handle:'allurekorea',      url:'https://www.youtube.com/@allurekorea',       name:'Allure Korea',tier:'magazine'},
+  {handle:'DAZEDKOREA',       url:'https://www.youtube.com/@DAZEDKOREA',        name:'Dazed Korea',tier:'magazine'},
+  {handle:'ARENAKOREATV',     url:'https://www.youtube.com/@ARENAKOREATV',      name:'Arena Homme+ Korea',tier:'magazine'},
+  {handle:'singlesmania',     url:'https://www.youtube.com/@singlesmania',      name:'Singles',tier:'magazine'},
+  {handle:'ESQUIREKorea',     url:'https://www.youtube.com/@ESQUIREKorea',      name:'Esquire Korea',tier:'magazine'},
   // ── 신규 추가 (2026-07-22) ──
-  {handle:'1theKOriginals',   url:'https://www.youtube.com/@1theKOriginals',    name:'1theK Originals'},
-  {handle:'DingoMusic',       url:'https://www.youtube.com/@DingoMusic',        name:'딩고뮤직'},
-  {handle:'STSEVEN_official', url:'https://www.youtube.com/@STSEVEN_official',  name:'재친구'},
-  {handle:'findyourKODE',     url:'https://www.youtube.com/@findyourKODE',      name:'findyourKODE'},
-  {handle:'TEO_universe',     url:'https://www.youtube.com/@TEO_universe',      name:'TEO_universe'},
-  {handle:'thekstarnextdoor', url:'https://www.youtube.com/@thekstarnextdoor',  name:'thekstarnextdoor'},
+  {handle:'1theKOriginals',   url:'https://www.youtube.com/@1theKOriginals',    name:'1theK Originals',tier:'music'},
+  {handle:'DingoMusic',       url:'https://www.youtube.com/@DingoMusic',        name:'딩고뮤직',tier:'music'},
+  {handle:'STSEVEN_official', url:'https://www.youtube.com/@STSEVEN_official',  name:'재친구',tier:'variety'},
+  {handle:'findyourKODE',     url:'https://www.youtube.com/@findyourKODE',      name:'findyourKODE',tier:'variety'},
+  {handle:'TEO_universe',     url:'https://www.youtube.com/@TEO_universe',      name:'TEO_universe',tier:'variety'},
+  {handle:'thekstarnextdoor', url:'https://www.youtube.com/@thekstarnextdoor',  name:'thekstarnextdoor',tier:'variety'},
   // ── 신규 추가 (2026-07-31) ──
-  {handle:'GoldenDiscOfficial',url:'https://www.youtube.com/@GoldenDiscOfficial',name:'골든디스크'},
+  {handle:'GoldenDiscOfficial',url:'https://www.youtube.com/@GoldenDiscOfficial',name:'골든디스크',tier:'music'},
   // ── 신규 추가 (2026-08-04) ──
-  {handle:'WelcomeToForest',  url:'https://www.youtube.com/@WelcomeToForest',   name:'들어봐! 유리의 숲'},
+  {handle:'WelcomeToForest',  url:'https://www.youtube.com/@WelcomeToForest',   name:'들어봐! 유리의 숲',tier:'variety'},
 ];
+const _EXT_STRICT_TIERS=new Set(['variety','magazine']);
 
 // 프로젝트 유닛(여러 그룹 소속 멤버가 모여 결성한 한시적 유닛, 자체 행성은 없음) — 영상 제목에 유닛명이
 // 언급되면 실제 소속 그룹으로 나눠 배정한다. gko는 _ytGroupKoFor와 동일 관례(실존 그룹이면 그 그룹,
@@ -12842,7 +12858,14 @@ const _GROUP_TITLE_CONFLICT_EXCLUDE={
 // (니치한 2007년 데뷔 그룹이 최근 데뷔한 그룹과 실제로 콜라보할 가능성은 사실상 없으므로) 무조건 버린다.
 // 제목에 이 그룹 하나만 단독으로 매칭됐을 때는(자기 채널 영상 등) 그대로 인정한다.
 const _GROUP_AMBIGUOUS_IF_COMATCHED=new Set(['슈퍼노바(초신성)']);
-function _m2ParseTitle(rawTitle,selfGko){
+// strict=true(예능/잡지 채널 백필·동기화에서 씀): 제목에 그룹명/영문명 literal 매칭이 하나도 없는데
+// 멤버 이름 평문 매칭만으로 그룹을 역추론하는 아래 폴백은 완전히 꺼버리고, 해시태그 매칭만 그 근거로
+// 인정한다. 음악방송/공식 채널(strict 기본값 false)은 무대·직캠 콘텐츠라 그룹명 없이 멤버명만 있어도
+// 실제로 그 멤버 얘기일 확률이 높지만, 예능/잡지는 매 영상이 그때그때 다른 셀럽을 다뤄서 멤버 이름이
+// 흔한 단어·동명이인과 우연히 겹치면 곧바로 오매칭됨(드림노트 "보니"가 "알고 보니"에 걸리던 사고,
+// 2026-08-06). _ATM_HASHTAG_ONLY_NAMES는 "이미 발견된" 흔한 이름만 보호하는데, strict는 아직 발견되지
+// 않은 새 흔한 이름/동명이인까지 채널 성격만으로 선제 차단한다.
+function _m2ParseTitle(rawTitle,selfGko,strict){
   // "하이라이트"는 그룹명이 아니라 "요약본" 의미로도 흔히 쓰여 그룹 하이라이트로 오매칭되기 쉬움 — 실측으로
   // "OO '노래' 릴댄 하이라이트 | 릴레이댄스"(릴레이댄스 코너 고정 문구), "OO 무대 하이라이트 모음"류가
   // 대량으로 하이라이트 그룹에 잘못 태깅되는 걸 확인함(2026-07-30). 대괄호로 감싼 경우([하이라이트])뿐
@@ -12961,7 +12984,10 @@ function _m2ParseTitle(rawTitle,selfGko){
       // membersByGroup은 그 버킷 안 이름 목록을 그대로 with_members에 "이름(솔로)" 형식으로 펼쳐 넣을
       // 뿐이라 문제 없음 — _findArtistByConnName/_apiVidToSong의 withKey가 기대하는 것과 정확히 같은 형식.
       const names=_m2NameVariants(a);
-      if(memberHit(a,names)&&!names.some(t=>hasForeignGroupSuffix(t))){
+      // strict 채널(예능/잡지)에서는 그룹명 literal 매칭이 아예 없으므로, 멤버 이름도 해시태그로
+      // 명시된 경우만 인정 — 평문 매칭(memberHit의 일반 분기)은 여기서 아예 시도하지 않는다.
+      const nameMatched=strict?names.some(t=>hitHashtag(t)):memberHit(a,names);
+      if(nameMatched&&!names.some(t=>hasForeignGroupSuffix(t))){
         if(!inferred.has(a.group.ko))inferred.set(a.group.ko,[]);
         inferred.get(a.group.ko).push(a.name.ko);
         if(!nameToGroups.has(a.name.ko))nameToGroups.set(a.name.ko,new Set());
@@ -13012,11 +13038,12 @@ function _m2ParseTitle(rawTitle,selfGko){
   return{primaryGroup:matchedGroupKos[0],withGroups:matchedGroupKos.slice(1),membersByGroup};
 }
 
-// 채널 1개 분량 파싱 → Supabase rows 배열 반환
-function _extBuildRows(vids){
+// 채널 1개 분량 파싱 → Supabase rows 배열 반환. strict는 호출부(_ytSyncExtChannels/_ytBackfillChannelCore)가
+// 그 채널의 tier('variety'/'magazine')를 보고 넘겨준다 — _EXT_STRICT_TIERS 참고.
+function _extBuildRows(vids,strict){
   const rows=[];let skipped=0;
   for(const v of vids){
-    const match=_m2ParseTitle(v.title);
+    const match=_m2ParseTitle(v.title,undefined,strict);
     if(!match){skipped++;continue;}
     const members=match.membersByGroup[match.primaryGroup]||[];
     const withGroups=[],withMembers=[];
@@ -13070,7 +13097,7 @@ async function _ytSyncExtChannels(){
         setProg(`${prefix} ${fetched}${tot?'/'+tot:''}개 수집 중…`+(resumeTok?' (이어받는 중)':''));
       },resumeTok);
       if(vids.length){
-        const{rows,skipped}=_extBuildRows(vids);
+        const{rows,skipped}=_extBuildRows(vids,_EXT_STRICT_TIERS.has(ch.tier));
         totalSkipped+=skipped;
         if(rows.length){
           setProg(`${prefix} ${rows.length}개 저장 중…`);
@@ -13182,7 +13209,7 @@ async function _ytBackfillChannelCore(ch,fromYear,toYear,callBudget,onProg,query
       });
     }
     if(vids.length){
-      const{rows,skipped:sk}=_extBuildRows(vids);
+      const{rows,skipped:sk}=_extBuildRows(vids,_EXT_STRICT_TIERS.has(ch.tier));
       skipped+=sk;
       if(rows.length){
         for(let i=0;i<rows.length;i+=200){
@@ -13505,6 +13532,12 @@ function _makeChVidController(contId){
       const selectedVids=state.allVids.filter(v=>_selIds.has(v.id));
       window._adminBulkKo=selectedVids[0]?.group_ko||state.ko;
       window._adminBulkMixedGko=new Set(selectedVids.map(v=>v.group_ko).filter(Boolean)).size>1;
+      // 멤버 카드에서 선택 중일 때만 "이 멤버 제외" 빠른 액션을 노출 — 그룹 카드/연결 카드는 특정 멤버
+      // 하나로 좁혀지지 않으므로 이 버튼이 의미가 없음(2026-08-06, 사용자 요청).
+      window._adminBulkMemberKo=state.memberKo||null;
+      window._adminBulkSelectedVids=selectedVids;
+      const excludeBtn=document.getElementById('admin-bulk-exclude-member-btn');
+      if(excludeBtn)excludeBtn.style.display=state.memberKo?'':'none';
     }else{
       bar.classList.add('hidden');
     }
@@ -13746,6 +13779,11 @@ function _makeChVidController(contId){
       if(!randomize){
         state.offset=0;
         state.wrapEnd=0;state.wrapPhase=false;
+        // 검색어/필터/탭이 바뀌었을 수 있으므로 이전 조합의 총 개수를 들고 있으면 안 됨 — 안 지우면
+        // 새 검색 결과가 첫 페이지 안에 다 들어와도(hasMore=false) 맨 아래 "N개" 라벨이 검색 전
+        // 전체 개수를 그대로 보여줌(2026-08-06, 사용자 제보). null이면 라벨은 allVids.length로
+        // 대체되는데, hasMore=false 시점엔 그게 항상 이번 조합의 정확한 개수와 같다.
+        state.total=null;
       }
       // randomize(↻) 케이스의 offset/wrapEnd는 아래에서 청크를 뽑은 뒤에 정해짐
       // 그리드가 새로 비워졌으므로 행 정렬 추적 상태도 초기화
@@ -15238,6 +15276,48 @@ document.getElementById('admin-bulk-hide-btn')?.addEventListener('click',async()
   selectedItems.forEach(el=>el.remove());
   window._adminBulkExitFn?.();
   btn.disabled=false;btn.textContent='숨김';
+});
+// 멤버 카드에서 여러 영상을 골라 "이 멤버가 실제로는 안 나오는 영상"이라고 한 번에 표시하는 빠른 액션 —
+// 매번 태그 편집 모달을 열어 멤버 이름을 하나씩 찾아 체크 해제할 필요 없이, members에서 이 멤버 이름만
+// 빼고(자체 채널 태깅) with_members에서 "이멤버(그룹)" 항목만 뺀다(다른 채널 게스트 태깅). 다른 멤버/그룹
+// 태그는 그대로 둔다 — "숨김"과 달리 이 영상 자체를 지우거나 다른 곳에서도 감추는 게 아니라, 딱 이 멤버
+// 연결만 끊는 것(2026-08-06, 사용자 요청 — 매번 정리를 따로 요청하기 번거롭다는 피드백).
+document.getElementById('admin-bulk-exclude-member-btn')?.addEventListener('click',async()=>{
+  if(!sb||!_isAdmin())return;
+  const btn=document.getElementById('admin-bulk-exclude-member-btn');
+  const mko=window._adminBulkMemberKo;
+  if(!mko)return;
+  const selectedItems=[...document.querySelectorAll('.gc-ch-item.admin-selected')];
+  if(!selectedItems.length)return;
+  const idSet=new Set(selectedItems.map(el=>el.dataset.vidId).filter(Boolean));
+  if(!idSet.size)return;
+  const vids=(window._adminBulkSelectedVids||[]).filter(v=>idSet.has(v.id));
+  const patches=vids.map(v=>{
+    const members=v.members||[],withMembers=v.with_members||[];
+    const newMembers=members.filter(m=>m!==mko);
+    const newWithMembers=withMembers.filter(wm=>!wm.startsWith(mko+'('));
+    return{id:v.id,members:newMembers,with_members:newWithMembers,group_ko:v.group_ko,
+      changed:newMembers.length!==members.length||newWithMembers.length!==withMembers.length};
+  }).filter(p=>p.changed);
+  if(!patches.length){_showShareToast('선택한 영상엔 이 멤버 태그가 없어요');return;}
+  btn.disabled=true;btn.textContent='처리 중…';
+  const allIds=patches.map(p=>p.id);
+  // tags_manual=true인 행은 DB 트리거가 태그 변경을 막으므로, 편집 모달과 동일하게 잠금 해제→변경→재잠금
+  const{error:unlockErr}=await sb.from(_YT_TABLE).update({tags_manual:false}).in('id',allIds);
+  if(unlockErr){btn.disabled=false;btn.textContent='이 멤버 제외';_showShareToast('오류: '+unlockErr.message);return;}
+  for(let i=0;i<patches.length;i+=25){
+    const chunk=patches.slice(i,i+25);
+    const results=await Promise.all(chunk.map(p=>sb.from(_YT_TABLE).update({members:p.members,with_members:p.with_members}).eq('id',p.id)));
+    const failed=results.find(r=>r.error);
+    if(failed){btn.disabled=false;btn.textContent='이 멤버 제외';_showShareToast('오류: '+failed.error.message);return;}
+  }
+  const{error:lockErr}=await sb.from(_YT_TABLE).update({tags_manual:true}).in('id',allIds);
+  if(lockErr){btn.disabled=false;btn.textContent='이 멤버 제외';_showShareToast('오류: '+lockErr.message);return;}
+  const affectedGkos=new Set(patches.map(p=>p.group_ko).filter(Boolean));
+  window._adminBulkExitFn?.();
+  affectedGkos.forEach(gko=>{_gcChVidCtl.reloadIfShowing(gko);_ttChVidCtl.reloadIfShowing(gko);});
+  btn.disabled=false;btn.textContent='이 멤버 제외';
+  _showShareToast(`${patches.length}개 영상에서 제외함`);
 });
 
 // 그룹/멤버/연결 카드 공통 "맨 위로" 버튼 — 스크롤로 아래로 많이 내려간 뒤 카드 맨 위로 쉽게 돌아가기 위함.
