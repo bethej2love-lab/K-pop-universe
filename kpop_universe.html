@@ -495,6 +495,9 @@
   #yt-lb-edit:hover{background:rgba(255,255,255,0.16);color:#fff;}
   #yt-lb-mute:hover{background:rgba(255,255,255,0.16);color:#fff;}
   #yt-lb-mute.is-on{color:rgba(255,255,255,0.95);}
+  #yt-lb-vol{-webkit-appearance:none;appearance:none;width:54px;height:3px;border-radius:2px;background:rgba(200,215,255,0.22);outline:none;cursor:pointer;flex-shrink:0;accent-color:rgba(200,215,255,0.85);}
+  #yt-lb-vol::-webkit-slider-thumb{-webkit-appearance:none;width:12px;height:12px;border-radius:50%;background:rgba(200,215,255,0.9);cursor:pointer;}
+  #yt-lb-vol::-moz-range-thumb{width:12px;height:12px;border:none;border-radius:50%;background:rgba(200,215,255,0.9);cursor:pointer;}
   #yt-lb-scrap svg,#yt-lb-bm svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linejoin:round;}
   #yt-lb-scrap.scrapped{color:rgba(255,92,125,0.92);}
   #yt-lb-scrap.scrapped svg{fill:currentColor;}
@@ -1635,8 +1638,11 @@
   #my-page-bio{font-size:10px;color:rgba(118,142,192,0.52);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
   #my-page-edit{background:none;border:0.5px solid rgba(140,165,220,0.20);border-radius:7px;color:rgba(138,162,218,0.52);font-size:9px;font-weight:700;letter-spacing:.10em;padding:3px 8px;cursor:pointer;font-family:inherit;transition:background .13s,color .13s,border-color .13s;flex-shrink:0;text-transform:uppercase;}
   #my-page-edit:hover{background:rgba(140,165,220,0.09);color:rgba(188,210,255,0.88);border-color:rgba(140,165,220,0.38);}
-  /* ── Scrap (playlist) ────────────────────────────── */
+  /* ── Scrap (likes) ───────────────────────────────── */
   #scrap-section{margin-top:14px;padding-top:12px;border-top:0.5px solid rgba(255,255,255,0.07);}
+  #scrap-list{max-height:220px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:rgba(140,165,220,0.18) transparent;}
+  #scrap-list::-webkit-scrollbar{width:3px;}
+  #scrap-list::-webkit-scrollbar-thumb{background:rgba(140,165,220,0.22);border-radius:2px;}
   /* ── Bookmarks (universal) ───────────────────────── */
   #bookmark-section{margin-top:14px;padding-top:12px;border-top:0.5px solid rgba(255,255,255,0.07);}
   /* ── Anniversaries (birthdays + 즐겨찾기 기념일) ──── */
@@ -1655,7 +1661,7 @@
   .anniv-item:hover{background:rgba(255,255,255,0.06);}
   .anniv-name{font-size:12px;color:#b8d0ee;font-weight:500;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
   .anniv-badge{display:inline-block;font-size:9px;font-weight:800;letter-spacing:.03em;padding:2px 6px;border-radius:6px;flex-shrink:0;min-width:34px;text-align:center;background:rgba(145,175,255,0.08);color:rgba(148,170,225,0.48);}
-  .anniv-edit{background:none;border:none;cursor:pointer;font-size:10px;color:rgba(120,145,195,0.38);padding:2px 4px;flex-shrink:0;transition:color .13s;}
+  .anniv-edit{background:none;border:none;cursor:pointer;font-size:14px;color:rgba(120,145,195,0.38);padding:2px 4px;flex-shrink:0;transition:color .13s;line-height:1;}
   .anniv-edit:hover{color:rgba(200,220,255,0.85);}
   .scrap-item{display:flex;align-items:center;gap:8px;padding:5px 4px;border-radius:8px;cursor:pointer;transition:background .13s;}
   .scrap-item:hover{background:rgba(255,255,255,0.06);}
@@ -1784,7 +1790,7 @@
       <div id="fav-list"><div class="fav-empty">즐겨찾기가 없어요</div></div>
     </div>
     <div id="scrap-section">
-      <div class="fav-hd"><span class="fav-hd-lbl">PLAYLIST</span></div>
+      <div class="fav-hd"><span class="fav-hd-lbl">LIKES</span></div>
       <div id="scrap-list"><div class="fav-empty">스크랩한 영상이 없어요</div></div>
     </div>
     <div id="bookmark-section">
@@ -2142,6 +2148,7 @@
       <div id="yt-lb-actions">
         <button id="yt-lb-rotate" aria-label="세로/가로 전환"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="2" width="10" height="16" rx="1.5"/><path d="M4 20h7M7.5 17l-3 3 3 3" transform="translate(0,-2)"/></svg></button>
         <button id="yt-lb-mute" aria-label="소리 켜기">🔇</button>
+        <input type="range" id="yt-lb-vol" min="0" max="100" value="100" aria-label="볼륨" step="1">
         <button id="yt-lb-scrap" aria-label="플레이리스트 추가"><svg viewBox="0 0 24 24"><path d="M12 21L10.55 19.7C5.4 15.1 2 12.1 2 8.5 2 5.4 4.4 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.6 3 22 5.4 22 8.5c0 3.6-3.4 6.6-8.55 11.2L12 21z"/></svg><span id="yt-lb-scrap-cnt" class="lb-action-cnt"></span></button>
         <button id="yt-lb-bm" aria-label="북마크"><svg viewBox="0 0 24 24"><path d="M17 3H7c-1.1 0-2 .9-2 2v16l7-3 7 3V5c0-1.1-.9-2-2-2z"/></svg></button>
         <button id="yt-lb-edit" aria-label="출연 멤버 지정" style="display:none">✎</button>
@@ -4105,6 +4112,7 @@ let _lbPlaylist=null,_lbIdx=-1,_lbCtx=null;
 let _lbSpeed=1; // 우측 탭존을 꾹 누르는 동안의 배속 (1 또는 2)
 // 소리 on/off는 세션 넘어 기억 — 한 번 켜두면 다음에 라이트박스 열 때도 계속 소리 켜진 채로 시작
 let _lbMuted=localStorage.getItem('kpu_lb_muted')!=='0'; // 기본 무음
+let _lbVolume=Math.min(100,Math.max(0,parseInt(localStorage.getItem('kpu_lb_volume')||'100',10)));
 let _lbAutoUnmuteT=null; // 다음/이전(스와이프·버튼) 전환 시 무음→소리 복구 타이머
 let _lbNeedUnmute=false; // 소리 모드에서 isAdvance 전환 시 재생 시작 후 unMute 필요 여부
 let _lbLoadingT=null; // 영상 전환 시 로딩 스피너 표시용 폴백 타이머(재생 시작 신호가 안 올 경우 대비)
@@ -4123,6 +4131,8 @@ function _updateLbMuteBtn(){
   btn.textContent=_lbMuted?'🔇':'🔊';
   btn.setAttribute('aria-label',_lbMuted?'소리 켜기':'소리 끄기');
   btn.classList.toggle('is-on',!_lbMuted);
+  const sl=document.getElementById('yt-lb-vol');
+  if(sl)sl.value=_lbMuted?0:_lbVolume;
 }
 function openLightbox(url,shorts,playlist,idx,ctx,isAdvance){
   const vid=ytId(url);if(!vid)return;
@@ -4160,7 +4170,7 @@ function openLightbox(url,shorts,playlist,idx,ctx,isAdvance){
     _lbAutoUnmuteT=setTimeout(()=>{
       if(_lbNeedUnmute&&iframe.contentWindow){
         iframe.contentWindow.postMessage(JSON.stringify({event:'command',func:'unMute',args:[]}),'*');
-        iframe.contentWindow.postMessage(JSON.stringify({event:'command',func:'setVolume',args:[100]}),'*');
+        iframe.contentWindow.postMessage(JSON.stringify({event:'command',func:'setVolume',args:[_lbVolume]}),'*');
         _lbNeedUnmute=false;
       }
     },1200);
@@ -4403,7 +4413,7 @@ window.addEventListener('message',e=>{
         const iframe=document.getElementById('yt-lb-iframe');
         if(iframe.contentWindow){
           iframe.contentWindow.postMessage(JSON.stringify({event:'command',func:'unMute',args:[]}),'*');
-          iframe.contentWindow.postMessage(JSON.stringify({event:'command',func:'setVolume',args:[100]}),'*');
+          iframe.contentWindow.postMessage(JSON.stringify({event:'command',func:'setVolume',args:[_lbVolume]}),'*');
         }
       }
     }
@@ -4575,6 +4585,28 @@ document.getElementById('yt-lb-mute').addEventListener('click',e=>{
   const iframe=document.getElementById('yt-lb-iframe');
   if(iframe.contentWindow){
     iframe.contentWindow.postMessage(JSON.stringify({event:'command',func:_lbMuted?'mute':'unMute',args:[]}),'*');
+    if(!_lbMuted)iframe.contentWindow.postMessage(JSON.stringify({event:'command',func:'setVolume',args:[_lbVolume]}),'*');
+  }
+});
+document.getElementById('yt-lb-vol').addEventListener('input',e=>{
+  e.stopPropagation();
+  const vol=parseInt(e.target.value,10);
+  if(vol>0){_lbVolume=vol;localStorage.setItem('kpu_lb_volume',_lbVolume);} // 0일 땐 복구용 볼륨 유지
+  const shouldMute=vol===0;
+  if(shouldMute!==_lbMuted){
+    _lbMuted=shouldMute;
+    localStorage.setItem('kpu_lb_muted',_lbMuted?'1':'0');
+    _updateLbMuteBtn();
+    document.getElementById('yt-lb-vol').value=vol; // _updateLbMuteBtn이 슬라이더 값을 덮어쓰므로 복원
+  }
+  const iframe=document.getElementById('yt-lb-iframe');
+  if(iframe&&iframe.contentWindow){
+    if(shouldMute){
+      iframe.contentWindow.postMessage(JSON.stringify({event:'command',func:'mute',args:[]}),'*');
+    }else{
+      iframe.contentWindow.postMessage(JSON.stringify({event:'command',func:'unMute',args:[]}),'*');
+      iframe.contentWindow.postMessage(JSON.stringify({event:'command',func:'setVolume',args:[vol]}),'*');
+    }
   }
 });
 // 영상 우측 탭존: 꾹 누르고 있는 동안만 2배속(손 떼면 원래 배속으로 복귀). 짧게 탭한 경우는 아무 것도
@@ -8670,7 +8702,7 @@ function _buildAnniversaryList(){
     div.appendChild(badge);
     const nameSpan=document.createElement('span');nameSpan.className='anniv-name';nameSpan.textContent=item.name;
     div.appendChild(nameSpan);
-    const editBtn=document.createElement('button');editBtn.className='anniv-edit';editBtn.title='날짜 수정';editBtn.textContent='🖉';
+    const editBtn=document.createElement('button');editBtn.className='anniv-edit';editBtn.title='날짜 수정';editBtn.textContent='⋮';
     div.appendChild(editBtn);
     div.addEventListener('click',()=>{
       if(item.type==='group'){
@@ -10822,7 +10854,8 @@ async function _ytSyncAll(){
 const VIEW_COUNT_WINDOW_DAYS=14;
 async function _ytRefreshViewCounts(){
   const key=_ytApiKey();
-  if(!key||!sb)return;
+  if(!key){_ytSetProg('API 키를 먼저 입력해주세요');return;}
+  if(!sb){_ytSetProg('Supabase 연결 없음');return;}
   _ytSetProg('조회수 갱신 대상 조회 중…');
   const sinceDate=new Date(Date.now()-VIEW_COUNT_WINDOW_DAYS*86400000).toISOString().slice(0,10);
   const{data:rows,error}=await _sbFetchAll(()=>sb.from(_YT_TABLE)
