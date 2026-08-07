@@ -10881,11 +10881,18 @@ async function _ytRefreshViewCounts(){
     }catch(e){console.error('[조회수 갱신] 실패:',e.message);}
   }
   if(!statsUpdates.length){_ytSetProg('조회수 갱신: 반영할 값 없음');return;}
-  for(let i=0;i<statsUpdates.length;i+=200){
-    const{error:ue}=await sb.from(_YT_TABLE).upsert(statsUpdates.slice(i,i+200));
-    if(ue)console.error('[조회수 갱신] 저장 실패:',ue.message);
+  let saved=0,failed=0;
+  for(let i=0;i<statsUpdates.length;i+=50){
+    _ytSetProg(`조회수 저장 중… ${i}/${statsUpdates.length}`);
+    const results=await Promise.all(
+      statsUpdates.slice(i,i+50).map(({id,view_count})=>
+        sb.from(_YT_TABLE).update({view_count}).eq('id',id)
+      )
+    );
+    results.forEach(({error:ue})=>{if(ue){failed++;console.error('[조회수 갱신] 저장 실패:',ue.message);}else saved++;});
+    if(failed){_ytSetProg(`저장 실패 (${failed}건): 콘솔 확인`);return;}
   }
-  _ytSetProg(`조회수 갱신 완료 — ${statsUpdates.length}개`);
+  _ytSetProg(`조회수 갱신 완료 — ${saved}개`);
 }
 
 function _ytSetProg(msg){const el=document.getElementById('sp-yt-prog');if(el)el.textContent=msg;}
