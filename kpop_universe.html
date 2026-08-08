@@ -1732,11 +1732,15 @@
   .feed-strip-name{font-size:9.5px;font-weight:600;color:rgba(215,228,255,0.85);text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:66px;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
   .feed-strip-sub{font-size:8.5px;color:rgba(120,148,200,0.55);text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:66px;margin-top:-4px;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
   /* Discovery 피드(인스타 피드 스타일 세로 스크롤 큰 카드) */
-  .feed-card{cursor:pointer;position:relative;overflow:hidden;-webkit-tap-highlight-color:transparent;border-bottom:0.5px solid rgba(255,255,255,0.06);transition:background .13s;}
+  .feed-card{cursor:pointer;position:relative;overflow:hidden;-webkit-tap-highlight-color:transparent;border-bottom:0.5px solid rgba(255,255,255,0.06);transition:background .13s;animation:feed-card-appear .28s ease both;}
+  @keyframes feed-card-appear{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
   .feed-card:active{background:rgba(255,255,255,0.035);}
   .feed-card-thumb-wrap{width:100%;aspect-ratio:16/9;background:rgba(255,255,255,0.05);position:relative;overflow:hidden;}
-  .feed-card-thumb{width:100%;height:100%;object-fit:cover;display:block;}
+  .feed-card-thumb{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .3s ease;}
+  .feed-card-thumb.loaded{opacity:1;}
   .feed-card-icon-fallback{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:34px;background:linear-gradient(135deg,rgba(100,130,255,0.16),rgba(255,255,255,0.03));}
+  .feed-card-shimmer{width:100%;height:100%;background:linear-gradient(90deg,rgba(255,255,255,0.04) 25%,rgba(255,255,255,0.09) 50%,rgba(255,255,255,0.04) 75%);background-size:200% 100%;animation:gc-shimmer 1.4s ease infinite;}
+  .feed-strip-shimmer{width:100%;height:100%;border-radius:50%;background:linear-gradient(90deg,rgba(255,255,255,0.04) 25%,rgba(255,255,255,0.09) 50%,rgba(255,255,255,0.04) 75%);background-size:200% 100%;animation:gc-shimmer 1.4s ease infinite;}
   .feed-card-cap{padding:10px 20px 18px;}
   .feed-card-title{font-size:12.5px;font-weight:600;color:rgba(220,232,255,0.92);line-height:1.4;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
   .feed-card-sub{font-size:10.5px;color:rgba(130,155,205,0.6);margin-top:3px;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
@@ -10050,12 +10054,13 @@ function _closeFeedOverlay(){
 }
 
 // 기념일 스트립(인스타 스토리 스타일 원형 아바타) 항목 — Today's Anniversary 전용
-function _appendAnnivStripItem(container,icon,name,sub,onClick,thumbUrl){
+function _appendAnnivStripItem(container,icon,name,sub,onClick,thumbUrl,sub2){
   const item=document.createElement('div');
   item.className='feed-strip-item';
-  item.innerHTML='<div class="feed-strip-thumb-wrap"><div class="feed-strip-icon">'+icon+'</div></div>'
+  item.innerHTML='<div class="feed-strip-thumb-wrap"><div class="feed-strip-shimmer" data-icon="'+icon+'"></div></div>'
     +'<div class="feed-strip-name">'+_cleanTitle(name)+'</div>'
-    +(sub?'<div class="feed-strip-sub">'+sub+'</div>':'');
+    +(sub?'<div class="feed-strip-sub">'+sub+'</div>':'')
+    +(sub2?'<div class="feed-strip-sub">'+sub2+'</div>':'');
   item.addEventListener('click',onClick);
   item.addEventListener('touchstart',e=>_lbRipple(item,e),{passive:true});
   item.addEventListener('mousedown',e=>_lbRipple(item,e));
@@ -10065,14 +10070,24 @@ function _appendAnnivStripItem(container,icon,name,sub,onClick,thumbUrl){
 }
 function _setAnnivStripThumb(item,thumbUrl){
   const wrap=item.querySelector('.feed-strip-thumb-wrap');
-  if(!wrap||!thumbUrl)return;
+  if(!wrap)return;
+  if(!thumbUrl){
+    const sh=wrap.querySelector('.feed-strip-shimmer');
+    if(sh){wrap.innerHTML='<div class="feed-strip-icon">'+(sh.dataset.icon||'🎂')+'</div>';}
+    return;
+  }
   const img=document.createElement('img');
   img.className='feed-strip-thumb';img.loading='lazy';img.alt='';
   img.style.position='absolute';img.style.inset='0';
-  // 아이콘을 바로 지우지 않고 그 위에 이미지를 겹쳐 쌓은 뒤, 실제로 로드가 끝나면 페이드인으로 덮는다 —
-  // 예전엔 로드되자마자 아이콘을 통째로 지우고 이미지로 바꿔치기해서 "뚝" 끊기듯 팝인되는 느낌이었음
-  // (2026-08-06, 사용자 제보 — 탐험 탭 열자마자 기념일 동그라미가 늦게 뜨는 게 거슬린다는 지적).
-  img.addEventListener('load',()=>img.classList.add('loaded'));
+  img.addEventListener('load',()=>{
+    img.classList.add('loaded');
+    wrap.querySelector('.feed-strip-shimmer')?.remove();
+  });
+  img.addEventListener('error',()=>{
+    const sh=wrap.querySelector('.feed-strip-shimmer');
+    if(sh){wrap.innerHTML='<div class="feed-strip-icon">'+(sh.dataset.icon||'🎂')+'</div>';}
+    img.remove();
+  });
   img.src=thumbUrl;
   wrap.appendChild(img);
 }
@@ -10080,23 +10095,36 @@ function _setAnnivStripThumb(item,thumbUrl){
 function _appendFeedCard(container,icon,title,sub,onClick,thumbUrl){
   const item=document.createElement('div');
   item.className='feed-card';
-  item.innerHTML='<div class="feed-card-thumb-wrap"><div class="feed-card-icon-fallback">'+icon+'</div></div>'
+  item.innerHTML='<div class="feed-card-thumb-wrap"><div class="feed-card-shimmer" data-icon="'+icon+'"></div></div>'
     +'<div class="feed-card-cap"><div class="feed-card-title">'+_cleanTitle(title)+'</div>'
     +(sub?'<div class="feed-card-sub">'+sub+'</div>':'')+'</div>';
   item.addEventListener('click',onClick);
   item.addEventListener('touchstart',e=>_lbRipple(item,e),{passive:true});
   item.addEventListener('mousedown',e=>_lbRipple(item,e));
   container.appendChild(item);
-  if(thumbUrl)_setFeedCardThumb(item,thumbUrl);
+  _setFeedCardThumb(item,thumbUrl);
   return item;
 }
 function _setFeedCardThumb(item,thumbUrl){
   const wrap=item.querySelector('.feed-card-thumb-wrap');
-  if(!wrap||!thumbUrl)return;
+  if(!wrap)return;
+  if(!thumbUrl){
+    const sh=wrap.querySelector('.feed-card-shimmer');
+    if(sh){wrap.innerHTML='<div class="feed-card-icon-fallback">'+(sh.dataset.icon||'🎵')+'</div>';}
+    return;
+  }
   const img=document.createElement('img');
   img.className='feed-card-thumb';img.loading='lazy';img.alt='';
+  img.addEventListener('load',()=>{
+    img.classList.add('loaded');
+    wrap.querySelector('.feed-card-shimmer')?.remove();
+  });
+  img.addEventListener('error',()=>{
+    const sh=wrap.querySelector('.feed-card-shimmer');
+    if(sh){wrap.innerHTML='<div class="feed-card-icon-fallback">'+(sh.dataset.icon||'🎵')+'</div>';}
+    img.remove();
+  });
   img.src=thumbUrl;
-  wrap.innerHTML='';
   wrap.appendChild(img);
 }
 // 탐색 피드의 "모아보기"류 카드(포맷 모아보기, 세대별 직캠 모음)는 눌렀을 때 바로 첫 영상 라이트박스로
@@ -10265,13 +10293,14 @@ function _buildFeedAnniversaries(){
     const gName=isKo?a.group.ko:(a.group.en||a.group.ko);
     const byear=parseInt(a.bday.split('.')[0]);
     const age=now.getFullYear()-byear;
-    const sub=gName+(age>0?(isKo?`  ·  ${byear}년생 (${age}세)`:`  ·  Born ${byear} (${age})`):'');
+    const sub=gName;
+    const sub2=age>0?(isKo?`${byear}년생 (${age}세)`:`Born ${byear} (${age})`):null;
     const item=_appendAnnivStripItem(list,'🎂',mName,sub,()=>_feedNav(()=>{
       if(a._worldPos)flyTo(a._worldPos);
       if(isMob()){showT(a,window.innerWidth/2,window.innerHeight*0.4,false,false,false);openMobSheet(document.getElementById('tt'));}
       else showT(a,window.innerWidth/2,window.innerHeight/2);
     }));
-    _fetchTopVideoThumb(_ytGroupKoFor(a),a.name.ko).then(t=>_setAnnivStripThumb(item,t));
+    _fetchTopVideoThumb(_ytGroupKoFor(a),a.name.ko).then(t=>_setAnnivStripThumb(item,t||null));
   });
   debutHits.forEach(([ko,info])=>{
     const name=isKo?ko:(info.en||ko);
