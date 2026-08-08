@@ -10372,6 +10372,9 @@ async function _buildFeedGenCamPick(list){
 // 자체가 안 뜬다(별도 빈 상태 처리 불필요). 처음부터 그냥 제자리에 붙이는 방식이었는데(2026-08-05),
 // 다른 두 모아보기 카드(_buildFeedFormatPick/_buildFeedGenCamPick)도 원래는 insertBefore로 맨 위에
 // 끼어들다가 화면이 밀리는 느낌이 있어서 나중에(2026-08-06) 이 방식으로 통일함.
+// 음방·직캠 제목 판별 — 음악방송 프로그램명 또는 직캠/팬캠/FANCAM 키워드가 있어야 음방 직캠으로 인정
+const _FANCAM_TITLE_RE=/FANCAM|직캠|팬캠|엠카운트다운|뮤직뱅크|인기가요|음악중심|쇼챔피언|M\s*COUNTDOWN|MUSIC\s*BANK|INKIGAYO|MUSIC\s*CORE|SHOW\s*CHAMPION|\bTHE\s+SHOW\b/i;
+
 async function _buildFeedWeeklyTopCams(list){
   if(!sb)return;
   const vidUrl=v=>v.category==='short'?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;
@@ -10386,14 +10389,26 @@ async function _buildFeedWeeklyTopCams(list){
       .or('content_flag.is.null,content_flag.neq.무관')
       .or('content_flag.is.null,content_flag.neq.hidden')
       .order('view_count',{ascending:false})
-      .limit(20);
+      .limit(100);
     if(error||!data?.length)return;
-    const vids=_filterBannedVideos(data);
-    if(vids.length<3)return; // 너무 적으면(연휴 등 업로드 가뭄) TOP 20이라 부르기 민망하니 생략
-    const songs=vids.map(v=>({t:v.title,u:vidUrl(v),thumb:v.thumb}));
-    const label='이번주 직캠 TOP 20',sub=`조회수 기준 · ${songs.length}개`;
-    // _feedNav를 안 쓰는 이유는 위 _buildFeedFormatPick과 동일(2026-08-06).
-    _appendFeedCard(list,'🏆',label,sub,()=>_openFeedListOverlay(label,sub,songs),vids[0].thumb);
+    const allVids=_filterBannedVideos(data);
+    if(!allVids.length)return;
+
+    // 카드 1: 음방·직캠 TOP — 제목에 직캠/팬캠/FANCAM/음방명 있는 것만
+    const camVids=allVids.filter(v=>_FANCAM_TITLE_RE.test(v.title)).slice(0,20);
+    if(camVids.length>=3){
+      const songs=camVids.map(v=>({t:v.title,u:vidUrl(v),thumb:v.thumb}));
+      const label='이번주 직캠 TOP',sub=`음방·직캠 조회수 기준 · ${songs.length}개`;
+      _appendFeedCard(list,'🏆',label,sub,()=>_openFeedListOverlay(label,sub,songs),camVids[0].thumb);
+    }
+
+    // 카드 2: 이번주 TOP — category='live' 전체 조회수 기준
+    const topVids=allVids.slice(0,20);
+    if(topVids.length>=3){
+      const songs=topVids.map(v=>({t:v.title,u:vidUrl(v),thumb:v.thumb}));
+      const label='이번주 TOP',sub=`조회수 기준 · ${songs.length}개`;
+      _appendFeedCard(list,'📈',label,sub,()=>_openFeedListOverlay(label,sub,songs),topVids[0].thumb);
+    }
   }catch(e){/* 카드 하나 실패했다고 탐험 탭 전체가 막히면 안 됨 — 조용히 무시 */}
 }
 
