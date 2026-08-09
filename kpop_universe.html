@@ -490,7 +490,7 @@
   #yt-lb-prev:hover,#yt-lb-next:hover{color:rgba(255,255,255,0.9);}
   #yt-lb-prev:disabled,#yt-lb-next:disabled{color:rgba(255,255,255,0.12);cursor:default;}
   #yt-lb-actions{display:flex;gap:10px;}
-  #yt-lb-scrap,#yt-lb-bm,#yt-lb-edit,#yt-lb-mute,#yt-lb-rotate{background:rgba(255,255,255,0.08);border:none;border-radius:50%;width:38px;height:38px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:rgba(200,215,255,0.7);transition:color .15s,background .15s;font-size:15px;}
+  #yt-lb-scrap,#yt-lb-pl,#yt-lb-edit,#yt-lb-mute,#yt-lb-rotate{background:rgba(255,255,255,0.08);border:none;border-radius:50%;width:38px;height:38px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:rgba(200,215,255,0.7);transition:color .15s,background .15s;font-size:15px;}
   #yt-lb-rotate.is-portrait{background:rgba(155,178,228,0.22);color:#c8ddff;}
   #yt-lb-edit:hover{background:rgba(255,255,255,0.16);color:#fff;}
   #yt-lb-mute:hover{background:rgba(255,255,255,0.16);color:#fff;}
@@ -498,11 +498,10 @@
   #yt-lb-vol{-webkit-appearance:none;appearance:none;width:54px;height:3px;border-radius:2px;background:rgba(200,215,255,0.22);outline:none;cursor:pointer;flex-shrink:0;accent-color:rgba(200,215,255,0.85);}
   #yt-lb-vol::-webkit-slider-thumb{-webkit-appearance:none;width:12px;height:12px;border-radius:50%;background:rgba(200,215,255,0.9);cursor:pointer;}
   #yt-lb-vol::-moz-range-thumb{width:12px;height:12px;border:none;border-radius:50%;background:rgba(200,215,255,0.9);cursor:pointer;}
-  #yt-lb-scrap svg,#yt-lb-bm svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linejoin:round;}
+  #yt-lb-scrap svg,#yt-lb-pl svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linejoin:round;}
   #yt-lb-scrap.scrapped{color:rgba(255,92,125,0.92);}
   #yt-lb-scrap.scrapped svg{fill:currentColor;}
-  #yt-lb-bm.bm-on{color:rgba(130,185,255,0.9);}
-  #yt-lb-bm.bm-on svg{fill:currentColor;}
+  #yt-lb-pl.pl-on{color:rgba(130,185,255,0.9);}
   .lb-action-cnt{font-size:10px;font-weight:700;color:rgba(200,215,255,0.6);margin-left:3px;font-family:'Pretendard',sans-serif;line-height:1;}
   .lb-action-cnt:empty{display:none;}
   #yt-lb-reactions{display:flex;align-items:center;justify-content:center;gap:4px;padding:10px 0 4px;flex-wrap:wrap;}
@@ -632,13 +631,13 @@
   #tt-collapse:hover{background:rgba(40,50,80,0.96);color:rgba(200,220,255,0.95);}
   /* 접기 탭: conn-panel 왼쪽 중간 (동일 패턴, conn-panel 자기 이동거리(280+640px)만큼 같이 슬라이드) */
   #conn-collapse{
-    position:fixed;right:920px;top:50%;
+    position:fixed;right:960px;top:50%;
     width:22px;height:44px;border:none;border-radius:8px 0 0 8px;
     background:rgba(20,24,44,0.88);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
     color:rgba(160,185,230,0.80);font-size:16px;line-height:1;
     cursor:pointer;padding:0;z-index:61;
     opacity:0;pointer-events:none;
-    transform:translateY(-50%) translateX(920px);
+    transform:translateY(-50%) translateX(960px);
     transition:transform 0.26s cubic-bezier(0.32,0,0.15,1),opacity 0.26s,background 0.15s,color 0.15s;
     display:flex;align-items:center;justify-content:center;
   }
@@ -651,7 +650,7 @@
   body.card-wide #tt-collapse{right:960px;}
   body.card-wide #conn-panel{right:960px;transform:translateX(calc(100% + 960px));}
   body.card-wide #conn-panel.open{transform:translateX(0);}
-  body.card-wide #conn-collapse{right:1240px;transform:translateY(-50%) translateX(1240px);}
+  body.card-wide #conn-collapse{right:1280px;transform:translateY(-50%) translateX(1280px);}
   body.card-wide #conn-panel.open~#conn-collapse{transform:translateY(-50%) translateX(0);}
   #sp-wide-btn{
     position:absolute;top:10px;left:10px;z-index:62;
@@ -870,6 +869,7 @@
   .gc-ch-item{position:relative;cursor:pointer;border-radius:6px;overflow:hidden;background:rgba(255,255,255,0.04);transition:opacity .13s;}
   .gc-ch-item:hover{opacity:.78;}
   .gc-ch-thumb{width:100%;aspect-ratio:16/9;object-fit:cover;display:block;}
+  .gc-ch-meta{font-size:11px;color:rgba(150,175,215,0.6);padding:0 4px 4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   .gc-ch-item.featured,.gc-ch-item.gc-ch-wide{grid-column:span 2;}
   .gc-ch-item.is-short .gc-ch-thumb{aspect-ratio:9/16;}
   /* 쇼츠가 대표(featured)로 뽑히면 2열 폭은 그대로 차지하되(그래야 오른쪽에 빈칸이 안 생김), 썸네일 자체는
@@ -1271,7 +1271,7 @@
   }
   /* ── Connection Card ─────────────────────────────── */
   #conn-panel{
-    position:fixed;right:640px;top:64px;bottom:0;width:280px;
+    position:fixed;right:640px;top:64px;bottom:0;width:320px;
     overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;
     z-index:61;pointer-events:none;
     transform:translateX(calc(100% + 640px));
@@ -1600,6 +1600,11 @@
   .pp-input{width:100%;background:rgba(255,255,255,0.055);border:0.5px solid rgba(255,255,255,0.09);border-radius:10px;color:#c8d8f0;font-family:inherit;font-size:13px;padding:9px 12px;outline:none;letter-spacing:.02em;transition:border-color .15s,background .15s;box-sizing:border-box;}
   .pp-input:focus{background:rgba(255,255,255,0.085);border-color:rgba(100,150,255,0.55);box-shadow:0 0 0 3px rgba(100,150,255,0.09);}
   .pp-input::placeholder{color:rgba(126,152,202,0.28);}
+  .pp-nick-row{display:flex;gap:6px;align-items:flex-start;}
+  .pp-nick-row .pp-input{flex:1;}
+  #pp-nick-random{flex-shrink:0;background:rgba(255,255,255,0.055);border:0.5px solid rgba(255,255,255,0.09);border-radius:10px;color:rgba(170,195,240,0.65);font-size:15px;width:38px;height:38px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .13s,transform .15s;padding:0;}
+  #pp-nick-random:hover{background:rgba(255,255,255,0.10);color:rgba(210,225,255,0.9);}
+  #pp-nick-random:active{transform:rotate(180deg) scale(0.88);transition:transform .18s;}
   .pp-err{font-size:10.5px;color:rgba(255,108,132,0.82);margin-top:5px;letter-spacing:.02em;}
   #pp-colors{display:flex;gap:9px;flex-wrap:wrap;margin-top:2px;}
   .pp-color-swatch{width:22px;height:22px;border-radius:50%;cursor:pointer;border:2.5px solid transparent;transition:transform .13s,border-color .13s;flex-shrink:0;padding:0;outline:none;}
@@ -1638,11 +1643,55 @@
   #my-page-bio{font-size:10px;color:rgba(118,142,192,0.52);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
   #my-page-edit{background:none;border:0.5px solid rgba(140,165,220,0.20);border-radius:7px;color:rgba(138,162,218,0.52);font-size:9px;font-weight:700;letter-spacing:.10em;padding:3px 8px;cursor:pointer;font-family:inherit;transition:background .13s,color .13s,border-color .13s;flex-shrink:0;text-transform:uppercase;}
   #my-page-edit:hover{background:rgba(140,165,220,0.09);color:rgba(188,210,255,0.88);border-color:rgba(140,165,220,0.38);}
+  /* ── Activity stats (한 줄 숫자 요약) ──────────────── */
+  #pp-activity-stats{display:flex;gap:22px;padding:10px 0 12px;}
+  .pp-stat-item{display:flex;align-items:center;gap:5px;}
+  .pp-stat-count{font-size:15px;font-weight:700;letter-spacing:-.01em;color:rgba(220,230,255,0.88);}
+  .pp-stat-icon{width:14px;height:14px;display:block;flex-shrink:0;fill:currentColor;}
+  .pp-stat-icon.heart{color:rgba(255,92,125,0.88);}
+  .pp-stat-icon.bm{color:rgba(90,170,255,0.88);}
   /* ── Scrap (likes) ───────────────────────────────── */
   #scrap-section{margin-top:14px;padding-top:12px;border-top:0.5px solid rgba(255,255,255,0.07);}
   #scrap-list{max-height:220px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:rgba(140,165,220,0.18) transparent;}
   #scrap-list::-webkit-scrollbar{width:3px;}
   #scrap-list::-webkit-scrollbar-thumb{background:rgba(140,165,220,0.22);border-radius:2px;}
+  /* ── Playlists ────────────────────────────────────── */
+  #playlist-section{margin-top:14px;padding-top:12px;border-top:0.5px solid rgba(255,255,255,0.07);}
+  .pl-row{display:flex;align-items:center;gap:10px;padding:6px 4px;cursor:pointer;border-radius:8px;transition:background .12s;}
+  .pl-row:hover{background:rgba(255,255,255,0.04);}
+  .pl-row-thumb{width:44px;height:28px;border-radius:4px;object-fit:cover;background:rgba(255,255,255,0.06);flex-shrink:0;}
+  .pl-row-info{flex:1;min-width:0;}
+  .pl-row-name{font-size:13px;color:rgba(200,220,255,0.85);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .pl-row-cnt{font-size:11px;color:rgba(120,145,190,0.48);margin-top:1px;}
+  .pl-row-del{background:none;border:none;color:rgba(140,165,220,0.28);font-size:14px;cursor:pointer;padding:2px 6px;flex-shrink:0;}
+  .pl-row-del:hover{color:rgba(255,100,120,0.7);}
+  #pl-create-btn{margin-top:6px;background:none;border:0.5px dashed rgba(140,165,220,0.18);border-radius:8px;color:rgba(140,165,220,0.42);font-size:11.5px;font-weight:600;padding:7px 10px;cursor:pointer;font-family:inherit;width:100%;text-align:left;transition:border-color .13s,color .13s;letter-spacing:.02em;}
+  #pl-create-btn:hover{border-color:rgba(140,165,220,0.38);color:rgba(180,200,240,0.78);}
+  /* ── Playlist picker modal ─────────────────────────── */
+  #pl-picker{position:fixed;inset:0;z-index:102;display:none;align-items:flex-end;justify-content:center;}
+  #pl-picker.open{display:flex;}
+  #pl-picker-bg{position:absolute;inset:0;background:rgba(0,0,0,0.5);}
+  #pl-picker-sheet{position:relative;width:100%;background:rgba(14,18,38,0.98);backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);border-radius:20px 20px 0 0;padding-bottom:env(safe-area-inset-bottom,0px);max-height:72vh;display:flex;flex-direction:column;z-index:1;}
+  @media(min-width:769px){#pl-picker-sheet{max-width:380px;border-radius:18px;margin-bottom:100px;}}
+  .pl-picker-hd{padding:16px 18px 10px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+  .pl-picker-title{font-size:13px;font-weight:700;color:rgba(200,220,255,0.88);letter-spacing:.03em;}
+  #pl-picker-close{background:none;border:none;color:rgba(140,165,220,0.45);font-size:20px;cursor:pointer;padding:0 2px;line-height:1;}
+  #pl-picker-list{overflow-y:auto;flex:1;padding:0 0 4px;}
+  .pl-picker-item{display:flex;align-items:center;gap:10px;padding:11px 18px;cursor:pointer;transition:background .12s;}
+  .pl-picker-item:hover{background:rgba(255,255,255,0.04);}
+  .pl-picker-item-name{flex:1;font-size:13px;color:rgba(200,220,255,0.82);}
+  .pl-picker-item-cnt{font-size:11px;color:rgba(120,145,190,0.45);margin-right:4px;}
+  .pl-picker-check{width:20px;height:20px;border-radius:50%;border:1.5px solid rgba(140,165,220,0.28);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .13s,border-color .13s;}
+  .pl-picker-check.on{background:rgba(255,92,125,0.88);border-color:rgba(255,92,125,0.88);}
+  .pl-picker-check.on::after{content:'✓';font-size:10px;color:#fff;font-weight:700;}
+  .pl-picker-new{padding:10px 18px 14px;border-top:0.5px solid rgba(255,255,255,0.07);flex-shrink:0;}
+  #pl-new-trigger{font-size:12px;color:rgba(140,165,220,0.5);cursor:pointer;display:inline-flex;align-items:center;gap:4px;padding:4px 0;}
+  #pl-new-trigger:hover{color:rgba(180,200,240,0.78);}
+  .pl-new-row{display:flex;gap:8px;margin-top:8px;}
+  #pl-new-name{flex:1;background:rgba(255,255,255,0.055);border:0.5px solid rgba(255,255,255,0.09);border-radius:10px;color:#c8d8f0;font-family:inherit;font-size:13px;padding:8px 12px;outline:none;transition:border-color .15s;}
+  #pl-new-name:focus{border-color:rgba(100,150,255,0.5);}
+  #pl-new-confirm{background:rgba(255,92,125,0.12);border:0.5px solid rgba(255,92,125,0.22);border-radius:10px;color:rgba(255,92,125,0.85);font-size:12px;font-weight:700;padding:8px 14px;cursor:pointer;font-family:inherit;white-space:nowrap;transition:background .13s;}
+  #pl-new-confirm:hover{background:rgba(255,92,125,0.2);}
   /* ── Bookmarks (universal) ───────────────────────── */
   #bookmark-section{margin-top:14px;padding-top:12px;border-top:0.5px solid rgba(255,255,255,0.07);}
   /* ── Anniversaries (birthdays + 즐겨찾기 기념일) ──── */
@@ -1789,9 +1838,24 @@
       <button id="my-page-edit">편집</button>
     </div>
     <div id="my-page-bias"></div>
+    <div id="pp-activity-stats">
+      <span class="pp-stat-item">
+        <svg class="pp-stat-icon heart" viewBox="0 0 24 24"><path d="M12 21L10.55 19.7C5.4 15.1 2 12.1 2 8.5 2 5.4 4.4 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.6 3 22 5.4 22 8.5c0 3.6-3.4 6.6-8.55 11.2L12 21z"/></svg>
+        <span class="pp-stat-count" id="pp-stat-likes">0</span>
+      </span>
+      <span class="pp-stat-item">
+        <svg class="pp-stat-icon bm" viewBox="0 0 24 24"><path d="M6 3h11a1 1 0 0 1 1 1v16.2l-6.5-4.6-6.5 4.6V4a1 1 0 0 1 1-1z"/></svg>
+        <span class="pp-stat-count" id="pp-stat-bookmarks">0</span>
+      </span>
+    </div>
     <div id="fav-section">
       <div class="fav-hd"><span class="fav-hd-lbl">FAVORITES</span><button id="fav-mode-btn" class="sp-tog">Highlight</button></div>
       <div id="fav-list"><div class="fav-empty">즐겨찾기가 없어요</div></div>
+    </div>
+    <div id="playlist-section">
+      <div class="fav-hd"><span class="fav-hd-lbl">PLAYLISTS</span></div>
+      <div id="playlist-list"><div class="fav-empty">플레이리스트가 없어요</div></div>
+      <button id="pl-create-btn">+ 새 플레이리스트</button>
     </div>
     <div id="scrap-section">
       <div class="fav-hd"><span class="fav-hd-lbl">LIKES</span></div>
@@ -2154,7 +2218,7 @@
         <button id="yt-lb-mute" aria-label="소리 켜기">🔇</button>
         <input type="range" id="yt-lb-vol" min="0" max="100" value="100" aria-label="볼륨" step="1">
         <button id="yt-lb-scrap" aria-label="플레이리스트 추가"><svg viewBox="0 0 24 24"><path d="M12 21L10.55 19.7C5.4 15.1 2 12.1 2 8.5 2 5.4 4.4 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.6 3 22 5.4 22 8.5c0 3.6-3.4 6.6-8.55 11.2L12 21z"/></svg><span id="yt-lb-scrap-cnt" class="lb-action-cnt"></span></button>
-        <button id="yt-lb-bm" aria-label="북마크"><svg viewBox="0 0 24 24"><path d="M17 3H7c-1.1 0-2 .9-2 2v16l7-3 7 3V5c0-1.1-.9-2-2-2z"/></svg></button>
+        <button id="yt-lb-pl" aria-label="플레이리스트에 추가"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h14M3 10h14M3 14h8"/><path d="M17 14v6M14 17h6"/></svg></button>
         <button id="yt-lb-edit" aria-label="출연 멤버 지정" style="display:none">✎</button>
       </div>
       <button id="yt-lb-next" aria-label="다음 영상">›</button>
@@ -2198,7 +2262,10 @@
     </div>
     <div class="pp-section">
       <label class="pp-label" for="pp-nick" id="pp-nick-label">닉네임 <span class="pp-required">*</span></label>
-      <input id="pp-nick" type="text" class="pp-input" placeholder="닉네임을 입력하세요" data-i18n-ph="ppNickPH" maxlength="20" autocomplete="off">
+      <div class="pp-nick-row">
+        <input id="pp-nick" type="text" class="pp-input" placeholder="닉네임을 입력하세요" data-i18n-ph="ppNickPH" maxlength="20" autocomplete="off">
+        <button id="pp-nick-random" type="button" title="랜덤 닉네임 생성">🎲</button>
+      </div>
       <div id="pp-nick-err" class="pp-err" data-i18n="ppNickErr">닉네임을 입력해주세요</div>
     </div>
     <div class="pp-section">
@@ -2347,6 +2414,23 @@
     <div class="pp-title" id="trophy-panel-title">음악방송 1위</div>
     <button id="trophy-panel-close" class="conn-back-btn" aria-label="닫기">×</button>
     <div id="trophy-panel-list"></div>
+  </div>
+</div>
+<div id="pl-picker">
+  <div id="pl-picker-bg"></div>
+  <div id="pl-picker-sheet">
+    <div class="pl-picker-hd">
+      <span class="pl-picker-title">플레이리스트에 추가</span>
+      <button id="pl-picker-close">×</button>
+    </div>
+    <div id="pl-picker-list"></div>
+    <div class="pl-picker-new">
+      <div id="pl-new-trigger">+ 새 플레이리스트 만들기</div>
+      <div class="pl-new-row" id="pl-new-row" style="display:none">
+        <input type="text" id="pl-new-name" placeholder="이름 입력" maxlength="30" autocomplete="off">
+        <button id="pl-new-confirm">만들기</button>
+      </div>
+    </div>
   </div>
 </div>
 <div id="unfav-confirm-overlay">
@@ -2631,6 +2715,7 @@ function applyLang(){
   const msi=document.getElementById('tab-sb-input');if(msi)msi.placeholder=t.searchPH;
   _refreshOpenCardText();
   renderFavList();_buildAnniversaryList();
+  renderPlaylistSection();
   renderBookmarkList();
   const _fp=document.getElementById('filter-panel');
   if(_tagFilter&&_tagFilter.type&&_fp&&_fp.style.display==='block')_renderFilterPanel();
@@ -2702,7 +2787,7 @@ function _refreshOpenCardText(){
       _tcoParts.push({text:typeof n==='object'?(currentLang==='ko'?(n.ko||n.en):(n.en||n.ko)):n,type:'nation',value:natKo});
     }
     _tcoParts.forEach((p,i)=>{
-      if(i>0){const sep=document.createElement('span');sep.textContent='·';sep.style.cssText='color:rgba(120,145,195,0.35);font-size:9px;margin:0 4px;vertical-align:middle;';tcoEl.appendChild(sep);}
+      if(i>0){const sep=document.createElement('span');sep.textContent='·';sep.style.cssText='color:rgba(120,145,195,0.35);font-size:9px;margin:0 2px;vertical-align:middle;';tcoEl.appendChild(sep);}
       const chip=document.createElement('span');
       chip.className='tag-chip'+(_tagFilter.type===p.type&&_tagFilter.value===p.value?' active':'');
       chip.dataset.filterType=p.type;chip.dataset.filterValue=p.value;chip.textContent=p.text;
@@ -2838,6 +2923,7 @@ async function buildUniverse(){
   _STRICT_SYNC_GROUPS=new Set(Object.entries(GROUPS).filter(([,v])=>v?.strictSync).map(([ko])=>ko));
   applyLang();
   renderFavList();_buildAnniversaryList();
+  renderPlaylistSection();
   renderScrapList();
   renderBookmarkList();
   renderConcertLogList();
@@ -3062,9 +3148,6 @@ async function buildUniverse(){
     // ── Collect member positions ───────────────────
     const _placedMPos=[];
     const _minSep=radius*0.34; // 최소 간격: 행성 반지름의 34% (멤버 많은 행성에서 점들이 너무 붙어 보이던 문제 완화)
-    // 방향은 골든 앵글 나선(피보나치 스피어)으로 인원수와 무관하게 구 전체에 고르게 뿌려서
-    // 순수 랜덤 샘플링이 소수 인원 그룹에서 종종 한쪽으로 몰리던 문제를 근본적으로 막는다.
-    // 완전히 기계적인 격자로 보이지 않도록 각 멤버 방향에 작은 랜덤 흔들림(jitter)을 더한다.
     const _mTotal=members.length;
     const _goldenAngle=Math.PI*(3-Math.sqrt(5));
     const _ySpacing=_mTotal>1?2/(_mTotal-1):2;
@@ -3072,11 +3155,19 @@ async function buildUniverse(){
       const [mr,mg,mb]=m.color||[r,g,b];
       const mColor=duneColor(mr,mg,mb);
 
-      const yBase=_mTotal>1?1-(mi/(_mTotal-1))*2:0;
-      const y=Math.max(-1,Math.min(1,yBase+(Math.random()-0.5)*_ySpacing*0.7));
-      const radAtY=Math.sqrt(Math.max(0,1-y*y));
-      const mTheta=_goldenAngle*mi+(Math.random()-0.5)*0.7;
-      const mDir=new THREE.Vector3(Math.cos(mTheta)*radAtY,y,Math.sin(mTheta)*radAtY);
+      // 3-4명: 황금각이 y≈±1 극점에 배치해 radAtY≈0이 되어 화면상 중앙에 몰리는 문제.
+      // 360°/N 균등 분산 + 적도 근처 y값으로 화면에서 고르게 퍼지게 함.
+      let mY,mTheta;
+      if(_mTotal<=4){
+        mTheta=(Math.PI*2/_mTotal)*mi+(Math.random()-0.5)*0.25;
+        mY=(Math.random()-0.5)*0.6;
+      }else{
+        const yBase=1-(mi/(_mTotal-1))*2;
+        mY=Math.max(-1,Math.min(1,yBase+(Math.random()-0.5)*_ySpacing*0.7));
+        mTheta=_goldenAngle*mi+(Math.random()-0.5)*0.7;
+      }
+      const radAtY=Math.sqrt(Math.max(0,1-mY*mY));
+      const mDir=new THREE.Vector3(Math.cos(mTheta)*radAtY,mY,Math.sin(mTheta)*radAtY);
 
       // 중심으로부터의 거리(rr)는 기존처럼 랜덤하게 둬서 별들이 표면에 딱 붙지 않고 입체적으로 보이게 유지
       let mPos,tries=0;
@@ -4197,18 +4288,18 @@ function _maybeShowSwipeHint(){
 function _lbUpdateToolbar(){
   const s=(_lbPlaylist&&_lbIdx>=0)?_lbPlaylist[_lbIdx]:null;
   const scrapBtn=document.getElementById('yt-lb-scrap');
-  const bmBtn=document.getElementById('yt-lb-bm');
+  const plBtn=document.getElementById('yt-lb-pl');
   const prevBtn=document.getElementById('yt-lb-prev');
   const nextBtn=document.getElementById('yt-lb-next');
   if(s){
-    scrapBtn.style.display='';bmBtn.style.display='';
+    scrapBtn.style.display='';plBtn.style.display='';
     const sc=_isScraped(s);
     scrapBtn.classList.toggle('scrapped',sc);
     scrapBtn.querySelector('svg').style.fill=sc?'currentColor':'none';
-    bmBtn.classList.toggle('bm-on',isVideoBookmarked(s));
-    bmBtn.querySelector('svg').style.fill=isVideoBookmarked(s)?'currentColor':'none';
+    const inAnyPl=playlists.some(p=>p.videos.some(v=>v.u===s.u));
+    plBtn.classList.toggle('pl-on',inAnyPl);
   }else{
-    scrapBtn.style.display='none';bmBtn.style.display='none';
+    scrapBtn.style.display='none';plBtn.style.display='none';
   }
   const editBtn=document.getElementById('yt-lb-edit');
   if(editBtn)editBtn.style.display=(_isAdmin()&&s&&s._apiId)?'':'none';
@@ -4564,15 +4655,10 @@ document.getElementById('yt-lb-scrap').addEventListener('click',e=>{
   btn.classList.toggle('scrapped',sc);
   btn.querySelector('svg').style.fill=sc?'currentColor':'none';
 });
-document.getElementById('yt-lb-bm').addEventListener('click',e=>{
+document.getElementById('yt-lb-pl').addEventListener('click',e=>{
   e.stopPropagation();
   if(!_lbPlaylist||_lbIdx<0)return;
-  const s=_lbPlaylist[_lbIdx];
-  toggleVideoBookmark(s,_lbCtx);
-  const on=isVideoBookmarked(s);
-  const btn=document.getElementById('yt-lb-bm');
-  btn.classList.toggle('bm-on',on);
-  btn.querySelector('svg').style.fill=on?'currentColor':'none';
+  _openPlPicker(_lbPlaylist[_lbIdx]);
 });
 document.getElementById('yt-lb-edit').addEventListener('click',e=>{
   e.stopPropagation();
@@ -6786,7 +6872,7 @@ function showT(a,cx,cy,keepNavStack,urlMode,pushMobNav,noFly){
     _tcoParts.push({text:natDisplay,type:'nation',value:natKo});
   }
   _tcoParts.forEach((p,i)=>{
-    if(i>0){const sep=document.createElement('span');sep.textContent='·';sep.style.cssText='color:rgba(120,145,195,0.35);font-size:9px;margin:0 4px;vertical-align:middle;';tcoEl.appendChild(sep);}
+    if(i>0){const sep=document.createElement('span');sep.textContent='·';sep.style.cssText='color:rgba(120,145,195,0.35);font-size:9px;margin:0 2px;vertical-align:middle;';tcoEl.appendChild(sep);}
     const chip=document.createElement('span');
     chip.className='tag-chip'+(_tagFilter.type===p.type&&_tagFilter.value===p.value?' active':'');
     chip.dataset.filterType=p.type;chip.dataset.filterValue=p.value;
@@ -8324,7 +8410,85 @@ function _makeScrapBtn(s,ctx){
   btn.addEventListener('click',e=>{e.stopPropagation();toggleScrap(s,ctx);});
   return btn;
 }
+// ── Playlists ──────────────────────────────────────────────────────
+const PLAYLIST_KEY='kpu_playlists';
+let playlists=JSON.parse(localStorage.getItem(PLAYLIST_KEY)||'[]');
+function _savePlaylists(){localStorage.setItem(PLAYLIST_KEY,JSON.stringify(playlists));_sbPushColumn('playlists',playlists);}
+function _plNewId(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6);}
+function _createPlaylist(name){
+  const pl={id:_plNewId(),name:name.trim(),videos:[],createdAt:new Date().toISOString().slice(0,10)};
+  playlists.unshift(pl);_savePlaylists();renderPlaylistSection();return pl;
+}
+function _addVideoToPl(plId,video){
+  const pl=playlists.find(p=>p.id===plId);if(!pl)return;
+  if(!pl.videos.some(v=>v.u===video.u))pl.videos.unshift({t:video.t,u:video.u,thumb:video.thumb,groupKo:video.groupKo||video._apiGroupKo||''});
+  _savePlaylists();renderPlaylistSection();_lbUpdateToolbar();
+}
+function _removeVideoFromPl(plId,url){
+  const pl=playlists.find(p=>p.id===plId);if(!pl)return;
+  pl.videos=pl.videos.filter(v=>v.u!==url);_savePlaylists();renderPlaylistSection();_lbUpdateToolbar();
+}
+function _deletePl(plId){playlists=playlists.filter(p=>p.id!==plId);_savePlaylists();renderPlaylistSection();}
+
+// Picker modal
+let _plPickerVideo=null;
+function _openPlPicker(video){
+  _plPickerVideo=video;
+  _renderPlPickerList();
+  document.getElementById('pl-new-row').style.display='none';
+  document.getElementById('pl-new-name').value='';
+  document.getElementById('pl-picker').classList.add('open');
+}
+function _closePlPicker(){document.getElementById('pl-picker').classList.remove('open');_plPickerVideo=null;}
+function _renderPlPickerList(){
+  const el=document.getElementById('pl-picker-list');if(!el)return;
+  if(!playlists.length){el.innerHTML='<div style="padding:12px 18px;font-size:12px;color:rgba(140,165,220,0.4);">아직 플레이리스트가 없어요</div>';return;}
+  el.innerHTML='';
+  playlists.forEach(pl=>{
+    const inPl=!!(_plPickerVideo&&pl.videos.some(v=>v.u===_plPickerVideo.u));
+    const row=document.createElement('div');row.className='pl-picker-item';
+    row.innerHTML=`<span class="pl-picker-item-name">${pl.name}</span><span class="pl-picker-item-cnt">${pl.videos.length}개</span><span class="pl-picker-check${inPl?' on':''}"></span>`;
+    row.addEventListener('click',()=>{
+      if(!_plPickerVideo)return;
+      if(inPl)_removeVideoFromPl(pl.id,_plPickerVideo.u);
+      else _addVideoToPl(pl.id,_plPickerVideo);
+      _renderPlPickerList();
+    });
+    el.appendChild(row);
+  });
+}
+function renderPlaylistSection(){
+  _updatePpStats();
+  const el=document.getElementById('playlist-list');if(!el)return;
+  if(!playlists.length){el.innerHTML='<div class="fav-empty">플레이리스트가 없어요</div>';return;}
+  el.innerHTML='';
+  playlists.forEach(pl=>{
+    const row=document.createElement('div');row.className='pl-row';
+    const img=document.createElement('img');img.className='pl-row-thumb';
+    const thumbUrl=pl.videos[0]?.thumb;
+    if(thumbUrl){img.src=thumbUrl;}else{img.style.background='rgba(255,255,255,0.06)';}
+    img.alt='';
+    const info=document.createElement('div');info.className='pl-row-info';
+    info.innerHTML=`<div class="pl-row-name">${pl.name}</div><div class="pl-row-cnt">${pl.videos.length}개 영상</div>`;
+    const del=document.createElement('button');del.className='pl-row-del';del.textContent='×';
+    del.addEventListener('click',e=>{e.stopPropagation();_deletePl(pl.id);});
+    row.appendChild(img);row.appendChild(info);row.appendChild(del);
+    row.addEventListener('click',()=>{
+      if(!pl.videos.length)return;
+      const songs=pl.videos.map(v=>({t:v.t,u:v.u,thumb:v.thumb}));
+      _openFeedListOverlay(pl.name,`${pl.videos.length}개 영상`,songs);
+    });
+    el.appendChild(row);
+  });
+}
+function _updatePpStats(){
+  const lEl=document.getElementById('pp-stat-likes');
+  const bEl=document.getElementById('pp-stat-bookmarks');
+  if(lEl)lEl.textContent=scraps.length;
+  if(bEl)bEl.textContent=bookmarks.length;
+}
 function renderScrapList(){
+  _updatePpStats();
   const el=document.getElementById('scrap-list');if(!el)return;
   if(!scraps.length){el.innerHTML='<div class="fav-empty">스크랩한 영상이 없어요</div>';return;}
   el.innerHTML='';
@@ -8413,6 +8577,7 @@ function _removeBookmarkAt(i,item){
   else if(item.type==='connection')document.getElementById('conn-bookmark-btn')?.classList.remove('bm-on');
 }
 function renderBookmarkList(){
+  _updatePpStats();
   const el=document.getElementById('bookmark-list');if(!el)return;
   if(!bookmarks.length){el.innerHTML='<div class="fav-empty">북마크가 없어요</div>';return;}
   el.innerHTML='';
@@ -9463,6 +9628,43 @@ function saveProfile(){
   if(_wasSel)_toggleMyStarFocus();
 }
 
+// Picker modal events
+document.getElementById('pl-picker-bg').addEventListener('click',_closePlPicker);
+document.getElementById('pl-picker-close').addEventListener('click',_closePlPicker);
+document.getElementById('pl-new-trigger').addEventListener('click',()=>{
+  const row=document.getElementById('pl-new-row');
+  row.style.display=row.style.display==='none'?'flex':'none';
+  if(row.style.display==='flex')setTimeout(()=>document.getElementById('pl-new-name').focus(),50);
+});
+function _confirmNewPl(){
+  const inp=document.getElementById('pl-new-name');
+  const name=inp.value.trim();if(!name)return;
+  const pl=_createPlaylist(name);
+  if(_plPickerVideo)_addVideoToPl(pl.id,_plPickerVideo);
+  inp.value='';document.getElementById('pl-new-row').style.display='none';
+  _renderPlPickerList();
+}
+document.getElementById('pl-new-confirm').addEventListener('click',_confirmNewPl);
+document.getElementById('pl-new-name').addEventListener('keydown',e=>{if(e.key==='Enter')_confirmNewPl();});
+// 프로필 패널 새 플리 버튼
+document.getElementById('pl-create-btn').addEventListener('click',()=>{
+  const name=prompt('플레이리스트 이름');
+  if(name?.trim())_createPlaylist(name);
+});
+const _NICK_ADJ=['반짝이는','설레는','눈부신','청량한','황홀한','찬란한','몽환적인','빛나는','신비로운','화려한','달콤한','떨리는','영롱한','투명한','귀여운','사랑스러운','아름다운','짜릿한','아련한','맑은','시원한','다정한','따뜻한'];
+const _NICK_NOUN=['우주','행성','빛','별','별자리','앨범','무대','마이크','포카','인이어','콘서트','최애','직캠','입덕','컴백','아이돌','센터','응원봉','멜로디'];
+function _genRandomNick(){
+  const adj=_NICK_ADJ[Math.floor(Math.random()*_NICK_ADJ.length)];
+  const noun=_NICK_NOUN[Math.floor(Math.random()*_NICK_NOUN.length)];
+  const num=Math.floor(Math.random()*900)+100;
+  return adj+noun+num;
+}
+document.getElementById('pp-nick-random').addEventListener('click',e=>{
+  e.stopPropagation();
+  const input=document.getElementById('pp-nick');
+  input.value=_genRandomNick();
+  input.focus();
+});
 document.getElementById('pp-save').addEventListener('click',e=>{e.stopPropagation();saveProfile();});
 document.getElementById('pp-close').addEventListener('click',e=>{e.stopPropagation();closeProfilePanel();});
 document.getElementById('profile-overlay').addEventListener('click',e=>{e.stopPropagation();if(e.target===e.currentTarget)closeProfilePanel();});
@@ -9754,6 +9956,7 @@ async function _pullServerToLocal(userId){
   favDates=data.fav_dates||{};
   scraps=data.scraps||[];
   bookmarks=data.bookmarks||[];
+  playlists=data.playlists||[];
   myProfile=data.profile||null;
   concertLog=data.concert_log||[];
   localStorage.setItem(FAV_KEY_G,JSON.stringify([...favGroups]));
@@ -9762,6 +9965,7 @@ async function _pullServerToLocal(userId){
   localStorage.setItem(FAV_DATE_KEY,JSON.stringify(favDates));
   localStorage.setItem(SCRAP_KEY,JSON.stringify(scraps));
   localStorage.setItem(BOOKMARK_KEY,JSON.stringify(bookmarks));
+  localStorage.setItem(PLAYLIST_KEY,JSON.stringify(playlists));
   localStorage.setItem(PROFILE_KEY,JSON.stringify(myProfile));
   localStorage.setItem(CONCERT_LOG_KEY,JSON.stringify(concertLog));
   return true;
@@ -10166,6 +10370,14 @@ function _openFeedListOverlay(title,sub,songs){
     titleEl.className='tv-sm-title';titleEl.textContent=_cleanTitle(s.t);
     addMarquee(titleEl);
     item.appendChild(img);item.appendChild(titleEl);
+    if(s.vc!=null||s.pa){
+      const metaEl=document.createElement('div');
+      metaEl.className='gc-ch-meta';
+      const datePart=s.pa?(s.pa.slice(5,7)+'.'+s.pa.slice(8,10)):'';
+      const vcPart=s.vc!=null?(s.vc>=1000000?(s.vc/1000000).toFixed(1).replace(/\.0$/,'')+'M':s.vc>=1000?Math.floor(s.vc/1000)+'K+':String(s.vc)):'';
+      metaEl.textContent=[datePart,vcPart].filter(Boolean).join(' · ');
+      item.appendChild(metaEl);
+    }
     item.addEventListener('click',e=>{
       e.stopPropagation();
       openLightbox(s.u,shortFlag,songs,idx,{});
@@ -10189,7 +10401,9 @@ function _openFeedListOverlay(title,sub,songs){
     newItems.forEach(it=>{
       const w=it.getBoundingClientRect().width;
       const titleH=it.querySelector('.tv-sm-title')?.getBoundingClientRect().height||0;
-      if(w)it.style.height=(it.classList.contains('is-short')?w*16/9:w*9/16)+titleH+'px';
+      const metaEl=it.querySelector('.gc-ch-meta');
+      const metaH=metaEl?Math.max(metaEl.getBoundingClientRect().height,20):0;
+      if(w)it.style.height=Math.ceil((it.classList.contains('is-short')?w*16/9:w*9/16)+titleH+metaH)+'px';
     });
     if(rendered<songs.length){grid.appendChild(sentinel);observer.observe(sentinel);}
     else observer.disconnect();
@@ -10340,7 +10554,7 @@ async function _buildFeedFormatPick(list){
       if(!vids.length)continue;
       const songs=vids.map(v=>({t:v.title,u:vidUrl(v),thumb:v.thumb}));
       const thumb=vids[Math.floor(Math.random()*vids.length)].thumb;
-      const label=`${fmt} 모아보기`,sub=`${songs.length}개 영상`;
+      const label=`${fmt} 모아보기`,sub='';
       // 예전엔 insertBefore로 맨 앞에 끼워넣었는데, 이미 렌더링된 다른 카드들 사이로 늦게(무거운
       // limit(500) 쿼리라 응답이 느림) 끼어들면서 화면이 밀리는 느낌이 심했음(2026-08-06, 사용자 제보)
       // — _buildFeedWeeklyTopCams에서 먼저 적용했던 것과 동일하게 그냥 제자리에 붙인다.
@@ -10386,7 +10600,7 @@ async function _buildFeedGenCamPick(list){
       const vids=_shuffle(bannedFiltered);
       const songs=vids.map(v=>({t:v.title,u:vidUrl(v),thumb:v.thumb}));
       const thumb=vids[Math.floor(Math.random()*vids.length)].thumb;
-      const label=`${gen}세대 ${gender==='f'?'여돌':'남돌'} 직캠 모음`,sub=`${songs.length}개 영상`;
+      const label=`${gen}세대 ${gender==='f'?'여돌':'남돌'} 직캠 모음`,sub='';
       // insertBefore 제거 이유는 위 _buildFeedFormatPick과 동일(2026-08-06).
       // _feedNav를 안 쓰는 이유는 위 _buildFeedFormatPick과 동일(2026-08-06).
       _appendFeedCard(list,'🎥',label,sub,()=>_openFeedListOverlay(label,sub,songs),thumb);
@@ -10410,7 +10624,7 @@ async function _buildFeedWeeklyTopCams(list){
   const sinceDate=new Date(Date.now()-7*86400000).toISOString().slice(0,10);
   try{
     const{data,error}=await sb.from(_YT_TABLE)
-      .select('id,title,thumb,category,content_flag,view_count')
+      .select('id,title,thumb,category,content_flag,view_count,published_at')
       .eq('category','live')
       .gte('published_at',sinceDate)
       .not('view_count','is',null)
@@ -10418,25 +10632,28 @@ async function _buildFeedWeeklyTopCams(list){
       .or('content_flag.is.null,content_flag.neq.무관')
       .or('content_flag.is.null,content_flag.neq.hidden')
       .order('view_count',{ascending:false})
-      .limit(100);
+      .limit(300);
     if(error||!data?.length)return;
     const allVids=_filterBannedVideos(data);
     if(!allVids.length)return;
 
+    const _fmtN=n=>n>=1000000?(n/1000000).toFixed(1).replace(/\.0$/,'')+'M':n>=1000?Math.floor(n/1000)+'K':String(n);
+
     // 카드 1: 음방·직캠 TOP — 제목에 직캠/팬캠/FANCAM/음방명 있는 것만
     const camVids=allVids.filter(v=>_FANCAM_TITLE_RE.test(v.title)).slice(0,20);
     if(camVids.length>=3){
-      const songs=camVids.map(v=>({t:v.title,u:vidUrl(v),thumb:v.thumb}));
-      const label='이번주 직캠 TOP',sub=`음방·직캠 조회수 기준 · ${songs.length}개`;
+      const songs=camVids.map(v=>({t:v.title,u:vidUrl(v),thumb:v.thumb,vc:v.view_count,pa:v.published_at?.slice(0,10)}));
+      const label='주간 직캠 TOP 20',sub=_cleanTitle(camVids[0].title);
       _appendFeedCard(list,'🏆',label,sub,()=>_openFeedListOverlay(label,sub,songs),camVids[0].thumb);
     }
 
-    // 카드 2: 이번주 TOP — category='live' 전체 조회수 기준
-    const topVids=allVids.slice(0,20);
+    // 카드 2: Trend — category='live' 전체 조회수 기준, 최근 7일 50개
+    const topVids=allVids.slice(0,50);
     if(topVids.length>=3){
-      const songs=topVids.map(v=>({t:v.title,u:vidUrl(v),thumb:v.thumb}));
-      const label='이번주 TOP',sub=`조회수 기준 · ${songs.length}개`;
-      _appendFeedCard(list,'📈',label,sub,()=>_openFeedListOverlay(label,sub,songs),topVids[0].thumb);
+      const songs=topVids.map(v=>({t:v.title,u:vidUrl(v),thumb:v.thumb,vc:v.view_count,pa:v.published_at?.slice(0,10)}));
+      const top1=topVids[0];
+      const label='Trend',sub=top1.view_count?`1위 · ${_fmtN(top1.view_count)} 조회`:'최근 7일';
+      _appendFeedCard(list,'📈',label,sub,()=>_openFeedListOverlay(label,sub,songs),top1.thumb);
     }
   }catch(e){/* 카드 하나 실패했다고 탐험 탭 전체가 막히면 안 됨 — 조용히 무시 */}
 }
@@ -10937,6 +11154,7 @@ async function _ytRefreshViewCounts(){
     if(failed){_ytSetProg(`저장 실패 (${failed}건): 콘솔 확인`);return;}
   }
   _ytSetProg(`조회수 갱신 완료 — ${saved}개`);
+  _feedDiscoveryBuiltAt=0; // 다음 탐험 탭 오픈 시 주간 TOP 순위 새로 반영
 }
 
 function _ytSetProg(msg){const el=document.getElementById('sp-yt-prog');if(el)el.textContent=msg;}
