@@ -1271,7 +1271,8 @@
    "weverse": "https://weverse.io/fromis9",
    "tiktok": "https://tiktok.com/@official_fromis9",
    "namu": "https://namu.wiki/w/fromis_9"
-  }
+  },
+  "projectShow": "아이돌학교"
  },
  "앤팀": {
   "en": "&TEAM",
@@ -1453,7 +1454,8 @@
    "x": "https://x.com/official_izone",
    "tiktok": "https://tiktok.com/@officializone_",
    "namu": "https://namu.wiki/w/아이즈원"
-  }
+  },
+  "projectShow": "프로듀스 48"
  },
  "아이오아이": {
   "en": "I.O.I",
@@ -1475,7 +1477,8 @@
    "x": "https://x.com/ioi_10th",
    "tiktok": "https://tiktok.com/@ioi_10th",
    "namu": "https://namu.wiki/w/아이오아이"
-  }
+  },
+  "projectShow": "프로듀스 101"
  },
  "워너원": {
   "en": "Wanna One",
@@ -1497,7 +1500,8 @@
    "instagram": "https://www.instagram.com/wannaone.official",
    "x": "https://x.com/WannaOne_twt",
    "namu": "https://namu.wiki/w/Wanna%20One"
-  }
+  },
+  "projectShow": "프로듀스 101 시즌2"
  },
  "케플러": {
   "en": "Kep1er",
@@ -1521,7 +1525,8 @@
    "tiktok": "https://www.tiktok.com/@official_kep1er",
    "weverse": "https://weverse.io/kep1er",
    "namu": "https://namu.wiki/w/Kep1er"
-  }
+  },
+  "projectShow": "Girls Planet 999"
  },
  "제로베이스원": {
   "en": "ZEROBASEONE",
@@ -1544,7 +1549,8 @@
    "x": "https://x.com/ZB1_official",
    "tiktok": "https://www.tiktok.com/@zb1_official",
    "namu": "https://namu.wiki/w/ZEROBASEONE"
-  }
+  },
+  "projectShow": "보이즈 플래닛"
  },
  "알파드라이브원": {
   "en": "ALPHA DRIVE ONE",
@@ -2469,7 +2475,8 @@
    "x": "https://x.com/x1official101",
    "namu": "https://namu.wiki/w/X1",
    "youtube": "https://www.youtube.com/channel/UCboVqbN79qGtz45u_7L8hOA"
-  }
+  },
+  "projectShow": "프로듀스 X 101"
  },
  "드리핀": {
   "en": "DRIPPIN",
@@ -3902,7 +3909,8 @@
   },
   "links": {
    "namu": "https://namu.wiki/w/VIXX"
-  }
+  },
+  "projectShow": "마이돌(MyDOL)"
  },
  "SS501": {
   "en": "SS501",
@@ -3958,7 +3966,8 @@
   },
   "links": {
    "namu": "https://namu.wiki/w/TO1"
-  }
+  },
+  "projectShow": "TO BE WORLD KLASS"
  },
  "앳하트": {
   "en": "AtHeart",
@@ -4009,7 +4018,8 @@
   },
   "links": {
    "namu": "https://namu.wiki/w/KATSEYE"
-  }
+  },
+  "projectShow": "The Debut: Dream Academy"
  },
  "큐더블유이알": {
   "en": "QWER",
@@ -5292,7 +5302,8 @@
    "x": "https://x.com/official_akmu",
    "tiktok": "https://www.tiktok.com/@akmu",
    "namu": "https://namu.wiki/w/AKMU"
-  }
+  },
+  "projectShow": "K팝스타 시즌2"
  },
  "판타지보이즈": {
   "en": "FANTASY BOYS",
@@ -5315,7 +5326,8 @@
    "x": "https://x.com/fantasyboys_twt",
    "tiktok": "https://www.tiktok.com/@official_fantasyboys",
    "namu": "https://namu.wiki/w/FANTASY%20BOYS"
-  }
+  },
+  "projectShow": "소년판타지"
  },
  "티아이오티": {
   "en": "TIOT",
@@ -5469,5 +5481,41 @@
   "altNames": [
    "초신성"
   ]
+ },
+ "앨리스": {
+  "en": "ALICE",
+  "debut": "2017.06.01",
+  "co": "아이오케이이앤엠",
+  "color": [
+   230,
+   150,
+   190
+  ],
+  "gender": "f",
+  "fandom": {
+   "ko": "블리스",
+   "en": "BLRIS"
+  },
+  "links": {
+   "namu": "https://namu.wiki/w/앨리스(아이돌)"
+  }
+ },
+ "엔플라잉": {
+  "en": "N.Flying",
+  "debut": "2015.05.20",
+  "co": "FNC엔터테인먼트",
+  "color": [
+   220,
+   120,
+   90
+  ],
+  "gender": "m",
+  "fandom": {
+   "ko": "엔피아",
+   "en": "N.Fia"
+  },
+  "links": {
+   "namu": "https://namu.wiki/w/엔플라잉"
+  }
  }
 }

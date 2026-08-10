@@ -6353,8 +6353,14 @@
   "songs": [],
   "links": {
    "instagram": "https://www.instagram.com/hi_sseulgi",
-   "namu": "https://namu.wiki/w/슬기(Red Velvet)"
-  }
+   "namu": "https://namu.wiki/w/슬기(Red Velvet)",
+   "youtube": "https://www.youtube.com/@hi_sseulgi_"
+  },
+  "channels": [
+   {
+    "url": "https://www.youtube.com/@hi_sseulgi_"
+   }
+  ]
  },
  {
   "name": {
@@ -6550,8 +6556,19 @@
   "songs": [],
   "links": {
    "instagram": "https://www.instagram.com/hyoyeon_x_x",
-   "namu": "https://namu.wiki/w/효연"
-  }
+   "namu": "https://namu.wiki/w/효연",
+   "youtube": "https://www.youtube.com/channel/UCy09Uze1QeJPWycuOMPhjsws"
+  },
+  "channels": [
+   {
+    "url": "https://www.youtube.com/channel/UCy09Uze1QeJPWycuOMPhjsws",
+    "label": "공식(음악)"
+   },
+   {
+    "url": "https://www.youtube.com/@Hyo_LevelUp",
+    "label": "개인 콘텐츠(타 멤버 다수 출연)"
+   }
+  ]
  },
  {
   "name": {
@@ -7822,7 +7839,11 @@
    "namu": "https://namu.wiki/w/%EC%95%84%EC%9D%B4%EC%9C%A0"
   },
   "sparkle": false,
-  "songs": []
+  "songs": [],
+  "fandom": {
+   "ko": "유애나",
+   "en": "UAENA"
+  }
  },
  {
   "name": {
@@ -10597,32 +10618,6 @@
   "links": {
    "instagram": "https://www.instagram.com/75_yabuki",
    "namu": "https://namu.wiki/w/야부키 나코"
-  }
- },
- {
-  "name": {
-   "ko": "혼다 히토미",
-   "en": "Hitomi"
-  },
-  "group": {
-   "ko": "아이즈원",
-   "en": "IZ*ONE"
-  },
-  "co": "iNKODE",
-  "active": true,
-  "color": [
-   216,
-   178,
-   168
-  ],
-  "bday": "2001.10.06",
-  "nat": {
-   "ko": "일본",
-   "en": "JP"
-  },
-  "links": {
-   "instagram": "https://www.instagram.com/10_hitomi_06",
-   "namu": "https://namu.wiki/w/혼다 히토미"
   }
  },
  {
@@ -19776,8 +19771,14 @@
   },
   "links": {
    "instagram": "https://www.instagram.com/seola_s",
-   "namu": "https://namu.wiki/w/설아"
-  }
+   "namu": "https://namu.wiki/w/설아",
+   "youtube": "https://www.youtube.com/@S1EOL2A"
+  },
+  "channels": [
+   {
+    "url": "https://www.youtube.com/@S1EOL2A"
+   }
+  ]
  },
  {
   "name": {
@@ -20624,7 +20625,17 @@
   "links": {
    "instagram": "https://www.instagram.com/10_hitomi_06",
    "namu": "https://namu.wiki/w/혼다 히토미"
-  }
+  },
+  "groups": [
+   {
+    "ko": "세이마이네임",
+    "en": "SAY MY NAME"
+   },
+   {
+    "ko": "아이즈원",
+    "en": "IZ*ONE"
+   }
+  ]
  },
  {
   "name": {
@@ -42471,6 +42482,299 @@
   },
   "links": {
    "namu": "https://namu.wiki/w/홍유경"
+  }
+ },
+ {
+  "name": {
+   "ko": "이제이",
+   "en": "Lee Jae"
+  },
+  "group": {
+   "ko": "앨리스",
+   "en": "ALICE"
+  },
+  "co": "아이오케이이앤엠",
+  "active": true,
+  "color": [
+   230,
+   150,
+   190
+  ],
+  "bday": "1997.08.13",
+  "nat": {
+   "ko": "한국",
+   "en": "KR"
+  }
+ },
+ {
+  "name": {
+   "ko": "채정",
+   "en": "Chae Jung"
+  },
+  "group": {
+   "ko": "앨리스",
+   "en": "ALICE"
+  },
+  "co": "아이오케이이앤엠",
+  "active": true,
+  "color": [
+   230,
+   150,
+   190
+  ],
+  "bday": "1999.08.26",
+  "nat": {
+   "ko": "한국",
+   "en": "KR"
+  }
+ },
+ {
+  "name": {
+   "ko": "소희",
+   "en": "So Hee"
+  },
+  "group": {
+   "ko": "앨리스",
+   "en": "ALICE"
+  },
+  "co": "아이오케이이앤엠",
+  "active": false,
+  "left": "2024.04.26",
+  "color": [
+   230,
+   150,
+   190
+  ],
+  "bday": "1999.12.31",
+  "nat": {
+   "ko": "한국",
+   "en": "KR"
+  }
+ },
+ {
+  "name": {
+   "ko": "도아",
+   "en": "Do A"
+  },
+  "group": {
+   "ko": "앨리스",
+   "en": "ALICE"
+  },
+  "co": "아이오케이이앤엠",
+  "active": false,
+  "left": "2024.05.02",
+  "color": [
+   230,
+   150,
+   190
+  ],
+  "bday": "1999.02.02",
+  "nat": {
+   "ko": "한국",
+   "en": "KR"
+  }
+ },
+ {
+  "name": {
+   "ko": "유경",
+   "en": "Yu Kyung"
+  },
+  "group": {
+   "ko": "앨리스",
+   "en": "ALICE"
+  },
+  "co": "아이오케이이앤엠",
+  "active": false,
+  "left": "2024.05.02",
+  "color": [
+   230,
+   150,
+   190
+  ],
+  "bday": "1999.11.05",
+  "nat": {
+   "ko": "한국",
+   "en": "KR"
+  }
+ },
+ {
+  "name": {
+   "ko": "가린",
+   "en": "Ka Rin"
+  },
+  "group": {
+   "ko": "앨리스",
+   "en": "ALICE"
+  },
+  "co": "아이오케이이앤엠",
+  "active": false,
+  "left": "2024.05.02",
+  "color": [
+   230,
+   150,
+   190
+  ],
+  "bday": "2002.01.05",
+  "nat": {
+   "ko": "한국",
+   "en": "KR"
+  }
+ },
+ {
+  "name": {
+   "ko": "연제",
+   "en": "Yen Je"
+  },
+  "group": {
+   "ko": "앨리스",
+   "en": "ALICE"
+  },
+  "co": "아이오케이이앤엠",
+  "active": false,
+  "left": "2024.05.29",
+  "color": [
+   230,
+   150,
+   190
+  ],
+  "bday": "1999.10.15",
+  "nat": {
+   "ko": "한국",
+   "en": "KR"
+  }
+ },
+ {
+  "name": {
+   "ko": "이승협",
+   "en": "Lee Seung Hyub"
+  },
+  "group": {
+   "ko": "엔플라잉",
+   "en": "N.Flying"
+  },
+  "co": "FNC엔터테인먼트",
+  "active": true,
+  "leader": true,
+  "color": [
+   220,
+   120,
+   90
+  ],
+  "bday": "1992.10.31",
+  "nat": {
+   "ko": "한국",
+   "en": "KR"
+  }
+ },
+ {
+  "name": {
+   "ko": "차훈",
+   "en": "Cha Hoon"
+  },
+  "group": {
+   "ko": "엔플라잉",
+   "en": "N.Flying"
+  },
+  "co": "FNC엔터테인먼트",
+  "active": true,
+  "color": [
+   220,
+   120,
+   90
+  ],
+  "bday": "1994.07.12",
+  "nat": {
+   "ko": "한국",
+   "en": "KR"
+  }
+ },
+ {
+  "name": {
+   "ko": "김재현",
+   "en": "Kim Jaehyun"
+  },
+  "group": {
+   "ko": "엔플라잉",
+   "en": "N.Flying"
+  },
+  "co": "FNC엔터테인먼트",
+  "active": true,
+  "color": [
+   220,
+   120,
+   90
+  ],
+  "bday": "1994.07.15",
+  "nat": {
+   "ko": "한국",
+   "en": "KR"
+  }
+ },
+ {
+  "name": {
+   "ko": "유회승",
+   "en": "Yoo Hwe Seung"
+  },
+  "group": {
+   "ko": "엔플라잉",
+   "en": "N.Flying"
+  },
+  "co": "FNC엔터테인먼트",
+  "active": true,
+  "color": [
+   220,
+   120,
+   90
+  ],
+  "bday": "1995.02.28",
+  "nat": {
+   "ko": "한국",
+   "en": "KR"
+  }
+ },
+ {
+  "name": {
+   "ko": "서동성",
+   "en": "Seo Dongsung"
+  },
+  "group": {
+   "ko": "엔플라잉",
+   "en": "N.Flying"
+  },
+  "co": "FNC엔터테인먼트",
+  "active": true,
+  "color": [
+   220,
+   120,
+   90
+  ],
+  "bday": "1996.04.09",
+  "nat": {
+   "ko": "한국",
+   "en": "KR"
+  }
+ },
+ {
+  "name": {
+   "ko": "권광진",
+   "en": "Kwon Kwang Jin"
+  },
+  "group": {
+   "ko": "엔플라잉",
+   "en": "N.Flying"
+  },
+  "co": "FNC엔터테인먼트",
+  "active": false,
+  "left": "2018.12.01",
+  "color": [
+   220,
+   120,
+   90
+  ],
+  "bday": "1992.08.12",
+  "nat": {
+   "ko": "한국",
+   "en": "KR"
   }
  }
 ]
