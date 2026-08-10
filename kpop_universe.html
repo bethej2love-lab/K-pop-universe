@@ -40,7 +40,7 @@
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <link rel="stylesheet" as="style" crossorigin
   href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@1.3.9/dist/web/static/pretendard-dynamic-subset.css">
-<link rel="stylesheet" href="kpop_universe.css?v=3">
+<link rel="stylesheet" href="kpop_universe.css?v=5">
 <script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@1/index.js"></script>
 </head>
 <body>
@@ -241,9 +241,9 @@
       <button class="sp-yt-sync" id="sp-yt-manual-batch-add-btn" style="opacity:.8;">여러 개 한 번에 추가</button>
     </div>
 
-    <div class="sp-subsec-lbl" style="margin-top:10px;">검수큐</div>
-    <button class="sp-yt-sync" id="sp-hnn-btn" style="opacity:.8;">데이터 퀄리티</button>
-    <button class="sp-yt-sync" id="sp-wonkok-btn" style="margin-top:4px;opacity:.8;">원곡 오태깅 의심 목록</button>
+    <div class="sp-subsec-lbl" style="margin-top:10px;">검수</div>
+    <button class="sp-yt-sync" id="sp-hnn-btn" style="opacity:.8;">검수 센터</button>
+    <button class="sp-yt-sync" id="sp-wonkok-btn" style="display:none"></button>
 
     <div class="sp-subsec-lbl" style="margin-top:10px;">데이터 정합성 — 매일(동기화 뒤 순서대로)</div>
     <button class="sp-yt-sync" id="sp-yt-autotag" style="margin-top:4px;opacity:.8;">2. 멤버+콜라보 자동 태깅 (미태깅분)</button>
@@ -308,81 +308,73 @@
   <button id="user-bulk-col-btn">컬렉션에 추가</button>
   <button id="user-bulk-cancel-btn">취소</button>
 </div>
-<div id="wonkok-overlay">
-  <div id="wonkok-panel">
-    <div id="wonkok-hd">
-      <span id="wonkok-hd-title">원곡 오태깅 의심 목록</span>
-      <button id="wonkok-close">✕</button>
-    </div>
-    <div id="wonkok-desc">제목에 "원곡" 또는 "커버"/"cover"가 들어간 영상 중, 그 절(괄호 안)에 태깅된 멤버/그룹 이름이 원곡자로 언급된 것만 후보로 추림 — members(자체 출연)뿐 아니라 with_members/with_groups(콜라보 태그)도 같이 검사. "Cover by X"처럼 by 뒤에 오는 이름은 원곡자가 아니라 실제 출연자로 보고 보호함. 추가로, with_members/with_groups에 서로 다른 그룹이 2개 이상 걸린 영상("여러 그룹 커버 감지" 표시)은 괄호 절이 없어도 커버 메들리로 보고 전부 후보에 포함함 — 진짜 다자간 콜라보일 수도 있으니 적용 전에 꼭 확인. 스캔은 시간이 좀 걸릴 수 있음.</div>
-    <button id="wonkok-scan-btn" class="uc-btn">스캔 시작</button>
-    <div id="wonkok-status"></div>
-    <div id="wonkok-toolbar" style="display:none">
-      <label id="wonkok-select-all-row"><input type="checkbox" id="wonkok-select-all" checked>전체 선택</label>
-      <span id="wonkok-count"></span>
-      <button id="wonkok-apply-btn">선택 항목 원곡 커버로 이동</button>
-    </div>
-    <div id="wonkok-list"></div>
-  </div>
-</div>
 <div id="hnn-overlay">
   <div id="hnn-panel">
     <div id="hnn-hd">
-      <span id="hnn-hd-title">데이터 퀄리티</span>
+      <span id="hnn-hd-title">검수 센터</span>
+      <div id="hnn-tabs">
+        <button class="hnn-tab active" data-tab="quality">태깅 품질</button>
+        <button class="hnn-tab" data-tab="wonkok">원곡 커버</button>
+      </div>
       <button id="hnn-close">✕</button>
     </div>
-    <div id="hnn-body">
-    <div id="hnn-dup-sec">
-      <div class="hnn-sec-lbl" style="padding:0 0 0;">동명이인(이름 중복) — 스캔 불필요, 로스터에서 바로 계산됨. 이름 누르면 카드로 이동</div>
-      <div id="hnn-dup-list"></div>
-    </div>
-    <div id="hnn-desc">
-      스캔 시작 → 그룹별 미태깅 비율·태깅 오염 의심 이름을 한 번에 찾아줌.<br>
-      그룹명 클릭 = 해당 카드로 이동 · "정리" = 무맥락 의심 영상 미리보기.<br>
-      의심 이름 체크 → "화이트리스트 추가" = 그 이름은 앞으로 해시태그로 명시된 경우만 태깅(DB 즉시 반영).<br>
-      추가 후엔 재검증 버튼으로 기존 오염분 정리 · 그냥 인기 많아서 튄 거면 "확인함"으로 넘기기.
-    </div>
-    <div id="hnn-wl-sec">
-      <div class="hnn-sec-lbl">흔한단어 보호 목록 (해시태그로만 인정 — ×를 눌러 제거 가능한 항목만 관리자가 추가한 것)</div>
-      <div id="hnn-wl-list"></div>
-    </div>
-    <button id="hnn-scan-btn" class="uc-btn">스캔 시작</button>
-    <div id="hnn-status"></div>
-    <div id="hnn-group-sec" style="display:none">
-      <div class="hnn-sec-lbl">그룹별 요약 (미태깅 많은 순 — 수동 편집 대상 찾기용)</div>
-      <div id="hnn-group-list"></div>
-    </div>
-    <div class="hnn-sec-lbl" id="hnn-member-lbl" style="display:none">멤버별 의심 후보</div>
-    <div id="hnn-toolbar" style="display:none">
-      <label id="hnn-select-all-row"><input type="checkbox" id="hnn-select-all">전체 선택</label>
-      <span id="hnn-count"></span>
-      <button id="hnn-apply-btn">선택 항목 화이트리스트 추가</button>
-    </div>
-    <div id="hnn-list"></div>
-    <div id="dq-junk-sec" style="display:none">
-      <div id="dq-junk-hd">
-        <button id="dq-junk-back">← 목록으로</button>
-        <span id="dq-junk-title"></span>
+    <div class="hnn-tab-sep"></div>
+    <div class="hnn-pane active" id="hnn-pane-quality">
+      <div id="hnn-dup-sec">
+        <div class="hnn-sec-lbl">동명이인(이름 중복) — 이름 누르면 카드로 이동</div>
+        <div id="hnn-dup-list"></div>
       </div>
-      <div id="dq-junk-status"></div>
-      <div id="dq-junk-toolbar" style="display:none">
-        <label id="dq-junk-select-all-row"><input type="checkbox" id="dq-junk-select-all">전체 선택</label>
-        <span id="dq-junk-count"></span>
-        <button id="dq-junk-flag-btn">선택 무관 처리</button>
-        <button id="dq-junk-delete-btn">선택 삭제</button>
+      <div id="hnn-wl-sec">
+        <div class="hnn-sec-lbl">흔한단어 보호 목록 (해시태그로만 인정)</div>
+        <div id="hnn-wl-list"></div>
       </div>
-      <div id="dq-junk-list"></div>
-      <div id="dq-cross-sec" style="display:none">
-        <div id="dq-cross-hd">콜라보 태그 오염 의심 <span style="font-weight:400;color:rgba(155,178,228,0.6);">(영상은 다른 그룹 것, with_groups에 이 그룹만 잘못 얹힘)</span></div>
-        <div id="dq-cross-status"></div>
-        <div id="dq-cross-toolbar" style="display:none">
-          <label id="dq-cross-select-all-row"><input type="checkbox" id="dq-cross-select-all">전체 선택</label>
-          <span id="dq-cross-count"></span>
-          <button id="dq-cross-remove-btn">선택 항목 태그만 제거</button>
+      <button id="hnn-scan-btn" style="display:none"></button>
+      <div id="hnn-status" class="hnn-auto-status"></div>
+      <div id="hnn-group-sec" style="display:none">
+        <div class="hnn-sec-lbl">그룹별 요약 (미태깅 많은 순)</div>
+        <div id="hnn-group-list"></div>
+      </div>
+      <div class="hnn-sec-lbl" id="hnn-member-lbl" style="display:none">멤버별 의심 후보</div>
+      <div id="hnn-toolbar" style="display:none">
+        <label id="hnn-select-all-row"><input type="checkbox" id="hnn-select-all">전체 선택</label>
+        <span id="hnn-count"></span>
+        <button id="hnn-apply-btn">선택 항목 화이트리스트 추가</button>
+      </div>
+      <div id="hnn-list"></div>
+      <div id="dq-junk-sec" style="display:none">
+        <div id="dq-junk-hd">
+          <button id="dq-junk-back">← 목록으로</button>
+          <span id="dq-junk-title"></span>
         </div>
-        <div id="dq-cross-list"></div>
+        <div id="dq-junk-status"></div>
+        <div id="dq-junk-toolbar" style="display:none">
+          <label id="dq-junk-select-all-row"><input type="checkbox" id="dq-junk-select-all">전체 선택</label>
+          <span id="dq-junk-count"></span>
+          <button id="dq-junk-flag-btn">선택 무관 처리</button>
+          <button id="dq-junk-delete-btn">선택 삭제</button>
+        </div>
+        <div id="dq-junk-list"></div>
+        <div id="dq-cross-sec" style="display:none">
+          <div id="dq-cross-hd">콜라보 태그 오염 의심 <span style="font-weight:400;color:rgba(155,178,228,0.6);">(영상은 다른 그룹 것, with_groups에 이 그룹만 잘못 얹힘)</span></div>
+          <div id="dq-cross-status"></div>
+          <div id="dq-cross-toolbar" style="display:none">
+            <label id="dq-cross-select-all-row"><input type="checkbox" id="dq-cross-select-all">전체 선택</label>
+            <span id="dq-cross-count"></span>
+            <button id="dq-cross-remove-btn">선택 항목 태그만 제거</button>
+          </div>
+          <div id="dq-cross-list"></div>
+        </div>
       </div>
     </div>
+    <div class="hnn-pane" id="hnn-pane-wonkok">
+      <button id="wonkok-scan-btn" style="display:none"></button>
+      <div id="wonkok-status" class="hnn-auto-status"></div>
+      <div id="wonkok-toolbar" style="display:none">
+        <label id="wonkok-select-all-row"><input type="checkbox" id="wonkok-select-all" checked>전체 선택</label>
+        <span id="wonkok-count"></span>
+        <button id="wonkok-apply-btn">선택 항목 원곡 커버로 이동</button>
+      </div>
+      <div id="wonkok-list"></div>
     </div>
   </div>
 </div>
@@ -2527,7 +2519,7 @@ function _filterBannedVideos(list,ko){return(list||[]).filter(v=>!_isBannedVideo
 // 흔히 쓰는 문구 — 제목에 이 단어가 있으면 어느 그룹으로 매칭됐든 무조건 무관 처리한다(사용자 요청, 2026-08-04).
 // _isBannedVideoTitle과 달리 hidden이 아니라 무관 처리(행은 남기되 그룹/멤버 그리드에서만 제외)라 신규
 // 동기화 시 이 체크에 걸리면 content_flag를 '무관'으로 붙여서 저장한다 — 기존 행은 아래 스윕 버튼으로 정리.
-const _JUNK_TITLE_KEYWORDS_GLOBAL=['띵곡팔이','김창옥쇼','이호선상담소','유부녀킬러','스트릿레스토랑파이터','십분hook','[#여권들고','프리한19'];
+const _JUNK_TITLE_KEYWORDS_GLOBAL=['띵곡팔이','김창옥쇼','이호선상담소','유부녀킬러','스트릿레스토랑파이터','십분hook','[#여권들고','프리한19','결혼지옥','오은영리포트','이혼숙려'];
 function _isJunkVideoTitle(t){return!!t&&_JUNK_TITLE_KEYWORDS_GLOBAL.some(k=>t.includes(k));}
 
 let _lbPlaylist=null,_lbIdx=-1,_lbCtx=null;
@@ -10781,7 +10773,6 @@ document.getElementById('dq-cross-remove-btn')?.addEventListener('click',async()
 });
 document.getElementById('dq-junk-back')?.addEventListener('click',()=>{
   document.getElementById('dq-junk-sec').style.display='none';
-  document.getElementById('hnn-scan-btn').style.display='';
   document.getElementById('hnn-wl-sec').style.display='';
   if(_dqGroupSummaries.length)document.getElementById('hnn-group-sec').style.display='';
   if(_hnnCandidates.length){
@@ -10882,16 +10873,24 @@ document.getElementById('hnn-apply-btn')?.addEventListener('click',async()=>{
     document.getElementById('hnn-status').textContent='오류: '+e.message;
   }
 });
-document.getElementById('sp-hnn-btn')?.addEventListener('click',()=>{document.getElementById('hnn-overlay').classList.add('open');_renderHnnWhitelist();_renderHnnDuplicateNames();_renderHnnGroupCountsLight();});
+let _hnnScanned=false,_wonkokScanned=false;
+function _hnnSwitchTab(tab){
+  document.querySelectorAll('.hnn-tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===tab));
+  document.querySelectorAll('.hnn-pane').forEach(p=>p.classList.toggle('active',p.id==='hnn-pane-'+tab));
+  if(tab==='quality'&&!_hnnScanned){_hnnScanned=true;setTimeout(()=>document.getElementById('hnn-scan-btn')?.click(),80);}
+  if(tab==='wonkok'&&!_wonkokScanned){_wonkokScanned=true;setTimeout(()=>document.getElementById('wonkok-scan-btn')?.click(),80);}
+}
+document.querySelectorAll('.hnn-tab').forEach(t=>t.addEventListener('click',()=>_hnnSwitchTab(t.dataset.tab)));
+document.getElementById('hnn-overlay')?.addEventListener('click',e=>{if(e.target===e.currentTarget)e.currentTarget.classList.remove('open');});
+document.getElementById('sp-hnn-btn')?.addEventListener('click',()=>{document.getElementById('hnn-overlay').classList.add('open');_renderHnnWhitelist();_renderHnnDuplicateNames();_hnnSwitchTab('quality');});
 // "스캔 시작"/닫기 버튼이 실제로 _hnnScan을 호출/오버레이를 닫도록 연결하는 게 누락돼있었음
 // (오버레이 열기만 sp-hnn-btn에 연결돼있고 정작 안의 스캔 버튼엔 아무 리스너도 없었음 — 사용자
 // 제보로 발견, 2026-08-03).
 document.getElementById('hnn-scan-btn')?.addEventListener('click',()=>{_hnnScan();});
 document.getElementById('hnn-close')?.addEventListener('click',()=>{
   document.getElementById('hnn-overlay').classList.remove('open');
-  // 그룹 정리 드릴다운을 열어둔 채로 닫았으면 다음에 열 때 다시 스캔 화면부터 보이게 초기화
+  _hnnScanned=false;_wonkokScanned=false;
   document.getElementById('dq-junk-sec').style.display='none';
-  document.getElementById('hnn-scan-btn').style.display='';
   document.getElementById('hnn-wl-sec').style.display='';
 });
 
@@ -10917,7 +10916,7 @@ function _wonkokStripClause(title){
       const inner=title.slice(i+1,Math.min(j,title.length));
       // "(원곡: X)" 뿐 아니라 "(BTS 커버)"/"[Dance Cover]"처럼 괄호 안에 커버/cover 단어가 있는 경우도
       // 같은 위험군이라 통째로 걷어낸다 — 원곡자 이름이 이 괄호 안에 커버 표시와 같이 적히는 관례가 흔함.
-      if(/^\s*원곡\s*[:：]?/.test(inner)||/커버|cover/i.test(inner)){i=j<title.length?j+1:title.length;continue;}
+      if(/^\s*원곡\s*[:：]?/.test(inner)||/커버|cover/i.test(inner)||(/\boriginal\b/i.test(inner)&&!_isBeOriginal(inner))){i=j<title.length?j+1:title.length;continue;}
     }
     out+=title[i];i++;
   }
@@ -10950,7 +10949,7 @@ function _wonkokParseClause(title){
       if(m)rest=inner.slice(m[0].length);
       // "(BTS 커버)"류 — "원곡:" 같은 고정 접두사가 없어서 뗄 게 없으므로 괄호 안 전체를 원곡자
       // 후보 텍스트로(원곡자 이름이 커버 표시와 같은 괄호 안에 같이 적히는 관례를 그대로 활용).
-      else if(/커버|cover/i.test(inner))rest=inner;
+      else if(/커버|cover/i.test(inner)||(/\boriginal\b/i.test(inner)&&!_isBeOriginal(inner)))rest=inner;
       if(rest!==null){
         const bm=/\bby\b/i.exec(rest);
         if(bm)return{origText:rest.slice(0,bm.index).trim(),performerText:rest.slice(bm.index+bm[0].length).trim()};
@@ -11008,8 +11007,15 @@ async function _wonkokScan(){
       if(data.length<1000)break;
       _wkLastId=data[data.length-1].id;
     }
-    const _wonkokIndicatorRe=/원곡|커버|cover/i;
-    const hitIds=(idTitleRows||[]).filter(v=>_wonkokIndicatorRe.test(v.title||'')).map(v=>v.id);
+    const _wonkokIndicatorRe=/원곡|커버|cover|\boriginal\b/i;
+    const _isBeOriginal=t=>/\bbe[\s_-]+original\b/i.test(t); // "BE ORIGINAL" 시리즈는 콘텐츠명, 원곡 크레딧 아님
+    const hitIds=(idTitleRows||[]).filter(v=>{
+      const t=v.title||'';
+      if(!_wonkokIndicatorRe.test(t))return false;
+      // "original"만 매칭됐는데 "be original" 패턴이면 제외
+      if(/\boriginal\b/i.test(t)&&!/원곡|커버|cover/i.test(t))return !_isBeOriginal(t);
+      return true;
+    }).map(v=>v.id);
     // "한 그룹이 여러 그룹 노래를 커버해서 그 원곡자들이 전부 with_members/with_groups(콜라보)로 잘못
     // 들어간" 경우 — with_groups + with_members에서 뽑아낸 그룹이 자기 자신 빼고 2개 이상이면 후보로
     // 삼는다. 실제로 한 영상에서 서로 다른 그룹 2곳 이상과 동시에 진짜 콜라보할 가능성보다, 커버
@@ -11202,9 +11208,9 @@ document.getElementById('wonkok-apply-btn')?.addEventListener('click',async()=>{
   if(!_wonkokCandidates.length)_renderWonkokList();
 });
 document.getElementById('wonkok-scan-btn')?.addEventListener('click',_wonkokScan);
-document.getElementById('wonkok-overlay')?.addEventListener('click',e=>{if(e.target===e.currentTarget)e.currentTarget.classList.remove('open');});
-document.getElementById('wonkok-close')?.addEventListener('click',()=>document.getElementById('wonkok-overlay').classList.remove('open'));
-document.getElementById('sp-wonkok-btn')?.addEventListener('click',()=>{document.getElementById('wonkok-overlay').classList.add('open');});
+;
+document.getElementById('wonkok-close')?.addEventListener('click',()=>document.getElementById('hnn-overlay').classList.remove('open'));
+document.getElementById('sp-wonkok-btn')?.addEventListener('click',()=>{document.getElementById('hnn-overlay').classList.add('open');_renderHnnWhitelist();_renderHnnDuplicateNames();_hnnSwitchTab('wonkok');});
 
 // ── 전체 영상 검색(admin) ── 그룹/멤버 무관하게 title 검색. 3글자 이상은 서버 ILIKE(트라이그램 인덱스로
 // 빠름), 1~2글자는 인덱스 가속이 안 되므로(pg_trgm은 3글자 미만 패턴을 못 씀) id/title/group_ko/thumb/
