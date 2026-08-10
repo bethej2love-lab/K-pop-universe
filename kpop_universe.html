@@ -5491,10 +5491,18 @@ function _dedupSongs(songs){
     const key=sg.u||sg; // url 없는 항목(이론상 없어야 함)은 병합 대상 삼지 않고 각자 고유 취급
     const existing=map.get(key);
     if(!existing){
-      map.set(key,{...sg,with:sg.with?[...sg.with]:sg.with});
+      map.set(key,{...sg,with:sg.with?[...sg.with]:sg.with,_groupWideNames:sg._groupWideNames?new Set(sg._groupWideNames):undefined});
       order.push(key);
-    }else if(sg.with?.length){
-      existing.with=[...new Set([...(existing.with||[]),...sg.with])];
+    }else{
+      if(sg.with?.length)existing.with=[...new Set([...(existing.with||[]),...sg.with])];
+      // 같은 영상이 "내 채널(멤버 확정)" 조회와 "그룹 통째 태깅" 조회 양쪽에 동시에 걸리는 경우(예: 코르티스
+      // 성현 영상에 성현 본인은 members로 확정, 베이비몬스터는 with_groups로 그룹째 태깅) with는 합쳐지지만
+      // 그룹와이드 여부가 조회 순서에 따라 통째로 날아가 버추면(예전 버그) 미확인 멤버까지 확정된 것처럼
+      // 보임 — _groupWideNames(이름 단위 미확인 표시)도 함께 합쳐서 어느 조회에서 왔든 정확히 유지되게 한다.
+      if(sg._groupWideNames?.size){
+        if(!existing._groupWideNames)existing._groupWideNames=new Set();
+        sg._groupWideNames.forEach(n=>existing._groupWideNames.add(n));
+      }
     }
   });
   return order.map(k=>map.get(k));
@@ -5667,11 +5675,15 @@ async function _fetchApiCollabData(anchor){
           .map(a=>a.group.ko===anchor.group.ko?a.name.ko:`${a.name.ko}(${a.group.ko})`)
       );
       if(!withList.length)return;
-      // _groupWideOnly: 특정 멤버가 아니라 그룹 전체가 태깅된 영상이라는 표시 — 실제로 누가 나왔는지는
-      // 모름. 그룹칩만으로 훑어볼 땐(_getCollabSongs의 groupsOk) 그대로 후보에 포함시키지만, 특정 멤버를
-      // 콕 선택했을 땐 이 표시가 있는 항목은 "그 멤버가 확인된 게 아니므로" 제외해야 함(사용자 제보로
-      // 발견 — 특정 멤버 선택해도 같은 그룹 다른 멤버 영상이 섞여 나오던 원인, 2026-08-03).
-      const song={t:v.title,u:v.category==='short'?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`,with:withList,_apiId:v.id,_apiGroupKo:v.group_ko,_groupWideOnly:true};
+      // _groupWideNames: 특정 멤버가 아니라 그룹 전체가 태깅된 영상이라는 표시(이름 단위 Set) — 실제로
+      // 누가 나왔는지는 모름. 그룹칩만으로 훑어볼 땐(_getCollabSongs의 groupsOk) 그대로 후보에 포함시키지만,
+      // 특정 멤버를 콕 선택했을 땐 이 Set에 들어있는 이름은 "그 멤버가 확인된 게 아니므로" 제외해야 함
+      // (사용자 제보로 발견 — 특정 멤버 선택해도 같은 그룹 다른 멤버 영상이 섞여 나오던 원인, 2026-08-03).
+      // 예전엔 song 전체에 boolean 하나(_groupWideOnly)로 표시했는데, 같은 영상이 "내 채널 멤버 확정" 조회와
+      // "그룹 통째 태깅" 조회 양쪽에 걸려 _dedupSongs에서 병합될 때 이 boolean이 유실되면서(with는 합쳐지는데
+      // 플래그는 안 합쳐짐) 확정 안 된 멤버까지 확정된 것처럼 보이는 버그가 있었음(2026-08-10, 코르티스
+      // 성현×베이비몬스터 사례로 발견) — 이름 단위 Set으로 바꿔서 병합 시에도 정확히 유지되게 함.
+      const song={t:v.title,u:v.category==='short'?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`,with:withList,_apiId:v.id,_apiGroupKo:v.group_ko,_groupWideNames:new Set(withList)};
       if(v.category==='mv')song.type='mv';
       else if(v.category==='other')song.type='other';
       withList.forEach(n=>names.add(n));
@@ -5706,7 +5718,7 @@ async function _fetchApiCollabData(anchor){
         withList=[`${solo.name.ko}(${solo.group.ko})`];
         groupWide=false;
       }
-      const song={t:v.title,u:v.category==='short'?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`,with:withList,_apiId:v.id,_apiGroupKo:v.group_ko,_groupWideOnly:groupWide};
+      const song={t:v.title,u:v.category==='short'?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`,with:withList,_apiId:v.id,_apiGroupKo:v.group_ko,_groupWideNames:groupWide?new Set(withList):undefined};
       if(v.category==='mv')song.type='mv';
       else if(v.category==='other')song.type='other';
       withList.forEach(n=>names.add(n));
@@ -5796,11 +5808,13 @@ function _getCollabSongs(anchor,sel,exactOnly,selGroups){
   return _dedupSongs(allSongs.filter(sg=>{
     if(!sel.length&&!selGroupsArr.length)return(sg.with||[]).length>0;
     const hasMember=m=>sg._owner===m||(sg.with||[]).some(w=>_findArtistByConnName(w,anchor.group.ko)===m);
-    // 특정 멤버를 콕 선택했을 때만 쓰는 더 엄격한 버전 — _groupWideOnly(그룹 전체 태깅을 로스터 전원으로
-    // 펼친 것일 뿐, 실제로 그 멤버가 나왔다고 확인된 게 아님)가 있으면 제외한다. 그룹칩만으로 훑어볼 땐
+    // 특정 멤버를 콕 선택했을 때만 쓰는 더 엄격한 버전 — _groupWideNames(그룹 전체 태깅을 로스터 전원으로
+    // 펼친 이름들일 뿐, 실제로 그 멤버가 나왔다고 확인된 게 아님)에 걸린 이름은 제외한다. 이름 단위로 보는
+    // 이유: 같은 영상 안에 확정된 멤버(예: 성현 본인)와 그룹째 태깅된 멤버(예: 베이비몬스터 전원)가 섞여
+    // 있을 수 있어서 song 전체를 하나의 boolean으로 취급하면 안 됨(2026-08-10). 그룹칩만으로 훑어볼 땐
     // (아래 groupsOk) 여전히 permissive한 hasMember를 그대로 씀 — "이 그룹과 뭔가 콜라보가 있다"는
     // 정보 자체는 유효하므로.
-    const hasMemberConfirmed=m=>!sg._groupWideOnly&&hasMember(m);
+    const hasMemberConfirmed=m=>sg._owner===m||(sg.with||[]).some(w=>_findArtistByConnName(w,anchor.group.ko)===m&&!(sg._groupWideNames&&sg._groupWideNames.has(w)));
     // 그룹 단위로 선택된 각 그룹은 기본적으로 "멤버 1명 이상 출연"이면 통과(OR). 단, 개별 멤버를 추가로
     // 선택하지 않은 채 "Only"를 켜면 그 그룹은 "멤버 전원이 다 같이 출연"해야 통과하도록 의미가 바뀐다.
     const groupsOk=selGroupsArr.every(gko=>{
@@ -5998,12 +6012,13 @@ function _buildConnContent(container){
   const otherGroupsSorted=[...otherByGroup.keys()].sort((a,b)=>{
     return _collabCount(otherByGroup.get(b)[0])-_collabCount(otherByGroup.get(a)[0])||a.localeCompare(b,'ko');
   });
-  // 그룹 전체 태깅(_groupWideOnly)으로만 연결된 그룹 판별 — 확인된 특정 멤버 없이 그룹명만 태깅된 경우라
-  // 멤버 개별 칩을 펼칠 필요가 없음(누가 나왔는지 모름).
+  // 그룹 전체 태깅으로만 연결된 그룹 판별 — 확인된 특정 멤버가 단 한 명도 없으면(전원이 _groupWideNames로만
+  // 들어온 경우) 멤버 개별 칩을 펼칠 필요가 없음(누가 나왔는지 모름). _collabCount가 이미 이름 단위로
+  // _groupWideNames를 걸러내므로(위 hasMemberConfirmed 참고), 그 결과를 그대로 재사용하면 된다 — 예전처럼
+  // song 전체의 boolean을 따로 또 검사할 필요 없음(2026-08-10, 코르티스 성현×베이비몬스터 버그 수정과 함께 단순화).
   const _groupWideOnlySet=new Set();
-  otherByGroup.forEach((_,gko)=>{
-    const songs=_getCollabSongs(_connAnchor,[],false,new Set([gko]));
-    if(songs.every(sg=>sg._groupWideOnly))_groupWideOnlySet.add(gko);
+  otherByGroup.forEach((members,gko)=>{
+    if(members.every(name=>_collabCount(name)===0))_groupWideOnlySet.add(gko);
   });
   // 그룹 두 개가 실제로 같은 영상에 함께 나온 적 있는지 미리 계산 — 겹치는 콜라보가 있을 때만 두 그룹을
   // 동시에 펼쳐두고, 없으면 새 그룹을 열 때 이전에 열려있던 그룹은 자동으로 닫는다(자리 차지 줄이기,
