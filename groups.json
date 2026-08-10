@@ -2041,27 +2041,6 @@
    "namu": "https://namu.wiki/w/AB6IX"
   }
  },
- "브브걸(브레이브걸스)": {
-  "en": "BBGIRLS (Brave Girls)",
-  "debut": "2011.04.08",
-  "co": "브브걸컴퍼니",
-  "color": [
-   220,
-   70,
-   90
-  ],
-  "gender": "f",
-  "fandom": {
-   "ko": "쁘이",
-   "en": "BBee"
-  },
-  "links": {
-   "instagram": "https://www.instagram.com/bravegirls.official/",
-   "x": "https://x.com/BraveGirls",
-   "youtube": "https://www.youtube.com/channel/UCx_kYu6Wp1yxZP_KtrW52EQ",
-   "namu": "https://namu.wiki/w/브브걸"
-  }
- },
  "하이라이트": {
   "en": "Highlight",
   "debut": "2017.03.20",
@@ -2422,23 +2401,6 @@
    "x": "https://x.com/TVXQ",
    "tiktok": "https://www.tiktok.com/@tvxq_official",
    "namu": "https://namu.wiki/w/동방신기"
-  }
- },
- "JX(JYJ)": {
-  "en": "JX (JYJ)",
-  "debut": "2010.10.14",
-  "co": "무소속",
-  "color": [
-   55,
-   55,
-   90
-  ],
-  "gender": "m",
-  "links": {
-   "youtube": "https://youtube.com/@JX_identity",
-   "namu": "https://namu.wiki/w/JYJ",
-   "instagram": "https://www.instagram.com/j.xofficial",
-   "x": "https://twitter.com/JX_identity"
   }
  },
  "갓세븐": {
@@ -3535,29 +3497,6 @@
    "instagram": "https://www.instagram.com/crayonpop_official_",
    "youtube": "https://www.youtube.com/@crayonpopvideo",
    "namu": "https://namu.wiki/w/크레용팝"
-  }
- },
- "슈퍼노바(초신성)": {
-  "en": "Supernova",
-  "debut": "2007.09.21",
-  "co": "SV엔터테인먼트",
-  "color": [
-   170,
-   190,
-   220
-  ],
-  "gender": "m",
-  "songs": [],
-  "fandom": {
-   "ko": "밀키",
-   "en": "Milky"
-  },
-  "links": {
-   "x": "https://x.com/SV_SUPERNOVA",
-   "instagram": "https://www.instagram.com/_supernova_official_",
-   "youtube": "https://www.youtube.com/@sventertainment6245",
-   "tiktok": "https://www.tiktok.com/@choshinsei_official",
-   "namu": "https://namu.wiki/w/슈퍼노바(아이돌)"
   }
  },
  "펜타곤": {
@@ -5459,5 +5398,76 @@
   "links": {
    "namu": "https://namu.wiki/w/남녀공학(아이돌)"
   }
+ },
+ "브브걸": {
+  "en": "BBGIRLS",
+  "debut": "2011.04.08",
+  "co": "브브걸컴퍼니",
+  "color": [
+   220,
+   70,
+   90
+  ],
+  "gender": "f",
+  "fandom": {
+   "ko": "쁘이",
+   "en": "BBee"
+  },
+  "links": {
+   "instagram": "https://www.instagram.com/bravegirls.official/",
+   "x": "https://x.com/BraveGirls",
+   "youtube": "https://www.youtube.com/channel/UCx_kYu6Wp1yxZP_KtrW52EQ",
+   "namu": "https://namu.wiki/w/브브걸"
+  },
+  "altNames": [
+   "브레이브걸스",
+   "Brave Girls"
+  ]
+ },
+ "JX": {
+  "en": "JX",
+  "debut": "2010.10.14",
+  "co": "무소속",
+  "color": [
+   55,
+   55,
+   90
+  ],
+  "gender": "m",
+  "links": {
+   "youtube": "https://youtube.com/@JX_identity",
+   "namu": "https://namu.wiki/w/JYJ",
+   "instagram": "https://www.instagram.com/j.xofficial",
+   "x": "https://twitter.com/JX_identity"
+  },
+  "altNames": [
+   "JYJ"
+  ]
+ },
+ "슈퍼노바": {
+  "en": "Supernova",
+  "debut": "2007.09.21",
+  "co": "SV엔터테인먼트",
+  "color": [
+   170,
+   190,
+   220
+  ],
+  "gender": "m",
+  "songs": [],
+  "fandom": {
+   "ko": "밀키",
+   "en": "Milky"
+  },
+  "links": {
+   "x": "https://x.com/SV_SUPERNOVA",
+   "instagram": "https://www.instagram.com/_supernova_official_",
+   "youtube": "https://www.youtube.com/@sventertainment6245",
+   "tiktok": "https://www.tiktok.com/@choshinsei_official",
+   "namu": "https://namu.wiki/w/슈퍼노바(아이돌)"
+  },
+  "altNames": [
+   "초신성"
+  ]
  }
 }

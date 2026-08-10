@@ -909,8 +909,8 @@
   #admin-bulk-edit-btn:active{opacity:.7;}
   #admin-bulk-hide-btn{background:rgba(255,65,65,0.16);border:1px solid rgba(255,100,100,0.32);border-radius:13px;color:#ff9898;font-size:12px;padding:5px 14px;cursor:pointer;font-family:inherit;}
   #admin-bulk-hide-btn:active{opacity:.7;}
-  #admin-bulk-exclude-member-btn{background:rgba(255,170,60,0.16);border:1px solid rgba(255,185,90,0.32);border-radius:13px;color:#ffc98a;font-size:12px;padding:5px 14px;cursor:pointer;font-family:inherit;}
-  #admin-bulk-exclude-member-btn:active{opacity:.7;}
+  #admin-bulk-exclude-member-btn,#admin-bulk-exclude-group-btn{background:rgba(255,170,60,0.16);border:1px solid rgba(255,185,90,0.32);border-radius:13px;color:#ffc98a;font-size:12px;padding:5px 14px;cursor:pointer;font-family:inherit;}
+  #admin-bulk-exclude-member-btn:active,#admin-bulk-exclude-group-btn:active{opacity:.7;}
   #admin-bulk-clear-collab-btn{background:rgba(160,120,255,0.16);border:1px solid rgba(175,140,255,0.32);border-radius:13px;color:#c4aeff;font-size:12px;padding:5px 14px;cursor:pointer;font-family:inherit;}
   #admin-bulk-clear-collab-btn:active{opacity:.7;}
   #admin-bulk-irrelevant-btn{background:rgba(255,120,170,0.16);border:1px solid rgba(255,140,185,0.32);border-radius:13px;color:#ffa8c8;font-size:12px;padding:5px 14px;cursor:pointer;font-family:inherit;}
@@ -1782,7 +1782,9 @@
   .feed-strip{display:flex;gap:14px;overflow-x:auto;padding:2px 20px 18px;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
   .feed-strip::-webkit-scrollbar{display:none;}
   .feed-strip-item{display:flex;flex-direction:column;align-items:center;gap:6px;flex-shrink:0;width:66px;cursor:pointer;position:relative;-webkit-tap-highlight-color:transparent;}
-  .feed-strip-thumb-wrap{width:60px;height:60px;border-radius:50%;padding:2px;flex-shrink:0;position:relative;overflow:hidden;background:conic-gradient(from 180deg,#ff8a5c,#ff5c8a,#8a5cff,#5c9aff,#ff8a5c);}
+  /* 로딩 중(이미지 뜨기 전)엔 이 배경이 생으로 다 보여서 원색 무지개 동그라미처럼 튀어 보이던 문제
+     (2026-08-10, 사용자 제보) — 톤을 확 낮춰 은은한 테두리 느낌만 남김(보일듯말듯). */
+  .feed-strip-thumb-wrap{width:60px;height:60px;border-radius:50%;padding:2px;flex-shrink:0;position:relative;overflow:hidden;background:conic-gradient(from 180deg,#522c1d,#521d2c,#2c1d52,#1d3152,#522c1d);}
   .feed-strip-thumb{width:100%;height:100%;border-radius:50%;object-fit:cover;display:block;border:2px solid #0b0f1f;box-sizing:border-box;opacity:0;transition:opacity .25s ease;}
   .feed-strip-thumb.loaded{opacity:1;}
   .feed-strip-icon{width:100%;height:100%;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;background:rgba(16,20,38,0.96);border:2px solid #0b0f1f;box-sizing:border-box;}
@@ -2045,10 +2047,10 @@
     <div class="sp-subsec-lbl" style="margin-top:10px;">데이터 정합성 — 필요할 때만</div>
     <button class="sp-yt-sync" id="sp-membersfix-btn" style="margin-top:4px;opacity:.8;">자체 멤버 태깅 재검증(전체)</button>
     <button class="sp-yt-sync" id="sp-catfix-btn" style="margin-top:4px;opacity:.8;">영상 카테고리(라이브 등) 재분류(전체)</button>
-    <button class="sp-yt-sync" id="sp-titlenorm-btn" style="margin-top:4px;opacity:.8;">검색용 제목 정규화 백필</button>
     <button class="sp-yt-sync" id="sp-yt-retag-all" style="margin-top:4px;opacity:.8;">멤버+콜라보 재태깅(기존 태깅분 포함, 전체)</button>
     <button class="sp-yt-sync" id="sp-yt-sweep-banned" style="margin-top:4px;opacity:.8;">밴 인물 언급 영상 숨김 정리</button>
     <button class="sp-yt-sync" id="sp-yt-sweep-junk" style="margin-top:4px;opacity:.8;">무조건 제외 키워드 영상 무관 정리</button>
+    <div class="sp-subsec-lbl" id="sp-junk-keywords-lbl" style="margin-top:2px;font-size:11px;opacity:.55;"></div>
 
     <div class="sp-yt-prog" id="sp-yt-prog"></div>
   </div>
@@ -2090,6 +2092,7 @@
   <span id="admin-bulk-count">0개 선택됨</span>
   <button id="admin-bulk-edit-btn">편집</button>
   <button id="admin-bulk-exclude-member-btn" style="display:none">이 멤버 제외</button>
+  <button id="admin-bulk-exclude-group-btn" style="display:none">이 그룹 제외</button>
   <button id="admin-bulk-clear-collab-btn">함께한 태그 제거</button>
   <button id="admin-bulk-irrelevant-btn">무관</button>
   <button id="admin-bulk-hide-btn">숨김</button>
@@ -4130,10 +4133,16 @@ function doSearch(q){
     const info=GROUPS[ko];
     const enN=info.en||'';
     const csG=_csScore(ko,q);
-    if(ko.includes(q)||enN.toLowerCase().includes(ql)||(qln.length>=2&&_normEn(enN).includes(qln))||csG<99){
+    // altNames: 그룹 키를 공식명으로 정리하면서(예: "브브걸(브레이브걸스)"→"브브걸") 옛/부제 이름이
+    // 검색에서 안 걸리게 되는 걸 막기 위한 필드 — "브레이브걸스"/"JYJ"/"초신성"처럼 여전히 널리 쓰이는
+    // 이름으로 검색해도 결과에 뜨게 함(2026-08-10, 사용자 요청). 표시는 항상 공식명(ko/en) 그대로.
+    const altNames=info.altNames||[];
+    const altScores=altNames.map(alt=>_mScore(alt,q,ql));
+    const altMatch=altNames.some(alt=>alt.toLowerCase().includes(ql)||(qln.length>=2&&_normEn(alt).includes(qln)));
+    if(ko.includes(q)||enN.toLowerCase().includes(ql)||(qln.length>=2&&_normEn(enN).includes(qln))||csG<99||altMatch){
       const bm=bubbleMeshes.find(b=>b.ko===ko);
       if(bm){
-        const s=Math.min(_mScore(ko,q,ql),_mScore(enN,q,ql),csG);
+        const s=Math.min(_mScore(ko,q,ql),_mScore(enN,q,ql),csG,...(altScores.length?altScores:[99]));
         const dispName=(_hasLatin&&enN)?enN:(currentLang==='ko'?ko:(enN||ko));
         const dispSub=(enN&&enN!==dispName)?enN:'';
         hits.push({type:'group',name:dispName,sub:dispSub,pos:bm.mesh.position.clone(),data:ko,score:s+0.5});
@@ -10440,7 +10449,13 @@ function _appendFeedCard(container,icon,title,sub,onClick,thumbUrl){
   item.addEventListener('touchstart',e=>_lbRipple(item,e),{passive:true});
   item.addEventListener('mousedown',e=>_lbRipple(item,e));
   container.appendChild(item);
-  _setFeedCardThumb(item,thumbUrl);
+  // thumbUrl을 아예 안 넘긴 호출(랜덤 그룹/멤버처럼 썸네일을 나중에 비동기로 따로 받아오는 카드)은
+  // 여기서 곧바로 부르지 않는다 — 예전엔 undefined도 "썸네일 없음"으로 취급해서 실제로는 아직 안
+  // 받아왔을 뿐인데도 음표/사람 이모지 폴백이 먼저 반짝 떴다가, 나중에 진짜 썸네일이 도착하면 그
+  // 위에 이미지가 따로 겹쳐 붙는 부자연스러운 모양이 됐었음(2026-08-10, 사용자 제보 — "이상한 음표
+  // 이모티콘"). null(명시적으로 "확인해봤는데 없음")은 여전히 즉시 폴백을 보여준다 — undefined(아직
+  // 모름)일 때만 셔머가 계속 자연스럽게 돌도록 건너뛰고, 호출부가 나중에 결과로 다시 불러준다.
+  if(thumbUrl!==undefined)_setFeedCardThumb(item,thumbUrl);
   return item;
 }
 function _setFeedCardThumb(item,thumbUrl){
@@ -11033,7 +11048,8 @@ const _YT_TABLE='yt_channel_videos';
 const _YT_PAGE=48;
 
 // PostgREST or()/and() 필터 문자열에 그룹/멤버 이름을 그대로 이어붙이면, 이름에 콤마·마침표·괄호·콜론처럼
-// 필터 문법상 예약된 문자가 있을 때(예: "브브걸(브레이브걸스)", "JX(JYJ)", "슈퍼노바(초신성)") 필터 구문이
+// 필터 문법상 예약된 문자가 있을 때(예전의 "브브걸(브레이브걸스)", "JX(JYJ)", "슈퍼노바(초신성)" — 지금은
+// 괄호 없는 "브브걸"/"JX"/"슈퍼노바"로 그룹 키 자체를 바꿔서 이 사례들은 해소됨, 2026-08-10) 필터 구문이
 // 깨진다. PostgREST가 이걸 곧바로 에러로 거부하지 않고 이상하게 해석해버리는 경우, 어떤 인덱스도 못 타는
 // 쿼리가 되어 DB가 statement_timeout에 걸릴 때까지 멈추는 사고로 이어진다(2026-08-05, 브브걸(브레이브걸스)
 // 유나 카드에서 영상이 하나도 안 뜨고 timeout 에러 발생 — 실측으로 원인 확정). 항상 큰따옴표로 감싸면
@@ -11437,21 +11453,34 @@ async function _ytSweepAmbiguousCollabMistag(){
     let manualSkipped=0;
     rows.forEach(v=>{
       const match=_m2ParseTitle(v.title||'',v.group_ko);
-      const validGroups=new Set(),validMembers=new Set();
+      const curWG=v.with_groups||[],curWM=v.with_members||[];
+      // validGroups: 다시 봐도 "그룹 단위로만" 근거 있는 것(특정 멤버까진 아직 특정 안 됨) — 그대로 유지.
+      // promote: 예전엔 그룹 단위로만 태깅됐지만(curWG에 있음) 지금 다시 매칭해보니 특정 멤버까지 잡히는 것
+      // — 이대휘(AB6IX) 사례(2026-08-10, 사용자 제보)처럼 매칭 로직이 나중에 개선되면서(해시태그 부분
+      // 문자열 인식 등) 예전엔 그룹으로만 뭉뚱그려졌던 태그를 지금은 더 정확히 특정할 수 있는 경우.
+      // 예전 버전은 "여전히 유효한지"만 보고 교집합만 남겨서, 이런 케이스는 group 쪽에서 근거를 잃어도
+      // (validGroups에 안 들어가서 제거는 되지만) with_members로 승격은 전혀 안 돼 그냥 통째로 날아갔었음
+      // — 그룹 태그가 사라지긴 해도 더 정확한 멤버 태그로 안 바뀌니 사실상 퇴화였음. 이번에 승격 로직 추가.
+      const validGroups=new Set(),validMembers=new Set(),promote=new Map();
       if(match){
         const otherGkos=[match.primaryGroup,...match.withGroups].filter(og=>og&&og!==v.group_ko);
         otherGkos.forEach(og=>{
           const sec=match.membersByGroup[og]||[];
-          if(sec.length)sec.forEach(mko=>validMembers.add(`${mko}(${og})`));
-          else validGroups.add(og);
+          if(sec.length){
+            const tags=sec.map(mko=>`${mko}(${og})`);
+            tags.forEach(t=>validMembers.add(t));
+            if(curWG.includes(og))promote.set(og,tags);
+          }else{
+            validGroups.add(og);
+          }
         });
       }
-      const curWG=v.with_groups||[],curWM=v.with_members||[];
       const newWG=curWG.filter(g=>validGroups.has(g));
-      const newWM=curWM.filter(m=>validMembers.has(m));
+      const promotedTags=[...promote.values()].flat();
+      const newWM=[...new Set([...curWM.filter(m=>validMembers.has(m)),...promotedTags])];
       const patch={};
-      if(newWG.length!==curWG.length)patch.with_groups=newWG;
-      if(newWM.length!==curWM.length)patch.with_members=newWM;
+      if(newWG.length!==curWG.length||newWG.some((g,i)=>g!==curWG[i]))patch.with_groups=newWG;
+      if(newWM.length!==curWM.length||newWM.some(m=>!curWM.includes(m)))patch.with_members=newWM;
       if(!Object.keys(patch).length)return;
       if(v.tags_manual){manualSkipped++;return;} // 수동 편집 행은 절대 안 고침 — 대신 개수만 집계
       updates.push({id:v.id,patch});
@@ -11640,38 +11669,6 @@ async function _ytSweepCategoryMistag(){
   }
 }
 
-// title_norm(위 _titleNorm 참고) 백필 — 컬럼을 새로 추가한 직후엔 기존 행 전부 비어있음. 이후 신규
-// 동기화/수동추가는 저장 시점에 이미 자동으로 채우므로(_ytSyncGroup/_extBuildRows/_ytBuildManualVideoRow),
-// 이 버튼은 title_norm이 비어있는 행만 골라 채우는 범용 도구 — 컬럼 추가 직후 한 번 돌리면 그 뒤로는
-// 항상 대상이 없어 즉시 끝남(재실행해도 안전). title_norm은 title에서 기계적으로 계산되는 파생값이라
-// 관리자가 직접 편집하는 값이 아니므로, 다른 재검증 버튼들과 달리 tags_manual 여부와 무관하게 전부 채운다.
-async function _ytBackfillTitleNorm(){
-  if(!sb){_ytSetProg('Supabase 연결 없음');return;}
-  const btn=document.getElementById('sp-titlenorm-btn');
-  if(btn)btn.disabled=true;
-  try{
-    _ytSetProg('[검색용 제목 정규화 백필] 조회 중…');
-    const{data:rows,error}=await _sbFetchAll(()=>sb.from(_YT_TABLE)
-      .select('id,title')
-      .is('title_norm',null)
-      .order('id'));
-    if(error){_ytSetProg('조회 실패: '+error.message);return;}
-    if(!rows?.length){_ytSetProg('채울 영상이 없어요(이미 다 채워짐)');return;}
-    const updates=rows.map(v=>({id:v.id,patch:{title_norm:_titleNorm(v.title)}}));
-    for(let i=0;i<updates.length;i+=200){
-      const chunk=updates.slice(i,i+200);
-      const results=await Promise.all(chunk.map(u=>sb.from(_YT_TABLE).update(u.patch).eq('id',u.id)));
-      const failed=results.find(r=>r.error);
-      if(failed)throw new Error(failed.error.message);
-      _ytSetProg(`[검색용 제목 정규화 백필] ${Math.min(i+200,updates.length)}/${updates.length}개 처리 중…`);
-    }
-    _ytSetProg(`완료! ${updates.length}개 채움`);
-  }catch(e){
-    _ytSetProg('오류: '+e.message);
-  }finally{
-    if(btn)btn.disabled=false;
-  }
-}
 
 // ── 동명이인/흔한단어 오염 의심 스캔(admin) ── "이유"(에버글로우, "reason"과 겹침)처럼 흔한 단어/동명이인
 // 이름이 대량 오태깅되는 사고가 반복 발견돼서(_ATM_HASHTAG_ONLY_NAMES에 발견될 때마다 하나씩 추가하는 중),
@@ -13450,14 +13447,16 @@ function _m2NameVariants(a){
 // "Supernova Love"와 글자 그대로 겹쳐서, 그 곡을 커버·챌린지한 다른 그룹들(아이브·베리베리·빌리·에스파·
 // 세븐틴·리센느 등) 영상이 실제로 대량 오매칭되는 걸 실측으로 확인(2026-07-31, IVE 자체 채널·타 채널
 // 챌린지 영상 다수). 처음엔 에스파 곡으로 오해해 aespa/에스파만 걸러뒀었는데 진짜 원곡은 아이브 쪽이었음.
+// 그룹 키가 2026-08-10에 "슈퍼노바(초신성)"→"슈퍼노바"로 바뀜(괄호 있는 그룹명이 "이름(그룹)" 태그
+// 문자열 파싱을 깨는 별도 문제 때문 — 초신성은 altNames로 이동, 검색은 그쪽에서 여전히 걸림).
 const _GROUP_TITLE_CONFLICT_EXCLUDE={
-  '슈퍼노바(초신성)':[/aespa/i,/에스파/,/david\s*guetta/i,/데이비드\s*게타/,/supernova\s*love/i,/아이브|\bIVE\b/i],
+  '슈퍼노바':[/aespa/i,/에스파/,/david\s*guetta/i,/데이비드\s*게타/,/supernova\s*love/i,/아이브|\bIVE\b/i],
 };
 // 위 정규식 목록으로도 다 못 거르는 경우(제목이 그냥 "Supernova"+다른 그룹 해시태그만 있고 곡명/원곡
 // 아티스트 언급이 없는 챌린지 영상들)를 위한 2차 방어선 — 이 그룹이 "다른 실존 그룹과 같이" 매칭됐으면
 // (니치한 2007년 데뷔 그룹이 최근 데뷔한 그룹과 실제로 콜라보할 가능성은 사실상 없으므로) 무조건 버린다.
 // 제목에 이 그룹 하나만 단독으로 매칭됐을 때는(자기 채널 영상 등) 그대로 인정한다.
-const _GROUP_AMBIGUOUS_IF_COMATCHED=new Set(['슈퍼노바(초신성)']);
+const _GROUP_AMBIGUOUS_IF_COMATCHED=new Set(['슈퍼노바']);
 // strict=true(예능/잡지 채널 백필·동기화에서 씀): 제목에 그룹명/영문명 literal 매칭이 하나도 없는데
 // 멤버 이름 평문 매칭만으로 그룹을 역추론하는 아래 폴백은 완전히 꺼버리고, 해시태그 매칭만 그 근거로
 // 인정한다. 음악방송/공식 채널(strict 기본값 false)은 무대·직캠 콘텐츠라 그룹명 없이 멤버명만 있어도
@@ -14138,6 +14137,13 @@ function _makeChVidController(contId){
       window._adminBulkSelectedVids=selectedVids;
       const excludeBtn=document.getElementById('admin-bulk-exclude-member-btn');
       if(excludeBtn)excludeBtn.style.display=state.memberKo?'':'none';
+      // "이 그룹 제외"는 반대로 그룹 카드에서 선택 중일 때만 노출(2026-08-10, 사용자 요청 — "이 멤버
+      // 제외"와 같은 맥락으로 그룹 카드에도 필요하다는 피드백, 동명이인 콜라보 오태깅 정리용).
+      // state.ko(지금 보고 있는 카드 자체 그룹)를 대상으로 함 — 선택된 영상들의 실제 group_ko가 아니라
+      // "이 카드에서 빼고 싶은 그룹"이 기준이라 window._adminBulkKo와는 다른 값일 수 있음.
+      window._adminBulkCardKo=state.ko;
+      const excludeGroupBtn=document.getElementById('admin-bulk-exclude-group-btn');
+      if(excludeGroupBtn)excludeGroupBtn.style.display=state.memberKo?'none':'';
     }else{
       bar.classList.add('hidden');
     }
@@ -14676,7 +14682,22 @@ function _makeChVidController(contId){
       filEl.scrollLeft+=e.deltaY;
     },{passive:false});
     // 멤버 카드는 MV 탭 제외 — 뮤비는 그룹 단위 콘텐츠라 그룹 카드 MV 탭에서 이미 다뤄지고, 멤버 개인 태깅 영상엔 거의 안 나옴
-    const catTabs=memberKo?[['all','전체'],['live','라이브'],['short','Shorts']]:[['all','전체'],['mv','MV'],['live','라이브'],['short','Shorts']];
+    let catTabs=memberKo?[['all','전체'],['live','라이브'],['short','Shorts']]:[['all','전체'],['mv','MV'],['live','라이브'],['short','Shorts']];
+    // "by Fan" 탭(2026-08-10, 사용자 요청) — 팬이 직접 찍거나 만든 영상 전용. 아직은 어떤 그룹도 팬채널을
+    // 등록 안 해서 category='fan'인 행이 하나도 없지만(추후 사용자가 그룹별로 팬채널 링크를 주면 그
+    // 채널 동기화 시 category='fan'으로 저장할 예정), 미리 이 자리를 만들어둠. 팬덤명을 알면 "by {영문
+    // 팬덤명}", 모르면 "by Fans"로 라벨링. 영상이 실제로 있는 그룹/멤버 카드에서만 보이게(없으면 탭
+    // 자체를 안 만듦) 가벼운 존재 확인(limit 1)을 비동기로 돌려서, 있을 때만 탭 배열에 끼워 넣고 다시 그림.
+    // 멤버 카드 쪽은 정확히 "이 멤버가 태깅된 팬 영상"까지 구분하지 않고 "이 그룹에 팬 영상이 하나라도
+    // 있는지"만 보는 근사치 — 실제 탭 클릭 시 콘텐츠 자체는 buildBaseQuery의 기존 멤버/그룹 스코프 로직을
+    // category='fan'에도 그대로 재사용하므로(else if(filter!=='all')q=q.eq('category',filter);) 결과는 정확함.
+    sb.from(_YT_TABLE).select('id').eq('group_ko',ko).eq('category','fan').limit(1).then(({data})=>{
+      if(!data?.length)return;
+      const fandomEn=GROUPS[ko]?.fandom?.en;
+      const fanLbl=fandomEn?`by ${fandomEn}`:'by Fans';
+      catTabs=[...catTabs,['fan',fanLbl]];
+      renderFilterTabs();
+    });
     // 카테고리(전체/MV/라이브/Shorts) ↔ 콘텐츠 포맷(킬링보이스 등) 알약을 같은 자리에 그린다.
     // viewMode가 바뀌면(⋮ 메뉴 토글) 이 함수를 다시 불러 알약만 교체하고 나머지 툴바는 그대로 둔다.
     function renderFilterTabs(){
@@ -15235,7 +15256,9 @@ function _groupGcVids(items,featured,startPos,startCat,avoidWiden){
     // 가로(랜딩) 영상은 짝지을 수 있어도 일정 확률로 단독 2열폭 카드로 키워 썸네일 크기에 변화를 준다
     // (멤버 카드처럼 같은 카테고리가 쭉 이어질 때 계속 같은 크기로만 나오는 걸 막기 위함).
     // avoidWiden(카드 넓게 보기 모드)에선 이미 패널 자체가 넓어서 추가로 안 키운다.
-    if(!avoidWiden&&pos===0&&c==='norm'&&Math.random()<0.28){
+    // 0.28(영상 3~4개당 1개꼴)은 너무 잦아서 2열 중 1열만 채워진 것처럼 보이는 카드가 너무 많다는
+    // 피드백(2026-08-10) — 가끔 변화를 주는 느낌만 남기고 빈도를 확 낮춤.
+    if(!avoidWiden&&pos===0&&c==='norm'&&Math.random()<0.1){
       v._wide=true;
       renderList.push(v);
       lastItem=v;
@@ -15811,11 +15834,15 @@ document.getElementById('vid-tag-thumb-refresh').addEventListener('click',async 
   });
   document.getElementById('sp-yt-sweep-banned')?.addEventListener('click',_ytSweepBannedVideos);
   document.getElementById('sp-yt-sweep-junk')?.addEventListener('click',_ytSweepJunkKeywordVideos);
+  // "무조건 제외 키워드" 목록이 코드에만 있어서 관리자가 지금 뭐가 걸려있는지 확인할 방법이 없었음
+  // (2026-08-10, 사용자 요청) — 버튼 밑에 현재 목록을 그대로 보여줌. _JUNK_TITLE_KEYWORDS_GLOBAL을
+  // 그대로 참조하므로 코드에서 키워드를 추가/삭제하면 이 표시도 자동으로 같이 바뀜(따로 관리 안 해도 됨).
+  const junkKwLbl=document.getElementById('sp-junk-keywords-lbl');
+  if(junkKwLbl)junkKwLbl.textContent='현재 목록: '+_JUNK_TITLE_KEYWORDS_GLOBAL.join(', ');
   document.getElementById('sp-collabfix-btn')?.addEventListener('click',_ytSweepAmbiguousCollabMistag);
   document.getElementById('sp-scan-namecollide-btn')?.addEventListener('click',_ytScanAmbiguousNameGroupMisassignment);
   document.getElementById('sp-membersfix-btn')?.addEventListener('click',_ytSweepMembersMistag);
   document.getElementById('sp-catfix-btn')?.addEventListener('click',_ytSweepCategoryMistag);
-  document.getElementById('sp-titlenorm-btn')?.addEventListener('click',_ytBackfillTitleNorm);
   document.getElementById('sp-yt-autotag')?.addEventListener('click',_ytAutoTagMembers);
   document.getElementById('sp-yt-retag-all')?.addEventListener('click',_ytRetagAllIncludingTagged);
   document.getElementById('sp-vm-btn')?.addEventListener('click',()=>_vmOpen());
@@ -15944,6 +15971,85 @@ document.getElementById('admin-bulk-exclude-member-btn')?.addEventListener('clic
   affectedGkos.forEach(gko=>{_gcChVidCtl.reloadIfShowing(gko);_ttChVidCtl.reloadIfShowing(gko);});
   btn.disabled=false;btn.textContent='이 멤버 제외';
   _showShareToast(`${patches.length}개 영상에서 제외함`);
+});
+// "이 멤버 제외"와 같은 맥락을 그룹 카드에 적용 — 여러 영상을 골라 "이 그룹이 실제로는 함께 나온 게
+// 아닌 영상"이라고 한 번에 표시. with_groups에서 이 그룹 이름만 뺀다(동명이인 콜라보 오태깅 정리용,
+// 2026-08-10, 사용자 요청 — "여전히 동명이인 등 제대로 정리 안 된 게 많다"는 피드백).
+// group_ko 자체가 이 그룹인 영상(자체 채널 소속 오배정 — 채널 동기화 단계에서부터 엉뚱한 그룹에
+// 매핑된 경우)은 with_groups만 지워선 카드에서 안 사라짐. 이 경우 members가 비어있고(=이 그룹 로스터
+// 매칭이 하나도 안 됐다는 뜻 — 애초에 이 그룹 영상이 아니었다는 신호) with_members가 정확히 한 그룹
+// 사람들로만 채워져 있으면(=진짜 소속을 알려주는 단서), 그 그룹으로 group_ko를 재배정하고 그 사람들을
+// with_members→members로 옮긴다(2026-08-10, 사용자 제안). 여러 그룹이 섞여 있거나 members가 이미
+// 차있으면 자동 판단이 위험하므로 건드리지 않고 몇 건인지만 알려준다.
+document.getElementById('admin-bulk-exclude-group-btn')?.addEventListener('click',async()=>{
+  if(!sb||!_isAdmin())return;
+  const btn=document.getElementById('admin-bulk-exclude-group-btn');
+  const gko=window._adminBulkCardKo;
+  if(!gko)return;
+  const selectedItems=[...document.querySelectorAll('.gc-ch-item.admin-selected')];
+  if(!selectedItems.length)return;
+  const idSet=new Set(selectedItems.map(el=>el.dataset.vidId).filter(Boolean));
+  if(!idSet.size)return;
+  const vids=(window._adminBulkSelectedVids||[]).filter(v=>idSet.has(v.id));
+  const ownChannelVids=vids.filter(v=>v.group_ko===gko);
+  const stripPatches=vids.filter(v=>v.group_ko!==gko).map(v=>{
+    const withGroups=v.with_groups||[];
+    const newWithGroups=withGroups.filter(g=>g!==gko);
+    return{id:v.id,type:'strip',with_groups:newWithGroups,group_ko:v.group_ko,changed:newWithGroups.length!==withGroups.length};
+  }).filter(p=>p.changed);
+  // 자체 채널 오배정 재배정 후보 판별
+  const reassignPatches=[];
+  let unresolvedCount=0;
+  ownChannelVids.forEach(v=>{
+    const members=v.members||[];
+    const withMembers=v.with_members||[];
+    if(members.length||!withMembers.length){unresolvedCount++;return;}
+    const targets=new Set();
+    const parsed=withMembers.map(wm=>{
+      const m=wm.match(/^(.+)\((.+)\)$/);
+      if(m)targets.add(m[2]);
+      return m;
+    });
+    if(targets.size!==1||parsed.some(p=>!p)){unresolvedCount++;return;} // 그룹이 안 섞여있고(정확히 1개) 파싱 실패도 없어야 함
+    const targetGko=[...targets][0];
+    if(!GROUPS[targetGko]||targetGko===gko){unresolvedCount++;return;}
+    reassignPatches.push({
+      id:v.id,type:'reassign',
+      group_ko:targetGko,
+      members:parsed.map(p=>p[1]),
+      with_members:[]
+    });
+  });
+  const patches=[...stripPatches,...reassignPatches];
+  if(!patches.length){
+    _showShareToast(unresolvedCount?`선택한 영상 ${unresolvedCount}개는 자동 재배정 불가(태그 편집에서 직접 확인)`:'선택한 영상엔 이 그룹 태그가 없어요');
+    return;
+  }
+  btn.disabled=true;btn.textContent='처리 중…';
+  const allIds=patches.map(p=>p.id);
+  // tags_manual=true인 행은 DB 트리거가 태그 변경을 막으므로, 편집 모달과 동일하게 잠금 해제→변경→재잠금
+  const{error:unlockErr}=await sb.from(_YT_TABLE).update({tags_manual:false}).in('id',allIds);
+  if(unlockErr){btn.disabled=false;btn.textContent='이 그룹 제외';_showShareToast('오류: '+unlockErr.message);return;}
+  for(let i=0;i<patches.length;i+=25){
+    const chunk=patches.slice(i,i+25);
+    const results=await Promise.all(chunk.map(p=>
+      p.type==='strip'
+        ?sb.from(_YT_TABLE).update({with_groups:p.with_groups}).eq('id',p.id)
+        :sb.from(_YT_TABLE).update({group_ko:p.group_ko,members:p.members,with_members:p.with_members}).eq('id',p.id)
+    ));
+    const failed=results.find(r=>r.error);
+    if(failed){btn.disabled=false;btn.textContent='이 그룹 제외';_showShareToast('오류: '+failed.error.message);return;}
+  }
+  const{error:lockErr}=await sb.from(_YT_TABLE).update({tags_manual:true}).in('id',allIds);
+  if(lockErr){btn.disabled=false;btn.textContent='이 그룹 제외';_showShareToast('오류: '+lockErr.message);return;}
+  const affectedGkos=new Set([gko,...patches.map(p=>p.group_ko).filter(Boolean)]);
+  window._adminBulkExitFn?.();
+  affectedGkos.forEach(g=>{_gcChVidCtl.reloadIfShowing(g);_ttChVidCtl.reloadIfShowing(g);});
+  btn.disabled=false;btn.textContent='이 그룹 제외';
+  const parts=[`제외 ${stripPatches.length}개`];
+  if(reassignPatches.length)parts.push(`재배정 ${reassignPatches.length}개`);
+  if(unresolvedCount)parts.push(`판단 보류 ${unresolvedCount}개`);
+  _showShareToast(parts.join(' · '));
 });
 // "이 멤버 제외"의 반대 방향 — 자체 채널 태깅(members)은 그대로 두고 "함께한 멤버"(with_members/with_groups,
 // 다른 그룹과의 콜라보 태그)만 통째로 지운다. 특정 멤버 하나로 좁힐 필요가 없는 액션이라 그룹/멤버/연결
