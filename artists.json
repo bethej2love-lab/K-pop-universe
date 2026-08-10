@@ -42422,5 +42422,55 @@
   "links": {
    "namu": "https://namu.wiki/w/이노(1993)"
   }
+ },
+ {
+  "name": {
+   "ko": "손나은",
+   "en": "Son Naeun"
+  },
+  "group": {
+   "ko": "에이핑크",
+   "en": "Apink"
+  },
+  "co": "위드어스엔터테인먼트",
+  "active": true,
+  "color": [
+   238,
+   162,
+   174
+  ],
+  "bday": "1994.02.10",
+  "nat": {
+   "ko": "대한민국",
+   "en": "KR"
+  },
+  "links": {
+   "namu": "https://namu.wiki/w/손나은"
+  }
+ },
+ {
+  "name": {
+   "ko": "홍유경",
+   "en": "Hong Yugyeong"
+  },
+  "group": {
+   "ko": "에이핑크",
+   "en": "Apink"
+  },
+  "co": "위드어스엔터테인먼트",
+  "active": false,
+  "color": [
+   223,
+   154,
+   172
+  ],
+  "bday": "1994.09.22",
+  "nat": {
+   "ko": "대한민국",
+   "en": "KR"
+  },
+  "links": {
+   "namu": "https://namu.wiki/w/홍유경"
+  }
  }
 ]
