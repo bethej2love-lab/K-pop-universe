@@ -873,7 +873,12 @@
   }
   .gc-totop:hover{background:rgba(255,255,255,0.14);}
   .gc-totop:active{transform:scale(0.9);}
-  .gc-ch-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px;align-items:start;}
+  /* align-items:stretch(2026-08-10) — start였을 때, 같은 행에서 한쪽만 "함께한 멤버" 줄이 있으면(썸네일
+     높이는 JS로 못박혀 있어도 그 아래 제목/함께한 멤버 줄은 auto라 카드 전체 높이가 서로 달라짐) 짧은
+     카드가 그 차이만큼 안 늘어나서 두 컬럼이 안 맞아 보이던 문제(사용자 제보 — "계단식으로 어긋남").
+     stretch로 바꾸면 짧은 카드도 행 높이만큼 배경이 채워져서 나란히 맞아 보임(썸네일 자체는 JS로 이미
+     높이가 고정돼있어 늘어나지 않음, 영향 없음). */
+  .gc-ch-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px;align-items:stretch;}
   .gc-ch-item{position:relative;cursor:pointer;border-radius:6px;overflow:hidden;background:rgba(255,255,255,0.04);transition:opacity .13s;}
   .gc-ch-item:hover{opacity:.78;}
   .gc-ch-thumb{width:100%;aspect-ratio:16/9;object-fit:cover;display:block;}
@@ -10504,7 +10509,16 @@ function _openFeedListOverlay(title,sub,songs){
   // 그룹/멤버 카드 영상 그리드(_renderMixedVidGrid)와 같은 규칙으로 크기를 다양하게 섞는다 — 이 그리드가
   // 이제 화면 크기 무관하게 항상 2열이라(위 CSS 참고) 데스크톱/모바일 구분 없이 항상 적용해도 어긋나지
   // 않음(2026-08-06, 예전엔 데스크톱 3열이라 여기서 껐었음).
-  const _wideFlags=_groupMixedVids(songs).map(e=>e.wide);
+  // ⚠️ _groupMixedVids는 같은 비율(가로/쇼츠)끼리 짝짓기 위해 내부적으로 순서를 바꿔치기(splice)한다 —
+  // 그런데 여기선 반환된 순서는 버리고 wide 불리언만 뽑아서 원래 songs 순서 그대로 렌더링에 썼던 게
+  // 버그였음(2026-08-10, 사용자 제보 — "왼쪽/오른쪽 컬럼이 계단식으로 어긋남"). 순서가 안 바뀐 것처럼
+  // wide 플래그만 원래 인덱스에 끼워 맞추니, 실제로 스왑이 일어난 지점부터는 완전히 엉뚱한 항목에 wide가
+  // 붙어서 쇼츠와 가로 영상이 한 행에 짝지어지고, 세로로 3배 가까이 차이나는 높이가 같은 행에 섞여
+  // 그리드가 계단식으로 무너졌음. 바뀐 순서(song)와 그 순서에 맞는 wide 플래그를 함께 써야 함 — 라이트박스
+  // 스와이프 목록도 실제 렌더 순서(orderedSongs)와 같아야 클릭한 영상부터 정확히 넘어가므로 같이 바꿈.
+  const _paired=_groupMixedVids(songs);
+  const orderedSongs=_paired.map(e=>e.song);
+  const _wideFlags=_paired.map(e=>e.wide);
   const sentinel=document.createElement('div');
   sentinel.style.cssText='grid-column:1/-1;height:1px;';
   const observer=new IntersectionObserver(entries=>{
@@ -10530,16 +10544,16 @@ function _openFeedListOverlay(title,sub,songs){
     }
     item.addEventListener('click',e=>{
       e.stopPropagation();
-      openLightbox(s.u,shortFlag,songs,idx,{});
+      openLightbox(s.u,shortFlag,orderedSongs,idx,{});
     });
     return item;
   }
   function renderNextBatch(){
     if(sentinel.parentNode)sentinel.remove();
-    const end=Math.min(rendered+BATCH,songs.length);
+    const end=Math.min(rendered+BATCH,orderedSongs.length);
     const frag=document.createDocumentFragment();
     const newItems=[];
-    for(let i=rendered;i<end;i++){const it=renderOne(songs[i],i);newItems.push(it);frag.appendChild(it);}
+    for(let i=rendered;i<end;i++){const it=renderOne(orderedSongs[i],i);newItems.push(it);frag.appendChild(it);}
     grid.appendChild(frag);
     rendered=end;
     // CSS aspect-ratio에만 맡기면 이 그리드에서 row 트랙이 lazy 이미지의 실제 크기 확정 타이밍을
@@ -10555,7 +10569,7 @@ function _openFeedListOverlay(title,sub,songs){
       const metaH=metaEl?Math.max(metaEl.getBoundingClientRect().height,20):0;
       if(w)it.style.height=Math.ceil((it.classList.contains('is-short')?w*16/9:w*9/16)+titleH+metaH)+'px';
     });
-    if(rendered<songs.length){grid.appendChild(sentinel);observer.observe(sentinel);}
+    if(rendered<orderedSongs.length){grid.appendChild(sentinel);observer.observe(sentinel);}
     else observer.disconnect();
   }
   renderNextBatch();
