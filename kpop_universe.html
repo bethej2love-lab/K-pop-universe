@@ -888,7 +888,8 @@
   .gc-ch-thumb{width:100%;aspect-ratio:16/9;object-fit:cover;display:block;}
   .gc-ch-meta{font-size:11px;color:rgba(150,175,215,0.6);padding:0 4px 4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   .gc-ch-item.featured,.gc-ch-item.gc-ch-wide{grid-column:span 2;}
-  .gc-ch-item.is-short .gc-ch-thumb{aspect-ratio:9/16;}
+  .gc-ch-item.is-short .gc-ch-thumb{aspect-ratio:9/16;object-fit:contain;position:relative;z-index:1;}
+  .gc-ch-item.is-short .gc-ch-thumb-bg{position:absolute;inset:0;background-size:cover;background-position:center;filter:blur(18px) brightness(0.45);transform:scale(1.08);z-index:0;}
   /* 쇼츠가 대표(featured)로 뽑히면 2열 폭은 그대로 차지하되(그래야 오른쪽에 빈칸이 안 생김), 썸네일 자체는
      세로 비율 유지한 채 가운데로 적당히 크게 — 모바일 멤버카드 대표영상(#tv-big-wrap.is-shorts)과 같은 톤.
      오버레이 버튼(태깅/스크랩)도 줄어든 썸네일 가장자리에 맞춰 안쪽으로 당김. */
@@ -7174,10 +7175,28 @@ function showT(a,cx,cy,keepNavStack,urlMode,pushMobNav,noFly){
     picAdminBtn.textContent='📷 프로필 사진 URL 저장';
     picAdminBtn.addEventListener('click',e=>{
       e.stopPropagation();
-      _promptDialog({title:`${a.name.ko} 인스타 프로필 사진 URL`,placeholder:'https://...'}).then(async url=>{
-        if(!url||!url.trim())return;
-        const ok=await _saveInstaPic(a.name.ko,url.trim());
-        if(ok)alert('저장됐어요');else alert('저장 실패 (Supabase 콘솔 확인)');
+      const existingUrl=_instaPicCache.get(a.name.ko)||'';
+      _promptDialog({title:`${a.name.ko} 인스타 프로필 사진 URL`,value:existingUrl,placeholder:'https://...'}).then(async url=>{
+        if(url==null)return; // 취소
+        const trimmed=url.trim();
+        if(!trimmed)return;
+        const ok=await _saveInstaPic(a.name.ko,trimmed);
+        if(!ok){alert('저장 실패 (Supabase 콘솔 확인)');return;}
+        // 이미지 로드 결과를 기다려서 성공/실패 메시지 결정
+        const img=document.getElementById('tt-insta-pic');
+        await new Promise(res=>{
+          if(!img){res();return;}
+          if(img.complete){res();return;}
+          const onDone=()=>{img.removeEventListener('load',onDone);img.removeEventListener('error',onDone);res();};
+          img.addEventListener('load',onDone);img.addEventListener('error',onDone);
+          setTimeout(res,4000); // 4초 이상 걸리면 그냥 넘어감
+        });
+        const wrap=document.getElementById('tt-insta-pic-wrap');
+        if(wrap&&wrap.style.display==='none'){
+          alert('URL 저장 완료. 단, 이미지를 불러오지 못했어요 — URL이 올바른지 확인해주세요.');
+        }else{
+          alert('저장됐어요');
+        }
       });
     });
     const tvEl=document.getElementById('tv');tvEl.parentElement.insertBefore(picAdminBtn,tvEl);
@@ -7283,9 +7302,11 @@ async function _loadInstaPic(a){
   if(_openTArtist?.name?.ko!==koName)return;
   wrap.href=a.links.instagram;
   wrap.onclick=e=>e.stopPropagation();
-  img.src=picUrl;
+  // 핸들러를 src보다 먼저 등록 (캐시된 이미지는 src 세팅 직후 onload 발화 가능)
   img.onerror=()=>{wrap.style.display='none';};
   img.onload=()=>{wrap.style.display='';};
+  if(img.src!==picUrl)img.src=picUrl;
+  else if(img.complete&&img.naturalWidth)wrap.style.display=''; // 이미 로드 완료된 경우
 }
 async function _saveInstaPic(koName,picUrl){
   if(!sb||!window._sbSession)return;
@@ -10775,10 +10796,11 @@ function _openFeedListOverlay(title,sub,songs){
     const shortFlag=isShorts(s.u);
     const item=document.createElement('div');
     item.className='gc-ch-item'+(shortFlag?' is-short':'')+(_wideFlags&&_wideFlags[idx]?' gc-ch-wide':'');
+    const thumbSrc=s.thumb||`https://img.youtube.com/vi/${ytId(s.u)}/mqdefault.jpg`;
     const img=document.createElement('img');
     img.className='gc-ch-thumb';img.loading='lazy';img.decoding='async';
-    img.src=s.thumb||`https://img.youtube.com/vi/${ytId(s.u)}/mqdefault.jpg`;
-    img.alt=_cleanTitle(s.t);
+    img.src=thumbSrc;img.alt=_cleanTitle(s.t);
+    if(shortFlag){const bg=document.createElement('div');bg.className='gc-ch-thumb-bg';bg.style.backgroundImage=`url(${thumbSrc})`;item.appendChild(bg);}
     const titleEl=document.createElement('div');
     titleEl.className='tv-sm-title';titleEl.textContent=_cleanTitle(s.t);
     addMarquee(titleEl);
@@ -14666,12 +14688,15 @@ function _makeChVidController(contId){
       img.className='gc-ch-thumb';
       const baseThumb=v.thumb||`https://img.youtube.com/vi/${v.id}/mqdefault.jpg`;
       if(isShort){
+        const bg=document.createElement('div');bg.className='gc-ch-thumb-bg';bg.style.backgroundImage=`url(${baseThumb})`;item.appendChild(bg);
         img.src=`https://i.ytimg.com/vi/${v.id}/oardefault.jpg`;
         img.onerror=()=>{img.onerror=null;img.src=baseThumb;};
         // 쇼츠 썸네일이 없으면 유튜브가 진짜 404 대신 120×90 회색 "재생 아이콘" 플레이스홀더를
         // 정상 이미지로 응답해서 onerror가 안 걸림 — onload에서 그 크기를 직접 감지해 폴백시킨다.
         img.onload=()=>{
           if(img.naturalWidth===120&&img.naturalHeight===90){img.onerror=null;img.onload=null;img.src=baseThumb;}
+          // oardefault.jpg(세로)가 로드되면 블러 배경도 해당 이미지로 교체
+          else if(img.src.includes('oardefault'))bg.style.backgroundImage=`url(${img.src})`;
         };
       }else{
         img.src=baseThumb;
