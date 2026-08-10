@@ -3751,6 +3751,9 @@ function _popMobCard(){
 }
 // ── Connection Card ────────────────────────────────
 let _connAnchor=null,_connSelected=[],_connLines3d=[],_connPanelShifted=false;
+let _connCloseTimer=null; // closeConnCard()의 모바일 지연 display:none 타이머 — openConnCard()가 곧바로
+  // 재호출되면(예: 탐험 탭 "연결 보기") 이 타이머가 열림 처리 이후에 뒤늦게 발화해 bs-open은 붙어있는데
+  // display만 none으로 남는 레이스가 있었음(2026-08-11, 사용자 제보 — 연결 카드가 안 뜬다는 신고)
 let _connExactOnly=false; // "Only" 토글 — 선택된 조합이 정확히(±더도 덜도 없이) 나온 영상만 보기
 let _connSelectedGroups=new Set(); // 타 그룹 묶음 칩에서 "그룹 단위"로 선택된 그룹(펼침 상태도 겸함)
 // 어드민 전용 — 연결 카드 영상 목록 다중 선택(그룹/멤버 카드 그리드의 선택 모드와 같은 톤, 별개 상태로 관리)
@@ -4514,6 +4517,7 @@ function openConnCard(artist){
   _connExitSelMode(); // 다른 앵커로 넘어가면 이전 선택 상태를 들고 가지 않게 초기화
   if(!_connApiCache.has(_connCacheKey(artist)))_enrichConnCardFromApi(artist); // 즉시 표시 후 백그라운드로 API 콜라보 데이터 보강
   if(isMob()){
+    clearTimeout(_connCloseTimer); // 직전 closeConnCard()의 지연 display:none이 이 열림 이후에 뒤늦게 발화하지 않도록
     document.getElementById('journal-sidebar').classList.remove('open'); // 마이페이지가 열려있는 채로 연결 카드를 열어도 카드가 위로 뜨도록
     _buildConnContent(connSheetBody);
     connSheetInner.scrollTop=0;
@@ -4559,7 +4563,7 @@ function closeConnCard(){
   _connAnchor=null;_connSelected=[];
   if(isMob()){
     connSheetEl.classList.remove('bs-open');
-    setTimeout(()=>{if(!connSheetEl.classList.contains('bs-open'))connSheetEl.style.display='none';},340);
+    _connCloseTimer=setTimeout(()=>{if(!connSheetEl.classList.contains('bs-open'))connSheetEl.style.display='none';},340);
     if(document.getElementById('tabbar').classList.contains('tab-hidden')){
       document.getElementById('tabbar').classList.remove('tab-hidden');
       _retractSheets();
@@ -5359,9 +5363,11 @@ function showT(a,cx,cy,keepNavStack,urlMode,pushMobNav,noFly){
     camBtn.setAttribute('aria-label','프로필 사진 업로드');camBtn.setAttribute('title','프로필 사진 업로드 (길게 누르면 URL로 입력)');
     camBtn.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>';
     // 사진 유무에 따라 버튼 외형 전환
+    // (wrap.style.display는 _loadInstaPic의 img.onload가 나중에 등록되어 이 리스너보다 늦게
+    // 갱신될 수 있으므로 참조하지 않고, 이미지 자체의 로드 상태를 직접 확인한다)
     const _syncCamBtn=()=>{
-      const wrap=document.getElementById('tt-insta-pic-wrap');
-      const hasPic=wrap&&wrap.style.display!=='none';
+      const img=document.getElementById('tt-insta-pic');
+      const hasPic=!!(img&&img.complete&&img.naturalWidth>0);
       camBtn.classList.toggle('cam-overlay',hasPic);
     };
     const picImg=document.getElementById('tt-insta-pic');
@@ -5514,6 +5520,15 @@ async function _saveInstaPic(koName,picUrl){
   const{error}=await sb.from('artist_pics').upsert({ko_name:koName,pic_url:picUrl,updated_at:new Date().toISOString()});
   if(!error){_instaPicCache.set(koName,picUrl);_loadInstaPic(_openTArtist);}
   return!error;
+}
+// 멤버 카드를 열지 않고도(예: 애니버서리 스트립) 저장된 인스타 프로필 사진만 조회
+async function _fetchInstaPicUrl(koName){
+  if(!sb)return null;
+  if(_instaPicCache.has(koName))return _instaPicCache.get(koName);
+  const{data}=await sb.from('artist_pics').select('pic_url').eq('ko_name',koName).maybeSingle();
+  const picUrl=data?.pic_url||null;
+  if(picUrl)_instaPicCache.set(koName,picUrl);
+  return picUrl;
 }
 
 const _LINK_DEFS=[
@@ -9098,7 +9113,11 @@ async function _pickFeaturedVidFromDB(ko,memberKo,onlyMe,filter,viewMode,formatF
     if(viewMode==='format'&&formatFilter){
       q=q.contains('content_formats',[formatFilter]);
     }else if(filter==='cover'){
-      q=q.or('title_norm.ilike.*cover*,title_norm.ilike.*커버*,title_norm.ilike.*원곡*,title_norm.ilike.*original*');
+      // Cover 탭 목록 쿼리와 동일한 "BE ORIGINAL"(안무 콘텐츠 시리즈명) 오매칭 제외 — 이 대표(하트 최다)
+      // 영상 선정 쿼리는 별도로 중복 구현돼있어서 목록 쪽만 고치고 여기를 빠뜨리면 대표 영상으로는
+      // 여전히 뽑힐 수 있었음(2026-08-11).
+      q=q.or('title_norm.ilike.*cover*,title_norm.ilike.*커버*,title_norm.ilike.*원곡*,title_norm.ilike.*original*')
+        .not('title_norm','ilike','*be original*');
     }else if(filter&&filter!=='all'){
       q=q.eq('category',filter);
     }
@@ -9158,7 +9177,10 @@ function _buildFeedAnniversaries(){
       if(isMob()){showT(a,window.innerWidth/2,window.innerHeight*0.4,false,false,false);openMobSheet(document.getElementById('tt'));}
       else showT(a,window.innerWidth/2,window.innerHeight/2);
     }),undefined,sub2);
-    _fetchTopVideoThumb(_ytGroupKoFor(a),a.name.ko).then(t=>_setAnnivStripThumb(item,t||null));
+    const _fallbackThumb=()=>_fetchTopVideoThumb(_ytGroupKoFor(a),a.name.ko).then(t=>_setAnnivStripThumb(item,t||null));
+    if(a.links?.instagram){
+      _fetchInstaPicUrl(a.name.ko).then(picUrl=>{if(picUrl)_setAnnivStripThumb(item,picUrl);else _fallbackThumb();});
+    }else _fallbackThumb();
   });
   debutHits.forEach(([ko,info])=>{
     const name=isKo?ko:(info.en||ko);
@@ -13141,7 +13163,10 @@ function _makeChVidController(contId){
       if(state.viewMode==='format'){
         if(state.formatFilter)q=q.contains('content_formats',[state.formatFilter]);
       }else if(filter==='cover'){
-        q=q.or('title_norm.ilike.*cover*,title_norm.ilike.*커버*,title_norm.ilike.*원곡*,title_norm.ilike.*original*');
+        // "BE ORIGINAL"은 딩고 안무 콘텐츠 시리즈명이라 "original" 매칭에 잘못 걸려 춤 콘텐츠가 Cover 탭에
+        // 섞여 들어왔음(2026-08-11, 사용자 제보) — 원곡 크레딧 문맥이 아닌 이 시리즈명만 명시적으로 제외.
+        q=q.or('title_norm.ilike.*cover*,title_norm.ilike.*커버*,title_norm.ilike.*원곡*,title_norm.ilike.*original*')
+          .not('title_norm','ilike','*be original*');
       }else if(filter!=='all'){
         q=q.eq('category',filter);
       }
