@@ -336,8 +336,9 @@
   #tt-back{position:absolute;top:-2px;left:-2px;z-index:2;padding:14px 16px;}
   #tt-bar{height:2px;width:calc(100% - 8px);margin:6px 4px 12px;}
   .tn{font-size:16px;font-weight:700;color:#d8e4f6;margin-bottom:3px;padding-right:18px;padding-left:4px;letter-spacing:-.02em;}
-  #tg-row{display:flex;align-items:center;justify-content:flex-start;gap:8px;margin-bottom:1px;padding-left:4px;padding-right:4px;}
-  .tg{font-size:13px;color:#aec8e8;letter-spacing:.05em;font-weight:500;text-transform:uppercase;cursor:pointer;transition:color .12s;width:fit-content;}
+  #tg-row{display:flex;align-items:center;justify-content:flex-start;gap:8px;margin-bottom:1px;padding-left:4px;padding-right:4px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;}
+  #tg-row::-webkit-scrollbar{display:none;}
+  .tg{font-size:13px;color:#aec8e8;letter-spacing:.05em;font-weight:500;text-transform:uppercase;cursor:pointer;transition:color .12s;width:fit-content;white-space:nowrap;}
   .tg:hover{color:#d0e8ff;}
   .tg.tg-past{color:rgba(150,165,200,0.42);}
   .tg.tg-past:hover{color:#d0e8ff;}
@@ -1473,7 +1474,7 @@
   /* ✦ 연결 버튼 */
   #tt-conn-row{margin-top:6px;}
   .tt-conn-btn{
-    margin-left:auto;
+    margin-left:auto;flex-shrink:0;white-space:nowrap;
     display:inline-flex;align-items:center;padding:4px 11px;border-radius:20px;
     font-size:10px;font-weight:600;letter-spacing:.10em;cursor:pointer;font-family:inherit;
     background:rgba(165,200,255,0.07);
@@ -1599,6 +1600,10 @@
   #discover-toast-thumb{width:44px;height:28px;border-radius:6px;object-fit:cover;flex-shrink:0;display:none;background:rgba(255,255,255,0.08);}
   #discover-toast-thumb.has-img{display:block;}
   #discover-toast-text b{color:#fff;}
+  #tt-insta-pic-wrap{display:block;flex-shrink:0;width:48px;height:48px;border-radius:50%;margin:6px 0 4px 4px;cursor:pointer;text-decoration:none;}
+  .tt-insta-ring{display:block;width:100%;height:100%;border-radius:50%;padding:2.5px;background:conic-gradient(from 0deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888,#833ab4,#5851db,#f09433);}
+  #tt-insta-pic{display:block;width:100%;height:100%;border-radius:50%;object-fit:cover;border:2px solid rgba(14,18,38,0.98);}
+  #tt-insta-pic-wrap:hover{transform:scale(1.07);transition:transform .15s;}
   #tt-name-row{display:inline-flex;align-items:center;gap:8px;margin-bottom:3px;padding-left:4px;max-width:calc(100% - 22px);}
   #tt-name-row .tn{margin-bottom:0;padding-left:0;padding-right:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
   #gc-name-row{display:inline-flex;align-items:center;gap:8px;margin-bottom:6px;max-width:100%;}
@@ -1764,6 +1769,19 @@
   @media(max-width:768px){
     .scrap-btn.abs-btn:not(.scrapped){pointer-events:none;}
   }
+  .col-btn{position:absolute;top:4px;right:34px;background:rgba(0,0,0,0.52);border:none;border-radius:50%;width:26px;height:26px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:rgba(220,230,255,0.72);opacity:0;transition:opacity .15s,color .15s,transform .15s;z-index:3;padding:0;line-height:1;}
+  .col-btn svg{width:13px;height:13px;display:block;fill:none;stroke:currentColor;stroke-width:2;stroke-linejoin:round;transition:fill .15s,stroke .15s;}
+  @media(hover:hover){.tv-sm:hover .col-btn,#tv-big-wrap:hover .col-btn,.gc-ch-item:hover .col-btn{opacity:1;}}
+  .col-btn.col-on{opacity:1!important;color:rgba(130,185,255,0.95);}
+  .col-btn.col-on svg{fill:currentColor;}
+  .col-btn:hover{color:rgba(160,210,255,0.98);transform:scale(1.22);}
+  @media(max-width:768px){.col-btn.abs-btn:not(.col-on){pointer-events:none;}}
+  #col-quick-toast{position:fixed;bottom:calc(80px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%) translateY(10px);background:rgba(16,20,44,0.96);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border:0.5px solid rgba(140,170,240,0.18);border-radius:14px;padding:10px 16px;display:flex;align-items:center;gap:10px;font-size:12.5px;color:rgba(200,220,255,0.88);white-space:nowrap;z-index:120;opacity:0;pointer-events:none;transition:opacity .18s,transform .18s;}
+  #col-quick-toast.show{opacity:1;pointer-events:auto;transform:translateX(-50%) translateY(0);}
+  #col-quick-toast-check{color:rgba(130,185,255,0.9);font-size:13px;}
+  #col-quick-toast-name{font-weight:600;max-width:150px;overflow:hidden;text-overflow:ellipsis;}
+  #col-quick-toast-change{color:rgba(130,185,255,0.75);cursor:pointer;font-size:11.5px;background:none;border:none;border-left:0.5px solid rgba(140,170,240,0.22);padding:0 0 0 10px;margin-left:2px;font-family:inherit;}
+  #col-quick-toast-change:hover{color:rgba(160,210,255,0.98);}
   /* 랜덤 스와치 */
   .pp-color-rand{background:conic-gradient(hsl(0,90%,72%),hsl(60,90%,72%),hsl(120,90%,72%),hsl(180,90%,72%),hsl(240,90%,72%),hsl(300,90%,72%),hsl(360,90%,72%))!important;box-shadow:none!important;}
   .pp-color-custom{display:flex;align-items:center;justify-content:center;position:relative;background:rgba(255,255,255,0.08)!important;box-shadow:none;color:rgba(210,225,255,0.75);font-size:13px;font-weight:700;line-height:1;}
@@ -1937,7 +1955,8 @@
   </div>
 </div>
 <div id="fav-hint-callout">Start with Your Favorite!<span id="fhc-arrow"></span></div>
-<div id="tt"><div id="tt-bar"></div><button id="tt-back" class="conn-back-btn" style="display:none" aria-label="이전 멤버로 돌아가기">‹</button><span id="ttx" role="button" tabindex="0" aria-label="멤버 카드 닫기">×</span><div id="tt-name-row"><div class="tn" id="tn"></div><button id="tt-fav" class="fav-btn" aria-label="즐겨찾기"><svg viewBox="0 0 24 24"><path d="M12 21L10.55 19.7C5.4 15.1 2 12.1 2 8.5 2 5.4 4.4 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.6 3 22 5.4 22 8.5c0 3.6-3.4 6.6-8.55 11.2L12 21z"/></svg></button><button id="tt-share" class="share-btn" aria-label="공유"><svg viewBox="0 0 24 24"><path d="M12 15V4M12 4l-3.5 3.5M12 4l3.5 3.5"/><path d="M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"/></svg></button></div><div id="tg-row"><div id="tt-links"></div><div class="tg" id="tg"></div><span id="tt-family-wrap" class="tt-family-wrap" style="display:none"><button id="tt-family-btn" type="button" aria-label="가족 관계">ⓘ</button><div id="tt-family-pop" class="tt-family-pop"></div></span><button id="tt-conn-btn" class="tt-conn-btn" style="display:none">연결</button></div><div class="tco" id="tco"></div><div id="tt-info-grid" style="display:none"><div class="row"><span class="lbl" data-i18n="gcDebut">데뷔</span><span class="val" id="tt-debut"></span></div><div class="row" id="tt-fandom-row" style="display:none"><span class="lbl" data-i18n="gcFandom">팬덤</span><span class="val" id="tt-fandom"></span></div></div><div id="tt-status-line" class="gc-status-line"></div><div class="tm" id="tm"></div><div id="tt-nav"><button class="tt-nav-btn" id="tt-prev" aria-label="이전 멤버"><span class="nav-arr">‹</span><span id="tt-prev-name" class="nav-name"></span></button><span id="tt-counter"></span><button class="tt-nav-btn" id="tt-next" aria-label="다음 멤버"><span id="tt-next-name" class="nav-name"></span><span class="nav-arr">›</span></button></div><div id="tt-concert-row" class="concert-row"></div><div id="tt-collection-row" class="gc-collection-row" style="display:none"><div class="gc-collection-hd">Collections</div><div class="gc-collection-list"></div></div><div id="tv"></div></div>
+<div id="tt"><div id="tt-bar"></div><button id="tt-back" class="conn-back-btn" style="display:none" aria-label="이전 멤버로 돌아가기">‹</button><span id="ttx" role="button" tabindex="0" aria-label="멤버 카드 닫기">×</span><a id="tt-insta-pic-wrap" style="display:none" target="_blank" rel="noopener noreferrer" aria-label="Instagram 프로필"><span class="tt-insta-ring"><img id="tt-insta-pic" alt="프로필"></span></a>
+<div id="tt-name-row"><div class="tn" id="tn"></div><button id="tt-fav" class="fav-btn" aria-label="즐겨찾기"><svg viewBox="0 0 24 24"><path d="M12 21L10.55 19.7C5.4 15.1 2 12.1 2 8.5 2 5.4 4.4 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.6 3 22 5.4 22 8.5c0 3.6-3.4 6.6-8.55 11.2L12 21z"/></svg></button><button id="tt-share" class="share-btn" aria-label="공유"><svg viewBox="0 0 24 24"><path d="M12 15V4M12 4l-3.5 3.5M12 4l3.5 3.5"/><path d="M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"/></svg></button></div><div id="tg-row"><div id="tt-links"></div><div class="tg" id="tg"></div><span id="tt-family-wrap" class="tt-family-wrap" style="display:none"><button id="tt-family-btn" type="button" aria-label="가족 관계">ⓘ</button><div id="tt-family-pop" class="tt-family-pop"></div></span><button id="tt-conn-btn" class="tt-conn-btn" style="display:none">연결</button></div><div class="tco" id="tco"></div><div id="tt-info-grid" style="display:none"><div class="row"><span class="lbl" data-i18n="gcDebut">데뷔</span><span class="val" id="tt-debut"></span></div><div class="row" id="tt-fandom-row" style="display:none"><span class="lbl" data-i18n="gcFandom">팬덤</span><span class="val" id="tt-fandom"></span></div></div><div id="tt-status-line" class="gc-status-line"></div><div class="tm" id="tm"></div><div id="tt-nav"><button class="tt-nav-btn" id="tt-prev" aria-label="이전 멤버"><span class="nav-arr">‹</span><span id="tt-prev-name" class="nav-name"></span></button><span id="tt-counter"></span><button class="tt-nav-btn" id="tt-next" aria-label="다음 멤버"><span id="tt-next-name" class="nav-name"></span><span class="nav-arr">›</span></button></div><div id="tt-concert-row" class="concert-row"></div><div id="tt-collection-row" class="gc-collection-row" style="display:none"><div class="gc-collection-hd">Collections</div><div class="gc-collection-list"></div></div><div id="tv"></div></div>
 <div id="gc">
   <div id="gc-bar"></div>
   <div id="gc-inner">
@@ -2027,6 +2046,7 @@
     <input type="text" class="sp-yt-key" id="sp-yt-key" placeholder="API 키 (AIzaSy...)" autocomplete="off" spellcheck="false">
     <button class="sp-yt-sync" id="sp-yt-sync">1. 전체 동기화 (공식 + 외부 채널)</button>
     <button class="sp-yt-sync" id="sp-yt-viewcount-btn" style="margin-top:4px;opacity:.8;">조회수만 갱신(이번주 직캠 TOP용)</button>
+    <button class="sp-yt-sync" id="sp-yt-allviewcount-btn" style="margin-top:4px;opacity:.8;">전체 조회수 갱신(연도별 TOP용 · 월 1회)</button>
     <button class="sp-yt-sync" id="sp-vm-btn" style="margin-top:4px;opacity:.8;">영상 관리 패널</button>
     <div style="margin-top:6px;padding-top:6px;border-top:0.5px solid rgba(255,255,255,0.07)">
       <div style="font-size:10px;color:rgba(155,178,228,0.4);margin-bottom:2px">과거 영상 백필 (search API, 쿼터 많이 씀)</div>
@@ -2455,6 +2475,11 @@
     <div id="trophy-panel-list"></div>
   </div>
 </div>
+<div id="col-quick-toast">
+  <span id="col-quick-toast-check">✓</span>
+  <span id="col-quick-toast-name"></span>에 추가됨
+  <button id="col-quick-toast-change">다른 컬렉션</button>
+</div>
 <div id="col-picker">
   <div id="col-picker-bg"></div>
   <div id="col-picker-sheet">
@@ -2777,6 +2802,7 @@ const T={
       all:'전체',girl:'걸그룹',boy:'보이그룹',coed:'혼성그룹',inactive:'비활동/탈퇴 멤버',reset:'↺ 초기화',
       searchPH:'그룹 · 멤버 검색…',mobileTitle:'케이팝 아이돌 지형도',srGroup:'그룹',
       preparing:'준비 중',gcAgency:'소속',gcDebut:'데뷔',gcFandom:'팬덤',gcLeader:'리더',gcMember:'멤버',gcSNS:'공식',
+      chSortRec:'추천순',chSortNew:'업로드순',chSortOld:'오래된순',chViewCon:'콘텐츠별 보기',chSearch:'영상 검색…',
       idxTitle:'인덱스',idxGroupTab:'그룹',idxMemberTab:'멤버',idxSearchPH:'그룹명 검색…',idxSearchPHMember:'멤버명 검색…',
       idxSortName:'이름 (가나다순)',idxSortDebut:'데뷔연도',idxSortAgency:'소속사',idxSortMembers:'멤버 수',
       idxSortBirth:'생년',idxSortGroup:'그룹명',idxSortNation:'국적',ppTitle:'내 프로필',ppNick:'닉네임',ppNickPH:'닉네임을 입력하세요',ppNickErr:'닉네임을 입력해주세요',ppBio:'한 줄 소개',ppBioPH:'선택사항',ppColor:'내 별 색상',ppFavLabel:'좋아요 공개',ppFavSub:'다른 사람들이 볼 수 있어요',ppSyncLabel:'다른 기기와 동기화',ppSyncSub:'다른 기기에서도 좋아요가 유지돼요',ppGoogleBtn:'구글로 연결하기',ppXBtn:'X로 연결하기',ppLinked:'계정에 연결됨 ✓',ppLogout:'로그아웃',ppSave:'저장'},
@@ -2785,6 +2811,7 @@ const T={
       all:'All',girl:'Girl Groups',boy:'Boy Groups',coed:'Coed Groups',inactive:'Inactive / Left',reset:'↺ Reset',
       searchPH:'Search groups · members…',mobileTitle:'K-pop Idol Map',srGroup:'Group',
       preparing:'Coming soon',gcAgency:'Agency',gcDebut:'Debut',gcFandom:'Fandom',gcLeader:'Leader',gcMember:'Members',gcSNS:'Official',
+      chSortRec:'Recommended',chSortNew:'Latest',chSortOld:'Oldest',chViewCon:'By Content',chSearch:'Search videos…',
       idxTitle:'Index',idxGroupTab:'Groups',idxMemberTab:'Members',idxSearchPH:'Search group name…',idxSearchPHMember:'Search member name…',
       idxSortName:'Name (A–Z)',idxSortDebut:'Debut Year',idxSortAgency:'Agency',idxSortMembers:'Member Count',
       idxSortBirth:'Birth Year',idxSortGroup:'Group',idxSortNation:'Nationality',ppTitle:'My Profile',ppNick:'Nickname',ppNickPH:'Enter nickname',ppNickErr:'Nickname is required',ppBio:'Bio',ppBioPH:'Optional',ppColor:'Star Color',ppFavLabel:'Public Likes',ppFavSub:'Others can see your likes',ppSyncLabel:'Sync Across Devices',ppSyncSub:'Likes stay synced across your devices',ppGoogleBtn:'Connect with Google',ppXBtn:'Connect with X',ppLinked:'Account Connected ✓',ppLogout:'Log Out',ppSave:'Save'}
@@ -4409,8 +4436,8 @@ function _maybeShowSwipeHint(){
 // 업로드일(MM.DD)·조회수(1.2M/34K+) 한 줄로 — _openFeedListOverlay의 .gc-ch-meta와 동일한 포맷 규칙
 // (2026-08-10, 라이트박스에도 재사용). pa/vc 둘 다 없으면 빈 문자열 반환(호출부가 그 경우 줄 자체를 숨김).
 function _fmtVidMeta(pa,vc){
-  const datePart=pa?(pa.slice(5,7)+'.'+pa.slice(8,10)):'';
-  const vcPart=vc!=null?(vc>=1000000?(vc/1000000).toFixed(1).replace(/\.0$/,'')+'M':vc>=1000?Math.floor(vc/1000)+'K+':String(vc)):'';
+  const datePart=pa?(pa.slice(0,4)+'.'+pa.slice(5,7)+'.'+pa.slice(8,10)):'';
+  const vcPart=vc!=null?(vc>=1000000?(vc/1000000).toFixed(1).replace(/\.0$/,'')+'M+':vc>=1000?Math.floor(vc/1000)+'K+':String(vc)):'';
   return[datePart,vcPart].filter(Boolean).join(' · ');
 }
 function _lbUpdateToolbar(){
@@ -4419,12 +4446,12 @@ function _lbUpdateToolbar(){
   const metaEl=document.getElementById('yt-lb-meta-text');
   if(titleEl&&metaEl){
     const infoWrap=document.getElementById('yt-lb-info');
-    if(s&&s.t){
-      titleEl.textContent=_cleanTitle(s.t);
+    titleEl.style.display='none';
+    if(s){
       const metaStr=_fmtVidMeta(s.pa,s.vc);
       metaEl.textContent=metaStr;
       metaEl.style.display=metaStr?'':'none';
-      infoWrap.style.display='';
+      infoWrap.style.display=metaStr?'':'none';
     }else{
       infoWrap.style.display='none';
     }
@@ -5115,6 +5142,7 @@ function makeSmallThumb(s,allSongs,idx,ctx){
   const withLine=_makeWithLine(s,ctx);
   if(withLine)box.appendChild(withLine);
   box.appendChild(_makeScrapBtn(s,ctx));
+  box.appendChild(_makeColBtn(s,ctx));
   if(_isAdmin()&&s._apiId){
     const editBtn=document.createElement('button');
     editBtn.className='vid-edit-btn';editBtn.type='button';editBtn.textContent='✎';
@@ -5136,33 +5164,32 @@ function _shuffle(arr){for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.r
 // 가중치를 준 셔플을 쓴다 — 매번 순서는 달라지되 라이브(직캠)가 통계적으로 위쪽에 더 자주 오고
 // 예능/연기 등(other)은 뒤로 밀리는 정도. other는 예능/인터뷰/드라마로 더 쪼개지 않고 하나로
 // 뭉뚱그림(2026-08-10, 사용자 판단 — 나중에 별도 "알짜배기 모음집" 기능에서 종류 무관하게 다룰 예정).
-const _VID_CAT_WEIGHT={mv:1.6,other:1};
-function _vidCatWeight(cat){return _VID_CAT_WEIGHT[cat]||3.2;} // live/short/미분류는 기본 최상위
+// live 기본 4.0, short 2.0(라이브 다음에 자연스럽게 섞임), mv 1.4, other 0.4(뒤로 강하게 밀림)
+const _VID_CAT_WEIGHT={short:2.0,mv:1.4,other:0.4};
+function _vidCatWeight(cat){return _VID_CAT_WEIGHT[cat]||4.0;}
 function _weightedShuffleByCat(arr,catOf){
   return arr.map(v=>({v,k:Math.random()**(1/_vidCatWeight(catOf(v)))}))
     .sort((a,b)=>b.k-a.k)
     .map(x=>x.v);
 }
-// 그룹 카드 영상 그리드에서 특정 멤버(예: 개인 활동이 많은 멤버) 영상이 연달아 몰려서 그 멤버만
-// 과다 노출되는 문제 완화(2026-08-10, 사용자 제보) — members가 1명으로 특정된 영상끼리 멤버별로 묶고
-// 라운드로빈으로 한 명씩 돌아가며 뽑아 섞는다. 그룹 전체/복수 멤버 태깅 영상은 별도 묶음으로 취급해
-// 밀려나지 않게 하고, 각 묶음 내부 순서는 그대로 유지해(직전 카테고리 가중 셔플 결과를 존중) 특정
-// 카테고리가 한쪽으로 쏠리지 않게 한다.
+// 같은 멤버 영상이 연속 MAX_CONSEC회를 초과하면 LOOK 범위 안에서 다른 멤버 영상을 앞으로 당겨온다.
+// 라운드로빈 방식 대비 카테고리 가중치 순서를 훨씬 잘 보존 — 예능이 "자기 차례"에 강제로 끌려오는 현상 제거.
 function _diversifyByMember(arr){
-  const order=[];const buckets=new Map();
-  arr.forEach(v=>{
-    const key=(v.members&&v.members.length===1)?v.members[0]:'__mixed__';
-    if(!buckets.has(key)){buckets.set(key,[]);order.push(key);}
-    buckets.get(key).push(v);
-  });
-  if(order.length<=1)return arr;
-  const out=[];
-  let left=arr.length;
-  while(left>0){
-    for(const key of order){
-      const b=buckets.get(key);
-      if(b.length){out.push(b.shift());left--;}
+  const out=[];const temp=[...arr];
+  let lastKey=null,sameCount=0;
+  const MAX_CONSEC=2,LOOK=10;
+  while(temp.length){
+    let pickIdx=0;
+    if(sameCount>=MAX_CONSEC){
+      for(let i=1;i<Math.min(LOOK,temp.length);i++){
+        const k=(temp[i].members&&temp[i].members.length===1)?temp[i].members[0]:'__mixed__';
+        if(k!==lastKey){pickIdx=i;break;}
+      }
     }
+    const[picked]=temp.splice(pickIdx,1);
+    const key=(picked.members&&picked.members.length===1)?picked.members[0]:'__mixed__';
+    if(key===lastKey)sameCount++;else{lastKey=key;sameCount=1;}
+    out.push(picked);
   }
   return out;
 }
@@ -5253,6 +5280,7 @@ function buildVideoSection(songs,containerEl,ctx,mainCandidates){
       const _bigWithLine=_makeWithLine(first,ctx);
       if(_bigWithLine)bigWrap.appendChild(_bigWithLine);
       bigWrap.appendChild(_makeScrapBtn(first,ctx));
+      bigWrap.appendChild(_makeColBtn(first,ctx));
       if(_isAdmin()&&first._apiId){
         const editBtn=document.createElement('button');
         editBtn.className='vid-edit-btn';editBtn.type='button';editBtn.textContent='✎';
@@ -5290,6 +5318,7 @@ function buildVideoSection(songs,containerEl,ctx,mainCandidates){
   const _bigWithLine=_makeWithLine(first,ctx);
   if(_bigWithLine)bigWrap.appendChild(_bigWithLine);
   bigWrap.appendChild(_makeScrapBtn(first,ctx));
+  bigWrap.appendChild(_makeColBtn(first,ctx));
   if(_isAdmin()&&first._apiId){
     const editBtn=document.createElement('button');
     editBtn.className='vid-edit-btn';editBtn.type='button';editBtn.textContent='✎';
@@ -6985,6 +7014,7 @@ function showT(a,cx,cy,keepNavStack,urlMode,pushMobNav,noFly){
   const _barColor=(gInfo&&gInfo.color)||a.color;
   if(_barColor){const[cr,cg,cb]=_barColor;ttBar.style.background=`linear-gradient(90deg,rgba(${cr},${cg},${cb},0.50),rgba(${cr},${cg},${cb},0.18))`;}
   else ttBar.style.background='rgba(160,180,220,0.22)';
+  _loadInstaPic(a);
   const tnEl=document.getElementById('tn');
   tnEl.textContent=currentLang==='ko'?a.name.ko:(a.name.en||a.name.ko);
   _appendDeceasedStar(tnEl,a);
@@ -7136,6 +7166,22 @@ function showT(a,cx,cy,keepNavStack,urlMode,pushMobNav,noFly){
   const _ttGroupQueryKo=_ytGroupKoFor(a);
   _loadConcertRow(_ttGroupQueryKo,'tt-concert-row');
   _loadCollectionRow(_ttGroupQueryKo,'tt-collection-row',_hasRealGroup?a.name.ko:null,a.name.ko);
+  // 관리자: 인스타 프로필 사진 URL 저장 버튼 (인스타 계정 있는 멤버만)
+  {const _existingPicBtn=document.getElementById('tt-insta-pic-admin');if(_existingPicBtn)_existingPicBtn.remove();}
+  if(_isAdmin()&&a.links?.instagram){
+    const picAdminBtn=document.createElement('button');picAdminBtn.id='tt-insta-pic-admin';
+    picAdminBtn.className='sp-yt-sync';picAdminBtn.style.cssText='font-size:10.5px;margin:6px 4px 2px;opacity:.7;';
+    picAdminBtn.textContent='📷 프로필 사진 URL 저장';
+    picAdminBtn.addEventListener('click',e=>{
+      e.stopPropagation();
+      _promptDialog({title:`${a.name.ko} 인스타 프로필 사진 URL`,placeholder:'https://...'}).then(async url=>{
+        if(!url||!url.trim())return;
+        const ok=await _saveInstaPic(a.name.ko,url.trim());
+        if(ok)alert('저장됐어요');else alert('저장 실패 (Supabase 콘솔 확인)');
+      });
+    });
+    const tvEl=document.getElementById('tv');tvEl.parentElement.insertBefore(picAdminBtn,tvEl);
+  }
   // ✦ 연결 버튼 (그룹명 오른쪽) — 정적 소스만으로 우선 판단해 즉시 표시하고, API 콜라보 캐시가 없으면
   // 백그라운드로 받아와서(연결 카드를 아예 안 열어봤어도) 카드 열자마자 정확한 상태로 갱신
   _updateConnBtn(a);
@@ -7215,6 +7261,39 @@ function _fandomText(fd){
   return fd.en||fd.ko||'';
 }
 // ── 그룹 외부 링크 (영문명 줄 오른쪽 아이콘) — 소비 빈도순: 유튜브>인스타>X>위버스>틱톡>나무위키 ──
+// ── Instagram 프로필 사진 ──────────────────────────────────────────
+// Supabase 테이블: artist_pics (ko_name TEXT PK, pic_url TEXT, updated_at TIMESTAMPTZ)
+// RLS: SELECT 전체 허용, INSERT/UPDATE/DELETE 인증 사용자만
+const _instaPicCache=new Map(); // ko_name → pic_url (세션 캐시)
+async function _loadInstaPic(a){
+  const wrap=document.getElementById('tt-insta-pic-wrap');
+  const img=document.getElementById('tt-insta-pic');
+  if(!wrap||!img)return;
+  wrap.style.display='none';
+  if(!a.links?.instagram||!sb)return;
+  const koName=a.name.ko;
+  let picUrl=_instaPicCache.get(koName);
+  if(!picUrl){
+    const{data}=await sb.from('artist_pics').select('pic_url').eq('ko_name',koName).maybeSingle();
+    picUrl=data?.pic_url||null;
+    if(picUrl)_instaPicCache.set(koName,picUrl);
+  }
+  if(!picUrl)return;
+  // 카드가 이미 다른 멤버로 전환됐으면 무시
+  if(_openTArtist?.name?.ko!==koName)return;
+  wrap.href=a.links.instagram;
+  wrap.onclick=e=>e.stopPropagation();
+  img.src=picUrl;
+  img.onerror=()=>{wrap.style.display='none';};
+  img.onload=()=>{wrap.style.display='';};
+}
+async function _saveInstaPic(koName,picUrl){
+  if(!sb||!window._sbSession)return;
+  const{error}=await sb.from('artist_pics').upsert({ko_name:koName,pic_url:picUrl,updated_at:new Date().toISOString()});
+  if(!error){_instaPicCache.set(koName,picUrl);_loadInstaPic(_openTArtist);}
+  return!error;
+}
+
 const _LINK_DEFS=[
   {key:'youtube',label:'YouTube',svg:'<svg viewBox="0 0 24 24" fill="none"><rect x="2" y="5" width="20" height="14" rx="4" stroke="currentColor" stroke-width="1.6"/><path d="M10 9.5l5 2.5-5 2.5z" fill="currentColor"/></svg>'},
   {key:'instagram',label:'Instagram',svg:'<svg viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="5" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="12" r="4.2" stroke="currentColor" stroke-width="1.6"/><circle cx="17.2" cy="6.8" r="1.2" fill="currentColor"/></svg>'},
@@ -8719,6 +8798,50 @@ function _makeScrapBtn(s,ctx){
   btn.addEventListener('click',e=>{e.stopPropagation();toggleScrap(s,ctx);});
   return btn;
 }
+
+// 마지막으로 사용한 컬렉션 — 클릭 한 번에 바로 담기(Spotify/YouTube 방식)
+let _lastUsedColId=localStorage.getItem('kpu_last_col_id')||null;
+function _setLastUsedCol(id){_lastUsedColId=id;localStorage.setItem('kpu_last_col_id',id);}
+
+let _colToastTimer=null;
+function _showColToast(colName,videoForPicker){
+  const toast=document.getElementById('col-quick-toast');
+  const nameEl=document.getElementById('col-quick-toast-name');
+  const changeBtn=document.getElementById('col-quick-toast-change');
+  if(!toast||!nameEl)return;
+  nameEl.textContent=colName;
+  if(changeBtn)changeBtn.onclick=()=>{_hideColToast();_openColPicker(videoForPicker);};
+  toast.classList.add('show');
+  clearTimeout(_colToastTimer);
+  _colToastTimer=setTimeout(_hideColToast,2800);
+}
+function _hideColToast(){document.getElementById('col-quick-toast')?.classList.remove('show');}
+
+function _makeColBtn(s,ctx){
+  const btn=document.createElement('button');
+  const inAnyCol=collections.some(p=>p.videos.some(v=>v.u===s.u));
+  btn.className='col-btn abs-btn'+(inAnyCol?' col-on':'');
+  btn.dataset.u=s.u;
+  btn.innerHTML='<svg viewBox="0 0 24 24"><path d="M5 3h14a1 1 0 0 1 1 1v16l-8-4.5L4 20V4a1 1 0 0 1 1-1z"/></svg>';
+  btn.title='컬렉션에 추가';
+  btn.setAttribute('aria-label','컬렉션에 추가');
+  btn.addEventListener('click',e=>{
+    e.stopPropagation();
+    const video={t:s.t,u:s.u,thumb:s.thumb||'',groupKo:ctx?.groupKo||s._apiGroupKo||'',memberKos:s._apiMemberKos||ctx?.memberKos||[]};
+    const inAny=collections.some(p=>p.videos.some(v=>v.u===s.u));
+    const lastCol=_lastUsedColId&&collections.find(p=>p.id===_lastUsedColId);
+    if(!collections.length||inAny||!lastCol){
+      // 컬렉션 없음 / 이미 담김(관리용) / 마지막 컬렉션 없음 → picker 열기
+      _openColPicker(video);
+    }else{
+      // 마지막 컬렉션에 즉시 추가
+      _addVideosToCol(lastCol.id,[video]);
+      document.querySelectorAll(`.col-btn[data-u="${CSS.escape(s.u)}"]`).forEach(b=>b.classList.add('col-on'));
+      _showColToast(lastCol.name,video);
+    }
+  });
+  return btn;
+}
 // ── Collections (구 playlists) ────────────────────────────────────
 // localStorage 키('kpu_playlists')와 Supabase user_data 컬럼명('playlists')은 기존 사용자 데이터
 // 마이그레이션 없이 그대로 유지 — JS 변수/함수/UI 표기만 collections로 통일(2026-08-10, 사용자 요청).
@@ -8737,6 +8860,7 @@ function _addVideosToCol(colId,videos){
   videos.forEach(video=>{
     if(!col.videos.some(v=>v.u===video.u))col.videos.unshift({t:video.t,u:video.u,thumb:video.thumb,groupKo:video.groupKo||video._apiGroupKo||'',memberKos:video.memberKos||video._apiMemberKos||[]});
   });
+  _setLastUsedCol(colId);
   _saveCollections();renderCollectionSection();_lbUpdateToolbar();
   if(col.isPublic)_syncPublicCollection(col);
 }
@@ -8813,7 +8937,9 @@ function _renderColPickerList(){
   const el=document.getElementById('col-picker-list');if(!el)return;
   if(!collections.length){el.innerHTML='<div style="padding:12px 18px;font-size:12px;color:rgba(140,165,220,0.4);">아직 컬렉션이 없어요</div>';return;}
   el.innerHTML='';
-  collections.forEach(col=>{
+  // 마지막으로 사용한 컬렉션을 맨 위에 — Spotify/YouTube 방식
+  const sorted=_lastUsedColId?[...collections].sort((a,b)=>(b.id===_lastUsedColId?1:0)-(a.id===_lastUsedColId?1:0)):collections;
+  sorted.forEach(col=>{
     // 여러 개 선택된 경우: 전부 이미 담겨있으면 체크 표시 — 누르면 전부 빼고, 아니면 빠진 것만 채워 넣음
     const inCol=_colPickerVideos.length>0&&_colPickerVideos.every(pv=>col.videos.some(v=>v.u===pv.u));
     const row=document.createElement('div');row.className='col-picker-item';
@@ -10204,6 +10330,7 @@ async function _migrateLocalToServer(userId){
     fav_connections:[...favConnections],
     fav_dates:favDates,
     scraps:scraps,
+    playlists:collections,
     profile:myProfile,
     concert_log:concertLog
   };
@@ -10742,6 +10869,8 @@ async function _pickFeaturedVidFromDB(ko,memberKo,onlyMe,filter,viewMode,formatF
       .or('content_flag.is.null,content_flag.neq.hidden'); // 노출 제외 처리된 영상이 대표(하트 최다) 영상으로 뽑히면 안 됨
     if(viewMode==='format'&&formatFilter){
       q=q.contains('content_formats',[formatFilter]);
+    }else if(filter==='cover'){
+      q=q.or('title_norm.ilike.*cover*,title_norm.ilike.*커버*,title_norm.ilike.*원곡*,title_norm.ilike.*original*');
     }else if(filter&&filter!=='all'){
       q=q.eq('category',filter);
     }
@@ -10950,6 +11079,36 @@ async function _buildFeedWeeklyTopCams(list){
 
 // "이름(그룹)" 형식 문자열 배열을 화면 표시용 텍스트로 접는다(그룹 표기는 떼고 이름만) — cover_of_members/
 // with_members 둘 다 이 포맷을 씀. 그룹 자체가 통째로 태깅된 cover_of_groups/with_groups는 그룹명 그대로.
+// 연도별 라이브 TOP 100 — 2004~현재 중 랜덤 연도를 뽑아 해당 연도 live 영상을 조회수 내림차순으로 최대 100개 보여줌.
+// 조회수 데이터는 관리자가 "전체 조회수 갱신" 버튼으로 갱신 (월 1회 권장). 데이터 없으면 카드 미표시.
+async function _buildFeedYearlyTop(list){
+  if(!sb)return;
+  const vidUrl=v=>v.category==='short'?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;
+  const currentYear=new Date().getFullYear();
+  const year=2004+Math.floor(Math.random()*(currentYear-2004+1));
+  try{
+    const{data,error}=await sb.from(_YT_TABLE)
+      .select('id,title,thumb,category,content_flag,view_count,published_at')
+      .eq('category','live')
+      .gte('published_at',`${year}-01-01`)
+      .lt('published_at',`${year+1}-01-01`)
+      .not('view_count','is',null)
+      .or('content_flag.is.null,content_flag.neq.기타')
+      .or('content_flag.is.null,content_flag.neq.무관')
+      .or('content_flag.is.null,content_flag.neq.hidden')
+      .order('view_count',{ascending:false})
+      .limit(200);
+    if(error||!data?.length)return;
+    const vids=_filterBannedVideos(data).slice(0,100);
+    if(vids.length<3)return;
+    const songs=vids.map(v=>({t:v.title,u:vidUrl(v),thumb:v.thumb,vc:v.view_count,pa:v.published_at?.slice(0,10)}));
+    const label=`${year}년 TOP 100`;
+    const top1=vids[0];
+    const fmtN=n=>n>=1000000?(n/1000000).toFixed(1).replace(/\.0$/,'')+'M+':n>=1000?Math.floor(n/1000)+'K+':String(n);
+    const sub=top1.view_count?`1위 · ${fmtN(top1.view_count)} 조회`:'라이브·직캠 조회수 기준';
+    _appendFeedCard(list,'🏅',label,sub,()=>_openFeedListOverlay(label,sub,songs),top1.thumb);
+  }catch(e){/* 조용히 무시 */}
+}
 function _feedFormatNameList(namesWithGroup,groupsOnly){
   const names=(namesWithGroup||[]).map(s=>{const m=s.match(/^(.+)\((.+)\)$/);return m?m[1]:s;});
   return[...names,...(groupsOnly||[])].join(', ');
@@ -11055,6 +11214,7 @@ function _buildFeedDiscovery(){
   _buildFeedFormatPick(list);
   _buildFeedGenCamPick(list);
   _buildFeedWeeklyTopCams(list);
+  _buildFeedYearlyTop(list);
   _buildFeedCoverSpotlight(list);
   _buildFeedTrendingHearts(list);
   _buildFeedCollabSpotlight(list);
@@ -11482,6 +11642,56 @@ async function _ytRefreshViewCounts(){
   }
   _ytSetProg(`조회수 갱신 완료 — ${saved}개`);
   _feedDiscoveryBuiltAt=0; // 다음 탐험 탭 오픈 시 주간 TOP 순위 새로 반영
+}
+
+// 연도별 TOP 100용 전체 라이브 조회수 갱신.
+// API 절약 전략: ① live 카테고리만 (연도별 TOP에 live만 쓰이므로 다른 카테고리 ID는 아예 조회 안 함)
+//               ② view_count IS NOT NULL인 것만 (한 번이라도 집계된 적 있는 영상 → 실질적 상위 후보)
+//               덕분에 "전체 영상 중 일부"만 YouTube API를 소비하므로 월 1회 돌려도 쿼터 여유 있음.
+async function _ytRefreshAllViewCounts(){
+  const key=_ytApiKey();
+  if(!key){_ytSetProg('API 키를 먼저 입력해주세요');return;}
+  if(!sb){_ytSetProg('Supabase 연결 없음');return;}
+  _ytSetProg('갱신 대상 조회 중 (live · 조회수 기집계)…');
+  const{data:rows,error}=await _sbFetchAll(()=>sb.from(_YT_TABLE)
+    .select('id')
+    .eq('category','live')
+    .not('view_count','is',null)
+    .order('id'));
+  if(error){_ytSetProg('대상 조회 실패: '+error.message);return;}
+  if(!rows?.length){_ytSetProg('갱신 대상 없음');return;}
+  const ids=rows.map(r=>r.id);
+  const totalCalls=Math.ceil(ids.length/50);
+  _ytSetProg(`YouTube API 호출 예정: ${totalCalls}회 (${ids.length}개 영상)`);
+  const statsUpdates=[];
+  for(let i=0;i<ids.length;i+=50){
+    const chunk=ids.slice(i,i+50);
+    _ytSetProg(`조회수 조회 중… ${Math.min(i+50,ids.length)}/${ids.length} (API ${Math.ceil((i+50)/50)}/${totalCalls}회)`);
+    try{
+      const r=await fetch(`https://www.googleapis.com/youtube/v3/videos?part=statistics&id=${chunk.join(',')}&key=${key}`);
+      if(!r.ok)throw new Error('YouTube API 오류 '+r.status);
+      const d=await r.json();
+      if(d.error)throw new Error(d.error.message);
+      (d.items||[]).forEach(it=>{
+        const vc=parseInt(it.statistics?.viewCount,10);
+        if(!isNaN(vc))statsUpdates.push({id:it.id,view_count:vc});
+      });
+    }catch(e){_ytSetProg('YouTube API 오류: '+e.message);console.error('[전체 조회수 갱신]',e.message);return;}
+  }
+  if(!statsUpdates.length){_ytSetProg('갱신할 값 없음 (영상이 모두 삭제되었거나 비공개)');return;}
+  let saved=0,failed=0;
+  for(let i=0;i<statsUpdates.length;i+=50){
+    _ytSetProg(`저장 중… ${i}/${statsUpdates.length}`);
+    const results=await Promise.all(
+      statsUpdates.slice(i,i+50).map(({id,view_count})=>
+        sb.from(_YT_TABLE).update({view_count}).eq('id',id)
+      )
+    );
+    results.forEach(({error:ue})=>{if(ue){failed++;console.error('[전체 조회수 갱신] 저장 실패:',ue.message);}else saved++;});
+    if(failed){_ytSetProg(`저장 실패 (${failed}건): 콘솔 확인`);return;}
+  }
+  _ytSetProg(`전체 조회수 갱신 완료 — ${saved}개 (live 카테고리 · API ${totalCalls}회 사용)`);
+  _feedDiscoveryBuiltAt=0;
 }
 
 function _ytSetProg(msg){const el=document.getElementById('sp-yt-prog');if(el)el.textContent=msg;}
@@ -14477,11 +14687,12 @@ function _makeChVidController(contId){
       // 넘어갔을 때(isShorts(url) 판별)도 세로 비율이 계속 유지됨 — watch?v= 로 통일해버리면 그 정보가 사라짐.
       const _vidUrl=vv=>vv.category==='short'?`https://www.youtube.com/shorts/${vv.id}`:`https://www.youtube.com/watch?v=${vv.id}`;
       const vidUrl=_vidUrl(v);
-      const s={t:v.title,u:vidUrl,with:_buildGridWithList(v,state.ko,state.memberKo),coverOfMembers:v.cover_of_members||[],coverOfGroups:v.cover_of_groups||[]};
+      const s={t:v.title,u:vidUrl,thumb:v.thumb||'',with:_buildGridWithList(v,state.ko,state.memberKo),coverOfMembers:v.cover_of_members||[],coverOfGroups:v.cover_of_groups||[]};
       const ctx={groupKo:state.ko};
       const withLine=_makeWithLine(s,ctx);
       if(withLine)item.appendChild(withLine);
       item.appendChild(_makeScrapBtn(s,ctx));
+      item.appendChild(_makeColBtn(s,ctx));
       if(_isAdmin()){
         const editBtn=document.createElement('button');
         editBtn.className='vid-edit-btn';editBtn.type='button';editBtn.textContent='✎';
@@ -14506,7 +14717,7 @@ function _makeChVidController(contId){
         // 관리자 태깅 대상(_apiId/_apiGroupKo)도 각 항목에 실어 보냄. _apiMemberKos는 이 영상에 태깅된
         // 멤버 전원을 그대로 실어서, 라이트박스에서 "컬렉션에 추가"로 담을 때 2명 이상 함께 나온 영상도
         // 그 멤버들 각자의 카드에 다 뜨게 한다(2026-08-10, 사용자 요청).
-        const playlist=state.allVids.map(vv=>({t:vv.title,u:_vidUrl(vv),thumb:vv.thumb,_apiId:vv.id,_apiGroupKo:state.ko,_apiMemberKos:_colMemberKosFor(vv)}));
+        const playlist=state.allVids.map(vv=>({t:vv.title,u:_vidUrl(vv),thumb:vv.thumb,pa:vv.published_at?.slice(0,10),_apiId:vv.id,_apiGroupKo:state.ko,_apiMemberKos:_colMemberKosFor(vv)}));
         let idx=playlist.findIndex(p=>p._apiId===v.id);
         if(idx<0){idx=0;playlist.unshift({t:v.title,u:vidUrl,thumb:v.thumb,_apiId:v.id,_apiGroupKo:state.ko,_apiMemberKos:_colMemberKosFor(v)});}
         openLightbox(vidUrl,isShort,playlist,idx);
@@ -14626,7 +14837,7 @@ function _makeChVidController(contId){
       // 끌어오는데(아래 memberKo 분기), 그런 행의 실제 소속은 카드 자체 그룹(ko)과 다를 수 있음.
       // group_ko가 없으면 "함께한 멤버" 표기와 편집 버튼의 소속 그룹이 전부 카드 자체 그룹으로 잘못
       // 표시됨(2026-08-04, 사용자 제보 — 성현 카드에서 투바투 게스트 영상이 코르티스로 잘못 뜨던 문제).
-      const selectCols='id,title,thumb,category,content_flag,group_ko,members,with_members,with_groups,cover_of_members,cover_of_groups';
+      const selectCols='id,title,thumb,category,content_flag,group_ko,members,with_members,with_groups,cover_of_members,cover_of_groups,published_at';
       let q=forCount?sb.from(_YT_TABLE).select('id',{count:'exact',head:true})
         :(reset&&randomize)?sb.from(_YT_TABLE).select(selectCols,{count:'exact'})
         :sb.from(_YT_TABLE).select(selectCols);
@@ -14684,6 +14895,8 @@ function _makeChVidController(contId){
       if(state.searchQ)q=q.ilike('title_norm',`%${_titleNorm(state.searchQ)}%`);
       if(state.viewMode==='format'){
         if(state.formatFilter)q=q.contains('content_formats',[state.formatFilter]);
+      }else if(filter==='cover'){
+        q=q.or('title_norm.ilike.*cover*,title_norm.ilike.*커버*,title_norm.ilike.*원곡*,title_norm.ilike.*original*');
       }else if(filter!=='all'){
         q=q.eq('category',filter);
       }
@@ -14881,7 +15094,8 @@ function _makeChVidController(contId){
     // 멤버 카드는 미태깅 그룹 영상(MV·Shorts·토크쇼 등)이 뒤섞여 첫 화면이 지저분해지지 않도록
     // "라이브"(무대 직캠 위주) 탭에서 시작 — 그룹 카드는 그대로 "전체"
     state={ko,memberKo:memberKo||null,filter:memberKo?'live':'all',onlyMe:false,searchQ:'',sortMode:'recommend',viewMode:'category',formatFilter:null,formats:[],offset:0,total:0,pos:0,cat:null,gen:state.gen+1,appendLock:false,trailingEl:null,hasMore:false,allVids:[],_liveFallbackDone:false,wrapEnd:0,wrapPhase:false,unitFilter:null};
-    cont.innerHTML=`<div class="gc-ch-hd"><div class="gc-ch-filters"></div><div class="gc-ch-sort-wrap"><button class="gc-ch-sort-btn" title="정렬" aria-haspopup="true" aria-expanded="false">⋮</button><div class="gc-ch-sort-menu"><button class="gc-ch-sort-item" data-sort="recommend"><span class="chk">✓</span>추천순</button><button class="gc-ch-sort-item" data-sort="latest"><span class="chk">✓</span>업로드순</button><button class="gc-ch-sort-item" data-sort="oldest"><span class="chk">✓</span>오래된순</button><div class="gc-ch-sort-divider" style="display:none"></div><button class="gc-ch-view-toggle" style="display:none"><span class="chk">✓</span>콘텐츠별 보기</button></div></div><button class="gc-ch-refresh" title="새로고침">↻</button></div><div class="gc-ch-search-wrap" style="display:none"><input class="gc-ch-search" placeholder="영상 검색…" autocomplete="off" spellcheck="false"><button class="gc-ch-search-clear" aria-label="검색어 지우기">\xD7</button></div><div class="gc-ch-grid"></div><div class="gc-ch-more-wrap"></div><div class="tv-cover-of-wrap" style="display:none"></div>`;
+    const _t=T[currentLang];
+    cont.innerHTML=`<div class="gc-ch-hd"><div class="gc-ch-filters"></div><div class="gc-ch-sort-wrap"><button class="gc-ch-sort-btn" title="정렬" aria-haspopup="true" aria-expanded="false">⋮</button><div class="gc-ch-sort-menu"><button class="gc-ch-sort-item" data-sort="recommend"><span class="chk">✓</span><span data-i18n="chSortRec">${_t.chSortRec}</span></button><button class="gc-ch-sort-item" data-sort="latest"><span class="chk">✓</span><span data-i18n="chSortNew">${_t.chSortNew}</span></button><button class="gc-ch-sort-item" data-sort="oldest"><span class="chk">✓</span><span data-i18n="chSortOld">${_t.chSortOld}</span></button><div class="gc-ch-sort-divider" style="display:none"></div><button class="gc-ch-view-toggle" style="display:none"><span class="chk">✓</span><span data-i18n="chViewCon">${_t.chViewCon}</span></button></div></div><button class="gc-ch-refresh" title="새로고침">↻</button></div><div class="gc-ch-search-wrap" style="display:none"><input class="gc-ch-search" placeholder="${_t.chSearch}" data-i18n-ph="chSearch" autocomplete="off" spellcheck="false"><button class="gc-ch-search-clear" aria-label="검색어 지우기">\xD7</button></div><div class="gc-ch-grid"></div><div class="gc-ch-more-wrap"></div><div class="tv-cover-of-wrap" style="display:none"></div>`;
     _exitSelMode();
     const filEl=cont.querySelector('.gc-ch-filters');
     // 영상 여러 개 선택 버튼 — 예전엔 어드민 태깅 편집용으로만 있었는데, 이제 일반 유저도 여러 영상을
@@ -14910,7 +15124,7 @@ function _makeChVidController(contId){
       filEl.scrollLeft+=e.deltaY;
     },{passive:false});
     // 멤버 카드는 MV 탭 제외 — 뮤비는 그룹 단위 콘텐츠라 그룹 카드 MV 탭에서 이미 다뤄지고, 멤버 개인 태깅 영상엔 거의 안 나옴
-    let catTabs=memberKo?[['all','전체'],['live','라이브'],['short','Shorts']]:[['all','전체'],['mv','MV'],['live','라이브'],['short','Shorts']];
+    let catTabs=memberKo?[['all','All'],['live','Live'],['cover','Cover'],['short','Shorts']]:[['all','All'],['mv','MV'],['live','Live'],['cover','Cover'],['short','Shorts']];
     // "by Fan" 탭(2026-08-10, 사용자 요청) — 팬이 직접 찍거나 만든 영상 전용. 아직은 어떤 그룹도 팬채널을
     // 등록 안 해서 category='fan'인 행이 하나도 없지만(추후 사용자가 그룹별로 팬채널 링크를 주면 그
     // 채널 동기화 시 category='fan'으로 저장할 예정), 미리 이 자리를 만들어둠. 팬덤명을 알면 "by {영문
@@ -15132,7 +15346,14 @@ function _makeChVidController(contId){
         stillQualifies=(isOwnChannel&&members.length===0)||withGroups.includes(ko);
       }
     }
-    if(stillQualifies&&state.filter!=='all'&&newRow.category!==state.filter)stillQualifies=false;
+    if(stillQualifies&&state.filter!=='all'){
+      if(state.filter==='cover'){
+        const t=(newRow.title||'').toLowerCase();
+        if(!/cover|커버|원곡|original/.test(t))stillQualifies=false;
+      }else if(newRow.category!==state.filter){
+        stillQualifies=false;
+      }
+    }
     // 카드 비율(가로/세로)이 바뀌면 2열 짝맞춤이 어긋날 수 있어 안전하게 제거 쪽으로 처리
     if(stillQualifies&&el.classList.contains('is-short')!==(newRow.category==='short'))stillQualifies=false;
     if(!stillQualifies){el.remove();return;}
@@ -16118,6 +16339,12 @@ document.getElementById('vid-tag-thumb-refresh').addEventListener('click',async 
     await _ytRefreshViewCounts();
     if(btn)btn.disabled=false;
   });
+  document.getElementById('sp-yt-allviewcount-btn')?.addEventListener('click',async()=>{
+    const btn=document.getElementById('sp-yt-allviewcount-btn');
+    if(btn)btn.disabled=true;
+    await _ytRefreshAllViewCounts();
+    if(btn)btn.disabled=false;
+  });
   document.getElementById('sp-yt-sweep-banned')?.addEventListener('click',_ytSweepBannedVideos);
   document.getElementById('sp-yt-sweep-junk')?.addEventListener('click',_ytSweepJunkKeywordVideos);
   // "무조건 제외 키워드" 목록이 코드에만 있어서 관리자가 지금 뭐가 걸려있는지 확인할 방법이 없었음
@@ -16397,7 +16624,7 @@ const _totopBtn=document.createElement('button');
 _totopBtn.id='gc-totop';_totopBtn.className='gc-totop';_totopBtn.setAttribute('aria-label','맨 위로');
 _totopBtn.textContent='↑';
 document.body.appendChild(_totopBtn);
-const TOTOP_SHOW_AT=140;
+const TOTOP_SHOW_AT=80;
 let _totopScrollTarget=null;
 function _hideTotop(){
   _totopBtn.style.display='none';
