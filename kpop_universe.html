@@ -44,7 +44,7 @@
 <script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@1/index.js"></script>
 </head>
 <body>
-<div id="loading">Loading Our Universe...</div>
+<div id="loading">Here Our K-Pop Universe..!</div>
 <div id="loading-veil"></div>
 <div id="loading-ring"></div>
 <div id="journal-sidebar">
@@ -126,7 +126,7 @@
     <button class="dh-btn" id="dh-settings-btn" aria-label="설정 열기">⚙︎</button>
   </div>
 </div>
-<div id="fav-hint-callout">Start with Your Favorite!<span id="fhc-arrow"></span></div>
+<div id="fav-hint-callout">Who's Your Bias?<span id="fhc-arrow"></span></div>
 <div id="tt"><div id="tt-bar"></div><button id="tt-back" class="conn-back-btn" style="display:none" aria-label="이전 멤버로 돌아가기">‹</button><span id="ttx" role="button" tabindex="0" aria-label="멤버 카드 닫기">×</span><a id="tt-insta-pic-wrap" style="display:none" target="_blank" rel="noopener noreferrer" aria-label="Instagram 프로필"><span class="tt-insta-ring"><img id="tt-insta-pic" alt="프로필"></span></a>
 <div id="tt-name-row"><div class="tn" id="tn"></div><button id="tt-fav" class="fav-btn" aria-label="즐겨찾기"><svg viewBox="0 0 24 24"><path d="M12 21L10.55 19.7C5.4 15.1 2 12.1 2 8.5 2 5.4 4.4 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.6 3 22 5.4 22 8.5c0 3.6-3.4 6.6-8.55 11.2L12 21z"/></svg></button><button id="tt-share" class="share-btn" aria-label="공유"><svg viewBox="0 0 24 24"><path d="M12 15V4M12 4l-3.5 3.5M12 4l3.5 3.5"/><path d="M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"/></svg></button></div><div id="tg-row"><div id="tt-links"></div><div class="tg" id="tg"></div><span id="tt-family-wrap" class="tt-family-wrap" style="display:none"><button id="tt-family-btn" type="button" aria-label="가족 관계">ⓘ</button><div id="tt-family-pop" class="tt-family-pop"></div></span><button id="tt-conn-btn" class="tt-conn-btn" style="display:none">연결</button></div><div class="tco" id="tco"></div><div id="tt-info-grid" style="display:none"><div class="row"><span class="lbl" data-i18n="gcDebut">데뷔</span><span class="val" id="tt-debut"></span></div><div class="row" id="tt-fandom-row" style="display:none"><span class="lbl" data-i18n="gcFandom">팬덤</span><span class="val" id="tt-fandom"></span></div></div><div id="tt-status-line" class="gc-status-line"></div><div class="tm" id="tm"></div><div id="tt-nav"><button class="tt-nav-btn" id="tt-prev" aria-label="이전 멤버"><span class="nav-arr">‹</span><span id="tt-prev-name" class="nav-name"></span></button><span id="tt-counter"></span><button class="tt-nav-btn" id="tt-next" aria-label="다음 멤버"><span id="tt-next-name" class="nav-name"></span><span class="nav-arr">›</span></button></div><div id="tt-concert-row" class="concert-row"></div><div id="tt-collection-row" class="gc-collection-row" style="display:none"><div class="gc-collection-hd">Collections</div><div class="gc-collection-list"></div></div><div id="tv"></div></div>
 <div id="gc">
@@ -5368,7 +5368,7 @@ function showT(a,cx,cy,keepNavStack,urlMode,pushMobNav,noFly){
       picAdminBtn.disabled=true;picAdminBtn.textContent='업로드 중…';
       try{
         const ext=file.name.split('.').pop().toLowerCase()||'jpg';
-        const path=`${koName}.${ext}`;
+        const path=`${crypto.randomUUID()}.${ext}`;
         const{error:upErr}=await sb.storage.from('artist-pics').upload(path,file,{upsert:true,contentType:file.type});
         if(upErr){alert('업로드 실패: '+upErr.message);return;}
         const{data:{publicUrl}}=sb.storage.from('artist-pics').getPublicUrl(path);
@@ -6881,7 +6881,7 @@ window.addEventListener('click',e=>{
 const FAV_KEY_G='kpu_fav_groups';
 const FAV_KEY_M='kpu_fav_members';
 const FAV_KEY_C='kpu_fav_connections';
-const FAV_HINT_DISMISSED_KEY='kpu_fav_hint_dismissed'; // 탐색 버튼을 눌렀거나 로그인했으면 "Start with Your Favorite!" 안내는 다시 안 보여줌
+const FAV_HINT_DISMISSED_KEY='kpu_fav_hint_dismissed'; // 탐색 버튼을 눌렀거나 로그인했으면 "Who's Your Bias?" 안내는 다시 안 보여줌
 let favGroups=new Set(JSON.parse(localStorage.getItem(FAV_KEY_G)||'[]'));
 let favMembers=new Set(JSON.parse(localStorage.getItem(FAV_KEY_M)||'[]'));
 let favConnections=new Set(JSON.parse(localStorage.getItem(FAV_KEY_C)||'[]'));
@@ -7349,7 +7349,7 @@ function _syncFavBtn(type,data){
   }
   _updateFavHintCallout();
 }
-// 데스크톱 헤더의 "Start with Your Favorite!" 말풍선 — 즐겨찾기가 하나도 없을 때만,
+// 데스크톱 헤더의 "Who's Your Bias?" 말풍선 — 즐겨찾기가 하나도 없을 때만,
 // 탐색(✦) 버튼을 화살표로 가리키도록 위치를 매번 실측해서 맞춘다(언어 토글로 버튼 폭이 바뀌어도 안전)
 function _updateFavHintCallout(){
   const el=document.getElementById('fav-hint-callout');
