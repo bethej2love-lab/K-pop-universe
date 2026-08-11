@@ -14,7 +14,7 @@
   #loading{
     position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);
     font-family:'Apple SD Gothic Neo',sans-serif;
-    font-size:13px;letter-spacing:0.12em;
+    font-size:13px;letter-spacing:0.12em;white-space:nowrap;
     z-index:98;
     background:linear-gradient(100deg,#7d8ef0 35%,#e8edff 50%,#7d8ef0 65%);
     background-size:220% 100%;
@@ -24,7 +24,7 @@
   }
   @keyframes loading-shimmer{0%{background-position:160% 0;}100%{background-position:-60% 0;}}
   #loading.loading-error{
-    animation:none;letter-spacing:0;
+    animation:none;letter-spacing:0;white-space:normal;
     background:none;-webkit-background-clip:initial;background-clip:initial;
     color:rgba(210,222,248,0.92);-webkit-text-fill-color:rgba(210,222,248,0.92);
     display:flex;flex-direction:column;align-items:center;gap:14px;
@@ -310,7 +310,7 @@
   .tg-unit.active{color:#d0e8ff;}
   .tg.tg-nogroup{cursor:default;}
   .tg.tg-nogroup:hover{color:#aec8e8;}
-  .tco{font-size:14px;color:#88aac8;margin-bottom:10px;}
+  .tco{font-size:14px;color:#88aac8;margin-top:4px;margin-bottom:6px;}
   /* 그룹/멤버 카드 상태 한 줄 — "지금 N명이 보고 있어요"와 "N명이 즐겨찾기했어요"가 한 자리에서 번갈아 표시됨 */
   .gc-status-line{display:none;overflow:hidden;height:16px;position:relative;font-size:10.5px;letter-spacing:.01em;margin:8px 0 7px;}
   .gc-status-line.show{display:block;}
@@ -418,6 +418,10 @@
   @media(min-width:769px){#mob-card-stack{display:none!important;}}
   #gc-back{position:absolute;top:-2px;left:-2px;z-index:2;padding:14px 16px;}
   #yt-lightbox{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.9);z-index:67;align-items:center;justify-content:center;}
+  /* 브라우즈 모드는 화면 전체를 덮는 실제 페이지형 시트라, 반투명(0.9)이면 뒤에 여전히 마운트돼있는
+     카드의 제목 텍스트 등이 10%만큼 비쳐 보이는 문제가 있었음(작은 중앙 박스였던 기존 모드는 겹칠
+     일이 거의 없어서 안 드러났었음, 2026-08-11 스크린샷으로 실측 확인) — 완전 불투명으로. */
+  #yt-lightbox.lb-browse{background:#08091a;}
   #yt-lightbox.open{display:flex;}
   #yt-lb-wrap{position:relative;width:min(88vw,900px);}
   #yt-lb-video-box{position:relative;width:100%;aspect-ratio:16/9;}
@@ -492,14 +496,65 @@
   #lb-emoji-picker-title{font-size:13px;font-weight:600;color:rgba(200,215,255,0.8);font-family:'Pretendard',sans-serif;letter-spacing:.02em;}
   #lb-emoji-picker-close{background:none;border:none;color:rgba(180,200,240,0.55);font-size:16px;cursor:pointer;padding:2px 4px;line-height:1;}
   emoji-picker{--background:transparent;--border-color:rgba(255,255,255,0.07);--button-active-background:rgba(255,255,255,0.14);--button-hover-background:rgba(255,255,255,0.08);--category-emoji-size:1.1rem;--emoji-size:1.5rem;--input-border-color:rgba(255,255,255,0.12);--input-font-color:#fff;--input-placeholder-color:rgba(180,200,240,0.4);--indicator-color:rgba(150,180,255,0.85);--outline-color:rgba(150,180,255,0.5);--text-color:rgba(200,220,255,0.9);--num-columns:8;width:100%;height:300px;border:none;}
+
+  /* ── 라이트박스 브라우즈 모드(일반 영상 — 유튜브뮤직 스타일, 2026-08-11) ──
+     쇼츠(스와이프) 모드는 위 규칙들 그대로 유지, 이 블록은 #yt-lightbox.lb-browse일 때만 적용됨. */
+  #yt-lb-main{display:block;}
+  /* 제목: 유튜브 자체 컨트롤을 탭하면 위에 뜨는 제목과 겹치는 정보라, 튀지 않게 은은한 톤으로만 */
+  #yt-lightbox.lb-browse #yt-lb-title-text{font-weight:500;color:rgba(175,190,220,0.6);}
+  #yt-lightbox.lb-browse #yt-lb-toolbar #yt-lb-prev,
+  #yt-lightbox.lb-browse #yt-lb-toolbar #yt-lb-next{display:none;} /* 아래 추천 목록 헤더의 화살표로 대체 */
+  #yt-lightbox.lb-browse #yt-lb-toolbar{justify-content:center;}
+  #yt-lb-member-info{display:none;}
+  #yt-lightbox.lb-browse #yt-lb-member-info{display:block;padding:10px 2px 0;border-top:0.5px solid rgba(255,255,255,0.07);margin-top:10px;}
+  #yt-lb-anchor-chip{font-size:12.5px;font-weight:600;color:rgba(215,228,255,0.85);}
+  #yt-lb-anchor-chip:empty{display:none;}
+  #yt-lb-with-chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:7px;}
+  #yt-lb-with-chips:empty{display:none;}
+  .lb-with-chip{background:rgba(255,255,255,0.06);border-radius:11px;padding:3px 9px;font-size:11px;color:rgba(195,210,240,0.72);}
+  #yt-lb-conn-btn{margin-top:9px;background:rgba(130,155,255,0.14);border:none;border-radius:14px;padding:6px 13px;font-size:12px;color:rgba(185,205,255,0.92);cursor:pointer;display:inline-flex;align-items:center;gap:1px;}
+  #yt-lb-conn-btn:hover{background:rgba(130,155,255,0.22);}
+  #yt-lb-conn-btn span{opacity:.7;}
+  #yt-lb-uplist{display:none;}
+  #yt-lightbox.lb-browse #yt-lb-uplist{display:block;}
+  #yt-lb-uplist-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:9px;}
+  #yt-lb-uplist-label{font-size:12px;font-weight:700;color:rgba(195,210,240,0.65);letter-spacing:.02em;}
+  #yt-lb-uplist-nav{display:flex;align-items:center;gap:4px;}
+  #yt-lb-uplist-prev,#yt-lb-uplist-next{background:none;border:none;color:rgba(255,255,255,0.5);font-size:17px;line-height:1;cursor:pointer;padding:3px 7px;}
+  #yt-lb-uplist-prev:hover,#yt-lb-uplist-next:hover{color:rgba(255,255,255,0.9);}
+  #yt-lb-uplist-prev:disabled,#yt-lb-uplist-next:disabled{color:rgba(255,255,255,0.15);cursor:default;}
+  #yt-lb-uplist-cnt{font-size:11px;color:rgba(150,170,210,0.55);min-width:34px;text-align:center;}
+  #yt-lb-uplist-scroll{display:flex;flex-direction:column;gap:2px;}
+  .lb-uplist-item{display:flex;gap:9px;padding:6px 4px;border-radius:8px;cursor:pointer;align-items:center;}
+  .lb-uplist-item:hover{background:rgba(255,255,255,0.05);}
+  .lb-uplist-item.is-current{background:rgba(130,155,255,0.11);}
+  .lb-uplist-thumb{width:78px;height:44px;flex-shrink:0;border-radius:6px;object-fit:cover;background:rgba(255,255,255,0.06);}
+  .lb-uplist-thumb.is-shorts{width:38px;height:66px;}
+  .lb-uplist-info{min-width:0;flex:1;}
+  .lb-uplist-title{font-size:12px;color:rgba(220,230,255,0.88);line-height:1.32;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+  .lb-uplist-meta{font-size:10.5px;color:rgba(150,170,210,0.55);margin-top:2px;}
+
+  @media(min-width:769px){
+    /* 데스크톱: 좌측(재생 중) + 우측(추천 목록) 2열 — 모바일 세로 스택과 다르게 별도 설계 */
+    #yt-lightbox.lb-browse #yt-lb-wrap{width:min(92vw,1080px);display:flex;align-items:flex-start;gap:26px;}
+    #yt-lightbox.lb-browse #yt-lb-main{flex:1;min-width:0;}
+    #yt-lightbox.lb-browse #yt-lb-uplist{width:320px;flex-shrink:0;max-height:min(80vh,720px);overflow-y:auto;padding-left:2px;}
+    #yt-lightbox.lb-browse #yt-lb-uplist-scroll{padding-bottom:8px;}
+  }
   @media(max-width:768px){
     #yt-lb-wrap{width:95vw;}
+    /* 브라우즈 모드: 작은 중앙 박스가 아니라 전체화면 스크롤 시트로 — 추천 목록까지 들어가야 해서 */
+    #yt-lightbox.lb-browse{align-items:stretch;justify-content:stretch;}
+    #yt-lightbox.lb-browse #yt-lb-wrap{width:100vw;max-width:100vw;height:100%;max-height:100%;overflow-y:auto;-webkit-overflow-scrolling:touch;box-sizing:border-box;padding:44px 14px 24px;}
+    #yt-lightbox.lb-browse #yt-lb-close{position:fixed;top:10px;right:12px;bottom:auto;z-index:1;background:rgba(0,0,0,0.4);border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;}
     #yt-lb-iframe{border-radius:10px;}
     /* 쇼츠는 세로로 길어서 화면 대부분을 차지해 스와이프 시작 지점(유튜브 iframe 바깥 여백)이 거의 없었음 —
        살짝 줄여서 위아래 여백을 확보 (탭으로 재생/일시정지하는 유튜브 기본 컨트롤은 그대로 유지됨) */
     #yt-lb-video-box.is-shorts{height:min(80vh,660px);width:auto;aspect-ratio:9/16;margin:0 auto;display:block;}
     #yt-lb-close{top:auto;bottom:calc(100% + 8px);right:0;font-size:15px;padding:4px 6px;opacity:.7;}
-    #yt-lightbox.lb-shorts #yt-lb-close{display:none;}
+    /* :not(.lb-browse) — 브라우즈 세션 중에 회전 버튼으로 영상만 세로로 바꾼 경우(lb-shorts는 영상 자체의
+       현재 비율일 뿐 세션 모드가 아님)까지 닫기 버튼이 사라지면 안 됨(2026-08-11) */
+    #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-close{display:none;}
     /* 모바일은 상하 스와이프로 영상 넘기므로 좌우 버튼은 오히려 잘못된 방향을 암시함 — 숨김 */
     #yt-lb-prev,#yt-lb-next{display:none;}
     #yt-lb-toolbar{justify-content:center;}
@@ -1022,11 +1077,13 @@
   #hnn-apply-btn:disabled{opacity:.35;cursor:default;}
   #hnn-dup-sec{flex-shrink:0;padding:10px 18px 12px;border-bottom:0.5px solid rgba(255,255,255,0.07);}
   #hnn-dup-list{max-height:160px;overflow-y:auto;margin-top:6px;}
-  .hnn-dup-item{padding:5px 0;border-top:0.5px solid rgba(255,255,255,0.05);}
+  /* 이름 라벨+칩을 한 줄(flex-wrap)로 압축 — 127개 그룹이 전부 2줄씩 차지하던 걸 줄임(2026-08-11).
+     이름 라벨은 톤을 낮추고 cursor/hover 없이 둬서 클릭 가능한 칩과 시각적으로 확실히 구분되게 함
+     (클릭해도 반응 없어 헷갈린다는 제보 — 원래부터 클릭 대상이 아니었음). */
+  .hnn-dup-item{display:flex;flex-wrap:wrap;align-items:center;gap:4px 6px;padding:4px 0;border-top:0.5px solid rgba(255,255,255,0.05);}
   .hnn-dup-item:first-child{border-top:none;}
-  .hnn-dup-name{font-size:11.5px;font-weight:600;color:rgba(220,230,255,0.9);margin-bottom:4px;}
-  .hnn-dup-people{display:flex;flex-wrap:wrap;gap:6px;}
-  .hnn-dup-person{font-size:11px;color:rgba(170,195,255,0.85);background:rgba(120,160,255,0.10);border:0.5px solid rgba(140,180,255,0.24);border-radius:8px;padding:3px 8px;cursor:pointer;}
+  .hnn-dup-name{font-size:11.5px;font-weight:600;color:rgba(150,170,205,0.6);flex-shrink:0;}
+  .hnn-dup-person{font-size:11px;color:rgba(170,195,255,0.85);background:rgba(120,160,255,0.10);border:0.5px solid rgba(140,180,255,0.24);border-radius:8px;padding:2px 7px;cursor:pointer;}
   .hnn-dup-person:hover{background:rgba(120,160,255,0.20);color:#fff;}
   #hnn-dup-empty{font-size:11px;color:rgba(155,178,228,0.4);padding:4px 0;}
   #dq-junk-sec{display:flex;flex-direction:column;min-height:0;flex:1;}
@@ -1566,8 +1623,12 @@
   .tt-insta-cam-btn.cam-overlay{position:absolute;width:20px;height:20px;left:calc(4px + 38px);top:38px;border:none;background:rgba(10,14,32,0.68);backdrop-filter:blur(3px);}
   .tt-insta-cam-btn.cam-overlay svg{width:11px;height:11px;}
   .tt-insta-cam-btn.cam-uploading{opacity:.5;pointer-events:none;}
-  #tt-insta-pic-wrap{display:block;flex-shrink:0;width:62px;height:62px;border-radius:50%;margin:-3px 0 0;cursor:pointer;text-decoration:none;}
-  .tt-insta-ring{display:block;width:100%;height:100%;border-radius:50%;padding:1.5px;background:conic-gradient(from 0deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888,#833ab4,#5851db,#f09433);}
+  #tt-insta-pic-wrap{display:block;flex-shrink:0;width:62px;height:62px;border-radius:50%;margin:-1px 0 0;cursor:pointer;text-decoration:none;}
+  /* 인스타 브랜드 그라데이션(주황~빨강) → 인디고~마젠타 성운 톤(2026-08-11 1차) → 그마저도 컬러감이
+     남아있어서 블랙앤화이트에 가까운 톤으로 재조정(2026-08-11 2차, 사용자 제보) — 검정~은색~흰색을
+     도는 메탈릭한 느낌만 남김. 가장 어두운 지점이 배경(#060612 계열)이랑 거의 같은 밝기라 링과
+     배경 경계가 안 보인다는 재제보(2026-08-11 3차) — 최저 밝기만 살짝 올림. */
+  .tt-insta-ring{display:block;width:100%;height:100%;border-radius:50%;padding:1.5px;background:conic-gradient(from 0deg,#1e1e26,#50505c,#eceef2,#50505c,#1e1e26);}
   #tt-insta-pic{display:block;width:100%;height:100%;border-radius:50%;object-fit:cover;border:2px solid rgba(14,18,38,0.98);}
   #tt-insta-pic-wrap:hover{transform:scale(1.07);transition:transform .15s;}
   #tt.has-insta-pic{max-width:288px!important;}
@@ -1785,8 +1846,12 @@
   .feed-strip::-webkit-scrollbar{display:none;}
   .feed-strip-item{display:flex;flex-direction:column;align-items:center;gap:6px;flex-shrink:0;width:66px;cursor:pointer;position:relative;-webkit-tap-highlight-color:transparent;}
   /* 로딩 중(이미지 뜨기 전)엔 이 배경이 생으로 다 보여서 원색 무지개 동그라미처럼 튀어 보이던 문제
-     (2026-08-10, 사용자 제보) — 톤을 확 낮춰 은은한 테두리 느낌만 남김(보일듯말듯). */
-  .feed-strip-thumb-wrap{width:60px;height:60px;border-radius:50%;padding:2px;flex-shrink:0;position:relative;overflow:hidden;background:conic-gradient(from 180deg,#522c1d,#521d2c,#2c1d52,#1d3152,#522c1d);}
+     (2026-08-10, 사용자 제보) — 톤을 확 낮춰 은은한 테두리 느낌만 남김(보일듯말듯).
+     톤을 낮춘 뒤에도 갈색~보라 배색이 여전히 우주 테마와 안 어울려 무지개 느낌이 난다는 재제보로
+     인디고~마젠타 성운 톤으로 바꿨다가(2026-08-11 1차), 그마저 컬러감이 남아있다는 재재제보(2차)로
+     .tt-insta-ring과 같은 블랙앤화이트 메탈릭 톤으로 통일. 밝기 범위는 원래 톤 그대로 유지.
+     최저 밝기가 배경과 안 구분된다는 재제보(2026-08-11 3차)로 .tt-insta-ring과 함께 최저 밝기만 올림. */
+  .feed-strip-thumb-wrap{width:60px;height:60px;border-radius:50%;padding:2px;flex-shrink:0;position:relative;overflow:hidden;background:conic-gradient(from 180deg,#1e1e26,#38383f,#48484f,#26262c,#1e1e26);}
   .feed-strip-thumb{width:100%;height:100%;border-radius:50%;object-fit:cover;display:block;border:2px solid #0b0f1f;box-sizing:border-box;opacity:0;transition:opacity .25s ease;}
   .feed-strip-thumb.loaded{opacity:1;}
   .feed-strip-icon{width:100%;height:100%;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;background:rgba(16,20,38,0.96);border:2px solid #0b0f1f;box-sizing:border-box;}

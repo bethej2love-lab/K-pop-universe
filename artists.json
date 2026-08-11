@@ -1178,6 +1178,16 @@
    "ko": "웨이션브이",
    "en": "WayV"
   },
+  "groups": [
+   {
+    "ko": "웨이션브이",
+    "en": "WayV"
+   },
+   {
+    "ko": "엔시티 127",
+    "en": "NCT 127"
+   }
+  ],
   "co": "SM",
   "planet": "main",
   "x": 8844,
@@ -16365,6 +16375,13 @@
    "ko": "한국",
    "en": "KR"
   },
+  "family": [
+   {
+    "rel": "동생",
+    "name": "천둥",
+    "group": "엠블랙"
+   }
+  ],
   "links": {
    "instagram": "https://www.instagram.com/daraxxi",
    "namu": "https://namu.wiki/w/산다라박"
@@ -29372,6 +29389,13 @@
    "en": "KR"
   },
   "sparkle": false,
+  "family": [
+   {
+    "rel": "누나",
+    "name": "산다라박",
+    "group": "투애니원"
+   }
+  ],
   "songs": [],
   "links": {
    "namu": "https://namu.wiki/w/%EC%B2%9C%EB%91%A5(%EC%97%A0%EB%B8%94%EB%9E%99)"
