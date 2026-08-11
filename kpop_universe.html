@@ -1114,7 +1114,7 @@ function _refreshOpenCardText(){
     });}
     const tcoEl=document.getElementById('tco');tcoEl.innerHTML='';
     const _tcoParts=[];
-    if(a.co)_tcoParts.push({text:a.co,type:'agency',value:a.co});
+    if(a.co&&a.co!=='무소속')_tcoParts.push({text:a.co,type:'agency',value:a.co});
     if(a.bday){
       _tcoParts.push({text:_ageChipText(a),type:'birthYear',value:a.bday.split('.')[0]});
     }
@@ -5641,7 +5641,7 @@ function showT(a,cx,cy,keepNavStack,urlMode,pushMobNav,noFly){
     fandomRow.style.display='none';
   }
   const _tcoParts=[];
-  if(a.co)_tcoParts.push({text:a.co,type:'agency',value:a.co});
+  if(a.co&&a.co!=='무소속')_tcoParts.push({text:a.co,type:'agency',value:a.co});
   if(a.bday){
     _tcoParts.push({text:_ageChipText(a),type:'birthYear',value:a.bday.split('.')[0]});
   }
@@ -6103,7 +6103,7 @@ function showGC(ko,cx,cy,keepMemberPanel,skipRipple,urlMode,pushMobNav){
     _enEl.textContent=_enShow?info.en:'';
     _enEl.style.display=_enShow?'':'none';
   }
-  _renderTagChip(document.getElementById('gc-co'),info.co||'','agency',info.co||'');
+  _renderTagChip(document.getElementById('gc-co'),(info.co==='무소속'?'':info.co)||'','agency',(info.co==='무소속'?'':info.co)||'');
   const _debutYr=String(info.debut||'').slice(0,4);
   _renderTagChip(document.getElementById('gc-debut'),info.debut||'','debutYear',_debutYr);
   // 서바이벌/오디션 프로그램 출신이면 데뷔 연도 옆에 "[프로그램명]"을 덧붙인다 — 클릭 가능한 데뷔
@@ -13878,6 +13878,8 @@ function _makeChVidController(contId){
         // 섞여 들어왔음(2026-08-11, 사용자 제보) — 원곡 크레딧 문맥이 아닌 이 시리즈명만 명시적으로 제외.
         q=q.or('title_norm.ilike.*cover*,title_norm.ilike.*커버*,title_norm.ilike.*원곡*,title_norm.ilike.*original*')
           .not('title_norm','ilike','*be original*');
+      }else if(filter==='live'){
+        q=q.eq('category','live').not('title','ilike','%[live]%');
       }else if(filter!=='all'){
         q=q.eq('category',filter);
       }
