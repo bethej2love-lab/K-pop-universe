@@ -376,6 +376,8 @@
         <button id="wonkok-apply-btn">선택 항목 원곡 커버로 이동</button>
       </div>
       <div id="wonkok-list"></div>
+      <button id="wonkok-overlap-fix-btn" style="margin-top:10px;opacity:.8;">cover_of ↔ with 겹침 정리(일회용)</button>
+      <div id="wonkok-overlap-status" class="hnn-auto-status"></div>
     </div>
   </div>
 </div>
@@ -972,6 +974,13 @@ let _myUniverseDeparting=[];
 const MY_UNIVERSE_DEPART_MS=600;
 let _memberCardLines=[];
 function _artistGroups(a){return a.groups||[a.group];}
+// 겸임/이적 멤버는 그룹마다 활동 상태가 다를 수 있음(예: 이달의소녀 탈퇴 후 루셈블로 데뷔) — groups
+// 배열의 해당 그룹 항목에 active를 개별로 얹어두면 그 그룹 문맥에서는 이 값을 우선 쓰고, 없으면
+// a.active(대표 상태)로 폴백한다(2026-08-11).
+function _activeInGroup(a,ko){
+  const g=_artistGroups(a).find(x=>x.ko===ko);
+  return(g&&g.active!==undefined)?g.active!==false:a.active!==false;
+}
 // 유튜브 채널 동기화 조회에 쓰는 키: 실존하는 그룹 소속이면 그 그룹 키를, 아이유처럼 소속 그룹이 없는
 // 솔로 아티스트면 본인 이름을 키로 써서 본인 채널을 동기화/조회한다(그룹별 group_ko 컬럼 재사용).
 function _ytGroupKoFor(a){return GROUPS[a.group.ko]?a.group.ko:a.name.ko;}
@@ -3046,7 +3055,7 @@ document.getElementById('yt-lightbox').addEventListener('click',e=>{e.stopPropag
 {
   const _lbEl=document.getElementById('yt-lightbox');
   const _lbWrap=document.getElementById('yt-lb-wrap');
-  let _lbTY=0,_lbTX=0,_lbDragging=false,_lbAxis=null,_lbTStart=0;
+  let _lbTY=0,_lbTX=0,_lbDragging=false,_lbAxis=null,_lbTStart=0,_lbPullMode=false;
   function _lbSlideIn(fromDir){
     // fromDir=1: 아래서 위로 진입(위로 스와이프→다음 영상)
     // fromDir=-1: 위에서 아래로 진입(아래로 스와이프→이전 영상)
@@ -3064,7 +3073,7 @@ document.getElementById('yt-lightbox').addEventListener('click',e=>{e.stopPropag
   _lbEl.addEventListener('touchstart',e=>{
     if(e.touches.length!==1)return;
     _lbTX=e.touches[0].clientX;_lbTY=e.touches[0].clientY;
-    _lbDragging=true;_lbAxis=null;_lbTStart=e.timeStamp;
+    _lbDragging=true;_lbAxis=null;_lbTStart=e.timeStamp;_lbPullMode=false;
     _lbWrap.style.transition='none';
   },{passive:true});
   _lbEl.addEventListener('touchmove',e=>{
@@ -3075,7 +3084,8 @@ document.getElementById('yt-lightbox').addEventListener('click',e=>{e.stopPropag
       if(Math.abs(dx)>8||Math.abs(dy)>8)_lbAxis=Math.abs(dx)>Math.abs(dy)?'x':'y';
       return;
     }
-    if(_lbAxis==='y'){
+    if(_lbAxis!=='y')return;
+    if(_lbSessionMode==='shorts'){
       if(e.cancelable)e.preventDefault();
       const canPrev=_lbPlaylist&&_lbIdx>0;
       const canNext=_lbPlaylist&&_lbIdx<_lbPlaylist.length-1;
@@ -3083,6 +3093,21 @@ document.getElementById('yt-lightbox').addEventListener('click',e=>{e.stopPropag
       if((dy<0&&!canNext)||(dy>0&&!canPrev))eff=dy*0.12;
       _lbWrap.style.transform=`translateY(${eff}px)`;
       _lbWrap.style.opacity=`${Math.max(0.25,1-Math.abs(eff)/280)}`;
+    }else{
+      // 브라우즈 모드: 목록이 맨 위까지 스크롤된 상태에서 더 아래로 당기면 "당겨서 닫기"(인스타/트위터
+      // 이미지뷰어 방식) — 그 외엔 preventDefault 없이 평소처럼 네이티브 스크롤 그대로 둔다
+      // (2026-08-11, 사용자 요청 — 예전엔 이 리스너가 세션모드 구분 없이 항상 스와이프-넘기기로만
+      // 동작해서 브라우즈 모드에서 목록을 스크롤하려는 손짓까지 다음 영상 넘기기로 오작동했었음).
+      if(_lbWrap.scrollTop<=0&&dy>0){
+        if(e.cancelable)e.preventDefault();
+        _lbPullMode=true;
+        const eff=Math.pow(dy,0.85);
+        _lbWrap.style.transform=`translateY(${eff}px)`;
+        _lbWrap.style.opacity=`${Math.max(0.4,1-eff/380)}`;
+      }else if(_lbPullMode){
+        _lbPullMode=false;
+        _lbWrap.style.transform='';_lbWrap.style.opacity='';
+      }
     }
   },{passive:false});
   _lbEl.addEventListener('touchend',e=>{
@@ -3091,7 +3116,7 @@ document.getElementById('yt-lightbox').addEventListener('click',e=>{e.stopPropag
     const dy=e.changedTouches.length?e.changedTouches[0].clientY-_lbTY:0;
     const dt=Math.max(1,e.timeStamp-_lbTStart);
     const vel=Math.abs(dy)/dt;
-    if(_lbAxis==='y'){
+    if(_lbAxis==='y'&&_lbSessionMode==='shorts'){
       const canPrev=_lbPlaylist&&_lbIdx>0;
       const canNext=_lbPlaylist&&_lbIdx<_lbPlaylist.length-1;
       const thresh=vel>0.45?28:72;
@@ -3111,6 +3136,22 @@ document.getElementById('yt-lightbox').addEventListener('click',e=>{e.stopPropag
         _lbWrap.style.transition='transform .4s cubic-bezier(0.22,1,0.36,1),opacity .3s ease';
         _lbWrap.style.transform='';_lbWrap.style.opacity='';
         setTimeout(()=>{_lbWrap.style.transition='';},420);
+      }
+    }else if(_lbAxis==='y'&&_lbSessionMode==='browse'&&_lbPullMode){
+      _lbPullMode=false;
+      const thresh=vel>0.5?50:90;
+      if(dy>thresh){
+        _lbWrap.style.transition='transform .22s cubic-bezier(0.4,0,1,1),opacity .2s ease';
+        _lbWrap.style.transform='translateY(100vh)';
+        _lbWrap.style.opacity='0';
+        setTimeout(()=>{
+          closeLightbox();
+          _lbWrap.style.transition='';_lbWrap.style.transform='';_lbWrap.style.opacity='';
+        },220);
+      }else{
+        _lbWrap.style.transition='transform .32s cubic-bezier(0.22,1,0.36,1),opacity .25s ease';
+        _lbWrap.style.transform='';_lbWrap.style.opacity='';
+        setTimeout(()=>{_lbWrap.style.transition='';},340);
       }
     }else{
       _lbWrap.style.transition='';
@@ -5761,6 +5802,7 @@ async function _loadInstaPic(a){
   const img=document.getElementById('tt-insta-pic');
   if(!wrap||!img)return;
   wrap.style.display='none';
+  wrap.classList.remove('tt-pic-loading','tt-pic-ready');
   if(!a.links?.instagram||!sb)return;
   const koName=a.name.ko;
   if(_instaPicPreloadP)await _instaPicPreloadP;
@@ -5775,11 +5817,19 @@ async function _loadInstaPic(a){
   if(_openTArtist?.name?.ko!==koName)return;
   wrap.href=a.links.instagram;
   wrap.onclick=e=>e.stopPropagation();
+  // URL이 확정된 시점(캐시 히트든 방금 조회든)에 바로 자리를 차지하고 셰머를 보여준다 — 실제 이미지
+  // 바이트 다운로드가 끝나기 전까지는 셰머만 돌고, onload에서 사진으로 크로스페이드(2026-08-11).
+  // 어드민 카메라 버튼도 이 시점부터 코너 오버레이로 미리 줄여둬야 셰머 원과 겹쳐 두 개로 보이지 않음
+  // (_syncCamBtn은 img.complete 기준이라 셰머가 도는 동안엔 아직 안 줄어드는 간극이 있었음).
+  wrap.style.display='';
+  wrap.classList.add('tt-pic-loading');
+  wrap.classList.remove('tt-pic-ready');
+  document.getElementById('tt-insta-cam-admin')?.classList.add('cam-overlay');
   // 핸들러를 src보다 먼저 등록 (캐시된 이미지는 src 세팅 직후 onload 발화 가능)
-  img.onerror=()=>{wrap.style.display='none';document.getElementById('tt')?.classList.remove('has-insta-pic');};
-  img.onload=()=>{wrap.style.display='';document.getElementById('tt')?.classList.add('has-insta-pic');};
+  img.onerror=()=>{wrap.style.display='none';wrap.classList.remove('tt-pic-loading','tt-pic-ready');document.getElementById('tt')?.classList.remove('has-insta-pic');document.getElementById('tt-insta-cam-admin')?.classList.remove('cam-overlay');};
+  img.onload=()=>{wrap.classList.remove('tt-pic-loading');wrap.classList.add('tt-pic-ready');document.getElementById('tt')?.classList.add('has-insta-pic');};
   if(img.src!==picUrl)img.src=picUrl;
-  else if(img.complete&&img.naturalWidth){wrap.style.display='';document.getElementById('tt')?.classList.add('has-insta-pic');}
+  else if(img.complete&&img.naturalWidth){wrap.classList.remove('tt-pic-loading');wrap.classList.add('tt-pic-ready');document.getElementById('tt')?.classList.add('has-insta-pic');}
 }
 async function _saveInstaPic(koName,picUrl){
   if(!sb||!window._sbSession)return;
@@ -5834,20 +5884,21 @@ function _renderGcMemberList(ko,cx,cy){
   const labelEl=document.getElementById('gc-mem-label');
   memListEl.innerHTML='';
   const allMembers=ARTISTS.filter(a=>_artistGroups(a).some(g=>g.ko===ko));
-  const hasInactive=allMembers.some(a=>!a.active);
+  const hasInactive=allMembers.some(a=>!_activeInGroup(a,ko));
   // 해체 등으로 전원이 비활동 상태인 그룹은 "활동 멤버만" 필터링하면 아무도 안 남아 카드가 텅 비어
   // 보이므로, 이 경우엔 토글 없이 기본값으로 전원 노출(글자색은 기존 비활동 스타일 그대로 어둡게 유지).
-  const noActiveMembers=allMembers.length>0&&!allMembers.some(a=>a.active);
+  const noActiveMembers=allMembers.length>0&&!allMembers.some(a=>_activeInGroup(a,ko));
   labelEl.classList.toggle('toggleable',hasInactive&&!noActiveMembers);
   labelEl.classList.toggle('on',hasInactive&&!noActiveMembers&&_gcShowInactive);
   labelEl.title=(hasInactive&&!noActiveMembers)?(currentLang==='ko'?'눌러서 비활동/탈퇴 멤버 보기':'Click to show inactive members'):'';
-  (noActiveMembers||(hasInactive&&_gcShowInactive)?allMembers:allMembers.filter(a=>a.active))
+  (noActiveMembers||(hasInactive&&_gcShowInactive)?allMembers:allMembers.filter(a=>_activeInGroup(a,ko)))
     .sort((a,b)=>{
-      if(a.active!==b.active)return a.active?-1:1; // 활동 멤버 먼저, 비활동/탈퇴 멤버는 맨 뒤로
+      const aAct=_activeInGroup(a,ko),bAct=_activeInGroup(b,ko);
+      if(aAct!==bAct)return aAct?-1:1; // 활동 멤버 먼저, 비활동/탈퇴 멤버는 맨 뒤로
       return (a.bday||'9999-99-99')<(b.bday||'9999-99-99')?-1:1;
     })
     .forEach(m=>{
-      const sp=document.createElement('span');sp.className='gc-mem-name'+(m.active?'':' gc-mem-inactive');
+      const sp=document.createElement('span');sp.className='gc-mem-name'+(_activeInGroup(m,ko)?'':' gc-mem-inactive');
       sp.textContent=currentLang==='ko'?m.name.ko:(m.name.en||m.name.ko);
       _appendDeceasedStar(sp,m);
       if(_artistGroups(m).length>1)sp.title=_artistGroups(m).map(g=>g.ko).join(' · ');
@@ -7354,11 +7405,16 @@ function _makeColBtn(s,ctx){
   return btn;
 }
 // ── Collections (구 playlists) ────────────────────────────────────
-// localStorage 키('kpu_playlists')와 Supabase user_data 컬럼명('playlists')은 기존 사용자 데이터
-// 마이그레이션 없이 그대로 유지 — JS 변수/함수/UI 표기만 collections로 통일(2026-08-10, 사용자 요청).
-const COLLECTION_KEY='kpu_playlists';
-let collections=JSON.parse(localStorage.getItem(COLLECTION_KEY)||'[]');
-function _saveCollections(){localStorage.setItem(COLLECTION_KEY,JSON.stringify(collections));_sbPushColumn('playlists',collections);}
+// localStorage 키·Supabase user_data 컬럼명까지 전부 collections로 통일(2026-08-11, 사용자 요청 —
+// 예전엔 JS 변수/UI만 collections로 바꾸고 저장 키는 호환을 위해 playlists로 남겨뒀었는데, 서버 쪽
+// playlists 컬럼이 애초에 한 번도 생성된 적이 없었던(생성 안 된 컬럼에 저장 시도 → 매번 조용히 실패
+// → 컬렉션이 계속 사라지는 것처럼 보이던 버그의 진짜 원인이었음) 게 밝혀지면서, 서버에 남은 기존
+// 데이터가 없어 마이그레이션 부담 없이 지금 한 번에 이름을 맞출 수 있게 됨) — localStorage는 예전
+// 키(kpu_playlists)에 남아있을 수 있는 기존 로컬 데이터를 한 번만 읽어와 새 키로 옮긴다.
+const COLLECTION_KEY='kpu_collections';
+const _COLLECTION_KEY_OLD='kpu_playlists';
+let collections=JSON.parse(localStorage.getItem(COLLECTION_KEY)||localStorage.getItem(_COLLECTION_KEY_OLD)||'[]');
+function _saveCollections(){localStorage.setItem(COLLECTION_KEY,JSON.stringify(collections));localStorage.removeItem(_COLLECTION_KEY_OLD);_sbPushColumn('collections',collections);}
 function _colNewId(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6);}
 function _createCollection(name){
   const col={id:_colNewId(),name:name.trim(),videos:[],createdAt:new Date().toISOString().slice(0,10),isPublic:false};
@@ -8861,7 +8917,7 @@ async function _migrateLocalToServer(userId){
     fav_connections:[...favConnections],
     fav_dates:favDates,
     scraps:scraps,
-    playlists:collections,
+    collections:collections,
     profile:myProfile,
     concert_log:concertLog
   };
@@ -8880,7 +8936,7 @@ async function _pullServerToLocal(userId){
   favConnections=new Set(data.fav_connections||[]);
   favDates=data.fav_dates||{};
   scraps=data.scraps||[];
-  collections=data.playlists||[];
+  collections=data.collections||[];
   myProfile=data.profile||null;
   concertLog=data.concert_log||[];
   localStorage.setItem(FAV_KEY_G,JSON.stringify([...favGroups]));
@@ -11223,6 +11279,12 @@ document.getElementById('hnn-close')?.addEventListener('click',()=>{
 // 따로 있었는데, 감지 로직이 사실상 같아서(같은 절 파싱 헬퍼를 공유하고 있었음) 하나로 합침
 // (2026-08-04, 사용자 요청 — "따로 있는 게 효율적인가?").
 const _WONKOK_BRACKETS={'(':')','[':']'};
+// "BE ORIGINAL" 시리즈는 콘텐츠명이지 원곡 크레딧이 아님 — _wonkokStripClause/_wonkokParseClause/
+// _wonkokScan 셋 다 같이 참조하는 공용 헬퍼라 최상위(모듈) 스코프에 둬야 한다. 예전엔 _wonkokScan
+// 함수 안에서만 지역 const로 선언해서, 그 안에서만 쓰일 땐 괜찮았는데 실제로는 이 두 함수도 이
+// 이름을 참조하고 있어서(그 함수들은 이 지역변수를 볼 수 없는 별도 스코프) 스캔이 후보 상세 파싱
+// 단계까지 진행되면 "_isBeOriginal is not defined"로 죽는 버그가 있었음(2026-08-11, 사용자 제보).
+function _isBeOriginal(t){return/\bbe[\s_-]+original\b/i.test(t);}
 function _wonkokStripClause(title){
   let out='',i=0;
   while(i<title.length){
@@ -11328,7 +11390,6 @@ async function _wonkokScan(){
       _wkLastId=data[data.length-1].id;
     }
     const _wonkokIndicatorRe=/원곡|커버|cover|\boriginal\b/i;
-    const _isBeOriginal=t=>/\bbe[\s_-]+original\b/i.test(t); // "BE ORIGINAL" 시리즈는 콘텐츠명, 원곡 크레딧 아님
     const hitIds=(idTitleRows||[]).filter(v=>{
       const t=v.title||'';
       if(!_wonkokIndicatorRe.test(t))return false;
@@ -11353,7 +11414,18 @@ async function _wonkokScan(){
       if(gset.size>=2)multiGroupIds.push(v.id);
     });
     const multiGroupIdSet=new Set(multiGroupIds);
-    const allIds=[...new Set([...hitIds,...multiGroupIds])];
+    // "Dance Cover"/"커버댄스"류 — "(원곡: X)"/"(X 커버)"처럼 커버 표시가 괄호 절 안에 깔끔하게 안
+    // 묶이고 제목 평문에 그냥 노출된 경우(예: "미쓰에이 Bad Girl Good Girl 커버댄스 by 체리블렛",
+    // "PRIMROSE 'HUSH'(miss A) Dance COVER Video") — 위 괄호절 파서로는 못 잡아서 신인 그룹이 선배
+    // 그룹 안무를 커버한 영상 다수가 계속 with_groups(콜라보)로 잘못 남아있었음(2026-08-11, 사용자
+    // 제보 — "신인 아이돌이 메이저 선배 그룹 커버댄스 하는 영상 오류 많다"). multiGroupIds와 같은
+    // 구조적 신호 방식이지만, 이쪽은 그룹이 하나만 걸려도(대부분 실측 케이스가 with_groups 딱 1개)
+    // 후보로 삼는다 — 대신 그 그룹/멤버 이름이 실제로 제목에 등장하는지는 아래 후보 검사 단계에서
+    // 한 번 더 확인해서(이름이 우연히도 전혀 안 나오면 걸러짐) 오탐을 줄인다.
+    const _DANCE_COVER_RE=/dance\s*cover|커버\s*댄스|cover\s*dance|cover\s*video/i;
+    const danceCoverIds=(idTitleRows||[]).filter(v=>_DANCE_COVER_RE.test(v.title||'')).map(v=>v.id);
+    const danceCoverIdSet=new Set(danceCoverIds);
+    const allIds=[...new Set([...hitIds,...multiGroupIds,...danceCoverIds])];
     if(!allIds.length){
       _wonkokCandidates=[];
       statusEl.textContent=`스캔 완료 — 전체 ${idTitleRows?.length||0}개 중 후보 0개`;
@@ -11404,6 +11476,23 @@ async function _wonkokScan(){
           if(perfNorm&&(_wonkokHit(perfNorm,gko)||(en&&_wonkokHit(perfNorm,en))))return false;
           return _wonkokHit(origNorm,gko)||(en&&_wonkokHit(origNorm,en));
         });
+      }
+      if(danceCoverIdSet.has(v.id)){
+        // "Dance Cover"/"커버댄스"류(괄호 절 없이 평문에 노출) — with_members/with_groups에 걸린
+        // 그룹/멤버 이름이 제목에 실제로 등장하는 경우만 원곡자 후보로 삼는다(이름이 전혀 안 나오면
+        // 이 영상과 무관한 태그일 수 있으니 건드리지 않고 그대로 둠 — 오탐 방지).
+        const titleNorm=_wonkokNorm(v.title||'');
+        const dcWithMem=(v.with_members||[]).filter(s=>{
+          const m=s.match(/^(.*)\((.*)\)$/);
+          if(!m)return false;
+          return _wonkokNameHits(m[1],m[2],titleNorm);
+        });
+        const dcWithGrp=(v.with_groups||[]).filter(gko=>{
+          const en=(GROUPS[gko]||{}).en||'';
+          return _wonkokHit(titleNorm,gko)||(en&&_wonkokHit(titleNorm,en));
+        });
+        toMoveWithMem=[...new Set([...toMoveWithMem,...dcWithMem])];
+        toMoveWithGrp=[...new Set([...toMoveWithGrp,...dcWithGrp])];
       }
       if(isMultiGroupCover){
         // 괄호 절 기반 판정과 별개로, 여러 그룹 커버 신호가 있으면 with_members/with_groups 전체를
@@ -11528,6 +11617,47 @@ document.getElementById('wonkok-apply-btn')?.addEventListener('click',async()=>{
   if(!_wonkokCandidates.length)_renderWonkokList();
 });
 document.getElementById('wonkok-scan-btn')?.addEventListener('click',_wonkokScan);
+// cover_of_members와 with_members에 같은 사람이 동시에 들어간 4건(2026-08-11, 사용자가 SQL로 직접
+// 찾아서 제보 — cover_of_members && with_members 겹침) 정리용 일회용 버튼. 겹침이 생기는 이유가
+// 매번 달라서(동명이인 오매칭 2건, 원곡자가 실제 출연자로 잘못 남은 경우 1건, 원곡자 자리에 실제
+// 출연자가 잘못 들어간 경우 1건) 자동 규칙 하나로 못 묶고 각 영상 제목을 직접 읽어 실제 사실관계에
+// 맞게 하나씩 확정한 값을 그대로 반영한다. 재실행해도 안전(idempotent) — 이미 고쳐진 값이면 그대로 덮어씀.
+const WONKOK_OVERLAP_FIXES=[
+  // "Greedy(Ariana Grande) Cover by CHAEWON" — CHAEWON은 채널주 윤채원(클라씨) 본인 영문표기인데
+  // 르세라핌 김채원으로 동명이인 오매칭됨. 원곡자(Ariana Grande)는 비추적 아티스트라 cover_of도 빈칸.
+  {id:'1eM0Krz6T0k',with_members:[],cover_of_members:[]},
+  // "JUN - ヤキモチ (원곡: 高橋優/타카하시 유우)" — 일본 가수 타카하시 유우가 넥스지 유우로 동명이인 오매칭.
+  {id:'gG63zVEnpWw',with_members:[],cover_of_members:[]},
+  // "손동운 - 잘자 내 몫까지 (원곡: 수지)" — 원곡자 수지는 맞게 잡혔는데, 실제 출연은 손동운 단독이라
+  // with_members에 수지가 잘못 남아있음(원곡자일 뿐 이 영상에 출연한 게 아님).
+  {id:'lygdOgUFWg4',with_members:[],cover_of_members:['수지(미쓰에이)']},
+  // "눈이 오잖아(원곡: 이무진 Feat.Heize) - STAYC 시은 X ATEEZ 종호" — 시은은 실제 듀엣 출연자(with 유지),
+  // 원곡자(이무진/헤이즈)는 비추적 아티스트라 cover_of는 빈칸이어야 하는데 시은이 잘못 들어가있음.
+  {id:'P_5LAItOplE',with_members:['시은(스테이씨)'],cover_of_members:[]},
+];
+document.getElementById('wonkok-overlap-fix-btn')?.addEventListener('click',async()=>{
+  if(!sb)return;
+  const btn=document.getElementById('wonkok-overlap-fix-btn');
+  const statusEl=document.getElementById('wonkok-overlap-status');
+  btn.disabled=true;btn.textContent='처리 중…';
+  let done=0,skipped=0,errors=0;
+  for(const fix of WONKOK_OVERLAP_FIXES){
+    try{
+      const{data:row,error:selErr}=await sb.from(_YT_TABLE).select('tags_manual').eq('id',fix.id).maybeSingle();
+      if(selErr)throw selErr;
+      if(!row){skipped++;continue;}
+      if(row.tags_manual){skipped++;continue;} // 수동편집 보호 — 이 프로젝트 전역 원칙
+      const{error:updErr}=await sb.from(_YT_TABLE).update({
+        with_members:fix.with_members,
+        cover_of_members:fix.cover_of_members
+      }).eq('id',fix.id);
+      if(updErr)throw updErr;
+      done++;
+    }catch(e){console.error('[wonkok overlap fix]',fix.id,e);errors++;}
+  }
+  btn.disabled=false;btn.textContent='cover_of ↔ with 겹침 정리(일회용)';
+  statusEl.textContent=`완료 — 반영 ${done}건 / 보호(수동편집)·미존재 ${skipped}건${errors?` / 오류 ${errors}건`:''}`;
+});
 ;
 document.getElementById('wonkok-close')?.addEventListener('click',()=>document.getElementById('hnn-overlay').classList.remove('open'));
 document.getElementById('sp-wonkok-btn')?.addEventListener('click',()=>{document.getElementById('hnn-overlay').classList.add('open');_renderHnnWhitelist();_renderHnnDuplicateNames();_hnnSwitchTab('wonkok');});
@@ -12221,7 +12351,6 @@ async function _ytRetagAllIncludingTagged(){
 }
 
 // ── 외부 채널 동기화 (M2·음방·직캠) ──
-function _ytApiKeyExt(){return(localStorage.getItem('kpu_ext_yt_key')||'').trim();}
 // tier: 'music'(공식/음악방송·직캠 — 무대·라이브 콘텐츠라 그룹명이 제목에 없어도 멤버 이름만으로
 // 그룹을 역추론해도 안전) vs 'variety'/'magazine'(예능·잡지 — 매 영상이 그때그때 다른 셀럽을 다루는
 // 채널이라 멤버 이름이 흔한 단어와 우연히 겹치면 위험. 그룹명/팬덤명이 제목에 literal로 없으면 멤버
@@ -12650,7 +12779,10 @@ function _extBuildRows(vids,strict,tier,owner){
 let _extIdolResyncing=false;
 async function _ytResyncIdolChannels(){
   if(_extIdolResyncing)return;
-  const key=_ytApiKeyExt();
+  // 설정 패널에 입력칸이 따로 없는 kpu_ext_yt_key를 참조하고 있어서, 메인 API 키를 이미 넣었어도
+  // 항상 "API 키를 먼저 입력해주세요"만 뜨던 버그(2026-08-11, 사용자 제보) — 다른 동기화 함수들과
+  // 똑같이 실제 입력칸이 있는 메인 키(_ytApiKey)를 쓰도록 통일.
+  const key=_ytApiKey();
   if(!key){_ytSetProg('API 키를 먼저 입력해주세요');return;}
   if(!sb){_ytSetProg('Supabase 연결 없음');return;}
   const idolChannels=_EXT_CHANNELS.filter(c=>c.tier==='idol');
@@ -13161,11 +13293,19 @@ function _makeChVidController(contId){
   // artists.json의 "left"(탈퇴일 — 나무위키 "이전 소속사" 계약기간 종료일 기반 근사치, 정확한 탈퇴일보다
   // 며칠~몇 달 늦을 수 있음) 필드가 있으면 그 날짜까지의 미태깅 영상만 허용하고, 없으면(아직 못 채운
   // 멤버) 안전하게 미태깅 영상 자체를 아예 안 준다(기존 방식 그대로 폴백).
+  // 겸임/이적 멤버는 그룹마다 활동 상태가 다를 수 있음(예: 이달의소녀 탈퇴 후 루셈블로 데뷔 — 루셈블에선
+  // 현역, 이달의소녀에선 탈퇴). groups 배열의 해당 그룹 항목에 active/left를 개별로 얹어두면 그 그룹
+  // 문맥에서는 이 값을 우선 쓰고, 없으면(대부분의 단일 그룹 멤버) 기존처럼 a.active/a.left로 폴백한다
+  // (2026-08-11, 사용자 제보 — 루셈블 카드에서 현역인데도 영상이 하나도 안 끌려오던 문제).
   function _memberVideoCutoff(memberKo,ko){
     if(!memberKo)return{active:true};
     const a=ARTISTS.find(x=>x.name.ko===memberKo&&_artistGroups(x).some(g=>g.ko===ko));
-    if(!a||a.active!==false)return{active:true};
-    return{active:false,left:a.left?a.left.replace(/\./g,'-'):null};
+    if(!a)return{active:true};
+    const gEntry=_artistGroups(a).find(g=>g.ko===ko)||{};
+    const activeHere=gEntry.active!==undefined?gEntry.active:a.active;
+    if(activeHere!==false)return{active:true};
+    const leftHere=gEntry.left!==undefined?gEntry.left:a.left;
+    return{active:false,left:leftHere?leftHere.replace(/\./g,'-'):null};
   }
   // 컬렉션에 담을 때 이 영상에 "누구 태그를 새길지" — 멤버 카드에서 담는 경우, v.members(자체 채널
   // 태깅)만 보면 놓치는 영상이 있음: 이 그리드는 (1) 아직 미태깅인 그룹 전체 영상, (2) 다른 채널에
