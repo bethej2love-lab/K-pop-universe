@@ -296,10 +296,10 @@
   #ttx{position:absolute;top:9px;right:11px;font-size:15px;color:rgba(150,170,215,0.65);cursor:pointer;line-height:1;}
   #tt-back{position:absolute;top:-2px;left:-2px;z-index:2;padding:14px 16px;}
   #tt-bar{height:2px;width:calc(100% - 8px);margin:6px 4px 12px;}
-  .tn{font-size:16px;font-weight:700;color:#d8e4f6;margin-bottom:3px;padding-right:18px;padding-left:4px;letter-spacing:-.02em;}
+  .tn{font-size:15px;font-weight:700;color:#d8e4f6;margin-bottom:3px;padding-right:18px;padding-left:4px;letter-spacing:-.02em;}
   #tg-row{display:flex;align-items:center;justify-content:flex-start;gap:8px;margin-bottom:1px;padding-left:4px;padding-right:4px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;}
   #tg-row::-webkit-scrollbar{display:none;}
-  .tg{font-size:13px;color:#aec8e8;letter-spacing:.05em;font-weight:500;text-transform:uppercase;cursor:pointer;transition:color .12s;width:fit-content;white-space:nowrap;}
+  .tg{font-size:12px;color:#aec8e8;letter-spacing:.05em;font-weight:500;text-transform:uppercase;cursor:pointer;transition:color .12s;width:fit-content;white-space:nowrap;}
   .tg:hover{color:#d0e8ff;}
   .tg.tg-past{color:rgba(150,165,200,0.42);}
   .tg.tg-past:hover{color:#d0e8ff;}
@@ -310,7 +310,12 @@
   .tg-unit.active{color:#d0e8ff;}
   .tg.tg-nogroup{cursor:default;}
   .tg.tg-nogroup:hover{color:#aec8e8;}
-  .tco{font-size:14px;color:#88aac8;margin-top:4px;margin-bottom:6px;}
+  .tco{font-size:11.5px;color:#88aac8;margin-top:6px;margin-bottom:0;padding-left:0;white-space:nowrap;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;}
+  #tco::-webkit-scrollbar{display:none;}
+  /* 웹에서 클릭 후 드래그로 가로 스크롤되는 줄(소속사줄·영상 카테고리 탭) 공용 커서 힌트 —
+     실제 드래그 동작은 _enableDragScroll()가 담당(2026-08-11, 사용자 요청). */
+  .hscroll-drag{cursor:grab;}
+  .hscroll-drag.drag-scrolling{cursor:grabbing;user-select:none;}
   /* 그룹/멤버 카드 상태 한 줄 — "지금 N명이 보고 있어요"와 "N명이 즐겨찾기했어요"가 한 자리에서 번갈아 표시됨 */
   .gc-status-line{display:none;overflow:hidden;height:16px;position:relative;font-size:10.5px;letter-spacing:.01em;margin:8px 0 7px;}
   .gc-status-line.show{display:block;}
@@ -321,7 +326,7 @@
   .gc-status-inner.type-favcount{color:rgba(255,150,190,0.85);text-shadow:0 0 6px rgba(255,120,170,0.3);}
   .gc-status-inner.anim-in{animation:status-slide-in 0.42s cubic-bezier(0.22,0.8,0.36,1) forwards;}
   .gc-status-inner.anim-out{animation:status-slide-out 0.38s cubic-bezier(0.64,0,0.78,0.2) forwards;}
-  #tt-status-line{margin:5px 0 12px;}
+  #tt-status-line{margin:10px 0 8px;}
   #tt-status-line .gc-status-inner{padding-left:4px;}
   .presence-dot{width:6px;height:6px;border-radius:50%;background:rgb(255,140,120);box-shadow:0 0 5px rgba(255,140,120,0.8);animation:presence-pulse 1.6s ease-in-out infinite;flex:none;}
   .favcount-dot{width:6px;height:6px;border-radius:50%;background:rgb(255,110,165);box-shadow:0 0 5px rgba(255,110,165,0.8);animation:presence-pulse 1.6s ease-in-out infinite;flex:none;}
@@ -1489,8 +1494,8 @@
   #tt-conn-row{margin-top:6px;}
   .tt-conn-btn{
     margin-left:auto;flex-shrink:0;white-space:nowrap;
-    display:inline-flex;align-items:center;padding:4px 11px;border-radius:20px;
-    font-size:10px;font-weight:600;letter-spacing:.10em;cursor:pointer;font-family:inherit;
+    display:inline-flex;align-items:center;padding:3px 9px;border-radius:18px;
+    font-size:9px;font-weight:600;letter-spacing:.10em;cursor:pointer;font-family:inherit;
     background:rgba(165,200,255,0.07);
     backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
     border:0.5px solid rgba(165,200,255,0.20);
@@ -1614,16 +1619,21 @@
   #discover-toast-thumb{width:44px;height:28px;border-radius:6px;object-fit:cover;flex-shrink:0;display:none;background:rgba(255,255,255,0.08);}
   #discover-toast-thumb.has-img{display:block;}
   #discover-toast-text b{color:#fff;}
-  #tt-pic-info-row{display:flex!important;flex-direction:row!important;align-items:flex-start;gap:10px;margin-bottom:2px;position:relative;padding-left:4px;}
+  /* align-items:center로 바꿔서 이름줄+그룹줄 텍스트 블록 전체가 원(사진) 세로 중앙에 자동으로 맞춰지게
+     함 — 예전엔 flex-start(원 상단에 맞춤)라 이름줄/그룹줄 사이 여백이 원 중간선과 안 맞았음(2026-08-11,
+     사용자 요청). 텍스트 두 줄 높이가 정확히 같지 않아도 이 방식이 폰트/언어(한국어·영어) 변화에도 항상
+     자연스럽게 맞는다. */
+  #tt-pic-info-row{display:flex!important;flex-direction:row!important;align-items:center;gap:8px;margin-bottom:2px;position:relative;padding-left:0;}
   #tt-info-side{flex:1;min-width:0;overflow:hidden;}
-  /* 어드민 프로필 사진 업로드 버튼 */
-  .tt-insta-cam-btn{flex-shrink:0;order:-1;width:62px;height:62px;border-radius:50%;border:1.5px dashed rgba(130,155,200,0.35);background:rgba(10,14,32,0.55);cursor:pointer;display:flex;align-items:center;justify-content:center;color:rgba(140,165,220,0.5);transition:border-color .15s,color .15s;z-index:5;padding:0;}
+  /* 어드민 프로필 사진 업로드 버튼 — 크기는 #tt-insta-pic-wrap과 항상 동일해야 함(사진 있고 없고에 따라
+     이 자리를 서로 대신 차지하므로) */
+  .tt-insta-cam-btn{flex-shrink:0;order:-1;width:78px;height:78px;border-radius:50%;border:1.5px dashed rgba(130,155,200,0.35);background:rgba(10,14,32,0.55);cursor:pointer;display:flex;align-items:center;justify-content:center;color:rgba(140,165,220,0.5);transition:border-color .15s,color .15s;z-index:5;padding:0;}
   .tt-insta-cam-btn:hover{border-color:rgba(140,165,220,0.65);color:rgba(180,205,255,0.85);}
   .tt-insta-cam-btn svg{width:20px;height:20px;pointer-events:none;}
-  .tt-insta-cam-btn.cam-overlay{position:absolute;width:20px;height:20px;left:calc(4px + 38px);top:38px;border:none;background:rgba(10,14,32,0.68);backdrop-filter:blur(3px);}
+  .tt-insta-cam-btn.cam-overlay{position:absolute;width:20px;height:20px;left:calc(4px + 54px);top:54px;border:none;background:rgba(10,14,32,0.68);backdrop-filter:blur(3px);}
   .tt-insta-cam-btn.cam-overlay svg{width:11px;height:11px;}
   .tt-insta-cam-btn.cam-uploading{opacity:.5;pointer-events:none;}
-  #tt-insta-pic-wrap{display:block;flex-shrink:0;width:62px;height:62px;border-radius:50%;margin:-1px 0 0;cursor:pointer;text-decoration:none;}
+  #tt-insta-pic-wrap{display:block;flex-shrink:0;width:78px;height:78px;border-radius:50%;cursor:pointer;text-decoration:none;}
   /* 인스타 브랜드 그라데이션(주황~빨강) → 인디고~마젠타 성운 톤(2026-08-11 1차) → 그마저도 컬러감이
      남아있어서 블랙앤화이트에 가까운 톤으로 재조정(2026-08-11 2차, 사용자 제보) — 검정~은색~흰색을
      도는 메탈릭한 느낌만 남김. 가장 어두운 지점이 배경(#060612 계열)이랑 거의 같은 밝기라 링과
