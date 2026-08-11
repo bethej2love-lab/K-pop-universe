@@ -148,6 +148,13 @@
       <div class="row" id="gc-leader-row" style="display:none"><span class="lbl" data-i18n="gcLeader">리더</span><span class="val" id="gc-leader"></span></div>
       <div class="row" id="gc-mem-row"><span class="lbl" id="gc-mem-label" data-i18n="gcMember">멤버</span><span class="val" id="gc-mem-list"></span></div>
     </div>
+    <div id="gc-discog-row" class="gc-discog-row" style="display:none">
+      <div class="gc-discog-hd">
+        <span class="gc-discog-title">Discography</span>
+        <button id="gc-discog-more-btn" class="gc-discog-more-btn" style="display:none" type="button">+<span id="gc-discog-more-cnt"></span></button>
+      </div>
+      <div id="gc-discog-strip" class="gc-discog-strip hscroll-drag"></div>
+    </div>
     <div id="gc-concert-row" class="concert-row"></div>
     <div id="gc-collection-row" class="gc-collection-row" style="display:none">
       <div class="gc-collection-hd">Collections</div>
@@ -487,9 +494,11 @@
   <input id="tab-sb-input" type="text" placeholder="그룹 · 멤버 검색…" autocomplete="off" inputmode="search">
   <button id="tab-sb-clear" aria-label="검색 닫기">✕</button>
 </div>
-<div id="onboard-hint" aria-hidden="true">
-  <div id="ob-pill"></div>
-  <div id="ob-arrow"><div id="ob-arrow-line"></div><div id="ob-arrow-head"></div></div>
+<div id="ob-top-search" aria-hidden="true">
+  <button id="ob-top-search-btn" type="button" aria-label="검색 열기">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="10.5" cy="10.5" r="6.5" stroke="currentColor" stroke-width="1.8"/><line x1="15.5" y1="15.5" x2="21" y2="21" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+    <span>WHO'S YOUR BIAS?</span>
+  </button>
 </div>
 <div id="mob-sr"></div>
 <div id="member-tooltip"></div>
@@ -658,6 +667,22 @@
     <div class="pp-title" id="trophy-panel-title">음악방송 1위</div>
     <button id="trophy-panel-close" class="conn-back-btn" aria-label="닫기">×</button>
     <div id="trophy-panel-list"></div>
+  </div>
+</div>
+<div id="gc-discog-detail">
+  <div id="gc-discog-detail-bg"></div>
+  <div id="gc-discog-detail-sheet">
+    <button id="gc-discog-detail-close" aria-label="닫기">×</button>
+    <div id="gc-discog-detail-covrow">
+      <button id="gc-discog-detail-prev" class="gc-discog-nav-btn" aria-label="이전 앨범">‹</button>
+      <img id="gc-discog-detail-cover" alt="">
+      <button id="gc-discog-detail-next" class="gc-discog-nav-btn" aria-label="다음 앨범">›</button>
+    </div>
+    <div id="gc-discog-detail-type"></div>
+    <div id="gc-discog-detail-title"></div>
+    <div id="gc-discog-detail-meta"></div>
+    <div id="gc-discog-detail-track-lbl">Tracklist</div>
+    <div id="gc-discog-detail-tracks"></div>
   </div>
 </div>
 <div id="col-quick-toast">
@@ -839,27 +864,32 @@ function makeGlowTex(){
   // 모든 별이 같은 이 텍스처(glowTex)를 공유하므로 우주 전체에 한 번에 적용됨.
   // 코어(0~15%) 안에 스파클을 넣으면 이미 최대 밝기라 안 보이므로, 코어를 벗어난 중간 밝기대에서만
   // 짧게 뻗어나가게 함(중심→끝 각각 별도 그라데이션으로 그려서 대칭 계산 실수 방지).
-  // "너무 과하다"는 피드백(2026-08-10)으로 밝기/길이를 한 번 더 낮춤 — 방향 다양성은 이 텍스처 자체가
-  // 아니라 makePointsMat 셰이더에서 별마다(flareSeed 기반) UV를 랜덤 회전시켜서 줌(전부 같은 +모양이
-  // 아니라 별마다 각도가 달라 보이게).
+  // 원형 glow와 "겹쳐 보이기만 하고 안 어우러진다"는 재피드백(2026-08-11) — 원인은 밝기보다 모양이었음:
+  // 끝까지 두께가 일정한 막대(stroke)라서 부드러운 방사형 glow와 달리 각진 기둥처럼 도드라졌다.
+  // 뿌리는 두껍고 끝으로 갈수록 뾰족해지는 바늘(needle) 폴리곤으로 바꾸고, 피크를 코어 쪽으로 당겨서
+  // 거기서부터 급격히 사그라들게(예전엔 85%까지 은은하게 남아있어 꼬리가 길었음) + 밝기도 45%로 낮춤.
+  // 방향 다양성은 이 텍스처 자체가 아니라 makePointsMat 셰이더에서 별마다(flareSeed 기반) UV를 랜덤
+  // 회전시켜서 줌(전부 같은 +모양이 아니라 별마다 각도가 달라 보이게).
   cx.globalCompositeOperation='lighter';
-  const armLen=c0*0.78;
+  const armLen=c0*0.70;
+  const armBaseHalfW=sz*0.026; // 뿌리 쪽 폭 — 여기서부터 끝(0)까지 선형으로 뾰족해짐
   [[1,0],[-1,0],[0,1],[0,-1]].forEach(([dx,dy])=>{
     const x2=c0+dx*armLen,y2=c0+dy*armLen;
+    const px=-dy,py=dx; // 팔 방향에 수직인 단위벡터 — 뿌리 쪽 폭을 만드는 데 씀
     const g=cx.createLinearGradient(c0,c0,x2,y2);
     g.addColorStop(0,    'rgba(255,255,255,0)');
-    g.addColorStop(0.15, 'rgba(255,255,255,0)');
-    g.addColorStop(0.35, 'rgba(255,255,255,0.12)');
-    g.addColorStop(0.60, 'rgba(255,255,255,0.07)');
-    g.addColorStop(0.85, 'rgba(255,255,255,0.02)');
+    g.addColorStop(0.10, 'rgba(255,255,255,0.028)');
+    g.addColorStop(0.20, 'rgba(255,255,255,0.055)');
+    g.addColorStop(0.42, 'rgba(255,255,255,0.016)');
+    g.addColorStop(0.68, 'rgba(255,255,255,0.003)');
     g.addColorStop(1,    'rgba(255,255,255,0)');
-    cx.strokeStyle=g;
-    cx.lineWidth=sz*0.035;
-    cx.lineCap='round';
+    cx.fillStyle=g;
     cx.beginPath();
-    cx.moveTo(c0,c0);
+    cx.moveTo(c0+px*armBaseHalfW,c0+py*armBaseHalfW);
+    cx.lineTo(c0-px*armBaseHalfW,c0-py*armBaseHalfW);
     cx.lineTo(x2,y2);
-    cx.stroke();
+    cx.closePath();
+    cx.fill();
   });
   cx.globalCompositeOperation='source-over';
   return new THREE.CanvasTexture(c);
@@ -1893,40 +1923,42 @@ function _revealUniverse(){
   }
 }
 
-// ── Onboarding hint ──────────────────────────────
+// ── 첫 방문 온보딩: 상단 검색바(글라스) + 탐험 패널 살짝 열기 ──────────
+// 예전엔 검색/탐험 탭을 가리키는 작은 말풍선 힌트였는데(한 번 뜨고 영영 사라짐), 지도앱처럼 상단
+// 검색바 + 바텀시트 살짝 열기로 바꿈(2026-08-11, 사용자 요청 — "이게 뭐지 뭘 봐야하지" 콜드스타트
+// 해소). 상단 검색바는 실제 입력창이 아니라 탭하면 기존 검색(tab-search)으로 그대로 인계하는
+// 버튼 — 결과 렌더링 로직을 중복 구현하지 않기 위함. _OB_KEY는 기존과 동일하게 재사용(최초 1회만).
 var _OB_KEY='kpu_onboard_done';
 var _obTimer=null;
-var _obActive=false; // hint가 실제로 화면에 떠 있는 상태
+var _obActive=false; // 온보딩 UI가 실제로 화면에 떠 있는 상태
 function _showOnboardHint(){
   if(_obActive||localStorage.getItem(_OB_KEY))return;
-  if(!isMob())return;
-  // 딥링크나 자동 오픈으로 이미 카드가 열려있으면 힌트 불필요
+  // 딥링크나 자동 오픈으로 이미 카드가 열려있으면 온보딩 불필요
   if(document.getElementById('mob-sheet').classList.contains('bs-open'))return;
   if(document.getElementById('side-panel').classList.contains('open'))return;
-  const el=document.getElementById('onboard-hint');
-  const pill=document.getElementById('ob-pill');
-  if(!el||!pill)return;
-  const isSearch=Math.random()<0.5;
-  pill.textContent=isSearch?'Start with your bias':'Explore now';
-  const btn=document.getElementById(isSearch?'tab-search':'tab-explore');
-  if(btn){
-    const r=btn.getBoundingClientRect();
-    el.style.left=(r.left+r.width/2)+'px';
-    el.style.bottom=(window.innerHeight-r.top+10)+'px';
-    btn.classList.add('ob-target-glow');
-  }
   _obActive=true;
-  el.classList.remove('ob-hide');
-  requestAnimationFrame(()=>requestAnimationFrame(()=>el.classList.add('ob-show')));
+  if(isMob()){
+    const el=document.getElementById('ob-top-search');
+    if(el){
+      el.classList.remove('ob-hide');
+      requestAnimationFrame(()=>requestAnimationFrame(()=>el.classList.add('ob-show')));
+    }
+    _openFeedOverlay();
+    document.getElementById('feed-overlay')?.classList.add('peek');
+  }else{
+    _openFeedOverlay();
+  }
 }
 function _dismissOnboardHint(){
   if(_obTimer){clearTimeout(_obTimer);_obTimer=null;}
   if(!_obActive)return;
   _obActive=false;
   localStorage.setItem(_OB_KEY,'1');
-  const el=document.getElementById('onboard-hint');
+  const el=document.getElementById('ob-top-search');
   if(el){el.classList.remove('ob-show');el.classList.add('ob-hide');}
-  document.querySelectorAll('.ob-target-glow').forEach(b=>b.classList.remove('ob-target-glow'));
+  const fo=document.getElementById('feed-overlay');
+  if(fo?.classList.contains('peek'))_closeFeedOverlay();
+  else if(!isMob())_closeFeedOverlay();
 }
 
 // ── Animate ───────────────────────────────────────
@@ -2550,7 +2582,7 @@ function _filterBannedVideos(list,ko){return(list||[]).filter(v=>!_isBannedVideo
 // 흔히 쓰는 문구 — 제목에 이 단어가 있으면 어느 그룹으로 매칭됐든 무조건 무관 처리한다(사용자 요청, 2026-08-04).
 // _isBannedVideoTitle과 달리 hidden이 아니라 무관 처리(행은 남기되 그룹/멤버 그리드에서만 제외)라 신규
 // 동기화 시 이 체크에 걸리면 content_flag를 '무관'으로 붙여서 저장한다 — 기존 행은 아래 스윕 버튼으로 정리.
-const _JUNK_TITLE_KEYWORDS_GLOBAL=['띵곡팔이','김창옥쇼','이호선상담소','유부녀킬러','스트릿레스토랑파이터','십분hook','[#여권들고','프리한19','결혼지옥','오은영리포트','이혼숙려'];
+const _JUNK_TITLE_KEYWORDS_GLOBAL=['띵곡팔이','김창옥쇼','이호선상담소','유부녀킬러','스트릿레스토랑파이터','십분hook','[#여권들고','프리한19','결혼지옥','오은영리포트','이혼숙려','닥터로이어','언니네산지직송','혼자는 못 해','방과후태리'];
 function _isJunkVideoTitle(t){return!!t&&_JUNK_TITLE_KEYWORDS_GLOBAL.some(k=>t.includes(k));}
 
 let _lbPlaylist=null,_lbIdx=-1,_lbCtx=null;
@@ -2585,7 +2617,12 @@ function _updateLbMuteBtn(){
   const sl=document.getElementById('yt-lb-vol');
   if(sl)sl.value=_lbMuted?0:_lbVolume;
 }
-function openLightbox(url,shorts,playlist,idx,ctx,isAdvance){
+// forceBrowseMode: 컬렉션/탐험 모아보기 등 유저가 정한 목록(_openFeedListOverlay)에서 열 때 — 쇼츠라도
+// 무한스크롤 발견용 몰입형 스와이프 모드로 안 몰아넣고, 유튜브뮤직처럼 세로 비율만 유지한 채 브라우즈
+// UI(제목/다음 영상 목록) 안에 사이즈만 맞춰 넣는다(2026-08-11, 사용자 요청 — "쇼츠여도 유튜브뮤직처럼
+// 화면에 맞춰 작아지는 로직으로"). 영상 자체의 세로 비율 표시(isPortrait)는 그대로 유지하고, 세션
+// 모드(_lbSessionMode)만 shorts로 안 넘어가게 분리.
+function openLightbox(url,shorts,playlist,idx,ctx,isAdvance,forceBrowseMode){
   const vid=ytId(url);if(!vid)return;
   _lbPlaylist=playlist||null;
   _lbIdx=(idx!=null)?idx:-1;
@@ -2600,7 +2637,7 @@ function openLightbox(url,shorts,playlist,idx,ctx,isAdvance){
   _lbSpeed=1;
   document.getElementById('yt-lb-speed-badge').classList.remove('is-on');
   // 세션 모드는 새 세션(isAdvance 없음)일 때만 다시 정함 — _lbGo(prev/next)는 세션 중이라 절대 안 바뀜.
-  if(!isAdvance)_lbSessionMode=shorts?'shorts':'browse';
+  if(!isAdvance)_lbSessionMode=(shorts&&!forceBrowseMode)?'shorts':'browse';
   lb.classList.toggle('lb-browse',_lbSessionMode==='browse');
   // iOS Safari: display:none 상태의 iframe에서 src를 바꾸면 사용자 제스처 체인이 끊겨 autoplay가 차단됨.
   // 라이트박스를 먼저 열어 iframe이 visible한 상태로 만든 뒤 src를 설정해야 autoplay가 허용됨.
@@ -2656,9 +2693,17 @@ function _fmtVidMeta(pa,vc){
 }
 // 세션 모드(_lbSessionMode)와 같은 타입(쇼츠/일반)의 항목만 대상으로 delta 방향의 다음 인덱스를 찾음 —
 // 못 찾으면 -1. prev/next 버튼(툴바·추천 목록 양쪽)과 카운터 계산에서 공용으로 씀.
+// browse 모드는 타입 필터 없이 목록 순서 그대로 다음/이전으로 넘어간다 — 컬렉션 등 유저가 직접 만든
+// 목록엔 쇼츠/일반이 섞여있을 수 있는데, 예전엔 여기서 타입이 다르면 건너뛰어서(쇼츠 세션이 아니어도
+// 내부적으로 shorts 여부로 걸렀음) 섞인 목록에서 다음 항목이 이상하게 스킵됐다(2026-08-11, forceBrowseMode
+// 도입과 함께 정리 — 쇼츠도 browse 세션에서 그냥 목록의 한 항목일 뿐이므로).
 function _lbAdjacentIdx(delta){
   if(!_lbPlaylist)return-1;
-  const wantShorts=_lbSessionMode==='shorts';
+  if(_lbSessionMode!=='shorts'){
+    const bi=_lbIdx+delta;
+    return(bi>=0&&bi<_lbPlaylist.length)?bi:-1;
+  }
+  const wantShorts=true;
   let i=_lbIdx+delta;
   while(i>=0&&i<_lbPlaylist.length){
     if(isShorts(_lbPlaylist[i].u)===wantShorts)return i;
@@ -2798,16 +2843,22 @@ function _lbUpdateUplist(){
       const meta=_fmtVidMeta(item.pa,item.vc);
       if(meta){const metaEl=document.createElement('div');metaEl.className='lb-uplist-meta';metaEl.textContent=meta;info.appendChild(metaEl);}
       row.appendChild(thumb);row.appendChild(info);
-      row.addEventListener('click',e=>{e.stopPropagation();openLightbox(item.u,isShorts(item.u),_lbPlaylist,i,_lbCtx);});
+      // 다음 영상 목록은 브라우즈 모드에서만 보이는 UI라(#yt-lightbox.lb-browse 한정 CSS), 여기서
+      // 고르는 항목은 쇼츠여도 항상 브라우즈 세션으로 유지한다(2026-08-11, forceBrowseMode 통일).
+      row.addEventListener('click',e=>{e.stopPropagation();openLightbox(item.u,isShorts(item.u),_lbPlaylist,i,_lbCtx,false,true);});
       scrollEl.appendChild(row);
     });
   }
   [...scrollEl.children].forEach((row,i)=>row.classList.toggle('is-current',i===_lbIdx));
-  // 카운터: 현재 세션 모드(쇼츠/일반)와 같은 타입 항목들 안에서 "몇 번째 / 총 몇 개"
-  const wantShorts=_lbSessionMode==='shorts';
-  const sameType=_lbPlaylist.filter(v=>isShorts(v.u)===wantShorts);
-  const rank=sameType.indexOf(_lbPlaylist[_lbIdx]);
-  if(cntEl)cntEl.textContent=(sameType.length>1&&rank>=0)?`${rank+1} / ${sameType.length}`:'';
+  // 카운터: 쇼츠 세션은 예전처럼 같은 타입끼리만 세고, 브라우즈 세션은(쇼츠 섞인 목록도 그대로 순서대로
+  // 넘어가므로) 목록 전체 기준 "몇 번째 / 총 몇 개"로 센다(2026-08-11, forceBrowseMode 통일).
+  if(_lbSessionMode==='shorts'){
+    const sameType=_lbPlaylist.filter(v=>isShorts(v.u));
+    const rank=sameType.indexOf(_lbPlaylist[_lbIdx]);
+    if(cntEl)cntEl.textContent=(sameType.length>1&&rank>=0)?`${rank+1} / ${sameType.length}`:'';
+  }else{
+    if(cntEl)cntEl.textContent=(_lbPlaylist.length>1&&_lbIdx>=0)?`${_lbIdx+1} / ${_lbPlaylist.length}`:'';
+  }
 }
 
 // ── 이모지 반응 ───────────────────────────────────────────────────────
@@ -5919,6 +5970,104 @@ function _renderGcMemberList(ko,cx,cy){
       memListEl.appendChild(sp);
     });
 }
+// ── 디스코그래피(멜론 데이터 기반) — 앨범명/커버/발매일/종류/타이틀곡 ──────────────
+// 기본은 싱글/EP/정규(isMain)만 노출하고, 리믹스·OST·라이브·컴필레이션 등은 데이터는 항상 갖고 있되
+// "+" 눌러야 펼쳐지게 한다(2026-08-11, 사용자 요청 — 처음엔 그런 것들 아예 빼는 걸 제안했는데, "제외하기
+// 보단 정보는 끌어오되 기본 노출만 안 하면 어떠냐"는 피드백으로 방향 수정). 파일럿 4개 그룹(코르티스·
+// 리센느·샤이니·아이브)만 groups.json에 discography 필드가 있음 — 없는 그룹은 섹션 자체를 숨긴다.
+// 상세 팝업 좌우 이동용 — 팝업을 연 시점에 스트립에 보이던 리스트(메인만/전체)를 그대로 기억해서
+// 그 순서대로 넘긴다(2026-08-11, 사용자 요청).
+let _gcDiscogList=[];
+let _gcDiscogIdx=-1;
+function _renderGcDiscography(ko){
+  const row=document.getElementById('gc-discog-row');
+  const strip=document.getElementById('gc-discog-strip');
+  const moreBtn=document.getElementById('gc-discog-more-btn');
+  const moreCntEl=document.getElementById('gc-discog-more-cnt');
+  const albums=(GROUPS[ko]||{}).discography;
+  if(!albums||!albums.length){row.style.display='none';return;}
+  row.style.display='';
+  const mainAlbums=albums.filter(a=>a.isMain);
+  const extraAlbums=albums.filter(a=>!a.isMain);
+  let showingAll=false;
+  function renderItems(){
+    strip.innerHTML='';
+    const list=showingAll?albums:mainAlbums;
+    list.forEach((a,idx)=>{
+      const item=document.createElement('div');
+      item.className='gc-discog-item'+(a.isMain?'':' gc-discog-extra');
+      const img=document.createElement('img');
+      img.className='gc-discog-cover';img.loading='lazy';img.decoding='async';
+      img.src=a.cover;img.alt=a.title;
+      const typeEl=document.createElement('div');typeEl.className='gc-discog-type';typeEl.textContent=a.type;
+      const titleEl=document.createElement('div');titleEl.className='gc-discog-item-title';titleEl.textContent=a.title;
+      item.appendChild(img);item.appendChild(typeEl);item.appendChild(titleEl);
+      item.addEventListener('click',e=>{e.stopPropagation();_gcDiscogList=list;_openGcDiscogDetail(a,idx);});
+      strip.appendChild(item);
+    });
+    _enableDragScroll(strip);
+  }
+  renderItems();
+  if(extraAlbums.length){
+    moreBtn.style.display='';
+    moreCntEl.textContent=extraAlbums.length;
+    moreBtn.onclick=e=>{
+      e.stopPropagation();
+      showingAll=!showingAll;
+      moreBtn.classList.toggle('on',showingAll);
+      moreBtn.firstChild.textContent=showingAll?'−':'+';
+      moreCntEl.textContent=showingAll?'':extraAlbums.length;
+      renderItems();
+    };
+  }else{
+    moreBtn.style.display='none';
+  }
+}
+function _openGcDiscogDetail(a,idx){
+  _gcDiscogIdx=idx!=null?idx:_gcDiscogList.indexOf(a);
+  document.getElementById('gc-discog-detail-prev').disabled=_gcDiscogIdx<=0;
+  document.getElementById('gc-discog-detail-next').disabled=_gcDiscogIdx<0||_gcDiscogIdx>=_gcDiscogList.length-1;
+  document.getElementById('gc-discog-detail-cover').src=a.cover;
+  document.getElementById('gc-discog-detail-type').textContent=a.type+(a.trackCount?' · '+a.trackCount+'곡':'');
+  document.getElementById('gc-discog-detail-title').textContent=a.title;
+  document.getElementById('gc-discog-detail-meta').textContent=a.releaseDate;
+  const trackLbl=document.getElementById('gc-discog-detail-track-lbl');
+  const tracksEl=document.getElementById('gc-discog-detail-tracks');
+  tracksEl.innerHTML='';
+  const tracks=a.tracks||[];
+  if(tracks.length){
+    trackLbl.style.display='';tracksEl.style.display='';
+    tracks.forEach(t=>{
+      const row=document.createElement('div');
+      row.className='gc-discog-track'+(t.isTitle?' is-title':'');
+      const noEl=document.createElement('span');noEl.className='gc-discog-track-no';noEl.textContent=t.no;
+      const nameEl=document.createElement('span');nameEl.className='gc-discog-track-name';nameEl.textContent=t.title;
+      row.appendChild(noEl);row.appendChild(nameEl);
+      tracksEl.appendChild(row);
+    });
+  }else if(a.titleTrack){
+    // 트랙리스트를 못 가져온 예전 데이터 대비 폴백 — 타이틀곡 하나만이라도 표시
+    trackLbl.style.display='';tracksEl.style.display='';
+    const row=document.createElement('div');row.className='gc-discog-track is-title';
+    const nameEl=document.createElement('span');nameEl.className='gc-discog-track-name';nameEl.textContent=a.titleTrack;
+    row.appendChild(nameEl);tracksEl.appendChild(row);
+  }else{
+    trackLbl.style.display='none';tracksEl.style.display='none';
+  }
+  document.getElementById('gc-discog-detail').classList.add('open');
+}
+function _closeGcDiscogDetail(){document.getElementById('gc-discog-detail').classList.remove('open');}
+function _gcDiscogDetailGo(delta){
+  const ni=_gcDiscogIdx+delta;
+  if(ni<0||ni>=_gcDiscogList.length)return;
+  _openGcDiscogDetail(_gcDiscogList[ni],ni);
+}
+document.getElementById('gc-discog-detail-bg').addEventListener('click',_closeGcDiscogDetail);
+document.getElementById('gc-discog-detail-close').addEventListener('click',_closeGcDiscogDetail);
+document.getElementById('gc-discog-detail-prev').addEventListener('click',e=>{e.stopPropagation();_gcDiscogDetailGo(-1);});
+document.getElementById('gc-discog-detail-next').addEventListener('click',e=>{e.stopPropagation();_gcDiscogDetailGo(1);});
+document.getElementById('gc-discog-detail').addEventListener('pointerdown',e=>e.stopPropagation());
+document.getElementById('gc-discog-detail').addEventListener('click',e=>e.stopPropagation());
 document.getElementById('gc-mem-label').addEventListener('click',e=>{
   e.stopPropagation();
   if(!e.currentTarget.classList.contains('toggleable')||!_openGCko)return;
@@ -5986,6 +6135,7 @@ function showGC(ko,cx,cy,keepMemberPanel,skipRipple,urlMode,pushMobNav){
   });
   if(regularPts)regularPts.geometry.attributes.position.needsUpdate=true;
   _renderGcMemberList(ko,cx,cy);
+  _renderGcDiscography(ko);
   _buildGcChVid(ko);
   _loadConcertRow(ko,'gc-concert-row');
   _loadCollectionRow(ko,'gc-collection-row');
@@ -7959,6 +8109,13 @@ document.getElementById('tab-feed').addEventListener('click',e=>{
   e.stopPropagation();
   document.body.classList.contains('feed-open')?_closeFeedOverlay():_openFeedOverlay();
 });
+// 상단 온보딩 검색바 — 실제 입력창이 아니라 탭하면 기존 검색(하단 돋보기와 동일)으로 그대로 인계한다
+// (결과 렌더링을 중복 구현하지 않기 위함, 2026-08-11).
+document.getElementById('ob-top-search-btn')?.addEventListener('click',e=>{
+  e.stopPropagation();
+  _dismissOnboardHint();
+  document.getElementById('tab-search').click();
+});
 document.getElementById('dh-fav-btn').addEventListener('click',e=>{e.stopPropagation();_toggleFavMode();});
 document.getElementById('fav-mode-btn').addEventListener('click',e=>{e.stopPropagation();_toggleFavMode();});
 document.getElementById('tt-fav').addEventListener('click',e=>{e.stopPropagation();if(_openTArtist)toggleFavMember(_openTArtist);});
@@ -9229,9 +9386,18 @@ function _openFeedOverlay(){
     cb.addEventListener('touchstart',e=>_lbRipple(cb,e),{passive:true});
     cb.addEventListener('mousedown',e=>_lbRipple(cb,e));
   }
+  // 탐험 패널이 "살짝 열기(peek)" 상태일 때 헤더를 누르면 전체 화면으로 펼쳐짐 — 지도앱 바텀시트 방식
+  // (여기 el._bound 블록과 같은 이유로 lazy-bind: #feed-hd도 본문 스크립트보다 나중에 파싱됨).
+  const hd=document.getElementById('feed-hd');
+  if(hd&&!hd._obBound){hd._obBound=true;
+    hd.addEventListener('click',e=>{
+      if(e.target.closest('#feed-close'))return;
+      if(el.classList.contains('peek')){e.stopPropagation();el.classList.remove('peek');}
+    });
+  }
 }
 function _closeFeedOverlay(){
-  document.getElementById('feed-overlay').classList.remove('open');
+  document.getElementById('feed-overlay').classList.remove('open','peek');
   document.getElementById('zoom-ctrl').classList.remove('zoom-feed-open');
   document.body.classList.remove('feed-open');
   document.getElementById('tab-feed').classList.remove('feed-open');
@@ -9385,7 +9551,9 @@ function _openFeedListOverlay(title,sub,songs){
       // 자신의 groupKo/memberKos에서 뽑는다 — 없으면(포맷/장르 모아보기처럼 애초에 이 정보가 없는
       // 목록) 빈 ctx로 자연히 폴백(라이트박스 브라우즈 모드의 멤버 정보 칸만 숨겨짐, 2026-08-11).
       const ctx=s.groupKo?{groupKo:s.groupKo,memberKo:(s.memberKos&&s.memberKos[0])||undefined}:{};
-      openLightbox(s.u,shortFlag,orderedSongs,idx,ctx);
+      // forceBrowseMode:true — 컬렉션/탐험 모아보기 등 이 목록에서 열 때는 쇼츠도 몰입형 스와이프
+      // 대신 브라우즈 레이아웃(세로 비율만 유지)으로 통일(2026-08-11, 사용자 요청).
+      openLightbox(s.u,shortFlag,orderedSongs,idx,ctx,false,true);
     });
     return item;
   }

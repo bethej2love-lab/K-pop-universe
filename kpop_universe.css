@@ -1467,6 +1467,44 @@
   .concert-reaction-btn.sel{opacity:1;background:rgba(155,178,228,0.20);}
   .concert-note-input{width:100%;box-sizing:border-box;margin-top:6px;background:rgba(255,255,255,0.05);border:0.5px solid rgba(255,255,255,0.12);border-radius:7px;padding:5px 8px;font-size:11px;color:#c0d6f0;font-family:inherit;outline:none;}
   .concert-note-input::placeholder{color:rgba(155,178,228,0.35);}
+  /* ── 그룹 카드 디스코그래피(앨범명/커버/발매일/종류/타이틀곡) — 멜론 데이터 기반, 2026-08-11 ──
+     기본은 싱글/EP/정규만 노출, 리믹스·OST·라이브·컴필레이션 등은 "+" 눌러야 나옴(데이터는 항상 다
+     들고 있음, isMain으로만 구분 — 사용자 요청). */
+  .gc-discog-row{margin-top:9px;padding-top:10px;border-top:0.5px solid rgba(255,255,255,0.10);}
+  .gc-discog-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:7px;}
+  .gc-discog-title{font-size:9.5px;font-weight:700;letter-spacing:.16em;color:rgba(130,150,205,0.5);text-transform:uppercase;}
+  .gc-discog-more-btn{background:rgba(255,255,255,0.06);border:none;border-radius:10px;padding:2px 8px;font-size:10px;font-weight:700;color:rgba(170,190,235,0.7);cursor:pointer;font-family:inherit;}
+  .gc-discog-more-btn:hover{background:rgba(255,255,255,0.11);color:rgba(200,215,255,0.95);}
+  .gc-discog-more-btn span{opacity:.65;margin-left:1px;}
+  .gc-discog-strip{display:flex;gap:9px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none;cursor:grab;}
+  .gc-discog-strip::-webkit-scrollbar{display:none;}
+  .gc-discog-item{flex-shrink:0;width:68px;cursor:pointer;}
+  .gc-discog-cover{width:68px;height:68px;border-radius:8px;object-fit:cover;background:rgba(255,255,255,0.06);display:block;box-shadow:0 3px 10px rgba(0,0,0,0.35);}
+  .gc-discog-type{font-size:8.5px;font-weight:700;letter-spacing:.05em;color:rgba(150,175,225,0.6);margin-top:5px;text-transform:uppercase;}
+  .gc-discog-item-title{font-size:10px;color:rgba(215,228,255,0.85);line-height:1.28;margin-top:1px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+  .gc-discog-extra .gc-discog-cover{opacity:.55;}
+  /* ── 앨범 상세 팝업 ── */
+  #gc-discog-detail{position:fixed;inset:0;z-index:102;display:none;align-items:flex-end;justify-content:center;}
+  #gc-discog-detail.open{display:flex;}
+  #gc-discog-detail-bg{position:absolute;inset:0;background:rgba(0,0,0,0.55);}
+  #gc-discog-detail-sheet{position:relative;width:100%;background:rgba(14,18,38,0.98);backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);border-radius:20px 20px 0 0;padding:22px 22px calc(22px + env(safe-area-inset-bottom,0px));box-sizing:border-box;z-index:1;text-align:center;}
+  @media(min-width:769px){#gc-discog-detail-sheet{max-width:320px;border-radius:18px;margin-bottom:100px;}}
+  #gc-discog-detail-close{position:absolute;top:10px;right:12px;background:none;border:none;color:rgba(190,205,240,0.6);font-size:20px;cursor:pointer;padding:4px;line-height:1;z-index:2;}
+  #gc-discog-detail-covrow{display:flex;align-items:center;justify-content:center;gap:14px;margin:4px 0 14px;}
+  #gc-discog-detail-cover{width:150px;height:150px;border-radius:12px;object-fit:cover;box-shadow:0 8px 28px rgba(0,0,0,0.45);display:block;flex-shrink:0;}
+  .gc-discog-nav-btn{flex-shrink:0;width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,0.07);border:none;color:rgba(200,215,255,0.8);font-size:19px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .15s,color .15s,opacity .15s;}
+  .gc-discog-nav-btn:hover{background:rgba(255,255,255,0.13);color:#fff;}
+  .gc-discog-nav-btn:disabled{opacity:.25;cursor:default;background:rgba(255,255,255,0.07);color:rgba(200,215,255,0.8);}
+  #gc-discog-detail-type{font-size:9.5px;font-weight:700;letter-spacing:.14em;color:rgba(150,175,225,0.65);text-transform:uppercase;}
+  #gc-discog-detail-title{font-size:15px;font-weight:700;color:#e4ecff;margin-top:5px;line-height:1.32;}
+  #gc-discog-detail-meta{font-size:11.5px;color:rgba(150,170,210,0.6);margin-top:6px;}
+  #gc-discog-detail-track-lbl{font-size:9px;font-weight:700;letter-spacing:.14em;color:rgba(130,150,205,0.5);text-transform:uppercase;margin-top:18px;padding-top:14px;border-top:0.5px solid rgba(255,255,255,0.08);text-align:left;}
+  #gc-discog-detail-tracks{margin-top:6px;max-height:200px;overflow-y:auto;text-align:left;}
+  .gc-discog-track{display:flex;align-items:baseline;gap:9px;padding:6px 2px;font-size:12.5px;}
+  .gc-discog-track-no{flex-shrink:0;width:16px;color:rgba(130,150,205,0.45);font-size:11px;text-align:right;font-variant-numeric:tabular-nums;}
+  .gc-discog-track-name{color:rgba(200,215,250,0.82);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .gc-discog-track.is-title .gc-discog-track-no{color:rgba(255,190,130,0.85);}
+  .gc-discog-track.is-title .gc-discog-track-name{color:#ffdcb0;font-weight:700;}
   /* ── 그룹/멤버 카드 내 컬렉션 행(내 컬렉션 + 공개 컬렉션 중 이 그룹이 담긴 것) ── */
   .gc-collection-row{margin-top:9px;padding-top:10px;border-top:0.5px solid rgba(255,255,255,0.10);}
   .gc-collection-hd{font-size:9.5px;font-weight:700;letter-spacing:.16em;color:rgba(130,150,205,0.5);text-transform:uppercase;margin-bottom:7px;}
@@ -1909,27 +1947,40 @@
   .feed-strip-item.cap-revealed .feed-strip-sub{opacity:1;}
   .feed-card-title{font-size:12.5px;font-weight:600;color:rgba(220,232,255,0.92);line-height:1.4;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
   .feed-card-sub{font-size:10.5px;color:rgba(130,155,205,0.6);margin-top:3px;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
-  /* ── Onboarding hint ─────────────────────────────── */
-  #onboard-hint{
-    position:fixed;z-index:39;pointer-events:none;
-    display:flex;flex-direction:column;align-items:center;gap:6px;
-    opacity:0;transform:translateY(10px);
-    transition:opacity .55s ease,transform .55s cubic-bezier(0.22,1,0.36,1);
+  /* ── 첫 방문 온보딩: 상단 검색바(iOS 리퀴드글라스 느낌) ──────────── */
+  #ob-top-search{
+    position:fixed;z-index:41;
+    top:calc(env(safe-area-inset-top,0px) + 58px);
+    left:20px;right:20px;
+    opacity:0;transform:translateY(-6px);
+    transition:opacity .5s ease,transform .5s cubic-bezier(0.22,1,0.36,1);
+    pointer-events:none;
   }
-  #onboard-hint.ob-show{opacity:1;transform:translateY(0);}
-  #onboard-hint.ob-hide{opacity:0;transform:translateY(4px);transition:opacity .3s ease,transform .3s ease;}
-  #ob-pill{
-    background:rgba(14,18,38,0.88);
-    backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);
-    border:0.5px solid rgba(255,255,255,0.11);
-    border-radius:24px;padding:8px 18px;
+  #ob-top-search.ob-show{opacity:1;transform:translateY(0);pointer-events:auto;}
+  #ob-top-search.ob-hide{opacity:0;transform:translateY(-6px);transition:opacity .3s ease,transform .3s ease;pointer-events:none;}
+  #ob-top-search-btn{
+    width:100%;box-sizing:border-box;display:flex;align-items:center;gap:8px;
+    background:rgba(255,255,255,0.08);
+    backdrop-filter:blur(26px) saturate(180%);-webkit-backdrop-filter:blur(26px) saturate(180%);
+    border:1px solid rgba(255,255,255,0.22);
+    border-radius:24px;padding:13px 18px;
+    cursor:pointer;
+    color:rgba(255,255,255,0.70);
     font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;
-    font-size:12.5px;font-weight:600;letter-spacing:.02em;
-    color:rgba(210,228,255,0.90);white-space:nowrap;
-    box-shadow:0 6px 24px rgba(0,0,0,0.40),inset 0 0.5px 0 rgba(255,255,255,0.06);
+    font-size:13px;font-weight:700;letter-spacing:.04em;
+    box-shadow:0 8px 28px rgba(0,0,0,0.28),inset 0 1px 0 rgba(255,255,255,0.20),inset 0 -6px 14px rgba(255,255,255,0.03);
+    transition:background .18s,border-color .18s,transform .12s;
   }
-  #ob-arrow{display:flex;flex-direction:column;align-items:center;gap:2px;animation:ob-bounce 1.5s ease-in-out infinite;}
-  #ob-arrow-line{width:1px;height:9px;background:rgba(160,185,240,0.38);}
-  #ob-arrow-head{width:0;height:0;border-left:4px solid transparent;border-right:4px solid transparent;border-top:5px solid rgba(160,185,240,0.38);}
-  @keyframes ob-bounce{0%,100%{transform:translateY(0);}50%{transform:translateY(3px);}}
-  .ob-target-glow{color:rgba(215,232,255,0.95)!important;filter:drop-shadow(0 0 7px rgba(140,175,255,0.60));}
+  #ob-top-search-btn:active{transform:scale(0.98);background:rgba(255,255,255,0.13);}
+  #ob-top-search-btn svg{flex-shrink:0;opacity:.8;}
+  #ob-top-search-btn span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  /* 탐험 패널 살짝 열어두기(첫 방문) — 지도앱 바텀시트 방식, 헤더 누르면 전체로 펼쳐짐 */
+  @media(max-width:768px){
+    #feed-overlay.open.peek{
+      inset:auto;left:0;right:0;bottom:0;height:50%;
+      border-radius:20px 20px 0 0;
+      border-top:0.5px solid rgba(255,255,255,0.10);
+      box-shadow:0 -8px 32px rgba(0,0,0,0.35);
+    }
+    #feed-overlay.peek #feed-hd{cursor:pointer;}
+  }
