@@ -37,8 +37,19 @@
     background:rgba(6,9,20,0.28);
     -webkit-mask-image:radial-gradient(circle at 50% 50%,transparent 0%,#000 0%);
     mask-image:radial-gradient(circle at 50% 50%,transparent 0%,#000 0%);
+    /* 이 레이어는 매 프레임 mask-image가 JS로 다시 계산되는데(_revealUniverse), backdrop-filter까지
+       같이 걸려있으면 프레임마다 블러+마스크를 전부 다시 그려야 해서 저사양 모바일에서 특히 끊김
+       (2026-08-12, 사용자 제보). will-change로 미리 별도 레이어로 승격해두면 최소한 이 레이어 갱신이
+       WebGL 캔버스 등 나머지 화면까지 다시 그리게 만드는 건 막아준다. */
+    will-change:mask-image,backdrop-filter;
   }
-  #loading-ring{position:fixed;inset:0;z-index:97;pointer-events:none;mix-blend-mode:screen;}
+  #loading-ring{position:fixed;inset:0;z-index:97;pointer-events:none;mix-blend-mode:screen;will-change:background;}
+  /* 모바일은 GPU가 약해 backdrop-filter의 블러 반경이 성능에 직접적으로 큰 영향을 줌 — 값을 낮출수록
+     비용이 확 줄어서(2026-08-12), 데스크톱보다 더 얇게 블러한다. 시각적으로는 살짝 덜 뿌옇게 보일 뿐
+     연출 자체(마스크가 퍼지며 우주가 드러나는 것)는 동일하게 유지됨. */
+  @media(max-width:768px){
+    #loading-veil{backdrop-filter:blur(16px) saturate(0.85);-webkit-backdrop-filter:blur(16px) saturate(0.85);}
+  }
   /* ── Tab bar ────────────────────────────────────── */
   #tabbar{
     position:fixed;bottom:0;left:0;right:0;
@@ -1132,7 +1143,22 @@
   #feed-list-hd{display:flex;align-items:flex-start;justify-content:space-between;padding:16px 18px 12px;flex-shrink:0;gap:10px;}
   #feed-list-hd-title{font-size:13.5px;font-weight:600;color:rgba(220,230,255,0.9);}
   #feed-list-sub{font-size:11px;color:rgba(155,178,228,0.55);margin-top:3px;}
+  /* 콜렉션 한줄평(선택 입력) — 목록/칩처럼 좁은 자리엔 넣을 공간이 없어서 상세를 열었을 때만 보여준다
+     (2026-08-12, 사용자 요청). 내 컬렉션일 때만 연필 아이콘으로 수정 가능, 남의 공개 컬렉션은 있을
+     때만(비어있으면 행 자체를 숨김) 읽기 전용으로 노출. */
+  #feed-list-desc-row{display:flex;align-items:center;gap:6px;margin-top:5px;}
+  #feed-list-desc{font-size:11.5px;color:rgba(200,215,250,0.72);line-height:1.4;}
+  #feed-list-desc.placeholder{color:rgba(140,165,220,0.35);font-style:italic;}
+  #feed-list-desc-edit{background:none;border:none;color:rgba(140,165,220,0.32);font-size:11px;cursor:pointer;padding:1px 4px;flex-shrink:0;}
+  #feed-list-desc-edit:hover{color:rgba(180,200,240,0.6);}
   #feed-list-close{background:none;border:none;color:rgba(180,195,230,0.6);font-size:18px;cursor:pointer;padding:0;line-height:1;flex-shrink:0;}
+  /* 다른 유저의 공개 컬렉션을 열었을 때만 보이는 줄 — 작성자 표시 + 내 라이브러리로 저장(복제)
+     (2026-08-12, 사용자 요청). 내 컬렉션이거나 포맷/장르 모아보기 등 콜렉션이 아닌 목록일 땐 숨김. */
+  #feed-list-save-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:0 18px 12px;flex-shrink:0;}
+  #feed-list-owner{font-size:11px;color:rgba(140,165,220,0.5);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  #feed-list-save-btn{flex-shrink:0;border-radius:20px;font-size:11.5px;font-weight:600;padding:5px 12px;cursor:pointer;font-family:inherit;border:0.5px solid rgba(130,185,255,0.32);background:rgba(130,185,255,0.10);color:rgba(170,205,255,0.92);}
+  #feed-list-save-btn:hover{background:rgba(130,185,255,0.18);}
+  #feed-list-save-btn.saved{border-color:rgba(140,165,220,0.2);background:none;color:rgba(140,165,220,0.4);cursor:default;}
   #feed-list-grid{overflow-y:auto;padding:0 14px 16px;}
   /* 정사각형으로 강제 크롭하면 썸네일에 박혀있는 이름/자막 정보가 잘려서(사용자 제보, 2026-08-03),
      그룹/멤버 카드의 기본 .gc-ch-item/.gc-ch-thumb 그대로(가로 16:9, 쇼츠만 9:16) 원본 비율을
@@ -1701,7 +1727,7 @@
   #tt-insta-pic-wrap:hover{transform:scale(1.07);transition:transform .15s;}
   #tt.has-insta-pic{max-width:288px!important;}
   #tt-name-row{display:inline-flex;align-items:center;gap:8px;margin-bottom:3px;padding-left:0;max-width:100%;}
-  #tt-name-row .tn{margin-bottom:0;padding-left:0;padding-right:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  #tt-name-row .tn{margin-bottom:0;padding-left:4px;padding-right:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
   /* 하트/공유 버튼이 align-items:center로도 이름 텍스트보다 살짝 아래로 처져 보인다는 제보(2026-08-11)
      — 아이콘 내부 여백 때문에 생기는 광학 보정용 미세 조정. */
   #tt-name-row .fav-btn,#tt-name-row .share-btn{position:relative;top:-1.5px;}
@@ -1802,6 +1828,32 @@
   .col-row-pub svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.6;}
   .col-row-pub:hover{color:rgba(180,200,240,0.6);}
   .col-row-pub.on{color:rgba(130,185,255,0.9);}
+  /* 드래그 재정렬 손잡이 — 콜렉션 목록(.col-row)·콜렉션 안 영상 목록(.cve-item) 공용(2026-08-12).
+     탭하면 목록을 열고 손잡이만 눌러 끌면 순서를 바꾸는 구조라 손잡이 히트박스를 넉넉히 잡는다. */
+  .drag-handle{background:none;border:none;color:rgba(140,165,220,0.32);cursor:grab;padding:4px 6px;flex-shrink:0;touch-action:none;font-size:13px;line-height:1;letter-spacing:1px;}
+  .drag-handle:hover{color:rgba(180,200,240,0.6);}
+  .drag-reorder-item{position:relative;}
+  .drag-reorder-item.dragging{opacity:0.55;background:rgba(120,170,255,0.08);box-shadow:0 6px 18px rgba(0,0,0,0.4);z-index:20;cursor:grabbing;}
+  .drag-reorder-item.dragging .drag-handle{cursor:grabbing;color:rgba(160,195,255,0.9);}
+  /* 콜렉션 상세(내 것일 때만) — 사진 그리드 대신 재생목록처럼 세로 리스트로 보여줘야 드래그 재정렬이
+     자연스러워서(스포티파이/유튜브뮤직 플레이리스트 편집 화면 참고, 2026-08-12) 사진 그리드(.gc-ch-item)와
+     별도 레이아웃을 쓴다. */
+  #feed-list-grid.cve-list{display:flex;flex-direction:column;gap:2px;}
+  .cve-item{display:flex;align-items:center;gap:8px;padding:5px 2px;border-radius:8px;cursor:pointer;transition:background .12s;}
+  .cve-item:hover{background:rgba(255,255,255,0.04);}
+  .cve-thumb{width:56px;height:34px;border-radius:4px;object-fit:cover;background:rgba(255,255,255,0.06);flex-shrink:0;}
+  .cve-info{flex:1;min-width:0;}
+  .cve-title{font-size:12.5px;color:rgba(210,225,255,0.88);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .cve-sub{font-size:10.5px;color:rgba(120,145,190,0.5);margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .cve-remove{background:none;border:none;color:rgba(140,165,220,0.28);font-size:14px;cursor:pointer;padding:2px 6px;flex-shrink:0;}
+  .cve-remove:hover{color:rgba(255,100,120,0.7);}
+  /* 콜렉션 대표 이미지(커버) 직접 지정 — 기본은 첫 영상 썸네일이지만, 핀 아이콘으로 원하는 영상을
+     고정할 수 있다(2026-08-12, 사용자 요청). 지정된 항목만 항상 채워진 상태로 보이게 한다. */
+  .cve-cover-btn{background:none;border:none;color:rgba(140,165,220,0.28);cursor:pointer;padding:2px 5px;flex-shrink:0;display:flex;align-items:center;}
+  .cve-cover-btn svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.6;}
+  .cve-cover-btn:hover{color:rgba(180,200,240,0.6);}
+  .cve-cover-btn.on{color:rgba(255,205,110,0.92);}
+  .cve-cover-btn.on svg{fill:currentColor;}
   #col-create-btn{margin-top:6px;background:none;border:0.5px dashed rgba(140,165,220,0.18);border-radius:8px;color:rgba(140,165,220,0.42);font-size:11.5px;font-weight:600;padding:7px 10px;cursor:pointer;font-family:inherit;width:100%;text-align:left;transition:border-color .13s,color .13s;letter-spacing:.02em;}
   #col-create-btn:hover{border-color:rgba(140,165,220,0.38);color:rgba(180,200,240,0.78);}
   /* ── Collection picker modal ────────────────────────── */

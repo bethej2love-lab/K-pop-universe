@@ -394,8 +394,16 @@
       <div>
         <div id="feed-list-hd-title"></div>
         <div id="feed-list-sub"></div>
+        <div id="feed-list-desc-row" style="display:none">
+          <span id="feed-list-desc"></span>
+          <button id="feed-list-desc-edit" type="button" style="display:none" aria-label="한줄평 수정">✎</button>
+        </div>
       </div>
       <button id="feed-list-close">✕</button>
+    </div>
+    <div id="feed-list-save-row" style="display:none">
+      <span id="feed-list-owner"></span>
+      <button id="feed-list-save-btn" type="button"></button>
     </div>
     <div id="feed-list-grid" class="gc-ch-grid"></div>
   </div>
@@ -1889,17 +1897,26 @@ function _revealUniverse(){
   loadingEl.style.opacity='0';
   {
     const t0=performance.now();
+    // 모바일에서는 veil의 mask-image/ring의 background(둘 다 backdrop-filter가 걸린 레이어를 프레임마다
+    // 다시 그리게 만드는 원인) 갱신만 한 프레임 걸러 적용 — 별이 커지는 WebGL 쪽(아래 bubbleMeshes)은
+    // 그대로 매 프레임 갱신해서 그쪽 체감 부드러움은 유지하면서, 진짜 무거운 CSS 리페인트 횟수만
+    // 반으로 줄인다(2026-08-12, 사용자 제보 — 저사양 폰에서 이 오프닝 모션이 끊긴다는 제보에 대응).
+    const _skipMaskFrame=isMob();
+    let _maskFrameToggle=false;
     (function tick(){
       const t=Math.min((performance.now()-t0)/dur,1);
       // 시작~중간은 선형에 가깝게 빠르게, 중간~끝은 기존 지수 가속 곡선 그대로 유지(이음매 없이 매끄럽게 블렌드)
       const e=t<=0?0:0.26*t+0.74*Math.pow(2,6*t-6);
       const r=e*112;
-      const bandInner=Math.max(0,r-42);
-      const grad=`radial-gradient(circle at 50% 50%, transparent ${bandInner}%, #000 ${r}%)`;
-      veil.style.webkitMaskImage=grad;veil.style.maskImage=grad;
-      if(ring){
-        const glowOp=Math.sin(Math.min(t,1)*Math.PI)*0.18;
-        ring.style.background=`radial-gradient(circle at 50% 50%, transparent ${Math.max(0,r-16)}%, rgba(150,190,255,${glowOp.toFixed(3)}) ${r}%, transparent ${r+20}%)`;
+      _maskFrameToggle=!_maskFrameToggle;
+      if(!_skipMaskFrame||_maskFrameToggle||t>=1){
+        const bandInner=Math.max(0,r-42);
+        const grad=`radial-gradient(circle at 50% 50%, transparent ${bandInner}%, #000 ${r}%)`;
+        veil.style.webkitMaskImage=grad;veil.style.maskImage=grad;
+        if(ring){
+          const glowOp=Math.sin(Math.min(t,1)*Math.PI)*0.18;
+          ring.style.background=`radial-gradient(circle at 50% 50%, transparent ${Math.max(0,r-16)}%, rgba(150,190,255,${glowOp.toFixed(3)}) ${r}%, transparent ${r+20}%)`;
+        }
       }
       bubbleMeshes.forEach(bm=>{
         const start=bm.mesh._revealFrac*0.55;
@@ -1923,25 +1940,27 @@ function _revealUniverse(){
   }
 }
 
-// ── 첫 방문 온보딩: 상단 검색바(글라스) + 탐험 패널 살짝 열기 ──────────
-// 예전엔 검색/탐험 탭을 가리키는 작은 말풍선 힌트였는데(한 번 뜨고 영영 사라짐), 지도앱처럼 상단
-// 검색바 + 바텀시트 살짝 열기로 바꿈(2026-08-11, 사용자 요청 — "이게 뭐지 뭘 봐야하지" 콜드스타트
-// 해소). 상단 검색바는 실제 입력창이 아니라 탭하면 기존 검색(tab-search)으로 그대로 인계하는
-// 버튼 — 결과 렌더링 로직을 중복 구현하지 않기 위함. _OB_KEY는 기존과 동일하게 재사용(최초 1회만).
+// ── 탐험 패널 살짝 열어두기(매번 기본 상태) + 첫 방문 검색바 안내 ──────────
+// 원래는 최초 1회만 뜨는 온보딩이었는데(2026-08-11), 탐험 패널을 아예 "콜드스타트 기본 화면"으로
+// 삼기로 함(2026-08-12, 사용자 요청) — 매번 앱을 열 때마다 탐험이 50%로 살짝 열려있음. 상단 검색바
+// 글라스 힌트("이게 뭐지" 튜토리얼)는 원래 취지(가르쳐주기)대로 최초 1회만 유지 — _OB_KEY는 이제
+// "검색바 힌트를 본 적 있는지"만 추적.
 var _OB_KEY='kpu_onboard_done';
 var _obTimer=null;
-var _obActive=false; // 온보딩 UI가 실제로 화면에 떠 있는 상태
+var _obActive=false; // 탐험 패널을 이 타이머가 자동으로 열어둔 상태(아직 아무 상호작용도 없었음)
 function _showOnboardHint(){
-  if(_obActive||localStorage.getItem(_OB_KEY))return;
-  // 딥링크나 자동 오픈으로 이미 카드가 열려있으면 온보딩 불필요
+  if(_obActive)return;
+  // 딥링크나 자동 오픈으로 이미 카드가 열려있으면 자동으로 열 필요 없음
   if(document.getElementById('mob-sheet').classList.contains('bs-open'))return;
   if(document.getElementById('side-panel').classList.contains('open'))return;
   _obActive=true;
   if(isMob()){
-    const el=document.getElementById('ob-top-search');
-    if(el){
-      el.classList.remove('ob-hide');
-      requestAnimationFrame(()=>requestAnimationFrame(()=>el.classList.add('ob-show')));
+    if(!localStorage.getItem(_OB_KEY)){
+      const el=document.getElementById('ob-top-search');
+      if(el){
+        el.classList.remove('ob-hide');
+        requestAnimationFrame(()=>requestAnimationFrame(()=>el.classList.add('ob-show')));
+      }
     }
     _openFeedOverlay();
     document.getElementById('feed-overlay')?.classList.add('peek');
@@ -1956,9 +1975,10 @@ function _dismissOnboardHint(){
   localStorage.setItem(_OB_KEY,'1');
   const el=document.getElementById('ob-top-search');
   if(el){el.classList.remove('ob-show');el.classList.add('ob-hide');}
-  const fo=document.getElementById('feed-overlay');
-  if(fo?.classList.contains('peek'))_closeFeedOverlay();
-  else if(!isMob())_closeFeedOverlay();
+  // 탐험 패널(peek 포함)은 이제 카드 밑에 그대로 깔아두는 게 기본이라(2026-08-12) 여기서 안 닫는다 —
+  // 카드가 완전히 치워지면 자연히 다시 보임. 데스크톱은 원래도 옆 패널이라 카드와 같이 열어두는 게
+  // 기본인데, 이 최초 안내에서만 예외적으로 닫아온 기존 동작만 유지.
+  if(!isMob())_closeFeedOverlay();
 }
 
 // ── Animate ───────────────────────────────────────
@@ -3663,7 +3683,17 @@ function _renderMixedVidGrid(items,containerEl,all,ctx){
 function buildVideoSection(songs,containerEl,ctx,mainCandidates){
   containerEl.innerHTML='';
   // 그리드 배치와 라이트박스 스와이프가 같은 순서를 보도록, 한 번만 섞어서 이후 전부(대표영상 선정 제외) 이 순서를 그대로 씀
-  const all=_weightedShuffleByCat([...(songs||[])],s=>s.type);
+  // 연결 카드에서 "Only"를 켜서 정확히 그 조합만 보는 중이면(ctx.pushExtDown), content_flag='외부인'
+  // (그 조합 외 다른 사람이 더 섞여 나온다고 관리자가 표시한 영상)은 순수 조합 영상들보다 아래로 뺀다
+  // (2026-08-12, 사용자 요청) — 그룹별로 각각 셔플한 뒤 이어붙여서 그리드/라이트박스 순서를 일치시킨다.
+  let all;
+  if(ctx&&ctx.pushExtDown){
+    const pure=(songs||[]).filter(s=>s.content_flag!=='외부인');
+    const ext=(songs||[]).filter(s=>s.content_flag==='외부인');
+    all=[..._weightedShuffleByCat(pure,s=>s.type),..._weightedShuffleByCat(ext,s=>s.type)];
+  }else{
+    all=_weightedShuffleByCat([...(songs||[])],s=>s.type);
+  }
   if(!all.length){
     return;
   }
@@ -4158,6 +4188,7 @@ function _apiVidToSong(v,memberKo,groupKo){
   // artists.json 수동 등록곡은 이 필드가 없어서(_apiId undefined) 태깅 버튼이 자동으로 안 뜸(대상 행이 없으므로).
   song._apiId=v.id;
   song._apiGroupKo=v.group_ko;
+  song.content_flag=v.content_flag||null;
   return song;
 }
 // 멤버 카드에 API로 수집된(그룹 채널 동기화) 영상 중 이 멤버가 출연 태깅된 것을 백그라운드로 불러와 합쳐서 다시 렌더링.
@@ -4298,7 +4329,7 @@ async function _fetchApiCollabData(anchor){
       // "그룹 통째 태깅" 조회 양쪽에 걸려 _dedupSongs에서 병합될 때 이 boolean이 유실되면서(with는 합쳐지는데
       // 플래그는 안 합쳐짐) 확정 안 된 멤버까지 확정된 것처럼 보이는 버그가 있었음(2026-08-10, 코르티스
       // 성현×베이비몬스터 사례로 발견) — 이름 단위 Set으로 바꿔서 병합 시에도 정확히 유지되게 함.
-      const song={t:v.title,u:v.category==='short'?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`,with:withList,_apiId:v.id,_apiGroupKo:v.group_ko,_groupWideNames:new Set(withList)};
+      const song={t:v.title,u:v.category==='short'?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`,with:withList,_apiId:v.id,_apiGroupKo:v.group_ko,_groupWideNames:new Set(withList),content_flag:v.content_flag||null};
       if(v.category==='mv')song.type='mv';
       else if(v.category==='other')song.type='other';
       withList.forEach(n=>names.add(n));
@@ -4337,7 +4368,7 @@ async function _fetchApiCollabData(anchor){
         withList=[`${solo.name.ko}(${solo.group.ko})`];
         groupWide=false;
       }
-      const song={t:v.title,u:v.category==='short'?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`,with:withList,_apiId:v.id,_apiGroupKo:v.group_ko,_groupWideNames:groupWide?new Set(withList):undefined};
+      const song={t:v.title,u:v.category==='short'?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`,with:withList,_apiId:v.id,_apiGroupKo:v.group_ko,_groupWideNames:groupWide?new Set(withList):undefined,content_flag:v.content_flag||null};
       if(v.category==='mv')song.type='mv';
       else if(v.category==='other')song.type='other';
       withList.forEach(n=>names.add(n));
@@ -4793,7 +4824,7 @@ function _buildConnContent(container){
   container.appendChild(vidLblRow);
   const vidDiv=document.createElement('div');
   const songs=_getCollabSongs(_connAnchor,_connSelected,_connExactOnly,_connSelectedGroups);
-  const _connCtx=_connAnchor?{groupKo:_connAnchor.group.ko,memberKo:_connAnchor.name.ko,selectable:_isAdmin()}:undefined;
+  const _connCtx=_connAnchor?{groupKo:_connAnchor.group.ko,memberKo:_connAnchor.name.ko,selectable:_isAdmin(),pushExtDown:_connExactOnly}:undefined;
   if(songs.length)buildVideoSection(songs,vidDiv,_connCtx);
   else{
     const e2=document.createElement('div');e2.className='conn-no-video';
@@ -5404,6 +5435,59 @@ function _enableDragScroll(el){
 }
 _enableDragScroll(document.getElementById('tco'));
 
+// ── 세로 목록 드래그 재정렬(공용) ────────────────────────────────
+// 콜렉션 목록(.col-row)·콜렉션 안 영상 목록(.cve-item) 둘 다 이걸로 재정렬한다(2026-08-12, 사용자 요청).
+// 항목 자체가 클릭하면 열리는 목록이라(탭=열기), 손잡이(.drag-handle)에서 시작한 포인터만 드래그로
+// 취급하고 나머지는 그대로 클릭이 통과하게 둔다. 항목이 적게는 몇 개~많아야 수십 개 수준이라(사용자가
+// 직접 큐레이션한 목록) 매 pointermove마다 형제 요소들의 getBoundingClientRect를 다시 재는 단순한
+// 방식으로도 성능에 문제없다 — 매번 최신 실제 위치를 보므로 항목 높이가 들쭉날쭉해도(영상 제목 줄바꿈 등)
+// 안정적으로 동작한다.
+function _enableDragReorder(containerEl,itemSelector,handleSelector,onReorder){
+  if(!containerEl||containerEl._dragReorderBound)return;
+  containerEl._dragReorderBound=true;
+  let dragEl=null,pointerId=null,moved=false;
+  function itemsExcept(el){return[...containerEl.querySelectorAll(itemSelector)].filter(i=>i!==el);}
+  function onMove(e){
+    if(!dragEl||e.pointerId!==pointerId)return;
+    e.preventDefault();
+    moved=true;
+    const y=e.clientY;
+    for(const other of itemsExcept(dragEl)){
+      const r=other.getBoundingClientRect();
+      const mid=r.top+r.height/2;
+      const dragIsBefore=!!(dragEl.compareDocumentPosition(other)&Node.DOCUMENT_POSITION_FOLLOWING);
+      if(dragIsBefore&&y>mid){containerEl.insertBefore(dragEl,other.nextSibling);break;}
+      if(!dragIsBefore&&y<mid){containerEl.insertBefore(dragEl,other);break;}
+    }
+  }
+  function onUp(e){
+    if(!dragEl||e.pointerId!==pointerId)return;
+    dragEl.classList.remove('dragging');
+    dragEl=null;pointerId=null;
+    containerEl.removeEventListener('pointermove',onMove);
+    containerEl.removeEventListener('pointerup',onUp);
+    containerEl.removeEventListener('pointercancel',onUp);
+    if(moved)onReorder([...containerEl.querySelectorAll(itemSelector)]);
+  }
+  containerEl.addEventListener('pointerdown',e=>{
+    const handle=e.target.closest(handleSelector);
+    if(!handle)return;
+    const item=handle.closest(itemSelector);
+    if(!item)return;
+    e.preventDefault();e.stopPropagation();
+    dragEl=item;pointerId=e.pointerId;moved=false;
+    item.classList.add('dragging');
+    containerEl.addEventListener('pointermove',onMove);
+    containerEl.addEventListener('pointerup',onUp);
+    containerEl.addEventListener('pointercancel',onUp);
+  });
+  // 손잡이를 눌러 끌었을 뿐인데(=탭이 아니라 드래그였는데) 손잡이 위로 발생하는 합성 click 이벤트가
+  // 그대로 항목의 열기(row click) 핸들러까지 버블돼 방금 재정렬한 항목이 열려버리는 걸 막는다.
+  containerEl.addEventListener('click',e=>{
+    if(e.target.closest(handleSelector)){e.stopPropagation();e.preventDefault();}
+  },true);
+}
+
 document.getElementById('ttx').addEventListener('click',e=>{
   e.stopPropagation();
   _maybeSuggestNext();
@@ -5695,6 +5779,7 @@ function showT(a,cx,cy,keepNavStack,urlMode,pushMobNav,noFly){
    const _existingCamInput=document.getElementById('tt-insta-cam-input');if(_existingCamInput)_existingCamInput.remove();}
   if(_isAdmin()&&a.links?.instagram){
     const koName=a.name.ko;
+    const groupKo=a.group?.ko||'';
     const _waitImgLoad=()=>new Promise(res=>{
       const img=document.getElementById('tt-insta-pic');
       if(!img||img.complete){res();return;}
@@ -5728,7 +5813,7 @@ function showT(a,cx,cy,keepNavStack,urlMode,pushMobNav,noFly){
         const{error:upErr}=await sb.storage.from('artist-pics').upload(path,file,{upsert:true,contentType:file.type});
         if(upErr){alert('업로드 실패: '+upErr.message);return;}
         const{data:{publicUrl}}=sb.storage.from('artist-pics').getPublicUrl(path);
-        const ok=await _saveInstaPic(koName,publicUrl);
+        const ok=await _saveInstaPic(koName,groupKo,publicUrl);
         if(ok){await _waitImgLoad();_syncCamBtn();}
         else alert('저장 실패');
       }finally{camBtn.classList.remove('cam-uploading');}
@@ -5738,10 +5823,10 @@ function showT(a,cx,cy,keepNavStack,urlMode,pushMobNav,noFly){
     camBtn.addEventListener('pointerdown',e=>{
       _camPressTimer=setTimeout(()=>{
         _camPressTimer=null;
-        const existingUrl=_instaPicCache.get(koName)||'';
+        const existingUrl=_instaPicCache.get(_picKey(koName,groupKo))||'';
         _promptDialog({title:`${koName} 프로필 사진 URL`,value:existingUrl,placeholder:'https://...'}).then(async url=>{
           if(url==null)return;const trimmed=url.trim();if(!trimmed)return;
-          const ok=await _saveInstaPic(koName,trimmed);
+          const ok=await _saveInstaPic(koName,groupKo,trimmed);
           if(ok){await _waitImgLoad();_syncCamBtn();}else alert('저장 실패');
         });
       },600);
@@ -5832,9 +5917,12 @@ function _fandomText(fd){
 }
 // ── 그룹 외부 링크 (영문명 줄 오른쪽 아이콘) — 소비 빈도순: 유튜브>인스타>X>위버스>틱톡>나무위키 ──
 // ── Instagram 프로필 사진 ──────────────────────────────────────────
-// Supabase 테이블: artist_pics (ko_name TEXT PK, pic_url TEXT, updated_at TIMESTAMPTZ)
-// RLS: SELECT 전체 허용, INSERT/UPDATE/DELETE 인증 사용자만
-const _instaPicCache=new Map(); // ko_name → pic_url (세션 캐시)
+// Supabase 테이블: artist_pics (ko_name TEXT, group_ko TEXT, pic_url TEXT, updated_at TIMESTAMPTZ,
+// PK (ko_name, group_ko)) — 동명이인(마크/도영/지민 등, 같은 이름이 여러 그룹에 존재)이 서로 사진을
+// 공유해버리던 버그(2026-08-12, 사용자 제보) 수정: 기존엔 ko_name 단독 PK라 이름이 겹치는 멤버끼리
+// 사진이 충돌했음 — 키에 group_ko를 추가해 그룹 단위로 분리.
+const _instaPicCache=new Map(); // "ko_name␟group_ko" → pic_url (세션 캐시)
+function _picKey(koName,groupKo){return koName+'␟'+(groupKo||'');}
 // artist_pics 전체를 한 번에 미리 받아 _instaPicCache를 채워둠(2026-08-11, 사용자 제보 — 멤버마다 사진
 // 뜨는 속도가 들쭉날쭉했던 원인: 카드 열 때마다 DB 조회 1번 + 이미지 로드가 순차로 걸려서, 이 세션에서
 // 이미 한 번 열어본 멤버(캐시 적중)만 빨랐던 것. 행이 32개뿐인 작은 테이블이라(2026-08-11 기준)
@@ -5843,9 +5931,9 @@ let _instaPicPreloadP=null;
 async function _warmInstaPicCache(){
   if(!sb)return;
   try{
-    const{data,error}=await sb.from('artist_pics').select('ko_name,pic_url');
+    const{data,error}=await sb.from('artist_pics').select('ko_name,group_ko,pic_url');
     if(error){console.error('instapic warm failed',error);return;}
-    (data||[]).forEach(r=>{if(r.pic_url)_instaPicCache.set(r.ko_name,r.pic_url);});
+    (data||[]).forEach(r=>{if(r.pic_url)_instaPicCache.set(_picKey(r.ko_name,r.group_ko),r.pic_url);});
   }catch(e){console.error('_warmInstaPicCache failed',e);}
 }
 async function _loadInstaPic(a){
@@ -5854,18 +5942,24 @@ async function _loadInstaPic(a){
   if(!wrap||!img)return;
   wrap.style.display='none';
   wrap.classList.remove('tt-pic-loading','tt-pic-ready');
+  // 사진 있는 멤버 → 없는 멤버로 넘어갈 때 이 클래스가 안 지워지면 카드 너비(max-width:288px)가
+  // 이전 멤버 것 그대로 남아 정렬이 흐트러짐(2026-08-12 제보) — 아래 조건부 리턴들보다 먼저,
+  // 매번 무조건 리셋해두고 실제 사진 로드에 성공했을 때만 onload에서 다시 붙인다.
+  document.getElementById('tt')?.classList.remove('has-insta-pic');
   if(!a.links?.instagram||!sb)return;
   const koName=a.name.ko;
+  const groupKo=a.group?.ko||'';
+  const cacheKey=_picKey(koName,groupKo);
   if(_instaPicPreloadP)await _instaPicPreloadP;
-  let picUrl=_instaPicCache.get(koName);
+  let picUrl=_instaPicCache.get(cacheKey);
   if(!picUrl){
-    const{data}=await sb.from('artist_pics').select('pic_url').eq('ko_name',koName).maybeSingle();
+    const{data}=await sb.from('artist_pics').select('pic_url').eq('ko_name',koName).eq('group_ko',groupKo).maybeSingle();
     picUrl=data?.pic_url||null;
-    if(picUrl)_instaPicCache.set(koName,picUrl);
+    if(picUrl)_instaPicCache.set(cacheKey,picUrl);
   }
   if(!picUrl)return;
   // 카드가 이미 다른 멤버로 전환됐으면 무시
-  if(_openTArtist?.name?.ko!==koName)return;
+  if(_openTArtist?.name?.ko!==koName||(_openTArtist?.group?.ko||'')!==groupKo)return;
   wrap.href=a.links.instagram;
   wrap.onclick=e=>e.stopPropagation();
   // URL이 확정된 시점(캐시 히트든 방금 조회든)에 바로 자리를 차지하고 셰머를 보여준다 — 실제 이미지
@@ -5882,20 +5976,21 @@ async function _loadInstaPic(a){
   if(img.src!==picUrl)img.src=picUrl;
   else if(img.complete&&img.naturalWidth){wrap.classList.remove('tt-pic-loading');wrap.classList.add('tt-pic-ready');document.getElementById('tt')?.classList.add('has-insta-pic');}
 }
-async function _saveInstaPic(koName,picUrl){
+async function _saveInstaPic(koName,groupKo,picUrl){
   if(!sb||!window._sbSession)return;
-  const{error}=await sb.from('artist_pics').upsert({ko_name:koName,pic_url:picUrl,updated_at:new Date().toISOString()});
-  if(!error){_instaPicCache.set(koName,picUrl);_loadInstaPic(_openTArtist);}
+  const{error}=await sb.from('artist_pics').upsert({ko_name:koName,group_ko:groupKo||'',pic_url:picUrl,updated_at:new Date().toISOString()},{onConflict:'ko_name,group_ko'});
+  if(!error){_instaPicCache.set(_picKey(koName,groupKo),picUrl);_loadInstaPic(_openTArtist);}
   return!error;
 }
 // 멤버 카드를 열지 않고도(예: 애니버서리 스트립) 저장된 인스타 프로필 사진만 조회
-async function _fetchInstaPicUrl(koName){
+async function _fetchInstaPicUrl(koName,groupKo){
   if(!sb)return null;
+  const cacheKey=_picKey(koName,groupKo);
   if(_instaPicPreloadP)await _instaPicPreloadP;
-  if(_instaPicCache.has(koName))return _instaPicCache.get(koName);
-  const{data}=await sb.from('artist_pics').select('pic_url').eq('ko_name',koName).maybeSingle();
+  if(_instaPicCache.has(cacheKey))return _instaPicCache.get(cacheKey);
+  const{data}=await sb.from('artist_pics').select('pic_url').eq('ko_name',koName).eq('group_ko',groupKo||'').maybeSingle();
   const picUrl=data?.pic_url||null;
-  if(picUrl)_instaPicCache.set(koName,picUrl);
+  if(picUrl)_instaPicCache.set(cacheKey,picUrl);
   return picUrl;
 }
 
@@ -6167,6 +6262,16 @@ document.getElementById('settings-panel').addEventListener('click',e=>e.stopProp
 // 닫혀버리는 버그가 있었음(노출 제외/편집 버튼 누를 때마다 카드가 사라짐).
 document.getElementById('admin-bulk-bar').addEventListener('click',e=>e.stopPropagation());
 document.getElementById('user-bulk-bar').addEventListener('click',e=>e.stopPropagation());
+// 같은 이유(body 바로 아래 뜨는 fixed 오버레이라 #tt/#gc 소속이 아님)로 #col-picker도 빠져있었음 — 컬렉션이
+// 하나도 없는 상태에서 카드 안 영상의 "컬렉션에 추가" 버튼을 처음 누르면 이 모달이 뜨는데, 그 안에서
+// 아무 버튼(새 컬렉션 만들기 등)을 눌러도 클릭이 window까지 새서 열려있던 멤버/그룹 카드가 닫혀버렸음
+// (2026-08-12, 사용자 제보 — "콜렉션 생성하고 저장 버튼 누르면 카드가 선택 해제된다").
+document.getElementById('col-picker').addEventListener('click',e=>e.stopPropagation());
+// #feed-list-overlay(컬렉션 상세/포맷·장르 모아보기)도 동일 계열 — 배경 클릭 시 닫는 자기 자신 리스너는
+// 이미 있었지만(9719번째 줄 부근) 그 리스너는 e.target===e.currentTarget(배경 자체를 눌렀을 때)에서만
+// 동작해서 stopPropagation을 안 했고, 내부 버튼(방금 추가한 재정렬 손잡이/빼기 버튼 등)을 눌러도 새어
+// 나갔음 — 안전하게 항상 막는다.
+document.getElementById('feed-list-overlay').addEventListener('click',e=>e.stopPropagation());
 
 // ── Filter ────────────────────────────────────────
 function applyFilter(){
@@ -7094,7 +7199,7 @@ document.getElementById('dh-feed-btn').addEventListener('click',e=>{
 }
 document.getElementById('desktop-header').addEventListener('click',e=>e.stopPropagation());
 document.getElementById('desktop-header').addEventListener('pointerdown',e=>e.stopPropagation());
-['settings-panel','search-wrap','tabbar','tt','gc','tab-settings'].forEach(id=>{
+['settings-panel','search-wrap','tabbar','tt','gc','tab-settings','col-picker'].forEach(id=>{
   document.getElementById(id)?.addEventListener('pointerdown',e=>e.stopPropagation());
 });
 window.addEventListener('pointerdown',e=>{_mdx=e.clientX;_mdy=e.clientY;closePanels();_dismissOnboardHint();});
@@ -7386,6 +7491,19 @@ let favConnections=new Set(JSON.parse(localStorage.getItem(FAV_KEY_C)||'[]'));
 const FAV_DATE_KEY='kpu_fav_dates';
 let favDates=JSON.parse(localStorage.getItem(FAV_DATE_KEY)||'{}'); // {key: 'YYYY-MM-DD'}
 let _dateEditKey=null;
+// ── 팬 덕질 계보 데이터 씨앗(2026-08-12) ─────────────
+// favDates는 즐겨찾기 해제 시 항목이 통째로 지워져서 "한때 좋아했던 흔적"이 안 남음 — 나중에 "내 우주
+// 지도"(추가 순서대로 별 배치, 해제해도 희미하게 남는 시각화) 만들 때 쓸 원본 로그를 지금부터 조용히
+// 쌓아둔다. 지금은 시각화 없이 순수 append-only 기록만(기존 화면엔 전혀 영향 없음).
+const FAV_HISTORY_KEY='kpu_fav_history';
+let favHistory=JSON.parse(localStorage.getItem(FAV_HISTORY_KEY)||'[]'); // [{dk,action:'add'|'remove',at:ISO}]
+const FAV_HISTORY_MAX=1000; // 개인 활동 로그치곤 넉넉한 상한 — 무한정 쌓이는 것만 방지
+function _logFavHistory(dk,action){
+  favHistory.push({dk,action,at:new Date().toISOString()});
+  if(favHistory.length>FAV_HISTORY_MAX)favHistory=favHistory.slice(-FAV_HISTORY_MAX);
+  localStorage.setItem(FAV_HISTORY_KEY,JSON.stringify(favHistory));
+  _sbPushColumn('fav_history',favHistory);
+}
 function _todayISO(){
   const d=new Date();
   return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
@@ -7461,6 +7579,7 @@ function toggleConnFavorite(anchor,sel){
     const wasFav=favConnections.has(k);
     if(wasFav){favConnections.delete(k);delete favDates[dk];}
     else{favConnections.add(k);favDates[dk]=_todayISO();}
+    _logFavHistory(dk,wasFav?'remove':'add');
     _saveFavDates();
     localStorage.setItem(FAV_KEY_C,JSON.stringify([...favConnections]));
     _sbPushColumn('fav_connections',[...favConnections]);
@@ -7604,6 +7723,13 @@ function _deleteCollection(colId){
 // 태그)로 씀 — 영상에 태깅된 멤버 전원이 memberKos에 실리므로, 2명 이상 함께 나온 영상도 그 멤버들
 // 각자의 카드에 다 뜬다(2026-08-10, 사용자 피드백 — "여럿 섞였으면 각각 카드에 뜨는 게 맞지 않냐").
 // v.memberKo(단수)는 이전 버전에서 이미 로컬에 저장된 항목을 위한 하위호환 폴백.
+// 콜렉션 대표 이미지(커버)로 쓸 영상 — 기본은 첫 번째 영상이지만, 핀으로 직접 지정했으면(col.coverU)
+// 그 영상을 우선한다. 지정해둔 영상이 나중에 컬렉션에서 빠지면(삭제) 자동으로 다시 첫 영상 기본값으로
+// 돌아간다(2026-08-12, 사용자 요청 — "첫 영상 자동 대신 원하는 영상으로 대표 이미지 고정하고 싶다").
+function _colCoverVideo(col){
+  if(col.coverU){const v=(col.videos||[]).find(v=>v.u===col.coverU);if(v)return v;}
+  return(col.videos||[])[0]||null;
+}
 function _collectionGroupKos(col){
   return[...new Set((col.videos||[]).map(v=>v.groupKo).filter(Boolean))];
 }
@@ -7616,8 +7742,13 @@ function _syncPublicCollection(col){
   if(!sb||!window._sbSession)return;
   const uid=window._sbSession.user.id;
   if(col.isPublic){
+    // public_collections엔 커버 지정 여부를 담을 별도 컬럼이 없음 — 다른 유저 카드 쪽 렌더링
+    // (_renderCollectionRow)이 항상 items[0]을 커버로 쓰므로, 지정된 커버 영상이 있으면 그것만
+    // 앞으로 옮겨서 보낸다(로컬 col.videos 자체의 순서는 안 건드림, 재정렬 기능과는 별개).
+    const cover=_colCoverVideo(col);
+    const items=(cover&&col.videos[0]!==cover)?[cover,...col.videos.filter(v=>v!==cover)]:col.videos;
     sb.from('public_collections').upsert({
-      id:col.id,owner_id:uid,name:col.name,items:col.videos,
+      id:col.id,owner_id:uid,owner_nick:myProfile?.nickname||null,name:col.name,desc:col.desc||null,items,
       group_kos:_collectionGroupKos(col),member_kos:_collectionMemberKos(col),updated_at:new Date().toISOString()
     }).then(({error})=>{if(error)console.error('공개 컬렉션 동기화 실패',error.message);});
   }else{
@@ -7679,9 +7810,11 @@ function renderCollectionSection(){
   if(!collections.length){el.innerHTML='<div class="fav-empty">컬렉션이 없어요</div>';return;}
   el.innerHTML='';
   collections.forEach(col=>{
-    const row=document.createElement('div');row.className='col-row';
+    const row=document.createElement('div');row.className='col-row drag-reorder-item';row.dataset.colId=col.id;
+    const dragHandle=document.createElement('button');dragHandle.type='button';dragHandle.className='drag-handle';dragHandle.textContent='⠿';dragHandle.setAttribute('aria-label','드래그해서 순서 바꾸기');
+    row.appendChild(dragHandle);
     const img=document.createElement('img');img.className='col-row-thumb';
-    const thumbUrl=col.videos[0]?.thumb;
+    const thumbUrl=_colCoverVideo(col)?.thumb;
     if(thumbUrl){img.src=thumbUrl;}else{img.style.background='rgba(255,255,255,0.06)';}
     img.alt='';
     const info=document.createElement('div');info.className='col-row-info';
@@ -7711,9 +7844,14 @@ function renderCollectionSection(){
     row.addEventListener('click',()=>{
       if(!col.videos.length)return;
       const songs=col.videos.map(v=>({t:v.t,u:v.u,thumb:v.thumb,groupKo:v.groupKo,memberKos:v.memberKos}));
-      _openFeedListOverlay(col.name,`${col.videos.length}개 영상`,songs);
+      _openFeedListOverlay(col.name,`${col.videos.length}개 영상`,songs,{colId:col.id,mine:true});
     });
     el.appendChild(row);
+  });
+  _enableDragReorder(el,'.col-row','.drag-handle',items=>{
+    const order=items.map(it=>it.dataset.colId);
+    collections=order.map(id=>collections.find(c=>c.id===id)).filter(Boolean);
+    _saveCollections();
   });
 }
 function _updatePpStats(){
@@ -7798,6 +7936,7 @@ function toggleFavGroup(ko){
     const wasFav=favGroups.has(ko);
     if(wasFav){favGroups.delete(ko);delete favDates[dk];}
     else{favGroups.add(ko);favDates[dk]=_todayISO();}
+    _logFavHistory(dk,wasFav?'remove':'add');
     _gaEvent('favorite_group',{group_name:ko,action:wasFav?'remove':'add'});
     _saveFavDates();
     _saveFavs();
@@ -7821,6 +7960,7 @@ function toggleFavMember(artist){
     const wasFav=favMembers.has(k);
     if(wasFav){favMembers.delete(k);delete favDates[dk];}
     else{favMembers.add(k);favDates[dk]=_todayISO();}
+    _logFavHistory(dk,wasFav?'remove':'add');
     _gaEvent('favorite_member',{member_name:artist.name.ko,group_name:artist.group.ko,action:wasFav?'remove':'add'});
     _saveFavDates();
     _saveFavs();
@@ -9073,6 +9213,7 @@ async function _migrateLocalToServer(userId){
     fav_members:[...favMembers],
     fav_connections:[...favConnections],
     fav_dates:favDates,
+    fav_history:favHistory,
     scraps:scraps,
     collections:collections,
     profile:myProfile,
@@ -9092,6 +9233,7 @@ async function _pullServerToLocal(userId){
   favMembers=new Set(data.fav_members||[]);
   favConnections=new Set(data.fav_connections||[]);
   favDates=data.fav_dates||{};
+  favHistory=data.fav_history||[];
   scraps=data.scraps||[];
   collections=data.collections||[];
   myProfile=data.profile||null;
@@ -9100,6 +9242,7 @@ async function _pullServerToLocal(userId){
   localStorage.setItem(FAV_KEY_M,JSON.stringify([...favMembers]));
   localStorage.setItem(FAV_KEY_C,JSON.stringify([...favConnections]));
   localStorage.setItem(FAV_DATE_KEY,JSON.stringify(favDates));
+  localStorage.setItem(FAV_HISTORY_KEY,JSON.stringify(favHistory));
   localStorage.setItem(SCRAP_KEY,JSON.stringify(scraps));
   localStorage.setItem(COLLECTION_KEY,JSON.stringify(collections));
   localStorage.setItem(PROFILE_KEY,JSON.stringify(myProfile));
@@ -9237,7 +9380,7 @@ async function _handleLogout(){
   const ok=await _confirmLogout();
   if(!ok)return;
   try{await sb.auth.signOut();}catch(e){console.error('signOut 실패',e);}
-  [FAV_KEY_G,FAV_KEY_M,FAV_KEY_C,FAV_DATE_KEY,SCRAP_KEY,PROFILE_KEY,CONCERT_LOG_KEY,SB_LAST_UID_KEY]
+  [FAV_KEY_G,FAV_KEY_M,FAV_KEY_C,FAV_DATE_KEY,FAV_HISTORY_KEY,SCRAP_KEY,PROFILE_KEY,CONCERT_LOG_KEY,SB_LAST_UID_KEY]
     .forEach(k=>localStorage.removeItem(k));
   location.reload();
 }
@@ -9494,12 +9637,144 @@ function _setFeedCardThumb(item,thumbUrl){
 // 들어가버리면 안에 뭐가 있는지 훑어볼 방법이 없었음 — 그룹/멤버 카드의 "채널 영상" 그리드와 같은
 // .gc-ch-grid/.gc-ch-item 스타일로 목록부터 보여주고, 그중 하나를 탭하면 그 영상부터 라이트박스가 열림
 // (라이트박스 안에서는 기존처럼 위아래 스와이프로 같은 목록 안을 계속 넘길 수 있음).
-function _openFeedListOverlay(title,sub,songs){
+// 내 컬렉션을 열었을 때만(editCtx.colId) 사진 그리드 대신 재생목록 스타일 세로 리스트로 보여준다 —
+// 드래그 손잡이(.drag-handle)로 순서를 바꿀 수 있고, ×로 컬렉션에서 바로 뺄 수도 있다(2026-08-12,
+// 사용자 요청). 내가 만든 목록이라 많아야 수십 개 수준이므로 그리드 쪽의 배치 페이지네이션 없이
+// 한 번에 전부 그린다. #feed-list-grid는 매번 재사용되는 싱글턴 엘리먼트라 _enableDragReorder는
+// 최초 1회만 실제로 바인딩되므로, onReorder 콜백은 파라미터로 받은 colId를 클로저에 가두지 않고
+// containerEl.dataset.colId를 그때그때 다시 읽어서 어떤 컬렉션을 열었든 항상 맞는 대상에 반영한다.
+function _renderCveList(songs,containerEl,colId){
+  containerEl.dataset.colId=colId;
+  const _col=collections.find(c=>c.id===colId);
+  const _syncColThumbsElsewhere=()=>{
+    renderCollectionSection();
+    if(_openGCko)_loadCollectionRow(_openGCko,'gc-collection-row');
+    if(_openTArtist){
+      const _hasRealGroup=!!GROUPS[_openTArtist.group.ko];
+      _loadCollectionRow(_ytGroupKoFor(_openTArtist),'tt-collection-row',_hasRealGroup?_openTArtist.name.ko:null,_openTArtist.name.ko);
+    }
+  };
+  songs.forEach(s=>{
+    const item=document.createElement('div');item.className='cve-item drag-reorder-item';item.dataset.u=s.u;
+    const handle=document.createElement('button');handle.type='button';handle.className='drag-handle';handle.textContent='⠿';handle.setAttribute('aria-label','드래그해서 순서 바꾸기');
+    const img=document.createElement('img');img.className='cve-thumb';img.loading='lazy';img.decoding='async';
+    img.src=s.thumb||`https://img.youtube.com/vi/${ytId(s.u)}/mqdefault.jpg`;img.alt='';
+    const info=document.createElement('div');info.className='cve-info';
+    const titleEl=document.createElement('div');titleEl.className='cve-title';titleEl.textContent=_cleanTitle(s.t);
+    info.appendChild(titleEl);
+    if(s.groupKo){const subEl=document.createElement('div');subEl.className='cve-sub';subEl.textContent=s.groupKo;info.appendChild(subEl);}
+    // 콜렉션 대표 이미지(커버) 지정 — 다시 누르면 지정 해제(기본값인 첫 영상으로 되돌아감)
+    const coverBtn=document.createElement('button');coverBtn.type='button';coverBtn.className='cve-cover-btn';
+    const _isCover=_col&&_colCoverVideo(_col)?.u===s.u;
+    coverBtn.classList.toggle('on',_isCover);
+    coverBtn.title=_isCover?'대표 이미지로 지정됨 · 눌러서 해제':'이 영상으로 대표 이미지 지정';
+    coverBtn.innerHTML='<svg viewBox="0 0 24 24"><path d="M12 2l2.6 6.6L21 10l-5 4.4L17.4 21 12 17.3 6.6 21 8 14.4 3 10l6.4-1.4z"/></svg>';
+    coverBtn.addEventListener('click',e=>{
+      e.stopPropagation();
+      if(!_col)return;
+      _col.coverU=(_col.coverU===s.u)?null:s.u;
+      _saveCollections();
+      if(_col.isPublic)_syncPublicCollection(_col);
+      containerEl.querySelectorAll('.cve-cover-btn').forEach(b=>b.classList.remove('on'));
+      const nowCover=_colCoverVideo(_col)?.u;
+      containerEl.querySelectorAll('.cve-item').forEach(it=>{
+        it.querySelector('.cve-cover-btn').classList.toggle('on',it.dataset.u===nowCover);
+      });
+      _syncColThumbsElsewhere();
+    });
+    const removeBtn=document.createElement('button');removeBtn.type='button';removeBtn.className='cve-remove';removeBtn.textContent='×';removeBtn.title='컬렉션에서 빼기';
+    removeBtn.addEventListener('click',e=>{
+      e.stopPropagation();
+      _removeVideoFromCol(colId,s.u);
+      item.remove();
+      if(!containerEl.children.length)_closeFeedListOverlay(); // 마지막 하나까지 빼면 빈 목록 대신 오버레이를 닫는다
+      else _syncColThumbsElsewhere(); // 커버로 지정했던 영상이 빠졌을 수 있으니 다른 곳 썸네일도 갱신
+    });
+    item.appendChild(handle);item.appendChild(img);item.appendChild(info);item.appendChild(coverBtn);item.appendChild(removeBtn);
+    item.addEventListener('click',e=>{
+      e.stopPropagation();
+      const ctx=s.groupKo?{groupKo:s.groupKo,memberKo:(s.memberKos&&s.memberKos[0])||undefined}:{};
+      openLightbox(s.u,isShorts(s.u),songs,songs.indexOf(s),ctx,false,true);
+    });
+    containerEl.appendChild(item);
+  });
+  _enableDragReorder(containerEl,'.cve-item','.drag-handle',items=>{
+    const curColId=containerEl.dataset.colId;
+    const col=collections.find(c=>c.id===curColId);if(!col)return;
+    const order=items.map(it=>it.dataset.u);
+    col.videos=order.map(u=>col.videos.find(v=>v.u===u)).filter(Boolean);
+    _saveCollections();
+    if(col.isPublic)_syncPublicCollection(col);
+  });
+}
+// 다른 유저의 공개 컬렉션을 열었을 때만(ctx.mine===false) 작성자 표시 + "내 컬렉션에 저장" 버튼을
+// 보여준다(2026-08-12, 사용자 요청 — 보기만 하던 남의 컬렉션을 내 라이브러리로 복제해서 가져오기).
+// 이미 저장한 적 있으면(copiedFrom으로 추적) 다시 못 누르게 "저장됨"으로 고정한다 — 같은 걸 여러 번
+// 복제해서 내 목록이 지저분해지는 것 방지.
+function _setupFeedListSaveRow(ctx){
+  const row=document.getElementById('feed-list-save-row');
+  if(!ctx||ctx.mine!==false||!ctx.colId){row.style.display='none';return;}
+  row.style.display='';
+  document.getElementById('feed-list-owner').textContent=ctx.ownerNick?`by ${ctx.ownerNick}`:'다른 유저의 컬렉션';
+  const btn=document.getElementById('feed-list-save-btn');
+  const already=collections.some(c=>c.copiedFrom===ctx.colId);
+  btn.textContent=already?'저장됨':'내 컬렉션에 저장';
+  btn.classList.toggle('saved',already);
+  btn.disabled=already;
+  btn.onclick=already?null:()=>{
+    const src=(_pubCollectionsCache||[]).find(r=>r.id===ctx.colId);
+    if(!src)return;
+    const col={id:_colNewId(),name:src.name,videos:(src.items||[]).map(v=>({...v})),createdAt:new Date().toISOString().slice(0,10),isPublic:false,copiedFrom:ctx.colId,desc:src.desc||undefined};
+    collections.unshift(col);_saveCollections();renderCollectionSection();
+    btn.textContent='저장됨';btn.classList.add('saved');btn.disabled=true;
+    _gaEvent('copy_public_collection',{});
+  };
+}
+// 콜렉션 한줄평(선택 입력) — 상세를 열었을 때만 노출. 내 컬렉션이면 연필로 수정 가능하고, 남의 공개
+// 컬렉션이면 있을 때만 읽기 전용으로 보여준다(2026-08-12, 사용자 요청).
+function _setupFeedListDescRow(ctx){
+  const row=document.getElementById('feed-list-desc-row');
+  const textEl=document.getElementById('feed-list-desc');
+  const editBtn=document.getElementById('feed-list-desc-edit');
+  if(!ctx||!ctx.colId){row.style.display='none';return;}
+  const desc=ctx.mine
+    ?collections.find(c=>c.id===ctx.colId)?.desc
+    :(_pubCollectionsCache||[]).find(r=>r.id===ctx.colId)?.desc;
+  if(!desc&&!ctx.mine){row.style.display='none';return;}
+  row.style.display='';
+  textEl.textContent=desc||'한줄평 추가...';
+  textEl.classList.toggle('placeholder',!desc);
+  editBtn.style.display=ctx.mine?'':'none';
+  if(ctx.mine){
+    editBtn.onclick=e=>{
+      e.stopPropagation();
+      const col=collections.find(c=>c.id===ctx.colId);if(!col)return;
+      _promptDialog({title:'컬렉션 한줄평',value:col.desc||'',placeholder:'이 컬렉션을 한 줄로 소개해보세요(선택)'}).then(v=>{
+        if(v==null)return;
+        col.desc=v||undefined;
+        _saveCollections();
+        if(col.isPublic)_syncPublicCollection(col);
+        _setupFeedListDescRow(ctx);
+      });
+    };
+  }
+}
+function _openFeedListOverlay(title,sub,songs,ctx){
   document.getElementById('feed-list-hd-title').textContent=title;
   document.getElementById('feed-list-sub').textContent=sub||'';
   const grid=document.getElementById('feed-list-grid');
   grid.innerHTML='';
   document.getElementById('feed-list-overlay').classList.add('open');
+  _setupFeedListSaveRow(ctx);
+  _setupFeedListDescRow(ctx);
+  if(ctx&&ctx.mine&&ctx.colId){
+    grid.classList.remove('gc-ch-grid');
+    grid.classList.add('cve-list');
+    _renderCveList(songs||[],grid,ctx.colId);
+    return;
+  }
+  grid.classList.add('gc-ch-grid');
+  grid.classList.remove('cve-list');
   // "(원곡: X)" 스캔이랑 같은 계열의 실측 문제 — 이 목록은 최대 500개(_buildFeedFormatPick/
   // _buildFeedGenCamPick의 limit)까지 있을 수 있는데, loading="lazy" <img> 수백 개를 한 번에 DOM에
   // 다 꽂아넣으면(오버레이를 먼저 열어도 마찬가지) 실제 화면 하나에 들어오는 근처 이미지 수십~수백 개가
@@ -9665,10 +9940,12 @@ async function _pickFeaturedVidFromDB(ko,memberKo,onlyMe,filter,viewMode,formatF
 }
 
 function _feedNav(cb){
-  // 모바일은 전체화면 오버레이라 닫아야 뒤 카드가 보이지만, 데스크톱은 옆으로 붙는 패널이라
-  // 계속 열어둔 채로 카드를 띄우는 게 자연스러움(2026-07-16)
-  if(isMob()){_closeFeedOverlay();setTimeout(cb,200);}
-  else cb();
+  // 예전엔 모바일에서 탐험 패널을 닫았다가 카드를 완전히 닫으면 다시 여는 방식이었는데, "다시 열리는"
+  // 모션 자체가 번거로워 보인다는 사용자 피드백으로 바꿈(2026-08-12) — 그냥 안 닫고 그대로 밑에 깔아
+  // 둔다. mob-sheet/mob-card-stack의 z-index(63/64)가 feed-overlay(39)보다 항상 높아서 카드가 자연히
+  // 위를 덮고, 카드를 치우면(스와이프로 끌어내리는 중간 상태 포함) 그 밑에 있던 탐험 패널이 그대로
+  // 보이는 게 오히려 "카드가 탐험 위에 얹혀있다"는 느낌에 더 맞음. 데스크톱은 원래도 옆 패널이라 그대로.
+  cb();
 }
 
 // 오늘 생일인 멤버 / 오늘 데뷔 N주년인 그룹만 모아서 보여줌(임박 정보 없이 딱 당일만) — 해당하는 게
@@ -9698,7 +9975,7 @@ function _buildFeedAnniversaries(){
     }),undefined,sub2);
     const _fallbackThumb=()=>_fetchTopVideoThumb(_ytGroupKoFor(a),a.name.ko).then(t=>_setAnnivStripThumb(item,t||null));
     if(a.links?.instagram){
-      _fetchInstaPicUrl(a.name.ko).then(picUrl=>{if(picUrl)_setAnnivStripThumb(item,picUrl);else _fallbackThumb();});
+      _fetchInstaPicUrl(a.name.ko,a.group?.ko||'').then(picUrl=>{if(picUrl)_setAnnivStripThumb(item,picUrl);else _fallbackThumb();});
     }else _fallbackThumb();
   });
   debutHits.forEach(([ko,info])=>{
@@ -14578,7 +14855,7 @@ let _pubCollectionsP=null;
 async function _warmPubCollections(){
   if(!sb)return;
   try{
-    const{data,error}=await sb.from('public_collections').select('id,owner_id,name,items,member_kos,group_kos,updated_at').order('updated_at',{ascending:false});
+    const{data,error}=await sb.from('public_collections').select('id,owner_id,owner_nick,name,desc,items,member_kos,group_kos,updated_at').order('updated_at',{ascending:false});
     if(error){console.error('public_collections warm failed',error);return;}
     _pubCollectionsCache=data||[];
   }catch(e){console.error('_warmPubCollections failed',e);}
@@ -14588,13 +14865,13 @@ async function _loadCollectionRow(ko,containerId,memberKo,cardMemberKo){
   if(row)row.style.display='none';
   const uid=window._sbSession?.user?.id||null;
   const mine=collections.filter(c=>memberKo?_collectionMemberKos(c).includes(memberKo):_collectionGroupKos(c).includes(ko))
-    .map(c=>({id:c.id,name:c.name,videos:c.videos,mine:true}));
+    .map(c=>({id:c.id,name:c.name,videos:c.videos,coverU:c.coverU,mine:true}));
   let pub=[];
   if(sb){
     if(_pubCollectionsP)await _pubCollectionsP;
     const all=_pubCollectionsCache||[];
     pub=all.filter(r=>r.owner_id!==uid&&(memberKo?(r.member_kos||[]).includes(memberKo):(r.group_kos||[]).includes(ko)))
-      .slice(0,20).map(r=>({id:r.id,name:r.name,videos:r.items||[],mine:false}));
+      .slice(0,20).map(r=>({id:r.id,name:r.name,videos:r.items||[],mine:false,ownerNick:r.owner_nick||null}));
   }
   // 대기 중 다른 카드로 전환됐으면 건너뜀
   if(cardMemberKo?_openTArtist?.name?.ko!==cardMemberKo:_openGCko!==ko)return;
@@ -14611,7 +14888,7 @@ function _renderCollectionRow(containerId,list){
     const chip=document.createElement('div');chip.className='gc-collection-chip';
     const thumbWrap=document.createElement('div');thumbWrap.className='gc-collection-chip-thumb-wrap';
     const img=document.createElement('img');img.className='gc-collection-chip-thumb';img.alt='';
-    const thumbUrl=col.videos[0]?.thumb;
+    const thumbUrl=_colCoverVideo(col)?.thumb;
     if(thumbUrl)img.src=thumbUrl;
     thumbWrap.appendChild(img);
     if(col.mine){const dot=document.createElement('span');dot.className='gc-collection-chip-mine';thumbWrap.appendChild(dot);}
@@ -14622,7 +14899,7 @@ function _renderCollectionRow(containerId,list){
       e.stopPropagation();
       if(!col.videos.length)return;
       const songs=col.videos.map(v=>({t:v.t,u:v.u,thumb:v.thumb,groupKo:v.groupKo,memberKos:v.memberKos}));
-      _openFeedListOverlay(col.name,`${col.videos.length}개 영상`,songs);
+      _openFeedListOverlay(col.name,`${col.videos.length}개 영상`,songs,col.mine?{colId:col.id,mine:true}:{colId:col.id,mine:false,ownerNick:col.ownerNick});
     });
     listEl.appendChild(chip);
   });
