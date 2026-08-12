@@ -802,6 +802,11 @@
     display:flex;align-items:center;justify-content:center;
     width:16px;height:16px;color:rgba(150,175,220,0.60);
     transition:color .15s,transform .15s;
+    /* 14~16px 아이콘은 손가락으로 정확히 누르기 어렵다는 실측 확인(2026-08-12) — 시각적 크기/간격은
+       그대로 두고 패딩+음수 마진으로 실제 탭 가능 영역만 넓힌다(전역 border-box 리셋 아래선 패딩이
+       안쪽을 깎아먹으므로 이 요소만 content-box로 되돌림, 음수 마진으로 레이아웃 자리는 원래 크기
+       그대로 보존). 배경/보더 없는 순수 아이콘이라 이 트릭이 시각적으로 전혀 티 안 남. */
+    box-sizing:content-box;padding:7px;margin:-7px;
   }
   .gc-link-icon:hover{color:rgba(200,220,255,0.95);transform:translateY(-1px);}
   .gc-link-icon svg{width:100%;height:100%;}
@@ -882,12 +887,17 @@
   .gc-ch-filter{
     background:linear-gradient(160deg,rgba(255,255,255,0.11),rgba(255,255,255,0.02));
     backdrop-filter:blur(16px) saturate(140%);-webkit-backdrop-filter:blur(16px) saturate(140%);
-    border:0.5px solid rgba(255,255,255,0.16);border-radius:20px;padding:4px 11px;
+    border:0.5px solid rgba(255,255,255,0.16);border-radius:20px;padding:6px 11px;
     font-size:11px;color:rgba(192,214,240,0.65);cursor:pointer;font-family:inherit;
     box-shadow:inset 0 1px 1px rgba(255,255,255,0.2),inset 0 -5px 8px -6px rgba(255,255,255,0.08),0 2px 5px rgba(0,0,0,0.14);
     transition:background .14s,border-color .14s,color .14s,transform .14s,box-shadow .14s;
     white-space:nowrap;flex-shrink:0;
   }
+  /* 23px 높이는 손가락 탭 기준으로 얕음(2026-08-12 실측) — 투명 히트존 확장을 시도했으나 이 부모
+     (.gc-ch-filters)가 가로 스크롤용 overflow-x:auto라서 CSS 스펙상 overflow-y도 강제로 auto가 되어
+     세로 확장분이 그대로 잘려나감(elementFromPoint로 실측 확인, 확장 안 먹힘). 대신 패딩을 4px→6px로
+     살짝 늘려 실제 알약 높이 자체를 키움(23px→27px 안팎) — 아이콘 쪽처럼 완전히 안 보이게는 못 하지만
+     체감상 거의 안 티 나는 수준의 최소 증가. */
   .gc-ch-filter:hover{background:linear-gradient(160deg,rgba(255,255,255,0.16),rgba(255,255,255,0.04));border-color:rgba(255,255,255,0.24);color:rgba(220,235,255,0.95);}
   .gc-ch-filter:active{transform:scale(0.93);}
   .gc-ch-filter.active{
@@ -1728,6 +1738,8 @@
   .tt-insta-cam-btn.cam-overlay svg{width:11px;height:11px;}
   .tt-insta-cam-btn.cam-uploading{opacity:.5;pointer-events:none;}
   #tt-insta-pic-wrap{display:block;position:relative;flex-shrink:0;width:78px;height:78px;border-radius:50%;cursor:pointer;text-decoration:none;}
+  /* 모바일에서만 아주 살짝 키움(2026-08-12, 사용자 요청 — 웹은 그대로 두고 모바일만) */
+  @media(max-width:768px){#tt-insta-pic-wrap,.tt-insta-cam-btn{width:82px;height:82px;}}
   /* 사진 URL은 캐시로 즉시 알아도 실제 이미지 바이트 다운로드엔 시간이 걸려서, 다 된 채로 "툭" 튀어
      나오면 어색하다는 제보(2026-08-11) — URL이 확정된 순간 자리부터 차지하고 은은한 로딩 셰머를
      보여주다가, 이미지가 실제로 로드되면 사진으로 크로스페이드한다. */
