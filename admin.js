@@ -741,174 +741,6 @@ async function _ytSweepCategoryMistag(){
 }
 
 
-// ── 동명이인/흔한단어 오염 의심 스캔(admin) ── "이유"(에버글로우, "reason"과 겹침)처럼 흔한 단어/동명이인
-// 이름이 대량 오태깅되는 사고가 반복 발견돼서(_ATM_HASHTAG_ONLY_NAMES에 발견될 때마다 하나씩 추가하는 중),
-// 사람이 우연히 발견하길 기다리는 대신 통계로 의심 후보를 먼저 찾아내는 감사(audit) 도구.
-// 자동으로 고치지는 않음 — 판단은 사람이 하고, 확정되면 코드의 화이트리스트에 추가 후 기존 재검증
-// 버튼(콜라보/자체 멤버)으로 정리하는 흐름.
-// ① 자체 채널(members): 같은 그룹 안에서 유독 한 멤버만 태깅 건수가 비정상적으로 많으면(그룹 내
-//    중앙값 대비) 의심 — 진짜 인기 많아서 그런 거면 그룹 내에서도 어느 정도 고르게 높을 텐데, 흔한
-//    단어/동명이인 오염이면 그 한 명만 튐.
-// ② 콜라보(with_members): 여러 그룹 채널에 걸쳐 게스트로 잡힌 총 건수 — 진짜 인기 콜라보 멤버도 있을 수
-//    있지만, 너무 높으면(수십~수백 건) 흔한 단어 오염 가능성을 의심해볼 근거가 됨.
-// 그룹별 총계/쇼츠/미태깅 요약 — "스캔 시작"은 멤버별 오염 탐지까지 같이 하느라 느린데(own/cross
-// 채널 RPC가 배열 컬럼을 멤버 단위로 펼쳐야 해서 무거움), 이건 그룹 집계 RPC만 가볍게 돌려서 패널
-// 열자마자 자동으로 보여준다(2026-08-05, 사용자 요청 — 스캔 없이 그룹별 미태깅/쇼츠 확인하고 싶다는
-// 요청). 미태깅 판정은 기존 dq_group_counts_range(스캔에서 이미 쓰던 값)를 그대로 재사용해서 숫자가
-// "스캔 시작" 결과와 어긋나지 않게 하고, 쇼츠 개수만 새 RPC(dq_group_shorts_counts_range,
-// migration_view_count.sql 참고) 하나를 곁들인다. 실패해도 조용히 넘어감 — "스캔 시작"으로 다시 시도 가능.
-async function _renderHnnGroupCountsLight(){
-  if(!sb)return;
-  try{
-    const{data:idRows,error:idErr}=await _sbFetchAll(()=>sb.from(_YT_TABLE).select('id').order('id'));
-    if(idErr||!idRows?.length)return;
-    const ids=idRows.map(r=>r.id);
-    const CHUNK=3000;
-    const ranges=[];
-    for(let i=0;i<ids.length;i+=CHUNK){
-      const chunkIds=ids.slice(i,i+CHUNK);
-      ranges.push({from:i===0?'':ids[i-1],to:chunkIds[chunkIds.length-1]});
-    }
-    const groupCounts=new Map(); // gko -> {total,untagged,shorts}
-    for(const{from,to}of ranges){
-      const[{data:dqPart,error:dqErr},{data:shortsPart,error:shortsErr}]=await Promise.all([
-        sb.rpc('dq_group_counts_range',{p_from_id:from,p_to_id:to}),
-        sb.rpc('dq_group_shorts_counts_range',{p_from_id:from,p_to_id:to})
-      ]);
-      if(dqErr||shortsErr)continue;
-      (dqPart||[]).forEach(({gko,total_cnt,untagged_cnt})=>{
-        const cur=groupCounts.get(gko)||{total:0,untagged:0,shorts:0};
-        cur.total+=Number(total_cnt);cur.untagged+=Number(untagged_cnt);
-        groupCounts.set(gko,cur);
-      });
-      (shortsPart||[]).forEach(({gko,cnt})=>{
-        const cur=groupCounts.get(gko)||{total:0,untagged:0,shorts:0};
-        cur.shorts+=Number(cnt);
-        groupCounts.set(gko,cur);
-      });
-    }
-    if(_dqGroupSummaries.length)return; // 그 사이 "스캔 시작"으로 더 자세한 결과가 이미 떴으면 안 덮어씀
-    const summaries=[...groupCounts.entries()].map(([gko,{total,untagged,shorts}])=>({
-      gko,total,untagged,shorts,
-      untaggedRatio:total>0?untagged/total:0,
-      suspectCount:0
-    })).sort((a,b)=>b.untagged-a.untagged||b.total-a.total);
-    _renderDqGroupList(summaries);
-  }catch(e){console.error('[데이터 퀄리티] 라이트 그룹 요약 실패:',e.message);}
-}
-async function _hnnScan(){
-  if(!sb){document.getElementById('hnn-status').textContent='Supabase 연결 없음';return;}
-  const btn=document.getElementById('hnn-scan-btn');
-  const statusEl=document.getElementById('hnn-status');
-  if(btn)btn.disabled=true;
-  document.getElementById('hnn-list').innerHTML='';
-  document.getElementById('hnn-group-sec').style.display='none';
-  document.getElementById('hnn-group-list').innerHTML='';
-  try{
-    // 전체를 한 번에 집계하는 RPC(hnn_*_counts)도 statement_timeout에 걸림 — 지금까지 계속 안전했던
-    // 패턴(id 구간을 작게 나눠 여러 번 요청)을 집계에도 그대로 적용한다. 먼저 id만 가볍게 전량
-    // 키셋 페이지네이션으로 받아와서(순수 PK 순서 스캔이라 빠름) 구간 경계를 만들고, 각 구간을
-    // hnn_*_counts_range(from,to) RPC로 따로 집계 요청해 브라우저에서 합산한다.
-    statusEl.textContent='id 목록 조회 중…';
-    const{data:idRows,error:idErr}=await _sbFetchAll(()=>sb.from(_YT_TABLE).select('id').order('id'));
-    if(idErr){statusEl.textContent='조회 실패: '+idErr.message;return;}
-    const ids=(idRows||[]).map(r=>r.id);
-    if(!ids.length){statusEl.textContent='집계할 영상이 없어요';return;}
-    const CHUNK=3000;
-    const ranges=[];
-    for(let i=0;i<ids.length;i+=CHUNK){
-      const chunkIds=ids.slice(i,i+CHUNK);
-      // id는 문자열(유튜브 영상 ID)이라 정렬 순서 그대로 첫/마지막 값을 경계로 씀 — 청크 바로 앞
-      // 경계는 그 이전 청크의 마지막 id(또는 맨 처음엔 빈 문자열, 모든 id보다 작다고 가정 가능하도록
-      // 첫 청크는 별도 처리).
-      ranges.push({from:i===0?'':ids[i-1],to:chunkIds[chunkIds.length-1]});
-    }
-    const ownCounts=new Map(); // "mko gko" -> count
-    const crossCounts=new Map();
-    const groupCounts=new Map(); // gko -> {total,untagged} — 데이터 퀄리티 그룹 요약용(2026-08-04)
-    for(let i=0;i<ranges.length;i++){
-      statusEl.textContent='집계 중… ('+(i+1)+'/'+ranges.length+'구간)';
-      const{from,to}=ranges[i];
-      const[{data:ownPart,error:ownErr},{data:crossPart,error:crossErr},{data:dqPart,error:dqErr}]=await Promise.all([
-        sb.rpc('hnn_own_channel_counts_range',{p_from_id:from,p_to_id:to}),
-        sb.rpc('hnn_cross_channel_counts_range',{p_from_id:from,p_to_id:to}),
-        sb.rpc('dq_group_counts_range',{p_from_id:from,p_to_id:to})
-      ]);
-      if(ownErr){statusEl.textContent='조회 실패(자체 채널, 구간 '+(i+1)+'): '+ownErr.message;return;}
-      if(crossErr){statusEl.textContent='조회 실패(콜라보, 구간 '+(i+1)+'): '+crossErr.message;return;}
-      if(dqErr){statusEl.textContent='조회 실패(그룹 요약, 구간 '+(i+1)+'): '+dqErr.message;return;}
-      (ownPart||[]).forEach(({mko,gko,cnt})=>{
-        const k=mko+' '+gko;
-        ownCounts.set(k,(ownCounts.get(k)||0)+Number(cnt));
-      });
-      (crossPart||[]).forEach(({mko,gko,cnt})=>{
-        const k=mko+' '+gko;
-        crossCounts.set(k,(crossCounts.get(k)||0)+Number(cnt));
-      });
-      (dqPart||[]).forEach(({gko,total_cnt,untagged_cnt})=>{
-        const cur=groupCounts.get(gko)||{total:0,untagged:0};
-        cur.total+=Number(total_cnt);cur.untagged+=Number(untagged_cnt);
-        groupCounts.set(gko,cur);
-      });
-    }
-    // ① 그룹별 자체 채널 태깅 건수 이상치 — 같은 그룹 내 중앙값과 비교
-    const byGroup=new Map(); // gko -> [{mko,count}]
-    ownCounts.forEach((count,k)=>{
-      const[mko,gko]=k.split(' ');
-      if(_isHashtagOnlyName(mko))return;
-      if(!byGroup.has(gko))byGroup.set(gko,[]);
-      byGroup.get(gko).push({mko,count});
-    });
-    const ownSuspects=[];
-    byGroup.forEach((list,gko)=>{
-      if(list.length<2)return; // 비교할 다른 멤버가 있어야 함
-      const sorted=[...list].sort((a,b)=>a.count-b.count);
-      const median=sorted[Math.floor(sorted.length/2)].count;
-      list.forEach(({mko,count})=>{
-        if(count>=15&&count>Math.max(median*3,median+15)){
-          ownSuspects.push({mko,gko,count,median,type:'own'});
-        }
-      });
-    });
-    // ② 콜라보(with_members) 총량 이상치 — 자체 화이트리스트 이름 제외, 절대 건수 기준 상위만
-    const crossSuspects=[];
-    crossCounts.forEach((count,k)=>{
-      const[mko,gko]=k.split(' ');
-      if(_isHashtagOnlyName(mko))return;
-      if(count>=15)crossSuspects.push({mko,gko,count,type:'cross'});
-    });
-    let combined=[...ownSuspects,...crossSuspects].sort((a,b)=>b.count-a.count).slice(0,60);
-    // "확인함(오염 아님)" 처리해둔 후보는 다음 스캔부터 다시 안 보이게 제외 — 인기 많은 멤버는 통계상
-    // 항상 이상치로 잡혀서 매번 같은 이름이 뜨는 피로도가 컸음(2026-08-04, 사용자 제보).
-    try{
-      const{data:dismissed,error:dmErr}=await sb.from('hnn_suspect_dismissed').select('mko,gko,type');
-      if(!dmErr&&dismissed?.length){
-        const dismissedSet=new Set(dismissed.map(d=>`${d.mko}|${d.gko}|${d.type}`));
-        combined=combined.filter(s=>!dismissedSet.has(`${s.mko}|${s.gko}|${s.type}`));
-      }
-    }catch(e){console.error('[데이터 퀄리티] 확인함 목록 조회 실패(무시하고 계속):',e.message);}
-    // 그룹별 요약 — 오염 의심 건수(잘린 60개가 아니라 ownSuspects/crossSuspects 전체 기준으로 그룹별 집계)
-    const suspectCountByGko=new Map();
-    [...ownSuspects,...crossSuspects].forEach(s=>{
-      suspectCountByGko.set(s.gko,(suspectCountByGko.get(s.gko)||0)+1);
-    });
-    const groupSummaries=[...groupCounts.entries()].map(([gko,{total,untagged}])=>({
-      gko,total,untagged,
-      untaggedRatio:total>0?untagged/total:0,
-      suspectCount:suspectCountByGko.get(gko)||0
-    // 미태깅 개수(절대값) 많은 순 — "지금 수동으로 편집할 만한 그룹"을 찾는 용도라 비율보다 절대
-    // 개수가 우선이어야 함(2026-08-04, 사용자 피드백 — 코르티스처럼 제목에 멤버명이 잘 안 들어가서
-    // 미태깅이 많이 쌓이는 그룹을 찾아 직접 편집하고 싶다는 요청. 오염 의심 건수는 동점일 때만 참고).
-    })).sort((a,b)=>b.untagged-a.untagged||b.suspectCount-a.suspectCount||b.total-a.total);
-    statusEl.textContent='집계 완료 — 그룹 '+groupSummaries.length+'개 / 멤버별 의심 후보 '+combined.length+'개(자체 '+ownSuspects.length+' / 콜라보 '+crossSuspects.length+')';
-    _renderDqGroupList(groupSummaries);
-    _renderHnnList(combined);
-  }catch(e){
-    statusEl.textContent='오류: '+e.message;
-  }finally{
-    if(btn)btn.disabled=false;
-  }
-}
 // 흔한단어 보호 목록(해시태그로만 인정하는 이름) 조회/관리 — 하드코딩(_ATM_HASHTAG_ONLY_NAMES)은 코드
 // 배포가 있어야 빠지므로 여기선 읽기 전용으로만 보여주고, DB(name_match_whitelist, admin이 스캔에서
 // 바로 추가한 것)는 즉시 제거도 가능하게 한다(2026-08-04, 사용자 요청 — "필요에 따라 추가/삭제").
@@ -1008,358 +840,22 @@ function _renderHnnWhitelist(){
     listEl.appendChild(row);
   }
 }
-// 그룹별 요약 테이블 — 그룹명을 누르면 해당 그룹 카드로 바로 이동(관리자가 의심 그룹을 바로 확인할 수 있게).
-let _dqGroupSummaries=[]; // "정리" 후 뒤로가기 눌렀을 때 그룹 요약 섹션을 다시 보여줄지 판단하는 데 씀
-function _renderDqGroupList(list){
-  _dqGroupSummaries=list;
-  const secEl=document.getElementById('hnn-group-sec');
-  const listEl=document.getElementById('hnn-group-list');
-  listEl.innerHTML='';
-  if(!list.length){secEl.style.display='none';return;}
-  secEl.style.display='';
-  list.forEach(g=>{
-    const item=document.createElement('div');item.className='hnn-group-item';
-    const name=document.createElement('div');name.className='hnn-group-name';name.textContent=g.gko;
-    const stats=document.createElement('div');stats.className='hnn-group-stats';
-    const ratioPct=Math.round(g.untaggedRatio*100);
-    stats.innerHTML=`<span>영상 ${g.total}개</span><span>쇼츠 ${g.shorts||0}개</span><span>미태깅 ${ratioPct}%</span>`+
-      (g.suspectCount?`<span class="hnn-group-susp">의심 ${g.suspectCount}건</span>`:'');
-    const cleanBtn=document.createElement('button');cleanBtn.type='button';cleanBtn.className='hnn-group-clean-btn';cleanBtn.textContent='정리';
-    cleanBtn.addEventListener('click',e=>{e.stopPropagation();_dqOpenGroupJunk(g.gko);});
-    item.appendChild(name);item.appendChild(stats);item.appendChild(cleanBtn);
-    item.addEventListener('click',()=>{
-      document.getElementById('hnn-overlay').classList.remove('open');
-      if(!GROUPS[g.gko])return; // 솔로 아티스트(본인 이름이 group_ko)는 그룹 카드가 없어 이동 생략
-      if(isMob()){
-        _navHistoryActive=true;showGC(g.gko,window.innerWidth/2,window.innerHeight*0.4,false,false,null,false);_navHistoryActive=false;
-        openMobSheet(document.getElementById('gc'));
-      }else{
-        showGC(g.gko,window.innerWidth/2,window.innerHeight*0.4);
-      }
-    });
-    listEl.appendChild(item);
-  });
-}
-// ── 그룹별 무맥락 영상 정리(레인보우/에버글로우 일회용 버튼들을 대체하는 범용 도구) ──
-// 하드코딩 정규식 대신 GROUPS/ARTISTS에서 그룹명·영문명·팬덤명·전체 멤버 실명/영문명을 그때그때 긁어와
-// "진짜 신호" 목록을 만든다. 이미 흔한단어 보호 목록(_ATM_HASHTAG_ONLY_NAMES/_ATM_DYNAMIC_HASHTAG_NAMES)에
-// 있는 이름은 신호에서 자동으로 뺀다 — "온다"를 에버글로우 화이트리스트에 넣어뒀다가 보호 목록에 추가한
-// 뒤에도 못 지워지던 실수가 이 구조에서는 애초에 안 생김(2026-08-04, 사용자 요청으로 범용화).
-function _dqGroupSignalRegex(gko){
-  const info=GROUPS[gko]||{};
-  const roster=ARTISTS.filter(a=>_artistGroups(a).some(g=>g.ko===gko));
-  // strictSync 그룹(하이라이트/시크릿/레인보우 등)은 그룹명 자체가 흔한 단어라 strictSync로 지정된
-  // 것이므로, 그 그룹명/영문명은 "진짜 신호"에서 뺀다 — 안 그러면 "RAINBOW"가 장식적으로 들어간
-  // 무관한 영상이 그룹명 자체를 신호로 착각해 정리 대상에서 계속 빠짐(strictSync 그룹 키워드 오염
-  // 정리 버튼이 하던 일을 이 범용 도구가 대신하려면 이 예외가 필요, 2026-08-04, 사용자 요청으로 통합).
-  const isStrict=_STRICT_SYNC_GROUPS.has(gko);
-  const tokens=[...(isStrict?[]:[gko,info.en,...(info.altNames||[])]),info.fandom?.ko,info.fandom?.en,...roster.flatMap(a=>[a.name.ko,a.name.en])].filter(Boolean);
-  const safeTokens=[...new Set(tokens)].filter(t=>[...t].length>=2&&!_isHashtagOnlyName(t));
-  if(!safeTokens.length)return null;
-  return new RegExp(safeTokens.map(_atmEscRe).join('|'),'i');
-}
-async function _dqScanGroupJunk(gko){
-  if(!sb)return{error:'Supabase 연결 없음'};
-  const{data:rows,error}=await _sbFetchAll(()=>sb.from(_YT_TABLE)
-    .select('id,title,thumb')
-    .eq('group_ko',gko)
-    .eq('tags_manual',false) // 관리자가 직접 저장한 행은 절대 후보에 안 넣음
-    .filter('members','eq','{}')
-    .filter('with_members','eq','{}')
-    .order('id'));
-  if(error)return{error:error.message};
-  const sig=_dqGroupSignalRegex(gko);
-  const junk=sig?(rows||[]).filter(r=>!sig.test((r.title||'').normalize('NFKC'))):(rows||[]);
-  // 자기 채널 태깅뿐 아니라, 다른 그룹 영상인데 with_groups(콜라보 태그)에 이 그룹이 잘못 얹힌 경우도
-  // 같이 잡는다 — 흔한 단어 그룹명(god 등)이 남의 영상 제목/설명에 우연히 등장해서 콜라보로 오태깅되는
-  // 패턴(2026-08-04, god/앰퍼샌드원 사례로 발견). 이건 영상 자체가 무관한 게 아니라 진짜 다른 그룹의
-  // 정상 영상이므로, 삭제/무관 처리가 아니라 with_groups에서 이 그룹 태그만 제거하는 게 맞는 조치.
-  const{data:crossRows,error:crossErr}=await _sbFetchAll(()=>sb.from(_YT_TABLE)
-    .select('id,title,thumb,group_ko,with_groups')
-    .neq('group_ko',gko)
-    .contains('with_groups',[gko])
-    .eq('tags_manual',false)
-    .order('id'));
-  if(crossErr)return{error:crossErr.message};
-  const crossJunk=sig?(crossRows||[]).filter(r=>!sig.test((r.title||'').normalize('NFKC'))):(crossRows||[]);
-  return{total:(rows||[]).length,junk,crossTotal:(crossRows||[]).length,crossJunk};
-}
-let _dqJunkGko=null,_dqJunkRows=[],_dqCrossGko=null,_dqCrossRows=[];
-async function _dqOpenGroupJunk(gko){
-  ['hnn-group-sec','hnn-member-lbl','hnn-toolbar','hnn-list','hnn-scan-btn','hnn-wl-sec'].forEach(id=>{
-    const el=document.getElementById(id);if(el)el.style.display='none';
-  });
-  document.getElementById('dq-junk-sec').style.display='flex';
-  document.getElementById('dq-junk-title').textContent=`${gko} — 조회 중…`;
-  document.getElementById('dq-junk-status').textContent='';
-  document.getElementById('dq-junk-toolbar').style.display='none';
-  document.getElementById('dq-junk-list').innerHTML='';
-  document.getElementById('dq-cross-sec').style.display='none';
-  document.getElementById('dq-cross-toolbar').style.display='none';
-  document.getElementById('dq-cross-list').innerHTML='';
-  const{total,junk,crossTotal,crossJunk,error}=await _dqScanGroupJunk(gko);
-  if(error){document.getElementById('dq-junk-status').textContent='조회 실패: '+error;return;}
-  document.getElementById('dq-junk-title').textContent=`${gko} — 무맥락 의심`;
-  document.getElementById('dq-junk-status').textContent=`전체 ${total}개 중 무맥락 의심 ${junk.length}개(members/with_members 비어있고 그룹 관련 신호도 없는 행)`;
-  _renderDqJunkList(gko,junk);
-  document.getElementById('dq-cross-sec').style.display='flex';
-  document.getElementById('dq-cross-status').textContent=`다른 그룹 영상에 콜라보로 잘못 얹힌 것 ${crossJunk.length}개 (전체 콜라보 태그 ${crossTotal}개 중)`;
-  _renderDqCrossList(gko,crossJunk);
-}
-function _renderDqJunkList(gko,rows){
-  _dqJunkGko=gko;_dqJunkRows=rows;
-  const listEl=document.getElementById('dq-junk-list');
-  const toolbarEl=document.getElementById('dq-junk-toolbar');
-  listEl.innerHTML='';
-  if(!rows.length){
-    listEl.innerHTML='<div style="padding:24px;text-align:center;color:rgba(155,178,228,0.45);font-size:12px;">의심 후보가 없어요</div>';
-    toolbarEl.style.display='none';
-    return;
-  }
-  toolbarEl.style.display='flex';
-  document.getElementById('dq-junk-select-all').checked=false;
-  rows.forEach(v=>{
-    const item=document.createElement('div');item.className='dq-junk-item';item.dataset.vidId=v.id;
-    const cb=document.createElement('input');cb.type='checkbox';cb.addEventListener('change',_updateDqJunkCount);
-    const img=document.createElement('img');img.className='dq-junk-thumb';img.src=v.thumb||`https://i.ytimg.com/vi/${v.id}/mqdefault.jpg`;img.loading='lazy';
-    const ttl=document.createElement('div');ttl.className='dq-junk-ttl';ttl.textContent=v.title||'';
-    item.appendChild(cb);item.appendChild(img);item.appendChild(ttl);
-    listEl.appendChild(item);
-  });
-  _updateDqJunkCount();
-}
-function _updateDqJunkCount(){
-  const total=_dqJunkRows.length;
-  const checked=document.querySelectorAll('#dq-junk-list .dq-junk-item input[type=checkbox]:checked').length;
-  document.getElementById('dq-junk-count').textContent=`${checked}/${total}개 선택됨`;
-  const delBtn=document.getElementById('dq-junk-delete-btn'),flagBtn=document.getElementById('dq-junk-flag-btn');
-  if(delBtn)delBtn.disabled=checked===0;
-  if(flagBtn)flagBtn.disabled=checked===0;
-  const allEl=document.getElementById('dq-junk-select-all');
-  if(allEl)allEl.checked=checked===total&&total>0;
-}
-document.getElementById('dq-junk-select-all')?.addEventListener('change',e=>{
-  document.querySelectorAll('#dq-junk-list .dq-junk-item input[type=checkbox]').forEach(cb=>{cb.checked=e.target.checked;});
-  _updateDqJunkCount();
-});
-function _dqJunkSelectedIds(){
-  return[...document.querySelectorAll('#dq-junk-list .dq-junk-item')].filter(el=>el.querySelector('input[type=checkbox]').checked).map(el=>el.dataset.vidId);
-}
-function _dqJunkRemoveIds(ids){
-  const idSet=new Set(ids);
-  _dqJunkRows=_dqJunkRows.filter(r=>!idSet.has(r.id));
-  ids.forEach(id=>document.querySelector(`#dq-junk-list .dq-junk-item[data-vid-id="${id}"]`)?.remove());
-  _updateDqJunkCount();
-  if(!_dqJunkRows.length)_renderDqJunkList(_dqJunkGko,[]);
-}
-document.getElementById('dq-junk-delete-btn')?.addEventListener('click',async()=>{
-  if(!sb)return;
-  const ids=_dqJunkSelectedIds();
-  if(!ids.length)return;
-  if(!confirm(`선택한 ${ids.length}개 영상을 삭제할까요? 되돌릴 수 없습니다.`))return;
-  const btn=document.getElementById('dq-junk-delete-btn');btn.disabled=true;
-  const{error}=await sb.from(_YT_TABLE).delete().in('id',ids);
-  if(error){document.getElementById('dq-junk-status').textContent='삭제 실패: '+error.message;btn.disabled=false;return;}
-  _dqJunkRemoveIds(ids);
-  document.getElementById('dq-junk-status').textContent=`삭제 완료 — 남은 ${_dqJunkRows.length}개`;
-});
-document.getElementById('dq-junk-flag-btn')?.addEventListener('click',async()=>{
-  if(!sb)return;
-  const ids=_dqJunkSelectedIds();
-  if(!ids.length)return;
-  const btn=document.getElementById('dq-junk-flag-btn');btn.disabled=true;
-  const{error}=await sb.from(_YT_TABLE).update({content_flag:'무관'}).in('id',ids);
-  if(error){document.getElementById('dq-junk-status').textContent='처리 실패: '+error.message;btn.disabled=false;return;}
-  _dqJunkRemoveIds(ids);
-  document.getElementById('dq-junk-status').textContent=`무관 처리 완료 — 남은 ${_dqJunkRows.length}개`;
-});
-function _renderDqCrossList(gko,rows){
-  _dqCrossGko=gko;_dqCrossRows=rows;
-  const listEl=document.getElementById('dq-cross-list');
-  const toolbarEl=document.getElementById('dq-cross-toolbar');
-  listEl.innerHTML='';
-  if(!rows.length){
-    listEl.innerHTML='<div style="padding:16px;text-align:center;color:rgba(155,178,228,0.45);font-size:11.5px;">의심 후보가 없어요</div>';
-    toolbarEl.style.display='none';
-    return;
-  }
-  toolbarEl.style.display='flex';
-  document.getElementById('dq-cross-select-all').checked=false;
-  rows.forEach(v=>{
-    const item=document.createElement('div');item.className='dq-junk-item';item.dataset.vidId=v.id;
-    const cb=document.createElement('input');cb.type='checkbox';cb.addEventListener('change',_updateDqCrossCount);
-    const img=document.createElement('img');img.className='dq-junk-thumb';img.src=v.thumb||`https://i.ytimg.com/vi/${v.id}/mqdefault.jpg`;img.loading='lazy';
-    const info=document.createElement('div');info.style.minWidth='0';
-    const grp=document.createElement('div');grp.style.cssText='font-size:10px;color:rgba(155,178,228,0.6);margin-bottom:2px;';
-    grp.textContent=`실제 그룹: ${v.group_ko||'?'}`;
-    const ttl=document.createElement('div');ttl.className='dq-junk-ttl';ttl.textContent=v.title||'';
-    info.appendChild(grp);info.appendChild(ttl);
-    item.appendChild(cb);item.appendChild(img);item.appendChild(info);
-    listEl.appendChild(item);
-  });
-  _updateDqCrossCount();
-}
-function _updateDqCrossCount(){
-  const total=_dqCrossRows.length;
-  const checked=document.querySelectorAll('#dq-cross-list .dq-junk-item input[type=checkbox]:checked').length;
-  document.getElementById('dq-cross-count').textContent=`${checked}/${total}개 선택됨`;
-  const btn=document.getElementById('dq-cross-remove-btn');
-  if(btn)btn.disabled=checked===0;
-  const allEl=document.getElementById('dq-cross-select-all');
-  if(allEl)allEl.checked=checked===total&&total>0;
-}
-document.getElementById('dq-cross-select-all')?.addEventListener('change',e=>{
-  document.querySelectorAll('#dq-cross-list .dq-junk-item input[type=checkbox]').forEach(cb=>{cb.checked=e.target.checked;});
-  _updateDqCrossCount();
-});
-function _dqCrossSelectedIds(){
-  return[...document.querySelectorAll('#dq-cross-list .dq-junk-item')].filter(el=>el.querySelector('input[type=checkbox]').checked).map(el=>el.dataset.vidId);
-}
-document.getElementById('dq-cross-remove-btn')?.addEventListener('click',async()=>{
-  if(!sb)return;
-  const ids=_dqCrossSelectedIds();
-  if(!ids.length)return;
-  const btn=document.getElementById('dq-cross-remove-btn');btn.disabled=true;
-  const idSet=new Set(ids);
-  const targets=_dqCrossRows.filter(r=>idSet.has(r.id));
-  try{
-    for(const v of targets){
-      const newWithGroups=(v.with_groups||[]).filter(g=>g!==_dqCrossGko);
-      const{error}=await sb.from(_YT_TABLE).update({with_groups:newWithGroups}).eq('id',v.id);
-      if(error)throw error;
-    }
-  }catch(e){
-    document.getElementById('dq-cross-status').textContent='처리 실패: '+e.message;
-    btn.disabled=false;
-    return;
-  }
-  _dqCrossRows=_dqCrossRows.filter(r=>!idSet.has(r.id));
-  ids.forEach(id=>document.querySelector(`#dq-cross-list .dq-junk-item[data-vid-id="${id}"]`)?.remove());
-  _updateDqCrossCount();
-  if(!_dqCrossRows.length)_renderDqCrossList(_dqCrossGko,[]);
-  document.getElementById('dq-cross-status').textContent=`태그 제거 완료 — 남은 ${_dqCrossRows.length}개`;
-});
-document.getElementById('dq-junk-back')?.addEventListener('click',()=>{
-  document.getElementById('dq-junk-sec').style.display='none';
-  document.getElementById('hnn-wl-sec').style.display='';
-  if(_dqGroupSummaries.length)document.getElementById('hnn-group-sec').style.display='';
-  if(_hnnCandidates.length){
-    document.getElementById('hnn-list').style.display='';
-    document.getElementById('hnn-toolbar').style.display='flex';
-    document.getElementById('hnn-member-lbl').style.display='';
-  }else{
-    document.getElementById('hnn-list').style.display='';
-  }
-});
-let _hnnCandidates=[];
-function _renderHnnList(list){
-  _hnnCandidates=list;
-  const listEl=document.getElementById('hnn-list');
-  const toolbarEl=document.getElementById('hnn-toolbar');
-  const lblEl=document.getElementById('hnn-member-lbl');
-  listEl.innerHTML='';
-  if(!list.length){
-    listEl.innerHTML='<div id="hnn-empty">의심 후보가 없어요</div>';
-    toolbarEl.style.display='none';
-    if(lblEl)lblEl.style.display='none';
-    return;
-  }
-  toolbarEl.style.display='flex';
-  if(lblEl)lblEl.style.display='';
-  document.getElementById('hnn-select-all').checked=false;
-  list.forEach((s,i)=>{
-    const item=document.createElement('div');item.className='hnn-item';item.dataset.name=s.mko;
-    item._hnnData=s;
-    const cb=document.createElement('input');cb.type='checkbox';
-    cb.addEventListener('change',_updateHnnCount);
-    const rank=document.createElement('div');rank.className='hnn-rank';rank.textContent=String(i+1);
-    const info=document.createElement('div');info.className='hnn-info';
-    const name=document.createElement('div');name.className='hnn-name';
-    name.innerHTML=s.mko+' <span style="color:rgba(155,178,228,0.6);font-weight:400;">('+s.gko+')</span> — <b>'+s.count+'건</b>';
-    const sub=document.createElement('div');sub.className='hnn-sub';
-    sub.textContent=s.type==='own'
-      ?('자체 채널 태깅 — 같은 그룹 내 중앙값 '+s.median+'건 대비 이상치')
-      :('다른 채널 콜라보(with_members) 총 '+s.count+'건');
-    info.appendChild(name);info.appendChild(sub);
-    // "확인함(오염 아님)" — 인기 많은 멤버라 통계상 튀는 것뿐이지 실제 오염이 아닌 경우, 다음 스캔부터
-    // 같은 후보가 또 뜨지 않게 hnn_suspect_dismissed 테이블에 기록한다(2026-08-04, 사용자 요청 —
-    // "매번 스캔할 이유가 없어진달까"). 화이트리스트 추가(평문 매칭 자체를 막음)와는 다른 개념이라
-    // 별도 테이블을 씀 — 이 멤버는 그냥 진짜 활동을 많이 하는 것뿐, 이름 자체를 막을 이유는 없으므로.
-    const dismissBtn=document.createElement('button');dismissBtn.type='button';dismissBtn.className='hnn-dismiss-btn';
-    dismissBtn.textContent='확인함';dismissBtn.title='오염 아님(그냥 인기 많음) — 다음 스캔부터 안 보이게';
-    dismissBtn.addEventListener('click',async e=>{
-      e.stopPropagation();
-      if(!sb)return;
-      dismissBtn.disabled=true;
-      const{error}=await sb.from('hnn_suspect_dismissed').upsert({mko:s.mko,gko:s.gko,type:s.type},{onConflict:'mko,gko,type'});
-      if(error){dismissBtn.disabled=false;alert('처리 실패: '+error.message);return;}
-      _hnnCandidates=_hnnCandidates.filter(x=>x!==s);
-      item.remove();
-      _updateHnnCount();
-      if(!_hnnCandidates.length)_renderHnnList([]);
-    });
-    item.appendChild(cb);item.appendChild(rank);item.appendChild(info);item.appendChild(dismissBtn);
-    listEl.appendChild(item);
-  });
-  _updateHnnCount();
-}
-function _updateHnnCount(){
-  const total=_hnnCandidates.length;
-  const checked=document.querySelectorAll('#hnn-list .hnn-item input[type=checkbox]:checked').length;
-  document.getElementById('hnn-count').textContent=checked+'/'+total+'개 선택됨';
-  const applyBtn=document.getElementById('hnn-apply-btn');
-  if(applyBtn)applyBtn.disabled=checked===0;
-  const allEl=document.getElementById('hnn-select-all');
-  if(allEl)allEl.checked=checked===total&&total>0;
-}
-document.getElementById('hnn-select-all')?.addEventListener('change',e=>{
-  document.querySelectorAll('#hnn-list .hnn-item input[type=checkbox]').forEach(cb=>{cb.checked=e.target.checked;});
-  _updateHnnCount();
-});
-// 체크된 이름들을 name_match_whitelist 테이블에 upsert — 이후 _isHashtagOnlyName이 즉시(재배포 없이)
-// 인식하도록 로컬 Set에도 바로 반영. 실제 기존 오염 데이터 정리는 여전히 콜라보/자체 멤버 재검증
-// 버튼을 관리자가 직접 눌러야 함(되돌리기 어려운 쓰기 작업이라 자동 연결하지 않음, 사용자 확인 2026-08-03).
-document.getElementById('hnn-apply-btn')?.addEventListener('click',async()=>{
-  if(!sb)return;
-  const btn=document.getElementById('hnn-apply-btn');
-  const items=[...document.querySelectorAll('#hnn-list .hnn-item')].filter(el=>el.querySelector('input[type=checkbox]').checked);
-  if(!items.length)return;
-  const names=[...new Set(items.map(el=>el.dataset.name).filter(Boolean))];
-  btn.disabled=true;btn.textContent='추가 중…';
-  try{
-    const{error}=await sb.from('name_match_whitelist').upsert(names.map(name=>({name})),{onConflict:'name'});
-    if(error)throw error;
-    names.forEach(n=>_ATM_DYNAMIC_HASHTAG_NAMES.add(n));
-    items.forEach(el=>el.remove());
-    _hnnCandidates=_hnnCandidates.filter(s=>!items.some(el=>el._hnnData===s));
-    document.getElementById('hnn-status').textContent=names.length+'개 화이트리스트에 추가 완료 — 콜라보/자체 멤버 재검증 버튼을 눌러 기존 오염분을 정리하세요. 남은 후보 '+_hnnCandidates.length+'개';
-    btn.textContent='선택 항목 화이트리스트 추가';
-    _updateHnnCount();
-    if(!_hnnCandidates.length)_renderHnnList([]);
-  }catch(e){
-    btn.disabled=false;btn.textContent='선택 항목 화이트리스트 추가';
-    document.getElementById('hnn-status').textContent='오류: '+e.message;
-  }
-});
-let _hnnScanned=false,_wonkokScanned=false;
+// 그룹별 요약/멤버별 의심 후보 스캔("_hnnScan")과 그룹별 무맥락 정리("_dqOpenGroupJunk")는 실사용이
+// 없어서 제거함(2026-08-12, 사용자 요청 — "더 이상 새로 걸리는 게 거의 없다", 흔한단어/동명이인은
+// 발견 시 개별 대응하는 걸로). 동명이인 목록(_renderHnnDuplicateNames)·흔한단어 보호 목록
+// (_renderHnnWhitelist)은 여전히 유용해서 남겨둠 — 새 이름 추가는 이제 스캔 화면 대신 SQL로 직접.
+let _wonkokScanned=false;
 function _hnnSwitchTab(tab){
   document.querySelectorAll('.hnn-tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===tab));
   document.querySelectorAll('.hnn-pane').forEach(p=>p.classList.toggle('active',p.id==='hnn-pane-'+tab));
-  if(tab==='quality'&&!_hnnScanned){_hnnScanned=true;setTimeout(()=>document.getElementById('hnn-scan-btn')?.click(),80);}
   if(tab==='wonkok'&&!_wonkokScanned){_wonkokScanned=true;setTimeout(()=>document.getElementById('wonkok-scan-btn')?.click(),80);}
 }
 document.querySelectorAll('.hnn-tab').forEach(t=>t.addEventListener('click',()=>_hnnSwitchTab(t.dataset.tab)));
 document.getElementById('hnn-overlay')?.addEventListener('click',e=>{if(e.target===e.currentTarget)e.currentTarget.classList.remove('open');});
 document.getElementById('sp-hnn-btn')?.addEventListener('click',()=>{document.getElementById('hnn-overlay').classList.add('open');_renderHnnWhitelist();_renderHnnDuplicateNames();_hnnSwitchTab('quality');});
-// "스캔 시작"/닫기 버튼이 실제로 _hnnScan을 호출/오버레이를 닫도록 연결하는 게 누락돼있었음
-// (오버레이 열기만 sp-hnn-btn에 연결돼있고 정작 안의 스캔 버튼엔 아무 리스너도 없었음 — 사용자
-// 제보로 발견, 2026-08-03).
-document.getElementById('hnn-scan-btn')?.addEventListener('click',()=>{_hnnScan();});
 document.getElementById('hnn-close')?.addEventListener('click',()=>{
   document.getElementById('hnn-overlay').classList.remove('open');
-  _hnnScanned=false;_wonkokScanned=false;
-  document.getElementById('dq-junk-sec').style.display='none';
-  document.getElementById('hnn-wl-sec').style.display='';
+  _wonkokScanned=false;
 });
 
 // ── "원곡: X" 오태깅 의심 목록 ── 다른 사람이 부른 커버 영상 제목에 "(원곡 : 이름)" 식으로 원곡자를
@@ -1980,6 +1476,10 @@ function _vmUpdateCount(){
   const allEl=document.getElementById('vm-select-all');
   if(allEl)allEl.checked=total>0&&checked===total;
 }
+// "그외"(ext) 채널은 이제 DB(ext_channels) 기반이라 여기서 유형 변경(select)/삭제 버튼을 바로 붙여
+// 코드 배포 없이 관리 가능하게 함 — "공식"(그룹/멤버 자체 채널, _officialChannels)은 GROUPS 데이터에서
+// 자동 생성되는 목록이라 여기서 개별 편집 대상이 아님(2026-08-12, 사용자 요청).
+const _EXT_TIER_OPTIONS=[['music','음악'],['variety','예능'],['magazine','잡지'],['idol','아이돌개인'],['show','드라마/영화']];
 function _vmRenderChannels(term){
   const listEl=document.getElementById('vm-ch-list');
   const q=(term||'').trim().toLowerCase();
@@ -1987,6 +1487,8 @@ function _vmRenderChannels(term){
   const all=isOfficial?_officialChannels():_EXT_CHANNELS;
   const rows=q?all.filter(ch=>ch.name.toLowerCase().includes(q)||(ch.handle||'').toLowerCase().includes(q)):all;
   document.getElementById('vm-ch-count').textContent=`총 ${all.length}개 중 ${rows.length}개 표시`;
+  const addRow=document.getElementById('vm-ch-add-row');
+  if(addRow)addRow.style.display=isOfficial?'none':'flex';
   if(!rows.length){
     listEl.innerHTML=`<div style="padding:16px;text-align:center;color:rgba(155,178,228,0.45);font-size:12px;">${q?'검색 결과가 없어요':'등록된 채널이 없어요'}</div>`;
     return;
@@ -1994,15 +1496,163 @@ function _vmRenderChannels(term){
   listEl.innerHTML='';
   rows.forEach(ch=>{
     const item=document.createElement('div');item.className='ec-item';
-    const info=document.createElement('div');
+    const info=document.createElement('div');info.className='ec-info';
     const name=document.createElement('div');name.className='ec-name';name.textContent=ch.name;
     info.appendChild(name);
     if(ch.handle){const handle=document.createElement('div');handle.className='ec-handle';handle.textContent='@'+ch.handle;info.appendChild(handle);}
+    item.appendChild(info);
+    if(!isOfficial){
+      const tierSel=document.createElement('select');tierSel.className='ec-tier-sel';
+      _EXT_TIER_OPTIONS.forEach(([v,label])=>{
+        const opt=document.createElement('option');opt.value=v;opt.textContent=label;opt.selected=ch.tier===v;tierSel.appendChild(opt);
+      });
+      tierSel.addEventListener('click',e=>e.stopPropagation());
+      tierSel.addEventListener('change',()=>_ecUpdateTier(ch.handle,tierSel.value));
+      item.appendChild(tierSel);
+      const delBtn=document.createElement('button');delBtn.className='ec-del-btn';delBtn.type='button';delBtn.textContent='삭제';
+      delBtn.addEventListener('click',e=>{e.stopPropagation();_ecDeleteChannel(ch.handle,ch.name);});
+      item.appendChild(delBtn);
+    }
     const link=document.createElement('a');link.className='ec-link';link.href=ch.url;link.target='_blank';link.rel='noopener noreferrer';link.textContent='열기';
-    item.appendChild(info);item.appendChild(link);
+    item.appendChild(link);
     listEl.appendChild(item);
   });
 }
+async function _ecUpdateTier(handle,newTier){
+  if(!sb)return;
+  const{error}=await sb.from('ext_channels').update({tier:newTier}).eq('handle',handle);
+  if(error){_showShareToast('오류: '+error.message);return;}
+  const ch=_EXT_CHANNELS.find(c=>c.handle===handle);
+  if(ch)ch.tier=newTier;
+  _showShareToast('유형 변경됨');
+}
+async function _ecDeleteChannel(handle,name){
+  if(!sb)return;
+  if(!confirm(`"${name}" 채널을 목록에서 삭제할까요? 이미 동기화된 영상은 그대로 남고, 앞으로 이 채널에서 새 영상만 안 받아옵니다.`))return;
+  const{error}=await sb.from('ext_channels').delete().eq('handle',handle);
+  if(error){_showShareToast('오류: '+error.message);return;}
+  _EXT_CHANNELS=_EXT_CHANNELS.filter(c=>c.handle!==handle);
+  _vmRenderChannels(document.getElementById('vm-search')?.value||'');
+  _showShareToast('채널 삭제됨');
+}
+async function _ecAddChannel(){
+  if(!sb)return;
+  const handleEl=document.getElementById('vm-ch-add-handle');
+  const nameEl=document.getElementById('vm-ch-add-name');
+  const tierEl=document.getElementById('vm-ch-add-tier');
+  const ownerEl=document.getElementById('vm-ch-add-owner');
+  const handle=(handleEl?.value||'').trim().replace(/^@/,'');
+  const name=(nameEl?.value||'').trim();
+  const tier=tierEl?.value||'variety';
+  const ownerMko=(ownerEl?.value||'').trim();
+  if(!handle||!name){_showShareToast('핸들과 이름을 입력해주세요');return;}
+  if(tier==='idol'&&!ownerMko){_showShareToast('아이돌개인 유형은 소유자 이름이 필요해요');return;}
+  const row={handle,url:`https://www.youtube.com/@${handle}`,name,tier,owner_mko:tier==='idol'?ownerMko:null};
+  const{error}=await sb.from('ext_channels').insert(row);
+  if(error){_showShareToast('오류: '+error.message);return;}
+  _EXT_CHANNELS.push({handle:row.handle,url:row.url,name:row.name,tier:row.tier,...(row.owner_mko?{owner:{mko:row.owner_mko}}:{})});
+  if(handleEl)handleEl.value='';if(nameEl)nameEl.value='';if(ownerEl)ownerEl.value='';if(tierEl)tierEl.value='variety';
+  _vmRenderChannels(document.getElementById('vm-search')?.value||'');
+  _showShareToast('채널 추가됨');
+}
+document.getElementById('vm-ch-add-btn')?.addEventListener('click',_ecAddChannel);
+document.getElementById('vm-ch-add-tier')?.addEventListener('change',e=>{
+  const ownerEl=document.getElementById('vm-ch-add-owner');
+  if(ownerEl)ownerEl.style.display=e.target.value==='idol'?'':'none';
+});
+
+// 그룹 우선순위(A>B>C) — 어드민 전용 데이터 관리 우선순위 표시, 유저에게는 절대 노출 안 됨(2026-08-12).
+// 레벨 없는 그룹은 group_priority 테이블에 행 자체가 없음(= 미지정).
+let _groupPriority=new Map(); // ko -> 'A'|'B'|'C'
+let _gpTab='all',_gpSearchTimer=null;
+async function _loadGroupPriority(){
+  if(!sb)return;
+  try{
+    const{data,error}=await sb.from('group_priority').select('ko,level');
+    if(error){console.error('group_priority 로드 실패',error.message);return;}
+    _groupPriority=new Map((data||[]).map(r=>[r.ko,r.level]));
+  }catch(e){console.error('group_priority 로드 실패',e);}
+}
+_loadGroupPriority();
+const _GP_LEVEL_ORDER={A:0,B:1,C:2};
+function _gpRenderList(term){
+  const listEl=document.getElementById('gp-list');
+  if(!listEl)return;
+  const q=(term||'').trim().toLowerCase();
+  let rows=Object.keys(GROUPS).map(ko=>({ko,info:GROUPS[ko],level:_groupPriority.get(ko)||''}));
+  if(q)rows=rows.filter(r=>r.ko.toLowerCase().includes(q)||(r.info.en||'').toLowerCase().includes(q));
+  if(_gpTab!=='all')rows=rows.filter(r=>_gpTab==='none'?!r.level:r.level===_gpTab);
+  rows.sort((a,b)=>{
+    if(_gpTab==='all'){
+      const oa=a.level?_GP_LEVEL_ORDER[a.level]:3,ob=b.level?_GP_LEVEL_ORDER[b.level]:3;
+      if(oa!==ob)return oa-ob;
+    }
+    return a.ko.localeCompare(b.ko,'ko');
+  });
+  document.getElementById('gp-count').textContent=`총 ${Object.keys(GROUPS).length}개 중 ${rows.length}개 표시`;
+  if(!rows.length){
+    listEl.innerHTML=`<div id="gp-empty">${q?'검색 결과가 없어요':'해당 레벨의 그룹이 없어요'}</div>`;
+    return;
+  }
+  listEl.innerHTML='';
+  rows.forEach(r=>{
+    const item=document.createElement('div');item.className='gp-item';
+    const info=document.createElement('div');info.className='gp-info';
+    const name=document.createElement('div');name.className='gp-name';name.textContent=r.ko;
+    info.appendChild(name);
+    const subParts=[r.info.en,r.info.co].filter(Boolean);
+    if(subParts.length){const sub=document.createElement('div');sub.className='gp-sub';sub.textContent=subParts.join(' · ');info.appendChild(sub);}
+    item.appendChild(info);
+    const sel=document.createElement('div');sel.className='gp-level-sel';
+    [['A','A'],['B','B'],['C','C'],['','미지정']].forEach(([lvl,label])=>{
+      const btn=document.createElement('button');btn.type='button';btn.className='gp-lvl-btn'+(lvl===''?' gp-lvl-clear':'');
+      btn.dataset.lvl=lvl;btn.textContent=label;
+      if((r.level||'')===lvl)btn.classList.add('active');
+      btn.addEventListener('click',()=>_gpSetLevel(r.ko,lvl));
+      sel.appendChild(btn);
+    });
+    item.appendChild(sel);
+    listEl.appendChild(item);
+  });
+}
+async function _gpSetLevel(ko,level){
+  if(!sb)return;
+  if(level)_groupPriority.set(ko,level);else _groupPriority.delete(ko);
+  _gpRenderList(document.getElementById('gp-search')?.value||'');
+  try{
+    if(level){
+      const{error}=await sb.from('group_priority').upsert({ko,level},{onConflict:'ko'});
+      if(error)throw error;
+    }else{
+      const{error}=await sb.from('group_priority').delete().eq('ko',ko);
+      if(error)throw error;
+    }
+  }catch(e){
+    console.error('그룹 우선순위 저장 실패',e);
+    _showShareToast('오류: '+(e.message||'저장 실패'));
+  }
+}
+document.getElementById('sp-gp-btn')?.addEventListener('click',()=>{
+  document.getElementById('gp-overlay').classList.add('open');
+  _gpTab='all';
+  document.querySelectorAll('.gp-tab').forEach(t=>t.classList.toggle('active',t.dataset.lvl==='all'));
+  const searchEl=document.getElementById('gp-search');if(searchEl)searchEl.value='';
+  _gpRenderList('');
+});
+document.getElementById('gp-overlay')?.addEventListener('click',e=>{if(e.target===e.currentTarget)e.currentTarget.classList.remove('open');});
+document.getElementById('gp-close')?.addEventListener('click',()=>document.getElementById('gp-overlay').classList.remove('open'));
+document.querySelectorAll('.gp-tab').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    _gpTab=btn.dataset.lvl;
+    document.querySelectorAll('.gp-tab').forEach(t=>t.classList.toggle('active',t===btn));
+    _gpRenderList(document.getElementById('gp-search')?.value||'');
+  });
+});
+document.getElementById('gp-search')?.addEventListener('input',()=>{
+  clearTimeout(_gpSearchTimer);
+  const val=document.getElementById('gp-search').value;
+  _gpSearchTimer=setTimeout(()=>_gpRenderList(val),200);
+});
 
 // vm 패널 이벤트
 document.getElementById('vm-overlay')?.addEventListener('click',e=>{if(e.target===e.currentTarget)e.currentTarget.classList.remove('open');});
@@ -2454,64 +2104,22 @@ async function _ytRetagAllIncludingTagged(){
 // 채널은 owner를 안 주고 그냥 variety로 둔다, 2026-08-11 사용자 요청).
 // 아래 "신규 추가" 구간 중 성격이 불확실한 채널(재친구/findyourKODE/thekstarnextdoor/들어봐! 유리의 숲)은
 // 안전하게 variety로 기본 처리함 — 실제로 공식/음악 성격이면 music으로 바꿔도 됨.
-const _EXT_CHANNELS=[
-  // ── 음악 방송 / 직캠 ──
-  {handle:'MnetM2',           url:'https://www.youtube.com/@MnetM2',           name:'M2',tier:'music'},
-  {handle:'Mnet',             url:'https://www.youtube.com/@Mnet',              name:'엠넷 (엠카운트다운)',tier:'music'},
-  {handle:'KBSKpop',          url:'https://www.youtube.com/@KBSKpop',           name:'뮤직뱅크',tier:'music'},
-  {handle:'MBCkpop',          url:'https://www.youtube.com/@MBCkpop',           name:'쇼음악중심',tier:'music'},
-  {handle:'SBSKPOP',          url:'https://www.youtube.com/@SBSKPOP',           name:'인기가요',tier:'music'},
-  {handle:'SBSKPOP_ZOOM',     url:'https://www.youtube.com/@SBSKPOP_ZOOM',      name:'인기가요 ZOOM',tier:'music'},
-  {handle:'ALLTHEKPOP',       url:'https://www.youtube.com/@ALLTHEKPOP',        name:'쇼챔피언',tier:'music'},
-  {handle:'thekpop',          url:'https://www.youtube.com/@thekpop',           name:'더 쇼',tier:'music'},
-  {handle:'STUDIOCHOOM',      url:'https://www.youtube.com/@STUDIOCHOOM',       name:'스튜디오 춤',tier:'music'},
-  {handle:'itsLiveOfficial',  url:'https://www.youtube.com/@itsLiveOfficial',   name:'잇츠라이브',tier:'music'},
-  {handle:'SoundBOMB360',     url:'https://www.youtube.com/@SoundBOMB360',      name:'사운드밤 360',tier:'music'},
-  // ── 예능 ──
-  {handle:'ch117',            url:'https://www.youtube.com/@ch117',             name:'채널일일칠',tier:'variety'},
-  {handle:'mmtg_official',    url:'https://www.youtube.com/@mmtg_official',     name:'MMTG',tier:'variety'},
-  {handle:'Diggle',           url:'https://www.youtube.com/@Diggle',            name:'디글',tier:'variety'},
-  {handle:'MBC_officialchannel',url:'https://www.youtube.com/@MBC_officialchannel',name:'MBC',tier:'variety'},
-  {handle:'JTBCvoyage',       url:'https://www.youtube.com/@JTBCvoyage',        name:'JTBC voyage',tier:'variety'},
-  {handle:'Pixid',            url:'https://www.youtube.com/@Pixid',             name:'픽시드',tier:'variety'},
-  {handle:'idolhumandocu',    url:'https://www.youtube.com/@idolhumandocu',     name:'아이돌인간다큐',tier:'variety'},
-  {handle:'ootbstudio',       url:'https://www.youtube.com/@ootbstudio',        name:'OOTB 스튜디오',tier:'variety'},
-  {handle:'ddeunddeun',       url:'https://www.youtube.com/@ddeunddeun',        name:'뜬뜬',tier:'variety'},
-  {handle:'15ya_egg',         url:'https://www.youtube.com/@15ya_egg',          name:'채널 십오야',tier:'variety'},
-  {handle:'muply',            url:'https://www.youtube.com/@muply',             name:'뮤플리',tier:'variety'},
-  // idol: 채널 자체가 특정 아이돌 1인이 MC/주체인 콘텐츠 전용 채널 — "지금 차린 건 쥐뿔도 없지만"의
-  // 이영지처럼 영상 대부분이 그 사람 얘기라, 공식 채널처럼 제목에서 그룹/멤버를 굳이 찾지 않고 owner를
-  // 그대로 주 인물로 고정해서 수집한다(2026-08-11, 사용자 요청). 워크맨(로테이션 출연진)·디글(예능
-  // 전반)처럼 특정 1인 소유가 아닌 채널은 그대로 variety에 남겨둠 — owner 필드 유무로 구분.
-  {handle:'youngji_boxmedia', url:'https://www.youtube.com/@youngji_boxmedia',  name:'영지 박스미디어',tier:'idol',owner:{mko:'이영지'}},
-  {handle:'workman',          url:'https://www.youtube.com/@workman',           name:'워크맨',tier:'variety'},
-  {handle:'saego_F5',         url:'https://www.youtube.com/@saego_F5',          name:'새고_F5',tier:'variety'},
-  // ── 잡지 ──
-  {handle:'wkorea',           url:'https://www.youtube.com/@wkorea',            name:'W Korea',tier:'magazine'},
-  {handle:'VogueKorea',       url:'https://www.youtube.com/@VogueKorea',        name:'Vogue Korea',tier:'magazine'},
-  {handle:'ellemagazinekr',   url:'https://www.youtube.com/@ellemagazinekr',    name:'ELLE Korea',tier:'magazine'},
-  {handle:'HarpersBAZAARKorea',url:'https://www.youtube.com/@HarpersBAZAARKorea',name:"Harper's BAZAAR Korea",tier:'magazine'},
-  {handle:'marieclairekr',    url:'https://www.youtube.com/@marieclairekr',     name:'Marie Claire Korea',tier:'magazine'},
-  {handle:'cosmokorea',       url:'https://www.youtube.com/@cosmokorea',        name:'Cosmopolitan Korea',tier:'magazine'},
-  {handle:'GQKOREA',          url:'https://www.youtube.com/@GQKOREA',           name:'GQ Korea',tier:'magazine'},
-  {handle:'allurekorea',      url:'https://www.youtube.com/@allurekorea',       name:'Allure Korea',tier:'magazine'},
-  {handle:'DAZEDKOREA',       url:'https://www.youtube.com/@DAZEDKOREA',        name:'Dazed Korea',tier:'magazine'},
-  {handle:'ARENAKOREATV',     url:'https://www.youtube.com/@ARENAKOREATV',      name:'Arena Homme+ Korea',tier:'magazine'},
-  {handle:'singlesmania',     url:'https://www.youtube.com/@singlesmania',      name:'Singles',tier:'magazine'},
-  {handle:'ESQUIREKorea',     url:'https://www.youtube.com/@ESQUIREKorea',      name:'Esquire Korea',tier:'magazine'},
-  // ── 신규 추가 (2026-07-22) ──
-  {handle:'1theKOriginals',   url:'https://www.youtube.com/@1theKOriginals',    name:'1theK Originals',tier:'music'},
-  {handle:'DingoMusic',       url:'https://www.youtube.com/@DingoMusic',        name:'딩고뮤직',tier:'music'},
-  {handle:'STSEVEN_official', url:'https://www.youtube.com/@STSEVEN_official',  name:'재친구',tier:'variety'},
-  {handle:'findyourKODE',     url:'https://www.youtube.com/@findyourKODE',      name:'findyourKODE',tier:'variety'},
-  {handle:'TEO_universe',     url:'https://www.youtube.com/@TEO_universe',      name:'TEO_universe',tier:'variety'},
-  {handle:'thekstarnextdoor', url:'https://www.youtube.com/@thekstarnextdoor',  name:'thekstarnextdoor',tier:'variety'},
-  // ── 신규 추가 (2026-07-31) ──
-  {handle:'GoldenDiscOfficial',url:'https://www.youtube.com/@GoldenDiscOfficial',name:'골든디스크',tier:'music'},
-  // ── 신규 추가 (2026-08-04) ──
-  {handle:'WelcomeToForest',  url:'https://www.youtube.com/@WelcomeToForest',   name:'들어봐! 유리의 숲',tier:'variety'},
-];
-const _EXT_STRICT_TIERS=new Set(['variety','magazine','idol']); // idol tier도 게스트 감지는 strict(해시태그만 인정)
+// 예전엔 이 배열이 하드코딩이라 채널 추가/삭제/유형 변경마다 코드 수정+재배포가 필요했음 — DB 테이블
+// (ext_channels)로 옮겨서 어드민 패널(영상 관리 > 동기화 채널 > 그외)에서 직접 추가/삭제/유형 수정
+// 가능하게 함(2026-08-12, 사용자 요청). SQL: ext_channels_migration.sql(기존 33개 채널 시드 포함).
+let _EXT_CHANNELS=[];
+let _extChannelsLoaded=false;
+async function _loadExtChannels(){
+  if(!sb)return;
+  try{
+    const{data,error}=await sb.from('ext_channels').select('handle,url,name,tier,owner_mko').order('name');
+    if(error){console.error('ext_channels 로드 실패',error.message);return;}
+    _EXT_CHANNELS=(data||[]).map(r=>({handle:r.handle,url:r.url,name:r.name,tier:r.tier,...(r.owner_mko?{owner:{mko:r.owner_mko}}:{})}));
+    _extChannelsLoaded=true;
+  }catch(e){console.error('ext_channels 로드 실패',e);}
+}
+_loadExtChannels();
+const _EXT_STRICT_TIERS=new Set(['variety','magazine','idol','show']); // idol/show tier도 게스트 감지는 strict(해시태그만 인정)
 
 // _PROJECT_UNITS는 kpop_universe.html(main)로 이동함(2026-08-12) — 그쪽의 _unitTagsFor/_onUnitTagClick도
 // 이 상수를 쓰는데 admin.js에만 남아있어서 일반 유저 검색(doSearch)이 통째로 죽는 사고가 있었음. admin.js는
@@ -2772,10 +2380,11 @@ function _extOwnerGko(owner){
   return a?_ytGroupKoFor(a):owner.mko;
 }
 // 채널 1개 분량 파싱 → Supabase rows 배열 반환. strict는 호출부(_ytSyncExtChannels/_ytBackfillChannelCore)가
-// 그 채널의 tier('variety'/'magazine'/'idol')를 보고 넘겨준다 — _EXT_STRICT_TIERS 참고.
+// 그 채널의 tier('variety'/'magazine'/'idol'/'show')를 보고 넘겨준다 — _EXT_STRICT_TIERS 참고.
 // tier/owner: idol 채널(owner 있음)은 제목 매칭 결과와 무관하게 owner를 주 인물로 고정하고(스킵도 없음),
 // 게스트 감지에만 제목 파싱을 계속 씀(2026-08-11). tier가 'music'이 아니면(variety/magazine/idol) 원래
-// mv/live/short 키워드가 없어 'other'로 뭉뚱그려지던 영상을 새 'variety' 카테고리로 분류한다.
+// mv/live/short 키워드가 없어 'other'로 뭉뚱그려지던 영상을 'variety' 카테고리로 분류한다 — 단 tier가
+// 'show'(드라마/영화, 2026-08-12 신설)면 예능과 구분해서 'show' 카테고리로 따로 분류한다.
 function _extBuildRows(vids,strict,tier,owner){
   const rows=[];let skipped=0;
   const ownerGko=_extOwnerGko(owner);
@@ -2795,7 +2404,7 @@ function _extBuildRows(vids,strict,tier,owner){
       if(sec.length){sec.forEach(mko=>withMembers.push(`${mko}(${gko})`));}
       else{withGroups.push(gko);}
     });
-    const category=(tier&&tier!=='music'&&(!v.category||v.category==='other'))?'variety':v.category;
+    const category=(tier&&tier!=='music'&&(!v.category||v.category==='other'))?(tier==='show'?'show':'variety'):v.category;
     rows.push({
       id:v.id,title:v.title,title_norm:_titleNorm(v.title),description:v.description||'',thumb:v.thumb,published_at:v.published_at,
       category,

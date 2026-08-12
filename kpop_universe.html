@@ -258,6 +258,9 @@
     <button class="sp-yt-sync" id="sp-hnn-btn" style="opacity:.8;">검수 센터</button>
     <button class="sp-yt-sync" id="sp-wonkok-btn" style="display:none"></button>
 
+    <div class="sp-subsec-lbl" style="margin-top:10px;">그룹 데이터 관리</div>
+    <button class="sp-yt-sync" id="sp-gp-btn" style="opacity:.8;">그룹 우선순위</button>
+
     <div class="sp-subsec-lbl" style="margin-top:10px;">데이터 정합성 — 매일(동기화 뒤 순서대로)</div>
     <button class="sp-yt-sync" id="sp-yt-autotag" style="margin-top:4px;opacity:.8;">2. 멤버+콜라보 자동 태깅 (미태깅분)</button>
     <button class="sp-yt-sync" id="sp-collabfix-btn" style="margin-top:4px;opacity:.8;">3. 콜라보 오태깅 재검증(전체)</button>
@@ -302,6 +305,19 @@
         <button class="vm-ch-tab active" data-tab="official">그룹/멤버 공식</button>
         <button class="vm-ch-tab" data-tab="ext">그외</button>
       </div>
+      <div id="vm-ch-add-row">
+        <input type="text" id="vm-ch-add-handle" placeholder="채널 핸들(@ 없이)" autocomplete="off" spellcheck="false">
+        <input type="text" id="vm-ch-add-name" placeholder="표시 이름" autocomplete="off" spellcheck="false">
+        <select id="vm-ch-add-tier">
+          <option value="music">음악</option>
+          <option value="variety" selected>예능</option>
+          <option value="magazine">잡지</option>
+          <option value="idol">아이돌개인</option>
+          <option value="show">드라마/영화</option>
+        </select>
+        <input type="text" id="vm-ch-add-owner" placeholder="소유자 실명(아이돌개인만)" autocomplete="off" spellcheck="false" style="display:none">
+        <button id="vm-ch-add-btn" type="button">채널 추가</button>
+      </div>
       <div id="vm-ch-count"></div>
       <div id="vm-ch-list"></div>
     </div>
@@ -342,43 +358,6 @@
         <div class="hnn-sec-lbl">흔한단어 보호 목록 (해시태그로만 인정)</div>
         <div id="hnn-wl-list"></div>
       </div>
-      <button id="hnn-scan-btn" style="display:none"></button>
-      <div id="hnn-status" class="hnn-auto-status"></div>
-      <div id="hnn-group-sec" style="display:none">
-        <div class="hnn-sec-lbl">그룹별 요약 (미태깅 많은 순)</div>
-        <div id="hnn-group-list"></div>
-      </div>
-      <div class="hnn-sec-lbl" id="hnn-member-lbl" style="display:none">멤버별 의심 후보</div>
-      <div id="hnn-toolbar" style="display:none">
-        <label id="hnn-select-all-row"><input type="checkbox" id="hnn-select-all">전체 선택</label>
-        <span id="hnn-count"></span>
-        <button id="hnn-apply-btn">선택 항목 화이트리스트 추가</button>
-      </div>
-      <div id="hnn-list"></div>
-      <div id="dq-junk-sec" style="display:none">
-        <div id="dq-junk-hd">
-          <button id="dq-junk-back">← 목록으로</button>
-          <span id="dq-junk-title"></span>
-        </div>
-        <div id="dq-junk-status"></div>
-        <div id="dq-junk-toolbar" style="display:none">
-          <label id="dq-junk-select-all-row"><input type="checkbox" id="dq-junk-select-all">전체 선택</label>
-          <span id="dq-junk-count"></span>
-          <button id="dq-junk-flag-btn">선택 무관 처리</button>
-          <button id="dq-junk-delete-btn">선택 삭제</button>
-        </div>
-        <div id="dq-junk-list"></div>
-        <div id="dq-cross-sec" style="display:none">
-          <div id="dq-cross-hd">콜라보 태그 오염 의심 <span style="font-weight:400;color:rgba(155,178,228,0.6);">(영상은 다른 그룹 것, with_groups에 이 그룹만 잘못 얹힘)</span></div>
-          <div id="dq-cross-status"></div>
-          <div id="dq-cross-toolbar" style="display:none">
-            <label id="dq-cross-select-all-row"><input type="checkbox" id="dq-cross-select-all">전체 선택</label>
-            <span id="dq-cross-count"></span>
-            <button id="dq-cross-remove-btn">선택 항목 태그만 제거</button>
-          </div>
-          <div id="dq-cross-list"></div>
-        </div>
-      </div>
     </div>
     <div class="hnn-pane" id="hnn-pane-wonkok">
       <button id="wonkok-scan-btn" style="display:none"></button>
@@ -392,6 +371,26 @@
       <button id="wonkok-overlap-fix-btn" style="margin-top:10px;opacity:.8;">cover_of ↔ with 겹침 정리(일회용)</button>
       <div id="wonkok-overlap-status" class="hnn-auto-status"></div>
     </div>
+  </div>
+</div>
+<div id="gp-overlay">
+  <div id="gp-panel">
+    <div id="gp-hd">
+      <span id="gp-hd-title">그룹 우선순위</span>
+      <button id="gp-close">✕</button>
+    </div>
+    <div id="gp-search-wrap">
+      <input type="text" id="gp-search" placeholder="그룹명 검색…" autocomplete="off" spellcheck="false">
+    </div>
+    <div id="gp-tabs">
+      <button class="gp-tab active" data-lvl="all">전체</button>
+      <button class="gp-tab" data-lvl="A">A</button>
+      <button class="gp-tab" data-lvl="B">B</button>
+      <button class="gp-tab" data-lvl="C">C</button>
+      <button class="gp-tab" data-lvl="none">미지정</button>
+    </div>
+    <div id="gp-count"></div>
+    <div id="gp-list"></div>
   </div>
 </div>
 <div id="feed-list-overlay">
@@ -4984,18 +4983,27 @@ connSheetEl.addEventListener('touchend',e=>{
 // 시트도 같이 움직여서 두 겹이 한 덩어리로 빠지는 것처럼 보이게 한다(가득 찬 상태에선 이미 화면을
 // 다 덮고 있어 밑 시트를 같이 움직일 필요가 없음).
 function _wireSheetSwipe(sheetEl,innerEl,onDismiss,syncEl){
-  let dragY=0,dragging=false,scrolled=false,scrollTopAtStart=0,_rafId=0,_applyFn=null;
-  innerEl.addEventListener('scroll',()=>{if(dragging)scrolled=true;},{passive:true});
+  // sheetDragActive: 이번 터치가 "콘텐츠 스크롤"이 아니라 "시트 자체를 끄는 드래그"로 전환됐는지.
+  // 예전엔 터치 시작 시점의 scrollTop만 보고 그 터치 세션 전체를 고정 판정했었는데, 그러면 스크롤된
+  // 상태에서 아래로 쭉 내려도(같은 손가락을 안 뗀 채로 맨 위까지 스크롤한 뒤 계속 당겨도) 닫기로 안
+  // 넘어가고, 손을 뗐다가 맨 위에서 새로 시작해야만 먹혀서 "안 먹는다"는 제보가 많았음(2026-08-12).
+  // 지금은 같은 터치가 이어지는 도중에라도 콘텐츠가 맨 위에 도달하는 그 순간부터 시트 드래그로 전환
+  // 되고, 그 순간의 손가락 위치를 새 기준점(dragY)으로 다시 잡아서 시트가 순간이동하듯 튀지 않는다.
+  let dragY=0,dragging=false,sheetDragActive=false,_rafId=0,_applyFn=null;
   sheetEl.addEventListener('touchstart',e=>{
     dragY=e.touches[0].clientY;
-    dragging=true;scrolled=false;
-    scrollTopAtStart=innerEl.scrollTop;
+    dragging=true;
+    sheetDragActive=innerEl.scrollTop<=0;
     e.stopPropagation();
   },{passive:true});
   sheetEl.addEventListener('touchmove',e=>{
     if(!dragging)return;e.stopPropagation();
-    const dy=e.touches[0].clientY-dragY;
-    if(scrolled||scrollTopAtStart>0)return;
+    const curY=e.touches[0].clientY;
+    if(!sheetDragActive){
+      if(innerEl.scrollTop<=0){sheetDragActive=true;dragY=curY;}
+      else return; // 아직 콘텐츠가 맨 위가 아니면 네이티브 스크롤에 맡긴다
+    }
+    const dy=curY-dragY;
     if(dy<0&&!_sheetFull&&innerEl.scrollTop<=0){
       if(e.cancelable)e.preventDefault();
       _applyFn=()=>{sheetEl.style.transition='none';sheetEl.style.transform=`translateY(${dy*0.35}px)`;};
@@ -5016,11 +5024,12 @@ function _wireSheetSwipe(sheetEl,innerEl,onDismiss,syncEl){
     const dy=e.changedTouches[0].clientY-dragY;
     sheetEl.style.transition='';
     if(syncEl)syncEl.style.transition='';
-    if(scrolled||scrollTopAtStart>0){
+    if(!sheetDragActive){
       sheetEl.style.transform='';
       if(syncEl)syncEl.style.transform='';
       return;
     }
+    sheetDragActive=false;
     if(dy<-60&&!_sheetFull&&innerEl.scrollTop<=0){
       // 위로 충분히 → 꽉 참 (핸들 영역 제한 제거: 콘텐츠 맨 위에서 어디서든)
       _sheetFull=true;
@@ -7875,7 +7884,11 @@ function renderCollectionSection(){
     const pubBtn=document.createElement('button');
     pubBtn.className='col-row-pub'+(col.isPublic?' on':'');
     pubBtn.title=col.isPublic?'공개 중 · 눌러서 비공개로':'비공개 · 눌러서 공개로(다른 유저 카드에 노출)';
-    pubBtn.innerHTML='<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.7 4 6 4 9s-1.5 6.3-4 9c-2.5-2.7-4-6-4-9s1.5-6.3 4-9z"/></svg>';
+    // 공개=지구본, 비공개=자물쇠 — 예전엔 같은 지구본 아이콘에 색만 껐다 켰다 해서 "꺼진 상태"가 뭘
+    // 뜻하는지 한눈에 안 들어온다는 사용자 피드백(2026-08-12)으로 아이콘 자체를 상태별로 다르게 함.
+    pubBtn.innerHTML=col.isPublic
+      ?'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.7 4 6 4 9s-1.5 6.3-4 9c-2.5-2.7-4-6-4-9s1.5-6.3 4-9z"/></svg>'
+      :'<svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>';
     pubBtn.addEventListener('click',e=>{e.stopPropagation();_toggleCollectionPublic(col.id);});
     const del=document.createElement('button');del.className='col-row-del';del.textContent='×';
     del.addEventListener('click',e=>{
@@ -9635,6 +9648,7 @@ function _openFeedOverlay(){
     // 요소라 스크립트 최상단에서 바로 바인딩하면 아직 DOM에 없어 에러가 나서, 처음 열릴 때 한 번만 바인딩
     el.addEventListener('pointerdown',e=>e.stopPropagation());
     el.addEventListener('click',e=>e.stopPropagation());
+    _wireFeedSwipeDismiss(el,document.getElementById('feed-body'));
   }
   const cb=document.getElementById('feed-close');
   if(!cb._bound){cb._bound=true;
@@ -9658,6 +9672,51 @@ function _closeFeedOverlay(){
   document.body.classList.remove('feed-open');
   document.getElementById('tab-feed').classList.remove('feed-open');
   document.getElementById('dh-feed-btn')?.classList.remove('active');
+}
+// 모바일: 카드(mob-sheet 등)처럼 콘텐츠 맨 위에서 아래로 쭉 내리면 어디서 시작했든 닫힘(2026-08-12,
+// 사용자 요청 — "카드처럼 어느 위치에서든 위→아래로 내리면 꺼지면 좋겠다"). peek(50%)든 전체 펼침이든
+// 동일하게 동작 — 펼치기는 기존 헤더 탭으로 이미 되므로 여기선 아래 방향만 다룬다. _wireSheetSwipe와
+// 달리 60%/100% 중간 단계가 없어서(peek/전체 두 상태뿐) 별도의 간단한 전용 로직으로 둠.
+function _wireFeedSwipeDismiss(el,body){
+  let dragY=0,dragging=false,dragActive=false,_rafId=0,_applyFn=null;
+  el.addEventListener('touchstart',e=>{
+    if(!isMob())return;
+    dragY=e.touches[0].clientY;
+    dragging=true;
+    dragActive=body.scrollTop<=0;
+  },{passive:true});
+  el.addEventListener('touchmove',e=>{
+    if(!dragging)return;
+    const curY=e.touches[0].clientY;
+    if(!dragActive){
+      if(body.scrollTop<=0){dragActive=true;dragY=curY;}
+      else return;
+    }
+    const dy=curY-dragY;
+    if(dy<=0)return; // 위로는 별도 동작 없음(펼치기는 헤더 탭으로 처리)
+    if(e.cancelable)e.preventDefault();
+    _applyFn=()=>{el.style.transition='none';el.style.transform=`translateY(${dy}px)`;};
+    if(!_rafId)_rafId=requestAnimationFrame(()=>{_rafId=0;_applyFn&&_applyFn();});
+  },{passive:false});
+  el.addEventListener('touchend',e=>{
+    if(!dragging)return;dragging=false;
+    if(_rafId){cancelAnimationFrame(_rafId);_rafId=0;}_applyFn=null;
+    if(!dragActive)return;
+    dragActive=false;
+    const dy=e.changedTouches[0].clientY-dragY;
+    if(dy>80){
+      el.style.transition='transform 0.22s cubic-bezier(0.32,0.72,0,1)';
+      el.style.transform=`translateY(${window.innerHeight}px)`;
+      setTimeout(()=>{
+        _closeFeedOverlay();
+        el.style.transition='';el.style.transform='';
+      },220);
+    }else{
+      el.style.transition='transform 0.22s cubic-bezier(0.32,0.72,0,1)';
+      el.style.transform='';
+      setTimeout(()=>{el.style.transition='';},220);
+    }
+  },{passive:true});
 }
 
 // 기념일 스트립(인스타 스토리 스타일 원형 아바타) 항목 — Today's Anniversary 전용
@@ -10880,8 +10939,14 @@ function _makeChVidController(contId){
       // 넘어갔을 때(isShorts(url) 판별)도 세로 비율이 계속 유지됨 — watch?v= 로 통일해버리면 그 정보가 사라짐.
       const _vidUrl=vv=>vv.category==='short'?`https://www.youtube.com/shorts/${vv.id}`:`https://www.youtube.com/watch?v=${vv.id}`;
       const vidUrl=_vidUrl(v);
-      const s={t:v.title,u:vidUrl,thumb:v.thumb||'',with:_buildGridWithList(v,state.ko,state.memberKo),coverOfMembers:v.cover_of_members||[],coverOfGroups:v.cover_of_groups||[]};
-      const ctx={groupKo:state.ko};
+      // _apiGroupKo/_apiMemberKos: 스크랩/컬렉션 버튼이 이 영상의 실제 DB 태그(v.members)를 그대로
+      // 실어 보내도록 함 — 예전엔 이 필드가 아예 없어서 그리드 썸네일에서 바로 컬렉션에 담으면(라이트박스를
+      // 안 거치면) 실제로 멤버 태깅된 영상이어도 memberKos가 항상 빈 배열로 저장돼, 태깅된 멤버 카드에
+      // 안 뜨고 그룹 카드에만 뜨는 문제가 있었음(2026-08-12, 사용자 제보 — 코르티스 성현 단독 출연
+      // 컬렉션이 성현 카드엔 안 뜨고 그룹 카드에만 뜸). _colMemberKosFor가 이미 "멤버 카드에서 보는
+      // 중이면 이 멤버도 포함" 폴백까지 갖고 있어서(위 정의 참고) 그대로 재사용.
+      const s={t:v.title,u:vidUrl,thumb:v.thumb||'',with:_buildGridWithList(v,state.ko,state.memberKo),coverOfMembers:v.cover_of_members||[],coverOfGroups:v.cover_of_groups||[],_apiGroupKo:v.group_ko||state.ko,_apiMemberKos:_colMemberKosFor(v)};
+      const ctx={groupKo:state.ko,memberKos:_colMemberKosFor(v)};
       const withLine=_makeWithLine(s,ctx);
       if(withLine)item.appendChild(withLine);
       item.appendChild(_makeScrapBtn(s,ctx));
@@ -11301,7 +11366,10 @@ function _makeChVidController(contId){
         releaseLock();
       }
     }catch(e){
-      if(reset)grid.innerHTML=`<div class="gc-ch-err">${e.message}</div>`;
+      if(reset){
+        grid.innerHTML=`<div class="gc-ch-err">${e.message}<button class="gc-ch-err-retry" type="button">다시 시도</button></div>`;
+        grid.querySelector('.gc-ch-err-retry')?.addEventListener('click',()=>load(ko,true),{once:true});
+      }
       else if(moreWrap)moreWrap.textContent='';
       console.error(contId+' 로드 실패',e);
       releaseLock();
@@ -11343,7 +11411,11 @@ function _makeChVidController(contId){
     // (2026-08-11, 사용자 요청). filEl은 카드를 열 때마다 innerHTML로 새로 그려지는 요소라 매번 새로 바인딩.
     _enableDragScroll(filEl);
     // 멤버 카드는 MV 탭 제외 — 뮤비는 그룹 단위 콘텐츠라 그룹 카드 MV 탭에서 이미 다뤄지고, 멤버 개인 태깅 영상엔 거의 안 나옴
-    let catTabs=memberKo?[['all','All'],['live','Live'],['cover','Cover'],['short','Shorts'],['variety','Variety']]:[['all','All'],['mv','MV'],['live','Live'],['cover','Cover'],['short','Shorts'],['variety','Variety']];
+    // 'show'(드라마/영화 — 예능 아닌 연기 위주) 탭 신설(2026-08-12, 사용자 요청) — 'variety'와 같은
+    // 방식(채널 화이트리스트 기반)으로 채워질 예정. 아직 채널 화이트리스트가 비어있어 실제 영상은
+    // 없을 수 있지만, 'variety'처럼 그룹/멤버 카드에 항상 노출되는 고정 탭으로 둠(팬영상 탭과 다르게
+    // "있을 때만" 동적으로 끼워 넣지 않음).
+    let catTabs=memberKo?[['all','All'],['live','Live'],['cover','Cover'],['short','Shorts'],['variety','Variety'],['show','Show']]:[['all','All'],['mv','MV'],['live','Live'],['cover','Cover'],['short','Shorts'],['variety','Variety'],['show','Show']];
     // "by Fan" 탭(2026-08-10, 사용자 요청) — 팬이 직접 찍거나 만든 영상 전용. 아직은 어떤 그룹도 팬채널을
     // 등록 안 해서 category='fan'인 행이 하나도 없지만(추후 사용자가 그룹별로 팬채널 링크를 주면 그
     // 채널 동기화 시 category='fan'으로 저장할 예정), 미리 이 자리를 만들어둠. 팬덤명을 알면 "by {영문
@@ -12107,8 +12179,8 @@ _totopBtn.addEventListener('click',e=>{
 </script>
 
 <div id="feed-overlay">
+  <div id="feed-peek-handle"></div>
   <div id="feed-hd">
-    <span id="feed-hd-title">탐험</span>
     <button id="feed-close">✕</button>
   </div>
   <div id="feed-body">

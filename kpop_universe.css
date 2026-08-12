@@ -549,10 +549,12 @@
   #yt-lb-conn-btn span{opacity:.7;}
   #yt-lb-uplist{display:none;}
   #yt-lightbox.lb-browse #yt-lb-uplist{display:block;}
-  #yt-lb-uplist-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:9px;}
+  #yt-lb-uplist-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
   #yt-lb-uplist-label{font-size:12px;font-weight:700;color:rgba(195,210,240,0.65);letter-spacing:.02em;}
   #yt-lb-uplist-nav{display:flex;align-items:center;gap:4px;}
-  #yt-lb-uplist-prev,#yt-lb-uplist-next{background:none;border:none;color:rgba(255,255,255,0.5);font-size:17px;line-height:1;cursor:pointer;padding:3px 7px;}
+  /* 다음 영상 헤더 줄 상하 패딩을 타이트하게(2026-08-12, 사용자 요청) — 이 줄 높이가 prev/next 버튼의
+     세로 패딩으로 정해지므로 여기를 줄이면 헤더 전체가 낮아짐. */
+  #yt-lb-uplist-prev,#yt-lb-uplist-next{background:none;border:none;color:rgba(255,255,255,0.5);font-size:17px;line-height:1;cursor:pointer;padding:1px 7px;}
   #yt-lb-uplist-prev:hover,#yt-lb-uplist-next:hover{color:rgba(255,255,255,0.9);}
   #yt-lb-uplist-prev:disabled,#yt-lb-uplist-next:disabled{color:rgba(255,255,255,0.15);cursor:default;}
   #yt-lb-uplist-cnt{font-size:11px;color:rgba(150,170,210,0.55);min-width:34px;text-align:center;}
@@ -590,29 +592,34 @@
     #yt-lightbox.lb-browse{align-items:stretch;justify-content:stretch;}
     #yt-lightbox.lb-browse #yt-lb-wrap{width:100vw;max-width:100vw;height:100%;max-height:100%;
       display:flex;flex-direction:column;overflow:hidden;
-      box-sizing:border-box;padding:56px 14px 0;}
+      box-sizing:border-box;padding:78px 14px 0;}
     #yt-lightbox.lb-browse #yt-lb-main{flex-shrink:0;}
     #yt-lightbox.lb-browse #yt-lb-info{padding-top:14px;}
     #yt-lightbox.lb-browse #yt-lb-reactions{padding-top:14px;}
     #yt-lightbox.lb-browse #yt-lb-toolbar{padding-top:14px;}
     /* 멤버정보(누가 나왔는지 칩)는 더 이상 툴바 밑에 끼어있지 않고 상단바 중앙으로 이동 — 그룹/멤버
        카드에서 재생모드로 들어왔을 때만 뜨는데, 기존 위치는 리액션·다음영상 사이에 레이아웃이 어색하다는
-       제보(2026-08-12)로 옮김. "연결 보기" 버튼은 더보기(⋮) 메뉴 쪽으로 같이 이동함(위 공용 규칙 참고). */
-    #yt-lightbox.lb-browse #yt-lb-member-info{position:fixed;top:8px;left:50%;transform:translateX(-50%);
+       제보(2026-08-12)로 옮김. "연결 보기" 버튼은 더보기(⋮) 메뉴 쪽으로 같이 이동함(위 공용 규칙 참고).
+       닫기/메뉴 버튼과 높이(36px)·top(14px)을 맞추고 flex 세로중앙 정렬해서, 텍스트만 살짝 높은 줄에
+       떠 보이던 정렬 어긋남을 없앰(2026-08-12, 사용자 재제보로 조정). */
+    #yt-lightbox.lb-browse #yt-lb-member-info{position:fixed;top:14px;left:50%;transform:translateX(-50%);
+      height:36px;display:flex;flex-direction:column;align-items:center;justify-content:center;
       max-width:56vw;text-align:center;z-index:1;margin-top:0;padding-top:0;border-top:none;
       pointer-events:none;} /* 칩 자체는 누를 일이 없어서 탭이 아래(영상)로 그대로 통과되게 */
     #yt-lightbox.lb-browse #yt-lb-anchor-chip{font-size:11.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
     #yt-lightbox.lb-browse #yt-lb-with-chips{justify-content:center;margin-top:3px;}
+    /* 볼륨/좋아요 등 툴바 줄과 "다음 영상" 사이 여백은 줄여서, 화면 하나에 다음 영상이 2개 정도는
+       바로 보이게(2026-08-12, 사용자 요청). */
     #yt-lightbox.lb-browse #yt-lb-uplist{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;
-      margin-top:16px;padding:16px 0 24px;border-top:0.5px solid rgba(255,255,255,0.07);}
+      margin-top:10px;padding:10px 0 24px;border-top:0.5px solid rgba(255,255,255,0.07);}
     #yt-lightbox.lb-browse #yt-lb-uplist-scroll{gap:10px;}
     #yt-lightbox.lb-browse .lb-uplist-item{padding:10px 6px;}
-    #yt-lightbox.lb-browse #yt-lb-close{position:fixed;top:8px;left:12px;right:auto;bottom:auto;z-index:2;background:rgba(0,0,0,0.4);border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;}
+    #yt-lightbox.lb-browse #yt-lb-close{position:fixed;top:14px;left:12px;right:auto;bottom:auto;z-index:2;background:rgba(0,0,0,0.4);border-radius:50%;width:36px;height:36px;display:flex;align-items:center;justify-content:center;}
     #yt-lightbox.lb-browse #yt-lb-close-x{display:none;}
-    #yt-lightbox.lb-browse #yt-lb-close-chevron{display:block;}
-    #yt-lightbox.lb-browse .lb-menu-wrap{display:block;position:fixed;top:8px;right:12px;z-index:2;}
-    #yt-lightbox.lb-browse #yt-lb-menu-btn{background:rgba(0,0,0,0.4);border:none;border-radius:50%;width:32px;height:32px;
-      color:#fff;font-size:18px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;}
+    #yt-lightbox.lb-browse #yt-lb-close-chevron{display:block;width:19px;height:19px;}
+    #yt-lightbox.lb-browse .lb-menu-wrap{display:block;position:fixed;top:14px;right:12px;z-index:2;}
+    #yt-lightbox.lb-browse #yt-lb-menu-btn{background:rgba(0,0,0,0.4);border:none;border-radius:50%;width:36px;height:36px;
+      color:#fff;font-size:21px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;}
     #yt-lb-iframe{border-radius:10px;}
     /* 쇼츠는 세로로 길어서 화면 대부분을 차지해 스와이프 시작 지점(유튜브 iframe 바깥 여백)이 거의 없었음 —
        살짝 줄여서 위아래 여백을 확보 (탭으로 재생/일시정지하는 유튜브 기본 컨트롤은 그대로 유지됨) */
@@ -1077,6 +1084,17 @@
   .vm-ch-tab.active{background:rgba(155,178,228,0.18);border-color:rgba(170,195,255,0.35);color:#c8ddff;}
   #vm-ch-count{font-size:10px;color:rgba(140,165,210,0.5);padding:5px 16px 0;}
   #vm-ch-list{overflow-y:auto;padding:8px 0;flex:1;min-height:0;}
+  /* "그외" 채널 추가 폼 — DB 기반으로 바뀌면서 코드 수정 없이 여기서 바로 추가 가능(2026-08-12) */
+  #vm-ch-add-row{display:flex;flex-wrap:wrap;gap:6px;padding:10px 16px;border-bottom:0.5px solid rgba(255,255,255,0.08);flex-shrink:0;}
+  #vm-ch-add-row input,#vm-ch-add-row select{background:rgba(255,255,255,0.05);border:0.5px solid rgba(255,255,255,0.12);border-radius:8px;color:rgba(220,230,255,0.9);font-size:11px;font-family:inherit;padding:6px 9px;}
+  #vm-ch-add-handle{flex:1 1 110px;min-width:90px;}
+  #vm-ch-add-name{flex:1 1 110px;min-width:90px;}
+  #vm-ch-add-owner{flex:1 1 140px;min-width:110px;}
+  #vm-ch-add-btn{flex-shrink:0;background:rgba(155,178,228,0.18);border:0.5px solid rgba(170,195,255,0.35);border-radius:8px;color:#c8ddff;font-size:11px;font-weight:600;font-family:inherit;padding:6px 12px;cursor:pointer;}
+  #vm-ch-add-btn:hover{background:rgba(155,178,228,0.28);}
+  .ec-tier-sel{flex-shrink:0;background:rgba(255,255,255,0.05);border:0.5px solid rgba(255,255,255,0.12);border-radius:8px;color:rgba(210,225,255,0.85);font-size:10.5px;font-family:inherit;padding:3px 5px;}
+  .ec-del-btn{flex-shrink:0;font-size:10.5px;color:rgba(240,150,150,0.85);background:rgba(220,90,90,0.10);border:0.5px solid rgba(220,90,90,0.3);border-radius:8px;padding:3px 8px;cursor:pointer;font-family:inherit;}
+  .ec-del-btn:hover{background:rgba(220,90,90,0.2);}
   /* ── 검수 센터 (통합 패널) ── */
   #hnn-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.52);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:81;display:none;align-items:center;justify-content:center;}
   #hnn-overlay.open{display:flex;}
@@ -1115,29 +1133,6 @@
   .wk-title{font-size:11.5px;color:rgba(210,225,255,0.78);line-height:1.4;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;}
   #wonkok-empty{font-size:12px;color:rgba(155,178,228,0.4);text-align:center;padding:40px 0;}
   /* 태깅 품질 탭 */
-  #hnn-status{font-size:11.5px;color:rgba(155,178,228,0.65);padding:10px 18px 4px;min-height:18px;flex-shrink:0;}
-  #hnn-list{padding:4px 0;}
-  #hnn-empty{font-size:12px;color:rgba(155,178,228,0.4);text-align:center;padding:40px 0;}
-  .hnn-item{display:flex;align-items:center;gap:10px;padding:8px 16px;transition:background .12s;cursor:pointer;}
-  .hnn-item:hover{background:rgba(255,255,255,0.03);}
-  .hnn-rank{width:22px;flex-shrink:0;text-align:center;font-size:11px;font-weight:700;color:rgba(155,178,228,0.35);}
-  .hnn-info{flex:1;min-width:0;}
-  .hnn-name{font-size:12px;color:rgba(220,230,255,0.9);font-weight:600;}
-  .hnn-name b{color:rgba(255,150,150,0.95);}
-  .hnn-sub{font-size:10.5px;color:rgba(155,178,228,0.5);margin-top:2px;}
-  .hnn-item input[type=checkbox]{flex-shrink:0;accent-color:rgba(255,150,150,0.9);margin-right:2px;}
-  .hnn-dismiss-btn{flex-shrink:0;background:rgba(255,255,255,0.05);border:0.5px solid rgba(255,255,255,0.12);border-radius:8px;color:rgba(185,205,245,0.65);font-size:10px;padding:4px 8px;cursor:pointer;font-family:inherit;}
-  .hnn-dismiss-btn:hover{background:rgba(255,255,255,0.09);color:rgba(220,230,255,0.9);}
-  .hnn-dismiss-btn:disabled{opacity:.4;cursor:default;}
-  #hnn-toolbar{display:flex;align-items:center;gap:10px;padding:8px 18px;border-bottom:0.5px solid rgba(255,255,255,0.07);flex-shrink:0;}
-  #hnn-group-list{overflow-y:auto;flex-shrink:0;border-bottom:0.5px solid rgba(255,255,255,0.07);}
-  .hnn-group-item{display:flex;align-items:center;gap:10px;padding:7px 18px;cursor:pointer;transition:background .12s;}
-  .hnn-group-item:hover{background:rgba(255,255,255,0.03);}
-  .hnn-group-name{font-size:12px;color:rgba(220,230,255,0.9);font-weight:600;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-  .hnn-group-stats{display:flex;gap:10px;flex-shrink:0;font-size:10.5px;color:rgba(155,178,228,0.55);}
-  .hnn-group-susp{color:rgba(255,150,150,0.9);font-weight:700;}
-  .hnn-group-clean-btn{flex-shrink:0;background:rgba(120,160,255,0.12);border:0.5px solid rgba(140,180,255,0.26);border-radius:8px;color:#a8c4ff;font-size:10px;padding:4px 8px;cursor:pointer;font-family:inherit;}
-  .hnn-group-clean-btn:hover{background:rgba(120,160,255,0.22);}
   #hnn-wl-sec{flex-shrink:0;padding:0 18px 12px;}
   #hnn-wl-list{display:block;}
   .hnn-wl-sublbl{font-size:10px;color:rgba(155,178,228,0.4);margin:6px 0 4px;}
@@ -1149,12 +1144,6 @@
   .hnn-wl-name:hover{color:#fff;text-decoration:underline;text-underline-offset:2px;}
   .hnn-wl-rm{background:none;border:none;color:rgba(255,150,150,0.7);font-size:13px;cursor:pointer;padding:0 4px;line-height:1;font-family:inherit;}
   .hnn-wl-rm:hover{color:rgba(255,180,180,0.95);}
-  #hnn-select-all-row{display:flex;align-items:center;gap:6px;font-size:11.5px;color:rgba(185,205,245,0.75);cursor:pointer;white-space:nowrap;}
-  #hnn-count{flex:1;font-size:11px;color:rgba(155,178,228,0.45);}
-  #hnn-apply-btn{background:rgba(255,150,150,0.14);border:1px solid rgba(255,150,150,0.28);border-radius:10px;color:#ffb8b8;font-size:11.5px;padding:6px 14px;cursor:pointer;font-family:inherit;white-space:nowrap;font-weight:600;}
-  #hnn-apply-btn:hover{background:rgba(255,150,150,0.22);}
-  #hnn-apply-btn:active{opacity:.7;}
-  #hnn-apply-btn:disabled{opacity:.35;cursor:default;}
   #hnn-dup-sec{flex-shrink:0;padding:10px 18px 12px;border-bottom:0.5px solid rgba(255,255,255,0.07);}
   #hnn-dup-list{max-height:160px;overflow-y:auto;margin-top:6px;}
   /* 이름 라벨+칩을 한 줄(flex-wrap)로 압축 — 127개 그룹이 전부 2줄씩 차지하던 걸 줄임(2026-08-11).
@@ -1166,27 +1155,37 @@
   .hnn-dup-person{font-size:11px;color:rgba(170,195,255,0.85);background:rgba(120,160,255,0.10);border:0.5px solid rgba(140,180,255,0.24);border-radius:8px;padding:2px 7px;cursor:pointer;}
   .hnn-dup-person:hover{background:rgba(120,160,255,0.20);color:#fff;}
   #hnn-dup-empty{font-size:11px;color:rgba(155,178,228,0.4);padding:4px 0;}
-  #dq-junk-sec{display:flex;flex-direction:column;min-height:0;flex:1;}
-  #dq-junk-hd{display:flex;align-items:center;gap:10px;padding:8px 18px;flex-shrink:0;}
-  #dq-junk-back{background:none;border:none;color:rgba(180,195,230,0.7);font-size:11.5px;cursor:pointer;padding:0;font-family:inherit;}
-  #dq-junk-back:hover{color:rgba(220,230,255,0.9);}
-  #dq-junk-title{font-size:12.5px;font-weight:600;color:rgba(220,230,255,0.9);}
-  #dq-junk-status{font-size:11.5px;color:rgba(155,178,228,0.7);padding:0 18px 8px;min-height:14px;flex-shrink:0;}
-  #dq-junk-toolbar{display:flex;align-items:center;gap:10px;padding:8px 18px;border-bottom:0.5px solid rgba(255,255,255,0.07);flex-shrink:0;}
-  #dq-junk-flag-btn{border-radius:10px;font-size:11px;padding:5px 10px;cursor:pointer;font-family:inherit;white-space:nowrap;border:1px solid rgba(255,160,80,0.28);background:rgba(255,160,80,0.10);color:rgba(255,190,120,0.9);}
-  #dq-junk-delete-btn{border-radius:10px;font-size:11px;padding:5px 10px;cursor:pointer;font-family:inherit;white-space:nowrap;border:1px solid rgba(220,90,90,0.28);background:rgba(220,90,90,0.10);color:rgba(240,150,150,0.9);}
-  #dq-junk-flag-btn:disabled,#dq-junk-delete-btn:disabled{opacity:.4;cursor:default;}
-  #dq-junk-list{overflow-y:auto;padding:8px 0;flex:1;min-height:0;}
-  .dq-junk-item{display:flex;align-items:center;gap:10px;padding:6px 18px;}
-  .dq-junk-thumb{width:64px;height:36px;object-fit:cover;border-radius:6px;flex-shrink:0;background:rgba(255,255,255,0.05);}
-  .dq-junk-ttl{font-size:11.5px;color:rgba(210,222,248,0.85);line-height:1.35;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;}
-  #dq-cross-sec{display:flex;flex-direction:column;min-height:0;flex-shrink:0;max-height:40%;border-top:0.5px solid rgba(255,255,255,0.07);margin-top:6px;}
-  #dq-cross-hd{font-size:11.5px;font-weight:600;color:rgba(220,230,255,0.85);padding:8px 18px 2px;flex-shrink:0;}
-  #dq-cross-status{font-size:11px;color:rgba(155,178,228,0.7);padding:0 18px 6px;min-height:14px;flex-shrink:0;}
-  #dq-cross-toolbar{display:flex;align-items:center;gap:10px;padding:6px 18px;border-bottom:0.5px solid rgba(255,255,255,0.07);flex-shrink:0;}
-  #dq-cross-remove-btn{border-radius:10px;font-size:11px;padding:5px 10px;cursor:pointer;font-family:inherit;white-space:nowrap;border:1px solid rgba(120,170,255,0.28);background:rgba(120,170,255,0.10);color:rgba(160,195,255,0.9);}
-  #dq-cross-remove-btn:disabled{opacity:.4;cursor:default;}
-  #dq-cross-list{overflow-y:auto;padding:8px 0;flex:1;min-height:0;}
+  /* 그룹 우선순위(어드민 전용, 유저 비노출) — 검수 센터(#hnn-overlay)와 같은 팝업 톤 재사용 */
+  #gp-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.52);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:81;display:none;align-items:center;justify-content:center;}
+  #gp-overlay.open{display:flex;}
+  #gp-panel{width:min(460px,calc(100vw - 24px));max-height:86vh;display:flex;flex-direction:column;background:rgba(12,16,32,0.98);backdrop-filter:blur(40px);-webkit-backdrop-filter:blur(40px);border-radius:20px;box-shadow:0 20px 64px rgba(0,0,0,0.78);border:0.5px solid rgba(255,255,255,0.10);overflow:hidden;}
+  #gp-hd{display:flex;align-items:center;gap:10px;padding:14px 16px;flex-shrink:0;border-bottom:0.5px solid rgba(255,255,255,0.07);}
+  #gp-hd-title{font-size:13px;font-weight:700;color:rgba(220,230,255,0.9);letter-spacing:-.01em;flex:1;}
+  #gp-close{background:none;border:none;color:rgba(180,195,230,0.5);font-size:18px;cursor:pointer;padding:0;line-height:1;flex-shrink:0;}
+  #gp-close:hover{color:rgba(220,230,255,0.85);}
+  #gp-search-wrap{padding:10px 16px 0;flex-shrink:0;}
+  #gp-search{width:100%;background:rgba(255,255,255,0.06);border:0.5px solid rgba(255,255,255,0.12);border-radius:8px;padding:7px 10px;font-size:12px;color:#c0d6f0;font-family:inherit;outline:none;box-sizing:border-box;}
+  #gp-search::placeholder{color:rgba(155,178,228,0.35);}
+  #gp-search:focus{border-color:rgba(155,178,228,0.4);}
+  #gp-tabs{display:flex;gap:2px;background:rgba(255,255,255,0.06);border-radius:10px;padding:2px;margin:10px 16px 0;flex-shrink:0;}
+  .gp-tab{flex:1;background:none;border:none;border-radius:8px;padding:5px 4px;font-size:11.5px;font-family:inherit;cursor:pointer;color:rgba(155,178,228,0.55);transition:background .15s,color .15s;white-space:nowrap;}
+  .gp-tab.active{background:rgba(255,255,255,0.12);color:rgba(220,230,255,0.95);font-weight:600;}
+  #gp-count{font-size:10.5px;color:rgba(155,178,228,0.4);padding:8px 16px 0;flex-shrink:0;}
+  #gp-list{flex:1;min-height:0;overflow-y:auto;padding:6px 10px 12px;}
+  .gp-item{display:flex;align-items:center;gap:8px;padding:6px 6px;border-top:0.5px solid rgba(255,255,255,0.05);}
+  .gp-item:first-child{border-top:none;}
+  .gp-info{flex:1;min-width:0;}
+  .gp-name{font-size:12px;color:rgba(215,225,250,0.9);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .gp-sub{font-size:10.5px;color:rgba(155,178,228,0.45);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .gp-level-sel{display:flex;gap:3px;flex-shrink:0;}
+  .gp-lvl-btn{background:rgba(255,255,255,0.05);border:0.5px solid rgba(255,255,255,0.10);border-radius:6px;padding:4px 8px;font-size:10.5px;font-weight:700;color:rgba(155,178,228,0.5);cursor:pointer;font-family:inherit;transition:background .15s,color .15s;}
+  .gp-lvl-btn:hover{background:rgba(255,255,255,0.10);}
+  .gp-lvl-btn.gp-lvl-clear{font-weight:400;padding:4px 6px;}
+  .gp-lvl-btn[data-lvl="A"].active{background:rgba(255,120,120,0.22);border-color:rgba(255,120,120,0.4);color:#ffb3b3;}
+  .gp-lvl-btn[data-lvl="B"].active{background:rgba(255,190,140,0.22);border-color:rgba(255,190,140,0.4);color:#ffd8ab;}
+  .gp-lvl-btn[data-lvl="C"].active{background:rgba(155,178,228,0.22);border-color:rgba(155,178,228,0.4);color:#c0d6f0;}
+  .gp-lvl-btn[data-lvl=""].active{background:rgba(255,255,255,0.14);border-color:rgba(255,255,255,0.24);color:rgba(220,230,255,0.85);}
+  #gp-empty{font-size:12px;color:rgba(155,178,228,0.4);text-align:center;padding:40px 0;}
   /* z-index:50 — #yt-lightbox(67)보다 반드시 낮아야 함: 이 목록 안에서 영상을 탭하면 라이트박스가
      이 오버레이 위로 열려야 하는데(#feed-list-overlay는 admin 목록들과 달리 라이트박스를 직접 여는
      용도), 다른 관리자 목록 오버레이(81~82)와 같은 값을 쓰면 라이트박스가 뒤로 숨는 사고가 남 */
@@ -1233,8 +1232,9 @@
      사용자 요청)를 위해 2열로 통일하고, 제목도 카드처럼 다시 보이게 함(원래 여기서만 숨겨져 있었음). */
   #feed-list-grid.gc-ch-grid{grid-template-columns:repeat(2,1fr);gap:4px;align-items:start;}
   #feed-list-grid .gc-ch-item{border-radius:4px;}
-  .ec-item{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:7px 16px;transition:background .12s;}
+  .ec-item{display:flex;align-items:center;gap:8px;padding:7px 16px;transition:background .12s;}
   .ec-item:hover{background:rgba(255,255,255,0.04);}
+  .ec-info{flex:1;min-width:0;overflow:hidden;}
   .ec-name{font-size:12px;color:rgba(210,225,255,0.85);}
   .ec-handle{font-size:10.5px;color:rgba(155,178,228,0.5);}
   .ec-link{flex-shrink:0;font-size:11px;color:rgba(170,210,255,0.75);text-decoration:none;padding:3px 9px;border-radius:12px;border:0.5px solid rgba(170,210,255,0.25);background:rgba(170,210,255,0.06);}
@@ -1306,7 +1306,9 @@
   .gc-ch-skeleton-thumb{width:100%;aspect-ratio:16/9;background:linear-gradient(90deg,rgba(255,255,255,0.04) 25%,rgba(255,255,255,0.09) 50%,rgba(255,255,255,0.04) 75%);background-size:200% 100%;animation:gc-shimmer 1.4s ease infinite;}
   .gc-ch-skeleton-title{height:9px;margin:7px 8px 4px;border-radius:4px;background:linear-gradient(90deg,rgba(255,255,255,0.04) 25%,rgba(255,255,255,0.09) 50%,rgba(255,255,255,0.04) 75%);background-size:200% 100%;animation:gc-shimmer 1.4s ease infinite;}
   .gc-ch-skeleton-title.short{width:55%;margin-bottom:8px;}
-  .gc-ch-err{font-size:11.5px;color:rgba(228,155,155,0.65);text-align:center;padding:6px 0;}
+  .gc-ch-err{grid-column:1/-1;font-size:11.5px;color:rgba(228,155,155,0.65);text-align:center;padding:6px 0;}
+  .gc-ch-err-retry{display:block;margin:8px auto 0;background:rgba(155,178,228,0.14);border:0.5px solid rgba(155,178,228,0.3);border-radius:7px;padding:6px 16px;font-size:11.5px;color:#c0d6f0;cursor:pointer;font-family:inherit;transition:background .15s;}
+  .gc-ch-err-retry:hover{background:rgba(155,178,228,0.24);}
   .sp-yt-key{width:100%;background:rgba(255,255,255,0.06);border:0.5px solid rgba(255,255,255,0.12);border-radius:7px;padding:6px 9px;font-size:11px;color:#c0d6f0;font-family:inherit;outline:none;box-sizing:border-box;margin-top:5px;}
   .sp-yt-key::placeholder{color:rgba(155,178,228,0.35);}
   .sp-yt-key:focus{border-color:rgba(155,178,228,0.4);}
@@ -2034,8 +2036,8 @@
     #feed-body{padding-bottom:20px;}
   }
   body.feed-open #mob-top-bar{display:none!important;}
-  #feed-hd{display:flex;align-items:center;justify-content:space-between;padding:calc(env(safe-area-inset-top,0px) + 16px) 20px 14px;background:rgba(8,11,24,0.97);border-bottom:0.5px solid rgba(255,255,255,0.08);flex-shrink:0;}
-  #feed-hd-title{font-size:15px;font-weight:700;color:rgba(210,225,255,0.9);letter-spacing:.02em;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
+  #feed-hd{display:flex;align-items:center;justify-content:flex-end;padding:calc(env(safe-area-inset-top,0px) + 16px) 20px 14px;background:rgba(8,11,24,0.97);border-bottom:0.5px solid rgba(255,255,255,0.08);flex-shrink:0;}
+  #feed-peek-handle{display:none;}
   #feed-close{background:none;border:none;width:28px;height:28px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;color:rgba(148,168,218,0.55);position:relative;overflow:hidden;transition:color .13s,transform .2s ease-out;flex-shrink:0;}
   #feed-close:active{color:rgba(200,218,255,0.85);transform:scale(0.86);transition:transform .07s;}
   #feed-body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;background:rgba(8,11,24,0.78);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);padding-bottom:calc(env(safe-area-inset-bottom,0px) + 80px);}
@@ -2111,4 +2113,6 @@
       box-shadow:0 -8px 32px rgba(0,0,0,0.35);
     }
     #feed-overlay.peek #feed-hd{cursor:pointer;}
+    /* 반쯤 열린 상태를 "당겨 올릴 수 있는 시트"로 명확히 보여주는 드래그 핸들(#mob-sheet-handle과 동일 패턴) */
+    #feed-overlay.peek #feed-peek-handle{display:block;width:36px;height:4px;background:rgba(255,255,255,0.18);border-radius:2px;margin:10px auto 0;}
   }
