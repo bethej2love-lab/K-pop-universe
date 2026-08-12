@@ -432,7 +432,13 @@
 <button id="tt-collapse" aria-label="멤버 카드 접기">›</button>
 <div id="yt-lightbox">
   <div id="yt-lb-wrap">
-    <button id="yt-lb-close" aria-label="동영상 닫기">✕</button>
+    <button id="yt-lb-close" aria-label="동영상 닫기"><svg id="yt-lb-close-chevron" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg><span id="yt-lb-close-x">✕</span></button>
+    <div class="lb-menu-wrap">
+      <button id="yt-lb-menu-btn" aria-label="더보기">⋮</button>
+      <div id="yt-lb-menu-panel">
+        <button id="yt-lb-conn-btn" style="display:none">연결 보기 <span>›</span></button>
+      </div>
+    </div>
     <div id="yt-lb-main">
     <div id="yt-lb-video-box">
       <iframe id="yt-lb-iframe" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>
@@ -477,7 +483,6 @@
     <div id="yt-lb-member-info">
       <div id="yt-lb-anchor-chip"></div>
       <div id="yt-lb-with-chips"></div>
-      <button id="yt-lb-conn-btn" style="display:none">연결 보기 <span>›</span></button>
     </div>
     </div>
     <div id="yt-lb-uplist">
@@ -2672,6 +2677,7 @@ function openLightbox(url,shorts,playlist,idx,ctx,isAdvance,forceBrowseMode){
   _lbPlaylist=playlist||null;
   _lbIdx=(idx!=null)?idx:-1;
   _lbCtx=(ctx!=null)?ctx:_lbCtx;
+  document.querySelector('.lb-menu-wrap')?.classList.remove('open'); // 이전 영상에서 열어뒀던 더보기 메뉴는 다음 영상으로 안 넘어가게
   const lb=document.getElementById('yt-lightbox');
   const iframe=document.getElementById('yt-lb-iframe');
   const forcePortrait=!shorts&&_lbPortraitVids.has(vid); // 이전에 세로로 저장된 영상
@@ -3126,6 +3132,7 @@ function closeLightbox(){
   lb.classList.remove('open');
   document.getElementById('yt-lb-iframe').src='';
   document.getElementById('lb-emoji-picker-wrap').classList.remove('open');
+  document.querySelector('.lb-menu-wrap')?.classList.remove('open');
   document.getElementById('lb-react-extended').classList.remove('open');
   document.getElementById('lb-react-more').textContent='+';
   _reactExpandedLevel=0;
@@ -3260,6 +3267,14 @@ document.getElementById('yt-lightbox').addEventListener('click',e=>{e.stopPropag
   },{passive:true});
 }
 document.getElementById('yt-lb-close').addEventListener('click',e=>{e.stopPropagation();closeLightbox();});
+document.getElementById('yt-lb-menu-btn')?.addEventListener('click',e=>{
+  e.stopPropagation();
+  document.querySelector('.lb-menu-wrap')?.classList.toggle('open');
+});
+document.addEventListener('click',e=>{
+  const wrap=document.querySelector('.lb-menu-wrap');
+  if(wrap&&!wrap.contains(e.target))wrap.classList.remove('open');
+});
 document.getElementById('yt-lb-prev').addEventListener('click',e=>{e.stopPropagation();_lbGo(-1);});
 document.getElementById('yt-lb-next').addEventListener('click',e=>{e.stopPropagation();_lbGo(1);});
 document.getElementById('yt-lb-uplist-prev').addEventListener('click',e=>{e.stopPropagation();_lbGo(-1);});
