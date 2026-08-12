@@ -383,11 +383,11 @@
       <input type="text" id="gp-search" placeholder="그룹명 검색…" autocomplete="off" spellcheck="false">
     </div>
     <div id="gp-tabs">
-      <button class="gp-tab active" data-lvl="all">전체</button>
-      <button class="gp-tab" data-lvl="A">A</button>
-      <button class="gp-tab" data-lvl="B">B</button>
-      <button class="gp-tab" data-lvl="C">C</button>
-      <button class="gp-tab" data-lvl="none">미지정</button>
+      <button class="gp-tab active" data-lvl="all">전체<span class="gp-tab-cnt"></span></button>
+      <button class="gp-tab" data-lvl="A">A<span class="gp-tab-cnt"></span></button>
+      <button class="gp-tab" data-lvl="B">B<span class="gp-tab-cnt"></span></button>
+      <button class="gp-tab" data-lvl="C">C<span class="gp-tab-cnt"></span></button>
+      <button class="gp-tab" data-lvl="none">미지정<span class="gp-tab-cnt"></span></button>
     </div>
     <div id="gp-count"></div>
     <div id="gp-list"></div>
@@ -445,6 +445,7 @@
       <div id="yt-lb-speed-zone" aria-hidden="true"></div>
       <div id="yt-lb-speed-badge">2×</div>
       <div id="yt-lb-tap-cap" aria-hidden="true"></div>
+      <div id="yt-lb-drag-cap" aria-hidden="true"></div>
     </div>
     <div id="yt-lb-info">
       <div id="yt-lb-title-text"></div>
@@ -3161,7 +3162,8 @@ document.getElementById('yt-lightbox').addEventListener('click',e=>{e.stopPropag
 {
   const _lbEl=document.getElementById('yt-lightbox');
   const _lbWrap=document.getElementById('yt-lb-wrap');
-  let _lbTY=0,_lbTX=0,_lbDragging=false,_lbAxis=null,_lbTStart=0,_lbPullMode=false;
+  const _lbUplist=document.getElementById('yt-lb-uplist');
+  let _lbTY=0,_lbTX=0,_lbDragging=false,_lbAxis=null,_lbTStart=0,_lbPullMode=false,_lbScrollEl=_lbWrap;
   function _lbSlideIn(fromDir){
     // fromDir=1: 아래서 위로 진입(위로 스와이프→다음 영상)
     // fromDir=-1: 위에서 아래로 진입(아래로 스와이프→이전 영상)
@@ -3180,6 +3182,7 @@ document.getElementById('yt-lightbox').addEventListener('click',e=>{e.stopPropag
     if(e.touches.length!==1)return;
     _lbTX=e.touches[0].clientX;_lbTY=e.touches[0].clientY;
     _lbDragging=true;_lbAxis=null;_lbTStart=e.timeStamp;_lbPullMode=false;
+    _lbScrollEl=e.target.closest('#yt-lb-uplist')?_lbUplist:_lbWrap;
     _lbWrap.style.transition='none';
   },{passive:true});
   _lbEl.addEventListener('touchmove',e=>{
@@ -3204,7 +3207,7 @@ document.getElementById('yt-lightbox').addEventListener('click',e=>{e.stopPropag
       // 이미지뷰어 방식) — 그 외엔 preventDefault 없이 평소처럼 네이티브 스크롤 그대로 둔다
       // (2026-08-11, 사용자 요청 — 예전엔 이 리스너가 세션모드 구분 없이 항상 스와이프-넘기기로만
       // 동작해서 브라우즈 모드에서 목록을 스크롤하려는 손짓까지 다음 영상 넘기기로 오작동했었음).
-      if(_lbWrap.scrollTop<=0&&dy>0){
+      if(_lbScrollEl.scrollTop<=0&&dy>0){
         if(e.cancelable)e.preventDefault();
         _lbPullMode=true;
         const eff=Math.pow(dy,0.85);
@@ -3264,6 +3267,50 @@ document.getElementById('yt-lightbox').addEventListener('click',e=>{e.stopPropag
       _lbWrap.style.transform='';_lbWrap.style.opacity='';
     }
   },{passive:true});
+  // 모바일 브라우즈: iframe이 터치를 흡수하므로 영상 상단 드래그 캡으로 아래 스와이프 → 닫기
+  {
+    const _dcEl=document.getElementById('yt-lb-drag-cap');
+    let _dcY=0,_dcT=0,_dcActive=false;
+    _dcEl.addEventListener('touchstart',e=>{
+      if(e.touches.length!==1||_lbSessionMode!=='browse')return;
+      _dcY=e.touches[0].clientY;_dcT=e.timeStamp;_dcActive=true;
+      _lbWrap.style.transition='none';
+      e.stopPropagation();
+    },{passive:true});
+    _dcEl.addEventListener('touchmove',e=>{
+      if(!_dcActive||e.touches.length!==1)return;
+      e.stopPropagation();
+      const dy=e.touches[0].clientY-_dcY;
+      if(dy>0){
+        if(e.cancelable)e.preventDefault();
+        _lbWrap.style.transform=`translateY(${Math.pow(dy,0.85)}px)`;
+        _lbWrap.style.opacity=`${Math.max(0.4,1-Math.pow(dy,0.85)/380)}`;
+      }
+    },{passive:false});
+    const _dcCancel=()=>{
+      if(!_dcActive)return;_dcActive=false;
+      _lbWrap.style.transition='transform .32s cubic-bezier(0.22,1,0.36,1),opacity .25s ease';
+      _lbWrap.style.transform='';_lbWrap.style.opacity='';
+      setTimeout(()=>{_lbWrap.style.transition='';},340);
+    };
+    _dcEl.addEventListener('touchend',e=>{
+      if(!_dcActive)return;_dcActive=false;
+      e.stopPropagation();
+      const dy=e.changedTouches[0].clientY-_dcY;
+      const vel=Math.abs(dy)/Math.max(1,e.timeStamp-_dcT);
+      _lbWrap.style.transition='';
+      if(dy>0&&(dy>80||vel>0.5)){
+        _lbWrap.style.transition='transform .22s cubic-bezier(0.4,0,1,1),opacity .2s ease';
+        _lbWrap.style.transform='translateY(100vh)';_lbWrap.style.opacity='0';
+        setTimeout(()=>{closeLightbox();_lbWrap.style.transition='';_lbWrap.style.transform='';_lbWrap.style.opacity='';},220);
+      }else{
+        _lbWrap.style.transition='transform .32s cubic-bezier(0.22,1,0.36,1),opacity .25s ease';
+        _lbWrap.style.transform='';_lbWrap.style.opacity='';
+        setTimeout(()=>{_lbWrap.style.transition='';},340);
+      }
+    },{passive:true});
+    _dcEl.addEventListener('touchcancel',_dcCancel,{passive:true});
+  }
 }
 document.getElementById('yt-lb-close').addEventListener('click',e=>{e.stopPropagation();closeLightbox();});
 document.getElementById('yt-lb-menu-btn')?.addEventListener('click',e=>{
@@ -3976,6 +4023,27 @@ function _freezeSheetBottomBeforeOverwrite(type){
   const el=document.getElementById(type);
   if(!mobSheetEl.classList.contains('bs-open')||el.parentElement!==mobSheetInner)return;
   const clone=el.cloneNode(true);
+  // ID 제거 전에 핵심 layout 요소들의 display/flex 속성을 inline으로 고정.
+  // cloneNode 후 ID를 제거하면 #tt-pic-info-row{display:flex} 같은 ID 기반 CSS가
+  // 모두 무효화되어 flex가 block으로 무너지고 아이콘·텍스트가 세로로 흩어지는 문제가 있었음.
+  ['tt-pic-info-row','tt-info-side','tt-name-row','tg-row',
+   'gc-inner','gc-header','gc-header-text','gc-name-row','gc-en-row','gc-grid']
+  .forEach(id=>{
+    const live=document.getElementById(id);
+    const c=clone.querySelector(`[id="${id}"]`);
+    if(!live||!c)return;
+    const cs=getComputedStyle(live);
+    c.style.display=cs.display;
+    c.style.flexDirection=cs.flexDirection;
+    c.style.alignItems=cs.alignItems;
+    c.style.justifyContent=cs.justifyContent;
+    c.style.flex=cs.flex;
+    c.style.minWidth=cs.minWidth;
+    c.style.gap=cs.gap;
+    c.style.padding=cs.padding;
+    c.style.overflow=cs.overflow;
+    c.style.overflowX=cs.overflowX;
+  });
   clone.removeAttribute('id');
   clone.querySelectorAll('[id]').forEach(d=>d.removeAttribute('id'));
   mobSheetInner.replaceChild(clone,el);
@@ -6445,12 +6513,12 @@ function _applyTagFocus(){
 }
 
 function _hideMyPageSections(){
-  ['my-page-header','my-page-bias','fav-section','scrap-section','anniv-section','concert-section'].forEach(id=>{
+  ['my-page-header','my-page-bias','pp-activity-stats','fav-section','collection-section','scrap-section','anniv-section','concert-section'].forEach(id=>{
     const el=document.getElementById(id);if(el)el.style.display='none';
   });
 }
 function _showMyPageSections(){
-  ['my-page-header','my-page-bias','fav-section','scrap-section','anniv-section','concert-section'].forEach(id=>{
+  ['my-page-header','my-page-bias','pp-activity-stats','fav-section','collection-section','scrap-section','anniv-section','concert-section'].forEach(id=>{
     const el=document.getElementById(id);if(el)el.style.display='';
   });
 }
@@ -6756,6 +6824,7 @@ document.getElementById('idx-search-inp').addEventListener('click',e=>e.stopProp
 const mobFilterSheetEl=document.getElementById('mob-filter-sheet');
 const mobFilterSheetInner=document.getElementById('mob-filter-sheet-inner');
 function openMobFilterSheet(){
+  document.getElementById('journal-sidebar').classList.remove('open');
   const fp=document.getElementById('filter-panel');
   fp.style.display='block';
   if(fp.parentElement!==mobFilterSheetInner)mobFilterSheetInner.appendChild(fp);
@@ -6879,7 +6948,7 @@ function _wireSheetTabbarHide(scrollEl){
 }
 [mobSheetInner,mobCardStackInner,connSheetInner].forEach(_wireSheetTabbarHide);
 function closePanels(){
-  document.getElementById('search-wrap').classList.remove('open');
+  if(myProfile?.nickname||!isMob())document.getElementById('search-wrap').classList.remove('open');
   document.getElementById('settings-panel').classList.remove('open');
   document.getElementById('journal-sidebar').classList.remove('open');
   _closeFeedOverlay();
@@ -7212,7 +7281,7 @@ document.getElementById('dh-search-btn').addEventListener('click',e=>{
   ['tab-settings','dh-settings-btn'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.remove('active');});
   sw.classList.toggle('open',!open);
   ['tab-search','dh-search-btn'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.toggle('active',!open);});
-  if(!open)setTimeout(()=>document.getElementById('search-input').focus(),50);
+  if(!open){_sizeSearchWrap();setTimeout(()=>document.getElementById('search-input').focus(),50);}
   _updateFavHintCallout();
 });
 document.getElementById('dh-settings-btn').addEventListener('click',e=>{
@@ -8049,22 +8118,32 @@ function _syncFavBtn(type,data){
   _updateFavHintCallout();
 }
 // 데스크톱 헤더의 "Who's Your Bias?" 말풍선 — 즐겨찾기가 하나도 없을 때만,
-// 탐색(✦) 버튼을 화살표로 가리키도록 위치를 매번 실측해서 맞춘다(언어 토글로 버튼 폭이 바뀌어도 안전)
+function _sizeSearchWrap(){
+  if(isMob())return;
+  const pill=document.getElementById('dh-right');
+  const sw=document.getElementById('search-wrap');
+  if(!pill||!sw)return;
+  const r=pill.getBoundingClientRect();
+  sw.style.width=Math.round(r.width)+'px';
+  sw.style.right=Math.round(window.innerWidth-r.right)+'px';
+}
+{let _swResizeT;window.addEventListener('resize',()=>{clearTimeout(_swResizeT);_swResizeT=setTimeout(()=>{if(document.getElementById('search-wrap').classList.contains('open'))_sizeSearchWrap();},120);});}
+// 검색(🔍) 버튼을 화살표로 가리키도록 위치를 매번 실측해서 맞춘다(언어 토글로 버튼 폭이 바뀌어도 안전)
 function _updateFavHintCallout(){
   const el=document.getElementById('fav-hint-callout');
   if(!el)return;
   const _panelsOpen=document.getElementById('search-wrap').classList.contains('open')||document.getElementById('settings-panel').classList.contains('open');
   const show=!isMob()&&!_panelsOpen&&favGroups.size===0&&favMembers.size===0&&!localStorage.getItem(FAV_HINT_DISMISSED_KEY);
   if(!show){el.classList.remove('show');return;}
-  const pill=document.getElementById('dh-right'),exploreBtn=document.getElementById('dh-explore-btn');
-  if(!pill||!exploreBtn)return;
-  const pillRect=pill.getBoundingClientRect(),exploreRect=exploreBtn.getBoundingClientRect();
+  const pill=document.getElementById('dh-right'),searchBtn=document.getElementById('dh-search-btn');
+  if(!pill||!searchBtn)return;
+  const pillRect=pill.getBoundingClientRect(),searchRect=searchBtn.getBoundingClientRect();
   // 화살표는 박스 안에서 항상 고정 오프셋(ARROW_OFFSET, CSS #fhc-arrow left와 일치)에 있으므로,
-  // 박스 오른쪽 기준이 아니라 "화살표가 탐색 버튼 중앙에 오도록" 박스의 left를 역산한다
+  // 박스 오른쪽 기준이 아니라 "화살표가 검색 버튼 중앙에 오도록" 박스의 left를 역산한다
   const ARROW_OFFSET=22+4.5; // #fhc-arrow의 left(22px) + 화살표 자체 폭의 절반
-  const exploreCenterX=(exploreRect.left+exploreRect.right)/2;
+  const searchCenterX=(searchRect.left+searchRect.right)/2;
   el.style.right='auto';
-  el.style.left=Math.round(exploreCenterX-ARROW_OFFSET)+'px';
+  el.style.left=Math.round(searchCenterX-ARROW_OFFSET)+'px';
   el.style.top=Math.round(pillRect.bottom+10)+'px';
   el.classList.add('show');
 }
@@ -9057,6 +9136,9 @@ document.getElementById('dh-profile-btn').addEventListener('click',e=>{
 });
 document.getElementById('my-page-edit').addEventListener('click',e=>{e.stopPropagation();openProfilePanel();});
 _updateProfileBtns();
+if(!myProfile?.nickname&&isMob()){
+  document.getElementById('search-wrap').classList.add('open');
+}
 updateMyPage();
 
 // ── Journal sidebar ───────────────────────────────
@@ -10643,7 +10725,14 @@ const _PROJECT_UNITS={
   // 비범·유권·피오 유닛, 2015.04.14 데뷔) — 둘 다 한때 별도 groups.json 행성으로 잘못 추가했다가
   // "행성 승격 안 함" 원칙(V8 결정 때 확정, 위 주석 참고)에 맞게 유닛 표기로 되돌림(2026-08-10, 사용자 정정).
   '더블에스301':{names:['더블에스301','Double S 301','SS301'],members:[{mko:'허영생',gko:'SS501'},{mko:'김규종',gko:'SS501'},{mko:'김형준',gko:'SS501'}]},
-  '바스타즈':{names:['바스타즈','Bastarz'],members:[{mko:'비범',gko:'블락비'},{mko:'유권',gko:'블락비'},{mko:'피오',gko:'블락비'}]}
+  '바스타즈':{names:['바스타즈','Bastarz'],members:[{mko:'비범',gko:'블락비'},{mko:'유권',gko:'블락비'},{mko:'피오',gko:'블락비'}]},
+  // 세븐틴 소유닛 — 부석순은 한때 groups.json 행성으로 등록됐다가 유닛 표기로 전환(2026-08-12, 사용자 요청).
+  // 부석순 이름 유래: 부승관(Seungkwan)·이석민(DK)·권순영(Hoshi) 성명에서 각 한 글자씩.
+  '부석순':{names:['부석순','BSS'],members:[{mko:'호시',gko:'세븐틴'},{mko:'도겸',gko:'세븐틴'},{mko:'승관',gko:'세븐틴'}]},
+  '정한X원우':{names:['정한X원우','JeongWon'],members:[{mko:'정한',gko:'세븐틴'},{mko:'원우',gko:'세븐틴'}]},
+  '호시X우지':{names:['호시X우지'],members:[{mko:'호시',gko:'세븐틴'},{mko:'우지',gko:'세븐틴'}]},
+  '에스쿱스X민규':{names:['에스쿱스X민규'],members:[{mko:'에스쿱스',gko:'세븐틴'},{mko:'민규',gko:'세븐틴'}]},
+  '도겸X승관':{names:['도겸X승관'],members:[{mko:'도겸',gko:'세븐틴'},{mko:'승관',gko:'세븐틴'}]}
 };
 function _onUnitTagClick(usp,unitName){
   return e=>{

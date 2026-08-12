@@ -1575,6 +1575,15 @@ async function _loadGroupPriority(){
 }
 _loadGroupPriority();
 const _GP_LEVEL_ORDER={A:0,B:1,C:2};
+// 그룹 전체 멤버가 active===false면 해체로 판단 (artists.json 기준, lazy cache)
+const _disbandedCache=new Map();
+function _isGroupDisbanded(ko){
+  if(_disbandedCache.has(ko))return _disbandedCache.get(ko);
+  const members=ARTISTS.filter(a=>a.group.ko===ko);
+  const result=members.length>0&&members.every(a=>a.active===false);
+  _disbandedCache.set(ko,result);
+  return result;
+}
 function _gpRenderList(term){
   const listEl=document.getElementById('gp-list');
   if(!listEl)return;
@@ -1589,7 +1598,16 @@ function _gpRenderList(term){
     }
     return a.ko.localeCompare(b.ko,'ko');
   });
-  document.getElementById('gp-count').textContent=`총 ${Object.keys(GROUPS).length}개 중 ${rows.length}개 표시`;
+  // 레벨별 카운트 → 탭 표기 갱신
+  const allKeys=Object.keys(GROUPS);
+  const lvlCnt={A:0,B:0,C:0,none:0};
+  allKeys.forEach(ko=>{const l=_groupPriority.get(ko)||'';if(l==='A')lvlCnt.A++;else if(l==='B')lvlCnt.B++;else if(l==='C')lvlCnt.C++;else lvlCnt.none++;});
+  document.querySelectorAll('.gp-tab').forEach(t=>{
+    const cnt=t.querySelector('.gp-tab-cnt');if(!cnt)return;
+    const l=t.dataset.lvl;
+    cnt.textContent=`(${l==='all'?allKeys.length:l==='none'?lvlCnt.none:lvlCnt[l]||0})`;
+  });
+  document.getElementById('gp-count').textContent=`총 ${allKeys.length}개 중 ${rows.length}개 표시`;
   if(!rows.length){
     listEl.innerHTML=`<div id="gp-empty">${q?'검색 결과가 없어요':'해당 레벨의 그룹이 없어요'}</div>`;
     return;
@@ -1598,7 +1616,10 @@ function _gpRenderList(term){
   rows.forEach(r=>{
     const item=document.createElement('div');item.className='gp-item';
     const info=document.createElement('div');info.className='gp-info';
-    const name=document.createElement('div');name.className='gp-name';name.textContent=r.ko;
+    const name=document.createElement('div');name.className='gp-name';
+    const nameText=document.createElement('span');nameText.className='gp-name-text';nameText.textContent=r.ko;
+    name.appendChild(nameText);
+    if(_isGroupDisbanded(r.ko)){const tag=document.createElement('span');tag.className='gp-disbanded-tag';tag.textContent='해체';name.appendChild(tag);}
     info.appendChild(name);
     const subParts=[r.info.en,r.info.co].filter(Boolean);
     if(subParts.length){const sub=document.createElement('div');sub.className='gp-sub';sub.textContent=subParts.join(' · ');info.appendChild(sub);}
@@ -2116,6 +2137,8 @@ async function _loadExtChannels(){
     if(error){console.error('ext_channels 로드 실패',error.message);return;}
     _EXT_CHANNELS=(data||[]).map(r=>({handle:r.handle,url:r.url,name:r.name,tier:r.tier,...(r.owner_mko?{owner:{mko:r.owner_mko}}:{})}));
     _extChannelsLoaded=true;
+    const backfillSel=document.getElementById('sp-yt-backfill-ch');
+    if(backfillSel)backfillSel.innerHTML=_EXT_CHANNELS.map(c=>`<option value="${c.handle}">${c.name}</option>`).join('');
   }catch(e){console.error('ext_channels 로드 실패',e);}
 }
 _loadExtChannels();
@@ -2268,6 +2291,14 @@ function _m2ParseTitle(rawTitle,selfGko,strict){
   // 유닛명(V8, GOT the beat 등) 매칭 — 유닛 자체는 그룹이 아니라, 실제 소속 그룹/멤버로 나눠 합류시킴.
   // 제목에 유닛명만 있고 개별 멤버 이름은 없는 경우까지 커버하기 위해, 유닛 멤버를 "그 멤버 이름이
   // 제목에 직접 있었던 것"처럼 membersByGroup에 강제로 합쳐 넣는다(아래 멤버 추출 루프에서 union).
+  //
+  // TODO(unit-name-false-with): 제노재민/문빈산하처럼 멤버 이름이 그대로 유닛명에 포함된 경우,
+  // "제노재민 제노 직캠"을 파싱하면 재민이 with로 잘못 태깅된다. 원인: unitExtraMembers에 유닛 소속
+  // 전원이 무조건 들어간 뒤 아래 union에서 그대로 merged되기 때문. 수정 방향: norm에서 유닛명 토큰을
+  // 먼저 제거한 normMinusUnits를 만들고, extra 멤버 중 normMinusUnits에서도 개별 매칭이 안 되는 멤버는
+  // 추가하지 않는다. 단, normMinusUnits에서 유닛 소속 멤버가 아무도 안 걸리면(유닛명만 제목에 있는 경우)
+  // 기존처럼 전원 추가 유지. 구현 전제: _PROJECT_UNITS에 해당 유닛 데이터가 충분히 등록돼 있어야 함
+  // — 유닛 데이터 보강 후 작업 예정.
   const unitExtraMembers={}; // gko -> Set(mko)
   Object.values(_PROJECT_UNITS).forEach(unit=>{
     if(!unit.names.some(hit))return;
@@ -2361,6 +2392,7 @@ function _m2ParseTitle(rawTitle,selfGko,strict){
            membersByGroup:Object.fromEntries(result.map(r=>[r.gko,r.members]))};
   }
   // 각 매칭 그룹에서 멤버 추출
+  // TODO(unit-name-false-with): extra 병합 시 normMinusUnits 기반 개별 매칭 여부 체크 추가 예정(위 주석 참고)
   const membersByGroup={};
   for(const gko of matchedGroupKos){
     const matched=ARTISTS.filter(a=>a.group.ko===gko&&_m2NameVariants(a).some(t=>hit(t)||hitHashtagSubstring(t))).map(a=>a.name.ko);

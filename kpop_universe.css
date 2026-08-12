@@ -488,6 +488,8 @@
   /* 영상 위 탭 캡처 레이어 — UI 숨겨진 상태에서만 활성, 탭하면 UI 토글 */
   #yt-lb-tap-cap{display:none;position:absolute;inset:0;z-index:2;-webkit-tap-highlight-color:transparent;cursor:pointer;}
   #yt-lb-wrap.lb-ui-hidden #yt-lb-tap-cap{display:block;}
+  /* 모바일 브라우즈: 영상 상단 드래그 캡 — iframe이 터치를 흡수하므로 위에 얇은 레이어로 아래 스와이프→닫기 제공 */
+  #yt-lb-drag-cap{display:none;}
   /* 모바일 첫 진입 시 1회: 상하로 스와이프해서 영상 넘길 수 있다는 걸 살짝 들썩임으로 암시 */
   @keyframes lb-swipe-hint{0%,100%{transform:translateY(0);}25%{transform:translateY(-16px);}60%{transform:translateY(0);}80%{transform:translateY(10px);}}
   #yt-lb-wrap.swipe-hint{animation:lb-swipe-hint 1s ease-in-out 2;}
@@ -631,6 +633,7 @@
     /* 모바일은 상하 스와이프로 영상 넘기므로 좌우 버튼은 오히려 잘못된 방향을 암시함 — 숨김 */
     #yt-lb-prev,#yt-lb-next{display:none;}
     #yt-lb-toolbar{justify-content:center;}
+    #yt-lightbox.lb-browse #yt-lb-drag-cap{display:block;position:absolute;top:0;left:0;right:0;height:40px;z-index:1;-webkit-tap-highlight-color:transparent;}
     #mob-sr .sr-item{padding:8px 22px;font-size:14px;line-height:1;}
     .sr-tag{font-size:11px;}
     .gc-ch-refresh{font-size:20px;padding:6px 8px;}
@@ -1170,12 +1173,15 @@
   #gp-tabs{display:flex;gap:2px;background:rgba(255,255,255,0.06);border-radius:10px;padding:2px;margin:10px 16px 0;flex-shrink:0;}
   .gp-tab{flex:1;background:none;border:none;border-radius:8px;padding:5px 4px;font-size:11.5px;font-family:inherit;cursor:pointer;color:rgba(155,178,228,0.55);transition:background .15s,color .15s;white-space:nowrap;}
   .gp-tab.active{background:rgba(255,255,255,0.12);color:rgba(220,230,255,0.95);font-weight:600;}
+  .gp-tab-cnt{font-size:9.5px;font-weight:400;opacity:0.7;margin-left:2px;}
   #gp-count{font-size:10.5px;color:rgba(155,178,228,0.4);padding:8px 16px 0;flex-shrink:0;}
   #gp-list{flex:1;min-height:0;overflow-y:auto;padding:6px 10px 12px;}
   .gp-item{display:flex;align-items:center;gap:8px;padding:6px 6px;border-top:0.5px solid rgba(255,255,255,0.05);}
   .gp-item:first-child{border-top:none;}
   .gp-info{flex:1;min-width:0;}
-  .gp-name{font-size:12px;color:rgba(215,225,250,0.9);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .gp-name{display:flex;align-items:center;gap:5px;font-size:12px;font-weight:600;}
+  .gp-name-text{color:rgba(215,225,250,0.9);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;}
+  .gp-disbanded-tag{flex-shrink:0;font-size:9px;font-weight:700;letter-spacing:.04em;color:rgba(200,150,150,0.7);background:rgba(255,100,100,0.10);border:0.5px solid rgba(255,100,100,0.22);border-radius:4px;padding:1px 4px;}
   .gp-sub{font-size:10.5px;color:rgba(155,178,228,0.45);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   .gp-level-sel{display:flex;gap:3px;flex-shrink:0;}
   .gp-lvl-btn{background:rgba(255,255,255,0.05);border:0.5px solid rgba(255,255,255,0.10);border-radius:6px;padding:4px 8px;font-size:10.5px;font-weight:700;color:rgba(155,178,228,0.5);cursor:pointer;font-family:inherit;transition:background .15s,color .15s;}
@@ -1372,7 +1378,7 @@
   @media(min-width:769px){
     #tabbar{display:none;}
     #settings-panel{top:58px;bottom:auto;right:0;width:320px;border-radius:16px 0 0 16px;max-height:calc(100vh - 78px);overflow-y:auto;}
-    #search-wrap{top:58px;bottom:auto;left:auto;right:0;transform:none;width:320px;}
+    #search-wrap{top:58px;bottom:auto;left:auto;right:16px;transform:none;width:320px;}
   }
   /* ── Journal sidebar ─────────────────────────────── */
   #journal-sidebar{
@@ -1935,7 +1941,7 @@
   #col-create-btn{margin-top:6px;background:none;border:0.5px dashed rgba(140,165,220,0.18);border-radius:8px;color:rgba(140,165,220,0.42);font-size:11.5px;font-weight:600;padding:7px 10px;cursor:pointer;font-family:inherit;width:100%;text-align:left;transition:border-color .13s,color .13s;letter-spacing:.02em;}
   #col-create-btn:hover{border-color:rgba(140,165,220,0.38);color:rgba(180,200,240,0.78);}
   /* ── Collection picker modal ────────────────────────── */
-  #col-picker{position:fixed;inset:0;z-index:102;display:none;align-items:flex-end;justify-content:center;}
+  #col-picker{position:fixed;inset:0;z-index:9990;display:none;align-items:flex-end;justify-content:center;}
   #col-picker.open{display:flex;}
   #col-picker-bg{position:absolute;inset:0;background:rgba(0,0,0,0.5);}
   #col-picker-sheet{position:relative;width:100%;background:rgba(14,18,38,0.98);backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);border-radius:20px 20px 0 0;padding-bottom:env(safe-area-inset-bottom,0px);max-height:72vh;display:flex;flex-direction:column;z-index:1;}
