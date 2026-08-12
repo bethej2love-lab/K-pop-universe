@@ -141,7 +141,10 @@
   #desktop-header{
     position:fixed;top:16px;left:0;right:0;
     display:flex;align-items:center;justify-content:flex-end;
-    padding:0 16px;z-index:40;pointer-events:none;
+    /* z-index:55 — #feed-list-overlay(컬렉션 상세 등, 50)보다는 위에 있어야 웹에서 컬렉션을 열어도
+       우측 상단 탭바가 가려지지 않음(2026-08-12, 사용자 제보). #yt-lightbox(67)보다는 낮게 유지 —
+       영상을 실제로 재생할 때는 몰입을 위해 기존처럼 네비게이션이 덮이는 게 자연스러움. */
+    padding:0 16px;z-index:55;pointer-events:none;
   }
   @media(max-width:768px){#desktop-header{display:none;}}
   /* 모바일 상단 타이틀과 동일한 톤 — 지금은 자리만(placeholder), 텍스트 디자인은 추후 다듬을 예정 */
@@ -939,6 +942,10 @@
   .gc-ch-item.featured.is-short .gc-ch-thumb{width:42%;margin:0 auto;}
   .gc-ch-item.featured.is-short .vid-edit-btn{left:calc(29% + 4px);}
   .gc-ch-item.featured.is-short .scrap-btn{right:calc(29% + 4px);}
+  /* 컬렉션(저장) 버튼도 하트와 같이 안쪽으로 당겨야 하는데 빠져있었음 — 기본 배치(저장 34px, 하트
+     4px, 간격 30px)를 그대로 유지한 채 당겨진 하트 기준으로 30px 왼쪽에 놓는다(2026-08-12, 사용자
+     제보 — 대표 쇼츠 영상만 저장 버튼이 하트보다 오른쪽에 있었음). */
+  .gc-ch-item.featured.is-short .col-btn{right:calc(29% + 4px + 30px);}
   /* ── 관리자 전용: 영상 출연 멤버 태깅 (그룹/멤버/연결 카드 썸네일 공용) ───────────────── */
   .vid-edit-btn{
     width:22px;height:22px;border-radius:50%;
@@ -1156,9 +1163,21 @@
      (2026-08-12, 사용자 요청). 내 컬렉션이거나 포맷/장르 모아보기 등 콜렉션이 아닌 목록일 땐 숨김. */
   #feed-list-save-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:0 18px 12px;flex-shrink:0;}
   #feed-list-owner{font-size:11px;color:rgba(140,165,220,0.5);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-  #feed-list-save-btn{flex-shrink:0;border-radius:20px;font-size:11.5px;font-weight:600;padding:5px 12px;cursor:pointer;font-family:inherit;border:0.5px solid rgba(130,185,255,0.32);background:rgba(130,185,255,0.10);color:rgba(170,205,255,0.92);}
-  #feed-list-save-btn:hover{background:rgba(130,185,255,0.18);}
-  #feed-list-save-btn.saved{border-color:rgba(140,165,220,0.2);background:none;color:rgba(140,165,220,0.4);cursor:default;}
+  #feed-list-action-btns{display:flex;align-items:center;gap:8px;flex-shrink:0;}
+  /* 저장(책갈피)·좋아요(하트) — 영상 썸네일의 .col-btn/.scrap-btn과 같은 아이콘·색을 그대로 써서
+     "어디서든 저장은 왼쪽 책갈피, 좋아요는 오른쪽 하트"로 통일한다(2026-08-12, 사용자 요청). 다만 저
+     버튼들은 썸네일 위에 얹는 absolute 오버레이라 여기(헤더 줄) 배치엔 안 맞아서, 같은 시각 언어의
+     인라인 버전을 새로 만듦.
+     */
+  .feed-lb-icon-btn{background:rgba(255,255,255,0.06);border:none;border-radius:50%;width:30px;height:30px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:rgba(220,230,255,0.72);transition:color .15s,transform .15s,background .15s;padding:0;}
+  .feed-lb-icon-btn svg{width:14px;height:14px;display:block;fill:none;stroke:currentColor;stroke-width:2;stroke-linejoin:round;}
+  .feed-lb-icon-btn:hover{transform:scale(1.1);}
+  #feed-list-save-btn.col-on{color:rgba(130,185,255,0.95);}
+  #feed-list-save-btn.col-on svg{fill:currentColor;}
+  #feed-list-save-btn.saved{cursor:default;}
+  #feed-list-save-btn.saved:hover{transform:none;}
+  #feed-list-like-btn.liked{color:rgba(255,92,125,0.92);}
+  #feed-list-like-btn.liked svg{fill:currentColor;stroke-width:2.2;}
   #feed-list-grid{overflow-y:auto;padding:0 14px 16px;}
   /* 정사각형으로 강제 크롭하면 썸네일에 박혀있는 이름/자막 정보가 잘려서(사용자 제보, 2026-08-03),
      그룹/멤버 카드의 기본 .gc-ch-item/.gc-ch-thumb 그대로(가로 16:9, 쇼츠만 9:16) 원본 비율을
@@ -1841,19 +1860,21 @@
   #feed-list-grid.cve-list{display:flex;flex-direction:column;gap:2px;}
   .cve-item{display:flex;align-items:center;gap:8px;padding:5px 2px;border-radius:8px;cursor:pointer;transition:background .12s;}
   .cve-item:hover{background:rgba(255,255,255,0.04);}
-  .cve-thumb{width:56px;height:34px;border-radius:4px;object-fit:cover;background:rgba(255,255,255,0.06);flex-shrink:0;}
+  .cve-thumb-wrap{position:relative;flex-shrink:0;}
+  .cve-thumb{display:block;width:56px;height:34px;border-radius:4px;object-fit:cover;background:rgba(255,255,255,0.06);}
   .cve-info{flex:1;min-width:0;}
   .cve-title{font-size:12.5px;color:rgba(210,225,255,0.88);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
   .cve-sub{font-size:10.5px;color:rgba(120,145,190,0.5);margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
   .cve-remove{background:none;border:none;color:rgba(140,165,220,0.28);font-size:14px;cursor:pointer;padding:2px 6px;flex-shrink:0;}
   .cve-remove:hover{color:rgba(255,100,120,0.7);}
-  /* 콜렉션 대표 이미지(커버) 직접 지정 — 기본은 첫 영상 썸네일이지만, 핀 아이콘으로 원하는 영상을
-     고정할 수 있다(2026-08-12, 사용자 요청). 지정된 항목만 항상 채워진 상태로 보이게 한다. */
-  .cve-cover-btn{background:none;border:none;color:rgba(140,165,220,0.28);cursor:pointer;padding:2px 5px;flex-shrink:0;display:flex;align-items:center;}
-  .cve-cover-btn svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.6;}
-  .cve-cover-btn:hover{color:rgba(180,200,240,0.6);}
-  .cve-cover-btn.on{color:rgba(255,205,110,0.92);}
-  .cve-cover-btn.on svg{fill:currentColor;}
+  /* 콜렉션 대표 이미지(커버) 직접 지정 — 별도 버튼으로 줄을 하나 더 차지하니 번잡스럽다는 피드백으로
+     (2026-08-12), 썸네일 모서리에 작은 배지로 옮김. 기본은 첫 영상 썸네일이고, 배지를 누르면 그 영상으로
+     고정/해제 토글. 호버 없이도(모바일) 발견 가능하도록 평소에도 옅게 보이게 둔다. */
+  .cve-cover-badge{position:absolute;bottom:1px;right:1px;width:16px;height:16px;border-radius:50%;background:rgba(0,0,0,0.6);border:none;padding:0;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.55);cursor:pointer;opacity:.7;transition:opacity .15s,color .15s;}
+  .cve-cover-badge svg{width:9px;height:9px;fill:none;stroke:currentColor;stroke-width:1.8;}
+  .cve-cover-badge:hover{opacity:1;}
+  .cve-cover-badge.on{opacity:1;color:rgba(255,205,110,0.95);}
+  .cve-cover-badge.on svg{fill:currentColor;}
   #col-create-btn{margin-top:6px;background:none;border:0.5px dashed rgba(140,165,220,0.18);border-radius:8px;color:rgba(140,165,220,0.42);font-size:11.5px;font-weight:600;padding:7px 10px;cursor:pointer;font-family:inherit;width:100%;text-align:left;transition:border-color .13s,color .13s;letter-spacing:.02em;}
   #col-create-btn:hover{border-color:rgba(140,165,220,0.38);color:rgba(180,200,240,0.78);}
   /* ── Collection picker modal ────────────────────────── */

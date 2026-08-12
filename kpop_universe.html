@@ -226,6 +226,7 @@
     <button class="sp-yt-sync" id="sp-yt-sync">1. 전체 동기화 (공식 + 외부 채널)</button>
     <button class="sp-yt-sync" id="sp-yt-viewcount-btn" style="margin-top:4px;opacity:.8;">조회수만 갱신(이번주 직캠 TOP용)</button>
     <button class="sp-yt-sync" id="sp-yt-allviewcount-btn" style="margin-top:4px;opacity:.8;">전체 조회수 갱신(연도별 TOP용 · 월 1회)</button>
+    <button class="sp-yt-sync" id="sp-yt-backfillviewcount-btn" style="margin-top:4px;opacity:.8;">연도별 TOP 최초 백필(일회용 · 시간 오래 걸림)</button>
     <button class="sp-yt-sync" id="sp-vm-btn" style="margin-top:4px;opacity:.8;">영상 관리 패널</button>
     <div style="margin-top:6px;padding-top:6px;border-top:0.5px solid rgba(255,255,255,0.07)">
       <div style="font-size:10px;color:rgba(155,178,228,0.4);margin-bottom:2px">과거 영상 백필 (search API, 쿼터 많이 씀)</div>
@@ -403,7 +404,10 @@
     </div>
     <div id="feed-list-save-row" style="display:none">
       <span id="feed-list-owner"></span>
-      <button id="feed-list-save-btn" type="button"></button>
+      <div id="feed-list-action-btns">
+        <button id="feed-list-save-btn" type="button" class="feed-lb-icon-btn" aria-label="컬렉션에 저장"><svg viewBox="0 0 24 24"><path d="M5 3h14a1 1 0 0 1 1 1v16l-8-4.5L4 20V4a1 1 0 0 1 1-1z"/></svg></button>
+        <button id="feed-list-like-btn" type="button" class="feed-lb-icon-btn" aria-label="좋아요"><svg viewBox="0 0 24 24"><path d="M12 21L10.55 19.7C5.4 15.1 2 12.1 2 8.5 2 5.4 4.4 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.6 3 22 5.4 22 8.5c0 3.6-3.4 6.6-8.55 11.2L12 21z"/></svg><span id="feed-list-like-cnt" class="lb-action-cnt"></span></button>
+      </div>
     </div>
     <div id="feed-list-grid" class="gc-ch-grid"></div>
   </div>
@@ -459,8 +463,8 @@
         <button id="yt-lb-rotate" aria-label="세로/가로 전환"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="2" width="10" height="16" rx="1.5"/><path d="M4 20h7M7.5 17l-3 3 3 3" transform="translate(0,-2)"/></svg></button>
         <button id="yt-lb-mute" aria-label="소리 켜기">🔇</button>
         <input type="range" id="yt-lb-vol" min="0" max="100" value="100" aria-label="볼륨" step="1">
-        <button id="yt-lb-scrap" aria-label="좋아요"><svg viewBox="0 0 24 24"><path d="M12 21L10.55 19.7C5.4 15.1 2 12.1 2 8.5 2 5.4 4.4 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.6 3 22 5.4 22 8.5c0 3.6-3.4 6.6-8.55 11.2L12 21z"/></svg><span id="yt-lb-scrap-cnt" class="lb-action-cnt"></span></button>
         <button id="yt-lb-col" aria-label="컬렉션에 추가"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h14M3 10h14M3 14h8"/><path d="M17 14v6M14 17h6"/></svg></button>
+        <button id="yt-lb-scrap" aria-label="좋아요"><svg viewBox="0 0 24 24"><path d="M12 21L10.55 19.7C5.4 15.1 2 12.1 2 8.5 2 5.4 4.4 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.6 3 22 5.4 22 8.5c0 3.6-3.4 6.6-8.55 11.2L12 21z"/></svg><span id="yt-lb-scrap-cnt" class="lb-action-cnt"></span></button>
         <button id="yt-lb-edit" aria-label="출연 멤버 지정" style="display:none">✎</button>
       </div>
       <button id="yt-lb-next" aria-label="다음 영상">›</button>
@@ -9176,6 +9180,37 @@ async function _warmScrapCounts(){
   }catch(e){console.error('_warmScrapCounts failed',e);}
 }
 
+// ── 콜렉션 좋아요 (video_scraps/video_scrap_counts와 동일한 패턴, 2026-08-12) ──
+// 개인 저장(복제)과는 별개로 가벼운 하트 — 원본 테이블(collection_likes, 유저×콜렉션 1행)에서
+// 집계 뷰(collection_like_counts)로 공개 개수를 뽑고, 공개 콜렉션 목록 정렬(좋아요 많은 순)에도 씀.
+let _colLikeCounts=new Map(); // collection_id -> like_count
+let _colLikedByMe=new Set(); // 내가 좋아요 누른 collection_id
+let _colLikesP=null;
+async function _warmColLikes(){
+  if(!sb)return;
+  try{
+    const{data,error}=await sb.from('collection_like_counts').select('collection_id,like_count');
+    if(error){console.error('collection like counts fetch failed',error);}
+    else(data||[]).forEach(r=>_colLikeCounts.set(r.collection_id,r.like_count));
+    if(window._sbSession){
+      const{data:mine,error:mineErr}=await sb.from('collection_likes').select('collection_id').eq('user_id',window._sbSession.user.id);
+      if(!mineErr)(mine||[]).forEach(r=>_colLikedByMe.add(r.collection_id));
+    }
+  }catch(e){console.error('_warmColLikes failed',e);}
+}
+function toggleCollectionLike(colId){
+  if(!sb||!window._sbSession)return null;
+  const uid=window._sbSession.user.id;
+  const wasLiked=_colLikedByMe.has(colId);
+  if(wasLiked){_colLikedByMe.delete(colId);_colLikeCounts.set(colId,Math.max(0,(_colLikeCounts.get(colId)||1)-1));}
+  else{_colLikedByMe.add(colId);_colLikeCounts.set(colId,(_colLikeCounts.get(colId)||0)+1);}
+  const q=wasLiked
+    ?sb.from('collection_likes').delete().eq('user_id',uid).eq('collection_id',colId)
+    :sb.from('collection_likes').insert({user_id:uid,collection_id:colId});
+  q.then(({error})=>{if(error)console.error('collection like sync failed',error);});
+  return!wasLiked;
+}
+
 let _sbPushTimers={};
 let _sbPushPending={}; // column -> 아직 서버로 안 나간 최신 값(탭 닫기/백그라운드 시 즉시 flush용)
 function _sbPushColumn(column,value){
@@ -9288,6 +9323,7 @@ async function initSupabaseSync(){
     _scrapCountsP=_warmScrapCounts(); // featured 선정 시 이 promise를 await해서 race condition 방지
     _instaPicPreloadP=_warmInstaPicCache(); // 멤버 카드를 열 때마다 DB 왕복 없이 바로 캐시에서 쓰도록 미리 로드
     _pubCollectionsP=_warmPubCollections(); // 컬렉션 행도 마찬가지로 미리 로드(2026-08-11)
+    _colLikesP=_warmColLikes(); // 콜렉션 좋아요 개수/내 좋아요 여부도 같이 미리 로드(2026-08-12)
     const isAnonymous=session.user.is_anonymous===true;
     if(!isAnonymous)_dismissFavHint(); // 구글 계정 연결(로그인) 상태면 즐겨찾기 시작 안내는 더 이상 필요 없음
     if(isBrandNewAnonymous){
@@ -9657,31 +9693,33 @@ function _renderCveList(songs,containerEl,colId){
   songs.forEach(s=>{
     const item=document.createElement('div');item.className='cve-item drag-reorder-item';item.dataset.u=s.u;
     const handle=document.createElement('button');handle.type='button';handle.className='drag-handle';handle.textContent='⠿';handle.setAttribute('aria-label','드래그해서 순서 바꾸기');
+    const thumbWrap=document.createElement('div');thumbWrap.className='cve-thumb-wrap';
     const img=document.createElement('img');img.className='cve-thumb';img.loading='lazy';img.decoding='async';
     img.src=s.thumb||`https://img.youtube.com/vi/${ytId(s.u)}/mqdefault.jpg`;img.alt='';
-    const info=document.createElement('div');info.className='cve-info';
-    const titleEl=document.createElement('div');titleEl.className='cve-title';titleEl.textContent=_cleanTitle(s.t);
-    info.appendChild(titleEl);
-    if(s.groupKo){const subEl=document.createElement('div');subEl.className='cve-sub';subEl.textContent=s.groupKo;info.appendChild(subEl);}
-    // 콜렉션 대표 이미지(커버) 지정 — 다시 누르면 지정 해제(기본값인 첫 영상으로 되돌아감)
-    const coverBtn=document.createElement('button');coverBtn.type='button';coverBtn.className='cve-cover-btn';
+    // 콜렉션 대표 이미지(커버) 지정 — 별도 줄 대신 썸네일 모서리 배지로(2026-08-12, "번잡스럽다"는
+    // 피드백으로 간소화). 다시 누르면 지정 해제(기본값인 첫 영상으로 되돌아감).
+    const coverBadge=document.createElement('button');coverBadge.type='button';coverBadge.className='cve-cover-badge';
     const _isCover=_col&&_colCoverVideo(_col)?.u===s.u;
-    coverBtn.classList.toggle('on',_isCover);
-    coverBtn.title=_isCover?'대표 이미지로 지정됨 · 눌러서 해제':'이 영상으로 대표 이미지 지정';
-    coverBtn.innerHTML='<svg viewBox="0 0 24 24"><path d="M12 2l2.6 6.6L21 10l-5 4.4L17.4 21 12 17.3 6.6 21 8 14.4 3 10l6.4-1.4z"/></svg>';
-    coverBtn.addEventListener('click',e=>{
+    coverBadge.classList.toggle('on',_isCover);
+    coverBadge.title=_isCover?'대표 이미지로 지정됨 · 눌러서 해제':'이 영상으로 대표 이미지 지정';
+    coverBadge.innerHTML='<svg viewBox="0 0 24 24"><path d="M12 2l2.6 6.6L21 10l-5 4.4L17.4 21 12 17.3 6.6 21 8 14.4 3 10l6.4-1.4z"/></svg>';
+    coverBadge.addEventListener('click',e=>{
       e.stopPropagation();
       if(!_col)return;
       _col.coverU=(_col.coverU===s.u)?null:s.u;
       _saveCollections();
       if(_col.isPublic)_syncPublicCollection(_col);
-      containerEl.querySelectorAll('.cve-cover-btn').forEach(b=>b.classList.remove('on'));
       const nowCover=_colCoverVideo(_col)?.u;
       containerEl.querySelectorAll('.cve-item').forEach(it=>{
-        it.querySelector('.cve-cover-btn').classList.toggle('on',it.dataset.u===nowCover);
+        it.querySelector('.cve-cover-badge').classList.toggle('on',it.dataset.u===nowCover);
       });
       _syncColThumbsElsewhere();
     });
+    thumbWrap.appendChild(img);thumbWrap.appendChild(coverBadge);
+    const info=document.createElement('div');info.className='cve-info';
+    const titleEl=document.createElement('div');titleEl.className='cve-title';titleEl.textContent=_cleanTitle(s.t);
+    info.appendChild(titleEl);
+    if(s.groupKo){const subEl=document.createElement('div');subEl.className='cve-sub';subEl.textContent=s.groupKo;info.appendChild(subEl);}
     const removeBtn=document.createElement('button');removeBtn.type='button';removeBtn.className='cve-remove';removeBtn.textContent='×';removeBtn.title='컬렉션에서 빼기';
     removeBtn.addEventListener('click',e=>{
       e.stopPropagation();
@@ -9690,7 +9728,7 @@ function _renderCveList(songs,containerEl,colId){
       if(!containerEl.children.length)_closeFeedListOverlay(); // 마지막 하나까지 빼면 빈 목록 대신 오버레이를 닫는다
       else _syncColThumbsElsewhere(); // 커버로 지정했던 영상이 빠졌을 수 있으니 다른 곳 썸네일도 갱신
     });
-    item.appendChild(handle);item.appendChild(img);item.appendChild(info);item.appendChild(coverBtn);item.appendChild(removeBtn);
+    item.appendChild(handle);item.appendChild(thumbWrap);item.appendChild(info);item.appendChild(removeBtn);
     item.addEventListener('click',e=>{
       e.stopPropagation();
       const ctx=s.groupKo?{groupKo:s.groupKo,memberKo:(s.memberKos&&s.memberKos[0])||undefined}:{};
@@ -9718,7 +9756,8 @@ function _setupFeedListSaveRow(ctx){
   document.getElementById('feed-list-owner').textContent=ctx.ownerNick?`by ${ctx.ownerNick}`:'다른 유저의 컬렉션';
   const btn=document.getElementById('feed-list-save-btn');
   const already=collections.some(c=>c.copiedFrom===ctx.colId);
-  btn.textContent=already?'저장됨':'내 컬렉션에 저장';
+  btn.title=already?'저장됨':'내 컬렉션에 저장';
+  btn.classList.toggle('col-on',already);
   btn.classList.toggle('saved',already);
   btn.disabled=already;
   btn.onclick=already?null:()=>{
@@ -9726,8 +9765,23 @@ function _setupFeedListSaveRow(ctx){
     if(!src)return;
     const col={id:_colNewId(),name:src.name,videos:(src.items||[]).map(v=>({...v})),createdAt:new Date().toISOString().slice(0,10),isPublic:false,copiedFrom:ctx.colId,desc:src.desc||undefined};
     collections.unshift(col);_saveCollections();renderCollectionSection();
-    btn.textContent='저장됨';btn.classList.add('saved');btn.disabled=true;
+    btn.title='저장됨';btn.classList.add('col-on','saved');btn.disabled=true;
     _gaEvent('copy_public_collection',{});
+  };
+  const likeBtn=document.getElementById('feed-list-like-btn');
+  const likeCntEl=document.getElementById('feed-list-like-cnt');
+  const refreshLikeUI=()=>{
+    const liked=_colLikedByMe.has(ctx.colId);
+    const cnt=_colLikeCounts.get(ctx.colId)||0;
+    likeBtn.classList.toggle('liked',liked);
+    likeCntEl.textContent=cnt>0?cnt:'';
+    likeBtn.title=liked?'좋아요 취소':'좋아요';
+  };
+  refreshLikeUI();
+  likeBtn.onclick=()=>{
+    if(!sb||!window._sbSession)return;
+    toggleCollectionLike(ctx.colId);
+    refreshLikeUI();
   };
 }
 // 콜렉션 한줄평(선택 입력) — 상세를 열었을 때만 노출. 내 컬렉션이면 연필로 수정 가능하고, 남의 공개
@@ -10737,6 +10791,57 @@ async function _ytRefreshAllViewCounts(){
     if(failed){_ytSetProg(`저장 실패 (${failed}건): 콘솔 확인`);return;}
   }
   _ytSetProg(`전체 조회수 갱신 완료 — ${saved}개 (live 카테고리 · API ${totalCalls}회 사용)`);
+  _feedDiscoveryBuiltAt=0;
+}
+
+// 연도별 TOP 100 최초 백필(일회용) — 위 "전체 조회수 갱신"은 이미 조회수가 있는 영상만 다시 갱신하는
+// 거라, 오래된 연도 라이브 영상은 조회수를 한 번도 못 받아본 채로 계속 비어있었음(2026-08-12, 사용자
+// 제보 — "왜 2026년만 뽑히고 다른 연도 TOP은 안 뜨지" → 실측해보니 live 95,461건 중 조회수 있는 건
+// 756건뿐이고 전부 2026년 발행분). "조회수만 갱신"(최근 14일)과 "전체 갱신"(이미 있는 것만) 사이에
+// 뚫려있던 구멍을 메우는 용도 — is('view_count',null)인 것만 대상으로 하므로, 중간에 탭을 닫아도
+// 다시 누르면 이미 채운 것은 건너뛰고 이어서 진행됨(자연히 재개 가능). 규모가 커서(live 전체, API
+// 약 1900회) 한 번 돌리면 오래 걸리니 완료 후엔 다시 쓸 일 없음 — 이후엔 "전체 조회수 갱신"으로 월 1회
+// 최신화만 하면 충분.
+async function _ytBackfillAllViewCounts(){
+  const key=_ytApiKey();
+  if(!key){_ytSetProg('API 키를 먼저 입력해주세요');return;}
+  if(!sb){_ytSetProg('Supabase 연결 없음');return;}
+  _ytSetProg('백필 대상 조회 중 (조회수 없는 live 전체)…');
+  const{data:rows,error}=await _sbFetchAll(()=>sb.from(_YT_TABLE)
+    .select('id')
+    .eq('category','live')
+    .is('view_count',null)
+    .order('id'));
+  if(error){_ytSetProg('대상 조회 실패: '+error.message);return;}
+  if(!rows?.length){_ytSetProg('백필 대상 없음(전부 조회수 있음)');return;}
+  const ids=rows.map(r=>r.id);
+  const totalCalls=Math.ceil(ids.length/50);
+  _ytSetProg(`YouTube API 호출 예정: ${totalCalls}회 (${ids.length}개 영상) — 시간이 꽤 걸릴 수 있어요, 탭을 계속 열어두세요`);
+  let savedTotal=0,failedTotal=0;
+  for(let i=0;i<ids.length;i+=50){
+    const chunk=ids.slice(i,i+50);
+    _ytSetProg(`백필 중… ${Math.min(i+50,ids.length)}/${ids.length} (API ${Math.floor(i/50)+1}/${totalCalls}회, 저장 ${savedTotal}개)`);
+    const statsUpdates=[];
+    try{
+      const r=await fetch(`https://www.googleapis.com/youtube/v3/videos?part=statistics&id=${chunk.join(',')}&key=${key}`);
+      if(!r.ok)throw new Error('YouTube API 오류 '+r.status);
+      const d=await r.json();
+      if(d.error)throw new Error(d.error.message);
+      (d.items||[]).forEach(it=>{
+        const vc=parseInt(it.statistics?.viewCount,10);
+        if(!isNaN(vc))statsUpdates.push({id:it.id,view_count:vc});
+      });
+    }catch(e){
+      _ytSetProg(`YouTube API 오류(${savedTotal}개까지 저장된 채로 중단, 다시 누르면 이어서 진행됨): `+e.message);
+      console.error('[연도별TOP 백필]',e.message);
+      return;
+    }
+    if(statsUpdates.length){
+      const results=await Promise.all(statsUpdates.map(({id,view_count})=>sb.from(_YT_TABLE).update({view_count}).eq('id',id)));
+      results.forEach(({error:ue})=>{if(ue){failedTotal++;console.error('[연도별TOP 백필] 저장 실패:',ue.message);}else savedTotal++;});
+    }
+  }
+  _ytSetProg(`연도별 TOP 백필 완료 — ${savedTotal}개 저장${failedTotal?`, 실패 ${failedTotal}건`:''} (API ${totalCalls}회 사용)`);
   _feedDiscoveryBuiltAt=0;
 }
 
@@ -14869,8 +14974,10 @@ async function _loadCollectionRow(ko,containerId,memberKo,cardMemberKo){
   let pub=[];
   if(sb){
     if(_pubCollectionsP)await _pubCollectionsP;
+    if(_colLikesP)await _colLikesP; // 좋아요 많은 순 정렬에 필요
     const all=_pubCollectionsCache||[];
     pub=all.filter(r=>r.owner_id!==uid&&(memberKo?(r.member_kos||[]).includes(memberKo):(r.group_kos||[]).includes(ko)))
+      .sort((a,b)=>(_colLikeCounts.get(b.id)||0)-(_colLikeCounts.get(a.id)||0))
       .slice(0,20).map(r=>({id:r.id,name:r.name,videos:r.items||[],mine:false,ownerNick:r.owner_nick||null}));
   }
   // 대기 중 다른 카드로 전환됐으면 건너뜀
@@ -15621,6 +15728,12 @@ document.getElementById('vid-tag-thumb-refresh').addEventListener('click',async 
     const btn=document.getElementById('sp-yt-allviewcount-btn');
     if(btn)btn.disabled=true;
     await _ytRefreshAllViewCounts();
+    if(btn)btn.disabled=false;
+  });
+  document.getElementById('sp-yt-backfillviewcount-btn')?.addEventListener('click',async()=>{
+    const btn=document.getElementById('sp-yt-backfillviewcount-btn');
+    if(btn)btn.disabled=true;
+    await _ytBackfillAllViewCounts();
     if(btn)btn.disabled=false;
   });
   document.getElementById('sp-yt-sweep-banned')?.addEventListener('click',_ytSweepBannedVideos);
