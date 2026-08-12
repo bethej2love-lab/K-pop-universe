@@ -8432,10 +8432,26 @@ function _flyToMyUniverse(dur){
   const dist=Math.max(maxR*2.6+18,30);
   _startFly(_myUniverseHub.clone(),_myUniverseHub.clone().addScaledVector(dir,dist),dur||MY_UNIVERSE_ENTER_MS+250);
 }
+// 종료 애니메이션이 내 별을 데려다 놓을 지점 — 평소(유휴) 상태에 최애 행성 위성 공전이 있으면
+// (_myStarIdleOrbitTarget) 그 궤도 위의 "지금 각도" 지점으로 정확히 맞춰서, 종료 애니메이션이 끝나는
+// 순간과 유휴 공전이 이어받는 지점이 완전히 일치하게 한다 — 안 맞으면 부드럽게 움직이던 별이 종료
+// 직후 유휴 공전 계산식으로 순간이동하듯 "띡" 튀는 문제가 있었음(2026-08-12, 사용자 제보로 발견).
+function _myStarExitRestPos(){
+  const idleTarget=_myStarIdleOrbitTarget();
+  if(idleTarget){
+    const idleR=idleTarget.radius+3.2;
+    return new THREE.Vector3(
+      idleTarget.mesh.position.x+Math.cos(_myStarIdleAngle)*idleR,
+      idleTarget.mesh.position.y+1.6,
+      idleTarget.mesh.position.z+Math.sin(_myStarIdleAngle)*idleR
+    );
+  }
+  return _getMyStarPos();
+}
 function _exitMyUniverseMode(){
   if(!_myUniverseOrbits.length){
     _myUniverseActive=false;_myUniverseHub=null;_myUniversePhase='idle';
-    if(myStarSprite)myStarSprite.position.copy(_getMyStarPos());
+    if(myStarSprite)myStarSprite.position.copy(_myStarExitRestPos());
     return;
   }
   const exitFrom=new Map();
@@ -8444,7 +8460,7 @@ function _exitMyUniverseMode(){
   });
   _myUniverseExitFrom=exitFrom;
   _myUniverseStarFrom=myStarSprite?myStarSprite.position.clone():null;
-  _myUniverseHub=_hubFromOrbitOrigins(_myUniverseOrbits); // 종료 후 안착할 '유휴' 위치
+  _myUniverseHub=_myStarExitRestPos(); // 종료 후 안착할 '유휴' 위치(유휴 공전 궤도 위 지점과 일치시킴)
   _myUniversePhase='exiting';
   _myUniversePhaseT0=performance.now();
 }
@@ -9085,6 +9101,14 @@ async function _loadDynamicHashtagNames(){
   }catch(e){}
 }
 _loadDynamicHashtagNames();
+// 카드 첫 오픈이 유독 느리게 느껴진다는 사용자 피드백(2026-08-12) — 실측해보니 세션 첫 Supabase 쿼리가
+// 연결/DB 웜업 비용으로 ~2초씩 걸리고, 그 뒤부터는 300ms~1초대로 뚝 떨어짐(TCP/TLS 핸드셰이크+
+// 무료 티어 DB의 대기 상태 해제 등으로 추정). name_match_whitelist(위)는 테이블이 작아서 이 웜업
+// 효과가 실제 카드가 조회하는 큰 테이블(yt_channel_videos)까지는 잘 안 미치는 것으로 보여, 그 테이블을
+// 직접 겨냥한 아주 가벼운 쿼리(1행만)를 페이지 로드 즉시 fire-and-forget으로 미리 쏴서, 유저가 실제로
+// 첫 카드를 열 때는 이미 연결이 데워져 있게 한다. _YT_TABLE 상수가 이 시점엔 아직 선언 전이라(스크립트
+// 아래쪽에서 const로 선언됨) 여기선 테이블명을 직접 문자열로 씀 — 그 상수와 항상 같은 값이어야 함.
+if(sb)sb.from('yt_channel_videos').select('id').limit(1).then(()=>{}).catch(()=>{});
 
 // ── OAuth 리디렉트 진단용 임시 로깅 (기기별 로그인 실패 원인 파악용, 확인되면 제거) ──
 function _authAlert(msg){
@@ -9991,8 +10015,17 @@ async function _pickFeaturedVidFromDB(ko,memberKo,onlyMe,filter,viewMode,formatF
     // 이게 카드 열 때마다 느려지는 주범이었음 — 대신 이미 세션에 로드해둔 _scrapCounts(하트가 하나라도
     // 있는 영상만, 사이트 전체 기준이라 훨씬 적음)에서 먼저 후보 id만 뽑고 .in()으로 좁혀서 조회한다.
     // 하트 없는 대다수 영상은 이제 이 쿼리에서 아예 안 건드림.
+    // ⚠️ 그래도 사이트가 커질수록 이 후보 목록 자체가 계속 늘어나 다시 느려짐(2026-08-12, 사용자 재제보 —
+    // 실측으로 그룹별 400ms~3.4초까지 편차 확인). 어차피 목적이 "하트 최다"를 찾는 것이므로, 하트 수
+    // 내림차순으로 정렬해서 상위 N개만 후보로 보낸다 — 특정 그룹의 진짜 최다 영상이 사이트 전체 기준
+    // 상위권 밖(즉 그 그룹 자체가 좋아요가 적은 소규모 그룹)이면 이 함수가 null을 반환하고 아래 호출부의
+    // _pickMainChVid 폴백이 대신 고르게 됨 — 완전히 정확하진 않지만(느려도 되면 사이트가 작을 때는 어차피
+    // 후보 전체가 N 이하라 지금과 100% 동일), 이 함수 자체가 "있으면 좋고 없어도 그만"인 보너스라(위
+    // _withTimeout 6초+null폴백 참고) 사이트 규모와 무관하게 속도가 일정한 쪽이 더 중요하다고 판단.
+    const CANDIDATE_CAP=1500;
+    const sortedByCount=[..._scrapCounts.entries()].sort((a,b)=>b[1]-a[1]).slice(0,CANDIDATE_CAP);
     const candidateIds=[];
-    for(const url of _scrapCounts.keys()){
+    for(const[url]of sortedByCount){
       const id=url.includes('shorts/')?url.split('shorts/')[1]:url.split('v=')[1];
       if(id)candidateIds.push(id);
     }
@@ -10063,10 +10096,10 @@ function _buildFeedAnniversaries(){
   bdayHits.forEach(a=>{
     const mName=isKo?a.name.ko:(a.name.en||a.name.ko);
     const gName=isKo?a.group.ko:(a.group.en||a.group.ko);
-    const byear=parseInt(a.bday.split('.')[0]);
-    const age=now.getFullYear()-byear;
     const sub=gName;
-    const sub2=age>0?(isKo?`${byear}년생 (${age}세)`:`Born ${byear} (${age})`):null;
+    // 나이 없이 생년월일만(2026-08-12, 사용자 요청 — 처음엔 멤버 카드처럼 나이도 같이 넣었다가
+    // 날짜만 원한다는 정정 받음).
+    const sub2=a.bday||null;
     const item=_appendAnnivStripItem(list,'🎂',mName,sub,()=>_feedNav(()=>{
       if(a._worldPos)flyTo(a._worldPos);
       if(isMob()){showT(a,window.innerWidth/2,window.innerHeight*0.4,false,false,false);openMobSheet(document.getElementById('tt'));}
@@ -11065,9 +11098,17 @@ function _makeChVidController(contId){
       // ↻ 새로고침(randomize)일 땐 건너뜀 — 하트 최다 영상은 항상 고정이라 이걸 계속 맨 앞에 꽂아두면
       // 아무리 새로고침을 눌러도 대표 영상이 매번 똑같아서 "새로고침이 반복된다"고 느껴지는 원인이었음
       // (2026-07-31). 카드를 처음 열 때(reset만, randomize 아님)는 대표 영상을 보여주는 게 여전히 맞음.
+      // 대표 영상 선정은 있으면 좋지만 없어도 되는 보너스(아래 _pickMainChVid로 항상 폴백 가능) — 그런데
+      // 아래 15초 타임아웃을 mainP(진짜 필요한 그리드 데이터)와 한 Promise.all로 묶어놨었어서, 하트가
+      // 많이 쌓인 사이트일수록 이 쿼리(_scrapCounts 전체를 in()으로 훑음) 자체가 느려질 수 있는데 그게
+      // mainP는 이미 성공했어도 카드 전체를 "응답이 없어요" 에러로 같이 죽이는 원인이었음(2026-08-12,
+      // 사용자 재제보 — 2026-08-11에 고친 randomize 청크 케이스와 같은 계열 버그가 여기 남아있었음).
+      // 여기만 따로 짧게(6초) 타임아웃 걸고 실패해도 null로 조용히 폴백시켜서, 대표 영상 선정이 느려도
+      // 그리드 자체는 절대 안 죽게 분리한다.
       const featuredP=cacheHit?Promise.resolve(cached.featuredFromDB)
         :(reset&&state.sortMode==='recommend'&&!randomize)
-        ?_pickFeaturedVidFromDB(ko,state.memberKo,state.onlyMe,filter,state.viewMode,state.formatFilter):Promise.resolve(null);
+        ?_withTimeout(_pickFeaturedVidFromDB(ko,state.memberKo,state.onlyMe,filter,state.viewMode,state.formatFilter),6000).catch(()=>null)
+        :Promise.resolve(null);
       // '미태깅 우선'(admin 전용): Postgres 배열 비교는 원소 없는 '{}'가 항상 더 작다고/크다고 취급하므로,
       // 배열 컬럼 오름차순/내림차순 정렬만으로 3단계 우선순위를 만들 수 있다 — 새 컬럼/RPC 없이 기존
       // 컬럼만으로 되는 정렬(2026-08-05, 수동 편집 편의용 관리자 요청):
@@ -11132,7 +11173,10 @@ function _makeChVidController(contId){
           state.total=bgCount;
         });
       }
-      const[{data,error,count},_featuredFromDB]=await _withTimeout(Promise.all([mainP,featuredP]),15000);
+      // 15초 하드 타임아웃은 진짜 필요한 mainP에만 건다 — featuredP는 위에서 이미 자체 타임아웃+null
+      // 폴백을 갖고 있어서 여기서 또 감쌀 필요가 없고, 감싸면 오히려 mainP 성공을 같이 깔고 앉는
+      // 원래 버그가 재발한다.
+      const[{data,error,count},_featuredFromDB]=await Promise.all([_withTimeout(mainP,15000),featuredP]);
       if(myGen!==state.gen)return; // 대기 중 다른 그룹/새로고침으로 전환됨: 그쪽이 이미 자신의 잠금을 걸어놨으므로 여기선 해제하지 않는다
       if(error)throw new Error(error.message);
       if(reset)grid.innerHTML='';
