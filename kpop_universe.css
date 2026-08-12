@@ -2081,6 +2081,7 @@
   .feed-strip-name,.feed-strip-sub{opacity:0;transition:opacity .22s ease;}
   .feed-strip-item.cap-revealed .feed-strip-name,
   .feed-strip-item.cap-revealed .feed-strip-sub{opacity:1;}
+  .feed-strip-item.anniv-inactive{opacity:0.42;filter:grayscale(0.3);}
   .feed-card-title{font-size:12.5px;font-weight:600;color:rgba(220,232,255,0.92);line-height:1.4;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
   .feed-card-sub{font-size:10.5px;color:rgba(130,155,205,0.6);margin-top:3px;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
   /* ── 첫 방문 온보딩: 상단 검색바(iOS 리퀴드글라스 느낌) ──────────── */
