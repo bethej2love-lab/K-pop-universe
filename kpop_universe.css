@@ -1,5 +1,7 @@
   *{margin:0;padding:0;box-sizing:border-box;}
-  html{background:#060612;-webkit-text-size-adjust:100%;text-size-adjust:100%;}
+  /* 더블탭 시 브라우저 네이티브 확대가 실수로 걸리는 걸 막음(2026-08-13, 사용자 제보) — pinch-zoom은
+     허용값이라 3D 지도의 OrbitControls 핀치 확대에는 영향 없음, manipulation은 더블탭줌만 끈다. */
+  html{background:#060612;-webkit-text-size-adjust:100%;text-size-adjust:100%;touch-action:manipulation;}
   body{
     background:radial-gradient(ellipse at 50% 38%,
       #12112a 0%,
@@ -71,7 +73,7 @@
   .tab-btn.active{color:rgba(225,238,255,1);text-shadow:0 0 8px rgba(200,220,255,0.5);}
   #mob-fav-btn svg path,#dh-fav-btn svg path{fill:none;transition:fill .15s;}
   #mob-fav-btn.fav-mode-on svg path,#dh-fav-btn.fav-mode-on svg path{fill:currentColor;}
-  #tab-feed.feed-open{color:rgba(130,170,255,0.9);}  #tab-lang{font-size:10px;font-weight:700;letter-spacing:.1em;}
+  #tab-feed.feed-open{color:rgba(130,170,255,0.9);}  #tab-lang{font-size:12px;font-weight:700;letter-spacing:.1em;}
   .tab-sep{display:none;}
   /* ── Tabbar search mode (mobile) ────────────────── */
   /* 탭 아이콘↔검색창 전환 시 컨테이너 모양과 내용물이 같은 속도로 접히고 펼쳐지도록,
@@ -116,7 +118,7 @@
     #mob-top-bar{
       position:fixed;top:0;left:0;right:0;
       display:flex;align-items:center;justify-content:space-between;
-      padding:calc(14px + env(safe-area-inset-top,0px)) 18px 12px;
+      padding:calc(14px + env(safe-area-inset-top,0px)) 18px 15px;
       background:linear-gradient(to bottom,rgba(9,9,26,0.38) 0%,rgba(9,9,26,0.0) 80%);
       backdrop-filter:blur(8px) saturate(1.1);-webkit-backdrop-filter:blur(8px) saturate(1.1);
       -webkit-mask-image:linear-gradient(to bottom,black 35%,rgba(0,0,0,0.5) 65%,transparent 100%);
@@ -124,7 +126,7 @@
       z-index:40;
     }
     #mob-top-title{
-      font-size:11px;font-weight:700;letter-spacing:.2em;
+      font-size:13px;font-weight:700;letter-spacing:.18em;
       color:rgba(180,200,240,0.55);
       font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;
     }
@@ -133,10 +135,14 @@
       background:none;border:none;cursor:pointer;
       color:rgba(190,205,240,0.60);
       font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;
-      font-size:16px;padding:7px 10px;border-radius:10px;
+      font-size:18px;padding:8px 10px;border-radius:10px;
+      display:inline-flex;align-items:center;justify-content:center;
       transition:color .15s;line-height:1;
     }
     .mob-top-btn.active{color:rgba(225,238,255,1);}
+    /* ⚙︎ 글리프는 폰트 안에서 다른 요소보다 작고 낮게 그려져(2026-08-13, 사용자 제보) 크기를
+       한 단계 더 키워 하트·KO와 시각적으로 맞춘다. */
+    #tab-settings{font-size:21px;}
   }
   #desktop-header{
     position:fixed;top:16px;left:0;right:0;
@@ -435,7 +441,9 @@
     box-sizing:border-box!important;overflow-x:hidden!important;
   }
   @media(min-width:769px){#mob-card-stack{display:none!important;}}
-  #gc-back{position:absolute;top:-2px;left:-2px;z-index:2;padding:14px 16px;}
+  /* tt-back과 같은 top:-2px를 썼었는데, 그룹 카드는 맨 위가 색상 라인이 아니라 그룹 이름 텍스트라
+     3px만큼 중심이 안 맞았음(2026-08-13, 사용자 제보 — 실측으로 확인) — 이름 텍스트 중심에 맞춤. */
+  #gc-back{position:absolute;top:1px;left:-2px;z-index:2;padding:14px 16px;}
   #yt-lightbox{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.9);z-index:67;align-items:center;justify-content:center;}
   /* 브라우즈 모드는 화면 전체를 덮는 실제 페이지형 시트라, 반투명(0.9)이면 뒤에 여전히 마운트돼있는
      카드의 제목 텍스트 등이 10%만큼 비쳐 보이는 문제가 있었음(작은 중앙 박스였던 기존 모드는 겹칠
@@ -834,16 +842,13 @@
   #tt-links{display:flex;align-items:center;gap:7px;flex-shrink:0;}
   #tt-links:not(:empty)::after{content:'·';color:rgba(120,145,195,0.4);font-size:10px;}
   #tt-links .gc-link-icon{width:14px;height:14px;}
-  .tt-family-wrap{position:relative;flex-shrink:0;}
-  #tt-family-btn{background:none;border:none;padding:2px 3px;font-size:10px;line-height:1;color:rgba(140,162,255,0.5);cursor:pointer;font-family:inherit;}
-  #tt-family-btn:hover{color:rgba(195,210,255,0.9);}
-  .tt-family-pop{display:none;position:absolute;left:0;top:calc(100% + 4px);min-width:150px;max-width:220px;
-    border-radius:10px;background:rgba(20,24,44,0.98);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
-    border:0.5px solid rgba(255,255,255,0.10);box-shadow:0 8px 24px rgba(0,0,0,0.45);z-index:6;overflow:hidden;padding:4px;}
-  .tt-family-pop.open{display:block;}
-  .tt-family-row{padding:7px 8px;border-radius:6px;font-size:11.5px;color:rgba(200,218,240,0.8);cursor:pointer;
-    transition:background .12s,color .12s;white-space:nowrap;}
-  .tt-family-row:hover{background:rgba(255,255,255,0.07);color:rgba(220,235,255,0.95);}
+  /* 가족관계 — 연결 카드 헤더 바로 아래, 콜라보 목록과 구분되는 별도 섹션(2026-08-13,
+     멤버 카드의 ⓘ 팝업에서 이동해옴). */
+  .conn-family-sec{margin-bottom:14px;}
+  .conn-family-lbl{font-size:9.5px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:rgba(126,150,204,0.52);margin-bottom:5px;}
+  .conn-family-row{padding:7px 9px;border-radius:8px;font-size:12px;color:rgba(200,218,240,0.82);cursor:pointer;
+    transition:background .12s,color .12s;}
+  .conn-family-row:hover{background:rgba(255,255,255,0.06);color:rgba(220,235,255,0.96);}
   .gc-link-icon{
     display:flex;align-items:center;justify-content:center;
     width:16px;height:16px;color:rgba(150,175,220,0.60);
@@ -1051,6 +1056,11 @@
   #vm-search{margin:8px 16px 0;padding:7px 10px;border-radius:8px;background:rgba(255,255,255,0.05);border:0.5px solid rgba(255,255,255,0.10);color:#c8daf0;font-size:11.5px;font-family:inherit;outline:none;flex-shrink:0;width:calc(100% - 32px);box-sizing:border-box;transition:border-color .15s,background .15s;}
   #vm-search::placeholder{color:rgba(150,175,215,0.38);}
   #vm-search:focus{border-color:rgba(150,185,255,0.28);background:rgba(255,255,255,0.075);}
+  /* 1차 검색 결과 안에서 한 번 더 좁혀 찾는 재검색 — 새 DB 조회 없이 이미 받아온 _vmRows를 클라이언트에서만
+     한 번 더 필터링한다(2026-08-13, 사용자 요청). */
+  #vm-search-2{margin:6px 16px 0;padding:6px 10px;border-radius:8px;background:rgba(255,255,255,0.03);border:0.5px solid rgba(255,255,255,0.08);color:#c8daf0;font-size:11px;font-family:inherit;outline:none;flex-shrink:0;width:calc(100% - 32px);box-sizing:border-box;transition:border-color .15s,background .15s;}
+  #vm-search-2::placeholder{color:rgba(150,175,215,0.32);}
+  #vm-search-2:focus{border-color:rgba(150,185,255,0.24);background:rgba(255,255,255,0.06);}
   #vm-status{font-size:11.5px;color:rgba(155,178,228,0.7);padding:5px 18px 0;min-height:16px;flex-shrink:0;}
   #vm-toolbar{display:flex;align-items:center;gap:10px;padding:8px 18px;border-bottom:0.5px solid rgba(255,255,255,0.08);flex-shrink:0;}
   #vm-select-all-row{display:flex;align-items:center;gap:6px;font-size:11.5px;color:rgba(185,205,245,0.75);cursor:pointer;white-space:nowrap;}
@@ -1182,6 +1192,7 @@
   .gp-name{display:flex;align-items:center;gap:5px;font-size:12px;font-weight:600;}
   .gp-name-text{color:rgba(215,225,250,0.9);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;}
   .gp-disbanded-tag{flex-shrink:0;font-size:9px;font-weight:700;letter-spacing:.04em;color:rgba(200,150,150,0.7);background:rgba(255,100,100,0.10);border:0.5px solid rgba(255,100,100,0.22);border-radius:4px;padding:1px 4px;}
+  .gp-survival-tag{flex-shrink:0;font-size:9px;font-weight:700;letter-spacing:.04em;color:rgba(150,190,220,0.75);background:rgba(100,180,255,0.10);border:0.5px solid rgba(100,180,255,0.22);border-radius:4px;padding:1px 4px;}
   .gp-sub{font-size:10.5px;color:rgba(155,178,228,0.45);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   .gp-level-sel{display:flex;gap:3px;flex-shrink:0;}
   .gp-lvl-btn{background:rgba(255,255,255,0.05);border:0.5px solid rgba(255,255,255,0.10);border-radius:6px;padding:4px 8px;font-size:10.5px;font-weight:700;color:rgba(155,178,228,0.5);cursor:pointer;font-family:inherit;transition:background .15s,color .15s;}
@@ -1570,11 +1581,18 @@
      기본은 싱글/EP/정규만 노출, 리믹스·OST·라이브·컴필레이션 등은 "+" 눌러야 나옴(데이터는 항상 다
      들고 있음, isMain으로만 구분 — 사용자 요청). */
   .gc-discog-row{margin-top:9px;padding-top:10px;border-top:0.5px solid rgba(255,255,255,0.10);}
-  .gc-discog-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:7px;}
+  .gc-discog-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
   .gc-discog-title{font-size:9.5px;font-weight:700;letter-spacing:.16em;color:rgba(130,150,205,0.5);text-transform:uppercase;}
   .gc-discog-more-btn{background:rgba(255,255,255,0.06);border:none;border-radius:10px;padding:2px 8px;font-size:10px;font-weight:700;color:rgba(170,190,235,0.7);cursor:pointer;font-family:inherit;}
   .gc-discog-more-btn:hover{background:rgba(255,255,255,0.11);color:rgba(200,215,255,0.95);}
   .gc-discog-more-btn span{opacity:.65;margin-left:1px;}
+  /* ── Discography 종류 필터 + 정렬(2026-08-13) ─────── */
+  .gc-discog-ctrl-row{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px;}
+  .gc-discog-type-chips{display:flex;align-items:center;gap:10px;overflow-x:auto;scrollbar-width:none;flex:1;min-width:0;}
+  .gc-discog-type-chips::-webkit-scrollbar{display:none;}
+  .gc-discog-chip{flex-shrink:0;white-space:nowrap;}
+  .gc-discog-sort-btn{flex-shrink:0;background:none;border:0.5px solid rgba(255,255,255,0.10);border-radius:9px;padding:3px 8px;font-size:10px;font-weight:600;color:rgba(150,175,225,0.55);cursor:pointer;font-family:inherit;letter-spacing:.02em;transition:background .13s,color .13s,border-color .13s;}
+  .gc-discog-sort-btn:hover{background:rgba(255,255,255,0.07);color:rgba(200,215,255,0.9);border-color:rgba(255,255,255,0.18);}
   .gc-discog-strip{display:flex;gap:9px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none;cursor:grab;}
   .gc-discog-strip::-webkit-scrollbar{display:none;}
   .gc-discog-item{flex-shrink:0;width:68px;cursor:pointer;}
@@ -1882,18 +1900,20 @@
   #my-page-bio{font-size:10px;color:rgba(118,142,192,0.52);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
   #my-page-edit{background:none;border:0.5px solid rgba(140,165,220,0.20);border-radius:7px;color:rgba(138,162,218,0.52);font-size:9px;font-weight:700;letter-spacing:.10em;padding:3px 8px;cursor:pointer;font-family:inherit;transition:background .13s,color .13s,border-color .13s;flex-shrink:0;text-transform:uppercase;}
   #my-page-edit:hover{background:rgba(140,165,220,0.09);color:rgba(188,210,255,0.88);border-color:rgba(140,165,220,0.38);}
-  /* ── Activity stats (한 줄 숫자 요약) ──────────────── */
-  #pp-activity-stats{display:flex;gap:22px;padding:10px 0 12px;}
-  .pp-stat-item{display:flex;align-items:center;gap:5px;}
-  .pp-stat-count{font-size:11px;font-weight:600;letter-spacing:-.01em;color:rgba(220,230,255,0.62);}
-  .pp-stat-icon{width:14px;height:14px;display:block;flex-shrink:0;fill:currentColor;}
-  .pp-stat-icon.heart{color:rgba(255,92,125,0.88);}
-  .pp-stat-icon.bm{color:rgba(90,170,255,0.88);}
+  /* ── 저널 섹션 리스트 공용 캡드-스크롤 ─────────────────
+     길어지는 목록(FAVORITES/COLLECTIONS/ANNIVERSARIES/CONCERTS)이 저널 사이드바 전체를
+     끝없이 늘리지 않도록 섹션마다 자체 최대높이+내부 스크롤을 준다(2026-08-13, 사용자 요청).
+     LIKES는 무제한으로 쌓일 수 있어 이 패턴 대신 미리보기+전체보기 오버레이를 쓴다(아래 별도 규칙). */
+  #fav-list,#collection-list,#anniv-list,#concert-log-list{max-height:220px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:rgba(140,165,220,0.18) transparent;}
+  #fav-list::-webkit-scrollbar,#collection-list::-webkit-scrollbar,#anniv-list::-webkit-scrollbar,#concert-log-list::-webkit-scrollbar{width:3px;}
+  #fav-list::-webkit-scrollbar-thumb,#collection-list::-webkit-scrollbar-thumb,#anniv-list::-webkit-scrollbar-thumb,#concert-log-list::-webkit-scrollbar-thumb{background:rgba(140,165,220,0.22);border-radius:2px;}
   /* ── Scrap (likes) ───────────────────────────────── */
   #scrap-section{margin-top:14px;padding-top:12px;border-top:0.5px solid rgba(255,255,255,0.07);}
   #scrap-list{max-height:220px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:rgba(140,165,220,0.18) transparent;}
   #scrap-list::-webkit-scrollbar{width:3px;}
   #scrap-list::-webkit-scrollbar-thumb{background:rgba(140,165,220,0.22);border-radius:2px;}
+  #scrap-viewall-btn{margin-top:6px;background:none;border:0.5px dashed rgba(140,165,220,0.18);border-radius:8px;color:rgba(140,165,220,0.42);font-size:11.5px;font-weight:600;padding:7px 10px;cursor:pointer;font-family:inherit;width:100%;text-align:left;transition:border-color .13s,color .13s;letter-spacing:.02em;}
+  #scrap-viewall-btn:hover{border-color:rgba(140,165,220,0.38);color:rgba(180,200,240,0.78);}
   /* ── Collections ──────────────────────────────────── */
   #collection-section{margin-top:14px;padding-top:12px;border-top:0.5px solid rgba(255,255,255,0.07);}
   .col-row{display:flex;align-items:center;gap:10px;padding:6px 4px;cursor:pointer;border-radius:8px;transition:background .12s;}

@@ -1282,11 +1282,15 @@ let _vmChTab='official'; // 'official' | 'ext'
 let _vmRows=[];
 let _vmSearchGen=0;
 let _vmSearchTimer=null;
+let _vmSearch2=''; // 1차 검색 결과(_vmRows) 안에서 한 번 더 좁히는 재검색어 — 새 조회 없이 클라이언트 필터만
+let _vmSearch2Timer=null;
 
 function _vmOpen(tab){
   _vmTab=tab||'all';
   document.querySelectorAll('.vm-tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===_vmTab));
   document.getElementById('vm-search').value='';
+  document.getElementById('vm-search-2').value='';
+  _vmSearch2='';
   document.getElementById('vm-overlay').classList.add('open');
   _vmApplyTab();
 }
@@ -1296,6 +1300,7 @@ function _vmApplyTab(){
   document.getElementById('vm-ch-inner').style.display=isCh?'flex':'none';
   // 검수 탭은 검색 불필요(그룹 필터로만 동작)
   document.getElementById('vm-search').style.display=(isCh||_vmTab==='ss')?'none':'';
+  document.getElementById('vm-search-2').style.display=(isCh||_vmTab==='ss')?'none':'';
   document.getElementById('vm-toolbar').style.display='none';
   document.getElementById('vm-status').textContent='';
   if(isCh){
@@ -1310,6 +1315,9 @@ async function _vmLoad(searchTerm){
   if(!sb)return;
   const tab=_vmTab;
   const myGen=++_vmSearchGen;
+  // 1차 검색어(전체 검색창)가 새로 바뀌면 이전 결과 기준으로 좁혀뒀던 재검색어는 더 이상 의미가 없으므로 초기화
+  _vmSearch2='';
+  const search2El=document.getElementById('vm-search-2');if(search2El)search2El.value='';
   const statusEl=document.getElementById('vm-status');
   const listEl=document.getElementById('vm-list');
   const toolbarEl=document.getElementById('vm-toolbar');
@@ -1373,14 +1381,25 @@ async function _vmLoad(searchTerm){
     statusEl.textContent='오류: '+e.message;
   }
 }
+function _vmSearch2Rows(){
+  if(!_vmSearch2)return _vmRows;
+  const t=_vmSearch2.toLowerCase();
+  return _vmRows.filter(v=>(v.title||'').toLowerCase().includes(t)||(v.group_ko||'').toLowerCase().includes(t));
+}
 function _vmRenderVideoList(){
   const listEl=document.getElementById('vm-list');
   const toolbarEl=document.getElementById('vm-toolbar');
   const tab=_vmTab;
   listEl.innerHTML='';
+  const rows=_vmSearch2Rows();
   if(!_vmRows.length){
     const emptyMsg=tab==='all'?'검색 결과가 없어요':tab==='nomem'?'무관 처리된 영상이 없어요':'숨김 처리된 영상이 없어요';
     listEl.innerHTML=`<div style="padding:24px;text-align:center;color:rgba(155,178,228,0.45);font-size:12px;">${emptyMsg}</div>`;
+    toolbarEl.style.display='none';
+    return;
+  }
+  if(!rows.length){
+    listEl.innerHTML=`<div style="padding:24px;text-align:center;color:rgba(155,178,228,0.45);font-size:12px;">재검색 결과가 없어요</div>`;
     toolbarEl.style.display='none';
     return;
   }
@@ -1395,7 +1414,7 @@ function _vmRenderVideoList(){
   }else{
     toolbarEl.style.display='none';
   }
-  _vmRows.forEach(v=>{
+  rows.forEach(v=>{
     const item=document.createElement('div');item.className='vm-item';item.dataset.vidId=v.id;
     if(showCheckbox){
       const cb=document.createElement('input');cb.type='checkbox';cb.style.flexShrink='0';
@@ -1466,7 +1485,7 @@ async function _vmSetFlag(v,newFlag,btn,item){
   }
 }
 function _vmUpdateCount(){
-  const total=_vmRows.length;
+  const total=document.querySelectorAll('#vm-list .vm-item').length;
   const checked=document.querySelectorAll('#vm-list .vm-item input[type=checkbox]:checked').length;
   document.getElementById('vm-count').textContent=`${checked}/${total}개 선택됨`;
   const applyBtn=document.getElementById('vm-apply-btn');
@@ -1620,6 +1639,7 @@ function _gpRenderList(term){
     const nameText=document.createElement('span');nameText.className='gp-name-text';nameText.textContent=r.ko;
     name.appendChild(nameText);
     if(_isGroupDisbanded(r.ko)){const tag=document.createElement('span');tag.className='gp-disbanded-tag';tag.textContent='해체';name.appendChild(tag);}
+    if(r.info.projectRing){const tag=document.createElement('span');tag.className='gp-survival-tag';tag.textContent='서바이벌';name.appendChild(tag);}
     info.appendChild(name);
     const subParts=[r.info.en,r.info.co].filter(Boolean);
     if(subParts.length){const sub=document.createElement('div');sub.className='gp-sub';sub.textContent=subParts.join(' · ');info.appendChild(sub);}
@@ -1690,6 +1710,12 @@ document.getElementById('vm-search')?.addEventListener('input',()=>{
   clearTimeout(_vmSearchTimer);
   const val=document.getElementById('vm-search').value;
   _vmSearchTimer=setTimeout(()=>_vmLoad(val),300);
+});
+// 재검색은 새 조회 없이 이미 받아온 _vmRows를 그대로 다시 필터링만 하므로 디바운스를 짧게 둬도 부담 없음
+document.getElementById('vm-search-2')?.addEventListener('input',()=>{
+  clearTimeout(_vmSearch2Timer);
+  const val=document.getElementById('vm-search-2').value;
+  _vmSearch2Timer=setTimeout(()=>{_vmSearch2=val.trim();_vmRenderVideoList();},120);
 });
 document.getElementById('vm-select-all')?.addEventListener('change',e=>{
   document.querySelectorAll('#vm-list .vm-item input[type=checkbox]').forEach(cb=>{cb.checked=e.target.checked;});

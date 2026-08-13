@@ -13656,7 +13656,14 @@
     "links": {
       "instagram": "https://www.instagram.com/yena.jigumina",
       "namu": "https://namu.wiki/w/최예나"
-    }
+    },
+    "family": [
+      {
+        "rel": "오빠",
+        "name": "최성민",
+        "group": "스피드"
+      }
+    ]
   },
   {
     "name": {
@@ -14200,32 +14207,6 @@
     "links": {
       "instagram": "https://www.instagram.com/gooreumseng",
       "namu": "https://namu.wiki/w/하성운"
-    }
-  },
-  {
-    "name": {
-      "ko": "황민현",
-      "en": "Minhyun"
-    },
-    "group": {
-      "ko": "워너원",
-      "en": "Wanna One"
-    },
-    "co": "플레디스",
-    "active": true,
-    "color": [
-      214,
-      188,
-      145
-    ],
-    "bday": "1995.08.09",
-    "nat": {
-      "ko": "한국",
-      "en": "KR"
-    },
-    "links": {
-      "instagram": "https://www.instagram.com/optimushwang",
-      "namu": "https://namu.wiki/w/황민현"
     }
   },
   {
@@ -31385,7 +31366,17 @@
     "links": {
       "namu": "https://namu.wiki/w/%EB%AF%BC%ED%98%84(%EB%89%B4%EC%9D%B4%EC%8A%A4%ED%8A%B8)",
       "instagram": "https://www.instagram.com/optimushwang"
-    }
+    },
+    "groups": [
+      {
+        "ko": "뉴이스트",
+        "en": "NU'EST"
+      },
+      {
+        "ko": "워너원",
+        "en": "Wanna One"
+      }
+    ]
   },
   {
     "name": {
@@ -34205,6 +34196,13 @@
         "trackCount": 1,
         "titleTrack": "",
         "tracks": []
+      }
+    ],
+    "family": [
+      {
+        "rel": "형",
+        "name": "우태운",
+        "group": "스피드"
       }
     ]
   },
@@ -38443,6 +38441,9 @@
     "nat": {
       "ko": "한국",
       "en": "KR"
+    },
+    "links": {
+      "instagram": "https://www.instagram.com/ACHAHAKYEON"
     }
   },
   {
@@ -38465,6 +38466,9 @@
     "nat": {
       "ko": "한국",
       "en": "KR"
+    },
+    "links": {
+      "instagram": "https://www.instagram.com/leo_jungtw"
     }
   },
   {
@@ -38487,6 +38491,9 @@
     "nat": {
       "ko": "한국",
       "en": "KR"
+    },
+    "links": {
+      "instagram": "https://www.instagram.com/keken_0406"
     }
   },
   {
@@ -38509,6 +38516,9 @@
     "nat": {
       "ko": "한국",
       "en": "KR"
+    },
+    "links": {
+      "instagram": "https://www.instagram.com/hsh0705"
     }
   },
   {
@@ -38532,7 +38542,10 @@
       "ko": "한국",
       "en": "KR"
     },
-    "left": "2020.08.07"
+    "left": "2020.08.07",
+    "links": {
+      "instagram": "https://www.instagram.com/beencantstop"
+    }
   },
   {
     "name": {
@@ -38555,7 +38568,10 @@
       "ko": "한국",
       "en": "KR"
     },
-    "left": "2023.04.11"
+    "left": "2023.04.11",
+    "links": {
+      "instagram": "https://www.instagram.com/ravithecrackkidz"
+    }
   },
   {
     "name": {
@@ -50549,7 +50565,14 @@
     ],
     "links": {
       "instagram": "https://www.instagram.com/bkgo123"
-    }
+    },
+    "family": [
+      {
+        "rel": "남동생",
+        "name": "지코",
+        "group": "블락비"
+      }
+    ]
   },
   {
     "name": {
@@ -50754,7 +50777,14 @@
     ],
     "links": {
       "instagram": "https://www.instagram.com/from_mean"
-    }
+    },
+    "family": [
+      {
+        "rel": "여동생",
+        "name": "최예나",
+        "group": "아이즈원"
+      }
+    ]
   },
   {
     "name": {

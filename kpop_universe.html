@@ -66,12 +66,6 @@
       <button id="my-page-edit">편집</button>
     </div>
     <div id="my-page-bias"></div>
-    <div id="pp-activity-stats">
-      <span class="pp-stat-item">
-        <svg class="pp-stat-icon heart" viewBox="0 0 24 24"><path d="M12 21L10.55 19.7C5.4 15.1 2 12.1 2 8.5 2 5.4 4.4 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.6 3 22 5.4 22 8.5c0 3.6-3.4 6.6-8.55 11.2L12 21z"/></svg>
-        <span class="pp-stat-count" id="pp-stat-likes">0</span>
-      </span>
-    </div>
     <div id="fav-section">
       <div class="fav-hd"><span class="fav-hd-lbl">FAVORITES</span><button id="fav-mode-btn" class="sp-tog">Highlight</button></div>
       <div id="fav-list"><div class="fav-empty">즐겨찾기가 없어요</div></div>
@@ -84,6 +78,7 @@
     <div id="scrap-section">
       <div class="fav-hd"><span class="fav-hd-lbl">LIKES</span></div>
       <div id="scrap-list"><div class="fav-empty">스크랩한 영상이 없어요</div></div>
+      <button id="scrap-viewall-btn" style="display:none">전체보기</button>
     </div>
     <div id="anniv-section">
       <div class="fav-hd"><span class="fav-hd-lbl">ANNIVERSARIES</span></div>
@@ -133,7 +128,7 @@
 </div>
 <div id="fav-hint-callout">Who's Your Bias?<span id="fhc-arrow"></span></div>
 <div id="tt"><div id="tt-bar"></div><button id="tt-back" class="conn-back-btn" style="display:none" aria-label="이전 멤버로 돌아가기">‹</button><span id="ttx" role="button" tabindex="0" aria-label="멤버 카드 닫기">×</span><div id="tt-pic-info-row"><a id="tt-insta-pic-wrap" style="display:none" target="_blank" rel="noopener noreferrer" aria-label="Instagram 프로필"><span class="tt-insta-ring"><img id="tt-insta-pic" alt="프로필"></span></a>
-<div id="tt-info-side"><div id="tt-name-row"><div class="tn" id="tn"></div><button id="tt-fav" class="fav-btn" aria-label="즐겨찾기"><svg viewBox="0 0 24 24"><path d="M12 21L10.55 19.7C5.4 15.1 2 12.1 2 8.5 2 5.4 4.4 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.6 3 22 5.4 22 8.5c0 3.6-3.4 6.6-8.55 11.2L12 21z"/></svg></button><button id="tt-share" class="share-btn" aria-label="공유"><svg viewBox="0 0 24 24"><path d="M12 15V4M12 4l-3.5 3.5M12 4l3.5 3.5"/><path d="M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"/></svg></button></div><div id="tg-row"><div id="tt-links"></div><div class="tg" id="tg"></div><span id="tt-family-wrap" class="tt-family-wrap" style="display:none"><button id="tt-family-btn" type="button" aria-label="가족 관계">ⓘ</button><div id="tt-family-pop" class="tt-family-pop"></div></span><button id="tt-conn-btn" class="tt-conn-btn" style="display:none">연결</button></div><div class="tco hscroll-drag" id="tco"></div></div></div><div id="tt-info-grid" style="display:none"><div class="row"><span class="lbl" data-i18n="gcDebut">데뷔</span><span class="val" id="tt-debut"></span></div><div class="row" id="tt-fandom-row" style="display:none"><span class="lbl" data-i18n="gcFandom">팬덤</span><span class="val" id="tt-fandom"></span></div></div><div id="tt-status-line" class="gc-status-line"></div><div class="tm" id="tm"></div><div id="tt-nav"><button class="tt-nav-btn" id="tt-prev" aria-label="이전 멤버"><span class="nav-arr">‹</span><span id="tt-prev-name" class="nav-name"></span></button><span id="tt-counter"></span><button class="tt-nav-btn" id="tt-next" aria-label="다음 멤버"><span id="tt-next-name" class="nav-name"></span><span class="nav-arr">›</span></button></div><div id="tt-concert-row" class="concert-row"></div><div id="tt-collection-row" class="gc-collection-row" style="display:none"><div class="gc-collection-hd">Collections</div><div class="gc-collection-list"></div></div><div id="tv"></div></div>
+<div id="tt-info-side"><div id="tt-name-row"><div class="tn" id="tn"></div><button id="tt-fav" class="fav-btn" aria-label="즐겨찾기"><svg viewBox="0 0 24 24"><path d="M12 21L10.55 19.7C5.4 15.1 2 12.1 2 8.5 2 5.4 4.4 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.6 3 22 5.4 22 8.5c0 3.6-3.4 6.6-8.55 11.2L12 21z"/></svg></button><button id="tt-share" class="share-btn" aria-label="공유"><svg viewBox="0 0 24 24"><path d="M12 15V4M12 4l-3.5 3.5M12 4l3.5 3.5"/><path d="M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"/></svg></button></div><div id="tg-row"><div id="tt-links"></div><div class="tg" id="tg"></div><button id="tt-conn-btn" class="tt-conn-btn" style="display:none">연결</button></div><div class="tco hscroll-drag" id="tco"></div></div></div><div id="tt-info-grid" style="display:none"><div class="row"><span class="lbl" data-i18n="gcDebut">데뷔</span><span class="val" id="tt-debut"></span></div><div class="row" id="tt-fandom-row" style="display:none"><span class="lbl" data-i18n="gcFandom">팬덤</span><span class="val" id="tt-fandom"></span></div></div><div id="tt-status-line" class="gc-status-line"></div><div class="tm" id="tm"></div><div id="tt-nav"><button class="tt-nav-btn" id="tt-prev" aria-label="이전 멤버"><span class="nav-arr">‹</span><span id="tt-prev-name" class="nav-name"></span></button><span id="tt-counter"></span><button class="tt-nav-btn" id="tt-next" aria-label="다음 멤버"><span id="tt-next-name" class="nav-name"></span><span class="nav-arr">›</span></button></div><div id="tt-concert-row" class="concert-row"></div><div id="tt-collection-row" class="gc-collection-row" style="display:none"><div class="gc-collection-hd">Collections</div><div class="gc-collection-list"></div></div><div id="tv"></div></div>
 <div id="gc">
   <div id="gc-bar"></div>
   <div id="gc-inner">
@@ -157,6 +152,10 @@
       <div class="gc-discog-hd">
         <span class="gc-discog-title">Discography</span>
         <button id="gc-discog-more-btn" class="gc-discog-more-btn" style="display:none" type="button">+<span id="gc-discog-more-cnt"></span></button>
+      </div>
+      <div id="gc-discog-ctrl-row" class="gc-discog-ctrl-row" style="display:none">
+        <div id="gc-discog-type-chips" class="gc-discog-type-chips"></div>
+        <button id="gc-discog-sort-btn" class="gc-discog-sort-btn" type="button" aria-label="정렬 방향"></button>
       </div>
       <div id="gc-discog-strip" class="gc-discog-strip hscroll-drag"></div>
     </div>
@@ -291,6 +290,7 @@
       <button class="vm-tab" data-tab="ss">검수</button>
     </div>
     <input type="text" id="vm-search" placeholder="제목·그룹 검색…" autocomplete="off" spellcheck="false">
+    <input type="text" id="vm-search-2" placeholder="검색 결과 내 재검색…" autocomplete="off" spellcheck="false" style="display:none">
     <div id="vm-status"></div>
     <div id="vm-toolbar" style="display:none">
       <label id="vm-select-all-row"><input type="checkbox" id="vm-select-all">전체 선택</label>
@@ -501,7 +501,7 @@
 <div id="mob-top-bar">
   <span id="mob-top-title">K-POP UNIVERSE</span>
   <div id="mob-top-right">
-    <button class="mob-top-btn" id="mob-fav-btn" aria-label="즐겨찾기 하이라이트"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 21C12 21 4 15.5 4 9.5a4.5 4.5 0 0 1 8-2.8A4.5 4.5 0 0 1 20 9.5C20 15.5 12 21 12 21z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg></button>
+    <button class="mob-top-btn" id="mob-fav-btn" aria-label="즐겨찾기 하이라이트"><svg width="21" height="21" viewBox="0 0 24 24" fill="none"><path d="M12 21C12 21 4 15.5 4 9.5a4.5 4.5 0 0 1 8-2.8A4.5 4.5 0 0 1 20 9.5C20 15.5 12 21 12 21z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg></button>
     <button class="mob-top-btn" id="tab-lang" aria-label="언어 전환">KO</button>
     <button class="mob-top-btn" id="tab-settings" aria-label="설정 열기">⚙︎</button>
   </div>
@@ -4495,8 +4495,12 @@ async function _fetchApiCollabData(anchor){
 function _updateConnBtn(a){
   const connBtn=document.getElementById('tt-conn-btn');
   if(!connBtn)return;
+  // 콜라보가 하나도 없어도 가족관계 정보가 있으면 "연결" 카드가 그 유일한 진입로이므로 같이 노출한다
+  // (2026-08-13 — 가족관계를 멤버 카드에서 연결 카드로 옮기며 같이 조정).
   const hasCollab=_getCollabMembers(a).length>0;
-  if(hasCollab){
+  const hasFamily=!!(a.family&&a.family.length);
+  const showBtn=hasCollab||hasFamily;
+  if(showBtn){
     const alreadyVisible=connBtn.classList.contains('conn-btn-visible');
     connBtn.style.display='';
     if(!alreadyVisible){
@@ -4506,7 +4510,7 @@ function _updateConnBtn(a){
     connBtn.classList.remove('conn-btn-visible');
     connBtn.style.display='none';
   }
-  connBtn.onclick=hasCollab?e=>{
+  connBtn.onclick=showBtn?e=>{
     e.stopPropagation();
     if(connPanelEl.classList.contains('open')&&_connAnchor===a){closeConnCard();}
     else{openConnCard(a);}
@@ -4725,6 +4729,29 @@ function _buildConnContent(container){
   });
   hd.appendChild(shareBtn);
   container.appendChild(hd);
+
+  // 가족관계 — 콜라보 여부와 무관한 개인적 관계라 콜라보 목록과는 별도 섹션으로, 헤더 바로 아래에 둔다.
+  // 예전엔 멤버 카드에 별도 ⓘ 버튼+팝업으로 있었는데, "연결"도 결국 이 아티스트와 다른 아티스트 사이의
+  // 관계를 보여주는 자리라 콜라보와 성격이 같다고 보고 여기로 옮김(2026-08-13, 사용자 요청).
+  if(_connAnchor.family&&_connAnchor.family.length){
+    const famSec=document.createElement('div');famSec.className='conn-family-sec';
+    const famLbl=document.createElement('div');famLbl.className='conn-family-lbl';famLbl.textContent='가족';
+    famSec.appendChild(famLbl);
+    _connAnchor.family.forEach(f=>{
+      const row=document.createElement('div');row.className='conn-family-row';
+      row.textContent=`${f.rel} ${f.name}`+(f.group?`(${f.group})`:'');
+      row.addEventListener('click',e=>{
+        e.stopPropagation();
+        const target=ARTISTS.find(x=>x.name.ko===f.name&&(!f.group||_artistGroups(x).some(g=>g.ko===f.group)));
+        if(!target)return;
+        if(target._worldPos)flyTo(target._worldPos);
+        if(isMob()){showT(target,window.innerWidth/2,window.innerHeight*0.4,false,false,false);openMobSheet(document.getElementById('tt'));}
+        else showT(target,window.innerWidth/2,window.innerHeight/2);
+      });
+      famSec.appendChild(row);
+    });
+    container.appendChild(famSec);
+  }
 
   // 멤버 목록 분류: 같은 그룹(이름만) vs 타 그룹("이름(그룹)")
   const allCollabNames=_getCollabMembers(_connAnchor);
@@ -5682,14 +5709,6 @@ document.getElementById('tt-back').addEventListener('click',e=>{
   if(isMob()&&connSheetEl.classList.contains('bs-open')&&!_memberNavStack.length){closeConnCard();return;}
   if(isMob()&&_cardStack.length>1){_popMobCard();}else{_ttGoBack();}
 });
-document.getElementById('tt-family-btn')?.addEventListener('click',e=>{
-  e.stopPropagation();
-  document.getElementById('tt-family-pop')?.classList.toggle('open');
-});
-document.addEventListener('click',e=>{
-  const wrap=document.getElementById('tt-family-wrap');
-  if(wrap&&!wrap.contains(e.target))document.getElementById('tt-family-pop')?.classList.remove('open');
-});
 document.getElementById('gc-back').addEventListener('click',e=>{
   e.stopPropagation();
   if(isMob()&&connSheetEl.classList.contains('bs-open')){closeConnCard();return;}
@@ -5799,33 +5818,8 @@ function showT(a,cx,cy,keepNavStack,urlMode,pushMobNav,noFly){
     usp.addEventListener('click',_onUnitTagClick(usp,unitName));
     tgEl.appendChild(usp);
   });
-  // 가족 관계 — 있어도 그룹 태그 줄에 노골적으로 안 섞이게, 존재할 때만 작은 ⓘ 아이콘으로 표시하고
-  // 눌러야 각주처럼 살짝 팝업으로 나옴(2026-08-06, 사용자 요청). 나이/성별로 호칭을 계산하지 않고
-  // artists.json에 이미 화자 기준 호칭(오빠/언니/형/누나/동생 등)을 그대로 데이터에 넣어둔다.
-  {
-    const famWrap=document.getElementById('tt-family-wrap');
-    const famPop=document.getElementById('tt-family-pop');
-    famPop.innerHTML='';famPop.classList.remove('open');
-    if(a.family&&a.family.length){
-      famWrap.style.display='';
-      a.family.forEach(f=>{
-        const row=document.createElement('div');row.className='tt-family-row';
-        row.textContent=`${f.rel} ${f.name}`+(f.group?`(${f.group})`:'');
-        row.addEventListener('click',e=>{
-          e.stopPropagation();
-          famPop.classList.remove('open');
-          const target=ARTISTS.find(x=>x.name.ko===f.name&&(!f.group||_artistGroups(x).some(g=>g.ko===f.group)));
-          if(!target)return;
-          if(target._worldPos)flyTo(target._worldPos);
-          if(isMob()){showT(target,window.innerWidth/2,window.innerHeight*0.4,false,false,false);openMobSheet(document.getElementById('tt'));}
-          else showT(target,window.innerWidth/2,window.innerHeight/2);
-        });
-        famPop.appendChild(row);
-      });
-    }else{
-      famWrap.style.display='none';
-    }
-  }
+  // 가족 관계는 이제 멤버 카드가 아니라 "연결" 카드 헤더 밑에 표시됨(_buildConnContent 참고,
+  // 2026-08-13 — 콜라보 여부와 무관하게 "이 아티스트와 다른 아티스트의 관계"라는 성격이 같아서 이동).
   const tcoEl=document.getElementById('tco');tcoEl.innerHTML='';
   // 아이유·이영지처럼 GROUPS에 실제 그룹이 없는 솔로 아티스트는 그룹 카드가 아예 없어서 데뷔일을 볼
   // 방법이 없었음 — 그룹 카드의 데뷔 칩과 동일한 방식(클릭 시 데뷔연도 필터)으로 여기 끼워 넣는다
@@ -6195,20 +6189,45 @@ function _renderGcMemberList(ko,cx,cy){
 // 그 순서대로 넘긴다(2026-08-11, 사용자 요청).
 let _gcDiscogList=[];
 let _gcDiscogIdx=-1;
+// 앨범 종류 필터 — groups.json의 type 문자열이 그룹마다 제각각("EP"/"미니 5집"/"정규 2집" 등)이라
+// 정확한 문자열 매칭 대신 접두어로 3개 버킷(싱글/미니(EP)/정규)에 묶는다. OST·리믹스·컴필레이션처럼
+// 세 버킷에 안 맞는 것들은 칩을 안 만들고 "전체"에서만 보이게 둔다(2026-08-13, 사용자 요청).
+function _discogBucket(type){
+  if(/^싱글/.test(type))return'싱글';
+  if(/^(미니|EP)/.test(type))return'미니(EP)';
+  if(/^정규/.test(type))return'정규';
+  return null;
+}
+const _DISCOG_BUCKETS=['싱글','미니(EP)','정규'];
 function _renderGcDiscography(ko){
   const row=document.getElementById('gc-discog-row');
   const strip=document.getElementById('gc-discog-strip');
   const moreBtn=document.getElementById('gc-discog-more-btn');
   const moreCntEl=document.getElementById('gc-discog-more-cnt');
+  const ctrlRow=document.getElementById('gc-discog-ctrl-row');
+  const chipsEl=document.getElementById('gc-discog-type-chips');
+  const sortBtn=document.getElementById('gc-discog-sort-btn');
   const albums=(GROUPS[ko]||{}).discography;
   if(!albums||!albums.length){row.style.display='none';return;}
   row.style.display='';
   const mainAlbums=albums.filter(a=>a.isMain);
   const extraAlbums=albums.filter(a=>!a.isMain);
   let showingAll=false;
+  let typeFilter='all';
+  let asc=true; // 기존 저장 순서(오래된 → 최신)를 기본값으로 유지
+  function sortedList(list){
+    return[...list].sort((a,b)=>{
+      const da=new Date(a.releaseDate.replace(/\./g,'-')),db=new Date(b.releaseDate.replace(/\./g,'-'));
+      return asc?da-db:db-da;
+    });
+  }
+  function currentList(){
+    const base=typeFilter==='all'?(showingAll?albums:mainAlbums):albums.filter(a=>_discogBucket(a.type)===typeFilter);
+    return sortedList(base);
+  }
   function renderItems(){
     strip.innerHTML='';
-    const list=showingAll?albums:mainAlbums;
+    const list=currentList();
     list.forEach((a,idx)=>{
       const item=document.createElement('div');
       item.className='gc-discog-item'+(a.isMain?'':' gc-discog-extra');
@@ -6222,6 +6241,34 @@ function _renderGcDiscography(ko){
       strip.appendChild(item);
     });
     _enableDragScroll(strip);
+  }
+  sortBtn.textContent=asc?'오래된순':'최신순';
+  sortBtn.onclick=e=>{
+    e.stopPropagation();
+    asc=!asc;
+    sortBtn.textContent=asc?'오래된순':'최신순';
+    renderItems();
+  };
+  const presentBuckets=_DISCOG_BUCKETS.filter(b=>albums.some(a=>_discogBucket(a.type)===b));
+  if(presentBuckets.length>1){
+    ctrlRow.style.display='';
+    chipsEl.innerHTML='';
+    ['전체',...presentBuckets].forEach(label=>{
+      const val=label==='전체'?'all':label;
+      const chip=document.createElement('button');
+      chip.type='button';chip.className='tag-chip gc-discog-chip'+(val===typeFilter?' active':'');
+      chip.textContent=label;
+      chip.addEventListener('click',e=>{
+        e.stopPropagation();
+        typeFilter=val;
+        chipsEl.querySelectorAll('.gc-discog-chip').forEach(c=>c.classList.toggle('active',c===chip));
+        moreBtn.style.display=(typeFilter==='all'&&extraAlbums.length)?'':'none';
+        renderItems();
+      });
+      chipsEl.appendChild(chip);
+    });
+  }else{
+    ctrlRow.style.display='none';
   }
   renderItems();
   if(extraAlbums.length){
@@ -6513,12 +6560,12 @@ function _applyTagFocus(){
 }
 
 function _hideMyPageSections(){
-  ['my-page-header','my-page-bias','pp-activity-stats','fav-section','collection-section','scrap-section','anniv-section','concert-section'].forEach(id=>{
+  ['my-page-header','my-page-bias','fav-section','collection-section','scrap-section','anniv-section','concert-section'].forEach(id=>{
     const el=document.getElementById(id);if(el)el.style.display='none';
   });
 }
 function _showMyPageSections(){
-  ['my-page-header','my-page-bias','pp-activity-stats','fav-section','collection-section','scrap-section','anniv-section','concert-section'].forEach(id=>{
+  ['my-page-header','my-page-bias','fav-section','collection-section','scrap-section','anniv-section','concert-section'].forEach(id=>{
     const el=document.getElementById(id);if(el)el.style.display='';
   });
 }
@@ -7927,7 +7974,6 @@ function _renderColPickerList(){
   });
 }
 function renderCollectionSection(){
-  _updatePpStats();
   const el=document.getElementById('collection-list');if(!el)return;
   if(!collections.length){el.innerHTML='<div class="fav-empty">컬렉션이 없어요</div>';return;}
   el.innerHTML='';
@@ -7980,16 +8026,21 @@ function renderCollectionSection(){
     _saveCollections();
   });
 }
-function _updatePpStats(){
-  const lEl=document.getElementById('pp-stat-likes');
-  if(lEl)lEl.textContent=scraps.length;
-}
+// LIKES는 다른 저널 섹션과 달리 무제한으로 쌓일 수 있어(다른 섹션처럼 캡드-스크롤 박스에 전체를
+// 다 넣으면 나중에 수백 개를 작은 박스 안에서 스크롤해야 함) — 미리보기 몇 개만 보여주고
+// "전체보기"를 누르면 컬렉션 상세와 동일한 재생목록 오버레이(_openFeedListOverlay, 24개씩
+// 지연 렌더링돼 수백 개도 안전함)로 전체를 연다(2026-08-13, 사용자 요청).
+const SCRAP_PREVIEW_N=6;
 function renderScrapList(){
-  _updatePpStats();
   const el=document.getElementById('scrap-list');if(!el)return;
-  if(!scraps.length){el.innerHTML='<div class="fav-empty">스크랩한 영상이 없어요</div>';return;}
+  const viewAllBtn=document.getElementById('scrap-viewall-btn');
+  if(!scraps.length){
+    el.innerHTML='<div class="fav-empty">스크랩한 영상이 없어요</div>';
+    if(viewAllBtn)viewAllBtn.style.display='none';
+    return;
+  }
   el.innerHTML='';
-  scraps.forEach((item,i)=>{
+  scraps.slice(0,SCRAP_PREVIEW_N).forEach((item,i)=>{
     const vid=ytId(item.u);const shorts=isShorts(item.u);
     const row=document.createElement('div');row.className='scrap-item';
     const img=document.createElement('img');
@@ -8008,7 +8059,19 @@ function renderScrapList(){
     row.addEventListener('click',()=>openLightbox(item.u,shorts,scraps,i));
     el.appendChild(row);
   });
+  if(viewAllBtn){
+    if(scraps.length>SCRAP_PREVIEW_N){
+      viewAllBtn.style.display='';
+      viewAllBtn.textContent=`전체보기 (${scraps.length})`;
+    }else{
+      viewAllBtn.style.display='none';
+    }
+  }
 }
+document.getElementById('scrap-viewall-btn')?.addEventListener('click',()=>{
+  const songs=scraps.map(item=>({t:item.t,u:item.u,groupKo:item.groupKo,memberKos:item.memberKo?[item.memberKo]:undefined}));
+  _openFeedListOverlay('LIKES',`${scraps.length}개 영상`,songs);
+});
 
 function _connSelKey(sel){return[...sel].sort().join(',');}
 
@@ -8378,6 +8441,13 @@ function _toggleFavMode(){
     _clearMyStarLines();
     _exitMyUniverseMode();
     if(focusGroupKo)setFocus(focusGroupKo,[..._extraFocusKos]);else clearFocus();
+    // 하이라이트를 끄면 별/행성은 원래 자리로 돌아가지만 카메라 줌은 그대로 남아 답답해 보이는
+    // 문제(2026-08-13, 사용자 제보) — 보던 방향은 유지한 채 살짝 뒤로 빠지게 한다.
+    const _exitDir=camera.position.clone().sub(controls.target);
+    if(_exitDir.lengthSq()>0.001){
+      const _exitDist=Math.min(_exitDir.length()*1.6,controls.maxDistance);
+      _startFly(controls.target.clone(),controls.target.clone().addScaledVector(_exitDir.normalize(),_exitDist),700);
+    }
   }
 }
 document.getElementById('mob-fav-btn').addEventListener('click',e=>{e.stopPropagation();_toggleFavMode();});
