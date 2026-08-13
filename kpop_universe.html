@@ -229,6 +229,9 @@
   <div class="sp-row">
     <button class="sp-reset" id="sp-reset" data-i18n="reset">↺ 초기화</button>
   </div>
+  <div class="sp-row">
+    <button class="sp-feedback-btn" id="sp-feedback-btn">💬 피드백 보내기</button>
+  </div>
   <div class="sp-legal-links">
     <a href="privacy.html" target="_blank" rel="noopener">개인정보처리방침</a>
     <span class="sp-legal-sep">·</span>
@@ -779,6 +782,23 @@
     <div id="generic-confirm-btns" style="margin-top:16px;">
       <button id="generic-prompt-cancel" class="uc-btn">취소</button>
       <button id="generic-prompt-save" class="uc-btn uc-btn-primary">저장</button>
+    </div>
+  </div>
+</div>
+<div id="feedback-overlay">
+  <div id="feedback-panel">
+    <div class="pp-title">피드백 보내기</div>
+    <div class="fb-cat-row">
+      <button type="button" class="fb-cat-btn active" data-cat="bug">버그 제보</button>
+      <button type="button" class="fb-cat-btn" data-cat="suggest">제안</button>
+      <button type="button" class="fb-cat-btn" data-cat="etc">기타</button>
+    </div>
+    <textarea id="feedback-text" class="pp-input" rows="5" maxlength="1000" placeholder="어떤 내용인지 편하게 적어주세요"></textarea>
+    <input id="feedback-contact" type="text" class="pp-input" style="margin-top:8px" placeholder="답장 받을 이메일(선택)" autocomplete="off">
+    <div id="feedback-err" class="pp-err" style="display:none">내용을 입력해주세요</div>
+    <div style="margin-top:16px;display:flex;gap:8px;">
+      <button id="feedback-cancel" type="button" class="uc-btn">취소</button>
+      <button id="feedback-submit" type="button" class="uc-btn uc-btn-primary">보내기</button>
     </div>
   </div>
 </div>
@@ -7303,6 +7323,65 @@ document.getElementById('sp-reset').addEventListener('click',e=>{
   document.querySelectorAll('.sp-type[data-gen]').forEach(b=>b.classList.add('active'));
   document.getElementById('sp-inactive-chk').checked=true;
   applyFilter();
+});
+
+// ── 피드백 보내기 ─────────────────────────────────
+let _fbCat='bug';
+function openFeedback(){
+  document.getElementById('feedback-text').value='';
+  document.getElementById('feedback-contact').value='';
+  document.getElementById('feedback-err').style.display='none';
+  _fbCat='bug';
+  document.querySelectorAll('.fb-cat-btn').forEach(b=>b.classList.toggle('active',b.dataset.cat===_fbCat));
+  const submitBtn=document.getElementById('feedback-submit');
+  submitBtn.disabled=false;submitBtn.textContent='보내기';
+  document.getElementById('feedback-overlay').classList.add('open');
+  _bringToFront(document.getElementById('feedback-overlay'));
+}
+function closeFeedback(){
+  document.getElementById('feedback-overlay').classList.remove('open');
+}
+document.getElementById('sp-feedback-btn').addEventListener('click',e=>{
+  e.stopPropagation();
+  document.getElementById('settings-panel').classList.remove('open');
+  openFeedback();
+});
+document.querySelectorAll('.fb-cat-btn').forEach(b=>{
+  b.addEventListener('click',e=>{
+    e.stopPropagation();
+    _fbCat=b.dataset.cat;
+    document.querySelectorAll('.fb-cat-btn').forEach(x=>x.classList.toggle('active',x===b));
+  });
+});
+document.getElementById('feedback-cancel').addEventListener('click',e=>{e.stopPropagation();closeFeedback();});
+document.getElementById('feedback-overlay').addEventListener('click',e=>{e.stopPropagation();if(e.target===e.currentTarget)closeFeedback();});
+document.getElementById('feedback-overlay').addEventListener('pointerdown',e=>e.stopPropagation());
+document.getElementById('feedback-submit').addEventListener('click',async e=>{
+  e.stopPropagation();
+  const msg=document.getElementById('feedback-text').value.trim();
+  const errEl=document.getElementById('feedback-err');
+  if(!msg){errEl.textContent='내용을 입력해주세요';errEl.style.display='';return;}
+  errEl.style.display='none';
+  const btn=e.currentTarget;
+  btn.disabled=true;btn.textContent='보내는 중…';
+  try{
+    const{error}=await sb.from('feedback').insert({
+      category:_fbCat,
+      message:msg,
+      contact:document.getElementById('feedback-contact').value.trim()||null,
+      user_id:window._sbSession?.user?.id||null,
+      nickname:myProfile?.nickname||null,
+      page_url:location.href,
+      user_agent:navigator.userAgent
+    });
+    if(error)throw error;
+    btn.textContent='전달됐어요!';
+    setTimeout(closeFeedback,900);
+  }catch(err){
+    errEl.textContent='전송에 실패했어요. 잠시 후 다시 시도해주세요.';
+    errEl.style.display='';
+    btn.disabled=false;btn.textContent='보내기';
+  }
 });
 
 // ── Desktop header buttons ─────────────────────────

@@ -268,6 +268,12 @@
     color:rgba(120,138,182,0.36);transition:color .15s;
   }
   .sp-reset:hover{color:rgba(170,188,232,0.68);}
+  .sp-feedback-btn{
+    width:100%;background:rgba(126,156,255,0.10);border:0.5px solid rgba(126,156,255,0.22);
+    border-radius:10px;padding:9px;font-family:inherit;font-size:11.5px;font-weight:700;
+    letter-spacing:.03em;color:rgba(195,215,255,0.85);cursor:pointer;transition:background .15s,border-color .15s,color .15s;
+  }
+  .sp-feedback-btn:hover{background:rgba(126,156,255,0.18);border-color:rgba(126,156,255,0.4);color:#fff;}
   .sp-legal-links{
     display:flex;align-items:center;justify-content:center;gap:7px;
     margin:14px 0 2px;padding-top:12px;
@@ -908,11 +914,11 @@
   }
   #gc-tv{margin-top:12px;}
   /* ── YouTube 채널 영상 섹션 ─────────────────────────── */
-  #gc-ch-vid{margin-top:9px;padding-top:12px;border-top:0.5px solid rgba(255,255,255,0.10);}
+  #gc-ch-vid{margin-top:9px;padding-top:9px;border-top:0.5px solid rgba(255,255,255,0.10);}
   #gc-ch-vid:empty{display:none;}
   /* 멤버 카드 영상 섹션(#tv) — 그룹카드(#gc-ch-vid)와 동일하게 자체 여백+구분선을 둬서, 바로 위 공연 정보
      (tt-concert-row)가 있든 없든 라이브/Shorts 필터 줄까지의 간격이 항상 일정하게 유지되도록 함. */
-  #tv{margin-top:9px;padding-top:12px;border-top:0.5px solid rgba(255,255,255,0.10);}
+  #tv{margin-top:9px;padding-top:9px;border-top:0.5px solid rgba(255,255,255,0.10);}
   #tv:empty{display:none;}
   .gc-ch-hd{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px;}
   .gc-ch-search-wrap{position:relative;margin-bottom:8px;}
@@ -931,17 +937,17 @@
   .gc-ch-sort-wrap{position:relative;flex:0 0 auto;}
   .gc-ch-sort-btn{background:none;border:none;cursor:pointer;color:rgba(155,178,228,0.46);font-size:15px;padding:4px 5px;transition:color .15s;font-family:inherit;line-height:1;}
   .gc-ch-sort-btn:hover,.gc-ch-sort-btn.active{color:#c0d6f0;}
-  .gc-ch-sort-menu{display:none;position:absolute;right:0;top:calc(100% + 4px);min-width:130px;border-radius:10px;
+  .gc-ch-sort-menu{display:none;position:absolute;right:0;top:calc(100% + 4px);min-width:114px;border-radius:18px;
     background:rgba(20,24,44,0.98);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
-    border:0.5px solid rgba(255,255,255,0.10);box-shadow:0 8px 24px rgba(0,0,0,0.45);z-index:5;overflow:hidden;padding:4px;}
+    border:0.5px solid rgba(255,255,255,0.10);box-shadow:0 8px 24px rgba(0,0,0,0.45);z-index:5;overflow:hidden;padding:5px;}
   .gc-ch-sort-menu.open{display:block;}
   .gc-ch-sort-item,.gc-ch-view-toggle{display:flex;align-items:center;gap:6px;width:100%;background:none;border:none;text-align:left;
-    color:rgba(200,218,240,0.72);font-size:11.5px;font-family:inherit;padding:7px 8px;border-radius:6px;cursor:pointer;transition:background .12s,color .12s;}
+    color:rgba(200,218,240,0.72);font-size:11px;font-family:inherit;padding:6px 9px;border-radius:12px;cursor:pointer;transition:background .12s,color .12s;}
   .gc-ch-sort-item:hover,.gc-ch-view-toggle:hover{background:rgba(255,255,255,0.07);color:rgba(220,235,255,0.95);}
   .gc-ch-sort-item.active,.gc-ch-view-toggle.active{color:#c8ddff;}
   .gc-ch-sort-item .chk,.gc-ch-view-toggle .chk{width:11px;flex:0 0 auto;font-size:10px;opacity:0;}
   .gc-ch-sort-item.active .chk,.gc-ch-view-toggle.active .chk{opacity:1;}
-  .gc-ch-sort-divider{height:0.5px;background:rgba(255,255,255,0.10);margin:4px 2px;}
+  .gc-ch-sort-divider{height:0.5px;background:rgba(255,255,255,0.10);margin:4px 5px;}
   .gc-ch-filters{display:flex;gap:4px;flex-wrap:nowrap;flex:1;overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
   .gc-ch-filters::-webkit-scrollbar{display:none;}
   .gc-ch-filter{
@@ -1906,6 +1912,15 @@
   #pp-linked-state{font-size:11px;color:rgba(130,200,160,0.85);margin-top:10px;letter-spacing:.02em;}
   #pp-linked-state .pp-linked-provider{font-weight:700;margin-right:4px;}
   #pp-linked-state .pp-linked-id{color:rgba(180,210,255,0.75);word-break:break-all;}
+  /* ── 피드백 보내기 ─────────────────────────────────── */
+  #feedback-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.52);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:70;display:none;align-items:center;justify-content:center;}
+  #feedback-overlay.open{display:flex;}
+  #feedback-panel{width:min(340px,calc(100vw - 40px));background:rgba(13,17,34,0.97);backdrop-filter:blur(40px) saturate(180%);-webkit-backdrop-filter:blur(40px) saturate(180%);border-radius:18px;box-shadow:0 16px 56px rgba(0,0,0,0.72);border:0.5px solid rgba(255,255,255,0.10);padding:20px;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
+  .fb-cat-row{display:flex;gap:6px;margin-top:14px;margin-bottom:12px;}
+  .fb-cat-btn{flex:1;padding:8px 4px;border-radius:9px;font-family:inherit;font-size:11px;font-weight:600;letter-spacing:.01em;cursor:pointer;background:rgba(255,255,255,0.045);border:0.5px solid rgba(255,255,255,0.09);color:rgba(160,182,222,0.62);transition:background .15s,border-color .15s,color .15s;}
+  .fb-cat-btn:hover{color:rgba(200,215,245,0.85);}
+  .fb-cat-btn.active{background:rgba(126,156,255,0.16);border-color:rgba(126,156,255,0.4);color:#fff;}
+  #feedback-text{resize:vertical;font-family:inherit;min-height:88px;}
   .uc-btn{flex:1;padding:10px;border-radius:10px;font-family:inherit;font-size:12px;font-weight:700;letter-spacing:.03em;cursor:pointer;position:relative;overflow:hidden;transition:background .15s,border-color .15s,color .15s,transform .2s ease-out;background:rgba(255,255,255,0.05);border:0.5px solid rgba(255,255,255,0.09);color:rgba(180,200,238,0.72);}
   .uc-btn:hover{background:rgba(255,255,255,0.09);color:#fff;}
   .uc-btn-danger{background:rgba(255,95,110,0.14);border-color:rgba(255,95,110,0.30);color:rgba(255,160,170,0.92);}
