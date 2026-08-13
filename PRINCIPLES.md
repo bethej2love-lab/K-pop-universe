@@ -87,3 +87,33 @@ Idols can do everything
 
 CSS 분리됐다는 것, 파일 구조 간단히
 
+
+
+핵심 파일
+
+kpop\_universe.html — 메인 HTML (전체 UI + JS 로직)
+
+kpop\_universe.css — 스타일시트 (HTML에서 분리됨)
+
+admin.js — 어드민 패널 JS
+
+groups.json — 그룹 데이터 (246그룹)
+
+artists.json — 멤버 데이터 (1500명+)
+
+connections.json — 연결 데이터
+
+manifest.json — PWA 설정 (홈 화면 추가 지원)
+
+sw.js — 서비스 워커 (PWA 오프라인 캐싱)
+
+og-image.png — SNS 공유 시 미리보기 이미지
+
+sitemap.xml — 검색엔진 크롤링용 사이트맵
+
+robots.txt — 검색엔진 크롤러 허용/차단 설정
+
+PRINCIPLES.md — 이 프로젝트 원칙 문서
+
+.gitattributes — Git 파일 처리 설정. 건드릴 일 없음
+

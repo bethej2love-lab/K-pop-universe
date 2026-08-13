@@ -1609,7 +1609,8 @@ function _gpRenderList(term){
   const q=(term||'').trim().toLowerCase();
   let rows=Object.keys(GROUPS).map(ko=>({ko,info:GROUPS[ko],level:_groupPriority.get(ko)||''}));
   if(q)rows=rows.filter(r=>r.ko.toLowerCase().includes(q)||(r.info.en||'').toLowerCase().includes(q));
-  if(_gpTab!=='all')rows=rows.filter(r=>_gpTab==='none'?!r.level:r.level===_gpTab);
+  if(_gpTab==='survival')rows=rows.filter(r=>!!r.info.projectRing);
+  else if(_gpTab!=='all')rows=rows.filter(r=>_gpTab==='none'?!r.level:r.level===_gpTab);
   rows.sort((a,b)=>{
     if(_gpTab==='all'){
       const oa=a.level?_GP_LEVEL_ORDER[a.level]:3,ob=b.level?_GP_LEVEL_ORDER[b.level]:3;
@@ -1621,10 +1622,11 @@ function _gpRenderList(term){
   const allKeys=Object.keys(GROUPS);
   const lvlCnt={A:0,B:0,C:0,none:0};
   allKeys.forEach(ko=>{const l=_groupPriority.get(ko)||'';if(l==='A')lvlCnt.A++;else if(l==='B')lvlCnt.B++;else if(l==='C')lvlCnt.C++;else lvlCnt.none++;});
+  const survivalCnt=allKeys.filter(ko=>GROUPS[ko].projectRing).length;
   document.querySelectorAll('.gp-tab').forEach(t=>{
     const cnt=t.querySelector('.gp-tab-cnt');if(!cnt)return;
     const l=t.dataset.lvl;
-    cnt.textContent=`(${l==='all'?allKeys.length:l==='none'?lvlCnt.none:lvlCnt[l]||0})`;
+    cnt.textContent=`(${l==='all'?allKeys.length:l==='none'?lvlCnt.none:l==='survival'?survivalCnt:lvlCnt[l]||0})`;
   });
   document.getElementById('gp-count').textContent=`총 ${allKeys.length}개 중 ${rows.length}개 표시`;
   if(!rows.length){

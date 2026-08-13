@@ -153,12 +153,13 @@
         <span class="gc-discog-title">Discography</span>
         <div class="gc-discog-hd-right">
           <div id="gc-discog-type-chips" class="seg-control seg-control-sm" style="display:none"><div class="seg-thumb"></div></div>
-          <button id="gc-discog-more-btn" class="gc-discog-more-btn" style="display:none" type="button">+<span id="gc-discog-more-cnt"></span></button>
           <div class="gc-ch-sort-wrap">
             <button id="gc-discog-sort-btn" class="gc-ch-sort-btn" type="button" title="정렬" aria-haspopup="true" aria-expanded="false">⋮</button>
             <div id="gc-discog-sort-menu" class="gc-ch-sort-menu">
               <button class="gc-ch-sort-item" data-sort="oldest"><span class="chk">✓</span><span>오래된순</span></button>
               <button class="gc-ch-sort-item" data-sort="latest"><span class="chk">✓</span><span>최신순</span></button>
+              <div id="gc-discog-more-divider" class="gc-ch-sort-divider" style="display:none"></div>
+              <button id="gc-discog-more-btn" class="gc-ch-view-toggle" type="button" style="display:none"><span class="chk">✓</span><span id="gc-discog-more-label"></span></button>
             </div>
           </div>
         </div>
@@ -227,6 +228,11 @@
   </div>
   <div class="sp-row">
     <button class="sp-reset" id="sp-reset" data-i18n="reset">↺ 초기화</button>
+  </div>
+  <div class="sp-legal-links">
+    <a href="privacy.html" target="_blank" rel="noopener">개인정보처리방침</a>
+    <span class="sp-legal-sep">·</span>
+    <a href="terms.html" target="_blank" rel="noopener">이용약관</a>
   </div>
   <div class="sp-sec" id="sp-yt-sec" style="display:none">
     <div class="sp-sec-lbl">YouTube 영상 관리</div>
@@ -394,6 +400,7 @@
       <button class="gp-tab" data-lvl="B">B<span class="gp-tab-cnt"></span></button>
       <button class="gp-tab" data-lvl="C">C<span class="gp-tab-cnt"></span></button>
       <button class="gp-tab" data-lvl="none">미지정<span class="gp-tab-cnt"></span></button>
+      <button class="gp-tab" data-lvl="survival">서바이벌<span class="gp-tab-cnt"></span></button>
     </div>
     <div id="gp-count"></div>
     <div id="gp-list"></div>
@@ -5973,8 +5980,14 @@ function showT(a,cx,cy,keepNavStack,urlMode,pushMobNav,noFly){
   const hasSongs=_memberAllSongs.length>0;
   const cardW=hasSongs?264:210;
   el.style.maxWidth=cardW+'px';
+  // 그룹 카드가 side-panel에 "있는지"는 DOM(classList/parentElement)이 아니라 _openGCko 상태값으로
+  // 판단한다 — closeSidePanel()이 open 클래스는 즉시 지우면서도 실제 DOM 정리(#gc를 body로 되돌리는
+  // 것)는 트랜지션 종료 후 260ms 지연으로 하기 때문에, 그 사이 빠르게 다른 카드를 열면 클래스만 먼저
+  // 꺼진 상태를 "그룹 카드 없음"으로 오판해서 멤버 카드가 두 번째 패널이 아니라 그룹 카드 자리를
+  // 통째로 대체해버리는 레이스 컨디션이 있었음(2026-08-13, 사용자 제보 — "빠르게 누르면 가끔 반대
+  // 방향에서 열린다"). _openGCko는 showGC/closeCards에서 항상 동기적으로 바뀌는 값이라 안전하다.
   if(isMob()){if(!_navHistoryActive)openMobSheet(el);}
-  else if(sidePanelEl.classList.contains('open')&&document.getElementById('gc').parentElement===sidePanelEl){
+  else if(_openGCko){
     openMemberPanel(el);
   }else{openSidePanel(el);}
   // nav
@@ -6128,7 +6141,7 @@ const _LINK_DEFS=[
   {key:'instagram',label:'Instagram',svg:'<svg viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="5" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="12" r="4.2" stroke="currentColor" stroke-width="1.6"/><circle cx="17.2" cy="6.8" r="1.2" fill="currentColor"/></svg>'},
   {key:'x',label:'X',svg:'<svg viewBox="-3 -3 30 30" fill="currentColor"><path d="M18.24 2.25h3.31L14.32 10.5l8.5 11.25H16.2l-4.72-6.23-5.4 6.23H2.75l7.73-8.84L2 2.25h6.06l4.26 5.63L18.24 2.25zm-1.16 17.52h1.83L7.08 4.13H5.12L17.08 19.77z"/></svg>'},
   {key:'weverse',label:'Weverse',svg:'<svg viewBox="0 0 24 24" fill="none"><path d="M12 21C6 17 2 13 2 9 2 6 4.5 4 7.5 4 9.5 4 11.2 5.8 12 7.5 12.8 5.8 14.5 4 16.5 4 19.5 4 22 6 22 9 22 13 18 17 12 21z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>'},
-  {key:'tiktok',label:'TikTok',svg:'<svg viewBox="0 0 24 24" fill="none"><path d="M9.5 17a3.5 3.5 0 1 0 3.5-3.5V5h2.5c.3 1.8 1.7 3.2 3.5 3.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>'},
+  {key:'tiktok',label:'TikTok',svg:'<svg viewBox="0 0 24 24" fill="none"><path d="M15 17a5 5 0 1 1-5-5V2h3.3c.4 3 2.8 5.4 5.7 5.8v3.2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>'},
   {key:'namu',label:'나무위키',svg:'<svg viewBox="0 0 24 24" fill="none"><path d="M12 2L6 11h4L5 19h6v3h2v-3h6l-5-8h4L12 2z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>'}
 ];
 function _renderGcLinks(links,wrapId){
@@ -6213,13 +6226,14 @@ function _discogBucket(type){
   if(/^정규/.test(type))return'정규';
   return null;
 }
-const _DISCOG_BUCKETS=['미니(EP)','싱글','정규']; // 탭 노출 순서: All-EP-Single-Album(2026-08-13, 사용자 요청)
-const _DISCOG_BUCKET_LABEL={all:'All','싱글':'Single','미니(EP)':'EP','정규':'Album'};
+const _DISCOG_BUCKETS=['정규','미니(EP)','싱글']; // 탭 노출 순서: All-정규-EP-Single(2026-08-13, 사용자 요청 — 정규만 한국어 유지)
+const _DISCOG_BUCKET_LABEL={all:'All','정규':'정규','미니(EP)':'EP','싱글':'Single'};
 function _renderGcDiscography(ko){
   const row=document.getElementById('gc-discog-row');
   const strip=document.getElementById('gc-discog-strip');
   const moreBtn=document.getElementById('gc-discog-more-btn');
-  const moreCntEl=document.getElementById('gc-discog-more-cnt');
+  const moreLabelEl=document.getElementById('gc-discog-more-label');
+  const moreDivider=document.getElementById('gc-discog-more-divider');
   const segEl=document.getElementById('gc-discog-type-chips');
   const segThumb=segEl.querySelector('.seg-thumb');
   const sortBtn=document.getElementById('gc-discog-sort-btn');
@@ -6251,7 +6265,7 @@ function _renderGcDiscography(ko){
       const img=document.createElement('img');
       img.className='gc-discog-cover';img.loading='lazy';img.decoding='async';
       img.src=a.cover;img.alt=a.title;
-      const typeEl=document.createElement('div');typeEl.className='gc-discog-type';typeEl.textContent=a.type;
+      const typeEl=document.createElement('div');typeEl.className='gc-discog-type';typeEl.textContent=a.type==='싱글'?'Single':a.type;
       const titleEl=document.createElement('div');titleEl.className='gc-discog-item-title';titleEl.textContent=a.title;
       item.appendChild(img);item.appendChild(typeEl);item.appendChild(titleEl);
       item.addEventListener('click',e=>{e.stopPropagation();_gcDiscogList=list;_openGcDiscogDetail(a,idx);});
@@ -6300,6 +6314,14 @@ function _renderGcDiscography(ko){
     segThumb.style.width=btn.offsetWidth+'px';
     segThumb.style.transform=`translateX(${btn.offsetLeft-2}px)`;
   }
+  // "기타 앨범 보기(+N)"는 원래 세그먼트 옆에 별도 +/− 버튼이었는데, 세그먼트+정렬 버튼까지 한 줄에
+  // 너무 많다는 피드백으로 정렬(⋮) 드롭다운 안 항목으로 옮김(2026-08-13) — 영상 쪽 "콘텐츠별 보기"
+  // 토글(.gc-ch-view-toggle)과 같은 자리/스타일 재사용, 전체(all) 탭일 때만 의미가 있으므로 그때만 노출.
+  function updateMoreVisibility(){
+    const show=typeFilter==='all'&&extraAlbums.length>0;
+    moreBtn.style.display=show?'':'none';
+    moreDivider.style.display=show?'':'none';
+  }
   const presentBuckets=_DISCOG_BUCKETS.filter(b=>albums.some(a=>_discogBucket(a.type)===b));
   if(presentBuckets.length>1){
     segEl.style.display='';
@@ -6314,7 +6336,7 @@ function _renderGcDiscography(ko){
         typeFilter=val;
         segBtns.forEach(b=>b.classList.toggle('active',b===btn));
         moveThumbTo(btn);
-        moreBtn.style.display=(typeFilter==='all'&&extraAlbums.length)?'':'none';
+        updateMoreVisibility();
         renderItems();
       });
       segEl.appendChild(btn);
@@ -6326,19 +6348,17 @@ function _renderGcDiscography(ko){
   }
   renderItems();
   if(extraAlbums.length){
-    moreBtn.style.display='';
-    moreCntEl.textContent=extraAlbums.length;
+    moreLabelEl.textContent=`기타 앨범 포함 (+${extraAlbums.length})`;
+    moreBtn.classList.toggle('active',showingAll);
     moreBtn.onclick=e=>{
       e.stopPropagation();
       showingAll=!showingAll;
-      moreBtn.classList.toggle('on',showingAll);
-      moreBtn.firstChild.textContent=showingAll?'−':'+';
-      moreCntEl.textContent=showingAll?'':extraAlbums.length;
+      moreBtn.classList.toggle('active',showingAll);
+      closeDiscogSortMenu();
       renderItems();
     };
-  }else{
-    moreBtn.style.display='none';
   }
+  updateMoreVisibility();
 }
 function _openGcDiscogDetail(a,idx){
   _gcDiscogIdx=idx!=null?idx:_gcDiscogList.indexOf(a);
@@ -7526,7 +7546,7 @@ renderer.domElement.addEventListener('touchend',e=>{
     });
     if(nearArtist&&nearPx<25){
       e.preventDefault();
-      const gcInSide=!isMob()&&sidePanelEl.classList.contains('open')&&document.getElementById('gc').parentElement===sidePanelEl;
+      const gcInSide=!isMob()&&!!_openGCko; // DOM classList/parentElement 대신 상태값 기준(위 showT와 동일 이유, 2026-08-13)
       if(gcInSide){closeMemberPanel(false);}else{closeCards();}
       showT(nearArtist,cx,cy);
       pulseMember(nearArtist);
@@ -7662,7 +7682,7 @@ window.addEventListener('click',e=>{
         // 투명 버블 → 멤버 우선
         const a=nearestMember();
         if(a){
-          const gcInSide=!isMob()&&sidePanelEl.classList.contains('open')&&document.getElementById('gc').parentElement===sidePanelEl;
+          const gcInSide=!isMob()&&!!_openGCko; // DOM classList/parentElement 대신 상태값 기준(위 showT와 동일 이유, 2026-08-13)
           if(gcInSide){closeMemberPanel(false);}else{closeCards();}
           const _sameGrp=a.group.ko===_curOpenGrp;
           showT(a,e.clientX,e.clientY,false,undefined,undefined,_sameGrp);if(!isMob())pulseMember(a);return;
@@ -7690,7 +7710,7 @@ window.addEventListener('click',e=>{
   // 버블 밖 → 멤버만 체크
   const a=nearestMember();
   if(a){
-    const gcInSide=!isMob()&&sidePanelEl.classList.contains('open')&&document.getElementById('gc').parentElement===sidePanelEl;
+    const gcInSide=!isMob()&&!!_openGCko; // DOM classList/parentElement 대신 상태값 기준(위 showT와 동일 이유, 2026-08-13)
     if(gcInSide){closeMemberPanel(false);}else{closeCards();}
     const _sameGrp=a.group.ko===_curOpenGrp;
     showT(a,e.clientX,e.clientY,false,undefined,undefined,_sameGrp);if(!isMob())pulseMember(a);return;

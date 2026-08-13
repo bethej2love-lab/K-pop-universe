@@ -268,6 +268,15 @@
     color:rgba(120,138,182,0.36);transition:color .15s;
   }
   .sp-reset:hover{color:rgba(170,188,232,0.68);}
+  .sp-legal-links{
+    display:flex;align-items:center;justify-content:center;gap:7px;
+    margin:14px 0 2px;padding-top:12px;
+    border-top:0.5px solid rgba(255,255,255,0.07);
+    font-size:10.5px;letter-spacing:.02em;
+  }
+  .sp-legal-links a{color:rgba(120,138,182,0.5);text-decoration:none;transition:color .15s;}
+  .sp-legal-links a:hover{color:rgba(170,188,232,0.8);}
+  .sp-legal-sep{color:rgba(120,138,182,0.3);}
   /* ── Toggle switch ───────────────────────────────── */
   .sw{display:inline-flex;align-items:center;cursor:pointer;flex-shrink:0;}
   .sw input{display:none;}
@@ -1583,13 +1592,11 @@
   .gc-discog-row{margin-top:9px;padding-top:10px;border-top:0.5px solid rgba(255,255,255,0.10);}
   .gc-discog-hd{display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:12px;}
   .gc-discog-title{flex-shrink:0;font-size:9.5px;font-weight:700;letter-spacing:.14em;color:rgba(130,150,205,0.56);text-transform:uppercase;}
-  .gc-discog-more-btn{flex-shrink:0;background:rgba(255,255,255,0.06);border:none;border-radius:10px;padding:2px 6px;font-size:9px;font-weight:700;color:rgba(170,190,235,0.7);cursor:pointer;font-family:inherit;}
-  .gc-discog-more-btn:hover{background:rgba(255,255,255,0.11);color:rgba(200,215,255,0.95);}
-  .gc-discog-more-btn span{opacity:.65;margin-left:1px;}
   /* ── Discography 종류 필터 + 정렬(2026-08-13) — 정렬 버튼은 밑의 영상 정렬(.gc-ch-sort-btn)과
-     톤을 맞추려고 그 클래스를 그대로 재사용. 종류 필터는 영상 쪽의 "따로 떨어진 알약 여러 개"가
-     아니라 "하나의 트랙 안에서 선택 배경이 슬라이드하는" 세그먼트 컨트롤을 원한다는 요청으로
-     별도 컴포넌트(.seg-control/.seg-thumb/.seg-btn)를 새로 만듦 — 이 앱에 이 형태가 없었음.
+     톤을 맞추려고 그 클래스를 그대로 재사용. "기타 앨범 보기" +/− 버튼도 원래 따로 있었는데 한 줄에
+     컨트롤이 너무 많다는 피드백으로 이 정렬 드롭다운 안 항목(.gc-ch-view-toggle 재사용)으로 옮김.
+     종류 필터는 영상 쪽의 "따로 떨어진 알약 여러 개"가 아니라 "하나의 트랙 안에서 선택 배경이
+     슬라이드하는" 세그먼트 컨트롤을 원한다는 요청으로 별도 컴포넌트를 새로 만듦 — 이 앱에 이 형태가 없었음.
      처음엔 Discography 제목 밑에 별도 줄로 뒀는데, "옆으로 붙여서 한 줄에 다 넣어달라"는 요청으로
      제목과 같은 줄(.gc-discog-hd 안)로 옮기고 폭/높이를 확 줄인 축소판(.seg-control-sm)을 씀. */
   .gc-discog-hd-right{display:flex;align-items:center;justify-content:flex-end;gap:5px;min-width:0;}
