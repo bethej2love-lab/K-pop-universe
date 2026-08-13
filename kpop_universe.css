@@ -1581,17 +1581,23 @@
      기본은 싱글/EP/정규만 노출, 리믹스·OST·라이브·컴필레이션 등은 "+" 눌러야 나옴(데이터는 항상 다
      들고 있음, isMain으로만 구분 — 사용자 요청). */
   .gc-discog-row{margin-top:9px;padding-top:10px;border-top:0.5px solid rgba(255,255,255,0.10);}
-  .gc-discog-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
-  .gc-discog-title{font-size:9.5px;font-weight:700;letter-spacing:.16em;color:rgba(130,150,205,0.56);text-transform:uppercase;}
-  .gc-discog-more-btn{background:rgba(255,255,255,0.06);border:none;border-radius:10px;padding:2px 8px;font-size:10px;font-weight:700;color:rgba(170,190,235,0.7);cursor:pointer;font-family:inherit;}
+  .gc-discog-hd{display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:12px;}
+  .gc-discog-title{flex-shrink:0;font-size:9.5px;font-weight:700;letter-spacing:.14em;color:rgba(130,150,205,0.56);text-transform:uppercase;}
+  .gc-discog-more-btn{flex-shrink:0;background:rgba(255,255,255,0.06);border:none;border-radius:10px;padding:2px 6px;font-size:9px;font-weight:700;color:rgba(170,190,235,0.7);cursor:pointer;font-family:inherit;}
   .gc-discog-more-btn:hover{background:rgba(255,255,255,0.11);color:rgba(200,215,255,0.95);}
   .gc-discog-more-btn span{opacity:.65;margin-left:1px;}
   /* ── Discography 종류 필터 + 정렬(2026-08-13) — 정렬 버튼은 밑의 영상 정렬(.gc-ch-sort-btn)과
      톤을 맞추려고 그 클래스를 그대로 재사용. 종류 필터는 영상 쪽의 "따로 떨어진 알약 여러 개"가
      아니라 "하나의 트랙 안에서 선택 배경이 슬라이드하는" 세그먼트 컨트롤을 원한다는 요청으로
-     별도 컴포넌트(.seg-control/.seg-thumb/.seg-btn)를 새로 만듦 — 이 앱에 이 형태가 없었음. */
-  .gc-discog-ctrl-row{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px;}
+     별도 컴포넌트(.seg-control/.seg-thumb/.seg-btn)를 새로 만듦 — 이 앱에 이 형태가 없었음.
+     처음엔 Discography 제목 밑에 별도 줄로 뒀는데, "옆으로 붙여서 한 줄에 다 넣어달라"는 요청으로
+     제목과 같은 줄(.gc-discog-hd 안)로 옮기고 폭/높이를 확 줄인 축소판(.seg-control-sm)을 씀. */
+  .gc-discog-hd-right{display:flex;align-items:center;justify-content:flex-end;gap:5px;min-width:0;}
+  .gc-discog-hd-right .gc-ch-sort-wrap{flex-shrink:0;}
   .seg-control{position:relative;display:flex;background:rgba(255,255,255,0.05);border:0.5px solid rgba(255,255,255,0.09);border-radius:10px;padding:2px;flex:1;min-width:0;}
+  .seg-control-sm{flex:0 1 auto;padding:1px;border-radius:8px;}
+  .seg-control-sm .seg-btn{padding:3px 6px;font-size:8px;letter-spacing:-.01em;}
+  .seg-control-sm .seg-thumb{top:1px;bottom:1px;border-radius:7px;}
   .seg-thumb{position:absolute;top:2px;bottom:2px;left:2px;width:0;border-radius:8px;
     background:linear-gradient(160deg,rgba(190,212,255,0.42),rgba(140,170,230,0.16));
     box-shadow:inset 0 1px 1px rgba(255,255,255,0.4),inset 0 -4px 8px -6px rgba(120,150,220,0.3),0 2px 6px rgba(120,150,220,0.25);
@@ -1601,6 +1607,7 @@
     font-size:10.5px;font-weight:600;color:rgba(170,190,225,0.62);cursor:pointer;font-family:inherit;
     white-space:nowrap;transition:color .18s;}
   .seg-btn.active{color:#eef4ff;}
+  .gc-discog-hd-right .gc-ch-sort-btn{font-size:12px;padding:2px 3px;}
   .gc-discog-strip{display:flex;gap:9px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none;cursor:grab;}
   .gc-discog-strip::-webkit-scrollbar{display:none;}
   .gc-discog-item{flex-shrink:0;width:68px;cursor:pointer;}

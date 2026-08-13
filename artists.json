@@ -19883,7 +19883,8 @@
       "en": "KR"
     },
     "links": {
-      "namu": "https://namu.wiki/w/문수아"
+      "namu": "https://namu.wiki/w/문수아",
+      "instagram": "https://www.instagram.com/a_us_noom"
     }
   },
   {
@@ -19908,7 +19909,8 @@
       "en": "KR"
     },
     "links": {
-      "namu": "https://namu.wiki/w/수현"
+      "namu": "https://namu.wiki/w/%EC%88%98%ED%98%84(Billlie)",
+      "instagram": "https://www.instagram.com/suhyeeooonn_"
     }
   },
   {
@@ -19933,7 +19935,8 @@
       "en": "KR"
     },
     "links": {
-      "namu": "https://namu.wiki/w/하람(Billlie)"
+      "namu": "https://namu.wiki/w/하람(Billlie)",
+      "instagram": "https://www.instagram.com/harami_beam"
     }
   },
   {
@@ -19958,7 +19961,8 @@
       "en": "JP"
     },
     "links": {
-      "namu": "https://namu.wiki/w/츠키(Billlie)"
+      "namu": "https://namu.wiki/w/츠키(Billlie)",
+      "instagram": "https://www.instagram.com/bunny9tsuki"
     }
   },
   {
@@ -19983,7 +19987,8 @@
       "en": "KR"
     },
     "links": {
-      "namu": "https://namu.wiki/w/션(Billlie)"
+      "namu": "https://namu.wiki/w/션(Billlie)",
+      "instagram": "https://www.instagram.com/sheonnnnn"
     }
   },
   {
@@ -20008,7 +20013,8 @@
       "en": "KR"
     },
     "links": {
-      "namu": "https://namu.wiki/w/시윤(Billlie)"
+      "namu": "https://namu.wiki/w/시윤(Billlie)",
+      "instagram": "https://www.instagram.com/see_uniuni"
     }
   },
   {
@@ -20033,7 +20039,8 @@
       "en": "JP"
     },
     "links": {
-      "namu": "https://namu.wiki/w/하루나(Billlie)"
+      "namu": "https://namu.wiki/w/하루나(Billlie)",
+      "instagram": "https://www.instagram.com/runa._.roon"
     }
   },
   {
@@ -41165,7 +41172,17 @@
     "links": {
       "instagram": "https://www.instagram.com/baejinyea",
       "namu": "https://namu.wiki/w/진예"
-    }
+    },
+    "groups": [
+      {
+        "ko": "라붐",
+        "en": "LABOUM"
+      },
+      {
+        "ko": "유니티",
+        "en": "UNI.T"
+      }
+    ]
   },
   {
     "name": {
@@ -42150,34 +42167,6 @@
     "bday": "1992.12.14",
     "links": {
       "namu": "https://namu.wiki/w/%EC%9C%A4%EC%A1%B0"
-    }
-  },
-  {
-    "name": {
-      "ko": "진예",
-      "en": "Jin Ye"
-    },
-    "group": {
-      "ko": "유니티",
-      "en": "UNI.T"
-    },
-    "co": "포켓돌스튜디오",
-    "active": true,
-    "color": [
-      190,
-      175,
-      220
-    ],
-    "nat": {
-      "ko": "한국",
-      "en": "KR"
-    },
-    "sparkle": false,
-    "songs": [],
-    "bday": "1994.06.09",
-    "links": {
-      "instagram": "https://www.instagram.com/baejinyea",
-      "namu": "https://namu.wiki/w/%EC%A7%84%EC%98%88"
     }
   },
   {

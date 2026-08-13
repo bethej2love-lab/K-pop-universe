@@ -151,15 +151,15 @@
     <div id="gc-discog-row" class="gc-discog-row" style="display:none">
       <div class="gc-discog-hd">
         <span class="gc-discog-title">Discography</span>
-        <button id="gc-discog-more-btn" class="gc-discog-more-btn" style="display:none" type="button">+<span id="gc-discog-more-cnt"></span></button>
-      </div>
-      <div id="gc-discog-ctrl-row" class="gc-discog-ctrl-row" style="display:none">
-        <div id="gc-discog-type-chips" class="seg-control"><div class="seg-thumb"></div></div>
-        <div class="gc-ch-sort-wrap">
-          <button id="gc-discog-sort-btn" class="gc-ch-sort-btn" type="button" title="정렬" aria-haspopup="true" aria-expanded="false">⋮</button>
-          <div id="gc-discog-sort-menu" class="gc-ch-sort-menu">
-            <button class="gc-ch-sort-item" data-sort="oldest"><span class="chk">✓</span><span>오래된순</span></button>
-            <button class="gc-ch-sort-item" data-sort="latest"><span class="chk">✓</span><span>최신순</span></button>
+        <div class="gc-discog-hd-right">
+          <div id="gc-discog-type-chips" class="seg-control seg-control-sm" style="display:none"><div class="seg-thumb"></div></div>
+          <button id="gc-discog-more-btn" class="gc-discog-more-btn" style="display:none" type="button">+<span id="gc-discog-more-cnt"></span></button>
+          <div class="gc-ch-sort-wrap">
+            <button id="gc-discog-sort-btn" class="gc-ch-sort-btn" type="button" title="정렬" aria-haspopup="true" aria-expanded="false">⋮</button>
+            <div id="gc-discog-sort-menu" class="gc-ch-sort-menu">
+              <button class="gc-ch-sort-item" data-sort="oldest"><span class="chk">✓</span><span>오래된순</span></button>
+              <button class="gc-ch-sort-item" data-sort="latest"><span class="chk">✓</span><span>최신순</span></button>
+            </div>
           </div>
         </div>
       </div>
@@ -2003,8 +2003,16 @@ function _dismissOnboardHint(){
 }
 
 // ── Animate ───────────────────────────────────────
+// 발열 대응(2026-08-13, 사용자 제보 — 휴대폰/맥북이 계속 뜨거워짐): 탭이 백그라운드일 때는 아예
+// 렌더링을 건너뛰고, 화면에 보이는 동안에도 실제 GPU 렌더 호출(renderer.render)만 30fps로 제한한다.
+// controls.update()·연결선/반짝임 등 위치·투명도 계산은 그대로 매 프레임 돌려서(가벼운 CPU 연산이라
+// 드래그 조작감엔 영향 없음), 실제로 GPU를 태우는 그리기 호출 빈도만 줄인다 — 120Hz 화면일수록 효과가 큼.
+let _lastRenderMs=0;
+const _RENDER_INTERVAL_MS=1000/30;
 function animate(){
   requestAnimationFrame(animate);
+  // 탭이 백그라운드(다른 앱 전환, 화면 꺼짐 등)면 아무것도 안 보이므로 완전히 건너뛴다.
+  if(document.hidden)return;
   // 모바일에서 카드/라이트박스가 화면을 사실상 다 덮고 조작도 막혀있는 동안은 3D 렌더링을 완전히 건너뛴다.
   // (안 보이고 조작도 안 되니 시각적 차이는 없고, 그만큼 스크롤 등 카드 쪽 인터랙션에 CPU/GPU 여유가 생김)
   // document.getElementById로 직접 조회하는 이유: mobSheetEl 등의 const는 이 함수보다 뒤에 선언되는데
@@ -2292,8 +2300,13 @@ function animate(){
     });
   }
   _nctRingGroups.forEach(({g})=>g.rotateZ(0.00028));
-  renderer.render(scene,camera);
-  labelRenderer.render(scene,camera);
+  // 실제 GPU 그리기 호출만 30fps로 제한(위 주석 참고) — 나머지 로직은 이미 다 계산된 뒤라 그냥 스킵.
+  const _nowMs=performance.now();
+  if(_nowMs-_lastRenderMs>=_RENDER_INTERVAL_MS){
+    _lastRenderMs=_nowMs;
+    renderer.render(scene,camera);
+    labelRenderer.render(scene,camera);
+  }
   if(window._syncZoomSlider)_syncZoomSlider();
 }
 animate();
@@ -6200,14 +6213,13 @@ function _discogBucket(type){
   if(/^정규/.test(type))return'정규';
   return null;
 }
-const _DISCOG_BUCKETS=['싱글','미니(EP)','정규'];
+const _DISCOG_BUCKETS=['미니(EP)','싱글','정규']; // 탭 노출 순서: All-EP-Single-Album(2026-08-13, 사용자 요청)
 const _DISCOG_BUCKET_LABEL={all:'All','싱글':'Single','미니(EP)':'EP','정규':'Album'};
 function _renderGcDiscography(ko){
   const row=document.getElementById('gc-discog-row');
   const strip=document.getElementById('gc-discog-strip');
   const moreBtn=document.getElementById('gc-discog-more-btn');
   const moreCntEl=document.getElementById('gc-discog-more-cnt');
-  const ctrlRow=document.getElementById('gc-discog-ctrl-row');
   const segEl=document.getElementById('gc-discog-type-chips');
   const segThumb=segEl.querySelector('.seg-thumb');
   const sortBtn=document.getElementById('gc-discog-sort-btn');
@@ -6290,7 +6302,7 @@ function _renderGcDiscography(ko){
   }
   const presentBuckets=_DISCOG_BUCKETS.filter(b=>albums.some(a=>_discogBucket(a.type)===b));
   if(presentBuckets.length>1){
-    ctrlRow.style.display='';
+    segEl.style.display='';
     segEl.querySelectorAll('.seg-btn').forEach(b=>b.remove());
     const segBtns=[];
     ['all',...presentBuckets].forEach(val=>{
@@ -6310,7 +6322,7 @@ function _renderGcDiscography(ko){
     });
     requestAnimationFrame(()=>moveThumbTo(segBtns[0]));
   }else{
-    ctrlRow.style.display='none';
+    segEl.style.display='none';
   }
   renderItems();
   if(extraAlbums.length){
@@ -10995,11 +11007,44 @@ function _invalidateChVidCache(contId,ko){
 // 제보, 웹은 네트워크가 안정적이라 덜 겪음). 일정 시간 안에 안 끝나면 타임아웃 에러로 강제 종료시켜서
 // load()의 기존 catch 블록(에러 메시지 표시 + 잠금 해제)이 처리하게 하면, 새로고침 없이 탭만 다시
 // 눌러도 정상적으로 재시도됨.
-function _withTimeout(promise,ms,msg){
-  return Promise.race([
-    promise,
-    new Promise((_,rej)=>setTimeout(()=>rej(new Error(msg||'응답이 없어요 — 네트워크 확인 후 다시 시도해주세요')),ms))
-  ]);
+// ⚠️ 2026-08-13, 사용자 재제보 — "응답이 없어요"가 여전히 자주 뜨는데, 막상 다시 시도 버튼을 누르면
+// (시간이 좀 걸려도) 결국 성공한다는 게 반복 확인됨 → 요청 자체가 죽은 게 아니라 그냥 느린(콜드스타트
+// 등) 경우가 대부분이라는 뜻. 사용자가 수동으로 누르는 그 "다시 시도"를, 에러를 보여주기 전에 자동으로
+// 몇 번 먼저 해보게 함 — retries>0로 호출하면(promise 대신 promise를 만드는 함수를 넘겨야 함, 매
+// 시도마다 새 요청을 쏴야 하므로) 타임아웃마다 조용히 재시도하고, 전부 실패했을 때만 진짜 에러를 낸다.
+// 기존 호출부(promise를 그냥 넘기던 곳)는 retries 없이 그대로 동작해서 하위호환됨.
+function _withTimeout(promiseOrFactory,ms,msg,retries=0){
+  const isFactory=typeof promiseOrFactory==='function';
+  if(!isFactory||retries<=0){
+    const p=isFactory?promiseOrFactory():promiseOrFactory;
+    return Promise.race([
+      p,
+      new Promise((_,rej)=>setTimeout(()=>rej(new Error(msg||'응답이 없어요 — 네트워크 확인 후 다시 시도해주세요')),ms))
+    ]);
+  }
+  return new Promise((resolve,reject)=>{
+    let attemptsLeft=retries+1,settled=false;
+    function attempt(){
+      let timedOut=false;
+      const timer=setTimeout(()=>{
+        timedOut=true;
+        attemptsLeft--;
+        if(attemptsLeft>0)attempt();
+        else if(!settled){settled=true;reject(new Error(msg||'응답이 없어요 — 네트워크 확인 후 다시 시도해주세요'));}
+      },ms);
+      promiseOrFactory().then(v=>{
+        clearTimeout(timer);
+        if(!settled){settled=true;resolve(v);}
+      }).catch(e=>{
+        clearTimeout(timer);
+        if(timedOut)return; // 이미 다음 시도로 넘어간 뒤 뒤늦게 도착한 실패 응답은 무시
+        attemptsLeft--;
+        if(attemptsLeft>0)attempt();
+        else if(!settled){settled=true;reject(e);}
+      });
+    }
+    attempt();
+  });
 }
 function _makeChVidController(contId){
   let state={ko:null,memberKo:null,filter:'all',sortMode:'recommend',viewMode:'category',formatFilter:null,formats:[],offset:0,total:0,pos:0,cat:null,gen:0,appendLock:false,trailingEl:null,hasMore:false,allVids:[],wrapEnd:0,wrapPhase:false,unitFilter:null};
@@ -11458,7 +11503,7 @@ function _makeChVidController(contId){
       // 그리드 자체는 절대 안 죽게 분리한다.
       const featuredP=cacheHit?Promise.resolve(cached.featuredFromDB)
         :(reset&&state.sortMode==='recommend'&&!randomize)
-        ?_withTimeout(_pickFeaturedVidFromDB(ko,state.memberKo,state.onlyMe,filter,state.viewMode,state.formatFilter),6000).catch(()=>null)
+        ?_withTimeout(()=>_pickFeaturedVidFromDB(ko,state.memberKo,state.onlyMe,filter,state.viewMode,state.formatFilter),6000,undefined,1).catch(()=>null)
         :Promise.resolve(null);
       // '미태깅 우선'(admin 전용): Postgres 배열 비교는 원소 없는 '{}'가 항상 더 작다고/크다고 취급하므로,
       // 배열 컬럼 오름차순/내림차순 정렬만으로 3단계 우선순위를 만들 수 있다 — 새 컬럼/RPC 없이 기존
@@ -11495,7 +11540,7 @@ function _makeChVidController(contId){
         // (2026-08-11, 사용자 제보). 청크마다 개별 타임아웃(6초)을 걸고 allSettled로 바꿔서, 일부만
         // 느리거나 끊겨도 성공한 청크만으로 채워서 보여준다 — 전부 실패했을 때만 진짜 에러로 처리.
         const perChunkMs=6000;
-        mainP=Promise.allSettled(chunkOffsets.map(off=>_withTimeout(ordered(buildBaseQuery()).range(off,off+chunkSize-1),perChunkMs)))
+        mainP=Promise.allSettled(chunkOffsets.map(off=>_withTimeout(()=>ordered(buildBaseQuery()).range(off,off+chunkSize-1),perChunkMs,undefined,1)))
           .then(results=>{
             const ok=results.filter(r=>r.status==='fulfilled'&&r.value&&!r.value.error).map(r=>r.value);
             if(!ok.length){
@@ -11512,7 +11557,11 @@ function _makeChVidController(contId){
         state.offset=Math.max(...chunkOffsets)+chunkSize;
         state.wrapEnd=Math.min(...chunkOffsets);state.wrapPhase=false;
       }else{
-        mainP=ordered(buildBaseQuery()).range(offset,offset+_YT_PAGE-1);
+        // 2026-08-13: 예전엔 여기 자체엔 타임아웃이 없고 아래에서 15초짜리 단발 타임아웃 하나로만
+        // 감쌌었음 — 콜드스타트 등으로 그 15초를 넘기면 무조건 에러였는데, 실제로는 조금만 더 기다리면
+        // (사용자가 수동으로 "다시 시도"를 누르면) 대부분 성공했음. 5초씩 최대 3번(원래 예산과 비슷한
+        // 15초 총량 안에서) 조용히 자동 재시도하도록 바꿔서, 진짜로 다 실패했을 때만 에러가 보이게 함.
+        mainP=_withTimeout(()=>ordered(buildBaseQuery()).range(offset,offset+_YT_PAGE-1),5000,undefined,2);
       }
       // 카드를 처음 열 때(reset, randomize 아님, 캐시도 아님)만: 정확한 총 개수를 그리드 렌더링과
       // 분리된 별도 요청으로 백그라운드에서 가져와 나중에(총 개수 라벨/다음 셔플용) state.total을
@@ -11524,10 +11573,11 @@ function _makeChVidController(contId){
           state.total=bgCount;
         });
       }
-      // 15초 하드 타임아웃은 진짜 필요한 mainP에만 건다 — featuredP는 위에서 이미 자체 타임아웃+null
-      // 폴백을 갖고 있어서 여기서 또 감쌀 필요가 없고, 감싸면 오히려 mainP 성공을 같이 깔고 앉는
-      // 원래 버그가 재발한다.
-      const[{data,error,count},_featuredFromDB]=await Promise.all([_withTimeout(mainP,15000),featuredP]);
+      // mainP는 각 분기(캐시/청크/기본)에서 이미 자체 타임아웃+재시도를 갖추고 있어서(위 참고) 여기서
+      // 또 한 번 감쌀 필요가 없음 — 예전엔 여기서 15초 단발 타임아웃으로 한 번 더 감쌌었는데, 그러면
+      // 내부 재시도가 다 끝나기도 전에 이 바깥쪽이 먼저 잘라버릴 수 있어서 오히려 재시도 효과를 죽임.
+      // featuredP는 자체 타임아웃+null 폴백이 있어 별도로 감쌀 필요 없는 것도 기존과 동일.
+      const[{data,error,count},_featuredFromDB]=await Promise.all([mainP,featuredP]);
       if(myGen!==state.gen)return; // 대기 중 다른 그룹/새로고침으로 전환됨: 그쪽이 이미 자신의 잠금을 걸어놨으므로 여기선 해제하지 않는다
       if(error)throw new Error(error.message);
       if(reset)grid.innerHTML='';
