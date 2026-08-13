@@ -538,7 +538,10 @@
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="10.5" cy="10.5" r="6.5" stroke="currentColor" stroke-width="1.8"/><line x1="15.5" y1="15.5" x2="21" y2="21" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
     <span>WHO'S YOUR BIAS?</span>
   </button>
+  <input id="ob-si" type="text" placeholder="그룹 · 멤버 검색…" autocomplete="off" inputmode="search">
+  <button id="ob-si-clear" aria-label="검색 닫기">✕</button>
 </div>
+<div id="ob-sr"></div>
 <div id="mob-sr"></div>
 <div id="member-tooltip"></div>
 <div id="zoom-ctrl">
@@ -1997,6 +2000,7 @@ function _revealUniverse(){
 var _OB_KEY='kpu_onboard_done';
 var _obTimer=null;
 var _obActive=false; // 탐험 패널을 이 타이머가 자동으로 열어둔 상태(아직 아무 상호작용도 없었음)
+var _obSearchMode=false; // 플로팅 검색바가 타이핑 모드인 동안 true — doSearch가 #ob-sr에 결과를 출력
 function _showOnboardHint(){
   if(_obActive)return;
   // 딥링크나 자동 오픈으로 이미 카드가 열려있으면 자동으로 열 필요 없음
@@ -2017,8 +2021,16 @@ function _showOnboardHint(){
     _openFeedOverlay();
   }
 }
+function exitObSearch(){
+  _obSearchMode=false;
+  const el=document.getElementById('ob-top-search');
+  if(el){el.classList.remove('ob-typing','ob-show');el.classList.add('ob-hide');}
+  const inp=document.getElementById('ob-si');if(inp){inp.value='';inp.blur();}
+  const sr=document.getElementById('ob-sr');if(sr){sr.classList.remove('open');sr.innerHTML='';}
+}
 function _dismissOnboardHint(){
   if(_obTimer){clearTimeout(_obTimer);_obTimer=null;}
+  if(_obSearchMode){exitObSearch();return;}
   if(!_obActive)return;
   _obActive=false;
   localStorage.setItem(_OB_KEY,'1');
@@ -2453,7 +2465,7 @@ function _resolveRecentSearches(){
   }).filter(Boolean);
 }
 // hits 렌더링 공통 로직 — 실시간 검색 결과와 최근 검색 목록이 그대로 재사용
-function _renderSearchHits(hits,res,mobSearch,isRecent){
+function _renderSearchHits(hits,res,mobSearch,isRecent,obSearch){
   res.innerHTML='';
   if(isRecent&&hits.length){
     const lbl=document.createElement('div');lbl.className='sr-recent-label';
@@ -2475,7 +2487,10 @@ function _renderSearchHits(hits,res,mobSearch,isRecent){
         if(h.type==='group'){showGC(h.data,cx,cy);pulseGroup(h.data);}
         else{showT(h.data,cx,cy);pulseMember(h.data);pulseGroup(h.data.group.ko);}
       };
-      if(mobSearch){
+      if(obSearch){
+        exitObSearch();
+        flyState.onComplete=()=>setTimeout(_openCard,150);
+      }else if(mobSearch){
         exitMobSearch();
         // 모바일은 카드(바텀시트)가 화면 하단 대부분을 덮어서, 카메라 이동이 끝나기 전에 카드부터
         // 열리면 이동하는 모습이 거의 안 보임 — 탐색(✦) 버튼과 동일하게 도착 후에 카드를 연다.
@@ -2497,18 +2512,20 @@ function _renderSearchHits(hits,res,mobSearch,isRecent){
   }
 }
 function doSearch(q){
-  const mobSearch=isMob()&&document.getElementById('tabbar').classList.contains('search-mode');
-  const res=mobSearch?document.getElementById('mob-sr'):document.getElementById('search-results');
+  const obSr=_obSearchMode?document.getElementById('ob-sr'):null;
+  const mobSearch=!obSr&&isMob()&&document.getElementById('tabbar').classList.contains('search-mode');
+  const res=obSr||(mobSearch?document.getElementById('mob-sr'):document.getElementById('search-results'));
   q=q.trim();
   if(!q){
     const recentHits=_resolveRecentSearches();
     if(!recentHits.length){
-      if(mobSearch){res.classList.remove('open');res.innerHTML='';}
+      if(obSr||mobSearch){res.classList.remove('open');res.innerHTML='';}
       else{res.style.display='none';}
       return;
     }
-    _renderSearchHits(recentHits,res,mobSearch,true);
-    if(mobSearch){res.classList.add('open');document.getElementById('tabbar').classList.add('has-sr');}
+    _renderSearchHits(recentHits,res,mobSearch,true,!!obSr);
+    if(obSr){res.classList.add('open');}
+    else if(mobSearch){res.classList.add('open');document.getElementById('tabbar').classList.add('has-sr');}
     else{res.style.display='block';}
     return;
   }
@@ -2566,8 +2583,9 @@ function doSearch(q){
     }
   });
   hits.sort((a,b)=>{const sd=a.score-b.score;if(sd!==0)return sd;return a.name.localeCompare(b.name,'ko');});
-  _renderSearchHits(hits.slice(0,40),res,mobSearch,false);
-  if(mobSearch){
+  _renderSearchHits(hits.slice(0,40),res,mobSearch,false,!!obSr);
+  if(obSr){res.classList.add('open');}
+  else if(mobSearch){
     res.classList.add('open');
     document.getElementById('tabbar').classList.toggle('has-sr',hits.length>0);
   }
@@ -3487,7 +3505,7 @@ document.getElementById('yt-lb-vol').addEventListener('input',e=>{
 // 제목 길이(넘치는 픽셀 수)와 무관하게 슬라이드 "체감 속도"가 항상 일정하도록, CSS의 고정 duration 대신
 // 넘치는 거리에 비례한 duration을 매번 계산해서 인라인으로 얹는다. 키프레임엔 앞뒤로 "잠깐 멈춤" 구간이
 // 껴 있어서(예: 호버는 처음/끝 15%씩 정지, 실제 이동은 70%), 그 이동 구간 기준으로 속도를 맞춰야 한다.
-const _MARQUEE_PX_PER_SEC=65; // 조정 포인트: 값을 늘리면 더 빠르게, 줄이면 더 느리게
+const _MARQUEE_PX_PER_SEC=140; // 조정 포인트: 값을 늘리면 더 빠르게, 줄이면 더 느리게
 // 최소치만 살짝 둬서 아주 미세하게 넘치는 제목이 순간 깜빡이듯 지나가지 않게 하고, 최대치는 사실상
 // 안전장치 정도로만(제목이 아무리 길어도 항상 같은 체감 속도를 유지하는 게 우선이므로 낮게 잡지 않음)
 const _MARQUEE_MIN_DUR=0.5,_MARQUEE_MAX_DUR=20.0;
@@ -3523,7 +3541,7 @@ function _wireMarqueeTap(el,inner){
     if(ov<=0)return;
     playing=true;
     inner.style.setProperty('--mx',`-${ov+6}px`);
-    inner.style.animationDuration=_marqueeDuration(ov,0.47)+'s'; // 키프레임 8%~55% 구간(47%)이 실제 이동
+    inner.style.animationDuration=_marqueeDuration(ov,0.74)+'s'; // 키프레임 6%~80% 구간(74%)이 실제 이동
     el.classList.add('is-marquee');
     inner.classList.add('marquee-tap-run');
     inner.addEventListener('animationend',()=>{
@@ -4083,8 +4101,9 @@ function openMobSheet(cardEl){
 // 훑어서 일괄 처리하도록 일반화한다. 새 카드 요소가 추가돼도 다시 깨질 일이 없다.
 const _FREEZE_LAYOUT_PROPS=['display','flexDirection','flexWrap','alignItems','alignContent','justifyContent',
   'flex','flexGrow','flexShrink','flexBasis','gap','rowGap','columnGap','minWidth','minHeight','maxWidth',
+  'width','height',
   'padding','paddingTop','paddingRight','paddingBottom','paddingLeft','overflow','overflowX','overflowY',
-  'whiteSpace','position','textAlign'];
+  'whiteSpace','position','textAlign','boxSizing'];
 function _freezeSheetBottomBeforeOverwrite(type){
   if(!isMob())return;
   const el=document.getElementById(type);
@@ -4192,8 +4211,40 @@ function _popMobCard(){
 
   // 여기부턴 스택이 딱 1겹(시트 바닥)만 남는 경우 — 기존처럼 오버레이를 접어 내린다.
   // mob-card-stack이 열려있으면 → mob-card-stack만 아래로 슬라이드아웃
-  // mob-sheet는 건드리지 않음 (이전 카드가 그대로 뒤에 있음)
   if(mobCardStackEl.style.display==='block'){
+    // 슬라이드아웃 시작 전에 바닥 카드를 미리 올바르게 렌더링해둔다.
+    // 이전엔 320ms 애니메이션이 끝난 뒤에야 렌더링했기 때문에, 그 사이 얼어붙은 클론(ID 제거로
+    // 레이아웃이 깨질 수 있음)이 배경으로 잠깐 드러났었음. 빠른 카드 전환 시 클론이 더 심하게
+    // 깨지는 경우 사용자가 볼 수 있었던 주된 원인(2026-08-13 재발).
+    // 바닥 카드(prev)와 이탈 카드가 같은 타입(tt→tt, gc→gc)이면 mob-card-stack 안의 라이브
+    // 엘리먼트를 정적 클론으로 교체해 애니메이션용으로만 쓰고, 라이브 엘리먼트는 mob-sheet에
+    // 미리 올바르게 렌더링해둔다.
+    const leavingEl=mobCardStackInner.querySelector('#tt,#gc');
+    const prevElId=prev.type==='gc'?'gc':'tt';
+    const prevEl=document.getElementById(prevElId);
+    if(leavingEl&&leavingEl===prevEl){
+      const leavingClone=leavingEl.cloneNode(true);
+      [leavingClone,...leavingClone.querySelectorAll('[id]')].forEach(c=>{
+        const live=c===leavingClone?leavingEl:document.getElementById(c.id);
+        if(!live)return;
+        const cs=getComputedStyle(live);
+        _FREEZE_LAYOUT_PROPS.forEach(p=>{if(cs[p])c.style[p]=cs[p];});
+      });
+      leavingClone.removeAttribute('id');
+      leavingClone.querySelectorAll('[id]').forEach(d=>d.removeAttribute('id'));
+      mobCardStackInner.replaceChild(leavingClone,leavingEl);
+      document.body.appendChild(leavingEl);leavingEl.style.display='none';
+      _navHistoryActive=true;
+      if(prev.type==='gc')showGC(prev.data,window.innerWidth/2,window.innerHeight*0.4,false,false,null,false);
+      else showT(prev.data,window.innerWidth/2,window.innerHeight*0.4,false,null,false);
+      _navHistoryActive=false;
+      leavingEl.style.maxWidth='';leavingEl.style.width='';leavingEl.style.left='';leavingEl.style.top='';
+      leavingEl.style.display='block';
+      Array.from(mobSheetInner.children).forEach(ch=>ch.remove());
+      mobSheetInner.scrollTop=0;
+      mobSheetInner.appendChild(leavingEl);
+    }
+
     mobCardStackEl.style.transition='transform .32s cubic-bezier(0.32,0.72,0,1)';
     mobCardStackEl.style.transform='translateY(100%)';
     setTimeout(()=>{
@@ -4201,26 +4252,27 @@ function _popMobCard(){
       mobCardStackEl.style.display='none';
       mobCardStackEl.style.transition='';
       mobCardStackEl.style.transform='';
+      // 라이브 카드(ID 있는 것)만 body로, 정적 클론(ID 없는 것)은 모두 제거
       const old=mobCardStackInner.querySelector('#tt,#gc');
       if(old){document.body.appendChild(old);old.style.display='none';}
+      Array.from(mobCardStackInner.children).forEach(ch=>ch.remove());
 
       // mob-card-stack이 접히면서 mob-sheet가 다시 화면 맨 위로 드러나므로, 카드 스택 위에서 스와이프로
       // 바뀌었을 수 있는 _sheetFull 상태를 mob-sheet 자신의 클래스에도 반영해준다(안 그러면 mob-card-stack
       // 스와이프 상태만 최신이고 mob-sheet는 예전 상태로 남아있을 수 있음).
       mobSheetEl.classList.toggle('bs-full',_sheetFull);
-      // mob-sheet의 클론 등을 실제 카드로 교체 (같은 타입이었던 경우)
-      const prevEl=document.getElementById(prev.type==='gc'?'gc':'tt');
-      if(prevEl.parentElement!==mobSheetInner){
+      // 타입이 달랐던 경우(tt→gc, gc→tt)는 위 사전 렌더링이 없었으므로 이전처럼 여기서 처리
+      const prevEl2=document.getElementById(prev.type==='gc'?'gc':'tt');
+      if(prevEl2.parentElement!==mobSheetInner){
         _navHistoryActive=true;
         if(prev.type==='gc')showGC(prev.data,window.innerWidth/2,window.innerHeight*0.4,false,false,null,false);
         else showT(prev.data,window.innerWidth/2,window.innerHeight*0.4,false,null,false);
         _navHistoryActive=false;
-        prevEl.style.maxWidth='';prevEl.style.width='';prevEl.style.left='';prevEl.style.top='';
-        // 클론 제거 후 실제 카드 삽입
-        Array.from(mobSheetInner.children).forEach(ch=>{if(ch!==prevEl)ch.remove();});
-        prevEl.style.display='block';
+        prevEl2.style.maxWidth='';prevEl2.style.width='';prevEl2.style.left='';prevEl2.style.top='';
+        Array.from(mobSheetInner.children).forEach(ch=>{if(ch!==prevEl2)ch.remove();});
+        prevEl2.style.display='block';
         mobSheetInner.scrollTop=0;
-        mobSheetInner.appendChild(prevEl);
+        mobSheetInner.appendChild(prevEl2);
       }
       _updateTtBackBtn();
       _reopenViaConnIfNeeded(leaving);
@@ -5121,6 +5173,24 @@ connSheetEl.addEventListener('touchend',e=>{
   else connSheetEl.style.transform='';
 },{passive:true});
 
+// 카드 내 콘텐츠 스크롤 감도 조절 — iOS 네이티브 스크롤은 1:1 매핑+관성이 너무 빨리 느껴지므로
+// factor(< 1.0)를 곱해 둔감하게 만들고, touchend 후 부드럽게 감속하는 모멘텀을 직접 구현.
+// scrollTop > 0 구간만 개입하고, scrollTop = 0 상태(맨 위)에선 아래 _wireSheetSwipe에 위임.
+function _wireSlowScroll(innerEl,factor){
+  let _ly=0,_vel=0,_raf=0,_on=false;
+  function _coast(){_vel*=0.87;if(Math.abs(_vel)<0.25){_raf=0;return;}innerEl.scrollTop+=_vel;_raf=requestAnimationFrame(_coast);}
+  innerEl.addEventListener('touchstart',e=>{cancelAnimationFrame(_raf);_raf=0;_vel=0;_ly=e.touches[0].clientY;_on=innerEl.scrollTop>0;},{passive:true});
+  innerEl.addEventListener('touchmove',e=>{
+    if(!_on){if(innerEl.scrollTop>0){_on=true;_ly=e.touches[0].clientY;}else return;}
+    const cy=e.touches[0].clientY;
+    _vel=(_ly-cy)*factor;
+    innerEl.scrollTop+=_vel;
+    _ly=cy;
+    e.preventDefault();e.stopPropagation();
+  },{passive:false});
+  innerEl.addEventListener('touchend',()=>{_on=false;if(Math.abs(_vel)>0.4)_raf=requestAnimationFrame(_coast);},{passive:true});
+}
+
 // 반쯤(60vh) ↔ 꽉 참(bs-full) 스와이프를 시트 엘리먼트 하나에 붙이는 공용 함수. mob-sheet(첫 카드)와
 // mob-card-stack(2번째 이후 카드가 재사용하는 오버레이) 둘 다 이 함수로 똑같이 동작하게 만들어야
 // "첫 카드를 100%로 펼쳐놓고 다음 카드를 열면 60vh로 도로 쪼그라드는" 불일치가 안 생김 — _sheetFull은
@@ -5203,6 +5273,8 @@ function _wireSheetSwipe(sheetEl,innerEl,onDismiss,syncEl){
 let _sheetFull=false;
 _wireSheetSwipe(mobCardStackEl,mobCardStackInner,closeMobSheet,mobSheetEl);
 _wireSheetSwipe(mobSheetEl,mobSheetInner,closeMobSheet);
+_wireSlowScroll(mobSheetInner,0.55);
+_wireSlowScroll(mobCardStackInner,0.55);
 function closeCards(){
   _clearMemberCardLines();
   closeConnCard();
@@ -5645,37 +5717,53 @@ _enableDragScroll(document.getElementById('tco'));
 function _enableDragReorder(containerEl,itemSelector,handleSelector,onReorder){
   if(!containerEl||containerEl._dragReorderBound)return;
   containerEl._dragReorderBound=true;
-  let dragEl=null,pointerId=null,moved=false;
-  function itemsExcept(el){return[...containerEl.querySelectorAll(itemSelector)].filter(i=>i!==el);}
+  let dragEl=null,pointerId=null,moved=false,startY=0,_ib=null,_rects=[];
+  function _items(){return[...containerEl.querySelectorAll(itemSelector)];}
+  // 포인터 Y 기준으로 삽입 위치를 계산하고, 각 항목에 translateY를 적용해 슬라이드 애니메이션.
+  // _rects는 드래그 시작 시점의 원본 위치를 고정해 두어 변환이 쌓여도 기준이 흔들리지 않음.
+  function _computeShifts(pointerY){
+    const its=_items(),di=its.indexOf(dragEl);if(di<0)return;
+    const h=_rects[di].height;
+    let ni=its.length;
+    for(let i=0;i<its.length;i++){
+      if(i===di)continue;
+      if(pointerY<_rects[i].top+_rects[i].height/2){ni=i;break;}
+    }
+    _ib=ni<its.length?its[ni]:null;
+    its.forEach((el,i)=>{
+      if(el===dragEl)return;
+      let s=0;
+      if(di<ni){if(i>di&&i<ni)s=-h;}else{if(i>=ni&&i<di)s=h;}
+      el.style.transform=s?`translateY(${s}px)`:'';
+    });
+  }
   function onMove(e){
     if(!dragEl||e.pointerId!==pointerId)return;
-    e.preventDefault();
-    moved=true;
-    const y=e.clientY;
-    for(const other of itemsExcept(dragEl)){
-      const r=other.getBoundingClientRect();
-      const mid=r.top+r.height/2;
-      const dragIsBefore=!!(dragEl.compareDocumentPosition(other)&Node.DOCUMENT_POSITION_FOLLOWING);
-      if(dragIsBefore&&y>mid){containerEl.insertBefore(dragEl,other.nextSibling);break;}
-      if(!dragIsBefore&&y<mid){containerEl.insertBefore(dragEl,other);break;}
-    }
+    e.preventDefault();moved=true;
+    dragEl.style.transform=`translateY(${e.clientY-startY}px)`;
+    _computeShifts(e.clientY);
   }
   function onUp(e){
     if(!dragEl||e.pointerId!==pointerId)return;
-    dragEl.classList.remove('dragging');
-    dragEl=null;pointerId=null;
     containerEl.removeEventListener('pointermove',onMove);
     containerEl.removeEventListener('pointerup',onUp);
     containerEl.removeEventListener('pointercancel',onUp);
-    if(moved)onReorder([...containerEl.querySelectorAll(itemSelector)]);
+    const its=_items(),de=dragEl,ib=_ib,dm=moved;
+    dragEl=null;pointerId=null;
+    // 모든 transform·transition 즉시 초기화 후 DOM 재배치
+    its.forEach(el=>{el.style.transition='';el.style.transform='';});
+    de.classList.remove('dragging');
+    if(dm){if(ib)containerEl.insertBefore(de,ib);else containerEl.appendChild(de);onReorder([...containerEl.querySelectorAll(itemSelector)]);}
   }
   containerEl.addEventListener('pointerdown',e=>{
-    const handle=e.target.closest(handleSelector);
-    if(!handle)return;
-    const item=handle.closest(itemSelector);
-    if(!item)return;
+    const handle=e.target.closest(handleSelector);if(!handle)return;
+    const item=handle.closest(itemSelector);if(!item)return;
     e.preventDefault();e.stopPropagation();
-    dragEl=item;pointerId=e.pointerId;moved=false;
+    dragEl=item;pointerId=e.pointerId;moved=false;startY=e.clientY;_ib=null;
+    const its=_items();
+    _rects=its.map(i=>i.getBoundingClientRect());
+    // 드래그 항목은 transition 없이 손가락에 즉시 따라오고, 나머지는 슬라이드 트랜지션
+    its.forEach(i=>{i.style.transition=i===item?'none':'transform 0.15s ease';});
     item.classList.add('dragging');
     containerEl.addEventListener('pointermove',onMove);
     containerEl.addEventListener('pointerup',onUp);
@@ -8160,7 +8248,9 @@ function _openColPicker(video){
   _renderColPickerList();
   document.getElementById('col-new-row').style.display='none';
   document.getElementById('col-new-name').value='';
-  document.getElementById('col-picker').classList.add('open');
+  const cp=document.getElementById('col-picker');
+  document.body.appendChild(cp); // backdrop-filter 컴포짓 레이어보다 위에 오도록 DOM 마지막으로 이동
+  cp.classList.add('open');
 }
 function _closeColPicker(){document.getElementById('col-picker').classList.remove('open');_colPickerVideos=[];}
 function _renderColPickerList(){
@@ -8674,9 +8764,22 @@ document.getElementById('tab-feed').addEventListener('click',e=>{
 // (결과 렌더링을 중복 구현하지 않기 위함, 2026-08-11).
 document.getElementById('ob-top-search-btn')?.addEventListener('click',e=>{
   e.stopPropagation();
-  _dismissOnboardHint();
-  document.getElementById('tab-search').click();
+  // 타이머·_obActive 정리(tab-search는 건드리지 않음 — 탭바 검색과 완전히 독립)
+  if(_obTimer){clearTimeout(_obTimer);_obTimer=null;}
+  _obActive=false;
+  localStorage.setItem(_OB_KEY,'1');
+  _obSearchMode=true;
+  const el=document.getElementById('ob-top-search');
+  if(el)el.classList.add('ob-typing');
+  const inp=document.getElementById('ob-si');
+  if(inp){inp.focus();doSearch('');}
 });
+document.getElementById('ob-si-clear')?.addEventListener('click',e=>{e.stopPropagation();exitObSearch();});
+document.getElementById('ob-si')?.addEventListener('input',e=>{doSearch(e.target.value);});
+document.getElementById('ob-si')?.addEventListener('focus',()=>doSearch(document.getElementById('ob-si').value));
+document.getElementById('ob-si')?.addEventListener('click',e=>e.stopPropagation());
+document.getElementById('ob-sr')?.addEventListener('click',e=>e.stopPropagation());
+document.getElementById('ob-sr')?.addEventListener('pointerdown',e=>e.stopPropagation());
 document.getElementById('dh-fav-btn').addEventListener('click',e=>{e.stopPropagation();_toggleFavMode();});
 document.getElementById('fav-mode-btn').addEventListener('click',e=>{e.stopPropagation();_toggleFavMode();});
 document.getElementById('tt-fav').addEventListener('click',e=>{e.stopPropagation();if(_openTArtist)toggleFavMember(_openTArtist);});
@@ -10553,8 +10656,10 @@ function _buildFeedAnniversaries(){
   if(!allBday.length&&!allDebut.length){section.style.display='none';return;}
   section.style.display='';
   list.innerHTML='';
-  // 활성 먼저, 탈퇴/해체는 뒤에
-  const bdayHits=[...allBday.filter(a=>a.active!==false),...allBday.filter(a=>a.active===false)];
+  // 활성 먼저, 탈퇴/해체는 뒤에 / 각 그룹 내에서 그룹 데뷔연도 최근 순
+  const _bdayDebutYr=a=>parseInt((GROUPS[a.group.ko]?.debut||a.debut||'0').split('.')[0])||0;
+  const _sortByDebutDesc=(a,b)=>_bdayDebutYr(b)-_bdayDebutYr(a);
+  const bdayHits=[...allBday.filter(a=>a.active!==false).sort(_sortByDebutDesc),...allBday.filter(a=>a.active===false).sort(_sortByDebutDesc)];
   const debutHits=[...allDebut.filter(([ko])=>!_isGrpDisbanded(ko)),...allDebut.filter(([ko])=>_isGrpDisbanded(ko))];
   bdayHits.forEach(a=>{
     const mName=isKo?a.name.ko:(a.name.en||a.name.ko);
@@ -11041,7 +11146,15 @@ const _PROJECT_UNITS={
   '정한X원우':{names:['정한X원우','JeongWon'],members:[{mko:'정한',gko:'세븐틴'},{mko:'원우',gko:'세븐틴'}]},
   '호시X우지':{names:['호시X우지'],members:[{mko:'호시',gko:'세븐틴'},{mko:'우지',gko:'세븐틴'}]},
   '에스쿱스X민규':{names:['에스쿱스X민규'],members:[{mko:'에스쿱스',gko:'세븐틴'},{mko:'민규',gko:'세븐틴'}]},
-  '도겸X승관':{names:['도겸X승관'],members:[{mko:'도겸',gko:'세븐틴'},{mko:'승관',gko:'세븐틴'}]}
+  '도겸X승관':{names:['도겸X승관'],members:[{mko:'도겸',gko:'세븐틴'},{mko:'승관',gko:'세븐틴'}]},
+  '아이린&슬기':{names:['아이린&슬기','레드벨벳 아이린&슬기','IRENE & SEULGI'],members:[{mko:'아이린',gko:'레드벨벳'},{mko:'슬기',gko:'레드벨벳'}]},
+  'SM THE BALLAD':{names:['SM THE BALLAD','에스엠 더 발라드'],members:[{mko:'규현',gko:'슈퍼주니어'},{mko:'종현',gko:'샤이니'},{mko:'예성',gko:'슈퍼주니어'},{mko:'최강창민',gko:'동방신기'},{mko:'태연',gko:'소녀시대'},{mko:'첸',gko:'엑소'},{mko:'크리스탈',gko:'에프엑스'}]},
+  'NCT U':{names:['NCT U','엔시티 유'],members:[
+    {mko:'태용',gko:'엔시티 127'},{mko:'도영',gko:'엔시티 127'},{mko:'재현',gko:'엔시티 127'},{mko:'쟈니',gko:'엔시티 127'},{mko:'정우',gko:'엔시티 127'},{mko:'마크',gko:'엔시티 127'},{mko:'해찬',gko:'엔시티 127'},{mko:'유타',gko:'엔시티 127'},
+    {mko:'런쥔',gko:'엔시티 드림'},{mko:'제노',gko:'엔시티 드림'},{mko:'재민',gko:'엔시티 드림'},{mko:'천러',gko:'엔시티 드림'},{mko:'지성',gko:'엔시티 드림'},
+    {mko:'텐',gko:'웨이션브이'},{mko:'쿤',gko:'웨이션브이'},{mko:'윈윈',gko:'웨이션브이'},{mko:'샤오쥔',gko:'웨이션브이'},{mko:'양양',gko:'웨이션브이'},{mko:'헨드리',gko:'웨이션브이'},
+    {mko:'성찬',gko:'라이즈'},{mko:'쇼타로',gko:'라이즈'}
+  ]}
 };
 function _onUnitTagClick(usp,unitName){
   return e=>{

@@ -147,9 +147,8 @@
   #desktop-header{
     position:fixed;top:16px;left:0;right:0;
     display:flex;align-items:center;justify-content:flex-end;
-    /* z-index:55 — #feed-list-overlay(컬렉션 상세 등, 50)보다는 위에 있어야 웹에서 컬렉션을 열어도
-       우측 상단 탭바가 가려지지 않음(2026-08-12, 사용자 제보). #yt-lightbox(67)보다는 낮게 유지 —
-       영상을 실제로 재생할 때는 몰입을 위해 기존처럼 네비게이션이 덮이는 게 자연스러움. */
+    /* z-index:55 — #yt-lightbox(67)보다는 낮게 유지. #feed-list-overlay는 65로 올라가 데스크톱 헤더를
+       덮지만 풀스크린 모달이 열려있을 때는 어차피 네비게이션이 가려지는 게 자연스러움. */
     padding:0 16px;z-index:55;pointer-events:none;
   }
   @media(max-width:768px){#desktop-header{display:none;}}
@@ -392,8 +391,8 @@
   /* 모바일 탭: hover가 없으므로 한 번만 끝까지 슬라이드했다가 되돌아옴(무한반복 아님) */
   /* 끝까지 슬라이드된 상태로 끝남 — 되돌아오는 모션은 넣지 않고, 애니메이션이 끝나면(JS가 클래스 제거)
      그냥 즉시 처음 위치로 스냅됨(유튜브 앱의 제목 스크롤과 동일한 느낌) */
-  @keyframes title-marquee-tap{0%,8%{transform:translateX(0);}55%,100%{transform:translateX(var(--mx,0px));}}
-  .marquee-tap-run{animation:title-marquee-tap 3.2s ease-in-out;}
+  @keyframes title-marquee-tap{0%,6%{transform:translateX(0);}80%,100%{transform:translateX(var(--mx,0px));}}
+  .marquee-tap-run{animation:title-marquee-tap 3.2s linear;}
   .tv-empty{font-size:11px;color:#5878a0;}
   /* 쇼츠 썸네일 (9:16) */
   #tv-big-wrap.is-shorts #tv-big{aspect-ratio:9/16;width:40%;margin:0 auto;}
@@ -1245,10 +1244,10 @@
   .gp-lvl-btn[data-lvl="C"].active{background:rgba(155,178,228,0.22);border-color:rgba(155,178,228,0.4);color:#c0d6f0;}
   .gp-lvl-btn[data-lvl=""].active{background:rgba(255,255,255,0.14);border-color:rgba(255,255,255,0.24);color:rgba(220,230,255,0.85);}
   #gp-empty{font-size:12px;color:rgba(155,178,228,0.46);text-align:center;padding:40px 0;}
-  /* z-index:50 — #yt-lightbox(67)보다 반드시 낮아야 함: 이 목록 안에서 영상을 탭하면 라이트박스가
-     이 오버레이 위로 열려야 하는데(#feed-list-overlay는 admin 목록들과 달리 라이트박스를 직접 여는
-     용도), 다른 관리자 목록 오버레이(81~82)와 같은 값을 쓰면 라이트박스가 뒤로 숨는 사고가 남 */
-  #feed-list-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.52);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:50;display:none;align-items:center;justify-content:center;}
+  /* z-index:65 — 카드시트(#mob-sheet:63, #mob-card-stack:64, #gc:61)보다 위에 있어야 카드에서 컬렉션을
+     탭했을 때 오버레이가 카드 앞으로 뜸. #yt-lightbox(67)보다는 아래 유지 — 이 목록 안 영상을 탭하면
+     라이트박스가 이 오버레이 위로 열리는 구조라 67보다 낮아야 함. */
+  #feed-list-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.52);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:65;display:none;align-items:center;justify-content:center;}
   #feed-list-overlay.open{display:flex;}
   #feed-list-panel{width:min(560px,calc(100vw - 32px));max-height:82vh;display:flex;flex-direction:column;background:rgba(13,17,34,0.97);backdrop-filter:blur(40px);-webkit-backdrop-filter:blur(40px);border-radius:18px;box-shadow:0 16px 56px rgba(0,0,0,0.72);border:0.5px solid rgba(255,255,255,0.10);}
   #feed-list-hd{display:flex;align-items:flex-start;justify-content:space-between;padding:16px 18px 12px;flex-shrink:0;gap:10px;}
@@ -1999,7 +1998,7 @@
   .drag-handle{background:none;border:none;color:rgba(140,165,220,0.38);cursor:grab;padding:4px 6px;flex-shrink:0;touch-action:none;font-size:13px;line-height:1;letter-spacing:1px;}
   .drag-handle:hover{color:rgba(180,200,240,0.66);}
   .drag-reorder-item{position:relative;}
-  .drag-reorder-item.dragging{opacity:0.55;background:rgba(120,170,255,0.08);box-shadow:0 6px 18px rgba(0,0,0,0.4);z-index:20;cursor:grabbing;}
+  .drag-reorder-item.dragging{opacity:1;background:rgba(18,22,46,0.98);box-shadow:0 8px 28px rgba(0,0,0,0.55);border-radius:8px;z-index:20;cursor:grabbing;}
   .drag-reorder-item.dragging .drag-handle{cursor:grabbing;color:rgba(160,195,255,0.9);}
   /* 콜렉션 상세(내 것일 때만) — 사진 그리드 대신 재생목록처럼 세로 리스트로 보여줘야 드래그 재정렬이
      자연스러워서(스포티파이/유튜브뮤직 플레이리스트 편집 화면 참고, 2026-08-12) 사진 그리드(.gc-ch-item)와
@@ -2132,7 +2131,7 @@
      있었음(2026-08-13, 사용자 제보) — 같은 배경/블러로 맞춰서 손잡이만 떠있는 이음새 없는 시트로 보이게. */
   #feed-hd{display:flex;align-items:center;justify-content:flex-end;padding:calc(env(safe-area-inset-top,0px) + 16px) 20px 14px;background:rgba(8,11,24,0.78);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);flex-shrink:0;}
   #feed-peek-handle{display:none;}
-  #feed-close{background:none;border:none;width:28px;height:28px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;color:rgba(148,168,218,0.61);position:relative;overflow:hidden;transition:color .13s,transform .2s ease-out;flex-shrink:0;}
+  #feed-close{display:none;}
   #feed-close:active{color:rgba(200,218,255,0.85);transform:scale(0.86);transition:transform .07s;}
   #feed-body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;background:rgba(8,11,24,0.78);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);padding-bottom:calc(env(safe-area-inset-bottom,0px) + 80px);}
   .feed-section-ttl{font-size:10px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:rgba(120,148,205,0.51);padding:22px 20px 8px;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
@@ -2199,6 +2198,36 @@
   #ob-top-search-btn:active{transform:scale(0.98);background:rgba(255,255,255,0.13);}
   #ob-top-search-btn svg{flex-shrink:0;opacity:.8;}
   #ob-top-search-btn span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  /* 타이핑 모드: 버튼 숨기고 인풋으로 전환 — 버튼과 동일한 시각 컨테이너를 #ob-top-search 자체로 공유 */
+  #ob-top-search.ob-typing{
+    display:flex;align-items:center;gap:8px;
+    background:rgba(255,255,255,0.08);
+    backdrop-filter:blur(26px) saturate(180%);-webkit-backdrop-filter:blur(26px) saturate(180%);
+    border:1px solid rgba(255,255,255,0.30);
+    border-radius:24px;padding:0 18px;
+    box-shadow:0 8px 28px rgba(0,0,0,0.28),inset 0 1px 0 rgba(255,255,255,0.20);
+  }
+  #ob-top-search.ob-typing #ob-top-search-btn{display:none;}
+  #ob-si{display:none;flex:1;background:none;border:none;outline:none;
+    color:rgba(255,255,255,0.92);font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;
+    font-size:13px;font-weight:500;padding:13px 0;-webkit-text-size-adjust:none;letter-spacing:.03em;}
+  #ob-si::placeholder{color:rgba(255,255,255,0.35);}
+  #ob-top-search.ob-typing #ob-si{display:block;}
+  #ob-si-clear{display:none;background:none;border:none;color:rgba(190,205,240,0.61);
+    font-size:16px;cursor:pointer;padding:4px 0 4px 4px;line-height:1;align-items:center;flex-shrink:0;}
+  #ob-top-search.ob-typing #ob-si-clear{display:flex;}
+  /* 온보딩 검색 결과 패널 — 플로팅 바 바로 아래에 뜸 */
+  #ob-sr{
+    position:fixed;left:20px;right:20px;
+    top:calc(env(safe-area-inset-top,0px) + 58px + 52px);
+    background:rgba(14,18,36,0.97);border-radius:0 0 16px 16px;
+    border:0.5px solid rgba(255,255,255,0.09);border-top:none;
+    backdrop-filter:blur(32px);-webkit-backdrop-filter:blur(32px);
+    box-shadow:0 8px 32px rgba(0,0,0,0.45);
+    z-index:42;max-height:55vh;overflow-y:auto;overflow-x:hidden;display:none;
+    box-sizing:border-box;padding:4px 0;
+  }
+  #ob-sr.open{display:block;}
   /* 탐험 패널 — 지도앱 바텀시트 방식. 첫 방문엔 살짝(peek, 절반)만 열어두고, 손잡이를 위로 끌면
      하단 탭바 "탐험" 버튼을 눌렀을 때와 완전히 같은 전체화면 상태(.peek 제거)가 되고, 아래로 끌면
      peek/전체 상태 구분 없이 바로 닫힌다(2026-08-13, 사용자 요청 — 이미 반만 열려있는 상태에서
@@ -2208,11 +2237,16 @@
   @media(max-width:768px){
     #feed-overlay{transition:transform .32s cubic-bezier(0.32,0.72,0,1),top .32s cubic-bezier(0.32,0.72,0,1),height .32s cubic-bezier(0.32,0.72,0,1),border-radius .32s cubic-bezier(0.32,0.72,0,1);}
     #feed-overlay.open.peek{
-      top:50%;height:50%;
+      top:44%;height:56%;
       border-radius:20px 20px 0 0;
       border-top:0.5px solid rgba(255,255,255,0.10);
       box-shadow:0 -8px 32px rgba(0,0,0,0.35);
+      background:rgba(8,11,24,0.97);
     }
+    /* peek 상태: X버튼 없으니 헤더 완전 축소, 핸들 바로 아래에 콘텐츠 */
+    #feed-overlay.open.peek #feed-hd{padding:0;height:0;overflow:hidden;}
+    /* peek 상태: 불투명하게(backdrop-filter 제거) */
+    #feed-overlay.open.peek #feed-body{background:rgba(8,11,24,0.97);backdrop-filter:none;-webkit-backdrop-filter:none;}
     /* peek든 전체든 손잡이는 항상 떠있게(#mob-sheet-handle과 동일 패턴) — "끌 수 있다"는 걸 늘 알려줌 */
     #feed-overlay.open #feed-peek-handle{display:block;width:36px;height:4px;background:rgba(255,255,255,0.18);border-radius:2px;margin:10px auto 0;}
   }
