@@ -6285,7 +6285,10 @@ function _renderGcDiscography(ko){
       const img=document.createElement('img');
       img.className='gc-discog-cover';img.loading='lazy';img.decoding='async';
       img.src=a.cover;img.alt=a.title;
-      const typeEl=document.createElement('div');typeEl.className='gc-discog-type';typeEl.textContent=a.type==='싱글'?'Single':a.type;
+      const typeEl=document.createElement('div');typeEl.className='gc-discog-type';
+      const typeLabel=a.type==='싱글'?'Single':a.type;
+      const yr=a.releaseDate?a.releaseDate.slice(0,4):'';
+      typeEl.textContent=yr?`${typeLabel} · ${yr}`:typeLabel;
       const titleEl=document.createElement('div');titleEl.className='gc-discog-item-title';titleEl.textContent=a.title;
       item.appendChild(img);item.appendChild(typeEl);item.appendChild(titleEl);
       item.addEventListener('click',e=>{e.stopPropagation();_gcDiscogList=list;_openGcDiscogDetail(a,idx);});
@@ -8386,8 +8389,10 @@ function _sizeSearchWrap(){
   const sw=document.getElementById('search-wrap');
   if(!pill||!sw)return;
   const r=pill.getBoundingClientRect();
-  sw.style.width=Math.round(r.width)+'px';
-  sw.style.right=Math.round(window.innerWidth-r.right)+'px';
+  // 아이콘 행(테두리 없음)과 픽셀 경계를 정확히 맞추면 검색창(테두리 있는 박스)이 착시로 더 커
+  // 보여서(2026-08-13, 사용자 제보), 테두리만큼 살짝 안쪽으로 인셋
+  sw.style.width=(Math.round(r.width)-2)+'px';
+  sw.style.right=(Math.round(window.innerWidth-r.right)+1)+'px';
 }
 {let _swResizeT;window.addEventListener('resize',()=>{clearTimeout(_swResizeT);_swResizeT=setTimeout(()=>{if(document.getElementById('search-wrap').classList.contains('open'))_sizeSearchWrap();},120);});}
 // 검색(🔍) 버튼을 화살표로 가리키도록 위치를 매번 실측해서 맞춘다(언어 토글로 버튼 폭이 바뀌어도 안전)

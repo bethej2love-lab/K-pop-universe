@@ -2,7 +2,7 @@
 // 빌드 스텝이 없는 프로젝트라 캐시 무효화는 이 버전 문자열을 수동으로 올려서 처리한다.
 // 의미 있는 배포(html/css/js 변경) 때마다 CACHE_VERSION을 올릴 것 — 안 올리면 재방문 유저가
 // 옛 캐시를 계속 보게 된다.
-const CACHE_VERSION='kpu-v1';
+const CACHE_VERSION='kpu-v2';
 
 const PRECACHE_URLS=[
   './kpop_universe.html',
