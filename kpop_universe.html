@@ -538,7 +538,7 @@
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="10.5" cy="10.5" r="6.5" stroke="currentColor" stroke-width="1.8"/><line x1="15.5" y1="15.5" x2="21" y2="21" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
     <span>WHO'S YOUR BIAS?</span>
   </button>
-  <input id="ob-si" type="text" placeholder="그룹 · 멤버 검색…" autocomplete="off" inputmode="search">
+  <input id="ob-si" type="text" placeholder="WHO'S YOUR BIAS?" autocomplete="off" inputmode="search">
   <button id="ob-si-clear" aria-label="검색 닫기">✕</button>
 </div>
 <div id="ob-sr"></div>
@@ -2010,13 +2010,6 @@ function _showOnboardHint(){
   if(document.getElementById('side-panel').classList.contains('open'))return;
   _obActive=true;
   if(isMob()){
-    if(!localStorage.getItem(_OB_KEY)){
-      const el=document.getElementById('ob-top-search');
-      if(el){
-        el.classList.remove('ob-hide');
-        requestAnimationFrame(()=>requestAnimationFrame(()=>el.classList.add('ob-show')));
-      }
-    }
     _openFeedOverlay();
     document.getElementById('feed-overlay')?.classList.add('peek');
   }else{
@@ -2026,7 +2019,7 @@ function _showOnboardHint(){
 function exitObSearch(){
   _obSearchMode=false;
   const el=document.getElementById('ob-top-search');
-  if(el){el.classList.remove('ob-typing','ob-show');el.classList.add('ob-hide');}
+  if(el){el.classList.remove('ob-show','ob-typing');el.classList.add('ob-hide');}
   const inp=document.getElementById('ob-si');if(inp){inp.value='';inp.blur();}
   const sr=document.getElementById('ob-sr');if(sr){sr.classList.remove('open');sr.innerHTML='';}
 }
@@ -2036,8 +2029,6 @@ function _dismissOnboardHint(){
   if(!_obActive)return;
   _obActive=false;
   localStorage.setItem(_OB_KEY,'1');
-  const el=document.getElementById('ob-top-search');
-  if(el){el.classList.remove('ob-show');el.classList.add('ob-hide');}
   // 탐험 패널(peek 포함)은 이제 카드 밑에 그대로 깔아두는 게 기본이라(2026-08-12) 여기서 안 닫는다 —
   // 카드가 완전히 치워지면 자연히 다시 보임. 데스크톱은 원래도 옆 패널이라 카드와 같이 열어두는 게
   // 기본인데, 이 최초 안내에서만 예외적으로 닫아온 기존 동작만 유지.
@@ -7275,6 +7266,7 @@ function _pickExploreTarget(){
 }
 document.getElementById('tab-explore').addEventListener('click',e=>{
   e.stopPropagation();
+  exitObSearch();
   _closeFeedOverlay();
   if(!bubbleMeshes.length)return;
   const item=_pickExploreTarget();const{bm}=item;
@@ -8808,6 +8800,7 @@ function _toggleFavMode(){
 document.getElementById('mob-fav-btn').addEventListener('click',e=>{e.stopPropagation();_toggleFavMode();});
 document.getElementById('tab-feed').addEventListener('click',e=>{
   e.stopPropagation();
+  exitObSearch();
   document.body.classList.contains('feed-open')?_closeFeedOverlay():_openFeedOverlay();
 });
 // 상단 온보딩 검색바 — 실제 입력창이 아니라 탭하면 기존 검색(하단 돋보기와 동일)으로 그대로 인계한다
@@ -8826,7 +8819,7 @@ document.getElementById('ob-top-search-btn')?.addEventListener('click',e=>{
 });
 document.getElementById('ob-si-clear')?.addEventListener('click',e=>{e.stopPropagation();exitObSearch();});
 document.getElementById('ob-si')?.addEventListener('input',e=>{doSearch(e.target.value);});
-document.getElementById('ob-si')?.addEventListener('focus',()=>doSearch(document.getElementById('ob-si').value));
+document.getElementById('ob-si')?.addEventListener('focus',()=>{_obSearchMode=true;doSearch(document.getElementById('ob-si').value);});
 document.getElementById('ob-si')?.addEventListener('click',e=>e.stopPropagation());
 document.getElementById('ob-sr')?.addEventListener('click',e=>e.stopPropagation());
 document.getElementById('ob-sr')?.addEventListener('pointerdown',e=>e.stopPropagation());
@@ -9574,8 +9567,14 @@ document.getElementById('dh-profile-btn').addEventListener('click',e=>{
 });
 document.getElementById('my-page-edit').addEventListener('click',e=>{e.stopPropagation();openProfilePanel();});
 _updateProfileBtns();
-if(!myProfile?.nickname&&isMob()){
-  document.getElementById('search-wrap').classList.add('open');
+// 모바일 비로그인: 상단 검색창을 처음부터 입력창 형태로 표시
+if(isMob()&&!myProfile?.nickname){
+  const _obEl=document.getElementById('ob-top-search');
+  if(_obEl){
+    _obEl.classList.remove('ob-hide');
+    _obEl.classList.add('ob-typing');
+    requestAnimationFrame(()=>requestAnimationFrame(()=>_obEl.classList.add('ob-show')));
+  }
 }
 updateMyPage();
 
