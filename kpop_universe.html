@@ -154,8 +154,14 @@
         <button id="gc-discog-more-btn" class="gc-discog-more-btn" style="display:none" type="button">+<span id="gc-discog-more-cnt"></span></button>
       </div>
       <div id="gc-discog-ctrl-row" class="gc-discog-ctrl-row" style="display:none">
-        <div id="gc-discog-type-chips" class="gc-discog-type-chips"></div>
-        <button id="gc-discog-sort-btn" class="gc-discog-sort-btn" type="button" aria-label="정렬 방향"></button>
+        <div id="gc-discog-type-chips" class="seg-control"><div class="seg-thumb"></div></div>
+        <div class="gc-ch-sort-wrap">
+          <button id="gc-discog-sort-btn" class="gc-ch-sort-btn" type="button" title="정렬" aria-haspopup="true" aria-expanded="false">⋮</button>
+          <div id="gc-discog-sort-menu" class="gc-ch-sort-menu">
+            <button class="gc-ch-sort-item" data-sort="oldest"><span class="chk">✓</span><span>오래된순</span></button>
+            <button class="gc-ch-sort-item" data-sort="latest"><span class="chk">✓</span><span>최신순</span></button>
+          </div>
+        </div>
       </div>
       <div id="gc-discog-strip" class="gc-discog-strip hscroll-drag"></div>
     </div>
@@ -4018,31 +4024,26 @@ function openMobSheet(cardEl){
 // id를 그대로 복제해서 문서에 id="tt"/"tt-back"/"tn" 등이 통째로 두 개씩 생겨 document.getElementById가
 // 리스너 없는 죽은 클론을 집어버리는 문제가 있었음 — 뒤로가기 버튼이 안 눌리던 진짜 원인이었음
 // (2026-08-11, 사용자 제보 — "이전버튼 잘 안 눌리고 카드가 제대로 쌓이지도 않는 것 같다").
+// ID 제거 전에 레이아웃에 관여하는 속성들을 인라인으로 고정해둬야 한다 — cloneNode 후 ID를 지우면
+// "#tt-links{display:flex}"처럼 ID 셀렉터에 의존하는 CSS 규칙이 전부 무효화되어 flex가 block으로
+// 무너지고 아이콘·텍스트가 세로로 한 줄씩 흩어지는 문제가 있었음(2026-08-11 최초 발견). 처음엔 문제가
+// 됐던 ID 몇 개만 하드코딩해서 고쳤었는데, 그 목록에 없던 #tt-links/#gc-links 등에서 같은 증상이
+// 다시 재발함(2026-08-13, 사용자 제보) — ID 목록을 손으로 계속 추가하는 대신, ID가 붙은 요소 전부를
+// 훑어서 일괄 처리하도록 일반화한다. 새 카드 요소가 추가돼도 다시 깨질 일이 없다.
+const _FREEZE_LAYOUT_PROPS=['display','flexDirection','flexWrap','alignItems','alignContent','justifyContent',
+  'flex','flexGrow','flexShrink','flexBasis','gap','rowGap','columnGap','minWidth','minHeight','maxWidth',
+  'padding','paddingTop','paddingRight','paddingBottom','paddingLeft','overflow','overflowX','overflowY',
+  'whiteSpace','position','textAlign'];
 function _freezeSheetBottomBeforeOverwrite(type){
   if(!isMob())return;
   const el=document.getElementById(type);
   if(!mobSheetEl.classList.contains('bs-open')||el.parentElement!==mobSheetInner)return;
   const clone=el.cloneNode(true);
-  // ID 제거 전에 핵심 layout 요소들의 display/flex 속성을 inline으로 고정.
-  // cloneNode 후 ID를 제거하면 #tt-pic-info-row{display:flex} 같은 ID 기반 CSS가
-  // 모두 무효화되어 flex가 block으로 무너지고 아이콘·텍스트가 세로로 흩어지는 문제가 있었음.
-  ['tt-pic-info-row','tt-info-side','tt-name-row','tg-row',
-   'gc-inner','gc-header','gc-header-text','gc-name-row','gc-en-row','gc-grid']
-  .forEach(id=>{
-    const live=document.getElementById(id);
-    const c=clone.querySelector(`[id="${id}"]`);
-    if(!live||!c)return;
+  [clone,...clone.querySelectorAll('[id]')].forEach(c=>{
+    const live=c===clone?el:document.getElementById(c.id);
+    if(!live)return;
     const cs=getComputedStyle(live);
-    c.style.display=cs.display;
-    c.style.flexDirection=cs.flexDirection;
-    c.style.alignItems=cs.alignItems;
-    c.style.justifyContent=cs.justifyContent;
-    c.style.flex=cs.flex;
-    c.style.minWidth=cs.minWidth;
-    c.style.gap=cs.gap;
-    c.style.padding=cs.padding;
-    c.style.overflow=cs.overflow;
-    c.style.overflowX=cs.overflowX;
+    _FREEZE_LAYOUT_PROPS.forEach(p=>{if(cs[p])c.style[p]=cs[p];});
   });
   clone.removeAttribute('id');
   clone.querySelectorAll('[id]').forEach(d=>d.removeAttribute('id'));
@@ -6192,6 +6193,7 @@ let _gcDiscogIdx=-1;
 // 앨범 종류 필터 — groups.json의 type 문자열이 그룹마다 제각각("EP"/"미니 5집"/"정규 2집" 등)이라
 // 정확한 문자열 매칭 대신 접두어로 3개 버킷(싱글/미니(EP)/정규)에 묶는다. OST·리믹스·컴필레이션처럼
 // 세 버킷에 안 맞는 것들은 칩을 안 만들고 "전체"에서만 보이게 둔다(2026-08-13, 사용자 요청).
+// 라벨은 밑의 영상 필터(All/MV/Live/Cover)와 톤을 맞춰 영문으로.
 function _discogBucket(type){
   if(/^싱글/.test(type))return'싱글';
   if(/^(미니|EP)/.test(type))return'미니(EP)';
@@ -6199,14 +6201,17 @@ function _discogBucket(type){
   return null;
 }
 const _DISCOG_BUCKETS=['싱글','미니(EP)','정규'];
+const _DISCOG_BUCKET_LABEL={all:'All','싱글':'Single','미니(EP)':'EP','정규':'Album'};
 function _renderGcDiscography(ko){
   const row=document.getElementById('gc-discog-row');
   const strip=document.getElementById('gc-discog-strip');
   const moreBtn=document.getElementById('gc-discog-more-btn');
   const moreCntEl=document.getElementById('gc-discog-more-cnt');
   const ctrlRow=document.getElementById('gc-discog-ctrl-row');
-  const chipsEl=document.getElementById('gc-discog-type-chips');
+  const segEl=document.getElementById('gc-discog-type-chips');
+  const segThumb=segEl.querySelector('.seg-thumb');
   const sortBtn=document.getElementById('gc-discog-sort-btn');
+  const sortMenu=document.getElementById('gc-discog-sort-menu');
   const albums=(GROUPS[ko]||{}).discography;
   if(!albums||!albums.length){row.style.display='none';return;}
   row.style.display='';
@@ -6242,31 +6247,68 @@ function _renderGcDiscography(ko){
     });
     _enableDragScroll(strip);
   }
-  sortBtn.textContent=asc?'오래된순':'최신순';
-  sortBtn.onclick=e=>{
-    e.stopPropagation();
-    asc=!asc;
-    sortBtn.textContent=asc?'오래된순':'최신순';
-    renderItems();
-  };
+  // 정렬 — 영상 쪽과 같은 "⋮ 아이콘 → 드롭다운(체크표시)" 방식으로 통일(2026-08-13, 텍스트 버튼이
+  // 안 예쁘다는 피드백). 항목이 두 개뿐이라 별도 전역 상태 없이 이 함수 스코프에서 직접 처리.
+  function closeDiscogSortMenu(){
+    sortMenu.classList.remove('open');
+    sortBtn.classList.remove('active');
+    sortBtn.setAttribute('aria-expanded','false');
+  }
+  function updateSortMenuUI(){
+    sortMenu.querySelectorAll('.gc-ch-sort-item').forEach(it=>{
+      it.classList.toggle('active',it.dataset.sort===(asc?'oldest':'latest'));
+    });
+  }
+  updateSortMenuUI();
+  if(!sortBtn._discogBound){
+    sortBtn._discogBound=true;
+    sortBtn.addEventListener('click',e=>{
+      e.stopPropagation();
+      const open=!sortMenu.classList.contains('open');
+      sortMenu.classList.toggle('open',open);
+      sortBtn.classList.toggle('active',open);
+      sortBtn.setAttribute('aria-expanded',open?'true':'false');
+    });
+    sortMenu.querySelectorAll('.gc-ch-sort-item').forEach(it=>{
+      it.addEventListener('click',e=>{
+        e.stopPropagation();
+        const wantAsc=it.dataset.sort==='oldest';
+        if(asc===wantAsc){closeDiscogSortMenu();return;}
+        asc=wantAsc;
+        updateSortMenuUI();
+        closeDiscogSortMenu();
+        renderItems();
+      });
+    });
+    document.addEventListener('click',closeDiscogSortMenu);
+  }
+  // 종류 필터 — 세그먼트 컨트롤(하나의 트랙 안에서 선택 배경이 슬라이드) — 개별 알약이 따로 노는
+  // 영상 필터와는 다른 형태를 원한다는 요청으로 신설(2026-08-13).
+  function moveThumbTo(btn){
+    segThumb.style.width=btn.offsetWidth+'px';
+    segThumb.style.transform=`translateX(${btn.offsetLeft-2}px)`;
+  }
   const presentBuckets=_DISCOG_BUCKETS.filter(b=>albums.some(a=>_discogBucket(a.type)===b));
   if(presentBuckets.length>1){
     ctrlRow.style.display='';
-    chipsEl.innerHTML='';
-    ['전체',...presentBuckets].forEach(label=>{
-      const val=label==='전체'?'all':label;
-      const chip=document.createElement('button');
-      chip.type='button';chip.className='tag-chip gc-discog-chip'+(val===typeFilter?' active':'');
-      chip.textContent=label;
-      chip.addEventListener('click',e=>{
+    segEl.querySelectorAll('.seg-btn').forEach(b=>b.remove());
+    const segBtns=[];
+    ['all',...presentBuckets].forEach(val=>{
+      const btn=document.createElement('button');
+      btn.type='button';btn.className='seg-btn'+(val===typeFilter?' active':'');
+      btn.textContent=_DISCOG_BUCKET_LABEL[val];
+      btn.addEventListener('click',e=>{
         e.stopPropagation();
         typeFilter=val;
-        chipsEl.querySelectorAll('.gc-discog-chip').forEach(c=>c.classList.toggle('active',c===chip));
+        segBtns.forEach(b=>b.classList.toggle('active',b===btn));
+        moveThumbTo(btn);
         moreBtn.style.display=(typeFilter==='all'&&extraAlbums.length)?'':'none';
         renderItems();
       });
-      chipsEl.appendChild(chip);
+      segEl.appendChild(btn);
+      segBtns.push(btn);
     });
+    requestAnimationFrame(()=>moveThumbTo(segBtns[0]));
   }else{
     ctrlRow.style.display='none';
   }
@@ -7904,6 +7946,52 @@ function _collectionGroupKos(col){
 }
 function _collectionMemberKos(col){
   return[...new Set((col.videos||[]).flatMap(v=>v.memberKos&&v.memberKos.length?v.memberKos:(v.memberKo?[v.memberKo]:[])))];
+}
+// 컬렉션에 담긴 영상의 memberKos는 담을 당시 UI 맥락(그리드/라이트박스 등)에서 스냅샷으로 저장되는데,
+// 예전 버그(그리드에서 바로 담으면 실제 DB 태그를 안 읽던 문제, 2026-08-12 수정)로 그 이전에 담긴
+// 영상들은 memberKos가 비어있는 채로 로컬/서버에 그대로 남아있다 — 코드 수정만으로는 이미 저장된
+// 데이터가 저절로 안 고쳐지므로, 로그인 시점에 컬렉션에 실린 영상들을 실제 DB 태그 기준으로 한 번씩
+// 다시 맞춰준다(2026-08-13, 사용자 제보 — 코르티스 성현 단독 출연 컬렉션이 성현 카드엔 안 뜨고
+// 그룹 카드에만 뜸). with_members는 "이름(그룹)" 포맷이라 괄호 앞 이름만 뽑아 합친다.
+function _videoTaggedMemberKos(row){
+  const names=new Set(row.members||[]);
+  (row.with_members||[]).forEach(s=>{
+    const m=s.match(/^(.+)\(.+\)$/);
+    names.add(m?m[1]:s);
+  });
+  return[...names];
+}
+async function _backfillCollectionVideoTags(){
+  if(!sb||!collections.length)return;
+  try{
+    const idMap=new Map(); // youtube id -> [videoObj, ...] (여러 컬렉션에 같은 영상이 있을 수 있음)
+    collections.forEach(col=>{
+      (col.videos||[]).forEach(v=>{
+        const id=ytId(v.u);
+        if(!id)return;
+        if(!idMap.has(id))idMap.set(id,[]);
+        idMap.get(id).push(v);
+      });
+    });
+    if(!idMap.size)return;
+    const ids=[...idMap.keys()];
+    let changed=false;
+    for(let i=0;i<ids.length;i+=200){
+      const chunk=ids.slice(i,i+200);
+      const{data,error}=await sb.from(_YT_TABLE).select('id,group_ko,members,with_members').in('id',chunk);
+      if(error||!data)continue;
+      data.forEach(row=>{
+        const fresh=_videoTaggedMemberKos(row);
+        (idMap.get(row.id)||[]).forEach(v=>{
+          const cur=v.memberKos||[];
+          const same=cur.length===fresh.length&&cur.every(m=>fresh.includes(m));
+          if(!same){v.memberKos=fresh;changed=true;}
+          if(row.group_ko&&!v.groupKo){v.groupKo=row.group_ko;changed=true;}
+        });
+      });
+    }
+    if(changed){_saveCollections();renderCollectionSection();}
+  }catch(e){console.error('컬렉션 영상 태그 백필 실패',e);}
 }
 // 공개/비공개 전환 및 영상 추가·삭제 시 공개 테이블(public_collections)과 동기화.
 // isPublic이면 upsert(생성/갱신 겸용), 아니면 delete — 두 경우 다 이 함수 하나로 처리.
@@ -9587,6 +9675,7 @@ async function initSupabaseSync(){
       localStorage.setItem(SB_LAST_UID_KEY,session.user.id);
       if(isNewDeviceForThisAccount)_gaEvent('link_account_success',{});
     }
+    _backfillCollectionVideoTags(); // 세션이 확정된 뒤 백그라운드로 — 화면 표시를 막지 않음
   }catch(e){
     _authAlert('initSupabaseSync 예외: '+(e&&e.message||e));
   }
@@ -9784,7 +9873,17 @@ const _FEED_DISCOVERY_TTL=3*60*1000;
 function _openFeedOverlay(){
   const el=document.getElementById('feed-overlay');
   if(isMob())closeMobSheet(); // 열려있는 카드 먼저 닫고 탐색 오버레이 표시
-  el.classList.add('open');
+  if(isMob()){
+    // 카드 바텀시트(openMobSheet)와 같은 톤으로 아래에서 위로 슬라이드업 — 예전엔 display:none→flex만
+    // 토글해서 트랜지션 없이 뚝 나타났음(2026-08-13, 사용자 제보).
+    el.style.transition='none';el.style.transform='translateY(100%)';
+    el.classList.add('open');
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{
+      el.style.transition='';el.style.transform='';
+    }));
+  }else{
+    el.classList.add('open');
+  }
   if(!isMob()){_bringToFront(el);document.getElementById('zoom-ctrl').classList.add('zoom-feed-open');}
   document.body.classList.add('feed-open');
   document.getElementById('tab-feed').classList.add('feed-open');
@@ -9827,8 +9926,10 @@ function _closeFeedOverlay(){
 }
 // 모바일: 카드(mob-sheet 등)처럼 콘텐츠 맨 위에서 아래로 쭉 내리면 어디서 시작했든 닫힘(2026-08-12,
 // 사용자 요청 — "카드처럼 어느 위치에서든 위→아래로 내리면 꺼지면 좋겠다"). peek(50%)든 전체 펼침이든
-// 동일하게 동작 — 펼치기는 기존 헤더 탭으로 이미 되므로 여기선 아래 방향만 다룬다. _wireSheetSwipe와
-// 달리 60%/100% 중간 단계가 없어서(peek/전체 두 상태뿐) 별도의 간단한 전용 로직으로 둠.
+// 동일하게 동작 — peek에서 반만 열려있는 상태에서 아래로 끄는 건 "줄이기"가 아니라 "닫기"라는 의도라
+// _wireSheetSwipe(카드용)와 달리 중간(peek로 되돌아가기) 단계 없이 바로 닫는다.
+// 위로 끄는 건 peek 상태일 때만 의미가 있음 — 전체 펼침(하단 탭바 "탐험"과 완전히 같은 화면)으로
+// 전환, 임계값 넘기면 .peek 제거 → top/height CSS 트랜지션으로 부드럽게 커짐(2026-08-13, 사용자 요청).
 function _wireFeedSwipeDismiss(el,body){
   let dragY=0,dragging=false,dragActive=false,_rafId=0,_applyFn=null;
   el.addEventListener('touchstart',e=>{
@@ -9845,9 +9946,9 @@ function _wireFeedSwipeDismiss(el,body){
       else return;
     }
     const dy=curY-dragY;
-    if(dy<=0)return; // 위로는 별도 동작 없음(펼치기는 헤더 탭으로 처리)
+    if(dy<0&&!el.classList.contains('peek'))return; // 이미 전체 펼침 — 더 올라갈 데 없음
     if(e.cancelable)e.preventDefault();
-    _applyFn=()=>{el.style.transition='none';el.style.transform=`translateY(${dy}px)`;};
+    _applyFn=()=>{el.style.transition='none';el.style.transform=`translateY(${dy<0?dy*0.35:dy}px)`;};
     if(!_rafId)_rafId=requestAnimationFrame(()=>{_rafId=0;_applyFn&&_applyFn();});
   },{passive:false});
   el.addEventListener('touchend',e=>{
@@ -9863,6 +9964,11 @@ function _wireFeedSwipeDismiss(el,body){
         _closeFeedOverlay();
         el.style.transition='';el.style.transform='';
       },220);
+    }else if(dy<-60&&el.classList.contains('peek')){
+      el.style.transition='transform 0.22s cubic-bezier(0.32,0.72,0,1)';
+      el.style.transform='';
+      el.classList.remove('peek'); // top/height는 위 CSS 트랜지션이 알아서 부드럽게 넘겨줌
+      setTimeout(()=>{el.style.transition='';},220);
     }else{
       el.style.transition='transform 0.22s cubic-bezier(0.32,0.72,0,1)';
       el.style.transform='';
