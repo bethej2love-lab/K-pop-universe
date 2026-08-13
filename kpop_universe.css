@@ -500,7 +500,7 @@
      비어있으면 그 부분만 조용히 생략(날짜만 있어도 표시, 둘 다 없으면 이 줄 자체를 숨김). */
   #yt-lb-info{padding:8px 2px 0;overflow:hidden;}
   #yt-lb-video-box.is-shorts~#yt-lb-info{width:min(54vw,420px);margin:0 auto;}
-  #yt-lb-title-text{font-size:12.5px;font-weight:600;color:rgba(225,235,255,0.92);line-height:1.35;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  #yt-lb-title-text{font-size:12.5px;font-weight:600;color:rgba(225,235,255,0.92);line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
   #yt-lb-meta-text{font-size:11px;color:rgba(150,175,215,0.66);margin-top:2px;}
   /* UI 오버레이 표시/숨김 */
   #yt-lb-close,#yt-lb-info,#yt-lb-reactions,#yt-lb-toolbar{transition:opacity .22s ease;}
@@ -650,9 +650,36 @@
        살짝 줄여서 위아래 여백을 확보 (탭으로 재생/일시정지하는 유튜브 기본 컨트롤은 그대로 유지됨) */
     #yt-lb-video-box.is-shorts{height:min(80vh,660px);width:auto;aspect-ratio:9/16;margin:0 auto;display:block;}
     #yt-lb-close{top:auto;bottom:calc(100% + 8px);right:0;font-size:15px;padding:4px 6px;opacity:.7;}
-    /* :not(.lb-browse) — 브라우즈 세션 중에 회전 버튼으로 영상만 세로로 바꾼 경우(lb-shorts는 영상 자체의
-       현재 비율일 뿐 세션 모드가 아님)까지 닫기 버튼이 사라지면 안 됨(2026-08-11) */
-    #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-close{display:none;}
+    /* 쇼츠 모드 전용 상단 바 — 닫기·모드전환·멤버정보·케밥 항상 고정 표시 */
+    #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-close{
+      display:flex;position:fixed;top:14px;left:12px;right:auto;bottom:auto;
+      z-index:2;background:rgba(0,0,0,0.4);border-radius:50%;padding:0;
+      width:36px;height:36px;align-items:center;justify-content:center;font-size:16px;opacity:1;}
+    #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-wrap.lb-ui-hidden #yt-lb-close{
+      opacity:.65;pointer-events:all;}
+    #lb-shorts-list-btn{display:none;}
+    #yt-lightbox.lb-shorts:not(.lb-browse) #lb-shorts-list-btn{
+      display:flex;position:fixed;top:14px;left:54px;
+      background:rgba(0,0,0,0.4);border:none;border-radius:50%;padding:0;
+      width:36px;height:36px;align-items:center;justify-content:center;
+      color:#fff;cursor:pointer;z-index:2;-webkit-tap-highlight-color:transparent;}
+    #yt-lightbox.lb-shorts:not(.lb-browse) .lb-menu-wrap{
+      display:block;position:fixed;top:14px;right:12px;z-index:2;}
+    #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-menu-btn{
+      background:rgba(0,0,0,0.4);border:none;border-radius:50%;padding:0;
+      width:36px;height:36px;color:#fff;font-size:21px;line-height:1;
+      cursor:pointer;display:flex;align-items:center;justify-content:center;}
+    #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-member-info{
+      display:flex;flex-direction:column;align-items:center;justify-content:center;
+      position:fixed;top:14px;left:50%;transform:translateX(-50%);
+      height:36px;max-width:44vw;text-align:center;z-index:1;
+      margin-top:0;padding-top:0;border-top:none;pointer-events:none;}
+    #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-anchor-chip{font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-with-chips{display:none;}
+    #yt-lightbox.lb-shorts:not(.lb-browse){align-items:flex-start;}
+    #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-wrap{
+      padding-top:calc(58px + env(safe-area-inset-top, 0px));}
+    #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-video-box.is-shorts{height:min(68vh,530px);}
     /* 모바일은 상하 스와이프로 영상 넘기므로 좌우 버튼은 오히려 잘못된 방향을 암시함 — 숨김 */
     #yt-lb-prev,#yt-lb-next{display:none;}
     #yt-lb-toolbar{justify-content:center;}
@@ -1625,7 +1652,7 @@
   .gc-discog-strip::-webkit-scrollbar{display:none;}
   .gc-discog-item{flex-shrink:0;width:68px;cursor:pointer;}
   .gc-discog-cover{width:68px;height:68px;border-radius:8px;object-fit:cover;background:rgba(255,255,255,0.06);display:block;box-shadow:0 3px 10px rgba(0,0,0,0.35);}
-  .gc-discog-type{font-size:8.5px;font-weight:700;letter-spacing:.03em;color:rgba(150,175,225,0.66);margin-top:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .gc-discog-type{font-size:7.5px;font-weight:700;letter-spacing:.03em;color:rgba(150,175,225,0.66);margin-top:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   .gc-discog-item-title{font-size:10px;color:rgba(215,228,255,0.85);line-height:1.28;margin-top:1px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
   .gc-discog-extra .gc-discog-cover{opacity:.55;}
   /* ── 앨범 상세 팝업 ── */

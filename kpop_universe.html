@@ -454,6 +454,7 @@
         <button id="yt-lb-conn-btn" style="display:none">연결 보기 <span>›</span></button>
       </div>
     </div>
+    <button id="lb-shorts-list-btn" aria-label="목록 보기"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="15" y2="18"/></svg></button>
     <div id="yt-lb-main">
     <div id="yt-lb-video-box">
       <iframe id="yt-lb-iframe" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>
@@ -2768,7 +2769,8 @@ function openLightbox(url,shorts,playlist,idx,ctx,isAdvance,forceBrowseMode){
   _lbUpdateToolbar();
   _updateLbMuteBtn();
   _maybeShowSwipeHint();
-  if(_lbSessionMode==='browse'){_lbUpdateMemberInfo();_lbUpdateUplist();}
+  _lbUpdateMemberInfo();
+  if(_lbSessionMode==='browse'){_lbUpdateUplist();}
 }
 const LB_SWIPE_HINT_KEY='kpu_lb_swipe_hint_shown'; // 상하 스와이프로 영상 넘길 수 있다는 걸 처음 한 번만 안내
 function _maybeShowSwipeHint(){
@@ -2814,11 +2816,9 @@ function _lbUpdateToolbar(){
   const metaEl=document.getElementById('yt-lb-meta-text');
   if(titleEl&&metaEl){
     const infoWrap=document.getElementById('yt-lb-info');
-    // 쇼츠(스와이프) 모드는 지금까지처럼 제목을 안 보여줌 — 브라우즈 모드만 제목을 은은하게 노출
-    // (유튜브 자체 컨트롤을 탭하면 상단에 뜨는 제목과 겹치는 정보라 튀지 않게, 2026-08-11).
-    if(s&&_lbSessionMode==='browse'){
-      titleEl.textContent=s.t||'';
-      titleEl.style.display=s.t?'':'none';
+    if(s&&s.t){
+      titleEl.textContent=s.t;
+      titleEl.style.display='';
     }else{
       titleEl.style.display='none';
     }
@@ -2826,7 +2826,7 @@ function _lbUpdateToolbar(){
       const metaStr=_fmtVidMeta(s.pa,s.vc);
       metaEl.textContent=metaStr;
       metaEl.style.display=metaStr?'':'none';
-      infoWrap.style.display=(metaStr||(s.t&&_lbSessionMode==='browse'))?'':'none';
+      infoWrap.style.display=(metaStr||s.t)?'':'none';
     }else{
       infoWrap.style.display='none';
     }
@@ -3194,6 +3194,17 @@ function closeLightbox(){
   if(tb&&tb.classList.contains('tab-hidden')){tb.classList.remove('tab-hidden');_retractSheets();}
   [mobSheetInner,mobCardStackInner,connSheetInner].forEach(el=>{if(el)el._lastScroll=el.scrollTop;});
 }
+function _lbSwitchToBrowse(){
+  const lb=document.getElementById('yt-lightbox');
+  const wrap=document.getElementById('yt-lb-wrap');
+  _lbSessionMode='browse';
+  lb.classList.add('lb-browse');
+  wrap.classList.remove('lb-ui-hidden');
+  _lbUpdateToolbar();
+  _lbUpdateMemberInfo();
+  _lbUpdateUplist();
+}
+document.getElementById('lb-shorts-list-btn').addEventListener('click',e=>{e.stopPropagation();_lbSwitchToBrowse();});
 document.getElementById('yt-lightbox').addEventListener('pointerdown',e=>e.stopPropagation());
 document.getElementById('yt-lightbox').addEventListener('click',e=>{e.stopPropagation();if(!document.getElementById('yt-lb-wrap').contains(e.target))closeLightbox();});
 // 쇼츠 모드에서 리액션·툴바 줄 옆의 빈 여백도 버튼이 아닌 컨테이너 자체를 눌렀을 때는 닫히도록 허용
