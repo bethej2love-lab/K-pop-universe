@@ -1863,7 +1863,11 @@ function _atmTokenize(title){return(title||'').toLowerCase().split(/[^a-z0-9]+/)
 // 방탄소년단 진의 name.ko는 "진"이라 'JIN'은 절대 매칭될 수 없는 죽은 항목이었음(2026-08-05, 사용자가
 // 박우진/권진아/진현주 영상에 방탄소년단 진이 잘못 얽혀있다고 제보하며 발견). 'Love'는 실제로 그 멤버의
 // name.ko 자체가 "Love"라 정상.
-const _ATM_HASHTAG_ONLY_NAMES=new Set(['여름','아이엠','가을','하늘','바다','이유','Love','진','이런','뉴','고우리','유사랑','종현','문빈','구하라','설리','노을','조현영','테오','바로','여정','온다','보니','미소']);
+// 2026-08-14: 종현/문빈/구하라/설리는 _ATM_NO_CONTEXT_RELAX_NAMES(아래)에도 같이 걸려있는 민감한
+// 이름(고인)이라 재배포 없이 한 번의 실수 클릭으로 보호가 풀리지 않도록 계속 하드코딩으로 남긴다.
+// 나머지는 DB(name_match_whitelist)로 이전 — 이제 보호 목록 화면에서 × 눌러 즉시 제거 가능해짐
+// (SQL은 대화 참고, admin이 직접 실행).
+const _ATM_HASHTAG_ONLY_NAMES=new Set(['종현','문빈','구하라','설리']);
 // 보니/미소(드림노트): "알고 보니"/"어쩌다 보니"/"미소 짓다"처럼 흔한 관용구·단어의 일부로 대량 오매칭됨
 // (2026-08-06, 사용자 제보 — 실측 결과 보니 151건 중 상당수, 미소 76건 다수가 무관 예능/뉴스 클립).
 // 하드코딩 목록 + DB(name_match_whitelist, admin이 스캔 화면에서 바로 추가) 목록을 합쳐서 판단.
@@ -2256,12 +2260,15 @@ function _m2ParseTitle(rawTitle,selfGko,strict){
     .replace(/하이라이트\s*모음/g,' ');
   // 특수문자를 공백으로 치환해 토큰 경계 확보, 앞뒤 공백 추가
   const norm=' '+title.toUpperCase().replace(/[^가-힣a-zA-Z0-9]/g,' ').replace(/\s+/g,' ')+' ';
-  function hit(name){
+  // n을 넘기면 그 문자열을 대신 검사 — "문빈&산하"처럼 & 로 묶인 유닛명이 정규화되면 "문빈 산하"처럼
+  // 멤버 이름이 개별 단어로 쪼개져 보여서, 유닛명 자체가 만든 가짜 개별 언급을 걸러내려면 유닛명 구간을
+  // 지운 문자열(normMinusUnits, 아래)로 다시 검사해야 함(TODO(unit-name-false-with) 해결, 2026-08-14).
+  function hit(name,n2){
     if(!name||name.length<2)return false;
     // trim 필수 — "K.R.Y."처럼 끝이 특수문자인 이름은 정규화 후 끝에 공백이 남아서 trim 없이 앞뒤
     // 공백을 덧붙이면 이중 공백이 되어 norm과 절대 안 맞음(2026-08-05, 슈퍼주니어 유닛 추가 중 발견).
     const n=name.toUpperCase().replace(/[^가-힣a-zA-Z0-9]/g,' ').replace(/\s+/g,' ').trim();
-    return norm.includes(' '+n+' ');
+    return (n2||norm).includes(' '+n+' ');
   }
   // "New"(뉴/더보이즈), "On"(온/올아워즈), "Key"(키/샤이니), "Q"(큐/더보이즈)처럼 등록명이 한 글자(단일음절)인
   // 멤버는 영문 로마자 표기가 흔한 영단어와 겹쳐서, 제목에 그 단어가 평범하게 쓰였을 뿐인데도 멤버 언급으로
@@ -2320,20 +2327,24 @@ function _m2ParseTitle(rawTitle,selfGko,strict){
   // 제목에 유닛명만 있고 개별 멤버 이름은 없는 경우까지 커버하기 위해, 유닛 멤버를 "그 멤버 이름이
   // 제목에 직접 있었던 것"처럼 membersByGroup에 강제로 합쳐 넣는다(아래 멤버 추출 루프에서 union).
   //
-  // TODO(unit-name-false-with): 제노재민/문빈산하처럼 멤버 이름이 그대로 유닛명에 포함된 경우,
-  // "제노재민 제노 직캠"을 파싱하면 재민이 with로 잘못 태깅된다. 원인: unitExtraMembers에 유닛 소속
-  // 전원이 무조건 들어간 뒤 아래 union에서 그대로 merged되기 때문. 수정 방향: norm에서 유닛명 토큰을
-  // 먼저 제거한 normMinusUnits를 만들고, extra 멤버 중 normMinusUnits에서도 개별 매칭이 안 되는 멤버는
-  // 추가하지 않는다. 단, normMinusUnits에서 유닛 소속 멤버가 아무도 안 걸리면(유닛명만 제목에 있는 경우)
-  // 기존처럼 전원 추가 유지. 구현 전제: _PROJECT_UNITS에 해당 유닛 데이터가 충분히 등록돼 있어야 함
-  // — 유닛 데이터 보강 후 작업 예정.
+  // (unit-name-false-with 해결, 2026-08-14) 제노재민/문빈산하처럼 멤버 이름이 그대로 유닛명에 포함된
+  // 경우 — "&"/공백으로 묶인 유닛명은 정규화되면 "문빈 산하"처럼 멤버 이름이 개별 단어로 쪼개져서,
+  // 유닛명만 제목에 있어도 멤버 이름이 "따로" 언급된 것처럼 히트돼버림("제노재민 제노 직캠"에서 재민이
+  // with로 잘못 잡히는 원인). normMinusUnits는 매칭된 유닛명 토큰의 리터럴 구간을 norm에서 지운
+  // 문자열 — 이걸로 다시 검사하면 유닛명이 만든 가짜 개별 언급은 사라지고, 제목 다른 자리에 진짜로
+  // 따로 쓰인 이름만 남는다. 아래 멤버 추출 루프에서 이 문자열을 기준으로 재검증한다.
   const unitExtraMembers={}; // gko -> Set(mko)
+  let normMinusUnits=norm;
   Object.values(_PROJECT_UNITS).forEach(unit=>{
     if(!unit.names.some(hit))return;
     unit.members.forEach(({mko,gko})=>{
       if(!seen.has(gko)){matchedGroupKos.push(gko);seen.add(gko);}
       if(!unitExtraMembers[gko])unitExtraMembers[gko]=new Set();
       unitExtraMembers[gko].add(mko);
+    });
+    unit.names.forEach(t=>{
+      const n=t.toUpperCase().replace(/[^가-힣a-zA-Z0-9]/g,' ').replace(/\s+/g,' ').trim();
+      if(n)normMinusUnits=normMinusUnits.replace(new RegExp(' '+_atmEscRe(n)+' ','g'),' ');
     });
   });
   // 흔한 곡/유행어와 겹치는 그룹(_GROUP_AMBIGUOUS_IF_COMATCHED)이 다른 실존 그룹과 "같이" 매칭됐으면
@@ -2419,13 +2430,22 @@ function _m2ParseTitle(rawTitle,selfGko,strict){
     return{primaryGroup:result[0].gko,withGroups:result.slice(1).map(r=>r.gko),
            membersByGroup:Object.fromEntries(result.map(r=>[r.gko,r.members]))};
   }
-  // 각 매칭 그룹에서 멤버 추출
-  // TODO(unit-name-false-with): extra 병합 시 normMinusUnits 기반 개별 매칭 여부 체크 추가 예정(위 주석 참고)
+  // 각 매칭 그룹에서 멤버 추출 — normMinusUnits 기준으로 검사해 유닛명 토큰이 만든 가짜 개별 언급을
+  // 제외한다(위 unit-name-false-with 해결 참고).
   const membersByGroup={};
   for(const gko of matchedGroupKos){
-    const matched=ARTISTS.filter(a=>a.group.ko===gko&&_m2NameVariants(a).some(t=>hit(t)||hitHashtagSubstring(t))).map(a=>a.name.ko);
+    const matched=ARTISTS.filter(a=>a.group.ko===gko&&_m2NameVariants(a).some(t=>hit(t,normMinusUnits)||hitHashtagSubstring(t))).map(a=>a.name.ko);
     const extra=unitExtraMembers[gko];
-    if(extra)extra.forEach(mko=>{if(!matched.includes(mko))matched.push(mko);});
+    if(extra){
+      const extraArr=[...extra];
+      const confirmed=extraArr.filter(mko=>{
+        const a=ARTISTS.find(x=>x.name.ko===mko&&x.group.ko===gko);
+        return a&&_m2NameVariants(a).some(t=>hit(t,normMinusUnits));
+      });
+      // 유닛 멤버 중 아무도 유닛명 밖에서 개별적으로 안 걸리면(유닛명만 제목에 있는 경우) 기존처럼
+      // 전원 추가 — 개별 이름이 정말 따로 언급된 경우만 그 멤버만 추가.
+      (confirmed.length?confirmed:extraArr).forEach(mko=>{if(!matched.includes(mko))matched.push(mko);});
+    }
     membersByGroup[gko]=matched;
   }
   return{primaryGroup:matchedGroupKos[0],withGroups:matchedGroupKos.slice(1),membersByGroup};

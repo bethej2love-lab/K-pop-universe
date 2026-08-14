@@ -10,8 +10,8 @@
 <meta property="og:site_name" content="K-POP UNIVERSE">
 <meta property="og:title" content="K-POP UNIVERSE">
 <meta property="og:description" content="내 최애부터 케이팝 씬 전체까지, 연결을 탐험하는 인터랙티브 지도">
-<meta property="og:url" content="https://bethej2love-lab.github.io/kpopuniverse/kpop_universe">
-<meta property="og:image" content="https://bethej2love-lab.github.io/kpopuniverse/og-image.png">
+<meta property="og:url" content="https://kpop-universe.kr/">
+<meta property="og:image" content="https://kpop-universe.kr/og-image.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:locale" content="ko_KR">
@@ -19,7 +19,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="K-POP UNIVERSE">
 <meta name="twitter:description" content="내 최애부터 케이팝 씬 전체까지, 연결을 탐험하는 인터랙티브 지도">
-<meta name="twitter:image" content="https://bethej2love-lab.github.io/kpopuniverse/og-image.png">
+<meta name="twitter:image" content="https://kpop-universe.kr/og-image.png">
 
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#09091a">
@@ -283,7 +283,8 @@
     <button class="sp-yt-sync" id="sp-membersfix-btn" style="margin-top:4px;opacity:.8;">자체 멤버 태깅 재검증(전체)</button>
     <button class="sp-yt-sync" id="sp-catfix-btn" style="margin-top:4px;opacity:.8;">영상 카테고리(라이브 등) 재분류(전체)</button>
     <button class="sp-yt-sync" id="sp-idol-resync-btn" style="margin-top:4px;opacity:.8;">아이돌 주도 채널 재태깅(일회용)</button>
-    <button class="sp-yt-sync" id="sp-yt-retag-all" style="margin-top:4px;opacity:.8;">멤버+콜라보 재태깅(기존 태깅분 포함, 전체)</button>
+    <button class="sp-yt-sync" id="sp-yt-retag-all" style="margin-top:4px;opacity:.8;" title="미태깅분까지 전부 포함해서 다시 훑습니다 — 매칭 로직을 고친 날은 이 버튼만 누르면 되고, 위 2번(매일 루틴)은 그날 따로 안 눌러도 됩니다.">멤버+콜라보 재태깅(기존 태깅분 포함, 전체)</button>
+    <div class="sp-subsec-lbl" style="margin-top:2px;font-size:11px;opacity:.55;">↑ 미태깅분도 같이 포함되니, 매칭 로직을 고친 날엔 이 버튼만 누르면 됨(위 2번 안 눌러도 됨)</div>
     <button class="sp-yt-sync" id="sp-yt-sweep-banned" style="margin-top:4px;opacity:.8;">밴 인물 언급 영상 숨김 정리</button>
     <button class="sp-yt-sync" id="sp-yt-sweep-junk" style="margin-top:4px;opacity:.8;">무조건 제외 키워드 영상 무관 정리</button>
     <div class="sp-subsec-lbl" id="sp-junk-keywords-lbl" style="margin-top:2px;font-size:11px;opacity:.55;"></div>
@@ -1999,7 +2000,16 @@ function _revealUniverse(){
 // 삼기로 함(2026-08-12, 사용자 요청) — 매번 앱을 열 때마다 탐험이 50%로 살짝 열려있음. 상단 검색바
 // 글라스 힌트("이게 뭐지" 튜토리얼)는 원래 취지(가르쳐주기)대로 최초 1회만 유지 — _OB_KEY는 이제
 // "검색바 힌트를 본 적 있는지"만 추적.
+// 2026-08-14(사용자 요청): 검색바와 탐험 반열림이 동시에 뜨면 정신없다는 제보 → 방문 횟수로 역할을
+// 분리. 최초 2회는 검색바만 보여주고 탐험 자동 반열림은 하지 않음(신규 유저는 "뭘 검색할 수 있는지"부터
+// 알려줌). 3회차부터는 검색바 없이 탐험 반열림만(평소 유저 경험) — _visitCount<=2 조건으로 판별.
 var _OB_KEY='kpu_onboard_done';
+var _VISIT_KEY='kpu_visit_count';
+var _visitCount=(()=>{
+  let n=1;
+  try{n=parseInt(localStorage.getItem(_VISIT_KEY)||'0',10)+1;localStorage.setItem(_VISIT_KEY,String(n));}catch(e){}
+  return n;
+})();
 var _obTimer=null;
 var _obActive=false; // 탐험 패널을 이 타이머가 자동으로 열어둔 상태(아직 아무 상호작용도 없었음)
 var _obSearchMode=false; // 플로팅 검색바가 타이핑 모드인 동안 true — doSearch가 #ob-sr에 결과를 출력
@@ -2008,8 +2018,11 @@ function _showOnboardHint(){
   // 딥링크나 자동 오픈으로 이미 카드가 열려있으면 자동으로 열 필요 없음
   if(document.getElementById('mob-sheet').classList.contains('bs-open'))return;
   if(document.getElementById('side-panel').classList.contains('open'))return;
+  // 모바일 신규 유저(최초 2회 방문)는 검색바만 보여주고 탐험 반열림은 생략 — 3회차부터 반대로 전환
+  if(isMob()&&!myProfile?.nickname&&_visitCount<=2)return;
   _obActive=true;
   if(isMob()){
+    exitObSearch(); // 탭바 탐험 버튼 수동 클릭(8801번줄)과 동일하게, 자동으로 뜰 때도 검색바를 먼저 닫아 겹쳐 보이지 않게 함
     _openFeedOverlay();
     document.getElementById('feed-overlay')?.classList.add('peek');
   }else{
@@ -2530,7 +2543,7 @@ function doSearch(q){
       else{res.style.display='none';}
       return;
     }
-    _renderSearchHits(recentHits,res,mobSearch,true,!!obSr);
+    _renderSearchHits(obSr?recentHits.slice(0,5):recentHits,res,mobSearch,true,!!obSr);
     if(obSr){res.classList.add('open');}
     else if(mobSearch){res.classList.add('open');document.getElementById('tabbar').classList.add('has-sr');}
     else{res.style.display='block';}
@@ -2590,7 +2603,7 @@ function doSearch(q){
     }
   });
   hits.sort((a,b)=>{const sd=a.score-b.score;if(sd!==0)return sd;return a.name.localeCompare(b.name,'ko');});
-  _renderSearchHits(hits.slice(0,40),res,mobSearch,false,!!obSr);
+  _renderSearchHits(hits.slice(0,obSr?5:40),res,mobSearch,false,!!obSr);
   if(obSr){res.classList.add('open');}
   else if(mobSearch){
     res.classList.add('open');
@@ -5280,8 +5293,8 @@ function _wireSheetSwipe(sheetEl,innerEl,onDismiss,syncEl){
 let _sheetFull=false;
 _wireSheetSwipe(mobCardStackEl,mobCardStackInner,closeMobSheet,mobSheetEl);
 _wireSheetSwipe(mobSheetEl,mobSheetInner,closeMobSheet);
-_wireSlowScroll(mobSheetInner,0.55);
-_wireSlowScroll(mobCardStackInner,0.55);
+_wireSlowScroll(mobSheetInner,0.75);
+_wireSlowScroll(mobCardStackInner,0.75);
 function closeCards(){
   _clearMemberCardLines();
   closeConnCard();
@@ -9567,8 +9580,9 @@ document.getElementById('dh-profile-btn').addEventListener('click',e=>{
 });
 document.getElementById('my-page-edit').addEventListener('click',e=>{e.stopPropagation();openProfilePanel();});
 _updateProfileBtns();
-// 모바일 비로그인: 상단 검색창을 처음부터 입력창 형태로 표시
-if(isMob()&&!myProfile?.nickname){
+// 모바일 비로그인: 상단 검색창을 처음부터 입력창 형태로 표시 — 최초 2회 방문까지만(3회차부터는
+// 검색바 대신 탐험 반열림을 기본 화면으로 사용, _showOnboardHint 참고)
+if(isMob()&&!myProfile?.nickname&&_visitCount<=2){
   const _obEl=document.getElementById('ob-top-search');
   if(_obEl){
     _obEl.classList.remove('ob-hide');
