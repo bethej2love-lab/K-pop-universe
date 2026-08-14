@@ -2266,6 +2266,12 @@ function animate(){
   // (2026-08-14, 사용자 요청 — "웹은 화면 넓으니 호버 안 해도 되지 않나". 인원 많은 그룹은 별들이 화면상
   // 가깝게 몰려 라벨끼리 겹치므로, 그 경우엔 라벨 없이 기존 마우스 추적 툴팁만 유지하기로 함). 멤버 목록
   // 패널(_renderGcMemberList)과 동일한 로스터 필터를 써서 항상 목록에 보이는 멤버와 라벨이 일치한다.
+  // ⚠️ try/catch 필수: animate()는 스크립트 로드 시 한 번 즉시(동기) 호출되는데(아래 mobSheetEl 관련
+  // 주석 참고), 그 시점엔 _openGCko/_gcShowInactive처럼 스크립트 더 아래에서 let으로 선언되는 변수가
+  // 아직 TDZ 상태라 접근만 해도 ReferenceError가 남 — 이게 여기서 안 잡히고 새면 최상위 스크립트 실행이
+  // 그 자리에서 통째로 멈춰서 이후 초기화 코드(로딩화면 해제 포함)가 전혀 안 돌아 무한 로딩이 됨
+  // (2026-08-14, 실제로 이 사고로 사이트가 완전히 안 뜨는 회귀가 있었음 — 재발 방지로 반드시 감싸둘 것).
+  try{
   if(!isMob()&&_openGCko){
     if(_gcLabelCacheKo!==_openGCko||_gcLabelCacheShowInactive!==_gcShowInactive){
       _gcLabelCacheKo=_openGCko;_gcLabelCacheShowInactive=_gcShowInactive;
@@ -2293,6 +2299,7 @@ function animate(){
     _gcLabelsWereShown=false;
     ARTISTS.forEach(a=>{if(a._nameLabel)a._nameLabel.visible=false;});
   }
+  }catch(e){/* TDZ 등으로 이번 프레임만 스킵 — 다음 프레임엔 정상 접근됨 */}
   if(myStarSprite){
     const _st=performance.now()*0.001;
     myStarSprite.scale.setScalar(myStarBase*(0.88+Math.sin(_st*1.15)*0.12));
