@@ -5270,7 +5270,7 @@ connSheetEl.addEventListener('touchend',e=>{
 // scrollTop > 0 구간만 개입하고, scrollTop = 0 상태(맨 위)에선 아래 _wireSheetSwipe에 위임.
 function _wireSlowScroll(innerEl,factor){
   let _ly=0,_vel=0,_raf=0,_on=false;
-  function _coast(){_vel*=0.87;if(Math.abs(_vel)<0.25){_raf=0;return;}innerEl.scrollTop+=_vel;_raf=requestAnimationFrame(_coast);}
+  function _coast(){_vel*=0.90;if(Math.abs(_vel)<0.25){_raf=0;return;}innerEl.scrollTop+=_vel;_raf=requestAnimationFrame(_coast);}
   innerEl.addEventListener('touchstart',e=>{cancelAnimationFrame(_raf);_raf=0;_vel=0;_ly=e.touches[0].clientY;_on=innerEl.scrollTop>0;},{passive:true});
   innerEl.addEventListener('touchmove',e=>{
     if(!_on){if(innerEl.scrollTop>0){_on=true;_ly=e.touches[0].clientY;}else return;}
@@ -5365,8 +5365,8 @@ function _wireSheetSwipe(sheetEl,innerEl,onDismiss,syncEl){
 let _sheetFull=false;
 _wireSheetSwipe(mobCardStackEl,mobCardStackInner,closeMobSheet,mobSheetEl);
 _wireSheetSwipe(mobSheetEl,mobSheetInner,closeMobSheet);
-_wireSlowScroll(mobSheetInner,0.85);
-_wireSlowScroll(mobCardStackInner,0.85);
+_wireSlowScroll(mobSheetInner,0.92);
+_wireSlowScroll(mobCardStackInner,0.92);
 function closeCards(){
   _clearMemberCardLines();
   closeConnCard();
@@ -10932,7 +10932,7 @@ async function _pickFeaturedVidFromDB(ko,memberKo,onlyMe,filter,viewMode,formatF
       q=q.contains('content_formats',[formatFilter]);
     }else if(filter==='cover'){
       // Cover 탭 목록 쿼리와 동일한 제외 목록 — 여기를 빠뜨리면 대표 영상으로는 여전히 뽑힐 수 있음.
-      q=q.or('title_norm.ilike.*cover*,title_norm.ilike.*커버*,title_norm.ilike.*원곡*,title_norm.ilike.*original*')
+      q=q.or('title_norm.ilike.*cover*,title_norm.ilike.*커버*,title_norm.ilike.*원곡*,title_norm.ilike.*original*,content_formats.cs.{cover}')
         .not('title_norm','ilike','*be original*')
         .not('title_norm','ilike','*original ver*')
         .not('title_norm','ilike','*cover story*')
@@ -10945,13 +10945,17 @@ async function _pickFeaturedVidFromDB(ko,memberKo,onlyMe,filter,viewMode,formatF
         .not('title_norm','ilike','*undercover*')
         .not('title_norm','ilike','*디스커버*')
         .not('title_norm','ilike','*리커버*')
-        .not('title_norm','ilike','*언더커버*');
+        .not('title_norm','ilike','*언더커버*')
+        .not('title_norm','ilike','*무빙 커버*')
+        .not('title_norm','ilike','*moving cover*')
+        .not('title_norm','ilike','*original contents*');
     }else if(filter==='live'){
-      q=q.or('category.eq.live,title_norm.ilike.*리무진서비스*,title_norm.ilike.*리무진 서비스*')
+      q=q.or('category.eq.live,content_formats.cs.{live},title_norm.ilike.*리무진서비스*,title_norm.ilike.*리무진 서비스*')
         .not('title','ilike','%[live]%')
         .not('title_norm','ilike','*엠카드림*');
     }else if(filter==='variety'||filter==='show'){
-      q=q.or(`category.eq.${filter},content_formats.cs.{${filter}}`);
+      const _varTitleOr=filter==='variety'?',title_norm.ilike.*라디오스타*,title_norm.ilike.*아는형님*,title_norm.ilike.*아는 형님*,title_norm.ilike.*놀라운토요일*,title_norm.ilike.*전참시*':'';
+      q=q.or(`category.eq.${filter},content_formats.cs.{${filter}}${_varTitleOr}`);
     }else if(filter&&filter!=='all'){
       q=q.eq('category',filter);
     }
@@ -11918,6 +11922,7 @@ function _makeChVidController(contId){
     return base;
   }
   let observer=null;
+  let _cleanupScroll=null;
   let _selMode=false;
   let _selIds=new Set();
   function _updateBulkBar(){
@@ -12322,7 +12327,7 @@ function _makeChVidController(contId){
       }else if(filter==='cover'){
         // "BE ORIGINAL"(딩고 안무 시리즈), "original ver"(원본 버전), "cover story"/"커버 촬영"(잡지/포토),
         // "uncover", "CHOOM ORIGINAL", "the original", "discover/recover/undercover"(커버 포함 단어) 등 제외.
-        q=q.or('title_norm.ilike.*cover*,title_norm.ilike.*커버*,title_norm.ilike.*원곡*,title_norm.ilike.*original*')
+        q=q.or('title_norm.ilike.*cover*,title_norm.ilike.*커버*,title_norm.ilike.*원곡*,title_norm.ilike.*original*,content_formats.cs.{cover}')
           .not('title_norm','ilike','*be original*')
           .not('title_norm','ilike','*original ver*')
           .not('title_norm','ilike','*cover story*')
@@ -12335,14 +12340,18 @@ function _makeChVidController(contId){
           .not('title_norm','ilike','*undercover*')
           .not('title_norm','ilike','*디스커버*')
           .not('title_norm','ilike','*리커버*')
-          .not('title_norm','ilike','*언더커버*');
+          .not('title_norm','ilike','*언더커버*')
+          .not('title_norm','ilike','*무빙 커버*')
+          .not('title_norm','ilike','*moving cover*')
+          .not('title_norm','ilike','*original contents*');
       }else if(filter==='live'){
-        q=q.or('category.eq.live,title_norm.ilike.*리무진서비스*,title_norm.ilike.*리무진 서비스*')
+        q=q.or('category.eq.live,content_formats.cs.{live},title_norm.ilike.*리무진서비스*,title_norm.ilike.*리무진 서비스*')
           .not('title','ilike','%[live]%')
           .not('title_norm','ilike','*엠카드림*');
       }else if(filter==='variety'||filter==='show'){
-        // category(채널 tier 기반 레거시) OR content_formats(영상 단위 장르 태그) 둘 다 체크
-        q=q.or(`category.eq.${filter},content_formats.cs.{${filter}}`);
+        // category(채널 tier 기반 레거시) OR content_formats(영상 단위 장르 태그) OR 제목 키워드 둘 다 체크
+        const _varTitleOr=filter==='variety'?',title_norm.ilike.*라디오스타*,title_norm.ilike.*아는형님*,title_norm.ilike.*아는 형님*,title_norm.ilike.*놀라운토요일*,title_norm.ilike.*전참시*':'';
+        q=q.or(`category.eq.${filter},content_formats.cs.{${filter}}${_varTitleOr}`);
       }else if(filter!=='all'){
         q=q.eq('category',filter);
       }
@@ -12639,6 +12648,29 @@ function _makeChVidController(contId){
       if(isFormat&&!state.formatFilter&&tabs.length)state.formatFilter=tabs[0][0];
     }
     renderFilterTabs();
+    // 'all' 탭 제외 각 탭에 실제 영상이 있는지 병렬 limit(1)로 비동기 확인 — 없으면 탭 숨김.
+    // fan 탭은 위에서 따로 처리, 여기선 초기 catTabs(fan 제외)만 스냅샷해서 확인.
+    (async()=>{
+      if(!sb)return;
+      const _snap=catTabs.filter(([v])=>v!=='all').map(([v])=>v);
+      const _chk=async v=>{
+        let q=sb.from(_YT_TABLE).select('id').limit(1);
+        if(memberKo)q=q.eq('group_ko',ko).contains('members',[memberKo]);
+        else q=q.eq('group_ko',ko);
+        if(v==='variety')q=q.or('category.eq.variety,content_formats.cs.{variety}');
+        else if(v==='live')q=q.or('category.eq.live,content_formats.cs.{live}');
+        else q=q.eq('category',v);
+        const{data}=await q;
+        return{v,ok:!!(data?.length)};
+      };
+      const res=await Promise.all(_snap.map(_chk));
+      if(state.ko!==ko||state.memberKo!==(memberKo||null))return;
+      const hidden=new Set(res.filter(r=>!r.ok).map(r=>r.v));
+      if(!hidden.size)return;
+      catTabs=catTabs.filter(([v])=>!hidden.has(v));
+      if(hidden.has(state.filter))state.filter='all';
+      renderFilterTabs();
+    })();
     // 멤버 카드 전용: "이 멤버만 단독 출연"한 영상만 걸러보는 토글(다른 필터 탭과 독립적으로 같이 켤 수 있음,
     // 예: Shorts+Only = 이 멤버 단독 쇼츠만). 전체/라이브/Shorts는 배타적 "모드"라 알약 버튼이지만 Only는
     // 부가 조건이라 텍스트만(.gc-ch-only)으로 구분되게 함.
@@ -12749,11 +12781,24 @@ function _makeChVidController(contId){
       load(ko,true);
     });
     if(observer)observer.disconnect();
+    if(_cleanupScroll){_cleanupScroll();_cleanupScroll=null;}
     const moreWrap=cont.querySelector('.gc-ch-more-wrap');
     observer=new IntersectionObserver(entries=>{
       if(entries[0].isIntersecting)tryLoadMore(ko);
     },{root:null,rootMargin:'0px 0px 400px 0px'});
     if(moreWrap)observer.observe(moreWrap);
+    // IntersectionObserver 보조: iOS Safari 등에서 fixed-position 스크롤 컨테이너 안의 요소에 대해
+    // IntersectionObserver가 재발화를 놓치는 경우를 scroll 리스너로 직접 보완한다.
+    // 모바일(mob-card-stack-inner/mob-sheet-inner)·데스크톱(side-panel/member-panel) 모두 커버.
+    const _mwEl=moreWrap;
+    const _onScroll=()=>{
+      if(!_mwEl||!state.hasMore||state.appendLock)return;
+      if(_mwEl.getBoundingClientRect().top<window.innerHeight+400)tryLoadMore(ko);
+    };
+    const _scrollers=[mobCardStackInner,mobSheetInner,
+      document.getElementById('side-panel'),document.getElementById('member-panel')].filter(Boolean);
+    _scrollers.forEach(el=>el.addEventListener('scroll',_onScroll,{passive:true}));
+    _cleanupScroll=()=>_scrollers.forEach(el=>el.removeEventListener('scroll',_onScroll));
     load(ko,true);
   }
 
@@ -12825,12 +12870,19 @@ function _makeChVidController(contId){
     if(stillQualifies&&state.filter!=='all'){
       if(state.filter==='cover'){
         const t=(newRow.title||'').toLowerCase();
-        const _coverExclude=['be original','original ver','cover story','커버 촬영','uncover','choom original','the original','discover','recover','undercover','디스커버','리커버','언더커버'];
-        if(!/cover|커버|원곡|original/.test(t)||_coverExclude.some(ex=>t.includes(ex)))stillQualifies=false;
+        const fmts=newRow.content_formats||[];
+        const _coverExclude=['be original','original ver','cover story','커버 촬영','uncover','choom original','the original','discover','recover','undercover','디스커버','리커버','언더커버','무빙 커버','moving cover','original contents'];
+        if(!fmts.includes('cover')&&(!/cover|커버|원곡|original/.test(t)||_coverExclude.some(ex=>t.includes(ex))))stillQualifies=false;
       }else if(state.filter==='live'){
         const t=(newRow.title||'').toLowerCase();
+        const fmts=newRow.content_formats||[];
         if(t.includes('엠카드림'))stillQualifies=false;
-        else if(newRow.category!=='live'&&!t.includes('리무진서비스')&&!t.includes('리무진 서비스'))stillQualifies=false;
+        else if(newRow.category!=='live'&&!fmts.includes('live')&&!t.includes('리무진서비스')&&!t.includes('리무진 서비스'))stillQualifies=false;
+      }else if(state.filter==='variety'){
+        const t=(newRow.title||'').toLowerCase();
+        const fmts=newRow.content_formats||[];
+        const _varKeywords=['라디오스타','아는형님','아는 형님','놀라운토요일','전참시'];
+        if(newRow.category!=='variety'&&!fmts.includes('variety')&&!_varKeywords.some(k=>t.includes(k)))stillQualifies=false;
       }else if(newRow.category!==state.filter){
         stillQualifies=false;
       }
@@ -13291,7 +13343,7 @@ function _groupGcVids(items,featured,startPos,startCat,avoidWiden,widenSomeShort
     // avoidWiden(카드 넓게 보기 모드)에선 이미 패널 자체가 넓어서 추가로 안 키운다.
     // 0.28(영상 3~4개당 1개꼴)은 너무 잦아서 2열 중 1열만 채워진 것처럼 보이는 카드가 너무 많다는
     // 피드백(2026-08-10) — 가끔 변화를 주는 느낌만 남기고 빈도를 확 낮춤.
-    if(!avoidWiden&&pos===0&&c==='norm'&&Math.random()<0.1){
+    if(!avoidWiden&&pos===0&&c==='norm'&&Math.random()<0.05){
       v._wide=true;
       renderList.push(v);
       lastItem=v;
@@ -13300,7 +13352,7 @@ function _groupGcVids(items,featured,startPos,startCat,avoidWiden,widenSomeShort
     }
     // Shorts 탭처럼 Shorts끼리만 이어질 땐 비율 경계가 없어 widening이 발생 안 함 —
     // widenSomeShorts(=Shorts 탭)일 때 가끔 단독 2열 폭 카드로 섞어 시각적 변화를 준다.
-    if(widenSomeShorts&&pos===0&&c==='short'&&Math.random()<0.1){
+    if(widenSomeShorts&&pos===0&&c==='short'&&Math.random()<0.05){
       v._wide=true;
       renderList.push(v);
       lastItem=v;

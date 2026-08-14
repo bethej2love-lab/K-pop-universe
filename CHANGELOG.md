@@ -14,7 +14,13 @@
 
 ## 2026-08-14
 
+- [완료][kpop_universe.html] live·cover 탭 content_formats 크로스탭 지원 — content_formats에 'live'/'cover' 수동 태깅 시 해당 탭에 복수 노출; _pickFeaturedVidFromDB·buildBaseQuery·patchItem 3곳 동기화
+- [완료][kpop_universe.html] 빈 탭 자동 숨김 — 카드 오픈 시 all 탭 제외 각 탭에 limit(1) 병렬 존재 확인, 영상 없으면 탭 제거·현재 필터가 해당 탭이면 all로 리셋; fan 탭은 기존 별도 처리 유지
+- [완료][kpop_universe.html] 무한스크롤 점 세개 재발화 누락 보완 — scroll 리스너를 mob-card-stack-inner·mob-sheet-inner·side-panel·member-panel 4곳에 추가(IntersectionObserver가 iOS Safari 등에서 fixed 컨테이너 안에서 재발화 놓치는 경우 대비); 이전 releaseLock 뷰포트 체크와 병행
+- [완료][kpop_universe.html] 모바일 카드 내 영상 스크롤 감도 상향 — _wireSlowScroll factor 0.85→0.92, coast decay 0.87→0.90 (한 번 터치에 더 긴 거리 스크롤+관성 여운 증가)
 - [완료][kpop_universe.html] 멤버 카드 콘서트 분리 — 그룹 멤버는 멤버명 기반 솔로 이벤트만(_loadMemberConcertRow 신설), 솔로 아티스트는 기존대로; DB에 groups=['멤버명'] 추가 즉시 자동 표시
+- [완료][kpop_universe.html] Cover 탭 제외 키워드 추가 — 무빙 커버·moving cover·original contents (대표영상쿼리·목록쿼리·patchItem 3곳 동기화)
+- [완료][kpop_universe.html] 예능 탭 제목 키워드 분류 추가 — 라디오스타·아는형님·아는 형님·놀라운토요일·전참시 (buildBaseQuery 2곳+patchItem 3곳 동기화, patchItem에서 content_formats 체크도 누락분 추가)
 - [완료][kpop_universe.css][kpop_universe.html] Collections 헤더에 인라인 컬렉션 수 표시 — "Collections · n개" 형식, cnt 스팬 별도 스타일(letter-spacing·uppercase 해제, 약간 연하게)
 - [완료][kpop_universe.css] 콘서트 표시줄 폰트 11.5px→10.5px 축소, padding-top 10px→7px 축소 / gc-collection-row margin-top 9→7px·padding-top 10→8px 조정(아래 선 간격 감소)
 - [완료][kpop_universe.css] 틱톡↔나무위키 아이콘 간격 보정 재수정 — 이전 -3px는 방향이 반대(gap 증가), -11px로 교체해 시각적으로 다른 아이콘 쌍과 균등하게 맞춤
