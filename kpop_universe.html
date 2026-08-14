@@ -307,12 +307,14 @@
     </div>
     <input type="text" id="vm-search" placeholder="제목·그룹 검색…" autocomplete="off" spellcheck="false">
     <input type="text" id="vm-search-2" placeholder="검색 결과 내 재검색…" autocomplete="off" spellcheck="false" style="display:none">
+    <button class="vm-toggle-pill" id="vm-only-normal-btn" type="button" style="display:none;margin:6px 16px 0;">정상만</button>
     <div id="vm-status"></div>
     <div id="vm-toolbar" style="display:none">
       <label id="vm-select-all-row"><input type="checkbox" id="vm-select-all">전체 선택</label>
       <span id="vm-count"></span>
       <button id="vm-edit-btn">편집</button>
-      <button id="vm-indiv-btn">선택 항목 개별 출연 처리</button>
+      <button id="vm-indiv-btn">선택-개별출연</button>
+      <button id="vm-coverclear-btn">선택-원곡제외</button>
       <button id="vm-apply-btn"></button>
     </div>
     <div id="vm-list"></div>
@@ -537,9 +539,9 @@
 <div id="ob-top-search" aria-hidden="true">
   <button id="ob-top-search-btn" type="button" aria-label="검색 열기">
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="10.5" cy="10.5" r="6.5" stroke="currentColor" stroke-width="1.8"/><line x1="15.5" y1="15.5" x2="21" y2="21" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-    <span>WHO'S YOUR BIAS?</span>
+    <span>Who's Your Bias?</span>
   </button>
-  <input id="ob-si" type="text" placeholder="WHO'S YOUR BIAS?" autocomplete="off" inputmode="search">
+  <input id="ob-si" type="text" placeholder="Who's Your Bias?" autocomplete="off" inputmode="search">
   <button id="ob-si-clear" aria-label="검색 닫기">✕</button>
 </div>
 <div id="ob-sr"></div>
@@ -623,6 +625,29 @@
     <div id="logout-confirm-btns">
       <button id="logout-confirm-cancel" class="uc-btn">취소</button>
       <button id="logout-confirm-ok" class="uc-btn uc-btn-danger">로그아웃</button>
+    </div>
+  </div>
+</div>
+<!-- 로그아웃 상태에서 "만들기" 눌렀을 때 신규가입/재로그인 경로를 갈라주는 선택 화면 — 예전엔 곧장
+     프로필 생성 폼(닉네임 등)부터 보여줘서, 이미 계정 있는 재방문자가 로그인 버튼(맨 아래 "연결하기")을
+     찾으려면 그 폼을 다 지나쳐야 했음(2026-08-14, 사용자 제보). 기존 confirm류 오버레이와 톤을 맞추기
+     위해 새 CSS 없이 같은 셀렉터 그룹에 편승(kpop_universe.css의 #link-confirm-overlay 등 참고). -->
+<div id="welcome-choice-overlay">
+  <div id="welcome-choice-panel">
+    <div class="pp-title">별 만들기</div>
+    <div id="welcome-choice-msg">이미 만든 별이 있으신가요?</div>
+    <button id="welcome-choice-login" class="pp-save-btn">이미 계정이 있어요 · 로그인</button>
+    <button id="welcome-choice-new" class="pp-save-btn">처음이에요 · 새로 시작할게요</button>
+  </div>
+</div>
+<div id="welcome-login-overlay">
+  <div id="welcome-login-panel">
+    <div class="pp-title">로그인</div>
+    <div id="welcome-login-msg">가입할 때 썼던 계정으로 로그인하면 프로필과 좋아요가 그대로 돌아와요.</div>
+    <button id="welcome-login-google" class="pp-save-btn">구글로 로그인</button>
+    <button id="welcome-login-x" class="pp-save-btn">X로 로그인</button>
+    <div id="welcome-login-btns">
+      <button id="welcome-login-back" class="uc-btn">뒤로</button>
     </div>
   </div>
 </div>
@@ -6077,10 +6102,12 @@ function showT(a,cx,cy,keepNavStack,urlMode,pushMobNav,noFly){
   const _ttGroupQueryKo=_ytGroupKoFor(a);
   _loadConcertRow(_ttGroupQueryKo,'tt-concert-row');
   _loadCollectionRow(_ttGroupQueryKo,'tt-collection-row',_hasRealGroup?a.name.ko:null,a.name.ko);
-  // 관리자: 인스타 프로필 사진 URL 저장 버튼 (인스타 계정 있는 멤버만)
+  // 관리자: 프로필 사진 업로드 버튼 — 예전엔 인스타 있는 멤버만 노출했는데, 개인 인스타 없는 신인도
+  // 사진은 붙일 수 있게 전 멤버로 확대(2026-08-14, 사용자 요청). 인스타 없는 멤버는 저장 직후 사진
+  // 클릭 시 연결될 출처 URL(위버스 등)을 추가로 물어봄 — 아래 _maybeAskSourceUrl 참고.
   {const _existingCamBtn=document.getElementById('tt-insta-cam-admin');if(_existingCamBtn)_existingCamBtn.remove();
    const _existingCamInput=document.getElementById('tt-insta-cam-input');if(_existingCamInput)_existingCamInput.remove();}
-  if(_isAdmin()&&a.links?.instagram){
+  if(_isAdmin()){
     const koName=a.name.ko;
     const groupKo=a.group?.ko||'';
     const _waitImgLoad=()=>new Promise(res=>{
@@ -6090,6 +6117,18 @@ function showT(a,cx,cy,keepNavStack,urlMode,pushMobNav,noFly){
       img.addEventListener('load',done);img.addEventListener('error',done);
       setTimeout(res,5000);
     });
+    // 개인 인스타 없는 멤버는 사진 저장 직후, 클릭 시 연결될 출처 URL(위버스 프로필 등)을 추가로
+    // 물어본다 — 인스타 있는 멤버는 사진이 항상 인스타로 연결되니 여기서 안 물어봄(_loadInstaPic의
+    // linkTarget 우선순위 참고). 취소하거나 빈 값이면 그냥 클릭 안 되는 사진으로 남는다.
+    const _maybeAskSourceUrl=async()=>{
+      if(a.links?.instagram)return;
+      const existing=_instaPicSourceCache.get(_picKey(koName,groupKo))||'';
+      const url=await _promptDialog({title:`${koName} 사진 출처 URL (위버스 등 — 사진 클릭 시 연결됨)`,value:existing,placeholder:'https://weverse.io/...'});
+      if(url==null)return;
+      const picUrl=_instaPicCache.get(_picKey(koName,groupKo));
+      if(!picUrl)return;
+      await _saveInstaPic(koName,groupKo,picUrl,url.trim());
+    };
     const fileInput=document.createElement('input');fileInput.id='tt-insta-cam-input';fileInput.type='file';fileInput.accept='image/*';fileInput.style.display='none';
     const camBtn=document.createElement('button');camBtn.id='tt-insta-cam-admin';camBtn.className='tt-insta-cam-btn';
     camBtn.setAttribute('aria-label','프로필 사진 업로드');camBtn.setAttribute('title','프로필 사진 업로드 (길게 누르면 URL로 입력)');
@@ -6117,7 +6156,7 @@ function showT(a,cx,cy,keepNavStack,urlMode,pushMobNav,noFly){
         if(upErr){alert('업로드 실패: '+upErr.message);return;}
         const{data:{publicUrl}}=sb.storage.from('artist-pics').getPublicUrl(path);
         const ok=await _saveInstaPic(koName,groupKo,publicUrl);
-        if(ok){await _waitImgLoad();_syncCamBtn();}
+        if(ok){await _waitImgLoad();_syncCamBtn();await _maybeAskSourceUrl();}
         else alert('저장 실패');
       }finally{camBtn.classList.remove('cam-uploading');}
     });
@@ -6130,7 +6169,7 @@ function showT(a,cx,cy,keepNavStack,urlMode,pushMobNav,noFly){
         _promptDialog({title:`${koName} 프로필 사진 URL`,value:existingUrl,placeholder:'https://...'}).then(async url=>{
           if(url==null)return;const trimmed=url.trim();if(!trimmed)return;
           const ok=await _saveInstaPic(koName,groupKo,trimmed);
-          if(ok){await _waitImgLoad();_syncCamBtn();}else alert('저장 실패');
+          if(ok){await _waitImgLoad();_syncCamBtn();await _maybeAskSourceUrl();}else alert('저장 실패');
         });
       },600);
     });
@@ -6231,6 +6270,10 @@ function _fandomText(fd){
 // 공유해버리던 버그(2026-08-12, 사용자 제보) 수정: 기존엔 ko_name 단독 PK라 이름이 겹치는 멤버끼리
 // 사진이 충돌했음 — 키에 group_ko를 추가해 그룹 단위로 분리.
 const _instaPicCache=new Map(); // "ko_name␟group_ko" → pic_url (세션 캐시)
+// source_url: 개인 인스타가 없는 멤버(주로 신인)의 사진 클릭 타겟(위버스 프로필 등) — pic_url과 별도
+// 컬럼/캐시로 관리한다(2026-08-14, 사용자 요청 — "신인들도 사진은 있는 게 낫다"). 인스타 있는 멤버는
+// 기존처럼 인스타로 연결되고 이 값은 안 쓰임 — 인스타 소셜 링크 필드("개인 계정만" 원칙)와는 별개 개념.
+const _instaPicSourceCache=new Map();
 function _picKey(koName,groupKo){return koName+'␟'+(groupKo||'');}
 // artist_pics 전체를 한 번에 미리 받아 _instaPicCache를 채워둠(2026-08-11, 사용자 제보 — 멤버마다 사진
 // 뜨는 속도가 들쭉날쭉했던 원인: 카드 열 때마다 DB 조회 1번 + 이미지 로드가 순차로 걸려서, 이 세션에서
@@ -6240,9 +6283,12 @@ let _instaPicPreloadP=null;
 async function _warmInstaPicCache(){
   if(!sb)return;
   try{
-    const{data,error}=await sb.from('artist_pics').select('ko_name,group_ko,pic_url');
+    const{data,error}=await sb.from('artist_pics').select('ko_name,group_ko,pic_url,source_url');
     if(error){console.error('instapic warm failed',error);return;}
-    (data||[]).forEach(r=>{if(r.pic_url)_instaPicCache.set(_picKey(r.ko_name,r.group_ko),r.pic_url);});
+    (data||[]).forEach(r=>{
+      if(r.pic_url)_instaPicCache.set(_picKey(r.ko_name,r.group_ko),r.pic_url);
+      if(r.source_url)_instaPicSourceCache.set(_picKey(r.ko_name,r.group_ko),r.source_url);
+    });
   }catch(e){console.error('_warmInstaPicCache failed',e);}
 }
 async function _loadInstaPic(a){
@@ -6255,21 +6301,30 @@ async function _loadInstaPic(a){
   // 이전 멤버 것 그대로 남아 정렬이 흐트러짐(2026-08-12 제보) — 아래 조건부 리턴들보다 먼저,
   // 매번 무조건 리셋해두고 실제 사진 로드에 성공했을 때만 onload에서 다시 붙인다.
   document.getElementById('tt')?.classList.remove('has-insta-pic');
-  if(!a.links?.instagram||!sb)return;
+  // 예전엔 인스타 있는 멤버만 사진을 보여줬는데(개인 인스타 없는 신인은 사진 자체가 안 뜸), 위버스 등
+  // 다른 출처(source_url)로도 사진을 붙일 수 있게 되면서 이 조건은 뺐다(2026-08-14, 사용자 요청).
+  if(!sb)return;
   const koName=a.name.ko;
   const groupKo=a.group?.ko||'';
   const cacheKey=_picKey(koName,groupKo);
   if(_instaPicPreloadP)await _instaPicPreloadP;
   let picUrl=_instaPicCache.get(cacheKey);
+  let sourceUrl=_instaPicSourceCache.get(cacheKey);
   if(!picUrl){
-    const{data}=await sb.from('artist_pics').select('pic_url').eq('ko_name',koName).eq('group_ko',groupKo).maybeSingle();
+    const{data}=await sb.from('artist_pics').select('pic_url,source_url').eq('ko_name',koName).eq('group_ko',groupKo).maybeSingle();
     picUrl=data?.pic_url||null;
+    sourceUrl=data?.source_url||null;
     if(picUrl)_instaPicCache.set(cacheKey,picUrl);
+    if(sourceUrl)_instaPicSourceCache.set(cacheKey,sourceUrl);
   }
   if(!picUrl)return;
   // 카드가 이미 다른 멤버로 전환됐으면 무시
   if(_openTArtist?.name?.ko!==koName||(_openTArtist?.group?.ko||'')!==groupKo)return;
-  wrap.href=a.links.instagram;
+  // 클릭 타겟: 개인 인스타 있으면 그쪽 우선, 없으면 사진 출처(위버스 등)로 — 둘 다 없으면 사진은
+  // 보여주되 클릭은 안 되게(이전 멤버 카드의 href가 남아있지 않도록 명시적으로 지움).
+  const linkTarget=a.links?.instagram||sourceUrl||null;
+  if(linkTarget){wrap.href=linkTarget;wrap.setAttribute('aria-label',a.links?.instagram?'Instagram 프로필':'프로필 페이지');}
+  else{wrap.removeAttribute('href');wrap.setAttribute('aria-label','프로필 사진');}
   wrap.onclick=e=>e.stopPropagation();
   // URL이 확정된 시점(캐시 히트든 방금 조회든)에 바로 자리를 차지하고 셰머를 보여준다 — 실제 이미지
   // 바이트 다운로드가 끝나기 전까지는 셰머만 돌고, onload에서 사진으로 크로스페이드(2026-08-11).
@@ -6285,10 +6340,18 @@ async function _loadInstaPic(a){
   if(img.src!==picUrl)img.src=picUrl;
   else if(img.complete&&img.naturalWidth){wrap.classList.remove('tt-pic-loading');wrap.classList.add('tt-pic-ready');document.getElementById('tt')?.classList.add('has-insta-pic');}
 }
-async function _saveInstaPic(koName,groupKo,picUrl){
+async function _saveInstaPic(koName,groupKo,picUrl,sourceUrl){
   if(!sb||!window._sbSession)return;
-  const{error}=await sb.from('artist_pics').upsert({ko_name:koName,group_ko:groupKo||'',pic_url:picUrl,updated_at:new Date().toISOString()},{onConflict:'ko_name,group_ko'});
-  if(!error){_instaPicCache.set(_picKey(koName,groupKo),picUrl);_loadInstaPic(_openTArtist);}
+  const payload={ko_name:koName,group_ko:groupKo||'',pic_url:picUrl,updated_at:new Date().toISOString()};
+  // sourceUrl을 안 넘기면(위버스 URL 안 물어보는 경로 등) 페이로드에서 아예 빼서 기존 값을 그대로
+  // 둔다 — upsert는 넘긴 컬럼만 갱신하므로, 빈 문자열이 아니라 undefined로 구분해야 실수로 지워지지 않음.
+  if(sourceUrl!==undefined)payload.source_url=sourceUrl||null;
+  const{error}=await sb.from('artist_pics').upsert(payload,{onConflict:'ko_name,group_ko'});
+  if(!error){
+    _instaPicCache.set(_picKey(koName,groupKo),picUrl);
+    if(sourceUrl!==undefined){if(sourceUrl)_instaPicSourceCache.set(_picKey(koName,groupKo),sourceUrl);else _instaPicSourceCache.delete(_picKey(koName,groupKo));}
+    _loadInstaPic(_openTArtist);
+  }
   return!error;
 }
 // 멤버 카드를 열지 않고도(예: 애니버서리 스트립) 저장된 인스타 프로필 사진만 조회
@@ -8818,6 +8881,13 @@ document.getElementById('tab-feed').addEventListener('click',e=>{
 });
 // 상단 온보딩 검색바 — 실제 입력창이 아니라 탭하면 기존 검색(하단 돋보기와 동일)으로 그대로 인계한다
 // (결과 렌더링을 중복 구현하지 않기 위함, 2026-08-11).
+// 버그 수정(2026-08-14, 사용자 제보 — "검색하려고 누르면 검색창이 사라짐"): 이 바 안의 버튼/인풋에
+// pointerdown 전파 차단이 빠져있어서, 탭할 때 window의 전역 pointerdown 리스너(closePanels+
+// _dismissOnboardHint)가 click보다 먼저 발동해 _obSearchMode가 true인 상태(입력창으로 전환된 뒤)에서
+// 곧장 exitObSearch()로 닫혀버렸음 — 버튼 탭 → 입력창 전환 → 그 입력창을 다시 탭(포커스)하는 두 번째
+// 탭에서 정확히 발동. #ob-sr(결과 목록)엔 이미 같은 이유로 pointerdown 차단이 있었는데 바 자체엔 빠져있던
+// 것 — 컨테이너 하나에 걸어서 안쪽 버튼/인풋/닫기 버튼 전부 한 번에 보호한다.
+document.getElementById('ob-top-search')?.addEventListener('pointerdown',e=>e.stopPropagation());
 document.getElementById('ob-top-search-btn')?.addEventListener('click',e=>{
   e.stopPropagation();
   // 타이머·_obActive 정리(tab-search는 건드리지 않음 — 탭바 검색과 완전히 독립)
@@ -9578,7 +9648,38 @@ document.getElementById('dh-profile-btn').addEventListener('click',e=>{
   e.stopPropagation();
   _toggleMyPagePanel();
 });
-document.getElementById('my-page-edit').addEventListener('click',e=>{e.stopPropagation();openProfilePanel();});
+// 로그인 상태(_isLinked)면 그대로 편집 화면으로, 아니면 신규가입/재로그인 선택 화면을 먼저 보여준다
+// (2026-08-14, 사용자 요청 — 곧장 프로필 생성 폼부터 뜨면 이미 계정 있는 재방문자가 로그인 버튼을
+// 찾으려고 그 폼을 다 지나쳐야 했음). openProfilePanel() 자체의 _isLinked 판정과 동일한 기준.
+document.getElementById('my-page-edit').addEventListener('click',e=>{
+  e.stopPropagation();
+  const _isLinked=window._sbSession&&window._sbSession.user.is_anonymous===false;
+  if(_isLinked)openProfilePanel();
+  else document.getElementById('welcome-choice-overlay').classList.add('open');
+});
+document.getElementById('welcome-choice-new').addEventListener('click',e=>{
+  e.stopPropagation();
+  document.getElementById('welcome-choice-overlay').classList.remove('open');
+  openProfilePanel();
+});
+document.getElementById('welcome-choice-login').addEventListener('click',e=>{
+  e.stopPropagation();
+  document.getElementById('welcome-choice-overlay').classList.remove('open');
+  document.getElementById('welcome-login-overlay').classList.add('open');
+});
+document.getElementById('welcome-login-back').addEventListener('click',e=>{
+  e.stopPropagation();
+  document.getElementById('welcome-login-overlay').classList.remove('open');
+  document.getElementById('welcome-choice-overlay').classList.add('open');
+});
+// 로그인 버튼은 기존 프로필 패널의 "연결하기"와 완전히 같은 함수를 재사용 — _handleAccountLink가
+// 이미 "이 계정이 다른 곳에 연결돼 있으면 연결 대신 로그인으로 전환" 처리까지 다 해준다(10064번줄 부근).
+document.getElementById('welcome-login-google').addEventListener('click',e=>{e.stopPropagation();_handleAccountLink('google');});
+document.getElementById('welcome-login-x').addEventListener('click',e=>{e.stopPropagation();_handleAccountLink('x');});
+document.getElementById('welcome-choice-overlay').addEventListener('click',e=>{e.stopPropagation();if(e.target===e.currentTarget)document.getElementById('welcome-choice-overlay').classList.remove('open');});
+document.getElementById('welcome-choice-overlay').addEventListener('pointerdown',e=>e.stopPropagation());
+document.getElementById('welcome-login-overlay').addEventListener('click',e=>{e.stopPropagation();if(e.target===e.currentTarget)document.getElementById('welcome-login-overlay').classList.remove('open');});
+document.getElementById('welcome-login-overlay').addEventListener('pointerdown',e=>e.stopPropagation());
 _updateProfileBtns();
 // 모바일 비로그인: 상단 검색창을 처음부터 입력창 형태로 표시 — 최초 2회 방문까지만(3회차부터는
 // 검색바 대신 탐험 반열림을 기본 화면으로 사용, _showOnboardHint 참고)
@@ -11037,6 +11138,134 @@ async function _buildFeedCollabSpotlight(list){
     },v.thumb);
   }catch(e){/* 조용히 무시 */}
 }
+// N년도 데뷔 그룹 모아보기 — 위 연도별 TOP 100(조회수가 앵커)과 달리 "데뷔연도"가 앵커라 다른 재미(그
+// 해에 어떤 그룹들이 나왔는지 훑어보기, 신인 시절 향수). 그룹 하나만 데뷔한 연도는 "모아보기"라 부르기
+// 애매해서 최소 3개 그룹 있는 연도만 후보로 삼고(2026-08-14, 사용자 요청), _buildFeedGenCamPick과 동일하게
+// 시간대(1시간 단위) 기준 순환시켜 매번 열 때마다 다른 연도가 뜨게 한다.
+function _debutYearGroups(){
+  const byYear=new Map();
+  Object.entries(GROUPS||{}).forEach(([ko,info])=>{
+    const yr=parseInt((info.debut||'0').split('.')[0])||0;
+    if(!yr)return;
+    if(!byYear.has(yr))byYear.set(yr,[]);
+    byYear.get(yr).push(ko);
+  });
+  return[...byYear.entries()].filter(([,list])=>list.length>=3).sort((a,b)=>a[0]-b[0]);
+}
+async function _buildFeedDebutYearPick(list){
+  if(!sb)return;
+  const years=_debutYearGroups();
+  if(!years.length)return;
+  const vidUrl=v=>v.category==='short'?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;
+  const hourIdx=Math.floor(Date.now()/3600000);
+  for(let i=0;i<years.length;i++){
+    const[year,groupKos]=years[(hourIdx+i)%years.length];
+    try{
+      const{data,error}=await sb.from(_YT_TABLE)
+        .select('id,title,thumb,category,content_flag,group_ko,view_count,published_at')
+        .in('group_ko',groupKos)
+        .eq('category','live')
+        .or('content_flag.is.null,content_flag.neq.기타')
+        .or('content_flag.is.null,content_flag.neq.무관')
+        .or('content_flag.is.null,content_flag.neq.hidden')
+        .order('published_at',{ascending:false})
+        .limit(300);
+      if(error)continue;
+      const bannedFiltered=_filterBannedVideos(data||[]);
+      if(bannedFiltered.length<6)continue; // 컬렉션이라 부르기엔 너무 적으면 다음 연도로
+      // 그룹별 라운드로빈 인터리빙(각 그룹 최대 3개) — 데뷔 연도가 앵커인데 특정 그룹 영상이 목록을 장악하면 안 됨.
+      const vids=_diversifyFeed(_shuffle(bannedFiltered),v=>v.group_ko,3);
+      const songs=vids.map(v=>({t:v.title,u:vidUrl(v),thumb:v.thumb,vc:v.view_count,pa:v.published_at?.slice(0,10)}));
+      const thumb=vids[Math.floor(Math.random()*vids.length)].thumb;
+      const label=`${year}년 데뷔 그룹 모아보기`,sub=`${groupKos.length}개 그룹`;
+      _appendFeedCard(list,'🌱',label,sub,()=>_openFeedListOverlay(label,sub,songs),thumb);
+      return;
+    }catch(e){/* 다음 연도로 */}
+  }
+}
+// 숨은 명무대 — 조회수(YouTube 전체 기준)는 낮은데 앱 안에서는 하트를 꽤 받은 무대. 위 급상승 하트
+// 영상은 "많이 본 것" 축만 있어서, 반대로 "저평가된 무대 발굴" 축을 추가(2026-08-14, 사용자 요청 —
+// "숨어서 보는 명무대", 곡이 아니라 무대라는 걸 명확히 해달라는 정정도 반영). 하트가 아예 없으면 신호가
+// 안 되므로 최소 하트 수 기준을 두고, 조회수가 그 기준보다 낮은 것만 후보로 삼는다 — 조회수 자체가
+// 없는(관리자가 아직 동기화 안 한) 행은 "낮다"고 볼 근거가 없어 후보에서 제외. 두 기준값은 실측 데이터
+// 분포를 보고 나중에 조정할 수 있는 대략치.
+const _HIDDEN_GEM_MIN_HEARTS=3;
+const _HIDDEN_GEM_MAX_VIEWS=50000;
+async function _buildFeedHiddenGem(list){
+  if(!sb||!_scrapCounts.size)return;
+  try{
+    const idOf=url=>url.includes('shorts/')?url.split('shorts/')[1]:url.split('v=')[1];
+    const candidates=[..._scrapCounts.entries()].filter(([,c])=>c>=_HIDDEN_GEM_MIN_HEARTS);
+    if(!candidates.length)return;
+    const ids=[...new Set(candidates.map(([url])=>idOf(url)).filter(Boolean))];
+    if(!ids.length)return;
+    const{data,error}=await sb.from(_YT_TABLE)
+      .select('id,title,thumb,category,content_flag,group_ko,view_count')
+      .in('id',ids)
+      .not('view_count','is',null)
+      .lte('view_count',_HIDDEN_GEM_MAX_VIEWS)
+      .or('content_flag.is.null,content_flag.neq.기타')
+      .or('content_flag.is.null,content_flag.neq.무관')
+      .or('content_flag.is.null,content_flag.neq.hidden');
+    if(error||!data?.length)return;
+    const vids=_filterBannedVideos(data);
+    if(!vids.length)return;
+    const heartsOf=v=>{
+      const url=v.category==='short'?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;
+      return _scrapCounts.get(url)||0;
+    };
+    vids.sort((a,b)=>heartsOf(b)-heartsOf(a));
+    const top=vids[0];
+    const vidUrl=top.category==='short'?`https://youtube.com/shorts/${top.id}`:`https://www.youtube.com/watch?v=${top.id}`;
+    const label=_cleanTitle(top.title);
+    const sub=currentLang==='ko'?`❤️ ${heartsOf(top)}개 · 숨은 명무대`:`❤️ ${heartsOf(top)} · Hidden gem`;
+    _appendFeedCard(list,'💎',label,sub,()=>{
+      openLightbox(vidUrl,top.category==='short',[{t:top.title,u:vidUrl,thumb:top.thumb}],0,{groupKo:top.group_ko});
+    },top.thumb);
+  }catch(e){/* 조용히 무시 */}
+}
+// N년 전 오늘 — 오늘과 같은 월-일에 발행된 과거 라이브 영상을 스포트라이트로("그때 그 무대" 향수 축,
+// 2026-08-14 사용자 요청, 네이밍도 사용자가 직접 확정). 정확히 그 날짜 하루만 보는 거라 결과가 희소할
+// 수 있어서, 최근 연도부터 2004년까지 순서대로 훑어 처음 찾아지는 해에서 멈춘다 — 다른 조합형 카드들과
+// 동일하게 시간대(1시간 단위) 기준으로 시작 오프셋을 돌려 매번 조금씩 다른 해가 먼저 걸리게 한다.
+async function _buildFeedThrowbackToday(list){
+  if(!sb)return;
+  const now=new Date();
+  const mm=String(now.getMonth()+1).padStart(2,'0'),dd=String(now.getDate()).padStart(2,'0');
+  const nextDate=new Date(now.getFullYear(),now.getMonth(),now.getDate()+1);
+  const nmm=String(nextDate.getMonth()+1).padStart(2,'0'),ndd=String(nextDate.getDate()).padStart(2,'0');
+  const yearRollover=nextDate.getFullYear()!==now.getFullYear()?1:0; // 오늘이 12/31이면 다음날이 다음 해로 넘어감
+  const years=[];
+  for(let y=now.getFullYear()-1;y>=2004;y--)years.push(y);
+  if(!years.length)return;
+  const hourIdx=Math.floor(Date.now()/3600000);
+  const vidUrl=v=>v.category==='short'?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;
+  for(let i=0;i<years.length;i++){
+    const year=years[(hourIdx+i)%years.length];
+    try{
+      const{data,error}=await sb.from(_YT_TABLE)
+        .select('id,title,thumb,category,content_flag,group_ko')
+        .eq('category','live')
+        .gte('published_at',`${year}-${mm}-${dd}`)
+        .lt('published_at',`${year+yearRollover}-${nmm}-${ndd}`)
+        .or('content_flag.is.null,content_flag.neq.기타')
+        .or('content_flag.is.null,content_flag.neq.무관')
+        .or('content_flag.is.null,content_flag.neq.hidden')
+        .limit(30);
+      if(error||!data?.length)continue;
+      const vids=_filterBannedVideos(data);
+      if(!vids.length)continue;
+      const v=vids[Math.floor(Math.random()*vids.length)];
+      const vUrl=vidUrl(v);
+      const label=_cleanTitle(v.title);
+      const sub=currentLang==='ko'?`${year}년 오늘`:`${year}, today`;
+      _appendFeedCard(list,'🕰️',label,sub,()=>{
+        openLightbox(vUrl,v.category==='short',[{t:v.title,u:vUrl,thumb:v.thumb}],0,{groupKo:v.group_ko});
+      },v.thumb);
+      return;
+    }catch(e){/* 다음 연도로 */}
+  }
+}
 
 function _buildFeedDiscovery(){
   const list=document.getElementById('feed-discovery');
@@ -11049,6 +11278,9 @@ function _buildFeedDiscovery(){
   _buildFeedCoverSpotlight(list);
   _buildFeedTrendingHearts(list);
   _buildFeedCollabSpotlight(list);
+  _buildFeedDebutYearPick(list);
+  _buildFeedHiddenGem(list);
+  _buildFeedThrowbackToday(list);
 
   // 1. 랜덤 그룹
   // 예전엔 카드 자리(shimmer)를 여기서 바로 만들고 썸네일만 나중에 채웠는데, 그러면 이 카드의 화면상

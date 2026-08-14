@@ -1292,6 +1292,9 @@ let _vmSearchGen=0;
 let _vmSearchTimer=null;
 let _vmSearch2=''; // 1차 검색 결과(_vmRows) 안에서 한 번 더 좁히는 재검색어 — 새 조회 없이 클라이언트 필터만
 let _vmSearch2Timer=null;
+// '전체' 탭 검색은 content_flag 상관없이 다 섞여 나오는데(무관/숨김/기타/외부인/개별출연 포함), 그중
+// 정상 노출 중인 것만 보고 싶을 때가 있어서 추가한 클라이언트 사이드 토글(2026-08-14, 사용자 요청).
+let _vmOnlyNormal=false;
 
 function _vmOpen(tab){
   _vmTab=tab||'all';
@@ -1311,6 +1314,11 @@ function _vmApplyTab(){
   document.getElementById('vm-search-2').style.display=(isCh||_vmTab==='ss')?'none':'';
   document.getElementById('vm-toolbar').style.display='none';
   document.getElementById('vm-status').textContent='';
+  // '정상만' 토글은 content_flag가 안 섞이는 다른 탭(무관/숨김/검수)에선 의미가 없으므로 전체 탭에서만 노출.
+  // 탭을 옮기면 기존 필터 상태가 새 탭에 그대로 남아있으면 헷갈리니 매번 초기화한다.
+  _vmOnlyNormal=false;
+  const onlyNormalBtn=document.getElementById('vm-only-normal-btn');
+  if(onlyNormalBtn){onlyNormalBtn.style.display=_vmTab==='all'?'':'none';onlyNormalBtn.classList.remove('active');}
   if(isCh){
     _vmChTab='official';
     document.querySelectorAll('.vm-ch-tab').forEach(t=>t.classList.toggle('active',t.dataset.tab==='official'));
@@ -1390,9 +1398,12 @@ async function _vmLoad(searchTerm){
   }
 }
 function _vmSearch2Rows(){
-  if(!_vmSearch2)return _vmRows;
-  const t=_vmSearch2.toLowerCase();
-  return _vmRows.filter(v=>(v.title||'').toLowerCase().includes(t)||(v.group_ko||'').toLowerCase().includes(t));
+  let rows=_vmOnlyNormal?_vmRows.filter(v=>!v.content_flag):_vmRows;
+  if(_vmSearch2){
+    const t=_vmSearch2.toLowerCase();
+    rows=rows.filter(v=>(v.title||'').toLowerCase().includes(t)||(v.group_ko||'').toLowerCase().includes(t));
+  }
+  return rows;
 }
 function _vmRenderVideoList(){
   const listEl=document.getElementById('vm-list');
@@ -1416,7 +1427,7 @@ function _vmRenderVideoList(){
     toolbarEl.style.display='flex';
     document.getElementById('vm-select-all-row').style.display='';
     document.getElementById('vm-select-all').checked=false;
-    const applyLabel=tab==='nomem'?'선택 항목 무관 해제':tab==='ss'?'선택 항목 숨김':tab==='hidden'?'선택 항목 숨김 해제':'선택 항목 무관 처리';
+    const applyLabel=tab==='nomem'?'선택-무관 해제':tab==='ss'?'선택-숨김':tab==='hidden'?'선택-숨김 해제':'선택-무관';
     document.getElementById('vm-apply-btn').textContent=applyLabel;
     _vmUpdateCount();
   }else{
@@ -1500,6 +1511,8 @@ function _vmUpdateCount(){
   if(applyBtn)applyBtn.disabled=checked===0;
   const indivBtn=document.getElementById('vm-indiv-btn');
   if(indivBtn)indivBtn.disabled=checked===0;
+  const coverClearBtn=document.getElementById('vm-coverclear-btn');
+  if(coverClearBtn)coverClearBtn.disabled=checked===0;
   const allEl=document.getElementById('vm-select-all');
   if(allEl)allEl.checked=total>0&&checked===total;
 }
@@ -1727,6 +1740,11 @@ document.getElementById('vm-search-2')?.addEventListener('input',()=>{
   const val=document.getElementById('vm-search-2').value;
   _vmSearch2Timer=setTimeout(()=>{_vmSearch2=val.trim();_vmRenderVideoList();},120);
 });
+document.getElementById('vm-only-normal-btn')?.addEventListener('click',()=>{
+  _vmOnlyNormal=!_vmOnlyNormal;
+  document.getElementById('vm-only-normal-btn').classList.toggle('active',_vmOnlyNormal);
+  _vmRenderVideoList();
+});
 document.getElementById('vm-select-all')?.addEventListener('change',e=>{
   document.querySelectorAll('#vm-list .vm-item input[type=checkbox]').forEach(cb=>{cb.checked=e.target.checked;});
   _vmUpdateCount();
@@ -1740,7 +1758,7 @@ document.getElementById('vm-apply-btn')?.addEventListener('click',async()=>{
   btn.disabled=true;btn.textContent='처리 중…';
   const newFlag=_vmTab==='ss'?'hidden':(_vmTab==='all'?'무관':null);
   const{error}=await sb.from(_YT_TABLE).update({content_flag:newFlag}).in('id',ids);
-  const applyLabel=_vmTab==='nomem'?'선택 항목 무관 해제':_vmTab==='ss'?'선택 항목 숨김':_vmTab==='hidden'?'선택 항목 숨김 해제':'선택 항목 무관 처리';
+  const applyLabel=_vmTab==='nomem'?'선택-무관 해제':_vmTab==='ss'?'선택-숨김':_vmTab==='hidden'?'선택-숨김 해제':'선택-무관';
   if(error){btn.disabled=false;btn.textContent=applyLabel;document.getElementById('vm-status').textContent='오류: '+error.message;return;}
   const idSet=new Set(ids);
   if(_vmTab==='all'){
@@ -1774,7 +1792,7 @@ document.getElementById('vm-indiv-btn')?.addEventListener('click',async()=>{
   btn.disabled=true;btn.textContent='처리 중…';
   const newFlag='개별출연';
   const{error}=await sb.from(_YT_TABLE).update({content_flag:newFlag}).in('id',ids);
-  if(error){btn.disabled=false;btn.textContent='선택 항목 개별 출연 처리';document.getElementById('vm-status').textContent='오류: '+error.message;return;}
+  if(error){btn.disabled=false;btn.textContent='선택-개별출연';document.getElementById('vm-status').textContent='오류: '+error.message;return;}
   const idSet=new Set(ids);
   if(_vmTab==='all'){
     _vmRows.forEach(v=>{if(idSet.has(v.id))v.content_flag=newFlag;});
@@ -1790,7 +1808,26 @@ document.getElementById('vm-indiv-btn')?.addEventListener('click',async()=>{
     document.getElementById('vm-status').textContent=`${ids.length}개 처리 완료 — 남은 ${_vmRows.length}개`;
     if(!_vmRows.length)_vmRenderVideoList();
   }
-  btn.textContent='선택 항목 개별 출연 처리';
+  btn.textContent='선택-개별출연';
+  _vmUpdateCount();
+});
+// 선택 항목 원곡 정보 제외 — cover_of_members/cover_of_groups만 비운다. content_flag는 안 건드리므로
+// (원곡 오태깅과 무관/숨김 여부는 별개) 위 개별출연/무관 버튼과 달리 어느 탭에서 눌러도 목록에서 항목이
+// 사라지지 않는다(2026-08-14, 사용자 요청 — 원곡 커버 검수 화면 없이도 바로 지울 수 있으면 좋겠다는 요청).
+document.getElementById('vm-coverclear-btn')?.addEventListener('click',async()=>{
+  if(!sb)return;
+  const btn=document.getElementById('vm-coverclear-btn');
+  const items=[...document.querySelectorAll('#vm-list .vm-item')].filter(el=>el.querySelector('input[type=checkbox]')?.checked);
+  const ids=items.map(el=>el.dataset.vidId).filter(Boolean);
+  if(!ids.length)return;
+  btn.disabled=true;btn.textContent='처리 중…';
+  const{error}=await sb.from(_YT_TABLE).update({cover_of_members:[],cover_of_groups:[]}).in('id',ids);
+  btn.textContent='선택-원곡제외';
+  if(error){btn.disabled=false;document.getElementById('vm-status').textContent='오류: '+error.message;return;}
+  const idSet=new Set(ids);
+  _vmRows.forEach(v=>{if(idSet.has(v.id)){v.cover_of_members=[];v.cover_of_groups=[];}});
+  items.forEach(el=>{const cb=el.querySelector('input[type=checkbox]');if(cb)cb.checked=false;});
+  document.getElementById('vm-status').textContent=`${ids.length}개 원곡 정보 제외 완료`;
   _vmUpdateCount();
 });
 document.getElementById('vm-edit-btn')?.addEventListener('click',()=>{

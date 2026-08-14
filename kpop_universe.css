@@ -1094,6 +1094,12 @@
   .vm-tab{flex:1;padding:6px 0;border-radius:8px;border:0.5px solid rgba(255,255,255,0.10);background:rgba(255,255,255,0.04);color:rgba(170,190,225,0.66);font-size:11px;font-weight:600;font-family:inherit;cursor:pointer;transition:background .13s,color .13s,border-color .13s;}
   .vm-tab:hover{color:rgba(210,225,255,0.85);}
   .vm-tab.active{background:rgba(155,178,228,0.18);border-color:rgba(170,195,255,0.35);color:#c8ddff;}
+  /* .vm-tab과 같은 톤이지만 별도 클래스 — .vm-tab은 스크립트가 로드 시점에 querySelectorAll로 한 번만
+     훑어서 탭 전환 클릭을 바인딩하므로, 그냥 시각적 재사용 목적으로 같은 클래스를 붙이면 "정상만" 버튼도
+     탭으로 오인돼 클릭 시 탭이 깨지는 사고가 남(2026-08-14, 구현 중 자체 검토로 발견). */
+  .vm-toggle-pill{padding:5px 12px;border-radius:8px;border:0.5px solid rgba(255,255,255,0.10);background:rgba(255,255,255,0.04);color:rgba(170,190,225,0.66);font-size:11px;font-weight:600;font-family:inherit;cursor:pointer;transition:background .13s,color .13s,border-color .13s;}
+  .vm-toggle-pill:hover{color:rgba(210,225,255,0.85);}
+  .vm-toggle-pill.active{background:rgba(155,178,228,0.18);border-color:rgba(170,195,255,0.35);color:#c8ddff;}
   #vm-search{margin:8px 16px 0;padding:7px 10px;border-radius:8px;background:rgba(255,255,255,0.05);border:0.5px solid rgba(255,255,255,0.10);color:#c8daf0;font-size:11.5px;font-family:inherit;outline:none;flex-shrink:0;width:calc(100% - 32px);box-sizing:border-box;transition:border-color .15s,background .15s;}
   #vm-search::placeholder{color:rgba(150,175,215,0.44);}
   #vm-search:focus{border-color:rgba(150,185,255,0.28);background:rgba(255,255,255,0.075);}
@@ -1931,11 +1937,13 @@
   .pp-save-btn:hover{background:rgba(115,145,255,0.18);border-color:rgba(120,150,255,0.32);color:rgba(220,230,255,0.92);}  .pp-save-btn:active{background:rgba(115,145,255,0.22);transform:scale(0.97);transition:transform .07s;}
   #tab-profile.pp-set,#dh-profile-btn.pp-set{font-size:11px;font-weight:700;letter-spacing:.01em;}
   /* ── 즐겨찾기 해제 확인 / 기념일 날짜 수정 / 계정 연결 확인 팝업 ────── */
-  #unfav-confirm-overlay,#date-edit-overlay,#link-confirm-overlay,#logout-confirm-overlay,#generic-confirm-overlay,#generic-prompt-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.52);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:70;display:none;align-items:center;justify-content:center;}
-  #unfav-confirm-overlay.open,#date-edit-overlay.open,#link-confirm-overlay.open,#logout-confirm-overlay.open,#generic-confirm-overlay.open,#generic-prompt-overlay.open{display:flex;}
-  #unfav-confirm-panel,#date-edit-panel,#link-confirm-panel,#logout-confirm-panel,#generic-confirm-panel,#generic-prompt-panel{width:min(280px,calc(100vw - 40px));background:rgba(13,17,34,0.97);backdrop-filter:blur(40px) saturate(180%);-webkit-backdrop-filter:blur(40px) saturate(180%);border-radius:18px;box-shadow:0 16px 56px rgba(0,0,0,0.72);border:0.5px solid rgba(255,255,255,0.10);padding:20px;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
-  #unfav-confirm-msg,#link-confirm-msg,#logout-confirm-msg,#generic-confirm-msg{font-size:12px;color:rgba(160,182,222,0.72);line-height:1.5;margin-top:8px;}
-  #unfav-confirm-btns,#link-confirm-btns,#logout-confirm-btns,#generic-confirm-btns{display:flex;gap:8px;margin-top:18px;}
+  #unfav-confirm-overlay,#date-edit-overlay,#link-confirm-overlay,#logout-confirm-overlay,#generic-confirm-overlay,#generic-prompt-overlay,#welcome-choice-overlay,#welcome-login-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.52);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:70;display:none;align-items:center;justify-content:center;}
+  #unfav-confirm-overlay.open,#date-edit-overlay.open,#link-confirm-overlay.open,#logout-confirm-overlay.open,#generic-confirm-overlay.open,#generic-prompt-overlay.open,#welcome-choice-overlay.open,#welcome-login-overlay.open{display:flex;}
+  #unfav-confirm-panel,#date-edit-panel,#link-confirm-panel,#logout-confirm-panel,#generic-confirm-panel,#generic-prompt-panel,#welcome-choice-panel,#welcome-login-panel{width:min(280px,calc(100vw - 40px));background:rgba(13,17,34,0.97);backdrop-filter:blur(40px) saturate(180%);-webkit-backdrop-filter:blur(40px) saturate(180%);border-radius:18px;box-shadow:0 16px 56px rgba(0,0,0,0.72);border:0.5px solid rgba(255,255,255,0.10);padding:20px;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
+  #unfav-confirm-msg,#link-confirm-msg,#logout-confirm-msg,#generic-confirm-msg,#welcome-choice-msg,#welcome-login-msg{font-size:12px;color:rgba(160,182,222,0.72);line-height:1.5;margin-top:8px;}
+  #unfav-confirm-btns,#link-confirm-btns,#logout-confirm-btns,#generic-confirm-btns,#welcome-login-btns{display:flex;gap:8px;margin-top:18px;}
+  /* 선택/로그인 패널은 -btns 없이 pp-save-btn을 바로 쌓아서 쓰므로, 메시지 아래 여백만 별도로 확보 */
+  #welcome-choice-msg,#welcome-login-msg{margin-bottom:14px;}
   #pp-x-link{margin-top:18px;}
   #pp-linked-state{font-size:11px;color:rgba(130,200,160,0.85);margin-top:10px;letter-spacing:.02em;}
   #pp-linked-state .pp-linked-provider{font-weight:700;margin-right:4px;}
@@ -2186,8 +2194,8 @@
   #ob-top-search.ob-hide{opacity:0;transform:translateY(-6px);transition:opacity .3s ease,transform .3s ease;pointer-events:none;}
   #ob-top-search-btn{
     width:100%;box-sizing:border-box;display:flex;align-items:center;gap:8px;
-    background:rgba(255,255,255,0.06);
-    backdrop-filter:blur(32px) saturate(140%);-webkit-backdrop-filter:blur(32px) saturate(140%);
+    background:rgba(255,255,255,0.07);
+    backdrop-filter:blur(10px) saturate(140%);-webkit-backdrop-filter:blur(10px) saturate(140%);
     border:0.5px solid rgba(255,255,255,0.18);
     border-radius:28px;padding:13px 18px;
     cursor:pointer;
@@ -2203,8 +2211,8 @@
   /* 타이핑 모드: 버튼 숨기고 인풋으로 전환 */
   #ob-top-search.ob-typing{
     display:flex;align-items:center;gap:8px;
-    background:rgba(255,255,255,0.06);
-    backdrop-filter:blur(32px) saturate(140%);-webkit-backdrop-filter:blur(32px) saturate(140%);
+    background:rgba(255,255,255,0.07);
+    backdrop-filter:blur(10px) saturate(140%);-webkit-backdrop-filter:blur(10px) saturate(140%);
     border:0.5px solid rgba(255,255,255,0.20);
     border-radius:28px;padding:0 18px;
     box-shadow:0 4px 20px rgba(0,0,0,0.18),inset 0 1px 0 rgba(255,255,255,0.14);
