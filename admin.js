@@ -532,21 +532,29 @@ async function _ytSweepAmbiguousCollabMistag(){
       // 예전 버전은 "여전히 유효한지"만 보고 교집합만 남겨서, 이런 케이스는 group 쪽에서 근거를 잃어도
       // (validGroups에 안 들어가서 제거는 되지만) with_members로 승격은 전혀 안 돼 그냥 통째로 날아갔었음
       // — 그룹 태그가 사라지긴 해도 더 정확한 멤버 태그로 안 바뀌니 사실상 퇴화였음. 이번에 승격 로직 추가.
-      const validGroups=new Set(),validMembers=new Set(),promote=new Map();
+      // consolidate: 그 반대 방향 — 멤버 개별로 나열돼있었는데(curWM) 다시 보니 활동중 멤버 전원이 매칭돼
+      // _classifyGuestGroup이 asGroup으로 판정하는 경우, 그룹 단위 태그로 뭉친다("멤버 전체 나오는 영상인데
+      // 이름이 죽 나열된다"는 사용자 제보, 2026-08-14). 이 영상에 그 그룹의 with_members 흔적이 이미 있던
+      // 경우에만 발동(curWM.some(...)) — 원래 이 함수는 "기존 태그 정리"만 하는 도구라, 아예 처음부터
+      // 안 걸려있던 콜라보를 새로 발견해서 추가하는 건 범위 밖(그건 자동 태깅/재태깅 버튼의 몫).
+      const validGroups=new Set(),validMembers=new Set(),promote=new Map(),consolidate=new Set();
       if(match){
         const otherGkos=[match.primaryGroup,...match.withGroups].filter(og=>og&&og!==v.group_ko);
         otherGkos.forEach(og=>{
           const sec=match.membersByGroup[og]||[];
-          if(sec.length){
+          const{asGroup,extraMembers}=_classifyGuestGroup(sec,og);
+          if(asGroup){
+            validGroups.add(og);
+            extraMembers.forEach(mko=>validMembers.add(`${mko}(${og})`));
+            if(sec.length&&!curWG.includes(og)&&curWM.some(m=>m.endsWith(`(${og})`)))consolidate.add(og);
+          }else{
             const tags=sec.map(mko=>`${mko}(${og})`);
             tags.forEach(t=>validMembers.add(t));
             if(curWG.includes(og))promote.set(og,tags);
-          }else{
-            validGroups.add(og);
           }
         });
       }
-      const newWG=curWG.filter(g=>validGroups.has(g));
+      const newWG=[...new Set([...curWG.filter(g=>validGroups.has(g)),...consolidate])];
       const promotedTags=[...promote.values()].flat();
       const newWM=[...new Set([...curWM.filter(m=>validMembers.has(m)),...promotedTags])];
       const patch={};
@@ -2033,8 +2041,9 @@ async function _ytAutoTagMembers(){
             const withGroups=[],withMembers=[];
             otherGkos.forEach(og=>{
               const sec=match.membersByGroup[og]||[];
-              if(sec.length)sec.forEach(mko=>withMembers.push(`${mko}(${og})`));
-              else withGroups.push(og);
+              const{asGroup,extraMembers}=_classifyGuestGroup(sec,og);
+              if(asGroup)withGroups.push(og);
+              extraMembers.forEach(mko=>withMembers.push(`${mko}(${og})`));
             });
             if(withMembers.length)patch.with_members=withMembers;
             if(withGroups.length)patch.with_groups=withGroups;
@@ -2451,6 +2460,26 @@ function _m2ParseTitle(rawTitle,selfGko,strict){
   return{primaryGroup:matchedGroupKos[0],withGroups:matchedGroupKos.slice(1),membersByGroup};
 }
 
+// (기능 추가, 2026-08-14) with_members/with_groups를 정할 때 그 그룹의 활동중 멤버(탈퇴/비활동 제외)
+// 전원이 매칭됐으면 개별 나열 대신 그룹 단위 태그로 뭉친다 — "멤버 전체 나오는 영상인데 이름이 죽
+// 나열된다"는 사용자 제보로 추가. _m2ParseTitle을 호출하는 5곳(콜라보 재검증/자동 태깅/외부채널 동기화/
+// 수동 영상 추가)이 전부 이 판정을 공유해야 일관되므로 여기 한 곳에 둔다.
+function _activeRosterKos(gko){
+  return ARTISTS.filter(a=>_artistGroups(a).some(g=>g.ko===gko)&&a.active!==false).map(a=>a.name.ko);
+}
+// sec: _m2ParseTitle이 그 그룹에서 찾아낸 멤버(mko) 배열. 활동중 멤버 전원이 sec에 다 있으면 그룹
+// 단위(asGroup=true)로 판정하고, 혹시 탈퇴/비활동 멤버가 추가로 같이 잡혔으면 그 사람만
+// extraMembers로 남겨 개별 표기를 유지한다(그룹 태그만으론 그 사람이 나온다는 정보가 사라지므로).
+// 활동중 로스터 자체가 비어있으면(그룹 데이터 없음 등) 안전하게 그룹 단위로 취급하지 않는다.
+function _classifyGuestGroup(sec,gko){
+  if(!sec||!sec.length)return{asGroup:true,extraMembers:[]};
+  const active=_activeRosterKos(gko);
+  if(active.length&&active.every(mko=>sec.includes(mko))){
+    return{asGroup:true,extraMembers:sec.filter(mko=>!active.includes(mko))};
+  }
+  return{asGroup:false,extraMembers:sec};
+}
+
 // idol tier 채널의 owner({mko})가 실제로 어느 group_ko로 저장돼야 하는지 계산 — GROUPS에 없는 솔로
 // 아티스트(이영지 등)는 자기 이름 자체가 그룹 키 역할을 함(_ytGroupKoFor와 동일 규칙). 매번 다시 찾지
 // 않도록 채널 동기화 함수들이 한 번만 계산해 캐시해서 넘겨줘도 되지만, 호출 빈도가 낮아 그냥 매번 계산.
@@ -2481,8 +2510,9 @@ function _extBuildRows(vids,strict,tier,owner){
     guestCandidates.forEach(gko=>{
       if(owner&&gko===ownerGko)return; // 본인 그룹이 게스트로 중복 잡히는 것만 방지
       const sec=match.membersByGroup[gko]||[];
-      if(sec.length){sec.forEach(mko=>withMembers.push(`${mko}(${gko})`));}
-      else{withGroups.push(gko);}
+      const{asGroup,extraMembers}=_classifyGuestGroup(sec,gko);
+      if(asGroup)withGroups.push(gko);
+      extraMembers.forEach(mko=>withMembers.push(`${mko}(${gko})`));
     });
     const category=(tier&&tier!=='music'&&(!v.category||v.category==='other'))?(tier==='show'?'show':'variety'):v.category;
     rows.push({
@@ -2859,8 +2889,9 @@ async function _ytBuildManualVideoRow(key,vid,manualGroup,manualMembers){
     members=match.membersByGroup[groupKo]||[];
     for(const gko of match.withGroups){
       const sec=match.membersByGroup[gko]||[];
-      if(sec.length)sec.forEach(mko=>withMembers.push(`${mko}(${gko})`));
-      else withGroups.push(gko);
+      const{asGroup,extraMembers}=_classifyGuestGroup(sec,gko);
+      if(asGroup)withGroups.push(gko);
+      extraMembers.forEach(mko=>withMembers.push(`${mko}(${gko})`));
     }
   }
   // 제목에 멤버 이름이 안 그대로 실려있거나(별명·영문 표기 등) 자동 인식이 틀렸을 때, 직접 입력한
