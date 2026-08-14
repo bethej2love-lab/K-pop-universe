@@ -2419,7 +2419,7 @@ function animate(){
   _nctRingGroups.forEach(({g})=>g.rotateZ(0.00028));
   // 실제 GPU 그리기 호출만 30fps로 제한(위 주석 참고) — 나머지 로직은 이미 다 계산된 뒤라 그냥 스킵.
   const _nowMs=performance.now();
-  if(_nowMs-_lastRenderMs>=_RENDER_INTERVAL_MS){
+  if(_nowMs-_lastRenderMs>=(_isAdmin()?1000/15:_RENDER_INTERVAL_MS)){
     _lastRenderMs=_nowMs;
     renderer.render(scene,camera);
     labelRenderer.render(scene,camera);
@@ -10925,11 +10925,15 @@ async function _pickFeaturedVidFromDB(ko,memberKo,onlyMe,filter,viewMode,formatF
     if(viewMode==='format'&&formatFilter){
       q=q.contains('content_formats',[formatFilter]);
     }else if(filter==='cover'){
-      // Cover 탭 목록 쿼리와 동일한 "BE ORIGINAL"(안무 콘텐츠 시리즈명) 오매칭 제외 — 이 대표(하트 최다)
-      // 영상 선정 쿼리는 별도로 중복 구현돼있어서 목록 쪽만 고치고 여기를 빠뜨리면 대표 영상으로는
-      // 여전히 뽑힐 수 있었음(2026-08-11).
+      // Cover 탭 목록 쿼리와 동일한 제외 목록 — 여기를 빠뜨리면 대표 영상으로는 여전히 뽑힐 수 있음.
       q=q.or('title_norm.ilike.*cover*,title_norm.ilike.*커버*,title_norm.ilike.*원곡*,title_norm.ilike.*original*')
-        .not('title_norm','ilike','*be original*');
+        .not('title_norm','ilike','*be original*')
+        .not('title_norm','ilike','*original ver*')
+        .not('title_norm','ilike','*cover story*')
+        .not('title_norm','ilike','*커버 촬영*')
+        .not('title_norm','ilike','*uncover*')
+        .not('title_norm','ilike','*choom original*')
+        .not('title_norm','ilike','*the original*');
     }else if(filter&&filter!=='all'){
       q=q.eq('category',filter);
     }
@@ -12289,10 +12293,16 @@ function _makeChVidController(contId){
       if(state.viewMode==='format'){
         if(state.formatFilter)q=q.contains('content_formats',[state.formatFilter]);
       }else if(filter==='cover'){
-        // "BE ORIGINAL"은 딩고 안무 콘텐츠 시리즈명이라 "original" 매칭에 잘못 걸려 춤 콘텐츠가 Cover 탭에
-        // 섞여 들어왔음(2026-08-11, 사용자 제보) — 원곡 크레딧 문맥이 아닌 이 시리즈명만 명시적으로 제외.
+        // "BE ORIGINAL"(딩고 안무 시리즈), "original ver"(원본 버전), "cover story"/"커버 촬영"(잡지/포토),
+        // "uncover", "CHOOM ORIGINAL", "the original" 등은 커버 영상이 아니라 명시적으로 제외.
         q=q.or('title_norm.ilike.*cover*,title_norm.ilike.*커버*,title_norm.ilike.*원곡*,title_norm.ilike.*original*')
-          .not('title_norm','ilike','*be original*');
+          .not('title_norm','ilike','*be original*')
+          .not('title_norm','ilike','*original ver*')
+          .not('title_norm','ilike','*cover story*')
+          .not('title_norm','ilike','*커버 촬영*')
+          .not('title_norm','ilike','*uncover*')
+          .not('title_norm','ilike','*choom original*')
+          .not('title_norm','ilike','*the original*');
       }else if(filter==='live'){
         q=q.eq('category','live').not('title','ilike','%[live]%');
       }else if(filter!=='all'){
@@ -12777,7 +12787,8 @@ function _makeChVidController(contId){
     if(stillQualifies&&state.filter!=='all'){
       if(state.filter==='cover'){
         const t=(newRow.title||'').toLowerCase();
-        if(!/cover|커버|원곡|original/.test(t))stillQualifies=false;
+        const _coverExclude=['be original','original ver','cover story','커버 촬영','uncover','choom original','the original'];
+        if(!/cover|커버|원곡|original/.test(t)||_coverExclude.some(ex=>t.includes(ex)))stillQualifies=false;
       }else if(newRow.category!==state.filter){
         stillQualifies=false;
       }
@@ -13056,10 +13067,7 @@ function _renderCollectionRow(containerId,list){
     if(thumbUrl)img.src=thumbUrl;
     thumbWrap.appendChild(img);
     if(col.mine){const dot=document.createElement('span');dot.className='gc-collection-chip-mine';thumbWrap.appendChild(dot);}
-    const name=document.createElement('div');name.className='gc-collection-chip-name';name.textContent=col.name;
-    const cnt=document.createElement('div');cnt.className='gc-collection-chip-cnt';cnt.textContent=`${col.videos.length}개`;
-    chip.appendChild(thumbWrap);chip.appendChild(name);chip.appendChild(cnt);
-    if(col.mine){
+    if(col.mine||_isAdmin()){
       const del=document.createElement('button');del.className='gc-collection-chip-del';del.textContent='×';del.title='컬렉션 삭제';
       del.addEventListener('click',async e=>{
         e.stopPropagation();
@@ -13067,15 +13075,20 @@ function _renderCollectionRow(containerId,list){
         collections=collections.filter(c=>c.id!==col.id);
         _saveCollections();renderCollectionSection();
         if(sb&&window._sbSession){
-          const{error}=await sb.from('public_collections').delete().eq('id',col.id).eq('owner_id',window._sbSession.user.id);
+          let q=sb.from('public_collections').delete().eq('id',col.id);
+          if(!_isAdmin())q=q.eq('owner_id',window._sbSession.user.id);
+          const{error}=await q;
           if(error)console.error('공개 컬렉션 삭제 실패',error.message);
         }
         chip.remove();
         const listEl2=document.getElementById(containerId)?.querySelector('.gc-collection-list');
         if(listEl2&&!listEl2.children.length)document.getElementById(containerId).style.display='none';
       });
-      chip.appendChild(del);
+      thumbWrap.appendChild(del);
     }
+    const name=document.createElement('div');name.className='gc-collection-chip-name';name.textContent=col.name;
+    const cnt=document.createElement('div');cnt.className='gc-collection-chip-cnt';cnt.textContent=`${col.videos.length}개`;
+    chip.appendChild(thumbWrap);chip.appendChild(name);chip.appendChild(cnt);
     chip.addEventListener('click',e=>{
       e.stopPropagation();
       if(!col.videos.length)return;

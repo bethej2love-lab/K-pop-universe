@@ -3449,7 +3449,7 @@ document.getElementById('vid-tag-save').addEventListener('click',async e=>{
       if(newGko){_gcChVidCtl.reloadIfShowing(newGko);_ttChVidCtl.reloadIfShowing(newGko);}
       _refreshOpenCardCollab();
       _refreshOpenCoverOfSection();
-    },500);
+    },100);
     return;
   }
   const{id}=_vidTagTarget;
@@ -3493,7 +3493,7 @@ document.getElementById('vid-tag-save').addEventListener('click',async e=>{
     if(newGko){_gcChVidCtl.reloadIfShowing(newGko);_ttChVidCtl.reloadIfShowing(newGko);}
     _refreshOpenCardCollab(); // with 태그 추가/변경으로 "연결" 버튼 노출 여부가 바뀌었을 수 있으니 갱신
     _refreshOpenCoverOfSection(); // 원곡자 지정 추가/변경으로 "다른 아티스트의 커버" 섹션이 바뀌었을 수 있으니 갱신
-  },500);
+  },100);
 });
 // 기타/외부인 포함/개별출연(체크박스) + 무관/숨김(토글 버튼) — content_flag 컬럼 하나를 놓고 배타적으로
 // 선택하는 하나의 그룹이라, 전부 여기서 _vidTagFlagChoice 하나로 수렴시키고 저장 버튼을 눌러야 반영된다

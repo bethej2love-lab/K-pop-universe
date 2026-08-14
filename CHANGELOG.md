@@ -14,6 +14,9 @@
 
 ## 2026-08-14
 
+- [완료][kpop_universe.html] Cover 탭 제외 키워드 추가 — original ver / cover story / 커버 촬영 / uncover / choom original / the original (목록쿼리·대표영상쿼리·patchItem 클라이언트 필터 3곳 동기화)
+- [완료][admin.js] 영상 태그 저장 후 그리드 갱신 딜레이 500ms → 100ms (단일/일괄 저장 모두)
+- [완료][kpop_universe.html] 어드민 계정 GPU 렌더링 15fps로 제한 — 일반 유저는 30fps 유지, 로그인 전/일반 계정은 그대로
 - [완료][kpop_universe.html][kpop_universe.css] 공개 컬렉션 칩에 삭제 버튼(×) 추가 — mine인 칩에만 hover 시 표시, 클릭 시 confirm 후 `public_collections` + 로컬에서 동시 삭제
 - [완료][kpop_universe.html] 어드민 로그인 시 본인이 만든 공개 컬렉션 안 보이는 버그 수정 — `_loadCollectionRow`의 `pub` 필터를 `owner_id !== uid` → `!mineIds.has(r.id)`로 변경; 자기 uid 공개 컬렉션이 `user_data`에 없으면 mine/pub 양쪽에서 제외되던 문제
 
