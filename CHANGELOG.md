@@ -14,6 +14,7 @@
 
 ## 2026-08-14
 
+- [완료][kpop_universe.html][kpop_universe.css] 공개 컬렉션 칩에 삭제 버튼(×) 추가 — mine인 칩에만 hover 시 표시, 클릭 시 confirm 후 `public_collections` + 로컬에서 동시 삭제
 - [완료][kpop_universe.html] 어드민 로그인 시 본인이 만든 공개 컬렉션 안 보이는 버그 수정 — `_loadCollectionRow`의 `pub` 필터를 `owner_id !== uid` → `!mineIds.has(r.id)`로 변경; 자기 uid 공개 컬렉션이 `user_data`에 없으면 mine/pub 양쪽에서 제외되던 문제
 
 - [완료][kpop_universe.css][kpop_universe.html] 멤버 카드 소속 그룹 폰트 조정 — 유닛은 메인 그룹(12px)보다 1pt 작게(11px), 영어 텍스트는 추가 1pt 감소(그룹 11px·유닛 10px), `tg-en` 클래스로 한글 미포함 텍스트 자동 감지

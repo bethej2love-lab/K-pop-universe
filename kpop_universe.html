@@ -13059,6 +13059,23 @@ function _renderCollectionRow(containerId,list){
     const name=document.createElement('div');name.className='gc-collection-chip-name';name.textContent=col.name;
     const cnt=document.createElement('div');cnt.className='gc-collection-chip-cnt';cnt.textContent=`${col.videos.length}개`;
     chip.appendChild(thumbWrap);chip.appendChild(name);chip.appendChild(cnt);
+    if(col.mine){
+      const del=document.createElement('button');del.className='gc-collection-chip-del';del.textContent='×';del.title='컬렉션 삭제';
+      del.addEventListener('click',async e=>{
+        e.stopPropagation();
+        if(!confirm(`"${col.name}" 컬렉션을 삭제할까요?`))return;
+        collections=collections.filter(c=>c.id!==col.id);
+        _saveCollections();renderCollectionSection();
+        if(sb&&window._sbSession){
+          const{error}=await sb.from('public_collections').delete().eq('id',col.id).eq('owner_id',window._sbSession.user.id);
+          if(error)console.error('공개 컬렉션 삭제 실패',error.message);
+        }
+        chip.remove();
+        const listEl2=document.getElementById(containerId)?.querySelector('.gc-collection-list');
+        if(listEl2&&!listEl2.children.length)document.getElementById(containerId).style.display='none';
+      });
+      chip.appendChild(del);
+    }
     chip.addEventListener('click',e=>{
       e.stopPropagation();
       if(!col.videos.length)return;

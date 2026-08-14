@@ -1743,12 +1743,15 @@
   .gc-collection-hd{font-size:9.5px;font-weight:700;letter-spacing:.16em;color:rgba(130,150,205,0.56);text-transform:uppercase;margin-bottom:7px;}
   .gc-collection-list{display:flex;gap:8px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none;}
   .gc-collection-list::-webkit-scrollbar{display:none;}
-  .gc-collection-chip{flex-shrink:0;width:74px;cursor:pointer;}
+  .gc-collection-chip{flex-shrink:0;width:74px;cursor:pointer;position:relative;}
   .gc-collection-chip-thumb-wrap{position:relative;width:74px;height:46px;border-radius:8px;overflow:hidden;background:rgba(255,255,255,0.06);}
   .gc-collection-chip-thumb{width:100%;height:100%;object-fit:cover;display:block;}
   .gc-collection-chip-mine{position:absolute;top:3px;right:3px;width:6px;height:6px;border-radius:50%;background:rgba(130,185,255,0.95);box-shadow:0 0 5px rgba(130,185,255,0.7);}
   .gc-collection-chip-name{margin-top:4px;font-size:10.5px;color:rgba(200,220,255,0.8);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   .gc-collection-chip-cnt{font-size:9.5px;color:rgba(120,145,190,0.54);}
+  .gc-collection-chip-del{position:absolute;top:2px;left:3px;width:16px;height:16px;border-radius:50%;background:rgba(10,12,24,0.72);border:none;color:rgba(255,255,255,0.55);font-size:11px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity 0.15s;}
+  .gc-collection-chip:hover .gc-collection-chip-del{opacity:1;}
+  .gc-collection-chip-del:hover{background:rgba(200,60,60,0.8);color:#fff;}
   #venue-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.52);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:80;display:none;align-items:center;justify-content:center;}
   #venue-overlay.open{display:flex;}
   #venue-panel{position:relative;width:min(320px,calc(100vw - 40px));max-height:min(480px,calc(100vh - 80px));overflow-y:auto;background:rgba(13,17,34,0.97);backdrop-filter:blur(40px) saturate(180%);-webkit-backdrop-filter:blur(40px) saturate(180%);border-radius:18px;box-shadow:0 16px 56px rgba(0,0,0,0.72);border:0.5px solid rgba(255,255,255,0.10);padding:20px;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
