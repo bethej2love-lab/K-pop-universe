@@ -1182,8 +1182,9 @@ function _refreshOpenCardText(){
       // 그룹 자체가 해체(disbanded)됐거나, 그룹은 멀쩡해도 이 멤버 본인이 탈퇴/비활동(active:false)이면
       // 둘 다 "과거형"으로 흐리게 — 이펙스 금동현처럼 그룹은 활동 중인데 본인만 탈퇴한 경우, 예전엔 그룹
       // 자체 해체 여부만 봐서 멀쩡한 밝기로 표시되던 걸 놓치고 있었음(2026-08-05, 사용자 제보).
-      sp.className='tg'+(((GROUPS[g.ko]||{}).disbanded||a.active===false)?' tg-past':'');
-      sp.textContent=currentLang==='ko'?g.ko:(g.en||g.ko);
+      const _tgTxt=currentLang==='ko'?g.ko:(g.en||g.ko);
+      sp.className='tg'+(((GROUPS[g.ko]||{}).disbanded||a.active===false)?' tg-past':'')+(!/[가-힯]/.test(_tgTxt)?' tg-en':'');
+      sp.textContent=_tgTxt;
       sp.addEventListener('click',e=>{
         e.stopPropagation();
         if(isMob()){
@@ -1197,7 +1198,7 @@ function _refreshOpenCardText(){
     });
     _unitTagsFor(a).forEach(unitName=>{
       const sep=document.createElement('span');sep.textContent=' · ';sep.style.cssText='color:rgba(150,170,210,0.45);pointer-events:none;';_tgEl.appendChild(sep);
-      const usp=document.createElement('span');usp.className='tg-unit';usp.textContent=unitName;
+      const usp=document.createElement('span');usp.className='tg-unit'+(!/[가-힯]/.test(unitName)?' tg-en':'');usp.textContent=unitName;
       usp.addEventListener('click',_onUnitTagClick(usp,unitName));
       _tgEl.appendChild(usp);
     });}
@@ -6073,14 +6074,15 @@ function showT(a,cx,cy,keepNavStack,urlMode,pushMobNav,noFly){
     // 그룹 자체가 해체(disbanded)됐거나, 그룹은 멀쩡해도 이 멤버 본인이 탈퇴/비활동(active:false)이면
     // 둘 다 "과거형"으로 흐리게 — 이펙스 금동현처럼 그룹은 활동 중인데 본인만 탈퇴한 경우, 예전엔 그룹
     // 자체 해체 여부만 봐서 멀쩡한 밝기로 표시되던 걸 놓치고 있었음(2026-08-05, 사용자 제보).
-    sp.className='tg'+((GROUPS[g.ko].disbanded||a.active===false)?' tg-past':'');
-    sp.textContent=currentLang==='ko'?g.ko:(g.en||g.ko);
+    const _spTxt=currentLang==='ko'?g.ko:(g.en||g.ko);
+    sp.className='tg'+((GROUPS[g.ko].disbanded||a.active===false)?' tg-past':'')+(!/[가-힯]/.test(_spTxt)?' tg-en':'');
+    sp.textContent=_spTxt;
     sp.addEventListener('click',_makeGcClickFn(g.ko));
     tgEl.appendChild(sp);
   });
   _unitTagsFor(a).forEach(unitName=>{
     if(tgEl.childNodes.length){const sep=document.createElement('span');sep.textContent=' · ';sep.style.cssText='color:rgba(150,170,210,0.45);pointer-events:none;';tgEl.appendChild(sep);}
-    const usp=document.createElement('span');usp.className='tg-unit';usp.textContent=unitName;
+    const usp=document.createElement('span');usp.className='tg-unit'+(!/[가-힯]/.test(unitName)?' tg-en':'');usp.textContent=unitName;
     usp.addEventListener('click',_onUnitTagClick(usp,unitName));
     tgEl.appendChild(usp);
   });
@@ -13030,9 +13032,10 @@ async function _loadCollectionRow(ko,containerId,memberKo,cardMemberKo){
     if(_pubCollectionsP)await _pubCollectionsP;
     if(_colLikesP)await _colLikesP; // 좋아요 많은 순 정렬에 필요
     const all=_pubCollectionsCache||[];
-    pub=all.filter(r=>r.owner_id!==uid&&(memberKo?(r.member_kos||[]).includes(memberKo):(r.group_kos||[]).includes(ko)))
+    const mineIds=new Set(mine.map(m=>m.id));
+    pub=all.filter(r=>!mineIds.has(r.id)&&(memberKo?(r.member_kos||[]).includes(memberKo):(r.group_kos||[]).includes(ko)))
       .sort((a,b)=>(_colLikeCounts.get(b.id)||0)-(_colLikeCounts.get(a.id)||0))
-      .slice(0,20).map(r=>({id:r.id,name:r.name,videos:r.items||[],mine:false,ownerNick:r.owner_nick||null}));
+      .slice(0,20).map(r=>({id:r.id,name:r.name,videos:r.items||[],mine:r.owner_id===uid,ownerNick:r.owner_nick||null}));
   }
   // 대기 중 다른 카드로 전환됐으면 건너뜀
   if(cardMemberKo?_openTArtist?.name?.ko!==cardMemberKo:_openGCko!==ko)return;
