@@ -2247,7 +2247,7 @@ function _unitMembersFromTitle(title,ko){
   };
   const result=new Set();
   Object.values(_PROJECT_UNITS).forEach(unit=>{
-    if(!unit.names.some(hit))return;
+    if(!unit.names.some(t=>hit(t)))return;
     unit.members.forEach(({mko,gko})=>{if(gko===ko)result.add(mko);});
   });
   return result;
@@ -2382,7 +2382,7 @@ function _m2ParseTitle(rawTitle,selfGko,strict){
   const unitExtraMembers={}; // gko -> Set(mko)
   let normMinusUnits=norm;
   Object.values(_PROJECT_UNITS).forEach(unit=>{
-    if(!unit.names.some(hit))return;
+    if(!unit.names.some(t=>hit(t)))return;
     unit.members.forEach(({mko,gko})=>{
       if(!seen.has(gko)){matchedGroupKos.push(gko);seen.add(gko);}
       if(!unitExtraMembers[gko])unitExtraMembers[gko]=new Set();
