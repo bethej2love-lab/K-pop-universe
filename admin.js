@@ -1792,7 +1792,7 @@ document.getElementById('vm-indiv-btn')?.addEventListener('click',async()=>{
   btn.disabled=true;btn.textContent='처리 중…';
   const newFlag='개별출연';
   const{error}=await sb.from(_YT_TABLE).update({content_flag:newFlag}).in('id',ids);
-  if(error){btn.disabled=false;btn.textContent='선택-개별출연';document.getElementById('vm-status').textContent='오류: '+error.message;return;}
+  if(error){btn.disabled=false;btn.textContent='선택-개별';document.getElementById('vm-status').textContent='오류: '+error.message;return;}
   const idSet=new Set(ids);
   if(_vmTab==='all'){
     _vmRows.forEach(v=>{if(idSet.has(v.id))v.content_flag=newFlag;});
@@ -1808,7 +1808,7 @@ document.getElementById('vm-indiv-btn')?.addEventListener('click',async()=>{
     document.getElementById('vm-status').textContent=`${ids.length}개 처리 완료 — 남은 ${_vmRows.length}개`;
     if(!_vmRows.length)_vmRenderVideoList();
   }
-  btn.textContent='선택-개별출연';
+  btn.textContent='선택-개별';
   _vmUpdateCount();
 });
 // 선택 항목 원곡 정보 제외 — cover_of_members/cover_of_groups만 비운다. content_flag는 안 건드리므로

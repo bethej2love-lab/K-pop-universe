@@ -519,19 +519,17 @@
   #yt-lb-prev,#yt-lb-next{background:none;border:none;color:rgba(255,255,255,0.45);font-size:30px;line-height:1;cursor:pointer;padding:4px 10px;transition:color .15s;}
   #yt-lb-prev:hover,#yt-lb-next:hover{color:rgba(255,255,255,0.9);}
   #yt-lb-prev:disabled,#yt-lb-next:disabled{color:rgba(255,255,255,0.12);cursor:default;}
-  #yt-lb-actions{display:flex;gap:10px;}
+  #yt-lb-actions{display:flex;align-items:center;gap:10px;}
   #yt-lb-scrap,#yt-lb-col,#yt-lb-edit,#yt-lb-mute,#yt-lb-rotate{background:rgba(255,255,255,0.08);border:none;border-radius:50%;width:38px;height:38px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:rgba(200,215,255,0.7);transition:color .15s,background .15s;font-size:15px;}
   #yt-lb-rotate.is-portrait{background:rgba(155,178,228,0.22);color:#c8ddff;}
   #yt-lb-edit:hover{background:rgba(255,255,255,0.16);color:#fff;}
   #yt-lb-mute:hover{background:rgba(255,255,255,0.16);color:#fff;}
   #yt-lb-mute.is-on{color:rgba(255,255,255,0.95);}
-  #yt-lb-vol{-webkit-appearance:none;appearance:none;width:54px;height:3px;border-radius:2px;background:rgba(200,215,255,0.22);outline:none;cursor:pointer;flex-shrink:0;accent-color:rgba(200,215,255,0.85);}
-  #yt-lb-vol::-webkit-slider-thumb{-webkit-appearance:none;width:12px;height:12px;border-radius:50%;background:rgba(200,215,255,0.9);cursor:pointer;}
-  #yt-lb-vol::-moz-range-thumb{width:12px;height:12px;border:none;border-radius:50%;background:rgba(200,215,255,0.9);cursor:pointer;}
   #yt-lb-scrap svg,#yt-lb-col svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linejoin:round;}
   #yt-lb-scrap.scrapped{color:rgba(255,92,125,0.92);}
   #yt-lb-scrap.scrapped svg{fill:currentColor;}
   #yt-lb-col.col-on{color:rgba(130,185,255,0.9);}
+  #yt-lb-col.col-on svg{fill:currentColor;}
   .lb-action-cnt{font-size:10px;font-weight:700;color:rgba(200,215,255,0.66);margin-left:3px;font-family:'Pretendard',sans-serif;line-height:1;}
   .lb-action-cnt:empty{display:none;}
   #yt-lb-reactions{display:flex;align-items:center;justify-content:center;gap:4px;padding:10px 0 4px;flex-wrap:wrap;}
@@ -648,6 +646,12 @@
     /* 쇼츠는 세로로 길어서 화면 대부분을 차지해 스와이프 시작 지점(유튜브 iframe 바깥 여백)이 거의 없었음 —
        살짝 줄여서 위아래 여백을 확보 (탭으로 재생/일시정지하는 유튜브 기본 컨트롤은 그대로 유지됨) */
     #yt-lb-video-box.is-shorts{height:min(80vh,660px);width:auto;aspect-ratio:9/16;margin:0 auto;display:block;}
+    /* #yt-lb-info(제목 줄)의 width가 위 규칙 밖(줄 469 부근)에서 정의된 min(54vw,420px) 그대로 남아있어서,
+       모바일에서 영상 박스가 height 기준(width:auto, 9:16)으로 바뀐 뒤로는 실제 영상 너비랑 안 맞았음 —
+       영상이 훨씬 넓은데 제목 줄만 좁아서 제목이 얼마 안 보이고 좌우로 빈 여백만 남던 원인(2026-08-14,
+       사용자 제보). 영상 실제 너비(height*9/16)와 같은 공식으로 맞춘다.
+       ⚠️ 아래 줄이 항상 이겨야 하므로 셀렉터 순서상 min(54vw,420px) 규칙(줄 469 근처)보다 뒤에 있어야 함. */
+    #yt-lb-video-box.is-shorts~#yt-lb-info{width:calc(min(80vh,660px) * 9 / 16);}
     #yt-lb-close{top:auto;bottom:calc(100% + 8px);right:0;font-size:15px;padding:4px 6px;opacity:.7;}
     /* 쇼츠 모드 전용 상단 바 — 닫기·모드전환·멤버정보·케밥 항상 고정 표시 */
     #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-close{
@@ -676,9 +680,25 @@
     #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-anchor-chip{font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
     #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-with-chips{display:none;}
     #yt-lightbox.lb-shorts:not(.lb-browse){align-items:flex-start;}
+    /* 상단 고정바(닫기/멤버정보/케밥, top:14px + height:36px = 50px에서 끝남) 바로 밑으로 여백 최소화
+       (2026-08-14, 사용자 요청 — "제목줄도 겨우 들어간다"). 예전 58px에서 살짝만 줄임 — 너무 붙이면
+       고정바랑 겹쳐 보임. */
     #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-wrap{
-      padding-top:calc(58px + env(safe-area-inset-top, 0px));}
+      padding-top:calc(52px + env(safe-area-inset-top, 0px));}
     #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-video-box.is-shorts{height:min(68vh,530px);}
+    /* 이 몰입형 쇼츠 모드는 영상 높이가 위(80vh/660px)와 또 달라서(68vh/530px), 제목 줄 너비도 이 값
+       기준으로 다시 맞춰야 함 — 안 그러면 여기서도 위와 같은 폭 불일치가 재발함. */
+    #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-video-box.is-shorts~#yt-lb-info{width:calc(min(68vh,530px) * 9 / 16);}
+    /* 회전(가로 전환) 버튼 — 가로 영상 재생모드에선 툴바 줄 중간쯤에 자연스럽게 보이는데, 쇼츠 모드는
+       영상+제목+리액션까지 쌓이고 나면 그 툴바 줄 자체가 화면 아래로 밀려나 사실상 안 보였음(2026-08-14,
+       사용자 제보 — "가로 전환 버튼이 안 보인다"). 툴바 흐름에서 안 빼고 그대로 두되, 쇼츠 모드에서만
+       position:fixed로 영상 박스 좌하단에 못박아서 툴바 줄 잘림/오버플로우와 무관하게 항상 보이게 한다.
+       top 계산은 바로 위 #yt-lb-wrap의 padding-top + 영상 높이(min(68vh,530px))로 영상의 실제 하단
+       가장자리를 구하고, 버튼 크기(38px)+여백만큼 위로 뺀 값. */
+    #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-rotate{
+      position:fixed;left:12px;
+      top:calc(52px + env(safe-area-inset-top, 0px) + min(68vh,530px) - 46px);
+      z-index:2;}
     /* 모바일은 상하 스와이프로 영상 넘기므로 좌우 버튼은 오히려 잘못된 방향을 암시함 — 숨김 */
     #yt-lb-prev,#yt-lb-next{display:none;}
     #yt-lb-toolbar{justify-content:center;}
@@ -1257,6 +1277,7 @@
   #feed-list-overlay.open{display:flex;}
   #feed-list-panel{width:min(560px,calc(100vw - 32px));max-height:82vh;display:flex;flex-direction:column;background:rgba(13,17,34,0.97);backdrop-filter:blur(40px);-webkit-backdrop-filter:blur(40px);border-radius:18px;box-shadow:0 16px 56px rgba(0,0,0,0.72);border:0.5px solid rgba(255,255,255,0.10);}
   #feed-list-hd{display:flex;align-items:flex-start;justify-content:space-between;padding:16px 18px 12px;flex-shrink:0;gap:10px;}
+  #feed-list-hd-actions{display:flex;align-items:center;gap:8px;flex-shrink:0;}
   #feed-list-hd-title{font-size:13.5px;font-weight:600;color:rgba(220,230,255,0.9);}
   #feed-list-sub{font-size:11px;color:rgba(155,178,228,0.61);margin-top:3px;}
   /* 콜렉션 한줄평(선택 입력) — 목록/칩처럼 좁은 자리엔 넣을 공간이 없어서 상세를 열었을 때만 보여준다
@@ -2094,16 +2115,18 @@
   .scrap-btn.scrapped{opacity:1!important;color:rgba(255,92,125,0.92);}
   .scrap-btn.scrapped svg{fill:currentColor;}
   .scrap-btn:hover{color:rgba(255,100,130,0.95);transform:scale(1.22);}
-  @media(max-width:768px){
-    .scrap-btn.abs-btn:not(.scrapped){pointer-events:none;}
-  }
   .col-btn{position:absolute;top:4px;right:34px;background:rgba(0,0,0,0.52);border:none;border-radius:50%;width:26px;height:26px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:rgba(220,230,255,0.72);opacity:0;transition:opacity .15s,color .15s,transform .15s;z-index:3;padding:0;line-height:1;}
   .col-btn svg{width:13px;height:13px;display:block;fill:none;stroke:currentColor;stroke-width:2;stroke-linejoin:round;transition:fill .15s,stroke .15s;}
   @media(hover:hover){.tv-sm:hover .col-btn,#tv-big-wrap:hover .col-btn,.gc-ch-item:hover .col-btn{opacity:1;}}
   .col-btn.col-on{opacity:1!important;color:rgba(130,185,255,0.95);}
   .col-btn.col-on svg{fill:currentColor;}
   .col-btn:hover{color:rgba(160,210,255,0.98);transform:scale(1.22);}
-  @media(max-width:768px){.col-btn.abs-btn:not(.col-on){pointer-events:none;}}
+  /* 호버가 없는 기기(모바일 등)는 반투명 상태로 항상 보이게 + 탭 가능하게(2026-08-14, 사용자 요청 —
+     "웹처럼 저장/컬렉션 버튼이 은은하게라도 보이면 좋겠다"). 예전엔 opacity:0에 pointer-events:none까지
+     걸려있어서 이미 저장/담은 것 아니면 모바일에서 그리드 위에서 바로 누를 방법이 아예 없었음. */
+  @media(hover:none){
+    .scrap-btn:not(.scrapped),.col-btn:not(.col-on){opacity:0.6;}
+  }
   #col-quick-toast{position:fixed;bottom:calc(80px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%) translateY(10px);background:rgba(16,20,44,0.96);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border:0.5px solid rgba(140,170,240,0.18);border-radius:14px;padding:10px 16px;display:flex;align-items:center;gap:10px;font-size:12.5px;color:rgba(200,220,255,0.88);white-space:nowrap;z-index:120;opacity:0;pointer-events:none;transition:opacity .18s,transform .18s;}
   #col-quick-toast.show{opacity:1;pointer-events:auto;transform:translateX(-50%) translateY(0);}
   #col-quick-toast-check{color:rgba(130,185,255,0.9);font-size:13px;}

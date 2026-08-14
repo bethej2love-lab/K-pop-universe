@@ -313,7 +313,7 @@
       <label id="vm-select-all-row"><input type="checkbox" id="vm-select-all">전체 선택</label>
       <span id="vm-count"></span>
       <button id="vm-edit-btn">편집</button>
-      <button id="vm-indiv-btn">선택-개별출연</button>
+      <button id="vm-indiv-btn">선택-개별</button>
       <button id="vm-coverclear-btn">선택-원곡제외</button>
       <button id="vm-apply-btn"></button>
     </div>
@@ -423,7 +423,10 @@
           <button id="feed-list-desc-edit" type="button" style="display:none" aria-label="한줄평 수정">✎</button>
         </div>
       </div>
-      <button id="feed-list-close">✕</button>
+      <div id="feed-list-hd-actions">
+        <button id="feed-list-sel-btn" class="gc-ch-sel-btn" type="button" title="영상 여러 개 선택">선택</button>
+        <button id="feed-list-close">✕</button>
+      </div>
     </div>
     <div id="feed-list-save-row" style="display:none">
       <span id="feed-list-owner"></span>
@@ -493,8 +496,7 @@
       <div id="yt-lb-actions">
         <button id="yt-lb-rotate" aria-label="세로/가로 전환"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="2" width="10" height="16" rx="1.5"/><path d="M4 20h7M7.5 17l-3 3 3 3" transform="translate(0,-2)"/></svg></button>
         <button id="yt-lb-mute" aria-label="소리 켜기">🔇</button>
-        <input type="range" id="yt-lb-vol" min="0" max="100" value="100" aria-label="볼륨" step="1">
-        <button id="yt-lb-col" aria-label="컬렉션에 추가"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h14M3 10h14M3 14h8"/><path d="M17 14v6M14 17h6"/></svg></button>
+        <button id="yt-lb-col" aria-label="컬렉션에 추가"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M5 3h14a1 1 0 0 1 1 1v16l-8-4.5L4 20V4a1 1 0 0 1 1-1z"/></svg></button>
         <button id="yt-lb-scrap" aria-label="좋아요"><svg viewBox="0 0 24 24"><path d="M12 21L10.55 19.7C5.4 15.1 2 12.1 2 8.5 2 5.4 4.4 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.6 3 22 5.4 22 8.5c0 3.6-3.4 6.6-8.55 11.2L12 21z"/></svg><span id="yt-lb-scrap-cnt" class="lb-action-cnt"></span></button>
         <button id="yt-lb-edit" aria-label="출연 멤버 지정" style="display:none">✎</button>
       </div>
@@ -2260,9 +2262,24 @@ function animate(){
     el.style.pointerEvents=op>0.15?'auto':'none';
   });
   // 모바일: 행성 충분히 줌인 시 멤버 이름 레이블 표시 (거리 28 이내 fade-in, 15 이내 fully visible)
-  if(isMob()){
+  // 데스크톱: 그룹 카드가 열려있고 그 그룹 멤버가 10명 이하면 그 그룹 멤버들만 고정 라벨로 항상 표시
+  // (2026-08-14, 사용자 요청 — "웹은 화면 넓으니 호버 안 해도 되지 않나". 인원 많은 그룹은 별들이 화면상
+  // 가깝게 몰려 라벨끼리 겹치므로, 그 경우엔 라벨 없이 기존 마우스 추적 툴팁만 유지하기로 함). 멤버 목록
+  // 패널(_renderGcMemberList)과 동일한 로스터 필터를 써서 항상 목록에 보이는 멤버와 라벨이 일치한다.
+  if(!isMob()&&_openGCko){
+    if(_gcLabelCacheKo!==_openGCko||_gcLabelCacheShowInactive!==_gcShowInactive){
+      _gcLabelCacheKo=_openGCko;_gcLabelCacheShowInactive=_gcShowInactive;
+      const roster=ARTISTS.filter(a=>_artistGroups(a).some(g=>g.ko===_openGCko)&&(_gcShowInactive||_activeInGroup(a,_openGCko)));
+      _gcLabelSet=roster.length<=10?new Set(roster):null;
+    }
+  }else if(_gcLabelCacheKo!==null){
+    _gcLabelCacheKo=null;_gcLabelSet=null;
+  }
+  if(isMob()||_gcLabelSet){
+    _gcLabelsWereShown=true;
     ARTISTS.forEach(a=>{
       if(!a._nameLabel||!a._worldPos)return;
+      if(_gcLabelSet&&!_gcLabelSet.has(a)){a._nameLabel.visible=false;return;}
       const bm=bubbleMeshes.find(b=>b.ko===a.group.ko);
       if(!bm){a._nameLabel.visible=false;return;}
       const d=camera.position.distanceTo(bm.mesh.position);
@@ -2272,6 +2289,9 @@ function animate(){
       a._nameLabel.visible=true;
       a._nameLabelEl.style.opacity=alpha.toFixed(3);
     });
+  }else if(_gcLabelsWereShown){
+    _gcLabelsWereShown=false;
+    ARTISTS.forEach(a=>{if(a._nameLabel)a._nameLabel.visible=false;});
   }
   if(myStarSprite){
     const _st=performance.now()*0.001;
@@ -2774,8 +2794,6 @@ function _updateLbMuteBtn(){
   btn.textContent=_lbMuted?'🔇':'🔊';
   btn.setAttribute('aria-label',_lbMuted?'소리 켜기':'소리 끄기');
   btn.classList.toggle('is-on',!_lbMuted);
-  const sl=document.getElementById('yt-lb-vol');
-  if(sl)sl.value=_lbMuted?0:_lbVolume;
 }
 // forceBrowseMode: 컬렉션/탐험 모아보기 등 유저가 정한 목록(_openFeedListOverlay)에서 열 때 — 쇼츠라도
 // 무한스크롤 발견용 몰입형 스와이프 모드로 안 몰아넣고, 유튜브뮤직처럼 세로 비율만 유지한 채 브라우즈
@@ -2792,7 +2810,15 @@ function openLightbox(url,shorts,playlist,idx,ctx,isAdvance,forceBrowseMode){
   const iframe=document.getElementById('yt-lb-iframe');
   const forcePortrait=!shorts&&_lbPortraitVids.has(vid); // 이전에 세로로 저장된 영상
   const isPortrait=!!shorts||forcePortrait;
-  document.getElementById('yt-lb-video-box').className=isPortrait?'is-shorts':'';
+  const _lbVideoBoxEl=document.getElementById('yt-lb-video-box');
+  _lbVideoBoxEl.className=isPortrait?'is-shorts':'';
+  // 쇼츠 스와이프로 다음 영상 넘어갈 때, aspect-ratio 기반 크기(9:16)가 클래스 변경 직후 곧바로 반영
+  // 안 되고 이전 영상 크기로 잠깐 남아있다가 스크롤 등 별개 리플로우가 있어야 뒤늦게 맞는 경우가 있음
+  // (2026-08-14, 사용자 제보 — "쇼츠 영상이 끌려오자마자는 가로에 갇혀 보였다가 스크롤하면 커진다",
+  // 모든 쇼츠가 아니라 일부에서만 — 탐험 그리드에서 겪었던 것과 같은 크로미움 aspect-ratio 버그 계열).
+  // offsetHeight를 강제로 읽어 그 자리에서 리플로우시켜, 뒤이은 _lbSlideIn 애니메이션 프레임 전에
+  // 올바른 크기가 이미 확정되게 한다.
+  void _lbVideoBoxEl.offsetHeight;
   lb.classList.toggle('lb-shorts',isPortrait);
   document.getElementById('yt-lb-rotate').classList.toggle('is-portrait',isPortrait);
   _lbSpeed=1;
@@ -3486,27 +3512,6 @@ document.getElementById('yt-lb-mute').addEventListener('click',e=>{
   if(iframe.contentWindow){
     iframe.contentWindow.postMessage(JSON.stringify({event:'command',func:_lbMuted?'mute':'unMute',args:[]}),'*');
     if(!_lbMuted)iframe.contentWindow.postMessage(JSON.stringify({event:'command',func:'setVolume',args:[_lbVolume]}),'*');
-  }
-});
-document.getElementById('yt-lb-vol').addEventListener('input',e=>{
-  e.stopPropagation();
-  const vol=parseInt(e.target.value,10);
-  if(vol>0){_lbVolume=vol;localStorage.setItem('kpu_lb_volume',_lbVolume);} // 0일 땐 복구용 볼륨 유지
-  const shouldMute=vol===0;
-  if(shouldMute!==_lbMuted){
-    _lbMuted=shouldMute;
-    localStorage.setItem('kpu_lb_muted',_lbMuted?'1':'0');
-    _updateLbMuteBtn();
-    document.getElementById('yt-lb-vol').value=vol; // _updateLbMuteBtn이 슬라이더 값을 덮어쓰므로 복원
-  }
-  const iframe=document.getElementById('yt-lb-iframe');
-  if(iframe&&iframe.contentWindow){
-    if(shouldMute){
-      iframe.contentWindow.postMessage(JSON.stringify({event:'command',func:'mute',args:[]}),'*');
-    }else{
-      iframe.contentWindow.postMessage(JSON.stringify({event:'command',func:'unMute',args:[]}),'*');
-      iframe.contentWindow.postMessage(JSON.stringify({event:'command',func:'setVolume',args:[vol]}),'*');
-    }
   }
 });
 // 영상 우측 탭존: 꾹 누르고 있는 동안만 2배속(손 떼면 원래 배속으로 복귀). 짧게 탭한 경우는 아무 것도
@@ -6397,6 +6402,9 @@ function _renderGcLinks(links,wrapId){
 }
 // ── 그룹 카드 멤버 목록: 비활동/탈퇴 멤버가 있으면 "멤버" 라벨을 토글 버튼으로 ──
 let _gcShowInactive=false;
+// 데스크톱 그룹 카드 고정 멤버 라벨용 캐시(아래 animate 루프에서 사용) — _openGCko/_gcShowInactive가
+// 바뀔 때만 로스터를 다시 계산해서 매 프레임 ARTISTS 전체를 filter하는 낭비를 피한다.
+let _gcLabelCacheKo=null,_gcLabelCacheShowInactive=null,_gcLabelSet=null,_gcLabelsWereShown=false;
 function _renderGcMemberList(ko,cx,cy){
   const memListEl=document.getElementById('gc-mem-list');
   const labelEl=document.getElementById('gc-mem-label');
@@ -6683,6 +6691,15 @@ function showGC(ko,cx,cy,keepMemberPanel,skipRipple,urlMode,pushMobNav){
     showSuffix.className='gc-show-suffix';
     showSuffix.textContent=` [${info.projectShow}]`;
     document.getElementById('gc-debut').appendChild(showSuffix);
+  }
+  // 슈퍼노바(구 초신성)처럼 데뷔 후 이름이 바뀐 그룹은 데뷔 정보 옆에 옛 이름을 괄호로 덧붙인다 — 위
+  // projectShow와 같은 톤/위치(클릭 대상 아닌 별도 span), altNames는 검색 매칭용으로 이미 있던 데이터를
+  // 그대로 재사용(2026-08-14, 사용자 요청).
+  if(info.altNames&&info.altNames.length){
+    const altSuffix=document.createElement('span');
+    altSuffix.className='gc-show-suffix';
+    altSuffix.textContent=` (${info.altNames.join(', ')})`;
+    document.getElementById('gc-debut').appendChild(altSuffix);
   }
   const fandomRow=document.getElementById('gc-fandom-row');
   const fandomEl=document.getElementById('gc-fandom');
@@ -10611,6 +10628,43 @@ function _openFeedListOverlay(title,sub,songs,ctx){
   document.getElementById('feed-list-overlay').classList.add('open');
   _setupFeedListSaveRow(ctx);
   _setupFeedListDescRow(ctx);
+  // 여러 개 골라 컬렉션에 한 번에 담기 — 그룹/멤버 카드 그리드의 "선택" 모드(_selMode/_selIds)와 같은
+  // 패턴을 여기(모아보기/장르·포맷 목록)에도 적용(2026-08-14, 사용자 요청 — "컬렉션에 여러개 담는 방법이
+  // 절실히 필요"). user-bulk-bar/#user-bulk-col-btn은 이미 window._userBulkSelectedVids만 보고 동작하는
+  // 공용 컴포넌트라(그룹/멤버 그리드 쪽 참고) 그대로 재사용 — 매번 새로 열릴 때마다 로컬 상태를 새로
+  // 만들어서 이전 세션 선택이 남아있지 않게 한다. 내 컬렉션 상세(ctx.mine)는 아래에서 별도 렌더러로
+  // 빠지므로 선택 버튼은 숨긴다.
+  const _flSelIds=new Set();
+  let _flSelMode=false;
+  const flSelBtn=document.getElementById('feed-list-sel-btn');
+  function _flExitSel(){
+    _flSelMode=false;_flSelIds.clear();
+    if(flSelBtn){flSelBtn.classList.remove('active');flSelBtn.textContent='선택';}
+    grid.querySelectorAll('.gc-ch-item.admin-selected').forEach(el=>el.classList.remove('admin-selected'));
+    document.getElementById('user-bulk-bar')?.classList.add('hidden');
+  }
+  function _flUpdateBar(){
+    const bar=document.getElementById('user-bulk-bar');
+    if(!bar)return;
+    if(_flSelIds.size>0){
+      bar.classList.remove('hidden');
+      document.getElementById('user-bulk-count').textContent=`${_flSelIds.size}개 선택됨`;
+      window._userBulkExitFn=_flExitSel;
+      window._userBulkSelectedVids=[..._flSelIds].map(i=>orderedSongs[i]).filter(Boolean)
+        .map(s=>({t:s.t,u:s.u,thumb:s.thumb,groupKo:s.groupKo,memberKos:s.memberKos||[]}));
+    }else{
+      bar.classList.add('hidden');
+    }
+  }
+  if(flSelBtn){
+    flSelBtn.style.display=(ctx&&ctx.mine&&ctx.colId)?'none':'';
+    flSelBtn.classList.remove('active');flSelBtn.textContent='선택';
+    flSelBtn.onclick=()=>{
+      _flSelMode=!_flSelMode;
+      if(!_flSelMode)_flExitSel();
+      else{flSelBtn.classList.add('active');flSelBtn.textContent='취소';}
+    };
+  }
   if(ctx&&ctx.mine&&ctx.colId){
     grid.classList.remove('gc-ch-grid');
     grid.classList.add('cve-list');
@@ -10668,6 +10722,12 @@ function _openFeedListOverlay(title,sub,songs,ctx){
     }
     item.addEventListener('click',e=>{
       e.stopPropagation();
+      if(_flSelMode){
+        if(_flSelIds.has(idx)){_flSelIds.delete(idx);item.classList.remove('admin-selected');}
+        else{_flSelIds.add(idx);item.classList.add('admin-selected');}
+        _flUpdateBar();
+        return;
+      }
       // 항목마다 소속 그룹/멤버가 다를 수 있는 목록(컬렉션 등)이라 공용 ctx 하나가 아니라 그 항목
       // 자신의 groupKo/memberKos에서 뽑는다 — 없으면(포맷/장르 모아보기처럼 애초에 이 정보가 없는
       // 목록) 빈 ctx로 자연히 폴백(라이트박스 브라우즈 모드의 멤버 정보 칸만 숨겨짐, 2026-08-11).
@@ -10707,6 +10767,7 @@ function _openFeedListOverlay(title,sub,songs,ctx){
 function _closeFeedListOverlay(){
   document.getElementById('feed-list-overlay').classList.remove('open');
   if(_feedListObserver){_feedListObserver.disconnect();_feedListObserver=null;}
+  document.getElementById('user-bulk-bar')?.classList.add('hidden'); // 선택 중이었으면 같이 정리
 }
 document.getElementById('feed-list-close')?.addEventListener('click',e=>{e.stopPropagation();_closeFeedListOverlay();});
 document.getElementById('feed-list-overlay')?.addEventListener('click',e=>{if(e.target===e.currentTarget)_closeFeedListOverlay();});
@@ -13095,7 +13156,9 @@ document.getElementById('user-bulk-cancel-btn')?.addEventListener('click',()=>{
 document.getElementById('user-bulk-col-btn')?.addEventListener('click',()=>{
   const vids=window._userBulkSelectedVids||[];
   if(!vids.length)return;
-  const videos=vids.map(v=>({
+  // 그룹/멤버 그리드(DB row: title/id/category/group_ko)와 모아보기 목록(이미 t/u 갖춘 picker-ready
+  // 형태, 2026-08-14 추가)이 이 바를 같이 쓰므로 형태를 보고 갈라서 처리 — t와 u가 이미 있으면 그대로 씀.
+  const videos=vids.map(v=>v.t&&v.u?v:({
     t:v.title,
     u:v.category==='short'?`https://www.youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`,
     thumb:v.thumb,groupKo:v.group_ko,memberKos:v._colMemberKos||v.members||[]
