@@ -78,7 +78,10 @@
   /* ── Tabbar search mode (mobile) ────────────────── */
   /* 탭 아이콘↔검색창 전환 시 컨테이너 모양과 내용물이 같은 속도로 접히고 펼쳐지도록,
      display 하드 스왑 대신 flex-basis/opacity를 함께 트랜지션해서 자연스럽게 이어지게 함 */
-  #tabbar{transition:transform .18s cubic-bezier(0.4,0,0.2,1),opacity .18s ease;}
+  /* 카드 시트(#mob-sheet 등)의 bottom 트랜지션(.32s cubic-bezier(0.32,0.72,0,1))과 반드시 같은 속도/곡선을
+     써야 함 — 예전엔 탭바가 .18s로 더 빨리 움직여서, 스크롤 올려 탭바가 다시 나타날 때 카드가 그 속도를
+     못 따라가 둘 사이에 틈이 생기고 그 틈으로 우주가 비쳐 보였음(2026-08-14, 사용자 제보). */
+  #tabbar{transition:transform .32s cubic-bezier(0.32,0.72,0,1),opacity .32s cubic-bezier(0.32,0.72,0,1);}
   #tabbar.tab-hidden{transform:translateY(110%);opacity:0;pointer-events:none;}
   #tabbar.search-mode{bottom:4px;left:28px;right:28px;border-radius:16px;border-top-color:transparent;padding:4px 10px;justify-content:flex-start;box-shadow:0 4px 24px rgba(0,0,0,0.45);}
   #tabbar.search-mode .tab-btn{flex:0 0 0;opacity:0;padding-left:0;padding-right:0;pointer-events:none;}
@@ -467,6 +470,10 @@
   #yt-lb-wrap{position:relative;width:min(88vw,900px);}
   #yt-lb-video-box{position:relative;width:100%;aspect-ratio:16/9;}
   #yt-lb-video-box.is-shorts{aspect-ratio:9/16;width:min(54vw,420px);margin:0 auto;}
+  /* 원래 쇼츠(세로) 영상을 "일반 재생모드처럼" 보고 싶을 때 — 박스 자체는 is-shorts를 빼서 그냥 기본
+     16:9 크기를 그대로 쓰고(새 규칙 불필요), 안의 iframe만 세로 비율 그대로 유지한 채 가운데 정렬해서
+     레터박스(양옆 여백)로 보이게 한다(2026-08-14, 사용자 요청). */
+  #yt-lb-video-box.is-letterbox #yt-lb-iframe{width:auto;height:100%;aspect-ratio:9/16;margin:0 auto;}
   #yt-lb-iframe{width:100%;height:100%;border:none;border-radius:8px;display:block;}
   #yt-lb-loading{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;opacity:0;transition:opacity .15s ease;z-index:1;}
   #yt-lb-loading.show{opacity:1;transition-delay:.12s;}
@@ -653,28 +660,33 @@
        ⚠️ 아래 줄이 항상 이겨야 하므로 셀렉터 순서상 min(54vw,420px) 규칙(줄 469 근처)보다 뒤에 있어야 함. */
     #yt-lb-video-box.is-shorts~#yt-lb-info{width:calc(min(80vh,660px) * 9 / 16);}
     #yt-lb-close{top:auto;bottom:calc(100% + 8px);right:0;font-size:15px;padding:4px 6px;opacity:.7;}
-    /* 쇼츠 모드 전용 상단 바 — 닫기·모드전환·멤버정보·케밥 항상 고정 표시 */
+    /* 쇼츠 모드 전용 상단 바 — 닫기·모드전환·멤버정보·케밥 항상 고정 표시.
+       ⚠️ top은 반드시 env(safe-area-inset-top)을 포함해야 함 — #yt-lb-wrap의 padding-top(아래, 영상
+       시작 위치를 결정)은 이미 안전영역을 포함해서 계산하는데, 이 4개는 예전에 top:14px 고정값이라
+       노치/다이나믹아일랜드 있는 기기에서만 상단바와 영상 시작 위치 사이에 안전영역 높이만큼 큰 틈이
+       생겼음(2026-08-14, 사용자 제보 — "여전히 여백이 크다", 안전영역 없는 환경에선 안 보여서 처음엔
+       못 잡았던 버그). */
     #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-close{
-      display:flex;position:fixed;top:14px;left:12px;right:auto;bottom:auto;
+      display:flex;position:fixed;top:calc(14px + env(safe-area-inset-top,0px));left:12px;right:auto;bottom:auto;
       z-index:2;background:rgba(0,0,0,0.4);border-radius:50%;padding:0;
       width:36px;height:36px;align-items:center;justify-content:center;font-size:16px;opacity:1;}
     #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-wrap.lb-ui-hidden #yt-lb-close{
       opacity:.65;pointer-events:all;}
     #lb-shorts-list-btn{display:none;}
     #yt-lightbox.lb-shorts:not(.lb-browse) #lb-shorts-list-btn{
-      display:flex;position:fixed;top:14px;left:54px;
+      display:flex;position:fixed;top:calc(14px + env(safe-area-inset-top,0px));left:54px;
       background:rgba(0,0,0,0.4);border:none;border-radius:50%;padding:0;
       width:36px;height:36px;align-items:center;justify-content:center;
       color:#fff;cursor:pointer;z-index:2;-webkit-tap-highlight-color:transparent;}
     #yt-lightbox.lb-shorts:not(.lb-browse) .lb-menu-wrap{
-      display:block;position:fixed;top:14px;right:12px;z-index:2;}
+      display:block;position:fixed;top:calc(14px + env(safe-area-inset-top,0px));right:12px;z-index:2;}
     #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-menu-btn{
       background:rgba(0,0,0,0.4);border:none;border-radius:50%;padding:0;
       width:36px;height:36px;color:#fff;font-size:21px;line-height:1;
       cursor:pointer;display:flex;align-items:center;justify-content:center;}
     #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-member-info{
       display:flex;flex-direction:column;align-items:center;justify-content:center;
-      position:fixed;top:14px;left:50%;transform:translateX(-50%);
+      position:fixed;top:calc(14px + env(safe-area-inset-top,0px));left:50%;transform:translateX(-50%);
       height:36px;max-width:44vw;text-align:center;z-index:1;
       margin-top:0;padding-top:0;border-top:none;pointer-events:none;}
     #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-anchor-chip{font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
@@ -689,16 +701,31 @@
     /* 이 몰입형 쇼츠 모드는 영상 높이가 위(80vh/660px)와 또 달라서(68vh/530px), 제목 줄 너비도 이 값
        기준으로 다시 맞춰야 함 — 안 그러면 여기서도 위와 같은 폭 불일치가 재발함. */
     #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-video-box.is-shorts~#yt-lb-info{width:calc(min(68vh,530px) * 9 / 16);}
-    /* 회전(가로 전환) 버튼 — 가로 영상 재생모드에선 툴바 줄 중간쯤에 자연스럽게 보이는데, 쇼츠 모드는
-       영상+제목+리액션까지 쌓이고 나면 그 툴바 줄 자체가 화면 아래로 밀려나 사실상 안 보였음(2026-08-14,
-       사용자 제보 — "가로 전환 버튼이 안 보인다"). 툴바 흐름에서 안 빼고 그대로 두되, 쇼츠 모드에서만
-       position:fixed로 영상 박스 좌하단에 못박아서 툴바 줄 잘림/오버플로우와 무관하게 항상 보이게 한다.
-       top 계산은 바로 위 #yt-lb-wrap의 padding-top + 영상 높이(min(68vh,530px))로 영상의 실제 하단
-       가장자리를 구하고, 버튼 크기(38px)+여백만큼 위로 뺀 값. */
+    /* 회전·음소거·컬렉션·좋아요·(관리자면)편집 버튼 — 가로 영상 재생모드에선 툴바 줄 안에 자연스럽게
+       보이는데, 쇼츠 모드는 영상+제목+리액션까지 쌓이고 나면 그 툴바 줄 자체가 화면 아래로 밀려나
+       다섯 개 다 사실상 안 보였음(2026-08-14, 사용자 제보 — 처음엔 회전 버튼만 고쳤다가, 같은 툴바
+       안의 나머지 버튼도 똑같이 안 보인다는 걸 뒤늦게 발견). 영상 전체를 덮는 투명판 없이, 릴스/틱톡처럼
+       영상 오른쪽 가장자리에 작은 원형 버튼만 세로로 쌓아서 각자 자기 자리만 차지하게 한다 — 중앙 탭
+       (재생/일시정지)이나 하단 유튜브 자체 진행바와는 안 겹침.
+       base: 맨 아래 버튼(회전)의 top — 영상 실제 하단 가장자리(#yt-lb-wrap padding-top + 영상 높이)에서
+       90px 위(유튜브 자체 하단 컨트롤바를 가리지 않도록 #yt-lb-speed-zone의 bottom:80px 여유와 맞춤).
+       그 위로 버튼당 52px(38px 버튼 + 14px 간격)씩 쌓는다. */
+    #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-rotate,
+    #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-mute,
+    #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-col,
+    #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-scrap,
+    #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-edit{
+      position:fixed;right:12px;left:auto;z-index:2;}
     #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-rotate{
-      position:fixed;left:12px;
-      top:calc(52px + env(safe-area-inset-top, 0px) + min(68vh,530px) - 46px);
-      z-index:2;}
+      top:calc(52px + env(safe-area-inset-top, 0px) + min(68vh,530px) - 90px - 0*52px);}
+    #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-mute{
+      top:calc(52px + env(safe-area-inset-top, 0px) + min(68vh,530px) - 90px - 1*52px);}
+    #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-col{
+      top:calc(52px + env(safe-area-inset-top, 0px) + min(68vh,530px) - 90px - 2*52px);}
+    #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-scrap{
+      top:calc(52px + env(safe-area-inset-top, 0px) + min(68vh,530px) - 90px - 3*52px);}
+    #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-edit{
+      top:calc(52px + env(safe-area-inset-top, 0px) + min(68vh,530px) - 90px - 4*52px);}
     /* 모바일은 상하 스와이프로 영상 넘기므로 좌우 버튼은 오히려 잘못된 방향을 암시함 — 숨김 */
     #yt-lb-prev,#yt-lb-next{display:none;}
     #yt-lb-toolbar{justify-content:center;}
@@ -903,6 +930,10 @@
   #tt-links{display:flex;align-items:center;gap:7px;flex-shrink:0;}
   #tt-links:not(:empty)::after{content:'·';color:rgba(120,145,195,0.46);font-size:10px;}
   #tt-links .gc-link-icon{width:14px;height:14px;}
+  /* 틱톡 아이콘 자체가 획 모양상 오른쪽으로 쏠려있어서(왼쪽 여백이 큼) 바로 뒤의 나무위키 아이콘과의
+     간격이 다른 아이콘 쌍보다 시각적으로 더 넓어 보임(2026-08-14, 사용자 제보) — gap 자체는 모든 쌍이
+     동일(7px)하므로, 이 쌍만 살짝 당겨서 눈으로 봤을 때 균등해 보이게 보정. */
+  .gc-link-icon-tiktok + .gc-link-icon-namu{margin-left:-3px;}
   /* 가족관계 — 연결 카드 헤더 바로 아래, 콜라보 목록과 구분되는 별도 섹션(2026-08-13,
      멤버 카드의 ⓘ 팝업에서 이동해옴). */
   .conn-family-sec{margin-bottom:14px;}
@@ -1302,6 +1333,8 @@
   .feed-lb-icon-btn{background:rgba(255,255,255,0.06);border:none;border-radius:50%;width:30px;height:30px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:rgba(220,230,255,0.72);transition:color .15s,transform .15s,background .15s;padding:0;}
   .feed-lb-icon-btn svg{width:14px;height:14px;display:block;fill:none;stroke:currentColor;stroke-width:2;stroke-linejoin:round;}
   .feed-lb-icon-btn:hover{transform:scale(1.1);}
+  #feed-list-admin-del-btn{color:rgba(255,140,150,0.75);}
+  #feed-list-admin-del-btn:hover{color:rgba(255,95,110,0.95);background:rgba(255,95,110,0.14);}
   #feed-list-save-btn.col-on{color:rgba(130,185,255,0.95);}
   #feed-list-save-btn.col-on svg{fill:currentColor;}
   #feed-list-save-btn.saved{cursor:default;}
@@ -1662,7 +1695,7 @@
   .gc-discog-hd-right .gc-ch-sort-wrap{flex-shrink:0;}
   .seg-control{position:relative;display:flex;background:rgba(255,255,255,0.05);border:0.5px solid rgba(255,255,255,0.09);border-radius:10px;padding:2px;flex:1;min-width:0;}
   .seg-control-sm{flex:0 1 auto;padding:1px;border-radius:8px;}
-  .seg-control-sm .seg-btn{padding:3px 6px;font-size:8px;letter-spacing:-.01em;}
+  .seg-control-sm .seg-btn{padding:4px 11px;font-size:9px;letter-spacing:-.01em;}
   .seg-control-sm .seg-thumb{top:1px;bottom:1px;border-radius:7px;}
   .seg-thumb{position:absolute;top:2px;bottom:2px;left:2px;width:0;border-radius:8px;
     background:linear-gradient(160deg,rgba(190,212,255,0.42),rgba(140,170,230,0.16));
@@ -1765,6 +1798,9 @@
   }
   .tag-chip:hover{color:rgba(210,230,255,1.0);text-shadow:0 0 10px rgba(170,210,255,0.52),0 0 4px rgba(170,210,255,0.24);}
   .tag-chip.active{color:#fff;text-shadow:0 0 10px rgba(190,220,255,0.60),0 0 4px rgba(190,220,255,0.30);}
+  /* 해체 그룹·탈퇴 멤버의 소속사 표기는 이제 과거 정보라 흐리게(2026-08-14, 사용자 요청) */
+  .tag-chip.tag-chip-past{color:rgba(170,205,255,0.42);text-shadow:none;}
+  .tag-chip.tag-chip-past:hover{color:rgba(190,215,255,0.60);text-shadow:none;}
   /* 데뷔 연도 옆 출신 프로그램명 — tag-chip과 폰트는 통일하되 클릭 불가(필터 대상 아님) */
   .gc-show-suffix{
     display:inline;padding:1px 4px 1px 0;font-size:11px;font-weight:600;letter-spacing:.04em;
@@ -1826,7 +1862,9 @@
   #idx-search-inp:focus{border-color:rgba(136,164,255,0.38);}
   #member-tooltip{position:fixed;pointer-events:none;z-index:99;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;font-size:12.5px;font-weight:600;color:rgba(245,248,255,0.95);text-shadow:0 0 11px rgba(225,235,255,0.55),0 0 4px rgba(225,235,255,0.45),0 1px 4px rgba(0,0,0,0.85);white-space:nowrap;opacity:0;transition:opacity 0.15s;transform:translate(-50%,-130%);letter-spacing:.04em;}
   /* 모바일 줌인 시 멤버 이름 레이블 (CSS2DObject) */
-  .member-name-label{font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;font-size:9.5px;font-weight:600;color:rgba(255,255,255,0.88);white-space:nowrap;pointer-events:none;user-select:none;letter-spacing:.03em;text-shadow:0 0 6px rgba(0,0,0,1),0 1px 3px rgba(0,0,0,1);transform:translate(-50%,-100%);}
+  /* .group-label(줄 303 부근)과 같은 톤(글자 두께/자간/은은한 발광)으로 맞추되, 더 옅게(2026-08-14,
+     사용자 요청 — "그룹 텍스트랑 거의 똑같은 스타일로 하되 더 투명하게, 은은하게"). */
+  .member-name-label{font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;font-size:9.5px;font-weight:500;color:rgba(255,255,255,0.55);white-space:nowrap;pointer-events:none;user-select:none;letter-spacing:.1em;text-shadow:0 0 10px rgba(255,255,255,0.4),0 1px 3px rgba(0,0,0,1);transform:translate(-50%,-100%);}
   ::-webkit-scrollbar{-webkit-appearance:none;width:2px;height:2px;}
   ::-webkit-scrollbar-track{background:transparent;}
   ::-webkit-scrollbar-thumb{-webkit-appearance:none;background:rgba(180,200,240,0.07);border-radius:2px;}
@@ -2210,15 +2248,15 @@
     top:calc(env(safe-area-inset-top,0px) + 76px);
     left:24px;right:24px;
     opacity:0;transform:translateY(-6px);
-    transition:opacity .5s ease,transform .5s cubic-bezier(0.22,1,0.36,1);
+    transition:opacity .9s cubic-bezier(0.22,1,0.36,1),transform .9s cubic-bezier(0.22,1,0.36,1);
     pointer-events:none;
   }
   #ob-top-search.ob-show{opacity:1;transform:translateY(0);pointer-events:auto;}
   #ob-top-search.ob-hide{opacity:0;transform:translateY(-6px);transition:opacity .3s ease,transform .3s ease;pointer-events:none;}
   #ob-top-search-btn{
     width:100%;box-sizing:border-box;display:flex;align-items:center;gap:8px;
-    background:rgba(255,255,255,0.07);
-    backdrop-filter:blur(10px) saturate(140%);-webkit-backdrop-filter:blur(10px) saturate(140%);
+    background:rgba(255,255,255,0.05);
+    backdrop-filter:blur(3px) saturate(140%);-webkit-backdrop-filter:blur(3px) saturate(140%);
     border:0.5px solid rgba(255,255,255,0.18);
     border-radius:28px;padding:13px 18px;
     cursor:pointer;
@@ -2230,12 +2268,13 @@
   }
   #ob-top-search-btn:active{transform:scale(0.98);background:rgba(255,255,255,0.10);}
   #ob-top-search-btn svg{flex-shrink:0;opacity:.6;}
-  #ob-top-search-btn span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  #ob-top-search-btn span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+    color:rgba(255,255,255,0.85);text-shadow:0 0 14px rgba(255,255,255,0.55),0 0 5px rgba(255,255,255,0.35);}
   /* 타이핑 모드: 버튼 숨기고 인풋으로 전환 */
   #ob-top-search.ob-typing{
     display:flex;align-items:center;gap:8px;
-    background:rgba(255,255,255,0.07);
-    backdrop-filter:blur(10px) saturate(140%);-webkit-backdrop-filter:blur(10px) saturate(140%);
+    background:rgba(255,255,255,0.05);
+    backdrop-filter:blur(3px) saturate(140%);-webkit-backdrop-filter:blur(3px) saturate(140%);
     border:0.5px solid rgba(255,255,255,0.20);
     border-radius:28px;padding:0 18px;
     box-shadow:0 4px 20px rgba(0,0,0,0.18),inset 0 1px 0 rgba(255,255,255,0.14);
@@ -2244,7 +2283,7 @@
   #ob-si{display:none;flex:1;background:none;border:none;outline:none;
     color:rgba(255,255,255,0.88);font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;
     font-size:13px;font-weight:500;padding:13px 0;-webkit-text-size-adjust:none;letter-spacing:.03em;}
-  #ob-si::placeholder{color:rgba(255,255,255,0.30);}
+  #ob-si::placeholder{color:rgba(255,255,255,0.55);text-shadow:0 0 14px rgba(255,255,255,0.4);}
   #ob-top-search.ob-typing #ob-si{display:block;}
   #ob-si-clear{display:none;background:none;border:none;color:rgba(200,215,240,0.45);
     font-size:16px;cursor:pointer;padding:4px 0 4px 4px;line-height:1;align-items:center;flex-shrink:0;}

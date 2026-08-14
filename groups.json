@@ -6238,7 +6238,9 @@
   "엔하이픈": {
     "en": "ENHYPEN",
     "debut": "2020.11.30",
+    "projectShow": "I-LAND",
     "co": "HYBE / Belift Lab",
+    "projectRing": true,
     "color": [
       148,
       138,
@@ -6651,7 +6653,9 @@
   "아일릿": {
     "en": "ILLIT",
     "debut": "2024.03.25",
+    "projectShow": "R U NEXT?",
     "co": "HYBE / Belift Lab",
+    "projectRing": true,
     "color": [
       205,
       162,
@@ -8024,7 +8028,9 @@
   "트와이스": {
     "en": "TWICE",
     "debut": "2015.10.20",
+    "projectShow": "SIXTEEN",
     "co": "JYP",
+    "projectRing": true,
     "color": [
       218,
       175,
@@ -18856,7 +18862,7 @@
         ]
       }
     ],
-    "disbanded": true
+    "disbanded": "2021.04.29"
   },
   "아이오아이": {
     "en": "I.O.I",
@@ -19404,6 +19410,7 @@
   "알파드라이브원": {
     "en": "ALPHA DRIVE ONE",
     "debut": "2026.01.12",
+    "projectShow": "보이즈 II 플래닛",
     "co": "웨이크원",
     "projectRing": true,
     "color": [
@@ -19507,6 +19514,7 @@
   "이즈나": {
     "en": "izna",
     "debut": "2024.11.25",
+    "projectShow": "I-LAND 2",
     "co": "웨이크원",
     "projectRing": true,
     "color": [
@@ -19640,6 +19648,7 @@
   "클로즈유어아이즈": {
     "en": "CLOSE YOUR EYES",
     "debut": "2025.04.02",
+    "projectShow": "PROJECT 7",
     "co": "UNCORE",
     "projectRing": true,
     "color": [
@@ -23685,7 +23694,7 @@
         ]
       }
     ],
-    "disbanded": true
+    "disbanded": "2024.07.09"
   },
   "피원하모니": {
     "en": "P1Harmony",
@@ -24797,7 +24806,7 @@
         ]
       }
     ],
-    "disbanded": true
+    "disbanded": "2023.01.23"
   },
   "위키미키": {
     "en": "Weki Meki",
@@ -25075,7 +25084,7 @@
         ]
       }
     ],
-    "disbanded": true
+    "disbanded": "2024.08.08"
   },
   "인피니트": {
     "en": "INFINITE",
@@ -25646,7 +25655,7 @@
         ]
       }
     ],
-    "disbanded": true
+    "disbanded": "2026.04.29"
   },
   "빌리": {
     "en": "Billlie",
@@ -26461,7 +26470,7 @@
         ]
       }
     ],
-    "disbanded": true
+    "disbanded": "2017.01.26"
   },
   "포미닛": {
     "en": "4minute",
@@ -26663,7 +26672,7 @@
         ]
       }
     ],
-    "disbanded": true
+    "disbanded": "2016.06.16"
   },
   "투애니원": {
     "en": "2NE1",
@@ -27243,7 +27252,7 @@
         ]
       }
     ],
-    "disbanded": true
+    "disbanded": "2016.11.12"
   },
   "이달의소녀": {
     "en": "LOONA",
@@ -27349,8 +27358,7 @@
           }
         ]
       }
-    ],
-    "disbanded": true
+    ]
   },
   "아르테미스": {
     "en": "ARTMS",
@@ -27541,7 +27549,7 @@
         ]
       }
     ],
-    "disbanded": true
+    "disbanded": "2024.11.29"
   },
   "클라씨": {
     "en": "CLASSy",
@@ -27961,12 +27969,14 @@
         ]
       }
     ],
-    "disbanded": true
+    "disbanded": "2022.05.20"
   },
   "니쥬": {
     "en": "NiziU",
     "debut": "2020.12.02",
+    "projectShow": "Nizi Project",
     "co": "JYP엔터테인먼트",
+    "projectRing": true,
     "color": [
       255,
       140,
@@ -28443,8 +28453,7 @@
           }
         ]
       }
-    ],
-    "disbanded": true
+    ]
   },
   "올데이프로젝트": {
     "en": "ALLDAY PROJECT",
@@ -30496,7 +30505,7 @@
         ]
       }
     ],
-    "disbanded": true
+    "disbanded": "2021.05.22"
   },
   "엑스원": {
     "en": "X1",
@@ -30563,7 +30572,7 @@
         ]
       }
     ],
-    "disbanded": true
+    "disbanded": "2020.01.06"
   },
   "드리핀": {
     "en": "DRIPPIN",
@@ -30820,7 +30829,7 @@
         ]
       }
     ],
-    "disbanded": true
+    "disbanded": "2017.01.06"
   },
   "틴탑": {
     "en": "TEEN TOP",
@@ -31294,7 +31303,9 @@
   "아이딧": {
     "en": "IDID",
     "debut": "2025.09.15",
+    "projectShow": "Debut's Plan",
     "co": "스타쉽엔터테인먼트",
+    "projectRing": true,
     "color": [
       100,
       190,
@@ -43901,7 +43912,7 @@
         ]
       }
     ],
-    "disbanded": true
+    "disbanded": "2019.05.24"
   },
   "빅스": {
     "en": "VIXX",
@@ -44238,7 +44249,9 @@
   "아홉": {
     "en": "AHOF",
     "debut": "2025.07.01",
+    "projectShow": "유니버스 리그",
     "co": "F&F엔터테인먼트",
+    "projectRing": true,
     "color": [
       230,
       140,
@@ -44444,7 +44457,7 @@
         ]
       }
     ],
-    "disbanded": true
+    "disbanded": "2023.12.31"
   },
   "앳하트": {
     "en": "AtHeart",
@@ -45175,7 +45188,7 @@
   "누에라": {
     "en": "NouerA",
     "debut": "2025.02.26",
-    "projectShow": "MAKEMATE1",
+    "projectShow": "MAKE MATE 1",
     "projectRing": true,
     "co": "누아엔터테인먼트",
     "color": [
@@ -46026,7 +46039,7 @@
         ]
       }
     ],
-    "disbanded": true
+    "disbanded": "2018.05.15"
   },
   "우아": {
     "en": "WOOAH",
@@ -46448,7 +46461,7 @@
         ]
       }
     ],
-    "disbanded": true
+    "disbanded": "2024.12.31"
   },
   "퍼플키스": {
     "en": "PURPLE KISS",
@@ -46761,7 +46774,7 @@
         ]
       }
     ],
-    "disbanded": true
+    "disbanded": "2025.11.16"
   },
   "영파씨": {
     "en": "YOUNG POSSE",
@@ -47280,7 +47293,7 @@
         ]
       }
     ],
-    "disbanded": true
+    "disbanded": "2022.09.23"
   },
   "아이덴티티": {
     "en": "idntt",
@@ -48349,12 +48362,14 @@
         ]
       }
     ],
-    "disbanded": true
+    "disbanded": "2026.05.31"
   },
   "티엔엑스": {
     "en": "TNX",
     "debut": "2022.05.17",
+    "projectShow": "LOUD",
     "co": "P NATION",
+    "projectRing": true,
     "color": [
       70,
       90,
@@ -49146,7 +49161,9 @@
   "배너": {
     "en": "VANNER",
     "debut": "2019.02.14",
+    "projectShow": "피크타임",
     "co": "무소속",
+    "projectRing": true,
     "color": [
       160,
       70,
@@ -50266,7 +50283,7 @@
         ]
       }
     ],
-    "disbanded": true
+    "disbanded": "2025.02.26"
   },
   "이븐": {
     "en": "EVNNE",
@@ -51005,7 +51022,7 @@
         ]
       }
     ],
-    "disbanded": true
+    "disbanded": "2022.01.28"
   },
   "트렌드지": {
     "en": "TRENDZ",
@@ -51822,7 +51839,7 @@
         ]
       }
     ],
-    "disbanded": true
+    "disbanded": "2025.03.31"
   },
   "힛지스": {
     "en": "HITGS",
@@ -52993,7 +53010,7 @@
         ]
       }
     ],
-    "disbanded": true
+    "disbanded": "2024.12.17"
   },
   "BAE173": {
     "en": "BAE173",
@@ -53220,7 +53237,7 @@
         ]
       }
     ],
-    "disbanded": true
+    "disbanded": "2026.06.30"
   },
   "뉴비트": {
     "en": "NEWBEAT",
@@ -53493,7 +53510,7 @@
         ]
       }
     ],
-    "disbanded": true
+    "disbanded": "2023.08.26"
   },
   "달샤벳": {
     "en": "Dal Shabet",
@@ -53591,7 +53608,7 @@
         ]
       }
     ],
-    "disbanded": true
+    "disbanded": "2018.12.05"
   },
   "나인뮤지스": {
     "en": "9MUSES",
@@ -53689,7 +53706,7 @@
         ]
       }
     ],
-    "disbanded": true
+    "disbanded": "2019.02.24"
   },
   "걸셋": {
     "en": "GIRLSET",
@@ -54665,7 +54682,7 @@
         ]
       }
     ],
-    "disbanded": true
+    "disbanded": "2018.12.26"
   },
   "크나큰": {
     "en": "KNK",
@@ -54913,7 +54930,7 @@
         ]
       }
     ],
-    "disbanded": true
+    "disbanded": "2024.04.22"
   },
   "시크릿넘버": {
     "en": "SECRET NUMBER",
@@ -55508,7 +55525,7 @@
       "tiktok": "https://www.tiktok.com/@official_fantasyboys",
       "namu": "https://namu.wiki/w/FANTASY%20BOYS"
     },
-    "projectShow": "소년판타지",
+    "projectShow": "소년판타지 2",
     "discography": [
       {
         "title": "FANTASY BOYS - SEMI FINAL",
@@ -55984,7 +56001,7 @@
         ]
       }
     ],
-    "disbanded": true
+    "disbanded": "2015.03.10"
   },
   "스피드": {
     "en": "SPEED",
@@ -56005,7 +56022,7 @@
       "namu": "https://namu.wiki/w/SPEED(아이돌)"
     },
     "discography": [],
-    "disbanded": true
+    "disbanded": "2015"
   },
   "남녀공학": {
     "en": "Coed School",
@@ -56077,7 +56094,7 @@
         ]
       }
     ],
-    "disbanded": true
+    "disbanded": "2012"
   },
   "브브걸": {
     "en": "BBGIRLS",
@@ -56275,277 +56292,6 @@
           {
             "no": 5,
             "title": "Thank You (Remix)",
-            "isTitle": false
-          }
-        ]
-      }
-    ]
-  },
-  "JX": {
-    "en": "JX",
-    "debut": "2010.10.14",
-    "co": "무소속",
-    "color": [
-      55,
-      55,
-      90
-    ],
-    "gender": "m",
-    "links": {
-      "youtube": "https://youtube.com/@JX_identity",
-      "namu": "https://namu.wiki/w/JYJ",
-      "instagram": "https://www.instagram.com/j.xofficial",
-      "x": "https://twitter.com/JX_identity"
-    },
-    "altNames": [
-      "JYJ"
-    ],
-    "discography": [
-      {
-        "title": "The Beginning",
-        "type": "정규",
-        "isMain": true,
-        "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/37/9c/10/379c10c8-75fb-282a-1595-8afb14770fb1/8809649890674.jpg/600x600bb.jpg",
-        "releaseDate": "2010-10-14",
-        "trackCount": 8,
-        "titleTrack": "Ayyy Girl (feat. Kanye West & Malik Yusef)",
-        "tracks": [
-          {
-            "no": 1,
-            "title": "Intro",
-            "isTitle": false
-          },
-          {
-            "no": 2,
-            "title": "Ayyy Girl (feat. Kanye West & Malik Yusef)",
-            "isTitle": true
-          },
-          {
-            "no": 3,
-            "title": "Empty",
-            "isTitle": false
-          },
-          {
-            "no": 4,
-            "title": "Be My Girl",
-            "isTitle": false
-          },
-          {
-            "no": 5,
-            "title": "Still in Love",
-            "isTitle": false
-          },
-          {
-            "no": 6,
-            "title": "I Can Soar",
-            "isTitle": false
-          },
-          {
-            "no": 7,
-            "title": "I Love You (feat. Flowsik)",
-            "isTitle": false
-          },
-          {
-            "no": 8,
-            "title": "Be the One",
-            "isTitle": false
-          }
-        ]
-      },
-      {
-        "title": "IN HEAVEN",
-        "type": "정규",
-        "isMain": true,
-        "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/95/73/c7/9573c748-b008-8a6e-80e6-b57db41d63d2/8806384557367.jpg/600x600bb.jpg",
-        "releaseDate": "2011-09-15",
-        "trackCount": 9,
-        "titleTrack": "Get Out",
-        "tracks": [
-          {
-            "no": 1,
-            "title": "Get Out",
-            "isTitle": true
-          },
-          {
-            "no": 2,
-            "title": "In Heaven (Narration 김정은 Version)",
-            "isTitle": false
-          },
-          {
-            "no": 3,
-            "title": "Fallen Leaves",
-            "isTitle": false
-          },
-          {
-            "no": 4,
-            "title": "The Boy's Letter",
-            "isTitle": false
-          },
-          {
-            "no": 5,
-            "title": "Mission",
-            "isTitle": false
-          },
-          {
-            "no": 6,
-            "title": "I.D.S (I Deal Scenario)",
-            "isTitle": false
-          },
-          {
-            "no": 7,
-            "title": "Pierrot",
-            "isTitle": false
-          },
-          {
-            "no": 8,
-            "title": "You're",
-            "isTitle": false
-          },
-          {
-            "no": 9,
-            "title": "Nine",
-            "isTitle": false
-          }
-        ]
-      },
-      {
-        "title": "In Heaven (Special Edition Album)",
-        "type": "리패키지",
-        "isMain": false,
-        "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music/3c/88/b1/mzi.epudupau.jpg/600x600bb.jpg",
-        "releaseDate": "2011-12-02",
-        "trackCount": 11,
-        "titleTrack": "Get Out (Remix)",
-        "tracks": [
-          {
-            "no": 1,
-            "title": "Get Out (Remix)",
-            "isTitle": true
-          },
-          {
-            "no": 2,
-            "title": "In Heaven (Remix)",
-            "isTitle": false
-          },
-          {
-            "no": 3,
-            "title": "Get Out",
-            "isTitle": false
-          },
-          {
-            "no": 4,
-            "title": "In Heaven (Narr. Kim Jeong Eun)",
-            "isTitle": false
-          },
-          {
-            "no": 5,
-            "title": "Fallen Leaves",
-            "isTitle": false
-          },
-          {
-            "no": 6,
-            "title": "The Boy's Letter",
-            "isTitle": false
-          },
-          {
-            "no": 7,
-            "title": "Mission",
-            "isTitle": false
-          },
-          {
-            "no": 8,
-            "title": "I.D.S (I Deal Scenario)",
-            "isTitle": false
-          },
-          {
-            "no": 9,
-            "title": "Pierrot",
-            "isTitle": false
-          },
-          {
-            "no": 10,
-            "title": "You're",
-            "isTitle": false
-          },
-          {
-            "no": 11,
-            "title": "Nine",
-            "isTitle": false
-          }
-        ]
-      },
-      {
-        "title": "JUST US",
-        "type": "정규",
-        "isMain": true,
-        "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/e1/98/40/e1984009-830b-f773-b00c-8a4e2646f4a6/8809795774842.jpg/600x600bb.jpg",
-        "releaseDate": "2014-07-29",
-        "trackCount": 13,
-        "titleTrack": "BACK SEAT",
-        "tracks": [
-          {
-            "no": 1,
-            "title": "JUST US",
-            "isTitle": false
-          },
-          {
-            "no": 2,
-            "title": "BACK SEAT",
-            "isTitle": true
-          },
-          {
-            "no": 3,
-            "title": "LETTING GO",
-            "isTitle": false
-          },
-          {
-            "no": 4,
-            "title": "7살",
-            "isTitle": false
-          },
-          {
-            "no": 5,
-            "title": "DAD,YOU THERE?",
-            "isTitle": false
-          },
-          {
-            "no": 6,
-            "title": "So So",
-            "isTitle": false
-          },
-          {
-            "no": 7,
-            "title": "새벽 두시 반",
-            "isTitle": false
-          },
-          {
-            "no": 8,
-            "title": "LET ME SEE",
-            "isTitle": false
-          },
-          {
-            "no": 9,
-            "title": "서른..",
-            "isTitle": false
-          },
-          {
-            "no": 10,
-            "title": "BABOBOY",
-            "isTitle": false
-          },
-          {
-            "no": 11,
-            "title": "DEAR J",
-            "isTitle": false
-          },
-          {
-            "no": 12,
-            "title": "CREATION",
-            "isTitle": false
-          },
-          {
-            "no": 13,
-            "title": "VALENTINE",
             "isTitle": false
           }
         ]
@@ -57289,7 +57035,7 @@
       220
     ],
     "gender": "m",
-    "disbanded": true,
+    "disbanded": "2020.08.08",
     "projectRing": true,
     "projectShow": "언더나인틴",
     "fandom": {
@@ -57310,7 +57056,7 @@
       100
     ],
     "gender": "m",
-    "disbanded": true,
+    "disbanded": "2019.01.27",
     "projectRing": true,
     "projectShow": "더 유닛",
     "fandom": {
@@ -57331,7 +57077,7 @@
       170
     ],
     "gender": "m",
-    "disbanded": true,
+    "disbanded": "2024.06.09",
     "projectRing": true,
     "projectShow": "극한데뷔 야생돌",
     "fandom": {
@@ -57352,7 +57098,7 @@
       220
     ],
     "gender": "f",
-    "disbanded": true,
+    "disbanded": "2024",
     "projectRing": true,
     "projectShow": "퀸덤 퍼즐",
     "fandom": {
@@ -57362,5 +57108,42 @@
     "links": {
       "namu": "https://namu.wiki/w/EL7Z_UP"
     }
+  },
+  "배틀": {
+    "en": "Battle",
+    "debut": "2006.12.17",
+    "co": "굿엔터테인먼트",
+    "color": [
+      95,
+      110,
+      150
+    ],
+    "gender": "m",
+    "links": {
+      "namu": "https://namu.wiki/w/배틀(아이돌)"
+    },
+    "projectShow": "배틀신화",
+    "projectRing": true,
+    "disbanded": "2008"
+  },
+  "스피카": {
+    "en": "SPICA",
+    "debut": "2012.01.10",
+    "co": "B2M엔터테인먼트",
+    "color": [
+      180,
+      150,
+      215
+    ],
+    "gender": "f",
+    "fandom": {
+      "ko": "머큐리",
+      "en": "Mercury"
+    },
+    "links": {
+      "youtube": "https://www.youtube.com/user/spicaofficial",
+      "namu": "https://namu.wiki/w/스피카(아이돌)"
+    },
+    "disbanded": "2017.02.06"
   }
 }

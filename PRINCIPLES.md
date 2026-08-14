@@ -115,5 +115,7 @@ robots.txt — 검색엔진 크롤러 허용/차단 설정
 
 PRINCIPLES.md — 이 프로젝트 원칙 문서
 
+CHANGELOG.md — 세션/기기 간 작업 인수인계 로그. 새 세션 시작 시 최근 항목 먼저 읽고, 끝날 때 한 줄 추가할 것
+
 .gitattributes — Git 파일 처리 설정. 건드릴 일 없음
 

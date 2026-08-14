@@ -95,9 +95,26 @@ async function _ytGetChannelId(ytUrl,key){
 // 예전엔 페이지네이션 도중 API 에러(쿼터 초과 등)가 나면 통째로 throw돼서 이미 모은 영상까지 다 날아갔고,
 // 재시도해도 항상 최신부터 다시 시작해 매번 같은 지점에서 막혀 과거 영상(예: 오래된 음악방송 무대)에
 // 영영 도달 못 하는 문제가 있었음 — 이제 중간에 실패해도 그때까지 모은 건 살리고 이어받을 지점을 남긴다.
-async function _ytFetchNewVideos(uploadsId,key,sinceId,onProg,startPageToken){
+// 그룹 해체일(GROUPS[ko].disbanded) 기준 영상 수집 컷오프 — 해체 후 올라온 영상은 그룹 활동과
+// 무관한 콘텐츠일 가능성이 높아 애초에 안 끌어온다(2026-08-14, 사용자 요청). disbanded 필드는
+// "YYYY"(연도만, 정확한 날짜 모를 때) 또는 "YYYY.MM.DD"(정확한 해체일) 둘 다 지원 — 연도만 있으면
+// 그 해 12/31까지는 수집 허용(해체+1년부터 컷). 아직 예전 방식(boolean true)인 그룹은 연도 데이터가
+// 채워지기 전까지 컷오프 없이 그대로 동작(하위호환).
+function _disbandCutoffDate(ko){
+  const d=GROUPS[ko]?.disbanded;
+  if(!d||d===true)return null;
+  const m=String(d).match(/^(\d{4})(?:\.(\d{2})\.(\d{2}))?/);
+  if(!m)return null;
+  const[,y,mo,day]=m;
+  return mo&&day?`${y}-${mo}-${day}`:`${y}-12-31`;
+}
+async function _ytFetchNewVideos(uploadsId,key,sinceId,onProg,startPageToken,cutoffDate){
   const vids=[];let pageToken=startPageToken||'';let total=0;
   let done=false,interrupted=false;
+  // 컷오프에 걸려 skip된 영상이라도 "채널의 실제 최신 영상 ID"는 북마크로 남겨야 다음 동기화 때마다
+  // 매번 같은 컷오프 이후 구간을 재스캔하지 않는다(newestId는 필터 전 페이지네이션에서 가장 먼저
+  // 만나는 항목 = 채널 최신 영상).
+  let newestId=null;
   do{
     let d;
     try{
@@ -116,8 +133,11 @@ async function _ytFetchNewVideos(uploadsId,key,sinceId,onProg,startPageToken){
     for(const item of(d.items||[])){
       const vid=item.snippet?.resourceId?.videoId;
       if(!vid)continue;
+      if(newestId===null)newestId=vid;
       if(vid===sinceId){hit=true;break;}
       if(_isBannedVideoTitle(item.snippet.title))continue; // 성범죄로 퇴출된 인물 관련 영상은 동기화 단계에서부터 저장하지 않음
+      const publishedAt=(item.snippet.publishedAt||'').slice(0,10);
+      if(cutoffDate&&publishedAt>cutoffDate)continue; // 해체 이후 올라온 영상은 수집 대상에서 제외
       const th=item.snippet.thumbnails||{};
       // 쇼츠는 세로 비율을 유지하는 썸네일(medium/default는 항상 16:9로 잘려있어 세로 판별 불가)이
       // 필요해서 maxres/standard/high 중 하나를 봐야 하는데, 우선순위를 maxres부터 두면 저장되는
@@ -133,7 +153,7 @@ async function _ytFetchNewVideos(uploadsId,key,sinceId,onProg,startPageToken){
         title:item.snippet.title||'',
         description:item.snippet.description||'', // part=snippet 응답에 이미 포함돼있던 걸 그냥 버렸었음 — 쿼터 추가 비용 없이 태깅 보조 텍스트로 재사용
         thumb:isShortThumb?(hiTh.url||th.medium?.url||''):(th.medium?.url||th.high?.url||th.default?.url||''),
-        published_at:(item.snippet.publishedAt||'').slice(0,10),
+        published_at:publishedAt,
         category:cat
       });
     }
@@ -143,7 +163,7 @@ async function _ytFetchNewVideos(uploadsId,key,sinceId,onProg,startPageToken){
     if(onProg)onProg(vids.length,total);
     if(pageToken)await new Promise(res=>setTimeout(res,80));
   }while(pageToken);
-  return{vids,total,done,interrupted,resumeToken:pageToken};
+  return{vids,total,done,interrupted,resumeToken:pageToken,newestId};
 }
 
 async function _ytSyncGroup(ko,key,onProg,youtubeUrl,syncKey){
@@ -173,7 +193,11 @@ async function _ytSyncGroup(ko,key,onProg,youtubeUrl,syncKey){
     sinceId=top?.[0]?.id||null;
   }
   const resumeTok=localStorage.getItem(resumeKey)||'';
-  const{vids,done,interrupted,resumeToken}=await _ytFetchNewVideos(uploadsId,key,sinceId,onProg,resumeTok);
+  // GROUPS[ko]가 있는 "그룹 공식 채널" 동기화에만 해체 컷오프가 걸린다 — 솔로/멤버 개인 채널(ko가
+  // 사람 이름이라 GROUPS[ko]가 undefined)은 자연히 컷오프 없이 그대로 동기화된다(그룹은 해체해도
+  // 멤버 개인 활동은 계속 끌어와야 한다는 요구사항, 2026-08-14).
+  const cutoffDate=_disbandCutoffDate(ko);
+  const{vids,done,interrupted,resumeToken,newestId}=await _ytFetchNewVideos(uploadsId,key,sinceId,onProg,resumeTok,cutoffDate);
   if(vids.length){
     const rows=vids.map(v=>({...v,group_ko:ko,title_norm:_titleNorm(v.title),...(_isJunkVideoTitle(v.title)?{content_flag:'무관'}:{})}));
     for(let i=0;i<rows.length;i+=200){
@@ -181,9 +205,10 @@ async function _ytSyncGroup(ko,key,onProg,youtubeUrl,syncKey){
       if(error)throw new Error(error.message);
     }
   }
-  // resumeTok 없이(=맨 최신부터) 시작한 실행이었을 때만 vids[0]가 진짜 "채널의 현재 최신 영상"이므로
-  // 그때만 북마크를 갱신한다 — 과거를 이어받는 중엔 건드리지 않음(_ytSyncExtChannels와 동일 원칙)
-  if(!resumeTok&&vids[0]?.id)localStorage.setItem(lsKey,vids[0].id);
+  // resumeTok 없이(=맨 최신부터) 시작한 실행이었을 때만 북마크를 갱신한다 — 과거를 이어받는 중엔
+  // 건드리지 않음(_ytSyncExtChannels와 동일 원칙). newestId를 쓰는 이유는 위 _ytFetchNewVideos 주석 참고
+  // (컷오프에 걸려 vids엔 하나도 안 들어가도 채널 자체의 최신 영상 ID로 북마크해야 매번 재스캔 안 함).
+  if(!resumeTok&&newestId)localStorage.setItem(lsKey,newestId);
   if(done)localStorage.removeItem(resumeKey);
   else if(interrupted&&resumeToken)localStorage.setItem(resumeKey,resumeToken);
   return vids.length;
@@ -1275,6 +1300,11 @@ async function _avsEnsureCache(){
     const{data,error}=await q;
     if(error)throw error;
     if(!data?.length)break;
+    // 3글자 이상 검색(ilike)은 title_norm 컬럼과 비교해 대소문자·유니코드 스타일드 문자를 다 흡수하는데,
+    // 이 1~2글자 캐시 경로는 원래 title 그대로 .includes()로 비교해서 대소문자가 다르면(예: 소문자로
+    // "v" 검색 — 제목엔 "V") 매칭이 안 되던 버그가 있었음(2026-08-14, 사용자 제보). 매 키 입력마다 매번
+    // 정규화하면 느려지니 캐시 시점에 한 번만 미리 계산해둔다.
+    data.forEach(v=>{v._tn=_titleNorm(v.title);v._gtn=_titleNorm(v.group_ko);});
     rows.push(...data);
     if(statusEl)statusEl.textContent=`전체 목록 준비 중… (${rows.length}개)`;
     if(data.length<1000)break;
@@ -1348,17 +1378,18 @@ async function _vmLoad(searchTerm){
       if(!term){_vmRows=[];listEl.innerHTML='<div style="padding:24px;text-align:center;color:rgba(155,178,228,0.45);font-size:12px;">제목이나 그룹명으로 검색하세요</div>';statusEl.textContent='';return;}
       let hits;
       if(term.length>=3){
-        const{data,error}=await sb.from(_YT_TABLE).select('id,title,group_ko,thumb,content_flag').ilike('title_norm',`%${_titleNorm(term)}%`).order('id').limit(200);
+        const{data,error}=await sb.from(_YT_TABLE).select('id,title,group_ko,thumb,content_flag').ilike('title_norm',`%${_titleNorm(term)}%`).order('id').limit(1000);
         if(myGen!==_vmSearchGen)return;
         if(error){statusEl.textContent='조회 실패: '+error.message;return;}
         hits=data||[];
       }else{
         const all=await _avsEnsureCache();
         if(myGen!==_vmSearchGen)return;
-        hits=all.filter(v=>(v.title||'').includes(term)||(v.group_ko||'').includes(term)).slice(0,200);
+        const tn=_titleNorm(term);
+        hits=all.filter(v=>v._tn.includes(tn)||v._gtn.includes(tn)).slice(0,1000);
       }
       _vmRows=hits;
-      statusEl.textContent=`${hits.length}개 표시${hits.length>=200?' (최대 200개)':''}`;
+      statusEl.textContent=`${hits.length}개 표시${hits.length>=1000?' (최대 1000개)':''}`;
       _vmRenderVideoList();
       return;
     }

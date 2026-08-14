@@ -53245,25 +53245,15 @@
       "en": "Kim Jaejoong"
     },
     "group": {
-      "ko": "JX",
-      "en": "JX"
+      "ko": "동방신기",
+      "en": "TVXQ"
     },
-    "groups": [
-      {
-        "ko": "JX",
-        "en": "JX"
-      },
-      {
-        "ko": "동방신기",
-        "en": "TVXQ"
-      }
-    ],
     "co": "무소속",
     "active": false,
     "color": [
-      55,
-      55,
-      90
+      228,
+      0,
+      43
     ],
     "bday": "1986.01.26",
     "nat": {
@@ -53273,7 +53263,263 @@
     "links": {
       "namu": "https://namu.wiki/w/김재중"
     },
-    "left": "2010.03.24"
+    "left": "2010.03.24",
+    "unitDiscography": [
+      {
+        "unitName": "JYJ",
+        "albums": [
+          {
+            "title": "The Beginning",
+            "type": "정규",
+            "isMain": true,
+            "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/37/9c/10/379c10c8-75fb-282a-1595-8afb14770fb1/8809649890674.jpg/600x600bb.jpg",
+            "releaseDate": "2010-10-14",
+            "trackCount": 8,
+            "titleTrack": "Ayyy Girl (feat. Kanye West & Malik Yusef)",
+            "tracks": [
+              {
+                "no": 1,
+                "title": "Intro",
+                "isTitle": false
+              },
+              {
+                "no": 2,
+                "title": "Ayyy Girl (feat. Kanye West & Malik Yusef)",
+                "isTitle": true
+              },
+              {
+                "no": 3,
+                "title": "Empty",
+                "isTitle": false
+              },
+              {
+                "no": 4,
+                "title": "Be My Girl",
+                "isTitle": false
+              },
+              {
+                "no": 5,
+                "title": "Still in Love",
+                "isTitle": false
+              },
+              {
+                "no": 6,
+                "title": "I Can Soar",
+                "isTitle": false
+              },
+              {
+                "no": 7,
+                "title": "I Love You (feat. Flowsik)",
+                "isTitle": false
+              },
+              {
+                "no": 8,
+                "title": "Be the One",
+                "isTitle": false
+              }
+            ]
+          },
+          {
+            "title": "IN HEAVEN",
+            "type": "정규",
+            "isMain": true,
+            "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/95/73/c7/9573c748-b008-8a6e-80e6-b57db41d63d2/8806384557367.jpg/600x600bb.jpg",
+            "releaseDate": "2011-09-15",
+            "trackCount": 9,
+            "titleTrack": "Get Out",
+            "tracks": [
+              {
+                "no": 1,
+                "title": "Get Out",
+                "isTitle": true
+              },
+              {
+                "no": 2,
+                "title": "In Heaven (Narration 김정은 Version)",
+                "isTitle": false
+              },
+              {
+                "no": 3,
+                "title": "Fallen Leaves",
+                "isTitle": false
+              },
+              {
+                "no": 4,
+                "title": "The Boy's Letter",
+                "isTitle": false
+              },
+              {
+                "no": 5,
+                "title": "Mission",
+                "isTitle": false
+              },
+              {
+                "no": 6,
+                "title": "I.D.S (I Deal Scenario)",
+                "isTitle": false
+              },
+              {
+                "no": 7,
+                "title": "Pierrot",
+                "isTitle": false
+              },
+              {
+                "no": 8,
+                "title": "You're",
+                "isTitle": false
+              },
+              {
+                "no": 9,
+                "title": "Nine",
+                "isTitle": false
+              }
+            ]
+          },
+          {
+            "title": "In Heaven (Special Edition Album)",
+            "type": "리패키지",
+            "isMain": false,
+            "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music/3c/88/b1/mzi.epudupau.jpg/600x600bb.jpg",
+            "releaseDate": "2011-12-02",
+            "trackCount": 11,
+            "titleTrack": "Get Out (Remix)",
+            "tracks": [
+              {
+                "no": 1,
+                "title": "Get Out (Remix)",
+                "isTitle": true
+              },
+              {
+                "no": 2,
+                "title": "In Heaven (Remix)",
+                "isTitle": false
+              },
+              {
+                "no": 3,
+                "title": "Get Out",
+                "isTitle": false
+              },
+              {
+                "no": 4,
+                "title": "In Heaven (Narr. Kim Jeong Eun)",
+                "isTitle": false
+              },
+              {
+                "no": 5,
+                "title": "Fallen Leaves",
+                "isTitle": false
+              },
+              {
+                "no": 6,
+                "title": "The Boy's Letter",
+                "isTitle": false
+              },
+              {
+                "no": 7,
+                "title": "Mission",
+                "isTitle": false
+              },
+              {
+                "no": 8,
+                "title": "I.D.S (I Deal Scenario)",
+                "isTitle": false
+              },
+              {
+                "no": 9,
+                "title": "Pierrot",
+                "isTitle": false
+              },
+              {
+                "no": 10,
+                "title": "You're",
+                "isTitle": false
+              },
+              {
+                "no": 11,
+                "title": "Nine",
+                "isTitle": false
+              }
+            ]
+          },
+          {
+            "title": "JUST US",
+            "type": "정규",
+            "isMain": true,
+            "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/e1/98/40/e1984009-830b-f773-b00c-8a4e2646f4a6/8809795774842.jpg/600x600bb.jpg",
+            "releaseDate": "2014-07-29",
+            "trackCount": 13,
+            "titleTrack": "BACK SEAT",
+            "tracks": [
+              {
+                "no": 1,
+                "title": "JUST US",
+                "isTitle": false
+              },
+              {
+                "no": 2,
+                "title": "BACK SEAT",
+                "isTitle": true
+              },
+              {
+                "no": 3,
+                "title": "LETTING GO",
+                "isTitle": false
+              },
+              {
+                "no": 4,
+                "title": "7살",
+                "isTitle": false
+              },
+              {
+                "no": 5,
+                "title": "DAD,YOU THERE?",
+                "isTitle": false
+              },
+              {
+                "no": 6,
+                "title": "So So",
+                "isTitle": false
+              },
+              {
+                "no": 7,
+                "title": "새벽 두시 반",
+                "isTitle": false
+              },
+              {
+                "no": 8,
+                "title": "LET ME SEE",
+                "isTitle": false
+              },
+              {
+                "no": 9,
+                "title": "서른..",
+                "isTitle": false
+              },
+              {
+                "no": 10,
+                "title": "BABOBOY",
+                "isTitle": false
+              },
+              {
+                "no": 11,
+                "title": "DEAR J",
+                "isTitle": false
+              },
+              {
+                "no": 12,
+                "title": "CREATION",
+                "isTitle": false
+              },
+              {
+                "no": 13,
+                "title": "VALENTINE",
+                "isTitle": false
+              }
+            ]
+          }
+        ]
+      }
+    ]
   },
   {
     "name": {
@@ -53281,25 +53527,15 @@
       "en": "Park Yoochun"
     },
     "group": {
-      "ko": "JX",
-      "en": "JX"
+      "ko": "동방신기",
+      "en": "TVXQ"
     },
-    "groups": [
-      {
-        "ko": "JX",
-        "en": "JX"
-      },
-      {
-        "ko": "동방신기",
-        "en": "TVXQ"
-      }
-    ],
     "co": "무소속",
     "active": false,
     "color": [
-      55,
-      55,
-      90
+      228,
+      0,
+      43
     ],
     "bday": "1986.06.04",
     "nat": {
@@ -53309,7 +53545,263 @@
     "links": {
       "namu": "https://namu.wiki/w/박유천"
     },
-    "left": "2010.03.24"
+    "left": "2010.03.24",
+    "unitDiscography": [
+      {
+        "unitName": "JYJ",
+        "albums": [
+          {
+            "title": "The Beginning",
+            "type": "정규",
+            "isMain": true,
+            "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/37/9c/10/379c10c8-75fb-282a-1595-8afb14770fb1/8809649890674.jpg/600x600bb.jpg",
+            "releaseDate": "2010-10-14",
+            "trackCount": 8,
+            "titleTrack": "Ayyy Girl (feat. Kanye West & Malik Yusef)",
+            "tracks": [
+              {
+                "no": 1,
+                "title": "Intro",
+                "isTitle": false
+              },
+              {
+                "no": 2,
+                "title": "Ayyy Girl (feat. Kanye West & Malik Yusef)",
+                "isTitle": true
+              },
+              {
+                "no": 3,
+                "title": "Empty",
+                "isTitle": false
+              },
+              {
+                "no": 4,
+                "title": "Be My Girl",
+                "isTitle": false
+              },
+              {
+                "no": 5,
+                "title": "Still in Love",
+                "isTitle": false
+              },
+              {
+                "no": 6,
+                "title": "I Can Soar",
+                "isTitle": false
+              },
+              {
+                "no": 7,
+                "title": "I Love You (feat. Flowsik)",
+                "isTitle": false
+              },
+              {
+                "no": 8,
+                "title": "Be the One",
+                "isTitle": false
+              }
+            ]
+          },
+          {
+            "title": "IN HEAVEN",
+            "type": "정규",
+            "isMain": true,
+            "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/95/73/c7/9573c748-b008-8a6e-80e6-b57db41d63d2/8806384557367.jpg/600x600bb.jpg",
+            "releaseDate": "2011-09-15",
+            "trackCount": 9,
+            "titleTrack": "Get Out",
+            "tracks": [
+              {
+                "no": 1,
+                "title": "Get Out",
+                "isTitle": true
+              },
+              {
+                "no": 2,
+                "title": "In Heaven (Narration 김정은 Version)",
+                "isTitle": false
+              },
+              {
+                "no": 3,
+                "title": "Fallen Leaves",
+                "isTitle": false
+              },
+              {
+                "no": 4,
+                "title": "The Boy's Letter",
+                "isTitle": false
+              },
+              {
+                "no": 5,
+                "title": "Mission",
+                "isTitle": false
+              },
+              {
+                "no": 6,
+                "title": "I.D.S (I Deal Scenario)",
+                "isTitle": false
+              },
+              {
+                "no": 7,
+                "title": "Pierrot",
+                "isTitle": false
+              },
+              {
+                "no": 8,
+                "title": "You're",
+                "isTitle": false
+              },
+              {
+                "no": 9,
+                "title": "Nine",
+                "isTitle": false
+              }
+            ]
+          },
+          {
+            "title": "In Heaven (Special Edition Album)",
+            "type": "리패키지",
+            "isMain": false,
+            "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music/3c/88/b1/mzi.epudupau.jpg/600x600bb.jpg",
+            "releaseDate": "2011-12-02",
+            "trackCount": 11,
+            "titleTrack": "Get Out (Remix)",
+            "tracks": [
+              {
+                "no": 1,
+                "title": "Get Out (Remix)",
+                "isTitle": true
+              },
+              {
+                "no": 2,
+                "title": "In Heaven (Remix)",
+                "isTitle": false
+              },
+              {
+                "no": 3,
+                "title": "Get Out",
+                "isTitle": false
+              },
+              {
+                "no": 4,
+                "title": "In Heaven (Narr. Kim Jeong Eun)",
+                "isTitle": false
+              },
+              {
+                "no": 5,
+                "title": "Fallen Leaves",
+                "isTitle": false
+              },
+              {
+                "no": 6,
+                "title": "The Boy's Letter",
+                "isTitle": false
+              },
+              {
+                "no": 7,
+                "title": "Mission",
+                "isTitle": false
+              },
+              {
+                "no": 8,
+                "title": "I.D.S (I Deal Scenario)",
+                "isTitle": false
+              },
+              {
+                "no": 9,
+                "title": "Pierrot",
+                "isTitle": false
+              },
+              {
+                "no": 10,
+                "title": "You're",
+                "isTitle": false
+              },
+              {
+                "no": 11,
+                "title": "Nine",
+                "isTitle": false
+              }
+            ]
+          },
+          {
+            "title": "JUST US",
+            "type": "정규",
+            "isMain": true,
+            "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/e1/98/40/e1984009-830b-f773-b00c-8a4e2646f4a6/8809795774842.jpg/600x600bb.jpg",
+            "releaseDate": "2014-07-29",
+            "trackCount": 13,
+            "titleTrack": "BACK SEAT",
+            "tracks": [
+              {
+                "no": 1,
+                "title": "JUST US",
+                "isTitle": false
+              },
+              {
+                "no": 2,
+                "title": "BACK SEAT",
+                "isTitle": true
+              },
+              {
+                "no": 3,
+                "title": "LETTING GO",
+                "isTitle": false
+              },
+              {
+                "no": 4,
+                "title": "7살",
+                "isTitle": false
+              },
+              {
+                "no": 5,
+                "title": "DAD,YOU THERE?",
+                "isTitle": false
+              },
+              {
+                "no": 6,
+                "title": "So So",
+                "isTitle": false
+              },
+              {
+                "no": 7,
+                "title": "새벽 두시 반",
+                "isTitle": false
+              },
+              {
+                "no": 8,
+                "title": "LET ME SEE",
+                "isTitle": false
+              },
+              {
+                "no": 9,
+                "title": "서른..",
+                "isTitle": false
+              },
+              {
+                "no": 10,
+                "title": "BABOBOY",
+                "isTitle": false
+              },
+              {
+                "no": 11,
+                "title": "DEAR J",
+                "isTitle": false
+              },
+              {
+                "no": 12,
+                "title": "CREATION",
+                "isTitle": false
+              },
+              {
+                "no": 13,
+                "title": "VALENTINE",
+                "isTitle": false
+              }
+            ]
+          }
+        ]
+      }
+    ]
   },
   {
     "name": {
@@ -53317,25 +53809,15 @@
       "en": "Kim Junsu"
     },
     "group": {
-      "ko": "JX",
-      "en": "JX"
+      "ko": "동방신기",
+      "en": "TVXQ"
     },
-    "groups": [
-      {
-        "ko": "JX",
-        "en": "JX"
-      },
-      {
-        "ko": "동방신기",
-        "en": "TVXQ"
-      }
-    ],
     "co": "무소속",
     "active": false,
     "color": [
-      55,
-      55,
-      90
+      228,
+      0,
+      43
     ],
     "bday": "1986.12.15",
     "nat": {
@@ -53345,7 +53827,263 @@
     "links": {
       "namu": "https://namu.wiki/w/김준수(JYJ)"
     },
-    "left": "2010.03.24"
+    "left": "2010.03.24",
+    "unitDiscography": [
+      {
+        "unitName": "JYJ",
+        "albums": [
+          {
+            "title": "The Beginning",
+            "type": "정규",
+            "isMain": true,
+            "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/37/9c/10/379c10c8-75fb-282a-1595-8afb14770fb1/8809649890674.jpg/600x600bb.jpg",
+            "releaseDate": "2010-10-14",
+            "trackCount": 8,
+            "titleTrack": "Ayyy Girl (feat. Kanye West & Malik Yusef)",
+            "tracks": [
+              {
+                "no": 1,
+                "title": "Intro",
+                "isTitle": false
+              },
+              {
+                "no": 2,
+                "title": "Ayyy Girl (feat. Kanye West & Malik Yusef)",
+                "isTitle": true
+              },
+              {
+                "no": 3,
+                "title": "Empty",
+                "isTitle": false
+              },
+              {
+                "no": 4,
+                "title": "Be My Girl",
+                "isTitle": false
+              },
+              {
+                "no": 5,
+                "title": "Still in Love",
+                "isTitle": false
+              },
+              {
+                "no": 6,
+                "title": "I Can Soar",
+                "isTitle": false
+              },
+              {
+                "no": 7,
+                "title": "I Love You (feat. Flowsik)",
+                "isTitle": false
+              },
+              {
+                "no": 8,
+                "title": "Be the One",
+                "isTitle": false
+              }
+            ]
+          },
+          {
+            "title": "IN HEAVEN",
+            "type": "정규",
+            "isMain": true,
+            "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/95/73/c7/9573c748-b008-8a6e-80e6-b57db41d63d2/8806384557367.jpg/600x600bb.jpg",
+            "releaseDate": "2011-09-15",
+            "trackCount": 9,
+            "titleTrack": "Get Out",
+            "tracks": [
+              {
+                "no": 1,
+                "title": "Get Out",
+                "isTitle": true
+              },
+              {
+                "no": 2,
+                "title": "In Heaven (Narration 김정은 Version)",
+                "isTitle": false
+              },
+              {
+                "no": 3,
+                "title": "Fallen Leaves",
+                "isTitle": false
+              },
+              {
+                "no": 4,
+                "title": "The Boy's Letter",
+                "isTitle": false
+              },
+              {
+                "no": 5,
+                "title": "Mission",
+                "isTitle": false
+              },
+              {
+                "no": 6,
+                "title": "I.D.S (I Deal Scenario)",
+                "isTitle": false
+              },
+              {
+                "no": 7,
+                "title": "Pierrot",
+                "isTitle": false
+              },
+              {
+                "no": 8,
+                "title": "You're",
+                "isTitle": false
+              },
+              {
+                "no": 9,
+                "title": "Nine",
+                "isTitle": false
+              }
+            ]
+          },
+          {
+            "title": "In Heaven (Special Edition Album)",
+            "type": "리패키지",
+            "isMain": false,
+            "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music/3c/88/b1/mzi.epudupau.jpg/600x600bb.jpg",
+            "releaseDate": "2011-12-02",
+            "trackCount": 11,
+            "titleTrack": "Get Out (Remix)",
+            "tracks": [
+              {
+                "no": 1,
+                "title": "Get Out (Remix)",
+                "isTitle": true
+              },
+              {
+                "no": 2,
+                "title": "In Heaven (Remix)",
+                "isTitle": false
+              },
+              {
+                "no": 3,
+                "title": "Get Out",
+                "isTitle": false
+              },
+              {
+                "no": 4,
+                "title": "In Heaven (Narr. Kim Jeong Eun)",
+                "isTitle": false
+              },
+              {
+                "no": 5,
+                "title": "Fallen Leaves",
+                "isTitle": false
+              },
+              {
+                "no": 6,
+                "title": "The Boy's Letter",
+                "isTitle": false
+              },
+              {
+                "no": 7,
+                "title": "Mission",
+                "isTitle": false
+              },
+              {
+                "no": 8,
+                "title": "I.D.S (I Deal Scenario)",
+                "isTitle": false
+              },
+              {
+                "no": 9,
+                "title": "Pierrot",
+                "isTitle": false
+              },
+              {
+                "no": 10,
+                "title": "You're",
+                "isTitle": false
+              },
+              {
+                "no": 11,
+                "title": "Nine",
+                "isTitle": false
+              }
+            ]
+          },
+          {
+            "title": "JUST US",
+            "type": "정규",
+            "isMain": true,
+            "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/e1/98/40/e1984009-830b-f773-b00c-8a4e2646f4a6/8809795774842.jpg/600x600bb.jpg",
+            "releaseDate": "2014-07-29",
+            "trackCount": 13,
+            "titleTrack": "BACK SEAT",
+            "tracks": [
+              {
+                "no": 1,
+                "title": "JUST US",
+                "isTitle": false
+              },
+              {
+                "no": 2,
+                "title": "BACK SEAT",
+                "isTitle": true
+              },
+              {
+                "no": 3,
+                "title": "LETTING GO",
+                "isTitle": false
+              },
+              {
+                "no": 4,
+                "title": "7살",
+                "isTitle": false
+              },
+              {
+                "no": 5,
+                "title": "DAD,YOU THERE?",
+                "isTitle": false
+              },
+              {
+                "no": 6,
+                "title": "So So",
+                "isTitle": false
+              },
+              {
+                "no": 7,
+                "title": "새벽 두시 반",
+                "isTitle": false
+              },
+              {
+                "no": 8,
+                "title": "LET ME SEE",
+                "isTitle": false
+              },
+              {
+                "no": 9,
+                "title": "서른..",
+                "isTitle": false
+              },
+              {
+                "no": 10,
+                "title": "BABOBOY",
+                "isTitle": false
+              },
+              {
+                "no": 11,
+                "title": "DEAR J",
+                "isTitle": false
+              },
+              {
+                "no": 12,
+                "title": "CREATION",
+                "isTitle": false
+              },
+              {
+                "no": 13,
+                "title": "VALENTINE",
+                "isTitle": false
+              }
+            ]
+          }
+        ]
+      }
+    ]
   },
   {
     "name": {
@@ -93049,6 +93787,221 @@
     "links": {
       "instagram": "https://www.instagram.com/hanyujin788",
       "namu": "https://namu.wiki/w/한유진(제로베이스원)"
+    }
+  },
+  {
+    "name": {
+      "ko": "류",
+      "en": "Ryu"
+    },
+    "group": {
+      "ko": "배틀",
+      "en": "Battle"
+    },
+    "co": "무소속",
+    "active": false,
+    "color": [
+      95,
+      110,
+      150
+    ],
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    }
+  },
+  {
+    "name": {
+      "ko": "휘찬",
+      "en": "Hwichan"
+    },
+    "group": {
+      "ko": "배틀",
+      "en": "Battle"
+    },
+    "co": "무소속",
+    "active": false,
+    "color": [
+      95,
+      110,
+      150
+    ],
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    }
+  },
+  {
+    "name": {
+      "ko": "진태화",
+      "en": "Jin Taehwa"
+    },
+    "group": {
+      "ko": "배틀",
+      "en": "Battle"
+    },
+    "co": "무소속",
+    "active": false,
+    "color": [
+      95,
+      110,
+      150
+    ],
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    }
+  },
+  {
+    "name": {
+      "ko": "리오",
+      "en": "Leo"
+    },
+    "group": {
+      "ko": "배틀",
+      "en": "Battle"
+    },
+    "co": "무소속",
+    "active": false,
+    "color": [
+      95,
+      110,
+      150
+    ],
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    }
+  },
+  {
+    "name": {
+      "ko": "크리스",
+      "en": "Chris"
+    },
+    "group": {
+      "ko": "배틀",
+      "en": "Battle"
+    },
+    "co": "무소속",
+    "active": false,
+    "color": [
+      95,
+      110,
+      150
+    ],
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    }
+  },
+  {
+    "name": {
+      "ko": "박시현",
+      "en": "Park Sihyun"
+    },
+    "group": {
+      "ko": "스피카",
+      "en": "SPICA"
+    },
+    "co": "무소속",
+    "active": false,
+    "color": [
+      180,
+      150,
+      215
+    ],
+    "bday": "1986.11.29",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    }
+  },
+  {
+    "name": {
+      "ko": "김보아",
+      "en": "Kim Boa"
+    },
+    "group": {
+      "ko": "스피카",
+      "en": "SPICA"
+    },
+    "co": "무소속",
+    "active": false,
+    "color": [
+      180,
+      150,
+      215
+    ],
+    "bday": "1987.01.14",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    }
+  },
+  {
+    "name": {
+      "ko": "나래",
+      "en": "Narae"
+    },
+    "group": {
+      "ko": "스피카",
+      "en": "SPICA"
+    },
+    "co": "무소속",
+    "active": false,
+    "color": [
+      180,
+      150,
+      215
+    ],
+    "bday": "1988.02.23",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    }
+  },
+  {
+    "name": {
+      "ko": "양지원",
+      "en": "Yang Jiwon"
+    },
+    "group": {
+      "ko": "스피카",
+      "en": "SPICA"
+    },
+    "co": "무소속",
+    "active": false,
+    "color": [
+      180,
+      150,
+      215
+    ],
+    "bday": "1988.04.05",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    }
+  },
+  {
+    "name": {
+      "ko": "김보형",
+      "en": "Kim Bohyung"
+    },
+    "group": {
+      "ko": "스피카",
+      "en": "SPICA"
+    },
+    "co": "무소속",
+    "active": false,
+    "color": [
+      180,
+      150,
+      215
+    ],
+    "bday": "1989.03.31",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
     }
   }
 ]
