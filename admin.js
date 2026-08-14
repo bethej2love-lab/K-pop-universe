@@ -2587,7 +2587,8 @@ function _extBuildRows(vids,strict,tier,owner){
       id:v.id,title:v.title,title_norm:_titleNorm(v.title),description:v.description||'',thumb:v.thumb,published_at:v.published_at,
       category,
       group_ko:owner?ownerGko:match.primaryGroup,members,with_groups:withGroups,with_members:withMembers,
-      ...(_isJunkVideoTitle(v.title)?{content_flag:'무관'}:{})
+      ...(_isJunkVideoTitle(v.title)?{content_flag:'무관'}:{}),
+      ...((tier==='variety'||tier==='show')?{content_formats:[tier]}:{})
     });
   }
   return{rows,skipped};
@@ -3061,6 +3062,7 @@ let _vidTagGroupsSelected=[]; // [groupKo,...] — "아이유의 팔레트, 뉴�
 let _vidTagCoverSelected=[]; // [{ko,groupKo}] — 커버 영상의 원곡자(멤버) 지정
 let _vidTagCoverGroupsSelected=[]; // [groupKo,...] — 원곡이 그룹 단위 곡일 때
 let _vidTagOrigManual=false; // DB에서 불러온 기존 tags_manual 값 — 트리거 우회 two-step 저장에 사용
+let _vidTagLoadedFormats=[]; // 모달 열 때 DB에서 읽은 content_formats — 저장 시 장르 태그 재계산에 사용
 // content_flag는 한 컬럼에 한 값만 들어가므로(null/기타/외부인/무관/hidden 중 하나) 체크박스 2개(기타/외부인)와
 // 토글 버튼 2개(무관/숨김)를 하나의 배타적 선택으로 묶어서 관리한다 — 예전엔 "숨김"만 별도 버튼으로 즉시
 // DB에 반영되고 나머지 셋은 저장 버튼을 눌러야 반영되는 등 취급이 달라서(2026-08-04, 사용자 피드백:
@@ -3250,7 +3252,7 @@ async function _openVidTagModal(v,ko,originKo){
   // 카드에 넘어온 v에는 members/with_members가 안 실려있는 경우가 많아서(그룹 카드 그리드는 해당 컬럼을
   // 아예 select하지 않음), 모달을 열 때 저장된 값을 DB에서 직접 불러와 체크박스/칩에 반영한다.
   if(sb){
-    const{data,error}=await sb.from(_YT_TABLE).select('members,with_members,with_groups,cover_of_members,cover_of_groups,category,content_flag,tags_manual').eq('id',v.id).maybeSingle();
+    const{data,error}=await sb.from(_YT_TABLE).select('members,with_members,with_groups,cover_of_members,cover_of_groups,category,content_flag,tags_manual,content_formats').eq('id',v.id).maybeSingle();
     if(!_vidTagTarget||_vidTagTarget.id!==v.id)return; // 응답 오는 사이 모달이 닫히거나 다른 영상으로 전환됨
     if(!error&&data){
       const savedMembers=new Set(data.members||[]);
@@ -3273,6 +3275,7 @@ async function _openVidTagModal(v,ko,originKo){
       }).filter(Boolean);
       _vidTagCoverGroupsSelected=data.cover_of_groups||[];
       _vidTagOrigManual=!!data.tags_manual;
+      _vidTagLoadedFormats=data.content_formats||[];
       _renderVidTagChips();
       const catEl=document.getElementById('vid-tag-cat');
       if(catEl)catEl.value=data.category||'';
@@ -3286,6 +3289,7 @@ function _closeVidTagModal(){
   _vidTagTarget=null;
   _vidTagBulkIds=null;
   _vidTagOrigManual=false;
+  _vidTagLoadedFormats=[];
   _vidTagFlagChoice=null;_vidTagFlagTouched=false;_vidTagApplyFlagUI();
   // 영상 관리 패널에서 연필 버튼으로 열었을 수 있으니, 열려있으면 현재 탭 기준으로 다시 불러온다.
   if(document.getElementById('vm-overlay')?.classList.contains('open')){
@@ -3459,6 +3463,11 @@ document.getElementById('vid-tag-save').addEventListener('click',async e=>{
   const updatePayload={members,with_members:withMembers,with_groups:withGroups,cover_of_members:coverMembers,cover_of_groups:coverGroups,content_flag:contentFlag,tags_manual:true};
   if(category!==undefined)updatePayload.category=category||null;
   if(newGko)updatePayload.group_ko=newGko;
+  // content_formats: 기존 배열에서 장르 태그(variety/show)만 교체, 코너명 태그는 보존
+  const _GENRE_TAGS=['variety','show'];
+  const newFormats=_vidTagLoadedFormats.filter(f=>!_GENRE_TAGS.includes(f));
+  if(category==='variety'||category==='show')newFormats.push(category);
+  updatePayload.content_formats=newFormats;
   if(_vidTagOrigManual){
     // 기존 행이 tags_manual=true였으므로 DB 트리거를 우회하는 two-step 저장:
     // 1) tags_manual=false → 트리거 조건(OLD.tags_manual=true) 해제 → 모든 컬럼 변경 허용

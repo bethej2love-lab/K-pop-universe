@@ -692,6 +692,8 @@
           <option value="mv">MV</option>
           <option value="live">라이브</option>
           <option value="short">Shorts</option>
+          <option value="variety">예능</option>
+          <option value="show">드라마/영화</option>
         </select>
         <button id="vid-tag-thumb-refresh" class="uc-btn" type="button" style="white-space:nowrap;padding:0 12px">썸네일 새로고침</button>
       </div>
@@ -1649,7 +1651,7 @@ async function buildUniverse(){
         m._bdayYear=parseInt(m.bday)||0;
         m._filterAlpha=1; m._filterTarget=1;
         // 모바일 줌인 멤버 이름 레이블 (CSS2DObject) — 항상 생성, animate 루프에서 모바일에서만 표시
-        {const _nd=document.createElement('div');_nd.className='member-name-label';_nd.textContent=m.name.ko;const _nl=new THREE.CSS2DObject(_nd);_nl.position.copy(mPos).add(new THREE.Vector3(0,0.26,0));_nl.visible=false;scene.add(_nl);m._nameLabel=_nl;m._nameLabelEl=_nd;}
+        {const _nd=document.createElement('div');_nd.className='member-name-label';_nd.textContent=m.name.ko;const _nl=new THREE.CSS2DObject(_nd);_nl.position.copy(mPos).add(new THREE.Vector3(0,0.42,0));_nl.visible=false;scene.add(_nl);m._nameLabel=_nl;m._nameLabelEl=_nd;}
       }
     });
   });
@@ -6156,7 +6158,11 @@ function showT(a,cx,cy,keepNavStack,urlMode,pushMobNav,noFly){
   // 이 카드의 영상 그리드 자체가 솔로일 땐 memberKo 없이(그룹 카드처럼) 동작하므로 컬렉션 필터도 맞춰서
   // memberKo 없이 그룹 단위로 조회한다.
   const _ttGroupQueryKo=_ytGroupKoFor(a);
-  _loadConcertRow(_ttGroupQueryKo,'tt-concert-row');
+  // 그룹 멤버 카드: 소속 그룹 콘서트는 그룹 카드에서만, 멤버 카드엔 멤버 이름으로 태깅된 솔로 이벤트만.
+  // 솔로 아티스트(hasRealGroup=false)는 본인 채널 = 본인 그룹이라 기존 _loadConcertRow 그대로.
+  // DB에 kpop_events.groups=['멤버명'] 형태로 솔로 공연 데이터가 추가되면 자동으로 표시된다.
+  if(_hasRealGroup)_loadMemberConcertRow(a.name.ko,'tt-concert-row');
+  else _loadConcertRow(_ttGroupQueryKo,'tt-concert-row');
   _loadCollectionRow(_ttGroupQueryKo,'tt-collection-row',_hasRealGroup?a.name.ko:null,a.name.ko);
   // 관리자: 프로필 사진 업로드 버튼 — 예전엔 인스타 있는 멤버만 노출했는데, 개인 인스타 없는 신인도
   // 사진은 붙일 수 있게 전 멤버로 확대(2026-08-14, 사용자 요청). 인스타 없는 멤버는 저장 직후 사진
@@ -10933,7 +10939,19 @@ async function _pickFeaturedVidFromDB(ko,memberKo,onlyMe,filter,viewMode,formatF
         .not('title_norm','ilike','*커버 촬영*')
         .not('title_norm','ilike','*uncover*')
         .not('title_norm','ilike','*choom original*')
-        .not('title_norm','ilike','*the original*');
+        .not('title_norm','ilike','*the original*')
+        .not('title_norm','ilike','*discover*')
+        .not('title_norm','ilike','*recover*')
+        .not('title_norm','ilike','*undercover*')
+        .not('title_norm','ilike','*디스커버*')
+        .not('title_norm','ilike','*리커버*')
+        .not('title_norm','ilike','*언더커버*');
+    }else if(filter==='live'){
+      q=q.or('category.eq.live,title_norm.ilike.*리무진서비스*,title_norm.ilike.*리무진 서비스*')
+        .not('title','ilike','%[live]%')
+        .not('title_norm','ilike','*엠카드림*');
+    }else if(filter==='variety'||filter==='show'){
+      q=q.or(`category.eq.${filter},content_formats.cs.{${filter}}`);
     }else if(filter&&filter!=='all'){
       q=q.eq('category',filter);
     }
@@ -12131,8 +12149,7 @@ function _makeChVidController(contId){
     nodes.forEach(item=>{
       const img=item.querySelector('.gc-ch-thumb');
       if(!img)return;
-      // item이 아니라 img 자신의 너비를 재야 함 — featured+쇼츠는 아이템 너비의 42%로 줄어든
-      // 이미지라(위 CSS 참고), item 기준으로 계산하면 실제 렌더 너비보다 훨씬 큰 높이가 박힘.
+      // img 자신의 너비를 재야 함 — 각종 보정(gc-ch-wide 등)이 적용된 실제 렌더 너비가 기준이 되어야 함.
       const w=img.getBoundingClientRect().width;
       if(w)img.style.height=(item.classList.contains('is-short')?w*16/9:w*9/16)+'px';
     });
@@ -12170,7 +12187,7 @@ function _makeChVidController(contId){
     if(!correctedIds.length)return;
     if(myGen!==state.gen)return; // 그 사이 다른 그룹/새로고침으로 전환됨: DB 보정만 반영하고 화면은 건너뜀
     // pageItems는 원래(업로드 시간순) 순서를 그대로 유지한 배열이므로, 정정된 category로 그대로 재그룹핑
-    const g=_groupGcVids(pageItems,featured,pageStartPos,pageStartCat,document.body.classList.contains('card-wide'));
+    const g=_groupGcVids(pageItems,featured,pageStartPos,pageStartCat,document.body.classList.contains('card-wide'),state.filter==='short');
     pageNodes.forEach(n=>n.remove());
     const{nodes:newNodes}=renderItems(g.renderList,grid);
     state.pos=g.endPos;state.cat=g.endCat;
@@ -12217,7 +12234,17 @@ function _makeChVidController(contId){
     }
     const myGen=state.gen;
     // gen이 그대로일 때만(그 사이 다른 그룹/새로고침으로 전환되지 않았을 때만) 이 호출이 건 잠금을 해제한다
-    const releaseLock=()=>{if(myGen===state.gen)state.appendLock=false;};
+    const releaseLock=()=>{
+      if(myGen!==state.gen)return;
+      state.appendLock=false;
+      // IntersectionObserver는 교차 상태 변화 시에만 발화 — appendLock 해제 시점에 moreWrap이
+      // 이미 뷰포트 안에 있으면 observer가 재발화하지 않아 다음 페이지가 영원히 안 불려오는 버그.
+      // 해제 직후 직접 확인해서 보완한다.
+      if(state.hasMore&&moreWrap){
+        const _r=moreWrap.getBoundingClientRect();
+        if(_r.top<window.innerHeight+500)tryLoadMore(ko);
+      }
+    };
     const{filter,offset}=state;
     // 필터 조건만 담당(정렬/범위는 호출부에서 붙임) — 청크 랜덤 샘플링 시 같은 조건으로 여러 번 독립 호출해야 함
     // forCount=true면 행 데이터 없이(head:true) 총 개수만 가볍게 물어보는 전용 변형 — 카드를 처음 열 때
@@ -12294,7 +12321,7 @@ function _makeChVidController(contId){
         if(state.formatFilter)q=q.contains('content_formats',[state.formatFilter]);
       }else if(filter==='cover'){
         // "BE ORIGINAL"(딩고 안무 시리즈), "original ver"(원본 버전), "cover story"/"커버 촬영"(잡지/포토),
-        // "uncover", "CHOOM ORIGINAL", "the original" 등은 커버 영상이 아니라 명시적으로 제외.
+        // "uncover", "CHOOM ORIGINAL", "the original", "discover/recover/undercover"(커버 포함 단어) 등 제외.
         q=q.or('title_norm.ilike.*cover*,title_norm.ilike.*커버*,title_norm.ilike.*원곡*,title_norm.ilike.*original*')
           .not('title_norm','ilike','*be original*')
           .not('title_norm','ilike','*original ver*')
@@ -12302,9 +12329,20 @@ function _makeChVidController(contId){
           .not('title_norm','ilike','*커버 촬영*')
           .not('title_norm','ilike','*uncover*')
           .not('title_norm','ilike','*choom original*')
-          .not('title_norm','ilike','*the original*');
+          .not('title_norm','ilike','*the original*')
+          .not('title_norm','ilike','*discover*')
+          .not('title_norm','ilike','*recover*')
+          .not('title_norm','ilike','*undercover*')
+          .not('title_norm','ilike','*디스커버*')
+          .not('title_norm','ilike','*리커버*')
+          .not('title_norm','ilike','*언더커버*');
       }else if(filter==='live'){
-        q=q.eq('category','live').not('title','ilike','%[live]%');
+        q=q.or('category.eq.live,title_norm.ilike.*리무진서비스*,title_norm.ilike.*리무진 서비스*')
+          .not('title','ilike','%[live]%')
+          .not('title_norm','ilike','*엠카드림*');
+      }else if(filter==='variety'||filter==='show'){
+        // category(채널 tier 기반 레거시) OR content_formats(영상 단위 장르 태그) 둘 다 체크
+        q=q.or(`category.eq.${filter},content_formats.cs.{${filter}}`);
       }else if(filter!=='all'){
         q=q.eq('category',filter);
       }
@@ -12463,7 +12501,7 @@ function _makeChVidController(contId){
       const pageStartPos=state.pos,pageStartCat=state.cat;
       const incomingTrailingEl=state.trailingEl; // 이전 페이지에서 홀로 남은 카드(있다면)
       const pageItems=vids;
-      const g=_groupGcVids(pageItems,featured,pageStartPos,pageStartCat,document.body.classList.contains('card-wide'));
+      const g=_groupGcVids(pageItems,featured,pageStartPos,pageStartCat,document.body.classList.contains('card-wide'),state.filter==='short');
       state.pos=g.endPos;state.cat=g.endCat;
       const{nodes:pageNodes,pendingProbe}=renderItems(g.renderList,grid);
       state.allVids=state.allVids.concat(g.renderList); // 라이트박스 스와이프 넘기기용으로 지금까지 불러온 영상 누적
@@ -12787,8 +12825,12 @@ function _makeChVidController(contId){
     if(stillQualifies&&state.filter!=='all'){
       if(state.filter==='cover'){
         const t=(newRow.title||'').toLowerCase();
-        const _coverExclude=['be original','original ver','cover story','커버 촬영','uncover','choom original','the original'];
+        const _coverExclude=['be original','original ver','cover story','커버 촬영','uncover','choom original','the original','discover','recover','undercover','디스커버','리커버','언더커버'];
         if(!/cover|커버|원곡|original/.test(t)||_coverExclude.some(ex=>t.includes(ex)))stillQualifies=false;
+      }else if(state.filter==='live'){
+        const t=(newRow.title||'').toLowerCase();
+        if(t.includes('엠카드림'))stillQualifies=false;
+        else if(newRow.category!=='live'&&!t.includes('리무진서비스')&&!t.includes('리무진 서비스'))stillQualifies=false;
       }else if(newRow.category!==state.filter){
         stillQualifies=false;
       }
@@ -13009,6 +13051,17 @@ async function _loadConcertRow(gko,containerId){
   if(error||!data)return;
   _renderConcertRow(containerId,data);
 }
+// 멤버 이름으로 직접 이벤트를 조회 — 그룹 멤버의 솔로 콘서트용.
+// groups 배열에 멤버 이름(ko)이 포함된 이벤트를 찾는다. GROUPS 체크 없이 이름으로 바로 쿼리하므로,
+// DB에 groups=['지민'] 형태로 데이터가 추가되는 즉시 해당 멤버 카드에 자동 표시된다.
+async function _loadMemberConcertRow(memberKo,containerId){
+  const row=document.getElementById(containerId);
+  if(row)row.innerHTML='';
+  if(!sb||!memberKo)return;
+  const{data,error}=await sb.from('kpop_events').select('*').contains('groups',[memberKo]).order('date_start',{ascending:false});
+  if(error||!data?.length)return;
+  _renderConcertRow(containerId,data);
+}
 
 // 그룹/멤버 카드의 컬렉션 행 — 내 컬렉션 중 이 그룹(또는 이 멤버)이 담긴 것(로컬, 네트워크 불필요) +
 // 공개 컬렉션 중 마찬가지로 담긴 것(다른 유저, public_collections 테이블)을 합쳐서 보여준다. 내 것을
@@ -13059,6 +13112,8 @@ function _renderCollectionRow(containerId,list){
   if(!listEl)return;
   if(!list.length){row.style.display='none';return;}
   listEl.innerHTML='';
+  const hdEl=row.querySelector('.gc-collection-hd');
+  if(hdEl)hdEl.innerHTML=`Collections<span class="gc-collection-hd-cnt"> · ${list.length}개</span>`;
   list.forEach(col=>{
     const chip=document.createElement('div');chip.className='gc-collection-chip';
     const thumbWrap=document.createElement('div');thumbWrap.className='gc-collection-chip-thumb-wrap';
@@ -13186,7 +13241,7 @@ async function _probeShortsBatch(refs){
 }
 
 // 대표(featured) 영상 후보: 뮤비만 제외하고 스크랩(하트) 최다 영상을 뽑는다. 쇼츠도 후보에 포함되며,
-// 쇼츠가 뽑히면 2열 히어로 폭은 그대로 차지하되 썸네일만 세로 비율로 가운데 크게 표시된다(.gc-ch-item.featured.is-short).
+// 쇼츠가 뽑히면 2열 폭 전체를 9:16 비율로 최대 크기로 표시한다(.gc-ch-item.featured.is-short).
 function _pickMainChVid(videos){
   if(!videos.length)return null;
   // 뮤비·예능/연기(other)는 대표영상 후보에서 제외 — 라이브(직캠)가 대표 위주가 되도록.
@@ -13210,7 +13265,7 @@ function _pickMainChVid(videos){
 // startPos/startCat은 이전 페이지에서 이어지는 그리드상 현재 위치(홀/짝, 대기 중인 비율).
 // widenPrevTrailing: 이 페이지 첫 항목의 비율이 이전 페이지의 마지막(홀로 남은) 카드와 달라서,
 // 그 이전 페이지 카드를 넓혀야 하는 경우 true.
-function _groupGcVids(items,featured,startPos,startCat,avoidWiden){
+function _groupGcVids(items,featured,startPos,startCat,avoidWiden,widenSomeShorts=false){
   const renderList=[];
   let pos=startPos,cat=startCat;
   let lastItem=null;
@@ -13237,6 +13292,15 @@ function _groupGcVids(items,featured,startPos,startCat,avoidWiden){
     // 0.28(영상 3~4개당 1개꼴)은 너무 잦아서 2열 중 1열만 채워진 것처럼 보이는 카드가 너무 많다는
     // 피드백(2026-08-10) — 가끔 변화를 주는 느낌만 남기고 빈도를 확 낮춤.
     if(!avoidWiden&&pos===0&&c==='norm'&&Math.random()<0.1){
+      v._wide=true;
+      renderList.push(v);
+      lastItem=v;
+      pos=0;cat=null;
+      continue;
+    }
+    // Shorts 탭처럼 Shorts끼리만 이어질 땐 비율 경계가 없어 widening이 발생 안 함 —
+    // widenSomeShorts(=Shorts 탭)일 때 가끔 단독 2열 폭 카드로 섞어 시각적 변화를 준다.
+    if(widenSomeShorts&&pos===0&&c==='short'&&Math.random()<0.1){
       v._wide=true;
       renderList.push(v);
       lastItem=v;
@@ -13343,7 +13407,17 @@ _wireTotop(memberPanelEl);
 _wireTotop(connPanelEl);
 _totopBtn.addEventListener('click',e=>{
   e.stopPropagation();
-  _totopScrollTarget?.scrollTo({top:0,behavior:'smooth'});
+  const _el=_totopScrollTarget;
+  if(!_el)return;
+  // behavior:'smooth'는 거리에 비례해 속도가 달라져서 일관성 없음 — 고정 시간+ease-out으로 교체
+  const _start=_el.scrollTop;
+  const _dur=340;
+  const _t0=performance.now();
+  (function _step(now){
+    const p=Math.min((now-_t0)/_dur,1);
+    _el.scrollTop=_start*(1-p*p*(3-2*p)); // smoothstep ease
+    if(p<1)requestAnimationFrame(_step);
+  })(performance.now());
 });
 
 </script>

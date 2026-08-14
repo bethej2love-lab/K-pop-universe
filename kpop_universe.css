@@ -380,7 +380,7 @@
   .tv-sm:hover{opacity:.82;}
   .tv-sm img{width:100%;aspect-ratio:16/9;object-fit:cover;display:block;}
   .tv-sm-title{font-size:13px;color:#a8bcd8;line-height:1.3;padding:4px 4px;white-space:nowrap!important;overflow:hidden;text-overflow:ellipsis;}
-  .tv-with-line{font-size:9px;font-weight:500;padding:0 4px 3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:.02em;}
+  .tv-with-line{font-size:9px;font-weight:500;color:#a8bcd8;padding:0 4px 3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:.02em;}
   .tv-with-chip{cursor:pointer;color:rgba(150,180,255,0.72);transition:color .13s;}
   .tv-with-chip:hover{color:rgba(200,220,255,1);text-decoration:underline;}
   .tv-with-chip-cover{color:rgba(200,150,230,0.75);}
@@ -932,10 +932,11 @@
   #tt-links{display:flex;align-items:center;gap:7px;flex-shrink:0;}
   #tt-links:not(:empty)::after{content:'·';color:rgba(120,145,195,0.46);font-size:10px;}
   #tt-links .gc-link-icon{width:14px;height:14px;}
-  /* 틱톡 아이콘 자체가 획 모양상 오른쪽으로 쏠려있어서(왼쪽 여백이 큼) 바로 뒤의 나무위키 아이콘과의
-     간격이 다른 아이콘 쌍보다 시각적으로 더 넓어 보임(2026-08-14, 사용자 제보) — gap 자체는 모든 쌍이
-     동일(7px)하므로, 이 쌍만 살짝 당겨서 눈으로 봤을 때 균등해 보이게 보정. */
-  .gc-link-icon-tiktok + .gc-link-icon-namu{margin-left:-3px;}
+  /* 틱톡 아이콘의 원형 콘텐츠가 x=5~15(24단위 기준) 좌측에 치우쳐 있어 우측 여백이 크고(16px 아이콘
+     기준 ≈6px), 바로 뒤 나무위키 아이콘과의 시각적 gap이 다른 쌍보다 넓어 보임(2026-08-14, 사용자 제보).
+     margin:-7px 기본값보다 더 음수로 설정해 나무위키 아이콘을 왼쪽으로 당겨야 gap이 줄어든다
+     (덜 음수인 -3px는 반대 방향 — 오른쪽으로 밀어 gap을 더 늘림). */
+  .gc-link-icon-tiktok + .gc-link-icon-namu{margin-left:-11px;}
   /* 가족관계 — 연결 카드 헤더 바로 아래, 콜라보 목록과 구분되는 별도 섹션(2026-08-13,
      멤버 카드의 ⓘ 팝업에서 이동해옴). */
   .conn-family-sec{margin-bottom:14px;}
@@ -1091,16 +1092,9 @@
   .gc-ch-item.featured,.gc-ch-item.gc-ch-wide{grid-column:span 2;}
   .gc-ch-item.is-short .gc-ch-thumb{aspect-ratio:9/16;object-fit:contain;position:relative;z-index:1;}
   .gc-ch-item.is-short .gc-ch-thumb-bg{position:absolute;inset:0;background-size:cover;background-position:center;filter:blur(18px) brightness(0.45);transform:scale(1.08);z-index:0;}
-  /* 쇼츠가 대표(featured)로 뽑히면 2열 폭은 그대로 차지하되(그래야 오른쪽에 빈칸이 안 생김), 썸네일 자체는
-     세로 비율 유지한 채 가운데로 적당히 크게 — 모바일 멤버카드 대표영상(#tv-big-wrap.is-shorts)과 같은 톤.
-     오버레이 버튼(태깅/스크랩)도 줄어든 썸네일 가장자리에 맞춰 안쪽으로 당김. */
-  .gc-ch-item.featured.is-short .gc-ch-thumb{width:42%;margin:0 auto;}
-  .gc-ch-item.featured.is-short .vid-edit-btn{left:calc(29% + 4px);}
-  .gc-ch-item.featured.is-short .scrap-btn{right:calc(29% + 4px);}
-  /* 컬렉션(저장) 버튼도 하트와 같이 안쪽으로 당겨야 하는데 빠져있었음 — 기본 배치(저장 34px, 하트
-     4px, 간격 30px)를 그대로 유지한 채 당겨진 하트 기준으로 30px 왼쪽에 놓는다(2026-08-12, 사용자
-     제보 — 대표 쇼츠 영상만 저장 버튼이 하트보다 오른쪽에 있었음). */
-  .gc-ch-item.featured.is-short .col-btn{right:calc(29% + 4px + 30px);}
+  /* 쇼츠가 대표(featured)로 뽑히면 2열 폭 전체를 채워 9:16 비율로 최대 크기로 표시한다(사용자 요청).
+     버튼은 기본값(right/left 4px)을 그대로 사용 — 썸네일이 전체 폭이라 별도 조정 불필요. */
+  .gc-ch-item.featured.is-short .gc-ch-thumb{width:100%;}
   /* ── 관리자 전용: 영상 출연 멤버 태깅 (그룹/멤버/연결 카드 썸네일 공용) ───────────────── */
   .vid-edit-btn{
     width:22px;height:22px;border-radius:50%;
@@ -1656,10 +1650,10 @@
   .conn-chip:active,.conn-chip.lp-active{transform:scale(0.93);color:rgba(232,246,255,1.0);text-shadow:0 0 17px rgba(200,228,255,0.94),0 0 8px rgba(200,228,255,0.65),0 0 3px rgba(200,228,255,0.42);}
   .conn-no-video{font-size:11px;color:#5878a0;padding:4px 0;}
   /* ── 콘서트/팬미팅 ────────────────────────────── */
-  .concert-row{margin-top:8px;padding-top:10px;border-top:0.5px solid rgba(255,255,255,0.10);}
+  .concert-row{margin-top:8px;padding-top:7px;border-top:0.5px solid rgba(255,255,255,0.10);}
   .concert-row:empty{display:none;margin:0;padding:0;border:none;}
   .concert-teaser{display:flex;align-items:center;gap:6px;width:100%;background:none;border:none;padding:2px 0;cursor:pointer;font-family:inherit;text-align:left;color:rgba(200,220,255,0.76);}
-  .concert-teaser-txt{flex:1;font-size:11.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .concert-teaser-txt{flex:1;font-size:10.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   .concert-chevron{font-size:10px;opacity:0.6;transition:transform .2s ease;flex-shrink:0;}
   .concert-teaser.open .concert-chevron{transform:rotate(90deg);}
   .concert-list{display:none;flex-direction:column;gap:8px;margin-top:8px;}
@@ -1739,19 +1733,20 @@
   .gc-discog-track.is-title .gc-discog-track-no{color:rgba(255,190,130,0.85);}
   .gc-discog-track.is-title .gc-discog-track-name{color:#ffdcb0;font-weight:700;}
   /* ── 그룹/멤버 카드 내 컬렉션 행(내 컬렉션 + 공개 컬렉션 중 이 그룹이 담긴 것) ── */
-  .gc-collection-row{margin-top:9px;padding-top:10px;border-top:0.5px solid rgba(255,255,255,0.10);}
+  .gc-collection-row{margin-top:7px;padding-top:8px;border-top:0.5px solid rgba(255,255,255,0.10);}
   .gc-collection-hd{font-size:9.5px;font-weight:700;letter-spacing:.16em;color:rgba(130,150,205,0.56);text-transform:uppercase;margin-bottom:7px;}
+  .gc-collection-hd-cnt{letter-spacing:0;text-transform:none;font-weight:500;opacity:0.75;}
   .gc-collection-list{display:flex;gap:8px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none;}
   .gc-collection-list::-webkit-scrollbar{display:none;}
-  .gc-collection-chip{flex-shrink:0;width:74px;cursor:pointer;position:relative;}
+  .gc-collection-chip{flex-shrink:0;width:74px;cursor:pointer;}
   .gc-collection-chip-thumb-wrap{position:relative;width:74px;height:46px;border-radius:8px;overflow:hidden;background:rgba(255,255,255,0.06);}
   .gc-collection-chip-thumb{width:100%;height:100%;object-fit:cover;display:block;}
   .gc-collection-chip-mine{position:absolute;top:3px;right:3px;width:6px;height:6px;border-radius:50%;background:rgba(130,185,255,0.95);box-shadow:0 0 5px rgba(130,185,255,0.7);}
   .gc-collection-chip-name{margin-top:4px;font-size:10.5px;color:rgba(200,220,255,0.8);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   .gc-collection-chip-cnt{font-size:9.5px;color:rgba(120,145,190,0.54);}
-  .gc-collection-chip-del{position:absolute;top:2px;left:3px;width:16px;height:16px;border-radius:50%;background:rgba(10,12,24,0.72);border:none;color:rgba(255,255,255,0.55);font-size:11px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity 0.15s;}
+  .gc-collection-chip-del{position:absolute;top:3px;left:3px;width:14px;height:14px;border-radius:50%;background:rgba(130,185,255,0.12);border:0.5px solid rgba(130,185,255,0.25);color:rgba(130,185,255,0.5);font-size:10px;line-height:1;padding:0;cursor:pointer;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity 0.15s,background 0.15s;}
   .gc-collection-chip:hover .gc-collection-chip-del{opacity:1;}
-  .gc-collection-chip-del:hover{background:rgba(200,60,60,0.8);color:#fff;}
+  .gc-collection-chip-del:hover{background:rgba(130,185,255,0.28);color:rgba(200,225,255,0.9);}
   #venue-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.52);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:80;display:none;align-items:center;justify-content:center;}
   #venue-overlay.open{display:flex;}
   #venue-panel{position:relative;width:min(320px,calc(100vw - 40px));max-height:min(480px,calc(100vh - 80px));overflow-y:auto;background:rgba(13,17,34,0.97);backdrop-filter:blur(40px) saturate(180%);-webkit-backdrop-filter:blur(40px) saturate(180%);border-radius:18px;box-shadow:0 16px 56px rgba(0,0,0,0.72);border:0.5px solid rgba(255,255,255,0.10);padding:20px;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
@@ -1867,9 +1862,8 @@
   #idx-search-inp:focus{border-color:rgba(136,164,255,0.38);}
   #member-tooltip{position:fixed;pointer-events:none;z-index:99;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;font-size:12.5px;font-weight:600;color:rgba(245,248,255,0.95);text-shadow:0 0 11px rgba(225,235,255,0.55),0 0 4px rgba(225,235,255,0.45),0 1px 4px rgba(0,0,0,0.85);white-space:nowrap;opacity:0;transition:opacity 0.15s;transform:translate(-50%,-130%);letter-spacing:.04em;}
   /* 모바일 줌인 시 멤버 이름 레이블 (CSS2DObject) */
-  /* .group-label(줄 303 부근)과 같은 톤(글자 두께/자간/은은한 발광)으로 맞추되, 더 옅게(2026-08-14,
-     사용자 요청 — "그룹 텍스트랑 거의 똑같은 스타일로 하되 더 투명하게, 은은하게"). */
-  .member-name-label{font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;font-size:9.5px;font-weight:500;color:rgba(255,255,255,0.55);white-space:nowrap;pointer-events:none;user-select:none;letter-spacing:.1em;text-shadow:0 0 10px rgba(255,255,255,0.4),0 1px 3px rgba(0,0,0,1);transform:translate(-50%,-100%);}
+  /* .group-label(줄 303 부근)과 거의 동일한 스타일 — currentColor 이중 글로우, 불투명도 높임(2026-08-14). */
+  .member-name-label{font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;font-size:8.5px;font-weight:500;color:rgba(255,255,255,0.82);white-space:nowrap;pointer-events:none;user-select:none;letter-spacing:.1em;text-shadow:0 0 14px currentColor,0 0 5px currentColor,0 1px 4px rgba(0,0,0,0.80);transform:translate(-50%,-100%);}
   ::-webkit-scrollbar{-webkit-appearance:none;width:2px;height:2px;}
   ::-webkit-scrollbar-track{background:transparent;}
   ::-webkit-scrollbar-thumb{-webkit-appearance:none;background:rgba(180,200,240,0.07);border-radius:2px;}

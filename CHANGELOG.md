@@ -14,6 +14,19 @@
 
 ## 2026-08-14
 
+- [완료][kpop_universe.html] 멤버 카드 콘서트 분리 — 그룹 멤버는 멤버명 기반 솔로 이벤트만(_loadMemberConcertRow 신설), 솔로 아티스트는 기존대로; DB에 groups=['멤버명'] 추가 즉시 자동 표시
+- [완료][kpop_universe.css][kpop_universe.html] Collections 헤더에 인라인 컬렉션 수 표시 — "Collections · n개" 형식, cnt 스팬 별도 스타일(letter-spacing·uppercase 해제, 약간 연하게)
+- [완료][kpop_universe.css] 콘서트 표시줄 폰트 11.5px→10.5px 축소, padding-top 10px→7px 축소 / gc-collection-row margin-top 9→7px·padding-top 10→8px 조정(아래 선 간격 감소)
+- [완료][kpop_universe.css] 틱톡↔나무위키 아이콘 간격 보정 재수정 — 이전 -3px는 방향이 반대(gap 증가), -11px로 교체해 시각적으로 다른 아이콘 쌍과 균등하게 맞춤
+- [완료][kpop_universe.css][kpop_universe.html] 대표(featured) 쇼츠 표시 크기 확대 — 42% 폭 제한 제거, 2열 전체 폭으로 9:16 비율 최대 크기 표시 / 버튼 위치 오버라이드 제거(기본값으로 복귀)
+- [완료][kpop_universe.html] Shorts 탭 그리드에 간헐적 와이드 쇼츠 추가 — _groupGcVids에 widenSomeShorts 파라미터, 10% 확률로 단독 2열 폭 카드 삽입(normal 영상과 동일한 방식)
+
+- [완료][kpop_universe.html] 무한스크롤 점 세개 안 나오는 버그 수정 — appendLock 해제 시점에 moreWrap이 이미 뷰포트 안이면 IntersectionObserver가 재발화 안 하던 문제, releaseLock에서 직접 viewport 체크 후 tryLoadMore 호출로 보완
+- [완료][kpop_universe.html] Live 탭에 제목 기반 예외 추가 — '리무진서비스'/'리무진 서비스' 포함 영상 category 무관하게 live 탭으로 포함 (buildBaseQuery·_pickFeaturedVidFromDB·patchItem 3곳 동기화)
+- [완료][kpop_universe.html][admin.js] variety/show 탭 분류를 category 단일값 → content_formats 배열 기반으로 전환 — 동기화 시 tier 자동 태깅, 수동 저장 시 기존 코너명 태그 보존하며 장르 태그만 교체, 쿼리는 category OR content_formats OR 병행(기존 레거시 행 누락 방지)
+- [완료][kpop_universe.html] 어드민 영상 포맷 편집 select에 예능·드라마/영화 옵션 추가
+- [완료][kpop_universe.html] Cover 탭 제외 키워드 추가 — discover/recovery/undercover 및 한글판(디스커버·리커버·언더커버) 3곳(대표영상쿼리·목록쿼리·클라이언트 필터) 동기화
+- [완료][kpop_universe.css] 멤버 이름 레이블(10명 이하 그룹 웹) 폰트 9.5px→8.5px 축소, 투명도 0.55→0.82로 높이고 text-shadow를 group-label과 동일한 currentColor 이중 글로우 방식으로 변경
 - [완료][kpop_universe.html] Cover 탭 제외 키워드 추가 — original ver / cover story / 커버 촬영 / uncover / choom original / the original (목록쿼리·대표영상쿼리·patchItem 클라이언트 필터 3곳 동기화)
 - [완료][admin.js] 영상 태그 저장 후 그리드 갱신 딜레이 500ms → 100ms (단일/일괄 저장 모두)
 - [완료][kpop_universe.html] 어드민 계정 GPU 렌더링 15fps로 제한 — 일반 유저는 30fps 유지, 로그인 전/일반 계정은 그대로
