@@ -356,7 +356,7 @@
   .hscroll-drag{cursor:grab;}
   .hscroll-drag.drag-scrolling{cursor:grabbing;user-select:none;}
   /* 그룹/멤버 카드 상태 한 줄 — "지금 N명이 보고 있어요"와 "N명이 즐겨찾기했어요"가 한 자리에서 번갈아 표시됨 */
-  .gc-status-line{display:none;overflow:hidden;height:16px;position:relative;font-size:10.5px;letter-spacing:.01em;margin:8px 0 7px;}
+  .gc-status-line{display:none;overflow:hidden;height:16px;position:relative;font-size:10.5px;letter-spacing:.01em;margin:8px 0 5px;}
   .gc-status-line.show{display:block;}
   @keyframes status-slide-in{from{transform:translateY(110%);opacity:0;}to{transform:translateY(0);opacity:1;}}
   @keyframes status-slide-out{from{transform:translateY(0);opacity:1;}to{transform:translateY(-110%);opacity:0;}}
@@ -365,7 +365,7 @@
   .gc-status-inner.type-favcount{color:rgba(255,150,190,0.85);text-shadow:0 0 6px rgba(255,120,170,0.3);}
   .gc-status-inner.anim-in{animation:status-slide-in 0.42s cubic-bezier(0.22,0.8,0.36,1) forwards;}
   .gc-status-inner.anim-out{animation:status-slide-out 0.38s cubic-bezier(0.64,0,0.78,0.2) forwards;}
-  #tt-status-line{margin:10px 0 8px;}
+  #tt-status-line{margin:10px 0 6px;}
   #tt-status-line .gc-status-inner{padding-left:4px;}
   .presence-dot{width:6px;height:6px;border-radius:50%;background:rgb(255,140,120);box-shadow:0 0 5px rgba(255,140,120,0.8);animation:presence-pulse 1.6s ease-in-out infinite;flex:none;}
   .favcount-dot{width:6px;height:6px;border-radius:50%;background:rgb(255,110,165);box-shadow:0 0 5px rgba(255,110,165,0.8);animation:presence-pulse 1.6s ease-in-out infinite;flex:none;}
@@ -490,9 +490,7 @@
   #yt-lb-speed-badge.is-on{display:block;}
   #yt-lb-close{position:absolute;top:-30px;right:0;background:none;border:none;color:#fff;font-size:20px;cursor:pointer;padding:4px 6px;opacity:.65;line-height:1;}
   #yt-lb-close:hover{opacity:1;}
-  /* 브라우즈 모드 전용 아래방향 화살표(⌄) — 닫기 버튼 아이콘을 스와이프/쇼츠 모드의 ✕와 다르게 씀
-     (2026-08-12, 사용자 요청 — Spotify 스타일 상단바). 기본(쇼츠 모드 등)은 ✕만 보이고 화살표는 숨김. */
-  #yt-lb-close-chevron{display:none;}
+  #yt-lb-close-chevron{display:block;width:18px;height:18px;}
   /* 브라우즈 모드 전용 상단 우측 "더보기(⋮)" 메뉴 — "연결 보기"처럼 자주 안 쓰는 부가 기능을 여기로
      모아서 상단바를 정리(2026-08-12, 사용자 요청). 기본(쇼츠 모드)은 아예 없음. */
   .lb-menu-wrap{display:none;position:relative;}
@@ -646,8 +644,6 @@
     #yt-lightbox.lb-browse #yt-lb-uplist-scroll{gap:10px;}
     #yt-lightbox.lb-browse .lb-uplist-item{padding:10px 6px;}
     #yt-lightbox.lb-browse #yt-lb-close{position:fixed;top:14px;left:12px;right:auto;bottom:auto;z-index:2;background:rgba(0,0,0,0.4);border-radius:50%;width:36px;height:36px;display:flex;align-items:center;justify-content:center;}
-    #yt-lightbox.lb-browse #yt-lb-close-x{display:none;}
-    #yt-lightbox.lb-browse #yt-lb-close-chevron{display:block;width:19px;height:19px;}
     #yt-lightbox.lb-browse .lb-menu-wrap{display:block;position:fixed;top:14px;right:12px;z-index:2;}
     #yt-lightbox.lb-browse #yt-lb-menu-btn{background:rgba(0,0,0,0.4);border:none;border-radius:50%;width:36px;height:36px;
       color:#fff;font-size:21px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;}
@@ -674,12 +670,6 @@
       width:36px;height:36px;align-items:center;justify-content:center;font-size:16px;opacity:1;}
     #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-wrap.lb-ui-hidden #yt-lb-close{
       opacity:.65;pointer-events:all;}
-    #lb-shorts-list-btn{display:none;}
-    #yt-lightbox.lb-shorts:not(.lb-browse) #lb-shorts-list-btn{
-      display:flex;position:fixed;top:calc(14px + env(safe-area-inset-top,0px));left:54px;
-      background:rgba(0,0,0,0.4);border:none;border-radius:50%;padding:0;
-      width:36px;height:36px;align-items:center;justify-content:center;
-      color:#fff;cursor:pointer;z-index:2;-webkit-tap-highlight-color:transparent;}
     #yt-lightbox.lb-shorts:not(.lb-browse) .lb-menu-wrap{
       display:block;position:fixed;top:calc(14px + env(safe-area-inset-top,0px));right:12px;z-index:2;}
     #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-menu-btn{
@@ -936,7 +926,7 @@
      기준 ≈6px), 바로 뒤 나무위키 아이콘과의 시각적 gap이 다른 쌍보다 넓어 보임(2026-08-14, 사용자 제보).
      margin:-7px 기본값보다 더 음수로 설정해 나무위키 아이콘을 왼쪽으로 당겨야 gap이 줄어든다
      (덜 음수인 -3px는 반대 방향 — 오른쪽으로 밀어 gap을 더 늘림). */
-  .gc-link-icon-tiktok + .gc-link-icon-namu{margin-left:-11px;}
+  .gc-link-icon-tiktok + .gc-link-icon-namu{margin-left:-9px;}
   /* 가족관계 — 연결 카드 헤더 바로 아래, 콜라보 목록과 구분되는 별도 섹션(2026-08-13,
      멤버 카드의 ⓘ 팝업에서 이동해옴). */
   .conn-family-sec{margin-bottom:14px;}
@@ -1735,7 +1725,6 @@
   /* ── 그룹/멤버 카드 내 컬렉션 행(내 컬렉션 + 공개 컬렉션 중 이 그룹이 담긴 것) ── */
   .gc-collection-row{margin-top:7px;padding-top:8px;border-top:0.5px solid rgba(255,255,255,0.10);}
   .gc-collection-hd{font-size:9.5px;font-weight:700;letter-spacing:.16em;color:rgba(130,150,205,0.56);text-transform:uppercase;margin-bottom:7px;}
-  .gc-collection-hd-cnt{letter-spacing:0;text-transform:none;font-weight:500;opacity:0.75;}
   .gc-collection-list{display:flex;gap:8px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none;}
   .gc-collection-list::-webkit-scrollbar{display:none;}
   .gc-collection-chip{flex-shrink:0;width:74px;cursor:pointer;}
@@ -2204,7 +2193,7 @@
   #feed-close{display:none;}
   #feed-close:active{color:rgba(200,218,255,0.85);transform:scale(0.86);transition:transform .07s;}
   #feed-body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;background:rgba(8,11,24,0.78);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);padding-bottom:calc(env(safe-area-inset-bottom,0px) + 80px);}
-  .feed-section-ttl{font-size:10px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:rgba(120,148,205,0.51);padding:22px 20px 8px;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
+  .feed-section-ttl{font-size:10px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:rgba(120,148,205,0.51);padding:14px 20px 8px;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
   /* 기념일 스트립(인스타 스토리 스타일 가로 스크롤) */
   .feed-strip{display:flex;gap:14px;overflow-x:auto;padding:2px 20px 18px;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
   .feed-strip::-webkit-scrollbar{display:none;}

@@ -12,6 +12,13 @@
 
 ---
 
+## 2026-08-15
+
+- [완료][kpop_universe.html][kpop_universe.css] 라이트박스 쇼츠 모드 UI 정리 — ① 닫기 버튼 아이콘 항상 chevron(↓)으로 통일(✕ 제거, 모드 무관하게 동일); ② 줄 세개 버튼(lb-shorts-list-btn) 완전 제거; ③ rotate 버튼 양방향 토글로 통합 — 세로(쇼츠)→가로(browse), 가로→세로(shorts) 자유 전환; _lbSwitchToShorts() 신설
+- [완료][groups.json][artists.json] 그룹 추가: 아이칠린(ICHILLIN', 2021, KM엔터, 걸그룹 7인), 엔싸인(n.SSign, 2023, nCH엔터, 보이그룹 7인, 청춘스타 출신)
+- [완료][kpop_universe.html] 동기화 무관 키워드 추가 — 스프링피버·유뷰녀 킬러 (_JUNK_TITLE_KEYWORDS_GLOBAL)
+- [완료][kpop_universe.html] 빈 탭 숨김 존재 체크 쿼리 버그 수정 — cover는 category='cover' 대신 title_norm ilike(cover·커버·원곡) + content_formats 체크로 수정, variety에 제목 키워드(라디오스타·아는형님 등) 추가, show에 content_formats.cs.{show} 추가 → buildBaseQuery 실제 필터와 일치
+
 ## 2026-08-14
 
 - [완료][kpop_universe.html] live·cover 탭 content_formats 크로스탭 지원 — content_formats에 'live'/'cover' 수동 태깅 시 해당 탭에 복수 노출; _pickFeaturedVidFromDB·buildBaseQuery·patchItem 3곳 동기화
