@@ -14,6 +14,8 @@
 
 ## 2026-08-15
 
+- [완료][kpop_universe.html][kpop_universe.css] 몰입형 쇼츠 모드 UI 항상 표시 — 닫기·리액션·툴바 아이콘 기본 숨김(lb-ui-hidden) 제거, 탭-캡(탭→UI토글) 기능 제거
+- [완료][kpop_universe.html] 탐험 버튼으로 새 카드 열릴 때 스크롤 위치 초기화 버그 수정 — display:none 중 scrollTop=0이 Safari에서 무시되던 문제, display:block 직후 재설정으로 보완(openMobSheet 첫 오픈 + 스택 푸시 2곳)
 - [완료][kpop_universe.html][kpop_universe.css] 라이트박스 쇼츠 모드 UI 정리 — ① 닫기 버튼 아이콘 항상 chevron(↓)으로 통일(✕ 제거, 모드 무관하게 동일); ② 줄 세개 버튼(lb-shorts-list-btn) 완전 제거; ③ rotate 버튼 양방향 토글로 통합 — 세로(쇼츠)→가로(browse), 가로→세로(shorts) 자유 전환; _lbSwitchToShorts() 신설
 - [완료][groups.json][artists.json] 그룹 추가: 아이칠린(ICHILLIN', 2021, KM엔터, 걸그룹 7인), 엔싸인(n.SSign, 2023, nCH엔터, 보이그룹 7인, 청춘스타 출신)
 - [완료][kpop_universe.html] 동기화 무관 키워드 추가 — 스프링피버·유뷰녀 킬러 (_JUNK_TITLE_KEYWORDS_GLOBAL)

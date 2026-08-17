@@ -2852,7 +2852,7 @@ function openLightbox(url,shorts,playlist,idx,ctx,isAdvance,forceBrowseMode){
   lb.classList.add('open');
   // UI 기본 숨김(탭하면 토글)은 몰입형 쇼츠 스와이프 전용 — 브라우즈 모드는 유튜브 자체 컨트롤을 그대로
   // 쓰는 일반 페이지형 레이아웃이라 항상 UI를 보여준다.
-  document.getElementById('yt-lb-wrap').classList.toggle('lb-ui-hidden',_lbSessionMode==='shorts');
+  document.getElementById('yt-lb-wrap').classList.remove('lb-ui-hidden');
   // controls=1: 진행바/재생시간/탐색은 노출하되, modestbranding+rel=0+iv_load_policy=3으로 로고·추천영상 등은 최대한 억제.
   // mute: 브라우저 자동재생 정책상 소리 있는 자동재생은 대부분 차단돼서, 무음일 때만 자동재생이 안정적으로
   // 됨 — 그래서 기본은 무음 자동재생, 사용자가 소리 버튼으로 직접 켜면 그 상태를 다음 영상에도 유지.
@@ -3260,10 +3260,6 @@ window.addEventListener('message',e=>{
     }
   }catch(_){}
 });
-function _lbToggleUi(){
-  document.getElementById('yt-lb-wrap').classList.toggle('lb-ui-hidden');
-}
-document.getElementById('yt-lb-tap-cap').addEventListener('click',_lbToggleUi);
 // 세로 영상으로 수동 전환된 video ID 기억 — 다음 열 때 자동 적용
 const _LB_PORTRAIT_KEY='kpu_lb_portrait_vids';
 let _lbPortraitVids=new Set(JSON.parse(localStorage.getItem(_LB_PORTRAIT_KEY)||'[]'));
@@ -3336,7 +3332,7 @@ function _lbSwitchToBrowse(){
 function _lbSwitchToShorts(){
   _lbSessionMode='shorts';
   document.getElementById('yt-lightbox').classList.remove('lb-browse');
-  document.getElementById('yt-lb-wrap').classList.add('lb-ui-hidden');
+  document.getElementById('yt-lb-wrap').classList.remove('lb-ui-hidden');
   _lbUpdateToolbar();
   _lbUpdateMemberInfo();
 }
@@ -4140,6 +4136,7 @@ function openMobSheet(cardEl){
     mobCardStackEl.style.display='none';mobCardStackEl.classList.remove('bs-open');
     mobSheetEl.classList.add('bs-full');
     mobSheetEl.style.display='block';
+    mobSheetInner.scrollTop=0; // display:none 중 scrollTop=0이 Safari에서 무시되는 문제 보완 — display:block 직후 재설정
     requestAnimationFrame(()=>mobSheetEl.classList.add('bs-open'));
     // 카드가 기본 100%(bs-full)로 열려서 우주 자체가 거의 안 보이는데도 별을 화면 위쪽으로 세게
     // 밀어올리고 있었음 — 시트를 끌어내려 살짝 들여다볼 때도 너무 위에 있어 잘 안 보인다는 제보
@@ -4167,6 +4164,7 @@ function openMobSheet(cardEl){
     // 그대로 물려받아서 열림(안 그러면 100%로 보다가 다음 카드 열 때마다 60vh로 도로 쪼그라듦)
     mobCardStackEl.classList.toggle('bs-full',_sheetFull);
     mobCardStackEl.style.display='block';
+    mobCardStackInner.scrollTop=0; // display:block 직후 재설정 — display:none 중 무시 보완
     mobCardStackEl.style.transition='none';
     mobCardStackEl.style.transform='translateY(200px)';
     requestAnimationFrame(()=>requestAnimationFrame(()=>{
