@@ -1741,11 +1741,36 @@
   #gc-discog-detail-meta{font-size:11.5px;color:rgba(150,170,210,0.66);margin-top:6px;}
   #gc-discog-detail-track-lbl{font-size:9px;font-weight:700;letter-spacing:.14em;color:rgba(130,150,205,0.56);text-transform:uppercase;margin-top:18px;padding-top:14px;border-top:0.5px solid rgba(255,255,255,0.08);text-align:left;}
   #gc-discog-detail-tracks{margin-top:6px;max-height:200px;overflow-y:auto;text-align:left;}
-  .gc-discog-track{display:flex;align-items:baseline;gap:9px;padding:6px 2px;font-size:12.5px;}
+  .gc-discog-track{display:flex;align-items:baseline;gap:9px;padding:6px 4px;font-size:12.5px;border-radius:7px;cursor:pointer;transition:background .13s;}
+  .gc-discog-track:hover{background:rgba(255,255,255,0.06);}
+  /* ── 트랙 클릭 → 영상 필터 결과 (2026-08-18) ──
+     gc-discog-detail(z-index:102) 위에 새 시트를 얹는 방식 — 앨범 상세를 안 닫고 그대로 뒤에 살려둬서,
+     ×로 닫으면 원래 보던 화면(앨범 트랙리스트)이 그대로 남아있게(사용자 피드백: "돌아가기 너무 어려움",
+     기존엔 검색창을 그 자리에서 고쳐 쓰는 방식이라 되돌리기가 애매했음). */
+  #gc-track-videos-overlay{position:fixed;inset:0;z-index:110;display:none;align-items:flex-end;justify-content:center;}
+  #gc-track-videos-overlay.open{display:flex;}
+  #gc-track-videos-bg{position:absolute;inset:0;background:rgba(0,0,0,0.55);}
+  #gc-track-videos-sheet{position:relative;width:100%;max-height:78vh;display:flex;flex-direction:column;background:rgba(14,18,38,0.98);backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);border-radius:20px 20px 0 0;padding:22px 22px calc(16px + env(safe-area-inset-bottom,0px));box-sizing:border-box;z-index:1;}
+  @media(min-width:769px){#gc-track-videos-sheet{max-width:340px;border-radius:18px;margin-bottom:100px;}}
+  #gc-track-videos-close{position:absolute;top:10px;right:12px;background:none;border:none;color:rgba(190,205,240,0.66);font-size:20px;cursor:pointer;padding:4px;line-height:1;z-index:2;}
+  #gc-track-videos-title{font-size:14px;font-weight:700;color:#e4ecff;line-height:1.32;padding-right:24px;flex-shrink:0;}
+  #gc-track-videos-list{margin-top:14px;overflow-y:auto;display:flex;flex-direction:column;gap:4px;min-height:0;}
+  .tvf-item{display:flex;align-items:center;gap:10px;padding:6px;border-radius:10px;cursor:pointer;transition:background .13s;}
+  .tvf-item:hover{background:rgba(255,255,255,0.06);}
+  .tvf-thumb{width:88px;flex-shrink:0;aspect-ratio:16/9;object-fit:cover;border-radius:7px;background:rgba(255,255,255,0.06);}
+  .tvf-title{font-size:12px;color:rgba(210,225,255,0.85);line-height:1.35;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;}
+  .tvf-empty{font-size:12px;color:rgba(155,178,228,0.5);text-align:center;padding:20px 0;}
   .gc-discog-track-no{flex-shrink:0;width:16px;color:rgba(130,150,205,0.51);font-size:11px;text-align:right;font-variant-numeric:tabular-nums;}
-  .gc-discog-track-name{color:rgba(200,215,250,0.82);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .gc-discog-track-name{flex:1;min-width:0;color:rgba(200,215,250,0.82);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
   .gc-discog-track.is-title .gc-discog-track-no{color:rgba(255,190,130,0.85);}
   .gc-discog-track.is-title .gc-discog-track-name{color:#ffdcb0;font-weight:700;}
+  /* 트랙별 멜론/스포티파이 뱃지 — 아이콘만 있고 클릭해도 아무 정보가 없으면 이상하다는 피드백으로,
+     클릭하면 전체 트로피 패널을 새로 열지 않고 그 자리에서 작은 텍스트가 펼쳐지는 가벼운 토글로
+     구현(2026-08-19). */
+  .gc-discog-track-badge{flex-shrink:0;background:none;border:none;cursor:pointer;padding:2px;display:inline-flex;color:rgba(210,175,80,0.55);transition:color .15s,transform .12s;}
+  .gc-discog-track-badge svg{width:11px;height:11px;display:block;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;}
+  .gc-discog-track-badge:hover{color:rgba(220,185,80,0.95);transform:scale(1.15);}
+  .gc-discog-track-badge-info{flex-shrink:0;font-size:10px;color:rgba(220,185,80,0.85);white-space:nowrap;}
   /* ── 그룹/멤버 카드 내 컬렉션 행(내 컬렉션 + 공개 컬렉션 중 이 그룹이 담긴 것) ── */
   .gc-collection-row{margin-top:7px;padding-top:8px;border-top:0.5px solid rgba(255,255,255,0.10);}
   .gc-collection-hd{font-size:9.5px;font-weight:700;letter-spacing:.16em;color:rgba(130,150,205,0.56);text-transform:uppercase;margin-bottom:7px;}
@@ -1778,6 +1803,7 @@
   #trophy-overlay.open{display:flex;}
   #trophy-panel{position:relative;width:min(320px,calc(100vw - 40px));max-height:min(480px,calc(100vh - 80px));overflow-y:auto;background:rgba(13,17,34,0.97);backdrop-filter:blur(40px) saturate(180%);-webkit-backdrop-filter:blur(40px) saturate(180%);border-radius:18px;box-shadow:0 16px 56px rgba(0,0,0,0.72);border:0.5px solid rgba(255,255,255,0.10);padding:20px;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
   #trophy-panel-close{position:absolute;top:14px;right:14px;}
+  #trophy-panel-tabs{margin-top:12px;}
   #trophy-panel-list{display:flex;flex-direction:column;gap:6px;margin-top:10px;}
   .trophy-item{display:flex;align-items:baseline;gap:8px;padding:5px 2px;border-bottom:0.5px solid rgba(255,255,255,0.06);font-size:11.5px;}
   .trophy-item-date{color:rgba(160,182,222,0.66);flex-shrink:0;font-variant-numeric:tabular-nums;}
@@ -1903,6 +1929,8 @@
   .fav-btn.fav-hint{color:rgba(255,120,150,0.68);animation:fav-hint-pulse 2.2s ease-in-out infinite;}
   .fav-btn+.trophy-btn{margin-left:-6px;position:relative;top:-0.25px;}
   @media(max-width:768px){.fav-btn+.trophy-btn{top:0.5px;}}
+  .trophy-btn+.trophy-btn{margin-left:-6px;position:relative;top:-0.25px;}
+  @media(max-width:768px){.trophy-btn+.trophy-btn{top:0.5px;}}
   .fav-btn+.share-btn{margin-left:-6px;position:relative;top:-0.25px;}
   @media(max-width:768px){.fav-btn+.share-btn{top:0.5px;}}
   .share-btn{background:none;border:none;outline:none;cursor:pointer;padding:2px 3px;border-radius:6px;flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;color:rgba(190,205,240,0.54);transition:color .15s,transform .12s;}
@@ -1969,11 +1997,25 @@
   #fav-section{padding-top:12px;padding-bottom:12px;border-top:0.5px solid rgba(255,255,255,0.07);}
   .fav-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
   .fav-hd-lbl{font-size:9.5px;font-weight:700;letter-spacing:.2em;color:rgba(130,150,205,0.56);text-transform:uppercase;}
-  .fav-item{display:flex;align-items:center;gap:6px;padding:6px 4px;border-radius:8px;cursor:pointer;transition:background .13s;}
+  /* 2026-08-18 — ANNIVERSARIES 섹션을 여기로 통합하면서 아바타(사진/색상원)+기념일 배지가 들어간
+     카드형으로 재설계. 멤버=인스타/위버스 사진, 그룹=groups.json img 필드(없으면 그룹 색상 원형). */
+  .fav-item{display:flex;align-items:center;gap:9px;padding:6px 4px;border-radius:10px;cursor:pointer;transition:background .13s;}
   .fav-item:hover{background:rgba(255,255,255,0.06);}
+  .fav-avatar{width:30px;height:30px;border-radius:50%;flex-shrink:0;overflow:hidden;}
+  .fav-avatar-photo{box-shadow:0 0 0 1px rgba(255,255,255,0.12);}
+  .fav-avatar-photo img{width:100%;height:100%;object-fit:cover;display:block;}
+  .fav-main{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px;}
+  .fav-name-row{display:flex;align-items:center;gap:6px;min-width:0;}
+  .fav-date-row{display:flex;align-items:center;gap:5px;}
   .fav-iname{font-size:12px;color:#b8d0ee;font-weight:500;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
   .fav-isub{font-size:10px;color:rgba(125,150,198,0.56);flex-shrink:0;letter-spacing:.02em;}
   .fav-itag{font-size:9px;font-weight:700;letter-spacing:.05em;padding:1px 5px;border-radius:7px;flex-shrink:0;background:rgba(145,175,255,0.10);color:rgba(150,175,228,0.61);}
+  .fav-badge{display:inline-block;font-size:9px;font-weight:800;letter-spacing:.03em;padding:1px 5px;border-radius:6px;flex-shrink:0;}
+  .fav-badge.today{background:rgba(255,205,70,0.16);color:rgba(255,215,100,0.92);}
+  .fav-badge.soon{background:rgba(255,110,140,0.13);color:rgba(255,130,155,0.85);}
+  .fav-badge.normal,.fav-badge.anniv{background:rgba(145,175,255,0.08);color:rgba(148,170,225,0.54);}
+  .fav-edit{background:none;border:none;cursor:pointer;font-size:14px;color:rgba(120,145,195,0.44);padding:2px 4px;flex-shrink:0;transition:color .13s;line-height:1;}
+  .fav-edit:hover{color:rgba(200,220,255,0.85);}
   .fav-empty{font-size:11px;color:rgba(92,112,158,0.48);padding:4px 4px;}
   #mob-fav-btn.fav-mode-on,#dh-fav-btn.fav-mode-on{color:rgba(255,105,135,0.95)!important;text-shadow:0 0 10px rgba(255,100,130,0.45);}
   /* ── Profile panel ───────────────────────────────── */
@@ -2046,12 +2088,13 @@
   #my-page-edit{background:none;border:0.5px solid rgba(140,165,220,0.20);border-radius:7px;color:rgba(138,162,218,0.58);font-size:9px;font-weight:700;letter-spacing:.10em;padding:3px 8px;cursor:pointer;font-family:inherit;transition:background .13s,color .13s,border-color .13s;flex-shrink:0;text-transform:uppercase;}
   #my-page-edit:hover{background:rgba(140,165,220,0.09);color:rgba(188,210,255,0.88);border-color:rgba(140,165,220,0.38);}
   /* ── 저널 섹션 리스트 공용 캡드-스크롤 ─────────────────
-     길어지는 목록(FAVORITES/COLLECTIONS/ANNIVERSARIES/CONCERTS)이 저널 사이드바 전체를
-     끝없이 늘리지 않도록 섹션마다 자체 최대높이+내부 스크롤을 준다(2026-08-13, 사용자 요청).
+     길어지는 목록(FAVORITES/COLLECTIONS/CONCERTS)이 저널 사이드바 전체를 끝없이 늘리지 않도록
+     섹션마다 자체 최대높이+내부 스크롤을 준다(2026-08-13, 사용자 요청). ANNIVERSARIES는 2026-08-18에
+     별도 섹션에서 FAVORITES 카드 안으로 통합됨(anniv-list 제거).
      LIKES는 무제한으로 쌓일 수 있어 이 패턴 대신 미리보기+전체보기 오버레이를 쓴다(아래 별도 규칙). */
-  #fav-list,#collection-list,#anniv-list,#concert-log-list{max-height:220px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:rgba(140,165,220,0.18) transparent;}
-  #fav-list::-webkit-scrollbar,#collection-list::-webkit-scrollbar,#anniv-list::-webkit-scrollbar,#concert-log-list::-webkit-scrollbar{width:3px;}
-  #fav-list::-webkit-scrollbar-thumb,#collection-list::-webkit-scrollbar-thumb,#anniv-list::-webkit-scrollbar-thumb,#concert-log-list::-webkit-scrollbar-thumb{background:rgba(140,165,220,0.22);border-radius:2px;}
+  #fav-list,#collection-list,#concert-log-list{max-height:220px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:rgba(140,165,220,0.18) transparent;}
+  #fav-list::-webkit-scrollbar,#collection-list::-webkit-scrollbar,#concert-log-list::-webkit-scrollbar{width:3px;}
+  #fav-list::-webkit-scrollbar-thumb,#collection-list::-webkit-scrollbar-thumb,#concert-log-list::-webkit-scrollbar-thumb{background:rgba(140,165,220,0.22);border-radius:2px;}
   /* ── Scrap (likes) ───────────────────────────────── */
   #scrap-section{margin-top:14px;padding-top:12px;border-top:0.5px solid rgba(255,255,255,0.07);}
   #scrap-list{max-height:220px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:rgba(140,165,220,0.18) transparent;}
@@ -2139,24 +2182,8 @@
   #col-new-name:focus{border-color:rgba(100,150,255,0.5);}
   #col-new-confirm{background:rgba(255,92,125,0.12);border:0.5px solid rgba(255,92,125,0.22);border-radius:10px;color:rgba(255,92,125,0.85);font-size:12px;font-weight:700;padding:8px 14px;cursor:pointer;font-family:inherit;white-space:nowrap;transition:background .13s;}
   #col-new-confirm:hover{background:rgba(255,92,125,0.2);}
-  /* ── Anniversaries (birthdays + 즐겨찾기 기념일) ──── */
-  #anniv-section{margin-top:14px;padding-top:12px;border-top:0.5px solid rgba(255,255,255,0.07);}
   #concert-section{margin-top:14px;padding-top:12px;border-top:0.5px solid rgba(255,255,255,0.07);}
   #journal-hd{margin-top:16px;display:none;}
-  .bday-item{display:flex;align-items:center;gap:7px;padding:5px 4px;border-radius:8px;cursor:pointer;transition:background .13s;}
-  .bday-item:hover{background:rgba(255,255,255,0.06);}
-  .bday-badge{display:inline-block;font-size:9px;font-weight:800;letter-spacing:.03em;padding:2px 6px;border-radius:6px;flex-shrink:0;min-width:34px;text-align:center;}
-  .bday-badge.today{background:rgba(255,205,70,0.16);color:rgba(255,215,100,0.92);}
-  .bday-badge.soon{background:rgba(255,110,140,0.13);color:rgba(255,130,155,0.85);}
-  .bday-badge.normal{background:rgba(145,175,255,0.08);color:rgba(148,170,225,0.54);}
-  .bday-name{font-size:12px;color:#b8d0ee;font-weight:500;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-  .bday-date{font-size:10px;color:rgba(125,150,198,0.48);flex-shrink:0;}
-  .anniv-item{display:flex;align-items:center;gap:7px;padding:5px 4px;border-radius:8px;cursor:pointer;transition:background .13s;}
-  .anniv-item:hover{background:rgba(255,255,255,0.06);}
-  .anniv-name{font-size:12px;color:#b8d0ee;font-weight:500;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-  .anniv-badge{display:inline-block;font-size:9px;font-weight:800;letter-spacing:.03em;padding:2px 6px;border-radius:6px;flex-shrink:0;min-width:34px;text-align:center;background:rgba(145,175,255,0.08);color:rgba(148,170,225,0.54);}
-  .anniv-edit{background:none;border:none;cursor:pointer;font-size:14px;color:rgba(120,145,195,0.44);padding:2px 4px;flex-shrink:0;transition:color .13s;line-height:1;}
-  .anniv-edit:hover{color:rgba(200,220,255,0.85);}
   .scrap-item{display:flex;align-items:center;gap:8px;padding:5px 4px;border-radius:8px;cursor:pointer;transition:background .13s;}
   .scrap-item:hover{background:rgba(255,255,255,0.06);}
   .scrap-thumb{width:42px;height:28px;border-radius:5px;object-fit:cover;flex-shrink:0;background:rgba(255,255,255,0.06);}

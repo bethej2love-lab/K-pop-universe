@@ -529,63 +529,6 @@ async function _ytSweepJunkKeywordVideos(){
     if(btn)btn.disabled=false;
   }
 }
-// HTML 엔티티(&#39; 등) 깨진 제목/설명 일괄 정리(일회용) — _decodeHtmlEntities를 동기화 3곳(채널 훑기/
-// 과거 백필/URL 수동추가)에 붙이기 전까지 이미 들어와있던 기존 행은 안 고쳐져 있음(2026-08-18, 사용자
-// 제보). 위 두 sweep과 같은 패턴(tags_manual 행은 안 건드림)이되, 값 자체가 행마다 달라서(공통 플래그 한
-// 값을 .in()으로 일괄 지정하는 방식이 안 통함) 배치로 개별 update.
-async function _ytFixHtmlEntities(){
-  if(!sb){_ytSetProg('Supabase 연결 없음');return;}
-  const btn=document.getElementById('sp-yt-fix-entities');
-  if(btn)btn.disabled=true;
-  try{
-    // 처음엔 title/description에 title.ilike.%&#%... 식으로 서버 OR 필터를 걸었는데 statement timeout으로
-    // 실패했음(2026-08-18, 사용자 제보) — 원인은 "&#" 패턴이 2글자라 pg_trgm 인덱스가 트라이그램을 못
-    // 뽑아 인덱스를 못 타고(3글자 미만은 인덱스 가속 안 됨), description은 애초에 트라이그램 인덱스 자체가
-    // 없어서, OR로 묶인 조건 하나라도 인덱스를 못 타면 8만+ 행 전체를 순차스캔하게 됨 — 바로 위 "전체 영상
-    // 검색(admin)"이 겪었던 "원곡" 스캔 타임아웃과 동일한 원인. 그때 고친 방식(필터 없는 순수 PK 페이지네이션
-    // + 클라이언트에서 패턴 판별)을 그대로 재사용.
-    const rows=[];
-    let lastId=null;
-    while(true){
-      let q=sb.from(_YT_TABLE).select('id,title,description,tags_manual').order('id').limit(1000);
-      if(lastId!==null)q=q.gt('id',lastId);
-      const{data,error}=await q;
-      if(error){_ytSetProg('조회 실패: '+error.message);return;}
-      if(!data?.length)break;
-      rows.push(...data);
-      _ytSetProg(`HTML 엔티티 포함 영상 조회 중… (${rows.length}개 확인)`);
-      if(data.length<1000)break;
-      lastId=data[data.length-1].id;
-    }
-    if(!rows.length){_ytSetProg('검사할 영상이 없어요');return;}
-    const fixes=[];
-    rows.filter(v=>v.tags_manual===false).forEach(v=>{ // 관리자가 직접 저장한 행은 절대 안 건드림
-      const newTitle=_decodeHtmlEntities(v.title||'');
-      const newDesc=_decodeHtmlEntities(v.description||'');
-      if(newTitle!==v.title||newDesc!==v.description){
-        fixes.push({id:v.id,title:newTitle,description:newDesc,title_norm:_titleNorm(newTitle)});
-      }
-    });
-    if(!fixes.length){_ytSetProg(`검사 완료 — ${rows.length}개 중 실제로 깨진 건 없음`);return;}
-    let done=0;
-    for(let i=0;i<fixes.length;i+=50){
-      const chunk=fixes.slice(i,i+50);
-      const results=await Promise.all(chunk.map(f=>
-        sb.from(_YT_TABLE).update({title:f.title,description:f.description,title_norm:f.title_norm}).eq('id',f.id)
-      ));
-      const failed=results.filter(r=>r.error);
-      if(failed.length)console.error('[엔티티 정리] 일부 실패:',failed.map(r=>r.error.message));
-      done+=chunk.length-failed.length;
-      _ytSetProg(`정리 중… ${done}/${fixes.length}`);
-    }
-    _ytSetProg(`완료! 전체 ${rows.length}개 중 ${done}개 정리함`);
-  }catch(e){
-    _ytSetProg('오류: '+e.message);
-  }finally{
-    if(btn)btn.disabled=false;
-  }
-}
-
 // "형준/SS501 김형준" 사고와 같은 계열 — 단일음절 멤버(예: 올아워즈 "온"/"On")의 영문 표기가 "on"처럼
 // 흔한 영단어와 겹치거나, 서로 다른 그룹에 동명이인 멤버(예: 크래비티 "성민"/Seongmin ↔ 슈퍼주니어
 // "성민"/Sungmin)가 있어서, 정작 그 그룹 이름은 제목에 전혀 없는데도 다른 그룹의 콜라보로 잘못
@@ -1307,48 +1250,6 @@ document.getElementById('wonkok-apply-btn')?.addEventListener('click',async()=>{
   if(!_wonkokCandidates.length)_renderWonkokList();
 });
 document.getElementById('wonkok-scan-btn')?.addEventListener('click',_wonkokScan);
-// cover_of_members와 with_members에 같은 사람이 동시에 들어간 4건(2026-08-11, 사용자가 SQL로 직접
-// 찾아서 제보 — cover_of_members && with_members 겹침) 정리용 일회용 버튼. 겹침이 생기는 이유가
-// 매번 달라서(동명이인 오매칭 2건, 원곡자가 실제 출연자로 잘못 남은 경우 1건, 원곡자 자리에 실제
-// 출연자가 잘못 들어간 경우 1건) 자동 규칙 하나로 못 묶고 각 영상 제목을 직접 읽어 실제 사실관계에
-// 맞게 하나씩 확정한 값을 그대로 반영한다. 재실행해도 안전(idempotent) — 이미 고쳐진 값이면 그대로 덮어씀.
-const WONKOK_OVERLAP_FIXES=[
-  // "Greedy(Ariana Grande) Cover by CHAEWON" — CHAEWON은 채널주 윤채원(클라씨) 본인 영문표기인데
-  // 르세라핌 김채원으로 동명이인 오매칭됨. 원곡자(Ariana Grande)는 비추적 아티스트라 cover_of도 빈칸.
-  {id:'1eM0Krz6T0k',with_members:[],cover_of_members:[]},
-  // "JUN - ヤキモチ (원곡: 高橋優/타카하시 유우)" — 일본 가수 타카하시 유우가 넥스지 유우로 동명이인 오매칭.
-  {id:'gG63zVEnpWw',with_members:[],cover_of_members:[]},
-  // "손동운 - 잘자 내 몫까지 (원곡: 수지)" — 원곡자 수지는 맞게 잡혔는데, 실제 출연은 손동운 단독이라
-  // with_members에 수지가 잘못 남아있음(원곡자일 뿐 이 영상에 출연한 게 아님).
-  {id:'lygdOgUFWg4',with_members:[],cover_of_members:['수지(미쓰에이)']},
-  // "눈이 오잖아(원곡: 이무진 Feat.Heize) - STAYC 시은 X ATEEZ 종호" — 시은은 실제 듀엣 출연자(with 유지),
-  // 원곡자(이무진/헤이즈)는 비추적 아티스트라 cover_of는 빈칸이어야 하는데 시은이 잘못 들어가있음.
-  {id:'P_5LAItOplE',with_members:['시은(스테이씨)'],cover_of_members:[]},
-];
-document.getElementById('wonkok-overlap-fix-btn')?.addEventListener('click',async()=>{
-  if(!sb)return;
-  const btn=document.getElementById('wonkok-overlap-fix-btn');
-  const statusEl=document.getElementById('wonkok-overlap-status');
-  btn.disabled=true;btn.textContent='처리 중…';
-  let done=0,skipped=0,errors=0;
-  for(const fix of WONKOK_OVERLAP_FIXES){
-    try{
-      const{data:row,error:selErr}=await sb.from(_YT_TABLE).select('tags_manual').eq('id',fix.id).maybeSingle();
-      if(selErr)throw selErr;
-      if(!row){skipped++;continue;}
-      if(row.tags_manual){skipped++;continue;} // 수동편집 보호 — 이 프로젝트 전역 원칙
-      const{error:updErr}=await sb.from(_YT_TABLE).update({
-        with_members:fix.with_members,
-        cover_of_members:fix.cover_of_members
-      }).eq('id',fix.id);
-      if(updErr)throw updErr;
-      done++;
-    }catch(e){console.error('[wonkok overlap fix]',fix.id,e);errors++;}
-  }
-  btn.disabled=false;btn.textContent='cover_of ↔ with 겹침 정리(일회용)';
-  statusEl.textContent=`완료 — 반영 ${done}건 / 보호(수동편집)·미존재 ${skipped}건${errors?` / 오류 ${errors}건`:''}`;
-});
-;
 document.getElementById('wonkok-close')?.addEventListener('click',()=>document.getElementById('hnn-overlay').classList.remove('open'));
 document.getElementById('sp-wonkok-btn')?.addEventListener('click',()=>{document.getElementById('hnn-overlay').classList.add('open');_renderHnnWhitelist();_renderHnnDuplicateNames();_hnnSwitchTab('wonkok');});
 
@@ -1426,13 +1327,18 @@ function _vmApplyTab(){
     _vmLoad();
   }
 }
-async function _vmLoad(searchTerm){
+async function _vmLoad(searchTerm,preserveSearch2){
   if(!sb)return;
   const tab=_vmTab;
   const myGen=++_vmSearchGen;
-  // 1차 검색어(전체 검색창)가 새로 바뀌면 이전 결과 기준으로 좁혀뒀던 재검색어는 더 이상 의미가 없으므로 초기화
-  _vmSearch2='';
-  const search2El=document.getElementById('vm-search-2');if(search2El)search2El.value='';
+  // 1차 검색어(전체 검색창)가 실제로 바뀌면 이전 결과 기준으로 좁혀뒀던 재검색어는 더 이상 의미가 없으므로
+  // 초기화한다 — 단, 편집 모달 저장 후처럼 1차 검색어는 그대로 두고 목록만 새로고침하는 경우(preserveSearch2)엔
+  // 사용자가 입력해둔 2차 검색어를 지우면 안 됨(2026-08-18, 사용자 제보 — 이중 검색 중 영상 편집·저장하면
+  // 2차 검색어가 매번 날아감).
+  if(!preserveSearch2){
+    _vmSearch2='';
+    const search2El=document.getElementById('vm-search-2');if(search2El)search2El.value='';
+  }
   const statusEl=document.getElementById('vm-status');
   const listEl=document.getElementById('vm-list');
   const toolbarEl=document.getElementById('vm-toolbar');
@@ -2790,85 +2696,6 @@ function _extBuildRows(vids,strict,tier,owner){
   return{rows,skipped};
 }
 
-// (일회용) idol tier로 새로 전환된 채널의 기존 동기화분을 새 owner 로직으로 재처리 — 예전엔 variety(strict)
-// tier라 owner 언급이 제목/해시태그에 없는 영상은 통째로 스킵됐거나, 게스트 그룹만 유일하게 매칭되면
-// 그게 주 인물 자리로 잘못 들어간 채 저장돼있을 수 있음(2026-08-11, 이영지 "박스미디어" idol tier 전환
-// 계기). 일반 동기화(_ytSyncExtChannels)는 upsert에 ignoreDuplicates:true라 이미 들어간 행은 안 고쳐지므로,
-// 이 버튼은 덮어쓰기(ignoreDuplicates 없음)로 idol tier 채널 전체를 처음부터 다시 훑는다 — idol tier
-// 채널이 새로 추가/전환될 때만 한 번씩 눌러주면 됨(그래서 상시 버튼이 아니라 일회용).
-// tags_manual=true(관리자가 직접 확인/수정한 행)는 절대 안 건드림 — 덮어쓰기 대상에서 조회 단계부터
-// 제외한다. 자동 처리가 수동 편집을 덮어쓰지 않는다는 건 이 프로젝트 전역 원칙(2026-07-31 사고 이후
-// 확립, 2026-08-11 재확인 — memory: feedback_never_overwrite_manual_tags 참고).
-let _extIdolResyncing=false;
-async function _ytResyncIdolChannels(){
-  if(_extIdolResyncing)return;
-  // 설정 패널에 입력칸이 따로 없는 kpu_ext_yt_key를 참조하고 있어서, 메인 API 키를 이미 넣었어도
-  // 항상 "API 키를 먼저 입력해주세요"만 뜨던 버그(2026-08-11, 사용자 제보) — 다른 동기화 함수들과
-  // 똑같이 실제 입력칸이 있는 메인 키(_ytApiKey)를 쓰도록 통일.
-  const key=_ytApiKey();
-  if(!key){_ytSetProg('API 키를 먼저 입력해주세요');return;}
-  if(!sb){_ytSetProg('Supabase 연결 없음');return;}
-  const idolChannels=_EXT_CHANNELS.filter(c=>c.tier==='idol');
-  if(!idolChannels.length){_ytSetProg('idol tier로 등록된 채널이 없어요');return;}
-  _extIdolResyncing=true;
-  let totalUpdated=0,totalProtected=0,errors=0;
-  for(let ci=0;ci<idolChannels.length;ci++){
-    const ch=idolChannels[ci];
-    const prefix=`[아이돌 채널 재태깅 ${ci+1}/${idolChannels.length}] ${ch.name}`;
-    try{
-      _ytSetProg(`${prefix} 채널 정보 가져오는 중…`);
-      const uploadsId=await _ytGetUploadsId(ch.url,key);
-      const resumeKey=`kpu_ext_idol_resync_resume_${ch.handle}`;
-      const resumeTok=localStorage.getItem(resumeKey)||'';
-      // sinceId=null — 마지막 동기화 지점에서 멈추지 않고 채널 전체를 처음부터 다시 훑음(중단되면
-      // 이어받기 체크포인트로 재시도).
-      const{vids,done,interrupted,resumeToken}=await _ytFetchNewVideos(uploadsId,key,null,(fetched,tot)=>{
-        _ytSetProg(`${prefix} ${fetched}${tot?'/'+tot:''}개 재처리 중…`+(resumeTok?' (이어서)':''));
-      },resumeTok);
-      if(vids.length){
-        const{rows}=_extBuildRows(vids,_EXT_STRICT_TIERS.has(ch.tier),ch.tier,ch.owner);
-        if(rows.length){
-          // 수동 편집(tags_manual=true) 행은 절대 덮어쓰지 않음 — 이 프로젝트 전역 원칙(다른 스윕
-          // 함수들도 전부 .eq('tags_manual',false)로 조회 단계부터 제외함, 2026-07-31 사고 이후 규칙,
-          // 2026-08-11 사용자 재확인). 이미 DB에 있는 id 중 tags_manual=true인 것만 걸러서 이번
-          // upsert 대상에서 완전히 빼고, 나머지만 덮어쓴다.
-          const idBatch=rows.map(r=>r.id);
-          const manualIds=new Set();
-          for(let i=0;i<idBatch.length;i+=200){
-            const{data:manualRows,error:mErr}=await sb.from(_YT_TABLE).select('id').in('id',idBatch.slice(i,i+200)).eq('tags_manual',true);
-            if(mErr)throw new Error(mErr.message);
-            (manualRows||[]).forEach(r=>manualIds.add(r.id));
-          }
-          const safeRows=rows.filter(r=>!manualIds.has(r.id));
-          totalProtected+=manualIds.size;
-          if(safeRows.length){
-            _ytSetProg(`${prefix} ${safeRows.length}개 덮어쓰는 중…`+(manualIds.size?` (수동편집 ${manualIds.size}개 보호)`:''));
-            for(let i=0;i<safeRows.length;i+=200){
-              const{error}=await sb.from(_YT_TABLE).upsert(safeRows.slice(i,i+200),{onConflict:'id'}); // ignoreDuplicates 없음 = 기존 행도 덮어씀(수동편집분 제외)
-              if(error)throw new Error(error.message);
-            }
-            totalUpdated+=safeRows.length;
-          }
-        }
-      }
-      if(done){
-        localStorage.removeItem(resumeKey);
-        _ytSetProg(`${prefix} 완료 (재처리 ${vids.length}개)`);
-      }else if(interrupted){
-        if(resumeToken)localStorage.setItem(resumeKey,resumeToken);
-        _ytSetProg(`${prefix} 중단됨(버튼 다시 누르면 이어서 재처리) — 지금까지 ${vids.length}개`);
-      }
-    }catch(e){
-      errors++;
-      console.error(`[idol resync] ${ch.name}`,e);
-      _ytSetProg(`${prefix} 오류: ${e.message}`);
-      await new Promise(r=>setTimeout(r,800));
-    }
-  }
-  _ytSetProg(`아이돌 주도 채널 재태깅 완료 — 총 ${totalUpdated}개 갱신 / 수동편집 ${totalProtected}개 보호${errors?` / 오류 ${errors}건`:''}`);
-  _extIdolResyncing=false;
-}
-
 let _extSyncing=false;
 async function _ytSyncExtChannels(){
   if(_extSyncing)return;
@@ -3489,8 +3316,9 @@ function _closeVidTagModal(){
   _vidTagLoadedFormats=[];
   _vidTagFlagChoice=null;_vidTagFlagTouched=false;_vidTagApplyFlagUI();
   // 영상 관리 패널에서 연필 버튼으로 열었을 수 있으니, 열려있으면 현재 탭 기준으로 다시 불러온다.
+  // 1차 검색어는 안 바뀌었으므로 이중 검색(2차 검색어)까지 그대로 유지(preserveSearch2).
   if(document.getElementById('vm-overlay')?.classList.contains('open')){
-    _vmLoad();
+    _vmLoad(undefined,true);
   }
 }
 document.getElementById('vid-tag-cancel').addEventListener('click',e=>{e.stopPropagation();_closeVidTagModal();});
@@ -3807,7 +3635,6 @@ document.getElementById('vid-tag-thumb-refresh').addEventListener('click',async 
   });
   document.getElementById('sp-yt-sweep-banned')?.addEventListener('click',_ytSweepBannedVideos);
   document.getElementById('sp-yt-sweep-junk')?.addEventListener('click',_ytSweepJunkKeywordVideos);
-  document.getElementById('sp-yt-fix-entities')?.addEventListener('click',_ytFixHtmlEntities);
   // "무조건 제외 키워드" 목록이 코드에만 있어서 관리자가 지금 뭐가 걸려있는지 확인할 방법이 없었음
   // (2026-08-10, 사용자 요청) — 버튼 밑에 현재 목록을 그대로 보여줌. _JUNK_TITLE_KEYWORDS_GLOBAL을
   // 그대로 참조하므로 코드에서 키워드를 추가/삭제하면 이 표시도 자동으로 같이 바뀜(따로 관리 안 해도 됨).
@@ -3817,7 +3644,6 @@ document.getElementById('vid-tag-thumb-refresh').addEventListener('click',async 
   document.getElementById('sp-scan-namecollide-btn')?.addEventListener('click',_ytScanAmbiguousNameGroupMisassignment);
   document.getElementById('sp-membersfix-btn')?.addEventListener('click',_ytSweepMembersMistag);
   document.getElementById('sp-catfix-btn')?.addEventListener('click',_ytSweepCategoryMistag);
-  document.getElementById('sp-idol-resync-btn')?.addEventListener('click',_ytResyncIdolChannels);
   document.getElementById('sp-yt-autotag')?.addEventListener('click',_ytAutoTagMembers);
   document.getElementById('sp-yt-retag-all')?.addEventListener('click',_ytRetagAllIncludingTagged);
   document.getElementById('sp-vm-btn')?.addEventListener('click',()=>_vmOpen());
