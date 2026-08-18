@@ -268,6 +268,9 @@
       <button class="sp-yt-sync" id="sp-yt-manual-batch-add-btn" style="opacity:.8;">여러 개 한 번에 추가</button>
     </div>
 
+    <div class="sp-subsec-lbl" style="margin-top:10px;">사용자 피드백</div>
+    <button class="sp-yt-sync" id="sp-fb-btn" style="opacity:.8;">피드백 보기</button>
+
     <div class="sp-subsec-lbl" style="margin-top:10px;">검수</div>
     <button class="sp-yt-sync" id="sp-hnn-btn" style="opacity:.8;">검수 센터</button>
     <button class="sp-yt-sync" id="sp-wonkok-btn" style="display:none"></button>
@@ -412,6 +415,22 @@
     <div id="gp-list"></div>
   </div>
 </div>
+<div id="fbv-overlay">
+  <div id="fbv-panel">
+    <div id="fbv-hd">
+      <span id="fbv-hd-title">피드백</span>
+      <button id="fbv-close">✕</button>
+    </div>
+    <div id="fbv-tabs">
+      <button class="fbv-tab active" data-cat="all">전체<span class="fbv-tab-cnt"></span></button>
+      <button class="fbv-tab" data-cat="bug">버그 제보<span class="fbv-tab-cnt"></span></button>
+      <button class="fbv-tab" data-cat="suggest">제안<span class="fbv-tab-cnt"></span></button>
+      <button class="fbv-tab" data-cat="etc">기타<span class="fbv-tab-cnt"></span></button>
+    </div>
+    <div id="fbv-count"></div>
+    <div id="fbv-list"></div>
+  </div>
+</div>
 <div id="feed-list-overlay">
   <div id="feed-list-panel">
     <div id="feed-list-hd">
@@ -454,14 +473,13 @@
 <button id="tt-collapse" aria-label="멤버 카드 접기">›</button>
 <div id="yt-lightbox">
   <div id="yt-lb-wrap">
-    <button id="yt-lb-close" aria-label="동영상 닫기"><svg id="yt-lb-close-chevron" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg><span id="yt-lb-close-x">✕</span></button>
+    <button id="yt-lb-close" aria-label="동영상 닫기"><svg id="yt-lb-close-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button>
     <div class="lb-menu-wrap">
       <button id="yt-lb-menu-btn" aria-label="더보기">⋮</button>
       <div id="yt-lb-menu-panel">
         <button id="yt-lb-conn-btn" style="display:none">연결 보기 <span>›</span></button>
       </div>
     </div>
-    <button id="lb-shorts-list-btn" aria-label="목록 보기"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="15" y2="18"/></svg></button>
     <div id="yt-lb-main">
     <div id="yt-lb-video-box">
       <iframe id="yt-lb-iframe" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>
@@ -692,6 +710,8 @@
           <option value="mv">MV</option>
           <option value="live">라이브</option>
           <option value="short">Shorts</option>
+          <option value="variety">예능</option>
+          <option value="show">드라마/영화</option>
         </select>
         <button id="vid-tag-thumb-refresh" class="uc-btn" type="button" style="white-space:nowrap;padding:0 12px">썸네일 새로고침</button>
       </div>
@@ -1127,6 +1147,30 @@ const T={
       idxSortName:'Name (A–Z)',idxSortDebut:'Debut Year',idxSortAgency:'Agency',idxSortMembers:'Member Count',
       idxSortBirth:'Birth Year',idxSortGroup:'Group',idxSortNation:'Nationality',ppTitle:'My Profile',ppNick:'Nickname',ppNickPH:'Enter nickname',ppNickErr:'Nickname is required',ppBio:'Bio',ppBioPH:'Optional',ppColor:'Star Color',ppFavLabel:'Public Likes',ppFavSub:'Others can see your likes',ppSyncLabel:'Sync Across Devices',ppSyncSub:'Likes stay synced across your devices',ppGoogleBtn:'Connect with Google',ppXBtn:'Connect with X',ppLinked:'Account Connected ✓',ppLogout:'Log Out',ppSave:'Save'}
 };
+// 소속사 표기 영어모드 정규화 — 완전 로마자 번역 대신 흔한 접미사 "엔터테인먼트"만 "Ent."로 치환
+// (2026-08-18, 사용자 요청). 브랜드명 자체가 순수 한글인 경우(예: 스윙, 큐브, 젤리피쉬)는 그대로
+// 남음 — 완전 로마자 표기는 그룹별 co 필드에 co_en을 따로 추가하는 별도 데이터 작업이 필요함.
+function _dispAgency(co){
+  if(!co||currentLang!=='en')return co;
+  return co.replace(/\s*엔터테인먼트$/,' Ent.');
+}
+// 설정 패널의 "N세대" 필터 버튼 5개는 아이콘(ⓘ)이 같은 버튼 안에 섞여 있어 data-i18n(textContent
+// 통째 교체)을 못 씀 — 첫 텍스트 노드만 골라 바꾼다(2026-08-18, 사용자 제보: 영어모드에서도 한국어로
+// 남아있던 버그). _openGenInfo는 여기 있어야 함 — applyLang()이 페이지 로드 시 바로 호출되는데 원래
+// 위치(세대 상세 패널 코드 근처, 파일 훨씬 아래)에 let으로 있으면 그 시점엔 TDZ라 참조만 해도 에러남.
+let _openGenInfo=null;
+function _updateGenButtonsLang(){
+  document.querySelectorAll('.sp-type[data-gen]').forEach(btn=>{
+    const g=btn.dataset.gen;
+    if(btn.firstChild&&btn.firstChild.nodeType===3)btn.firstChild.textContent=currentLang==='ko'?`${g}세대`:`Gen ${g}`;
+  });
+  document.querySelectorAll('.sp-gen-info').forEach(icon=>{
+    const g=icon.dataset.genInfo;
+    icon.title=currentLang==='ko'?'자세히':'Details';
+    icon.setAttribute('aria-label',currentLang==='ko'?`${g}세대 그룹 목록 보기`:`View Gen ${g} group list`);
+  });
+  if(_openGenInfo!=null)_renderGenDetail(_openGenInfo);
+}
 function applyLang(){
   document.body.classList.toggle('lang-en',currentLang==='en');
   const t=T[currentLang];
@@ -1139,6 +1183,7 @@ function applyLang(){
   const _nl=document.getElementById('pp-nick-label');if(_nl&&_nl.childNodes[0])_nl.childNodes[0].textContent=t.ppNick+' ';
   const si=document.getElementById('search-input');if(si)si.placeholder=t.searchPH;
   const msi=document.getElementById('tab-sb-input');if(msi)msi.placeholder=t.searchPH;
+  _updateGenButtonsLang();
   _refreshOpenCardText();
   renderFavList();_buildAnniversaryList();
   renderCollectionSection();
@@ -1182,8 +1227,9 @@ function _refreshOpenCardText(){
       // 그룹 자체가 해체(disbanded)됐거나, 그룹은 멀쩡해도 이 멤버 본인이 탈퇴/비활동(active:false)이면
       // 둘 다 "과거형"으로 흐리게 — 이펙스 금동현처럼 그룹은 활동 중인데 본인만 탈퇴한 경우, 예전엔 그룹
       // 자체 해체 여부만 봐서 멀쩡한 밝기로 표시되던 걸 놓치고 있었음(2026-08-05, 사용자 제보).
-      sp.className='tg'+(((GROUPS[g.ko]||{}).disbanded||a.active===false)?' tg-past':'');
-      sp.textContent=currentLang==='ko'?g.ko:(g.en||g.ko);
+      const _tgTxt=currentLang==='ko'?g.ko:(g.en||g.ko);
+      sp.className='tg'+(((GROUPS[g.ko]||{}).disbanded||a.active===false)?' tg-past':'')+(!/[가-힯]/.test(_tgTxt)?' tg-en':'');
+      sp.textContent=_tgTxt;
       sp.addEventListener('click',e=>{
         e.stopPropagation();
         if(isMob()){
@@ -1197,13 +1243,13 @@ function _refreshOpenCardText(){
     });
     _unitTagsFor(a).forEach(unitName=>{
       const sep=document.createElement('span');sep.textContent=' · ';sep.style.cssText='color:rgba(150,170,210,0.45);pointer-events:none;';_tgEl.appendChild(sep);
-      const usp=document.createElement('span');usp.className='tg-unit';usp.textContent=unitName;
+      const usp=document.createElement('span');usp.className='tg-unit'+(!/[가-힯]/.test(unitName)?' tg-en':'');usp.textContent=unitName;
       usp.addEventListener('click',_onUnitTagClick(usp,unitName));
       _tgEl.appendChild(usp);
     });}
     const tcoEl=document.getElementById('tco');tcoEl.innerHTML='';
     const _tcoParts=[];
-    if(a.co&&a.co!=='무소속')_tcoParts.push({text:a.co,type:'agency',value:a.co});
+    if(a.co&&a.co!=='무소속')_tcoParts.push({text:_dispAgency(a.co),type:'agency',value:a.co});
     if(a.bday){
       _tcoParts.push({text:_ageChipText(a),type:'birthYear',value:a.bday.split('.')[0]});
     }
@@ -1648,7 +1694,7 @@ async function buildUniverse(){
         m._bdayYear=parseInt(m.bday)||0;
         m._filterAlpha=1; m._filterTarget=1;
         // 모바일 줌인 멤버 이름 레이블 (CSS2DObject) — 항상 생성, animate 루프에서 모바일에서만 표시
-        {const _nd=document.createElement('div');_nd.className='member-name-label';_nd.textContent=m.name.ko;const _nl=new THREE.CSS2DObject(_nd);_nl.position.copy(mPos).add(new THREE.Vector3(0,0.26,0));_nl.visible=false;scene.add(_nl);m._nameLabel=_nl;m._nameLabelEl=_nd;}
+        {const _nd=document.createElement('div');_nd.className='member-name-label';_nd.textContent=m.name.ko;const _nl=new THREE.CSS2DObject(_nd);_nl.position.copy(mPos).add(new THREE.Vector3(0,0.42,0));_nl.visible=false;scene.add(_nl);m._nameLabel=_nl;m._nameLabelEl=_nd;}
       }
     });
   });
@@ -2418,7 +2464,7 @@ function animate(){
   _nctRingGroups.forEach(({g})=>g.rotateZ(0.00028));
   // 실제 GPU 그리기 호출만 30fps로 제한(위 주석 참고) — 나머지 로직은 이미 다 계산된 뒤라 그냥 스킵.
   const _nowMs=performance.now();
-  if(_nowMs-_lastRenderMs>=_RENDER_INTERVAL_MS){
+  if(_nowMs-_lastRenderMs>=(_isAdmin()?1000/15:_RENDER_INTERVAL_MS)){
     _lastRenderMs=_nowMs;
     renderer.render(scene,camera);
     labelRenderer.render(scene,camera);
@@ -2773,7 +2819,7 @@ function _filterBannedVideos(list,ko){return(list||[]).filter(v=>!_isBannedVideo
 // 흔히 쓰는 문구 — 제목에 이 단어가 있으면 어느 그룹으로 매칭됐든 무조건 무관 처리한다(사용자 요청, 2026-08-04).
 // _isBannedVideoTitle과 달리 hidden이 아니라 무관 처리(행은 남기되 그룹/멤버 그리드에서만 제외)라 신규
 // 동기화 시 이 체크에 걸리면 content_flag를 '무관'으로 붙여서 저장한다 — 기존 행은 아래 스윕 버튼으로 정리.
-const _JUNK_TITLE_KEYWORDS_GLOBAL=['띵곡팔이','김창옥쇼','이호선상담소','유부녀킬러','스트릿레스토랑파이터','십분hook','[#여권들고','프리한19','결혼지옥','오은영리포트','이혼숙려','닥터로이어','언니네산지직송','혼자는 못 해','방과후태리'];
+const _JUNK_TITLE_KEYWORDS_GLOBAL=['띵곡팔이','김창옥쇼','이호선상담소','유부녀킬러','유뷰녀 킬러','스트릿레스토랑파이터','십분hook','[#여권들고','프리한19','결혼지옥','오은영리포트','이혼숙려','닥터로이어','언니네산지직송','혼자는 못 해','방과후태리','스프링피버'];
 function _isJunkVideoTitle(t){return!!t&&_JUNK_TITLE_KEYWORDS_GLOBAL.some(k=>t.includes(k));}
 
 let _lbPlaylist=null,_lbIdx=-1,_lbCtx=null;
@@ -2850,7 +2896,7 @@ function openLightbox(url,shorts,playlist,idx,ctx,isAdvance,forceBrowseMode){
   lb.classList.add('open');
   // UI 기본 숨김(탭하면 토글)은 몰입형 쇼츠 스와이프 전용 — 브라우즈 모드는 유튜브 자체 컨트롤을 그대로
   // 쓰는 일반 페이지형 레이아웃이라 항상 UI를 보여준다.
-  document.getElementById('yt-lb-wrap').classList.toggle('lb-ui-hidden',_lbSessionMode==='shorts');
+  document.getElementById('yt-lb-wrap').classList.remove('lb-ui-hidden');
   // controls=1: 진행바/재생시간/탐색은 노출하되, modestbranding+rel=0+iv_load_policy=3으로 로고·추천영상 등은 최대한 억제.
   // mute: 브라우저 자동재생 정책상 소리 있는 자동재생은 대부분 차단돼서, 무음일 때만 자동재생이 안정적으로
   // 됨 — 그래서 기본은 무음 자동재생, 사용자가 소리 버튼으로 직접 켜면 그 상태를 다음 영상에도 유지.
@@ -3136,17 +3182,17 @@ function _buildExtendedReactions(){
   // 풀: 기본 2행 이모지 + 유저 반응 중 1행에 없는 것
   const poolSet=new Set(LB_REACT_EXTENDED);
   _reactionCounts.forEach((cnt,key)=>{
-    const[url,emoji]=key.split(' ');
+    const[url,emoji]=key.split(' ');
     if(url===_lbCurVideoUrl&&cnt>0&&!row1Set.has(emoji)&&!poolSet.has(emoji))poolSet.add(emoji);
   });
   _myReactions.forEach(key=>{
-    const[url,emoji]=key.split(' ');
+    const[url,emoji]=key.split(' ');
     if(url===_lbCurVideoUrl&&!row1Set.has(emoji)&&!poolSet.has(emoji))poolSet.add(emoji);
   });
   // 반응 수 내림차순 정렬 (0은 뒤로)
   const pool=[...poolSet].sort((a,b)=>{
-    const cA=_reactionCounts.get(_lbCurVideoUrl+' '+a)||0;
-    const cB=_reactionCounts.get(_lbCurVideoUrl+' '+b)||0;
+    const cA=_reactionCounts.get(_lbCurVideoUrl+' '+a)||0;
+    const cB=_reactionCounts.get(_lbCurVideoUrl+' '+b)||0;
     return cB-cA;
   });
   // 최대 11개 (+ 버튼 포함 2행 한계)
@@ -3258,10 +3304,6 @@ window.addEventListener('message',e=>{
     }
   }catch(_){}
 });
-function _lbToggleUi(){
-  document.getElementById('yt-lb-wrap').classList.toggle('lb-ui-hidden');
-}
-document.getElementById('yt-lb-tap-cap').addEventListener('click',_lbToggleUi);
 // 세로 영상으로 수동 전환된 video ID 기억 — 다음 열 때 자동 적용
 const _LB_PORTRAIT_KEY='kpu_lb_portrait_vids';
 let _lbPortraitVids=new Set(JSON.parse(localStorage.getItem(_LB_PORTRAIT_KEY)||'[]'));
@@ -3273,31 +3315,30 @@ document.getElementById('yt-lb-rotate').addEventListener('click',e=>{
   const box=document.getElementById('yt-lb-video-box');
   const lb=document.getElementById('yt-lightbox');
   const rotateBtn=document.getElementById('yt-lb-rotate');
-  // 원래 쇼츠(세로) 영상이면 회전 버튼의 의미가 다르다 — "세로↔강제세로"가 아니라 "일반 재생모드(가로로
-  // 긴 상자) 안에 세로 비율 그대로 맞춰(레터박스) 넣기" 토글(2026-08-14, 사용자 요청 — 처음부터 원했던
-  // 게 이거였는데 "세로가 긴 직사각형 왼쪽아래 회전 버튼"으로 오해해서 엉뚱한 버튼을 고쳤었음). 박스 자체
-  // 클래스(is-shorts)를 빼면 그냥 일반 영상용 기본 크기(16:9)를 그대로 재사용하니 새 박스 CSS는 필요
-  // 없고, 안의 iframe만 9:16 그대로 유지한 채 가운데 정렬되게(.is-letterbox, CSS 참고) 하면 된다.
-  if(_lbIsNativeShorts){
-    const goingLetterbox=!box.classList.contains('is-letterbox');
-    if(goingLetterbox){
-      box.classList.remove('is-shorts');box.classList.add('is-letterbox');
-      _lbSwitchToBrowse(); // 일반 영상과 동일하게 세션모드도 'browse'로(하단 다음 영상 목록도 같이 뜸)
-    }else{
-      // 되돌리기 — 상태를 하나하나 되돌리는 대신 지금 영상을 진짜 쇼츠로 다시 여는 것과 동일하게 처리
+  const goingPortrait=!box.classList.contains('is-shorts');
+  if(goingPortrait){
+    // → 세로(쇼츠) 모드
+    box.classList.add('is-shorts');
+    box.classList.remove('is-letterbox');
+    lb.classList.add('lb-shorts');
+    rotateBtn.classList.add('is-portrait');
+    _lbSwitchToShorts();
+    if(!_lbIsNativeShorts){
       const vid=ytId(document.getElementById('yt-lb-iframe').src||'');
-      if(vid)openLightbox(`https://youtube.com/shorts/${vid}`,true,_lbPlaylist,_lbIdx,_lbCtx,false);
-      return;
+      if(vid){_lbPortraitVids.add(vid);_lbSavePortrait();}
     }
-    rotateBtn.classList.toggle('is-portrait',goingLetterbox);
-    return;
+  }else{
+    // → 가로(browse) 모드
+    box.classList.remove('is-shorts');
+    lb.classList.remove('lb-shorts');
+    if(_lbIsNativeShorts)box.classList.add('is-letterbox'); // 쇼츠 원본은 iframe이 9:16 비율이라 letterbox로
+    rotateBtn.classList.remove('is-portrait');
+    _lbSwitchToBrowse();
+    if(!_lbIsNativeShorts){
+      const vid=ytId(document.getElementById('yt-lb-iframe').src||'');
+      if(vid){_lbPortraitVids.delete(vid);_lbSavePortrait();}
+    }
   }
-  const isPortrait=box.classList.toggle('is-shorts');
-  lb.classList.toggle('lb-shorts',isPortrait);
-  rotateBtn.classList.toggle('is-portrait',isPortrait);
-  // 세로 전환 시 이 영상 ID 저장, 다시 가로로 되돌리면 삭제
-  const vid=ytId(document.getElementById('yt-lb-iframe').src||'');
-  if(vid){isPortrait?_lbPortraitVids.add(vid):_lbPortraitVids.delete(vid);_lbSavePortrait();}
 });
 function closeLightbox(){
   clearTimeout(_lbAutoUnmuteT);
@@ -3332,7 +3373,13 @@ function _lbSwitchToBrowse(){
   _lbUpdateMemberInfo();
   _lbUpdateUplist();
 }
-document.getElementById('lb-shorts-list-btn').addEventListener('click',e=>{e.stopPropagation();_lbSwitchToBrowse();});
+function _lbSwitchToShorts(){
+  _lbSessionMode='shorts';
+  document.getElementById('yt-lightbox').classList.remove('lb-browse');
+  document.getElementById('yt-lb-wrap').classList.remove('lb-ui-hidden');
+  _lbUpdateToolbar();
+  _lbUpdateMemberInfo();
+}
 document.getElementById('yt-lightbox').addEventListener('pointerdown',e=>e.stopPropagation());
 document.getElementById('yt-lightbox').addEventListener('click',e=>{e.stopPropagation();if(!document.getElementById('yt-lb-wrap').contains(e.target))closeLightbox();});
 // 쇼츠 모드에서 리액션·툴바 줄 옆의 빈 여백도 버튼이 아닌 컨테이너 자체를 눌렀을 때는 닫히도록 허용
@@ -4133,6 +4180,7 @@ function openMobSheet(cardEl){
     mobCardStackEl.style.display='none';mobCardStackEl.classList.remove('bs-open');
     mobSheetEl.classList.add('bs-full');
     mobSheetEl.style.display='block';
+    mobSheetInner.scrollTop=0; // display:none 중 scrollTop=0이 Safari에서 무시되는 문제 보완 — display:block 직후 재설정
     requestAnimationFrame(()=>mobSheetEl.classList.add('bs-open'));
     // 카드가 기본 100%(bs-full)로 열려서 우주 자체가 거의 안 보이는데도 별을 화면 위쪽으로 세게
     // 밀어올리고 있었음 — 시트를 끌어내려 살짝 들여다볼 때도 너무 위에 있어 잘 안 보인다는 제보
@@ -4160,6 +4208,7 @@ function openMobSheet(cardEl){
     // 그대로 물려받아서 열림(안 그러면 100%로 보다가 다음 카드 열 때마다 60vh로 도로 쪼그라듦)
     mobCardStackEl.classList.toggle('bs-full',_sheetFull);
     mobCardStackEl.style.display='block';
+    mobCardStackInner.scrollTop=0; // display:block 직후 재설정 — display:none 중 무시 보완
     mobCardStackEl.style.transition='none';
     mobCardStackEl.style.transform='translateY(200px)';
     requestAnimationFrame(()=>requestAnimationFrame(()=>{
@@ -5267,7 +5316,7 @@ connSheetEl.addEventListener('touchend',e=>{
 // scrollTop > 0 구간만 개입하고, scrollTop = 0 상태(맨 위)에선 아래 _wireSheetSwipe에 위임.
 function _wireSlowScroll(innerEl,factor){
   let _ly=0,_vel=0,_raf=0,_on=false;
-  function _coast(){_vel*=0.87;if(Math.abs(_vel)<0.25){_raf=0;return;}innerEl.scrollTop+=_vel;_raf=requestAnimationFrame(_coast);}
+  function _coast(){_vel*=0.90;if(Math.abs(_vel)<0.25){_raf=0;return;}innerEl.scrollTop+=_vel;_raf=requestAnimationFrame(_coast);}
   innerEl.addEventListener('touchstart',e=>{cancelAnimationFrame(_raf);_raf=0;_vel=0;_ly=e.touches[0].clientY;_on=innerEl.scrollTop>0;},{passive:true});
   innerEl.addEventListener('touchmove',e=>{
     if(!_on){if(innerEl.scrollTop>0){_on=true;_ly=e.touches[0].clientY;}else return;}
@@ -5362,8 +5411,8 @@ function _wireSheetSwipe(sheetEl,innerEl,onDismiss,syncEl){
 let _sheetFull=false;
 _wireSheetSwipe(mobCardStackEl,mobCardStackInner,closeMobSheet,mobSheetEl);
 _wireSheetSwipe(mobSheetEl,mobSheetInner,closeMobSheet);
-_wireSlowScroll(mobSheetInner,0.85);
-_wireSlowScroll(mobCardStackInner,0.85);
+_wireSlowScroll(mobSheetInner,0.92);
+_wireSlowScroll(mobCardStackInner,0.92);
 function closeCards(){
   _clearMemberCardLines();
   closeConnCard();
@@ -6073,14 +6122,15 @@ function showT(a,cx,cy,keepNavStack,urlMode,pushMobNav,noFly){
     // 그룹 자체가 해체(disbanded)됐거나, 그룹은 멀쩡해도 이 멤버 본인이 탈퇴/비활동(active:false)이면
     // 둘 다 "과거형"으로 흐리게 — 이펙스 금동현처럼 그룹은 활동 중인데 본인만 탈퇴한 경우, 예전엔 그룹
     // 자체 해체 여부만 봐서 멀쩡한 밝기로 표시되던 걸 놓치고 있었음(2026-08-05, 사용자 제보).
-    sp.className='tg'+((GROUPS[g.ko].disbanded||a.active===false)?' tg-past':'');
-    sp.textContent=currentLang==='ko'?g.ko:(g.en||g.ko);
+    const _spTxt=currentLang==='ko'?g.ko:(g.en||g.ko);
+    sp.className='tg'+((GROUPS[g.ko].disbanded||a.active===false)?' tg-past':'')+(!/[가-힯]/.test(_spTxt)?' tg-en':'');
+    sp.textContent=_spTxt;
     sp.addEventListener('click',_makeGcClickFn(g.ko));
     tgEl.appendChild(sp);
   });
   _unitTagsFor(a).forEach(unitName=>{
     if(tgEl.childNodes.length){const sep=document.createElement('span');sep.textContent=' · ';sep.style.cssText='color:rgba(150,170,210,0.45);pointer-events:none;';tgEl.appendChild(sep);}
-    const usp=document.createElement('span');usp.className='tg-unit';usp.textContent=unitName;
+    const usp=document.createElement('span');usp.className='tg-unit'+(!/[가-힯]/.test(unitName)?' tg-en':'');usp.textContent=unitName;
     usp.addEventListener('click',_onUnitTagClick(usp,unitName));
     tgEl.appendChild(usp);
   });
@@ -6154,7 +6204,11 @@ function showT(a,cx,cy,keepNavStack,urlMode,pushMobNav,noFly){
   // 이 카드의 영상 그리드 자체가 솔로일 땐 memberKo 없이(그룹 카드처럼) 동작하므로 컬렉션 필터도 맞춰서
   // memberKo 없이 그룹 단위로 조회한다.
   const _ttGroupQueryKo=_ytGroupKoFor(a);
-  _loadConcertRow(_ttGroupQueryKo,'tt-concert-row');
+  // 그룹 멤버 카드: 소속 그룹 콘서트는 그룹 카드에서만, 멤버 카드엔 멤버 이름으로 태깅된 솔로 이벤트만.
+  // 솔로 아티스트(hasRealGroup=false)는 본인 채널 = 본인 그룹이라 기존 _loadConcertRow 그대로.
+  // DB에 kpop_events.groups=['멤버명'] 형태로 솔로 공연 데이터가 추가되면 자동으로 표시된다.
+  if(_hasRealGroup)_loadMemberConcertRow(a.name.ko,'tt-concert-row');
+  else _loadConcertRow(_ttGroupQueryKo,'tt-concert-row');
   _loadCollectionRow(_ttGroupQueryKo,'tt-collection-row',_hasRealGroup?a.name.ko:null,a.name.ko);
   // 관리자: 프로필 사진 업로드 버튼 — 예전엔 인스타 있는 멤버만 노출했는데, 개인 인스타 없는 신인도
   // 사진은 붙일 수 있게 전 멤버로 확대(2026-08-14, 사용자 요청). 인스타 없는 멤버는 저장 직후 사진
@@ -6746,7 +6800,7 @@ function showGC(ko,cx,cy,keepMemberPanel,skipRipple,urlMode,pushMobNav){
     _enEl.textContent=_enShow?info.en:'';
     _enEl.style.display=_enShow?'':'none';
   }
-  _renderTagChip(document.getElementById('gc-co'),(info.co==='무소속'?'':info.co)||'','agency',(info.co==='무소속'?'':info.co)||'',!!info.disbanded);
+  _renderTagChip(document.getElementById('gc-co'),(info.co==='무소속'?'':_dispAgency(info.co))||'','agency',(info.co==='무소속'?'':info.co)||'',!!info.disbanded);
   const _debutYr=String(info.debut||'').slice(0,4);
   _renderTagChip(document.getElementById('gc-debut'),info.debut||'','debutYear',_debutYr);
   // 서바이벌/오디션 프로그램 출신이면 데뷔 연도 옆에 "[프로그램명]"을 덧붙인다 — 클릭 가능한 데뷔
@@ -7201,7 +7255,7 @@ function _renderIndexList(){
     }
     groups.forEach(([ko,g])=>{
       const sub=_idxSortKey==='members'?(currentLang==='ko'?`${_memberCountFor(ko)}명`:`${_memberCountFor(ko)} members`)
-        :_idxSortKey==='agency'?(g.co||'')
+        :_idxSortKey==='agency'?_dispAgency(g.co||'')
         :(g.debut?String(g.debut).slice(0,4):'');
       const item=_makeFilterListItem(currentLang==='ko'?ko:(g.en||ko),sub,()=>{
         const bm=bubbleMeshes.find(b=>b.ko===ko);if(bm)flyToBubble(bm.mesh.position,bm.radius);
@@ -7554,7 +7608,9 @@ document.querySelectorAll('.sp-type[data-gen]').forEach(btn=>{
 // 세대 버튼의 ⓘ 아이콘 — 우주 필터(버튼 본체 클릭)와는 별개로, 그 세대의 연도 범위·그룹 목록을 훑어볼 수 있는 보기 전용 패널.
 // 한 번에 하나만 펼치고(다시 누르면 접힘) 공간을 적게 차지하도록 스크롤 박스 안에 넣는다.
 const _GEN_META={1:'~2003',2:'2004–2011',3:'2012–2017',4:'2018–2022',5:'2023~'};
-let _openGenInfo=null;
+// _openGenInfo는 TDZ 문제 때문에 위쪽 _updateGenButtonsLang() 근처(applyLang 정의부)로 옮겨 선언함 —
+// applyLang()이 페이지 최초 로드 시(1373번째 줄 부근) 바로 호출되는데, let 선언이 그보다 뒤(여기)에
+// 있으면 그 시점엔 아직 초기화 전이라 참조만 해도 ReferenceError가 남(2026-08-18).
 // 뒤로 돌아갈 세대 번호. null이 아니면 그룹 카드의 ‹ 버튼이 "세대 목록으로 돌아가기"로 동작함(closeCards()에서 초기화).
 let _gcFromGenList=null;
 function _renderGenDetail(g){
@@ -7566,9 +7622,10 @@ function _renderGenDetail(g){
     .sort((a,b)=>(parseInt(a[1].debut)||0)-(parseInt(b[1].debut)||0))
     .map(([ko])=>ko);
   const list=names.length
-    ?names.map(ko=>`<span class="sp-gen-grp" data-gko="${ko}">${ko}</span>`).join(', ')
-    :'해당하는 그룹이 없어요';
-  detail.innerHTML=`<div class="sp-gen-detail-hd">${g}세대 · ${_GEN_META[g]} · ${names.length}개 그룹</div>`
+    ?names.map(ko=>`<span class="sp-gen-grp" data-gko="${ko}">${currentLang==='ko'?ko:(GROUPS[ko].en||ko)}</span>`).join(', ')
+    :(currentLang==='ko'?'해당하는 그룹이 없어요':'No groups');
+  const _hd=currentLang==='ko'?`${g}세대 · ${_GEN_META[g]} · ${names.length}개 그룹`:`Gen ${g} · ${_GEN_META[g]} · ${names.length} groups`;
+  detail.innerHTML=`<div class="sp-gen-detail-hd">${_hd}</div>`
     +`<div class="sp-gen-detail-list">${list}</div>`;
   detail.classList.add('open');
 }
@@ -9635,6 +9692,10 @@ function saveProfile(){
   };
   localStorage.setItem(PROFILE_KEY,JSON.stringify(myProfile));
   _sbPushColumn('profile',myProfile);
+  // 새로 별 만들 때 기본 컬렉션 하나 깔아둠 — 나중에 볼 영상 담아두는 자리(북마크) 역할, 별도 북마크
+  // 버튼이 없어 컬렉션이 그 역할을 대신하므로. 기존 유저 소급 적용 안 함(이미 정리된 목록에 손 안 댐),
+  // 익명으로 미리 컬렉션을 만들어둔 경우도 존중해 비워있을 때만 생성(2026-08-18).
+  if(_isNewProfile&&!collections.length)_createCollection('Bookmarks');
   _gaEvent('save_profile',{is_new_profile:_isNewProfile});
   closeProfilePanel();
   _updateProfileBtns();
@@ -10923,11 +10984,31 @@ async function _pickFeaturedVidFromDB(ko,memberKo,onlyMe,filter,viewMode,formatF
     if(viewMode==='format'&&formatFilter){
       q=q.contains('content_formats',[formatFilter]);
     }else if(filter==='cover'){
-      // Cover 탭 목록 쿼리와 동일한 "BE ORIGINAL"(안무 콘텐츠 시리즈명) 오매칭 제외 — 이 대표(하트 최다)
-      // 영상 선정 쿼리는 별도로 중복 구현돼있어서 목록 쪽만 고치고 여기를 빠뜨리면 대표 영상으로는
-      // 여전히 뽑힐 수 있었음(2026-08-11).
-      q=q.or('title_norm.ilike.*cover*,title_norm.ilike.*커버*,title_norm.ilike.*원곡*,title_norm.ilike.*original*')
-        .not('title_norm','ilike','*be original*');
+      // Cover 탭 목록 쿼리와 동일한 제외 목록 — 여기를 빠뜨리면 대표 영상으로는 여전히 뽑힐 수 있음.
+      q=q.or('title_norm.ilike.*cover*,title_norm.ilike.*커버*,title_norm.ilike.*원곡*,title_norm.ilike.*original*,content_formats.cs.{cover}')
+        .not('title_norm','ilike','*be original*')
+        .not('title_norm','ilike','*original ver*')
+        .not('title_norm','ilike','*cover story*')
+        .not('title_norm','ilike','*커버 촬영*')
+        .not('title_norm','ilike','*uncover*')
+        .not('title_norm','ilike','*choom original*')
+        .not('title_norm','ilike','*the original*')
+        .not('title_norm','ilike','*discover*')
+        .not('title_norm','ilike','*recover*')
+        .not('title_norm','ilike','*undercover*')
+        .not('title_norm','ilike','*디스커버*')
+        .not('title_norm','ilike','*리커버*')
+        .not('title_norm','ilike','*언더커버*')
+        .not('title_norm','ilike','*무빙 커버*')
+        .not('title_norm','ilike','*moving cover*')
+        .not('title_norm','ilike','*original contents*');
+    }else if(filter==='live'){
+      q=q.or('category.eq.live,content_formats.cs.{live},title_norm.ilike.*리무진서비스*,title_norm.ilike.*리무진 서비스*')
+        .not('title','ilike','%[live]%')
+        .not('title_norm','ilike','*엠카드림*');
+    }else if(filter==='variety'||filter==='show'){
+      const _varTitleOr=filter==='variety'?',title_norm.ilike.*라디오스타*,title_norm.ilike.*아는형님*,title_norm.ilike.*아는 형님*,title_norm.ilike.*놀라운토요일*,title_norm.ilike.*전참시*':'';
+      q=q.or(`category.eq.${filter},content_formats.cs.{${filter}}${_varTitleOr}`);
     }else if(filter&&filter!=='all'){
       q=q.eq('category',filter);
     }
@@ -11452,7 +11533,7 @@ function _buildFeedDiscovery(){
     const info=GROUPS[ko];
     const name=isKo?ko:(info.en||ko);
     const sub=(info.debut?info.debut.slice(0,4)+(isKo?'년 데뷔':' debut'):'')
-              +(info.co?'  ·  '+info.co:'');
+              +(info.co?'  ·  '+_dispAgency(info.co):'');
     _fetchTopVideoThumb(ko,null).then(t=>{
       _appendFeedCard(list,'🎵',name,sub,()=>_feedNav(()=>{
         const bm=bubbleMeshes.find(b=>b.ko===ko);if(bm)flyToBubble(bm.mesh.position,bm.radius);
@@ -11894,6 +11975,7 @@ function _makeChVidController(contId){
     return base;
   }
   let observer=null;
+  let _cleanupScroll=null;
   let _selMode=false;
   let _selIds=new Set();
   function _updateBulkBar(){
@@ -12125,8 +12207,7 @@ function _makeChVidController(contId){
     nodes.forEach(item=>{
       const img=item.querySelector('.gc-ch-thumb');
       if(!img)return;
-      // item이 아니라 img 자신의 너비를 재야 함 — featured+쇼츠는 아이템 너비의 42%로 줄어든
-      // 이미지라(위 CSS 참고), item 기준으로 계산하면 실제 렌더 너비보다 훨씬 큰 높이가 박힘.
+      // img 자신의 너비를 재야 함 — 각종 보정(gc-ch-wide 등)이 적용된 실제 렌더 너비가 기준이 되어야 함.
       const w=img.getBoundingClientRect().width;
       if(w)img.style.height=(item.classList.contains('is-short')?w*16/9:w*9/16)+'px';
     });
@@ -12164,7 +12245,7 @@ function _makeChVidController(contId){
     if(!correctedIds.length)return;
     if(myGen!==state.gen)return; // 그 사이 다른 그룹/새로고침으로 전환됨: DB 보정만 반영하고 화면은 건너뜀
     // pageItems는 원래(업로드 시간순) 순서를 그대로 유지한 배열이므로, 정정된 category로 그대로 재그룹핑
-    const g=_groupGcVids(pageItems,featured,pageStartPos,pageStartCat,document.body.classList.contains('card-wide'));
+    const g=_groupGcVids(pageItems,featured,pageStartPos,pageStartCat,document.body.classList.contains('card-wide'),state.filter==='short');
     pageNodes.forEach(n=>n.remove());
     const{nodes:newNodes}=renderItems(g.renderList,grid);
     state.pos=g.endPos;state.cat=g.endCat;
@@ -12211,7 +12292,17 @@ function _makeChVidController(contId){
     }
     const myGen=state.gen;
     // gen이 그대로일 때만(그 사이 다른 그룹/새로고침으로 전환되지 않았을 때만) 이 호출이 건 잠금을 해제한다
-    const releaseLock=()=>{if(myGen===state.gen)state.appendLock=false;};
+    const releaseLock=()=>{
+      if(myGen!==state.gen)return;
+      state.appendLock=false;
+      // IntersectionObserver는 교차 상태 변화 시에만 발화 — appendLock 해제 시점에 moreWrap이
+      // 이미 뷰포트 안에 있으면 observer가 재발화하지 않아 다음 페이지가 영원히 안 불려오는 버그.
+      // 해제 직후 직접 확인해서 보완한다.
+      if(state.hasMore&&moreWrap){
+        const _r=moreWrap.getBoundingClientRect();
+        if(_r.top<window.innerHeight+500)tryLoadMore(ko);
+      }
+    };
     const{filter,offset}=state;
     // 필터 조건만 담당(정렬/범위는 호출부에서 붙임) — 청크 랜덤 샘플링 시 같은 조건으로 여러 번 독립 호출해야 함
     // forCount=true면 행 데이터 없이(head:true) 총 개수만 가볍게 물어보는 전용 변형 — 카드를 처음 열 때
@@ -12287,12 +12378,33 @@ function _makeChVidController(contId){
       if(state.viewMode==='format'){
         if(state.formatFilter)q=q.contains('content_formats',[state.formatFilter]);
       }else if(filter==='cover'){
-        // "BE ORIGINAL"은 딩고 안무 콘텐츠 시리즈명이라 "original" 매칭에 잘못 걸려 춤 콘텐츠가 Cover 탭에
-        // 섞여 들어왔음(2026-08-11, 사용자 제보) — 원곡 크레딧 문맥이 아닌 이 시리즈명만 명시적으로 제외.
-        q=q.or('title_norm.ilike.*cover*,title_norm.ilike.*커버*,title_norm.ilike.*원곡*,title_norm.ilike.*original*')
-          .not('title_norm','ilike','*be original*');
+        // "BE ORIGINAL"(딩고 안무 시리즈), "original ver"(원본 버전), "cover story"/"커버 촬영"(잡지/포토),
+        // "uncover", "CHOOM ORIGINAL", "the original", "discover/recover/undercover"(커버 포함 단어) 등 제외.
+        q=q.or('title_norm.ilike.*cover*,title_norm.ilike.*커버*,title_norm.ilike.*원곡*,title_norm.ilike.*original*,content_formats.cs.{cover}')
+          .not('title_norm','ilike','*be original*')
+          .not('title_norm','ilike','*original ver*')
+          .not('title_norm','ilike','*cover story*')
+          .not('title_norm','ilike','*커버 촬영*')
+          .not('title_norm','ilike','*uncover*')
+          .not('title_norm','ilike','*choom original*')
+          .not('title_norm','ilike','*the original*')
+          .not('title_norm','ilike','*discover*')
+          .not('title_norm','ilike','*recover*')
+          .not('title_norm','ilike','*undercover*')
+          .not('title_norm','ilike','*디스커버*')
+          .not('title_norm','ilike','*리커버*')
+          .not('title_norm','ilike','*언더커버*')
+          .not('title_norm','ilike','*무빙 커버*')
+          .not('title_norm','ilike','*moving cover*')
+          .not('title_norm','ilike','*original contents*');
       }else if(filter==='live'){
-        q=q.eq('category','live').not('title','ilike','%[live]%');
+        q=q.or('category.eq.live,content_formats.cs.{live},title_norm.ilike.*리무진서비스*,title_norm.ilike.*리무진 서비스*')
+          .not('title','ilike','%[live]%')
+          .not('title_norm','ilike','*엠카드림*');
+      }else if(filter==='variety'||filter==='show'){
+        // category(채널 tier 기반 레거시) OR content_formats(영상 단위 장르 태그) OR 제목 키워드 둘 다 체크
+        const _varTitleOr=filter==='variety'?',title_norm.ilike.*라디오스타*,title_norm.ilike.*아는형님*,title_norm.ilike.*아는 형님*,title_norm.ilike.*놀라운토요일*,title_norm.ilike.*전참시*':'';
+        q=q.or(`category.eq.${filter},content_formats.cs.{${filter}}${_varTitleOr}`);
       }else if(filter!=='all'){
         q=q.eq('category',filter);
       }
@@ -12451,7 +12563,7 @@ function _makeChVidController(contId){
       const pageStartPos=state.pos,pageStartCat=state.cat;
       const incomingTrailingEl=state.trailingEl; // 이전 페이지에서 홀로 남은 카드(있다면)
       const pageItems=vids;
-      const g=_groupGcVids(pageItems,featured,pageStartPos,pageStartCat,document.body.classList.contains('card-wide'));
+      const g=_groupGcVids(pageItems,featured,pageStartPos,pageStartCat,document.body.classList.contains('card-wide'),state.filter==='short');
       state.pos=g.endPos;state.cat=g.endCat;
       const{nodes:pageNodes,pendingProbe}=renderItems(g.renderList,grid);
       state.allVids=state.allVids.concat(g.renderList); // 라이트박스 스와이프 넘기기용으로 지금까지 불러온 영상 누적
@@ -12589,6 +12701,31 @@ function _makeChVidController(contId){
       if(isFormat&&!state.formatFilter&&tabs.length)state.formatFilter=tabs[0][0];
     }
     renderFilterTabs();
+    // 'all' 탭 제외 각 탭에 실제 영상이 있는지 병렬 limit(1)로 비동기 확인 — 없으면 탭 숨김.
+    // fan 탭은 위에서 따로 처리, 여기선 초기 catTabs(fan 제외)만 스냅샷해서 확인.
+    (async()=>{
+      if(!sb)return;
+      const _snap=catTabs.filter(([v])=>v!=='all').map(([v])=>v);
+      const _chk=async v=>{
+        let q=sb.from(_YT_TABLE).select('id').limit(1);
+        if(memberKo)q=q.eq('group_ko',ko).contains('members',[memberKo]);
+        else q=q.eq('group_ko',ko);
+        if(v==='cover')q=q.or('title_norm.ilike.*cover*,title_norm.ilike.*커버*,title_norm.ilike.*원곡*,content_formats.cs.{cover}');
+        else if(v==='variety')q=q.or('category.eq.variety,content_formats.cs.{variety},title_norm.ilike.*라디오스타*,title_norm.ilike.*아는형님*,title_norm.ilike.*아는 형님*,title_norm.ilike.*놀라운토요일*,title_norm.ilike.*전참시*');
+        else if(v==='live')q=q.or('category.eq.live,content_formats.cs.{live},title_norm.ilike.*리무진서비스*,title_norm.ilike.*리무진 서비스*');
+        else if(v==='show')q=q.or('category.eq.show,content_formats.cs.{show}');
+        else q=q.eq('category',v);
+        const{data}=await q;
+        return{v,ok:!!(data?.length)};
+      };
+      const res=await Promise.all(_snap.map(_chk));
+      if(state.ko!==ko||state.memberKo!==(memberKo||null))return;
+      const hidden=new Set(res.filter(r=>!r.ok).map(r=>r.v));
+      if(!hidden.size)return;
+      catTabs=catTabs.filter(([v])=>!hidden.has(v));
+      if(hidden.has(state.filter))state.filter='all';
+      renderFilterTabs();
+    })();
     // 멤버 카드 전용: "이 멤버만 단독 출연"한 영상만 걸러보는 토글(다른 필터 탭과 독립적으로 같이 켤 수 있음,
     // 예: Shorts+Only = 이 멤버 단독 쇼츠만). 전체/라이브/Shorts는 배타적 "모드"라 알약 버튼이지만 Only는
     // 부가 조건이라 텍스트만(.gc-ch-only)으로 구분되게 함.
@@ -12699,11 +12836,24 @@ function _makeChVidController(contId){
       load(ko,true);
     });
     if(observer)observer.disconnect();
+    if(_cleanupScroll){_cleanupScroll();_cleanupScroll=null;}
     const moreWrap=cont.querySelector('.gc-ch-more-wrap');
     observer=new IntersectionObserver(entries=>{
       if(entries[0].isIntersecting)tryLoadMore(ko);
     },{root:null,rootMargin:'0px 0px 400px 0px'});
     if(moreWrap)observer.observe(moreWrap);
+    // IntersectionObserver 보조: iOS Safari 등에서 fixed-position 스크롤 컨테이너 안의 요소에 대해
+    // IntersectionObserver가 재발화를 놓치는 경우를 scroll 리스너로 직접 보완한다.
+    // 모바일(mob-card-stack-inner/mob-sheet-inner)·데스크톱(side-panel/member-panel) 모두 커버.
+    const _mwEl=moreWrap;
+    const _onScroll=()=>{
+      if(!_mwEl||!state.hasMore||state.appendLock)return;
+      if(_mwEl.getBoundingClientRect().top<window.innerHeight+400)tryLoadMore(ko);
+    };
+    const _scrollers=[mobCardStackInner,mobSheetInner,
+      document.getElementById('side-panel'),document.getElementById('member-panel')].filter(Boolean);
+    _scrollers.forEach(el=>el.addEventListener('scroll',_onScroll,{passive:true}));
+    _cleanupScroll=()=>_scrollers.forEach(el=>el.removeEventListener('scroll',_onScroll));
     load(ko,true);
   }
 
@@ -12775,7 +12925,19 @@ function _makeChVidController(contId){
     if(stillQualifies&&state.filter!=='all'){
       if(state.filter==='cover'){
         const t=(newRow.title||'').toLowerCase();
-        if(!/cover|커버|원곡|original/.test(t))stillQualifies=false;
+        const fmts=newRow.content_formats||[];
+        const _coverExclude=['be original','original ver','cover story','커버 촬영','uncover','choom original','the original','discover','recover','undercover','디스커버','리커버','언더커버','무빙 커버','moving cover','original contents'];
+        if(!fmts.includes('cover')&&(!/cover|커버|원곡|original/.test(t)||_coverExclude.some(ex=>t.includes(ex))))stillQualifies=false;
+      }else if(state.filter==='live'){
+        const t=(newRow.title||'').toLowerCase();
+        const fmts=newRow.content_formats||[];
+        if(t.includes('엠카드림'))stillQualifies=false;
+        else if(newRow.category!=='live'&&!fmts.includes('live')&&!t.includes('리무진서비스')&&!t.includes('리무진 서비스'))stillQualifies=false;
+      }else if(state.filter==='variety'){
+        const t=(newRow.title||'').toLowerCase();
+        const fmts=newRow.content_formats||[];
+        const _varKeywords=['라디오스타','아는형님','아는 형님','놀라운토요일','전참시'];
+        if(newRow.category!=='variety'&&!fmts.includes('variety')&&!_varKeywords.some(k=>t.includes(k)))stillQualifies=false;
       }else if(newRow.category!==state.filter){
         stillQualifies=false;
       }
@@ -12996,6 +13158,17 @@ async function _loadConcertRow(gko,containerId){
   if(error||!data)return;
   _renderConcertRow(containerId,data);
 }
+// 멤버 이름으로 직접 이벤트를 조회 — 그룹 멤버의 솔로 콘서트용.
+// groups 배열에 멤버 이름(ko)이 포함된 이벤트를 찾는다. GROUPS 체크 없이 이름으로 바로 쿼리하므로,
+// DB에 groups=['지민'] 형태로 데이터가 추가되는 즉시 해당 멤버 카드에 자동 표시된다.
+async function _loadMemberConcertRow(memberKo,containerId){
+  const row=document.getElementById(containerId);
+  if(row)row.innerHTML='';
+  if(!sb||!memberKo)return;
+  const{data,error}=await sb.from('kpop_events').select('*').contains('groups',[memberKo]).order('date_start',{ascending:false});
+  if(error||!data?.length)return;
+  _renderConcertRow(containerId,data);
+}
 
 // 그룹/멤버 카드의 컬렉션 행 — 내 컬렉션 중 이 그룹(또는 이 멤버)이 담긴 것(로컬, 네트워크 불필요) +
 // 공개 컬렉션 중 마찬가지로 담긴 것(다른 유저, public_collections 테이블)을 합쳐서 보여준다. 내 것을
@@ -13030,9 +13203,10 @@ async function _loadCollectionRow(ko,containerId,memberKo,cardMemberKo){
     if(_pubCollectionsP)await _pubCollectionsP;
     if(_colLikesP)await _colLikesP; // 좋아요 많은 순 정렬에 필요
     const all=_pubCollectionsCache||[];
-    pub=all.filter(r=>r.owner_id!==uid&&(memberKo?(r.member_kos||[]).includes(memberKo):(r.group_kos||[]).includes(ko)))
+    const mineIds=new Set(mine.map(m=>m.id));
+    pub=all.filter(r=>!mineIds.has(r.id)&&(memberKo?(r.member_kos||[]).includes(memberKo):(r.group_kos||[]).includes(ko)))
       .sort((a,b)=>(_colLikeCounts.get(b.id)||0)-(_colLikeCounts.get(a.id)||0))
-      .slice(0,20).map(r=>({id:r.id,name:r.name,videos:r.items||[],mine:false,ownerNick:r.owner_nick||null}));
+      .slice(0,20).map(r=>({id:r.id,name:r.name,videos:r.items||[],mine:r.owner_id===uid,ownerNick:r.owner_nick||null}));
   }
   // 대기 중 다른 카드로 전환됐으면 건너뜀
   if(cardMemberKo?_openTArtist?.name?.ko!==cardMemberKo:_openGCko!==ko)return;
@@ -13053,6 +13227,25 @@ function _renderCollectionRow(containerId,list){
     if(thumbUrl)img.src=thumbUrl;
     thumbWrap.appendChild(img);
     if(col.mine){const dot=document.createElement('span');dot.className='gc-collection-chip-mine';thumbWrap.appendChild(dot);}
+    if(col.mine||_isAdmin()){
+      const del=document.createElement('button');del.className='gc-collection-chip-del';del.textContent='×';del.title='컬렉션 삭제';
+      del.addEventListener('click',async e=>{
+        e.stopPropagation();
+        if(!confirm(`"${col.name}" 컬렉션을 삭제할까요?`))return;
+        collections=collections.filter(c=>c.id!==col.id);
+        _saveCollections();renderCollectionSection();
+        if(sb&&window._sbSession){
+          let q=sb.from('public_collections').delete().eq('id',col.id);
+          if(!_isAdmin())q=q.eq('owner_id',window._sbSession.user.id);
+          const{error}=await q;
+          if(error)console.error('공개 컬렉션 삭제 실패',error.message);
+        }
+        chip.remove();
+        const listEl2=document.getElementById(containerId)?.querySelector('.gc-collection-list');
+        if(listEl2&&!listEl2.children.length)document.getElementById(containerId).style.display='none';
+      });
+      thumbWrap.appendChild(del);
+    }
     const name=document.createElement('div');name.className='gc-collection-chip-name';name.textContent=col.name;
     const cnt=document.createElement('div');cnt.className='gc-collection-chip-cnt';cnt.textContent=`${col.videos.length}개`;
     chip.appendChild(thumbWrap);chip.appendChild(name);chip.appendChild(cnt);
@@ -13153,7 +13346,7 @@ async function _probeShortsBatch(refs){
 }
 
 // 대표(featured) 영상 후보: 뮤비만 제외하고 스크랩(하트) 최다 영상을 뽑는다. 쇼츠도 후보에 포함되며,
-// 쇼츠가 뽑히면 2열 히어로 폭은 그대로 차지하되 썸네일만 세로 비율로 가운데 크게 표시된다(.gc-ch-item.featured.is-short).
+// 쇼츠가 뽑히면 2열 폭 전체를 9:16 비율로 최대 크기로 표시한다(.gc-ch-item.featured.is-short).
 function _pickMainChVid(videos){
   if(!videos.length)return null;
   // 뮤비·예능/연기(other)는 대표영상 후보에서 제외 — 라이브(직캠)가 대표 위주가 되도록.
@@ -13177,7 +13370,7 @@ function _pickMainChVid(videos){
 // startPos/startCat은 이전 페이지에서 이어지는 그리드상 현재 위치(홀/짝, 대기 중인 비율).
 // widenPrevTrailing: 이 페이지 첫 항목의 비율이 이전 페이지의 마지막(홀로 남은) 카드와 달라서,
 // 그 이전 페이지 카드를 넓혀야 하는 경우 true.
-function _groupGcVids(items,featured,startPos,startCat,avoidWiden){
+function _groupGcVids(items,featured,startPos,startCat,avoidWiden,widenSomeShorts=false){
   const renderList=[];
   let pos=startPos,cat=startCat;
   let lastItem=null;
@@ -13203,7 +13396,16 @@ function _groupGcVids(items,featured,startPos,startCat,avoidWiden){
     // avoidWiden(카드 넓게 보기 모드)에선 이미 패널 자체가 넓어서 추가로 안 키운다.
     // 0.28(영상 3~4개당 1개꼴)은 너무 잦아서 2열 중 1열만 채워진 것처럼 보이는 카드가 너무 많다는
     // 피드백(2026-08-10) — 가끔 변화를 주는 느낌만 남기고 빈도를 확 낮춤.
-    if(!avoidWiden&&pos===0&&c==='norm'&&Math.random()<0.1){
+    if(!avoidWiden&&pos===0&&c==='norm'&&Math.random()<0.05){
+      v._wide=true;
+      renderList.push(v);
+      lastItem=v;
+      pos=0;cat=null;
+      continue;
+    }
+    // Shorts 탭처럼 Shorts끼리만 이어질 땐 비율 경계가 없어 widening이 발생 안 함 —
+    // widenSomeShorts(=Shorts 탭)일 때 가끔 단독 2열 폭 카드로 섞어 시각적 변화를 준다.
+    if(widenSomeShorts&&pos===0&&c==='short'&&Math.random()<0.05){
       v._wide=true;
       renderList.push(v);
       lastItem=v;
@@ -13310,7 +13512,17 @@ _wireTotop(memberPanelEl);
 _wireTotop(connPanelEl);
 _totopBtn.addEventListener('click',e=>{
   e.stopPropagation();
-  _totopScrollTarget?.scrollTo({top:0,behavior:'smooth'});
+  const _el=_totopScrollTarget;
+  if(!_el)return;
+  // behavior:'smooth'는 거리에 비례해 속도가 달라져서 일관성 없음 — 고정 시간+ease-out으로 교체
+  const _start=_el.scrollTop;
+  const _dur=340;
+  const _t0=performance.now();
+  (function _step(now){
+    const p=Math.min((now-_t0)/_dur,1);
+    _el.scrollTop=_start*(1-p*p*(3-2*p)); // smoothstep ease
+    if(p<1)requestAnimationFrame(_step);
+  })(performance.now());
 });
 
 </script>
