@@ -69,6 +69,7 @@
     <div id="fav-section">
       <div class="fav-hd"><span class="fav-hd-lbl">FAVORITES</span><button id="fav-mode-btn" class="sp-tog">Highlight</button></div>
       <div id="fav-list"><div class="fav-empty">즐겨찾기가 없어요</div></div>
+      <button id="uc-card-btn" data-i18n="ucCardBtn">✦ 내 우주 카드 만들기</button>
     </div>
     <div id="collection-section">
       <div class="fav-hd"><span class="fav-hd-lbl">COLLECTIONS</span></div>
@@ -651,6 +652,18 @@
     </div>
   </div>
 </div>
+<div id="uc-card-overlay">
+  <div id="uc-card-panel">
+    <div class="pp-title" data-i18n="ucCardTitle">내 우주 카드</div>
+    <div id="uc-card-imgwrap"><img id="uc-card-img" alt=""></div>
+    <div id="uc-card-status"></div>
+    <div id="uc-card-btns">
+      <button id="uc-card-cancel" class="uc-btn" data-i18n="ucCardClose">닫기</button>
+      <button id="uc-card-download" class="uc-btn" data-i18n="ucCardSave" disabled>저장</button>
+      <button id="uc-card-share" class="uc-btn uc-btn-primary" data-i18n="ucCardShare" disabled>공유</button>
+    </div>
+  </div>
+</div>
 <!-- 로그아웃 상태에서 "만들기" 눌렀을 때 신규가입/재로그인 경로를 갈라주는 선택 화면 — 예전엔 곧장
      프로필 생성 폼(닉네임 등)부터 보여줘서, 이미 계정 있는 재방문자가 로그인 버튼(맨 아래 "연결하기")을
      찾으려면 그 폼을 다 지나쳐야 했음(2026-08-14, 사용자 제보). 기존 confirm류 오버레이와 톤을 맞추기
@@ -870,6 +883,55 @@
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/renderers/CSS2DRenderer.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.110.1/dist/umd/supabase.js"></script>
 <script>
+// ── CDN 폴백 + 필수 라이브러리 가드 (2026-08-18) ─────────────────────────────
+// three.js가 로드에 실패하면 아래 메인 스크립트가 최상위에서 즉시 throw돼 로딩 화면
+// ("Here is Our K-Pop Universe..!")에 에러 안내도 없이 영원히 멈춤. cdnjs/jsdelivr 순단,
+// 회사망 차단, 광고차단 확장 등 실사용에서 드물지 않은 케이스라 2중 방어:
+// ① 제3 CDN(unpkg)에서 한 번 더 시도 (document.write는 파싱 중 동기 로드라 순서 보장됨)
+// ② 그래도 없으면 메인 스크립트 첫머리 가드가 에러 화면으로 전환 (아래 KPU_LIB_GUARD 참고)
+if(typeof THREE==='undefined'){
+  document.write('<script src="https://unpkg.com/three@0.128.0/build/three.min.js"><\/script>');
+}
+</script>
+<script>
+if(typeof THREE!=='undefined'&&!THREE.OrbitControls){
+  document.write('<script src="https://unpkg.com/three@0.128.0/examples/js/controls/OrbitControls.js"><\/script>');
+}
+if(typeof THREE!=='undefined'&&!THREE.CSS2DRenderer){
+  document.write('<script src="https://unpkg.com/three@0.128.0/examples/js/renderers/CSS2DRenderer.js"><\/script>');
+}
+if(typeof window.supabase==='undefined'){
+  document.write('<script src="https://unpkg.com/@supabase/supabase-js@2.110.1/dist/umd/supabase.js"><\/script>');
+}
+</script>
+<script>
+// ── KPU_LIB_GUARD: three.js 최종 부재 시 에러 화면 전환 (2026-08-18) ──────────
+// 원본+폴백 CDN 모두 실패하면 아래에서 new THREE.Scene()이 바로 throw돼 이 스크립트 전체가
+// 죽고, buildUniverse()의 catch(로드 실패 화면)는 등록조차 안 됨 — 사용자는 로딩 문구에서
+// 영원히 대기. 그 전에 여기서 직접 기존 에러 화면과 같은 UI로 전환하고 실행을 중단한다.
+// (supabase는 이미 sb=null로 관용 처리되므로 필수 아님 — three 계열만 하드 의존성)
+if(typeof THREE==='undefined'||!THREE.OrbitControls||!THREE.CSS2DRenderer){
+  (function(){
+    var ko=(navigator.language||'').toLowerCase().indexOf('ko')===0;
+    var veil=document.getElementById('loading-veil');if(veil)veil.remove();
+    var ring=document.getElementById('loading-ring');if(ring)ring.remove();
+    var el=document.getElementById('loading');
+    if(el){
+      el.classList.add('loading-error');
+      el.style.opacity='1';
+      el.innerHTML='';
+      var msg=document.createElement('div');
+      msg.textContent=ko?'필수 스크립트를 불러오지 못했어요. 네트워크(또는 광고 차단 확장) 확인 후 다시 시도해주세요.':'Failed to load required scripts. Please check your network (or ad blocker) and try again.';
+      var btn=document.createElement('button');
+      btn.className='uc-btn uc-btn-primary';
+      btn.textContent=ko?'다시 시도':'Retry';
+      btn.addEventListener('click',function(){location.reload();});
+      el.appendChild(msg);el.appendChild(btn);
+    }
+    try{gtag('event','cdn_load_error',{lib:typeof THREE==='undefined'?'three':'three-addons'});}catch(e){}
+  })();
+  throw new Error('CDN 스크립트 로드 실패 — 앱 초기화 중단');
+}
 // 이전에 줌인된 상태로 새로고침했을 때 초기 스케일 1.0으로 강제 복원 (iOS Safari 대응)
 (function(){
   var vp=document.querySelector('meta[name=viewport]');
@@ -1141,7 +1203,10 @@ const T={
       idxSortBirth:'생년',idxSortGroup:'그룹명',idxSortNation:'국적',ppTitle:'내 프로필',ppNick:'닉네임',ppNickPH:'닉네임을 입력하세요',ppNickErr:'닉네임을 입력해주세요',ppBio:'한 줄 소개',ppBioPH:'선택사항',ppColor:'내 별 색상',ppFavLabel:'좋아요 공개',ppFavSub:'다른 사람들이 볼 수 있어요',ppSyncLabel:'다른 기기와 동기화',ppSyncSub:'다른 기기에서도 좋아요가 유지돼요',ppGoogleBtn:'구글로 연결하기',ppXBtn:'X로 연결하기',ppLinked:'계정에 연결됨 ✓',ppLogout:'로그아웃',ppSave:'저장',
       fbBtnLabel:'💬 피드백 보내기',fbTitle:'피드백 보내기',fbCatBug:'버그 제보',fbCatSuggest:'제안',fbCatEtc:'기타',fbTextPH:'어떤 내용인지 편하게 적어주세요',fbContactPH:'답장 받을 이메일(선택)',fbErrEmpty:'내용을 입력해주세요',fbCancel:'취소',fbSubmit:'보내기',fbSending:'보내는 중…',fbSent:'전달됐어요!',fbSendFail:'전송에 실패했어요. 잠시 후 다시 시도해주세요.',
       cancel:'취소',colNewBtn:'+ 새 컬렉션',colNewFullBtn:'+ 새 컬렉션 만들기',colNamePH:'이름 입력',colEmpty:'컬렉션이 없어요',colCreateConfirm:'만들기',
-      selLabel:'선택',selBtnTitle:'영상 여러 개 선택',sortTitle:'정렬',refreshTitle:'새로고침',searchClearLabel:'검색어 지우기',userBulkAdd:'컬렉션에 추가'},
+      selLabel:'선택',selBtnTitle:'영상 여러 개 선택',sortTitle:'정렬',refreshTitle:'새로고침',searchClearLabel:'검색어 지우기',userBulkAdd:'컬렉션에 추가',
+      ucCardBtn:'✦ 내 우주 카드 만들기',ucCardTitle:'내 우주 카드',ucCardClose:'닫기',ucCardSave:'저장',ucCardShare:'공유',
+      ucCardNeedFav:'먼저 즐겨찾기 하이라이트(♥)를 켜주세요',ucCardAligning:'정렬 중이에요, 잠시 후 다시 시도해주세요',
+      ucCardGenerating:'카드 생성 중…',ucCardNoFav:'카드를 만들 즐겨찾기가 없어요',ucCardSaved:'이미지가 저장됐어요 — 앱에서 직접 공유해주세요'},
   en:{sp_title:'Settings',debutYr:'Debut Year',birthYr:'Birth Year',grpType:'Group Type',
       genLabel:'Generation',genNote:'Just for fun',
       all:'All',girl:'Girl Groups',boy:'Boy Groups',coed:'Coed Groups',inactive:'Inactive / Left',reset:'↺ Reset',
@@ -1153,7 +1218,10 @@ const T={
       idxSortBirth:'Birth Year',idxSortGroup:'Group',idxSortNation:'Nationality',ppTitle:'My Profile',ppNick:'Nickname',ppNickPH:'Enter nickname',ppNickErr:'Nickname is required',ppBio:'Bio',ppBioPH:'Optional',ppColor:'Star Color',ppFavLabel:'Public Likes',ppFavSub:'Others can see your likes',ppSyncLabel:'Sync Across Devices',ppSyncSub:'Likes stay synced across your devices',ppGoogleBtn:'Connect with Google',ppXBtn:'Connect with X',ppLinked:'Account Connected ✓',ppLogout:'Log Out',ppSave:'Save',
       fbBtnLabel:'💬 Send Feedback',fbTitle:'Send Feedback',fbCatBug:'Bug Report',fbCatSuggest:'Suggestion',fbCatEtc:'Other',fbTextPH:'Write anything on your mind',fbContactPH:'Email for a reply (optional)',fbErrEmpty:'Please enter a message',fbCancel:'Cancel',fbSubmit:'Send',fbSending:'Sending…',fbSent:'Sent, thank you!',fbSendFail:'Failed to send. Please try again in a moment.',
       cancel:'Cancel',colNewBtn:'+ New Collection',colNewFullBtn:'+ Create Collection',colNamePH:'Enter name',colEmpty:'No collections yet',colCreateConfirm:'Create',
-      selLabel:'Select',selBtnTitle:'Select multiple videos',sortTitle:'Sort',refreshTitle:'Refresh',searchClearLabel:'Clear search',userBulkAdd:'Add to Collection'}
+      selLabel:'Select',selBtnTitle:'Select multiple videos',sortTitle:'Sort',refreshTitle:'Refresh',searchClearLabel:'Clear search',userBulkAdd:'Add to Collection',
+      ucCardBtn:'✦ Create My Universe Card',ucCardTitle:'My Universe Card',ucCardClose:'Close',ucCardSave:'Save',ucCardShare:'Share',
+      ucCardNeedFav:'Turn on Favorites Highlight (♥) first',ucCardAligning:'Still aligning — try again in a moment',
+      ucCardGenerating:'Generating card…',ucCardNoFav:'No favorites to build a card from',ucCardSaved:'Image saved — share it from your gallery app'}
 };
 // 소속사 표기 영어모드 정규화 — 완전 로마자 번역 대신 흔한 접미사 "엔터테인먼트"만 "Ent."로 치환
 // (2026-08-18, 사용자 요청). 브랜드명 자체가 순수 한글인 경우(예: 스윙, 큐브, 젤리피쉬)는 그대로
@@ -9337,6 +9405,150 @@ function _exitMyUniverseMode(){
   _myUniversePhaseT0=performance.now();
 }
 
+// ── 내 우주 카드 (공유용 이미지, 2026-08-18) ──────────────────────────────
+// 별도 카드 템플릿을 새로 디자인하는 대신, 이미 있는 3D 씬(글로우/듄 컬러링/별밭)을 실제로 캡처해서
+// 쓴다 — "아름다움"을 새로 만들 필요 없이 앱 본체의 미학을 그대로 재사용하는 게 목적(2026-08-18, 사용자
+// 논의). "내 우주" 모드(favMode)가 이미 궤도 위치를 실제로 옮겨두므로, 그 라이브 상태를 그대로 다른
+// 카메라로 한 번 더 그려서 캡처한다 — 라이브 카메라(camera)는 안 건드리고, 임시 카메라로만 렌더.
+function _computeMyUniverseBounds(){
+  if(!_myUniverseActive||_myUniversePhase!=='active'||!_myUniverseHub||!_myUniverseOrbits.length)return null;
+  let maxR=2.4;
+  _myUniverseOrbits.forEach(o=>{
+    if(o.kind==='group')maxR=Math.max(maxR,o.radius+o.bm.radius);
+    else if(o.kind==='member-solo')maxR=Math.max(maxR,o.radius);
+  });
+  return{hub:_myUniverseHub.clone(),maxR};
+}
+// 사용자가 우연히 보고 있던 각도에 기대지 않고, 매번 같은 3/4 부감 각도로 고정 — 카드가 항상 일정하게
+// "예쁜 구도"로 나오게 하기 위함(사용자 요청: "이미지 자체가 아름다우면 좋겠다").
+function _renderMyUniverseSnapshotDataURL(cardW,cardH){
+  const bounds=_computeMyUniverseBounds();
+  if(!bounds)return null;
+  const{hub,maxR}=bounds;
+  const dir=new THREE.Vector3(0.55,0.40,0.72).normalize();
+  const dist=Math.max(maxR*2.5+16,26);
+  const snapCam=new THREE.PerspectiveCamera(50,cardW/cardH,0.1,1000);
+  snapCam.position.copy(hub.clone().addScaledVector(dir,dist));
+  snapCam.lookAt(hub);
+
+  // 우주 전체가 워낙 빽빽해서, 화각을 좁혀도 즐겨찾기 안 한 다른 그룹 행성이 우연히 프레임 가장자리에
+  // 걸려 "남의 우주"처럼 보이는 경우가 실측에서 확인됨 — 캡처하는 동안만 궤도 밖 행성을 숨긴다.
+  // 멤버 별밭(작은 점들)은 그대로 둬서 배경 우주 느낌은 유지(2026-08-18, 헤드리스 검증 중 발견).
+  const orbitKos=new Set(_myUniverseOrbits.filter(o=>o.kind==='group').map(o=>o.ko));
+  const hiddenMeshes=[];
+  bubbleMeshes.forEach(bm=>{
+    if(!orbitKos.has(bm.ko)&&bm.mesh.visible){bm.mesh.visible=false;hiddenMeshes.push(bm.mesh);}
+  });
+
+  const prevSize=new THREE.Vector2();renderer.getSize(prevSize);
+  const prevPR=renderer.getPixelRatio();
+  renderer.setPixelRatio(1);
+  renderer.setSize(cardW,cardH,false); // false=CSS 크기는 그대로 두고 내부 해상도만 바꿈
+  renderer.render(scene,snapCam);
+  const dataURL=renderer.domElement.toDataURL('image/png');
+  hiddenMeshes.forEach(m=>{m.visible=true;});
+  // 원래 크기/카메라로 즉시 복원 — 이 함수는 동기로 끝나서 브라우저가 그 사이 화면을 그릴 기회가 없음(중간 프레임 노출 없음)
+  renderer.setPixelRatio(prevPR);
+  renderer.setSize(prevSize.x,prevSize.y,false);
+  renderer.render(scene,camera);
+  return dataURL;
+}
+// WebGL 캡처(글로우 있는 별/행성)는 배경이 완전 투명(renderer clearAlpha=0)이라, 2D 캔버스에서
+// 사이트 톤(딥 네이비)의 배경 + 내 별 색으로 은은하게 틴트한 그라데이션 위에 얹고, 하단에 발광
+// 타이포로 닉네임/워터마크를 합성한다.
+async function _buildMyUniverseCardDataURL(){
+  const W=1080,H=1350;
+  const webglURL=_renderMyUniverseSnapshotDataURL(W,H);
+  if(!webglURL)return null;
+  const img=new Image();
+  await new Promise((res,rej)=>{img.onload=res;img.onerror=rej;img.src=webglURL;});
+
+  const cv=document.createElement('canvas');cv.width=W;cv.height=H;
+  const ctx=cv.getContext('2d');
+  const col=myProfile?.color||[170,195,255];
+
+  const bg=ctx.createRadialGradient(W*0.5,H*0.36,0,W*0.5,H*0.36,H*0.9);
+  bg.addColorStop(0,`rgba(${col[0]},${col[1]},${col[2]},0.16)`);
+  bg.addColorStop(0.42,'#0d0c22');
+  bg.addColorStop(1,'#040309');
+  ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);
+  ctx.drawImage(img,0,0,W,H);
+
+  // 하단 페이드 — 별밭 위에 텍스트를 바로 얹으면 가독성이 떨어져서 배경을 한 번 더 어둡게
+  const fade=ctx.createLinearGradient(0,H*0.72,0,H);
+  fade.addColorStop(0,'rgba(4,3,9,0)');
+  fade.addColorStop(1,'rgba(4,3,9,0.88)');
+  ctx.fillStyle=fade;ctx.fillRect(0,H*0.72,W,H*0.28);
+
+  const nickname=myProfile?.nickname||'';
+  const title=currentLang==='ko'?(nickname?`${nickname}의 우주`:'나의 우주'):(nickname?`${nickname}'s Universe`:'My Universe');
+  ctx.textAlign='center';
+  ctx.font='500 46px "Pretendard","Apple SD Gothic Neo",sans-serif';
+  ctx.fillStyle='#f3f6ff';
+  ctx.shadowColor=`rgba(${col[0]},${col[1]},${col[2]},0.65)`;
+  ctx.shadowBlur=24;ctx.fillText(title,W/2,H-150);
+  ctx.shadowBlur=8;ctx.fillText(title,W/2,H-150);
+  ctx.shadowBlur=0;
+
+  ctx.font='400 21px "Pretendard","Apple SD Gothic Neo",sans-serif';
+  ctx.fillStyle='rgba(200,212,240,0.55)';
+  ctx.fillText('K · P O P   U N I V E R S E',W/2,H-104);
+
+  return cv.toDataURL('image/png');
+}
+let _ucCardDataURL=null;
+async function _openUcCardPreview(){
+  const overlay=document.getElementById('uc-card-overlay');
+  const imgEl=document.getElementById('uc-card-img');
+  const statusEl=document.getElementById('uc-card-status');
+  const shareBtn=document.getElementById('uc-card-share');
+  const dlBtn=document.getElementById('uc-card-download');
+  const t=T[currentLang];
+  imgEl.classList.remove('loaded');imgEl.src='';
+  shareBtn.disabled=true;dlBtn.disabled=true;_ucCardDataURL=null;
+  overlay.classList.add('open');
+  if(!_myUniverseActive||!_myUniverseOrbits.length){statusEl.textContent=t.ucCardNeedFav;return;}
+  if(_myUniversePhase!=='active'){statusEl.textContent=t.ucCardAligning;return;}
+  statusEl.textContent=t.ucCardGenerating;
+  try{
+    const dataURL=await _buildMyUniverseCardDataURL();
+    if(!overlay.classList.contains('open'))return; // 생성 도중 닫혔으면 반영하지 않음
+    if(!dataURL){statusEl.textContent=t.ucCardNoFav;return;}
+    _ucCardDataURL=dataURL;
+    imgEl.onload=()=>imgEl.classList.add('loaded');
+    imgEl.src=dataURL;
+    statusEl.textContent='';
+    shareBtn.disabled=false;dlBtn.disabled=false;
+  }catch(e){
+    statusEl.textContent=(currentLang==='ko'?'생성 실패: ':'Failed: ')+e.message;
+  }
+}
+function _closeUcCardPreview(){document.getElementById('uc-card-overlay').classList.remove('open');}
+function _downloadUcCard(){
+  if(!_ucCardDataURL)return;
+  const a=document.createElement('a');
+  a.href=_ucCardDataURL;a.download='my-kpop-universe.png';
+  document.body.appendChild(a);a.click();document.body.removeChild(a);
+}
+async function _shareUcCard(){
+  if(!_ucCardDataURL)return;
+  try{
+    const blob=await(await fetch(_ucCardDataURL)).blob();
+    const file=new File([blob],'my-kpop-universe.png',{type:'image/png'});
+    if(navigator.canShare&&navigator.canShare({files:[file]})){
+      await navigator.share({files:[file],title:'K-POP Universe',text:currentLang==='ko'?'내 케이팝 우주 ✦':'My K-pop Universe ✦'});
+      return;
+    }
+  }catch(e){ /* 취소했거나 실패 — 아래 다운로드 폴백으로 계속 진행 */ }
+  _downloadUcCard();
+  _showShareToast(T[currentLang].ucCardSaved);
+}
+document.getElementById('uc-card-btn')?.addEventListener('click',_openUcCardPreview);
+document.getElementById('uc-card-cancel')?.addEventListener('click',_closeUcCardPreview);
+document.getElementById('uc-card-download')?.addEventListener('click',_downloadUcCard);
+document.getElementById('uc-card-share')?.addEventListener('click',_shareUcCard);
+document.getElementById('uc-card-overlay')?.addEventListener('click',e=>{if(e.target===e.currentTarget)_closeUcCardPreview();});
+
 function _makeMyStarTex([r,g,b]){
   const sz=128,c=sz/2;
   const cv=document.createElement('canvas');cv.width=cv.height=sz;
@@ -11196,6 +11408,20 @@ function _buildFeedAnniversaries(){
   const _sortByDebutDesc=(a,b)=>_bdayDebutYr(b)-_bdayDebutYr(a);
   const bdayHits=[...allBday.filter(a=>a.active!==false).sort(_sortByDebutDesc),...allBday.filter(a=>a.active===false).sort(_sortByDebutDesc)];
   const debutHits=[...allDebut.filter(([ko])=>!_isGrpDisbanded(ko)),...allDebut.filter(([ko])=>_isGrpDisbanded(ko))];
+  // 그룹 데뷔 N주년을 멤버 생일보다 앞(왼쪽)에 배치 — _appendAnnivStripItem이 매번 list 끝에 이어붙이는
+  // 방식이라 순서는 곧 호출 순서(2026-08-18, 사용자 요청으로 debut/bday 블록 순서 자체를 바꿈).
+  debutHits.forEach(([ko,info])=>{
+    const name=isKo?ko:(info.en||ko);
+    const n=now.getFullYear()-parseInt(String(info.debut).split('.')[0]);
+    const sub=isKo?`데뷔 ${n}주년`:`${n}th debut anniversary`;
+    const item=_appendAnnivStripItem(list,'🎉',name,sub,()=>_feedNav(()=>{
+      const bm=bubbleMeshes.find(b=>b.ko===ko);if(bm)flyToBubble(bm.mesh.position,bm.radius);
+      if(isMob()){showGC(ko,window.innerWidth/2,window.innerHeight*0.4,false,false,null,false);openMobSheet(document.getElementById('gc'));}
+      else showGC(ko,window.innerWidth/2,window.innerHeight/2);
+    }));
+    if(_isGrpDisbanded(ko))item.classList.add('anniv-inactive');
+    _fetchTopVideoThumb(ko,null).then(t=>_setAnnivStripThumb(item,t));
+  });
   bdayHits.forEach(a=>{
     const mName=isKo?a.name.ko:(a.name.en||a.name.ko);
     const gName=isKo?a.group.ko:(a.group.en||a.group.ko);
@@ -11213,18 +11439,6 @@ function _buildFeedAnniversaries(){
     if(a.links?.instagram){
       _fetchInstaPicUrl(a.name.ko,a.group?.ko||'').then(picUrl=>{if(picUrl)_setAnnivStripThumb(item,picUrl);else _fallbackThumb();});
     }else _fallbackThumb();
-  });
-  debutHits.forEach(([ko,info])=>{
-    const name=isKo?ko:(info.en||ko);
-    const n=now.getFullYear()-parseInt(String(info.debut).split('.')[0]);
-    const sub=isKo?`데뷔 ${n}주년`:`${n}th debut anniversary`;
-    const item=_appendAnnivStripItem(list,'🎉',name,sub,()=>_feedNav(()=>{
-      const bm=bubbleMeshes.find(b=>b.ko===ko);if(bm)flyToBubble(bm.mesh.position,bm.radius);
-      if(isMob()){showGC(ko,window.innerWidth/2,window.innerHeight*0.4,false,false,null,false);openMobSheet(document.getElementById('gc'));}
-      else showGC(ko,window.innerWidth/2,window.innerHeight/2);
-    }));
-    if(_isGrpDisbanded(ko))item.classList.add('anniv-inactive');
-    _fetchTopVideoThumb(ko,null).then(t=>_setAnnivStripThumb(item,t));
   });
 }
 
@@ -11346,7 +11560,7 @@ async function _buildFeedWeeklyTopCams(list){
   const sinceDate=new Date(Date.now()-7*86400000).toISOString().slice(0,10);
   try{
     const{data,error}=await sb.from(_YT_TABLE)
-      .select('id,title,thumb,category,content_flag,group_ko,view_count,published_at')
+      .select('id,title,thumb,category,content_flag,group_ko,members,view_count,published_at')
       .eq('category','live')
       .gte('published_at',sinceDate)
       .not('view_count','is',null)
@@ -11361,11 +11575,15 @@ async function _buildFeedWeeklyTopCams(list){
 
     const _fmtN=n=>n>=1000000?(n/1000000).toFixed(1).replace(/\.0$/,'')+'M':n>=1000?Math.floor(n/1000)+'K':String(n);
 
-    // 카드 1: 음방·직캠 TOP — 제목에 직캠/팬캠/FANCAM/음방명 있는 것만, 그룹당 최대 3개로 다양성 확보
-    const camVids=_capByGroup(allVids.filter(v=>_FANCAM_TITLE_RE.test(v.title)),v=>v.group_ko,3).slice(0,20);
+    // 카드 1: 음방·직캠 TOP — 제목에 직캠/팬캠/FANCAM/음방명 있는 것만, 그룹당 최대 3개로 다양성 확보.
+    // members 태깅이 정확히 1명일 때만 "개인" 직캠으로 간주 — 실측해보니 K-Choreo/MIX직캠처럼 그룹 전체
+    // 포메이션 영상은 members가 빈 배열([])로, 진짜 개인 직캠은 그 한 명만 담겨있는 패턴이 뚜렷했음
+    // (2026-08-18, 사용자 요청 — 그룹 전체 무대 영상 말고 개인만 보고 싶다고 함). 제목엔 이름이 있는데
+    // 태깅이 아직 안 된 소수 케이스는 놓칠 수 있음(태깅 정확도의 한계, 이 필터 자체의 문제는 아님).
+    const camVids=_capByGroup(allVids.filter(v=>_FANCAM_TITLE_RE.test(v.title)&&(v.members||[]).length===1),v=>v.group_ko,3).slice(0,20);
     if(camVids.length>=3){
       const songs=camVids.map(v=>({t:v.title,u:vidUrl(v),thumb:v.thumb,vc:v.view_count,pa:v.published_at?.slice(0,10)}));
-      const label=currentLang==='ko'?'주간 직캠 TOP 20':'Weekly Fancam TOP 20',sub=_cleanTitle(camVids[0].title);
+      const label=currentLang==='ko'?'주간 개인 직캠 TOP 20':'Weekly Solo Fancam TOP 20',sub=_cleanTitle(camVids[0].title);
       _appendFeedCard(list,'🏆',label,sub,()=>_openFeedListOverlay(label,sub,songs),camVids[0].thumb);
     }
 
@@ -13622,11 +13840,16 @@ function _updateAdminUI(){
 // 관리자 전용 도구(동기화/스윕/태깅 모달 등)는 admin.js에 분리해뒀다가, 관리자로 확인될 때만 불러온다 —
 // 일반 방문자는 이 코드를 아예 다운로드하지 않음. 같은 전역 스코프를 쓰는 일반 스크립트라 로드가 끝나야
 // 그 안의 함수들이 정의되므로, 관리자 UI가 실제로 동작하려면 이 로드가 끝난 뒤여야 함(아래 주석 참고).
+// admin.js에 캐시버스터 쿼리 없이 src='admin.js'만 쓰면, 배포(GitHub 재업로드) 후에도 브라우저/CDN이
+// 옛 버전을 계속 서빙해서 고친 코드가 반영 안 되는 것처럼 보이는 사고가 남(2026-08-18, HTML 엔티티 정리
+// 버튼 타임아웃 재수정 후에도 계속 재현된다는 제보로 발견). admin.js 내용을 바꿀 때마다 이 버전 문자열도
+// 같이 올릴 것(sw.js의 CACHE_VERSION과 같은 수동 관리 방식).
+const _ADMIN_JS_VER='2026-08-18b';
 function _loadAdminScript(){
   if(!_isAdmin()||document.getElementById('admin-js-script'))return;
   const s=document.createElement('script');
   s.id='admin-js-script';
-  s.src='admin.js';
+  s.src='admin.js?v='+_ADMIN_JS_VER;
   document.body.appendChild(s);
 }
 

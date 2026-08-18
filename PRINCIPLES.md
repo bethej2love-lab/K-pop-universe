@@ -99,7 +99,7 @@ kpop\_universe.html — index.html로 즉시 리다이렉트하는 얇은 파일
 
 kpop\_universe.css — 스타일시트 (HTML에서 분리됨)
 
-admin.js — 어드민 패널 JS
+admin.js — 어드민 패널 JS. index.html이 `admin.js?v=버전`으로 캐시버스팅해서 로드함(`_ADMIN_JS_VER` 상수) — **admin.js 내용을 바꿀 때마다 index.html의 `_ADMIN_JS_VER`도 같이 올릴 것.** 안 올리면 GitHub 재배포해도 브라우저/CDN이 옛 버전을 계속 서빙해서 고친 코드가 반영 안 된 것처럼 보임(2026-08-18, HTML 엔티티 정리 타임아웃 재수정 후에도 계속 재현된다는 제보로 발견).
 
 groups.json — 그룹 데이터 (246그룹)
 

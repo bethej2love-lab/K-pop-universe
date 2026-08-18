@@ -538,18 +538,28 @@ async function _ytFixHtmlEntities(){
   const btn=document.getElementById('sp-yt-fix-entities');
   if(btn)btn.disabled=true;
   try{
-    _ytSetProg('HTML 엔티티 포함 영상 조회 중…');
-    const entityOr=['%&#%','%&amp%','%&quot%','%&lt%','%&gt%','%&apos%','%&#39%'];
-    const orClause=entityOr.map(p=>`title.ilike.${p}`).concat(entityOr.map(p=>`description.ilike.${p}`)).join(',');
-    const{data:rows,error}=await _sbFetchAll(()=>sb.from(_YT_TABLE)
-      .select('id,title,description')
-      .eq('tags_manual',false) // 관리자가 직접 저장한 행은 절대 안 건드림
-      .or(orClause)
-      .order('id'));
-    if(error){_ytSetProg('조회 실패: '+error.message);return;}
-    if(!rows?.length){_ytSetProg('검사할 영상이 없어요');return;}
+    // 처음엔 title/description에 title.ilike.%&#%... 식으로 서버 OR 필터를 걸었는데 statement timeout으로
+    // 실패했음(2026-08-18, 사용자 제보) — 원인은 "&#" 패턴이 2글자라 pg_trgm 인덱스가 트라이그램을 못
+    // 뽑아 인덱스를 못 타고(3글자 미만은 인덱스 가속 안 됨), description은 애초에 트라이그램 인덱스 자체가
+    // 없어서, OR로 묶인 조건 하나라도 인덱스를 못 타면 8만+ 행 전체를 순차스캔하게 됨 — 바로 위 "전체 영상
+    // 검색(admin)"이 겪었던 "원곡" 스캔 타임아웃과 동일한 원인. 그때 고친 방식(필터 없는 순수 PK 페이지네이션
+    // + 클라이언트에서 패턴 판별)을 그대로 재사용.
+    const rows=[];
+    let lastId=null;
+    while(true){
+      let q=sb.from(_YT_TABLE).select('id,title,description,tags_manual').order('id').limit(1000);
+      if(lastId!==null)q=q.gt('id',lastId);
+      const{data,error}=await q;
+      if(error){_ytSetProg('조회 실패: '+error.message);return;}
+      if(!data?.length)break;
+      rows.push(...data);
+      _ytSetProg(`HTML 엔티티 포함 영상 조회 중… (${rows.length}개 확인)`);
+      if(data.length<1000)break;
+      lastId=data[data.length-1].id;
+    }
+    if(!rows.length){_ytSetProg('검사할 영상이 없어요');return;}
     const fixes=[];
-    rows.forEach(v=>{
+    rows.filter(v=>v.tags_manual===false).forEach(v=>{ // 관리자가 직접 저장한 행은 절대 안 건드림
       const newTitle=_decodeHtmlEntities(v.title||'');
       const newDesc=_decodeHtmlEntities(v.description||'');
       if(newTitle!==v.title||newDesc!==v.description){
@@ -568,7 +578,7 @@ async function _ytFixHtmlEntities(){
       done+=chunk.length-failed.length;
       _ytSetProg(`정리 중… ${done}/${fixes.length}`);
     }
-    _ytSetProg(`완료! 후보 ${rows.length}개 중 ${done}개 정리함`);
+    _ytSetProg(`완료! 전체 ${rows.length}개 중 ${done}개 정리함`);
   }catch(e){
     _ytSetProg('오류: '+e.message);
   }finally{
@@ -1354,7 +1364,7 @@ async function _avsEnsureCache(){
   const rows=[];
   let lastId=null;
   while(true){
-    let q=sb.from(_YT_TABLE).select('id,title,group_ko,thumb,category').order('id').limit(1000);
+    let q=sb.from(_YT_TABLE).select('id,title,group_ko,thumb,category,content_flag,members,with_members,with_groups,cover_of_members,cover_of_groups').order('id').limit(1000);
     if(lastId!==null)q=q.gt('id',lastId);
     const{data,error}=await q;
     if(error)throw error;
@@ -1437,7 +1447,7 @@ async function _vmLoad(searchTerm){
       if(!term){_vmRows=[];listEl.innerHTML='<div style="padding:24px;text-align:center;color:rgba(155,178,228,0.45);font-size:12px;">제목이나 그룹명으로 검색하세요</div>';statusEl.textContent='';return;}
       let hits;
       if(term.length>=3){
-        const{data,error}=await sb.from(_YT_TABLE).select('id,title,group_ko,thumb,content_flag').ilike('title_norm',`%${_titleNorm(term)}%`).order('id').limit(1000);
+        const{data,error}=await sb.from(_YT_TABLE).select('id,title,group_ko,thumb,content_flag,members,with_members,with_groups,cover_of_members,cover_of_groups').ilike('title_norm',`%${_titleNorm(term)}%`).order('id').limit(1000);
         if(myGen!==_vmSearchGen)return;
         if(error){statusEl.textContent='조회 실패: '+error.message;return;}
         hits=data||[];
@@ -1458,7 +1468,7 @@ async function _vmLoad(searchTerm){
       if(!ssGkos.length){statusEl.textContent='strictSync 그룹이 없어요';_vmRows=[];_vmRenderVideoList();return;}
       // PostgREST에서 IN 필터는 .in() 메서드로 처리
       const{data,error}=await _sbFetchAll(()=>sb.from(_YT_TABLE)
-        .select('id,title,group_ko,thumb,content_flag')
+        .select('id,title,group_ko,thumb,content_flag,members,with_members,with_groups,cover_of_members,cover_of_groups')
         .in('group_ko',ssGkos)
         .eq('tags_manual',false)
         .order('id'));
@@ -1472,7 +1482,7 @@ async function _vmLoad(searchTerm){
     }
     // nomem / hidden 탭
     const flag=tab==='nomem'?'무관':'hidden';
-    let q=sb.from(_YT_TABLE).select('id,title,group_ko,thumb,content_flag');
+    let q=sb.from(_YT_TABLE).select('id,title,group_ko,thumb,content_flag,members,with_members,with_groups,cover_of_members,cover_of_groups');
     q=q.eq('content_flag',flag);
     if(term)q=q.or(`title.ilike.${_pgFilterVal('%'+term+'%')},group_ko.ilike.${_pgFilterVal('%'+term+'%')}`);
     const{data,error}=await _sbFetchAll(()=>q.order('id'));
@@ -1486,6 +1496,17 @@ async function _vmLoad(searchTerm){
     if(myGen!==_vmSearchGen)return;
     statusEl.textContent='오류: '+e.message;
   }
+}
+// 그룹 태그 하나만으로는 실제 무슨 콘텐츠인지(개인 태깅/콜라보/커버) 알 수 없어서, 편집 모달을 열지
+// 않고도 목록에서 바로 파악할 수 있게 멤버·함께한(콜라보)·원곡 정보를 한 줄로 요약(2026-08-18, 사용자 요청).
+function _vmTagsLine(v){
+  const parts=[];
+  if((v.members||[]).length)parts.push(`멤버: ${v.members.join(', ')}`);
+  const withAll=[...(v.with_members||[]),...(v.with_groups||[])];
+  if(withAll.length)parts.push(`함께: ${withAll.join(', ')}`);
+  const coverAll=[...(v.cover_of_members||[]),...(v.cover_of_groups||[])];
+  if(coverAll.length)parts.push(`원곡: ${coverAll.join(', ')}`);
+  return parts.join(' · ');
 }
 function _vmSearch2Rows(){
   let rows=_vmOnlyNormal?_vmRows.filter(v=>!v.content_flag):_vmRows;
@@ -1535,6 +1556,11 @@ function _vmRenderVideoList(){
     const grp=document.createElement('div');grp.className='vm-group';grp.textContent=v.group_ko||'';
     const ttl=document.createElement('div');ttl.className='vm-title';ttl.textContent=v.title||'';
     info.appendChild(grp);info.appendChild(ttl);
+    const tagsLine=_vmTagsLine(v);
+    if(tagsLine){
+      const tags=document.createElement('div');tags.className='vm-tags';tags.textContent=tagsLine;
+      info.appendChild(tags);
+    }
     const actions=document.createElement('div');actions.className='vm-actions';
     // flag badge button (클릭하면 무관→숨김→정상 순으로 순환 — 기타/외부인/개별출연은 순환 대상이
     // 아니라 그대로 표시만 하고, 클릭 한 번에 그 값이 지워지지 않게 함)
