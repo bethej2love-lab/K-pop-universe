@@ -5,6 +5,18 @@
 
 function _ytApiKey(){return(localStorage.getItem('kpu_yt_key')||'').trim();}
 
+// YouTube API가 title/description을 HTML 엔티티로 이스케이프해서 내려주는 경우가 있음(예: 어퍼스트로피가
+// "&#39;"로, "&"가 "&amp;"로) — JSON이라 자동으로 안 풀리고 그대로 문자열에 박혀서, 화면은 textContent로
+// (안전하게) 그대로 찍으니 "&#39;" 텍스트 자체가 그대로 보임(2026-08-18, 사용자 제보). <textarea>에
+// innerHTML로 넣었다 .value로 꺼내는 방식이 모든 HTML 엔티티(이름/숫자 둘 다)를 브라우저가 알아서
+// 정확히 디코딩해줘서 정규식 나열보다 안전 — 동기화 3곳(채널 훑기/과거 백필/URL 수동추가) 전부 적용.
+function _decodeHtmlEntities(str){
+  if(!str)return str;
+  const ta=document.createElement('textarea');
+  ta.innerHTML=str;
+  return ta.value;
+}
+
 // 제목에 유니코드 "수학용 볼드체" 등 스타일드 문자(예: 𝐇𝐀𝐏𝐏𝐘 𝐁𝐈𝐑𝐓𝐇𝐃𝐀𝐘 — Shorts 제목 강조용으로 흔히 씀)가
 // 있으면, 겉보기엔 일반 알파벳과 똑같아 보여도 코드상 완전히 다른 문자라서 일반 ILIKE 검색으론 절대 못
 // 찾는다(2026-08-06, 사용자 제보 — 크래비티 카드에서 "birth" 검색이 스타일드 제목의 생일 축하 Shorts를
@@ -135,7 +147,8 @@ async function _ytFetchNewVideos(uploadsId,key,sinceId,onProg,startPageToken,cut
       if(!vid)continue;
       if(newestId===null)newestId=vid;
       if(vid===sinceId){hit=true;break;}
-      if(_isBannedVideoTitle(item.snippet.title))continue; // 성범죄로 퇴출된 인물 관련 영상은 동기화 단계에서부터 저장하지 않음
+      const title=_decodeHtmlEntities(item.snippet.title||'');
+      if(_isBannedVideoTitle(title))continue; // 성범죄로 퇴출된 인물 관련 영상은 동기화 단계에서부터 저장하지 않음
       const publishedAt=(item.snippet.publishedAt||'').slice(0,10);
       if(cutoffDate&&publishedAt>cutoffDate)continue; // 해체 이후 올라온 영상은 수집 대상에서 제외
       const th=item.snippet.thumbnails||{};
@@ -146,12 +159,12 @@ async function _ytFetchNewVideos(uploadsId,key,sinceId,onProg,startPageToken,cut
       // 판별에는 어차피 다 같은 비율이라 영향 없고, 용량만 가벼워짐.
       const hiTh=th.high||th.standard||th.maxres;
       const isShortThumb=!!(hiTh&&hiTh.height>hiTh.width);
-      let cat=isShortThumb?'short':_ytClassify(item.snippet.title||'');
+      let cat=isShortThumb?'short':_ytClassify(title);
       if(cat==='skip')continue;
       vids.push({
         id:vid,
-        title:item.snippet.title||'',
-        description:item.snippet.description||'', // part=snippet 응답에 이미 포함돼있던 걸 그냥 버렸었음 — 쿼터 추가 비용 없이 태깅 보조 텍스트로 재사용
+        title,
+        description:_decodeHtmlEntities(item.snippet.description||''), // part=snippet 응답에 이미 포함돼있던 걸 그냥 버렸었음 — 쿼터 추가 비용 없이 태깅 보조 텍스트로 재사용
         thumb:isShortThumb?(hiTh.url||th.medium?.url||''):(th.medium?.url||th.high?.url||th.default?.url||''),
         published_at:publishedAt,
         category:cat
@@ -510,6 +523,52 @@ async function _ytSweepJunkKeywordVideos(){
     }
     localStorage.setItem('kpu_junk_sweep_version',version);
     _ytSetProg(`완료! ${rows.length}개 중 ${toFlag.length}개 무관 처리함`);
+  }catch(e){
+    _ytSetProg('오류: '+e.message);
+  }finally{
+    if(btn)btn.disabled=false;
+  }
+}
+// HTML 엔티티(&#39; 등) 깨진 제목/설명 일괄 정리(일회용) — _decodeHtmlEntities를 동기화 3곳(채널 훑기/
+// 과거 백필/URL 수동추가)에 붙이기 전까지 이미 들어와있던 기존 행은 안 고쳐져 있음(2026-08-18, 사용자
+// 제보). 위 두 sweep과 같은 패턴(tags_manual 행은 안 건드림)이되, 값 자체가 행마다 달라서(공통 플래그 한
+// 값을 .in()으로 일괄 지정하는 방식이 안 통함) 배치로 개별 update.
+async function _ytFixHtmlEntities(){
+  if(!sb){_ytSetProg('Supabase 연결 없음');return;}
+  const btn=document.getElementById('sp-yt-fix-entities');
+  if(btn)btn.disabled=true;
+  try{
+    _ytSetProg('HTML 엔티티 포함 영상 조회 중…');
+    const entityOr=['%&#%','%&amp%','%&quot%','%&lt%','%&gt%','%&apos%','%&#39%'];
+    const orClause=entityOr.map(p=>`title.ilike.${p}`).concat(entityOr.map(p=>`description.ilike.${p}`)).join(',');
+    const{data:rows,error}=await _sbFetchAll(()=>sb.from(_YT_TABLE)
+      .select('id,title,description')
+      .eq('tags_manual',false) // 관리자가 직접 저장한 행은 절대 안 건드림
+      .or(orClause)
+      .order('id'));
+    if(error){_ytSetProg('조회 실패: '+error.message);return;}
+    if(!rows?.length){_ytSetProg('검사할 영상이 없어요');return;}
+    const fixes=[];
+    rows.forEach(v=>{
+      const newTitle=_decodeHtmlEntities(v.title||'');
+      const newDesc=_decodeHtmlEntities(v.description||'');
+      if(newTitle!==v.title||newDesc!==v.description){
+        fixes.push({id:v.id,title:newTitle,description:newDesc,title_norm:_titleNorm(newTitle)});
+      }
+    });
+    if(!fixes.length){_ytSetProg(`검사 완료 — ${rows.length}개 중 실제로 깨진 건 없음`);return;}
+    let done=0;
+    for(let i=0;i<fixes.length;i+=50){
+      const chunk=fixes.slice(i,i+50);
+      const results=await Promise.all(chunk.map(f=>
+        sb.from(_YT_TABLE).update({title:f.title,description:f.description,title_norm:f.title_norm}).eq('id',f.id)
+      ));
+      const failed=results.filter(r=>r.error);
+      if(failed.length)console.error('[엔티티 정리] 일부 실패:',failed.map(r=>r.error.message));
+      done+=chunk.length-failed.length;
+      _ytSetProg(`정리 중… ${done}/${fixes.length}`);
+    }
+    _ytSetProg(`완료! 후보 ${rows.length}개 중 ${done}개 정리함`);
   }catch(e){
     _ytSetProg('오류: '+e.message);
   }finally{
@@ -1542,6 +1601,8 @@ function _vmUpdateCount(){
   if(applyBtn)applyBtn.disabled=checked===0;
   const indivBtn=document.getElementById('vm-indiv-btn');
   if(indivBtn)indivBtn.disabled=checked===0;
+  const normalBtn=document.getElementById('vm-normal-btn');
+  if(normalBtn)normalBtn.disabled=checked===0;
   const coverClearBtn=document.getElementById('vm-coverclear-btn');
   if(coverClearBtn)coverClearBtn.disabled=checked===0;
   const allEl=document.getElementById('vm-select-all');
@@ -1749,6 +1810,83 @@ document.getElementById('gp-search')?.addEventListener('input',()=>{
   _gpSearchTimer=setTimeout(()=>_gpRenderList(val),200);
 });
 
+// 사용자 피드백 조회 — 어드민 전용, 읽기+삭제만(상태 추적 없음, 처리 끝난 건 삭제로 정리)(2026-08-18)
+let _feedbackRows=[],_fbvTab='all';
+const _FB_CAT_LABEL={bug:'버그 제보',suggest:'제안',etc:'기타'};
+async function _loadFeedback(){
+  if(!sb)return;
+  try{
+    const{data,error}=await sb.from('feedback').select('*').order('created_at',{ascending:false});
+    if(error){console.error('feedback 로드 실패',error.message);return;}
+    _feedbackRows=data||[];
+  }catch(e){console.error('feedback 로드 실패',e);}
+}
+function _fbvRenderList(){
+  const listEl=document.getElementById('fbv-list');
+  if(!listEl)return;
+  let rows=_feedbackRows;
+  if(_fbvTab!=='all')rows=rows.filter(r=>r.category===_fbvTab);
+  const cnt={bug:0,suggest:0,etc:0};
+  _feedbackRows.forEach(r=>{if(cnt[r.category]!==undefined)cnt[r.category]++;});
+  document.querySelectorAll('.fbv-tab').forEach(t=>{
+    const c=t.querySelector('.fbv-tab-cnt');if(!c)return;
+    const cat=t.dataset.cat;
+    c.textContent=`(${cat==='all'?_feedbackRows.length:cnt[cat]||0})`;
+  });
+  document.getElementById('fbv-count').textContent=`총 ${rows.length}개`;
+  if(!rows.length){
+    listEl.innerHTML=`<div id="fbv-empty">${_fbvTab==='all'?'피드백이 없어요':'해당 카테고리 피드백이 없어요'}</div>`;
+    return;
+  }
+  listEl.innerHTML='';
+  rows.forEach(r=>{
+    const item=document.createElement('div');item.className='fbv-item';
+    const top=document.createElement('div');top.className='fbv-item-top';
+    const tag=document.createElement('span');tag.className='fbv-cat-tag fbv-cat-'+r.category;tag.textContent=_FB_CAT_LABEL[r.category]||r.category;
+    top.appendChild(tag);
+    const date=document.createElement('span');date.className='fbv-date';
+    date.textContent=r.created_at?new Date(r.created_at).toLocaleString('ko-KR',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'}):'';
+    top.appendChild(date);
+    const delBtn=document.createElement('button');delBtn.type='button';delBtn.className='fbv-del-btn';delBtn.textContent='삭제';
+    delBtn.addEventListener('click',()=>_fbvDelete(r.id));
+    top.appendChild(delBtn);
+    item.appendChild(top);
+    const msg=document.createElement('div');msg.className='fbv-msg';msg.textContent=r.message;
+    item.appendChild(msg);
+    const metaParts=[r.nickname,r.contact,r.page_url].filter(Boolean);
+    if(metaParts.length){
+      const meta=document.createElement('div');meta.className='fbv-meta';meta.title=metaParts.join(' · ');meta.textContent=metaParts.join(' · ');
+      item.appendChild(meta);
+    }
+    listEl.appendChild(item);
+  });
+}
+async function _fbvDelete(id){
+  if(!sb)return;
+  if(!confirm('이 피드백을 삭제할까요?'))return;
+  const{error}=await sb.from('feedback').delete().eq('id',id);
+  if(error){_showShareToast('오류: '+error.message);return;}
+  _feedbackRows=_feedbackRows.filter(r=>r.id!==id);
+  _fbvRenderList();
+}
+document.getElementById('sp-fb-btn')?.addEventListener('click',async()=>{
+  document.getElementById('fbv-overlay').classList.add('open');
+  _fbvTab='all';
+  document.querySelectorAll('.fbv-tab').forEach(t=>t.classList.toggle('active',t.dataset.cat==='all'));
+  document.getElementById('fbv-list').innerHTML='<div id="fbv-empty">불러오는 중…</div>';
+  await _loadFeedback();
+  _fbvRenderList();
+});
+document.getElementById('fbv-overlay')?.addEventListener('click',e=>{if(e.target===e.currentTarget)e.currentTarget.classList.remove('open');});
+document.getElementById('fbv-close')?.addEventListener('click',()=>document.getElementById('fbv-overlay').classList.remove('open'));
+document.querySelectorAll('.fbv-tab').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    _fbvTab=btn.dataset.cat;
+    document.querySelectorAll('.fbv-tab').forEach(t=>t.classList.toggle('active',t===btn));
+    _fbvRenderList();
+  });
+});
+
 // vm 패널 이벤트
 document.getElementById('vm-overlay')?.addEventListener('click',e=>{if(e.target===e.currentTarget)e.currentTarget.classList.remove('open');});
 document.getElementById('vm-close')?.addEventListener('click',()=>document.getElementById('vm-overlay').classList.remove('open'));
@@ -1840,6 +1978,38 @@ document.getElementById('vm-indiv-btn')?.addEventListener('click',async()=>{
     if(!_vmRows.length)_vmRenderVideoList();
   }
   btn.textContent='선택-개별';
+  _vmUpdateCount();
+});
+// 여러 개 선택 후 한 번에 정상(null)으로 되돌리는 버튼 — vm-apply-btn은 탭마다 목적이 고정(전체 탭은
+// 무관 처리만, nomem/hidden 탭은 각자 원래 상태 해제만)이라, 예를 들어 '전체' 탭 검색 결과에 무관/기타/
+// 외부인/개별출연 등 이미 플래그가 섞여 있을 때 그것들만 골라 한 번에 정상으로 되돌릴 방법이 없었음
+// (배지를 하나씩 클릭해서 순환시키는 것만 가능). 모든 탭에서 동일하게 동작(2026-08-18, 사용자 요청).
+document.getElementById('vm-normal-btn')?.addEventListener('click',async()=>{
+  if(!sb)return;
+  const btn=document.getElementById('vm-normal-btn');
+  const items=[...document.querySelectorAll('#vm-list .vm-item')].filter(el=>el.querySelector('input[type=checkbox]')?.checked);
+  const ids=items.map(el=>el.dataset.vidId).filter(Boolean);
+  if(!ids.length)return;
+  btn.disabled=true;btn.textContent='처리 중…';
+  const newFlag=null;
+  const{error}=await sb.from(_YT_TABLE).update({content_flag:newFlag}).in('id',ids);
+  if(error){btn.disabled=false;btn.textContent='선택-정상';document.getElementById('vm-status').textContent='오류: '+error.message;return;}
+  const idSet=new Set(ids);
+  if(_vmTab==='all'){
+    _vmRows.forEach(v=>{if(idSet.has(v.id))v.content_flag=newFlag;});
+    items.forEach(el=>{
+      const cb=el.querySelector('input[type=checkbox]');if(cb)cb.checked=false;
+      const flagBtn=el.querySelector('.vm-flag-btn');
+      if(flagBtn)_vmSetFlagLabel(flagBtn,newFlag);
+    });
+    document.getElementById('vm-status').textContent=`${ids.length}개 정상 처리 완료`;
+  }else{
+    _vmRows=_vmRows.filter(v=>!idSet.has(v.id));
+    items.forEach(el=>el.remove());
+    document.getElementById('vm-status').textContent=`${ids.length}개 처리 완료 — 남은 ${_vmRows.length}개`;
+    if(!_vmRows.length)_vmRenderVideoList();
+  }
+  btn.textContent='선택-정상';
   _vmUpdateCount();
 });
 // 선택 항목 원곡 정보 제외 — cover_of_members/cover_of_groups만 비운다. content_flag는 안 건드리므로
@@ -2798,7 +2968,8 @@ async function _ytBackfillChannelCore(ch,fromYear,toYear,callBudget,onProg,query
     for(const item of(d?.items||[])){
       const vid=item.id?.videoId;
       if(!vid)continue;
-      if(_isBannedVideoTitle(item.snippet.title))continue; // 성범죄로 퇴출된 인물 관련 영상은 백필 단계에서부터 저장하지 않음
+      const title=_decodeHtmlEntities(item.snippet.title||'');
+      if(_isBannedVideoTitle(title))continue; // 성범죄로 퇴출된 인물 관련 영상은 백필 단계에서부터 저장하지 않음
       const th=item.snippet.thumbnails||{};
       // 쇼츠는 세로 비율을 유지하는 썸네일(medium/default는 항상 16:9로 잘려있어 세로 판별 불가)이
       // 필요해서 maxres/standard/high 중 하나를 봐야 하는데, 우선순위를 maxres부터 두면 저장되는
@@ -2807,10 +2978,10 @@ async function _ytBackfillChannelCore(ch,fromYear,toYear,callBudget,onProg,query
       // 판별에는 어차피 다 같은 비율이라 영향 없고, 용량만 가벼워짐.
       const hiTh=th.high||th.standard||th.maxres;
       const isShortThumb=!!(hiTh&&hiTh.height>hiTh.width);
-      let cat=isShortThumb?'short':_ytClassify(item.snippet.title||'');
+      let cat=isShortThumb?'short':_ytClassify(title);
       if(cat==='skip')continue;
       vids.push({
-        id:vid,title:item.snippet.title||'',description:item.snippet.description||'',
+        id:vid,title,description:_decodeHtmlEntities(item.snippet.description||''),
         thumb:isShortThumb?(hiTh.url||th.medium?.url||''):(th.medium?.url||th.high?.url||th.default?.url||''),
         published_at:(item.snippet.publishedAt||'').slice(0,10),category:cat
       });
@@ -2935,7 +3106,7 @@ async function _ytBuildManualVideoRow(key,vid,manualGroup,manualMembers){
   if(d.error)throw new Error(d.error.message);
   const item=d.items?.[0];
   if(!item)throw new Error('영상을 찾을 수 없어요(비공개/삭제됐을 수 있음)');
-  const title=item.snippet.title||'';
+  const title=_decodeHtmlEntities(item.snippet.title||'');
   if(_isBannedVideoTitle(title))throw new Error('제외 대상 인물이 언급된 영상이라 추가할 수 없어요');
   const th=item.snippet.thumbnails||{};
   const hiTh=th.high||th.standard||th.maxres; // 세로 판별용, 가벼운 순으로(2026-08-10, 위 동기화 루프와 동일 이유)
@@ -3610,6 +3781,7 @@ document.getElementById('vid-tag-thumb-refresh').addEventListener('click',async 
   });
   document.getElementById('sp-yt-sweep-banned')?.addEventListener('click',_ytSweepBannedVideos);
   document.getElementById('sp-yt-sweep-junk')?.addEventListener('click',_ytSweepJunkKeywordVideos);
+  document.getElementById('sp-yt-fix-entities')?.addEventListener('click',_ytFixHtmlEntities);
   // "무조건 제외 키워드" 목록이 코드에만 있어서 관리자가 지금 뭐가 걸려있는지 확인할 방법이 없었음
   // (2026-08-10, 사용자 요청) — 버튼 밑에 현재 목록을 그대로 보여줌. _JUNK_TITLE_KEYWORDS_GLOBAL을
   // 그대로 참조하므로 코드에서 키워드를 추가/삭제하면 이 표시도 자동으로 같이 바뀜(따로 관리 안 해도 됨).

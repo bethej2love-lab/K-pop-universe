@@ -63,7 +63,7 @@ Idols can do everything
 
 이 프로젝트는 케이팝 아이돌 연결 관계를 3D 우주 지도로 시각화한 웹 서비스.
 
-단일 HTML 파일(kpop\_universe.html) + JSON 데이터(groups.json, artists.json, connections.json) + Supabase 백엔드 구조.
+단일 HTML 파일(index.html) + JSON 데이터(groups.json, artists.json, connections.json) + Supabase 백엔드 구조.
 
 
 
@@ -89,9 +89,13 @@ CSS 분리됐다는 것, 파일 구조 간단히
 
 
 
+⚠️ 2026-08-18 구조 변경: index.html이 유일한 정식 앱 파일(source of truth)이 됨. **코드 작업은 항상 index.html에 할 것 — kpop\_universe.html은 절대 직접 수정하지 말 것.** 원래는 index.html이 kpop\_universe.html의 수동 복사본이라 매번 동기화해야 했는데(2026-08-12에 고친 버그수정이 index.html엔 안 들어가 있던 걸 2026-08-18에 발견), 반복적으로 깜빡할 위험이 있어 구조 자체를 바꿈: kpop\_universe.html은 이제 `location.replace('./')`로 index.html로 즉시 리다이렉트만 하는 얇은 파일(옛 PWA 바로가기/북마크 하위호환용). manifest.json의 start\_url도 `./`로 변경했고, sw.js 오프라인 캐시 폴백 대상도 `./`로 바꿨음 — 이 셋(kpop\_universe.html 내용/manifest start\_url/sw.js 폴백)은 서로 맞물려있으니 혹시 다시 손댈 일 있으면 셋 다 같이 확인할 것.
+
 핵심 파일
 
-kpop\_universe.html — 메인 HTML (전체 UI + JS 로직)
+index.html — 메인 HTML (전체 UI + JS 로직). **모든 코드 작업은 여기.**
+
+kpop\_universe.html — index.html로 즉시 리다이렉트하는 얇은 파일. 절대 직접 수정하지 말 것(위 경고 참고)
 
 kpop\_universe.css — 스타일시트 (HTML에서 분리됨)
 
