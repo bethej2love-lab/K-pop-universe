@@ -798,6 +798,15 @@ function _dqGotoArtist(artist){
     openMobSheet(document.getElementById('tt'));
   }else{
     showT(artist,window.innerWidth/2,window.innerHeight*0.4);
+    // showT 내부에서 openSidePanel/openMemberPanel이 호출되지만,
+    // 이벤트 버블링으로 window click이 먼저 도달해 카드를 닫아버리는 타이밍 문제를 방지:
+    // 클릭 이벤트 큐가 소진된 다음 프레임에 패널이 실제로 열려있는지 확인 후 보완 오픈.
+    requestAnimationFrame(()=>{
+      const ttEl=document.getElementById('tt');
+      if(!memberPanelEl.classList.contains('open')&&!sidePanelEl.classList.contains('open')){
+        openSidePanel(ttEl);
+      }
+    });
   }
 }
 function _dqGotoArtistByName(name){
@@ -831,7 +840,7 @@ function _renderHnnDuplicateNames(){
       const chip=document.createElement('span');chip.className='hnn-dup-person';
       chip.textContent=a.group.ko+(a.active===false?' · 비활동':'');
       chip.title='눌러서 이 멤버 카드로 이동';
-      chip.addEventListener('click',()=>_dqGotoArtist(a));
+      chip.addEventListener('click',e=>{e.stopPropagation();_dqGotoArtist(a);});
       item.appendChild(chip);
     });
     listEl.appendChild(item);

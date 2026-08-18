@@ -155,6 +155,8 @@
             <div id="gc-discog-sort-menu" class="gc-ch-sort-menu">
               <button class="gc-ch-sort-item" data-sort="oldest"><span class="chk">✓</span><span>오래된순</span></button>
               <button class="gc-ch-sort-item" data-sort="latest"><span class="chk">✓</span><span>최신순</span></button>
+              <div id="gc-discog-ost-divider" class="gc-ch-sort-divider" style="display:none"></div>
+              <button id="gc-discog-ost-btn" class="gc-ch-sort-item" type="button" style="display:none"><span class="chk">✓</span><span>OST 포함</span></button>
               <div id="gc-discog-more-divider" class="gc-ch-sort-divider" style="display:none"></div>
               <button id="gc-discog-more-btn" class="gc-ch-view-toggle" type="button" style="display:none"><span class="chk">✓</span><span id="gc-discog-more-label"></span></button>
             </div>
@@ -291,7 +293,7 @@
     <div class="sp-yt-prog" id="sp-yt-prog"></div>
   </div>
 </div>
-<div id="vm-overlay">
+<div id="vm-overlay" data-modal>
   <div id="vm-panel">
     <div id="vm-hd">
       <span id="vm-hd-title">영상 관리</span>
@@ -356,7 +358,7 @@
   <button id="user-bulk-col-btn" data-i18n="userBulkAdd">컬렉션에 추가</button>
   <button id="user-bulk-cancel-btn" data-i18n="cancel">취소</button>
 </div>
-<div id="hnn-overlay">
+<div id="hnn-overlay" data-modal>
   <div id="hnn-panel">
     <div id="hnn-hd">
       <span id="hnn-hd-title">검수 센터</span>
@@ -389,7 +391,7 @@
     </div>
   </div>
 </div>
-<div id="gp-overlay">
+<div id="gp-overlay" data-modal>
   <div id="gp-panel">
     <div id="gp-hd">
       <span id="gp-hd-title">그룹 우선순위</span>
@@ -410,7 +412,7 @@
     <div id="gp-list"></div>
   </div>
 </div>
-<div id="fbv-overlay">
+<div id="fbv-overlay" data-modal>
   <div id="fbv-panel">
     <div id="fbv-hd">
       <span id="fbv-hd-title">피드백</span>
@@ -426,7 +428,7 @@
     <div id="fbv-list"></div>
   </div>
 </div>
-<div id="feed-list-overlay">
+<div id="feed-list-overlay" data-modal>
   <div id="feed-list-panel">
     <div id="feed-list-hd">
       <div>
@@ -568,7 +570,7 @@
 </div>
 <div id="conn-panel"><div class="conn-inner" id="conn-panel-inner"></div></div>
 <button id="conn-collapse" aria-label="연결 카드 접기">›</button>
-<div id="profile-overlay">
+<div id="profile-overlay" data-modal>
   <div id="profile-panel">
     <div class="pp-hd">
       <span class="pp-title" data-i18n="ppTitle">내 프로필</span>
@@ -624,7 +626,7 @@
     <button id="pp-save" class="pp-save-btn" data-i18n="ppSave">저장</button>
   </div>
 </div>
-<div id="link-confirm-overlay">
+<div id="link-confirm-overlay" data-modal>
   <div id="link-confirm-panel">
     <div class="pp-title">연결할까요?</div>
     <div id="link-confirm-msg">연결하려는 계정에 이미 다른 기기 데이터가 있다면, 지금 이 브라우저의 좋아요·프로필은 그 데이터로 대체돼요.</div>
@@ -634,7 +636,7 @@
     </div>
   </div>
 </div>
-<div id="logout-confirm-overlay">
+<div id="logout-confirm-overlay" data-modal>
   <div id="logout-confirm-panel">
     <div class="pp-title">로그아웃할까요?</div>
     <div id="logout-confirm-msg">로그아웃하면 이 브라우저는 새 방문자 상태로 돌아가요. 계정에 연결된 좋아요·즐겨찾기·컬렉션·프로필은 서버에 안전하게 남아있고, 같은 계정으로 다시 로그인하면 그대로 불러와져요.</div>
@@ -644,7 +646,7 @@
     </div>
   </div>
 </div>
-<div id="uc-card-overlay">
+<div id="uc-card-overlay" data-modal>
   <div id="uc-card-panel">
     <div class="pp-title" data-i18n="ucCardTitle">내 우주 카드</div>
     <div id="uc-card-imgwrap"><img id="uc-card-img" alt=""></div>
@@ -660,7 +662,7 @@
      프로필 생성 폼(닉네임 등)부터 보여줘서, 이미 계정 있는 재방문자가 로그인 버튼(맨 아래 "연결하기")을
      찾으려면 그 폼을 다 지나쳐야 했음(2026-08-14, 사용자 제보). 기존 confirm류 오버레이와 톤을 맞추기
      위해 새 CSS 없이 같은 셀렉터 그룹에 편승(kpop_universe.css의 #link-confirm-overlay 등 참고). -->
-<div id="welcome-choice-overlay">
+<div id="welcome-choice-overlay" data-modal>
   <div id="welcome-choice-panel">
     <div class="pp-title">별 만들기</div>
     <div id="welcome-choice-msg">이미 만든 별이 있으신가요?</div>
@@ -668,7 +670,7 @@
     <button id="welcome-choice-new" class="pp-save-btn">처음이에요 · 새로 시작할게요</button>
   </div>
 </div>
-<div id="welcome-login-overlay">
+<div id="welcome-login-overlay" data-modal>
   <div id="welcome-login-panel">
     <div class="pp-title">로그인</div>
     <div id="welcome-login-msg">가입할 때 썼던 계정으로 로그인하면 프로필과 좋아요가 그대로 돌아와요.</div>
@@ -679,7 +681,7 @@
     </div>
   </div>
 </div>
-<div id="vid-tag-overlay">
+<div id="vid-tag-overlay" data-modal>
   <div id="vid-tag-panel">
     <div class="pp-title"><span id="vid-tag-title-text">출연 멤버 지정</span></div>
     <div id="vid-tag-vidtitle"></div>
@@ -745,7 +747,7 @@
     </div>
   </div>
 </div>
-<div id="pp-bias-emoji-overlay">
+<div id="pp-bias-emoji-overlay" data-modal>
   <div id="pp-bias-emoji-panel">
     <div class="pp-title">이모티콘 선택</div>
     <div id="pp-bias-emoji-target"></div>
@@ -753,14 +755,14 @@
     <button id="pp-bias-emoji-skip" class="uc-btn">기본(🤍)으로 넘어가기</button>
   </div>
 </div>
-<div id="venue-overlay">
+<div id="venue-overlay" data-modal>
   <div id="venue-panel">
     <div class="pp-title" id="venue-panel-title"></div>
     <button id="venue-panel-close" class="conn-back-btn" aria-label="닫기">×</button>
     <div id="venue-panel-list"></div>
   </div>
 </div>
-<div id="trophy-overlay">
+<div id="trophy-overlay" data-modal>
   <div id="trophy-panel">
     <div class="pp-title" id="trophy-panel-title">음악방송 1위</div>
     <button id="trophy-panel-close" class="conn-back-btn" aria-label="닫기">×</button>
@@ -784,7 +786,7 @@
     <div id="gc-discog-detail-tracks"></div>
   </div>
 </div>
-<div id="gc-track-videos-overlay">
+<div id="gc-track-videos-overlay" data-modal>
   <div id="gc-track-videos-bg"></div>
   <div id="gc-track-videos-sheet">
     <button id="gc-track-videos-close" aria-label="닫기">×</button>
@@ -797,7 +799,7 @@
   <span id="col-quick-toast-name"></span>에 추가됨
   <button id="col-quick-toast-change">다른 컬렉션</button>
 </div>
-<div id="col-picker">
+<div id="col-picker" data-modal>
   <div id="col-picker-bg"></div>
   <div id="col-picker-sheet">
     <div class="col-picker-hd">
@@ -814,7 +816,7 @@
     </div>
   </div>
 </div>
-<div id="unfav-confirm-overlay">
+<div id="unfav-confirm-overlay" data-modal>
   <div id="unfav-confirm-panel">
     <div class="pp-title">즐겨찾기를 해제할까요?</div>
     <div id="unfav-confirm-msg">해제하면 기록된 기념일도<br>함께 사라져요.</div>
@@ -824,7 +826,7 @@
     </div>
   </div>
 </div>
-<div id="date-edit-overlay">
+<div id="date-edit-overlay" data-modal>
   <div id="date-edit-panel">
     <div class="pp-title">기념일 날짜 수정</div>
     <input id="date-edit-input" type="date" class="pp-input" style="margin-top:14px;">
@@ -834,7 +836,7 @@
     </div>
   </div>
 </div>
-<div id="generic-confirm-overlay">
+<div id="generic-confirm-overlay" data-modal>
   <div id="generic-confirm-panel">
     <div class="pp-title" id="generic-confirm-title"></div>
     <div id="generic-confirm-msg"></div>
@@ -844,7 +846,7 @@
     </div>
   </div>
 </div>
-<div id="generic-prompt-overlay">
+<div id="generic-prompt-overlay" data-modal>
   <div id="generic-prompt-panel">
     <div class="pp-title" id="generic-prompt-title"></div>
     <input id="generic-prompt-input" type="text" class="pp-input" style="margin-top:14px;" maxlength="2000" autocomplete="off">
@@ -854,7 +856,7 @@
     </div>
   </div>
 </div>
-<div id="feedback-overlay">
+<div id="feedback-overlay" data-modal>
   <div id="feedback-panel">
     <div class="pp-title" data-i18n="fbTitle">피드백 보내기</div>
     <div class="fb-cat-row">
@@ -6783,6 +6785,8 @@ function _renderGcDiscography(ko){
   const segThumb=segEl.querySelector('.seg-thumb');
   const sortBtn=document.getElementById('gc-discog-sort-btn');
   const sortMenu=document.getElementById('gc-discog-sort-menu');
+  const ostDivider=document.getElementById('gc-discog-ost-divider');
+  const ostBtn=document.getElementById('gc-discog-ost-btn');
   const albums=(GROUPS[ko]||{}).discography;
   if(!albums||!albums.length){row.style.display='none';return;}
   row.style.display='';
@@ -6791,7 +6795,8 @@ function _renderGcDiscography(ko){
   const extraAlbums=albums.filter(a=>!a.isMain);
   let showingAll=false;
   let typeFilter='all';
-  let asc=true; // 기존 저장 순서(오래된 → 최신)를 기본값으로 유지
+  let asc=false;
+  let ostIncluded=true;
   function sortedList(list){
     return[...list].sort((a,b)=>{
       const da=new Date(a.releaseDate.replace(/\./g,'-')),db=new Date(b.releaseDate.replace(/\./g,'-'));
@@ -6800,7 +6805,8 @@ function _renderGcDiscography(ko){
   }
   function currentList(){
     const base=typeFilter==='all'?(showingAll?albums:mainAlbums):albums.filter(a=>_discogBucket(a.type)===typeFilter);
-    return sortedList(base);
+    const filtered=ostIncluded?base:base.filter(a=>a.type!=='OST');
+    return sortedList(filtered);
   }
   function renderItems(){
     strip.innerHTML='';
@@ -6830,14 +6836,25 @@ function _renderGcDiscography(ko){
     sortBtn.setAttribute('aria-expanded','false');
   }
   function updateSortMenuUI(){
-    sortMenu.querySelectorAll('.gc-ch-sort-item').forEach(it=>{
+    sortMenu.querySelectorAll('.gc-ch-sort-item[data-sort]').forEach(it=>{
       it.classList.toggle('active',it.dataset.sort===(asc?'oldest':'latest'));
     });
+    ostBtn.classList.toggle('active',ostIncluded);
   }
   updateSortMenuUI();
+  // OST 버튼 — OST 있는 그룹에서만 노출, 매번 핸들러 교체
+  const hasOst=albums.some(a=>a.type==='OST');
+  ostDivider.style.display=hasOst?'':'none';
+  ostBtn.style.display=hasOst?'':'none';
+  ostBtn.onclick=e=>{
+    e.stopPropagation();
+    ostIncluded=!ostIncluded;
+    updateSortMenuUI();
+    renderItems();
+  };
   // sort item 핸들러는 그룹 전환 시 현재 그룹의 asc/renderItems 클로저를 써야 하므로
   // _discogBound 가드 밖에서 매번 onclick으로 교체
-  sortMenu.querySelectorAll('.gc-ch-sort-item').forEach(it=>{
+  sortMenu.querySelectorAll('.gc-ch-sort-item[data-sort]').forEach(it=>{
     it.onclick=e=>{
       e.stopPropagation();
       const wantAsc=it.dataset.sort==='oldest';
@@ -8169,7 +8186,7 @@ document.getElementById('desktop-header').addEventListener('pointerdown',e=>e.st
 ['settings-panel','search-wrap','tabbar','tt','gc','tab-settings','col-picker'].forEach(id=>{
   document.getElementById(id)?.addEventListener('pointerdown',e=>e.stopPropagation());
 });
-window.addEventListener('pointerdown',e=>{_mdx=e.clientX;_mdy=e.clientY;closePanels();_dismissOnboardHint();});
+window.addEventListener('pointerdown',e=>{if(e.target.closest('[data-modal]')){_mdx=e.clientX;_mdy=e.clientY;return;}_mdx=e.clientX;_mdy=e.clientY;closePanels();_dismissOnboardHint();});
 
 // ── Hover tooltip (member name / group name) ──────
 const _tipEl=document.getElementById('member-tooltip');
@@ -8183,7 +8200,7 @@ window.addEventListener('mousemove',e=>{
     if(e.clientX<rect.left||e.clientX>rect.right||e.clientY<rect.top||e.clientY>rect.bottom){
       _tipEl.style.opacity='0';return;
     }
-    const _overPanel=document.elementsFromPoint(e.clientX,e.clientY).some(el=>el.closest('#tt,#gc,#side-panel,#member-panel,#journal-sidebar,#desktop-header,#settings-panel,#search-wrap,#conn-panel,#yt-lightbox,#profile-overlay,#vid-tag-overlay,#pp-bias-emoji-overlay,#link-confirm-overlay,#logout-confirm-overlay,#unfav-confirm-overlay,#date-edit-overlay,#generic-confirm-overlay,#generic-prompt-overlay,#col-picker'));
+    const _overPanel=document.elementsFromPoint(e.clientX,e.clientY).some(el=>el.closest('#tt,#gc,#side-panel,#member-panel,#journal-sidebar,#desktop-header,#settings-panel,#search-wrap,#conn-panel,#yt-lightbox,[data-modal]'));
     if(_overPanel){_tipEl.style.opacity='0';return;}
     // 1. 멤버 별 이름 — 행성이 충분히 가까울 때만
     let nearArtist=null,nearPx=Infinity;
@@ -8357,6 +8374,7 @@ renderer.domElement.addEventListener('touchend',e=>{
 },{passive:true});
 
 window.addEventListener('click',e=>{
+  if(e.target.closest('[data-modal]'))return;
   if(isMob()&&[mobSheetEl,mobCardStackEl,connSheetEl].some(s=>s.contains(e.target)))return;
   if(Math.hypot(e.clientX-_mdx,e.clientY-_mdy)>(isMob()?12:5))return;
   const rect=renderer.domElement.getBoundingClientRect();
@@ -12537,11 +12555,18 @@ function _makeChVidController(contId){
 
   // 스크롤로 more-wrap(그리드 맨 아래 센티널)이 뷰포트 근처에 들어오면 다음 페이지를 자동으로 불러온다.
   function tryLoadMore(ko,source){
-    if(state.ko!==ko||!state.hasMore||state.appendLock)return;
-    // 어느 트리거(observer/scroll/poll/releaseLock)가 실제로 다음 페이지를 불러왔는지 GA로 남김 — "점세개
-    // 안 뜸" 제보가 데스크톱 사파리·모바일 사파리 둘 다에서 재발한다는데 이 환경(Windows Chrome)에선
-    // 재현이 안 돼서(2026-08-18), IntersectionObserver가 실전에서 얼마나 자주 놓치고 나머지 두 안전망이
-    // 실제로 얼마나 자주 구제하는지 실측 없이는 다음 수정 방향을 못 잡음.
+    if(state.ko!==ko||!state.hasMore)return;
+    if(state.appendLock){
+      // appendLock 중에도 점 세개가 없으면 선제 표시 — lock이 풀릴 때까지 "로딩 중" 시각 피드백을 줌.
+      // (lock이 잡힌 상태에서 tryLoadMore가 즉시 return하면 점 세개를 그릴 기회가 없어
+      // 유저에게 "여기서 끝"처럼 보이는 문제의 완전한 해결 — 2026-08-18)
+      const _mw=cont?.querySelector('.gc-ch-more-wrap');
+      if(_mw&&!_mw.querySelector('.gc-ch-more-loading')){
+        _mw.innerHTML='<div class="gc-ch-more-loading"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>';
+      }
+      return;
+    }
+    // 어느 트리거(observer/scroll/poll/releaseLock)가 실제로 다음 페이지를 불러왔는지 GA로 남김
     if(source)_gaEvent('infscroll_trigger',{source});
     load(ko,false);
   }
@@ -13944,10 +13969,18 @@ function _probeIsPortrait(id){
 // 잠깐 옆 칸과 비율이 섞여 보임) v.category만 갱신해두고, 배치가 다 끝난 뒤 호출부가 한 번에 재배치한다.
 async function _probeShortsBatch(refs){
   const CONCURRENCY=6;
+  // 배치 전체 데드라인: 이 함수의 완료를 settlePage가 await하고, 그동안 state.appendLock이 잠긴 채
+  // 유지된다. 잠금 중엔 load()가 점 세개를 그리기도 전에 조기 return하므로 observer/scroll/poll 세
+  // 겹의 트리거가 전부 조용히 무시됨. 프로브는 이미지 load/error 이벤트에 의존하는데, 네트워크가
+  // 잠깐 끊기면 어느 쪽도 안 와서 개별 8초 타임아웃으로만 끝남 — 페이지당 최대 47개 × 최악 8웨이브
+  // × 8초 = 최대 64초 잠금이 무한 스크롤을 죽이는 근본 원인(2026-08-18 수정).
+  const _BATCH_DEADLINE_MS=5000;
+  const _deadline=performance.now()+_BATCH_DEADLINE_MS;
   let idx=0;
   const correctedIds=[];
   async function worker(){
     while(idx<refs.length){
+      if(performance.now()>_deadline)return;
       const v=refs[idx++];
       const isPortrait=await _probeIsPortrait(v.id);
       if(!isPortrait)continue;
@@ -13955,7 +13988,10 @@ async function _probeShortsBatch(refs){
       correctedIds.push(v.id);
     }
   }
-  await Promise.all(Array.from({length:Math.min(CONCURRENCY,refs.length)},worker));
+  const _work=Promise.all(Array.from({length:Math.min(CONCURRENCY,refs.length)},worker));
+  let _timedOut=false;
+  await Promise.race([_work,new Promise(r=>setTimeout(()=>{_timedOut=true;r();},_BATCH_DEADLINE_MS))]);
+  if(_timedOut&&idx<refs.length)_gaEvent('probe_batch_deadline',{pending:refs.length-idx,total:refs.length});
   return correctedIds;
 }
 
@@ -14146,7 +14182,7 @@ _totopBtn.addEventListener('click',e=>{
 
 </script>
 
-<div id="feed-overlay">
+<div id="feed-overlay" data-modal>
   <div id="feed-peek-handle"></div>
   <div id="feed-hd">
     <button id="feed-close">✕</button>

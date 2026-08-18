@@ -12,6 +12,19 @@
 
 ---
 
+## 2026-08-18 (cont. 6)
+
+- [완료][index.html][admin.js] 무한 스크롤 점 세개 미표시 + 로딩 멈춤 버그 근본 수정 — 원인: `_probeShortsBatch`(쇼츠 재확인 프로브)가 `appendLock`을 최대 64초 보유, 그 동안 `tryLoadMore`가 즉시 return해 점 세개도 그리지 못함. (1) `_probeShortsBatch`에 배치 전체 데드라인 5초 적용(`Promise.race`) → lock 보유 최대 5초로 단축, 발동 시 `probe_batch_deadline` GA 이벤트 기록. (2) `tryLoadMore`에서 lock 중에도 점 세개 선제 표시 → "끝난 것처럼 보이는" 시각 문제 완전 해결. (3) lock 해제 후 기존 polling/releaseLock이 다음 페이지 이어받음.
+- [완료][index.html][admin.js] 이벤트 가드 구조 전환 — 23개 오버레이 전체에 `data-modal` 속성 추가; `window pointerdown`에 `[data-modal]` 가드(모달 내 클릭에서 `closePanels` 차단); `window click`에 동일 가드(우주 클릭 판정 차단); `mousemove` `_overPanel` 셀렉터의 하드코딩 오버레이 목록을 `[data-modal]` 단일 선택자로 통합. 편집 모달 뒤 우주 호버/클릭 통과 버그 원천 차단.
+- [완료][admin.js] 동명이인 칩 클릭 시 카드 미오픈 수정 — 칩 click에 `e.stopPropagation()` 추가(버블링 1차 차단); `_dqGotoArtist` 데스크톱 분기에 `requestAnimationFrame` 보완 오픈 추가(이벤트 큐 소진 후 패널 미열림 시 `openSidePanel` 재호출). 근본 원인: 칩 클릭 이벤트가 `window click`까지 버블링돼 방금 열린 카드를 즉시 닫았음 — 위 이벤트 가드와 함께 이중 수정.
+- [완료][groups.json] 디스코그래피 대규모 업데이트 — Batch 1(15개 그룹): 데이식스·러블리즈·스테이씨·이달의소녀·위너·인피니트·아스트로·아이오아이·여자친구·오마이걸·카라·씨스타·애프터스쿨·이엑스아이디·엠블랙. Batch 2(23개 그룹): 미쓰에이·베리베리·비원에이포·비투비·빅뱅·빅스·블락비·씨엔블루·아이콘·악뮤·에스에프나인·에이비식스·에이프릴·에프티아일랜드·우주소녀·케플러·크래비티·트레저·펜타곤·프로미스나인·하이라이트·제로베이스원·라이즈. 추가 수정: 에이오에이(2→7개)·티아라(4→6개). tracks 포맷 통일(`{no, title, isTitle}` dict). HTML 엔티티 디코딩 적용.
+- [완료][groups.json] 엑소 앨범 커버 이미지 8개 누락 보완 — Mama·Miracles in December·LOVE ME RIGHT Repackage·LOTTO Repackage·Universe Winter Special·COUNTDOWN·LOVE SHOT Repackage·REVERXE. 멜론 albumId 검색 후 CDN URL 패턴(`id.zfill(8)` → 3/2/3 분할)으로 생성, HTTP 200 확인 후 반영.
+- [완료][index.html] OST 포함/미포함 필터 — 디스코그래피 케밥 버튼 메뉴에 "OST 포함" 토글 추가(OST가 있는 그룹에만 노출). `currentList()` 수정, `updateSortMenuUI()` 수정, sort item 셀렉터 `[data-sort]` 한정으로 OST 버튼 오작동 방지.
+
+## 2026-08-18 (cont. 5)
+
+- [완료][index.html][admin.js] Fable(claude-fable-5)과의 협업 세션 — 무한 스크롤 근본 원인 분석(appendLock 누수) 및 admin 개선 계획(`admin_improvement_plan.md`) 작성. 해당 패치는 cont. 6에서 반영.
+
 ## 2026-08-18 (cont. 4)
 
 - [완료][index.html][kpop_universe.css] 컬렉션 커스텀 표지 사진 업로드 — 컬렉션 관리 행에 카메라 버튼(🎥) 추가, 클릭 시 이미지 파일 선택 → `artist-pics` 버킷 `col-covers/{colId}.{ext}` 경로에 upsert 업로드 → publicUrl을 `col.coverImg`에 저장 → `_saveCollections()`. 칩 썸네일·관리 행 썸네일 둘 다 `col.coverImg` 우선, 없으면 기존 영상 썸네일 폴백.
