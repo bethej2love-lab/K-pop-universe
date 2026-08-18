@@ -6835,6 +6835,19 @@ function _renderGcDiscography(ko){
     });
   }
   updateSortMenuUI();
+  // sort item 핸들러는 그룹 전환 시 현재 그룹의 asc/renderItems 클로저를 써야 하므로
+  // _discogBound 가드 밖에서 매번 onclick으로 교체
+  sortMenu.querySelectorAll('.gc-ch-sort-item').forEach(it=>{
+    it.onclick=e=>{
+      e.stopPropagation();
+      const wantAsc=it.dataset.sort==='oldest';
+      if(asc===wantAsc){closeDiscogSortMenu();return;}
+      asc=wantAsc;
+      updateSortMenuUI();
+      closeDiscogSortMenu();
+      renderItems();
+    };
+  });
   if(!sortBtn._discogBound){
     sortBtn._discogBound=true;
     sortBtn.addEventListener('click',e=>{
@@ -6843,17 +6856,6 @@ function _renderGcDiscography(ko){
       sortMenu.classList.toggle('open',open);
       sortBtn.classList.toggle('active',open);
       sortBtn.setAttribute('aria-expanded',open?'true':'false');
-    });
-    sortMenu.querySelectorAll('.gc-ch-sort-item').forEach(it=>{
-      it.addEventListener('click',e=>{
-        e.stopPropagation();
-        const wantAsc=it.dataset.sort==='oldest';
-        if(asc===wantAsc){closeDiscogSortMenu();return;}
-        asc=wantAsc;
-        updateSortMenuUI();
-        closeDiscogSortMenu();
-        renderItems();
-      });
     });
     document.addEventListener('click',closeDiscogSortMenu);
   }
@@ -12288,7 +12290,10 @@ const _PROJECT_UNITS={
   // EXID 서브유닛
   '다소니':{names:['다소니','Dasoni'],members:[{mko:'솔지',gko:'이엑스아이디'},{mko:'하니',gko:'이엑스아이디'}]},
   // SS501 서브유닛
-  'FIVE O ONE':{names:['FIVE O ONE','파이브 오 원'],members:[{mko:'김현중',gko:'SS501'},{mko:'허영생',gko:'SS501'},{mko:'김규종',gko:'SS501'}]}
+  'FIVE O ONE':{names:['FIVE O ONE','파이브 오 원'],members:[{mko:'김현중',gko:'SS501'},{mko:'허영생',gko:'SS501'},{mko:'김규종',gko:'SS501'}]},
+  // 구구단 서브유닛
+  '구구단 오구오구':{names:['구구단 오구오구','gugudan OGUOGU'],members:[{mko:'신보라',gko:'구구단'},{mko:'장소진',gko:'구구단'},{mko:'류셰닝',gko:'구구단'},{mko:'정미미',gko:'구구단'},{mko:'김세정',gko:'구구단'},{mko:'강미나',gko:'구구단'},{mko:'김나영',gko:'구구단'}]},
+  '구구단 세미나':{names:['구구단 세미나','gugudan SEMINA'],members:[{mko:'김세정',gko:'구구단'},{mko:'김나영',gko:'구구단'}]}
 };
 function _onUnitTagClick(usp,unitName){
   return e=>{

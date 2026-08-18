@@ -32909,7 +32909,17 @@
     "links": {
       "instagram": "https://www.instagram.com/clean_0828",
       "namu": "https://namu.wiki/w/김세정"
-    }
+    },
+    "groups": [
+      {
+        "ko": "아이오아이",
+        "en": "I.O.I"
+      },
+      {
+        "ko": "구구단",
+        "en": "gugudan"
+      }
+    ]
   },
   {
     "name": {
@@ -33213,7 +33223,17 @@
       "namu": "https://namu.wiki/w/강미나",
       "instagram": "https://www.instagram.com/_happiness_o"
     },
-    "left": "2017.01.31"
+    "left": "2017.01.31",
+    "groups": [
+      {
+        "ko": "아이오아이",
+        "en": "I.O.I"
+      },
+      {
+        "ko": "구구단",
+        "en": "gugudan"
+      }
+    ]
   },
   {
     "name": {
@@ -94304,5 +94324,296 @@
       "ko": "한국",
       "en": "KR"
     }
+  },
+  {
+    "name": {
+      "ko": "정미미",
+      "en": "MIMI"
+    },
+    "group": {
+      "ko": "구구단",
+      "en": "gugudan"
+    },
+    "co": "젤리피쉬엔터테인먼트",
+    "active": false,
+    "color": [
+      170,
+      140,
+      215
+    ],
+    "bday": "1993.01.01",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/정미미(구구단)"
+    }
+  },
+  {
+    "name": {
+      "ko": "신보라",
+      "en": "HANA"
+    },
+    "group": {
+      "ko": "구구단",
+      "en": "gugudan"
+    },
+    "co": "젤리피쉬엔터테인먼트",
+    "active": true,
+    "color": [
+      170,
+      140,
+      215
+    ],
+    "bday": "1993.04.30",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/하나(구구단)"
+    }
+  },
+  {
+    "name": {
+      "ko": "한해빈",
+      "en": "HAEBIN"
+    },
+    "group": {
+      "ko": "구구단",
+      "en": "gugudan"
+    },
+    "co": "젤리피쉬엔터테인먼트",
+    "active": true,
+    "color": [
+      170,
+      140,
+      215
+    ],
+    "bday": "1995.08.16",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/해빈(구구단)"
+    }
+  },
+  {
+    "name": {
+      "ko": "김나영",
+      "en": "NAYOUNG"
+    },
+    "group": {
+      "ko": "구구단",
+      "en": "gugudan"
+    },
+    "co": "젤리피쉬엔터테인먼트",
+    "active": false,
+    "color": [
+      170,
+      140,
+      215
+    ],
+    "bday": "1995.11.23",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/나영(구구단)"
+    }
+  },
+  {
+    "name": {
+      "ko": "류셰닝",
+      "en": "SALLY"
+    },
+    "group": {
+      "ko": "구구단",
+      "en": "gugudan"
+    },
+    "co": "젤리피쉬엔터테인먼트",
+    "active": false,
+    "color": [
+      170,
+      140,
+      215
+    ],
+    "bday": "1996.10.23",
+    "nat": {
+      "ko": "중국",
+      "en": "CN"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/샐리(구구단)"
+    }
+  },
+  {
+    "name": {
+      "ko": "장소진",
+      "en": "SOY"
+    },
+    "group": {
+      "ko": "구구단",
+      "en": "gugudan"
+    },
+    "co": "젤리피쉬엔터테인먼트",
+    "active": true,
+    "color": [
+      170,
+      140,
+      215
+    ],
+    "bday": "1996.11.21",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/소이(구구단)"
+    }
+  },
+  {
+    "name": {
+      "ko": "조아람",
+      "en": "HYEYEON"
+    },
+    "group": {
+      "ko": "구구단",
+      "en": "gugudan"
+    },
+    "co": "젤리피쉬엔터테인먼트",
+    "active": false,
+    "color": [
+      170,
+      140,
+      215
+    ],
+    "bday": "2000.08.05",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/혜연(구구단)"
+    },
+    "left": "2018.10.25"
+  },
+  {
+    "name": {
+      "ko": "캣",
+      "en": "KAT"
+    },
+    "group": {
+      "ko": "A2O MAY",
+      "en": "A2O MAY"
+    },
+    "co": "A2O엔터테인먼트",
+    "active": true,
+    "color": [
+      90,
+      165,
+      205
+    ],
+    "bday": "2005.04.15",
+    "nat": {
+      "ko": "미국",
+      "en": "US"
+    },
+    "links": {}
+  },
+  {
+    "name": {
+      "ko": "미쉐",
+      "en": "MICHE"
+    },
+    "group": {
+      "ko": "A2O MAY",
+      "en": "A2O MAY"
+    },
+    "co": "A2O엔터테인먼트",
+    "active": true,
+    "color": [
+      90,
+      165,
+      205
+    ],
+    "bday": "2005.04.15",
+    "nat": {
+      "ko": "미국",
+      "en": "US"
+    },
+    "links": {}
+  },
+  {
+    "name": {
+      "ko": "쓰지에",
+      "en": "SHIJIE"
+    },
+    "group": {
+      "ko": "A2O MAY",
+      "en": "A2O MAY"
+    },
+    "co": "A2O엔터테인먼트",
+    "active": true,
+    "color": [
+      90,
+      165,
+      205
+    ],
+    "bday": "2007.06.26",
+    "nat": {
+      "ko": "중국",
+      "en": "CN"
+    },
+    "links": {}
+  },
+  {
+    "name": {
+      "ko": "취창",
+      "en": "QUCHANG"
+    },
+    "group": {
+      "ko": "A2O MAY",
+      "en": "A2O MAY"
+    },
+    "co": "A2O엔터테인먼트",
+    "active": true,
+    "color": [
+      90,
+      165,
+      205
+    ],
+    "bday": "2007.07.28",
+    "nat": {
+      "ko": "중국",
+      "en": "CN"
+    },
+    "links": {}
+  },
+  {
+    "name": {
+      "ko": "천위",
+      "en": "CHENYU"
+    },
+    "group": {
+      "ko": "A2O MAY",
+      "en": "A2O MAY"
+    },
+    "co": "A2O엔터테인먼트",
+    "active": true,
+    "color": [
+      90,
+      165,
+      205
+    ],
+    "bday": "2008.02.22",
+    "nat": {
+      "ko": "중국",
+      "en": "CN"
+    },
+    "links": {}
   }
 ]
