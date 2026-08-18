@@ -12,6 +12,23 @@
 
 ---
 
+## 2026-08-18 (cont. 4)
+
+- [완료][index.html][kpop_universe.css] 컬렉션 커스텀 표지 사진 업로드 — 컬렉션 관리 행에 카메라 버튼(🎥) 추가, 클릭 시 이미지 파일 선택 → `artist-pics` 버킷 `col-covers/{colId}.{ext}` 경로에 upsert 업로드 → publicUrl을 `col.coverImg`에 저장 → `_saveCollections()`. 칩 썸네일·관리 행 썸네일 둘 다 `col.coverImg` 우선, 없으면 기존 영상 썸네일 폴백.
+
+## 2026-08-18 (cont. 3)
+
+- [완료][index.html] 그룹 이름 레이블을 행성 위→아래로 이동 — CSS2DObject anchor를 `(0, radius+0.3, 0)` → `(0, -(radius+0.3), 0)`으로 변경, div top:5px(anchor 아래)로 통일. 행성 위에 있던 별 멤버 이름과 겹치던 문제 해결.
+
+## 2026-08-18 (cont. 2)
+
+- [완료][admin.js][index.html] 해체 그룹 자동 매칭 차단 — `_m2ParseTitle`의 `groupsSorted` 필터에 `&&!v.disbanded` 추가. 이전엔 해체 그룹도 다른 채널 영상 제목에서 자동으로 with_groups에 태깅됐음(disbanded는 공식 채널 수집 컷오프만 했고, 타 채널 제목 매칭은 막지 않았음). 이제 disbanded 그룹은 아예 매칭 대상에서 제외 → 앞으로 신규 영상에는 no-op, 기존 오태깅 영상은 "콜라보 오태깅 재검증" sweep 버튼으로 정리 가능. `_ADMIN_JS_VER` 2026-08-18d→2026-08-18e.
+
+## 2026-08-18 (cont.)
+
+- [완료][groups.json][artists.json][connections.json] 그룹 추가: 저스트비(JUSTB, 2021, 블루닷, 남성 6인, 온리비) — 멤버 5명 신규(임지민·이건우·배인·시우·김상우), 전도염(원더나인)은 groups 배열로 겸직 반영; 배드빌런(BADVILLAIN, 2024, 빅플래닛메이드, 여성 7인, 빌리온) — 멤버 7명 신규; connections 36쌍 추가
+- [완료][groups.json][index.html] 유앤비(UNB) 행성→유닛 격하 — groups.json에서 제거, index.html _PROJECT_UNITS에 9명 유닛으로 추가(강유찬/에이스·고호정/핫샷·준/유키스·이의진·오광석·박대원·이형근·지한솔·김기중 모두 gko=유앤비)
+
 ## 2026-08-18
 
 - [완료][artists.json] 젝스키스 이재진 인스타그램 링크 삭제.

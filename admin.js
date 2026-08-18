@@ -2491,7 +2491,7 @@ function _m2ParseTitle(rawTitle,selfGko,strict){
   // 옮겼는데, 여기서 안 챙기면 제목에 옛 이름만 적힌 영상(예: "JYJ 콘서트")을 더는 못 알아보는 회귀가
   // 생김(사용자 제보로 발견 — 검색 쪽만 altNames를 보게 고쳤지 태깅 매칭 쪽은 놓쳤었음).
   const groupsSorted=Object.entries(GROUPS)
-    .filter(([ko])=>!_STRICT_SYNC_GROUPS.has(ko))
+    .filter(([ko,v])=>!_STRICT_SYNC_GROUPS.has(ko)&&!v.disbanded)
     .map(([ko,v])=>({ko,tokens:[ko,v.en,...(v.altNames||[])].filter(Boolean)}))
     .sort((a,b)=>Math.max(...b.tokens.map(t=>t.length))-Math.max(...a.tokens.map(t=>t.length)));
   const matchedGroupKos=[];

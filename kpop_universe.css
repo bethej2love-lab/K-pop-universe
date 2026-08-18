@@ -2112,6 +2112,10 @@
   .col-row-cnt{font-size:11px;color:rgba(120,145,190,0.54);margin-top:1px;}
   .col-row-del{background:none;border:none;color:rgba(140,165,220,0.34);font-size:14px;cursor:pointer;padding:2px 6px;flex-shrink:0;}
   .col-row-del:hover{color:rgba(255,100,120,0.7);}
+  .col-row-cam{background:none;border:none;color:rgba(140,165,220,0.34);cursor:pointer;padding:2px 5px;flex-shrink:0;display:flex;align-items:center;}
+  .col-row-cam svg{width:14px;height:14px;stroke:currentColor;}
+  .col-row-cam:hover{color:rgba(180,200,240,0.76);}
+  .col-row-cam.cam-uploading{opacity:0.4;pointer-events:none;}
   .col-row-rename{background:none;border:none;color:rgba(140,165,220,0.34);font-size:12px;cursor:pointer;padding:2px 5px;flex-shrink:0;}
   .col-row-rename:hover{color:rgba(180,200,240,0.66);}
   .col-row-pub{background:none;border:none;color:rgba(140,165,220,0.34);cursor:pointer;padding:2px 4px;flex-shrink:0;display:flex;align-items:center;}
@@ -2331,7 +2335,7 @@
   #ob-top-search.ob-typing #ob-top-search-btn{display:none;}
   #ob-si{display:none;flex:1;background:none;border:none;outline:none;
     color:rgba(255,255,255,0.88);font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;
-    font-size:13px;font-weight:500;padding:13px 0;-webkit-text-size-adjust:none;letter-spacing:.03em;}
+    font-size:13px;font-weight:500;line-height:1;padding:13px 0;-webkit-text-size-adjust:none;letter-spacing:.03em;}
   #ob-si::placeholder{color:rgba(255,255,255,0.55);text-shadow:0 0 14px rgba(255,255,255,0.4);}
   #ob-top-search.ob-typing #ob-si{display:block;}
   #ob-si-clear{display:none;background:none;border:none;color:rgba(200,215,240,0.45);
