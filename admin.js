@@ -1163,7 +1163,10 @@ const _WONKOK_BRACKETS={'(':')','[':']'};
 // 함수 안에서만 지역 const로 선언해서, 그 안에서만 쓰일 땐 괜찮았는데 실제로는 이 두 함수도 이
 // 이름을 참조하고 있어서(그 함수들은 이 지역변수를 볼 수 없는 별도 스코프) 스캔이 후보 상세 파싱
 // 단계까지 진행되면 "_isBeOriginal is not defined"로 죽는 버그가 있었음(2026-08-11, 사용자 제보).
-function _isBeOriginal(t){return/\bbe[\s_-]+original\b/i.test(t);}
+// "BE ORIGINAL" 외에 "POP ORIGINAL", 그리고 "*_original"(POP_ORIGINAL 등 언더스코어로 이어붙인
+// 시리즈 태그)도 같은 댄스/퍼포먼스 콘텐츠 시리즈명이지 원곡 크레딧이 아니라 함께 제외(2026-08-19,
+// 사용자 요청 — 커버 끌어오기 오탐 제거). 함수명은 히스토리상 그대로 두되 대상은 아래처럼 넓어짐.
+function _isBeOriginal(t){return/\b(?:be|pop)[\s_-]+original\b/i.test(t)||/_original\b/i.test(t);}
 function _wonkokStripClause(title){
   let out='',i=0;
   while(i<title.length){
@@ -3669,6 +3672,103 @@ document.getElementById('vid-tag-cover-search').addEventListener('input',e=>{
   });
 });
 _wireListKeyboardNav(document.getElementById('vid-tag-cover-search'),document.getElementById('vid-tag-cover-results'),'.vid-tag-with-opt');
+
+// ── 선택 영상 원곡 일괄 지정(교체) ─────────────────────────────────────────
+// "선택-원곡제외"(cover_of를 []로 비움)의 반대 동작 — 선택한 여러 영상의 cover_of를 고른 원곡으로 SET
+// 한다(2026-08-19, 사용자 요청). 영상마다 출연 멤버가 달라 벌크 편집 모달로는 멤버를 안 건드리고 원곡만
+// 넣을 수 없었던 문제 해결. cover_of 컬럼은 tags_manual 보호 트리거 대상이 아니라서(원곡제외 버튼이
+// 이미 plain update로 동작) 여기서도 plain update로 충분하고, tags_manual은 안 건드려 멤버 자동 태깅을
+// 막지 않는다. 검색 UI는 vid-tag-cover-search 로직을 그대로(그룹/멤버 둘 다), 상태만 _vmCs*로 복제.
+let _vmCsIds=[];      // 팝업 열 때 스냅샷한 대상 영상 id
+let _vmCsGroups=[];   // [groupKo,...] 그룹 단위 원곡
+let _vmCsMembers=[];  // [{ko,groupKo},...] 멤버 단위 원곡
+function _vmCsRenderChips(){
+  const el=document.getElementById('vm-cs-chips');if(!el)return;
+  el.innerHTML='';
+  const addChip=(label,onRemove)=>{
+    const chip=document.createElement('span');
+    chip.className='vid-tag-chip vid-tag-chip-cover';
+    chip.appendChild(document.createTextNode(label));
+    const rm=document.createElement('button');
+    rm.type='button';rm.textContent='✕';rm.setAttribute('aria-label','제거');
+    rm.addEventListener('click',e=>{e.stopPropagation();onRemove();_vmCsRenderChips();});
+    chip.appendChild(rm);el.appendChild(chip);
+  };
+  _vmCsMembers.forEach((m,i)=>addChip(`원곡: ${m.ko}(${m.groupKo})`,()=>_vmCsMembers.splice(i,1)));
+  _vmCsGroups.forEach((gko,i)=>addChip(`원곡: ${gko} (그룹 전체)`,()=>_vmCsGroups.splice(i,1)));
+}
+function _openVmCoverSet(){
+  if(!sb||!_isAdmin())return;
+  const ids=[...document.querySelectorAll('#vm-list .vm-item')]
+    .filter(el=>el.querySelector('input[type=checkbox]')?.checked)
+    .map(el=>el.dataset.vidId).filter(Boolean);
+  if(!ids.length){document.getElementById('vm-status').textContent='먼저 영상을 선택해주세요';return;}
+  _vmCsIds=ids;_vmCsGroups=[];_vmCsMembers=[];
+  document.getElementById('vm-cs-count').textContent=`${ids.length}개 영상에 원곡 지정(기존 원곡은 교체됨)`;
+  document.getElementById('vm-cs-search').value='';
+  document.getElementById('vm-cs-results').innerHTML='';
+  document.getElementById('vm-cs-status').textContent='';
+  _vmCsRenderChips();
+  document.getElementById('vm-coverset-overlay').style.display='flex';
+  setTimeout(()=>document.getElementById('vm-cs-search').focus(),50);
+}
+function _closeVmCoverSet(){document.getElementById('vm-coverset-overlay').style.display='none';}
+document.getElementById('vm-cs-search')?.addEventListener('input',e=>{
+  const q=e.target.value.trim();
+  const resultsEl=document.getElementById('vm-cs-results');
+  resultsEl.innerHTML='';
+  if(!q)return;
+  const qLower=q.toLowerCase();
+  Object.keys(GROUPS).filter(gko=>
+    (gko.includes(q)||(GROUPS[gko].en||'').toLowerCase().includes(qLower))&&!_vmCsGroups.includes(gko)
+  ).slice(0,4).forEach(gko=>{
+    const opt=document.createElement('div');
+    opt.className='vid-tag-with-opt vid-tag-with-opt-group';
+    opt.textContent=`${gko} (그룹 전체)`;
+    opt.addEventListener('click',ev=>{ev.stopPropagation();_vmCsGroups.push(gko);_vmCsRenderChips();e.target.value='';resultsEl.innerHTML='';});
+    resultsEl.appendChild(opt);
+  });
+  const already=new Set(_vmCsMembers.map(m=>m.ko+'|'+m.groupKo));
+  ARTISTS.filter(a=>
+    (a.name.ko.includes(q)||(a.name.en||'').toLowerCase().includes(qLower))&&!already.has(a.name.ko+'|'+a.group.ko)
+  ).sort((a,b)=>(_vidTagExactMatch(b,q,qLower)?1:0)-(_vidTagExactMatch(a,q,qLower)?1:0)).slice(0,8).forEach(a=>{
+    const opt=document.createElement('div');
+    opt.className='vid-tag-with-opt';
+    opt.textContent=`${a.name.ko} (${a.group.ko})`;
+    opt.addEventListener('click',ev=>{ev.stopPropagation();_vmCsMembers.push({ko:a.name.ko,groupKo:a.group.ko});_vmCsRenderChips();e.target.value='';resultsEl.innerHTML='';});
+    resultsEl.appendChild(opt);
+  });
+});
+_wireListKeyboardNav(document.getElementById('vm-cs-search'),document.getElementById('vm-cs-results'),'.vid-tag-with-opt',()=>_closeVmCoverSet());
+document.getElementById('vm-coverset-btn')?.addEventListener('click',_openVmCoverSet);
+document.getElementById('vm-cs-cancel')?.addEventListener('click',_closeVmCoverSet);
+// 배경(패널 바깥) 클릭 시 닫기
+document.getElementById('vm-coverset-overlay')?.addEventListener('click',e=>{if(e.target.id==='vm-coverset-overlay')_closeVmCoverSet();});
+document.getElementById('vm-cs-apply')?.addEventListener('click',async()=>{
+  if(!sb||!_isAdmin())return;
+  const statusEl=document.getElementById('vm-cs-status');
+  if(!_vmCsGroups.length&&!_vmCsMembers.length){statusEl.textContent='원곡을 하나 이상 지정해주세요';return;}
+  if(!_vmCsIds.length){statusEl.textContent='대상 영상이 없어요';return;}
+  const coverMembers=_vmCsMembers.map(m=>`${m.ko}(${m.groupKo})`);
+  const coverGroups=[..._vmCsGroups];
+  const ids=_vmCsIds;
+  const btn=document.getElementById('vm-cs-apply');
+  btn.disabled=true;statusEl.textContent='저장 중…';
+  const{error}=await sb.from(_YT_TABLE).update({cover_of_members:coverMembers,cover_of_groups:coverGroups}).in('id',ids);
+  btn.disabled=false;
+  if(error){statusEl.textContent='저장 실패: '+error.message;return;}
+  const idSet=new Set(ids);
+  _vmRows.forEach(v=>{if(idSet.has(v.id)){v.cover_of_members=coverMembers.slice();v.cover_of_groups=coverGroups.slice();}});
+  [...document.querySelectorAll('#vm-list .vm-item')].forEach(el=>{
+    const cb=el.querySelector('input[type=checkbox]');
+    if(cb&&idSet.has(el.dataset.vidId))cb.checked=false;
+  });
+  _closeVmCoverSet();
+  document.getElementById('vm-status').textContent=`${ids.length}개 원곡 지정 완료`;
+  _vmUpdateCount();
+  _refreshOpenCoverOfSection?.();
+});
+
 document.getElementById('vid-tag-save').addEventListener('click',async e=>{
   e.stopPropagation();
   if(!_vidTagTarget||!sb)return;
