@@ -1891,7 +1891,7 @@ async function buildUniverse(){
       // 있었음(사용자 제보). 해체 그룹은 날려보내지 않고 제자리에 두고, 아래 애니메이션 루프의
       // inactiveDim(0.22)만으로 다른 별보다 어둡게 보이게 한다.
       let _flyInside=null,_flyOutside=null;
-      if(!m.active&&ko===m.group.ko&&!(GROUPS[ko]||{}).disbanded){
+      if(!m.active&&!m.memorial&&ko===m.group.ko&&!(GROUPS[ko]||{}).disbanded){
         _flyInside=mPos.clone(); // 원래라면 여기 있었을 자리(토글 켜면 여기로 날아들어옴)
         const outDir=new THREE.Vector3(Math.random()-0.5,Math.random()*0.6+0.2,Math.random()-0.5).normalize();
         // 행성 바로 앞(radius+5)이 아니라 우주에 멀찍이 떠다니는 느낌이 나도록 훨씬 멀리 배치
@@ -2529,16 +2529,20 @@ function animate(){
     // 비활동/탈퇴 멤버는 별 자체를 옅게 — a.active는 데이터 입력 시 "지금 어디서든 활동 중인지" 기준으로
     // 넣으므로(예: 한 그룹은 탈퇴해도 다른 그룹/솔로로 활동 중이면 true), 따로 그룹별 교차 판정 없이
     // 이 값 하나만 보면 됨.
-    const inactiveDim=a.active===false?0.22:1;
+    // 추모(memorial): 세상 떠난 멤버는 "꺼진 별"이 아니라 "영원한 별"로 — 다른 비활동 별처럼 어둡게
+    // 낮추지 않고(밝기 그대로) 따뜻한 흰빛으로 은은히 더 빛나게 한다(2026-08-19, 사용자 요청). 날아가지도
+    // 않고(위 fly-away 조건에서 memorial 제외) 그룹 별자리 안에 그대로 남는다.
+    const inactiveDim=a.memorial?1:(a.active===false?0.22:1);
     const fa=Math.min(1,a._filterAlpha*a._focusAlpha*inactiveDim+(a._flashPulse||0));
     const favBoost=a._favAlpha*0.4;
+    const memR=a.memorial?0.5:0,memG=a.memorial?0.42:0,memB=a.memorial?0.3:0; // 따뜻한 흰빛 쪽으로 승화
     (a._worldPositions||[]).forEach(wp=>{
       const attr=wp.ptsType==='sparkle'?spkColorAttr:regColorAttr;
       if(!attr)return;
       const i=wp.ptsIdx*3;
-      attr.array[i]=Math.min(1,(wp.origColor[0]+(1-wp.origColor[0])*favBoost)*fa);
-      attr.array[i+1]=Math.min(1,(wp.origColor[1]+(1-wp.origColor[1])*favBoost)*fa);
-      attr.array[i+2]=Math.min(1,(wp.origColor[2]+(1-wp.origColor[2])*favBoost)*fa);
+      attr.array[i]=Math.min(1,(wp.origColor[0]+(1-wp.origColor[0])*(favBoost+memR))*fa);
+      attr.array[i+1]=Math.min(1,(wp.origColor[1]+(1-wp.origColor[1])*(favBoost+memG))*fa);
+      attr.array[i+2]=Math.min(1,(wp.origColor[2]+(1-wp.origColor[2])*(favBoost+memB))*fa);
     });
     colorsDirty=true;
   });
@@ -12223,7 +12227,7 @@ async function _buildFeedGenSoloCamTop(list,offset){
       .map(([ko])=>ko);
     if(!groupKos.length)continue;
     try{
-      const vids=(await _fetchSoloFancamPool(groupKos,500)).slice(0,100);
+      const vids=(await _fetchSoloFancamPool(groupKos,1000)).slice(0,100);
       if(vids.length<10)continue; // 이 조합은 후보가 너무 적음 — 다음 세대×성별 조합으로
       const songs=vids.map(v=>({t:v.title,u:vidUrl(v),thumb:v.thumb,vc:v.view_count,pa:v.published_at?.slice(0,10)}));
       const label=currentLang==='ko'?`${gen}세대 ${gender==='f'?'여돌':'남돌'} 개인 직캠 TOP 100`:`Gen ${gen} ${gender==='f'?'Girl Group':'Boy Group'} Solo Fancam TOP 100`;
@@ -12258,7 +12262,7 @@ async function _buildFeedStageTop100(list,opts){
   if(!sb)return;
   const vidUrl=v=>v.category==='short'?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;
   try{
-    const vids=(await _fetchStagePool(opts.groupKos,500,5)).slice(0,100);
+    const vids=(await _fetchStagePool(opts.groupKos,1000,15)).slice(0,100);
     if(vids.length<10)return;
     const songs=vids.map(v=>({t:v.title,u:vidUrl(v),thumb:v.thumb,vc:v.view_count,pa:v.published_at?.slice(0,10)}));
     const label=currentLang==='ko'?opts.labelKo:opts.labelEn;
@@ -12287,7 +12291,7 @@ async function _buildFeedGenStageTop(list,offset){
       .map(([ko])=>ko);
     if(!groupKos.length)continue;
     try{
-      const vids=(await _fetchStagePool(groupKos,300,5)).slice(0,100);
+      const vids=(await _fetchStagePool(groupKos,1000,15)).slice(0,100);
       if(vids.length<10)continue;
       const songs=vids.map(v=>({t:v.title,u:vidUrl(v),thumb:v.thumb,vc:v.view_count,pa:v.published_at?.slice(0,10)}));
       const label=currentLang==='ko'?`${gen}세대 ${gender==='f'?'여돌':'남돌'} 무대 TOP 100`:`Gen ${gen} ${gender==='f'?'Girl Group':'Boy Group'} Stage TOP 100`;
@@ -12328,7 +12332,7 @@ async function _buildFeedFestival(list,opts){
   if(!sb)return;
   const vidUrl=v=>v.category==='short'?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;
   try{
-    const vids=(await _fetchFestivalPool(opts.filter,opts.postFilter,700,5)).slice(0,100);
+    const vids=(await _fetchFestivalPool(opts.filter,opts.postFilter,1000,15)).slice(0,200);
     if(vids.length<10)return;
     const songs=vids.map(v=>({t:v.title,u:vidUrl(v),thumb:v.thumb,vc:v.view_count,pa:v.published_at?.slice(0,10)}));
     const label=currentLang==='ko'?opts.labelKo:opts.labelEn;
@@ -12422,7 +12426,7 @@ const _BSIDE_MIN=8; // 이 개수 미만이면 카드 안 만들고 다음 후�
 async function _renderBsideCard(list,groupKos,icon,labelKo,labelEn,fetchLimit,capPerGroup){
   const vids=await _fetchGroupVideoPool(groupKos,fetchLimit);
   if(!vids.length)return false;
-  const stages=_capByGroup(_bsideStagesFromVideos(vids),v=>v.group_ko,capPerGroup).slice(0,100);
+  const stages=_capByGroup(_bsideStagesFromVideos(vids),v=>v.group_ko,capPerGroup).slice(0,200);
   if(stages.length<_BSIDE_MIN)return false;
   const vidUrl=v=>v.category==='short'?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;
   const songs=stages.map(v=>({t:v.title,u:vidUrl(v),thumb:v.thumb,vc:v.view_count,pa:v.published_at?.slice(0,10)}));
@@ -12459,7 +12463,7 @@ async function _buildFeedGenBsideStages(list,offset){
       .filter(([ko,info])=>info.gender===gender&&_groupGeneration(info.debut,ko)===gen&&Object.keys(_groupBsideIndex(ko).bside).length)
       .map(([ko])=>ko);
     if(!groupKos.length)continue;
-    try{ if(await _renderBsideCard(list,groupKos,'🎧',`${gen}세대 ${gender==='f'?'여돌':'남돌'} 수록곡 무대 모음`,`Gen ${gen} ${gender==='f'?'Girl Group':'Boy Group'} B-side Stages`,1000,5))return; }
+    try{ if(await _renderBsideCard(list,groupKos,'🎧',`${gen}세대 ${gender==='f'?'여돌':'남돌'} 수록곡 무대 모음`,`Gen ${gen} ${gender==='f'?'Girl Group':'Boy Group'} B-side Stages`,1000,15))return; }
     catch(e){/* 다음 조합 */}
   }
 }
@@ -12483,7 +12487,7 @@ async function _fetchCoverPool(groupKos,fetchLimit){
   return _filterBannedVideos(data);
 }
 async function _renderCoverCard(list,groupKos,icon,labelKo,labelEn,fetchLimit,capPerGroup){
-  const vids=_capByGroup(await _fetchCoverPool(groupKos,fetchLimit),v=>v.group_ko,capPerGroup).slice(0,100);
+  const vids=_capByGroup(await _fetchCoverPool(groupKos,fetchLimit),v=>v.group_ko,capPerGroup).slice(0,200);
   if(vids.length<_COVER_MIN)return false;
   const vidUrl=v=>v.category==='short'?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;
   const songs=vids.map(v=>({t:v.title,u:vidUrl(v),thumb:v.thumb,vc:v.view_count,pa:v.published_at?.slice(0,10)}));
@@ -12519,7 +12523,7 @@ async function _buildFeedGroupCovers(list,offset){
   const hourIdx=Math.floor(Date.now()/3600000)+(offset||0);
   for(let i=0;i<4;i++){
     const ko=groups[((hourIdx+i)%groups.length+groups.length)%groups.length];
-    try{ if(await _renderCoverCard(list,[ko],'🎙️',`${ko} 커버곡 모음`,`${(GROUPS[ko].en||ko)} Covers`,300,100))return; }
+    try{ if(await _renderCoverCard(list,[ko],'🎙️',`${ko} 커버곡 모음`,`${(GROUPS[ko].en||ko)} Covers`,800,100))return; }
     catch(e){/* 다음 그룹 */}
   }
 }
@@ -12531,7 +12535,7 @@ async function _buildFeedGenCovers(list,offset){
     const{gen,gender}=_GEN_CAM_COMBOS[(hourIdx+i)%_GEN_CAM_COMBOS.length];
     const groupKos=Object.entries(GROUPS||{}).filter(([ko,info])=>info.gender===gender&&_groupGeneration(info.debut,ko)===gen).map(([ko])=>ko);
     if(!groupKos.length)continue;
-    try{ if(await _renderCoverCard(list,groupKos,'🎙️',`${gen}세대 ${gender==='f'?'여돌':'남돌'} 커버곡 모음`,`Gen ${gen} ${gender==='f'?'Girl Group':'Boy Group'} Covers`,1000,5))return; }
+    try{ if(await _renderCoverCard(list,groupKos,'🎙️',`${gen}세대 ${gender==='f'?'여돌':'남돌'} 커버곡 모음`,`Gen ${gen} ${gender==='f'?'Girl Group':'Boy Group'} Covers`,1000,15))return; }
     catch(e){/* 다음 조합 */}
   }
 }
@@ -13648,7 +13652,7 @@ function _makeChVidController(contId){
         state.total=null;
       }
       // 그리드가 새로 비워졌으므로 행 정렬 추적 상태도 초기화
-      state.pos=0;state.cat=null;state.trailingEl=null;state.allVids=[];
+      state.pos=0;state.cat=null;state.trailingEl=null;state.allVids=[];state.seenIds=new Set();
     }
     const myGen=state.gen;
     // gen이 그대로일 때만(그 사이 다른 그룹/새로고침으로 전환되지 않았을 때만) 이 호출이 건 잠금을 해제한다
@@ -13853,10 +13857,14 @@ function _makeChVidController(contId){
             ok.forEach(r=>(r.data||[]).forEach(v=>{if(!seen.has(v.id)){seen.add(v.id);merged.push(v);}}));
             return{data:merged,error:null,count:ok[0]?.count};
           });
-        // 청크 사이에 안 보여준 구간이 남으므로, 기존 wrap 방식과 같은 취지로 가장 앞쪽 청크 이전
-        // 구간(0~min)은 무한스크롤이 끝까지 내려간 뒤 처음으로 돌아가 마저 채워주게 한다.
+        // 청크는 24곳을 흩뿌려 "첫인상"만 다양하게 준 것 — 그 사이/이전 구간은 아직 대부분 안 봤으므로,
+        // 무한스크롤이 forward(청크시작→total)를 다 내려간 뒤 처음(0)으로 돌아가 "청크 시작점까지" 마저
+        // 훑어서 결국 풀 전체를 빠짐없이 불러온다. 재요청되는 샘플은 아래 seenIds dedup으로 중복 제거.
+        // (2026-08-19, 사용자 제보 — 총 "N개" 라벨은 뜨는데 그만큼 안 불러와지던 문제. 예전엔 wrap가
+        // 0~min까지만 덮어서 [min~청크시작] 가운데 구간이 통째로 안 실렸던 게 원인 — wrapEnd를 청크
+        // 시작 offset으로 확장해 시작 구간 전체를 덮게 함.)
         state.offset=Math.max(...chunkOffsets)+chunkSize;
-        state.wrapEnd=Math.min(...chunkOffsets);state.wrapPhase=false;
+        state.wrapEnd=state.offset;state.wrapPhase=false;
       }else{
         // 2026-08-13: 예전엔 여기 자체엔 타임아웃이 없고 아래에서 15초짜리 단발 타임아웃 하나로만
         // 감쌌었음 — 콜드스타트 등으로 그 15초를 넘기면 무조건 에러였는데, 실제로는 조금만 더 기다리면
@@ -13933,6 +13941,11 @@ function _makeChVidController(contId){
           featured={...main,_featured:true};
         }
       }
+      // 청크 forward/wrap가 같은 구간을 다시 훑어 같은 영상이 재요청되므로, 이미 그리드에 넣은 id는
+      // 걸러 중복 카드를 막는다(위 wrapEnd=청크시작 확장이 안전하려면 필수). 순차 모드에도 무해(중복 없음).
+      state.seenIds=state.seenIds||new Set();
+      if(featured)state.seenIds.add(featured.id);
+      vids=vids.filter(v=>{if(state.seenIds.has(v.id))return false;state.seenIds.add(v.id);return true;});
       // 이 페이지 안에서는 (셔플된) 순서를 유지하면서 같은 비율끼리만 같은 행에 짝짓는다. featured는 풀로우(2열)를
       // 실제로 차지하므로 state.pos/cat으로 그리드상 현재 위치를 정확히 추적해 페이지("더보기") 경계에서도
       // 가로/세로가 한 행에 섞이지 않도록 하고, 홀수로 남는 카드는 빈 스페이서 대신 폭을 넓혀 채운다
