@@ -68477,6 +68477,9 @@
           }
         ]
       }
+    ],
+    "altNames": [
+      "나우어데이즈"
     ]
   },
   "파우": {
@@ -71494,7 +71497,7 @@
         "title": "B.B.B (Bigger Badder Better)",
         "type": "싱글",
         "isMain": false,
-        "cover": "https://cdnimg.melon.co.kr/cm/album/images/120/44/918/12044918_500.jpg",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/120/44/918/12044918_20250820162544_500.jpg",
         "releaseDate": "2025-08-15",
         "trackCount": 2,
         "titleTrack": "B.B.B (Bigger Badder Better)",
@@ -71515,7 +71518,7 @@
         "title": "PAPARAZZI ARRIVE",
         "type": "EP",
         "isMain": true,
-        "cover": "https://cdnimg.melon.co.kr/cm/album/images/121/55/561/12155561_500.jpg",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/121/55/561/12155561_20251029170152_500.jpg",
         "releaseDate": "2025-10-24",
         "trackCount": 14,
         "titleTrack": "PAPARAZZI ARRIVE",
@@ -71596,7 +71599,7 @@
         "title": "Love Got Me Ooh",
         "type": "싱글",
         "isMain": true,
-        "cover": "https://cdnimg.melon.co.kr/cm/album/images/138/02/833/13802833_500.jpg",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/138/02/833/13802833_20260714125422_500.jpg",
         "releaseDate": "2026-07-17",
         "trackCount": 4,
         "titleTrack": "Love Got Me Ooh",
@@ -71961,5 +71964,28 @@
         ]
       }
     ]
+  },
+  "나인아이": {
+    "en": "NINE.i",
+    "debut": "2022.03.30",
+    "co": "FC ENM",
+    "color": [
+      150,
+      175,
+      230
+    ],
+    "gender": "m",
+    "songs": [],
+    "fandom": {
+      "ko": "i.ENIN",
+      "en": "i.ENIN"
+    },
+    "links": {
+      "youtube": "https://www.youtube.com/channel/UCFIi7EJQFFv1cn5Pcz6Kk7A",
+      "instagram": "https://www.instagram.com/nine.i_official/",
+      "x": "https://x.com/NINE_i_Firstone",
+      "tiktok": "https://www.tiktok.com/@nine.i_official",
+      "namu": "https://namu.wiki/w/NINE.i"
+    }
   }
 }

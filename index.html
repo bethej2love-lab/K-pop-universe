@@ -12086,12 +12086,146 @@ async function _buildFeedLegend100(list){
     const vids=_filterBannedVideos(data).slice(0,100);
     if(vids.length<3)return;
     const songs=vids.map(v=>({t:v.title,u:vidUrl(v),thumb:v.thumb,vc:v.view_count,pa:v.published_at?.slice(0,10)}));
-    const label=currentLang==='ko'?'레전드 100':'Legend 100';
+    const label=currentLang==='ko'?'케이팝 레전드 100':'K-pop Legend 100';
     const top1=vids[0];
     const fmtN=n=>n>=1000000?Math.floor(n/1000000)+'M+':n>=1000?Math.floor(n/1000)+'K+':String(n);
     const sub=top1.view_count?(currentLang==='ko'?`1위 · ${fmtN(top1.view_count)} 조회`:`#1 · ${fmtN(top1.view_count)} views`):(currentLang==='ko'?'라이브·직캠 역대 조회수 기준':'Based on all-time live/fancam views');
     _appendFeedCard(list,'👑',label,sub,()=>_openFeedListOverlay(label,sub,songs),top1.thumb);
   }catch(e){/* 조용히 무시 */}
+}
+// 역대 개인(멤버 단독) 직캠 TOP 100 계열(2026-08-19, 사용자 요청) — "개인" 용어는 기존 "주간 개인
+// 직캠 TOP 20"(_buildFeedWeeklyTopCams)에서 이미 쓰던 표현을 그대로 통일해서 재사용(사용자가 "개인"/
+// "멤버" 중 뭐가 나을지 물어봐서, 새로 고민하기보다 기존에 이미 정착된 용어를 계속 쓰는 쪽으로 결정).
+// "개인 직캠" 판정 기준도 그 카드와 동일: 제목에 직캠/팬캠/FANCAM/음방명이 있고, 태깅된 멤버가 정확히
+// 1명일 때만(그룹 전체 포메이션 직캠과 구분). 전체기간 조회수 기준이라 레전드 100과 마찬가지로 결과가
+// 고정이므로 무한스크롤 반복 풀에는 안 넣음(세대별 카드만 예외 — 아래 참고).
+async function _fetchSoloFancamPool(groupKos,fetchLimit){
+  let q=sb.from(_YT_TABLE)
+    .select('id,title,thumb,category,content_flag,group_ko,members,view_count,published_at')
+    .eq('category','live')
+    .not('view_count','is',null)
+    .or('content_flag.is.null,content_flag.neq.기타')
+    .or('content_flag.is.null,content_flag.neq.무관')
+    .or('content_flag.is.null,content_flag.neq.hidden');
+  if(groupKos)q=q.in('group_ko',groupKos);
+  const{data,error}=await q.order('view_count',{ascending:false}).limit(fetchLimit);
+  if(error||!data?.length)return[];
+  return _filterBannedVideos(data).filter(v=>_FANCAM_TITLE_RE.test(v.title)&&(v.members||[]).length===1);
+}
+async function _buildFeedSoloCamTop100(list,opts){
+  if(!sb)return;
+  const vidUrl=v=>v.category==='short'?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;
+  try{
+    const vids=(await _fetchSoloFancamPool(opts.groupKos,1000)).slice(0,100);
+    if(vids.length<10)return; // 후보가 너무 적으면(세부 필터라 그룹 나눌수록 적어짐) 카드 자체를 생략
+    const songs=vids.map(v=>({t:v.title,u:vidUrl(v),thumb:v.thumb,vc:v.view_count,pa:v.published_at?.slice(0,10)}));
+    const label=currentLang==='ko'?opts.labelKo:opts.labelEn;
+    const top1=vids[0];
+    const fmtN=n=>n>=1000000?Math.floor(n/1000000)+'M+':n>=1000?Math.floor(n/1000)+'K+':String(n);
+    const sub=top1.view_count?(currentLang==='ko'?`1위 · ${fmtN(top1.view_count)} 조회`:`#1 · ${fmtN(top1.view_count)} views`):'';
+    _appendFeedCard(list,opts.icon,label,sub,()=>_openFeedListOverlay(label,sub,songs),top1.thumb);
+  }catch(e){/* 조용히 무시 */}
+}
+function _buildFeedAllTimeSoloCam(list){
+  return _buildFeedSoloCamTop100(list,{groupKos:null,icon:'🎬',labelKo:'역대 개인 직캠 TOP 100',labelEn:'All-Time Solo Fancam TOP 100'});
+}
+function _buildFeedGirlGroupSoloCam(list){
+  const groupKos=Object.entries(GROUPS||{}).filter(([,i])=>i.gender==='f').map(([k])=>k);
+  return _buildFeedSoloCamTop100(list,{groupKos,icon:'💗',labelKo:'역대 여돌 개인 직캠 TOP 100',labelEn:'All-Time Girl Group Solo Fancam TOP 100'});
+}
+function _buildFeedBoyGroupSoloCam(list){
+  const groupKos=Object.entries(GROUPS||{}).filter(([,i])=>i.gender==='m').map(([k])=>k);
+  return _buildFeedSoloCamTop100(list,{groupKos,icon:'⚡',labelKo:'역대 남돌 개인 직캠 TOP 100',labelEn:'All-Time Boy Group Solo Fancam TOP 100'});
+}
+// 세대별 개인 직캠 TOP 100 — 기존 _buildFeedGenCamPick(세대별 직캠 "모음", 최신순)과 같은 세대×성별
+// 조합(_GEN_CAM_COMBOS)을 시간대(1시간)로 순환하되, 이쪽은 "모음"이 아니라 조회수 기준 TOP 100이라는
+// 점만 다름 — 결과가 매 시간 바뀌므로(오프셋 증가 시 다음 조합으로) 무한스크롤 반복 풀 대상.
+async function _buildFeedGenSoloCamTop(list,offset){
+  if(!sb)return;
+  const vidUrl=v=>v.category==='short'?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;
+  const hourIdx=Math.floor(Date.now()/3600000)+(offset||0);
+  for(let i=0;i<_GEN_CAM_COMBOS.length;i++){
+    const{gen,gender}=_GEN_CAM_COMBOS[(hourIdx+i)%_GEN_CAM_COMBOS.length];
+    const groupKos=Object.entries(GROUPS||{})
+      .filter(([ko,info])=>info.gender===gender&&_groupGeneration(info.debut,ko)===gen)
+      .map(([ko])=>ko);
+    if(!groupKos.length)continue;
+    try{
+      const vids=(await _fetchSoloFancamPool(groupKos,500)).slice(0,100);
+      if(vids.length<10)continue; // 이 조합은 후보가 너무 적음 — 다음 세대×성별 조합으로
+      const songs=vids.map(v=>({t:v.title,u:vidUrl(v),thumb:v.thumb,vc:v.view_count,pa:v.published_at?.slice(0,10)}));
+      const label=currentLang==='ko'?`${gen}세대 ${gender==='f'?'여돌':'남돌'} 개인 직캠 TOP 100`:`Gen ${gen} ${gender==='f'?'Girl Group':'Boy Group'} Solo Fancam TOP 100`;
+      const top1=vids[0];
+      const fmtN=n=>n>=1000000?Math.floor(n/1000000)+'M+':n>=1000?Math.floor(n/1000)+'K+':String(n);
+      const sub=top1.view_count?(currentLang==='ko'?`1위 · ${fmtN(top1.view_count)} 조회`:`#1 · ${fmtN(top1.view_count)} views`):'';
+      _appendFeedCard(list,'🎞️',label,sub,()=>_openFeedListOverlay(label,sub,songs),top1.thumb);
+      return;
+    }catch(e){/* 다음 조합으로 */}
+  }
+}
+// 역대/세대별 무대 TOP 100 — 위 "개인 직캠" 계열과 짝을 이루는 시리즈지만, 멤버 1명 단독 필터 없이
+// category='live' 전체(개인 직캠+그룹 완전체 무대 다 포함)를 조회수 기준으로 본다(2026-08-19, 사용자
+// 요청). "역대 전체 무대 TOP 100"은 이미 있는 "케이팝 레전드 100"과 쿼리가 완전히 동일해질 것이라
+// 중복 카드를 새로 안 만들고, 레전드 100이 그 역할을 그대로 겸하게 둔다 — 여기선 여돌/남돌/세대별
+// 세 가지만 추가. 그룹당 상한(capPerGroup)을 둬서 인기 그룹 영상이 100자리를 독점하지 않게 함
+// (기존 "Trend" 카드의 _capByGroup 재사용).
+async function _fetchStagePool(groupKos,fetchLimit,capPerGroup){
+  let q=sb.from(_YT_TABLE)
+    .select('id,title,thumb,category,content_flag,group_ko,members,view_count,published_at')
+    .eq('category','live')
+    .not('view_count','is',null)
+    .or('content_flag.is.null,content_flag.neq.기타')
+    .or('content_flag.is.null,content_flag.neq.무관')
+    .or('content_flag.is.null,content_flag.neq.hidden');
+  if(groupKos)q=q.in('group_ko',groupKos);
+  const{data,error}=await q.order('view_count',{ascending:false}).limit(fetchLimit);
+  if(error||!data?.length)return[];
+  return _capByGroup(_filterBannedVideos(data),v=>v.group_ko,capPerGroup);
+}
+async function _buildFeedStageTop100(list,opts){
+  if(!sb)return;
+  const vidUrl=v=>v.category==='short'?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;
+  try{
+    const vids=(await _fetchStagePool(opts.groupKos,500,5)).slice(0,100);
+    if(vids.length<10)return;
+    const songs=vids.map(v=>({t:v.title,u:vidUrl(v),thumb:v.thumb,vc:v.view_count,pa:v.published_at?.slice(0,10)}));
+    const label=currentLang==='ko'?opts.labelKo:opts.labelEn;
+    const top1=vids[0];
+    const fmtN=n=>n>=1000000?Math.floor(n/1000000)+'M+':n>=1000?Math.floor(n/1000)+'K+':String(n);
+    const sub=top1.view_count?(currentLang==='ko'?`1위 · ${fmtN(top1.view_count)} 조회`:`#1 · ${fmtN(top1.view_count)} views`):'';
+    _appendFeedCard(list,opts.icon,label,sub,()=>_openFeedListOverlay(label,sub,songs),top1.thumb);
+  }catch(e){/* 조용히 무시 */}
+}
+function _buildFeedGirlGroupStage(list){
+  const groupKos=Object.entries(GROUPS||{}).filter(([,i])=>i.gender==='f').map(([k])=>k);
+  return _buildFeedStageTop100(list,{groupKos,icon:'💃',labelKo:'역대 여돌 무대 TOP 100',labelEn:'All-Time Girl Group Stage TOP 100'});
+}
+function _buildFeedBoyGroupStage(list){
+  const groupKos=Object.entries(GROUPS||{}).filter(([,i])=>i.gender==='m').map(([k])=>k);
+  return _buildFeedStageTop100(list,{groupKos,icon:'🕺',labelKo:'역대 남돌 무대 TOP 100',labelEn:'All-Time Boy Group Stage TOP 100'});
+}
+async function _buildFeedGenStageTop(list,offset){
+  if(!sb)return;
+  const vidUrl=v=>v.category==='short'?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;
+  const hourIdx=Math.floor(Date.now()/3600000)+(offset||0);
+  for(let i=0;i<_GEN_CAM_COMBOS.length;i++){
+    const{gen,gender}=_GEN_CAM_COMBOS[(hourIdx+i)%_GEN_CAM_COMBOS.length];
+    const groupKos=Object.entries(GROUPS||{})
+      .filter(([ko,info])=>info.gender===gender&&_groupGeneration(info.debut,ko)===gen)
+      .map(([ko])=>ko);
+    if(!groupKos.length)continue;
+    try{
+      const vids=(await _fetchStagePool(groupKos,300,5)).slice(0,100);
+      if(vids.length<10)continue;
+      const songs=vids.map(v=>({t:v.title,u:vidUrl(v),thumb:v.thumb,vc:v.view_count,pa:v.published_at?.slice(0,10)}));
+      const label=currentLang==='ko'?`${gen}세대 ${gender==='f'?'여돌':'남돌'} 무대 TOP 100`:`Gen ${gen} ${gender==='f'?'Girl Group':'Boy Group'} Stage TOP 100`;
+      const top1=vids[0];
+      const fmtN=n=>n>=1000000?Math.floor(n/1000000)+'M+':n>=1000?Math.floor(n/1000)+'K+':String(n);
+      const sub=top1.view_count?(currentLang==='ko'?`1위 · ${fmtN(top1.view_count)} 조회`:`#1 · ${fmtN(top1.view_count)} views`):'';
+      _appendFeedCard(list,'🎤',label,sub,()=>_openFeedListOverlay(label,sub,songs),top1.thumb);
+      return;
+    }catch(e){/* 다음 조합으로 */}
+  }
 }
 function _feedFormatNameList(namesWithGroup,groupsOnly){
   const names=(namesWithGroup||[]).map(s=>{const m=s.match(/^(.+)\((.+)\)$/);return m?m[1]:s;});
@@ -12386,8 +12520,10 @@ function _buildFeedRandomConnection(list){
   const withNames=song.with.map(w=>_findArtistByConnName(w,owner.group.ko));
   const ownerDisp=isKo?owner.name.ko:(owner.name.en||owner.name.ko);
   const withDisp=withNames.map((wa,i)=>wa?(isKo?wa.name.ko:(wa.name.en||wa.name.ko)):(song.with[i].match(/^(.+)\(/)?.[1]||song.with[i]));
-  const connLabel=[ownerDisp,...withDisp].join(' ↔ ');
-  const connSub=isKo?(withDisp.length>1?`${withDisp.length+1}인 연결 보기`:'연결 보기'):'View connection';
+  // 화살표(↔)가 어색하다는 피드백(2026-08-19)으로 물결(~)로 교체, "N인" 인원수 표기도 같이 제거—
+  // 인원 정보 없이 "연결 보기"만으로 충분하다는 판단.
+  const connLabel=[ownerDisp,...withDisp].join(' ~ ');
+  const connSub=isKo?'연결 보기':'View connection';
   const connVid=song.u?ytId(song.u):null;
   const connThumb=connVid?`https://img.youtube.com/vi/${connVid}/mqdefault.jpg`:null;
   _appendFeedCard(list,'🔗',connLabel,connSub,()=>_feedNav(()=>{
@@ -12452,6 +12588,13 @@ function _buildFeedDiscovery(){
   _buildFeedWeeklyTopCams(list);
   _buildFeedYearlyTop(list);
   _buildFeedLegend100(list);
+  _buildFeedAllTimeSoloCam(list);
+  _buildFeedGirlGroupSoloCam(list);
+  _buildFeedBoyGroupSoloCam(list);
+  _buildFeedGenSoloCamTop(list);
+  _buildFeedGirlGroupStage(list);
+  _buildFeedBoyGroupStage(list);
+  _buildFeedGenStageTop(list);
   _buildFeedCoverSpotlight(list);
   _buildFeedTrendingHearts(list);
   _buildFeedCollabSpotlight(list);
@@ -12466,13 +12609,15 @@ function _buildFeedDiscovery(){
 }
 
 // ── 탐험 패널 "모아보기" 무한스크롤 ──────────────────────────────────────
-// 위 15개 카드는 패널 열 때 한 번만 뽑혀서 끝이 있었는데(2026-08-19, 사용자 요청 — "끝이 없을 정도로
+// 위 22개 카드는 패널 열 때 한 번만 뽑혀서 끝이 있었는데(2026-08-19, 사용자 요청 — "끝이 없을 정도로
 // 채워져있으면 좋겠다"), 매번 랜덤으로 뽑는 카드들(랜덤 그룹/멤버/연결/영상 + 연도별 TOP/커버 스포트라이트/
 // 콜라보 스포트라이트)은 다시 불러도 새 결과가 나오므로 스크롤 끝에 닿을 때마다 이어붙인다. 시간대(1시간)
-// 순환 카드(_buildFeedFormatPick/_buildFeedGenCamPick/_buildFeedDebutYearPick)는 그대로 다시 부르면 같은
-// 시간 안에선 정확히 같은 카드가 또 뜨므로, offset을 계속 늘려가며 같이 불러 순환을 계속 진행시킨다.
-// 하트 기준 카드(_buildFeedHiddenGem/_buildFeedTrendingHearts)와 오늘의 기념일/N년 전 오늘, 레전드 100
-// (전체기간 고정 순위)은 세션 내내 결과가 고정이거나 날짜 기반이라 반복 호출해도 변화가 없어 이 풀에서 제외.
+// 순환 카드(_buildFeedFormatPick/_buildFeedGenCamPick/_buildFeedDebutYearPick/_buildFeedGenSoloCamTop/
+// _buildFeedGenStageTop)는 그대로 다시 부르면 같은 시간 안에선 정확히 같은 카드가 또 뜨므로, offset을
+// 계속 늘려가며 같이 불러 순환을 계속 진행시킨다. 하트 기준 카드(_buildFeedHiddenGem/
+// _buildFeedTrendingHearts)와 오늘의 기념일/N년 전 오늘, 레전드 100·역대 개인/여돌/남돌 직캠 TOP 100·
+// 역대 여돌/남돌 무대 TOP 100(전체기간 고정 순위)은 세션 내내 결과가 고정이거나 날짜 기반이라 반복
+// 호출해도 변화가 없어 이 풀에서 제외.
 const _FEED_MORE_RANDOM_FNS=[_buildFeedRandomGroup,_buildFeedRandomMember,_buildFeedRandomConnection,_buildFeedRandomVideo,_buildFeedYearlyTop,_buildFeedCoverSpotlight,_buildFeedCollabSpotlight];
 let _feedMoreOffset=0,_feedMoreLoading=false,_feedMoreObserver=null,_feedMoreListObserver=null;
 function _loadMoreFeedDiscovery(){
@@ -12486,6 +12631,8 @@ function _loadMoreFeedDiscovery(){
   _buildFeedFormatPick(list,_feedMoreOffset);
   _buildFeedGenCamPick(list,_feedMoreOffset);
   _buildFeedDebutYearPick(list,_feedMoreOffset);
+  _buildFeedGenSoloCamTop(list,_feedMoreOffset);
+  _buildFeedGenStageTop(list,_feedMoreOffset);
   // 카드들이 썸네일/Supabase 응답 순서대로 비동기로 하나씩 붙기 때문에(네트워크 타이밍이 제각각이라
   // 고정 타임아웃으론 못 맞춤), 센티널을 다시 맨 끝으로 옮기는 건 아래 MutationObserver가 매 append마다
   // 알아서 계속 재보정한다 — 여기서 직접 옮기지 않음(2026-08-19, 처음엔 여기서 한 번만 옮겼다가 늦게
