@@ -385,6 +385,66 @@ async function _ytRefreshAllViewCounts(){
   _feedDiscoveryBuiltAt=0;
 }
 
+// 카테고리 무관 "진짜 전체" 조회수 순환 갱신(2026-08-19, 사용자 제안) — 위 _ytRefreshAllViewCounts는
+// live만 다루고, mv/쇼츠/예능 등 나머지 카테고리(전체 35만여 건 중 live 제외 25만여 건)는 한 번 동기화된
+// 뒤로 조회수가 계속 그대로 방치됨. 그렇다고 매번 전체를 다 돌면 API 약 7,150회(전체 35만여 건÷50)로
+// 하루 쿼터(1만)를 거의 다 써버려서(2026-08-19 실측) 정기 동기화(search.list, 콜당 100쿼터)와 부딪힘.
+// 대신 "가장 오래전에 갱신된 것부터" 고정 배치(기본 5,000개=API 약 100회, 부담 거의 없음)만 매번
+// 갱신하는 라운드로빈 방식 — view_count_synced_at 컬럼 기준으로 이번에 갱신한 건 자동으로 맨 뒤로
+// 밀리므로, 이 버튼을 정기적으로(월 1회 정도) 누르기만 하면 몇 달에 걸쳐 전체가 공평하게 한 바퀴씩
+// 순환 갱신됨 — "어떤 영상이 안 변할지"를 미리 판별하려는 복잡한 로직 없이도 결과적으로 비슷한 효과.
+// (view_count_synced_at 컬럼은 admin_migrations.sql — 사용자가 직접 실행 필요, RLS로 Claude가 못 씀)
+const VIEW_COUNT_ROTATE_BATCH=5000;
+async function _ytRotateViewCountRefresh(){
+  const key=_ytApiKey();
+  if(!key){_ytSetProg('API 키를 먼저 입력해주세요');return;}
+  if(!sb){_ytSetProg('Supabase 연결 없음');return;}
+  _ytSetProg('순환 갱신 대상 조회 중 (가장 오래전에 갱신된 것부터, 전체 카테고리)…');
+  const{data:rows,error}=await sb.from(_YT_TABLE)
+    .select('id')
+    .order('view_count_synced_at',{ascending:true,nullsFirst:true})
+    .limit(VIEW_COUNT_ROTATE_BATCH);
+  if(error){_ytSetProg('대상 조회 실패: '+error.message);return;}
+  if(!rows?.length){_ytSetProg('순환 갱신 대상 없음');return;}
+  const ids=rows.map(r=>r.id);
+  const totalCalls=Math.ceil(ids.length/50);
+  _ytSetProg(`YouTube API 호출 예정: ${totalCalls}회 (${ids.length}개 영상)`);
+  let savedTotal=0,failedTotal=0;
+  for(let i=0;i<ids.length;i+=50){
+    const chunk=ids.slice(i,i+50);
+    _ytSetProg(`순환 갱신 중… ${Math.min(i+50,ids.length)}/${ids.length} (API ${Math.floor(i/50)+1}/${totalCalls}회, 저장 ${savedTotal}개)`);
+    const nowIso=new Date().toISOString();
+    const statsUpdates=[];
+    try{
+      const r=await fetch(`https://www.googleapis.com/youtube/v3/videos?part=statistics&id=${chunk.join(',')}&key=${key}`);
+      if(!r.ok)throw new Error('YouTube API 오류 '+r.status);
+      const d=await r.json();
+      if(d.error)throw new Error(d.error.message);
+      const returned=new Set();
+      (d.items||[]).forEach(it=>{
+        returned.add(it.id);
+        const vc=parseInt(it.statistics?.viewCount,10);
+        if(!isNaN(vc))statsUpdates.push({id:it.id,view_count:vc,touchOnly:false});
+      });
+      // 삭제/비공개라 API 응답에 아예 안 잡힌 것도 "이번에 확인은 했다"는 뜻으로 synced_at만 갱신하고
+      // 기존 view_count는 그대로 둠(null로 덮어써서 데이터를 잃으면 안 됨) — 안 그러면 죽은 영상이 계속
+      // "가장 오래됨" 취급돼 매번 맨 앞에 다시 뽑히기만 하고 끝나지 않음.
+      chunk.filter(id=>!returned.has(id)).forEach(id=>statsUpdates.push({id,touchOnly:true}));
+    }catch(e){
+      _ytSetProg(`YouTube API 오류(${savedTotal}개까지 저장된 채로 중단, 다시 누르면 이어서 진행됨): `+e.message);
+      console.error('[조회수 순환 갱신]',e.message);
+      return;
+    }
+    const results=await Promise.all(statsUpdates.map(({id,view_count,touchOnly})=>
+      sb.from(_YT_TABLE).update(touchOnly?{view_count_synced_at:nowIso}:{view_count,view_count_synced_at:nowIso}).eq('id',id)
+    ));
+    results.forEach(({error:ue})=>{if(ue){failedTotal++;console.error('[조회수 순환 갱신] 저장 실패:',ue.message);}else savedTotal++;});
+    if(failedTotal){_ytSetProg(`저장 실패 (${failedTotal}건): 콘솔 확인`);return;}
+  }
+  _ytSetProg(`조회수 순환 갱신 완료 — ${savedTotal}개 (전체 카테고리 · API ${totalCalls}회 사용, 다음 실행 땐 이어서 오래된 것부터)`);
+  _feedDiscoveryBuiltAt=0;
+}
+
 // 연도별 TOP 100 최초 백필(일회용) — 위 "전체 조회수 갱신"은 이미 조회수가 있는 영상만 다시 갱신하는
 // 거라, 오래된 연도 라이브 영상은 조회수를 한 번도 못 받아본 채로 계속 비어있었음(2026-08-12, 사용자
 // 제보 — "왜 2026년만 뽑히고 다른 연도 TOP은 안 뜨지" → 실측해보니 live 95,461건 중 조회수 있는 건
@@ -812,6 +872,103 @@ async function _ytFixOnlyoneofLoveMistag(){
     _ytSetProg(`완료! ${rows.length}개 중 ${updates.length}개에서 Love 오태깅 제거함`+(manualSkipped?` (수동 편집이라 안 건드리고 넘어간 것 ${manualSkipped}개 — 직접 확인 필요)`:''));
   }catch(e){
     _ytSetProg('오류: '+e.message);
+  }finally{
+    if(btn)btn.disabled=false;
+  }
+}
+
+// 커버곡 원곡 제목 자동 추출(2026-08-19, 사용자 요청 — "특정 커버곡 모아보기" 기능의 전제 작업, 일회성
+// 스크립트가 아니라 반복 재실행 가능한 버튼으로). cover_of_members/cover_of_groups(원곡 아티스트)가
+// 채워진 영상 중엔 진짜 커버곡이 아니라 검수 센터에서 "실제 출연/콜라보가 아니다"로 재분류돼 이 필드로
+// 옮겨진 것도 섞여있음(실측: 전체 1,854건 중 제목에 커버/원곡/Original 관련 키워드까지 있는 진짜 커버는
+// 763건뿐) — 그래서 cover_of_members/groups 하나만 보고 곡명을 추출하면 안 되고, 반드시 제목 키워드
+// 교차검증(아래 쿼리의 두 번째 .or)까지 같이 걸어야 함. 제목에서 곡명 후보를 뽑은 뒤, 그 원곡 아티스트의
+// 디스코그래피(groups.json)에서 실제로 확인되는 것만 cover_of_song에 저장한다 — 후보를 못 뽑거나
+// 디스코그래피에 없으면(솔로 아티스트는 애초에 디스코그래피 데이터가 없어 확인 불가) 그냥 비워둠, 틀린
+// 곡명을 저장하느니 안 채우는 게 안전(프로젝트 전역 원칙 — 확실한 것만 자동, 애매하면 다음 실행에 맡김).
+// cover_of_song이 이미 있는 행은 쿼리에서부터 제외하므로, 다시 눌러도 새로 늘어난 커버 영상이나(동기화로
+// 새로 들어옴) 지난번엔 실패했지만 이번엔 잡히는 것(디스코그래피가 그 사이 보강됨, 매칭 로직 개선 등)만
+// 처리됨 — 매번 전량 재스캔이 아니라서 반복 실행 부담이 적음. tags_manual=true는 다른 재검증 버튼들과
+// 동일하게 절대 건드리지 않음.
+function _ytCoverSongCandidate(title){
+  // 이모지로 시작하는 제목이 많아서(장식용 접두), "by" 패턴이 그걸 곡명 일부로 같이 집어삼키는 걸
+  // 막기 위해 선행 이모지/공백부터 제거하고 시작한다(2026-08-19, 실제 샘플로 검증 중 발견).
+  const t=(title||'').replace(/^[\s\p{Extended_Pictographic}️]+/u,'');
+  const patterns=[
+    // 따옴표 안쪽은 탐욕적으로(.{1,40}, 아포스트로피 등을 굳이 배제하지 않음) 매칭 — 영문 곡명에 흔한
+    // "Life's Too Short" 같은 내부 아포스트로피를 진짜 닫는 따옴표로 착각해 잘라먹지 않게 하기 위함
+    // (2026-08-19, 실제 샘플에서 "Life's Too Short"가 "s Too Short"로 잘리는 걸 발견해 수정).
+    /['"“‘](.{1,40})['"”’]\s*\(?\s*(?:원곡|Original)/,   // '곡명' (원곡: ...) / "곡명" (Original ...)
+    /['"“‘](.{1,40})['"”’]\s*(?:COVER|Cover|커버)/,      // '곡명' Cover / "곡명" 커버
+    /-\s*([^()\-]{1,40}?)\s*\(\s*(?:원곡|Original)/,     // ... - 곡명 (원곡: ...)
+    /^(.{1,40}?)\s+by\s+.{1,30}?\(\s*Original\s*Song/i,  // 곡명 by 커버아티스트 (Original Song: ...)
+  ];
+  for(const re of patterns){
+    const m=t.match(re);
+    if(m&&m[1]){
+      const cand=m[1].trim();
+      if(cand)return cand;
+    }
+  }
+  return null;
+}
+// "이름(그룹)" 형식이면 그 그룹의 디스코그래피, 순수 그룹명이면 그 그룹 자체의 디스코그래피 트랙 제목
+// 전부를 모아 반환 — 솔로 아티스트(group.ko==='솔로')는 groups.json에 항목 자체가 없어 빈 배열이 되고,
+// 그 경우 이 원곡은 확인 불가(아래 _ytMatchCoverSong에서 자연히 매칭 실패로 처리됨)로 남는다.
+function _ytCoverOrigTrackTitles(nameWithGroup){
+  const m=nameWithGroup.match(/\(([^)]+)\)\s*$/);
+  const gko=m?m[1]:nameWithGroup;
+  const disc=GROUPS[gko]?.discography;
+  if(!disc)return[];
+  const out=[];
+  disc.forEach(al=>(al.tracks||[]).forEach(t=>{if(t.title)out.push(t.title);}));
+  return out;
+}
+// 공백/기호까지 지운 느슨한 비교용 — "God's Menu"처럼 아포스트로피 유무 등 사소한 표기차 흡수
+function _ytCoverSongLoose(s){return _titleNorm(s).replace(/[\s'".,!?()\-_]/g,'');}
+function _ytMatchCoverSong(candidate,origNames){
+  const candNorm=_titleNorm(candidate),candLoose=_ytCoverSongLoose(candidate);
+  for(const nm of origNames){
+    for(const track of _ytCoverOrigTrackTitles(nm)){
+      const tNorm=_titleNorm(track),tLoose=_ytCoverSongLoose(track);
+      if(tNorm.includes(candNorm)||candNorm.includes(tNorm))return track;
+      if(tLoose.includes(candLoose)||candLoose.includes(tLoose))return track;
+    }
+  }
+  return null;
+}
+async function _ytExtractCoverSongTitles(){
+  if(!sb){_ytSetProg('Supabase 연결 없음');return;}
+  const btn=document.getElementById('sp-covertitle-btn');
+  if(btn)btn.disabled=true;
+  try{
+    _ytSetProg('[커버곡 제목 추출] 대상 조회 중…');
+    const{data:rows,error}=await _sbFetchAll(()=>sb.from(_YT_TABLE)
+      .select('id,title,cover_of_members,cover_of_groups,tags_manual')
+      .or('cover_of_members.neq.{},cover_of_groups.neq.{}')
+      .or('title_norm.ilike.*cover*,title_norm.ilike.*커버*,title_norm.ilike.*원곡*,title_norm.ilike.*original*,content_formats.cs.{cover}')
+      .is('cover_of_song',null)
+      .order('id'));
+    if(error){_ytSetProg('[커버곡 제목 추출] 조회 실패: '+error.message);return;}
+    if(!rows?.length){_ytSetProg('[커버곡 제목 추출] 대상 없음(이미 다 처리됐거나 새 커버 영상 없음)');return;}
+    const updates=[];
+    let manualSkipped=0,noMatch=0;
+    rows.forEach(v=>{
+      if(v.tags_manual){manualSkipped++;return;}
+      const cand=_ytCoverSongCandidate(v.title);
+      if(!cand){noMatch++;return;}
+      const origNames=[...(v.cover_of_members||[]),...(v.cover_of_groups||[])];
+      const song=_ytMatchCoverSong(cand,origNames);
+      if(song)updates.push({id:v.id,cover_of_song:song});
+      else noMatch++;
+    });
+    for(let i=0;i<updates.length;i+=50){
+      _ytSetProg(`[커버곡 제목 추출] 저장 중… ${i}/${updates.length}`);
+      await Promise.all(updates.slice(i,i+50).map(({id,cover_of_song})=>
+        sb.from(_YT_TABLE).update({cover_of_song}).eq('id',id)
+      ));
+    }
+    _ytSetProg(`[커버곡 제목 추출] 완료 — ${rows.length}개 중 ${updates.length}개 확인됨, ${noMatch}개는 확인 불가`+(manualSkipped?`, 수동태그 ${manualSkipped}개 건너뜀`:'')+' (재실행하면 이어서 시도됨)');
   }finally{
     if(btn)btn.disabled=false;
   }
@@ -3725,6 +3882,12 @@ document.getElementById('vid-tag-thumb-refresh').addEventListener('click',async 
     await _ytBackfillAllViewCounts();
     if(btn)btn.disabled=false;
   });
+  document.getElementById('sp-yt-rotateviewcount-btn')?.addEventListener('click',async()=>{
+    const btn=document.getElementById('sp-yt-rotateviewcount-btn');
+    if(btn)btn.disabled=true;
+    await _ytRotateViewCountRefresh();
+    if(btn)btn.disabled=false;
+  });
   document.getElementById('sp-yt-sweep-banned')?.addEventListener('click',_ytSweepBannedVideos);
   document.getElementById('sp-yt-sweep-junk')?.addEventListener('click',_ytSweepJunkKeywordVideos);
   // "무조건 제외 키워드" 목록이 코드에만 있어서 관리자가 지금 뭐가 걸려있는지 확인할 방법이 없었음
@@ -3737,6 +3900,7 @@ document.getElementById('vid-tag-thumb-refresh').addEventListener('click',async 
   document.getElementById('sp-membersfix-btn')?.addEventListener('click',_ytSweepMembersMistag);
   document.getElementById('sp-onlyoneof-love-btn')?.addEventListener('click',_ytFixOnlyoneofLoveMistag);
   document.getElementById('sp-catfix-btn')?.addEventListener('click',_ytSweepCategoryMistag);
+  document.getElementById('sp-covertitle-btn')?.addEventListener('click',_ytExtractCoverSongTitles);
   document.getElementById('sp-yt-autotag')?.addEventListener('click',_ytAutoTagMembers);
   document.getElementById('sp-yt-retag-all')?.addEventListener('click',_ytRetagAllIncludingTagged);
   document.getElementById('sp-vm-btn')?.addEventListener('click',()=>_vmOpen());
@@ -3759,6 +3923,18 @@ document.getElementById('vid-tag-thumb-refresh').addEventListener('click',async 
   });
   document.getElementById('sp-yt-manual-add-btn')?.addEventListener('click',_ytAddVideoByUrl);
   document.getElementById('sp-yt-manual-batch-add-btn')?.addEventListener('click',_ytAddVideosBatch);
+  // 버튼마다 한 줄 설명 토글(2026-08-19, 사용자 요청) — 켜둔 상태를 기억해서 매번 다시 켤 필요 없게 함.
+  const hintToggle=document.getElementById('sp-hint-toggle');
+  const hintSec=document.getElementById('sp-yt-sec');
+  if(hintToggle&&hintSec){
+    const hintKey='kpu_admin_show_hints';
+    hintToggle.checked=localStorage.getItem(hintKey)==='1';
+    hintSec.classList.toggle('show-hints',hintToggle.checked);
+    hintToggle.addEventListener('change',()=>{
+      hintSec.classList.toggle('show-hints',hintToggle.checked);
+      localStorage.setItem(hintKey,hintToggle.checked?'1':'0');
+    });
+  }
 })();
 
 // ── 동기화 채널 목록 (그룹/멤버 공식 + 그외 외부 채널 두 탭 — 전부 로컬 데이터, DB 조회 없음) ──

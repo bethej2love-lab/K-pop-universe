@@ -1444,6 +1444,10 @@
   .sp-yt-sync:hover:not(:disabled){background:rgba(155,178,228,0.24);}
   .sp-yt-sync:disabled{opacity:.45;cursor:not-allowed;}
   .sp-yt-prog{font-size:10.5px;color:rgba(155,178,228,0.56);margin-top:5px;min-height:14px;text-align:center;word-break:break-all;}
+  /* 버튼마다 한 줄 설명 — 기본은 숨겨져 있다가 위 "ⓘ 버튼 설명 보기" 토글을 켜면 나타남
+     (2026-08-19, 사용자 요청 — "버튼마다 이해하기 쉽게 설명 좀"). */
+  .sp-btn-hint{display:none;font-size:10.5px;line-height:1.4;color:rgba(155,178,228,0.55);margin:3px 2px 6px;}
+  #sp-yt-sec.show-hints .sp-btn-hint{display:block;}
   /* ── Search ──────────────────────────────────── */
   #search-wrap{
     position:fixed;bottom:78px;left:50%;transform:translateX(-50%);
@@ -2058,8 +2062,8 @@
   .pp-save-btn:hover{background:rgba(115,145,255,0.18);border-color:rgba(120,150,255,0.32);color:rgba(220,230,255,0.92);}  .pp-save-btn:active{background:rgba(115,145,255,0.22);transform:scale(0.97);transition:transform .07s;}
   #tab-profile.pp-set,#dh-profile-btn.pp-set{font-size:11px;font-weight:700;letter-spacing:.01em;}
   /* ── 즐겨찾기 해제 확인 / 기념일 날짜 수정 / 계정 연결 확인 팝업 ────── */
-  #unfav-confirm-overlay,#date-edit-overlay,#link-confirm-overlay,#logout-confirm-overlay,#generic-confirm-overlay,#generic-prompt-overlay,#welcome-choice-overlay,#welcome-login-overlay,#uc-card-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.52);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:70;display:none;align-items:center;justify-content:center;}
-  #unfav-confirm-overlay.open,#date-edit-overlay.open,#link-confirm-overlay.open,#logout-confirm-overlay.open,#generic-confirm-overlay.open,#generic-prompt-overlay.open,#welcome-choice-overlay.open,#welcome-login-overlay.open,#uc-card-overlay.open{display:flex;}
+  #unfav-confirm-overlay,#date-edit-overlay,#link-confirm-overlay,#logout-confirm-overlay,#generic-confirm-overlay,#generic-prompt-overlay,#welcome-choice-overlay,#welcome-login-overlay,#uc-card-overlay,#debut-card-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.52);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:70;display:none;align-items:center;justify-content:center;}
+  #unfav-confirm-overlay.open,#date-edit-overlay.open,#link-confirm-overlay.open,#logout-confirm-overlay.open,#generic-confirm-overlay.open,#generic-prompt-overlay.open,#welcome-choice-overlay.open,#welcome-login-overlay.open,#uc-card-overlay.open,#debut-card-overlay.open{display:flex;}
   #unfav-confirm-panel,#date-edit-panel,#link-confirm-panel,#logout-confirm-panel,#generic-confirm-panel,#generic-prompt-panel,#welcome-choice-panel,#welcome-login-panel{width:min(280px,calc(100vw - 40px));background:rgba(13,17,34,0.97);backdrop-filter:blur(40px) saturate(180%);-webkit-backdrop-filter:blur(40px) saturate(180%);border-radius:18px;box-shadow:0 16px 56px rgba(0,0,0,0.72);border:0.5px solid rgba(255,255,255,0.10);padding:20px;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
   #unfav-confirm-msg,#link-confirm-msg,#logout-confirm-msg,#generic-confirm-msg,#welcome-choice-msg,#welcome-login-msg{font-size:12px;color:rgba(160,182,222,0.72);line-height:1.5;margin-top:8px;}
   #unfav-confirm-btns,#link-confirm-btns,#logout-confirm-btns,#generic-confirm-btns,#welcome-login-btns{display:flex;gap:8px;margin-top:18px;}
@@ -2169,6 +2173,17 @@
   #uc-card-img.loaded{display:block;}
   #uc-card-status{font-size:11.5px;color:rgba(160,182,222,0.65);margin-top:10px;text-align:center;min-height:14px;}
   #uc-card-btns{display:flex;gap:8px;margin-top:14px;}
+  /* 데뷔 기념일 카드 — 내 우주 카드(uc-card-*)와 동일 톤/구조, 세로 비율만 9:16으로 다르게(스토리 공유
+     용도, 2026-08-19 사용자 요청 — "이미지 자체는 세로가 긴 게 좋을 듯"). */
+  #debut-card-panel{width:min(320px,calc(100vw - 40px));background:rgba(13,17,34,0.97);backdrop-filter:blur(40px) saturate(180%);-webkit-backdrop-filter:blur(40px) saturate(180%);border-radius:18px;box-shadow:0 16px 56px rgba(0,0,0,0.72);border:0.5px solid rgba(255,255,255,0.10);padding:20px;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
+  #debut-card-imgwrap{margin-top:12px;border-radius:14px;overflow:hidden;background:rgba(255,255,255,0.03);aspect-ratio:9/16;display:flex;align-items:center;justify-content:center;}
+  #debut-card-img{width:100%;height:100%;object-fit:cover;display:none;}
+  #debut-card-img.loaded{display:block;}
+  #debut-card-status{font-size:11.5px;color:rgba(160,182,222,0.65);margin-top:10px;text-align:center;min-height:14px;}
+  #debut-card-btns{display:flex;gap:8px;margin-top:14px;}
+  #gc-anniv-banner{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;margin-top:8px;padding:9px 14px;border-radius:10px;font-family:inherit;font-size:12.5px;font-weight:700;letter-spacing:.01em;cursor:pointer;background:linear-gradient(90deg,rgba(255,200,120,0.20),rgba(255,140,190,0.20));border:0.5px solid rgba(255,200,150,0.35);color:#ffe9c7;transition:background .15s,transform .2s ease-out;}
+  #gc-anniv-banner:hover{background:linear-gradient(90deg,rgba(255,200,120,0.30),rgba(255,140,190,0.30));}
+  #gc-anniv-banner:active{transform:scale(0.97);transition:transform .07s;}
   /* ── Collection picker modal ────────────────────────── */
   #col-picker{position:fixed;inset:0;z-index:9990;display:none;align-items:flex-end;justify-content:center;}
   #col-picker.open{display:flex;}

@@ -135,6 +135,7 @@
         <div id="gc-name-row"><div id="gc-name"></div><button id="gc-fav" class="fav-btn" aria-label="즐겨찾기"><svg viewBox="0 0 24 24"><path d="M12 21L10.55 19.7C5.4 15.1 2 12.1 2 8.5 2 5.4 4.4 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.6 3 22 5.4 22 8.5c0 3.6-3.4 6.6-8.55 11.2L12 21z"/></svg></button><button id="gc-trophy" class="trophy-btn" style="display:none" aria-label="트로피 기록"><svg viewBox="0 0 24 24"><path d="M8 3h8v7a4 4 0 0 1-8 0V3z"/><path d="M8 5H5a1 1 0 0 0-1 1v1a3 3 0 0 0 3 3"/><path d="M16 5h3a1 1 0 0 1 1 1v1a3 3 0 0 1-3 3"/><path d="M12 14v3M9 17h6M8 20h8"/></svg></button><button id="gc-share" class="share-btn" aria-label="공유"><svg viewBox="0 0 24 24"><path d="M12 15V4M12 4l-3.5 3.5M12 4l3.5 3.5"/><path d="M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"/></svg></button></div>
         <div id="gc-en-row"><div id="gc-en"></div><div id="gc-links"></div></div>
         <div id="gc-status-line" class="gc-status-line"></div>
+        <button id="gc-anniv-banner" style="display:none" type="button"></button>
       </div>
     </div>
     <div id="gc-bar-mob"></div>
@@ -238,14 +239,25 @@
   </div>
   <div class="sp-sec" id="sp-yt-sec" style="display:none">
     <div class="sp-sec-lbl">YouTube 영상 관리</div>
+    <div class="sp-row">
+      <span class="sp-lbl">ⓘ 버튼 설명 보기</span>
+      <label class="sw"><input type="checkbox" id="sp-hint-toggle"><span class="sw-track"><span class="sw-thumb"></span></span></label>
+    </div>
 
     <div class="sp-subsec-lbl">동기화</div>
     <input type="text" class="sp-yt-key" id="sp-yt-key" placeholder="API 키 (AIzaSy...)" autocomplete="off" spellcheck="false">
     <button class="sp-yt-sync" id="sp-yt-sync">1. 전체 동기화 (공식 + 외부 채널)</button>
+    <div class="sp-btn-hint">공식 채널 전체 + 외부 채널의 새 영상을 가져와요. 평소엔 이것부터 누르면 돼요.</div>
     <button class="sp-yt-sync" id="sp-yt-viewcount-btn" style="margin-top:4px;opacity:.8;">조회수만 갱신(이번주 직캠 TOP용)</button>
+    <div class="sp-btn-hint">최근 14일 라이브 영상 조회수만 갱신 — 이번 주 직캠 TOP 순위에 씀. 위 전체 동기화에 이미 얹혀있어서 따로 안 눌러도 됨.</div>
     <button class="sp-yt-sync" id="sp-yt-allviewcount-btn" style="margin-top:4px;opacity:.8;">전체 조회수 갱신(연도별 TOP용 · 월 1회)</button>
+    <div class="sp-btn-hint">조회수가 이미 있는 라이브 영상 전체를 다시 갱신 — 연도별 TOP 100용. 한 달에 한 번이면 충분해요.</div>
     <button class="sp-yt-sync" id="sp-yt-backfillviewcount-btn" style="margin-top:4px;opacity:.8;">연도별 TOP 최초 백필(일회용 · 시간 오래 걸림)</button>
+    <div class="sp-btn-hint">조회수를 한 번도 못 받아본 오래된 라이브 영상에 처음 채워넣는 용도 — 이미 다 채워졌으면 다시 누를 일 없어요.</div>
+    <button class="sp-yt-sync" id="sp-yt-rotateviewcount-btn" style="margin-top:4px;opacity:.8;">전체 카테고리 조회수 순환 갱신(월 1회 · 배치 5000개씩)</button>
+    <div class="sp-btn-hint">라이브 말고 쇼츠·MV 등 나머지 전체를 대상으로, 가장 오래전에 갱신된 5천개씩만 순환 갱신 — 몇 달 걸려 전체를 한 바퀴 돌아요. 월 1회 정도.</div>
     <button class="sp-yt-sync" id="sp-vm-btn" style="margin-top:4px;opacity:.8;">영상 관리 패널</button>
+    <div class="sp-btn-hint">영상 하나하나를 검색해서 확인·수정할 수 있는 별도 패널을 열어요.</div>
     <div style="margin-top:6px;padding-top:6px;border-top:0.5px solid rgba(255,255,255,0.07)">
       <div style="font-size:10px;color:rgba(155,178,228,0.4);margin-bottom:2px">과거 영상 백필 (search API, 쿼터 많이 씀)</div>
       <select class="sp-yt-key" id="sp-yt-backfill-ch"></select>
@@ -255,7 +267,9 @@
       </div>
       <input type="text" class="sp-yt-key" id="sp-yt-backfill-query" placeholder="검색어(그룹명, 비우면 채널 전체)">
       <button class="sp-yt-sync" id="sp-yt-backfill-btn" style="opacity:.8;">이 채널만 백필 실행</button>
+      <div class="sp-btn-hint">위에서 고른 채널 하나의 과거 영상을 지정한 연도 범위만큼 검색해서 가져와요 — 쿼터를 많이 써요.</div>
       <button class="sp-yt-sync" id="sp-yt-backfill-priority-btn" style="opacity:.8;">음악방송 6개 채널 순서대로 백필</button>
+      <div class="sp-btn-hint">업로드가 아주 많은 음악방송 채널 6개(M2·Mnet·KBS 등)를 우선순위로 순서대로 백필해요.</div>
     </div>
     <div style="margin-top:6px;padding-top:6px;border-top:0.5px solid rgba(255,255,255,0.07)">
       <div style="font-size:10px;color:rgba(155,178,228,0.4);margin-bottom:2px">영상 URL로 직접 추가</div>
@@ -263,32 +277,47 @@
       <input type="text" class="sp-yt-key" id="sp-yt-manual-group" placeholder="그룹명(자동인식 안 되면 입력, 예: 티아라)">
       <input type="text" class="sp-yt-key" id="sp-yt-manual-members" placeholder="멤버명(자동인식 안 되면 입력, 쉼표로 여러 명, 예: 지연,소연)">
       <button class="sp-yt-sync" id="sp-yt-manual-add-btn" style="opacity:.8;">이 영상 추가</button>
+      <div class="sp-btn-hint">자동 동기화로 안 잡힌 영상을 URL 하나로 직접 추가해요.</div>
       <textarea class="sp-yt-key" id="sp-yt-manual-urls-batch" rows="4" placeholder="여러 개 한 번에: URL을 한 줄에 하나씩" style="resize:vertical;font-family:inherit;margin-top:6px;"></textarea>
       <button class="sp-yt-sync" id="sp-yt-manual-batch-add-btn" style="opacity:.8;">여러 개 한 번에 추가</button>
+      <div class="sp-btn-hint">여러 URL을 한 줄에 하나씩 붙여넣고 한 번에 추가해요.</div>
     </div>
 
     <div class="sp-subsec-lbl" style="margin-top:10px;">사용자 피드백</div>
     <button class="sp-yt-sync" id="sp-fb-btn" style="opacity:.8;">피드백 보기</button>
+    <div class="sp-btn-hint">유저들이 보낸 피드백 목록을 확인해요.</div>
 
     <div class="sp-subsec-lbl" style="margin-top:10px;">검수</div>
     <button class="sp-yt-sync" id="sp-hnn-btn" style="opacity:.8;">검수 센터</button>
+    <div class="sp-btn-hint">태깅 품질 의심 목록·원곡/커버 후보·동명이인 목록을 모아보는 검수 센터를 열어요.</div>
     <button class="sp-yt-sync" id="sp-wonkok-btn" style="display:none"></button>
 
     <div class="sp-subsec-lbl" style="margin-top:10px;">그룹 데이터 관리</div>
     <button class="sp-yt-sync" id="sp-gp-btn" style="opacity:.8;">그룹 우선순위</button>
+    <div class="sp-btn-hint">그룹별 노출 우선순위(A/B/C)를 지정하는 패널을 열어요 — 유저에겐 안 보이는 내부용.</div>
 
     <div class="sp-subsec-lbl" style="margin-top:10px;">데이터 정합성 — 매일(동기화 뒤 순서대로)</div>
     <button class="sp-yt-sync" id="sp-yt-autotag" style="margin-top:4px;opacity:.8;">2. 멤버+콜라보 자동 태깅 (미태깅분)</button>
+    <div class="sp-btn-hint">아직 멤버/콜라보 태그가 하나도 없는 영상만 채워요 — 동기화 직후 매일 누르는 루틴 2번째.</div>
     <button class="sp-yt-sync" id="sp-collabfix-btn" style="margin-top:4px;opacity:.8;">3. 콜라보 오태깅 재검증(전체)</button>
+    <div class="sp-btn-hint">다른 그룹과의 콜라보 태그(함께한 멤버 등)를 최신 로직으로 전체 재검증해요 — 관리자가 직접 저장한 태그는 안 건드려요.</div>
     <button class="sp-yt-sync" id="sp-scan-namecollide-btn" style="margin-top:4px;opacity:.8;">4. 동명이인 그룹 오배정 전체 스캔+재배정</button>
+    <div class="sp-btn-hint">동명이인 때문에 엉뚱한 그룹으로 잘못 배정된 영상을 찾아 확실한 것만 자동으로 바로잡아요.</div>
     <div class="sp-subsec-lbl" style="margin-top:10px;">데이터 정합성 — 필요할 때만</div>
     <button class="sp-yt-sync" id="sp-membersfix-btn" style="margin-top:4px;opacity:.8;">자체 멤버 태깅 재검증(전체)</button>
+    <div class="sp-btn-hint">그룹 자체 채널의 멤버 태그를 최신 매칭 로직으로 전체 재검증해요 — 매칭 로직을 고친 날 누르면 됨.</div>
     <button class="sp-yt-sync" id="sp-onlyoneof-love-btn" style="margin-top:4px;opacity:.8;">온리원오프 Love 오태깅 정리(일회용)</button>
+    <div class="sp-btn-hint">"Love"가 흔한 단어와 겹쳐 잘못 태깅됐던 사고 하나만 고치는 일회용 버튼 — 이미 정리했으면 다시 누를 일 없어요.</div>
     <button class="sp-yt-sync" id="sp-catfix-btn" style="margin-top:4px;opacity:.8;">영상 카테고리(라이브 등) 재분류(전체)</button>
+    <div class="sp-btn-hint">라이브/쇼츠/예능 등 카테고리 분류를 최신 로직으로 전체 재분류해요.</div>
+    <button class="sp-yt-sync" id="sp-covertitle-btn" style="margin-top:4px;opacity:.8;">커버곡 원곡 제목 자동 추출</button>
+    <div class="sp-btn-hint">제목에서 곡명을 뽑아 원곡 아티스트 디스코그래피와 대조, 확인되는 것만 저장해요 — 다시 눌러도 새로 늘어난 것만 처리돼요.</div>
     <button class="sp-yt-sync" id="sp-yt-retag-all" style="margin-top:4px;opacity:.8;" title="미태깅분까지 전부 포함해서 다시 훑습니다 — 매칭 로직을 고친 날은 이 버튼만 누르면 되고, 위 2번(매일 루틴)은 그날 따로 안 눌러도 됩니다.">멤버+콜라보 재태깅(기존 태깅분 포함, 전체)</button>
     <div class="sp-subsec-lbl" style="margin-top:2px;font-size:11px;opacity:.55;">↑ 미태깅분도 같이 포함되니, 매칭 로직을 고친 날엔 이 버튼만 누르면 됨(위 2번 안 눌러도 됨)</div>
     <button class="sp-yt-sync" id="sp-yt-sweep-banned" style="margin-top:4px;opacity:.8;">밴 인물 언급 영상 숨김 정리</button>
+    <div class="sp-btn-hint">밴(제재) 인물이 언급된 기존 영상을 찾아 숨김 처리해요 — 밴 목록이 안 바뀌었으면 다시 눌러도 빠르게 끝나요.</div>
     <button class="sp-yt-sync" id="sp-yt-sweep-junk" style="margin-top:4px;opacity:.8;">무조건 제외 키워드 영상 무관 정리</button>
+    <div class="sp-btn-hint">아래 목록에 있는 키워드가 제목에 있는 기존 영상을 찾아 '무관'으로 정리해요.</div>
     <div class="sp-subsec-lbl" id="sp-junk-keywords-lbl" style="margin-top:2px;font-size:11px;opacity:.55;"></div>
 
     <div class="sp-yt-prog" id="sp-yt-prog"></div>
@@ -656,6 +685,18 @@
       <button id="uc-card-cancel" class="uc-btn" data-i18n="ucCardClose">닫기</button>
       <button id="uc-card-download" class="uc-btn" data-i18n="ucCardSave" disabled>저장</button>
       <button id="uc-card-share" class="uc-btn uc-btn-primary" data-i18n="ucCardShare" disabled>공유</button>
+    </div>
+  </div>
+</div>
+<div id="debut-card-overlay" data-modal>
+  <div id="debut-card-panel">
+    <div class="pp-title" data-i18n="debutCardTitle">데뷔 기념일 카드</div>
+    <div id="debut-card-imgwrap"><img id="debut-card-img" alt=""></div>
+    <div id="debut-card-status"></div>
+    <div id="debut-card-btns">
+      <button id="debut-card-cancel" class="uc-btn" data-i18n="ucCardClose">닫기</button>
+      <button id="debut-card-download" class="uc-btn" data-i18n="ucCardSave" disabled>저장</button>
+      <button id="debut-card-share" class="uc-btn uc-btn-primary" data-i18n="ucCardShare" disabled>공유</button>
     </div>
   </div>
 </div>
@@ -1210,7 +1251,8 @@ const T={
       selLabel:'선택',selBtnTitle:'영상 여러 개 선택',sortTitle:'정렬',refreshTitle:'새로고침',searchClearLabel:'검색어 지우기',userBulkAdd:'컬렉션에 추가',
       ucCardBtn:'✦ 내 우주 카드 만들기',ucCardTitle:'내 우주 카드',ucCardClose:'닫기',ucCardSave:'저장',ucCardShare:'공유',
       ucCardNeedFav:'먼저 즐겨찾기 하이라이트(♥)를 켜주세요',ucCardAligning:'정렬 중이에요, 잠시 후 다시 시도해주세요',
-      ucCardGenerating:'카드 생성 중…',ucCardNoFav:'카드를 만들 즐겨찾기가 없어요',ucCardSaved:'이미지가 저장됐어요 — 앱에서 직접 공유해주세요'},
+      ucCardGenerating:'카드 생성 중…',ucCardNoFav:'카드를 만들 즐겨찾기가 없어요',ucCardSaved:'이미지가 저장됐어요 — 앱에서 직접 공유해주세요',
+      debutCardTitle:'데뷔 기념일 카드',debutCardFail:'카드를 만들 수 없어요'},
   en:{sp_title:'Settings',debutYr:'Debut Year',birthYr:'Birth Year',grpType:'Group Type',
       genLabel:'Generation',genNote:'Just for fun',
       all:'All',girl:'Girl Groups',boy:'Boy Groups',coed:'Coed Groups',inactive:'Inactive / Left',reset:'↺ Reset',
@@ -1225,7 +1267,8 @@ const T={
       selLabel:'Select',selBtnTitle:'Select multiple videos',sortTitle:'Sort',refreshTitle:'Refresh',searchClearLabel:'Clear search',userBulkAdd:'Add to Collection',
       ucCardBtn:'✦ Create My Universe Card',ucCardTitle:'My Universe Card',ucCardClose:'Close',ucCardSave:'Save',ucCardShare:'Share',
       ucCardNeedFav:'Turn on Favorites Highlight (♥) first',ucCardAligning:'Still aligning — try again in a moment',
-      ucCardGenerating:'Generating card…',ucCardNoFav:'No favorites to build a card from',ucCardSaved:'Image saved — share it from your gallery app'}
+      ucCardGenerating:'Generating card…',ucCardNoFav:'No favorites to build a card from',ucCardSaved:'Image saved — share it from your gallery app',
+      debutCardTitle:'Debut Anniversary Card',debutCardFail:'Could not create card'}
 };
 // 소속사 표기 영어모드 정규화 — 완전 로마자 번역 대신 흔한 접미사 "엔터테인먼트"만 "Ent."로 치환
 // (2026-08-18, 사용자 요청). 브랜드명 자체가 순수 한글인 경우(예: 스윙, 큐브, 젤리피쉬)는 그대로
@@ -5522,6 +5565,11 @@ function _wireSlowScroll(innerEl,factor){
 // syncEl을 주면(mob-card-stack이 mob-sheet 위에 겹쳐있을 때) 반쯤 상태에서 아래로 끌 때 밑에 깔린
 // 시트도 같이 움직여서 두 겹이 한 덩어리로 빠지는 것처럼 보이게 한다(가득 찬 상태에선 이미 화면을
 // 다 덮고 있어 밑 시트를 같이 움직일 필요가 없음).
+// 드래그로 인식하기 전 무시할 최소 이동거리(px) — 없으면 카드를 막 열고 콘텐츠 맨 위에서 살짝만
+// 손가락이 흔들려도(스크롤하려던 의도였어도) 곧바로 카드 전체가 시각적으로 따라 움직여서 "첫 터치가
+// 너무 민감하다"고 느껴짐(2026-08-19, 사용자 제보 — "레거시 다른 어플 쓸 때랑 느낌이 다르다"). 네이티브
+// 앱들이 보통 갖고 있는 최소 이동거리(터치 slop)를 흉내내, 이 거리를 넘어야만 드래그로 확정한다.
+const _SHEET_DRAG_SLOP=10;
 function _wireSheetSwipe(sheetEl,innerEl,onDismiss,syncEl){
   // sheetDragActive: 이번 터치가 "콘텐츠 스크롤"이 아니라 "시트 자체를 끄는 드래그"로 전환됐는지.
   // 예전엔 터치 시작 시점의 scrollTop만 보고 그 터치 세션 전체를 고정 판정했었는데, 그러면 스크롤된
@@ -5529,7 +5577,7 @@ function _wireSheetSwipe(sheetEl,innerEl,onDismiss,syncEl){
   // 넘어가고, 손을 뗐다가 맨 위에서 새로 시작해야만 먹혀서 "안 먹는다"는 제보가 많았음(2026-08-12).
   // 지금은 같은 터치가 이어지는 도중에라도 콘텐츠가 맨 위에 도달하는 그 순간부터 시트 드래그로 전환
   // 되고, 그 순간의 손가락 위치를 새 기준점(dragY)으로 다시 잡아서 시트가 순간이동하듯 튀지 않는다.
-  let dragY=0,dragging=false,sheetDragActive=false,_rafId=0,_applyFn=null;
+  let dragY=0,dragging=false,sheetDragActive=false,_slopArmed=false,_rafId=0,_applyFn=null;
   sheetEl.addEventListener('touchstart',e=>{
     // 자체적으로 가로 스크롤되는 영역(.hscroll-drag — .gc-ch-filters/.tg-row/.tco/.gc-discog-strip 등)에서
     // 시작한 터치는 여기서 추적 자체를 안 함 — 안 그러면 콘텐츠가 맨 위(innerEl.scrollTop<=0)일 때 그
@@ -5539,14 +5587,22 @@ function _wireSheetSwipe(sheetEl,innerEl,onDismiss,syncEl){
     dragY=e.touches[0].clientY;
     dragging=true;
     sheetDragActive=innerEl.scrollTop<=0;
+    _slopArmed=false;
     e.stopPropagation();
   },{passive:true});
   sheetEl.addEventListener('touchmove',e=>{
     if(!dragging)return;e.stopPropagation();
     const curY=e.touches[0].clientY;
     if(!sheetDragActive){
-      if(innerEl.scrollTop<=0){sheetDragActive=true;dragY=curY;}
+      if(innerEl.scrollTop<=0){sheetDragActive=true;dragY=curY;_slopArmed=false;}
       else return; // 아직 콘텐츠가 맨 위가 아니면 네이티브 스크롤에 맡긴다
+    }
+    if(!_slopArmed){
+      // 최소 이동거리를 넘기 전엔 아무 반응도 안 함(네이티브 preventDefault도 안 걸어서 스크롤 시도를
+      // 막지 않음) — 넘는 순간의 손가락 위치를 새 기준점으로 다시 잡아, 데드존만큼 갑자기 점프하지 않고
+      // 그 지점부터 dy=0으로 자연스럽게 이어진다(위 재기준점 로직과 같은 방식).
+      if(Math.abs(curY-dragY)<_SHEET_DRAG_SLOP)return;
+      dragY=curY;_slopArmed=true;
     }
     const dy=curY-dragY;
     if(dy<0&&!_sheetFull&&innerEl.scrollTop<=0){
@@ -7176,6 +7232,22 @@ function showGC(ko,cx,cy,keepMemberPanel,skipRipple,urlMode,pushMobNav){
     altSuffix.className='gc-show-suffix';
     altSuffix.textContent=` (${info.altNames.join(', ')})`;
     document.getElementById('gc-debut').appendChild(altSuffix);
+  }
+  // 오늘이 이 그룹 데뷔 기념일이면(우주에 노바가 터지는 그 조건과 동일, _isDebutAnniversaryToday
+  // 재사용) 카드 공유 버튼을 그날만 노출 — 나침반(탐험 패널)처럼 항상 보이는 곳엔 소수만 쓸 액션이라
+  // 안 어울린다는 사용자 판단으로, 그룹 카드 안에 그날만 뜨는 배너로 배치(2026-08-19, 사용자 요청).
+  {
+    const annivBanner=document.getElementById('gc-anniv-banner');
+    if(annivBanner){
+      if(_isDebutAnniversaryToday(info)){
+        const n=new Date().getFullYear()-parseInt(String(info.debut).split('.')[0],10);
+        annivBanner.textContent=currentLang==='ko'?`🎉 오늘 데뷔 ${n}주년! 카드 공유하기`:`🎉 ${n}th Debut Anniversary Today! Share Card`;
+        annivBanner.style.display='';
+        annivBanner.onclick=()=>_openDebutCardPreview(ko);
+      }else{
+        annivBanner.style.display='none';
+      }
+    }
   }
   const fandomRow=document.getElementById('gc-fandom-row');
   const fandomEl=document.getElementById('gc-fandom');
@@ -9623,12 +9695,42 @@ async function _buildMyUniverseCardDataURL(){
   const ctx=cv.getContext('2d');
   const col=myProfile?.color||[170,195,255];
 
-  const bg=ctx.createRadialGradient(W*0.5,H*0.36,0,W*0.5,H*0.36,H*0.9);
-  bg.addColorStop(0,`rgba(${col[0]},${col[1]},${col[2]},0.16)`);
-  bg.addColorStop(0.42,'#0d0c22');
+  // 배경 그라데이션 중심이 W*0.5,H*0.36에 있었는데, WebGL 캡처는 카메라가 hub를 정확히 정중앙(W/2,H/2)
+  // 겨냥해서 그린 것이라 실제 내 별 위치는 W/2,H/2 — 즉 배경의 가장 밝은 지점과 실제 별 위치가 서로
+  // 어긋나 있었음. "내 별이 중심에 있지도 않고 안 튀어 보인다"는 지적(2026-08-19)의 핵심 원인이 이거라
+  // 판단해 그라데이션 중심을 별의 실제 좌표로 맞춤. 반경도 화면 대부분을 뒤덮던 H*0.9에서 크게 줄이고
+  // 콘트라스트를 세게 줘서(중간 정지점 제거) "전체가 뿌옇게 뜬 안개"가 아니라 별 하나에서 뻗어나가는
+  // 국소적인 빛무리로 보이게 함 — 배경이 빨리 어두워질수록 별밭 점들이 안개에 묻히지 않고 도드라진다.
+  const hubX=W*0.5,hubY=H*0.5;
+  const bg=ctx.createRadialGradient(hubX,hubY,0,hubX,hubY,H*0.38);
+  bg.addColorStop(0,`rgba(${col[0]},${col[1]},${col[2]},0.22)`);
+  bg.addColorStop(0.5,'#0a0918');
   bg.addColorStop(1,'#040309');
+  ctx.fillStyle='#040309';ctx.fillRect(0,0,W,H); // 그라데이션 바깥(반경 밖)도 확실히 어두운 바탕으로 깔아둠
   ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);
   ctx.drawImage(img,0,0,W,H);
+
+  // 내 별 위치에 2D 캔버스로 또렷한 코어+십자 플레어를 한 번 더 얹는다 — WebGL 스프라이트 하나만으로는
+  // 캡처 해상도/거리에 따라 흐리게 뭉개질 수 있어서, 카드에서만큼은 별이 확실히 "튀어" 보이도록 별도로
+  // 보강(공유 glowTex는 앱 전체에 쓰여서 여기서 세게 건드리면 다른 곳까지 영향받으니 손 안 댐 — 이 카드
+  // 함수 안에서만 닫힌 효과).
+  ctx.save();
+  ctx.globalCompositeOperation='lighter';
+  const core=ctx.createRadialGradient(hubX,hubY,0,hubX,hubY,26);
+  core.addColorStop(0,'rgba(255,255,255,1)');
+  core.addColorStop(0.35,'rgba(255,255,255,0.55)');
+  core.addColorStop(1,'rgba(255,255,255,0)');
+  ctx.fillStyle=core;ctx.beginPath();ctx.arc(hubX,hubY,26,0,Math.PI*2);ctx.fill();
+  const armLen=100;
+  [[1,0],[-1,0],[0,1],[0,-1]].forEach(([dx,dy])=>{
+    const g=ctx.createLinearGradient(hubX,hubY,hubX+dx*armLen,hubY+dy*armLen);
+    g.addColorStop(0,'rgba(255,255,255,0.55)');
+    g.addColorStop(0.3,'rgba(255,255,255,0.16)');
+    g.addColorStop(1,'rgba(255,255,255,0)');
+    ctx.strokeStyle=g;ctx.lineWidth=3;
+    ctx.beginPath();ctx.moveTo(hubX,hubY);ctx.lineTo(hubX+dx*armLen,hubY+dy*armLen);ctx.stroke();
+  });
+  ctx.restore();
 
   // 하단 페이드 — 별밭 위에 텍스트를 바로 얹으면 가독성이 떨어져서 배경을 한 번 더 어둡게
   const fade=ctx.createLinearGradient(0,H*0.72,0,H);
@@ -9704,6 +9806,146 @@ document.getElementById('uc-card-cancel')?.addEventListener('click',_closeUcCard
 document.getElementById('uc-card-download')?.addEventListener('click',_downloadUcCard);
 document.getElementById('uc-card-share')?.addEventListener('click',_shareUcCard);
 document.getElementById('uc-card-overlay')?.addEventListener('click',e=>{if(e.target===e.currentTarget)_closeUcCardPreview();});
+
+// ── 데뷔 기념일 카드 (공유용 이미지, 2026-08-19) ──────────────────────────
+// 위 "내 우주 카드"와 같은 철학 — 새 비주얼을 디자인하지 않고 이미 있는 3D 씬(그 그룹 행성의 글로우/
+// 색상)을 실제로 캡처해서 쓴다. 다른 점은 프레이밍 대상이 "즐겨찾기 허브 전체"가 아니라 그룹 행성
+// 하나뿐이라는 것과, 캔버스 비율이 4:5가 아니라 9:16(인스타 스토리에 그대로 맞는 세로형, 사용자 요청)
+// 이라는 것.
+function _renderDebutCardSnapshotDataURL(ko,cardW,cardH){
+  const bm=bubbleMeshes.find(b=>b.ko===ko);
+  if(!bm)return null;
+  const hub=bm.mesh.position.clone();
+  const dir=new THREE.Vector3(0.55,0.40,0.72).normalize();
+  const dist=Math.max(bm.radius*2.6+10,16);
+  const snapCam=new THREE.PerspectiveCamera(50,cardW/cardH,0.1,1000);
+  snapCam.position.copy(hub.clone().addScaledVector(dir,dist));
+  snapCam.lookAt(hub);
+
+  // 이 그룹 하나만 "주인공"으로 보이게, 캡처하는 동안만 다른 그룹 행성을 숨긴다(내 우주 카드와 동일 이유).
+  const hiddenMeshes=[];
+  bubbleMeshes.forEach(b=>{
+    if(b.ko!==ko&&b.mesh.visible){b.mesh.visible=false;hiddenMeshes.push(b.mesh);}
+  });
+
+  const prevSize=new THREE.Vector2();renderer.getSize(prevSize);
+  const prevPR=renderer.getPixelRatio();
+  renderer.setPixelRatio(1);
+  renderer.setSize(cardW,cardH,false);
+  renderer.render(scene,snapCam);
+  const dataURL=renderer.domElement.toDataURL('image/png');
+  hiddenMeshes.forEach(m=>{m.visible=true;});
+  renderer.setPixelRatio(prevPR);
+  renderer.setSize(prevSize.x,prevSize.y,false);
+  renderer.render(scene,camera);
+  return dataURL;
+}
+async function _buildDebutAnniversaryCardDataURL(ko){
+  const info=GROUPS[ko];
+  if(!info||!info.debut)return null;
+  const W=1080,H=1920;
+  const webglURL=_renderDebutCardSnapshotDataURL(ko,W,H);
+  if(!webglURL)return null;
+  const img=new Image();
+  await new Promise((res,rej)=>{img.onload=res;img.onerror=rej;img.src=webglURL;});
+
+  const cv=document.createElement('canvas');cv.width=W;cv.height=H;
+  const ctx=cv.getContext('2d');
+  const col=info.color||[170,195,255];
+
+  const bg=ctx.createRadialGradient(W*0.5,H*0.34,0,W*0.5,H*0.34,H*0.8);
+  bg.addColorStop(0,`rgba(${col[0]},${col[1]},${col[2]},0.20)`);
+  bg.addColorStop(0.42,'#0d0c22');
+  bg.addColorStop(1,'#040309');
+  ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);
+  ctx.drawImage(img,0,0,W,H);
+
+  // 하단 40%를 어둡게 페이드해 그 위에 얹는 텍스트(숫자/그룹명/데뷔일/워터마크) 가독성 확보
+  const fade=ctx.createLinearGradient(0,H*0.58,0,H);
+  fade.addColorStop(0,'rgba(4,3,9,0)');
+  fade.addColorStop(1,'rgba(4,3,9,0.92)');
+  ctx.fillStyle=fade;ctx.fillRect(0,H*0.58,W,H*0.42);
+
+  const n=new Date().getFullYear()-parseInt(String(info.debut).split('.')[0],10);
+  const isKo=currentLang==='ko';
+  const name=isKo?ko:(info.en||ko);
+  ctx.textAlign='center';
+
+  // 스포티파이 Wrapped 스타일 — 숫자를 제일 크게 강조
+  ctx.font='800 300px "Pretendard","Apple SD Gothic Neo",sans-serif';
+  ctx.fillStyle='#f8f9ff';
+  ctx.shadowColor=`rgba(${col[0]},${col[1]},${col[2]},0.75)`;
+  ctx.shadowBlur=40;ctx.fillText(String(n),W/2,H-680);
+  ctx.shadowBlur=14;ctx.fillText(String(n),W/2,H-680);
+  ctx.shadowBlur=0;
+
+  ctx.font='700 52px "Pretendard","Apple SD Gothic Neo",sans-serif';
+  ctx.fillStyle=`rgb(${col[0]},${col[1]},${col[2]})`;
+  ctx.fillText(isKo?'주년':'YEARS',W/2,H-590);
+
+  ctx.font='600 56px "Pretendard","Apple SD Gothic Neo",sans-serif';
+  ctx.fillStyle='#f3f6ff';
+  ctx.fillText(name,W/2,H-260);
+
+  ctx.font='400 26px "Pretendard","Apple SD Gothic Neo",sans-serif';
+  ctx.fillStyle='rgba(210,222,250,0.7)';
+  ctx.fillText((isKo?'데뷔 ':'Debuted ')+info.debut,W/2,H-210);
+
+  ctx.font='400 22px "Pretendard","Apple SD Gothic Neo",sans-serif';
+  ctx.fillStyle='rgba(200,212,240,0.55)';
+  ctx.fillText('K · P O P   U N I V E R S E',W/2,H-90);
+
+  return cv.toDataURL('image/png');
+}
+let _debutCardDataURL=null;
+async function _openDebutCardPreview(ko){
+  const overlay=document.getElementById('debut-card-overlay');
+  const imgEl=document.getElementById('debut-card-img');
+  const statusEl=document.getElementById('debut-card-status');
+  const shareBtn=document.getElementById('debut-card-share');
+  const dlBtn=document.getElementById('debut-card-download');
+  const t=T[currentLang];
+  imgEl.classList.remove('loaded');imgEl.src='';
+  shareBtn.disabled=true;dlBtn.disabled=true;_debutCardDataURL=null;
+  overlay.classList.add('open');
+  statusEl.textContent=t.ucCardGenerating;
+  try{
+    const dataURL=await _buildDebutAnniversaryCardDataURL(ko);
+    if(!overlay.classList.contains('open'))return; // 생성 도중 닫혔으면 반영하지 않음
+    if(!dataURL){statusEl.textContent=t.debutCardFail;return;}
+    _debutCardDataURL=dataURL;
+    imgEl.onload=()=>imgEl.classList.add('loaded');
+    imgEl.src=dataURL;
+    statusEl.textContent='';
+    shareBtn.disabled=false;dlBtn.disabled=false;
+  }catch(e){
+    statusEl.textContent=(currentLang==='ko'?'생성 실패: ':'Failed: ')+e.message;
+  }
+}
+function _closeDebutCardPreview(){document.getElementById('debut-card-overlay').classList.remove('open');}
+function _downloadDebutCard(){
+  if(!_debutCardDataURL)return;
+  const a=document.createElement('a');
+  a.href=_debutCardDataURL;a.download='kpop-universe-anniversary.png';
+  document.body.appendChild(a);a.click();document.body.removeChild(a);
+}
+async function _shareDebutCard(){
+  if(!_debutCardDataURL)return;
+  try{
+    const blob=await(await fetch(_debutCardDataURL)).blob();
+    const file=new File([blob],'kpop-universe-anniversary.png',{type:'image/png'});
+    if(navigator.canShare&&navigator.canShare({files:[file]})){
+      await navigator.share({files:[file],title:'K-POP Universe'});
+      return;
+    }
+  }catch(e){ /* 취소했거나 실패 — 아래 다운로드 폴백으로 계속 진행 */ }
+  _downloadDebutCard();
+  _showShareToast(T[currentLang].ucCardSaved);
+}
+document.getElementById('debut-card-cancel')?.addEventListener('click',_closeDebutCardPreview);
+document.getElementById('debut-card-download')?.addEventListener('click',_downloadDebutCard);
+document.getElementById('debut-card-share')?.addEventListener('click',_shareDebutCard);
+document.getElementById('debut-card-overlay')?.addEventListener('click',e=>{if(e.target===e.currentTarget)_closeDebutCardPreview();});
 
 function _makeMyStarTex([r,g,b]){
   const sz=128,c=sz/2;
@@ -12209,6 +12451,7 @@ function _buildFeedDiscovery(){
   _buildFeedGenCamPick(list);
   _buildFeedWeeklyTopCams(list);
   _buildFeedYearlyTop(list);
+  _buildFeedLegend100(list);
   _buildFeedCoverSpotlight(list);
   _buildFeedTrendingHearts(list);
   _buildFeedCollabSpotlight(list);
@@ -12223,13 +12466,13 @@ function _buildFeedDiscovery(){
 }
 
 // ── 탐험 패널 "모아보기" 무한스크롤 ──────────────────────────────────────
-// 위 14개 카드는 패널 열 때 한 번만 뽑혀서 끝이 있었는데(2026-08-19, 사용자 요청 — "끝이 없을 정도로
+// 위 15개 카드는 패널 열 때 한 번만 뽑혀서 끝이 있었는데(2026-08-19, 사용자 요청 — "끝이 없을 정도로
 // 채워져있으면 좋겠다"), 매번 랜덤으로 뽑는 카드들(랜덤 그룹/멤버/연결/영상 + 연도별 TOP/커버 스포트라이트/
 // 콜라보 스포트라이트)은 다시 불러도 새 결과가 나오므로 스크롤 끝에 닿을 때마다 이어붙인다. 시간대(1시간)
 // 순환 카드(_buildFeedFormatPick/_buildFeedGenCamPick/_buildFeedDebutYearPick)는 그대로 다시 부르면 같은
 // 시간 안에선 정확히 같은 카드가 또 뜨므로, offset을 계속 늘려가며 같이 불러 순환을 계속 진행시킨다.
-// 하트 기준 카드(_buildFeedHiddenGem/_buildFeedTrendingHearts)와 오늘의 기념일/N년 전 오늘은 세션 내내
-// 결과가 고정이거나 날짜 기반이라 반복 호출해도 변화가 없어 이 풀에서 제외.
+// 하트 기준 카드(_buildFeedHiddenGem/_buildFeedTrendingHearts)와 오늘의 기념일/N년 전 오늘, 레전드 100
+// (전체기간 고정 순위)은 세션 내내 결과가 고정이거나 날짜 기반이라 반복 호출해도 변화가 없어 이 풀에서 제외.
 const _FEED_MORE_RANDOM_FNS=[_buildFeedRandomGroup,_buildFeedRandomMember,_buildFeedRandomConnection,_buildFeedRandomVideo,_buildFeedYearlyTop,_buildFeedCoverSpotlight,_buildFeedCollabSpotlight];
 let _feedMoreOffset=0,_feedMoreLoading=false,_feedMoreObserver=null,_feedMoreListObserver=null;
 function _loadMoreFeedDiscovery(){
@@ -12520,7 +12763,9 @@ async function _waitAppendUnlock(state,maxMs=5000){
 // "반복 새로고침처럼 느껴진다"는 오해로 한 번 없앴다가 사용자가 원상복구를 요청했던 별개의 캐시)는 이거랑
 // 다른 상수라 안 건드림.
 const _chVidPageCache=new Map(); // key -> {data,count,featuredFromDB,ts}
-const _CH_VID_CACHE_TTL=900000;
+// 15분→1분(2026-08-19, 사용자 요청) — '추천순' 기본 오픈이 이제 청크 랜덤 샘플링을 타므로(위 load()
+// 참고) 캐시가 만료돼야 새로 샘플링됨. 15분은 너무 길어서 재방문해도 계속 똑같아 보였던 원인 중 하나.
+const _CH_VID_CACHE_TTL=60000;
 function _chVidCacheKey(contId,ko,state){
   return[contId,ko,state.memberKo||'',state.filter,state.sortMode,state.viewMode,state.formatFilter||'',state.onlyMe?1:0,state.unitFilter||'',state.searchQ||''].join('|');
 }
@@ -13092,8 +13337,23 @@ function _makeChVidController(contId){
       const ordered=q=>state.sortMode==='untagged'
         ?q.order('with_groups',{ascending:false}).order('members',{ascending:true}).order('published_at',{ascending:false})
         :q.order('published_at',{ascending:state.sortMode==='oldest'});
+      // '추천순' 기본 오픈(↻ 아님)도 아래 청크 랜덤 샘플링을 타게 하려면 청크 개수 계산에 쓸 전체
+      // 개수를 먼저 알아야 함 — 예전엔 이 총 개수를 화면을 막지 않으려고 항상 백그라운드로만 채웠는데,
+      // 그러면 매 오픈마다(카드를 닫고 다시 열 때마다 state가 통째로 새로 만들어져 total도 매번 모르는
+      // 상태로 시작함) 총 개수를 모른 채로 아래 else 분기(offset 0부터 최신순)를 타서 사실상 항상 같은
+      // 최신 48개만 보여줬음 — "추천순 순서가 안 바뀐다"(2026-08-19, 사용자 제보)는 게 이 때문. 그래서
+      // 이 경우에 한해 가벼운 head:true 총 개수 조회를 짧게 기다린 뒤 청크 랜덤 여부를 결정한다.
+      if(reset&&!randomize&&!cacheHit&&state.sortMode==='recommend'&&!state.total){
+        // buildBaseQuery()가 반환하는 supabase 쿼리 빌더는 thenable이지만 진짜 Promise가 아니라
+        // .catch()가 없음 — 여기서 그걸 체이닝하면 "buildBaseQuery(...).catch is not a function"으로
+        // 죽어서 카드 전체가 로드 실패함(Playwright로 재현+발견). try/await로 감싸야 안전하다.
+        try{
+          const{count:preCount}=await buildBaseQuery(true);
+          if(myGen===state.gen&&preCount!=null)state.total=preCount;
+        }catch(e){/* 실패해도 아래에서 total 없이 안전하게 폴백 */}
+      }
       let mainP;
-      const isChunkedRandomize=reset&&randomize&&state.total>_YT_PAGE;
+      const isChunkedRandomize=reset&&state.total>_YT_PAGE&&(randomize||state.sortMode==='recommend');
       if(cacheHit){
         mainP=Promise.resolve({data:cached.data,error:null,count:cached.count});
       }else if(isChunkedRandomize){
@@ -13138,8 +13398,9 @@ function _makeChVidController(contId){
       }
       // 카드를 처음 열 때(reset, randomize 아님, 캐시도 아님)만: 정확한 총 개수를 그리드 렌더링과
       // 분리된 별도 요청으로 백그라운드에서 가져와 나중에(총 개수 라벨/다음 셔플용) state.total을
-      // 채워 넣는다 — await 안 하므로 첫 화면 표시를 전혀 막지 않는다.
-      if(reset&&!randomize&&!cacheHit){
+      // 채워 넣는다 — await 안 하므로 첫 화면 표시를 전혀 막지 않는다. '추천순'은 바로 위에서 이미
+      // 총 개수를 기다려서 알아냈으므로(state.total 있음) 여기서 또 물어볼 필요 없음(중복 조회 방지).
+      if(reset&&!randomize&&!cacheHit&&!state.total){
         buildBaseQuery(true).then(({count:bgCount,error:bgErr})=>{
           if(bgErr||bgCount==null)return;
           if(myGen!==state.gen)return; // 그 사이 다른 카드/새로고침으로 전환됨
@@ -14226,7 +14487,7 @@ function _updateAdminUI(){
 // 옛 버전을 계속 서빙해서 고친 코드가 반영 안 되는 것처럼 보이는 사고가 남(2026-08-18, HTML 엔티티 정리
 // 버튼 타임아웃 재수정 후에도 계속 재현된다는 제보로 발견). admin.js 내용을 바꿀 때마다 이 버전 문자열도
 // 같이 올릴 것(sw.js의 CACHE_VERSION과 같은 수동 관리 방식).
-const _ADMIN_JS_VER='2026-08-19a';
+const _ADMIN_JS_VER='2026-08-19d';
 function _loadAdminScript(){
   if(!_isAdmin()||document.getElementById('admin-js-script'))return;
   const s=document.createElement('script');
