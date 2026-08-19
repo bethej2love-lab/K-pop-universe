@@ -120,6 +120,17 @@ function _disbandCutoffDate(ko){
   const[,y,mo,day]=m;
   return mo&&day?`${y}-${mo}-${day}`:`${y}-12-31`;
 }
+// 그룹은 그대로 활동 중인데 개별 멤버만 탈퇴한 경우(artists.json의 left 필드, "YYYY.MM.DD")의 자동 태깅
+// 컷오프 — 위 _disbandCutoffDate와 같은 이유, 대상만 그룹 전체 대신 멤버 한 명. 탈퇴일 이후 올라온
+// 영상까지 그 멤버로 계속 태깅되면(특히 흔한 단어/영단어 이름은 오탐까지 겹쳐 악화됨) 탈퇴한 멤버가
+// 여전히 활동 중인 것처럼 보이는 문제가 있음(2026-08-19, 사용자 제보 — 온리원오프 Love, 2021.08.02 탈퇴
+// 이후에도 계속 신규 영상에 태깅되던 사례로 발견). left 필드가 없으면(탈퇴일 미상) 컷오프 없이 기존대로.
+function _memberLeftCutoffDate(a){
+  const l=a&&a.left;
+  if(!l)return null;
+  const m=String(l).match(/^(\d{4})\.(\d{2})\.(\d{2})/);
+  return m?`${m[1]}-${m[2]}-${m[3]}`:null;
+}
 async function _ytFetchNewVideos(uploadsId,key,sinceId,onProg,startPageToken,cutoffDate){
   const vids=[];let pageToken=startPageToken||'';let total=0;
   let done=false,interrupted=false;
@@ -559,6 +570,9 @@ async function _ytSweepAmbiguousCollabMistag(){
     if(!rows?.length){_ytSetProg('검사할 영상이 없어요');return;}
     const updates=[];
     let manualSkipped=0;
+    // 콜라보 태그가 완전히 다 빠지는 행 — 위 _ytSweepMembersMistag와 동일 이유로 자동 무관 처리는 안 하고
+    // 목록만 콘솔에 남긴다(2026-08-19, 사용자 요청).
+    const wipedOut=[];
     rows.forEach(v=>{
       const match=_m2ParseTitle(v.title||'',v.group_ko);
       const curWG=v.with_groups||[],curWM=v.with_members||[];
@@ -600,10 +614,14 @@ async function _ytSweepAmbiguousCollabMistag(){
       if(!Object.keys(patch).length)return;
       if(v.tags_manual){manualSkipped++;return;} // 수동 편집 행은 절대 안 고침 — 대신 개수만 집계
       updates.push({id:v.id,patch});
+      if(!newWG.length&&!newWM.length)wipedOut.push({id:v.id,title:v.title,removedGroups:curWG,removedMembers:curWM});
     });
     if(!updates.length){
       _ytSetProg(`검사 완료 — ${rows.length}개 중 오염 없음`+(manualSkipped?` (단, 수동 편집이라 건드리지 않고 넘어간 것 ${manualSkipped}개 있음 — 직접 확인 필요)`:''));
       return;
+    }
+    if(wipedOut.length){
+      console.log(`[콜라보 오태깅 재검증] 콜라보 태그가 전부 빠진 행 ${wipedOut.length}개 — 무관 콘텐츠인지 직접 확인 필요:`,wipedOut);
     }
     for(let i=0;i<updates.length;i+=200){
       const chunk=updates.slice(i,i+200);
@@ -612,7 +630,7 @@ async function _ytSweepAmbiguousCollabMistag(){
       if(failed)throw new Error(failed.error.message);
       _ytSetProg(`[콜라보 오태깅 재검증] ${Math.min(i+200,updates.length)}/${updates.length}개 처리 중…`);
     }
-    _ytSetProg(`완료! ${rows.length}개 중 ${updates.length}개에서 근거 없는 콜라보 태그 제거함`+(manualSkipped?` (수동 편집이라 안 건드리고 넘어간 것 ${manualSkipped}개 — 직접 확인 필요)`:''));
+    _ytSetProg(`완료! ${rows.length}개 중 ${updates.length}개에서 근거 없는 콜라보 태그 제거함`+(wipedOut.length?` (그중 ${wipedOut.length}개는 태그가 전부 빠짐 — 콘솔 확인 필요)`:'')+(manualSkipped?` (수동 편집이라 안 건드리고 넘어간 것 ${manualSkipped}개 — 직접 확인 필요)`:''));
   }catch(e){
     _ytSetProg('오류: '+e.message);
   }finally{
@@ -706,22 +724,32 @@ async function _ytSweepMembersMistag(){
   try{
     _ytSetProg('[자체 멤버 태깅 재검증] 조회 중…');
     const{data:rows,error}=await _sbFetchAll(()=>sb.from(_YT_TABLE)
-      .select('id,title,description,group_ko,members')
+      .select('id,title,description,group_ko,members,published_at')
       .eq('tags_manual',false)
       .not('members','eq','{}')
       .order('id'));
     if(error){_ytSetProg('조회 실패: '+error.message);return;}
     if(!rows?.length){_ytSetProg('검사할 영상이 없어요');return;}
     const updates=[];
+    // 태그가 완전히 다 빠지는 행(진짜 무관 콘텐츠일 수도, 그냥 특정 멤버명이 제목에 없을 뿐인 정상
+    // 자체채널 영상일 수도 있음 — 이 스윕은 판단 안 하고 목록만 콘솔에 남긴다. 무관 처리 여부는 관리자가
+    // 직접 확인해서 판단(2026-08-19, 사용자 요청 — 자동으로 content_flag='무관' 처리는 위험하다고 판단).
+    const wipedOut=[];
     rows.forEach(v=>{
-      const roster=ARTISTS.filter(a=>_artistGroups(a).some(g=>g.ko===v.group_ko)).map(a=>({ko:a.name.ko,en:a.name.en}));
+      const roster=ARTISTS.filter(a=>_artistGroups(a).some(g=>g.ko===v.group_ko)).map(a=>({ko:a.name.ko,en:a.name.en,left:a.left}));
       if(!roster.length)return;
-      const validSet=new Set(_atmResolveMembers(v.title,v.description,roster,v.group_ko));
+      const validSet=new Set(_atmResolveMembers(v.title,v.description,roster,v.group_ko,v.published_at));
       const curM=v.members||[];
       const newM=curM.filter(mko=>validSet.has(mko));
-      if(newM.length!==curM.length)updates.push({id:v.id,patch:{members:newM}});
+      if(newM.length!==curM.length){
+        updates.push({id:v.id,patch:{members:newM}});
+        if(!newM.length)wipedOut.push({id:v.id,title:v.title,removed:curM});
+      }
     });
     if(!updates.length){_ytSetProg(`검사 완료 — ${rows.length}개 중 오염 없음`);return;}
+    if(wipedOut.length){
+      console.log(`[자체 멤버 태깅 재검증] 태그가 전부 빠진 행 ${wipedOut.length}개 — 무관 콘텐츠인지 직접 확인 필요:`,wipedOut);
+    }
     for(let i=0;i<updates.length;i+=200){
       const chunk=updates.slice(i,i+200);
       const results=await Promise.all(chunk.map(u=>sb.from(_YT_TABLE).update(u.patch).eq('id',u.id)));
@@ -729,7 +757,59 @@ async function _ytSweepMembersMistag(){
       if(failed)throw new Error(failed.error.message);
       _ytSetProg(`[자체 멤버 태깅 재검증] ${Math.min(i+200,updates.length)}/${updates.length}개 처리 중…`);
     }
-    _ytSetProg(`완료! ${rows.length}개 중 ${updates.length}개에서 근거 없는 멤버 태그 제거함`);
+    _ytSetProg(`완료! ${rows.length}개 중 ${updates.length}개에서 근거 없는 멤버 태그 제거함`+(wipedOut.length?` (그중 ${wipedOut.length}개는 태그가 전부 빠짐 — 콘솔 확인 후 무관 처리 여부 직접 판단 필요)`:''));
+  }catch(e){
+    _ytSetProg('오류: '+e.message);
+  }finally{
+    if(btn)btn.disabled=false;
+  }
+}
+
+// 온리원오프 "Love" 오태깅 일괄 정리(일회용) — "Love"는 흔한 영단어라 다른 그룹/채널의 무관한 영상
+// 제목("I Love You", "Love Dive" 등)에도 평문 매칭으로 계속 잘못 걸림. 게다가 Love는 2021.08.02
+// 탈퇴한 멤버라 흔한단어 문제까지 겹쳐 오염이 특히 심함(2026-08-19, 사용자 제보). 정식 해법(흔한단어
+// 화이트리스트에 추가해 해시태그로만 인정)보다 더 엄격하게, "온리원오프 자체 채널 영상이거나 제목에
+// 온리원오프/ONLYONEOF가 있는 경우만" 남기고 나머지는 다 뺀다 — members/with_members뿐 아니라 원곡
+// 태깅(cover_of_members)에도 같은 오염이 있어 셋 다 정리한다. tags_manual=true는 절대 안 건드림.
+async function _ytFixOnlyoneofLoveMistag(){
+  if(!sb){_ytSetProg('Supabase 연결 없음');return;}
+  const btn=document.getElementById('sp-onlyoneof-love-btn');
+  if(btn)btn.disabled=true;
+  try{
+    _ytSetProg('[온리원오프 Love 오태깅 정리] 조회 중…');
+    const withTag='Love(온리원오프)';
+    const{data:rows,error}=await _sbFetchAll(()=>sb.from(_YT_TABLE)
+      .select('id,title,group_ko,members,with_members,cover_of_members,tags_manual')
+      .or(`members.cs.{${_pgFilterVal('Love')}},with_members.cs.{${_pgFilterVal(withTag)}},cover_of_members.cs.{${_pgFilterVal(withTag)}}`)
+      .order('id'));
+    if(error){_ytSetProg('조회 실패: '+error.message);return;}
+    if(!rows?.length){_ytSetProg('검사할 영상이 없어요');return;}
+    const updates=[];
+    let manualSkipped=0;
+    rows.forEach(v=>{
+      const keep=v.group_ko==='온리원오프'||/온리원오프|onlyoneof/i.test(v.title||'');
+      if(keep)return;
+      const curM=v.members||[],curWM=v.with_members||[],curCM=v.cover_of_members||[];
+      const patch={};
+      if(curM.includes('Love')){const n=curM.filter(x=>x!=='Love');if(n.length!==curM.length)patch.members=n;}
+      if(curWM.includes(withTag)){const n=curWM.filter(x=>x!==withTag);if(n.length!==curWM.length)patch.with_members=n;}
+      if(curCM.includes(withTag)){const n=curCM.filter(x=>x!==withTag);if(n.length!==curCM.length)patch.cover_of_members=n;}
+      if(!Object.keys(patch).length)return;
+      if(v.tags_manual){manualSkipped++;return;}
+      updates.push({id:v.id,patch});
+    });
+    if(!updates.length){
+      _ytSetProg(`검사 완료 — ${rows.length}개 중 정리 대상 없음`+(manualSkipped?` (수동 편집이라 안 건드리고 넘어간 것 ${manualSkipped}개 — 직접 확인 필요)`:''));
+      return;
+    }
+    for(let i=0;i<updates.length;i+=200){
+      const chunk=updates.slice(i,i+200);
+      const results=await Promise.all(chunk.map(u=>sb.from(_YT_TABLE).update(u.patch).eq('id',u.id)));
+      const failed=results.find(r=>r.error);
+      if(failed)throw new Error(failed.error.message);
+      _ytSetProg(`[온리원오프 Love 오태깅 정리] ${Math.min(i+200,updates.length)}/${updates.length}개 처리 중…`);
+    }
+    _ytSetProg(`완료! ${rows.length}개 중 ${updates.length}개에서 Love 오태깅 제거함`+(manualSkipped?` (수동 편집이라 안 건드리고 넘어간 것 ${manualSkipped}개 — 직접 확인 필요)`:''));
   }catch(e){
     _ytSetProg('오류: '+e.message);
   }finally{
@@ -2146,12 +2226,15 @@ function _atmMatchesMember(m,title,tokens,groupKo){
 // 5명이 다 태깅돼 미나미 연결 카드에까지 리브 단독 영상이 섞여 나오던 오염 사고로 발견됨(2026-08-03).
 // 신규 태깅(_ytAutoTagMembers)과 재검증(_ytSweepMembersMistag) 양쪽이 이 헬퍼를 공유해야, 재검증
 // 버튼을 눌렀을 때 이미 오염된 기존 행도 같은 기준으로 걷어낼 수 있다.
-function _atmResolveMembers(title,description,roster,groupKo){
+function _atmResolveMembers(title,description,roster,groupKo,publishedAt){
+  // publishedAt(영상 발행일, "YYYY-MM-DD")이 주어지면 그 시점에 이미 탈퇴한 멤버는 매칭 후보에서 제외
+  // (_memberLeftCutoffDate 참고) — 그룹은 활동 중이어도 탈퇴 멤버는 그 이후 영상에 안 나오는 게 정상.
+  const roster2=publishedAt?roster.filter(m=>{const c=_memberLeftCutoffDate(m);return !c||publishedAt<=c;}):roster;
   const t=title||'';
-  const hitTitle=roster.filter(m=>_atmMatchesMember(m,t,_atmTokenize(t),groupKo)).map(m=>m.ko);
+  const hitTitle=roster2.filter(m=>_atmMatchesMember(m,t,_atmTokenize(t),groupKo)).map(m=>m.ko);
   const searchText=description?`${t}\n${description}`:t;
-  const hitFull=roster.filter(m=>_atmMatchesMember(m,searchText,_atmTokenize(searchText),groupKo)).map(m=>m.ko);
-  if(roster.length>0&&hitFull.length===roster.length&&hitTitle.length<roster.length)return hitTitle;
+  const hitFull=roster2.filter(m=>_atmMatchesMember(m,searchText,_atmTokenize(searchText),groupKo)).map(m=>m.ko);
+  if(roster2.length>0&&hitFull.length===roster2.length&&hitTitle.length<roster2.length)return hitTitle;
   return hitFull;
 }
 async function _ytAutoTagMembers(){
@@ -2167,7 +2250,7 @@ async function _ytAutoTagMembers(){
       // 채널에서는 영원히 로스터에 안 잡혀 자동 태깅 대상에서 빠짐 — 겸임 소속까지 보는 _artistGroups로 판정
       // (2026-07-31, 우주소녀 채널의 유연정 단독 영상이 계속 미태깅으로 남아 다른 멤버 카드에도 "그룹 전체
       // 미태깅 영상"으로 잘못 노출되던 문제의 원인).
-      const members=ARTISTS.filter(a=>_artistGroups(a).some(g=>g.ko===gko)).map(a=>({ko:a.name.ko,en:a.name.en}));
+      const members=ARTISTS.filter(a=>_artistGroups(a).some(g=>g.ko===gko)).map(a=>({ko:a.name.ko,en:a.name.en,left:a.left}));
       if(!members.length)continue;
       _ytSetProg(`[${gi+1}/${groupKos.length}] ${gko}: 미태깅 영상 조회 중…`);
       // 같은 그룹 멤버(members)가 비어있거나, 콜라보(with_members/with_groups)가 아직 하나도 안 잡힌
@@ -2177,7 +2260,7 @@ async function _ytAutoTagMembers(){
       // 4개 조건을 .or() 한 번에 다 넣어야 OR로 묶임 — .or()를 여러 번 체이닝하면 AND로 묶여서
       // "members도 비고 AND with_members도 빈" 행만 걸리는 버그가 났던 적이 있었음(같은 실수 재발 방지).
       const{data:rows,error}=await _sbFetchAll(()=>sb.from(_YT_TABLE)
-        .select('id,title,members,with_members,with_groups')
+        .select('id,title,members,with_members,with_groups,published_at')
         .eq('group_ko',gko)
         .eq('tags_manual',false) // 관리자가 태그 모달에서 직접 저장한 행은 자동 태깅이 절대 건드리지 않음
         .or('members.eq.{},members.is.null,with_members.eq.{},with_members.is.null')
@@ -2207,7 +2290,7 @@ async function _ytAutoTagMembers(){
           // 오탐 위험이 커서 의도적으로 제목만 그대로 쓴다 — 아래 _m2ParseTitle(title,gko) 참고.
           // 단, 설명란까지 포함했을 때 로스터 전원이 매칭되는데 제목만으로는 전원이 안 잡히면 채널
           // 시그니처 블록일 가능성이 높다고 보고 제목 매칭만 신뢰함 — _atmResolveMembers 참고.
-          const hit=_atmResolveMembers(title,descByIdText.get(v.id),members,gko);
+          const hit=_atmResolveMembers(title,descByIdText.get(v.id),members,gko,v.published_at);
           if(hit.length)patch.members=[...new Set(hit)];
         }
         // 콜라보(다른 그룹 멤버 언급) 감지 — 외부채널 태깅에 이미 쓰던 _m2ParseTitle을 그대로 재사용.
@@ -2268,13 +2351,13 @@ async function _ytRetagAllIncludingTagged(){
     let grandMatched=0,grandChecked=0;
     for(let gi=0;gi<groupKos.length;gi++){
       const gko=groupKos[gi];
-      const members=ARTISTS.filter(a=>_artistGroups(a).some(g=>g.ko===gko)).map(a=>({ko:a.name.ko,en:a.name.en}));
+      const members=ARTISTS.filter(a=>_artistGroups(a).some(g=>g.ko===gko)).map(a=>({ko:a.name.ko,en:a.name.en,left:a.left}));
       if(!members.length)continue;
       _ytSetProg(`[${gi+1}/${groupKos.length}] ${gko}: 전체 영상 조회 중…`);
       // 미태깅분 버튼과 달리 members/with_members 상태로 거르지 않고 이 그룹 전체를 다 훑는다 —
       // tags_manual=false만 지켜지면 됨(관리자가 손댄 행은 여기서부터 절대 후보에 안 들어감).
       const{data:rows,error}=await _sbFetchAll(()=>sb.from(_YT_TABLE)
-        .select('id,title,description,members,with_members,with_groups')
+        .select('id,title,description,members,with_members,with_groups,published_at')
         .eq('group_ko',gko)
         .eq('tags_manual',false)
         .order('id'));
@@ -2287,7 +2370,7 @@ async function _ytRetagAllIncludingTagged(){
         // 자체 멤버: 새로 잡힌 이름을 기존 members에 합집합으로 더함(빼는 건 절대 안 함 — 삭제는
         // 별도 재검증 버튼의 몫).
         const curMembers=v.members||[];
-        const hit=_atmResolveMembers(title,v.description,members,gko);
+        const hit=_atmResolveMembers(title,v.description,members,gko,v.published_at);
         const unionMembers=[...new Set([...curMembers,...hit])];
         if(unionMembers.length!==curMembers.length)patch.members=unionMembers;
         // 콜라보: 새로 특정 멤버까지 잡히면 "그룹 전체" 표시(with_groups)를 그 멤버 표기(with_members)로
@@ -3652,6 +3735,7 @@ document.getElementById('vid-tag-thumb-refresh').addEventListener('click',async 
   document.getElementById('sp-collabfix-btn')?.addEventListener('click',_ytSweepAmbiguousCollabMistag);
   document.getElementById('sp-scan-namecollide-btn')?.addEventListener('click',_ytScanAmbiguousNameGroupMisassignment);
   document.getElementById('sp-membersfix-btn')?.addEventListener('click',_ytSweepMembersMistag);
+  document.getElementById('sp-onlyoneof-love-btn')?.addEventListener('click',_ytFixOnlyoneofLoveMistag);
   document.getElementById('sp-catfix-btn')?.addEventListener('click',_ytSweepCategoryMistag);
   document.getElementById('sp-yt-autotag')?.addEventListener('click',_ytAutoTagMembers);
   document.getElementById('sp-yt-retag-all')?.addEventListener('click',_ytRetagAllIncludingTagged);
