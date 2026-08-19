@@ -40,6 +40,15 @@ function slugify(en, fallbackKo) {
   const slug = base.replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
   return slug || 'group';
 }
+// 그룹명 끝에 마침표/공백이 있으면(H.O.T., S.E.S.) Windows가 폴더 생성 시 이를 자동으로 잘라내서,
+// 로컬(Node)이 만든 실제 폴더명과 git.exe가 인식하는 경로가 어긋나 "could not open directory"로
+// 조용히 커밋에서 누락되는 문제가 있었음(2026-08-19, git 클론 기반 배포로 전환하며 실측 발견 — git
+// add -A 실행 시 이 두 그룹만 경고와 함께 통째로 빠짐). 폴더/URL 경로에서만 끝 마침표·공백을 제거하고,
+// 화면 표시 텍스트나 앱 내부 딥링크 해시(#g=...)는 원래 이름(H.O.T. 그대로) 그대로 써야 앱의 GROUPS
+// 키와 어긋나지 않는다.
+function urlSafeKo(ko) {
+  return ko.replace(/[.\s]+$/, '');
+}
 function ordinal(n) {
   const s = ['th', 'st', 'nd', 'rd'], v = n % 100;
   return n + (s[(v - 20) % 10] || s[v] || s[0]);
@@ -80,7 +89,7 @@ groupKos.forEach(ko => {
   const en = info.en || ko;
   const slug = slugify(en, ko);
   const members = membersOf(ko);
-  const koPath = `g/${ko}/`;
+  const koPath = `g/${urlSafeKo(ko)}/`;
   const enPath = `en/g/${slug}/`;
   const koUrl = `${SITE}/${koPath}`;
   const enUrl = `${SITE}/${enPath}`;
