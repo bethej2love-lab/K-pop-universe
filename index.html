@@ -6923,18 +6923,17 @@ function _ordinal(n){
   return n+(s[(v-20)%10]||s[v]||s[0]);
 }
 function _discogTypeLabel(type){
-  if(type==='싱글')return'Single';
-  // 영어 모드는 "N집"의 "집"(한국어 단위 명사)이 그대로 남으면 어색해서 서수+Full/Mini 순서로 재배치
-  // ("정규 2집"→"2nd Full") — 한국어 모드는 "Mini"만 원래 영단어라 "Mini 5집"처럼 그대로 둬도 자연스러움
-  // (2026-08-18, 사용자 요청).
+  // 영어 모드는 "N집"의 "집"(한국어 단위 명사)이 어색해 서수+Full/Mini로 재배치("정규 2집"→"2nd Full").
   if(currentLang==='en'){
+    if(type==='싱글')return'Single';
     const m=(type||'').match(/^(미니|정규|EP)\s*(\d+)집$/);
     if(m)return `${_ordinal(+m[2])} ${m[1]==='정규'?'Full':'Mini'}`;
     return (type||'').replace(/^(미니|EP)/,'Mini').replace(/^정규/,'Full');
   }
-  // groups.json 원본에 "미니 N집" 계열 말고 그냥 "EP" 단독으로 박힌 앨범도 있어서(_discogBucket의
-  // /^(미니|EP)/ 버킷 판정과 동일 패턴으로) 같이 잡아야 "EP" 문구가 화면에 안 남는다(2026-08-18).
-  return (type||'').replace(/^(미니|EP)/,'Mini');
+  // 한국어 모드: 앨범 커버 밑 캡션은 원본 한국어 그대로 표기("미니 5집"/"정규 2집"/"싱글") — 필터 탭
+  // (_discogBucketLabel)만 Mini/Single 영문 유지(2026-08-19, 사용자 요청 — 이전 "미니"→"Mini" 통일 번복).
+  // 원본에 그냥 "EP" 단독으로 박힌 것만 "미니"로 정리("EP" 문구가 화면에 남지 않게).
+  return (type||'').replace(/^EP\b/,'미니');
 }
 function _renderGcDiscography(ko){
   const row=document.getElementById('gc-discog-row');
@@ -13956,11 +13955,18 @@ function _makeChVidController(contId){
       }else if(state.wrapPhase){
         hasMore=state.offset<state.wrapEnd;
         if(!hasMore)state.wrapEnd=0; // 한 바퀴 다 돌았으니 리셋
+      }else if(state.wrapEnd>0){
+        // 청크 랜덤 샘플링의 "정방향 구간"(랜덤 시작점→total)이 아직 안 끝난 상태. 청크는 24곳×2개를
+        // id로 중복제거해 합치므로 지점이 겹치면 이번 페이지가 _YT_PAGE(48)보다 적어지는데, 그걸 아래
+        // else의 "페이지 충만도(>=48)"로 판정하면 "더 없음"으로 잘못 끝나서 총개수 "N개" 라벨만 뜨고
+        // 스크롤이 죽었음(2026-08-19, 사용자 제보 — 추천순 기본 오픈에 청크를 적용하며 드러난 회귀버그).
+        // 청크 구간에선 페이지 충만도가 아니라 "남은 구간(offset<total)"으로 판정한다(빈 응답이면
+        // 총개수 stale 등으로 인한 무한루프 방지 위해 종료).
+        hasMore=state.offset<state.total&&(data?.length||0)>0;
       }else{
         // count 없이 페이지네이션: 이번 페이지가 요청한 만큼(_YT_PAGE) 꽉 찼으면 아직 더 있다고 보고,
         // 덜 찼으면 정확히 끝(표준 offset LIMIT+1 없이도 되는 이유는 .range()가 요청 개수를 그대로
-        // 반영하기 때문). wrapEnd가 0인 일반 순차 페이지네이션(초기 오픈+무한스크롤)에서만 타는 분기라
-        // 청크 랜덤(위 두 분기)엔 영향 없음(2026-08-06, 사용자 요청 — count:'exact' 비용 제거).
+        // 반영하기 때문). wrapEnd가 0인 일반 순차 페이지네이션(초기 오픈+무한스크롤)에서만 타는 분기.
         hasMore=(data?.length||0)>=_YT_PAGE;
       }
       state.hasMore=hasMore;
