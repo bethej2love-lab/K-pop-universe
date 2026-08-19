@@ -4763,6 +4763,11 @@ function _getSongsFeaturingArtist(a){
 // 합쳐서 보여준다. 세션 중 앵커별로 캐시(_connApiCache)해두고, 카드 열릴 때 비동기로 채운 뒤 재렌더링.
 let _connApiCache=new Map(); // key: "이름|그룹" → {songs:[...], names:Set}
 function _connCacheKey(a){return`${a.name.ko}|${a.group.ko}`;}
+// _buildConnContent가 매 재렌더링(칩 클릭 등)마다 다시 계산하던 무거운 값들의 캐시 — 앵커+API 데이터
+// 보유 여부가 바뀔 때만 리셋됨(그 함수 내부 참고). 이름별 콜라보 수(_collabCountCache)뿐 아니라
+// 전체 콜라보 이름 목록(_collabNamesCache)·그룹 동시출연 쌍(_coGroupPairsCache)도 같이 캐시 —
+// 셋 다 같은 입력(_connAnchor+API 상태)에 대해 결과가 고정이라 굳이 매번 다시 구할 필요가 없었음.
+let _collabCountCache=new Map(),_collabCountCacheKey=null,_collabNamesCache=null,_coGroupPairsCache=null;
 async function _fetchApiCollabData(anchor){
   if(!sb)return{songs:[],names:new Set()};
   const memberKo=anchor.name.ko;
@@ -4907,7 +4912,19 @@ function _updateConnBtn(a){
   connBtn.onclick=showBtn?e=>{
     e.stopPropagation();
     if(connPanelEl.classList.contains('open')&&_connAnchor===a){closeConnCard();}
-    else{openConnCard(a);}
+    else{
+      // openConnCard(특히 _buildConnContent)가 이름이 많은 인기 멤버는(콜라보 API 데이터까지 합치면
+      // 수백 개) 첫 렌더에 몇 초씩 걸릴 수 있어(2026-08-19, 사용자 제보 — "연결 카드 뜨는 게 너무
+      // 늦다"). 자바스크립트가 그동안 메인 스레드를 막고 있어서 버튼 상태를 먼저 바꿔놔도 바로는 안
+      // 그려지므로, 로딩 표시를 붙인 뒤 한 프레임 쉬어 화면에 반영될 시간을 주고 나서 무거운 작업을
+      // 시작한다. _collabCountCache를 앵커별로 유지하도록 고쳐서(_buildConnContent 참고) 두 번째부터는
+      // 이 로딩이 거의 안 보일 정도로 빨라짐 — 처음 여는 순간에만 체감됨.
+      connBtn.classList.add('conn-btn-loading');
+      requestAnimationFrame(()=>requestAnimationFrame(()=>{
+        openConnCard(a);
+        connBtn.classList.remove('conn-btn-loading');
+      }));
+    }
   }:null;
 }
 // 관리자가 영상 태깅 모달에서 with 멤버를 새로 추가/수정했을 때, 지금 열려있는 멤버 카드의 콜라보
@@ -5147,15 +5164,28 @@ function _buildConnContent(container){
     container.appendChild(famSec);
   }
 
-  // 멤버 목록 분류: 같은 그룹(이름만) vs 타 그룹("이름(그룹)")
-  const allCollabNames=_getCollabMembers(_connAnchor);
-  const sameGroupNames=allCollabNames.filter(n=>!n.includes('('));
-  const otherGroupNames=allCollabNames.filter(n=>n.includes('('));
-
   // 콜라보 영상 수는 이름별로 한 번만 계산해서 재사용 — _getCollabSongs가 내부적으로 전체 콜라보
   // 목록을 필터링하는 무거운 함수라, 정렬 비교(.sort) 콜백 안에서 그때그때 다시 부르면 이름이
   // 많을수록(N log N 비교) 같은 계산을 수십~수백 번 반복하게 되어 연결 카드가 느려지는 원인이었다.
-  const _collabCountCache=new Map();
+  // ⚠️ 이 캐시는 예전엔 함수 호출마다 새로 만드는 지역변수였음 — 즉 주석과 달리 실제로는 전혀
+  // 재사용이 안 되고 있었다: 칩 하나 펼치는 것만으로도(재렌더링 = _buildConnContent 재호출)
+  // 이름 전부를 처음부터 다시 계산했고, 특히 API 콜라보 데이터(_enrichConnCardFromApi)가 도착해
+  // 이름 수가 확 늘어난 뒤 재렌더링될 때 활동 많은 멤버는 이름이 수백 개까지 늘어나 각각 6~20ms인
+  // _getCollabSongs가 그만큼 반복 호출되며 연결 카드 오픈이 수 초씩 걸리는 원인이었다(2026-08-19,
+  // 사용자 제보로 실측 확인). 앵커+API 데이터 보유 여부가 그대로인 동안은(칩 선택/그룹 펼치기 등
+  // 순수 재렌더링) 캐시를 그대로 들고 가고, 앵커가 바뀌거나 API 데이터가 새로 도착한 시점에만 새로
+  // 만들도록 모듈 전역 변수로 전환. 같은 이유로 전체 콜라보 이름 목록(_getCollabMembers)과 그룹
+  // 동시출연 쌍 계산(_getCollabSongs 전체 조회)도 같이 이 키로 캐시.
+  const _collabCacheKey=_connCacheKey(_connAnchor)+'|'+(_connApiCache.has(_connCacheKey(_connAnchor))?'api':'noapi');
+  if(_collabCountCacheKey!==_collabCacheKey){
+    _collabCountCacheKey=_collabCacheKey;
+    _collabCountCache=new Map();
+    _collabNamesCache=_getCollabMembers(_connAnchor);
+    _coGroupPairsCache=null; // 아래에서 처음 쓰일 때 계산(그룹 콜라보 없는 앵커면 아예 안 씀)
+  }
+  const allCollabNames=_collabNamesCache;
+  const sameGroupNames=allCollabNames.filter(n=>!n.includes('('));
+  const otherGroupNames=allCollabNames.filter(n=>n.includes('('));
   const _collabCount=name=>{
     if(!_collabCountCache.has(name))_collabCountCache.set(name,_getCollabSongs(_connAnchor,[name],false).length);
     return _collabCountCache.get(name);
@@ -5197,18 +5227,21 @@ function _buildConnContent(container){
   // 그룹 두 개가 실제로 같은 영상에 함께 나온 적 있는지 미리 계산 — 겹치는 콜라보가 있을 때만 두 그룹을
   // 동시에 펼쳐두고, 없으면 새 그룹을 열 때 이전에 열려있던 그룹은 자동으로 닫는다(자리 차지 줄이기,
   // 2026-08-04 사용자 요청 — "성현+하루아"처럼 실제 겹치는 경우만 동시 비교 가능하면 됨).
-  const _coGroupPairs=new Set(); // "gkoA|gkoB"(정렬됨) 조합
-  _getCollabSongs(_connAnchor,[],false,new Set()).forEach(sg=>{
-    const gkosInSong=new Set();
-    (sg.with||[]).forEach(n=>{
-      const m=n.match(/^(.+)\((.+)\)$/);
-      if(m)gkosInSong.add(m[2]);
+  if(!_coGroupPairsCache){
+    _coGroupPairsCache=new Set(); // "gkoA|gkoB"(정렬됨) 조합
+    _getCollabSongs(_connAnchor,[],false,new Set()).forEach(sg=>{
+      const gkosInSong=new Set();
+      (sg.with||[]).forEach(n=>{
+        const m=n.match(/^(.+)\((.+)\)$/);
+        if(m)gkosInSong.add(m[2]);
+      });
+      if(gkosInSong.size>1){
+        const arr=[...gkosInSong];
+        for(let i=0;i<arr.length;i++)for(let j=i+1;j<arr.length;j++)_coGroupPairsCache.add([arr[i],arr[j]].sort().join('|'));
+      }
     });
-    if(gkosInSong.size>1){
-      const arr=[...gkosInSong];
-      for(let i=0;i<arr.length;i++)for(let j=i+1;j<arr.length;j++)_coGroupPairs.add([arr[i],arr[j]].sort().join('|'));
-    }
-  });
+  }
+  const _coGroupPairs=_coGroupPairsCache;
   function _groupsCoAppear(gkoA,gkoB){return _coGroupPairs.has([gkoA,gkoB].sort().join('|'));}
 
   // 멤버 칩 하나 빌드 (같은 그룹 / 타 그룹 펼침 양쪽 공용)
@@ -8776,13 +8809,17 @@ function _syncPublicCollection(col){
   if(!sb||!window._sbSession)return;
   const uid=window._sbSession.user.id;
   if(col.isPublic){
-    // public_collections엔 커버 지정 여부를 담을 별도 컬럼이 없음 — 다른 유저 카드 쪽 렌더링
-    // (_renderCollectionRow)이 항상 items[0]을 커버로 쓰므로, 지정된 커버 영상이 있으면 그것만
-    // 앞으로 옮겨서 보낸다(로컬 col.videos 자체의 순서는 안 건드림, 재정렬 기능과는 별개).
+    // 핀으로 지정한 커버 영상(coverU)은 public_collections에 그 값을 담을 컬럼이 없어서, 다른 유저
+    // 카드 쪽 렌더링(_renderCollectionRow)이 항상 items[0]을 커버로 쓰는 점을 이용해 지정된 커버 영상을
+    // 맨 앞으로 옮겨서 보낸다(로컬 col.videos 자체의 순서는 안 건드림, 재정렬 기능과는 별개).
+    // 업로드한 커스텀 표지 사진(coverImg)은 cover_img 컬럼에 그대로 실어 보낸다(2026-08-19, 사용자
+    // 제보로 발견 — 공개 컬렉션은 커스텀 표지를 담을 데가 아예 없어서 다른 유저 카드엔 항상 예전
+    // 영상 썸네일로만 보이던 문제. public_collections_cover_img_migration.sql 실행 필요).
     const cover=_colCoverVideo(col);
     const items=(cover&&col.videos[0]!==cover)?[cover,...col.videos.filter(v=>v!==cover)]:col.videos;
     sb.from('public_collections').upsert({
       id:col.id,owner_id:uid,owner_nick:myProfile?.nickname||null,name:col.name,desc:col.desc||null,items,
+      cover_img:col.coverImg||null,
       group_kos:_collectionGroupKos(col),member_kos:_collectionMemberKos(col),updated_at:new Date().toISOString()
     }).then(({error})=>{if(error)console.error('공개 컬렉션 동기화 실패',error.message);});
   }else{
@@ -8903,6 +8940,7 @@ function renderCollectionSection(){
         const{data:{publicUrl}}=sb.storage.from('artist-pics').getPublicUrl(path);
         col.coverImg=publicUrl;
         _saveCollections();
+        if(col.isPublic)_syncPublicCollection(col); // 이미 공개된 컬렉션이면 새 표지를 바로 다른 유저 쪽에도 반영
         img.src=publicUrl;img.style.background='';
       }catch(e){console.error(e);}finally{camBtn.classList.remove('cam-uploading');}
     });
@@ -11786,6 +11824,33 @@ async function _buildFeedYearlyTop(list){
     _appendFeedCard(list,'🏅',label,sub,()=>_openFeedListOverlay(label,sub,songs),top1.thumb);
   }catch(e){/* 조용히 무시 */}
 }
+// 레전드 100 — 위 연도별 TOP 100과 같은 구조인데 연도 제한이 없는 전체 기간(역대) 조회수 기준
+// (2026-08-19, 사용자 요청). 매번 같은 결과라 무한스크롤 반복 풀(_FEED_MORE_RANDOM_FNS)에는 안 넣고
+// 패널 열 때 한 번만(3분 TTL) 뽑히는 초기 카드로만 둔다 — 반복 호출해도 새로울 게 없어서.
+async function _buildFeedLegend100(list){
+  if(!sb)return;
+  const vidUrl=v=>v.category==='short'?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;
+  try{
+    const{data,error}=await sb.from(_YT_TABLE)
+      .select('id,title,thumb,category,content_flag,view_count,published_at')
+      .eq('category','live')
+      .not('view_count','is',null)
+      .or('content_flag.is.null,content_flag.neq.기타')
+      .or('content_flag.is.null,content_flag.neq.무관')
+      .or('content_flag.is.null,content_flag.neq.hidden')
+      .order('view_count',{ascending:false})
+      .limit(200);
+    if(error||!data?.length)return;
+    const vids=_filterBannedVideos(data).slice(0,100);
+    if(vids.length<3)return;
+    const songs=vids.map(v=>({t:v.title,u:vidUrl(v),thumb:v.thumb,vc:v.view_count,pa:v.published_at?.slice(0,10)}));
+    const label=currentLang==='ko'?'레전드 100':'Legend 100';
+    const top1=vids[0];
+    const fmtN=n=>n>=1000000?Math.floor(n/1000000)+'M+':n>=1000?Math.floor(n/1000)+'K+':String(n);
+    const sub=top1.view_count?(currentLang==='ko'?`1위 · ${fmtN(top1.view_count)} 조회`:`#1 · ${fmtN(top1.view_count)} views`):(currentLang==='ko'?'라이브·직캠 역대 조회수 기준':'Based on all-time live/fancam views');
+    _appendFeedCard(list,'👑',label,sub,()=>_openFeedListOverlay(label,sub,songs),top1.thumb);
+  }catch(e){/* 조용히 무시 */}
+}
 function _feedFormatNameList(namesWithGroup,groupsOnly){
   const names=(namesWithGroup||[]).map(s=>{const m=s.match(/^(.+)\((.+)\)$/);return m?m[1]:s;});
   return[...names,...(groupsOnly||[])].join(', ');
@@ -13804,7 +13869,7 @@ let _pubCollectionsP=null;
 async function _warmPubCollections(){
   if(!sb)return;
   try{
-    const{data,error}=await sb.from('public_collections').select('id,owner_id,owner_nick,name,desc,items,member_kos,group_kos,updated_at').order('updated_at',{ascending:false});
+    const{data,error}=await sb.from('public_collections').select('id,owner_id,owner_nick,name,desc,items,cover_img,member_kos,group_kos,updated_at').order('updated_at',{ascending:false});
     if(error){console.error('public_collections warm failed',error);return;}
     _pubCollectionsCache=data||[];
   }catch(e){console.error('_warmPubCollections failed',e);}
@@ -13814,7 +13879,7 @@ async function _loadCollectionRow(ko,containerId,memberKo,cardMemberKo){
   if(row)row.style.display='none';
   const uid=window._sbSession?.user?.id||null;
   const mine=collections.filter(c=>memberKo?_collectionMemberKos(c).includes(memberKo):_collectionGroupKos(c).includes(ko))
-    .map(c=>({id:c.id,name:c.name,videos:c.videos,coverU:c.coverU,mine:true}));
+    .map(c=>({id:c.id,name:c.name,videos:c.videos,coverU:c.coverU,coverImg:c.coverImg,mine:true}));
   let pub=[];
   if(sb){
     if(_pubCollectionsP)await _pubCollectionsP;
@@ -13823,7 +13888,7 @@ async function _loadCollectionRow(ko,containerId,memberKo,cardMemberKo){
     const mineIds=new Set(mine.map(m=>m.id));
     pub=all.filter(r=>!mineIds.has(r.id)&&(memberKo?(r.member_kos||[]).includes(memberKo):(r.group_kos||[]).includes(ko)))
       .sort((a,b)=>(_colLikeCounts.get(b.id)||0)-(_colLikeCounts.get(a.id)||0))
-      .slice(0,20).map(r=>({id:r.id,name:r.name,videos:r.items||[],mine:r.owner_id===uid,ownerNick:r.owner_nick||null}));
+      .slice(0,20).map(r=>({id:r.id,name:r.name,videos:r.items||[],coverImg:r.cover_img||null,mine:r.owner_id===uid,ownerNick:r.owner_nick||null}));
   }
   // 대기 중 다른 카드로 전환됐으면 건너뜀
   if(cardMemberKo?_openTArtist?.name?.ko!==cardMemberKo:_openGCko!==ko)return;
