@@ -68,22 +68,22 @@
     <div id="my-page-bias"></div>
     <div id="fav-section">
       <div class="fav-hd"><span class="fav-hd-lbl">FAVORITES</span><button id="fav-mode-btn" class="sp-tog">Highlight</button></div>
-      <div id="fav-list"><div class="fav-empty">즐겨찾기가 없어요</div></div>
+      <div id="fav-list"><div class="fav-empty">아직 즐겨찾기가 없어요</div></div>
       <button id="uc-card-btn" data-i18n="ucCardBtn">✦ 내 우주 카드 만들기</button>
     </div>
     <div id="collection-section">
       <div class="fav-hd"><span class="fav-hd-lbl">COLLECTIONS</span></div>
-      <div id="collection-list"><div class="fav-empty" data-i18n="colEmpty">컬렉션이 없어요</div></div>
+      <div id="collection-list"><div class="fav-empty" data-i18n="colEmpty">아직 모아둔 컬렉션이 없어요</div></div>
       <button id="col-create-btn" data-i18n="colNewBtn">+ 새 컬렉션</button>
     </div>
     <div id="scrap-section">
       <div class="fav-hd"><span class="fav-hd-lbl">LIKES</span></div>
-      <div id="scrap-list"><div class="fav-empty">스크랩한 영상이 없어요</div></div>
+      <div id="scrap-list"><div class="fav-empty">아직 담아둔 영상이 없어요</div></div>
       <button id="scrap-viewall-btn" style="display:none">전체보기</button>
     </div>
     <div id="concert-section">
       <div class="fav-hd"><span class="fav-hd-lbl">CONCERTS</span></div>
-      <div id="concert-log-list"><div class="fav-empty">다녀온 공연이 없어요</div></div>
+      <div id="concert-log-list"><div class="fav-empty">아직 기록한 공연이 없어요</div></div>
     </div>
     <div id="filter-panel">
       <div id="filter-panel-hd">
@@ -244,6 +244,10 @@
       <label class="sw"><input type="checkbox" id="sp-hint-toggle"><span class="sw-track"><span class="sw-thumb"></span></span></label>
     </div>
 
+    <div class="sp-subsec-lbl">사용자 피드백</div>
+    <button class="sp-yt-sync" id="sp-fb-btn" style="opacity:.8;">피드백 보기</button>
+    <div class="sp-btn-hint">유저들이 보낸 피드백 목록을 확인해요.</div>
+
     <div class="sp-subsec-lbl">동기화</div>
     <input type="text" class="sp-yt-key" id="sp-yt-key" placeholder="API 키 (AIzaSy...)" autocomplete="off" spellcheck="false">
     <button class="sp-yt-sync" id="sp-yt-sync">1. 전체 동기화 (공식 + 외부 채널)</button>
@@ -283,9 +287,6 @@
       <div class="sp-btn-hint">여러 URL을 한 줄에 하나씩 붙여넣고 한 번에 추가해요.</div>
     </div>
 
-    <div class="sp-subsec-lbl" style="margin-top:10px;">사용자 피드백</div>
-    <button class="sp-yt-sync" id="sp-fb-btn" style="opacity:.8;">피드백 보기</button>
-    <div class="sp-btn-hint">유저들이 보낸 피드백 목록을 확인해요.</div>
 
     <div class="sp-subsec-lbl" style="margin-top:10px;">검수</div>
     <button class="sp-yt-sync" id="sp-hnn-btn" style="opacity:.8;">검수 센터</button>
@@ -411,6 +412,34 @@
       <div id="hnn-wl-sec">
         <div class="hnn-sec-lbl">흔한단어 보호 목록 (해시태그로만 인정)</div>
         <div id="hnn-wl-list"></div>
+      </div>
+      <div id="hnn-atm-sec">
+        <div class="hnn-sec-lbl">기타 태깅 예외 규칙 (재배포 없이 즉시 반영)</div>
+        <div class="hnn-atm-sub">
+          <div class="hnn-atm-sub-lbl">성씨 오매칭 제외 — 이름+성씨 조합 중 우연히 겹치는 흔한 성씨 제외</div>
+          <div id="hnn-atm-surname-list" class="hnn-atm-list"></div>
+          <div class="hnn-atm-add-row">
+            <input id="hnn-atm-surname-name" type="text" placeholder="멤버 이름(예: 가인)">
+            <input id="hnn-atm-surname-value" type="text" placeholder="제외할 성씨(예: 송)">
+            <button id="hnn-atm-surname-add" type="button">추가</button>
+          </div>
+        </div>
+        <div class="hnn-atm-sub">
+          <div class="hnn-atm-sub-lbl">동시매칭시 무시 — 흔한 곡/유행어와 겹치는 그룹명, 다른 그룹과 같이 잡히면 버림</div>
+          <div id="hnn-atm-comatch-list" class="hnn-atm-list"></div>
+          <div class="hnn-atm-add-row">
+            <input id="hnn-atm-comatch-value" type="text" placeholder="그룹명(예: 슈퍼노바)">
+            <button id="hnn-atm-comatch-add" type="button">추가</button>
+          </div>
+        </div>
+        <div class="hnn-atm-sub">
+          <div class="hnn-atm-sub-lbl">리터럴 전용 토큰 — 특수문자 포함 그룹명, 정규화 없이 원문 그대로만 인정</div>
+          <div id="hnn-atm-literal-list" class="hnn-atm-list"></div>
+          <div class="hnn-atm-add-row">
+            <input id="hnn-atm-literal-value" type="text" placeholder="토큰(예: 15&)">
+            <button id="hnn-atm-literal-add" type="button">추가</button>
+          </div>
+        </div>
       </div>
     </div>
     <div class="hnn-pane" id="hnn-pane-wonkok">
@@ -1268,11 +1297,11 @@ const T={
       idxSortName:'이름 (가나다순)',idxSortDebut:'데뷔연도',idxSortAgency:'소속사',idxSortMembers:'멤버 수',
       idxSortBirth:'생년',idxSortGroup:'그룹명',idxSortNation:'국적',ppTitle:'내 프로필',ppNick:'닉네임',ppNickPH:'닉네임을 입력하세요',ppNickErr:'닉네임을 입력해주세요',ppBio:'한 줄 소개',ppBioPH:'선택사항',ppColor:'내 별 색상',ppFavLabel:'좋아요 공개',ppFavSub:'다른 사람들이 볼 수 있어요',ppSyncLabel:'다른 기기와 동기화',ppSyncSub:'다른 기기에서도 좋아요가 유지돼요',ppGoogleBtn:'구글로 연결하기',ppXBtn:'X로 연결하기',ppLinked:'계정에 연결됨 ✓',ppLogout:'로그아웃',ppSave:'저장',
       fbBtnLabel:'💬 피드백 보내기',fbTitle:'피드백 보내기',fbCatBug:'버그 제보',fbCatSuggest:'제안',fbCatEtc:'기타',fbTextPH:'어떤 내용인지 편하게 적어주세요',fbContactPH:'답장 받을 이메일(선택)',fbErrEmpty:'내용을 입력해주세요',fbCancel:'취소',fbSubmit:'보내기',fbSending:'보내는 중…',fbSent:'전달됐어요!',fbSendFail:'전송에 실패했어요. 잠시 후 다시 시도해주세요.',
-      cancel:'취소',colNewBtn:'+ 새 컬렉션',colNewFullBtn:'+ 새 컬렉션 만들기',colNamePH:'이름 입력',colEmpty:'컬렉션이 없어요',colCreateConfirm:'만들기',
+      cancel:'취소',colNewBtn:'+ 새 컬렉션',colNewFullBtn:'+ 새 컬렉션 만들기',colNamePH:'이름 입력',colEmpty:'아직 모아둔 컬렉션이 없어요',colCreateConfirm:'만들기',
       selLabel:'선택',selBtnTitle:'영상 여러 개 선택',sortTitle:'정렬',refreshTitle:'새로고침',searchClearLabel:'검색어 지우기',userBulkAdd:'컬렉션에 추가',
       ucCardBtn:'✦ 내 우주 카드 만들기',ucCardTitle:'내 우주 카드',ucCardClose:'닫기',ucCardSave:'저장',ucCardShare:'공유',
       ucCardNeedFav:'먼저 즐겨찾기 하이라이트(♥)를 켜주세요',ucCardAligning:'정렬 중이에요, 잠시 후 다시 시도해주세요',
-      ucCardGenerating:'카드 생성 중…',ucCardNoFav:'카드를 만들 즐겨찾기가 없어요',ucCardSaved:'이미지가 저장됐어요 — 앱에서 직접 공유해주세요',
+      ucCardGenerating:'카드 생성 중…',ucCardNoFav:'카드를 만들려면 먼저 별을 하나 찜해보세요!',ucCardSaved:'이미지가 저장됐어요 — 앱에서 직접 공유해주세요',
       debutCardTitle:'데뷔 기념일 카드',debutCardFail:'카드를 만들 수 없어요'},
   en:{sp_title:'Settings',debutYr:'Debut Year',birthYr:'Birth Year',grpType:'Group Type',
       genLabel:'Generation',genNote:'Just for fun',
@@ -1689,7 +1718,11 @@ async function buildUniverse(){
     const fillMat=new THREE.ShaderMaterial({
       uniforms:{
         uColor:{value:color},
-        uFresnelMult:{value:0.15},
+        // 세대별 표면 물성 파일럿 2차 시도(2026-08-20) — 새 셰이더 코드(노이즈) 대신 기존 uFresnelMult
+        // 값만 1세대에 한해 낮춤(0.15→0.09, "테두리가 너무 선명하다"는 피드백을 1세대 차별화 축으로 사용).
+        // 그레인(고주파 noise) 시도는 화면이 통째로 안 보이는 회귀를 일으켜서 되돌림 — 새 GLSL 분기 없이
+        // 기존 uniform 값만 바꾸는 훨씬 안전한 방식으로 재시도.
+        uFresnelMult:{value:_groupGeneration(info.debut,ko)===1?0.09:0.15},
         uBaseOp:{value:0.0},
         uFillOp:{value:0.0},
         uSunDir:{value:new THREE.Vector3(0.6,0.8,0.4).normalize()},
@@ -1700,7 +1733,14 @@ async function buildUniverse(){
         uVirtual:{value:info.virtualIdol?1.0:0.0},
         uTime:{value:0.0},
         uSeed:{value:(()=>{let h=0;for(let i=0;i<ko.length;i++)h=(h*31+ko.charCodeAt(i))>>>0;return (h%997)/997*50.0;})()},
-        uNoise:{value:isMob()?0.0:1.0}
+        uNoise:{value:isMob()?0.0:1.0},
+        // 그레인 재시도(2026-08-20, 2차) — 지난번 32.0 배율은 렌더링이 통째로 깨졌음(추정 원인:
+        // snoise 내부 permute 계산이 큰 입력값에서 정밀도 문제로 불안정해짐). 이번엔 훨씬 낮은
+        // 배율(10.0)로 훨씬 보수적으로 시도.
+        uGrain:{value:_groupGeneration(info.debut,ko)===1?1.0:0.0},
+        // 해체 그룹 잔광(2026-08-20) — uGrain과 같은 이유로 매프레임 덮어쓰기 루프(uAmbient 등) 밖의
+        // 새 uniform으로 둠. disbanded 필드 있는 그룹만 최종 색/알파를 살짝 낮춤.
+        uDisbanded:{value:info.disbanded?1.0:0.0}
       },
       vertexShader:`
         varying vec3 vNormal;
@@ -1727,6 +1767,8 @@ async function buildUniverse(){
         uniform float uTime;
         uniform float uSeed;
         uniform float uNoise;
+        uniform float uGrain;
+        uniform float uDisbanded;
         varying vec3 vNormal;
         varying vec3 vViewDir;
         varying vec2 vUv;
@@ -1755,7 +1797,9 @@ async function buildUniverse(){
           vec3 n=gl_FrontFacing?normalize(vNormal):-normalize(vNormal);
           vec3 v=normalize(vViewDir);
           float vd=max(0.0,dot(n,v));
-          float fresnel=pow(1.0-vd,1.8);
+          // 지수를 낮춰(1.8→1.2) 가장자리에서만 빛나던 fresnel 발광 영역을 안쪽으로 더 넓게 퍼뜨림
+          // (2026-08-20, 사용자 피드백 — 가까이 갈수록 속이 텅 빈 느낌). 전체 그룹 공통 영향.
+          float fresnel=pow(1.0-vd,1.2);
           vec3 l=normalize(uSunDir);
           float lambert=max(0.0,dot(n,l));
           float diffuse=uAmbient+(1.0-uAmbient)*lambert;
@@ -1763,9 +1807,20 @@ async function buildUniverse(){
           float spec=pow(max(0.0,dot(n,h)),uSpecPow)*uSpecMult;
           // 표면 노이즈: 그룹별 고유 시드로 천체 표면 무늬(밝기 미세 변조) + 아주 느린 흐름
           // 노이즈만 비용이 있어 모바일(uNoise=0)에선 건너뛴다 — 아래 웜톤·대기 림은 거의 공짜라 유지
-          float nz=0.0,nz2=0.0;
-          if(uNoise>0.5){nz=snoise(n*2.3+vec3(uSeed)+uTime*0.02);nz2=snoise(n*6.5-vec3(uSeed*1.7));}
-          vec3 base=uColor*(1.0+0.16*nz+0.07*nz2);
+          float nz=0.0,nz2=0.0,grainNz=0.0;
+          if(uNoise>0.5){
+            nz=snoise(n*2.3+vec3(uSeed)+uTime*0.02);nz2=snoise(n*6.5-vec3(uSeed*1.7));
+            // 그레인 4차 — 3차(14.0)까지 렌더링 안전 확인됐으니 주파수를 좀 더 올려 자글거림 자체를
+            // 키우고(20.0), 강도/채도/어둡기 전부 크게 올림.
+            if(uGrain>0.5)grainNz=snoise(n*20.0+vec3(uSeed*1.3));
+          }
+          vec3 base=uColor*(1.0+0.16*nz+0.07*nz2+uGrain*0.35*grainNz);
+          // 오래된 필름 느낌 — 채도 낮추고 어둡게(1세대만, uGrain 0이면 무변화)
+          {
+            float lum=dot(base,vec3(0.299,0.587,0.114));
+            base=mix(base,vec3(lum),uGrain*0.5);
+            base*=mix(1.0,0.75,uGrain);
+          }
           // 명암 경계(터미네이터) 웜톤 — 낮/밤 경계에 주황~분홍
           base=mix(base*vec3(1.16,0.84,0.68),base,smoothstep(0.12,0.62,lambert));
           // 색으로 명암 표현 (alpha를 낮추지 않으므로 검은 고리 없음)
@@ -1774,6 +1829,10 @@ async function buildUniverse(){
           col+=(uColor+vec3(0.14))*fresnel*0.5*uFilterOp;
           // 스펙큘러: 완화(구슬 하이라이트 줄임)
           col+=vec3(spec*0.11);
+          // 그레인 5차 — 위에서 base에 곱해진 grainNz는 diffuse(조명 밝기)에 다시 곱해지면서 그림자
+          // 쪽에서 옅어짐(가운데만 자글거리고 가장자리/어두운 쪽은 안 보이는 느낌의 원인으로 추정).
+          // 조명과 무관하게 표면 전체에 고르게 보이도록 diffuse 곱셈 이후에 살짝 더해줌.
+          col+=vec3(uGrain*grainNz*0.06);
           // 버추얼 아이돌(실체 없는 홀로그램 컨셉): 위에서 아래로 흐르는 은은한 스캔라인 +
           // 가장자리(Fresnel rim)를 시간에 따라 시안↔마젠타로 갈라지게 틴트(색수차/글리치 느낌)
           if(uVirtual>0.5){
@@ -1785,6 +1844,9 @@ async function buildUniverse(){
           }
           // alpha: close-up에서만 투명, 줌아웃 시 불투명
           float alpha=(uBaseOp+uFillOp+fresnel*uFresnelMult)*uFilterOp;
+          // 해체 그룹 잔광 — 밝기와 알파를 같이 살짝 낮춰서 "꺼져가는" 느낌(2026-08-20).
+          col*=mix(1.0,0.55,uDisbanded);
+          alpha*=mix(1.0,0.8,uDisbanded);
           gl_FragColor=vec4(clamp(col,0.0,1.0),clamp(alpha,0.0,1.0));
         }`,
       transparent:true,side:THREE.DoubleSide,depthWrite:false
@@ -3078,7 +3140,7 @@ function _filterBannedVideos(list,ko){return(list||[]).filter(v=>!_isBannedVideo
 // 흔히 쓰는 문구 — 제목에 이 단어가 있으면 어느 그룹으로 매칭됐든 무조건 무관 처리한다(사용자 요청, 2026-08-04).
 // _isBannedVideoTitle과 달리 hidden이 아니라 무관 처리(행은 남기되 그룹/멤버 그리드에서만 제외)라 신규
 // 동기화 시 이 체크에 걸리면 content_flag를 '무관'으로 붙여서 저장한다 — 기존 행은 아래 스윕 버튼으로 정리.
-const _JUNK_TITLE_KEYWORDS_GLOBAL=['띵곡팔이','김창옥쇼','이호선상담소','유부녀킬러','유뷰녀 킬러','스트릿레스토랑파이터','십분hook','[#여권들고','프리한19','결혼지옥','오은영리포트','이혼숙려','닥터로이어','언니네산지직송','혼자는 못 해','방과후태리','스프링피버','[#학연]','1호가'];
+const _JUNK_TITLE_KEYWORDS_GLOBAL=['띵곡팔이','김창옥쇼','이호선상담소','유부녀킬러','유뷰녀 킬러','스트릿레스토랑파이터','십분hook','[#여권들고','프리한19','결혼지옥','오은영리포트','이혼숙려','닥터로이어','언니네산지직송','혼자는 못 해','방과후태리','스프링피버','[#학연]','1호가','퍼펙트글로우'];
 function _isJunkVideoTitle(t){return!!t&&_JUNK_TITLE_KEYWORDS_GLOBAL.some(k=>t.includes(k));}
 
 let _lbPlaylist=null,_lbIdx=-1,_lbCtx=null;
@@ -9176,7 +9238,7 @@ function renderScrapList(){
   const el=document.getElementById('scrap-list');if(!el)return;
   const viewAllBtn=document.getElementById('scrap-viewall-btn');
   if(!scraps.length){
-    el.innerHTML='<div class="fav-empty">스크랩한 영상이 없어요</div>';
+    el.innerHTML='<div class="fav-empty">아직 담아둔 영상이 없어요</div>';
     if(viewAllBtn)viewAllBtn.style.display='none';
     return;
   }
@@ -9441,7 +9503,7 @@ async function renderFavList(){
   const el=document.getElementById('fav-list');if(!el)return;
   const myGen=++_favListGen;
   if(!favGroups.size&&!favMembers.size&&!favConnections.size){
-    el.innerHTML='<div class="fav-empty">즐겨찾기가 없어요</div>';return;
+    el.innerHTML='<div class="fav-empty">아직 즐겨찾기가 없어요</div>';return;
   }
   if(_instaPicPreloadP)await _instaPicPreloadP; // 멤버 사진 캐시가 아직 안 찼으면 기다렸다가 렌더
   if(myGen!==_favListGen)return; // 대기 중 다른 렌더 요청이 들어왔으면 낡은 결과는 버림
@@ -9850,23 +9912,40 @@ async function _buildMyUniverseCardDataURL(){
   // 캡처 해상도/거리에 따라 흐리게 뭉개질 수 있어서, 카드에서만큼은 별이 확실히 "튀어" 보이도록 별도로
   // 보강(공유 glowTex는 앱 전체에 쓰여서 여기서 세게 건드리면 다른 곳까지 영향받으니 손 안 댐 — 이 카드
   // 함수 안에서만 닫힌 효과).
-  ctx.save();
-  ctx.globalCompositeOperation='lighter';
-  const core=ctx.createRadialGradient(hubX,hubY,0,hubX,hubY,26);
-  core.addColorStop(0,'rgba(255,255,255,1)');
-  core.addColorStop(0.35,'rgba(255,255,255,0.55)');
-  core.addColorStop(1,'rgba(255,255,255,0)');
-  ctx.fillStyle=core;ctx.beginPath();ctx.arc(hubX,hubY,26,0,Math.PI*2);ctx.fill();
-  const armLen=100;
-  [[1,0],[-1,0],[0,1],[0,-1]].forEach(([dx,dy])=>{
-    const g=ctx.createLinearGradient(hubX,hubY,hubX+dx*armLen,hubY+dy*armLen);
-    g.addColorStop(0,'rgba(255,255,255,0.55)');
-    g.addColorStop(0.3,'rgba(255,255,255,0.16)');
+  // 십자 플레어를 균일 두께 선(stroke)이 아니라 코어에서 두껍다가 끝으로 갈수록 가늘어지는 뾰족한
+  // 삼각형(빛이 새어나가는 모양)으로 — 우리 별의 동그랗고 부드러운 코어와 자를 대고 그은 듯한 직선이
+  // 안 어울린다는 피드백(2026-08-20). 얇고 밝은 심(core beam) + 넓고 옅은 겉(halo beam) 두 겹을
+  // 겹쳐서 사진 속 회절 스파이크에 더 가깝게. cx,cy는 별 중심, dx,dy는 방향 단위벡터.
+  function _drawFlareSpike(cx,cy,dx,dy,len,maxWidth,alpha){
+    const px=-dy,py=dx; // 방향에 수직인 벡터(폭 방향)
+    const tipX=cx+dx*len,tipY=cy+dy*len;
+    const g=ctx.createLinearGradient(cx,cy,tipX,tipY);
+    g.addColorStop(0,`rgba(255,255,255,${alpha})`);
+    g.addColorStop(0.28,`rgba(255,255,255,${alpha*0.4})`);
     g.addColorStop(1,'rgba(255,255,255,0)');
-    ctx.strokeStyle=g;ctx.lineWidth=3;
-    ctx.beginPath();ctx.moveTo(hubX,hubY);ctx.lineTo(hubX+dx*armLen,hubY+dy*armLen);ctx.stroke();
-  });
-  ctx.restore();
+    ctx.fillStyle=g;
+    ctx.beginPath();
+    ctx.moveTo(cx-px*maxWidth/2,cy-py*maxWidth/2);
+    ctx.lineTo(cx+px*maxWidth/2,cy+py*maxWidth/2);
+    ctx.lineTo(tipX,tipY);
+    ctx.closePath();
+    ctx.fill();
+  }
+  function _drawStarFlare(cx,cy,coreR,armLen){
+    ctx.save();
+    ctx.globalCompositeOperation='lighter';
+    const core=ctx.createRadialGradient(cx,cy,0,cx,cy,coreR);
+    core.addColorStop(0,'rgba(255,255,255,1)');
+    core.addColorStop(0.35,'rgba(255,255,255,0.55)');
+    core.addColorStop(1,'rgba(255,255,255,0)');
+    ctx.fillStyle=core;ctx.beginPath();ctx.arc(cx,cy,coreR,0,Math.PI*2);ctx.fill();
+    [[1,0],[-1,0],[0,1],[0,-1]].forEach(([dx,dy])=>{
+      _drawFlareSpike(cx,cy,dx,dy,armLen,coreR*0.9,0.32); // 넓고 옅은 겉
+      _drawFlareSpike(cx,cy,dx,dy,armLen*1.15,coreR*0.22,0.85); // 얇고 밝은 심
+    });
+    ctx.restore();
+  }
+  _drawStarFlare(hubX,hubY,26,100);
 
   // 하단 페이드 — 별밭 위에 텍스트를 바로 얹으면 가독성이 떨어져서 배경을 한 번 더 어둡게
   const fade=ctx.createLinearGradient(0,H*0.72,0,H);
@@ -10785,6 +10864,31 @@ async function _loadDynamicHashtagNames(){
   }catch(e){}
 }
 _loadDynamicHashtagNames();
+// 나머지 하드코딩 태깅 예외 상수(_ATM_SURNAME_EXCLUDE/_GROUP_AMBIGUOUS_IF_COMATCHED/
+// _GROUP_TOKEN_LITERAL_ONLY, admin.js)도 위 name_match_whitelist와 동일한 이유로 DB 이전
+// (2026-08-20) — 범용 테이블 atm_exception_rules(type,key,value) 하나로 세 종류 다 커버.
+// 실패해도(테이블 없음 등) 하드코딩 보호는 그대로 유지(fail-open).
+const _ATM_DYNAMIC_SURNAME_EXCLUDE=new Map(); // name -> Set(제외할 성씨)
+const _ATM_DYNAMIC_AMBIGUOUS_COMATCH=new Set(); // groupKo
+const _ATM_DYNAMIC_LITERAL_ONLY=new Set(); // token
+async function _loadDynamicAtmRules(){
+  if(!sb)return;
+  try{
+    const{data,error}=await sb.from('atm_exception_rules').select('type,key,value');
+    if(error||!data)return;
+    data.forEach(r=>{
+      if(r.type==='surname_exclude'){
+        if(!_ATM_DYNAMIC_SURNAME_EXCLUDE.has(r.key))_ATM_DYNAMIC_SURNAME_EXCLUDE.set(r.key,new Set());
+        (r.value||[]).forEach(s=>_ATM_DYNAMIC_SURNAME_EXCLUDE.get(r.key).add(s));
+      }else if(r.type==='ambiguous_comatch'){
+        _ATM_DYNAMIC_AMBIGUOUS_COMATCH.add(r.key);
+      }else if(r.type==='literal_only'){
+        _ATM_DYNAMIC_LITERAL_ONLY.add(r.key);
+      }
+    });
+  }catch(e){}
+}
+_loadDynamicAtmRules();
 // 카드 첫 오픈이 유독 느리게 느껴진다는 사용자 피드백(2026-08-12) — 실측해보니 세션 첫 Supabase 쿼리가
 // 연결/DB 웜업 비용으로 ~2초씩 걸리고, 그 뒤부터는 300ms~1초대로 뚝 떨어짐(TCP/TLS 핸드셰이크+
 // 무료 티어 DB의 대기 상태 해제 등으로 추정). name_match_whitelist(위)는 테이블이 작아서 이 웜업
@@ -11825,6 +11929,7 @@ async function _fetchTopVideoThumb(gko,memberKo){
               :q.or(`group_ko.eq.${_pgFilterVal(gko)},with_groups.cs.{${_pgFilterVal(gko)}}`);
     q=q.or('content_flag.is.null,content_flag.neq.무관');
     q=q.or('content_flag.is.null,content_flag.neq.hidden'); // 노출 제외 처리된 영상이 대표 썸네일로 뽑히면 안 됨
+    q=q.or('content_flag.is.null,content_flag.neq.개별출연'); // 컴필레이션 클립이 대표 썸네일로 뽑히면 안 됨(2026-08-20)
     const{data,error}=await q.order('published_at',{ascending:false}).limit(12);
     if(error||!data?.length)return null;
     const vidUrl=v=>v.category==='short'?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;
@@ -11836,7 +11941,7 @@ async function _fetchTopVideoThumb(gko,memberKo){
 
 // 페이지네이션과 무관하게 이 그룹/멤버의 전체 영상 중 스크랩(하트) 최다 영상을 반환.
 // _warmScrapCounts 완료를 기다린 뒤 결정론적으로 선택 → 새로고침해도 같은 영상 유지.
-async function _pickFeaturedVidFromDB(ko,memberKo,onlyMe,filter,viewMode,formatFilter){
+async function _pickFeaturedVidFromDB(ko,memberKo,onlyMe,filter,viewMode,formatFilter,searchQ){
   if(!sb||!window._sbSession)return null;
   try{
     if(_scrapCountsP)await _scrapCountsP;
@@ -11865,7 +11970,12 @@ async function _pickFeaturedVidFromDB(ko,memberKo,onlyMe,filter,viewMode,formatF
       .in('id',candidateIds)
       .or('content_flag.is.null,content_flag.neq.기타')
       .or('content_flag.is.null,content_flag.neq.무관')
-      .or('content_flag.is.null,content_flag.neq.hidden'); // 노출 제외 처리된 영상이 대표(하트 최다) 영상으로 뽑히면 안 됨
+      .or('content_flag.is.null,content_flag.neq.hidden') // 노출 제외 처리된 영상이 대표(하트 최다) 영상으로 뽑히면 안 됨
+      .or('content_flag.is.null,content_flag.neq.개별출연'); // 컴필레이션 클립 제외(2026-08-20)
+    // 검색 중이면 대표영상도 검색어에 실제로 걸리는 것만 후보로 — 그리드(buildBaseQuery)가 쓰는 것과
+    // 완전히 동일한 title_norm ilike 매칭을 그대로 재사용. 안 걸리면 그냥 null 반환(대표영상 없음)돼서
+    // 검색과 무관한 "하트 최다" 영상이 검색 결과 맨 위에 인위적으로 고정되는 걸 막는다(2026-08-20, 사용자 요청).
+    if(searchQ)q=q.ilike('title_norm',`%${_titleNorm(searchQ)}%`);
     if(viewMode==='format'&&formatFilter){
       q=q.contains('content_formats',[formatFilter]);
     }else if(filter==='cover'){
@@ -12249,7 +12359,10 @@ async function _fetchSoloFancamPool(groupKos,fetchLimit){
     .not('view_count','is',null)
     .or('content_flag.is.null,content_flag.neq.기타')
     .or('content_flag.is.null,content_flag.neq.무관')
-    .or('content_flag.is.null,content_flag.neq.hidden');
+    .or('content_flag.is.null,content_flag.neq.hidden')
+    // '개별출연' 제외 — _fetchStagePool과 동일 이유(2026-08-20). members.length===1 필터가 대부분
+    // 걸러주지만(컴필레이션은 보통 members가 비어있거나 여럿) 우연히 1명만 남는 경우까지 방어.
+    .or('content_flag.is.null,content_flag.neq.개별출연');
   if(groupKos)q=q.in('group_ko',groupKos);
   const{data,error}=await q.order('view_count',{ascending:false}).limit(fetchLimit);
   if(error||!data?.length)return[];
@@ -12319,7 +12432,11 @@ async function _fetchStagePool(groupKos,fetchLimit,capPerGroup){
     .not('view_count','is',null)
     .or('content_flag.is.null,content_flag.neq.기타')
     .or('content_flag.is.null,content_flag.neq.무관')
-    .or('content_flag.is.null,content_flag.neq.hidden');
+    .or('content_flag.is.null,content_flag.neq.hidden')
+    // '개별출연'(여러 그룹이 각자 따로 나온 비하인드/백스테이지 컴필레이션) 제외 — 안 걸러지면 group_ko
+    // 하나에 우연히 걸린 채널의 완전체 무대인 것처럼 다른 그룹 멤버가 딸려 들어옴(2026-08-20, 사용자
+    // 제보 — 더보이즈 채널 쇼챔 백스테이지 컴필레이션에 전소미가 섞여서 "남돌 무대 TOP100"에 노출됨).
+    .or('content_flag.is.null,content_flag.neq.개별출연');
   if(groupKos)q=q.in('group_ko',groupKos);
   const{data,error}=await q.order('view_count',{ascending:false}).limit(fetchLimit);
   if(error||!data?.length)return[];
@@ -12387,7 +12504,8 @@ async function _fetchFestivalPool(applyFilter,postFilter,fetchLimit,capPerGroup)
     .not('view_count','is',null)
     .or('content_flag.is.null,content_flag.neq.기타')
     .or('content_flag.is.null,content_flag.neq.무관')
-    .or('content_flag.is.null,content_flag.neq.hidden');
+    .or('content_flag.is.null,content_flag.neq.hidden')
+    .or('content_flag.is.null,content_flag.neq.개별출연'); // 컴필레이션 클립 제외(2026-08-20)
   q=applyFilter(q);
   const{data,error}=await q.order('view_count',{ascending:false}).limit(fetchLimit);
   if(error||!data?.length)return[];
@@ -13858,9 +13976,12 @@ function _makeChVidController(contId){
       // 사용자 재제보 — 2026-08-11에 고친 randomize 청크 케이스와 같은 계열 버그가 여기 남아있었음).
       // 여기만 따로 짧게(6초) 타임아웃 걸고 실패해도 null로 조용히 폴백시켜서, 대표 영상 선정이 느려도
       // 그리드 자체는 절대 안 죽게 분리한다.
+      // 대표영상 고정은 전체/라이브 탭에서만 — 쇼츠/MV/기타처럼 원래 쭉 훑어보는 성격이 강한 탭까지
+      // 매번 같은 "하트 최다" 영상이 맨 앞에 박혀있으면 인위적으로 느껴진다는 사용자 피드백(2026-08-20).
+      const _featuredEligibleTab=filter==='all'||filter==='live';
       const featuredP=cacheHit?Promise.resolve(cached.featuredFromDB)
-        :(reset&&state.sortMode==='recommend'&&!randomize)
-        ?_withTimeout(()=>_pickFeaturedVidFromDB(ko,state.memberKo,state.onlyMe,filter,state.viewMode,state.formatFilter),6000,undefined,1).catch(()=>null)
+        :(reset&&state.sortMode==='recommend'&&!randomize&&_featuredEligibleTab)
+        ?_withTimeout(()=>_pickFeaturedVidFromDB(ko,state.memberKo,state.onlyMe,filter,state.viewMode,state.formatFilter,state.searchQ),6000,undefined,1).catch(()=>null)
         :Promise.resolve(null);
       // '미태깅 우선'(admin 전용): Postgres 배열 비교는 원소 없는 '{}'가 항상 더 작다고/크다고 취급하므로,
       // 배열 컬럼 오름차순/내림차순 정렬만으로 3단계 우선순위를 만들 수 있다 — 새 컬럼/RPC 없이 기존
@@ -14507,8 +14628,8 @@ const CONCERT_REACTIONS=['🥹','🔥','😭','💜','😴'];
 async function renderConcertLogList(){
   const el=document.getElementById('concert-log-list');
   if(!el)return;
-  if(!concertLog.length){el.innerHTML='<div class="fav-empty">다녀온 공연이 없어요</div>';return;}
-  if(!sb){el.innerHTML='<div class="fav-empty">다녀온 공연이 없어요</div>';return;}
+  if(!concertLog.length){el.innerHTML='<div class="fav-empty">아직 기록한 공연이 없어요</div>';return;}
+  if(!sb){el.innerHTML='<div class="fav-empty">아직 기록한 공연이 없어요</div>';return;}
   const ids=concertLog.map(x=>x.id);
   const{data,error}=await sb.from('kpop_events').select('*').in('id',ids);
   if(error||!data)return;
