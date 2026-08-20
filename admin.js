@@ -47,7 +47,10 @@ function _ytClassify(title){
   if(/OFFICIAL\s+AUDIO|공식\s*음원/.test(t))return'skip';
   if(/\bTEASER\b|티저/.test(t))return'skip';
   if(/\bSHORTS?\b/.test(t)||/#SHORTS?/.test(t))return'short';
-  if(/\bM\.?V\.?\b|\bMUSIC\s+VIDEO\b|뮤직?\s*비디오|뮤비/.test(t))return'mv';
+  // "M/V"(슬래시 표기)를 놓치고 있었음 — M.V./MV/M V는 잡혔는데 슬래시형만 빠져서, 이렇게 쓴 진짜
+  // 뮤직비디오가 mv로 안 걸러지고 live 등 다른 카테고리로 새서 무대/직캠 모음에 섞여 들어감
+  // (2026-08-20, 사용자 제보 — 전소미 영상이 남돌 무대 모음에 낀 사고).
+  if(/\bM[.\/]?V\.?\b|\bMUSIC\s+VIDEO\b|뮤직?\s*비디오|뮤비/.test(t))return'mv';
   if(_YT_BROADCAST_RE.test(t))return'other';
   const looksPrerecorded=_YT_PRERECORDED_RE.test(t);
   if((!looksPrerecorded||_YT_STRONG_LIVE_RE.test(t))&&/\bLIVE\b|\bCONCERT\b|\bPERFORMANCE\b|\bFANCAM\b|라이브|직캠|팬캠/.test(t))return'live';
@@ -825,58 +828,6 @@ async function _ytSweepMembersMistag(){
   }
 }
 
-// 온리원오프 "Love" 오태깅 일괄 정리(일회용) — "Love"는 흔한 영단어라 다른 그룹/채널의 무관한 영상
-// 제목("I Love You", "Love Dive" 등)에도 평문 매칭으로 계속 잘못 걸림. 게다가 Love는 2021.08.02
-// 탈퇴한 멤버라 흔한단어 문제까지 겹쳐 오염이 특히 심함(2026-08-19, 사용자 제보). 정식 해법(흔한단어
-// 화이트리스트에 추가해 해시태그로만 인정)보다 더 엄격하게, "온리원오프 자체 채널 영상이거나 제목에
-// 온리원오프/ONLYONEOF가 있는 경우만" 남기고 나머지는 다 뺀다 — members/with_members뿐 아니라 원곡
-// 태깅(cover_of_members)에도 같은 오염이 있어 셋 다 정리한다. tags_manual=true는 절대 안 건드림.
-async function _ytFixOnlyoneofLoveMistag(){
-  if(!sb){_ytSetProg('Supabase 연결 없음');return;}
-  const btn=document.getElementById('sp-onlyoneof-love-btn');
-  if(btn)btn.disabled=true;
-  try{
-    _ytSetProg('[온리원오프 Love 오태깅 정리] 조회 중…');
-    const withTag='Love(온리원오프)';
-    const{data:rows,error}=await _sbFetchAll(()=>sb.from(_YT_TABLE)
-      .select('id,title,group_ko,members,with_members,cover_of_members,tags_manual')
-      .or(`members.cs.{${_pgFilterVal('Love')}},with_members.cs.{${_pgFilterVal(withTag)}},cover_of_members.cs.{${_pgFilterVal(withTag)}}`)
-      .order('id'));
-    if(error){_ytSetProg('조회 실패: '+error.message);return;}
-    if(!rows?.length){_ytSetProg('검사할 영상이 없어요');return;}
-    const updates=[];
-    let manualSkipped=0;
-    rows.forEach(v=>{
-      const keep=v.group_ko==='온리원오프'||/온리원오프|onlyoneof/i.test(v.title||'');
-      if(keep)return;
-      const curM=v.members||[],curWM=v.with_members||[],curCM=v.cover_of_members||[];
-      const patch={};
-      if(curM.includes('Love')){const n=curM.filter(x=>x!=='Love');if(n.length!==curM.length)patch.members=n;}
-      if(curWM.includes(withTag)){const n=curWM.filter(x=>x!==withTag);if(n.length!==curWM.length)patch.with_members=n;}
-      if(curCM.includes(withTag)){const n=curCM.filter(x=>x!==withTag);if(n.length!==curCM.length)patch.cover_of_members=n;}
-      if(!Object.keys(patch).length)return;
-      if(v.tags_manual){manualSkipped++;return;}
-      updates.push({id:v.id,patch});
-    });
-    if(!updates.length){
-      _ytSetProg(`검사 완료 — ${rows.length}개 중 정리 대상 없음`+(manualSkipped?` (수동 편집이라 안 건드리고 넘어간 것 ${manualSkipped}개 — 직접 확인 필요)`:''));
-      return;
-    }
-    for(let i=0;i<updates.length;i+=200){
-      const chunk=updates.slice(i,i+200);
-      const results=await Promise.all(chunk.map(u=>sb.from(_YT_TABLE).update(u.patch).eq('id',u.id)));
-      const failed=results.find(r=>r.error);
-      if(failed)throw new Error(failed.error.message);
-      _ytSetProg(`[온리원오프 Love 오태깅 정리] ${Math.min(i+200,updates.length)}/${updates.length}개 처리 중…`);
-    }
-    _ytSetProg(`완료! ${rows.length}개 중 ${updates.length}개에서 Love 오태깅 제거함`+(manualSkipped?` (수동 편집이라 안 건드리고 넘어간 것 ${manualSkipped}개 — 직접 확인 필요)`:''));
-  }catch(e){
-    _ytSetProg('오류: '+e.message);
-  }finally{
-    if(btn)btn.disabled=false;
-  }
-}
-
 // 그룹배정 신뢰도 재스캔(일회용, 기존 데이터 소급) — 2026-08-20 신뢰도 2단계 도입 전에 이미 들어가있던
 // 영상들 대상. 위 온리원오프 Love 전용 정리와 달리 이건 "Love" 하나만이 아니라 같은 패턴(제목에 그룹명
 // 리터럴이 전혀 없이 멤버 이름 하나만으로 group_ko 자체가 정해진 경우) 전체를 훑는다 — 옛 Love 정리
@@ -1178,6 +1129,98 @@ function _renderHnnWhitelist(){
     listEl.appendChild(row);
   }
 }
+// 기타 태깅 예외 규칙 3종(성씨제외/동시매칭무시/리터럴전용) — 위 흔한단어 보호 목록과 동일한 톤/구조로
+// atm_exception_rules(type,key,value) DB 테이블을 표시+추가+제거. 하드코딩분(admin.js 코드)은 여기서
+// 안 보여줌(그 수가 적고 재배포로만 바뀌니 굳이 UI로 노출할 필요 없음 — 화이트리스트처럼 fixed 항목을
+// 같이 보여주면 오히려 "여기서 다 관리되는 것"처럼 오해할 수 있어서 DB분만 표시, 2026-08-20).
+function _hnnAtmChip(label,removeHandler){
+  const chip=document.createElement('span');chip.className='hnn-atm-chip';
+  const nameEl=document.createElement('span');nameEl.textContent=label;
+  chip.appendChild(nameEl);
+  const rm=document.createElement('button');rm.type='button';rm.className='hnn-atm-rm';rm.textContent='×';
+  rm.addEventListener('click',async e=>{e.stopPropagation();rm.disabled=true;await removeHandler(rm);});
+  chip.appendChild(rm);
+  return chip;
+}
+async function _renderHnnAtmRules(){
+  const surEl=document.getElementById('hnn-atm-surname-list');
+  const comatchEl=document.getElementById('hnn-atm-comatch-list');
+  const litEl=document.getElementById('hnn-atm-literal-list');
+  if(!surEl||!comatchEl||!litEl)return;
+  surEl.innerHTML='';comatchEl.innerHTML='';litEl.innerHTML='';
+  [..._ATM_DYNAMIC_SURNAME_EXCLUDE.entries()].sort((a,b)=>a[0].localeCompare(b[0],'ko')).forEach(([name,surnames])=>{
+    [...surnames].forEach(sur=>{
+      surEl.appendChild(_hnnAtmChip(`${name} / ${sur}`,async rm=>{
+        if(!sb)return;
+        if(!confirm(`"${name}"의 성씨 예외("${sur}")를 제거할까요?`)){rm.disabled=false;return;}
+        const rest=[...surnames].filter(s=>s!==sur);
+        const{error}=rest.length
+          ?await sb.from('atm_exception_rules').update({value:rest}).eq('type','surname_exclude').eq('key',name)
+          :await sb.from('atm_exception_rules').delete().eq('type','surname_exclude').eq('key',name);
+        if(error){alert('제거 실패: '+error.message);rm.disabled=false;return;}
+        surnames.delete(sur);
+        if(!surnames.size)_ATM_DYNAMIC_SURNAME_EXCLUDE.delete(name);
+        _renderHnnAtmRules();
+      }));
+    });
+  });
+  [..._ATM_DYNAMIC_AMBIGUOUS_COMATCH].sort((a,b)=>a.localeCompare(b,'ko')).forEach(gko=>{
+    comatchEl.appendChild(_hnnAtmChip(gko,async rm=>{
+      if(!sb)return;
+      if(!confirm(`"${gko}"를 목록에서 제거할까요?`)){rm.disabled=false;return;}
+      const{error}=await sb.from('atm_exception_rules').delete().eq('type','ambiguous_comatch').eq('key',gko);
+      if(error){alert('제거 실패: '+error.message);rm.disabled=false;return;}
+      _ATM_DYNAMIC_AMBIGUOUS_COMATCH.delete(gko);
+      _renderHnnAtmRules();
+    }));
+  });
+  [..._ATM_DYNAMIC_LITERAL_ONLY].sort((a,b)=>a.localeCompare(b,'ko')).forEach(tok=>{
+    litEl.appendChild(_hnnAtmChip(tok,async rm=>{
+      if(!sb)return;
+      if(!confirm(`"${tok}"를 목록에서 제거할까요?`)){rm.disabled=false;return;}
+      const{error}=await sb.from('atm_exception_rules').delete().eq('type','literal_only').eq('key',tok);
+      if(error){alert('제거 실패: '+error.message);rm.disabled=false;return;}
+      _ATM_DYNAMIC_LITERAL_ONLY.delete(tok);
+      _renderHnnAtmRules();
+    }));
+  });
+}
+document.getElementById('hnn-atm-surname-add')?.addEventListener('click',async()=>{
+  if(!sb)return;
+  const nameEl=document.getElementById('hnn-atm-surname-name'),valEl=document.getElementById('hnn-atm-surname-value');
+  const name=(nameEl.value||'').trim(),sur=(valEl.value||'').trim();
+  if(!name||!sur)return;
+  const existing=_ATM_DYNAMIC_SURNAME_EXCLUDE.get(name);
+  const merged=[...(existing||[]),sur];
+  const{error}=await sb.from('atm_exception_rules').upsert({type:'surname_exclude',key:name,value:merged},{onConflict:'type,key'});
+  if(error){alert('추가 실패: '+error.message);return;}
+  if(!_ATM_DYNAMIC_SURNAME_EXCLUDE.has(name))_ATM_DYNAMIC_SURNAME_EXCLUDE.set(name,new Set());
+  _ATM_DYNAMIC_SURNAME_EXCLUDE.get(name).add(sur);
+  nameEl.value='';valEl.value='';
+  _renderHnnAtmRules();
+});
+document.getElementById('hnn-atm-comatch-add')?.addEventListener('click',async()=>{
+  if(!sb)return;
+  const valEl=document.getElementById('hnn-atm-comatch-value');
+  const gko=(valEl.value||'').trim();
+  if(!gko)return;
+  const{error}=await sb.from('atm_exception_rules').upsert({type:'ambiguous_comatch',key:gko,value:null},{onConflict:'type,key'});
+  if(error){alert('추가 실패: '+error.message);return;}
+  _ATM_DYNAMIC_AMBIGUOUS_COMATCH.add(gko);
+  valEl.value='';
+  _renderHnnAtmRules();
+});
+document.getElementById('hnn-atm-literal-add')?.addEventListener('click',async()=>{
+  if(!sb)return;
+  const valEl=document.getElementById('hnn-atm-literal-value');
+  const tok=(valEl.value||'').trim();
+  if(!tok)return;
+  const{error}=await sb.from('atm_exception_rules').upsert({type:'literal_only',key:tok,value:null},{onConflict:'type,key'});
+  if(error){alert('추가 실패: '+error.message);return;}
+  _ATM_DYNAMIC_LITERAL_ONLY.add(tok);
+  valEl.value='';
+  _renderHnnAtmRules();
+});
 // 그룹별 요약/멤버별 의심 후보 스캔("_hnnScan")과 그룹별 무맥락 정리("_dqOpenGroupJunk")는 실사용이
 // 없어서 제거함(2026-08-12, 사용자 요청 — "더 이상 새로 걸리는 게 거의 없다", 흔한단어/동명이인은
 // 발견 시 개별 대응하는 걸로). 동명이인 목록(_renderHnnDuplicateNames)·흔한단어 보호 목록
@@ -1190,7 +1233,7 @@ function _hnnSwitchTab(tab){
 }
 document.querySelectorAll('.hnn-tab').forEach(t=>t.addEventListener('click',()=>_hnnSwitchTab(t.dataset.tab)));
 document.getElementById('hnn-overlay')?.addEventListener('click',e=>{if(e.target===e.currentTarget)e.currentTarget.classList.remove('open');});
-document.getElementById('sp-hnn-btn')?.addEventListener('click',()=>{document.getElementById('hnn-overlay').classList.add('open');_renderHnnWhitelist();_renderHnnDuplicateNames();_hnnSwitchTab('quality');});
+document.getElementById('sp-hnn-btn')?.addEventListener('click',()=>{document.getElementById('hnn-overlay').classList.add('open');_renderHnnWhitelist();_renderHnnDuplicateNames();_renderHnnAtmRules();_hnnSwitchTab('quality');});
 document.getElementById('hnn-close')?.addEventListener('click',()=>{
   document.getElementById('hnn-overlay').classList.remove('open');
   _wonkokScanned=false;
@@ -1547,7 +1590,7 @@ document.getElementById('wonkok-apply-btn')?.addEventListener('click',async()=>{
 });
 document.getElementById('wonkok-scan-btn')?.addEventListener('click',_wonkokScan);
 document.getElementById('wonkok-close')?.addEventListener('click',()=>document.getElementById('hnn-overlay').classList.remove('open'));
-document.getElementById('sp-wonkok-btn')?.addEventListener('click',()=>{document.getElementById('hnn-overlay').classList.add('open');_renderHnnWhitelist();_renderHnnDuplicateNames();_hnnSwitchTab('wonkok');});
+document.getElementById('sp-wonkok-btn')?.addEventListener('click',()=>{document.getElementById('hnn-overlay').classList.add('open');_renderHnnWhitelist();_renderHnnDuplicateNames();_renderHnnAtmRules();_hnnSwitchTab('wonkok');});
 
 // ── 전체 영상 검색(admin) ── 그룹/멤버 무관하게 title 검색. 3글자 이상은 서버 ILIKE(트라이그램 인덱스로
 // 빠름), 1~2글자는 인덱스 가속이 안 되므로(pg_trgm은 3글자 미만 패턴을 못 씀) id/title/group_ko/thumb/
@@ -2435,7 +2478,8 @@ function _atmMatchesMember(m,title,tokens,groupKo){
     if(new RegExp(`(?<![가-힣])${_atmEscRe(name)}(?:${particles}){0,2}(?![가-힣])`).test(title))return true; // 이름+조사
     const surRe=new RegExp(`([가-힣])${_atmEscRe(name)}(?:${particles}){0,2}(?![가-힣])`,'g');
     const surExclude=_ATM_SURNAME_EXCLUDE[name];
-    let sm;while((sm=surRe.exec(title))){if(_ATM_KOREAN_SURNAMES.has(sm[1])&&!(surExclude&&surExclude.has(sm[1])))return true;} // 성+이름(+조사)
+    const surExcludeDyn=_ATM_DYNAMIC_SURNAME_EXCLUDE.get(name); // DB 이전분(2026-08-20)
+    let sm;while((sm=surRe.exec(title))){if(_ATM_KOREAN_SURNAMES.has(sm[1])&&!(surExclude&&surExclude.has(sm[1]))&&!(surExcludeDyn&&surExcludeDyn.has(sm[1])))return true;} // 성+이름(+조사)
     const givenOnly=_atmStripSurname(nameChars);
     if(givenOnly&&givenOnly.length>=2){
       if(new RegExp(`(?<![가-힣])${_atmEscRe(givenOnly)}(?:${particles}){0,2}(?![가-힣])`).test(title))return true; // 등록명이 성+이름인데 제목엔 이름만
@@ -2849,7 +2893,7 @@ function _m2ParseTitle(rawTitle,selfGko,strict){
     if(seen.has(ko))continue;
     const conflicts=_GROUP_TITLE_CONFLICT_EXCLUDE[ko];
     if(conflicts&&conflicts.some(re=>re.test(title)))continue;
-    if(tokens.some(t=>_GROUP_TOKEN_LITERAL_ONLY.has(t)?hitLiteral(t):hit(t))){matchedGroupKos.push(ko);seen.add(ko);}
+    if(tokens.some(t=>(_GROUP_TOKEN_LITERAL_ONLY.has(t)||_ATM_DYNAMIC_LITERAL_ONLY.has(t))?hitLiteral(t):hit(t))){matchedGroupKos.push(ko);seen.add(ko);}
   }
   // 유닛명(V8, GOT the beat 등) 매칭 — 유닛 자체는 그룹이 아니라, 실제 소속 그룹/멤버로 나눠 합류시킴.
   // 제목에 유닛명만 있고 개별 멤버 이름은 없는 경우까지 커버하기 위해, 유닛 멤버를 "그 멤버 이름이
@@ -2883,7 +2927,7 @@ function _m2ParseTitle(rawTitle,selfGko,strict){
   // 항상 이런 단어 충돌이지, 진짜 콜라보가 아님(2026-07-31, 에스파·비투비 채널에서 실측 확인).
   if(matchedGroupKos.length>1||(selfGko&&matchedGroupKos.length===1&&!matchedGroupKos.includes(selfGko))){
     for(const gko of[...matchedGroupKos]){
-      if(_GROUP_AMBIGUOUS_IF_COMATCHED.has(gko)){
+      if(_GROUP_AMBIGUOUS_IF_COMATCHED.has(gko)||_ATM_DYNAMIC_AMBIGUOUS_COMATCH.has(gko)){
         matchedGroupKos.splice(matchedGroupKos.indexOf(gko),1);
         seen.delete(gko);
       }
@@ -4123,7 +4167,6 @@ document.getElementById('vid-tag-thumb-refresh').addEventListener('click',async 
   document.getElementById('sp-collabfix-btn')?.addEventListener('click',_ytSweepAmbiguousCollabMistag);
   document.getElementById('sp-scan-namecollide-btn')?.addEventListener('click',_ytScanAmbiguousNameGroupMisassignment);
   document.getElementById('sp-membersfix-btn')?.addEventListener('click',_ytSweepMembersMistag);
-  document.getElementById('sp-onlyoneof-love-btn')?.addEventListener('click',_ytFixOnlyoneofLoveMistag);
   document.getElementById('sp-yt-rescan-weak-btn')?.addEventListener('click',_ytRescanWeakGroupAssignments);
   document.getElementById('sp-catfix-btn')?.addEventListener('click',_ytSweepCategoryMistag);
   document.getElementById('sp-covertitle-btn')?.addEventListener('click',_ytExtractCoverSongTitles);
