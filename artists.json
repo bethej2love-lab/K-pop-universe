@@ -2217,6 +2217,95 @@
           }
         ]
       }
+    ],
+    "discography": [
+      {
+        "title": "TAP",
+        "type": "미니 2집",
+        "releaseDate": "2024.02.26",
+        "trackCount": 6,
+        "isMain": true,
+        "titleTrack": "TAP",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/114/23/457/11423457_20240226121537_500.jpg?8a1ad9ba4c35fa4156781072776e5be7",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "TAP",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Moon Tour",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "Run Away",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "APE",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "나에게 했던 것과 같이 (Ups & Downs)",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "404 Loading",
+            "isTitle": false
+          }
+        ]
+      },
+      {
+        "title": "SHALALA",
+        "type": "미니 1집",
+        "releaseDate": "2023.06.05",
+        "trackCount": 7,
+        "isMain": true,
+        "titleTrack": "샤랄라 (SHALALA)",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/112/58/356/11258356_20230605112020_500.jpg?db9cc91fd229b8e5370ce3629b576c65",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "샤랄라 (SHALALA)",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "관둬 (GWANDO)",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "Move Mood Mode (Feat. 웬디)",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Virtual Insanity",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "RUBY",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "404 File Not Found",
+            "isTitle": false
+          },
+          {
+            "no": 7,
+            "title": "Back to the Past",
+            "isTitle": false
+          }
+        ]
+      }
     ]
   },
   {
@@ -25105,6 +25194,44 @@
           }
         ]
       }
+    ],
+    "discography": [
+      {
+        "title": "Beautiful",
+        "type": "미니 1집",
+        "releaseDate": "2015.02.13",
+        "trackCount": 5,
+        "isMain": true,
+        "titleTrack": "SHAKE THAT BRASS (Feat. 태연 (소녀시대))",
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/023/03/942/2303942_500.jpg",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Beautiful",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "SHAKE THAT BRASS (Feat. 태연 (소녀시대))",
+            "isTitle": true
+          },
+          {
+            "no": 3,
+            "title": "Love Run",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Heights",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "I Just Wanna (Feat. 에릭남)",
+            "isTitle": false
+          }
+        ]
+      }
     ]
   },
   {
@@ -25138,7 +25265,50 @@
     "links": {
       "namu": "https://namu.wiki/w/루나(f(x))",
       "instagram": "https://www.instagram.com/hermosavidaluna"
-    }
+    },
+    "discography": [
+      {
+        "title": "Free Somebody",
+        "type": "미니 1집",
+        "releaseDate": "2016.05.31",
+        "trackCount": 6,
+        "isMain": true,
+        "titleTrack": "Free Somebody",
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/026/88/030/2688030_500.jpg",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Free Somebody",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Breathe",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "Keep On Doin'",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "예쁜 소녀 (I Wish)",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Galaxy",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "My Medicine",
+            "isTitle": false
+          }
+        ]
+      }
+    ]
   },
   {
     "name": {
@@ -27653,7 +27823,55 @@
     "links": {
       "instagram": "https://www.instagram.com/_zyozyo",
       "namu": "https://namu.wiki/w/지효"
-    }
+    },
+    "discography": [
+      {
+        "title": "ZONE",
+        "type": "미니 1집",
+        "releaseDate": "2023.08.18",
+        "trackCount": 7,
+        "isMain": true,
+        "titleTrack": "Killin’ Me Good",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/113/08/528/11308528_20230817180024_500.jpg?c8968892a966a2514c0cc94740cb8eb6",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Killin’ Me Good",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Talkin’ About It (Feat. 24kGoldn)",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "Closer",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Wishing On You",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Don't Wanna Go Back (Duet with 헤이즈)",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "Room",
+            "isTitle": false
+          },
+          {
+            "no": 7,
+            "title": "Nightmare",
+            "isTitle": false
+          }
+        ]
+      }
+    ]
   },
   {
     "name": {
@@ -40606,6 +40824,44 @@
                 "isTitle": true
               }
             ]
+          }
+        ]
+      }
+    ],
+    "discography": [
+      {
+        "title": "Brand New",
+        "type": "미니 1집",
+        "releaseDate": "2022.09.26",
+        "trackCount": 5,
+        "isMain": true,
+        "titleTrack": "Brand New",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/110/63/361/11063361_20220923231233_500.jpg?302d9600f00cc1e83d5138e5f8f0bef4",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Brand New",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Feedback",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "How We Do (Feat. 마크 of NCT)",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "민들레 (Love Letter)",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Serenity",
+            "isTitle": false
           }
         ]
       }
@@ -55787,7 +56043,96 @@
     "links": {
       "instagram": "https://www.instagram.com/nwh91",
       "namu": "https://namu.wiki/w/남우현"
-    }
+    },
+    "discography": [
+      {
+        "title": "Second Write..",
+        "type": "미니 2집",
+        "releaseDate": "2018.09.03",
+        "trackCount": 7,
+        "isMain": true,
+        "titleTrack": "너만 괜찮다면",
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/102/00/420/10200420_500.jpg?e66a24e4f18c2cdee6f9ea5dbca22414",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Second Write..",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "너만 괜찮다면",
+            "isTitle": true
+          },
+          {
+            "no": 3,
+            "title": "You're My Lady",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "I Swear (Feat. 동우 of INFINITE)",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Smile (Feat. 김정모 of TraxX)",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "같은자리",
+            "isTitle": false
+          },
+          {
+            "no": 7,
+            "title": "사랑해",
+            "isTitle": false
+          }
+        ]
+      },
+      {
+        "title": "Write..",
+        "type": "미니 1집",
+        "releaseDate": "2016.05.09",
+        "trackCount": 6,
+        "isMain": true,
+        "titleTrack": "끄덕끄덕",
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/026/83/592/2683592_500.jpg",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Write..",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "끄덕끄덕",
+            "isTitle": true
+          },
+          {
+            "no": 3,
+            "title": "그 사람",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "향기",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Gravity",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "Stand by me",
+            "isTitle": false
+          }
+        ]
+      }
+    ]
   },
   {
     "name": {
