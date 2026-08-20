@@ -838,6 +838,15 @@ async function _ytSweepMembersMistag(){
 // 승인/거부하게 한다 — 자체 채널 영상인데 우연히 그룹명 없이 멤버 이름만 있던 정상 케이스가 섞여
 // 있을 수 있어(제목만으론 100% 구분 불가) 되돌릴 수 없는 자동 처리 대신 검수를 거치게 하는 것.
 async function _ytRescanWeakGroupAssignments(){
+  // ⚠️ 비활성화(2026-08-20, 사용자 제보): 이 재스캔이 "제목에 그룹명 없이 멤버 이름만 있는" 정상 영상
+  // (직캠·챌린지·예능 클립 대부분)을 약한 근거로 오판해 무려 35,168개를 통째로 검수큐(content_flag=hidden
+  // +needs_review)로 보내버림. content_flag=null 전체를 소급 스캔하는데 _m2ParseTitle의 'weak' 판정이
+  // 멤버명만 있는 정상 제목 대다수에 걸려서 대량 오탐 — "멤버명만 있는 제목" ≠ "그룹 오배정"인데 그렇게
+  // 취급한 게 원인. Supabase SQL로 `UPDATE ... SET content_flag=NULL,needs_review=false WHERE
+  // content_flag='hidden' AND needs_review=true`로 전량 원복함. 기준(weak 판정)을 훨씬 좁히기 전엔 절대
+  // 재실행 금지 — 실수로 눌러도 아무 일 안 하도록 조기 반환.
+  _ytSetProg('⚠️ 비활성화됨 — 정상 영상 3.5만개를 대량 오숨김한 이력이 있어 막아둠(2026-08-20). "weak 근거" 기준을 좁히기 전엔 실행 안 됨.');
+  return;
   if(!sb){_ytSetProg('Supabase 연결 없음');return;}
   const btn=document.getElementById('sp-yt-rescan-weak-btn');
   if(btn)btn.disabled=true;
