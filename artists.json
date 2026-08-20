@@ -28085,7 +28085,758 @@
     "fandom": {
       "ko": "유애나",
       "en": "UAENA"
-    }
+    },
+    "discography": [
+      {
+        "title": "꽃갈피 셋",
+        "type": "리메이크 3집",
+        "releaseDate": "2025.05.27",
+        "trackCount": 6,
+        "isMain": true,
+        "titleTrack": "Never Ending Story",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/118/31/781/11831781_20250526162725_500.jpg?YUV444",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "빨간 운동화",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "Never Ending Story",
+            "isTitle": true
+          },
+          {
+            "no": 3,
+            "title": "10월 4일",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Last Scene (Feat. 원슈타인)",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "미인 (Feat. Balming Tiger)",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "네모의 꿈",
+            "isTitle": false
+          }
+        ]
+      },
+      {
+        "title": "The Winning",
+        "type": "미니 6집",
+        "releaseDate": "2024.02.20",
+        "trackCount": 5,
+        "isMain": true,
+        "titleTrack": "Shopper",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/114/04/142/11404142_20240220141548_500.jpg?70df4fcc0f7fdcbc8ccbaf7e8965a913",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Shopper",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "홀씨",
+            "isTitle": true
+          },
+          {
+            "no": 3,
+            "title": "Shh.. (Feat. 혜인(HYEIN), 조원선 & Special Narr. 패티김)",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Love wins all",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "관객이 될게 (I stan U)",
+            "isTitle": false
+          }
+        ]
+      },
+      {
+        "title": "LILAC",
+        "type": "정규 5집",
+        "releaseDate": "2021.03.25",
+        "trackCount": 10,
+        "isMain": true,
+        "titleTrack": "라일락",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/105/54/246/10554246_20210325161233_500.jpg?304eb9ed9c07a16ec6d6e000dc0e7d91",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "라일락",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Flu",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "Coin",
+            "isTitle": true
+          },
+          {
+            "no": 4,
+            "title": "봄 안녕 봄",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Celebrity",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "돌림노래 (Feat. DEAN)",
+            "isTitle": false
+          },
+          {
+            "no": 7,
+            "title": "빈 컵 (Empty Cup)",
+            "isTitle": false
+          },
+          {
+            "no": 8,
+            "title": "아이와 나의 바다",
+            "isTitle": false
+          },
+          {
+            "no": 9,
+            "title": "어푸 (Ah puh)",
+            "isTitle": false
+          },
+          {
+            "no": 10,
+            "title": "에필로그",
+            "isTitle": false
+          }
+        ]
+      },
+      {
+        "title": "Love poem",
+        "type": "미니 5집",
+        "releaseDate": "2019.11.18",
+        "trackCount": 6,
+        "isMain": true,
+        "titleTrack": "Blueming",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/103/46/650/10346650_500.jpg?14a08050b8c6adc879b6e0cf587d456a",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "unlucky",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "그 사람",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "Blueming",
+            "isTitle": true
+          },
+          {
+            "no": 4,
+            "title": "시간의 바깥",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "자장가",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "Love poem",
+            "isTitle": true
+          }
+        ]
+      },
+      {
+        "title": "꽃갈피 둘",
+        "type": "리메이크 2집",
+        "releaseDate": "2017.09.22",
+        "trackCount": 6,
+        "isMain": true,
+        "titleTrack": "잠 못 드는 밤 비는 내리고",
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/100/96/855/10096855_500.jpg?143adaa26f0aeb5c274cb302ddac684f",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "가을 아침",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "비밀의 화원",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "잠 못 드는 밤 비는 내리고",
+            "isTitle": true
+          },
+          {
+            "no": 4,
+            "title": "어젯밤 이야기",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "개여울",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "매일 그대와",
+            "isTitle": false
+          }
+        ]
+      },
+      {
+        "title": "Palette",
+        "type": "정규 4집",
+        "releaseDate": "2017.04.21",
+        "trackCount": 10,
+        "isMain": true,
+        "titleTrack": "팔레트 (Feat. G-DRAGON)",
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/100/56/666/10056666_500.jpg?6aeddbe69ee3e13388eb0d9b81adaca8",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "이 지금",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "팔레트 (Feat. G-DRAGON)",
+            "isTitle": true
+          },
+          {
+            "no": 3,
+            "title": "이런 엔딩",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "아이유",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "잼잼",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "Black Out",
+            "isTitle": false
+          },
+          {
+            "no": 7,
+            "title": "마침표",
+            "isTitle": false
+          },
+          {
+            "no": 8,
+            "title": "아이유",
+            "isTitle": false
+          },
+          {
+            "no": 9,
+            "title": "그렇게 사랑은",
+            "isTitle": false
+          },
+          {
+            "no": 10,
+            "title": "이름에게",
+            "isTitle": true
+          }
+        ]
+      },
+      {
+        "title": "CHAT-SHIRE",
+        "type": "미니 4집",
+        "releaseDate": "2015.10.23",
+        "trackCount": 7,
+        "isMain": true,
+        "titleTrack": "스물셋",
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/026/46/282/2646282_500.jpg",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "새 신발",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "Zeze",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "스물셋",
+            "isTitle": true
+          },
+          {
+            "no": 4,
+            "title": "푸르던",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Red Queen (Feat. Zion.T)",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "무릎",
+            "isTitle": false
+          },
+          {
+            "no": 7,
+            "title": "안경",
+            "isTitle": false
+          }
+        ]
+      },
+      {
+        "title": "꽃갈피",
+        "type": "리메이크 1집",
+        "releaseDate": "2014.05.16",
+        "trackCount": 7,
+        "isMain": true,
+        "titleTrack": "나의 옛날이야기",
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/022/56/290/2256290_500.jpg",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "나의 옛날이야기",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "꽃",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "삐에로는 우릴 보고 웃지",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "사랑이 지나가면",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "너의 의미 (Feat. 김창완)",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "여름밤의 꿈",
+            "isTitle": false
+          },
+          {
+            "no": 7,
+            "title": "꿍따리 샤바라 (Feat. 클론)",
+            "isTitle": false
+          }
+        ]
+      },
+      {
+        "title": "Modern Times",
+        "type": "정규 3집",
+        "releaseDate": "2013.10.08",
+        "trackCount": 13,
+        "isMain": true,
+        "titleTrack": "분홍신",
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/022/08/448/2208448_500.jpg",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "을의 연애 (With 박주원)",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "누구나 비밀은 있다 (Feat. 가인 Of Brown Eyed Girls)",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "입술 사이 (50cm)",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "분홍신",
+            "isTitle": true
+          },
+          {
+            "no": 5,
+            "title": "Modern Times",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "싫은 날",
+            "isTitle": false
+          },
+          {
+            "no": 7,
+            "title": "Obliviate",
+            "isTitle": false
+          },
+          {
+            "no": 8,
+            "title": "아이야 나랑 걷자 (Feat. 최백호)",
+            "isTitle": false
+          },
+          {
+            "no": 9,
+            "title": "Havana",
+            "isTitle": false
+          },
+          {
+            "no": 10,
+            "title": "우울시계 (Feat. 종현 Of SHINee)",
+            "isTitle": false
+          },
+          {
+            "no": 11,
+            "title": "한낮의 꿈 (Feat. 양희은)",
+            "isTitle": false
+          },
+          {
+            "no": 12,
+            "title": "기다려",
+            "isTitle": false
+          },
+          {
+            "no": 13,
+            "title": "(Bonus Track) Voice Mail (Korean Ver.)",
+            "isTitle": false
+          }
+        ]
+      },
+      {
+        "title": "Last Fantasy",
+        "type": "정규 2집",
+        "releaseDate": "2011.11.29",
+        "trackCount": 13,
+        "isMain": true,
+        "titleTrack": "너랑 나",
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/020/40/666/2040666_500.jpg",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "비밀",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "잠자는 숲 속의 왕자 (Feat. 윤상)",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "별을 찾는 아이 (Feat. 김광진)",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "너랑 나",
+            "isTitle": true
+          },
+          {
+            "no": 5,
+            "title": "벽지무늬",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "삼촌 (Feat. 이적)",
+            "isTitle": false
+          },
+          {
+            "no": 7,
+            "title": "사랑니",
+            "isTitle": false
+          },
+          {
+            "no": 8,
+            "title": "Everything's Alright (Feat. 김현철)",
+            "isTitle": false
+          },
+          {
+            "no": 9,
+            "title": "Last Fantasy",
+            "isTitle": false
+          },
+          {
+            "no": 10,
+            "title": "Teacher (Feat. Ra.D)",
+            "isTitle": false
+          },
+          {
+            "no": 11,
+            "title": "길 잃은 강아지",
+            "isTitle": false
+          },
+          {
+            "no": 12,
+            "title": "4AM",
+            "isTitle": false
+          },
+          {
+            "no": 13,
+            "title": "라망 (L'amant)",
+            "isTitle": false
+          }
+        ]
+      },
+      {
+        "title": "Real",
+        "type": "미니 3집",
+        "releaseDate": "2010.12.09",
+        "trackCount": 7,
+        "isMain": true,
+        "titleTrack": "좋은 날",
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/010/93/562/1093562_500.jpg",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "이게 아닌데",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "느리게 하는 일",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "좋은 날",
+            "isTitle": true
+          },
+          {
+            "no": 4,
+            "title": "첫 이별 그날 밤",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "혼자 있는 방",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "미리 메리 크리스마스 (Feat. 천둥 Of MBLAQ)",
+            "isTitle": false
+          },
+          {
+            "no": 7,
+            "title": "좋은 날 (Inst.)",
+            "isTitle": false
+          }
+        ]
+      },
+      {
+        "title": "IU...IM",
+        "type": "미니 2집",
+        "releaseDate": "2009.11.12",
+        "trackCount": 7,
+        "isMain": true,
+        "titleTrack": "마쉬멜로우",
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/007/18/505/718505_500.jpg",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Love Attack",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "기차를 타고",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "마쉬멜로우",
+            "isTitle": true
+          },
+          {
+            "no": 4,
+            "title": "아침 눈물",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "두근 두근 데이트",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "기차를 타고 (Inst.)",
+            "isTitle": false
+          },
+          {
+            "no": 7,
+            "title": "아침 눈물 (Inst.)",
+            "isTitle": false
+          }
+        ]
+      },
+      {
+        "title": "Growing Up",
+        "type": "정규 1집",
+        "releaseDate": "2009.04.23",
+        "trackCount": 16,
+        "isMain": true,
+        "titleTrack": "Boo",
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/005/46/853/546853_500.jpg",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "바라보기",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "Boo",
+            "isTitle": true
+          },
+          {
+            "no": 3,
+            "title": "가여워",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "A Dreamer",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Every Sweet Day",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "미아",
+            "isTitle": false
+          },
+          {
+            "no": 7,
+            "title": "나 말고 넷",
+            "isTitle": false
+          },
+          {
+            "no": 8,
+            "title": "있잖아 (Feat. 마리오)",
+            "isTitle": false
+          },
+          {
+            "no": 9,
+            "title": "졸업하는 날",
+            "isTitle": false
+          },
+          {
+            "no": 10,
+            "title": "Feel So Good",
+            "isTitle": false
+          },
+          {
+            "no": 11,
+            "title": "미운 오리",
+            "isTitle": false
+          },
+          {
+            "no": 12,
+            "title": "마주보기 (바라보기 그 후)",
+            "isTitle": false
+          },
+          {
+            "no": 13,
+            "title": "미아 (Acoustic Ver.)",
+            "isTitle": false
+          },
+          {
+            "no": 14,
+            "title": "있잖아 (Rock Ver.)",
+            "isTitle": false
+          },
+          {
+            "no": 15,
+            "title": "Boo (Inst.)",
+            "isTitle": false
+          },
+          {
+            "no": 16,
+            "title": "가여워 (Inst.)",
+            "isTitle": false
+          }
+        ]
+      },
+      {
+        "title": "Lost And Found",
+        "type": "미니 1집",
+        "releaseDate": "2008.09.23",
+        "trackCount": 6,
+        "isMain": true,
+        "titleTrack": "미아",
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/003/98/025/398025_500.jpg",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "미운오리",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "미아",
+            "isTitle": true
+          },
+          {
+            "no": 3,
+            "title": "있잖아 (Feat. 마리오)",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Feel So Good",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Every Sweet Day",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "미아 (Inst.)",
+            "isTitle": false
+          }
+        ]
+      }
+    ]
   },
   {
     "name": {
@@ -80329,6 +81080,755 @@
           }
         ]
       }
+    ],
+    "discography": [
+      {
+        "title": "Crazier - The 11th Album",
+        "type": "정규 11집",
+        "releaseDate": "2025.08.04",
+        "trackCount": 11,
+        "isMain": true,
+        "titleTrack": "Crazier",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/119/82/344/11982344_20250801154039_500.jpg?6dfb6eea5bf4caa4b93a9f081712bb4b",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Crazier",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Healing Generation",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "It Takes Two",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Don't Mind Me",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "How Could",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "What She Wants",
+            "isTitle": false
+          },
+          {
+            "no": 7,
+            "title": "Up And Down",
+            "isTitle": false
+          },
+          {
+            "no": 8,
+            "title": "Love Like This",
+            "isTitle": false
+          },
+          {
+            "no": 9,
+            "title": "Like I Like",
+            "isTitle": false
+          },
+          {
+            "no": 10,
+            "title": "Hit You Up",
+            "isTitle": false
+          },
+          {
+            "no": 11,
+            "title": "Clockwise",
+            "isTitle": false
+          }
+        ]
+      },
+      {
+        "title": "Forgive Me - The 3rd Mini Album",
+        "type": "미니 3집",
+        "releaseDate": "2022.11.22",
+        "trackCount": 6,
+        "isMain": true,
+        "titleTrack": "Forgive Me",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/111/06/700/11106700_20221121150330_500.jpg?fb4290dc6975fda2fcc4edbb542d15e1",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Forgive Me",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "ZIP (짓)",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "Sketch",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Breathe",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "After Midnight",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "Hope",
+            "isTitle": false
+          }
+        ]
+      },
+      {
+        "title": "BETTER – The 10th Album",
+        "type": "정규 10집",
+        "releaseDate": "2020.12.01",
+        "trackCount": 11,
+        "isMain": true,
+        "titleTrack": "Better",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/105/26/860/10526860_20201201154013_500.jpg?07d9e0394e95dc731b641320102c2beb",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Better",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Temptations",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "Cloud",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "All That Jazz",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "L.O.V.E",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "Cut Me Off",
+            "isTitle": false
+          },
+          {
+            "no": 7,
+            "title": "Got Me Good",
+            "isTitle": false
+          },
+          {
+            "no": 8,
+            "title": "Honey & Diamonds",
+            "isTitle": false
+          },
+          {
+            "no": 9,
+            "title": "Start Over",
+            "isTitle": false
+          },
+          {
+            "no": 10,
+            "title": "Gravity",
+            "isTitle": false
+          },
+          {
+            "no": 11,
+            "title": "Little Bird",
+            "isTitle": false
+          }
+        ]
+      },
+      {
+        "title": "Starry Night - The 2nd Mini Album",
+        "type": "미니 2집",
+        "releaseDate": "2019.12.11",
+        "trackCount": 6,
+        "isMain": true,
+        "titleTrack": "Starry Night (Feat. Crush)",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/103/63/277/10363277_20191211121716_500.jpg?495a2b4ffc7a8abba7f473037aa19e19",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Starry Night (Feat. Crush)",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Black",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "Butterfly",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "I Don't Mind",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "보여 (Think About You)",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "말린 장미 (Dry Flower)",
+            "isTitle": false
+          }
+        ]
+      },
+      {
+        "title": "WOMAN - The 9th Album",
+        "type": "정규 9집",
+        "releaseDate": "2018.10.24",
+        "trackCount": 10,
+        "isMain": true,
+        "titleTrack": "Woman",
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/102/15/631/10215631_500.jpg?06919d168848e774d7e118e559b2d5e4",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Woman",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Like it!",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "홧김에 (Irreversible)",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Encounter",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Little More",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "너와 나 (U&I)",
+            "isTitle": false
+          },
+          {
+            "no": 7,
+            "title": "If",
+            "isTitle": false
+          },
+          {
+            "no": 8,
+            "title": "No Limit",
+            "isTitle": false
+          },
+          {
+            "no": 9,
+            "title": "Good Love",
+            "isTitle": false
+          },
+          {
+            "no": 10,
+            "title": "습관 (I want you back)",
+            "isTitle": false
+          }
+        ]
+      },
+      {
+        "title": "ONE SHOT, TWO SHOT - The 1st Mini Album",
+        "type": "미니 1집",
+        "releaseDate": "2018.02.20",
+        "trackCount": 7,
+        "isMain": true,
+        "titleTrack": "ONE SHOT, TWO SHOT",
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/101/40/687/10140687_500.jpg?972d483cbbb7768905b42686539b1def",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "ONE SHOT, TWO SHOT",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "EVERYBODY KNOWS",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "내가 돌아 (NEGA DOLA)",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "YOUR SONG (Feat. Junoflo)",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "RECOLLECTION",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "ALWAYS, ALL WAYS (Feat. Chancellor)",
+            "isTitle": false
+          },
+          {
+            "no": 7,
+            "title": "CAMO",
+            "isTitle": false
+          }
+        ]
+      },
+      {
+        "title": "Kiss My Lips - The 8th Album",
+        "type": "정규 8집",
+        "releaseDate": "2015.05.12",
+        "trackCount": 12,
+        "isMain": true,
+        "titleTrack": "Kiss My Lips",
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/023/16/838/2316838_500.jpg",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Kiss My Lips",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Who Are You (Feat. 개코)",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "Smash",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Shattered",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Fox",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "Double Jack (Feat. 에디킴)",
+            "isTitle": false
+          },
+          {
+            "no": 7,
+            "title": "Home",
+            "isTitle": false
+          },
+          {
+            "no": 8,
+            "title": "Clockwork",
+            "isTitle": false
+          },
+          {
+            "no": 9,
+            "title": "Love and Hate",
+            "isTitle": false
+          },
+          {
+            "no": 10,
+            "title": "Green Light",
+            "isTitle": false
+          },
+          {
+            "no": 11,
+            "title": "Hello",
+            "isTitle": false
+          },
+          {
+            "no": 12,
+            "title": "Blah",
+            "isTitle": false
+          }
+        ]
+      },
+      {
+        "title": "Only One",
+        "type": "정규 7집",
+        "releaseDate": "2012.07.22",
+        "trackCount": 9,
+        "isMain": true,
+        "titleTrack": "Only One",
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/021/38/075/2138075_500.jpg",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Only One",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "The Shadow",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "네모난 바퀴 (Hope)",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Not Over U",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "The Top",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "Mayday! Mayday! (너에게 닿기를 간절히 외치다)",
+            "isTitle": false
+          },
+          {
+            "no": 7,
+            "title": "One Dream (Feat. HENRY Of Super Junior-M & KEY Of SHINee)",
+            "isTitle": false
+          },
+          {
+            "no": 8,
+            "title": "Only One (Inst.)",
+            "isTitle": false
+          },
+          {
+            "no": 9,
+            "title": "The Shadow (Inst.)",
+            "isTitle": false
+          }
+        ]
+      },
+      {
+        "title": "Hurricane Venus - The 6th Album",
+        "type": "정규 6집",
+        "releaseDate": "2010.08.05",
+        "trackCount": 11,
+        "isMain": true,
+        "titleTrack": "Hurricane Venus",
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/009/78/853/978853_500.jpg",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "GAME",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "Hurricane Venus",
+            "isTitle": true
+          },
+          {
+            "no": 3,
+            "title": "Dangerous",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "옆 사람 (Stand By)",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "M.E.P (My Electronic Piano)",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "Let Me",
+            "isTitle": false
+          },
+          {
+            "no": 7,
+            "title": "한별 (Implode)",
+            "isTitle": false
+          },
+          {
+            "no": 8,
+            "title": "Adrenaline",
+            "isTitle": false
+          },
+          {
+            "no": 9,
+            "title": "하루하루 (Ordinary Day)",
+            "isTitle": false
+          },
+          {
+            "no": 10,
+            "title": "Don't Know What To Say",
+            "isTitle": false
+          },
+          {
+            "no": 11,
+            "title": "로망스 (Romance)",
+            "isTitle": false
+          }
+        ]
+      },
+      {
+        "title": "Girls On Top",
+        "type": "정규 5집",
+        "releaseDate": "2005.06.24",
+        "trackCount": 13,
+        "isMain": true,
+        "titleTrack": "Girls On Top",
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/003/04/317/304317_500.jpg",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Moto",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "Do You Love Me? (둘이 함께)",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "Girls On Top",
+            "isTitle": true
+          },
+          {
+            "no": 4,
+            "title": "오늘 그댈 본다면 (If You Were Here) (CF - 서울우유 '서울이 좋다' 보아편)",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Love Can Make A Miracle",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "Addiction (중독)",
+            "isTitle": false
+          },
+          {
+            "no": 7,
+            "title": "Freak In Me",
+            "isTitle": false
+          },
+          {
+            "no": 8,
+            "title": "공중정원 (Garden In The Air)",
+            "isTitle": false
+          },
+          {
+            "no": 9,
+            "title": "I Spy",
+            "isTitle": false
+          },
+          {
+            "no": 10,
+            "title": "Can't Let Go",
+            "isTitle": false
+          },
+          {
+            "no": 11,
+            "title": "Heroine (시선)",
+            "isTitle": false
+          },
+          {
+            "no": 12,
+            "title": "숨... (Breathe Again)",
+            "isTitle": false
+          },
+          {
+            "no": 13,
+            "title": "가을편지",
+            "isTitle": false
+          }
+        ]
+      },
+      {
+        "title": "My Name - The 4th Album",
+        "type": "정규 4집",
+        "releaseDate": "2004.06.11",
+        "trackCount": 14,
+        "isMain": true,
+        "titleTrack": "My Name",
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/000/34/891/34891_500.jpg",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "My Name",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Spark",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "I Got U",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "My Prayer (기도)",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "완전한 날개",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "두근두근 (Pit-A-Pat)",
+            "isTitle": false
+          },
+          {
+            "no": 7,
+            "title": "I Kiss",
+            "isTitle": false
+          },
+          {
+            "no": 8,
+            "title": "Don't Give A Damn",
+            "isTitle": false
+          },
+          {
+            "no": 9,
+            "title": "그럴 수 있겠지...!?",
+            "isTitle": false
+          },
+          {
+            "no": 10,
+            "title": "Etude",
+            "isTitle": false
+          },
+          {
+            "no": 11,
+            "title": "인사 (Good-Bye)",
+            "isTitle": false
+          },
+          {
+            "no": 12,
+            "title": "Feel Me",
+            "isTitle": false
+          },
+          {
+            "no": 13,
+            "title": "바보같죠 (Stay In Love)",
+            "isTitle": false
+          },
+          {
+            "no": 14,
+            "title": "We",
+            "isTitle": false
+          }
+        ]
+      },
+      {
+        "title": "Atlantis Princess",
+        "type": "정규 3집",
+        "releaseDate": "2003.05.30",
+        "trackCount": 13,
+        "isMain": true,
+        "titleTrack": "아틀란티스 소녀 (Atlantis Princess)",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/000/40/234/40234_20210323165407_500.jpg?7125a4a8363ce2435ae35fc3ef4e019a",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Time To Begin",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "아틀란티스 소녀 (Atlantis Princess)",
+            "isTitle": true
+          },
+          {
+            "no": 3,
+            "title": "나무 (Tree)",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Milky Way",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "천사의 숨결 (Beat Of Angel)",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "선물 (Gift)",
+            "isTitle": false
+          },
+          {
+            "no": 7,
+            "title": "이런 내게 (Where Are You)",
+            "isTitle": false
+          },
+          {
+            "no": 8,
+            "title": "단념 (Make A Move)",
+            "isTitle": false
+          },
+          {
+            "no": 9,
+            "title": "사랑해요 (So Much In Love)",
+            "isTitle": false
+          },
+          {
+            "no": 10,
+            "title": "남겨진 슬픔 (Endless Sorrow)",
+            "isTitle": false
+          },
+          {
+            "no": 11,
+            "title": "The Show Must Go On",
+            "isTitle": false
+          },
+          {
+            "no": 12,
+            "title": "서울의 빛 (The Lights Of Seoul)",
+            "isTitle": false
+          },
+          {
+            "no": 13,
+            "title": "The Lights Of Seoul",
+            "isTitle": false
+          }
+        ]
+      }
     ]
   },
   {
@@ -80390,7 +81890,593 @@
       "namu": "https://namu.wiki/w/비(연예인)"
     },
     "sparkle": false,
-    "songs": []
+    "songs": [],
+    "discography": [
+      {
+        "title": "PIECES by RAIN",
+        "type": "미니 2집",
+        "releaseDate": "2021.03.03",
+        "trackCount": 5,
+        "isMain": true,
+        "titleTrack": "WHY DON'T WE (Feat. 청하)",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/105/72/449/10572449_20210303151319_500.jpg?11a1fce8cb0ed888b6106a17032da4a5",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Aurora (오로라)",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "MAGNETIC (Feat. 잭슨)",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "WHY DON'T WE (Feat. 청하)",
+            "isTitle": true
+          },
+          {
+            "no": 4,
+            "title": "이리루와 (Feat. Keita, TAG, WON of Ciipher)",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "비",
+            "isTitle": false
+          }
+        ]
+      },
+      {
+        "title": "MY LIFE愛",
+        "type": "미니 1집",
+        "releaseDate": "2017.12.01",
+        "trackCount": 8,
+        "isMain": true,
+        "titleTrack": "깡",
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/101/14/544/10114544_500.jpg?3ff4b760f08d82663b150e0eab7b3540",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "오늘 헤어져 (Feat. 조현아 of 어반자카파)",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "입에 달아",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "다시",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Sunshine",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "깡",
+            "isTitle": true
+          },
+          {
+            "no": 6,
+            "title": "다시 (Inst.)",
+            "isTitle": false
+          },
+          {
+            "no": 7,
+            "title": "깡 (Inst.)",
+            "isTitle": false
+          },
+          {
+            "no": 8,
+            "title": "Sunshine (Inst.)",
+            "isTitle": false
+          }
+        ]
+      },
+      {
+        "title": "Rain Effect",
+        "type": "정규 6집",
+        "releaseDate": "2014.01.02",
+        "trackCount": 10,
+        "isMain": true,
+        "titleTrack": "30 Sexy",
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/022/24/109/2224109_500.jpg?262173baed33f4e02a27d58643af9c01",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Rain Effect",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "30 Sexy",
+            "isTitle": true
+          },
+          {
+            "no": 3,
+            "title": "La Song",
+            "isTitle": true
+          },
+          {
+            "no": 4,
+            "title": "어디 가요. 오빠 (Feat. 현아)",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "마릴린 먼로 (Marilyn Monroe)",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "차에 타봐",
+            "isTitle": false
+          },
+          {
+            "no": 7,
+            "title": "Superman",
+            "isTitle": false
+          },
+          {
+            "no": 8,
+            "title": "알아버렸어",
+            "isTitle": false
+          },
+          {
+            "no": 9,
+            "title": "Dear Mama Don't Cry",
+            "isTitle": false
+          },
+          {
+            "no": 10,
+            "title": "30 Sexy (East4a Deeptech Mix)",
+            "isTitle": false
+          }
+        ]
+      },
+      {
+        "title": "Back To The Basic",
+        "type": "스페셜",
+        "releaseDate": "2010.04.07",
+        "trackCount": 5,
+        "isMain": true,
+        "titleTrack": "널 붙잡을 노래",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/008/41/954/841954_20200319170158_500.jpg?6255d556614d7f252f44e8849482ec46",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "널 붙잡을 노래",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Hip Song",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "One",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "똑같아 (Same)",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Love Song (English Ver.)",
+            "isTitle": false
+          }
+        ]
+      },
+      {
+        "title": "Rainism",
+        "type": "정규 5집",
+        "releaseDate": "2008.10.15",
+        "trackCount": 15,
+        "isMain": true,
+        "titleTrack": "Rainism (Clean Ver.)",
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/003/98/518/398518_500.jpg",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "My Way (Intro)",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "Rainism (Clean Ver.)",
+            "isTitle": true
+          },
+          {
+            "no": 3,
+            "title": "Only You",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Love Story",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "사랑이라는 건",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "내 여자",
+            "isTitle": false
+          },
+          {
+            "no": 7,
+            "title": "You",
+            "isTitle": false
+          },
+          {
+            "no": 8,
+            "title": "Fresh Woman",
+            "isTitle": false
+          },
+          {
+            "no": 9,
+            "title": "더 끌려 (Feat. 태완 a.k.a C-Luv)",
+            "isTitle": false
+          },
+          {
+            "no": 10,
+            "title": "고개 돌려",
+            "isTitle": false
+          },
+          {
+            "no": 11,
+            "title": "9월 12일",
+            "isTitle": false
+          },
+          {
+            "no": 12,
+            "title": "My Way",
+            "isTitle": false
+          },
+          {
+            "no": 13,
+            "title": "Rainism (Remix) (Clean Ver.)",
+            "isTitle": false
+          },
+          {
+            "no": 14,
+            "title": "Rainism (Original Ver.)",
+            "isTitle": false
+          },
+          {
+            "no": 15,
+            "title": "Rainism (Remix) (Original Ver.)",
+            "isTitle": false
+          }
+        ]
+      },
+      {
+        "title": "Rain's World",
+        "type": "정규 4집",
+        "releaseDate": "2006.10.13",
+        "trackCount": 14,
+        "isMain": true,
+        "titleTrack": "I'm Coming (Feat. Tablo)",
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/003/28/756/328756_500.jpg",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Rain's World",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "I'm Coming (Feat. Tablo)",
+            "isTitle": true
+          },
+          {
+            "no": 3,
+            "title": "With U",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "내가 누웠던 침대 (In My Bed)",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "하루도 (Not A Single Day)",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "카시오페아 (Cassiopeia) (Feat. 임정희)",
+            "isTitle": false
+          },
+          {
+            "no": 7,
+            "title": "Him & Me (Feat. 다이나믹 듀오)",
+            "isTitle": false
+          },
+          {
+            "no": 8,
+            "title": "Don't Stop",
+            "isTitle": false
+          },
+          {
+            "no": 9,
+            "title": "Touch Ya (Feat. 태완, aka, C-Luv)",
+            "isTitle": false
+          },
+          {
+            "no": 10,
+            "title": "Move On",
+            "isTitle": false
+          },
+          {
+            "no": 11,
+            "title": "Oh Yeah",
+            "isTitle": false
+          },
+          {
+            "no": 12,
+            "title": "Friends (Feat. Tiger JK)",
+            "isTitle": false
+          },
+          {
+            "no": 13,
+            "title": "To My Friends",
+            "isTitle": false
+          },
+          {
+            "no": 14,
+            "title": "나 (B-garage Remix)",
+            "isTitle": false
+          }
+        ]
+      },
+      {
+        "title": "It's Raining",
+        "type": "정규 3집",
+        "releaseDate": "2004.10.08",
+        "trackCount": 16,
+        "isMain": true,
+        "titleTrack": "It's Raining",
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/000/42/127/42127_500.jpg",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "하고 싶었던 말",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "It's Raining",
+            "isTitle": true
+          },
+          {
+            "no": 3,
+            "title": "I Do",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "지운 얼굴 (Familiar Face)",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "11 Days",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "Quiz",
+            "isTitle": false
+          },
+          {
+            "no": 7,
+            "title": "My Groove (Feat. EpikHigh, 임정희)",
+            "isTitle": false
+          },
+          {
+            "no": 8,
+            "title": "난",
+            "isTitle": false
+          },
+          {
+            "no": 9,
+            "title": "Biggest Thing",
+            "isTitle": false
+          },
+          {
+            "no": 10,
+            "title": "Wanna Talk (Feat. Juvie)",
+            "isTitle": false
+          },
+          {
+            "no": 11,
+            "title": "But I Love You",
+            "isTitle": false
+          },
+          {
+            "no": 12,
+            "title": "찾아요 (Feat. 허인창)",
+            "isTitle": false
+          },
+          {
+            "no": 13,
+            "title": "No No No",
+            "isTitle": false
+          },
+          {
+            "no": 14,
+            "title": "To you",
+            "isTitle": false
+          },
+          {
+            "no": 15,
+            "title": "I Love You  (Feat. 노을)",
+            "isTitle": false
+          },
+          {
+            "no": 16,
+            "title": "비",
+            "isTitle": false
+          }
+        ]
+      },
+      {
+        "title": "Rain 2",
+        "type": "정규 2집",
+        "releaseDate": "2003.10.16",
+        "trackCount": 13,
+        "isMain": true,
+        "titleTrack": "태양을 피하는 방법 (Gtr.Remix)",
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/000/32/940/32940_500.jpg",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "2003.10.16",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "알면서",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "난 또 니가 좋은거야",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "왜 하필",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "너에게 나는",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "너마저",
+            "isTitle": false
+          },
+          {
+            "no": 7,
+            "title": "내가 유명해지니 좋니",
+            "isTitle": false
+          },
+          {
+            "no": 8,
+            "title": "태양을 피하는 방법 (Gtr.Remix)",
+            "isTitle": true
+          },
+          {
+            "no": 9,
+            "title": "화성에서 온 남자 금성에서 온 여자",
+            "isTitle": false
+          },
+          {
+            "no": 10,
+            "title": "아쉬운 빈 공간",
+            "isTitle": false
+          },
+          {
+            "no": 11,
+            "title": "안녕이란 말대신 (Remix)",
+            "isTitle": false
+          },
+          {
+            "no": 12,
+            "title": "태양을 피하는 방법",
+            "isTitle": false
+          },
+          {
+            "no": 13,
+            "title": "태양이 떠도",
+            "isTitle": false
+          }
+        ]
+      },
+      {
+        "title": "N001",
+        "type": "정규 1집",
+        "releaseDate": "2002.05.13",
+        "trackCount": 11,
+        "isMain": true,
+        "titleTrack": "나쁜 남자",
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/000/16/339/16339_500.jpg",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "우(雨)",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "악수",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "나쁜 남자",
+            "isTitle": true
+          },
+          {
+            "no": 4,
+            "title": "나",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "익숙치 않아서",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "Baby Baby",
+            "isTitle": false
+          },
+          {
+            "no": 7,
+            "title": "안녕이란 말 대신",
+            "isTitle": false
+          },
+          {
+            "no": 8,
+            "title": "너처럼 (Feat. 바다)",
+            "isTitle": false
+          },
+          {
+            "no": 9,
+            "title": "나론 안되니 (Feat. 후니훈, 허인창)",
+            "isTitle": false
+          },
+          {
+            "no": 10,
+            "title": "왜",
+            "isTitle": false
+          },
+          {
+            "no": 11,
+            "title": "What's Love (Feat. 데니, 렉시, 별 And JYP)",
+            "isTitle": false
+          }
+        ]
+      }
+    ]
   },
   {
     "name": {
