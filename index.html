@@ -319,6 +319,8 @@
     <button class="sp-yt-sync" id="sp-yt-sweep-junk" style="margin-top:4px;opacity:.8;">무조건 제외 키워드 영상 무관 정리</button>
     <div class="sp-btn-hint">아래 목록에 있는 키워드가 제목에 있는 기존 영상을 찾아 '무관'으로 정리해요.</div>
     <div class="sp-subsec-lbl" id="sp-junk-keywords-lbl" style="margin-top:2px;font-size:11px;opacity:.55;"></div>
+    <button class="sp-yt-sync" id="sp-yt-rescan-weak-btn" style="margin-top:4px;opacity:.8;">그룹배정 신뢰도 재스캔(기존 데이터)</button>
+    <div class="sp-btn-hint">제목에 그룹명 없이 멤버 이름 하나만으로 그룹이 정해진 기존 영상(Love/루나/조이 사고 계열)을 찾아 "그룹배정 검수" 큐로 보내요 — 관리자 확인 태그는 안 건드려요.</div>
 
     <div class="sp-yt-prog" id="sp-yt-prog"></div>
   </div>
@@ -335,6 +337,7 @@
       <button class="vm-tab" data-tab="hidden">숨김</button>
       <button class="vm-tab" data-tab="channels">동기화 채널</button>
       <button class="vm-tab" data-tab="ss">검수</button>
+      <button class="vm-tab" data-tab="review">그룹배정 검수</button>
     </div>
     <input type="text" id="vm-search" placeholder="제목·그룹 검색…" autocomplete="off" spellcheck="false">
     <input type="text" id="vm-search-2" placeholder="검색 결과 내 재검색…" autocomplete="off" spellcheck="false" style="display:none">
@@ -3075,7 +3078,7 @@ function _filterBannedVideos(list,ko){return(list||[]).filter(v=>!_isBannedVideo
 // 흔히 쓰는 문구 — 제목에 이 단어가 있으면 어느 그룹으로 매칭됐든 무조건 무관 처리한다(사용자 요청, 2026-08-04).
 // _isBannedVideoTitle과 달리 hidden이 아니라 무관 처리(행은 남기되 그룹/멤버 그리드에서만 제외)라 신규
 // 동기화 시 이 체크에 걸리면 content_flag를 '무관'으로 붙여서 저장한다 — 기존 행은 아래 스윕 버튼으로 정리.
-const _JUNK_TITLE_KEYWORDS_GLOBAL=['띵곡팔이','김창옥쇼','이호선상담소','유부녀킬러','유뷰녀 킬러','스트릿레스토랑파이터','십분hook','[#여권들고','프리한19','결혼지옥','오은영리포트','이혼숙려','닥터로이어','언니네산지직송','혼자는 못 해','방과후태리','스프링피버'];
+const _JUNK_TITLE_KEYWORDS_GLOBAL=['띵곡팔이','김창옥쇼','이호선상담소','유부녀킬러','유뷰녀 킬러','스트릿레스토랑파이터','십분hook','[#여권들고','프리한19','결혼지옥','오은영리포트','이혼숙려','닥터로이어','언니네산지직송','혼자는 못 해','방과후태리','스프링피버','[#학연]','1호가'];
 function _isJunkVideoTitle(t){return!!t&&_JUNK_TITLE_KEYWORDS_GLOBAL.some(k=>t.includes(k));}
 
 let _lbPlaylist=null,_lbIdx=-1,_lbCtx=null;
@@ -4776,12 +4779,20 @@ function _apiVidToSong(v,memberKo,groupKo){
     // 같으면(예: 투어스 영재 카드에 같은 투어스 소속 경민이 함께 태깅된 경우) 그룹 표기를 생략해서
     // "경민(투어스)"이 아니라 "경민"으로 — 다른 곳(같은 그룹 멤버 표시)과 표기 방식을 통일한다.
     const m=n.match(/^(.*)\((.*)\)$/);
+    let pushed;
     if(m&&m[2]===groupKo){
       if(m[1]===memberKo)return; // 자기 자신이 다른 표기로 들어와 있는 경우 방지
-      withList.push(m[1]);
+      pushed=m[1];
     }else{
-      withList.push(n);
+      pushed=n;
     }
+    // 태깅 시 실명/구프로젝트그룹명 등으로 적혀 로스터의 표기(활동명·현 소속)와 안 맞으면 연결 카드에
+    // 클릭해도 영상이 안 뜨는 유령 칩이 생긴다 — 그룹 자체는 실존해도 그 그룹 로스터엔 이 이름이 없어서
+    // _getCollabSongs의 그룹칩 필터링(roster.some(hasMember))이 항상 실패하기 때문. 태깅 시점에 로스터와
+    // 매칭되는지 확인해서 안 되면 아예 넣지 않는다(2026-08-20, 투어스 도훈 카드에 "황민현(워너원)"으로
+    // 잘못 태깅된 사례 — 로스터엔 활동명 "민현(뉴이스트)"으로만 존재해서 매칭 실패, RECURRING_BUGS.md 참고).
+    if(!_findArtistByConnName(pushed,groupKo))return;
+    withList.push(pushed);
   });
   }
   const song={
@@ -5266,6 +5277,41 @@ function _buildConnContent(container){
       famSec.appendChild(row);
     });
     container.appendChild(famSec);
+  }
+
+  // "제작" 관계(groups.json producedBy) — 가족과 마찬가지로 콜라보(같이 영상에 나옴)와는 무관한 관계라
+  // 별도 섹션. 양방향: ①이 앵커가 소속된 그룹을 누가 만들었는지(정방향), ②이 앵커 본인이 만든 그룹이
+  // 있는지(역방향, 전체 GROUPS를 스캔해서 producedBy에 내 이름이 있는 그룹을 찾음) 둘 다 표시
+  // (2026-08-20, 사용자 요청 — 비→엠블랙/지코→보이넥스트도어처럼 제작자-그룹 관계를 드러내고 싶다는
+  // 아이디어). 데이터 출처는 groups.json 한 곳뿐이라 그룹 카드(#gc-produced-row)와 이 섹션이 항상 일치함.
+  const producedByMe=[]; // {groupKo, producer entry} — 내가 속한 그룹을 만든 사람
+  _artistGroups(_connAnchor).forEach(g=>{
+    (GROUPS[g.ko]?.producedBy||[]).forEach(entry=>producedByMe.push({groupKo:g.ko,entry}));
+  });
+  const producedByAnchor=[]; // groupKo — 앵커 본인이 만든 그룹
+  Object.entries(GROUPS).forEach(([gko,info])=>{
+    (info.producedBy||[]).forEach(entry=>{
+      if(entry.ko===_connAnchor.name.ko&&(!entry.group||entry.group===_connAnchor.group.ko))producedByAnchor.push(gko);
+    });
+  });
+  if(producedByMe.length||producedByAnchor.length){
+    const prodSec=document.createElement('div');prodSec.className='conn-family-sec';
+    const prodLbl=document.createElement('div');prodLbl.className='conn-family-lbl';prodLbl.textContent=currentLang==='ko'?'제작':'Produced by';
+    prodSec.appendChild(prodLbl);
+    producedByMe.forEach(({entry})=>{
+      const row=document.createElement('div');row.className='conn-family-row';
+      row.textContent=(currentLang==='ko'?'제작 ':'Produced by ')+entry.ko;
+      if(entry.artist)row.addEventListener('click',e=>{e.stopPropagation();_gotoProducerArtist(entry);});
+      else row.style.cursor='default';
+      prodSec.appendChild(row);
+    });
+    producedByAnchor.forEach(gko=>{
+      const row=document.createElement('div');row.className='conn-family-row';
+      row.textContent=(currentLang==='ko'?'제작한 그룹 ':'Group produced: ')+gko;
+      row.addEventListener('click',e=>{e.stopPropagation();closeConnCard();showGC(gko,window.innerWidth/2,window.innerHeight/2);});
+      prodSec.appendChild(row);
+    });
+    container.appendChild(prodSec);
   }
 
   // 콜라보 영상 수는 이름별로 한 번만 계산해서 재사용 — _getCollabSongs가 내부적으로 전체 콜라보
@@ -7274,6 +7320,16 @@ function showGC(ko,cx,cy,keepMemberPanel,skipRipple,urlMode,pushMobNav){
     _enEl.style.display=_enShow?'':'none';
   }
   _renderTagChip(document.getElementById('gc-co'),(info.co==='무소속'?'':_dispAgency(info.co))||'','agency',(info.co==='무소속'?'':info.co)||'',!!info.disbanded);
+  // 소속 옆에 "제작"(groups.json producedBy) 덧붙임 — 처음엔 #gc-grid에 별도 줄로 만들었는데, 프로듀서가
+  // 있는 그룹이 소수뿐이라 상시 줄 하나를 차지하는 게 과하다는 판단(2026-08-20, 사용자 피드백)으로
+  // 아래 projectShow/altNames와 똑같이 소속 옆 대괄호 접미사로 통일 — 클릭 대상 아닌 정보성 텍스트인
+  // 것도 동일(클릭 가능한 이동은 연결 카드의 "제작" 섹션에서 담당).
+  if(info.producedBy&&info.producedBy.length){
+    const prodSuffix=document.createElement('span');
+    prodSuffix.className='gc-show-suffix';
+    prodSuffix.textContent=` [${currentLang==='ko'?'제작':'produced by'} ${info.producedBy.map(p=>p.ko).join(', ')}]`;
+    document.getElementById('gc-co').appendChild(prodSuffix);
+  }
   const _debutYr=String(info.debut||'').slice(0,4);
   _renderTagChip(document.getElementById('gc-debut'),info.debut||'','debutYear',_debutYr);
   // 서바이벌/오디션 프로그램 출신이면 데뷔 연도 옆에 "[프로그램명]"을 덧붙인다 — 클릭 가능한 데뷔
@@ -7446,6 +7502,17 @@ function _refreshTagChips(){
   });
 }
 
+// "제작" 관계(누가 이 그룹을 만들었나, groups.json의 producedBy) 렌더링 — 가족 섹션 클릭 이동 패턴
+// 그대로 재사용. artist:true인 항목만 클릭 가능한 칩(로스터에 실제로 있는 사람), false는(비/방시혁처럼
+// 아직 우주에 별이 없는 인물도 기록은 해두고 싶어서) 클릭 불가 텍스트로 표시. group은 동명이인 방지용
+// 선택 필드(가족 섹션의 f.group과 동일한 이유, 2026-08-20).
+function _gotoProducerArtist(entry){
+  const target=ARTISTS.find(x=>x.name.ko===entry.ko&&(!entry.group||_artistGroups(x).some(g=>g.ko===entry.group)));
+  if(!target)return;
+  if(target._worldPos)flyTo(target._worldPos);
+  if(isMob()){showT(target,window.innerWidth/2,window.innerHeight*0.4,false,false,false);openMobSheet(document.getElementById('tt'));}
+  else showT(target,window.innerWidth/2,window.innerHeight/2);
+}
 function _getNatKo(nat){
   if(!nat)return null;
   return typeof nat==='object'?(nat.ko||nat.en):nat;
@@ -12104,7 +12171,7 @@ async function _buildFeedWeeklyTopCams(list){
     if(topVids.length>=3){
       const songs=topVids.map(v=>({t:v.title,u:vidUrl(v),thumb:v.thumb,vc:v.view_count,pa:v.published_at?.slice(0,10)}));
       const top1=topVids[0];
-      const label='Trend',sub=top1.view_count?(currentLang==='ko'?`1위 · ${_fmtN(top1.view_count)} 조회`:`#1 · ${_fmtN(top1.view_count)} views`):(currentLang==='ko'?'최근 7일':'Last 7 days');
+      const label='Trend',sub=top1.view_count?(currentLang==='ko'?`1위 · ${_fmtN(top1.view_count)}`:`#1 · ${_fmtN(top1.view_count)} views`):(currentLang==='ko'?'최근 7일':'Last 7 days');
       _appendFeedCard(list,'📈',label,sub,()=>_openFeedListOverlay(label,sub,songs),top1.thumb);
     }
   }catch(e){/* 카드 하나 실패했다고 탐험 탭 전체가 막히면 안 됨 — 조용히 무시 */}
@@ -12138,7 +12205,7 @@ async function _buildFeedYearlyTop(list){
     const label=currentLang==='ko'?`${year}년 TOP 100`:`${year} TOP 100`;
     const top1=vids[0];
     const fmtN=n=>n>=1000000?Math.floor(n/1000000)+'M+':n>=1000?Math.floor(n/1000)+'K+':String(n);
-    const sub=top1.view_count?(currentLang==='ko'?`1위 · ${fmtN(top1.view_count)} 조회`:`#1 · ${fmtN(top1.view_count)} views`):(currentLang==='ko'?'라이브·직캠 조회수 기준':'Based on live/fancam views');
+    const sub=top1.view_count?(currentLang==='ko'?`1위 · ${fmtN(top1.view_count)}`:`#1 · ${fmtN(top1.view_count)} views`):(currentLang==='ko'?'라이브·직캠 조회수 기준':'Based on live/fancam views');
     _appendFeedCard(list,'🏅',label,sub,()=>_openFeedListOverlay(label,sub,songs),top1.thumb);
   }catch(e){/* 조용히 무시 */}
 }
@@ -12165,7 +12232,7 @@ async function _buildFeedLegend100(list){
     const label=currentLang==='ko'?'케이팝 레전드 100':'K-pop Legend 100';
     const top1=vids[0];
     const fmtN=n=>n>=1000000?Math.floor(n/1000000)+'M+':n>=1000?Math.floor(n/1000)+'K+':String(n);
-    const sub=top1.view_count?(currentLang==='ko'?`1위 · ${fmtN(top1.view_count)} 조회`:`#1 · ${fmtN(top1.view_count)} views`):(currentLang==='ko'?'라이브·직캠 역대 조회수 기준':'Based on all-time live/fancam views');
+    const sub=top1.view_count?(currentLang==='ko'?`1위 · ${fmtN(top1.view_count)}`:`#1 · ${fmtN(top1.view_count)} views`):(currentLang==='ko'?'라이브·직캠 역대 조회수 기준':'Based on all-time live/fancam views');
     _appendFeedCard(list,'👑',label,sub,()=>_openFeedListOverlay(label,sub,songs),top1.thumb);
   }catch(e){/* 조용히 무시 */}
 }
@@ -12198,7 +12265,7 @@ async function _buildFeedSoloCamTop100(list,opts){
     const label=currentLang==='ko'?opts.labelKo:opts.labelEn;
     const top1=vids[0];
     const fmtN=n=>n>=1000000?Math.floor(n/1000000)+'M+':n>=1000?Math.floor(n/1000)+'K+':String(n);
-    const sub=top1.view_count?(currentLang==='ko'?`1위 · ${fmtN(top1.view_count)} 조회`:`#1 · ${fmtN(top1.view_count)} views`):'';
+    const sub=top1.view_count?(currentLang==='ko'?`1위 · ${fmtN(top1.view_count)}`:`#1 · ${fmtN(top1.view_count)} views`):'';
     _appendFeedCard(list,opts.icon,label,sub,()=>_openFeedListOverlay(label,sub,songs),top1.thumb);
   }catch(e){/* 조용히 무시 */}
 }
@@ -12233,7 +12300,7 @@ async function _buildFeedGenSoloCamTop(list,offset){
       const label=currentLang==='ko'?`${gen}세대 ${gender==='f'?'여돌':'남돌'} 개인 직캠 TOP 100`:`Gen ${gen} ${gender==='f'?'Girl Group':'Boy Group'} Solo Fancam TOP 100`;
       const top1=vids[0];
       const fmtN=n=>n>=1000000?Math.floor(n/1000000)+'M+':n>=1000?Math.floor(n/1000)+'K+':String(n);
-      const sub=top1.view_count?(currentLang==='ko'?`1위 · ${fmtN(top1.view_count)} 조회`:`#1 · ${fmtN(top1.view_count)} views`):'';
+      const sub=top1.view_count?(currentLang==='ko'?`1위 · ${fmtN(top1.view_count)}`:`#1 · ${fmtN(top1.view_count)} views`):'';
       _appendFeedCard(list,'🎞️',label,sub,()=>_openFeedListOverlay(label,sub,songs),top1.thumb);
       return;
     }catch(e){/* 다음 조합으로 */}
@@ -12268,7 +12335,7 @@ async function _buildFeedStageTop100(list,opts){
     const label=currentLang==='ko'?opts.labelKo:opts.labelEn;
     const top1=vids[0];
     const fmtN=n=>n>=1000000?Math.floor(n/1000000)+'M+':n>=1000?Math.floor(n/1000)+'K+':String(n);
-    const sub=top1.view_count?(currentLang==='ko'?`1위 · ${fmtN(top1.view_count)} 조회`:`#1 · ${fmtN(top1.view_count)} views`):'';
+    const sub=top1.view_count?(currentLang==='ko'?`1위 · ${fmtN(top1.view_count)}`:`#1 · ${fmtN(top1.view_count)} views`):'';
     _appendFeedCard(list,opts.icon,label,sub,()=>_openFeedListOverlay(label,sub,songs),top1.thumb);
   }catch(e){/* 조용히 무시 */}
 }
@@ -12297,7 +12364,7 @@ async function _buildFeedGenStageTop(list,offset){
       const label=currentLang==='ko'?`${gen}세대 ${gender==='f'?'여돌':'남돌'} 무대 TOP 100`:`Gen ${gen} ${gender==='f'?'Girl Group':'Boy Group'} Stage TOP 100`;
       const top1=vids[0];
       const fmtN=n=>n>=1000000?Math.floor(n/1000000)+'M+':n>=1000?Math.floor(n/1000)+'K+':String(n);
-      const sub=top1.view_count?(currentLang==='ko'?`1위 · ${fmtN(top1.view_count)} 조회`:`#1 · ${fmtN(top1.view_count)} views`):'';
+      const sub=top1.view_count?(currentLang==='ko'?`1위 · ${fmtN(top1.view_count)}`:`#1 · ${fmtN(top1.view_count)} views`):'';
       _appendFeedCard(list,'🎤',label,sub,()=>_openFeedListOverlay(label,sub,songs),top1.thumb);
       return;
     }catch(e){/* 다음 조합으로 */}

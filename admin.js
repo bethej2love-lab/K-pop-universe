@@ -877,6 +877,53 @@ async function _ytFixOnlyoneofLoveMistag(){
   }
 }
 
+// 그룹배정 신뢰도 재스캔(일회용, 기존 데이터 소급) — 2026-08-20 신뢰도 2단계 도입 전에 이미 들어가있던
+// 영상들 대상. 위 온리원오프 Love 전용 정리와 달리 이건 "Love" 하나만이 아니라 같은 패턴(제목에 그룹명
+// 리터럴이 전혀 없이 멤버 이름 하나만으로 group_ko 자체가 정해진 경우) 전체를 훑는다 — 옛 Love 정리
+// 버튼은 members 배열에서 "Love"만 지웠을 뿐 group_ko는 안 건드려서 근본 원인(엉뚱한 그룹 소유로 잡힌
+// 영상 자체)이 그대로 남아있었음(오늘 실측 확인). content_flag가 이미 뭔가 지정된 행(무관/hidden/기타
+// 등)은 이미 사람이 한 번 판단한 것이므로 건드리지 않고, tags_manual=true도 절대 안 건드림. 자동으로
+// 지우지 않고 needs_review 큐로만 보내서(content_flag:'hidden') 어드민이 "그룹배정 검수" 탭에서 최종
+// 승인/거부하게 한다 — 자체 채널 영상인데 우연히 그룹명 없이 멤버 이름만 있던 정상 케이스가 섞여
+// 있을 수 있어(제목만으론 100% 구분 불가) 되돌릴 수 없는 자동 처리 대신 검수를 거치게 하는 것.
+async function _ytRescanWeakGroupAssignments(){
+  if(!sb){_ytSetProg('Supabase 연결 없음');return;}
+  const btn=document.getElementById('sp-yt-rescan-weak-btn');
+  if(btn)btn.disabled=true;
+  try{
+    _ytSetProg('[그룹배정 신뢰도 재스캔] 대상 조회 중… (전체 미태깅 없는 영상이라 시간이 걸릴 수 있어요)');
+    const{data:rows,error}=await _sbFetchAll(()=>sb.from(_YT_TABLE)
+      .select('id,title,group_ko,tags_manual')
+      .is('content_flag',null)
+      .order('id'));
+    if(error){_ytSetProg('조회 실패: '+error.message);return;}
+    if(!rows?.length){_ytSetProg('검사할 영상이 없어요');return;}
+    const candidates=[];
+    let manualSkipped=0,checked=0;
+    for(const v of rows){
+      checked++;
+      if(v.tags_manual){manualSkipped++;continue;}
+      const match=_m2ParseTitle(v.title||'',undefined,false);
+      if(match&&match.confidence==='weak'&&match.primaryGroup===v.group_ko)candidates.push(v.id);
+      if(checked%5000===0)_ytSetProg(`[그룹배정 신뢰도 재스캔] ${checked}/${rows.length}개 검사 중… (약한 근거 ${candidates.length}건 발견)`);
+    }
+    if(!candidates.length){
+      _ytSetProg(`검사 완료 — ${rows.length}개 중 약한 근거로 배정된 영상 없음`+(manualSkipped?` (수동 편집이라 건너뛴 것 ${manualSkipped}개)`:''));
+      return;
+    }
+    for(let i=0;i<candidates.length;i+=200){
+      const{error:updErr}=await sb.from(_YT_TABLE).update({content_flag:'hidden',needs_review:true}).in('id',candidates.slice(i,i+200));
+      if(updErr)throw new Error(updErr.message);
+      _ytSetProg(`[그룹배정 신뢰도 재스캔] ${Math.min(i+200,candidates.length)}/${candidates.length}개 검수 큐로 이동 중…`);
+    }
+    _ytSetProg(`완료! ${rows.length}개 중 ${candidates.length}개를 "그룹배정 검수" 큐로 이동함`+(manualSkipped?` (수동 편집이라 건너뛴 것 ${manualSkipped}개)`:'')+' — 영상관리 패널의 "그룹배정 검수" 탭에서 확인해주세요.');
+  }catch(e){
+    _ytSetProg('오류: '+e.message);
+  }finally{
+    if(btn)btn.disabled=false;
+  }
+}
+
 // 커버곡 원곡 제목 자동 추출(2026-08-19, 사용자 요청 — "특정 커버곡 모아보기" 기능의 전제 작업, 일회성
 // 스크립트가 아니라 반복 재실행 가능한 버튼으로). cover_of_members/cover_of_groups(원곡 아티스트)가
 // 채워진 영상 중엔 진짜 커버곡이 아니라 검수 센터에서 "실제 출연/콜라보가 아니다"로 재분류돼 이 필드로
@@ -1558,9 +1605,10 @@ function _vmApplyTab(){
   const isCh=_vmTab==='channels';
   document.getElementById('vm-list').style.display=isCh?'none':'';
   document.getElementById('vm-ch-inner').style.display=isCh?'flex':'none';
-  // 검수 탭은 검색 불필요(그룹 필터로만 동작)
-  document.getElementById('vm-search').style.display=(isCh||_vmTab==='ss')?'none':'';
-  document.getElementById('vm-search-2').style.display=(isCh||_vmTab==='ss')?'none':'';
+  // 검수 탭들은 검색 불필요(고정 대상 목록)
+  const isReviewLike=_vmTab==='ss'||_vmTab==='review';
+  document.getElementById('vm-search').style.display=(isCh||isReviewLike)?'none':'';
+  document.getElementById('vm-search-2').style.display=(isCh||isReviewLike)?'none':'';
   document.getElementById('vm-toolbar').style.display='none';
   document.getElementById('vm-status').textContent='';
   // '정상만' 토글은 content_flag가 안 섞이는 다른 탭(무관/숨김/검수)에선 의미가 없으므로 전체 탭에서만 노출.
@@ -1635,6 +1683,23 @@ async function _vmLoad(searchTerm,preserveSearch2){
       _vmRenderVideoList();
       return;
     }
+    if(tab==='review'){
+      // 그룹배정 검수 큐 — _extBuildRows가 owner 없는 외부/모음채널에서 멤버 이름 하나만으로(강한 근거
+      // 없이) group_ko를 역추론했을 때 needs_review:true+content_flag:'hidden'으로 저장해둔 것들
+      // (2026-08-20 도입). 여기서 승인하면 그 즉시 실제 그룹으로 확정(content_flag 해제), 거부하면
+      // 무관 처리 — 둘 다 needs_review는 false로 내려 큐에서 빠짐.
+      const{data,error}=await _sbFetchAll(()=>sb.from(_YT_TABLE)
+        .select('id,title,group_ko,thumb,content_flag,members,with_members,with_groups,cover_of_members,cover_of_groups')
+        .eq('needs_review',true)
+        .order('id'));
+      if(myGen!==_vmSearchGen)return;
+      if(error){statusEl.textContent='조회 실패: '+error.message;return;}
+      const all=(data||[]).sort((a,b)=>(a.group_ko||'').localeCompare(b.group_ko||'','ko')||(a.title||'').localeCompare(b.title||'','ko'));
+      _vmRows=all;
+      statusEl.textContent=`그룹배정 검수 대상 ${all.length}개 — 멤버 이름 하나만으로 그룹을 추측한 영상들이에요`;
+      _vmRenderVideoList();
+      return;
+    }
     // nomem / hidden 탭
     const flag=tab==='nomem'?'무관':'hidden';
     let q=sb.from(_YT_TABLE).select('id,title,group_ko,thumb,content_flag,members,with_members,with_groups,cover_of_members,cover_of_groups');
@@ -1678,7 +1743,7 @@ function _vmRenderVideoList(){
   listEl.innerHTML='';
   const rows=_vmSearch2Rows();
   if(!_vmRows.length){
-    const emptyMsg=tab==='all'?'검색 결과가 없어요':tab==='nomem'?'무관 처리된 영상이 없어요':'숨김 처리된 영상이 없어요';
+    const emptyMsg=tab==='all'?'검색 결과가 없어요':tab==='nomem'?'무관 처리된 영상이 없어요':tab==='review'?'검수 대기 중인 영상이 없어요':'숨김 처리된 영상이 없어요';
     listEl.innerHTML=`<div style="padding:24px;text-align:center;color:rgba(155,178,228,0.45);font-size:12px;">${emptyMsg}</div>`;
     toolbarEl.style.display='none';
     return;
@@ -1717,16 +1782,28 @@ function _vmRenderVideoList(){
       info.appendChild(tags);
     }
     const actions=document.createElement('div');actions.className='vm-actions';
-    // flag badge button (클릭하면 무관→숨김→정상 순으로 순환 — 기타/외부인/개별출연은 순환 대상이
-    // 아니라 그대로 표시만 하고, 클릭 한 번에 그 값이 지워지지 않게 함)
-    const flag=v.content_flag||null;
-    const flagBtn=document.createElement('button');flagBtn.className='vm-flag-btn';flagBtn.type='button';
-    _vmSetFlagLabel(flagBtn,flag);
-    flagBtn.addEventListener('click',e=>{e.stopPropagation();_vmCycleFlagInline(v,flagBtn,item);});
+    if(tab==='review'){
+      // 그룹배정 검수 큐 전용 버튼 — 일반 flagBtn의 무관→숨김→정상 순환은 "이 그룹배정이 맞는지"라는
+      // 이 탭의 질문과 안 맞아서(정상=현재도 hidden 상태인 게 뭘 뜻하는지 헷갈림) 승인/거부 이진 버튼으로
+      // 대체. 둘 다 needs_review를 false로 내려야 큐에서 실제로 빠짐(2026-08-20).
+      const approveBtn=document.createElement('button');approveBtn.className='vm-flag-btn vm-flag-normal';approveBtn.type='button';approveBtn.textContent='승인';
+      approveBtn.addEventListener('click',e=>{e.stopPropagation();_vmReviewDecide(v,item,true,approveBtn,rejectBtn);});
+      const rejectBtn=document.createElement('button');rejectBtn.className='vm-flag-btn vm-flag-nomem';rejectBtn.type='button';rejectBtn.textContent='거부';
+      rejectBtn.addEventListener('click',e=>{e.stopPropagation();_vmReviewDecide(v,item,false,approveBtn,rejectBtn);});
+      actions.appendChild(approveBtn);actions.appendChild(rejectBtn);
+    }else{
+      // flag badge button (클릭하면 무관→숨김→정상 순으로 순환 — 기타/외부인/개별출연은 순환 대상이
+      // 아니라 그대로 표시만 하고, 클릭 한 번에 그 값이 지워지지 않게 함)
+      const flag=v.content_flag||null;
+      const flagBtn=document.createElement('button');flagBtn.className='vm-flag-btn';flagBtn.type='button';
+      _vmSetFlagLabel(flagBtn,flag);
+      flagBtn.addEventListener('click',e=>{e.stopPropagation();_vmCycleFlagInline(v,flagBtn,item);});
+      actions.appendChild(flagBtn);
+    }
     // edit button
     const editBtn=document.createElement('button');editBtn.className='vid-edit-btn';editBtn.type='button';editBtn.textContent='✎';
     editBtn.addEventListener('click',e=>{e.stopPropagation();_openVidTagModal({id:v.id,title:v.title},v.group_ko);});
-    actions.appendChild(flagBtn);actions.appendChild(editBtn);
+    actions.appendChild(editBtn);
     item.appendChild(img);item.appendChild(info);item.appendChild(actions);
     listEl.appendChild(item);
   });
@@ -1773,6 +1850,22 @@ async function _vmSetFlag(v,newFlag,btn,item){
       if(!_vmRows.length)_vmRenderVideoList();
     },500);
   }
+}
+// 그룹배정 검수 큐(review 탭) 전용 — 승인이면 실제 그룹으로 확정(content_flag 해제), 거부면 이 그룹배정이
+// 틀렸다는 뜻이므로 무관 처리. 둘 다 needs_review를 내려야 큐에서 실제로 빠짐(2026-08-20).
+async function _vmReviewDecide(v,item,approve,approveBtn,rejectBtn){
+  if(!sb)return;
+  approveBtn.disabled=true;rejectBtn.disabled=true;
+  const newFlag=approve?null:'무관';
+  const{error}=await sb.from(_YT_TABLE).update({content_flag:newFlag,needs_review:false}).eq('id',v.id);
+  if(error){approveBtn.disabled=false;rejectBtn.disabled=false;_showShareToast('오류: '+error.message);return;}
+  item.style.opacity='0.3';
+  setTimeout(()=>{
+    _vmRows=_vmRows.filter(r=>r.id!==v.id);
+    item.remove();
+    document.getElementById('vm-status').textContent=`그룹배정 검수 대상 ${_vmRows.length}개 남음`;
+    if(!_vmRows.length)_vmRenderVideoList();
+  },400);
 }
 function _vmUpdateCount(){
   const total=document.querySelectorAll('#vm-list .vm-item').length;
@@ -2742,8 +2835,12 @@ function _m2ParseTitle(rawTitle,selfGko,strict){
   // 그룹 키를 공식명으로 정리하면서(2026-08-10, "이름(그룹)" 태그 파싱 버그 수정 겸) 옛 이름을 altNames로
   // 옮겼는데, 여기서 안 챙기면 제목에 옛 이름만 적힌 영상(예: "JYJ 콘서트")을 더는 못 알아보는 회귀가
   // 생김(사용자 제보로 발견 — 검색 쪽만 altNames를 보게 고쳤지 태깅 매칭 쪽은 놓쳤었음).
+  // 예전엔 해체 그룹 39팀 전체를 여기서 통째로 제외했음(일반명사 그룹명 오염 방지 목적) — 근데 그중
+  // 실제 충돌 위험이 있는 건 일부(배틀·여자친구·에이프릴 등 흔한 단어형)뿐이고, 나머지 대다수(아이즈원·
+  // 스피카·티오원 등 고유명사형)는 외부/모음 채널 영상 제목에 그룹명이 버젓이 있어도 영원히 매칭 안
+  // 되는 과잉 차단이었음. 위험군만 strictSync로 개별 지정하는 걸로 대체(2026-08-20, 39팀 전수 검토 후).
   const groupsSorted=Object.entries(GROUPS)
-    .filter(([ko,v])=>!_STRICT_SYNC_GROUPS.has(ko)&&!v.disbanded)
+    .filter(([ko,v])=>!_STRICT_SYNC_GROUPS.has(ko))
     .map(([ko,v])=>({ko,tokens:[ko,v.en,...(v.altNames||[])].filter(Boolean)}))
     .sort((a,b)=>Math.max(...b.tokens.map(t=>t.length))-Math.max(...a.tokens.map(t=>t.length)));
   const matchedGroupKos=[];
@@ -2809,7 +2906,7 @@ function _m2ParseTitle(rawTitle,selfGko,strict){
   // 그룹 미매칭이면 멤버 이름으로 그룹 역추론
   if(!matchedGroupKos.length){
     const inferred=new Map(); // groupKo -> [memberKo]
-    const nameToGroups=new Map(); // 멤버명(한글) -> 그 이름으로 매칭된 groupKo 집합(동명이인 충돌 감지용)
+    const nameToGroups=new Map(); // 멤버명(한글) -> Map(아티스트객체 -> 그 사람 소속 groupKo[]) — 동명이인 충돌 감지용
     for(const a of ARTISTS){
       // 예전엔 GROUPS에 없는 그룹(아이유·보아처럼 group.ko="솔로"인 솔로 아티스트)을 통째로 건너뛰어서,
       // 제목에 진짜 그룹명 없이 솔로 아티스트 이름만 있는 콜라보(예: 자체 채널 영상에 "아이유"만 언급)가
@@ -2822,10 +2919,20 @@ function _m2ParseTitle(rawTitle,selfGko,strict){
       // 명시된 경우만 인정 — 평문 매칭(memberHit의 일반 분기)은 여기서 아예 시도하지 않는다.
       const nameMatched=strict?names.some(t=>hitHashtag(t)):memberHit(a,names);
       if(nameMatched&&!names.some(t=>hasForeignGroupSuffix(t))){
-        if(!inferred.has(a.group.ko))inferred.set(a.group.ko,[]);
-        inferred.get(a.group.ko).push(a.name.ko);
-        if(!nameToGroups.has(a.name.ko))nameToGroups.set(a.name.ko,new Set());
-        nameToGroups.get(a.name.ko).add(a.group.ko);
+        // 겸임 멤버(NCT 마크·해찬, 아이즈원 안유진 등)는 자기 소속 그룹 전부(_artistGroups)에 귀속시켜야
+        // 함 — a.group.ko(주 소속)만 보면 부소속 채널/모음영상에서 역추론 자체가 원천 차단됨
+        // (2026-08-20, 자체채널 태깅은 이미 _artistGroups 쓰는데 여기만 안 맞춰져 있던 비대칭 수정).
+        const artistGkos=_artistGroups(a).map(g=>g.ko);
+        artistGkos.forEach(gko=>{
+          if(!inferred.has(gko))inferred.set(gko,[]);
+          inferred.get(gko).push(a.name.ko);
+        });
+        // 겸임 멤버 본인의 다중 소속(가짜 충돌)과 진짜 동명이인(다른 사람, 아래 참고)을 구분하려면
+        // 아티스트 객체 단위로 묶어야 함 — 그냥 groupKo Set으로 합치면 마크 혼자 매칭돼도
+        // {엔시티127,엔시티드림} 2개가 쌓여 아래 동명이인 로직이 "충돌"로 오인해 본인을 두 그룹
+        // 모두에서 지워버리는 자기파괴적 회귀가 생김(2026-08-20, 위 겸임 수정과 함께 발견).
+        if(!nameToGroups.has(a.name.ko))nameToGroups.set(a.name.ko,new Map());
+        nameToGroups.get(a.name.ko).set(a,artistGkos);
       }
     }
     if(!inferred.size)return null;
@@ -2837,10 +2944,12 @@ function _m2ParseTitle(rawTitle,selfGko,strict){
     // "지유"와 키키 "지유"가 외부 모음채널 영상에서 계속 서로에게 잘못 얹히던 원인이 이거였음(2026-08-05,
     // 사용자 제보). 기존 selfGko 안전장치는 "그 그룹 전체"가 selfGko와 같을 때만 작동해서, selfGko가
     // 아예 idol 그룹이 아닌 모음채널인 경우까지는 못 걸렀었음.
-    nameToGroups.forEach((gkos,name)=>{
-      if(gkos.size<2)return;
-      const keepGko=(selfGko&&gkos.has(selfGko))?selfGko:null;
-      gkos.forEach(gko=>{
+    nameToGroups.forEach((perPerson,name)=>{
+      if(perPerson.size<2)return; // 매칭된 사람이 1명뿐이면(겸임이라 그룹이 여러 개여도) 진짜 동명이인 충돌 아님
+      const allGkos=new Set();
+      perPerson.forEach(gkos=>gkos.forEach(g=>allGkos.add(g)));
+      const keepGko=(selfGko&&allGkos.has(selfGko))?selfGko:null;
+      allGkos.forEach(gko=>{
         if(gko===keepGko)return;
         const list=inferred.get(gko);
         if(!list)return;
@@ -2858,19 +2967,26 @@ function _m2ParseTitle(rawTitle,selfGko,strict){
     }
     const result=[];
     for(const[gko,members]of inferred){result.push({gko,members});}
+    // confidence:'weak' — 제목에 그룹명/해시태그 리터럴이 전혀 없이 멤버 이름 하나만으로 그룹 자체를
+    // 역추론한 경로. Love(온리원오프)/루나(에프엑스)/조이(레드벨벳) 오염 사례가 전부 이 경로에서
+    // 나왔음(2026-08-20, 실측 확인) — 무관 채널(THE SHOW 등)의 무관 영상 제목에 흔한 단어 하나 있다고
+    // 그룹 전체가 잘못 배정되는 사고가 여기서만 발생. 호출부(_extBuildRows)가 owner 없는 외부/모음채널
+    // 매칭에서 이 값을 보고 즉시확정 대신 검수 대기로 돌린다.
     return{primaryGroup:result[0].gko,withGroups:result.slice(1).map(r=>r.gko),
-           membersByGroup:Object.fromEntries(result.map(r=>[r.gko,r.members]))};
+           membersByGroup:Object.fromEntries(result.map(r=>[r.gko,r.members])),confidence:'weak'};
   }
   // 각 매칭 그룹에서 멤버 추출 — normMinusUnits 기준으로 검사해 유닛명 토큰이 만든 가짜 개별 언급을
   // 제외한다(위 unit-name-false-with 해결 참고).
   const membersByGroup={};
   for(const gko of matchedGroupKos){
-    const matched=ARTISTS.filter(a=>a.group.ko===gko&&_m2NameVariants(a).some(t=>hit(t,normMinusUnits)||hitHashtagSubstring(t))).map(a=>a.name.ko);
+    // 겸임 멤버 대응 — a.group.ko===gko(주 소속만)면 NCT 마크/해찬처럼 부소속 그룹 이름이 제목에
+    // 매칭돼도 정작 그 멤버 자신은 로스터에서 빠져 추출 누락됨(2026-08-20, 위 역추론부와 동일 수정).
+    const matched=ARTISTS.filter(a=>_artistGroups(a).some(g=>g.ko===gko)&&_m2NameVariants(a).some(t=>hit(t,normMinusUnits)||hitHashtagSubstring(t))).map(a=>a.name.ko);
     const extra=unitExtraMembers[gko];
     if(extra){
       const extraArr=[...extra];
       const confirmed=extraArr.filter(mko=>{
-        const a=ARTISTS.find(x=>x.name.ko===mko&&x.group.ko===gko);
+        const a=ARTISTS.find(x=>x.name.ko===mko&&_artistGroups(x).some(g=>g.ko===gko));
         return a&&_m2NameVariants(a).some(t=>hit(t,normMinusUnits));
       });
       // 유닛 멤버 중 아무도 유닛명 밖에서 개별적으로 안 걸리면(유닛명만 제목에 있는 경우) 기존처럼
@@ -2879,7 +2995,9 @@ function _m2ParseTitle(rawTitle,selfGko,strict){
     }
     membersByGroup[gko]=matched;
   }
-  return{primaryGroup:matchedGroupKos[0],withGroups:matchedGroupKos.slice(1),membersByGroup};
+  // confidence:'strong' — 제목에 그룹명(공식명/영문명/altNames) 리터럴이나 해시태그가 실제로 있어서
+  // 그룹을 특정한 경로. 위 역추론(약한 근거) 경로와 대비되는 값.
+  return{primaryGroup:matchedGroupKos[0],withGroups:matchedGroupKos.slice(1),membersByGroup,confidence:'strong'};
 }
 
 // (기능 추가, 2026-08-14) with_members/with_groups를 정할 때 그 그룹의 활동중 멤버(탈퇴/비활동 제외)
@@ -2937,11 +3055,18 @@ function _extBuildRows(vids,strict,tier,owner){
       extraMembers.forEach(mko=>withMembers.push(`${mko}(${gko})`));
     });
     const category=(tier&&tier!=='music'&&(!v.category||v.category==='other'))?(tier==='show'?'show':'variety'):v.category;
+    // 신뢰도 검수 — owner 없는 채널(THE SHOW·뮤직뱅크 등 특정 그룹 소유가 아닌 모음/방송사 채널)에서
+    // group_ko가 오로지 멤버 이름 하나만으로 역추론(confidence:'weak')됐으면, 그 즉시 실제 그룹으로
+    // 확정하지 않고 content_flag:'hidden'(기존에 이미 전면 신뢰되던 은닉 메커니즘 재사용)+needs_review:true로
+    // 저장해 어드민 검수 큐에서만 보이게 한다. owner가 있는 채널(이 채널 자체가 특정 인물 소유)은
+    // group_ko가 owner로 고정되지 confidence 영향을 안 받으므로 대상이 아님(2026-08-20, Love/루나/조이
+    // 오염 실측 확인 후 도입).
+    const needsReview=!owner&&match.confidence==='weak';
     rows.push({
       id:v.id,title:v.title,title_norm:_titleNorm(v.title),description:v.description||'',thumb:v.thumb,published_at:v.published_at,
       category,
       group_ko:owner?ownerGko:match.primaryGroup,members,with_groups:withGroups,with_members:withMembers,
-      ...(_isJunkVideoTitle(v.title)?{content_flag:'무관'}:{}),
+      ...(_isJunkVideoTitle(v.title)?{content_flag:'무관'}:needsReview?{content_flag:'hidden',needs_review:true}:{}),
       ...((tier==='variety'||tier==='show')?{content_formats:[tier]}:{})
     });
   }
@@ -3999,6 +4124,7 @@ document.getElementById('vid-tag-thumb-refresh').addEventListener('click',async 
   document.getElementById('sp-scan-namecollide-btn')?.addEventListener('click',_ytScanAmbiguousNameGroupMisassignment);
   document.getElementById('sp-membersfix-btn')?.addEventListener('click',_ytSweepMembersMistag);
   document.getElementById('sp-onlyoneof-love-btn')?.addEventListener('click',_ytFixOnlyoneofLoveMistag);
+  document.getElementById('sp-yt-rescan-weak-btn')?.addEventListener('click',_ytRescanWeakGroupAssignments);
   document.getElementById('sp-catfix-btn')?.addEventListener('click',_ytSweepCategoryMistag);
   document.getElementById('sp-covertitle-btn')?.addEventListener('click',_ytExtractCoverSongTitles);
   document.getElementById('sp-yt-autotag')?.addEventListener('click',_ytAutoTagMembers);

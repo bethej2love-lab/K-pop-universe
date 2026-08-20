@@ -18765,6 +18765,14 @@
           }
         ]
       }
+    ],
+    "producedBy": [
+      {
+        "ko": "지코",
+        "group": "블락비",
+        "artist": true,
+        "note": "KOZ엔터테인먼트 설립·제작"
+      }
     ]
   },
   "스테이씨": {
@@ -28988,7 +28996,8 @@
         ]
       }
     ],
-    "disbanded": "2024.07.09"
+    "disbanded": "2024.07.09",
+    "strictSync": true
   },
   "피원하모니": {
     "en": "P1Harmony",
@@ -31606,7 +31615,8 @@
         ]
       }
     ],
-    "disbanded": "2026.04.29"
+    "disbanded": "2026.04.29",
+    "strictSync": true
   },
   "빌리": {
     "en": "Billlie",
@@ -32398,7 +32408,7 @@
   },
   "하이라이트": {
     "en": "Highlight",
-    "debut": "2017.03.20",
+    "debut": "2009.10.16",
     "co": "어라운드어스엔터테인먼트",
     "strictSync": true,
     "color": [
@@ -32710,6 +32720,10 @@
           }
         ]
       }
+    ],
+    "altNames": [
+      "비스트",
+      "BEAST"
     ]
   },
   "카라": {
@@ -35317,7 +35331,8 @@
         ]
       }
     ],
-    "disbanded": "2022.05.20"
+    "disbanded": "2022.05.20",
+    "strictSync": true
   },
   "니쥬": {
     "en": "NiziU",
@@ -38257,7 +38272,8 @@
         ]
       }
     ],
-    "disbanded": "2021.05.22"
+    "disbanded": "2021.05.22",
+    "strictSync": true
   },
   "엑스원": {
     "en": "X1",
@@ -38324,7 +38340,8 @@
         ]
       }
     ],
-    "disbanded": "2020.01.06"
+    "disbanded": "2020.01.06",
+    "strictSync": true
   },
   "드리핀": {
     "en": "DRIPPIN",
@@ -50623,6 +50640,14 @@
           }
         ]
       }
+    ],
+    "producedBy": [
+      {
+        "ko": "박재범",
+        "group": "2PM",
+        "artist": true,
+        "note": "AOMG/H1GHR MUSIC 설립·제작"
+      }
     ]
   },
   "모모랜드": {
@@ -55896,6 +55921,14 @@
           }
         ]
       }
+    ],
+    "producedBy": [
+      {
+        "ko": "비",
+        "group": "솔로",
+        "artist": true,
+        "note": "제이튠캠프에서 데뷔시킴"
+      }
     ]
   },
   "유키스": {
@@ -56372,7 +56405,8 @@
         ]
       }
     ],
-    "disbanded": "2019.05.24"
+    "disbanded": "2019.05.24",
+    "strictSync": true
   },
   "빅스": {
     "en": "VIXX",
@@ -59089,7 +59123,8 @@
         ]
       }
     ],
-    "disbanded": "2018.05.15"
+    "disbanded": "2018.05.15",
+    "strictSync": true
   },
   "우아": {
     "en": "WOOAH",
@@ -59511,7 +59546,8 @@
         ]
       }
     ],
-    "disbanded": "2024.12.31"
+    "disbanded": "2024.12.31",
+    "strictSync": true
   },
   "퍼플키스": {
     "en": "PURPLE KISS",
@@ -63892,7 +63928,8 @@
         ]
       }
     ],
-    "disbanded": "2025.02.26"
+    "disbanded": "2025.02.26",
+    "strictSync": true
   },
   "이븐": {
     "en": "EVNNE",
@@ -64898,7 +64935,8 @@
         ]
       }
     ],
-    "disbanded": "2022.01.28"
+    "disbanded": "2022.01.28",
+    "strictSync": true
   },
   "트렌드지": {
     "en": "TRENDZ",
@@ -65715,7 +65753,8 @@
         ]
       }
     ],
-    "disbanded": "2025.03.31"
+    "disbanded": "2025.03.31",
+    "strictSync": true
   },
   "힛지스": {
     "en": "HITGS",
@@ -67386,7 +67425,8 @@
         ]
       }
     ],
-    "disbanded": "2023.08.26"
+    "disbanded": "2023.08.26",
+    "strictSync": true
   },
   "달샤벳": {
     "en": "Dal Shabet",
@@ -70125,7 +70165,8 @@
       "namu": "https://namu.wiki/w/SPEED(아이돌)"
     },
     "discography": [],
-    "disbanded": "2015"
+    "disbanded": "2015",
+    "strictSync": true
   },
   "남녀공학": {
     "en": "Coed School",
@@ -70197,7 +70238,8 @@
         ]
       }
     ],
-    "disbanded": "2012"
+    "disbanded": "2012",
+    "strictSync": true
   },
   "브브걸": {
     "en": "BBGIRLS",
@@ -71168,7 +71210,8 @@
     },
     "links": {
       "namu": "https://namu.wiki/w/TAN"
-    }
+    },
+    "strictSync": true
   },
   "엘즈업": {
     "en": "EL7Z UP",
@@ -71206,7 +71249,8 @@
     },
     "projectShow": "배틀신화",
     "projectRing": true,
-    "disbanded": "2008"
+    "disbanded": "2008",
+    "strictSync": true
   },
   "스피카": {
     "en": "SPICA",
@@ -71471,7 +71515,8 @@
           }
         ]
       }
-    ]
+    ],
+    "strictSync": true
   },
   "A2O MAY": {
     "en": "A2O MAY",
@@ -72010,5 +72055,195 @@
       "namu": "https://namu.wiki/w/레이디스 코드"
     },
     "disbanded": "2020.02.01"
+  },
+  "걸스데이": {
+    "en": "Girl's Day",
+    "debut": "2010.07.09",
+    "co": "Dream T Entertainment",
+    "color": [
+      214,
+      140,
+      168
+    ],
+    "gender": "f",
+    "songs": [],
+    "fandom": {
+      "ko": "데이지",
+      "en": "DAI5Y"
+    },
+    "links": {
+      "youtube": "https://youtube.com/@girlsday5",
+      "instagram": "https://instagram.com/dte_girlsday",
+      "x": "https://x.com/Girls_day",
+      "namu": "https://namu.wiki/w/걸스데이"
+    }
+  },
+  "헬로비너스": {
+    "en": "Hello Venus",
+    "debut": "2012.05.10",
+    "co": "Fantagio",
+    "color": [
+      168,
+      150,
+      214
+    ],
+    "gender": "f",
+    "songs": [],
+    "fandom": {
+      "ko": "헬로큐피드",
+      "en": "HelloCupid"
+    },
+    "links": {
+      "x": "https://x.com/chHelloVenus",
+      "tiktok": "https://tiktok.com/@hv_official",
+      "namu": "https://namu.wiki/w/헬로비너스"
+    }
+  },
+  "소나무": {
+    "en": "SONAMOO",
+    "debut": "2015.01.02",
+    "co": "TS Entertainment",
+    "color": [
+      120,
+      168,
+      140
+    ],
+    "gender": "f",
+    "songs": [],
+    "fandom": {
+      "ko": "솔방울",
+      "en": "Solbang-ul"
+    },
+    "links": {
+      "instagram": "https://instagram.com/sonamoo_insta",
+      "youtube": "https://youtube.com/@sonamoo2708",
+      "namu": "https://namu.wiki/w/소나무(아이돌)"
+    }
+  },
+  "네이처": {
+    "en": "NATURE",
+    "debut": "2018.08.03",
+    "co": "n.CH엔터테인먼트",
+    "color": [
+      150,
+      200,
+      214
+    ],
+    "gender": "f",
+    "songs": [],
+    "survivalShow": true,
+    "fandom": {
+      "ko": "리프",
+      "en": "LEAF"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/NATURE"
+    }
+  },
+  "트라이비": {
+    "en": "TRI.BE",
+    "debut": "2021.02.17",
+    "co": "TR Entertainment",
+    "color": [
+      214,
+      170,
+      120
+    ],
+    "gender": "f",
+    "songs": [],
+    "survivalShow": true,
+    "fandom": {
+      "ko": "트루",
+      "en": "TRUE"
+    },
+    "links": {
+      "youtube": "https://youtube.com/@TRIBE_2021",
+      "instagram": "https://instagram.com/tribedaloca",
+      "x": "https://x.com/tribedaloca",
+      "tiktok": "https://tiktok.com/@tribedaloca",
+      "weverse": "https://weverse.io/tribe",
+      "namu": "https://namu.wiki/w/트라이비"
+    }
+  },
+  "히스토리": {
+    "en": "HISTORY",
+    "debut": "2013.04.26",
+    "co": "Loen Entertainment",
+    "color": [
+      180,
+      160,
+      140
+    ],
+    "gender": "m",
+    "songs": [],
+    "fandom": {
+      "ko": "스토리아",
+      "en": "Storya"
+    },
+    "links": {
+      "x": "https://x.com/HISTORY426",
+      "namu": "https://namu.wiki/w/히스토리(아이돌)"
+    }
+  },
+  "스텔라": {
+    "en": "Stellar",
+    "debut": "2011.08.28",
+    "co": "D Entertainment Pascal",
+    "color": [
+      200,
+      150,
+      190
+    ],
+    "gender": "f",
+    "songs": [],
+    "fandom": {
+      "ko": "트윙클",
+      "en": "Twinkle"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/스텔라(아이돌)"
+    }
+  },
+  "유앤비": {
+    "en": "UNB",
+    "debut": "2018.04.07",
+    "co": "포켓돌스튜디오",
+    "color": [
+      140,
+      170,
+      210
+    ],
+    "gender": "m",
+    "songs": [],
+    "projectRing": true,
+    "fandom": {
+      "ko": "유엔미",
+      "en": "UNME"
+    },
+    "links": {
+      "x": "https://x.com/official_un_b",
+      "instagram": "https://instagram.com/official_un_b",
+      "namu": "https://namu.wiki/w/UNB"
+    }
+  },
+  "B.D.U": {
+    "en": "B.D.U",
+    "debut": "2024.06.26",
+    "co": "오르카뮤직",
+    "color": [
+      200,
+      150,
+      120
+    ],
+    "gender": "m",
+    "songs": [],
+    "projectRing": true,
+    "fandom": {
+      "ko": "삐유",
+      "en": "B.U"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/B.D.U"
+    }
   }
 }
