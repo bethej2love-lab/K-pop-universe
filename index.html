@@ -576,6 +576,10 @@
       <div id="yt-lb-speed-badge">2×</div>
       <div id="yt-lb-tap-cap" aria-hidden="true"></div>
       <div id="yt-lb-drag-cap" aria-hidden="true"></div>
+      <div id="yt-lb-autonext" style="display:none">
+        <span id="yt-lb-autonext-text"></span>
+        <button id="yt-lb-autonext-cancel" type="button">취소</button>
+      </div>
     </div>
     <div id="yt-lb-info">
       <div id="yt-lb-title-text"></div>
@@ -3240,6 +3244,8 @@ function _updateLbMuteBtn(){
 let _lbIsNativeShorts=false; // 회전 버튼이 "강제 세로 전환"과 "레터박스 전환" 중 뭘 해야 할지 판단용
 function openLightbox(url,shorts,playlist,idx,ctx,isAdvance,forceBrowseMode){
   const vid=ytId(url);if(!vid)return;
+  _lbCancelAutoNext(); // 새 영상을 여는 모든 경로(연속재생 포함)에서 이전 영상의 대기 중인 카운트다운은 취소
+  _lbEndedHandled=false; // 새 영상이니 종료 이벤트 중복 가드도 리셋
   _lbIsNativeShorts=!!shorts;
   _lbPlaylist=playlist||null;
   _lbIdx=(idx!=null)?idx:-1;
@@ -3664,14 +3670,77 @@ function _lbGo(delta){
   const s=_lbPlaylist[ni];
   openLightbox(s.u,isShorts(s.u),_lbPlaylist,ni,_lbCtx,true);
 }
-// YouTube IFrame API 이벤트 수신 — onStateChange 1(재생 시작) 즉시 unMute
-// 고정 타이머보다 신뢰성 높음: 플레이어가 실제로 재생을 시작한 순간에만 실행
+// ── 연속재생(2026-08-21, Fable 자문 세션 지적 — "영상이 끝나면 그냥 멈춘다"가 체류시간의 가장 큰
+// 공백이라는 진단, 코드로 재검증 후 확인) — shorts 모드는 종료 즉시 다음 영상으로, browse 모드는
+// 유튜브/넷플릭스식 "다음 영상 N초 후 재생"(취소 가능) 배너. 스와이프 넘기기(_lbEl 터치 리스너 블록)
+// 안에 있는 _lbSlideIn/_lbWrap은 그 블록의 지역 클로저라 여기서 직접 못 씀 — DOM은 그냥 다시
+// 조회하면 되므로(같은 엘리먼트), 슬라이드 아웃/인 애니메이션만 여기 독립적으로 재구현.
+let _lbAutoNextInterval=null,_lbEndedHandled=false;
+function _lbCancelAutoNext(){
+  if(_lbAutoNextInterval){clearInterval(_lbAutoNextInterval);_lbAutoNextInterval=null;}
+  const el=document.getElementById('yt-lb-autonext');
+  if(el)el.style.display='none';
+}
+function _lbShowAutoNextPrompt(){
+  const el=document.getElementById('yt-lb-autonext');
+  const textEl=document.getElementById('yt-lb-autonext-text');
+  if(!el||!textEl)return;
+  let sec=5;
+  const update=()=>{textEl.textContent=currentLang==='ko'?`다음 영상 ${sec}초 후 재생`:`Next in ${sec}s`;};
+  update();
+  el.style.display='flex';
+  _lbAutoNextInterval=setInterval(()=>{
+    sec--;
+    if(sec<=0){
+      clearInterval(_lbAutoNextInterval);_lbAutoNextInterval=null;
+      el.style.display='none';
+      _lbGo(1);
+      return;
+    }
+    update();
+  },1000);
+}
+function _lbHandleVideoEnded(){
+  // 유튜브가 종료 이벤트를 중복으로 보내는 경우(실측은 못 해봤지만 iframe API가 종종 그럼) 두 번
+  // 연속으로 넘어가는 걸 막는 가드 — openLightbox가 새 영상을 열 때마다 다시 false로 리셋됨.
+  if(_lbEndedHandled)return;
+  if(!_lbPlaylist||_lbIdx<0)return;
+  const canNext=_lbIdx<_lbPlaylist.length-1;
+  if(!canNext)return; // 목록의 마지막 영상이면 그냥 멈춤(자연스러운 끝)
+  _lbEndedHandled=true;
+  if(_lbSessionMode==='shorts'){
+    const wrap=document.getElementById('yt-lb-wrap');
+    if(!wrap){_lbGo(1);return;}
+    wrap.style.transition='transform .26s cubic-bezier(0.4,0,1,1),opacity .2s ease';
+    wrap.style.transform='translateY(-100vh)';
+    wrap.style.opacity='0';
+    setTimeout(()=>{
+      _lbGo(1);
+      const w=document.getElementById('yt-lb-wrap');
+      if(!w)return;
+      w.style.transition='none';
+      w.style.transform='translateY(100vh)';
+      w.style.opacity='0';
+      requestAnimationFrame(()=>requestAnimationFrame(()=>{
+        w.style.transition='transform .32s cubic-bezier(0.22,1,0.36,1),opacity .22s ease';
+        w.style.transform='';w.style.opacity='';
+        setTimeout(()=>{w.style.transition='';},360);
+      }));
+    },260);
+  }else{
+    _lbShowAutoNextPrompt();
+  }
+}
+document.getElementById('yt-lb-autonext-cancel')?.addEventListener('click',e=>{e.stopPropagation();_lbCancelAutoNext();});
+// YouTube IFrame API 이벤트 수신 — onStateChange 1(재생 시작) 즉시 unMute, 0(종료) 연속재생
 window.addEventListener('message',e=>{
   try{
     const d=JSON.parse(e.data);
+    if(d.event!=='infoDelivery'||d.info?.playerState==null)return;
     // YouTube sends {event:'infoDelivery', info:{playerState:1}} when playback starts
-    if(d.event==='infoDelivery'&&d.info?.playerState===1){
+    if(d.info.playerState===1){
       _lbHideLoading();
+      _lbCancelAutoNext(); // 되감기/재생 등으로 다시 재생 상태가 되면 대기 중이던 카운트다운은 취소
       if(_lbNeedUnmute){
         _lbNeedUnmute=false;
         clearTimeout(_lbAutoUnmuteT);
@@ -3681,6 +3750,8 @@ window.addEventListener('message',e=>{
           iframe.contentWindow.postMessage(JSON.stringify({event:'command',func:'setVolume',args:[_lbVolume]}),'*');
         }
       }
+    }else if(d.info.playerState===0){
+      _lbHandleVideoEnded();
     }
   }catch(_){}
 });
