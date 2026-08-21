@@ -10335,10 +10335,11 @@ async function _buildCollectionCardDataURL(col){
 }
 let _colCardDataURL=null,_colCardUrl=null;
 function _colDeepLink(colId){return location.origin+location.pathname+location.search+'#col='+_hashEsc(colId);}
-// 공유용 링크는 앱 자체 해시(#col=id)가 아니라 share.kpop-universe.kr(Vercel, 2026-08-21)로 줘야 함 —
-// GitHub Pages는 정적이라 링크 미리보기(네이버 블로그/카카오톡/X 등)에 그 컬렉션 전용 og:image/제목을
-// 못 띄우는데, 이 서브도메인의 서버리스 함수(/col/:id)가 그걸 만들어주고 실제 클릭 시엔 앱으로 넘겨준다.
-function _colShareUrl(colId){return 'https://share.kpop-universe.kr/col/'+encodeURIComponent(colId);}
+// 공유용 링크는 앱 자체 해시(#col=id)가 아니라 open.kpop-universe.kr(Vercel, 2026-08-21 — 처음엔
+// share였다가 스포티파이 스타일 개편하면서 open으로 변경)로 줘야 함 — GitHub Pages는 정적이라 링크
+// 미리보기(네이버 블로그/카카오톡/X 등)에 그 컬렉션 전용 og:image/제목을 못 띄우는데, 이 서브도메인의
+// 서버리스 함수(/col/:id, kpopuniverse-share 저장소)가 그걸 만들어주고 실제 클릭 시엔 앱으로 넘겨준다.
+function _colShareUrl(colId){return 'https://open.kpop-universe.kr/col/'+encodeURIComponent(colId);}
 // 남의 공개 컬렉션(_pubCollectionsCache 항목)은 필드명이 달라서(items/cover_img) 카드 빌더가 기대하는
 // {name,videos,coverImg} 모양으로 맞춰준다.
 function _pubColToCardShape(row){return{id:row.id,name:row.name,videos:row.items||[],coverImg:row.cover_img||null};}
