@@ -1750,6 +1750,12 @@ async function buildUniverse(){
   let regularIdx=0,sparkleIdx=0;
 
   const _placedBubbles=[];
+  // 행성 구체 지오메트리 공유(2026-08-21, 성능 예산 검토 후 반영 — Fable 감사+실측 확인) — 그룹마다
+  // radius를 지오메트리에 구워서 263개를 따로 만들던 걸, 단위 구체 하나를 만들고 mesh.scale로 키우는
+  // 방식으로 전환. 반지름 r인 구체 = 단위 구체(r=1)를 (r,r,r)로 균등 스케일한 것과 수학적으로 완전히
+  // 동일한 모양이라 시각적 차이가 전혀 없음(순수 메모리 절감) — 세그먼트 수(64,64)는 이번엔 그대로 둠,
+  // 세그먼트 감소는 시각적 위험이 있어 스크린샷 검증 후 별도 진행 예정.
+  const _sharedBubbleGeo=new THREE.SphereGeometry(1,64,64);
   Object.entries(grpData).forEach(([ko,info])=>{
     const members=memberMap[ko]||[];
     const distBase=debutToRadius(parseInt(info.debut)||2020);
@@ -1779,7 +1785,7 @@ async function buildUniverse(){
     _placedBubbles.push({pos,r:radius});
 
     // ── Bubble fill — Fresnel ShaderMaterial ──────
-    const fillGeo=new THREE.SphereGeometry(radius,64,64);
+    const fillGeo=_sharedBubbleGeo;
     const fillMat=new THREE.ShaderMaterial({
       uniforms:{
         uColor:{value:color},
@@ -1918,6 +1924,7 @@ async function buildUniverse(){
     });
     const bubble=new THREE.Mesh(fillGeo,fillMat);
     bubble.position.copy(pos);
+    bubble.scale.setScalar(radius); // 공유 단위 구체를 실제 반지름으로 확대(위 _sharedBubbleGeo 참고)
     bubble._isLegacy=_isLegacyGroup(info.debut);
     bubble._isSurvivalShow=!!info.disbanded;
     scene.add(bubble);
@@ -2435,14 +2442,17 @@ function _revealUniverse(){
         const start=bm.mesh._revealFrac*0.55;
         const local=Math.max(0,Math.min(1,(e-start)/0.4));
         const s=local<=0?0.001:Math.max(0.001,easeOutBack(local));
-        bm.mesh.scale.setScalar(s);
+        // 행성 지오메트리 공유(2026-08-21)로 반지름이 geometry가 아니라 scale에 실리게 되면서, 이 인트로
+        // 애니메이션의 "scale=1이 곧 완성 크기"라는 예전 전제가 깨짐 — bm.radius를 곱해서 각 행성 본연의
+        // 크기로 정착하게 함(링은 자체 geometry에 크기가 그대로 있어 영향 없음, s 그대로 유지).
+        bm.mesh.scale.setScalar(s*bm.radius);
         const rg=_nctRingGroups.find(x=>x.ko===bm.ko);
         if(rg)rg.g.scale.setScalar(s);
       });
       if(t<1)requestAnimationFrame(tick);
       else{
         bubbleMeshes.forEach(bm=>{
-          bm.mesh.scale.setScalar(1);
+          bm.mesh.scale.setScalar(bm.radius);
           const rg=_nctRingGroups.find(x=>x.ko===bm.ko);
           if(rg)rg.g.scale.setScalar(1);
         });
