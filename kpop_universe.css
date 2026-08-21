@@ -2355,6 +2355,10 @@
   .feed-grid .feed-card-title{font-size:11px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
   .feed-grid .feed-card-sub{font-size:9.5px;}
   .feed-grid .gc-ch-more-wrap{grid-column:1/-1;}
+  /* Charts 섹션 접기/펼치기 — 기본 4장(2행)만 노출, 나머지는 "더보기" 전까진 렌더는 됐지만 안 보임 */
+  #feed-chart.fg-collapsed>.feed-card:nth-child(n+5){display:none;}
+  .feed-more-toggle{display:block;width:calc(100% - 40px);margin:2px 20px 16px;padding:9px 0;text-align:center;font-size:11.5px;font-weight:600;color:rgba(160,185,230,0.75);background:rgba(255,255,255,0.045);border:none;border-radius:8px;cursor:pointer;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;-webkit-tap-highlight-color:transparent;}
+  .feed-more-toggle:active{background:rgba(255,255,255,0.09);}
   @keyframes feed-card-appear{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
   .feed-card:active{background:rgba(255,255,255,0.035);}
   .feed-card-thumb-wrap{width:100%;aspect-ratio:16/9;background:rgba(255,255,255,0.05);position:relative;overflow:hidden;}

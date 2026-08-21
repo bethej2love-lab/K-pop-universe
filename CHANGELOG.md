@@ -19,6 +19,7 @@
 
 ## 2026-08-21
 
+- [완료][index.html][kpop_universe.css] Charts 섹션 접기/펼치기 + 정렬 조정(사용자 제보 — 랭킹 카드 10종으로 늘어나면서 Discovery가 너무 아래로 밀림) — 기본 4장(2행)만 노출, "더보기 ⌄"/"접기 ⌃" 토글(`#feed-chart-more`, CSS `nth-child(n+5)` 방식이라 비동기 도착 카드 수와 무관하게 항상 4번째까지만 보임). 패널 재오픈마다 항상 접힌 상태로 리셋(사용자 요청 — "접은 게 기본"). Trend 카드는 개념상 고정 랭킹이 아니라 랜덤 발견 카드라 Charts가 아니라 Discovery로 재배치(`_buildFeedWeeklyTopCams`에 `discList` 파라미터 추가) — 그 결과 Charts 상단이 "주간 개인 직캠 TOP 20"/"월간 무대 TOP 30"(최근 기준)로 시작하고 그 뒤로 연도별/역대 TOP류(오래된 순)가 이어지는 자연스러운 최신순 배치가 됨.
 - [완료][index.html][kpop_universe.css] 탐험 패널 밀도/층위 개편 — Fable UX 감사 3건(밀도·고정/랜덤층 분리·최근 본) 코드로 재검증 후 반영, 개인화 50%믹싱·탭 통합 2건은 비판적으로 보류(전자는 방금 합의한 라이트 버전과 충돌, 후자는 탭바 구조 변경이라 별도 세션 필요).
   - **밀도**: `#feed-discovery`가 실측 확인 결과 진짜 1열 풀블리드였음(`.feed-card-thumb-wrap{aspect-ratio:16/9}`, 폭 100%) — `.feed-grid{display:grid;grid-template-columns:1fr 1fr}`로 전환, 카드 자체(`_appendFeedCard`)는 그대로 재사용하고 컨테이너 CSS만 교체(다른 호출부 영향 없음).
   - **고정/랜덤층 분리**: `_buildFeedDiscovery()`의 22개 카드는 원래도 호출 순서가 고정이라 실제로는 랜덤이 아니었음(레전드100 등 무한스크롤 반복 풀에서 이미 제외돼있던 것도 확인) — 문제는 시각적 구분이 없었던 것. 랭킹류 10개 카드(주간/월간 TOP·연도별 TOP100·레전드100·역대 개인/여돌/남돌 직캠 TOP100·역대 여돌/남돌 무대 TOP100·세대별 TOP)를 새 `#feed-chart`("📊 Charts") 섹션으로 분리, 나머지는 "✨ Discovery"에 유지. "Chart" 단수보다 스포티파이 실제 표기와 일치하는 "Charts" 복수형 채택.
