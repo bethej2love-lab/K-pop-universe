@@ -1,0 +1,44 @@
+name: Rebuild static SEO pages
+
+  # artists.json/groups.json이 바뀌어 push되면 build_group_pages.js를 자동으로 돌려서
+  # 그룹/멤버 정적 페이지(g/, en/g/, member/, en/member/)와 sitemap.xml을 재생성하고
+  # 결과물을 다시 커밋한다. 이 워크플로우 자체가 만드는 커밋(g/, en/g/, member/, en/member/,
+  # sitemap.xml만 건드림)은 트리거 경로(paths)에 안 걸려서 무한 루프로 이어지지 않는다.
+  # (2026-08-21, 사용자 요청 — 데이터 수정할 때마다 로컬에서 스크립트 수동 실행하던 걸 자동화)
+
+  on:
+    push:
+      branches: [main]
+      paths:
+        - 'artists.json'
+        - 'groups.json'
+        - 'build_group_pages.js'
+
+  permissions:
+    contents: write
+
+  jobs:
+    rebuild:
+      runs-on: ubuntu-latest
+      steps:
+        - uses: actions/checkout@v4
+
+        - uses: actions/setup-node@v4
+          with:
+            node-version: 20
+
+        - name: Build SEO pages
+          run: node build_group_pages.js
+
+        - name: Commit and push if changed
+          run: |
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add g/ en/g/ member/ en/member/ sitemap.xml 2>/dev/null || git add g/ en/g/ sitemap.xml
+            if git diff --cached --quiet; then
+              echo "변경된 정적 페이지 없음"
+            else
+              git commit -m "chore: rebuild static SEO pages (auto)"
+              git pull --rebase origin main
+              git push
+            fi
