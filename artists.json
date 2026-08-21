@@ -23816,8 +23816,16 @@
         "titleTrack": "TEMPO",
         "cover": "https://cdnimg.melon.co.kr/cm2/album/images/124/36/038/12436038_20251212145325_500.jpg",
         "tracks": [
-          { "no": 1, "title": "TEMPO", "isTitle": true },
-          { "no": 2, "title": "You're Right", "isTitle": false }
+          {
+            "no": 1,
+            "title": "TEMPO",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "You're Right",
+            "isTitle": false
+          }
         ]
       },
       {
@@ -23829,16 +23837,56 @@
         "titleTrack": "CALL BACK",
         "cover": "https://cdnimg.melon.co.kr/cm2/album/images/116/31/401/11631401_20241101151212_500.jpg",
         "tracks": [
-          { "no": 1, "title": "FIREWORKS (Feat. 소희 of RIIZE)", "isTitle": false },
-          { "no": 2, "title": "CALL BACK", "isTitle": true },
-          { "no": 3, "title": "Because Of You (Feat. 닝닝 of aespa)", "isTitle": false },
-          { "no": 4, "title": "Something About U", "isTitle": false },
-          { "no": 5, "title": "Came And Left Me", "isTitle": false },
-          { "no": 6, "title": "Slow Down", "isTitle": false },
-          { "no": 7, "title": "Round Kick", "isTitle": false },
-          { "no": 8, "title": "Affection", "isTitle": false },
-          { "no": 9, "title": "I Don't Miss You", "isTitle": false },
-          { "no": 10, "title": "Would You Mind", "isTitle": false }
+          {
+            "no": 1,
+            "title": "FIREWORKS (Feat. 소희 of RIIZE)",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "CALL BACK",
+            "isTitle": true
+          },
+          {
+            "no": 3,
+            "title": "Because Of You (Feat. 닝닝 of aespa)",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Something About U",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Came And Left Me",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "Slow Down",
+            "isTitle": false
+          },
+          {
+            "no": 7,
+            "title": "Round Kick",
+            "isTitle": false
+          },
+          {
+            "no": 8,
+            "title": "Affection",
+            "isTitle": false
+          },
+          {
+            "no": 9,
+            "title": "I Don't Miss You",
+            "isTitle": false
+          },
+          {
+            "no": 10,
+            "title": "Would You Mind",
+            "isTitle": false
+          }
         ]
       },
       {
@@ -23850,7 +23898,11 @@
         "titleTrack": "Stay for a night",
         "cover": "https://cdnimg.melon.co.kr/cm2/album/images/113/94/415/11394415_20240105115142_500.jpg",
         "tracks": [
-          { "no": 1, "title": "Stay for a night", "isTitle": true }
+          {
+            "no": 1,
+            "title": "Stay for a night",
+            "isTitle": true
+          }
         ]
       },
       {
@@ -23862,12 +23914,36 @@
         "titleTrack": "놓아줘 (Chase)",
         "cover": "https://cdnimg.melon.co.kr/cm2/album/images/111/16/640/11116640_20221205154425_500.jpg",
         "tracks": [
-          { "no": 1, "title": "놓아줘 (Chase)", "isTitle": true },
-          { "no": 2, "title": "Runaway (Feat. GEMINI)", "isTitle": false },
-          { "no": 3, "title": "Prove It", "isTitle": false },
-          { "no": 4, "title": "Waterfall (Feat. Lim Kim)", "isTitle": false },
-          { "no": 5, "title": "Choice", "isTitle": false },
-          { "no": 6, "title": "Heartbreak", "isTitle": false }
+          {
+            "no": 1,
+            "title": "놓아줘 (Chase)",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Runaway (Feat. GEMINI)",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "Prove It",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Waterfall (Feat. Lim Kim)",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Choice",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "Heartbreak",
+            "isTitle": false
+          }
         ]
       },
       {
@@ -23879,7 +23955,11 @@
         "titleTrack": "Heartbreak",
         "cover": "https://cdnimg.melon.co.kr/cm2/album/images/108/18/695/10818695_20211220161113_500.jpg",
         "tracks": [
-          { "no": 1, "title": "Heartbreak", "isTitle": true }
+          {
+            "no": 1,
+            "title": "Heartbreak",
+            "isTitle": true
+          }
         ]
       }
     ]
@@ -24940,16 +25020,56 @@
         "titleTrack": "Lonely (Feat. 태연)",
         "cover": "https://cdnimg.melon.co.kr/cm/album/images/100/57/543/10057543_500.jpg",
         "tracks": [
-          { "no": 1, "title": "Lonely (Feat. 태연)", "isTitle": true },
-          { "no": 2, "title": "따뜻한 겨울 (Our Season)", "isTitle": false },
-          { "no": 3, "title": "1000", "isTitle": false },
-          { "no": 4, "title": "놓아줘 (Let Me Out)", "isTitle": false },
-          { "no": 5, "title": "엘리베이터 (Elevator)", "isTitle": false },
-          { "no": 6, "title": "눈싸움 (Blinking Game)", "isTitle": false },
-          { "no": 7, "title": "벽난로 (Fireplace)", "isTitle": false },
-          { "no": 8, "title": "멍하니 있어 (Just Chill)", "isTitle": false },
-          { "no": 9, "title": "Love Is So Nice", "isTitle": false },
-          { "no": 10, "title": "바퀴 (Where are you)", "isTitle": false }
+          {
+            "no": 1,
+            "title": "Lonely (Feat. 태연)",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "따뜻한 겨울 (Our Season)",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "1000",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "놓아줘 (Let Me Out)",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "엘리베이터 (Elevator)",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "눈싸움 (Blinking Game)",
+            "isTitle": false
+          },
+          {
+            "no": 7,
+            "title": "벽난로 (Fireplace)",
+            "isTitle": false
+          },
+          {
+            "no": 8,
+            "title": "멍하니 있어 (Just Chill)",
+            "isTitle": false
+          },
+          {
+            "no": 9,
+            "title": "Love Is So Nice",
+            "isTitle": false
+          },
+          {
+            "no": 10,
+            "title": "바퀴 (Where are you)",
+            "isTitle": false
+          }
         ]
       },
       {
@@ -25017,15 +25137,51 @@
         "titleTrack": "하루의 끝 (End of a day)",
         "cover": "https://cdnimg.melon.co.kr/cm/album/images/026/40/645/2640645_500.jpg",
         "tracks": [
-          { "no": 1, "title": "하루의 끝 (End of a day)", "isTitle": true },
-          { "no": 2, "title": "산하엽 (Diphylleia grayi)", "isTitle": false },
-          { "no": 3, "title": "U & I", "isTitle": false },
-          { "no": 4, "title": "미안해 (I'm sorry)", "isTitle": false },
-          { "no": 5, "title": "Happy Birthday", "isTitle": false },
-          { "no": 6, "title": "내일쯤 (Maybe tomorrow)", "isTitle": false },
-          { "no": 7, "title": "02:34", "isTitle": false },
-          { "no": 8, "title": "그래도 되지 않아? (Fine)", "isTitle": false },
-          { "no": 9, "title": "Like You", "isTitle": false }
+          {
+            "no": 1,
+            "title": "하루의 끝 (End of a day)",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "산하엽 (Diphylleia grayi)",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "U & I",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "미안해 (I'm sorry)",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Happy Birthday",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "내일쯤 (Maybe tomorrow)",
+            "isTitle": false
+          },
+          {
+            "no": 7,
+            "title": "02:34",
+            "isTitle": false
+          },
+          {
+            "no": 8,
+            "title": "그래도 되지 않아? (Fine)",
+            "isTitle": false
+          },
+          {
+            "no": 9,
+            "title": "Like You",
+            "isTitle": false
+          }
         ]
       },
       {
@@ -25569,8 +25725,16 @@
         "titleTrack": "PWLT",
         "cover": "https://cdnimg.melon.co.kr/cm2/album/images/135/34/485/13534485_20260521101648_500.jpg",
         "tracks": [
-          { "no": 1, "title": "PWLT", "isTitle": true },
-          { "no": 2, "title": "PWLT (Instrumental)", "isTitle": false }
+          {
+            "no": 1,
+            "title": "PWLT",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "PWLT (Instrumental)",
+            "isTitle": false
+          }
         ]
       },
       {
@@ -25582,8 +25746,16 @@
         "titleTrack": "Solitary",
         "cover": "https://cdnimg.melon.co.kr/cm2/album/images/124/11/273/12411273_20251127105659_500.jpg",
         "tracks": [
-          { "no": 1, "title": "Solitary", "isTitle": true },
-          { "no": 2, "title": "Solitary (Party Remix)", "isTitle": false }
+          {
+            "no": 1,
+            "title": "Solitary",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Solitary (Party Remix)",
+            "isTitle": false
+          }
         ]
       }
     ]
@@ -28540,11 +28712,31 @@
         "titleTrack": "무제(無題) (Untitled, 2014)",
         "cover": "https://cdnimg.melon.co.kr/cm/album/images/100/69/644/10069644_500.jpg",
         "tracks": [
-          { "no": 1, "title": "INTRO. 권지용 (Middle Fingers-Up)", "isTitle": false },
-          { "no": 2, "title": "개소리 (BULLSHIT)", "isTitle": false },
-          { "no": 3, "title": "SUPER STAR", "isTitle": false },
-          { "no": 4, "title": "무제(無題) (Untitled, 2014)", "isTitle": true },
-          { "no": 5, "title": "OUTRO. 신곡(神曲) (Divina Commedia)", "isTitle": false }
+          {
+            "no": 1,
+            "title": "INTRO. 권지용 (Middle Fingers-Up)",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "개소리 (BULLSHIT)",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "SUPER STAR",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "무제(無題) (Untitled, 2014)",
+            "isTitle": true
+          },
+          {
+            "no": 5,
+            "title": "OUTRO. 신곡(神曲) (Divina Commedia)",
+            "isTitle": false
+          }
         ]
       },
       {
@@ -29614,7 +29806,11 @@
         "titleTrack": "EYES CLOSED",
         "cover": "https://cdnimg.melon.co.kr/cm2/album/images/121/51/915/12151915_20251007164126_500.jpg",
         "tracks": [
-          { "no": 1, "title": "EYES CLOSED (with ZAYN)", "isTitle": true }
+          {
+            "no": 1,
+            "title": "EYES CLOSED (with ZAYN)",
+            "isTitle": true
+          }
         ]
       },
       {
@@ -29657,8 +29853,16 @@
         "titleTrack": "꽃 (FLOWER)",
         "cover": "https://cdnimg.melon.co.kr/cm2/album/images/112/14/411/11214411_20230330163342_500.jpg",
         "tracks": [
-          { "no": 1, "title": "꽃 (FLOWER)", "isTitle": true },
-          { "no": 2, "title": "All Eyes On Me", "isTitle": false }
+          {
+            "no": 1,
+            "title": "꽃 (FLOWER)",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "All Eyes On Me",
+            "isTitle": false
+          }
         ]
       }
     ]
@@ -29705,7 +29909,11 @@
         "titleTrack": "Less than a Lover",
         "cover": "https://cdnimg.melon.co.kr/cm2/album/images/139/67/276/13967276_20260723112744_500.jpg",
         "tracks": [
-          { "no": 1, "title": "Less than a Lover", "isTitle": true }
+          {
+            "no": 1,
+            "title": "Less than a Lover",
+            "isTitle": true
+          }
         ]
       },
       {
@@ -29803,8 +30011,16 @@
         "titleTrack": "You & Me",
         "cover": "https://cdnimg.melon.co.kr/cm2/album/images/113/39/556/11339556_20231005170424_500.jpg",
         "tracks": [
-          { "no": 1, "title": "You & Me", "isTitle": true },
-          { "no": 2, "title": "You & Me (Coachella ver.)", "isTitle": false }
+          {
+            "no": 1,
+            "title": "You & Me",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "You & Me (Coachella ver.)",
+            "isTitle": false
+          }
         ]
       },
       {
@@ -29816,7 +30032,11 @@
         "titleTrack": "SOLO",
         "cover": "https://cdnimg.melon.co.kr/cm/album/images/102/21/424/10221424_500.jpg",
         "tracks": [
-          { "no": 1, "title": "SOLO", "isTitle": true }
+          {
+            "no": 1,
+            "title": "SOLO",
+            "isTitle": true
+          }
         ]
       }
     ]
@@ -29934,8 +30154,16 @@
         "titleTrack": "On The Ground",
         "cover": "https://cdnimg.melon.co.kr/cm2/album/images/105/76/966/10576966_20210312112253_500.jpg",
         "tracks": [
-          { "no": 1, "title": "On The Ground", "isTitle": true },
-          { "no": 2, "title": "Gone", "isTitle": false }
+          {
+            "no": 1,
+            "title": "On The Ground",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Gone",
+            "isTitle": false
+          }
         ]
       }
     ]
@@ -30068,8 +30296,16 @@
         "titleTrack": "LALISA",
         "cover": "https://cdnimg.melon.co.kr/cm2/album/images/107/10/695/10710695_20210910105303_500.jpg",
         "tracks": [
-          { "no": 1, "title": "LALISA", "isTitle": true },
-          { "no": 2, "title": "MONEY", "isTitle": false }
+          {
+            "no": 1,
+            "title": "LALISA",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "MONEY",
+            "isTitle": false
+          }
         ]
       }
     ]
@@ -65521,18 +65757,66 @@
         "titleTrack": "무중력 (Feat. CHANMINA)",
         "cover": "https://cdnimg.melon.co.kr/cm2/album/images/114/29/145/11429145_20240227102100_500.jpg",
         "tracks": [
-          { "no": 1, "title": "intro", "isTitle": false },
-          { "no": 2, "title": "새 (Feat. 허성현 (Huh))", "isTitle": false },
-          { "no": 3, "title": "why stop now (Feat. 정상수)", "isTitle": false },
-          { "no": 4, "title": "무중력 (Feat. CHANMINA)", "isTitle": true },
-          { "no": 5, "title": "hercules! (Feat. JUSTHIS)", "isTitle": false },
-          { "no": 6, "title": "moon (Feat. iHwak)", "isTitle": true },
-          { "no": 7, "title": "벚꽃", "isTitle": false },
-          { "no": 8, "title": "너가 그러라 한다면", "isTitle": true },
-          { "no": 9, "title": "Drowning (Feat. SOLE (쏠))", "isTitle": false },
-          { "no": 10, "title": "2030 머릿속", "isTitle": false },
-          { "no": 11, "title": "help me out o kill me not", "isTitle": false },
-          { "no": 12, "title": "f", "isTitle": false }
+          {
+            "no": 1,
+            "title": "intro",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "새 (Feat. 허성현 (Huh))",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "why stop now (Feat. 정상수)",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "무중력 (Feat. CHANMINA)",
+            "isTitle": true
+          },
+          {
+            "no": 5,
+            "title": "hercules! (Feat. JUSTHIS)",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "moon (Feat. iHwak)",
+            "isTitle": true
+          },
+          {
+            "no": 7,
+            "title": "벚꽃",
+            "isTitle": false
+          },
+          {
+            "no": 8,
+            "title": "너가 그러라 한다면",
+            "isTitle": true
+          },
+          {
+            "no": 9,
+            "title": "Drowning (Feat. SOLE (쏠))",
+            "isTitle": false
+          },
+          {
+            "no": 10,
+            "title": "2030 머릿속",
+            "isTitle": false
+          },
+          {
+            "no": 11,
+            "title": "help me out o kill me not",
+            "isTitle": false
+          },
+          {
+            "no": 12,
+            "title": "f",
+            "isTitle": false
+          }
         ]
       },
       {
@@ -65575,8 +65859,16 @@
         "titleTrack": "Drowning (Feat. SOLE (쏠))",
         "cover": "https://cdnimg.melon.co.kr/cm2/album/images/112/06/324/11206324_20230317174322_500.jpg",
         "tracks": [
-          { "no": 1, "title": "Drowning (Feat. SOLE (쏠))", "isTitle": true },
-          { "no": 2, "title": "벚꽃 (Cherry Blossoms)", "isTitle": false }
+          {
+            "no": 1,
+            "title": "Drowning (Feat. SOLE (쏠))",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "벚꽃 (Cherry Blossoms)",
+            "isTitle": false
+          }
         ]
       },
       {
@@ -65905,7 +66197,11 @@
         "titleTrack": "BUZZIN (Feat. Coogie, GRAY)",
         "cover": "https://cdnimg.melon.co.kr/cm2/album/images/128/86/618/12886618_20260226193331_500.jpg",
         "tracks": [
-          { "no": 1, "title": "BUZZIN (Feat. Coogie, GRAY)", "isTitle": true }
+          {
+            "no": 1,
+            "title": "BUZZIN (Feat. Coogie, GRAY)",
+            "isTitle": true
+          }
         ]
       },
       {
@@ -89336,67 +89632,6 @@
       },
       {
         "title": "PSY 8th 4X2=8",
-        "type": "정규 1집",
-        "releaseDate": "2017.05.10",
-        "trackCount": 10,
-        "isMain": true,
-        "titleTrack": "I LUV IT",
-        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/100/60/647/10060647_20260306152826_500.jpg?YUV444",
-        "tracks": [
-          {
-            "no": 1,
-            "title": "I LUV IT",
-            "isTitle": true
-          },
-          {
-            "no": 2,
-            "title": "New Face",
-            "isTitle": true
-          },
-          {
-            "no": 3,
-            "title": "마지막 장면 (Feat. 이성경)",
-            "isTitle": false
-          },
-          {
-            "no": 4,
-            "title": "LOVE (Feat. 태양)",
-            "isTitle": false
-          },
-          {
-            "no": 5,
-            "title": "BOMB (Feat. B.I, BOBBY)",
-            "isTitle": false
-          },
-          {
-            "no": 6,
-            "title": "We Are Young",
-            "isTitle": false
-          },
-          {
-            "no": 7,
-            "title": "팩트폭행 (Feat. G-DRAGON)",
-            "isTitle": false
-          },
-          {
-            "no": 8,
-            "title": "Rock will never die",
-            "isTitle": false
-          },
-          {
-            "no": 9,
-            "title": "기댈곳",
-            "isTitle": false
-          },
-          {
-            "no": 10,
-            "title": "오토리버스 (Feat. TABLO)",
-            "isTitle": false
-          }
-        ]
-      },
-      {
-        "title": "PSY 8th 4X2=8",
         "type": "정규 8집",
         "releaseDate": "2017.05.10",
         "trackCount": 10,
@@ -89868,6 +90103,117 @@
           {
             "no": 14,
             "title": "생",
+            "isTitle": false
+          }
+        ]
+      },
+      {
+        "title": "Psy From The Psycho World!",
+        "type": "정규 1집",
+        "releaseDate": "2001.01.18",
+        "trackCount": 20,
+        "isMain": true,
+        "titleTrack": "새",
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/000/00/981/981_500.jpg",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Intro",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "Lady",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "새",
+            "isTitle": true
+          },
+          {
+            "no": 4,
+            "title": "끝",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "나에게 맡겨봐",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "Life (Feat. R.jay, Yota, DM, Y.Kwan, Small)",
+            "isTitle": false
+          },
+          {
+            "no": 7,
+            "title": "동거동락",
+            "isTitle": false
+          },
+          {
+            "no": 8,
+            "title": "Freedom",
+            "isTitle": false
+          },
+          {
+            "no": 9,
+            "title": "성냥팔이 소녀",
+            "isTitle": false
+          },
+          {
+            "no": 10,
+            "title": "No.1",
+            "isTitle": false
+          },
+          {
+            "no": 11,
+            "title": "I Love Sex (Feat. 조PD)",
+            "isTitle": false
+          },
+          {
+            "no": 12,
+            "title": "쇼킹! 양가집 규수",
+            "isTitle": false
+          },
+          {
+            "no": 13,
+            "title": "성공의 어머니",
+            "isTitle": false
+          },
+          {
+            "no": 14,
+            "title": "놀아보자",
+            "isTitle": false
+          },
+          {
+            "no": 15,
+            "title": "2세의 처 (Feat. R.jay, DM, Y.Kwan, Small)",
+            "isTitle": false
+          },
+          {
+            "no": 16,
+            "title": "불륜",
+            "isTitle": false
+          },
+          {
+            "no": 17,
+            "title": "계집녀",
+            "isTitle": false
+          },
+          {
+            "no": 18,
+            "title": "Upskail Phenomenon",
+            "isTitle": false
+          },
+          {
+            "no": 19,
+            "title": "Mordern",
+            "isTitle": false
+          },
+          {
+            "no": 20,
+            "title": "Outro",
             "isTitle": false
           }
         ]
