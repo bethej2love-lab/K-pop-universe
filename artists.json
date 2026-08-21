@@ -18934,7 +18934,152 @@
     "links": {
       "namu": "https://namu.wiki/w/소연",
       "instagram": "https://www.instagram.com/tiny.pretty.j"
-    }
+    },
+    "discography": [
+      {
+        "title": "내 이름 맑음 [THE 시즌즈: 박보검의 칸타빌레]",
+        "type": "싱글",
+        "releaseDate": "2025.06.27",
+        "trackCount": 1,
+        "isMain": true,
+        "titleTrack": "내 이름 맑음",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/118/68/840/11868840_20250626140842_500.jpg?fb67a286d61f9324f75bb687109c9d85",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "내 이름 맑음",
+            "isTitle": true
+          }
+        ]
+      },
+      {
+        "title": "아무너케",
+        "type": "싱글",
+        "releaseDate": "2023.08.23",
+        "trackCount": 2,
+        "isMain": true,
+        "titleTrack": "아무너케 (I'm OK)",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/113/11/120/11311120_20230822172834_500.jpg?378dcc580ee20949c21340eea7fb9d37",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "아무너케 (I'm OK)",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "아무너케 (I'm OK) (Inst.)",
+            "isTitle": false
+          }
+        ]
+      },
+      {
+        "title": "아따 맛있다 (Shake Shack Korea)",
+        "type": "싱글",
+        "releaseDate": "2022.07.27",
+        "trackCount": 1,
+        "isMain": true,
+        "titleTrack": "아따 맛있다 (Shake Shack Korea)",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/110/14/320/11014320_20220726155315_500.jpg?0b3136a85eb217e321629339434cca7b",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "아따 맛있다 (Shake Shack Korea)",
+            "isTitle": true
+          }
+        ]
+      },
+      {
+        "title": "FREAK SHOW (지금부터, 쇼타임! X 전소연)",
+        "type": "OST",
+        "releaseDate": "2022.04.20",
+        "trackCount": 2,
+        "isMain": false,
+        "titleTrack": "FREAK SHOW",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/109/26/218/10926218_20220419164157_500.jpg?6855a1bf0f47f6b657bea61f936b42c4",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "FREAK SHOW",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "FREAK SHOW (Inst.)",
+            "isTitle": false
+          }
+        ],
+        "feat": true
+      },
+      {
+        "title": "Windy",
+        "type": "미니 1집",
+        "releaseDate": "2021.07.05",
+        "trackCount": 5,
+        "isMain": true,
+        "titleTrack": "삠삠 (BEAM BEAM)",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/106/44/247/10644247_20210705151028_500.jpg?4665248577e55423bc796bfbb11cad62",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "삠삠 (BEAM BEAM)",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Weather",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "Quit",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Psycho",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Is this bad b****** number? (Feat. 비비(BIBI), 이영지)",
+            "isTitle": false
+          }
+        ]
+      },
+      {
+        "title": "아이들 쏭",
+        "type": "싱글",
+        "releaseDate": "2018.02.28",
+        "trackCount": 1,
+        "isMain": true,
+        "titleTrack": "아이들 쏭 (Idle song)",
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/101/43/163/10143163_500.jpg?1901f3c7becd5d314cdea8bc69df2e31",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "아이들 쏭 (Idle song)",
+            "isTitle": true
+          }
+        ]
+      },
+      {
+        "title": "Jelly",
+        "type": "싱글",
+        "releaseDate": "2017.11.05",
+        "trackCount": 1,
+        "isMain": true,
+        "titleTrack": "Jelly",
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/101/08/914/10108914_500.jpg?e5d90c20266e0d498504050efafc9745",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Jelly",
+            "isTitle": true
+          }
+        ]
+      }
+    ]
   },
   {
     "name": {
@@ -22121,7 +22266,105 @@
     "links": {
       "instagram": "https://www.instagram.com/jenaissante",
       "namu": "https://namu.wiki/w/허윤진"
-    }
+    },
+    "discography": [
+      {
+        "title": "해파리",
+        "type": "싱글",
+        "releaseDate": "2025.01.10",
+        "trackCount": 1,
+        "isMain": true,
+        "titleTrack": "해파리",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/116/89/576/11689576_20250110102451_500.jpg?f349df1e87e39a72f2917633ba5181f5",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "해파리",
+            "isTitle": true
+          }
+        ]
+      },
+      {
+        "title": "blessing in disguise",
+        "type": "싱글",
+        "releaseDate": "2023.08.14",
+        "trackCount": 1,
+        "isMain": true,
+        "titleTrack": "blessing in disguise",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/113/04/521/11304521_20230811112856_500.jpg?8c4f754ff8983a46015ea7f12995bfa0",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "blessing in disguise",
+            "isTitle": true
+          }
+        ]
+      },
+      {
+        "title": "피어나도록 (love you twice)",
+        "type": "싱글",
+        "releaseDate": "2023.03.14",
+        "trackCount": 1,
+        "isMain": true,
+        "titleTrack": "피어나도록 (love you twice)",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/112/02/461/11202461_20230314094050_500.jpg?afc230b878ab793531619377aa61b2fa",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "피어나도록 (love you twice)",
+            "isTitle": true
+          }
+        ]
+      },
+      {
+        "title": "I ≠ DOLL",
+        "type": "싱글",
+        "releaseDate": "2023.01.09",
+        "trackCount": 1,
+        "isMain": true,
+        "titleTrack": "I ≠ DOLL",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/111/42/276/11142276_20230109103037_500.jpg?6761edf1376bce9582dfd6b6b1dd2e69",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "I ≠ DOLL",
+            "isTitle": true
+          }
+        ]
+      },
+      {
+        "title": "2022 Christmas VIBE - 허윤진",
+        "type": "싱글",
+        "releaseDate": "2023.01.02",
+        "trackCount": 1,
+        "isMain": true,
+        "titleTrack": "Last Christmas",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/111/34/867/11134867_20221230180650_500.jpg?72ab68043739c8b1c7c28554ad95db4d",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Last Christmas",
+            "isTitle": true
+          }
+        ]
+      },
+      {
+        "title": "Raise y_our glass",
+        "type": "싱글",
+        "releaseDate": "2022.08.09",
+        "trackCount": 1,
+        "isMain": true,
+        "titleTrack": "Raise y_our glass",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/111/41/641/11141641_20230106161125_500.jpg?c55ecbd6d12410912102c44e60154f3c",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Raise y_our glass",
+            "isTitle": true
+          }
+        ]
+      }
+    ]
   },
   {
     "name": {
