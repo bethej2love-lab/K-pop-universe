@@ -1934,8 +1934,8 @@ async function _vmLoad(searchTerm,preserveSearch2){
       _vmRenderVideoList();
       return;
     }
-    // nomem / hidden 탭
-    const flag=tab==='nomem'?'무관':'hidden';
+    // nomem / hold / hidden 탭
+    const flag=tab==='nomem'?'무관':tab==='hold'?'보류':'hidden';
     let q=sb.from(_YT_TABLE).select('id,title,group_ko,thumb,content_flag,members,with_members,with_groups,cover_of_members,cover_of_groups');
     q=q.eq('content_flag',flag);
     if(term)q=q.or(`title.ilike.${_pgFilterVal('%'+term+'%')},group_ko.ilike.${_pgFilterVal('%'+term+'%')}`);
@@ -1977,7 +1977,7 @@ function _vmRenderVideoList(){
   listEl.innerHTML='';
   const rows=_vmSearch2Rows();
   if(!_vmRows.length){
-    const emptyMsg=tab==='all'?'검색 결과가 없어요':tab==='nomem'?'무관 처리된 영상이 없어요':tab==='review'?'검수 대기 중인 영상이 없어요':tab==='catlock'?'라이브 후보 중 수동 편집으로 막힌 영상이 없어요':'숨김 처리된 영상이 없어요';
+    const emptyMsg=tab==='all'?'검색 결과가 없어요':tab==='nomem'?'무관 처리된 영상이 없어요':tab==='hold'?'보류된 영상이 없어요':tab==='review'?'검수 대기 중인 영상이 없어요':tab==='catlock'?'라이브 후보 중 수동 편집으로 막힌 영상이 없어요':'숨김 처리된 영상이 없어요';
     listEl.innerHTML=`<div style="padding:24px;text-align:center;color:rgba(155,178,228,0.45);font-size:12px;">${emptyMsg}</div>`;
     toolbarEl.style.display='none';
     return;
@@ -1987,12 +1987,12 @@ function _vmRenderVideoList(){
     toolbarEl.style.display='none';
     return;
   }
-  const showCheckbox=tab==='nomem'||tab==='hidden'||tab==='ss'||tab==='all';
+  const showCheckbox=tab==='nomem'||tab==='hold'||tab==='hidden'||tab==='ss'||tab==='all';
   if(showCheckbox){
     toolbarEl.style.display='flex';
     document.getElementById('vm-select-all-row').style.display='';
     document.getElementById('vm-select-all').checked=false;
-    const applyLabel=tab==='nomem'?'선택-무관 해제':tab==='ss'?'선택-숨김':tab==='hidden'?'선택-숨김 해제':'선택-무관';
+    const applyLabel=tab==='nomem'?'선택-무관 해제':tab==='hold'?'선택-보류 해제':tab==='ss'?'선택-숨김':tab==='hidden'?'선택-숨김 해제':'선택-무관';
     document.getElementById('vm-apply-btn').textContent=applyLabel;
     _vmUpdateCount();
   }else{
@@ -2053,6 +2053,7 @@ function _vmSetFlagLabel(btn,flag){
   if(!flag){btn.textContent='정상';btn.classList.add('vm-flag-normal');}
   else if(flag==='무관'){btn.textContent='무관';btn.classList.add('vm-flag-nomem');}
   else if(flag==='hidden'){btn.textContent='숨김';btn.classList.add('vm-flag-hidden');}
+  else if(flag==='보류'){btn.textContent='보류';btn.classList.add('vm-flag-hold');} // 유니버스 미등록 아이돌 — 검토 대기
   else{btn.textContent=flag;btn.classList.add('vm-flag-other');} // 기타/외부인/개별출연 — 있는 그대로 표시
 }
 function _vmCycleFlagInline(v,btn,item){
@@ -2060,7 +2061,7 @@ function _vmCycleFlagInline(v,btn,item){
   // 시작한 것처럼 무관으로 보내고(그 값을 조용히 지우고 곧장 hidden으로 건너뛰지 않게), 순환이 끝나면
   // 정상(null)으로 돌아가 완전히 지워지는 건 그대로 유지(관리자가 명시적으로 한 바퀴 돌린 것이므로).
   const cur=v.content_flag||null;
-  const next=cur==='무관'?'hidden':(cur==='hidden'?null:'무관');
+  const next=cur==='무관'?'hidden':(cur==='hidden'?'보류':(cur==='보류'?null:'무관')); // 무관→숨김→보류→정상 순환
   _vmSetFlag(v,next,btn,item);
 }
 async function _vmSetFlag(v,newFlag,btn,item){
@@ -2073,7 +2074,7 @@ async function _vmSetFlag(v,newFlag,btn,item){
   btn.disabled=false;
   // 탭 필터와 안 맞는 항목은 페이드 아웃 후 제거
   const tab=_vmTab;
-  const mismatch=(tab==='nomem'&&newFlag!=='무관')||(tab==='hidden'&&newFlag!=='hidden');
+  const mismatch=(tab==='nomem'&&newFlag!=='무관')||(tab==='hold'&&newFlag!=='보류')||(tab==='hidden'&&newFlag!=='hidden');
   if(mismatch){
     item.style.opacity='0.3';
     setTimeout(()=>{
@@ -2508,7 +2509,7 @@ document.getElementById('vm-apply-btn')?.addEventListener('click',async()=>{
   btn.disabled=true;btn.textContent='처리 중…';
   const newFlag=_vmTab==='ss'?'hidden':(_vmTab==='all'?'무관':null);
   const{error}=await sb.from(_YT_TABLE).update({content_flag:newFlag}).in('id',ids);
-  const applyLabel=_vmTab==='nomem'?'선택-무관 해제':_vmTab==='ss'?'선택-숨김':_vmTab==='hidden'?'선택-숨김 해제':'선택-무관';
+  const applyLabel=_vmTab==='nomem'?'선택-무관 해제':_vmTab==='hold'?'선택-보류 해제':_vmTab==='ss'?'선택-숨김':_vmTab==='hidden'?'선택-숨김 해제':'선택-무관';
   if(error){btn.disabled=false;btn.textContent=applyLabel;document.getElementById('vm-status').textContent='오류: '+error.message;return;}
   const idSet=new Set(ids);
   if(_vmTab==='all'){
