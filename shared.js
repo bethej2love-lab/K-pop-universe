@@ -113,9 +113,6 @@ const _PROJECT_UNITS={
   // 오마이걸 서브유닛
   '오마이걸 반하나':{names:['오마이걸 반하나','OH MY GIRL BANHANA'],members:[{mko:'효정',gko:'오마이걸'},{mko:'유빈',gko:'오마이걸'},{mko:'아린',gko:'오마이걸'}]},
   // 스트레이키즈 서브유닛
-  '3RACHA':{names:['3RACHA','쓰리라차'],members:[{mko:'방찬',gko:'스트레이키즈'},{mko:'창빈',gko:'스트레이키즈'},{mko:'한',gko:'스트레이키즈'}]},
-  '댄스라차':{names:['댄스라차'],members:[{mko:'리노',gko:'스트레이키즈'},{mko:'현진',gko:'스트레이키즈'},{mko:'필릭스',gko:'스트레이키즈'}]},
-  '보컬라차':{names:['보컬라차'],members:[{mko:'승민',gko:'스트레이키즈'},{mko:'아이엔',gko:'스트레이키즈'}]},
   // 우주소녀 서브유닛
   '우주소녀 쪼꼬미':{names:['우주소녀 쪼꼬미','WJSN CHOCOME'],members:[{mko:'수빈',gko:'우주소녀'},{mko:'여름',gko:'우주소녀'},{mko:'다영',gko:'우주소녀'},{mko:'루다',gko:'우주소녀'}]},
   '우주소녀 더 블랙':{names:['우주소녀 더 블랙','WJSN THE BLACK'],members:[{mko:'설아',gko:'우주소녀'},{mko:'보나',gko:'우주소녀'},{mko:'엑시',gko:'우주소녀'},{mko:'은서',gko:'우주소녀'}]},
@@ -182,12 +179,7 @@ const _PROJECT_UNITS={
   'NINE to SIX':{names:['NINE to SIX','나인 투 식스'],members:[{mko:'민규',gko:'동키즈'},{mko:'주원',gko:'동키즈'}]},
   // I.O.I 유닛
   'I.O.I (7인 유닛)':{names:['I.O.I 7인 유닛','Whatta Man'],members:[{mko:'임나영',gko:'아이오아이'},{mko:'김청하',gko:'아이오아이'},{mko:'주결경',gko:'아이오아이'},{mko:'김소혜',gko:'아이오아이'},{mko:'최유정',gko:'아이오아이'},{mko:'김도연',gko:'아이오아이'},{mko:'전소미',gko:'아이오아이'}]},
-  'I.O.I (2인 유닛)':{names:['I.O.I 2인 유닛'],members:[{mko:'정채연',gko:'아이오아이'},{mko:'유연정',gko:'아이오아이'}]},
   // 워너원 유닛
-  'Triple Position':{names:['Triple Position','트리플 포지션'],members:[{mko:'김재환',gko:'워너원'},{mko:'강다니엘',gko:'워너원'},{mko:'박우진',gko:'워너원'}]},
-  'Lean On Me':{names:['Lean On Me','린온미'],members:[{mko:'윤지성',gko:'워너원'},{mko:'하성운',gko:'워너원'}]},
-  'The Heal':{names:['The Heal','더 힐'],members:[{mko:'옹성우',gko:'워너원'},{mko:'이대휘',gko:'워너원'}]},
-  '남바완':{names:['남바완'],members:[{mko:'박지훈',gko:'워너원'},{mko:'배진영',gko:'워너원'},{mko:'라이관린',gko:'워너원'}]},
   // EXID 서브유닛
   '다소니':{names:['다소니','Dasoni'],members:[{mko:'솔지',gko:'이엑스아이디'},{mko:'하니',gko:'이엑스아이디'}]},
   // SS501 서브유닛
