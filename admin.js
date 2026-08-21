@@ -884,6 +884,62 @@ async function _ytRescanWeakGroupAssignments(){
   }
 }
 
+// (일회용, 2026-08-21) 트리플에스 유닛명 오매칭 소급 정리 — _PROJECT_UNITS의 "AAA"(Acid Angel from
+// Asia 약칭이자 아시아 아티스트 어워즈 약칭)·"Aria"(흔한 단어/곡명)·"EVOLution"/"Glow"/"hatch!"/"NXT"
+// (흔한 영단어·짧은 약어) 트리거가 무관한 다른 그룹 영상(시상식 비하인드, 챌린지/커버 크레딧 해시태그
+// 등)에 대량으로 걸려 with_members에 트리플에스 멤버가 잘못 붙던 문제(Fable 감사 기반 실측 발견).
+// 트리거를 해시태그 전용으로 좁히거나(AAA 등) 아예 삭제(Aria)했으니, 그 수정된 로직으로 다시 매칭해서
+// "더 이상 안 걸리는" 것만 제거한다 — 진짜 콜라보(예: 실제로 #tripleS 해시태그가 있는 경우)는 그대로
+// 보존됨. strict=false(느슨하게)로 재매칭해서 그래도 안 걸리면 확실히 틀린 것으로 판단(관대한 재매칭
+// 기준을 써야 "혹시 몰라서 냅둠"이 아니라 "느슨하게 봐도 안 됨" 확신이 생김).
+async function _ytCleanupUnitTokenMistag(){
+  if(!sb){_ytSetProg('Supabase 연결 없음');return;}
+  const btn=document.getElementById('sp-yt-cleanup-unittoken-btn');
+  if(btn)btn.disabled=true;
+  try{
+    _ytSetProg('[유닛 오매칭 정리] 대상 조회 중…');
+    const{data:rows,error}=await _sbFetchAll(()=>sb.from(_YT_TABLE)
+      .select('id,title,group_ko,with_members')
+      .neq('group_ko','트리플에스')
+      .eq('tags_manual',false)
+      .not('with_members','eq','{}') // with_members가 아예 빈 행은 트리플에스 오매칭 대상일 수 없음 — 전송량 절감
+      .order('id'));
+    if(error){_ytSetProg('조회 실패: '+error.message);return;}
+    const suspectRows=(rows||[]).filter(v=>(v.with_members||[]).some(s=>s.endsWith('(트리플에스)')));
+    if(!suspectRows.length){_ytSetProg('의심 행 없음');return;}
+    const updates=[];
+    let removedCount=0;
+    suspectRows.forEach(v=>{
+      const wm=v.with_members||[];
+      let match;
+      try{ match=_m2ParseTitle(v.title||'',v.group_ko,false); }catch(e){ match=null; }
+      const stillMatched=new Set(match?(match.membersByGroup['트리플에스']||[]):[]);
+      const newWm=wm.filter(s=>{
+        if(!s.endsWith('(트리플에스)'))return true;
+        const mko=s.slice(0,-'(트리플에스)'.length);
+        return stillMatched.has(mko);
+      });
+      if(newWm.length!==wm.length){
+        removedCount+=wm.length-newWm.length;
+        updates.push({id:v.id,patch:{with_members:newWm}});
+      }
+    });
+    if(!updates.length){_ytSetProg(`검사 완료 — 의심 ${suspectRows.length}개 중 실제로 제거할 항목 없음`);return;}
+    for(let i=0;i<updates.length;i+=200){
+      const chunk=updates.slice(i,i+200);
+      const results=await Promise.all(chunk.map(u=>sb.from(_YT_TABLE).update(u.patch).eq('id',u.id)));
+      const failed=results.find(r=>r.error);
+      if(failed)throw new Error(failed.error.message);
+      _ytSetProg(`[유닛 오매칭 정리] ${Math.min(i+200,updates.length)}/${updates.length}개 처리 중…`);
+    }
+    _ytSetProg(`완료! ${suspectRows.length}개 중 ${updates.length}개 행에서 트리플에스 오매칭 ${removedCount}건 제거함`);
+  }catch(e){
+    _ytSetProg('오류: '+e.message);
+  }finally{
+    if(btn)btn.disabled=false;
+  }
+}
+
 // 커버곡 원곡 제목 자동 추출(2026-08-19, 사용자 요청 — "특정 커버곡 모아보기" 기능의 전제 작업, 일회성
 // 스크립트가 아니라 반복 재실행 가능한 버튼으로). cover_of_members/cover_of_groups(원곡 아티스트)가
 // 채워진 영상 중엔 진짜 커버곡이 아니라 검수 센터에서 "실제 출연/콜라보가 아니다"로 재분류돼 이 필드로
@@ -1635,6 +1691,7 @@ async function _avsEnsureCache(){
 // ── 영상 관리 통합 패널 ──
 let _vmTab='all';       // 'all' | 'nomem' | 'hidden' | 'channels'
 let _vmChTab='official'; // 'official' | 'ext'
+let _vmChTierFilter='all'; // 'all' | 'music' | 'variety' | 'magazine' | 'idol' | 'show' — "그외" 탭 안에서만 씀
 let _vmRows=[];
 let _vmSearchGen=0;
 let _vmSearchTimer=null;
@@ -1657,9 +1714,12 @@ function _vmApplyTab(){
   const isCh=_vmTab==='channels';
   document.getElementById('vm-list').style.display=isCh?'none':'';
   document.getElementById('vm-ch-inner').style.display=isCh?'flex':'none';
-  // 검수 탭들은 검색 불필요(고정 대상 목록)
-  const isReviewLike=_vmTab==='ss'||_vmTab==='review';
-  document.getElementById('vm-search').style.display=(isCh||isReviewLike)?'none':'';
+  // 검수 탭들은 검색 불필요(고정 대상 목록). 채널 탭은 재검색(vm-search-2, 결과 내 좁히기)까진 필요
+  // 없지만 1차 검색창은 채널명/핸들 검색용으로 그대로 쓴다(2026-08-21 — 예전엔 여기도 숨겨져 있었음).
+  const isReviewLike=_vmTab==='ss'||_vmTab==='review'||_vmTab==='catlock';
+  const searchEl=document.getElementById('vm-search');
+  searchEl.style.display=isReviewLike?'none':'';
+  searchEl.placeholder=isCh?'채널명·핸들 검색…':'제목·그룹 검색…';
   document.getElementById('vm-search-2').style.display=(isCh||isReviewLike)?'none':'';
   document.getElementById('vm-toolbar').style.display='none';
   document.getElementById('vm-status').textContent='';
@@ -1670,7 +1730,9 @@ function _vmApplyTab(){
   if(onlyNormalBtn){onlyNormalBtn.style.display=_vmTab==='all'?'':'none';onlyNormalBtn.classList.remove('active');}
   if(isCh){
     _vmChTab='official';
+    _vmChTierFilter='all';
     document.querySelectorAll('.vm-ch-tab').forEach(t=>t.classList.toggle('active',t.dataset.tab==='official'));
+    _vmRenderChTierChips();
     _vmRenderChannels('');
   }else{
     _vmLoad();
@@ -1752,6 +1814,28 @@ async function _vmLoad(searchTerm,preserveSearch2){
       _vmRenderVideoList();
       return;
     }
+    if(tab==='catlock'){
+      // "OO 최애직캠"처럼 채널마다 반복되는 브랜드명이 붙어도 제목에 "직캠"류 단어가 있으면 _ytClassify가
+      // 이미 category='live'로 잡아준다 — 안 잡히는 진짜 문제는 tags_manual=true(사람이 직접 수정)라
+      // "영상 카테고리 재분류(전체)"(_ytSweepCategoryMistag)가 애초에 건드리지 않고 조용히 건너뛰는
+      // 경우들이었음. 그 목록이 지금까지 안 보여서 실수로 잘못 저장된 건지 의도적으로 다르게 둔 건지
+      // 확인할 방법이 없었음(2026-08-21, 사용자 요청) — tags_manual=true 안 건드리는 원칙은 그대로 두고,
+      // 후보만 여기서 보여줘서 사람이 하나씩 직접(✎) 확인·수정하게 한다.
+      const{data,error}=await _sbFetchAll(()=>sb.from(_YT_TABLE)
+        .select('id,title,group_ko,thumb,content_flag,members,with_members,with_groups,cover_of_members,cover_of_groups,category')
+        .eq('tags_manual',true)
+        .neq('category','live')
+        .neq('category','short')
+        .order('id'));
+      if(myGen!==_vmSearchGen)return;
+      if(error){statusEl.textContent='조회 실패: '+error.message;return;}
+      const candidates=(data||[]).filter(v=>_ytClassify(v.title||'')==='live');
+      const all=candidates.sort((a,b)=>(a.group_ko||'').localeCompare(b.group_ko||'','ko')||(a.title||'').localeCompare(b.title||'','ko'));
+      _vmRows=all;
+      statusEl.textContent=`라이브로 보이는데 수동 편집으로 다른 카테고리로 저장된 영상 ${all.length}개 — ✎로 하나씩 확인해주세요`;
+      _vmRenderVideoList();
+      return;
+    }
     // nomem / hidden 탭
     const flag=tab==='nomem'?'무관':'hidden';
     let q=sb.from(_YT_TABLE).select('id,title,group_ko,thumb,content_flag,members,with_members,with_groups,cover_of_members,cover_of_groups');
@@ -1795,7 +1879,7 @@ function _vmRenderVideoList(){
   listEl.innerHTML='';
   const rows=_vmSearch2Rows();
   if(!_vmRows.length){
-    const emptyMsg=tab==='all'?'검색 결과가 없어요':tab==='nomem'?'무관 처리된 영상이 없어요':tab==='review'?'검수 대기 중인 영상이 없어요':'숨김 처리된 영상이 없어요';
+    const emptyMsg=tab==='all'?'검색 결과가 없어요':tab==='nomem'?'무관 처리된 영상이 없어요':tab==='review'?'검수 대기 중인 영상이 없어요':tab==='catlock'?'라이브 후보 중 수동 편집으로 막힌 영상이 없어요':'숨김 처리된 영상이 없어요';
     listEl.innerHTML=`<div style="padding:24px;text-align:center;color:rgba(155,178,228,0.45);font-size:12px;">${emptyMsg}</div>`;
     toolbarEl.style.display='none';
     return;
@@ -1938,11 +2022,34 @@ function _vmUpdateCount(){
 // 코드 배포 없이 관리 가능하게 함 — "공식"(그룹/멤버 자체 채널, _officialChannels)은 GROUPS 데이터에서
 // 자동 생성되는 목록이라 여기서 개별 편집 대상이 아님(2026-08-12, 사용자 요청).
 const _EXT_TIER_OPTIONS=[['music','음악'],['variety','예능'],['magazine','잡지'],['idol','아이돌개인'],['show','드라마/영화']];
+// "그외" 탭에서 유형별로 걸러보는 칩 — official 탭에선 숨김(2026-08-21, 사용자 요청 — 5종이 한 리스트에
+// 섞여 있어 특정 유형만 확인하기 번거로움).
+function _vmRenderChTierChips(){
+  const wrap=document.getElementById('vm-ch-tier-filter');
+  if(!wrap)return;
+  const isOfficial=_vmChTab==='official';
+  wrap.style.display=isOfficial?'none':'flex';
+  if(isOfficial){wrap.innerHTML='';return;}
+  wrap.innerHTML='';
+  [['all','전체'],..._EXT_TIER_OPTIONS].forEach(([v,label])=>{
+    const b=document.createElement('button');
+    b.type='button';b.className='ec-tier-chip'+(v===_vmChTierFilter?' active':'');
+    b.textContent=label;
+    b.addEventListener('click',()=>{
+      _vmChTierFilter=v;
+      wrap.querySelectorAll('.ec-tier-chip').forEach(x=>x.classList.remove('active'));
+      b.classList.add('active');
+      _vmRenderChannels(document.getElementById('vm-search')?.value||'');
+    });
+    wrap.appendChild(b);
+  });
+}
 function _vmRenderChannels(term){
   const listEl=document.getElementById('vm-ch-list');
   const q=(term||'').trim().toLowerCase();
   const isOfficial=_vmChTab==='official';
-  const all=isOfficial?_officialChannels():_EXT_CHANNELS;
+  let all=isOfficial?_officialChannels():_EXT_CHANNELS;
+  if(!isOfficial&&_vmChTierFilter!=='all')all=all.filter(ch=>ch.tier===_vmChTierFilter);
   const rows=q?all.filter(ch=>ch.name.toLowerCase().includes(q)||(ch.handle||'').toLowerCase().includes(q)):all;
   document.getElementById('vm-ch-count').textContent=`총 ${all.length}개 중 ${rows.length}개 표시`;
   const addRow=document.getElementById('vm-ch-add-row');
@@ -1993,30 +2100,79 @@ async function _ecDeleteChannel(handle,name){
   _vmRenderChannels(document.getElementById('vm-search')?.value||'');
   _showShareToast('채널 삭제됨');
 }
+// 이름 하나로 여러 명(동명이인)이 잡히면 owner_mko만으로는 그 중 누구인지 알 수 없어 나중에 엉뚱한
+// 사람으로 고정될 수 있음(_extOwnerGko가 ARTISTS.find로 이름만 보고 첫 매치를 집던 문제, 2026-08-21
+// 사용자 제보). 등록 시점에 후보가 2명 이상이면 그룹 선택 드롭다운을 띄워 명시적으로 고르게 한다.
+function _ecUpdateOwnerGkoOptions(){
+  const nameEl=document.getElementById('vm-ch-add-owner');
+  const gkoSel=document.getElementById('vm-ch-add-owner-gko');
+  if(!nameEl||!gkoSel)return;
+  const name=nameEl.value.trim();
+  const matches=name?ARTISTS.filter(a=>a.name.ko===name):[];
+  if(matches.length<2){gkoSel.style.display='none';gkoSel.innerHTML='';return;}
+  gkoSel.innerHTML='<option value="">동명이인 — 그룹 선택…</option>'+matches.map(a=>{
+    const gko=_ytGroupKoFor(a);
+    return `<option value="${gko}">${a.name.ko} (${gko})</option>`;
+  }).join('');
+  gkoSel.style.display='';
+}
+document.getElementById('vm-ch-add-owner')?.addEventListener('input',_ecUpdateOwnerGkoOptions);
 async function _ecAddChannel(){
   if(!sb)return;
   const handleEl=document.getElementById('vm-ch-add-handle');
   const nameEl=document.getElementById('vm-ch-add-name');
   const tierEl=document.getElementById('vm-ch-add-tier');
   const ownerEl=document.getElementById('vm-ch-add-owner');
+  const ownerGkoEl=document.getElementById('vm-ch-add-owner-gko');
+  const targetGkoEl=document.getElementById('vm-ch-add-target-gko');
   const handle=(handleEl?.value||'').trim().replace(/^@/,'');
   const name=(nameEl?.value||'').trim();
   const tier=tierEl?.value||'variety';
   const ownerMko=(ownerEl?.value||'').trim();
   if(!handle||!name){_showShareToast('핸들과 이름을 입력해주세요');return;}
-  if(tier==='idol'&&!ownerMko){_showShareToast('아이돌개인 유형은 소유자 이름이 필요해요');return;}
-  const row={handle,url:`https://www.youtube.com/@${handle}`,name,tier,owner_mko:tier==='idol'?ownerMko:null};
+  if(_EXT_CHANNELS.some(c=>c.handle.toLowerCase()===handle.toLowerCase())){_showShareToast('이미 등록된 채널이에요');return;}
+  let ownerGko=null;
+  if(tier==='idol'){
+    if(!ownerMko){_showShareToast('아이돌개인 유형은 소유자 이름이 필요해요');return;}
+    const matches=ARTISTS.filter(a=>a.name.ko===ownerMko);
+    if(matches.length>1){
+      ownerGko=ownerGkoEl?.value||'';
+      if(!ownerGko){_showShareToast('동명이인이 있어요 — 그룹을 선택해주세요');return;}
+    }else if(matches.length===1){
+      ownerGko=_ytGroupKoFor(matches[0]);
+    }else{
+      ownerGko=ownerMko; // GROUPS에 없는 솔로(이영지 등) — 이름 자체가 그룹 키(_ytGroupKoFor와 동일 관례)
+    }
+  }else if(tier==='fans'){
+    // 팬 채널은 특정 멤버가 아니라 그룹 전체가 대상 — owner_mko 없이 owner_gko만 채워서 idol과 같은
+    // "채널 소유(그룹 고정)" 메커니즘을 재사용한다(_extOwnerGko/_extBuildRows가 mko 없어도 gko만으로 동작).
+    const targetGko=(targetGkoEl?.value||'').trim();
+    if(!targetGko||!_isValidVidGroupKo(targetGko)){_showShareToast('팬 채널은 실존하는 대상 그룹을 입력해주세요');return;}
+    ownerGko=targetGko;
+  }
+  const row={handle,url:`https://www.youtube.com/@${handle}`,name,tier,owner_mko:tier==='idol'?ownerMko:null,owner_gko:(tier==='idol'||tier==='fans')?ownerGko:null};
   const{error}=await sb.from('ext_channels').insert(row);
   if(error){_showShareToast('오류: '+error.message);return;}
-  _EXT_CHANNELS.push({handle:row.handle,url:row.url,name:row.name,tier:row.tier,...(row.owner_mko?{owner:{mko:row.owner_mko}}:{})});
+  _EXT_CHANNELS.push({handle:row.handle,url:row.url,name:row.name,tier:row.tier,...((row.owner_mko||row.owner_gko)?{owner:{mko:row.owner_mko||null,gko:row.owner_gko||null}}:{})});
   if(handleEl)handleEl.value='';if(nameEl)nameEl.value='';if(ownerEl)ownerEl.value='';if(tierEl)tierEl.value='variety';
+  if(ownerGkoEl){ownerGkoEl.value='';ownerGkoEl.style.display='none';ownerGkoEl.innerHTML='';}
+  if(targetGkoEl){targetGkoEl.value='';targetGkoEl.style.display='none';}
   _vmRenderChannels(document.getElementById('vm-search')?.value||'');
   _showShareToast('채널 추가됨');
 }
 document.getElementById('vm-ch-add-btn')?.addEventListener('click',_ecAddChannel);
 document.getElementById('vm-ch-add-tier')?.addEventListener('change',e=>{
   const ownerEl=document.getElementById('vm-ch-add-owner');
+  const targetGkoEl=document.getElementById('vm-ch-add-target-gko');
   if(ownerEl)ownerEl.style.display=e.target.value==='idol'?'':'none';
+  if(targetGkoEl){
+    targetGkoEl.style.display=e.target.value==='fans'?'':'none';
+    if(e.target.value==='fans')_ensureVidTagGroupList();
+  }
+  if(e.target.value!=='idol'){
+    const gkoSel=document.getElementById('vm-ch-add-owner-gko');
+    if(gkoSel){gkoSel.value='';gkoSel.style.display='none';gkoSel.innerHTML='';}
+  }
 });
 
 // 그룹 우선순위(A>B>C) — 어드민 전용 데이터 관리 우선순위 표시, 유저에게는 절대 노출 안 됨(2026-08-12).
@@ -2225,8 +2381,9 @@ document.querySelectorAll('.vm-tab').forEach(btn=>{
   });
 });
 document.getElementById('vm-search')?.addEventListener('input',()=>{
-  clearTimeout(_vmSearchTimer);
   const val=document.getElementById('vm-search').value;
+  if(_vmTab==='channels'){_vmRenderChannels(val);return;} // 채널 목록은 이미 메모리에 있는 배열 필터라 디바운스 불필요
+  clearTimeout(_vmSearchTimer);
   _vmSearchTimer=setTimeout(()=>_vmLoad(val),300);
 });
 // 재검색은 새 조회 없이 이미 받아온 _vmRows를 그대로 다시 필터링만 하므로 디바운스를 짧게 둬도 부담 없음
@@ -2376,7 +2533,10 @@ document.getElementById('vm-edit-btn')?.addEventListener('click',()=>{
 document.querySelectorAll('.vm-ch-tab').forEach(btn=>{
   btn.addEventListener('click',()=>{
     _vmChTab=btn.dataset.tab;
+    _vmChTierFilter='all';
     document.querySelectorAll('.vm-ch-tab').forEach(t=>t.classList.toggle('active',t===btn));
+    document.getElementById('vm-search').value='';
+    _vmRenderChTierChips();
     _vmRenderChannels('');
   });
 });
@@ -2742,16 +2902,18 @@ let _extChannelsLoaded=false;
 async function _loadExtChannels(){
   if(!sb)return;
   try{
-    const{data,error}=await sb.from('ext_channels').select('handle,url,name,tier,owner_mko').order('name');
+    const{data,error}=await sb.from('ext_channels').select('handle,url,name,tier,owner_mko,owner_gko').order('name');
     if(error){console.error('ext_channels 로드 실패',error.message);return;}
-    _EXT_CHANNELS=(data||[]).map(r=>({handle:r.handle,url:r.url,name:r.name,tier:r.tier,...(r.owner_mko?{owner:{mko:r.owner_mko}}:{})}));
+    // 팬(fans) 채널은 owner_mko 없이 owner_gko만 있음(그룹 전체가 대상, 특정 멤버 아님) — owner_mko
+    // 유무가 아니라 둘 중 하나라도 있으면 owner 객체를 만든다(2026-08-21).
+    _EXT_CHANNELS=(data||[]).map(r=>({handle:r.handle,url:r.url,name:r.name,tier:r.tier,...((r.owner_mko||r.owner_gko)?{owner:{mko:r.owner_mko||null,gko:r.owner_gko||null}}:{})}));
     _extChannelsLoaded=true;
     const backfillSel=document.getElementById('sp-yt-backfill-ch');
     if(backfillSel)backfillSel.innerHTML=_EXT_CHANNELS.map(c=>`<option value="${c.handle}">${c.name}</option>`).join('');
   }catch(e){console.error('ext_channels 로드 실패',e);}
 }
 _loadExtChannels();
-const _EXT_STRICT_TIERS=new Set(['variety','magazine','idol','show']); // idol/show tier도 게스트 감지는 strict(해시태그만 인정)
+const _EXT_STRICT_TIERS=new Set(['variety','magazine','idol','show','fans']); // idol/show/fans tier도 게스트 감지는 strict(해시태그만 인정)
 
 // _PROJECT_UNITS는 kpop_universe.html(main)로 이동함(2026-08-12) — 그쪽의 _unitTagsFor/_onUnitTagClick도
 // 이 상수를 쓰는데 admin.js에만 남아있어서 일반 유저 검색(doSearch)이 통째로 죽는 사고가 있었음. admin.js는
@@ -2776,9 +2938,13 @@ function _unitMembersFromTitle(title,ko){
     const n=name.toUpperCase().replace(/[^가-힣a-zA-Z0-9]/g,' ').replace(/\s+/g,' ').trim();
     return norm.includes(' '+n+' ');
   };
+  // _UNIT_HASHTAG_ONLY_TOKENS(index.html, "AAA"/"EVOLution" 등 흔한단어 유닛 트리거)는 여기서도 똑같이
+  // 해시태그로만 인정해야 함 — 안 그러면 이 함수(자체 채널 경로)로는 여전히 평문 매칭으로 새서 반쪽만
+  // 고쳐짐(2026-08-21).
+  const hitHashtag=name=>new RegExp(`#${_atmEscRe(name)}(?![가-힣a-zA-Z0-9])`,'i').test(title||'');
   const result=new Set();
   Object.values(_PROJECT_UNITS).forEach(unit=>{
-    if(!unit.names.some(t=>hit(t)))return;
+    if(!unit.names.some(t=>_UNIT_HASHTAG_ONLY_TOKENS.has(t)?hitHashtag(t):hit(t)))return;
     unit.members.forEach(({mko,gko})=>{if(gko===ko)result.add(mko);});
   });
   return result;
@@ -2917,7 +3083,10 @@ function _m2ParseTitle(rawTitle,selfGko,strict){
   const unitExtraMembers={}; // gko -> Set(mko)
   let normMinusUnits=norm;
   Object.values(_PROJECT_UNITS).forEach(unit=>{
-    if(!unit.names.some(t=>hit(t)))return;
+    // _UNIT_HASHTAG_ONLY_TOKENS(index.html) — "AAA"/"EVOLution" 등 흔한단어 유닛 트리거는 해시태그로만
+    // 인정(2026-08-21, Fable 감사로 트리플에스 유닛명이 아시아 아티스트 어워즈 약칭·다른 그룹 콘서트명과
+    // 충돌해 대량 오매칭되는 게 발견됨).
+    if(!unit.names.some(t=>_UNIT_HASHTAG_ONLY_TOKENS.has(t)?hitHashtag(t):hit(t)))return;
     unit.members.forEach(({mko,gko})=>{
       if(!seen.has(gko)){matchedGroupKos.push(gko);seen.add(gko);}
       if(!unitExtraMembers[gko])unitExtraMembers[gko]=new Set();
@@ -3073,11 +3242,14 @@ function _classifyGuestGroup(sec,gko){
   return{asGroup:false,extraMembers:sec};
 }
 
-// idol tier 채널의 owner({mko})가 실제로 어느 group_ko로 저장돼야 하는지 계산 — GROUPS에 없는 솔로
-// 아티스트(이영지 등)는 자기 이름 자체가 그룹 키 역할을 함(_ytGroupKoFor와 동일 규칙). 매번 다시 찾지
-// 않도록 채널 동기화 함수들이 한 번만 계산해 캐시해서 넘겨줘도 되지만, 호출 빈도가 낮아 그냥 매번 계산.
+// idol tier 채널의 owner({mko,gko})가 실제로 어느 group_ko로 저장돼야 하는지 계산 — GROUPS에 없는 솔로
+// 아티스트(이영지 등)는 자기 이름 자체가 그룹 키 역할을 함(_ytGroupKoFor와 동일 규칙). owner.gko는 채널
+// 등록 시점(_ecAddChannel)에 동명이인이면 그룹을 직접 골라 저장해둔 값 — 있으면 그걸 그대로 신뢰하고,
+// 없으면(마이그레이션 전 옛 데이터) 예전처럼 이름만으로 첫 매치를 찾는다(동명이인이면 틀릴 수 있음,
+// 2026-08-21 사용자 제보 — 등록 폼이 이름만 받고 그룹 구분이 없어 동명이인 처리가 안 되고 있었음).
 function _extOwnerGko(owner){
   if(!owner)return null;
+  if(owner.gko)return owner.gko;
   const a=ARTISTS.find(x=>x.name.ko===owner.mko);
   return a?_ytGroupKoFor(a):owner.mko;
 }
@@ -3093,7 +3265,10 @@ function _extBuildRows(vids,strict,tier,owner){
   for(const v of vids){
     const match=_m2ParseTitle(v.title,ownerGko||undefined,strict);
     if(!owner&&!match){skipped++;continue;}
-    const members=owner?[owner.mko]:(match.membersByGroup[match.primaryGroup]||[]);
+    // idol tier(owner.mko 있음)는 인물이 이미 확정이라 그대로 고정. fans tier(owner.gko만 있음, 그룹
+    // 전체가 대상이라 특정 멤버가 없음)는 제목에서 그 그룹 멤버 언급을 찾아본다 — 없으면(그룹 전체
+    // 다루는 영상) 빈 배열로 둔다(2026-08-21).
+    const members=owner?.mko?[owner.mko]:(match.membersByGroup[ownerGko||match.primaryGroup]||[]);
     const withGroups=[],withMembers=[];
     // owner가 있으면 match.primaryGroup도 게스트 후보에 포함시켜야 함 — owner(솔로 아티스트 등)는
     // GROUPS에 없어 제목의 그룹명 리터럴 매칭 대상이 아니므로, 게스트 그룹이 유일하게 매칭되면 그게
@@ -3107,7 +3282,10 @@ function _extBuildRows(vids,strict,tier,owner){
       if(asGroup)withGroups.push(gko);
       extraMembers.forEach(mko=>withMembers.push(`${mko}(${gko})`));
     });
-    const category=(tier&&tier!=='music'&&(!v.category||v.category==='other'))?(tier==='show'?'show':'variety'):v.category;
+    // fans tier는 원래 category(mv/live/short 등)가 뭐였든 무조건 'fan'으로 — "by Fans" 탭은 콘텐츠
+    // 종류가 아니라 "팬이 만들었다"는 출처 자체가 기준이라, variety/show처럼 'other'만 덮어쓰는 방식으론
+    // 안 됨(직캠류 팬캠도 팬 채널 콘텐츠면 다 여기로 가야 함, 2026-08-21).
+    const category=tier==='fans'?'fan':(tier&&tier!=='music'&&(!v.category||v.category==='other'))?(tier==='show'?'show':'variety'):v.category;
     // 신뢰도 검수 — owner 없는 채널(THE SHOW·뮤직뱅크 등 특정 그룹 소유가 아닌 모음/방송사 채널)에서
     // group_ko가 오로지 멤버 이름 하나만으로 역추론(confidence:'weak')됐으면, 그 즉시 실제 그룹으로
     // 확정하지 않고 content_flag:'hidden'(기존에 이미 전면 신뢰되던 은닉 메커니즘 재사용)+needs_review:true로
@@ -4177,6 +4355,7 @@ document.getElementById('vid-tag-thumb-refresh').addEventListener('click',async 
   document.getElementById('sp-scan-namecollide-btn')?.addEventListener('click',_ytScanAmbiguousNameGroupMisassignment);
   document.getElementById('sp-membersfix-btn')?.addEventListener('click',_ytSweepMembersMistag);
   document.getElementById('sp-yt-rescan-weak-btn')?.addEventListener('click',_ytRescanWeakGroupAssignments);
+  document.getElementById('sp-yt-cleanup-unittoken-btn')?.addEventListener('click',_ytCleanupUnitTokenMistag);
   document.getElementById('sp-catfix-btn')?.addEventListener('click',_ytSweepCategoryMistag);
   document.getElementById('sp-covertitle-btn')?.addEventListener('click',_ytExtractCoverSongTitles);
   document.getElementById('sp-yt-autotag')?.addEventListener('click',_ytAutoTagMembers);
