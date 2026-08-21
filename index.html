@@ -255,6 +255,8 @@
     <a href="privacy.html" target="_blank" rel="noopener">개인정보처리방침</a>
     <span class="sp-legal-sep">·</span>
     <a href="terms.html" target="_blank" rel="noopener">이용약관</a>
+    <span class="sp-legal-sep">·</span>
+    <a href="mailto:bethej2love@gmail.com?subject=%5B%EA%B6%8C%EB%A6%AC%20%EC%B9%A8%ED%95%B4%20%EC%8B%A0%EA%B3%A0%2F%EC%82%AD%EC%A0%9C%20%EC%9A%94%EC%B2%AD%5D" rel="noopener">권리 침해 신고</a>
   </div>
   <div class="sp-sec" id="sp-yt-sec" style="display:none">
     <div class="sp-sec-lbl">YouTube 영상 관리</div>
@@ -544,6 +546,7 @@
         <button id="feed-list-save-btn" type="button" class="feed-lb-icon-btn" aria-label="컬렉션에 저장"><svg viewBox="0 0 24 24"><path d="M5 3h14a1 1 0 0 1 1 1v16l-8-4.5L4 20V4a1 1 0 0 1 1-1z"/></svg></button>
         <button id="feed-list-like-btn" type="button" class="feed-lb-icon-btn" aria-label="좋아요"><svg viewBox="0 0 24 24"><path d="M12 21L10.55 19.7C5.4 15.1 2 12.1 2 8.5 2 5.4 4.4 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.6 3 22 5.4 22 8.5c0 3.6-3.4 6.6-8.55 11.2L12 21z"/></svg><span id="feed-list-like-cnt" class="lb-action-cnt"></span></button>
         <button id="feed-list-admin-del-btn" type="button" class="feed-lb-icon-btn" style="display:none" aria-label="관리자: 공개 컬렉션 삭제" title="관리자: 이 공개 컬렉션 삭제"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2m3 0-1 14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2L4 6"/></svg></button>
+        <button id="feed-list-report-btn" type="button" class="feed-lb-icon-btn" style="display:none;opacity:0.45;font-size:17px;line-height:1;" aria-label="더보기" title="신고">⋮</button>
       </div>
     </div>
     <div id="feed-list-grid" class="gc-ch-grid"></div>
@@ -587,6 +590,7 @@
     <div id="yt-lb-info">
       <div id="yt-lb-title-text"></div>
       <div id="yt-lb-meta-text"></div>
+      <div id="yt-lb-yt-src" style="font-size:9px;color:rgba(255,255,255,0.13);letter-spacing:0.03em;margin-top:1px;">youtube</div>
     </div>
     <div id="yt-lb-reactions">
       <button class="lb-react-btn" data-emoji="❤️‍🔥">❤️‍🔥<span class="lb-react-cnt"></span></button>
@@ -12194,6 +12198,17 @@ function _setupFeedListSaveRow(ctx){
       if(error){alert('삭제 실패: '+error.message);delBtn.disabled=false;return;}
       if(_pubCollectionsCache)_pubCollectionsCache=_pubCollectionsCache.filter(r=>r.id!==ctx.colId);
       _closeFeedListOverlay();
+    };
+  }
+  // 신고: 대놓고 "신고"가 아니라 케밥(⋮)으로 간접 노출. 남의 공개 컬렉션에 부적절한 이름/내용이 있을 때
+  // 권리자/사용자가 메일로 신고할 수 있게 함(2026-08-19, 사용자 요청 — 눈에 안 띄게 케밥 활용).
+  const repBtn=document.getElementById('feed-list-report-btn');
+  if(repBtn){
+    repBtn.style.display='';
+    repBtn.onclick=()=>{
+      const nm=document.getElementById('feed-list-hd-title').textContent;
+      const body='신고 컬렉션: '+nm+'\n작성자: '+(ctx.ownerNick||'')+'\nID: '+(ctx.colId||'')+'\n\n신고 사유:\n';
+      window.location.href='mailto:bethej2love@gmail.com?subject='+encodeURIComponent('[공개 컬렉션 신고] '+nm)+'&body='+encodeURIComponent(body);
     };
   }
 }
