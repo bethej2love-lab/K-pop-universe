@@ -1753,9 +1753,12 @@ async function buildUniverse(){
   // 행성 구체 지오메트리 공유(2026-08-21, 성능 예산 검토 후 반영 — Fable 감사+실측 확인) — 그룹마다
   // radius를 지오메트리에 구워서 263개를 따로 만들던 걸, 단위 구체 하나를 만들고 mesh.scale로 키우는
   // 방식으로 전환. 반지름 r인 구체 = 단위 구체(r=1)를 (r,r,r)로 균등 스케일한 것과 수학적으로 완전히
-  // 동일한 모양이라 시각적 차이가 전혀 없음(순수 메모리 절감) — 세그먼트 수(64,64)는 이번엔 그대로 둠,
-  // 세그먼트 감소는 시각적 위험이 있어 스크린샷 검증 후 별도 진행 예정.
-  const _sharedBubbleGeo=new THREE.SphereGeometry(1,64,64);
+  // 동일한 모양이라 시각적 차이가 전혀 없음(순수 메모리 절감).
+  // 세그먼트 다이어트(64,64→24,16, 같은 날 후속) — 실측(renderer.info) 결과 트라이앵글 예산 초과의 83%가
+  // 이 구체 하나에서 나왔음(263개×8064각형=212만, 전체 256만 중). 24×16(약 700각형)이면 9분의 1로 줄어
+  // 예산 안에 들어옴. 프레넬 글로우 셰이더가 실루엣을 감싸는 아트스타일이라 저각형이어도 눈에 띄는 차이가
+  // 거의 없을 것으로 판단(전후 스크린샷 비교로 검증 후 반영, 사용자 승인).
+  const _sharedBubbleGeo=new THREE.SphereGeometry(1,24,16);
   Object.entries(grpData).forEach(([ko,info])=>{
     const members=memberMap[ko]||[];
     const distBase=debutToRadius(parseInt(info.debut)||2020);
@@ -2279,7 +2282,10 @@ async function buildUniverse(){
       const d=Math.abs(off)/halfSpan;                // 0(중앙)~1(가장자리) 정규화 거리
       const op=0.8*Math.pow(1-d,2.4);                // 부드러운 곡선으로 감쇠, 가장자리에서 0
       const radius=centerR+off;
-      const geo=new THREE.RingGeometry(radius-strokeW/2,radius+strokeW/2,96,1);
+      // 세그먼트 32(원래 96, 성능 예산 검토 2026-08-21) — 이 얇은 스트로크가 27+28개 겹겹이 쌓여 그라데이션을
+      // 만드는 구조라(위 _RING_STROKE_N 참고) 개별 스트로크 하나의 각짐은 애초에 눈에 안 띄고, 가산 블렌딩으로
+      // 겹쳐 보이므로 낮춰도 티가 안 남 — 그룹 39개 × 스트로크 수만큼 곱해지는 값이라 절감 효과가 큼.
+      const geo=new THREE.RingGeometry(radius-strokeW/2,radius+strokeW/2,32,1);
       const mat=new THREE.MeshBasicMaterial({color:0x66ddaa,transparent:true,opacity:op,side:THREE.DoubleSide,depthWrite:false,depthTest:false,blending:THREE.AdditiveBlending});
       g.add(new THREE.Mesh(geo,mat));
       _baseOps.push(op);
@@ -2294,7 +2300,7 @@ async function buildUniverse(){
       const op=0.035*Math.pow(1-t,2);               // 기존 어떤 스트로크보다도 옅게, 바깥으로 갈수록 0에 수렴
       [-1,1].forEach(sign=>{
         const radius=centerR+sign*(halfSpan+extraGap*i);
-        const geo=new THREE.RingGeometry(radius-extraGap/2,radius+extraGap/2,96,1);
+        const geo=new THREE.RingGeometry(radius-extraGap/2,radius+extraGap/2,32,1); // 세그먼트 32(원래 96, 위와 동일 사유)
         const mat=new THREE.MeshBasicMaterial({color:0x66ddaa,transparent:true,opacity:op,side:THREE.DoubleSide,depthWrite:false,depthTest:false,blending:THREE.AdditiveBlending});
         g.add(new THREE.Mesh(geo,mat));
         _baseOps.push(op);
