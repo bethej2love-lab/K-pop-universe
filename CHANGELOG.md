@@ -19,6 +19,11 @@
 
 ## 2026-08-21
 
+- [완료][index.html][kpop_universe.css][kpopuniverse-share] 주간/월간 TOP 순위 변동 배지 신설 — "매주 한 번 트리거는 어색하다, 랭킹 자체는 롤링 7일인데 비교 주기는 일간이어야 자연스럽다"는 사용자 지적 반영해 일간 스냅샷으로 설계. 새 카드 "월간 무대 TOP 30" 추가(최근 30일, 필터 없이 조회수 기준, "완전체 무대"라는 이름은 사용자가 어색하다고 해서 폐기하고 그냥 기간을 늘린 별도 차트로 단순화) — 기존 "주간 개인 직캠 TOP 20"과 함께 둘 다 순위 배지 대상. Trend 카드는 그대로 두되 노출 순서만 랜덤 셔플로 변경(셀렉 기준은 조회수 유지, 순위 배지는 미부착 — "차트"가 아니라 발견용이라는 사용자 판단).
+  - DB: `rank_snapshots(chart_type, snapshot_date, video_id, rank)` 신규 테이블(SQL 별도 전달, 미실행) — public read RLS, 쓰기는 서비스롤 전용.
+  - `kpopuniverse-share`(Vercel) 신규: `api/cron/snapshot-ranks.js` — 매일 UTC 00:05(`vercel.json` crons) 두 차트의 오늘 순위를 계산해 upsert. `SUPABASE_SERVICE_ROLE_KEY`는 코드에 하드코딩하지 않고 Vercel 환경변수로만 설정 필요(사용자 조치 대기) — anon key(읽기 전용, 기존 `api/col/[id].js`에서처럼 공개해도 무방)와 달리 서비스롤 키는 절대 커밋 금지.
+  - 프론트: `_fetchPrevRanks(chartType)`가 어제 스냅샷 조회, 스냅샷이 아직 없으면(신규 배포 직후) 배지 자체를 숨김(전부 "NEW"로 잘못 표시 방지). 배지는 `_openFeedListOverlay`의 공용 그리드 렌더러(`gc-ch-item`)에 `s.rankDelta` 있을 때만 그리는 방식으로 추가해 다른 호출부(컬렉션 등)엔 영향 없음.
+
 - [완료][index.html][kpop_universe.css] 라이트박스 연속재생 신설 — Fable 자문 세션이 코드 정독으로 지적한 "영상 종료 postMessage(playerState=0) 미처리"를 코드로 재검증 후 확인(재생 시작=1만 처리, 종료 이벤트 자체가 없었음). shorts 모드는 스와이프 넘기기와 같은 슬라이드 애니메이션으로 즉시 다음 영상, browse 모드는 5초 카운트다운 배너(`#yt-lb-autonext`, 취소 가능) 후 자동 이동. 목록 끝이면 자연스럽게 멈추고, 종료 이벤트 중복 수신 대비 가드(`_lbEndedHandled`)도 넣음. **⚠️ 샌드박스가 유튜브 iframe을 막아 실제 재생/배너 겹침 여부는 미검증 — 실기기 확인 필요.**
   - Fable이 제안한 나머지(하트/리액션/북마크 통합, 주간 순위 변동, 피드 3층구조+밀도, 탭 통합)는 비판적으로 검토 후 보류 — 액션 통합은 제품 판단 필요, 주간 순위는 서버 스케줄러가 없어서(오늘 새로 생긴 Vercel 인프라로 가능은 해짐) "작음"이 아니라 "인프라 추가 필요"로 재평가, 나머지는 구조 개편급이라 별도 세션 필요.
 

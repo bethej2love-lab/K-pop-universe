@@ -12234,6 +12234,15 @@ function _openFeedListOverlay(title,sub,songs,ctx){
     img.className='gc-ch-thumb';img.loading='lazy';img.decoding='async';
     img.src=thumbSrc;img.alt=_cleanTitle(s.t);
     if(shortFlag){const bg=document.createElement('div');bg.className='gc-ch-thumb-bg';bg.style.backgroundImage=`url(${thumbSrc})`;item.appendChild(bg);}
+    // 순위 변동 배지 — 주간 개인 직캠 TOP 20/월간 무대 TOP 30처럼 rankDelta가 있는 목록에서만 렌더.
+    // 스냅샷 자체가 없으면(신규 배포 직후) rankDelta가 undefined라 배지를 아예 안 그림.
+    if(s.rankDelta!==undefined){
+      const badge=document.createElement('div');
+      const d=s.rankDelta;
+      badge.className='gc-ch-rank-badge '+(d==null?'rd-new':d>0?'rd-up':d<0?'rd-down':'rd-flat');
+      badge.textContent=(idx+1)+(d==null?' NEW':d>0?` ▲${d}`:d<0?` ▼${-d}`:' –');
+      item.appendChild(badge);
+    }
     const titleEl=document.createElement('div');
     titleEl.className='tv-sm-title';titleEl.textContent=_cleanTitle(s.t);
     addMarquee(titleEl);
@@ -12625,10 +12634,27 @@ async function _buildFeedGenCamPick(list,offset){
 // 음방·직캠 제목 판별 — 음악방송 프로그램명 또는 직캠/팬캠/FANCAM 키워드가 있어야 음방 직캠으로 인정
 const _FANCAM_TITLE_RE=/FANCAM|직캠|팬캠|엠카운트다운|뮤직뱅크|인기가요|음악중심|쇼챔피언|M\s*COUNTDOWN|MUSIC\s*BANK|INKIGAYO|MUSIC\s*CORE|SHOW\s*CHAMPION|\bTHE\s+SHOW\b/i;
 
+// 어제 스냅샷 대비 순위 변동 조회(rank_snapshots, 매일 자정 Vercel Cron이 채움 — kpopuniverse-share/api/cron/
+// snapshot-ranks.js 참고). 스냅샷이 아직 하나도 없으면(신규 배포 직후 등) undefined를 반환해서 배지 자체를
+// 숨긴다 — 데이터 없이 전부 "NEW"로 잘못 표시되는 것 방지.
+async function _fetchPrevRanks(chartType){
+  try{
+    const{data:dRows}=await sb.from('rank_snapshots').select('snapshot_date').eq('chart_type',chartType).order('snapshot_date',{ascending:false}).limit(1);
+    if(!dRows?.length)return undefined;
+    const prevDate=dRows[0].snapshot_date;
+    const{data:rows}=await sb.from('rank_snapshots').select('video_id,rank').eq('chart_type',chartType).eq('snapshot_date',prevDate);
+    const m={};(rows||[]).forEach(r=>{m[r.video_id]=r.rank;});
+    return m;
+  }catch(e){return undefined;}
+}
 async function _buildFeedWeeklyTopCams(list){
   if(!sb)return;
   const vidUrl=v=>v.category==='short'?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;
   const sinceDate=new Date(Date.now()-7*86400000).toISOString().slice(0,10);
+  const sinceDate30=new Date(Date.now()-30*86400000).toISOString().slice(0,10);
+  const _fmtN=n=>n>=1000000?Math.floor(n/1000000)+'M':n>=1000?Math.floor(n/1000)+'K':String(n);
+  const _withRankDelta=(vids,prevRanks)=>vids.map((v,i)=>({t:v.title,u:vidUrl(v),thumb:v.thumb,vc:v.view_count,pa:v.published_at?.slice(0,10),
+    rankDelta:prevRanks===undefined?undefined:(prevRanks[v.id]!=null?prevRanks[v.id]-(i+1):null)}));
   try{
     const{data,error}=await sb.from(_YT_TABLE)
       .select('id,title,thumb,category,content_flag,group_ko,members,view_count,published_at')
@@ -12644,8 +12670,6 @@ async function _buildFeedWeeklyTopCams(list){
     const allVids=_filterBannedVideos(data);
     if(!allVids.length)return;
 
-    const _fmtN=n=>n>=1000000?Math.floor(n/1000000)+'M':n>=1000?Math.floor(n/1000)+'K':String(n);
-
     // 카드 1: 음방·직캠 TOP — 제목에 직캠/팬캠/FANCAM/음방명 있는 것만, 그룹당 최대 3개로 다양성 확보.
     // members 태깅이 정확히 1명일 때만 "개인" 직캠으로 간주 — 실측해보니 K-Choreo/MIX직캠처럼 그룹 전체
     // 포메이션 영상은 members가 빈 배열([])로, 진짜 개인 직캠은 그 한 명만 담겨있는 패턴이 뚜렷했음
@@ -12653,20 +12677,49 @@ async function _buildFeedWeeklyTopCams(list){
     // 태깅이 아직 안 된 소수 케이스는 놓칠 수 있음(태깅 정확도의 한계, 이 필터 자체의 문제는 아님).
     const camVids=_capByGroup(allVids.filter(v=>_FANCAM_TITLE_RE.test(v.title)&&(v.members||[]).length===1),v=>v.group_ko,3).slice(0,20);
     if(camVids.length>=3){
-      const songs=camVids.map(v=>({t:v.title,u:vidUrl(v),thumb:v.thumb,vc:v.view_count,pa:v.published_at?.slice(0,10)}));
+      const prevRanks=await _fetchPrevRanks('solo_cam');
+      const songs=_withRankDelta(camVids,prevRanks);
       const label=currentLang==='ko'?'주간 개인 직캠 TOP 20':'Weekly Solo Fancam TOP 20',sub=_cleanTitle(camVids[0].title);
       _appendFeedCard(list,'🏆',label,sub,()=>_openFeedListOverlay(label,sub,songs),camVids[0].thumb);
     }
 
-    // 카드 2: Trend — category='live' 전체 조회수 기준, 최근 7일 50개, 그룹당 최대 3개
+    // 카드 2: Trend — category='live' 전체 조회수 기준으로 뽑되(최근 7일 50개, 그룹당 최대 3개), 노출
+    // 순서는 랜덤 셔플 — "차트"가 아니라 발견용 카드라 순위 나열 느낌을 주지 않기 위함(2026-08-21, 사용자
+    // 요청 — 셀렉 기준은 조회수여도 노출은 랜덤하게, 순위 변동 배지도 불필요). 카드 자체의 라벨/썸네일은
+    // 셔플 전의 진짜 1위 영상 기준을 그대로 쓴다.
     const topVids=_capByGroup(allVids,v=>v.group_ko,3).slice(0,50);
     if(topVids.length>=3){
-      const songs=topVids.map(v=>({t:v.title,u:vidUrl(v),thumb:v.thumb,vc:v.view_count,pa:v.published_at?.slice(0,10)}));
       const top1=topVids[0];
+      const songs=_shuffle([...topVids]).map(v=>({t:v.title,u:vidUrl(v),thumb:v.thumb,vc:v.view_count,pa:v.published_at?.slice(0,10)}));
       const label='Trend',sub=top1.view_count?(currentLang==='ko'?`1위 · ${_fmtN(top1.view_count)}`:`#1 · ${_fmtN(top1.view_count)} views`):(currentLang==='ko'?'최근 7일':'Last 7 days');
       _appendFeedCard(list,'📈',label,sub,()=>_openFeedListOverlay(label,sub,songs),top1.thumb);
     }
   }catch(e){/* 카드 하나 실패했다고 탐험 탭 전체가 막히면 안 됨 — 조용히 무시 */}
+
+  // 카드 3: 월간 무대 TOP 30 — 최근 30일 전체(개인 직캠 포함, 필터 없음), 조회수 기준으로 뽑아 순위
+  // 그대로 노출하고 어제 대비 순위 변동 배지를 붙인다(2026-08-21, 사용자 요청 — "완전체 무대"는 이름이
+  // 어색하다고 해서 폐기, 그룹 전체로 필터링하지 않고 그냥 기간을 늘린 별도 차트로 단순화).
+  try{
+    const{data,error}=await sb.from(_YT_TABLE)
+      .select('id,title,thumb,category,content_flag,group_ko,members,view_count,published_at')
+      .eq('category','live')
+      .gte('published_at',sinceDate30)
+      .not('view_count','is',null)
+      .or('content_flag.is.null,content_flag.neq.기타')
+      .or('content_flag.is.null,content_flag.neq.무관')
+      .or('content_flag.is.null,content_flag.neq.hidden')
+      .order('view_count',{ascending:false})
+      .limit(500);
+    if(error||!data?.length)return;
+    const allVids30=_filterBannedVideos(data);
+    const stageVids=_capByGroup(allVids30,v=>v.group_ko,3).slice(0,30);
+    if(stageVids.length>=3){
+      const prevRanks=await _fetchPrevRanks('monthly_stage');
+      const songs=_withRankDelta(stageVids,prevRanks);
+      const label=currentLang==='ko'?'월간 무대 TOP 30':'Monthly Stage TOP 30',sub=_cleanTitle(stageVids[0].title);
+      _appendFeedCard(list,'🎤',label,sub,()=>_openFeedListOverlay(label,sub,songs),stageVids[0].thumb);
+    }
+  }catch(e){/* 조용히 무시 */}
 }
 
 // "이름(그룹)" 형식 문자열 배열을 화면 표시용 텍스트로 접는다(그룹 표기는 떼고 이름만) — cover_of_members/
