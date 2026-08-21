@@ -3197,7 +3197,9 @@ function _cleanTitle(t){return(t||'').replace(_TITLE_BREAK_RE,' ').replace(/ {2,
 // "크리스"(한글)는 "크리스마스"와 겹쳐서 엑소 채널 안에서도(자기네 크리스마스 콘텐츠) 오탐되므로 아예 뺐고,
 // 영문 표기(kris)는 그런 충돌이 없어 전역으로 둠.
 const _BANNED_VIDEO_NAMES_GLOBAL=['seungri','태일','taeil','himchan','종훈','jonghun','kris'];
-const _BANNED_VIDEO_NAMES_SCOPED={'빅뱅':['승리'],'비에이피':['힘찬']};
+// 씨엔블루 "종현"(이종현) — 샤이니에도 실존하는 활동중 멤버 "종현"과 완전히 같은 표기라 전역으로 걸면
+// 안 됨(2026-08-21, 사용자 확인 — 승리·태일·크리스와 같은 사유의 퇴출 인물).
+const _BANNED_VIDEO_NAMES_SCOPED={'빅뱅':['승리'],'비에이피':['힘찬'],'씨엔블루':['종현']};
 const _bannedGlobalRe=new RegExp(_BANNED_VIDEO_NAMES_GLOBAL.join('|'),'i');
 function _isBannedVideoTitle(t,ko){
   const title=t||'';

@@ -103,12 +103,17 @@ const add = (level, category, detail) => issues.push({ level, category, detail }
 
 // ── 6. connections.json이 참조하는 이름이 ARTISTS에 아예 없음 ──────────────────────
 // 동명이인(예: "마크")은 정상 — 이름 자체가 ARTISTS 어디에도 없는 완전한 유령 참조만 잡는다.
+// 성범죄 등으로 퇴출돼 의도적으로 ARTISTS에서 제외한 인물(index.html의 _BANNED_VIDEO_NAMES_GLOBAL/
+// SCOPED와 같은 정책)이나 공식 데뷔 전 탈퇴해 애초에 등록 대상이 아니었던 인물은 "없는 게 정상"이라
+// 여기서 계속 경고로 뜨면 실제 버그와 구분이 안 됨 — 알려진 제외 인물은 화이트리스트로 걸러낸다
+// (2026-08-21, 사용자 확인 — 이종현(씨엔블루)/태일(NCT 전 멤버)/김가람(르세라핌, 공식 데뷔 전 탈퇴)).
+const _KNOWN_EXCLUDED_PEOPLE = new Set(['이종현', '태일', '김가람', '승리', '크리스', '힘찬', '종훈']);
 {
   const allNames = new Set(ARTISTS.map(a => a.name.ko));
   const missing = new Map(); // name -> count
   CONNECTIONS.forEach(c => {
     [c.a, c.b].forEach(n => {
-      if (n && !allNames.has(n)) missing.set(n, (missing.get(n) || 0) + 1);
+      if (n && !allNames.has(n) && !_KNOWN_EXCLUDED_PEOPLE.has(n)) missing.set(n, (missing.get(n) || 0) + 1);
     });
   });
   missing.forEach((count, name) => add('warn', 'connections.json 유령 참조', `"${name}" — ARTISTS에 없는데 연결 ${count}건에서 참조됨`));
