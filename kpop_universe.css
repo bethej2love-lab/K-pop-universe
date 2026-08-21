@@ -2105,7 +2105,9 @@
   .fb-cat-btn:hover{color:rgba(200,215,245,0.85);}
   .fb-cat-btn.active{background:rgba(126,156,255,0.16);border-color:rgba(126,156,255,0.4);color:#fff;}
   #feedback-text{resize:vertical;font-family:inherit;min-height:88px;}
-  .uc-btn{flex:1;padding:10px;border-radius:10px;font-family:inherit;font-size:12px;font-weight:700;letter-spacing:.03em;cursor:pointer;position:relative;overflow:hidden;transition:background .15s,border-color .15s,color .15s,transform .2s ease-out;background:rgba(255,255,255,0.05);border:0.5px solid rgba(255,255,255,0.09);color:rgba(180,200,238,0.72);}
+  .uc-btn{flex:1;padding:10px;border-radius:10px;font-family:inherit;font-size:12px;font-weight:700;letter-spacing:.03em;cursor:pointer;position:relative;overflow:hidden;transition:background .15s,border-color .15s,color .15s,transform .2s ease-out;background:rgba(255,255,255,0.05);border:0.5px solid rgba(255,255,255,0.09);color:rgba(180,200,238,0.72);display:flex;align-items:center;justify-content:center;}
+  /* 텍스트는 언제나 보조일 뿐 — 카드 미리보기 닫기/저장/공유 버튼은 아이콘으로만(2026-08-21, 사용자 요청) */
+  .uc-btn svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;display:block;}
   .uc-btn:hover{background:rgba(255,255,255,0.09);color:#fff;}
   .uc-btn-danger{background:rgba(255,95,110,0.14);border-color:rgba(255,95,110,0.30);color:rgba(255,160,170,0.92);}
   .uc-btn-danger:hover{background:rgba(255,95,110,0.24);border-color:rgba(255,95,110,0.50);color:#fff;}
