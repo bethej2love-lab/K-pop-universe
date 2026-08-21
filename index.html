@@ -9172,13 +9172,15 @@ function _syncPublicCollection(col){
     // 영상 썸네일로만 보이던 문제. public_collections_cover_img_migration.sql 실행 필요).
     const cover=_colCoverVideo(col);
     const items=(cover&&col.videos[0]!==cover)?[cover,...col.videos.filter(v=>v!==cover)]:col.videos;
-    sb.from('public_collections').upsert({
+    // return — 기존 호출부는 다 fire-and-forget으로 쓰지만(반환값 무시해도 무해), 공유 카드 업로드처럼
+    // "이 upsert가 끝난 뒤에" 순서가 보장돼야 하는 새 호출부가 await할 수 있게 함(2026-08-21).
+    return sb.from('public_collections').upsert({
       id:col.id,owner_id:uid,owner_nick:myProfile?.nickname||null,name:col.name,desc:col.desc||null,items,
       cover_img:col.coverImg||null,
       group_kos:_collectionGroupKos(col),member_kos:_collectionMemberKos(col),updated_at:new Date().toISOString()
     }).then(({error})=>{if(error)console.error('공개 컬렉션 동기화 실패',error.message);});
   }else{
-    sb.from('public_collections').delete().eq('id',col.id).eq('owner_id',uid)
+    return sb.from('public_collections').delete().eq('id',col.id).eq('owner_id',uid)
       .then(({error})=>{if(error)console.error('공개 컬렉션 비공개 전환 실패',error.message);});
   }
 }
@@ -10352,7 +10354,8 @@ async function _openColCardPreview(colId,mine){
       if(!confirm(currentLang==='ko'
         ?'공유하려면 이 컬렉션을 공개로 전환해야 해요(다른 사람이 링크로 열어볼 수 있게). 지금 공개로 전환할까요?'
         :'Sharing requires making this collection public (so others can open the link). Make it public now?'))return;
-      col.isPublic=true;_saveCollections();renderCollectionSection();_syncPublicCollection(col);
+      col.isPublic=true;_saveCollections();renderCollectionSection();
+      await _syncPublicCollection(col); // await 필수 — public_collections 행이 실제로 생겨야 아래 카드 업로드(update)가 먹힘
     }
   }else{
     col=(_pubCollectionsCache||[]).find(r=>r.id===colId);
@@ -10383,9 +10386,28 @@ async function _openColCardPreview(colId,mine){
     imgEl.src=dataURL;
     statusEl.textContent='';
     shareBtn.disabled=false;dlBtn.disabled=false;
+    // 내 컬렉션일 때만 카드 이미지를 실제로 업로드해서 og:image로 쓸 수 있게 한다(2026-08-21, 사용자
+    // 제보 — 네이버 블로그 미리보기가 이 카드가 아니라 원본 영상 썸네일로 뜸. 캔버스로 만든 이미지는
+    // 브라우저 안에만 있어서 링크 미리보기 봇이 볼 방법이 없었음). 미리보기를 여는 시점에 바로
+    // 시작(기다렸다가 실제로 공유 버튼 누를 때까지 시간을 벌어줌), 실패해도 카드 미리보기 자체는
+    // 멀쩡하니 fire-and-forget.
+    if(mine)_uploadColShareCard(colId,dataURL);
   }catch(e){
     statusEl.textContent=(currentLang==='ko'?'생성 실패: ':'Failed: ')+e.message;
   }
+}
+async function _uploadColShareCard(colId,dataURL){
+  if(!sb||!window._sbSession)return;
+  try{
+    const blob=await(await fetch(dataURL)).blob();
+    const path=`col-share-cards/${colId}.png`;
+    const{error:upErr}=await sb.storage.from('artist-pics').upload(path,blob,{upsert:true,contentType:'image/png'});
+    if(upErr){console.error('공유 카드 업로드 실패',upErr.message);return;}
+    const{data:{publicUrl}}=sb.storage.from('artist-pics').getPublicUrl(path);
+    const uid=window._sbSession.user.id;
+    const{error:updErr}=await sb.from('public_collections').update({share_card_img:publicUrl}).eq('id',colId).eq('owner_id',uid);
+    if(updErr)console.error('공유 카드 URL 저장 실패',updErr.message);
+  }catch(e){console.error('공유 카드 업로드 실패',e);}
 }
 function _closeColCardPreview(){document.getElementById('col-card-overlay').classList.remove('open');}
 function _downloadColCard(){
