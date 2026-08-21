@@ -1,4 +1,4 @@
-name: Rebuild static SEO pages
+  name: Rebuild static SEO pages
 
   # artists.json/groups.json이 바뀌어 push되면 build_group_pages.js를 자동으로 돌려서
   # 그룹/멤버 정적 페이지(g/, en/g/, member/, en/member/)와 sitemap.xml을 재생성하고
