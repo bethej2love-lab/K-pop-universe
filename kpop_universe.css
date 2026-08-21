@@ -2357,8 +2357,13 @@
   .feed-grid .gc-ch-more-wrap{grid-column:1/-1;}
   /* Charts 섹션 접기/펼치기 — 기본 4장(2행)만 노출, 나머지는 "더보기" 전까진 렌더는 됐지만 안 보임 */
   #feed-chart.fg-collapsed>.feed-card:nth-child(n+5){display:none;}
-  .feed-more-toggle{display:block;width:calc(100% - 40px);margin:2px 20px 16px;padding:9px 0;text-align:center;font-size:11.5px;font-weight:600;color:rgba(160,185,230,0.75);background:rgba(255,255,255,0.045);border:none;border-radius:8px;cursor:pointer;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;-webkit-tap-highlight-color:transparent;}
+  /* 아이콘 전용 셰브런(2026-08-21, 사용자 요청 — 텍스트바가 너무 투박하고 큼) — 작은 원형 버튼, 접힘/펼침은
+     회전으로만 표현. 터치 타겟은 실제 시각 크기(28px)보다 무형으로 넉넉히 키움(padding, 기존 소셜아이콘
+     확장 패턴과 동일). */
+  .feed-more-toggle{display:flex;align-items:center;justify-content:center;width:28px;height:28px;margin:2px auto 14px;padding:8px;box-sizing:content-box;color:rgba(160,185,230,0.75);background:rgba(255,255,255,0.045);border:none;border-radius:50%;cursor:pointer;-webkit-tap-highlight-color:transparent;}
   .feed-more-toggle:active{background:rgba(255,255,255,0.09);}
+  .feed-more-toggle svg{transition:transform .2s ease;}
+  .feed-more-toggle.expanded svg{transform:rotate(180deg);}
   @keyframes feed-card-appear{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
   .feed-card:active{background:rgba(255,255,255,0.035);}
   .feed-card-thumb-wrap{width:100%;aspect-ratio:16/9;background:rgba(255,255,255,0.05);position:relative;overflow:hidden;}

@@ -21,6 +21,7 @@
 
 ## 2026-08-21
 
+- [완료][index.html][kpop_universe.css] Charts "더보기" 버튼 아이콘 전용으로 교체 + "연말 무대 모음 TOP 100" 카드를 Discovery→Charts로 이동(사용자 요청 — "텍스트 적지 말고 아이콘만으로", "TOP 들어가면 다 charts 쪽으로"). 텍스트바(가로 100%, 텍스트+화살표)를 작은 원형 셰브런 버튼으로 축소, 접힘/펼침은 회전으로만 표현하고 텍스트는 title/aria-label에만 보조로 남김(기존 아이콘 전용 버튼들과 동일 패턴). 라벨에 "TOP"이 들어간 카드 중 유일하게 Discovery에 남아있던 `_buildFeedFestivalYearEnd`("연말 무대 모음 TOP 100")를 Charts로 이동 — KBS/MBC/SBS/썸머는 "모아보기"라 TOP이 없어 그대로 Discovery 유지. 스모크 테스트로 실브라우저 확인.
 - [이슈→완료][index.html] **오늘 앞서 커밋한 "솔로 아티스트 연결 카드" 수정이 실제로는 회귀였음 — 재수정.** 사용자가 "여전히 다른 그룹 메인에서 아이유 태깅한 게 안 뜬다"고 재확인 요청해서 이번엔 코드 추론이 아니라 `yt_channel_videos`를 직접 조회해 실측했더니, 진짜 데이터는 "아이유(아이유)"가 0건, "아이유(솔로)"가 18건이었음 — 정반대였음. 오늘 오전 수정 때 admin.js의 `_isValidVidGroupKo` 주석("'솔로' 태그는 가짜 값이라 그대로 쓰면 안 됨")을 with_members 태그 형식에도 적용된다고 잘못 유추했는데, 그 주석은 **채널 동기화 키**(`_extOwnerGko`, group_ko 컬럼) 얘기였지 **콜라보 태그 접미사** 얘기가 아니었음 — 코드 주석만 보고 실측을 안 한 게 원인. 형제 함수 `_enrichMemberVideosFromApi`(멤버 카드용)는 애초에 `a.group.ko` 그대로 써서 처음부터 정상이었던 게 결정적 단서.
   - `_fetchApiCollabData`의 `withKey`를 `groupKo`(`_ytGroupKoFor`)→`anchor.group.ko`로 되돌림, `_findArtistByConnName`/`_getCollabMembers`는 실측 형식(`a.group.ko`)을 기본으로 하되 `_ytGroupKoFor` 형식도 방어적으로 같이 인정(그룹 소속 멤버는 둘이 항상 같은 값이라 기존 동작엔 영향 없음).
   - **실측 검증**: 헤드리스 브라우저로 `_fetchApiCollabData(아이유)`를 직접 호출해 확인 — 이제 루나(에프엑스)·지코(블락비)·(여자)아이들 5명·아이브 5명·데이식스 5명·트와이스 전원 등 20곡·29명이 정상적으로 잡힘.

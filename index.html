@@ -12569,7 +12569,14 @@ function _wireFeedChartToggle(){
   const btn=document.getElementById('feed-chart-more');
   if(!chart||!btn)return;
   chart.classList.add('fg-collapsed');
-  const _label=()=>{btn.textContent=chart.classList.contains('fg-collapsed')?(currentLang==='ko'?'더보기 ⌄':'Show more ⌄'):(currentLang==='ko'?'접기 ⌃':'Show less ⌃');};
+  // 아이콘 전용(2026-08-21, 사용자 요청 — "텍스트 적지 말고 걍 아이콘만으로 간결하게") — 셰브런 회전으로
+  // 상태 표현, 텍스트는 title/aria-label에만 보조로 남김(기존 아이콘 전용 버튼들과 동일 패턴).
+  const _label=()=>{
+    const collapsed=chart.classList.contains('fg-collapsed');
+    btn.classList.toggle('expanded',!collapsed);
+    const t=collapsed?(currentLang==='ko'?'더보기':'Show more'):(currentLang==='ko'?'접기':'Show less');
+    btn.setAttribute('aria-label',t);btn.title=t;
+  };
   _label();
   btn.onclick=()=>{chart.classList.toggle('fg-collapsed');_label();};
 }
@@ -13651,9 +13658,12 @@ function _buildFeedDiscovery(){
   _buildFeedGirlGroupStage(chart);
   _buildFeedBoyGroupStage(chart);
   _buildFeedGenStageTop(chart);
+  // "연말 무대 모음 TOP 100"은 라벨에 랭킹(TOP)이 붙어있는 이상 다른 TOP류와 마찬가지로 Charts로
+  // (2026-08-21, 사용자 요청 — "TOP 들어가면 다 discover 아닌 charts 쪽으로"). KBS/MBC/SBS/썸머는
+  // "모아보기"라 TOP이 없어서 그대로 Discovery에 남긴다.
+  _buildFeedFestivalYearEnd(chart);
   _buildFeedFormatPick(list);
   _buildFeedGenCamPick(list);
-  _buildFeedFestivalYearEnd(list);
   _buildFeedFestivalKBS(list);
   _buildFeedFestivalMBC(list);
   _buildFeedFestivalSBS(list);
@@ -15693,7 +15703,9 @@ _totopBtn.addEventListener('click',e=>{
     <div class="feed-section">
       <div class="feed-section-ttl">📊 Charts</div>
       <div id="feed-chart" class="feed-grid"></div>
-      <button id="feed-chart-more" class="feed-more-toggle" type="button"></button>
+      <button id="feed-chart-more" class="feed-more-toggle" type="button">
+        <svg viewBox="0 0 24 24" width="16" height="16"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
     </div>
     <div class="feed-section">
       <div class="feed-section-ttl">✨ Discovery</div>
