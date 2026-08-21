@@ -1505,8 +1505,9 @@ function _refreshOpenCardText(){
     _appendDeceasedStar(tnEl0,a);
     {const _tgEl=document.getElementById('tg');const _aGrps=_artistGroups(a);
     _tgEl.innerHTML='';_tgEl.onclick=null;
-    _aGrps.forEach((g,i)=>{
-      if(i>0){const sep=document.createElement('span');sep.textContent=' · ';sep.style.cssText='color:rgba(150,170,210,0.45);pointer-events:none;';_tgEl.appendChild(sep);}
+    _aGrps.forEach((g)=>{
+      if(!GROUPS[g.ko])return; // 아이유의 "솔로"처럼 GROUPS에 실존하지 않는 가짜 그룹 태그는 표시 안 함(SNS 링크만 노출) — 초기 렌더(6774)와 동일 처리. 이 재렌더 경로에 이 필터가 빠져있어 솔로 아티스트 카드에 "솔로"가 뜨던 버그(2026-08-21, 사용자 제보).
+      if(_tgEl.childNodes.length){const sep=document.createElement('span');sep.textContent=' · ';sep.style.cssText='color:rgba(150,170,210,0.45);pointer-events:none;';_tgEl.appendChild(sep);}
       const sp=document.createElement('span');
       // 그룹 자체가 해체(disbanded)됐거나, 그룹은 멀쩡해도 이 멤버 본인이 탈퇴/비활동(active:false)이면
       // 둘 다 "과거형"으로 흐리게 — 이펙스 금동현처럼 그룹은 활동 중인데 본인만 탈퇴한 경우, 예전엔 그룹
