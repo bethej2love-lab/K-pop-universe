@@ -997,6 +997,47 @@ async function _ytCleanupHashtagOnlyMistag(){
   }
 }
 
+// 아이돌개인 채널 owner_gko 소급 백필(일회용, 2026-08-21) — 등록 폼에 동명이인 그룹선택 드롭다운을
+// 추가한 게 신규 등록부터만 적용돼서(_ecUpdateOwnerGkoOptions), 그 전에 이미 등록된 idol 채널은 여전히
+// owner_gko가 비어있어 _extOwnerGko가 이름만으로 ARTISTS의 첫 매치를 추측함 — 동명이인이 있는 채널은
+// 지금도 계속 잘못된 그룹으로 고정될 위험이 있음. 동명이인이 없는(매치 1명 또는 0명=GROUPS 밖 솔로)
+// 채널만 안전하게 자동 백필하고, 진짜 동명이인(매치 2명 이상)인 채널은 자동으로 못 정함 — 삭제 후
+// 재등록(이제 그룹선택 드롭다운이 뜸)하도록 이름만 보고해서 사용자가 직접 처리하게 한다.
+async function _ecBackfillOwnerGko(){
+  if(!sb){_ytSetProg('Supabase 연결 없음');return;}
+  const btn=document.getElementById('sp-ec-backfill-ownergko-btn');
+  if(btn)btn.disabled=true;
+  try{
+    _ytSetProg('[채널 owner_gko 백필] 대상 조회 중…');
+    const{data:rows,error}=await sb.from('ext_channels').select('handle,name,owner_mko').eq('tier','idol').is('owner_gko',null);
+    if(error){_ytSetProg('조회 실패: '+error.message);return;}
+    if(!rows?.length){_ytSetProg('대상 없음 — 이미 전부 owner_gko가 채워져 있어요');return;}
+    const safeUpdates=[],ambiguousNames=[];
+    rows.forEach(r=>{
+      const mko=(r.owner_mko||'').trim();
+      if(!mko)return; // owner_mko 자체가 없는 이상 행은 스킵(있어선 안 되지만 방어)
+      const matches=ARTISTS.filter(a=>a.name.ko===mko);
+      if(matches.length>1){ambiguousNames.push(`${r.name}(${mko})`);return;}
+      const gko=matches.length===1?_ytGroupKoFor(matches[0]):mko; // 0명=GROUPS 밖 솔로, 이름 자체가 그룹 키
+      safeUpdates.push({handle:r.handle,owner_gko:gko});
+    });
+    for(let i=0;i<safeUpdates.length;i++){
+      const u=safeUpdates[i];
+      const{error:upErr}=await sb.from('ext_channels').update({owner_gko:u.owner_gko}).eq('handle',u.handle);
+      if(upErr)throw new Error(upErr.message);
+      const ch=_EXT_CHANNELS.find(c=>c.handle===u.handle);
+      if(ch&&ch.owner)ch.owner.gko=u.owner_gko;
+      if((i+1)%20===0)_ytSetProg(`[채널 owner_gko 백필] ${i+1}/${safeUpdates.length}개 처리 중…`);
+    }
+    const ambPart=ambiguousNames.length?` / 동명이인이라 자동처리 못한 ${ambiguousNames.length}개(삭제 후 재등록 필요): ${ambiguousNames.join(', ')}`:'';
+    _ytSetProg(`완료! ${rows.length}개 중 ${safeUpdates.length}개 자동 백필함${ambPart}`);
+  }catch(e){
+    _ytSetProg('오류: '+e.message);
+  }finally{
+    if(btn)btn.disabled=false;
+  }
+}
+
 // 커버곡 원곡 제목 자동 추출(2026-08-19, 사용자 요청 — "특정 커버곡 모아보기" 기능의 전제 작업, 일회성
 // 스크립트가 아니라 반복 재실행 가능한 버튼으로). cover_of_members/cover_of_groups(원곡 아티스트)가
 // 채워진 영상 중엔 진짜 커버곡이 아니라 검수 센터에서 "실제 출연/콜라보가 아니다"로 재분류돼 이 필드로
@@ -4421,6 +4462,7 @@ document.getElementById('vid-tag-thumb-refresh').addEventListener('click',async 
   document.getElementById('sp-yt-rescan-weak-btn')?.addEventListener('click',_ytRescanWeakGroupAssignments);
   document.getElementById('sp-yt-cleanup-unittoken-btn')?.addEventListener('click',_ytCleanupUnitTokenMistag);
   document.getElementById('sp-yt-cleanup-hashtagonly-btn')?.addEventListener('click',_ytCleanupHashtagOnlyMistag);
+  document.getElementById('sp-ec-backfill-ownergko-btn')?.addEventListener('click',_ecBackfillOwnerGko);
   document.getElementById('sp-catfix-btn')?.addEventListener('click',_ytSweepCategoryMistag);
   document.getElementById('sp-covertitle-btn')?.addEventListener('click',_ytExtractCoverSongTitles);
   document.getElementById('sp-yt-autotag')?.addEventListener('click',_ytAutoTagMembers);

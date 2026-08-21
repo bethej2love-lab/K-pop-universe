@@ -19,6 +19,9 @@
 
 ## 2026-08-21
 
+- [완료][admin.js][index.html] 우선순위 정리 3건 중 1~2번 처리(사용자 요청 — CHANGELOG 복기해서 우선순위 1~3위 선정 후 순서대로 진행) —
+  - **① 아이돌개인 채널 owner_gko 소급 백필**: 어제 등록 폼에 동명이인 그룹선택 드롭다운을 추가했지만 신규 등록부터만 적용돼서, 그 전에 등록된 채널은 여전히 이름만으로 그룹을 추측하는 위험한 상태였음. 새 일회용 버튼 `_ecBackfillOwnerGko`(`sp-ec-backfill-ownergko-btn`) — 매치 0~1명(동명이인 없음)인 채널만 안전하게 자동 백필, 매치 2명 이상(진짜 동명이인)은 자동으로 못 정하니 이름만 보고하고 삭제 후 재등록하도록 안내. 실행은 admin 세션에서.
+  - **② 그룹배정 검수센터(승인/거부 버튼) 코드 재검증**: 실브라우저 클릭 테스트 도구가 이번 세션에도 없어서 코드 정독으로 대신 확인 — `review` 탭 쿼리(`needs_review=true`)·탭 버튼(`data-tab="review"`)·`_vmReviewDecide`(승인→content_flag null, 거부→'무관', 둘 다 needs_review false) 전부 정상 연결 확인, 구조적 결함 못 찾음. **여전히 실제 클릭 1회는 확인 안 됨** — 다음에 확인 필요.
 - [완료][index.html][kpop_universe.css] Charts 섹션 접기/펼치기 + 정렬 조정(사용자 제보 — 랭킹 카드 10종으로 늘어나면서 Discovery가 너무 아래로 밀림) — 기본 4장(2행)만 노출, "더보기 ⌄"/"접기 ⌃" 토글(`#feed-chart-more`, CSS `nth-child(n+5)` 방식이라 비동기 도착 카드 수와 무관하게 항상 4번째까지만 보임). 패널 재오픈마다 항상 접힌 상태로 리셋(사용자 요청 — "접은 게 기본"). Trend 카드는 개념상 고정 랭킹이 아니라 랜덤 발견 카드라 Charts가 아니라 Discovery로 재배치(`_buildFeedWeeklyTopCams`에 `discList` 파라미터 추가) — 그 결과 Charts 상단이 "주간 개인 직캠 TOP 20"/"월간 무대 TOP 30"(최근 기준)로 시작하고 그 뒤로 연도별/역대 TOP류(오래된 순)가 이어지는 자연스러운 최신순 배치가 됨.
 - [완료][index.html][kpop_universe.css] 탐험 패널 밀도/층위 개편 — Fable UX 감사 3건(밀도·고정/랜덤층 분리·최근 본) 코드로 재검증 후 반영, 개인화 50%믹싱·탭 통합 2건은 비판적으로 보류(전자는 방금 합의한 라이트 버전과 충돌, 후자는 탭바 구조 변경이라 별도 세션 필요).
   - **밀도**: `#feed-discovery`가 실측 확인 결과 진짜 1열 풀블리드였음(`.feed-card-thumb-wrap{aspect-ratio:16/9}`, 폭 100%) — `.feed-grid{display:grid;grid-template-columns:1fr 1fr}`로 전환, 카드 자체(`_appendFeedCard`)는 그대로 재사용하고 컨테이너 CSS만 교체(다른 호출부 영향 없음).
