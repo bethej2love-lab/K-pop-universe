@@ -356,6 +356,7 @@
       <button class="vm-tab" data-tab="channels">동기화 채널</button>
       <button class="vm-tab" data-tab="ss">검수</button>
       <button class="vm-tab" data-tab="review">그룹배정 검수</button>
+      <button class="vm-tab" data-tab="catlock">라이브잠금</button>
     </div>
     <input type="text" id="vm-search" placeholder="제목·그룹 검색…" autocomplete="off" spellcheck="false">
     <input type="text" id="vm-search-2" placeholder="검색 결과 내 재검색…" autocomplete="off" spellcheck="false" style="display:none">
@@ -525,6 +526,8 @@
       </div>
       <div id="feed-list-hd-actions">
         <button id="feed-list-sel-btn" class="gc-ch-sel-btn" type="button" title="영상 여러 개 선택" data-i18n="selLabel" data-i18n-title="selBtnTitle">선택</button>
+        <button id="feed-list-savecol-btn" class="gc-ch-sel-btn" type="button" title="이 목록을 내 컬렉션으로 저장" style="display:none">컬렉션에 저장</button>
+        <button id="feed-list-share-btn" class="gc-ch-sel-btn" type="button" title="공유 이미지 만들기" style="display:none">공유</button>
         <button id="feed-list-close">✕</button>
       </div>
     </div>
@@ -751,6 +754,18 @@
       <button id="debut-card-cancel" class="uc-btn" data-i18n="ucCardClose">닫기</button>
       <button id="debut-card-download" class="uc-btn" data-i18n="ucCardSave" disabled>저장</button>
       <button id="debut-card-share" class="uc-btn uc-btn-primary" data-i18n="ucCardShare" disabled>공유</button>
+    </div>
+  </div>
+</div>
+<div id="col-card-overlay" data-modal>
+  <div id="col-card-panel">
+    <div class="pp-title" data-i18n="colCardTitle">컬렉션 공유 카드</div>
+    <div id="col-card-imgwrap"><img id="col-card-img" alt=""></div>
+    <div id="col-card-status"></div>
+    <div id="col-card-btns">
+      <button id="col-card-cancel" class="uc-btn" data-i18n="ucCardClose">닫기</button>
+      <button id="col-card-download" class="uc-btn" data-i18n="ucCardSave" disabled>저장</button>
+      <button id="col-card-share" class="uc-btn uc-btn-primary" data-i18n="ucCardShare" disabled>공유</button>
     </div>
   </div>
 </div>
@@ -1333,7 +1348,8 @@ const T={
       ucCardBtn:'✦ 내 우주 카드 만들기',ucCardTitle:'내 우주 카드',ucCardClose:'닫기',ucCardSave:'저장',ucCardShare:'공유',
       ucCardNeedFav:'먼저 즐겨찾기 하이라이트(♥)를 켜주세요',ucCardAligning:'정렬 중이에요, 잠시 후 다시 시도해주세요',
       ucCardGenerating:'카드 생성 중…',ucCardNoFav:'카드를 만들려면 먼저 별을 하나 찜해보세요!',ucCardSaved:'이미지가 저장됐어요 — 앱에서 직접 공유해주세요',
-      debutCardTitle:'데뷔 기념일 카드',debutCardFail:'카드를 만들 수 없어요'},
+      debutCardTitle:'데뷔 기념일 카드',debutCardFail:'카드를 만들 수 없어요',
+      colCardTitle:'컬렉션 공유 카드',colCardFail:'카드를 만들 수 없어요'},
   en:{sp_title:'Settings',debutYr:'Debut Year',birthYr:'Birth Year',grpType:'Group Type',
       genLabel:'Generation',genNote:'Just for fun',
       all:'All',girl:'Girl Groups',boy:'Boy Groups',coed:'Coed Groups',inactive:'Inactive / Left',reset:'↺ Reset',
@@ -1349,7 +1365,8 @@ const T={
       ucCardBtn:'✦ Create My Universe Card',ucCardTitle:'My Universe Card',ucCardClose:'Close',ucCardSave:'Save',ucCardShare:'Share',
       ucCardNeedFav:'Turn on Favorites Highlight (♥) first',ucCardAligning:'Still aligning — try again in a moment',
       ucCardGenerating:'Generating card…',ucCardNoFav:'No favorites to build a card from',ucCardSaved:'Image saved — share it from your gallery app',
-      debutCardTitle:'Debut Anniversary Card',debutCardFail:'Could not create card'}
+      debutCardTitle:'Debut Anniversary Card',debutCardFail:'Could not create card',
+      colCardTitle:'Collection Share Card',colCardFail:'Could not create card'}
 };
 // 소속사 표기 영어모드 정규화 — 완전 로마자 번역 대신 흔한 접미사 "엔터테인먼트"만 "Ent."로 치환
 // (2026-08-18, 사용자 요청). 브랜드명 자체가 순수 한글인 경우(예: 스윙, 큐브, 젤리피쉬)는 그대로
@@ -5914,9 +5931,23 @@ function _syncUrl(mode){
     history.pushState(null,'',location.pathname+location.search+hash);
   }
 }
+// 컬렉션 공유 딥링크(#col=id, 2026-08-21) — 내 컬렉션이면 로컬에서 바로, 남의 공개 컬렉션이면
+// public_collections에서 단건 조회. 비공개인데 남이 링크로 들어온 경우(주인이 나중에 비공개로
+// 돌렸거나 링크 자체가 잘못됨)는 조용히 무시(에러 노출 안 함, 흔한 "만료된 링크" 취급).
+async function _openCollectionFromHash(colId){
+  const mineCol=collections.find(c=>c.id===colId);
+  if(mineCol){_openFeedListOverlay(mineCol.name,_colVidCountText(mineCol.videos.length),mineCol.videos,{colId:mineCol.id,mine:true});return;}
+  if(!sb)return;
+  const uid=window._sbSession?.user?.id||null;
+  const{data,error}=await sb.from('public_collections').select('id,owner_id,owner_nick,name,items,cover_img').eq('id',colId).maybeSingle();
+  if(error||!data)return;
+  _openFeedListOverlay(data.name,_colVidCountText((data.items||[]).length),data.items||[],{colId:data.id,mine:data.owner_id===uid,ownerNick:data.owner_nick||null});
+}
 function _openFromHash(){
   if(!location.hash)return;
   const params=new URLSearchParams(location.hash.slice(1));
+  const colId=params.get('col');
+  if(colId){_openCollectionFromHash(colId);return;}
   const gko=params.get('g'),mko=params.get('m');
   if(!gko)return;
   // '솔로'는 GROUPS에 없는 placeholder(서로 무관한 솔로 아티스트들이 공유)라 원래 여기서 무조건
@@ -10216,6 +10247,168 @@ document.getElementById('debut-card-download')?.addEventListener('click',_downlo
 document.getElementById('debut-card-share')?.addEventListener('click',_shareDebutCard);
 document.getElementById('debut-card-overlay')?.addEventListener('click',e=>{if(e.target===e.currentTarget)_closeDebutCardPreview();});
 
+// ── 컬렉션 공유 카드(2026-08-21, 사용자 요청) — 위 두 카드와 같은 톤(딥네이비 배경+발광 텍스트)이지만,
+// 컬렉션은 3D 공간의 한 점(행성)에 안 묶여있어(여러 영상을 모은 것) 3D 씬 캡처가 아니라 이미지를 쓴다.
+// 커스텀 커버(coverImg, 컬렉션 상세에서 직접 지정 가능)가 있으면 그것 하나를 크게, 없으면 담긴 영상
+// 썸네일을 2x2 그리드로 깐다(사용자와 확인한 방향). 외부 이미지(유튜브 썸네일/Supabase Storage)를
+// 캔버스에 그리는 건 이 세 카드 중 이게 처음이라 CORS로 로드 실패할 수 있음 — 실패한 낱장은 그냥
+// 빈칸으로 두고 계속 진행(전체 실패로 이어지지 않게 개별 try 없이 onerror에서 null resolve).
+function _loadImgSafe(url){
+  return new Promise(res=>{
+    if(!url){res(null);return;}
+    const img=new Image();img.crossOrigin='anonymous';
+    img.onload=()=>res(img);img.onerror=()=>res(null);
+    img.src=url;
+  });
+}
+// object-fit:cover와 동일한 크롭 규칙으로 이미지를 그린다.
+function _drawImgCover(ctx,img,x,y,w,h){
+  const ir=img.width/img.height,tr=w/h;
+  let sx=0,sy=0,sw=img.width,sh=img.height;
+  if(ir>tr){sw=img.height*tr;sx=(img.width-sw)/2;}
+  else{sh=img.width/tr;sy=(img.height-sh)/2;}
+  ctx.drawImage(img,sx,sy,sw,sh,x,y,w,h);
+}
+async function _buildCollectionCardDataURL(col){
+  const W=1080,H=1350;
+  const cv=document.createElement('canvas');cv.width=W;cv.height=H;
+  const ctx=cv.getContext('2d');
+  ctx.fillStyle='#040309';ctx.fillRect(0,0,W,H);
+
+  const coverH=H*0.72; // 하단 텍스트 영역 확보하고 위쪽만 이미지 영역으로
+  if(col.coverImg){
+    const img=await _loadImgSafe(col.coverImg);
+    if(img)_drawImgCover(ctx,img,0,0,W,coverH);
+  }else{
+    const thumbs=(col.videos||[]).slice(0,4).map(v=>v.thumb).filter(Boolean);
+    const imgs=await Promise.all(thumbs.map(_loadImgSafe));
+    const cell=W/2,cellH=coverH/2;
+    imgs.forEach((img,i)=>{
+      if(!img)return;
+      _drawImgCover(ctx,img,(i%2)*cell,Math.floor(i/2)*cellH,cell,cellH);
+    });
+  }
+
+  // 이미지 영역 아래는 배경색으로 확실히 덮고, 그 경계는 페이드로 자연스럽게
+  ctx.fillStyle='#040309';ctx.fillRect(0,coverH,W,H-coverH);
+  const fade=ctx.createLinearGradient(0,coverH*0.55,0,coverH);
+  fade.addColorStop(0,'rgba(4,3,9,0)');
+  fade.addColorStop(1,'rgba(4,3,9,0.95)');
+  ctx.fillStyle=fade;ctx.fillRect(0,coverH*0.55,W,coverH*0.45);
+
+  ctx.textAlign='center';
+  const col_=myProfile?.color||[170,195,255];
+  // 컬렉션명이 길 수 있어 폭에 안 맞으면 폰트 크기를 줄여가며 맞춘다(줄바꿈 대신 — 카드 하단 여백이
+  // 고정이라 두 줄이 되면 다음 텍스트와 겹침).
+  let fontSize=52;
+  const name=col.name||'';
+  ctx.font=`700 ${fontSize}px "Pretendard","Apple SD Gothic Neo",sans-serif`;
+  while(fontSize>28&&ctx.measureText(name).width>W-140){
+    fontSize-=4;
+    ctx.font=`700 ${fontSize}px "Pretendard","Apple SD Gothic Neo",sans-serif`;
+  }
+  ctx.fillStyle='#f3f6ff';
+  ctx.shadowColor=`rgba(${col_[0]},${col_[1]},${col_[2]},0.6)`;ctx.shadowBlur=20;
+  ctx.fillText(name,W/2,H-190);
+  ctx.shadowBlur=0;
+
+  ctx.font='400 26px "Pretendard","Apple SD Gothic Neo",sans-serif';
+  ctx.fillStyle='rgba(200,212,240,0.65)';
+  const cnt=(col.videos||[]).length;
+  ctx.fillText(currentLang==='ko'?`${cnt}개 영상`:`${cnt} video${cnt===1?'':'s'}`,W/2,H-125);
+
+  ctx.font='400 22px "Pretendard","Apple SD Gothic Neo",sans-serif';
+  ctx.fillStyle='rgba(200,212,240,0.55)';
+  ctx.fillText('K · P O P   U N I V E R S E',W/2,H-70);
+
+  return cv.toDataURL('image/png');
+}
+let _colCardDataURL=null,_colCardUrl=null;
+function _colDeepLink(colId){return location.origin+location.pathname+location.search+'#col='+_hashEsc(colId);}
+// 공유용 링크는 앱 자체 해시(#col=id)가 아니라 share.kpop-universe.kr(Vercel, 2026-08-21)로 줘야 함 —
+// GitHub Pages는 정적이라 링크 미리보기(네이버 블로그/카카오톡/X 등)에 그 컬렉션 전용 og:image/제목을
+// 못 띄우는데, 이 서브도메인의 서버리스 함수(/col/:id)가 그걸 만들어주고 실제 클릭 시엔 앱으로 넘겨준다.
+function _colShareUrl(colId){return 'https://share.kpop-universe.kr/col/'+encodeURIComponent(colId);}
+// 남의 공개 컬렉션(_pubCollectionsCache 항목)은 필드명이 달라서(items/cover_img) 카드 빌더가 기대하는
+// {name,videos,coverImg} 모양으로 맞춰준다.
+function _pubColToCardShape(row){return{id:row.id,name:row.name,videos:row.items||[],coverImg:row.cover_img||null};}
+// 공유는 "링크가 있어야 의미 있다"(사용자 요청, 2026-08-21) — 컬렉션이 비공개면 아직 남이 열어볼 링크가
+// 없으므로, 공유 시점에 공개로 전환할지 먼저 확인한다. 남의 공개 컬렉션(mine===false)은 이미 공개라
+// 바로 진행. colId는 항상 필요(딥링크에 실어야 하므로) — 저장 안 된 임시 목록은애초에 이 함수를 호출하는
+// "공유" 버튼 자체가 안 보인다(호출부인 feed-list-share-btn 참고, isEphemeral이면 대신 "컬렉션에 저장"만 뜸).
+async function _openColCardPreview(colId,mine){
+  let col=null;
+  if(mine){
+    col=collections.find(c=>c.id===colId);
+    if(col&&!col.isPublic){
+      if(!confirm(currentLang==='ko'
+        ?'공유하려면 이 컬렉션을 공개로 전환해야 해요(다른 사람이 링크로 열어볼 수 있게). 지금 공개로 전환할까요?'
+        :'Sharing requires making this collection public (so others can open the link). Make it public now?'))return;
+      col.isPublic=true;_saveCollections();renderCollectionSection();_syncPublicCollection(col);
+    }
+  }else{
+    col=(_pubCollectionsCache||[]).find(r=>r.id===colId);
+    if(col)col=_pubColToCardShape(col);
+    if(!col&&sb){
+      const{data}=await sb.from('public_collections').select('id,name,items,cover_img').eq('id',colId).maybeSingle();
+      if(data)col=_pubColToCardShape(data);
+    }
+  }
+  if(!col)return;
+  _colCardUrl=_colShareUrl(colId);
+  const overlay=document.getElementById('col-card-overlay');
+  const imgEl=document.getElementById('col-card-img');
+  const statusEl=document.getElementById('col-card-status');
+  const shareBtn=document.getElementById('col-card-share');
+  const dlBtn=document.getElementById('col-card-download');
+  const t=T[currentLang];
+  imgEl.classList.remove('loaded');imgEl.src='';
+  shareBtn.disabled=true;dlBtn.disabled=true;_colCardDataURL=null;
+  overlay.classList.add('open');
+  statusEl.textContent=t.ucCardGenerating;
+  try{
+    const dataURL=await _buildCollectionCardDataURL(col);
+    if(!overlay.classList.contains('open'))return; // 생성 도중 닫혔으면 반영하지 않음
+    if(!dataURL){statusEl.textContent=t.colCardFail;return;}
+    _colCardDataURL=dataURL;
+    imgEl.onload=()=>imgEl.classList.add('loaded');
+    imgEl.src=dataURL;
+    statusEl.textContent='';
+    shareBtn.disabled=false;dlBtn.disabled=false;
+  }catch(e){
+    statusEl.textContent=(currentLang==='ko'?'생성 실패: ':'Failed: ')+e.message;
+  }
+}
+function _closeColCardPreview(){document.getElementById('col-card-overlay').classList.remove('open');}
+function _downloadColCard(){
+  if(!_colCardDataURL)return;
+  const a=document.createElement('a');
+  a.href=_colCardDataURL;a.download='kpop-universe-collection.png';
+  document.body.appendChild(a);a.click();document.body.removeChild(a);
+}
+// 이미지+링크를 같이 전달 — Web Share API가 files와 url을 같이 받으면(지원하는 브라우저에선) 공유
+// 시트에 링크가 텍스트로 같이 실린다. 지원 안 하거나 취소되면, 링크는 클립보드로 복사하고 이미지는
+// 다운로드해서 "따로따로지만 결국 둘 다 전달됨"으로 폴백(2026-08-21, 사용자 요청 — "이미지는 링크를
+// 위한 것"이라 링크 없는 공유는 의미 없음).
+async function _shareColCard(){
+  if(!_colCardDataURL||!_colCardUrl)return;
+  try{
+    const blob=await(await fetch(_colCardDataURL)).blob();
+    const file=new File([blob],'kpop-universe-collection.png',{type:'image/png'});
+    if(navigator.canShare&&navigator.canShare({files:[file]})){
+      await navigator.share({files:[file],title:'K-POP Universe',url:_colCardUrl});
+      return;
+    }
+  }catch(e){ /* 취소했거나 실패 — 아래 폴백으로 계속 진행 */ }
+  _downloadColCard();
+  _copyShareLink(_colCardUrl);
+  _showShareToast(currentLang==='ko'?'링크가 복사됐고 이미지도 저장됐어요 — 같이 올려주세요':'Link copied and image saved — post them together');
+}
+document.getElementById('col-card-cancel')?.addEventListener('click',_closeColCardPreview);
+document.getElementById('col-card-download')?.addEventListener('click',_downloadColCard);
+document.getElementById('col-card-share')?.addEventListener('click',_shareColCard);
+document.getElementById('col-card-overlay')?.addEventListener('click',e=>{if(e.target===e.currentTarget)_closeColCardPreview();});
+
 function _makeMyStarTex([r,g,b]){
   const sz=128,c=sz/2;
   const cv=document.createElement('canvas');cv.width=cv.height=sz;
@@ -11865,6 +12058,26 @@ function _openFeedListOverlay(title,sub,songs,ctx){
       _flSelMode=!_flSelMode;
       if(!_flSelMode)_flExitSel();
       else{flSelBtn.classList.add('active');flSelBtn.textContent=T[currentLang].cancel;}
+    };
+  }
+  // 공유는 "링크가 있어야" 의미가 있음(사용자 요청, 2026-08-21) — 링크가 존재하는 대상은 컬렉션
+  // (#col=id 딥링크, 공개일 때만 남도 열람 가능)뿐이라, 탐험 패널 "모음"류 카드(ctx 없음, 임시 목록이라
+  // 고정 링크가 없음)는 공유 대신 "컬렉션에 저장" 버튼만 보여준다 — 저장하면 그 즉시 내 컬렉션 상세로
+  // 전환되고, 거기서 공유하면 된다(공유 시점에 비공개면 공개로 전환할지 물어봄, _openColCardPreview 참고).
+  const flShareBtn=document.getElementById('feed-list-share-btn');
+  const flSaveColBtn=document.getElementById('feed-list-savecol-btn');
+  const isEphemeral=!(ctx&&ctx.colId); // 모음류(저장된 컬렉션이 아님)
+  if(flShareBtn){
+    flShareBtn.style.display=isEphemeral?'none':'';
+    if(!isEphemeral)flShareBtn.onclick=()=>_openColCardPreview(ctx.colId,ctx.mine);
+  }
+  if(flSaveColBtn){
+    flSaveColBtn.style.display=isEphemeral?'':'none';
+    if(isEphemeral)flSaveColBtn.onclick=()=>{
+      const col={id:_colNewId(),name:title,videos:(songs||[]).map(s=>({...s})),createdAt:new Date().toISOString().slice(0,10),isPublic:false};
+      collections.unshift(col);_saveCollections();renderCollectionSection();
+      _showShareToast(currentLang==='ko'?'컬렉션에 저장됐어요':'Saved to your collections');
+      _openFeedListOverlay(col.name,_colVidCountText(col.videos.length),col.videos,{colId:col.id,mine:true});
     };
   }
   if(ctx&&ctx.mine&&ctx.colId){
