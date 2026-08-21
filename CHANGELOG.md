@@ -19,8 +19,14 @@
 
 ## 2026-08-21
 
+- [완료][index.html][kpop_universe.css] 탐험 패널 밀도/층위 개편 — Fable UX 감사 3건(밀도·고정/랜덤층 분리·최근 본) 코드로 재검증 후 반영, 개인화 50%믹싱·탭 통합 2건은 비판적으로 보류(전자는 방금 합의한 라이트 버전과 충돌, 후자는 탭바 구조 변경이라 별도 세션 필요).
+  - **밀도**: `#feed-discovery`가 실측 확인 결과 진짜 1열 풀블리드였음(`.feed-card-thumb-wrap{aspect-ratio:16/9}`, 폭 100%) — `.feed-grid{display:grid;grid-template-columns:1fr 1fr}`로 전환, 카드 자체(`_appendFeedCard`)는 그대로 재사용하고 컨테이너 CSS만 교체(다른 호출부 영향 없음).
+  - **고정/랜덤층 분리**: `_buildFeedDiscovery()`의 22개 카드는 원래도 호출 순서가 고정이라 실제로는 랜덤이 아니었음(레전드100 등 무한스크롤 반복 풀에서 이미 제외돼있던 것도 확인) — 문제는 시각적 구분이 없었던 것. 랭킹류 10개 카드(주간/월간 TOP·연도별 TOP100·레전드100·역대 개인/여돌/남돌 직캠 TOP100·역대 여돌/남돌 무대 TOP100·세대별 TOP)를 새 `#feed-chart`("📊 Charts") 섹션으로 분리, 나머지는 "✨ Discovery"에 유지. "Chart" 단수보다 스포티파이 실제 표기와 일치하는 "Charts" 복수형 채택.
+  - **최근 본**: `openLightbox` 진입점 1곳에서 `_recordRecentView`로 최근 20개를 localStorage에 기록(서버 저장 없음, 기기 로컬), 기념일 스트립 바로 아래 "🕐 Recently Viewed" 가로 행(`#feed-recent`) 신설 — 원형 아바타(`feed-strip-item`)와 다른 16:9 사각 썸네일 마크업(`feed-recent-item`) 새로 추가.
+  - ⚠️ 실제 브라우저 렌더링/터치 확인은 이번 세션에서 못 함(테스트 도구 없음) — 실기기 확인 필요.
+
 - [완료][index.html][kpop_universe.css][kpopuniverse-share] 주간/월간 TOP 순위 변동 배지 신설 — "매주 한 번 트리거는 어색하다, 랭킹 자체는 롤링 7일인데 비교 주기는 일간이어야 자연스럽다"는 사용자 지적 반영해 일간 스냅샷으로 설계. 새 카드 "월간 무대 TOP 30" 추가(최근 30일, 필터 없이 조회수 기준, "완전체 무대"라는 이름은 사용자가 어색하다고 해서 폐기하고 그냥 기간을 늘린 별도 차트로 단순화) — 기존 "주간 개인 직캠 TOP 20"과 함께 둘 다 순위 배지 대상. Trend 카드는 그대로 두되 노출 순서만 랜덤 셔플로 변경(셀렉 기준은 조회수 유지, 순위 배지는 미부착 — "차트"가 아니라 발견용이라는 사용자 판단).
-  - DB: `rank_snapshots(chart_type, snapshot_date, video_id, rank)` 신규 테이블(SQL 별도 전달, 미실행) — public read RLS, 쓰기는 서비스롤 전용.
+  - DB: `rank_snapshots(chart_type, snapshot_date, video_id, rank)` 신규 테이블 — public read RLS, 쓰기는 서비스롤 전용. SQL 실행 완료, Vercel `SUPABASE_SERVICE_ROLE_KEY` 환경변수 설정 완료(사용자 확인).
   - `kpopuniverse-share`(Vercel) 신규: `api/cron/snapshot-ranks.js` — 매일 UTC 00:05(`vercel.json` crons) 두 차트의 오늘 순위를 계산해 upsert. `SUPABASE_SERVICE_ROLE_KEY`는 코드에 하드코딩하지 않고 Vercel 환경변수로만 설정 필요(사용자 조치 대기) — anon key(읽기 전용, 기존 `api/col/[id].js`에서처럼 공개해도 무방)와 달리 서비스롤 키는 절대 커밋 금지.
   - 프론트: `_fetchPrevRanks(chartType)`가 어제 스냅샷 조회, 스냅샷이 아직 없으면(신규 배포 직후) 배지 자체를 숨김(전부 "NEW"로 잘못 표시 방지). 배지는 `_openFeedListOverlay`의 공용 그리드 렌더러(`gc-ch-item`)에 `s.rankDelta` 있을 때만 그리는 방식으로 추가해 다른 호출부(컬렉션 등)엔 영향 없음.
 

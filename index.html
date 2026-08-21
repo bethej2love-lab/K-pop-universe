@@ -3247,6 +3247,7 @@ function openLightbox(url,shorts,playlist,idx,ctx,isAdvance,forceBrowseMode){
   _lbCancelAutoNext(); // 새 영상을 여는 모든 경로(연속재생 포함)에서 이전 영상의 대기 중인 카운트다운은 취소
   _lbEndedHandled=false; // 새 영상이니 종료 이벤트 중복 가드도 리셋
   _lbIsNativeShorts=!!shorts;
+  _recordRecentView(vid,playlist&&idx!=null?playlist[idx]:null,shorts);
   _lbPlaylist=playlist||null;
   _lbIdx=(idx!=null)?idx:-1;
   _lbCtx=(ctx!=null)?ctx:_lbCtx;
@@ -12485,6 +12486,47 @@ function _buildFeedAnniversaries(){
   });
 }
 
+// "최근 본" 가로 행(2026-08-21, Fable UX 감사 반영) — 재진입 시 마지막으로 보던 걸 바로 이어볼 수 있는
+// 가장 싸고 강한 패턴. 서버 저장 없이 로컬 기기 기준(localStorage)으로만 최근 20개, id 중복은 최신
+// 시청으로 앞당김. openLightbox를 여는 모든 경로(그룹/멤버 카드, 탐험 패널, 라이트박스 자동재생 등)에서
+// 공통으로 호출되므로 어디서 봤든 다 기록된다.
+const _RECENT_VIEW_KEY='_kpu_recent_vids';
+function _recordRecentView(vid,song,shorts){
+  try{
+    let arr=JSON.parse(localStorage.getItem(_RECENT_VIEW_KEY)||'[]');
+    arr=arr.filter(v=>v.id!==vid);
+    arr.unshift({id:vid,t:song?.t||'',thumb:song?.thumb||`https://img.youtube.com/vi/${vid}/mqdefault.jpg`,
+      u:song?.u||(shorts?`https://youtube.com/shorts/${vid}`:`https://www.youtube.com/watch?v=${vid}`),
+      groupKo:song?.groupKo,memberKos:song?.memberKos,ts:Date.now()});
+    localStorage.setItem(_RECENT_VIEW_KEY,JSON.stringify(arr.slice(0,20)));
+  }catch(e){/* localStorage 꽉 참/비활성 등 — 조용히 무시, 기록 실패가 재생을 막으면 안 됨 */}
+}
+function _buildFeedRecentlyViewed(){
+  const section=document.getElementById('feed-recent-section');
+  const list=document.getElementById('feed-recent');
+  if(!section||!list)return;
+  _enableDragScroll(list);
+  let arr=[];
+  try{arr=JSON.parse(localStorage.getItem(_RECENT_VIEW_KEY)||'[]');}catch(e){}
+  if(!arr.length){section.style.display='none';return;}
+  section.style.display='';
+  list.innerHTML='';
+  arr.forEach((v,i)=>{
+    const item=document.createElement('div');
+    item.className='feed-recent-item';
+    item.innerHTML='<div class="feed-recent-thumb-wrap"><img class="feed-recent-thumb" loading="lazy" decoding="async" src="'+v.thumb+'" alt=""></div>'
+      +(v.t?'<div class="feed-recent-title">'+_cleanTitle(v.t)+'</div>':'');
+    item.addEventListener('click',()=>_feedNav(()=>{
+      const ctx=v.groupKo?{groupKo:v.groupKo,memberKo:(v.memberKos&&v.memberKos[0])||undefined}:{};
+      const pl=arr.map(x=>({t:x.t,u:x.u,thumb:x.thumb,groupKo:x.groupKo,memberKos:x.memberKos}));
+      openLightbox(v.u,isShorts(v.u),pl,i,ctx,false,true);
+    }));
+    item.addEventListener('touchstart',e=>_lbRipple(item,e),{passive:true});
+    item.addEventListener('mousedown',e=>_lbRipple(item,e));
+    list.appendChild(item);
+  });
+}
+
 // 탐험 피드 다양성 — 동일 그룹 영상이 과다 노출되지 않도록 keyFn 기준으로 라운드로빈 인터리빙.
 // (vids는 미리 shuffle된 상태로 넘기면 버킷 내부 순서도 다양해짐)
 // subKeyFn을 주면 그룹 캡 안에서도 다시 한 번 라운드로빈(보통 멤버 단위) — 영상이 많아지면서 그룹
@@ -13537,22 +13579,30 @@ function _buildFeedRandomVideo(list){
 
 function _buildFeedDiscovery(){
   const list=document.getElementById('feed-discovery');
+  const chartList=document.getElementById('feed-chart');
   list.innerHTML='';
+  if(chartList)chartList.innerHTML='';
   _feedMoreOffset=0; // 무한스크롤 "시간대 순환" 오프셋 리셋(아래 _loadMoreFeedDiscovery 참고)
   _feedUsedRotation={}; // 순환 카드 중복노출 방지 기록도 패널을 새로 열 때 초기화(아래 _feedRotUsed 참고)
   _feedSpreadBoundary=null; // 모아보기류 카드 재배치 진행 지점도 초기화(아래 _spreadFeedCollectionCards 참고)
+  _buildFeedRecentlyViewed();
+  // 랭킹류(주간/월간/연도별/역대 TOP) 카드는 "Discovery"(랜덤 발견)가 아니라 "Charts"(항상 같은 자리,
+  // 스포티파이 홈 고정 선반 문법) 섹션으로 분리(2026-08-21, Fable UX 감사 반영 — "차트가 랜덤 안에 섞여
+  // 있으면 습관이 안 생긴다"). 실제 호출 순서는 원래도 고정이었지만(랜덤 섞임 아님) 시각적으로 구분이
+  // 없었던 게 문제였으므로, 데이터 흐름은 그대로 두고 담기는 컨테이너만 분리한다.
+  const chart=chartList||list;
+  _buildFeedWeeklyTopCams(chart);
+  _buildFeedYearlyTop(chart);
+  _buildFeedLegend100(chart);
+  _buildFeedAllTimeSoloCam(chart);
+  _buildFeedGirlGroupSoloCam(chart);
+  _buildFeedBoyGroupSoloCam(chart);
+  _buildFeedGenSoloCamTop(chart);
+  _buildFeedGirlGroupStage(chart);
+  _buildFeedBoyGroupStage(chart);
+  _buildFeedGenStageTop(chart);
   _buildFeedFormatPick(list);
   _buildFeedGenCamPick(list);
-  _buildFeedWeeklyTopCams(list);
-  _buildFeedYearlyTop(list);
-  _buildFeedLegend100(list);
-  _buildFeedAllTimeSoloCam(list);
-  _buildFeedGirlGroupSoloCam(list);
-  _buildFeedBoyGroupSoloCam(list);
-  _buildFeedGenSoloCamTop(list);
-  _buildFeedGirlGroupStage(list);
-  _buildFeedBoyGroupStage(list);
-  _buildFeedGenStageTop(list);
   _buildFeedFestivalYearEnd(list);
   _buildFeedFestivalKBS(list);
   _buildFeedFestivalMBC(list);
@@ -15765,6 +15815,14 @@ _totopBtn.addEventListener('click',e=>{
     <div class="feed-section" id="feed-anniv-section" style="display:none">
       <div class="feed-section-ttl">🎂 Today's Anniversary</div>
       <div id="feed-anniv" class="feed-strip hscroll-drag"></div>
+    </div>
+    <div class="feed-section" id="feed-recent-section" style="display:none">
+      <div class="feed-section-ttl">🕐 Recently Viewed</div>
+      <div id="feed-recent" class="feed-strip hscroll-drag"></div>
+    </div>
+    <div class="feed-section">
+      <div class="feed-section-ttl">📊 Charts</div>
+      <div id="feed-chart" class="feed-grid"></div>
     </div>
     <div class="feed-section">
       <div class="feed-section-ttl">✨ Discovery</div>
