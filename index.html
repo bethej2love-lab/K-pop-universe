@@ -5023,6 +5023,11 @@ function _apiVidToSong(v,memberKo,groupKo){
     // 같으면(예: 투어스 영재 카드에 같은 투어스 소속 경민이 함께 태깅된 경우) 그룹 표기를 생략해서
     // "경민(투어스)"이 아니라 "경민"으로 — 다른 곳(같은 그룹 멤버 표시)과 표기 방식을 통일한다.
     const m=n.match(/^(.*)\((.*)\)$/);
+    // 솔로 아티스트 카드 본인제외: 아이유처럼 group.ko가 "솔로"라 with_members엔 "아이유(솔로)"로 태깅되는데
+    // 연결카드는 groupKo로 본인 이름("아이유")을 넘겨서(솔로는 group_ko가 곧 본인 이름) selfTagged("(아이유)")와
+    // 안 맞아 본인이 상대 칩으로 뜨는 버그가 있었음(2026-08-21, 아이유&루나 Festival 제보). 태깅된 이름이
+    // 카드 주인(groupKo)과 같으면 본인이므로 제외 — 그룹 카드는 groupKo가 그룹명이라 사람이름과 안 겹쳐 안전.
+    if(m&&m[1]===groupKo)return;
     let pushed;
     if(m&&m[2]===groupKo){
       if(m[1]===memberKo)return; // 자기 자신이 다른 표기로 들어와 있는 경우 방지
