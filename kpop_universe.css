@@ -74,6 +74,12 @@
   #mob-fav-btn svg path,#dh-fav-btn svg path{fill:none;transition:fill .15s;}
   #mob-fav-btn.fav-mode-on svg path,#dh-fav-btn.fav-mode-on svg path{fill:currentColor;}
   #tab-feed.feed-open{color:rgba(130,170,255,0.9);}  #tab-lang{font-size:12px;font-weight:700;letter-spacing:.1em;}
+  /* 나침반 탭 첫방문 뱃지(2026-08-21, 사용자 요청) — "여기 뭔가 있다"는 신호만 은은하게 반짝이는 점 하나,
+     텍스트 없음. 한 번이라도 열면 영구히 안 뜸(JS에서 localStorage로 관리). */
+  #tab-feed{position:relative;}
+  .tab-badge-dot{display:none;position:absolute;top:6px;right:14px;width:7px;height:7px;border-radius:50%;background:#6ea8ff;box-shadow:0 0 6px rgba(110,168,255,0.85);pointer-events:none;}
+  #tab-feed.show-badge .tab-badge-dot{display:block;animation:tab-badge-pulse 1.8s ease-in-out infinite;}
+  @keyframes tab-badge-pulse{0%,100%{opacity:0.5;transform:scale(0.85);}50%{opacity:1;transform:scale(1.2);}}
   .tab-sep{display:none;}
   /* ── Tabbar search mode (mobile) ────────────────── */
   /* 탭 아이콘↔검색창 전환 시 컨테이너 모양과 내용물이 같은 속도로 접히고 펼쳐지도록,
