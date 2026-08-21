@@ -940,6 +940,63 @@ async function _ytCleanupUnitTokenMistag(){
   }
 }
 
+// (일회용, 2026-08-21) 흔한단어 멤버명 오매칭 소급 정리 — name_match_whitelist에 새로 추가된 10명
+// (고우리/미래/아이엠/리세/써머/이현/태양/지디/솔라/김채원, Fable 감사 2번 유형)이 이제 해시태그로만
+// 인정되므로, 예전(평문 매칭 시절)에 with_members로 잘못 붙은 것들을 고친 로직으로 다시 매칭해서 더는
+// 안 걸리면 제거한다. 트리플에스 유닛 정리 버튼과 동일 패턴 — group_ko 자체는 절대 안 건드림(weak
+// 재스캔 사고 교훈, [[project_kpop_tagging_accuracy_audit]] 참고). members(자체 출연자) 필드도 안
+// 건드림 — 그건 "그 그룹 자기 채널의 정상 태깅"일 가능성이 높아 with_members(콜라보)만 대상으로 좁힘.
+const _HASHTAG_ONLY_CLEANUP_NAMES=new Set(['고우리','미래','아이엠','리세','써머','이현','태양','지디','솔라','김채원']);
+async function _ytCleanupHashtagOnlyMistag(){
+  if(!sb){_ytSetProg('Supabase 연결 없음');return;}
+  const btn=document.getElementById('sp-yt-cleanup-hashtagonly-btn');
+  if(btn)btn.disabled=true;
+  try{
+    _ytSetProg('[흔한단어 오매칭 정리] 대상 조회 중…');
+    const{data:rows,error}=await _sbFetchAll(()=>sb.from(_YT_TABLE)
+      .select('id,title,group_ko,with_members')
+      .eq('tags_manual',false)
+      .not('with_members','eq','{}')
+      .order('id'));
+    if(error){_ytSetProg('조회 실패: '+error.message);return;}
+    const suspectRows=(rows||[]).filter(v=>(v.with_members||[]).some(s=>{
+      const m=s.match(/^(.+)\((.+)\)$/);
+      return m&&_HASHTAG_ONLY_CLEANUP_NAMES.has(m[1]);
+    }));
+    if(!suspectRows.length){_ytSetProg('의심 행 없음');return;}
+    const updates=[];
+    let removedCount=0;
+    suspectRows.forEach(v=>{
+      const wm=v.with_members||[];
+      let match;
+      try{ match=_m2ParseTitle(v.title||'',v.group_ko,false); }catch(e){ match=null; }
+      const newWm=wm.filter(s=>{
+        const m=s.match(/^(.+)\((.+)\)$/);
+        if(!m||!_HASHTAG_ONLY_CLEANUP_NAMES.has(m[1]))return true; // 무관 항목은 그대로 유지
+        const[,mko,gko]=m;
+        return!!(match&&(match.membersByGroup[gko]||[]).includes(mko));
+      });
+      if(newWm.length!==wm.length){
+        removedCount+=wm.length-newWm.length;
+        updates.push({id:v.id,patch:{with_members:newWm}});
+      }
+    });
+    if(!updates.length){_ytSetProg(`검사 완료 — 의심 ${suspectRows.length}개 중 실제로 제거할 항목 없음`);return;}
+    for(let i=0;i<updates.length;i+=200){
+      const chunk=updates.slice(i,i+200);
+      const results=await Promise.all(chunk.map(u=>sb.from(_YT_TABLE).update(u.patch).eq('id',u.id)));
+      const failed=results.find(r=>r.error);
+      if(failed)throw new Error(failed.error.message);
+      _ytSetProg(`[흔한단어 오매칭 정리] ${Math.min(i+200,updates.length)}/${updates.length}개 처리 중…`);
+    }
+    _ytSetProg(`완료! ${suspectRows.length}개 중 ${updates.length}개 행에서 오매칭 ${removedCount}건 제거함`);
+  }catch(e){
+    _ytSetProg('오류: '+e.message);
+  }finally{
+    if(btn)btn.disabled=false;
+  }
+}
+
 // 커버곡 원곡 제목 자동 추출(2026-08-19, 사용자 요청 — "특정 커버곡 모아보기" 기능의 전제 작업, 일회성
 // 스크립트가 아니라 반복 재실행 가능한 버튼으로). cover_of_members/cover_of_groups(원곡 아티스트)가
 // 채워진 영상 중엔 진짜 커버곡이 아니라 검수 센터에서 "실제 출연/콜라보가 아니다"로 재분류돼 이 필드로
@@ -4363,6 +4420,7 @@ document.getElementById('vid-tag-thumb-refresh').addEventListener('click',async 
   document.getElementById('sp-membersfix-btn')?.addEventListener('click',_ytSweepMembersMistag);
   document.getElementById('sp-yt-rescan-weak-btn')?.addEventListener('click',_ytRescanWeakGroupAssignments);
   document.getElementById('sp-yt-cleanup-unittoken-btn')?.addEventListener('click',_ytCleanupUnitTokenMistag);
+  document.getElementById('sp-yt-cleanup-hashtagonly-btn')?.addEventListener('click',_ytCleanupHashtagOnlyMistag);
   document.getElementById('sp-catfix-btn')?.addEventListener('click',_ytSweepCategoryMistag);
   document.getElementById('sp-covertitle-btn')?.addEventListener('click',_ytExtractCoverSongTitles);
   document.getElementById('sp-yt-autotag')?.addEventListener('click',_ytAutoTagMembers);
