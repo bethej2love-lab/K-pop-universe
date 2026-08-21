@@ -23806,16 +23806,81 @@
       "instagram": "https://www.instagram.com/choiminho_1209",
       "namu": "https://namu.wiki/w/민호"
     },
-    "soloDiscography": [
+    "discography": [
       {
-        "title": "August 16th - Single",
-        "type": "싱글",
+        "title": "TEMPO",
+        "type": "싱글 1집",
+        "releaseDate": "2025.12.15",
+        "trackCount": 2,
         "isMain": true,
-        "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/ff/21/50/ff2150c7-fb33-e8de-6804-9a80aca62fe3/8809829787268.jpg/600x600bb.jpg",
-        "releaseDate": "2020-11-18",
+        "titleTrack": "TEMPO",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/124/36/038/12436038_20251212145325_500.jpg",
+        "tracks": [
+          { "no": 1, "title": "TEMPO", "isTitle": true },
+          { "no": 2, "title": "You're Right", "isTitle": false }
+        ]
+      },
+      {
+        "title": "CALL BACK",
+        "type": "정규 1집",
+        "releaseDate": "2024.11.04",
+        "trackCount": 10,
+        "isMain": true,
+        "titleTrack": "CALL BACK",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/116/31/401/11631401_20241101151212_500.jpg",
+        "tracks": [
+          { "no": 1, "title": "FIREWORKS (Feat. 소희 of RIIZE)", "isTitle": false },
+          { "no": 2, "title": "CALL BACK", "isTitle": true },
+          { "no": 3, "title": "Because Of You (Feat. 닝닝 of aespa)", "isTitle": false },
+          { "no": 4, "title": "Something About U", "isTitle": false },
+          { "no": 5, "title": "Came And Left Me", "isTitle": false },
+          { "no": 6, "title": "Slow Down", "isTitle": false },
+          { "no": 7, "title": "Round Kick", "isTitle": false },
+          { "no": 8, "title": "Affection", "isTitle": false },
+          { "no": 9, "title": "I Don't Miss You", "isTitle": false },
+          { "no": 10, "title": "Would You Mind", "isTitle": false }
+        ]
+      },
+      {
+        "title": "Stay for a night",
+        "type": "싱글",
+        "releaseDate": "2024.01.06",
         "trackCount": 1,
-        "titleTrack": "",
-        "tracks": []
+        "isMain": true,
+        "titleTrack": "Stay for a night",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/113/94/415/11394415_20240105115142_500.jpg",
+        "tracks": [
+          { "no": 1, "title": "Stay for a night", "isTitle": true }
+        ]
+      },
+      {
+        "title": "CHASE - The 1st Mini Album",
+        "type": "미니 1집",
+        "releaseDate": "2022.12.06",
+        "trackCount": 6,
+        "isMain": true,
+        "titleTrack": "놓아줘 (Chase)",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/111/16/640/11116640_20221205154425_500.jpg",
+        "tracks": [
+          { "no": 1, "title": "놓아줘 (Chase)", "isTitle": true },
+          { "no": 2, "title": "Runaway (Feat. GEMINI)", "isTitle": false },
+          { "no": 3, "title": "Prove It", "isTitle": false },
+          { "no": 4, "title": "Waterfall (Feat. Lim Kim)", "isTitle": false },
+          { "no": 5, "title": "Choice", "isTitle": false },
+          { "no": 6, "title": "Heartbreak", "isTitle": false }
+        ]
+      },
+      {
+        "title": "Heartbreak",
+        "type": "싱글",
+        "releaseDate": "2021.12.21",
+        "trackCount": 1,
+        "isMain": true,
+        "titleTrack": "Heartbreak",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/108/18/695/10818695_20211220161113_500.jpg",
+        "tracks": [
+          { "no": 1, "title": "Heartbreak", "isTitle": true }
+        ]
       }
     ]
   },
@@ -24608,128 +24673,6 @@
       "namu": "https://namu.wiki/w/종현"
     },
     "left": "2017.12.18",
-    "soloDiscography": [
-      {
-        "title": "Poet Ⅰ Artist",
-        "type": "정규",
-        "isMain": true,
-        "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music118/v4/f1/e3/8d/f1e38dd4-28bf-8804-1db0-2429c5b3db5d/JONGHYUN_PoetArtist_Digital_Cover.jpg/600x600bb.jpg",
-        "releaseDate": "2018-01-23",
-        "trackCount": 11,
-        "titleTrack": "",
-        "tracks": []
-      },
-      {
-        "title": "JONGHYUN The Collection \"Story Op.2\"",
-        "type": "정규",
-        "isMain": true,
-        "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/23/7d/a6/237da630-890b-87d6-e8bf-5e089f308b96/Op.2.jpg/600x600bb.jpg",
-        "releaseDate": "2017-04-24",
-        "trackCount": 10,
-        "titleTrack": "",
-        "tracks": []
-      },
-      {
-        "title": "She Is - The 1st Album",
-        "type": "정규",
-        "isMain": true,
-        "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/cf/ff/b8/cfffb84a-521b-7567-6e13-e3317f7f481b/JONGHYUN_Digital_Cover.jpg/600x600bb.jpg",
-        "releaseDate": "2016-05-24",
-        "trackCount": 10,
-        "titleTrack": "",
-        "tracks": []
-      },
-      {
-        "title": "투유 프로젝트 슈가맨, Pt. 5 - Single",
-        "type": "싱글",
-        "isMain": true,
-        "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/b3/64/66/b36466bb-0d57-6486-deff-4a81fad19aa3/8806197977802.jpg/600x600bb.jpg",
-        "releaseDate": "2015-11-18",
-        "trackCount": 2,
-        "titleTrack": "",
-        "tracks": []
-      },
-      {
-        "title": "Beautiful Lady (From \"Oh My Venus, Pt. 1\") [Original Television Soundtrack] - Single",
-        "type": "OST",
-        "isMain": false,
-        "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music123/v4/7e/33/77/7e337747-24d3-1f3b-6ce1-67dccddb1f38/8809484110197_Cover.jpg/600x600bb.jpg",
-        "releaseDate": "2015-11-17",
-        "trackCount": 1,
-        "titleTrack": "",
-        "tracks": []
-      },
-      {
-        "title": "Aewol (From \"Monthly Live Connection Track 3\") - Single",
-        "type": "라이브",
-        "isMain": false,
-        "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music122/v4/8c/9a/92/8c9a9287-043b-f1a5-d157-81e465fdbae3/8809435819520_Cover.jpg/600x600bb.jpg",
-        "releaseDate": "2015-10-29",
-        "trackCount": 1,
-        "titleTrack": "",
-        "tracks": []
-      },
-      {
-        "title": "가을이긴 한가 봐 (From \"월간 라이브커넥션 Track 2\") - Single",
-        "type": "싱글",
-        "isMain": true,
-        "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music41/v4/69/cf/d8/69cfd88e-22be-4ddf-4cd3-becc5debcbe8/mzm.aaoaowny.jpg/600x600bb.jpg",
-        "releaseDate": "2015-10-22",
-        "trackCount": 1,
-        "titleTrack": "",
-        "tracks": []
-      },
-      {
-        "title": "Elevator (From \"Monthly Live Connection Track 1\") - Single",
-        "type": "라이브",
-        "isMain": false,
-        "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music126/v4/1e/6e/6a/1e6e6acb-e756-e17e-568a-00a84657e86e/8809435818998_Cover.jpg/600x600bb.jpg",
-        "releaseDate": "2015-10-14",
-        "trackCount": 1,
-        "titleTrack": "",
-        "tracks": []
-      },
-      {
-        "title": "JONGHYUN The Collection 'Story Op.1'",
-        "type": "정규",
-        "isMain": true,
-        "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music6/v4/47/66/b5/4766b583-abe2-1a7a-7d05-9664d8763031/2342423.jpg/600x600bb.jpg",
-        "releaseDate": "2015-09-17",
-        "trackCount": 9,
-        "titleTrack": "",
-        "tracks": []
-      },
-      {
-        "title": "Who Are You : School 2015 (Original Television Soundtrack), Pt. 6 - Single",
-        "type": "OST",
-        "isMain": false,
-        "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/db/f3/81/dbf38100-1eab-64e7-0305-39c2363744ee/TJ.jpg/600x600bb.jpg",
-        "releaseDate": "2015-06-01",
-        "trackCount": 2,
-        "titleTrack": "",
-        "tracks": []
-      },
-      {
-        "title": "The 1st Mini Album 'BASE'",
-        "type": "EP",
-        "isMain": true,
-        "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music5/v4/b9/bd/7e/b9bd7eb3-ee4e-5a2f-dc0f-b5902385aa4f/dj.eubwkbry.jpg/600x600bb.jpg",
-        "releaseDate": "2015-01-12",
-        "trackCount": 7,
-        "titleTrack": "",
-        "tracks": []
-      },
-      {
-        "title": "Dream of the Emperor (Original Television Soundtrack), Pt. 3 - 백분의 일 - Single",
-        "type": "OST",
-        "isMain": false,
-        "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/c1/83/24/c183240d-d40b-f8e0-74f7-29dde7df69de/8806163303017.jpg/600x600bb.jpg",
-        "releaseDate": "2013-04-12",
-        "trackCount": 1,
-        "titleTrack": "",
-        "tracks": []
-      }
-    ],
     "unitDiscography": [
       {
         "unitName": "SM THE BALLAD",
@@ -24989,6 +24932,27 @@
         ]
       },
       {
+        "title": "이야기 Op.2",
+        "type": "소품집 2집",
+        "releaseDate": "2017.04.24",
+        "trackCount": 10,
+        "isMain": true,
+        "titleTrack": "Lonely (Feat. 태연)",
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/100/57/543/10057543_500.jpg",
+        "tracks": [
+          { "no": 1, "title": "Lonely (Feat. 태연)", "isTitle": true },
+          { "no": 2, "title": "따뜻한 겨울 (Our Season)", "isTitle": false },
+          { "no": 3, "title": "1000", "isTitle": false },
+          { "no": 4, "title": "놓아줘 (Let Me Out)", "isTitle": false },
+          { "no": 5, "title": "엘리베이터 (Elevator)", "isTitle": false },
+          { "no": 6, "title": "눈싸움 (Blinking Game)", "isTitle": false },
+          { "no": 7, "title": "벽난로 (Fireplace)", "isTitle": false },
+          { "no": 8, "title": "멍하니 있어 (Just Chill)", "isTitle": false },
+          { "no": 9, "title": "Love Is So Nice", "isTitle": false },
+          { "no": 10, "title": "바퀴 (Where are you)", "isTitle": false }
+        ]
+      },
+      {
         "title": "좋아",
         "type": "정규 1집",
         "releaseDate": "2016.05.24",
@@ -25042,6 +25006,26 @@
             "title": "Suit Up",
             "isTitle": false
           }
+        ]
+      },
+      {
+        "title": "이야기 Op.1",
+        "type": "소품집 1집",
+        "releaseDate": "2015.09.17",
+        "trackCount": 9,
+        "isMain": true,
+        "titleTrack": "하루의 끝 (End of a day)",
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/026/40/645/2640645_500.jpg",
+        "tracks": [
+          { "no": 1, "title": "하루의 끝 (End of a day)", "isTitle": true },
+          { "no": 2, "title": "산하엽 (Diphylleia grayi)", "isTitle": false },
+          { "no": 3, "title": "U & I", "isTitle": false },
+          { "no": 4, "title": "미안해 (I'm sorry)", "isTitle": false },
+          { "no": 5, "title": "Happy Birthday", "isTitle": false },
+          { "no": 6, "title": "내일쯤 (Maybe tomorrow)", "isTitle": false },
+          { "no": 7, "title": "02:34", "isTitle": false },
+          { "no": 8, "title": "그래도 되지 않아? (Fine)", "isTitle": false },
+          { "no": 9, "title": "Like You", "isTitle": false }
         ]
       },
       {
@@ -25572,6 +25556,34 @@
               "장리인"
             ]
           }
+        ]
+      }
+    ],
+    "discography": [
+      {
+        "title": "PWLT",
+        "type": "싱글 2집",
+        "releaseDate": "2026.05.26",
+        "trackCount": 2,
+        "isMain": true,
+        "titleTrack": "PWLT",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/135/34/485/13534485_20260521101648_500.jpg",
+        "tracks": [
+          { "no": 1, "title": "PWLT", "isTitle": true },
+          { "no": 2, "title": "PWLT (Instrumental)", "isTitle": false }
+        ]
+      },
+      {
+        "title": "Solitary",
+        "type": "싱글 1집",
+        "releaseDate": "2025.11.27",
+        "trackCount": 2,
+        "isMain": true,
+        "titleTrack": "Solitary",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/124/11/273/12411273_20251127105659_500.jpg",
+        "tracks": [
+          { "no": 1, "title": "Solitary", "isTitle": true },
+          { "no": 2, "title": "Solitary (Party Remix)", "isTitle": false }
         ]
       }
     ]
@@ -28520,6 +28532,22 @@
         ]
       },
       {
+        "title": "권지용",
+        "type": "미니 2집",
+        "releaseDate": "2017.06.08",
+        "trackCount": 5,
+        "isMain": true,
+        "titleTrack": "무제(無題) (Untitled, 2014)",
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/100/69/644/10069644_500.jpg",
+        "tracks": [
+          { "no": 1, "title": "INTRO. 권지용 (Middle Fingers-Up)", "isTitle": false },
+          { "no": 2, "title": "개소리 (BULLSHIT)", "isTitle": false },
+          { "no": 3, "title": "SUPER STAR", "isTitle": false },
+          { "no": 4, "title": "무제(無題) (Untitled, 2014)", "isTitle": true },
+          { "no": 5, "title": "OUTRO. 신곡(神曲) (Divina Commedia)", "isTitle": false }
+        ]
+      },
+      {
         "title": "쿠데타 (COUP D'ETAT)",
         "type": "정규 2집",
         "releaseDate": "2013.09.05",
@@ -29576,59 +29604,19 @@
       "instagram": "https://www.instagram.com/sooyaaa__",
       "namu": "https://namu.wiki/w/지수(BLACKPINK)"
     },
-    "soloDiscography": [
-      {
-        "title": "EYES CLOSED (BARE/UNVEILED) - Single",
-        "type": "EP",
-        "isMain": true,
-        "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/29/b2/87/29b28746-fa8a-3ba8-0540-a75b1e347bea/093624824633.jpg/600x600bb.jpg",
-        "releaseDate": "2025-11-14",
-        "trackCount": 3,
-        "titleTrack": "",
-        "tracks": []
-      },
-      {
-        "title": "EYES CLOSED (2X) - Single",
-        "type": "EP",
-        "isMain": true,
-        "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/d4/07/23/d40723e7-0223-8ed6-8ac6-891364209a1e/054391224590.jpg/600x600bb.jpg",
-        "releaseDate": "2025-10-31",
-        "trackCount": 3,
-        "titleTrack": "",
-        "tracks": []
-      },
-      {
-        "title": "EYES CLOSED - Single",
-        "type": "싱글",
-        "isMain": true,
-        "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/e5/0f/50/e50f5026-6fb6-24c3-9907-0f358cb6a76f/054391226037.jpg/600x600bb.jpg",
-        "releaseDate": "2025-10-10",
-        "trackCount": 1,
-        "titleTrack": "",
-        "tracks": []
-      },
-      {
-        "title": "AMORTAGE - EP",
-        "type": "EP",
-        "isMain": true,
-        "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/77/b2/6c/77b26ce3-3233-54e9-e223-ffb32aa49d01/093624833550_cover.jpg/600x600bb.jpg",
-        "releaseDate": "2025-02-14",
-        "trackCount": 4,
-        "titleTrack": "",
-        "tracks": []
-      },
-      {
-        "title": "ME - Single",
-        "type": "싱글",
-        "isMain": true,
-        "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/c0/13/d1/c013d179-4cc3-0f48-e3e8-7b977e38dc0c/JISOO_Digital_Cover_4000px.jpg/600x600bb.jpg",
-        "releaseDate": "2023-03-31",
-        "trackCount": 2,
-        "titleTrack": "",
-        "tracks": []
-      }
-    ],
     "discography": [
+      {
+        "title": "EYES CLOSED",
+        "type": "싱글",
+        "releaseDate": "2025.10.10",
+        "trackCount": 1,
+        "isMain": true,
+        "titleTrack": "EYES CLOSED",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/121/51/915/12151915_20251007164126_500.jpg",
+        "tracks": [
+          { "no": 1, "title": "EYES CLOSED (with ZAYN)", "isTitle": true }
+        ]
+      },
       {
         "title": "AMORTAGE",
         "type": "미니 1집",
@@ -29658,6 +29646,19 @@
             "title": "Hugs & Kisses",
             "isTitle": false
           }
+        ]
+      },
+      {
+        "title": "ME",
+        "type": "싱글",
+        "releaseDate": "2023.03.31",
+        "trackCount": 2,
+        "isMain": true,
+        "titleTrack": "꽃 (FLOWER)",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/112/14/411/11214411_20230330163342_500.jpg",
+        "tracks": [
+          { "no": 1, "title": "꽃 (FLOWER)", "isTitle": true },
+          { "no": 2, "title": "All Eyes On Me", "isTitle": false }
         ]
       }
     ]
@@ -29694,69 +29695,19 @@
       "instagram": "https://www.instagram.com/jennierubyjane",
       "namu": "https://namu.wiki/w/제니(BLACKPINK)"
     },
-    "soloDiscography": [
-      {
-        "title": "Less than a Lover - Single",
-        "type": "싱글",
-        "isMain": true,
-        "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/a0/8a/84/a08a8464-c3d8-04aa-84a0-9498a52985dd/196874620281.jpg/600x600bb.jpg",
-        "releaseDate": "2026-07-24",
-        "trackCount": 1,
-        "titleTrack": "",
-        "tracks": []
-      },
-      {
-        "title": "Intro : JANE with FKJ - Single",
-        "type": "싱글",
-        "isMain": true,
-        "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/60/30/44/60304430-26a2-c255-7357-2148d3082aac/cover_KM0021385_1.jpg/600x600bb.jpg",
-        "releaseDate": "2025-03-07",
-        "trackCount": 1,
-        "titleTrack": "",
-        "tracks": []
-      },
-      {
-        "title": "Mantra - Single",
-        "type": "싱글",
-        "isMain": true,
-        "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/48/12/ac/4812acbe-515a-6c85-3dfe-5bcc7abb5f68/cover_KM0020451_1.jpg/600x600bb.jpg",
-        "releaseDate": "2024-10-11",
-        "trackCount": 1,
-        "titleTrack": "",
-        "tracks": []
-      },
-      {
-        "title": "One of the Girls - EP",
-        "type": "EP",
-        "isMain": true,
-        "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/2a/75/7c/2a757c4d-659e-dd5d-bcce-16800fa6b031/23UM1IM62083.rgb.jpg/600x600bb.jpg",
-        "releaseDate": "2023-12-08",
-        "trackCount": 5,
-        "titleTrack": "",
-        "tracks": []
-      },
-      {
-        "title": "JENNIE Special Single [You & Me] - Single",
-        "type": "싱글",
-        "isMain": true,
-        "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music126/v4/81/ff/21/81ff218c-3773-8bd7-19be-2b9d0c373a7f/JENNIE_You_Me_0922.jpg/600x600bb.jpg",
-        "releaseDate": "2023-10-06",
-        "trackCount": 2,
-        "titleTrack": "",
-        "tracks": []
-      },
-      {
-        "title": "The Idol Episode 4 (Music from the HBO Original Series) - Single",
-        "type": "EP",
-        "isMain": true,
-        "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/db/28/e7/db28e7c3-f53a-76c8-eaa4-d92a22e4f160/23UMGIM72115.rgb.jpg/600x600bb.jpg",
-        "releaseDate": "2023-06-23",
-        "trackCount": 3,
-        "titleTrack": "",
-        "tracks": []
-      }
-    ],
     "discography": [
+      {
+        "title": "Less than a Lover",
+        "type": "싱글",
+        "releaseDate": "2026.07.24",
+        "trackCount": 1,
+        "isMain": true,
+        "titleTrack": "Less than a Lover",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/139/67/276/13967276_20260723112744_500.jpg",
+        "tracks": [
+          { "no": 1, "title": "Less than a Lover", "isTitle": true }
+        ]
+      },
       {
         "title": "Ruby",
         "type": "정규 1집",
@@ -29842,6 +29793,31 @@
             "isTitle": false
           }
         ]
+      },
+      {
+        "title": "You & Me",
+        "type": "스페셜 싱글",
+        "releaseDate": "2023.10.06",
+        "trackCount": 2,
+        "isMain": true,
+        "titleTrack": "You & Me",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/113/39/556/11339556_20231005170424_500.jpg",
+        "tracks": [
+          { "no": 1, "title": "You & Me", "isTitle": true },
+          { "no": 2, "title": "You & Me (Coachella ver.)", "isTitle": false }
+        ]
+      },
+      {
+        "title": "SOLO",
+        "type": "싱글 1집",
+        "releaseDate": "2018.11.12",
+        "trackCount": 1,
+        "isMain": true,
+        "titleTrack": "SOLO",
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/102/21/424/10221424_500.jpg",
+        "tracks": [
+          { "no": 1, "title": "SOLO", "isTitle": true }
+        ]
       }
     ]
   },
@@ -29877,58 +29853,6 @@
       "instagram": "https://www.instagram.com/roses_are_rosie",
       "namu": "https://namu.wiki/w/로제(BLACKPINK)"
     },
-    "soloDiscography": [
-      {
-        "title": "On My Mind - Single",
-        "type": "싱글",
-        "isMain": true,
-        "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/a0/37/63/a0376375-d14d-de3b-dd39-744980e624eb/075679604446.jpg/600x600bb.jpg",
-        "releaseDate": "2025-06-27",
-        "trackCount": 1,
-        "titleTrack": "",
-        "tracks": []
-      },
-      {
-        "title": "Messy (From F1® The Movie) - Single",
-        "type": "싱글",
-        "isMain": true,
-        "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/3f/12/c6/3f12c666-79bc-88a2-e6b7-ace94a925a52/075678595561.jpg/600x600bb.jpg",
-        "releaseDate": "2025-05-08",
-        "trackCount": 1,
-        "titleTrack": "",
-        "tracks": []
-      },
-      {
-        "title": "number one girl - Single",
-        "type": "싱글",
-        "isMain": true,
-        "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/bd/c4/96/bdc49685-1c20-0862-20f1-dfa9d6d0ddcc/075679629203_cover.jpg/600x600bb.jpg",
-        "releaseDate": "2024-11-22",
-        "trackCount": 1,
-        "titleTrack": "",
-        "tracks": []
-      },
-      {
-        "title": "APT. - Single",
-        "type": "싱글",
-        "isMain": true,
-        "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/d8/3c/e4/d83ce45f-3d8c-ba71-aaec-a98e8eeabe7d/075679628138_cover.jpg/600x600bb.jpg",
-        "releaseDate": "2024-10-18",
-        "trackCount": 1,
-        "titleTrack": "",
-        "tracks": []
-      },
-      {
-        "title": "R - Single",
-        "type": "싱글",
-        "isMain": true,
-        "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/6d/77/0a/6d770a0d-f90d-71d4-270d-6083177cdcfc/ROSE_DigitalAlbumCover_4000.jpg/600x600bb.jpg",
-        "releaseDate": "2021-03-12",
-        "trackCount": 2,
-        "titleTrack": "",
-        "tracks": []
-      }
-    ],
     "discography": [
       {
         "title": "rosie",
@@ -30000,6 +29924,19 @@
             "isTitle": false
           }
         ]
+      },
+      {
+        "title": "R",
+        "type": "싱글 1집",
+        "releaseDate": "2021.03.12",
+        "trackCount": 2,
+        "isMain": true,
+        "titleTrack": "On The Ground",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/105/76/966/10576966_20210312112253_500.jpg",
+        "tracks": [
+          { "no": 1, "title": "On The Ground", "isTitle": true },
+          { "no": 2, "title": "Gone", "isTitle": false }
+        ]
       }
     ]
   },
@@ -30035,138 +29972,6 @@
       "instagram": "https://www.instagram.com/lalalalisa_m",
       "namu": "https://namu.wiki/w/리사(BLACKPINK)"
     },
-    "soloDiscography": [
-      {
-        "title": "Goals (FIFA World Cup 2026™) - Single",
-        "type": "싱글",
-        "isMain": true,
-        "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/b5/49/b7/b549b7b2-1b7e-5b27-ef3f-2ae865323a52/26UMGIM55235.rgb.jpg/600x600bb.jpg",
-        "releaseDate": "2026-05-21",
-        "trackCount": 1,
-        "titleTrack": "",
-        "tracks": []
-      },
-      {
-        "title": "SBS 골 때리는 그녀들 리부트 (Original Soundtrack) - Single",
-        "type": "OST",
-        "isMain": false,
-        "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/e8/a0/29/e8a029d6-ca39-af42-defb-99e06227fac5/8800358409379_cover.jpg/600x600bb.jpg",
-        "releaseDate": "2026-05-20",
-        "trackCount": 1,
-        "titleTrack": "",
-        "tracks": []
-      },
-      {
-        "title": "Bad Angel - Single",
-        "type": "싱글",
-        "isMain": true,
-        "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/91/16/88/911688f3-ddcb-848d-378c-3894473a3422/26UMGIM42386.rgb.jpg/600x600bb.jpg",
-        "releaseDate": "2026-04-07",
-        "trackCount": 1,
-        "titleTrack": "",
-        "tracks": []
-      },
-      {
-        "title": "DECOTORA15 - Single",
-        "type": "싱글",
-        "isMain": true,
-        "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/b2/ec/c7/b2ecc7dc-46ec-ce3c-07e5-ad4367d630a5/4547366815139.jpg/600x600bb.jpg",
-        "releaseDate": "2026-04-03",
-        "trackCount": 1,
-        "titleTrack": "",
-        "tracks": []
-      },
-      {
-        "title": "Priceless - Single",
-        "type": "싱글",
-        "isMain": true,
-        "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/ea/fc/66/eafc66b2-7a46-71e5-ee8e-20692209e478/25UMGIM56693.rgb.jpg/600x600bb.jpg",
-        "releaseDate": "2025-05-02",
-        "trackCount": 1,
-        "titleTrack": "",
-        "tracks": []
-      },
-      {
-        "title": "Alter Ego",
-        "type": "정규",
-        "isMain": true,
-        "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/88/f6/7f/88f67fd9-c010-e52a-d10e-f5781116b99a/196872937138.jpg/600x600bb.jpg",
-        "releaseDate": "2025-02-28",
-        "trackCount": 15,
-        "titleTrack": "",
-        "tracks": []
-      },
-      {
-        "title": "Moonlit Floor (Kiss Me) [Santa Baby Remix] - Single",
-        "type": "리믹스",
-        "isMain": false,
-        "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/56/f3/06/56f30664-81f9-3d28-6956-1257440214c0/196872696769.jpg/600x600bb.jpg",
-        "releaseDate": "2024-11-29",
-        "trackCount": 1,
-        "titleTrack": "",
-        "tracks": []
-      },
-      {
-        "title": "Moonlit Floor (Kiss Me) - Single",
-        "type": "EP",
-        "isMain": true,
-        "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/f2/ef/23/f2ef23da-0f61-ceb3-d64e-961e0727ee70/196872529715.jpg/600x600bb.jpg",
-        "releaseDate": "2024-10-08",
-        "trackCount": 3,
-        "titleTrack": "",
-        "tracks": []
-      },
-      {
-        "title": "Moonlit Floor (Kiss Me) - Single",
-        "type": "싱글",
-        "isMain": true,
-        "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/7c/83/fb/7c83fbdf-27c1-39d5-dfb6-b8d6e2cd8dad/196872478501.jpg/600x600bb.jpg",
-        "releaseDate": "2024-10-04",
-        "trackCount": 1,
-        "titleTrack": "",
-        "tracks": []
-      },
-      {
-        "title": "SG - Single",
-        "type": "싱글",
-        "isMain": true,
-        "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/b4/71/e1/b471e13b-b846-16de-28dc-ed4903da4630/21UM1IM27799.rgb.jpg/600x600bb.jpg",
-        "releaseDate": "2021-10-22",
-        "trackCount": 1,
-        "titleTrack": "",
-        "tracks": []
-      },
-      {
-        "title": "LALISA - Single",
-        "type": "싱글",
-        "isMain": true,
-        "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/cf/8f/7e/cf8f7eb2-75ee-9675-988c-3ce17d8ce11f/LISA_ALBUM_DS_4000.jpg/600x600bb.jpg",
-        "releaseDate": "2021-09-10",
-        "trackCount": 2,
-        "titleTrack": "",
-        "tracks": []
-      },
-      {
-        "title": "青春有你3 第22期 (Live) - Single",
-        "type": "라이브",
-        "isMain": false,
-        "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/5f/6f/31/5f6f3173-ac8a-6785-4130-9ff5fd84bb2b/4896010023834.jpg/600x600bb.jpg",
-        "releaseDate": "2021-05-01",
-        "trackCount": 1,
-        "titleTrack": "",
-        "tracks": []
-      },
-      {
-        "title": "Lisa",
-        "type": "EP",
-        "isMain": true,
-        "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/04/86/dc/0486dcd2-330e-924a-ecc0-2775a898bbea/mzi.uscquqoe.jpg/600x600bb.jpg",
-        "releaseDate": "2009-11-10",
-        "trackCount": 7,
-        "titleTrack": "",
-        "tracks": []
-      }
-    ],
     "discography": [
       {
         "title": "Alter Ego",
@@ -30252,6 +30057,19 @@
             "title": "Rapunzel (Kiki Solo Version)",
             "isTitle": false
           }
+        ]
+      },
+      {
+        "title": "LALISA",
+        "type": "싱글 1집",
+        "releaseDate": "2021.09.10",
+        "trackCount": 2,
+        "isMain": true,
+        "titleTrack": "LALISA",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/107/10/695/10710695_20210910105303_500.jpg",
+        "tracks": [
+          { "no": 1, "title": "LALISA", "isTitle": true },
+          { "no": 2, "title": "MONEY", "isTitle": false }
         ]
       }
     ]
@@ -65690,109 +65508,30 @@
       "instagram": "https://www.instagram.com/bobbyindaeyo",
       "namu": "https://namu.wiki/w/BOBBY"
     },
-    "soloDiscography": [
-      {
-        "title": "It's Always Been You - Single",
-        "type": "싱글",
-        "isMain": true,
-        "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music126/v4/a5/cd/ac/a5cdacc8-35c6-3a21-5b3d-89b93e0f61d7/5411530832040.jpg/600x600bb.jpg",
-        "releaseDate": "2022-10-18",
-        "trackCount": 1,
-        "titleTrack": "",
-        "tracks": []
-      },
-      {
-        "title": "Bittersweet Sixteen - Single",
-        "type": "싱글",
-        "isMain": true,
-        "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/7a/9d/54/7a9d54f7-0d47-4e5e-630c-026d197d84b9/5411530831050.jpg/600x600bb.jpg",
-        "releaseDate": "2022-10-07",
-        "trackCount": 1,
-        "titleTrack": "",
-        "tracks": []
-      },
-      {
-        "title": "It's Always Been You - Single",
-        "type": "싱글",
-        "isMain": true,
-        "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music122/v4/33/63/da/3363dad5-af6f-ca0b-5754-36d16b417607/5411530832040.png/600x600bb.jpg",
-        "releaseDate": "2022-07-15",
-        "trackCount": 1,
-        "titleTrack": "",
-        "tracks": []
-      },
-      {
-        "title": "Bittersweet Sixteen - Single",
-        "type": "싱글",
-        "isMain": true,
-        "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/6b/70/2b/6b702b34-f80e-8fcd-5830-d49df912f37f/5411530831159.png/600x600bb.jpg",
-        "releaseDate": "2021-12-10",
-        "trackCount": 1,
-        "titleTrack": "",
-        "tracks": []
-      },
-      {
-        "title": "Best Times - Single",
-        "type": "싱글",
-        "isMain": true,
-        "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/04/56/6f/04566fe3-85bc-5c35-8f05-f7f332f55900/5411530827800.png/600x600bb.jpg",
-        "releaseDate": "2020-11-27",
-        "trackCount": 1,
-        "titleTrack": "",
-        "tracks": []
-      },
-      {
-        "title": "Look at Me - Single",
-        "type": "싱글",
-        "isMain": true,
-        "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/d2/b2/f4/d2b2f4a0-0a5c-a13f-072b-3c6d7a69dd5c/5411530825950.png/600x600bb.jpg",
-        "releaseDate": "2020-05-15",
-        "trackCount": 1,
-        "titleTrack": "",
-        "tracks": []
-      },
-      {
-        "title": "Twelve Days of Christmas - Single",
-        "type": "싱글",
-        "isMain": true,
-        "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music126/v4/e3/42/a9/e342a9d6-e767-0dae-57e0-c6ade814470f/5411530823659.png/600x600bb.jpg",
-        "releaseDate": "2019-12-12",
-        "trackCount": 1,
-        "titleTrack": "",
-        "tracks": []
-      },
-      {
-        "title": "Sing Our Song - Single",
-        "type": "싱글",
-        "isMain": true,
-        "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music112/v4/9c/27/fc/9c27fc6c-8798-819d-7ef9-bae5a45096e0/5411530823499.png/600x600bb.jpg",
-        "releaseDate": "2019-11-15",
-        "trackCount": 1,
-        "titleTrack": "",
-        "tracks": []
-      },
-      {
-        "title": "Sing Our Song - Single",
-        "type": "싱글",
-        "isMain": true,
-        "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music126/v4/3f/0d/a5/3f0da5a2-0aa4-5c93-e913-f2677c10a594/5411530823482.png/600x600bb.jpg",
-        "releaseDate": "2019-11-15",
-        "trackCount": 1,
-        "titleTrack": "",
-        "tracks": []
-      },
-      {
-        "title": "Hey Don't You Know - Single",
-        "type": "싱글",
-        "isMain": true,
-        "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music126/v4/b9/0c/9e/b90c9e21-6cc1-20f8-1212-2a67d1353741/5411530822096.png/600x600bb.jpg",
-        "releaseDate": "2019-09-06",
-        "trackCount": 1,
-        "titleTrack": "",
-        "tracks": []
-      }
-    ],
     "discography": [
+      {
+        "title": "Sir. Robert",
+        "type": "정규 3집",
+        "releaseDate": "2024.02.28",
+        "trackCount": 12,
+        "isMain": true,
+        "titleTrack": "무중력 (Feat. CHANMINA)",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/114/29/145/11429145_20240227102100_500.jpg",
+        "tracks": [
+          { "no": 1, "title": "intro", "isTitle": false },
+          { "no": 2, "title": "새 (Feat. 허성현 (Huh))", "isTitle": false },
+          { "no": 3, "title": "why stop now (Feat. 정상수)", "isTitle": false },
+          { "no": 4, "title": "무중력 (Feat. CHANMINA)", "isTitle": true },
+          { "no": 5, "title": "hercules! (Feat. JUSTHIS)", "isTitle": false },
+          { "no": 6, "title": "moon (Feat. iHwak)", "isTitle": true },
+          { "no": 7, "title": "벚꽃", "isTitle": false },
+          { "no": 8, "title": "너가 그러라 한다면", "isTitle": true },
+          { "no": 9, "title": "Drowning (Feat. SOLE (쏠))", "isTitle": false },
+          { "no": 10, "title": "2030 머릿속", "isTitle": false },
+          { "no": 11, "title": "help me out o kill me not", "isTitle": false },
+          { "no": 12, "title": "f", "isTitle": false }
+        ]
+      },
       {
         "title": "ROBERT",
         "type": "미니 1집",
@@ -65822,6 +65561,19 @@
             "title": "새 (feat. 허성현 (Huh))",
             "isTitle": false
           }
+        ]
+      },
+      {
+        "title": "S.i.R",
+        "type": "싱글 1집",
+        "releaseDate": "2023.03.21",
+        "trackCount": 2,
+        "isMain": true,
+        "titleTrack": "Drowning (Feat. SOLE (쏠))",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/112/06/324/11206324_20230317174322_500.jpg",
+        "tracks": [
+          { "no": 1, "title": "Drowning (Feat. SOLE (쏠))", "isTitle": true },
+          { "no": 2, "title": "벚꽃 (Cherry Blossoms)", "isTitle": false }
         ]
       },
       {
@@ -66141,6 +65893,18 @@
     },
     "left": "2019.06.12",
     "discography": [
+      {
+        "title": "BUZZIN",
+        "type": "싱글",
+        "releaseDate": "2026.03.02",
+        "trackCount": 1,
+        "isMain": true,
+        "titleTrack": "BUZZIN (Feat. Coogie, GRAY)",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/128/86/618/12886618_20260226193331_500.jpg",
+        "tracks": [
+          { "no": 1, "title": "BUZZIN (Feat. Coogie, GRAY)", "isTitle": true }
+        ]
+      },
       {
         "title": "WONDERLAND",
         "type": "정규 3집",
