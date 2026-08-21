@@ -1964,10 +1964,10 @@ async function buildUniverse(){
     });
     labelWrap.appendChild(div);
     const label=new THREE.CSS2DObject(labelWrap);
-    label.position.set(0,radius+1.2,0);
+    label.position.set(0,radius+1.2,0); // 초기값 — 실제 위치는 매 프레임 카메라 방향 기준으로 재계산됨(아래 animate 루프 참고)
     bubble.add(label);
     groupLabels.push({el:div,worldPos:pos.clone(),ko,en:info.en||ko});
-    bubbleMeshes.push({mesh:bubble,ko,info,radius,labelEl:div,halo:haloMesh});
+    bubbleMeshes.push({mesh:bubble,ko,info,radius,labelEl:div,labelObj:label,halo:haloMesh});
 
     // ── Collect member positions ───────────────────
     const _placedMPos=[];
@@ -2677,6 +2677,13 @@ function animate(){
     colorsDirty=true;
   });
   if(colorsDirty){if(regColorAttr)regColorAttr.needsUpdate=true;if(spkColorAttr)spkColorAttr.needsUpdate=true;}
+  // 그룹 라벨을 행성 로컬 Y축(radius+1.2)에 고정해뒀더니, 카메라가 위/아래에서 내려다보는 각도가 되면
+  // "화면상 위쪽"과 그 축이 거의 평행해져서 라벨이 행성 실루엣 한가운데(=행성 내부)로 투영되는 문제가
+  // 있었음(2026-08-21, 사용자 제보 — "행성 이름이 행성 바깥이 아닌 내부에 위치해서 멤버 이름이랑 겹침").
+  // 고정 로컬축 대신 매 프레임 카메라의 실제 "화면상 위쪽" 방향(camUp)으로 오프셋을 다시 계산 —
+  // 어느 각도에서 봐도 라벨이 항상 행성 실루엣 바깥(화면상 위)에 남는다. bubble엔 회전을 안 주므로
+  // (grep 확인됨) 월드 공간 camUp을 그대로 로컬 오프셋으로 써도 된다.
+  const _camUp=new THREE.Vector3(0,1,0).applyQuaternion(camera.quaternion);
   groupLabels.forEach(({el,worldPos,ko})=>{
     const bm=bubbleMeshes.find(b=>b.ko===ko);
     const d=camera.position.distanceTo(bm?bm.mesh.position:worldPos);
@@ -2685,6 +2692,7 @@ function animate(){
     const op=distFade*fa;
     el.style.opacity=op.toFixed(3);
     el.style.pointerEvents=op>0.15?'auto':'none';
+    if(bm&&bm.labelObj)bm.labelObj.position.copy(_camUp).multiplyScalar(bm.radius+1.2);
   });
   // 모바일: 행성 충분히 줌인 시 멤버 이름 레이블 표시 (거리 28 이내 fade-in, 15 이내 fully visible)
   // 데스크톱: 그룹 카드가 열려있으면 그 그룹 멤버 전원을 고정 라벨로 항상 표시
