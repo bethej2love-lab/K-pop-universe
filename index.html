@@ -4929,7 +4929,11 @@ const connSheetInner=document.getElementById('conn-sheet-inner');
 
 function _findArtistByConnName(withStr,anchorGroupKo){
   const m=withStr.match(/^(.+)\((.+)\)$/);
-  if(m)return ARTISTS.find(a=>a.name.ko===m[1]&&a.group.ko===m[2]);
+  // 괄호 안 값은 실제 group.ko가 아니라 _ytGroupKoFor(채널 동기화 키) 기준 — 솔로 아티스트는 본인
+  // 이름이 그 키라("아이유(아이유)") a.group.ko(="솔로", 여러 명이 공유하는 가짜 값)와는 안 맞음.
+  // _ytGroupKoFor로 비교해야 그룹 멤버(기존과 동일하게 동작)/솔로 아티스트 둘 다 정확히 찾는다
+  // (2026-08-21, 사용자 제보 — 솔로 아티스트 연결 카드에 역방향 콜라보가 안 잡히던 버그의 짝).
+  if(m)return ARTISTS.find(a=>a.name.ko===m[1]&&_ytGroupKoFor(a)===m[2]);
   return ARTISTS.find(a=>a.name.ko===withStr&&a.group.ko===anchorGroupKo);
 }
 // 같은 영상이 여러 조회 경로(자체 채널 멤버 태그 vs 콜라보 그룹 태그 등)에서 각각 따로 발견되면,
@@ -5090,7 +5094,14 @@ async function _fetchApiCollabData(anchor){
   if(!sb)return{songs:[],names:new Set()};
   const memberKo=anchor.name.ko;
   const groupKo=_ytGroupKoFor(anchor); // 솔로면 본인 이름이 곧 채널 동기화 키
-  const withKey=`${memberKo}(${anchor.group.ko})`; // 타 채널 콜라보 태깅 표시용 키는 원래 그룹 표기 그대로
+  // 타 채널이 이 사람을 콜라보로 태깅할 때 붙이는 "(그룹)" 접미사도 groupKo(=_ytGroupKoFor)와 동일한
+  // 규칙을 써야 함 — admin.js 태깅 파이프라인이 명시적으로 anchor.group.ko(artists.json의 "솔로" 같은
+  // placeholder)를 그대로 쓰지 않고 본인 이름을 그룹 키로 쓰도록 돼있음(admin.js의 _isValidVidGroupKo
+  // 주석 참고 — "'솔로 태그'는 여러 명이 공유하는 가짜 값이라 그대로 쓰면 안 됨"). 여기서 원래 그룹
+  // 표기(anchor.group.ko="솔로")를 그대로 썼던 게 버그 — 실제 DB엔 "아이유(아이유)"로 저장되는데
+  // "아이유(솔로)"로 찾고 있어서, 솔로 아티스트는 "다른 채널이 나를 콜라보로 태깅한" 역방향 연결이
+  // 전부 안 잡히고 있었음(2026-08-21, 사용자 제보 — "아이유 연결 카드에 일부만 나온다").
+  const withKey=`${memberKo}(${groupKo})`;
   try{
     const[ownQ,taggedQ,groupTagQ,reverseGroupTagQ]=await Promise.all([
       sb.from(_YT_TABLE).select('id,title,category,group_ko,members,with_members,content_flag').eq('group_ko',groupKo).contains('members',[memberKo]),
@@ -5281,11 +5292,17 @@ function _getCollabMembers(artist){
   const s=new Set();
   (artist.songs||[]).forEach(sg=>{(sg.with||[]).forEach(n=>s.add(n));});
   const myName=artist.name.ko;
+  const myGko=_ytGroupKoFor(artist);
+  // 솔로 아티스트(GROUPS에 없음)는 다른 사람 with 태그에도 "이름(본인이름)" 형태로 걸려있음(_ytGroupKoFor
+  // 규칙, admin.js 태깅 파이프라인과 동일) — bare 이름만 비교하면 이 형태를 못 잡아서 역방향 콜라보가
+  // 누락됨(2026-08-21, 사용자 제보 — 아이유 연결 카드에 일부만 나오던 버그의 static-data 쪽 짝).
+  const myTaggedForm=`${myName}(${myGko})`;
   ARTISTS.forEach(other=>{
     if(other===artist)return;
     (other.songs||[]).forEach(sg=>{
-      if((sg.with||[]).includes(myName)){
-        const ownerStr=other.group.ko===artist.group.ko?other.name.ko:`${other.name.ko}(${other.group.ko})`;
+      if((sg.with||[]).some(w=>w===myName||w===myTaggedForm)){
+        const otherGko=_ytGroupKoFor(other);
+        const ownerStr=otherGko===myGko?other.name.ko:`${other.name.ko}(${other.group.ko})`;
         s.add(ownerStr);
       }
     });
