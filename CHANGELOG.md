@@ -17,6 +17,35 @@
 
 ---
 
+## 2026-08-21
+
+- [완료][index.html] 탐험 패널 "모아보기"류 카드 개선 (사용자 제보 — 연말 무대 콘텐츠 연속 노출, "아스트로 수록곡 모음" 중복 노출) —
+  - KBS/MBC/SBS/가요대전 썸머 카드 라벨 "모음"→"모아보기"(연말 통합 카드는 "TOP 100"이라 그대로 둠).
+  - 이 4개 카드 정렬을 조회수→랜덤(published_at으로 모은 뒤 `_shuffle`)으로 변경 — "TOP 100" 아닌 모아보기류는 조회수 정렬 안 한다는 원칙 적용, "1위 · N 조회" 서브텍스트도 정렬 기준 바뀐 카드는 제거.
+  - `_appendFeedCard` 7번째 인자로 카테고리(`'collection'`) 표시 가능하게 하고, 포맷/직캠/페스티벌x5/수록곡x2/커버x2/데뷔연도 총 11개 모아보기류 카드에 표시 → `_spreadFeedCollectionCards`가 새로 도착한 카드 구간만 훑어 collection/그 외 카드를 번갈아 재배치(이미 본 카드 위치는 안 건드림, `_feedSpreadBoundary`로 진행 지점 추적).
+  - 포맷/직캠/수록곡/커버/데뷔연도/세대별TOP100 등 "시간대+offset 회전" 카드 9종에 세션 전역 `_feedRotUsed` Set 추가 — 무한스크롤 offset이 겹쳐 같은 후보(그룹/조합/연도)가 재선택되는 걸 방지, 패널 재오픈 시에만 리셋.
+  - 미착수: 사용자가 언급한 "모아보기인데 10여개밖에 안 나오는" 개수 부족 이슈는 데이터 실측 필요해서 보류.
+- [완료][index.html] 라이트박스 쇼츠 상하 스와이프 임계값 조정(사용자 요청) — `thresh=vel>0.45?28:72` → `?35:65`로 좁힘(빠른 플릭 최소거리는 늘리고, 느린 드래그 최대거리는 줄임).
+- [완료][index.html] 멤버/그룹 카드 라이브 탭 단조로움 완화(사용자 제보 — 1행2열만 계속 나옴) — `_groupGcVids`에 `wideProb` 인자 추가(기본 0.05 유지), 라이브 탭(`state.filter==='live'`) 호출부만 0.15로 상향. 다른 탭(예능/뮤비 등)은 기존 5% 그대로.
+- [진행중][index.html][admin.js][kpop_universe.css] 어드민 "동기화 채널" 관리 개선(사용자 요청 4건) —
+  - 채널 검색창이 채널 탭에서 `display:none`으로 숨겨져 있던 버그 수정(렌더 함수 `_vmRenderChannels`는 이미 검색 지원 중이었음) — 검색창 노출 + placeholder 전환.
+  - 채널 등록 시 handle 중복 체크 추가(`_ecAddChannel` 앞단에서 `_EXT_CHANNELS` 대조) + DB 유니크 인덱스 병행.
+  - "그외" 탭에 유형별(음악/예능/잡지/아이돌개인/드라마영화) 필터 칩 신설(`_vmChTierFilter`/`_vmRenderChTierChips`) — 5종이 한 리스트에 섞여 보기 불편하다는 제보.
+  - **아이돌개인 채널 동명이인 처리 버그 발견+수정** — `_extOwnerGko`가 `ARTISTS.find`로 이름만 보고 첫 매치를 쓰던 문제(등록 폼도 그룹 구분 없이 이름 텍스트만 받음). 등록 폼에 동명이인 있을 때만 뜨는 그룹 선택 드롭다운(`vm-ch-add-owner-gko`) 추가, `ext_channels.owner_gko`에 직접 저장해서 `_extOwnerGko`가 이름 재추론 없이 그 값을 그대로 신뢰하도록 변경. **기존에 이미 등록된 idol 채널은 소급 적용 안 됨**(재저장 전까진 예전처럼 이름만으로 추론) — 흔한 이름 쓰는 idol 채널 있으면 재확인 필요.
+  - [완료] SQL 실행됨 — `ALTER TABLE ext_channels ADD COLUMN IF NOT EXISTS owner_gko text; CREATE UNIQUE INDEX IF NOT EXISTS ext_channels_handle_uq ON ext_channels(handle);`
+  - **[완료] "fans" 채널 유형 신설** — 표시 쪽(`category='fan'`, "by Fans" 탭)은 2026-08-10에 이미 있었으나 등록 경로가 없던 걸 마저 연결. tier 셀렉트에 '팬' 추가, 전용 "대상 그룹" 입력(`vm-ch-add-target-gko`, 기존 `#vid-tag-group-list` 데이터리스트 재사용+`_isValidVidGroupKo`로 검증) 신설 — 아이돌개인처럼 owner 메커니즘을 그대로 쓰되 `owner_mko` 없이 `owner_gko`만 채워 그룹 전체를 대상으로 고정. `_extBuildRows`에서: members는 owner.mko 있으면 고정, 없으면(fans) 제목에서 그 그룹 멤버 언급을 찾아 채움(없으면 빈 배열=그룹 전체 영상) / category는 tier==='fans'면 원래 분류가 뭐였든 무조건 'fan'으로 강제(variety/show와 달리 'other'만 덮어쓰는 방식이 아님 — 팬캠도 팬 채널 콘텐츠면 다 "by Fans"로 가야 하므로). `_EXT_STRICT_TIERS`에도 추가(해시태그 없는 게스트 추론 방지).
+  - 넷플릭스코리아류(예능/드라마 혼재 채널) 분류는 사용자가 "드라마/영화" 쪽으로 직접 등록하기로 함(코드 변경 없음).
+  - 음악(music) tier의 느슨한(strict:false) 매칭은 "영상=단일 인물의 무대/직캠"이라는 전제 때문이라 스포티파이류(다양한 아티스트 큐레이션 채널)엔 안 맞음 — 등록 시 'music' 대신 'magazine'(strict) 쪽으로 넣도록 안내함(코드 변경 없음).
+- [완료][artists.json] "파파존스 피자 알바" 워크돌 영상 재배정(사용자 제보) — 실제 출연자는 아이브 리즈인데 동명이인 아닌 다른 멤버 "이서" 밑에 잘못 들어가 있었음(with:지유(키키)는 그대로 유지). 제목도 과하게 축약된 커스텀 문구 "파파존스 피자 알바 (워크돌)" → [[feedback_video_title]] 기준(그룹명만 제거, 나머지 원제목 유지)대로 복원.
+- [완료][.github/workflows/rebuild-seo-pages.yml] artists.json/groups.json/build_group_pages.js push 시 정적 SEO 페이지 자동 재생성 워크플로우 신설(사용자 요청 — "수정할 때마다 자동 반영 안 되냐"). GitHub Pages가 main 브랜치 루트에서 바로 서빙되는 구조라 워크플로우가 단순: checkout→setup-node→`node build_group_pages.js`→변경분 있으면 bot 커밋+push. **주의**: `.github/workflows/` 경로는 일반 PAT(workflow 스코프 없음)로 push 불가라 웹 UI로 직접 추가했음(2회 — 1차는 들여쓰기 깨져서 재수정). 리포 Settings→Actions→Workflow permissions도 "Read and write"로 변경 필요(완료).
+- [완료][index.html][build_group_pages.js] 멤버별 정적 SEO 페이지 1,693명분 신설(Fable 자문 세션 방향 확인 — 그룹 249개보다 멤버 개별 진입점이 롱테일 검색에 전략적으로 더 중요) —
+  - `build_group_pages.js`를 확장해 그룹 페이지와 같은 스크립트에서 멤버 페이지도 같이 생성(별도 스크립트로 안 만든 이유: sitemap.xml을 두 스크립트가 따로 쓰면 서로 덮어써서 충돌).
+  - 그룹 소속 멤버는 `g/{그룹}/{멤버}/`, `en/g/{그룹}/{멤버}/`로 그룹 폴더 밑에 중첩(동명이인이 다른 그룹에 있을 수 있어 그룹으로 반드시 구분 — 드림캐쳐 지유/키키 지유 오배정 사고가 실제 사례). GROUPS에 없는 솔로 아티스트(9명 — group.ko="솔로" placeholder)는 `member/{이름}/`, `en/member/{이름}/` 최상위.
+  - 페이지 내용: 프로필(생일/소속/소속사/활동상태), 대표 영상(songs, with 콜라보 태그 포함), 개인 디스코그래피(discography 필드), 인스타/나무위키 링크, "우주에서 보기" CTA. meta description은 그룹 페이지와 같은 톤("다른 아이돌들과 어떻게 연결되는지 탐험해보세요")으로 통일.
+  - **겸임(이중소속) 멤버**는 주 소속(`group`) 밑에 페이지를 두고 나머지 소속 그룹은 "소속 그룹" 섹션에 링크로 표시(예: 마크 → 엔시티127 페이지에 있고, 엔시티드림도 링크로 노출).
+  - **부수 발견+수정**: 솔로 아티스트(group.ko="솔로")의 딥링크(`#g=솔로&m=이름`)가 `_openFromHash`의 `if(!gko||!GROUPS[gko])return;` 가드에 막혀 원래부터 전부 깨져있었음(솔로는 GROUPS에 없는 placeholder라서) — 멤버 지정된 경우에 한해 예외 허용하도록 수정, 이번에 만든 솔로 멤버 페이지의 "우주에서 보기" CTA가 실제로 작동하려면 필수였음.
+  - 실행 결과: 그룹 263개+멤버 1,693명 × 2개 언어 = 정적 페이지 3,912장, sitemap.xml 3,913개 URL. 로컬에서 직접 실행+검증 완료(리즈/보아/마크 페이지 스팟체크), 실제 배포/자동화 트리거는 이 커밋 push 이후 GitHub Actions가 처리.
+
 ## 2026-08-20
 
 - [진행중][artists.json] 솔로 디스코그래피 이어서 작업 (그룹없는 솔로 아티스트 + 명단 잔여) — 워크플로우 확립: 나무위키 공식 앨범 목록(번호·타입)을 **사람이 읽어** 확보 → Melon 아티스트 앨범페이지+상세로 커버/트랙 **날짜 매칭** → 브라우저 Image()로 커버 로드검증 → `discography` 필드 적용. **자동 번호 추론 금지**(일본반/스페셜/리패키지가 [정규]로 섞여 오번호 발생 — 내 자동이 보아 Crazier를 정규9집으로 뽑았으나 실제 정규11집, 아이유 Real을 미니1집으로 뽑았으나 실제 미니3집, 초기앨범 누락으로 번호 밀림. 반드시 나무위키 대조).
