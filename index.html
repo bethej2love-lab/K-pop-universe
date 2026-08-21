@@ -2723,7 +2723,7 @@ function animate(){
     const op=distFade*fa;
     el.style.opacity=op.toFixed(3);
     el.style.pointerEvents=op>0.15?'auto':'none';
-    if(bm&&bm.labelObj)bm.labelObj.position.copy(_camUp).multiplyScalar(bm.radius+1.2);
+    if(bm&&bm.labelObj)bm.labelObj.position.copy(_camUp).multiplyScalar(bm.radius+0.5); // 행성 위 살짝 띄우기(1.2→0.5, 2026-08-21 사용자 요청 — camUp 방향은 각도무관 일정거리라 예전보다 높아 보여서 좁힘)
   });
   // 모바일: 행성 충분히 줌인 시 멤버 이름 레이블 표시 (거리 28 이내 fade-in, 15 이내 fully visible)
   // 데스크톱: 그룹 카드가 열려있으면 그 그룹 멤버 전원을 고정 라벨로 항상 표시
