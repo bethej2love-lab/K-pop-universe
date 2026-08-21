@@ -21,6 +21,10 @@
 
 ## 2026-08-21
 
+- [이슈→완료][index.html] **오늘 앞서 커밋한 "솔로 아티스트 연결 카드" 수정이 실제로는 회귀였음 — 재수정.** 사용자가 "여전히 다른 그룹 메인에서 아이유 태깅한 게 안 뜬다"고 재확인 요청해서 이번엔 코드 추론이 아니라 `yt_channel_videos`를 직접 조회해 실측했더니, 진짜 데이터는 "아이유(아이유)"가 0건, "아이유(솔로)"가 18건이었음 — 정반대였음. 오늘 오전 수정 때 admin.js의 `_isValidVidGroupKo` 주석("'솔로' 태그는 가짜 값이라 그대로 쓰면 안 됨")을 with_members 태그 형식에도 적용된다고 잘못 유추했는데, 그 주석은 **채널 동기화 키**(`_extOwnerGko`, group_ko 컬럼) 얘기였지 **콜라보 태그 접미사** 얘기가 아니었음 — 코드 주석만 보고 실측을 안 한 게 원인. 형제 함수 `_enrichMemberVideosFromApi`(멤버 카드용)는 애초에 `a.group.ko` 그대로 써서 처음부터 정상이었던 게 결정적 단서.
+  - `_fetchApiCollabData`의 `withKey`를 `groupKo`(`_ytGroupKoFor`)→`anchor.group.ko`로 되돌림, `_findArtistByConnName`/`_getCollabMembers`는 실측 형식(`a.group.ko`)을 기본으로 하되 `_ytGroupKoFor` 형식도 방어적으로 같이 인정(그룹 소속 멤버는 둘이 항상 같은 값이라 기존 동작엔 영향 없음).
+  - **실측 검증**: 헤드리스 브라우저로 `_fetchApiCollabData(아이유)`를 직접 호출해 확인 — 이제 루나(에프엑스)·지코(블락비)·(여자)아이들 5명·아이브 5명·데이식스 5명·트와이스 전원 등 20곡·29명이 정상적으로 잡힘.
+  - **교훈**: 코드 주석이 그럴듯해 보여도 그게 "지금 내가 보는 이 코드"에 대한 얘기인지 확인 없이 유추하면 안 됨 — 이 프로젝트의 기존 원칙("Fable 보고서도 실측 재검증")을 내 스스로의 판단에도 똑같이 적용했어야 했음.
 - [완료][shared.js][index.html][tests/matching.test.js] 파일 분리 0단계 완료(사용자 요청 — Fable 지적 4번 "파일 분리" 검토 후 위험 낮은 조각만 우선 진행, 나머지는 아래 백로그로 기록) — `_artistGroups`/`_ytGroupKoFor`/`_UNIT_HASHTAG_ONLY_TOKENS`/`_PROJECT_UNITS`를 새 `shared.js`로 이전. admin.js가 원래도 index.html과 같은 전역 스코프로 이 4개를 그냥 참조하던 구조였고(admin.js는 관리자 확인 후 늦게 동적 로드되니 순서 문제 없었음) 로직 변경은 전혀 없음 — `<script src="shared.js?v=2026-08-21a">`를 본문 스크립트보다 먼저 로드하도록 태그만 추가. admin.js는 무수정(전역 스코프라 그대로 동작).
   - **바로 증명된 가치**: `tests/matching.test.js`가 이 4개를 index.html에서 줄번호/중괄호 스캔으로 손으로 잘라내던 걸 이제 `require`+통째 실행으로 단순화 — 카피 드리프트 위험이 그만큼 줄었음.
   - **검증**: 매칭 테스트(`node tests/matching.test.js`) 12/12 유지, 스모크 테스트(`node tests/smoke.test.js`)로 실제 브라우저에서 `shared.js` 로드+`_artistGroups`/`_PROJECT_UNITS` 정의 확인+탐험 패널 정상 동작까지 확인.

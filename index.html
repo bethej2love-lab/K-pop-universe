@@ -4932,11 +4932,11 @@ const connSheetInner=document.getElementById('conn-sheet-inner');
 
 function _findArtistByConnName(withStr,anchorGroupKo){
   const m=withStr.match(/^(.+)\((.+)\)$/);
-  // 괄호 안 값은 실제 group.ko가 아니라 _ytGroupKoFor(채널 동기화 키) 기준 — 솔로 아티스트는 본인
-  // 이름이 그 키라("아이유(아이유)") a.group.ko(="솔로", 여러 명이 공유하는 가짜 값)와는 안 맞음.
-  // _ytGroupKoFor로 비교해야 그룹 멤버(기존과 동일하게 동작)/솔로 아티스트 둘 다 정확히 찾는다
-  // (2026-08-21, 사용자 제보 — 솔로 아티스트 연결 카드에 역방향 콜라보가 안 잡히던 버그의 짝).
-  if(m)return ARTISTS.find(a=>a.name.ko===m[1]&&_ytGroupKoFor(a)===m[2]);
+  // 괄호 안 값은 실측 결과(yt_channel_videos 직접 조회, 2026-08-21) 대부분 a.group.ko 그대로("아이유(솔로)"
+  // 18건 확인, "아이유(아이유)" 형식은 0건) — a.group.ko===m[2]가 기본. _ytGroupKoFor(a)===m[2]도 같이
+  // 허용해두는 건 순수 방어용(그룹 소속 멤버는 둘이 항상 같은 값이라 기존 동작에 전혀 영향 없음, 혹시
+  // 다른 경로에서 그 형식을 쓰는 경우가 있어도 놓치지 않게).
+  if(m)return ARTISTS.find(a=>a.name.ko===m[1]&&(a.group.ko===m[2]||_ytGroupKoFor(a)===m[2]));
   return ARTISTS.find(a=>a.name.ko===withStr&&a.group.ko===anchorGroupKo);
 }
 // 같은 영상이 여러 조회 경로(자체 채널 멤버 태그 vs 콜라보 그룹 태그 등)에서 각각 따로 발견되면,
@@ -5096,15 +5096,15 @@ let _collabCountCache=new Map(),_collabCountCacheKey=null,_collabNamesCache=null
 async function _fetchApiCollabData(anchor){
   if(!sb)return{songs:[],names:new Set()};
   const memberKo=anchor.name.ko;
-  const groupKo=_ytGroupKoFor(anchor); // 솔로면 본인 이름이 곧 채널 동기화 키
-  // 타 채널이 이 사람을 콜라보로 태깅할 때 붙이는 "(그룹)" 접미사도 groupKo(=_ytGroupKoFor)와 동일한
-  // 규칙을 써야 함 — admin.js 태깅 파이프라인이 명시적으로 anchor.group.ko(artists.json의 "솔로" 같은
-  // placeholder)를 그대로 쓰지 않고 본인 이름을 그룹 키로 쓰도록 돼있음(admin.js의 _isValidVidGroupKo
-  // 주석 참고 — "'솔로 태그'는 여러 명이 공유하는 가짜 값이라 그대로 쓰면 안 됨"). 여기서 원래 그룹
-  // 표기(anchor.group.ko="솔로")를 그대로 썼던 게 버그 — 실제 DB엔 "아이유(아이유)"로 저장되는데
-  // "아이유(솔로)"로 찾고 있어서, 솔로 아티스트는 "다른 채널이 나를 콜라보로 태깅한" 역방향 연결이
-  // 전부 안 잡히고 있었음(2026-08-21, 사용자 제보 — "아이유 연결 카드에 일부만 나온다").
-  const withKey=`${memberKo}(${groupKo})`;
+  const groupKo=_ytGroupKoFor(anchor); // 솔로면 본인 이름이 곧 채널 동기화 키(members/own 쿼리에만 씀)
+  // ⚠️ 2026-08-21 정정: 어제 이 자리를 groupKo(_ytGroupKoFor) 기준 "아이유(아이유)"로 바꿨었는데, 실제
+  // DB(yt_channel_videos)를 직접 조회해보니 완전히 틀렸음 — "아이유(아이유)" 형식은 0건, 실제로 쓰이는
+  // 형식은 "아이유(솔로)"(anchor.group.ko 그대로) 18건이었음. admin.js 주석("솔로 태그는 가짜 값이라
+  // 그대로 쓰면 안 됨")은 채널 동기화 키(_extOwnerGko, groupKo 컬럼 값)에 대한 얘기였지 with_members
+  // 태그 접미사 얘기가 아니었음 — 코드 주석만 보고 유추하고 실측을 안 한 게 원인. 형제 함수
+  // _enrichMemberVideosFromApi(멤버 카드용, 줄 5030)는 원래부터 anchor.group.ko를 그대로 써서 정상
+  // 동작하고 있었음 — 그것과 동일하게 되돌림.
+  const withKey=`${memberKo}(${anchor.group.ko})`;
   try{
     const[ownQ,taggedQ,groupTagQ,reverseGroupTagQ]=await Promise.all([
       sb.from(_YT_TABLE).select('id,title,category,group_ko,members,with_members,content_flag').eq('group_ko',groupKo).contains('members',[memberKo]),
@@ -5295,17 +5295,20 @@ function _getCollabMembers(artist){
   const s=new Set();
   (artist.songs||[]).forEach(sg=>{(sg.with||[]).forEach(n=>s.add(n));});
   const myName=artist.name.ko;
-  const myGko=_ytGroupKoFor(artist);
-  // 솔로 아티스트(GROUPS에 없음)는 다른 사람 with 태그에도 "이름(본인이름)" 형태로 걸려있음(_ytGroupKoFor
-  // 규칙, admin.js 태깅 파이프라인과 동일) — bare 이름만 비교하면 이 형태를 못 잡아서 역방향 콜라보가
-  // 누락됨(2026-08-21, 사용자 제보 — 아이유 연결 카드에 일부만 나오던 버그의 static-data 쪽 짝).
-  const myTaggedForm=`${myName}(${myGko})`;
+  // 솔로 아티스트가 다른 사람 with 태그에 걸릴 때의 접미사는 실측(2026-08-21, yt_channel_videos 직접
+  // 조회) 결과 a.group.ko 그대로("아이유(솔로)")가 실제 쓰이는 형식 — _ytGroupKoFor 기준("아이유(아이유)")
+  // 형식은 실측 0건이라 주 형식에서 제외, 방어용으로만 같이 인정한다.
+  const myTaggedFormLegacy=`${myName}(${artist.group.ko})`;
+  const myTaggedFormYtSync=`${myName}(${_ytGroupKoFor(artist)})`;
   ARTISTS.forEach(other=>{
     if(other===artist)return;
     (other.songs||[]).forEach(sg=>{
-      if((sg.with||[]).some(w=>w===myName||w===myTaggedForm)){
-        const otherGko=_ytGroupKoFor(other);
-        const ownerStr=otherGko===myGko?other.name.ko:`${other.name.ko}(${other.group.ko})`;
+      if((sg.with||[]).some(w=>w===myName||w===myTaggedFormLegacy||w===myTaggedFormYtSync)){
+        // "같은 그룹"으로 보고 접미사 없이 표시할지 여부 — 실제 그룹(GROUPS에 있는)끼리는 group.ko가
+        // 같으면 진짜 같은 그룹이지만, "솔로"는 서로 무관한 여러 명이 공유하는 가짜 값이라 그 값만
+        // 같다고 같은 그룹 취급하면 안 됨(예: 다른 솔로 아티스트끼리 서로 남남인데 묶여 보이는 버그).
+        const sameRealGroup=other.group.ko===artist.group.ko&&!!GROUPS[artist.group.ko];
+        const ownerStr=sameRealGroup?other.name.ko:`${other.name.ko}(${other.group.ko})`;
         s.add(ownerStr);
       }
     });
