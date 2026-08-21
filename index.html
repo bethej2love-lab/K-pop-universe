@@ -5112,8 +5112,16 @@ async function _fetchApiCollabData(anchor){
   // 동작하고 있었음 — 그것과 동일하게 되돌림.
   const withKey=`${memberKo}(${anchor.group.ko})`;
   try{
+    // 솔로 아티스트(GROUPS에 없음)의 own 쿼리는 members 배열에 본인 이름이 들어있길 요구하면 안 됨 —
+    // 실측(2026-08-21, 사용자 제보 — "아이유 메인에 차은우 태깅된 영상이 연결 카드에 안 뜬다") 확인 결과,
+    // 솔로 채널 자체 영상은 members가 비어있는 채로 올라온 경우가 있었음(예: "#아이유 #차은우" 비하인드
+    // 3건 전부 members:[]). 그룹 채널(여러 멤버가 있어 "이 영상에 누가 나왔는지" 구분이 필요)과 달리,
+    // 솔로 채널은 group_ko=groupKo인 것 자체가 이미 "본인 채널 영상"이라는 뜻이라 이 조건이 불필요할 뿐
+    // 아니라 해로움 — 있으면 이런 미태깅 행을 통째로 놓친다.
+    let ownQBuilder=sb.from(_YT_TABLE).select('id,title,category,group_ko,members,with_members,content_flag').eq('group_ko',groupKo);
+    if(GROUPS[anchor.group.ko])ownQBuilder=ownQBuilder.contains('members',[memberKo]);
     const[ownQ,taggedQ,groupTagQ,reverseGroupTagQ]=await Promise.all([
-      sb.from(_YT_TABLE).select('id,title,category,group_ko,members,with_members,content_flag').eq('group_ko',groupKo).contains('members',[memberKo]),
+      ownQBuilder,
       sb.from(_YT_TABLE).select('id,title,category,group_ko,members,with_members,content_flag').contains('with_members',[withKey]),
       // 아이유의 팔레트, 뉴진스편처럼 개별 멤버가 아니라 그룹 전체가 with_groups로 태깅된 내 채널 영상
       sb.from(_YT_TABLE).select('id,title,category,group_ko,members,with_groups,content_flag').eq('group_ko',groupKo).not('with_groups','eq','{}'),
