@@ -57,7 +57,11 @@ async function main() {
   await new Promise(r => server.listen(PORT, r));
 
   // 2. 헤드리스 브라우저 — 전용 프로필/포트라 사용자의 실제 Edge 창과 완전히 격리됨
-  const profileDir = path.join(os.tmpdir(), 'kpu-smoke-profile');
+  // 매번 새 임시 폴더 — 고정 경로를 재사용하면 지난 실행의 localStorage(온보딩 힌트 등)가 남아서
+  // "이전 방문자처럼 보이는" 상태로 열리게 되고, 그 상태에 따라 UI 동작이 달라져 실행마다 결과가
+  // 들쭉날쭉해짐(2026-08-21, 실제로 겪음 — 두 번째 실행부터 계속 "탐험 패널이 안 열림"으로 실패했는데
+  // 원인은 shared.js 리팩터링이 아니라 이 프로필 재사용이었음, 새 프로필로는 항상 통과 확인).
+  const profileDir = fs.mkdtempSync(path.join(os.tmpdir(), 'kpu-smoke-'));
   const child = spawn(BROWSER_PATH, [
     '--headless=new', '--disable-gpu', '--no-sandbox',
     `--remote-debugging-port=${CDP_PORT}`, `--user-data-dir=${profileDir}`,
@@ -97,15 +101,15 @@ async function main() {
     if (errors.length) fail(`초기 로드 중 콘솔 에러 ${errors.length}건: ${errors.slice(0, 5).join(' | ')}`);
     else ok('초기 로드 콘솔 에러 0건');
 
-    // 4. 상호작용 — 나침반 탐험 패널 열기
+    // 4. 상호작용 — 나침반 탐험 패널 열기. Charts 카드는 Supabase 응답을 기다려야 해서(네트워크 속도
+    // 편차 큼) 고정 sleep 대신 조건이 실제로 참이 될 때까지 폴링 — 느린 환경에서의 타이밍 오탐 방지.
     const errBefore = errors.length;
     await evalExpr(cdp, `document.getElementById('tab-feed')?.click()`);
-    await sleep(2500);
-    const feedOpen = await evalExpr(cdp, `document.getElementById('feed-overlay')?.classList.contains('open')`);
-    const chartCardCount = await evalExpr(cdp, `document.querySelectorAll('#feed-chart .feed-card').length`);
+    const feedOpen = await pollUntil(cdp, `document.getElementById('feed-overlay')?.classList.contains('open')`, 5000);
     if (!feedOpen) fail('탐험 패널이 안 열림(#feed-overlay.open 없음)'); else ok('탐험 패널 열기 성공');
-    if (typeof chartCardCount === 'number' && chartCardCount > 0) ok(`Charts 섹션 카드 ${chartCardCount}개 렌더 확인`);
-    else fail('Charts 섹션에 카드가 하나도 안 뜸');
+    const chartCardCount = await pollUntil(cdp, `document.querySelectorAll('#feed-chart .feed-card').length`, 8000, v => v > 0);
+    if (chartCardCount) ok(`Charts 섹션 카드 ${chartCardCount}개 렌더 확인`);
+    else fail('Charts 섹션에 카드가 하나도 안 뜸(8초 대기)');
     if (errors.length > errBefore) fail(`탐험 패널 여는 동안 새 콘솔 에러 ${errors.length - errBefore}건: ${errors.slice(errBefore, errBefore + 5).join(' | ')}`);
     else ok('탐험 패널 여는 동안 새 콘솔 에러 0건');
 
@@ -114,6 +118,11 @@ async function main() {
     server.close();
     // ⚠️ 프로세스 이름이 아니라 정확한 PID만 종료 — msedge 일괄 kill 금지(위 주석 참고)
     try { execSync(`taskkill /PID ${child.pid} /T /F`); } catch (e) { /* 이미 종료됐으면 무시 */ }
+    // 프로세스 종료 직후엔 Chromium 잠금 파일(SingletonLock 등)이 OS에서 아직 안 풀려있을 수 있어
+    // 삭제가 한 번에 안 될 수 있음 — 짧게 재시도. 그래도 실패하면 다음 실행 전용 폴더라 무해하게 남음.
+    for (let i = 0; i < 3; i++) {
+      try { fs.rmSync(profileDir, { recursive: true, force: true }); break; } catch (e) { await sleep(300); }
+    }
   }
 
   console.log(`\n${pass ? '✅ 스모크 테스트 통과' : '❌ 스모크 테스트 실패'}`);
@@ -154,6 +163,15 @@ function waitForLoadEvent(cdp) {
 async function evalExpr(cdp, expr) {
   const r = await cdp.send('Runtime.evaluate', { expression: expr, returnByValue: true, awaitPromise: false });
   return r?.result?.value;
+}
+async function pollUntil(cdp, expr, timeoutMs, isReady = v => !!v) {
+  const t0 = Date.now();
+  while (Date.now() - t0 < timeoutMs) {
+    const v = await evalExpr(cdp, expr);
+    if (isReady(v)) return v;
+    await sleep(200);
+  }
+  return await evalExpr(cdp, expr); // 마지막 값 그대로 반환(실패 메시지에 쓰기 위함)
 }
 
 main().catch(e => { console.error('[smoke] 실행 실패:', e); process.exit(2); });

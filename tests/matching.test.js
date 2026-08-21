@@ -18,7 +18,9 @@ const path = require('path');
 
 const ROOT = path.join(__dirname, '..');
 const adminSrc = fs.readFileSync(path.join(ROOT, 'admin.js'), 'utf8');
-const htmlSrc = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
+// _artistGroups/_ytGroupKoFor/_UNIT_HASHTAG_ONLY_TOKENS/_PROJECT_UNITS는 2026-08-21 "파일 분리 0단계"로
+// shared.js에 모여있어서 더는 index.html을 슬라이스할 필요가 없음 — 파일 하나를 그대로 통째로 실행.
+const sharedSrc = fs.readFileSync(path.join(ROOT, 'shared.js'), 'utf8');
 const GROUPS = JSON.parse(fs.readFileSync(path.join(ROOT, 'groups.json'), 'utf8'));
 const ARTISTS = JSON.parse(fs.readFileSync(path.join(ROOT, 'artists.json'), 'utf8'));
 
@@ -71,13 +73,10 @@ pieces.push(extractStatement(adminSrc, /^const _GROUP_TITLE_CONFLICT_EXCLUDE\s*=
 pieces.push(extractStatement(adminSrc, /^const _GROUP_AMBIGUOUS_IF_COMATCHED\s*=/m, '_GROUP_AMBIGUOUS_IF_COMATCHED'));
 pieces.push(extractByBraces(adminSrc, /^function _m2ParseTitle\(/m, '_m2ParseTitle'));
 
-pieces.push(extractByBraces(htmlSrc, /^function _artistGroups\(/m, '_artistGroups'));
-pieces.push(extractStatement(htmlSrc, /^const _UNIT_HASHTAG_ONLY_TOKENS\s*=/m, '_UNIT_HASHTAG_ONLY_TOKENS'));
-pieces.push(extractStatement(htmlSrc, /^const _PROJECT_UNITS\s*=/m, '_PROJECT_UNITS'));
-
 const harnessSrc = `
 const GROUPS=${JSON.stringify(GROUPS)};
 const ARTISTS=${JSON.stringify(ARTISTS)};
+${sharedSrc}
 // DB에서 런타임에 채워지는 동적 화이트리스트 — 테스트에선 빈 Set(하드코딩된 보호만 검증, 위 주석 참고)
 const _ATM_DYNAMIC_HASHTAG_NAMES=new Set();
 const _ATM_DYNAMIC_AMBIGUOUS_COMATCH=new Set();
