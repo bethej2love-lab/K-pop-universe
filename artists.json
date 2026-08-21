@@ -30083,6 +30083,22 @@
     },
     "discography": [
       {
+        "title": "바이, 썸머",
+        "type": "싱글",
+        "releaseDate": "2025.09.10",
+        "trackCount": 1,
+        "isMain": true,
+        "titleTrack": "바이, 썸머",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/121/06/743/12106743_20250909141428_500.jpg?YUV444",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "바이, 썸머",
+            "isTitle": true
+          }
+        ]
+      },
+      {
         "title": "꽃갈피 셋",
         "type": "리메이크 3집",
         "releaseDate": "2025.05.27",
@@ -30160,6 +30176,22 @@
         ]
       },
       {
+        "title": "strawberry moon",
+        "type": "싱글",
+        "releaseDate": "2021.10.19",
+        "trackCount": 1,
+        "isMain": true,
+        "titleTrack": "strawberry moon",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/107/43/453/10743453_20211018165252_500.jpg?4a230414088a35eeff232020daf65806",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "strawberry moon",
+            "isTitle": true
+          }
+        ]
+      },
+      {
         "title": "LILAC",
         "type": "정규 5집",
         "releaseDate": "2021.03.25",
@@ -30221,6 +30253,22 @@
         ]
       },
       {
+        "title": "에잇",
+        "type": "싱글",
+        "releaseDate": "2020.05.06",
+        "trackCount": 1,
+        "isMain": true,
+        "titleTrack": "에잇(Prod.&Feat. SUGA of BTS)",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/104/26/648/10426648_20200506153340_500.jpg?0ed92b652a9149e26387233529a32781",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "에잇(Prod.&Feat. SUGA of BTS)",
+            "isTitle": true
+          }
+        ]
+      },
+      {
         "title": "Love poem",
         "type": "미니 5집",
         "releaseDate": "2019.11.18",
@@ -30257,6 +30305,22 @@
           {
             "no": 6,
             "title": "Love poem",
+            "isTitle": true
+          }
+        ]
+      },
+      {
+        "title": "삐삐",
+        "type": "싱글",
+        "releaseDate": "2018.10.10",
+        "trackCount": 1,
+        "isMain": true,
+        "titleTrack": "삐삐",
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/102/10/535/10210535_500.jpg?f80bff85a135984aa8f2392889bda057",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "삐삐",
             "isTitle": true
           }
         ]
@@ -30364,6 +30428,38 @@
         ]
       },
       {
+        "title": "사랑이 잘",
+        "type": "싱글",
+        "releaseDate": "2017.04.07",
+        "trackCount": 1,
+        "isMain": true,
+        "titleTrack": "사랑이 잘 (With 오혁)",
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/100/52/968/10052968_500.jpg?1ef0f77375b5b4a9c009a4c95d42bd59",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "사랑이 잘 (With 오혁)",
+            "isTitle": true
+          }
+        ]
+      },
+      {
+        "title": "밤편지",
+        "type": "싱글",
+        "releaseDate": "2017.03.24",
+        "trackCount": 1,
+        "isMain": true,
+        "titleTrack": "밤편지",
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/100/47/890/10047890_500.jpg?fe3170fcb1ac397fc072be5877d5f1b9",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "밤편지",
+            "isTitle": true
+          }
+        ]
+      },
+      {
         "title": "CHAT-SHIRE",
         "type": "미니 4집",
         "releaseDate": "2015.10.23",
@@ -30406,6 +30502,38 @@
             "no": 7,
             "title": "안경",
             "isTitle": false
+          }
+        ]
+      },
+      {
+        "title": "마음",
+        "type": "싱글",
+        "releaseDate": "2015.05.18",
+        "trackCount": 1,
+        "isMain": true,
+        "titleTrack": "마음",
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/023/19/008/2319008_500.jpg?1d5950f924c443dce26fdfeb4b55471b",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "마음",
+            "isTitle": true
+          }
+        ]
+      },
+      {
+        "title": "소격동",
+        "type": "싱글",
+        "releaseDate": "2014.10.02",
+        "trackCount": 1,
+        "isMain": true,
+        "titleTrack": "소격동",
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/022/84/378/2284378_500.jpg",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "소격동",
+            "isTitle": true
           }
         ]
       },
@@ -30532,6 +30660,32 @@
         ]
       },
       {
+        "title": "스무 살의 봄",
+        "type": "싱글",
+        "releaseDate": "2012.05.11",
+        "trackCount": 3,
+        "isMain": true,
+        "titleTrack": "하루 끝",
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/021/21/646/2121646_500.jpg",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "복숭아",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "하루 끝",
+            "isTitle": true
+          },
+          {
+            "no": 3,
+            "title": "그 애 참 싫다",
+            "isTitle": false
+          }
+        ]
+      },
+      {
         "title": "Last Fantasy",
         "type": "정규 2집",
         "releaseDate": "2011.11.29",
@@ -30649,6 +30803,27 @@
           {
             "no": 7,
             "title": "좋은 날 (Inst.)",
+            "isTitle": false
+          }
+        ]
+      },
+      {
+        "title": "잔소리",
+        "type": "싱글",
+        "releaseDate": "2010.06.03",
+        "trackCount": 2,
+        "isMain": true,
+        "titleTrack": "잔소리 (With 2AM 슬옹)",
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/009/11/358/911358_500.jpg",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "잔소리 (With 2AM 슬옹)",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Rain Drop",
             "isTitle": false
           }
         ]
