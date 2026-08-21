@@ -3742,6 +3742,69 @@
           }
         ]
       }
+    ],
+    "discography": [
+      {
+        "title": "청춘의 포말 (YOUTH)",
+        "type": "정규 1집",
+        "releaseDate": "2024.04.22",
+        "trackCount": 10,
+        "isMain": true,
+        "titleTrack": "반딧불 (Little Light)",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/114/69/495/11469495_20240419182508_500.jpg?34b7c978fb2c306d34e1c00aa391376f",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "새봄의 노래 (Beginning)",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "반딧불 (Little Light)",
+            "isTitle": true
+          },
+          {
+            "no": 3,
+            "title": "나의 바다에게 (From Little Wave)",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Time Machine (Feat. 태연, 마크)",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "내가 됐으면 해 (Serenade)",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "끝에서 다시 (Rewind)",
+            "isTitle": false
+          },
+          {
+            "no": 7,
+            "title": "온기 (Warmth)",
+            "isTitle": false
+          },
+          {
+            "no": 8,
+            "title": "Lost In California",
+            "isTitle": false
+          },
+          {
+            "no": 9,
+            "title": "쉼표 (Rest)",
+            "isTitle": false
+          },
+          {
+            "no": 10,
+            "title": "댈러스 러브 필드 (Dallas Love Field)",
+            "isTitle": false
+          }
+        ]
+      }
     ]
   },
   {
@@ -78204,7 +78267,203 @@
     "links": {
       "instagram": "https://www.instagram.com/jun2dakay",
       "namu": "https://namu.wiki/w/JUN.K(2PM)"
-    }
+    },
+    "discography": [
+      {
+        "title": "20분",
+        "type": "미니 3집",
+        "releaseDate": "2020.12.09",
+        "trackCount": 7,
+        "isMain": true,
+        "titleTrack": "30분은 거절할까 봐",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/105/30/972/10530972_20201209105215_500.jpg?9fb044266e4fec72bbc09391f162d6b9",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "집",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "스케치북",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "30분은 거절할까 봐",
+            "isTitle": true
+          },
+          {
+            "no": 4,
+            "title": "미끄럼틀",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "평행선",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "쉼표",
+            "isTitle": false
+          },
+          {
+            "no": 7,
+            "title": "Ms. NO TIME (Korean Ver.)",
+            "isTitle": false
+          }
+        ]
+      },
+      {
+        "title": "나의 20대",
+        "type": "미니 2집",
+        "releaseDate": "2017.11.27",
+        "trackCount": 5,
+        "isMain": true,
+        "titleTrack": "이사하는 날",
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/101/12/825/10112825_500.jpg?534e849f39c691aa0a87d4e6561d1688",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "솔직히 말할게",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "11월부터 2월까지 (Feat. 소미)",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "이사하는 날",
+            "isTitle": true
+          },
+          {
+            "no": 4,
+            "title": "왜 (Feat. 박지민)",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "나의 20대 (Feat. 더블케이)",
+            "isTitle": false
+          }
+        ]
+      },
+      {
+        "title": "77-1X3-00",
+        "type": "스페셜 앨범",
+        "releaseDate": "2017.01.12",
+        "trackCount": 10,
+        "isMain": true,
+        "titleTrack": "no shadow",
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/100/30/646/10030646_500.jpg?dd6897ca9cded85835e38810f746432c",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "alive pt2",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "no shadow",
+            "isTitle": true
+          },
+          {
+            "no": 3,
+            "title": "no goodbye",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "phone call",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "mary poppins",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "good morning",
+            "isTitle": false
+          },
+          {
+            "no": 7,
+            "title": "walking on the moon",
+            "isTitle": false
+          },
+          {
+            "no": 8,
+            "title": "just one night",
+            "isTitle": false
+          },
+          {
+            "no": 9,
+            "title": "love letter remix",
+            "isTitle": false
+          },
+          {
+            "no": 10,
+            "title": "결혼식",
+            "isTitle": false
+          }
+        ]
+      },
+      {
+        "title": "Mr. NO♡",
+        "type": "미니 1집",
+        "releaseDate": "2016.08.09",
+        "trackCount": 8,
+        "isMain": true,
+        "titleTrack": "THINK ABOUT YOU",
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/027/03/171/2703171_500.jpg?82fdefe93f1b7b71b8b10e84a1dd111b",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Mr. NO♡",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "THINK ABOUT YOU",
+            "isTitle": true
+          },
+          {
+            "no": 3,
+            "title": "BETTER MAN",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "YOUNG FOREVER",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "파도타기",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "우리집",
+            "isTitle": false
+          },
+          {
+            "no": 7,
+            "title": "가지마 (Feat. 백아연)",
+            "isTitle": false
+          },
+          {
+            "no": 8,
+            "title": "NO LOVE Part 2 (Feat. San E)",
+            "isTitle": false
+          }
+        ]
+      }
+    ]
   },
   {
     "name": {
