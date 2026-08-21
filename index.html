@@ -9866,7 +9866,11 @@ document.getElementById('mob-fav-btn').addEventListener('click',e=>{e.stopPropag
 // 스스로 눌러야만 발견하는 문제(기념일/차트/디스커버리 전부 예고 없음) 대응. 텍스트 없이 반짝이는 점
 // 하나로만 신호를 주고, 한 번이라도 열면 영구히 다시 안 뜸.
 const _FEED_BADGE_SEEN_KEY='kpu_feed_badge_seen';
-if(!localStorage.getItem(_FEED_BADGE_SEEN_KEY))document.getElementById('tab-feed').classList.add('show-badge');
+// 뱃지는 "자동 반열림(peek)이 억제되는 유저"에게만 — 데스크톱/모바일 3회차+는 탐험 패널이 알아서 peek로
+// 열려서 뱃지가 중복이고, 게다가 peek는 tab-feed '클릭'이 아니라 _openFeedOverlay로 열려 뱃지 클리어(9873)가
+// 안 걸려 반짝점이 영구 잔존했음(2026-08-21, 사용자 지적). peek 억제 조건(위 _showOnboardHint의
+// isMob()&&!nickname&&_visitCount<=2)과 동일하게 맞춰, 패널이 안 열려 존재를 모를 모바일 신규 1-2회차에만 표시.
+if(!localStorage.getItem(_FEED_BADGE_SEEN_KEY)&&isMob()&&!myProfile?.nickname&&_visitCount<=2)document.getElementById('tab-feed').classList.add('show-badge');
 document.getElementById('tab-feed').addEventListener('click',e=>{
   e.stopPropagation();
   exitObSearch();
