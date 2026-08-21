@@ -325,6 +325,113 @@
           }
         ]
       }
+    ],
+    "discography": [
+      {
+        "title": "언젠가는 슬기로울 전공의생활 OST Part 3",
+        "type": "OST",
+        "releaseDate": "2025.04.19",
+        "trackCount": 2,
+        "isMain": false,
+        "titleTrack": "그런 날",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/117/81/008/11781008_20250418144103_500.jpg?21588f66953d845d65cdf7033aef031d",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "그런 날",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "그런 날 (Inst.)",
+            "isTitle": false
+          }
+        ],
+        "feat": true
+      },
+      {
+        "title": "옥씨부인전 OST Part.1",
+        "type": "OST",
+        "releaseDate": "2024.12.01",
+        "trackCount": 2,
+        "isMain": false,
+        "titleTrack": "헌정연서",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/116/54/919/11654919_20241129144254_500.jpg?3d6736be0d6e98ce8724042c4e863473",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "헌정연서",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "헌정연서 (Inst.)",
+            "isTitle": false
+          }
+        ],
+        "feat": true
+      },
+      {
+        "title": "처음 본 순간 (영화 사랑의 하츄핑 OST)",
+        "type": "OST",
+        "releaseDate": "2024.07.03",
+        "trackCount": 1,
+        "isMain": false,
+        "titleTrack": "처음 본 순간 (영화 사랑의 하츄핑 OST)",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/115/27/471/11527471_20240702111644_500.jpg?bf5f2e296c04f62ded8db7069551aad4",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "처음 본 순간 (영화 사랑의 하츄핑 OST)",
+            "isTitle": true
+          }
+        ],
+        "feat": true
+      },
+      {
+        "title": "윈터 of aespa X 마이데몬",
+        "type": "OST",
+        "releaseDate": "2023.12.08",
+        "trackCount": 2,
+        "isMain": false,
+        "titleTrack": "With You",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/113/80/544/11380544_20231207153653_500.jpg?7370a2dd4d436fe0f517db430ac216fc",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "With You",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "With You (Inst.)",
+            "isTitle": false
+          }
+        ],
+        "feat": true
+      },
+      {
+        "title": "무인도의 디바 OST Part.8",
+        "type": "OST",
+        "releaseDate": "2023.11.19",
+        "trackCount": 2,
+        "isMain": false,
+        "titleTrack": "항해",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/113/67/730/11367730_20231117114654_500.jpg?462d3515dcb9fb049c06855c4f7ef5d6",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "항해",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "항해 (Inst.)",
+            "isTitle": false
+          }
+        ],
+        "feat": true
+      }
     ]
   },
   {
@@ -21445,7 +21552,30 @@
     "songs": [],
     "links": {
       "namu": "https://namu.wiki/w/소희(RIIZE)"
-    }
+    },
+    "discography": [
+      {
+        "title": "환승연애4 OST Part 2",
+        "type": "싱글",
+        "releaseDate": "2025.10.15",
+        "trackCount": 2,
+        "isMain": true,
+        "titleTrack": "Love on the canvas",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/121/59/829/12159829_20251014145002_500.jpg?YUV444",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Love on the canvas",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Love on the canvas (Inst.)",
+            "isTitle": false
+          }
+        ]
+      }
+    ]
   },
   {
     "name": {
