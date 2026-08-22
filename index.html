@@ -9316,8 +9316,9 @@ function _openColPhotoGrid(colId){
   closeBtn.addEventListener('click',()=>{ov.style.display='none';});
   hd.appendChild(tw);hd.appendChild(addBtn);hd.appendChild(closeBtn);
   const guide=document.createElement('div');
-  guide.style.cssText='font-size:10.5px;color:rgba(150,175,225,0.5);padding:0 16px 8px;line-height:1.4;';
-  guide.textContent=currentLang==='ko'?'⚠️ 실존 인물 비하·성적 대상화 금지 · 저작권자 요청 시 삭제될 수 있어요':'⚠️ No demeaning/sexualizing of real people · may be removed on rightsholder request';
+  // 법적 장치(#5)라 "명시"는 하되, 눈에 안 띄게 아주 은은하게(사용자 요청 2026-08-22 — 보이면 흥이 식음). 작게·흐리게·짧게.
+  guide.style.cssText='font-size:8.5px;color:rgba(150,175,225,0.22);padding:0 16px 6px;line-height:1.3;letter-spacing:.01em;font-weight:400;';
+  guide.textContent=currentLang==='ko'?'비하·성적 대상화 금지 · 저작권자 요청 시 삭제':'No demeaning/sexualizing · removable on request';
   const grid=document.createElement('div');
   grid.style.cssText='flex:1;overflow-y:auto;padding:0 12px 24px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px;align-content:start;';
   const fi=document.createElement('input');fi.type='file';fi.accept='image/*';fi.multiple=true;fi.style.display='none';
@@ -9367,7 +9368,25 @@ function _openPhotoFull(url){
   }
   f.innerHTML='';
   const im=document.createElement('img');im.src=url;im.style.cssText='max-width:100%;max-height:100%;object-fit:contain;border-radius:8px;';
-  f.appendChild(im);f.style.display='flex';
+  f.appendChild(im);
+  // 다운로드(2026-08-22 사용자 요청) — 크로스오리진(Supabase Storage)이라 blob으로 받아 저장. 실패(CORS/모바일)하면
+  // 새 탭으로 열어 길게 눌러 저장하도록 폴백. 버튼은 stopPropagation으로 배경 탭(닫기)과 분리.
+  const dl=document.createElement('button');dl.textContent=currentLang==='ko'?'⤓ 저장':'⤓ Save';
+  dl.style.cssText='position:fixed;left:50%;transform:translateX(-50%);bottom:calc(22px + env(safe-area-inset-bottom,0px));background:rgba(255,255,255,0.15);border:0.5px solid rgba(255,255,255,0.28);color:#fff;border-radius:22px;padding:9px 22px;font-size:13px;font-weight:600;cursor:pointer;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);z-index:1;';
+  dl.addEventListener('click',async e=>{
+    e.stopPropagation();
+    dl.disabled=true;dl.textContent=currentLang==='ko'?'저장 중…':'Saving…';
+    try{
+      const res=await fetch(url);const blob=await res.blob();
+      const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+      a.download=((url.split('/').pop()||'photo').split('?')[0])||'photo.jpg';
+      document.body.appendChild(a);a.click();a.remove();
+      setTimeout(()=>URL.revokeObjectURL(a.href),1500);
+    }catch(err){window.open(url,'_blank','noopener');}
+    finally{dl.disabled=false;dl.textContent=currentLang==='ko'?'⤓ 저장':'⤓ Save';}
+  });
+  f.appendChild(dl);
+  f.style.display='flex';
 }
 // 여러 영상을 한 번에 담을 때(일괄 선택 → 컬렉션에 추가)도 저장/동기화가 영상 개수만큼 반복 호출되지
 // 않도록 배열 기반으로 통일 — 단일 추가(_addVideoToCol)는 그 위에 얇게 얹은 래퍼.
