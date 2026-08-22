@@ -6303,14 +6303,21 @@ function pulseGroupRipple(ko){
   const bm=bubbleMeshes.find(b=>b.ko===ko);
   if(!bm)return;
   const[r,g,b]=(bm.info&&bm.info.color)||[180,200,255];
-  const sz=128,c=sz/2;
+  // 512px + 가우시안 감쇠 링(2026-08-22) — 기존 128px·4스톱은 좁은 밝은 띠 + 안쪽 급경사(0.45에서 알파가
+  // 0→0.70 급상승)라, 레티나(맥북)에서 저해상도 확대 밴딩과 그 경계선이 또렷한 "도넛"으로 보였음(윈도우/폰은
+  // dpr 낮아 뭉개져 우연히 부드러웠던 것). 가우시안은 어느 반경에도 경계가 없어 dpr·색역 무관하게 매끈 —
+  // 기기 분기 없이 통합 텍스처로 모든 기기에서 자연스럽게. 렌더 비용은 스프라이트 화면 크기로 정해져 512px여도
+  // 성능 영향 없음(텍스처는 그룹 클릭당 1회만 생성). 피크 0.74는 기존 링과 같은 시각 반경.
+  const sz=512,c=sz/2;
   const cv=document.createElement('canvas');cv.width=cv.height=sz;
   const ctx=cv.getContext('2d');
-  const grd=ctx.createRadialGradient(c,c,sz*0.28,c,c,sz*0.50);
-  grd.addColorStop(0,`rgba(${r},${g},${b},0)`);
-  grd.addColorStop(0.45,`rgba(${r},${g},${b},0.70)`);
-  grd.addColorStop(0.75,`rgba(${r},${g},${b},0.18)`);
-  grd.addColorStop(1,`rgba(${r},${g},${b},0)`);
+  const grd=ctx.createRadialGradient(c,c,0,c,c,c);
+  for(let i=0;i<=32;i++){
+    const p=i/32;
+    let a=0.55*Math.exp(-Math.pow((p-0.74)/0.14,2));
+    if(i===32)a=0; // 텍스처 가장자리에서 확실히 0 — 스프라이트 사각 경계 노출 방지
+    grd.addColorStop(p,`rgba(${r},${g},${b},${a.toFixed(3)})`);
+  }
   ctx.fillStyle=grd;ctx.fillRect(0,0,sz,sz);
   const tex=new THREE.CanvasTexture(cv);
   const rad=bm.radius;
