@@ -6101,6 +6101,40 @@ function closeCards(){
 function _gaEvent(name,params){
   if(typeof gtag==='function')gtag('event',name,params||{});
 }
+// ── 성능 실측 계측(2026-08-22, 가오픈 전) — 세그먼트 다이어트 등 최적화 효과를 실기기 숫자로 확인하려고
+// fps/LCP를 GA로 수집한다. 매 프레임·상시 전송이 아니라 세션당 대표값 1회만(GA가 유저 전체로 집계).
+// 계측이 앱을 깨는 일이 없도록 전부 try/catch로 감싸고, isMob/_gaEvent는 함수 선언이라 여기서 안전.
+(function _perfInstrument(){
+  try{
+    const _dev=()=>isMob()?'mobile':'desktop';
+    // LCP: PerformanceObserver로 최종값 추적 → 페이지 숨김/이탈 시 1회 전송(그 전이 실제 최종 LCP라).
+    try{
+      let _lcp=0;
+      const _po=new PerformanceObserver(list=>{const es=list.getEntries();const e=es[es.length-1];if(e)_lcp=e.renderTime||e.loadTime||e.startTime||0;});
+      _po.observe({type:'largest-contentful-paint',buffered:true});
+      let _lcpSent=false;
+      const _sendLcp=()=>{if(_lcpSent||!_lcp)return;_lcpSent=true;try{_po.disconnect();}catch(e){}_gaEvent('perf_lcp',{value:Math.round(_lcp),device:_dev()});};
+      addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')_sendLcp();});
+      addEventListener('pagehide',_sendLcp,{once:true});
+    }catch(e){}
+    // FPS: 씬이 안정화된 뒤(로드 4.5초 후) 4초간 rAF 샘플링 → 평균 + 최저(초당 최소=잰크 지표) 1회 전송.
+    setTimeout(()=>{
+      try{
+        let total=0,secFrames=0,minSec=Infinity,t0=0,secStart=0;
+        function _samp(now){
+          if(!t0){t0=now;secStart=now;requestAnimationFrame(_samp);return;} // 첫 프레임은 기준점만
+          total++;secFrames++;
+          if(now-secStart>=1000){const f=secFrames*1000/(now-secStart);if(f<minSec)minSec=f;secFrames=0;secStart=now;}
+          if(now-t0<4000){requestAnimationFrame(_samp);return;}
+          const avg=total*1000/(now-t0);
+          if(minSec===Infinity)minSec=avg;
+          _gaEvent('perf_fps',{avg:Math.round(avg),min:Math.round(minSec),device:_dev(),dpr:Math.round((window.devicePixelRatio||1)*10)/10});
+        }
+        requestAnimationFrame(_samp);
+      }catch(e){}
+    },4500);
+  }catch(e){}
+})();
 let _searchTrackTimer=null;
 function _trackSearchDebounced(q){
   clearTimeout(_searchTrackTimer);

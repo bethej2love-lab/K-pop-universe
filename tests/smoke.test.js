@@ -29,6 +29,11 @@ const EDGE_CANDIDATES = [
   'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe',
   'C:\\Program Files\\Microsoft\\Edge\\Application\\msedge.exe',
   'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
+  // macOS / Linux 후보 — 맥에서도 스모크(특히 모바일 뷰포트)를 돌릴 수 있게(2026-08-22)
+  '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
+  '/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge',
+  '/Applications/Chromium.app/Contents/MacOS/Chromium',
+  '/usr/bin/google-chrome', '/usr/bin/chromium-browser', '/usr/bin/chromium',
 ];
 const BROWSER_PATH = EDGE_CANDIDATES.find(p => fs.existsSync(p));
 
@@ -63,7 +68,11 @@ async function main() {
   // 원인은 shared.js 리팩터링이 아니라 이 프로필 재사용이었음, 새 프로필로는 항상 통과 확인).
   const profileDir = fs.mkdtempSync(path.join(os.tmpdir(), 'kpu-smoke-'));
   const child = spawn(BROWSER_PATH, [
-    '--headless=new', '--disable-gpu', '--no-sandbox',
+    '--headless=new', '--disable-gpu', '--no-sandbox', '--no-first-run',
+    // 헤드리스에서 소프트웨어 WebGL 허용 — 최신 Chrome/Edge는 --disable-gpu 시 SwiftShader WebGL을
+    // 기본 차단해서 3D 씬(THREE.WebGLRenderer)이 "Error creating WebGL context"로 죽음. 명시로 켠다
+    // (2026-08-22 맥에서 스모크 돌릴 때 발견 — 이게 없으면 씬 초기화 실패로 전 항목 오탐).
+    '--enable-unsafe-swiftshader', '--use-gl=angle', '--use-angle=swiftshader',
     `--remote-debugging-port=${CDP_PORT}`, `--user-data-dir=${profileDir}`,
     'about:blank',
   ], { stdio: 'ignore' });
@@ -89,8 +98,10 @@ async function main() {
     await waitForLoadEvent(cdp);
     await sleep(4000); // 초기 fetch(GROUPS/ARTISTS)·Three.js 씬 구성 시간 확보
 
-    const loadingGone = await evalExpr(cdp, `(function(){const el=document.getElementById('loading-screen')||document.querySelector('.loading-screen,#loading');return !el||getComputedStyle(el).display==='none'||el.style.display==='none';})()`);
-    if (loadingGone === false) fail('로딩 오버레이가 안 사라짐(무한 로딩 의심)'); else ok('로딩 오버레이 정상 해제(또는 애초에 없음)');
+    // 고정 대기 대신 폴링 — SwiftShader 등 느린 헤드리스에선 씬 구성이 4초를 넘겨 로딩이 아직 떠있을 수
+    // 있어 오탐이 났음(2026-08-22 맥). 사라질 때까지(최대 8초 더) 폴링해 환경 속도와 무관하게 판정한다.
+    const loadingGone = await pollUntil(cdp, `(function(){const el=document.getElementById('loading-screen')||document.querySelector('.loading-screen,#loading');return !el||getComputedStyle(el).display==='none'||el.style.display==='none';})()`, 8000, v => v === true);
+    if (!loadingGone) fail('로딩 오버레이가 안 사라짐(무한 로딩 의심)'); else ok('로딩 오버레이 정상 해제(또는 애초에 없음)');
 
     const hasCanvas = await evalExpr(cdp, `!!document.querySelector('canvas')`);
     if (!hasCanvas) fail('canvas 엘리먼트가 없음 — 3D 씬 초기화 실패 의심'); else ok('3D 캔버스 존재 확인');
@@ -113,11 +124,30 @@ async function main() {
     if (errors.length > errBefore) fail(`탐험 패널 여는 동안 새 콘솔 에러 ${errors.length - errBefore}건: ${errors.slice(errBefore, errBefore + 5).join(' | ')}`);
     else ok('탐험 패널 여는 동안 새 콘솔 에러 0건');
 
+    // 5. 모바일 뷰포트 재검증(신규 유저) — isMob()으로 단락되는 최상위 즉시실행 코드는 데스크톱 뷰포트에선
+    // 실행조차 안 돼서 크래시가 안 잡힌다(2026-08-22 모바일 전용 TDZ 크래시: 데스크톱 스모크·육안 다 통과했는데
+    // 모바일 신규유저 전원이 로딩화면 영구정지했음). 뷰포트를 390으로 좁히고 localStorage를 비워(=신규 유저)
+    // 다시 로드해, 모바일에서만 타는 즉시실행 경로가 안전한지 확인한다.
+    await cdp.send('Emulation.setDeviceMetricsOverride', { width: 390, height: 844, deviceScaleFactor: 2, mobile: true });
+    await evalExpr(cdp, `try{localStorage.clear()}catch(e){}`);
+    const errBeforeMobile = errors.length;
+    await cdp.send('Page.navigate', { url: `http://127.0.0.1:${PORT}/index.html` });
+    await waitForLoadEvent(cdp);
+    await sleep(4000);
+    const mobLoadingGone = await pollUntil(cdp, `(function(){const el=document.getElementById('loading-screen')||document.querySelector('.loading-screen,#loading');return !el||getComputedStyle(el).display==='none'||el.style.display==='none';})()`, 8000, v => v === true);
+    if (!mobLoadingGone) fail('모바일(390px) 뷰포트에서 로딩이 안 사라짐 — 모바일 전용 크래시/무한로딩 의심'); else ok('모바일(390px) 뷰포트 로딩 정상 해제');
+    const mobCanvas = await evalExpr(cdp, `!!document.querySelector('canvas')`);
+    if (!mobCanvas) fail('모바일 뷰포트에서 canvas 없음 — 씬 초기화 실패'); else ok('모바일 뷰포트 3D 캔버스 존재');
+    if (errors.length > errBeforeMobile) fail(`모바일 뷰포트 로드 중 콘솔 에러 ${errors.length - errBeforeMobile}건: ${errors.slice(errBeforeMobile, errBeforeMobile + 5).join(' | ')}`);
+    else ok('모바일 뷰포트 로드 콘솔 에러 0건');
+
     cdp.close();
   } finally {
     server.close();
-    // ⚠️ 프로세스 이름이 아니라 정확한 PID만 종료 — msedge 일괄 kill 금지(위 주석 참고)
-    try { execSync(`taskkill /PID ${child.pid} /T /F`); } catch (e) { /* 이미 종료됐으면 무시 */ }
+    // ⚠️ 프로세스 이름이 아니라 정확한 PID만 종료 — msedge 일괄 kill 금지(위 주석 참고).
+    // Windows는 taskkill(자식 트리 포함), macOS/Linux는 SIGKILL로 이 spawn PID만 종료(taskkill이 없어
+    // 예전엔 맥에서 오펀 브라우저가 남았음, 2026-08-22 크로스플랫폼화).
+    try { if (process.platform === 'win32') execSync(`taskkill /PID ${child.pid} /T /F`); else child.kill('SIGKILL'); } catch (e) { /* 이미 종료됐으면 무시 */ }
     // 프로세스 종료 직후엔 Chromium 잠금 파일(SingletonLock 등)이 OS에서 아직 안 풀려있을 수 있어
     // 삭제가 한 번에 안 될 수 있음 — 짧게 재시도. 그래도 실패하면 다음 실행 전용 폴더라 무해하게 남음.
     for (let i = 0; i < 3; i++) {
