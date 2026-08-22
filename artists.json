@@ -103286,9 +103286,190 @@
     "sparkle": false,
     "songs": [],
     "links": {
+      "instagram": "https://www.instagram.com/hyojong_1994",
       "namu": "https://namu.wiki/w/%EB%8D%98(%ED%8E%9C%ED%83%80%EA%B3%A4)"
     },
-    "left": "2018.11.14"
+    "left": "2018.11.14",
+    "discography": [
+      {
+        "title": "Too Much",
+        "type": "싱글",
+        "releaseDate": "2026.08.07",
+        "trackCount": 1,
+        "isMain": true,
+        "titleTrack": "Too Much",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/144/15/164/14415164_20260803122440_500.jpg?YUV444",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Too Much",
+            "isTitle": true
+          }
+        ]
+      },
+      {
+        "title": "던 (DAWN) X 마이데몬",
+        "type": "OST",
+        "releaseDate": "2023.12.09",
+        "trackCount": 2,
+        "isMain": false,
+        "titleTrack": "우리 사라져도",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/113/81/053/11381053_20231208140652_500.jpg?b97898c0781b56d42e15cf6757cf64b5",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "우리 사라져도",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "우리 사라져도 (Inst.)",
+            "isTitle": false
+          }
+        ],
+        "feat": true
+      },
+      {
+        "title": "Narcissus (나르시스)",
+        "type": "미니 2집",
+        "releaseDate": "2023.09.15",
+        "trackCount": 8,
+        "isMain": true,
+        "titleTrack": "Star (Feat. 10CM)",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/113/27/530/11327530_20230914165659_500.jpg?230f12b5866cd4c061d8d129bdc152c5",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Star (Feat. 10CM)",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Heart",
+            "isTitle": true
+          },
+          {
+            "no": 3,
+            "title": "I Don’t",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Fallin' (Feat. pH-1)",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Seasons (Feat. GEMINI)",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "기억 (Feat. 김사월)",
+            "isTitle": false
+          },
+          {
+            "no": 7,
+            "title": "놓고 갈게",
+            "isTitle": false
+          },
+          {
+            "no": 8,
+            "title": "Abyss",
+            "isTitle": false
+          }
+        ]
+      },
+      {
+        "title": "빛이 나는 너에게",
+        "type": "싱글",
+        "releaseDate": "2023.04.13",
+        "trackCount": 2,
+        "isMain": true,
+        "titleTrack": "빛이 나는 너에게",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/112/22/887/11222887_20230412154617_500.jpg?31384c723cce7ae90b72873da9724cb2",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "빛이 나는 너에게",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "빛이 나는 너에게 (Instrumental)",
+            "isTitle": false
+          }
+        ]
+      },
+      {
+        "title": "Stupid Cool",
+        "type": "싱글",
+        "releaseDate": "2022.06.16",
+        "trackCount": 1,
+        "isMain": true,
+        "titleTrack": "Stupid Cool",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/109/84/701/10984701_20220615195830_500.jpg?f4771097ebd8348712d99dadcb285def",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Stupid Cool",
+            "isTitle": true
+          }
+        ]
+      },
+      {
+        "title": "던디리던",
+        "type": "미니 1집",
+        "releaseDate": "2020.10.09",
+        "trackCount": 5,
+        "isMain": true,
+        "titleTrack": "던디리던 (Feat. Jessi)",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/105/00/912/10500912_20201008141238_500.jpg?7dd4827df08c1fb593b05da8a4b650f7",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "던디리던 (Feat. Jessi)",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "가마니 (Feat. Crush)",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "딴따라",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "호랑나비",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "평소와 똑같은 밤",
+            "isTitle": false
+          }
+        ]
+      },
+      {
+        "title": "MONEY",
+        "type": "싱글",
+        "releaseDate": "2019.11.05",
+        "trackCount": 1,
+        "isMain": true,
+        "titleTrack": "MONEY",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/103/47/804/10347804_500.jpg?fd3839f28459ae5ba136ba18a1cd5572",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "MONEY",
+            "isTitle": true
+          }
+        ]
+      }
+    ]
   },
   {
     "name": {
