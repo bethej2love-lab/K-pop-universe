@@ -45,7 +45,7 @@
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <link rel="stylesheet" as="style" crossorigin
   href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@1.3.9/dist/web/static/pretendard-dynamic-subset.css">
-<link rel="stylesheet" href="kpop_universe.css?v=12">
+<link rel="stylesheet" href="kpop_universe.css?v=13">
 <script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@1/index.js"></script>
 </head>
 <body>
@@ -1302,6 +1302,19 @@ function _appendDeceasedStar(el,a){
   star.title=currentLang==='ko'?`고인 · ${a.died}`:`In memoriam · ${a.died}`;
   el.appendChild(star);
 }
+// 서브네임(옛 활동명/실명 등) — 멤버 카드 이름 옆에 작고 흐리게(2026-08-22, 데이터세션 subName 필드 렌더링).
+// 성민→"제롬"(옛 활동명), 로아→"김민경"(실명) 등. 있을 때만.
+function _appendSubName(el,a){
+  if(!a||!a.subName)return;
+  const sp=document.createElement('span');sp.className='tn-subname';sp.textContent=a.subName;
+  el.appendChild(sp);
+}
+// 별(행성) 라벨 이름 — 그 그룹의 groups[] 항목에 name 오버라이드(옛 활동명)가 있으면 그걸로(예: 성민이
+// 티오원 행성에 뜰 땐 "제롬"). 없으면 현 활동명(name.ko). 라벨이 어느 그룹 행성에 만들어지든 그 이름과 일치.
+function _starLabelName(m,groupKo){
+  const g=(_artistGroups(m)||[]).find(x=>x.ko===groupKo);
+  return (g&&g.name)||m.name.ko;
+}
 const groupLabels=[];
 let ARTISTS=[],GROUPS={};
 let _STRICT_SYNC_GROUPS=new Set(); // groups.json의 strictSync:true 그룹 — 로드 후 채워짐
@@ -1503,7 +1516,7 @@ function _refreshOpenCardText(){
     const a=_openTArtist;
     const tnEl0=document.getElementById('tn');
     tnEl0.textContent=currentLang==='ko'?a.name.ko:(a.name.en||a.name.ko);
-    _appendDeceasedStar(tnEl0,a);
+    _appendDeceasedStar(tnEl0,a);_appendSubName(tnEl0,a);
     {const _tgEl=document.getElementById('tg');const _aGrps=_artistGroups(a);
     _tgEl.innerHTML='';_tgEl.onclick=null;
     _aGrps.forEach((g)=>{
@@ -2070,7 +2083,7 @@ async function buildUniverse(){
         m._bdayYear=parseInt(m.bday)||0;
         m._filterAlpha=1; m._filterTarget=1;
         // 모바일 줌인 멤버 이름 레이블 (CSS2DObject) — 항상 생성, animate 루프에서 모바일에서만 표시
-        {const _nd=document.createElement('div');_nd.className='member-name-label';_nd.textContent=m.name.ko;const _nl=new THREE.CSS2DObject(_nd);_nl.position.copy(mPos).add(new THREE.Vector3(0,0.42,0));_nl.visible=false;scene.add(_nl);m._nameLabel=_nl;m._nameLabelEl=_nd;}
+        {const _nd=document.createElement('div');_nd.className='member-name-label';_nd.textContent=_starLabelName(m,ko);const _nl=new THREE.CSS2DObject(_nd);_nl.position.copy(mPos).add(new THREE.Vector3(0,0.42,0));_nl.visible=false;scene.add(_nl);m._nameLabel=_nl;m._nameLabelEl=_nd;}
       }
     });
   });
@@ -6737,7 +6750,7 @@ function showT(a,cx,cy,keepNavStack,urlMode,pushMobNav,noFly){
   _loadInstaPic(a);
   const tnEl=document.getElementById('tn');
   tnEl.textContent=currentLang==='ko'?a.name.ko:(a.name.en||a.name.ko);
-  _appendDeceasedStar(tnEl,a);
+  _appendDeceasedStar(tnEl,a);_appendSubName(tnEl,a);
   _renderGcLinks(a.links,'tt-links');
   const tgEl=document.getElementById('tg');
   tgEl.innerHTML='';tgEl.onclick=null;
