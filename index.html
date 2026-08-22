@@ -45,7 +45,7 @@
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <link rel="stylesheet" as="style" crossorigin
   href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@1.3.9/dist/web/static/pretendard-dynamic-subset.css">
-<link rel="stylesheet" href="kpop_universe.css?v=7">
+<link rel="stylesheet" href="kpop_universe.css?v=8">
 <script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@1/index.js"></script>
 </head>
 <body>
@@ -12035,9 +12035,11 @@ function _setAnnivStripThumb(item,thumbUrl){
   wrap.appendChild(img);
 }
 // Discovery 피드(인스타 피드 스타일 큰 썸네일 카드) 항목 — 썸네일을 못 구하면 이모지 폴백 유지
-function _appendFeedCard(container,icon,title,sub,onClick,thumbUrl,cat){
+function _appendFeedCard(container,icon,title,sub,onClick,thumbUrl,cat,opts){
   const item=document.createElement('div');
   item.className='feed-card';
+  if(opts&&opts.wide)item.classList.add('feed-wide'); // 하이라이트: 전체폭 16:9(2026-08-22)
+  if(opts&&opts.short)item.classList.add('is-short'); // 대표가 쇼츠: 9:16 세로(안 잘리게)
   if(cat)item.dataset.cat=cat; // '모아보기'류 카드 표시용(연속 노출 방지 재배치에 사용, 2026-08-21)
   item.innerHTML='<div class="feed-card-thumb-wrap"><div class="feed-card-shimmer" data-icon="'+icon+'"></div></div>'
     +'<div class="feed-card-cap"><div class="feed-card-title">'+_cleanTitle(title)+'</div>'
@@ -12062,6 +12064,8 @@ function _appendFeedCard(container,icon,title,sub,onClick,thumbUrl,cat){
 function _setFeedCardThumb(item,thumbUrl){
   const wrap=item.querySelector('.feed-card-thumb-wrap');
   if(!wrap)return;
+  // 쇼츠(9:16) 카드는 썸네일 뒤에 블러 배경을 깔아 좌우 여백을 채움(그룹/멤버 카드 .gc-ch-thumb-bg와 동일, 2026-08-22)
+  if(thumbUrl&&item.classList.contains('is-short')&&!wrap.querySelector('.feed-card-thumb-bg')){const bg=document.createElement('div');bg.className='feed-card-thumb-bg';bg.style.backgroundImage=`url(${thumbUrl})`;wrap.insertBefore(bg,wrap.firstChild);}
   if(!thumbUrl){
     const sh=wrap.querySelector('.feed-card-shimmer');
     if(sh){wrap.innerHTML='<div class="feed-card-icon-fallback">'+(sh.dataset.icon||'🎵')+'</div>';}
@@ -13414,7 +13418,7 @@ async function _buildFeedCoverSpotlight(list){
     // 탐험 탭을 안 닫고 그 위에 그냥 라이트박스만 띄우기 위함(2026-08-06).
     _appendFeedCard(list,'🎤',label,sub,()=>{
       openLightbox(vidUrl,v.category==='short',[{t:v.title,u:vidUrl,thumb:v.thumb,pa:v.published_at?.slice(0,10)}],0,{groupKo:v.group_ko});
-    },v.thumb);
+    },v.thumb,null,{wide:v.category!=='short',short:v.category==='short'});
   }catch(e){/* 조용히 무시 */}
 }
 // 급상승 하트 영상 — YouTube API view_count 동기화(관리자가 눌러줘야만 채워짐)에 의존하지 않고, 앱
@@ -13450,7 +13454,7 @@ async function _buildFeedTrendingHearts(list){
     const sub=(currentLang==='ko'?`❤️ ${countOf(top)}개 · 인기 급상승`:`❤️ ${countOf(top)} · trending`);
     _appendFeedCard(list,'🔥',label,sub,()=>{
       openLightbox(vidUrl,top.category==='short',[{t:top.title,u:vidUrl,thumb:top.thumb,pa:top.published_at?.slice(0,10)}],0,{});
-    },top.thumb);
+    },top.thumb,null,{wide:top.category!=='short',short:top.category==='short'});
   }catch(e){/* 조용히 무시 */}
 }
 // 콜라보 스포트라이트 — with_members/with_groups(다른 그룹 게스트 출연)가 태깅된 영상을 직접 카드로
@@ -13479,7 +13483,7 @@ async function _buildFeedCollabSpotlight(list){
     const sub=`${v.group_ko} × ${_feedFormatNameList(v.with_members,v.with_groups)}`;
     _appendFeedCard(list,'🤝',label,sub,()=>{
       openLightbox(vidUrl,v.category==='short',[{t:v.title,u:vidUrl,thumb:v.thumb,pa:v.published_at?.slice(0,10)}],0,{groupKo:v.group_ko});
-    },v.thumb);
+    },v.thumb,null,{wide:v.category!=='short',short:v.category==='short'});
   }catch(e){/* 조용히 무시 */}
 }
 // N년도 데뷔 그룹 모아보기 — 위 연도별 TOP 100(조회수가 앵커)과 달리 "데뷔연도"가 앵커라 다른 재미(그
@@ -13736,7 +13740,7 @@ function _buildFeedRandomVideo(list){
         openMemberPanel(document.getElementById('tt'));
       }
     }
-  }),vThumb);
+  }),vThumb,null,{wide:!isShorts(song.u)}); // 단일 랜덤영상: landscape면 전체폭(썸네일이 mqdefault 16:9라 쇼츠는 세로 처리 안 함)
 }
 
 function _buildFeedDiscovery(){
