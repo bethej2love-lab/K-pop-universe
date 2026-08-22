@@ -554,6 +554,7 @@ async function _ytSweepBannedVideos(){
     if(!rows?.length){_ytSetProg('검사할 영상이 없어요');localStorage.setItem('kpu_banned_sweep_version',version);return;}
     const toHide=rows.filter(v=>_isBannedVideoTitle(v.title,v.group_ko)).map(v=>v.id);
     if(!toHide.length){_ytSetProg(`검사 완료 — ${rows.length}개 중 해당 없음`);localStorage.setItem('kpu_banned_sweep_version',version);return;}
+    await _snapshotBeforeBulk('밴 인물 언급 영상 숨김 정리',toHide);
     for(let i=0;i<toHide.length;i+=200){
       const{error:ue}=await sb.from(_YT_TABLE).update({content_flag:'hidden'}).in('id',toHide.slice(i,i+200));
       if(ue)throw new Error(ue.message);
@@ -591,6 +592,7 @@ async function _ytSweepJunkKeywordVideos(){
     if(!rows?.length){_ytSetProg('검사할 영상이 없어요');localStorage.setItem('kpu_junk_sweep_version',version);return;}
     const toFlag=rows.filter(v=>_isJunkVideoTitle(v.title)).map(v=>v.id);
     if(!toFlag.length){_ytSetProg(`검사 완료 — ${rows.length}개 중 해당 없음`);localStorage.setItem('kpu_junk_sweep_version',version);return;}
+    await _snapshotBeforeBulk('제외 키워드 영상 무관 정리',toFlag);
     for(let i=0;i<toFlag.length;i+=200){
       const{error:ue}=await sb.from(_YT_TABLE).update({content_flag:'무관'}).in('id',toFlag.slice(i,i+200));
       if(ue)throw new Error(ue.message);
@@ -686,6 +688,7 @@ async function _ytSweepAmbiguousCollabMistag(){
     if(wipedOut.length){
       console.log(`[콜라보 오태깅 재검증] 콜라보 태그가 전부 빠진 행 ${wipedOut.length}개 — 무관 콘텐츠인지 직접 확인 필요:`,wipedOut);
     }
+    await _snapshotBeforeBulk('콜라보 오태깅 재검증(전체)',updates.map(u=>u.id));
     for(let i=0;i<updates.length;i+=200){
       const chunk=updates.slice(i,i+200);
       const results=await Promise.all(chunk.map(u=>sb.from(_YT_TABLE).update(u.patch).eq('id',u.id)));
@@ -813,6 +816,7 @@ async function _ytSweepMembersMistag(){
     if(wipedOut.length){
       console.log(`[자체 멤버 태깅 재검증] 태그가 전부 빠진 행 ${wipedOut.length}개 — 무관 콘텐츠인지 직접 확인 필요:`,wipedOut);
     }
+    await _snapshotBeforeBulk('자체 멤버 태깅 재검증(전체)',updates.map(u=>u.id));
     for(let i=0;i<updates.length;i+=200){
       const chunk=updates.slice(i,i+200);
       const results=await Promise.all(chunk.map(u=>sb.from(_YT_TABLE).update(u.patch).eq('id',u.id)));
@@ -871,6 +875,7 @@ async function _ytRescanWeakGroupAssignments(){
       _ytSetProg(`검사 완료 — ${rows.length}개 중 약한 근거로 배정된 영상 없음`+(manualSkipped?` (수동 편집이라 건너뛴 것 ${manualSkipped}개)`:''));
       return;
     }
+    await _snapshotBeforeBulk('그룹배정 신뢰도 재스캔',candidates);
     for(let i=0;i<candidates.length;i+=200){
       const{error:updErr}=await sb.from(_YT_TABLE).update({content_flag:'hidden',needs_review:true}).in('id',candidates.slice(i,i+200));
       if(updErr)throw new Error(updErr.message);
@@ -969,6 +974,7 @@ async function _ytExtractCoverSongTitles(){
       if(song)updates.push({id:v.id,cover_of_song:song});
       else noMatch++;
     });
+    await _snapshotBeforeBulk('커버곡 원곡 제목 자동 추출',updates.map(u=>u.id));
     for(let i=0;i<updates.length;i+=50){
       _ytSetProg(`[커버곡 제목 추출] 저장 중… ${i}/${updates.length}`);
       await Promise.all(updates.slice(i,i+50).map(({id,cover_of_song})=>
@@ -976,6 +982,79 @@ async function _ytExtractCoverSongTitles(){
       ));
     }
     _ytSetProg(`[커버곡 제목 추출] 완료 — ${rows.length}개 중 ${updates.length}개 확인됨, ${noMatch}개는 확인 불가`+(manualSkipped?`, 수동태그 ${manualSkipped}개 건너뜀`:'')+' (재실행하면 이어서 시도됨)');
+  }finally{
+    if(btn)btn.disabled=false;
+  }
+}
+
+// ── 일괄 작업 실행 취소(undo) 스냅샷 ─────────────────────────────────────────────
+// 대량 스윕/재검증/재스캔 버튼이 수백~수만 행을 자동으로 바꾸기 "직전"에, 바뀔 행들의 현재값을
+// admin_bulk_snapshots 테이블에 1회분(batch)으로 떠둔다. 오조작 시 "↩︎ 마지막 일괄 작업 되돌리기"
+// 버튼이 그 batch를 통째로 복원 — undo가 곧 백업이 되는 구조(2026-08-22, 자문 백업전략 #1, 3.5만
+// 재스캔 사고 재발 방지책). 어느 버튼이 어느 컬럼을 바꾸든 하나의 헬퍼로 커버하려고, 이 관리도구들이
+// 바꿀 수 있는 컬럼 전부를 고정 목록으로 떠둔다(안 바뀐 컬럼까지 복원해도 값이 같아 무해).
+const _BULK_SNAP_TABLE='admin_bulk_snapshots';
+const _BULK_SNAP_COLS=['group_ko','members','with_members','with_groups','content_flag','needs_review','cover_of_members','cover_of_groups','cover_of_song','tags_manual'];
+// 영향받는 id들의 "바꾸기 전" 값을 떠서 batch로 저장한다. 실패해도(테이블 없음/권한 등) 원래 작업은
+// 막지 않고 안내만 남긴다 — 스냅샷이 안 됐다고 관리도구 자체가 멈추면 안 됨(그만큼 되돌리기만 불가).
+async function _snapshotBeforeBulk(opLabel,ids){
+  if(!sb||!ids||!ids.length)return null;
+  const uniq=[...new Set(ids)];
+  const batchId=(self.crypto&&self.crypto.randomUUID)?self.crypto.randomUUID():('b'+Date.now()+Math.random().toString(36).slice(2));
+  try{
+    let saved=0;
+    for(let i=0;i<uniq.length;i+=200){
+      const chunk=uniq.slice(i,i+200);
+      const{data:rows,error}=await sb.from(_YT_TABLE).select(['id',..._BULK_SNAP_COLS].join(',')).in('id',chunk);
+      if(error)throw new Error(error.message);
+      if(!rows||!rows.length)continue;
+      const snapRows=rows.map(r=>{
+        const before={};
+        _BULK_SNAP_COLS.forEach(c=>{before[c]=r[c];});
+        return{batch_id:batchId,op_label:opLabel,row_id:String(r.id),before_data:before};
+      });
+      const{error:insErr}=await sb.from(_BULK_SNAP_TABLE).insert(snapRows);
+      if(insErr)throw new Error(insErr.message);
+      saved+=snapRows.length;
+    }
+    // 오래된 스냅샷(30일 경과) 정리 — 무한 누적 방지, 실패해도 무시
+    try{const cutoff=new Date(Date.now()-30*24*3600*1000).toISOString();await sb.from(_BULK_SNAP_TABLE).delete().lt('created_at',cutoff);}catch(_){}
+    return{batchId,saved};
+  }catch(e){
+    _ytSetProg('ℹ️ 되돌리기 준비 안 됨(작업은 정상 진행됨) — '+e.message+' · admin_bulk_snapshots 테이블 SQL을 1회 실행하면 켜집니다.');
+    return null;
+  }
+}
+// 가장 최근 일괄 작업(batch)을 이전 상태로 복원한다. 되돌린 batch는 삭제해서 중복 되돌리기를 막는다
+// (그 전 batch가 새 "마지막"이 되어 연속 undo도 가능). tags_manual 값도 스냅샷 시점 그대로 복원됨.
+async function _ytUndoLastBulk(){
+  if(!sb){_ytSetProg('Supabase 연결 없음');return;}
+  const btn=document.getElementById('sp-yt-undo-bulk-btn');
+  try{
+    _ytSetProg('[되돌리기] 마지막 일괄 작업 조회 중…');
+    const{data:last,error:lErr}=await sb.from(_BULK_SNAP_TABLE).select('batch_id,op_label,created_at').order('created_at',{ascending:false}).limit(1);
+    if(lErr){_ytSetProg('되돌리기 조회 실패: '+lErr.message+' (admin_bulk_snapshots 테이블 SQL을 실행했는지 확인)');return;}
+    if(!last||!last.length){_ytSetProg('되돌릴 일괄 작업이 없어요 (스윕/재검증/재스캔을 실행한 적이 있어야 해요)');return;}
+    const{batch_id,op_label,created_at}=last[0];
+    const when=new Date(created_at).toLocaleString('ko-KR');
+    if(!confirm(`마지막 일괄 작업을 되돌릴까요?\n\n작업: ${op_label}\n시각: ${when}\n\n이 작업으로 바뀐 행들을 그 직전 상태로 복원합니다.`)){_ytSetProg('되돌리기 취소됨');return;}
+    if(btn)btn.disabled=true;
+    const{data:snaps,error:sErr}=await _sbFetchAll(()=>sb.from(_BULK_SNAP_TABLE).select('row_id,before_data').eq('batch_id',batch_id).order('snap_id'));
+    if(sErr){_ytSetProg('되돌리기 데이터 로드 실패: '+sErr.message);return;}
+    if(!snaps||!snaps.length){_ytSetProg('되돌릴 스냅샷 데이터가 없어요');return;}
+    let restored=0;
+    for(let i=0;i<snaps.length;i+=100){
+      const chunk=snaps.slice(i,i+100);
+      const results=await Promise.all(chunk.map(s=>sb.from(_YT_TABLE).update(s.before_data).eq('id',s.row_id)));
+      const failed=results.find(r=>r.error);
+      if(failed)throw new Error(failed.error.message);
+      restored+=chunk.length;
+      _ytSetProg(`[되돌리기] ${Math.min(i+100,snaps.length)}/${snaps.length}개 복원 중…`);
+    }
+    await sb.from(_BULK_SNAP_TABLE).delete().eq('batch_id',batch_id);
+    _ytSetProg(`되돌리기 완료! "${op_label}"으로 바뀐 ${restored}개 행을 이전 상태로 복원했어요.`);
+  }catch(e){
+    _ytSetProg('되돌리기 오류: '+e.message);
   }finally{
     if(btn)btn.disabled=false;
   }
@@ -4307,6 +4386,7 @@ document.getElementById('vid-tag-thumb-refresh').addEventListener('click',async 
   document.getElementById('sp-scan-namecollide-btn')?.addEventListener('click',_ytScanAmbiguousNameGroupMisassignment);
   document.getElementById('sp-membersfix-btn')?.addEventListener('click',_ytSweepMembersMistag);
   document.getElementById('sp-yt-rescan-weak-btn')?.addEventListener('click',_ytRescanWeakGroupAssignments);
+  document.getElementById('sp-yt-undo-bulk-btn')?.addEventListener('click',_ytUndoLastBulk);
   document.getElementById('sp-catfix-btn')?.addEventListener('click',_ytSweepCategoryMistag);
   document.getElementById('sp-covertitle-btn')?.addEventListener('click',_ytExtractCoverSongTitles);
   document.getElementById('sp-yt-autotag')?.addEventListener('click',_ytAutoTagMembers);
