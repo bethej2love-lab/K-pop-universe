@@ -9321,7 +9321,7 @@ function _openColPhotoGrid(colId){
   guide.style.cssText='font-size:8.5px;color:rgba(150,175,225,0.22);padding:0 16px 6px;line-height:1.3;letter-spacing:.01em;font-weight:400;';
   guide.textContent=currentLang==='ko'?'비하·성적 대상화 금지 · 저작권자 요청 시 삭제':'No demeaning/sexualizing · removable on request';
   const grid=document.createElement('div');
-  grid.style.cssText='flex:1;overflow-y:auto;padding:0 12px 24px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px;align-content:start;';
+  grid.style.cssText='flex:1;overflow-y:auto;padding:2px 12px 24px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;align-content:start;'; // gap 5→7 + 위 여백 살짝(2026-08-22 사용자 요청 — 위아래 여백)
   const fi=document.createElement('input');fi.type='file';fi.accept='image/*';fi.multiple=true;fi.style.display='none';
   fi.addEventListener('change',async()=>{
     const files=[...fi.files];fi.value=''; // ⚠️ fi.value=''가 라이브 FileList를 비우므로 반드시 먼저 배열로 복사(2026-08-22 버그픽스)
@@ -9342,16 +9342,10 @@ function _openColPhotoGrid(colId){
     col.photos.forEach(ph=>{
       const cell=document.createElement('div');
       cell.style.cssText='position:relative;aspect-ratio:1;border-radius:8px;overflow:hidden;background:rgba(255,255,255,0.05);cursor:pointer;';
-      const im=document.createElement('img');im.src=ph.u;im.loading='lazy';im.style.cssText='width:100%;height:100%;object-fit:cover;display:block;';
-      im.addEventListener('click',()=>_openPhotoFull(ph.u));
+      const im=document.createElement('img');im.src=ph.u;im.loading='lazy';im.style.cssText='position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;'; // absolute로 빼서 셀 높이를 aspect-ratio로만 결정 — iOS에서 in-flow img가 행 높이를 오산해 위아래로 겹치던 것 방지(2026-08-22)
+      // 그리드는 깨끗하게 — 사진 위 아무 표시 없음(2026-08-22 사용자 요청). 삭제는 사진을 크게 본 화면(_openPhotoFull)의 🗑에서.
+      im.addEventListener('click',()=>_openPhotoFull(ph.u,()=>{_removePhotoFromCol(colId,ph.u);renderGrid();}));
       cell.appendChild(im);
-      const del=document.createElement('button');del.textContent='×';del.setAttribute('aria-label','삭제');
-      del.style.cssText='position:absolute;top:3px;right:3px;width:22px;height:22px;border-radius:50%;background:rgba(0,0,0,0.55);border:none;color:#fff;font-size:15px;line-height:1;cursor:pointer;';
-      del.addEventListener('click',e=>{
-        e.stopPropagation();
-        _confirmDialog({title:currentLang==='ko'?'사진 삭제':'Delete photo',msg:currentLang==='ko'?'이 사진을 삭제할까요?':'Delete this photo?',okLabel:currentLang==='ko'?'삭제':'Delete'}).then(ok=>{if(ok){_removePhotoFromCol(colId,ph.u);renderGrid();}});
-      });
-      cell.appendChild(del);
       grid.appendChild(cell);
     });
   }
@@ -9359,7 +9353,7 @@ function _openColPhotoGrid(colId){
   renderGrid();
   ov.style.display='flex';
 }
-function _openPhotoFull(url){
+function _openPhotoFull(url,onDelete){
   let f=document.getElementById('col-photo-full');
   if(!f){
     f=document.createElement('div');f.id='col-photo-full';
@@ -9387,6 +9381,16 @@ function _openPhotoFull(url){
     finally{dl.disabled=false;dl.textContent=currentLang==='ko'?'⤓ 저장':'⤓ Save';}
   });
   f.appendChild(dl);
+  // 삭제(2026-08-22) — 그리드는 깨끗하게 두고, 사진 크게 본 이 화면에서만 삭제. onDelete가 있을 때(본인 소유)만 노출.
+  if(onDelete){
+    const tr=document.createElement('button');tr.textContent=currentLang==='ko'?'🗑 삭제':'🗑 Delete';
+    tr.style.cssText='position:fixed;top:calc(14px + env(safe-area-inset-top,0px));right:14px;background:rgba(230,90,90,0.16);border:0.5px solid rgba(240,120,120,0.4);color:#ffd8d8;border-radius:20px;padding:7px 15px;font-size:13px;font-weight:600;cursor:pointer;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);z-index:1;';
+    tr.addEventListener('click',e=>{
+      e.stopPropagation();
+      _confirmDialog({title:currentLang==='ko'?'사진 삭제':'Delete photo',msg:currentLang==='ko'?'이 사진을 삭제할까요?':'Delete this photo?',okLabel:currentLang==='ko'?'삭제':'Delete'}).then(ok=>{if(ok){onDelete();f.style.display='none';f.innerHTML='';}});
+    });
+    f.appendChild(tr);
+  }
   f.style.display='flex';
 }
 // 여러 영상을 한 번에 담을 때(일괄 선택 → 컬렉션에 추가)도 저장/동기화가 영상 개수만큼 반복 호출되지
