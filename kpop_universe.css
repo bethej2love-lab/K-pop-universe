@@ -1077,7 +1077,9 @@
      카드가 그 차이만큼 안 늘어나서 두 컬럼이 안 맞아 보이던 문제(사용자 제보 — "계단식으로 어긋남").
      stretch로 바꾸면 짧은 카드도 행 높이만큼 배경이 채워져서 나란히 맞아 보임(썸네일 자체는 JS로 이미
      높이가 고정돼있어 늘어나지 않음, 영향 없음). */
-  .gc-ch-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px;align-items:stretch;}
+  /* dense: 전체폭(.featured/.gc-ch-wide span 2) 카드가 홀수 위치 뒤에 와서 빈 칸이 생기면 뒤 단일 카드로
+     자동 채움 — feed-grid와 동일한 예방책(featured가 맨 위일 땐 채울 구멍이 없어 변화 없음, 2026-08-22). */
+  .gc-ch-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px;align-items:stretch;grid-auto-flow:dense;}
   .gc-ch-item{position:relative;cursor:pointer;border-radius:6px;overflow:hidden;background:rgba(255,255,255,0.04);transition:opacity .13s;}
   .gc-ch-item:hover{opacity:.78;}
   .gc-ch-thumb{width:100%;aspect-ratio:16/9;object-fit:cover;display:block;}
@@ -2364,7 +2366,9 @@
   .feed-card{cursor:pointer;position:relative;overflow:hidden;-webkit-tap-highlight-color:transparent;border-bottom:0.5px solid rgba(255,255,255,0.06);transition:background .13s;animation:feed-card-appear .28s ease both;}
   /* 2열 그리드(2026-08-21, Fable UX 감사 반영 — "화면당 1장은 발견량이 너무 적다") — 풀블리드 1열 목록에서
      2열 타일 그리드로 전환. 카드 자체(_appendFeedCard)는 그대로 재사용하고 컨테이너 레이아웃만 바꾼다. */
-  .feed-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 20px 4px;align-items:start;}
+  /* grid-auto-flow:dense — 전체폭(.feed-wide span 2) 카드가 홀수 위치 뒤에 오면 직전 행 오른쪽 칸이
+     비던 버그(2026-08-22 사용자 제보) 수정: 빈 칸을 뒤쪽 단일 카드로 자동 메움(구멍 있을 때만 작동). */
+  .feed-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 20px 4px;align-items:start;grid-auto-flow:dense;}
   /* 크기 섞기(2026-08-22) — 그룹/멤버 카드 그리드처럼: 하이라이트(단일영상)는 전체폭 16:9, 대표가 쇼츠면 9:16 세로 */
   .feed-grid .feed-card.feed-wide{grid-column:span 2;}
   .feed-card.is-short .feed-card-thumb-wrap{aspect-ratio:9/16;}
