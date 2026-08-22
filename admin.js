@@ -2031,6 +2031,13 @@ function _vmRenderChannels(term){
     const info=document.createElement('div');info.className='ec-info';
     const name=document.createElement('div');name.className='ec-name';name.textContent=ch.name;
     info.appendChild(name);
+    // 아이돌개인 채널이면 소유 아이돌 이름을 옆에 표기(공동운영이면 여러 명 · 로 구분, 2026-08-22)
+    if(ch.tier==='idol'&&ch.owner?.mko){
+      const own=document.createElement('div');own.className='ec-owner';
+      own.textContent='👤 '+ch.owner.mko.split(',').map(s=>s.trim()).filter(Boolean).join(' · ');
+      own.style.cssText='font-size:11px;color:rgba(155,178,228,0.72);margin-top:1px;';
+      info.appendChild(own);
+    }
     if(ch.handle){const handle=document.createElement('div');handle.className='ec-handle';handle.textContent='@'+ch.handle;info.appendChild(handle);}
     item.appendChild(info);
     if(!isOfficial){
@@ -2074,13 +2081,18 @@ function _ecUpdateOwnerGkoOptions(){
   const nameEl=document.getElementById('vm-ch-add-owner');
   const gkoSel=document.getElementById('vm-ch-add-owner-gko');
   if(!nameEl||!gkoSel)return;
-  const name=nameEl.value.trim();
-  const matches=name?ARTISTS.filter(a=>a.name.ko===name):[];
-  if(matches.length<2){gkoSel.style.display='none';gkoSel.innerHTML='';return;}
-  gkoSel.innerHTML='<option value="">동명이인 — 그룹 선택…</option>'+matches.map(a=>{
-    const gko=_ytGroupKoFor(a);
-    return `<option value="${gko}">${a.name.ko} (${gko})</option>`;
-  }).join('');
+  // 공동운영 지원(2026-08-22): 소유자를 쉼표로 여러 명 넣을 수 있음(예: "백승, 뮤"). 이름이 동명이인이거나
+  // 소유자들의 그룹이 갈리면 그룹을 명시적으로 고르게 한다(공동소유자는 같은 그룹이 원칙이라 보통은 자동 확정).
+  const names=nameEl.value.split(',').map(s=>s.trim()).filter(Boolean);
+  const groupSet=new Set();let anyAmbiguous=false;
+  names.forEach(nm=>{
+    const ms=ARTISTS.filter(a=>a.name.ko===nm);
+    if(ms.length>=2)anyAmbiguous=true;
+    if(ms.length)ms.forEach(a=>groupSet.add(_ytGroupKoFor(a)));
+    else groupSet.add(nm); // GROUPS 밖 솔로 — 이름 자체가 그룹 키
+  });
+  if(!anyAmbiguous&&groupSet.size<=1){gkoSel.style.display='none';gkoSel.innerHTML='';return;}
+  gkoSel.innerHTML='<option value="">그룹 선택…(동명이인/공동소유)</option>'+[...groupSet].map(g=>`<option value="${g}">${g}</option>`).join('');
   gkoSel.style.display='';
 }
 document.getElementById('vm-ch-add-owner')?.addEventListener('input',_ecUpdateOwnerGkoOptions);
@@ -2095,20 +2107,27 @@ async function _ecAddChannel(){
   const handle=(handleEl?.value||'').trim().replace(/^@/,'');
   const name=(nameEl?.value||'').trim();
   const tier=tierEl?.value||'variety';
-  const ownerMko=(ownerEl?.value||'').trim();
+  const ownerNames=(ownerEl?.value||'').split(',').map(s=>s.trim()).filter(Boolean); // 공동운영 채널: 쉼표로 여러 명(2026-08-22)
+  const ownerMko=ownerNames.join(',');
   if(!handle||!name){_showShareToast('핸들과 이름을 입력해주세요');return;}
   if(_EXT_CHANNELS.some(c=>c.handle.toLowerCase()===handle.toLowerCase())){_showShareToast('이미 등록된 채널이에요');return;}
   let ownerGko=null;
   if(tier==='idol'){
-    if(!ownerMko){_showShareToast('아이돌개인 유형은 소유자 이름이 필요해요');return;}
-    const matches=ARTISTS.filter(a=>a.name.ko===ownerMko);
-    if(matches.length>1){
-      ownerGko=ownerGkoEl?.value||'';
-      if(!ownerGko){_showShareToast('동명이인이 있어요 — 그룹을 선택해주세요');return;}
-    }else if(matches.length===1){
-      ownerGko=_ytGroupKoFor(matches[0]);
+    if(!ownerNames.length){_showShareToast('아이돌개인 유형은 소유자 이름이 필요해요');return;}
+    // 공동운영이면 소유자 여러 명 — 그룹(owner_gko)은 공동소유자가 공유한다고 보고 하나로 확정한다.
+    const gkoSet=new Set();let anyAmbiguous=false;
+    ownerNames.forEach(nm=>{
+      const ms=ARTISTS.filter(a=>a.name.ko===nm);
+      if(ms.length>=2)anyAmbiguous=true;
+      if(ms.length===1)gkoSet.add(_ytGroupKoFor(ms[0]));
+      else if(!ms.length)gkoSet.add(nm); // GROUPS에 없는 솔로 — 이름 자체가 그룹 키
+    });
+    const picked=(ownerGkoEl&&ownerGkoEl.style.display!=='none')?(ownerGkoEl.value||''):'';
+    if(anyAmbiguous||gkoSet.size>1){
+      if(!picked){_showShareToast('소유자의 그룹을 선택해주세요(동명이인이거나 소유자들 그룹이 갈려요)');return;}
+      ownerGko=picked;
     }else{
-      ownerGko=ownerMko; // GROUPS에 없는 솔로(이영지 등) — 이름 자체가 그룹 키(_ytGroupKoFor와 동일 관례)
+      ownerGko=picked||[...gkoSet][0]||ownerNames[0];
     }
   }else if(tier==='fans'){
     // 팬 채널은 특정 멤버가 아니라 그룹 전체가 대상 — owner_mko 없이 owner_gko만 채워서 idol과 같은
@@ -3224,8 +3243,9 @@ function _classifyGuestGroup(sec,gko){
 function _extOwnerGko(owner){
   if(!owner)return null;
   if(owner.gko)return owner.gko;
-  const a=ARTISTS.find(x=>x.name.ko===owner.mko);
-  return a?_ytGroupKoFor(a):owner.mko;
+  const first=(owner.mko||'').split(',')[0].trim(); // 공동소유자는 그룹 공유 — 첫 이름으로 그룹 해석
+  const a=ARTISTS.find(x=>x.name.ko===first);
+  return a?_ytGroupKoFor(a):first;
 }
 // 채널 1개 분량 파싱 → Supabase rows 배열 반환. strict는 호출부(_ytSyncExtChannels/_ytBackfillChannelCore)가
 // 그 채널의 tier('variety'/'magazine'/'idol'/'show')를 보고 넘겨준다 — _EXT_STRICT_TIERS 참고.
@@ -3242,7 +3262,7 @@ function _extBuildRows(vids,strict,tier,owner){
     // idol tier(owner.mko 있음)는 인물이 이미 확정이라 그대로 고정. fans tier(owner.gko만 있음, 그룹
     // 전체가 대상이라 특정 멤버가 없음)는 제목에서 그 그룹 멤버 언급을 찾아본다 — 없으면(그룹 전체
     // 다루는 영상) 빈 배열로 둔다(2026-08-21).
-    const members=owner?.mko?[owner.mko]:(match.membersByGroup[ownerGko||match.primaryGroup]||[]);
+    const members=owner?.mko?owner.mko.split(',').map(s=>s.trim()).filter(Boolean):(match.membersByGroup[ownerGko||match.primaryGroup]||[]); // 공동운영이면 소유자 여러 명 다 붙임(2026-08-22)
     const withGroups=[],withMembers=[];
     // owner가 있으면 match.primaryGroup도 게스트 후보에 포함시켜야 함 — owner(솔로 아티스트 등)는
     // GROUPS에 없어 제목의 그룹명 리터럴 매칭 대상이 아니므로, 게스트 그룹이 유일하게 매칭되면 그게
