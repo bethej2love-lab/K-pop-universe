@@ -67327,6 +67327,29 @@
           }
         ]
       }
+    ],
+    "discography": [
+      {
+        "title": "신의퀴즈4 OST Part 1",
+        "type": "싱글",
+        "releaseDate": "2014.06.20",
+        "trackCount": 2,
+        "isMain": true,
+        "titleTrack": "어쩌면 난",
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/022/61/732/2261732_500.jpg",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "어쩌면 난",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "어쩌면 난 (Inst.)",
+            "isTitle": false
+          }
+        ]
+      }
     ]
   },
   {
