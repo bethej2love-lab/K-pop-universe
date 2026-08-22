@@ -10120,7 +10120,10 @@ const _FEED_BADGE_SEEN_KEY='kpu_feed_badge_seen';
 // 열려서 뱃지가 중복이고, 게다가 peek는 tab-feed '클릭'이 아니라 _openFeedOverlay로 열려 뱃지 클리어(9873)가
 // 안 걸려 반짝점이 영구 잔존했음(2026-08-21, 사용자 지적). peek 억제 조건(위 _showOnboardHint의
 // isMob()&&!nickname&&_visitCount<=2)과 동일하게 맞춰, 패널이 안 열려 존재를 모를 모바일 신규 1-2회차에만 표시.
-if(!localStorage.getItem(_FEED_BADGE_SEEN_KEY)&&isMob()&&!myProfile?.nickname&&_visitCount<=2)document.getElementById('tab-feed').classList.add('show-badge');
+// ⚠️ myProfile(let)은 이 지점보다 한참 뒤(10171)에 선언돼 여기서 참조하면 TDZ 크래시 — isMob()로 단락되는
+// 데스크톱은 멀쩡하고 모바일만 로딩화면에서 영구 정지했음(2026-08-22 회귀 수정, 자문 제보). 최상위 즉시실행
+// 지점이라 프로필은 변수 대신 localStorage에서 직접 읽는다(PROFILE_KEY도 10166이라 TDZ, 리터럴 사용).
+if(!localStorage.getItem(_FEED_BADGE_SEEN_KEY)&&isMob()&&!JSON.parse(localStorage.getItem('kpu_profile')||'null')?.nickname&&_visitCount<=2)document.getElementById('tab-feed').classList.add('show-badge');
 document.getElementById('tab-feed').addEventListener('click',e=>{
   e.stopPropagation();
   exitObSearch();
