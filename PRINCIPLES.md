@@ -129,7 +129,7 @@ CHANGELOG.md — 세션/기기 간 작업 인수인계 로그. 새 세션 시작
 
 
 
-⚠️ 이 프로젝트는 git 저장소가 아님 — 로컬은 GitHub 레포에서 받은 zip을 푼 폴더이고, 배포는 사용자가 직접 GitHub 웹에서 드래그 업로드하는 방식(git pull/push 아님). 아래 규칙은 이 방식 기준.
+⚠️ 2026-08-22 방식 변경: 이제 git 저장소로 운영함(그 전엔 zip을 풀어 GitHub 웹에서 드래그 업로드하는 방식이었음). 정식 작업 클론은 `/Users/a1234/Documents/GitHub/kpopuniverse`(원격 `github.com/bethej2love-lab/kpopuniverse`, main 브랜치), GitHub Desktop으로 받아둠. **모든 작업·배포는 이 클론에서** 함 — 터미널에서 `git commit` + `git push origin main`으로 배포하면 GitHub Pages(kpop-universe.kr)가 자동 재배포됨. **Claude Code가 작업 완료 후 커밋·푸시까지 해도 됨**(사용자 승인 하에 정착, 2026-08-22). 수동 드래그 업로드도 여전히 가능하지만 기본은 git push. ⚠️ 예전 zip 폴더(예: `Downloads/kpopuniverse-main`)는 구버전이라 절대 거기서 작업/업로드하지 말 것 — 반드시 위 클론에서 하고, 시작 전과 push 직전에 `git fetch origin`/`git pull`로 최신화(로컬 캐시만 믿지 말 것, CHANGELOG 사용규칙 참고).
 
 
 
@@ -145,9 +145,9 @@ CHANGELOG.md — 세션/기기 간 작업 인수인계 로그. 새 세션 시작
 
 &nbsp; - 버그픽스: 재현된 문제 최소 범위만, 파일 무관
 
-\- 여러 세션(창)을 동시에 운영할 땐 같은 파일을 동시에 건드리지 말 것 — git이 없어서 충돌이 조용히 묻힘(나중에 배포하는 쪽이 앞선 수정을 통째로 덮어씀, 경고도 안 뜸). 겹치는 파일을 만지는 세션은 동시에 두 개 이상 열지 않기.
+\- 여러 세션(창)을 동시에 운영할 땐 같은 파일을 동시에 건드리지 말 것 — 이제 git이라 같은 파일 동시수정은 push 시 merge conflict로 드러나긴 하지만(예전처럼 조용히 묻히진 않음), 구버전 클론/zip에서 작업하면 앞선 커밋을 모른 채 덮어쓸 위험은 여전함. 겹치는 파일을 만지는 세션은 동시에 두 개 이상 열지 않기. push 전 항상 `git fetch origin` 먼저.
 
-\- 세션 종료 시 CHANGELOG.md에 한 줄 기록. 배포(GitHub 업로드)는 사용자가 직접 판단해서 진행 — Claude Code가 먼저 나서서 배포하지 않음.
+\- 세션 종료 시 CHANGELOG.md에 한 줄 기록. 배포는 이 클론에서 `git commit` + `git push origin main` — Claude Code가 작업 완료 후 커밋·푸시까지 진행해도 됨(2026-08-22 방식 정착). 단 커밋·push 직전에 반드시 `git fetch origin` 먼저(다른 기기/세션이 그 사이 올린 걸 놓치지 않게).
 
 \- "경쟁 구도"(같은 작업을 여러 세션에 동시에 던지고 결과 비교)는 지금 단계에선 안 씀 — 코드베이스가 하나뿐이라 충돌 위험만 키움. 디자인 시안 비교처럼 결과물이 여러 개여도 되는 작업에만 쓸 것.
 

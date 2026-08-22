@@ -20,6 +20,10 @@
 
 ---
 
+## 2026-08-22
+
+- [완료][admin.js][index.html] 일회용 버튼 3개 제거 — "트리플에스 유닛명 오매칭 정리"(`sp-yt-cleanup-unittoken-btn`/`_ytCleanupUnitTokenMistag`)·"흔한단어 멤버명 오매칭 정리"(`sp-yt-cleanup-hashtagonly-btn`/`_ytCleanupHashtagOnlyMistag`+`_HASHTAG_ONLY_CLEANUP_NAMES`)·"아이돌개인 채널 owner_gko 백필"(`sp-ec-backfill-ownergko-btn`/`_ecBackfillOwnerGko`). 전부 2026-08-21 소급정리용 1회성이라 실행 완료 후 역할 끝남. 버튼 HTML+힌트·함수·바인딩·상수 전부 삭제, `node --check`로 문법 검증, `_ADMIN_JS_VER`→2026-08-22a. ⚠️ 작업 중 발견: Downloads의 8/20 zip 폴더가 라이브보다 구버전이라 하마터면 그걸 고쳐 올려 8/21 작업을 덮어쓸 뻔 → 이후 GitHub 클론(Documents/GitHub/kpopuniverse)에서 직접 작업+push하는 것으로 정리(PRINCIPLES.md 갱신).
+
 ## 2026-08-21
 
 - [완료][artists.json] 엑스원(X1) 우즈(전 조승연) `name.ko`를 "우즈(조승연)"→"우즈"로 정리(사용자 제보 — 콜라보 표기 시 "우즈(조승연)(엑스원)"처럼 그룹 접미사가 이중으로 붙어 지저분하게 보임). 원인은 에반(희승, 엔하이픈)과 같은 패턴 — 등록명 자체에 실명이 괄호로 같이 박혀있어서, 콜라보 태깅 시스템이 붙이는 "(그룹)" 접미사와 합쳐지면서 "이름(실명)(그룹)" 형태가 됨. 헤드리스로 태그 조합/역매칭까지 재현 확인 — 이제 "우즈(엑스원)"로 깔끔하게 생성되고 `_findArtistByConnName`도 정상 역매칭됨.
