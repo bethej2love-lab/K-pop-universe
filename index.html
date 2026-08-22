@@ -15598,7 +15598,12 @@ async function _loadCollectionRow(ko,containerId,memberKo,cardMemberKo){
   const row=document.getElementById(containerId);
   if(row)row.style.display='none';
   const uid=window._sbSession?.user?.id||null;
-  const mine=collections.filter(c=>memberKo?_collectionMemberKos(c).includes(memberKo):_collectionGroupKos(c).includes(ko))
+  // 동명이인 누수 방지(2026-08-22 사용자 제보 — 성민(크래비티)에 만든 컬렉션이 다른 성민 카드에도 다 떴음):
+  // 이름(memberKo)만 매칭하면 동명이인이 전부 걸린다. 이 카드가 보는 그룹(ko)과 멤버가 "같은 영상"이 담긴
+  // 컬렉션만 이 멤버 것으로 인정한다(영상엔 groupKo가 함께 저장돼 있어 인물 구분 가능).
+  const mine=collections.filter(c=>memberKo
+      ?(c.videos||[]).some(v=>v.groupKo===ko&&(v.memberKos||[]).includes(memberKo))
+      :_collectionGroupKos(c).includes(ko))
     .map(c=>({id:c.id,name:c.name,videos:c.videos,coverU:c.coverU,coverImg:c.coverImg,mine:true}));
   let pub=[];
   if(sb){
@@ -15606,7 +15611,10 @@ async function _loadCollectionRow(ko,containerId,memberKo,cardMemberKo){
     if(_colLikesP)await _colLikesP; // 좋아요 많은 순 정렬에 필요
     const all=_pubCollectionsCache||[];
     const mineIds=new Set(mine.map(m=>m.id));
-    pub=all.filter(r=>!mineIds.has(r.id)&&(memberKo?(r.member_kos||[]).includes(memberKo):(r.group_kos||[]).includes(ko)))
+    // 공개 컬렉션도 같은 동명이인 누수 방지 — 이름(member_kos)만 보지 말고 이 그룹(group_kos)까지 함께 요구.
+    // (member_kos/group_kos는 영상 단위가 아니라 컬렉션 전체 집계라 근사치지만, 동명이인끼리 그룹까지 겹치는
+    // 일은 드물어 실사용 누수를 사실상 없앤다.)
+    pub=all.filter(r=>!mineIds.has(r.id)&&(memberKo?((r.member_kos||[]).includes(memberKo)&&(r.group_kos||[]).includes(ko)):(r.group_kos||[]).includes(ko)))
       .sort((a,b)=>(_colLikeCounts.get(b.id)||0)-(_colLikeCounts.get(a.id)||0))
       .slice(0,20).map(r=>({id:r.id,name:r.name,videos:r.items||[],coverImg:r.cover_img||null,mine:r.owner_id===uid,ownerNick:r.owner_nick||null}));
   }
