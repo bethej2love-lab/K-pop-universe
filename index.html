@@ -341,10 +341,8 @@
     <button class="sp-yt-sync" id="sp-yt-sweep-junk" style="margin-top:4px;opacity:.8;">무조건 제외 키워드 영상 무관 정리</button>
     <div class="sp-btn-hint">아래 목록에 있는 키워드가 제목에 있는 기존 영상을 찾아 '무관'으로 정리해요.</div>
     <div class="sp-subsec-lbl" id="sp-junk-keywords-lbl" style="margin-top:2px;font-size:11px;opacity:.55;"></div>
-    <button class="sp-yt-sync" id="sp-yt-rescan-weak-btn" style="margin-top:4px;opacity:.8;">그룹배정 신뢰도 재스캔(기존 데이터)</button>
-    <div class="sp-btn-hint">제목에 그룹명 없이 멤버 이름 하나만으로 그룹이 정해진 기존 영상(Love/루나/조이 사고 계열)을 찾아 "그룹배정 검수" 큐로 보내요 — 관리자 확인 태그는 안 건드려요.</div>
     <button class="sp-yt-sync" id="sp-yt-undo-bulk-btn" style="margin-top:10px;opacity:.9;border:1px solid #d08a8a;">↩︎ 마지막 일괄 작업 되돌리기</button>
-    <div class="sp-btn-hint">바로 위 스윕/재검증/재스캔 버튼들이 잘못 돌아갔을 때, 그 작업 직전 상태로 되돌려요(가장 최근 1회분). 각 버튼이 실행 직전 자동으로 스냅샷을 떠두기 때문에 별도 준비 없이 눌러도 돼요. (되돌리기 기능은 admin_bulk_snapshots 테이블 SQL을 1회 실행해야 켜져요.)</div>
+    <div class="sp-btn-hint">바로 위 스윕/재검증 버튼들이 잘못 돌아갔을 때, 그 작업 직전 상태로 되돌려요(가장 최근 1회분). 각 버튼이 실행 직전 자동으로 스냅샷을 떠두기 때문에 별도 준비 없이 눌러도 돼요. (되돌리기 기능은 admin_bulk_snapshots 테이블 SQL을 1회 실행해야 켜져요.)</div>
 
     <div class="sp-yt-prog" id="sp-yt-prog"></div>
   </div>
@@ -15710,7 +15708,7 @@ function _updateAdminUI(){
 // 옛 버전을 계속 서빙해서 고친 코드가 반영 안 되는 것처럼 보이는 사고가 남(2026-08-18, HTML 엔티티 정리
 // 버튼 타임아웃 재수정 후에도 계속 재현된다는 제보로 발견). admin.js 내용을 바꿀 때마다 이 버전 문자열도
 // 같이 올릴 것(sw.js의 CACHE_VERSION과 같은 수동 관리 방식).
-const _ADMIN_JS_VER='2026-08-22b';
+const _ADMIN_JS_VER='2026-08-22c';
 function _loadAdminScript(){
   if(!_isAdmin()||document.getElementById('admin-js-script'))return;
   const s=document.createElement('script');

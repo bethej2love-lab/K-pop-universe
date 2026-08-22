@@ -832,63 +832,6 @@ async function _ytSweepMembersMistag(){
   }
 }
 
-// 그룹배정 신뢰도 재스캔(일회용, 기존 데이터 소급) — 2026-08-20 신뢰도 2단계 도입 전에 이미 들어가있던
-// 영상들 대상. 위 온리원오프 Love 전용 정리와 달리 이건 "Love" 하나만이 아니라 같은 패턴(제목에 그룹명
-// 리터럴이 전혀 없이 멤버 이름 하나만으로 group_ko 자체가 정해진 경우) 전체를 훑는다 — 옛 Love 정리
-// 버튼은 members 배열에서 "Love"만 지웠을 뿐 group_ko는 안 건드려서 근본 원인(엉뚱한 그룹 소유로 잡힌
-// 영상 자체)이 그대로 남아있었음(오늘 실측 확인). content_flag가 이미 뭔가 지정된 행(무관/hidden/기타
-// 등)은 이미 사람이 한 번 판단한 것이므로 건드리지 않고, tags_manual=true도 절대 안 건드림. 자동으로
-// 지우지 않고 needs_review 큐로만 보내서(content_flag:'hidden') 어드민이 "그룹배정 검수" 탭에서 최종
-// 승인/거부하게 한다 — 자체 채널 영상인데 우연히 그룹명 없이 멤버 이름만 있던 정상 케이스가 섞여
-// 있을 수 있어(제목만으론 100% 구분 불가) 되돌릴 수 없는 자동 처리 대신 검수를 거치게 하는 것.
-async function _ytRescanWeakGroupAssignments(){
-  // ⚠️ 비활성화(2026-08-20, 사용자 제보): 이 재스캔이 "제목에 그룹명 없이 멤버 이름만 있는" 정상 영상
-  // (직캠·챌린지·예능 클립 대부분)을 약한 근거로 오판해 무려 35,168개를 통째로 검수큐(content_flag=hidden
-  // +needs_review)로 보내버림. content_flag=null 전체를 소급 스캔하는데 _m2ParseTitle의 'weak' 판정이
-  // 멤버명만 있는 정상 제목 대다수에 걸려서 대량 오탐 — "멤버명만 있는 제목" ≠ "그룹 오배정"인데 그렇게
-  // 취급한 게 원인. Supabase SQL로 `UPDATE ... SET content_flag=NULL,needs_review=false WHERE
-  // content_flag='hidden' AND needs_review=true`로 전량 원복함. 기준(weak 판정)을 훨씬 좁히기 전엔 절대
-  // 재실행 금지 — 실수로 눌러도 아무 일 안 하도록 조기 반환.
-  _ytSetProg('⚠️ 비활성화됨 — 정상 영상 3.5만개를 대량 오숨김한 이력이 있어 막아둠(2026-08-20). "weak 근거" 기준을 좁히기 전엔 실행 안 됨.');
-  return;
-  if(!sb){_ytSetProg('Supabase 연결 없음');return;}
-  const btn=document.getElementById('sp-yt-rescan-weak-btn');
-  if(btn)btn.disabled=true;
-  try{
-    _ytSetProg('[그룹배정 신뢰도 재스캔] 대상 조회 중… (전체 미태깅 없는 영상이라 시간이 걸릴 수 있어요)');
-    const{data:rows,error}=await _sbFetchAll(()=>sb.from(_YT_TABLE)
-      .select('id,title,group_ko,tags_manual')
-      .is('content_flag',null)
-      .order('id'));
-    if(error){_ytSetProg('조회 실패: '+error.message);return;}
-    if(!rows?.length){_ytSetProg('검사할 영상이 없어요');return;}
-    const candidates=[];
-    let manualSkipped=0,checked=0;
-    for(const v of rows){
-      checked++;
-      if(v.tags_manual){manualSkipped++;continue;}
-      const match=_m2ParseTitle(v.title||'',undefined,false);
-      if(match&&match.confidence==='weak'&&match.primaryGroup===v.group_ko)candidates.push(v.id);
-      if(checked%5000===0)_ytSetProg(`[그룹배정 신뢰도 재스캔] ${checked}/${rows.length}개 검사 중… (약한 근거 ${candidates.length}건 발견)`);
-    }
-    if(!candidates.length){
-      _ytSetProg(`검사 완료 — ${rows.length}개 중 약한 근거로 배정된 영상 없음`+(manualSkipped?` (수동 편집이라 건너뛴 것 ${manualSkipped}개)`:''));
-      return;
-    }
-    await _snapshotBeforeBulk('그룹배정 신뢰도 재스캔',candidates);
-    for(let i=0;i<candidates.length;i+=200){
-      const{error:updErr}=await sb.from(_YT_TABLE).update({content_flag:'hidden',needs_review:true}).in('id',candidates.slice(i,i+200));
-      if(updErr)throw new Error(updErr.message);
-      _ytSetProg(`[그룹배정 신뢰도 재스캔] ${Math.min(i+200,candidates.length)}/${candidates.length}개 검수 큐로 이동 중…`);
-    }
-    _ytSetProg(`완료! ${rows.length}개 중 ${candidates.length}개를 "그룹배정 검수" 큐로 이동함`+(manualSkipped?` (수동 편집이라 건너뛴 것 ${manualSkipped}개)`:'')+' — 영상관리 패널의 "그룹배정 검수" 탭에서 확인해주세요.');
-  }catch(e){
-    _ytSetProg('오류: '+e.message);
-  }finally{
-    if(btn)btn.disabled=false;
-  }
-}
-
 // 커버곡 원곡 제목 자동 추출(2026-08-19, 사용자 요청 — "특정 커버곡 모아보기" 기능의 전제 작업, 일회성
 // 스크립트가 아니라 반복 재실행 가능한 버튼으로). cover_of_members/cover_of_groups(원곡 아티스트)가
 // 채워진 영상 중엔 진짜 커버곡이 아니라 검수 센터에서 "실제 출연/콜라보가 아니다"로 재분류돼 이 필드로
@@ -4385,7 +4328,6 @@ document.getElementById('vid-tag-thumb-refresh').addEventListener('click',async 
   document.getElementById('sp-collabfix-btn')?.addEventListener('click',_ytSweepAmbiguousCollabMistag);
   document.getElementById('sp-scan-namecollide-btn')?.addEventListener('click',_ytScanAmbiguousNameGroupMisassignment);
   document.getElementById('sp-membersfix-btn')?.addEventListener('click',_ytSweepMembersMistag);
-  document.getElementById('sp-yt-rescan-weak-btn')?.addEventListener('click',_ytRescanWeakGroupAssignments);
   document.getElementById('sp-yt-undo-bulk-btn')?.addEventListener('click',_ytUndoLastBulk);
   document.getElementById('sp-catfix-btn')?.addEventListener('click',_ytSweepCategoryMistag);
   document.getElementById('sp-covertitle-btn')?.addEventListener('click',_ytExtractCoverSongTitles);
