@@ -2209,8 +2209,9 @@
   .cve-cover-badge:hover{opacity:1;}
   .cve-cover-badge.on{opacity:1;color:rgba(255,205,110,0.95);}
   .cve-cover-badge.on svg{fill:currentColor;}
-  #col-create-btn{margin-top:6px;background:none;border:0.5px dashed rgba(140,165,220,0.18);border-radius:8px;color:rgba(140,165,220,0.48);font-size:11.5px;font-weight:600;padding:7px 10px;cursor:pointer;font-family:inherit;width:100%;text-align:left;transition:border-color .13s,color .13s;letter-spacing:.02em;}
-  #col-create-btn:hover{border-color:rgba(140,165,220,0.38);color:rgba(180,200,240,0.78);}
+  #col-create-btn,#col-create-photo-btn{margin-top:6px;background:none;border:0.5px dashed rgba(140,165,220,0.18);border-radius:8px;color:rgba(140,165,220,0.48);font-size:11.5px;font-weight:600;padding:7px 10px;cursor:pointer;font-family:inherit;width:100%;text-align:left;transition:border-color .13s,color .13s;letter-spacing:.02em;}
+  #col-create-btn:hover,#col-create-photo-btn:hover{border-color:rgba(140,165,220,0.38);color:rgba(180,200,240,0.78);}
+  #col-create-photo-btn{margin-top:5px;}
   /* ── 내 우주 카드 (2026-08-18) ─────────────────────────── */
   #uc-card-btn{margin-top:8px;background:none;border:0.5px dashed rgba(140,165,220,0.18);border-radius:8px;color:rgba(140,165,220,0.48);font-size:11.5px;font-weight:600;padding:7px 10px;cursor:pointer;font-family:inherit;width:100%;text-align:left;transition:border-color .13s,color .13s;letter-spacing:.02em;}
   #uc-card-btn:hover{border-color:rgba(140,165,220,0.38);color:rgba(180,200,240,0.78);}
