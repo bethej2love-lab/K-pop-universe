@@ -1304,14 +1304,19 @@ function _appendDeceasedStar(el,a){
 }
 // 서브네임(옛 활동명/실명 등) — 멤버 카드 이름 옆에 작고 흐리게(2026-08-22, 데이터세션 subName 필드 렌더링).
 // 성민→"제롬"(옛 활동명), 로아→"김민경"(실명) 등. 있을 때만.
+// displayName: 현재 활동명이 스테이지명과 달라진 경우(디오→도경수) 카드/라벨/검색에 크게 보여줄 "표시용 메인
+// 이름". name.ko(디오)는 connections·영상태깅의 정식 키라 절대 안 바꾸고 표시만 덮어쓴다. 없으면 name.ko.
+// (한국어 표시 기준 — 영문은 name.en 유지)(2026-08-22, CHANGELOG 디오 스펙).
+function _dispKo(a){return(a&&a.displayName)||(a&&a.name&&a.name.ko)||'';}
+// 카드 이름 옆 작고 흐린 보조 표기 — ① displayName으로 메인을 덮었으면 원래 활동명(도경수 옆 "디오"),
+// ② subName(옛활동명/실명, 성민 옆 "제롬"). 메인과 너무 유사하면(한쪽이 다른 쪽에 포함, 박재범⊃재범) 생략.
 function _appendSubName(el,a){
-  if(!a||!a.subName)return;
-  // 메인 이름과 너무 유사하면(한쪽이 다른 쪽에 포함, 예: 박재범⊃재범) 굳이 흐리게 병기하지 않음
-  // — 다른 이름일 때만 의미 있음(성민↔제롬)(2026-08-22 사용자 기준).
-  const n=(a.name.ko||''),s=a.subName;
-  if(n.includes(s)||s.includes(n))return;
-  const sp=document.createElement('span');sp.className='tn-subname';sp.textContent=s;
-  el.appendChild(sp);
+  if(!a)return;
+  const main=currentLang==='ko'?_dispKo(a):((a.name&&a.name.en)||(a.name&&a.name.ko)||'');
+  const subs=[];
+  if(a.displayName&&currentLang==='ko'&&a.name&&a.name.ko&&a.name.ko!==a.displayName)subs.push(a.name.ko);
+  if(a.subName&&!main.includes(a.subName)&&!a.subName.includes(main))subs.push(a.subName);
+  subs.forEach(s=>{const sp=document.createElement('span');sp.className='tn-subname';sp.textContent=s;el.appendChild(sp);});
 }
 // 멤버의 검색용 별칭 — subName(옛 활동명/실명)과 groups[]의 name 오버라이드(그룹별 활동명)를 모아
 // 메인 이름(ko/en)과 다른 것만. "제롬" 검색으로 성민이 뜨게 하는 데 씀(2026-08-22).
@@ -1325,7 +1330,8 @@ function _artistAliases(a){
 // 티오원 행성에 뜰 땐 "제롬"). 없으면 현 활동명(name.ko). 라벨이 어느 그룹 행성에 만들어지든 그 이름과 일치.
 function _starLabelName(m,groupKo){
   const g=(_artistGroups(m)||[]).find(x=>x.ko===groupKo);
-  return (g&&g.name)||m.name.ko;
+  // 우선순위: 그룹별 활동명 오버라이드(제롬) > displayName(도경수) > 현 활동명(name.ko/디오).
+  return (g&&g.name)||m.displayName||m.name.ko;
 }
 const groupLabels=[];
 let ARTISTS=[],GROUPS={};
@@ -1527,7 +1533,7 @@ function _refreshOpenCardText(){
   if(ttEl.style.display!=='none'&&_openTArtist){
     const a=_openTArtist;
     const tnEl0=document.getElementById('tn');
-    tnEl0.textContent=currentLang==='ko'?a.name.ko:(a.name.en||a.name.ko);
+    tnEl0.textContent=currentLang==='ko'?_dispKo(a):(a.name.en||a.name.ko);
     _appendDeceasedStar(tnEl0,a);_appendSubName(tnEl0,a);
     {const _tgEl=document.getElementById('tg');const _aGrps=_artistGroups(a);
     _tgEl.innerHTML='';_tgEl.onclick=null;
@@ -3133,9 +3139,10 @@ function doSearch(q){
     }
   });
   ARTISTS.forEach(a=>{
-    const koN=a.name.ko,enN=a.name.en||'';
+    const koN=a.name.ko,enN=a.name.en||'',dnN=a.displayName||''; // dnN: displayName(도경수) — 있으면 표시 메인
     const csM=_csScore(koN,q);
-    const mainMatch=koN.includes(q)||enN.toLowerCase().includes(ql)||(qln.length>=2&&_normEn(enN).includes(qln))||csM<99;
+    // displayName(도경수)으로도 검색되게 매칭에 포함 — name.ko(디오)는 여전히 별개로 매칭됨.
+    const mainMatch=koN.includes(q)||enN.toLowerCase().includes(ql)||(qln.length>=2&&_normEn(enN).includes(qln))||csM<99||(!!dnN&&(dnN.includes(q)||_csScore(dnN,q)<99));
     // 별칭(옛 활동명/실명·그룹별 활동명) 검색 — "제롬"으로 검색해도 성민이 뜨게(2026-08-22). 별칭으로만
     // 걸렸을 때(메인 이름엔 안 걸림) 그 별칭을 결과에 흐리게 병기(matchedAlias) — "제롬" 검색이면 "성민 제롬",
     // "성민" 검색이면 별칭 없이 "성민"만.
@@ -3143,11 +3150,13 @@ function doSearch(q){
     const matchedAlias=mainMatch?null:(aliases.find(al=>al.includes(q)||al.toLowerCase().includes(ql)||(qln.length>=2&&_normEn(al).includes(qln))||_csScore(al,q)<99)||null);
     if(mainMatch||matchedAlias){
       const aliasScores=aliases.map(al=>_mScore(al,q,ql));
-      const s=Math.min(_mScore(koN,q,ql),_mScore(enN,q,ql),csM,...(aliasScores.length?aliasScores:[99]));
-      const dispName=(_hasLatin&&enN)?enN:(currentLang==='ko'?koN:(enN||koN));
+      const s=Math.min(_mScore(koN,q,ql),_mScore(enN,q,ql),csM,...(dnN?[_mScore(dnN,q,ql)]:[]),...(aliasScores.length?aliasScores:[99]));
+      const dispName=(_hasLatin&&enN)?enN:(currentLang==='ko'?(dnN||koN):(enN||koN));
       // 아이유의 "솔로"처럼 실존하지 않는 가짜 그룹은 검색 결과 우측 태그에도 표시하지 않음
       const dispSub=!GROUPS[a.group.ko]?'':((_hasLatin&&a.group.en)?a.group.en:(currentLang==='ko'?a.group.ko:(a.group.en||a.group.ko)));
-      hits.push({type:'member',name:dispName,sub:dispSub,alias:matchedAlias,pos:a._worldPos,data:a,score:s});
+      // displayName 멤버는 카드와 일관되게 원래 활동명(디오)을 항상 흐리게 병기, 아니면 기존 matchedAlias.
+      const aliasShown=(dnN&&dnN!==koN&&currentLang==='ko')?koN:matchedAlias;
+      hits.push({type:'member',name:dispName,sub:dispSub,alias:aliasShown,pos:a._worldPos,data:a,score:s});
     }
   });
   // 프로젝트 유닛(태티서·V8 등)은 자체 행성/카드가 없으므로, 유닛명으로 검색하면 실제 소속 멤버들을
@@ -6775,7 +6784,7 @@ function showT(a,cx,cy,keepNavStack,urlMode,pushMobNav,noFly){
   else ttBar.style.background='rgba(160,180,220,0.22)';
   _loadInstaPic(a);
   const tnEl=document.getElementById('tn');
-  tnEl.textContent=currentLang==='ko'?a.name.ko:(a.name.en||a.name.ko);
+  tnEl.textContent=currentLang==='ko'?_dispKo(a):(a.name.en||a.name.ko);
   _appendDeceasedStar(tnEl,a);_appendSubName(tnEl,a);
   _renderGcLinks(a.links,'tt-links');
   const tgEl=document.getElementById('tg');
