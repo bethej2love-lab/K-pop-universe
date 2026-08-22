@@ -2725,7 +2725,7 @@ function animate(){
     const op=distFade*fa;
     el.style.opacity=op.toFixed(3);
     el.style.pointerEvents=op>0.15?'auto':'none';
-    if(bm&&bm.labelObj)bm.labelObj.position.copy(_camUp).multiplyScalar(bm.radius+0.2); // 행성 위 살짝 띄우기(1.2→0.5→0.2, 2026-08-21 사용자 요청 — camUp은 각도무관 일정거리라 카드 열어 가까이 보면 크게 떠 보여서 더 좁힘)
+    if(bm&&bm.labelObj)bm.labelObj.position.copy(_camUp).multiplyScalar(bm.radius*1.05); // 행성 위 살짝 띄우기(1.2→0.5→0.2→radius*1.05, 2026-08-22 사용자 요청 — 상수(+0.2)로 더하면 반지름이 작은 행성(≤4인 그룹, R≈1.3)일수록 0.2가 상대적으로 커서 라벨이 붕 떠 보였음. 반지름 비율로 바꿔 큰 행성·작은 행성 모두 균일하게 5%만 위로)
   });
   // 모바일: 행성 충분히 줌인 시 멤버 이름 레이블 표시 (거리 28 이내 fade-in, 15 이내 fully visible)
   // 데스크톱: 그룹 카드가 열려있으면 그 그룹 멤버 전원을 고정 라벨로 항상 표시
