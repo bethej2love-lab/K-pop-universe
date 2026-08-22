@@ -137,6 +137,7 @@
           <button class="gc-ch-sort-item" data-sort="latest"><span class="chk">✓</span><span>최신순</span></button>
           <div id="tt-discog-ost-divider" class="gc-ch-sort-divider" style="display:none"></div>
           <button id="tt-discog-ost-btn" class="gc-ch-sort-item" type="button" style="display:none"><span class="chk">✓</span><span>OST·피처링 포함</span></button>
+          <button id="tt-discog-unit-btn" class="gc-ch-sort-item" type="button" style="display:none"><span class="chk">✓</span><span>솔로만 보기</span></button>
           <div id="tt-discog-more-divider" class="gc-ch-sort-divider" style="display:none"></div>
           <button id="tt-discog-more-btn" class="gc-ch-view-toggle" type="button" style="display:none"><span class="chk">✓</span><span id="tt-discog-more-label"></span></button>
         </div>
@@ -177,6 +178,7 @@
               <button class="gc-ch-sort-item" data-sort="latest"><span class="chk">✓</span><span>최신순</span></button>
               <div id="gc-discog-ost-divider" class="gc-ch-sort-divider" style="display:none"></div>
               <button id="gc-discog-ost-btn" class="gc-ch-sort-item" type="button" style="display:none"><span class="chk">✓</span><span>OST·피처링 포함</span></button>
+              <button id="gc-discog-unit-btn" class="gc-ch-sort-item" type="button" style="display:none"><span class="chk">✓</span><span>솔로만 보기</span></button>
               <div id="gc-discog-more-divider" class="gc-ch-sort-divider" style="display:none"></div>
               <button id="gc-discog-more-btn" class="gc-ch-view-toggle" type="button" style="display:none"><span class="chk">✓</span><span id="gc-discog-more-label"></span></button>
             </div>
@@ -7299,6 +7301,7 @@ function _renderDiscography(prefix,albums){
   const sortMenu=document.getElementById(prefix+'-discog-sort-menu');
   const ostDivider=document.getElementById(prefix+'-discog-ost-divider');
   const ostBtn=document.getElementById(prefix+'-discog-ost-btn');
+  const unitBtn=document.getElementById(prefix+'-discog-unit-btn');
   if(!albums||!albums.length){row.style.display='none';return;}
   row.style.display='';
   if(prefix==='gc')_loadGcDiscogTrackTrophies(_openGCko);
@@ -7308,6 +7311,7 @@ function _renderDiscography(prefix,albums){
   let typeFilter='all';
   let asc=false;
   let extrasIncluded=false; // 디폴트 OST·피처링 제외(2026-08-21, 사용자 요청) — 케밥 토글로 포함
+  let soloOnly=false; // 디폴트 유닛 앨범 포함(EXO-SC 등) — 케밥 '솔로만 보기' 토글로 제외(2026-08-22, 사용자 요청)
   function sortedList(list){
     return[...list].sort((a,b)=>{
       const da=new Date(a.releaseDate.replace(/\./g,'-')),db=new Date(b.releaseDate.replace(/\./g,'-'));
@@ -7325,6 +7329,7 @@ function _renderDiscography(prefix,albums){
     }else{
       base=base.filter(a=>a.type!=='OST'&&!a.feat); // 디폴트: OST·피처링 제외
     }
+    if(soloOnly)base=base.filter(a=>!a.unit); // '솔로만 보기': 유닛(EXO-SC 등) 앨범 제외
     return sortedList(base);
   }
   function renderItems(){
@@ -7359,11 +7364,13 @@ function _renderDiscography(prefix,albums){
       it.classList.toggle('active',it.dataset.sort===(asc?'oldest':'latest'));
     });
     ostBtn.classList.toggle('active',extrasIncluded);
+    if(unitBtn)unitBtn.classList.toggle('active',soloOnly);
   }
   updateSortMenuUI();
   // OST 버튼 — OST 있는 그룹에서만 노출, 매번 핸들러 교체
   const hasOst=albums.some(a=>a.type==='OST'||a.feat); // OST 또는 피처링 있으면 토글 노출
-  ostDivider.style.display=hasOst?'':'none';
+  const hasUnit=albums.some(a=>a.unit); // 유닛(EXO-SC 등) 앨범 있으면 '솔로만 보기' 노출
+  ostDivider.style.display=(hasOst||hasUnit)?'':'none'; // 토글 그룹 구분선 — 둘 중 하나라도 있으면
   ostBtn.style.display=hasOst?'':'none';
   ostBtn.onclick=e=>{
     e.stopPropagation();
@@ -7371,6 +7378,16 @@ function _renderDiscography(prefix,albums){
     updateSortMenuUI();
     renderItems();
   };
+  // '솔로만 보기' 버튼 — 유닛(EXO-SC 등) 앨범 있을 때만 노출
+  if(unitBtn){
+    unitBtn.style.display=hasUnit?'':'none';
+    unitBtn.onclick=e=>{
+      e.stopPropagation();
+      soloOnly=!soloOnly;
+      updateSortMenuUI();
+      renderItems();
+    };
+  }
   // sort item 핸들러는 그룹 전환 시 현재 그룹의 asc/renderItems 클로저를 써야 하므로
   // _discogBound 가드 밖에서 매번 onclick으로 교체
   sortMenu.querySelectorAll('.gc-ch-sort-item[data-sort]').forEach(it=>{
