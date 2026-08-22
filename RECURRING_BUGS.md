@@ -25,3 +25,22 @@
 * 관련 코드: `_buildConnContent`/`_getCollabMembers`/`_getCollabSongs`/`_apiVidToSong`/
   `_findArtistByConnName`(index.html)
 * 상태: 코드 방어 완료, DB 데이터 정정은 보류
+
+
+
+## 그룹 이름 라벨이 행성 위로 "붕 떠" 보임
+
+* 여러 번 재발: 2026-08-20(1.2→0.5→0.2), 2026-08-22(radius+0.2→radius*1.05) — 매번 "상수/비율만
+  조정"으로 접근했으나 안 잡혔음. 2026-08-22 사용자 재제보로 진짜 원인 규명.
+* 진짜 원인: 그룹 라벨(CSS2DObject)이 `bubble` mesh의 **자식**인데 `bubble.scale=radius`(공유 단위구체
+  `_sharedBubbleGeo`(반지름 1)를 실제 반지름으로 확대, index.html:1763·1932)라, 라벨의 **로컬 위치가 이미
+  radius배로 월드 변환**됨. 그런데 오프셋을 `radius*1.05`(로컬)로 줘서 월드에선 `radius²×1.05` → 반지름
+  큰 행성일수록 표면 위 오프셋이 radius의 수 배까지 커짐(radius 4.5 → ~3.7배). "상수를 줄여도" 지배항이
+  radius²라 소용없었던 이유.
+* 조치(2026-08-22): ①오프셋을 단위구체 기준 배수로 — `radius*1.05`→`1.05`(index.html:2726). ②라벨 텍스트
+  앵커를 위로 — 인라인 `top:5px`→`bottom:5px`(index.html:1964). 카드 열림/닫힘 두 상태 헤드리스 렌더로 검증.
+* 패턴 노트: **"자식으로 붙인 오브젝트에 부모 scale이 곱해지는" 함정.** 라벨/보조 오브젝트 위치가 이상하게
+  크게/작게 나오면, 먼저 그 부모 mesh의 `.scale`부터 확인할 것. 위치를 "world 절대값"으로 주고 싶으면
+  자식으로 붙이지 말고 scene 직속에 두거나, 부모 scale의 역수를 곱해 보정.
+* 관련 코드: 라벨 생성/부모 부착(index.html:1930·1987), 매 프레임 재배치(index.html:2726),
+  라벨 CSS 인라인(index.html:1962~1964)
