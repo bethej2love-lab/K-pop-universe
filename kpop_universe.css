@@ -1540,6 +1540,10 @@
   .sr-item:hover,.sr-item:active,.sr-item.kbd-active{background:rgba(255,255,255,0.09);}
   .sr-item-name{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
   .sr-item-name.sr-group{color:#9ab8dc;}
+  /* 이름+별칭 묶음 — space-between으로 태그를 오른쪽에 두되 별칭은 이름 바로 옆에 붙게(2026-08-22) */
+  .sr-nl{flex:1;min-width:0;display:flex;align-items:baseline;gap:6px;overflow:hidden;}
+  .sr-nl .sr-item-name{flex:0 1 auto;}
+  .sr-alias{font-size:10px;font-weight:400;color:rgba(180,195,230,0.42);letter-spacing:0;flex-shrink:0;}
   .sr-tag{font-size:10px;color:#9ab8dc;letter-spacing:.05em;text-transform:uppercase;flex-shrink:0;}
   .sr-empty{padding:14px 13px;font-size:12px;color:rgba(140,160,200,0.56);text-align:center;}
   .sr-recent-label{padding:6px 13px 4px;font-size:10px;font-weight:700;color:rgba(140,160,200,0.56);letter-spacing:.06em;text-transform:uppercase;}
