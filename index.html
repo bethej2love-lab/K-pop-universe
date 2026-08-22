@@ -13174,7 +13174,7 @@ async function _buildFeedFestival(list,opts){
     let sub='',thumb;
     if(opts.sortByViews){
       const top1=vids[0];
-      sub=top1.view_count?(currentLang==='ko'?`1위 · ${fmtN(top1.view_count)} 조회`:`#1 · ${fmtN(top1.view_count)} views`):'';
+      sub=top1.view_count?(currentLang==='ko'?`1위 · ${fmtN(top1.view_count)}`:`#1 · ${fmtN(top1.view_count)} views`):'';
       thumb=top1.thumb;
     }else{
       thumb=vids[Math.floor(Math.random()*vids.length)].thumb; // 정렬이 없으니 "1위" 문구도 안 씀(랜덤이라 순위 의미 없음)
@@ -13273,7 +13273,7 @@ async function _renderBsideCard(list,groupKos,icon,labelKo,labelEn,fetchLimit,ca
   const label=currentLang==='ko'?labelKo:labelEn;
   const fmtN=n=>n>=1000000?Math.floor(n/1000000)+'M+':n>=1000?Math.floor(n/1000)+'K+':String(n);
   const top1=stages[0];
-  const sub=top1.view_count?(currentLang==='ko'?`1위 · ${fmtN(top1.view_count)} 조회`:`#1 · ${fmtN(top1.view_count)} views`):'';
+  const sub=top1.view_count?(currentLang==='ko'?`1위 · ${fmtN(top1.view_count)}`:`#1 · ${fmtN(top1.view_count)} views`):'';
   _appendFeedCard(list,icon,label,sub,()=>_openFeedListOverlay(label,sub,songs),top1.thumb,'collection');
   return true;
 }
@@ -13337,7 +13337,7 @@ async function _renderCoverCard(list,groupKos,icon,labelKo,labelEn,fetchLimit,ca
   const label=currentLang==='ko'?labelKo:labelEn;
   const fmtN=n=>n>=1000000?Math.floor(n/1000000)+'M+':n>=1000?Math.floor(n/1000)+'K+':String(n);
   const top1=vids[0];
-  const sub=top1.view_count?(currentLang==='ko'?`1위 · ${fmtN(top1.view_count)} 조회`:`#1 · ${fmtN(top1.view_count)} views`):'';
+  const sub=top1.view_count?(currentLang==='ko'?`1위 · ${fmtN(top1.view_count)}`:`#1 · ${fmtN(top1.view_count)} views`):'';
   _appendFeedCard(list,icon,label,sub,()=>_openFeedListOverlay(label,sub,songs),top1.thumb,'collection');
   return true;
 }
