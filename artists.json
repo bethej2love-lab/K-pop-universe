@@ -60223,7 +60223,31 @@
     "links": {
       "instagram": "https://www.instagram.com/x.odid",
       "namu": "https://namu.wiki/w/테오(P1Harmony)"
-    }
+    },
+    "discography": [
+      {
+        "title": "혼례대첩 OST Part.1",
+        "type": "OST",
+        "releaseDate": "2023.10.30",
+        "trackCount": 2,
+        "isMain": false,
+        "titleTrack": "반이라서",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/113/53/580/11353580_20231027153957_500.jpg?4793c2c9378c7f69e21ae88393025289",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "반이라서",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "반이라서 (Inst.)",
+            "isTitle": false
+          }
+        ],
+        "feat": true
+      }
+    ]
   },
   {
     "name": {
@@ -60533,7 +60557,30 @@
     "links": {
       "instagram": "https://www.instagram.com/daehyeon0211",
       "namu": "https://namu.wiki/w/장대현"
-    }
+    },
+    "discography": [
+      {
+        "title": "FEEL GOOD",
+        "type": "싱글",
+        "releaseDate": "2019.08.24",
+        "trackCount": 2,
+        "isMain": true,
+        "titleTrack": "던져 (FEEL GOOD)",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/103/21/148/10321148_500.jpg?26effc62f9ae7bed713a52eaf116eae6",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "던져 (FEEL GOOD)",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "SO",
+            "isTitle": false
+          }
+        ]
+      }
+    ]
   },
   {
     "name": {
@@ -60621,7 +60668,31 @@
     "links": {
       "instagram": "https://www.instagram.com/stone_dol2",
       "namu": "https://namu.wiki/w/강석화"
-    }
+    },
+    "discography": [
+      {
+        "title": "삼남매가 용감하게 OST Part.4",
+        "type": "OST",
+        "releaseDate": "2022.11.20",
+        "trackCount": 2,
+        "isMain": false,
+        "titleTrack": "설렘",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/111/05/923/11105923_20221118142338_500.jpg?3c9147c3d57849ce44de9fa52740082b",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "설렘",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "설렘 (Inst.)",
+            "isTitle": false
+          }
+        ],
+        "feat": true
+      }
+    ]
   },
   {
     "name": {
@@ -60701,7 +60772,30 @@
       "left": "2023.01.23",
       "namu": "https://namu.wiki/w/서령"
     },
-    "left": "2023.01.23"
+    "left": "2023.01.23",
+    "discography": [
+      {
+        "title": "나의 바다, 나의 우주",
+        "type": "싱글",
+        "releaseDate": "2024.06.12",
+        "trackCount": 2,
+        "isMain": true,
+        "titleTrack": "나의 바다, 나의 우주",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/115/09/118/11509118_20240611142755_500.jpg?ef6eefb2cab78a7bff34cc1cac6fd8f1",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "나의 바다, 나의 우주",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "나의 바다, 나의 우주 (inst.)",
+            "isTitle": false
+          }
+        ]
+      }
+    ]
   },
   {
     "name": {
@@ -60860,7 +60954,52 @@
     "links": {
       "instagram": "https://www.instagram.com/_haerimida"
     },
-    "left": "2024.08.08"
+    "left": "2024.08.08",
+    "discography": [
+      {
+        "title": "RUN STAR",
+        "type": "싱글",
+        "releaseDate": "2025.06.07",
+        "trackCount": 2,
+        "isMain": true,
+        "titleTrack": "RUN STAR",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/118/47/094/11847094_20250605151946_500.jpg?0b6e60068cf671255c56523621faa891",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "RUN STAR",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "RUN STAR (Inst.)",
+            "isTitle": false
+          }
+        ]
+      },
+      {
+        "title": "하나뿐인 내편 OST Part.7",
+        "type": "OST",
+        "releaseDate": "2018.10.28",
+        "trackCount": 2,
+        "isMain": false,
+        "titleTrack": "장미의 미소",
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/102/16/743/10216743_500.jpg?17a91bcbf8a659b7f4909a438759f776",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "장미의 미소",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "장미의 미소 (Inst.)",
+            "isTitle": false
+          }
+        ],
+        "feat": true
+      }
+    ]
   },
   {
     "name": {
@@ -61793,7 +61932,31 @@
     "links": {
       "namu": "https://namu.wiki/w/문수아",
       "instagram": "https://www.instagram.com/a_us_noom"
-    }
+    },
+    "discography": [
+      {
+        "title": "재벌집 막내아들 OST Part 4",
+        "type": "OST",
+        "releaseDate": "2022.12.10",
+        "trackCount": 2,
+        "isMain": false,
+        "titleTrack": "Like a Star(별처럼)",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/111/19/856/11119856_20221209113634_500.jpg?34a21e13222b4cb99867ebcac76499c6",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Like a Star(별처럼)",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Like a Star(별처럼) (Inst.)",
+            "isTitle": false
+          }
+        ],
+        "feat": true
+      }
+    ]
   },
   {
     "name": {
@@ -61819,7 +61982,25 @@
     "links": {
       "namu": "https://namu.wiki/w/%EC%88%98%ED%98%84(Billlie)",
       "instagram": "https://www.instagram.com/suhyeeooonn_"
-    }
+    },
+    "discography": [
+      {
+        "title": "지구 한 바퀴",
+        "type": "싱글",
+        "releaseDate": "2019.06.29",
+        "trackCount": 1,
+        "isMain": true,
+        "titleTrack": "지구 한 바퀴",
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/103/01/285/10301285_500.jpg?162bc535e3786c0c5dde868437b0c035",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "지구 한 바퀴",
+            "isTitle": true
+          }
+        ]
+      }
+    ]
   },
   {
     "name": {
@@ -61845,7 +62026,31 @@
     "links": {
       "namu": "https://namu.wiki/w/하람(Billlie)",
       "instagram": "https://www.instagram.com/harami_beam"
-    }
+    },
+    "discography": [
+      {
+        "title": "로드 오브 히어로즈 OST Part 4",
+        "type": "OST",
+        "releaseDate": "2023.03.26",
+        "trackCount": 2,
+        "isMain": false,
+        "titleTrack": "Remember the days",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/112/10/214/11210214_20230324135655_500.jpg?bb9f86210807bcceb435a23779ad5954",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Remember the days",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Remember the days (Inst.)",
+            "isTitle": false
+          }
+        ],
+        "feat": true
+      }
+    ]
   },
   {
     "name": {
@@ -61871,7 +62076,30 @@
     "links": {
       "namu": "https://namu.wiki/w/츠키(Billlie)",
       "instagram": "https://www.instagram.com/bunny9tsuki"
-    }
+    },
+    "discography": [
+      {
+        "title": "난 사랑을 아직 몰라",
+        "type": "싱글",
+        "releaseDate": "2023.08.14",
+        "trackCount": 2,
+        "isMain": true,
+        "titleTrack": "난 사랑을 아직 몰라",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/113/04/995/11304995_20230811160430_500.jpg?59716c4d3806715389bf250cfcce6020",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "난 사랑을 아직 몰라",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "난 사랑을 아직 몰라 (Inst.)",
+            "isTitle": false
+          }
+        ]
+      }
+    ]
   },
   {
     "name": {
@@ -61975,7 +62203,30 @@
     "links": {
       "instagram": "https://www.instagram.com/jwoong_official",
       "namu": "https://namu.wiki/w/전웅"
-    }
+    },
+    "discography": [
+      {
+        "title": "PIXEL",
+        "type": "싱글",
+        "releaseDate": "2024.11.14",
+        "trackCount": 2,
+        "isMain": true,
+        "titleTrack": "PIXEL",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/116/40/870/11640870_20241113153244_500.jpg?fcf3d24bdce89e2b2b81b7512290f357",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "PIXEL",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "PIXEL (Inst.)",
+            "isTitle": false
+          }
+        ]
+      }
+    ]
   },
   {
     "name": {
@@ -62001,7 +62252,53 @@
     "links": {
       "instagram": "https://www.instagram.com/iameastnow",
       "namu": "https://namu.wiki/w/김동현(AB6IX)"
-    }
+    },
+    "discography": [
+      {
+        "title": "미래의 미래 OST Part.3",
+        "type": "OST",
+        "releaseDate": "2025.12.13",
+        "trackCount": 2,
+        "isMain": false,
+        "titleTrack": "생각나",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/124/34/732/12434732_20251211184050_500.jpg?1d8e51c382d5aea1802ac88e2f41b5aa",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "생각나",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "생각나 (Inst.)",
+            "isTitle": false
+          }
+        ],
+        "feat": true
+      },
+      {
+        "title": "웹드라마 썸타는 편의점 OST Part. 2",
+        "type": "OST",
+        "releaseDate": "2021.02.21",
+        "trackCount": 2,
+        "isMain": false,
+        "titleTrack": "썸탈래 나랑 (SOME)",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/105/67/548/10567548_20210219151834_500.jpg?5bf8f01fcb4b5bedb58634bbcfedbcd1",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "썸탈래 나랑 (SOME)",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "썸탈래 나랑 (SOME) (Inst.)",
+            "isTitle": false
+          }
+        ],
+        "feat": true
+      }
+    ]
   },
   {
     "name": {
@@ -62027,7 +62324,46 @@
     "links": {
       "instagram": "https://www.instagram.com/nyong2ya",
       "namu": "https://namu.wiki/w/민영(브브걸)"
-    }
+    },
+    "discography": [
+      {
+        "title": "[SERIES363] #02",
+        "type": "싱글",
+        "releaseDate": "2026.08.19",
+        "trackCount": 1,
+        "isMain": true,
+        "titleTrack": "After 2am",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/144/60/029/14460029_20260818154941_500.jpg?630a2abdc73cdd1084d5b64ea96a2270",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "After 2am",
+            "isTitle": true
+          }
+        ]
+      },
+      {
+        "title": "오늘 밤 뭐해? (민영(BBGIRLS) X 피어나 프로젝트)",
+        "type": "싱글",
+        "releaseDate": "2025.07.06",
+        "trackCount": 2,
+        "isMain": true,
+        "titleTrack": "오늘 밤 뭐해?",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/118/81/320/11881320_20250704160931_500.jpg?7c50616e188e50e7a710f227d370f1bb",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "오늘 밤 뭐해?",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "오늘 밤 뭐해? (Inst.)",
+            "isTitle": false
+          }
+        ]
+      }
+    ]
   },
   {
     "name": {
@@ -62106,7 +62442,25 @@
       "namu": "https://namu.wiki/w/남유정",
       "instagram": "https://www.instagram.com/braveg_yj"
     },
-    "left": "2024.04.22"
+    "left": "2024.04.22",
+    "discography": [
+      {
+        "title": "Beautiful Sunlight",
+        "type": "싱글",
+        "releaseDate": "2026.04.06",
+        "trackCount": 1,
+        "isMain": true,
+        "titleTrack": "Beautiful Sunlight",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/133/10/409/13310409_20260403165948_500.jpg?fb322b30c3e935d72739436d3d48671a",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Beautiful Sunlight",
+            "isTitle": true
+          }
+        ]
+      }
+    ]
   },
   {
     "name": {
@@ -62931,7 +63285,95 @@
     "links": {
       "instagram": "https://www.instagram.com/gyuri_88",
       "namu": "https://namu.wiki/w/박규리"
-    }
+    },
+    "discography": [
+      {
+        "title": "너의 등짝에 스매싱 OST Part.1",
+        "type": "OST",
+        "releaseDate": "2017.12.27",
+        "trackCount": 2,
+        "isMain": false,
+        "titleTrack": "Universe",
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/101/23/201/10123201_500.jpg?745955d59a74572de488467247950fbf",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Universe",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Universe (Inst.)",
+            "isTitle": false
+          }
+        ],
+        "feat": true
+      },
+      {
+        "title": "네일샵 파리스 OST Part.1",
+        "type": "OST",
+        "releaseDate": "2013.05.10",
+        "trackCount": 2,
+        "isMain": false,
+        "titleTrack": "기다릴 거에요",
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/021/84/695/2184695_500.jpg",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "기다릴 거에요",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "기다릴 거에요 (Inst.)",
+            "isTitle": false
+          }
+        ],
+        "feat": true
+      },
+      {
+        "title": "맛있는 인생 OST Part.2",
+        "type": "싱글",
+        "releaseDate": "2012.06.08",
+        "trackCount": 2,
+        "isMain": true,
+        "titleTrack": "영혼보다 사랑해",
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/021/26/167/2126167_500.jpg",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "영혼보다 사랑해",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Your Vacant Position",
+            "isTitle": false
+          }
+        ]
+      },
+      {
+        "title": "시티헌터 OST Part.5",
+        "type": "싱글",
+        "releaseDate": "2011.06.23",
+        "trackCount": 2,
+        "isMain": true,
+        "titleTrack": "그대만 봐요",
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/013/16/034/1316034_500.jpg",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "그대만 봐요",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "그대만 봐요 (Inst.)",
+            "isTitle": false
+          }
+        ]
+      }
+    ]
   },
   {
     "name": {
@@ -62957,7 +63399,148 @@
     "links": {
       "instagram": "https://www.instagram.com/thesy88",
       "namu": "https://namu.wiki/w/한승연"
-    }
+    },
+    "discography": [
+      {
+        "title": "퍼퓸 OST Part.14",
+        "type": "OST",
+        "releaseDate": "2019.07.16",
+        "trackCount": 2,
+        "isMain": false,
+        "titleTrack": "안녕 또 안녕",
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/103/07/366/10307366_500.jpg?3ea7f0e6ecaebc18023ded45dce129ce",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "안녕 또 안녕",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "안녕 또 안녕 (Inst.)",
+            "isTitle": false
+          }
+        ],
+        "feat": true
+      },
+      {
+        "title": "I Love Me",
+        "type": "싱글",
+        "releaseDate": "2019.01.25",
+        "trackCount": 1,
+        "isMain": true,
+        "titleTrack": "I Love Me",
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/102/46/183/10246183_500.jpg?9a8294fdeafa51fd1fac097f9d091357",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "I Love Me",
+            "isTitle": true
+          }
+        ]
+      },
+      {
+        "title": "시간이 멈추는 그때 OST Part.3",
+        "type": "OST",
+        "releaseDate": "2018.11.08",
+        "trackCount": 2,
+        "isMain": false,
+        "titleTrack": "시간의 온도",
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/102/20/235/10220235_500.jpg?26393ea1e91a92e9c47a751ae0c40934",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "시간의 온도",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "시간의 온도 (Inst.)",
+            "isTitle": false
+          }
+        ],
+        "feat": true
+      },
+      {
+        "title": "잘 있니",
+        "type": "싱글",
+        "releaseDate": "2016.12.19",
+        "trackCount": 1,
+        "isMain": true,
+        "titleTrack": "잘 있니",
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/100/24/122/10024122_500.jpg?e48f4575d755e8b5e913cf39788e6bc4",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "잘 있니",
+            "isTitle": true
+          }
+        ]
+      },
+      {
+        "title": "그앤 나",
+        "type": "싱글",
+        "releaseDate": "2016.07.24",
+        "trackCount": 2,
+        "isMain": true,
+        "titleTrack": "그앤 나",
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/026/99/637/2699637_500.jpg",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "그앤 나",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "그앤 나 (Inst.)",
+            "isTitle": false
+          }
+        ]
+      },
+      {
+        "title": "여자만화구두 OST Part.2",
+        "type": "싱글",
+        "releaseDate": "2014.03.17",
+        "trackCount": 2,
+        "isMain": true,
+        "titleTrack": "혼자 사랑 할까요",
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/022/41/596/2241596_500.jpg",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "혼자 사랑 할까요",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "혼자 사랑 할까요 (Inst.)",
+            "isTitle": false
+          }
+        ]
+      },
+      {
+        "title": "무사 백동수 OST Part.8",
+        "type": "싱글",
+        "releaseDate": "2011.08.29",
+        "trackCount": 2,
+        "isMain": true,
+        "titleTrack": "사랑 때문에",
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/020/08/726/2008726_500.jpg",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "사랑 때문에",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "사랑 때문에 (Inst.)",
+            "isTitle": false
+          }
+        ]
+      }
+    ]
   },
   {
     "name": {
@@ -63035,7 +63618,77 @@
     "links": {
       "instagram": "https://www.instagram.com/young_g_hur",
       "namu": "https://namu.wiki/w/허영지"
-    }
+    },
+    "discography": [
+      {
+        "title": "Toi Toi Toi",
+        "type": "싱글",
+        "releaseDate": "2023.09.12",
+        "trackCount": 3,
+        "isMain": true,
+        "titleTrack": "L.O.V.E",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/113/24/064/11324064_20230911154224_500.jpg?c25e1b3289f5c2a1bc33b42e68d04b3f",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "L.O.V.E",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Focus",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "Climax",
+            "isTitle": false
+          }
+        ]
+      },
+      {
+        "title": "함께할개 Part.2",
+        "type": "싱글",
+        "releaseDate": "2017.12.15",
+        "trackCount": 2,
+        "isMain": true,
+        "titleTrack": "그리움",
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/101/20/330/10120330_500.jpg?a5355e34a7ec1359cd6c5bd75444c369",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "그리움",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "그리움 (Inst.)",
+            "isTitle": false
+          }
+        ]
+      },
+      {
+        "title": "추억시계",
+        "type": "싱글",
+        "releaseDate": "2017.08.25",
+        "trackCount": 2,
+        "isMain": true,
+        "titleTrack": "추억시계",
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/100/90/105/10090105_500.jpg?784a9418107adbdf1cbb06416482760c",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "추억시계",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "추억시계 (Inst.)",
+            "isTitle": false
+          }
+        ]
+      }
+    ]
   },
   {
     "name": {
@@ -63063,7 +63716,72 @@
       "namu": "https://namu.wiki/w/구하라"
     },
     "left": "2019.11.24",
-    "memorial": true
+    "memorial": true,
+    "discography": [
+      {
+        "title": "저글러스 OST Part.8",
+        "type": "OST",
+        "releaseDate": "2018.01.23",
+        "trackCount": 2,
+        "isMain": false,
+        "titleTrack": "좋은 날에",
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/101/32/024/10132024_500.jpg?c652c7730a0f572742659f63c1bec4e2",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "좋은 날에",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "좋은 날에 (Inst.)",
+            "isTitle": false
+          }
+        ],
+        "feat": true
+      },
+      {
+        "title": "HARA 1st Mini Album 'ALOHARA (Can You Feel It?)'",
+        "type": "미니 1집",
+        "releaseDate": "2015.07.14",
+        "trackCount": 6,
+        "isMain": true,
+        "titleTrack": "초코칩쿠키 (Feat. 기리보이)",
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/023/29/119/2329119_500.jpg?229731d58232b9c2478f684f639e882f",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "어때? (Feat. 허영지)",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "초코칩쿠키 (Feat. 기리보이)",
+            "isTitle": true
+          },
+          {
+            "no": 3,
+            "title": "La La La (Feat. Matthew)",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "하라구",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Rainy Day",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "초코칩쿠키 (Inst.)",
+            "isTitle": false
+          }
+        ]
+      }
+    ]
   },
   {
     "name": {
@@ -63090,7 +63808,147 @@
       "namu": "https://namu.wiki/w/유빈",
       "instagram": "https://www.instagram.com/iluvyub"
     },
-    "left": "2017.02.10"
+    "left": "2017.02.10",
+    "discography": [
+      {
+        "title": "향수(PERFUME)",
+        "type": "싱글",
+        "releaseDate": "2021.01.13",
+        "trackCount": 1,
+        "isMain": true,
+        "titleTrack": "향수(PERFUME)",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/105/46/617/10546617_20210113111520_500.jpg?35627f74744f04fcaf5bfa56b2d89939",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "향수(PERFUME)",
+            "isTitle": true
+          }
+        ]
+      },
+      {
+        "title": "Traveller, No.501",
+        "type": "싱글",
+        "releaseDate": "2020.12.10",
+        "trackCount": 2,
+        "isMain": true,
+        "titleTrack": "Wave",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/105/31/387/10531387_20201209151449_500.jpg?e29ee38255225000aef623ea9aaf5ca4",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Wave",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Wave (Inst.)",
+            "isTitle": false
+          }
+        ]
+      },
+      {
+        "title": "넵넵 (ME TIME)",
+        "type": "싱글",
+        "releaseDate": "2020.05.21",
+        "trackCount": 1,
+        "isMain": true,
+        "titleTrack": "넵넵 (ME TIME)",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/104/33/654/10433654_20200521152106_500.jpg?1fee50e1cc2d6538b045cbfd12ec0f73",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "넵넵 (ME TIME)",
+            "isTitle": true
+          }
+        ]
+      },
+      {
+        "title": "초콜릿 OST Part.7",
+        "type": "OST",
+        "releaseDate": "2019.12.22",
+        "trackCount": 2,
+        "isMain": false,
+        "titleTrack": "Special",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/103/67/738/10367738_20191220175745_500.jpg?3eb498936fa80622da67928ec45593c3",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Special",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Special (inst.)",
+            "isTitle": false
+          }
+        ],
+        "feat": true
+      },
+      {
+        "title": "Start of The End",
+        "type": "싱글",
+        "releaseDate": "2019.10.30",
+        "trackCount": 2,
+        "isMain": true,
+        "titleTrack": "무성영화 (feat. 윤미래)",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/103/45/598/10345598_500.jpg?45313e3c96fce6d49eed8093360385cf",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "무성영화 (feat. 윤미래)",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Not Yours",
+            "isTitle": false
+          }
+        ]
+      },
+      {
+        "title": "#TUSM",
+        "type": "싱글",
+        "releaseDate": "2018.11.27",
+        "trackCount": 3,
+        "isMain": true,
+        "titleTrack": "Thank U Soooo Much",
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/102/26/543/10226543_500.jpg?1b53aa2034e015ac46703dd8819db5a4",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "보내줄게",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "Thank U Soooo Much",
+            "isTitle": true
+          },
+          {
+            "no": 3,
+            "title": "Game Over",
+            "isTitle": false
+          }
+        ]
+      },
+      {
+        "title": "都市女子",
+        "type": "싱글",
+        "releaseDate": "2018.06.05",
+        "trackCount": 1,
+        "isMain": true,
+        "titleTrack": "숙녀 (淑女)",
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/101/73/711/10173711_500.jpg?43f7482634d82926c645c21c6001903f",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "숙녀 (淑女)",
+            "isTitle": true
+          }
+        ]
+      }
+    ]
   },
   {
     "name": {
@@ -63783,7 +64641,183 @@
       "namu": "https://namu.wiki/w/선예",
       "instagram": "https://www.instagram.com/sunye.m"
     },
-    "left": "2015.07.20"
+    "left": "2015.07.20",
+    "discography": [
+      {
+        "title": "Sing For Eternity",
+        "type": "싱글",
+        "releaseDate": "2023.12.06",
+        "trackCount": 1,
+        "isMain": true,
+        "titleTrack": "영원을 노래해 (Sing For Eternity) (Feat. 소향, 루나, 이보람, 이지훈, 김다현, 조권, 범키)",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/113/78/318/11378318_20231205135207_500.jpg?2a4cae58cde7d1fc68c5774fa1c52edb",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "영원을 노래해 (Sing For Eternity) (Feat. 소향, 루나, 이보람, 이지훈, 김다현, 조권, 범키)",
+            "isTitle": true
+          }
+        ]
+      },
+      {
+        "title": "That's Me",
+        "type": "OST",
+        "releaseDate": "2023.06.29",
+        "trackCount": 2,
+        "isMain": false,
+        "titleTrack": "That's Me",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/112/75/395/11275395_20230628140102_500.jpg?aef857dc0c88bfe68ac1535646c00804",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "That's Me",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "That's Me (Instrumental)",
+            "isTitle": false
+          }
+        ],
+        "feat": true
+      },
+      {
+        "title": "[Genuine]",
+        "type": "미니 1집",
+        "releaseDate": "2022.07.26",
+        "trackCount": 5,
+        "isMain": true,
+        "titleTrack": "Just A Dancer",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/110/06/762/11006762_20220726132846_500.jpg?387d30c56c819b5cd3033c4d3fe6f206",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Genuine",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "Just A Dancer",
+            "isTitle": true
+          },
+          {
+            "no": 3,
+            "title": "Glass Heart",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Now I Fly",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Best Thing",
+            "isTitle": false
+          }
+        ]
+      },
+      {
+        "title": "울지 않을게",
+        "type": "싱글",
+        "releaseDate": "2022.05.08",
+        "trackCount": 2,
+        "isMain": true,
+        "titleTrack": "울지 않을게",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/109/44/484/10944484_20220506112239_500.jpg?19427b2969c53de7d5ae167da30d5c9e",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "울지 않을게",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "울지 않을게 (Inst.)",
+            "isTitle": false
+          }
+        ]
+      },
+      {
+        "title": "열애중",
+        "type": "싱글",
+        "releaseDate": "2022.03.04",
+        "trackCount": 2,
+        "isMain": true,
+        "titleTrack": "열애중",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/108/84/545/10884545_20220303180040_500.jpg?062bf06891e8cc2c4254161bf9a21cb0",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "열애중",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "열애중 (Inst.)",
+            "isTitle": false
+          }
+        ]
+      },
+      {
+        "title": "울랄라부부 OST Part.1",
+        "type": "싱글",
+        "releaseDate": "2012.10.08",
+        "trackCount": 2,
+        "isMain": true,
+        "titleTrack": "내게 와줘",
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/021/52/050/2152050_500.jpg",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "내게 와줘",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "내게 와줘 (Inst.)",
+            "isTitle": false
+          }
+        ]
+      },
+      {
+        "title": "신들의 만찬 OST Part.3",
+        "type": "싱글",
+        "releaseDate": "2012.04.16",
+        "trackCount": 2,
+        "isMain": true,
+        "titleTrack": "사랑소리",
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/021/11/029/2111029_500.jpg",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "사랑소리",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "사랑소리 (MR)",
+            "isTitle": false
+          }
+        ]
+      },
+      {
+        "title": "드림하이 OST Part.2",
+        "type": "싱글",
+        "releaseDate": "2011.01.10",
+        "trackCount": 1,
+        "isMain": true,
+        "titleTrack": "Maybe",
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/011/32/551/1132551_500.jpg",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Maybe",
+            "isTitle": true
+          }
+        ]
+      }
+    ]
   },
   {
     "name": {
@@ -63906,6 +64940,50 @@
           }
         ]
       }
+    ],
+    "discography": [
+      {
+        "title": "내사랑 내곁에",
+        "type": "싱글",
+        "releaseDate": "2012.11.16",
+        "trackCount": 2,
+        "isMain": true,
+        "titleTrack": "내사랑 내곁에 (With 일훈 Of 비투비)",
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/021/66/917/2166917_500.jpg",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "내사랑 내곁에 (With 일훈 Of 비투비)",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "내사랑 내곁에 (Inst.)",
+            "isTitle": false
+          }
+        ]
+      },
+      {
+        "title": "포세이돈 OST Part.4",
+        "type": "싱글",
+        "releaseDate": "2011.10.25",
+        "trackCount": 2,
+        "isMain": true,
+        "titleTrack": "꿈이라고 생각해",
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/020/24/546/2024546_500.jpg",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "꿈이라고 생각해",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "꿈이라고 생각해 (Inst.)",
+            "isTitle": false
+          }
+        ]
+      }
     ]
   },
   {
@@ -63973,6 +65051,295 @@
                 "isTitle": false
               }
             ]
+          }
+        ]
+      }
+    ],
+    "discography": [
+      {
+        "title": "Dive!",
+        "type": "싱글",
+        "releaseDate": "2026.01.11",
+        "trackCount": 3,
+        "isMain": true,
+        "titleTrack": "Dive!",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/124/74/742/12474742_20260108205333_500.jpg?a6d2ee2f7badf3d6b5dd0dbd743f3317",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Dive!",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Dive! (Speed Up)",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "Dive!",
+            "isTitle": false
+          }
+        ]
+      },
+      {
+        "title": "내 눈에 콩깍지 OST Part.09",
+        "type": "OST",
+        "releaseDate": "2022.12.02",
+        "trackCount": 2,
+        "isMain": false,
+        "titleTrack": "그런 너였는데",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/111/14/770/11114770_20221201161233_500.jpg?b823238ce6032c4a84b84d7d86b5cacc",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "그런 너였는데",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "그런 너였는데 (Inst.)",
+            "isTitle": false
+          }
+        ],
+        "feat": true
+      },
+      {
+        "title": "알면서도",
+        "type": "싱글",
+        "releaseDate": "2022.05.22",
+        "trackCount": 1,
+        "isMain": true,
+        "titleTrack": "알면서도",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/109/63/877/10963877_20220520164655_500.jpg?eddc1fdd7509114f81b480e7b717ae44",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "알면서도",
+            "isTitle": true
+          }
+        ]
+      },
+      {
+        "title": "숲",
+        "type": "싱글",
+        "releaseDate": "2021.08.21",
+        "trackCount": 1,
+        "isMain": true,
+        "titleTrack": "숲 (Feat. 허가윤)",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/106/87/227/10687227_20210820150824_500.jpg?2dc0b76e16fe4a5c9ddad0b7acef815f",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "숲 (Feat. 허가윤)",
+            "isTitle": true
+          }
+        ]
+      },
+      {
+        "title": "BAD",
+        "type": "싱글",
+        "releaseDate": "2020.08.24",
+        "trackCount": 2,
+        "isMain": true,
+        "titleTrack": "BAD (Feat. 김뮤지엄)",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/104/79/983/10479983_20200824151756_500.jpg?93db711ef465e672e9fd4efc0f0caf28",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "세상 모든 나쁜 이들에게 (to this which the world all are bad)",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "BAD (Feat. 김뮤지엄)",
+            "isTitle": true
+          }
+        ]
+      },
+      {
+        "title": "놓지마 정신줄 OST",
+        "type": "OST",
+        "releaseDate": "2020.08.18",
+        "trackCount": 2,
+        "isMain": false,
+        "titleTrack": "놓지마 정신줄",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/104/76/602/10476602_20200814142239_500.jpg?ed52de8b63db77bd9a2af0a562a00d8b",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "놓지마 정신줄",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "놓지마 내 손",
+            "isTitle": false
+          }
+        ],
+        "feat": true
+      },
+      {
+        "title": "The moment I loved",
+        "type": "미니 1집",
+        "releaseDate": "2019.05.04",
+        "trackCount": 4,
+        "isMain": true,
+        "titleTrack": "환상",
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/102/81/032/10281032_500.jpg?d8343be710756601deaab2fd7806175d",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "환상",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "analog",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "그건 내가 정할 수가 없는 거라서",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "처음처럼 (bonus track)",
+            "isTitle": false
+          }
+        ]
+      },
+      {
+        "title": "샤워 (Shower)",
+        "type": "싱글",
+        "releaseDate": "2018.10.31",
+        "trackCount": 2,
+        "isMain": true,
+        "titleTrack": "샤워 (Shower) (Feat. 니화 (NiiHWA))",
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/102/17/468/10217468_500.jpg?23ddec54a2c3bf4f10c2414f11df2f8b",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "샤워 (Shower) (Feat. 니화 (NiiHWA))",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "샤워 (Shower) (Inst.)",
+            "isTitle": false
+          }
+        ]
+      },
+      {
+        "title": "BUS",
+        "type": "싱글",
+        "releaseDate": "2018.07.11",
+        "trackCount": 1,
+        "isMain": true,
+        "titleTrack": "Bus",
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/101/83/629/10183629_500.jpg?5bc51d2bcf7a19267f17bb52f5c03ad4",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Bus",
+            "isTitle": true
+          }
+        ]
+      },
+      {
+        "title": "Because",
+        "type": "싱글",
+        "releaseDate": "2018.01.13",
+        "trackCount": 1,
+        "isMain": true,
+        "titleTrack": "Because",
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/101/28/433/10128433_500.jpg?c512af580fb475dedc6b62705620bcf7",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Because",
+            "isTitle": true
+          }
+        ]
+      },
+      {
+        "title": "저기요 (Hello)",
+        "type": "싱글",
+        "releaseDate": "2017.09.12",
+        "trackCount": 1,
+        "isMain": true,
+        "titleTrack": "저기요 (Feat. 키썸 (KISUM))",
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/100/95/341/10095341_500.jpg?8faf17049779c8ea6733ba4915ca047e",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "저기요 (Feat. 키썸 (KISUM))",
+            "isTitle": true
+          }
+        ]
+      },
+      {
+        "title": "파수꾼 OST Part.4",
+        "type": "OST",
+        "releaseDate": "2017.06.12",
+        "trackCount": 2,
+        "isMain": false,
+        "titleTrack": "Taken (Feat. DAVII)",
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/100/70/073/10070073_500.jpg?ae0e6bca529b65d1d1ea60cd7f70d280",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Taken (Feat. DAVII)",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Taken (Inst.)",
+            "isTitle": false
+          }
+        ],
+        "feat": true
+      },
+      {
+        "title": "낮 and 밤",
+        "type": "싱글",
+        "releaseDate": "2016.11.02",
+        "trackCount": 2,
+        "isMain": true,
+        "titleTrack": "내가 해",
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/100/11/803/10011803_500.jpg?d019c9076ae6cecef22f9c40a02a438a",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "내가 해",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "자석 (Feat. 올티)",
+            "isTitle": false
+          }
+        ]
+      },
+      {
+        "title": "사랑과 우정사이",
+        "type": "싱글",
+        "releaseDate": "2013.01.03",
+        "trackCount": 2,
+        "isMain": true,
+        "titleTrack": "사랑과 우정사이",
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/021/71/576/2171576_500.jpg",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "사랑과 우정사이",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "사랑과 우정사이 (Inst.)",
+            "isTitle": false
           }
         ]
       }
@@ -64256,7 +65623,158 @@
     "links": {
       "instagram": "https://www.instagram.com/_minzy_mz",
       "namu": "https://namu.wiki/w/공민지"
-    }
+    },
+    "discography": [
+      {
+        "title": "기깔나",
+        "type": "싱글",
+        "releaseDate": "2021.12.12",
+        "trackCount": 1,
+        "isMain": true,
+        "titleTrack": "기깔나",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/108/08/863/10808863_20211209223838_500.jpg?017b2bb94d05f51f2ea61d6d0e0860cd",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "기깔나",
+            "isTitle": true
+          }
+        ]
+      },
+      {
+        "title": "TEAMO",
+        "type": "싱글",
+        "releaseDate": "2021.07.11",
+        "trackCount": 1,
+        "isMain": true,
+        "titleTrack": "TEAMO",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/106/48/708/10648708_20210709162325_500.jpg?855cd517bd7b3e70341bec1491925828",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "TEAMO",
+            "isTitle": true
+          }
+        ]
+      },
+      {
+        "title": "LOVELY",
+        "type": "싱글",
+        "releaseDate": "2020.05.24",
+        "trackCount": 1,
+        "isMain": true,
+        "titleTrack": "LOVELY",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/104/34/017/10434017_20200522102821_500.jpg?70d534ff161b32c0a392380f2a178678",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "LOVELY",
+            "isTitle": true
+          }
+        ]
+      },
+      {
+        "title": "ALL OF YOU SAY",
+        "type": "싱글",
+        "releaseDate": "2018.12.03",
+        "trackCount": 1,
+        "isMain": true,
+        "titleTrack": "ALL OF YOU SAY",
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/102/28/431/10228431_500.jpg?c1ddffa01f542dcb62e388664955995e",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "ALL OF YOU SAY",
+            "isTitle": true
+          }
+        ]
+      },
+      {
+        "title": "검법남녀 OST Part.3",
+        "type": "OST",
+        "releaseDate": "2018.06.04",
+        "trackCount": 2,
+        "isMain": false,
+        "titleTrack": "걸어가",
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/101/73/132/10173132_500.jpg?8315ee5432f27034b31d4c9c9461665d",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "걸어가",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "걸어가 (Inst.)",
+            "isTitle": false
+          }
+        ],
+        "feat": true
+      },
+      {
+        "title": "MINZY WORK 01 UNO",
+        "type": "미니 1집",
+        "releaseDate": "2017.04.17",
+        "trackCount": 6,
+        "isMain": true,
+        "titleTrack": "니나노 (Feat. 플로우식 (Flowsik))",
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/100/55/255/10055255_500.jpg?16bed7db9b97eaf1f20d487c5c29c2e5",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "니나노 (Feat. 플로우식 (Flowsik))",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Superwoman (수퍼우먼)",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "ING (알쏭달쏭)",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Flashlight (Feat. 박재범)",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Beautiful Lie",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "니나노 (English Rap Ver.) (Feat. 플로우식 (Flowsik))",
+            "isTitle": false
+          }
+        ]
+      },
+      {
+        "title": "역적 : 백성을 훔친 도적 OST Part.4",
+        "type": "OST",
+        "releaseDate": "2017.03.07",
+        "trackCount": 2,
+        "isMain": false,
+        "titleTrack": "사랑하고 싶었던 거야",
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/100/43/401/10043401_500.jpg?1f41e5396627df8b5d19b2b05d8d1208",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "사랑하고 싶었던 거야",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "사랑하고 싶었던 거야 (Inst.)",
+            "isTitle": false
+          }
+        ],
+        "feat": true
+      }
+    ]
   },
   {
     "name": {
@@ -64282,7 +65800,30 @@
     "links": {
       "instagram": "https://www.instagram.com/qtfreet",
       "namu": "https://namu.wiki/w/큐리"
-    }
+    },
+    "discography": [
+      {
+        "title": "SURI SURI",
+        "type": "싱글",
+        "releaseDate": "2021.09.26",
+        "trackCount": 2,
+        "isMain": true,
+        "titleTrack": "SURI SURI",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/107/22/056/10722056_20210924163108_500.jpg?8cc9cdbe311a58c43125a4f47ebabc54",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "SURI SURI",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "SURI SURI (Inst.)",
+            "isTitle": false
+          }
+        ]
+      }
+    ]
   },
   {
     "name": {
@@ -64348,6 +65889,90 @@
                 "isTitle": false
               }
             ]
+          }
+        ]
+      }
+    ],
+    "discography": [
+      {
+        "title": "금이야 옥이야 OST Part.1",
+        "type": "OST",
+        "releaseDate": "2023.04.13",
+        "trackCount": 1,
+        "isMain": false,
+        "titleTrack": "두근두근 때론 콩닥콩닥",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/112/22/513/11222513_20230412143917_500.jpg?44b1a1b6fbdf13b2469d12870db36bb1",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "두근두근 때론 콩닥콩닥",
+            "isTitle": true
+          }
+        ],
+        "feat": true
+      },
+      {
+        "title": "너 미워! 줄리엣 OST Part.3",
+        "type": "OST",
+        "releaseDate": "2019.02.28",
+        "trackCount": 2,
+        "isMain": false,
+        "titleTrack": "그대 나 별",
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/102/56/030/10256030_500.jpg?c6b389cf421459894bc0daf1c1d8d13e",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "그대 나 별",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "그대 나 별 (Inst.)",
+            "isTitle": false
+          }
+        ],
+        "feat": true
+      },
+      {
+        "title": "내 뒤에 테리우스 OST Part.4",
+        "type": "OST",
+        "releaseDate": "2018.10.31",
+        "trackCount": 2,
+        "isMain": false,
+        "titleTrack": "하늘에 외치다",
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/102/17/671/10217671_500.jpg?2ff47646b0a6b8e934c33027dcbc0ca3",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "하늘에 외치다",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "하늘에 외치다 (Inst.)",
+            "isTitle": false
+          }
+        ],
+        "feat": true
+      },
+      {
+        "title": "Good Bye",
+        "type": "싱글",
+        "releaseDate": "2015.10.14",
+        "trackCount": 2,
+        "isMain": true,
+        "titleTrack": "Good Bye",
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/026/44/700/2644700_500.jpg",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Good Bye",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Good bye (Chinese Ver.)",
+            "isTitle": false
           }
         ]
       }
@@ -64754,7 +66379,25 @@
     "links": {
       "instagram": "https://www.instagram.com/x_xellybabyx",
       "namu": "https://namu.wiki/w/ELLY(EXID)"
-    }
+    },
+    "discography": [
+      {
+        "title": "Nhớ Anh Lắm",
+        "type": "싱글",
+        "releaseDate": "2023.06.19",
+        "trackCount": 1,
+        "isMain": true,
+        "titleTrack": "Nhớ Anh Lắm",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/142/28/415/14228415_20260728212128_500.jpg?7774998e7367af93dfe821c99547e984",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Nhớ Anh Lắm",
+            "isTitle": true
+          }
+        ]
+      }
+    ]
   },
   {
     "name": {
@@ -64867,7 +66510,73 @@
     "links": {
       "instagram": "https://www.instagram.com/hyeliniseo",
       "namu": "https://namu.wiki/w/혜린"
-    }
+    },
+    "discography": [
+      {
+        "title": "술 한잔할래요",
+        "type": "싱글",
+        "releaseDate": "2023.12.28",
+        "trackCount": 2,
+        "isMain": true,
+        "titleTrack": "술 한잔할래요",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/113/90/329/11390329_20231227131456_500.jpg?d24bd3482b65941f80eec17f166eb497",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "술 한잔할래요",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "술 한잔할래요 (Inst.)",
+            "isTitle": false
+          }
+        ]
+      },
+      {
+        "title": "겨울 지나 벚꽃 OST PART.4",
+        "type": "OST",
+        "releaseDate": "2022.03.17",
+        "trackCount": 2,
+        "isMain": false,
+        "titleTrack": "Love Letter",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/108/91/611/10891611_20220315155214_500.jpg?a374317e615c8c5cb5c4ba56367c96c6",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Love Letter",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Love Letter (Inst.)",
+            "isTitle": false
+          }
+        ],
+        "feat": true
+      },
+      {
+        "title": "알아주길 바랬어",
+        "type": "싱글",
+        "releaseDate": "2021.05.06",
+        "trackCount": 2,
+        "isMain": true,
+        "titleTrack": "알아주길 바랬어",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/106/02/367/10602367_20210504160804_500.jpg?4a16c0636d345778db20e3cb3525dd21",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "알아주길 바랬어",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "알아주길 바랬어 (Inst.)",
+            "isTitle": false
+          }
+        ]
+      }
+    ]
   },
   {
     "name": {
@@ -64893,7 +66602,30 @@
     "links": {
       "instagram": "https://www.instagram.com/parkjjongaa",
       "namu": "https://namu.wiki/w/박정화"
-    }
+    },
+    "discography": [
+      {
+        "title": "sun love",
+        "type": "싱글",
+        "releaseDate": "2026.05.10",
+        "trackCount": 2,
+        "isMain": true,
+        "titleTrack": "sun love",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/133/77/333/13377333_20260507182253_500.jpg?ef4f832282d70e5797a96eb995a2e83a",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "sun love",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "sun love (inst.)",
+            "isTitle": false
+          }
+        ]
+      }
+    ]
   },
   {
     "name": {
@@ -65250,6 +66982,121 @@
           }
         ]
       }
+    ],
+    "discography": [
+      {
+        "title": "어라 니 아래",
+        "type": "싱글",
+        "releaseDate": "2025.09.30",
+        "trackCount": 1,
+        "isMain": true,
+        "titleTrack": "어라 니 아래",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/121/41/874/12141874_20250929155048_500.jpg?a3201f99c3586b244a1c3517c2ce0b4a",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "어라 니 아래",
+            "isTitle": true
+          }
+        ]
+      },
+      {
+        "title": "별이 쏟아진다",
+        "type": "싱글",
+        "releaseDate": "2025.04.23",
+        "trackCount": 2,
+        "isMain": true,
+        "titleTrack": "별이 쏟아진다",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/117/84/393/11784393_20250424114801_500.jpg?43e0f4f503d401e4d970add4d861fb34",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "별이 쏟아진다",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "별이 쏟아진다 (Inst.)",
+            "isTitle": false
+          }
+        ]
+      },
+      {
+        "title": "Amaranth (FEAT. 딘딘)",
+        "type": "싱글",
+        "releaseDate": "2022.04.06",
+        "trackCount": 1,
+        "isMain": true,
+        "titleTrack": "천일홍 (FEAT. 딘딘)",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/109/10/600/10910600_20220405185057_500.jpg?27b65c85d3e4f2af2fbb1485567d852f",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "천일홍 (FEAT. 딘딘)",
+            "isTitle": true
+          }
+        ]
+      },
+      {
+        "title": "Better World(트웬티해커OST Part.3)",
+        "type": "OST",
+        "releaseDate": "2021.04.08",
+        "trackCount": 1,
+        "isMain": false,
+        "titleTrack": "Better World",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/105/88/966/10588966_20210407160558_500.jpg?62e8aa72b470aa432fc86350c040d08a",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Better World",
+            "isTitle": true
+          }
+        ],
+        "feat": true
+      },
+      {
+        "title": "막돼먹은 영애씨 시즌 14 OST Part.1",
+        "type": "OST",
+        "releaseDate": "2015.08.11",
+        "trackCount": 2,
+        "isMain": false,
+        "titleTrack": "향기에 취해",
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/023/34/049/2334049_500.jpg",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "향기에 취해",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "향기에 취해 (Inst.)",
+            "isTitle": false
+          }
+        ],
+        "feat": true
+      },
+      {
+        "title": "주영훈 20주년 기념 앨범 Part 4",
+        "type": "싱글",
+        "releaseDate": "2014.07.11",
+        "trackCount": 2,
+        "isMain": true,
+        "titleTrack": "배반의 장미",
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/022/66/545/2266545_500.jpg",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "배반의 장미",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "배반의 장미 (Inst.)",
+            "isTitle": false
+          }
+        ]
+      }
     ]
   },
   {
@@ -65522,6 +67369,129 @@
           }
         ]
       }
+    ],
+    "discography": [
+      {
+        "title": "우리는 매일매일 OST Part.5 - 난 모든 기억을 지워야만 했어",
+        "type": "OST",
+        "releaseDate": "2026.03.26",
+        "trackCount": 2,
+        "isMain": false,
+        "titleTrack": "난 모든 기억을 지워야만 했어",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/130/32/479/13032479_20260325145155_500.jpg?66fe1140c43f6e89297f46211655b3d0",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "난 모든 기억을 지워야만 했어",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "난 모든 기억을 지워야만 했어 (Inst.)",
+            "isTitle": false
+          }
+        ],
+        "feat": true
+      },
+      {
+        "title": "<sAvioR>",
+        "type": "싱글",
+        "releaseDate": "2025.11.13",
+        "trackCount": 1,
+        "isMain": true,
+        "titleTrack": "sAvioR",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/122/07/742/12207742_20251112172309_500.jpg?YUV444",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "sAvioR",
+            "isTitle": true
+          }
+        ]
+      },
+      {
+        "title": "Algorithm (Eng Ver.)",
+        "type": "싱글",
+        "releaseDate": "2024.09.23",
+        "trackCount": 2,
+        "isMain": true,
+        "titleTrack": "Algorithm (Eng Ver.)",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/115/97/238/11597238_20240920173204_500.jpg?99f1ce424113686c24cc147abcf34ba0",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Algorithm (Eng Ver.)",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Algorithm (Eng Rock Ver.)",
+            "isTitle": false
+          }
+        ]
+      },
+      {
+        "title": "<K>",
+        "type": "미니 1집",
+        "releaseDate": "2023.10.31",
+        "trackCount": 6,
+        "isMain": true,
+        "titleTrack": "Algorithm",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/113/54/832/11354832_20231030160906_500.jpg?b2688d0637ef7ef6ee374dd4c9e004d6",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "개화",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "Algorithm",
+            "isTitle": true
+          },
+          {
+            "no": 3,
+            "title": "Sad Girls Club",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Video Game",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Nokia",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "Addiction",
+            "isTitle": false
+          }
+        ]
+      },
+      {
+        "title": "Honestly",
+        "type": "싱글",
+        "releaseDate": "2022.07.13",
+        "trackCount": 2,
+        "isMain": true,
+        "titleTrack": "Honestly",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/110/02/586/11002586_20220712121955_500.jpg?26721ee09fa3cf71a643ad9f82a011ce",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Honestly",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Honestly (inst.)",
+            "isTitle": false
+          }
+        ]
+      }
     ]
   },
   {
@@ -65592,6 +67562,72 @@
               "지금, 좋아해 (Love & Live) (Remix)",
               "You and Me Together (Remix)"
             ]
+          }
+        ]
+      }
+    ],
+    "discography": [
+      {
+        "title": "Again",
+        "type": "싱글",
+        "releaseDate": "2026.06.14",
+        "trackCount": 1,
+        "isMain": true,
+        "titleTrack": "Again",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/137/32/020/13732020_20260612150041_500.jpg?6dfaa6d8ce62309cfe5304f7f6205bc2",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Again",
+            "isTitle": true
+          }
+        ]
+      },
+      {
+        "title": "<Love Poison>",
+        "type": "싱글",
+        "releaseDate": "2025.09.18",
+        "trackCount": 1,
+        "isMain": true,
+        "titleTrack": "Love Poison",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/121/22/380/12122380_20250917164441_500.jpg?355164ba583c05aa9f322671b0d3b665",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Love Poison",
+            "isTitle": true
+          }
+        ]
+      },
+      {
+        "title": "<Fragile Eyes>",
+        "type": "싱글",
+        "releaseDate": "2024.12.09",
+        "trackCount": 1,
+        "isMain": true,
+        "titleTrack": "Fragile Eyes",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/116/60/851/11660851_20241206135003_500.jpg?b098c3ddf9fdf23906c7ea5f01e9d7d0",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Fragile Eyes",
+            "isTitle": true
+          }
+        ]
+      },
+      {
+        "title": "Plastic Candy",
+        "type": "싱글",
+        "releaseDate": "2023.10.26",
+        "trackCount": 1,
+        "isMain": true,
+        "titleTrack": "Plastic Candy",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/113/51/588/11351588_20231026103539_500.jpg?7fcaf8119e132ae1eec5054d6e9e5ee1",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Plastic Candy",
+            "isTitle": true
           }
         ]
       }
@@ -65690,6 +67726,24 @@
           }
         ]
       }
+    ],
+    "discography": [
+      {
+        "title": "<Can You Entertain?>",
+        "type": "싱글",
+        "releaseDate": "2025.10.16",
+        "trackCount": 1,
+        "isMain": true,
+        "titleTrack": "Can You Entertain?",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/121/62/689/12162689_20251015153640_500.jpg?3c50d9b76de71f564793be65048d644b",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Can You Entertain?",
+            "isTitle": true
+          }
+        ]
+      }
     ]
   },
   {
@@ -65785,6 +67839,24 @@
           }
         ]
       }
+    ],
+    "discography": [
+      {
+        "title": "<Ring of Chaos>",
+        "type": "싱글",
+        "releaseDate": "2025.10.23",
+        "trackCount": 1,
+        "isMain": true,
+        "titleTrack": "Ring of Chaos",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/121/72/546/12172546_20251022165739_500.jpg?8c733646e6c3a2744e127c7adfd527b2",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Ring of Chaos",
+            "isTitle": true
+          }
+        ]
+      }
     ]
   },
   {
@@ -65877,6 +67949,24 @@
             "tracks": [
               "Sweet Crazy Love (Eng Ver.)"
             ]
+          }
+        ]
+      }
+    ],
+    "discography": [
+      {
+        "title": "<Pressure>",
+        "type": "싱글",
+        "releaseDate": "2025.10.30",
+        "trackCount": 1,
+        "isMain": true,
+        "titleTrack": "Pressure",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/121/82/921/12182921_20251029152737_500.jpg?be3f3d9784ced1e95333fd6e19e63140",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Pressure",
+            "isTitle": true
           }
         ]
       }
@@ -66313,6 +68403,556 @@
             ]
           }
         ]
+      }
+    ],
+    "discography": [
+      {
+        "title": "RULE",
+        "type": "싱글",
+        "releaseDate": "2026.07.02",
+        "trackCount": 2,
+        "isMain": true,
+        "titleTrack": "RULE (feat. 헤이즈 (Heize))",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/137/75/192/13775192_20260701142000_500.jpg?d83d4ce0629e0ae7e0005ed806cb2cab",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "RULE (feat. 헤이즈 (Heize))",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "RULE (feat. 헤이즈 (Heize)) (Inst.)",
+            "isTitle": false
+          }
+        ]
+      },
+      {
+        "title": "XO, My Cyberlove",
+        "type": "정규 1집",
+        "releaseDate": "2026.01.07",
+        "trackCount": 9,
+        "isMain": true,
+        "titleTrack": "XO, My Cyberlove",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/124/69/726/12469726_20260106173240_500.jpg?0721ea963c23a1842ea28c5fdc84bb50",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "XO, My Cyberlove",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Canary",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "Cocktail Dress",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Limoncello",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Teeny Tiny Heart",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "Love Potion",
+            "isTitle": false
+          },
+          {
+            "no": 7,
+            "title": "Heart Tea Bag",
+            "isTitle": false
+          },
+          {
+            "no": 8,
+            "title": "Hide & Seek",
+            "isTitle": false
+          },
+          {
+            "no": 9,
+            "title": "첫눈이 오면 그때 거기서 만나 (Loving You!)",
+            "isTitle": false
+          }
+        ]
+      },
+      {
+        "title": "내 여자친구는 상남자 OST Part.5",
+        "type": "OST",
+        "releaseDate": "2025.08.14",
+        "trackCount": 2,
+        "isMain": false,
+        "titleTrack": "별",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/120/44/021/12044021_20250813142254_500.jpg?7ca769c1c1255918aae51a798bdf1a14",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "별",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "별 (Inst.)",
+            "isTitle": false
+          }
+        ],
+        "feat": true
+      },
+      {
+        "title": "Loveholic (첫사랑 엔딩 X 츄 (CHUU))",
+        "type": "싱글",
+        "releaseDate": "2025.07.21",
+        "trackCount": 2,
+        "isMain": true,
+        "titleTrack": "Loveholic",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/119/18/651/11918651_20250721110955_500.jpg?YUV444",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Loveholic",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Loveholic (Inst.)",
+            "isTitle": false
+          }
+        ]
+      },
+      {
+        "title": "Only cry in the rain",
+        "type": "미니 3집",
+        "releaseDate": "2025.04.21",
+        "trackCount": 5,
+        "isMain": true,
+        "titleTrack": "Only cry in the rain",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/117/81/407/11781407_20250418165246_500.jpg?532bcf098039dceae3af2c12e00fbb5b",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Only cry in the rain",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Back in town",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "Kiss a kitty",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Je t'aime",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "No more",
+            "isTitle": false
+          }
+        ]
+      },
+      {
+        "title": "내가 바보라서 그래? (feat. KIXO (키조))",
+        "type": "싱글",
+        "releaseDate": "2025.03.27",
+        "trackCount": 2,
+        "isMain": true,
+        "titleTrack": "내가 바보라서 그래? (feat. KIXO (키조))",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/117/52/289/11752289_20250326153854_500.jpg?f4b7158b026dc7e73a9ffca6828dd2d0",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "내가 바보라서 그래? (feat. KIXO (키조))",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "내가 바보라서 그래? (feat. KIXO (키조)) (Inst.)",
+            "isTitle": false
+          }
+        ]
+      },
+      {
+        "title": "nrv",
+        "type": "싱글",
+        "releaseDate": "2024.11.09",
+        "trackCount": 1,
+        "isMain": true,
+        "titleTrack": "PINK CLOUD",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/116/37/073/11637073_20241108115848_500.jpg?dc358be816c825e7a14d2e8072e49e30",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "PINK CLOUD",
+            "isTitle": true
+          }
+        ]
+      },
+      {
+        "title": "IN MY DREAM (웹툰 '환생좌' X 츄 (CHUU))",
+        "type": "싱글",
+        "releaseDate": "2024.09.19",
+        "trackCount": 2,
+        "isMain": true,
+        "titleTrack": "IN MY DREAM",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/115/92/794/11592794_20240912170948_500.jpg?cc706260dcc05588e3ad0628e20a4714",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "IN MY DREAM",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "IN MY DREAM (Inst.)",
+            "isTitle": false
+          }
+        ]
+      },
+      {
+        "title": "두 번째 사랑 (Ver.Acoustic) (한류 시작 20th 프로젝트 Part.2)",
+        "type": "싱글",
+        "releaseDate": "2024.09.12",
+        "trackCount": 1,
+        "isMain": true,
+        "titleTrack": "두 번째 사랑 (Ver. Acoustic)",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/115/90/250/11590250_20240911104553_500.jpg?9e281375efcfe761a6cdff39b9fe41be",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "두 번째 사랑 (Ver. Acoustic)",
+            "isTitle": true
+          }
+        ]
+      },
+      {
+        "title": "두 번째 사랑 (한류 시작 20th 프로젝트 Part.1)",
+        "type": "싱글",
+        "releaseDate": "2024.07.22",
+        "trackCount": 2,
+        "isMain": true,
+        "titleTrack": "두 번째 사랑",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/115/45/803/11545803_20240719113350_500.jpg?14e59f8932a2b78c8f7a0dc59ee154bb",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "두 번째 사랑",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "두 번째 사랑 (Inst.)",
+            "isTitle": false
+          }
+        ]
+      },
+      {
+        "title": "Strawberry Rush",
+        "type": "미니 2집",
+        "releaseDate": "2024.06.25",
+        "trackCount": 6,
+        "isMain": true,
+        "titleTrack": "Strawberry Rush",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/115/19/459/11519459_20240626160545_500.jpg?YUV444",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Strawberry Rush",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Honeybee",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "Daydreamer",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Lucid Dream",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Chocolate",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "Chocolate (English Ver.)",
+            "isTitle": false
+          }
+        ]
+      },
+      {
+        "title": "Chocolate (English Ver.)",
+        "type": "싱글",
+        "releaseDate": "2024.02.14",
+        "trackCount": 1,
+        "isMain": true,
+        "titleTrack": "Chocolate (English Ver.)",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/114/16/823/11416823_20240213182259_500.jpg?2ae5f57b1c0bb1786ec08c0817c68b05",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Chocolate (English Ver.)",
+            "isTitle": true
+          }
+        ]
+      },
+      {
+        "title": "Chocolate",
+        "type": "싱글",
+        "releaseDate": "2024.02.13",
+        "trackCount": 1,
+        "isMain": true,
+        "titleTrack": "Chocolate",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/114/15/217/11415217_20240208111902_500.jpg?490a15a356e72ca762469d9f8a4ccb64",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Chocolate",
+            "isTitle": true
+          }
+        ]
+      },
+      {
+        "title": "여우비 (낮에 뜨는 달 X 츄 (CHUU))",
+        "type": "싱글",
+        "releaseDate": "2024.01.03",
+        "trackCount": 2,
+        "isMain": true,
+        "titleTrack": "여우비 (낮에 뜨는 달 X 츄 (CHUU))",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/113/92/279/11392279_20240102163116_500.jpg?09ae437be8e31542cd84befc58848fab",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "여우비 (낮에 뜨는 달 X 츄 (CHUU))",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "여우비 (낮에 뜨는 달 X 츄 (CHUU)) (Inst.)",
+            "isTitle": false
+          }
+        ]
+      },
+      {
+        "title": "아름다운 이별 - I am Re:Born #1",
+        "type": "싱글",
+        "releaseDate": "2023.12.10",
+        "trackCount": 2,
+        "isMain": true,
+        "titleTrack": "아름다운 이별",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/113/81/064/11381064_20231208141258_500.jpg?eca1035f94ee86435d10e99e1af27e43",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "아름다운 이별",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "아름다운 이별 (Inst.)",
+            "isTitle": false
+          }
+        ]
+      },
+      {
+        "title": "[THE 시즌즈 VolⅡ. 10] <악뮤의 오날오밤> ReːWake x 츄 (CHUU)",
+        "type": "싱글",
+        "releaseDate": "2023.11.18",
+        "trackCount": 1,
+        "isMain": true,
+        "titleTrack": "좋아 좋아",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/113/68/034/11368034_20231117150248_500.jpg?e375d4d5e60bf3849e72c42243dba587",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "좋아 좋아",
+            "isTitle": true
+          }
+        ]
+      },
+      {
+        "title": "Howl",
+        "type": "미니 1집",
+        "releaseDate": "2023.10.18",
+        "trackCount": 5,
+        "isMain": true,
+        "titleTrack": "Howl",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/113/41/107/11341107_20231017175537_500.jpg?64992eb907c58f0046ff3b6bc8a96b83",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Howl",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Underwater",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "My Palace",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Aliens",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Hitchhiker",
+            "isTitle": false
+          }
+        ]
+      },
+      {
+        "title": "우리의 밤은 당신의 낮보다 아름답다",
+        "type": "싱글",
+        "releaseDate": "2023.08.02",
+        "trackCount": 2,
+        "isMain": true,
+        "titleTrack": "우리의 밤은 당신의 낮보다 아름답다",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/112/97/680/11297680_20230825181747_500.jpg?949d9d8f04aadb73566f6ac48b9add07",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "우리의 밤은 당신의 낮보다 아름답다",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "우리의 밤은 당신의 낮보다 아름답다 (Inst.)",
+            "isTitle": false
+          }
+        ]
+      },
+      {
+        "title": "고백 (영화 '동감' X 츄 (이달의 소녀))",
+        "type": "OST",
+        "releaseDate": "2022.10.16",
+        "trackCount": 2,
+        "isMain": false,
+        "titleTrack": "고백 (영화 '동감' X 츄 (이달의 소녀))",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/110/78/402/11078402_20221014143446_500.jpg?0804744f4d981d946bae2d54db3daa4c",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "고백 (영화 '동감' X 츄 (이달의 소녀))",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "고백 (영화 '동감' X 츄 (이달의 소녀)) (Inst.)",
+            "isTitle": false
+          }
+        ],
+        "feat": true
+      },
+      {
+        "title": "조조코믹스(네이버웹툰) 웹툰 OST Part.1",
+        "type": "OST",
+        "releaseDate": "2022.10.08",
+        "trackCount": 2,
+        "isMain": false,
+        "titleTrack": "브런치 (조조코믹스, 네이버웹툰)",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/110/72/311/11072311_20221006140607_500.jpg?e416130170c7ba935abbb8e9b8008701",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "브런치 (조조코믹스, 네이버웹툰)",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "브런치 (조조코믹스, 네이버웹툰) (Inst.)",
+            "isTitle": false
+          }
+        ],
+        "feat": true
+      },
+      {
+        "title": "일과 이분의 일",
+        "type": "싱글",
+        "releaseDate": "2022.09.04",
+        "trackCount": 2,
+        "isMain": true,
+        "titleTrack": "일과 이분의 일",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/110/45/042/11045042_20220902153028_500.jpg?41fddba36aa0175b5ba2dc0ffcaf2395",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "일과 이분의 일",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "일과 이분의 일 (Inst.)",
+            "isTitle": false
+          }
+        ]
+      },
+      {
+        "title": "오케이 광자매 OST Part.5",
+        "type": "OST",
+        "releaseDate": "2021.06.12",
+        "trackCount": 2,
+        "isMain": false,
+        "titleTrack": "좋아서 좋아해",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/106/25/999/10625999_20210611154046_500.jpg?c58a002694045b3eac14278b5db1d030",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "좋아서 좋아해",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "좋아서 좋아해 (Inst.)",
+            "isTitle": false
+          }
+        ],
+        "feat": true
+      },
+      {
+        "title": "출사표 OST Part.4",
+        "type": "OST",
+        "releaseDate": "2020.07.29",
+        "trackCount": 2,
+        "isMain": false,
+        "titleTrack": "봄꽃",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/104/67/939/10467939_20200728113015_500.jpg?54a5cd0972a42b3ccbb43eb553b41b9a",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "봄꽃",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "봄꽃 (Inst.)",
+            "isTitle": false
+          }
+        ],
+        "feat": true
       }
     ]
   },
@@ -66824,7 +69464,25 @@
     "links": {
       "instagram": "https://www.instagram.com/my13kaa",
       "namu": "https://namu.wiki/w/마유카(NiziU)"
-    }
+    },
+    "discography": [
+      {
+        "title": "회유하는 아르파프레데리움",
+        "type": "싱글",
+        "releaseDate": "2025.07.17",
+        "trackCount": 1,
+        "isMain": true,
+        "titleTrack": "회유하는 아르파프레데리움",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/119/01/366/11901366_20250716161432_500.jpg?1521d984fb5cbfe2ed56acb9b2eb88eb",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "회유하는 아르파프레데리움",
+            "isTitle": true
+          }
+        ]
+      }
+    ]
   },
   {
     "name": {
@@ -66929,7 +69587,45 @@
       "namu": "https://namu.wiki/w/J.seph",
       "instagram": "https://www.instagram.com/j.seph_"
     },
-    "left": "2026.07.06"
+    "left": "2026.07.06",
+    "discography": [
+      {
+        "title": "J.seph 1st EP 'Spin-off'",
+        "type": "미니 1집",
+        "releaseDate": "2026.05.26",
+        "trackCount": 5,
+        "isMain": true,
+        "titleTrack": "EASY",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/135/59/048/13559048_20260521181759_500.jpg?3bf212c3817960e77ff5cda30d07a5c4",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "ILL",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "EASY",
+            "isTitle": true
+          },
+          {
+            "no": 3,
+            "title": "TRIPPY",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "BOTTOMS UP",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "EASY (Inst.)",
+            "isTitle": false
+          }
+        ]
+      }
+    ]
   },
   {
     "name": {
@@ -67197,6 +69893,334 @@
         "trackCount": 2,
         "titleTrack": "",
         "tracks": []
+      }
+    ],
+    "discography": [
+      {
+        "title": "Time's Tickin'",
+        "type": "싱글",
+        "releaseDate": "2026.07.20",
+        "trackCount": 2,
+        "isMain": true,
+        "titleTrack": "Time's Tickin'",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/138/06/779/13806779_20260715142246_500.jpg?YUV444",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Time's Tickin'",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "보통의 이야기 (An Ordinary Story)",
+            "isTitle": false
+          }
+        ]
+      },
+      {
+        "title": "I-KNOW - The 1st Album",
+        "type": "정규 1집",
+        "releaseDate": "2025.11.05",
+        "trackCount": 10,
+        "isMain": true,
+        "titleTrack": "Body Language",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/121/56/301/12156301_20251104180743_500.jpg?272c5e4d0f2e31e62ee913cd6aa1a536",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Set In Stone",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "Body Language",
+            "isTitle": true
+          },
+          {
+            "no": 3,
+            "title": "Stretch",
+            "isTitle": true
+          },
+          {
+            "no": 4,
+            "title": "Spotlight2",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Waterfalls (Feat. 카이 (KAI))",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "Leader",
+            "isTitle": false
+          },
+          {
+            "no": 7,
+            "title": "Premium (Feat. 민니 (MINNIE))",
+            "isTitle": false
+          },
+          {
+            "no": 8,
+            "title": "Fever",
+            "isTitle": false
+          },
+          {
+            "no": 9,
+            "title": "Let You Go",
+            "isTitle": false
+          },
+          {
+            "no": 10,
+            "title": "이륙 (26 Take-off)",
+            "isTitle": false
+          }
+        ]
+      },
+      {
+        "title": "Reality Show - The 3rd Mini Album",
+        "type": "미니 4집",
+        "releaseDate": "2023.08.07",
+        "trackCount": 6,
+        "isMain": true,
+        "titleTrack": "Vuja De",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/113/00/938/11300938_20230807115236_500.jpg?f0d51eb753ccf4db82a60046c3bf5613",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Wannabe",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "Vuja De",
+            "isTitle": true
+          },
+          {
+            "no": 3,
+            "title": "Tarantino",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Relax",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Spotlight",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "Curtain",
+            "isTitle": false
+          }
+        ]
+      },
+      {
+        "title": "레이스 OST",
+        "type": "OST",
+        "releaseDate": "2023.06.09",
+        "trackCount": 2,
+        "isMain": false,
+        "titleTrack": "Waterfall",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/112/61/355/11261355_20230608164242_500.jpg?524ceab15092b1ec0e6c5c839b13a767",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Waterfall",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Waterfall (Inst.)",
+            "isTitle": false
+          }
+        ],
+        "feat": true
+      },
+      {
+        "title": "U KNOW Y",
+        "type": "미니 3집",
+        "releaseDate": "2023.06.03",
+        "trackCount": 7,
+        "isMain": true,
+        "titleTrack": "Burning Down",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/112/57/608/11257608_20230602160858_500.jpg?98a7b2354f5f22efacf2f0249e2575ba",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Burning Down",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Tattoos & High Heels",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "BANG!",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "繋がれた舟／Tsunagareta fune",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "T-Style",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "Honey Funny Bunny (Japanese Ver.)",
+            "isTitle": false
+          },
+          {
+            "no": 7,
+            "title": "Santa Revolution",
+            "isTitle": false
+          }
+        ]
+      },
+      {
+        "title": "Stay…",
+        "type": "싱글",
+        "releaseDate": "2022.02.24",
+        "trackCount": 1,
+        "isMain": true,
+        "titleTrack": "Stay…",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/108/77/642/10877642_20220223124713_500.jpg?91f71f6bc9199aeef44be08ad065a205",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Stay…",
+            "isTitle": true
+          }
+        ]
+      },
+      {
+        "title": "Eeny Meeny",
+        "type": "싱글",
+        "releaseDate": "2021.01.25",
+        "trackCount": 1,
+        "isMain": true,
+        "titleTrack": "Eeny Meeny",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/105/52/753/10552753_20210125152837_500.jpg?a3cab95c37082cdf74ad474eee1d4b1c",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Eeny Meeny",
+            "isTitle": true
+          }
+        ]
+      },
+      {
+        "title": "NOIR - The 2nd Mini Album",
+        "type": "미니 2집",
+        "releaseDate": "2021.01.18",
+        "trackCount": 6,
+        "isMain": true,
+        "titleTrack": "Thank U",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/105/49/242/10549242_20210118154602_500.jpg?d59173436a5c368fb1a37266cdeac873",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Time Machine",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "Thank U",
+            "isTitle": true
+          },
+          {
+            "no": 3,
+            "title": "Eeny Meeny",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Loco (House Party)",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Need You Right Now",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "불면 (不眠; La Rosa) (Feat. 신예은)",
+            "isTitle": false
+          }
+        ]
+      },
+      {
+        "title": "True Colors - The 1st Mini Album",
+        "type": "미니 1집",
+        "releaseDate": "2019.06.12",
+        "trackCount": 6,
+        "isMain": true,
+        "titleTrack": "Follow",
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/102/96/042/10296042_500.jpg?6bca5e0ffbd59b2a5773439ee22b1e52",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Follow",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Blue Jeans",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "Swing (Feat. BoA)",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "불러 (Hit Me Up) (Feat. 기리보이)",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "왜 (Why)",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "Change The World",
+            "isTitle": false
+          }
+        ]
+      },
+      {
+        "title": "DROP - SM STATION",
+        "type": "싱글",
+        "releaseDate": "2017.09.25",
+        "trackCount": 2,
+        "isMain": true,
+        "titleTrack": "DROP",
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/100/98/884/10098884_500.jpg?6173c13d0aa711ae42f484c8fc69d3fa",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "DROP",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "DROP (Inst.)",
+            "isTitle": false
+          }
+        ]
       }
     ]
   },
@@ -67553,6 +70577,288 @@
               "조미 (슈퍼주니어-M)",
               "장리인"
             ]
+          }
+        ]
+      }
+    ],
+    "discography": [
+      {
+        "title": "My Bad",
+        "type": "싱글",
+        "releaseDate": "2025.08.27",
+        "trackCount": 1,
+        "isMain": true,
+        "titleTrack": "My Bad",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/120/75/659/12075659_20250826175929_500.jpg?YUV444",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "My Bad",
+            "isTitle": true
+          }
+        ]
+      },
+      {
+        "title": "Close To You",
+        "type": "미니 4집",
+        "releaseDate": "2023.06.04",
+        "trackCount": 7,
+        "isMain": true,
+        "titleTrack": "Into The Water",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/112/57/617/11257617_20230602161505_500.jpg?6d5c1c40247f2b9edcddf1ba023ffdac",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Into The Water",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "道程／Michinori",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "Oh No!",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Rock with U",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Gold Dust",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "Admit it, You Love it",
+            "isTitle": false
+          },
+          {
+            "no": 7,
+            "title": "木枯らしが届く頃に／Kogarashiga Todokukoroni",
+            "isTitle": false
+          }
+        ]
+      },
+      {
+        "title": "Devil - The 2nd Mini Album",
+        "type": "미니 3집",
+        "releaseDate": "2022.01.13",
+        "trackCount": 6,
+        "isMain": true,
+        "titleTrack": "Devil",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/108/37/859/10837859_20220113160318_500.jpg?272099661689a040530c563b087d6363",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Devil",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Maniac",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "Fever",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Alien",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Dirty Dancing",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "Airplane Mode",
+            "isTitle": false
+          }
+        ]
+      },
+      {
+        "title": "Gold Dust (English Ver.)",
+        "type": "싱글",
+        "releaseDate": "2021.12.22",
+        "trackCount": 1,
+        "isMain": true,
+        "titleTrack": "Gold Dust (English Ver.)",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/108/20/412/10820412_20211221173515_500.jpg?4defa3bffa6b222aec5c079f2e8488dd",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Gold Dust (English Ver.)",
+            "isTitle": true
+          }
+        ]
+      },
+      {
+        "title": "Human",
+        "type": "미니 2집",
+        "releaseDate": "2021.12.08",
+        "trackCount": 6,
+        "isMain": true,
+        "titleTrack": "Human",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/108/05/338/10805338_20211207153255_500.jpg?f22e1026a0ef315f401ea647489284c8",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Don’t Let Me Down",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "Human",
+            "isTitle": true
+          },
+          {
+            "no": 3,
+            "title": "You Light My Moon",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "もう愛してると言えない／Mo Aisiteruto Ienai",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Put Your Records On",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "Over",
+            "isTitle": false
+          }
+        ]
+      },
+      {
+        "title": "All That Love - SM STATION",
+        "type": "싱글",
+        "releaseDate": "2020.11.13",
+        "trackCount": 2,
+        "isMain": true,
+        "titleTrack": "All That Love",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/105/18/167/10518167_20201113123630_500.jpg?5207a2c0eb3131cc832cb637da6aed91",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "All That Love",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "All That Love (Inst.)",
+            "isTitle": false
+          }
+        ]
+      },
+      {
+        "title": "Chocolate - The 1st Mini Album",
+        "type": "미니 1집",
+        "releaseDate": "2020.04.06",
+        "trackCount": 6,
+        "isMain": true,
+        "titleTrack": "Chocolate",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/104/13/093/10413093_20200406151247_500.jpg?26c1f8ad28389b5b9cd0d7edc2b2bd87",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Chocolate",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "High Heels",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "Lie (Feat. 청하)",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Piano",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Me, Myself & I",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "No Tomorrow",
+            "isTitle": false
+          }
+        ]
+      },
+      {
+        "title": "여정 (In A Different Life) - SM STATION",
+        "type": "싱글",
+        "releaseDate": "2017.09.28",
+        "trackCount": 2,
+        "isMain": true,
+        "titleTrack": "여정 (In A Different Life)",
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/101/00/144/10100144_500.jpg?1b0bee3711a553fa95c99c7e4ecd780e",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "여정 (In A Different Life)",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "여정 (In A Different Life) (Inst.)",
+            "isTitle": false
+          }
+        ]
+      },
+      {
+        "title": "미미 OST 최강창민 '슬픔 속에 그댈 지워야만 해'",
+        "type": "싱글",
+        "releaseDate": "2014.03.07",
+        "trackCount": 1,
+        "isMain": true,
+        "titleTrack": "슬픔 속에 그댈 지워야만 해 (Because I Love You) (Acoustic Ver.)",
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/022/39/093/2239093_500.jpg",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "슬픔 속에 그댈 지워야만 해 (Because I Love You) (Acoustic Ver.)",
+            "isTitle": true
+          }
+        ]
+      },
+      {
+        "title": "전우치 OST Part 2",
+        "type": "싱글",
+        "releaseDate": "2012.12.18",
+        "trackCount": 2,
+        "isMain": true,
+        "titleTrack": "눈물 같은 사람",
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/021/70/459/2170459_500.jpg",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "눈물 같은 사람",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "눈물 같은 사람 (Inst.)",
+            "isTitle": false
           }
         ]
       }
