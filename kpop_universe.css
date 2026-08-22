@@ -1750,7 +1750,7 @@
   .gc-discog-hd-right .gc-ch-sort-wrap{flex-shrink:0;}
   .seg-control{position:relative;display:flex;background:rgba(255,255,255,0.05);border:0.5px solid rgba(255,255,255,0.09);border-radius:10px;padding:2px;flex:1;min-width:0;}
   .seg-control-sm{flex:0 1 auto;padding:1px;border-radius:8px;}
-  .seg-control-sm .seg-btn{padding:4px 11px;font-size:9px;letter-spacing:-.01em;}
+  .seg-control-sm .seg-btn{padding:3px 8px;font-size:9px;letter-spacing:-.01em;} /* 2026-08-22 크기 살짝 축소(높이 4→3, 너비 11→8) */
   .seg-control-sm .seg-thumb{top:1px;bottom:1px;border-radius:7px;}
   .seg-thumb{position:absolute;top:2px;bottom:2px;left:2px;width:0;border-radius:8px;
     background:linear-gradient(160deg,rgba(190,212,255,0.42),rgba(140,170,230,0.16));
