@@ -101690,23 +101690,226 @@
     },
     "discography": [
       {
-        "title": "애정만만세 OST Part.2",
-        "type": "싱글",
-        "releaseDate": "2011.08.05",
-        "trackCount": 2,
+        "title": "Lost and Found",
+        "type": "미니 3집",
+        "releaseDate": "2026.04.01",
+        "trackCount": 4,
         "isMain": true,
-        "titleTrack": "Loving U",
-        "cover": "https://cdnimg.melon.co.kr/cm/album/images/020/06/817/2006817_500.jpg",
+        "titleTrack": "TAXI",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/133/02/284/13302284_20260331114950_500.jpg?3e85903ebcf486db57cf9d44fef3209f",
         "tracks": [
           {
             "no": 1,
-            "title": "Loving U",
+            "title": "TAXI",
             "isTitle": true
           },
           {
             "no": 2,
-            "title": "Loving U (Inst.)",
+            "title": "BIG HOODIE (feat. Mikey Angelo)",
             "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "HENNESSY (feat. 이윤정)",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "ALL LOVE!",
+            "isTitle": false
+          }
+        ]
+      },
+      {
+        "title": "EVERYBODY’S GUILTY, BUT NO ONE’S TO BLAME",
+        "type": "미니 2집",
+        "releaseDate": "2025.10.13",
+        "trackCount": 7,
+        "isMain": true,
+        "titleTrack": "DIRTY BOY (Feat. JAMIE, UWA)",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/121/48/763/12148763_20251002121240_500.jpg?519c6d1edd41e0df17b887f12d6282c8",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "MY TURNTABLE IS CONCRETE PT.2",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "DIRTY BOY (Feat. JAMIE, UWA)",
+            "isTitle": true
+          },
+          {
+            "no": 3,
+            "title": "MAPSI",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "CLUB SEX CIGARETTES",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "DEVIL ON MY SHOULDER",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "WURK (Feat. 정우석)",
+            "isTitle": false
+          },
+          {
+            "no": 7,
+            "title": "ANNIE",
+            "isTitle": false
+          }
+        ]
+      },
+      {
+        "title": "Skyfall",
+        "type": "싱글",
+        "releaseDate": "2025.01.09",
+        "trackCount": 2,
+        "isMain": true,
+        "titleTrack": "Skyfall",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/116/87/693/11687693_20250108121841_500.jpg?494c66d5cd548ffc512a329790e2735b",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Skyfall",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Skyfall (Instrumental)",
+            "isTitle": false
+          }
+        ]
+      },
+      {
+        "title": "Everglow",
+        "type": "싱글",
+        "releaseDate": "2024.11.06",
+        "trackCount": 2,
+        "isMain": true,
+        "titleTrack": "Everglow",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/116/33/169/11633169_20241105113751_500.jpg?b3bee3cf4ce2af2cb1accc49f26b27bf",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Everglow",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Everglow (Inst.)",
+            "isTitle": false
+          }
+        ]
+      },
+      {
+        "title": "Dancing On The Road",
+        "type": "싱글",
+        "releaseDate": "2024.09.05",
+        "trackCount": 2,
+        "isMain": true,
+        "titleTrack": "Dancing On The Road",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/115/83/619/11583619_20240903174333_500.jpg?d6c76265fd639e3c27c7944a7d405837",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Dancing On The Road",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Dancing On The Road (Inst.)",
+            "isTitle": false
+          }
+        ]
+      },
+      {
+        "title": "If this is love, I want a refund",
+        "type": "미니 1집",
+        "releaseDate": "2024.05.02",
+        "trackCount": 5,
+        "isMain": true,
+        "titleTrack": "Broke My Heart (Feat. Lay Bankz)",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/114/79/008/11479008_20240502110357_500.jpg?5c666b29d644cacc1670dcda82519c16",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Broke My Heart (Feat. Lay Bankz)",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Solo",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "Freaky Love",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Valentine",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Fashion Style",
+            "isTitle": false
+          }
+        ]
+      },
+      {
+        "title": "Freaky Love",
+        "type": "싱글",
+        "releaseDate": "2024.03.21",
+        "trackCount": 1,
+        "isMain": true,
+        "titleTrack": "Freaky Love",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/114/47/647/11447647_20240320163259_500.jpg?3157e4024e1c9cecd93f79e693f8b995",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Freaky Love",
+            "isTitle": true
+          }
+        ]
+      },
+      {
+        "title": "Fashion Style",
+        "type": "싱글",
+        "releaseDate": "2024.01.08",
+        "trackCount": 1,
+        "isMain": true,
+        "titleTrack": "Fashion Style",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/113/94/717/11394717_20240105172103_500.jpg?52a8223a8720806a15d59c553ae9f7d2",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Fashion Style",
+            "isTitle": true
+          }
+        ]
+      },
+      {
+        "title": "POSE",
+        "type": "싱글",
+        "releaseDate": "2022.08.09",
+        "trackCount": 1,
+        "isMain": true,
+        "titleTrack": "POSE",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/110/25/009/11025009_20220809101432_500.jpg?b065bc7fbb1be7ef29a2462029a40311",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "POSE",
+            "isTitle": true
           }
         ]
       }
