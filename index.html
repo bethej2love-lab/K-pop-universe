@@ -14125,7 +14125,7 @@ function _makeChVidController(contId){
       // appendLock 중에도 점 세개가 없으면 선제 표시 — lock이 풀릴 때까지 "로딩 중" 시각 피드백을 줌.
       // (lock이 잡힌 상태에서 tryLoadMore가 즉시 return하면 점 세개를 그릴 기회가 없어
       // 유저에게 "여기서 끝"처럼 보이는 문제의 완전한 해결 — 2026-08-18)
-      const _mw=cont?.querySelector('.gc-ch-more-wrap');
+      const _mw=document.getElementById(contId)?.querySelector('.gc-ch-more-wrap'); // cont는 이 함수 스코프에 없음 — contId로 현재 DOM을 직접 찾음(안 그러면 게이트 해제 시 ReferenceError, 2026-08-22)
       if(_mw&&!_mw.querySelector('.gc-ch-more-loading')){
         _mw.innerHTML='<div class="gc-ch-more-loading"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>';
       }
@@ -14992,7 +14992,11 @@ function _makeChVidController(contId){
     // 직접 보완한다. 모바일(mob-card-stack-inner/mob-sheet-inner)·데스크톱(side-panel/member-panel) 모두 커버.
     const _mwEl=moreWrap;
     const _onScroll=source=>{
-      if(!_mwEl||!state.hasMore||state.appendLock)return;
+      // appendLock은 여기서 막지 않는다(2026-08-22) — 락 중이어도 tryLoadMore가 점 세개를 "선제 표시"해야
+      // 하기 때문. 여기서 appendLock을 게이트에 넣으면 스크롤/폴링이 락 중엔 tryLoadMore에 도달조차 못 해서
+      // 점 세개 브랜치가 영영 안 밟힘(락 ~3초간 무표시 → 해제 후에야 뒤늦게 점 세개). 락으로 인한 중복 로드
+      // 방지는 tryLoadMore 내부(appendLock이면 점 세개만 그리고 return)가 이미 담당함.
+      if(!_mwEl||!state.hasMore)return;
       // 카드가 닫혀서 패널 자체가 display:none이면 getBoundingClientRect()가 전부 0을 반환하는데,
       // top(0)이 우연히 "뷰포트 안"으로 오판되기 딱 좋은 값이라 offsetParent로 실제 렌더 여부부터 확인
       // (closeCards()가 이 컨트롤러의 상태/리스너를 안 지우므로, 카드 닫힌 뒤에도 계속 붙어있음 —
