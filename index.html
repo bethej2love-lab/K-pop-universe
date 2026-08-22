@@ -12773,7 +12773,13 @@ async function _buildFeedFormatPick(list,offset){
 // 시간대(1시간 단위) 기준 순환시켜 매번 열 때마다 다른 조합이 뜨게 하고, 결과가 너무 적은 조합(1세대처럼
 // 그룹 수 자체가 적은 경우)은 다음 조합으로 넘어간다.
 const _CAM_FORMATS=['안방1열/단독샷/페이스캠','MPD/입덕직캠','음중/최애직캠','원테이크/얼빡직캠','쇼챔직캠','UNFILTERED CAM'];
-const _GEN_CAM_COMBOS=[1,2,3,4,5].flatMap(gen=>[{gen,gender:'f'},{gen,gender:'m'}]);
+// 세대별 노출 가중치 — 각 세대를 (여돌/남돌 짝)만큼 회전 목록에 넣되, 1세대만 빈도를 살짝 낮춘다
+// (2026-08-22 사용자 요청 — 1세대는 데이터·팬덤이 상대적으로 적음). 기본 3, 1세대 2 → 1세대 ≈14%,
+// 나머지 각 ≈21%(예전엔 세대 균등 20%). 더/덜 줄이려면 아래 {1:2}의 2만 조정(3이면 예전처럼 균등, 1이면 절반).
+const _GEN_CAM_WEIGHT={1:2};
+const _GEN_CAM_COMBOS=[1,2,3,4,5].flatMap(gen=>
+  Array.from({length:_GEN_CAM_WEIGHT[gen]||3},()=>[{gen,gender:'f'},{gen,gender:'m'}]).flat()
+);
 async function _buildFeedGenCamPick(list,offset){
   if(!sb)return;
   const vidUrl=v=>v.category==='short'?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;
