@@ -2480,3 +2480,13 @@
     /* peek든 전체든 손잡이는 항상 떠있게(#mob-sheet-handle과 동일 패턴) — "끌 수 있다"는 걸 늘 알려줌 */
     #feed-overlay.open #feed-peek-handle{display:block;width:36px;height:4px;background:rgba(255,255,255,0.18);border-radius:2px;margin:10px auto 0;}
   }
+
+  /* ── 자체 웹앱(홈화면 설치, standalone) 전용 상단 여백 ────────────────────────
+     사파리 브라우저는 주소창 여백이 있어 괜찮은데, 홈화면에 추가한 자체 웹앱(black-translucent 상태바)에선
+     콘텐츠가 상태바 밑까지 꽉 차 상단바가 타이트했음(2026-08-22 사용자 제보). display-mode:standalone은
+     "설치된 웹앱일 때만" 걸리므로 사파리엔 영향 없음. env(safe-area-inset-top)은 그대로 쓰고 기본 여백만
+     14→24px로 키워 상태바에 바짝 붙는 느낌을 완화. 이 규칙은 파일 끝(소스 순서 마지막)이라 위 #mob-top-bar
+     패딩을 확실히 덮어씀. ⚠️ 실기기(홈화면 추가한 아이폰)에서 보고 아래 24px만 조정하면 됨. */
+  @media (display-mode: standalone) and (max-width:768px){
+    #mob-top-bar{padding-top:calc(24px + env(safe-area-inset-top,0px));}
+  }
