@@ -14575,7 +14575,7 @@ function _makeChVidController(contId){
     if(!correctedIds.length)return;
     if(myGen!==state.gen)return; // 그 사이 다른 그룹/새로고침으로 전환됨: DB 보정만 반영하고 화면은 건너뜀
     // pageItems는 원래(업로드 시간순) 순서를 그대로 유지한 배열이므로, 정정된 category로 그대로 재그룹핑
-    const g=_groupGcVids(pageItems,featured,pageStartPos,pageStartCat,document.body.classList.contains('card-wide'),state.filter==='short',state.filter==='live'?0.15:0.05);
+    const g=_groupGcVids(pageItems,featured,pageStartPos,pageStartCat,document.body.classList.contains('card-wide'),state.filter==='short',state.filter==='live'?0.24:0.05);
     pageNodes.forEach(n=>n.remove());
     const{nodes:newNodes}=renderItems(g.renderList,grid);
     state.pos=g.endPos;state.cat=g.endCat;
@@ -14921,7 +14921,7 @@ function _makeChVidController(contId){
       const pageStartPos=state.pos,pageStartCat=state.cat;
       const incomingTrailingEl=state.trailingEl; // 이전 페이지에서 홀로 남은 카드(있다면)
       const pageItems=vids;
-      const g=_groupGcVids(pageItems,featured,pageStartPos,pageStartCat,document.body.classList.contains('card-wide'),state.filter==='short',state.filter==='live'?0.15:0.05);
+      const g=_groupGcVids(pageItems,featured,pageStartPos,pageStartCat,document.body.classList.contains('card-wide'),state.filter==='short',state.filter==='live'?0.24:0.05);
       state.pos=g.endPos;state.cat=g.endCat;
       const{nodes:pageNodes,pendingProbe}=renderItems(g.renderList,grid);
       state.allVids=state.allVids.concat(g.renderList); // 라이트박스 스와이프 넘기기용으로 지금까지 불러온 영상 누적
@@ -15904,7 +15904,9 @@ function _groupGcVids(items,featured,startPos,startCat,avoidWiden,widenSomeShort
     // 0.28(영상 3~4개당 1개꼴)은 너무 잦아서 2열 중 1열만 채워진 것처럼 보이는 카드가 너무 많다는
     // 피드백(2026-08-10) — 가끔 변화를 주는 느낌만 남기고 빈도를 확 낮춤. 이후 라이브 탭만 너무
     // 단조롭다는 반대 피드백(2026-08-21)이 있어 wideProb를 탭별로 다르게 받음(호출부 참고) — 다른
-    // 탭(가로 비율 영상이 섞인 예능/뮤비 등)은 기존 0.05 그대로.
+    // 탭(가로 비율 영상이 섞인 예능/뮤비 등)은 기존 0.05 그대로. 라이브는 0.15로 줬다가 여전히 전체폭이
+    // 너무 드물다는 재피드백(2026-08-22)으로 0.24로 상향 — .gc-ch-grid에 grid-auto-flow:dense가 적용된
+    // 뒤라 넓힘으로 생기던 빈칸(0.28을 낮췄던 원래 이유) 우려도 줄었음.
     if(!avoidWiden&&pos===0&&c==='norm'&&Math.random()<wideProb){
       v._wide=true;
       renderList.push(v);
