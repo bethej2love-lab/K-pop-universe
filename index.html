@@ -9086,7 +9086,7 @@ function _confirmDialog({title,msg,okLabel='확인'}){
     const msgEl=document.getElementById('generic-confirm-msg');
     msgEl.textContent=msg||'';msgEl.style.display=msg?'':'none';
     document.getElementById('generic-confirm-ok').textContent=okLabel;
-    document.getElementById('generic-confirm-overlay').classList.add('open');
+    const _co=document.getElementById('generic-confirm-overlay');_co.classList.add('open');_bringToFront(_co); // 사이드바 등이 _bringToFront로 z-index를 70 위로 올려 다이얼로그를 덮던 문제(2026-08-22) — 다이얼로그도 맨 위로
   });
 }
 function _closeGenericConfirm(ok){
@@ -9105,7 +9105,7 @@ function _promptDialog({title,value='',placeholder=''}){
     document.getElementById('generic-prompt-title').textContent=title||'';
     const inp=document.getElementById('generic-prompt-input');
     inp.value=value;inp.placeholder=placeholder;
-    document.getElementById('generic-prompt-overlay').classList.add('open');
+    const _po=document.getElementById('generic-prompt-overlay');_po.classList.add('open');_bringToFront(_po); // 위 _confirmDialog와 동일 이유 — 사이드바 위로 확실히(2026-08-22)
     setTimeout(()=>{inp.focus();inp.select();},50);
   });
 }
