@@ -394,7 +394,7 @@
   /* 마퀴(긴 제목 슬라이드) — 데스크톱은 hover, 모바일은 탭으로 트리거(JS의 addMarquee 참고). 둘 다 같은 표시 규칙 공유 */
   #tv-big-title,.tv-sm-title,.tv-with-line{text-overflow:unset;}
   .tv-title-inner{display:inline-block;white-space:nowrap;vertical-align:top;}
-  #tv-big-title:not(.is-marquee),.tv-sm-title:not(.is-marquee),.tv-with-line:not(.is-marquee){-webkit-mask-image:linear-gradient(to right,#000 calc(100% - 14px),transparent 100%);mask-image:linear-gradient(to right,#000 calc(100% - 14px),transparent 100%);}
+  #tv-big-title:not(.is-marquee),.tv-sm-title:not(.is-marquee),.tv-with-line:not(.is-marquee),.feed-card-sub:not(.is-marquee){-webkit-mask-image:linear-gradient(to right,#000 calc(100% - 14px),transparent 100%);mask-image:linear-gradient(to right,#000 calc(100% - 14px),transparent 100%);}
   /* duration은 항상 JS(_marqueeDuration)가 넘치는 거리에 비례해서 인라인으로 계산해 넣음 — 여기 2.2s는
      인라인 값이 없을 때(이론상 없어야 함)의 fallback일 뿐, 실제로는 매번 덮어써짐 */
   .marquee-run{animation:title-marquee 2.2s .2s linear infinite;}
@@ -2367,9 +2367,9 @@
   /* 아이콘 전용 셰브런(2026-08-21, 사용자 요청 — 텍스트바가 너무 투박하고 큼) — 작은 원형 버튼, 접힘/펼침은
      회전으로만 표현. 터치 타겟은 실제 시각 크기(28px)보다 무형으로 넉넉히 키움(padding, 기존 소셜아이콘
      확장 패턴과 동일). */
-  .feed-more-toggle{display:flex;align-items:center;justify-content:center;width:28px;height:28px;margin:2px auto 14px;padding:8px;box-sizing:content-box;color:rgba(160,185,230,0.75);background:rgba(255,255,255,0.045);border:none;border-radius:50%;cursor:pointer;-webkit-tap-highlight-color:transparent;}
-  .feed-more-toggle:active{background:rgba(255,255,255,0.09);}
-  .feed-more-toggle svg{transition:transform .2s ease;}
+  .feed-more-toggle{display:flex;align-items:center;justify-content:center;width:14px;height:14px;margin:0 auto 12px;padding:4px;box-sizing:content-box;color:rgba(160,185,230,0.5);background:rgba(255,255,255,0.03);border:none;border-radius:50%;cursor:pointer;-webkit-tap-highlight-color:transparent;}
+  .feed-more-toggle:active{background:rgba(255,255,255,0.08);}
+  .feed-more-toggle svg{width:12px;height:12px;transition:transform .2s ease;}
   .feed-more-toggle.expanded svg{transform:rotate(180deg);}
   @keyframes feed-card-appear{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
   .feed-card:active{background:rgba(255,255,255,0.035);}
@@ -2393,7 +2393,7 @@
   .feed-recent-thumb{width:100%;height:100%;object-fit:cover;display:block;}
   .feed-recent-title{font-size:10px;color:rgba(200,215,245,0.75);line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
   .feed-card-title{font-size:12.5px;font-weight:600;color:rgba(220,232,255,0.92);line-height:1.4;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
-  .feed-card-sub{font-size:10.5px;color:rgba(130,155,205,0.66);margin-top:3px;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
+  .feed-card-sub{font-size:10.5px;color:rgba(130,155,205,0.66);margin-top:3px;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;white-space:nowrap;overflow:hidden;}
   /* ── 첫 방문 온보딩: 상단 검색바(iOS 리퀴드글라스 느낌) ──────────── */
   #ob-top-search{
     position:fixed;z-index:41;
