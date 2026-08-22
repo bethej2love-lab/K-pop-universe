@@ -117356,6 +117356,7 @@
       "ko": "로아",
       "en": "로아"
     },
+    "subName": "김민경",
     "group": {
       "ko": "프리스틴",
       "en": "PRISTIN"
@@ -120253,31 +120254,6 @@
   },
   {
     "name": {
-      "ko": "여정",
-      "en": "Yeojeong"
-    },
-    "group": {
-      "ko": "티오원",
-      "en": "TO1"
-    },
-    "co": "n.CH엔터테인먼트",
-    "active": true,
-    "color": [
-      90,
-      160,
-      200
-    ],
-    "bday": "2005.01.29",
-    "nat": {
-      "ko": "한국",
-      "en": "KR"
-    },
-    "links": {
-      "instagram": "https://www.instagram.com/im.travel5"
-    }
-  },
-  {
-    "name": {
       "ko": "치훈",
       "en": "Chihoon"
     },
@@ -120325,32 +120301,6 @@
     },
     "links": {
       "instagram": "https://www.instagram.com/minminmul"
-    },
-    "left": "2022.06.17"
-  },
-  {
-    "name": {
-      "ko": "제롬",
-      "en": "Jerome"
-    },
-    "group": {
-      "ko": "티오원",
-      "en": "TO1"
-    },
-    "co": "n.CH엔터테인먼트",
-    "active": false,
-    "color": [
-      90,
-      160,
-      200
-    ],
-    "bday": "2001.08.25",
-    "nat": {
-      "ko": "한국",
-      "en": "KR"
-    },
-    "links": {
-      "instagram": "https://www.instagram.com/xmnrome"
     },
     "left": "2022.06.17"
   },
@@ -127285,10 +127235,22 @@
       "ko": "성민",
       "en": "Seongmin"
     },
+    "subName": "제롬",
     "group": {
       "ko": "원팩트",
       "en": "ONE PACT"
     },
+    "groups": [
+      {
+        "ko": "원팩트",
+        "en": "ONE PACT"
+      },
+      {
+        "ko": "티오원",
+        "en": "TO1",
+        "name": "제롬"
+      }
+    ],
     "co": "ARMADA 엔터테인먼트",
     "active": true,
     "color": [
@@ -128838,10 +128800,22 @@
       "ko": "전여여정",
       "en": "Jeon Yeoyeojeong"
     },
+    "subName": "여정",
     "group": {
       "ko": "뉴비트",
       "en": "NEWBEAT"
     },
+    "groups": [
+      {
+        "ko": "뉴비트",
+        "en": "NEWBEAT"
+      },
+      {
+        "ko": "티오원",
+        "en": "TO1",
+        "name": "여정"
+      }
+    ],
     "co": "비트인터렉티브",
     "active": true,
     "color": [
@@ -128856,7 +128830,7 @@
     },
     "links": {
       "instagram": "https://www.instagram.com/im.travel5",
-      "namu": "https://namu.wiki/w/%EC%A0%84%EC%97%AC%EC%97%AC%EC%A0%95"
+      "namu": "https://namu.wiki/w/전여여정"
     }
   },
   {
