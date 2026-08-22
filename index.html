@@ -9353,7 +9353,14 @@ function _openColPhotoGrid(colId){
   guide.style.cssText='font-size:8.5px;color:rgba(150,175,225,0.22);padding:0 16px 6px;line-height:1.3;letter-spacing:.01em;font-weight:400;';
   guide.textContent=currentLang==='ko'?'비하·성적 대상화 금지 · 저작권자 요청 시 삭제':'No demeaning/sexualizing · removable on request';
   const grid=document.createElement('div');
-  grid.style.cssText='flex:1;overflow-y:auto;padding:2px 12px 24px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;align-content:start;'; // gap 5→7 + 위 여백 살짝(2026-08-22 사용자 요청 — 위아래 여백)
+  grid.style.cssText='padding:2px 12px 24px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;align-content:start;'; // gap 7 + 위 여백
+  // 스크롤은 이 래퍼가 맡고 그리드 자체엔 높이 제약을 주지 않는다 — 그리드에 flex:1(고정 높이)을 주면 셀의
+  // aspect-ratio 높이와 정의된 컨테이너 높이가 순환 참조돼 행이 컨테이너에 맞춰 압축됨(정사각이 깨지고 사진이
+  // 많으면 납작한 띠가 됨, 스크롤도 안 됨 — 2026-08-22 데스크톱서 확인). 래퍼(overflow)+자연높이 그리드로
+  // 분리하면 셀이 항상 정사각으로 유지되고 넘치면 스크롤된다.
+  const scrollWrap=document.createElement('div');
+  scrollWrap.style.cssText='flex:1;min-height:0;overflow-y:auto;';
+  scrollWrap.appendChild(grid);
   const fi=document.createElement('input');fi.type='file';fi.accept='image/*';fi.multiple=true;fi.style.display='none';
   fi.addEventListener('change',async()=>{
     const files=[...fi.files];fi.value=''; // ⚠️ fi.value=''가 라이브 FileList를 비우므로 반드시 먼저 배열로 복사(2026-08-22 버그픽스)
@@ -9373,15 +9380,19 @@ function _openColPhotoGrid(colId){
     }
     col.photos.forEach((ph,idx)=>{
       const cell=document.createElement('div');
-      cell.style.cssText='position:relative;aspect-ratio:1;border-radius:8px;overflow:hidden;background:rgba(255,255,255,0.05);cursor:pointer;';
-      const im=document.createElement('img');im.src=ph.u;im.loading='lazy';im.style.cssText='position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;'; // absolute로 빼서 셀 높이를 aspect-ratio로만 결정 — iOS에서 in-flow img가 행 높이를 오산해 위아래로 겹치던 것 방지(2026-08-22)
+      cell.style.cssText='position:relative;border-radius:8px;overflow:hidden;background:rgba(255,255,255,0.05);cursor:pointer;';
+      // aspect-ratio는 셀이 아니라 인플로 img에 준다 — 셀에 aspect-ratio + position:absolute img 조합은 셀의
+      // 인플로 콘텐츠 높이가 0이라 그리드가 행 트랙을 0으로 재고, 이후 셀이 aspect-ratio로 커지며 다음 행을
+      // 침범해 위아래로 겹쳤음(2026-08-22 데스크톱서 크게 재현). img 자체에 aspect-ratio를 주면 실제 높이를
+      // 가져 그리드가 행 높이를 정상 측정. (iOS 겹침의 원인이던 height:100%(퍼센트) 대신 aspect-ratio 사용.)
+      const im=document.createElement('img');im.src=ph.u;im.loading='lazy';im.style.cssText='display:block;width:100%;aspect-ratio:1;object-fit:cover;';
       // 그리드는 깨끗하게 — 사진 위 아무 표시 없음(2026-08-22 사용자 요청). 삭제는 사진을 크게 본 화면(_openPhotoFull)의 🗑에서.
       im.addEventListener('click',()=>_openPhotoFull(col.photos,idx,(url)=>{_removePhotoFromCol(colId,url);renderGrid();}));
       cell.appendChild(im);
       grid.appendChild(cell);
     });
   }
-  ov.appendChild(hd);ov.appendChild(guide);ov.appendChild(grid);ov.appendChild(fi);
+  ov.appendChild(hd);ov.appendChild(guide);ov.appendChild(scrollWrap);ov.appendChild(fi);
   renderGrid();
   ov.style.display='flex';
 }
@@ -9402,7 +9413,8 @@ function _openPhotoFull(photos,startIdx,onDelete){
   im.style.cssText='max-width:100%;max-height:100%;object-fit:contain;border-radius:8px;user-select:none;-webkit-user-select:none;';
   f.appendChild(im);
   const show=i=>{cur=(i+list.length)%list.length;im.src=list[cur].u;};
-  const icon=(svg,pos,onClick,extra)=>{const btn=document.createElement('button');btn.innerHTML=svg;btn.style.cssText='position:fixed;display:flex;align-items:center;justify-content:center;border-radius:50%;cursor:pointer;background:rgba(255,255,255,0.13);border:0.5px solid rgba(255,255,255,0.22);color:#fff;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);z-index:2;-webkit-tap-highlight-color:transparent;'+pos+(extra||'');btn.addEventListener('click',e=>{e.stopPropagation();onClick();});f.appendChild(btn);return btn;};
+  const chrome=[]; // 주변 UI(버튼 전부) — 탭 토글 대상
+  const icon=(svg,pos,onClick,extra)=>{const btn=document.createElement('button');btn.innerHTML=svg;btn.style.cssText='position:fixed;display:flex;align-items:center;justify-content:center;border-radius:50%;cursor:pointer;background:rgba(255,255,255,0.13);border:0.5px solid rgba(255,255,255,0.22);color:#fff;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);z-index:2;-webkit-tap-highlight-color:transparent;transition:opacity .22s ease;'+pos+(extra||'');btn.addEventListener('click',e=>{e.stopPropagation();onClick();});f.appendChild(btn);btn.dataset.base=btn.style.opacity||'1';chrome.push(btn);return btn;};
   const S={
     prev:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>',
     next:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>',
@@ -9432,7 +9444,12 @@ function _openPhotoFull(photos,startIdx,onDelete){
   let sx=0,sy=0,swiped=false;
   f.addEventListener('touchstart',e=>{const t=e.touches[0];sx=t.clientX;sy=t.clientY;swiped=false;},{passive:true});
   f.addEventListener('touchend',e=>{const t=e.changedTouches[0];const dx=t.clientX-sx,dy=t.clientY-sy;if(Math.abs(dx)>40&&Math.abs(dx)>Math.abs(dy)){swiped=true;show(dx<0?cur+1:cur-1);}},{passive:true});
-  f.addEventListener('click',e=>{if(swiped){swiped=false;return;}if(e.target===f)close();});
+  // 아이폰 사진 앨범처럼: 사진/배경을 탭하면 주변 UI(버튼)를 토글 — 한 번 탭하면 싹 사라져 사진만, 또 탭하면
+  // 다시 표시(2026-08-22 사용자 요청). 닫기는 좌상단 ✕(숨겨졌으면 한 번 탭해 꺼낸 뒤) 또는 ESC. 스와이프로
+  // 넘긴 직후의 클릭은 무시(swiped 가드).
+  let chromeShown=true;
+  const toggleChrome=()=>{chromeShown=!chromeShown;chrome.forEach(btn=>{btn.style.opacity=chromeShown?(btn.dataset.base||'1'):'0';btn.style.pointerEvents=chromeShown?'':'none';});};
+  f.addEventListener('click',e=>{if(swiped){swiped=false;return;}if(e.target.closest('button'))return;toggleChrome();});
   const onKey=e=>{if(e.key==='ArrowLeft')show(cur-1);else if(e.key==='ArrowRight')show(cur+1);else if(e.key==='Escape')close();};
   window._cpfKey=onKey;document.addEventListener('keydown',onKey);
   show(cur);
