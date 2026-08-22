@@ -42140,57 +42140,6 @@
   },
   {
     "name": {
-      "ko": "주결경",
-      "en": "Kyulkyung"
-    },
-    "group": {
-      "ko": "아이오아이",
-      "en": "I.O.I"
-    },
-    "co": "플레디스",
-    "active": false,
-    "color": [
-      255,
-      179,
-      138
-    ],
-    "bday": "1998.12.16",
-    "nat": {
-      "ko": "중국",
-      "en": "CN"
-    },
-    "links": {
-      "left": "2019.05.24",
-      "namu": "https://namu.wiki/w/주결경",
-      "instagram": "https://www.instagram.com/zhou_jieqiong1216"
-    },
-    "left": "2017.01.31",
-    "unitDiscography": [
-      {
-        "unitName": "I.O.I (7인 유닛)",
-        "albums": [
-          {
-            "title": "Whatta Man",
-            "type": "싱글",
-            "isMain": true,
-            "cover": "https://cdnimg.melon.co.kr/cm/album/images/027/03/172/2703172_500.jpg",
-            "releaseDate": "2016-08-09",
-            "trackCount": 1,
-            "titleTrack": "Whatta Man (Good man)",
-            "tracks": [
-              {
-                "no": 1,
-                "title": "Whatta Man (Good man)",
-                "isTitle": true
-              }
-            ]
-          }
-        ]
-      }
-    ]
-  },
-  {
-    "name": {
       "ko": "김소혜",
       "en": "Sohye"
     },
@@ -117588,15 +117537,25 @@
   },
   {
     "name": {
-      "ko": "결경",
-      "en": "결경"
+      "ko": "주결경",
+      "en": "Kyulkyung"
     },
     "group": {
       "ko": "프리스틴",
       "en": "PRISTIN"
     },
+    "groups": [
+      {
+        "ko": "프리스틴",
+        "en": "PRISTIN"
+      },
+      {
+        "ko": "아이오아이",
+        "en": "I.O.I"
+      }
+    ],
     "co": "플레디스",
-    "active": true,
+    "active": false,
     "color": [
       230,
       150,
@@ -117608,8 +117567,11 @@
       "en": "CN"
     },
     "links": {
+      "left": "2019.05.24",
+      "namu": "https://namu.wiki/w/주결경",
       "instagram": "https://www.instagram.com/zhou_jieqiong1216"
     },
+    "left": "2019.05.24",
     "unitDiscography": [
       {
         "unitName": "PRISTIN V",
@@ -117632,6 +117594,27 @@
                 "no": 2,
                 "title": "Spotlight",
                 "isTitle": false
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "unitName": "I.O.I (7인 유닛)",
+        "albums": [
+          {
+            "title": "Whatta Man",
+            "type": "싱글",
+            "isMain": true,
+            "cover": "https://cdnimg.melon.co.kr/cm/album/images/027/03/172/2703172_500.jpg",
+            "releaseDate": "2016-08-09",
+            "trackCount": 1,
+            "titleTrack": "Whatta Man (Good man)",
+            "tracks": [
+              {
+                "no": 1,
+                "title": "Whatta Man (Good man)",
+                "isTitle": true
               }
             ]
           }
