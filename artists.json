@@ -124274,7 +124274,11 @@
     "links": {
       "instagram": "https://www.instagram.com/intheatresthissummer",
       "namu": "https://namu.wiki/w/장은성(2000)"
-    }
+    },
+    "matchAliases": [
+      "도시",
+      "DOSIE"
+    ]
   },
   {
     "name": {
@@ -124340,6 +124344,10 @@
         "ko": "엘즈업",
         "en": "EL7Z UP"
       }
+    ],
+    "matchAliases": [
+      "유키",
+      "YUKI"
     ]
   },
   {
@@ -131191,7 +131199,10 @@
     "links": {
       "instagram": "https://www.instagram.com/im.travel5",
       "namu": "https://namu.wiki/w/전여여정"
-    }
+    },
+    "matchAliases": [
+      "여정"
+    ]
   },
   {
     "name": {
@@ -136216,7 +136227,10 @@
       "ko": "한국",
       "en": "KR"
     },
-    "links": {}
+    "links": {},
+    "matchAliases": [
+      "나나"
+    ]
   },
   {
     "name": {
