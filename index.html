@@ -14469,7 +14469,8 @@ function _makeChVidController(contId){
       return;
     }
     // 어느 트리거(observer/scroll/poll/releaseLock)가 실제로 다음 페이지를 불러왔는지 GA로 남김
-    if(source)_gaEvent('infscroll_trigger',{source});
+    // 파라미터명은 trigger — GA 예약어 'source'(traffic source/utm_source)와 충돌해 계측이 오염되므로 피함(2026-08-23)
+    if(source)_gaEvent('infscroll_trigger',{trigger:source});
     load(ko,false);
   }
 
