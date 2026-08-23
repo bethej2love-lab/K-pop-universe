@@ -1983,8 +1983,9 @@ async function buildUniverse(){
           // alpha: close-up에서만 투명, 줌아웃 시 불투명
           float alpha=(uBaseOp+uFillOp+fresnel*uFresnelMult)*uFilterOp;
           // 해체 그룹 잔광 — 밝기와 알파를 같이 살짝 낮춰서 "꺼져가는" 느낌(2026-08-20).
-          col*=mix(1.0,0.55,uDisbanded);
-          alpha*=mix(1.0,0.8,uDisbanded);
+          // 0.55→0.72(2026-08-24): 어두운 색 그룹(원더걸스 마룬 등)은 이 딤까지 겹쳐 행성이 거의 안 보였음 — 과거감 유지하며 완화.
+          col*=mix(1.0,0.72,uDisbanded);
+          alpha*=mix(1.0,0.88,uDisbanded);
           gl_FragColor=vec4(clamp(col,0.0,1.0),clamp(alpha,0.0,1.0));
         }`,
       transparent:true,side:THREE.DoubleSide,depthWrite:false
@@ -2755,7 +2756,7 @@ function animate(){
     // 추모(memorial): 세상 떠난 멤버는 "꺼진 별"이 아니라 "영원한 별"로 — 다른 비활동 별처럼 어둡게
     // 낮추지 않고(밝기 그대로) 따뜻한 흰빛으로 은은히 더 빛나게 한다(2026-08-19, 사용자 요청). 날아가지도
     // 않고(위 fly-away 조건에서 memorial 제외) 그룹 별자리 안에 그대로 남는다.
-    const inactiveDim=a.memorial?1:(a.active===false?0.22:1);
+    const inactiveDim=a.memorial?1:(a.active===false?0.34:1); // 0.22→0.34(2026-08-24): 해체그룹(원더걸스 등) 전원 비활동 시 별자리가 너무 어두워 안 보이던 것 — 과거감은 유지하되 "모여서 보이게"
     const fa=Math.min(1,a._filterAlpha*a._focusAlpha*inactiveDim+(a._flashPulse||0));
     const favBoost=a._favAlpha*0.4;
     const memR=a.memorial?0.5:0,memG=a.memorial?0.42:0,memB=a.memorial?0.3:0; // 따뜻한 흰빛 쪽으로 승화
