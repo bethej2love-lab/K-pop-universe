@@ -3037,6 +3037,18 @@ function _m2ParseTitle(rawTitle,selfGko,strict){
     if(c.length<=4)return true;          // 짧은 영문명(JIN·GD·CL·Rise·Jae…)
     return _ATM_COMMON_EN_WORDS.has(c.toLowerCase()); // 흔한 영단어(Prince·Kevin·Love…)
   }
+  // 이종 게이트(Fable #2): 두 그룹이 소속사도 다르고 데뷔 세대차(6년 이상)도 크면 "먼 그룹"으로 본다.
+  // 이름만으로의 역추론에서 selfGko와 이 관계인 그룹은 해시태그 없이 인정하지 않는다(위 인퍼런스 루프).
+  // 그룹 정보가 없으면(솔로 등) 보수적으로 게이트하지 않음(false).
+  function _isCrossGate(gko,selfGko){
+    const g1=GROUPS[gko],g2=GROUPS[selfGko];
+    if(!g1||!g2)return false;
+    const co1=(g1.co||'').trim(),co2=(g2.co||'').trim();
+    const sameCo=!!(co1&&co2)&&co1===co2;
+    const y1=parseInt(g1.debut)||0,y2=parseInt(g2.debut)||0;
+    const genGap=(y1&&y2)?Math.abs(y1-y2):0;
+    return !sameCo&&genGap>=6;
+  }
   function memberHit(a,names){
     if([...a.name.ko].length===1||_isHashtagOnlyName(a.name.ko))return names.some(t=>hitHashtag(t));
     return names.some(t=>_atmNameNeedsCtx(t)?hitHashtag(t):hit(t));
@@ -3157,17 +3169,25 @@ function _m2ParseTitle(rawTitle,selfGko,strict){
         // 겸임 멤버(NCT 마크·해찬, 아이즈원 안유진 등)는 자기 소속 그룹 전부(_artistGroups)에 귀속시켜야
         // 함 — a.group.ko(주 소속)만 보면 부소속 채널/모음영상에서 역추론 자체가 원천 차단됨
         // (2026-08-20, 자체채널 태깅은 이미 _artistGroups 쓰는데 여기만 안 맞춰져 있던 비대칭 수정).
-        const artistGkos=_artistGroups(a).map(g=>g.ko);
-        artistGkos.forEach(gko=>{
-          if(!inferred.has(gko))inferred.set(gko,[]);
-          inferred.get(gko).push(a.name.ko);
-        });
-        // 겸임 멤버 본인의 다중 소속(가짜 충돌)과 진짜 동명이인(다른 사람, 아래 참고)을 구분하려면
-        // 아티스트 객체 단위로 묶어야 함 — 그냥 groupKo Set으로 합치면 마크 혼자 매칭돼도
-        // {엔시티127,엔시티드림} 2개가 쌓여 아래 동명이인 로직이 "충돌"로 오인해 본인을 두 그룹
-        // 모두에서 지워버리는 자기파괴적 회귀가 생김(2026-08-20, 위 겸임 수정과 함께 발견).
-        if(!nameToGroups.has(a.name.ko))nameToGroups.set(a.name.ko,new Map());
-        nameToGroups.get(a.name.ko).set(a,artistGkos);
+        // ⚠️ 이종 게이트(Fable #2, 2026-08-23): selfGko(이 영상이 실제 속한 채널 그룹)와 "소속사·세대 모두
+        // 먼" 다른 그룹을, 제목에 그룹명·해시태그도 없이 순전히 이름만으로 역추론하는 건 근거가 약하다 —
+        // 진짜 콜라보(같은 무대·페스티벌)면 대개 이름이 해시태그나 그룹명과 함께 명시되므로, far 그룹은
+        // 해시태그 매칭일 때만 인정한다. #1(짧은영문/흔한단어 게이트)이 못 거르는, 이름은 멀쩡한데 세대·
+        // 소속사가 동떨어진 역추론 오태깅(감사 상위 다수)을 잡는 2차 게이트.
+        const viaHashtag=names.some(t=>hitHashtag(t));
+        const artistGkos=_artistGroups(a).map(g=>g.ko).filter(gko=>viaHashtag||!selfGko||gko===selfGko||!_isCrossGate(gko,selfGko));
+        if(artistGkos.length){
+          artistGkos.forEach(gko=>{
+            if(!inferred.has(gko))inferred.set(gko,[]);
+            inferred.get(gko).push(a.name.ko);
+          });
+          // 겸임 멤버 본인의 다중 소속(가짜 충돌)과 진짜 동명이인(다른 사람, 아래 참고)을 구분하려면
+          // 아티스트 객체 단위로 묶어야 함 — 그냥 groupKo Set으로 합치면 마크 혼자 매칭돼도
+          // {엔시티127,엔시티드림} 2개가 쌓여 아래 동명이인 로직이 "충돌"로 오인해 본인을 두 그룹
+          // 모두에서 지워버리는 자기파괴적 회귀가 생김(2026-08-20, 위 겸임 수정과 함께 발견).
+          if(!nameToGroups.has(a.name.ko))nameToGroups.set(a.name.ko,new Map());
+          nameToGroups.get(a.name.ko).set(a,artistGkos);
+        }
       }
     }
     if(!inferred.size)return null;
