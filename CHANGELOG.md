@@ -25,6 +25,7 @@
 ---
 
 ## 2026-08-23
+- [보류][index.html] **디스코 앨범 포함 토글 UX 재검토**(사용자 제보 — "OST·피처링 포함"과 "기타 앨범 포함"을 따로 두 번 체크해야 해서 불편). 현재 ⋮ 메뉴에 독립 토글 3개(OST·피처링/솔로만/기타앨범). 취향 갈리는 결정이라 보류 — 옵션: A)OST·피처링+기타를 "전체 포함" 하나로 병합(간편, 세밀제어 상실) B)현행 유지 + 맨 위 "모두 포함" 마스터 토글 추가(추천 — 세밀함 유지 + 한방) C)세그먼트 종류칩에 흡수(구조 큼). 사용자 A/B/C 선택 후 구현.
 - [완료][index.html] **디스코 정렬 케밥, 카드 빈 곳 탭하면 닫히게**(사용자 요청). closeDiscogSortMenu의 document 클릭 리스너가 카드(#tt/#gc)의 stopPropagation에 막혀 카드 안 탭엔 안 닿던 게 원인. 카드 클릭 핸들러에 _closeOpenSortMenus() 추가 — 케밥/메뉴항목은 자체 stopPropagation이라 카드까지 안 와서 그 외 빈 곳 탭만 메뉴를 닫음. 영상 그리드 정렬메뉴(.gc-ch-sort-menu)도 커버. sw v67→v68.
 - [보류][index.html] **별 발광(글로우) + 연결선 포커스 강조 — Fable 검토 후 대기**. ③글로우: 멤버 별에 halo 레이어(bloomHaloTex) 이미 있으나 별 커진 만큼 상대적으로 옅어 밋밋. Fable의 "포커스일 때만 발광(홈 불변)" 방향 채택하되, 멤버 별이 regular/sparkle 전역 Points라 "그 행성만 스왑"은 불가 → 정점별 focus 플래그 + uFocus 유니폼 셰이더 수정 필요(Fable의 "제로코스트 텍스처 스왑"은 오판). ④연결선: 선마다 baseOp(0.15)+grpKo 있어(2203) 포커스 그룹 선만 opacity/굵기 상향 가능(전역 상향 금지—홈 거미줄화). 게이트: setFocus/focusGroupKo 재사용. 배경 별밭(위 항목) 실기기 확인 후 착수.
 - [완료][index.html] **배경 별밭 흰 사각형·검은 점 아티팩트 수정**. Fable 감사 검토 중 원인 재규명: 멤버 별(makePointsMat)은 map+additive+depthWrite:false 정상인데, **배경 잔별(makeStarField)**이 map 없음(→THREE가 흰 사각형으로 렌더) + depthWrite 기본값 true(→행성 앞에 온 별이 뒤 행성 additive 글로우를 가려 검은 점). soft 원형 텍스처(_bgStarTex)+depthWrite:false 부여로 둘 다 해소. NormalBlending 유지(홈 밝기/산만함 불변), gl_PointSize 무관(iOS 안전). Fable는 멤버 별을 지목했으나 코드 검증상 배경 별밭이 진짜 원인이었음. 실기기 확인 필요(배포전 게이트 3번). `sw v66→v67`.
