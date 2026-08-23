@@ -137,6 +137,7 @@
           <button class="gc-ch-sort-item" data-sort="oldest"><span class="chk">✓</span><span>오래된순</span></button>
           <button class="gc-ch-sort-item" data-sort="latest"><span class="chk">✓</span><span>최신순</span></button>
           <div id="tt-discog-ost-divider" class="gc-ch-sort-divider" style="display:none"></div>
+          <button id="tt-discog-all-btn" class="gc-ch-sort-item" type="button" style="display:none"><span class="chk">✓</span><span>부가 앨범까지 포함</span></button>
           <button id="tt-discog-ost-btn" class="gc-ch-sort-item" type="button" style="display:none"><span class="chk">✓</span><span>OST·피처링 포함</span></button>
           <button id="tt-discog-unit-btn" class="gc-ch-sort-item" type="button" style="display:none"><span class="chk">✓</span><span>솔로만 보기</span></button>
           <div id="tt-discog-more-divider" class="gc-ch-sort-divider" style="display:none"></div>
@@ -178,6 +179,7 @@
               <button class="gc-ch-sort-item" data-sort="oldest"><span class="chk">✓</span><span>오래된순</span></button>
               <button class="gc-ch-sort-item" data-sort="latest"><span class="chk">✓</span><span>최신순</span></button>
               <div id="gc-discog-ost-divider" class="gc-ch-sort-divider" style="display:none"></div>
+              <button id="gc-discog-all-btn" class="gc-ch-sort-item" type="button" style="display:none"><span class="chk">✓</span><span>부가 앨범까지 포함</span></button>
               <button id="gc-discog-ost-btn" class="gc-ch-sort-item" type="button" style="display:none"><span class="chk">✓</span><span>OST·피처링 포함</span></button>
               <button id="gc-discog-unit-btn" class="gc-ch-sort-item" type="button" style="display:none"><span class="chk">✓</span><span>솔로만 보기</span></button>
               <div id="gc-discog-more-divider" class="gc-ch-sort-divider" style="display:none"></div>
@@ -7443,6 +7445,7 @@ function _renderDiscography(prefix,albums){
   const ostDivider=document.getElementById(prefix+'-discog-ost-divider');
   const ostBtn=document.getElementById(prefix+'-discog-ost-btn');
   const unitBtn=document.getElementById(prefix+'-discog-unit-btn');
+  const allBtn=document.getElementById(prefix+'-discog-all-btn');
   if(!albums||!albums.length){row.style.display='none';return;}
   row.style.display='';
   if(prefix==='gc')_loadGcDiscogTrackTrophies(_openGCko);
@@ -7511,12 +7514,31 @@ function _renderDiscography(prefix,albums){
   // OST 버튼 — OST 있는 그룹에서만 노출, 매번 핸들러 교체
   const hasOst=albums.some(a=>a.type==='OST'||a.feat); // OST 또는 피처링 있으면 토글 노출
   const hasUnit=albums.some(a=>a.unit); // 유닛(EXO-SC 등) 앨범 있으면 '솔로만 보기' 노출
+  // "부가 앨범까지 포함" 마스터 토글(2026-08-24, 옵션1+B) — OST·피처링과 기타 앨범이 둘 다 있을 때만 노출
+  // (그때가 "따로 두 번 체크" 고통 지점). 한 번 탭으로 둘 다 켜고/끔. 개별 토글은 그대로 유지되고 개별로
+  // 둘 다 켜지면 이 마스터도 자동 ✓. 세그먼트 '전체'(=종류)와 안 겹치게 '부가(=범위)' 표현으로 분리.
+  const _hasBothExtras=hasOst&&extraAlbums.length>0;
+  const _syncAllBtn=()=>{if(allBtn)allBtn.classList.toggle('active',extrasIncluded&&showingAll);};
+  if(allBtn){
+    allBtn.style.display=_hasBothExtras?'':'none';
+    _syncAllBtn();
+    allBtn.onclick=e=>{
+      e.stopPropagation();
+      const on=!(extrasIncluded&&showingAll);
+      extrasIncluded=on;showingAll=on;
+      updateSortMenuUI();                         // OST·피처링 ✓ 갱신
+      moreBtn.classList.toggle('active',showingAll); // 기타 앨범 ✓ 갱신
+      _syncAllBtn();
+      renderItems();
+    };
+  }
   ostDivider.style.display=(hasOst||hasUnit)?'':'none'; // 토글 그룹 구분선 — 둘 중 하나라도 있으면
   ostBtn.style.display=hasOst?'':'none';
   ostBtn.onclick=e=>{
     e.stopPropagation();
     extrasIncluded=!extrasIncluded;
     updateSortMenuUI();
+    _syncAllBtn();
     renderItems();
   };
   // '솔로만 보기' 버튼 — 유닛(EXO-SC 등) 앨범 있을 때만 노출
@@ -7599,6 +7621,7 @@ function _renderDiscography(prefix,albums){
       e.stopPropagation();
       showingAll=!showingAll;
       moreBtn.classList.toggle('active',showingAll);
+      _syncAllBtn();
       closeDiscogSortMenu();
       renderItems();
     };
