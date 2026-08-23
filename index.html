@@ -2972,7 +2972,7 @@ function flyToBubble(pos,radius){
 }
 // 포커스 해제(빈 우주 클릭)로 관심이 꺼졌을 때, 보던 방향/타겟은 유지한 채
 // 카메라만 살짝 뒤로 물러나서 주변 다른 행성들이 한눈에 들어오게 한다.
-function _zoomOutABit(factor=3.0,dur=700){
+function _zoomOutABit(factor=(isMob()?2.5:3.0),dur=700){ // 모바일은 카드-오픈을 더 당긴 만큼(11→9) 선택해제 줌아웃도 덜(3.0→2.5, 2026-08-23)
   const dir=camera.position.clone().sub(controls.target);
   if(dir.lengthSq()<0.001)return;
   const dist=dir.length()*factor; // normalize()가 dir을 제자리에서 바꾸므로 길이는 먼저 뽑아둔다
