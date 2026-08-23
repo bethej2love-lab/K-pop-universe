@@ -3021,9 +3021,25 @@ function _m2ParseTitle(rawTitle,selfGko,strict){
     return new RegExp(`#${_atmEscRe(name)}(?![가-힣a-zA-Z0-9])`,'i').test(title)
       ||new RegExp(`#${_atmEscRe(name.replace(/[^가-힣a-zA-Z0-9]/g,''))}(?![가-힣a-zA-Z0-9])`,'i').test(title);
   }
+  // Fable 일반화(2026-08-23): "짧은 영문명(≤4자) 또는 흔한 영단어"인 이름 변형은 그룹명/해시태그 등 맥락
+  // 없이는 매칭하지 않는다. 러블리즈 JIN·지디→GD·태양→SUN·리세→Rise·천둥→Thunder처럼 짧은 영문 로마자가
+  // 타 그룹 채널의 곡 제목·가사 영단어에 우연히 걸려 그 멤버로 그룹을 역추론하던 오태깅 계열(감사에서 상위
+  // 다수 확인)을, 이름 목록을 일일이 늘리는 대신 길이·사전 기준으로 일괄 차단. ⚠️ 이 게이트는 memberHit이
+  // 쓰이는 "이름으로 그룹 역추론"(아래 루프)에만 작용하고, 이미 제목에 그룹명이 확정된 그룹의 멤버 추출
+  // (다른 경로)은 평문 매칭 그대로라, 진짜 콜라보(그룹명 함께 표기)나 자체 채널 태깅 손실은 작다. 한글 이름
+  // 변형은 대상 아님 — name.en만 짧고 name.ko가 멀쩡하면 한글 변형은 평문 매칭 유지되고 영문 변형만 게이트됨.
+  const _ATM_COMMON_EN_WORDS=new Set(['love','rise','sun','star','baby','angel','king','queen','prince','princess','fire','rain','moon','light','dream','gold','golden','hero','lucky','summer','winter','spring','jay','leo','max','ace','boy','girl','only','wave','luna','soul','good','high','sky','blue','cherry','honey','crown','magic','forever','tonight','crazy','kevin','thunder','shine','glow']);
+  function _atmNameNeedsCtx(t){
+    if(!t)return false;
+    if(!/^[A-Za-z0-9][A-Za-z0-9.\-'’ ]*$/.test(t))return false; // 라틴(영문) 계열 변형만 — 한글 이름은 단일음절/보호목록 규칙이 커버
+    const c=t.replace(/[^A-Za-z0-9]/g,'');
+    if(!/[A-Za-z]/.test(c))return false; // 순수 숫자 제외(그룹 토큰 규칙 별도)
+    if(c.length<=4)return true;          // 짧은 영문명(JIN·GD·CL·Rise·Jae…)
+    return _ATM_COMMON_EN_WORDS.has(c.toLowerCase()); // 흔한 영단어(Prince·Kevin·Love…)
+  }
   function memberHit(a,names){
     if([...a.name.ko].length===1||_isHashtagOnlyName(a.name.ko))return names.some(t=>hitHashtag(t));
-    return names.some(t=>hit(t));
+    return names.some(t=>_atmNameNeedsCtx(t)?hitHashtag(t):hit(t));
   }
   // 해시태그가 "성+이름"을 띄어쓰기 없이 그대로 붙여 쓰는 경우(예: "#HUHYUNJIN" = 허Huh+윤진Yunjin)가
   // 흔한데, 등록명(name.en)은 보통 성 없이 이름만("Yunjin") 등록돼있어서 위 hit()의 단어 경계 매칭으론
