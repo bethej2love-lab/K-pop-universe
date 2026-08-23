@@ -2961,14 +2961,14 @@ function flyTo(pos,dur){
   if(!pos)return;
   const dir=camera.position.clone().sub(controls.target).normalize();
   if(dir.lengthSq()<0.001)dir.set(0,0,1);
-  _startFly(pos,pos.clone().addScaledVector(dir,isMob()?40:22),dur||800);
+  _startFly(pos,pos.clone().addScaledVector(dir,isMob()?33:22),dur||800); // 모바일 멤버 카드 열릴 때 조금 더 가까이(40→33, 2026-08-23)
 }
 function flyToBubble(pos,radius){
   const dir=camera.position.clone().sub(pos).normalize();
   if(dir.lengthSq()<0.001)dir.set(0,0,1);
   // 정면 충돌 느낌 없애기: 위에서 살짝 비스듬히 + 거리 여유
   const tilted=new THREE.Vector3(dir.x*0.8,dir.y+0.28,dir.z*0.8).normalize();
-  _startFly(pos,pos.clone().addScaledVector(tilted,radius*(isMob()?11.0:5.5)),1000);
+  _startFly(pos,pos.clone().addScaledVector(tilted,radius*(isMob()?9.0:5.5)),1000); // 모바일 그룹 카드 열릴 때 조금 더 가까이(11→9, 2026-08-23)
 }
 // 포커스 해제(빈 우주 클릭)로 관심이 꺼졌을 때, 보던 방향/타겟은 유지한 채
 // 카메라만 살짝 뒤로 물러나서 주변 다른 행성들이 한눈에 들어오게 한다.
