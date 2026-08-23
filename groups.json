@@ -7905,7 +7905,7 @@
       },
       {
         "title": "꿈의 장: MAGIC",
-        "type": "EP",
+        "type": "정규",
         "isMain": true,
         "cover": "https://cdnimg.melon.co.kr/cm2/album/images/103/41/654/10341654_500.jpg",
         "releaseDate": "2019.10.21",
@@ -8262,119 +8262,94 @@
         ]
       },
       {
-        "title": "The Dream Chapter: STAR",
+        "title": "별의 장: SANCTUARY",
         "type": "EP",
         "isMain": true,
-        "cover": "https://cdnimg.melon.co.kr/cm/album/images/102/56/762/10256762_500.jpg",
-        "releaseDate": "2019.03.04",
-        "trackCount": null,
-        "titleTrack": "CROWN",
-        "tracks": [
-          {
-            "no": 1,
-            "title": "CROWN",
-            "isTitle": true
-          }
-        ]
-      },
-      {
-        "title": "The Dream Chapter: MAGIC",
-        "type": "정규",
-        "isMain": true,
-        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/103/41/654/10341654_500.jpg",
-        "releaseDate": "2019.10.21",
-        "trackCount": null,
-        "titleTrack": "9 and Three Quarters (Run Away)",
-        "tracks": [
-          {
-            "no": 1,
-            "title": "9 and Three Quarters (Run Away)",
-            "isTitle": true
-          }
-        ]
-      },
-      {
-        "title": "The Dream Chapter: ETERNITY",
-        "type": "EP",
-        "isMain": true,
-        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/104/31/716/10431716_20200518153327_500.jpg",
-        "releaseDate": "2020.05.18",
-        "trackCount": null,
-        "titleTrack": "Can't You See Me?",
-        "tracks": [
-          {
-            "no": 1,
-            "title": "Can't You See Me?",
-            "isTitle": true
-          }
-        ]
-      },
-      {
-        "title": "The Chaos Chapter: FREEZE",
-        "type": "정규",
-        "isMain": true,
-        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/106/17/217/10617217_20210531132328_500.jpg",
-        "releaseDate": "2021.05.31",
-        "trackCount": null,
-        "titleTrack": "LO$ER=LO♡ER",
-        "tracks": [
-          {
-            "no": 1,
-            "title": "LO$ER=LO♡ER",
-            "isTitle": true
-          }
-        ]
-      },
-      {
-        "title": "The Name Chapter: FREEFALL",
-        "type": "정규",
-        "isMain": true,
-        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/113/43/302/11343302_20231012153730_500.jpg",
-        "releaseDate": "2023.10.13",
-        "trackCount": null,
-        "titleTrack": "Back for More (with Anitta)",
-        "tracks": [
-          {
-            "no": 1,
-            "title": "Back for More (with Anitta)",
-            "isTitle": true
-          },
-          {
-            "no": 2,
-            "title": "Tinnitus (Wanna be a rock)",
-            "isTitle": true
-          }
-        ]
-      },
-      {
-        "title": "The Star Chapter: SANCTUARY",
-        "type": "EP",
-        "isMain": true,
-        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/116/32/009/11632009_20241104105912_500.jpg",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/116/32/009/11632009_20241104105912_500.jpg?0317ef579138cb2aeebe962b36b1ebdf",
         "releaseDate": "2024.11.04",
-        "trackCount": null,
+        "trackCount": 6,
         "titleTrack": "Over The Moon",
         "tracks": [
           {
             "no": 1,
+            "title": "Heaven",
+            "isTitle": false
+          },
+          {
+            "no": 2,
             "title": "Over The Moon",
             "isTitle": true
+          },
+          {
+            "no": 3,
+            "title": "Danger",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Resist (Not Gonna Run Away)",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Forty One Winks",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "Higher Than Heaven",
+            "isTitle": false
           }
         ]
       },
       {
-        "title": "The Star Chapter: TOGETHER",
+        "title": "별의 장: TOGETHER",
         "type": "정규",
         "isMain": true,
-        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/119/18/636/11918636_20250721104940_500.jpg",
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/119/18/636/11918636_20250721104940_500.jpg?e2b17d3af5da1d2c6ac182d607e1c8a1",
         "releaseDate": "2025.07.21",
-        "trackCount": null,
+        "trackCount": 8,
         "titleTrack": "Beautiful Strangers",
         "tracks": [
           {
             "no": 1,
+            "title": "Upside Down Kiss",
+            "isTitle": false
+          },
+          {
+            "no": 2,
             "title": "Beautiful Strangers",
             "isTitle": true
+          },
+          {
+            "no": 3,
+            "title": "Ghost Girl",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Sunday Driver",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Dance With You",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "Take My Half",
+            "isTitle": false
+          },
+          {
+            "no": 7,
+            "title": "Bird of Night",
+            "isTitle": false
+          },
+          {
+            "no": 8,
+            "title": "별의 노래",
+            "isTitle": false
           }
         ]
       }
