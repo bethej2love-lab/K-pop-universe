@@ -10896,21 +10896,18 @@ function _downloadColCard(){
 // 순간 복사가 안 된 채로 남는 사고가 재현됨(2026-08-21, 사용자 제보) — 그룹/멤버 카드 공유 버튼
 // (_shareCurrentView/_isTouchPrimary)에서 이미 한 번 겪고 고쳤던 것과 똑같은 패턴이라 여기도 통일.
 // 데스크톱은 무조건 우리 쪽에서 직접 링크를 클립보드에 복사 + 이미지 다운로드로 확정 처리.
+// 공유 = 링크만(2026-08-23 사용자 요청). 예전엔 이미지도 같이 자동 저장/공유했지만, 이미지는 바로 옆
+// "저장" 버튼(col-card-download)이 따로 있으므로 공유는 링크만 다루게 단순화 — 원치 않는 자동 다운로드 제거.
 async function _shareColCard(){
-  if(!_colCardDataURL||!_colCardUrl)return;
-  if(_isTouchPrimary()){
+  if(!_colCardUrl)return;
+  if(_isTouchPrimary()&&navigator.share){
     try{
-      const blob=await(await fetch(_colCardDataURL)).blob();
-      const file=new File([blob],'kpop-universe-collection.png',{type:'image/png'});
-      if(navigator.canShare&&navigator.canShare({files:[file]})){
-        await navigator.share({files:[file],title:'K-POP Universe',url:_colCardUrl});
-        return;
-      }
+      await navigator.share({title:'K-POP Universe',url:_colCardUrl}); // 링크만(이미지 파일 안 실음)
+      return;
     }catch(e){ /* 취소했거나 실패 — 아래 폴백으로 계속 진행 */ }
   }
-  _downloadColCard();
   _copyShareLink(_colCardUrl);
-  _showShareToast(currentLang==='ko'?'링크가 복사됐고 이미지도 저장됐어요 — 같이 올려주세요':'Link copied and image saved — post them together');
+  _showShareToast(currentLang==='ko'?'링크가 복사됐어요':'Link copied');
 }
 document.getElementById('col-card-cancel')?.addEventListener('click',_closeColCardPreview);
 document.getElementById('col-card-download')?.addEventListener('click',_downloadColCard);
