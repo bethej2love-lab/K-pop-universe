@@ -2774,6 +2774,13 @@ function _atmMatchesMember(m,title,tokens,groupKo){
   const nameChars=[...name];
   const multiChar=nameChars.length>1&&!hashtagOnly;
   const particles=['이','가','은','는','을','를','과','와','도','만','의','에','께','님','씨','아','야','랑','한테','에게'].map(_atmEscRe).join('|');
+  // matchAliases(정식 표기가 영문인 멤버의 한글 로마자 별칭 — JAY B→제이비, 러블리즈 진→진 등): 이 함수는
+  // "자체 채널(group 확정)"에서만 쓰이므로 별칭 평문 매칭이 안전. 다자 별칭은 단독/조사, 단일음절은 해시태그만.
+  if(m.aliases&&m.aliases.length&&m.aliases.some(al=>{
+    if(!al)return false;
+    if([...al].length>1)return new RegExp(`(?<![가-힣])${_atmEscRe(al)}(?:${particles}){0,2}(?![가-힣])`).test(title)||new RegExp(`#${_atmEscRe(al)}(?![가-힣])`).test(title);
+    return new RegExp(`#${_atmEscRe(al)}(?![가-힣])`).test(title);
+  }))return true;
   if(multiChar){
     if(new RegExp(`(?<![가-힣])${_atmEscRe(name)}(?![가-힣])`).test(title))return true; // 이름 단독
     if(new RegExp(`(?<![가-힣])${_atmEscRe(name)}(?:${particles}){0,2}(?![가-힣])`).test(title))return true; // 이름+조사
@@ -2848,7 +2855,7 @@ async function _ytAutoTagMembers(){
       // 채널에서는 영원히 로스터에 안 잡혀 자동 태깅 대상에서 빠짐 — 겸임 소속까지 보는 _artistGroups로 판정
       // (2026-07-31, 우주소녀 채널의 유연정 단독 영상이 계속 미태깅으로 남아 다른 멤버 카드에도 "그룹 전체
       // 미태깅 영상"으로 잘못 노출되던 문제의 원인).
-      const members=ARTISTS.filter(a=>_artistGroups(a).some(g=>g.ko===gko)).map(a=>({ko:a.name.ko,en:a.name.en,left:a.left}));
+      const members=ARTISTS.filter(a=>_artistGroups(a).some(g=>g.ko===gko)).map(a=>({ko:a.name.ko,en:a.name.en,left:a.left,aliases:a.matchAliases}));
       if(!members.length)continue;
       _ytSetProg(`[${gi+1}/${groupKos.length}] ${gko}: 미태깅 영상 조회 중…`);
       // 같은 그룹 멤버(members)가 비어있거나, 콜라보(with_members/with_groups)가 아직 하나도 안 잡힌
@@ -2949,7 +2956,7 @@ async function _ytRetagAllIncludingTagged(){
     let grandMatched=0,grandChecked=0;
     for(let gi=0;gi<groupKos.length;gi++){
       const gko=groupKos[gi];
-      const members=ARTISTS.filter(a=>_artistGroups(a).some(g=>g.ko===gko)).map(a=>({ko:a.name.ko,en:a.name.en,left:a.left}));
+      const members=ARTISTS.filter(a=>_artistGroups(a).some(g=>g.ko===gko)).map(a=>({ko:a.name.ko,en:a.name.en,left:a.left,aliases:a.matchAliases}));
       if(!members.length)continue;
       _ytSetProg(`[${gi+1}/${groupKos.length}] ${gko}: 전체 영상 조회 중…`);
       // 미태깅분 버튼과 달리 members/with_members 상태로 거르지 않고 이 그룹 전체를 다 훑는다 —
