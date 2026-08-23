@@ -2269,6 +2269,8 @@ function _vmUpdateCount(){
   if(applyBtn)applyBtn.disabled=checked===0;
   const indivBtn=document.getElementById('vm-indiv-btn');
   if(indivBtn)indivBtn.disabled=checked===0;
+  const holdBtn=document.getElementById('vm-hold-btn');
+  if(holdBtn)holdBtn.disabled=checked===0;
   const normalBtn=document.getElementById('vm-normal-btn');
   if(normalBtn)normalBtn.disabled=checked===0;
   const coverClearBtn=document.getElementById('vm-coverclear-btn');
@@ -2742,6 +2744,36 @@ document.getElementById('vm-indiv-btn')?.addEventListener('click',async()=>{
     if(!_vmRows.length)_vmRenderVideoList();
   }
   btn.textContent='선택-개별';
+  _vmUpdateCount();
+});
+// 선택-보류 — content_flag='보류'(유니버스 미등록 아이돌/검토 대기)로 일괄 지정. 전체 탭에서 눈에 띄는
+// 미등록 그룹·오태깅 후보를 바로 큐로 보낼 수 있게(2026-08-23 사용자 요청). vm-indiv-btn과 동일 패턴.
+document.getElementById('vm-hold-btn')?.addEventListener('click',async()=>{
+  if(!sb)return;
+  const btn=document.getElementById('vm-hold-btn');
+  const items=[...document.querySelectorAll('#vm-list .vm-item')].filter(el=>el.querySelector('input[type=checkbox]')?.checked);
+  const ids=items.map(el=>el.dataset.vidId).filter(Boolean);
+  if(!ids.length)return;
+  btn.disabled=true;btn.textContent='처리 중…';
+  const newFlag='보류';
+  const{error}=await sb.from(_YT_TABLE).update({content_flag:newFlag}).in('id',ids);
+  if(error){btn.disabled=false;btn.textContent='선택-보류';document.getElementById('vm-status').textContent='오류: '+error.message;return;}
+  const idSet=new Set(ids);
+  if(_vmTab==='all'){
+    _vmRows.forEach(v=>{if(idSet.has(v.id))v.content_flag=newFlag;});
+    items.forEach(el=>{
+      const cb=el.querySelector('input[type=checkbox]');if(cb)cb.checked=false;
+      const flagBtn=el.querySelector('.vm-flag-btn');
+      if(flagBtn)_vmSetFlagLabel(flagBtn,newFlag);
+    });
+    document.getElementById('vm-status').textContent=`${ids.length}개 보류 처리 완료`;
+  }else{
+    _vmRows=_vmRows.filter(v=>!idSet.has(v.id));
+    items.forEach(el=>el.remove());
+    document.getElementById('vm-status').textContent=`${ids.length}개 처리 완료 — 남은 ${_vmRows.length}개`;
+    if(!_vmRows.length)_vmRenderVideoList();
+  }
+  btn.textContent='선택-보류';
   _vmUpdateCount();
 });
 // 여러 개 선택 후 한 번에 정상(null)으로 되돌리는 버튼 — vm-apply-btn은 탭마다 목적이 고정(전체 탭은
@@ -3350,8 +3382,14 @@ function _m2ParseTitle(rawTitle,selfGko,strict){
     const genGap=(y1&&y2)?Math.abs(y1-y2):0;
     return !sameCo&&genGap>=6;
   }
+  // 한글 흔한단어 이름(베이비·하루·하늘…): _atmNameNeedsCtx는 라틴 전용이라 한글 흔한단어는 게이트 못 함.
+  // 이름만으로의 역추론(memberHit)에서 이런 이름은 노래제목·가사(#없는 평문 "베이비")나 다른 그룹명
+  // 부분문자열(베이비돈크라이·베이비몬스터·베이비복스)에 걸려 엉뚱한 그룹으로 끌려감(2026-08-23 사용자
+  // 제보 — 베이비돈크라이 영상이 아워벌스데이 '베이비'로 오추론). 단일음절 이름과 동일하게 인퍼런스에선
+  // 해시태그만 인정한다(자체 채널 태깅 _atmMatchesMember는 그룹 확정 문맥이라 평문 매칭 그대로 유지 — 영향 없음).
+  const _ATM_COMMON_KO_WORDS=new Set(['베이비','하루','하늘','바다','봄','여름','겨울','별','사랑','달','천사','하트']);
   function memberHit(a,names){
-    if([...a.name.ko].length===1||_isHashtagOnlyName(a.name.ko))return names.some(t=>hitHashtag(t));
+    if([...a.name.ko].length===1||_isHashtagOnlyName(a.name.ko)||_ATM_COMMON_KO_WORDS.has(a.name.ko))return names.some(t=>hitHashtag(t));
     return names.some(t=>_atmNameNeedsCtx(t)?hitHashtag(t):hit(t));
   }
   // 해시태그가 "성+이름"을 띄어쓰기 없이 그대로 붙여 쓰는 경우(예: "#HUHYUNJIN" = 허Huh+윤진Yunjin)가

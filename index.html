@@ -381,6 +381,7 @@
       <span id="vm-count"></span>
       <button id="vm-edit-btn">편집</button>
       <button id="vm-indiv-btn">선택-개별</button>
+      <button id="vm-hold-btn">선택-보류</button>
       <button id="vm-normal-btn">선택-정상</button>
       <button id="vm-coverclear-btn">선택-원곡제외</button>
       <button id="vm-coverset-btn" style="border-radius:10px;font-size:11.5px;padding:6px 12px;cursor:pointer;font-family:inherit;white-space:nowrap;border:1px solid rgba(190,120,230,0.42);background:rgba(190,120,230,0.16);color:rgba(222,182,242,0.95);">선택-원곡지정</button>
@@ -16066,7 +16067,7 @@ function _updateAdminUI(){
 // 옛 버전을 계속 서빙해서 고친 코드가 반영 안 되는 것처럼 보이는 사고가 남(2026-08-18, HTML 엔티티 정리
 // 버튼 타임아웃 재수정 후에도 계속 재현된다는 제보로 발견). admin.js 내용을 바꿀 때마다 이 버전 문자열도
 // 같이 올릴 것(sw.js의 CACHE_VERSION과 같은 수동 관리 방식).
-const _ADMIN_JS_VER='2026-08-23l';
+const _ADMIN_JS_VER='2026-08-23m';
 function _loadAdminScript(){
   if(!_isAdmin()||document.getElementById('admin-js-script'))return;
   const s=document.createElement('script');
