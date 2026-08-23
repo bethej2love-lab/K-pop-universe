@@ -3216,7 +3216,13 @@ function _m2ParseTitle(rawTitle,selfGko,strict){
   for(const gko of matchedGroupKos){
     // 겸임 멤버 대응 — a.group.ko===gko(주 소속만)면 NCT 마크/해찬처럼 부소속 그룹 이름이 제목에
     // 매칭돼도 정작 그 멤버 자신은 로스터에서 빠져 추출 누락됨(2026-08-20, 위 역추론부와 동일 수정).
-    const matched=ARTISTS.filter(a=>_artistGroups(a).some(g=>g.ko===gko)&&_m2NameVariants(a).some(t=>hit(t,normMinusUnits)||hitHashtagSubstring(t))).map(a=>a.name.ko);
+    // matchAliases(2026-08-23): 정식 표기가 영문인 멤버(러블리즈 JIN·Kei 등)의 한글 로마자 별칭("진"·"케이").
+    // ⚠️ 이 별칭은 "제목에 그룹명이 확정된" 이 블록에서만 단어경계로 매칭한다 — 역추론(memberHit) 블록엔
+    // 절대 안 들어가서 흔한 문자열("케이"=케이팝 등)로 그룹을 잘못 끌어오는 오염이 없다. 저장은 name.ko
+    // 그대로라(표시/쿼리 일관) 별칭으로 걸려도 members엔 'JIN'/'Kei'로 들어감. 단일음절 별칭("진")도 그룹이
+    // 이미 확정된 맥락이라 hit()의 length<2 컷 없이 단어경계로 인정(진심·진짜는 단어경계라 안 걸림).
+    const _aliasHit=al=>{const n=(al||'').toUpperCase().replace(/[^가-힣a-zA-Z0-9]/g,' ').replace(/\s+/g,' ').trim();return !!n&&normMinusUnits.includes(' '+n+' ');};
+    const matched=ARTISTS.filter(a=>_artistGroups(a).some(g=>g.ko===gko)&&(_m2NameVariants(a).some(t=>hit(t,normMinusUnits)||hitHashtagSubstring(t))||(a.matchAliases||[]).some(_aliasHit))).map(a=>a.name.ko);
     const extra=unitExtraMembers[gko];
     if(extra){
       const extraArr=[...extra];
