@@ -25,6 +25,7 @@
 ---
 
 ## 2026-08-23
+- [완료][admin.js] **2PM·2AM 시간표기 오매칭 게이트**. 라디오/방송 시간표기("⏰ RYO : 2PM-4PM")가 그룹 2PM으로 매칭돼 "원곡: 2PM" 오태깅까지 발생(Fable/사용자 제보). `_GROUP_TITLE_CONFLICT_EXCLUDE`에 2PM·2AM 추가 — 숫자+AM/PM이 다른 시각과 대시/물결로 이어진 시간범위(\d[AP]M[-~]\d[AP]M)일 때만 그룹 매칭 제외. 진짜 곡 "2PM - My House"(대시 뒤 두번째 시각 없음)는 안전. 재발 방지(적용하려면 재태깅). `_ADMIN_JS_VER→n`, `sw v65→v66`.
 - [완료][admin.js] **한글 흔한단어 이름 인퍼런스 게이트 — 베이비→아워벌스데이 오추론 수정**. 사용자 제보: 그룹 베이비돈크라이 영상이 아워벌스데이 멤버 '베이비'로 끌려감. 원인: `memberHit`(제목→그룹 역추론)의 흔한단어 게이트 `_atmNameNeedsCtx`가 라틴 전용이라 한글 '베이비'(baby, 노래·가사에 흔함 + 베이비돈크라이/베이비몬스터/베이비복스의 부분문자열)를 평문 매칭. `_ATM_COMMON_KO_WORDS`(베이비·하루·하늘·바다·봄·여름·겨울·별·사랑·달·천사·하트) 신설 → 단일음절 이름처럼 인퍼런스에선 해시태그만 인정. 자체 채널 태깅(_atmMatchesMember, 그룹 확정 문맥)은 평문 유지라 영향 없음. 적용하려면 자동태깅/재태깅 재실행.
 - [완료][admin.js][index.html] **영상관리 전체 탭 '선택-보류' 버튼 추가**(사용자 요청). 체크한 영상을 content_flag='보류'로 일괄 지정(유니버스 미등록 아이돌/검토 대기 큐로). vm-indiv-btn과 동일 패턴, _vmUpdateCount에 disabled 관리 추가. `_ADMIN_JS_VER→m`, `sw v64→v65`.
 - [완료][index.html][sw.js] **GA 이벤트 파라미터 source→trigger 개명(계측 오염 방지)**. `infscroll_trigger` 이벤트의 `{source}` 파라미터가 GA 예약어(traffic source/utm_source)와 충돌해 무한스크롤 트리거값(observer/scroll/poll/releaseLock)이 유입경로 차원과 섞일 위험 → `{trigger:source}`로 키만 개명(변수·값 그대로). `sw v63→v64`.

@@ -3302,6 +3302,11 @@ function _m2NameVariants(a){
 // 문자열 파싱을 깨는 별도 문제 때문 — 초신성은 altNames로 이동, 검색은 그쪽에서 여전히 걸림).
 const _GROUP_TITLE_CONFLICT_EXCLUDE={
   '슈퍼노바':[/aespa/i,/에스파/,/david\s*guetta/i,/데이비드\s*게타/,/supernova\s*love/i,/아이브|\bIVE\b/i],
+  // 2PM·2AM: 라디오/방송 시간표기(2PM-4PM, 2AM~4AM 등)가 그룹명으로 오매칭됨(2026-08-23 Fable/사용자
+  // 제보 — "⏰ RYO : 2PM-4PM"이 그룹 2PM으로, "원곡: 2PM" 오태깅까지). 숫자+AM/PM이 "다른 시각과 대시/
+  // 물결로 이어진 범위"일 때만 제외 → 진짜 곡 "2PM - My House"(대시 뒤 두 번째 시각 없음)는 안전.
+  '2PM':[/\d\s*[AP]M\s*[-~–]\s*\d\s*[AP]M/i],
+  '2AM':[/\d\s*[AP]M\s*[-~–]\s*\d\s*[AP]M/i],
 };
 // 위 정규식 목록으로도 다 못 거르는 경우(제목이 그냥 "Supernova"+다른 그룹 해시태그만 있고 곡명/원곡
 // 아티스트 언급이 없는 챌린지 영상들)를 위한 2차 방어선 — 이 그룹이 "다른 실존 그룹과 같이" 매칭됐으면
