@@ -3392,7 +3392,7 @@ function _m2ParseTitle(rawTitle,selfGko,strict){
   // 부분문자열(베이비돈크라이·베이비몬스터·베이비복스)에 걸려 엉뚱한 그룹으로 끌려감(2026-08-23 사용자
   // 제보 — 베이비돈크라이 영상이 아워벌스데이 '베이비'로 오추론). 단일음절 이름과 동일하게 인퍼런스에선
   // 해시태그만 인정한다(자체 채널 태깅 _atmMatchesMember는 그룹 확정 문맥이라 평문 매칭 그대로 유지 — 영향 없음).
-  const _ATM_COMMON_KO_WORDS=new Set(['베이비','하루','하늘','바다','봄','여름','겨울','별','사랑','달','천사','하트']);
+  const _ATM_COMMON_KO_WORDS=new Set(['베이비','하루','하늘','바다','봄','여름','겨울','별','사랑','달','천사','하트','메이']); // 메이: en=May(달)+동명이인 3명(리센느/세이마이네임/체리블렛)+A2O MAY 그룹명 — 인퍼런스에선 해시태그/그룹문맥만(2026-08-24)
   function memberHit(a,names){
     if([...a.name.ko].length===1||_isHashtagOnlyName(a.name.ko)||_ATM_COMMON_KO_WORDS.has(a.name.ko))return names.some(t=>hitHashtag(t));
     return names.some(t=>_atmNameNeedsCtx(t)?hitHashtag(t):hit(t));
