@@ -119,6 +119,29 @@ const _KNOWN_EXCLUDED_PEOPLE = new Set(['이종현', '태일', '김가람', '승
   missing.forEach((count, name) => add('warn', 'connections.json 유령 참조', `"${name}" — ARTISTS에 없는데 연결 ${count}건에서 참조됨`));
 }
 
+// ── 7. 그룹명 ↔ 타 그룹 멤버명 충돌 (오태깅 유발 — 스텔라→하츠투하츠, 슈가→방탄 사례로 발견, 2026-08-23) ──
+// 그룹명(ko/en)이 다른 그룹 멤버의 이름(ko/en)과 같으면, 그 멤버 언급이 그룹으로 오매칭돼 대량 오태깅됨.
+// strictSync 지정한 그룹은 제목 매칭에서 빠지므로(=처리됨) 경고 대상에서 제외. 새 충돌은 검토 후 strictSync.
+const _memNameIdx = new Map(); // UPPER(name) -> Set(group.ko)
+ARTISTS.forEach(a => {
+  [a.name && a.name.ko, a.name && a.name.en].forEach(nm => {
+    if (!nm) return;
+    const u = nm.toUpperCase();
+    if (!_memNameIdx.has(u)) _memNameIdx.set(u, new Set());
+    _memNameIdx.get(u).add(a.group && a.group.ko);
+  });
+});
+Object.entries(GROUPS).forEach(([gko, info]) => {
+  if (info.strictSync) return; // 이미 처리된 그룹은 건너뜀
+  [gko, info.en].forEach(form => {
+    if (!form) return;
+    const others = _memNameIdx.get(form.toUpperCase());
+    if (!others) return;
+    const otherGroups = [...others].filter(x => x && x !== gko);
+    if (otherGroups.length) add('warn', '그룹명↔멤버명 충돌(오태깅 위험)', `그룹 "${gko}"(=${form}) ↔ ${otherGroups.join(', ')}의 동명 멤버 — strictSync 검토 필요`);
+  });
+});
+
 // ── 리포트 ──────────────────────
 const byCategory = new Map();
 issues.forEach(iss => {
