@@ -708,6 +708,55 @@ async function _ytSweepCoverReclassify(){
   }catch(e){_ytSetProg('오류: '+e.message);}
   finally{if(btn)btn.disabled=false;}
 }
+// [원곡 소급 재분류 2차](2026-08-23): 커버 키워드는 없지만 "타소속사 + 10년 이상 선배" with 태그 —
+// 후배가 선배 명곡을 커버한 케이스가 압도적(CSV 실측: 방탄→라이즈·S.E.S.→앤팀·핑클→보넥도 등 408건).
+// 1차(키워드+6년)가 못 잡는 무키워드 원곡을 cover_of로. ⚠️ 진짜 콜라보 위험은 대부분 "같은 소속사"(가족
+// 콜라보)에 몰려 있어 그건 제외, 제목에 합동/페스티벌 키워드 있는 것도 제외. 1차와 동일한 안전장치.
+async function _ytSweepCoverReclassify2(){
+  if(!sb){_ytSetProg('Supabase 연결 없음');return;}
+  const btn=document.getElementById('sp-coverfix2-btn');
+  if(btn)btn.disabled=true;
+  try{
+    _ytSetProg('[원곡 재분류 2차] 조회 중…');
+    const{data:rows,error}=await _sbFetchAll(()=>sb.from(_YT_TABLE)
+      .select('id,title,group_ko,with_members,with_groups,cover_of_members,cover_of_groups,tags_manual')
+      .or('with_members.neq.{},with_groups.neq.{}').order('id'));
+    if(error){_ytSetProg('조회 실패: '+error.message);return;}
+    if(!rows?.length){_ytSetProg('검사할 영상이 없어요');return;}
+    const _senior=(wg,ch)=>{const g1=GROUPS[wg],g2=GROUPS[ch];if(!g1||!g2)return 0;const y1=parseInt(g1.debut)||0,y2=parseInt(g2.debut)||0;return(y1&&y2)?(y2-y1):0;};
+    const _sameCo=(wg,ch)=>{const c1=(GROUPS[wg]?.co||'').split('/')[0].trim(),c2=(GROUPS[ch]?.co||'').split('/')[0].trim();return !!(c1&&c2)&&c1===c2;};
+    const _collabKw=/합동|콜라보|collab|페스티벌|festival|듀엣|공동무대/i;
+    const _ok=(wg,ch,title)=>_senior(wg,ch)>=10&&!_sameCo(wg,ch)&&!_collabKw.test(title||'');
+    const updates=[];let manualSkipped=0;const excluded=[];
+    rows.forEach(v=>{
+      const ch=v.group_ko,title=v.title||'';
+      const curWG=v.with_groups||[],curWM=v.with_members||[],curCG=v.cover_of_groups||[],curCM=v.cover_of_members||[];
+      const moveG=[],moveM=[];
+      curWG.forEach(wg=>{if(_senior(wg,ch)>=10){if(_ok(wg,ch,title))moveG.push(wg);else excluded.push({id:v.id,title,group_ko:ch,후보:wg,사유:_sameCo(wg,ch)?'같은소속사':'콜라보키워드'});}});
+      curWM.forEach(m=>{const mm=m.match(/^(.+)\((.+)\)$/);if(!mm)return;if(_senior(mm[2],ch)>=10){if(_ok(mm[2],ch,title))moveM.push(m);else excluded.push({id:v.id,title,group_ko:ch,후보:m,사유:_sameCo(mm[2],ch)?'같은소속사':'콜라보키워드'});}});
+      if(!moveG.length&&!moveM.length)return;
+      if(v.tags_manual){manualSkipped++;return;}
+      updates.push({id:v.id,patch:{
+        with_groups:curWG.filter(g=>!moveG.includes(g)),
+        with_members:curWM.filter(m=>!moveM.includes(m)),
+        cover_of_groups:[...new Set([...curCG,...moveG])],
+        cover_of_members:[...new Set([...curCM,...moveM])]
+      }});
+    });
+    if(excluded.length)console.log(`[원곡 재분류 2차] 제외(같은소속사/콜라보키워드 — 진짜 콜라보 가능성) ${excluded.length}건, 직접 확인:`,excluded);
+    if(!updates.length){_ytSetProg(`2차 재분류할 것 없음 (제외 ${excluded.length}건은 콘솔).`+(manualSkipped?` 수동보호 ${manualSkipped}건.`:''));return;}
+    if(!confirm(`[2차] 커버 키워드 없이 "타소속사 + 10년 이상 선배"인 with 태그 ${updates.length}건을 원곡(cover_of)으로 재분류할까요?\n\n· 후배가 선배 명곡 커버한 케이스가 대부분\n· 같은 소속사/합동·페스티벌 키워드는 자동 제외(${excluded.length}건, 콘솔 목록)\n· 수동편집 태그 안 건드림 (${manualSkipped}건)\n· 스냅샷 저장돼서 되돌리기 가능`))
+      {_ytSetProg(`취소됨 — 미리보기만 (2차 재분류 예정 ${updates.length}건, 제외 ${excluded.length}건 콘솔).`);return;}
+    await _snapshotBeforeBulk('원곡 재분류 2차(무키워드·타소속사·10년+)',updates.map(u=>u.id));
+    for(let i=0;i<updates.length;i+=200){
+      const results=await Promise.all(updates.slice(i,i+200).map(u=>sb.from(_YT_TABLE).update(u.patch).eq('id',u.id)));
+      const f=results.find(r=>r.error);if(f)throw new Error(f.error.message);
+      _ytSetProg(`[원곡 재분류 2차] ${Math.min(i+200,updates.length)}/${updates.length}건 처리 중…`);
+    }
+    _ytSetProg(`완료! [2차] ${updates.length}건을 원곡으로 재분류함. 제외(같은소속사 등) ${excluded.length}건은 콘솔에서 직접 확인.`+(manualSkipped?` 수동보호 ${manualSkipped}건.`:''));
+  }catch(e){_ytSetProg('오류: '+e.message);}
+  finally{if(btn)btn.disabled=false;}
+}
 async function _ytSweepAmbiguousCollabMistag(){
   if(!sb){_ytSetProg('Supabase 연결 없음');return;}
   const btn=document.getElementById('sp-collabfix-btn');
@@ -4507,6 +4556,7 @@ document.getElementById('vid-tag-thumb-refresh').addEventListener('click',async 
   if(junkKwLbl)junkKwLbl.textContent='현재 목록: '+_JUNK_TITLE_KEYWORDS_GLOBAL.join(', ');
   document.getElementById('sp-detect-btn')?.addEventListener('click',_ytSweepDetectPreview);
 document.getElementById('sp-coverfix-btn')?.addEventListener('click',_ytSweepCoverReclassify);
+document.getElementById('sp-coverfix2-btn')?.addEventListener('click',_ytSweepCoverReclassify2);
 document.getElementById('sp-collabfix-btn')?.addEventListener('click',_ytSweepAmbiguousCollabMistag);
   document.getElementById('sp-scan-namecollide-btn')?.addEventListener('click',_ytScanAmbiguousNameGroupMisassignment);
   document.getElementById('sp-membersfix-btn')?.addEventListener('click',_ytSweepMembersMistag);
