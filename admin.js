@@ -3363,12 +3363,28 @@ function _extBuildRows(vids,strict,tier,owner){
     // withGroups가 아니라 primaryGroup 자리로 잡혀서 게스트가 통째로 누락됐었음(2026-08-11, "이영지랑
     // #에스파 카리나" 같은 제목에서 실측 확인).
     const guestCandidates=owner&&match?[match.primaryGroup,...match.withGroups].filter((g,i,arr)=>g&&arr.indexOf(g)===i):(match?match.withGroups:[]);
+    // 원곡 라우팅(Fable #1·#2, 2026-08-23): "현역 그룹이 선배 명곡 커버 → 원곡 그룹이 with로 오분류" 계열을
+    // 태깅 시점에 cover_of로 돌린다. 채널 그룹(channelGko)과 비교해 게스트가 ⓐ커버 키워드 동반 + 6년 이상
+    // 선배거나 ⓑ커버 키워드 + 게스트 3그룹 이상 나열(모음 영상)이면 with_groups 대신 cover_of_groups로.
+    // ⚠️ 반드시 "커버 키워드"가 있을 때만 라우팅 — 키워드 없는(세대차만 큰) 애매한 건 진짜 콜라보일 수 있어
+    // 여기서 안 건드리고 소급 검수 큐 몫으로 둔다(보수적). "함께"와 "원곡"은 데이터 의미가 완전히 다름.
+    const channelGko=owner?ownerGko:(match?match.primaryGroup:null);
+    const coverGroups=[],coverMembers=[];
+    const _titleHasCoverKw=/원곡|커버|cover|\boriginal\b/i.test(v.title||'');
+    const _seniorYears=gko=>{const g1=GROUPS[gko],g2=GROUPS[channelGko];if(!g1||!g2)return 0;const y1=parseInt(g1.debut)||0,y2=parseInt(g2.debut)||0;return(y1&&y2)?(y2-y1):0;};
+    const _isCompilation=_titleHasCoverKw&&guestCandidates.filter(g=>g!==channelGko).length>=2; // 커버 키워드 + 게스트 그룹 2개+(=총 3그룹+ 나열)
     guestCandidates.forEach(gko=>{
       if(owner&&gko===ownerGko)return; // 본인 그룹이 게스트로 중복 잡히는 것만 방지
       const sec=match.membersByGroup[gko]||[];
       const{asGroup,extraMembers}=_classifyGuestGroup(sec,gko);
-      if(asGroup)withGroups.push(gko);
-      extraMembers.forEach(mko=>withMembers.push(`${mko}(${gko})`));
+      const _isCoverOriginal=channelGko&&gko!==channelGko&&(_isCompilation||(_titleHasCoverKw&&_seniorYears(gko)>=6));
+      if(_isCoverOriginal){
+        if(asGroup)coverGroups.push(gko);
+        else extraMembers.forEach(mko=>coverMembers.push(`${mko}(${gko})`));
+      }else{
+        if(asGroup)withGroups.push(gko);
+        extraMembers.forEach(mko=>withMembers.push(`${mko}(${gko})`));
+      }
     });
     // fans tier는 원래 category(mv/live/short 등)가 뭐였든 무조건 'fan'으로 — "by Fans" 탭은 콘텐츠
     // 종류가 아니라 "팬이 만들었다"는 출처 자체가 기준이라, variety/show처럼 'other'만 덮어쓰는 방식으론
@@ -3385,6 +3401,8 @@ function _extBuildRows(vids,strict,tier,owner){
       id:v.id,title:v.title,title_norm:_titleNorm(v.title),description:v.description||'',thumb:v.thumb,published_at:v.published_at,
       category,
       group_ko:owner?ownerGko:match.primaryGroup,members,with_groups:withGroups,with_members:withMembers,
+      ...(coverGroups.length?{cover_of_groups:coverGroups}:{}),
+      ...(coverMembers.length?{cover_of_members:coverMembers}:{}),
       ...(_isJunkVideoTitle(v.title)?{content_flag:'무관'}:needsReview?{content_flag:'hidden',needs_review:true}:{}),
       ...((tier==='variety'||tier==='show')?{content_formats:[tier]}:{})
     });
