@@ -336,6 +336,7 @@
     <button class="sp-yt-sync" id="sp-coverfix-btn" style="margin-top:4px;opacity:.8;">🎵 원곡 재분류 1차 (커버키워드+6년선배)</button>
     <div class="sp-btn-hint">커버 영상인데 원곡 그룹이 "함께한 그룹"으로 잘못 들어간 걸 "원곡(cover_of)"으로 재분류해요. 누르면 <b>몇 건인지 먼저 보여주고 확인 눌러야 적용</b>. 스냅샷 되돌리기·수동태그 보호.</div>
     <button class="sp-yt-sync" id="sp-coverfix2-btn" style="margin-top:4px;opacity:.8;">🎵 원곡 재분류 2차 (무키워드·타소속사·10년+)</button>
+    <button class="sp-yt-sync" id="sp-lockfill-btn" style="margin-top:4px;opacity:.8;">🔓 잠금-빈값 멤버 채우기 (직캠 solo 복구)</button>
     <div class="sp-btn-hint">키워드는 없지만 "다른 소속사 + 10년 이상 선배"인 with 태그(=후배가 선배 명곡 커버가 대부분)를 원곡으로 재분류. <b>같은 소속사·합동/페스티벌 키워드는 자동 제외</b>(진짜 콜라보 가능성 → 콘솔에 목록). 1차 먼저 돌린 뒤 누르세요.</div>
     <button class="sp-yt-sync" id="sp-catfix-btn" style="margin-top:4px;opacity:.8;">영상 카테고리(라이브 등) 재분류(전체)</button>
     <div class="sp-btn-hint">라이브/쇼츠/예능 등 카테고리 분류를 최신 로직으로 전체 재분류해요.</div>
@@ -16063,7 +16064,7 @@ function _updateAdminUI(){
 // 옛 버전을 계속 서빙해서 고친 코드가 반영 안 되는 것처럼 보이는 사고가 남(2026-08-18, HTML 엔티티 정리
 // 버튼 타임아웃 재수정 후에도 계속 재현된다는 제보로 발견). admin.js 내용을 바꿀 때마다 이 버전 문자열도
 // 같이 올릴 것(sw.js의 CACHE_VERSION과 같은 수동 관리 방식).
-const _ADMIN_JS_VER='2026-08-23i';
+const _ADMIN_JS_VER='2026-08-23j';
 function _loadAdminScript(){
   if(!_isAdmin()||document.getElementById('admin-js-script'))return;
   const s=document.createElement('script');

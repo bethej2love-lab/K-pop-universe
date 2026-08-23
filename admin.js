@@ -757,6 +757,85 @@ async function _ytSweepCoverReclassify2(){
   }catch(e){_ytSetProg('오류: '+e.message);}
   finally{if(btn)btn.disabled=false;}
 }
+// 잠금-빈값 멤버 채우기(2026-08-23) — tags_manual=true 로 잠겼는데 members가 빈 직캠들을 자동태깅과 동일한
+// 매처로 채운다. 왜 이런 행이 생기나: tags_manual=true는 오직 관리자 액션(태그모달 저장·벌크작업)에서만
+// 설정되는데, category 등 "멤버가 아닌" 필드를 벌크 변경할 때 쓰는 트리거 우회 two-step(해제→수정→재잠금)
+// 에서 members는 원래 []인 채 그대로 다시 잠겨버림 — 인제스트(_extBuildRows)는 tags_manual을 안 건드리므로
+// 이 잠금은 "관리자가 일부러 멤버를 비운 것"이 아니라 벌크작업의 부수효과다. 그 결과 자동태깅이 잠금을
+// 존중해 영영 스킵 → 아이칠린 이지/지윤, 러블리즈 JIN, 엔싸인 멤버 등 수백 건이 solo 0으로 남아있었음
+// (2026-08-23 라이브 solo 전수 스캔에서 잠금-빈값 297건/42명으로 측정). 자동태깅과 유일하게 다른 점은
+// 대상이 tags_manual=true라는 것뿐이고, 매칭 근거(_atmResolveMembers)·게이트(단일음절·흔한단어·별칭)는
+// 100% 동일. 콜라보 흔적(with_members/with_groups)이 있는 행은 솔로가 아니므로 제외. 쓰기는 편집 모달과
+// 똑같이 잠금 해제→members 세팅→재잠금(스냅샷으로 되돌리기 가능).
+async function _ytSweepFillLockedEmpty(){
+  if(!sb){_ytSetProg('Supabase 연결 없음');return;}
+  const btn=document.getElementById('sp-lockfill-btn');
+  if(btn)btn.disabled=true;
+  try{
+    _ytSetProg('[잠금-빈값 채우기] 조회 중…');
+    const{data:rows,error}=await _sbFetchAll(()=>sb.from(_YT_TABLE)
+      .select('id,title,group_ko,members,with_members,with_groups,published_at')
+      .eq('tags_manual',true)
+      .or('members.eq.{},members.is.null')
+      .order('id'));
+    if(error){_ytSetProg('조회 실패: '+error.message);return;}
+    if(!rows?.length){_ytSetProg('검사할 잠금-빈값 영상이 없어요');return;}
+    // 솔로 후보만: members 비었고 콜라보 흔적도 없는 행
+    const cands=rows.filter(v=>!v.members?.length&&!v.with_members?.length&&!v.with_groups?.length);
+    if(!cands.length){_ytSetProg(`잠금-빈값 솔로 후보 없음 (조회 ${rows.length}건).`);return;}
+    // description은 매칭에 필요한 후보 행만 가볍게 별도 조회(egress 절약 — 자동태깅과 동일 정책)
+    const descById=new Map();
+    const ids=cands.map(v=>v.id);
+    for(let i=0;i<ids.length;i+=500){
+      const{data:dr,error:de}=await sb.from(_YT_TABLE).select('id,description').in('id',ids.slice(i,i+500));
+      if(de){console.error('[잠금-빈값] description 조회 실패:',de.message);continue;}
+      (dr||[]).forEach(r=>descById.set(r.id,r.description));
+    }
+    // 그룹별 로스터 캐시 — 자동태깅(_ytAutoTagMembers)과 동일 구성(_artistGroups로 겸임 포함, left/aliases 유지)
+    const rosterCache=new Map();
+    const rosterOf=gko=>{
+      if(rosterCache.has(gko))return rosterCache.get(gko);
+      const r=ARTISTS.filter(a=>_artistGroups(a).some(g=>g.ko===gko)).map(a=>({ko:a.name.ko,en:a.name.en,left:a.left,aliases:a.matchAliases}));
+      rosterCache.set(gko,r);return r;
+    };
+    // 흔한 영단어와 겹치는 이름(온리원오프 Love 등)은 곡 제목의 그 단어에 오매칭될 수 있어, 단독으로만
+    // 잡히면 자동채움에서 빼고 수동확인 목록(콘솔)으로 돌린다 — 99.99% 목표상 새 오태깅 유발 방지.
+    const _RISKY_EN=new Set(['love','rise','sun','star','baby','angel','king','queen','prince','one','win','wish','joy','hope','sky','moon','luna','ace','max']);
+    const updates=[];const samples=[];const riskyManual=[];
+    cands.forEach(v=>{
+      const roster=rosterOf(v.group_ko);
+      if(!roster.length)return;
+      const hit=_atmResolveMembers(v.title||'',descById.get(v.id),roster,v.group_ko,v.published_at);
+      if(!hit.length)return;
+      const members=[...new Set(hit)];
+      if(members.length===1&&_RISKY_EN.has(String(members[0]).toLowerCase().replace(/[^a-z]/g,''))){
+        riskyManual.push({id:v.id,group_ko:v.group_ko,멤버후보:members[0],title:(v.title||'').slice(0,58)});
+        return;
+      }
+      updates.push({id:v.id,members});
+      if(samples.length<30)samples.push({group_ko:v.group_ko,채울멤버:members,title:(v.title||'').slice(0,58)});
+    });
+    if(riskyManual.length)console.log(`[잠금-빈값 채우기] 흔한영단어 단독매칭 ${riskyManual.length}건은 자동채움 제외(곡 제목 오매칭 위험) — 직접 확인:`,riskyManual);
+    console.log(`[잠금-빈값 채우기] 후보 ${updates.length}건 (전체 잠금-빈값 ${cands.length}건 중) 샘플:`,samples);
+    if(!updates.length){_ytSetProg(`채울 것 없음 — 잠금-빈값 ${cands.length}건 중 확정 매칭 0 (진짜 소스없음/모호).`);return;}
+    if(!confirm(`잠금(tags_manual=true)인데 members가 비어있던 영상 ${updates.length}건에 멤버를 채울까요?\n\n· 자동태깅과 동일 매처로 자기 그룹 멤버 확정 매칭된 것만 (단일음절·흔한단어·별칭 게이트 동일)\n· 콜라보 흔적 있는 행은 제외 (솔로만)\n· 잠금은 유지: 해제→채움→재잠금\n· 스냅샷 저장돼 되돌리기 가능 · 샘플 ${samples.length}건 콘솔`))
+      {_ytSetProg(`취소됨 — 미리보기만 (채울 예정 ${updates.length}건, 콘솔 샘플).`);return;}
+    await _snapshotBeforeBulk('잠금-빈값 멤버 채우기',updates.map(u=>u.id));
+    // DB 트리거 우회 two-step(편집 모달과 동일): tags_manual=true라 그냥은 members 변경이 막힘
+    let done=0;
+    for(let i=0;i<updates.length;i+=100){
+      const chunk=updates.slice(i,i+100);
+      const r1=await Promise.all(chunk.map(u=>sb.from(_YT_TABLE).update({members:u.members,tags_manual:false}).eq('id',u.id)));
+      const f1=r1.find(r=>r.error);if(f1)throw new Error(f1.error.message);
+      const r2=await Promise.all(chunk.map(u=>sb.from(_YT_TABLE).update({tags_manual:true}).eq('id',u.id)));
+      const f2=r2.find(r=>r.error);if(f2)throw new Error(f2.error.message);
+      done+=chunk.length;
+      _ytSetProg(`[잠금-빈값 채우기] ${done}/${updates.length}건 처리 중…`);
+    }
+    _ytSetProg(`완료! 잠금-빈값 ${updates.length}건에 멤버를 채웠어요(잠금 유지).`+(riskyManual.length?` 흔한영단어 ${riskyManual.length}건은 수동확인(콘솔).`:'')+` 카드 라이브 only 탭 확인해보세요.`);
+  }catch(e){_ytSetProg('오류: '+e.message);}
+  finally{if(btn)btn.disabled=false;}
+}
 async function _ytSweepAmbiguousCollabMistag(){
   if(!sb){_ytSetProg('Supabase 연결 없음');return;}
   const btn=document.getElementById('sp-collabfix-btn');
@@ -4564,6 +4643,7 @@ document.getElementById('vid-tag-thumb-refresh').addEventListener('click',async 
   document.getElementById('sp-detect-btn')?.addEventListener('click',_ytSweepDetectPreview);
 document.getElementById('sp-coverfix-btn')?.addEventListener('click',_ytSweepCoverReclassify);
 document.getElementById('sp-coverfix2-btn')?.addEventListener('click',_ytSweepCoverReclassify2);
+document.getElementById('sp-lockfill-btn')?.addEventListener('click',_ytSweepFillLockedEmpty);
 document.getElementById('sp-collabfix-btn')?.addEventListener('click',_ytSweepAmbiguousCollabMistag);
   document.getElementById('sp-scan-namecollide-btn')?.addEventListener('click',_ytScanAmbiguousNameGroupMisassignment);
   document.getElementById('sp-membersfix-btn')?.addEventListener('click',_ytSweepMembersMistag);
