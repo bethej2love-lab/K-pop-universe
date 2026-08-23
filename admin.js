@@ -2998,15 +2998,14 @@ async function _ytAutoTagMembers(){
   try{
     const groupKos=Object.keys(GROUPS);
     let grandMatched=0,grandChecked=0;
-    for(let gi=0;gi<groupKos.length;gi++){
-      const gko=groupKos[gi];
+    let completed=0;
+    const CONC=6; // 동시 처리 그룹 수 — 순차 268회 왕복을 병렬화해 시간 단축(결과 동일, egress 총량 불변, 2026-08-23)
+    const processGroup=async(gko)=>{
       // a.group.ko(주 소속)만 보면 유연정(주 소속 아이오아이, 겸임 우주소녀)처럼 이중소속 멤버가 겸임 그룹
       // 채널에서는 영원히 로스터에 안 잡혀 자동 태깅 대상에서 빠짐 — 겸임 소속까지 보는 _artistGroups로 판정
-      // (2026-07-31, 우주소녀 채널의 유연정 단독 영상이 계속 미태깅으로 남아 다른 멤버 카드에도 "그룹 전체
-      // 미태깅 영상"으로 잘못 노출되던 문제의 원인).
+      // (2026-07-31, 우주소녀 채널의 유연정 단독 영상이 계속 미태깅으로 남던 문제의 원인).
       const members=ARTISTS.filter(a=>_artistGroups(a).some(g=>g.ko===gko)).map(a=>({ko:a.name.ko,en:a.name.en,left:a.left,aliases:a.matchAliases}));
-      if(!members.length)continue;
-      _ytSetProg(`[${gi+1}/${groupKos.length}] ${gko}: 미태깅 영상 조회 중…`);
+      if(!members.length){completed++;return;}
       // 같은 그룹 멤버(members)가 비어있거나, 콜라보(with_members/with_groups)가 아직 하나도 안 잡힌
       // 행을 대상으로 삼는다 — 자체 채널 챌린지 영상처럼 제목에 "챌린지" 같은 표시 없이 바로 다른 그룹
       // 멤버 이름만 나오는 경우도 있고, 로스터가 그때그때 늘어나서 예전엔 매칭 안 되던 이름이 이제는
@@ -3019,8 +3018,8 @@ async function _ytAutoTagMembers(){
         .eq('tags_manual',false) // 관리자가 태그 모달에서 직접 저장한 행은 자동 태깅이 절대 건드리지 않음
         .or('members.eq.{},members.is.null,with_members.eq.{},with_members.is.null')
         .order('id'));
-      if(error){console.error(`[자동 태깅] ${gko} 조회 실패:`,error.message);continue;}
-      if(!rows?.length)continue;
+      if(error){console.error(`[자동 태깅] ${gko} 조회 실패:`,error.message);completed++;return;}
+      if(!rows?.length){completed++;return;}
       // description(설명란)은 members가 아직 빈 행에만 필요(콜라보 감지는 아래 _m2ParseTitle이 제목만
       // 씀) — 위 select에서 아예 안 받아오고, 실제로 필요한 행 id만 추려서 별도로 가볍게 다시 받는다.
       // 이 버튼은 "매일" 루틴이라 매번 그룹 전체를 훑는데, with_members만 비어있고 members는 이미 채워진
@@ -3078,9 +3077,13 @@ async function _ytAutoTagMembers(){
         }
         grandMatched+=updates.length;
       }
-      _ytSetProg(`[${gi+1}/${groupKos.length}] ${gko}: ${updates.length}/${rows.length}개 매칭 (누적 ${grandMatched}개)`);
-    }
-    _ytSetProg(`완료! 미태깅 ${grandChecked}개 중 ${grandMatched}개 새로 태깅됨`);
+      completed++;
+      _ytSetProg(`[${completed}/${groupKos.length}] ${gko}: ${updates.length}/${rows.length}개 매칭 (누적 ${grandMatched}개)`);
+    };
+    let _qi=0;
+    const _worker=async()=>{while(_qi<groupKos.length){await processGroup(groupKos[_qi++]);}};
+    await Promise.all(Array.from({length:Math.min(CONC,groupKos.length)},()=>_worker()));
+    _ytSetProg(`완료! 미태깅 ${grandChecked}개 중 ${grandMatched}개 새로 태깅됨 (동시 ${CONC})`);
   }catch(e){
     _ytSetProg('오류: '+e.message);
   }finally{
