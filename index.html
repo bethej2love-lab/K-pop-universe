@@ -1336,6 +1336,11 @@ function _starLabelName(m,groupKo){
 const groupLabels=[];
 let ARTISTS=[],GROUPS={};
 let _STRICT_SYNC_GROUPS=new Set(); // groups.json의 strictSync:true 그룹 — 로드 후 채워짐
+// 멤버 이름 라벨이 나타나기 시작하는 카메라-행성 거리(=별이 시각적으로 분해되는 줌 경계).
+// 라벨 페이드 계산과 "멤버 별 탭 허용" 게이트가 이 값 하나를 공유한다 — 예전엔 라벨은 이 거리(28) 기준,
+// 탭 허용은 uFillOp>0.12(≈거리 42) 기준으로 따로 놀아서, 그 사이 28~42 구간에선 "이름도 안 뜬 뭉친 별"이
+// 탭돼 그룹 대신 멤버 카드가 열렸음(2026-08-23 재현·수정). "이름이 보일 때만 그 별을 탭할 수 있다".
+const STAR_LABEL_FADE_DIST=28;
 const bubbleMeshes=[],regularArtists=[],sparkleArtists=[];
 let regularPts=null,sparklePts=null;
 // 마크(NCT 127) 파일럿: 비활동 상태를 "행성 밖에 떠 있다가 멤버 토글 시 안으로 날아들어옴"으로 표현
@@ -2786,7 +2791,7 @@ function animate(){
       const bm=bubbleMeshes.find(b=>b.ko===a.group.ko);
       if(!bm){a._nameLabel.visible=false;return;}
       const d=camera.position.distanceTo(bm.mesh.position);
-      const fade=d<28?Math.max(0,Math.min(1,(28-d)/13)):0;
+      const fade=d<STAR_LABEL_FADE_DIST?Math.max(0,Math.min(1,(STAR_LABEL_FADE_DIST-d)/13)):0;
       const alpha=fade*(bm.mesh._filterAlpha??1)*(bm.mesh._focusAlpha??1);
       if(alpha<0.01){a._nameLabel.visible=false;return;}
       a._nameLabel.visible=true;
@@ -4806,6 +4811,11 @@ function _placeInContainer(cardEl,container){
   [document.getElementById('tt'),document.getElementById('gc')].forEach(el=>{
     if(el!==cardEl&&el.parentElement===container){document.body.appendChild(el);el.style.display='none';}
   });
+  // 이전에 카드를 쌓았다가(스택) 닫았을 때 시트 바닥(mob-sheet-inner)에 얼어붙은 채 남은 클론(id 없는
+  // 카드)이 있을 수 있음 — closeMobSheet 계열 teardown은 id 있는 라이브 카드만 치워서 클론은 남았음.
+  // 새 카드를 넣기 전에 컨테이너에 남은 다른 자식을 싹 비운다. 안 그러면 새 카드 옆/뒤에 예전 카드가
+  // 같이 떠서 "이전에 열었던 카드가 나온다"가 됨(2026-08-23 재현·수정).
+  Array.from(container.children).forEach(ch=>{if(ch!==cardEl)ch.remove();});
   cardEl.style.display='block';container.scrollTop=0;container.appendChild(cardEl);
 }
 function closeMobSheet(){
@@ -8923,6 +8933,9 @@ renderer.domElement.addEventListener('touchend',e=>{
     ARTISTS.forEach(a=>{
       const _abm=bubbleMeshes.find(b=>b.ko===a.group.ko);
       if(_abm&&_abm.mesh.material.uniforms.uFillOp.value>0.12)return;
+      // 이름 라벨이 아직 안 뜨는 줌(별이 화면상 안 벌어진 상태)에선 멤버 탭 제외 — 그 별을 조준할 수 없으니
+      // 그룹 행성이 대신 열려야 함. uFillOp 게이트만으론 못 막던 28~42 구간 보강(2026-08-23).
+      if(_abm&&camera.position.distanceTo(_abm.mesh.position)>=STAR_LABEL_FADE_DIST)return;
       const _wps=a._worldPositions||[];
       const _chk=_wps.length?_wps.map(wp=>wp.pos):(a._worldPos?[a._worldPos]:[]);
       _chk.forEach(pos=>{
@@ -9052,6 +9065,9 @@ window.addEventListener('click',e=>{
       // 빈 우주를 눌러 카드를 닫으려는데 멀리 압축돼 보이던 그룹의 멤버가 대신 선택되는 것 방지
       const _abm=bubbleMeshes.find(b=>b.ko===a.group.ko);
       if(_abm&&_abm.mesh.material.uniforms.uFillOp.value>0.12)return;
+      // 이름 라벨이 아직 안 뜨는 줌(별이 화면상 안 벌어진 상태)에선 멤버 클릭 제외 — 그룹 행성이 대신 열려야 함.
+      // 모바일 touchend 탭 경로와 동일 게이트(28~42 구간 보강, 2026-08-23).
+      if(_abm&&camera.position.distanceTo(_abm.mesh.position)>=STAR_LABEL_FADE_DIST)return;
       const _wps=a._worldPositions||[];
       const _chk=_wps.length?_wps.map(wp=>wp.pos):(a._worldPos?[a._worldPos]:[]);
       _chk.forEach(pos=>{
