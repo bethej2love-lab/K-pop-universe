@@ -2199,7 +2199,19 @@ async function buildUniverse(){
   // 체감상 DPR^2에 비례해 작아지는 결과가 됨(2026-08-18, 사용자 제보 — "웹에서 볼 때 멤버 별이 유독
   // 작게 느껴진다"). scale이 DPR을 아예 안 보는 만큼, 반대로 "곱해서" 상쇄해야 실제 화면상 크기가
   // DPR과 무관하게 일정해짐 — 나누기를 곱하기로 뒤집어서 수정.
-  function makePointsMat(tex,sizeW,opacity,sizeClamp,useHaloScale){
+  // 멤버 별 "거리 적응형 크기"(2026-08-23) — 카메라가 그 별에 다가갈수록 별이 커진다. 예전엔 전역 상수
+  // 하나로 별 크기를 키워서 홈 줌에서 떠다니는 솔로 별까지 커져 튀는 실패가 있었음.
+  // ⚠️ 핵심 깨달음: 근접에선 원근 확대(scale/-z)만으로 gl_PointSize가 이미 수백~수천 px라 항상 크기
+  // 상한(clamp)에 걸린다 → 근접 별의 화면 크기는 사실상 "clamp 값"이 결정한다(곱셈 배율은 clamp에 먹혀
+  // 무효). 그래서 크기를 곱하는 게 아니라 clamp 자체를 거리적응형으로 만든다: 가까우면 상한↑(별 큼),
+  // 멀면 상한↓(홈의 솔로별은 그대로 작게 = 예전 실패 자동 회피). 거리 판단은 별별 "뷰거리÷소속행성반지름"
+  // (z/r) — 카드-오픈 줌(flyToBubble=반지름×11)에선 그룹 크기와 무관하게 z/r≈11로 통일되고, 소속 행성
+  // 없는 솔로 별은 aRadius가 작은 기본값이라 z/r이 커져서 홈에선 안 커진다.
+  // near/far: z/r 임계(near 이하=완전 확대, far 이상=평소). scale: near-clamp 전역 미세조정(라이브 튜닝).
+  // clamp*: 그룹 인원별 near-clamp 배율(인원 많은 그룹은 별 겹침 방지로 상한을 조금 낮춤).
+  const _STAR_BLOOM={near:11.0, far:18.0, scale:1.0,
+    clampSmall:1.0, clampMid:0.85, clampBig:0.72}; // ≤6 / 7~12 / 13+ 명
+  function makePointsMat(tex,sizeW,opacity,sizeClamp,useHaloScale,nearClamp){
     const mat=new THREE.PointsMaterial({
       size:sizeW*Math.min(window.devicePixelRatio,2),map:tex,vertexColors:true,
       transparent:true,opacity,
@@ -2217,10 +2229,15 @@ async function buildUniverse(){
     // (코어 별 자체 크기/밝기는 그대로 둬서 "덜 중요해 보이는" 인상은 안 주도록).
     mat.onBeforeCompile=shader=>{
       shader.uniforms.uTime={value:0};
+      shader.uniforms.uBloomNear={value:_STAR_BLOOM.near};
+      shader.uniforms.uBloomFar={value:_STAR_BLOOM.far};
+      shader.uniforms.uBloomScale={value:_STAR_BLOOM.scale};
+      shader.uniforms.uFarClamp={value:sizeClamp};
+      shader.uniforms.uNearClamp={value:nearClamp||sizeClamp};
       shader.vertexShader=shader.vertexShader
         .replace(
           'uniform float size;\nuniform float scale;',
-          'uniform float size;\nuniform float scale;\nuniform float uTime;\nattribute float flareSeed;\nvarying float vFlareSeed;'+(useHaloScale?'\nattribute float haloScale;':'')
+          'uniform float size;\nuniform float scale;\nuniform float uTime;\nuniform float uBloomNear;\nuniform float uBloomFar;\nuniform float uBloomScale;\nuniform float uFarClamp;\nuniform float uNearClamp;\nattribute float flareSeed;\nattribute float aRadius;\nattribute float aBloomMax;\nvarying float vFlareSeed;'+(useHaloScale?'\nattribute float haloScale;':'')
         )
         .replace(
           'gl_PointSize = size;',
@@ -2228,7 +2245,11 @@ async function buildUniverse(){
         )
         .replace(
           'if ( isPerspective ) gl_PointSize *= ( scale / - mvPosition.z );',
-          `if ( isPerspective ) gl_PointSize *= ( scale / - mvPosition.z );\n\t\tgl_PointSize = min( gl_PointSize, ${sizeClamp.toFixed(1)} );`
+          // 거리 적응형 클램프: 별-카메라 뷰거리를 소속 행성 반지름으로 정규화(z/r)해서, 가까우면(near 이하)
+          // 상한을 uNearClamp(×인원배율 aBloomMax ×라이브 uBloomScale)까지 올리고 멀면(far 이상) uFarClamp로.
+          // 근접에선 원근 확대가 늘 이 상한을 채우므로 결국 화면 별 크기 = 이 적응형 상한이 된다.
+          // 솔로 별은 aRadius가 작아 z/r이 커져 홈에선 uFarClamp(작게) 유지 → 예전 실패 회피.
+          `if ( isPerspective ) gl_PointSize *= ( scale / - mvPosition.z );\n\t\tfloat _zr = ( - mvPosition.z ) / max( aRadius, 0.5 );\n\t\tfloat _bt = 1.0 - smoothstep( uBloomNear, uBloomFar, _zr );\n\t\tfloat _cl = mix( uFarClamp, uNearClamp * aBloomMax * uBloomScale, _bt );\n\t\tgl_PointSize = min( gl_PointSize, _cl );`
         );
       // 십자 스파클 텍스처(glowTex)를 모든 별이 그대로 공유하면 전부 똑같은 +모양으로 보여 부자연스러우므로,
       // 별마다 flareSeed로 point sprite의 UV 자체를 0~90도 사이에서 랜덤 회전시켜 샘플링한다
@@ -2263,22 +2284,34 @@ async function buildUniverse(){
     const geo=new THREE.BufferGeometry();
     geo.setAttribute('position',new THREE.BufferAttribute(new Float32Array(positions),3));
     geo.setAttribute('color',new THREE.BufferAttribute(new Float32Array(colors),3));
-    const flareSeeds=new Float32Array(positions.length/3);
+    const _n=positions.length/3;
+    const flareSeeds=new Float32Array(_n);
+    // 거리 적응형 크기용 정점 속성: aRadius=소속 행성 반지름(솔로는 작은 기본값 1.2 → 홈에서 안 부풀게),
+    // aBloomMax=최대 확대배율(인원 많은 그룹은 별 겹침 방지로 낮춤). 행성 반지름/인원수는 맵으로 1회 조회.
+    const aRadius=new Float32Array(_n),aBloomMax=new Float32Array(_n);
+    const _rByKo={};bubbleMeshes.forEach(b=>{_rByKo[b.ko]=b.radius;});
+    const _cntByKo={};ARTISTS.forEach(a=>{const k=a.group&&a.group.ko;if(k)_cntByKo[k]=(_cntByKo[k]||0)+1;});
     // 예전엔 매 재구성마다 Math.random()이라 별의 반짝임 리듬이 로드할 때마다 바뀌었음 — 이름 해시로
     // 고정해서 "이 별은 항상 이 리듬으로 빛난다"는 개체 정체성을 색조 편차와 동일한 원리로 부여.
-    for(let i=0;i<flareSeeds.length;i++){
+    for(let i=0;i<_n;i++){
       const a=artists&&artists[i];
       flareSeeds[i]=a?((_hashStr(a.name.ko+'|'+(a.group.ko||''))>>>16)%1000)/1000:Math.random();
+      const gko=a&&a.group&&a.group.ko;
+      aRadius[i]=(gko&&_rByKo[gko])?_rByKo[gko]:1.2;
+      const mc=gko?(_cntByKo[gko]||1):1;
+      aBloomMax[i]=mc<=6?_STAR_BLOOM.clampSmall:(mc<=12?_STAR_BLOOM.clampMid:_STAR_BLOOM.clampBig);
     }
     geo.setAttribute('flareSeed',new THREE.BufferAttribute(flareSeeds,1));
+    geo.setAttribute('aRadius',new THREE.BufferAttribute(aRadius,1));
+    geo.setAttribute('aBloomMax',new THREE.BufferAttribute(aBloomMax,1));
     geo.setAttribute('haloScale',new THREE.BufferAttribute(new Float32Array(haloScale),1));
-    const mat=makePointsMat(glowTex,sizeW,opacity,46.0,false);
+    const mat=makePointsMat(glowTex,sizeW,opacity,46.0,false,220.0); // far 46(홈 유지)·near 220(근접 별 ~3.5배). 근접에서만 상한↑
     const pts=new THREE.Points(geo,mat);
     scene.add(pts);
     // 후처리 블룸 없이 '빛이 실제로 번지는' 느낌을 내기 위한 halo 레이어 — 같은 geometry(포지션/컬러)를
     // 공유해서 즐겨찾기·필터 등으로 색이 바뀌어도 자동으로 같이 반영되고, 훨씬 크고 옅은 텍스처로
     // additive 겹쳐 그려서 코어 바깥으로 빛이 새어나가는 것처럼 보이게 한다.
-    const haloMat=makePointsMat(bloomHaloTex,sizeW*3.4,opacity*0.55,150.0,true);
+    const haloMat=makePointsMat(bloomHaloTex,sizeW*3.4,opacity*0.55,150.0,true,440.0); // 헤일로도 근접 상한↑(코어와 비례)
     const haloPts=new THREE.Points(geo,haloMat);
     scene.add(haloPts);
     pts.userData.halo=haloPts;
