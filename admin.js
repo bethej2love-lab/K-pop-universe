@@ -836,6 +836,76 @@ async function _ytSweepFillLockedEmpty(){
   }catch(e){_ytSetProg('오류: '+e.message);}
   finally{if(btn)btn.disabled=false;}
 }
+// 고아 태그 정정(2026-08-23) — members/with_members에 "정식명(name.ko)이 아닌데 그 그룹에서 알려진
+// 별칭/표시명"으로 태깅된 고아 태그(여정→전여여정, 홍의진→의진 등)를 정식명으로 재태깅한다. 이런 고아는
+// 외부채널 태깅(_m2ParseTitle이 활동명으로 매칭)이나 병합 이전 데이터에서 생기며, 카드는 정식명으로만
+// 영상을 모으므로 고아 이름 태그는 어느 카드에도 안 떠서 사라진다. 사람은 그대로 두고 이름 형태만 바꾸는
+// 순수 정규화라 matchAliases·groups[].name 오버라이드로 확실히 아는 것만 매핑해 안전(모르는 고아는
+// 동명이인일 수 있어 손대지 않고 콘솔 리뷰로만 — 별칭 추가하면 다음 실행에서 정정됨).
+async function _ytSweepCanonicalizeMembers(){
+  if(!sb){_ytSetProg('Supabase 연결 없음');return;}
+  const btn=document.getElementById('sp-canon-btn');
+  if(btn)btn.disabled=true;
+  try{
+    const CANON=new Set();
+    ARTISTS.forEach(a=>{const c=a.name&&a.name.ko;if(c)CANON.add(c);});
+    const MAP=new Map(); // `${gko}|${form}` → 정식명
+    ARTISTS.forEach(a=>{
+      const canon=a.name&&a.name.ko;if(!canon)return;
+      const gkos=_artistGroups(a).map(g=>g.ko);
+      (a.matchAliases||[]).forEach(al=>{if(al&&al!==canon)gkos.forEach(g=>MAP.set(`${g}|${al}`,canon));});
+      (a.groups||[]).forEach(g=>{if(g&&g.name&&g.name!==canon)MAP.set(`${g.ko}|${g.name}`,canon);});
+    });
+    _ytSetProg('[고아태그 정정] 조회 중…');
+    const{data:rows,error}=await _sbFetchAll(()=>sb.from(_YT_TABLE)
+      .select('id,title,group_ko,members,with_members,tags_manual')
+      .or('members.neq.{},with_members.neq.{}').order('id'));
+    if(error){_ytSetProg('조회 실패: '+error.message);return;}
+    if(!rows?.length){_ytSetProg('검사할 영상이 없어요');return;}
+    const remap=(name,gko)=>CANON.has(name)?name:(MAP.get(`${gko}|${name}`)||name);
+    const updates=[];const samples=[];const orphanUnknown=new Map();
+    rows.forEach(v=>{
+      const gko=v.group_ko;
+      const curM=v.members||[],curWM=v.with_members||[];
+      const newM=curM.map(m=>remap(m,gko));
+      const newWM=curWM.map(wm=>{const mm=wm.match(/^(.+)\((.+)\)$/);if(!mm)return wm;const nm=remap(mm[1],mm[2]);return nm===mm[1]?wm:`${nm}(${mm[2]})`;});
+      const mChanged=newM.some((m,i)=>m!==curM[i]);
+      const wmChanged=newWM.some((m,i)=>m!==curWM[i]);
+      curM.forEach(m=>{if(!CANON.has(m)&&!MAP.get(`${gko}|${m}`))orphanUnknown.set(`${gko}|${m}`,(orphanUnknown.get(`${gko}|${m}`)||0)+1);});
+      if(!mChanged&&!wmChanged)return;
+      const patch={};
+      if(mChanged)patch.members=[...new Set(newM)];
+      if(wmChanged)patch.with_members=[...new Set(newWM)];
+      updates.push({id:v.id,patch,locked:!!v.tags_manual});
+      if(samples.length<30)samples.push({group_ko:gko,before:curM,after:patch.members||curM,title:(v.title||'').slice(0,45)});
+    });
+    const orphanList=[...orphanUnknown.entries()].map(([k,c])=>({key:k,count:c})).sort((a,b)=>b.count-a.count);
+    console.log('[고아태그 정정] 재태깅 샘플:',samples);
+    console.log(`[고아태그 정정] 미매핑 고아(동명이인 의심 — 손 안 댐, 별칭 추가하면 다음번 정정) ${orphanList.length}종:`,orphanList.slice(0,40));
+    if(!updates.length){_ytSetProg(`정정할 고아태그 없음. 미매핑 고아 ${orphanList.length}종은 콘솔(별칭 추가 대상).`);return;}
+    const lockedCnt=updates.filter(u=>u.locked).length;
+    if(!confirm(`정식명이 아닌 별칭/표시명으로 태깅된 고아 태그 ${updates.length}건을 정식명으로 정정할까요?\n\n· 여정→전여여정, 홍의진→의진처럼 "같은 사람, 이름형태만" 정정\n· matchAliases·groups[].name으로 확실히 아는 것만 (모르는 고아 ${orphanList.length}종은 손 안 댐)\n· 잠금행 ${lockedCnt}건은 해제→정정→재잠금\n· 스냅샷 저장돼 되돌리기 가능 · 샘플 콘솔`))
+      {_ytSetProg(`취소됨 — 미리보기만 (정정 예정 ${updates.length}건).`);return;}
+    await _snapshotBeforeBulk('고아태그 정정(별칭→정식명)',updates.map(u=>u.id));
+    let done=0;
+    for(let i=0;i<updates.length;i+=100){
+      const chunk=updates.slice(i,i+100);
+      const r1=await Promise.all(chunk.map(u=>u.locked
+        ? sb.from(_YT_TABLE).update({...u.patch,tags_manual:false}).eq('id',u.id)
+        : sb.from(_YT_TABLE).update(u.patch).eq('id',u.id)));
+      const f1=r1.find(r=>r.error);if(f1)throw new Error(f1.error.message);
+      const relock=chunk.filter(u=>u.locked);
+      if(relock.length){
+        const r2=await Promise.all(relock.map(u=>sb.from(_YT_TABLE).update({tags_manual:true}).eq('id',u.id)));
+        const f2=r2.find(r=>r.error);if(f2)throw new Error(f2.error.message);
+      }
+      done+=chunk.length;
+      _ytSetProg(`[고아태그 정정] ${done}/${updates.length}건 처리 중…`);
+    }
+    _ytSetProg(`완료! 고아태그 ${updates.length}건을 정식명으로 정정(잠금 ${lockedCnt}건 유지). 미매핑 고아 ${orphanList.length}종은 콘솔(별칭 추가 대상).`);
+  }catch(e){_ytSetProg('오류: '+e.message);}
+  finally{if(btn)btn.disabled=false;}
+}
 async function _ytSweepAmbiguousCollabMistag(){
   if(!sb){_ytSetProg('Supabase 연결 없음');return;}
   const btn=document.getElementById('sp-collabfix-btn');
@@ -4644,6 +4714,7 @@ document.getElementById('vid-tag-thumb-refresh').addEventListener('click',async 
 document.getElementById('sp-coverfix-btn')?.addEventListener('click',_ytSweepCoverReclassify);
 document.getElementById('sp-coverfix2-btn')?.addEventListener('click',_ytSweepCoverReclassify2);
 document.getElementById('sp-lockfill-btn')?.addEventListener('click',_ytSweepFillLockedEmpty);
+document.getElementById('sp-canon-btn')?.addEventListener('click',_ytSweepCanonicalizeMembers);
 document.getElementById('sp-collabfix-btn')?.addEventListener('click',_ytSweepAmbiguousCollabMistag);
   document.getElementById('sp-scan-namecollide-btn')?.addEventListener('click',_ytScanAmbiguousNameGroupMisassignment);
   document.getElementById('sp-membersfix-btn')?.addEventListener('click',_ytSweepMembersMistag);
