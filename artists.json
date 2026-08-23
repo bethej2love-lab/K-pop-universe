@@ -125552,34 +125552,6 @@
   },
   {
     "name": {
-      "ko": "홍의진",
-      "en": "Hong Uijin"
-    },
-    "group": {
-      "ko": "유니티",
-      "en": "UNI.T"
-    },
-    "co": "포켓돌스튜디오",
-    "active": true,
-    "color": [
-      190,
-      175,
-      220
-    ],
-    "nat": {
-      "ko": "한국",
-      "en": "KR"
-    },
-    "sparkle": false,
-    "songs": [],
-    "bday": "1996.10.08",
-    "links": {
-      "instagram": "https://www.instagram.com/_hongeuijin_",
-      "namu": "https://namu.wiki/w/%ED%99%8D%EC%9D%98%EC%A7%84"
-    }
-  },
-  {
-    "name": {
       "ko": "백예빈",
       "en": "Baek Yebin"
     },
@@ -139273,8 +139245,8 @@
   },
   {
     "name": {
-      "ko": "우지",
-      "en": "Uji"
+      "ko": "의진",
+      "en": "Uijin"
     },
     "group": {
       "ko": "소나무",
@@ -139294,9 +139266,17 @@
     },
     "sparkle": false,
     "songs": [],
-    "links": {
-      "namu": "https://namu.wiki/w/%EC%9A%B0%EC%A7%80"
-    }
+    "groups": [
+      {
+        "ko": "소나무",
+        "en": "SONAMOO"
+      },
+      {
+        "ko": "유니티",
+        "en": "UNI.T",
+        "name": "홍의진"
+      }
+    ]
   },
   {
     "name": {
