@@ -324,8 +324,10 @@
     <div class="sp-subsec-lbl" style="margin-top:10px;">데이터 정합성 — 매일(동기화 뒤 순서대로)</div>
     <button class="sp-yt-sync" id="sp-yt-autotag" style="margin-top:4px;opacity:.8;">2. 멤버+콜라보 자동 태깅 (미태깅분)</button>
     <div class="sp-btn-hint">아직 멤버/콜라보 태그가 하나도 없는 영상만 채워요 — 동기화 직후 매일 누르는 루틴 2번째.</div>
+    <button class="sp-yt-sync" id="sp-detect-btn" style="margin-top:4px;opacity:.8;">🔍 오태깅 미리보기 (읽기전용 · 안 고침)</button>
+    <div class="sp-btn-hint">아래 "3. 콜라보 오태깅 재검증"을 누르면 무엇이 얼마나 제거될지 <b>미리 보기만</b> 해요(실제로 안 고침). 이종(타소속사+세대차) 오태깅 건수·제거될 태그 상위목록을 콘솔(F12)에 띄워요.</div>
     <button class="sp-yt-sync" id="sp-collabfix-btn" style="margin-top:4px;opacity:.8;">3. 콜라보 오태깅 재검증(전체)</button>
-    <div class="sp-btn-hint">다른 그룹과의 콜라보 태그(함께한 멤버 등)를 최신 로직으로 전체 재검증해요 — 관리자가 직접 저장한 태그는 안 건드려요.</div>
+    <div class="sp-btn-hint">다른 그룹과의 콜라보 태그(함께한 멤버 등)를 최신 로직으로 전체 재검증해요 — 관리자가 직접 저장한 태그는 안 건드려요. (되돌리기: 스냅샷 저장됨)</div>
     <button class="sp-yt-sync" id="sp-scan-namecollide-btn" style="margin-top:4px;opacity:.8;">4. 동명이인 그룹 오배정 전체 스캔+재배정</button>
     <div class="sp-btn-hint">동명이인 때문에 엉뚱한 그룹으로 잘못 배정된 영상을 찾아 확실한 것만 자동으로 바로잡아요.</div>
     <div class="sp-subsec-lbl" style="margin-top:10px;">데이터 정합성 — 필요할 때만</div>
@@ -16026,7 +16028,7 @@ function _updateAdminUI(){
 // 옛 버전을 계속 서빙해서 고친 코드가 반영 안 되는 것처럼 보이는 사고가 남(2026-08-18, HTML 엔티티 정리
 // 버튼 타임아웃 재수정 후에도 계속 재현된다는 제보로 발견). admin.js 내용을 바꿀 때마다 이 버전 문자열도
 // 같이 올릴 것(sw.js의 CACHE_VERSION과 같은 수동 관리 방식).
-const _ADMIN_JS_VER='2026-08-23d';
+const _ADMIN_JS_VER='2026-08-23e';
 function _loadAdminScript(){
   if(!_isAdmin()||document.getElementById('admin-js-script'))return;
   const s=document.createElement('script');

@@ -615,6 +615,51 @@ async function _ytSweepJunkKeywordVideos(){
 // tags_manual=true(관리자가 태그 모달에서 직접 저장·확정한 행)는 알고리즘이 어떻게 판단하든 절대 건드리지
 // 않음 — 관리자가 직접 확인해서 저장한 값이 항상 최종 기준(2026-07-31, 자동 재검증이 수동 태그까지
 // 지워버린 사고 이후 추가된 안전장치).
+// [읽기전용 미리보기](Fable #3, 2026-08-23): "콜라보 오태깅 재검증"이 무엇을 제거할지 실제 UPDATE 없이
+// 미리 집계해서 보여준다(드라이런). 재파싱 valid 계산은 _ytSweepAmbiguousCollabMistag와 동일 — 여기선
+// 제거될 with 태그를 빈도로 모으고, 이종(타소속사+세대차 6년+) 성격 제거를 따로 세서 콘솔/진행바에 띄운다.
+async function _ytSweepDetectPreview(){
+  if(!sb){_ytSetProg('Supabase 연결 없음');return;}
+  const btn=document.getElementById('sp-detect-btn');
+  if(btn)btn.disabled=true;
+  try{
+    _ytSetProg('[오태깅 미리보기] 조회 중…');
+    const{data:rows,error}=await _sbFetchAll(()=>sb.from(_YT_TABLE)
+      .select('id,title,group_ko,with_members,with_groups,tags_manual')
+      .or('with_members.neq.{},with_groups.neq.{}')
+      .order('id'));
+    if(error){_ytSetProg('조회 실패: '+error.message);return;}
+    if(!rows?.length){_ytSetProg('검사할 영상이 없어요');return;}
+    const _xgen=(a,b)=>{const g1=GROUPS[a],g2=GROUPS[b];if(!g1||!g2)return false;const c1=(g1.co||'').trim(),c2=(g2.co||'').trim();const same=!!(c1&&c2)&&c1===c2;const gap=Math.abs((parseInt(g1.debut)||0)-(parseInt(g2.debut)||0));return !same&&gap>=6;};
+    const remM=new Map(),remG=new Map();let changed=0,manual=0,wiped=0,xgate=0;const samples=[];
+    rows.forEach(v=>{
+      const match=_m2ParseTitle(v.title||'',v.group_ko);
+      const curWG=v.with_groups||[],curWM=v.with_members||[];
+      const validGroups=new Set(),validMembers=new Set();
+      if(match){
+        [match.primaryGroup,...match.withGroups].filter(og=>og&&og!==v.group_ko).forEach(og=>{
+          const sec=match.membersByGroup[og]||[];
+          const{asGroup,extraMembers}=_classifyGuestGroup(sec,og);
+          if(asGroup){validGroups.add(og);extraMembers.forEach(mko=>validMembers.add(`${mko}(${og})`));}
+          else sec.forEach(mko=>validMembers.add(`${mko}(${og})`));
+        });
+      }
+      const rmWM=curWM.filter(m=>!validMembers.has(m)),rmWG=curWG.filter(g=>!validGroups.has(g));
+      if(!rmWM.length&&!rmWG.length)return;
+      changed++;
+      if(v.tags_manual)manual++;
+      if(!curWM.filter(m=>validMembers.has(m)).length&&!curWG.filter(g=>validGroups.has(g)).length)wiped++;
+      rmWM.forEach(m=>{remM.set(m,(remM.get(m)||0)+1);const mm=m.match(/^(.+)\((.+)\)$/);if(mm&&_xgen(mm[2],v.group_ko))xgate++;});
+      rmWG.forEach(g=>remG.set(g,(remG.get(g)||0)+1));
+      if(samples.length<20)samples.push({id:v.id,title:v.title,group_ko:v.group_ko,제거될멤버:rmWM,제거될그룹:rmWG,tags_manual:!!v.tags_manual});
+    });
+    console.log('[오태깅 미리보기] 제거될 with_members 상위30:',[...remM.entries()].sort((a,b)=>b[1]-a[1]).slice(0,30));
+    console.log('[오태깅 미리보기] 제거될 with_groups 상위20:',[...remG.entries()].sort((a,b)=>b[1]-a[1]).slice(0,20));
+    console.log('[오태깅 미리보기] 샘플20:',samples);
+    _ytSetProg(`미리보기: ${rows.length}개 중 ${changed}개에서 태그 제거 예정 (이종 성격 ${xgate}건, 태그 전부빠짐 ${wiped}개, 수동보호 ${manual}개). 상세는 콘솔(F12). 실제 적용은 아래 "3. 콜라보 오태깅 재검증".`);
+  }catch(e){_ytSetProg('오류: '+e.message);}
+  finally{if(btn)btn.disabled=false;}
+}
 async function _ytSweepAmbiguousCollabMistag(){
   if(!sb){_ytSetProg('Supabase 연결 없음');return;}
   const btn=document.getElementById('sp-collabfix-btn');
@@ -4394,7 +4439,8 @@ document.getElementById('vid-tag-thumb-refresh').addEventListener('click',async 
   // 그대로 참조하므로 코드에서 키워드를 추가/삭제하면 이 표시도 자동으로 같이 바뀜(따로 관리 안 해도 됨).
   const junkKwLbl=document.getElementById('sp-junk-keywords-lbl');
   if(junkKwLbl)junkKwLbl.textContent='현재 목록: '+_JUNK_TITLE_KEYWORDS_GLOBAL.join(', ');
-  document.getElementById('sp-collabfix-btn')?.addEventListener('click',_ytSweepAmbiguousCollabMistag);
+  document.getElementById('sp-detect-btn')?.addEventListener('click',_ytSweepDetectPreview);
+document.getElementById('sp-collabfix-btn')?.addEventListener('click',_ytSweepAmbiguousCollabMistag);
   document.getElementById('sp-scan-namecollide-btn')?.addEventListener('click',_ytScanAmbiguousNameGroupMisassignment);
   document.getElementById('sp-membersfix-btn')?.addEventListener('click',_ytSweepMembersMistag);
   document.getElementById('sp-yt-undo-bulk-btn')?.addEventListener('click',_ytUndoLastBulk);
