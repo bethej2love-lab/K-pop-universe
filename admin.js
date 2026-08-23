@@ -1988,7 +1988,7 @@ function _vmUpdateCount(){
 // "그외"(ext) 채널은 이제 DB(ext_channels) 기반이라 여기서 유형 변경(select)/삭제 버튼을 바로 붙여
 // 코드 배포 없이 관리 가능하게 함 — "공식"(그룹/멤버 자체 채널, _officialChannels)은 GROUPS 데이터에서
 // 자동 생성되는 목록이라 여기서 개별 편집 대상이 아님(2026-08-12, 사용자 요청).
-const _EXT_TIER_OPTIONS=[['music','음악'],['variety','예능'],['magazine','잡지'],['idol','아이돌개인'],['show','드라마/영화']];
+const _EXT_TIER_OPTIONS=[['music','음악'],['variety','예능'],['magazine','잡지'],['idol','아이돌개인'],['show','드라마/영화'],['fans','팬']];
 // "그외" 탭에서 유형별로 걸러보는 칩 — official 탭에선 숨김(2026-08-21, 사용자 요청 — 5종이 한 리스트에
 // 섞여 있어 특정 유형만 확인하기 번거로움).
 function _vmRenderChTierChips(){
@@ -2112,8 +2112,10 @@ async function _ecAddChannel(){
   if(!handle||!name){_showShareToast('핸들과 이름을 입력해주세요');return;}
   if(_EXT_CHANNELS.some(c=>c.handle.toLowerCase()===handle.toLowerCase())){_showShareToast('이미 등록된 채널이에요');return;}
   let ownerGko=null;
-  if(tier==='idol'){
-    if(!ownerNames.length){_showShareToast('아이돌개인 유형은 소유자 이름이 필요해요');return;}
+  // 소유자(멤버)를 실명으로 지정하는 유형: 아이돌개인은 필수, 팬은 선택(개인 팬채널이면 그 멤버, 아니면 아래 그룹급).
+  const memberOwned=(tier==='idol')||(tier==='fans'&&ownerNames.length>0);
+  if(memberOwned){
+    if(tier==='idol'&&!ownerNames.length){_showShareToast('아이돌개인 유형은 소유자 이름이 필요해요');return;}
     // 공동운영이면 소유자 여러 명 — 그룹(owner_gko)은 공동소유자가 공유한다고 보고 하나로 확정한다.
     const gkoSet=new Set();let anyAmbiguous=false;
     ownerNames.forEach(nm=>{
@@ -2130,13 +2132,13 @@ async function _ecAddChannel(){
       ownerGko=picked||[...gkoSet][0]||ownerNames[0];
     }
   }else if(tier==='fans'){
-    // 팬 채널은 특정 멤버가 아니라 그룹 전체가 대상 — owner_mko 없이 owner_gko만 채워서 idol과 같은
-    // "채널 소유(그룹 고정)" 메커니즘을 재사용한다(_extOwnerGko/_extBuildRows가 mko 없어도 gko만으로 동작).
+    // 멤버 없이 등록한 팬 채널 = 그룹 전체가 대상 — owner_mko 없이 owner_gko만 채워서 그룹급으로 동작
+    // (개인 팬채널이면 위 memberOwned 분기에서 그 멤버로 고정 태깅 + category는 그대로 'fan').
     const targetGko=(targetGkoEl?.value||'').trim();
-    if(!targetGko||!_isValidVidGroupKo(targetGko)){_showShareToast('팬 채널은 실존하는 대상 그룹을 입력해주세요');return;}
+    if(!targetGko||!_isValidVidGroupKo(targetGko)){_showShareToast('팬 채널은 전용 멤버 실명, 또는 대상 그룹을 입력해주세요');return;}
     ownerGko=targetGko;
   }
-  const row={handle,url:`https://www.youtube.com/@${handle}`,name,tier,owner_mko:tier==='idol'?ownerMko:null,owner_gko:(tier==='idol'||tier==='fans')?ownerGko:null};
+  const row={handle,url:`https://www.youtube.com/@${handle}`,name,tier,owner_mko:memberOwned?ownerMko:null,owner_gko:(memberOwned||tier==='fans')?ownerGko:null};
   const{error}=await sb.from('ext_channels').insert(row);
   if(error){_showShareToast('오류: '+error.message);return;}
   _EXT_CHANNELS.push({handle:row.handle,url:row.url,name:row.name,tier:row.tier,...((row.owner_mko||row.owner_gko)?{owner:{mko:row.owner_mko||null,gko:row.owner_gko||null}}:{})});
@@ -2150,12 +2152,14 @@ document.getElementById('vm-ch-add-btn')?.addEventListener('click',_ecAddChannel
 document.getElementById('vm-ch-add-tier')?.addEventListener('change',e=>{
   const ownerEl=document.getElementById('vm-ch-add-owner');
   const targetGkoEl=document.getElementById('vm-ch-add-target-gko');
-  if(ownerEl)ownerEl.style.display=e.target.value==='idol'?'':'none';
+  // 소유자(멤버 실명) 입력칸 — 아이돌개인은 필수, 팬은 선택(개인 팬채널이면 그 멤버 지정, 비우면 그룹급).
+  if(ownerEl)ownerEl.style.display=(e.target.value==='idol'||e.target.value==='fans')?'':'none';
   if(targetGkoEl){
     targetGkoEl.style.display=e.target.value==='fans'?'':'none';
     if(e.target.value==='fans')_ensureVidTagGroupList();
   }
-  if(e.target.value!=='idol'){
+  // 동명이인 그룹선택 드롭다운은 소유자 입력을 쓰는 유형(idol/fans)에서만 유지 — 나머지 유형으로 바꾸면 비움
+  if(e.target.value!=='idol'&&e.target.value!=='fans'){
     const gkoSel=document.getElementById('vm-ch-add-owner-gko');
     if(gkoSel){gkoSel.value='';gkoSel.style.display='none';gkoSel.innerHTML='';}
   }
@@ -3262,7 +3266,10 @@ function _extBuildRows(vids,strict,tier,owner){
     // idol tier(owner.mko 있음)는 인물이 이미 확정이라 그대로 고정. fans tier(owner.gko만 있음, 그룹
     // 전체가 대상이라 특정 멤버가 없음)는 제목에서 그 그룹 멤버 언급을 찾아본다 — 없으면(그룹 전체
     // 다루는 영상) 빈 배열로 둔다(2026-08-21).
-    const members=owner?.mko?owner.mko.split(',').map(s=>s.trim()).filter(Boolean):(match.membersByGroup[ownerGko||match.primaryGroup]||[]); // 공동운영이면 소유자 여러 명 다 붙임(2026-08-22)
+    // match가 null일 수 있음(strict 채널에서 제목에 그룹명/해시태그가 하나도 없어 파싱 결과 없음). owner가
+    // 있는 채널(팬/아이돌개인)은 위 skip에 안 걸리고 여기로 오므로 반드시 match를 널가드해야 함 — 안 그러면
+    // 그룹명 없는 팬캠 제목("성현 직캠" 등) 하나만 걸려도 그 채널 동기화가 통째로 크래시했음(2026-08-23 수정).
+    const members=owner?.mko?owner.mko.split(',').map(s=>s.trim()).filter(Boolean):(match?(match.membersByGroup[ownerGko||match.primaryGroup]||[]):[]); // 공동운영이면 소유자 여러 명 다 붙임(2026-08-22)
     const withGroups=[],withMembers=[];
     // owner가 있으면 match.primaryGroup도 게스트 후보에 포함시켜야 함 — owner(솔로 아티스트 등)는
     // GROUPS에 없어 제목의 그룹명 리터럴 매칭 대상이 아니므로, 게스트 그룹이 유일하게 매칭되면 그게
