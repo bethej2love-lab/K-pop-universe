@@ -61458,6 +61458,16 @@
           }
         ]
       }
+    ],
+    "groups": [
+      {
+        "ko": "위아이",
+        "en": "WEi"
+      },
+      {
+        "ko": "JBJ",
+        "en": "JBJ"
+      }
     ]
   },
   {
@@ -100167,7 +100177,17 @@
     "links": {
       "instagram": "https://www.instagram.com/roh_taehyun",
       "namu": "https://namu.wiki/w/%EB%85%B8%ED%83%9C%ED%98%84(%ED%95%AB%EC%83%B7)"
-    }
+    },
+    "groups": [
+      {
+        "ko": "핫샷",
+        "en": "HOTSHOT"
+      },
+      {
+        "ko": "JBJ",
+        "en": "JBJ"
+      }
+    ]
   },
   {
     "name": {
@@ -140143,6 +140163,688 @@
     "songs": [],
     "links": {
       "namu": "https://namu.wiki/w/%EC%A0%84%EC%9C%A8"
+    }
+  },
+  {
+    "name": {
+      "ko": "아유미",
+      "en": "Ayumi"
+    },
+    "group": {
+      "ko": "슈가",
+      "en": "Sugar"
+    },
+    "co": "스타월드",
+    "active": false,
+    "color": [
+      232,
+      150,
+      175
+    ],
+    "bday": "1984.08.25",
+    "nat": {
+      "ko": "일본",
+      "en": "JP"
+    }
+  },
+  {
+    "name": {
+      "ko": "황정음",
+      "en": "Hwang Jung-eum"
+    },
+    "group": {
+      "ko": "슈가",
+      "en": "Sugar"
+    },
+    "co": "스타월드",
+    "active": false,
+    "color": [
+      232,
+      150,
+      175
+    ],
+    "bday": "1984.12.25",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    }
+  },
+  {
+    "name": {
+      "ko": "박수진",
+      "en": "Park Su-jin"
+    },
+    "group": {
+      "ko": "슈가",
+      "en": "Sugar"
+    },
+    "co": "스타월드",
+    "active": false,
+    "color": [
+      232,
+      150,
+      175
+    ],
+    "bday": "1985.11.27",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    }
+  },
+  {
+    "name": {
+      "ko": "육혜승",
+      "en": "Yuk Hye-seung"
+    },
+    "group": {
+      "ko": "슈가",
+      "en": "Sugar"
+    },
+    "co": "스타월드",
+    "active": false,
+    "color": [
+      232,
+      150,
+      175
+    ],
+    "bday": "1985.10.04",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    }
+  },
+  {
+    "name": {
+      "ko": "이하린",
+      "en": "Lee Ha-rin"
+    },
+    "group": {
+      "ko": "슈가",
+      "en": "Sugar"
+    },
+    "co": "스타월드",
+    "active": false,
+    "color": [
+      232,
+      150,
+      175
+    ],
+    "bday": "1983.09.08",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    }
+  },
+  {
+    "name": {
+      "ko": "이신",
+      "en": "Shin"
+    },
+    "group": {
+      "ko": "고스트나인",
+      "en": "GHOST9"
+    },
+    "co": "마루기획",
+    "active": true,
+    "color": [
+      120,
+      125,
+      205
+    ],
+    "bday": "2000.03.18",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    }
+  },
+  {
+    "name": {
+      "ko": "손준형",
+      "en": "Son Junhyung"
+    },
+    "group": {
+      "ko": "고스트나인",
+      "en": "GHOST9"
+    },
+    "co": "마루기획",
+    "active": true,
+    "color": [
+      120,
+      125,
+      205
+    ],
+    "bday": "2000.10.21",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    }
+  },
+  {
+    "name": {
+      "ko": "이강성",
+      "en": "Lee Kangseong"
+    },
+    "group": {
+      "ko": "고스트나인",
+      "en": "GHOST9"
+    },
+    "co": "마루기획",
+    "active": true,
+    "color": [
+      120,
+      125,
+      205
+    ],
+    "bday": "2002.08.08",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    }
+  },
+  {
+    "name": {
+      "ko": "최준성",
+      "en": "Choi Junseong"
+    },
+    "group": {
+      "ko": "고스트나인",
+      "en": "GHOST9"
+    },
+    "co": "마루기획",
+    "active": true,
+    "color": [
+      120,
+      125,
+      205
+    ],
+    "bday": "2002.09.29",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    }
+  },
+  {
+    "name": {
+      "ko": "프린스",
+      "en": "Prince"
+    },
+    "group": {
+      "ko": "고스트나인",
+      "en": "GHOST9"
+    },
+    "co": "마루기획",
+    "active": true,
+    "color": [
+      120,
+      125,
+      205
+    ],
+    "bday": "2003.01.10",
+    "nat": {
+      "ko": "태국",
+      "en": "TH"
+    }
+  },
+  {
+    "name": {
+      "ko": "이우진",
+      "en": "Lee Woojin"
+    },
+    "group": {
+      "ko": "고스트나인",
+      "en": "GHOST9"
+    },
+    "co": "마루기획",
+    "active": true,
+    "color": [
+      120,
+      125,
+      205
+    ],
+    "bday": "2003.04.07",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    }
+  },
+  {
+    "name": {
+      "ko": "이진우",
+      "en": "Lee Jinwoo"
+    },
+    "group": {
+      "ko": "고스트나인",
+      "en": "GHOST9"
+    },
+    "co": "마루기획",
+    "active": true,
+    "color": [
+      120,
+      125,
+      205
+    ],
+    "bday": "2004.09.13",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    }
+  },
+  {
+    "name": {
+      "ko": "황동준",
+      "en": "Hwang Dongjun"
+    },
+    "group": {
+      "ko": "고스트나인",
+      "en": "GHOST9"
+    },
+    "co": "마루기획",
+    "active": false,
+    "color": [
+      120,
+      125,
+      205
+    ],
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "left": "2021.09.05"
+  },
+  {
+    "name": {
+      "ko": "이태승",
+      "en": "Lee Taeseung"
+    },
+    "group": {
+      "ko": "고스트나인",
+      "en": "GHOST9"
+    },
+    "co": "마루기획",
+    "active": false,
+    "color": [
+      120,
+      125,
+      205
+    ],
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "left": "2021.09.05"
+  },
+  {
+    "name": {
+      "ko": "노아",
+      "en": "Noah"
+    },
+    "group": {
+      "ko": "티에프엔",
+      "en": "TFN"
+    },
+    "co": "MLD엔터테인먼트",
+    "active": false,
+    "color": [
+      90,
+      165,
+      200
+    ],
+    "bday": "2000.08.02",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    }
+  },
+  {
+    "name": {
+      "ko": "시안",
+      "en": "Sian"
+    },
+    "group": {
+      "ko": "티에프엔",
+      "en": "TFN"
+    },
+    "co": "MLD엔터테인먼트",
+    "active": false,
+    "color": [
+      90,
+      165,
+      200
+    ],
+    "bday": "2001.02.02",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    }
+  },
+  {
+    "name": {
+      "ko": "케빈",
+      "en": "Kevin"
+    },
+    "group": {
+      "ko": "티에프엔",
+      "en": "TFN"
+    },
+    "co": "MLD엔터테인먼트",
+    "active": false,
+    "color": [
+      90,
+      165,
+      200
+    ],
+    "bday": "2001.04.08",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    }
+  },
+  {
+    "name": {
+      "ko": "건우",
+      "en": "Gunwoo"
+    },
+    "group": {
+      "ko": "티에프엔",
+      "en": "TFN"
+    },
+    "co": "MLD엔터테인먼트",
+    "active": false,
+    "color": [
+      90,
+      165,
+      200
+    ],
+    "bday": "2002.05.28",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    }
+  },
+  {
+    "name": {
+      "ko": "레오",
+      "en": "Leo"
+    },
+    "group": {
+      "ko": "티에프엔",
+      "en": "TFN"
+    },
+    "co": "MLD엔터테인먼트",
+    "active": false,
+    "color": [
+      90,
+      165,
+      200
+    ],
+    "bday": "2002.10.08",
+    "nat": {
+      "ko": "일본",
+      "en": "JP"
+    }
+  },
+  {
+    "name": {
+      "ko": "온",
+      "en": "On"
+    },
+    "group": {
+      "ko": "티에프엔",
+      "en": "TFN"
+    },
+    "co": "MLD엔터테인먼트",
+    "active": false,
+    "color": [
+      90,
+      165,
+      200
+    ],
+    "bday": "2002.10.16",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    }
+  },
+  {
+    "name": {
+      "ko": "제로",
+      "en": "Zero"
+    },
+    "group": {
+      "ko": "티에프엔",
+      "en": "TFN"
+    },
+    "co": "MLD엔터테인먼트",
+    "active": false,
+    "color": [
+      90,
+      165,
+      200
+    ],
+    "bday": "2003.01.20",
+    "nat": {
+      "ko": "일본",
+      "en": "JP"
+    }
+  },
+  {
+    "name": {
+      "ko": "카이리",
+      "en": "Kairi"
+    },
+    "group": {
+      "ko": "티에프엔",
+      "en": "TFN"
+    },
+    "co": "MLD엔터테인먼트",
+    "active": false,
+    "color": [
+      90,
+      165,
+      200
+    ],
+    "bday": "2003.02.24",
+    "nat": {
+      "ko": "일본",
+      "en": "JP"
+    }
+  },
+  {
+    "name": {
+      "ko": "키오",
+      "en": "Kio"
+    },
+    "group": {
+      "ko": "티에프엔",
+      "en": "TFN"
+    },
+    "co": "MLD엔터테인먼트",
+    "active": false,
+    "color": [
+      90,
+      165,
+      200
+    ],
+    "bday": "2004.11.25",
+    "nat": {
+      "ko": "일본",
+      "en": "JP"
+    }
+  },
+  {
+    "name": {
+      "ko": "김상균",
+      "en": "Kim Sang-gyun"
+    },
+    "group": {
+      "ko": "JBJ",
+      "en": "JBJ"
+    },
+    "co": "페이브엔터테인먼트",
+    "active": false,
+    "color": [
+      225,
+      170,
+      90
+    ],
+    "bday": "1995.05.23",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    }
+  },
+  {
+    "name": {
+      "ko": "타카다 켄타",
+      "en": "Takada Kenta"
+    },
+    "group": {
+      "ko": "JBJ",
+      "en": "JBJ"
+    },
+    "co": "페이브엔터테인먼트",
+    "active": false,
+    "color": [
+      225,
+      170,
+      90
+    ],
+    "bday": "1995.01.10",
+    "nat": {
+      "ko": "일본",
+      "en": "JP"
+    }
+  },
+  {
+    "name": {
+      "ko": "김용국",
+      "en": "Kim Yong-guk"
+    },
+    "group": {
+      "ko": "JBJ",
+      "en": "JBJ"
+    },
+    "co": "페이브엔터테인먼트",
+    "active": false,
+    "color": [
+      225,
+      170,
+      90
+    ],
+    "bday": "1996.03.02",
+    "nat": {
+      "ko": "중국",
+      "en": "CN"
+    }
+  },
+  {
+    "name": {
+      "ko": "권현빈",
+      "en": "Kwon Hyun-bin"
+    },
+    "group": {
+      "ko": "JBJ",
+      "en": "JBJ"
+    },
+    "co": "페이브엔터테인먼트",
+    "active": false,
+    "color": [
+      225,
+      170,
+      90
+    ],
+    "bday": "1997.03.04",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    }
+  },
+  {
+    "name": {
+      "ko": "시우",
+      "en": "SIU"
+    },
+    "group": {
+      "ko": "메이브",
+      "en": "MAVE:"
+    },
+    "co": "메타버스 엔터테인먼트",
+    "active": true,
+    "color": [
+      160,
+      110,
+      220
+    ],
+    "bday": "2002.03.02",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    }
+  },
+  {
+    "name": {
+      "ko": "제나",
+      "en": "ZENA"
+    },
+    "group": {
+      "ko": "메이브",
+      "en": "MAVE:"
+    },
+    "co": "메타버스 엔터테인먼트",
+    "active": true,
+    "color": [
+      160,
+      110,
+      220
+    ],
+    "bday": "2002.12.25",
+    "nat": {
+      "ko": "프랑스",
+      "en": "FR"
+    }
+  },
+  {
+    "name": {
+      "ko": "타이라",
+      "en": "TYRA"
+    },
+    "group": {
+      "ko": "메이브",
+      "en": "MAVE:"
+    },
+    "co": "메타버스 엔터테인먼트",
+    "active": true,
+    "color": [
+      160,
+      110,
+      220
+    ],
+    "bday": "2003.07.25",
+    "nat": {
+      "ko": "미국",
+      "en": "US"
+    }
+  },
+  {
+    "name": {
+      "ko": "마티",
+      "en": "MARTY"
+    },
+    "group": {
+      "ko": "메이브",
+      "en": "MAVE:"
+    },
+    "co": "메타버스 엔터테인먼트",
+    "active": true,
+    "color": [
+      160,
+      110,
+      220
+    ],
+    "bday": "2003.11.23",
+    "nat": {
+      "ko": "인도네시아",
+      "en": "ID"
     }
   }
 ]

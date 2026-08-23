@@ -72174,5 +72174,115 @@
     "links": {
       "namu": "https://namu.wiki/w/B.D.U"
     }
+  },
+  "슈가": {
+    "en": "Sugar",
+    "debut": "2002.02.13",
+    "co": "스타월드",
+    "color": [
+      232,
+      150,
+      175
+    ],
+    "gender": "f",
+    "disbanded": true,
+    "fandom": {
+      "ko": "슈가아일랜드",
+      "en": "Sugar Island"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/슈가(걸그룹)"
+    }
+  },
+  "고스트나인": {
+    "en": "GHOST9",
+    "debut": "2020.09.23",
+    "co": "마루기획",
+    "color": [
+      120,
+      125,
+      205
+    ],
+    "gender": "m",
+    "fandom": {
+      "ko": "고스티",
+      "en": "Ghostie"
+    },
+    "links": {
+      "instagram": "https://www.instagram.com/official.ghost9/",
+      "youtube": "https://www.youtube.com/@GHOST9Official",
+      "x": "https://twitter.com/GHOST9OFFICIAL",
+      "namu": "https://namu.wiki/w/GHOST9"
+    }
+  },
+  "티에프엔": {
+    "en": "TFN",
+    "debut": "2021.01.11",
+    "co": "MLD엔터테인먼트",
+    "color": [
+      90,
+      165,
+      200
+    ],
+    "gender": "m",
+    "disbanded": true,
+    "altNames": [
+      "T1419"
+    ],
+    "fandom": {
+      "ko": "에델바이스",
+      "en": "Edelweiss"
+    },
+    "links": {
+      "instagram": "https://www.instagram.com/t1419_official",
+      "youtube": "https://www.youtube.com/channel/UC2dshAPWPLAOdNKl_Aglmhw",
+      "x": "https://twitter.com/TFN_official_",
+      "namu": "https://namu.wiki/w/TFN"
+    }
+  },
+  "JBJ": {
+    "en": "JBJ",
+    "debut": "2017.10.18",
+    "co": "페이브엔터테인먼트",
+    "color": [
+      225,
+      170,
+      90
+    ],
+    "gender": "m",
+    "disbanded": true,
+    "projectRing": true,
+    "projectShow": "프로듀스 101 시즌2",
+    "fandom": {
+      "ko": "조이풀",
+      "en": "Joyful"
+    },
+    "links": {
+      "instagram": "https://www.instagram.com/jbjofficial787",
+      "x": "https://twitter.com/JBJofficial787",
+      "namu": "https://namu.wiki/w/JBJ"
+    }
+  },
+  "메이브": {
+    "en": "MAVE:",
+    "debut": "2023.01.25",
+    "co": "메타버스 엔터테인먼트",
+    "color": [
+      160,
+      110,
+      220
+    ],
+    "gender": "f",
+    "virtualIdol": true,
+    "fandom": {
+      "ko": "메이즈",
+      "en": "MAZE:"
+    },
+    "links": {
+      "instagram": "https://www.instagram.com/mave_official_/",
+      "youtube": "https://www.youtube.com/@MAVE_official",
+      "x": "https://twitter.com/MAVE_official_",
+      "namu": "https://namu.wiki/w/MAVE:"
+    }
   }
 }
