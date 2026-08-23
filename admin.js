@@ -660,6 +660,54 @@ async function _ytSweepDetectPreview(){
   }catch(e){_ytSetProg('오류: '+e.message);}
   finally{if(btn)btn.disabled=false;}
 }
+// [원곡 소급 재분류](Fable #3, 2026-08-23): 커버 영상인데 원곡 그룹이 with(함께한 그룹)로 잘못 들어간 걸
+// cover_of로 옮긴다. 태깅 시점 라우팅(_extBuildRows)의 소급 버전 — 기존 with 태그만 검사해 조건 맞는 것만
+// 이동(제목 전체 재파싱 아님, 나머지 태그 안 건드림). 자동은 "커버 키워드 + 6년+ 선배"만(고신뢰), "키워드
+// 없이 세대차만 큰(10년+)" 건 진짜 콜라보일 수 있어 콘솔에 목록만(자동 안 함). 드라이런(confirm 전 건수
+// 표시)+스냅샷 되돌리기+tags_manual 보호.
+async function _ytSweepCoverReclassify(){
+  if(!sb){_ytSetProg('Supabase 연결 없음');return;}
+  const btn=document.getElementById('sp-coverfix-btn');
+  if(btn)btn.disabled=true;
+  try{
+    _ytSetProg('[원곡 재분류] 조회 중…');
+    const{data:rows,error}=await _sbFetchAll(()=>sb.from(_YT_TABLE)
+      .select('id,title,group_ko,with_members,with_groups,cover_of_members,cover_of_groups,tags_manual')
+      .or('with_members.neq.{},with_groups.neq.{}').order('id'));
+    if(error){_ytSetProg('조회 실패: '+error.message);return;}
+    if(!rows?.length){_ytSetProg('검사할 영상이 없어요');return;}
+    const _cov=/원곡|커버|cover|\boriginal\b/i;
+    const _senior=(wg,ch)=>{const g1=GROUPS[wg],g2=GROUPS[ch];if(!g1||!g2)return 0;const y1=parseInt(g1.debut)||0,y2=parseInt(g2.debut)||0;return(y1&&y2)?(y2-y1):0;};
+    const updates=[];let manualSkipped=0;const reviewList=[];
+    rows.forEach(v=>{
+      const ch=v.group_ko,hasCov=_cov.test(v.title||'');
+      const curWG=v.with_groups||[],curWM=v.with_members||[],curCG=v.cover_of_groups||[],curCM=v.cover_of_members||[];
+      const moveG=[],moveM=[];
+      curWG.forEach(wg=>{const sen=_senior(wg,ch);if(hasCov&&sen>=6)moveG.push(wg);else if(!hasCov&&sen>=10)reviewList.push({id:v.id,title:v.title,group_ko:ch,후보:wg,세대차:sen});});
+      curWM.forEach(m=>{const mm=m.match(/^(.+)\((.+)\)$/);if(!mm)return;const sen=_senior(mm[2],ch);if(hasCov&&sen>=6)moveM.push(m);else if(!hasCov&&sen>=10)reviewList.push({id:v.id,title:v.title,group_ko:ch,후보:m,세대차:sen});});
+      if(!moveG.length&&!moveM.length)return;
+      if(v.tags_manual){manualSkipped++;return;}
+      updates.push({id:v.id,patch:{
+        with_groups:curWG.filter(g=>!moveG.includes(g)),
+        with_members:curWM.filter(m=>!moveM.includes(m)),
+        cover_of_groups:[...new Set([...curCG,...moveG])],
+        cover_of_members:[...new Set([...curCM,...moveM])]
+      }});
+    });
+    if(reviewList.length)console.log(`[원곡 재분류] 검수 후보(키워드 없이 10년+ 선배 with) ${reviewList.length}건 — 진짜 콜라보일 수 있어 자동 안 함, 직접 확인 요망:`,reviewList);
+    if(!updates.length){_ytSetProg(`자동 재분류할 원곡 없음 (검수 후보 ${reviewList.length}건은 콘솔 F12). `+(manualSkipped?`수동보호 ${manualSkipped}건.`:''));return;}
+    if(!confirm(`커버 키워드 + 6년 이상 선배인 with 태그 ${updates.length}건을 "함께한 그룹"→"원곡(cover_of)"으로 재분류할까요?\n\n· 검수 후보 ${reviewList.length}건(키워드 없이 세대차만 큰 것)은 자동 안 하고 콘솔에 목록\n· 수동편집 태그는 안 건드림 (${manualSkipped}건)\n· 스냅샷 저장돼서 되돌리기 가능`))
+      {_ytSetProg(`취소됨 — 미리보기만 (재분류 예정 ${updates.length}건, 검수 ${reviewList.length}건 콘솔).`);return;}
+    await _snapshotBeforeBulk('원곡 재분류(with→cover_of)',updates.map(u=>u.id));
+    for(let i=0;i<updates.length;i+=200){
+      const results=await Promise.all(updates.slice(i,i+200).map(u=>sb.from(_YT_TABLE).update(u.patch).eq('id',u.id)));
+      const f=results.find(r=>r.error);if(f)throw new Error(f.error.message);
+      _ytSetProg(`[원곡 재분류] ${Math.min(i+200,updates.length)}/${updates.length}건 처리 중…`);
+    }
+    _ytSetProg(`완료! ${updates.length}건을 원곡(cover_of)으로 재분류함. 검수 후보 ${reviewList.length}건은 콘솔(직접 확인).`+(manualSkipped?` 수동보호 ${manualSkipped}건.`:''));
+  }catch(e){_ytSetProg('오류: '+e.message);}
+  finally{if(btn)btn.disabled=false;}
+}
 async function _ytSweepAmbiguousCollabMistag(){
   if(!sb){_ytSetProg('Supabase 연결 없음');return;}
   const btn=document.getElementById('sp-collabfix-btn');
@@ -4458,6 +4506,7 @@ document.getElementById('vid-tag-thumb-refresh').addEventListener('click',async 
   const junkKwLbl=document.getElementById('sp-junk-keywords-lbl');
   if(junkKwLbl)junkKwLbl.textContent='현재 목록: '+_JUNK_TITLE_KEYWORDS_GLOBAL.join(', ');
   document.getElementById('sp-detect-btn')?.addEventListener('click',_ytSweepDetectPreview);
+document.getElementById('sp-coverfix-btn')?.addEventListener('click',_ytSweepCoverReclassify);
 document.getElementById('sp-collabfix-btn')?.addEventListener('click',_ytSweepAmbiguousCollabMistag);
   document.getElementById('sp-scan-namecollide-btn')?.addEventListener('click',_ytScanAmbiguousNameGroupMisassignment);
   document.getElementById('sp-membersfix-btn')?.addEventListener('click',_ytSweepMembersMistag);
