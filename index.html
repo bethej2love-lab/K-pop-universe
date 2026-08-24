@@ -6173,6 +6173,7 @@ function closeCards(){
   clearFocus();_openGCko=null;_openTArtist=null;
   _leavePresence();
   _gcStatusState.group.favcount='';_gcStatusState.member.favcount='';
+  _gcStatusState.group.traces='';_gcStatusState.member.traces='';
   _renderGcStatusLine('group');_renderGcStatusLine('member');
   _syncUrl('replace');
 }
@@ -7221,6 +7222,7 @@ function showT(a,cx,cy,keepNavStack,urlMode,pushMobNav,noFly){
   _gaEvent('view_member',{member_name:a.name.ko,group_name:a.group.ko});
   _joinPresence('member',a.group.ko+':'+a.name.ko);
   _showFavCount('member',a.group.ko+':'+a.name.ko,'get_member_fav_count');
+  _showTraceCount('member',a.group.ko+':'+a.name.ko,'get_member_trace_week');
   _syncUrl(urlMode||'push');
 }
 
@@ -7941,6 +7943,7 @@ function showGC(ko,cx,cy,keepMemberPanel,skipRipple,urlMode,pushMobNav){
   _gaEvent('view_group',{group_name:ko});
   _joinPresence('group',ko);
   _showFavCount('group',ko,'get_group_fav_count');
+  _showTraceCount('group',ko,'get_group_trace_week');
   _syncUrl(urlMode||'push');
 }
 
@@ -12180,7 +12183,7 @@ async function _handleLogout(){
 document.getElementById('pp-logout-btn').addEventListener('click',e=>{e.stopPropagation();_handleLogout();});
 
 // ── 그룹/멤버 카드 상태 한 줄: 실시간 시청자 수 + 즐겨찾기 인기 지표를 한 자리에서 번갈아 표시 ──
-const _gcStatusState={group:{presence:'',favcount:''},member:{presence:'',favcount:''}};
+const _gcStatusState={group:{presence:'',favcount:'',traces:''},member:{presence:'',favcount:'',traces:''}};
 const _gcStatusTimers={group:null,member:null};
 const _gcStatusIdx={group:0,member:0};
 function _statusEl(kind){return document.getElementById(kind==='group'?'gc-status-line':'tt-status-line');}
@@ -12191,6 +12194,7 @@ function _renderGcStatusLine(kind){
   const entries=[];
   if(_gcStatusState[kind].presence)entries.push({type:'presence',html:_gcStatusState[kind].presence});
   if(_gcStatusState[kind].favcount)entries.push({type:'favcount',html:_gcStatusState[kind].favcount});
+  if(_gcStatusState[kind].traces)entries.push({type:'traces',html:_gcStatusState[kind].traces});
   if(!entries.length){el.classList.remove('show');el.innerHTML='';return;}
   const paint=(i,animate)=>{
     const entry=entries[i];
@@ -12268,6 +12272,27 @@ async function _showFavCount(kind,key,rpcFn){
   if(error){console.error('fav count fetch failed',error);return;}
   if(data>0){
     _gcStatusState[kind].favcount='<span class="favcount-dot"></span>'+(currentLang==='ko'?`${data}명이 좋아해요`:`${data} like this`);
+    _renderGcStatusLine(kind);
+  }
+}
+
+// ── 흔적(이번 주 하트+리액션) 익명 합산 — 순위·개인귀속 없이 총량만(favcount와 같은 톤/로테이션). ──────
+// N=이번 주 이 그룹(멤버) 영상에 하트/리액션을 남긴 서로 다른 사람 수, M=그 흔적 총개수.
+// 서버 집계는 RPC(get_group_trace_week/get_member_trace_week)가 담당 — 흔적 테이블(video_scraps/
+// video_reactions)엔 group_ko가 없어 URL→yt_channel_videos.id 조인이 필요해서 클라 쿼리로는 불가.
+// RPC가 아직 없으면 error로 조용히 안 뜸(fail-safe).
+let _traceCountReqId=0;
+async function _showTraceCount(kind,key,rpcFn){
+  _gcStatusState[kind].traces='';
+  _renderGcStatusLine(kind);
+  if(!sb)return;
+  const reqId=++_traceCountReqId;
+  const{data,error}=await sb.rpc(rpcFn,kind==='group'?{p_group_ko:key}:{p_member_key:key});
+  if(reqId!==_traceCountReqId)return; // 그 사이 다른 카드로 넘어감 — 오래된 응답 무시
+  if(error){console.error('trace count fetch failed',error);return;}
+  const n=(data&&data.n)||0,m=(data&&data.m)||0;
+  if(n>0&&m>0){
+    _gcStatusState[kind].traces='<span class="favcount-dot"></span>'+(currentLang==='ko'?`이번 주 ${n}명이 흔적 ${m}개를 남겼어요`:`${n} left ${m} traces this week`);
     _renderGcStatusLine(kind);
   }
 }
