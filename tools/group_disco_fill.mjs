@@ -74,7 +74,8 @@ function readNamu(gname, g) {
 const NAMU_LABEL = '(?:정규|미니|싱글|EP|스페셜|리패키지|디지털 싱글|선공개 싱글|베스트|라이브|OST|리메이크)';
 function parseNamuAlbums(text) {
   const out = [];
-  const re = new RegExp(`([^\\]]{1,60}?)\\s+((?:${NAMU_LABEL})[^0-9]{0,12}(?:\\d+집)?(?:\\s*리패키지)?)\\s+(\\d{4})\\.\\s*(\\d{1,2})\\.\\s*(\\d{1,2})\\.?(?![0-9])`, 'g');
+  // 날짜 구분자는 문서마다 "2020.03.24." / "2010. 01. 14." / "2010.04.12" / "2010/06/09" 가 다 있다
+  const re = new RegExp(`([^\\]]{1,60}?)\\s+((?:${NAMU_LABEL})[^0-9]{0,12}(?:\\d+집)?(?:\\s*리패키지)?)\\s+(\\d{4})[./]\\s*(\\d{1,2})[./]\\s*(\\d{1,2})\\.?(?![0-9])`, 'g');
   let m;
   while ((m = re.exec(text))) {
     out.push({
@@ -96,12 +97,28 @@ function parseNamuAlbums(text) {
     a.jp = cur?.label === '일본 음반';
     a.section = cur?.label || '';
   }
-  if (out.length >= 3) {
-    const asc = out[1].date >= out[0].date;
-    for (let i = 1; i < out.length; i++) {
-      const back = asc ? out[i].date < out[i - 1].date : out[i].date > out[i - 1].date;
-      if (back) { for (let j = i; j < out.length; j++) out[j].secondary = true; break; }
-    }
+  // ⚠ "첫 역행에서 자르기"는 너무 약하다 — 에스파처럼 목록 앞머리에 SMCU 묶음이 끼어
+  //    날짜가 잠깐 뒤집히면 한국 음반 전체가 통째로 잘려나간다(파싱 0의 주원인).
+  //    방향은 다수결로 정하고, 1년 이상 크게 되감기면서 그 뒤가 다시 단조로울 때만 새 섹션으로 본다.
+  markSecondary(out);
+  return out;
+}
+
+function markSecondary(out) {
+  if (out.length < 4) return;
+  let up = 0, down = 0;
+  for (let i = 1; i < out.length; i++) (out[i].date >= out[i - 1].date ? up++ : down++);
+  const asc = up >= down;
+  const days = (a, b) => Math.abs(new Date(a.replace(/\./g, '-')) - new Date(b.replace(/\./g, '-'))) / 86400000;
+  for (let i = 1; i < out.length; i++) {
+    const back = asc ? out[i].date < out[i - 1].date : out[i].date > out[i - 1].date;
+    // 1년 이상 크게 되감기는 첫 지점부터 잘라낸다.
+    // ⚠ "그 뒤가 단조로울 때만" 조건을 달았더니 일본 음반 구간이 통과해 씨엔블루 Stay Gold·
+    //    SF9 GOLDEN ECHO·데이식스 The DECADE 같은 일본 앨범이 국내 정규로 추가됐다(되돌림).
+    //    작은 흔들림(에스파 SMCU 묶음 등)만 무시하고, 큰 되감기는 무조건 새 구간으로 본다.
+    if (!back || days(out[i].date, out[i - 1].date) < 300) continue;
+    for (let j = i; j < out.length; j++) out[j].secondary = true;
+    return;
   }
   return out.filter(n => !n.jp && !n.secondary && n.section !== '참여 음반');
 }
@@ -227,12 +244,25 @@ for (const gname of names) {
 
   const groupAdds = [];
   for (const n of missing) {
+    // ⚠ "날짜만 맞으면 채택" 폴백은 금지 — 나무위키에 없는 일본 앨범(씨엔블루 Stay Gold)이
+    //    같은 날짜라는 이유로 국내 정규로 들어왔다. 제목이 맞아야만 채택한다.
     const cand = mAlbums.find(a => titleAgrees(a.title, n.title) && dayDiff(a.date || n.date, n.date) <= 45) ||
-                 mAlbums.find(a => a.date === n.date);
+                 mAlbums.find(a => titleAgrees(a.title, n.title));
     if (!cand) { notOnMelon.push({ gname, label: n.label, title: n.title, date: n.date }); continue; }
+    // 나무위키 제목 파싱이 흔들려 "누락"으로 잡혔더라도, 멜론 제목이 기존 항목과 같으면 이미 있는 앨범이다
+    if (g.discography.some(d => titleAgrees(d.title, cand.title) || d.releaseDate === cand.date)) continue;
+    // 변형판(… Ver./Edition)이 원판 대신 잡히는 걸 막는다 — 나무위키 제목에 없는 표기면 후보에서 뺀다
+    const variant = /\((?:[^)]*(?:ver\.?|version|edition|리패키지|repackage)[^)]*)\)/i;
+    if (variant.test(cand.title) && !variant.test(n.title)) {
+      const plain = mAlbums.find(a => titleAgrees(a.title, n.title) && !variant.test(a.title));
+      if (plain) Object.assign(cand, plain); else { notOnMelon.push({ gname, label: n.label, title: n.title, date: n.date, why: '변형판만 있음' }); continue; }
+    }
     const detail = await get(`https://www.melon.com/album/detail.htm?albumId=${cand.albumId}`, `album_${cand.albumId}`, 10000);
     if (!detail) { notOnMelon.push({ gname, label: n.label, title: n.title, date: n.date, why: '상세 수집 실패' }); continue; }
     const d = parseAlbumDetail(detail);
+    // 정규/미니라면서 곡이 2곡 이하면 싱글을 잘못 집은 것 (오메가엑스 "Dream" 1곡짜리 미니 3집 사례)
+    const cnt = d.tracks.length || cand.trackCount;
+    if (cnt < 3) { notOnMelon.push({ gname, label: n.label, title: n.title, date: n.date, why: `${cnt}곡뿐 — 싱글 오매칭 의심` }); continue; }
     groupAdds.push({
       gname, type: labelToType(n.label), namuTitle: n.title,
       entry: {
