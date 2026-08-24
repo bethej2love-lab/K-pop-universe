@@ -3393,8 +3393,15 @@ function _m2ParseTitle(rawTitle,selfGko,strict){
   // 제보 — 베이비돈크라이 영상이 아워벌스데이 '베이비'로 오추론). 단일음절 이름과 동일하게 인퍼런스에선
   // 해시태그만 인정한다(자체 채널 태깅 _atmMatchesMember는 그룹 확정 문맥이라 평문 매칭 그대로 유지 — 영향 없음).
   const _ATM_COMMON_KO_WORDS=new Set(['베이비','하루','하늘','바다','봄','여름','겨울','별','사랑','달','천사','하트','메이']); // 메이: en=May(달)+동명이인 3명(리센느/세이마이네임/체리블렛)+A2O MAY 그룹명 — 인퍼런스에선 해시태그/그룹문맥만(2026-08-24)
+  // 멤버 이름이 "실존하는 그룹 이름"과 같은 경우(예: 다이아 멤버 "유니스" ↔ 그룹 유니스(UNIS), A2O MAY의
+  // "메이" 등): 제목에 평문으로 나온 "유니스"는 거의 항상 그 그룹을 가리키는데, memberHit이 이걸 그 이름의
+  // 멤버(다이아 유니스)로 역추론해 엉뚱한 그룹 콜라보(with_members "유니스(다이아)")로 오태깅함 —
+  // 동명이인이 아니라 그룹명↔멤버명 충돌이라 아래 nameToGroups 동명이인 dedup(매칭 1명이라)에도 안 걸림
+  // (2026-08-24 사용자 제보 — 그룹 유니스 영상이 다이아 유니스 카드에 뜸). _ATM_COMMON_KO_WORDS와 동일 원칙으로
+  // 인퍼런스에선 해시태그로 명시된 경우만 인정한다(그룹 자체 매칭 경로는 별개라 그룹 태깅은 정상 유지).
+  const _atmNameIsGroup=a=>!!GROUPS[a.name.ko]&&a.name.ko!==a.group.ko;
   function memberHit(a,names){
-    if([...a.name.ko].length===1||_isHashtagOnlyName(a.name.ko)||_ATM_COMMON_KO_WORDS.has(a.name.ko))return names.some(t=>hitHashtag(t));
+    if([...a.name.ko].length===1||_isHashtagOnlyName(a.name.ko)||_ATM_COMMON_KO_WORDS.has(a.name.ko)||_atmNameIsGroup(a))return names.some(t=>hitHashtag(t));
     return names.some(t=>_atmNameNeedsCtx(t)?hitHashtag(t):hit(t));
   }
   // 해시태그가 "성+이름"을 띄어쓰기 없이 그대로 붙여 쓰는 경우(예: "#HUHYUNJIN" = 허Huh+윤진Yunjin)가
