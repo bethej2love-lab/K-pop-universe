@@ -11,6 +11,11 @@
 //          정상적으로 열려야 한다(회귀 없음). 데스크톱 click 경로 + 실제 모바일 touchend 경로 둘 다.
 //  [버그B] 카드를 스택으로 쌓았다가 닫은 뒤 새 카드를 열면, 시트 바닥에 이전 카드의 얼어붙은 클론이
 //          남아 함께 뜨면 안 된다(새 카드만 있어야 함). 스택→뒤로가기(pop) 정상 복원도 확인.
+//  [버그C] 카드 안에서 스크롤 다운하면 하단 탭바가 숨고, 스크롤 업/최상단으로 오면 다시 나타나야 한다.
+//          (iOS 고무줄 바운스에서 방향 오판으로 "탭바가 안 돌아오던" 회귀 방지 — 헤드리스는 음수
+//          scrollTop 바운스 자체는 재현 못 하므로, 핵심 안전망 "최상단<40px=무조건 표시"와 방향 감지를 검증.)
+//  [버그D] 첫 카드가 열리는 애니메이션 중에 다음 카드를 빠르게 연속으로 열어도, 스택이 보존되고 다음
+//          카드가 50% 중간 높이에서 고착되지 않고 100%(bs-full)로 완전히 열려야 한다.
 //
 // ⚠️ 브라우저는 이 스크립트가 spawn한 PID만 정확히 종료(프로세스명 일괄 kill 금지, smoke.test.js 참고).
 // 실행: node tests/interaction.test.js
@@ -180,6 +185,38 @@ async function main() {
     const back = await ev(cdp, `(_openTArtist&&((_openTArtist.name&&_openTArtist.name.ko)||_openTArtist.name))||null`);
     if (back === pick[0]) ok(`[버그B] 스택→뒤로가기(pop) → 이전 카드(${pick[0]}) 정상 복원`);
     else fail(`[버그B] pop 후 복원 실패 — 기대=${pick[0]}, 실제=${back}`);
+
+    // ── [버그C] 카드 스크롤 시 탭바 숨김/복귀 (탭바 미복귀 회귀 방지) ──
+    // 헤드리스 Chrome은 iOS 고무줄(음수/초과 scrollTop) 자체를 재현 못 하므로, 수정의 핵심인
+    // "다운=숨김 / 업=표시 / 최상단(<40px)=무조건 표시(안전망)"를 결정론적으로 검증한다. 스크롤이
+    // 실제로 걸리도록 시트 안에 임시 스페이서를 넣고 scrollTop을 직접 세팅해 scroll 이벤트를 발생시킨다.
+    await closeAll();
+    await ev(cdp, `showT(${byKo}(window.__P[0]))`); await sleep(700);
+    await ev(cdp, `(function(){const sp=document.createElement('div');sp.id='__tb_spacer';sp.style.height='2000px';mobSheetInner.appendChild(sp);return 1;})()`);
+    const tabHidden = async () => await ev(cdp, `document.getElementById('tabbar').classList.contains('tab-hidden')`);
+    const scrollSheet = async (y) => { await ev(cdp, `(function(y){mobSheetInner.scrollTop=y;mobSheetInner.dispatchEvent(new Event('scroll'));return 1;})(${y})`); await sleep(120); };
+    const c0 = await tabHidden();                       // 초기: 표시(false)
+    await scrollSheet(300); const cDown = await tabHidden();   // 다운: 숨김(true)
+    await scrollSheet(180); const cUp = await tabHidden();     // 업(여전히 >40): 표시(false)
+    await scrollSheet(300); const cDown2 = await tabHidden();  // 다시 다운: 숨김(true)
+    await scrollSheet(0);   const cTop = await tabHidden();    // 최상단: 안전망으로 무조건 표시(false)
+    await ev(cdp, `(function(){const s=document.getElementById('__tb_spacer');if(s)s.remove();return 1;})()`);
+    if (!c0 && cDown && !cUp && cDown2 && !cTop) ok('[버그C] 다운=숨김 / 업=복귀 / 최상단=강제표시(탭바 미복귀 회귀 방지)');
+    else fail(`[버그C] 탭바 숨김/복귀 오동작 — 초기=${c0}(false여야) 다운=${cDown}(true여야) 업=${cUp}(false여야) 다운2=${cDown2}(true여야) 최상단=${cTop}(false여야)`);
+
+    // ── [버그D] 빠른 연속 카드 오픈 시 다음 카드가 50%에서 고착되면 안 됨 ──
+    // 재현: 한 틱에 showT 3번을 연속 호출 → 첫 오픈 애니(340ms)가 끝나기 전에 2·3번째가 들어온다.
+    // 예전엔 열림 판정이 bs-open(rAF 한 프레임 뒤 부착)에 의존해 오분기·스택 덮어쓰기 + 뒤늦은
+    // setTimeout이 새 애니 중간에 transform을 초기화해 중간 높이 고착. 이제 스택 보존 + 100% 완전 오픈.
+    await closeAll();
+    await ev(cdp, `(function(){showT(${byKo}(window.__P[0]));showT(${byKo}(window.__P[1]));showT(${byKo}(window.__P[2]));return 1;})()`);
+    await sleep(900); // 340ms 슬라이드업 + rAF 정착 대기
+    const rapid = JSON.parse(await ev(cdp, `JSON.stringify({stack:_cardStack.length,full:mobCardStackEl.classList.contains('bs-full'),open:mobCardStackEl.classList.contains('bs-open'),xf:mobCardStackEl.style.transform,disp:mobCardStackEl.style.display})`));
+    const xfCleared = rapid.xf === '' || rapid.xf === 'translateY(0px)' || rapid.xf === 'translateY(0)';
+    if (rapid.stack === 3 && rapid.full && rapid.open && xfCleared && rapid.disp === 'block')
+      ok('[버그D] 빠른 연속 오픈 3장 → 스택 보존(3) + 카드 100%(bs-full) 완전 오픈(중간 고착 없음)');
+    else fail(`[버그D] 연속 오픈 고착/스택깨짐 — stack=${rapid.stack}(3기대) full=${rapid.full} open=${rapid.open} transform="${rapid.xf}"(비어야) disp=${rapid.disp}`);
+    await closeAll();
 
     if (errors.length) fail(`상호작용 중 콘솔 에러 ${errors.length}건: ${errors.slice(0, 5).join(' | ')}`);
     else ok('상호작용 중 콘솔 에러 0건');

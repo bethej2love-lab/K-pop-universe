@@ -433,8 +433,8 @@
     will-change:transform;
   }
   #mob-sheet.bs-open{transform:translateY(0);}
-  #mob-sheet.bs-full{min-height:calc(var(--mob-vh,100vh) - var(--sheet-bottom,73px));max-height:calc(var(--mob-vh,100vh) - var(--sheet-bottom,73px));border-radius:0;}
-  #mob-sheet.bs-full #mob-sheet-inner{max-height:calc(var(--mob-vh,100vh) - var(--sheet-bottom,73px) - 24px);}
+  #mob-sheet.bs-full{min-height:calc(var(--mob-vh,100vh) - var(--sheet-bottom,73px));max-height:calc(var(--mob-vh,100vh) - var(--sheet-bottom,73px));border-radius:0;padding-top:env(safe-area-inset-top,0px);}
+  #mob-sheet.bs-full #mob-sheet-inner{max-height:calc(var(--mob-vh,100vh) - var(--sheet-bottom,73px) - 24px - env(safe-area-inset-top,0px));}
   #mob-card-stack{
     display:none;position:fixed;left:0;right:0;
     bottom:var(--sheet-bottom,73px);min-height:60vh;max-height:60vh;
@@ -453,8 +453,8 @@
   /* mob-sheet(첫 카드)의 100%(bs-full) 상태가 그 위로 쌓이는 카드(mob-card-stack)에도 그대로 이어지도록
      동일한 규칙을 mob-card-stack에도 적용 — 안 그러면 첫 카드를 100%로 봐놓고 다음 카드를 열었을 때
      60vh로 뚝 떨어져서 답답해 보이는 문제가 있었음. */
-  #mob-card-stack.bs-full{min-height:calc(var(--mob-vh,100vh) - var(--sheet-bottom,73px));max-height:calc(var(--mob-vh,100vh) - var(--sheet-bottom,73px));border-radius:0;}
-  #mob-card-stack.bs-full #mob-card-stack-inner{max-height:calc(var(--mob-vh,100vh) - var(--sheet-bottom,73px) - 24px);}
+  #mob-card-stack.bs-full{min-height:calc(var(--mob-vh,100vh) - var(--sheet-bottom,73px));max-height:calc(var(--mob-vh,100vh) - var(--sheet-bottom,73px));border-radius:0;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);}
+  #mob-card-stack.bs-full #mob-card-stack-inner{max-height:calc(var(--mob-vh,100vh) - var(--sheet-bottom,73px) - 24px - env(safe-area-inset-top,0px));}
   #mob-card-stack-inner{overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;max-height:calc(60vh - 24px);overscroll-behavior:contain;width:100%;box-sizing:border-box;position:relative;transition:max-height .32s cubic-bezier(0.32,0.72,0,1);}
   #mob-card-stack-inner>#tt,#mob-card-stack-inner>#gc{
     position:static!important;display:block!important;
@@ -1628,8 +1628,8 @@
   #conn-sheet.bs-open{transform:translateY(0);}
   /* 멤버 카드가 100%(bs-full)로 열려있는 상태에서 연결 카드를 열면 그 상태를 그대로 물려받아 100%로 열림
      (mob-sheet/mob-card-stack의 bs-full 이어받기와 같은 패턴, 2026-08-04 사용자 요청). */
-  #conn-sheet.bs-full{min-height:calc(var(--mob-vh,100vh) - var(--sheet-bottom,73px));max-height:calc(var(--mob-vh,100vh) - var(--sheet-bottom,73px));border-radius:0;}
-  #conn-sheet.bs-full #conn-sheet-inner{max-height:calc(var(--mob-vh,100vh) - var(--sheet-bottom,73px) - 24px);}
+  #conn-sheet.bs-full{min-height:calc(var(--mob-vh,100vh) - var(--sheet-bottom,73px));max-height:calc(var(--mob-vh,100vh) - var(--sheet-bottom,73px));border-radius:0;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);}
+  #conn-sheet.bs-full #conn-sheet-inner{max-height:calc(var(--mob-vh,100vh) - var(--sheet-bottom,73px) - 24px - env(safe-area-inset-top,0px));}
   @media(min-width:769px){#conn-sheet{display:none!important;}}
   #conn-sheet-inner{overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;max-height:calc(60vh - 24px);overscroll-behavior:contain;transition:max-height .32s cubic-bezier(0.32,0.72,0,1);}
   #conn-sheet .conn-inner{padding:16px 28px 14px 28px;}

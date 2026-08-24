@@ -4652,6 +4652,23 @@ let _navHistoryActive=false;
 const mobCardStackEl=document.getElementById('mob-card-stack');
 const mobCardStackInner=document.getElementById('mob-card-stack-inner');
 let _mobCloseTimer=null;
+// 카드 스택 슬라이드업 애니메이션의 재진입 가드 — 빠르게 연속으로 카드를 열 때(예: 행성 탭 → 뜨는 중
+// 즉시 멤버칩 탭) 이전 애니메이션의 뒤늦은 setTimeout/rAF 콜백이 새 애니메이션 중간에 transform을
+// 초기화해 카드가 50% 중간 높이에서 고착되던 문제를 막는다. _stackAnimSeq를 올려 in-flight 콜백을
+// 무효화하고, _stackAnimTimer로 진행 중 타이머를 붙잡아 즉시 정리·커밋한다.
+let _stackAnimTimer=null;
+let _stackAnimSeq=0;
+// 진행 중이던 스택 슬라이드업을 즉시 최종 상태(bs-open, transform 해제)로 커밋 — 새 카드를 열기 전에
+// 호출해 중간 높이 고착을 없앤다. 스택이 떠있지 않으면(첫 오픈 등) 커밋은 건너뛰되 seq는 올려둔다.
+function _finalizeStackAnim(){
+  if(_stackAnimTimer){clearTimeout(_stackAnimTimer);_stackAnimTimer=null;}
+  _stackAnimSeq++;
+  if(mobCardStackEl.style.display==='block'||mobCardStackEl.classList.contains('bs-open')){
+    mobCardStackEl.style.transition='';
+    mobCardStackEl.style.transform='';
+    mobCardStackEl.classList.add('bs-open');
+  }
+}
 const sidePanelEl=document.getElementById('side-panel');
 const memberPanelEl=document.getElementById('member-panel');
 let _memberPanelShifted=false;
@@ -4736,12 +4753,20 @@ function closeSidePanel(){
 function openMobSheet(cardEl){
   clearTimeout(_mobCloseTimer);
   controls.enabled=false;
+  // 새 카드는 scrollTop=0에서 시작하므로 방향 감지 기준선도 0으로 리셋 — 직전 카드에서 남은 _lastScroll
+  // 잔상 때문에 첫 스크롤이 반대 방향으로 오판되거나 탭바가 숨김 고착되는 걸 막는다.
+  mobSheetInner._lastScroll=0;mobCardStackInner._lastScroll=0;
   document.getElementById('journal-sidebar').classList.remove('open'); // 마이페이지가 열려있는 채로 그룹/멤버 카드를 열어도 카드가 위로 뜨도록
   cardEl.style.maxWidth='';cardEl.style.width='';cardEl.style.left='';cardEl.style.top='';
 
   const type=cardEl.id==='gc'?'gc':'tt';
   const data=type==='gc'?_openGCko:_openTArtist;
-  const isOpen=mobSheetEl.classList.contains('bs-open');
+  // 진행 중이던 스택 애니메이션을 먼저 최종 상태로 커밋 — 이전 카드가 중간 높이에 고착되지 않게 한다.
+  _finalizeStackAnim();
+  // 열림 판정은 클래스(bs-open은 rAF로 한 프레임 뒤에 붙음) 대신 _cardStack 길이로 — 첫 탭 직후 rAF가
+  // 돌기 전에 두 번째 탭이 들어와도 '열림'으로 정확히 인식해 스택 푸시로 분기한다(안 그러면 첫 오픈으로
+  // 되돌아가 스택이 통째로 덮어써짐).
+  const isOpen=_cardStack.length>0;
   const viaConn=_pendingViaConn;_pendingViaConn=null; // 연결 카드 칩 점프로 온 경우에만 채워짐(2026-08-11)
 
   if(!isOpen){
@@ -4783,12 +4808,16 @@ function openMobSheet(cardEl){
     mobCardStackEl.classList.toggle('bs-full',_sheetFull);
     mobCardStackEl.style.display='block';
     mobCardStackInner.scrollTop=0; // display:block 직후 재설정 — display:none 중 무시 보완
+    const mySeq=++_stackAnimSeq; // 이 애니메이션 세대 토큰 — 그 사이 새 카드가 열리면 폐기된다
     mobCardStackEl.style.transition='none';
     mobCardStackEl.style.transform='translateY(200px)';
     requestAnimationFrame(()=>requestAnimationFrame(()=>{
+      if(mySeq!==_stackAnimSeq)return; // 이미 다음 카드가 열렸으면 이 프레임은 버림
       mobCardStackEl.style.transition='transform .32s cubic-bezier(0.32,0.72,0,1)';
       mobCardStackEl.style.transform='translateY(0)';
-      setTimeout(()=>{
+      _stackAnimTimer=setTimeout(()=>{
+        _stackAnimTimer=null;
+        if(mySeq!==_stackAnimSeq)return; // 뒤늦은 콜백이 새 애니메이션을 건드리지 않게 가드
         mobCardStackEl.style.transition='';mobCardStackEl.style.transform='';
         mobCardStackEl.classList.add('bs-open');
       },340);
@@ -4846,6 +4875,10 @@ function _placeInContainer(cardEl,container){
 }
 function closeMobSheet(){
   clearTimeout(_mobCloseTimer);
+  // 진행 중이던 스택 슬라이드업 애니메이션 무효화 — 뒤늦은 setTimeout이 방금 숨긴 스택에 bs-open을
+  // 도로 붙이는 레이스를 막는다.
+  if(_stackAnimTimer){clearTimeout(_stackAnimTimer);_stackAnimTimer=null;}
+  _stackAnimSeq++;
   _cardStack=[];
   // mob-card-stack 즉시 숨기기
   mobCardStackEl.classList.remove('bs-open');
@@ -4894,6 +4927,9 @@ function _reopenViaConnIfNeeded(leaving){
   }
 }
 function _popMobCard(){
+  // 진행 중이던 오픈-푸시 애니메이션 무효화 — 뒤늦은 콜백이 pop 슬라이드아웃 중간에 끼어드는 걸 막는다.
+  if(_stackAnimTimer){clearTimeout(_stackAnimTimer);_stackAnimTimer=null;}
+  _stackAnimSeq++;
   if(_cardStack.length<=1){closeMobSheet();return;}
   const leaving=_cardStack.pop();
   const prev=_cardStack[_cardStack.length-1];
@@ -8486,18 +8522,21 @@ function _wireSheetTabbarHide(scrollEl){
   if(!scrollEl)return;
   scrollEl._lastScroll=0;
   scrollEl.addEventListener('scroll',()=>{
-    const cur=scrollEl.scrollTop;
     const tb=document.getElementById('tabbar');
-    if(cur>scrollEl._lastScroll&&cur>10){
-      if(!tb.classList.contains('tab-hidden')){
-        tb.classList.add('tab-hidden');
-        _extendSheets();
-      }
-    } else {
-      if(tb.classList.contains('tab-hidden')){
-        tb.classList.remove('tab-hidden');
-        _retractSheets();
-      }
+    // iOS 고무줄(바운스): scrollTop이 0 미만이거나 최대치를 넘는 구간에선 방향 계산(직전-현재)이 반전돼
+    // "다운 중"으로 오판된 채 탭바가 숨김 고착됨 — 유효 범위로 클램프해서 바운스 구간을 무시한다.
+    const max=Math.max(0,scrollEl.scrollHeight-scrollEl.clientHeight);
+    const cur=Math.max(0,Math.min(scrollEl.scrollTop,max));
+    // 최상단 근처(<40px)면 방향 무관 무조건 표시 — "탭바 안 돌아옴" 케이스를 전부 흡수하는 안전망.
+    if(cur<40){
+      if(tb.classList.contains('tab-hidden')){tb.classList.remove('tab-hidden');_retractSheets();}
+      scrollEl._lastScroll=cur;
+      return;
+    }
+    if(cur>scrollEl._lastScroll+2){ // 아래로(히스테리시스 2px로 미세 흔들림 무시)
+      if(!tb.classList.contains('tab-hidden')){tb.classList.add('tab-hidden');_extendSheets();}
+    } else if(cur<scrollEl._lastScroll-2){ // 위로
+      if(tb.classList.contains('tab-hidden')){tb.classList.remove('tab-hidden');_retractSheets();}
     }
     scrollEl._lastScroll=cur;
   },{passive:true});
