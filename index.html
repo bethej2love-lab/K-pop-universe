@@ -2597,6 +2597,17 @@ function _dismissOnboardHint(){
 // 드래그 조작감엔 영향 없음), 실제로 GPU를 태우는 그리기 호출 빈도만 줄인다 — 120Hz 화면일수록 효과가 큼.
 let _lastRenderMs=0;
 const _RENDER_INTERVAL_MS=1000/30;
+// Tier 2(2026-08-24, 발열 저감): 사용자가 잠깐 안 만지면(패시브 감상) 렌더를 30→20fps로 낮춘다.
+// autoRotate가 아주 느려(0.25) 20fps로 떨어져도 체감이 없고, 손대면 즉시 30fps로 복귀. idle 발열 절감.
+let _lastInteractMs=performance.now();
+const _IDLE_MS=2500,_IDLE_FPS=20;
+['pointerdown','pointermove','wheel','touchstart','touchmove','keydown'].forEach(ev=>
+  window.addEventListener(ev,()=>{_lastInteractMs=performance.now();},{passive:true}));
+function _curRenderInterval(){
+  if(_isAdmin())return 1000/15;                 // 어드민은 기존대로 15fps
+  if(flyState.active)return _RENDER_INTERVAL_MS; // 비행(카메라 이동) 중엔 30fps 유지
+  return (performance.now()-_lastInteractMs>_IDLE_MS)?1000/_IDLE_FPS:_RENDER_INTERVAL_MS;
+}
 function animate(){
   requestAnimationFrame(animate);
   // 탭이 백그라운드(다른 앱 전환, 화면 꺼짐 등)면 아무것도 안 보이므로 완전히 건너뛴다.
@@ -2629,6 +2640,14 @@ function animate(){
     }
   }
   controls.update();
+  // Tier 1(2026-08-24, 발열 저감): 아래 무거운 시각 계산(연결선·행성 268개 유니폼·별 포인트)과 실제 GPU
+  // 렌더를 "렌더 fps"로 한 번에 묶는다. 예전엔 이 계산들이 매 rAF(120Hz 화면이면 초당 120번) 돌면서
+  // 정작 그림은 30fps로만 그려 3/4가 낭비됐음(120Hz 폰서 CPU 루프 최대 4배↓). 드래그·관성 감에 직접
+  // 관여하는 flyState/controls.update()만 위에서 매 프레임 유지하고, 나머지는 렌더 타이밍에만 돌린다.
+  const _nowMs=performance.now();
+  if(_nowMs-_lastRenderMs<_curRenderInterval())return;
+  const _dtMs=Math.min(_nowMs-_lastRenderMs,100); // 프레임간 실경과(연속 회전 애니 속도 보정용, 긴 정지 후 튐 방지)
+  _lastRenderMs=_nowMs;
   connLines.forEach(({line,mid,baseOp,grpKo,posA,posB,bm,artA,artB})=>{
     // 즐겨찾기(내 우주 모드) 등으로 멤버/행성이 실시간 이동할 때 선 끝점이 예전 자리에 덩그러니 남지 않도록 매 프레임 동기화
     const posAttr=line.geometry.attributes.position;
@@ -2939,14 +2958,10 @@ function animate(){
       l.material.opacity=base*_mAlpha;
     });
   }
-  _nctRingGroups.forEach(({g})=>g.rotateZ(0.00028));
-  // 실제 GPU 그리기 호출만 30fps로 제한(위 주석 참고) — 나머지 로직은 이미 다 계산된 뒤라 그냥 스킵.
-  const _nowMs=performance.now();
-  if(_nowMs-_lastRenderMs>=(_isAdmin()?1000/15:_RENDER_INTERVAL_MS)){
-    _lastRenderMs=_nowMs;
-    renderer.render(scene,camera);
-    labelRenderer.render(scene,camera);
-  }
+  _nctRingGroups.forEach(({g})=>g.rotateZ(0.00028*_dtMs/16.67)); // 실경과 기준 회전(렌더 fps 달라도 속도 일정)
+  // 위에서 이미 렌더 fps로 게이트했으므로(Tier 1) 여기선 그냥 그린다.
+  renderer.render(scene,camera);
+  labelRenderer.render(scene,camera);
   if(window._syncZoomSlider)_syncZoomSlider();
 }
 animate();
