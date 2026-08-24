@@ -13069,26 +13069,11 @@ function _buildFeedRecentlyViewed(){
   });
 }
 
-// Charts 섹션 접기/펼치기(2026-08-21, 사용자 요청) — 랭킹 카드가 10종까지 늘어나면서 Discovery가 너무
-// 아래로 밀려서, 기본은 접힌 상태(처음 4장만)로 두고 "더보기" 눌러야 전부 보이게. 카드 개수/도착 순서가
-// 비동기라 매번 달라지므로 특정 카드를 숨기지 않고 CSS nth-child로 "몇 번째부터 숨길지"만 제어 —
-// 카드가 늦게 도착해도(그리드에 계속 append) 자동으로 규칙이 적용된다.
-function _wireFeedChartToggle(){
-  const chart=document.getElementById('feed-chart');
-  const btn=document.getElementById('feed-chart-more');
-  if(!chart||!btn)return;
-  chart.classList.add('fg-collapsed');
-  // 아이콘 전용(2026-08-21, 사용자 요청 — "텍스트 적지 말고 걍 아이콘만으로 간결하게") — 셰브런 회전으로
-  // 상태 표현, 텍스트는 title/aria-label에만 보조로 남김(기존 아이콘 전용 버튼들과 동일 패턴).
-  const _label=()=>{
-    const collapsed=chart.classList.contains('fg-collapsed');
-    btn.classList.toggle('expanded',!collapsed);
-    const t=collapsed?(currentLang==='ko'?'더보기':'Show more'):(currentLang==='ko'?'접기':'Show less');
-    btn.setAttribute('aria-label',t);btn.title=t;
-  };
-  _label();
-  btn.onclick=()=>{chart.classList.toggle('fg-collapsed');_label();};
-}
+// Charts 섹션은 세로 그리드+더보기 토글에서 가로 선반(feed-strip)으로 전환(2026-08-24, 사용자 요청 —
+// 기념일·최근본 스트립과 일관되게 가로로. 더보기 토글은 "차트 카드가 Discovery를 아래로 밀어냄"을
+// 막던 땜빵이었는데, 가로 선반이 한 줄 높이만 차지해 근본 원인이 사라져 토글째 제거). 가로 스크롤은
+// 위 호출부에서 _enableDragScroll(chart)로 처리. "뒤에 더 있는지 안 보임" 약점은 바로 아래 Discovery가
+// 사실상 무한스크롤이라 깊은 브라우징 니즈를 흡수하므로 Charts는 하이라이트 선반 역할로 충분.
 
 // 탐험 피드 다양성 — 동일 그룹 영상이 과다 노출되지 않도록 keyFn 기준으로 라운드로빈 인터리빙.
 // (vids는 미리 shuffle된 상태로 넘기면 버킷 내부 순서도 다양해짐)
@@ -14162,7 +14147,7 @@ function _buildFeedDiscovery(){
   // 있으면 습관이 안 생긴다"). 실제 호출 순서는 원래도 고정이었지만(랜덤 섞임 아님) 시각적으로 구분이
   // 없었던 게 문제였으므로, 데이터 흐름은 그대로 두고 담기는 컨테이너만 분리한다.
   const chart=chartList||list;
-  _wireFeedChartToggle();
+  _enableDragScroll(chart); // Charts는 가로 선반 — 드래그/휠 가로 스크롤(기념일·최근본 스트립과 동일 패턴, 2026-08-24)
   _buildFeedWeeklyTopCams(chart,list);
   _buildFeedYearlyTop(chart);
   _buildFeedLegend100(chart);
@@ -16240,10 +16225,7 @@ _totopBtn.addEventListener('click',e=>{
     </div>
     <div class="feed-section">
       <div class="feed-section-ttl">📊 Charts</div>
-      <div id="feed-chart" class="feed-grid"></div>
-      <button id="feed-chart-more" class="feed-more-toggle" type="button">
-        <svg viewBox="0 0 24 24" width="16" height="16"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </button>
+      <div id="feed-chart" class="feed-strip hscroll-drag"></div>
     </div>
     <div class="feed-section">
       <div class="feed-section-ttl">✨ Discovery</div>
