@@ -5668,67 +5668,6 @@
         ]
       },
       {
-        "title": "Hot Sauce",
-        "type": "정규",
-        "isMain": true,
-        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/106/02/760/10602760_20210510153709_500.jpg",
-        "releaseDate": "2021.05.10",
-        "trackCount": 10,
-        "titleTrack": "Hot Sauce",
-        "tracks": [
-          {
-            "no": 1,
-            "title": "맛 (Hot Sauce)",
-            "isTitle": true
-          },
-          {
-            "no": 2,
-            "title": "Diggity",
-            "isTitle": false
-          },
-          {
-            "no": 3,
-            "title": "고래 (Dive Into You)",
-            "isTitle": false
-          },
-          {
-            "no": 4,
-            "title": "우리의 계절 (My Youth)",
-            "isTitle": false
-          },
-          {
-            "no": 5,
-            "title": "Rocket",
-            "isTitle": false
-          },
-          {
-            "no": 6,
-            "title": "Countdown (3, 2, 1)",
-            "isTitle": false
-          },
-          {
-            "no": 7,
-            "title": "ANL",
-            "isTitle": false
-          },
-          {
-            "no": 8,
-            "title": "주인공 (Irreplaceable)",
-            "isTitle": false
-          },
-          {
-            "no": 9,
-            "title": "지금처럼만 (Be There For You)",
-            "isTitle": false
-          },
-          {
-            "no": 10,
-            "title": "Rainbow (책갈피)",
-            "isTitle": false
-          }
-        ]
-      },
-      {
         "title": "Reload",
         "type": "미니",
         "isMain": true,
@@ -12260,44 +12199,8 @@
         ]
       },
       {
-        "title": "'훗 (Hoot)' The 3rd Mini Album",
-        "type": "미니 3집",
-        "isMain": true,
-        "cover": "https://cdnimg.melon.co.kr/cm/album/images/010/51/951/1051951_500.jpg",
-        "releaseDate": "2010.10.25",
-        "trackCount": 5,
-        "titleTrack": "훗 (Hoot)",
-        "tracks": [
-          {
-            "no": 1,
-            "title": "훗 (Hoot)",
-            "isTitle": true
-          },
-          {
-            "no": 2,
-            "title": "내 잘못이죠 (Mistake)",
-            "isTitle": false
-          },
-          {
-            "no": 3,
-            "title": "단짝 (My Best Friend)",
-            "isTitle": false
-          },
-          {
-            "no": 4,
-            "title": "Wake Up",
-            "isTitle": false
-          },
-          {
-            "no": 5,
-            "title": "첫눈에... (Snowy Wish)",
-            "isTitle": false
-          }
-        ]
-      },
-      {
         "title": "훗 (Hoot)",
-        "type": "미니",
+        "type": "미니 3집",
         "isMain": true,
         "cover": "https://cdnimg.melon.co.kr/cm/album/images/010/51/951/1051951_500.jpg",
         "releaseDate": "2010.10.25",
@@ -36242,85 +36145,13 @@
         ]
       },
       {
-        "title": "And&End",
-        "type": "미니 10집",
-        "isMain": true,
-        "cover": "https://cdnimg.melon.co.kr/cm/album/images/022/81/562/2281562_500.jpg",
-        "releaseDate": "2016.10.05",
-        "trackCount": 5,
-        "titleTrack": "Tiamo",
-        "tracks": [
-          {
-            "no": 1,
-            "title": "Tiamo",
-            "isTitle": true
-          },
-          {
-            "no": 2,
-            "title": "나 어때 (What Do You Think of Me)",
-            "isTitle": false
-          },
-          {
-            "no": 3,
-            "title": "행복한 척 (Acting Happy)",
-            "isTitle": false
-          },
-          {
-            "no": 4,
-            "title": "Go Away",
-            "isTitle": false
-          },
-          {
-            "no": 5,
-            "title": "Tiamo (Inst.)",
-            "isTitle": false
-          }
-        ]
-      },
-      {
-        "title": "Funky Town",
-        "type": "미니 5집",
-        "isMain": true,
-        "cover": "https://cdnimg.melon.co.kr/cm/album/images/020/58/067/2058067_500.jpg",
-        "releaseDate": "2015.10.19",
-        "trackCount": 5,
-        "titleTrack": "So Crazy",
-        "tracks": [
-          {
-            "no": 1,
-            "title": "So Crazy",
-            "isTitle": true
-          },
-          {
-            "no": 2,
-            "title": "Funky Town",
-            "isTitle": false
-          },
-          {
-            "no": 3,
-            "title": "하이힐 (High Heels)",
-            "isTitle": false
-          },
-          {
-            "no": 4,
-            "title": "니가 없는 밤 (Without You)",
-            "isTitle": false
-          },
-          {
-            "no": 5,
-            "title": "So Crazy (Inst.)",
-            "isTitle": false
-          }
-        ]
-      },
-      {
         "title": "So Good",
         "type": "미니 11집",
         "isMain": true,
         "cover": "https://cdnimg.melon.co.kr/cm/album/images/023/32/960/2332960_500.jpg",
         "releaseDate": "2015.08.04",
         "trackCount": 5,
-        "titleTrack": "완전 미쳤네 (Korean Ver.)",
+        "titleTrack": "완전 미쳤네",
         "tracks": [
           {
             "no": 1,
@@ -36345,6 +36176,52 @@
           {
             "no": 5,
             "title": "완전 미쳤네 (Inst.)",
+            "isTitle": false
+          }
+        ]
+      },
+      {
+        "title": "And&End",
+        "type": "미니 10집",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/022/81/562/2281562_500.jpg",
+        "releaseDate": "2014.09.11",
+        "trackCount": 7,
+        "titleTrack": "Sugar Free",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Sugar Free (BigRoom Ver.)",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Sugar Free",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "남주긴 아까워",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "ORGR",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "지난 달력",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "그녀를 보면",
+            "isTitle": false
+          },
+          {
+            "no": 7,
+            "title": "Sugar Free (BigRoom Ver Inst.)",
             "isTitle": false
           }
         ]
@@ -36432,42 +36309,6 @@
         ]
       },
       {
-        "title": "NUMBER NINE",
-        "type": "미니 3집",
-        "isMain": true,
-        "cover": "https://cdnimg.melon.co.kr/cm/album/images/022/21/502/2221502_500.jpg",
-        "releaseDate": "2013.08.20",
-        "trackCount": 5,
-        "titleTrack": "Number Nine",
-        "tracks": [
-          {
-            "no": 1,
-            "title": "Number Nine",
-            "isTitle": true
-          },
-          {
-            "no": 2,
-            "title": "방금 이 노래 (This Song)",
-            "isTitle": false
-          },
-          {
-            "no": 3,
-            "title": "DO YOU KNOW ME",
-            "isTitle": false
-          },
-          {
-            "no": 4,
-            "title": "No. 9 (Korean Ver.)",
-            "isTitle": false
-          },
-          {
-            "no": 5,
-            "title": "Number Nine (Inst.)",
-            "isTitle": false
-          }
-        ]
-      },
-      {
         "title": "MIRAGE",
         "type": "미니 7집",
         "isMain": true,
@@ -36509,53 +36350,48 @@
         ]
       },
       {
-        "title": "DAY BY DAY",
+        "title": "DAY BY DAY",
         "type": "미니 6집",
         "isMain": true,
         "cover": "https://cdnimg.melon.co.kr/cm/album/images/021/33/148/2133148_500.jpg",
-        "releaseDate": "2012.07.06",
-        "trackCount": 6,
-        "titleTrack": "Day By Day",
+        "releaseDate": "2012.07.03",
+        "trackCount": 5,
+        "titleTrack": "DAY BY DAY",
         "tracks": [
           {
             "no": 1,
-            "title": "Day By Day",
+            "title": "DAY BY DAY",
             "isTitle": true
           },
           {
             "no": 2,
-            "title": "Sexy Love",
+            "title": "HOLIDAY",
             "isTitle": false
           },
           {
             "no": 3,
-            "title": "미치게 만들어 (Crazy in Love)",
+            "title": "떠나지마",
             "isTitle": false
           },
           {
             "no": 4,
-            "title": "가면 (Mask)",
+            "title": "HUE",
             "isTitle": false
           },
           {
             "no": 5,
-            "title": "No. 9",
-            "isTitle": false
-          },
-          {
-            "no": 6,
-            "title": "Day By Day (Inst.)",
+            "title": "사랑놀이",
             "isTitle": false
           }
         ]
       },
       {
-        "title": "John Travolta Wannabe",
-        "type": "미니 1집",
+        "title": "Funky Town",
+        "type": "미니 5집",
         "isMain": true,
-        "cover": "https://cdnimg.melon.co.kr/cm/album/images/013/17/401/1317401_500.jpg",
-        "releaseDate": "2012.01.16",
-        "trackCount": 6,
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/020/58/067/2058067_500.jpg",
+        "releaseDate": "2012.01.03",
+        "trackCount": 8,
         "titleTrack": "Lovey-Dovey",
         "tracks": [
           {
@@ -36565,27 +36401,37 @@
           },
           {
             "no": 2,
-            "title": "존트라볼타 워너비 (John Travolta Wannabe)",
+            "title": "우리 사랑했잖아",
             "isTitle": false
           },
           {
             "no": 3,
-            "title": "야야야 (Yayaya)",
+            "title": "Lovey-Dovey (Club Remix Ver.)",
             "isTitle": false
           },
           {
             "no": 4,
-            "title": "SEXY LOVE",
+            "title": "Cry Cry",
             "isTitle": false
           },
           {
             "no": 5,
-            "title": "Yayaya (English Ver.)",
+            "title": "Goodbye, OK",
             "isTitle": false
           },
           {
             "no": 6,
-            "title": "Lovey-Dovey (Inst.)",
+            "title": "O My God",
+            "isTitle": false
+          },
+          {
+            "no": 7,
+            "title": "I'm So Bad",
+            "isTitle": false
+          },
+          {
+            "no": 8,
+            "title": "Cry Cry (Ballad Ver.)",
             "isTitle": false
           }
         ]
@@ -36632,6 +36478,52 @@
         ]
       },
       {
+        "title": "존트라볼타 워너비",
+        "type": "미니 3집",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/013/17/401/1317401_500.jpg",
+        "releaseDate": "2011.06.29",
+        "trackCount": 7,
+        "titleTrack": "Roly-Poly",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Roly-Poly",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "진짜 진짜 좋아해",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "Yayaya (Remix Ver.)",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "왜 이러니 (Remix Ver.)",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Ma Boo (Remix Ver.)",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "몰라요 (Remix Ver.)",
+            "isTitle": false
+          },
+          {
+            "no": 7,
+            "title": "괜찮아요 (Remix Ver.)",
+            "isTitle": false
+          }
+        ]
+      },
+      {
         "title": "Vol.2 Temptastic",
         "type": "미니 2집",
         "isMain": true,
@@ -36673,62 +36565,82 @@
         ]
       },
       {
-        "title": "Absolute First Album",
+        "title": "Absolute First Album",
         "type": "정규 1집",
         "isMain": true,
         "cover": "https://cdnimg.melon.co.kr/cm/album/images/007/27/252/727252_500.jpg",
-        "releaseDate": "2009.07.01",
-        "trackCount": 10,
-        "titleTrack": "TTL (Time to Love)",
+        "releaseDate": "2009.11.27",
+        "trackCount": 14,
+        "titleTrack": "Bo Peep Bo Peep",
         "tracks": [
           {
             "no": 1,
-            "title": "TTL (Time to Love)",
-            "isTitle": true
+            "title": "One&One",
+            "isTitle": false
           },
           {
             "no": 2,
-            "title": "왜 이러니 (What's My Name?)",
+            "title": "처음처럼",
             "isTitle": false
           },
           {
             "no": 3,
             "title": "Bo Peep Bo Peep",
-            "isTitle": false
+            "isTitle": true
           },
           {
             "no": 4,
-            "title": "멍청이 (Stupid)",
+            "title": "Tic Tic Toc",
             "isTitle": false
           },
           {
             "no": 5,
-            "title": "파라다이스 (Paradise)",
+            "title": "Bye Bye",
             "isTitle": false
           },
           {
             "no": 6,
-            "title": "Lies (Lie)",
+            "title": "Apple Is A",
             "isTitle": false
           },
           {
             "no": 7,
-            "title": "So Crazy",
+            "title": "Falling U",
             "isTitle": false
           },
           {
             "no": 8,
-            "title": "Yayaya",
+            "title": "너너너",
             "isTitle": false
           },
           {
             "no": 9,
-            "title": "사랑을 했다 (We Were in Love)",
+            "title": "거짓말 (Dance Ver.)",
             "isTitle": false
           },
           {
             "no": 10,
-            "title": "TTL (Inst.)",
+            "title": "T.T.L (Time To Love)",
+            "isTitle": false
+          },
+          {
+            "no": 11,
+            "title": "거짓말 (Slow Ver.)",
+            "isTitle": false
+          },
+          {
+            "no": 12,
+            "title": "TTL Listen.2",
+            "isTitle": false
+          },
+          {
+            "no": 13,
+            "title": "좋은 사람",
+            "isTitle": false
+          },
+          {
+            "no": 14,
+            "title": "놀아볼래?",
             "isTitle": false
           }
         ]
@@ -60032,10 +59944,10 @@
       },
       {
         "title": "Still 2:00PM",
-        "type": "정규 1집",
+        "type": "미니 1집",
         "isMain": true,
         "cover": "https://cdnimg.melon.co.kr/cm/album/images/010/35/164/1035164_500.jpg",
-        "releaseDate": "2010.09.09",
+        "releaseDate": "2010.10.11",
         "trackCount": 7,
         "titleTrack": "I'll Be Back",
         "tracks": [
@@ -60113,6 +60025,82 @@
           {
             "no": 6,
             "title": "Space 마자",
+            "isTitle": false
+          }
+        ]
+      },
+      {
+        "title": "1:59PM",
+        "type": "정규 1집",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/007/11/451/711451_500.jpg",
+        "releaseDate": "2009.11.03",
+        "trackCount": 13,
+        "titleTrack": "Heartbeat",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "My Heart",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "Heartbeat",
+            "isTitle": true
+          },
+          {
+            "no": 3,
+            "title": "기다리다 지친다",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "너에게 미쳤었다",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Gimme The Light",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "Back 2U",
+            "isTitle": false
+          },
+          {
+            "no": 7,
+            "title": "All Night Long",
+            "isTitle": false
+          },
+          {
+            "no": 8,
+            "title": "Heartbeat (Red Light Mix)",
+            "isTitle": false
+          },
+          {
+            "no": 9,
+            "title": "10점 만점에 10점 (10/10)",
+            "isTitle": false
+          },
+          {
+            "no": 10,
+            "title": "Only You (Acoustic Mix)",
+            "isTitle": false
+          },
+          {
+            "no": 11,
+            "title": "Again & Again",
+            "isTitle": false
+          },
+          {
+            "no": 12,
+            "title": "니가밉다 (Lounge Mix)",
+            "isTitle": false
+          },
+          {
+            "no": 13,
+            "title": "돌아올지도 몰라 (Bossa Nova Mix)",
             "isTitle": false
           }
         ]
