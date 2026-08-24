@@ -64,7 +64,7 @@ function readNamu(gname, g) {
   }
   for (let i = 0; i < cands.length; i++) {
     const f = path.join(CACHE_DIR, `gnamu_${encodeURIComponent(gname)}_${i}.html`);
-    try { execFileSync('curl', ['-sk', '--max-time', '40', '-A', UA, encodeURI(cands[i]), '-o', f], { stdio: 'ignore' }); reqCount++; } catch { continue; }
+    try { execFileSync('curl', ['-skL', '--max-time', '40', '-A', UA, encodeURI(cands[i]), '-o', f], { stdio: 'ignore' }); reqCount++; } catch { continue; }
     const h = fs.existsSync(f) ? fs.readFileSync(f, 'utf8') : '';
     if (!namuMissing(h)) return h;
   }
@@ -101,7 +101,8 @@ function parseNamuAlbums(text) {
   //    날짜가 잠깐 뒤집히면 한국 음반 전체가 통째로 잘려나간다(파싱 0의 주원인).
   //    방향은 다수결로 정하고, 1년 이상 크게 되감기면서 그 뒤가 다시 단조로울 때만 새 섹션으로 본다.
   markSecondary(out);
-  return out;
+  // ⚠ 이 필터를 빼먹으면 일본 음반이 국내 정규/미니로 섞여 들어간다(실제로 한 번 발생)
+  return out.filter(n => !n.jp && !n.secondary && n.section !== '참여 음반');
 }
 
 function markSecondary(out) {
@@ -120,7 +121,6 @@ function markSecondary(out) {
     for (let j = i; j < out.length; j++) out[j].secondary = true;
     return;
   }
-  return out.filter(n => !n.jp && !n.secondary && n.section !== '참여 음반');
 }
 
 /* --------------------------------- 멜론 --------------------------------- */

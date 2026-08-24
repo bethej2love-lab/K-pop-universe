@@ -156,7 +156,7 @@ function curlGet(url, cacheFile) {
   for (let i = 1; i <= 3; i++) {
     try {
       reqCount++;
-      execFileSync('curl', ['-sk', '--max-time', '40', '-A', UA, url, '-o', cacheFile], { stdio: 'ignore' });
+      execFileSync('curl', ['-skL', '--max-time', '40', '-A', UA, url, '-o', cacheFile], { stdio: 'ignore' });
       const h = readIfValid(cacheFile);
       if (h) return h;
       if (fs.existsSync(cacheFile) && fs.statSync(cacheFile).size > 5000) return '';
