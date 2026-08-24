@@ -278,7 +278,8 @@ const audit = JSON.parse(fs.readFileSync(path.join(OUT_DIR, 'result.json'), 'utf
 const artists = JSON.parse(fs.readFileSync(path.join(ROOT, 'artists.json'), 'utf8'));
 const artistList = Object.values(artists);
 
-let targets = audit.results.filter(r => !r.hasDiscogInJson && r.hasMain);
+const ROUND2 = process.argv.includes('--round2');   // 싱글/OST 만 보유한 멤버
+let targets = audit.results.filter(r => !r.hasDiscogInJson && (ROUND2 ? (!r.hasMain && r.solo.length > 0) : r.hasMain));
 if (ONLY) targets = targets.filter(t => ONLY.has(t.ko));
 if (LIMIT) targets = targets.slice(0, LIMIT);
 

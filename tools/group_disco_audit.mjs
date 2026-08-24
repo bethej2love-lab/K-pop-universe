@@ -126,12 +126,12 @@ for (const gname of names) {
   /* ---- A) 내부 정합성 (수집 없이 즉시 판정 가능) ---- */
 
   // A1. 같은 종류·번호가 두 번 (에이프릴 "Dreaming" 미니1집/미니7집 류)
+  // ⚠ 접두사(정규 1집)만 보면 "정규 1집 PART 2"·"정규 3집 Act 1/2" 같은 파트 앨범을 중복으로 오판한다.
+  //    같은 번호를 의도적으로 쓰는 표기이므로 전체 문자열이 완전히 같을 때만 중복.
   const byType = {};
   for (const d of disco) {
-    const { kind, no } = kindOf(d.type);
-    if (!no) continue;
-    const key = `${kind} ${no}집`;
-    (byType[key] = byType[key] || []).push(d);
+    if (!/^(정규|미니)\s*\d+집$/.test(d.type)) continue;
+    (byType[d.type] = byType[d.type] || []).push(d);
   }
   for (const [k, list] of Object.entries(byType)) {
     if (list.length > 1) push(gname, '번호중복', 'ERROR', `${k} 이 ${list.length}장 — ${list.map(d => `"${d.title}"(${d.releaseDate})`).join(' vs ')}`);
