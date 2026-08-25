@@ -95580,7 +95580,9 @@
       },
       {
         "ko": "BAE173",
-        "en": "BAE173"
+        "en": "BAE173",
+        "active": false,
+        "left": "2026.02.28"
       }
     ],
     "left": "2020.01.06"
@@ -95791,6 +95793,18 @@
       "ko": "엑스원",
       "en": "X1"
     },
+    "groups": [
+      {
+        "ko": "엑스원",
+        "en": "X1"
+      },
+      {
+        "ko": "BAE173",
+        "en": "BAE173",
+        "active": false,
+        "left": "2023.06.22"
+      }
+    ],
     "co": "무소속",
     "active": false,
     "color": [
@@ -95808,6 +95822,33 @@
       "namu": "https://namu.wiki/w/%EB%82%A8%EB%8F%84%ED%98%84",
       "instagram": "https://www.instagram.com/tonixxrei"
     }
+  },
+  {
+    "name": {
+      "ko": "도하",
+      "en": "Doha"
+    },
+    "group": {
+      "ko": "BAE173",
+      "en": "BAE173"
+    },
+    "co": "포켓돌스튜디오",
+    "active": false,
+    "color": [
+      43,
+      120,
+      190
+    ],
+    "bday": "2004.03.07",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/도하(BAE173)",
+      "instagram": "https://www.instagram.com/skrbals"
+    },
+    "left": "2026.04.21"
   },
   {
     "name": {
@@ -180591,7 +180632,7 @@
     },
     "links": {
       "namu": "https://namu.wiki/w/%EC%98%81%EC%84%9C",
-      "instagram": "https://www.instagram.com/u_ose0"
+      "instagram": "https://www.instagram.com/0se0__0"
     },
     "left": "2026.06.30",
     "discography": [
