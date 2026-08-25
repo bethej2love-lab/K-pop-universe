@@ -2140,13 +2140,23 @@ function _vmRenderVideoList(){
     toolbarEl.style.display='none';
     return;
   }
-  const showCheckbox=tab==='nomem'||tab==='hold'||tab==='hidden'||tab==='ss'||tab==='all';
+  // review 탭도 체크박스를 켠다(2026-08-25) — 예전엔 한 건씩 승인/거부만 가능해서 3천 건짜리 큐를
+  // 사실상 처리할 수 없었고, 그래서 검수 자체가 방치돼 있었음(사용자 확인). 일괄 승인/거부로 전환.
+  const isReview=tab==='review';
+  const showCheckbox=isReview||tab==='nomem'||tab==='hold'||tab==='hidden'||tab==='ss'||tab==='all';
   if(showCheckbox){
     toolbarEl.style.display='flex';
     document.getElementById('vm-select-all-row').style.display='';
     document.getElementById('vm-select-all').checked=false;
     const applyLabel=tab==='nomem'?'선택-무관 해제':tab==='hold'?'선택-보류 해제':tab==='ss'?'선택-숨김':tab==='hidden'?'선택-숨김 해제':'선택-무관';
     document.getElementById('vm-apply-btn').textContent=applyLabel;
+    // review 탭에선 이 탭의 질문("이 그룹배정이 맞나")과 무관한 버튼들을 숨겨서 오조작을 막는다.
+    ['vm-apply-btn','vm-indiv-btn','vm-hold-btn','vm-normal-btn','vm-coverclear-btn','vm-coverset-btn'].forEach(id=>{
+      const el=document.getElementById(id);if(el)el.style.display=isReview?'none':'';
+    });
+    ['vm-review-approve-btn','vm-review-reject-btn'].forEach(id=>{
+      const el=document.getElementById(id);if(el)el.style.display=isReview?'':'none';
+    });
     _vmUpdateCount();
   }else{
     toolbarEl.style.display='none';
@@ -2255,6 +2265,43 @@ async function _vmReviewDecide(v,item,approve,approveBtn,rejectBtn){
     if(!_vmRows.length)_vmRenderVideoList();
   },400);
 }
+// 일괄 승인/거부(2026-08-25) — 개별 _vmReviewDecide와 같은 규칙: 승인=content_flag 해제(실제 그룹으로
+// 확정), 거부=무관 처리. 둘 다 needs_review를 내려야 큐에서 빠진다.
+// ⚠️ 되돌릴 수 있어야 하므로 다른 일괄 버튼들과 동일하게 실행 직전 스냅샷을 뜬다.
+async function _vmReviewBulk(approve){
+  if(!sb)return;
+  const ids=[...document.querySelectorAll('#vm-list .vm-item input[type=checkbox]:checked')]
+    .map(c=>c.closest('.vm-item')?.dataset.vidId).filter(Boolean);
+  if(!ids.length)return;
+  const label=approve?'승인':'거부';
+  if(!confirm(`선택한 ${ids.length}개를 ${label}할까요?\n\n· 승인: 지금 배정된 그룹이 맞다고 확정(숨김 해제)\n· 거부: 그룹배정이 틀렸다는 뜻이라 '무관' 처리\n\n되돌리기 스냅샷이 저장돼요.`))return;
+  const aBtn=document.getElementById('vm-review-approve-btn'),rBtn=document.getElementById('vm-review-reject-btn');
+  if(aBtn)aBtn.disabled=true;if(rBtn)rBtn.disabled=true;
+  const statusEl=document.getElementById('vm-status');
+  try{
+    await _snapshotBeforeBulk(`그룹배정 검수 일괄 ${label}`,ids);
+    for(let i=0;i<ids.length;i+=200){
+      const chunk=ids.slice(i,i+200);
+      const{error}=await sb.from(_YT_TABLE).update({content_flag:approve?null:'무관',needs_review:false}).in('id',chunk);
+      if(error)throw new Error(error.message);
+      if(statusEl)statusEl.textContent=`${label} 처리 중… ${Math.min(i+200,ids.length)}/${ids.length}`;
+    }
+    // 재조회 없이 목록에서만 걷어낸다 — 3천 건짜리 큐를 매번 다시 긁으면 그것만으로 몇 초씩 걸림
+    const gone=new Set(ids);
+    _vmRows=_vmRows.filter(r=>!gone.has(r.id));
+    _vmRenderVideoList();
+    if(statusEl)statusEl.textContent=`${ids.length}개 ${label} 완료 — 그룹배정 검수 대상 ${_vmRows.length}개 남음`;
+    _showShareToast(`${ids.length}개 ${label}됨`);
+  }catch(e){
+    if(statusEl)statusEl.textContent='오류: '+e.message;
+    _showShareToast('오류: '+e.message);
+  }finally{
+    if(aBtn)aBtn.disabled=false;if(rBtn)rBtn.disabled=false;
+    _vmUpdateCount();
+  }
+}
+document.getElementById('vm-review-approve-btn')?.addEventListener('click',()=>_vmReviewBulk(true));
+document.getElementById('vm-review-reject-btn')?.addEventListener('click',()=>_vmReviewBulk(false));
 function _vmUpdateCount(){
   const total=document.querySelectorAll('#vm-list .vm-item').length;
   const checked=document.querySelectorAll('#vm-list .vm-item input[type=checkbox]:checked').length;
@@ -4441,17 +4488,35 @@ async function _openVidTagModal(v,ko,originKo){
   }
   document.getElementById('vid-tag-status').textContent='';
 }
+// 편집 모달을 열기 전에 어떤 행이었는지 기억해뒀다가, 닫을 때 그 행만 다시 읽는다(2026-08-25).
+// 예전엔 닫을 때마다 _vmLoad()로 탭 전체를 재조회했는데, 그룹배정 검수(3천 건)처럼 큰 탭에선 편집
+// 한 번에 몇 초씩 처음부터 다시 긁어서 사실상 검수를 못 하는 상태였음(사용자 제보).
+async function _vmRefreshRows(ids){
+  if(!sb||!ids?.length)return false;
+  const{data,error}=await sb.from(_YT_TABLE)
+    .select('id,title,group_ko,thumb,content_flag,needs_review,category,members,with_members,with_groups,cover_of_members,cover_of_groups,tags_manual')
+    .in('id',ids);
+  if(error||!data)return false;
+  const byId=new Map(data.map(r=>[r.id,r]));
+  // 이 탭의 조건에서 벗어난 행(예: 검수 탭에서 승인돼 needs_review가 내려간 행)은 목록에서 뺀다.
+  const stillFits=r=>_vmTab!=='review'||r.needs_review===true;
+  _vmRows=_vmRows.map(r=>byId.has(r.id)?{...r,...byId.get(r.id)}:r).filter(r=>!byId.has(r.id)||stillFits(r));
+  _vmRenderVideoList();
+  return true;
+}
 function _closeVidTagModal(){
   document.getElementById('vid-tag-overlay').classList.remove('open');
+  const _editedIds=_vidTagBulkIds?[..._vidTagBulkIds]:(_vidTagTarget?.id?[_vidTagTarget.id]:[]);
   _vidTagTarget=null;
   _vidTagBulkIds=null;
   _vidTagOrigManual=false;
   _vidTagLoadedFormats=[];
   _vidTagFlagChoice=null;_vidTagFlagTouched=false;_vidTagApplyFlagUI();
-  // 영상 관리 패널에서 연필 버튼으로 열었을 수 있으니, 열려있으면 현재 탭 기준으로 다시 불러온다.
-  // 1차 검색어는 안 바뀌었으므로 이중 검색(2차 검색어)까지 그대로 유지(preserveSearch2).
+  // 영상 관리 패널이 열려있으면 방금 편집한 행만 갱신한다 — 탭 전체 재조회는 큰 탭(검수 3천 건)에서
+  // 편집 한 번마다 몇 초씩 걸려 작업을 사실상 불가능하게 만들었음. 편집한 행을 못 찾은 경우에만
+  // 예전처럼 전체 재조회로 폴백(1차 검색어는 그대로, 2차 검색어도 유지).
   if(document.getElementById('vm-overlay')?.classList.contains('open')){
-    _vmLoad(undefined,true);
+    _vmRefreshRows(_editedIds).then(ok=>{if(!ok)_vmLoad(undefined,true);});
   }
 }
 document.getElementById('vid-tag-cancel').addEventListener('click',e=>{e.stopPropagation();_closeVidTagModal();});
