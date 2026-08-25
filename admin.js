@@ -3694,6 +3694,11 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
   //    groups.json 앤팀에 altNames:["andTEAM"]을 같이 넣어야 정상 영상이 안 끊긴다. 둘은 세트.
   const _GROUP_TOKEN_LITERAL_ONLY=new Set(['15&','&TEAM']);
   function hitLiteral(t){return title.toUpperCase().includes(t.toUpperCase());}
+  // 영문명이 흔한 가사/구절인 그룹의 EN 토큰은 해시태그(#SAYMYNAME)로 명시됐을 때만 인정한다.
+  // 세이마이네임(Say My Name): "When You Say My Name : YEWON"·"MIYEON – Say My Name" 등 곡명·가사에
+  // 걸려 남의 영상을 대량으로 훔침(2026-08-25 실측). 한글 '세이마이네임' 토큰은 여기 없어 그대로 평문
+  // 매칭되므로 정당한 세이마이네임 영상(한글 표기/멤버)은 안 끊긴다. 스텔라·M&N과 같은 계열의 그룹판 게이트.
+  const _GROUP_TOKEN_HASHTAG_ONLY=new Set(['SAY MY NAME']);
   // 긴 이름 우선 정렬 (부분 매칭 방지). strictSync 그룹은 제목 키워드 매칭에서 제외 — 자체 채널
   // 동기화(_ytSyncGroup)로만 영상이 들어와야 하는 공통명사 이름 그룹이 외부 채널 영상 제목에서 오인식되는 걸 막음.
   // altNames(예: 브브걸의 "브레이브걸스", 슈퍼노바의 "초신성", JX의 "JYJ")도 토큰에 포함시켜야 함 —
@@ -3714,7 +3719,7 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
     if(seen.has(ko))continue;
     const conflicts=_GROUP_TITLE_CONFLICT_EXCLUDE[ko];
     if(conflicts&&conflicts.some(re=>re.test(title)))continue;
-    if(tokens.some(t=>(_GROUP_TOKEN_LITERAL_ONLY.has(t)||_ATM_DYNAMIC_LITERAL_ONLY.has(t))?hitLiteral(t):hit(t))){matchedGroupKos.push(ko);seen.add(ko);}
+    if(tokens.some(t=>_GROUP_TOKEN_HASHTAG_ONLY.has(t)?hitHashtag(t):(_GROUP_TOKEN_LITERAL_ONLY.has(t)||_ATM_DYNAMIC_LITERAL_ONLY.has(t))?hitLiteral(t):hit(t))){matchedGroupKos.push(ko);seen.add(ko);}
   }
   // 유닛명(V8, GOT the beat 등) 매칭 — 유닛 자체는 그룹이 아니라, 실제 소속 그룹/멤버로 나눠 합류시킴.
   // 제목에 유닛명만 있고 개별 멤버 이름은 없는 경우까지 커버하기 위해, 유닛 멤버를 "그 멤버 이름이

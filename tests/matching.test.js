@@ -295,6 +295,13 @@ test('이름==그룹명 — "스텔라장 Stella Jang"이 하츠투하츠 스텔
 test('이름==그룹명 — 제목에 그룹명이 있으면 정상: "하츠투하츠 스텔라 직캠"은 그대로 잡힌다',
   '[입덕직캠] 하츠투하츠 스텔라 직캠 4K', undefined,
   r => !!r && (r.membersByGroup['하츠투하츠'] || []).includes('스텔라'));
+// 영문 가사 그룹명(세이마이네임=Say My Name) — 영문 구절은 해시태그일 때만, 한글은 평문 유지.
+test('그룹 영문가사명 — "When You Say My Name" 가사가 세이마이네임으로 안 잡힌다',
+  'When You Say My Name : YEWON', undefined,
+  r => !r || r.primaryGroup !== '세이마이네임');
+test('그룹 영문가사명 — 한글 "세이마이네임 히토미"는 그대로 잡힌다',
+  '[페이스캠4K] 세이마이네임 히토미 WaveWay (SAY MY NAME HITOMI FaceCam)', undefined,
+  r => !!r && r.primaryGroup === '세이마이네임');
 
 // ── 실행 ──────────────────────────────────────────────
 let pass = 0, fail = 0;
