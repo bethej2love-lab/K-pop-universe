@@ -2051,7 +2051,7 @@ function _vmApplyTab(){
   document.getElementById('vm-ch-inner').style.display=isCh?'flex':'none';
   // 검수 탭들은 검색 불필요(고정 대상 목록). 채널 탭은 재검색(vm-search-2, 결과 내 좁히기)까진 필요
   // 없지만 1차 검색창은 채널명/핸들 검색용으로 그대로 쓴다(2026-08-21 — 예전엔 여기도 숨겨져 있었음).
-  const isReviewLike=_vmTab==='ss'||_vmTab==='review'||_vmTab==='catlock';
+  const isReviewLike=_vmTab==='ss'||_vmTab==='review'||_vmTab==='catlock'||_vmTab==='new';
   const searchEl=document.getElementById('vm-search');
   searchEl.style.display=isReviewLike?'none':'';
   searchEl.placeholder=isCh?'채널명·핸들 검색…':'제목·그룹 검색…';
@@ -2111,6 +2111,16 @@ async function _vmLoad(searchTerm,preserveSearch2){
       }
       _vmRows=hits;
       statusEl.textContent=`${hits.length}개 표시${hits.length>=1000?' (최대 1000개)':''}`;
+      _vmRenderVideoList();
+      return;
+    }
+    if(tab==='new'){
+      // 새로 들어온 영상 — created_at > 기준선(출처컬럼 추가 시점). 최신순. 그때그때 품질관리용(보고 바로 편집).
+      const{data,error}=await sb.from(_YT_TABLE).select('id,title,group_ko,thumb,content_flag,members,with_members,with_groups,cover_of_members,cover_of_groups,source_tier').gt('created_at',_ADM_CREATED_BASELINE).order('created_at',{ascending:false}).limit(1000);
+      if(myGen!==_vmSearchGen)return;
+      if(error){statusEl.textContent='조회 실패: '+error.message;return;}
+      _vmRows=data||[];
+      statusEl.textContent=`${_vmRows.length}개 (새로 들어온 순)${_vmRows.length>=1000?' · 최대 1000개':''}`;
       _vmRenderVideoList();
       return;
     }
@@ -2251,7 +2261,7 @@ function _vmRenderVideoList(){
   listEl.innerHTML='';
   const rows=_vmSearch2Rows();
   if(!_vmRows.length){
-    const emptyMsg=tab==='all'?'검색 결과가 없어요':tab==='nomem'?'무관 처리된 영상이 없어요':tab==='hold'?'보류된 영상이 없어요':tab==='review'?'검수 대기 중인 영상이 없어요':tab==='catlock'?'라이브 후보 중 수동 편집으로 막힌 영상이 없어요':'숨김 처리된 영상이 없어요';
+    const emptyMsg=tab==='all'?'검색 결과가 없어요':tab==='new'?'새로 들어온 영상이 없어요':tab==='nomem'?'무관 처리된 영상이 없어요':tab==='hold'?'보류된 영상이 없어요':tab==='review'?'검수 대기 중인 영상이 없어요':tab==='catlock'?'라이브 후보 중 수동 편집으로 막힌 영상이 없어요':'숨김 처리된 영상이 없어요';
     listEl.innerHTML=`<div style="padding:24px;text-align:center;color:rgba(155,178,228,0.45);font-size:12px;">${emptyMsg}</div>`;
     toolbarEl.style.display='none';
     return;
@@ -2264,7 +2274,7 @@ function _vmRenderVideoList(){
   // review 탭도 체크박스를 켠다(2026-08-25) — 예전엔 한 건씩 승인/거부만 가능해서 3천 건짜리 큐를
   // 사실상 처리할 수 없었고, 그래서 검수 자체가 방치돼 있었음(사용자 확인). 일괄 승인/거부로 전환.
   const isReview=tab==='review';
-  const showCheckbox=isReview||tab==='nomem'||tab==='hold'||tab==='hidden'||tab==='ss'||tab==='all';
+  const showCheckbox=isReview||tab==='nomem'||tab==='hold'||tab==='hidden'||tab==='ss'||tab==='all'||tab==='new';
   if(showCheckbox){
     toolbarEl.style.display='flex';
     document.getElementById('vm-select-all-row').style.display='';
@@ -5559,7 +5569,7 @@ async function _admLoadCards(){
   const cReview=mk('그룹배정 검수 대기','눌러서 검수 탭 열기',openVmTab('review'));
   const cSs=mk('strictSync 오염 검수','흔한 이름 그룹 영상 점검',openVmTab('ss'));
   const cFb=mk('새 피드백','마지막으로 본 뒤 들어온 것',()=>{_admHomeClose();document.getElementById('sp-fb-btn')?.click();});
-  const cNew=mk('새로 들어온 영상','동기화로 유입된 신규분');
+  const cNew=mk('새로 들어온 영상','눌러서 새 영상 검토·편집',openVmTab('new'));
   const set=(card,n,zeroSub)=>{
     const el=card.querySelector('.adm-card-num');
     const sub=card.querySelector('.adm-card-sub');
