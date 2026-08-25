@@ -3399,7 +3399,11 @@ function _m2ParseTitle(rawTitle,selfGko,strict){
   // 동명이인이 아니라 그룹명↔멤버명 충돌이라 아래 nameToGroups 동명이인 dedup(매칭 1명이라)에도 안 걸림
   // (2026-08-24 사용자 제보 — 그룹 유니스 영상이 다이아 유니스 카드에 뜸). _ATM_COMMON_KO_WORDS와 동일 원칙으로
   // 인퍼런스에선 해시태그로 명시된 경우만 인정한다(그룹 자체 매칭 경로는 별개라 그룹 태깅은 정상 유지).
-  const _atmNameIsGroup=a=>!!GROUPS[a.name.ko]&&a.name.ko!==a.group.ko;
+  // ⚠️ strictSync 그룹은 제외한다(2026-08-25). strictSync는 "이 그룹명은 제목 키워드 매칭에서 아예
+  // 빼라"는 뜻이라(위 groupsSorted 필터), 그런 그룹과 이름이 같다고 멤버까지 게이트하면 막을 모호함은
+  // 애초에 없는데 정당한 태깅만 잃는다. 실제로 방탄소년단 슈가(↔2002년 걸그룹 슈가/Sugar)와
+  // 하츠투하츠 스텔라(↔스텔라/Stellar) 둘이 이 이유로 해시태그 없이는 영영 매칭 안 되고 있었음.
+  const _atmNameIsGroup=a=>!!GROUPS[a.name.ko]&&a.name.ko!==a.group.ko&&!_STRICT_SYNC_GROUPS.has(a.name.ko);
   function memberHit(a,names){
     if([...a.name.ko].length===1||_isHashtagOnlyName(a.name.ko)||_ATM_COMMON_KO_WORDS.has(a.name.ko)||_atmNameIsGroup(a))return names.some(t=>hitHashtag(t));
     return names.some(t=>_atmNameNeedsCtx(t)?hitHashtag(t):hit(t));

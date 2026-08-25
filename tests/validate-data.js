@@ -142,6 +142,29 @@ Object.entries(GROUPS).forEach(([gko, info]) => {
   });
 });
 
+// ── N. 새로 추가/최근 데뷔한 그룹의 이름 충돌 위험 ──────────────────
+// 이름 충돌(동명이인·흔한단어·그룹명==멤버명·유닛토큰)은 이 프로젝트 오태깅 사고의 사실상 유일한
+// 원인인데, 매번 사용자 제보를 받고 나서야 개별 대응해왔음(2026-08-25 전수 감사에서 확인).
+// 판정 로직은 tools/name_collision_audit.mjs 한 곳에만 두고 여기선 위임만 한다 — 로직을 복붙하면
+// admin.js의 실제 게이트와 어긋나는 순간 이 검사가 거짓 안심을 주게 되므로.
+// 대상은 --new(최근 커밋에서 새로 생긴 그룹 + 최근 18개월 데뷔)로 한정 — 전체는 기존 위험까지
+// 다 뜨니까 배포 게이트로는 부적합하고, 전수 점검은 도구를 직접 돌린다.
+{
+  const { execFileSync } = require('child_process');
+  try {
+    const out = execFileSync(process.execPath,
+      [path.join(ROOT, 'tools', 'name_collision_audit.mjs'), '--new', '--json'],
+      { encoding: 'utf8', maxBuffer: 1 << 26 });
+    const r = JSON.parse(out);
+    for (const f of (r.findings || [])) {
+      add(f.sev === 'high' ? 'warn' : 'warn', `새 그룹 이름 충돌 위험(${f.kind})`,
+        `${f.name} [${f.gko}] — ${f.detail}`);
+    }
+  } catch (e) {
+    add('warn', '이름 충돌 검사 실행 실패', `tools/name_collision_audit.mjs — ${String(e.message).split('\n')[0].slice(0, 120)}`);
+  }
+}
+
 // ── 리포트 ──────────────────────
 const byCategory = new Map();
 issues.forEach(iss => {
