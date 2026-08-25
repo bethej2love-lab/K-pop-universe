@@ -3661,7 +3661,10 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
   const _atmNameIsGroup=a=>!!GROUPS[a.name.ko]&&a.name.ko!==a.group.ko&&!_STRICT_SYNC_GROUPS.has(a.name.ko);
   function memberHit(a,names){
     if([...a.name.ko].length===1||_isHashtagOnlyName(a.name.ko)||_ATM_COMMON_KO_WORDS.has(a.name.ko)||_atmNameIsGroup(a))return names.some(t=>hitHashtag(t));
-    return names.some(t=>_atmNameNeedsCtx(t)?hitHashtag(t):hit(t));
+    // 흔한단어 게이트는 변형(_m2NameVariants)마다 개별 적용해야 함 — 풀네임만 검사하면 성을 뗀 given-name
+    // 변형(유사랑→"사랑")이 게이트를 통과해 평문 "사랑"(=love)에 대량 오매칭됨(이즈나 group_ko 385건 오염,
+    // 2026-08-25 실측). 변형 t 자체가 흔한 한글단어면 그 변형은 해시태그(#유사랑)로 명시됐을 때만 인정한다.
+    return names.some(t=>(_atmNameNeedsCtx(t)||_ATM_COMMON_KO_WORDS.has(t))?hitHashtag(t):hit(t));
   }
   // 해시태그가 "성+이름"을 띄어쓰기 없이 그대로 붙여 쓰는 경우(예: "#HUHYUNJIN" = 허Huh+윤진Yunjin)가
   // 흔한데, 등록명(name.en)은 보통 성 없이 이름만("Yunjin") 등록돼있어서 위 hit()의 단어 경계 매칭으론
