@@ -1,0 +1,39 @@
+name: Bump cache version
+
+  on:
+    push:
+      branches: [main]
+      paths:
+        - 'kpop_universe.css'
+        - 'shared.js'
+        - 'admin.js'
+        - 'index.html'
+        - 'sw.js'
+
+  permissions:
+    contents: write
+
+  jobs:
+    bump:
+      # 봇이 만든 커밋에는 반응하지 않는다(무한 루프 1차 가드)
+      if: github.event.head_commit.author.name != 'github-actions[bot]'
+      runs-on: ubuntu-latest
+      steps:
+        - uses: actions/checkout@v4
+        - uses: actions/setup-node@v4
+          with:
+            node-version: 20
+        - name: Bump cache-buster versions
+          run: node tools/bump_cache_version.mjs
+        - name: Commit and push if changed
+          run: |
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add index.html sw.js
+            if git diff --cached --quiet; then
+              echo "캐시버스터 최신 — 커밋할 것 없음"
+            else
+              git commit -m "chore: bump cache version (auto)"
+              git pull --rebase origin main
+              git push
+            fi
