@@ -3601,6 +3601,9 @@ const _GROUP_TITLE_CONFLICT_EXCLUDE={
   // 물결로 이어진 범위"일 때만 제외 → 진짜 곡 "2PM - My House"(대시 뒤 두 번째 시각 없음)는 안전.
   '2PM':[/\d\s*[AP]M\s*[-~–]\s*\d\s*[AP]M/i],
   '2AM':[/\d\s*[AP]M\s*[-~–]\s*\d\s*[AP]M/i],
+  // 스텔라(Stellar) ↔ 하츠투하츠 멤버 '스텔라': 제목에 하츠투하츠가 있으면 '스텔라'는 그룹 스텔라가
+  // 아니라 그 멤버다 → 그룹 스텔라 매칭 제외(멤버는 하츠투하츠 로스터에서 정상 추출). strictSync 해제와 세트.
+  '스텔라':[/하츠투하츠|hearts\s*2\s*hearts|\bH2H\b/i],
 };
 // 위 정규식 목록으로도 다 못 거르는 경우(제목이 그냥 "Supernova"+다른 그룹 해시태그만 있고 곡명/원곡
 // 아티스트 언급이 없는 챌린지 영상들)를 위한 2차 방어선 — 이 그룹이 "다른 실존 그룹과 같이" 매칭됐으면
@@ -3760,7 +3763,10 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
   // 매칭되므로 정당한 세이마이네임 영상(한글 표기/멤버)은 안 끊긴다. 스텔라·M&N과 같은 계열의 그룹판 게이트.
   // 'NATURE'(네이처): "NATURE REPUBLIC"(화장품 브랜드)·"nature's..." 등 흔한 영단어에 걸려 남의 영상을
   // 훔침(실측 — NCT127 광고영상이 네이처로). 한글 '네이처'는 게이트 밖이라 정당한 영상은 유지.
-  const _GROUP_TOKEN_HASHTAG_ONLY=new Set(['SAY MY NAME','NATURE']);
+  // 'STELLAR'(스텔라): 영어 형용사 stellar(=최고의)에 오염. strictSync를 풀어 한글 '스텔라'는 그룹으로
+  // 매칭되게 하되(2011~2018 스텔라 영상 복구), 영문 토큰은 해시태그(#STELLAR)일 때만. 멤버 충돌(하츠투하츠
+  // 스텔라)은 아래 _GROUP_TITLE_CONFLICT_EXCLUDE['스텔라']로 처리(제목에 하츠투하츠 있으면 그룹 스텔라 제외).
+  const _GROUP_TOKEN_HASHTAG_ONLY=new Set(['SAY MY NAME','NATURE','STELLAR']);
   // 긴 이름 우선 정렬 (부분 매칭 방지). strictSync 그룹은 제목 키워드 매칭에서 제외 — 자체 채널
   // 동기화(_ytSyncGroup)로만 영상이 들어와야 하는 공통명사 이름 그룹이 외부 채널 영상 제목에서 오인식되는 걸 막음.
   // altNames(예: 브브걸의 "브레이브걸스", 슈퍼노바의 "초신성", JX의 "JYJ")도 토큰에 포함시켜야 함 —

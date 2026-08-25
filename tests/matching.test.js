@@ -302,6 +302,13 @@ test('그룹 영문가사명 — "When You Say My Name" 가사가 세이마이�
 test('그룹 영문가사명 — 한글 "세이마이네임 히토미"는 그대로 잡힌다',
   '[페이스캠4K] 세이마이네임 히토미 WaveWay (SAY MY NAME HITOMI FaceCam)', undefined,
   r => !!r && r.primaryGroup === '세이마이네임');
+// 스텔라(Stellar) strictSync 해제 — 한글 '스텔라'는 그룹으로 복구, 단 '하츠투하츠' 있으면 멤버.
+test('스텔라 그룹 복구 — "스텔라 - 찔려"가 그룹 스텔라로 잡힌다',
+  '[HOT] Stellar - Sting, 스텔라 - 찔려 Show Music core 2016', undefined,
+  r => !!r && r.primaryGroup === '스텔라');
+test('스텔라 충돌 — "하츠투하츠 스텔라"는 그룹 스텔라가 아니라 하츠투하츠',
+  '[입덕직캠] 하츠투하츠 스텔라 직캠 4K', undefined,
+  r => !!r && r.primaryGroup === '하츠투하츠');
 
 // ── 실행 ──────────────────────────────────────────────
 let pass = 0, fail = 0;
