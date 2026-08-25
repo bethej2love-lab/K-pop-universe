@@ -3767,6 +3767,11 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
   // 매칭되게 하되(2011~2018 스텔라 영상 복구), 영문 토큰은 해시태그(#STELLAR)일 때만. 멤버 충돌(하츠투하츠
   // 스텔라)은 아래 _GROUP_TITLE_CONFLICT_EXCLUDE['스텔라']로 처리(제목에 하츠투하츠 있으면 그룹 스텔라 제외).
   const _GROUP_TOKEN_HASHTAG_ONLY=new Set(['SAY MY NAME','NATURE','STELLAR']);
+  // 해체 후 같은 이름이 재사용된 그룹 — 재사용 시점 이후 영상엔 옛 그룹을 매칭하지 않는다(날짜가 유일한
+  // 구분 단서, 제목만으론 동일). 스텔라: 그룹 Stellar(2011~2018 해체) ↔ 하츠투하츠 멤버 스텔라(2025 데뷔).
+  // 실측 — 재배정 버튼이 2025년 '유하 스텔라 이안'(하츠투하츠) 영상을 그룹 스텔라로 대량 편입시킨 원인.
+  // 컷오프(하츠투하츠 프리데뷔 시점) 이후 영상은 그룹 스텔라 제외 → 멤버 인식 경로로 하츠투하츠 멤버가 잡힘.
+  const _GROUP_DISBAND_REUSE_CUTOFF={'스텔라':'2024-06-01'};
   // 긴 이름 우선 정렬 (부분 매칭 방지). strictSync 그룹은 제목 키워드 매칭에서 제외 — 자체 채널
   // 동기화(_ytSyncGroup)로만 영상이 들어와야 하는 공통명사 이름 그룹이 외부 채널 영상 제목에서 오인식되는 걸 막음.
   // altNames(예: 브브걸의 "브레이브걸스", 슈퍼노바의 "초신성", JX의 "JYJ")도 토큰에 포함시켜야 함 —
@@ -3787,6 +3792,8 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
     if(seen.has(ko))continue;
     const conflicts=_GROUP_TITLE_CONFLICT_EXCLUDE[ko];
     if(conflicts&&conflicts.some(re=>re.test(title)))continue;
+    const _reuseCut=_GROUP_DISBAND_REUSE_CUTOFF[ko]; // 이름 재사용 컷오프 이후 영상엔 옛 그룹 매칭 안 함
+    if(_reuseCut&&publishedAt&&publishedAt>=_reuseCut)continue;
     if(tokens.some(t=>_GROUP_TOKEN_HASHTAG_ONLY.has(t)?hitHashtag(t):(_GROUP_TOKEN_LITERAL_ONLY.has(t)||_ATM_DYNAMIC_LITERAL_ONLY.has(t))?hitLiteral(t):hit(t))){matchedGroupKos.push(ko);seen.add(ko);}
   }
   // 유닛명(V8, GOT the beat 등) 매칭 — 유닛 자체는 그룹이 아니라, 실제 소속 그룹/멤버로 나눠 합류시킴.
