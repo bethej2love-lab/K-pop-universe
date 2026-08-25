@@ -5407,8 +5407,10 @@ function _admCard(opt){
 }
 // 마지막 루틴 실행 시각 — 기존 체크포인트(kpu_yt_last_*)는 "마지막 영상 id"라 시각 정보가 없어서
 // 별도 타임스탬프를 남긴다(루틴 완료 시 기록).
-function _admLastRunText(){
-  const t=Number(localStorage.getItem(_ADM_LS.lastRun)||0);
+// ⚠️ localStorage만 쓰면 기기별로 따로 논다 — 회사 PC에서 돌린 기록이 집 PC엔 안 보였음(2026-08-25).
+//    그래서 공용 DB(atm_exception_rules를 범용 키-값으로 재사용, type='admin_meta')에도 남겨
+//    어느 기기서든 같은 값이 보이게 한다. localStorage는 즉시표시/오프라인 폴백으로 유지.
+function _admLastRunFmt(t){
   if(!t)return{num:'기록 없음',sub:'루틴을 한 번 돌리면 기록돼요',tone:'adm-zero'};
   const h=Math.floor((Date.now()-t)/3600000);
   const when=new Date(t).toLocaleString('ko-KR');
@@ -5416,6 +5418,17 @@ function _admLastRunText(){
   if(h<24)return{num:h+'시간 전',sub:when,tone:''};
   const d=Math.floor(h/24);
   return{num:d+'일 전',sub:when,tone:d>=3?'adm-warn':''};
+}
+function _admLastRunLocal(){return Number(localStorage.getItem(_ADM_LS.lastRun)||0);}
+async function _admReadLastRunDB(){
+  try{
+    const{data,error}=await sb.from('atm_exception_rules').select('value').eq('type','admin_meta').eq('key','last_routine').maybeSingle();
+    if(error||!data)return 0;
+    return Number(data.value)||0;
+  }catch(e){return 0;}
+}
+async function _admWriteLastRunDB(ts){
+  try{await sb.from('atm_exception_rules').upsert({type:'admin_meta',key:'last_routine',value:ts},{onConflict:'type,key'});}catch(e){}
 }
 // ⚠️ supabase-js는 `.select()`를 **먼저** 부른 뒤에야 필터(.eq/.in/.gt)를 걸 수 있다.
 // 처음엔 `sb.from(X).eq(...)` 순서로 짰다가 카드가 전부 "?"(=조회 실패)로 떴음 — 호출부가
@@ -5432,8 +5445,9 @@ async function _admLoadCards(){
   const wrap=document.getElementById('adm-cards');
   if(!wrap)return;
   wrap.innerHTML='';
-  const lr=_admLastRunText();
-  wrap.appendChild(_admCard({lbl:'마지막 루틴 실행',num:lr.num,sub:lr.sub,tone:lr.tone}));
+  const lrLocal=_admLastRunFmt(_admLastRunLocal());
+  const lrCard=_admCard({lbl:'마지막 루틴 실행',num:lrLocal.num,sub:lrLocal.sub,tone:lrLocal.tone});
+  wrap.appendChild(lrCard);
   // 숫자가 늦게 와도 레이아웃이 안 튀도록 카드를 먼저 만들어 두고 나중에 채운다
   const mk=(lbl,sub,onClick)=>{const c=_admCard({lbl:lbl,num:'…',sub:'불러오는 중',onClick:onClick,tone:'adm-zero'});c.dataset.sub=sub;wrap.appendChild(c);return c;};
   const openVmTab=tab=>()=>{
@@ -5464,6 +5478,16 @@ async function _admLoadCards(){
     });
     return;
   }
+  // 공용 DB의 마지막 실행 시각으로 카드 갱신(기기 간 공유). 로컬보다 최신이면 로컬도 맞춰둔다.
+  _admReadLastRunDB().then(dbTs=>{
+    const t=Math.max(dbTs,_admLastRunLocal());
+    if(!t)return;
+    const f=_admLastRunFmt(t);
+    const n=lrCard.querySelector('.adm-card-num'),s=lrCard.querySelector('.adm-card-sub');
+    if(n){n.textContent=f.num;n.className='adm-card-num'+(f.tone?' '+f.tone:'');}
+    if(s)s.textContent=f.sub;
+    if(dbTs>_admLastRunLocal()){try{localStorage.setItem(_ADM_LS.lastRun,String(dbTs));}catch(e){}}
+  });
   const ssGkos=[..._STRICT_SYNC_GROUPS];
   // ⚠️ Promise.all로 묶어 한꺼번에 반영하면 **제일 느린 쿼리에 전부 발이 묶인다** — 콜드 커넥션에선
   // 첫 쿼리가 11초까지 걸리는 걸 실측했고(2026-08-25), 그동안 카드 셋이 다 "…"로 멈춰 있어서 화면이
@@ -5536,7 +5560,9 @@ async function _admRunRoutine(withSync){
   }
   const mins=Math.round((Date.now()-t0)/60000);
   _admSetLog('총 '+(mins<1?'1분 미만':mins+'분')+' 소요 — 카드 숫자를 다시 불러왔어요.','adm-log-done');
-  try{localStorage.setItem(_ADM_LS.lastRun,String(Date.now()));}catch(e){}
+  const _now=Date.now();
+  try{localStorage.setItem(_ADM_LS.lastRun,String(_now));}catch(e){}
+  await _admWriteLastRunDB(_now);
   _admRoutineRunning=false;
   if(runBtn)runBtn.disabled=false;
   if(noSyncBtn)noSyncBtn.disabled=false;
