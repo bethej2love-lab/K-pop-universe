@@ -3251,6 +3251,19 @@ const _EXT_STRICT_TIERS=new Set(['variety','magazine','idol','show','fans']); //
 // 제목에 프로젝트 유닛명(한글/영문 표기 아무거나)이 있으면 그중 지금 채널(ko)에 속하는 멤버만 추려서
 // 반환 — 태그 모달에서 체크박스 기본값을 정할 때(_openVidTagModal), _m2ParseTitle과 별개로 자체 채널
 // 영상에도 같은 유닛 인식을 적용하기 위한 경량 버전(그룹/멤버 역추론 등 나머지 로직은 필요 없음).
+// 로테이션 유닛(NCT U)에서 "이 멤버가 제목에 따로 언급됐는가" 판정.
+// ⚠️ 한글 활동명만 보면 안 된다 — NCT 계열은 영문 표기/해시태그(#JISUNG, TAEYONG)가 압도적이라
+// 한글만 보면 영문 제목 영상에서 아무도 못 잡는다(2026-08-25 단위테스트에서 발견).
+// 짧은 영문명(TEN·KUN 등)은 흔한 단어·숫자와 겹치므로 해시태그로만 인정 — _atmNameNeedsCtx와 같은
+// 원칙이지만 그 함수는 _m2ParseTitle 스코프 안이라 여기선 길이 기준으로 대체한다.
+function _unitMemberNamedInTitle(mko,gko,hit,hitHashtag){
+  if(hit(mko)||hitHashtag(mko))return true;
+  const a=ARTISTS.find(x=>x.name.ko===mko&&_artistGroups(x).some(g=>g.ko===gko));
+  const en=a&&a.name&&a.name.en;
+  if(!en)return false;
+  if(hitHashtag(en))return true;
+  return en.replace(/[^A-Za-z0-9]/g,'').length>=5&&hit(en);
+}
 function _unitMembersFromTitle(title,ko){
   const norm=' '+(title||'').toUpperCase().replace(/[^가-힣a-zA-Z0-9]/g,' ').replace(/\s+/g,' ')+' ';
   // name도 title과 같은 규칙으로 정규화해야 함 — 안 그러면 "K.R.Y."/"D&E"처럼 특수문자가 낀 유닛명은
@@ -3268,6 +3281,12 @@ function _unitMembersFromTitle(title,ko){
   const result=new Set();
   Object.values(_PROJECT_UNITS).forEach(unit=>{
     if(!unit.names.some(t=>_UNIT_HASHTAG_ONLY_TOKENS.has(t)?hitHashtag(t):hit(t)))return;
+    // 로테이션 유닛(NCT U 등, shared.js 주석 참고)은 members가 "참여한 적 있는 사람 명단"이라
+    // 전원 확장하면 안 됨 — 제목에 이름이 따로 언급된 멤버만 인정한다.
+    if(unit.rotating){
+      unit.members.forEach(({mko,gko})=>{if(gko===ko&&_unitMemberNamedInTitle(mko,gko,hit,hitHashtag))result.add(mko);});
+      return;
+    }
     unit.members.forEach(({mko,gko})=>{if(gko===ko)result.add(mko);});
   });
   return result;
@@ -3392,7 +3411,10 @@ function _m2ParseTitle(rawTitle,selfGko,strict){
   // 부분문자열(베이비돈크라이·베이비몬스터·베이비복스)에 걸려 엉뚱한 그룹으로 끌려감(2026-08-23 사용자
   // 제보 — 베이비돈크라이 영상이 아워벌스데이 '베이비'로 오추론). 단일음절 이름과 동일하게 인퍼런스에선
   // 해시태그만 인정한다(자체 채널 태깅 _atmMatchesMember는 그룹 확정 문맥이라 평문 매칭 그대로 유지 — 영향 없음).
-  const _ATM_COMMON_KO_WORDS=new Set(['베이비','하루','하늘','바다','봄','여름','겨울','별','사랑','달','천사','하트','메이']); // 메이: en=May(달)+동명이인 3명(리센느/세이마이네임/체리블렛)+A2O MAY 그룹명 — 인퍼런스에선 해시태그/그룹문맥만(2026-08-24)
+  // 2026-08-25 전수 감사(tools/name_collision_audit.mjs)로 추가된 6개: 가을(아이브)·노을(레인보우)·
+  // 소원(여자친구)·하나(피프티피프티)·루비(프림로즈)·미소(드림노트). 전부 노래 제목·자막에 평문으로
+  // 흔히 나오는 단어라 역추론에서 오매칭 위험이 큼(실측: "가을"은 38건 중 5건이 이미 근거 없는 태그).
+  const _ATM_COMMON_KO_WORDS=new Set(['베이비','하루','하늘','바다','봄','여름','겨울','별','사랑','달','천사','하트','메이','가을','노을','소원','하나','루비','미소']); // 메이: en=May(달)+동명이인 3명(리센느/세이마이네임/체리블렛)+A2O MAY 그룹명 — 인퍼런스에선 해시태그/그룹문맥만(2026-08-24)
   // 멤버 이름이 "실존하는 그룹 이름"과 같은 경우(예: 다이아 멤버 "유니스" ↔ 그룹 유니스(UNIS), A2O MAY의
   // "메이" 등): 제목에 평문으로 나온 "유니스"는 거의 항상 그 그룹을 가리키는데, memberHit이 이걸 그 이름의
   // 멤버(다이아 유니스)로 역추론해 엉뚱한 그룹 콜라보(with_members "유니스(다이아)")로 오태깅함 —
@@ -3467,7 +3489,15 @@ function _m2ParseTitle(rawTitle,selfGko,strict){
     // 인정(2026-08-21, Fable 감사로 트리플에스 유닛명이 아시아 아티스트 어워즈 약칭·다른 그룹 콘서트명과
     // 충돌해 대량 오매칭되는 게 발견됨).
     if(!unit.names.some(t=>_UNIT_HASHTAG_ONLY_TOKENS.has(t)?hitHashtag(t):hit(t)))return;
-    unit.members.forEach(({mko,gko})=>{
+    // 로테이션 유닛(NCT U — shared.js 주석 참고)은 members가 "곡마다 바뀌는 참여자 풀"이라 전원
+    // 확장하면 참여도 안 한 멤버까지 붙는다(2026-08-25 실측 767건). 제목에 이름이 따로 언급된
+    // 멤버만 인정하고, 그 멤버의 그룹만 matchedGroupKos에 넣는다 — 이름이 하나도 없으면 이 유닛으로
+    // 인한 멤버·그룹 추가는 0건(자체 채널이면 group_ko는 채널 기준으로 따로 정해지므로 영상이
+    // 유실되지는 않음).
+    const named=unit.rotating
+      ? unit.members.filter(({mko,gko})=>_unitMemberNamedInTitle(mko,gko,hit,hitHashtag))
+      : unit.members;
+    named.forEach(({mko,gko})=>{
       if(!seen.has(gko)){matchedGroupKos.push(gko);seen.add(gko);}
       if(!unitExtraMembers[gko])unitExtraMembers[gko]=new Set();
       unitExtraMembers[gko].add(mko);
@@ -4412,6 +4442,26 @@ document.getElementById('vid-tag-cover-search').addEventListener('input',e=>{
   const groupMatches=Object.keys(GROUPS).filter(gko=>
     (gko.includes(q)||(GROUPS[gko].en||'').toLowerCase().includes(qLower))&&!_vidTagCoverGroupsSelected.includes(gko)
   ).slice(0,4);
+  // 프로젝트 유닛도 원곡자로 지정할 수 있게(2026-08-25, 사용자 요청 — "원곡자에 NCT U 추가"). 유닛은
+  // groups.json에 없어서(행성 승격 안 함 원칙) 위 GROUPS 검색엔 절대 안 걸렸음. cover_of_groups에는
+  // 유닛명을 그대로 넣고, 멤버 카드 커버 탭 하단(_loadCoverOfSection)이 그 멤버의 유닛명으로도 조회한다.
+  const unitMatches=Object.keys(_PROJECT_UNITS).filter(uname=>
+    (uname.toLowerCase().includes(qLower)||_PROJECT_UNITS[uname].names.some(n=>n.toLowerCase().includes(qLower)))
+    &&!_vidTagCoverGroupsSelected.includes(uname)
+  ).slice(0,3);
+  unitMatches.forEach(uname=>{
+    const opt=document.createElement('div');
+    opt.className='vid-tag-with-opt vid-tag-with-opt-group';
+    opt.textContent=`${uname} (유닛 전체)`;
+    opt.addEventListener('click',ev=>{
+      ev.stopPropagation();
+      _vidTagCoverGroupsSelected.push(uname);
+      _renderVidTagChips();
+      e.target.value='';
+      resultsEl.innerHTML='';
+    });
+    resultsEl.appendChild(opt);
+  });
   groupMatches.forEach(gko=>{
     const opt=document.createElement('div');
     opt.className='vid-tag-with-opt vid-tag-with-opt-group';

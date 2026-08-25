@@ -71,6 +71,10 @@ pieces.push(extractStatement(adminSrc, /^const _m2VariantsCache\s*=/m, '_m2Varia
 pieces.push(extractByBraces(adminSrc, /^function _m2NameVariants\(/m, '_m2NameVariants'));
 pieces.push(extractStatement(adminSrc, /^const _GROUP_TITLE_CONFLICT_EXCLUDE\s*=/m, '_GROUP_TITLE_CONFLICT_EXCLUDE'));
 pieces.push(extractStatement(adminSrc, /^const _GROUP_AMBIGUOUS_IF_COMATCHED\s*=/m, '_GROUP_AMBIGUOUS_IF_COMATCHED'));
+// 로테이션 유닛(NCT U) 판정 헬퍼 — _m2ParseTitle이 유닛 확장에서 호출한다(2026-08-25 신설).
+// ⚠️ 이 하네스는 "이름으로 잘라오기" 방식이라, _m2ParseTitle이 새 최상위 함수를 부르게 되면
+// 여기에도 반드시 추가해야 함(안 하면 "... is not defined"로 전 케이스가 실패한다).
+pieces.push(extractByBraces(adminSrc, /^function _unitMemberNamedInTitle\(/m, '_unitMemberNamedInTitle'));
 pieces.push(extractByBraces(adminSrc, /^function _m2ParseTitle\(/m, '_m2ParseTitle'));
 
 const harnessSrc = `
@@ -165,6 +169,37 @@ test(
 );
 
 // 참고용(단정하지 않음) — 이번 회귀 스위트 작성 중 새로 발견한 실제 잠재 이슈:
+// ── NCT U(로테이션 유닛) ─────────────────────────────────────────
+// 다른 유닛(부석순·유아유 등)은 유닛명이 뜨면 그 멤버 전원이 참여한 게 맞지만, NCT U의 members는
+// "NCT U로 활동한 적 있는 사람 21명 풀"이라 전원 확장하면 참여도 안 한 멤버가 붙는다.
+// 실제로 2026-08-25 실측에서 767건이 이렇게 오염돼 있었음(지성321·마크114·정우113·재현113·도영106).
+// shared.js의 rotating:true 로 "제목에 이름이 따로 언급된 멤버만" 인정하도록 바꾼 것의 회귀 방지.
+test(
+  'NCT U 로테이션 — 윈윈 직캠에 다른 NCT 멤버가 안 붙음',
+  "[페이스캠4K] 엔시티 유 윈윈 '90's Love' (NCT U WINWIN FaceCam)", undefined,
+  r => !r || !(r.membersByGroup['엔시티 드림'] || []).includes('지성')
+);
+test(
+  'NCT U 로테이션 — 제목에 언급된 멤버(윈윈)는 정상 인정',
+  "[페이스캠4K] 엔시티 유 윈윈 '90's Love' (NCT U WINWIN FaceCam)", undefined,
+  r => !!r && (r.membersByGroup['웨이션브이'] || []).includes('윈윈')
+);
+test(
+  'NCT U 로테이션 — 유닛명만 있고 개별 이름이 없으면 멤버 0명',
+  "NCT U 엔시티 유 'Make A Wish (Birthday Song)' MV", undefined,
+  r => !r || Object.values(r.membersByGroup || {}).every(list => !list || !list.length)
+);
+test(
+  'NCT U 로테이션 — 영문 해시태그(#JISUNG)로 명시되면 인정',
+  'NCT U 비하인드 #JISUNG', undefined,
+  r => !!r && (r.membersByGroup['엔시티 드림'] || []).includes('지성')
+);
+test(
+  '고정 유닛(부석순)은 전원 확장 유지 — rotating 도입 회귀 방지',
+  '부석순 BSS 세븐틴 직캠', undefined,
+  r => !!r && (r.membersByGroup['세븐틴'] || []).length === 3
+);
+
 // "마크"는 엔시티(겸임)와 GOT7(마크 투안) 양쪽에 실존하는 동명이인인데, 그룹명 없이 "마크"만
 // 있는 제목은 동명이인 충돌 로직상 두 사람 모두 후보가 되어 결과가 어떻게 나오는지 검증이 안 돼있음
 // (엔시티 마크 본인의 겸임 소속 인정 로직과, 이 동명이인 충돌 로직이 상호작용하는 지점이라 별도 검토
