@@ -2151,6 +2151,8 @@
   #profile-panel{width:min(312px,calc(100vw - 32px));background:rgba(13,17,34,0.97);backdrop-filter:blur(40px) saturate(180%);-webkit-backdrop-filter:blur(40px) saturate(180%);border-radius:20px;box-shadow:0 16px 56px rgba(0,0,0,0.72);border:0.5px solid rgba(255,255,255,0.10);padding:22px 22px 24px;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
   .pp-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;}
   .pp-title{font-size:13.5px;font-weight:700;color:rgba(210,225,255,0.88);letter-spacing:.04em;}
+  /* 선택 입력 안내 — 제목보다 한 톤 낮춰야 "필수"로 안 읽힌다. \n을 줄바꿈으로 살리려고 pre-line. */
+  .pp-hint{margin-top:7px;font-size:11.5px;line-height:1.5;font-weight:400;color:rgba(180,200,230,0.62);white-space:pre-line;letter-spacing:.01em;}
   #pp-close{background:none;border:none;width:28px;height:28px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;color:rgba(148,168,218,0.61);line-height:1;padding:0;position:relative;overflow:hidden;flex-shrink:0;transition:color .13s,transform .2s ease-out;}
   #pp-close:hover{color:rgba(200,218,255,0.85);}  #pp-close:active{transform:scale(0.86);transition:transform .07s;}
   .pp-section{margin-bottom:18px;}

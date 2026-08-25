@@ -51,7 +51,7 @@
      ⚠️ 손으로 올리던 시절 2026-08-24에 실제로 빠뜨려서 폰이 "새 마크업 + 옛 CSS"를 그리는 바람에
      화면이 통째로 깨졌음(Charts 카드가 158px→46px로 찌그러짐). 로컬 확인은
      `node tools/bump_cache_version.mjs --check`. -->
-<link rel="stylesheet" href="kpop_universe.css?v=20260825-abda9b35">
+<link rel="stylesheet" href="kpop_universe.css?v=20260825-54ced410">
 <script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@1/index.js"></script>
 </head>
 <body>
@@ -1062,6 +1062,9 @@
 <div id="generic-prompt-overlay" data-modal>
   <div id="generic-prompt-panel">
     <div class="pp-title" id="generic-prompt-title"></div>
+    <!-- 선택 입력이거나 "취소해도 된다"를 알려야 하는 경우의 보조 설명 — 제목(굵음)과 톤을 나눠야
+         읽히므로 별도 줄로 둔다. hint 없이 부르면 비어 있고 display:none이라 기존 호출엔 영향 없음. -->
+    <div class="pp-hint" id="generic-prompt-hint" style="display:none"></div>
     <input id="generic-prompt-input" type="text" class="pp-input" style="margin-top:14px;" maxlength="2000" autocomplete="off">
     <div id="generic-confirm-btns" style="margin-top:16px;">
       <button id="generic-prompt-cancel" class="uc-btn" data-i18n="cancel">취소</button>
@@ -7176,7 +7179,10 @@ function showT(a,cx,cy,keepNavStack,urlMode,pushMobNav,noFly){
     const _maybeAskSourceUrl=async()=>{
       if(a.links?.instagram)return;
       const existing=_instaPicSourceCache.get(_picKey(koName,groupKo))||'';
-      const url=await _promptDialog({title:`${koName} 사진 출처 URL (위버스 등 — 사진 클릭 시 연결됨)`,value:existing,placeholder:'https://weverse.io/...'});
+      const url=await _promptDialog({
+        title:`${koName} 사진 출처 URL (선택)`,
+        hint:'사진을 눌렀을 때 열릴 페이지 (위버스 프로필 등)\n인스타도 위버스도 없으면 취소를 누르세요 — 사진은 그대로 뜨고 클릭만 안 돼요.',
+        value:existing,placeholder:'https://weverse.io/…'});
       if(url==null)return;
       const picUrl=_instaPicCache.get(_picKey(koName,groupKo));
       if(!picUrl)return;
@@ -9481,10 +9487,12 @@ document.getElementById('generic-confirm-overlay').addEventListener('click',e=>{
 document.getElementById('generic-confirm-overlay').addEventListener('pointerdown',e=>e.stopPropagation());
 
 let _genericPromptResolve=null;
-function _promptDialog({title,value='',placeholder=''}){
+function _promptDialog({title,value='',placeholder='',hint=''}){
   return new Promise(resolve=>{
     _genericPromptResolve=resolve;
     document.getElementById('generic-prompt-title').textContent=title||'';
+    const hintEl=document.getElementById('generic-prompt-hint');
+    if(hintEl){hintEl.textContent=hint||'';hintEl.style.display=hint?'':'none';}
     const inp=document.getElementById('generic-prompt-input');
     inp.value=value;inp.placeholder=placeholder;
     const _po=document.getElementById('generic-prompt-overlay');_po.classList.add('open');_bringToFront(_po); // 위 _confirmDialog와 동일 이유 — 사이드바 위로 확실히(2026-08-22)
