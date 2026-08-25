@@ -5299,3 +5299,176 @@ document.getElementById('admin-bulk-clear-collab-btn')?.addEventListener('click'
   btn.disabled=false;btn.textContent='함께한 태그 제거';
   _showShareToast(`${targets.length}개 영상에서 함께한 멤버 태그 제거함`);
 });
+
+// ══════════════════════════════════════════════════════════════════════════════
+// 관리자 홈 — "오늘 할 일" 대시보드 (2026-08-25 신설)
+//
+// 왜: 검수 큐가 3,051건 쌓이는 동안 아무도 안 봤고, 사용자 본인이 "이걸 해야 하는지 까먹고 있었다"고
+// 했음. 원인은 의지가 아니라 **할 일이 있다는 걸 알 방법이 없던 것** — 버튼이 설정 패널에 20개 넘게
+// 흩어져 있어서 매번 뭘 눌러야 하는지 기억해내야 했다. 숫자를 먼저 보여줘서 진입 이유를 만든다.
+// 기존 버튼은 하나도 안 없앤다. 이 화면은 그 위에 얹는 진입점일 뿐이라 회귀 위험이 없다.
+//
+// ⚠️ 카드 카운트는 "빨라야" 의미가 있다(느리면 또 안 열게 됨). 무거운 집계(미태깅 155,070건은 5.6초)는
+//    일부러 안 넣었다 — 숫자가 커도 행동으로 안 이어지는 지표라 넣을 이유도 없음.
+const _ADM_LS={fbSeen:'kpu_adm_fb_seen',lastRun:'kpu_adm_last_routine'};
+function _admSetLog(text,cls){
+  const el=document.getElementById('adm-routine-log');
+  if(!el)return null;
+  const d=document.createElement('div');
+  d.className='adm-log-step'+(cls?' '+cls:'');
+  d.textContent=text;
+  el.appendChild(d);
+  return d;
+}
+function _admCard(opt){
+  const c=document.createElement('div');
+  c.className='adm-card'+(opt.onClick?'':' adm-card-static');
+  const l=document.createElement('div');l.className='adm-card-lbl';l.textContent=opt.lbl;
+  const n=document.createElement('div');n.className='adm-card-num'+(opt.tone?' '+opt.tone:'');n.textContent=opt.num;
+  c.appendChild(l);c.appendChild(n);
+  const s=document.createElement('div');s.className='adm-card-sub';s.textContent=opt.sub||'';
+  c.appendChild(s);
+  if(opt.onClick)c.addEventListener('click',opt.onClick);
+  return c;
+}
+// 마지막 루틴 실행 시각 — 기존 체크포인트(kpu_yt_last_*)는 "마지막 영상 id"라 시각 정보가 없어서
+// 별도 타임스탬프를 남긴다(루틴 완료 시 기록).
+function _admLastRunText(){
+  const t=Number(localStorage.getItem(_ADM_LS.lastRun)||0);
+  if(!t)return{num:'기록 없음',sub:'루틴을 한 번 돌리면 기록돼요',tone:'adm-zero'};
+  const h=Math.floor((Date.now()-t)/3600000);
+  const when=new Date(t).toLocaleString('ko-KR');
+  if(h<1)return{num:'방금',sub:when,tone:''};
+  if(h<24)return{num:h+'시간 전',sub:when,tone:''};
+  const d=Math.floor(h/24);
+  return{num:d+'일 전',sub:when,tone:d>=3?'adm-warn':''};
+}
+// ⚠️ supabase-js는 `.select()`를 **먼저** 부른 뒤에야 필터(.eq/.in/.gt)를 걸 수 있다.
+// 처음엔 `sb.from(X).eq(...)` 순서로 짰다가 카드가 전부 "?"(=조회 실패)로 떴음 — 호출부가
+// "이미 select까지 끝난 쿼리"를 넘기도록 바꿔서 순서를 잘못 쓸 여지를 없앤다.
+async function _admCount(q){
+  try{
+    const{count,error}=await q;
+    if(error)return null;
+    return count==null?0:count;
+  }catch(e){return null;}
+}
+const _admHead=()=>({count:'exact',head:true});
+async function _admLoadCards(){
+  const wrap=document.getElementById('adm-cards');
+  if(!wrap)return;
+  wrap.innerHTML='';
+  const lr=_admLastRunText();
+  wrap.appendChild(_admCard({lbl:'마지막 루틴 실행',num:lr.num,sub:lr.sub,tone:lr.tone}));
+  // 숫자가 늦게 와도 레이아웃이 안 튀도록 카드를 먼저 만들어 두고 나중에 채운다
+  const mk=(lbl,sub,onClick)=>{const c=_admCard({lbl:lbl,num:'…',sub:'불러오는 중',onClick:onClick,tone:'adm-zero'});c.dataset.sub=sub;wrap.appendChild(c);return c;};
+  const openVmTab=tab=>()=>{
+    _admHomeClose();
+    document.getElementById('sp-vm-btn')?.click();
+    setTimeout(()=>document.querySelector('.vm-tab[data-tab="'+tab+'"]')?.click(),260);
+  };
+  const cReview=mk('그룹배정 검수 대기','눌러서 검수 탭 열기',openVmTab('review'));
+  const cSs=mk('strictSync 오염 검수','흔한 이름 그룹 영상 점검',openVmTab('ss'));
+  const cFb=mk('새 피드백','마지막으로 본 뒤 들어온 것',()=>{_admHomeClose();document.getElementById('sp-fb-btn')?.click();});
+  const set=(card,n,zeroSub)=>{
+    const el=card.querySelector('.adm-card-num');
+    const sub=card.querySelector('.adm-card-sub');
+    if(n===null){el.textContent='?';el.className='adm-card-num adm-zero';if(sub)sub.textContent='조회 실패';return;}
+    el.textContent=String(n);
+    el.className='adm-card-num'+(n===0?' adm-zero':(n>=100?' adm-warn':''));
+    if(sub)sub.textContent=(n===0&&zeroSub)?zeroSub:(card.dataset.sub||'');
+  };
+  // ⚠️ 여기서 그냥 return하면 카드가 "…" 상태로 영원히 굳는다(실제로 데스크톱에서 재현됨 — 홈을
+  // 여는 시점에 Supabase 클라이언트가 아직 준비 전이면 숫자가 안 채워진 채로 끝났음).
+  // 잠깐 기다렸다 다시 보고, 그래도 없으면 이유를 카드에 적는다.
+  for(let i=0;i<20&&!sb;i++)await new Promise(r=>setTimeout(r,250));
+  if(!sb){
+    [cReview,cSs,cFb].forEach(c=>{
+      c.querySelector('.adm-card-num').textContent='—';
+      c.querySelector('.adm-card-sub').textContent='DB 연결 대기 중';
+    });
+    return;
+  }
+  const ssGkos=[..._STRICT_SYNC_GROUPS];
+  // ⚠️ Promise.all로 묶어 한꺼번에 반영하면 **제일 느린 쿼리에 전부 발이 묶인다** — 콜드 커넥션에선
+  // 첫 쿼리가 11초까지 걸리는 걸 실측했고(2026-08-25), 그동안 카드 셋이 다 "…"로 멈춰 있어서 화면이
+  // 고장난 것처럼 보였음. 각자 도착하는 대로 채운다(피드백처럼 빠른 건 즉시 뜸).
+  _admCount(sb.from(_YT_TABLE).select('id',_admHead()).eq('needs_review',true))
+    .then(n=>set(cReview,n,'다 봤어요'));
+  (ssGkos.length?_admCount(sb.from(_YT_TABLE).select('id',_admHead()).in('group_ko',ssGkos).eq('tags_manual',false)):Promise.resolve(0))
+    .then(n=>set(cSs,n,'깨끗해요'));
+  (function(){
+    const since=localStorage.getItem(_ADM_LS.fbSeen);
+    const q=sb.from('feedback').select('id',_admHead());
+    return _admCount(since?q.gt('created_at',since):q);
+  })().then(n=>set(cFb,n,'새 피드백 없음'));
+}
+function _admHomeClose(){document.getElementById('adm-home-overlay')?.classList.remove('open');}
+function _admHomeOpen(){
+  const ov=document.getElementById('adm-home-overlay');
+  if(!ov)return;
+  ov.classList.add('open');
+  const log=document.getElementById('adm-routine-log');if(log)log.innerHTML='';
+  _admLoadCards();
+}
+document.getElementById('sp-adm-home-btn')?.addEventListener('click',_admHomeOpen);
+document.getElementById('adm-home-close')?.addEventListener('click',_admHomeClose);
+document.getElementById('adm-home-overlay')?.addEventListener('click',function(e){if(e.target===e.currentTarget)_admHomeClose();});
+// 피드백 뷰어를 열면 "마지막으로 본 시각"을 기록 — 다음에 홈에서 "새 피드백 N건"의 기준이 된다.
+document.getElementById('sp-fb-btn')?.addEventListener('click',function(){
+  try{localStorage.setItem(_ADM_LS.fbSeen,new Date().toISOString());}catch(e){}
+});
+
+// ── 매일 루틴 실행기 ──────────────────────────────────────────────────────────
+// 기존 1~4번 버튼을 순서대로 돌린다. 각 단계는 원래 함수를 그대로 호출하므로 동작이 갈릴 일이 없고,
+// 진행 상황은 그 함수들이 쓰는 #sp-yt-prog 텍스트를 그대로 읽어서 보여준다.
+// ⚠️ 요약이 핵심이다 — 실제로 "재태깅 눌렀는데 group_ko가 안 바뀌어서 다 된 건지 모르겠다"는 일이
+//    있었음(2026-08-25). 단계마다 끝난 시점의 진행 문구를 남겨야 뭘 했는지 나중에 확인할 수 있다.
+// ⚠️ 동기화(1번)는 YouTube API 쿼터에 걸려 수십 분씩 걸리거나 중간에 끊긴다 — 그래서 "동기화 빼고
+//    실행"을 따로 뒀다. 쿼터를 아껴야 하거나 시간이 없을 때 2~4번만 돌리는 용도.
+let _admRoutineRunning=false,_admRoutineStop=false;
+async function _admRunRoutine(withSync){
+  if(_admRoutineRunning)return;
+  _admRoutineRunning=true;_admRoutineStop=false;
+  const runBtn=document.getElementById('adm-run-routine');
+  const noSyncBtn=document.getElementById('adm-run-routine-nosync');
+  const stopBtn=document.getElementById('adm-stop-routine');
+  const log=document.getElementById('adm-routine-log');
+  if(log)log.innerHTML='';
+  if(runBtn)runBtn.disabled=true;
+  if(noSyncBtn)noSyncBtn.disabled=true;
+  if(stopBtn)stopBtn.style.display='';
+  const steps=[];
+  if(withSync)steps.push({name:'1. 전체 동기화',fn:_ytSyncAll});
+  steps.push({name:'2. 멤버+콜라보 자동 태깅',fn:_ytAutoTagMembers});
+  steps.push({name:'3. 콜라보 오태깅 재검증',fn:_ytSweepAmbiguousCollabMistag});
+  steps.push({name:'4. 동명이인 그룹 오배정 스캔',fn:_ytScanAmbiguousNameGroupMisassignment});
+  const t0=Date.now();
+  for(let i=0;i<steps.length;i++){
+    if(_admRoutineStop){_admSetLog('■ 사용자가 중단함','adm-log-fail');break;}
+    const s=steps[i];
+    const line=_admSetLog(s.name+' … 진행 중');
+    try{
+      await s.fn();
+      // 각 함수가 마지막으로 남긴 진행/결과 문구를 그대로 요약으로 채택(문구 중복 정의를 피함)
+      const prog=(document.getElementById('sp-yt-prog')?.textContent||'').trim();
+      if(line){line.textContent='✅ '+s.name+'\n   '+(prog||'완료');line.className='adm-log-step adm-log-done';}
+    }catch(e){
+      if(line){line.textContent='❌ '+s.name+'\n   '+(e&&e.message?e.message:e);line.className='adm-log-step adm-log-fail';}
+    }
+  }
+  const mins=Math.round((Date.now()-t0)/60000);
+  _admSetLog('총 '+(mins<1?'1분 미만':mins+'분')+' 소요 — 카드 숫자를 다시 불러왔어요.','adm-log-done');
+  try{localStorage.setItem(_ADM_LS.lastRun,String(Date.now()));}catch(e){}
+  _admRoutineRunning=false;
+  if(runBtn)runBtn.disabled=false;
+  if(noSyncBtn)noSyncBtn.disabled=false;
+  if(stopBtn)stopBtn.style.display='none';
+  _admLoadCards();
+}
+document.getElementById('adm-run-routine')?.addEventListener('click',function(){_admRunRoutine(true);});
+document.getElementById('adm-run-routine-nosync')?.addEventListener('click',function(){_admRunRoutine(false);});
+document.getElementById('adm-stop-routine')?.addEventListener('click',function(){
+  _admRoutineStop=true;
+  _admSetLog('중단 요청됨 — 지금 단계가 끝나면 멈춰요(진행 중인 단계는 안전하게 마무리).');
+});

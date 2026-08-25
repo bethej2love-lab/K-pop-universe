@@ -1245,6 +1245,47 @@
   .ec-del-btn{flex-shrink:0;font-size:10.5px;color:rgba(240,150,150,0.85);background:rgba(220,90,90,0.10);border:0.5px solid rgba(220,90,90,0.3);border-radius:8px;padding:3px 8px;cursor:pointer;font-family:inherit;}
   .ec-del-btn:hover{background:rgba(220,90,90,0.2);}
   /* ── 검수 센터 (통합 패널) ── */
+  /* ── 관리자 홈(오늘 할 일) ─────────────────────────────────────────────
+     데스크톱/모바일 둘 다에서 쓰므로 카드는 auto-fit 그리드로 폭에 따라 1~3열로 접힌다.
+     모바일(≤768px)에선 전체화면 시트로 전환 — 좁은 화면에서 가운데 떠 있는 모달은 스크롤이
+     답답하고 탭 타겟도 좁아진다. */
+  #adm-home-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.52);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:81;display:none;align-items:center;justify-content:center;}
+  #adm-home-overlay.open{display:flex;}
+  #adm-home-panel{width:min(600px,calc(100vw - 24px));max-height:86vh;display:flex;flex-direction:column;background:rgba(12,16,32,0.98);backdrop-filter:blur(40px);-webkit-backdrop-filter:blur(40px);border-radius:20px;box-shadow:0 20px 60px rgba(0,0,0,0.55);border:0.5px solid rgba(255,255,255,0.10);overflow:hidden;}
+  #adm-home-hd{display:flex;align-items:center;gap:10px;padding:14px 16px;flex-shrink:0;border-bottom:0.5px solid rgba(255,255,255,0.08);}
+  #adm-home-title{flex:1;font-size:13px;font-weight:700;color:rgba(220,230,255,0.9);letter-spacing:-.01em;}
+  #adm-home-close{background:none;border:none;padding:4px;cursor:pointer;color:rgba(150,175,225,0.55);display:flex;align-items:center;}
+  #adm-home-close:active{color:rgba(200,218,255,0.85);transform:scale(0.9);}
+  #adm-home-body{overflow-y:auto;-webkit-overflow-scrolling:touch;padding:14px 16px 20px;}
+  #adm-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;}
+  .adm-card{background:rgba(255,255,255,0.04);border:0.5px solid rgba(255,255,255,0.09);border-radius:12px;padding:12px 13px;cursor:pointer;transition:background .13s;-webkit-tap-highlight-color:transparent;}
+  .adm-card:active{background:rgba(255,255,255,0.08);}
+  .adm-card.adm-card-static{cursor:default;}
+  .adm-card-lbl{font-size:10.5px;color:rgba(150,175,225,0.62);letter-spacing:.02em;}
+  .adm-card-num{font-size:22px;font-weight:700;color:rgba(225,236,255,0.95);line-height:1.25;margin-top:3px;font-variant-numeric:tabular-nums;}
+  .adm-card-num.adm-zero{color:rgba(150,175,225,0.45);font-weight:600;}
+  .adm-card-num.adm-warn{color:rgba(255,190,120,0.95);}
+  .adm-card-sub{font-size:10px;color:rgba(140,165,215,0.55);margin-top:2px;}
+  .adm-sec-lbl{font-size:10.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(120,148,205,0.55);margin:18px 0 6px;}
+  #adm-routine-desc{font-size:11px;line-height:1.55;color:rgba(155,178,228,0.6);margin-bottom:9px;}
+  #adm-routine-btns{display:flex;flex-wrap:wrap;gap:8px;}
+  #adm-routine-btns>button{border-radius:10px;font-size:12px;padding:9px 14px;cursor:pointer;font-family:inherit;white-space:nowrap;border:1px solid rgba(120,170,255,0.32);background:rgba(120,170,255,0.14);color:rgba(180,208,255,0.95);}
+  #adm-routine-btns>#adm-run-routine{background:rgba(100,180,120,0.18);border-color:rgba(100,180,120,0.36);color:rgba(150,225,170,0.95);font-weight:600;}
+  #adm-routine-btns>#adm-stop-routine{background:rgba(230,110,110,0.14);border-color:rgba(230,110,110,0.34);color:rgba(245,160,160,0.92);}
+  #adm-routine-btns>button:active{opacity:.7;}
+  #adm-routine-btns>button:disabled{opacity:.4;cursor:default;}
+  #adm-routine-log{margin-top:12px;font-size:11px;line-height:1.6;color:rgba(175,196,240,0.78);white-space:pre-wrap;word-break:break-word;}
+  #adm-routine-log:empty{display:none;}
+  .adm-log-step{padding:7px 10px;border-radius:9px;background:rgba(255,255,255,0.035);margin-bottom:6px;border-left:2px solid rgba(120,170,255,0.4);}
+  .adm-log-step.adm-log-done{border-left-color:rgba(100,180,120,0.6);}
+  .adm-log-step.adm-log-fail{border-left-color:rgba(230,110,110,0.6);}
+  @media(max-width:768px){
+    #adm-home-panel{width:100vw;max-width:100vw;max-height:100dvh;height:100dvh;border-radius:0;border:none;}
+    #adm-home-hd{padding-top:calc(env(safe-area-inset-top,0px) + 14px);}
+    #adm-home-body{padding-bottom:calc(env(safe-area-inset-bottom,0px) + 28px);}
+    #adm-cards{grid-template-columns:repeat(auto-fit,minmax(132px,1fr));}
+    #adm-routine-btns>button{flex:1 1 100%;padding:12px 14px;font-size:12.5px;}
+  }
   #hnn-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.52);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:81;display:none;align-items:center;justify-content:center;}
   #hnn-overlay.open{display:flex;}
   #hnn-panel{width:min(540px,calc(100vw - 24px));max-height:86vh;display:flex;flex-direction:column;background:rgba(12,16,32,0.98);backdrop-filter:blur(40px);-webkit-backdrop-filter:blur(40px);border-radius:20px;box-shadow:0 20px 64px rgba(0,0,0,0.78);border:0.5px solid rgba(255,255,255,0.10);overflow:hidden;}

@@ -51,7 +51,7 @@
      ⚠️ 손으로 올리던 시절 2026-08-24에 실제로 빠뜨려서 폰이 "새 마크업 + 옛 CSS"를 그리는 바람에
      화면이 통째로 깨졌음(Charts 카드가 158px→46px로 찌그러짐). 로컬 확인은
      `node tools/bump_cache_version.mjs --check`. -->
-<link rel="stylesheet" href="kpop_universe.css?v=20260825-6ad43936">
+<link rel="stylesheet" href="kpop_universe.css?v=20260825-14f55285">
 <script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@1/index.js"></script>
 </head>
 <body>
@@ -280,7 +280,11 @@
     <button class="sp-yt-sync" id="sp-fb-btn" style="opacity:.8;">피드백 보기</button>
     <div class="sp-btn-hint">유저들이 보낸 피드백 목록을 확인해요.</div>
 
-    <div class="sp-subsec-lbl">동기화</div>
+    <!-- 관리자 홈 — 설정 패널 맨 위에 둔다. 흩어진 버튼을 다 기억할 필요 없이 "숫자 → 할 일"만 보고
+         움직일 수 있게 하는 게 목적(2026-08-25). 아래 개별 버튼들은 그대로 남겨둔다. -->
+    <button class="sp-yt-sync" id="sp-adm-home-btn" style="border-color:rgba(140,180,255,0.45);">🏠 관리자 홈 — 오늘 할 일</button>
+    <div class="sp-btn-hint">밀린 검수·새 피드백·마지막 동기화를 한눈에 보고, 매일 루틴을 한 번에 돌려요.</div>
+    <div class="sp-subsec-lbl" style="margin-top:10px;">동기화</div>
     <input type="text" class="sp-yt-key" id="sp-yt-key" placeholder="API 키 (AIzaSy...)" autocomplete="off" spellcheck="false">
     <button class="sp-yt-sync" id="sp-yt-sync">1. 전체 동기화 (공식 + 외부 채널)</button>
     <div class="sp-btn-hint">공식 채널 전체 + 외부 채널의 새 영상을 가져와요. 평소엔 이것부터 누르면 돼요.</div>
@@ -458,6 +462,31 @@
   <span id="user-bulk-count">0개 선택됨</span>
   <button id="user-bulk-col-btn" data-i18n="userBulkAdd">컬렉션에 추가</button>
   <button id="user-bulk-cancel-btn" data-i18n="cancel">취소</button>
+</div>
+<!-- ── 관리자 홈(오늘 할 일) ─────────────────────────────────────────────────────
+     검수 센터가 1년간 방치된 원인이 "할 일이 있다는 걸 알 방법이 없어서"였음(사용자 확인) — 숫자를
+     먼저 보여줘서 진입 이유를 만든다. 데스크톱/모바일 둘 다 쓰므로 카드 그리드는 폭에 따라 자동 접힘.
+     기존 개별 버튼들은 그대로 두고, 이 화면은 그 위에 얹는 "진입점"으로만 동작한다. -->
+<div id="adm-home-overlay" data-modal>
+  <div id="adm-home-panel">
+    <div id="adm-home-hd">
+      <span id="adm-home-title">관리자 홈</span>
+      <button id="adm-home-close" aria-label="닫기">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+    <div id="adm-home-body">
+      <div id="adm-cards"></div>
+      <div class="adm-sec-lbl">매일 루틴</div>
+      <div id="adm-routine-desc">동기화 → 자동 태깅 → 콜라보 재검증 → 동명이인 스캔을 순서대로 한 번에 돌려요. 각 단계가 끝나면 무엇이 몇 건 바뀌었는지 아래에 남아요.</div>
+      <div id="adm-routine-btns">
+        <button id="adm-run-routine">▶ 매일 루틴 실행</button>
+        <button id="adm-run-routine-nosync" title="유튜브 API 쿼터를 아낄 때 — 동기화를 건너뛰고 2~4번만">동기화 빼고 실행</button>
+        <button id="adm-stop-routine" style="display:none">■ 중단</button>
+      </div>
+      <div id="adm-routine-log"></div>
+    </div>
+  </div>
 </div>
 <div id="hnn-overlay" data-modal>
   <div id="hnn-panel">
@@ -16267,7 +16296,7 @@ function _updateAdminUI(){
 // 옛 버전을 계속 서빙해서 고친 코드가 반영 안 되는 것처럼 보이는 사고가 남(2026-08-18, HTML 엔티티 정리
 // 버튼 타임아웃 재수정 후에도 계속 재현된다는 제보로 발견). admin.js 내용을 바꿀 때마다 이 버전 문자열도
 // 같이 올릴 것(sw.js의 CACHE_VERSION과 같은 수동 관리 방식).
-const _ADMIN_JS_VER='20260825-52ca3891';
+const _ADMIN_JS_VER='20260825-69c60dc9';
 function _loadAdminScript(){
   if(!_isAdmin()||document.getElementById('admin-js-script'))return;
   const s=document.createElement('script');
