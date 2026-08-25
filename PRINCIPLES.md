@@ -107,6 +107,8 @@ Idols can do everything
    - **그룹명==멤버명** → 자동(`_atmNameIsGroup`). 단 충돌 상대가 `strictSync` 그룹이면 게이트가 오히려 손해라 예외 처리돼 있음.
    - **그룹명이 흔한 단어** → groups.json에 `strictSync:true`. 자체 채널 동기화로만 영상이 들어온다.
    - **유닛명 충돌** → `_UNIT_HASHTAG_ONLY_TOKENS`(shared.js).
+   - **활동명이 이미 있는 유명 멤버와 똑같음** → `name.ko`를 **본명으로** 넣고 활동명은 `matchAliases`에. 활동명을 그대로 `name.ko`에 넣으면 동명이인 dedup이 걸려 **"그룹명 없이 그 이름만 있는 제목"의 역추론이 양쪽 다 버려진다** — 즉 새 사람을 추가하는 것만으로 기존 유명 멤버의 태깅이 죽는다. `matchAliases`는 그룹이 확정된 뒤 멤버 추출에만 단어경계로 쓰이므로 옛 소속 시절 영상은 그대로 잡힌다. 예: 다이아 "제니"→`이소율`+`matchAliases:["제니"]`(블랙핑크 제니 보호), 엘즈업 "나나"→`권나연`, 퍼플키스 "도시"→`장은성`.
+   - **탈퇴 멤버** → 로스터에서 지우지 말고 `active:false` + `left:"YYYY.MM.DD"`로 남길 것(겸임이면 `groups[]`의 해당 항목에). 지우면 탈퇴 게이트(`_atmLeftBefore`)가 작동할 근거 자체가 없어진다. ⚠️ 다만 **그룹 해체까지 있었던 멤버는 탈퇴가 아니다** — 해체 그룹 멤버 전원이 active인 게 관례라 혼자만 `active:false`로 두면 그 사람만 "전 멤버"로 빠진다(파이브돌스 승희 사례).
 3. 이미 동기화된 영상까지 오염됐는지는 `NODE_TLS_REJECT_UNAUTHORIZED=0 node tools/name_pollution_probe.mjs` 로 실측(읽기 전용). 정정은 어드민의 "콜라보 재검증"·"자체 멤버 재검증"·"동명이인 그룹 오배정 전체 스캔" 버튼으로.
 
 ⚠️ 판정 로직은 `tools/name_collision_audit.mjs` **한 곳에만** 둔다. 복붙해서 두 벌이 되면 admin.js의 실제 게이트와 어긋나는 순간 검사가 거짓 안심을 준다.

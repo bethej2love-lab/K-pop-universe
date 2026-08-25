@@ -262,6 +262,21 @@ test(
   console.log('[참고] "마크" bare 매칭 결과(동명이인 잠재 이슈, assert 없음):', JSON.stringify(r));
 })();
 
+// ── 활동명이 유명인과 겹칠 때: 본명 등록 + matchAliases (2026-08-25, 다이아 전 멤버 추가) ─────
+// 다이아 前 멤버 "제니"(본명 이소율)를 name.ko="제니"로 넣으면, 같은 이름의 블랙핑크 제니와
+// 동명이인 dedup에 걸려 **"그룹명 없이 제니만 있는 제목"의 역추론이 양쪽 다 버려진다** —
+// 즉 이 사람을 추가하는 것만으로 블랙핑크 쪽 태깅이 죽는다. 그래서 본명으로 등록하고 활동명은
+// matchAliases에 둔다(matchAliases는 그룹이 확정된 뒤 멤버 추출에만 쓰여 역추론엔 안 들어감).
+test('별칭 — 그룹명이 있으면 활동명(제니)으로도 다이아 이소율이 잡힌다',
+  "[MPD직캠] 다이아 제니 직캠 'Will you go out with me' (DIA JENNY FanCam)", undefined,
+  r => !!r && (r.membersByGroup['다이아'] || []).includes('이소율'));
+test('별칭 — 그룹명 없이 "제니"만 있으면 블랙핑크 역추론이 그대로 살아있다(동명이인 회귀 방지)',
+  '제니 무대 모음', undefined,
+  r => !!r && r.primaryGroup === '블랙핑크' && (r.membersByGroup['블랙핑크'] || []).includes('제니'));
+test('탈퇴 게이트 — 다이아 탈퇴(2019.07.06) 이후 영상엔 이소율이 안 붙음',
+  '다이아 제니 근황', undefined,
+  r => !r || !(r.membersByGroup['다이아'] || []).includes('이소율'), '2021-03-01');
+
 // ── 실행 ──────────────────────────────────────────────
 let pass = 0, fail = 0;
 cases.forEach(({ name, title, selfGko, check, publishedAt }) => {
