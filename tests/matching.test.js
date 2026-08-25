@@ -109,6 +109,17 @@ const cases = [];
 // publishedAt: 탈퇴 게이트(_atmLeftBefore) 검증용 4번째 인자. 안 주면 기존처럼 날짜 없이 파싱.
 function test(name, title, selfGko, check, publishedAt) { cases.push({ name, title, selfGko, check, publishedAt }); }
 
+// ── confidence 판정(2026-08-25) ─────────────────────────────────
+// 역추론 결과는 전부 'weak'라 검수 큐로 갔는데, 실측해보니 큐 3,051건 중 661건(22%)이 #KEY·#키처럼
+// 해시태그로 멤버가 박혀 있었음 — 업로더가 태그로 특정해준 걸 "추측"으로 볼 이유가 없어 strong으로.
+// weak는 _extBuildRows에서 needs_review 플래그로 이어지므로, 이 판정이 곧 큐 유입량을 정한다.
+test('confidence — 해시태그로 멤버가 명시되면 strong',
+  "Oh baby, I'm cravin #KEY #키 #REDY", undefined,
+  r => !!r && r.confidence === 'strong');
+test('confidence — 평문 이름만 있으면 weak 유지(검수 대상)',
+  '[레어탬] EP 5 오늘은 태민이 게임왕 TAEMIN 태민', undefined,
+  r => !!r && r.confidence === 'weak');
+
 // ── 탈퇴 게이트(2026-08-25, 사용자 제보 "라이즈 탈퇴한 승한 직캠이 라이즈 카드에 뜬다") ─────
 // 제목만으론 절대 구분할 수 없는 종류의 오류 — 2023년 "[MPD직캠] 라이즈 승한 'Talk Saxy'"는 정당하고
 // 2026년 "승한 댄스 실력"은 오태깅인데 둘 다 제목엔 승한만 있다. 발행일이 유일한 단서.

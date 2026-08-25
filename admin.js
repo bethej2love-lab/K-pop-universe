@@ -3649,6 +3649,7 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
   if(!matchedGroupKos.length){
     const inferred=new Map(); // groupKo -> [memberKo]
     const nameToGroups=new Map(); // 멤버명(한글) -> Map(아티스트객체 -> 그 사람 소속 groupKo[]) — 동명이인 충돌 감지용
+    let _inferViaHashtag=false;   // 이 역추론에 해시태그 명시가 하나라도 쓰였는가(아래 confidence 판정용)
     for(const a of ARTISTS){
       // 예전엔 GROUPS에 없는 그룹(아이유·보아처럼 group.ko="솔로"인 솔로 아티스트)을 통째로 건너뛰어서,
       // 제목에 진짜 그룹명 없이 솔로 아티스트 이름만 있는 콜라보(예: 자체 채널 영상에 "아이유"만 언급)가
@@ -3670,6 +3671,10 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
         // 해시태그 매칭일 때만 인정한다. #1(짧은영문/흔한단어 게이트)이 못 거르는, 이름은 멀쩡한데 세대·
         // 소속사가 동떨어진 역추론 오태깅(감사 상위 다수)을 잡는 2차 게이트.
         const viaHashtag=names.some(t=>hitHashtag(t));
+        // 해시태그로 사람이 직접 명시한 건 "약한 근거"가 아니다(2026-08-25, 사용자 결정).
+        // 실측: 검수 큐 3,051건 중 661건(22%)이 #KEY·#키처럼 해시태그로 멤버가 박혀 있는데도 weak로
+        // 분류돼 검수 대기에 쌓이고 있었음 — 업로더가 태그로 특정해준 걸 "추측"으로 볼 이유가 없다.
+        if(viaHashtag)_inferViaHashtag=true;
         // ⚠️ group.ko가 "솔로"인 아티스트(아이유·비·싸이·승한 등 무소속 솔로)는 그 값이 **여러 명이
         // 공유하는 placeholder**라 그대로 group_ko로 쓰면 안 된다 — `_isValidVidGroupKo`도 '솔로'를
         // 무효로 치고, 실제로 이 경로를 타고 group_ko='솔로'로 저장된 영상이 633건 쌓여 어느 카드에도
@@ -3730,7 +3735,8 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
     // 그룹 전체가 잘못 배정되는 사고가 여기서만 발생. 호출부(_extBuildRows)가 owner 없는 외부/모음채널
     // 매칭에서 이 값을 보고 즉시확정 대신 검수 대기로 돌린다.
     return{primaryGroup:result[0].gko,withGroups:result.slice(1).map(r=>r.gko),
-           membersByGroup:Object.fromEntries(result.map(r=>[r.gko,r.members])),confidence:'weak'};
+           membersByGroup:Object.fromEntries(result.map(r=>[r.gko,r.members])),
+           confidence:_inferViaHashtag?'strong':'weak'};
   }
   // 각 매칭 그룹에서 멤버 추출 — normMinusUnits 기준으로 검사해 유닛명 토큰이 만든 가짜 개별 언급을
   // 제외한다(위 unit-name-false-with 해결 참고).
@@ -3869,7 +3875,13 @@ function _extBuildRows(vids,strict,tier,owner,defaultCat){
       group_ko:owner?ownerGko:match.primaryGroup,members,with_groups:withGroups,with_members:withMembers,
       ...(coverGroups.length?{cover_of_groups:coverGroups}:{}),
       ...(coverMembers.length?{cover_of_members:coverMembers}:{}),
-      ...(_isJunkVideoTitle(v.title)?{content_flag:'무관'}:needsReview?{content_flag:'hidden',needs_review:true}:{}),
+      // 약한 근거 매칭을 더는 hidden으로 감추지 않는다(2026-08-25, 사용자 결정). needs_review 플래그만
+      // 남겨 어드민이 사후 감사할 수 있게 하고, 유저에겐 정상 노출한다.
+      //   왜: "사람이 검수한다"는 전제가 실제로 안 지켜져서(사용자: "안 누르게 되더라") 큐가 3,051건
+      //   쌓이는 동안 그 대가로 709건이 유저 화면에서 사라져 있었음. 게다가 실측해보니 큐의 93%가
+      //   고유한 이름이고 표본은 전부 정확했음 — 위험한 이름은 이미 앞단 게이트(흔한단어·짧은영문·
+      //   동명이인 dedup)가 걸러내기 때문. 이 정책이 도입된 2026-08-20엔 그 게이트들이 없었다.
+      ...(_isJunkVideoTitle(v.title)?{content_flag:'무관'}:needsReview?{needs_review:true}:{}),
       ...((tier==='variety'||tier==='show')?{content_formats:[tier]}:{})
     });
   }
