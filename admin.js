@@ -2341,6 +2341,25 @@ function _vmRenderChannels(term){
       tierSel.addEventListener('click',e=>e.stopPropagation());
       tierSel.addEventListener('change',()=>_ecUpdateTier(ch.handle,tierSel.value));
       item.appendChild(tierSel);
+      // 기본 카테고리(제목으로 분류 안 된 영상의 행선지) — 채널마다 성격이 달라 유형으로 강제하지 않음
+      const catSel=document.createElement('select');catSel.className='ec-tier-sel';catSel.title='분류 안 된 영상 기본 탭';
+      [['','기본'],['none','전체탭만'],['variety','예능'],['show','드라마/영화'],['live','라이브'],['mv','뮤비']].forEach(([v,label])=>{
+        const o=document.createElement('option');o.value=v;o.textContent=label;
+        if((ch.defaultCategory||'')===v)o.selected=true;
+        catSel.appendChild(o);
+      });
+      catSel.addEventListener('click',e=>e.stopPropagation());
+      catSel.addEventListener('change',()=>_ecUpdateField(ch.handle,{default_category:catSel.value||null},'defaultCategory',catSel.value,'기본 카테고리 변경됨'));
+      item.appendChild(catSel);
+      // 대표 채널 — 한 멤버가 채널 여러 개일 때 카드 유튜브 아이콘이 가리킬 하나(아이돌개인만)
+      if(ch.tier==='idol'){
+        const pw=document.createElement('label');pw.className='ec-primary-lbl';pw.title='멤버 카드 유튜브 아이콘이 가리킬 대표 채널';
+        const pc=document.createElement('input');pc.type='checkbox';pc.checked=!!ch.isPrimary;
+        pc.addEventListener('click',e=>e.stopPropagation());
+        pc.addEventListener('change',()=>_ecUpdateField(ch.handle,{is_primary:pc.checked},'isPrimary',pc.checked,'대표 채널 변경됨'));
+        pw.appendChild(pc);pw.appendChild(document.createTextNode('대표'));
+        item.appendChild(pw);
+      }
       const delBtn=document.createElement('button');delBtn.className='ec-del-btn';delBtn.type='button';delBtn.textContent='삭제';
       delBtn.addEventListener('click',e=>{e.stopPropagation();_ecDeleteChannel(ch.handle,ch.name);});
       item.appendChild(delBtn);
@@ -2349,6 +2368,16 @@ function _vmRenderChannels(term){
     item.appendChild(link);
     listEl.appendChild(item);
   });
+}
+// ext_channels 단일 필드 즉시 저장(유형 변경과 같은 패턴) — patch는 DB 컬럼명, localKey는 _EXT_CHANNELS
+// 캐시의 카멜케이스 키. 저장 성공해야 로컬 캐시도 바꾼다(실패 시 화면과 DB가 어긋나지 않게).
+async function _ecUpdateField(handle,patch,localKey,localVal,okMsg){
+  if(!sb)return;
+  const{error}=await sb.from('ext_channels').update(patch).eq('handle',handle);
+  if(error){_showShareToast('오류: '+error.message);return;}
+  const ch=_EXT_CHANNELS.find(c=>c.handle===handle);
+  if(ch)ch[localKey]=localVal;
+  _showShareToast(okMsg);
 }
 async function _ecUpdateTier(handle,newTier){
   if(!sb)return;
@@ -2397,6 +2426,8 @@ async function _ecAddChannel(){
   const ownerEl=document.getElementById('vm-ch-add-owner');
   const ownerGkoEl=document.getElementById('vm-ch-add-owner-gko');
   const targetGkoEl=document.getElementById('vm-ch-add-target-gko');
+  const defCatEl=document.getElementById('vm-ch-add-defcat');
+  const primaryEl=document.getElementById('vm-ch-add-primary');
   const handle=(handleEl?.value||'').trim().replace(/^@/,'');
   const name=(nameEl?.value||'').trim();
   const tier=tierEl?.value||'variety';
@@ -2431,13 +2462,19 @@ async function _ecAddChannel(){
     if(!targetGko||!_isValidVidGroupKo(targetGko)){_showShareToast('팬 채널은 전용 멤버 실명, 또는 대상 그룹을 입력해주세요');return;}
     ownerGko=targetGko;
   }
-  const row={handle,url:`https://www.youtube.com/@${handle}`,name,tier,owner_mko:memberOwned?ownerMko:null,owner_gko:(memberOwned||tier==='fans')?ownerGko:null};
+  // is_primary는 아이돌개인 채널에만 의미가 있음 — 한 멤버가 채널을 여러 개 가질 수 있는데
+  // 멤버 카드 SNS 아이콘은 유튜브 슬롯이 하나뿐이라 어느 걸 걸지 정해야 한다(2026-08-25).
+  const row={handle,url:`https://www.youtube.com/@${handle}`,name,tier,owner_mko:memberOwned?ownerMko:null,owner_gko:(memberOwned||tier==='fans')?ownerGko:null,
+    default_category:(defCatEl?.value||'')||null,is_primary:tier==='idol'?!!primaryEl?.checked:false};
   const{error}=await sb.from('ext_channels').insert(row);
   if(error){_showShareToast('오류: '+error.message);return;}
-  _EXT_CHANNELS.push({handle:row.handle,url:row.url,name:row.name,tier:row.tier,...((row.owner_mko||row.owner_gko)?{owner:{mko:row.owner_mko||null,gko:row.owner_gko||null}}:{})});
+  _EXT_CHANNELS.push({handle:row.handle,url:row.url,name:row.name,tier:row.tier,defaultCategory:row.default_category||'',isPrimary:!!row.is_primary,...((row.owner_mko||row.owner_gko)?{owner:{mko:row.owner_mko||null,gko:row.owner_gko||null}}:{})});
   if(handleEl)handleEl.value='';if(nameEl)nameEl.value='';if(ownerEl)ownerEl.value='';if(tierEl)tierEl.value='variety';
   if(ownerGkoEl){ownerGkoEl.value='';ownerGkoEl.style.display='none';ownerGkoEl.innerHTML='';}
   if(targetGkoEl){targetGkoEl.value='';targetGkoEl.style.display='none';}
+  if(defCatEl)defCatEl.value='';
+  if(primaryEl)primaryEl.checked=false;
+  const primWrap=document.getElementById('vm-ch-add-primary-wrap');if(primWrap)primWrap.style.display='none';
   _vmRenderChannels(document.getElementById('vm-search')?.value||'');
   _showShareToast('채널 추가됨');
 }
@@ -2456,6 +2493,10 @@ document.getElementById('vm-ch-add-tier')?.addEventListener('change',e=>{
     const gkoSel=document.getElementById('vm-ch-add-owner-gko');
     if(gkoSel){gkoSel.value='';gkoSel.style.display='none';gkoSel.innerHTML='';}
   }
+  // "대표" 체크박스는 아이돌개인에만 의미 있음(멤버 카드 유튜브 아이콘이 어느 채널을 가리킬지)
+  const primWrap=document.getElementById('vm-ch-add-primary-wrap');
+  if(primWrap)primWrap.style.display=e.target.value==='idol'?'inline-flex':'none';
+  if(e.target.value!=='idol'){const p=document.getElementById('vm-ch-add-primary');if(p)p.checked=false;}
 });
 
 // 그룹 우선순위(A>B>C) — 어드민 전용 데이터 관리 우선순위 표시, 유저에게는 절대 노출 안 됨(2026-08-12).
@@ -3225,11 +3266,15 @@ let _extChannelsLoaded=false;
 async function _loadExtChannels(){
   if(!sb)return;
   try{
-    const{data,error}=await sb.from('ext_channels').select('handle,url,name,tier,owner_mko,owner_gko').order('name');
+    // ⚠️ select('*') 인 이유: 컬럼을 명시하면 마이그레이션이 아직 안 돌아간 환경에서 PostgREST가
+    // 400(column does not exist)을 뱉고, 이 함수는 error면 그냥 return이라 _EXT_CHANNELS가 통째로 비어
+    // **외부채널 동기화가 전면 중단**된다(2026-08-25 스모크에서 실제로 잡힘). 작은 테이블이라 * 로 받아도
+    // 부담이 없고, 새 컬럼이 없으면 아래 매핑에서 undefined→기본값으로 자연히 폴백된다.
+    const{data,error}=await sb.from('ext_channels').select('*').order('name');
     if(error){console.error('ext_channels 로드 실패',error.message);return;}
     // 팬(fans) 채널은 owner_mko 없이 owner_gko만 있음(그룹 전체가 대상, 특정 멤버 아님) — owner_mko
     // 유무가 아니라 둘 중 하나라도 있으면 owner 객체를 만든다(2026-08-21).
-    _EXT_CHANNELS=(data||[]).map(r=>({handle:r.handle,url:r.url,name:r.name,tier:r.tier,...((r.owner_mko||r.owner_gko)?{owner:{mko:r.owner_mko||null,gko:r.owner_gko||null}}:{})}));
+    _EXT_CHANNELS=(data||[]).map(r=>({handle:r.handle,url:r.url,name:r.name,tier:r.tier,defaultCategory:r.default_category||'',isPrimary:!!r.is_primary,...((r.owner_mko||r.owner_gko)?{owner:{mko:r.owner_mko||null,gko:r.owner_gko||null}}:{})}));
     _extChannelsLoaded=true;
     const backfillSel=document.getElementById('sp-yt-backfill-ch');
     if(backfillSel)backfillSel.innerHTML=_EXT_CHANNELS.map(c=>`<option value="${c.handle}">${c.name}</option>`).join('');
@@ -3684,7 +3729,7 @@ function _extOwnerGko(owner){
 // 게스트 감지에만 제목 파싱을 계속 씀(2026-08-11). tier가 'music'이 아니면(variety/magazine/idol) 원래
 // mv/live/short 키워드가 없어 'other'로 뭉뚱그려지던 영상을 'variety' 카테고리로 분류한다 — 단 tier가
 // 'show'(드라마/영화, 2026-08-12 신설)면 예능과 구분해서 'show' 카테고리로 따로 분류한다.
-function _extBuildRows(vids,strict,tier,owner){
+function _extBuildRows(vids,strict,tier,owner,defaultCat){
   const rows=[];let skipped=0;
   const ownerGko=_extOwnerGko(owner);
   for(const v of vids){
@@ -3729,7 +3774,15 @@ function _extBuildRows(vids,strict,tier,owner){
     // fans tier는 원래 category(mv/live/short 등)가 뭐였든 무조건 'fan'으로 — "by Fans" 탭은 콘텐츠
     // 종류가 아니라 "팬이 만들었다"는 출처 자체가 기준이라, variety/show처럼 'other'만 덮어쓰는 방식으론
     // 안 됨(직캠류 팬캠도 팬 채널 콘텐츠면 다 여기로 가야 함, 2026-08-21).
-    const category=tier==='fans'?'fan':(tier&&tier!=='music'&&(!v.category||v.category==='other'))?(tier==='show'?'show':'variety'):v.category;
+    // 제목으로 분류한 결과(_ytClassify)가 우선이고, 'other'로 안 잡힌 것만 폴백을 쓴다. 예전엔 폴백이
+    // tier에서 곧바로 나와서(show면 show, 나머지 전부 variety) 아이돌 개인 채널의 브이로그·일상까지
+    // 몽땅 예능 탭에 쌓였음 — 채널마다 성격이 다른데 한 값으로 강제할 이유가 없어서 채널별 설정
+    // (ext_channels.default_category)으로 바꿈(2026-08-25, 사용자 요청).
+    //   빈 값  → 기존 동작(show=show, 나머지=variety)
+    //   'none' → 폴백 안 함. 분류 안 된 건 'other'로 남아 전체(all) 탭에만 노출된다.
+    const _fbRaw=defaultCat||(tier==='show'?'show':'variety');
+    const _fallback=_fbRaw==='none'?(v.category||'other'):_fbRaw;
+    const category=tier==='fans'?'fan':(tier&&tier!=='music'&&(!v.category||v.category==='other'))?_fallback:v.category;
     // 신뢰도 검수 — owner 없는 채널(THE SHOW·뮤직뱅크 등 특정 그룹 소유가 아닌 모음/방송사 채널)에서
     // group_ko가 오로지 멤버 이름 하나만으로 역추론(confidence:'weak')됐으면, 그 즉시 실제 그룹으로
     // 확정하지 않고 content_flag:'hidden'(기존에 이미 전면 신뢰되던 은닉 메커니즘 재사용)+needs_review:true로
@@ -3784,7 +3837,7 @@ async function _ytSyncExtChannels(){
         setProg(`${prefix} ${fetched}${tot?'/'+tot:''}개 수집 중…`+(resumeTok?' (이어받는 중)':''));
       },resumeTok);
       if(vids.length){
-        const{rows,skipped}=_extBuildRows(vids,_EXT_STRICT_TIERS.has(ch.tier),ch.tier,ch.owner);
+        const{rows,skipped}=_extBuildRows(vids,_EXT_STRICT_TIERS.has(ch.tier),ch.tier,ch.owner,ch.defaultCategory);
         totalSkipped+=skipped;
         if(rows.length){
           setProg(`${prefix} ${rows.length}개 저장 중…`);
@@ -3894,7 +3947,7 @@ async function _ytBackfillChannelCore(ch,fromYear,toYear,callBudget,onProg,query
       });
     }
     if(vids.length){
-      const{rows,skipped:sk}=_extBuildRows(vids,_EXT_STRICT_TIERS.has(ch.tier),ch.tier,ch.owner);
+      const{rows,skipped:sk}=_extBuildRows(vids,_EXT_STRICT_TIERS.has(ch.tier),ch.tier,ch.owner,ch.defaultCategory);
       skipped+=sk;
       if(rows.length){
         for(let i=0;i<rows.length;i+=200){

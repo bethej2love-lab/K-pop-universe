@@ -1233,6 +1233,9 @@
   #vm-ch-add-target-gko{flex:1 1 140px;min-width:110px;}
   #vm-ch-add-btn{flex-shrink:0;background:rgba(155,178,228,0.18);border:0.5px solid rgba(170,195,255,0.35);border-radius:8px;color:#c8ddff;font-size:11px;font-weight:600;font-family:inherit;padding:6px 12px;cursor:pointer;}
   #vm-ch-add-btn:hover{background:rgba(155,178,228,0.28);}
+  /* 대표 채널 체크박스(아이돌개인 행) — 유형/기본카테고리 select 옆에 같은 높이로 붙음 */
+  .ec-primary-lbl{flex-shrink:0;display:inline-flex;align-items:center;gap:3px;font-size:10.5px;color:rgba(190,210,250,0.72);white-space:nowrap;cursor:pointer;}
+  .ec-primary-lbl input{margin:0;cursor:pointer;}
   .ec-tier-sel{flex-shrink:0;background:rgba(255,255,255,0.05);border:0.5px solid rgba(255,255,255,0.12);border-radius:8px;color:rgba(210,225,255,0.85);font-size:10.5px;font-family:inherit;padding:3px 5px;}
   .ec-del-btn{flex-shrink:0;font-size:10.5px;color:rgba(240,150,150,0.85);background:rgba(220,90,90,0.10);border:0.5px solid rgba(220,90,90,0.3);border-radius:8px;padding:3px 8px;cursor:pointer;font-family:inherit;}
   .ec-del-btn:hover{background:rgba(220,90,90,0.2);}
