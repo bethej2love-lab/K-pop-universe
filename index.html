@@ -45,7 +45,10 @@
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <link rel="stylesheet" as="style" crossorigin
   href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@1.3.9/dist/web/static/pretendard-dynamic-subset.css">
-<link rel="stylesheet" href="kpop_universe.css?v=15">
+<!-- ⚠️ kpop_universe.css를 수정하면 이 ?v= 를 반드시 같이 올릴 것 — 안 올리면 폰이 옛 CSS를 그대로
+     재사용해서 "새 마크업 + 옛 스타일"로 화면이 통째로 깨진다(2026-08-24 Charts 가로선반 전환 때
+     실제로 발생: 158px 고정폭 규칙을 못 받아 카드가 46~68px로 찌그러짐). sw.js의 CACHE_VERSION도 같이. -->
+<link rel="stylesheet" href="kpop_universe.css?v=16">
 <script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@1/index.js"></script>
 </head>
 <body>
@@ -3950,7 +3953,7 @@ function closeLightbox(){
   // 닫을 때마다 탭바를 무조건 보이는 상태로 되돌리고, 각 시트의 스크롤 추적값도 현재 위치로 재동기화한다.
   const tb=document.getElementById('tabbar');
   if(tb&&tb.classList.contains('tab-hidden')){tb.classList.remove('tab-hidden');_retractSheets();}
-  [mobSheetInner,mobCardStackInner,connSheetInner].forEach(el=>{if(el)el._lastScroll=el.scrollTop;});
+  _rebaseSheetScroll();
 }
 function _lbSwitchToBrowse(){
   const lb=document.getElementById('yt-lightbox');
@@ -4771,6 +4774,7 @@ function openMobSheet(cardEl){
   // 새 카드는 scrollTop=0에서 시작하므로 방향 감지 기준선도 0으로 리셋 — 직전 카드에서 남은 _lastScroll
   // 잔상 때문에 첫 스크롤이 반대 방향으로 오판되거나 탭바가 숨김 고착되는 걸 막는다.
   mobSheetInner._lastScroll=0;mobCardStackInner._lastScroll=0;
+  mobSheetInner._tbAccum=0;mobCardStackInner._tbAccum=0;
   document.getElementById('journal-sidebar').classList.remove('open'); // 마이페이지가 열려있는 채로 그룹/멤버 카드를 열어도 카드가 위로 뜨도록
   cardEl.style.maxWidth='';cardEl.style.width='';cardEl.style.left='';cardEl.style.top='';
 
@@ -4908,8 +4912,8 @@ function closeMobSheet(){
   mobSheetEl.style.transform='';
   document.getElementById('tabbar').classList.remove('tab-hidden');
   _retractSheets();
-  mobSheetInner._lastScroll=0;
-  mobCardStackInner._lastScroll=0;
+  mobSheetInner._lastScroll=0;mobSheetInner._tbAccum=0;
+  mobCardStackInner._lastScroll=0;mobCardStackInner._tbAccum=0;
   _hideTotop();
   // 뷰 원위치
   if(_mobViewShift!==0)_animMobViewShift(0,320);
@@ -4953,7 +4957,7 @@ function _popMobCard(){
     document.getElementById('tabbar').classList.remove('tab-hidden');
     _retractSheets();
   }
-  mobCardStackInner._lastScroll=0;
+  mobCardStackInner._lastScroll=0;mobCardStackInner._tbAccum=0;
   _hideTotop();
 
   // 스택이 아직 2겹 이상 남아있으면(예: 인물→그룹→인물 3겹에서 한 번만 pop) 오버레이 자체는 그대로 두고
@@ -6012,7 +6016,7 @@ function closeConnCard(){
       document.getElementById('tabbar').classList.remove('tab-hidden');
       _retractSheets();
     }
-    connSheetInner._lastScroll=0;
+    connSheetInner._lastScroll=0;connSheetInner._tbAccum=0;
     _hideTotop();
   }else{
     connPanelEl.classList.remove('open');
@@ -8477,14 +8481,24 @@ function closeMobFilterSheet(){
   });
 });
 let _tabbarH=73;
+let _tabbarOff=false; // 지금 탭바가 숨겨져 있어서 시트가 그 자리까지 내려와 있는 상태인가
+// 탭바 높이 실측 → CSS 변수 반영. ⚠️ getBoundingClientRect()는 transform이 반영된 값이라, 탭바가
+// .tab-hidden(translateY(110%))인 동안 재측정하면 화면 밖 좌표가 잡혀 높이가 0 근처로 망가진다
+// (iOS는 주소창 접힘/펼침 때 resize가 수시로 발화하므로 실제로 그 타이밍에 걸림). 레이아웃 높이인
+// offsetHeight + CSS bottom 오프셋으로 재는 게 transform과 무관해서 안전하다.
 function updateSheetBottom(){
   if(window.innerWidth>768)return;
   const tb=document.getElementById('tabbar');if(!tb)return;
-  const rect=tb.getBoundingClientRect();
-  const h=Math.round(window.innerHeight-rect.top)+8;
-  _tabbarH=h;
-  document.documentElement.style.setProperty('--sheet-bottom',h+'px');
+  const off=parseFloat(getComputedStyle(tb).bottom)||0; // 검색 모드(bottom:4px) 같은 띄움 보정
+  _tabbarH=Math.round(tb.offsetHeight+off);
   document.documentElement.style.setProperty('--mob-vh',(window.visualViewport?.height??window.innerHeight)+'px');
+  _applySheetMetrics();
+}
+// 시트 기하를 결정하는 단 두 개의 변수를 한 곳에서만 쓴다(kpop_universe.css의 #mob-sheet 주석 참고).
+function _applySheetMetrics(){
+  const rs=document.documentElement.style;
+  rs.setProperty('--sheet-bottom',(_tabbarOff?0:_tabbarH)+'px');
+  rs.setProperty('--sheet-grow',(_tabbarOff?_tabbarH:0)+'px');
 }
 function exitMobSearch(){
   const tb=document.getElementById('tabbar');
@@ -8494,65 +8508,73 @@ function exitMobSearch(){
 }
 window.addEventListener('resize',updateSheetBottom);
 requestAnimationFrame(updateSheetBottom);
-// 시트별 [바깥 패널, 실제 스크롤되는 안쪽 콘텐츠] 쌍 — 탭바가 숨겨질 때 바깥 패널뿐 아니라
-// 안쪽 콘텐츠의 max-height도 같이 늘려야, 탭바가 사라진 자리까지 카드 내용이 실제로 채워짐
-// (안쪽만 CSS 고정값(60vh-24px)에 묶여 있으면 바깥만 늘어나고 빈 여백만 남는 버그가 있었음)
-const _sheetPairs=[
-  [document.getElementById('mob-sheet'),document.getElementById('mob-sheet-inner')],
-  [document.getElementById('mob-card-stack'),document.getElementById('mob-card-stack-inner')],
-  [document.getElementById('conn-sheet'),document.getElementById('conn-sheet-inner')]
-];
-function _extendSheets(){
-  _sheetPairs.forEach(([outer,inner])=>{
-    if(!outer)return;
-    outer.style.bottom='0px';
-    const isFull=outer.classList.contains('bs-full');
-    if(isFull){
-      outer.style.minHeight='var(--mob-vh,100vh)';
-      outer.style.maxHeight='var(--mob-vh,100vh)';
-      if(inner)inner.style.maxHeight='calc(var(--mob-vh,100vh) - 24px)';
-    }else{
-      outer.style.minHeight=`calc(60vh + ${_tabbarH}px)`;
-      outer.style.maxHeight=`calc(60vh + ${_tabbarH}px)`;
-      if(inner)inner.style.maxHeight=`calc(60vh + ${_tabbarH}px - 24px)`;
-    }
+// 탭바가 숨겨질 때 시트가 그 자리까지 내려오고 안쪽 콘텐츠도 같이 늘어나야 하는데, 예전엔 여기서
+// 시트 3개에 인라인 min/max-height·bottom을 직접 박았다. 그 값이 "호출 시점의 bs-full 여부" 기준이라
+// 나중에 열리는 카드가 옛 값에 갇혔음(자세한 건 kpop_universe.css의 #mob-sheet 주석). 지금은 변수
+// 두 개(--sheet-bottom/--sheet-grow)만 갈아끼우고 나머지는 전부 CSS가 계산한다.
+const _sheetScrollers=[mobSheetInner,mobCardStackInner,connSheetInner].filter(Boolean);
+function _rebaseSheetScroll(){
+  _sheetScrollers.forEach(el=>{
+    el._lastScroll=el.scrollTop;el._tbAccum=0;
+    el._lastMax=Math.max(0,el.scrollHeight-el.clientHeight);
   });
 }
-function _retractSheets(){
-  _sheetPairs.forEach(([outer,inner])=>{
-    if(!outer)return;
-    outer.style.bottom='';
-    outer.style.minHeight='';
-    outer.style.maxHeight='';
-    if(inner)inner.style.maxHeight='';
-  });
-  document.documentElement.style.setProperty('--sheet-bottom',_tabbarH+'px');
-}
+function _extendSheets(){_tabbarOff=true;_applySheetMetrics();_rebaseSheetScroll();}
+function _retractSheets(){_tabbarOff=false;_applySheetMetrics();_rebaseSheetScroll();}
 // 그룹/멤버/연결 카드 시트 전부 같은 방식으로: 아래로 스크롤하면 탭바 숨김+시트 확장, 위로 스크롤(또는 맨 위)하면 원복
+const _TB_HIDE_DELTA=28;  // 이만큼 연속으로 내려야 숨김(네이티브 앱 감각 — 손가락 미세 흔들림/클램프 무시)
+const _TB_SHOW_DELTA=14;  // 올릴 땐 더 민감하게(돌아오는 쪽이 안 되면 훨씬 답답하므로)
+const _TB_TOP_ZONE=40;    // 최상단 근처는 방향 무관 무조건 표시(안전망)
+// 지금 화면 맨 위에 있는 카드의 스크롤 컨테이너만 탭바를 조종한다 — 밑에 깔린 시트(스택 뒤의
+// mob-sheet 등)도 시트 높이가 바뀔 때마다 클램프로 scroll을 쏘는데, 그걸 같이 듣고 있으면 두
+// 컨테이너가 서로 탭바를 숨겼다 켰다 하며 싸운다(카드를 여러 번 열었다 닫으면 재현됨).
+function _activeSheetScroller(){
+  if(connSheetEl&&connSheetEl.classList.contains('bs-open'))return connSheetInner;
+  if(mobCardStackEl&&mobCardStackEl.style.display==='block')return mobCardStackInner;
+  if(mobSheetEl&&mobSheetEl.classList.contains('bs-open'))return mobSheetInner;
+  return null;
+}
 function _wireSheetTabbarHide(scrollEl){
   if(!scrollEl)return;
-  scrollEl._lastScroll=0;
+  scrollEl._lastScroll=0;scrollEl._tbAccum=0;scrollEl._lastMax=0;
   scrollEl.addEventListener('scroll',()=>{
     const tb=document.getElementById('tabbar');
+    if(!tb)return;
     // iOS 고무줄(바운스): scrollTop이 0 미만이거나 최대치를 넘는 구간에선 방향 계산(직전-현재)이 반전돼
     // "다운 중"으로 오판된 채 탭바가 숨김 고착됨 — 유효 범위로 클램프해서 바운스 구간을 무시한다.
     const max=Math.max(0,scrollEl.scrollHeight-scrollEl.clientHeight);
     const cur=Math.max(0,Math.min(scrollEl.scrollTop,max));
+    const prevMax=scrollEl._lastMax;
+    scrollEl._lastMax=max;
+    // 지금 맨 위 카드가 아니면 추적만 하고 탭바엔 손대지 않는다.
+    if(scrollEl!==_activeSheetScroller()){scrollEl._lastScroll=cur;scrollEl._tbAccum=0;return;}
     // 최상단 근처(<40px)면 방향 무관 무조건 표시 — "탭바 안 돌아옴" 케이스를 전부 흡수하는 안전망.
-    if(cur<40){
+    if(cur<_TB_TOP_ZONE){
       if(tb.classList.contains('tab-hidden')){tb.classList.remove('tab-hidden');_retractSheets();}
-      scrollEl._lastScroll=cur;
+      scrollEl._lastScroll=cur;scrollEl._tbAccum=0;
       return;
     }
-    if(cur>scrollEl._lastScroll+2){ // 아래로(히스테리시스 2px로 미세 흔들림 무시)
+    let d=cur-scrollEl._lastScroll;
+    scrollEl._lastScroll=cur;
+    // 탭바가 숨겨지면 시트가 커져서 이 컨테이너의 clientHeight가 늘고, 그만큼 스크롤 가능 최대치(max)가
+    // 줄면서 브라우저가 scrollTop을 강제로 위로 당긴다. 그건 사용자가 올린 게 아니므로 델타에서 빼야
+    // 한다 — 안 빼면 "위로 스크롤"로 읽혀 탭바가 숨자마자 도로 튀어나온다(높이 트랜지션이 .32s라
+    // 이 클램프가 여러 프레임에 걸쳐 조금씩 들어옴). 시간창으로 무시하면 그 사이 진짜 위로 튕긴
+    // 손가락까지 같이 삼켜버려서, 이렇게 클램프된 양만 정확히 상쇄한다.
+    const clampShift=Math.min(0,max-prevMax);
+    if(d<0&&clampShift<0)d=Math.min(0,d-clampShift);
+    if(d===0)return;
+    // 방향이 바뀌면 누적을 리셋하고 새로 센다(왔다갔다 하는 손가락에 탭바가 깜빡이지 않게)
+    if((d>0)!==(scrollEl._tbAccum>0))scrollEl._tbAccum=0;
+    scrollEl._tbAccum+=d;
+    if(scrollEl._tbAccum>=_TB_HIDE_DELTA){
       if(!tb.classList.contains('tab-hidden')){tb.classList.add('tab-hidden');_extendSheets();}
-    } else if(cur<scrollEl._lastScroll-2){ // 위로
+    }else if(scrollEl._tbAccum<=-_TB_SHOW_DELTA){
       if(tb.classList.contains('tab-hidden')){tb.classList.remove('tab-hidden');_retractSheets();}
     }
-    scrollEl._lastScroll=cur;
   },{passive:true});
 }
-[mobSheetInner,mobCardStackInner,connSheetInner].forEach(_wireSheetTabbarHide);
+_sheetScrollers.forEach(_wireSheetTabbarHide);
 function closePanels(){
   if(myProfile?.nickname||!isMob())document.getElementById('search-wrap').classList.remove('open');
   document.getElementById('settings-panel').classList.remove('open');
@@ -8623,6 +8645,7 @@ document.getElementById('tab-explore').addEventListener('click',e=>{
     const _stackCard=mobCardStackInner.querySelector('#tt,#gc');
     if(_stackCard){document.body.appendChild(_stackCard);_stackCard.style.display='none';}
     mobSheetInner._lastScroll=0;mobCardStackInner._lastScroll=0;
+    mobSheetInner._tbAccum=0;mobCardStackInner._tbAccum=0;
     closeConnCard();clearFocus();_openGCko=null;_openTArtist=null;
     controls.enabled=false;
   }else{

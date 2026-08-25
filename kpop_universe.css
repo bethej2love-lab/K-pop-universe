@@ -107,7 +107,7 @@
   /* ── Mobile search results ───────────────────────── */
   #mob-sr{
     position:fixed;left:28px;right:28px;
-    bottom:calc(var(--sheet-bottom,73px) - 8px);
+    bottom:var(--sheet-bottom,73px);
     background:rgba(14,18,36,0.96);border-radius:16px 16px 0 0;
     border:0.5px solid rgba(255,255,255,0.09);border-bottom:none;
     backdrop-filter:blur(32px);-webkit-backdrop-filter:blur(32px);
@@ -417,10 +417,17 @@
   .tv-more-btn{width:100%;margin-top:5px;padding:5px 8px;border:none;border-radius:8px;background:rgba(255,255,255,0.08);color:rgba(160,180,225,0.80);font-family:inherit;font-size:10px;font-weight:600;cursor:pointer;letter-spacing:.02em;transition:background .13s,color .13s;}
   .tv-more-btn:hover{background:rgba(255,255,255,0.13);color:rgba(205,220,255,0.95);}
   /* ── Mobile bottom sheet ─────────────────────────── */
+  /* 카드 시트 높이/위치는 전부 JS가 :root에 심는 두 변수만 보고 결정된다(2026-08-25 재설계).
+       --sheet-bottom : 시트 아래에 비워둘 높이 = 탭바가 보일 땐 탭바 높이, 숨겨지면 0
+       --sheet-grow   : 반쯤(60vh) 상태에서 탭바가 사라진 만큼 시트를 더 키울 양(0 또는 탭바 높이)
+     예전엔 _extendSheets()가 시트 3개에 인라인 min/max-height를 직접 박았는데, 그 값이 "호출 시점의
+     bs-full 여부"로 정해져서 그 뒤에 열리는 카드가 옛 값에 갇혔음(스택 카드 inner가 60vh+탭바에
+     고정돼 화면을 못 채움 = "탭바 로직이 카드 열었다 닫았다 하면 깨진다"의 정체). 변수만 바꾸면
+     지금 열려있든 나중에 열리든 CSS가 알아서 맞추므로 stale 인라인 값이 구조적으로 안 생긴다. */
   #mob-sheet{
     display:none;position:fixed;left:0;right:0;width:100%;
     bottom:var(--sheet-bottom,73px);
-    min-height:60vh;max-height:60vh;
+    min-height:calc(60vh + var(--sheet-grow,0px));max-height:calc(60vh + var(--sheet-grow,0px));
     border-radius:20px 20px 0 0;
     background:rgba(16,20,36,0.96);
     backdrop-filter:blur(36px);-webkit-backdrop-filter:blur(36px);
@@ -437,7 +444,7 @@
   #mob-sheet.bs-full #mob-sheet-inner{max-height:calc(var(--mob-vh,100vh) - var(--sheet-bottom,73px) - 24px - env(safe-area-inset-top,0px));}
   #mob-card-stack{
     display:none;position:fixed;left:0;right:0;
-    bottom:var(--sheet-bottom,73px);min-height:60vh;max-height:60vh;
+    bottom:var(--sheet-bottom,73px);min-height:calc(60vh + var(--sheet-grow,0px));max-height:calc(60vh + var(--sheet-grow,0px));
     border-radius:20px 20px 0 0;overflow:hidden;
     background:rgba(14,18,36,0.97);
     backdrop-filter:blur(36px);-webkit-backdrop-filter:blur(36px);
@@ -455,7 +462,7 @@
      60vh로 뚝 떨어져서 답답해 보이는 문제가 있었음. */
   #mob-card-stack.bs-full{min-height:calc(var(--mob-vh,100vh) - var(--sheet-bottom,73px));max-height:calc(var(--mob-vh,100vh) - var(--sheet-bottom,73px));border-radius:0;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);}
   #mob-card-stack.bs-full #mob-card-stack-inner{max-height:calc(var(--mob-vh,100vh) - var(--sheet-bottom,73px) - 24px - env(safe-area-inset-top,0px));}
-  #mob-card-stack-inner{overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;max-height:calc(60vh - 24px);overscroll-behavior:contain;width:100%;box-sizing:border-box;position:relative;transition:max-height .32s cubic-bezier(0.32,0.72,0,1);}
+  #mob-card-stack-inner{overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;max-height:calc(60vh + var(--sheet-grow,0px) - 24px);overscroll-behavior:contain;width:100%;box-sizing:border-box;position:relative;transition:max-height .32s cubic-bezier(0.32,0.72,0,1);}
   #mob-card-stack-inner>#tt,#mob-card-stack-inner>#gc{
     position:static!important;display:block!important;
     max-width:100%!important;width:100%!important;
@@ -730,7 +737,7 @@
     .gc-ch-refresh{font-size:20px;padding:6px 8px;}
   }
   #mob-sheet-handle{width:36px;height:4px;background:rgba(255,255,255,0.14);border-radius:2px;margin:10px auto 6px;display:block;}
-  #mob-sheet-inner{overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;max-height:calc(60vh - 24px);overscroll-behavior:contain;width:100%;box-sizing:border-box;position:relative;transition:max-height .32s cubic-bezier(0.32,0.72,0,1);}
+  #mob-sheet-inner{overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;max-height:calc(60vh + var(--sheet-grow,0px) - 24px);overscroll-behavior:contain;width:100%;box-sizing:border-box;position:relative;transition:max-height .32s cubic-bezier(0.32,0.72,0,1);}
   #mob-sheet-inner::-webkit-scrollbar{-webkit-appearance:none;width:2px;}
   #mob-sheet-inner::-webkit-scrollbar-track{background:transparent;}
   #mob-sheet-inner::-webkit-scrollbar-thumb{-webkit-appearance:none;background:rgba(180,200,240,0.07);border-radius:2px;}
@@ -1614,7 +1621,7 @@
   #conn-panel .conn-inner{padding:56px 23px 20px 26px;}
   #conn-sheet{
     display:none;position:fixed;left:0;right:0;
-    bottom:var(--sheet-bottom,73px);min-height:60vh;max-height:60vh;
+    bottom:var(--sheet-bottom,73px);min-height:calc(60vh + var(--sheet-grow,0px));max-height:calc(60vh + var(--sheet-grow,0px));
     border-radius:20px 20px 0 0;overflow:hidden;
     background:rgba(14,18,36,0.97);
     backdrop-filter:blur(36px);-webkit-backdrop-filter:blur(36px);
@@ -1631,7 +1638,7 @@
   #conn-sheet.bs-full{min-height:calc(var(--mob-vh,100vh) - var(--sheet-bottom,73px));max-height:calc(var(--mob-vh,100vh) - var(--sheet-bottom,73px));border-radius:0;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);}
   #conn-sheet.bs-full #conn-sheet-inner{max-height:calc(var(--mob-vh,100vh) - var(--sheet-bottom,73px) - 24px - env(safe-area-inset-top,0px));}
   @media(min-width:769px){#conn-sheet{display:none!important;}}
-  #conn-sheet-inner{overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;max-height:calc(60vh - 24px);overscroll-behavior:contain;transition:max-height .32s cubic-bezier(0.32,0.72,0,1);}
+  #conn-sheet-inner{overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;max-height:calc(60vh + var(--sheet-grow,0px) - 24px);overscroll-behavior:contain;transition:max-height .32s cubic-bezier(0.32,0.72,0,1);}
   #conn-sheet .conn-inner{padding:16px 28px 14px 28px;}
   /* ── Mob filter sheet ───────────────────────────── */
   #mob-filter-sheet{

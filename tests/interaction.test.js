@@ -16,6 +16,10 @@
 //          scrollTop 바운스 자체는 재현 못 하므로, 핵심 안전망 "최상단<40px=무조건 표시"와 방향 감지를 검증.)
 //  [버그D] 첫 카드가 열리는 애니메이션 중에 다음 카드를 빠르게 연속으로 열어도, 스택이 보존되고 다음
 //          카드가 50% 중간 높이에서 고착되지 않고 100%(bs-full)로 완전히 열려야 한다.
+//  [버그E] 탭바가 보일 때 탭바와 카드 사이에 틈이 있으면 안 된다(그 사이로 배경 우주가 비쳐 보임).
+//          --sheet-bottom을 "탭바 높이 + 8px"로 잡던 상수 오차 회귀 방지.
+//  [버그F] 탭바가 숨겨진 상태에서 새 카드를 열어도 그 카드가 화면을 꽉 채워야 한다. 시트 높이를 인라인
+//          스타일로 박던 시절, 나중에 열리는 카드가 옛 값(60vh+탭바)에 갇히던 회귀 방지.
 //
 // ⚠️ 브라우저는 이 스크립트가 spawn한 PID만 정확히 종료(프로세스명 일괄 kill 금지, smoke.test.js 참고).
 // 실행: node tests/interaction.test.js
@@ -216,6 +220,45 @@ async function main() {
     if (rapid.stack === 3 && rapid.full && rapid.open && xfCleared && rapid.disp === 'block')
       ok('[버그D] 빠른 연속 오픈 3장 → 스택 보존(3) + 카드 100%(bs-full) 완전 오픈(중간 고착 없음)');
     else fail(`[버그D] 연속 오픈 고착/스택깨짐 — stack=${rapid.stack}(3기대) full=${rapid.full} open=${rapid.open} transform="${rapid.xf}"(비어야) disp=${rapid.disp}`);
+    await closeAll();
+
+    // ── [버그E] 탭바가 보일 때 탭바와 카드 사이에 틈(배경 우주가 비침)이 없어야 함 ──
+    // 원인이었던 것: updateSheetBottom()이 --sheet-bottom을 "탭바 높이 + 8px"로 잡아서 시트가 항상
+    // 8px 떠 있었음(2026-08-14에도 같은 증상이 트랜지션 속도 불일치로 한 번 났던, 재발 계열 버그).
+    await ev(cdp, `showT(${byKo}(window.__P[0]))`); await sleep(900);
+    const gap = JSON.parse(await ev(cdp, `JSON.stringify((function(){
+      const tb=document.getElementById('tabbar'),ms=document.getElementById('mob-sheet');
+      return {hidden:tb.classList.contains('tab-hidden'),gap:Math.round(tb.getBoundingClientRect().top-ms.getBoundingClientRect().bottom)};
+    })())`));
+    if (!gap.hidden && gap.gap === 0) ok('[버그E] 탭바-카드 틈 0px(배경 우주 비침 없음)');
+    else fail(`[버그E] 탭바-카드 사이 틈 ${gap.gap}px (0이어야 함, 탭바숨김=${gap.hidden})`);
+
+    // ── [버그F] 탭바가 숨겨진 상태에서 새 카드를 열면 그 카드도 화면을 꽉 채워야 함 ──
+    // 원인이었던 것: _extendSheets()가 시트 3개에 인라인 min/max-height를 "호출 시점의 bs-full 여부"로
+    // 박아서, 그때 숨겨져 있던 mob-card-stack이 60vh+탭바 값에 갇혔고 나중에 bs-full로 열려도 그 인라인
+    // 값이 CSS를 이겨 화면을 못 채웠음("카드 여기저기 열었다 닫았다 하면 탭바 로직이 깨진다"의 정체).
+    await ev(cdp, `(function(){const sp=document.createElement('div');sp.id='__tb_spacer2';sp.style.height='2000px';mobSheetInner.appendChild(sp);return 1;})()`);
+    await ev(cdp, `(function(){mobSheetInner.scrollTop=400;mobSheetInner.dispatchEvent(new Event('scroll'));return 1;})()`);
+    await sleep(500);
+    const hiddenBefore = await ev(cdp, `document.getElementById('tabbar').classList.contains('tab-hidden')`);
+    await ev(cdp, `showT(${byKo}(window.__P[1]))`); await sleep(900);
+    // 새 카드는 맨 위(scrollTop 0)에서 시작하므로 탭바가 다시 나오는 게 정상 — 그래서 기대 높이는
+    // 그 시점의 --sheet-bottom을 그대로 반영한 "--mob-vh - --sheet-bottom - 24"다. 핵심은 이 값이지
+    // 옛날 인라인 고착값(60vh + 탭바 - 24)이 아니라는 것. (--mob-vh는 visualViewport 기준이라
+    // 헤드리스에선 window.innerHeight와 다를 수 있어 반드시 CSS 변수에서 읽는다.)
+    const stacked = JSON.parse(await ev(cdp, `JSON.stringify((function(){
+      const inner=document.getElementById('mob-card-stack-inner');
+      const rs=getComputedStyle(document.documentElement);
+      const mobVh=parseFloat(rs.getPropertyValue('--mob-vh'))||window.innerHeight;
+      const sb=parseFloat(rs.getPropertyValue('--sheet-bottom'))||0;
+      return {innerH:Math.round(inner.clientHeight),expect:Math.round(mobVh-sb-24),
+              stale:Math.round(window.innerHeight*0.6+(parseFloat(getComputedStyle(document.getElementById('tabbar')).height)||0)-24),
+              inlineMax:inner.style.maxHeight,disp:mobCardStackEl.style.display};
+    })())`));
+    await ev(cdp, `(function(){const s=document.getElementById('__tb_spacer2');if(s)s.remove();return 1;})()`);
+    if (hiddenBefore && stacked.disp === 'block' && Math.abs(stacked.innerH - stacked.expect) <= 4 && stacked.inlineMax === '')
+      ok(`[버그F] 탭바 숨김 중 연 카드도 시트 높이 정상(inner ${stacked.innerH}, 옛 고착값 ${stacked.stale} 아님, 인라인 높이 잔존 없음)`);
+    else fail(`[버그F] 스택 카드 높이 고착 — 숨김선행=${hiddenBefore} disp=${stacked.disp} inner=${stacked.innerH}(기대 ${stacked.expect}, 옛 고착값 ${stacked.stale}) 인라인max="${stacked.inlineMax}"(비어야)`);
     await closeAll();
 
     if (errors.length) fail(`상호작용 중 콘솔 에러 ${errors.length}건: ${errors.slice(0, 5).join(' | ')}`);
