@@ -7431,8 +7431,12 @@ function _withIdolChannelLink(a){
   const links=a?.links||null;
   if(!a||links?.youtube)return links;                 // 파일에 이미 있으면 그대로
   if(!_idolChannelsByMember){_loadIdolChannels();return links;} // 첫 호출: 다음 카드부터 반영
-  for(const g of _artistGroups(a)){
-    const url=_idolChannelsByMember.get(`${a.name.ko}|${g.ko}`);
+  // owner_gko는 _ytGroupKoFor 관례를 따른다 — 실존 그룹 소속이면 그룹명, 아이유·이영지처럼 소속 그룹이
+  // 없는 솔로면 **본인 이름**. 처음엔 _artistGroups(그룹명)만 보다가 솔로가 전부 미스났었음
+  // (이영지 1,184건, 2026-08-25 실측으로 발견) — 본인 이름 키도 같이 시도한다.
+  const keys=[..._artistGroups(a).map(g=>`${a.name.ko}|${g.ko}`),`${a.name.ko}|${a.name.ko}`];
+  for(const k of keys){
+    const url=_idolChannelsByMember.get(k);
     if(url)return{...(links||{}),youtube:url};
   }
   return links;
@@ -16252,7 +16256,7 @@ function _updateAdminUI(){
 // 옛 버전을 계속 서빙해서 고친 코드가 반영 안 되는 것처럼 보이는 사고가 남(2026-08-18, HTML 엔티티 정리
 // 버튼 타임아웃 재수정 후에도 계속 재현된다는 제보로 발견). admin.js 내용을 바꿀 때마다 이 버전 문자열도
 // 같이 올릴 것(sw.js의 CACHE_VERSION과 같은 수동 관리 방식).
-const _ADMIN_JS_VER='2026-08-25d';
+const _ADMIN_JS_VER='2026-08-25e';
 function _loadAdminScript(){
   if(!_isAdmin()||document.getElementById('admin-js-script'))return;
   const s=document.createElement('script');
