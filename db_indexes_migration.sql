@@ -44,3 +44,21 @@ CREATE INDEX IF NOT EXISTS idx_ytv_group_ko
 -- 인덱스 생성 후 플래너 통계를 갱신해야 새 인덱스를 실제로 고려함
 ANALYZE yt_channel_videos;
 
+
+-- ── 2026-08-25 추가: 어드민 검수 도구 조회 인덱스(실측 후 반영) ──────────────────
+-- ⚠️ 아래 세 개는 "부분 인덱스"다 — 조건에 맞는 소수 행만 담아서 크기가 작고(전체의 5~8%),
+--    다른 쿼리 계획에 영향을 주지 않는다. 다만 플래너가 인덱스를 쓰려면 쿼리 조건이 인덱스
+--    predicate와 **같은 형태**여야 하므로, 아래 정규식/비교식을 바꾸면 admin.js 쪽 조회도 같이 고칠 것.
+
+-- 그룹배정 검수 큐(needs_review 탭). 전엔 매 페이지가 371,448행을 훑었음.
+CREATE INDEX IF NOT EXISTS idx_ytv_needs_review
+  ON yt_channel_videos (id) WHERE needs_review;
+
+-- 검수 센터 "원곡 커버" 스캔 — 제목 후보. ILIKE '%원곡%'은 2글자라 pg_trgm도 못 타서
+-- 정규식(~*) + 부분 인덱스로 해결. 실측 11.9초 → 1.5초.
+CREATE INDEX IF NOT EXISTS idx_ytv_wonkok_title
+  ON yt_channel_videos (id) WHERE title ~* '원곡|커버|cover|original';
+
+-- 같은 스캔의 두 번째 축 — with 태그 보유 행("여러 그룹 커버 메들리" 구조 신호). 실측 25.2초 → 2.0초.
+CREATE INDEX IF NOT EXISTS idx_ytv_has_with_tags
+  ON yt_channel_videos (id) WHERE with_groups <> '{}' OR with_members <> '{}';
