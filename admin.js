@@ -3758,7 +3758,9 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
   // 세이마이네임(Say My Name): "When You Say My Name : YEWON"·"MIYEON – Say My Name" 등 곡명·가사에
   // 걸려 남의 영상을 대량으로 훔침(2026-08-25 실측). 한글 '세이마이네임' 토큰은 여기 없어 그대로 평문
   // 매칭되므로 정당한 세이마이네임 영상(한글 표기/멤버)은 안 끊긴다. 스텔라·M&N과 같은 계열의 그룹판 게이트.
-  const _GROUP_TOKEN_HASHTAG_ONLY=new Set(['SAY MY NAME']);
+  // 'NATURE'(네이처): "NATURE REPUBLIC"(화장품 브랜드)·"nature's..." 등 흔한 영단어에 걸려 남의 영상을
+  // 훔침(실측 — NCT127 광고영상이 네이처로). 한글 '네이처'는 게이트 밖이라 정당한 영상은 유지.
+  const _GROUP_TOKEN_HASHTAG_ONLY=new Set(['SAY MY NAME','NATURE']);
   // 긴 이름 우선 정렬 (부분 매칭 방지). strictSync 그룹은 제목 키워드 매칭에서 제외 — 자체 채널
   // 동기화(_ytSyncGroup)로만 영상이 들어와야 하는 공통명사 이름 그룹이 외부 채널 영상 제목에서 오인식되는 걸 막음.
   // altNames(예: 브브걸의 "브레이브걸스", 슈퍼노바의 "초신성", JX의 "JYJ")도 토큰에 포함시켜야 함 —
