@@ -370,6 +370,15 @@
   .gc-status-inner{position:absolute;top:0;left:0;right:0;height:100%;display:flex;align-items:center;gap:5px;}
   .gc-status-inner.type-presence{color:rgba(255,170,150,0.85);}
   .gc-status-inner.type-favcount{color:rgba(255,150,190,0.85);text-shadow:0 0 6px rgba(255,120,170,0.3);}
+  /* 흔적(익명 합산)은 앞의 둘과 달리 색 규칙이 없어서 부모 색을 그대로 물려받고 있었음 — 멤버 카드는
+     #tt{color:#ccd8ee}라 멀쩡했는데 그룹 카드(#gc)는 색 지정이 없어 UA 기본 검정을 물려받아 어두운
+     카드 위에서 안 보였음(2026-08-25 사용자 제보). 부모에 기대지 말고 여기서 직접 못 박는다.
+     presence(코랄)·favcount(핑크)와 달리 강조색을 안 쓰는 건 의도 — 순위·경쟁이 아닌 조용한 합산이라
+     멤버 카드 본문과 같은 톤(#ccd8ee)으로 두고, 분홍 점(.favcount-dot)만 시선을 끈다.
+     ⚠️ "#gc에 기본 color를 주면 되지 않나"는 안 됨 — 모바일 카드 스택은 이전 카드를 cloneNode 후
+     id를 지워서 배경에 남기는데(_freezeSheetBottomBeforeOverwrite), 그러면 #gc 아이디 셀렉터가
+     통째로 무효화돼 얼어붙은 카드만 도로 검정이 된다. 클래스 셀렉터로 박아야 클론에서도 산다. */
+  .gc-status-inner.type-traces{color:#ccd8ee;}
   .gc-status-inner.anim-in{animation:status-slide-in 0.42s cubic-bezier(0.22,0.8,0.36,1) forwards;}
   .gc-status-inner.anim-out{animation:status-slide-out 0.38s cubic-bezier(0.64,0,0.78,0.2) forwards;}
   #tt-status-line{margin:10px 0 6px;}
