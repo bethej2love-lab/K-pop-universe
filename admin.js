@@ -1552,7 +1552,9 @@ document.getElementById('hnn-overlay')?.addEventListener('click',e=>{if(e.target
 document.getElementById('sp-hnn-btn')?.addEventListener('click',()=>{document.getElementById('hnn-overlay').classList.add('open');_renderHnnWhitelist();_renderHnnDuplicateNames();_renderHnnAtmRules();_hnnSwitchTab('quality');});
 document.getElementById('hnn-close')?.addEventListener('click',()=>{
   document.getElementById('hnn-overlay').classList.remove('open');
-  _wonkokScanned=false;
+  // ⚠️ 예전엔 여기서 _wonkokScanned=false로 리셋해서, 검수 센터를 닫았다 열 때마다 원곡 스캔을
+  // 처음부터 다시 돌렸음 — 스캔 자체가 무거워서 그것만으로 이 탭을 못 쓰게 만든 원인 중 하나였다
+  // (2026-08-25 사용자 제보). 결과는 세션 동안 그대로 두고, 다시 훑고 싶으면 "다시 스캔" 버튼을 쓴다.
 });
 
 // ── "원곡: X" 오태깅 의심 목록 ── 다른 사람이 부른 커버 영상 제목에 "(원곡 : 이름)" 식으로 원곡자를
@@ -1661,22 +1663,36 @@ async function _wonkokScan(){
     // 겹쳐 statement_timeout에 걸림 — 그래서 서버에는 title 패턴매칭을 아예 안 시키고, id·title만 가볍게
     // (필터 없는 순수 PK 순서 스캔이라 빠름) 전량 페이지네이션으로 받아온 뒤 "원곡" 포함 여부는
     // 클라이언트에서 문자열 검사로 판정한다. 매칭된 소수의 id만 골라 나머지 컬럼을 추가로 조회.
-    statusEl.textContent='제목 목록 조회 중… (시간이 좀 걸릴 수 있음)';
+    // ⚠️ 예전엔 여기서 **전체 371,448행을 통째로** 페이지네이션해서 받아온 뒤 클라이언트에서 "원곡"
+    // 문자열을 찾았다. `ILIKE '%원곡%'`가 2글자라 pg_trgm 인덱스를 못 타는 게 이유였는데, 그 대가로
+    // 검수 센터를 열 때마다 372페이지를 긁어서 몇 분씩 걸렸고 실제로 못 쓰는 기능이 돼 있었음
+    // (2026-08-25 사용자 제보). PostgREST의 `imatch`(= `~*` 정규식)를 쓰면 서버에서 바로 걸러진다.
+    // 실측: 전체 371,448 → 제목 후보 9,484 + with태그 보유 20,951 (합쳐도 8%).
+    // 아래 두 축은 **판정 조건이 서로 달라서** 각각 받아온다:
+    //   ① 제목에 원곡/커버 표시가 있는 것 → 괄호절 파서 대상
+    //   ② with_groups/with_members가 있는 것 → "여러 그룹 커버 메들리"(multiGroupIds) 구조 신호 대상
+    // ⚠️ 정규식은 아래 _wonkokIndicatorRe와 **같은 의미**를 유지해야 한다(한쪽만 고치면 조용히 후보가
+    //    빠짐). 서버 필터는 넓게 잡고 정밀 판정은 그대로 클라이언트에서 한다.
+    statusEl.textContent='후보 조회 중…';
+    const _wkSeen=new Set();
     const idTitleRows=[];
-    let _wkLastId=null;
-    while(true){
-      // group_ko/with_members/with_groups도 같이 가볍게 받아온다 — "여러 그룹 커버 메들리" 감지(아래
-      // multiGroupIds)에 필요. 배열 컬럼이라 있어도 payload가 크게 안 무거워짐.
-      let q=sb.from(_YT_TABLE).select('id,title,group_ko,with_members,with_groups').order('id').limit(1000);
-      if(_wkLastId!==null)q=q.gt('id',_wkLastId);
-      const{data,error:idErr}=await q;
-      if(idErr){statusEl.textContent=`조회 실패(${idTitleRows.length}개까지 받음): `+idErr.message;return;}
-      if(!data?.length)break;
-      idTitleRows.push(...data);
-      statusEl.textContent=`제목 목록 조회 중… (${idTitleRows.length}개)`;
-      if(data.length<1000)break;
-      _wkLastId=data[data.length-1].id;
-    }
+    const _wkPull=async(label,build)=>{
+      let last=null;
+      while(true){
+        let q=build().order('id').limit(1000);
+        if(last!==null)q=q.gt('id',last);
+        const{data,error:idErr}=await q;
+        if(idErr)throw new Error(`${label} 조회 실패(${idTitleRows.length}개까지 받음): ${idErr.message}`);
+        if(!data?.length)break;
+        data.forEach(v=>{if(!_wkSeen.has(v.id)){_wkSeen.add(v.id);idTitleRows.push(v);}});
+        statusEl.textContent=`후보 조회 중… (${idTitleRows.length}개)`;
+        if(data.length<1000)break;
+        last=data[data.length-1].id;
+      }
+    };
+    const _WK_COLS='id,title,group_ko,with_members,with_groups';
+    await _wkPull('제목 후보',()=>sb.from(_YT_TABLE).select(_WK_COLS).filter('title','imatch','원곡|커버|cover|original'));
+    await _wkPull('with태그 후보',()=>sb.from(_YT_TABLE).select(_WK_COLS).or('with_groups.neq.{},with_members.neq.{}'));
     const _wonkokIndicatorRe=/원곡|커버|cover|\boriginal\b/i;
     const hitIds=(idTitleRows||[]).filter(v=>{
       const t=v.title||'';

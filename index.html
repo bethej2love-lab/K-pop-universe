@@ -504,7 +504,9 @@
       </div>
     </div>
     <div class="hnn-pane" id="hnn-pane-wonkok">
-      <button id="wonkok-scan-btn" style="display:none"></button>
+      <!-- 예전엔 숨겨진 자동 트리거였는데(탭 열 때마다 자동 재스캔), 스캔 결과를 세션 동안 유지하도록
+           바꾸면서 수동 재스캔 수단이 필요해져 노출한다(2026-08-25). -->
+      <button id="wonkok-scan-btn" class="sp-yt-sync" style="margin:0 0 8px;opacity:.85;">🔄 다시 스캔</button>
       <div id="wonkok-status" class="hnn-auto-status"></div>
       <div id="wonkok-toolbar" style="display:none">
         <label id="wonkok-select-all-row"><input type="checkbox" id="wonkok-select-all" checked>전체 선택</label>
@@ -16260,7 +16262,7 @@ function _updateAdminUI(){
 // 옛 버전을 계속 서빙해서 고친 코드가 반영 안 되는 것처럼 보이는 사고가 남(2026-08-18, HTML 엔티티 정리
 // 버튼 타임아웃 재수정 후에도 계속 재현된다는 제보로 발견). admin.js 내용을 바꿀 때마다 이 버전 문자열도
 // 같이 올릴 것(sw.js의 CACHE_VERSION과 같은 수동 관리 방식).
-const _ADMIN_JS_VER='2026-08-25i';
+const _ADMIN_JS_VER='2026-08-25j';
 function _loadAdminScript(){
   if(!_isAdmin()||document.getElementById('admin-js-script'))return;
   const s=document.createElement('script');
