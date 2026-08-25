@@ -2050,12 +2050,26 @@ async function _vmLoad(searchTerm,preserveSearch2){
       // strictSync 그룹 오염 검수 — tags_manual=false 행만 (관리자가 이미 확인한 건 제외)
       const ssGkos=[..._STRICT_SYNC_GROUPS];
       if(!ssGkos.length){statusEl.textContent='strictSync 그룹이 없어요';_vmRows=[];_vmRenderVideoList();return;}
-      // PostgREST에서 IN 필터는 .in() 메서드로 처리
-      const{data,error}=await _sbFetchAll(()=>sb.from(_YT_TABLE)
-        .select('id,title,group_ko,thumb,content_flag,members,with_members,with_groups,cover_of_members,cover_of_groups')
-        .in('group_ko',ssGkos)
-        .eq('tags_manual',false)
-        .order('id'));
+      // ⚠️ 예전엔 `.in('group_ko', 23개).order('id')` 한 방으로 받았는데 **19.2초** 걸렸음 —
+      // group_ko 인덱스는 있지만 전역 id 정렬과 안 맞아서, 페이지마다 매칭 3.3%(12,113/371,448)를
+      // 찾느라 테이블을 훑는 꼴이었다. 그룹별로 쪼개면 각 쿼리가 group_ko 인덱스를 그대로 타고
+      // 정렬도 그 안에서만 하면 돼서 **0.6초**로 떨어진다(실측, 32배). 인덱스 추가 불필요.
+      // 동시 6개는 다른 대량 조회(name_pollution_probe 등)에서 쓰던 것과 같은 수준 — 더 늘려도
+      // 이득이 크지 않고 무료 티어 커넥션만 압박한다.
+      const _SS_COLS='id,title,group_ko,thumb,content_flag,members,with_members,with_groups,cover_of_members,cover_of_groups';
+      let error=null;const collected=[];let _ssCursor=0;
+      const _ssWorker=async()=>{
+        while(_ssCursor<ssGkos.length&&!error){
+          const gko=ssGkos[_ssCursor++];
+          const{data:d,error:e}=await _sbFetchAll(()=>sb.from(_YT_TABLE)
+            .select(_SS_COLS).eq('group_ko',gko).eq('tags_manual',false).order('id'));
+          if(e){error=e;return;}
+          collected.push(...(d||[]));
+          if(myGen===_vmSearchGen)statusEl.textContent=`검수 대상 조회 중… (${collected.length}개)`;
+        }
+      };
+      await Promise.all(Array.from({length:6},_ssWorker));
+      const data=collected;
       if(myGen!==_vmSearchGen)return;
       if(error){statusEl.textContent='조회 실패: '+error.message;return;}
       const all=(data||[]).sort((a,b)=>(a.group_ko||'').localeCompare(b.group_ko||'','ko')||(a.title||'').localeCompare(b.title||'','ko'));
@@ -2173,6 +2187,10 @@ function _vmRenderVideoList(){
     ['vm-review-approve-btn','vm-review-reject-btn'].forEach(id=>{
       const el=document.getElementById(id);if(el)el.style.display=isReview?'':'none';
     });
+    // 검수(ss) 탭엔 "선택-숨김"(vm-apply-btn)만 있고 무관 처리 수단이 없었음(2026-08-25 사용자 제보).
+    // 숨김과 무관은 성격이 달라서(숨김=보류에 가깝고, 무관=이 그룹 콘텐츠가 아님) 둘 다 필요.
+    const nomemBtn=document.getElementById('vm-nomem-btn');
+    if(nomemBtn)nomemBtn.style.display=tab==='ss'?'':'none';
     _vmUpdateCount();
   }else{
     toolbarEl.style.display='none';
@@ -2318,6 +2336,32 @@ async function _vmReviewBulk(approve){
 }
 document.getElementById('vm-review-approve-btn')?.addEventListener('click',()=>_vmReviewBulk(true));
 document.getElementById('vm-review-reject-btn')?.addEventListener('click',()=>_vmReviewBulk(false));
+// 검수(ss) 탭 전용 "선택-무관" — 같은 탭의 "선택-숨김"(vm-apply-btn)과 달리 content_flag를 '무관'으로.
+// 처리한 행은 이 탭의 질문(오염 검수)에서 답이 난 것이므로 목록에서 걷어낸다.
+document.getElementById('vm-nomem-btn')?.addEventListener('click',async()=>{
+  if(!sb)return;
+  const btn=document.getElementById('vm-nomem-btn');
+  const items=[...document.querySelectorAll('#vm-list .vm-item')].filter(el=>el.querySelector('input[type=checkbox]')?.checked);
+  const ids=items.map(el=>el.dataset.vidId).filter(Boolean);
+  if(!ids.length)return;
+  if(!confirm(`선택한 ${ids.length}개를 '무관'으로 처리할까요?\n\n이 그룹 콘텐츠가 아니라는 뜻이라 카드에서 빠져요.\n되돌리기 스냅샷이 저장돼요.`))return;
+  btn.disabled=true;const orig=btn.textContent;btn.textContent='처리 중…';
+  const statusEl=document.getElementById('vm-status');
+  try{
+    await _snapshotBeforeBulk('검수 탭 일괄 무관',ids);
+    for(let i=0;i<ids.length;i+=200){
+      const{error}=await sb.from(_YT_TABLE).update({content_flag:'무관'}).in('id',ids.slice(i,i+200));
+      if(error)throw new Error(error.message);
+    }
+    const gone=new Set(ids);
+    _vmRows=_vmRows.filter(v=>!gone.has(v.id));
+    _vmRenderVideoList();
+    if(statusEl)statusEl.textContent=`${ids.length}개 무관 처리 완료 — 검수 대상 ${_vmRows.length}개 남음`;
+    _showShareToast(`${ids.length}개 무관 처리됨`);
+  }catch(e){
+    if(statusEl)statusEl.textContent='오류: '+e.message;
+  }finally{btn.disabled=false;btn.textContent=orig;_vmUpdateCount();}
+});
 function _vmUpdateCount(){
   const total=document.querySelectorAll('#vm-list .vm-item').length;
   const checked=document.querySelectorAll('#vm-list .vm-item input[type=checkbox]:checked').length;
