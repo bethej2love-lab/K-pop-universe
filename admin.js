@@ -226,9 +226,9 @@ async function _ytSyncGroup(ko,key,onProg,youtubeUrl,syncKey){
   const cutoffDate=_disbandCutoffDate(ko);
   const{vids,done,interrupted,resumeToken,newestId}=await _ytFetchNewVideos(uploadsId,key,sinceId,onProg,resumeTok,cutoffDate);
   if(vids.length){
-    const rows=vids.map(v=>({...v,group_ko:ko,title_norm:_titleNorm(v.title),...(_isJunkVideoTitle(v.title)?{content_flag:'무관'}:{})}));
+    const rows=vids.map(v=>({...v,group_ko:ko,title_norm:_titleNorm(v.title),source_handle:skey,source_tier:'official',...(_isJunkVideoTitle(v.title)?{content_flag:'무관'}:{})}));
     for(let i=0;i<rows.length;i+=200){
-      const{error}=await sb.from(_YT_TABLE).upsert(rows.slice(i,i+200));
+      const{error}=await _ytUpsertVideos(rows.slice(i,i+200));
       if(error)throw new Error(error.message);
     }
   }
@@ -4022,7 +4022,19 @@ function _extOwnerGko(owner){
 // 게스트 감지에만 제목 파싱을 계속 씀(2026-08-11). tier가 'music'이 아니면(variety/magazine/idol) 원래
 // mv/live/short 키워드가 없어 'other'로 뭉뚱그려지던 영상을 'variety' 카테고리로 분류한다 — 단 tier가
 // 'show'(드라마/영화, 2026-08-12 신설)면 예능과 구분해서 'show' 카테고리로 따로 분류한다.
-function _extBuildRows(vids,strict,tier,owner,defaultCat){
+// 영상 upsert 공용 래퍼 — source_handle/source_tier(출처 채널 컬럼)를 채우되, 마이그레이션 SQL을 아직
+// 안 돌렸으면(컬럼 없음) 첫 시도에서 감지해 그 필드만 빼고 재시도한다. 동기화가 절대 안 깨지게(2026-08-25).
+let _ytHasSourceCols=true;
+async function _ytUpsertVideos(rows,opts){
+  const strip=rs=>rs.map(r=>{const{source_handle,source_tier,...rest}=r;return rest;});
+  let{error}=await sb.from(_YT_TABLE).upsert(_ytHasSourceCols?rows:strip(rows),opts);
+  if(error&&_ytHasSourceCols&&/source_handle|source_tier/.test(error.message||'')){
+    _ytHasSourceCols=false; // 이후 동기화는 조용히 출처 없이 진행(마이그레이션 실행하면 자동으로 다시 켜짐 — 새로고침 후)
+    ({error}=await sb.from(_YT_TABLE).upsert(strip(rows),opts));
+  }
+  return{error};
+}
+function _extBuildRows(vids,strict,tier,owner,defaultCat,handle){
   const rows=[];let skipped=0;
   const ownerGko=_extOwnerGko(owner);
   for(const v of vids){
@@ -4086,6 +4098,7 @@ function _extBuildRows(vids,strict,tier,owner,defaultCat){
     rows.push({
       id:v.id,title:v.title,title_norm:_titleNorm(v.title),description:v.description||'',thumb:v.thumb,published_at:v.published_at,
       category,
+      source_handle:handle||null,source_tier:tier||null, // 출처 채널(오너/서바이벌 판단용, 2026-08-25)
       group_ko:owner?ownerGko:match.primaryGroup,members,with_groups:withGroups,with_members:withMembers,
       // 항상 두 칸을 넣는다(빈 값이어도 []). 조건부로 넣으면 200개 배치 안에 커버 영상이 하나라도
       // 섞였을 때, 그 칼럼이 배치의 INSERT 컬럼 목록에 들어가면서 키가 없는 일반 영상 행들이 null로
@@ -4139,12 +4152,12 @@ async function _ytSyncExtChannels(){
         setProg(`${prefix} ${fetched}${tot?'/'+tot:''}개 수집 중…`+(resumeTok?' (이어받는 중)':''));
       },resumeTok);
       if(vids.length){
-        const{rows,skipped}=_extBuildRows(vids,_EXT_STRICT_TIERS.has(ch.tier),ch.tier,ch.owner,ch.defaultCategory);
+        const{rows,skipped}=_extBuildRows(vids,_EXT_STRICT_TIERS.has(ch.tier),ch.tier,ch.owner,ch.defaultCategory,ch.handle);
         totalSkipped+=skipped;
         if(rows.length){
           setProg(`${prefix} ${rows.length}개 저장 중…`);
           for(let i=0;i<rows.length;i+=200){
-            const{error}=await sb.from(_YT_TABLE).upsert(rows.slice(i,i+200),{onConflict:'id',ignoreDuplicates:true});
+            const{error}=await _ytUpsertVideos(rows.slice(i,i+200),{onConflict:'id',ignoreDuplicates:true});
             if(error)throw new Error(error.message);
           }
           // resumeTok 없이(=맨 최신부터) 이번 실행이 시작됐을 때만 vids[0]가 진짜 "채널의 현재 최신 영상"이므로
@@ -4249,11 +4262,11 @@ async function _ytBackfillChannelCore(ch,fromYear,toYear,callBudget,onProg,query
       });
     }
     if(vids.length){
-      const{rows,skipped:sk}=_extBuildRows(vids,_EXT_STRICT_TIERS.has(ch.tier),ch.tier,ch.owner,ch.defaultCategory);
+      const{rows,skipped:sk}=_extBuildRows(vids,_EXT_STRICT_TIERS.has(ch.tier),ch.tier,ch.owner,ch.defaultCategory,ch.handle);
       skipped+=sk;
       if(rows.length){
         for(let i=0;i<rows.length;i+=200){
-          const{error}=await sb.from(_YT_TABLE).upsert(rows.slice(i,i+200),{onConflict:'id',ignoreDuplicates:true});
+          const{error}=await _ytUpsertVideos(rows.slice(i,i+200),{onConflict:'id',ignoreDuplicates:true});
           if(error)throw new Error(error.message);
         }
         added+=rows.length;
