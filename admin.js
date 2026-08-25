@@ -2084,14 +2084,21 @@ async function _vmLoad(searchTerm,preserveSearch2){
       // (2026-08-20 도입). 여기서 승인하면 그 즉시 실제 그룹으로 확정(content_flag 해제), 거부하면
       // 무관 처리 — 둘 다 needs_review는 false로 내려 큐에서 빠짐.
       const{data,error}=await _sbFetchAll(()=>sb.from(_YT_TABLE)
-        .select('id,title,group_ko,thumb,content_flag,members,with_members,with_groups,cover_of_members,cover_of_groups')
+        .select('id,title,group_ko,thumb,content_flag,members,with_members,with_groups,cover_of_members,cover_of_groups,created_at')
         .eq('needs_review',true)
         .order('id'));
       if(myGen!==_vmSearchGen)return;
       if(error){statusEl.textContent='조회 실패: '+error.message;return;}
-      const all=(data||[]).sort((a,b)=>(a.group_ko||'').localeCompare(b.group_ko||'','ko')||(a.title||'').localeCompare(b.title||'','ko'));
+      // ⚠️ 정렬을 그룹명순 → **유입 최신순**으로 바꿨다(2026-08-25). 이 큐는 "하루 신규분만 보고
+      // 끝낸다"는 규칙으로 운영하기로 했는데(누적 3천 건을 다 봐야 한다는 부담이 1년간 안 누른
+      // 원인이었음), 그러려면 새로 들어온 게 맨 위에 있어야 한다. created_at이 없는 옛 행은 뒤로.
+      const all=(data||[]).sort((a,b)=>
+        String(b.created_at||'').localeCompare(String(a.created_at||''))
+        ||(a.group_ko||'').localeCompare(b.group_ko||'','ko')
+        ||(a.title||'').localeCompare(b.title||'','ko'));
       _vmRows=all;
-      statusEl.textContent=`그룹배정 검수 대상 ${all.length}개 — 멤버 이름 하나만으로 그룹을 추측한 영상들이에요`;
+      const nNew=all.filter(v=>String(v.created_at||'')>_ADM_CREATED_BASELINE).length;
+      statusEl.textContent=`그룹배정 검수 대상 ${all.length}개`+(nNew?` (신규 유입 ${nNew}개 — 위쪽부터)`:'')+` — 멤버 이름 하나만으로 그룹을 추측한 영상들이에요`;
       _vmRenderVideoList();
       return;
     }
@@ -5311,6 +5318,11 @@ document.getElementById('admin-bulk-clear-collab-btn')?.addEventListener('click'
 // ⚠️ 카드 카운트는 "빨라야" 의미가 있다(느리면 또 안 열게 됨). 무거운 집계(미태깅 155,070건은 5.6초)는
 //    일부러 안 넣었다 — 숫자가 커도 행동으로 안 이어지는 지표라 넣을 이유도 없음.
 const _ADM_LS={fbSeen:'kpu_adm_fb_seen',lastRun:'kpu_adm_last_routine'};
+// yt_channel_videos.created_at은 2026-08-25에 추가했다. `add column ... default now()`라 **기존
+// 371,448행이 전부 ALTER 시각(아래 값) 하나로 채워졌다** — 그래서 "최근 24시간" 같은 조건은 오늘
+// 전체 테이블을 다 잡아버린다. 이 기준선보다 **큰** 것만이 진짜 신규 유입이다(실측으로 경계 확인).
+// ⚠️ 이 상수는 지우지 말 것. 지우면 "신규" 숫자가 37만으로 튀어서 대시보드가 무의미해진다.
+const _ADM_CREATED_BASELINE='2026-08-25T05:30:25Z';
 function _admSetLog(text,cls){
   const el=document.getElementById('adm-routine-log');
   if(!el)return null;
@@ -5370,6 +5382,7 @@ async function _admLoadCards(){
   const cReview=mk('그룹배정 검수 대기','눌러서 검수 탭 열기',openVmTab('review'));
   const cSs=mk('strictSync 오염 검수','흔한 이름 그룹 영상 점검',openVmTab('ss'));
   const cFb=mk('새 피드백','마지막으로 본 뒤 들어온 것',()=>{_admHomeClose();document.getElementById('sp-fb-btn')?.click();});
+  const cNew=mk('새로 들어온 영상','동기화로 유입된 신규분');
   const set=(card,n,zeroSub)=>{
     const el=card.querySelector('.adm-card-num');
     const sub=card.querySelector('.adm-card-sub');
@@ -5383,7 +5396,7 @@ async function _admLoadCards(){
   // 잠깐 기다렸다 다시 보고, 그래도 없으면 이유를 카드에 적는다.
   for(let i=0;i<20&&!sb;i++)await new Promise(r=>setTimeout(r,250));
   if(!sb){
-    [cReview,cSs,cFb].forEach(c=>{
+    [cReview,cSs,cFb,cNew].forEach(c=>{
       c.querySelector('.adm-card-num').textContent='—';
       c.querySelector('.adm-card-sub').textContent='DB 연결 대기 중';
     });
@@ -5402,6 +5415,8 @@ async function _admLoadCards(){
     const q=sb.from('feedback').select('id',_admHead());
     return _admCount(since?q.gt('created_at',since):q);
   })().then(n=>set(cFb,n,'새 피드백 없음'));
+  _admCount(sb.from(_YT_TABLE).select('id',_admHead()).gt('created_at',_ADM_CREATED_BASELINE))
+    .then(n=>set(cNew,n,'아직 없음 (기준: 08/25 컬럼 추가 시점)'));
 }
 function _admHomeClose(){document.getElementById('adm-home-overlay')?.classList.remove('open');}
 function _admHomeOpen(){
