@@ -702,6 +702,66 @@ async function _ytSweepCoverReclassify(){
   }catch(e){_ytSetProg('오류: '+e.message);}
   finally{if(btn)btn.disabled=false;}
 }
+// [오태깅 그룹 재배정](2026-08-25): 고친 매칭 엔진(_m2ParseTitle)을 기존 저장 행에 다시 돌려서,
+// "저장된 group_ko는 제목에 근거가 없는데, 엔진이 제목에 대놓고 있는 '다른 그룹'을 찾은" 행을 그 그룹으로
+// 재배정한다. 전수 진단(scratchpad B리포트)에서 이런 3천여 건 대부분이 오염이 아니라 옛 버그로 엉뚱한
+// 그룹에 저장됐던 직캠의 '정당한 복구'로 확인됨(하이키·체리블렛·클라씨 등). 엔진을 그대로 재사용하므로
+// 매칭 로직을 고칠수록(폴루터 게이트 추가 등) 이 도구도 자동으로 더 정확해진다.
+// 안전장치: 저장 그룹이 제목에 있으면 스킵(근거 있음), 엔진 그룹이 제목에 literal로 있을 때만(강한 근거)
+// 재배정, 콜라보 신호(with/선배/feat…)는 원문 기준으로 제외(게스트일 뿐 원태그가 맞을 수 있음),
+// tags_manual 보호, 드라이런(건수 confirm)+스냅샷 되돌리기. cover_of_*는 안 건드림.
+async function _ytSweepMistagReclassify(){
+  if(!sb){_ytSetProg('Supabase 연결 없음');return;}
+  const btn=document.getElementById('sp-mistagfix-btn');
+  if(btn)btn.disabled=true;
+  try{
+    _ytSetProg('[오태깅 재배정] 전체 조회 중…');
+    const{data:rows,error}=await _sbFetchAll(()=>sb.from(_YT_TABLE)
+      .select('id,title,group_ko,members,with_members,with_groups,published_at,tags_manual,content_flag').order('id'));
+    if(error){_ytSetProg('조회 실패: '+error.message);return;}
+    if(!rows?.length){_ytSetProg('영상이 없어요');return;}
+    const EXCLUDE=new Set(['무관','보류','hidden','외부인']);
+    const _grpToks=ko=>{const v=GROUPS[ko];return v?[ko,v.en,...(v.altNames||[])].filter(Boolean).map(t=>t.toUpperCase()):[];};
+    const _norm=t=>' '+(t||'').toUpperCase().replace(/[^가-힣A-Z0-9]/g,' ').replace(/\s+/g,' ')+' ';
+    const _titleHas=(nu,ko)=>_grpToks(ko).some(t=>nu.includes(t));
+    // 콜라보 신호는 원문(구두점 유지)에서 검사 — 정규화하면 w/·feat. 같은 신호가 사라져 콜라보를 놓친다.
+    const COLLAB=/with |w\/| feat| ft[ .]|선배|챌린지|challenge|원곡| cover|커버|＆| & |함께|출연|게스트|guest| vs | x /i;
+    let manualSkipped=0;const updates=[];const sample=[];
+    for(let i=0;i<rows.length;i++){
+      if(i%5000===0){_ytSetProg(`[오태깅 재배정] 분석 중… ${i}/${rows.length} (후보 ${updates.length})`);await new Promise(r=>setTimeout(r));}
+      const v=rows[i];const g=v.group_ko;
+      if(!g||!GROUPS[g])continue;
+      if(v.content_flag&&EXCLUDE.has(v.content_flag))continue;
+      const nu=_norm(v.title);
+      if(_titleHas(nu,g))continue; // 저장 그룹이 제목에 있음 → 근거 있음, 안 건드림
+      let m=null;try{m=_m2ParseTitle(v.title,undefined,false,(v.published_at||'').slice(0,10));}catch(e){}
+      const ng=m&&m.primaryGroup;
+      if(!ng||ng===g)continue;
+      if(!_titleHas(nu,ng))continue;         // 엔진 그룹이 제목에 literal로 있어야만 재배정(강한 근거)
+      if(COLLAB.test(v.title||''))continue;   // 콜라보/게스트면 원태그가 맞을 수 있어 제외
+      if(v.tags_manual){manualSkipped++;continue;}
+      const members=(m.membersByGroup&&m.membersByGroup[ng])||[];
+      const wgs=m.withGroups||[];
+      const wms=[];wgs.forEach(x=>((m.membersByGroup&&m.membersByGroup[x])||[]).forEach(mm=>wms.push(`${mm}(${x})`)));
+      updates.push({id:v.id,patch:{group_ko:ng,members,with_groups:wgs,with_members:wms}});
+      if(sample.length<40)sample.push(`[${g}→${ng}] ${(v.title||'').slice(0,60)}`);
+    }
+    console.log('[오태깅 재배정] 재배정 예정 표본(최대40):\n'+sample.join('\n'));
+    if(!updates.length){_ytSetProg(`재배정할 오태깅 없음 (전체 ${rows.length} 스캔${manualSkipped?`, 수동보호 ${manualSkipped}`:''})`);return;}
+    if(!confirm(`오태깅 그룹 재배정 ${updates.length}건을 적용할까요?\n\n· "저장 그룹은 제목에 근거 없음 + 엔진이 제목의 다른 그룹을 literal로 찾음"인 행\n  (대부분 옛 오저장의 정당한 복구 — 하이키·체리블렛 등)\n· 콜라보(with/선배/feat)·수동편집(${manualSkipped}건)은 자동 제외\n· 표본 40건을 콘솔(F12)에 출력함 — 먼저 확인 권장\n· 스냅샷 저장되어 "마지막 일괄 작업 되돌리기"로 복구 가능`)){
+      _ytSetProg(`취소됨 — 미리보기만 (재배정 예정 ${updates.length}건, 표본 콘솔).`);return;
+    }
+    await _snapshotBeforeBulk('오태깅 그룹 재배정',updates.map(u=>u.id));
+    for(let i=0;i<updates.length;i+=200){
+      const results=await Promise.all(updates.slice(i,i+200).map(u=>sb.from(_YT_TABLE).update(u.patch).eq('id',u.id)));
+      const f=results.find(r=>r.error);if(f)throw new Error(f.error.message);
+      _ytSetProg(`[오태깅 재배정] ${Math.min(i+200,updates.length)}/${updates.length}건 적용 중…`);
+    }
+    _ytSetProg(`완료! ${updates.length}건 그룹 재배정함.${manualSkipped?` 수동보호 ${manualSkipped}건.`:''} (되돌리기: "↩︎ 마지막 일괄 작업 되돌리기")`);
+  }catch(e){_ytSetProg('오류: '+e.message);}
+  finally{if(btn)btn.disabled=false;}
+}
+document.getElementById('sp-mistagfix-btn')?.addEventListener('click',_ytSweepMistagReclassify);
 // [원곡 소급 재분류 2차](2026-08-23): 커버 키워드는 없지만 "타소속사 + 10년 이상 선배" with 태그 —
 // 후배가 선배 명곡을 커버한 케이스가 압도적(CSV 실측: 방탄→라이즈·S.E.S.→앤팀·핑클→보넥도 등 408건).
 // 1차(키워드+6년)가 못 잡는 무키워드 원곡을 cover_of로. ⚠️ 진짜 콜라보 위험은 대부분 "같은 소속사"(가족
