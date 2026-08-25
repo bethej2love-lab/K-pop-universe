@@ -1222,7 +1222,9 @@ async function _ytExtractCoverSongTitles(){
 // 재스캔 사고 재발 방지책). 어느 버튼이 어느 컬럼을 바꾸든 하나의 헬퍼로 커버하려고, 이 관리도구들이
 // 바꿀 수 있는 컬럼 전부를 고정 목록으로 떠둔다(안 바뀐 컬럼까지 복원해도 값이 같아 무해).
 const _BULK_SNAP_TABLE='admin_bulk_snapshots';
-const _BULK_SNAP_COLS=['group_ko','members','with_members','with_groups','content_flag','needs_review','cover_of_members','cover_of_groups','cover_of_song','tags_manual'];
+const _BULK_SNAP_COLS=['group_ko','members','with_members','with_groups','content_flag','needs_review','cover_of_members','cover_of_groups','cover_of_song','tags_manual','reviewed_at'];
+let _snapHasReviewedAt=true;
+const _snapCols=()=>_snapHasReviewedAt?_BULK_SNAP_COLS:_BULK_SNAP_COLS.filter(c=>c!=='reviewed_at');
 // 영향받는 id들의 "바꾸기 전" 값을 떠서 batch로 저장한다. 실패해도(테이블 없음/권한 등) 원래 작업은
 // 막지 않고 안내만 남긴다 — 스냅샷이 안 됐다고 관리도구 자체가 멈추면 안 됨(그만큼 되돌리기만 불가).
 async function _snapshotBeforeBulk(opLabel,ids){
@@ -1233,12 +1235,18 @@ async function _snapshotBeforeBulk(opLabel,ids){
     let saved=0;
     for(let i=0;i<uniq.length;i+=200){
       const chunk=uniq.slice(i,i+200);
-      const{data:rows,error}=await sb.from(_YT_TABLE).select(['id',..._BULK_SNAP_COLS].join(',')).in('id',chunk);
+      let{data:rows,error}=await sb.from(_YT_TABLE).select(['id',..._snapCols()].join(',')).in('id',chunk);
+      // reviewed_at 추가 SQL 전이면 여기서 400이 나고, 스냅샷은 모든 일괄 작업의 전제라 일괄 기능이
+      // 통째로 막힌다 — 한 번만 컬럼을 빼고 재시도한 뒤 이후로는 뺀 목록을 쓴다(2026-08-25).
+      if(error&&_snapHasReviewedAt&&/reviewed_at/.test(error.message||'')){
+        _snapHasReviewedAt=false;
+        ({data:rows,error}=await sb.from(_YT_TABLE).select(['id',..._snapCols()].join(',')).in('id',chunk));
+      }
       if(error)throw new Error(error.message);
       if(!rows||!rows.length)continue;
       const snapRows=rows.map(r=>{
         const before={};
-        _BULK_SNAP_COLS.forEach(c=>{before[c]=r[c];});
+        _snapCols().forEach(c=>{before[c]=r[c];});
         return{batch_id:batchId,op_label:opLabel,row_id:String(r.id),before_data:before};
       });
       const{error:insErr}=await sb.from(_BULK_SNAP_TABLE).insert(snapRows);
@@ -2048,6 +2056,11 @@ async function _vmLoad(searchTerm,preserveSearch2){
     }
     if(tab==='ss'){
       // strictSync 그룹 오염 검수 — tags_manual=false 행만 (관리자가 이미 확인한 건 제외)
+      // ⚠️ content_flag가 이미 붙은 행(무관/숨김/보류)도 제외한다(2026-08-25, 사용자 제보).
+      //    예전엔 이 조건이 없어서, 무관/보류 처리하면 그 자리에선 목록에서 빠지는데 탭을 다시 열면
+      //    그대로 다시 올라왔다 — "검수 대상 N개"가 아무리 처리해도 안 줄어드는 것처럼 보임.
+      //    이 탭의 질문은 "이 그룹 콘텐츠가 맞나"이고 플래그가 붙었다는 건 그 답이 났다는 뜻이다.
+      //    (보류는 별도 '보류' 탭에서 다시 볼 수 있으므로 여기서 빼도 유실되지 않는다)
       const ssGkos=[..._STRICT_SYNC_GROUPS];
       if(!ssGkos.length){statusEl.textContent='strictSync 그룹이 없어요';_vmRows=[];_vmRenderVideoList();return;}
       // ⚠️ 예전엔 `.in('group_ko', 23개).order('id')` 한 방으로 받았는데 **19.2초** 걸렸음 —
@@ -2057,12 +2070,23 @@ async function _vmLoad(searchTerm,preserveSearch2){
       // 동시 6개는 다른 대량 조회(name_pollution_probe 등)에서 쓰던 것과 같은 수준 — 더 늘려도
       // 이득이 크지 않고 무료 티어 커넥션만 압박한다.
       const _SS_COLS='id,title,group_ko,thumb,content_flag,members,with_members,with_groups,cover_of_members,cover_of_groups';
+      let _ssHasReviewedAt=true;
       let error=null;const collected=[];let _ssCursor=0;
       const _ssWorker=async()=>{
         while(_ssCursor<ssGkos.length&&!error){
           const gko=ssGkos[_ssCursor++];
-          const{data:d,error:e}=await _sbFetchAll(()=>sb.from(_YT_TABLE)
-            .select(_SS_COLS).eq('group_ko',gko).eq('tags_manual',false).order('id'));
+          const _ssQuery=()=>{
+            let q=sb.from(_YT_TABLE).select(_SS_COLS).eq('group_ko',gko).eq('tags_manual',false).is('content_flag',null);
+            if(_ssHasReviewedAt)q=q.is('reviewed_at',null);
+            return q.order('id');
+          };
+          let{data:d,error:e}=await _sbFetchAll(_ssQuery);
+          // reviewed_at 컬럼 추가 SQL을 아직 안 돌린 상태로 배포되면 여기서 400이 나 검수 탭이 통째로
+          // 안 열린다 — 그 경우 컬럼 없이 한 번 더 조회해서 최소한 예전 동작은 유지한다(2026-08-25).
+          if(e&&_ssHasReviewedAt&&/reviewed_at/.test(e.message||'')){
+            _ssHasReviewedAt=false;
+            ({data:d,error:e}=await _sbFetchAll(_ssQuery));
+          }
           if(e){error=e;return;}
           collected.push(...(d||[]));
           if(myGen===_vmSearchGen)statusEl.textContent=`검수 대상 조회 중… (${collected.length}개)`;
@@ -2198,6 +2222,8 @@ function _vmRenderVideoList(){
     // 숨김과 무관은 성격이 달라서(숨김=보류에 가깝고, 무관=이 그룹 콘텐츠가 아님) 둘 다 필요.
     const nomemBtn=document.getElementById('vm-nomem-btn');
     if(nomemBtn)nomemBtn.style.display=tab==='ss'?'':'none';
+    const confirmBtn=document.getElementById('vm-confirm-btn');
+    if(confirmBtn)confirmBtn.style.display=tab==='ss'?'':'none';
     _vmUpdateCount();
   }else{
     toolbarEl.style.display='none';
@@ -2369,6 +2395,38 @@ document.getElementById('vm-nomem-btn')?.addEventListener('click',async()=>{
     if(statusEl)statusEl.textContent='오류: '+e.message;
   }finally{btn.disabled=false;btn.textContent=orig;_vmUpdateCount();}
 });
+// 검수(ss) 탭 전용 "선택-확인"(2026-08-25) — "봤고 태그가 맞다"를 기록하는 유일한 수단.
+// ⚠️ tags_manual=true를 이 용도로 쓰면 안 된다. 그건 "관리자가 태그를 직접 고쳤으니 자동 태깅이
+//    건드리지 말 것"이라는 뜻이고(프로젝트 전역 원칙), 눈으로 훑어 통과시킨 1만여 건에 그걸 찍으면
+//    앞으로의 매처 개선이 그 행들엔 영원히 반영되지 않는다. 그래서 reviewed_at 컬럼을 따로 둔다.
+// 되돌리기: reviewed_at도 _BULK_SNAP_COLS에 들어 있어 다른 일괄 작업과 똑같이 스냅샷으로 복구된다.
+document.getElementById('vm-confirm-btn')?.addEventListener('click',async()=>{
+  if(!sb)return;
+  const btn=document.getElementById('vm-confirm-btn');
+  const items=[...document.querySelectorAll('#vm-list .vm-item')].filter(el=>el.querySelector('input[type=checkbox]')?.checked);
+  const ids=items.map(el=>el.dataset.vidId).filter(Boolean);
+  if(!ids.length)return;
+  if(!confirm(`선택한 ${ids.length}개를 '확인'으로 처리할까요?\n\n태그가 맞다고 보고 검수 큐에서 빼요.\n영상 자체는 그대로 노출되고, 자동 태깅도 계속 적용돼요.\n되돌리기 스냅샷이 저장돼요.`))return;
+  btn.disabled=true;const orig=btn.textContent;btn.textContent='처리 중…';
+  const statusEl=document.getElementById('vm-status');
+  try{
+    await _snapshotBeforeBulk('검수 탭 일괄 확인',ids);
+    const now=new Date().toISOString();
+    for(let i=0;i<ids.length;i+=200){
+      const{error}=await sb.from(_YT_TABLE).update({reviewed_at:now}).in('id',ids.slice(i,i+200));
+      if(error)throw new Error(error.message);
+      if(statusEl)statusEl.textContent=`확인 처리 중… ${Math.min(i+200,ids.length)}/${ids.length}`;
+    }
+    const gone=new Set(ids);
+    _vmRows=_vmRows.filter(v=>!gone.has(v.id));
+    _vmRenderVideoList();
+    if(statusEl)statusEl.textContent=`${ids.length}개 확인 완료 — 검수 대상 ${_vmRows.length}개 남음`;
+    _showShareToast(`${ids.length}개 확인 처리됨`);
+  }catch(e){
+    if(statusEl)statusEl.textContent='오류: '+e.message;
+    _showShareToast('오류: '+e.message);
+  }finally{btn.disabled=false;btn.textContent=orig;_vmUpdateCount();}
+});
 function _vmUpdateCount(){
   const total=document.querySelectorAll('#vm-list .vm-item').length;
   const checked=document.querySelectorAll('#vm-list .vm-item input[type=checkbox]:checked').length;
@@ -2379,6 +2437,10 @@ function _vmUpdateCount(){
   if(indivBtn)indivBtn.disabled=checked===0;
   const holdBtn=document.getElementById('vm-hold-btn');
   if(holdBtn)holdBtn.disabled=checked===0;
+  const confirmBtn2=document.getElementById('vm-confirm-btn');
+  if(confirmBtn2)confirmBtn2.disabled=checked===0;
+  const nomemBtn2=document.getElementById('vm-nomem-btn');
+  if(nomemBtn2)nomemBtn2.disabled=checked===0;
   const normalBtn=document.getElementById('vm-normal-btn');
   if(normalBtn)normalBtn.disabled=checked===0;
   const coverClearBtn=document.getElementById('vm-coverclear-btn');

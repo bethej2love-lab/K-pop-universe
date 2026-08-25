@@ -1187,7 +1187,7 @@
   #vm-toolbar>button:active{opacity:.7;}
   #vm-toolbar>button:disabled{opacity:.4;cursor:default;}
   /* 초록 = 되돌리는/승인하는 방향(무관 해제·숨김 해제·승인) */
-  #vm-toolbar>#vm-apply-btn,#vm-toolbar>#vm-review-approve-btn{background:rgba(100,180,120,0.16);border-color:rgba(100,180,120,0.32);color:rgba(145,220,165,0.9);}
+  #vm-toolbar>#vm-apply-btn,#vm-toolbar>#vm-review-approve-btn,#vm-toolbar>#vm-confirm-btn{background:rgba(100,180,120,0.16);border-color:rgba(100,180,120,0.32);color:rgba(145,220,165,0.9);}
   /* 주황 = 내려놓는 방향(보류·무관 처리) — 파랑(일반)과 초록(승인)에서 시각적으로 구분 */
   #vm-toolbar>#vm-hold-btn,#vm-toolbar>#vm-nomem-btn{background:rgba(230,160,90,0.14);border-color:rgba(230,160,90,0.32);color:rgba(240,190,130,0.9);}
   /* 빨강 = 거부(되돌리기 부담이 가장 큰 동작) */
