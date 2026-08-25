@@ -190234,6 +190234,18 @@
       "ko": "파이브돌스",
       "en": "5DOLLS"
     },
+    "groups": [
+      {
+        "ko": "파이브돌스",
+        "en": "5DOLLS"
+      },
+      {
+        "ko": "다이아",
+        "en": "DIA",
+        "active": false,
+        "left": "2016.04.12"
+      }
+    ],
     "co": "코어콘텐츠미디어",
     "active": true,
     "color": [
