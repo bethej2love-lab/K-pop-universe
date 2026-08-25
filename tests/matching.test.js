@@ -284,6 +284,17 @@ test('흔한단어 given-name — "사랑"만 있는 제목이 이즈나로 역�
 test('흔한단어 given-name — 해시태그 #유사랑이 있으면 정상 매칭된다(정당한 언급은 유지)',
   '이즈나 직캠 #유사랑', undefined,
   r => !!r && (r.membersByGroup['이즈나'] || []).includes('유사랑'));
+// M&N 유닛 토큰 — '&'가 정규화로 'M N'이 돼 "A.M.N Showcase"에 걸려 미료/나르샤로 새던 것 차단.
+test('유닛 토큰 M&N — "A.M.N Showcase"가 브라운아이드걸스 미료/나르샤로 안 잡힌다',
+  '[Fancam] Stellar : Minhee - Crying, A.M.N Showcase @ DMC Festival', undefined,
+  r => !r || !((r.membersByGroup['브라운아이드걸스'] || []).includes('미료') || (r.membersByGroup['브라운아이드걸스'] || []).includes('나르샤')));
+// 이름↔그룹명 충돌(스텔라) — strictSync 그룹이어도 역추론에선 해시태그만. "Stella Jang" 등이 하츠투하츠로 안 감.
+test('이름==그룹명 — "스텔라장 Stella Jang"이 하츠투하츠 스텔라로 안 잡힌다',
+  '스텔라장 Stella Jang - I GO [세로라이브] LIVE', undefined,
+  r => !r || !(r.membersByGroup['하츠투하츠'] || []).includes('스텔라'));
+test('이름==그룹명 — 제목에 그룹명이 있으면 정상: "하츠투하츠 스텔라 직캠"은 그대로 잡힌다',
+  '[입덕직캠] 하츠투하츠 스텔라 직캠 4K', undefined,
+  r => !!r && (r.membersByGroup['하츠투하츠'] || []).includes('스텔라'));
 
 // ── 실행 ──────────────────────────────────────────────
 let pass = 0, fail = 0;

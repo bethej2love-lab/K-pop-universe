@@ -36,7 +36,10 @@ function _ytGroupKoFor(a){return GROUPS[a.group.ko]?a.group.ko:a.name.ko;}
 // (ONEWE "O!NEW Evolution" 콘서트·2NE1 "NEW EVOLUTION" 투어·크레용팝 "Evolution" 앨범 등에 흔히
 // 쓰이는 영단어), "Glow"(뷰티/챌린지 콘텐츠 흔한 단어), "hatch!"(흔한 영단어), "NXT"(3글자 약어,
 // WWE NXT 등과 겹침) — 전부 같은 이유로 해시태그 전용으로 좁힘.
-const _UNIT_HASHTAG_ONLY_TOKENS=new Set(['AAA','EVOLution','Glow','hatch!','NXT']);
+// 'M&N'(미료·나르샤 유닛) 추가(2026-08-25): hit()이 '&'를 공백으로 바꿔 'M N'이 되는데, "A.M.N
+// Showcase @ DMC Festival"류 제목이 정규화되면 'A M N'이 돼서 그 안의 'M N'에 걸림 — 스텔라(Stellar)
+// 페스티벌 직캠들이 통째로 브라운아이드걸스 미료/나르샤로 오태깅되던 원인(실측). '&TEAM'·'15&'와 동일 계열.
+const _UNIT_HASHTAG_ONLY_TOKENS=new Set(['AAA','EVOLution','Glow','hatch!','NXT','M&N']);
 const _PROJECT_UNITS={
   'V8':{names:['V8','브이에잇'],members:[{mko:'디에잇',gko:'세븐틴'},{mko:'버논',gko:'세븐틴'}]},
   'GOT THE BEAT':{names:['GOT THE BEAT','갓더비트'],members:[{mko:'보아',gko:'보아'},{mko:'태연',gko:'소녀시대'},{mko:'효연',gko:'소녀시대'},
