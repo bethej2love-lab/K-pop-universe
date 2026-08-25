@@ -13501,7 +13501,9 @@ async function _buildFeedWeeklyTopCams(list,discList){
     if(topVids.length>=3){
       const top1=topVids[0];
       const songs=_shuffle([...topVids]).map(v=>({t:v.title,u:vidUrl(v),thumb:v.thumb,vc:v.view_count,pa:v.published_at?.slice(0,10)}));
-      const label='Trend',sub=top1.view_count?(currentLang==='ko'?`1위 · ${_fmtN(top1.view_count)}`:`#1 · ${_fmtN(top1.view_count)} views`):(currentLang==='ko'?'최근 7일':'Last 7 days');
+      // 발견용(셔플·비랭킹) 카드라 순위/조회수 대신 대표 영상 제목을 보여준다 — 카드1·카드3과 동일 패턴
+      // (2026-08-25, 사용자 제보: TOP 모음도 아닌데 "1위·조회수"가 뜨는 게 이상함).
+      const label='Trend',sub=_cleanTitle(top1.title);
       _appendFeedCard(discList||list,'📈',label,sub,()=>_openFeedListOverlay(label,sub,songs),top1.thumb);
     }
   }catch(e){/* 카드 하나 실패했다고 탐험 탭 전체가 막히면 안 됨 — 조용히 무시 */}
