@@ -257,18 +257,12 @@ async function _ytSyncAll(){
     seenSolo.add(a.name.ko);
     solos.push({ko:a.name.ko,url:a.links.youtube,syncKey:a.name.ko});
   });
-  // 효연·설아·슬기처럼 실제 그룹 소속이 있어도 본인 개인 채널이 따로 있는 멤버 — artists.json의
-  // channels[]. 한 사람이 채널을 여러 개 가질 수 있어서(효연: 공식+개인 콘텐츠) syncKey를 채널별로
-  // 다르게 줘서 체크포인트가 서로 안 꼬이게 한다(위 _ytSyncGroup 주석 참고). 저장되는 group_ko는
-  // 채널이 몇 개든 항상 본인 이름 하나로 통일 — 같은 사람 콘텐츠로 묶여야 카드에서 다 보임.
-  const personal=[];
-  ARTISTS.forEach(a=>{
-    (a.channels||[]).forEach((ch,i)=>{
-      if(!ch?.url)return;
-      personal.push({ko:a.name.ko,url:ch.url,syncKey:`${a.name.ko}__${i}`});
-    });
-  });
-  const targets=[...groups,...solos,...personal];
+  // ⚠️ 개인 채널(효연·슬기·설아)은 2026-08-25에 ext_channels(tier='idol')로 이관돼 여기서 빠졌다.
+  // 이 경로는 group_ko를 "본인 이름"으로 저장했는데, 멤버 카드는 group_ko=소속그룹+members에 본인이
+  // 있는 영상만 조회하므로 그렇게 저장된 1,072건이 사이트 어디에서도 안 보이는 상태였음(실측).
+  // ext 경로(_extBuildRows)는 group_ko=소속그룹 + members=[본인]으로 저장해서 그룹 카드·멤버 카드
+  // 양쪽에 정상 노출된다. 개인 채널 동기화는 이제 "외부채널 동기화" 버튼이 담당.
+  const targets=[...groups,...solos];
   let done=0;
   for(const{ko,url,syncKey}of targets){
     _ytSetProg(`[${done+1}/${targets.length}] ${ko} 동기화 중...`);
@@ -4928,12 +4922,11 @@ function _officialChannels(){
     seenSolo.add(a.name.ko);
     solos.push({name:a.name.ko,url:a.links.youtube});
   });
-  // 실제 그룹 소속이 있어도 개인 채널을 따로 두는 멤버(효연 등) — _ytSyncAll과 동일하게 표시만 해줌
-  const personal=[];
-  (ARTISTS||[]).forEach(a=>{
-    (a.channels||[]).forEach(ch=>{if(ch?.url)personal.push({name:ch.label?`${a.name.ko} (${ch.label})`:a.name.ko,url:ch.url});});
-  });
-  return[...groups,...solos,...personal];
+  // 아이돌 개인 채널(효연·슬기·설아)은 여기 있다가 ext_channels(tier='idol')로 이관됨(2026-08-25).
+  // 이 탭은 "파일(groups.json/artists.json)이 정본인 채널"만 보여주는 읽기 전용 목록이고, 사람 채널은
+  // 전부 "그외" 탭에서 어드민이 직접 관리한다 — 같은 성격의 채널이 편집 가능/불가능으로 갈려 있던 걸
+  // 정리한 것. artists.json의 channels[] 필드도 같이 제거했다.
+  return[...groups,...solos];
 }
 
 // ── 어드민 일괄 선택 플로팅 바 ──

@@ -395,8 +395,10 @@
     <div id="vm-list"></div>
     <div id="vm-ch-inner" style="display:none">
       <div id="vm-ch-tabs">
-        <button class="vm-ch-tab active" data-tab="official">그룹/멤버 공식</button>
-        <button class="vm-ch-tab" data-tab="ext">그외</button>
+        <!-- 2026-08-25: 아이돌 개인 채널을 ext로 이관하면서 경계를 "공식/비공식"이 아니라
+             "파일이 정본(읽기 전용) / DB에서 직접 관리(편집 가능)"로 다시 그음. -->
+        <button class="vm-ch-tab active" data-tab="official">그룹 공식(파일)</button>
+        <button class="vm-ch-tab" data-tab="ext">직접 관리</button>
       </div>
       <div id="vm-ch-tier-filter"></div>
       <div id="vm-ch-add-row">
@@ -14978,10 +14980,13 @@ function _makeChVidController(contId){
         const ownGroupWideClause=_cutoff.active?`and(group_ko.eq.${_pgFilterVal(ko)},members.eq.{}),`
           :_cutoff.left?`and(group_ko.eq.${_pgFilterVal(ko)},members.eq.{},published_at.lte.${_cutoff.left}),`
           :'';
-        // group_ko.eq.멤버본인이름 — 효연·설아·슬기처럼 실제 그룹 소속이 있어도 개인 채널(artists.json
-        // channels[])이 따로 동기화되는 경우, 그 채널 영상은 group_ko가 그룹명이 아니라 본인 이름으로
-        // 저장됨(_ytGroupKoFor와 동일 관례) — 이 절이 없으면 개인 채널 영상이 본인 카드에도 안 뜸
-        // (2026-08-10, 개인 채널 추가하며 같이 처리).
+        // group_ko.eq.멤버본인이름 — 개인 채널 영상이 group_ko를 그룹명이 아니라 본인 이름으로 저장하던
+        // 시절(artists.json channels[] 경로)의 데이터를 위한 절. 이 절이 없으면 그 영상들이 본인 카드에도
+        // 안 뜸(2026-08-10, 개인 채널 추가하며 같이 처리).
+        // 2026-08-25에 개인 채널을 ext_channels(tier='idol')로 이관하면서 신규 영상은 group_ko=소속그룹
+        // +members=[본인]으로 저장되지만, **이 절은 그대로 둔다** — 이관 SQL이 돌기 전까지 기존 1,072건이
+        // 이 절 하나로만 보이고 있어서 지우면 그 사이 영상이 통째로 사라진다. 이관이 끝나면 매칭되는
+        // 행이 없어져 자연히 no-op이 되므로 남겨둬도 비용이 없다.
         q=q.or(`${ownGroupWideClause}and(group_ko.eq.${_pgFilterVal(ko)},members.cs.{${_pgFilterVal(state.memberKo)}}),with_members.cs.{${_pgFilterVal(state.memberKo+'('+ko+')')}},group_ko.eq.${_pgFilterVal(state.memberKo)}`);
       }else{
         // 그룹 카드: 내 채널 영상은 멤버 태깅 여부와 무관하게 전부 노출(그룹 전체가 나오는 영상이든
@@ -16247,7 +16252,7 @@ function _updateAdminUI(){
 // 옛 버전을 계속 서빙해서 고친 코드가 반영 안 되는 것처럼 보이는 사고가 남(2026-08-18, HTML 엔티티 정리
 // 버튼 타임아웃 재수정 후에도 계속 재현된다는 제보로 발견). admin.js 내용을 바꿀 때마다 이 버전 문자열도
 // 같이 올릴 것(sw.js의 CACHE_VERSION과 같은 수동 관리 방식).
-const _ADMIN_JS_VER='2026-08-25c';
+const _ADMIN_JS_VER='2026-08-25d';
 function _loadAdminScript(){
   if(!_isAdmin()||document.getElementById('admin-js-script'))return;
   const s=document.createElement('script');
