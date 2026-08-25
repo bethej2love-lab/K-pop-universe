@@ -1,39 +1,56 @@
 name: Bump cache version
 
-  on:
-    push:
-      branches: [main]
-      paths:
-        - 'kpop_universe.css'
-        - 'shared.js'
-        - 'admin.js'
-        - 'index.html'
-        - 'sw.js'
+# css/js를 고쳐 push하면 index.html의 `?v=`·`_ADMIN_JS_VER`와 sw.js의 CACHE_VERSION을 파일 내용
+# 해시로 자동 갱신해서 다시 커밋한다.
+#
+# 왜: 이 값들을 손으로 올리다가 2026-08-24에 실제로 빠뜨려 폰이 "새 마크업 + 옛 CSS"를 그리는 바람에
+# 화면이 통째로 깨졌음. 그 뒤 하루 작업하는 동안만 12번을 손으로 올렸고, 사람 규율로는 또 빠진다는 게
+# 확인돼서 자동화. (CHANGELOG DECISIONS "정적 자산 캐시버스터 자동화" 항목의 선택지 ①)
+#
+# ⚠️ 무한 루프 방지가 이 워크플로우의 유일한 함정이다:
+#   - 트리거 경로에 index.html/sw.js가 들어있고 이 워크플로우가 바로 그 둘을 고쳐서 push하므로,
+#     가드가 없으면 자기 커밋이 자기를 다시 부른다.
+#   - 1차 가드: 아래 `if`로 봇 커밋이면 아예 안 돈다.
+#   - 2차 가드(안전망): 봇 커밋을 어떻게든 타더라도 해시가 이미 최신이라 diff가 없어 커밋을 안 하고
+#     끝난다. 즉 최악의 경우에도 한 바퀴 헛도는 것으로 자연 종료된다.
 
-  permissions:
-    contents: write
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'kpop_universe.css'
+      - 'shared.js'
+      - 'admin.js'
+      - 'index.html'
+      - 'sw.js'
 
-  jobs:
-    bump:
-      # 봇이 만든 커밋에는 반응하지 않는다(무한 루프 1차 가드)
-      if: github.event.head_commit.author.name != 'github-actions[bot]'
-      runs-on: ubuntu-latest
-      steps:
-        - uses: actions/checkout@v4
-        - uses: actions/setup-node@v4
-          with:
-            node-version: 20
-        - name: Bump cache-buster versions
-          run: node tools/bump_cache_version.mjs
-        - name: Commit and push if changed
-          run: |
-            git config user.name "github-actions[bot]"
-            git config user.email "github-actions[bot]@users.noreply.github.com"
-            git add index.html sw.js
-            if git diff --cached --quiet; then
-              echo "캐시버스터 최신 — 커밋할 것 없음"
-            else
-              git commit -m "chore: bump cache version (auto)"
-              git pull --rebase origin main
-              git push
-            fi
+permissions:
+  contents: write
+
+jobs:
+  bump:
+    # 봇이 만든 커밋에는 반응하지 않는다(1차 루프 가드)
+    if: github.event.head_commit.author.name != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Bump cache-buster versions
+        run: node tools/bump_cache_version.mjs
+
+      - name: Commit and push if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add index.html sw.js
+          if git diff --cached --quiet; then
+            echo "캐시버스터 최신 — 커밋할 것 없음"
+          else
+            git commit -m "chore: bump cache version (auto)"
+            git pull --rebase origin main
+            git push
+          fi
