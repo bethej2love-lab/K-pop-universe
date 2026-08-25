@@ -1965,6 +1965,9 @@
     text-shadow:0 0 7px rgba(140,175,255,0.32),0 0 3px rgba(140,175,255,0.14);
     transition:color .14s,text-shadow .14s;user-select:none;
   }
+  /* 생년월일 칩은 프로필에서 부차 정보라 살짝 어둡게(2026-08-25, 사용자 요청).
+     hover/active 규칙이 뒤에 와서 그때는 그대로 밝아진다. */
+  .tag-chip[data-filter-type="birthYear"]{color:rgba(160,190,230,0.52);text-shadow:0 0 6px rgba(140,175,255,0.18);}
   .tag-chip:hover{color:rgba(210,230,255,1.0);text-shadow:0 0 10px rgba(170,210,255,0.52),0 0 4px rgba(170,210,255,0.24);}
   .tag-chip.active{color:#fff;text-shadow:0 0 10px rgba(190,220,255,0.60),0 0 4px rgba(190,220,255,0.30);}
   /* 해체 그룹·탈퇴 멤버의 소속사 표기는 이제 과거 정보라 흐리게(2026-08-14, 사용자 요청) */

@@ -1369,13 +1369,10 @@ function _labelGlowColor(r,g,b){
 // 보임) died 필드가 있으면 사망 당시 나이로 고정 표시한다.
 function _ageChipText(a){
   if(!a.bday)return null;
+  // 고인은 나이·사망일을 붙이지 않고 생년월일만 표기(2026-08-25, 사용자 요청) — 사망 사실은 이름 옆
+  // 별(_appendDeceasedStar)로 이미 드러나고, "(nn세)"는 사망 당시 나이라 오히려 무겁게 읽힘.
+  if(a.died)return a.bday;
   const[by,bm,bd]=a.bday.split('.').map(Number);
-  if(a.died){
-    const[dy,dm,dd]=a.died.split('.').map(Number);
-    let age=dy-by;
-    if(dm<bm||(dm===bm&&dd<bd))age--;
-    return `${a.bday} – ${a.died} (${age}${currentLang==='ko'?'세':'y.o.'})`;
-  }
   const now=new Date();let age=now.getFullYear()-by;
   if(now.getMonth()+1<bm||(now.getMonth()+1===bm&&now.getDate()<bd))age--;
   return a.bday+(age>=0?` (${age}${currentLang==='ko'?'세':'y.o.'})`:' ');
@@ -1613,8 +1610,12 @@ function applyLang(){
 function _tgPeriodText(a,g){
   const activeHere=(g&&g.active!==undefined)?g.active:a.active;
   if(activeHere!==false)return''; // 이 그룹에선 아직 현역(겸임 멤버의 현역 그룹 등)
+  const leftHere=(g&&g.left!==undefined)?g.left:a.left;
+  // 사망으로 인한 이탈은 '탈퇴'가 아니므로 활동 종료로 표기하지 않는다(종현·문빈·구하라·리세·은비 등).
+  // 단 설리처럼 생전에 이미 탈퇴한 경우(탈퇴일<사망일)는 실제 탈퇴라 그대로 보여준다.
+  if(a.died&&(!leftHere||leftHere>=a.died))return'';
   const ym=s=>{const p=String(s||'').split('.');return p[0]?(p[1]?p[0]+'.'+p[1]:p[0]):'';};
-  const L=ym((g&&g.left!==undefined)?g.left:a.left);
+  const L=ym(leftHere);
   const J=ym((g&&g.joined!==undefined)?g.joined:a.joined);
   if(J&&L)return J+'~'+L;
   if(L)return'~'+L;
