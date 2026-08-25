@@ -619,7 +619,7 @@ async function _ytSweepDetectPreview(){
   try{
     _ytSetProg('[오태깅 미리보기] 조회 중…');
     const{data:rows,error}=await _sbFetchAll(()=>sb.from(_YT_TABLE)
-      .select('id,title,group_ko,with_members,with_groups,tags_manual')
+      .select('id,title,group_ko,with_members,with_groups,tags_manual,published_at')
       .or('with_members.neq.{},with_groups.neq.{}')
       .order('id'));
     if(error){_ytSetProg('조회 실패: '+error.message);return;}
@@ -627,7 +627,7 @@ async function _ytSweepDetectPreview(){
     const _xgen=(a,b)=>{const g1=GROUPS[a],g2=GROUPS[b];if(!g1||!g2)return false;const c1=(g1.co||'').trim(),c2=(g2.co||'').trim();const same=!!(c1&&c2)&&c1===c2;const gap=Math.abs((parseInt(g1.debut)||0)-(parseInt(g2.debut)||0));return !same&&gap>=6;};
     const remM=new Map(),remG=new Map();let changed=0,manual=0,wiped=0,xgate=0;const samples=[];
     rows.forEach(v=>{
-      const match=_m2ParseTitle(v.title||'',v.group_ko);
+      const match=_m2ParseTitle(v.title||"",v.group_ko,undefined,v.published_at);
       const curWG=v.with_groups||[],curWM=v.with_members||[];
       const validGroups=new Set(),validMembers=new Set();
       if(match){
@@ -913,7 +913,7 @@ async function _ytSweepAmbiguousCollabMistag(){
     // 드림캐쳐 지유 영상에 키키 지유가 계속 남아있다"는 사례로 발견. 그 영상들이 tags_manual=true라
     // 재검증 조회 대상에서부터 빠져있었을 가능성이 높음).
     const{data:rows,error}=await _sbFetchAll(()=>sb.from(_YT_TABLE)
-      .select('id,title,group_ko,with_members,with_groups,tags_manual')
+      .select('id,title,group_ko,with_members,with_groups,tags_manual,published_at')
       .or('with_members.neq.{},with_groups.neq.{}')
       .order('id'));
     if(error){_ytSetProg('조회 실패: '+error.message);return;}
@@ -924,7 +924,7 @@ async function _ytSweepAmbiguousCollabMistag(){
     // 목록만 콘솔에 남긴다(2026-08-19, 사용자 요청).
     const wipedOut=[];
     rows.forEach(v=>{
-      const match=_m2ParseTitle(v.title||'',v.group_ko);
+      const match=_m2ParseTitle(v.title||'',v.group_ko,undefined,v.published_at);
       const curWG=v.with_groups||[],curWM=v.with_members||[];
       // validGroups: 다시 봐도 "그룹 단위로만" 근거 있는 것(특정 멤버까진 아직 특정 안 됨) — 그대로 유지.
       // promote: 예전엔 그룹 단위로만 태깅됐지만(curWG에 있음) 지금 다시 매칭해보니 특정 멤버까지 잡히는 것
@@ -3117,7 +3117,7 @@ async function _ytAutoTagMembers(){
         // group_ko는 절대 안 건드림(자체 채널 영상의 소속은 항상 그 채널 그룹으로 고정) — 매칭된 그룹 중
         // 지금 채널(gko) 자신은 제외하고 "다른" 그룹만 with_groups/with_members로 채운다.
         if(!v.with_members?.length&&!v.with_groups?.length){
-          const match=_m2ParseTitle(title,gko);
+          const match=_m2ParseTitle(title,gko,undefined,v.published_at);
           if(match){
             const otherGkos=[match.primaryGroup,...match.withGroups].filter(og=>og&&og!==gko);
             const withGroups=[],withMembers=[];
@@ -3199,7 +3199,7 @@ async function _ytRetagAllIncludingTagged(){
         if(unionMembers.length!==curMembers.length)patch.members=unionMembers;
         // 콜라보: 새로 특정 멤버까지 잡히면 "그룹 전체" 표시(with_groups)를 그 멤버 표기(with_members)로
         // 승격시키고, 여전히 그룹 단위로만 잡히면(그리고 이미 그 그룹 특정 멤버가 있는 게 아니면) 추가.
-        const match=_m2ParseTitle(title,gko);
+        const match=_m2ParseTitle(title,gko,undefined,v.published_at);
         if(match){
           const otherGkos=[match.primaryGroup,...match.withGroups].filter(og=>og&&og!==gko);
           let curWithMembers=[...(v.with_members||[])];
@@ -3378,7 +3378,25 @@ const _GROUP_AMBIGUOUS_IF_COMATCHED=new Set(['슈퍼노바']);
 // 흔한 단어·동명이인과 우연히 겹치면 곧바로 오매칭됨(드림노트 "보니"가 "알고 보니"에 걸리던 사고,
 // 2026-08-06). _ATM_HASHTAG_ONLY_NAMES는 "이미 발견된" 흔한 이름만 보호하는데, strict는 아직 발견되지
 // 않은 새 흔한 이름/동명이인까지 채널 성격만으로 선제 차단한다.
-function _m2ParseTitle(rawTitle,selfGko,strict){
+// 탈퇴 게이트(2026-08-25, 사용자 요청 — "탈퇴 멤버 영상이 그룹 카드에 계속 뜬다").
+// 어떤 멤버가 그룹 G를 떠난 뒤에 올라온 영상은, 제목에 그 사람 이름이 있어도 G의 콘텐츠가 아니다.
+// 실제 사례: 라이즈 승한(2024.10.13 탈퇴)의 솔로 프로젝트 "승한앤소울" 직캠이 라이즈로 잡힘.
+//   ⚠️ 이건 "제목만으론 절대 구분할 수 없는" 종류의 오류다 — 2023년 [MPD직캠] 라이즈 승한 'Talk Saxy'는
+//      정당하고 2026년 "승한 댄스 실력"은 오태깅인데, 둘 다 제목엔 승한만 있다. 날짜가 유일한 단서.
+//   ⚠️ 그래서 탈퇴 이력은 로스터에서 지우지 말고 반드시 {active:false, left:"YYYY.MM.DD"}로 남길 것.
+//      승한은 통째로 삭제돼 있었고, 그 상태에선 이 게이트가 작동할 근거 자체가 없었다.
+// publishedAt이 없으면(구버전 호출부) 게이트를 걸지 않는다 — 하위호환 + 근거 없이 지우지 않기.
+function _atmLeftBefore(a,gko,publishedAt){
+  if(!publishedAt)return false;
+  const g=_artistGroups(a).find(x=>x.ko===gko);
+  if(!g)return false;
+  const activeHere=g.active!==undefined?g.active:a.active;
+  if(activeHere!==false)return false;
+  const left=(g.left!==undefined?g.left:a.left);
+  if(!left)return false; // 탈퇴일을 모르면 판단 보류(기존 동작 유지)
+  return String(publishedAt).slice(0,10)>String(left).replace(/\./g,'-').slice(0,10);
+}
+function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
   // "(원곡: X)"/"[Dance Cover]"/"(BTS 커버)"류 절은 매칭 전에 먼저 제거한다 — 이 절 안의 이름은 실제
   // 출연자가 아니라 커버 대상(원곡자)이라, 그대로 두면 group_ko/with_members가 원곡자 쪽으로 잘못
   // 붙는다(예: "마마무 - 아주 NICE(원곡: 세븐틴)"에 세븐틴이 콜라보로 붙음). 이 헬퍼는 원래 관리자
@@ -3610,7 +3628,8 @@ function _m2ParseTitle(rawTitle,selfGko,strict){
         // 무효로 치고, 실제로 이 경로를 타고 group_ko='솔로'로 저장된 영상이 633건 쌓여 어느 카드에도
         // 안 걸리는 미아가 돼 있었음(2026-08-25 실측). 나머지 코드가 쓰는 관례(`_ytGroupKoFor`)와 똑같이
         // "실존 그룹이면 그룹명, 아니면 본인 이름"으로 바꿔서 넣는다.
-        const artistGkos=_artistGroups(a).map(g=>(GROUPS[g.ko]?g.ko:a.name.ko))
+        const artistGkos=_artistGroups(a).filter(g=>!_atmLeftBefore(a,g.ko,publishedAt)) // 탈퇴 후 영상은 그 그룹 아님
+          .map(g=>(GROUPS[g.ko]?g.ko:a.name.ko))
           .filter(gko=>viaHashtag||!selfGko||gko===selfGko||!_isCrossGate(gko,selfGko));
         if(artistGkos.length){
           artistGkos.forEach(gko=>{
@@ -3678,7 +3697,8 @@ function _m2ParseTitle(rawTitle,selfGko,strict){
     // 그대로라(표시/쿼리 일관) 별칭으로 걸려도 members엔 'JIN'/'Kei'로 들어감. 단일음절 별칭("진")도 그룹이
     // 이미 확정된 맥락이라 hit()의 length<2 컷 없이 단어경계로 인정(진심·진짜는 단어경계라 안 걸림).
     const _aliasHit=al=>{const n=(al||'').toUpperCase().replace(/[^가-힣a-zA-Z0-9]/g,' ').replace(/\s+/g,' ').trim();return !!n&&normMinusUnits.includes(' '+n+' ');};
-    const matched=ARTISTS.filter(a=>_artistGroups(a).some(g=>g.ko===gko)&&(_m2NameVariants(a).some(t=>hit(t,normMinusUnits)||hitHashtagSubstring(t))||(a.matchAliases||[]).some(_aliasHit))).map(a=>a.name.ko);
+    // 탈퇴 게이트(위 _atmLeftBefore 주석 참고) — 이 영상이 올라온 시점에 이미 그 그룹을 떠난 사람은 제외.
+    const matched=ARTISTS.filter(a=>_artistGroups(a).some(g=>g.ko===gko)&&!_atmLeftBefore(a,gko,publishedAt)&&(_m2NameVariants(a).some(t=>hit(t,normMinusUnits)||hitHashtagSubstring(t))||(a.matchAliases||[]).some(_aliasHit))).map(a=>a.name.ko);
     const extra=unitExtraMembers[gko];
     if(extra){
       const extraArr=[...extra];
@@ -3739,7 +3759,7 @@ function _extBuildRows(vids,strict,tier,owner,defaultCat){
   const rows=[];let skipped=0;
   const ownerGko=_extOwnerGko(owner);
   for(const v of vids){
-    const match=_m2ParseTitle(v.title,ownerGko||undefined,strict);
+    const match=_m2ParseTitle(v.title,ownerGko||undefined,strict,v.published_at);
     if(!owner&&!match){skipped++;continue;}
     // idol tier(owner.mko 있음)는 인물이 이미 확정이라 그대로 고정. fans tier(owner.gko만 있음, 그룹
     // 전체가 대상이라 특정 멤버가 없음)는 제목에서 그 그룹 멤버 언급을 찾아본다 — 없으면(그룹 전체

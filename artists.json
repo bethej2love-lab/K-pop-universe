@@ -22261,6 +22261,18 @@
       "ko": "솔로",
       "en": "Solo"
     },
+    "groups": [
+      {
+        "ko": "솔로",
+        "en": "Solo"
+      },
+      {
+        "ko": "라이즈",
+        "en": "RIIZE",
+        "active": false,
+        "left": "2024.10.13"
+      }
+    ],
     "co": "SM",
     "active": true,
     "color": [

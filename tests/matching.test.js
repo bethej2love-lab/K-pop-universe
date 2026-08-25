@@ -75,6 +75,7 @@ pieces.push(extractStatement(adminSrc, /^const _GROUP_AMBIGUOUS_IF_COMATCHED\s*=
 // ⚠️ 이 하네스는 "이름으로 잘라오기" 방식이라, _m2ParseTitle이 새 최상위 함수를 부르게 되면
 // 여기에도 반드시 추가해야 함(안 하면 "... is not defined"로 전 케이스가 실패한다).
 pieces.push(extractByBraces(adminSrc, /^function _unitMemberNamedInTitle\(/m, '_unitMemberNamedInTitle'));
+pieces.push(extractByBraces(adminSrc, /^function _atmLeftBefore\(/m, '_atmLeftBefore')); // 탈퇴 게이트(2026-08-25)
 pieces.push(extractByBraces(adminSrc, /^function _m2ParseTitle\(/m, '_m2ParseTitle'));
 
 const harnessSrc = `
@@ -105,7 +106,24 @@ const { _m2ParseTitle, _PROJECT_UNITS } = mod.exports;
 // ── 테스트 케이스 ──────────────────────────────────────────────
 // 각 케이스는 실제 사고/수정 이력(CHANGELOG 2026-07~08) 기반. check(result)가 true를 반환해야 통과.
 const cases = [];
-function test(name, title, selfGko, check) { cases.push({ name, title, selfGko, check }); }
+// publishedAt: 탈퇴 게이트(_atmLeftBefore) 검증용 4번째 인자. 안 주면 기존처럼 날짜 없이 파싱.
+function test(name, title, selfGko, check, publishedAt) { cases.push({ name, title, selfGko, check, publishedAt }); }
+
+// ── 탈퇴 게이트(2026-08-25, 사용자 제보 "라이즈 탈퇴한 승한 직캠이 라이즈 카드에 뜬다") ─────
+// 제목만으론 절대 구분할 수 없는 종류의 오류 — 2023년 "[MPD직캠] 라이즈 승한 'Talk Saxy'"는 정당하고
+// 2026년 "승한 댄스 실력"은 오태깅인데 둘 다 제목엔 승한만 있다. 발행일이 유일한 단서.
+// ⚠️ 전제: 탈퇴 이력을 로스터에서 지우지 말고 {active:false,left:"..."}로 남길 것. 승한은 통째로
+//    삭제돼 있어서 이 게이트가 작동할 근거 자체가 없었고, 복원하니 이번엔 탈퇴 후 영상까지 라이즈로
+//    잡히는 역효과가 났다 — 로스터 복원과 이 게이트는 반드시 세트.
+test('탈퇴 게이트 — 탈퇴 후 솔로 활동 영상은 옛 그룹으로 안 잡힘',
+  "[안방1열 직캠4K] 승한앤소울 승한 'Glow' (XngHan&Xoul XngHan FanCam)", undefined,
+  r => !r || (r.primaryGroup !== '라이즈' && !(r.withGroups || []).includes('라이즈')), '2026-05-13');
+test('탈퇴 게이트 — 활동기(탈퇴 전) 영상은 그대로 유지',
+  "[MPD직캠] 라이즈 승한 직캠 4K 'Talk Saxy' (RIIZE SEUNGHAN FanCam)", undefined,
+  r => !!r && (r.primaryGroup === '라이즈' || (r.withGroups || []).includes('라이즈')), '2023-11-09');
+test('탈퇴 게이트 — 발행일을 안 주면 기존 동작 유지(하위호환)',
+  "[MPD직캠] 라이즈 승한 직캠 4K 'Talk Saxy' (RIIZE SEUNGHAN FanCam)", undefined,
+  r => !!r && (r.primaryGroup === '라이즈' || (r.withGroups || []).includes('라이즈')));
 
 test(
   '트리플에스 AAA — 해시태그 없이 평문이면 안 걸림',
@@ -235,10 +253,10 @@ test(
 
 // ── 실행 ──────────────────────────────────────────────
 let pass = 0, fail = 0;
-cases.forEach(({ name, title, selfGko, check }) => {
+cases.forEach(({ name, title, selfGko, check, publishedAt }) => {
   let result, ok, err = null;
   try {
-    result = title === null ? undefined : _m2ParseTitle(title, selfGko, false);
+    result = title === null ? undefined : _m2ParseTitle(title, selfGko, false, publishedAt);
     ok = check(result);
   } catch (e) { ok = false; err = e; }
   if (ok) { pass++; console.log(`✅ ${name}`); }
