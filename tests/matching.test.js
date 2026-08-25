@@ -169,6 +169,30 @@ test(
 );
 
 // 참고용(단정하지 않음) — 이번 회귀 스위트 작성 중 새로 발견한 실제 잠재 이슈:
+// ── 앤팀 &TEAM 리터럴 전용(2026-08-25, 사용자 제보) ─────────────────
+// hit()이 특수문자를 공백으로 바꾸는 탓에 '&TEAM'이 그냥 'TEAM'이 돼서 무관한 제목이 대량 매칭됐음
+// (실측 3,438건 중 328건). '15&'와 같은 계열이라 _GROUP_TOKEN_LITERAL_ONLY로 처리.
+// ⚠️ 실제 제목은 '&TEAM'보다 '#andTEAM'을 훨씬 많이 쓰므로 altNames로 그쪽도 살려야 함 — 세트로 검증.
+test('앤팀 — 공식 표기 &TEAM 은 매칭됨(리터럴)', '&TEAM Under the skin MV', undefined,
+  r => !!r && (r.primaryGroup === '앤팀' || (r.withGroups || []).includes('앤팀')));
+test('앤팀 — 실제로 많이 쓰는 #andTEAM 표기도 매칭됨', 'wolves are coming #MarkonMe #andTEAM', undefined,
+  r => !!r && (r.primaryGroup === '앤팀' || (r.withGroups || []).includes('앤팀')));
+test('앤팀 — 한글 "앤팀"도 매칭됨', '앤팀 콘서트 비하인드', undefined,
+  r => !!r && (r.primaryGroup === '앤팀' || (r.withGroups || []).includes('앤팀')));
+test('앤팀 — bare "Team"은 매칭 안 됨(오염 원인)', 'Team 5JANGNAM - Officially Missing You', undefined,
+  r => !r || (r.primaryGroup !== '앤팀' && !(r.withGroups || []).includes('앤팀')));
+test('앤팀 — "Team A vs B"도 매칭 안 됨', 'Hoodie Girls Team A vs B', undefined,
+  r => !r || (r.primaryGroup !== '앤팀' && !(r.withGroups || []).includes('앤팀')));
+
+// ── "솔로" placeholder 누출(2026-08-25 실측으로 발견) ──────────────────
+// 무소속 솔로(아이유·승한 등)는 artists.json에서 group.ko가 "솔로"인데, 이건 여러 명이 공유하는
+// 가짜 값이라 group_ko로 쓰면 안 됨(_isValidVidGroupKo도 무효 처리). 그런데 역추론 경로가 이걸
+// 그대로 반환해서 group_ko='솔로' 영상이 633건 쌓여 어느 카드에도 안 걸리는 미아가 돼 있었음.
+test('솔로 placeholder — 무소속 솔로는 "솔로"가 아니라 본인 이름으로 잡혀야', '승한앤소울 승한 \'Glow\' FanCam', undefined,
+  r => !!r && r.primaryGroup === '승한');
+test('솔로 placeholder — 어떤 경우에도 "솔로"가 그룹으로 나오면 안 됨', '카리나의 아이유 \'그 사람\' 커버', undefined,
+  r => !r || (r.primaryGroup !== '솔로' && !(r.withGroups || []).includes('솔로') && !Object.keys(r.membersByGroup || {}).includes('솔로')));
+
 // ── NCT U(로테이션 유닛) ─────────────────────────────────────────
 // 다른 유닛(부석순·유아유 등)은 유닛명이 뜨면 그 멤버 전원이 참여한 게 맞지만, NCT U의 members는
 // "NCT U로 활동한 적 있는 사람 21명 풀"이라 전원 확장하면 참여도 안 한 멤버가 붙는다.

@@ -3487,7 +3487,13 @@ function _m2ParseTitle(rawTitle,selfGko,strict){
   // 흔한 단어/숫자를 보강한 이름이면 그 특수문자가 지워지면서 그냥 "15" 하나만 남아버려 날짜·순위·회차
   // 등 무관한 숫자에 대량으로 오매칭된다(2026-08-05, 사용자 제보로 발견). 이런 토큰은 정규화하지 않은
   // 원문 그대로 리터럴 부분 문자열로만 인정한다 — "15&"는 살아있어야 매칭되고 "15"만으로는 안 됨.
-  const _GROUP_TOKEN_LITERAL_ONLY=new Set(['15&']);
+  // '&TEAM'(앤팀) 추가(2026-08-25) — '15&'와 완전히 같은 계열. hit()이 특수문자를 공백으로 바꾸는 탓에
+  // '&TEAM'이 그냥 'TEAM'이 돼서, "Team 5JANGNAM"·"Team A vs B"·"[#음중직캠] ... Team 1" 같은 무관한
+  // 제목이 전부 앤팀으로 매칭됐음(실측: 앤팀 태깅 3,438건 중 328건이 앤팀 표기 없이 'TEAM'만으로 걸림).
+  // 리터럴 전용으로 두면 '&'가 살아있는 공식 표기 '&TEAM'만 인정된다.
+  // ⚠️ 실제 유튜브 제목은 '&TEAM'보다 해시태그 '#andTEAM'을 훨씬 많이 쓰므로(3,110건 중 대부분),
+  //    groups.json 앤팀에 altNames:["andTEAM"]을 같이 넣어야 정상 영상이 안 끊긴다. 둘은 세트.
+  const _GROUP_TOKEN_LITERAL_ONLY=new Set(['15&','&TEAM']);
   function hitLiteral(t){return title.toUpperCase().includes(t.toUpperCase());}
   // 긴 이름 우선 정렬 (부분 매칭 방지). strictSync 그룹은 제목 키워드 매칭에서 제외 — 자체 채널
   // 동기화(_ytSyncGroup)로만 영상이 들어와야 하는 공통명사 이름 그룹이 외부 채널 영상 제목에서 오인식되는 걸 막음.
@@ -3599,7 +3605,13 @@ function _m2ParseTitle(rawTitle,selfGko,strict){
         // 해시태그 매칭일 때만 인정한다. #1(짧은영문/흔한단어 게이트)이 못 거르는, 이름은 멀쩡한데 세대·
         // 소속사가 동떨어진 역추론 오태깅(감사 상위 다수)을 잡는 2차 게이트.
         const viaHashtag=names.some(t=>hitHashtag(t));
-        const artistGkos=_artistGroups(a).map(g=>g.ko).filter(gko=>viaHashtag||!selfGko||gko===selfGko||!_isCrossGate(gko,selfGko));
+        // ⚠️ group.ko가 "솔로"인 아티스트(아이유·비·싸이·승한 등 무소속 솔로)는 그 값이 **여러 명이
+        // 공유하는 placeholder**라 그대로 group_ko로 쓰면 안 된다 — `_isValidVidGroupKo`도 '솔로'를
+        // 무효로 치고, 실제로 이 경로를 타고 group_ko='솔로'로 저장된 영상이 633건 쌓여 어느 카드에도
+        // 안 걸리는 미아가 돼 있었음(2026-08-25 실측). 나머지 코드가 쓰는 관례(`_ytGroupKoFor`)와 똑같이
+        // "실존 그룹이면 그룹명, 아니면 본인 이름"으로 바꿔서 넣는다.
+        const artistGkos=_artistGroups(a).map(g=>(GROUPS[g.ko]?g.ko:a.name.ko))
+          .filter(gko=>viaHashtag||!selfGko||gko===selfGko||!_isCrossGate(gko,selfGko));
         if(artistGkos.length){
           artistGkos.forEach(gko=>{
             if(!inferred.has(gko))inferred.set(gko,[]);
