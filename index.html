@@ -1604,6 +1604,22 @@ function applyLang(){
   if(_idxOpen){_renderIdxSortOptions();_renderIndexList();}
   _updateFavHintCallout();
 }
+// 탈퇴/과거 그룹 칩 옆에 붙일 활동 기간 텍스트.
+// - active/left는 그룹별(gEntry) 값이 있으면 우선, 없으면 대표값(a.active/a.left)으로 폴백
+//   (_memberVideoCutoff와 동일 관례 — 겸임 멤버가 한 그룹만 탈퇴한 경우까지 정확히 처리).
+// - 지금은 탈퇴일(left)만 있어 "~2021.08"처럼 종료 시점만 보여준다. 합류일(joined) 데이터를
+//   채우면 자동으로 "2020.09~2021.08" 전체 기간으로 확장된다(데이터 방향 B 대비).
+// - left는 근사치(나무위키 이전소속사 계약종료일 기반)라 일 단위는 부정확 — 연.월까지만 노출한다.
+function _tgPeriodText(a,g){
+  const activeHere=(g&&g.active!==undefined)?g.active:a.active;
+  if(activeHere!==false)return''; // 이 그룹에선 아직 현역(겸임 멤버의 현역 그룹 등)
+  const ym=s=>{const p=String(s||'').split('.');return p[0]?(p[1]?p[0]+'.'+p[1]:p[0]):'';};
+  const L=ym((g&&g.left!==undefined)?g.left:a.left);
+  const J=ym((g&&g.joined!==undefined)?g.joined:a.joined);
+  if(J&&L)return J+'~'+L;
+  if(L)return'~'+L;
+  return ''; // 종료 시점을 모르면(해체일만 있는 등) 아무것도 안 붙임
+}
 function _refreshOpenCardText(){
   // 그룹 카드
   const gcEl=document.getElementById('gc');
@@ -1652,6 +1668,8 @@ function _refreshOpenCardText(){
         closeCards();showGC(g.ko,gx,gy);
       });
       _tgEl.appendChild(sp);
+      const _per=_tgPeriodText(a,g);
+      if(_per){const psp=document.createElement('span');psp.className='tg-period';psp.textContent=_per;_tgEl.appendChild(psp);}
     });
     _unitTagsFor(a).forEach(unitName=>{
       const sep=document.createElement('span');sep.textContent=' · ';sep.style.cssText='color:rgba(150,170,210,0.45);pointer-events:none;';_tgEl.appendChild(sep);
@@ -7066,6 +7084,8 @@ function showT(a,cx,cy,keepNavStack,urlMode,pushMobNav,noFly){
     sp.textContent=_spTxt;
     sp.addEventListener('click',_makeGcClickFn(g.ko));
     tgEl.appendChild(sp);
+    const _per=_tgPeriodText(a,g);
+    if(_per){const psp=document.createElement('span');psp.className='tg-period';psp.textContent=_per;tgEl.appendChild(psp);}
   });
   _unitTagsFor(a).forEach(unitName=>{
     if(tgEl.childNodes.length){const sep=document.createElement('span');sep.textContent=' · ';sep.style.cssText='color:rgba(150,170,210,0.45);pointer-events:none;';tgEl.appendChild(sep);}
