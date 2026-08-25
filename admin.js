@@ -4002,8 +4002,11 @@ function _extBuildRows(vids,strict,tier,owner,defaultCat){
       id:v.id,title:v.title,title_norm:_titleNorm(v.title),description:v.description||'',thumb:v.thumb,published_at:v.published_at,
       category,
       group_ko:owner?ownerGko:match.primaryGroup,members,with_groups:withGroups,with_members:withMembers,
-      ...(coverGroups.length?{cover_of_groups:coverGroups}:{}),
-      ...(coverMembers.length?{cover_of_members:coverMembers}:{}),
+      // 항상 두 칸을 넣는다(빈 값이어도 []). 조건부로 넣으면 200개 배치 안에 커버 영상이 하나라도
+      // 섞였을 때, 그 칼럼이 배치의 INSERT 컬럼 목록에 들어가면서 키가 없는 일반 영상 행들이 null로
+      // 저장되려다 NOT NULL 위반으로 배치 전체가 튕겼음(M2·뮤직뱅크·쇼챔피언 백필 실패, 2026-08-25).
+      cover_of_groups:coverGroups,
+      cover_of_members:coverMembers,
       // 약한 근거 매칭을 더는 hidden으로 감추지 않는다(2026-08-25, 사용자 결정). needs_review 플래그만
       // 남겨 어드민이 사후 감사할 수 있게 하고, 유저에겐 정상 노출한다.
       //   왜: "사람이 검수한다"는 전제가 실제로 안 지켜져서(사용자: "안 누르게 되더라") 큐가 3,051건
