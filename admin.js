@@ -1358,7 +1358,7 @@ async function _ytExtractCoverSongTitles(){
 // 재스캔 사고 재발 방지책). 어느 버튼이 어느 컬럼을 바꾸든 하나의 헬퍼로 커버하려고, 이 관리도구들이
 // 바꿀 수 있는 컬럼 전부를 고정 목록으로 떠둔다(안 바뀐 컬럼까지 복원해도 값이 같아 무해).
 const _BULK_SNAP_TABLE='admin_bulk_snapshots';
-const _BULK_SNAP_COLS=['group_ko','members','with_members','with_groups','content_flag','needs_review','cover_of_members','cover_of_groups','cover_of_song','tags_manual','reviewed_at'];
+const _BULK_SNAP_COLS=['group_ko','members','with_members','with_groups','content_flag','needs_review','cover_of_members','cover_of_groups','cover_of_song','tags_manual','category','reviewed_at'];
 let _snapHasReviewedAt=true;
 const _snapCols=()=>_snapHasReviewedAt?_BULK_SNAP_COLS:_BULK_SNAP_COLS.filter(c=>c!=='reviewed_at');
 // 영향받는 id들의 "바꾸기 전" 값을 떠서 batch로 저장한다. 실패해도(테이블 없음/권한 등) 원래 작업은
@@ -1457,6 +1457,10 @@ async function _ytSweepCategoryMistag(){
     if(!rows?.length){_ytSetProg('검사할 영상이 없어요');return;}
     const updates=[];
     rows.forEach(v=>{
+      // 쇼츠는 제목이 아니라 썸네일 세로비율(동기화 시점)로만 판정한다 — 제목이 [MV]·라이브류여도
+      // 쇼츠면 쇼츠로 남겨야 탭 노출 비율이 맞음(2026-08-26 사용자 요청). 조회에서 이미 제외하지만
+      // 방어적으로 한 번 더 막는다 — 쇼츠는 이 버튼으로 절대 다른 카테고리로 안 옮긴다.
+      if(v.category==='short')return;
       const newCat=_ytClassify(v.title||'');
       // skip은 동기화 시점에 "아예 저장하지 않는다"는 의미라 이미 저장된 행엔 적용 대상이 아니고,
       // short는 위에서부터 조회 대상 자체를 제외했으므로(썸네일 실측 전용) 여기서도 만들지 않는다.
@@ -1465,6 +1469,7 @@ async function _ytSweepCategoryMistag(){
       updates.push({id:v.id,patch:{category:newCat}});
     });
     if(!updates.length){_ytSetProg(`검사 완료 — ${rows.length}개 중 바뀔 항목 없음`);return;}
+    await _snapshotBeforeBulk('영상 카테고리 재분류(전체)',updates.map(u=>u.id));
     for(let i=0;i<updates.length;i+=200){
       const chunk=updates.slice(i,i+200);
       const results=await Promise.all(chunk.map(u=>sb.from(_YT_TABLE).update(u.patch).eq('id',u.id)));
