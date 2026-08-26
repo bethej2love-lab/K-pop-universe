@@ -2194,6 +2194,11 @@
   .pp-input::placeholder{color:rgba(126,152,202,0.34);}
   .pp-nick-row{display:flex;gap:6px;align-items:flex-start;}
   .pp-nick-row .pp-input{flex:1;}
+  /* _promptDialog 인라인 종류 토글(새 컬렉션 영상/사진) — 세그먼트 버튼 2개 */
+  .pp-toggle{display:flex;gap:6px;margin-top:12px;}
+  .pp-toggle-opt{flex:1;padding:9px;border-radius:10px;font-family:inherit;font-size:12px;font-weight:700;letter-spacing:.03em;cursor:pointer;background:rgba(255,255,255,0.05);border:0.5px solid rgba(255,255,255,0.09);color:rgba(180,200,238,0.72);transition:background .15s,border-color .15s,color .15s;}
+  .pp-toggle-opt:hover{background:rgba(255,255,255,0.09);color:#fff;}
+  .pp-toggle-opt.active{background:rgba(100,150,255,0.18);border-color:rgba(100,150,255,0.55);color:#fff;}
   #pp-nick-random{flex-shrink:0;background:rgba(255,255,255,0.055);border:0.5px solid rgba(255,255,255,0.09);border-radius:10px;color:rgba(170,195,240,0.71);font-size:15px;width:38px;height:38px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .13s,transform .15s;padding:0;}
   #pp-nick-random:hover{background:rgba(255,255,255,0.10);color:rgba(210,225,255,0.9);}
   #pp-nick-random:active{transform:rotate(180deg) scale(0.88);transition:transform .18s;}

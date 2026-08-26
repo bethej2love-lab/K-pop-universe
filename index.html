@@ -81,7 +81,6 @@
       <div class="fav-hd"><span class="fav-hd-lbl">COLLECTIONS</span></div>
       <div id="collection-list"><div class="fav-empty" data-i18n="colEmpty">아직 모아둔 컬렉션이 없어요</div></div>
       <button id="col-create-btn" data-i18n="colNewBtn">+ 새 컬렉션</button>
-      <button id="col-create-photo-btn" data-i18n="colNewPhotoBtn">+ 사진 컬렉션</button>
     </div>
     <div id="scrap-section">
       <div class="fav-hd"><span class="fav-hd-lbl">LIKES</span></div>
@@ -1090,6 +1089,8 @@
          읽히므로 별도 줄로 둔다. hint 없이 부르면 비어 있고 display:none이라 기존 호출엔 영향 없음. -->
     <div class="pp-hint" id="generic-prompt-hint" style="display:none"></div>
     <input id="generic-prompt-input" type="text" class="pp-input" style="margin-top:14px;" maxlength="2000" autocomplete="off">
+    <!-- 선택 토글(예: 새 컬렉션의 영상/사진 종류). toggle 옵션을 넘긴 _promptDialog 호출에서만 채워져 표시됨 -->
+    <div id="generic-prompt-toggle" class="pp-toggle" style="display:none;"></div>
     <div id="generic-confirm-btns" style="margin-top:16px;">
       <button id="generic-prompt-cancel" class="uc-btn" data-i18n="cancel">취소</button>
       <button id="generic-prompt-save" class="uc-btn uc-btn-primary" data-i18n="ppSave">저장</button>
@@ -1577,7 +1578,7 @@ const T={
       idxSortName:'이름 (가나다순)',idxSortDebut:'데뷔연도',idxSortAgency:'소속사',idxSortMembers:'멤버 수',
       idxSortBirth:'생년',idxSortGroup:'그룹명',idxSortNation:'국적',ppTitle:'내 프로필',ppNick:'닉네임',ppNickPH:'닉네임을 입력하세요',ppNickErr:'닉네임을 입력해주세요',ppBio:'한 줄 소개',ppBioPH:'선택사항',ppColor:'내 별 색상',ppFavLabel:'좋아요 공개',ppFavSub:'다른 사람들이 볼 수 있어요',ppSyncLabel:'다른 기기와 동기화',ppSyncSub:'다른 기기에서도 좋아요가 유지돼요',ppGoogleBtn:'구글로 연결하기',ppXBtn:'X로 연결하기',ppLinked:'계정에 연결됨 ✓',ppLogout:'로그아웃',ppSave:'저장',
       fbBtnLabel:'💬 피드백 보내기',fbTitle:'피드백 보내기',fbCatBug:'버그 제보',fbCatSuggest:'제안',fbCatEtc:'기타',fbTextPH:'어떤 내용인지 편하게 적어주세요',fbContactPH:'답장 받을 이메일(선택)',fbErrEmpty:'내용을 입력해주세요',fbCancel:'취소',fbSubmit:'보내기',fbSending:'보내는 중…',fbSent:'전달됐어요!',fbSendFail:'전송에 실패했어요. 잠시 후 다시 시도해주세요.',
-      cancel:'취소',colNewBtn:'+ 새 컬렉션',colNewPhotoBtn:'+ 사진 컬렉션',colNewFullBtn:'+ 새 컬렉션 만들기',colNamePH:'이름 입력',colEmpty:'아직 모아둔 컬렉션이 없어요',colCreateConfirm:'만들기',
+      cancel:'취소',colNewBtn:'+ 새 컬렉션',colNewPhotoBtn:'+ 사진 컬렉션',colTypeVideo:'영상',colTypePhoto:'사진',colNewFullBtn:'+ 새 컬렉션 만들기',colNamePH:'이름 입력',colEmpty:'아직 모아둔 컬렉션이 없어요',colCreateConfirm:'만들기',
       favEmpty:'아직 즐겨찾기가 없어요',scrapEmpty:'아직 담아둔 영상이 없어요',concertEmpty:'아직 기록한 공연이 없어요',colAddedSuffix:'에 추가됨',colChangeBtn:'다른 컬렉션',
       selLabel:'선택',selBtnTitle:'영상 여러 개 선택',sortTitle:'정렬',refreshTitle:'새로고침',searchClearLabel:'검색어 지우기',userBulkAdd:'컬렉션에 추가',
       ucCardBtn:'✦ 내 우주 카드 만들기',ucCardTitle:'내 우주 카드',ucCardClose:'닫기',ucCardSave:'저장',ucCardShare:'공유',
@@ -1595,7 +1596,7 @@ const T={
       idxSortName:'Name (A–Z)',idxSortDebut:'Debut Year',idxSortAgency:'Agency',idxSortMembers:'Member Count',
       idxSortBirth:'Birth Year',idxSortGroup:'Group',idxSortNation:'Nationality',ppTitle:'My Profile',ppNick:'Nickname',ppNickPH:'Enter nickname',ppNickErr:'Nickname is required',ppBio:'Bio',ppBioPH:'Optional',ppColor:'Star Color',ppFavLabel:'Public Likes',ppFavSub:'Others can see your likes',ppSyncLabel:'Sync Across Devices',ppSyncSub:'Likes stay synced across your devices',ppGoogleBtn:'Connect with Google',ppXBtn:'Connect with X',ppLinked:'Account Connected ✓',ppLogout:'Log Out',ppSave:'Save',
       fbBtnLabel:'💬 Send Feedback',fbTitle:'Send Feedback',fbCatBug:'Bug Report',fbCatSuggest:'Suggestion',fbCatEtc:'Other',fbTextPH:'Write anything on your mind',fbContactPH:'Email for a reply (optional)',fbErrEmpty:'Please enter a message',fbCancel:'Cancel',fbSubmit:'Send',fbSending:'Sending…',fbSent:'Sent, thank you!',fbSendFail:'Failed to send. Please try again in a moment.',
-      cancel:'Cancel',colNewBtn:'+ New Collection',colNewPhotoBtn:'+ Photo Collection',colNewFullBtn:'+ Create Collection',colNamePH:'Enter name',colEmpty:'No collections yet',colCreateConfirm:'Create',
+      cancel:'Cancel',colNewBtn:'+ New Collection',colNewPhotoBtn:'+ Photo Collection',colTypeVideo:'Video',colTypePhoto:'Photo',colNewFullBtn:'+ Create Collection',colNamePH:'Enter name',colEmpty:'No collections yet',colCreateConfirm:'Create',
       favEmpty:'No favorites yet',scrapEmpty:'No saved videos yet',concertEmpty:'No concerts logged yet',colAddedSuffix:' added',colChangeBtn:'Change collection',
       selLabel:'Select',selBtnTitle:'Select multiple videos',sortTitle:'Sort',refreshTitle:'Refresh',searchClearLabel:'Clear search',userBulkAdd:'Add to Collection',
       ucCardBtn:'✦ Create My Universe Card',ucCardTitle:'My Universe Card',ucCardClose:'Close',ucCardSave:'Save',ucCardShare:'Share',
@@ -10057,8 +10058,8 @@ document.getElementById('generic-confirm-cancel').addEventListener('click',e=>{e
 document.getElementById('generic-confirm-overlay').addEventListener('click',e=>{e.stopPropagation();if(e.target===e.currentTarget)_closeGenericConfirm(false);});
 document.getElementById('generic-confirm-overlay').addEventListener('pointerdown',e=>e.stopPropagation());
 
-let _genericPromptResolve=null;
-function _promptDialog({title,value='',placeholder='',hint=''}){
+let _genericPromptResolve=null,_genericPromptToggle=null,_genericPromptToggleVal=null;
+function _promptDialog({title,value='',placeholder='',hint='',toggle=null}){
   return new Promise(resolve=>{
     _genericPromptResolve=resolve;
     document.getElementById('generic-prompt-title').textContent=title||'';
@@ -10066,13 +10067,41 @@ function _promptDialog({title,value='',placeholder='',hint=''}){
     if(hintEl){hintEl.textContent=hint||'';hintEl.style.display=hint?'':'none';}
     const inp=document.getElementById('generic-prompt-input');
     inp.value=value;inp.placeholder=placeholder;
+    // 선택 토글(예: 새 컬렉션의 영상/사진 종류) — toggle 옵션이 있을 때만 렌더. 저장 시 선택값이 {name,choice}로 반환됨.
+    const tgEl=document.getElementById('generic-prompt-toggle');
+    _genericPromptToggle=toggle||null;
+    _genericPromptToggleVal=toggle?(toggle.value||toggle.options[0].val):null;
+    if(tgEl){
+      tgEl.innerHTML='';
+      if(toggle){
+        toggle.options.forEach(o=>{
+          const b=document.createElement('button');
+          b.type='button';
+          b.className='pp-toggle-opt'+(o.val===_genericPromptToggleVal?' active':'');
+          b.textContent=o.label;
+          b.addEventListener('click',ev=>{
+            ev.stopPropagation();
+            _genericPromptToggleVal=o.val;
+            tgEl.querySelectorAll('.pp-toggle-opt').forEach(x=>x.classList.remove('active'));
+            b.classList.add('active');
+          });
+          tgEl.appendChild(b);
+        });
+        tgEl.style.display='';
+      }else tgEl.style.display='none';
+    }
     const _po=document.getElementById('generic-prompt-overlay');_po.classList.add('open');_bringToFront(_po); // 위 _confirmDialog와 동일 이유 — 사이드바 위로 확실히(2026-08-22)
     setTimeout(()=>{inp.focus();inp.select();},50);
   });
 }
 function _closeGenericPrompt(val){
   document.getElementById('generic-prompt-overlay').classList.remove('open');
-  if(_genericPromptResolve){_genericPromptResolve(val);_genericPromptResolve=null;}
+  if(_genericPromptResolve){
+    // 토글이 있었으면 {name,choice}로, 없으면 기존처럼 문자열로 반환(하위호환). 취소(val=null)는 항상 null.
+    const out=(_genericPromptToggle&&val!=null)?{name:val,choice:_genericPromptToggleVal}:val;
+    _genericPromptToggle=null;
+    _genericPromptResolve(out);_genericPromptResolve=null;
+  }
 }
 document.getElementById('generic-prompt-save').addEventListener('click',e=>{
   e.stopPropagation();
@@ -12305,19 +12334,25 @@ function _confirmNewCol(){
 }
 document.getElementById('col-new-confirm').addEventListener('click',_confirmNewCol);
 document.getElementById('col-new-name').addEventListener('keydown',e=>{if(e.key==='Enter')_confirmNewCol();});
-// 프로필 패널 새 컬렉션 버튼
+// 프로필 패널 새 컬렉션 버튼 — 영상/사진 종류를 한 다이얼로그에서 인라인 토글로 고른다(2026-08-26, 예전
+// '+ 사진 컬렉션' 버튼과 통합). 사진은 Supabase 업로드가 필요해 종류가 photo일 때만 로그인 확인.
 document.getElementById('col-create-btn').addEventListener('click',()=>{
-  _promptDialog({title:T[currentLang].colNewBtn.replace('+ ',''),placeholder:T[currentLang].colNamePH}).then(name=>{
-    if(name)_createCollection(name);
-  });
-});
-// 사진 컬렉션 만들기(2026-08-22) — 이름 입력 → 사진 kind로 생성 → 바로 그리드 열어 업로드 유도
-document.getElementById('col-create-photo-btn')?.addEventListener('click',()=>{
-  if(!window._sbSession){alert(currentLang==='ko'?'로그인하면 사진 컬렉션을 만들 수 있어요.':'Log in to create a photo collection.');return;}
-  _promptDialog({title:currentLang==='ko'?'사진 컬렉션 만들기':'New photo collection',placeholder:currentLang==='ko'?'예: 아이유 셀카 모음':'e.g. IU selfies'}).then(name=>{
-    if(!name)return;
-    const col=_createCollection(name,'photo');
-    _openColPhotoGrid(col.id);
+  _promptDialog({
+    title:T[currentLang].colNewBtn.replace('+ ',''),
+    placeholder:T[currentLang].colNamePH,
+    toggle:{value:'video',options:[
+      {val:'video',label:T[currentLang].colTypeVideo},
+      {val:'photo',label:T[currentLang].colTypePhoto}
+    ]}
+  }).then(res=>{
+    if(!res||!res.name)return;
+    if(res.choice==='photo'){
+      if(!window._sbSession){alert(currentLang==='ko'?'로그인하면 사진 컬렉션을 만들 수 있어요.':'Log in to create a photo collection.');return;}
+      const col=_createCollection(res.name,'photo');
+      _openColPhotoGrid(col.id); // 만들자마자 그리드 열어 업로드 유도(기존 사진 버튼 동작 유지)
+    }else{
+      _createCollection(res.name);
+    }
   });
 });
 const _NICK_ADJ=['반짝이는','설레는','눈부신','청량한','황홀한','찬란한','몽환적인','빛나는','신비로운','화려한','달콤한','떨리는','영롱한','투명한','귀여운','사랑스러운','아름다운','짜릿한','아련한','맑은','시원한','다정한','따뜻한'];
