@@ -5742,7 +5742,10 @@ async function _fetchApiCollabData(anchor){
       if((v.members||[]).length>0&&!v.members.includes(memberKo))return;
       const withList=(v.with_groups||[]).flatMap(gko=>
         ARTISTS.filter(a=>_artistGroups(a).some(g=>g.ko===gko))
-          .map(a=>a.group.ko===anchor.group.ko?a.name.ko:`${a.name.ko}(${a.group.ko})`)
+          // 태그된 그룹(gko)으로 라벨해야 연결 카드가 그 그룹으로 묶어 표기한다 — 예전엔 멤버의 대표 그룹
+          // (a.group.ko)으로 라벨해서, 그룹 전체만 태깅된 영상인데도 멤버 대표그룹으로 펼쳐 보였음
+          // (2026-08-26 사용자 제보: with_groups=[워너원]뿐인데 "뉴이스트 민현·핫샷 하성운", 이달의소녀=[이달의소녀]인데 루셈블·아르테미스).
+          .map(a=>gko===anchor.group.ko?a.name.ko:`${a.name.ko}(${gko})`)
       );
       if(!withList.length)return;
       // _groupWideNames: 특정 멤버가 아니라 그룹 전체가 태깅된 영상이라는 표시(이름 단위 Set) — 실제로
