@@ -4036,7 +4036,7 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
   if(!matchedGroupKos.length){
     const inferred=new Map(); // groupKo -> [memberKo]
     const nameToGroups=new Map(); // 멤버명(한글) -> Map(아티스트객체 -> 그 사람 소속 groupKo[]) — 동명이인 충돌 감지용
-    const tokenToArtists=new Map(); // 매칭 토큰(대문자) -> Set(아티스트) — 교차-ko 영문 동명이인 감지(옵션 A)
+    const tokenToArtists=new Map(),artistToTokens=new Map(),artistToGkos=new Map(); // 옵션 A: 토큰↔사람↔그룹 동명이인 감지용
     let _inferViaHashtag=false;   // 이 역추론에 해시태그 명시가 하나라도 쓰였는가(아래 confidence 판정용)
     for(const a of ARTISTS){
       // 예전엔 GROUPS에 없는 그룹(아이유·보아처럼 group.ko="솔로"인 솔로 아티스트)을 통째로 건너뛰어서,
@@ -4083,7 +4083,10 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
           // 모두에서 지워버리는 자기파괴적 회귀가 생김(2026-08-20, 위 겸임 수정과 함께 발견).
           if(!nameToGroups.has(a.name.ko))nameToGroups.set(a.name.ko,new Map());
           nameToGroups.get(a.name.ko).set(a,artistGkos);
-          // 이 사람을 매칭시킨 토큰들을 기록 — 같은 토큰이 서로 다른 사람 여럿과 겹치면(아래 옵션 A) 애매
+          // 이 사람↔매칭토큰↔소속그룹을 기록 — 같은 토큰이 서로 다른 그룹의 사람 여럿과 겹치는데 그 사람이
+          // 최종 inferred에 살아남으면(아래 옵션 A) 그 그룹배정은 못 믿는다.
+          artistToTokens.set(a,_matchedToks.map(t=>t.toUpperCase()));
+          artistToGkos.set(a,artistGkos);
           _matchedToks.forEach(t=>{const k=t.toUpperCase();if(!tokenToArtists.has(k))tokenToArtists.set(k,new Set());tokenToArtists.get(k).add(a);});
         }
       }
@@ -4118,13 +4121,21 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
     if(selfGko&&inferred.has(selfGko)){
       for(const gko of[...inferred.keys()]){if(gko!==selfGko)inferred.delete(gko);}
     }
-    // 옵션 A(2026-08-26 사용자 결정): 한 토큰(특히 영문 로마자)이 서로 다른 사람 2명 이상과 매칭됐는데
-    // 제목에 그룹 표시가 전혀 없으면(이 블록 자체가 matchedGroupKos 비었을 때) 누구인지 자신있게 못 가른다
-    // → confidence:'ambiguous'로 검수 큐로 보낸다(_extBuildRows가 hidden+needs_review로 저장, 유저 노출
-    // 안 함=오배정 위험 0). selfGko(자체/오너 채널)로 이미 갈리는 문맥이면 애매하지 않으므로 owner-less
-    // (selfGko 없음)일 때만 적용 — 다른 호출부(자체채널 태깅 등)엔 영향 없음.
+    // 옵션 A(2026-08-26 사용자 결정): 제목에 그룹 표시가 전혀 없어 이름만으로 역추론한 상황에서,
+    // **살아남은 멤버가 "서로 다른 그룹 2곳 이상의 사람과 겹치는 토큰"으로 매칭됐으면** 그 그룹배정은
+    // 못 믿는다 → confidence:'ambiguous'로 검수 큐로(_extBuildRows가 hidden+needs_review 저장, 유저
+    // 노출 안 함=오배정 0). 예: #JIHOON(투어스/트레저/워너원)은 살아남은 박지훈이 애매토큰 매칭 → 애매.
+    // 반대로 "쯔위 최애는 나연"은 쯔위(고유토큰)로 트와이스가 확정되고 나연(동명이인)은 이미 dropped라
+    // 살아남은 멤버가 애매토큰이 아니므로 애매 아님(오탐 방지). selfGko 있으면(자체/오너 채널) 애매 아님.
     let _tokenAmbiguous=false;
-    if(!selfGko){for(const arts of tokenToArtists.values()){if(arts.size>=2){_tokenAmbiguous=true;break;}}}
+    if(!selfGko){
+      const _tokGroups=k=>{const s=new Set();(tokenToArtists.get(k)||new Set()).forEach(x=>(artistToGkos.get(x)||[]).forEach(g=>s.add(g)));return s;};
+      for(const a of artistToTokens.keys()){
+        const survived=(artistToGkos.get(a)||[]).some(g=>(inferred.get(g)||[]).includes(a.name.ko));
+        if(!survived)continue;
+        if((artistToTokens.get(a)||[]).some(k=>_tokGroups(k).size>=2)){_tokenAmbiguous=true;break;}
+      }
+    }
     const result=[];
     for(const[gko,members]of inferred){result.push({gko,members});}
     // confidence:'weak' — 제목에 그룹명/해시태그 리터럴이 전혀 없이 멤버 이름 하나만으로 그룹 자체를
