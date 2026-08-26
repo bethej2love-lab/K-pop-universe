@@ -14513,7 +14513,9 @@ async function _coverEligibleGroups(){
   const counts={};let from=0;
   while(from<4000){
     const{data,error}=await sb.from(_YT_TABLE).select('group_ko')
-      .or('cover_of_groups.neq.{},cover_of_members.neq.{}').range(from,from+999);
+      // 정렬 없이 .range()로 페이지를 넘기면 PostgreSQL이 매 요청 임의 순서를 줘서 행이 중복 집계·누락될
+      // 수 있음 — 고유키 id로 정렬해 페이지네이션을 결정적으로(2026-08-26, 카드 무한스크롤 tie-break와 동일 원칙).
+      .or('cover_of_groups.neq.{},cover_of_members.neq.{}').order('id',{ascending:true}).range(from,from+999);
     if(error||!data?.length)break;
     data.forEach(r=>{if(r.group_ko)counts[r.group_ko]=(counts[r.group_ko]||0)+1;});
     if(data.length<1000)break;
@@ -15716,9 +15718,14 @@ function _makeChVidController(contId){
       //  2순위: with_groups는 비어있지만(1순위 아님) 이 그룹 자체 채널 태깅(members)도 비어있는 경우 —
       //    순수 미태깅. members 오름차순.
       //  3순위: 나머지(이미 다 태깅됨).
+      // ⚠️ 반드시 마지막에 고유키(id)로 tie-break — published_at은 동기화 때 날짜만(slice 0,10) 저장돼
+      // 같은 날 올라온 영상은 정렬값이 전부 동일하다. id 2차 정렬이 없으면 PostgreSQL이 동일값 행의 순서를
+      // 요청마다 다르게 줘서 .range() 페이지 경계(48↔96…)가 어긋나 일부 영상이 중복(→seenIds로 걸러짐)·
+      // 일부는 어느 페이지에도 안 잡혀 누락된다 → 끝까지 안 불러와졌는데 총계 "N개"만 뜨고 멈춤, 새로고침하면
+      // 순서가 다시 섞여 이어짐(2026-08-26 사용자 제보). 순차(range)·청크 랜덤 샘플링 둘 다 이 ordered를 탄다.
       const ordered=q=>state.sortMode==='untagged'
-        ?q.order('with_groups',{ascending:false}).order('members',{ascending:true}).order('published_at',{ascending:false})
-        :q.order('published_at',{ascending:state.sortMode==='oldest'});
+        ?q.order('with_groups',{ascending:false}).order('members',{ascending:true}).order('published_at',{ascending:false}).order('id',{ascending:false})
+        :q.order('published_at',{ascending:state.sortMode==='oldest'}).order('id',{ascending:state.sortMode==='oldest'});
       // '추천순' 기본 오픈(↻ 아님)도 아래 청크 랜덤 샘플링을 타게 하려면 청크 개수 계산에 쓸 전체
       // 개수를 먼저 알아야 함 — 예전엔 이 총 개수를 화면을 막지 않으려고 항상 백그라운드로만 채웠는데,
       // 그러면 매 오픈마다(카드를 닫고 다시 열 때마다 state가 통째로 새로 만들어져 total도 매번 모르는
