@@ -120,6 +120,24 @@ test('confidence — 평문 이름만 있으면 weak 유지(검수 대상)',
   '[레어탬] EP 5 오늘은 태민이 게임왕 TAEMIN 태민', undefined,
   r => !!r && r.confidence === 'weak');
 
+// 동명이인 영문토큰 애매성 → 검수(ambiguous) (2026-08-26 옵션 A, 사용자 결정)
+// "JIHOON"은 투어스 지훈·트레저 지훈·워너원 박지훈 3명의 en과 겹치는데, ko 기반 동명이인 dedup은
+// '지훈'(투어스·트레저)만 충돌로 보고 유일 ko인 '박지훈'(워너원)을 confident하게 남겨 오배정했었다.
+// 토큰 단위(memberHitTokens)로 "한 토큰이 서로 다른 사람 2명+와 매칭 + 그룹표시 없음"을 잡아 검수로 보낸다.
+test('동명이인 영문토큰(JIHOON) + 그룹표시 없음 → ambiguous(검수 큐로)',
+  '#JIHOON 첫만남챌린지', undefined,
+  r => !!r && r.confidence === 'ambiguous');
+test('그룹표시(#TWS) 있으면 정상 확정 — 투어스, 검수 아님',
+  'I want to dance #TWS #JIHOON', undefined,
+  r => !!r && r.primaryGroup === '투어스' && r.confidence !== 'ambiguous');
+test('그룹명(트레저) 명시 → 트레저 정상 확정, 검수 아님',
+  '트레저 지훈 직캠', undefined,
+  r => !!r && r.primaryGroup === '트레저' && r.confidence !== 'ambiguous');
+// 고유 이름(동명이인 아님)은 애매하지 않아야 — 회귀 방지
+test('고유 이름은 ambiguous 아님(장원영)',
+  '#WONYOUNG 아이브 원영 직캠', undefined,
+  r => !!r && r.confidence !== 'ambiguous');
+
 // ── 탈퇴 게이트(2026-08-25, 사용자 제보 "라이즈 탈퇴한 승한 직캠이 라이즈 카드에 뜬다") ─────
 // 제목만으론 절대 구분할 수 없는 종류의 오류 — 2023년 "[MPD직캠] 라이즈 승한 'Talk Saxy'"는 정당하고
 // 2026년 "승한 댄스 실력"은 오태깅인데 둘 다 제목엔 승한만 있다. 발행일이 유일한 단서.

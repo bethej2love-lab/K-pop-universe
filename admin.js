@@ -3896,6 +3896,14 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
     // 2026-08-25 실측). 변형 t 자체가 흔한 한글단어면 그 변형은 해시태그(#유사랑)로 명시됐을 때만 인정한다.
     return names.some(t=>(_atmNameNeedsCtx(t)||_ATM_COMMON_KO_WORDS.has(t))?hitHashtag(t):hit(t));
   }
+  // memberHit과 동일한 게이트를 적용하되 "매칭된 토큰들"을 돌려준다 — 교차-ko 영문 동명이인 감지용
+  // (2026-08-26 옵션 A). 예: "JIHOON"이 투어스 지훈·트레저 지훈·워너원 박지훈 3명의 en 변형과 겹침을
+  // ko 기반 dedup(name.ko='지훈' vs '박지훈')만으론 못 잡던 걸, 토큰 단위로 잡아 검수로 보낸다.
+  // some→filter만 다르고 판정 로직은 memberHit과 글자 그대로 동일(둘이 갈라지면 감지가 틀어짐).
+  function memberHitTokens(a,names){
+    if([...a.name.ko].length===1||_isHashtagOnlyName(a.name.ko)||_ATM_COMMON_KO_WORDS.has(a.name.ko)||_atmNameIsGroup(a))return names.filter(t=>hitHashtag(t));
+    return names.filter(t=>(_atmNameNeedsCtx(t)||_ATM_COMMON_KO_WORDS.has(t))?hitHashtag(t):hit(t));
+  }
   // 해시태그가 "성+이름"을 띄어쓰기 없이 그대로 붙여 쓰는 경우(예: "#HUHYUNJIN" = 허Huh+윤진Yunjin)가
   // 흔한데, 등록명(name.en)은 보통 성 없이 이름만("Yunjin") 등록돼있어서 위 hit()의 단어 경계 매칭으론
   // "HUHYUNJIN" 안에 파묻힌 "YUNJIN"을 못 찾았음 — 이미 그룹이 확정된 로스터 안에서만 쓰여서(아래
@@ -4028,6 +4036,7 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
   if(!matchedGroupKos.length){
     const inferred=new Map(); // groupKo -> [memberKo]
     const nameToGroups=new Map(); // 멤버명(한글) -> Map(아티스트객체 -> 그 사람 소속 groupKo[]) — 동명이인 충돌 감지용
+    const tokenToArtists=new Map(); // 매칭 토큰(대문자) -> Set(아티스트) — 교차-ko 영문 동명이인 감지(옵션 A)
     let _inferViaHashtag=false;   // 이 역추론에 해시태그 명시가 하나라도 쓰였는가(아래 confidence 판정용)
     for(const a of ARTISTS){
       // 예전엔 GROUPS에 없는 그룹(아이유·보아처럼 group.ko="솔로"인 솔로 아티스트)을 통째로 건너뛰어서,
@@ -4039,7 +4048,8 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
       const names=_m2NameVariants(a);
       // strict 채널(예능/잡지)에서는 그룹명 literal 매칭이 아예 없으므로, 멤버 이름도 해시태그로
       // 명시된 경우만 인정 — 평문 매칭(memberHit의 일반 분기)은 여기서 아예 시도하지 않는다.
-      const nameMatched=strict?names.some(t=>hitHashtag(t)):memberHit(a,names);
+      const _matchedToks=strict?names.filter(t=>hitHashtag(t)):memberHitTokens(a,names);
+      const nameMatched=_matchedToks.length>0;
       if(nameMatched&&!names.some(t=>hasForeignGroupSuffix(t))){
         // 겸임 멤버(NCT 마크·해찬, 아이즈원 안유진 등)는 자기 소속 그룹 전부(_artistGroups)에 귀속시켜야
         // 함 — a.group.ko(주 소속)만 보면 부소속 채널/모음영상에서 역추론 자체가 원천 차단됨
@@ -4073,6 +4083,8 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
           // 모두에서 지워버리는 자기파괴적 회귀가 생김(2026-08-20, 위 겸임 수정과 함께 발견).
           if(!nameToGroups.has(a.name.ko))nameToGroups.set(a.name.ko,new Map());
           nameToGroups.get(a.name.ko).set(a,artistGkos);
+          // 이 사람을 매칭시킨 토큰들을 기록 — 같은 토큰이 서로 다른 사람 여럿과 겹치면(아래 옵션 A) 애매
+          _matchedToks.forEach(t=>{const k=t.toUpperCase();if(!tokenToArtists.has(k))tokenToArtists.set(k,new Set());tokenToArtists.get(k).add(a);});
         }
       }
     }
@@ -4106,6 +4118,13 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
     if(selfGko&&inferred.has(selfGko)){
       for(const gko of[...inferred.keys()]){if(gko!==selfGko)inferred.delete(gko);}
     }
+    // 옵션 A(2026-08-26 사용자 결정): 한 토큰(특히 영문 로마자)이 서로 다른 사람 2명 이상과 매칭됐는데
+    // 제목에 그룹 표시가 전혀 없으면(이 블록 자체가 matchedGroupKos 비었을 때) 누구인지 자신있게 못 가른다
+    // → confidence:'ambiguous'로 검수 큐로 보낸다(_extBuildRows가 hidden+needs_review로 저장, 유저 노출
+    // 안 함=오배정 위험 0). selfGko(자체/오너 채널)로 이미 갈리는 문맥이면 애매하지 않으므로 owner-less
+    // (selfGko 없음)일 때만 적용 — 다른 호출부(자체채널 태깅 등)엔 영향 없음.
+    let _tokenAmbiguous=false;
+    if(!selfGko){for(const arts of tokenToArtists.values()){if(arts.size>=2){_tokenAmbiguous=true;break;}}}
     const result=[];
     for(const[gko,members]of inferred){result.push({gko,members});}
     // confidence:'weak' — 제목에 그룹명/해시태그 리터럴이 전혀 없이 멤버 이름 하나만으로 그룹 자체를
@@ -4115,7 +4134,7 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
     // 매칭에서 이 값을 보고 즉시확정 대신 검수 대기로 돌린다.
     return{primaryGroup:result[0].gko,withGroups:result.slice(1).map(r=>r.gko),
            membersByGroup:Object.fromEntries(result.map(r=>[r.gko,r.members])),
-           confidence:_inferViaHashtag?'strong':'weak'};
+           confidence:_tokenAmbiguous?'ambiguous':(_inferViaHashtag?'strong':'weak')};
   }
   // 각 매칭 그룹에서 멤버 추출 — normMinusUnits 기준으로 검사해 유닛명 토큰이 만든 가짜 개별 언급을
   // 제외한다(위 unit-name-false-with 해결 참고).
@@ -4259,12 +4278,14 @@ function _extBuildRows(vids,strict,tier,owner,defaultCat,handle){
     // 저장해 어드민 검수 큐에서만 보이게 한다. owner가 있는 채널(이 채널 자체가 특정 인물 소유)은
     // group_ko가 owner로 고정되지 confidence 영향을 안 받으므로 대상이 아님(2026-08-20, Love/루나/조이
     // 오염 실측 확인 후 도입).
-    const needsReview=!owner&&match.confidence==='weak';
+    // 옵션 A(2026-08-26): 그룹표시 없는 동명이인(영문토큰 교차-ko)은 자신있게 배정하지 않고 검수+숨김으로.
+    const ambiguous=!owner&&match.confidence==='ambiguous';
+    const needsReview=!owner&&(match.confidence==='weak'||ambiguous);
     rows.push({
       id:v.id,title:v.title,title_norm:_titleNorm(v.title),description:v.description||'',thumb:v.thumb,published_at:v.published_at,
       category,
       source_handle:handle||null,source_tier:tier||null, // 출처 채널(오너/서바이벌 판단용, 2026-08-25)
-      group_ko:owner?ownerGko:match.primaryGroup,members,with_groups:withGroups,with_members:withMembers,
+      group_ko:owner?ownerGko:match.primaryGroup,members:ambiguous?[]:members,with_groups:withGroups,with_members:withMembers,
       // 항상 두 칸을 넣는다(빈 값이어도 []). 조건부로 넣으면 200개 배치 안에 커버 영상이 하나라도
       // 섞였을 때, 그 칼럼이 배치의 INSERT 컬럼 목록에 들어가면서 키가 없는 일반 영상 행들이 null로
       // 저장되려다 NOT NULL 위반으로 배치 전체가 튕겼음(M2·뮤직뱅크·쇼챔피언 백필 실패, 2026-08-25).
@@ -4276,7 +4297,7 @@ function _extBuildRows(vids,strict,tier,owner,defaultCat,handle){
       //   쌓이는 동안 그 대가로 709건이 유저 화면에서 사라져 있었음. 게다가 실측해보니 큐의 93%가
       //   고유한 이름이고 표본은 전부 정확했음 — 위험한 이름은 이미 앞단 게이트(흔한단어·짧은영문·
       //   동명이인 dedup)가 걸러내기 때문. 이 정책이 도입된 2026-08-20엔 그 게이트들이 없었다.
-      ...(_isJunkVideoTitle(v.title)?{content_flag:'무관'}:needsReview?{needs_review:true}:{}),
+      ...(_isJunkVideoTitle(v.title)?{content_flag:'무관'}:ambiguous?{needs_review:true,content_flag:'hidden'}:needsReview?{needs_review:true}:{}),
       ...((tier==='variety'||tier==='show')?{content_formats:[tier]}:{})
     });
   }
