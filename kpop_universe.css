@@ -758,12 +758,16 @@
     /* 탭 영역은 44×44로 아래까지 넉넉히 두되, 글리프는 손잡이(y 10~14px)와 같은 줄에 오도록
        위쪽 정렬 + line-height 26px로 시각 중심을 13px에 맞춘다. */
     display:none;align-items:flex-start;justify-content:center;
-    background:none;border:none;padding:0;margin:0;cursor:pointer;font-family:inherit;
-    color:rgba(155,178,228,0.78);font-size:26px;line-height:1;font-weight:600;
+    background:none;border:none;margin:0;cursor:pointer;font-family:inherit;
+    /* 손잡이 줄과 같은 줄이되 시각 중심이 살짝 아래로 — 실기기(사파리) 피드백 반영 */
+    padding:6px 0 0;
+    color:rgba(155,178,228,0.82);
     -webkit-tap-highlight-color:transparent;transition:color .15s;
   }
   .sheet-back-btn.on{display:flex;}
-  .sheet-back-btn>span{display:block;line-height:21px;}
+  /* 라이트박스 닫기 셰브런(#yt-lb-close-chevron)과 같은 도형을 왼쪽으로 돌려 씀 — 텍스트 글리프(‹)는
+     각도가 벌어지고 크기 제어가 안 돼서 SVG로 교체(2026-08-26 사용자 피드백). 앱 전체 아이콘 문법 통일. */
+  .sheet-back-btn>svg{display:block;width:20px;height:20px;transform:rotate(90deg);}
   .sheet-back-btn:active{color:rgba(210,228,255,0.95);}
   .sheet-back-btn:focus-visible{outline:2px solid rgba(150,180,255,0.8);outline-offset:-4px;border-radius:10px;}
   #mob-sheet-inner{overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;max-height:calc(60vh + var(--sheet-grow,0px) - 24px);overscroll-behavior:contain;width:100%;box-sizing:border-box;position:relative;transition:max-height .32s cubic-bezier(0.32,0.72,0,1);}
