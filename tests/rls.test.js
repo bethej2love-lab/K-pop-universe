@@ -64,10 +64,11 @@ const EXPECT = {
   collection_like_counts:       { read: 'locked', write: 'view' },
   video_reaction_counts:        { read: 'public', write: 'view' },
   video_scrap_counts:           { read: 'public', write: 'view' },
-  // ⚠️ 2026-08-26 발견: 익명 INSERT가 열려 있음. 자동 태깅 예외 규칙 테이블이라 익명이 규칙을
-  //    주입하면 태깅 파이프라인이 오염될 수 있다. 어드민 전용으로 조여야 함.
-  atm_exception_rules:          { read: 'locked', write: 'open',
-                                  why: '⚠️ 미해결 — 어드민 전용으로 조일 것(2026-08-26 발견)', known_issue: true },
+  // 2026-08-26: 익명 INSERT가 열려 있던 걸 발견해 조임. 원인은 이 테이블에만 있던 'public write'
+  //   (PERMISSIVE, cmd=ALL) 정책. 지우지 않고 RESTRICTIVE 정책 3개(INSERT/UPDATE/DELETE)를 AND로
+  //   얹어서 관리자 이메일을 요구하게 했다 — 기존 정책을 드롭하면 관리자 권한이 같이 날아갈 수 있어서.
+  //   ⚠️ 다른 테이블에도 'public write' 같은 PERMISSIVE ALL 정책이 있는지는 이 테스트가 계속 감시한다.
+  atm_exception_rules:          { read: 'locked', write: 'locked' },
 };
 
 // ── 코드에서 테이블 자동 추출 ─────────────────────────────────────────────────
