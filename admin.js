@@ -639,6 +639,49 @@ async function _ytSweepJunkKeywordVideos(){
 // 결과 미리보기가 "제거 예정"이라 부른 381건 중 **380건이 수동 편집 행**(=실제 스윕은 절대 안 건드림)
 // 이라, 콘솔의 "제거될 상위30"이 사실상 보호되는 태그로 도배돼 있었다. 실제로 바뀌는 행은 1건.
 // 두 곳이 다시 갈라지지 않도록 판정을 이 함수 하나로 합친다.
+// ── 제거 안전장치: "제목/설명에 근거가 뻔히 있는 태그는 지우지 않는다" ──────────────
+// 이 스윕의 구조적 결함: **태그는 강한 매처로 붙이고(제목+설명+별칭+영문+해시태그, 그리고 사람 손),
+// 제거는 약한 매처(_m2ParseTitle — 사실상 한국어 평문 위주, 설명란을 아예 안 봄)로 판단한다.**
+// 강한 매처만 찾을 수 있는 태그는 재검증 때마다 삭제 후보가 된다. 실측(2026-08-26, 전체 17,184건):
+// 삭제 후보가 된 태그 515건 중 **281건(55%)이 제목에 눈으로 보인다** — 해시태그 59("#TEMPEST #혁",
+// "#EPEX #뮤"), 평문 183("현아&던", "문빈,윤산하,강민"), 영문표기 39("PSY - 챔피언", "#SOYEON").
+// 지금 그게 안 지워지고 있는 유일한 이유는 그 행들이 전부 tags_manual=true(=사용자가 손으로 고쳐둔 것)
+// 이기 때문이다. 즉 수동 보호가 방파제 역할을 하고 있을 뿐, 보호를 풀면 그대로 날아간다.
+// → 근거가 눈에 보이면 제거 후보에서 뺀다. **이름과 그룹이 둘 다** 보여야 인정하는 게 핵심 —
+//    이름만으로 인정하면 동명이인 오태깅(드림캐쳐 지유 영상의 "지유(키키)")을 못 걷어낸다.
+//    "키키"가 제목에 없으니 그건 그대로 제거 대상으로 남는다.
+// 흔한 단어/한 글자 이름은 기존 정책(_isHashtagOnlyName, 한 글자 이름은 해시태그만 인정)을 그대로
+// 적용해서 "여름"/"온" 같은 단어가 우연히 들어간 걸 근거로 오인하지 않게 한다.
+function _collabEvidenceText(v){return`${v.title||''}\n${v.description||''}`;}
+function _collabHasToken(text,tok,hashtagOnly){
+  if(!tok)return false;
+  const esc=s=>s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+  if(hashtagOnly)return new RegExp('#\\s*'+esc(tok),'i').test(text);
+  // 영문/숫자 토큰은 단어 경계를 요구한다(MC 규칙과 같은 이유). 한글은 경계 개념이 약해 포함 검사.
+  if(/^[A-Za-z0-9 ._'-]+$/.test(tok)){
+    const flat=t=>t.replace(/[\s._'-]+/g,'').toUpperCase();   // "#LE_SSERAFIM" ↔ "LE SSERAFIM"
+    return flat(text).includes(flat(tok));
+  }
+  return text.includes(tok);
+}
+// 그룹 근거: 한글명 또는 영문명이 보이면 인정
+function _collabGroupEvidenced(text,gko){
+  if(_collabHasToken(text,gko))return true;
+  const en=GROUPS[gko]&&GROUPS[gko].en;
+  return !!en&&_collabHasToken(text,en);
+}
+// "이름(그룹)" 태그의 근거가 텍스트에 있나 — 이름과 그룹이 **둘 다** 보여야 한다
+function _collabMemberEvidenced(text,tag){
+  const m=tag.match(/^(.+)\((.+)\)$/);
+  if(!m)return false;
+  const[,ko,gko]=m;
+  if(!_collabGroupEvidenced(text,gko))return false;
+  const hashOnly=_isHashtagOnlyName(ko)||ko.length===1; // 한 글자 이름은 해시태그만(기존 정책)
+  if(_collabHasToken(text,ko,hashOnly))return true;
+  const a=ARTISTS.find(z=>z.name.ko===ko&&z.group.ko===gko);
+  const en=a&&a.name&&a.name.en;
+  return !!en&&en.length>2&&_collabHasToken(text,en,hashOnly);
+}
 function _collabRejudge(v){
   const match=_m2ParseTitle(v.title||'',v.group_ko,undefined,v.published_at);
   const curWG=v.with_groups||[],curWM=v.with_members||[];
@@ -658,8 +701,10 @@ function _collabRejudge(v){
       }
     });
   }
-  const newWG=[...new Set([...curWG.filter(g=>validGroups.has(g)),...consolidate])];
-  const newWM=[...new Set([...curWM.filter(m=>validMembers.has(m)),...[...promote.values()].flat()])];
+  // 재파싱이 근거를 못 찾았더라도 제목/설명에 이름+그룹이 뻔히 보이면 유지한다(위 안전장치 주석).
+  const ev=_collabEvidenceText(v);
+  const newWG=[...new Set([...curWG.filter(g=>validGroups.has(g)||_collabGroupEvidenced(ev,g)),...consolidate])];
+  const newWM=[...new Set([...curWM.filter(m=>validMembers.has(m)||_collabMemberEvidenced(ev,m)),...[...promote.values()].flat()])];
   const patch={};
   if(newWG.length!==curWG.length||newWG.some((g,i)=>g!==curWG[i]))patch.with_groups=newWG;
   if(newWM.length!==curWM.length||newWM.some(m=>!curWM.includes(m)))patch.with_members=newWM;
@@ -678,7 +723,7 @@ async function _ytSweepDetectPreview(){
   try{
     _ytSetProg('[오태깅 미리보기] 조회 중…');
     const{data:rows,error}=await _sbFetchAll(()=>sb.from(_YT_TABLE)
-      .select('id,title,group_ko,with_members,with_groups,tags_manual,published_at')
+      .select('id,title,description,group_ko,with_members,with_groups,tags_manual,published_at')
       .or('with_members.neq.{},with_groups.neq.{}')
       .order('id'));
     if(error){_ytSetProg('조회 실패: '+error.message);return;}
@@ -1030,7 +1075,7 @@ async function _ytSweepAmbiguousCollabMistag(){
     // 드림캐쳐 지유 영상에 키키 지유가 계속 남아있다"는 사례로 발견. 그 영상들이 tags_manual=true라
     // 재검증 조회 대상에서부터 빠져있었을 가능성이 높음).
     const{data:rows,error}=await _sbFetchAll(()=>sb.from(_YT_TABLE)
-      .select('id,title,group_ko,with_members,with_groups,tags_manual,published_at')
+      .select('id,title,description,group_ko,with_members,with_groups,tags_manual,published_at')
       .or('with_members.neq.{},with_groups.neq.{}')
       .order('id'));
     if(error){_ytSetProg('조회 실패: '+error.message);return;}
