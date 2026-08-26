@@ -1485,6 +1485,16 @@ const groupLabels=[];
 const _lblProj=new THREE.Vector3();
 // 라벨 폭은 DOM 측정값이라 매 프레임 읽으면 레이아웃 스래싱이 난다 — 요소에 캐시해두고
 // 텍스트가 바뀌는 유일한 시점(언어 전환)에만 비운다. 아직 레이아웃 전이면(0) 캐시하지 않는다.
+// 원거리 라벨 로테이션(2026-08-26) — 같은 그룹만 계속 떠 있지 않고 번갈아 떴다 사라지게 한다.
+// 위상은 그룹 이름 해시로 고정: 로드할 때마다 리듬이 바뀌면 "이 그룹은 이 박자"라는 인상이 안 생긴다.
+let _lblFarStartAt=Infinity;   // 진입 직후엔 라벨을 띄우지 않는다(우주가 먼저 눈에 들어오게)
+let _lblShown=new Set();       // 직전 프레임에 떠 있던 그룹 — 경계에서 깜빡이는 걸 막는 히스테리시스용
+const _lblPhaseCache=Object.create(null);
+function _lblPhase(ko){
+  let v=_lblPhaseCache[ko];
+  if(v===undefined){v=_lblPhaseCache[ko]=((_hashStr(ko)>>>8)%1000)/1000*Math.PI*2;}
+  return v;
+}
 function _labelWidth(el){
   if(el._lblW)return el._lblW;
   const w=el.offsetWidth;
@@ -2649,6 +2659,7 @@ async function buildUniverse(){
   _psBuildSeg();_applyPowerSave();
   applyLang();
   _revealUniverse();
+  _lblFarStartAt=performance.now()+1200; // 우주가 먼저 보이고 1.2초 뒤부터 이름이 fade in
   _obTimer=setTimeout(_showOnboardHint,2600);
   // 생일 별똥별: 인트로 연출 끝난 뒤 한 번, 이후 30분마다 오늘 생일인 멤버 확인
   setTimeout(_checkBdayShootingStars,2400);
@@ -3043,24 +3054,44 @@ function animate(){
     // 크기 영향을 최대 1.94배로 눌러서, 어드민 큐레이션 등급(A×4 / B×1.5 / C×0.6)이 확실히 이기게 한다.
     // pri는 group_priority 테이블을 groups.json에 구운 값(admin 전용 RLS라 앱이 직접 못 읽음).
     const pri=(GROUPS[ko]&&GROUPS[ko].pri)||1;
-    _farCands.push({el,sx,sy,fa,score:Math.sqrt(bm?bm.radius:1)*pri/Math.max(d,0.001)});
+    _farCands.push({el,ko,sx,sy,fa,phase:_lblPhase(ko),score:Math.sqrt(bm?bm.radius:1)*pri/Math.max(d,0.001)});
   });
   // 점수 높은 순으로 놓되, 이미 놓인 라벨과 화면상 사각형이 겹치면 건너뛴다(그리디 충돌 회피).
   // 상한을 두는 건 밀도가 목적이 아니라 "읽히는 것"이 목적이기 때문 — 좁은 화면일수록 적게.
   if(_farCands.length){
-    _farCands.sort((a,b)=>b.score-a.score);
-    const _maxFar=_powerSaveOn?(isMob()?6:10):(isMob()?10:18);
-    const _placed=[];
-    for(const cd of _farCands){
-      let show=_placed.length<_maxFar;
-      if(show){
-        const w=_labelWidth(cd.el);
-        const x0=cd.sx-w/2-7,x1=cd.sx+w/2+7,y0=cd.sy-18,y1=cd.sy+5;
-        if(_placed.some(p=>!(x1<p[0]||x0>p[1]||y1<p[2]||y0>p[3])))show=false;
-        else _placed.push([x0,x1,y0,y1]);
+    const _nowMsLbl=performance.now();
+    if(_nowMsLbl<_lblFarStartAt){
+      // 진입 직후 잠깐은 이름을 띄우지 않는다 — 우주가 먼저 눈에 들어오고 이름이 뒤따라 떠오르게.
+      _farCands.forEach(cd=>{cd.el.style.opacity='0';cd.el.style.pointerEvents='none';});
+      _lblShown=new Set();
+    }else{
+      // 시간에 따라 순번이 도는 느린 파도(주기 약 16초). 점수에 곱해서 같은 그룹이 계속 이기지 않게 한다.
+      const _wt=_nowMsLbl*0.000286; // 2π / 22000ms — 너무 빠르면 화면이 부산해진다(16초는 6초마다 전량 교체됐음)
+      for(const cd of _farCands){
+        const wave=0.5+0.5*Math.sin(_wt+cd.phase);
+        // 이미 떠 있던 라벨엔 가산점 — 없으면 경계에서 매 프레임 자리를 뺏고 뺏겨 깜빡인다.
+        // 진폭을 좁게(0.72~1.28) 잡아야 순위가 통째로 뒤집히지 않고 몇 개씩만 교대한다.
+        cd.rank=cd.score*(0.72+0.56*wave)*(_lblShown.has(cd.ko)?1.45:1);
       }
-      cd.el.style.opacity=show?(0.8*cd.fa).toFixed(3):'0';
-      cd.el.style.pointerEvents='none';
+      _farCands.sort((a,b)=>b.rank-a.rank);
+      const _maxFar=_powerSaveOn?(isMob()?6:10):(isMob()?10:18);
+      const _placed=[],_nextShown=new Set();
+      for(const cd of _farCands){
+        let show=_placed.length<_maxFar;
+        if(show){
+          const w=_labelWidth(cd.el);
+          const x0=cd.sx-w/2-7,x1=cd.sx+w/2+7,y0=cd.sy-18,y1=cd.sy+5;
+          if(_placed.some(p=>!(x1<p[0]||x0>p[1]||y1<p[2]||y0>p[3])))show=false;
+          else _placed.push([x0,x1,y0,y1]);
+        }
+        if(show)_nextShown.add(cd.ko);
+        cd.el.style.opacity=show?(0.8*cd.fa).toFixed(3):'0';
+        // 텍스트를 직접 누를 수 있게 한다. 예전엔 pointer-events를 안 줘서 클릭이 3D 캔버스로 흘러
+        // **근처의 다른 행성**이 열리곤 했다(사용자 제보). 라벨은 행성보다 위에 있는 명시적 타깃이라
+        // 조준 정확도는 오히려 올라간다 — "중간 줌 오클릭"은 별/행성 레이캐스트 쪽 문제였고 별개다.
+        cd.el.style.pointerEvents=show?'auto':'none';
+      }
+      _lblShown=_nextShown;
     }
   }
   // 모바일: 행성 충분히 줌인 시 멤버 이름 레이블 표시 (거리 28 이내 fade-in, 15 이내 fully visible)
@@ -10767,9 +10798,25 @@ function _favDateRowEl(bdayDays,annivDays){
   }
   return row;
 }
-function _appendFavRow(el,{tag,name,sub,imgUrl,colorArr,bdayDays,annivDays,dk,onClick}){
+// 연결 즐겨찾기용 — 사진 여러 장을 살짝 겹쳐 그린다(최대 3장 + "+N").
+// 4장부터는 얼굴이 너무 작아지고 목록 폭도 밀리므로 개수 배지로 접는다.
+function _favAvatarStackEl(people){
+  if(!people||people.length<=1)return _favAvatarEl(people&&people[0]?people[0].img:null,people&&people[0]?people[0].color:null);
+  const wrap=document.createElement('div');wrap.className='fav-avatar-stack';
+  const shown=people.slice(0,3);
+  shown.forEach(p=>wrap.appendChild(_favAvatarEl(p.img,p.color)));
+  const rest=people.length-shown.length;
+  if(rest>0){
+    const more=document.createElement('div');
+    more.className='fav-avatar fav-avatar-more';
+    more.textContent='+'+rest;
+    wrap.appendChild(more);
+  }
+  return wrap;
+}
+function _appendFavRow(el,{tag,name,sub,imgUrl,colorArr,people,bdayDays,annivDays,dk,onClick}){
   const row=document.createElement('div');row.className='fav-item';
-  row.appendChild(_favAvatarEl(imgUrl,colorArr));
+  row.appendChild(people?_favAvatarStackEl(people):_favAvatarEl(imgUrl,colorArr));
   const main=document.createElement('div');main.className='fav-main';
   const nameRow=document.createElement('div');nameRow.className='fav-name-row';
   nameRow.innerHTML=`<span class="fav-itag">${tag}</span><span class="fav-iname">${name}</span>`+(sub?`<span class="fav-isub">${sub}</span>`:'');
@@ -10836,9 +10883,16 @@ async function renderFavList(){
     if(!anchor)return;
     const sel=selPart?selPart.split(','):[];
     const anchorName=currentLang==='ko'?mko:(anchor.name.en||mko);
+    // 연결은 "누구와 누구"가 핵심이라 앵커 사진 하나로는 부족 — 상대 멤버 사진까지 겹쳐서 보여준다.
+    const _connPeople=[{img:_instaPicCache.get(_picKey(mko,gko))||null,color:anchor.color}];
+    sel.forEach(n=>{
+      const t=_findArtistByConnName(n,gko);
+      if(t)_connPeople.push({img:_instaPicCache.get(_picKey(t.name.ko,t.group.ko))||null,color:t.color});
+      else _connPeople.push({img:null,color:anchor.color});
+    });
     _appendFavRow(el,{
       tag:currentLang==='ko'?'연결':'Connection',name:`${anchorName} × ${sel.join(', ')}`,
-      imgUrl:_instaPicCache.get(_picKey(mko,gko))||null,colorArr:anchor.color,
+      people:_connPeople,colorArr:anchor.color,
       bdayDays:null,annivDays:_daysSince(favDates['c:'+key]),dk:'c:'+key,
       onClick:()=>{
         const bm=bubbleMeshes.find(b=>b.ko===gko);
