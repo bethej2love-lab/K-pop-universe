@@ -51,7 +51,7 @@
      ⚠️ 손으로 올리던 시절 2026-08-24에 실제로 빠뜨려서 폰이 "새 마크업 + 옛 CSS"를 그리는 바람에
      화면이 통째로 깨졌음(Charts 카드가 158px→46px로 찌그러짐). 로컬 확인은
      `node tools/bump_cache_version.mjs --check`. -->
-<link rel="stylesheet" href="kpop_universe.css?v=20260826-a51ab988">
+<link rel="stylesheet" href="kpop_universe.css?v=20260826c">
 <script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@1/index.js"></script>
 </head>
 <body>
@@ -1453,6 +1453,18 @@ function _appendDeceasedStar(el,a){
 // displayName: 현재 활동명이 스테이지명과 달라진 경우(디오→도경수) 카드/라벨/검색에 크게 보여줄 "표시용 메인
 // 이름". name.ko(디오)는 connections·영상태깅의 정식 키라 절대 안 바꾸고 표시만 덮어쓴다. 없으면 name.ko.
 // (한국어 표시 기준 — 영문은 name.en 유지)(2026-08-22, CHANGELOG 디오 스펙).
+// soloDisplay — "전 소속 그룹은 있지만 표기는 솔로처럼"을 **손으로 지정하는** 표기 전용 플래그
+// (2026-08-26, 사용자 요청 — 엑스원 해체 후 솔로로 활동하는 우즈, 엔하이픈에서 나온 에반).
+// ⚠️ group.ko는 절대 같이 바꾸지 말 것. 그 값이 영상 조회 키(_ytGroupKoFor: 실존 그룹이면 그룹명,
+//    아니면 본인 이름)라, 솔로로 바꾸면 group_ko='우즈'/'에반' 채널을 찾게 되는데 DB엔 각각 0건이라
+//    카드가 통째로 빈다(실측 확인 — 우즈 영상 4건은 전부 group_ko='엑스원', 에반은 363건이 '엔하이픈').
+//    소속(데이터)은 그대로 두고 표기만 감추는 게 이 플래그의 전부다.
+// group.ko==='솔로'(아이유·보아 등 애초에 무소속)도 같은 취급 — 표기 결과가 정확히 같아진다.
+function _isSoloDisp(a){return !!(a&&(a.soloDisplay===true||a.group.ko==='솔로'));}
+const _SOLO_GROUP={ko:'솔로',en:'Solo'};
+// 멤버 옆에 붙일 그룹 표기용 group 객체 — 솔로 취급이면 실제 소속 대신 "솔로".
+function _dispGroup(a){return a?(_isSoloDisp(a)?_SOLO_GROUP:a.group):null;}
+function _dispGroupName(a){const g=_dispGroup(a);return g?(currentLang==='ko'?g.ko:(g.en||g.ko)):'';}
 function _dispKo(a){return(a&&a.displayName)||(a&&a.name&&a.name.ko)||'';}
 // 카드 이름 옆 작고 흐린 보조 표기 — ① displayName으로 메인을 덮었으면 원래 활동명(도경수 옆 "디오"),
 // ② subName(옛활동명/실명, 성민 옆 "제롬"). 메인과 너무 유사하면(한쪽이 다른 쪽에 포함, 박재범⊃재범) 생략.
@@ -6187,7 +6199,11 @@ function _buildConnContent(container){
       if(names.length>1){
         const cnt=n=>(_connLiteralCountCache&&_connLiteralCountCache.get(n))||0;
         const primary=a.group&&a.group.ko;
-        names.sort((x,y)=>cnt(y)-cnt(x)
+        // repGroup: artists.json에서 손으로 못박는 대표 그룹. 자동 규칙(등장 수→미해체→주 소속)이
+        // 애매하게 고르는 경우를 사람이 덮어쓰기 위한 탈출구(2026-08-26, 사용자 요청).
+        const forced=a.repGroup;
+        names.sort((x,y)=>(gkoOf(y)===forced?1:0)-(gkoOf(x)===forced?1:0)
+          ||cnt(y)-cnt(x)
           ||(_gDisbanded(gkoOf(x))?1:0)-(_gDisbanded(gkoOf(y))?1:0)
           ||(gkoOf(y)===primary?1:0)-(gkoOf(x)===primary?1:0)
           ||gkoOf(x).localeCompare(gkoOf(y),'ko'));
@@ -6202,7 +6218,10 @@ function _buildConnContent(container){
   otherGroupNames.filter(n=>_connRepNames.has(n)).forEach(n=>{
     const m=n.match(/^(.+)\((.+)\)$/);
     if(!m)return;
-    const gko=m[2];
+    // 솔로 취급 멤버(우즈·에반 등)는 태그가 "우즈(엑스원)"으로 남아있어도 그룹 칩으로 묶지 않는다 —
+    // 아래에서 '솔로' 버킷은 그룹 칩 없이 바로 펼쳐지므로 결과적으로 "우즈" 이름만 뜬다(사용자 요청).
+    const _a=_findArtistByConnName(n,_connAnchor.group.ko);
+    const gko=(_a&&_isSoloDisp(_a))?'솔로':m[2];
     if(!otherByGroup.has(gko))otherByGroup.set(gko,[]);
     otherByGroup.get(gko).push(n);
   });
@@ -8920,7 +8939,7 @@ function _renderFilterPanel(){
       first=false;
       byMonth[mo].forEach(({m,dd})=>{
         const name=currentLang==='ko'?m.name.ko:(m.name.en||m.name.ko);
-        const grpName=currentLang==='ko'?m.group.ko:(m.group.en||m.group.ko);
+        const grpName=_dispGroupName(m);
         const div=document.createElement('div');div.className='filter-list-item';
         const row=document.createElement('div');row.className='fli-item-row';
         const nameEl=document.createElement('div');nameEl.className='fli-name';
@@ -9068,7 +9087,7 @@ function _renderIndexList(){
     }
     members.forEach(m=>{
       const name=currentLang==='ko'?m.name.ko:(m.name.en||m.name.ko);
-      const grpName=currentLang==='ko'?m.group.ko:(m.group.en||m.group.ko);
+      const grpName=_dispGroupName(m);
       const sub=_idxSortKey==='nation'?_natOf(m):(_idxSortKey==='birth'?(m.bday||''):grpName);
       const item=_makeFilterListItem(name,sub,()=>{
         if(m._worldPos)flyTo(m._worldPos);showT(m,window.innerWidth/2,window.innerHeight*0.4);
@@ -13751,7 +13770,7 @@ function _buildFeedAnniversaries(){
   });
   bdayHits.forEach(a=>{
     const mName=isKo?a.name.ko:(a.name.en||a.name.ko);
-    const gName=isKo?a.group.ko:(a.group.en||a.group.ko);
+    const gName=_dispGroupName(a); // 솔로 취급 멤버는 전 소속 대신 "솔로"
     const sub=gName;
     // 나이 없이 생년월일만(2026-08-12, 사용자 요청 — 처음엔 멤버 카드처럼 나이도 같이 넣었다가
     // 날짜만 원한다는 정정 받음).

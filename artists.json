@@ -23076,8 +23076,8 @@
   },
   {
     "name": {
-      "ko": "에반(희승)",
-      "en": "EVAN (Heeseung)"
+      "ko": "에반",
+      "en": "EVAN"
     },
     "group": {
       "ko": "엔하이픈",
@@ -23106,7 +23106,9 @@
       "instagram": "https://www.instagram.com/h_evva_n",
       "namu": "https://namu.wiki/w/EVAN(2001)"
     },
-    "left": "2026.03.10"
+    "left": "2026.03.10",
+    "soloDisplay": true,
+    "subName": "희승"
   },
   {
     "name": {
@@ -95129,7 +95131,8 @@
           }
         ]
       }
-    ]
+    ],
+    "soloDisplay": true
   },
   {
     "name": {
