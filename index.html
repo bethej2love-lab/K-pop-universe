@@ -3005,7 +3005,7 @@ function animate(){
     // 추모(memorial): 세상 떠난 멤버는 "꺼진 별"이 아니라 "영원한 별"로 — 다른 비활동 별처럼 어둡게
     // 낮추지 않고(밝기 그대로) 따뜻한 흰빛으로 은은히 더 빛나게 한다(2026-08-19, 사용자 요청). 날아가지도
     // 않고(위 fly-away 조건에서 memorial 제외) 그룹 별자리 안에 그대로 남는다.
-    const inactiveDim=a.memorial?1:(a.active===false?0.34:1); // 0.22→0.34(2026-08-24): 해체그룹(원더걸스 등) 전원 비활동 시 별자리가 너무 어두워 안 보이던 것 — 과거감은 유지하되 "모여서 보이게"
+    const inactiveDim=a.memorial?1:(a.active===false?0.5:1); // 0.22→0.34(2026-08-24)→0.5(2026-08-26): 검은점 수정으로 알파가 색을 따라 내려가면서 비활동 별(0.34)이 거의 안 보이게 됨(금동현 등 사라짐) — 어둡지만 보이는 선으로 올림. ⚠️실기기서 값 확인
     const fa=Math.min(1,a._filterAlpha*a._focusAlpha*inactiveDim+(a._flashPulse||0));
     const favBoost=a._favAlpha*0.4;
     const memR=a.memorial?0.5:0,memG=a.memorial?0.42:0,memB=a.memorial?0.3:0; // 따뜻한 흰빛 쪽으로 승화
