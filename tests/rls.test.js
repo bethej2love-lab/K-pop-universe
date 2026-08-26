@@ -68,7 +68,12 @@ const EXPECT = {
   //   (PERMISSIVE, cmd=ALL) 정책. 지우지 않고 RESTRICTIVE 정책 3개(INSERT/UPDATE/DELETE)를 AND로
   //   얹어서 관리자 이메일을 요구하게 했다 — 기존 정책을 드롭하면 관리자 권한이 같이 날아갈 수 있어서.
   //   ⚠️ 다른 테이블에도 'public write' 같은 PERMISSIVE ALL 정책이 있는지는 이 테스트가 계속 감시한다.
-  atm_exception_rules:          { read: 'locked', write: 'locked' },
+  // ⚠️ read는 'public'이 맞다(2026-08-26 재확인): index.html의 _loadDynamicAtmRules()가 line ~12530에서
+  //   **로그인 무관 전원에게 무조건** 호출돼 매처 예외규칙(surname_exclude·literal_only·ambiguous_comatch)을
+  //   로드한다 — 공개 읽기가 앱 동작에 필요하고, 내용은 태깅 설정 토큰/타임스탬프라 유저 데이터가 아니다.
+  //   처음엔 테이블이 0행이라 'locked'로 잘못 통과했는데, 행이 생기자 실제 정책(public read)이 드러난 것.
+  //   경계 대상은 어디까지나 write였고, write는 위 RESTRICTIVE 3종으로 관리자만 가능(테스트 통과 확인).
+  atm_exception_rules:          { read: 'public', write: 'locked' },
 };
 
 // ── 코드에서 테이블 자동 추출 ─────────────────────────────────────────────────
@@ -128,6 +133,44 @@ async function insertProbe(t) {
     } else {
       ok(`${t}: 읽기 ${cnt}행 / 쓰기 ${wr === 'view' ? '뷰(INSERT 불가)' : 'RLS 차단'}`);
     }
+  }
+
+  // ── 로그인 유저 간 격리(cross-user) — 두 테스트 계정 토큰이 있을 때만 ──────────────
+  // 왜 필요: 위 검사는 전부 '로그인 안 한 anon' 기준이라 "로그인한 A가 B의 행을 보는가"는 못 잡는다.
+  //   read:'locked'인 per-user 테이블(user_data 즐겨찾기·프로필, collection_likes)에 유저 격리
+  //   정책(USING auth.uid()=user_id)이 빠져 있으면, 익명은 막혀도 '로그인한 아무나'가 남의 데이터를
+  //   전부 읽을 수 있다 — anon 테스트로는 절대 안 잡히는 사각지대다.
+  // 실행법:
+  //   1) 테스트 계정 2개를 만들고 각 access_token(JWT)을 구한다
+  //      (브라우저 콘솔: (await sb.auth.getSession()).data.session.access_token)
+  //   2) 계정 B로 즐겨찾기/프로필 등을 미리 만들어 둔다(B가 빈 계정이면 0행이라 판정이 무의미)
+  //   3) KPU_TOKEN_A=... KPU_TOKEN_B=... node tests/rls.test.js
+  // read:'public'인 video_scraps·video_reactions는 원래 누구나 읽는 집계라 격리 대상이 아니다(제외).
+  const TOKEN_A = process.env.KPU_TOKEN_A, TOKEN_B = process.env.KPU_TOKEN_B;
+  const jwtSub = t => { try { return JSON.parse(Buffer.from((t.split('.')[1] || ''), 'base64').toString()).sub || ''; } catch (e) { return ''; } };
+  if (TOKEN_A && TOKEN_B) {
+    const uidB = jwtSub(TOKEN_B);
+    const asUser = tok => ({ apikey: KEY, Authorization: 'Bearer ' + tok });
+    const OWNED = { user_data: 'user_id', collection_likes: 'user_id' }; // read:locked인 per-user 테이블만
+    console.log('\n[rls] 로그인 유저 간 격리 검사 (로그인 A가 B의 행을 읽는지)');
+    if (!uidB) warn('KPU_TOKEN_B에서 uid(sub)를 못 읽음 — 올바른 access_token(JWT)인지 확인');
+    for (const [t, col] of Object.entries(OWNED)) {
+      try {
+        // A의 토큰으로 B의 소유행을 직접 조회 — 격리돼 있으면 0행이어야 한다
+        const rA = await fetch(`${SB}/${t}?select=${col}&${col}=eq.${uidB}`, { headers: { ...asUser(TOKEN_A), Prefer: 'count=exact', Range: '0-0' } });
+        const seenByA = parseInt((rA.headers.get('content-range') || '').split('/')[1] || '0', 10) || 0;
+        // B 자신으로 조회해 데이터 존재 여부 확인(0이면 판정 무의미)
+        const rB = await fetch(`${SB}/${t}?select=${col}&${col}=eq.${uidB}`, { headers: { ...asUser(TOKEN_B), Prefer: 'count=exact', Range: '0-0' } });
+        const ownedByB = parseInt((rB.headers.get('content-range') || '').split('/')[1] || '0', 10) || 0;
+        if (seenByA > 0) bad(`${t}: 로그인 A가 B의 행 ${seenByA}개를 읽음 — 유저 격리 정책(USING auth.uid()=${col}) 누락/오류`);
+        else if (!ownedByB) warn(`${t}: 계정 B에 데이터가 없어 격리 판정 무의미 — B로 즐겨찾기 등을 먼저 만들 것`);
+        else ok(`${t}: A가 B의 행을 못 봄(B는 ${ownedByB}행 보유, A에겐 0행)`);
+      } catch (e) { netFail = true; warn(`${t}: 격리 검사 네트워크 오류 (${e.message})`); }
+    }
+  } else {
+    console.log('\n[rls] ⏭️  로그인 유저 간 격리 검사 건너뜀 — KPU_TOKEN_A / KPU_TOKEN_B 환경변수 없음.');
+    console.log('      테스트 계정 2개의 access_token을 주면 "A가 B의 데이터를 읽는지"까지 검사한다:');
+    console.log('      KPU_TOKEN_A=... KPU_TOKEN_B=... node tests/rls.test.js');
   }
 
   if (netFail) {
