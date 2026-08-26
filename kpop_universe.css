@@ -659,6 +659,10 @@
       height:36px;display:flex;flex-direction:column;align-items:center;justify-content:center;
       max-width:56vw;text-align:center;z-index:1;margin-top:0;padding-top:0;border-top:none;
       pointer-events:none;} /* 칩 자체는 누를 일이 없어서 탭이 아래(영상)로 그대로 통과되게 */
+  /* 하프시트 진입점(멤버/그룹 이름)·연결 버튼은 눌려야 하므로 부모의 pointer-events:none를 개별 복구
+     — 빈 영역은 여전히 영상으로 통과(2026-08-26 회귀 수정: 하프시트 버튼이 부모 때문에 죽어있던 것). */
+  #yt-lightbox.lb-browse #yt-lb-member-info .lb-anchor-part,
+  #yt-lightbox.lb-browse #yt-lb-member-info #yt-lb-conn-btn{pointer-events:auto;}
     #yt-lightbox.lb-browse #yt-lb-anchor-chip{font-size:11.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
     #yt-lightbox.lb-browse #yt-lb-with-chips{justify-content:center;margin-top:3px;}
     /* 볼륨/좋아요 등 툴바 줄과 "다음 영상" 사이 여백은 줄여서, 화면 하나에 다음 영상이 2개 정도는
