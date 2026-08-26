@@ -3010,8 +3010,13 @@ function animate(){
     if(_lblProj.z>1){el.style.opacity='0';el.style.pointerEvents='none';return;} // 카메라 뒤
     const sx=(_lblProj.x*0.5+0.5)*_lblVW,sy=(-_lblProj.y*0.5+0.5)*_lblVH;
     if(sx<-40||sx>_lblVW+40||sy<0||sy>_lblVH){el.style.opacity='0';el.style.pointerEvents='none';return;}
-    const pri=(GROUPS[ko]&&GROUPS[ko].pri)||1; // 어드민 큐레이션 등급(groups.json에 구움), 없으면 1
-    _farCands.push({el,sx,sy,fa,score:((bm?bm.radius:1)/Math.max(d,0.001))*pri});
+    // 점수 = √(반지름) × 등급배수 / 거리.
+    // 반지름은 **멤버 수**로 정해지므로(1.2~4.5) 그대로 곱하면 "인기 그룹"이 아니라 "인원 많은 그룹"이
+    // 이긴다(실제로 1차 구현에서 뉴진스·에스파는 안 뜨고 나인뮤지스·파이브돌스가 떴음). 제곱근을 씌워
+    // 크기 영향을 최대 1.94배로 눌러서, 어드민 큐레이션 등급(A×4 / B×1.5 / C×0.6)이 확실히 이기게 한다.
+    // pri는 group_priority 테이블을 groups.json에 구운 값(admin 전용 RLS라 앱이 직접 못 읽음).
+    const pri=(GROUPS[ko]&&GROUPS[ko].pri)||1;
+    _farCands.push({el,sx,sy,fa,score:Math.sqrt(bm?bm.radius:1)*pri/Math.max(d,0.001)});
   });
   // 점수 높은 순으로 놓되, 이미 놓인 라벨과 화면상 사각형이 겹치면 건너뛴다(그리디 충돌 회피).
   // 상한을 두는 건 밀도가 목적이 아니라 "읽히는 것"이 목적이기 때문 — 좁은 화면일수록 적게.
