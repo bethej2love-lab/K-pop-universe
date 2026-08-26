@@ -635,10 +635,12 @@
 </div>
 <div id="mob-sheet">
   <button id="mob-sheet-back" class="sheet-back-btn" aria-label="이전 카드로 돌아가기"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+  <button id="mob-sheet-tovid" class="sheet-tovid-btn" aria-label="영상으로 돌아가기"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
   <div id="mob-sheet-handle"></div>
   <div id="mob-sheet-inner"></div>
 </div>
 <div id="mob-card-stack">
+  <button id="mob-stack-tovid" class="sheet-tovid-btn" aria-label="영상으로 돌아가기"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
   <button id="mob-stack-back" class="sheet-back-btn" aria-label="이전 카드로 돌아가기"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
   <div class="conn-handle"></div>
   <div id="mob-card-stack-inner"></div>
@@ -3823,8 +3825,23 @@ function _lbUpdateMemberInfo(){
   if(memberKo)artist=ARTISTS.find(a=>a.name.ko===memberKo&&(a.group.ko===groupKo||(a.groups||[]).some(g=>g.ko===groupKo)));
   const gName=groupKo&&GROUPS[groupKo]?(currentLang==='ko'?groupKo:(GROUPS[groupKo].en||groupKo)):'';
   const mName=artist?(currentLang==='ko'?artist.name.ko:(artist.name.en||artist.name.ko)):'';
-  anchorEl.textContent=mName&&gName?`${mName} · ${gName}`:(mName||gName);
-  wrap.style.display=anchorEl.textContent?'':'none';
+  // ── 하프시트 진입점(2026-08-26, 로드맵 P1-2) ────────────────────────────────────
+  // 예전엔 "카리나 · 에스파"가 한 덩어리 텍스트라 누를 수 없었다. 멤버/그룹을 각각 누르면
+  // 그 카드가 화면 아래 절반으로 올라온다 — **영상은 계속 재생된다**(연결 카드와 달리 일시정지 안 함).
+  // iframe을 DOM에서 떼거나 부모를 바꾸면 재생이 리셋되므로, iframe은 손대지 않고 카드 시트만 위로 올린다.
+  anchorEl.innerHTML='';
+  const _mkPart=(text,fn)=>{
+    const b=document.createElement('button');
+    b.type='button';b.className='lb-anchor-part';b.textContent=text;
+    b.addEventListener('click',e=>{e.stopPropagation();fn();});
+    return b;
+  };
+  if(mName&&artist)anchorEl.appendChild(_mkPart(mName,()=>_openLbHalf('member',artist)));
+  else if(mName)anchorEl.appendChild(document.createTextNode(mName));
+  if(mName&&gName){const sep=document.createElement('span');sep.className='lb-anchor-sep';sep.textContent='·';anchorEl.appendChild(sep);}
+  if(gName&&GROUPS[groupKo])anchorEl.appendChild(_mkPart(gName,()=>_openLbHalf('group',groupKo)));
+  else if(gName)anchorEl.appendChild(document.createTextNode(gName));
+  wrap.style.display=(mName||gName)?'':'none';
   withEl.innerHTML='';
   (s?.with||[]).forEach(n=>{
     const target=_findArtistByConnName(n,artist?artist.group.ko:groupKo);
@@ -4184,8 +4201,52 @@ document.getElementById('yt-lb-rotate').addEventListener('click',e=>{
     }
   }
 });
+
+// ── 라이트박스 하프시트(2026-08-26, 로드맵 P1-2) ──────────────────────────────────────
+// 재생 화면 상단의 멤버/그룹 이름을 누르면 그 카드가 화면 아래 절반으로 올라온다.
+// 설계 원칙 두 가지:
+//  ① **iframe을 절대 건드리지 않는다.** DOM에서 떼거나 부모를 바꾸면 유튜브 임베드가 리셋된다.
+//     그래서 새 컨테이너로 카드를 옮기는 대신, **이미 카드가 들어있는 시트를 라이트박스 위로 올리고
+//     높이만 절반으로** 만든다. 영상은 그대로 재생된다(연결 카드는 일시정지하지만 여기선 안 함 —
+//     라이트박스가 열린 상태 그대로라 3D 렌더 정지 보호막도 유지돼서 발열 페널티가 없다).
+//  ② 카드는 **정상 경로**(showT/showGC → openMobSheet)로 연다. 임시로 빌려오는 방식은 라이트박스
+//     뒤에 깔려 있던 카드가 비어버리는 상태 충돌이 생긴다. 정상 경로를 타므로 카드 스택·URL·뒤로가기가
+//     전부 평소대로 동작하고, 나중에 "위로 끌어 풀카드 승격"도 기존 시트 제스처에 그대로 얹힌다.
+let _lbHalfEls=[];
+function _openLbHalf(kind,data){
+  if(kind==='member')showT(data,innerWidth/2,innerHeight*0.4);
+  else showGC(data,innerWidth/2,innerHeight*0.4);
+  // 카드가 실제로 들어간 컨테이너를 찾아 라이트박스(z 67) 위로 올린다.
+  const cardEl=document.getElementById(kind==='member'?'tt':'gc');
+  const host=cardEl&&cardEl.parentElement?cardEl.parentElement.closest('#mob-card-stack,#mob-sheet,#side-panel,#member-panel'):null;
+  _lbHalfEls=[];
+  if(host){
+    host.classList.add('lb-half');
+    _bringToFront(host);
+    _lbHalfEls.push(host);
+    // 스택 2겹이면 아래 시트도 같이 올려야 카드가 통째로 보인다
+    const sheet=document.getElementById('mob-sheet');
+    if(host.id==='mob-card-stack'&&sheet&&sheet.style.display!=='none'){
+      sheet.classList.add('lb-half');_bringToFront(sheet);_lbHalfEls.push(sheet);
+      _bringToFront(host); // 스택이 시트보다 위여야 함
+    }
+  }
+  document.getElementById('yt-lightbox')?.classList.add('lb-half-open');
+}
+// 영상으로 복귀 — 카드는 닫지 않는다(눌러서 이동한 건 실제 이동이므로 뒤에 남아 있는 게 맞다).
+// 라이트박스를 닫으면 그 카드가 그대로 드러난다.
+function _closeLbHalf(){
+  _lbHalfEls.forEach(el=>{el.classList.remove('lb-half');el.style.zIndex='';});
+  _lbHalfEls=[];
+  document.getElementById('yt-lightbox')?.classList.remove('lb-half-open');
+}
+[document.getElementById('mob-sheet-tovid'),document.getElementById('mob-stack-tovid')].forEach(b=>{
+  if(b)b.addEventListener('click',e=>{e.stopPropagation();_closeLbHalf();});
+});
+
 function closeLightbox(){
   clearTimeout(_lbAutoUnmuteT);
+  _closeLbHalf(); // 하프시트로 올려둔 카드 시트를 원래 층으로 되돌린다
   _lbHideLoading();
   const lb=document.getElementById('yt-lightbox');
   lb.classList.remove('open');
@@ -5152,6 +5213,7 @@ function _placeInContainer(cardEl,container){
 }
 function closeMobSheet(){
   clearTimeout(_mobCloseTimer);
+  if(typeof _closeLbHalf==='function')_closeLbHalf(); // 스와이프로 닫아도 하프시트 상태가 남지 않게
   // 진행 중이던 스택 슬라이드업 애니메이션 무효화 — 뒤늦은 setTimeout이 방금 숨긴 스택에 bs-open을
   // 도로 붙이는 레이스를 막는다.
   if(_stackAnimTimer){clearTimeout(_stackAnimTimer);_stackAnimTimer=null;}
@@ -7146,6 +7208,9 @@ window.addEventListener('keydown',e=>{
 // 데이터모달은 자기 닫기 버튼(-close/-cancel)을 눌러 각자의 정리 로직을 그대로 재사용한다.
 function _closeTopOverlay(){
   const lb=document.getElementById('yt-lightbox');
+  // 하프시트(라이트박스 위로 올라온 카드)가 가장 위 층이다 — ESC/뒤로 한 번은 여기부터 벗긴다.
+  // 이게 없으면 데스크톱에서 카드만 내릴 방법이 없어 영상을 통째로 닫아야 했다(2026-08-26 P1-2).
+  if(lb&&lb.classList.contains('lb-half-open')){_closeLbHalf();return true;}
   if(lb&&lb.classList.contains('open')){closeLightbox();return true;}
   for(const id of ['feedback-overlay','feed-list-overlay','profile-overlay','vm-overlay','hnn-overlay','gp-overlay','fbv-overlay']){
     const el=document.getElementById(id);
