@@ -10677,33 +10677,12 @@ function renderScrapList(){
     if(viewAllBtn)viewAllBtn.style.display='none';
     return;
   }
+  // 미리보기 구역 없이 버튼 하나로 — likes 영상이 많을 수 있어 프로필 패널이 길어지는 걸 막고, 버튼을
+  // 눌러야 전체 리스트(_openFeedListOverlay, 아래 scrap-viewall-btn 핸들러)가 뜨게 한다(2026-08-26 사용자 요청).
   el.innerHTML='';
-  scraps.slice(0,SCRAP_PREVIEW_N).forEach((item,i)=>{
-    const vid=ytId(item.u);const shorts=isShorts(item.u);
-    const row=document.createElement('div');row.className='scrap-item';
-    const img=document.createElement('img');
-    img.className='scrap-thumb'+(shorts?' is-shorts':'');
-    img.src=`https://img.youtube.com/vi/${vid}/mqdefault.jpg`;img.alt=_cleanTitle(item.t);
-    const info=document.createElement('div');info.className='scrap-info';
-    const tEl=document.createElement('div');tEl.className='scrap-title';tEl.textContent=_cleanTitle(item.t);
-    const sub=document.createElement('div');sub.className='scrap-sub';
-    sub.textContent=[item.groupKo,item.memberKo].filter(Boolean).join(' · ');
-    info.appendChild(tEl);info.appendChild(sub);
-    const del=document.createElement('button');del.className='scrap-del';del.textContent='×';del.title='삭제';
-    del.addEventListener('click',e=>{e.stopPropagation();scraps.splice(i,1);localStorage.setItem(SCRAP_KEY,JSON.stringify(scraps));_sbPushColumn('scraps',scraps);renderScrapList();
-      document.querySelectorAll(`.scrap-btn[data-u="${CSS.escape(item.u)}"]`).forEach(b=>{b.classList.remove('scrapped');});
-    });
-    row.appendChild(img);row.appendChild(info);row.appendChild(del);
-    row.addEventListener('click',()=>openLightbox(item.u,shorts,scraps,i));
-    el.appendChild(row);
-  });
   if(viewAllBtn){
-    if(scraps.length>SCRAP_PREVIEW_N){
-      viewAllBtn.style.display='';
-      viewAllBtn.textContent=currentLang==='ko'?`전체보기 (${scraps.length})`:`View All (${scraps.length})`;
-    }else{
-      viewAllBtn.style.display='none';
-    }
+    viewAllBtn.style.display='';
+    viewAllBtn.textContent=currentLang==='ko'?`담아둔 영상 ${scraps.length}개 보기`:`View ${scraps.length} liked videos`;
   }
 }
 document.getElementById('scrap-viewall-btn')?.addEventListener('click',()=>{
