@@ -10005,6 +10005,11 @@ const FAV_HINT_DISMISSED_KEY='kpu_fav_hint_dismissed'; // 탐색 버튼을 눌�
 let favGroups=new Set(JSON.parse(localStorage.getItem(FAV_KEY_G)||'[]'));
 let favMembers=new Set(JSON.parse(localStorage.getItem(FAV_KEY_M)||'[]'));
 let favConnections=new Set(JSON.parse(localStorage.getItem(FAV_KEY_C)||'[]'));
+// 즐겨찾기 표시 순서(dk 배열 'g:..'/'m:..'/'c:..', 각 행 케밥 ⋮ 메뉴에서 조정). 지금은 기기 로컬 전용
+// — 계정 간 동기화는 user_data에 fav_order 컬럼을 추가하면 켤 수 있음(별도 마이그레이션, DECISIONS 참고).
+const FAV_ORDER_KEY='kpu_fav_order';
+let favOrder=JSON.parse(localStorage.getItem(FAV_ORDER_KEY)||'[]');
+function _saveFavOrder(){localStorage.setItem(FAV_ORDER_KEY,JSON.stringify(favOrder));}
 // ── 즐겨찾기 기념일(아카이브) ───────────────────────
 const FAV_DATE_KEY='kpu_fav_dates';
 let favDates=JSON.parse(localStorage.getItem(FAV_DATE_KEY)||'{}'); // {key: 'YYYY-MM-DD'}
@@ -10911,8 +10916,33 @@ function _favAvatarStackEl(people){
   }
   return wrap;
 }
+// 즐겨찾기 순서 조정(2026-08-26 사용자 요청) — 상시 표식 없이, 각 행의 케밥(⋮) 메뉴에서만 위/아래/맨위로.
+// 현재 화면 순서를 그대로 읽어(_currentFavDks) 이동만 반영한 전체 순서를 favOrder에 저장 → renderFavList가
+// 그 순서로 DOM을 재배치한다. 드래그·화살표 같은 상시 마커를 안 넣는 게 요구사항.
+function _currentFavDks(){const el=document.getElementById('fav-list');return el?[...el.children].map(r=>r.dataset.dk).filter(Boolean):[];}
+function _moveFav(dk,dir){const o=_currentFavDks();const i=o.indexOf(dk);if(i<0)return;const j=i+dir;if(j<0||j>=o.length)return;[o[i],o[j]]=[o[j],o[i]];favOrder=o;_saveFavOrder();renderFavList();}
+function _moveFavTop(dk){const o=_currentFavDks();const i=o.indexOf(dk);if(i<=0)return;o.splice(i,1);o.unshift(dk);favOrder=o;_saveFavOrder();renderFavList();}
+let _favKebabEl=null,_favKebabOutside=null;
+function _closeFavKebab(){if(_favKebabOutside){document.removeEventListener('click',_favKebabOutside,true);_favKebabOutside=null;}if(_favKebabEl){_favKebabEl.remove();_favKebabEl=null;}}
+function _openFavKebab(dk,btn){
+  _closeFavKebab();
+  const ko=currentLang==='ko';
+  const menu=document.createElement('div');menu.className='fav-kebab-menu';
+  const mk=(label,fn)=>{const b=document.createElement('button');b.type='button';b.className='fav-kebab-item';b.textContent=label;b.addEventListener('click',ev=>{ev.stopPropagation();_closeFavKebab();fn();});menu.appendChild(b);};
+  mk(ko?'기념일 수정':'Edit anniversary',()=>_openDateEditor({dk}));
+  mk(ko?'↑ 위로':'↑ Move up',()=>_moveFav(dk,-1));
+  mk(ko?'↓ 아래로':'↓ Move down',()=>_moveFav(dk,1));
+  mk(ko?'⤒ 맨 위로':'⤒ Move to top',()=>_moveFavTop(dk));
+  document.body.appendChild(menu);
+  const r=btn.getBoundingClientRect();
+  menu.style.left=Math.max(8,r.right-menu.offsetWidth)+'px';
+  menu.style.top=Math.min(r.bottom+4,window.innerHeight-menu.offsetHeight-8)+'px';
+  _favKebabEl=menu;
+  _favKebabOutside=ev=>{if(_favKebabEl&&!_favKebabEl.contains(ev.target))_closeFavKebab();};
+  setTimeout(()=>document.addEventListener('click',_favKebabOutside,true),0);
+}
 function _appendFavRow(el,{tag,name,sub,imgUrl,colorArr,people,bdayDays,annivDays,dk,onClick}){
-  const row=document.createElement('div');row.className='fav-item';
+  const row=document.createElement('div');row.className='fav-item';row.dataset.dk=dk; // 재정렬용 식별자(케밥 메뉴)
   row.appendChild(people?_favAvatarStackEl(people):_favAvatarEl(imgUrl,colorArr));
   const main=document.createElement('div');main.className='fav-main';
   const nameRow=document.createElement('div');nameRow.className='fav-name-row';
@@ -10922,8 +10952,8 @@ function _appendFavRow(el,{tag,name,sub,imgUrl,colorArr,people,bdayDays,annivDay
   if(dateRow)main.appendChild(dateRow);
   row.appendChild(main);
   const editBtn=document.createElement('button');editBtn.className='fav-edit';
-  editBtn.title=currentLang==='ko'?'기념일 수정':'Edit anniversary';editBtn.textContent='⋮';
-  editBtn.addEventListener('click',e=>{e.stopPropagation();_openDateEditor({dk});});
+  editBtn.title=currentLang==='ko'?'메뉴 (기념일·순서)':'Menu';editBtn.textContent='⋮';
+  editBtn.addEventListener('click',e=>{e.stopPropagation();_openFavKebab(dk,editBtn);}); // 기념일 수정 + 순서 이동 메뉴(2026-08-26)
   row.appendChild(editBtn);
   row.addEventListener('click',onClick);
   el.appendChild(row);
@@ -11002,6 +11032,12 @@ async function renderFavList(){
       }
     });
   });
+  // 케밥(⋮ 메뉴)으로 정한 사용자 순서(favOrder)대로 DOM 재배치 — 목록에 있는 dk 먼저 그 순서로, 없는
+  // 신규 항목은 기존(그룹→멤버→연결) 순서 유지(안정 정렬). favOrder 비어있으면 기본 순서 그대로.
+  if(favOrder.length){
+    const _fp=new Map(favOrder.map((dk,i)=>[dk,i]));
+    [...el.children].sort((a,b)=>(_fp.has(a.dataset.dk)?_fp.get(a.dataset.dk):Infinity)-(_fp.has(b.dataset.dk)?_fp.get(b.dataset.dk):Infinity)).forEach(r=>el.appendChild(r));
+  }
 }
 
 const FAV_DIM=0.03; // 즐겨찾기 하이라이트 모드 전용 — 검색/필터의 FOCUS_DIM보다 다른 행성/별을 더 투명하게
