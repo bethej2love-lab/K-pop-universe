@@ -1204,7 +1204,29 @@ controls.enableDamping=true;
 controls.dampingFactor=0.06;
 controls.minDistance=5;
 controls.maxDistance=UNIVERSE_MAX_DIST;
-controls.autoRotate=true;
+// ── 모션 줄이기(prefers-reduced-motion) ─────────────────────────────────────────────
+// 이 앱은 상시 자동회전하는 3D 우주라, OS에서 "동작 줄이기"를 켠 사용자에게는 접근성 이전에
+// 사실상 쓸 수 없는 화면이 된다(전정기관 민감 사용자에게 큰 면적의 지속 회전은 멀미 유발).
+// 2026-08-26 감사에서 이 미디어 쿼리 대응이 HTML·CSS 통틀어 0곳이라는 게 확인돼 추가함.
+// ⚠️ 원칙: **기능은 하나도 빼지 않는다.** 움직임의 '연출'만 없애고 도착 상태는 동일하게 만든다
+//    (카메라 비행 → 즉시 도착, 리플/펄스 → 생략, 자동회전 → 정지). 로딩 스피너처럼 "상태를
+//    알려주는" 애니메이션은 남긴다 — 그걸 없애면 오히려 멈춘 것처럼 보여서 사용성이 나빠진다.
+// 이 스위치는 앞으로 절전 모드(자동/켬/끔)가 그대로 재사용한다 — 강등 레버를 한 곳에 모으는 게 목적.
+// ⚠️ 여기는 최상위 즉시실행 구간이라 파일 뒤에 선언되는 let/const(flyState 등)를 건드리면 TDZ로 죽는다
+//    (PRINCIPLES.md 참고). 그래서 초기화에서는 controls만 만지고, 나머지는 각 사용처에서 플래그를 본다.
+let _reduceMotion=!!(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+if(_reduceMotion)document.documentElement.classList.add('reduce-motion');
+try{
+  const _rmq=window.matchMedia('(prefers-reduced-motion: reduce)');
+  const _onRm=e=>{
+    _reduceMotion=!!e.matches;
+    document.documentElement.classList.toggle('reduce-motion',_reduceMotion);
+    controls.autoRotate=!_reduceMotion;
+  };
+  if(_rmq.addEventListener)_rmq.addEventListener('change',_onRm);
+  else if(_rmq.addListener)_rmq.addListener(_onRm); // 구형 사파리
+}catch(e){}
+controls.autoRotate=!_reduceMotion;
 controls.autoRotateSpeed=0.25;
 
 // ── Stars ─────────────────────────────────────────
@@ -3105,7 +3127,7 @@ function animate(){
       l.material.opacity=base*_mAlpha;
     });
   }
-  _nctRingGroups.forEach(({g})=>g.rotateZ(0.00028*_dtMs/16.67)); // 실경과 기준 회전(렌더 fps 달라도 속도 일정)
+  if(!_reduceMotion)_nctRingGroups.forEach(({g})=>g.rotateZ(0.00028*_dtMs/16.67)); // 실경과 기준 회전(렌더 fps 달라도 속도 일정)
   // 위에서 이미 렌더 fps로 게이트했으므로(Tier 1) 여기선 그냥 그린다.
   renderer.render(scene,camera);
   labelRenderer.render(scene,camera);
@@ -3140,7 +3162,8 @@ function _startFly(toOrbit,toCam,dur){
   flyState.toOrbit.copy(toOrbit);
   flyState.toCam.copy(toCam);
   flyState.t0=performance.now();
-  flyState.dur=dur||800;
+  // 모션 줄이기: 비행 연출만 없애고 도착 지점은 동일하게(0으로 두면 0/0=NaN이라 1ms)
+  flyState.dur=_reduceMotion?1:(dur||800);
   flyState.active=true;
 }
 function flyTo(pos,dur){
@@ -6686,6 +6709,7 @@ window.addEventListener('popstate',()=>{
 });
 
 function pulseGroupRipple(ko){
+  if(_reduceMotion)return; // 모션 줄이기: 리플은 순수 연출
   const bm=bubbleMeshes.find(b=>b.ko===ko);
   if(!bm)return;
   const[r,g,b]=(bm.info&&bm.info.color)||[180,200,255];
@@ -6730,6 +6754,7 @@ function pulseGroupRipple(ko){
   makeRipple(1300);
 }
 function pulseGroup(ko){
+  if(_reduceMotion)return;
   const bm=bubbleMeshes.find(b=>b.ko===ko);
   if(!bm)return;
   const mat=bm.mesh.material;
@@ -6747,6 +6772,7 @@ function pulseGroup(ko){
 }
 
 function pulseMember(artist){
+  if(_reduceMotion)return;
   // 모바일: 카드가 올라가면서 링이 가려지므로 빠른 국소 플래시로 대체 (B+C)
   if(isMob()){
     const _pos=(artist._worldPositions||[])[0]?.pos||(artist._worldPos);
@@ -6878,6 +6904,7 @@ function _spawnBdayShootingStar(artist){
   });
 }
 function _checkBdayShootingStars(){
+  if(_reduceMotion)return; // 모션 줄이기: 화면을 가로지르는 연출
   ARTISTS.forEach(a=>{if(_isBdayToday(a))_spawnBdayShootingStar(a);});
 }
 
@@ -9219,7 +9246,7 @@ function flyHome(){
   closeCards();closePanels();
   const dir=new THREE.Vector3(0,8,155).normalize();
   _startFly(new THREE.Vector3(0,0,0),dir.multiplyScalar(controls.maxDistance),1000);
-  flyState.onComplete=()=>{controls.autoRotate=true;};
+  flyState.onComplete=()=>{controls.autoRotate=!_reduceMotion;};
 }
 
 // ── Zoom slider ───────────────────────────────────
@@ -9479,7 +9506,7 @@ const ZD_DOUBLE_TAP_MS=350,ZD_DOUBLE_TAP_DIST=40,ZD_TRIGGER_DIST=10,ZD_SENS_PX=2
 renderer.domElement.addEventListener('touchstart',e=>{
   if(!isMob())return;
   if(e.touches.length!==1){
-    if(_zdActive){controls.enabled=_zdPrevControlsEnabled;controls.autoRotate=_zdPrevAutoRotate;_zdActive=false;}
+    if(_zdActive){controls.enabled=_zdPrevControlsEnabled;controls.autoRotate=_zdPrevAutoRotate&&!_reduceMotion;_zdActive=false;}
     _zdCandidate=false;
     return;
   }
@@ -9515,7 +9542,7 @@ renderer.domElement.addEventListener('touchend',e=>{
   if(!isMob())return;
   if(_zdActive){
     controls.enabled=_zdPrevControlsEnabled;
-    controls.autoRotate=_zdPrevAutoRotate;
+    controls.autoRotate=_zdPrevAutoRotate&&!_reduceMotion;
     _zdActive=false;
   }
   _zdCandidate=false;
