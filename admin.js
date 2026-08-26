@@ -1363,10 +1363,12 @@ let _snapHasReviewedAt=true;
 const _snapCols=()=>_snapHasReviewedAt?_BULK_SNAP_COLS:_BULK_SNAP_COLS.filter(c=>c!=='reviewed_at');
 // 영향받는 id들의 "바꾸기 전" 값을 떠서 batch로 저장한다. 실패해도(테이블 없음/권한 등) 원래 작업은
 // 막지 않고 안내만 남긴다 — 스냅샷이 안 됐다고 관리도구 자체가 멈추면 안 됨(그만큼 되돌리기만 불가).
-async function _snapshotBeforeBulk(opLabel,ids){
+// forceBatchId: 여러 번 나눠 호출해도 같은 batch로 묶고 싶을 때(예: 청크로 진행되는 쇼츠 승격 스윕의
+// 한 번의 실행 전체를 하나의 되돌리기 단위로) 넘긴다. 안 넘기면 매 호출마다 새 batch.
+async function _snapshotBeforeBulk(opLabel,ids,forceBatchId){
   if(!sb||!ids||!ids.length)return null;
   const uniq=[...new Set(ids)];
-  const batchId=(self.crypto&&self.crypto.randomUUID)?self.crypto.randomUUID():('b'+Date.now()+Math.random().toString(36).slice(2));
+  const batchId=forceBatchId||((self.crypto&&self.crypto.randomUUID)?self.crypto.randomUUID():('b'+Date.now()+Math.random().toString(36).slice(2)));
   try{
     let saved=0;
     for(let i=0;i<uniq.length;i+=200){
@@ -1482,6 +1484,78 @@ async function _ytSweepCategoryMistag(){
     _ytSetProg('오류: '+e.message);
   }finally{
     if(btn)btn.disabled=false;
+  }
+}
+
+// ── 가로→쇼츠 일괄 승격 스윕 ────────────────────────────────────────────────────
+// 동기화 시점 세로 판별이 원리적으로 불가능하다(2026-08-26 조사): 쇼츠 썸네일도 high/standard/maxres가
+// 전부 가로(480x360·640x480·1280x720)라 hiTh.height>hiTh.width가 참이 될 수 없고, 원본 세로 비율을
+// 유지하는 건 oardefault.jpg(1080x1920)뿐이다. 그 결과 category='short'는 사실상 제목 정규식으로만
+// 걸려왔고, 세로 영상 약 2.8만 건이 가로 카드로 찌그러져 노출돼 왔다. 이 스윕은 short가 아닌 행을 id
+// 오름차순으로 훑으며 oardefault.jpg를 실측(_probeIsPortrait, index.html 정의 — 같은 페이지 전역)해
+// 세로면 category='short'로 **승격만** 한다. 반대 방향(강등)은 오판 위험이 커서 하지 않으며 조회에서
+// short를 아예 제외한다. 대상이 ~28만 건이라 브라우저 이미지 프로브로 오래 걸려(동시 12개 ~90분)
+// localStorage 커서로 **중단/재개**를 지원한다 — 이미 승격된 행은 다음 조회에서 자동 제외되고, 커서
+// 덕에 이미 확인한 가로 행을 재프로브하지 않는다. tags_manual 행은 다른 스윕과 동일하게 보호. 한 번의
+// 실행 전체가 하나의 batch로 스냅샷돼 "↩︎ 되돌리기"로 통째 복원 가능(재개하면 새 batch).
+let _shortsPromoteRunning=false;
+const _SHORTS_PROMOTE_CURSOR_KEY='_kpu_shortsPromoteCursor';
+async function _ytSweepPromoteShorts(){
+  if(!sb){_ytSetProg('Supabase 연결 없음');return;}
+  const btn=document.getElementById('sp-shortspromote-btn');
+  if(_shortsPromoteRunning){ // 실행 중 다시 누르면 중단 요청(현재 청크까지 마치고 멈춤)
+    _shortsPromoteRunning=false;
+    _ytSetProg('[쇼츠 승격] 중단 요청됨 — 현재 청크 마무리 후 멈춥니다…');
+    return;
+  }
+  if(typeof _probeIsPortrait!=='function'){_ytSetProg('오류: 세로 판별 함수(_probeIsPortrait)를 찾을 수 없어요');return;}
+  let cursor=Number(localStorage.getItem(_SHORTS_PROMOTE_CURSOR_KEY)||'0')||0;
+  if(cursor){
+    if(!confirm(`이전에 id ${cursor}까지 진행했어요.\n\n[확인] 이어서 재개\n[취소] 처음부터 다시`)){cursor=0;localStorage.removeItem(_SHORTS_PROMOTE_CURSOR_KEY);}
+  }
+  const runBatchId=(self.crypto&&self.crypto.randomUUID)?self.crypto.randomUUID():('sp'+Date.now());
+  _shortsPromoteRunning=true;
+  if(btn){btn.textContent='⏹️ 쇼츠 승격 중단';btn.style.borderColor='#d08a8a';}
+  const CHUNK=400, CONC=12;
+  let scanned=0, promoted=0, snapOff=false;
+  try{
+    let remain=null; // 진행률 표시용 대략치(실패해도 무시)
+    try{const{count}=await sb.from(_YT_TABLE).select('id',{count:'exact',head:true}).eq('tags_manual',false).neq('category','short').gt('id',cursor);remain=count;}catch(_){}
+    while(_shortsPromoteRunning){
+      const{data:rows,error}=await sb.from(_YT_TABLE)
+        .select('id')
+        .eq('tags_manual',false).neq('category','short').gt('id',cursor)
+        .order('id',{ascending:true}).limit(CHUNK);
+      if(error){_ytSetProg('조회 실패: '+error.message+` (id ${cursor}까지, 재개 가능)`);break;}
+      if(!rows||!rows.length){_ytSetProg(`✅ 쇼츠 승격 완료! 전량 스캔 끝 — 총 ${promoted}개를 쇼츠로 승격(스캔 ${scanned}개).`);localStorage.removeItem(_SHORTS_PROMOTE_CURSOR_KEY);break;}
+      // 세로 실측(동시 CONC개) — oardefault.jpg가 로드되고 세로면 쇼츠
+      const portraitIds=[]; let idx=0;
+      const worker=async()=>{while(idx<rows.length){if(!_shortsPromoteRunning)return;const r=rows[idx++];const isP=await _probeIsPortrait(r.id);scanned++;if(isP)portraitIds.push(r.id);}};
+      await Promise.all(Array.from({length:CONC},worker));
+      // 승격(세로만) — 실행 전체를 runBatchId 하나로 스냅샷
+      if(portraitIds.length){
+        if(!snapOff){const s=await _snapshotBeforeBulk('가로→쇼츠 승격',portraitIds,runBatchId);if(s===null)snapOff=true;}
+        for(let i=0;i<portraitIds.length;i+=200){
+          const c=portraitIds.slice(i,i+200);
+          const results=await Promise.all(c.map(id=>sb.from(_YT_TABLE).update({category:'short'}).eq('id',id)));
+          const failed=results.find(x=>x.error);
+          if(failed)throw new Error(failed.error.message);
+        }
+        promoted+=portraitIds.length;
+      }
+      cursor=rows[rows.length-1].id;
+      localStorage.setItem(_SHORTS_PROMOTE_CURSOR_KEY,String(cursor));
+      const pct=remain?` · ~${Math.min(99,Math.round(scanned/remain*100))}%`:'';
+      _ytSetProg(`[쇼츠 승격] 스캔 ${scanned}${remain?'/'+remain:''}${pct} · 승격 ${promoted}개 (id ${cursor}까지)`);
+    }
+    if(!_shortsPromoteRunning && localStorage.getItem(_SHORTS_PROMOTE_CURSOR_KEY)){
+      _ytSetProg(`⏸️ 쇼츠 승격 중단됨 (id ${cursor}까지, 누적 승격 ${promoted}개). 버튼 다시 눌러 재개.`);
+    }
+  }catch(e){
+    _ytSetProg('쇼츠 승격 오류: '+e.message+` (id ${cursor}까지 진행, 재개 가능)`);
+  }finally{
+    _shortsPromoteRunning=false;
+    if(btn){btn.textContent='⬆️ 가로→쇼츠 일괄 승격'+(localStorage.getItem(_SHORTS_PROMOTE_CURSOR_KEY)?' (재개)':'');btn.style.borderColor='';}
   }
 }
 
@@ -5304,6 +5378,8 @@ document.getElementById('sp-collabfix-btn')?.addEventListener('click',_ytSweepAm
   document.getElementById('sp-membersfix-btn')?.addEventListener('click',_ytSweepMembersMistag);
   document.getElementById('sp-yt-undo-bulk-btn')?.addEventListener('click',_ytUndoLastBulk);
   document.getElementById('sp-catfix-btn')?.addEventListener('click',_ytSweepCategoryMistag);
+  document.getElementById('sp-shortspromote-btn')?.addEventListener('click',_ytSweepPromoteShorts);
+  {const _spb=document.getElementById('sp-shortspromote-btn');if(_spb&&localStorage.getItem('_kpu_shortsPromoteCursor'))_spb.textContent='⬆️ 가로→쇼츠 일괄 승격 (재개)';}
   document.getElementById('sp-covertitle-btn')?.addEventListener('click',_ytExtractCoverSongTitles);
   document.getElementById('sp-yt-autotag')?.addEventListener('click',_ytAutoTagMembers);
   document.getElementById('sp-yt-retag-all')?.addEventListener('click',_ytRetagAllIncludingTagged);
