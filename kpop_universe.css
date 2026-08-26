@@ -2447,6 +2447,10 @@
   /* 기념일 스트립(인스타 스토리 스타일 가로 스크롤) */
   .feed-strip{display:flex;gap:10px;overflow-x:auto;padding:2px 20px 18px;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
   .feed-strip::-webkit-scrollbar{display:none;}
+/* 투데이 애니버서리 스트립만 프로필 간 가로 간격 더 좁게(2026-08-26 사용자 요청) — 공유 .feed-strip은
+   그대로 두고 #feed-anniv에만 gap·아이템 폭 축소(썸네일 76px보다 작아지면 안 됨). 실기기서 미세조정 가능. */
+#feed-anniv{gap:5px;}
+#feed-anniv .feed-strip-item{width:78px;}
   .feed-strip-item{display:flex;flex-direction:column;align-items:center;gap:7px;flex-shrink:0;width:84px;cursor:pointer;position:relative;-webkit-tap-highlight-color:transparent;}
   /* 로딩 중(이미지 뜨기 전)엔 이 배경이 생으로 다 보여서 원색 무지개 동그라미처럼 튀어 보이던 문제
      (2026-08-10, 사용자 제보) — 톤을 확 낮춰 은은한 테두리 느낌만 남김(보일듯말듯).
