@@ -5482,7 +5482,18 @@ function _findArtistByConnName(withStr,anchorGroupKo){
   // 18건 확인, "아이유(아이유)" 형식은 0건) — a.group.ko===m[2]가 기본. _ytGroupKoFor(a)===m[2]도 같이
   // 허용해두는 건 순수 방어용(그룹 소속 멤버는 둘이 항상 같은 값이라 기존 동작에 전혀 영향 없음, 혹시
   // 다른 경로에서 그 형식을 쓰는 경우가 있어도 놓치지 않게).
-  if(m)return ARTISTS.find(a=>a.name.ko===m[1]&&(a.group.ko===m[2]||_ytGroupKoFor(a)===m[2]));
+  if(m){
+    // 주 소속 표기를 먼저 — 동명이인이 있을 때 오매칭을 줄인다.
+    const exact=ARTISTS.find(a=>a.name.ko===m[1]&&(a.group.ko===m[2]||_ytGroupKoFor(a)===m[2]));
+    if(exact)return exact;
+    // 겸임(부소속) 표기도 인정한다. with_members엔 "해찬(엔시티 드림)"처럼 **주 소속이 아닌 쪽**으로
+    // 태깅된 게 실제로 649개 영상 · 658건 있었는데(2026-08-26 전수 실측), 예전엔 여기서 못 찾아
+    // _apiVidToSong이 "로스터에 없는 이름"으로 보고 그 태그를 통째로 버렸다 — 콜라보 칩이 아예 안 뜨는
+    // 조용한 누락(한유진(제로베이스원) 193건, 이한결(BAE173) 49건 …). groups[]는 겸임 멤버의 실제 소속
+    // 목록이라 인정하는 게 맞다. 이걸 살리면 같은 사람이 두 그룹 표기로 동시에 뜨는데, 그건 연결 카드
+    // 쪽 _connRepNames(대표 그룹 하나로 접기)에서 처리한다.
+    return ARTISTS.find(a=>a.name.ko===m[1]&&(_artistGroups(a)||[]).some(g=>g.ko===m[2]));
+  }
   return ARTISTS.find(a=>a.name.ko===withStr&&a.group.ko===anchorGroupKo);
 }
 // 같은 영상이 여러 조회 경로(자체 채널 멤버 태그 vs 콜라보 그룹 태그 등)에서 각각 따로 발견되면,
@@ -5643,7 +5654,7 @@ function _connCacheKey(a){return`${a.name.ko}|${a.group.ko}`;}
 // 보유 여부가 바뀔 때만 리셋됨(그 함수 내부 참고). 이름별 콜라보 수(_collabCountCache)뿐 아니라
 // 전체 콜라보 이름 목록(_collabNamesCache)·그룹 동시출연 쌍(_coGroupPairsCache)도 같이 캐시 —
 // 셋 다 같은 입력(_connAnchor+API 상태)에 대해 결과가 고정이라 굳이 매번 다시 구할 필요가 없었음.
-let _collabCountCache=new Map(),_collabCountCacheKey=null,_collabNamesCache=null,_coGroupPairsCache=null;
+let _collabCountCache=new Map(),_collabCountCacheKey=null,_collabNamesCache=null,_coGroupPairsCache=null,_connLiteralCountCache=null;
 async function _fetchApiCollabData(anchor){
   if(!sb)return{songs:[],names:new Set()};
   const memberKo=anchor.name.ko;
@@ -6116,7 +6127,23 @@ function _buildConnContent(container){
     _collabCountCacheKey=_collabCacheKey;
     _collabCountCache=new Map();
     _collabNamesCache=_getCollabMembers(_connAnchor);
-    _coGroupPairsCache=null; // 아래에서 처음 쓰일 때 계산(그룹 콜라보 없는 앵커면 아예 안 씀)
+    // 예전엔 그룹 동시출연 쌍(_coGroupPairsCache)만 필요해서 아래쪽에서 게으르게 계산했는데, 이제
+    // **겸임 멤버 접기**(아래 _connRepNames)에 "이름별 실제 등장 횟수"가 그룹 칩을 만들기 **전에**
+    // 필요해져서, 같은 한 번의 순회에서 둘 다 만든다(순회 횟수는 그대로 1회).
+    _coGroupPairsCache=new Set(); // "gkoA|gkoB"(정렬됨) 조합
+    _connLiteralCountCache=new Map(); // "이름(그룹)" 문자열 그대로의 등장 영상 수
+    _getCollabSongs(_connAnchor,[],false,new Set()).forEach(sg=>{
+      const gkosInSong=new Set();
+      (sg.with||[]).forEach(n=>{
+        _connLiteralCountCache.set(n,(_connLiteralCountCache.get(n)||0)+1);
+        const m=n.match(/^(.+)\((.+)\)$/);
+        if(m)gkosInSong.add(m[2]);
+      });
+      if(gkosInSong.size>1){
+        const arr=[...gkosInSong];
+        for(let i=0;i<arr.length;i++)for(let j=i+1;j<arr.length;j++)_coGroupPairsCache.add([arr[i],arr[j]].sort().join('|'));
+      }
+    });
   }
   const allCollabNames=_collabNamesCache;
   const sameGroupNames=allCollabNames.filter(n=>!n.includes('('));
@@ -6129,9 +6156,50 @@ function _buildConnContent(container){
   // 같은 그룹: 콜라보 영상 수 내림차순 정렬
   sameGroupNames.sort((a,b)=>_collabCount(b)-_collabCount(a)||a.localeCompare(b,'ko'));
 
+  // 겸임 멤버는 소속 그룹 수만큼 태그가 붙는다(예: 해찬 = "해찬(엔시티 127)" + "해찬(엔시티 드림)" —
+  // 실제로 **한 영상의 with_members 안에 둘 다** 들어있는 걸 DB에서 확인했다, 2026-08-26). 그대로 두면
+  // 상대 연결 카드에 그룹 칩이 두 개 생기고 같은 사람이 양쪽에 하나씩 나타나 "두 그룹과 콜라보한 것"처럼
+  // 읽힌다(사용자 제보 — "번거롭다, 대표 그룹 하나만 뜨는 게 맞을 듯").
+  // ⚠️ 태그 데이터 자체는 건드리지 않는다 — 엔시티 127 카드에서도 엔시티 드림 카드에서도 이 영상이
+  //    검색돼야 하므로 두 태그 모두 필요하다(2026-08월 겸임 자동태깅 수정의 목적). 접는 건 **표시**뿐.
+  // 대표 그룹 결정 순서:
+  //   ① 이 카드에서 그 표기로 실제 등장한 영상이 더 많은 쪽 — 그 연결이 어느 그룹 활동이었는지가 드러남
+  //      (예: 엑스원 시절 콜라보만 있는 카드면 이진혁은 업텐션이 아니라 엑스원으로 뜬다)
+  //   ② 동률이면 해체하지 않은 그룹 — 유연정의 주 소속이 데이터상 아이오아이(해체)라 그대로 두면 어색함
+  //   ③ 그래도 동률이면 주 소속(artists.json group.ko)
+  // 사람이 다르면 접히지 않는다 — 한 영상에 태용(127) + 런쥔(드림)이면 그룹 칩 두 개가 그대로 남는다.
+  const _connRepNames=(()=>{
+    const gkoOf=n=>(n.match(/^(.+)\((.+)\)$/)||[])[2]||'';
+    // 기념일 스트립 쪽 동명 헬퍼(_isGrpDisbanded)와 같은 판정 — 그건 그 함수 안 지역 const라 여기선 못 쓴다.
+    const _gDisbanded=ko=>{const mem=(ARTISTS||[]).filter(a=>a.group.ko===ko);return mem.length>0&&mem.every(a=>a.active===false);};
+    const byArtist=new Map(),keep=new Set();
+    // 앵커와 같은 그룹이라 접미사 없이 뜨는 이름(sameGroupNames)과 겹치는 경우도 같은 사람이므로,
+    // 접미사 붙은 쪽을 버린다(예: 엔시티 127 멤버 카드에서 해찬이 "해찬"과 "해찬(엔시티 드림)"으로 중복).
+    const sameArtists=new Set(sameGroupNames.map(n=>_findArtistByConnName(n,_connAnchor.group.ko)).filter(Boolean));
+    otherGroupNames.forEach(n=>{
+      const a=_findArtistByConnName(n,_connAnchor.group.ko);
+      if(!a){keep.add(n);return;} // 아티스트로 해석 안 되는 이름은 손대지 않는다
+      if(sameArtists.has(a))return;
+      if(!byArtist.has(a))byArtist.set(a,[]);
+      byArtist.get(a).push(n);
+    });
+    byArtist.forEach((names,a)=>{
+      if(names.length>1){
+        const cnt=n=>(_connLiteralCountCache&&_connLiteralCountCache.get(n))||0;
+        const primary=a.group&&a.group.ko;
+        names.sort((x,y)=>cnt(y)-cnt(x)
+          ||(_gDisbanded(gkoOf(x))?1:0)-(_gDisbanded(gkoOf(y))?1:0)
+          ||(gkoOf(y)===primary?1:0)-(gkoOf(x)===primary?1:0)
+          ||gkoOf(x).localeCompare(gkoOf(y),'ko'));
+      }
+      keep.add(names[0]);
+    });
+    return keep;
+  })();
+
   // 타 그룹: 그룹별 묶기
   const otherByGroup=new Map();
-  otherGroupNames.forEach(n=>{
+  otherGroupNames.filter(n=>_connRepNames.has(n)).forEach(n=>{
     const m=n.match(/^(.+)\((.+)\)$/);
     if(!m)return;
     const gko=m[2];
@@ -6162,21 +6230,7 @@ function _buildConnContent(container){
   // 그룹 두 개가 실제로 같은 영상에 함께 나온 적 있는지 미리 계산 — 겹치는 콜라보가 있을 때만 두 그룹을
   // 동시에 펼쳐두고, 없으면 새 그룹을 열 때 이전에 열려있던 그룹은 자동으로 닫는다(자리 차지 줄이기,
   // 2026-08-04 사용자 요청 — "성현+하루아"처럼 실제 겹치는 경우만 동시 비교 가능하면 됨).
-  if(!_coGroupPairsCache){
-    _coGroupPairsCache=new Set(); // "gkoA|gkoB"(정렬됨) 조합
-    _getCollabSongs(_connAnchor,[],false,new Set()).forEach(sg=>{
-      const gkosInSong=new Set();
-      (sg.with||[]).forEach(n=>{
-        const m=n.match(/^(.+)\((.+)\)$/);
-        if(m)gkosInSong.add(m[2]);
-      });
-      if(gkosInSong.size>1){
-        const arr=[...gkosInSong];
-        for(let i=0;i<arr.length;i++)for(let j=i+1;j<arr.length;j++)_coGroupPairsCache.add([arr[i],arr[j]].sort().join('|'));
-      }
-    });
-  }
-  const _coGroupPairs=_coGroupPairsCache;
+  const _coGroupPairs=_coGroupPairsCache; // 위 캐시 무효화 블록에서 미리 계산됨
   function _groupsCoAppear(gkoA,gkoB){return _coGroupPairs.has([gkoA,gkoB].sort().join('|'));}
 
   // 멤버 칩 하나 빌드 (같은 그룹 / 타 그룹 펼침 양쪽 공용)
