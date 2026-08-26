@@ -63,6 +63,14 @@ need(/if\(!_collabGroupEvidenced\(text,gko\)\)return false;/.test(memEv), '멤�
 need(memEv.includes('_isHashtagOnlyName(ko)') && memEv.includes('ko.length===1'),
   '흔한단어·한 글자 이름은 해시태그로만 인정(기존 정책 재사용)');
 
+// ── ②-2 재판정 근거를 태깅 매처와 동등하게: 별칭·altName·겸임(2026-08-26) ─────────────────
+// 태깅은 altNames·matchAliases·겸임(_artistGroups)으로 붙이는데 재판정 근거는 name.ko/en만 봤음 →
+// 별칭/옛이름 근거 태그가 재검증마다 오삭제 후보였음(실측 202개). 근거 검사를 태깅과 대칭으로 올림.
+const grpEv = fnBody('function _collabGroupEvidenced');
+need(grpEv.includes('altNames'), '그룹 근거가 altNames(브브걸↔브레이브걸스·슈퍼노바↔초신성 등)도 인정');
+need(memEv.includes('matchAliases'), '멤버 근거가 matchAliases(황민현↔민현·JIN↔진 등)도 인정');
+need(memEv.includes('_artistGroups('), '멤버 조회가 _artistGroups로 겸임 멤버(민현(워너원) 등)도 찾음');
+
 // ── ③ 설명란까지 근거로 봄 ─────────────────────────────────────────────────────
 need(/function _collabEvidenceText\(v\)\{return`\$\{v\.title\|\|''\}\\n\$\{v\.description\|\|''\}`;\}/.test(src.replace(/\\n/g, '\\n')) || src.includes("_collabEvidenceText(v){return`${v.title||''}"),
   '근거 텍스트에 설명란(description)이 포함됨');

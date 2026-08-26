@@ -667,8 +667,11 @@ function _collabHasToken(text,tok,hashtagOnly){
 // 그룹 근거: 한글명 또는 영문명이 보이면 인정
 function _collabGroupEvidenced(text,gko){
   if(_collabHasToken(text,gko))return true;
-  const en=GROUPS[gko]&&GROUPS[gko].en;
-  return !!en&&_collabHasToken(text,en);
+  const info=GROUPS[gko];if(!info)return false;
+  if(info.en&&_collabHasToken(text,info.en))return true;
+  // altNames(브브걸↔브레이브걸스·하이라이트↔비스트·슈퍼노바↔초신성 등) — 태깅이 altNames로도 붙이므로
+  // 재판정 근거도 동등하게 인정(2026-08-26: 재판정 매처를 태깅과 대칭으로).
+  return (info.altNames||[]).some(alt=>_collabHasToken(text,alt));
 }
 // "이름(그룹)" 태그의 근거가 텍스트에 있나 — 이름과 그룹이 **둘 다** 보여야 한다
 function _collabMemberEvidenced(text,tag){
@@ -678,9 +681,14 @@ function _collabMemberEvidenced(text,tag){
   if(!_collabGroupEvidenced(text,gko))return false;
   const hashOnly=_isHashtagOnlyName(ko)||ko.length===1; // 한 글자 이름은 해시태그만(기존 정책)
   if(_collabHasToken(text,ko,hashOnly))return true;
-  const a=ARTISTS.find(z=>z.name.ko===ko&&z.group.ko===gko);
-  const en=a&&a.name&&a.name.en;
-  return !!en&&en.length>2&&_collabHasToken(text,en,hashOnly);
+  // 겸임 멤버(민현(워너원)·마크(엔시티 드림) 등)는 z.group.ko(주소속)로는 못 찾으므로 _artistGroups로 찾는다
+  // — 예전엔 못 찾아 영문/별칭 검사가 통째로 스킵됐음.
+  const a=ARTISTS.find(z=>z.name.ko===ko&&_artistGroups(z).some(g=>g.ko===gko));
+  if(!a)return false;
+  const en=a.name&&a.name.en;
+  if(en&&en.length>2&&_collabHasToken(text,en,hashOnly))return true;
+  // matchAliases(황민현↔민현·JAY B↔제이비·JIN↔진 등) — 태깅이 별칭으로 붙이므로 재판정 근거도 동등하게 인정.
+  return (a.matchAliases||[]).some(al=>al&&_collabHasToken(text,al,_isHashtagOnlyName(al)||al.length===1));
 }
 function _collabRejudge(v){
   const match=_m2ParseTitle(v.title||'',v.group_ko,undefined,v.published_at);
