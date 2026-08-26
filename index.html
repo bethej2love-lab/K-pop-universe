@@ -1461,6 +1461,17 @@ function _starLabelName(m,groupKo){
   return (g&&g.name)||m.displayName||m.name.ko;
 }
 const groupLabels=[];
+// ── 원거리 라벨 LOD 보조(2026-08-26) ─────────────────────────────────────────────
+// 매 프레임 새 벡터를 만들지 않도록 투영용 하나를 재사용한다.
+const _lblProj=new THREE.Vector3();
+// 라벨 폭은 DOM 측정값이라 매 프레임 읽으면 레이아웃 스래싱이 난다 — 요소에 캐시해두고
+// 텍스트가 바뀌는 유일한 시점(언어 전환)에만 비운다. 아직 레이아웃 전이면(0) 캐시하지 않는다.
+function _labelWidth(el){
+  if(el._lblW)return el._lblW;
+  const w=el.offsetWidth;
+  if(w>0){el._lblW=w;return w;}
+  return 44;
+}
 let ARTISTS=[],GROUPS={};
 let _STRICT_SYNC_GROUPS=new Set(); // groups.json의 strictSync:true 그룹 — 로드 후 채워짐
 // 멤버 이름 라벨이 나타나기 시작하는 카메라-행성 거리(=별이 시각적으로 분해되는 줌 경계).
@@ -1624,7 +1635,7 @@ function applyLang(){
   const _lt=currentLang.toUpperCase();
   const _tl=document.getElementById('tab-lang');if(_tl)_tl.textContent=_lt;
   const _dl=document.getElementById('dh-lang-btn');if(_dl)_dl.textContent=_lt;
-  groupLabels.forEach(({el,ko,en})=>{el.textContent=currentLang==='ko'?ko:(en||ko);});
+  groupLabels.forEach(({el,ko,en})=>{el.textContent=currentLang==='ko'?ko:(en||ko);el._lblW=undefined;/* 폭 캐시 무효화(라벨 LOD용) */});
   document.querySelectorAll('[data-i18n]').forEach(el=>{const k=el.dataset.i18n;if(t[k])el.textContent=t[k];});
   document.querySelectorAll('[data-i18n-ph]').forEach(el=>{const k=el.dataset.i18nPh;if(t[k])el.placeholder=t[k];});
   document.querySelectorAll('[data-i18n-title]').forEach(el=>{const k=el.dataset.i18nTitle;if(t[k])el.title=t[k];});
@@ -2966,16 +2977,60 @@ function animate(){
   // 어느 각도에서 봐도 라벨이 항상 행성 실루엣 바깥(화면상 위)에 남는다. bubble엔 회전을 안 주므로
   // (grep 확인됨) 월드 공간 camUp을 그대로 로컬 오프셋으로 써도 된다.
   const _camUp=new THREE.Vector3(0,1,0).applyQuaternion(camera.quaternion);
-  groupLabels.forEach(({el,worldPos,ko})=>{
-    const bm=bubbleMeshes.find(b=>b.ko===ko);
+  // ── 원거리 그룹 라벨 LOD(2026-08-26, 로드맵 P1-1) ──────────────────────────────────
+  // 지도 앱(네이버·카카오)의 라벨 밀도 제어를 그대로 가져온 것: 멀리서는 큰 것만, 가까이 갈수록 세부까지.
+  // 왜: 예전엔 거리 40 이내에서만 라벨이 떴는데 홈 화면은 행성까지 100~300이라 **라벨이 하나도 없었다.**
+  // 268개가 전부 "이름 없는 구슬"이라 첫 방문자에게 "예쁘다" 다음 "뭘 눌러야 하지"의 답이 화면에 없었음.
+  // 방식: 점수 = 화면상 크기(반지름/거리) × 등급 배수. 점수 높은 순으로 놓되 이미 놓인 라벨과 겹치면
+  // 건너뛴다(그리디 충돌 회피). 지도가 쓰는 것과 같은 방법이고 줌이 바뀌면 자동으로 재계산된다.
+  // ⚠️ 원거리 라벨엔 pointer-events를 주지 않는다 — 행성이 작을 때 조준 대상이 늘면 예전에 고쳤던
+  //    "중간 줌 오클릭"(조준 게이트) 계열 문제가 되살아날 수 있어 표시 전용으로 둔다.
+  const _lblVW=innerWidth,_lblVH=innerHeight;
+  const _farCands=[];
+  groupLabels.forEach(entry=>{
+    const {el,worldPos,ko}=entry;
+    // bubbleMeshes.find를 매 프레임 268번 돌던 것(=268²회 비교) 캐시로 제거
+    let bm=entry._bm;
+    if(bm===undefined)bm=entry._bm=(bubbleMeshes.find(b=>b.ko===ko)||null);
     const d=camera.position.distanceTo(bm?bm.mesh.position:worldPos);
     const distFade=d<40?1:d<70?(70-d)/30:0;
     const fa=(bm?bm.mesh._filterAlpha??1:1)*(bm?bm.mesh._focusAlpha??1:1)*(bm?bm.mesh._legacyAlpha??1:1);
-    const op=distFade*fa;
-    el.style.opacity=op.toFixed(3);
-    el.style.pointerEvents=op>0.15?'auto':'none';
-    if(bm&&bm.labelObj)bm.labelObj.position.copy(_camUp).multiplyScalar(1.05); // 행성 위 살짝(2026-08-22 재수정) — ⚠️ labelObj는 bubble의 자식이고 bubble.scale=radius(공유 단위구체 _sharedBubbleGeo를 반지름으로 확대, 1763·1932행)라 로컬 위치가 이미 radius배로 변환됨. 따라서 이 오프셋은 "단위구체 기준 배수"여야 함(1.0=표면, 1.05=표면 위 5%). 예전 radius+0.2 / radius*1.05는 radius를 이중 적용(월드 오프셋이 radius²)해서 반지름 큰 행성일수록 라벨이 한참 위로 붕 떠 있었음(2026-08-22 사용자 제보로 원인 발견). 1.05의 숫자만 조정하면 됨(1.02=거의 붙음, 1.10=조금 더 위).
+    // ⚠️ labelObj는 bubble의 자식이고 bubble.scale=radius라 로컬 위치가 이미 radius배로 변환된다.
+    // 따라서 이 오프셋은 "단위구체 기준 배수"여야 함(1.0=표면, 1.05=표면 위 5%). radius를 곱하면
+    // radius²가 돼서 큰 행성일수록 라벨이 붕 뜬다(2026-08-22 실제 버그). 숫자만 조정할 것.
+    if(bm&&bm.labelObj)bm.labelObj.position.copy(_camUp).multiplyScalar(1.05);
+    if(distFade>0.001){ // 근거리는 기존 동작 그대로(전부 표시 + 클릭 가능)
+      const op=distFade*fa;
+      el.style.opacity=op.toFixed(3);
+      el.style.pointerEvents=op>0.15?'auto':'none';
+      return;
+    }
+    if(fa<=0.02){el.style.opacity='0';el.style.pointerEvents='none';return;} // 필터/포커스로 꺼진 그룹
+    _lblProj.copy(bm?bm.mesh.position:worldPos).project(camera);
+    if(_lblProj.z>1){el.style.opacity='0';el.style.pointerEvents='none';return;} // 카메라 뒤
+    const sx=(_lblProj.x*0.5+0.5)*_lblVW,sy=(-_lblProj.y*0.5+0.5)*_lblVH;
+    if(sx<-40||sx>_lblVW+40||sy<0||sy>_lblVH){el.style.opacity='0';el.style.pointerEvents='none';return;}
+    const pri=(GROUPS[ko]&&GROUPS[ko].pri)||1; // 어드민 큐레이션 등급(groups.json에 구움), 없으면 1
+    _farCands.push({el,sx,sy,fa,score:((bm?bm.radius:1)/Math.max(d,0.001))*pri});
   });
+  // 점수 높은 순으로 놓되, 이미 놓인 라벨과 화면상 사각형이 겹치면 건너뛴다(그리디 충돌 회피).
+  // 상한을 두는 건 밀도가 목적이 아니라 "읽히는 것"이 목적이기 때문 — 좁은 화면일수록 적게.
+  if(_farCands.length){
+    _farCands.sort((a,b)=>b.score-a.score);
+    const _maxFar=isMob()?10:18;
+    const _placed=[];
+    for(const cd of _farCands){
+      let show=_placed.length<_maxFar;
+      if(show){
+        const w=_labelWidth(cd.el);
+        const x0=cd.sx-w/2-7,x1=cd.sx+w/2+7,y0=cd.sy-18,y1=cd.sy+5;
+        if(_placed.some(p=>!(x1<p[0]||x0>p[1]||y1<p[2]||y0>p[3])))show=false;
+        else _placed.push([x0,x1,y0,y1]);
+      }
+      cd.el.style.opacity=show?(0.8*cd.fa).toFixed(3):'0';
+      cd.el.style.pointerEvents='none';
+    }
+  }
   // 모바일: 행성 충분히 줌인 시 멤버 이름 레이블 표시 (거리 28 이내 fade-in, 15 이내 fully visible)
   // 데스크톱: 그룹 카드가 열려있으면 그 그룹 멤버 전원을 고정 라벨로 항상 표시
   // (2026-08-14, 사용자 요청 — "웹은 화면 넓으니 호버 안 해도 되지 않나". 2026-08-19, 인원수 상한(10명)
