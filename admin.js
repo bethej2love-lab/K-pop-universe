@@ -42,6 +42,22 @@ const _YT_LIVE_SHOW_RE=/엠카운트다운|뮤직뱅크|인기가요|음악중�
 // "생방송 음악중심 직캠"처럼 진짜 방송 무대 직캠 제목과도 겹쳐서 못 씀 — 그래서 플랫폼 이름이 같이 있는
 // 경우만 "실시간 방송"으로 확정해서 잡는다.
 const _YT_BROADCAST_RE=/브이라이브|V\s*LIVE|VLIVE|위버스\s*라이브|WEVERSE\s*LIVE|유튜브\s*라이브|YOUTUBE\s*LIVE|인스타\s*라이브|인스타그램\s*라이브|INSTAGRAM\s*LIVE|아프리카\s*TV|AFREECA|트위치|TWITCH|틱톡\s*라이브|TIKTOK\s*LIVE|라이브\s*방송|LIVE\s*CHAT|Q\s*&\s*A\s*LIVE/;
+// 음악방송 MC 진행분(“MC 컷 모음”, “NEW MC THE SHOW”, “MC석” 등)은 채널이 음방이라 제목의 방송명
+// (_YT_LIVE_SHOW_RE)에 걸려 전부 라이브(무대)로 분류돼 있었다 — 실제론 무대가 아니라 진행 영상이라
+// 라이브 탭을 오염시킨다(2026-08-26, 사용자 요청 — "제목에 mc 있으면 all로 보내달라").
+// ⚠️ MC는 **단독 토큰**일 때만 인정한다. 부분 문자열로 잡으면 MCOUNTDOWN(엠카운트다운) 13,796건과
+//    MCND(엠씨엔디) 271건이 통째로 오분류된다. 앞뒤 경계 검사 + 엠씨엔디 명시 제외로 막았고,
+//    실측 결과 MCOUNTDOWN 13,796건 중 걸리는 건 113건("MC 컷 모음 … #MCOUNTDOWN"처럼 진짜 MC분),
+//    MCND는 0건이다.
+// ⚠️ 단, 제목에 직캠/팬캠류가 같이 있으면 라이브로 남긴다 — "MC 정우 서프라이즈 직캠(굿바이 무대)",
+//    "MC석 직캠 4K"처럼 실제 촬영된 무대/직캠 영상이라 other로 보내면 그게 더 큰 손실(180건).
+const _YT_MC_HOST_RE=/(^|[^A-Za-z가-힣])(MC|엠씨)([^A-Za-z가-힣]|$)/i;
+const _YT_MCND_RE=/MCND|엠씨엔디/i;
+const _YT_FANCAM_RE=/직캠|팬캠|풀캠|페이스캠|FANCAM|FACECAM|FULL\s*CAM/i;
+function _ytIsMcHosting(title){
+  const s=title||'';
+  return _YT_MC_HOST_RE.test(s)&&!_YT_MCND_RE.test(s)&&!_YT_FANCAM_RE.test(s);
+}
 function _ytClassify(title){
   const t=(title||'').toUpperCase();
   if(/OFFICIAL\s+AUDIO|공식\s*음원/.test(t))return'skip';
@@ -52,6 +68,9 @@ function _ytClassify(title){
   // (2026-08-20, 사용자 제보 — 전소미 영상이 남돌 무대 모음에 낀 사고).
   if(/\bM[.\/]?V\.?\b|\bMUSIC\s+VIDEO\b|뮤직?\s*비디오|뮤비/.test(t))return'mv';
   if(_YT_BROADCAST_RE.test(t))return'other';
+  // MC 진행분은 라이브 판정보다 앞에서 걸러낸다(위 _ytIsMcHosting 주석 참고). 쇼츠 판정은 이 위에
+  // 있으므로 MC 쇼츠(90건)는 그대로 short로 남는다 — short는 장르가 아니라 포맷이라 유지가 맞다.
+  if(_ytIsMcHosting(title))return'other';
   const looksPrerecorded=_YT_PRERECORDED_RE.test(t);
   if((!looksPrerecorded||_YT_STRONG_LIVE_RE.test(t))&&/\bLIVE\b|\bCONCERT\b|\bPERFORMANCE\b|\bFANCAM\b|라이브|직캠|팬캠/.test(t))return'live';
   if(_YT_LIVE_SHOW_RE.test(t))return'live';
@@ -612,6 +631,46 @@ async function _ytSweepJunkKeywordVideos(){
 // [읽기전용 미리보기](Fable #3, 2026-08-23): "콜라보 오태깅 재검증"이 무엇을 제거할지 실제 UPDATE 없이
 // 미리 집계해서 보여준다(드라이런). 재파싱 valid 계산은 _ytSweepAmbiguousCollabMistag와 동일 — 여기선
 // 제거될 with 태그를 빈도로 모으고, 이종(타소속사+세대차 6년+) 성격 제거를 따로 세서 콘솔/진행바에 띄운다.
+// ── 콜라보 재판정(미리보기 ↔ 실제 스윕 공용) ─────────────────────────────────────
+// 2026-08-26, 사용자 제보("3. 콜라보 오태깅 재검증이 잘 매칭되어있는 것까지 제거하는 것 같다").
+// 원인은 제거 로직이 아니라 **미리보기가 거짓 보고**를 하고 있던 것이었다. 두 함수가 같은 판정을
+// 각자 복붙해뒀는데 미리보기 쪽에만 promote/consolidate(태그를 되살리는 경로)가 빠져 있었고,
+// 무엇보다 tags_manual=true 행을 **세기만 하고 목록에서 안 걸러냈다** — 실측(전체 17,185건 재현)
+// 결과 미리보기가 "제거 예정"이라 부른 381건 중 **380건이 수동 편집 행**(=실제 스윕은 절대 안 건드림)
+// 이라, 콘솔의 "제거될 상위30"이 사실상 보호되는 태그로 도배돼 있었다. 실제로 바뀌는 행은 1건.
+// 두 곳이 다시 갈라지지 않도록 판정을 이 함수 하나로 합친다.
+function _collabRejudge(v){
+  const match=_m2ParseTitle(v.title||'',v.group_ko,undefined,v.published_at);
+  const curWG=v.with_groups||[],curWM=v.with_members||[];
+  const validGroups=new Set(),validMembers=new Set(),promote=new Map(),consolidate=new Set();
+  if(match){
+    [match.primaryGroup,...match.withGroups].filter(og=>og&&og!==v.group_ko).forEach(og=>{
+      const sec=match.membersByGroup[og]||[];
+      const{asGroup,extraMembers}=_classifyGuestGroup(sec,og);
+      if(asGroup){
+        validGroups.add(og);
+        extraMembers.forEach(mko=>validMembers.add(`${mko}(${og})`));
+        if(sec.length&&!curWG.includes(og)&&curWM.some(m=>m.endsWith(`(${og})`)))consolidate.add(og);
+      }else{
+        const tags=sec.map(mko=>`${mko}(${og})`);
+        tags.forEach(t=>validMembers.add(t));
+        if(curWG.includes(og))promote.set(og,tags);
+      }
+    });
+  }
+  const newWG=[...new Set([...curWG.filter(g=>validGroups.has(g)),...consolidate])];
+  const newWM=[...new Set([...curWM.filter(m=>validMembers.has(m)),...[...promote.values()].flat()])];
+  const patch={};
+  if(newWG.length!==curWG.length||newWG.some((g,i)=>g!==curWG[i]))patch.with_groups=newWG;
+  if(newWM.length!==curWM.length||newWM.some(m=>!curWM.includes(m)))patch.with_members=newWM;
+  return{
+    curWG,curWM,newWG,newWM,patch,
+    changed:!!Object.keys(patch).length,
+    lostM:curWM.filter(m=>!newWM.includes(m)),
+    lostG:curWG.filter(g=>!newWG.includes(g)),
+    wiped:!newWG.length&&!newWM.length,
+  };
+}
 async function _ytSweepDetectPreview(){
   if(!sb){_ytSetProg('Supabase 연결 없음');return;}
   const btn=document.getElementById('sp-detect-btn');
@@ -626,31 +685,29 @@ async function _ytSweepDetectPreview(){
     if(!rows?.length){_ytSetProg('검사할 영상이 없어요');return;}
     const _xgen=(a,b)=>{const g1=GROUPS[a],g2=GROUPS[b];if(!g1||!g2)return false;const c1=(g1.co||'').trim(),c2=(g2.co||'').trim();const same=!!(c1&&c2)&&c1===c2;const gap=Math.abs((parseInt(g1.debut)||0)-(parseInt(g2.debut)||0));return !same&&gap>=6;};
     const remM=new Map(),remG=new Map();let changed=0,manual=0,wiped=0,xgate=0;const samples=[];
+    // 수동 편집 행은 실제 스윕이 절대 안 건드리므로 **집계에서 완전히 분리**한다 — 예전엔 같은
+    // 통계에 섞여서 "제거될 상위30"이 보호되는 태그로 도배됐다(위 _collabRejudge 주석 참고).
+    const manualSamples=[];
     rows.forEach(v=>{
-      const match=_m2ParseTitle(v.title||"",v.group_ko,undefined,v.published_at);
-      const curWG=v.with_groups||[],curWM=v.with_members||[];
-      const validGroups=new Set(),validMembers=new Set();
-      if(match){
-        [match.primaryGroup,...match.withGroups].filter(og=>og&&og!==v.group_ko).forEach(og=>{
-          const sec=match.membersByGroup[og]||[];
-          const{asGroup,extraMembers}=_classifyGuestGroup(sec,og);
-          if(asGroup){validGroups.add(og);extraMembers.forEach(mko=>validMembers.add(`${mko}(${og})`));}
-          else sec.forEach(mko=>validMembers.add(`${mko}(${og})`));
-        });
+      const j=_collabRejudge(v);
+      if(!j.changed)return;
+      if(v.tags_manual){
+        manual++;
+        if(manualSamples.length<20)manualSamples.push({id:v.id,title:v.title,group_ko:v.group_ko,보호중_유지됨:true,제안됐던제거:[...j.lostM,...j.lostG]});
+        return;
       }
-      const rmWM=curWM.filter(m=>!validMembers.has(m)),rmWG=curWG.filter(g=>!validGroups.has(g));
-      if(!rmWM.length&&!rmWG.length)return;
       changed++;
-      if(v.tags_manual)manual++;
-      if(!curWM.filter(m=>validMembers.has(m)).length&&!curWG.filter(g=>validGroups.has(g)).length)wiped++;
-      rmWM.forEach(m=>{remM.set(m,(remM.get(m)||0)+1);const mm=m.match(/^(.+)\((.+)\)$/);if(mm&&_xgen(mm[2],v.group_ko))xgate++;});
-      rmWG.forEach(g=>remG.set(g,(remG.get(g)||0)+1));
-      if(samples.length<20)samples.push({id:v.id,title:v.title,group_ko:v.group_ko,제거될멤버:rmWM,제거될그룹:rmWG,tags_manual:!!v.tags_manual});
+      if(j.wiped)wiped++;
+      j.lostM.forEach(m=>{remM.set(m,(remM.get(m)||0)+1);const mm=m.match(/^(.+)\((.+)\)$/);if(mm&&_xgen(mm[2],v.group_ko))xgate++;});
+      j.lostG.forEach(g=>remG.set(g,(remG.get(g)||0)+1));
+      if(samples.length<20)samples.push({id:v.id,title:v.title,group_ko:v.group_ko,제거될멤버:j.lostM,제거될그룹:j.lostG,남을멤버:j.newWM,남을그룹:j.newWG});
     });
+    console.log(`[오태깅 미리보기] ⚠️ 아래는 **실제로 바뀔 ${changed}건**만 집계한 것입니다. 수동 편집(tags_manual) ${manual}건은 스윕이 건드리지 않으므로 제외했습니다.`);
     console.log('[오태깅 미리보기] 제거될 with_members 상위30:',[...remM.entries()].sort((a,b)=>b[1]-a[1]).slice(0,30));
     console.log('[오태깅 미리보기] 제거될 with_groups 상위20:',[...remG.entries()].sort((a,b)=>b[1]-a[1]).slice(0,20));
-    console.log('[오태깅 미리보기] 샘플20:',samples);
-    _ytSetProg(`미리보기: ${rows.length}개 중 ${changed}개에서 태그 제거 예정 (이종 성격 ${xgate}건, 태그 전부빠짐 ${wiped}개, 수동보호 ${manual}개). 상세는 콘솔(F12). 실제 적용은 아래 "3. 콜라보 오태깅 재검증".`);
+    console.log('[오태깅 미리보기] 실제로 바뀔 샘플20:',samples);
+    if(manual)console.log(`[오태깅 미리보기] (참고) 수동 편집이라 그대로 유지되는 행 ${manual}건 — 아래는 "만약 보호가 없었다면" 제안됐을 내용이라 조치 불필요:`,manualSamples);
+    _ytSetProg(`미리보기: ${rows.length}개 중 실제로 바뀔 행 ${changed}개`+(manual?` · 수동 편집이라 그대로 두는 행 ${manual}개(변경 없음)`:'')+`. 바뀔 ${changed}개 중 태그 전부빠짐 ${wiped}개, 이종 성격 ${xgate}건. 상세는 콘솔(F12).`);
   }catch(e){_ytSetProg('오류: '+e.message);}
   finally{if(btn)btn.disabled=false;}
 }
@@ -984,47 +1041,13 @@ async function _ytSweepAmbiguousCollabMistag(){
     // 목록만 콘솔에 남긴다(2026-08-19, 사용자 요청).
     const wipedOut=[];
     rows.forEach(v=>{
-      const match=_m2ParseTitle(v.title||'',v.group_ko,undefined,v.published_at);
-      const curWG=v.with_groups||[],curWM=v.with_members||[];
-      // validGroups: 다시 봐도 "그룹 단위로만" 근거 있는 것(특정 멤버까진 아직 특정 안 됨) — 그대로 유지.
-      // promote: 예전엔 그룹 단위로만 태깅됐지만(curWG에 있음) 지금 다시 매칭해보니 특정 멤버까지 잡히는 것
-      // — 이대휘(AB6IX) 사례(2026-08-10, 사용자 제보)처럼 매칭 로직이 나중에 개선되면서(해시태그 부분
-      // 문자열 인식 등) 예전엔 그룹으로만 뭉뚱그려졌던 태그를 지금은 더 정확히 특정할 수 있는 경우.
-      // 예전 버전은 "여전히 유효한지"만 보고 교집합만 남겨서, 이런 케이스는 group 쪽에서 근거를 잃어도
-      // (validGroups에 안 들어가서 제거는 되지만) with_members로 승격은 전혀 안 돼 그냥 통째로 날아갔었음
-      // — 그룹 태그가 사라지긴 해도 더 정확한 멤버 태그로 안 바뀌니 사실상 퇴화였음. 이번에 승격 로직 추가.
-      // consolidate: 그 반대 방향 — 멤버 개별로 나열돼있었는데(curWM) 다시 보니 활동중 멤버 전원이 매칭돼
-      // _classifyGuestGroup이 asGroup으로 판정하는 경우, 그룹 단위 태그로 뭉친다("멤버 전체 나오는 영상인데
-      // 이름이 죽 나열된다"는 사용자 제보, 2026-08-14). 이 영상에 그 그룹의 with_members 흔적이 이미 있던
-      // 경우에만 발동(curWM.some(...)) — 원래 이 함수는 "기존 태그 정리"만 하는 도구라, 아예 처음부터
-      // 안 걸려있던 콜라보를 새로 발견해서 추가하는 건 범위 밖(그건 자동 태깅/재태깅 버튼의 몫).
-      const validGroups=new Set(),validMembers=new Set(),promote=new Map(),consolidate=new Set();
-      if(match){
-        const otherGkos=[match.primaryGroup,...match.withGroups].filter(og=>og&&og!==v.group_ko);
-        otherGkos.forEach(og=>{
-          const sec=match.membersByGroup[og]||[];
-          const{asGroup,extraMembers}=_classifyGuestGroup(sec,og);
-          if(asGroup){
-            validGroups.add(og);
-            extraMembers.forEach(mko=>validMembers.add(`${mko}(${og})`));
-            if(sec.length&&!curWG.includes(og)&&curWM.some(m=>m.endsWith(`(${og})`)))consolidate.add(og);
-          }else{
-            const tags=sec.map(mko=>`${mko}(${og})`);
-            tags.forEach(t=>validMembers.add(t));
-            if(curWG.includes(og))promote.set(og,tags);
-          }
-        });
-      }
-      const newWG=[...new Set([...curWG.filter(g=>validGroups.has(g)),...consolidate])];
-      const promotedTags=[...promote.values()].flat();
-      const newWM=[...new Set([...curWM.filter(m=>validMembers.has(m)),...promotedTags])];
-      const patch={};
-      if(newWG.length!==curWG.length||newWG.some((g,i)=>g!==curWG[i]))patch.with_groups=newWG;
-      if(newWM.length!==curWM.length||newWM.some(m=>!curWM.includes(m)))patch.with_members=newWM;
-      if(!Object.keys(patch).length)return;
+      // 판정은 _collabRejudge 하나로 통일 — 미리보기와 실제가 갈라져서 "미리보기가 지운다고 한 게
+      // 실제로는 안 지워지는(그 반대도)" 상태였다(2026-08-26 수정, 그 함수 주석 참고).
+      const j=_collabRejudge(v);
+      if(!j.changed)return;
       if(v.tags_manual){manualSkipped++;return;} // 수동 편집 행은 절대 안 고침 — 대신 개수만 집계
-      updates.push({id:v.id,patch});
-      if(!newWG.length&&!newWM.length)wipedOut.push({id:v.id,title:v.title,removedGroups:curWG,removedMembers:curWM});
+      updates.push({id:v.id,patch:j.patch});
+      if(j.wiped)wipedOut.push({id:v.id,title:v.title,removedGroups:j.curWG,removedMembers:j.curWM});
     });
     if(!updates.length){
       _ytSetProg(`검사 완료 — ${rows.length}개 중 오염 없음`+(manualSkipped?` (단, 수동 편집이라 건드리지 않고 넘어간 것 ${manualSkipped}개 있음 — 직접 확인 필요)`:''));

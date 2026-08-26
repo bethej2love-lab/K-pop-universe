@@ -15327,11 +15327,19 @@ function _makeChVidController(contId){
       // 지정된 커버도 같이 보여준다(2026-08-25, 사용자 요청). NCT U처럼 곡마다 참여자가 바뀌는 유닛은
       // 곡별 참여자를 태깅하기 어려워서, 유닛 커버는 그 유닛 소속 멤버 카드 전체에 노출하는 쪽으로
       // 합의함 — 커버 탭 맨 아래 "다른 아티스트의 커버" 섹션이라 본인 출연 영상과 섞이지 않는다.
-      const _me=memberKo&&ARTISTS.find(a=>a.name.ko===memberKo&&_artistGroups(a).some(g=>g.ko===ko));
+      // ⚠️ 무소속 솔로(아이유·보아)는 카드 키(ko)가 _ytGroupKoFor 규칙에 따라 **본인 이름**인데,
+      // 태깅 쪽은 a.group.ko('솔로')를 써서 cover_of_members에 "아이유(솔로)"로 저장돼 있다.
+      // 그래서 "아이유(아이유)"로만 조회하던 예전 코드는 아이유 커버를 거의 못 찾았다
+      // (실측 2026-08-26: "아이유(솔로)" 60건 vs "아이유(아이유)" 1건 — 커버 탭이 사실상 비어 보였음).
+      // 보아는 "보아(보아)" 18건 + "보아(솔로)" 11건으로 **두 표기가 섞여 있어** 한쪽만으론 부족하다.
+      // → 둘 다 조회한다(_findArtistByConnName이 두 형식을 모두 인정하는 것과 같은 방어).
+      // _me 조회도 _artistGroups만 보면 솔로는 못 찾으므로(ko='아이유' vs groups=['솔로']) 같이 넓힌다.
+      const _me=memberKo&&ARTISTS.find(a=>a.name.ko===memberKo&&(_artistGroups(a).some(g=>g.ko===ko)||_ytGroupKoFor(a)===ko));
       const _unitNames=_me?_unitTagsFor(_me):[];
-      const queries=[memberKo
-        ? sb.from(_YT_TABLE).select(_cols).contains('cover_of_members',[`${memberKo}(${ko})`])
-        : sb.from(_YT_TABLE).select(_cols).contains('cover_of_groups',[ko])];
+      const _coverKeys=memberKo?[...new Set([`${memberKo}(${ko})`].concat(_me?[`${memberKo}(${_me.group.ko})`]:[]))]:[];
+      const queries=memberKo
+        ? _coverKeys.map(k=>sb.from(_YT_TABLE).select(_cols).contains('cover_of_members',[k]))
+        : [sb.from(_YT_TABLE).select(_cols).contains('cover_of_groups',[ko])];
       _unitNames.forEach(u=>queries.push(sb.from(_YT_TABLE).select(_cols).contains('cover_of_groups',[u])));
       const settled=await Promise.all(queries.map(q=>q.then(r=>r,()=>({data:null}))));
       if(state.ko!==ko||state.memberKo!==(memberKo||null))return; // 그 사이 다른 카드로 전환됨
