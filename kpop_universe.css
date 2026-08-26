@@ -2662,3 +2662,8 @@
   .sheet-tovid-btn>svg{display:block;width:20px;height:20px;}
   .sheet-tovid-btn:active{color:rgba(210,228,255,0.95);}
   .sheet-tovid-btn:focus-visible{outline:2px solid rgba(150,180,255,0.8);outline-offset:-4px;border-radius:10px;}
+  /* 절전 모드 설정 행(2026-08-26, P1-3) — 라벨+세그먼트 한 줄, 그 아래 현재 상태 설명 한 줄.
+     자동이 기본이라 "지금 절전 중인지"를 글로 알려줘야 사용자가 상태를 안다. */
+  .sp-row.sp-row-col{flex-direction:column;align-items:stretch;gap:6px;}
+  .sp-row.sp-row-col .sp-row-top{display:flex;align-items:center;justify-content:space-between;gap:10px;}
+  .sp-row.sp-row-col .sp-sub{font-size:11.5px;line-height:1.45;color:rgba(155,178,228,0.62);}
