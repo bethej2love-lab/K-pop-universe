@@ -10005,11 +10005,11 @@ const FAV_HINT_DISMISSED_KEY='kpu_fav_hint_dismissed'; // 탐색 버튼을 눌�
 let favGroups=new Set(JSON.parse(localStorage.getItem(FAV_KEY_G)||'[]'));
 let favMembers=new Set(JSON.parse(localStorage.getItem(FAV_KEY_M)||'[]'));
 let favConnections=new Set(JSON.parse(localStorage.getItem(FAV_KEY_C)||'[]'));
-// 즐겨찾기 표시 순서(dk 배열 'g:..'/'m:..'/'c:..', 각 행 케밥 ⋮ 메뉴에서 조정). 지금은 기기 로컬 전용
-// — 계정 간 동기화는 user_data에 fav_order 컬럼을 추가하면 켤 수 있음(별도 마이그레이션, DECISIONS 참고).
+// 즐겨찾기 표시 순서(dk 배열 'g:..'/'m:..'/'c:..', 각 행 케밥 ⋮ 메뉴에서 조정). 다른 fav_* 컬럼과 동일하게
+// user_data.fav_order로 계정 동기화(⚠️ user_data에 fav_order jsonb 컬럼 필요 — fav_order_migration.sql).
 const FAV_ORDER_KEY='kpu_fav_order';
 let favOrder=JSON.parse(localStorage.getItem(FAV_ORDER_KEY)||'[]');
-function _saveFavOrder(){localStorage.setItem(FAV_ORDER_KEY,JSON.stringify(favOrder));}
+function _saveFavOrder(){localStorage.setItem(FAV_ORDER_KEY,JSON.stringify(favOrder));_sbPushColumn('fav_order',favOrder);}
 // ── 즐겨찾기 기념일(아카이브) ───────────────────────
 const FAV_DATE_KEY='kpu_fav_dates';
 let favDates=JSON.parse(localStorage.getItem(FAV_DATE_KEY)||'{}'); // {key: 'YYYY-MM-DD'}
@@ -12796,6 +12796,7 @@ async function _migrateLocalToServer(userId){
     fav_groups:[...favGroups],
     fav_members:[...favMembers],
     fav_connections:[...favConnections],
+    fav_order:favOrder,
     fav_dates:favDates,
     fav_history:favHistory,
     scraps:scraps,
@@ -12816,6 +12817,7 @@ async function _pullServerToLocal(userId){
   favGroups=new Set(data.fav_groups||[]);
   favMembers=new Set(data.fav_members||[]);
   favConnections=new Set(data.fav_connections||[]);
+  favOrder=data.fav_order||[];
   favDates=data.fav_dates||{};
   favHistory=data.fav_history||[];
   scraps=data.scraps||[];
@@ -12825,6 +12827,7 @@ async function _pullServerToLocal(userId){
   localStorage.setItem(FAV_KEY_G,JSON.stringify([...favGroups]));
   localStorage.setItem(FAV_KEY_M,JSON.stringify([...favMembers]));
   localStorage.setItem(FAV_KEY_C,JSON.stringify([...favConnections]));
+  localStorage.setItem(FAV_ORDER_KEY,JSON.stringify(favOrder));
   localStorage.setItem(FAV_DATE_KEY,JSON.stringify(favDates));
   localStorage.setItem(FAV_HISTORY_KEY,JSON.stringify(favHistory));
   localStorage.setItem(SCRAP_KEY,JSON.stringify(scraps));
