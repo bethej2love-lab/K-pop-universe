@@ -749,6 +749,23 @@
     .gc-ch-refresh{font-size:20px;padding:6px 8px;}
   }
   #mob-sheet-handle{width:36px;height:4px;background:rgba(255,255,255,0.14);border-radius:2px;margin:10px auto 6px;display:block;}
+  /* 카드 뒤로가기 — 시트 손잡이 줄 왼쪽 끝에 고정(2026-08-26).
+     카드(#tt/#gc)는 mob-sheet와 mob-card-stack을 오가지만 손잡이 줄은 컨테이너에 붙어 있어서,
+     어떤 카드가 올라와도 뒤로가기 위치가 항상 같다(예전엔 카드 제목 옆에 붙어 카드마다 달랐음).
+     글리프는 작게 두되 탭 영역은 44×44로 잡는다(애플 HIG 최소 터치 타깃). */
+  .sheet-back-btn{
+    position:absolute;left:2px;top:0;width:44px;height:44px;z-index:3;
+    /* 탭 영역은 44×44로 아래까지 넉넉히 두되, 글리프는 손잡이(y 10~14px)와 같은 줄에 오도록
+       위쪽 정렬 + line-height 26px로 시각 중심을 13px에 맞춘다. */
+    display:none;align-items:flex-start;justify-content:center;
+    background:none;border:none;padding:0;margin:0;cursor:pointer;font-family:inherit;
+    color:rgba(155,178,228,0.78);font-size:26px;line-height:1;font-weight:600;
+    -webkit-tap-highlight-color:transparent;transition:color .15s;
+  }
+  .sheet-back-btn.on{display:flex;}
+  .sheet-back-btn>span{display:block;line-height:21px;}
+  .sheet-back-btn:active{color:rgba(210,228,255,0.95);}
+  .sheet-back-btn:focus-visible{outline:2px solid rgba(150,180,255,0.8);outline-offset:-4px;border-radius:10px;}
   #mob-sheet-inner{overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;max-height:calc(60vh + var(--sheet-grow,0px) - 24px);overscroll-behavior:contain;width:100%;box-sizing:border-box;position:relative;transition:max-height .32s cubic-bezier(0.32,0.72,0,1);}
   #mob-sheet-inner::-webkit-scrollbar{-webkit-appearance:none;width:2px;}
   #mob-sheet-inner::-webkit-scrollbar-track{background:transparent;}

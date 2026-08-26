@@ -79,6 +79,29 @@ function isoDate(d) {
 function membersOf(ko) {
   return artists.filter(a => (a.group && a.group.ko === ko) || (a.groups || []).some(g => g.ko === ko));
 }
+// 공유 미리보기용 대표 영상 썸네일 캐시(2026-08-26, tools/build_og_thumbs.mjs가 생성).
+// 왜: 아래 ogImageFor()는 groups.json/artists.json의 songs[0]에서만 썸네일을 뽑는데 그 필드가
+// 그룹 14개·아티스트 56명에만 있어서, 실측 결과 그룹 페이지의 96%·멤버 페이지의 97%가 전부 같은
+// 일반 og-image.png로 폴백하고 있었다(=어떤 링크를 공유해도 미리보기가 똑같음). 영상은 Supabase에
+// 있으므로 거기서 그룹/멤버별 대표 영상을 골라 캐시해두고 여기서 읽는다.
+// 캐시가 없으면 기존 동작(songs[0] → 일반 이미지)으로 조용히 폴백하므로 빌드는 항상 성공한다.
+let OG_THUMBS = { groups: {}, members: {} };
+try {
+  OG_THUMBS = JSON.parse(fs.readFileSync(path.join(ROOT, 'og_thumbs.json'), 'utf8'));
+} catch (e) {
+  console.warn('[build] og_thumbs.json 없음 — 대표 썸네일 없이 진행(node tools/build_og_thumbs.mjs로 생성)');
+}
+// maxresdefault는 1280×720, hqdefault는 480×360 — 크롤러가 큰 카드로 렌더하려면 크기 메타가 필요하다
+function ogSizeFor(url) {
+  if (/maxresdefault/.test(url)) return { w: 1280, h: 720 };
+  if (/hqdefault/.test(url)) return { w: 480, h: 360 };
+  return { w: 1200, h: 630 }; // 자체 og-image.png
+}
+function ogImageForGroup(ko, info) { return (OG_THUMBS.groups && OG_THUMBS.groups[ko]) || ogImageFor(info); }
+function ogImageForMember(a) {
+  const k = a.group.ko + '|' + a.name.ko;
+  return (OG_THUMBS.members && OG_THUMBS.members[k]) || ogImageFor(a);
+}
 function ogImageFor(info) {
   const song = (info.songs || [])[0];
   if (!song || !song.u) return `${SITE}/og-image.png`;
@@ -98,7 +121,7 @@ groupKos.forEach(ko => {
   const enPath = `en/g/${slug}/`;
   const koUrl = `${SITE}/${koPath}`;
   const enUrl = `${SITE}/${enPath}`;
-  const ogImage = ogImageFor(info);
+  const ogImage = ogImageForGroup(ko, info);
   const debutIso = isoDate(info.debut);
   const deepLinkHash = '#g=' + hashEsc(ko);
 
@@ -180,6 +203,8 @@ groupKos.forEach(ko => {
 <meta property="og:description" content="${escHtml(desc)}">
 <meta property="og:url" content="${selfUrl}">
 <meta property="og:image" content="${ogImage}">
+<meta property="og:image:width" content="${ogSizeFor(ogImage).w}">
+<meta property="og:image:height" content="${ogSizeFor(ogImage).h}">
 <meta property="og:locale" content="${isEn ? 'en_US' : 'ko_KR'}">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="${escHtml(displayName)}">
@@ -266,7 +291,7 @@ artists.forEach(a => {
   const enPath = isSolo ? `en/member/${slug}/` : `en/g/${enGroupSlug}/${slug}/`;
   const koUrl = `${SITE}/${koPath}`;
   const enUrl = `${SITE}/${enPath}`;
-  const ogImage = ogImageFor(a);
+  const ogImage = ogImageForMember(a);
   const bdayIso = isoDate(a.bday);
   const deepLinkHash = '#g=' + hashEsc(primaryGko) + '&m=' + hashEsc(ko);
 
@@ -380,6 +405,8 @@ artists.forEach(a => {
 <meta property="og:description" content="${escHtml(desc)}">
 <meta property="og:url" content="${selfUrl}">
 <meta property="og:image" content="${ogImage}">
+<meta property="og:image:width" content="${ogSizeFor(ogImage).w}">
+<meta property="og:image:height" content="${ogSizeFor(ogImage).h}">
 <meta property="og:locale" content="${isEn ? 'en_US' : 'ko_KR'}">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="${escHtml(displayName)}">
