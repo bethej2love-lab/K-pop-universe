@@ -3,12 +3,17 @@
 // 배경(사용자 제보 "shorts인데 형식 지정 안 돼서 가로 직사각형에 축소 노출되는 게 왜 이렇게 많냐"):
 // 동기화 시점 세로 판별이 원리적으로 불가능했다 — 쇼츠 썸네일도 high/standard/maxres가 전부 가로라
 // hiTh.height>hiTh.width가 참이 될 수 없고, 세로 비율을 유지하는 건 oardefault.jpg뿐. 결과적으로 세로
-// 영상 약 2.8만 건이 가로 카드로 찌그러져 노출돼 왔다. 이 스윕은 short가 아닌 행을 oardefault 실측으로
-// 확인해 세로면 category='short'로 **승격만** 한다.
+// 영상 약 2.8만 건이 가로 카드로 찌그러져 노출돼 왔다. 이 스윕은 아직 세로가 아닌 행을 oardefault
+// 실측으로 확인해 세로면 **is_short=true로 승격만** 한다.
+//
+// 2026-08-27 직교화: 승격이 category를 'short'로 덮어쓰던 시절엔 세로 직캠을 승격하는 순간 장르가
+// 날아가 Live 탭에서 사라졌다. short는 장르가 아니라 형식이므로 is_short 불리언으로 빼냈다
+// (is_short_migration.sql). 이 테스트는 그게 다시 category로 되돌아가지 않게 못을 박는다.
 //
 // 이 테스트가 지키는 불변식(28만 행을 건드리는 일괄 작업이라 회귀가 치명적):
-//  ① 수동 편집(tags_manual) 보호  ② 강등 금지(short는 조회에서 제외, update는 항상 'short'만)
+//  ① 수동 편집(tags_manual) 보호  ② 강등 금지 + category 불간섭(쓰는 건 is_short뿐)
 //  ③ oardefault 실측(_probeIsPortrait)으로만 판정  ④ 중단/재개(커서)  ⑤ 실행 전체가 하나의 되돌리기 batch
+//  ⑥ short 직교화 — 판별/조회/렌더가 전부 is_short 기준
 //
 // 실행: node tests/shorts-promote.test.js
 
@@ -39,11 +44,13 @@ need(fn.length > 0, '함수 파싱됨');
 // ① 수동 편집 보호
 need(fn.includes(".eq('tags_manual',false)"), '수동 편집(tags_manual) 행은 조회에서 제외');
 
-// ② 강등 금지 — short는 조회에서 빼고(재프로브·강등 원천 차단), 쓰는 값은 오직 'short'
-need(fn.includes(".neq('category','short')"), '이미 short인 행은 조회 제외(강등·재프로브 안 함)');
-const updates = fn.match(/\.update\(\{category:'[^']*'\}\)/g) || [];
-need(updates.length > 0 && updates.every(u => u === ".update({category:'short'})"),
-  `카테고리 쓰기는 항상 'short'만(승격 전용) — 발견 ${JSON.stringify(updates)}`);
+// ② 강등 금지 + category 불간섭 — 이미 세로인 행은 조회에서 빼고(재프로브·강등 원천 차단),
+//    쓰는 값은 오직 is_short:true. category를 건드리면 승격이 곧 장르 소실이 된다(직교화 이전 버그).
+need(fn.includes(".eq('is_short',false)"), '이미 세로인 행은 조회 제외(강등·재프로브 안 함)');
+const updates = fn.match(/\.update\(\{[^}]*\}\)/g) || [];
+need(updates.length > 0 && updates.every(u => u === '.update({is_short:true})'),
+  `쓰기는 항상 is_short:true만(승격 전용, category 불간섭) — 발견 ${JSON.stringify(updates)}`);
+need(!/category/.test(fn), '승격 스윕은 category를 아예 언급하지 않음(장르 소실 재발 방지)');
 
 // ③ oardefault 실측으로만 판정
 need(fn.includes('_probeIsPortrait('), 'oardefault 실측(_probeIsPortrait)으로 세로 판정');
@@ -71,6 +78,85 @@ need(src.includes("getElementById('sp-shortspromote-btn')?.addEventListener('cli
   '버튼 클릭 핸들러 연결됨');
 need(/_BULK_SNAP_COLS=\[[^\]]*'category'[^\]]*\]/.test(src),
   'category가 스냅샷 백업 컬럼에 포함(되돌리기가 category 복원)');
+need(/_BULK_SNAP_COLS=\[[^\]]*'is_short'[^\]]*\]/.test(src),
+  'is_short가 스냅샷 백업 컬럼에 포함(승격 되돌리기의 실효성)');
+
+// ─────────────────────────────────────────────────────────────────────────────
+// ⑥ short 직교화(2026-08-27) — 형식 플래그가 장르(category)와 분리돼 있는지
+// ─────────────────────────────────────────────────────────────────────────────
+const html = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+
+need(/function _isShortV\(v\)\{return !!v&&\(v\.is_short===true\|\|v\.category==='short'\)/.test(html),
+  '_isShortV 헬퍼 — is_short 우선 + category===\'short\' 레거시 폴백');
+
+// 판별을 헬퍼 한 곳으로 모았는지: 헬퍼 정의/주석 밖에서 category==='short'를 직접 비교하면 안 된다.
+const strayReads = html.split('\n').filter(l => {
+  const t = l.trim();
+  if (t.startsWith('//') || t.includes('function _isShortV')) return false;
+  return /category(!|=)=='short'/.test(l);
+});
+need(strayReads.length === 0,
+  `세로 판별은 _isShortV 한 곳에서만 — 직접 비교 잔재 ${strayReads.length}건`);
+
+// category를 읽는 쿼리는 반드시 is_short도 같이 뽑아야 한다 — 안 그러면 폴백(category==='short')만
+// 남아서, 승격만 되고 category는 장르인 행(직교화의 정상 상태)이 가로로 그려진다. 이게 이번 리팩터에서
+// 가장 조용히 깨지기 쉬운 지점이라 두 파일의 컬럼 목록 문자열을 통째로 훑는다.
+const colListRe = /(?:\.select\(|_cols=|selectCols=|_COLS=)\s*(['"`])([^'"`\n]+)\1/g;
+const missing = [];
+for (const [file, text] of [['index.html', html], ['admin.js', src]]) {
+  for (const m of text.matchAll(colListRe)) {
+    const cols = m[2].split(',').map(s => s.trim());
+    if (cols.includes('category') && !cols.includes('is_short')) {
+      missing.push(`${file}: ${m[2].slice(0, 70)}`);
+    }
+  }
+}
+need(missing.length === 0,
+  `category를 뽑는 컬럼 목록엔 is_short도 포함 — 누락 ${missing.length}건${missing.length ? '\n     ' + missing.join('\n     ') : ''}`);
+
+// Shorts 탭 조회는 플래그 기준(부분 인덱스 idx_ytv_is_short_group_published와 같은 형태)
+need((html.match(/filter==='short'\)\{/g) || []).length >= 2 && html.includes(".eq('is_short',true)"),
+  "Shorts 탭 필터가 .eq('is_short',true) 기준");
+
+// 동기화 시점: 세로 여부가 category 자리를 뺏지 않는지
+need(/function _ytIsShortTitle\(title\)\{/.test(src), '제목 기반 세로 판정이 _ytIsShortTitle로 분리됨');
+need(!/return'short'/.test(src), "_ytClassify가 더 이상 'short'를 장르로 반환하지 않음");
+need((src.match(/const isShort=isShortThumb\|\|_ytIsShortTitle\(title\)/g) || []).length >= 3,
+  '동기화 3경로 모두 썸네일 OR 제목으로 is_short를 따로 계산');
+need(/category:cat,is_short:isShort/.test(src), '동기화 행에 category와 is_short가 둘 다 실림');
+
+// ── 실제 동작 확인: 분류기를 잘라와 진짜 제목으로 돌려본다(문자열 검사만으론 못 잡는 회귀 대비) ──
+// _YT_PRERECORDED_RE 선언부터 _ytClassify 끝까지가 자기완결 블록이라 그대로 eval한다.
+const clsStart = src.indexOf('const _YT_PRERECORDED_RE=');
+const clsEnd = src.indexOf('\n}', src.indexOf('function _ytClassify(title){')) + 2;
+need(clsStart > 0 && clsEnd > clsStart, '분류기 블록 슬라이스 성공');
+const { _ytClassify, _ytIsShortTitle } =
+  new Function(src.slice(clsStart, clsEnd) + '\nreturn{_ytClassify,_ytIsShortTitle};')();
+
+const cases = [
+  // [제목, 기대 category, 기대 is_short(제목 기준)]
+  ['[MC 컷 모음] 오늘의 진행 #shorts', 'other', true],
+  ['에스파 카리나 직캠 4K #shorts', 'live', true],   // ★ 예전엔 'short'가 돼서 Live 탭에서 사라졌던 케이스
+  ['뉴진스 Super Shy M/V #Shorts', 'mv', true],
+  ['아이브 안유진 엠카운트다운 무대', 'live', false],
+  ['르세라핌 Performance Video', 'other', false],
+  ['OFFICIAL AUDIO - 어떤 곡', 'skip', false],
+];
+let behavOk = true;
+for (const [title, wantCat, wantShort] of cases) {
+  const gotCat = _ytClassify(title), gotShort = _ytIsShortTitle(title);
+  if (gotCat !== wantCat || gotShort !== wantShort) {
+    behavOk = false;
+    bad(`"${title}" → category=${gotCat}(기대 ${wantCat}), is_short=${gotShort}(기대 ${wantShort})`);
+  }
+}
+if (behavOk) ok(`분류기 실제 동작 ${cases.length}건 — #shorts가 붙어도 장르를 잃지 않음`);
+
+// 마이그레이션 SQL이 코드와 같은 전제를 갖고 있는지
+const sql = fs.readFileSync(path.join(__dirname, '..', 'is_short_migration.sql'), 'utf8');
+need(/ADD COLUMN IF NOT EXISTS is_short boolean NOT NULL DEFAULT false/.test(sql), 'SQL이 is_short 컬럼을 추가');
+need(/SET is_short = true WHERE category = 'short'/.test(sql), "SQL이 기존 category='short'를 플래그로 백필");
+need(/WHERE is_short/.test(sql), '조회용 부분 인덱스 predicate가 코드의 .eq(is_short,true)와 같은 형태');
 
 console.log(pass ? '\n✅ 쇼츠 승격 스윕 테스트 통과' : '\n❌ 쇼츠 승격 스윕 테스트 실패');
 process.exit(pass ? 0 : 1);

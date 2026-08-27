@@ -937,12 +937,16 @@
           <option value="">기본</option>
           <option value="mv">MV</option>
           <option value="live">라이브</option>
-          <option value="short">Shorts</option>
           <option value="variety">예능</option>
           <option value="show">드라마/영화</option>
         </select>
         <button id="vid-tag-thumb-refresh" class="uc-btn" type="button" style="white-space:nowrap;padding:0 12px">썸네일 새로고침</button>
       </div>
+      <!-- 쇼츠는 장르가 아니라 **형식**이라 위 select(장르 단일값)에서 빼내 별도 플래그로 뒀다
+           (2026-08-27, is_short_migration.sql). 세로 직캠은 라이브+쇼츠 양쪽에 떠야 맞다. -->
+      <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:11.5px;color:rgba(185,205,245,0.75);margin-top:9px">
+        <input type="checkbox" id="vid-tag-isshort" style="accent-color:rgba(155,178,228,0.9)">세로(쇼츠) — 9:16으로 표시, Shorts 탭 노출
+      </label>
     </div>
     <div class="pp-section" style="margin-top:10px;display:flex;flex-wrap:wrap;gap:10px 18px">
       <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:11.5px;color:rgba(185,205,245,0.75)">
@@ -3614,6 +3618,13 @@ function ytId(u){
   return s?s[1]:'';
 }
 function isShorts(u){return /\/shorts\//.test(u||'');}
+// DB 행이 세로(쇼츠) 영상인지. short는 장르가 아니라 **형식**이라 2026-08-27에 category 단일값에서
+// is_short 불리언으로 빼냈다(is_short_migration.sql) — 그래야 세로 직캠이 Live와 Shorts 양쪽에 뜨고
+// 9:16으로도 그려진다. category==='short' 폴백을 남겨둔 이유: ①마이그레이션 SQL이 아직 안 돌아간
+// 환경 ②is_short를 select에 안 넣은 쿼리가 혹시 남아 있을 때 — 둘 다 예전 동작으로 안전하게 떨어진다.
+// (반대로 is_short=true인데 category='live'인 행은 폴백만으론 못 잡으니, category를 뽑는 쿼리는
+//  is_short도 같이 뽑아야 한다. 아래 .select() 문자열들에 전부 넣어뒀다.)
+function _isShortV(v){return !!v&&(v.is_short===true||v.category==='short');}
 function isMob(){return window.innerWidth<=768;}
 // 유튜브 API로 동기화된 일부 영상(주로 인스타 릴스 크로스포스트) 제목엔 실제 줄바꿈 문자가 들어있어서,
 // 한 줄 말줄임(white-space:nowrap)이 안 먹고 제목 영역이 여러 줄로 확 커져 보이는 문제가 있었음 — 표시 직전에 제거.
@@ -5584,7 +5595,7 @@ function _apiVidToSong(v,memberKo,groupKo){
   }
   const song={
     t:v.title,
-    u:v.category==='short'?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`,
+    u:_isShortV(v)?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`,
   };
   if(withList.length)song.with=withList;
   if(v.cover_of_members?.length)song.coverOfMembers=v.cover_of_members;
@@ -5607,10 +5618,10 @@ async function _enrichMemberVideosFromApi(a,tv,baseSongs,basePersonalSongs){
   const withKey=`${memberKo}(${a.group.ko})`; // 타 채널에서 콜라보로 태깅될 때 쓰는 표시용 키는 원래 그룹 표기 그대로
   try{
     const[ownQ,withQ,generalQ]=await Promise.all([
-      sb.from(_YT_TABLE).select('id,title,category,group_ko,members,with_members,cover_of_members,cover_of_groups,content_flag').eq('group_ko',groupKo).contains('members',[memberKo]),
-      sb.from(_YT_TABLE).select('id,title,category,group_ko,members,with_members,cover_of_members,cover_of_groups,content_flag').contains('with_members',[withKey]),
+      sb.from(_YT_TABLE).select('id,title,category,is_short,group_ko,members,with_members,cover_of_members,cover_of_groups,content_flag').eq('group_ko',groupKo).contains('members',[memberKo]),
+      sb.from(_YT_TABLE).select('id,title,category,is_short,group_ko,members,with_members,cover_of_members,cover_of_groups,content_flag').contains('with_members',[withKey]),
       // 멤버 태깅 없는 그룹 전체 영상 — 모든 멤버 카드에 노출
-      sb.from(_YT_TABLE).select('id,title,category,group_ko,members,with_members,cover_of_members,cover_of_groups,content_flag').eq('group_ko',groupKo).filter('members','eq','{}'),
+      sb.from(_YT_TABLE).select('id,title,category,is_short,group_ko,members,with_members,cover_of_members,cover_of_groups,content_flag').eq('group_ko',groupKo).filter('members','eq','{}'),
     ]);
     if(ownQ.error)throw new Error(ownQ.error.message);
     if(withQ.error)throw new Error(withQ.error.message);
@@ -5630,11 +5641,11 @@ async function _enrichMemberVideosFromApi(a,tv,baseSongs,basePersonalSongs){
     render();
     // DB category가 부정확해 실제론 쇼츠(세로)인데 가로로 표시될 수 있어 백그라운드로 재확인 후 다시 렌더링
     // (그룹 카드 영상 그리드에 쓴 것과 동일한 보정 로직 재사용)
-    const uncertain=rows.filter(v=>v.category!=='short');
+    const uncertain=rows.filter(v=>!_isShortV(v));
     if(uncertain.length){
       const correctedIds=await _probeShortsBatch(uncertain);
       if(correctedIds.length){
-        sb.from(_YT_TABLE).update({category:'short'}).in('id',correctedIds).then(({error})=>{
+        sb.from(_YT_TABLE).update({is_short:true}).in('id',correctedIds).then(({error})=>{
           if(error)console.error('쇼츠 분류 보정 저장 실패',error.message);
         });
         render();
@@ -5689,18 +5700,18 @@ async function _fetchApiCollabData(anchor){
     // 3건 전부 members:[]). 그룹 채널(여러 멤버가 있어 "이 영상에 누가 나왔는지" 구분이 필요)과 달리,
     // 솔로 채널은 group_ko=groupKo인 것 자체가 이미 "본인 채널 영상"이라는 뜻이라 이 조건이 불필요할 뿐
     // 아니라 해로움 — 있으면 이런 미태깅 행을 통째로 놓친다.
-    let ownQBuilder=sb.from(_YT_TABLE).select('id,title,category,group_ko,members,with_members,content_flag').eq('group_ko',groupKo);
+    let ownQBuilder=sb.from(_YT_TABLE).select('id,title,category,is_short,group_ko,members,with_members,content_flag').eq('group_ko',groupKo);
     if(GROUPS[anchor.group.ko])ownQBuilder=ownQBuilder.contains('members',[memberKo]);
     const[ownQ,taggedQ,groupTagQ,reverseGroupTagQ]=await Promise.all([
       ownQBuilder,
-      sb.from(_YT_TABLE).select('id,title,category,group_ko,members,with_members,content_flag').contains('with_members',[withKey]),
+      sb.from(_YT_TABLE).select('id,title,category,is_short,group_ko,members,with_members,content_flag').contains('with_members',[withKey]),
       // 아이유의 팔레트, 뉴진스편처럼 개별 멤버가 아니라 그룹 전체가 with_groups로 태깅된 내 채널 영상
-      sb.from(_YT_TABLE).select('id,title,category,group_ko,members,with_groups,content_flag').eq('group_ko',groupKo).not('with_groups','eq','{}'),
+      sb.from(_YT_TABLE).select('id,title,category,is_short,group_ko,members,with_groups,content_flag').eq('group_ko',groupKo).not('with_groups','eq','{}'),
       // 반대 방향: 다른 채널(예: 아이유)이 내 그룹 전체를 with_groups로 태깅한 경우 — 이게 없으면
       // 그룹으로 태깅된 쪽(예: (여자)아이들 개별 멤버)에는 이 콜라보가 전혀 안 보이는 비대칭이 생김.
       // members도 같이 받아온다 — 아래에서 그 채널 자체 멤버 매칭 결과가 있으면 로스터 전체 대신
       // 그걸로 좁히는 데 씀(2026-08-04).
-      sb.from(_YT_TABLE).select('id,title,category,group_ko,members,with_groups,content_flag').contains('with_groups',[anchor.group.ko])
+      sb.from(_YT_TABLE).select('id,title,category,is_short,group_ko,members,with_groups,content_flag').contains('with_groups',[anchor.group.ko])
     ]);
     if(ownQ.error)throw new Error(ownQ.error.message);
     if(taggedQ.error)throw new Error(taggedQ.error.message);
@@ -5719,11 +5730,11 @@ async function _fetchApiCollabData(anchor){
     // → 다른 두 호출부와 동일하게 fire-and-forget으로 바꿔서 song 조립을 안 막게 함. 대신 URL 형식이
     // (shorts/ vs watch?v=) 이번 로드에서는 옛 category 그대로 반영될 수 있음 — DB는 백그라운드로
     // 갱신되니 다음에 카드를 다시 열면 정확해짐(사소한 정확도보다 버튼이 바로 뜨는 게 우선).
-    const uncertain=[...rows,...groupTagRows,...reverseGroupTagRows].filter(v=>v.category!=='short');
+    const uncertain=[...rows,...groupTagRows,...reverseGroupTagRows].filter(v=>!_isShortV(v));
     if(uncertain.length){
       _probeShortsBatch(uncertain).then(correctedIds=>{
         if(correctedIds.length){
-          sb.from(_YT_TABLE).update({category:'short'}).in('id',correctedIds).then(({error})=>{
+          sb.from(_YT_TABLE).update({is_short:true}).in('id',correctedIds).then(({error})=>{
             if(error)console.error('연결 카드 쇼츠 분류 보정 저장 실패',error.message);
           });
         }
@@ -5759,7 +5770,7 @@ async function _fetchApiCollabData(anchor){
       // "그룹 통째 태깅" 조회 양쪽에 걸려 _dedupSongs에서 병합될 때 이 boolean이 유실되면서(with는 합쳐지는데
       // 플래그는 안 합쳐짐) 확정 안 된 멤버까지 확정된 것처럼 보이는 버그가 있었음(2026-08-10, 코르티스
       // 성현×베이비몬스터 사례로 발견) — 이름 단위 Set으로 바꿔서 병합 시에도 정확히 유지되게 함.
-      const song={t:v.title,u:v.category==='short'?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`,with:withList,_apiId:v.id,_apiGroupKo:v.group_ko,_groupWideNames:new Set(withList),content_flag:v.content_flag||null};
+      const song={t:v.title,u:_isShortV(v)?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`,with:withList,_apiId:v.id,_apiGroupKo:v.group_ko,_groupWideNames:new Set(withList),content_flag:v.content_flag||null};
       if(v.category==='mv')song.type='mv';
       else if(v.category==='other')song.type='other';
       withList.forEach(n=>names.add(n));
@@ -5798,7 +5809,7 @@ async function _fetchApiCollabData(anchor){
         withList=[`${solo.name.ko}(${solo.group.ko})`];
         groupWide=false;
       }
-      const song={t:v.title,u:v.category==='short'?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`,with:withList,_apiId:v.id,_apiGroupKo:v.group_ko,_groupWideNames:groupWide?new Set(withList):undefined,content_flag:v.content_flag||null};
+      const song={t:v.title,u:_isShortV(v)?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`,with:withList,_apiId:v.id,_apiGroupKo:v.group_ko,_groupWideNames:groupWide?new Set(withList):undefined,content_flag:v.content_flag||null};
       if(v.category==='mv')song.type='mv';
       else if(v.category==='other')song.type='other';
       withList.forEach(n=>names.add(n));
@@ -8494,7 +8505,7 @@ async function _filterGcVideosByTrack(title){
   overlay.classList.add('open');
   // 그룹 카드 영상 그리드가 쓰는 것과 동일한 노출 조건(무관/숨김 제외, 자체+게스트 태깅 포함)만
   // 그대로 재사용 — title_norm ilike로 정규화 매칭(대소문자·특수문자 차이 흡수).
-  const{data,error}=await sb.from(_YT_TABLE).select('id,title,thumb,category,published_at')
+  const{data,error}=await sb.from(_YT_TABLE).select('id,title,thumb,category,is_short,published_at')
     .or(`group_ko.eq.${_pgFilterVal(gko)},with_groups.cs.{${_pgFilterVal(gko)}}`)
     .or('content_flag.is.null,content_flag.neq.무관').or('content_flag.is.null,content_flag.neq.보류')
     .or('content_flag.is.null,content_flag.neq.hidden')
@@ -8505,7 +8516,7 @@ async function _filterGcVideosByTrack(title){
   if(error){listEl.innerHTML=`<div class="tvf-empty">${currentLang==='ko'?'불러오기 실패':'Failed to load'}</div>`;return;}
   if(!data||!data.length){listEl.innerHTML=`<div class="tvf-empty">${currentLang==='ko'?'관련 영상이 없어요':'No matching videos'}</div>`;return;}
   listEl.innerHTML='';
-  const _vidUrl=v=>v.category==='short'?`https://www.youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;
+  const _vidUrl=v=>_isShortV(v)?`https://www.youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;
   const playlist=data.map(v=>({t:v.title,u:_vidUrl(v),thumb:v.thumb,pa:v.published_at?.slice(0,10)}));
   data.forEach((v,i)=>{
     const item=document.createElement('div');item.className='tvf-item';
@@ -8514,7 +8525,7 @@ async function _filterGcVideosByTrack(title){
     const t=document.createElement('div');t.className='tvf-title';t.textContent=v.title;
     item.appendChild(img);item.appendChild(t);
     item.addEventListener('click',()=>{
-      openLightbox(_vidUrl(v),v.category==='short',playlist,i,{groupKo:gko});
+      openLightbox(_vidUrl(v),_isShortV(v),playlist,i,{groupKo:gko});
     });
     listEl.appendChild(item);
   });
@@ -13698,7 +13709,7 @@ document.getElementById('feed-list-overlay')?.addEventListener('pointerdown',e=>
 async function _fetchTopVideoThumb(gko,memberKo){
   if(!sb||!gko)return null;
   try{
-    let q=sb.from(_YT_TABLE).select('id,thumb,category');
+    let q=sb.from(_YT_TABLE).select('id,thumb,category,is_short');
     q=memberKo?q.eq('group_ko',gko).or(`members.eq.{},members.cs.{${_pgFilterVal(memberKo)}}`)
               :q.or(`group_ko.eq.${_pgFilterVal(gko)},with_groups.cs.{${_pgFilterVal(gko)}}`);
     q=q.or('content_flag.is.null,content_flag.neq.무관').or('content_flag.is.null,content_flag.neq.보류');
@@ -13706,7 +13717,7 @@ async function _fetchTopVideoThumb(gko,memberKo){
     q=q.or('content_flag.is.null,content_flag.neq.개별출연'); // 컴필레이션 클립이 대표 썸네일로 뽑히면 안 됨(2026-08-20)
     const{data,error}=await q.order('published_at',{ascending:false}).limit(12);
     if(error||!data?.length)return null;
-    const vidUrl=v=>v.category==='short'?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;
+    const vidUrl=v=>_isShortV(v)?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;
     const maxC=Math.max(0,...data.map(v=>_scrapCounts.get(vidUrl(v))||0));
     const top=maxC>0?data.filter(v=>(_scrapCounts.get(vidUrl(v))||0)===maxC):data;
     return top[Math.floor(Math.random()*top.length)]?.thumb||null;
@@ -13740,7 +13751,7 @@ async function _pickFeaturedVidFromDB(ko,memberKo,onlyMe,filter,viewMode,formatF
     }
     if(!candidateIds.length)return null;
     let q=sb.from(_YT_TABLE)
-      .select('id,title,thumb,category,content_flag,members,with_members,with_groups')
+      .select('id,title,thumb,category,is_short,content_flag,members,with_members,with_groups')
       .in('id',candidateIds)
       .or('content_flag.is.null,content_flag.neq.기타')
       .or('content_flag.is.null,content_flag.neq.무관').or('content_flag.is.null,content_flag.neq.보류')
@@ -13762,6 +13773,8 @@ async function _pickFeaturedVidFromDB(ko,memberKo,onlyMe,filter,viewMode,formatF
     }else if(filter==='variety'||filter==='show'){
       const _varTitleOr=filter==='variety'?',title_norm.ilike.*라디오스타*,title_norm.ilike.*아는형님*,title_norm.ilike.*아는 형님*,title_norm.ilike.*놀라운토요일*,title_norm.ilike.*전참시*':'';
       q=q.or(`category.eq.${filter},content_formats.cs.{${filter}}${_varTitleOr}`);
+    }else if(filter==='short'){
+      q=q.eq('is_short',true); // short는 장르가 아니라 형식 플래그(is_short_migration.sql) — category와 직교
     }else if(filter&&filter!=='all'){
       q=q.eq('category',filter);
     }
@@ -13782,7 +13795,7 @@ async function _pickFeaturedVidFromDB(ko,memberKo,onlyMe,filter,viewMode,formatF
     }
     const{data}=await q;
     if(!data?.length)return null;
-    const vidUrl=v=>v.category==='short'?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;
+    const vidUrl=v=>_isShortV(v)?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;
     let best=null,bestC=0;
     for(const v of data){const c=_scrapCounts.get(vidUrl(v))||0;if(c>bestC){bestC=c;best=v;}}
     return bestC>0?best:null;
@@ -13954,7 +13967,7 @@ function _capByGroup(vids,keyFn,maxPerKey){
 // 해당 시간대 포맷에 영상이 없으면(그룹별로 편차 큼) 다음 포맷으로 넘어가며 찾는다.
 async function _buildFeedFormatPick(list,offset){
   if(!sb)return;
-  const vidUrl=v=>v.category==='short'?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;
+  const vidUrl=v=>_isShortV(v)?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;
   // offset: 무한스크롤로 다시 부를 때(_loadMoreFeedDiscovery) 매번 늘려서, 같은 시간대 안에서도 순환이
   // 계속 앞으로 진행되게 함(안 그러면 hourIdx만 쓸 때 같은 시간 안엔 항상 같은 포맷이 다시 뽑힘) — 2026-08-19.
   const hourIdx=Math.floor(Date.now()/3600000)+(offset||0);
@@ -13963,7 +13976,7 @@ async function _buildFeedFormatPick(list,offset){
     if(_feedRotUsed('fmt').has(fmt))continue; // 무한스크롤 offset이 겹쳐도 같은 포맷 재노출 방지(2026-08-21)
     try{
       const{data,error}=await sb.from(_YT_TABLE)
-        .select('id,title,thumb,category,content_flag,group_ko,members,view_count,published_at')
+        .select('id,title,thumb,category,is_short,content_flag,group_ko,members,view_count,published_at')
         .contains('content_formats',[fmt])
         .or('content_flag.is.null,content_flag.neq.기타')
         .or('content_flag.is.null,content_flag.neq.무관').or('content_flag.is.null,content_flag.neq.보류')
@@ -14009,7 +14022,7 @@ const _GEN_CAM_COMBOS=[1,2,3,4,5].flatMap(gen=>
 );
 async function _buildFeedGenCamPick(list,offset){
   if(!sb)return;
-  const vidUrl=v=>v.category==='short'?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;
+  const vidUrl=v=>_isShortV(v)?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;
   // offset: 위 _buildFeedFormatPick과 동일 이유(2026-08-19 무한스크롤 지원)
   const hourIdx=Math.floor(Date.now()/3600000)+(offset||0);
   for(let i=0;i<_GEN_CAM_COMBOS.length;i++){
@@ -14022,7 +14035,7 @@ async function _buildFeedGenCamPick(list,offset){
     if(!groupKos.length)continue;
     try{
       const{data,error}=await sb.from(_YT_TABLE)
-        .select('id,title,thumb,category,content_flag,group_ko,members,view_count,published_at')
+        .select('id,title,thumb,category,is_short,content_flag,group_ko,members,view_count,published_at')
         .in('group_ko',groupKos)
         .overlaps('content_formats',_CAM_FORMATS)
         .or('content_flag.is.null,content_flag.neq.기타')
@@ -14074,7 +14087,7 @@ async function _fetchPrevRanks(chartType){
 }
 async function _buildFeedWeeklyTopCams(list,discList){
   if(!sb)return;
-  const vidUrl=v=>v.category==='short'?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;
+  const vidUrl=v=>_isShortV(v)?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;
   const sinceDate=new Date(Date.now()-7*86400000).toISOString().slice(0,10);
   const sinceDate30=new Date(Date.now()-30*86400000).toISOString().slice(0,10);
   const _fmtN=n=>n>=1000000?Math.floor(n/1000000)+'M':n>=1000?Math.floor(n/1000)+'K':String(n);
@@ -14082,7 +14095,7 @@ async function _buildFeedWeeklyTopCams(list,discList){
     rankDelta:prevRanks===undefined?undefined:(prevRanks[v.id]!=null?prevRanks[v.id]-(i+1):null)}));
   try{
     const{data,error}=await sb.from(_YT_TABLE)
-      .select('id,title,thumb,category,content_flag,group_ko,members,view_count,published_at')
+      .select('id,title,thumb,category,is_short,content_flag,group_ko,members,view_count,published_at')
       .eq('category','live')
       .gte('published_at',sinceDate)
       .not('view_count','is',null)
@@ -14130,7 +14143,7 @@ async function _buildFeedWeeklyTopCams(list,discList){
   // 어색하다고 해서 폐기, 그룹 전체로 필터링하지 않고 그냥 기간을 늘린 별도 차트로 단순화).
   try{
     const{data,error}=await sb.from(_YT_TABLE)
-      .select('id,title,thumb,category,content_flag,group_ko,members,view_count,published_at')
+      .select('id,title,thumb,category,is_short,content_flag,group_ko,members,view_count,published_at')
       .eq('category','live')
       .gte('published_at',sinceDate30)
       .not('view_count','is',null)
@@ -14157,12 +14170,12 @@ async function _buildFeedWeeklyTopCams(list,discList){
 // 조회수 데이터는 관리자가 "전체 조회수 갱신" 버튼으로 갱신 (월 1회 권장). 데이터 없으면 카드 미표시.
 async function _buildFeedYearlyTop(list){
   if(!sb)return;
-  const vidUrl=v=>v.category==='short'?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;
+  const vidUrl=v=>_isShortV(v)?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;
   const currentYear=new Date().getFullYear();
   const year=2004+Math.floor(Math.random()*(currentYear-2004+1));
   try{
     const{data,error}=await sb.from(_YT_TABLE)
-      .select('id,title,thumb,category,content_flag,view_count,published_at')
+      .select('id,title,thumb,category,is_short,content_flag,view_count,published_at')
       .eq('category','live')
       .gte('published_at',`${year}-01-01`)
       .lt('published_at',`${year+1}-01-01`)
@@ -14187,10 +14200,10 @@ async function _buildFeedYearlyTop(list){
 // 패널 열 때 한 번만(3분 TTL) 뽑히는 초기 카드로만 둔다 — 반복 호출해도 새로울 게 없어서.
 async function _buildFeedLegend100(list){
   if(!sb)return;
-  const vidUrl=v=>v.category==='short'?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;
+  const vidUrl=v=>_isShortV(v)?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;
   try{
     const{data,error}=await sb.from(_YT_TABLE)
-      .select('id,title,thumb,category,content_flag,view_count,published_at')
+      .select('id,title,thumb,category,is_short,content_flag,view_count,published_at')
       .eq('category','live')
       .not('view_count','is',null)
       .or('content_flag.is.null,content_flag.neq.기타')
@@ -14216,7 +14229,7 @@ async function _buildFeedLegend100(list){
 // 고정이므로 무한스크롤 반복 풀에는 안 넣음(세대별 카드만 예외 — 아래 참고).
 async function _fetchSoloFancamPool(groupKos,fetchLimit){
   let q=sb.from(_YT_TABLE)
-    .select('id,title,thumb,category,content_flag,group_ko,members,view_count,published_at')
+    .select('id,title,thumb,category,is_short,content_flag,group_ko,members,view_count,published_at')
     .eq('category','live')
     .not('view_count','is',null)
     .or('content_flag.is.null,content_flag.neq.기타')
@@ -14232,7 +14245,7 @@ async function _fetchSoloFancamPool(groupKos,fetchLimit){
 }
 async function _buildFeedSoloCamTop100(list,opts){
   if(!sb)return;
-  const vidUrl=v=>v.category==='short'?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;
+  const vidUrl=v=>_isShortV(v)?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;
   try{
     const vids=(await _fetchSoloFancamPool(opts.groupKos,1000)).slice(0,100);
     if(vids.length<10)return; // 후보가 너무 적으면(세부 필터라 그룹 나눌수록 적어짐) 카드 자체를 생략
@@ -14259,7 +14272,7 @@ function _buildFeedBoyGroupSoloCam(list){
 // 점만 다름 — 결과가 매 시간 바뀌므로(오프셋 증가 시 다음 조합으로) 무한스크롤 반복 풀 대상.
 async function _buildFeedGenSoloCamTop(list,offset){
   if(!sb)return;
-  const vidUrl=v=>v.category==='short'?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;
+  const vidUrl=v=>_isShortV(v)?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;
   const hourIdx=Math.floor(Date.now()/3600000)+(offset||0);
   for(let i=0;i<_GEN_CAM_COMBOS.length;i++){
     const{gen,gender}=_GEN_CAM_COMBOS[(hourIdx+i)%_GEN_CAM_COMBOS.length];
@@ -14290,7 +14303,7 @@ async function _buildFeedGenSoloCamTop(list,offset){
 // (기존 "Trend" 카드의 _capByGroup 재사용).
 async function _fetchStagePool(groupKos,fetchLimit,capPerGroup){
   let q=sb.from(_YT_TABLE)
-    .select('id,title,thumb,category,content_flag,group_ko,members,view_count,published_at')
+    .select('id,title,thumb,category,is_short,content_flag,group_ko,members,view_count,published_at')
     .eq('category','live')
     .not('view_count','is',null)
     .or('content_flag.is.null,content_flag.neq.기타')
@@ -14307,7 +14320,7 @@ async function _fetchStagePool(groupKos,fetchLimit,capPerGroup){
 }
 async function _buildFeedStageTop100(list,opts){
   if(!sb)return;
-  const vidUrl=v=>v.category==='short'?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;
+  const vidUrl=v=>_isShortV(v)?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;
   try{
     const vids=(await _fetchStagePool(opts.groupKos,1000,15)).slice(0,100);
     if(vids.length<10)return;
@@ -14328,7 +14341,7 @@ function _buildFeedBoyGroupStage(list){
 }
 async function _buildFeedGenStageTop(list,offset){
   if(!sb)return;
-  const vidUrl=v=>v.category==='short'?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;
+  const vidUrl=v=>_isShortV(v)?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;
   const hourIdx=Math.floor(Date.now()/3600000)+(offset||0);
   for(let i=0;i<_GEN_CAM_COMBOS.length;i++){
     const{gen,gender}=_GEN_CAM_COMBOS[(hourIdx+i)%_GEN_CAM_COMBOS.length];
@@ -14364,7 +14377,7 @@ async function _buildFeedGenStageTop(list,offset){
 //    클라이언트에서 처리(PostgREST 중첩 and/not 문자열보다 안전).
 async function _fetchFestivalPool(applyFilter,postFilter,fetchLimit,capPerGroup,sortByViews){
   let q=sb.from(_YT_TABLE)
-    .select('id,title,thumb,category,group_ko,view_count,published_at')
+    .select('id,title,thumb,category,is_short,group_ko,view_count,published_at')
     .not('view_count','is',null)
     .or('content_flag.is.null,content_flag.neq.기타')
     .or('content_flag.is.null,content_flag.neq.무관').or('content_flag.is.null,content_flag.neq.보류')
@@ -14383,7 +14396,7 @@ async function _fetchFestivalPool(applyFilter,postFilter,fetchLimit,capPerGroup,
 }
 async function _buildFeedFestival(list,opts){
   if(!sb)return;
-  const vidUrl=v=>v.category==='short'?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;
+  const vidUrl=v=>_isShortV(v)?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;
   try{
     const vids=(await _fetchFestivalPool(opts.filter,opts.postFilter,1000,15,opts.sortByViews)).slice(0,200);
     if(vids.length<10)return;
@@ -14481,7 +14494,7 @@ function _feedRankSub(label,vc,fallback,forceRank){
 }
 async function _fetchGroupVideoPool(groupKos,fetchLimit){
   const{data,error}=await sb.from(_YT_TABLE)
-    .select('id,title,thumb,category,group_ko,view_count,published_at')
+    .select('id,title,thumb,category,is_short,group_ko,view_count,published_at')
     .not('view_count','is',null)
     .or('content_flag.is.null,content_flag.neq.기타')
     .or('content_flag.is.null,content_flag.neq.무관').or('content_flag.is.null,content_flag.neq.보류')
@@ -14498,7 +14511,7 @@ async function _renderBsideCard(list,groupKos,icon,labelKo,labelEn,fetchLimit,ca
   if(!vids.length)return false;
   const stages=_capByGroup(_bsideStagesFromVideos(vids),v=>v.group_ko,capPerGroup).slice(0,200);
   if(stages.length<_BSIDE_MIN)return false;
-  const vidUrl=v=>v.category==='short'?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;
+  const vidUrl=v=>_isShortV(v)?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;
   const songs=stages.map(v=>({t:v.title,u:vidUrl(v),thumb:v.thumb,vc:v.view_count,pa:v.published_at?.slice(0,10)}));
   const label=currentLang==='ko'?labelKo:labelEn;
   const top1=stages[0];
@@ -14547,7 +14560,7 @@ async function _buildFeedGenBsideStages(list,offset){
 const _COVER_MIN=6; // 이 개수 미만이면 카드 안 만들고 다음 후보로
 async function _fetchCoverPool(groupKos,fetchLimit){
   const{data,error}=await sb.from(_YT_TABLE)
-    .select('id,title,thumb,category,group_ko,view_count,published_at')
+    .select('id,title,thumb,category,is_short,group_ko,view_count,published_at')
     .not('view_count','is',null)
     .or('content_flag.is.null,content_flag.neq.기타')
     .or('content_flag.is.null,content_flag.neq.무관').or('content_flag.is.null,content_flag.neq.보류')
@@ -14561,7 +14574,7 @@ async function _fetchCoverPool(groupKos,fetchLimit){
 async function _renderCoverCard(list,groupKos,icon,labelKo,labelEn,fetchLimit,capPerGroup){
   const vids=_capByGroup(await _fetchCoverPool(groupKos,fetchLimit),v=>v.group_ko,capPerGroup).slice(0,200);
   if(vids.length<_COVER_MIN)return false;
-  const vidUrl=v=>v.category==='short'?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;
+  const vidUrl=v=>_isShortV(v)?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;
   const songs=vids.map(v=>({t:v.title,u:vidUrl(v),thumb:v.thumb,vc:v.view_count,pa:v.published_at?.slice(0,10)}));
   const label=currentLang==='ko'?labelKo:labelEn;
   const top1=vids[0];
@@ -14626,7 +14639,7 @@ async function _buildFeedCoverSpotlight(list){
   if(!sb)return;
   try{
     const{data,error}=await sb.from(_YT_TABLE)
-      .select('id,title,thumb,category,content_flag,group_ko,cover_of_members,cover_of_groups,published_at')
+      .select('id,title,thumb,category,is_short,content_flag,group_ko,cover_of_members,cover_of_groups,published_at')
       .or('cover_of_members.neq.{},cover_of_groups.neq.{}')
       .or('content_flag.is.null,content_flag.neq.기타')
       .or('content_flag.is.null,content_flag.neq.무관').or('content_flag.is.null,content_flag.neq.보류')
@@ -14636,15 +14649,15 @@ async function _buildFeedCoverSpotlight(list){
     const vids=_filterBannedVideos(data).filter(v=>(v.cover_of_members?.length)||(v.cover_of_groups?.length));
     if(!vids.length)return;
     const v=vids[Math.floor(Math.random()*vids.length)];
-    const vidUrl=v.category==='short'?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;
+    const vidUrl=_isShortV(v)?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;
     const label=_cleanTitle(v.title);
     const sub=(currentLang==='ko'?'원곡: ':'Original: ')+_feedFormatNameList(v.cover_of_members,v.cover_of_groups);
     // 다른 두 모아보기 카드와 달리 목록 팝업이 아니라 영상 하나짜리 스포트라이트라 라이트박스를 바로
     // 여는 게 자연스러움 — insertBefore/_feedNav 안 쓰는 이유는 위 _buildFeedFormatPick과 동일하게,
     // 탐험 탭을 안 닫고 그 위에 그냥 라이트박스만 띄우기 위함(2026-08-06).
     _appendFeedCard(list,'🎤',label,sub,()=>{
-      openLightbox(vidUrl,v.category==='short',[{t:v.title,u:vidUrl,thumb:v.thumb,pa:v.published_at?.slice(0,10)}],0,{groupKo:v.group_ko});
-    },v.thumb,null,{wide:v.category!=='short',short:v.category==='short'});
+      openLightbox(vidUrl,_isShortV(v),[{t:v.title,u:vidUrl,thumb:v.thumb,pa:v.published_at?.slice(0,10)}],0,{groupKo:v.group_ko});
+    },v.thumb,null,{wide:!_isShortV(v),short:_isShortV(v)});
   }catch(e){/* 조용히 무시 */}
 }
 // 급상승 하트 영상 — YouTube API view_count 동기화(관리자가 눌러줘야만 채워짐)에 의존하지 않고, 앱
@@ -14660,7 +14673,7 @@ async function _buildFeedTrendingHearts(list){
     const ids=[...new Set(topUrls.map(([url])=>idOf(url)).filter(Boolean))];
     if(!ids.length)return;
     const{data,error}=await sb.from(_YT_TABLE)
-      .select('id,title,thumb,category,content_flag,published_at')
+      .select('id,title,thumb,category,is_short,content_flag,published_at')
       .in('id',ids)
       .or('content_flag.is.null,content_flag.neq.기타')
       .or('content_flag.is.null,content_flag.neq.무관').or('content_flag.is.null,content_flag.neq.보류')
@@ -14669,18 +14682,18 @@ async function _buildFeedTrendingHearts(list){
     const vids=_filterBannedVideos(data);
     if(!vids.length)return;
     const countOf=v=>{
-      const url=v.category==='short'?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;
+      const url=_isShortV(v)?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;
       return _scrapCounts.get(url)||0;
     };
     vids.sort((a,b)=>countOf(b)-countOf(a));
     const top=vids[0];
     if(countOf(top)<=0)return;
-    const vidUrl=top.category==='short'?`https://youtube.com/shorts/${top.id}`:`https://www.youtube.com/watch?v=${top.id}`;
+    const vidUrl=_isShortV(top)?`https://youtube.com/shorts/${top.id}`:`https://www.youtube.com/watch?v=${top.id}`;
     const label=_cleanTitle(top.title);
     const sub=(currentLang==='ko'?`❤️ ${countOf(top)}개 · 인기 급상승`:`❤️ ${countOf(top)} · trending`);
     _appendFeedCard(list,'🔥',label,sub,()=>{
-      openLightbox(vidUrl,top.category==='short',[{t:top.title,u:vidUrl,thumb:top.thumb,pa:top.published_at?.slice(0,10)}],0,{});
-    },top.thumb,null,{wide:top.category!=='short',short:top.category==='short'});
+      openLightbox(vidUrl,_isShortV(top),[{t:top.title,u:vidUrl,thumb:top.thumb,pa:top.published_at?.slice(0,10)}],0,{});
+    },top.thumb,null,{wide:!_isShortV(top),short:_isShortV(top)});
   }catch(e){/* 조용히 무시 */}
 }
 // 콜라보 스포트라이트 — with_members/with_groups(다른 그룹 게스트 출연)가 태깅된 영상을 직접 카드로
@@ -14690,7 +14703,7 @@ async function _buildFeedCollabSpotlight(list){
   if(!sb)return;
   try{
     const{data,error}=await sb.from(_YT_TABLE)
-      .select('id,title,thumb,category,content_flag,group_ko,with_members,with_groups,published_at')
+      .select('id,title,thumb,category,is_short,content_flag,group_ko,with_members,with_groups,published_at')
       .or('with_members.neq.{},with_groups.neq.{}')
       .or('content_flag.is.null,content_flag.neq.기타')
       .or('content_flag.is.null,content_flag.neq.무관').or('content_flag.is.null,content_flag.neq.보류')
@@ -14704,12 +14717,12 @@ async function _buildFeedCollabSpotlight(list){
     const vids=_filterBannedVideos(data).filter(v=>(v.with_members?.length)||(v.with_groups?.length));
     if(!vids.length)return;
     const v=vids[Math.floor(Math.random()*vids.length)];
-    const vidUrl=v.category==='short'?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;
+    const vidUrl=_isShortV(v)?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;
     const label=_cleanTitle(v.title);
     const sub=`${v.group_ko} × ${_feedFormatNameList(v.with_members,v.with_groups)}`;
     _appendFeedCard(list,'🤝',label,sub,()=>{
-      openLightbox(vidUrl,v.category==='short',[{t:v.title,u:vidUrl,thumb:v.thumb,pa:v.published_at?.slice(0,10)}],0,{groupKo:v.group_ko});
-    },v.thumb,null,{wide:v.category!=='short',short:v.category==='short'});
+      openLightbox(vidUrl,_isShortV(v),[{t:v.title,u:vidUrl,thumb:v.thumb,pa:v.published_at?.slice(0,10)}],0,{groupKo:v.group_ko});
+    },v.thumb,null,{wide:!_isShortV(v),short:_isShortV(v)});
   }catch(e){/* 조용히 무시 */}
 }
 // N년도 데뷔 그룹 모아보기 — 위 연도별 TOP 100(조회수가 앵커)과 달리 "데뷔연도"가 앵커라 다른 재미(그
@@ -14730,7 +14743,7 @@ async function _buildFeedDebutYearPick(list,offset){
   if(!sb)return;
   const years=_debutYearGroups();
   if(!years.length)return;
-  const vidUrl=v=>v.category==='short'?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;
+  const vidUrl=v=>_isShortV(v)?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;
   // offset: 위 _buildFeedFormatPick과 동일 이유(2026-08-19 무한스크롤 지원)
   const hourIdx=Math.floor(Date.now()/3600000)+(offset||0);
   for(let i=0;i<years.length;i++){
@@ -14738,7 +14751,7 @@ async function _buildFeedDebutYearPick(list,offset){
     if(_feedRotUsed('debutYear').has(year))continue; // 무한스크롤 offset 겹침으로 인한 재노출 방지(2026-08-21)
     try{
       const{data,error}=await sb.from(_YT_TABLE)
-        .select('id,title,thumb,category,content_flag,group_ko,members,view_count,published_at')
+        .select('id,title,thumb,category,is_short,content_flag,group_ko,members,view_count,published_at')
         .in('group_ko',groupKos)
         .eq('category','live')
         .or('content_flag.is.null,content_flag.neq.기타')
@@ -14778,7 +14791,7 @@ async function _buildFeedHiddenGem(list){
     const ids=[...new Set(candidates.map(([url])=>idOf(url)).filter(Boolean))];
     if(!ids.length)return;
     const{data,error}=await sb.from(_YT_TABLE)
-      .select('id,title,thumb,category,content_flag,group_ko,view_count,published_at')
+      .select('id,title,thumb,category,is_short,content_flag,group_ko,view_count,published_at')
       .in('id',ids)
       .not('view_count','is',null)
       .lte('view_count',_HIDDEN_GEM_MAX_VIEWS)
@@ -14789,16 +14802,16 @@ async function _buildFeedHiddenGem(list){
     const vids=_filterBannedVideos(data);
     if(!vids.length)return;
     const heartsOf=v=>{
-      const url=v.category==='short'?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;
+      const url=_isShortV(v)?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;
       return _scrapCounts.get(url)||0;
     };
     vids.sort((a,b)=>heartsOf(b)-heartsOf(a));
     const top=vids[0];
-    const vidUrl=top.category==='short'?`https://youtube.com/shorts/${top.id}`:`https://www.youtube.com/watch?v=${top.id}`;
+    const vidUrl=_isShortV(top)?`https://youtube.com/shorts/${top.id}`:`https://www.youtube.com/watch?v=${top.id}`;
     const label=_cleanTitle(top.title);
     const sub=currentLang==='ko'?`❤️ ${heartsOf(top)}개 · 숨은 명무대`:`❤️ ${heartsOf(top)} · Hidden gem`;
     _appendFeedCard(list,'💎',label,sub,()=>{
-      openLightbox(vidUrl,top.category==='short',[{t:top.title,u:vidUrl,thumb:top.thumb,pa:top.published_at?.slice(0,10)}],0,{groupKo:top.group_ko});
+      openLightbox(vidUrl,_isShortV(top),[{t:top.title,u:vidUrl,thumb:top.thumb,pa:top.published_at?.slice(0,10)}],0,{groupKo:top.group_ko});
     },top.thumb);
   }catch(e){/* 조용히 무시 */}
 }
@@ -14817,12 +14830,12 @@ async function _buildFeedThrowbackToday(list){
   for(let y=now.getFullYear()-1;y>=2004;y--)years.push(y);
   if(!years.length)return;
   const hourIdx=Math.floor(Date.now()/3600000);
-  const vidUrl=v=>v.category==='short'?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;
+  const vidUrl=v=>_isShortV(v)?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;
   for(let i=0;i<years.length;i++){
     const year=years[(hourIdx+i)%years.length];
     try{
       const{data,error}=await sb.from(_YT_TABLE)
-        .select('id,title,thumb,category,content_flag,group_ko,published_at')
+        .select('id,title,thumb,category,is_short,content_flag,group_ko,published_at')
         .eq('category','live')
         .gte('published_at',`${year}-${mm}-${dd}`)
         .lt('published_at',`${year+yearRollover}-${nmm}-${ndd}`)
@@ -14838,7 +14851,7 @@ async function _buildFeedThrowbackToday(list){
       const label=_cleanTitle(v.title);
       const sub=currentLang==='ko'?`${year}년 오늘`:`${year}, today`;
       _appendFeedCard(list,'🕰️',label,sub,()=>{
-        openLightbox(vUrl,v.category==='short',[{t:v.title,u:vUrl,thumb:v.thumb,pa:v.published_at?.slice(0,10)}],0,{groupKo:v.group_ko});
+        openLightbox(vUrl,_isShortV(v),[{t:v.title,u:vUrl,thumb:v.thumb,pa:v.published_at?.slice(0,10)}],0,{groupKo:v.group_ko});
       },v.thumb);
       return;
     }catch(e){/* 다음 연도로 */}
@@ -15393,7 +15406,7 @@ function _makeChVidController(contId){
     if(!wrap||!sb)return;
     wrap.innerHTML='';wrap.style.display='none';
     try{
-      const _cols='id,title,category,group_ko,members,with_members,with_groups,cover_of_members,cover_of_groups,content_flag';
+      const _cols='id,title,category,is_short,group_ko,members,with_members,with_groups,cover_of_members,cover_of_groups,content_flag';
       // 멤버 카드는 본인 원곡(cover_of_members)뿐 아니라 **본인이 속한 프로젝트 유닛**이 원곡자로
       // 지정된 커버도 같이 보여준다(2026-08-25, 사용자 요청). NCT U처럼 곡마다 참여자가 바뀌는 유닛은
       // 곡별 참여자를 태깅하기 어려워서, 유닛 커버는 그 유닛 소속 멤버 카드 전체에 노출하는 쪽으로
@@ -15470,7 +15483,7 @@ function _makeChVidController(contId){
     const nodes=[];
     const pendingProbe=[];
     vids.forEach(v=>{
-      const isShort=v.category==='short';
+      const isShort=_isShortV(v);
       const item=document.createElement('div');
       item.className='gc-ch-item'+(isShort?' is-short':'')+(v._featured?' featured':'')+(v._wide?' gc-ch-wide':'');
       item.dataset.vidId=v.id;
@@ -15500,7 +15513,7 @@ function _makeChVidController(contId){
       item.appendChild(img);item.appendChild(tEl);
       // 쇼츠는 URL 자체를 /shorts/ 형식으로 만들어야 스크랩/컬렉션으로 저장되거나 라이트박스에서 스와이프로
       // 넘어갔을 때(isShorts(url) 판별)도 세로 비율이 계속 유지됨 — watch?v= 로 통일해버리면 그 정보가 사라짐.
-      const _vidUrl=vv=>vv.category==='short'?`https://www.youtube.com/shorts/${vv.id}`:`https://www.youtube.com/watch?v=${vv.id}`;
+      const _vidUrl=vv=>_isShortV(vv)?`https://www.youtube.com/shorts/${vv.id}`:`https://www.youtube.com/watch?v=${vv.id}`;
       const vidUrl=_vidUrl(v);
       // _apiGroupKo/_apiMemberKos: 스크랩/컬렉션 버튼이 이 영상의 실제 DB 태그(v.members)를 그대로
       // 실어 보내도록 함 — 예전엔 이 필드가 아예 없어서 그리드 썸네일에서 바로 컬렉션에 담으면(라이트박스를
@@ -15589,7 +15602,7 @@ function _makeChVidController(contId){
   async function settlePage({myGen,grid,pageItems,featured,pageStartPos,pageStartCat,pageNodes,pendingProbe,hasMore,incomingTrailingEl}){
     const correctedIds=await _probeShortsBatch(pendingProbe);
     if(correctedIds.length&&sb){
-      sb.from(_YT_TABLE).update({category:'short'}).in('id',correctedIds).then(({error})=>{
+      sb.from(_YT_TABLE).update({is_short:true}).in('id',correctedIds).then(({error})=>{
         if(error)console.error('쇼츠 분류 보정 저장 실패',error.message);
       });
     }
@@ -15670,7 +15683,7 @@ function _makeChVidController(contId){
       // 끌어오는데(아래 memberKo 분기), 그런 행의 실제 소속은 카드 자체 그룹(ko)과 다를 수 있음.
       // group_ko가 없으면 "함께한 멤버" 표기와 편집 버튼의 소속 그룹이 전부 카드 자체 그룹으로 잘못
       // 표시됨(2026-08-04, 사용자 제보 — 성현 카드에서 투바투 게스트 영상이 코르티스로 잘못 뜨던 문제).
-      const selectCols='id,title,thumb,category,content_flag,group_ko,members,with_members,with_groups,cover_of_members,cover_of_groups,published_at,view_count';
+      const selectCols='id,title,thumb,category,is_short,content_flag,group_ko,members,with_members,with_groups,cover_of_members,cover_of_groups,published_at,view_count';
       let q=forCount?sb.from(_YT_TABLE).select('id',{count:'exact',head:true})
         :(reset&&randomize)?sb.from(_YT_TABLE).select(selectCols,{count:'exact'})
         :sb.from(_YT_TABLE).select(selectCols);
@@ -15742,6 +15755,11 @@ function _makeChVidController(contId){
         // category(채널 tier 기반 레거시) OR content_formats(영상 단위 장르 태그) OR 제목 키워드 둘 다 체크
         const _varTitleOr=filter==='variety'?',title_norm.ilike.*라디오스타*,title_norm.ilike.*아는형님*,title_norm.ilike.*아는 형님*,title_norm.ilike.*놀라운토요일*,title_norm.ilike.*전참시*':'';
         q=q.or(`category.eq.${filter},content_formats.cs.{${filter}}${_varTitleOr}`);
+      }else if(filter==='short'){
+        // short는 장르가 아니라 형식 플래그(is_short_migration.sql) — category와 직교라서 세로 직캠은
+        // Live 탭과 Shorts 탭에 동시에 뜬다. 부분 인덱스 idx_ytv_is_short_group_published가 이 형태를
+        // 커버하므로 조건을 바꾸면 SQL 쪽 predicate도 같이 고칠 것.
+        q=q.eq('is_short',true);
       }else if(filter!=='all'){
         q=q.eq('category',filter);
       }
@@ -16114,6 +16132,7 @@ function _makeChVidController(contId){
         else if(v==='variety')q=q.or('category.eq.variety,content_formats.cs.{variety},title_norm.ilike.*라디오스타*,title_norm.ilike.*아는형님*,title_norm.ilike.*아는 형님*,title_norm.ilike.*놀라운토요일*,title_norm.ilike.*전참시*');
         else if(v==='live')q=q.or('category.eq.live,content_formats.cs.{live},title_norm.ilike.*리무진서비스*,title_norm.ilike.*리무진 서비스*');
         else if(v==='show')q=q.or('category.eq.show,content_formats.cs.{show}');
+        else if(v==='short')q=q.eq('is_short',true); // 형식 플래그(위 buildBaseQuery와 같은 기준)
         else q=q.eq('category',v);
         const{data}=await q;
         return{v,ok:!!(data?.length)};
@@ -16358,12 +16377,15 @@ function _makeChVidController(contId){
         const fmts=newRow.content_formats||[];
         const _varKeywords=['라디오스타','아는형님','아는 형님','놀라운토요일','전참시'];
         if(newRow.category!=='variety'&&!fmts.includes('variety')&&!_varKeywords.some(k=>t.includes(k)))stillQualifies=false;
+      }else if(state.filter==='short'){
+        // Shorts 탭은 장르(category)가 아니라 형식 플래그가 기준(2026-08-27 직교화)
+        if(!_isShortV(newRow))stillQualifies=false;
       }else if(newRow.category!==state.filter){
         stillQualifies=false;
       }
     }
     // 카드 비율(가로/세로)이 바뀌면 2열 짝맞춤이 어긋날 수 있어 안전하게 제거 쪽으로 처리
-    if(stillQualifies&&el.classList.contains('is-short')!==(newRow.category==='short'))stillQualifies=false;
+    if(stillQualifies&&el.classList.contains('is-short')!==(_isShortV(newRow)))stillQualifies=false;
     if(!stillQualifies){el.remove();return;}
     const titleEl=el.querySelector('.tv-sm-title');
     if(titleEl){
@@ -16853,7 +16875,7 @@ async function _probeShortsBatch(refs){
       const v=refs[idx++];
       const isPortrait=await _probeIsPortrait(v.id);
       if(!isPortrait)continue;
-      v.category='short';
+      v.is_short=true;
       correctedIds.push(v.id);
     }
   }
@@ -16872,7 +16894,7 @@ function _pickMainChVid(videos){
   const pool=videos.filter(v=>v.category!=='mv'&&v.category!=='other');
   const base=pool.length?pool:videos;
   // 쇼츠는 스크랩 URL이 watch?v=가 아니라 youtube.com/shorts/ 형식이라 조회 키를 category에 맞게 만들어야 함
-  const vidUrl=v=>v.category==='short'?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;
+  const vidUrl=v=>_isShortV(v)?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;
   const maxC=Math.max(0,...base.map(v=>_scrapCounts.get(vidUrl(v))||0));
   if(maxC>0){
     const top=base.filter(v=>(_scrapCounts.get(vidUrl(v))||0)===maxC);
@@ -16896,7 +16918,7 @@ function _groupGcVids(items,featured,startPos,startCat,avoidWiden,widenSomeShort
   let widenPrevTrailing=false;
   if(featured){
     renderList.push(featured);pos=0;cat=null;
-  }else if(pos===1&&items.length&&(items[0].category==='short'?'short':'norm')!==cat){
+  }else if(pos===1&&items.length&&(_isShortV(items[0])?'short':'norm')!==cat){
     widenPrevTrailing=true;pos=0;cat=null;
   }
   // avoidWiden(넓게보기 모드): 홀로 남은 카드를 2칸 폭으로 넓히면(특히 쇼츠) 카드 폭이 넓어진 만큼
@@ -16909,7 +16931,7 @@ function _groupGcVids(items,featured,startPos,startCat,avoidWiden,widenSomeShort
   const arr=(avoidWiden||avoidShortsWiden)?items.slice():items;
   for(let i=0;i<arr.length;i++){
     let v=arr[i];
-    let c=v.category==='short'?'short':'norm';
+    let c=_isShortV(v)?'short':'norm';
     // 가로(랜딩) 영상은 짝지을 수 있어도 일정 확률로 단독 2열폭 카드로 키워 썸네일 크기에 변화를 준다
     // (멤버 카드처럼 같은 카테고리가 쭉 이어질 때 계속 같은 크기로만 나오는 걸 막기 위함).
     // avoidWiden(카드 넓게 보기 모드)에선 이미 패널 자체가 넓어서 추가로 안 키운다.
@@ -16939,7 +16961,7 @@ function _groupGcVids(items,featured,startPos,startCat,avoidWiden,widenSomeShort
       let swapIdx=-1;
       if(avoidWiden||(avoidShortsWiden&&cat==='short')){
         for(let j=i+1;j<arr.length;j++){
-          if((arr[j].category==='short'?'short':'norm')===cat){swapIdx=j;break;}
+          if((_isShortV(arr[j])?'short':'norm')===cat){swapIdx=j;break;}
         }
       }
       if(swapIdx!==-1){
@@ -16997,7 +17019,7 @@ document.getElementById('user-bulk-col-btn')?.addEventListener('click',()=>{
   // 형태, 2026-08-14 추가)이 이 바를 같이 쓰므로 형태를 보고 갈라서 처리 — t와 u가 이미 있으면 그대로 씀.
   const videos=vids.map(v=>v.t&&v.u?v:({
     t:v.title,
-    u:v.category==='short'?`https://www.youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`,
+    u:_isShortV(v)?`https://www.youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`,
     thumb:v.thumb,groupKo:v.group_ko,memberKos:v._colMemberKos||v.members||[]
   }));
   window._userBulkExitFn?.();

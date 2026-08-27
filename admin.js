@@ -58,18 +58,27 @@ function _ytIsMcHosting(title){
   const s=title||'';
   return _YT_MC_HOST_RE.test(s)&&!_YT_MCND_RE.test(s)&&!_YT_FANCAM_RE.test(s);
 }
+// 제목만 보고 "세로(쇼츠)"를 주장하는지. 2026-08-27에 _ytClassify에서 분리해 나왔다 — short는 장르가
+// 아니라 **형식**이라 category(단일값 장르)와 직교해야 한다(is_short_migration.sql). 예전엔 여기서
+// 'short'를 반환하는 바람에 "#shorts 붙은 직캠"이 라이브 탭에서 통째로 사라졌다.
+// ⚠️ 이 판정은 어디까지나 보조다 — 제목에 shorts를 안 쓴 세로 영상이 훨씬 많고(2026-08-26 실측 ~2.8만
+//    건), 동기화 시점 썸네일 비율로는 원리적으로 못 잡는다. 실측 판별은 관리자 승격 스윕이 담당한다.
+function _ytIsShortTitle(title){
+  const t=(title||'').toUpperCase();
+  return /\bSHORTS?\b/.test(t)||/#SHORTS?/.test(t);
+}
 function _ytClassify(title){
   const t=(title||'').toUpperCase();
   if(/OFFICIAL\s+AUDIO|공식\s*음원/.test(t))return'skip';
   if(/\bTEASER\b|티저/.test(t))return'skip';
-  if(/\bSHORTS?\b/.test(t)||/#SHORTS?/.test(t))return'short';
   // "M/V"(슬래시 표기)를 놓치고 있었음 — M.V./MV/M V는 잡혔는데 슬래시형만 빠져서, 이렇게 쓴 진짜
   // 뮤직비디오가 mv로 안 걸러지고 live 등 다른 카테고리로 새서 무대/직캠 모음에 섞여 들어감
   // (2026-08-20, 사용자 제보 — 전소미 영상이 남돌 무대 모음에 낀 사고).
   if(/\bM[.\/]?V\.?\b|\bMUSIC\s+VIDEO\b|뮤직?\s*비디오|뮤비/.test(t))return'mv';
   if(_YT_BROADCAST_RE.test(t))return'other';
-  // MC 진행분은 라이브 판정보다 앞에서 걸러낸다(위 _ytIsMcHosting 주석 참고). 쇼츠 판정은 이 위에
-  // 있으므로 MC 쇼츠(90건)는 그대로 short로 남는다 — short는 장르가 아니라 포맷이라 유지가 맞다.
+  // MC 진행분은 라이브 판정보다 앞에서 걸러낸다(위 _ytIsMcHosting 주석 참고). 쇼츠 여부는 이제
+  // 이 함수와 무관한 별도 플래그(_ytIsShortTitle → is_short)라, MC 쇼츠도 여기선 그냥 other가 되고
+  // 세로 표시/Shorts 탭 노출은 플래그가 따로 챙긴다.
   if(_ytIsMcHosting(title))return'other';
   const looksPrerecorded=_YT_PRERECORDED_RE.test(t);
   if((!looksPrerecorded||_YT_STRONG_LIVE_RE.test(t))&&/\bLIVE\b|\bCONCERT\b|\bPERFORMANCE\b|\bFANCAM\b|라이브|직캠|팬캠/.test(t))return'live';
@@ -192,7 +201,11 @@ async function _ytFetchNewVideos(uploadsId,key,sinceId,onProg,startPageToken,cut
       // 판별에는 어차피 다 같은 비율이라 영향 없고, 용량만 가벼워짐.
       const hiTh=th.high||th.standard||th.maxres;
       const isShortThumb=!!(hiTh&&hiTh.height>hiTh.width);
-      let cat=isShortThumb?'short':_ytClassify(title);
+      // 세로 여부는 category가 아니라 is_short 플래그로 나간다(2026-08-27 직교화). 동기화 시점
+      // 썸네일 비율(isShortThumb)은 원리적으로 거의 항상 false지만, 제목의 #shorts 표기는 잡을 수 있어
+      // 둘을 OR로 묶는다 — 진짜 판별은 관리자 '가로→쇼츠 일괄 승격' 스윕이 oardefault 실측으로 한다.
+      const cat=_ytClassify(title);
+      const isShort=isShortThumb||_ytIsShortTitle(title);
       if(cat==='skip')continue;
       vids.push({
         id:vid,
@@ -200,7 +213,7 @@ async function _ytFetchNewVideos(uploadsId,key,sinceId,onProg,startPageToken,cut
         description:_decodeHtmlEntities(item.snippet.description||''), // part=snippet 응답에 이미 포함돼있던 걸 그냥 버렸었음 — 쿼터 추가 비용 없이 태깅 보조 텍스트로 재사용
         thumb:isShortThumb?(hiTh.url||th.medium?.url||''):(th.medium?.url||th.high?.url||th.default?.url||''),
         published_at:publishedAt,
-        category:cat
+        category:cat,is_short:isShort
       });
     }
     if(hit){done=true;pageToken='';break;}
@@ -1358,9 +1371,12 @@ async function _ytExtractCoverSongTitles(){
 // 재스캔 사고 재발 방지책). 어느 버튼이 어느 컬럼을 바꾸든 하나의 헬퍼로 커버하려고, 이 관리도구들이
 // 바꿀 수 있는 컬럼 전부를 고정 목록으로 떠둔다(안 바뀐 컬럼까지 복원해도 값이 같아 무해).
 const _BULK_SNAP_TABLE='admin_bulk_snapshots';
-const _BULK_SNAP_COLS=['group_ko','members','with_members','with_groups','content_flag','needs_review','cover_of_members','cover_of_groups','cover_of_song','tags_manual','category','reviewed_at'];
+const _BULK_SNAP_COLS=['group_ko','members','with_members','with_groups','content_flag','needs_review','cover_of_members','cover_of_groups','cover_of_song','tags_manual','category','is_short','reviewed_at'];
 let _snapHasReviewedAt=true;
-const _snapCols=()=>_snapHasReviewedAt?_BULK_SNAP_COLS:_BULK_SNAP_COLS.filter(c=>c!=='reviewed_at');
+// is_short도 같은 사정 — is_short_migration.sql 실행 전이면 컬럼이 없어서 스냅샷 select가 400을 낸다.
+// 스냅샷은 모든 일괄 작업의 전제라 여기서 막히면 일괄 기능이 통째로 죽으므로 한 번만 빼고 재시도한다.
+let _snapHasIsShort=true;
+const _snapCols=()=>_BULK_SNAP_COLS.filter(c=>(c!=='reviewed_at'||_snapHasReviewedAt)&&(c!=='is_short'||_snapHasIsShort));
 // 영향받는 id들의 "바꾸기 전" 값을 떠서 batch로 저장한다. 실패해도(테이블 없음/권한 등) 원래 작업은
 // 막지 않고 안내만 남긴다 — 스냅샷이 안 됐다고 관리도구 자체가 멈추면 안 됨(그만큼 되돌리기만 불가).
 // forceBatchId: 여러 번 나눠 호출해도 같은 batch로 묶고 싶을 때(예: 청크로 진행되는 쇼츠 승격 스윕의
@@ -1378,6 +1394,10 @@ async function _snapshotBeforeBulk(opLabel,ids,forceBatchId){
       // 통째로 막힌다 — 한 번만 컬럼을 빼고 재시도한 뒤 이후로는 뺀 목록을 쓴다(2026-08-25).
       if(error&&_snapHasReviewedAt&&/reviewed_at/.test(error.message||'')){
         _snapHasReviewedAt=false;
+        ({data:rows,error}=await sb.from(_YT_TABLE).select(['id',..._snapCols()].join(',')).in('id',chunk));
+      }
+      if(error&&_snapHasIsShort&&/is_short/.test(error.message||'')){
+        _snapHasIsShort=false;
         ({data:rows,error}=await sb.from(_YT_TABLE).select(['id',..._snapCols()].join(',')).in('id',chunk));
       }
       if(error)throw new Error(error.message);
@@ -1440,10 +1460,15 @@ async function _ytUndoLastBulk(){
 // 단어가 없는 진짜 방송 무대 영상이 other로 방치되는 문제가 대량으로 쌓여있었음(2026-08-06, 사용자 제보
 // + 실측 확인: 'other'인데 방송명이 있는 영상 최소 1만7천여 건, 'live'인데 "Performance Video"인 영상
 // 761건). _ytClassify 자체를 고친 뒤(위 참고) 이미 저장된 기존 행에도 소급 적용하는 재분류 스윕.
-// 쇼츠(category='short')는 제목이 아니라 썸네일 실측으로 판정하는 게 더 정확해서 이 스윕 대상에서 제외
-// (제목만으로 재분류하면 "OOO Live"라는 제목의 쇼츠가 다시 live로 되돌아가는 식의 역행이 생길 수 있음).
 // tags_manual=true(관리자가 태그 모달에서 직접 category를 저장한 행)는 다른 재검증 버튼들과 동일하게
 // 절대 건드리지 않음.
+//
+// ⚠️ 2026-08-27 직교화로 쇼츠 제외를 **없앴다**. 예전엔 category가 단일값이라 short와 장르가 배타적
+// 이었고, 그래서 "제목만으로 재분류하면 쇼츠가 live로 되돌아간다"는 이유로 쇼츠를 통째로 뺐었다. 지금은
+// 세로 여부가 is_short 플래그로 빠져나갔으므로(is_short_migration.sql) 쇼츠에도 장르를 붙이는 게 맞고,
+// 오히려 그래야 세로 직캠이 Live 탭에 뜬다. **is_short_migration.sql을 돌린 뒤 이 버튼을 한 번 실행하면
+// 기존 category='short' 약 84,286건의 장르 재추론(직교화 3단계)이 그대로 끝난다** — 별도 일회용 버튼을
+// 만들지 않은 이유가 이것이고, 되돌리기(category 스냅샷)도 이미 붙어 있다.
 async function _ytSweepCategoryMistag(){
   if(!sb){_ytSetProg('Supabase 연결 없음');return;}
   const btn=document.getElementById('sp-catfix-btn');
@@ -1451,24 +1476,23 @@ async function _ytSweepCategoryMistag(){
   try{
     _ytSetProg('[영상 카테고리 재분류] 조회 중…');
     const{data:rows,error}=await _sbFetchAll(()=>sb.from(_YT_TABLE)
-      .select('id,title,category')
+      .select('id,title,category,is_short')
       .eq('tags_manual',false)
-      .neq('category','short')
       .order('id'));
     if(error){_ytSetProg('조회 실패: '+error.message);return;}
     if(!rows?.length){_ytSetProg('검사할 영상이 없어요');return;}
     const updates=[];
     rows.forEach(v=>{
-      // 쇼츠는 제목이 아니라 썸네일 세로비율(동기화 시점)로만 판정한다 — 제목이 [MV]·라이브류여도
-      // 쇼츠면 쇼츠로 남겨야 탭 노출 비율이 맞음(2026-08-26 사용자 요청). 조회에서 이미 제외하지만
-      // 방어적으로 한 번 더 막는다 — 쇼츠는 이 버튼으로 절대 다른 카테고리로 안 옮긴다.
-      if(v.category==='short')return;
       const newCat=_ytClassify(v.title||'');
-      // skip은 동기화 시점에 "아예 저장하지 않는다"는 의미라 이미 저장된 행엔 적용 대상이 아니고,
-      // short는 위에서부터 조회 대상 자체를 제외했으므로(썸네일 실측 전용) 여기서도 만들지 않는다.
-      if(!newCat||newCat==='skip'||newCat==='short')return;
+      // skip은 동기화 시점에 "아예 저장하지 않는다"는 의미라 이미 저장된 행엔 적용 대상이 아니다.
+      // (_ytClassify는 2026-08-27부터 'short'를 반환하지 않는다 — 세로는 is_short 플래그 소관.)
+      if(!newCat||newCat==='skip')return;
       if(newCat===v.category)return;
-      updates.push({id:v.id,patch:{category:newCat}});
+      // 레거시 category='short' 행은 여기서 장르를 되찾는다. is_short는 SQL 백필로 이미 true이므로
+      // 건드리지 않는다 — 혹시 백필 전이면 같이 세워줘야 세로 표시가 안 끊긴다.
+      const patch={category:newCat};
+      if(v.category==='short'&&v.is_short!==true)patch.is_short=true;
+      updates.push({id:v.id,patch});
     });
     if(!updates.length){_ytSetProg(`검사 완료 — ${rows.length}개 중 바뀔 항목 없음`);return;}
     await _snapshotBeforeBulk('영상 카테고리 재분류(전체)',updates.map(u=>u.id));
@@ -1490,11 +1514,13 @@ async function _ytSweepCategoryMistag(){
 // ── 가로→쇼츠 일괄 승격 스윕 ────────────────────────────────────────────────────
 // 동기화 시점 세로 판별이 원리적으로 불가능하다(2026-08-26 조사): 쇼츠 썸네일도 high/standard/maxres가
 // 전부 가로(480x360·640x480·1280x720)라 hiTh.height>hiTh.width가 참이 될 수 없고, 원본 세로 비율을
-// 유지하는 건 oardefault.jpg(1080x1920)뿐이다. 그 결과 category='short'는 사실상 제목 정규식으로만
-// 걸려왔고, 세로 영상 약 2.8만 건이 가로 카드로 찌그러져 노출돼 왔다. 이 스윕은 short가 아닌 행을 id
+// 유지하는 건 oardefault.jpg(1080x1920)뿐이다. 그 결과 세로 판별은 사실상 제목 정규식으로만 걸려왔고,
+// 세로 영상 약 2.8만 건이 가로 카드로 찌그러져 노출돼 왔다. 이 스윕은 아직 세로가 아닌 행을 id
 // 오름차순으로 훑으며 oardefault.jpg를 실측(_probeIsPortrait, index.html 정의 — 같은 페이지 전역)해
-// 세로면 category='short'로 **승격만** 한다. 반대 방향(강등)은 오판 위험이 커서 하지 않으며 조회에서
-// short를 아예 제외한다. 대상이 ~28만 건이라 브라우저 이미지 프로브로 오래 걸려(동시 12개 ~90분)
+// 세로면 **is_short=true로 승격만** 한다. 반대 방향(강등)은 오판 위험이 커서 하지 않으며 조회에서
+// 이미 세로인 행을 아예 제외한다.
+// ⚠️ 2026-08-27 직교화 전엔 category를 'short'로 덮어써서 승격할 때마다 장르가 날아갔다 — 지금은
+//    플래그만 세우므로 라이브 직캠이 Live 탭에 남은 채로 9:16이 된다(is_short_migration.sql). 대상이 ~28만 건이라 브라우저 이미지 프로브로 오래 걸려(동시 12개 ~90분)
 // localStorage 커서로 **중단/재개**를 지원한다 — 이미 승격된 행은 다음 조회에서 자동 제외되고, 커서
 // 덕에 이미 확인한 가로 행을 재프로브하지 않는다. tags_manual 행은 다른 스윕과 동일하게 보호. 한 번의
 // 실행 전체가 하나의 batch로 스냅샷돼 "↩︎ 되돌리기"로 통째 복원 가능(재개하면 새 batch).
@@ -1520,11 +1546,11 @@ async function _ytSweepPromoteShorts(){
   let scanned=0, promoted=0, snapOff=false;
   try{
     let remain=null; // 진행률 표시용 대략치(실패해도 무시)
-    try{const{count}=await sb.from(_YT_TABLE).select('id',{count:'exact',head:true}).eq('tags_manual',false).neq('category','short').gt('id',cursor);remain=count;}catch(_){}
+    try{const{count}=await sb.from(_YT_TABLE).select('id',{count:'exact',head:true}).eq('tags_manual',false).eq('is_short',false).gt('id',cursor);remain=count;}catch(_){}
     while(_shortsPromoteRunning){
       const{data:rows,error}=await sb.from(_YT_TABLE)
         .select('id')
-        .eq('tags_manual',false).neq('category','short').gt('id',cursor)
+        .eq('tags_manual',false).eq('is_short',false).gt('id',cursor)
         .order('id',{ascending:true}).limit(CHUNK);
       if(error){_ytSetProg('조회 실패: '+error.message+` (id ${cursor}까지, 재개 가능)`);break;}
       if(!rows||!rows.length){_ytSetProg(`✅ 쇼츠 승격 완료! 전량 스캔 끝 — 총 ${promoted}개를 쇼츠로 승격(스캔 ${scanned}개).`);localStorage.removeItem(_SHORTS_PROMOTE_CURSOR_KEY);break;}
@@ -1537,7 +1563,7 @@ async function _ytSweepPromoteShorts(){
         if(!snapOff){const s=await _snapshotBeforeBulk('가로→쇼츠 승격',portraitIds,runBatchId);if(s===null)snapOff=true;}
         for(let i=0;i<portraitIds.length;i+=200){
           const c=portraitIds.slice(i,i+200);
-          const results=await Promise.all(c.map(id=>sb.from(_YT_TABLE).update({category:'short'}).eq('id',id)));
+          const results=await Promise.all(c.map(id=>sb.from(_YT_TABLE).update({is_short:true}).eq('id',id)));
           const failed=results.find(x=>x.error);
           if(failed)throw new Error(failed.error.message);
         }
@@ -2159,7 +2185,7 @@ async function _avsEnsureCache(){
   const rows=[];
   let lastId=null;
   while(true){
-    let q=sb.from(_YT_TABLE).select('id,title,group_ko,thumb,category,content_flag,members,with_members,with_groups,cover_of_members,cover_of_groups').order('id').limit(1000);
+    let q=sb.from(_YT_TABLE).select('id,title,group_ko,thumb,category,is_short,content_flag,members,with_members,with_groups,cover_of_members,cover_of_groups').order('id').limit(1000);
     if(lastId!==null)q=q.gt('id',lastId);
     const{data,error}=await q;
     if(error)throw error;
@@ -2359,10 +2385,11 @@ async function _vmLoad(searchTerm,preserveSearch2){
       // 확인할 방법이 없었음(2026-08-21, 사용자 요청) — tags_manual=true 안 건드리는 원칙은 그대로 두고,
       // 후보만 여기서 보여줘서 사람이 하나씩 직접(✎) 확인·수정하게 한다.
       const{data,error}=await _sbFetchAll(()=>sb.from(_YT_TABLE)
-        .select('id,title,group_ko,thumb,content_flag,members,with_members,with_groups,cover_of_members,cover_of_groups,category')
+        .select('id,title,group_ko,thumb,content_flag,members,with_members,with_groups,cover_of_members,cover_of_groups,category,is_short')
         .eq('tags_manual',true)
         .neq('category','live')
-        .neq('category','short')
+        // 예전엔 여기서 쇼츠도 뺐다 — category가 단일값이라 short면 live일 수 없었기 때문. 2026-08-27
+        // 직교화로 세로 직캠도 category='live'가 될 수 있게 됐으니 후보에서 빼면 안 된다.
         .order('id'));
       if(myGen!==_vmSearchGen)return;
       if(error){statusEl.textContent='조회 실패: '+error.message;return;}
@@ -3939,7 +3966,12 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
   // 'STELLAR'(스텔라): 영어 형용사 stellar(=최고의)에 오염. strictSync를 풀어 한글 '스텔라'는 그룹으로
   // 매칭되게 하되(2011~2018 스텔라 영상 복구), 영문 토큰은 해시태그(#STELLAR)일 때만. 멤버 충돌(하츠투하츠
   // 스텔라)은 아래 _GROUP_TITLE_CONFLICT_EXCLUDE['스텔라']로 처리(제목에 하츠투하츠 있으면 그룹 스텔라 제외).
-  const _GROUP_TOKEN_HASHTAG_ONLY=new Set(['SAY MY NAME','NATURE','STELLAR']);
+  // '에이스'(A.C.E): strictSync 22팀 전수 실측(2026-08-27)에서 유일하게 "한글 토큰만 위험"으로 갈린
+  // 케이스. strictSync를 유지하면 진짜 A.C.E 무대(THE SHOW 다수)를 영영 못 잡고, 통째로 풀면 "에이스
+  // 형사"·"1 vs 1 에이스 랩 배틀"·"갓기 에이스 응원"까지 훔친다 — 그래서 strictSync는 풀되 한글
+  // 토큰만 해시태그 전용으로 내렸다. 영문 'A.C.E'는 마침표 덕에 정규화 후 ' A C E '라는 고유 시퀀스가
+  // 돼서 hit()으로 안전하게 잡히므로 게이트 밖에 둔다(그래서 위 THE SHOW 제목들은 그대로 회수됨).
+  const _GROUP_TOKEN_HASHTAG_ONLY=new Set(['SAY MY NAME','NATURE','STELLAR','에이스']);
   // 해체 후 같은 이름이 재사용된 그룹 — 재사용 시점 이후 영상엔 옛 그룹을 매칭하지 않는다(날짜가 유일한
   // 구분 단서, 제목만으론 동일). 스텔라: 그룹 Stellar(2011~2018 해체) ↔ 하츠투하츠 멤버 스텔라(2025 데뷔).
   // 실측 — 재배정 버튼이 2025년 '유하 스텔라 이안'(하츠투하츠) 영상을 그룹 스텔라로 대량 편입시킨 원인.
@@ -3952,9 +3984,21 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
   // 옮겼는데, 여기서 안 챙기면 제목에 옛 이름만 적힌 영상(예: "JYJ 콘서트")을 더는 못 알아보는 회귀가
   // 생김(사용자 제보로 발견 — 검색 쪽만 altNames를 보게 고쳤지 태깅 매칭 쪽은 놓쳤었음).
   // 예전엔 해체 그룹 39팀 전체를 여기서 통째로 제외했음(일반명사 그룹명 오염 방지 목적) — 근데 그중
-  // 실제 충돌 위험이 있는 건 일부(배틀·여자친구·에이프릴 등 흔한 단어형)뿐이고, 나머지 대다수(아이즈원·
-  // 스피카·티오원 등 고유명사형)는 외부/모음 채널 영상 제목에 그룹명이 버젓이 있어도 영원히 매칭 안
-  // 되는 과잉 차단이었음. 위험군만 strictSync로 개별 지정하는 걸로 대체(2026-08-20, 39팀 전수 검토 후).
+  // 실제 충돌 위험이 있는 건 일부(배틀 등 흔한 단어형)뿐이고, 나머지 대다수(아이즈원·스피카·티오원 등
+  // 고유명사형)는 외부/모음 채널 영상 제목에 그룹명이 버젓이 있어도 영원히 매칭 안 되는 과잉 차단이었음.
+  // 위험군만 strictSync로 개별 지정하는 걸로 대체(2026-08-20, 39팀 전수 검토 후).
+  //
+  // 2026-08-27 2차 정리 — 22팀 → **7팀**. 실제 매처로 A/B 시뮬(strictSync 켠 결과 vs 그 그룹만 뺀 결과를
+  // 같은 실제 제목 표본에 돌려 비교)해보니, 판별선이 "해체/규모"가 아니라 **"그룹명이 한국어 일반명사·
+  // 프로그램명·곡명과 겹치는가"**였다. 남긴 7팀은 겹침이 실측으로 확인된 것들:
+  //   레인보우("더 시즌즈-이영지의 레인보우" 프로그램명, 해제 시 826건 오탈취) · 배틀("랩배틀/댄스 배틀",
+  //   427) · 하이라이트("N회 하이라이트" 코너명·"Highlight Medley" 앨범, 331) · 시크릿("SECRET BOX"·
+  //   "IVE SECRET" 앨범명, 261) · 슈가(방탄 슈가 + "Sugar Rush Ride" 곡명, 182) · 스피드(87) · god(77).
+  // 푼 14팀(여자친구·로켓펀치·씨아이엑스·위클리·미래소년·에이프릴·비디씨·구구단·티에이엔·피에스타·
+  // 씨엘씨·엑스원·남녀공학·프리스틴)은 오탈취가 거의 없고, 오히려 제 그룹명이 제목에 뻔히 있는데도
+  // 멤버 이름 역추론에 밀려 남의 그룹으로 가 있었다 — 예: "Rocket Punch(로켓펀치) - CHIQUITA"가
+  // 베이비몬스터(치키타=멤버명)로, "씨아이엑스 배진영 직캠"이 워너원(전 소속)으로, "에이프릴 양예나
+  // 직캠"이 아이즈원(예나 동명이인)으로. 자세한 수치는 CHANGELOG 2026-08-27 항목.
   const groupsSorted=Object.entries(GROUPS)
     .filter(([ko,v])=>!_STRICT_SYNC_GROUPS.has(ko))
     .map(([ko,v])=>({ko,tokens:[ko,v.en,...(v.altNames||[])].filter(Boolean)}))
@@ -4295,6 +4339,7 @@ function _extBuildRows(vids,strict,tier,owner,defaultCat,handle){
     rows.push({
       id:v.id,title:v.title,title_norm:_titleNorm(v.title),description:v.description||'',thumb:v.thumb,published_at:v.published_at,
       category,
+      is_short:!!v.is_short, // 형식 플래그는 채널 tier 폴백(위 _fallback)의 영향을 안 받는다 — 장르와 직교(2026-08-27)
       source_handle:handle||null,source_tier:tier||null, // 출처 채널(오너/서바이벌 판단용, 2026-08-25)
       group_ko:owner?ownerGko:match.primaryGroup,members:ambiguous?[]:members,with_groups:withGroups,with_members:withMembers,
       // 항상 두 칸을 넣는다(빈 값이어도 []). 조건부로 넣으면 200개 배치 안에 커버 영상이 하나라도
@@ -4450,12 +4495,16 @@ async function _ytBackfillChannelCore(ch,fromYear,toYear,callBudget,onProg,query
       // 판별에는 어차피 다 같은 비율이라 영향 없고, 용량만 가벼워짐.
       const hiTh=th.high||th.standard||th.maxres;
       const isShortThumb=!!(hiTh&&hiTh.height>hiTh.width);
-      let cat=isShortThumb?'short':_ytClassify(title);
+      // 세로 여부는 category가 아니라 is_short 플래그로 나간다(2026-08-27 직교화). 동기화 시점
+      // 썸네일 비율(isShortThumb)은 원리적으로 거의 항상 false지만, 제목의 #shorts 표기는 잡을 수 있어
+      // 둘을 OR로 묶는다 — 진짜 판별은 관리자 '가로→쇼츠 일괄 승격' 스윕이 oardefault 실측으로 한다.
+      const cat=_ytClassify(title);
+      const isShort=isShortThumb||_ytIsShortTitle(title);
       if(cat==='skip')continue;
       vids.push({
         id:vid,title,description:_decodeHtmlEntities(item.snippet.description||''),
         thumb:isShortThumb?(hiTh.url||th.medium?.url||''):(th.medium?.url||th.high?.url||th.default?.url||''),
-        published_at:(item.snippet.publishedAt||'').slice(0,10),category:cat
+        published_at:(item.snippet.publishedAt||'').slice(0,10),category:cat,is_short:isShort
       });
     }
     if(vids.length){
@@ -4583,7 +4632,8 @@ async function _ytBuildManualVideoRow(key,vid,manualGroup,manualMembers){
   const th=item.snippet.thumbnails||{};
   const hiTh=th.high||th.standard||th.maxres; // 세로 판별용, 가벼운 순으로(2026-08-10, 위 동기화 루프와 동일 이유)
   const isShortThumb=!!(hiTh&&hiTh.height>hiTh.width);
-  let category=isShortThumb?'short':_ytClassify(title);
+  let category=_ytClassify(title);
+  const isShort=isShortThumb||_ytIsShortTitle(title); // 세로는 category가 아닌 is_short 플래그로(2026-08-27 직교화)
   if(category==='skip')category='other'; // 수동으로 콕 집어 추가하는 거라 티저/음원이어도 그냥 기타로 저장(스킵하지 않음)
   const thumb=isShortThumb?(hiTh.url||th.medium?.url||''):(th.medium?.url||th.high?.url||th.default?.url||'');
   const publishedAt=(item.snippet.publishedAt||'').slice(0,10);
@@ -4615,7 +4665,7 @@ async function _ytBuildManualVideoRow(key,vid,manualGroup,manualMembers){
     members=manualMembers;
   }
   const description=item.snippet.description||'';
-  return{id:vid,title,title_norm:_titleNorm(title),description,thumb,published_at:publishedAt,category,group_ko:groupKo,members,with_groups:withGroups,with_members:withMembers};
+  return{id:vid,title,title_norm:_titleNorm(title),description,thumb,published_at:publishedAt,category,is_short:isShort,group_ko:groupKo,members,with_groups:withGroups,with_members:withMembers};
 }
 // 이미 존재하는 행이 tags_manual=true(관리자가 태그 모달에서 직접 확정)면, 수동 추가가 upsert로
 // 그 위를 덮어써버리는 사고를 막기 위한 사전 체크 — 재백필 등으로 같은 id가 다시 들어올 때 특히 위험.
@@ -4715,6 +4765,15 @@ let _vidTagFlagChoice=null; // null | '기타' | '외부인' | '무관' | 'hidde
 // 넷 중 하나라도 클릭하면 true가 돼서, 저장 시 선택 안 된 영상들의 기존 content_flag까지 건드리지 않던
 // 기존 동작을 그대로 유지한다.
 let _vidTagFlagTouched=false;
+// 세로(쇼츠) 플래그도 같은 이유로 "안 건드림 / 켬 / 끔" 3상태가 필요하다 — 일괄 편집에서 체크박스를
+// 한 번도 안 건드렸으면 선택한 영상들의 기존 is_short를 그대로 둬야 한다(2026-08-27).
+let _vidTagShortTouched=false;
+function _vidTagBindShortCheckbox(){
+  const el=document.getElementById('vid-tag-isshort');
+  if(!el||el._bound)return;
+  el._bound=true;
+  el.addEventListener('change',()=>{_vidTagShortTouched=true;});
+}
 function _vidTagApplyFlagUI(){
   const etcEl=document.getElementById('vid-tag-flag-etc');
   const extEl=document.getElementById('vid-tag-flag-ext');
@@ -4856,6 +4915,10 @@ function _openVidTagModalBulk(ids,ko){
   // 일괄 편집은 영상마다 기존 플래그가 다를 수 있어 빈 상태(미선택)로 시작 — touched는 false로 둬서
   // 아무 것도 안 누르면 저장 시 content_flag를 아예 건드리지 않는다(기존 태그 보존).
   _vidTagFlagChoice=null;_vidTagFlagTouched=false;_vidTagApplyFlagUI();
+  _vidTagBindShortCheckbox();
+  const shortEl0=document.getElementById('vid-tag-isshort');
+  if(shortEl0)shortEl0.checked=false;
+  _vidTagShortTouched=false;
   document.getElementById('vid-tag-status').textContent='';
   document.getElementById('vid-tag-overlay').classList.add('open');
 }
@@ -4895,7 +4958,7 @@ async function _openVidTagModal(v,ko,originKo){
   // 카드에 넘어온 v에는 members/with_members가 안 실려있는 경우가 많아서(그룹 카드 그리드는 해당 컬럼을
   // 아예 select하지 않음), 모달을 열 때 저장된 값을 DB에서 직접 불러와 체크박스/칩에 반영한다.
   if(sb){
-    const{data,error}=await sb.from(_YT_TABLE).select('members,with_members,with_groups,cover_of_members,cover_of_groups,category,content_flag,tags_manual,content_formats').eq('id',v.id).maybeSingle();
+    const{data,error}=await sb.from(_YT_TABLE).select('members,with_members,with_groups,cover_of_members,cover_of_groups,category,is_short,content_flag,tags_manual,content_formats').eq('id',v.id).maybeSingle();
     if(!_vidTagTarget||_vidTagTarget.id!==v.id)return; // 응답 오는 사이 모달이 닫히거나 다른 영상으로 전환됨
     if(!error&&data){
       const savedMembers=new Set(data.members||[]);
@@ -4921,8 +4984,14 @@ async function _openVidTagModal(v,ko,originKo){
       _vidTagLoadedFormats=data.content_formats||[];
       _renderVidTagChips();
       const catEl=document.getElementById('vid-tag-cat');
-      if(catEl)catEl.value=data.category||'';
+      // category='short'는 직교화 전 레거시 — 장르 select엔 더 이상 short 옵션이 없으므로 빈 값으로
+      // 보이게 두고(재추론 버튼이 따로 정리한다), 세로 여부는 아래 체크박스가 담당한다.
+      if(catEl)catEl.value=(data.category==='short'?'':(data.category||''));
       _vidTagFlagChoice=data.content_flag||null;_vidTagFlagTouched=false;_vidTagApplyFlagUI();
+      _vidTagBindShortCheckbox();
+      const shortEl=document.getElementById('vid-tag-isshort');
+      if(shortEl)shortEl.checked=_isShortV(data);
+      _vidTagShortTouched=false;
     }
   }
   document.getElementById('vid-tag-status').textContent='';
@@ -4933,7 +5002,7 @@ async function _openVidTagModal(v,ko,originKo){
 async function _vmRefreshRows(ids){
   if(!sb||!ids?.length)return false;
   const{data,error}=await sb.from(_YT_TABLE)
-    .select('id,title,group_ko,thumb,content_flag,needs_review,category,members,with_members,with_groups,cover_of_members,cover_of_groups,tags_manual')
+    .select('id,title,group_ko,thumb,content_flag,needs_review,category,is_short,members,with_members,with_groups,cover_of_members,cover_of_groups,tags_manual')
     .in('id',ids);
   if(error||!data)return false;
   const byId=new Map(data.map(r=>[r.id,r]));
@@ -5185,6 +5254,8 @@ document.getElementById('vid-tag-save').addEventListener('click',async e=>{
   const coverGroups=[..._vidTagCoverGroupsSelected];
   const catEl=document.getElementById('vid-tag-cat');
   const category=catEl?catEl.value:undefined;
+  const shortEl=document.getElementById('vid-tag-isshort');
+  const isShort=shortEl?shortEl.checked:undefined;
   const contentFlag=_vidTagFlagChoice;
   const{ko,originKo}=_vidTagTarget;
   // 소속 그룹(group_ko) 자체를 완전히 다른 그룹으로 옮기는 경우 — 자동 태깅이 아예 엉뚱한 그룹으로
@@ -5206,6 +5277,7 @@ document.getElementById('vid-tag-save').addEventListener('click',async e=>{
     const updatePayload={};
     if(overwriteTags){updatePayload.members=members;updatePayload.with_members=withMembers;updatePayload.with_groups=withGroups;updatePayload.cover_of_members=coverMembers;updatePayload.cover_of_groups=coverGroups;updatePayload.tags_manual=true;}
     if(category)updatePayload.category=category;
+    if(_vidTagShortTouched&&isShort!==undefined)updatePayload.is_short=isShort;
     if(_vidTagFlagTouched)updatePayload.content_flag=contentFlag;
     if(newGko)updatePayload.group_ko=newGko;
     if(!Object.keys(updatePayload).length){statusEl.textContent='변경할 항목을 선택해주세요';return;}
@@ -5241,6 +5313,9 @@ document.getElementById('vid-tag-save').addEventListener('click',async e=>{
   // 이 값을 절대 덮어쓰지 않게 함(2026-07-31, 자동 재검증이 수동 태그를 지워버린 사고 이후 추가).
   const updatePayload={members,with_members:withMembers,with_groups:withGroups,cover_of_members:coverMembers,cover_of_groups:coverGroups,content_flag:contentFlag,tags_manual:true};
   if(category!==undefined)updatePayload.category=category||null;
+  // 단일 편집은 체크박스가 DB 현재값으로 채워져 열리므로 항상 그대로 반영해도 안전하다(일괄 편집만
+  // "안 건드림"을 구분해야 함).
+  if(isShort!==undefined)updatePayload.is_short=isShort;
   if(newGko)updatePayload.group_ko=newGko;
   // content_formats: 기존 배열에서 장르 태그(variety/show)만 교체, 코너명 태그는 보존
   const _GENRE_TAGS=['variety','show'];
@@ -5263,7 +5338,7 @@ document.getElementById('vid-tag-save').addEventListener('click',async e=>{
   // group_ko도 같이 실어보내야 함 — patchItem 내부의 _buildGridWithList가 "이 영상이 실제로 속한
   // 그룹"과 "지금 보는 카드의 그룹"이 다른지 판단할 때 필요(없으면 게스트 출연 영상의 함께한 멤버 줄이
   // "이름(undefined)"처럼 잘못 그려짐, 2026-08-04).
-  const patchedRow={title:document.getElementById('vid-tag-vidtitle').textContent,group_ko:newGko||ko,members,with_members:withMembers,with_groups:withGroups,cover_of_members:coverMembers,cover_of_groups:coverGroups,content_flag:contentFlag,category:category||null};
+  const patchedRow={title:document.getElementById('vid-tag-vidtitle').textContent,group_ko:newGko||ko,members,with_members:withMembers,with_groups:withGroups,cover_of_members:coverMembers,cover_of_groups:coverGroups,content_flag:contentFlag,category:category||null,is_short:isShort===undefined?false:isShort};
   setTimeout(()=>{
     _closeVidTagModal();
     // 지금 보고 있던 카드(originKo) 그리드는 재조회 없이 이 카드 하나만 직접 고침(제목/함께한 멤버 갱신

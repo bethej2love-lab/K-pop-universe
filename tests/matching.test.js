@@ -183,10 +183,15 @@ test(
   '15& 신곡 무대 직캠', undefined,
   r => !!(r && (r.primaryGroup === '피프틴앤드' || (r.withGroups || []).includes('피프틴앤드')))
 );
+// ⚠️ 이 자리에 있던 '여자친구(strictSync) — 제목에 그룹명이 있어도 제외' 케이스는 2026-08-27에
+// **의도적으로 뒤집었다**. 22팀 전수 A/B 시뮬에서 여자친구는 오탈취보다 손실이 훨씬 컸고(표본에서
+// 오배정 98건 + 앞으로 안 버려질 제목 729건, 오탈취 사례는 컴필레이션 정도), strictSync에서 뺐다.
+// 뒤집힌 기대값은 아래 "strictSync 해제" 묶음에 있다. 되돌리려면 groups.json의 strictSync와 그
+// 묶음을 같이 손볼 것.
 test(
-  '여자친구(strictSync) — 외부채널 제목에 그룹명이 있어도 title-matching에서 제외',
+  '여자친구 — strictSync 해제 후 제목의 그룹명이 정상 매칭됨(2026-08-27 방향 전환)',
   '여자친구 신곡 커버 챌린지', undefined,
-  r => !r || !(r.primaryGroup === '여자친구' || (r.withGroups || []).includes('여자친구'))
+  r => !!r && r.primaryGroup === '여자친구'
 );
 test(
   '단일음절 이름("키") — 평문 문장 속 단어로는 샤이니 안 걸림',
@@ -341,6 +346,65 @@ test('스텔라 날짜게이트 — 2025년 "유하 스텔라 이안"이 그룹 
 test('스텔라 날짜게이트 — 2016년 "스텔라 - 찔려"는 여전히 그룹 스텔라',
   '[HOT] Stellar - Sting, 스텔라 - 찔려 Show Music core', undefined,
   r => !!r && r.primaryGroup === '스텔라', '2016-02-01');
+
+// ── strictSync 2차 정리(2026-08-27): 22팀 → 7팀 ────────────────────────────────
+// 22팀 전수를 실제 매처 A/B 시뮬로 재검토한 결과, 판별선이 "해체/규모"가 아니라 "그룹명이 한국어
+// 일반명사·프로그램명·곡명과 겹치는가"였다. 아래는 그 판정을 고정하는 회귀 테스트 —
+// **푼 14팀은 제 이름으로 잡혀야 하고, 남긴 7팀은 계속 안 잡혀야 한다.** 목록을 다시 손대면
+// 여기가 먼저 빨개진다. 케이스 제목은 전부 DB 실제 행에서 가져온 것.
+//
+// (1) 푼 그룹 — 예전엔 제목에 그룹명이 뻔히 있어도 멤버 이름 역추론에 밀려 남의 그룹으로 갔다.
+test('strictSync 해제 — "로켓펀치 - CHIQUITA"가 베이비몬스터(치키타=멤버명)로 안 감',
+  'Rocket Punch(로켓펀치) - CHIQUITA @인기가요 inkigayo 20220327', undefined,
+  r => !!r && r.primaryGroup === '로켓펀치');
+test('strictSync 해제 — "씨아이엑스 배진영 직캠"이 워너원(전 소속)으로 안 감',
+  "[예능연구소] 씨아이엑스 배진영 직캠 'Cinema' (CIX BAEJINYOUNG FanCam)", undefined,
+  r => !!r && r.primaryGroup === '씨아이엑스');
+test('strictSync 해제 — "에이프릴 양예나 직캠"이 아이즈원(예나 동명이인)으로 안 감',
+  "[예능연구소] 에이프릴 양예나 직캠 'Now or Never' (APRIL YANG YENA FanCam)", undefined,
+  r => !!r && r.primaryGroup === '에이프릴');
+test('strictSync 해제 — "미래소년 이준혁 직캠"이 세븐틴(준)으로 안 감',
+  "[안방1열 직캠4K] 미래소년 이준혁 'Drip N' Drop' (MIRAE LEE JUN HYUK FanCam)", undefined,
+  r => !!r && r.primaryGroup === '미래소년');
+test('strictSync 해제 — "위클리 지한 페이스캠"이 스트레이키즈(한)로 안 감',
+  "[페이스캠4K] 위클리 지한 'Check It Out' (Weeekly JI HAN FaceCam)", undefined,
+  r => !!r && r.primaryGroup === '위클리');
+test('strictSync 해제 — "여자친구 은하"가 비비지(겸임)로 안 감',
+  '[STAGE MIX] 여자친구(GFRIEND) – 너 그리고 나 (NAVILLERA) | 쇼! 음악중심', undefined,
+  r => !!r && r.primaryGroup === '여자친구');
+//
+// (2) 남긴 7팀 — 그룹명이 프로그램명/코너명/앨범명/곡명과 겹쳐서 풀면 대량 오탈취가 난다.
+//     (괄호 숫자는 2026-08-27 시뮬에서 측정한 "해제 시 오탈취" 규모)
+test('strictSync 유지 — "[더 시즌즈-이영지의 레인보우]"가 그룹 레인보우로 안 감 (826건)',
+  "[세로] 이영지 - If I Ain't Got You [더 시즌즈-이영지의 레인보우] | KBS", undefined,
+  r => !r || r.primaryGroup !== '레인보우');
+test('strictSync 유지 — "랩배틀"이 그룹 배틀로 안 감 (427건)',
+  '주간아이돌 - 142회 에이핑크 랩배틀/Weekly Idol A_PINK Rap Battle', undefined,
+  r => !r || r.primaryGroup !== '배틀');
+test('strictSync 유지 — "[하이라이트]" 코너명이 그룹 하이라이트로 안 감 (331건)',
+  '[하이라이트] TAEYANG - 나의 마음에 (Seed) [더 시즌즈-성시경의 고막남친] | KBS', undefined,
+  r => !r || r.primaryGroup !== '하이라이트');
+test('strictSync 유지 — "IVE SECRET" 앨범명이 그룹 시크릿으로 안 감 (261건)',
+  "IVE THE 4th EP 〈 IVE SECRET 〉 'XOXZ' COMING SOON", undefined,
+  r => !r || r.primaryGroup !== '시크릿');
+test('strictSync 유지 — "Sugar Rush Ride"(TXT 곡명)가 그룹 슈가로 안 감 (182건)',
+  "[MPD직캠] TXT 휴닝카이 직캠 4K 'Sugar Rush Ride'", undefined,
+  r => !r || r.primaryGroup !== '슈가');
+//
+// (3) 에이스(A.C.E) 중간안 — strictSync는 풀되 **한글 '에이스'만** 해시태그 전용
+//     (_GROUP_TOKEN_HASHTAG_ONLY). 영문 'A.C.E'는 정규화하면 ' A C E '라는 고유 시퀀스라 안전.
+test('에이스 중간안 — 영문 A.C.E 표기는 그룹으로 잡힘',
+  'A.C.E, My Girl (에이스, My Girl) [THE SHOW 240305]', undefined,
+  r => !!r && r.primaryGroup === '에이스');
+test('에이스 중간안 — 해시태그 #에이스도 잡힘',
+  '#ACE #에이스 #박준희 선배님과 함께 맘껏 더 call me crazy', undefined,
+  r => !!r && r.primaryGroup === '에이스');
+test('에이스 중간안 — 평문 "에이스 형사"는 그룹으로 안 잡힘',
+  "(ENG CC) '가석방 심사관 이한신' 에이스 형사 권유리의 폴꾸 | 권유리, Kwon Yuri", undefined,
+  r => !r || r.primaryGroup !== '에이스');
+test('에이스 중간안 — 평문 "1 vs 1 에이스 랩 배틀"도 그룹으로 안 잡힘',
+  '[#힙팝프린세스/6회] 권도희 vs 최가윤 | 1 vs 1 에이스 랩 배틀 한국 | Mnet 251120', undefined,
+  r => !r || r.primaryGroup !== '에이스');
 
 // ── 실행 ──────────────────────────────────────────────
 let pass = 0, fail = 0;
