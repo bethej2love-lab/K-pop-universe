@@ -5628,10 +5628,9 @@ document.getElementById('admin-bulk-edit-btn')?.addEventListener('click',()=>{
     if(statusEl)statusEl.textContent='선택한 영상이 여러 그룹에 걸쳐 있어요 — "멤버/콜라보 태그도 덮어쓰기"는 끄고 사용하세요';
   }
 });
-// "보류" — content_flag='보류'. **무관/숨김과 동작이 다르다**: 이 둘은 카드 그리드에서 바로 사라지지만
-// (_filterBannedVideos가 hidden·무관만 거른다) 보류는 그리드에 그대로 남고 탐험 차트·대표영상 선정에서만
-// 빠진다("판단은 나중에, 대표로는 쓰지 말자"). 그래서 여기서 선택 항목을 DOM에서 지우면 안 된다 —
-// 지웠다간 새로고침 때 도로 나타나서 "안 먹었다"는 오해를 부른다. 대신 토스트로 결과만 알린다.
+// "보류" — content_flag='보류'. 카드 그리드 쿼리(buildBaseQuery)가 무관·hidden과 함께 서버에서 빼주므로
+// **무관/숨김과 똑같이 카드에서 사라진다.** 차이는 의미뿐이다: 무관은 "이 그룹/멤버와 관계없음"이라는
+// 판정이고 보류는 "판단을 미뤄둠"이라, 나중에 영상 관리 패널의 '보류' 탭에서 다시 꺼내 보게 된다.
 // (영상 관리 패널의 '선택-보류'(vm-hold-btn)와 같은 플래그, 2026-08-27 사용자 요청으로 카드에도 추가.)
 document.getElementById('admin-bulk-hold-btn')?.addEventListener('click',async()=>{
   if(!sb||!_isAdmin())return;
@@ -5642,10 +5641,10 @@ document.getElementById('admin-bulk-hold-btn')?.addEventListener('click',async()
   if(!ids.length)return;
   btn.disabled=true;btn.textContent='처리 중…';
   const{error}=await sb.from(_YT_TABLE).update({content_flag:'보류'}).in('id',ids);
-  btn.disabled=false;btn.textContent='보류';
-  if(error){_showShareToast('오류: '+error.message);return;}
+  if(error){btn.disabled=false;btn.textContent='보류';_showShareToast('오류: '+error.message);return;}
+  selectedItems.forEach(el=>el.remove());
   window._adminBulkExitFn?.();
-  _showShareToast(`${ids.length}개 보류 처리됨 (카드에는 계속 보이고, 차트·대표영상에서만 빠져요)`);
+  btn.disabled=false;btn.textContent='보류';
 });
 document.getElementById('admin-bulk-hide-btn')?.addEventListener('click',async()=>{
   if(!sb||!_isAdmin())return;

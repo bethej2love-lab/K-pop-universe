@@ -962,9 +962,9 @@
     </div>
     <div id="vid-tag-flag-toggles">
       <button type="button" id="vid-tag-flag-nomem-btn" class="vid-tag-flag-toggle vid-tag-flag-nomem">무관</button>
-      <!-- 보류(2026-08-27 사용자 요청) — 무관/숨김과 달리 **카드 그리드에서는 계속 보인다**.
-           _filterBannedVideos가 거르는 건 hidden·무관 둘뿐이고, 보류는 탐험 차트·대표영상 선정에서만
-           빠진다("판단은 나중에, 대표로는 쓰지 말자"). 영상 관리 패널의 '보류' 탭과 같은 플래그. -->
+      <!-- 보류(2026-08-27 사용자 요청) — 무관/숨김과 똑같이 카드에서 제외된다(그리드 쿼리가 서버에서
+           무관·보류·hidden을 함께 뺀다). 차이는 의미뿐: 무관은 "이 그룹/멤버와 관계없음"이라는 판정,
+           보류는 "판단을 미뤄둠"이라 영상 관리 패널의 '보류' 탭에서 나중에 다시 꺼내 본다. -->
       <button type="button" id="vid-tag-flag-hold-btn" class="vid-tag-flag-toggle vid-tag-flag-hold">보류</button>
       <button type="button" id="vid-tag-flag-hidden-btn" class="vid-tag-flag-toggle vid-tag-flag-hidden">숨김</button>
     </div>
@@ -3657,7 +3657,12 @@ function _isBannedVideoTitle(t,ko){
 // content_flag==='무관'은 관리자가 "이 태그(멤버/콜라보) 자동인식이 틀렸다"고 정정한 표시 — 영상 그리드
 // 쪽은 이미 쿼리 단계에서 걸러내는데, 연결 카드(_fetchApiCollabData)는 이 체크가 빠져있어서 태그를
 // 무관 처리해도 members/with_members 배열 값이 그대로 남아있으면 연결 카드에 유령처럼 계속 뜨는 버그가 있었음.
-function _filterBannedVideos(list,ko){return(list||[]).filter(v=>!_isBannedVideoTitle(v.title,ko)&&v.content_flag!=='hidden'&&v.content_flag!=='무관');}
+// ⚠️ 여기 목록은 **카드 그리드 쿼리(buildBaseQuery)의 content_flag 제외와 같아야 한다.** 그쪽은
+// 서버에서 무관·보류·hidden을 이미 빼고 있는데(count까지 정확히 맞추려고 서버에서 건다), 이 클라이언트
+// 안전망엔 오래도록 '보류'가 빠져 있었다 — 평소엔 서버가 걸러줘서 안 드러나지만, 방금 보류로 바꾼 행을
+// 재조회 없이 화면에서 걷어내는 경로(일괄 처리·편집 직후)에선 이 함수가 유일한 기준이라 그대로 남았다
+// (2026-08-27 사용자 지적: "보류 처리해도 카드에서 제외되어야 하는데").
+function _filterBannedVideos(list,ko){return(list||[]).filter(v=>!_isBannedVideoTitle(v.title,ko)&&v.content_flag!=='hidden'&&v.content_flag!=='무관'&&v.content_flag!=='보류');}
 // "띵곡팔이" — 실제 케이팝 채널 콘텐츠가 아니라 유명곡을 짜깁기해 파는 저작권 우회형 재업로드 채널에서
 // 흔히 쓰는 문구 — 제목에 이 단어가 있으면 어느 그룹으로 매칭됐든 무조건 무관 처리한다(사용자 요청, 2026-08-04).
 // _isBannedVideoTitle과 달리 hidden이 아니라 무관 처리(행은 남기되 그룹/멤버 그리드에서만 제외)라 신규
@@ -16449,7 +16454,9 @@ function _makeChVidController(contId){
     const members=newRow.members||[],withMembers=newRow.with_members||[],withGroups=newRow.with_groups||[];
     const flag=newRow.content_flag;
     let stillQualifies=true;
-    if(flag==='hidden'||flag==='무관')stillQualifies=false;
+    // 카드 그리드 쿼리가 서버에서 빼는 셋(hidden·무관·보류)과 같은 기준 — 편집 모달에서 보류로 저장한
+    // 행도 재조회 없이 바로 목록에서 빠져야 한다(2026-08-27, '보류'가 여기서도 빠져 있었음).
+    if(flag==='hidden'||flag==='무관'||flag==='보류')stillQualifies=false;
     if(state.memberKo&&flag==='기타')stillQualifies=false;
     // "members가 비어있으면 그룹 전체 영상으로 이 그리드에 자격 있음" 규칙은 이 영상의 실제 소속
     // (group_ko)이 지금 이 그리드(ko)와 같을 때만 성립함 — 편집 모달에서 소속 그룹 자체를 다른 그룹으로

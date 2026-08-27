@@ -4,11 +4,14 @@
 // 경우에도 '보류' 추가해줘." (영상 관리 패널엔 이미 '보류' 탭과 '선택-보류'가 있었는데, 카드 쪽
 // 편집 모달과 admin-bulk-bar에만 없었다.)
 //
-// ⚠️ 이 테스트의 핵심은 **보류가 무관/숨김과 동작이 다르다**는 것을 못 박는 것이다:
-//    _filterBannedVideos가 그리드에서 걷어내는 건 hidden·무관 **둘뿐**이고, 보류는 카드 그리드에
-//    그대로 남은 채 탐험 차트·대표영상 선정에서만 빠진다("판단은 나중에, 대표로는 쓰지 말자").
-//    그래서 일괄바의 보류 버튼은 무관/숨김 버튼과 달리 **선택 항목을 DOM에서 지우면 안 된다** —
-//    지웠다간 새로고침 때 도로 나타나서 "안 먹었다"는 오해를 부른다.
+// ⚠️ 이 테스트의 핵심은 **보류를 거르는 세 곳이 서로 어긋나지 않게** 못 박는 것이다.
+//    카드 그리드 쿼리(buildBaseQuery)는 서버에서 무관·보류·hidden을 함께 빼는데(count까지 맞추려고
+//    서버에서 건다), 클라이언트 안전망(_filterBannedVideos)과 편집 직후 재확인(patchItem)에는
+//    '보류'가 빠져 있었다. 평소엔 서버가 걸러줘서 안 드러나지만, 방금 보류로 바꾼 행을 재조회 없이
+//    화면에서 걷어내는 경로에선 이 둘이 유일한 기준이라 그대로 남았다.
+//    → 첫 구현 때 나(클로드)는 _filterBannedVideos만 보고 "보류는 카드에 남는다"고 잘못 판단해
+//      일괄 보류가 DOM을 안 지우게 만들었고, 사용자가 "보류 처리해도 카드에서 제외되어야 하는데"라고
+//      바로잡았다. 세 곳을 같은 목록으로 맞추고, 그 일치를 여기서 검사한다.
 //
 // 실행: node tests/hold-flag.test.js
 
@@ -49,23 +52,18 @@ const holdHandler = (() => {
 })();
 need(holdHandler.length > 0, '일괄 보류 핸들러 파싱됨');
 need(/content_flag:'보류'/.test(holdHandler), '  · content_flag를 보류로 저장');
-need(!/selectedItems\.forEach\(el=>el\.remove\(\)\)/.test(holdHandler),
-  '  · **선택 항목을 DOM에서 지우지 않음** — 보류는 카드 그리드에 그대로 남는 플래그라, 지우면 새로고침 때 되살아나 "안 먹었다"고 오해된다');
-need(/_showShareToast\(/.test(holdHandler), '  · 화면에서 안 사라지므로 토스트로 결과를 알림');
+need(/selectedItems\.forEach\(el=>el\.remove\(\)\)/.test(holdHandler),
+  '  · 처리한 항목을 목록에서 즉시 제거 — 보류도 카드에서 빠지는 플래그라 무관/숨김과 같은 동작이어야 한다');
 need(/_adminBulkExitFn\?\.\(\)/.test(holdHandler), '  · 처리 후 선택 모드 종료(무관/숨김과 동일)');
-// 반대로 무관/숨김은 지우는 게 맞다 — 그 동작이 유지되는지도 같이 고정
-const irrHandler = (() => {
-  const i = admin.indexOf(`getElementById('admin-bulk-irrelevant-btn')`);
-  let j = admin.indexOf('{', i), d = 0;
-  for (let k = j; k < admin.length; k++) { if (admin[k] === '{') d++; else if (admin[k] === '}') { d--; if (!d) return admin.slice(i, k + 1); } }
-  return '';
-})();
-need(/selectedItems\.forEach\(el=>el\.remove\(\)\)/.test(irrHandler),
-  '무관은 여전히 목록에서 즉시 제거(그리드에서 실제로 빠지는 플래그라 맞는 동작)');
 
-// ── 보류의 의미가 코드에서 유지되는가 ────────────────────────────────────────
-need(/_filterBannedVideos\(list,ko\)\{return\(list\|\|\[\]\)\.filter\(v=>!_isBannedVideoTitle\(v\.title,ko\)&&v\.content_flag!=='hidden'&&v\.content_flag!=='무관'\)/.test(html),
-  "그리드 필터는 여전히 hidden·무관만 거름(보류는 안 거름) — 이 전제가 깨지면 위 DOM 미삭제 판단도 같이 바뀌어야 함");
+// ── 보류를 거르는 세 곳이 일치하는가 (이번 오판의 재발 방지) ─────────────────
+// ① 카드 그리드 서버 쿼리  ② 클라이언트 안전망  ③ 편집 직후 재확인
+need(/q=q\.or\('content_flag\.is\.null,content_flag\.neq\.무관'\)\.or\('content_flag\.is\.null,content_flag\.neq\.보류'\)/.test(html),
+  '① 카드 그리드 쿼리가 서버에서 무관·보류를 함께 제외');
+need(/function _filterBannedVideos\(list,ko\)\{[^\n]*content_flag!=='hidden'&&v\.content_flag!=='무관'&&v\.content_flag!=='보류'/.test(html),
+  '② 클라이언트 안전망(_filterBannedVideos)도 hidden·무관·보류 셋 다 거름');
+need(/if\(flag==='hidden'\|\|flag==='무관'\|\|flag==='보류'\)stillQualifies=false;/.test(html),
+  '③ 편집 직후 재확인(patchItem)도 셋 다 목록에서 뺌');
 
 // ── 일괄바가 좁은 화면에서 잘리지 않는가 ─────────────────────────────────────
 // 버튼이 하나 늘면서 드러난 문제 — 실측 390px에서 바 폭이 475px(최악 679px)로 양쪽이 잘렸다.
