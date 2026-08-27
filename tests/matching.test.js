@@ -406,6 +406,53 @@ test('에이스 중간안 — 평문 "1 vs 1 에이스 랩 배틀"도 그룹으�
   '[#힙팝프린세스/6회] 권도희 vs 최가윤 | 1 vs 1 에이스 랩 배틀 한국 | Mnet 251120', undefined,
   r => !r || r.primaryGroup !== '에이스');
 
+// ── 체리블렛 현 멤버 7명 추가(2026-08-27) — 동명이인 밀집 그룹 ──────────────────
+// 배경: artists.json에 전 멤버 3명(미래·코코로·린린)만 있고 **현 멤버 7명이 통째로 빠져 있었다**
+// (사용자 제보). 그런데 이 7명 중 5명이 동명이인이다 — 유주(여자친구·하입프린세스), 지원(프로미스나인·
+// 시그니처), 메이(리센느·세이마이네임), 보라(씨스타), 채린(아이칠린). 추가 전/후로 실제 매처를 DB 제목
+// 4,352건에 돌려 비교했더니 바뀐 건 2건뿐이었고(아래 [알려진 한계] 참고), 나머지는 전부 정상이었다.
+// 이 묶음은 그 판정을 고정한다 — 그룹명이 있으면 정확히 갈리고, 없으면 dedup이 통째로 버린다.
+test('체리블렛 유주 — 여자친구/하입프린세스 유주로 안 샘',
+  "[페이스캠4K] 체리블렛 유주 'Love So Sweet' (Cherry Bullet YU JU FaceCam)", undefined,
+  r => !!r && r.primaryGroup === '체리블렛' && (r.membersByGroup['체리블렛'] || []).includes('유주'));
+test('여자친구 유주 — 체리블렛으로 안 샘(반대 방향)',
+  '여자친구 유주 직캠 밤', undefined,
+  r => !!r && r.primaryGroup === '여자친구');
+test('체리블렛 지원 — 프로미스나인/시그니처 지원으로 안 샘',
+  '[쇼챔직캠 4K] Cherry Bullet JIWON - P.O.W! (체리블렛 지원 - 파우)', undefined,
+  r => !!r && r.primaryGroup === '체리블렛' && (r.membersByGroup['체리블렛'] || []).includes('지원'));
+test('씨스타 보라 — 체리블렛으로 안 샘',
+  '[MPD직캠] 씨스타 보라 직캠', undefined,
+  r => !!r && r.primaryGroup === '씨스타');
+test('아이칠린 채린 — 체리블렛으로 안 샘',
+  '아이칠린 채린 직캠', undefined,
+  r => !!r && r.primaryGroup === '아이칠린');
+// 그룹 표시가 없으면 동명이인 dedup이 통째로 버려야 한다(오배정 0). 유일 이름은 그대로 잡힌다.
+test('동명이인 이름은 그룹표시 없으면 아무 그룹도 안 잡음(지원 3명)',
+  '#지원 챌린지', undefined,
+  r => !r || r.primaryGroup === null);
+test('동명이인 이름은 그룹표시 없으면 아무 그룹도 안 잡음(메이 3명)',
+  '#메이 챌린지', undefined,
+  r => !r || r.primaryGroup === null);
+test('유일 이름(레미)은 그룹표시 없어도 체리블렛으로 잡힘',
+  '#레미 #REMI 챌린지', undefined,
+  r => !!r && r.primaryGroup === '체리블렛');
+// 감사 스캐너(tools/name_collision_audit.mjs)가 "미래(체리블렛)가 그룹명 미래소년에 통째로 들어있다 ·
+// 보호 없음"으로 경고하지만, 실제로는 hit()의 토큰 경계 검사가 막는다(스캐너가 보수적으로 잡는 오탐).
+// strictSync를 푼 뒤 미래소년 영상이 늘어나므로 여기서 확인해둔다.
+test('미래소년 영상에 체리블렛 미래가 안 낌(토큰 경계)',
+  '[안방1열 직캠4K] 미래소년 이준혁 Drip N Drop (MIRAE LEE JUN HYUK FanCam)', undefined,
+  r => !!r && r.primaryGroup === '미래소년' && !r.membersByGroup['체리블렛']);
+// [알려진 한계] 그룹명이 하나도 없는 제목에서 primaryGroup은 artists.json 등장 순서로 갈린다
+// (역추론 경로의 result[0]). 그래서 "이승협 직캠 'Superstar (Feat. 해윤)'"이 체리블렛 추가 후
+// 엔플라잉→체리블렛으로 뒤집힌다. 다만 confidence가 weak라 검수 큐로 가고, 이미 저장된 행은
+// _ytSweepMistagReclassify가 "엔진 그룹이 제목에 literal로 있어야 재배정"이라 안 건드린다.
+// 이 케이스는 **현재 동작을 기록해두는 것**이지 바람직한 값이 아니다 — feat 절 안의 인물을 primary에서
+// 강등하는 개선을 하면 이 기대값이 엔플라잉으로 바뀌어야 맞다.
+test('[알려진 한계] 그룹명 없는 feat 제목은 순서 의존 — 대신 weak로 검수 큐행',
+  "[예능연구소 4K] 이승협 직캠 'Superstar (Feat. 해윤)' (J.DON FanCam)", undefined,
+  r => !!r && r.confidence === 'weak' && (r.withGroups || []).concat([r.primaryGroup]).includes('엔플라잉'));
+
 // ── 실행 ──────────────────────────────────────────────
 let pass = 0, fail = 0;
 cases.forEach(({ name, title, selfGko, check, publishedAt }) => {
