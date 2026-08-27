@@ -2083,6 +2083,10 @@
   /* 해체 그룹·탈퇴 멤버의 소속사 표기는 이제 과거 정보라 흐리게(2026-08-14, 사용자 요청) */
   .tag-chip.tag-chip-past{color:rgba(170,205,255,0.42);text-shadow:none;}
   .tag-chip.tag-chip-past:hover{color:rgba(190,215,255,0.60);text-shadow:none;}
+  /* 데뷔일 옆 "~ 해체일"(2026-08-27) — 폰트/크기는 데뷔일과 동일하게 두고 색만 낮춘다.
+     값은 .tag-chip-past(과거형 태그)와 같은 것을 쓴다 — 이 프로젝트에서 "지난 것"을 뜻하는 색이
+     이미 그거라, 새 값을 만들면 같은 의미에 두 가지 톤이 생긴다. glow도 같이 뺀다(빛나면 현재형으로 읽힘). */
+  .gc-show-suffix.gc-disband-suffix{color:rgba(170,205,255,0.42);text-shadow:none;}
   /* 데뷔 연도 옆 출신 프로그램명 — tag-chip과 폰트는 통일하되 클릭 불가(필터 대상 아님) */
   .gc-show-suffix{
     display:inline;padding:1px 4px 1px 0;font-size:11px;font-weight:600;letter-spacing:.04em;

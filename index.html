@@ -8805,6 +8805,20 @@ function showGC(ko,cx,cy,keepMemberPanel,skipRipple,urlMode,_unusedPushMobNav){
   }
   const _debutYr=String(info.debut||'').slice(0,4);
   _renderTagChip(document.getElementById('gc-debut'),info.debut||'','debutYear',_debutYr);
+  // 해체한 그룹은 데뷔일 뒤에 "~ 해체일"을 붙여 활동 기간으로 읽히게 한다(2026-08-27, 사용자 요청).
+  // 데뷔일 칩과 폰트는 같고(.gc-show-suffix가 이미 .tag-chip과 동일) 색만 이 프로젝트의 기존 과거형
+  // 색(.tag-chip-past)으로 낮춘다. 클릭 대상이 아니다 — 데뷔 연도 칩은 "같은 해 데뷔 그룹" 필터인데
+  // 해체일엔 대응하는 필터가 없다.
+  // disbanded가 true(해체는 맞지만 날짜 미상, 실측 3팀)면 붙일 게 없으므로 생략한다.
+  {
+    const _dis=info.disbanded;
+    if(typeof _dis==='string'&&/\d/.test(_dis)){
+      const disSuffix=document.createElement('span');
+      disSuffix.className='gc-show-suffix gc-disband-suffix';
+      disSuffix.textContent=` ~ ${_dis}`;
+      document.getElementById('gc-debut').appendChild(disSuffix);
+    }
+  }
   // 서바이벌/오디션 프로그램 출신이면 데뷔 연도 옆에 "[프로그램명]"을 덧붙인다 — 클릭 가능한 데뷔
   // 연도 칩(필터용)과 분리된 별도 span이라 이 텍스트 자체는 클릭/필터 대상이 아님(2026-08-10, 사용자 요청).
   if(info.projectShow){
