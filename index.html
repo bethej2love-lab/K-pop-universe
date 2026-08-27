@@ -478,6 +478,7 @@
   <button id="admin-bulk-exclude-group-btn" style="display:none">이 그룹 제외</button>
   <button id="admin-bulk-clear-collab-btn">함께한 태그 제거</button>
   <button id="admin-bulk-irrelevant-btn">무관</button>
+  <button id="admin-bulk-hold-btn">보류</button>
   <button id="admin-bulk-hide-btn">숨김</button>
   <button id="admin-bulk-cancel-btn">취소</button>
 </div>
@@ -961,6 +962,10 @@
     </div>
     <div id="vid-tag-flag-toggles">
       <button type="button" id="vid-tag-flag-nomem-btn" class="vid-tag-flag-toggle vid-tag-flag-nomem">무관</button>
+      <!-- 보류(2026-08-27 사용자 요청) — 무관/숨김과 달리 **카드 그리드에서는 계속 보인다**.
+           _filterBannedVideos가 거르는 건 hidden·무관 둘뿐이고, 보류는 탐험 차트·대표영상 선정에서만
+           빠진다("판단은 나중에, 대표로는 쓰지 말자"). 영상 관리 패널의 '보류' 탭과 같은 플래그. -->
+      <button type="button" id="vid-tag-flag-hold-btn" class="vid-tag-flag-toggle vid-tag-flag-hold">보류</button>
       <button type="button" id="vid-tag-flag-hidden-btn" class="vid-tag-flag-toggle vid-tag-flag-hidden">숨김</button>
     </div>
     <div id="vid-tag-status"></div>

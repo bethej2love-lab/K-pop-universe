@@ -20,6 +20,8 @@
 //          --sheet-bottom을 "탭바 높이 + 8px"로 잡던 상수 오차 회귀 방지.
 //  [버그F] 탭바가 숨겨진 상태에서 새 카드를 열어도 그 카드가 화면을 꽉 채워야 한다. 시트 높이를 인라인
 //          스타일로 박던 시절, 나중에 열리는 카드가 옛 값(60vh+탭바)에 갇히던 회귀 방지.
+//  [버그H] 관리자 일괄바(admin-bulk-bar)가 좁은 화면(390px)에서 화면 밖으로 잘리지 않아야 한다.
+//          버튼이 최대 7개라 이미 넘치고 있었고, left:50%만 둔 채 wrap을 켜면 오히려 더 나빠진다.
 //  [버그G] 탐험 패널(#feed-body)에서도 카드처럼 "맨 위로" 버튼이 뜨고, 눌러서 올라가고, 스크롤을
 //          내려둔 채 패널을 닫으면 버튼이 화면에 남지 않아야 한다(2026-08-27 사용자 요청).
 //          #feed-body는 본문 스크립트보다 나중에 파싱돼 lazy-bind인데, 이 패널의 lazy-bind는 이미
@@ -291,6 +293,38 @@ async function main() {
     const totopClosed = await pollUntil(cdp, `getComputedStyle(document.getElementById('gc-totop')).display`, 3000, v => v === 'none');
     if (totopClosed === 'none') ok('[버그G] 스크롤한 채 패널을 닫아도 버튼이 안 남음');
     else fail(`[버그G] 패널을 닫았는데 버튼이 남아있음 — display=${totopClosed}`);
+
+    // ── [버그H] 관리자 일괄바가 좁은 화면에서 잘리지 않는가 (2026-08-27) ────────────────
+    // '보류' 버튼을 추가하다 발견 — 버튼이 최대 7개라 390px에서 바 폭이 475px(최악 679px)로 양쪽이
+    // 잘려 '취소'와 '0개 선택됨'이 화면 밖에 있었다(보류 추가 전부터의 문제). left/right를 양쪽으로
+    // 잡고 wrap을 켜서 고쳤는데, left:50%만 둔 채 wrap하면 가용 폭이 50vw로 잡혀 **오히려 더 나빠지므로**
+    // 정적 CSS 검사만으로는 부족하다 — 실제 렌더 폭을 재서 화면 안에 들어오는지 확인한다.
+    const barFit = await ev(cdp, `(function(){
+      var b=document.getElementById('admin-bulk-bar'); if(!b) return null;
+      var hadHidden=b.classList.contains('hidden'); b.classList.remove('hidden');
+      var mem=document.getElementById('admin-bulk-exclude-member-btn'), grp=document.getElementById('admin-bulk-exclude-group-btn');
+      var pm=mem.style.display, pg=grp.style.display;
+      mem.style.display=''; grp.style.display='';           // 최악 조합(버튼 전부 노출)으로 잰다
+      var r=b.getBoundingClientRect();
+      var out={w:Math.round(r.width),left:Math.round(r.left),over:Math.round(r.right-window.innerWidth),h:Math.round(r.height),vw:window.innerWidth};
+      mem.style.display=pm; grp.style.display=pg; if(hadHidden)b.classList.add('hidden');
+      return JSON.stringify(out);
+    })()`);
+    const bf = barFit ? JSON.parse(barFit) : null;
+    if (bf && bf.left >= 0 && bf.over <= 0) ok(`[버그H] 일괄바가 화면 안에 들어옴 (${bf.vw}px 뷰포트 · 바 ${bf.w}px · ${bf.h}px 높이)`);
+    else fail(`[버그H] 일괄바가 화면 밖으로 잘림 — ${barFit}`);
+    // 보류 버튼이 실제로 그 안에 있는지(추가한 버튼이 닿는지)
+    const holdVisible = await ev(cdp, `(function(){
+      var b=document.getElementById('admin-bulk-bar'), h=document.getElementById('admin-bulk-hold-btn');
+      if(!b||!h) return 'missing';
+      var hadHidden=b.classList.contains('hidden'); b.classList.remove('hidden');
+      var r=h.getBoundingClientRect();
+      var okk = r.left>=0 && r.right<=window.innerWidth && r.width>0;
+      if(hadHidden)b.classList.add('hidden');
+      return okk?'in':'out:'+Math.round(r.left)+','+Math.round(r.right);
+    })()`);
+    if (holdVisible === 'in') ok('[버그H] 새로 추가한 "보류" 버튼이 화면 안에 있음');
+    else fail(`[버그H] 보류 버튼이 화면 밖 — ${holdVisible}`);
 
     if (errors.length) fail(`상호작용 중 콘솔 에러 ${errors.length}건: ${errors.slice(0, 5).join(' | ')}`);
     else ok('상호작용 중 콘솔 에러 0건');

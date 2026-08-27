@@ -4821,7 +4821,7 @@ let _vidTagLoadedFormats=[]; // 모달 열 때 DB에서 읽은 content_formats �
 // 토글 버튼 2개(무관/숨김)를 하나의 배타적 선택으로 묶어서 관리한다 — 예전엔 "숨김"만 별도 버튼으로 즉시
 // DB에 반영되고 나머지 셋은 저장 버튼을 눌러야 반영되는 등 취급이 달라서(2026-08-04, 사용자 피드백:
 // 무관/숨김의 "정도"가 안 맞음) 넷 다 저장 버튼을 눌러야 반영되는 걸로 통일했다.
-let _vidTagFlagChoice=null; // null | '기타' | '외부인' | '무관' | 'hidden'
+let _vidTagFlagChoice=null; // null | '기타' | '외부인' | '개별출연' | '무관' | '보류' | 'hidden'
 // 일괄 편집에서 "아무 플래그도 안 건드림"과 "명시적으로 정상으로 되돌림"을 구분하기 위한 플래그 —
 // 넷 중 하나라도 클릭하면 true가 돼서, 저장 시 선택 안 된 영상들의 기존 content_flag까지 건드리지 않던
 // 기존 동작을 그대로 유지한다.
@@ -4840,11 +4840,13 @@ function _vidTagApplyFlagUI(){
   const extEl=document.getElementById('vid-tag-flag-ext');
   const indivEl=document.getElementById('vid-tag-flag-indiv');
   const nomemBtn=document.getElementById('vid-tag-flag-nomem-btn');
+  const holdBtn=document.getElementById('vid-tag-flag-hold-btn');
   const hiddenBtn=document.getElementById('vid-tag-flag-hidden-btn');
   if(etcEl)etcEl.checked=_vidTagFlagChoice==='기타';
   if(extEl)extEl.checked=_vidTagFlagChoice==='외부인';
   if(indivEl)indivEl.checked=_vidTagFlagChoice==='개별출연';
   if(nomemBtn)nomemBtn.classList.toggle('active',_vidTagFlagChoice==='무관');
+  if(holdBtn)holdBtn.classList.toggle('active',_vidTagFlagChoice==='보류');
   if(hiddenBtn)hiddenBtn.classList.toggle('active',_vidTagFlagChoice==='hidden');
 }
 function _vidTagSetFlagChoice(v){
@@ -5438,6 +5440,9 @@ document.getElementById('vid-tag-flag-indiv').addEventListener('change',e=>{
   _vidTagFlagTouched=true;_vidTagFlagChoice=e.target.checked?'개별출연':null;_vidTagApplyFlagUI();
 });
 document.getElementById('vid-tag-flag-nomem-btn').addEventListener('click',e=>{e.stopPropagation();_vidTagSetFlagChoice('무관');});
+// 보류(2026-08-27) — 무관/숨김과 같은 3택 토글이라 하나를 고르면 나머지는 자동으로 풀린다
+// (_vidTagSetFlagChoice가 단일 선택). 같은 걸 다시 누르면 해제.
+document.getElementById('vid-tag-flag-hold-btn')?.addEventListener('click',e=>{e.stopPropagation();_vidTagSetFlagChoice('보류');});
 document.getElementById('vid-tag-flag-hidden-btn').addEventListener('click',e=>{e.stopPropagation();_vidTagSetFlagChoice('hidden');});
 // 썸네일이 아예 안 뜨는 개별 영상 하나만 유튜브에서 다시 조회해서 고치는 용도 —
 // "쇼츠 자동 감지"처럼 전체 영상을 다 훑지 않고 지금 열려있는 이 영상 하나만 갱신한다.
@@ -5622,6 +5627,25 @@ document.getElementById('admin-bulk-edit-btn')?.addEventListener('click',()=>{
     const statusEl=document.getElementById('vid-tag-status');
     if(statusEl)statusEl.textContent='선택한 영상이 여러 그룹에 걸쳐 있어요 — "멤버/콜라보 태그도 덮어쓰기"는 끄고 사용하세요';
   }
+});
+// "보류" — content_flag='보류'. **무관/숨김과 동작이 다르다**: 이 둘은 카드 그리드에서 바로 사라지지만
+// (_filterBannedVideos가 hidden·무관만 거른다) 보류는 그리드에 그대로 남고 탐험 차트·대표영상 선정에서만
+// 빠진다("판단은 나중에, 대표로는 쓰지 말자"). 그래서 여기서 선택 항목을 DOM에서 지우면 안 된다 —
+// 지웠다간 새로고침 때 도로 나타나서 "안 먹었다"는 오해를 부른다. 대신 토스트로 결과만 알린다.
+// (영상 관리 패널의 '선택-보류'(vm-hold-btn)와 같은 플래그, 2026-08-27 사용자 요청으로 카드에도 추가.)
+document.getElementById('admin-bulk-hold-btn')?.addEventListener('click',async()=>{
+  if(!sb||!_isAdmin())return;
+  const btn=document.getElementById('admin-bulk-hold-btn');
+  const selectedItems=[...document.querySelectorAll('.gc-ch-item.admin-selected,.tv-conn-selectable.admin-selected')];
+  if(!selectedItems.length)return;
+  const ids=selectedItems.map(el=>el.dataset.vidId).filter(Boolean);
+  if(!ids.length)return;
+  btn.disabled=true;btn.textContent='처리 중…';
+  const{error}=await sb.from(_YT_TABLE).update({content_flag:'보류'}).in('id',ids);
+  btn.disabled=false;btn.textContent='보류';
+  if(error){_showShareToast('오류: '+error.message);return;}
+  window._adminBulkExitFn?.();
+  _showShareToast(`${ids.length}개 보류 처리됨 (카드에는 계속 보이고, 차트·대표영상에서만 빠져요)`);
 });
 document.getElementById('admin-bulk-hide-btn')?.addEventListener('click',async()=>{
   if(!sb||!_isAdmin())return;
