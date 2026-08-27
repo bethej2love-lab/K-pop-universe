@@ -8079,6 +8079,25 @@ function _fandomText(fd){
 // PK (ko_name, group_ko)) — 동명이인(마크/도영/지민 등, 같은 이름이 여러 그룹에 존재)이 서로 사진을
 // 공유해버리던 버그(2026-08-12, 사용자 제보) 수정: 기존엔 ko_name 단독 PK라 이름이 겹치는 멤버끼리
 // 사진이 충돌했음 — 키에 group_ko를 추가해 그룹 단위로 분리.
+// PostgREST는 한 번에 **1,000행**만 준다 — 그런데 에러도 경고도 없이 조용히 잘려서, 테이블이 그 선을
+// 넘기 전까지는 아무도 모른다. "전부 다 받아야 하는" 프리워밍 조회는 반드시 이걸 거칠 것.
+// 실제 사고(2026-08-27, 사용자 제보 "사진 등록했는데 업데이트가 안 된다"): artist_pics가 32행이던
+// 시절(2026-08-11)에 만든 `.select()` 한 줄이 그대로 남아, 1,111행 중 **111행이 통째로 누락**되고
+// 있었다. 하필 잘리는 쪽이 최근 등록분이라 증상이 "새로 등록한 사진만 안 뜬다"로 나타났다.
+// ⚠️ 호출부에서 order를 반드시 지정할 것 — 정렬이 없으면 페이지 경계에서 행이 새거나 겹칠 수 있다.
+// admin.js의 _sbFetchAll과 같은 개념이지만 그건 어드민 전용 스크립트라 일반 유저 경로에선 못 쓴다.
+async function _sbSelectAll(build){
+  const PAGE=1000;const out=[];let from=0;
+  for(;;){
+    const{data,error}=await build().range(from,from+PAGE-1);
+    if(error)return{data:out,error};
+    if(!data?.length)break;
+    out.push(...data);
+    if(data.length<PAGE)break;
+    from+=PAGE;
+  }
+  return{data:out,error:null};
+}
 const _instaPicCache=new Map(); // "ko_name␟group_ko" → pic_url (세션 캐시)
 // source_url: 개인 인스타가 없는 멤버(주로 신인)의 사진 클릭 타겟(위버스 프로필 등) — pic_url과 별도
 // 컬럼/캐시로 관리한다(2026-08-14, 사용자 요청 — "신인들도 사진은 있는 게 낫다"). 인스타 있는 멤버는
@@ -8093,16 +8112,19 @@ let _instaPicPreloadP=null;
 async function _warmInstaPicCache(){
   if(!sb)return;
   try{
-    let{data,error}=await sb.from('artist_pics').select('ko_name,group_ko,pic_url,source_url');
+    // ⚠️ 반드시 페이지네이션할 것 — PostgREST는 한 번에 **1,000행**만 준다. 이 테이블이 32행이던 시절
+    // (2026-08-11)에 만든 코드라 그냥 select() 하나였는데, 사진이 쌓여 1,000행을 넘긴 뒤로는 **넘친 만큼이
+    // 조용히 잘려나가고 있었다** — 에러도 경고도 없이. 잘리는 쪽이 하필 최근 등록분이라 증상이
+    // "새로 등록한 사진만 안 뜬다"로 나타났다(2026-08-27 사용자 제보 — 실측 1,111행 중 111행 누락,
+    // 그중 40개가 그날 등록분이었다). 정렬을 고정해야 페이지 경계에서 행이 새거나 겹치지 않는다.
+    const _sel=cols=>_sbSelectAll(()=>sb.from('artist_pics').select(cols).order('ko_name').order('group_ko'));
+    let{data:rows,error}=await _sel('ko_name,group_ko,pic_url,source_url');
     // source_url 컬럼이 아직 없는 DB(마이그레이션 미실행)면 42703(undefined_column)로 통째로 실패해서
     // 기존에 잘 뜨던 인스타 사진까지 전부 안 뜨는 것처럼 보임(2026-08-14, 사용자 제보로 발견) — 컬럼 없이
     // 한 번 더 시도해서 최소한 pic_url만이라도 정상 로드되게 방어한다.
-    if(error?.code==='42703'){
-      const retry=await sb.from('artist_pics').select('ko_name,group_ko,pic_url');
-      data=retry.data;error=retry.error;
-    }
+    if(error?.code==='42703')({data:rows,error}=await _sel('ko_name,group_ko,pic_url'));
     if(error){console.error('instapic warm failed',error);return;}
-    (data||[]).forEach(r=>{
+    (rows||[]).forEach(r=>{
       if(r.pic_url)_instaPicCache.set(_picKey(r.ko_name,r.group_ko),r.pic_url);
       if(r.source_url)_instaPicSourceCache.set(_picKey(r.ko_name,r.group_ko),r.source_url);
     });
@@ -8190,6 +8212,19 @@ async function _fetchInstaPicUrl(koName,groupKo){
   const picUrl=data?.pic_url||null;
   if(picUrl)_instaPicCache.set(cacheKey,picUrl);
   return picUrl;
+}
+// 겸임 멤버는 사진이 어느 그룹 문맥에서 등록됐는지 미리 알 수 없다 — artist_pics의 키가 (이름, 그룹)
+// 복합키라(동명이인 사진 공유 버그 수정, 2026-08-12) 주 소속만 찾으면 부소속에서 등록한 사진을 놓친다.
+// 소속 그룹을 순서대로 훑어 처음 찾은 것을 쓴다. 전부 캐시 조회라 비용은 사실상 0.
+async function _fetchArtistPicAnyGroup(a){
+  if(!a)return null;
+  const gs=_artistGroups(a).map(g=>g.ko);
+  if(!gs.length)gs.push('');
+  for(const gko of gs){
+    const url=await _fetchInstaPicUrl(a.name.ko,gko||'');
+    if(url)return url;
+  }
+  return null;
 }
 
 const _LINK_DEFS=[
@@ -11129,9 +11164,21 @@ function _openFavKebab(dk,btn){
   _favKebabOutside=ev=>{if(_favKebabEl&&!_favKebabEl.contains(ev.target))_closeFavKebab();};
   setTimeout(()=>document.addEventListener('click',_favKebabOutside,true),0);
 }
-function _appendFavRow(el,{tag,name,sub,imgUrl,colorArr,people,bdayDays,annivDays,dk,onClick}){
+function _appendFavRow(el,{tag,name,sub,imgUrl,colorArr,people,bdayDays,annivDays,dk,onClick,_picRetryKey}){
   const row=document.createElement('div');row.className='fav-item';row.dataset.dk=dk; // 재정렬용 식별자(케밥 메뉴)
-  row.appendChild(people?_favAvatarStackEl(people):_favAvatarEl(imgUrl,colorArr));
+  const avatar=people?_favAvatarStackEl(people):_favAvatarEl(imgUrl,colorArr);
+  row.appendChild(avatar);
+  // _instaPicCache는 인증 직후 비동기로 채워지는데(_warmInstaPicCache) 이 목록은 캐시를 **동기로** 읽는다
+  // — 프로필 패널을 워밍 완료 전에 열면 사진 자리가 빈 채로 굳고, 워밍이 끝나도 다시 그리는 곳이 없었다
+  // (2026-08-27 사용자 제보 — "사진 등록했는데 프로필 패널이 업데이트 안 된다"). 워밍을 기다렸다 한 번만
+  // 다시 채운다. 이미 사진이 있었거나(imgUrl) 여러 명 스택(people)이면 건드리지 않는다.
+  if(!imgUrl&&!people&&_picRetryKey&&_instaPicPreloadP){
+    const _k=_picRetryKey;
+    _instaPicPreloadP.then(()=>{
+      const late=_instaPicCache.get(_k);
+      if(late&&row.isConnected)avatar.replaceWith(_favAvatarEl(late,colorArr));
+    });
+  }
   const main=document.createElement('div');main.className='fav-main';
   const nameRow=document.createElement('div');nameRow.className='fav-name-row';
   nameRow.innerHTML=`<span class="fav-itag">${tag}</span><span class="fav-iname">${name}</span>`+(sub?`<span class="fav-isub">${sub}</span>`:'');
@@ -11179,7 +11226,7 @@ async function renderFavList(){
     const sub=currentLang==='ko'?gko:(GROUPS[gko]?.en||gko);
     _appendFavRow(el,{
       tag:currentLang==='ko'?'멤버':'Member',name,sub,
-      imgUrl:_instaPicCache.get(_picKey(mko,gko))||null,colorArr:artist.color,
+      imgUrl:_instaPicCache.get(_picKey(mko,gko))||null,colorArr:artist.color,_picRetryKey:_picKey(mko,gko),
       bdayDays:_daysUntilBday(artist.bday),annivDays:_daysSince(favDates['m:'+key]),dk:'m:'+key,
       onClick:()=>{
         const bm=bubbleMeshes.find(b=>b.ko===gko);
@@ -12911,7 +12958,8 @@ let _scrapCountsP=null; // _warmScrapCounts() 완료 promise — featured 선택
 async function _warmScrapCounts(){
   if(!sb||!window._sbSession)return;
   try{
-    const{data,error}=await sb.from('video_scrap_counts').select('video_url,scrap_count');
+    // 유저 활동으로 계속 늘어나는 테이블이라 1,000행 함정 대상 — _sbSelectAll 주석 참고.
+    const{data,error}=await _sbSelectAll(()=>sb.from('video_scrap_counts').select('video_url,scrap_count').order('video_url'));
     if(error){console.error('scrap counts fetch failed',error);return;}
     (data||[]).forEach(r=>_scrapCounts.set(r.video_url,r.scrap_count));
   }catch(e){console.error('_warmScrapCounts failed',e);}
@@ -12926,11 +12974,11 @@ let _colLikesP=null;
 async function _warmColLikes(){
   if(!sb)return;
   try{
-    const{data,error}=await sb.from('collection_like_counts').select('collection_id,like_count');
+    const{data,error}=await _sbSelectAll(()=>sb.from('collection_like_counts').select('collection_id,like_count').order('collection_id'));
     if(error){console.error('collection like counts fetch failed',error);}
     else(data||[]).forEach(r=>_colLikeCounts.set(r.collection_id,r.like_count));
     if(window._sbSession){
-      const{data:mine,error:mineErr}=await sb.from('collection_likes').select('collection_id').eq('user_id',window._sbSession.user.id);
+      const{data:mine,error:mineErr}=await _sbSelectAll(()=>sb.from('collection_likes').select('collection_id').eq('user_id',window._sbSession.user.id).order('collection_id'));
       if(!mineErr)(mine||[]).forEach(r=>_colLikedByMe.add(r.collection_id));
     }
   }catch(e){console.error('_warmColLikes failed',e);}
@@ -14046,9 +14094,13 @@ function _buildFeedAnniversaries(){
     }),undefined,sub2);
     if(a.active===false)item.classList.add('anniv-inactive');
     const _fallbackThumb=()=>_fetchTopVideoThumb(_ytGroupKoFor(a),a.name.ko).then(t=>_setAnnivStripThumb(item,t||null));
-    if(a.links?.instagram){
-      _fetchInstaPicUrl(a.name.ko,a.group?.ko||'').then(picUrl=>{if(picUrl)_setAnnivStripThumb(item,picUrl);else _fallbackThumb();});
-    }else _fallbackThumb();
+    // ⚠️ 예전엔 `if(a.links?.instagram)`으로 감싸서 **인스타가 있는 멤버만** 사진을 조회했다. 2026-08-14에
+    // "인스타 없는 멤버도 위버스 등 출처로 사진 등록 가능"으로 확대됐는데 이 조건이 같이 안 고쳐져서,
+    // 인스타 없는 **541명**은 사진을 등록해도 여기서 영영 안 떴다(2026-08-27 사용자 제보 — 오늘 생일 4명 중
+    // 민찬·브라이언·윤 3명이 정확히 이 경우였고, DB엔 사진이 멀쩡히 있었다).
+    // 이제 인스타 유무와 무관하게 사진을 먼저 찾고, 없을 때만 영상 썸네일로 폴백한다. _fetchInstaPicUrl은
+    // 프리로드된 캐시를 먼저 보므로 추가 DB 왕복은 거의 없다.
+    _fetchArtistPicAnyGroup(a).then(picUrl=>{if(picUrl)_setAnnivStripThumb(item,picUrl);else _fallbackThumb();});
   });
 }
 
@@ -16887,7 +16939,9 @@ let _pubCollectionsP=null;
 async function _warmPubCollections(){
   if(!sb)return;
   try{
-    const{data,error}=await sb.from('public_collections').select('id,owner_id,owner_nick,name,desc,items,cover_img,member_kos,group_kos,updated_at').order('updated_at',{ascending:false});
+    // 유저가 공개하는 만큼 늘어나는 테이블이라 1,000행 함정 대상 — _sbSelectAll 주석 참고.
+    // updated_at은 동률이 날 수 있어 id를 2차 정렬로 붙인다(페이지 경계에서 행이 새거나 겹치는 것 방지).
+    const{data,error}=await _sbSelectAll(()=>sb.from('public_collections').select('id,owner_id,owner_nick,name,desc,items,cover_img,member_kos,group_kos,updated_at').order('updated_at',{ascending:false}).order('id'));
     if(error){console.error('public_collections warm failed',error);return;}
     _pubCollectionsCache=data||[];
   }catch(e){console.error('_warmPubCollections failed',e);}
