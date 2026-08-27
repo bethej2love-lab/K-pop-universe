@@ -1383,6 +1383,9 @@ const _snapCols=()=>_BULK_SNAP_COLS.filter(c=>(c!=='reviewed_at'||_snapHasReview
 // 한 번의 실행 전체를 하나의 되돌리기 단위로) 넘긴다. 안 넘기면 매 호출마다 새 batch.
 async function _snapshotBeforeBulk(opLabel,ids,forceBatchId){
   if(!sb||!ids||!ids.length)return null;
+  // 일괄 작업은 수천 행을 한꺼번에 바꾸므로 영상 관리 패널의 탭 캐시를 전부 버린다 — 모든 일괄
+  // 버튼이 이 함수를 반드시 거치므로(스냅샷은 일괄 작업의 전제) 여기 한 곳이면 충분하다.
+  try{_vmCache.clear();}catch(_){}
   const uniq=[...new Set(ids)];
   const batchId=forceBatchId||((self.crypto&&self.crypto.randomUUID)?self.crypto.randomUUID():('b'+Date.now()+Math.random().toString(36).slice(2)));
   try{
@@ -2217,6 +2220,35 @@ let _vmSearch2Timer=null;
 // 정상 노출 중인 것만 보고 싶을 때가 있어서 추가한 클라이언트 사이드 토글(2026-08-14, 사용자 요청).
 let _vmOnlyNormal=false;
 
+// ── 그룹배정 검수 큐의 정의(한 곳) ────────────────────────────────────────────
+// needs_review=true 이면서 **아직 '무관'으로 정리되지 않은** 것. 2026-08-27 사용자 제보 — 검수 탭에서
+// 본 영상을 나중에 무관 처리했는데도 큐에 계속 남아 있었다(실측 156건 중 11건이 그 상태). 무관은
+// "이 그룹배정이 틀렸다"는 판정이라 검수를 이미 마친 것과 같으므로 큐에서 빠지는 게 맞다.
+// ⚠️ 큐 목록(_vmLoad의 review 탭)과 관리자 홈 카운트 카드가 **반드시 같은 정의**를 써야 한다 —
+//    한쪽만 고치면 "카드엔 156개인데 열어보면 145개"로 어긋난다(같은 날 루틴/버튼 드리프트 사고와
+//    같은 종류라 아예 함수 하나로 묶었다). tests/routine-parity.test.js가 이 대응도 검사한다.
+function _vmReviewQueueFilter(q){
+  return q.eq('needs_review',true).or('content_flag.is.null,content_flag.neq.무관');
+}
+
+// ── 탭 조회 결과 캐시 ─────────────────────────────────────────────────────────
+// 탭을 옮겼다 돌아올 때마다 같은 쿼리를 통째로 다시 던지고 있었다 — 검수 큐·strictSync·카테고리 잠금은
+// _sbFetchAll로 수만 행을 긁어서 몇 초씩 걸린다(2026-08-27 사용자 요청).
+// 이미 캐시되던 것: '전체' 탭의 1~2글자 검색(_avsEnsureCache — 페이지 새로고침 전까지 전량 유지)과
+// '채널' 탭(_EXT_CHANNELS 메모리 배열이라 네트워크 자체가 없음). 나머지 탭은 전부 매번 재조회였다.
+const _VM_CACHE_TTL=180000; // 3분 — 지나면 자동으로 다시 조회한다
+const _vmCache=new Map();   // key(tab \0 검색어) → {rows, status, ts}
+let _vmCacheKeyCur=null;
+const _vmCacheKey=(tab,term)=>tab+' '+(term||'');
+// 쓰기가 일어나면 지금 보고 있는 탭 말고 다른 탭 캐시는 버린다 — 무관 처리 한 번으로 '무관' 탭과 검수
+// 큐가 동시에 바뀌므로, 남겨두면 다른 탭에서 사라진 행이 되살아난 것처럼 보인다.
+function _vmCacheDropOthers(){for(const k of[..._vmCache.keys()])if(k!==_vmCacheKeyCur)_vmCache.delete(k);}
+// 현재 탭 캐시를 지금 _vmRows 상태로 덮어쓴다(조회 직후, 그리고 행을 갱신·삭제한 뒤에 부른다).
+function _vmCacheSync(){
+  if(!_vmCacheKeyCur)return;
+  _vmCache.set(_vmCacheKeyCur,{rows:_vmRows,status:document.getElementById('vm-status')?.textContent||'',ts:Date.now()});
+}
+
 function _vmOpen(tab){
   _vmTab=tab||'all';
   document.querySelectorAll('.vm-tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===_vmTab));
@@ -2273,6 +2305,20 @@ async function _vmLoad(searchTerm,preserveSearch2){
   listEl.innerHTML='';
   statusEl.textContent='조회 중…';
   const term=(searchTerm!==undefined?searchTerm:(document.getElementById('vm-search').value||'')).trim();
+  // 같은 탭·같은 검색어를 TTL 안에 다시 열면 네트워크 없이 그대로 복원한다. 캐시에 담기는 rows는
+  // _vmRows와 같은 배열 참조라, 행 하나만 고치는 경로(_vmRefreshRows 등)가 _vmCacheSync를 부르면
+  // 캐시도 같이 최신이 된다. 쓰기가 나면 다른 탭 캐시는 _vmCacheDropOthers로 버린다.
+  const cacheKey=_vmCacheKey(tab,term);
+  _vmCacheKeyCur=cacheKey;
+  const _cached=_vmCache.get(cacheKey);
+  if(_cached&&Date.now()-_cached.ts<_VM_CACHE_TTL){
+    _vmRows=_cached.rows;
+    statusEl.textContent=_cached.status;
+    // ⚠️ 여기서 _vmCacheSync를 부르면 안 된다 — ts가 갱신돼 TTL이 "마지막 방문 기준 3분"으로 미끄러지고,
+    //    탭을 계속 오가면 영원히 재조회가 안 된다. 저장 시각은 실제 조회 시각 그대로 둔다.
+    _vmRenderVideoList();
+    return;
+  }
   try{
     let rows;
     if(tab==='all'){
@@ -2292,7 +2338,7 @@ async function _vmLoad(searchTerm,preserveSearch2){
       }
       _vmRows=hits;
       statusEl.textContent=`${hits.length}개 표시${hits.length>=1000?' (최대 1000개)':''}`;
-      _vmRenderVideoList();
+      _vmCacheSync();_vmRenderVideoList();
       return;
     }
     if(tab==='new'){
@@ -2302,7 +2348,7 @@ async function _vmLoad(searchTerm,preserveSearch2){
       if(error){statusEl.textContent='조회 실패: '+error.message;return;}
       _vmRows=data||[];
       statusEl.textContent=`${_vmRows.length}개 (새로 들어온 순)${_vmRows.length>=1000?' · 최대 1000개':''}`;
-      _vmRenderVideoList();
+      _vmCacheSync();_vmRenderVideoList();
       return;
     }
     if(tab==='ss'){
@@ -2313,7 +2359,7 @@ async function _vmLoad(searchTerm,preserveSearch2){
       //    이 탭의 질문은 "이 그룹 콘텐츠가 맞나"이고 플래그가 붙었다는 건 그 답이 났다는 뜻이다.
       //    (보류는 별도 '보류' 탭에서 다시 볼 수 있으므로 여기서 빼도 유실되지 않는다)
       const ssGkos=[..._STRICT_SYNC_GROUPS];
-      if(!ssGkos.length){statusEl.textContent='strictSync 그룹이 없어요';_vmRows=[];_vmRenderVideoList();return;}
+      if(!ssGkos.length){statusEl.textContent='strictSync 그룹이 없어요';_vmRows=[];_vmCacheSync();_vmRenderVideoList();return;}
       // ⚠️ 예전엔 `.in('group_ko', 23개).order('id')` 한 방으로 받았는데 **19.2초** 걸렸음 —
       // group_ko 인덱스는 있지만 전역 id 정렬과 안 맞아서, 페이지마다 매칭 3.3%(12,113/371,448)를
       // 찾느라 테이블을 훑는 꼴이었다. 그룹별로 쪼개면 각 쿼리가 group_ko 인덱스를 그대로 타고
@@ -2350,7 +2396,7 @@ async function _vmLoad(searchTerm,preserveSearch2){
       const all=(data||[]).sort((a,b)=>(a.group_ko||'').localeCompare(b.group_ko||'','ko')||(a.title||'').localeCompare(b.title||'','ko'));
       _vmRows=all;
       statusEl.textContent=`검수 대상 ${all.length}개 (strictSync 그룹: ${ssGkos.join(', ')})`;
-      _vmRenderVideoList();
+      _vmCacheSync();_vmRenderVideoList();
       return;
     }
     if(tab==='review'){
@@ -2358,9 +2404,8 @@ async function _vmLoad(searchTerm,preserveSearch2){
       // 없이) group_ko를 역추론했을 때 needs_review:true+content_flag:'hidden'으로 저장해둔 것들
       // (2026-08-20 도입). 여기서 승인하면 그 즉시 실제 그룹으로 확정(content_flag 해제), 거부하면
       // 무관 처리 — 둘 다 needs_review는 false로 내려 큐에서 빠짐.
-      const{data,error}=await _sbFetchAll(()=>sb.from(_YT_TABLE)
-        .select('id,title,group_ko,thumb,content_flag,members,with_members,with_groups,cover_of_members,cover_of_groups,created_at')
-        .eq('needs_review',true)
+      const{data,error}=await _sbFetchAll(()=>_vmReviewQueueFilter(sb.from(_YT_TABLE)
+        .select('id,title,group_ko,thumb,content_flag,members,with_members,with_groups,cover_of_members,cover_of_groups,created_at'))
         .order('id'));
       if(myGen!==_vmSearchGen)return;
       if(error){statusEl.textContent='조회 실패: '+error.message;return;}
@@ -2374,7 +2419,7 @@ async function _vmLoad(searchTerm,preserveSearch2){
       _vmRows=all;
       const nNew=all.filter(v=>String(v.created_at||'')>_ADM_CREATED_BASELINE).length;
       statusEl.textContent=`그룹배정 검수 대상 ${all.length}개`+(nNew?` (신규 유입 ${nNew}개 — 위쪽부터)`:'')+` — 멤버 이름 하나만으로 그룹을 추측한 영상들이에요`;
-      _vmRenderVideoList();
+      _vmCacheSync();_vmRenderVideoList();
       return;
     }
     if(tab==='catlock'){
@@ -2397,7 +2442,7 @@ async function _vmLoad(searchTerm,preserveSearch2){
       const all=candidates.sort((a,b)=>(a.group_ko||'').localeCompare(b.group_ko||'','ko')||(a.title||'').localeCompare(b.title||'','ko'));
       _vmRows=all;
       statusEl.textContent=`라이브로 보이는데 수동 편집으로 다른 카테고리로 저장된 영상 ${all.length}개 — ✎로 하나씩 확인해주세요`;
-      _vmRenderVideoList();
+      _vmCacheSync();_vmRenderVideoList();
       return;
     }
     // nomem / hold / hidden 탭
@@ -2411,7 +2456,7 @@ async function _vmLoad(searchTerm,preserveSearch2){
     const all=(data||[]).sort((a,b)=>(a.group_ko||'').localeCompare(b.group_ko||'','ko')||(a.title||'').localeCompare(b.title||'','ko'));
     _vmRows=all;
     statusEl.textContent=term?`검색 결과 ${all.length}개`:`총 ${all.length}개`;
-    _vmRenderVideoList();
+    _vmCacheSync();_vmRenderVideoList();
   }catch(e){
     if(myGen!==_vmSearchGen)return;
     statusEl.textContent='오류: '+e.message;
@@ -2556,7 +2601,9 @@ async function _vmSetFlag(v,newFlag,btn,item){
   btn.disabled=false;
   // 탭 필터와 안 맞는 항목은 페이드 아웃 후 제거
   const tab=_vmTab;
-  const mismatch=(tab==='nomem'&&newFlag!=='무관')||(tab==='hold'&&newFlag!=='보류')||(tab==='hidden'&&newFlag!=='hidden');
+  // review 탭 추가(2026-08-27): 여기서 무관으로 바꾸면 그건 '그룹배정이 틀렸다'는 판정이라 큐에서
+  // 빠지는 게 맞다(_vmReviewQueueFilter·stillFits와 같은 기준).
+  const mismatch=(tab==='nomem'&&newFlag!=='무관')||(tab==='hold'&&newFlag!=='보류')||(tab==='hidden'&&newFlag!=='hidden')||(tab==='review'&&newFlag==='무관');
   if(mismatch){
     item.style.opacity='0.3';
     setTimeout(()=>{
@@ -2564,6 +2611,7 @@ async function _vmSetFlag(v,newFlag,btn,item){
       item.remove();
       _vmUpdateCount();
       document.getElementById('vm-status').textContent=`총 ${_vmRows.length}개`;
+      _vmCacheSync();_vmCacheDropOthers();
       if(!_vmRows.length)_vmRenderVideoList();
     },500);
   }
@@ -2581,6 +2629,7 @@ async function _vmReviewDecide(v,item,approve,approveBtn,rejectBtn){
     _vmRows=_vmRows.filter(r=>r.id!==v.id);
     item.remove();
     document.getElementById('vm-status').textContent=`그룹배정 검수 대상 ${_vmRows.length}개 남음`;
+    _vmCacheSync();_vmCacheDropOthers();
     if(!_vmRows.length)_vmRenderVideoList();
   },400);
 }
@@ -2610,6 +2659,9 @@ async function _vmReviewBulk(approve){
     _vmRows=_vmRows.filter(r=>!gone.has(r.id));
     _vmRenderVideoList();
     if(statusEl)statusEl.textContent=`${ids.length}개 ${label} 완료 — 그룹배정 검수 대상 ${_vmRows.length}개 남음`;
+    // 위 _snapshotBeforeBulk가 캐시를 통째로 비웠으므로, 걷어낸 뒤 상태를 현재 탭 캐시로 다시 심는다
+    // (안 하면 이 탭도 캐시가 비어 다음 방문에 3천 건을 또 긁는다).
+    _vmCacheSync();
     _showShareToast(`${ids.length}개 ${label}됨`);
   }catch(e){
     if(statusEl)statusEl.textContent='오류: '+e.message;
@@ -2640,6 +2692,7 @@ document.getElementById('vm-nomem-btn')?.addEventListener('click',async()=>{
     }
     const gone=new Set(ids);
     _vmRows=_vmRows.filter(v=>!gone.has(v.id));
+    _vmCacheSync();_vmCacheDropOthers(); // 목록에서 걷어낸 결과를 캐시에도 반영(2026-08-27)
     _vmRenderVideoList();
     if(statusEl)statusEl.textContent=`${ids.length}개 무관 처리 완료 — 검수 대상 ${_vmRows.length}개 남음`;
     _showShareToast(`${ids.length}개 무관 처리됨`);
@@ -2671,6 +2724,7 @@ document.getElementById('vm-confirm-btn')?.addEventListener('click',async()=>{
     }
     const gone=new Set(ids);
     _vmRows=_vmRows.filter(v=>!gone.has(v.id));
+    _vmCacheSync();_vmCacheDropOthers(); // 목록에서 걷어낸 결과를 캐시에도 반영(2026-08-27)
     _vmRenderVideoList();
     if(statusEl)statusEl.textContent=`${ids.length}개 확인 완료 — 검수 대상 ${_vmRows.length}개 남음`;
     _showShareToast(`${ids.length}개 확인 처리됨`);
@@ -3171,6 +3225,7 @@ document.getElementById('vm-apply-btn')?.addEventListener('click',async()=>{
     document.getElementById('vm-status').textContent=`${ids.length}개 무관 처리 완료`;
   }else{
     _vmRows=_vmRows.filter(v=>!idSet.has(v.id));
+    _vmCacheSync();_vmCacheDropOthers(); // 목록에서 걷어낸 결과를 캐시에도 반영(2026-08-27)
     items.forEach(el=>el.remove());
     document.getElementById('vm-status').textContent=`${ids.length}개 처리 완료 — 남은 ${_vmRows.length}개`;
     if(!_vmRows.length)_vmRenderVideoList();
@@ -3202,6 +3257,7 @@ document.getElementById('vm-indiv-btn')?.addEventListener('click',async()=>{
     document.getElementById('vm-status').textContent=`${ids.length}개 개별출연 처리 완료`;
   }else{
     _vmRows=_vmRows.filter(v=>!idSet.has(v.id));
+    _vmCacheSync();_vmCacheDropOthers(); // 목록에서 걷어낸 결과를 캐시에도 반영(2026-08-27)
     items.forEach(el=>el.remove());
     document.getElementById('vm-status').textContent=`${ids.length}개 처리 완료 — 남은 ${_vmRows.length}개`;
     if(!_vmRows.length)_vmRenderVideoList();
@@ -3232,6 +3288,7 @@ document.getElementById('vm-hold-btn')?.addEventListener('click',async()=>{
     document.getElementById('vm-status').textContent=`${ids.length}개 보류 처리 완료`;
   }else{
     _vmRows=_vmRows.filter(v=>!idSet.has(v.id));
+    _vmCacheSync();_vmCacheDropOthers(); // 목록에서 걷어낸 결과를 캐시에도 반영(2026-08-27)
     items.forEach(el=>el.remove());
     document.getElementById('vm-status').textContent=`${ids.length}개 처리 완료 — 남은 ${_vmRows.length}개`;
     if(!_vmRows.length)_vmRenderVideoList();
@@ -3264,6 +3321,7 @@ document.getElementById('vm-normal-btn')?.addEventListener('click',async()=>{
     document.getElementById('vm-status').textContent=`${ids.length}개 정상 처리 완료`;
   }else{
     _vmRows=_vmRows.filter(v=>!idSet.has(v.id));
+    _vmCacheSync();_vmCacheDropOthers(); // 목록에서 걷어낸 결과를 캐시에도 반영(2026-08-27)
     items.forEach(el=>el.remove());
     document.getElementById('vm-status').textContent=`${ids.length}개 처리 완료 — 남은 ${_vmRows.length}개`;
     if(!_vmRows.length)_vmRenderVideoList();
@@ -5007,8 +5065,11 @@ async function _vmRefreshRows(ids){
   if(error||!data)return false;
   const byId=new Map(data.map(r=>[r.id,r]));
   // 이 탭의 조건에서 벗어난 행(예: 검수 탭에서 승인돼 needs_review가 내려간 행)은 목록에서 뺀다.
-  const stillFits=r=>_vmTab!=='review'||r.needs_review===true;
+  // 무관 처리는 '이 그룹배정이 틀렸다'는 판정이라 검수를 마친 것과 같다 — 편집 모달에서 무관으로
+  // 바꾼 행이 목록에 그대로 남아 있던 문제(2026-08-27 제보). 조회 필터(_vmReviewQueueFilter)와 같은 기준.
+  const stillFits=r=>_vmTab!=='review'||(r.needs_review===true&&r.content_flag!=='무관');
   _vmRows=_vmRows.map(r=>byId.has(r.id)?{...r,...byId.get(r.id)}:r).filter(r=>!byId.has(r.id)||stillFits(r));
+  _vmCacheSync();_vmCacheDropOthers(); // 방금 쓰기가 있었으므로 다른 탭 캐시는 못 믿는다
   _vmRenderVideoList();
   return true;
 }
@@ -5867,7 +5928,7 @@ async function _admLoadCards(){
   // ⚠️ Promise.all로 묶어 한꺼번에 반영하면 **제일 느린 쿼리에 전부 발이 묶인다** — 콜드 커넥션에선
   // 첫 쿼리가 11초까지 걸리는 걸 실측했고(2026-08-25), 그동안 카드 셋이 다 "…"로 멈춰 있어서 화면이
   // 고장난 것처럼 보였음. 각자 도착하는 대로 채운다(피드백처럼 빠른 건 즉시 뜸).
-  _admCount(sb.from(_YT_TABLE).select('id',_admHead()).eq('needs_review',true))
+  _admCount(_vmReviewQueueFilter(sb.from(_YT_TABLE).select('id',_admHead())))
     .then(n=>set(cReview,n,'다 봤어요'));
   (ssGkos.length?_admCount(sb.from(_YT_TABLE).select('id',_admHead()).in('group_ko',ssGkos).eq('tags_manual',false)):Promise.resolve(0))
     .then(n=>set(cSs,n,'깨끗해요'));
