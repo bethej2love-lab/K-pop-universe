@@ -1297,6 +1297,10 @@
   #vm-list::-webkit-scrollbar-thumb:hover{background:rgba(160,185,240,0.48);background-clip:content-box;}
   /* 탭 라벨의 "마지막 조회 시점 개수"(2026-08-27) — 실시간 아님을 시각적으로도 구분되게 흐리고 작게.
      숫자가 붙었다 없어져도 탭 폭이 안 흔들리게 .vm-tab은 flex:1로 이미 균등분할돼 있다. */
+  /* 자동 판정분 표시(2026-08-27) — 배지 왼쪽에 점 하나. 텍스트를 붙이면 '무관'/'보류'/'숨김'
+     라벨이 밀려 배지 폭이 제각각이 되므로 무형(::before)으로만 구분한다. */
+  .vm-flag-btn.vm-flag-auto::before{content:'';display:inline-block;width:4px;height:4px;border-radius:50%;
+    background:currentColor;opacity:.55;margin-right:4px;vertical-align:middle;}
   .vm-tab-count{font-size:9.5px;font-weight:500;opacity:.62;margin-left:1px;}
   .vm-tab.active .vm-tab-count{opacity:.78;}
   /* 4상태 이동 버튼 — 기본 동작(vm-apply-btn)보다 한 단계 약하게 보이도록 테두리만 */

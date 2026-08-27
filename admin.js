@@ -258,7 +258,7 @@ async function _ytSyncGroup(ko,key,onProg,youtubeUrl,syncKey){
   if(vids.length){
     // 공식 채널 업로드분은 제외 키워드에 걸려도 무관 처리하지 않는다 — 판단은 _shouldJunkFlag
     // 한 곳에 있고(index.html), 여기선 source_tier를 그대로 넘겨 정책을 따른다(2026-08-27).
-    const rows=vids.map(v=>({...v,group_ko:ko,title_norm:_titleNorm(v.title),source_handle:skey,source_tier:'official',...(_shouldJunkFlag(v.title,'official')?{content_flag:'무관'}:{})}));
+    const rows=vids.map(v=>({...v,group_ko:ko,title_norm:_titleNorm(v.title),source_handle:skey,source_tier:'official',...(_shouldJunkFlag(v.title,'official')?_flagPatch('무관','auto'):{})}));
     for(let i=0;i<rows.length;i+=200){
       const{error}=await _ytUpsertVideos(rows.slice(i,i+200));
       if(error)throw new Error(error.message);
@@ -582,7 +582,7 @@ async function _ytSweepBannedVideos(){
     if(!toHide.length){_ytSetProg(`검사 완료 — ${rows.length}개 중 해당 없음`);localStorage.setItem('kpu_banned_sweep_version',version);return;}
     await _snapshotBeforeBulk('밴 인물 언급 영상 숨김 정리',toHide);
     for(let i=0;i<toHide.length;i+=200){
-      const{error:ue}=await sb.from(_YT_TABLE).update({content_flag:'hidden'}).in('id',toHide.slice(i,i+200));
+      const{error:ue}=await sb.from(_YT_TABLE).update(_flagPatch('hidden','auto',{needs_review:false})).in('id',toHide.slice(i,i+200));
       if(ue)throw new Error(ue.message);
     }
     localStorage.setItem('kpu_banned_sweep_version',version);
@@ -621,7 +621,7 @@ async function _ytSweepJunkKeywordVideos(){
     if(!toFlag.length){_ytSetProg(`검사 완료 — ${rows.length}개 중 해당 없음`);localStorage.setItem('kpu_junk_sweep_version',version);return;}
     await _snapshotBeforeBulk('제외 키워드 영상 무관 정리',toFlag);
     for(let i=0;i<toFlag.length;i+=200){
-      const{error:ue}=await sb.from(_YT_TABLE).update({content_flag:'무관'}).in('id',toFlag.slice(i,i+200));
+      const{error:ue}=await sb.from(_YT_TABLE).update(_flagPatch('무관','auto')).in('id',toFlag.slice(i,i+200));
       if(ue)throw new Error(ue.message);
     }
     localStorage.setItem('kpu_junk_sweep_version',version);
@@ -940,7 +940,7 @@ async function _ytSweepHiddenRejudge(){
       const members=(m.membersByGroup&&m.membersByGroup[ng])||[];
       const wgs=m.withGroups||[];
       const wms=[];wgs.forEach(x=>((m.membersByGroup&&m.membersByGroup[x])||[]).forEach(mm=>wms.push(`${mm}(${x})`)));
-      moves.push({id:v.id,patch:{group_ko:ng,members,with_groups:wgs,with_members:wms,content_flag:null}});
+      moves.push({id:v.id,patch:{group_ko:ng,members,with_groups:wgs,with_members:wms,..._flagPatch(null,'auto')}});
       if(sMove.length<40)sMove.push(`[${v.group_ko}→${ng}] ${(v.title||'').slice(0,60)}`);
     }
     console.log(`[숨김 재판정] 재배정 예정 표본(최대40):\n${sMove.join('\n')}\n\n[숨김 재판정] 보류 이동 표본(최대40):\n${sHold.join('\n')}`);
@@ -955,7 +955,7 @@ async function _ytSweepHiddenRejudge(){
       _ytSetProg(`[숨김 재판정] 재배정 ${Math.min(i+200,moves.length)}/${moves.length}건…`);
     }
     for(let i=0;i<holds.length;i+=200){
-      const{error:ue}=await sb.from(_YT_TABLE).update({content_flag:'보류'}).in('id',holds.slice(i,i+200));
+      const{error:ue}=await sb.from(_YT_TABLE).update(_flagPatch('보류','auto')).in('id',holds.slice(i,i+200));
       if(ue)throw new Error(ue.message);
       _ytSetProg(`[숨김 재판정] 보류 이동 ${Math.min(i+200,holds.length)}/${holds.length}건…`);
     }
@@ -1451,12 +1451,16 @@ async function _ytExtractCoverSongTitles(){
 // 재스캔 사고 재발 방지책). 어느 버튼이 어느 컬럼을 바꾸든 하나의 헬퍼로 커버하려고, 이 관리도구들이
 // 바꿀 수 있는 컬럼 전부를 고정 목록으로 떠둔다(안 바뀐 컬럼까지 복원해도 값이 같아 무해).
 const _BULK_SNAP_TABLE='admin_bulk_snapshots';
-const _BULK_SNAP_COLS=['group_ko','members','with_members','with_groups','content_flag','needs_review','cover_of_members','cover_of_groups','cover_of_song','tags_manual','category','is_short','reviewed_at'];
+const _BULK_SNAP_COLS=['group_ko','members','with_members','with_groups','content_flag','needs_review','cover_of_members','cover_of_groups','cover_of_song','tags_manual','category','is_short','reviewed_at','flag_source','flagged_at'];
 let _snapHasReviewedAt=true;
+// flag_source/flagged_at(2026-08-27 신설)도 스냅샷에 넣는다 — content_flag만 되돌리고 출처를 안
+// 되돌리면 "정상인데 auto가 숨긴 흔적이 남은" 유령 상태가 생긴다. 컬럼이 아직 없는 환경(마이그레이션
+// 전)에서 select가 400을 내면 reviewed_at·is_short과 같은 방식으로 한 번만 빼고 재시도한다.
+let _snapHasFlagSrc=true;
 // is_short도 같은 사정 — is_short_migration.sql 실행 전이면 컬럼이 없어서 스냅샷 select가 400을 낸다.
 // 스냅샷은 모든 일괄 작업의 전제라 여기서 막히면 일괄 기능이 통째로 죽으므로 한 번만 빼고 재시도한다.
 let _snapHasIsShort=true;
-const _snapCols=()=>_BULK_SNAP_COLS.filter(c=>(c!=='reviewed_at'||_snapHasReviewedAt)&&(c!=='is_short'||_snapHasIsShort));
+const _snapCols=()=>_BULK_SNAP_COLS.filter(c=>(c!=='reviewed_at'||_snapHasReviewedAt)&&(c!=='is_short'||_snapHasIsShort)&&((c!=='flag_source'&&c!=='flagged_at')||_snapHasFlagSrc));
 // 영향받는 id들의 "바꾸기 전" 값을 떠서 batch로 저장한다. 실패해도(테이블 없음/권한 등) 원래 작업은
 // 막지 않고 안내만 남긴다 — 스냅샷이 안 됐다고 관리도구 자체가 멈추면 안 됨(그만큼 되돌리기만 불가).
 // forceBatchId: 여러 번 나눠 호출해도 같은 batch로 묶고 싶을 때(예: 청크로 진행되는 쇼츠 승격 스윕의
@@ -1481,6 +1485,10 @@ async function _snapshotBeforeBulk(opLabel,ids,forceBatchId){
       }
       if(error&&_snapHasIsShort&&/is_short/.test(error.message||'')){
         _snapHasIsShort=false;
+        ({data:rows,error}=await sb.from(_YT_TABLE).select(['id',..._snapCols()].join(',')).in('id',chunk));
+      }
+      if(error&&_snapHasFlagSrc&&/flag_source|flagged_at/.test(error.message||'')){
+        _snapHasFlagSrc=false;
         ({data:rows,error}=await sb.from(_YT_TABLE).select(['id',..._snapCols()].join(',')).in('id',chunk));
       }
       if(error)throw new Error(error.message);
@@ -2583,8 +2591,11 @@ async function _vmLoad(searchTerm,preserveSearch2){
       return;
     }
     // nomem / hold / hidden 탭
+    // flag_source를 같이 읽는다(2026-08-27) — 이 세 탭의 존재 이유가 "내가 분류한 것"을 훑는 건데,
+    // 실제로는 자동분이 99%(숨김 2,822건 중 사람이 숨긴 건 22건)라 출처가 안 보이면 어느 게 내 판단인지
+    // 알 수 없다. 배지에 · 를 붙여 자동분을 구분한다. 컬럼이 없는 환경이면 값이 undefined라 표시만 빠짐.
     const flag=tab==='nomem'?'무관':tab==='hold'?'보류':'hidden';
-    let q=sb.from(_YT_TABLE).select('id,title,group_ko,thumb,content_flag,members,with_members,with_groups,cover_of_members,cover_of_groups');
+    let q=sb.from(_YT_TABLE).select('id,title,group_ko,thumb,content_flag,flag_source,members,with_members,with_groups,cover_of_members,cover_of_groups');
     q=q.eq('content_flag',flag);
     if(term)q=q.or(`title.ilike.${_pgFilterVal('%'+term+'%')},group_ko.ilike.${_pgFilterVal('%'+term+'%')}`);
     const{data,error}=await _sbFetchAll(()=>q.order('id'));
@@ -2697,6 +2708,10 @@ function _vmRenderVideoList(){
       const flag=v.content_flag||null;
       const flagBtn=document.createElement('button');flagBtn.className='vm-flag-btn';flagBtn.type='button';
       _vmSetFlagLabel(flagBtn,flag);
+      // 자동 판정분 표시(2026-08-27) — 사람이 찍은 것과 매처가 찍은 것을 눈으로 갈라야 검수가 된다.
+      // flag_source가 없는 옛 행은 표시가 안 붙는데, 그 자체가 "이 컬럼 생기기 전 것"이라는 정보다.
+      if(v.flag_source==='auto'){flagBtn.classList.add('vm-flag-auto');flagBtn.title='자동 판정 (사람이 확인하지 않음)';}
+      else if(v.flag_source==='manual')flagBtn.title='직접 지정함';
       flagBtn.addEventListener('click',e=>{e.stopPropagation();_vmCycleFlagInline(v,flagBtn,item);});
       actions.appendChild(flagBtn);
     }
@@ -2733,7 +2748,7 @@ function _vmCycleFlagInline(v,btn,item){
 async function _vmSetFlag(v,newFlag,btn,item){
   if(!sb)return;
   btn.disabled=true;
-  const{error}=await sb.from(_YT_TABLE).update({content_flag:newFlag}).eq('id',v.id);
+  const{error}=await sb.from(_YT_TABLE).update(_flagPatch(newFlag,'manual')).eq('id',v.id);
   if(error){btn.disabled=false;_showShareToast('오류: '+error.message);return;}
   v.content_flag=newFlag;
   _vmSetFlagLabel(btn,newFlag);
@@ -2761,7 +2776,7 @@ async function _vmReviewDecide(v,item,approve,approveBtn,rejectBtn){
   if(!sb)return;
   approveBtn.disabled=true;rejectBtn.disabled=true;
   const newFlag=approve?null:'무관';
-  const{error}=await sb.from(_YT_TABLE).update({content_flag:newFlag,needs_review:false}).eq('id',v.id);
+  const{error}=await sb.from(_YT_TABLE).update(_flagPatch(newFlag,'manual',{needs_review:false})).eq('id',v.id);
   if(error){approveBtn.disabled=false;rejectBtn.disabled=false;_showShareToast('오류: '+error.message);return;}
   item.style.opacity='0.3';
   setTimeout(()=>{
@@ -2789,7 +2804,7 @@ async function _vmReviewBulk(approve){
     await _snapshotBeforeBulk(`그룹배정 검수 일괄 ${label}`,ids);
     for(let i=0;i<ids.length;i+=200){
       const chunk=ids.slice(i,i+200);
-      const{error}=await sb.from(_YT_TABLE).update({content_flag:approve?null:'무관',needs_review:false}).in('id',chunk);
+      const{error}=await sb.from(_YT_TABLE).update(_flagPatch(approve?null:'무관','manual',{needs_review:false})).in('id',chunk);
       if(error)throw new Error(error.message);
       if(statusEl)statusEl.textContent=`${label} 처리 중… ${Math.min(i+200,ids.length)}/${ids.length}`;
     }
@@ -2826,7 +2841,7 @@ document.getElementById('vm-nomem-btn')?.addEventListener('click',async()=>{
   try{
     await _snapshotBeforeBulk('검수 탭 일괄 무관',ids);
     for(let i=0;i<ids.length;i+=200){
-      const{error}=await sb.from(_YT_TABLE).update({content_flag:'무관'}).in('id',ids.slice(i,i+200));
+      const{error}=await sb.from(_YT_TABLE).update(_flagPatch('무관','manual')).in('id',ids.slice(i,i+200));
       if(error)throw new Error(error.message);
     }
     const gone=new Set(ids);
@@ -3357,7 +3372,7 @@ async function _vmBulkSetFlag(newFlag,btnId){
   if(!ids.length)return;
   const restore=btn?btn.textContent:'';
   if(btn){btn.disabled=true;btn.textContent='처리 중…';}
-  const{error}=await sb.from(_YT_TABLE).update({content_flag:newFlag}).in('id',ids);
+  const{error}=await sb.from(_YT_TABLE).update(_flagPatch(newFlag,'manual')).in('id',ids);
   const done=()=>{if(btn){btn.disabled=false;btn.textContent=(btnId==='vm-apply-btn')?_vmApplyLabel():restore;}};
   if(error){done();document.getElementById('vm-status').textContent='오류: '+error.message;return;}
   const idSet=new Set(ids);
@@ -3404,7 +3419,7 @@ document.getElementById('vm-indiv-btn')?.addEventListener('click',async()=>{
   if(!ids.length)return;
   btn.disabled=true;btn.textContent='처리 중…';
   const newFlag='개별출연';
-  const{error}=await sb.from(_YT_TABLE).update({content_flag:newFlag}).in('id',ids);
+  const{error}=await sb.from(_YT_TABLE).update(_flagPatch(newFlag,'manual')).in('id',ids);
   if(error){btn.disabled=false;btn.textContent='선택-개별';document.getElementById('vm-status').textContent='오류: '+error.message;return;}
   const idSet=new Set(ids);
   if(_vmTab==='all'){
@@ -3435,7 +3450,7 @@ document.getElementById('vm-hold-btn')?.addEventListener('click',async()=>{
   if(!ids.length)return;
   btn.disabled=true;btn.textContent='처리 중…';
   const newFlag='보류';
-  const{error}=await sb.from(_YT_TABLE).update({content_flag:newFlag}).in('id',ids);
+  const{error}=await sb.from(_YT_TABLE).update(_flagPatch(newFlag,'manual')).in('id',ids);
   if(error){btn.disabled=false;btn.textContent='선택-보류';document.getElementById('vm-status').textContent='오류: '+error.message;return;}
   const idSet=new Set(ids);
   if(_vmTab==='all'){
@@ -3468,7 +3483,7 @@ document.getElementById('vm-normal-btn')?.addEventListener('click',async()=>{
   if(!ids.length)return;
   btn.disabled=true;btn.textContent='처리 중…';
   const newFlag=null;
-  const{error}=await sb.from(_YT_TABLE).update({content_flag:newFlag}).in('id',ids);
+  const{error}=await sb.from(_YT_TABLE).update(_flagPatch(newFlag,'manual')).in('id',ids);
   if(error){btn.disabled=false;btn.textContent='선택-정상';document.getElementById('vm-status').textContent='오류: '+error.message;return;}
   const idSet=new Set(ids);
   if(_vmTab==='all'){
@@ -4580,7 +4595,7 @@ function _extBuildRows(vids,strict,tier,owner,defaultCat,handle){
       //   쌓이는 동안 그 대가로 709건이 유저 화면에서 사라져 있었음. 게다가 실측해보니 큐의 93%가
       //   고유한 이름이고 표본은 전부 정확했음 — 위험한 이름은 이미 앞단 게이트(흔한단어·짧은영문·
       //   동명이인 dedup)가 걸러내기 때문. 이 정책이 도입된 2026-08-20엔 그 게이트들이 없었다.
-      ...(_shouldJunkFlag(v.title,tier)?{content_flag:'무관'}:ambiguous?{needs_review:true,content_flag:'hidden'}:needsReview?{needs_review:true}:{}),
+      ...(_shouldJunkFlag(v.title,tier)?_flagPatch('무관','auto'):ambiguous?_flagPatch('hidden','auto'):needsReview?{needs_review:true}:{}),
       ...((tier==='variety'||tier==='show')?{content_formats:[tier]}:{})
     });
   }
@@ -5535,7 +5550,7 @@ document.getElementById('vid-tag-save').addEventListener('click',async e=>{
     if(overwriteTags){updatePayload.members=members;updatePayload.with_members=withMembers;updatePayload.with_groups=withGroups;updatePayload.cover_of_members=coverMembers;updatePayload.cover_of_groups=coverGroups;updatePayload.tags_manual=true;}
     if(category)updatePayload.category=category;
     if(_vidTagShortTouched&&isShort!==undefined)updatePayload.is_short=isShort;
-    if(_vidTagFlagTouched)updatePayload.content_flag=contentFlag;
+    if(_vidTagFlagTouched)Object.assign(updatePayload,_flagPatch(contentFlag,'manual'));
     if(newGko)updatePayload.group_ko=newGko;
     if(!Object.keys(updatePayload).length){statusEl.textContent='변경할 항목을 선택해주세요';return;}
     const ids=_vidTagBulkIds;
@@ -5568,7 +5583,7 @@ document.getElementById('vid-tag-save').addEventListener('click',async e=>{
   // tags_manual:true — 이 모달에서 직접 저장한 행은 "관리자가 확인한 최종 태그"로 표시해서, 자동
   // 태깅/재검증 스윕(멤버+콜라보 자동 태깅, 콜라보 오태깅 재검증 등)이 알고리즘 판단과 다르더라도
   // 이 값을 절대 덮어쓰지 않게 함(2026-07-31, 자동 재검증이 수동 태그를 지워버린 사고 이후 추가).
-  const updatePayload={members,with_members:withMembers,with_groups:withGroups,cover_of_members:coverMembers,cover_of_groups:coverGroups,content_flag:contentFlag,tags_manual:true};
+  const updatePayload={members,with_members:withMembers,with_groups:withGroups,cover_of_members:coverMembers,cover_of_groups:coverGroups,..._flagPatch(contentFlag,'manual'),tags_manual:true};
   if(category!==undefined)updatePayload.category=category||null;
   // 단일 편집은 체크박스가 DB 현재값으로 채워져 열리므로 항상 그대로 반영해도 안전하다(일괄 편집만
   // "안 건드림"을 구분해야 함).
@@ -5831,7 +5846,7 @@ document.getElementById('admin-bulk-hold-btn')?.addEventListener('click',async()
   const ids=selectedItems.map(el=>el.dataset.vidId).filter(Boolean);
   if(!ids.length)return;
   btn.disabled=true;btn.textContent='처리 중…';
-  const{error}=await sb.from(_YT_TABLE).update({content_flag:'보류'}).in('id',ids);
+  const{error}=await sb.from(_YT_TABLE).update(_flagPatch('보류','manual')).in('id',ids);
   if(error){btn.disabled=false;btn.textContent='보류';_showShareToast('오류: '+error.message);return;}
   selectedItems.forEach(el=>el.remove());
   window._adminBulkExitFn?.();
@@ -5845,7 +5860,7 @@ document.getElementById('admin-bulk-hide-btn')?.addEventListener('click',async()
   const ids=selectedItems.map(el=>el.dataset.vidId).filter(Boolean);
   if(!ids.length)return;
   btn.disabled=true;btn.textContent='처리 중…';
-  const{error}=await sb.from(_YT_TABLE).update({content_flag:'hidden'}).in('id',ids);
+  const{error}=await sb.from(_YT_TABLE).update(_flagPatch('hidden','manual')).in('id',ids);
   if(error){btn.disabled=false;btn.textContent='숨김';_showShareToast('오류: '+error.message);return;}
   selectedItems.forEach(el=>el.remove());
   window._adminBulkExitFn?.();
@@ -5863,7 +5878,7 @@ document.getElementById('admin-bulk-irrelevant-btn')?.addEventListener('click',a
   const ids=selectedItems.map(el=>el.dataset.vidId).filter(Boolean);
   if(!ids.length)return;
   btn.disabled=true;btn.textContent='처리 중…';
-  const{error}=await sb.from(_YT_TABLE).update({content_flag:'무관'}).in('id',ids);
+  const{error}=await sb.from(_YT_TABLE).update(_flagPatch('무관','manual')).in('id',ids);
   if(error){btn.disabled=false;btn.textContent='무관';_showShareToast('오류: '+error.message);return;}
   selectedItems.forEach(el=>el.remove());
   window._adminBulkExitFn?.();

@@ -15319,6 +15319,21 @@ function _wireFeedDiscoveryInfiniteScroll(){
 
 // ── YouTube 채널 영상 (Supabase 연동) ─────────────────────────────
 const _YT_TABLE='yt_channel_videos';
+// content_flag를 쓸 땐 "누가 언제 찍었는지"를 항상 같이 남긴다(2026-08-27, flag_source/flagged_at 신설).
+// 발단: 숨김 2,822건 중 **사람이 숨긴 건 22건(0.8%)뿐**이었는데 둘이 같은 칸을 써서 구분이 아예
+// 불가능했다. "내가 숨긴 것"과 "매처가 숨긴 것"을 못 가르면 숨김 탭은 검수 도구가 못 된다.
+// ⚠️ 자동으로 'hidden'을 찍을 땐 needs_review도 반드시 같이 세운다 — 이번 오염 2,800건이 전부
+//    needs_review=false라 **유저 화면에서 사라진 채 어떤 검수 목록에도 안 뜨는 조용한 블랙아웃**이었다.
+//    자동 판정은 틀릴 수 있다는 전제 위에서만 화면에서 감출 자격이 있다.
+// extra로 needs_review를 명시하면 그 값이 우선한다(사람이 검수를 끝낸 경우 등).
+function _flagPatch(flag,source,extra){
+  const p={content_flag:flag||null,
+    flag_source:flag?source:null,
+    flagged_at:flag?new Date().toISOString():null,
+    ...(extra||{})};
+  if(flag==='hidden'&&source==='auto'&&p.needs_review===undefined)p.needs_review=true;
+  return p;
+}
 const _YT_PAGE=48;
 
 // PostgREST or()/and() 필터 문자열에 그룹/멤버 이름을 그대로 이어붙이면, 이름에 콤마·마침표·괄호·콜론처럼

@@ -51,7 +51,9 @@ const holdHandler = (() => {
   return '';
 })();
 need(holdHandler.length > 0, '일괄 보류 핸들러 파싱됨');
-need(/content_flag:'보류'/.test(holdHandler), '  · content_flag를 보류로 저장');
+// 2026-08-27: content_flag 쓰기가 전부 _flagPatch(flag,source)를 거치도록 바뀌었다(출처 기록).
+// 리터럴이 아니라 헬퍼 호출을 확인한다 — 둘 중 어느 형태든 "보류로 저장"이면 통과.
+need(/content_flag:'보류'|_flagPatch\('보류',/.test(holdHandler), '  · content_flag를 보류로 저장');
 need(/selectedItems\.forEach\(el=>el\.remove\(\)\)/.test(holdHandler),
   '  · 처리한 항목을 목록에서 즉시 제거 — 보류도 카드에서 빠지는 플래그라 무관/숨김과 같은 동작이어야 한다');
 need(/_adminBulkExitFn\?\.\(\)/.test(holdHandler), '  · 처리 후 선택 모드 종료(무관/숨김과 동일)');

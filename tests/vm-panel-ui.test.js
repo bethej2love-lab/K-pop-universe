@@ -69,9 +69,9 @@ if (sweep) {
   ok(/console\.log\(`\[숨김 재판정\]/.test(b), '표본을 콘솔에 안 찍음(사전 확인 불가)');
   ok(/if\(ng===v\.group_ko\)\{same\+\+;continue;\}/.test(b), '판정이 같은 행을 손대고 있음');
   // 무매칭은 '무관'이 아니라 '보류'로 — 매처가 못 잡는 것과 우주 밖인 것은 다르다.
-  ok(/content_flag:'보류'/.test(b), '무매칭분을 보류로 안 보냄');
+  ok(/content_flag:'보류'|_flagPatch\('보류',/.test(b), '무매칭분을 보류로 안 보냄');
   ok(!/content_flag:'무관'/.test(b), '무매칭분을 무관으로 밀고 있음 — 실존 그룹이 섞여 있어 영영 안 보이게 됨');
-  ok(/content_flag:null/.test(b), '재배정 시 숨김 해제를 안 함');
+  ok(/content_flag:null|_flagPatch\(null,/.test(b), '재배정 시 숨김 해제를 안 함');
 }
 // 기존 오태깅 재배정 버튼과 판정 보조 함수가 갈라지지 않았는지(문자열 동일성으로 확인)
 const norm = /const _norm=t=>' '\+\(t\|\|''\)\.toUpperCase\(\)\.replace\(\/\[\^가-힣A-Z0-9\]\/g,' '\)\.replace\(\/\\s\+\/g,' '\)\+' ';/g;
