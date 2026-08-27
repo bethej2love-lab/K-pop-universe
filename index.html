@@ -7713,7 +7713,13 @@ function showT(a,cx,cy,keepNavStack,urlMode,_unusedPushMobNav,noFly){
   // 본인 채널이라 태깅 필터링 자체가 필요 없음). 콜라보(함께한 멤버) 표시줄은 이 그리드엔 안 나오고 연결
   // 카드에서만 보임(그룹 카드 그리드와 동일한 동작). Supabase를 못 쓰는 경우에만 기존 방식으로 폴백.
   const _hasRealGroup=!!GROUPS[a.group.ko];
-  if(sb&&(_hasRealGroup||a.links?.youtube)){
+  // ⚠️ 예전엔 무소속 솔로에게 `a.links.youtube`(등록된 본인 채널)를 요구했는데, 그건 "본인 채널 영상이
+  // 있어야 DB 경로가 의미 있다"는 전제였고 틀렸다 — 채널이 없어도 **외부 채널이 그 사람을 태깅한 영상**과
+  // **남이 그 사람 곡을 부른 커버(cover_of_*)**가 DB에 있다. 비(Rain)가 정확히 그 경우로, 영상 5건 +
+  // 커버 19건이 있는데 카드 영상 섹션 자체가 통째로 스킵돼 아무것도 안 보였다(2026-08-27 실측).
+  // 폴백(buildVideoSection)은 artists.json의 songs를 쓰는데 해당 3명(비·빛새온·김민서)은 songs가 0건이라
+  // 폴백으로 얻는 게 애초에 없었다 — sb만 있으면 DB 경로로 보낸다(잃는 것 없음, 확인 후 변경).
+  if(sb){
     if(_hasRealGroup)_ttChVidCtl.build(a.group.ko,a.name.ko);
     else _ttChVidCtl.build(_ytGroupKoFor(a));
   }else{
@@ -15270,6 +15276,29 @@ function _withTimeout(promiseOrFactory,ms,msg,retries=0){
     attempt();
   });
 }
+// "다른 아티스트의 커버"(cover_of_*) 조회 키 계산 — **한 곳에만 둔다.**
+// 이 계산이 흩어져 있어서 같은 버그를 두 번 놓쳤다: 2026-08-26에 "아이유 커버 탭이 비어 보인다"를
+// 고쳤는데 멤버 카드 분기만 고쳤고, 정작 무소속 솔로 카드는 memberKo 없이(그룹 카드처럼) 열려서 그
+// 분기를 안 타 그대로였다(2026-08-27 재제보). 섹션 로드(_loadCoverOfSection)와 Cover 탭 노출
+// 판정(_chk) 두 곳이 이 함수를 같이 쓰게 해서 한쪽만 고쳐지는 상황 자체를 없앤다.
+//
+// 키가 두 벌인 이유: 무소속 솔로는 카드 키(ko)가 _ytGroupKoFor 관례로 **본인 이름**("아이유")인데
+// 태깅은 a.group.ko를 써서 "아이유(솔로)"로 저장된다. 실측(2026-08-27) — 아이유 "아이유(솔로)" 61건
+// vs "아이유(아이유)" 1건, 보아는 18건/11건으로 아예 갈라져 있어 어느 한쪽만으론 부족하다.
+function _coverOfQueryKeys(ko,memberKo){
+  // memberKo가 없어도 이 카드 키가 무소속 솔로 본인이면 사람 키로 조회해야 한다(영향 9명:
+  // 승한·아이유·보아·이영지·비·세븐·싸이·빛새온·김민서).
+  const soloSelf=(!memberKo&&!GROUPS[ko])?ARTISTS.find(a=>_ytGroupKoFor(a)===ko):null;
+  const personKo=memberKo||soloSelf?.name.ko||null;
+  const me=personKo?ARTISTS.find(a=>a.name.ko===personKo&&(_artistGroups(a).some(g=>g.ko===ko)||_ytGroupKoFor(a)===ko)):null;
+  return{
+    me:me||null,
+    personKeys:personKo?[...new Set([`${personKo}(${ko})`].concat(me?[`${personKo}(${me.group.ko})`]:[]))]:[],
+    // 멤버 카드는 소속 그룹의 커버를 안 본다(그룹 카드 몫) — 그룹/솔로 카드만 cover_of_groups를 같이 본다.
+    groupKey:memberKo?null:ko,
+  };
+}
+
 function _makeChVidController(contId){
   let state={ko:null,memberKo:null,filter:'all',sortMode:'recommend',viewMode:'category',formatFilter:null,formats:[],offset:0,total:0,pos:0,cat:null,gen:0,appendLock:false,trailingEl:null,hasMore:false,allVids:[],wrapEnd:0,wrapPhase:false,unitFilter:null};
   // 탈퇴/비활동(active:false) 멤버는 "그룹 전체(미태깅)" 영상까지 무제한으로 끌어오면 안 됨 — 탈퇴 이후
@@ -15418,12 +15447,12 @@ function _makeChVidController(contId){
       // 보아는 "보아(보아)" 18건 + "보아(솔로)" 11건으로 **두 표기가 섞여 있어** 한쪽만으론 부족하다.
       // → 둘 다 조회한다(_findArtistByConnName이 두 형식을 모두 인정하는 것과 같은 방어).
       // _me 조회도 _artistGroups만 보면 솔로는 못 찾으므로(ko='아이유' vs groups=['솔로']) 같이 넓힌다.
-      const _me=memberKo&&ARTISTS.find(a=>a.name.ko===memberKo&&(_artistGroups(a).some(g=>g.ko===ko)||_ytGroupKoFor(a)===ko));
+      // ⚠️ 조회 키는 _coverOfQueryKeys 한 곳에서만 만든다(위 함수 주석 참고 — 같은 버그를 두 번 놓친
+      // 이유가 이 계산이 두 군데로 흩어져 있었던 것). Cover 탭 노출 판정(_chk)도 같은 함수를 쓴다.
+      const{me:_me,personKeys:_coverKeys,groupKey:_groupKey}=_coverOfQueryKeys(ko,memberKo);
       const _unitNames=_me?_unitTagsFor(_me):[];
-      const _coverKeys=memberKo?[...new Set([`${memberKo}(${ko})`].concat(_me?[`${memberKo}(${_me.group.ko})`]:[]))]:[];
-      const queries=memberKo
-        ? _coverKeys.map(k=>sb.from(_YT_TABLE).select(_cols).contains('cover_of_members',[k]))
-        : [sb.from(_YT_TABLE).select(_cols).contains('cover_of_groups',[ko])];
+      const queries=_coverKeys.map(k=>sb.from(_YT_TABLE).select(_cols).contains('cover_of_members',[k]));
+      if(_groupKey)queries.push(sb.from(_YT_TABLE).select(_cols).contains('cover_of_groups',[_groupKey]));
       _unitNames.forEach(u=>queries.push(sb.from(_YT_TABLE).select(_cols).contains('cover_of_groups',[u])));
       const settled=await Promise.all(queries.map(q=>q.then(r=>r,()=>({data:null}))));
       if(state.ko!==ko||state.memberKo!==(memberKo||null))return; // 그 사이 다른 카드로 전환됨
@@ -16128,7 +16157,20 @@ function _makeChVidController(contId){
         let q=sb.from(_YT_TABLE).select('id').limit(1);
         if(memberKo)q=q.eq('group_ko',ko).contains('members',[memberKo]);
         else q=q.eq('group_ko',ko);
-        if(v==='cover')q=q.or('title_norm.ilike.*cover*,title_norm.ilike.*커버*,title_norm.ilike.*원곡*,content_formats.cs.{cover}');
+        if(v==='cover'){
+          // 본인/그룹이 부른 커버(제목 기준)가 하나라도 있으면 탭 유지.
+          const{data:own}=await q.or('title_norm.ilike.*cover*,title_norm.ilike.*커버*,title_norm.ilike.*원곡*,content_formats.cs.{cover}');
+          if(own?.length)return{v,ok:true};
+          // 없더라도 "다른 아티스트의 커버"(cover_of_*)가 있으면 탭을 살려야 한다 — 비(Rain)가 정확히
+          // 이 경우로, 본인 채널 커버 제목 영상 0건 / 남이 부른 커버 19건이라 이 체크가 없으면 탭이
+          // 숨겨져 19건이 영영 도달 불가였다(2026-08-27 실측).
+          const{personKeys,groupKey}=_coverOfQueryKeys(ko,memberKo);
+          const probes=personKeys.map(k=>sb.from(_YT_TABLE).select('id').limit(1).contains('cover_of_members',[k]));
+          if(groupKey)probes.push(sb.from(_YT_TABLE).select('id').limit(1).contains('cover_of_groups',[groupKey]));
+          if(!probes.length)return{v,ok:false};
+          const rs=await Promise.all(probes.map(p=>p.then(r=>r,()=>({data:null}))));
+          return{v,ok:rs.some(r=>r?.data?.length)};
+        }
         else if(v==='variety')q=q.or('category.eq.variety,content_formats.cs.{variety},title_norm.ilike.*라디오스타*,title_norm.ilike.*아는형님*,title_norm.ilike.*아는 형님*,title_norm.ilike.*놀라운토요일*,title_norm.ilike.*전참시*');
         else if(v==='live')q=q.or('category.eq.live,content_formats.cs.{live},title_norm.ilike.*리무진서비스*,title_norm.ilike.*리무진 서비스*');
         else if(v==='show')q=q.or('category.eq.show,content_formats.cs.{show}');
