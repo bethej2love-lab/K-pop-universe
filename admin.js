@@ -143,14 +143,12 @@ async function _ytGetChannelId(ytUrl,key){
 // "YYYY"(연도만, 정확한 날짜 모를 때) 또는 "YYYY.MM.DD"(정확한 해체일) 둘 다 지원 — 연도만 있으면
 // 그 해 12/31까지는 수집 허용(해체+1년부터 컷). 아직 예전 방식(boolean true)인 그룹은 연도 데이터가
 // 채워지기 전까지 컷오프 없이 그대로 동작(하위호환).
-function _disbandCutoffDate(ko){
-  const d=GROUPS[ko]?.disbanded;
-  if(!d||d===true)return null;
-  const m=String(d).match(/^(\d{4})(?:\.(\d{2})\.(\d{2}))?/);
-  if(!m)return null;
-  const[,y,mo,day]=m;
-  return mo&&day?`${y}-${mo}-${day}`:`${y}-12-31`;
-}
+// 2026-08-27: 같은 계산이 index.html의 _groupEndDate(멤버 카드 영상 컷오프용)와 두 벌이 돼서
+// 그쪽 하나로 합쳤다 — 여기서 갈리면 "수집은 됐는데 카드엔 안 뜸"(또는 그 반대)이 조용히 생긴다.
+// 옛 구현은 'YYYY.MM'(일 없음)을 그 해 12/31로 밀어버렸는데(정규식이 월·일을 한 묶음으로 요구),
+// _groupEndDate는 그 달의 마지막 날로 정확히 잡는다. 지금 groups.json엔 YYYY.MM 형태가 없어서
+// 실질 차이는 없지만, 생기면 그쪽이 맞다.
+function _disbandCutoffDate(ko){return _groupEndDate(ko);}
 // 그룹은 그대로 활동 중인데 개별 멤버만 탈퇴한 경우(artists.json의 left 필드, "YYYY.MM.DD")의 자동 태깅
 // 컷오프 — 위 _disbandCutoffDate와 같은 이유, 대상만 그룹 전체 대신 멤버 한 명. 탈퇴일 이후 올라온
 // 영상까지 그 멤버로 계속 태깅되면(특히 흔한 단어/영단어 이름은 오탐까지 겹쳐 악화됨) 탈퇴한 멤버가
@@ -888,6 +886,85 @@ async function _ytSweepMistagReclassify(){
   finally{if(btn)btn.disabled=false;}
 }
 document.getElementById('sp-mistagfix-btn')?.addEventListener('click',_ytSweepMistagReclassify);
+
+// [숨김 목록 재판정](2026-08-27) — 위 _ytSweepMistagReclassify가 content_flag 있는 행을 통째로
+// 제외(EXCLUDE)해서, **숨김 처리된 오태깅은 어떤 스윕으로도 영원히 안 닿는 사각지대**였다.
+// 실측: hidden 2,822건(tags_manual=false) 중 지금 매처로 같은 그룹이 나오는 건 417건뿐이고,
+// 나머지는 짧은 이름 게이트(a.name.ko 1음절 → 해시태그 전용)가 들어오기 **전에** 쌓인 오매칭이었다.
+//   더보이즈 "뉴"(NEW) → "THE NEW SIX"·"New York"·"Brand New"
+//   스트레이키즈 "한"(HAN) · 세븐틴 "준"(JUN) · 스테이씨 "윤"(YOON) → 강승윤·윤두준·윤보미…
+// 그래서 이건 "숨김을 푸는" 버튼이 아니라 **"옛 판정을 지금 판정으로 갈아끼우는"** 버튼이다.
+//
+// ⚠️ 2026-08-20에 신뢰도 재스캔 버튼이 정상영상 35,168건을 대량 오숨김시킨 사고가 있었다. 그래서
+//    _ytSweepMistagReclassify가 쓰던 안전장치를 **그대로** 가져왔다(약한 추론으론 절대 안 옮김):
+//    ① 새 그룹명이 제목에 literal로 있어야만 재배정 ② 콜라보/커버 신호 있으면 제외(원태그가 맞을 수
+//    있음) ③ tags_manual=true 제외 ④ 스냅샷 후 적용(되돌리기 가능) ⑤ confirm 취소 시 미리보기만.
+// 무매칭분을 '무관'이 아니라 '보류'로 보내는 이유: 매처가 못 잡는 것과 우주 밖인 것은 다르다.
+// 실제로 무매칭 990건에 "THE NEW SIX - FUEGO | Show! MusicCore"처럼 **실존 그룹인데 아직 못 잡는**
+// 것이 섞여 있어서, 무관으로 밀면 영영 안 보인다. 보류는 카드에서 빠지되 검수 목록에 남는다.
+async function _ytSweepHiddenRejudge(){
+  if(!sb){_ytSetProg('Supabase 연결 없음');return;}
+  const btn=document.getElementById('sp-hidden-rejudge-btn');
+  if(btn)btn.disabled=true;
+  try{
+    _ytSetProg('[숨김 재판정] 숨김 목록 조회 중…');
+    const{data:rows,error}=await _sbFetchAll(()=>sb.from(_YT_TABLE)
+      .select('id,title,group_ko,published_at')
+      .eq('content_flag','hidden')
+      .eq('tags_manual',false) // 사람이 직접 숨긴 건 절대 안 건드림(프로젝트 헌법)
+      .order('id'));
+    if(error){_ytSetProg('조회 실패: '+error.message);return;}
+    if(!rows?.length){_ytSetProg('재판정할 숨김 영상이 없어요');return;}
+    // 판정 보조 함수는 _ytSweepMistagReclassify와 글자 그대로 같은 것을 쓴다 — 둘이 갈라지면
+    // "재배정 버튼은 옮기는데 재판정 버튼은 안 옮기는" 식의 조용한 불일치가 생긴다.
+    const _grpToks=ko=>{const v=GROUPS[ko];return v?[ko,v.en,...(v.altNames||[])].filter(Boolean).map(t=>t.toUpperCase()):[];};
+    const _norm=t=>' '+(t||'').toUpperCase().replace(/[^가-힣A-Z0-9]/g,' ').replace(/\s+/g,' ')+' ';
+    const _titleHas=(nu,ko)=>_grpToks(ko).some(t=>nu.includes(t));
+    const COLLAB=/with |w\/| feat| ft[ .]|선배|챌린지|challenge|원곡| cover|커버|＆| & |함께|출연|게스트|guest| vs | x /i;
+    const moves=[],holds=[];let same=0,weak=0,collab=0;
+    const sMove=[],sHold=[];
+    for(let i=0;i<rows.length;i++){
+      if(i%2000===0){_ytSetProg(`[숨김 재판정] 분석 중… ${i}/${rows.length} (재배정 ${moves.length} · 보류 ${holds.length})`);await new Promise(r=>setTimeout(r));}
+      const v=rows[i];
+      let m=null;try{m=_m2ParseTitle(v.title,undefined,false,(v.published_at||'').slice(0,10));}catch(e){}
+      const ng=m&&m.primaryGroup;
+      if(!ng){ // 아무 그룹도 안 잡힘 → 숨김 유지가 아니라 보류로(검수 목록에 올린다)
+        holds.push(v.id);
+        if(sHold.length<40)sHold.push(`[${v.group_ko}] ${(v.title||'').slice(0,64)}`);
+        continue;
+      }
+      if(ng===v.group_ko){same++;continue;}                    // 판정 근거 유지 → 손대지 않음
+      const nu=_norm(v.title);
+      if(!_titleHas(nu,ng)){weak++;continue;}                  // 약한 추론 → 안 옮김
+      if(COLLAB.test(v.title||'')){collab++;continue;}         // 콜라보/커버 → 원태그가 맞을 수 있음
+      const members=(m.membersByGroup&&m.membersByGroup[ng])||[];
+      const wgs=m.withGroups||[];
+      const wms=[];wgs.forEach(x=>((m.membersByGroup&&m.membersByGroup[x])||[]).forEach(mm=>wms.push(`${mm}(${x})`)));
+      moves.push({id:v.id,patch:{group_ko:ng,members,with_groups:wgs,with_members:wms,content_flag:null}});
+      if(sMove.length<40)sMove.push(`[${v.group_ko}→${ng}] ${(v.title||'').slice(0,60)}`);
+    }
+    console.log(`[숨김 재판정] 재배정 예정 표본(최대40):\n${sMove.join('\n')}\n\n[숨김 재판정] 보류 이동 표본(최대40):\n${sHold.join('\n')}`);
+    if(!moves.length&&!holds.length){_ytSetProg(`옮길 것 없음 (숨김 ${rows.length}건 중 판정 동일 ${same}, 약한추론 ${weak}, 콜라보 ${collab})`);return;}
+    if(!confirm(`숨김 ${rows.length}건을 지금 매처로 재판정한 결과예요.\n\n· 다른 그룹으로 재배정 + 숨김 해제 : ${moves.length}건\n   (제목에 그 그룹명이 literal로 있는 것만)\n· 아무 그룹도 안 잡혀 '보류'로 이동 : ${holds.length}건\n   (무관 아님 — 카드에선 빠지되 검수 목록에 남음)\n\n· 판정 그대로라 손 안 댐 ${same}건 / 약한추론 제외 ${weak}건 / 콜라보·커버 제외 ${collab}건\n· 표본 각 40건을 콘솔(F12)에 출력했어요 — 먼저 확인 권장\n· 스냅샷 저장되어 "↩︎ 마지막 일괄 작업 되돌리기"로 복구 가능\n\n적용할까요?`)){
+      _ytSetProg(`취소됨 — 미리보기만 (재배정 ${moves.length} · 보류 ${holds.length}, 표본 콘솔).`);return;
+    }
+    await _snapshotBeforeBulk('숨김 목록 재판정',[...moves.map(u=>u.id),...holds]);
+    for(let i=0;i<moves.length;i+=200){
+      const results=await Promise.all(moves.slice(i,i+200).map(u=>sb.from(_YT_TABLE).update(u.patch).eq('id',u.id)));
+      const f=results.find(r=>r.error);if(f)throw new Error(f.error.message);
+      _ytSetProg(`[숨김 재판정] 재배정 ${Math.min(i+200,moves.length)}/${moves.length}건…`);
+    }
+    for(let i=0;i<holds.length;i+=200){
+      const{error:ue}=await sb.from(_YT_TABLE).update({content_flag:'보류'}).in('id',holds.slice(i,i+200));
+      if(ue)throw new Error(ue.message);
+      _ytSetProg(`[숨김 재판정] 보류 이동 ${Math.min(i+200,holds.length)}/${holds.length}건…`);
+    }
+    _vmCache&&_vmCache.clear&&_vmCache.clear(); // 영상관리 패널 탭 캐시가 옛 목록을 들고 있지 않도록
+    _ytSetProg(`완료! 재배정 ${moves.length}건 · 보류 이동 ${holds.length}건 (되돌리기: "↩︎ 마지막 일괄 작업 되돌리기")`);
+  }catch(e){_ytSetProg('오류: '+e.message);}
+  finally{if(btn)btn.disabled=false;}
+}
+document.getElementById('sp-hidden-rejudge-btn')?.addEventListener('click',_ytSweepHiddenRejudge);
 // [원곡 소급 재분류 2차](2026-08-23): 커버 키워드는 없지만 "타소속사 + 10년 이상 선배" with 태그 —
 // 후배가 선배 명곡을 커버한 케이스가 압도적(CSV 실측: 방탄→라이즈·S.E.S.→앤팀·핑클→보넥도 등 408건).
 // 1차(키워드+6년)가 못 잡는 무키워드 원곡을 cover_of로. ⚠️ 진짜 콜라보 위험은 대부분 "같은 소속사"(가족
@@ -2249,6 +2326,9 @@ function _vmCacheDropOthers(){for(const k of[..._vmCache.keys()])if(k!==_vmCache
 // 현재 탭 캐시를 지금 _vmRows 상태로 덮어쓴다(조회 직후, 그리고 행을 갱신·삭제한 뒤에 부른다).
 function _vmCacheSync(){
   if(!_vmCacheKeyCur)return;
+  // 탭 라벨의 개수 배지도 여기서 같이 갱신한다 — 조회 직후에도, 일괄 처리로 행이 빠진 뒤에도
+  // 이 함수가 불리므로 배지가 목록과 항상 붙어 다닌다(따로 부르면 한쪽만 갱신되는 드리프트가 생김).
+  _vmSetTabCount(_vmTab,_vmRows.length);
   _vmCache.set(_vmCacheKeyCur,{rows:_vmRows,status:document.getElementById('vm-status')?.textContent||'',ts:Date.now()});
 }
 
@@ -2260,6 +2340,33 @@ function _vmOpen(tab){
   _vmSearch2='';
   document.getElementById('vm-overlay').classList.add('open');
   _vmApplyTab();
+}
+// 4상태 이동 버튼 노출(2026-08-27) — 무관/보류/숨김 목록 탭에서만 띄우고, 그 탭 **자신의 상태**
+// 버튼은 뺀다(제자리 이동은 무의미). '전체' 탭은 기존 vm-apply-btn(→무관)에 더해 보류/숨김도 열어준다.
+// 검수 계열 탭(ss/review/catlock/new/orphan)은 승인·거부 같은 전용 동작이 따로 있어 건드리지 않는다.
+const _VM_MOVE_BTNS=[['vm-move-normal-btn',null],['vm-move-nomem-btn','무관'],['vm-move-hold-btn','보류'],['vm-move-hidden-btn','hidden']];
+function _vmSyncMoveBtns(){
+  const tabFlag={nomem:'무관',hold:'보류',hidden:'hidden'}[_vmTab];
+  const on=_vmTab==='all'||tabFlag!==undefined;
+  _VM_MOVE_BTNS.forEach(([id,flag])=>{
+    const el=document.getElementById(id);
+    if(!el)return;
+    // '전체' 탭의 →무관과 목록 탭의 →정상은 기존 vm-apply-btn이 이미 하는 일이라 중복 노출하지 않는다.
+    const dup=(_vmTab==='all'&&flag==='무관')||(tabFlag!==undefined&&flag===null);
+    el.style.display=(on&&flag!==tabFlag&&!dup)?'':'none';
+  });
+}
+// 탭 라벨의 "마지막 조회 시점 개수"(2026-08-27, 사용자 요청 — "실시간은 아니어도 이전 조회했을 때
+// 몇 개였는지 보이면 좋겠다"). 실시간 집계는 탭마다 count 쿼리를 또 던져야 해서 패널 열 때마다 느려진다.
+const _vmTabCount=new Map(); // tab → 마지막 조회에서 본 행 수
+function _vmSetTabCount(tab,n){
+  _vmTabCount.set(tab,n);
+  const btn=document.querySelector(`.vm-tab[data-tab="${tab}"]`);
+  if(!btn)return;
+  if(!btn.dataset.baseLabel)btn.dataset.baseLabel=btn.textContent.trim();
+  let badge=btn.querySelector('.vm-tab-count');
+  if(!badge){badge=document.createElement('span');badge.className='vm-tab-count';btn.appendChild(badge);}
+  badge.textContent=' '+n;
 }
 function _vmApplyTab(){
   const isCh=_vmTab==='channels';
@@ -2279,6 +2386,7 @@ function _vmApplyTab(){
   _vmOnlyNormal=false;
   const onlyNormalBtn=document.getElementById('vm-only-normal-btn');
   if(onlyNormalBtn){onlyNormalBtn.style.display=_vmTab==='all'?'':'none';onlyNormalBtn.classList.remove('active');}
+  _vmSyncMoveBtns();
   if(isCh){
     _vmChTab='official';
     _vmChTierFilter='all';
@@ -2319,6 +2427,7 @@ async function _vmLoad(searchTerm,preserveSearch2){
     statusEl.textContent=_cached.status;
     // ⚠️ 여기서 _vmCacheSync를 부르면 안 된다 — ts가 갱신돼 TTL이 "마지막 방문 기준 3분"으로 미끄러지고,
     //    탭을 계속 오가면 영원히 재조회가 안 된다. 저장 시각은 실제 조회 시각 그대로 둔다.
+    _vmSetTabCount(tab,_vmRows.length); // 개수 배지만 갱신(ts는 안 건드림)
     _vmRenderVideoList();
     return;
   }
@@ -3231,38 +3340,59 @@ document.getElementById('vm-select-all')?.addEventListener('change',e=>{
   document.querySelectorAll('#vm-list .vm-item input[type=checkbox]').forEach(cb=>{cb.checked=e.target.checked;});
   _vmUpdateCount();
 });
-document.getElementById('vm-apply-btn')?.addEventListener('click',async()=>{
+// 각 탭의 "기본" 목적지 — 그 탭에 있는 항목을 한 번 눌러 빼내는 자리(기존 동작 그대로).
+function _vmDefaultFlag(){return _vmTab==='ss'?'hidden':(_vmTab==='all'?'무관':null);}
+function _vmApplyLabel(){return _vmTab==='nomem'?'선택-무관 해제':_vmTab==='hold'?'선택-보류 해제':_vmTab==='ss'?'선택-숨김':_vmTab==='hidden'?'선택-숨김 해제':'선택-무관';}
+const _VM_FLAG_LABEL={'무관':'무관','보류':'보류','hidden':'숨김'};
+// 선택 항목의 content_flag를 임의의 상태로 바꾼다(2026-08-27, 4상태 대칭).
+// 예전엔 탭마다 탈출구가 "정상(null)" 하나뿐이라, 잘못 분류된 걸 발견해도 옆 상태로 못 옮기고
+// 정상으로 되돌린 뒤 다시 찾아 분류해야 하는 막다른 골목이었다(사용자 제보 — "숨김 탭에 선택-무관
+// 버튼이 없는데 있는 게 좋지 않을까"). 세 상태의 뜻이 서로 다르므로(숨김=우주 안인데 노출 금지 /
+// 무관=우주 밖 / 보류=판단 유예) 옆으로 옮기는 건 정상적인 검수 동작이다.
+async function _vmBulkSetFlag(newFlag,btnId){
   if(!sb)return;
-  const btn=document.getElementById('vm-apply-btn');
+  const btn=document.getElementById(btnId);
   const items=[...document.querySelectorAll('#vm-list .vm-item')].filter(el=>el.querySelector('input[type=checkbox]')?.checked);
   const ids=items.map(el=>el.dataset.vidId).filter(Boolean);
   if(!ids.length)return;
-  btn.disabled=true;btn.textContent='처리 중…';
-  const newFlag=_vmTab==='ss'?'hidden':(_vmTab==='all'?'무관':null);
+  const restore=btn?btn.textContent:'';
+  if(btn){btn.disabled=true;btn.textContent='처리 중…';}
   const{error}=await sb.from(_YT_TABLE).update({content_flag:newFlag}).in('id',ids);
-  const applyLabel=_vmTab==='nomem'?'선택-무관 해제':_vmTab==='hold'?'선택-보류 해제':_vmTab==='ss'?'선택-숨김':_vmTab==='hidden'?'선택-숨김 해제':'선택-무관';
-  if(error){btn.disabled=false;btn.textContent=applyLabel;document.getElementById('vm-status').textContent='오류: '+error.message;return;}
+  const done=()=>{if(btn){btn.disabled=false;btn.textContent=(btnId==='vm-apply-btn')?_vmApplyLabel():restore;}};
+  if(error){done();document.getElementById('vm-status').textContent='오류: '+error.message;return;}
   const idSet=new Set(ids);
-  if(_vmTab==='all'){
+  // 이 탭이 "그 플래그의 목록"인가 — 목록의 정체성과 다른 값으로 바뀐 행만 화면에서 걷어낸다.
+  const tabFlag={nomem:'무관',hold:'보류',hidden:'hidden'}[_vmTab]||null;
+  const staysInList=_vmTab==='all'||newFlag===tabFlag;
+  if(staysInList){
     // 전체 탭은 검색 결과 목록이라 플래그를 바꿔도 그대로 남아있어야 함(nomem/hidden 탭처럼 그 자체가
     // "무관/숨김 목록"이 아니므로) — 행을 지우지 않고 배지와 체크박스만 갱신한다.
     _vmRows.forEach(v=>{if(idSet.has(v.id))v.content_flag=newFlag;});
+    _vmCacheSync();
     items.forEach(el=>{
       const cb=el.querySelector('input[type=checkbox]');if(cb)cb.checked=false;
       const flagBtn=el.querySelector('.vm-flag-btn');
-      if(flagBtn){flagBtn.className='vm-flag-btn vm-flag-nomem';flagBtn.textContent='무관';}
+      if(flagBtn){
+        const cls=newFlag==='hidden'?'vm-flag-hidden':newFlag==='보류'?'vm-flag-hold':newFlag==='무관'?'vm-flag-nomem':'vm-flag-none';
+        flagBtn.className='vm-flag-btn '+cls;
+        flagBtn.textContent=newFlag?(_VM_FLAG_LABEL[newFlag]||newFlag):'정상';
+      }
     });
-    document.getElementById('vm-status').textContent=`${ids.length}개 무관 처리 완료`;
+    document.getElementById('vm-status').textContent=`${ids.length}개 ${newFlag?(_VM_FLAG_LABEL[newFlag]||newFlag):'정상'} 처리 완료`;
   }else{
     _vmRows=_vmRows.filter(v=>!idSet.has(v.id));
     _vmCacheSync();_vmCacheDropOthers(); // 목록에서 걷어낸 결과를 캐시에도 반영(2026-08-27)
     items.forEach(el=>el.remove());
-    document.getElementById('vm-status').textContent=`${ids.length}개 처리 완료 — 남은 ${_vmRows.length}개`;
+    const to=newFlag?(_VM_FLAG_LABEL[newFlag]||newFlag):'정상';
+    document.getElementById('vm-status').textContent=`${ids.length}개 → ${to} — 남은 ${_vmRows.length}개`;
     if(!_vmRows.length)_vmRenderVideoList();
   }
-  btn.textContent=applyLabel;
+  done();
   _vmUpdateCount();
-});
+}
+document.getElementById('vm-apply-btn')?.addEventListener('click',()=>_vmBulkSetFlag(_vmDefaultFlag(),'vm-apply-btn'));
+[['vm-move-normal-btn',null],['vm-move-nomem-btn','무관'],['vm-move-hold-btn','보류'],['vm-move-hidden-btn','hidden']]
+  .forEach(([id,flag])=>document.getElementById(id)?.addEventListener('click',()=>_vmBulkSetFlag(flag,id)));
 // 탭과 무관하게 항상 '개별출연'으로 고정 — 각자 그룹/멤버 카드엔 그대로 노출되지만 "함께한 멤버"/연결
 // 카드 집계에서는 빠지는 플래그(진짜 콜라보가 아니라 같은 영상에 각자 따로 출연한 경우), 2026-08-04
 // 사용자 요청으로 무관 처리 버튼과 동일한 자리에 원클릭 버튼으로 추가.

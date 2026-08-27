@@ -375,6 +375,8 @@
     <div class="sp-btn-hint">밴(제재) 인물이 언급된 기존 영상을 숨김 처리. 밴 목록 안 바뀌었으면 다시 눌러도 빠름.</div>
     <button class="sp-yt-sync" id="sp-yt-sweep-junk" style="margin-top:4px;opacity:.8;">무조건 제외 키워드 영상 무관 정리</button>
     <div class="sp-btn-hint">아래 목록 키워드가 제목에 있는 기존 영상을 '무관'으로 정리.</div>
+    <button class="sp-yt-sync" id="sp-hidden-rejudge-btn" style="margin-top:4px;opacity:.8;">숨김 목록 재판정 (옛 매처가 숨긴 것 되살리기)</button>
+    <div class="sp-btn-hint">숨김 영상을 지금 매처로 다시 판정 — 제목에 다른 그룹명이 뻔히 있으면 그 그룹으로 재배정하고, 아무 그룹도 안 잡히면 '보류'로 옮겨 검수 대상으로 만듦. 수동 편집분은 손대지 않음. 먼저 취소를 눌러 미리보기(F12 콘솔)만 볼 수 있음.</div>
     <div class="sp-subsec-lbl" id="sp-junk-keywords-lbl" style="margin-top:2px;font-size:11px;opacity:.55;"></div>
     <button class="sp-yt-sync" id="sp-canon-btn" style="margin-top:4px;opacity:.8;">🏷️ 고아태그 정정 (별칭→정식명: 여정→전여여정)</button>
     <div class="sp-btn-hint">별칭/축약으로 저장된 멤버 태그를 정식명으로 정정.</div>
@@ -428,6 +430,14 @@
            구분이 안 돼서, 맞다고 넘긴 행이 큐에 영원히 남았다. 그래서 "봤고 맞음"만 따로 기록한다. -->
       <button id="vm-confirm-btn" style="display:none">선택-확인</button>
       <button id="vm-apply-btn"></button>
+      <!-- 4상태 대칭 이동(2026-08-27, 사용자 요청) — 예전엔 탭마다 탈출구가 "정상" 하나뿐이라
+           숨김↔무관↔보류를 옆으로 못 옮겼다. 세 상태의 뜻이 서로 다르므로(숨김=우주 안인데 노출 금지
+           / 무관=우주 밖 / 보류=판단 유예) 옆으로 옮기는 게 정상적인 검수 동작이다.
+           현재 탭 자신의 상태에 해당하는 버튼은 _vmSyncMoveBtns()가 숨긴다(제자리 이동은 무의미). -->
+      <button id="vm-move-normal-btn" class="vm-move-btn" style="display:none">→정상</button>
+      <button id="vm-move-nomem-btn" class="vm-move-btn" style="display:none">→무관</button>
+      <button id="vm-move-hold-btn" class="vm-move-btn" style="display:none">→보류</button>
+      <button id="vm-move-hidden-btn" class="vm-move-btn" style="display:none">→숨김</button>
       <!-- 그룹배정 검수 탭 전용 일괄 처리(2026-08-25) — 3천 건짜리 큐를 한 건씩 누르는 건 현실적으로
            불가능해서 실제로 아무도 안 쓰고 있었음. 여러 개 선택 후 한 번에 승인/거부. -->
       <button id="vm-review-approve-btn" style="display:none">선택-승인</button>
@@ -1545,6 +1555,32 @@ function _labelWidth(el){
 }
 let ARTISTS=[],GROUPS={};
 let _STRICT_SYNC_GROUPS=new Set(); // groups.json의 strictSync:true 그룹 — 로드 후 채워짐
+// ── 그룹 종료(해체) 판정 — 예전엔 같은 로직이 지역 const로 두 벌 복붙돼 있었다(_gDisbanded:연결 카드
+// 대표그룹 정렬, _isGrpDisbanded:애니버서리 스트립 dim/정렬). 둘 다 **groups.json의 명시 `disbanded`
+// 필드를 아예 안 읽고** 로스터만 봐서, 아이즈원·루셈블·프리스틴처럼 해체일이 박혀 있는데도 멤버들이
+// 새 그룹에서 현역이면 "활동중"으로 판정했다(실측 18팀, 2026-08-27).
+// ⚠️ 로스터 검사를 _artistGroups로 넓히지 말 것 — 넓히면 이달의소녀·유앤비가 거꾸로 "현역"으로
+//    뒤집힌다. 겸임 멤버가 새 그룹(루셈블·에이스)에서 현역인데 옛 그룹 항목엔 per-group active:false가
+//    안 박혀 있어서 그 그룹까지 현역으로 세기 때문. 그 데이터가 채워지기 전엔 주 소속 기준이 안전하다.
+//    명시 필드를 OR로 얹기만 하면 +18팀/-0팀이라 잃는 게 없다.
+function _groupIsOver(ko){
+  if((GROUPS[ko]||{}).disbanded)return true;
+  const m=(ARTISTS||[]).filter(a=>a.group.ko===ko);
+  return m.length>0&&m.every(a=>a.active===false);
+}
+// 해체일 → 'YYYY-MM-DD'. groups.json의 disbanded는 실제로 3형태만 쓰인다(실측):
+// 'YYYY.MM.DD' 36팀 · 'YYYY' 4팀 · true 3팀. 연도만 있으면 그 해 마지막 날까지 쳐준다
+// (그 해 안의 영상을 잘라낼 근거가 없음). true/없음은 "해체는 맞는데 날짜를 모름"이라 null.
+function _groupEndDate(ko){
+  const d=(GROUPS[ko]||{}).disbanded;
+  if(typeof d!=='string')return null;
+  const m=/^(\d{4})(?:\.(\d{1,2}))?(?:\.(\d{1,2}))?$/.exec(d.trim());
+  if(!m)return null;
+  const p2=n=>String(n).padStart(2,'0');
+  if(!m[2])return `${m[1]}-12-31`;
+  if(!m[3])return `${m[1]}-${p2(m[2])}-${new Date(+m[1],+m[2],0).getDate()}`;
+  return `${m[1]}-${p2(m[2])}-${p2(m[3])}`;
+}
 // 멤버 이름 라벨이 나타나기 시작하는 카메라-행성 거리(=별이 시각적으로 분해되는 줌 경계).
 // 라벨 페이드 계산과 "멤버 별 탭 허용" 게이트가 이 값 하나를 공유한다 — 예전엔 라벨은 이 거리(28) 기준,
 // 탭 허용은 uFillOp>0.12(≈거리 42) 기준으로 따로 놀아서, 그 사이 28~42 구간에선 "이름도 안 뜬 뭉친 별"이
@@ -3688,7 +3724,7 @@ function _filterBannedVideos(list,ko){return(list||[]).filter(v=>!_isBannedVideo
 // 흔히 쓰는 문구 — 제목에 이 단어가 있으면 어느 그룹으로 매칭됐든 무조건 무관 처리한다(사용자 요청, 2026-08-04).
 // _isBannedVideoTitle과 달리 hidden이 아니라 무관 처리(행은 남기되 그룹/멤버 그리드에서만 제외)라 신규
 // 동기화 시 이 체크에 걸리면 content_flag를 '무관'으로 붙여서 저장한다 — 기존 행은 아래 스윕 버튼으로 정리.
-const _JUNK_TITLE_KEYWORDS_GLOBAL=['띵곡팔이','김창옥쇼','이호선상담소','유부녀킬러','유뷰녀 킬러','스트릿레스토랑파이터','십분hook','[#여권들고','프리한19','결혼지옥','오은영리포트','이혼숙려','닥터로이어','언니네산지직송','혼자는 못 해','방과후태리','스프링피버','[#학연]','1호가','퍼펙트글로우','님과 함께2','relay dance battle','물건너온아빠들','물 건너온 아빠들','닥터킴의','최강야구'];
+const _JUNK_TITLE_KEYWORDS_GLOBAL=['띵곡팔이','김창옥쇼','이호선상담소','유부녀킬러','유뷰녀 킬러','스트릿레스토랑파이터','십분hook','[#여권들고','프리한19','결혼지옥','오은영리포트','이혼숙려','닥터로이어','언니네산지직송','혼자는 못 해','방과후태리','스프링피버','[#학연]','1호가','퍼펙트글로우','님과 함께2','relay dance battle','물건너온아빠들','물 건너온 아빠들','닥터킴의','최강야구','진짜괜찮은사람','진짜 괜찮은 사람','지금거신전화는','지금 거신 전화는'];
 // ⚠️ 대소문자 무시하고 비교한다 — 예전엔 t.includes(k) 그대로였는데, 목록이 전부 한글이라 문제가
 // 안 드러났을 뿐이었음. 영문 키워드('relay dance battle' 등)는 실제 제목이 "Relay Dance Battle"·
 // "RELAY DANCE BATTLE"처럼 대문자가 섞여 있어 그대로 두면 아예 안 걸린다(2026-08-25).
@@ -6297,8 +6333,9 @@ function _buildConnContent(container){
   // 사람이 다르면 접히지 않는다 — 한 영상에 태용(127) + 런쥔(드림)이면 그룹 칩 두 개가 그대로 남는다.
   const _connRepNames=(()=>{
     const gkoOf=n=>(n.match(/^(.+)\((.+)\)$/)||[])[2]||'';
-    // 기념일 스트립 쪽 동명 헬퍼(_isGrpDisbanded)와 같은 판정 — 그건 그 함수 안 지역 const라 여기선 못 쓴다.
-    const _gDisbanded=ko=>{const mem=(ARTISTS||[]).filter(a=>a.group.ko===ko);return mem.length>0&&mem.every(a=>a.active===false);};
+    // 해체 판정은 전역 _groupIsOver 하나로 통일함(2026-08-27) — 예전엔 여기와 애니버서리 스트립에
+    // 같은 로직이 지역 const로 두 벌 있었고, 둘 다 명시 disbanded 필드를 안 읽었다.
+    const _gDisbanded=_groupIsOver;
     const byArtist=new Map(),keep=new Set();
     // 앵커와 같은 그룹이라 접미사 없이 뜨는 이름(sameGroupNames)과 겹치는 경우도 같은 사람이므로,
     // 접미사 붙은 쪽을 버린다(예: 엔시티 127 멤버 카드에서 해찬이 "해찬"과 "해찬(엔시티 드림)"으로 중복).
@@ -13970,7 +14007,7 @@ function _buildFeedAnniversaries(){
   _enableDragScroll(list);
   const isKo=currentLang==='ko';
   const now=new Date();
-  const _isGrpDisbanded=ko=>{const m=(ARTISTS||[]).filter(a=>a.group.ko===ko);return m.length>0&&m.every(a=>a.active===false);};
+  const _isGrpDisbanded=_groupIsOver; // 전역 판정으로 통일(2026-08-27) — 위 _gDisbanded와 같은 함수
   const allBday=(ARTISTS||[]).filter(a=>a.bday&&_daysUntilBday(a.bday)===0);
   const allDebut=Object.entries(GROUPS||{}).filter(([,info])=>_isDebutAnniversaryToday(info));
   if(!allBday.length&&!allDebut.length){section.style.display='none';return;}
@@ -15444,8 +15481,22 @@ function _makeChVidController(contId){
   // 올라온, 그 멤버가 실제론 없는데 아직 개별 태깅이 안 됐을 뿐인 영상까지 멤버 카드에 새어 들어가는
   // 원인이었음(2026-08-06, 사용자 제보 — (여자)아이들 전 멤버 수진 카드에 탈퇴 이후 최근 영상 노출).
   // artists.json의 "left"(탈퇴일 — 나무위키 "이전 소속사" 계약기간 종료일 기반 근사치, 정확한 탈퇴일보다
-  // 며칠~몇 달 늦을 수 있음) 필드가 있으면 그 날짜까지의 미태깅 영상만 허용하고, 없으면(아직 못 채운
-  // 멤버) 안전하게 미태깅 영상 자체를 아예 안 준다(기존 방식 그대로 폴백).
+  // 며칠~몇 달 늦을 수 있음) 필드가 있으면 그 날짜까지의 미태깅 영상만 허용한다.
+  //
+  // left가 없을 때(2026-08-27 재설계): 예전엔 **무조건 차단**이었는데, 그러면 "그 사람이 그룹을 떠난
+  // 것"과 "그룹 자체가 끝난 것"이 구분 없이 같이 막혀서 멤버 카드가 통째로 비었다 — 실측 110명.
+  // 실제 원인은 탈퇴일 미기입이 아니라 **active 필드가 두 뜻으로 섞여 쓰이는 것**이었다: 쥬얼리(2015
+  // 해체) 하주연·김은정은 active:true(=개인 활동 계속), 정유진·서인영은 active:false(=은퇴)인데,
+  // 쥬얼리에 있던 기간은 똑같다. 그런데 컷오프는 이걸 "이 그룹 멤버인가"로 읽어서 은퇴한 쪽만 쥬얼리
+  // 영상이 통째로 사라졌다(걸스데이 혜리 vs 황지선, 스텔라 4:4도 같은 모양).
+  // 그래서 그룹이 이미 끝났으면 그룹 영상 전체가 곧 그 사람의 활동기이므로 막지 않는다:
+  //   ① left 있음            → 그 날짜까지(기존)
+  //   ② 해체일 있음          → 해체일까지
+  //   ③ 해체는 확실·날짜 모름 → 컷오프 없음
+  //   ④ 현역 그룹을 떠남·날짜 모름 → 기존대로 차단(엑소 타오 등 6명. 언제까지가 그 사람 시절인지
+  //      알 방법이 없고, 여기서 풀면 탈퇴 이후 최신 영상까지 새어 들어간다 — 수진 원래 버그의 재발)
+  // ⚠️ ②는 "해체 전에 먼저 탈퇴한 멤버"에게 느슨하다(그 사이 영상이 섞일 수 있음). 그래도 카드가
+  //    통째로 비는 것보단 낫고, 해당 멤버에 left를 채우면 ①로 정확해진다.
   // 겸임/이적 멤버는 그룹마다 활동 상태가 다를 수 있음(예: 이달의소녀 탈퇴 후 루셈블로 데뷔 — 루셈블에선
   // 현역, 이달의소녀에선 탈퇴). groups 배열의 해당 그룹 항목에 active/left를 개별로 얹어두면 그 그룹
   // 문맥에서는 이 값을 우선 쓰고, 없으면(대부분의 단일 그룹 멤버) 기존처럼 a.active/a.left로 폴백한다
@@ -15458,7 +15509,11 @@ function _makeChVidController(contId){
     const activeHere=gEntry.active!==undefined?gEntry.active:a.active;
     if(activeHere!==false)return{active:true};
     const leftHere=gEntry.left!==undefined?gEntry.left:a.left;
-    return{active:false,left:leftHere?leftHere.replace(/\./g,'-'):null};
+    if(leftHere)return{active:false,left:leftHere.replace(/\./g,'-')};   // ①
+    const end=_groupEndDate(ko);
+    if(end)return{active:false,left:end};                                // ②
+    if(_groupIsOver(ko))return{active:true};                             // ③
+    return{active:false,left:null};                                      // ④
   }
   // 컬렉션에 담을 때 이 영상에 "누구 태그를 새길지" — 멤버 카드에서 담는 경우, v.members(자체 채널
   // 태깅)만 보면 놓치는 영상이 있음: 이 그리드는 (1) 아직 미태깅인 그룹 전체 영상, (2) 다른 채널에
