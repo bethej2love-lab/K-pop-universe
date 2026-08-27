@@ -3705,6 +3705,11 @@ function isShorts(u){return /\/shorts\//.test(u||'');}
 // (반대로 is_short=true인데 category='live'인 행은 폴백만으론 못 잡으니, category를 뽑는 쿼리는
 //  is_short도 같이 뽑아야 한다. 아래 .select() 문자열들에 전부 넣어뒀다.)
 function _isShortV(v){return !!v&&(v.is_short===true||v.category==='short');}
+// 그리드/목록/라이트박스에서 쓰는 song 객체({u,t,thumb,...})의 세로(쇼츠) 여부 판별 — 정렬·그룹핑·렌더·
+// 라이트박스가 전부 이 하나만 쓴다(2026-08-27 통일). is_short/category 플래그가 있으면 그걸(정확), 없으면
+// URL(/shorts/)로 폴백한다. 세로 직캠은 watch?v= URL이 많아 URL만으론 놓치므로, song 생성 지점에서
+// is_short를 실어주면(핵심) 이 판별이 정확해진다. 플래그가 아직 안 실린 소스는 폴백으로 최소 기존 동작 유지.
+function _songIsShort(s){return !!s&&(s.is_short===true||s.category==='short'||isShorts(s.u));}
 function isMob(){return window.innerWidth<=768;}
 // 유튜브 API로 동기화된 일부 영상(주로 인스타 릴스 크로스포스트) 제목엔 실제 줄바꿈 문자가 들어있어서,
 // 한 줄 말줄임(white-space:nowrap)이 안 먹고 제목 영역이 여러 줄로 확 커져 보이는 문제가 있었음 — 표시 직전에 제거.
@@ -3965,7 +3970,7 @@ function _lbAdjacentIdx(delta){
   const wantShorts=true;
   let i=_lbIdx+delta;
   while(i>=0&&i<_lbPlaylist.length){
-    if(isShorts(_lbPlaylist[i].u)===wantShorts)return i;
+    if(_songIsShort(_lbPlaylist[i])===wantShorts)return i;
     i+=delta;
   }
   return-1;
@@ -4115,7 +4120,7 @@ function _lbUpdateUplist(){
     _lbUplistRenderedFor=_lbPlaylist;
     scrollEl.innerHTML='';
     _lbPlaylist.forEach((item,i)=>{
-      const shorts=isShorts(item.u);
+      const shorts=_songIsShort(item);
       const row=document.createElement('div');
       row.className='lb-uplist-item';
       const thumb=document.createElement(item.thumb?'img':'div');
@@ -4129,7 +4134,7 @@ function _lbUpdateUplist(){
       row.appendChild(thumb);row.appendChild(info);
       // 다음 영상 목록은 브라우즈 모드에서만 보이는 UI라(#yt-lightbox.lb-browse 한정 CSS), 여기서
       // 고르는 항목은 쇼츠여도 항상 브라우즈 세션으로 유지한다(2026-08-11, forceBrowseMode 통일).
-      row.addEventListener('click',e=>{e.stopPropagation();openLightbox(item.u,isShorts(item.u),_lbPlaylist,i,_lbCtx,false,true);});
+      row.addEventListener('click',e=>{e.stopPropagation();openLightbox(item.u,_songIsShort(item),_lbPlaylist,i,_lbCtx,false,true);});
       scrollEl.appendChild(row);
     });
   }
@@ -4137,7 +4142,7 @@ function _lbUpdateUplist(){
   // 카운터: 쇼츠 세션은 예전처럼 같은 타입끼리만 세고, 브라우즈 세션은(쇼츠 섞인 목록도 그대로 순서대로
   // 넘어가므로) 목록 전체 기준 "몇 번째 / 총 몇 개"로 센다(2026-08-11, forceBrowseMode 통일).
   if(_lbSessionMode==='shorts'){
-    const sameType=_lbPlaylist.filter(v=>isShorts(v.u));
+    const sameType=_lbPlaylist.filter(v=>_songIsShort(v));
     const rank=sameType.indexOf(_lbPlaylist[_lbIdx]);
     if(cntEl)cntEl.textContent=(sameType.length>1&&rank>=0)?`${rank+1} / ${sameType.length}`:'';
   }else{
@@ -4315,7 +4320,7 @@ function _lbGo(delta){
   const ni=_lbAdjacentIdx(delta);
   if(ni<0)return;
   const s=_lbPlaylist[ni];
-  openLightbox(s.u,isShorts(s.u),_lbPlaylist,ni,_lbCtx,true);
+  openLightbox(s.u,_songIsShort(s),_lbPlaylist,ni,_lbCtx,true);
 }
 // ── 연속재생(2026-08-21, Fable 자문 세션 지적 — "영상이 끝나면 그냥 멈춘다"가 체류시간의 가장 큰
 // 공백이라는 진단, 코드로 재검증 후 확인) — shorts 모드는 종료 즉시 다음 영상으로, browse 모드는
@@ -4994,7 +4999,7 @@ function _connSelToggle(box,s){
 }
 function makeSmallThumb(s,allSongs,idx,ctx){
   const vid=ytId(s.u);
-  const shorts=isShorts(s.u);
+  const shorts=_songIsShort(s);
   const box=document.createElement('div');
   box.className='tv-sm'+(shorts?' is-shorts':'');
   const img=document.createElement('img');
@@ -5077,7 +5082,7 @@ function _pickMainVideo(pool){
 // 어긋나지 않는다(2026-08-27 도입, 사용자 요청 "쇼츠는 쇼츠끼리·가로는 가로끼리 한 행에").
 function _sortMixedByAspect(arr){
   const norms=[],shorts=[];
-  for(const s of (arr||[]))(isShorts(s.u)?shorts:norms).push(s);
+  for(const s of (arr||[]))(_songIsShort(s)?shorts:norms).push(s);
   return norms.concat(shorts);
 }
 // items는 호출부에서 이미 _sortMixedByAspect로 비율별 정렬돼 들어온다(가로 블록→쇼츠 블록). 여기선 순서를
@@ -5088,7 +5093,7 @@ function _sortMixedByAspect(arr){
 function _groupMixedVids(items){
   const out=[];let col=0,prevCat=null;
   for(let i=0;i<items.length;i++){
-    const cat=isShorts(items[i].u)?'short':'norm';
+    const cat=_songIsShort(items[i])?'short':'norm';
     if(col===1&&prevCat!==null&&cat!==prevCat){out[out.length-1].wide=true;col=0;}
     out.push({song:items[i],wide:false});
     col=(col+1)%2;prevCat=(col===1)?cat:null;
@@ -5124,9 +5129,9 @@ function buildVideoSection(songs,containerEl,ctx,mainCandidates){
     return;
   }
   if(isMob()){
-    const normSongs=all.filter(s=>!isShorts(s.u));
+    const normSongs=all.filter(s=>!_songIsShort(s));
     if(normSongs.length>0){
-      const normPool=(mainCandidates&&mainCandidates.length?mainCandidates:normSongs).filter(s=>!isShorts(s.u));
+      const normPool=(mainCandidates&&mainCandidates.length?mainCandidates:normSongs).filter(s=>!_songIsShort(s));
       const first=normPool.length?_pickMainVideo(normPool):(normSongs.find(s=>(s.type||'fancam')==='fancam')||normSongs[0]);
       const bigWrap=document.createElement('div');bigWrap.id='tv-big-wrap';
       const big=document.createElement('img');big.id='tv-big';big.decoding='async';
@@ -5150,7 +5155,7 @@ function buildVideoSection(songs,containerEl,ctx,mainCandidates){
         bigWrap.addEventListener('click',e=>{
           e.stopPropagation();
           if(_selectable&&_connSelMode){_connSelToggle(bigWrap,first);return;}
-          openLightbox(first.u,isShorts(first.u),all,all.indexOf(first),ctx);
+          openLightbox(first.u,_songIsShort(first),all,all.indexOf(first),ctx);
         });
       }
       containerEl.appendChild(bigWrap);
@@ -5164,7 +5169,7 @@ function buildVideoSection(songs,containerEl,ctx,mainCandidates){
   // ── 데스크탑 ─────────────────────────────────────
   const desktopPool=mainCandidates&&mainCandidates.length?mainCandidates:all;
   const first=_pickMainVideo(desktopPool);
-  const firstShorts=isShorts(first.u);
+  const firstShorts=_songIsShort(first);
   const bigWrap=document.createElement('div');bigWrap.id='tv-big-wrap';
   if(firstShorts)bigWrap.classList.add('is-shorts');
   const big=document.createElement('img');big.id='tv-big';big.decoding='async';
@@ -13664,7 +13669,7 @@ function _renderCveList(songs,containerEl,colId){
     item.addEventListener('click',e=>{
       e.stopPropagation();
       const ctx=s.groupKo?{groupKo:s.groupKo,memberKo:(s.memberKos&&s.memberKos[0])||undefined}:{};
-      openLightbox(s.u,isShorts(s.u),songs,songs.indexOf(s),ctx,false,true);
+      openLightbox(s.u,_songIsShort(s),songs,songs.indexOf(s),ctx,false,true);
     });
     containerEl.appendChild(item);
   });
@@ -13891,14 +13896,24 @@ function _openFeedListOverlay(title,sub,songs,ctx){
   },{root:grid,rootMargin:'600px 0px'});
   _feedListObserver=observer;
   function renderOne(s,idx){
-    const shortFlag=isShorts(s.u);
+    const shortFlag=_songIsShort(s);
     const item=document.createElement('div');
     item.className='gc-ch-item'+(shortFlag?' is-short':'')+(_wideFlags&&_wideFlags[idx]?' gc-ch-wide':'');
-    const thumbSrc=s.thumb||`https://img.youtube.com/vi/${ytId(s.u)}/mqdefault.jpg`;
+    const baseThumb=s.thumb||`https://img.youtube.com/vi/${ytId(s.u)}/mqdefault.jpg`;
     const img=document.createElement('img');
-    img.className='gc-ch-thumb';img.loading='lazy';img.decoding='async';
-    img.src=thumbSrc;img.alt=_cleanTitle(s.t);
-    if(shortFlag){const bg=document.createElement('div');bg.className='gc-ch-thumb-bg';bg.style.backgroundImage=`url(${thumbSrc})`;item.appendChild(bg);}
+    img.className='gc-ch-thumb';img.loading='lazy';img.decoding='async';img.alt=_cleanTitle(s.t);
+    if(shortFlag){
+      // 쇼츠는 세로(9:16) 박스라 세로 썸네일(oardefault.jpg)로 채워야 꽉 참 — 안 그러면 가로 썸네일이 가운데
+      // 갇혀 위아래가 블러로 빈다(사용자 제보, 2026-08-27). 카드 그리드(renderItems)와 동일 로직: oardefault가
+      // 없으면(유튜브가 120x90 회색 플레이스홀더로 응답) 가로 썸네일로 폴백, 로드되면 블러 배경도 세로로 교체.
+      const bg=document.createElement('div');bg.className='gc-ch-thumb-bg';bg.style.backgroundImage=`url(${baseThumb})`;item.appendChild(bg);
+      const _vid=ytId(s.u);
+      img.src=`https://i.ytimg.com/vi/${_vid}/oardefault.jpg`;
+      img.onerror=()=>{img.onerror=null;img.src=baseThumb;};
+      img.onload=()=>{if(img.naturalWidth===120&&img.naturalHeight===90){img.onerror=null;img.onload=null;img.src=baseThumb;}else if(img.src.includes('oardefault'))bg.style.backgroundImage=`url(${img.src})`;};
+    }else{
+      img.src=baseThumb;
+    }
     // 순위 변동 배지 — 주간 개인 직캠 TOP 20/월간 무대 TOP 30처럼 rankDelta가 있는 목록에서만 렌더.
     // 스냅샷 자체가 없으면(신규 배포 직후) rankDelta가 undefined라 배지를 아예 안 그림.
     if(s.rankDelta!==undefined){
@@ -14213,7 +14228,7 @@ function _buildFeedRecentlyViewed(){
     item.addEventListener('click',()=>_feedNav(()=>{
       const ctx=v.groupKo?{groupKo:v.groupKo,memberKo:(v.memberKos&&v.memberKos[0])||undefined}:{};
       const pl=arr.map(x=>({t:x.t,u:x.u,thumb:x.thumb,groupKo:x.groupKo,memberKos:x.memberKos}));
-      openLightbox(v.u,isShorts(v.u),pl,i,ctx,false,true);
+      openLightbox(v.u,_songIsShort(v),pl,i,ctx,false,true);
     }));
     item.addEventListener('touchstart',e=>_lbRipple(item,e),{passive:true});
     item.addEventListener('mousedown',e=>_lbRipple(item,e));
@@ -15280,13 +15295,13 @@ function _buildFeedRandomVideo(list){
   _appendFeedCard(list,'🎬',song.t,vSub,()=>_feedNav(()=>{
     if(pick.type==='group'){
       const bm=bubbleMeshes.find(b=>b.ko===pick.gko);if(bm)flyToBubble(bm.mesh.position,bm.radius);
-      openLightbox(song.u,isShorts(song.u),list_,list_.indexOf(song),{groupKo:pick.gko});
+      openLightbox(song.u,_songIsShort(song),list_,list_.indexOf(song),{groupKo:pick.gko});
       if(isMob()){showGC(pick.gko,window.innerWidth/2,window.innerHeight*0.4,false,false,null,false);}
       else showGC(pick.gko,window.innerWidth/2,window.innerHeight/2);
     }else{
       const a=pick.artist;
       if(a._worldPos)flyTo(a._worldPos);
-      openLightbox(song.u,isShorts(song.u),list_,list_.indexOf(song),{groupKo:a.group.ko,memberKo:a.name.ko});
+      openLightbox(song.u,_songIsShort(song),list_,list_.indexOf(song),{groupKo:a.group.ko,memberKo:a.name.ko});
       if(isMob()){showT(a,window.innerWidth/2,window.innerHeight*0.4,false,false,false);}
       else{
         // 웹은 그룹 카드+멤버 카드를 도킹된 형태로 같이 열어서 맥락(어느 그룹 소속인지)이 같이 보이게 함
@@ -15296,7 +15311,7 @@ function _buildFeedRandomVideo(list){
         openMemberPanel(document.getElementById('tt'));
       }
     }
-  }),vThumb,null,{wide:!isShorts(song.u)}); // 단일 랜덤영상: landscape면 전체폭(썸네일이 mqdefault 16:9라 쇼츠는 세로 처리 안 함)
+  }),vThumb,null,{wide:!_songIsShort(song)}); // 단일 랜덤영상: landscape면 전체폭(썸네일이 mqdefault 16:9라 쇼츠는 세로 처리 안 함)
 }
 
 function _buildFeedDiscovery(){
