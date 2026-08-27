@@ -3691,11 +3691,31 @@ const _LIVE_EXCLUDE=['엠카드림','비하인드','behind'];
 // 그리드 목록·탭 노출 판정)에 복붙돼 있었고, 실제로 탭 노출 판정에는 제외 조건이 통째로 빠져 있어서
 // "탭은 보이는데 열면 빈 목록"이 될 수 있었다(2026-08-27 정리). 커버 탭의 _applyCoverExcludeQuery와
 // 같은 방식이며, 클라이언트 재확인(patchItem)도 같은 _LIVE_EXCLUDE 배열을 그대로 쓴다.
-function _applyLiveTabQuery(q){
-  q=q.or('category.eq.live,content_formats.cs.{live},title_norm.ilike.*리무진서비스*,title_norm.ilike.*리무진 서비스*')
-     .not('title','ilike','%[live]%');
+// 제외 조건만 따로 — 탐험 패널의 무대/직캠 차트들은 category='live'를 직접 조회하므로(탭 조건을 안 씀)
+// 이 조각을 그대로 재사용한다. 2026-08-27 1차 수정 때 카드 탭만 고쳤다가 "차트에는 그대로 남는다"는
+// 지적을 받아 분리했다 — 같은 배열(_LIVE_EXCLUDE)을 보므로 키워드를 추가하면 양쪽에 동시에 적용된다.
+function _applyLiveExclude(q){
+  q=q.not('title','ilike','%[live]%');
   for(const k of _LIVE_EXCLUDE)q=q.not('title_norm','ilike',`*${k}*`);
   return q;
+}
+function _applyLiveTabQuery(q){
+  return _applyLiveExclude(q.or('category.eq.live,content_formats.cs.{live},title_norm.ilike.*리무진서비스*,title_norm.ilike.*리무진 서비스*'));
+}
+// 예능(variety) 탭에 **제목만으로도** 들어와야 하는 프로그램명 — title_norm(NFKC+소문자) 기준이라
+// 전부 소문자로 적는다. 채널 tier가 예능이 아니거나 content_formats 태깅이 안 된 영상(대부분
+// category='other')을 제목으로 건져내는 장치다.
+//  · 2026-08-27 추가: '놀면뭐하니'(+띄어쓴 표기). 실측 240건이 전부 category='other'로 예능 탭에 안 떴다.
+//    같은 요청에 있던 '전참시'는 이미 들어 있었고 실제 조회로 동작 확인됨(넥스지 등) — 그대로 뒀다.
+//    '전지적 참견'/'전지적참견'(정식 명칭, 31건)도 같은 프로그램이라 같이 넣었다.
+const _VARIETY_TITLE_KEYWORDS=['라디오스타','아는형님','아는 형님','놀라운토요일','전참시','전지적 참견','전지적참견','놀면뭐하니','놀면 뭐하니'];
+// ⚠️ variety/show 탭 조건도 라이브·커버와 같은 이유로 **여기 한 곳**에서만 만든다. 예전엔 같은
+// or 문자열이 세 군데(대표영상 선정·그리드 목록·탭 노출 판정)에 복붙돼 있어서, 키워드를 추가하려면
+// 세 곳을 다 찾아 고쳐야 했고 하나만 빠뜨리면 조용히 어긋났다. 클라이언트 재확인(patchItem)도 같은
+// _VARIETY_TITLE_KEYWORDS 배열을 그대로 쓴다.
+function _applyGenreTabQuery(q,filter){ // filter: 'variety' | 'show'
+  const titleOr=filter==='variety'?_VARIETY_TITLE_KEYWORDS.map(k=>`,title_norm.ilike.*${k}*`).join(''):'';
+  return q.or(`category.eq.${filter},content_formats.cs.{${filter}}${titleOr}`);
 }
 
 let _lbPlaylist=null,_lbIdx=-1,_lbCtx=null;
@@ -13813,8 +13833,7 @@ async function _pickFeaturedVidFromDB(ko,memberKo,onlyMe,filter,viewMode,formatF
     }else if(filter==='live'){
       q=_applyLiveTabQuery(q);
     }else if(filter==='variety'||filter==='show'){
-      const _varTitleOr=filter==='variety'?',title_norm.ilike.*라디오스타*,title_norm.ilike.*아는형님*,title_norm.ilike.*아는 형님*,title_norm.ilike.*놀라운토요일*,title_norm.ilike.*전참시*':'';
-      q=q.or(`category.eq.${filter},content_formats.cs.{${filter}}${_varTitleOr}`);
+      q=_applyGenreTabQuery(q,filter);
     }else if(filter==='short'){
       q=q.eq('is_short',true); // short는 장르가 아니라 형식 플래그(is_short_migration.sql) — category와 직교
     }else if(filter&&filter!=='all'){
@@ -14136,9 +14155,9 @@ async function _buildFeedWeeklyTopCams(list,discList){
   const _withRankDelta=(vids,prevRanks)=>vids.map((v,i)=>({t:v.title,u:vidUrl(v),thumb:v.thumb,vc:v.view_count,pa:v.published_at?.slice(0,10),
     rankDelta:prevRanks===undefined?undefined:(prevRanks[v.id]!=null?prevRanks[v.id]-(i+1):null)}));
   try{
-    const{data,error}=await sb.from(_YT_TABLE)
+    const{data,error}=await _applyLiveExclude(sb.from(_YT_TABLE)
       .select('id,title,thumb,category,is_short,content_flag,group_ko,members,view_count,published_at')
-      .eq('category','live')
+      .eq('category','live'))
       .gte('published_at',sinceDate)
       .not('view_count','is',null)
       .or('content_flag.is.null,content_flag.neq.기타')
@@ -14184,9 +14203,9 @@ async function _buildFeedWeeklyTopCams(list,discList){
   // 그대로 노출하고 어제 대비 순위 변동 배지를 붙인다(2026-08-21, 사용자 요청 — "완전체 무대"는 이름이
   // 어색하다고 해서 폐기, 그룹 전체로 필터링하지 않고 그냥 기간을 늘린 별도 차트로 단순화).
   try{
-    const{data,error}=await sb.from(_YT_TABLE)
+    const{data,error}=await _applyLiveExclude(sb.from(_YT_TABLE)
       .select('id,title,thumb,category,is_short,content_flag,group_ko,members,view_count,published_at')
-      .eq('category','live')
+      .eq('category','live'))
       .gte('published_at',sinceDate30)
       .not('view_count','is',null)
       .or('content_flag.is.null,content_flag.neq.기타')
@@ -14216,9 +14235,9 @@ async function _buildFeedYearlyTop(list){
   const currentYear=new Date().getFullYear();
   const year=2004+Math.floor(Math.random()*(currentYear-2004+1));
   try{
-    const{data,error}=await sb.from(_YT_TABLE)
+    const{data,error}=await _applyLiveExclude(sb.from(_YT_TABLE)
       .select('id,title,thumb,category,is_short,content_flag,view_count,published_at')
-      .eq('category','live')
+      .eq('category','live'))
       .gte('published_at',`${year}-01-01`)
       .lt('published_at',`${year+1}-01-01`)
       .not('view_count','is',null)
@@ -14244,9 +14263,9 @@ async function _buildFeedLegend100(list){
   if(!sb)return;
   const vidUrl=v=>_isShortV(v)?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;
   try{
-    const{data,error}=await sb.from(_YT_TABLE)
+    const{data,error}=await _applyLiveExclude(sb.from(_YT_TABLE)
       .select('id,title,thumb,category,is_short,content_flag,view_count,published_at')
-      .eq('category','live')
+      .eq('category','live'))
       .not('view_count','is',null)
       .or('content_flag.is.null,content_flag.neq.기타')
       .or('content_flag.is.null,content_flag.neq.무관').or('content_flag.is.null,content_flag.neq.보류')
@@ -14270,9 +14289,9 @@ async function _buildFeedLegend100(list){
 // 1명일 때만(그룹 전체 포메이션 직캠과 구분). 전체기간 조회수 기준이라 레전드 100과 마찬가지로 결과가
 // 고정이므로 무한스크롤 반복 풀에는 안 넣음(세대별 카드만 예외 — 아래 참고).
 async function _fetchSoloFancamPool(groupKos,fetchLimit){
-  let q=sb.from(_YT_TABLE)
+  let q=_applyLiveExclude(sb.from(_YT_TABLE)
     .select('id,title,thumb,category,is_short,content_flag,group_ko,members,view_count,published_at')
-    .eq('category','live')
+    .eq('category','live'))
     .not('view_count','is',null)
     .or('content_flag.is.null,content_flag.neq.기타')
     .or('content_flag.is.null,content_flag.neq.무관').or('content_flag.is.null,content_flag.neq.보류')
@@ -14344,9 +14363,9 @@ async function _buildFeedGenSoloCamTop(list,offset){
 // 세 가지만 추가. 그룹당 상한(capPerGroup)을 둬서 인기 그룹 영상이 100자리를 독점하지 않게 함
 // (기존 "Trend" 카드의 _capByGroup 재사용).
 async function _fetchStagePool(groupKos,fetchLimit,capPerGroup){
-  let q=sb.from(_YT_TABLE)
+  let q=_applyLiveExclude(sb.from(_YT_TABLE)
     .select('id,title,thumb,category,is_short,content_flag,group_ko,members,view_count,published_at')
-    .eq('category','live')
+    .eq('category','live'))
     .not('view_count','is',null)
     .or('content_flag.is.null,content_flag.neq.기타')
     .or('content_flag.is.null,content_flag.neq.무관').or('content_flag.is.null,content_flag.neq.보류')
@@ -14792,10 +14811,10 @@ async function _buildFeedDebutYearPick(list,offset){
     const[year,groupKos]=years[(hourIdx+i)%years.length];
     if(_feedRotUsed('debutYear').has(year))continue; // 무한스크롤 offset 겹침으로 인한 재노출 방지(2026-08-21)
     try{
-      const{data,error}=await sb.from(_YT_TABLE)
+      const{data,error}=await _applyLiveExclude(sb.from(_YT_TABLE)
         .select('id,title,thumb,category,is_short,content_flag,group_ko,members,view_count,published_at')
         .in('group_ko',groupKos)
-        .eq('category','live')
+        .eq('category','live'))
         .or('content_flag.is.null,content_flag.neq.기타')
         .or('content_flag.is.null,content_flag.neq.무관').or('content_flag.is.null,content_flag.neq.보류')
         .or('content_flag.is.null,content_flag.neq.hidden')
@@ -14876,9 +14895,9 @@ async function _buildFeedThrowbackToday(list){
   for(let i=0;i<years.length;i++){
     const year=years[(hourIdx+i)%years.length];
     try{
-      const{data,error}=await sb.from(_YT_TABLE)
+      const{data,error}=await _applyLiveExclude(sb.from(_YT_TABLE)
         .select('id,title,thumb,category,is_short,content_flag,group_ko,published_at')
-        .eq('category','live')
+        .eq('category','live'))
         .gte('published_at',`${year}-${mm}-${dd}`)
         .lt('published_at',`${year+yearRollover}-${nmm}-${ndd}`)
         .or('content_flag.is.null,content_flag.neq.기타')
@@ -15815,9 +15834,8 @@ function _makeChVidController(contId){
       }else if(filter==='live'){
         q=_applyLiveTabQuery(q);
       }else if(filter==='variety'||filter==='show'){
-        // category(채널 tier 기반 레거시) OR content_formats(영상 단위 장르 태그) OR 제목 키워드 둘 다 체크
-        const _varTitleOr=filter==='variety'?',title_norm.ilike.*라디오스타*,title_norm.ilike.*아는형님*,title_norm.ilike.*아는 형님*,title_norm.ilike.*놀라운토요일*,title_norm.ilike.*전참시*':'';
-        q=q.or(`category.eq.${filter},content_formats.cs.{${filter}}${_varTitleOr}`);
+        // category(채널 tier 레거시) OR content_formats(영상 단위 장르) OR 제목 키워드 — 셋 다 체크
+        q=_applyGenreTabQuery(q,filter);
       }else if(filter==='short'){
         // short는 장르가 아니라 형식 플래그(is_short_migration.sql) — category와 직교라서 세로 직캠은
         // Live 탭과 Shorts 탭에 동시에 뜬다. 부분 인덱스 idx_ytv_is_short_group_published가 이 형태를
@@ -16205,9 +16223,9 @@ function _makeChVidController(contId){
           const rs=await Promise.all(probes.map(p=>p.then(r=>r,()=>({data:null}))));
           return{v,ok:rs.some(r=>r?.data?.length)};
         }
-        else if(v==='variety')q=q.or('category.eq.variety,content_formats.cs.{variety},title_norm.ilike.*라디오스타*,title_norm.ilike.*아는형님*,title_norm.ilike.*아는 형님*,title_norm.ilike.*놀라운토요일*,title_norm.ilike.*전참시*');
+        else if(v==='variety')q=_applyGenreTabQuery(q,'variety'); // 목록 쿼리와 같은 조건(_VARIETY_TITLE_KEYWORDS)
         else if(v==='live')q=_applyLiveTabQuery(q); // 목록 쿼리와 같은 조건 — 예전엔 여기만 제외 조건이 빠져 있었다
-        else if(v==='show')q=q.or('category.eq.show,content_formats.cs.{show}');
+        else if(v==='show')q=_applyGenreTabQuery(q,'show');
         else if(v==='short')q=q.eq('is_short',true); // 형식 플래그(위 buildBaseQuery와 같은 기준)
         else q=q.eq('category',v);
         const{data}=await q;
@@ -16453,10 +16471,11 @@ function _makeChVidController(contId){
         if(_LIVE_EXCLUDE.some(k=>t.includes(k)))stillQualifies=false;
         else if(newRow.category!=='live'&&!fmts.includes('live')&&!t.includes('리무진서비스')&&!t.includes('리무진 서비스'))stillQualifies=false;
       }else if(state.filter==='variety'){
-        const t=(newRow.title||'').toLowerCase();
+        // 키워드는 _VARIETY_TITLE_KEYWORDS 한 곳에서만 가져온다(목록 쿼리와 같은 값). 비교 기준도
+        // _titleNorm으로 — 서버의 title_norm과 같은 정규화라 스타일드 문자까지 같이 걸린다.
+        const t=_titleNorm(newRow.title||'');
         const fmts=newRow.content_formats||[];
-        const _varKeywords=['라디오스타','아는형님','아는 형님','놀라운토요일','전참시'];
-        if(newRow.category!=='variety'&&!fmts.includes('variety')&&!_varKeywords.some(k=>t.includes(k)))stillQualifies=false;
+        if(newRow.category!=='variety'&&!fmts.includes('variety')&&!_VARIETY_TITLE_KEYWORDS.some(k=>t.includes(k)))stillQualifies=false;
       }else if(state.filter==='short'){
         // Shorts 탭은 장르(category)가 아니라 형식 플래그가 기준(2026-08-27 직교화)
         if(!_isShortV(newRow))stillQualifies=false;

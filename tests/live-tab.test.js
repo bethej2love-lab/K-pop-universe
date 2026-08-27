@@ -33,7 +33,10 @@ need(list.every(k => k === k.toLowerCase()),
 // ── 쿼리 조립이 한 함수인가, 그리고 모든 사용처가 그 함수를 쓰는가 ────────────────────
 need(/function _applyLiveTabQuery\(q\)\{/.test(html), '라이브 탭 쿼리 조립이 _applyLiveTabQuery 한 함수에 있음');
 const fnBody = (html.match(/function _applyLiveTabQuery\(q\)\{[\s\S]*?\n\}/) || [''])[0];
-need(/_LIVE_EXCLUDE/.test(fnBody), '  · 쿼리 함수가 _LIVE_EXCLUDE를 사용(하드코딩 아님)');
+// 제외 루프는 _applyLiveExclude 쪽에 있고 탭 쿼리는 그걸 감싸기만 한다(탐험 차트가 제외만 재사용
+// 하려고 2026-08-27에 쪼갬) — 그래서 배열 사용 여부는 _applyLiveExclude 본문에서 확인한다.
+const excBody = (html.match(/function _applyLiveExclude\(q\)\{[\s\S]*?\n\}/) || [''])[0];
+need(/_LIVE_EXCLUDE/.test(excBody), '  · 제외 함수가 _LIVE_EXCLUDE를 사용(하드코딩 아님)');
 need(/content_formats\.cs\.\{live\}/.test(fnBody), '  · category=live OR content_formats=live 조건 유지');
 need(/리무진서비스/.test(fnBody), '  · 리무진서비스 제목 예외 유지');
 
@@ -56,5 +59,38 @@ const patchLive = (html.match(/\}else if\(state\.filter==='live'\)\{[\s\S]*?\n  
 need(/_titleNorm\(newRow\.title\|\|''\)/.test(patchLive),
   '  · 비교 기준이 _titleNorm — 서버 title_norm과 같은 정규화');
 
-console.log(pass ? '\n✅ 라이브 탭 제외 테스트 통과' : '\n❌ 라이브 탭 제외 테스트 실패');
+// ── 탐험 패널의 라이브 차트도 같은 제외를 쓰는가 ──────────────────────────────────────
+// 1차 수정 때 카드 탭만 고쳤더니 "탐험 패널의 이번주 직캠 TOP 같은 섹션엔 그대로 남는다"는 지적을
+// 받았다(2026-08-27). 그 섹션들은 탭 조건이 아니라 category='live'를 직접 조회하므로, 제외 조각만
+// 떼어낸 _applyLiveExclude를 쓰게 했다. category='live' 직접 조회가 하나라도 맨몸으로 남으면 실패.
+need(/function _applyLiveExclude\(q\)\{/.test(html), '제외 조각이 _applyLiveExclude로 분리됨');
+need(/return _applyLiveExclude\(q\.or\(/.test(html), '  · 탭 쿼리(_applyLiveTabQuery)도 그 조각을 재사용');
+const bareLive = [];
+html.split('\n').forEach((l, i) => {
+  if (!/\.eq\('category','live'\)/.test(l)) return;
+  // 체인 시작이 _applyLiveExclude(로 감싸져 있는지 — 같은 줄 또는 위 3줄 안에서 확인
+  const near = html.split('\n').slice(Math.max(0, i - 3), i + 1).join('\n');
+  if (!/_applyLiveExclude\(sb\.from/.test(near)) bareLive.push(`${i + 1}: ${l.trim().slice(0, 60)}`);
+});
+need(bareLive.length === 0,
+  `category='live' 직접 조회가 전부 _applyLiveExclude로 감싸짐 — 누락 ${bareLive.length}건${bareLive.length ? '\n     ' + bareLive.join('\n     ') : ''}`);
+
+// ── 예능(variety) 탭 제목 키워드도 한 곳인가 ─────────────────────────────────────────
+// 라이브와 똑같이 네 군데에 복붙돼 있었다(대표영상·목록·탭 노출·patchItem).
+const varMatch = html.match(/const _VARIETY_TITLE_KEYWORDS=\[([^\]]*)\];/);
+need(!!varMatch, '_VARIETY_TITLE_KEYWORDS 목록이 존재');
+const varList = varMatch ? varMatch[1].split(',').map(s => s.trim().replace(/^'|'$/g, '')) : [];
+for (const k of ['놀면뭐하니', '놀면 뭐하니', '전참시', '라디오스타'])
+  need(varList.includes(k), `  · 예능 키워드에 '${k}' 포함`);
+need(varList.every(k => k === k.toLowerCase()), '  · 전부 소문자(title_norm 정규화 기준)');
+need(/function _applyGenreTabQuery\(q,filter\)\{/.test(html), 'variety/show 탭 쿼리가 _applyGenreTabQuery 한 함수에 있음');
+// 키워드가 함수 밖에 또 하드코딩돼 있으면 드리프트 — 정의 한 줄에만 나와야 한다.
+const raKeyword = (html.match(/라디오스타/g) || []).length;
+need(raKeyword === 1, `예능 키워드 하드코딩은 정의 1곳뿐이어야 함 — '라디오스타' 발견 ${raKeyword}곳`);
+const genreUses = (html.match(/_applyGenreTabQuery\(/g) || []).length;
+need(genreUses >= 5, `_applyGenreTabQuery 사용처 ${genreUses}곳(정의 1 + 대표영상/목록/탭노출 variety·show)`);
+need(/_VARIETY_TITLE_KEYWORDS\.some\(k=>t\.includes\(k\)\)/.test(html),
+  'patchItem의 예능 재확인도 같은 배열을 사용');
+
+console.log(pass ? '\n✅ 라이브/예능 탭 조건 테스트 통과' : '\n❌ 라이브/예능 탭 조건 테스트 실패');
 process.exit(pass ? 0 : 1);
