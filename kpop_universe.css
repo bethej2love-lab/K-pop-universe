@@ -388,6 +388,12 @@
   #tt-status-line .gc-status-inner{padding-left:4px;}
   .presence-dot{width:6px;height:6px;border-radius:50%;background:rgb(255,140,120);box-shadow:0 0 5px rgba(255,140,120,0.8);animation:presence-pulse 1.6s ease-in-out infinite;flex:none;}
   .favcount-dot{width:6px;height:6px;border-radius:50%;background:rgb(255,110,165);box-shadow:0 0 5px rgba(255,110,165,0.8);animation:presence-pulse 1.6s ease-in-out infinite;flex:none;}
+  /* 흔적(이번 주 N명이 흔적 M개) 전용 점 — 예전엔 .favcount-dot을 그대로 재사용해서 "N명이 좋아해요"와
+     점 색이 똑같았다(둘 다 핑크). 같은 줄에서 로테이션되는 지표라 점까지 같으면 무엇이 바뀐 건지
+     구분이 안 된다(2026-08-27 사용자 지적).
+     presence(코랄 255,140,120)·favcount(핑크 255,110,165)가 둘 다 따뜻한 쪽이라, 흔적만 차가운 쪽으로
+     뺀다 — 텍스트도 이미 차가운 본문톤(#ccd8ee)이라 점과 글자가 한 덩어리로 읽힌다. */
+  .trace-dot{width:6px;height:6px;border-radius:50%;background:rgb(110,225,195);box-shadow:0 0 5px rgba(110,225,195,0.75);animation:presence-pulse 1.6s ease-in-out infinite;flex:none;}
   @keyframes presence-pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:0.45;transform:scale(0.72);}}
   .tm{display:none;}
   #tv-big-wrap{cursor:pointer;border-radius:8px;overflow:hidden;background:rgba(255,255,255,0.04);}
@@ -2656,6 +2662,7 @@
     #tab-feed.show-badge .tab-badge-dot,
     .presence-dot,
     .favcount-dot,
+    .trace-dot,
     .fav-btn.fav-hint{ animation:none !important; }
     /* 고인 멤버 별 반짝임 — 추모 표현이지만 지속 깜빡임이라 정지(색은 그대로 유지) */
     .deceased-twinkle,

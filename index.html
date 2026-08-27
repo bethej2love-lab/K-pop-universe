@@ -13202,7 +13202,7 @@ async function _showTraceCount(kind,key,rpcFn){
   if(error){console.error('trace count fetch failed',error);return;}
   const n=(data&&data.n)||0,m=(data&&data.m)||0;
   if(n>0&&m>0){
-    _gcStatusState[kind].traces='<span class="favcount-dot"></span>'+(currentLang==='ko'?`이번 주 ${n}명이 흔적 ${m}개를 남겼어요`:`${n} left ${m} traces this week`);
+    _gcStatusState[kind].traces='<span class="trace-dot"></span>'+(currentLang==='ko'?`이번 주 ${n}명이 흔적 ${m}개를 남겼어요`:`${n} left ${m} traces this week`);
     _renderGcStatusLine(kind);
   }
 }
