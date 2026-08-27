@@ -92,5 +92,20 @@ need(genreUses >= 5, `_applyGenreTabQuery 사용처 ${genreUses}곳(정의 1 + �
 need(/_VARIETY_TITLE_KEYWORDS\.some\(k=>t\.includes\(k\)\)/.test(html),
   'patchItem의 예능 재확인도 같은 배열을 사용');
 
-console.log(pass ? '\n✅ 라이브/예능 탭 조건 테스트 통과' : '\n❌ 라이브/예능 탭 조건 테스트 실패');
+// ── 커버(cover) 탭도 같은 정리 ────────────────────────────────────────────────
+// 2026-08-27 사용자 요청으로 비하인드/behind를 커버 탭에서도 뺐다. 그러다 라이브에서 겪은 것과
+// **같은 자리**(탭 노출 판정)에 제외 목록이 빠져 있는 걸 또 발견해서 같이 고쳤다.
+const covMatch = html.match(/const _COVER_EXCLUDE=\[([\s\S]*?)\];/);
+need(!!covMatch, '_COVER_EXCLUDE 목록이 존재');
+const covList = covMatch ? [...covMatch[1].matchAll(/'([^']*)'/g)].map(m => m[1]) : [];
+for (const k of ['비하인드', 'behind'])
+  need(covList.includes(k), `  · 커버 제외 키워드에 '${k}' 포함`);
+need(covList.every(k => k === k.toLowerCase()), '  · 전부 소문자(title_norm 정규화 기준)');
+need(/const\{data:own\}=await _applyCoverExcludeQuery\(q\);/.test(html),
+  '커버 탭 노출 판정도 _applyCoverExcludeQuery 사용 — 예전엔 여기만 제외 목록이 빠져 있었다');
+// 커버 조건(or 문자열)을 만드는 곳도 함수 하나여야 한다
+const covOr = (html.match(/title_norm\.ilike\.\*cover\*,title_norm\.ilike\.\*커버\*/g) || []).length;
+need(covOr === 1, `커버 OR 조건은 _applyCoverExcludeQuery 안 1곳뿐이어야 함 — 발견 ${covOr}곳`);
+
+console.log(pass ? '\n✅ 라이브/예능/커버 탭 조건 테스트 통과' : '\n❌ 라이브/예능/커버 탭 조건 테스트 실패');
 process.exit(pass ? 0 : 1);
