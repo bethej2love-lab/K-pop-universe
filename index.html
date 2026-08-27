@@ -1203,13 +1203,38 @@ if(typeof THREE==='undefined'||!THREE.OrbitControls||!THREE.CSS2DRenderer){
   })();
   throw new Error('CDN 스크립트 로드 실패 — 앱 초기화 중단');
 }
-// 이전에 줌인된 상태로 새로고침했을 때 초기 스케일 1.0으로 강제 복원 (iOS Safari 대응)
+// 이전에 줌인된 상태로 새로고침했을 때 초기 스케일 1.0으로 강제 복원 (iOS Safari 대응).
+// 추가로 (1) 두 손가락 확대 제스처를 원천 차단하고 (2) 그래도 확대가 걸리면 자동으로 되돌린다.
+// 배경: PWA(standalone)는 새로고침이 없어, 한 번 줌인되면 아래 로드-시-1회 리셋이 다시 돌 기회가
+// 없이 확대가 영구 고착됐다(2026-08-27 사용자 제보 — 사파리는 정상, PWA에서만 취창 직캠 등이 통째로
+// 확대·잘려 보이고 user-scalable=no라 핀치로 줄이지도 못함). iOS는 user-scalable=no를 무시하고
+// 핀치줌을 허용하므로, 아래 gesture 차단과 scale 감지 복구를 둘 다 둔다.
 (function(){
   var vp=document.querySelector('meta[name=viewport]');
   if(!vp)return;
   var orig=vp.getAttribute('content');
-  vp.setAttribute('content','width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=no,viewport-fit=cover');
-  setTimeout(function(){vp.setAttribute('content',orig);},1);
+  // viewport content를 strict로 바꿨다 1프레임 뒤 원복 — 이 토글 자체가 iOS에 스케일 리셋을 강제한다.
+  function resetZoom(){
+    vp.setAttribute('content','width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=no,viewport-fit=cover');
+    setTimeout(function(){vp.setAttribute('content',orig);},1);
+  }
+  resetZoom(); // 로드 시 1회 (기존 동작)
+  // (1) 원천 차단: gesture 이벤트(멀티터치 확대/회전 전용, 단일터치 스와이프와 무관)를 직접 막아야
+  //     iOS에서 확대가 애초에 안 걸린다. 유튜브 iframe 내부는 별개 문서라 영향받지 않는다.
+  ['gesturestart','gesturechange','gestureend'].forEach(function(ev){
+    document.addEventListener(ev,function(e){e.preventDefault();},{passive:false});
+  });
+  // (2) 보험: 그래도 확대가 걸리면(visualViewport.scale>1) 되돌린다 — PWA는 새로고침이 없어
+  //     이 자동 복구가 없으면 확대가 고착된다. 핀치 진행 중 연타 방지로 살짝 디바운스.
+  if(window.visualViewport){
+    var _zoomResetT=null;
+    window.visualViewport.addEventListener('resize',function(){
+      if(window.visualViewport.scale>1.01){
+        clearTimeout(_zoomResetT);
+        _zoomResetT=setTimeout(resetZoom,150);
+      }
+    });
+  }
 })();
 const W=window.innerWidth,H=window.innerHeight;
 
@@ -5047,43 +5072,26 @@ function _pickMainVideo(pool){
   return p[Math.floor(Math.random()*p.length)];
 }
 // 대표영상을 뺀 "나머지" 목록을 그룹카드 영상그리드처럼 섞는다 — 순서상 같은 비율(가로/쇼츠)이
-// 연속될 때만 2개씩 짝짓고, 비율이 바뀌는 경계에서 홀로 남는 카드는 2열 폭으로 넓혀 빈칸 없이 채운다.
-// (그룹카드의 _groupGcVids와 동일한 규칙 — 페이지네이션이 없는 단발성 렌더링이라 간소화한 버전)
-// 데스크톱에서 쇼츠가 홀로 남아 2열 폭으로 넓어지면 세로로 과하게 커 보여서(2026-08-06, 사용자 제보),
-// _groupGcVids의 avoidWiden과 동일하게 넓히는 대신 뒤쪽에서 같은 비율(쇼츠) 영상을 찾아 앞으로 당겨와
-// 짝을 채운다. 가로 영상은 그대로 넓혀도 문제없다는 지적이라 안 건드림. 모바일은 패널 폭 자체가 좁아서
-// 넓어져도 덜 커 보이므로 기존처럼 그냥 넓힌다.
+// 같은 비율끼리 한 행에 오도록 가로(norm) 먼저·쇼츠(short) 나중으로 안정 정렬한다(각 그룹 내 원래 순서 유지).
+// 호출부는 그리드 표시와 라이트박스 스와이프 playlist 양쪽에 이 순서를 함께 써야 클릭한 영상부터 넘기기가
+// 어긋나지 않는다(2026-08-27 도입, 사용자 요청 "쇼츠는 쇼츠끼리·가로는 가로끼리 한 행에").
+function _sortMixedByAspect(arr){
+  const norms=[],shorts=[];
+  for(const s of (arr||[]))(isShorts(s.u)?shorts:norms).push(s);
+  return norms.concat(shorts);
+}
+// items는 호출부에서 이미 _sortMixedByAspect로 비율별 정렬돼 들어온다(가로 블록→쇼츠 블록). 여기선 순서를
+// 그대로 두고, 비율이 바뀌는 경계에서 2열 중 첫 칸에 홀로 남는 카드만 2열 폭으로 넓혀(wide) 다음 비율이
+// 반드시 새 행에서 시작하게 한다 — 그래야 한 행이 항상 같은 비율로만 채워진다. 넓힌 칸(홀로 남은 가로)은
+// featured처럼 2열 폭 16:9로 그려진다. 쇼츠는 넓히면 세로로 과하게 커서(2026-08-06 사용자 제보) 경계에서만
+// 넓히고 목록 끝에서 홀로 남는 건 1칸 그대로 둔다.
 function _groupMixedVids(items){
-  const avoidShortsWiden=!isMob();
-  const arr=items.slice();
-  const out=[];let pos=0,cat=null,lastEntry=null;
-  for(let i=0;i<arr.length;i++){
-    let s=arr[i];
-    let c=isShorts(s.u)?'short':'norm';
-    if(pos===1&&cat!==c){
-      let swapIdx=-1;
-      if(avoidShortsWiden&&cat==='short'){
-        for(let j=i+1;j<arr.length;j++){
-          if((isShorts(arr[j].u)?'short':'norm')===cat){swapIdx=j;break;}
-        }
-      }
-      if(swapIdx!==-1){
-        const[matched]=arr.splice(swapIdx,1);
-        arr.splice(i,0,matched);
-        s=matched;c=cat;
-      }else{
-        if(lastEntry)lastEntry.wide=true;
-        pos=0;cat=null;
-      }
-    }
-    const entry={song:s,wide:false};
-    out.push(entry);lastEntry=entry;pos=(pos+1)%2;cat=pos===1?c:null;
-  }
-  if(pos===1&&lastEntry){
-    // 마지막에 홀로 남으면(더 이어질 페이지가 없으므로) 바로 넓히는데, 그게 쇼츠고 데스크톱이면
-    // 더 짝지을 상대가 뒤에 없으니(swap 불가) 넓히지 않고 1열 폭 그대로 둔다.
-    const lastIsShort=isShorts(lastEntry.song.u);
-    if(!(avoidShortsWiden&&lastIsShort))lastEntry.wide=true;
+  const out=[];let col=0,prevCat=null;
+  for(let i=0;i<items.length;i++){
+    const cat=isShorts(items[i].u)?'short':'norm';
+    if(col===1&&prevCat!==null&&cat!==prevCat){out[out.length-1].wide=true;col=0;}
+    out.push({song:items[i],wide:false});
+    col=(col+1)%2;prevCat=(col===1)?cat:null;
   }
   return out;
 }
@@ -5108,9 +5116,9 @@ function buildVideoSection(songs,containerEl,ctx,mainCandidates){
   if(ctx&&ctx.pushExtDown){
     const pure=(songs||[]).filter(s=>s.content_flag!=='외부인');
     const ext=(songs||[]).filter(s=>s.content_flag==='외부인');
-    all=[..._weightedShuffleByCat(pure,s=>s.type),..._weightedShuffleByCat(ext,s=>s.type)];
+    all=[..._sortMixedByAspect(_weightedShuffleByCat(pure,s=>s.type)),..._sortMixedByAspect(_weightedShuffleByCat(ext,s=>s.type))];
   }else{
-    all=_weightedShuffleByCat([...(songs||[])],s=>s.type);
+    all=_sortMixedByAspect(_weightedShuffleByCat([...(songs||[])],s=>s.type));
   }
   if(!all.length){
     return;
@@ -13858,7 +13866,7 @@ function _openFeedListOverlay(title,sub,songs,ctx){
   // 붙어서 쇼츠와 가로 영상이 한 행에 짝지어지고, 세로로 3배 가까이 차이나는 높이가 같은 행에 섞여
   // 그리드가 계단식으로 무너졌음. 바뀐 순서(song)와 그 순서에 맞는 wide 플래그를 함께 써야 함 — 라이트박스
   // 스와이프 목록도 실제 렌더 순서(orderedSongs)와 같아야 클릭한 영상부터 정확히 넘어가므로 같이 바꿈.
-  const _paired=_groupMixedVids(songs);
+  const _paired=_groupMixedVids(_sortMixedByAspect(songs));
   const orderedSongs=_paired.map(e=>e.song);
   const _wideFlags=_paired.map(e=>e.wide);
   if(_feedListObserver)_feedListObserver.disconnect(); // 직전에 끝까지 안 스크롤하고 닫았을 경우 대비
@@ -14362,10 +14370,14 @@ async function _buildFeedWeeklyTopCams(list,discList){
     // 태깅이 아직 안 된 소수 케이스는 놓칠 수 있음(태깅 정확도의 한계, 이 필터 자체의 문제는 아님).
     const camVids=_capByGroup(allVids.filter(v=>_FANCAM_TITLE_RE.test(v.title)&&(v.members||[]).length===1),v=>v.group_ko,3).slice(0,20);
     if(camVids.length>=3){
-      const prevRanks=await _fetchPrevRanks('solo_cam');
-      const songs=_withRankDelta(camVids,prevRanks);
       const label=currentLang==='ko'?'주간 개인 직캠 TOP 20':'Weekly Solo Fancam TOP 20',sub=_cleanTitle(camVids[0].title);
-      _appendFeedCard(list,'🏆',label,sub,()=>_openFeedListOverlay(label,sub,songs),camVids[0].thumb);
+      // 순위 변동 배지용 이전 순위(_fetchPrevRanks)는 리스트를 '열 때'(클릭)만 쓰인다 — 카드 자체(썸네일/라벨)엔
+      // 안 쓰이므로 await로 붙잡지 않고 백그라운드로 가져온다. await하면 이 조회가 끝날 때까지 디스커버리 탭
+      // 콘텐츠 등장이 통째로 밀렸다(2026-08-27, 1000행 잘림 방지로 이 조회가 페이지네이션되며 무거워진 뒤 체감
+      // 저하). 클릭 시점엔 대개 이미 채워져 있고, 혹시 아직이면 _withRankDelta가 undefined→배지 숨김으로 안전 폴백.
+      let _prevSolo;
+      _fetchPrevRanks('solo_cam').then(r=>{_prevSolo=r;});
+      _appendFeedCard(list,'🏆',label,sub,()=>_openFeedListOverlay(label,sub,_withRankDelta(camVids,_prevSolo)),camVids[0].thumb);
     }
 
     // 카드 2: Trend — category='live' 전체 조회수 기준으로 뽑되(최근 7일 50개, 그룹당 최대 3개), 노출
@@ -14403,10 +14415,11 @@ async function _buildFeedWeeklyTopCams(list,discList){
     const allVids30=_filterBannedVideos(data);
     const stageVids=_capByGroup(allVids30,v=>v.group_ko,3).slice(0,30);
     if(stageVids.length>=3){
-      const prevRanks=await _fetchPrevRanks('monthly_stage');
-      const songs=_withRankDelta(stageVids,prevRanks);
       const label=currentLang==='ko'?'월간 무대 TOP 30':'Monthly Stage TOP 30',sub=_cleanTitle(stageVids[0].title);
-      _appendFeedCard(list,'🎤',label,sub,()=>_openFeedListOverlay(label,sub,songs),stageVids[0].thumb);
+      // 카드1과 동일 — 순위 배지 조회는 클릭 시점에만 필요하므로 콘텐츠 렌더를 막지 않게 백그라운드로 뺀다.
+      let _prevStage;
+      _fetchPrevRanks('monthly_stage').then(r=>{_prevStage=r;});
+      _appendFeedCard(list,'🎤',label,sub,()=>_openFeedListOverlay(label,sub,_withRankDelta(stageVids,_prevStage)),stageVids[0].thumb);
     }
   }catch(e){/* 조용히 무시 */}
 }
@@ -17236,6 +17249,10 @@ function _pickMainChVid(videos){
 // widenPrevTrailing: 이 페이지 첫 항목의 비율이 이전 페이지의 마지막(홀로 남은) 카드와 달라서,
 // 그 이전 페이지 카드를 넓혀야 하는 경우 true.
 function _groupGcVids(items,featured,startPos,startCat,avoidWiden,widenSomeShorts=false,wideProb=0.05){
+  // 같은 비율끼리 한 행에 오도록 입력을 가로→쇼츠 순으로 정렬한다(2026-08-27, 사용자 요청 "쇼츠끼리·가로끼리").
+  // 정렬 후엔 아래 swap(경계에서 뒤의 같은 비율을 당겨오기)이 자연히 무효가 되고 비율 경계에서의 넓히기만
+  // 남는다. state.allVids가 이 renderList를 그대로 누적하므로(16270) 라이트박스 스와이프 순서도 함께 맞는다.
+  items=_sortMixedByAspect(items);
   const renderList=[];
   let pos=startPos,cat=startCat;
   let lastItem=null;
