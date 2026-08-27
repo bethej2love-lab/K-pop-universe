@@ -20,6 +20,10 @@
 //          --sheet-bottom을 "탭바 높이 + 8px"로 잡던 상수 오차 회귀 방지.
 //  [버그F] 탭바가 숨겨진 상태에서 새 카드를 열어도 그 카드가 화면을 꽉 채워야 한다. 시트 높이를 인라인
 //          스타일로 박던 시절, 나중에 열리는 카드가 옛 값(60vh+탭바)에 갇히던 회귀 방지.
+//  [버그G] 탐험 패널(#feed-body)에서도 카드처럼 "맨 위로" 버튼이 뜨고, 눌러서 올라가고, 스크롤을
+//          내려둔 채 패널을 닫으면 버튼이 화면에 남지 않아야 한다(2026-08-27 사용자 요청).
+//          #feed-body는 본문 스크립트보다 나중에 파싱돼 lazy-bind인데, 이 패널의 lazy-bind는 이미
+//          한 번 빠뜨린 전례가 있어(스와이프 닫기) 실제로 열고·스크롤하고·닫아보며 확인한다.
 //
 // ⚠️ 브라우저는 이 스크립트가 spawn한 PID만 정확히 종료(프로세스명 일괄 kill 금지, smoke.test.js 참고).
 // 실행: node tests/interaction.test.js
@@ -260,6 +264,33 @@ async function main() {
       ok(`[버그F] 탭바 숨김 중 연 카드도 시트 높이 정상(inner ${stacked.innerH}, 옛 고착값 ${stacked.stale} 아님, 인라인 높이 잔존 없음)`);
     else fail(`[버그F] 스택 카드 높이 고착 — 숨김선행=${hiddenBefore} disp=${stacked.disp} inner=${stacked.innerH}(기대 ${stacked.expect}, 옛 고착값 ${stacked.stale}) 인라인max="${stacked.inlineMax}"(비어야)`);
     await closeAll();
+
+    // ── [버그G] 탐험 패널 "맨 위로" 버튼(2026-08-27 사용자 요청) ────────────────────────
+    // 카드에만 있던 _wireTotop을 탐험 패널(#feed-body)에도 붙였다. #feed-body는 본문 스크립트보다
+    // 나중에 파싱돼서 스크립트 최상단에선 DOM에 없다 — 그래서 패널이 처음 열릴 때 lazy-bind하는데,
+    // 이 프로젝트에서 탐험 패널 lazy-bind는 이미 한 번 빠뜨린 전례가 있어(스와이프 닫기) 실제로
+    // 열고·스크롤하고·닫아보며 확인한다.
+    await ev(cdp, `document.getElementById('tab-feed')?.click()`);
+    await pollUntil(cdp, `document.getElementById('feed-overlay')?.classList.contains('open')`, 6000);
+    await pollUntil(cdp, `(function(){var b=document.getElementById('feed-body');return !!b&&b.scrollHeight>b.clientHeight+120})()`, 12000);
+    const totopBefore = await ev(cdp, `getComputedStyle(document.getElementById('gc-totop')).display`);
+    await ev(cdp, `(function(){var b=document.getElementById('feed-body');b.scrollTop=400;b.dispatchEvent(new Event('scroll'));return 1})()`);
+    const totopAfter = await pollUntil(cdp, `getComputedStyle(document.getElementById('gc-totop')).display`, 3000, v => v === 'flex');
+    if (totopBefore === 'none' && totopAfter === 'flex') ok('[버그G] 탐험 패널 스크롤 시 "맨 위로" 버튼 등장(스크롤 전엔 숨김)');
+    else fail(`[버그G] 탐험 패널 맨위로 버튼 — 스크롤 전=${totopBefore}(none 기대) 후=${totopAfter}(flex 기대)`);
+
+    await ev(cdp, `document.getElementById('gc-totop').click()`);
+    const backTop = await pollUntil(cdp, `document.getElementById('feed-body').scrollTop`, 3000, v => v === 0);
+    if (backTop === 0) ok('[버그G] 버튼 클릭 시 탐험 패널이 맨 위로 이동');
+    else fail(`[버그G] 버튼을 눌러도 안 올라감 — scrollTop=${backTop}`);
+
+    // 스크롤을 내려둔 채 닫으면 버튼이 화면에 그대로 남으면 안 된다(연결 패널에서 겪었던 문제).
+    await ev(cdp, `(function(){var b=document.getElementById('feed-body');b.scrollTop=400;b.dispatchEvent(new Event('scroll'));return 1})()`);
+    await pollUntil(cdp, `getComputedStyle(document.getElementById('gc-totop')).display`, 2000, v => v === 'flex');
+    await ev(cdp, `_closeFeedOverlay()`);
+    const totopClosed = await pollUntil(cdp, `getComputedStyle(document.getElementById('gc-totop')).display`, 3000, v => v === 'none');
+    if (totopClosed === 'none') ok('[버그G] 스크롤한 채 패널을 닫아도 버튼이 안 남음');
+    else fail(`[버그G] 패널을 닫았는데 버튼이 남아있음 — display=${totopClosed}`);
 
     if (errors.length) fail(`상호작용 중 콘솔 에러 ${errors.length}건: ${errors.slice(0, 5).join(' | ')}`);
     else ok('상호작용 중 콘솔 에러 0건');

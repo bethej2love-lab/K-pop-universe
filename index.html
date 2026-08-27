@@ -3681,6 +3681,22 @@ function _applyCoverExcludeQuery(q){
   for(const k of _COVER_EXCLUDE)q=q.not('title_norm','ilike',`*${k}*`);
   return q;
 }
+// 라이브(무대) 탭 제외 키워드 — title_norm(NFKC+소문자) 기준이라 전부 소문자로 적는다.
+//  · '엠카드림': 기존(엠카운트다운 드림 무대가 아닌 예고/편성 클립).
+//  · '비하인드'/'behind': 2026-08-27 사용자 요청 — 무대 뒤 촬영분은 무대가 아니다. 실측으로 걸리는 게
+//    전부 "[BEHIND THE SHOW]", "콘서트 비하인드", "안무 연습 비하인드", "Performance Film Behind"류라
+//    오제외 위험이 낮았다(category='live' 115,762건 중 비하인드 919 · behind 1,373).
+const _LIVE_EXCLUDE=['엠카드림','비하인드','behind'];
+// ⚠️ 라이브 탭 조건은 **여기 한 곳**에서만 만든다. 예전엔 같은 or/not 조합이 세 군데(대표영상 선정·
+// 그리드 목록·탭 노출 판정)에 복붙돼 있었고, 실제로 탭 노출 판정에는 제외 조건이 통째로 빠져 있어서
+// "탭은 보이는데 열면 빈 목록"이 될 수 있었다(2026-08-27 정리). 커버 탭의 _applyCoverExcludeQuery와
+// 같은 방식이며, 클라이언트 재확인(patchItem)도 같은 _LIVE_EXCLUDE 배열을 그대로 쓴다.
+function _applyLiveTabQuery(q){
+  q=q.or('category.eq.live,content_formats.cs.{live},title_norm.ilike.*리무진서비스*,title_norm.ilike.*리무진 서비스*')
+     .not('title','ilike','%[live]%');
+  for(const k of _LIVE_EXCLUDE)q=q.not('title_norm','ilike',`*${k}*`);
+  return q;
+}
 
 let _lbPlaylist=null,_lbIdx=-1,_lbCtx=null;
 // 세션 모드('shorts'|'browse') — 세션 시작(isAdvance 없는 openLightbox 호출) 시점에만 결정되고,
@@ -13187,6 +13203,11 @@ function _openFeedOverlay(){
     el.addEventListener('pointerdown',e=>e.stopPropagation());
     el.addEventListener('click',e=>e.stopPropagation());
     _wireFeedSwipeDismiss(el,document.getElementById('feed-body'));
+    // 카드와 똑같은 "맨 위로" 버튼을 탐험 패널에도(2026-08-27 사용자 요청). 카드용으로 이미 있던
+    // _wireTotop을 그대로 재사용 — 스크롤 컨테이너만 넘기면 되고, 버튼(z-index 66)이 이 오버레이
+    // (z-index 39)보다 위라 그대로 뜬다. 여기서 바인딩하는 이유는 위 el._bound 블록과 같다:
+    // #feed-body는 본문 스크립트보다 나중에 파싱돼서 스크립트 최상단에선 아직 DOM에 없다.
+    _wireTotop(document.getElementById('feed-body'));
   }
   const cb=document.getElementById('feed-close');
   if(!cb._bound){cb._bound=true;
@@ -13205,6 +13226,9 @@ function _openFeedOverlay(){
   }
 }
 function _closeFeedOverlay(){
+  // 스크롤을 내려둔 채로 닫으면 "맨 위로" 버튼이 화면에 그대로 떠 있게 된다(연결 패널에서 이미 겪은
+  // 문제와 같음) — 이 패널이 대상일 때만 숨긴다. 다른 컨테이너가 대상이면 건드리지 않는다.
+  if(_totopScrollTarget===document.getElementById('feed-body'))_hideTotop();
   document.getElementById('feed-overlay').classList.remove('open','peek');
   document.getElementById('zoom-ctrl').classList.remove('zoom-feed-open');
   document.body.classList.remove('feed-open');
@@ -13787,9 +13811,7 @@ async function _pickFeaturedVidFromDB(ko,memberKo,onlyMe,filter,viewMode,formatF
       // Cover 탭 목록 쿼리와 동일한 제외 목록 — 여기를 빠뜨리면 대표 영상으로는 여전히 뽑힐 수 있음.
       q=_applyCoverExcludeQuery(q);
     }else if(filter==='live'){
-      q=q.or('category.eq.live,content_formats.cs.{live},title_norm.ilike.*리무진서비스*,title_norm.ilike.*리무진 서비스*')
-        .not('title','ilike','%[live]%')
-        .not('title_norm','ilike','*엠카드림*');
+      q=_applyLiveTabQuery(q);
     }else if(filter==='variety'||filter==='show'){
       const _varTitleOr=filter==='variety'?',title_norm.ilike.*라디오스타*,title_norm.ilike.*아는형님*,title_norm.ilike.*아는 형님*,title_norm.ilike.*놀라운토요일*,title_norm.ilike.*전참시*':'';
       q=q.or(`category.eq.${filter},content_formats.cs.{${filter}}${_varTitleOr}`);
@@ -15791,9 +15813,7 @@ function _makeChVidController(contId){
         // 제외 목록은 _COVER_EXCLUDE 한 곳에만 있다(위 대표영상 쿼리·아래 태그모달 재검증과 공유).
         q=_applyCoverExcludeQuery(q);
       }else if(filter==='live'){
-        q=q.or('category.eq.live,content_formats.cs.{live},title_norm.ilike.*리무진서비스*,title_norm.ilike.*리무진 서비스*')
-          .not('title','ilike','%[live]%')
-          .not('title_norm','ilike','*엠카드림*');
+        q=_applyLiveTabQuery(q);
       }else if(filter==='variety'||filter==='show'){
         // category(채널 tier 기반 레거시) OR content_formats(영상 단위 장르 태그) OR 제목 키워드 둘 다 체크
         const _varTitleOr=filter==='variety'?',title_norm.ilike.*라디오스타*,title_norm.ilike.*아는형님*,title_norm.ilike.*아는 형님*,title_norm.ilike.*놀라운토요일*,title_norm.ilike.*전참시*':'';
@@ -16186,7 +16206,7 @@ function _makeChVidController(contId){
           return{v,ok:rs.some(r=>r?.data?.length)};
         }
         else if(v==='variety')q=q.or('category.eq.variety,content_formats.cs.{variety},title_norm.ilike.*라디오스타*,title_norm.ilike.*아는형님*,title_norm.ilike.*아는 형님*,title_norm.ilike.*놀라운토요일*,title_norm.ilike.*전참시*');
-        else if(v==='live')q=q.or('category.eq.live,content_formats.cs.{live},title_norm.ilike.*리무진서비스*,title_norm.ilike.*리무진 서비스*');
+        else if(v==='live')q=_applyLiveTabQuery(q); // 목록 쿼리와 같은 조건 — 예전엔 여기만 제외 조건이 빠져 있었다
         else if(v==='show')q=q.or('category.eq.show,content_formats.cs.{show}');
         else if(v==='short')q=q.eq('is_short',true); // 형식 플래그(위 buildBaseQuery와 같은 기준)
         else q=q.eq('category',v);
@@ -16424,9 +16444,13 @@ function _makeChVidController(contId){
         // 목록/대표영상 쿼리와 반드시 같은 값을 써야 하므로 _COVER_EXCLUDE를 그대로 참조(복붙 금지)
         if(!fmts.includes('cover')&&(!/cover|커버|원곡|original/.test(t)||_COVER_EXCLUDE.some(ex=>t.includes(ex))))stillQualifies=false;
       }else if(state.filter==='live'){
-        const t=(newRow.title||'').toLowerCase();
+        // 제외 목록은 _LIVE_EXCLUDE 한 곳에서만 가져온다(위 _applyLiveTabQuery와 같은 값). 예전엔
+        // '엠카드림'만 여기 하드코딩돼 있어서, 목록 쿼리에 제외가 늘어나도 이 재확인은 안 따라왔다.
+        // 비교 기준도 toLowerCase()에서 _titleNorm()으로 올림 — 서버 쪽 title_norm과 같은 정규화라
+        // 스타일드 문자("ＢＥＨＩＮＤ")까지 같이 걸린다.
+        const t=_titleNorm(newRow.title||'');
         const fmts=newRow.content_formats||[];
-        if(t.includes('엠카드림'))stillQualifies=false;
+        if(_LIVE_EXCLUDE.some(k=>t.includes(k)))stillQualifies=false;
         else if(newRow.category!=='live'&&!fmts.includes('live')&&!t.includes('리무진서비스')&&!t.includes('리무진 서비스'))stillQualifies=false;
       }else if(state.filter==='variety'){
         const t=(newRow.title||'').toLowerCase();
