@@ -5915,7 +5915,20 @@ async function _admRunRoutine(withSync){
   if(noSyncBtn)noSyncBtn.disabled=true;
   if(stopBtn)stopBtn.style.display='';
   const steps=[];
-  if(withSync)steps.push({name:'1. 전체 동기화',fn:_ytSyncAll});
+  // ⚠️ 1번은 **설정 패널의 "1. 전체 동기화 (공식 + 외부 채널)" 버튼과 똑같은 3단계**여야 한다.
+  //    2026-08-27까지 여기서 _ytSyncAll 하나만 불렀는데, 그 버튼의 핸들러는
+  //    _ytSyncAll → _ytSyncExtChannels → _ytRefreshViewCounts 셋을 순서대로 부른다.
+  //    그래서 루틴만 돌린 날은 **외부 채널(음방·예능·아이돌주도) 유입과 조회수 갱신이 통째로 빠졌다** —
+  //    라벨엔 "전체 동기화"라고 떠 있는데 실제로는 공식 채널만 돈 것. 루틴 주석이 "원래 함수를 그대로
+  //    호출하므로 동작이 갈릴 일이 없다"고 했지만, 버튼이 하는 일이 아니라 안쪽 함수 하나만 집어와서
+  //    정확히 그 드리프트가 났다. tests/routine-parity.test.js가 이제 이 대응을 고정한다.
+  //    비용: 둘 다 저렴하다 — 외부 채널은 playlistItems.list(쿼터 1/콜, sinceId 체크포인트로 증분),
+  //    조회수는 videos.list(쿼터 1/콜, 최근 14일분만이라 ~70콜). 비싼 search.list는 과거 백필 전용.
+  if(withSync){
+    steps.push({name:'1. 전체 동기화 (공식 채널)',fn:_ytSyncAll});
+    steps.push({name:'1-2. 외부 채널 동기화 (음방·예능·아이돌주도)',fn:_ytSyncExtChannels});
+    steps.push({name:'1-3. 조회수 갱신 (최근 14일 · 이번주 직캠 TOP용)',fn:_ytRefreshViewCounts});
+  }
   steps.push({name:'2. 멤버+콜라보 자동 태깅',fn:_ytAutoTagMembers});
   steps.push({name:'3. 콜라보 오태깅 재검증',fn:_ytSweepAmbiguousCollabMistag});
   steps.push({name:'4. 동명이인 그룹 오배정 스캔',fn:_ytScanAmbiguousNameGroupMisassignment});
