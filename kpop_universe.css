@@ -442,6 +442,16 @@
      bs-full 여부"로 정해져서 그 뒤에 열리는 카드가 옛 값에 갇혔음(스택 카드 inner가 60vh+탭바에
      고정돼 화면을 못 채움 = "탭바 로직이 카드 열었다 닫았다 하면 깨진다"의 정체). 변수만 바꾸면
      지금 열려있든 나중에 열리든 CSS가 알아서 맞추므로 stale 인라인 값이 구조적으로 안 생긴다. */
+  /* --safe-top : 상단 세이프에어리어(노치/상태바) 높이. 시트가 화면을 꽉 채울 때(bs-full)만 의미가 있다.
+     ⚠️ 왜 env()를 직접 안 쓰고 변수로 한 번 감싸는가 —
+       ① 시트의 padding-top과 그 위에 절대배치된 버튼들의 top이 **반드시 같은 값**이어야 하는데,
+          예전엔 시트만 env()를 쓰고 버튼은 top:0이라 PWA(홈 화면 추가)에서 버튼만 노치 밑에 남았다.
+          absolute의 top:0은 padding box가 아니라 border edge 기준이라, 손잡이(일반 흐름)는 밀려나는데
+          버튼은 안 밀려난다 — 브라우저에선 inset이 0이라 안 보이고 **PWA에서만** 드러났다
+          (2026-08-27 사용자 제보 "웹앱으로 열면 이전 버튼이 혼자 왼쪽 꼭대기에 있어서 쓸 수가 없음").
+       ② env()는 헤드리스/데스크톱에서 항상 0이라 회귀 테스트로 재현할 방법이 없다. 변수로 두면
+          테스트가 --safe-top만 덮어써서 노치 상황을 그대로 재현할 수 있다(tests/pwa-safearea.test.js). */
+  :root{--safe-top:env(safe-area-inset-top,0px);}
   #mob-sheet{
     display:none;position:fixed;left:0;right:0;width:100%;
     bottom:var(--sheet-bottom,73px);
@@ -458,8 +468,8 @@
     will-change:transform;
   }
   #mob-sheet.bs-open{transform:translateY(0);}
-  #mob-sheet.bs-full{min-height:calc(var(--mob-vh,100vh) - var(--sheet-bottom,73px));max-height:calc(var(--mob-vh,100vh) - var(--sheet-bottom,73px));border-radius:0;padding-top:env(safe-area-inset-top,0px);}
-  #mob-sheet.bs-full #mob-sheet-inner{max-height:calc(var(--mob-vh,100vh) - var(--sheet-bottom,73px) - 24px - env(safe-area-inset-top,0px));}
+  #mob-sheet.bs-full{min-height:calc(var(--mob-vh,100vh) - var(--sheet-bottom,73px));max-height:calc(var(--mob-vh,100vh) - var(--sheet-bottom,73px));border-radius:0;padding-top:var(--safe-top);}
+  #mob-sheet.bs-full #mob-sheet-inner{max-height:calc(var(--mob-vh,100vh) - var(--sheet-bottom,73px) - 24px - var(--safe-top));}
   #mob-card-stack{
     display:none;position:fixed;left:0;right:0;
     bottom:var(--sheet-bottom,73px);min-height:calc(60vh + var(--sheet-grow,0px));max-height:calc(60vh + var(--sheet-grow,0px));
@@ -478,8 +488,8 @@
   /* mob-sheet(첫 카드)의 100%(bs-full) 상태가 그 위로 쌓이는 카드(mob-card-stack)에도 그대로 이어지도록
      동일한 규칙을 mob-card-stack에도 적용 — 안 그러면 첫 카드를 100%로 봐놓고 다음 카드를 열었을 때
      60vh로 뚝 떨어져서 답답해 보이는 문제가 있었음. */
-  #mob-card-stack.bs-full{min-height:calc(var(--mob-vh,100vh) - var(--sheet-bottom,73px));max-height:calc(var(--mob-vh,100vh) - var(--sheet-bottom,73px));border-radius:0;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);}
-  #mob-card-stack.bs-full #mob-card-stack-inner{max-height:calc(var(--mob-vh,100vh) - var(--sheet-bottom,73px) - 24px - env(safe-area-inset-top,0px));}
+  #mob-card-stack.bs-full{min-height:calc(var(--mob-vh,100vh) - var(--sheet-bottom,73px));max-height:calc(var(--mob-vh,100vh) - var(--sheet-bottom,73px));border-radius:0;box-sizing:border-box;padding-top:var(--safe-top);}
+  #mob-card-stack.bs-full #mob-card-stack-inner{max-height:calc(var(--mob-vh,100vh) - var(--sheet-bottom,73px) - 24px - var(--safe-top));}
   #mob-card-stack-inner{overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;max-height:calc(60vh + var(--sheet-grow,0px) - 24px);overscroll-behavior:contain;width:100%;box-sizing:border-box;position:relative;transition:max-height .32s cubic-bezier(0.32,0.72,0,1);}
   #mob-card-stack-inner>#tt,#mob-card-stack-inner>#gc{
     position:static!important;display:block!important;
@@ -775,6 +785,16 @@
     -webkit-tap-highlight-color:transparent;transition:color .15s;
   }
   .sheet-back-btn.on{display:flex;}
+  /* 시트가 화면을 꽉 채울 때(bs-full)는 시트에 상단 세이프에어리어만큼 padding이 붙는데, 이 버튼들은
+     absolute라 top:0이 **padding box가 아니라 border edge** 기준이다 — 즉 손잡이(일반 흐름)는 노치
+     아래로 밀려나는데 버튼만 노치 밑에 그대로 남는다. 브라우저에선 inset이 0이라 안 보이고 PWA(홈
+     화면 추가)에서만 드러났다(2026-08-27 제보). 시트 padding-top과 **같은 변수**를 써서 붙여둔다 —
+     한쪽만 고치면 또 어긋나므로 값의 출처를 하나로 묶는 게 요점.
+     '영상으로 돌아가기'(.sheet-tovid-btn)도 같은 top:0이라 같이 깨져 있었다. */
+  #mob-sheet.bs-full>.sheet-back-btn,   #mob-sheet.bs-full>.sheet-tovid-btn,
+  #mob-card-stack.bs-full>.sheet-back-btn, #mob-card-stack.bs-full>.sheet-tovid-btn{
+    top:var(--safe-top);
+  }
   /* 라이트박스 닫기 셰브런(#yt-lb-close-chevron)과 같은 도형을 왼쪽으로 돌려 씀 — 텍스트 글리프(‹)는
      각도가 벌어지고 크기 제어가 안 돼서 SVG로 교체(2026-08-26 사용자 피드백). 앱 전체 아이콘 문법 통일. */
   .sheet-back-btn>svg{display:block;width:20px;height:20px;transform:rotate(90deg);}
@@ -1747,8 +1767,8 @@
   #conn-sheet.bs-open{transform:translateY(0);}
   /* 멤버 카드가 100%(bs-full)로 열려있는 상태에서 연결 카드를 열면 그 상태를 그대로 물려받아 100%로 열림
      (mob-sheet/mob-card-stack의 bs-full 이어받기와 같은 패턴, 2026-08-04 사용자 요청). */
-  #conn-sheet.bs-full{min-height:calc(var(--mob-vh,100vh) - var(--sheet-bottom,73px));max-height:calc(var(--mob-vh,100vh) - var(--sheet-bottom,73px));border-radius:0;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);}
-  #conn-sheet.bs-full #conn-sheet-inner{max-height:calc(var(--mob-vh,100vh) - var(--sheet-bottom,73px) - 24px - env(safe-area-inset-top,0px));}
+  #conn-sheet.bs-full{min-height:calc(var(--mob-vh,100vh) - var(--sheet-bottom,73px));max-height:calc(var(--mob-vh,100vh) - var(--sheet-bottom,73px));border-radius:0;box-sizing:border-box;padding-top:var(--safe-top);}
+  #conn-sheet.bs-full #conn-sheet-inner{max-height:calc(var(--mob-vh,100vh) - var(--sheet-bottom,73px) - 24px - var(--safe-top));}
   @media(min-width:769px){#conn-sheet{display:none!important;}}
   #conn-sheet-inner{overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;max-height:calc(60vh + var(--sheet-grow,0px) - 24px);overscroll-behavior:contain;transition:max-height .32s cubic-bezier(0.32,0.72,0,1);}
   #conn-sheet .conn-inner{padding:16px 28px 14px 28px;}
