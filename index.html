@@ -13780,7 +13780,21 @@ function _openFeedListOverlay(title,sub,songs,ctx){
   document.getElementById('feed-list-sub').textContent=sub||'';
   const grid=document.getElementById('feed-list-grid');
   grid.innerHTML='';
-  document.getElementById('feed-list-overlay').classList.add('open');
+  // 모바일: 탐험 패널(_openFeedOverlay)과 같은 톤으로 아래에서 위로 슬라이드업. 배경(overlay)≠패널이라
+  // 패널에만 transform을 넣는다. 데스크톱은 기존 센터 모달(즉시 표시) 그대로.
+  {
+    const _flOv=document.getElementById('feed-list-overlay');
+    const _flPanel=document.getElementById('feed-list-panel');
+    if(isMob()){
+      _flPanel.style.transition='none';_flPanel.style.transform='translateY(100%)';
+      _flOv.classList.add('open');
+      requestAnimationFrame(()=>requestAnimationFrame(()=>{
+        _flPanel.style.transition='transform 0.26s cubic-bezier(0.32,0.72,0,1)';_flPanel.style.transform='';
+      }));
+    }else{
+      _flOv.classList.add('open');
+    }
+  }
   _setupFeedListSaveRow(ctx);
   _setupFeedListDescRow(ctx);
   // 여러 개 골라 컬렉션에 한 번에 담기 — 그룹/멤버 카드 그리드의 "선택" 모드(_selMode/_selIds)와 같은
@@ -13949,10 +13963,53 @@ function _openFeedListOverlay(title,sub,songs,ctx){
   renderNextBatch();
 }
 function _closeFeedListOverlay(){
-  document.getElementById('feed-list-overlay').classList.remove('open');
-  if(_feedListObserver){_feedListObserver.disconnect();_feedListObserver=null;}
-  document.getElementById('user-bulk-bar')?.classList.add('hidden'); // 선택 중이었으면 같이 정리
+  const _flOv=document.getElementById('feed-list-overlay');
+  const _flPanel=document.getElementById('feed-list-panel');
+  const _fin=()=>{
+    _flOv.classList.remove('open');
+    _flPanel.style.transition='';_flPanel.style.transform='';
+    if(_feedListObserver){_feedListObserver.disconnect();_feedListObserver=null;}
+    document.getElementById('user-bulk-bar')?.classList.add('hidden'); // 선택 중이었으면 같이 정리
+  };
+  // 모바일: 아래로 슬라이드아웃 후 정리(열기와 대칭). 데스크톱은 즉시.
+  if(isMob()&&_flOv.classList.contains('open')){
+    _flPanel.style.transition='transform 0.24s cubic-bezier(0.32,0.72,0,1)';
+    _flPanel.style.transform='translateY(100%)';
+    setTimeout(_fin,240);
+  }else _fin();
 }
+// 모바일 바텀시트: 콘텐츠 맨 위에서 아래로 끌면 닫힘(탐험 패널 _wireFeedSwipeDismiss와 같은 규칙, 단 peek
+// 없음 — 모음은 반쯤 상태가 없다). 배경(overlay)이 아니라 패널에 transform을 준다.
+function _wireFeedListSwipe(){
+  const ov=document.getElementById('feed-list-overlay');
+  const panel=document.getElementById('feed-list-panel');
+  const body=document.getElementById('feed-list-grid');
+  let dragY=0,dragging=false,dragActive=false,_rafId=0,_applyFn=null;
+  panel.addEventListener('touchstart',e=>{
+    if(!isMob())return;
+    if(e.target.closest('.hscroll-drag')){dragging=false;return;}
+    dragY=e.touches[0].clientY;dragging=true;dragActive=body.scrollTop<=0;
+  },{passive:true});
+  panel.addEventListener('touchmove',e=>{
+    if(!dragging)return;
+    const curY=e.touches[0].clientY;
+    if(!dragActive){if(body.scrollTop<=0){dragActive=true;dragY=curY;}else return;}
+    const dy=curY-dragY;
+    if(dy<0)return; // 위로 끌기는 무시(모음은 peek/더 펼침 상태가 없음)
+    if(e.cancelable)e.preventDefault();
+    _applyFn=()=>{panel.style.transition='none';panel.style.transform=`translateY(${dy}px)`;};
+    if(!_rafId)_rafId=requestAnimationFrame(()=>{_rafId=0;_applyFn&&_applyFn();});
+  },{passive:false});
+  panel.addEventListener('touchend',e=>{
+    if(!dragging)return;dragging=false;
+    if(_rafId){cancelAnimationFrame(_rafId);_rafId=0;}_applyFn=null;
+    if(!dragActive)return;dragActive=false;
+    const dy=e.changedTouches[0].clientY-dragY;
+    if(dy>80){_closeFeedListOverlay();}
+    else{panel.style.transition='transform 0.22s cubic-bezier(0.32,0.72,0,1)';panel.style.transform='';setTimeout(()=>{panel.style.transition='';},220);}
+  },{passive:true});
+}
+_wireFeedListSwipe();
 document.getElementById('feed-list-close')?.addEventListener('click',e=>{e.stopPropagation();_closeFeedListOverlay();});
 document.getElementById('feed-list-overlay')?.addEventListener('click',e=>{if(e.target===e.currentTarget)_closeFeedListOverlay();});
 document.getElementById('feed-list-overlay')?.addEventListener('pointerdown',e=>e.stopPropagation());
