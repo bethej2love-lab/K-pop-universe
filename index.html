@@ -8318,10 +8318,19 @@ function _renderDiscography(prefix,albums){
   if(prefix==='gc')_loadGcDiscogTrackTrophies(_openGCko);
   const mainAlbums=albums.filter(a=>a.isMain);
   const extraAlbums=albums.filter(a=>!a.isMain);
-  let showingAll=false;
+  // 메인(싱글/EP/정규)이 하나도 없고 부가(OST·피처링/기타)만 있는 경우엔 기본값을 켠 채로 시작한다.
+  // 안 그러면 DISCOGRAPHY 헤더만 뜨고 그 아래가 텅 비어 '고장난 것처럼' 보인다 — 실측(2026-08-27):
+  // 디스코그래피가 있는 멤버 609명 중 **99명**이 이 상태이고 전부 OST/피처링이다(그룹 카드는 0명이라
+  // 멤버 카드에서만 생기는 증상, 사용자 제보와 일치).
+  // 섹션을 통째로 숨기지 않는 이유: 데이터는 실제로 있고 'OST에 이만큼 참여했다'가 그 멤버에 대한
+  // 정보이기 때문. 커버는 .gc-discog-extra가 이미 흐리게(opacity .55) 그리므로 '부가'라는 성격이
+  // 그대로 드러나고, ⋮ 메뉴의 'OST·피처링' 토글로 예전처럼 끌 수도 있다(초기 ✓ 표시는 아래
+  // updateSortMenuUI()가 이 값을 읽어 맞춘다).
+  const _onlyExtras=mainAlbums.length===0;
+  let showingAll=_onlyExtras;
   let typeFilter='all';
   let asc=false;
-  let extrasIncluded=false; // 디폴트 OST·피처링 제외(2026-08-21, 사용자 요청) — 케밥 토글로 포함
+  let extrasIncluded=_onlyExtras; // 디폴트 OST·피처링 제외(2026-08-21) — 단, 부가만 있으면 켜고 시작
   let soloOnly=false; // 디폴트 유닛 앨범 포함(EXO-SC 등) — 케밥 '솔로만 보기' 토글로 제외(2026-08-22, 사용자 요청)
   function sortedList(list){
     return[...list].sort((a,b)=>{
