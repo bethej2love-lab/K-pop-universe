@@ -32,6 +32,21 @@
 ---
 
 ## 2026-08-27
+- [완료][index.html][admin.js] **PostgREST 1,000행 제한 전수 감사** — 위 프로필 사진 사고와 같은 함정이 다른 곳에도 있는지 `sb.from(X).select(...)` **31곳 전부** 확인(사용자 요청).
+  - **결과**: 이미 고친 5곳(워밍) 외에 **7곳 추가 수정**. 나머지 19곳은 단건/limit/count전용/단일개체필터로 이미 안전.
+  - **추가 수정한 7곳**(전부 "전량을 받아야 하는데 상한이 없던" 것):
+    | 위치 | 테이블 | 잘렸을 때 증상 |
+    |---|---|---|
+    | index.html:8252 · admin.js:3928 | `ext_channels` | 채널이 조용히 무시돼 그만큼 동기화에서 빠짐 |
+    | index.html:12793 | `name_match_whitelist` | 매처 예외가 일부만 로드 → 조용한 오태깅 |
+    | index.html:12812 | `atm_exception_rules` | 위와 동일 |
+    | index.html:14317 | `rank_snapshots` | 순위 변동이 "없음"으로 잘못 표시 |
+    | admin.js:3139 | `group_priority` | 우선순위 일부 누락 |
+    | admin.js:3255 | `feedback` | 유저 피드백이 목록에서 사라짐 |
+  - ⚠️ **`_sbFetchAll`(admin.js)은 `id` 키셋 방식**이라 `id` 컬럼이 없는 테이블(`group_priority`)엔 못 쓰고 호출부의 `.order()`도 덮어쓴다. 정렬을 보존해야 하는 곳은 range 방식인 `_sbSelectAll`을 쓸 것.
+  - **안전으로 판정한 근거**(테스트의 ALLOW 목록에 사유와 함께 등록 — 나중에 "왜 얘만 안 고쳤지"가 안 되게): `video_reaction_counts`/`video_reactions`(영상 1개·유저 1명 기준, 상한 한 자릿수) · `melon_yearly_top100`(전체 799행, 그룹당 수십) · `spotify_streaming_milestones`(455행, 그룹당 수십) · `kpop_events`(전체 11행, 그룹/장소/id목록 1건 기준) · `feedback` count 조회(`_admHead()`={count:'exact',head:true}라 본문을 안 받음).
+  - ⚠️ `rank_snapshots`·`feedback`·`group_priority`는 **admin 전용 RLS라 anon 키로는 0행**이라 크기 실측이 불가능하다 — "비어있다"고 판단하면 안 되고, 그래서 구조로만 판정했다.
+  - **검증**: `tests/select-pagination.test.js` 신설(48개). 규칙 6종(헬퍼/range/단건/limit<1000/count전용/ALLOW등록) 중 하나를 못 만족하면 실패하고, **전량 조회에 `.order()`가 없으면**(페이지 경계에서 행이 새거나 겹침) 그것도 실패시킨다. 일부러 한 곳을 되돌려 실제로 잡히는지 확인함. 전체 24개 스위트 통과.
 - [완료][index.html] **"사진 등록했는데 애니버서리·프로필 패널이 업데이트 안 된다" — 독립적인 버그 2개**(사용자 제보, 새로고침·재접속으로도 안 고쳐진다고 함).
   - **원인 ①(진짜 원인): PostgREST 1,000행 제한에 프리워밍이 조용히 잘리고 있었다.** `_warmInstaPicCache`가 `artist_pics`가 **32행이던 시절(2026-08-11)**에 만든 `.select()` 한 줄 그대로였는데, 사진이 쌓여 1,000행을 넘긴 뒤로는 넘친 만큼이 **에러도 경고도 없이** 버려지고 있었다. 실측 **1,111행 중 111행 누락**이고, 하필 잘리는 쪽이 **최근 등록분**이라 증상이 정확히 "새로 등록한 사진만 안 뜬다"로 나타났다 — 그날 등록분 40개가 통째로 여기 있었다(체리블렛 7명·틴탑·올아워즈 등).
     - `_sbSelectAll(build)` 헬퍼 신설 + **워밍 4곳 전부** 적용(`artist_pics`·`video_scrap_counts`·`collection_like_counts`+`collection_likes`·`public_collections`). 나머지 3개는 아직 작지만(58/0/5행) 유저 활동으로 늘어나는 테이블이라 같은 시한폭탄이었다. admin.js의 `_sbFetchAll`과 같은 개념이지만 그건 어드민 전용 스크립트라 일반 유저 경로에선 못 쓴다.

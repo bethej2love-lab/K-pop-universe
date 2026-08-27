@@ -8249,7 +8249,8 @@ async function _loadIdolChannels(){
   try{
     // select('*') — 컬럼을 명시하면 마이그레이션 전 환경에서 400이 나고 콘솔 에러로 남는다(스모크 실패).
     // 새 컬럼(is_primary)이 없으면 undefined로 와서 정렬만 무의미해질 뿐 동작은 그대로다.
-    const{data,error}=await sb.from('ext_channels').select('*').eq('tier','idol');
+    // ⚠️ 전량 조회 — _sbSelectAll 필수(PostgREST 1,000행 제한). 잘리면 채널이 조용히 무시된다.
+    const{data,error}=await _sbSelectAll(()=>sb.from('ext_channels').select('*').eq('tier','idol').order('handle'));
     if(error||!data)return;
     // 대표(is_primary) 채널을 우선 — 한 멤버가 채널을 여러 개 가질 수 있는데 아이콘 슬롯은 하나뿐이라
     // 대표가 지정돼 있으면 그걸, 없으면 먼저 나온 것을 쓴다.
@@ -12790,7 +12791,7 @@ const _ATM_DYNAMIC_HASHTAG_NAMES=new Set();
 async function _loadDynamicHashtagNames(){
   if(!sb)return;
   try{
-    const{data,error}=await sb.from('name_match_whitelist').select('name');
+    const{data,error}=await _sbSelectAll(()=>sb.from('name_match_whitelist').select('name').order('name'));
     if(error||!data)return;
     data.forEach(r=>{if(r.name)_ATM_DYNAMIC_HASHTAG_NAMES.add(r.name);});
   }catch(e){}
@@ -12809,7 +12810,7 @@ const _ATM_DYNAMIC_LITERAL_ONLY=new Set(); // token
 async function _loadDynamicAtmRules(){
   if(!sb)return;
   try{
-    const{data,error}=await sb.from('atm_exception_rules').select('type,key,value');
+    const{data,error}=await _sbSelectAll(()=>sb.from('atm_exception_rules').select('type,key,value').order('type').order('key'));
     if(error||!data)return;
     data.forEach(r=>{
       if(r.type==='surname_exclude'){
@@ -14314,7 +14315,9 @@ async function _fetchPrevRanks(chartType){
     const{data:dRows}=await sb.from('rank_snapshots').select('snapshot_date').eq('chart_type',chartType).order('snapshot_date',{ascending:false}).limit(1);
     if(!dRows?.length)return undefined;
     const prevDate=dRows[0].snapshot_date;
-    const{data:rows}=await sb.from('rank_snapshots').select('video_id,rank').eq('chart_type',chartType).eq('snapshot_date',prevDate);
+    // 차트 한 장이라 보통 수백 행이지만 상한이 보장된 구조는 아니라 페이지네이션한다 —
+    // 잘리면 "순위 변동 없음"으로 조용히 잘못 표시된다(2026-08-27 전수 감사).
+    const{data:rows}=await _sbSelectAll(()=>sb.from('rank_snapshots').select('video_id,rank').eq('chart_type',chartType).eq('snapshot_date',prevDate).order('rank'));
     const m={};(rows||[]).forEach(r=>{m[r.video_id]=r.rank;});
     return m;
   }catch(e){return undefined;}

@@ -3136,7 +3136,8 @@ let _gpTab='all',_gpSearchTimer=null;
 async function _loadGroupPriority(){
   if(!sb)return;
   try{
-    const{data,error}=await sb.from('group_priority').select('ko,level');
+    // ⚠️ 전량 조회 — id 컬럼이 없어 _sbFetchAll(키셋)은 못 쓰고 _sbSelectAll(range)을 쓴다.
+    const{data,error}=await _sbSelectAll(()=>sb.from('group_priority').select('ko,level').order('ko'));
     if(error){console.error('group_priority 로드 실패',error.message);return;}
     _groupPriority=new Map((data||[]).map(r=>[r.ko,r.level]));
   }catch(e){console.error('group_priority 로드 실패',e);}
@@ -3252,7 +3253,8 @@ const _FB_CAT_LABEL={bug:'버그 제보',suggest:'제안',etc:'기타'};
 async function _loadFeedback(){
   if(!sb)return;
   try{
-    const{data,error}=await sb.from('feedback').select('*').order('created_at',{ascending:false});
+    // ⚠️ 유저가 보내는 만큼 늘어나는 테이블 — created_at 동률 대비로 id를 2차 정렬에 붙인다.
+    const{data,error}=await _sbSelectAll(()=>sb.from('feedback').select('*').order('created_at',{ascending:false}).order('id'));
     if(error){console.error('feedback 로드 실패',error.message);return;}
     _feedbackRows=data||[];
   }catch(e){console.error('feedback 로드 실패',e);}
@@ -3925,7 +3927,8 @@ async function _loadExtChannels(){
     // 400(column does not exist)을 뱉고, 이 함수는 error면 그냥 return이라 _EXT_CHANNELS가 통째로 비어
     // **외부채널 동기화가 전면 중단**된다(2026-08-25 스모크에서 실제로 잡힘). 작은 테이블이라 * 로 받아도
     // 부담이 없고, 새 컬럼이 없으면 아래 매핑에서 undefined→기본값으로 자연히 폴백된다.
-    const{data,error}=await sb.from('ext_channels').select('*').order('name');
+    // ⚠️ 전량 조회 — _sbSelectAll 필수(PostgREST 1,000행 제한). 잘리면 그만큼의 채널이 동기화에서 빠진다.
+    const{data,error}=await _sbSelectAll(()=>sb.from('ext_channels').select('*').order('name').order('handle'));
     if(error){console.error('ext_channels 로드 실패',error.message);return;}
     // 팬(fans) 채널은 owner_mko 없이 owner_gko만 있음(그룹 전체가 대상, 특정 멤버 아님) — owner_mko
     // 유무가 아니라 둘 중 하나라도 있으면 owner 객체를 만든다(2026-08-21).
