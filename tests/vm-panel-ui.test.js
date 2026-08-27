@@ -13,22 +13,39 @@ const css = fs.readFileSync(path.join(ROOT, 'kpop_universe.css'), 'utf8');
 let pass = 0, fail = 0;
 const ok = (c, m) => { if (c) { pass++; } else { fail++; console.error('  ✗ ' + m); } };
 
-// ── ① 4상태 대칭 이동 ────────────────────────────────────────────
-for (const id of ['vm-move-normal-btn', 'vm-move-nomem-btn', 'vm-move-hold-btn', 'vm-move-hidden-btn']) {
+// ── ① 상태 이동 버튼 4종 (2026-08-27 정리) ───────────────────────
+// 뜻이 고정된 4개로 통일했다. 예전엔 여기에 ⓐ뜻이 고정된 3개(정상·보류·무관) ⓑ탭마다 뜻이 바뀌는
+// vm-apply-btn ⓒ나중에 얹은 vm-move-* 4개가 섞여, 같은 동작 버튼이 두 벌씩 떴다(사용자 제보).
+for (const id of ['vm-normal-btn', 'vm-nomem-btn', 'vm-hold-btn', 'vm-hidden-btn']) {
   ok(html.includes(`id="${id}"`), `${id} 버튼이 index.html에 없음`);
-  ok(new RegExp(`\\['${id}',`).test(adminJs), `${id}가 admin.js 배선 목록에 없음`);
+  ok(new RegExp(`\\['${id}',`).test(adminJs), `${id}가 _VM_FLAG_BTNS 배선 목록에 없음`);
 }
+// 되살아나면 안 되는 것들 — 중복의 원인이었던 셋
+for (const gone of ['vm-move-normal-btn', 'vm-move-nomem-btn', 'vm-move-hold-btn', 'vm-move-hidden-btn']) {
+  ok(!html.includes(`id="${gone}"`), `${gone}이 되살아남 — 상태 버튼이 두 벌이 된다`);
+}
+ok(!/id="vm-apply-btn"/.test(html),
+  'vm-apply-btn이 되살아남 — 탭마다 뜻이 바뀌는 버튼이라 고정 4개와 반드시 겹친다');
+for (const dead of ['_vmDefaultFlag', '_vmApplyLabel', '_VM_MOVE_BTNS', '_vmSyncMoveBtns']) {
+  ok(!adminJs.includes(dead + '('), `${dead} 잔재가 남아있음`);
+}
+
 // 공통 함수 하나로 처리해야 함 — 버튼마다 로직을 복사하면 한 곳만 고쳐지는 드리프트가 난다.
 ok(/async function _vmBulkSetFlag\(newFlag,btnId\)/.test(adminJs), '_vmBulkSetFlag 공통 함수가 없음');
-ok(/vm-apply-btn'\)\?\.addEventListener\('click',\(\)=>_vmBulkSetFlag\(_vmDefaultFlag\(\)/.test(adminJs),
-  '기존 vm-apply-btn이 공통 함수를 안 씀(동작이 갈라짐)');
+ok(/_VM_FLAG_BTNS\.forEach\(\(\[id,flag\]\)=>document\.getElementById\(id\)\?\.addEventListener/.test(adminJs),
+  '4개 버튼이 한 목록에서 배선되지 않음(개별 리스너로 흩어지면 또 갈라진다)');
 // 자기 탭 상태로 가는 버튼은 숨겨야 함(제자리 이동은 무의미)
 ok(/flag!==tabFlag/.test(adminJs), '현재 탭 자신의 상태 버튼을 숨기는 로직이 없음');
-ok(/_vmSyncMoveBtns\(\)/.test(adminJs) && (adminJs.match(/_vmSyncMoveBtns\(\)/g) || []).length >= 2,
-  '_vmSyncMoveBtns가 정의만 되고 탭 전환에서 안 불림');
-// 목록 탭에서 다른 상태로 옮기면 그 행은 목록에서 빠져야 하고, 같은 상태면 남아야 한다.
-ok(/const staysInList=_vmTab==='all'\|\|newFlag===tabFlag;/.test(adminJs),
-  '목록 잔류 판정(staysInList)이 없음 — 옮긴 행이 목록에 남거나 멀쩡한 행이 사라짐');
+ok((adminJs.match(/_vmSyncFlagBtns\(\)/g) || []).length >= 2,
+  '_vmSyncFlagBtns가 정의만 되고 탭 전환에서 안 불림');
+// 노출 판정과 목록 잔류 판정이 **같은 표**를 봐야 "버튼은 있는데 눌러도 목록에서 안 빠지는" 게 안 생긴다.
+ok(/const staysInList=tabFlag===undefined\|\|newFlag===tabFlag;/.test(adminJs),
+  '목록 잔류 판정이 _vmTabFlag()를 안 씀 — 노출 판정과 갈라진다');
+ok((adminJs.match(/_vmTabFlag\(\)/g) || []).length >= 2, '_vmTabFlag가 한 곳에서만 쓰임(표가 두 벌일 가능성)');
+// 되돌리기 스냅샷 — 예전엔 "선택-무관"만 남기고 보류/정상은 안 남겼다. 셋 다 수백 행을 한 번에
+// 바꾸는 같은 성격이라 기준이 갈릴 이유가 없다(이 프로젝트는 undo가 곧 백업).
+ok(/await _snapshotBeforeBulk\(`영상 관리 일괄/.test(adminJs),
+  '일괄 상태 변경에 스냅샷이 없음 — 되돌리기 불가');
 
 // ── ② 탭 개수 배지 ───────────────────────────────────────────────
 ok(/function _vmSetTabCount\(tab,n\)/.test(adminJs), '_vmSetTabCount가 없음');

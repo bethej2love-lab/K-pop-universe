@@ -419,25 +419,21 @@
       <span id="vm-count"></span>
       <button id="vm-edit-btn">편집</button>
       <button id="vm-indiv-btn">선택-개별</button>
-      <button id="vm-hold-btn">선택-보류</button>
+      <!-- 상태 이동 4종(2026-08-27 정리) — 예전엔 여기에 뜻이 고정된 버튼 3개(정상·보류·무관)와,
+           탭마다 뜻이 바뀌는 vm-apply-btn(→무관/→숨김/→정상)이 섞여 있었고 그 위에 vm-move-* 4개를
+           또 얹어서 같은 동작 버튼이 두 벌씩 떴다. 뜻이 고정된 4개로 통일하고 vm-apply-btn은 없앴다 —
+           "이 탭에서 이 버튼이 무슨 뜻이지"를 생각할 필요가 없어야 검수 속도가 난다.
+           현재 탭 자신의 상태 버튼은 _vmSyncFlagBtns()가 숨긴다(제자리 이동은 무의미). -->
       <button id="vm-normal-btn">선택-정상</button>
+      <button id="vm-nomem-btn">선택-무관</button>
+      <button id="vm-hold-btn">선택-보류</button>
+      <button id="vm-hidden-btn">선택-숨김</button>
       <button id="vm-coverclear-btn">선택-원곡제외</button>
       <button id="vm-coverset-btn">선택-원곡지정</button>
-      <!-- 검수(ss) 탭엔 "선택-숨김"만 있고 무관 처리 수단이 없었음(2026-08-25 사용자 제보) -->
-      <button id="vm-nomem-btn" style="display:none">선택-무관</button>
       <!-- 검수(ss) 탭 전용 "선택-확인"(2026-08-25) — 검수 대상 대부분은 태그가 이미 맞는 정상 행이라
            무관/보류/숨김 어느 것도 해당이 없다. 그런데 '정상'은 곧 플래그 없음이라 "아직 안 본 것"과
            구분이 안 돼서, 맞다고 넘긴 행이 큐에 영원히 남았다. 그래서 "봤고 맞음"만 따로 기록한다. -->
       <button id="vm-confirm-btn" style="display:none">선택-확인</button>
-      <button id="vm-apply-btn"></button>
-      <!-- 4상태 대칭 이동(2026-08-27, 사용자 요청) — 예전엔 탭마다 탈출구가 "정상" 하나뿐이라
-           숨김↔무관↔보류를 옆으로 못 옮겼다. 세 상태의 뜻이 서로 다르므로(숨김=우주 안인데 노출 금지
-           / 무관=우주 밖 / 보류=판단 유예) 옆으로 옮기는 게 정상적인 검수 동작이다.
-           현재 탭 자신의 상태에 해당하는 버튼은 _vmSyncMoveBtns()가 숨긴다(제자리 이동은 무의미). -->
-      <button id="vm-move-normal-btn" class="vm-move-btn" style="display:none">→정상</button>
-      <button id="vm-move-nomem-btn" class="vm-move-btn" style="display:none">→무관</button>
-      <button id="vm-move-hold-btn" class="vm-move-btn" style="display:none">→보류</button>
-      <button id="vm-move-hidden-btn" class="vm-move-btn" style="display:none">→숨김</button>
       <!-- 그룹배정 검수 탭 전용 일괄 처리(2026-08-25) — 3천 건짜리 큐를 한 건씩 누르는 건 현실적으로
            불가능해서 실제로 아무도 안 쓰고 있었음. 여러 개 선택 후 한 번에 승인/거부. -->
       <button id="vm-review-approve-btn" style="display:none">선택-승인</button>

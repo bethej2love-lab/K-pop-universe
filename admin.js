@@ -2349,19 +2349,23 @@ function _vmOpen(tab){
   document.getElementById('vm-overlay').classList.add('open');
   _vmApplyTab();
 }
-// 4상태 이동 버튼 노출(2026-08-27) — 무관/보류/숨김 목록 탭에서만 띄우고, 그 탭 **자신의 상태**
-// 버튼은 뺀다(제자리 이동은 무의미). '전체' 탭은 기존 vm-apply-btn(→무관)에 더해 보류/숨김도 열어준다.
-// 검수 계열 탭(ss/review/catlock/new/orphan)은 승인·거부 같은 전용 동작이 따로 있어 건드리지 않는다.
-const _VM_MOVE_BTNS=[['vm-move-normal-btn',null],['vm-move-nomem-btn','무관'],['vm-move-hold-btn','보류'],['vm-move-hidden-btn','hidden']];
-function _vmSyncMoveBtns(){
-  const tabFlag={nomem:'무관',hold:'보류',hidden:'hidden'}[_vmTab];
-  const on=_vmTab==='all'||tabFlag!==undefined;
-  _VM_MOVE_BTNS.forEach(([id,flag])=>{
+// ── 상태 이동 버튼 4종(2026-08-27 정리) ──────────────────────────────────────
+// 각 버튼의 뜻은 탭과 무관하게 **고정**이다. 예전엔 뜻이 고정된 3개(정상·보류·무관)와, 탭마다 뜻이
+// 바뀌는 vm-apply-btn(→무관/→숨김/→정상)이 섞여 있었고, 거기에 vm-move-* 4개를 또 얹어서 같은
+// 동작 버튼이 두 벌씩 떴다(사용자 제보). vm-apply-btn을 없애고 이 4개로 통일했다 — "이 탭에서 이
+// 버튼이 무슨 뜻이지"를 생각할 필요가 없어야 검수 속도가 난다.
+const _VM_FLAG_BTNS=[['vm-normal-btn',null],['vm-nomem-btn','무관'],['vm-hold-btn','보류'],['vm-hidden-btn','hidden']];
+// 이 탭이 "그 플래그의 목록"인가 — 노출 판정과 목록 잔류 판정(_vmBulkSetFlag)이 **같은 표**를 봐야
+// "버튼은 있는데 눌러도 목록에서 안 빠지는" 식의 어긋남이 안 생긴다.
+const _vmTabFlag=()=>({nomem:'무관',hold:'보류',hidden:'hidden'}[_vmTab]);
+function _vmSyncFlagBtns(){
+  const tabFlag=_vmTabFlag();
+  const on=_vmTab!=='channels';
+  _VM_FLAG_BTNS.forEach(([id,flag])=>{
+    // 목록 탭이 아니면(all·검수 계열) tabFlag가 undefined라 어느 flag와도 안 같아 4개 전부 뜬다.
+    // 목록 탭이면 그 탭 자신의 상태로 가는 버튼만 빠진다(제자리 이동이라 의미가 없다).
     const el=document.getElementById(id);
-    if(!el)return;
-    // '전체' 탭의 →무관과 목록 탭의 →정상은 기존 vm-apply-btn이 이미 하는 일이라 중복 노출하지 않는다.
-    const dup=(_vmTab==='all'&&flag==='무관')||(tabFlag!==undefined&&flag===null);
-    el.style.display=(on&&flag!==tabFlag&&!dup)?'':'none';
+    if(el)el.style.display=(on&&flag!==tabFlag)?'':'none';
   });
 }
 // 탭 라벨의 "마지막 조회 시점 개수"(2026-08-27, 사용자 요청 — "실시간은 아니어도 이전 조회했을 때
@@ -2394,7 +2398,7 @@ function _vmApplyTab(){
   _vmOnlyNormal=false;
   const onlyNormalBtn=document.getElementById('vm-only-normal-btn');
   if(onlyNormalBtn){onlyNormalBtn.style.display=_vmTab==='all'?'':'none';onlyNormalBtn.classList.remove('active');}
-  _vmSyncMoveBtns();
+  _vmSyncFlagBtns();
   if(isCh){
     _vmChTab='official';
     _vmChTierFilter='all';
@@ -2656,19 +2660,15 @@ function _vmRenderVideoList(){
     toolbarEl.style.display='flex';
     document.getElementById('vm-select-all-row').style.display='';
     document.getElementById('vm-select-all').checked=false;
-    const applyLabel=tab==='nomem'?'선택-무관 해제':tab==='hold'?'선택-보류 해제':tab==='ss'?'선택-숨김':tab==='hidden'?'선택-숨김 해제':'선택-무관';
-    document.getElementById('vm-apply-btn').textContent=applyLabel;
     // review 탭에선 이 탭의 질문("이 그룹배정이 맞나")과 무관한 버튼들을 숨겨서 오조작을 막는다.
-    ['vm-apply-btn','vm-indiv-btn','vm-hold-btn','vm-normal-btn','vm-coverclear-btn','vm-coverset-btn'].forEach(id=>{
+    ['vm-indiv-btn','vm-coverclear-btn','vm-coverset-btn'].forEach(id=>{
       const el=document.getElementById(id);if(el)el.style.display=isReview?'none':'';
     });
     ['vm-review-approve-btn','vm-review-reject-btn'].forEach(id=>{
       const el=document.getElementById(id);if(el)el.style.display=isReview?'':'none';
     });
-    // 검수(ss) 탭엔 "선택-숨김"(vm-apply-btn)만 있고 무관 처리 수단이 없었음(2026-08-25 사용자 제보).
-    // 숨김과 무관은 성격이 달라서(숨김=보류에 가깝고, 무관=이 그룹 콘텐츠가 아님) 둘 다 필요.
-    const nomemBtn=document.getElementById('vm-nomem-btn');
-    if(nomemBtn)nomemBtn.style.display=tab==='ss'?'':'none';
+    // 상태 이동 4종(정상/무관/보류/숨김)의 노출은 _vmSyncFlagBtns가 탭 전환 시 한 곳에서 정한다 —
+    // 여기서 또 개별로 건드리면 두 곳이 갈라져 "탭에 따라 있다가 없다가" 하는 버튼이 생긴다.
     const confirmBtn=document.getElementById('vm-confirm-btn');
     if(confirmBtn)confirmBtn.style.display=tab==='ss'?'':'none';
     _vmUpdateCount();
@@ -2827,33 +2827,6 @@ async function _vmReviewBulk(approve){
 }
 document.getElementById('vm-review-approve-btn')?.addEventListener('click',()=>_vmReviewBulk(true));
 document.getElementById('vm-review-reject-btn')?.addEventListener('click',()=>_vmReviewBulk(false));
-// 검수(ss) 탭 전용 "선택-무관" — 같은 탭의 "선택-숨김"(vm-apply-btn)과 달리 content_flag를 '무관'으로.
-// 처리한 행은 이 탭의 질문(오염 검수)에서 답이 난 것이므로 목록에서 걷어낸다.
-document.getElementById('vm-nomem-btn')?.addEventListener('click',async()=>{
-  if(!sb)return;
-  const btn=document.getElementById('vm-nomem-btn');
-  const items=[...document.querySelectorAll('#vm-list .vm-item')].filter(el=>el.querySelector('input[type=checkbox]')?.checked);
-  const ids=items.map(el=>el.dataset.vidId).filter(Boolean);
-  if(!ids.length)return;
-  if(!confirm(`선택한 ${ids.length}개를 '무관'으로 처리할까요?\n\n이 그룹 콘텐츠가 아니라는 뜻이라 카드에서 빠져요.\n되돌리기 스냅샷이 저장돼요.`))return;
-  btn.disabled=true;const orig=btn.textContent;btn.textContent='처리 중…';
-  const statusEl=document.getElementById('vm-status');
-  try{
-    await _snapshotBeforeBulk('검수 탭 일괄 무관',ids);
-    for(let i=0;i<ids.length;i+=200){
-      const{error}=await sb.from(_YT_TABLE).update(_flagPatch('무관','manual')).in('id',ids.slice(i,i+200));
-      if(error)throw new Error(error.message);
-    }
-    const gone=new Set(ids);
-    _vmRows=_vmRows.filter(v=>!gone.has(v.id));
-    _vmCacheSync();_vmCacheDropOthers(); // 목록에서 걷어낸 결과를 캐시에도 반영(2026-08-27)
-    _vmRenderVideoList();
-    if(statusEl)statusEl.textContent=`${ids.length}개 무관 처리 완료 — 검수 대상 ${_vmRows.length}개 남음`;
-    _showShareToast(`${ids.length}개 무관 처리됨`);
-  }catch(e){
-    if(statusEl)statusEl.textContent='오류: '+e.message;
-  }finally{btn.disabled=false;btn.textContent=orig;_vmUpdateCount();}
-});
 // 검수(ss) 탭 전용 "선택-확인"(2026-08-25) — "봤고 태그가 맞다"를 기록하는 유일한 수단.
 // ⚠️ tags_manual=true를 이 용도로 쓰면 안 된다. 그건 "관리자가 태그를 직접 고쳤으니 자동 태깅이
 //    건드리지 말 것"이라는 뜻이고(프로젝트 전역 원칙), 눈으로 훑어 통과시킨 1만여 건에 그걸 찍으면
@@ -2891,18 +2864,11 @@ function _vmUpdateCount(){
   const total=document.querySelectorAll('#vm-list .vm-item').length;
   const checked=document.querySelectorAll('#vm-list .vm-item input[type=checkbox]:checked').length;
   document.getElementById('vm-count').textContent=`${checked}/${total}개 선택됨`;
-  const applyBtn=document.getElementById('vm-apply-btn');
-  if(applyBtn)applyBtn.disabled=checked===0;
+  _VM_FLAG_BTNS.forEach(([id])=>{const b=document.getElementById(id);if(b)b.disabled=checked===0;});
   const indivBtn=document.getElementById('vm-indiv-btn');
   if(indivBtn)indivBtn.disabled=checked===0;
-  const holdBtn=document.getElementById('vm-hold-btn');
-  if(holdBtn)holdBtn.disabled=checked===0;
   const confirmBtn2=document.getElementById('vm-confirm-btn');
   if(confirmBtn2)confirmBtn2.disabled=checked===0;
-  const nomemBtn2=document.getElementById('vm-nomem-btn');
-  if(nomemBtn2)nomemBtn2.disabled=checked===0;
-  const normalBtn=document.getElementById('vm-normal-btn');
-  if(normalBtn)normalBtn.disabled=checked===0;
   const coverClearBtn=document.getElementById('vm-coverclear-btn');
   if(coverClearBtn)coverClearBtn.disabled=checked===0;
   const allEl=document.getElementById('vm-select-all');
@@ -3357,9 +3323,6 @@ document.getElementById('vm-select-all')?.addEventListener('change',e=>{
   document.querySelectorAll('#vm-list .vm-item input[type=checkbox]').forEach(cb=>{cb.checked=e.target.checked;});
   _vmUpdateCount();
 });
-// 각 탭의 "기본" 목적지 — 그 탭에 있는 항목을 한 번 눌러 빼내는 자리(기존 동작 그대로).
-function _vmDefaultFlag(){return _vmTab==='ss'?'hidden':(_vmTab==='all'?'무관':null);}
-function _vmApplyLabel(){return _vmTab==='nomem'?'선택-무관 해제':_vmTab==='hold'?'선택-보류 해제':_vmTab==='ss'?'선택-숨김':_vmTab==='hidden'?'선택-숨김 해제':'선택-무관';}
 const _VM_FLAG_LABEL={'무관':'무관','보류':'보류','hidden':'숨김'};
 // 선택 항목의 content_flag를 임의의 상태로 바꾼다(2026-08-27, 4상태 대칭).
 // 예전엔 탭마다 탈출구가 "정상(null)" 하나뿐이라, 잘못 분류된 걸 발견해도 옆 상태로 못 옮기고
@@ -3374,13 +3337,17 @@ async function _vmBulkSetFlag(newFlag,btnId){
   if(!ids.length)return;
   const restore=btn?btn.textContent:'';
   if(btn){btn.disabled=true;btn.textContent='처리 중…';}
+  // 되돌리기 스냅샷 — 예전엔 "선택-무관" 하나만 이걸 남기고 보류/정상은 안 남겼는데, 셋 다 수백 행을
+  // 한 번에 바꾸는 같은 성격의 동작이라 기준이 갈릴 이유가 없다. 이 프로젝트는 undo가 곧 백업이다
+  // (2026-08-22 백업전략 #1, 3.5만 재스캔 사고 재발 방지책). 실패해도 원 작업은 막지 않는다.
+  await _snapshotBeforeBulk(`영상 관리 일괄 ${newFlag?(_VM_FLAG_LABEL[newFlag]||newFlag):'정상'}`,ids);
   const{error}=await sb.from(_YT_TABLE).update(_flagPatch(newFlag,'manual')).in('id',ids);
-  const done=()=>{if(btn){btn.disabled=false;btn.textContent=(btnId==='vm-apply-btn')?_vmApplyLabel():restore;}};
+  const done=()=>{if(btn){btn.disabled=false;btn.textContent=restore;}};
   if(error){done();document.getElementById('vm-status').textContent='오류: '+error.message;return;}
   const idSet=new Set(ids);
   // 이 탭이 "그 플래그의 목록"인가 — 목록의 정체성과 다른 값으로 바뀐 행만 화면에서 걷어낸다.
-  const tabFlag={nomem:'무관',hold:'보류',hidden:'hidden'}[_vmTab]||null;
-  const staysInList=_vmTab==='all'||newFlag===tabFlag;
+  const tabFlag=_vmTabFlag();
+  const staysInList=tabFlag===undefined||newFlag===tabFlag;
   if(staysInList){
     // 전체 탭은 검색 결과 목록이라 플래그를 바꿔도 그대로 남아있어야 함(nomem/hidden 탭처럼 그 자체가
     // "무관/숨김 목록"이 아니므로) — 행을 지우지 않고 배지와 체크박스만 갱신한다.
@@ -3407,9 +3374,7 @@ async function _vmBulkSetFlag(newFlag,btnId){
   done();
   _vmUpdateCount();
 }
-document.getElementById('vm-apply-btn')?.addEventListener('click',()=>_vmBulkSetFlag(_vmDefaultFlag(),'vm-apply-btn'));
-[['vm-move-normal-btn',null],['vm-move-nomem-btn','무관'],['vm-move-hold-btn','보류'],['vm-move-hidden-btn','hidden']]
-  .forEach(([id,flag])=>document.getElementById(id)?.addEventListener('click',()=>_vmBulkSetFlag(flag,id)));
+_VM_FLAG_BTNS.forEach(([id,flag])=>document.getElementById(id)?.addEventListener('click',()=>_vmBulkSetFlag(flag,id)));
 // 탭과 무관하게 항상 '개별출연'으로 고정 — 각자 그룹/멤버 카드엔 그대로 노출되지만 "함께한 멤버"/연결
 // 카드 집계에서는 빠지는 플래그(진짜 콜라보가 아니라 같은 영상에 각자 따로 출연한 경우), 2026-08-04
 // 사용자 요청으로 무관 처리 버튼과 동일한 자리에 원클릭 버튼으로 추가.
@@ -3440,70 +3405,6 @@ document.getElementById('vm-indiv-btn')?.addEventListener('click',async()=>{
     if(!_vmRows.length)_vmRenderVideoList();
   }
   btn.textContent='선택-개별';
-  _vmUpdateCount();
-});
-// 선택-보류 — content_flag='보류'(유니버스 미등록 아이돌/검토 대기)로 일괄 지정. 전체 탭에서 눈에 띄는
-// 미등록 그룹·오태깅 후보를 바로 큐로 보낼 수 있게(2026-08-23 사용자 요청). vm-indiv-btn과 동일 패턴.
-document.getElementById('vm-hold-btn')?.addEventListener('click',async()=>{
-  if(!sb)return;
-  const btn=document.getElementById('vm-hold-btn');
-  const items=[...document.querySelectorAll('#vm-list .vm-item')].filter(el=>el.querySelector('input[type=checkbox]')?.checked);
-  const ids=items.map(el=>el.dataset.vidId).filter(Boolean);
-  if(!ids.length)return;
-  btn.disabled=true;btn.textContent='처리 중…';
-  const newFlag='보류';
-  const{error}=await sb.from(_YT_TABLE).update(_flagPatch(newFlag,'manual')).in('id',ids);
-  if(error){btn.disabled=false;btn.textContent='선택-보류';document.getElementById('vm-status').textContent='오류: '+error.message;return;}
-  const idSet=new Set(ids);
-  if(_vmTab==='all'){
-    _vmRows.forEach(v=>{if(idSet.has(v.id))v.content_flag=newFlag;});
-    items.forEach(el=>{
-      const cb=el.querySelector('input[type=checkbox]');if(cb)cb.checked=false;
-      const flagBtn=el.querySelector('.vm-flag-btn');
-      if(flagBtn)_vmSetFlagLabel(flagBtn,newFlag);
-    });
-    document.getElementById('vm-status').textContent=`${ids.length}개 보류 처리 완료`;
-  }else{
-    _vmRows=_vmRows.filter(v=>!idSet.has(v.id));
-    _vmCacheSync();_vmCacheDropOthers(); // 목록에서 걷어낸 결과를 캐시에도 반영(2026-08-27)
-    items.forEach(el=>el.remove());
-    document.getElementById('vm-status').textContent=`${ids.length}개 처리 완료 — 남은 ${_vmRows.length}개`;
-    if(!_vmRows.length)_vmRenderVideoList();
-  }
-  btn.textContent='선택-보류';
-  _vmUpdateCount();
-});
-// 여러 개 선택 후 한 번에 정상(null)으로 되돌리는 버튼 — vm-apply-btn은 탭마다 목적이 고정(전체 탭은
-// 무관 처리만, nomem/hidden 탭은 각자 원래 상태 해제만)이라, 예를 들어 '전체' 탭 검색 결과에 무관/기타/
-// 외부인/개별출연 등 이미 플래그가 섞여 있을 때 그것들만 골라 한 번에 정상으로 되돌릴 방법이 없었음
-// (배지를 하나씩 클릭해서 순환시키는 것만 가능). 모든 탭에서 동일하게 동작(2026-08-18, 사용자 요청).
-document.getElementById('vm-normal-btn')?.addEventListener('click',async()=>{
-  if(!sb)return;
-  const btn=document.getElementById('vm-normal-btn');
-  const items=[...document.querySelectorAll('#vm-list .vm-item')].filter(el=>el.querySelector('input[type=checkbox]')?.checked);
-  const ids=items.map(el=>el.dataset.vidId).filter(Boolean);
-  if(!ids.length)return;
-  btn.disabled=true;btn.textContent='처리 중…';
-  const newFlag=null;
-  const{error}=await sb.from(_YT_TABLE).update(_flagPatch(newFlag,'manual')).in('id',ids);
-  if(error){btn.disabled=false;btn.textContent='선택-정상';document.getElementById('vm-status').textContent='오류: '+error.message;return;}
-  const idSet=new Set(ids);
-  if(_vmTab==='all'){
-    _vmRows.forEach(v=>{if(idSet.has(v.id))v.content_flag=newFlag;});
-    items.forEach(el=>{
-      const cb=el.querySelector('input[type=checkbox]');if(cb)cb.checked=false;
-      const flagBtn=el.querySelector('.vm-flag-btn');
-      if(flagBtn)_vmSetFlagLabel(flagBtn,newFlag);
-    });
-    document.getElementById('vm-status').textContent=`${ids.length}개 정상 처리 완료`;
-  }else{
-    _vmRows=_vmRows.filter(v=>!idSet.has(v.id));
-    _vmCacheSync();_vmCacheDropOthers(); // 목록에서 걷어낸 결과를 캐시에도 반영(2026-08-27)
-    items.forEach(el=>el.remove());
-    document.getElementById('vm-status').textContent=`${ids.length}개 처리 완료 — 남은 ${_vmRows.length}개`;
-    if(!_vmRows.length)_vmRenderVideoList();
-  }
-  btn.textContent='선택-정상';
   _vmUpdateCount();
 });
 // 선택 항목 원곡 정보 제외 — cover_of_members/cover_of_groups만 비운다. content_flag는 안 건드리므로
