@@ -3986,9 +3986,14 @@ function _lbUpdateMemberInfo(){
   // 그 카드가 화면 아래 절반으로 올라온다 — **영상은 계속 재생된다**(연결 카드와 달리 일시정지 안 함).
   // iframe을 DOM에서 떼거나 부모를 바꾸면 재생이 리셋되므로, iframe은 손대지 않고 카드 시트만 위로 올린다.
   anchorEl.innerHTML='';
+  // 밑줄을 버튼이 아니라 **안쪽 span**에 그린다 — 버튼에 세로 padding을 줘서 터치 영역을 키우면
+  // (실측 17px → 애플 HIG 최소 44px에 한참 못 미쳤음) 버튼에 걸린 border-bottom이 글자에서 멀어져
+  // 밑줄이 붕 뜬다. 글자는 그대로 두고 탭 영역만 넓히는 '무형 확장'(2026-08-27).
   const _mkPart=(text,fn)=>{
     const b=document.createElement('button');
-    b.type='button';b.className='lb-anchor-part';b.textContent=text;
+    b.type='button';b.className='lb-anchor-part';
+    const t=document.createElement('span');t.className='lb-anchor-label';t.textContent=text;
+    b.appendChild(t);
     b.addEventListener('click',e=>{e.stopPropagation();fn();});
     return b;
   };
@@ -4002,8 +4007,15 @@ function _lbUpdateMemberInfo(){
   (s?.with||[]).forEach(n=>{
     const target=_findArtistByConnName(n,artist?artist.group.ko:groupKo);
     const label=target?(currentLang==='ko'?target.name.ko:(target.name.en||target.name.ko)):(n.match(/^(.+)\((.+)\)$/)?.[1]||n);
-    const chip=document.createElement('span');
-    chip.className='lb-with-chip';
+    // 함께한 멤버도 누르면 그 멤버 카드가 반 열린다(2026-08-27 사용자 요청 — 앵커의 멤버/그룹은
+    // 눌리는데 이 칩만 장식이라 '멤버는 클릭이 안 되냐'는 제보). 이름을 실제 아티스트로 해석하지
+    // 못한 칩(target 없음)은 열 카드가 없으므로 예전처럼 그냥 텍스트로 둔다.
+    const chip=document.createElement(target?'button':'span');
+    chip.className='lb-with-chip'+(target?' lb-with-chip-btn':'');
+    if(target){
+      chip.type='button';
+      chip.addEventListener('click',e=>{e.stopPropagation();_openLbHalf('member',target);});
+    }
     chip.textContent=label;
     withEl.appendChild(chip);
   });

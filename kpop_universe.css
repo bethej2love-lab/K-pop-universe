@@ -613,6 +613,10 @@
   #yt-lb-with-chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:7px;}
   #yt-lb-with-chips:empty{display:none;}
   .lb-with-chip{background:rgba(255,255,255,0.06);border-radius:11px;padding:3px 9px;font-size:11px;color:rgba(195,210,240,0.72);}
+  /* 누를 수 있는 칩(해석된 멤버) — span 칩과 생김새는 같게 두고 버튼 기본 스타일만 지운다. 칩 자체가
+     이미 22px라 세로는 충분해서 좌우 여백만 조금 넓혀 탭 실수를 줄인다(2026-08-27). */
+  .lb-with-chip-btn{border:none;font-family:inherit;line-height:inherit;cursor:pointer;padding:4px 11px;-webkit-tap-highlight-color:transparent;}
+  .lb-with-chip-btn:active{background:rgba(255,255,255,0.14);color:#fff;}
   #yt-lb-conn-btn{margin-top:9px;background:rgba(130,155,255,0.14);border:none;border-radius:14px;padding:6px 13px;font-size:12px;color:rgba(185,205,255,0.92);cursor:pointer;display:inline-flex;align-items:center;gap:1px;}
   #yt-lb-conn-btn:hover{background:rgba(130,155,255,0.22);}
   #yt-lb-conn-btn span{opacity:.7;}
@@ -671,16 +675,25 @@
        제보(2026-08-12)로 옮김. "연결 보기" 버튼은 더보기(⋮) 메뉴 쪽으로 같이 이동함(위 공용 규칙 참고).
        닫기/메뉴 버튼과 높이(36px)·top(14px)을 맞추고 flex 세로중앙 정렬해서, 텍스트만 살짝 높은 줄에
        떠 보이던 정렬 어긋남을 없앰(2026-08-12, 사용자 재제보로 조정). */
+    /* ⚠️ 예전엔 height:36px에 두 줄(앵커 + 함께한멤버 칩)을 욱여넣어서 **두 줄이 3px 겹쳐** 있었다
+       (실측 2026-08-27: 앵커 버튼 아래끝 31 > 칩 위끝 28). 위아래 어느 쪽을 눌러도 엉뚱한 게 잡혀
+       '터치가 어렵다'는 제보로 이어졌다. 이제 높이를 내용에 맡기고(min-height로 최소치만 유지)
+       두 줄 사이에 실제 간격을 준다.
+       ⚠️ 첫 줄은 여전히 닫기(⌄)·메뉴(⋮) 버튼과 같은 36px 밴드 안에서 세로 중앙이어야 한다 —
+       그래서 justify-content:center(전체 중앙)가 아니라 flex-start로 두고, 앵커 줄 자체에 36px를
+       준다. 안 그러면 칩이 생길 때마다 첫 줄이 위로 밀려 좌우 버튼과 어긋난다. */
     #yt-lightbox.lb-browse #yt-lb-member-info{position:fixed;top:14px;left:50%;transform:translateX(-50%);
-      height:36px;display:flex;flex-direction:column;align-items:center;justify-content:center;
+      min-height:36px;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;
       max-width:56vw;text-align:center;z-index:1;margin-top:0;padding-top:0;border-top:none;
-      pointer-events:none;} /* 칩 자체는 누를 일이 없어서 탭이 아래(영상)로 그대로 통과되게 */
+      pointer-events:none;} /* 빈 영역의 탭은 아래(영상)로 그대로 통과 — 누를 것들만 아래에서 되살린다 */
   /* 하프시트 진입점(멤버/그룹 이름)·연결 버튼은 눌려야 하므로 부모의 pointer-events:none를 개별 복구
      — 빈 영역은 여전히 영상으로 통과(2026-08-26 회귀 수정: 하프시트 버튼이 부모 때문에 죽어있던 것). */
   #yt-lightbox.lb-browse #yt-lb-member-info .lb-anchor-part,
+  #yt-lightbox.lb-browse #yt-lb-member-info .lb-with-chip-btn,
   #yt-lightbox.lb-browse #yt-lb-member-info #yt-lb-conn-btn{pointer-events:auto;}
-    #yt-lightbox.lb-browse #yt-lb-anchor-chip{font-size:11.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-    #yt-lightbox.lb-browse #yt-lb-with-chips{justify-content:center;margin-top:3px;}
+    #yt-lightbox.lb-browse #yt-lb-anchor-chip{font-size:11.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+      height:36px;line-height:36px;} /* 닫기/메뉴 버튼과 같은 밴드 — 안의 버튼은 vertical-align:middle */
+    #yt-lightbox.lb-browse #yt-lb-with-chips{justify-content:center;margin-top:7px;}
     /* 볼륨/좋아요 등 툴바 줄과 "다음 영상" 사이 여백은 줄여서, 화면 하나에 다음 영상이 2개 정도는
        바로 보이게(2026-08-12, 사용자 요청). */
     #yt-lightbox.lb-browse #yt-lb-uplist{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;
@@ -2706,13 +2719,15 @@
   #mob-sheet.lb-half #mob-sheet-inner,
   #mob-card-stack.lb-half #mob-card-stack-inner{max-height:calc(52vh - 26px);}
   /* 영상 위 이름 칩 — 누를 수 있다는 걸 보여주되 툴바가 시끄러워지지 않게 밑줄만 은은하게 */
+  /* 탭 영역은 세로로 넓히고(실측 17px → 44px 미만이라 누르기 어려웠음) 밑줄은 안쪽 span이 그린다 —
+     버튼에 border-bottom을 두면 padding만큼 글자에서 떨어져 밑줄이 붕 뜬다(2026-08-27). */
   .lb-anchor-part{
-    background:none;border:none;padding:0 1px;margin:0;cursor:pointer;
-    font:inherit;color:inherit;letter-spacing:inherit;
-    border-bottom:1px solid rgba(255,255,255,0.28);
+    background:none;border:none;padding:12px 5px;margin:0;cursor:pointer;
+    font:inherit;color:inherit;letter-spacing:inherit;line-height:1;vertical-align:middle;
     -webkit-tap-highlight-color:transparent;
   }
-  .lb-anchor-part:active{color:#fff;border-bottom-color:rgba(255,255,255,0.7);}
+  .lb-anchor-label{border-bottom:1px solid rgba(255,255,255,0.28);padding-bottom:1px;}
+  .lb-anchor-part:active .lb-anchor-label{color:#fff;border-bottom-color:rgba(255,255,255,0.7);}
   .lb-anchor-part:focus-visible{outline:2px solid rgba(150,180,255,0.85);outline-offset:2px;border-radius:3px;}
   .lb-anchor-sep{margin:0 5px;opacity:0.55;}
   /* "영상으로 돌아가기" — 손잡이 줄 오른쪽 끝(왼쪽은 카드 뒤로가기가 쓴다).
