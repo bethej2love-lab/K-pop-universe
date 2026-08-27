@@ -1483,9 +1483,18 @@ function _appendDeceasedStar(el,a){
 // group.ko==='솔로'(아이유·보아 등 애초에 무소속)도 같은 취급 — 표기 결과가 정확히 같아진다.
 function _isSoloDisp(a){return !!(a&&(a.soloDisplay===true||a.group.ko==='솔로'));}
 const _SOLO_GROUP={ko:'솔로',en:'Solo'};
+// dispKo/dispEn — group/groups[] 항목에 얹는 **표기 전용** 그룹명 오버라이드(2026-08-27, 사용자 요청).
+// 개명한 그룹의 옛 이름으로 표기해야 하는 멤버를 위한 것: 장현승은 비스트(2009.10~2016.04)까지만 활동했고
+// '하이라이트'로 개명(2017.03)하기 전에 탈퇴했으므로 "하이라이트 전 멤버"로 뜨면 사실과 다르다.
+// ⚠️ soloDisplay와 동일한 원칙 — g.ko는 절대 안 바꾼다. 그 값이 영상 조회 키(group_ko)이자 연결 태그
+//    ("장현승(하이라이트)")의 키라, 데이터를 '비스트'로 바꾸면 DB에 없는 group_ko를 찾게 돼 카드가 빈다.
+//    표기만 갈아끼우고 클릭 시엔 여전히 g.ko(하이라이트) 그룹 카드로 간다.
+// 한쪽 언어만 채워도 오버라이드가 항상 이긴다 — dispKo만 있는데 영문에서 g.en('Highlight')으로 새면
+// "이 멤버는 개명 후 그룹과 무관"이라는 이 필드의 존재 이유가 그 화면에서만 조용히 무너진다.
+function _gLabel(g){return g?(currentLang==='ko'?(g.dispKo||g.dispEn||g.ko):(g.dispEn||g.dispKo||g.en||g.ko)):'';}
 // 멤버 옆에 붙일 그룹 표기용 group 객체 — 솔로 취급이면 실제 소속 대신 "솔로".
 function _dispGroup(a){return a?(_isSoloDisp(a)?_SOLO_GROUP:a.group):null;}
-function _dispGroupName(a){const g=_dispGroup(a);return g?(currentLang==='ko'?g.ko:(g.en||g.ko)):'';}
+function _dispGroupName(a){return _gLabel(_dispGroup(a));}
 function _dispKo(a){return(a&&a.displayName)||(a&&a.name&&a.name.ko)||'';}
 // 카드 이름 옆 작고 흐린 보조 표기 — ① displayName으로 메인을 덮었으면 원래 활동명(도경수 옆 "디오"),
 // ② subName(옛활동명/실명, 성민 옆 "제롬"). 메인과 너무 유사하면(한쪽이 다른 쪽에 포함, 박재범⊃재범) 생략.
@@ -1770,7 +1779,7 @@ function _refreshOpenCardText(){
       // 그룹 자체가 해체(disbanded)됐거나, 그룹은 멀쩡해도 이 멤버 본인이 탈퇴/비활동(active:false)이면
       // 둘 다 "과거형"으로 흐리게 — 이펙스 금동현처럼 그룹은 활동 중인데 본인만 탈퇴한 경우, 예전엔 그룹
       // 자체 해체 여부만 봐서 멀쩡한 밝기로 표시되던 걸 놓치고 있었음(2026-08-05, 사용자 제보).
-      const _tgTxt=currentLang==='ko'?g.ko:(g.en||g.ko);
+      const _tgTxt=_gLabel(g); // dispKo/dispEn이 있으면 옛 그룹명으로 표기(장현승→"비스트"), 클릭은 그대로 g.ko
       sp.className='tg'+(((GROUPS[g.ko]||{}).disbanded||a.active===false)?' tg-past':'')+(!/[가-힯]/.test(_tgTxt)?' tg-en':'');
       sp.textContent=_tgTxt;
       sp.addEventListener('click',e=>{
@@ -3652,7 +3661,10 @@ function _cleanTitle(t){return(t||'').replace(_TITLE_BREAK_RE,' ').replace(/ {2,
 // 전역으로 걸면 다른 그룹의 멀쩡한 영상까지 오탐됨 — 실제 그 인물 소속이었던 그룹의 채널에서만 거름.
 // "크리스"(한글)는 "크리스마스"와 겹쳐서 엑소 채널 안에서도(자기네 크리스마스 콘텐츠) 오탐되므로 아예 뺐고,
 // 영문 표기(kris)는 그런 충돌이 없어 전역으로 둠.
-const _BANNED_VIDEO_NAMES_GLOBAL=['seungri','태일','taeil','himchan','종훈','jonghun','kris'];
+// 용준형(비스트/하이라이트, 2019.03.14 탈퇴) — 한글 "용준형"은 충돌 없어 전역, 로마자는 **성(yong)이 붙은
+// 형태만** 전역에 둔다. "junhyung"/"jun hyung" 단독으로 걸면 고스트나인 손준형(#SONJUNHYUNG, 현역)이
+// 통째로 오폭된다 — 실측 55건 중 48건이 손준형이었음(2026-08-27).
+const _BANNED_VIDEO_NAMES_GLOBAL=['seungri','태일','taeil','himchan','종훈','jonghun','kris','용준형','yong jun hyung','yong jun hyeong','yongjunhyung'];
 // 씨엔블루 "종현"(이종현) — 샤이니에도 실존하는 활동중 멤버 "종현"과 완전히 같은 표기라 전역으로 걸면
 // 안 됨(2026-08-21, 사용자 확인 — 승리·태일·크리스와 같은 사유의 퇴출 인물).
 const _BANNED_VIDEO_NAMES_SCOPED={'빅뱅':['승리'],'비에이피':['힘찬'],'씨엔블루':['종현']};
@@ -6412,10 +6424,23 @@ function _buildConnContent(container){
 
   // 타 그룹 멤버 (그룹 단위 묶음 칩) — 칩을 클릭하면 "그룹 선택"(펼침 겸용)이 되어, 그 그룹 멤버 중
   // 1명 이상 출연한 영상 전체가 먼저 뜨고, 펼쳐진 멤버 칩을 추가로 클릭하면 그 멤버 필수 출연으로 더 좁혀진다.
+  // 그룹 칩에 띄울 이름 — 버킷 안 멤버가 전원 같은 옛 그룹명(dispKo)을 쓰면 그 이름으로 표기한다.
+  // 장현승 하나만 들어있는 '하이라이트' 버킷은 "비스트"로 뜨고, 장현승+양요섭처럼 섞여 있으면 어느 쪽으로
+  // 써도 반쪽은 틀리므로 실제 그룹명을 그대로 쓴다. 버킷 키(gko)는 showGC·_groupsCoAppear가 쓰는
+  // 실제 그룹명이라 절대 안 바꾼다 — 라벨만 갈아끼운다(2026-08-27).
+  const _connGroupChipLabel=gko=>{
+    const labels=new Set((otherByGroup.get(gko)||[]).map(n=>{
+      const a=_findArtistByConnName(n,_connAnchor.group.ko);
+      const g=a&&_artistGroups(a).find(x=>x.ko===gko);
+      return _gLabel(g||{ko:gko});
+    }));
+    return labels.size===1?[...labels][0]:gko;
+  };
   otherGroupsSorted.forEach(gko=>{
     const members=otherByGroup.get(gko);
     const isSelGroup=_connSelectedGroups.has(gko);
     const isWideOnly=_groupWideOnlySet.has(gko);
+    const gkoLabel=_connGroupChipLabel(gko);
 
     const groupWrap=document.createElement('div');groupWrap.style.cssText='display:flex;flex-direction:column;align-items:flex-start;';
 
@@ -6423,7 +6448,7 @@ function _buildConnContent(container){
     groupChip.type='button';
     groupChip.className='conn-group-chip'+(isSelGroup?' open':'');
     // 그룹 전체 태깅만 있는 경우: 쉐브론 없이 그룹명만 표시 (펼칠 멤버 없음)
-    groupChip.innerHTML=isWideOnly?gko:`${gko}<span class="conn-group-chevron">›</span>`;
+    groupChip.innerHTML=isWideOnly?gkoLabel:`${gkoLabel}<span class="conn-group-chevron">›</span>`;
 
     groupChip.addEventListener('click',e=>{
       e.stopPropagation();
@@ -7741,7 +7766,7 @@ function showT(a,cx,cy,keepNavStack,urlMode,_unusedPushMobNav,noFly){
     // 그룹 자체가 해체(disbanded)됐거나, 그룹은 멀쩡해도 이 멤버 본인이 탈퇴/비활동(active:false)이면
     // 둘 다 "과거형"으로 흐리게 — 이펙스 금동현처럼 그룹은 활동 중인데 본인만 탈퇴한 경우, 예전엔 그룹
     // 자체 해체 여부만 봐서 멀쩡한 밝기로 표시되던 걸 놓치고 있었음(2026-08-05, 사용자 제보).
-    const _spTxt=currentLang==='ko'?g.ko:(g.en||g.ko);
+    const _spTxt=_gLabel(g); // dispKo/dispEn이 있으면 옛 그룹명으로 표기(장현승→"비스트"), 클릭은 그대로 g.ko
     sp.className='tg'+((GROUPS[g.ko].disbanded||a.active===false)?' tg-past':'')+(!/[가-힯]/.test(_spTxt)?' tg-en':'');
     sp.textContent=_spTxt;
     sp.addEventListener('click',_makeGcClickFn(g.ko));
