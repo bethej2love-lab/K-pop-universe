@@ -3657,7 +3657,7 @@ function _filterBannedVideos(list,ko){return(list||[]).filter(v=>!_isBannedVideo
 // 흔히 쓰는 문구 — 제목에 이 단어가 있으면 어느 그룹으로 매칭됐든 무조건 무관 처리한다(사용자 요청, 2026-08-04).
 // _isBannedVideoTitle과 달리 hidden이 아니라 무관 처리(행은 남기되 그룹/멤버 그리드에서만 제외)라 신규
 // 동기화 시 이 체크에 걸리면 content_flag를 '무관'으로 붙여서 저장한다 — 기존 행은 아래 스윕 버튼으로 정리.
-const _JUNK_TITLE_KEYWORDS_GLOBAL=['띵곡팔이','김창옥쇼','이호선상담소','유부녀킬러','유뷰녀 킬러','스트릿레스토랑파이터','십분hook','[#여권들고','프리한19','결혼지옥','오은영리포트','이혼숙려','닥터로이어','언니네산지직송','혼자는 못 해','방과후태리','스프링피버','[#학연]','1호가','퍼펙트글로우','님과 함께2','relay dance battle','물건너온아빠들','물 건너온 아빠들'];
+const _JUNK_TITLE_KEYWORDS_GLOBAL=['띵곡팔이','김창옥쇼','이호선상담소','유부녀킬러','유뷰녀 킬러','스트릿레스토랑파이터','십분hook','[#여권들고','프리한19','결혼지옥','오은영리포트','이혼숙려','닥터로이어','언니네산지직송','혼자는 못 해','방과후태리','스프링피버','[#학연]','1호가','퍼펙트글로우','님과 함께2','relay dance battle','물건너온아빠들','물 건너온 아빠들','닥터킴의','최강야구'];
 // ⚠️ 대소문자 무시하고 비교한다 — 예전엔 t.includes(k) 그대로였는데, 목록이 전부 한글이라 문제가
 // 안 드러났을 뿐이었음. 영문 키워드('relay dance battle' 등)는 실제 제목이 "Relay Dance Battle"·
 // "RELAY DANCE BATTLE"처럼 대문자가 섞여 있어 그대로 두면 아예 안 걸린다(2026-08-25).
@@ -3666,6 +3666,21 @@ function _isJunkVideoTitle(t){
   if(!t)return false;
   const s=t.toLowerCase();
   return _JUNK_TITLE_KEYWORDS_GLOBAL.some(k=>s.includes(k.toLowerCase()));
+}
+// 제외 키워드로 '무관' 처리할지 — **아이돌 공식 채널(source_tier='official') 업로드분은 면제**한다
+// (2026-08-27 사용자 요청 "제외 키워드에도 불구하고 공식 채널 영상은 무조건 끌어와줘").
+// 근거: 이 키워드 목록은 원래 "남의 채널이 짜깁기해 올린 것"(띵곡팔이류)이나 "그룹과 무관한 외부
+// 예능/상담 콘텐츠"를 걸러내려고 만든 장치다. 그룹/솔로가 자기 채널에 직접 올린 영상은 제목에 뭐가
+// 들어있든 그 아티스트의 콘텐츠가 맞으므로 걸러낼 이유가 없다.
+// ⚠️ 판단을 여기 한 곳에 모아 동기화 시점(_ytSyncGroup·_extBuildRows)과 소급 스윕
+//    (_ytSweepJunkKeywordVideos)이 같은 규칙을 쓰게 한다.
+// ⚠️ 한계: source_tier는 2026-08-26에 생긴 컬럼이라 그 전에 들어온 행은 대부분 NULL이다(실측
+//    372,703건 중 official 태그는 310건뿐). 즉 이 면제는 **앞으로 동기화되는 분부터** 확실히 걸리고,
+//    옛 행은 공식 채널이었는지 알 방법이 없어 예전과 동일하게 취급된다. 소급 적용하려면 그룹별
+//    동기화 북마크를 지우고 재동기화해서 source_tier를 채워야 한다.
+function _shouldJunkFlag(title,sourceTier){
+  if(sourceTier==='official')return false;
+  return _isJunkVideoTitle(title);
 }
 // ── Cover 탭 제외 키워드 ─────────────────────────────────────────────────────
 // "cover/커버/원곡/original"이 제목에 있어도 실제 커버곡이 아닌 것들. 커버 포함 단어(discover·recover·

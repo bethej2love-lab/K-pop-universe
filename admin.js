@@ -258,7 +258,9 @@ async function _ytSyncGroup(ko,key,onProg,youtubeUrl,syncKey){
   const cutoffDate=_disbandCutoffDate(ko);
   const{vids,done,interrupted,resumeToken,newestId}=await _ytFetchNewVideos(uploadsId,key,sinceId,onProg,resumeTok,cutoffDate);
   if(vids.length){
-    const rows=vids.map(v=>({...v,group_ko:ko,title_norm:_titleNorm(v.title),source_handle:skey,source_tier:'official',...(_isJunkVideoTitle(v.title)?{content_flag:'무관'}:{})}));
+    // 공식 채널 업로드분은 제외 키워드에 걸려도 무관 처리하지 않는다 — 판단은 _shouldJunkFlag
+    // 한 곳에 있고(index.html), 여기선 source_tier를 그대로 넘겨 정책을 따른다(2026-08-27).
+    const rows=vids.map(v=>({...v,group_ko:ko,title_norm:_titleNorm(v.title),source_handle:skey,source_tier:'official',...(_shouldJunkFlag(v.title,'official')?{content_flag:'무관'}:{})}));
     for(let i=0;i<rows.length;i+=200){
       const{error}=await _ytUpsertVideos(rows.slice(i,i+200));
       if(error)throw new Error(error.message);
@@ -610,13 +612,14 @@ async function _ytSweepJunkKeywordVideos(){
     }
     _ytSetProg('제외 키워드 포함 영상 조회 중…');
     const{data:rows,error}=await _sbFetchAll(()=>sb.from(_YT_TABLE)
-      .select('id,title')
+      .select('id,title,source_tier')
       .eq('tags_manual',false) // 관리자가 직접 저장한 행은 절대 안 건드림
       .or('content_flag.is.null,content_flag.neq.무관')
       .order('id'));
     if(error){_ytSetProg('조회 실패: '+error.message);return;}
     if(!rows?.length){_ytSetProg('검사할 영상이 없어요');localStorage.setItem('kpu_junk_sweep_version',version);return;}
-    const toFlag=rows.filter(v=>_isJunkVideoTitle(v.title)).map(v=>v.id);
+    // 공식 채널 업로드분은 제외 — 동기화 시점과 같은 규칙(_shouldJunkFlag)을 그대로 쓴다.
+    const toFlag=rows.filter(v=>_shouldJunkFlag(v.title,v.source_tier)).map(v=>v.id);
     if(!toFlag.length){_ytSetProg(`검사 완료 — ${rows.length}개 중 해당 없음`);localStorage.setItem('kpu_junk_sweep_version',version);return;}
     await _snapshotBeforeBulk('제외 키워드 영상 무관 정리',toFlag);
     for(let i=0;i<toFlag.length;i+=200){
@@ -4411,7 +4414,7 @@ function _extBuildRows(vids,strict,tier,owner,defaultCat,handle){
       //   쌓이는 동안 그 대가로 709건이 유저 화면에서 사라져 있었음. 게다가 실측해보니 큐의 93%가
       //   고유한 이름이고 표본은 전부 정확했음 — 위험한 이름은 이미 앞단 게이트(흔한단어·짧은영문·
       //   동명이인 dedup)가 걸러내기 때문. 이 정책이 도입된 2026-08-20엔 그 게이트들이 없었다.
-      ...(_isJunkVideoTitle(v.title)?{content_flag:'무관'}:ambiguous?{needs_review:true,content_flag:'hidden'}:needsReview?{needs_review:true}:{}),
+      ...(_shouldJunkFlag(v.title,tier)?{content_flag:'무관'}:ambiguous?{needs_review:true,content_flag:'hidden'}:needsReview?{needs_review:true}:{}),
       ...((tier==='variety'||tier==='show')?{content_formats:[tier]}:{})
     });
   }
