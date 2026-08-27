@@ -2267,7 +2267,7 @@ function _vmApplyTab(){
   document.getElementById('vm-ch-inner').style.display=isCh?'flex':'none';
   // 검수 탭들은 검색 불필요(고정 대상 목록). 채널 탭은 재검색(vm-search-2, 결과 내 좁히기)까진 필요
   // 없지만 1차 검색창은 채널명/핸들 검색용으로 그대로 쓴다(2026-08-21 — 예전엔 여기도 숨겨져 있었음).
-  const isReviewLike=_vmTab==='ss'||_vmTab==='review'||_vmTab==='catlock'||_vmTab==='new';
+  const isReviewLike=_vmTab==='ss'||_vmTab==='review'||_vmTab==='catlock'||_vmTab==='new'||_vmTab==='orphan';
   const searchEl=document.getElementById('vm-search');
   searchEl.style.display=isReviewLike?'none':'';
   searchEl.placeholder=isCh?'채널명·핸들 검색…':'제목·그룹 검색…';
@@ -2425,6 +2425,31 @@ async function _vmLoad(searchTerm,preserveSearch2){
       _vmCacheSync();_vmRenderVideoList();
       return;
     }
+    if(tab==='orphan'){
+      // members에 이름은 있는데 그 행의 group_ko가 그 사람 소속이 아니라 **어느 카드에서도 조회되지
+      // 않는** 태그. 멤버 카드 조건이 and(group_ko.eq.그룹, members.cs.{이름})이라, group_ko가 안 맞으면
+      // 그 태그는 저장돼 있어도 화면에 영향을 주지 못한다(2026-08-27 우즈/조승연 제보로 발견).
+      // 판정은 서버에서 못 한다(로스터가 artists.json에만 있음) → members 비어있지 않은 행만 긁어와
+      // 클라이언트에서 거른다. 미등록 이름(로스터에 아예 없는 이름)은 별개 문제라 제외한다.
+      const{data,error}=await _sbFetchAll(()=>sb.from(_YT_TABLE)
+        .select('id,title,group_ko,thumb,content_flag,members,with_members,with_groups,cover_of_members,cover_of_groups,tags_manual')
+        .not('members','eq','{}')
+        .order('id'));
+      if(myGen!==_vmSearchGen)return;
+      if(error){statusEl.textContent='조회 실패: '+error.message;return;}
+      const _fits=(name,gko)=>ARTISTS.some(a=>a.name.ko===name&&_artistGroups(a).some(g=>g.ko===gko));
+      const _known=name=>ARTISTS.some(a=>a.name.ko===name);
+      const all=(data||[]).map(v=>{
+        const orphans=(v.members||[]).filter(m=>_known(m)&&!_fits(m,v.group_ko));
+        return orphans.length?{...v,_orphans:orphans}:null;
+      }).filter(Boolean).sort((a,b)=>(b.tags_manual?1:0)-(a.tags_manual?1:0)||(a.group_ko||'').localeCompare(b.group_ko||'','ko'));
+      _vmRows=all;
+      const nMan=all.filter(v=>v.tags_manual).length;
+      const nTags=all.reduce((n,v)=>n+v._orphans.length,0);
+      statusEl.textContent=`고아 멤버태그 ${nTags}개 / 영상 ${all.length}개`+(nMan?` (수동 저장 ${nMan}개 — 위쪽부터)`:'')+' — 태그는 있는데 소속 그룹이 안 맞아 어디에도 안 보이는 것들이에요';
+      _vmCacheSync();_vmRenderVideoList();
+      return;
+    }
     if(tab==='catlock'){
       // "OO 최애직캠"처럼 채널마다 반복되는 브랜드명이 붙어도 제목에 "직캠"류 단어가 있으면 _ytClassify가
       // 이미 category='live'로 잡아준다 — 안 잡히는 진짜 문제는 tags_manual=true(사람이 직접 수정)라
@@ -2469,7 +2494,9 @@ async function _vmLoad(searchTerm,preserveSearch2){
 // 않고도 목록에서 바로 파악할 수 있게 멤버·함께한(콜라보)·원곡 정보를 한 줄로 요약(2026-08-18, 사용자 요청).
 function _vmTagsLine(v){
   const parts=[];
-  if((v.members||[]).length)parts.push(`멤버: ${v.members.join(', ')}`);
+  // 고아 멤버태그 탭에선 어느 이름이 문제인지 바로 보여야 한다 — 목록만 보고 "이 영상은 group_ko를
+  // 옮길 것인가, 저 이름을 with_members로 뺄 것인가"를 판단해야 하기 때문(2026-08-27).
+  if((v.members||[]).length)parts.push(`멤버: ${v.members.map(m=>(v._orphans||[]).includes(m)?`⚠️${m}`:m).join(', ')}`);
   const withAll=[...(v.with_members||[]),...(v.with_groups||[])];
   if(withAll.length)parts.push(`함께: ${withAll.join(', ')}`);
   const coverAll=[...(v.cover_of_members||[]),...(v.cover_of_groups||[])];
@@ -5021,10 +5048,32 @@ async function _openVidTagModal(v,ko,originKo){
   // 카드에 넘어온 v에는 members/with_members가 안 실려있는 경우가 많아서(그룹 카드 그리드는 해당 컬럼을
   // 아예 select하지 않음), 모달을 열 때 저장된 값을 DB에서 직접 불러와 체크박스/칩에 반영한다.
   if(sb){
-    const{data,error}=await sb.from(_YT_TABLE).select('members,with_members,with_groups,cover_of_members,cover_of_groups,category,is_short,content_flag,tags_manual,content_formats').eq('id',v.id).maybeSingle();
+    const{data,error}=await sb.from(_YT_TABLE).select('group_ko,members,with_members,with_groups,cover_of_members,cover_of_groups,category,is_short,content_flag,tags_manual,content_formats').eq('id',v.id).maybeSingle();
     if(!_vidTagTarget||_vidTagTarget.id!==v.id)return; // 응답 오는 사이 모달이 닫히거나 다른 영상으로 전환됨
     if(!error&&data){
       const savedMembers=new Set(data.members||[]);
+      // ⚠️ 이 모달의 '소속 그룹' 칸과 멤버 체크박스는 예전엔 **지금 보던 카드의 그룹(ko)** 으로 그렸다.
+      // 그런데 members[]는 '그 행의 group_ko 그룹 안에서 누가 나오는가'라는 뜻이라, 영상의 실제
+      // group_ko가 다르면 여기서 체크한 멤버가 어느 카드에서도 조회되지 않는다(멤버 카드 조건이
+      // and(group_ko.eq.그룹, members.cs.{이름})). 게다가 저장 시 groupKoInput===ko면 group_ko를
+      // 아예 안 써서, 화면엔 맞는 그룹이 떠 있는데 행은 옛 그룹 그대로 남았다 — 실측 고아 태그
+      // 1,155개(수동 51개)가 이렇게 쌓였다(2026-08-27, 우즈/조승연 제보로 발견).
+      // → 응답이 오면 **영상의 실제 소속**으로 폼을 맞추고, 카드 그룹과 다르면 눈에 띄게 알린다.
+      const realGko=data.group_ko||ko;
+      _vidTagTarget.realGko=realGko;
+      const gkoField=document.getElementById('vid-tag-group-ko');
+      const notice=document.getElementById('vid-tag-gko-notice');
+      // 응답 오는 사이 관리자가 그룹 칸을 직접 만졌으면 그 선택을 존중하고 건드리지 않는다.
+      const untouched=_vidTagRenderedGko===ko&&gkoField&&gkoField.value===ko;
+      if(untouched&&realGko!==ko){
+        gkoField.value=realGko;
+        _renderVidTagMemberCheckboxes(realGko,{savedMembers});
+        if(notice){
+          notice.style.display='';
+          notice.textContent='이 영상의 실제 소속은 "'+realGko+'"예요 (지금 보던 카드는 "'+ko+'"). '
+            +'아래 멤버 체크는 '+realGko+' 기준으로 저장돼요 — '+ko+' 영상이 맞다면 이 칸을 "'+ko+'"으로 바꾸고 저장하세요.';
+        }
+      }else if(notice){notice.style.display='none';notice.textContent='';}
       // 아직 아무도 태깅 안 된(=관리자가 손댄 적 없는) 영상일 때만 유닛 추정치를 기본값으로 유지 —
       // 이미 저장된 태깅이 있으면(유닛 멤버를 일부러 뺐을 수도 있으니) DB 값을 그대로 따른다.
       const useGuess=savedMembers.size===0&&!_soloChannel;
@@ -5324,12 +5373,15 @@ document.getElementById('vid-tag-save').addEventListener('click',async e=>{
   const isShort=shortEl?shortEl.checked:undefined;
   const contentFlag=_vidTagFlagChoice;
   const{ko,originKo}=_vidTagTarget;
+  // 비교 대상은 카드 그룹(ko)이 아니라 **이 영상의 실제 소속**이어야 한다 — ko와 비교하면 관리자가
+  // 칸을 실제 소속으로 두든 카드 그룹으로 바꾸든 판정이 뒤집혀서 group_ko가 안 써진다(위 ② 주석).
+  const _curGko=_vidTagTarget.realGko||ko;
   // 소속 그룹(group_ko) 자체를 완전히 다른 그룹으로 옮기는 경우 — 자동 태깅이 아예 엉뚱한 그룹으로
   // 잘못 물었을 때(예: "원곡: X그룹" 오태깅) "그룹멤버안나옴+타그룹멤버 크로스태그"로 우회하지 않고
   // 여기서 바로 소속을 바로잡을 수 있게 함.
   const groupKoInput=(document.getElementById('vid-tag-group-ko')?.value||'').trim();
   let newGko=null;
-  if(groupKoInput&&groupKoInput!==ko){
+  if(groupKoInput&&groupKoInput!==_curGko){
     if(!_isValidVidGroupKo(groupKoInput)){statusEl.textContent=`"${groupKoInput}"는 등록된 그룹명/솔로 아티스트명이 아니에요(정확히 입력해주세요)`;return;}
     newGko=groupKoInput;
   }

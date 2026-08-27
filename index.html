@@ -402,6 +402,11 @@
       <button class="vm-tab" data-tab="ss">검수</button>
       <button class="vm-tab" data-tab="review">그룹배정 검수</button>
       <button class="vm-tab" data-tab="catlock">라이브잠금</button>
+      <!-- 고아 멤버태그(2026-08-27) — members에 이름은 붙었는데 그 행의 group_ko가 그 사람 소속이
+           아니라서 어느 카드에서도 조회되지 않는 태그. 편집 모달이 카드 그룹 기준으로 폼을 그리던
+           버그로 쌓였고(실측 1,155개), 정정 방법이 영상마다 달라서(group_ko 재배정 vs with_members로
+           이동) 자동 처리 대신 목록으로 보여주고 사람이 판단한다. -->
+      <button class="vm-tab" data-tab="orphan">고아 멤버태그</button>
     </div>
     <input type="text" id="vm-search" placeholder="제목·그룹 검색…" autocomplete="off" spellcheck="false">
     <input type="text" id="vm-search-2" placeholder="검색 결과 내 재검색…" autocomplete="off" spellcheck="false" style="display:none">
@@ -912,6 +917,10 @@
     <div class="pp-section" style="margin-top:0 0 10px">
       <label class="pp-label" for="vid-tag-group-ko">소속 그룹(완전히 다른 그룹 영상이면 여기서 바로 옮기기)</label>
       <input id="vid-tag-group-ko" type="text" class="pp-input" list="vid-tag-group-list" placeholder="그룹명" autocomplete="off">
+      <!-- 이 영상의 실제 소속(DB의 group_ko)이 지금 보던 카드의 그룹과 다를 때만 뜬다. 예전엔 이 칸이
+           **카드의 그룹**으로 채워져서, 화면엔 '엑스원'이라 떠 있는데 실제 행은 '이즈나'인 채로 저장돼
+           멤버 태그가 어느 카드에서도 안 보이는 사고가 났다(2026-08-27). -->
+      <div id="vid-tag-gko-notice" style="display:none;font-size:10.5px;color:rgba(255,190,120,0.9);margin-top:5px;line-height:1.45"></div>
       <datalist id="vid-tag-group-list"></datalist>
     </div>
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
