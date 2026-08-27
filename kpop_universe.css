@@ -1501,6 +1501,60 @@
   .gp-lvl-btn[data-lvl="C"].active{background:rgba(155,178,228,0.22);border-color:rgba(155,178,228,0.4);color:#c0d6f0;}
   .gp-lvl-btn[data-lvl=""].active{background:rgba(255,255,255,0.14);border-color:rgba(255,255,255,0.24);color:rgba(220,230,255,0.85);}
   #gp-empty{font-size:12px;color:rgba(155,178,228,0.46);text-align:center;padding:40px 0;}
+
+  /* ── 어드민 도킹 모드 (데스크톱 전용, 2026-08-28) ────────────────────────────────
+     관리자 홈/검수 센터/영상 관리/그룹 우선순위는 원래 z81 중앙 모달이라, 열면 카드(#gc:61,
+     #side-panel/#member-panel:62~63)를 항상 덮었다. 검수하면서 카드를 못 보니 "열고 확인하고 닫고"
+     왕복이 생기고, 대시보드 카드조차 자기를 닫아야(_admHomeClose) 다음 패널을 열 수 있었다.
+     → z58로 카드 **밑에** 깔고 좌측에 도킹한다. 카드는 우측 앵커(#side-panel right:0,
+     #member-panel right:640px)라 가로로 겹치지 않는다.
+
+     구현 메모: 오버레이 루트는 inset:0 그대로 두되 배경/블러를 지우고 pointer-events:none으로
+     투과시킨다. 패널만 pointer-events:auto. 이렇게 하면
+       · window pointerdown/click 가드의 `e.target.closest('[data-modal]')`는 패널 클릭이
+         루트까지 버블링되므로 그대로 동작 (배경 클릭은 애초에 루트에 안 닿음 → 우주 조작 정상)
+       · 호버 툴팁 가드의 elementsFromPoint는 pointer-events:none 요소를 제외하므로
+         루트는 안 잡히고 패널만 잡힌다 → 패널 위에선 툴팁 숨김, 우주 위에선 툴팁 정상
+       · `e.target===e.currentTarget` 백드롭 클릭 닫기 핸들러들은 루트에 이벤트가 안 닿아
+         자동으로 무력화된다 (도킹은 배경 클릭으로 닫히면 안 되므로 의도한 결과)
+     즉 data-modal 속성/가드 코드는 손대지 않아도 도킹 의미론이 그대로 성립한다.
+     ⚠️ 도킹 패널에 _bringToFront()를 쓰면 안 된다 — 카드보다 위로 올라가 목적이 뒤집힌다. */
+  @media(min-width:769px){
+    #adm-home-overlay,#hnn-overlay,#vm-overlay,#gp-overlay{
+      background:none;backdrop-filter:none;-webkit-backdrop-filter:none;
+      z-index:58;pointer-events:none;
+      align-items:stretch;justify-content:flex-start;
+      padding:58px 0 12px 12px;
+    }
+    #adm-home-panel,#hnn-panel,#vm-panel,#gp-panel{
+      pointer-events:auto;
+      width:min(520px,44vw);max-width:none;
+      height:100%;max-height:none;
+      box-shadow:0 12px 44px rgba(0,0,0,0.6);
+    }
+    /* 도킹 폭에선 카드 3열이 너무 좁다 — 2열로 */
+    #adm-cards{grid-template-columns:repeat(auto-fit,minmax(180px,1fr));}
+
+    /* 좌측 슬롯 충돌 해소 — 탐험 패널과 저널 사이드바가 둘 다 left:0·width:300px·z66으로 같은 자리를
+       쓴다(게다가 탐험 패널은 세션마다 자동으로 열린다). 도킹 z58은 그 밑이라 그냥 두면 패널 왼쪽
+       300px가 통째로 가려진다 — 실제로 첫 스크린샷에서 vm 탭 줄이 잘려 나왔다. 어드민 도킹 중에는
+       좌측 패널을 접어둔다. `.open` 클래스는 그대로 두므로(transform만 되돌림) 도킹을 닫는 순간
+       원래 transition을 타고 다시 미끄러져 나온다 — 상태를 따로 저장·복원할 필요가 없다.
+       줌 컨트롤(#zoom-ctrl, z50)도 도킹 밑에 깔리므로 폭만큼 옆으로 민다
+       (기존 `#journal-sidebar.open~#zoom-ctrl{left:318px}`와 같은 대응). */
+    body:has(#adm-home-overlay.open,#hnn-overlay.open,#vm-overlay.open,#gp-overlay.open) #feed-overlay,
+    body:has(#adm-home-overlay.open,#hnn-overlay.open,#vm-overlay.open,#gp-overlay.open) #journal-sidebar{
+      transform:translateX(-300px);
+    }
+    body:has(#adm-home-overlay.open,#hnn-overlay.open,#vm-overlay.open,#gp-overlay.open) #zoom-ctrl{
+      left:calc(min(520px,44vw) + 24px);
+    }
+  }
+  /* 도킹 패널 헤더의 "관리자 홈으로" 되돌아가기 — 홈과 슬롯을 공유하므로 진입 후 복귀 경로가 필요 */
+  .adm-back-home{background:rgba(255,255,255,0.05);border:0.5px solid rgba(255,255,255,0.10);border-radius:7px;color:rgba(200,215,245,0.72);font-size:12px;line-height:1;padding:5px 7px;cursor:pointer;flex-shrink:0;margin-left:auto;margin-right:8px;}
+  .adm-back-home:hover{background:rgba(255,255,255,0.10);color:rgba(220,232,255,0.92);}
+  @media(max-width:768px){.adm-back-home{display:none;}}
+
   #fbv-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.52);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:81;display:none;align-items:center;justify-content:center;}
   #fbv-overlay.open{display:flex;}
   #fbv-panel{width:min(460px,calc(100vw - 24px));max-height:86vh;display:flex;flex-direction:column;background:rgba(12,16,32,0.98);backdrop-filter:blur(40px);-webkit-backdrop-filter:blur(40px);border-radius:20px;box-shadow:0 20px 64px rgba(0,0,0,0.78);border:0.5px solid rgba(255,255,255,0.10);overflow:hidden;}

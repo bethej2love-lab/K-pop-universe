@@ -6087,6 +6087,16 @@ function _admHomeOpen(){
 document.getElementById('sp-adm-home-btn')?.addEventListener('click',_admHomeOpen);
 document.getElementById('adm-home-close')?.addEventListener('click',_admHomeClose);
 document.getElementById('adm-home-overlay')?.addEventListener('click',function(e){if(e.target===e.currentTarget)_admHomeClose();});
+// 데스크톱 도킹 모드(2026-08-28)에선 관리자 홈과 검수/영상/우선순위 패널이 좌측 슬롯 하나를 공유한다.
+// 홈의 카드를 눌러 들어가면 홈이 닫히므로, 돌아올 경로가 없으면 "설정 패널 → 🏠" 왕복이 그대로 남는다.
+// 각 도킹 패널 헤더의 🏠 버튼이 그 복귀 경로 — 현재 패널을 닫고 홈을 다시 연다(같은 슬롯이라 자연스럽게 교체됨).
+document.querySelectorAll('.adm-back-home').forEach(function(btn){
+  btn.addEventListener('click',function(e){
+    e.stopPropagation();
+    btn.closest('[data-modal]')?.classList.remove('open');
+    _admHomeOpen();
+  });
+});
 // 피드백 뷰어를 열면 "마지막으로 본 시각"을 기록 — 다음에 홈에서 "새 피드백 N건"의 기준이 된다.
 document.getElementById('sp-fb-btn')?.addEventListener('click',function(){
   try{localStorage.setItem(_ADM_LS.fbSeen,new Date().toISOString());}catch(e){}
