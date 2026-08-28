@@ -1032,12 +1032,13 @@
     animation:deceased-twinkle 2.8s ease-in-out infinite;}
   @keyframes deceased-twinkle{0%,100%{opacity:0.72;transform:scale(0.9);}50%{opacity:1;transform:scale(1.1);}}
   .gc-mem-name .deceased-star{width:6px;height:6px;margin-left:3px;}
-  /* 사진 유무 분기 없이 항상 세로(3줄: 영문 / 링크)로 통일 — 그룹 사진은 전부 채울 예정이라 has-gc-pic
-     분기가 무의미(2026-08-28, 사용자 요청). 아래 .has-gc-pic 규칙과 gap을 맞춰 사진 로드 전후 흔들림 없앰. */
-  #gc-en-row{display:flex;flex-direction:column;align-items:flex-start;gap:7px;min-width:0;}
+  /* 영문 그룹명 + SNS 링크를 기본 한 줄에 두되, 영문이 길어 한 줄에 안 들어가면 링크만 자동으로 다음 줄로
+     내린다(flex-wrap) — 글자수를 세지 않고 공간 기준 자동. 보통 3줄(이름 / 영문+링크 / 상태), 영문 긴 그룹만
+     4줄(이름 / 영문 / 링크 / 상태). 사진 유무 무관 통일(2026-08-28, 사용자 요청 — 4줄 남발 방지). */
+  #gc-en-row{display:flex;flex-wrap:wrap;align-items:center;gap:5px 8px;min-width:0;}
   /* 최후의 안전장치 — #gc-links가 flex-shrink:0이라 영문명이 안 줄면 SNS 아이콘이 카드 밖으로 밀려
      잘린다(#gc는 overflow:hidden이라 조용히 잘린다). 실제 잘림은 아래 .has-gc-pic 규칙으로 막는다. */
-  #gc-en{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  #gc-en{min-width:0;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
   /* 영어 모드에선 영문 서브(gc-en)가 빈 문자열이라(index.html: _enShow=한국어일때만) 숨겨서 gap이 안 생기게 —
      그래야 영어 모드는 이름+링크 2줄 그대로 유지된다(2026-08-28, 사용자: "en 모드는 2줄, 그대로 두면 됨"). */
   #gc-en:empty{display:none;}
@@ -2360,7 +2361,7 @@
      90개(34%)의 영문명이 잘렸다("TOMORROW X TOGETHER"→"TO..."). 사진을 줄여도 아이콘이 공간의
      대부분을 쓰므로 해결이 안 돼서, 아이콘을 한 줄 내려 영문명에 전체 폭을 준다(2026-08-28).
      ⚠️ 카드 폭은 늘릴 수 없다 — 데스크톱은 #side-panel, 모바일은 시트가 폭을 정한다. */
-  #gc.has-gc-pic #gc-en-row{flex-direction:column;align-items:flex-start;justify-content:flex-start;gap:7px;}
+  #gc.has-gc-pic #gc-en-row{flex-wrap:wrap;align-items:center;gap:5px 8px;}
   #gc.has-gc-pic #gc-en{max-width:100%;}
   /* 사진이 없을 때 뜨는 관리자 업로드 버튼(점선 원)도 같은 크기여야 자리 교대가 자연스럽다.
      #gc-header는 position:static이라 cam-overlay(absolute)의 기준이 되게 relative를 준다. */
