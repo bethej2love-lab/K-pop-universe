@@ -1985,10 +1985,24 @@
   .concert-chevron{font-size:10px;opacity:0.6;transition:transform .2s ease;flex-shrink:0;}
   .concert-teaser.open .concert-chevron{transform:rotate(90deg);}
   .concert-list{display:none;flex-direction:column;gap:8px;margin-top:8px;}
+  /* 예정 / 지난 공연 구분 라벨 — 목록 안에서 섹션 경계만 알려주는 최소한의 표시 */
+  .concert-sec-lbl{font-size:9.5px;font-weight:700;letter-spacing:.06em;color:rgba(150,175,225,0.58);
+    padding:4px 2px 0;text-transform:uppercase;}
+  .concert-sec-lbl:not(:first-child){margin-top:6px;border-top:0.5px solid rgba(255,255,255,0.06);padding-top:8px;}
+  .concert-more-btn{background:rgba(255,255,255,0.05);border:0.5px solid rgba(255,255,255,0.10);
+    border-radius:9px;padding:7px 10px;font-size:10.5px;font-family:inherit;cursor:pointer;
+    color:rgba(185,210,250,0.78);-webkit-tap-highlight-color:transparent;}
+  .concert-more-btn:hover{background:rgba(255,255,255,0.09);color:rgba(215,232,255,0.95);}
   /* KOPIS 오픈API 약관이 요구하는 출처 표기 — 데이터 바로 아래, 눈에 거슬리지 않되 읽히는 크기로 */
   .concert-credit{font-size:9.5px;color:rgba(150,170,210,0.50);letter-spacing:.01em;padding:2px 2px 0;}
   .concert-list.open{display:flex;}
   .concert-item{background:rgba(255,255,255,0.05);border:0.5px solid rgba(255,255,255,0.09);border-radius:10px;padding:8px 10px;font-size:10.5px;color:rgba(200,220,255,0.7);}
+  /* 포스터가 있는 항목만 2열 그리드 — 포스터가 왼쪽 열에서 전체 높이를 차지하고 나머지가 오른쪽에
+     흐른다. 래퍼 div를 새로 만들지 않아 기존 자식 구조(제목·메타·액션·리액션)를 그대로 둔다. */
+  .concert-item.has-poster{display:grid;grid-template-columns:auto 1fr;column-gap:10px;}
+  .concert-item.has-poster>.concert-poster{grid-row:1/-1;}
+  .concert-poster{width:52px;height:74px;object-fit:cover;border-radius:6px;flex-shrink:0;
+    background:rgba(255,255,255,0.06);border:0.5px solid rgba(255,255,255,0.08);}
   .concert-item-title{font-weight:700;font-size:11px;color:rgba(220,235,255,0.82);margin-bottom:3px;}
   .concert-item-meta{color:rgba(160,182,222,0.66);margin-bottom:6px;}
   .concert-venue-chip{color:rgba(170,210,255,0.9);cursor:pointer;text-decoration:underline;text-underline-offset:2px;background:none;border:none;font:inherit;padding:0;}

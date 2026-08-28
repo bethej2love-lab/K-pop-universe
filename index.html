@@ -17137,8 +17137,26 @@ function _dDay(dateStr){
   return Math.round((target-today)/86400000);
 }
 
+// KOPIS 포스터 URL은 http://www.kopis.or.kr/… 로 온다. https 사이트에서 http 이미지는 브라우저가
+// 막거나 자동승격에 실패할 수 있어서 표시 직전에 https로 바꾼다. www가 붙으면 301이 걸리므로 같이 뗀다
+// (실측: https://kopis.or.kr/upload/pfmPoster/… 는 200 image/jpeg).
+// ⚠️ DB 값은 그대로 둔다 — venue·city와 같은 이유(수집 원본 보존).
+function _posterUrl(u){
+  if(!u)return '';
+  return u.replace(/^http:\/\//,'https://').replace(/^https:\/\/www\.kopis\.or\.kr/,'https://kopis.or.kr');
+}
 function _makeConcertItem(ev){
   const item=document.createElement('div');item.className='concert-item';
+  // 포스터가 있으면 왼쪽에 얇게(2026-08-28 사용자 요청). KOPIS 수집분 654/670건에 있다.
+  // 없으면 아예 안 넣어서 레이아웃이 비지 않게 한다(placeholder를 두면 빈 칸만 늘어난다).
+  const p=_posterUrl(ev.poster_url);
+  if(p){
+    const img=document.createElement('img');
+    img.className='concert-poster';img.loading='lazy';img.alt='';img.src=p;
+    // 이미지가 죽어 있으면(옛 공연 포스터가 내려간 경우) 칸을 없애서 제목이 밀리지 않게
+    img.addEventListener('error',()=>img.remove());
+    item.appendChild(img);item.classList.add('has-poster');
+  }
   const title=document.createElement('div');title.className='concert-item-title';title.textContent=ev.title;
   const meta=document.createElement('div');meta.className='concert-item-meta';
   meta.textContent=`${_fmtConcertDate(ev)} · `;
@@ -17248,7 +17266,35 @@ function _renderConcertRow(containerId,events){
   teaser.appendChild(txt);teaser.appendChild(chevron);
 
   const list=document.createElement('div');list.className='concert-list';
-  [...upcoming,...past].forEach(ev=>list.appendChild(_makeConcertItem(ev)));
+  // 예정과 지난 것을 나눠 보여준다(2026-08-28 사용자 요청 — "토글 한 번에 역대 공연이 냅다 쭉
+  // 나열되니 보기 불편"). 데이식스 23건·엔플라잉 35건처럼 이력이 많은 그룹은 한 번에 다 펼치면
+  // 카드가 스크롤로 뒤덮인다. **예정은 전부, 지난 것은 3개만** 보여주고 나머지는 접는다 —
+  // 지금 볼 만한 건 앞으로 있을 공연이고, 과거는 찾을 때만 펼치면 된다.
+  const PAST_HEAD=3;
+  const addSec=(label,items)=>{
+    if(!items.length)return;
+    const lbl=document.createElement('div');lbl.className='concert-sec-lbl';
+    lbl.textContent=`${label} ${items.length}`;
+    list.appendChild(lbl);
+    items.forEach(ev=>list.appendChild(_makeConcertItem(ev)));
+  };
+  addSec(currentLang==='ko'?'예정':'Upcoming',upcoming);
+  if(past.length){
+    const head=past.slice(0,PAST_HEAD),rest=past.slice(PAST_HEAD);
+    addSec(currentLang==='ko'?'지난 공연':'Past',head);
+    if(rest.length){
+      const more=document.createElement('button');
+      more.type='button';more.className='concert-more-btn';
+      more.textContent=currentLang==='ko'?`지난 공연 ${rest.length}개 더보기`:`Show ${rest.length} more`;
+      more.addEventListener('click',e=>{
+        e.stopPropagation();
+        const frag=document.createDocumentFragment();
+        rest.forEach(ev=>frag.appendChild(_makeConcertItem(ev)));
+        more.replaceWith(frag);   // 버튼 자리에 그대로 펼친다(스크롤 위치가 안 튄다)
+      });
+      list.appendChild(more);
+    }
+  }
   // 출처 표기(2026-08-28) — KOPIS 오픈API 이용약관이 "API를 활용해 서비스를 개발할 경우 아래 사항을
   // 반드시 함께 명시"하도록 요구한다. 공연 정보를 실제로 보여주는 이 목록 안에 둔다(별도 페이지가
   // 아니라 데이터 옆에 있어야 표기 의미가 있음). 목록이 열릴 때만 보이므로 평상시 화면은 안 건드린다.
