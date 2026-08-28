@@ -3892,7 +3892,10 @@ const _COVER_EXCLUDE=['be original','original ver','cover story','커버 촬영'
   // 2026-08-27 사용자 요청 — 라이브 탭과 같은 이유로 커버 탭에서도 뺀다. 커버 '무대'가 아니라
   // 촬영/연습 현장 뒷이야기라 실측 표본이 전부 "커버 촬영 현장 비하인드"·"STUDIO CHOOM ORIGINAL
   // behind"류였다(커버 조건 매칭 9,504건 중 비하인드 90 · behind 352).
-  '비하인드','behind'];
+  '비하인드','behind',
+  // 2026-08-28 사용자 요청 — 잡지 화보('cover story'와 같은 부류). 노래 커버가 아니라 디지털 커버 촬영.
+  // 해시태그로 붙어 공백이 없는 표기(#DIGITALCOVER)도 실제로 있어서 같이 넣는다.
+  'digital cover','디지털 커버','digitalcover'];
 function _applyCoverExcludeQuery(q){
   q=q.or('title_norm.ilike.*cover*,title_norm.ilike.*커버*,title_norm.ilike.*원곡*,title_norm.ilike.*original*,content_formats.cs.{cover}');
   for(const k of _COVER_EXCLUDE)q=q.not('title_norm','ilike',`*${k}*`);
