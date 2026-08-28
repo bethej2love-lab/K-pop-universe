@@ -3899,9 +3899,14 @@ const _COVER_EXCLUDE=['be original','original ver','cover story','커버 촬영'
   '비하인드','behind',
   // 2026-08-28 사용자 요청 — 잡지 화보('cover story'와 같은 부류). 노래 커버가 아니라 디지털 커버 촬영.
   // 해시태그로 붙어 공백이 없는 표기(#DIGITALCOVER)도 실제로 있어서 같이 넣는다.
-  'digital cover','디지털 커버','digitalcover'];
+  'digital cover','디지털 커버','digitalcover',
+  // 2026-08-28 사용자 요청 — 잡지 '커버스토리'(붙여쓰기). 노래 커버가 아니라 화보/기사.
+  '커버스토리'];
 function _applyCoverExcludeQuery(q){
-  q=q.or('title_norm.ilike.*cover*,title_norm.ilike.*커버*,title_norm.ilike.*원곡*,title_norm.ilike.*original*,content_formats.cs.{cover}');
+  // 제목 키워드(cover/커버/원곡/original)나 content_formats='cover'뿐 아니라, 원곡을 명시적으로 태깅한 행
+  // (cover_of_groups/cover_of_members 비어있지 않음)도 커버로 인정 — 제목에 '커버/원곡' 단어가 없어도
+  // 태깅만 돼 있으면 커버 탭에 노출된다(2026-08-28, 사용자 요청).
+  q=q.or('title_norm.ilike.*cover*,title_norm.ilike.*커버*,title_norm.ilike.*원곡*,title_norm.ilike.*original*,content_formats.cs.{cover},cover_of_groups.neq.{},cover_of_members.neq.{}');
   for(const k of _COVER_EXCLUDE)q=q.not('title_norm','ilike',`*${k}*`);
   return q;
 }
@@ -7731,6 +7736,10 @@ function _enableDragReorder(containerEl,itemSelector,handleSelector,onReorder){
     const handle=e.target.closest(handleSelector);if(!handle)return;
     const item=handle.closest(itemSelector);if(!item)return;
     e.preventDefault();e.stopPropagation();
+    // 드래그 중 손가락이 목록 밖(패널 배경)으로 나갔다 떼면 그 배경 탭이 패널 닫기(profile-overlay 배경 클릭)로
+    // 잘못 트리거돼 순서 조절 중 패널이 닫히던 문제 — 포인터를 컨테이너에 고정해 밖에서도 이벤트가 여기로만
+    // 오게 한다(2026-08-28, 사용자 제보). pointerup 시 자동 해제.
+    try{containerEl.setPointerCapture(e.pointerId);}catch(_){}
     dragEl=item;pointerId=e.pointerId;moved=false;startY=e.clientY;_ib=null;
     const its=_items();
     _rects=its.map(i=>i.getBoundingClientRect());
@@ -10990,7 +10999,7 @@ function _openPhotoFull(photos,startIdx,onDelete){
 function _addVideosToCol(colId,videos){
   const col=collections.find(p=>p.id===colId);if(!col)return;
   videos.forEach(video=>{
-    if(!col.videos.some(v=>v.u===video.u))col.videos.unshift({t:video.t,u:video.u,thumb:video.thumb,groupKo:video.groupKo||video._apiGroupKo||'',memberKos:video.memberKos||video._apiMemberKos||[]});
+    if(!col.videos.some(v=>v.u===video.u))col.videos.push({t:video.t,u:video.u,thumb:video.thumb,groupKo:video.groupKo||video._apiGroupKo||'',memberKos:video.memberKos||video._apiMemberKos||[]}); // push=맨 뒤(아래) — 최근 담은 게 목록 아래로(2026-08-28, 사용자 요청)
   });
   _setLastUsedCol(colId);
   _saveCollections();renderCollectionSection();_lbUpdateToolbar();
