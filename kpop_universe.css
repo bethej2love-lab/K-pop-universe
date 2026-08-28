@@ -2019,30 +2019,28 @@
   .concert-credit{font-size:9.5px;color:rgba(150,170,210,0.50);letter-spacing:.01em;padding:2px 2px 0;}
   .concert-list.open{display:flex;}
   .concert-item{background:rgba(255,255,255,0.05);border:0.5px solid rgba(255,255,255,0.09);border-radius:10px;padding:8px 10px;font-size:10.5px;color:rgba(200,220,255,0.7);}
-  /* 포스터가 있는 항목만 2열 그리드 — 포스터가 왼쪽 열에서 전체 높이를 차지하고 나머지가 오른쪽에
-     흐른다. 래퍼 div를 새로 만들지 않아 기존 자식 구조(제목·메타·액션·리액션)를 그대로 둔다. */
-  /* minmax(0,1fr): 1fr의 기본 min-width는 auto라 긴 제목이 칸을 넘으면 축소되지 않고 세로로 터진다
-     (2026-08-28 사용자 제보 — 제목·"다녀왔어요"가 한 글자씩 세로로). min을 0으로 풀고, 포스터 외 모든
-     자식(제목·날짜·액션)을 오른쪽 칸(2열)에 고정 + min-width:0으로 정상 줄바꿈/생략되게 한다. */
-  .concert-item.has-poster{display:grid;grid-template-columns:auto minmax(0,1fr);column-gap:10px;}
-  .concert-item.has-poster>.concert-poster{grid-row:1/-1;grid-column:1;}
-  .concert-item.has-poster>:not(.concert-poster){grid-column:2;min-width:0;}
-  .concert-poster{width:52px;height:74px;object-fit:cover;border-radius:6px;flex-shrink:0;
+  /* fable 개선안 반영(2026-08-28): grid 대신 flex. 포스터 옆 body(min-width:0)에 제목·날짜를 세로로 쌓고
+     공연장·예매·다녀왔어요는 칩으로 가로 배치. 제목은 여러 줄 허용(line-height 1.35). min-width:0으로
+     긴 제목 세로 줄바꿈 방지(직전 grid minmax 버그픽스를 flex 구조로 대체). 날짜 포맷 세련화는 다음 단계. */
+  .concert-item.has-poster{display:flex;gap:12px;}
+  .concert-poster{width:60px;height:85px;object-fit:cover;border-radius:8px;flex-shrink:0;
     background:rgba(255,255,255,0.06);border:0.5px solid rgba(255,255,255,0.08);}
-  .concert-item-title{font-weight:700;font-size:11px;color:rgba(220,235,255,0.82);margin-bottom:3px;}
+  .concert-item-body{flex:1;min-width:0;display:flex;flex-direction:column;gap:6px;}
+  .concert-item-title{font-weight:700;font-size:13px;line-height:1.35;color:rgba(226,238,255,0.92);}
+  .concert-item-date{font-size:11px;color:rgba(165,188,228,0.82);}
   .concert-item-meta{color:rgba(160,182,222,0.66);margin-bottom:6px;}
-  .concert-venue-chip{color:rgba(170,210,255,0.9);cursor:pointer;text-decoration:underline;text-underline-offset:2px;background:none;border:none;font:inherit;padding:0;}
-  .concert-venue-chip:hover{color:rgba(220,238,255,1);}
-  .concert-item-actions{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:4px;}
-  .concert-ticket-btn{font-size:10.5px;font-weight:700;color:rgba(200,220,255,0.9);background:rgba(155,178,228,0.16);border:0.5px solid rgba(155,178,228,0.3);border-radius:14px;padding:3px 9px;cursor:pointer;text-decoration:none;display:inline-block;}
-  .concert-attend-btn{font-size:10.5px;font-weight:700;border-radius:14px;padding:3px 9px;cursor:pointer;font-family:inherit;background:rgba(255,255,255,0.055);border:0.5px solid rgba(255,255,255,0.14);color:rgba(192,214,240,0.71);}
-  .concert-attend-btn.on{background:rgba(155,178,228,0.24);color:#c8ddff;border-color:rgba(170,195,255,0.42);}
-  .concert-reaction-row{display:none;gap:4px;margin-top:6px;}
+  .concert-item-chips{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:2px;}
+  .concert-venue-chip{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;color:rgba(190,215,255,0.92);background:rgba(155,178,228,0.10);border:0.5px solid rgba(155,178,228,0.22);border-radius:9px;padding:5px 9px;cursor:pointer;font-family:inherit;}
+  .concert-venue-chip:hover{background:rgba(155,178,228,0.18);color:#dbeaff;}
+  .concert-ticket-btn{display:inline-flex;align-items:center;font-size:11px;font-weight:700;color:rgba(200,220,248,0.9);background:rgba(155,178,228,0.16);border:0.5px solid rgba(155,178,228,0.3);border-radius:9px;padding:5px 10px;cursor:pointer;text-decoration:none;font-family:inherit;}
+  .concert-attend-btn{display:inline-flex;align-items:center;font-size:11px;font-weight:700;border-radius:9px;padding:5px 10px;cursor:pointer;font-family:inherit;background:rgba(255,255,255,0.055);border:0.5px solid rgba(255,255,255,0.14);color:rgba(200,220,248,0.85);}
+  .concert-attend-btn.on{background:rgba(155,178,228,0.26);color:#d5e5ff;border-color:rgba(170,195,255,0.45);}
+  .concert-reaction-row{display:none;gap:4px;margin-top:4px;}
   .concert-reaction-row.open{display:flex;}
   .concert-reaction-btn{font-size:15px;background:none;border:none;cursor:pointer;padding:2px 3px;border-radius:8px;opacity:0.55;transition:opacity .12s,background .12s;}
   .concert-reaction-btn:hover{opacity:0.85;}
   .concert-reaction-btn.sel{opacity:1;background:rgba(155,178,228,0.20);}
-  .concert-note-input{width:100%;box-sizing:border-box;margin-top:6px;background:rgba(255,255,255,0.05);border:0.5px solid rgba(255,255,255,0.12);border-radius:7px;padding:5px 8px;font-size:11px;color:#c0d6f0;font-family:inherit;outline:none;}
+  .concert-note-input{width:100%;box-sizing:border-box;margin-top:4px;background:rgba(255,255,255,0.05);border:0.5px solid rgba(255,255,255,0.12);border-radius:7px;padding:6px 9px;font-size:12px;color:#c0d6f0;font-family:inherit;outline:none;}
   .concert-note-input::placeholder{color:rgba(155,178,228,0.41);}
   /* ── 그룹 카드 디스코그래피(앨범명/커버/발매일/종류/타이틀곡) — 멜론 데이터 기반, 2026-08-11 ──
      기본은 싱글/EP/정규만 노출, 리믹스·OST·라이브·컴필레이션 등은 "+" 눌러야 나옴(데이터는 항상 다

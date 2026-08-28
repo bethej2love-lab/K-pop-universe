@@ -17315,26 +17315,30 @@ function _makeConcertItem(ev){
     img.addEventListener('error',()=>img.remove());
     item.appendChild(img);item.classList.add('has-poster');
   }
+  // fable 개선안 반영(2026-08-28): 포스터 옆 body(min-width:0)에 제목·날짜를 세로로, 공연장·예매·다녀왔어요는
+  // 아래 칩으로 가로 배치. 제목은 여러 줄 허용. (날짜 포맷 8.30–31·요일 세련화는 다음 단계)
+  const body=document.createElement('div');body.className='concert-item-body';
   const title=document.createElement('div');title.className='concert-item-title';title.textContent=ev.title;
-  const meta=document.createElement('div');meta.className='concert-item-meta';
-  meta.textContent=`${_fmtConcertDate(ev)} · `;
-  const venueBtn=document.createElement('button');venueBtn.type='button';venueBtn.className='concert-venue-chip';
-  venueBtn.textContent=`${_venueName(ev.venue)}${ev.city?' ('+_shortCity(ev.city)+')':''}`;
-  venueBtn.addEventListener('click',e=>{e.stopPropagation();_openVenueEvents(ev.venue);});
-  meta.appendChild(venueBtn);
-  item.appendChild(title);item.appendChild(meta);
+  const date=document.createElement('div');date.className='concert-item-date';date.textContent=_fmtConcertDate(ev);
+  body.appendChild(title);body.appendChild(date);
 
-  const actions=document.createElement('div');actions.className='concert-item-actions';
+  const chips=document.createElement('div');chips.className='concert-item-chips';
+  const venueBtn=document.createElement('button');venueBtn.type='button';venueBtn.className='concert-venue-chip';
+  venueBtn.textContent=`${_venueName(ev.venue)}${ev.city?' · '+_shortCity(ev.city):''}`;
+  venueBtn.addEventListener('click',e=>{e.stopPropagation();_openVenueEvents(ev.venue);});
+  chips.appendChild(venueBtn);
   if(ev.official_url){
-    const linkBtn=document.createElement('a');linkBtn.className='concert-ticket-btn';linkBtn.textContent=currentLang==='ko'?'예매 정보 ↗':'Tickets ↗';
+    const linkBtn=document.createElement('a');linkBtn.className='concert-ticket-btn';linkBtn.textContent=currentLang==='ko'?'예매 ↗':'Tickets ↗';
     linkBtn.href=ev.official_url;linkBtn.target='_blank';linkBtn.rel='noopener noreferrer';
     linkBtn.addEventListener('click',e=>e.stopPropagation());
-    actions.appendChild(linkBtn);
+    chips.appendChild(linkBtn);
   }
   const entry=_concertLogEntry(ev.id);
   const attendBtn=document.createElement('button');attendBtn.type='button';
   attendBtn.className='concert-attend-btn'+(entry?' on':'');
   attendBtn.textContent=_attendText(!!entry);
+  chips.appendChild(attendBtn);
+  body.appendChild(chips);
   const reactionRow=document.createElement('div');reactionRow.className='concert-reaction-row'+(entry?' open':'');
   CONCERT_REACTIONS.forEach(emo=>{
     const rb=document.createElement('button');rb.type='button';rb.className='concert-reaction-btn'+(entry&&entry.reaction===emo?' sel':'');
@@ -17373,10 +17377,8 @@ function _makeConcertItem(ev){
     }
     _saveConcertLog();renderConcertLogList();
   });
-  actions.appendChild(attendBtn);
-  item.appendChild(actions);
-  item.appendChild(reactionRow);
-  item.appendChild(noteInput);
+  body.appendChild(reactionRow);body.appendChild(noteInput);
+  item.appendChild(body);
   return item;
 }
 
