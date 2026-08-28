@@ -2021,8 +2021,12 @@
   .concert-item{background:rgba(255,255,255,0.05);border:0.5px solid rgba(255,255,255,0.09);border-radius:10px;padding:8px 10px;font-size:10.5px;color:rgba(200,220,255,0.7);}
   /* 포스터가 있는 항목만 2열 그리드 — 포스터가 왼쪽 열에서 전체 높이를 차지하고 나머지가 오른쪽에
      흐른다. 래퍼 div를 새로 만들지 않아 기존 자식 구조(제목·메타·액션·리액션)를 그대로 둔다. */
-  .concert-item.has-poster{display:grid;grid-template-columns:auto 1fr;column-gap:10px;}
-  .concert-item.has-poster>.concert-poster{grid-row:1/-1;}
+  /* minmax(0,1fr): 1fr의 기본 min-width는 auto라 긴 제목이 칸을 넘으면 축소되지 않고 세로로 터진다
+     (2026-08-28 사용자 제보 — 제목·"다녀왔어요"가 한 글자씩 세로로). min을 0으로 풀고, 포스터 외 모든
+     자식(제목·날짜·액션)을 오른쪽 칸(2열)에 고정 + min-width:0으로 정상 줄바꿈/생략되게 한다. */
+  .concert-item.has-poster{display:grid;grid-template-columns:auto minmax(0,1fr);column-gap:10px;}
+  .concert-item.has-poster>.concert-poster{grid-row:1/-1;grid-column:1;}
+  .concert-item.has-poster>:not(.concert-poster){grid-column:2;min-width:0;}
   .concert-poster{width:52px;height:74px;object-fit:cover;border-radius:6px;flex-shrink:0;
     background:rgba(255,255,255,0.06);border:0.5px solid rgba(255,255,255,0.08);}
   .concert-item-title{font-weight:700;font-size:11px;color:rgba(220,235,255,0.82);margin-bottom:3px;}
