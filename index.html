@@ -6065,6 +6065,10 @@ async function _enrichConnCardFromApi(anchor){
   if(_connAnchor!==anchor)return; // 그 사이 다른 멤버/카드로 전환됨
   _connApiCache.set(_connCacheKey(anchor),data);
   _buildConnContent(isMob()?connSheetBody:connPanelInner);
+  // API가 뒤늦게 도착하면 상대 목록이 늘어난다 — 우주 쪽(연결선·별 밝기)도 같이 갱신해야 카드와
+  // 화면이 어긋나지 않는다(2026-08-28, Fable 자문 반영: "API 데이터가 뒤늦게 도착하면 선이 나중에
+  // 우르르 추가됨"). _buildConnContent가 _collabNamesCache를 다시 채운 뒤라 여기서 부르는 게 맞다.
+  _updateConnLines3d();_applyConnFocus();
 }
 function _getCollabMembers(artist){
   const s=new Set();
@@ -6130,20 +6134,58 @@ function _getCollabSongs(anchor,sel,exactOnly,selGroups){
   }));
 }
 function _clearConnLines3d(){
-  _connLines3d.forEach(l=>scene.remove(l));_connLines3d=[];
+  // 예전엔 scene.remove만 하고 geometry/material을 안 버려서, 카드를 열고 닫을 때마다 GPU 버퍼가
+  // 쌓였다. 아래에서 매번 새 geometry를 만드니 여기서 반드시 정리한다.
+  _connLines3d.forEach(l=>{scene.remove(l);l.geometry&&l.geometry.dispose();l.material&&l.material.dispose();});
+  _connLines3d=[];
+}
+// 연결 카드에서 지금 보여줄 수 있는 상대 이름 전체 — _buildConnContent가 채워둔 캐시를 그대로 쓴다
+// (_getCollabMembers는 무거워서 여기서 다시 부르면 카드 오픈이 두 배로 느려진다). 아직 안 채워졌거나
+// 다른 앵커의 캐시면 null → 그 경우엔 선택된 것만 그린다(카드 본문이 그려진 뒤 다시 호출됨).
+function _connAllNames(){
+  if(!_connAnchor||!_collabNamesCache)return null;
+  const k=_connCacheKey(_connAnchor)+'|';
+  return(_collabCountCacheKey&&_collabCountCacheKey.indexOf(k)===0)?_collabNamesCache:null;
 }
 function _updateConnLines3d(){
   _clearConnLines3d();
   if(!_connAnchor||!_connAnchor._worldPos)return;
   const col=_connAnchor.color||[140,180,255];
   const hexCol=new THREE.Color(col[0]/255,col[1]/255,col[2]/255).multiplyScalar(1.6);
-  _connSelected.forEach(name=>{
-    const other=_findArtistByConnName(name,_connAnchor.group.ko);
-    if(!other||!other._worldPos)return;
-    const geo=new THREE.BufferGeometry().setFromPoints([_connAnchor._worldPos,other._worldPos]);
-    const mat=new THREE.LineBasicMaterial({color:hexCol,transparent:true,opacity:0.72,depthWrite:false});
-    const line=new THREE.Line(geo,mat);scene.add(line);_connLines3d.push(line);
-  });
+  const from=_connAnchor._worldPos;
+  const posOf=name=>{const o=_findArtistByConnName(name,_connAnchor.group.ko);return(o&&o._worldPos)?o._worldPos:null;};
+  const selSet=new Set(_connSelected);
+  const bright=[],dim=[];
+  // 선택된 것 = 밝게. 그 외 전체 = 은은하게.
+  // 왜 전체를 그리나(2026-08-28): 예전엔 _connSelected만 그려서 **카드를 여는 순간 연결선이 0개**였다.
+  // 칩을 하나 골라야 비로소 선이 생기니, 이 서비스의 정체성이자 철학 문서가 "발견" 축의 대표로 꼽는
+  // 연결선이 주인공이 아니라 부산물이 돼 있었다. 이제 카드를 열면 그 사람의 연결이 우주에 바로 보이고,
+  // 칩 선택은 "그중 무엇을 강조할지"를 고르는 동작이 된다(카드=리모컨, 답=우주).
+  // ⚠️ 상한(2026-08-28, Fable 자문 반영): 활동 많은 멤버는 API 보강 뒤 상대가 수백 명이라 별 하나에서
+  // 직선이 수백 개 뻗어 나가면 **헤어볼**이 된다(드로우콜은 아래에서 합쳐 해결되지만 가독성은 별개
+  // 문제다). 콜라보 편수 상위 N개만 선으로 그리고, 나머지는 선 대신 _applyConnFocus의 **별 밝기**로
+  // 표현한다 — 그쪽은 개수가 늘어도 화면이 안 지저분해진다.
+  // (Fable이 제안한 "굵기를 콜라보 수에 비례"는 채택 못 함 — WebGL에서 LineBasicMaterial.linewidth는
+  //  대부분의 드라이버가 무시하고 1px로 고정한다. 굵기를 쓰려면 Line2/LineMaterial 별도 도입이 필요.)
+  const CONN_LINE_MAX=30;
+  let names=(_connAllNames()||[]).filter(n=>!selSet.has(n));
+  if(names.length>CONN_LINE_MAX){
+    const cnt=n=>(_collabCountCache&&_collabCountCache.get(n))||0;
+    names=names.slice().sort((a,b)=>cnt(b)-cnt(a)).slice(0,CONN_LINE_MAX);
+  }
+  names.forEach(name=>{const p=posOf(name);if(p)dim.push(from,p);});
+  _connSelected.forEach(name=>{const p=posOf(name);if(p)bright.push(from,p);});
+  // ⚠️ 인기 멤버는 상대가 수백 명이라 THREE.Line을 하나씩 만들면 드로우콜이 그만큼 늘어난다(발열 지표는
+  // fps가 아니라 드로우콜 — PRINCIPLES). 두 층을 각각 **LineSegments 하나**로 합쳐 총 2콜로 고정한다.
+  const add=(pts,opacity)=>{
+    if(!pts.length)return;
+    const geo=new THREE.BufferGeometry().setFromPoints(pts);
+    const mat=new THREE.LineBasicMaterial({color:hexCol,transparent:true,opacity:opacity,depthWrite:false});
+    const seg=new THREE.LineSegments(geo,mat);scene.add(seg);_connLines3d.push(seg);
+  };
+  // 선택이 있으면 나머지는 더 죽여서 강조 대비를 만든다(선택 전엔 전체가 주인공이므로 조금 더 밝게).
+  add(dim,_connSelected.length?0.10:0.26);
+  add(bright,0.72);
 }
 function _openPanelWidth(){
   if(isMob())return 0;
@@ -6160,13 +6202,16 @@ function _panelOffsetVec(dist){
   return new THREE.Vector3().setFromMatrixColumn(camera.matrix,0).multiplyScalar(shift);
 }
 function _applyConnFocus(){
-  if(!_connAnchor||!_connSelected.length){
-    if(_connAnchor)setFocus(_connAnchor.group.ko);
-    return;
-  }
+  if(!_connAnchor)return;
   const brightGroups=new Set([_connAnchor.group.ko]);
   const brightArtists=new Set([_connAnchor]);
-  _connSelected.forEach(name=>{
+  // 선택이 없으면 **콜라보 상대 전부**를 밝게, 나머지는 페이드(2026-08-28, Fable 자문 반영).
+  // 예전엔 선택이 없으면 앵커 그룹만 setFocus하고 끝이라, 카드를 열어도 우주가 사실상 반응하지 않았다.
+  // 별 밝기는 상대가 수백 명이어도 화면이 지저분해지지 않고 드로우콜도 안 늘어서, 선(상한 30개)보다
+  // 이쪽이 "이 사람의 연결"을 보여주는 주력이다.
+  const src=_connSelected.length?_connSelected:(_connAllNames()||[]);
+  if(!_connSelected.length&&!src.length){setFocus(_connAnchor.group.ko);return;} // 상대 정보가 아직 없으면 기존 동작
+  src.forEach(name=>{
     const other=_findArtistByConnName(name,_connAnchor.group.ko);
     if(other){brightArtists.add(other);brightGroups.add(other.group.ko);}
   });
@@ -6625,6 +6670,7 @@ function openConnCard(artist){
     clearTimeout(_connCloseTimer); // 직전 closeConnCard()의 지연 display:none이 이 열림 이후에 뒤늦게 발화하지 않도록
     document.getElementById('journal-sidebar').classList.remove('open'); // 마이페이지가 열려있는 채로 연결 카드를 열어도 카드가 위로 뜨도록
     _buildConnContent(connSheetBody);
+    _updateConnLines3d(); // 본문이 그려지며 상대 이름 캐시가 채워졌으니 이제 "전체 연결선"을 그릴 수 있다
     connSheetInner.scrollTop=0;
     // 연결 카드도 새로 여는 것이니 같은 불변식 — 게다가 여기엔 스크롤 추적값 리셋도 없어서, 이전 카드에서
     // 내려간 _lastScroll이 남아 첫 스크롤 방향이 반대로 읽히기도 했다.
@@ -6658,6 +6704,7 @@ function openConnCard(artist){
     const collapseEl=document.getElementById('conn-collapse');
     if(collapseEl)collapseEl.style.right=(memberRight+connW)+'px';
     _buildConnContent(connPanelInner);
+    _updateConnLines3d(); // 모바일과 같은 이유 — 본문이 그려진 뒤라야 전체 연결선을 그릴 수 있다
     // 실제로 스크롤되는 건 conn-panel-inner(패딩 래퍼)가 아니라 바깥 conn-panel 자체(overflow-y:auto가
     // 거기 붙어있음) — 여기를 0으로 안 돌리면 이전 앵커에서 스크롤해둔 위치가 그대로 남아있었음.
     connPanelEl.scrollTop=0;
@@ -6668,7 +6715,10 @@ function openConnCard(artist){
 function closeConnCard(){
   _clearConnLines3d();
   _connExitSelMode();
-  if(_connAnchor&&_connSelected.length)setFocus(_connAnchor.group.ko);
+  // ⚠️ 선택 유무와 무관하게 복원한다(2026-08-28). 예전엔 `_connSelected.length`가 있을 때만 되돌렸는데,
+  // 이제는 선택이 없어도 카드를 여는 순간 콜라보 상대 전부를 밝히므로(_applyConnFocus) 안 되돌리면
+  // 카드를 닫아도 우주가 페이드된 채 남는다.
+  if(_connAnchor)setFocus(_connAnchor.group.ko);
   _connAnchor=null;_connSelected=[];
   if(isMob()){
     connSheetEl.classList.remove('bs-open');
