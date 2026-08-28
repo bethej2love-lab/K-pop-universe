@@ -2120,8 +2120,13 @@
   .tt-conn-btn.conn-btn-visible{opacity:1;transform:translateY(-1px);}
   .tt-conn-btn:hover{background:rgba(165,200,255,0.13);border-color:rgba(165,200,255,0.34);color:rgba(215,235,255,0.98);}
   .tt-conn-btn:active{opacity:0.55;}
-  /* 연결 카드 첫 로딩(이름 많은 멤버는 몇 초 걸릴 수 있음) 동안 텍스트 대신 작은 스피너 표시 */
-  .tt-conn-btn.conn-btn-loading{color:transparent;pointer-events:none;position:relative;}
+  /* 연결 카드 첫 로딩(이름 많은 멤버는 몇 초 걸릴 수 있음) 동안 텍스트 대신 작은 스피너 표시.
+     ⚠️ transition:none이 핵심이다(2026-08-28, 사용자 제보 "로딩 아이콘이 연결 텍스트 위로 겹쳐 보임").
+     .tt-conn-btn 기본 규칙에 `color .18s` 트랜지션이 걸려 있어서 글자가 0.18초에 걸쳐 서서히 사라지는데,
+     이 클래스를 붙인 직후 openConnCard가 메인 스레드를 통째로 막는다 — 그러면 트랜지션이 시작만 하고
+     진행을 못 해서, 글자가 그대로 남은 채 그 위에 스피너만 얹힌 상태로 몇 초간 얼어붙는다.
+     로딩 표시는 "부드럽게" 바뀔 이유가 없으므로 즉시 전환한다. */
+  .tt-conn-btn.conn-btn-loading{color:transparent;pointer-events:none;position:relative;transition:none;}
   .tt-conn-btn.conn-btn-loading::after{
     content:'';position:absolute;left:50%;top:50%;width:9px;height:9px;margin:-4.5px 0 0 -4.5px;
     border-radius:50%;border:1.5px solid rgba(185,215,255,0.30);border-top-color:rgba(185,215,255,0.95);
