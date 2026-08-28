@@ -17110,7 +17110,7 @@ async function renderConcertLogList(){
     const title=document.createElement('div');title.className='fav-iname';
     title.textContent=(entry.reaction?entry.reaction+' ':'')+ev.title;
     const sub=document.createElement('div');sub.className='fav-isub';
-    sub.textContent=`${ev.date_start} · ${ev.venue}`;
+    sub.textContent=`${ev.date_start} · ${_venueName(ev.venue)}`;
     info.appendChild(title);info.appendChild(sub);
     if(entry.note){const note=document.createElement('div');note.className='concert-log-note';note.textContent=entry.note;info.appendChild(note);}
     const del=document.createElement('button');del.className='scrap-del';del.textContent='×';del.title='삭제';
@@ -17143,7 +17143,7 @@ function _makeConcertItem(ev){
   const meta=document.createElement('div');meta.className='concert-item-meta';
   meta.textContent=`${_fmtConcertDate(ev)} · `;
   const venueBtn=document.createElement('button');venueBtn.type='button';venueBtn.className='concert-venue-chip';
-  venueBtn.textContent=`${ev.venue}${ev.city?' ('+_shortCity(ev.city)+')':''}`;
+  venueBtn.textContent=`${_venueName(ev.venue)}${ev.city?' ('+_shortCity(ev.city)+')':''}`;
   venueBtn.addEventListener('click',e=>{e.stopPropagation();_openVenueEvents(ev.venue);});
   meta.appendChild(venueBtn);
   item.appendChild(title);item.appendChild(meta);
@@ -17218,6 +17218,14 @@ function _shortCity(c){
   if(_CITY_SHORT[c])return _CITY_SHORT[c];
   return c.replace(/(특별자치시|특별자치도|특별시|광역시|자치시|자치도)$/,'').replace(/도$/,'');
 }
+// 공연장 표기 별칭 — KOPIS 등록명이 실제로 불리는 이름과 다를 때 **표시만** 바꾼다(2026-08-28).
+// ⚠️ DB 값을 고치면 안 된다: 수집 중복 판정 키가 (title, date_start, venue)라, venue를 바꿔두면
+//    다음 수집 때 KOPIS가 주는 원래 이름을 "없는 행"으로 보고 다시 넣어 중복이 되살아난다.
+//    그래서 데이터는 KOPIS 표기 그대로 두고 여기서만 갈아끼운다(지역명 축약과 같은 이유).
+// "(구. ○○)"·괄호 병기처럼 KOPIS 표기가 이미 충분히 알아볼 만한 것은 굳이 손대지 않는다 —
+// 실제로 헷갈리는 것만 최소한으로 넣을 것.
+const _VENUE_ALIAS={'인스파이어 엔터테인먼트 리조트':'인스파이어 아레나'};
+const _venueName=v=>_VENUE_ALIAS[v]||v||'';
 function _renderConcertRow(containerId,events){
   const row=document.getElementById(containerId);
   if(!row)return;
@@ -17385,7 +17393,7 @@ async function _openVenueEvents(venue){
   const overlay=document.getElementById('venue-overlay');
   const titleEl=document.getElementById('venue-panel-title');
   const listEl=document.getElementById('venue-panel-list');
-  titleEl.textContent=venue;
+  titleEl.textContent=_venueName(venue); // 조회는 원래 값으로, 표시만 별칭(위 _VENUE_ALIAS 주석)
   listEl.innerHTML='<div class="gc-ch-msg">불러오는 중…</div>';
   overlay.classList.add('open');
   if(!sb)return;
