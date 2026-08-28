@@ -130,8 +130,25 @@ const sq = s => `'${String(s || '').replace(/'/g, "''")}'`;
 
 async function main() {
   if (args.selftest) return selftest();
-  const key = args.key || process.env.KOPIS_KEY;
-  if (!key) { console.error('키가 필요합니다: --key=... (또는 KOPIS_KEY 환경변수)\n발급: https://www.data.go.kr/data/15097805/openapi.do (자동승인)'); process.exit(1); }
+  // 키는 세 곳에서 찾는다. 우선순위대로: --key= > KOPIS_KEY 환경변수 > 레포 루트의 .kopis_key 파일.
+  // 파일을 마지막에 두되 자동으로 읽는 이유: 명령줄에 키를 직접 적으면 셸 히스토리와 대화 기록에
+  // 그대로 남는다. 파일은 .gitignore로 커밋도 막아둔다.
+  const keyFile = path.join(ROOT, '.kopis_key');
+  const key = args.key || process.env.KOPIS_KEY
+    || (fs.existsSync(keyFile) ? fs.readFileSync(keyFile, 'utf8').trim() : '');
+  if (!key) {
+    console.error([
+      '인증키를 못 찾았습니다. 아래 중 하나로 넣어주세요(권장: 파일).',
+      '',
+      `  1) 파일  : ${keyFile}  ← 이 파일에 키만 한 줄로 저장 (.gitignore로 커밋 차단됨)`,
+      '  2) 환경변수: KOPIS_KEY=...',
+      '  3) 인자   : --key=...   (셸 히스토리에 남으니 비권장)',
+      '',
+      '발급: https://kopis.or.kr/por/cs/openapi/openApiUseSend.do?menuId=MNU_00074',
+      '⚠️ 키가 Encoding/Decoding 두 종류로 왔다면 **Decoding** 키를 넣으세요(스크립트가 자체 인코딩합니다).',
+    ].join('\n'));
+    process.exit(1);
+  }
   const from = args.from || '20260101', to = args.to || '20261231';
   const minConf = args['min-conf'] || 'strong';
   const genre = typeof args.genre === 'string' ? args.genre : null;
