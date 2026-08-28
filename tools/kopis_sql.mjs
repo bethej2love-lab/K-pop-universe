@@ -33,14 +33,23 @@ const args = Object.fromEntries(process.argv.slice(2).map(s => { const m = s.mat
 const rows = JSON.parse(fs.readFileSync(path.join(ROOT, 'events.matched.json'), 'utf8'));
 const sq = s => `'${String(s ?? '').replace(/'/g, "''")}'`;
 
-// type은 NOT NULL인데 기본값이 없어 반드시 넣어야 한다. 기존 행이 쓰는 어휘와 어긋나면
-// 필터링이 갈라지므로, 값은 --type=... 으로 바깥에서 받는다(기본은 제목에서 추론).
+// type은 NOT NULL인데 기본값이 없어 반드시 넣어야 한다.
+// ⚠️ **기존 행의 어휘를 그대로 따른다**(2026-08-28 실측: 콘서트7 · 팬미팅2 · 팬콘1 · 페스티벌1).
+//    처음엔 영문('concert','fanmeeting'…)으로 넣을 뻔했는데, 그러면 같은 뜻이 두 어휘로 갈려
+//    나중에 type으로 거르는 화면이 절반만 보게 된다. 스키마만 맞추고 **어휘를 안 맞추는 것**도
+//    같은 종류의 사고다.
+// ⚠️ 기존 데이터가 팬미팅과 팬콘을 **따로** 두고 있어 추론기도 둘을 나눈다(원래는 뭉뚱그렸다).
+//    쇼케이스는 기존 행에 없지만 콘서트로 뭉뚱그리기보다 자연스러운 확장이라 새 값으로 둔다.
 const FIXED_TYPE = typeof args.type === 'string' ? args.type : null;
 const inferType = t =>
-  /팬미팅|FAN\s?MEETING|FANMEETING|FAN[- ]?CON\b|FANCON|팬콘/i.test(t) ? 'fanmeeting'
-    : /페스티벌|FESTIVAL/i.test(t) ? 'festival'
-      : /쇼케이스|SHOWCASE/i.test(t) ? 'showcase'
-        : 'concert';
+  /팬\s?콘\b|FAN[-\s]?CON(?!CERT)|FANCON/i.test(t) ? '팬콘'
+    : /팬미팅|FAN\s?MEETING|FANMEETING/i.test(t) ? '팬미팅'
+      // ⚠️ 'Festival'이 투어·앨범 이름의 일부인 경우가 많다 — "Red Velvet SPECIAL LIVE, The ReVe
+      //    Festival", "GOT7 CONCERT: NESTFEST"는 그룹 자기 콘서트지 페스티벌이 아니다.
+      //    제목에 CONCERT/LIVE/TOUR가 같이 있으면 그쪽이 실체라 콘서트로 둔다.
+      : (/페스티벌|FESTIVAL|FEST\b/i.test(t) && !/CONCERT|콘서트|LIVE|TOUR|투어/i.test(t)) ? '페스티벌'
+        : /쇼케이스|SHOWCASE/i.test(t) ? '쇼케이스'
+          : '콘서트';
 
 // ── 이벤트 성격 필터 (2026-08-28, 716건 눈검사에서 나온 것) ─────────────────────
 // 이름 매칭 문제가 아니라 **이 행이 애초에 "공연"인가**의 문제라 여기서 거른다(재수집 불필요).
