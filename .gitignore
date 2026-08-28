@@ -1,0 +1,21 @@
+# API 키·비밀값 (2026-08-28) — 절대 커밋되면 안 되는 것들.
+# KOPIS 인증키는 여기 파일로 두고 환경변수로 읽는다(명령줄에 키를 직접 적으면 셸 히스토리와
+# 대화 기록에 그대로 남는다):
+#   KOPIS_KEY=$(cat .kopis_key) node tools/kopis_events.mjs --from=20260801 --probe
+.kopis_key
+*.key
+.env
+.env.*
+
+# 수집 산출물 — SQL은 검토 후 admin 세션에서 실행하고 레포엔 안 남긴다
+events.sql
+*.local.sql
+
+# 작업 부스러기
+node_modules/
+*.log
+*.tmp
+.vidsec.tmp
+.vidfn.tmp
+index.html.bak*
+kpop_universe.html.bak*
