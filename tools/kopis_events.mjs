@@ -215,6 +215,30 @@ async function fetchDetail(key, mt20id) {
   };
 }
 
+// 목록 API는 공연장을 시설 단위로만 준다('올림픽공원'). 상세 API의 fcltynm 은 홀까지 준다
+// ('올림픽공원 (핸드볼경기장)'). 정규화 규칙은 kopis_venue.mjs 한 곳에만 두고 여기선 갖다 쓴다 —
+// 규칙이 두 곳에 갈라지면 수집분과 손입력분이 서로 다른 이름으로 들어간다.
+async function normalizeVenues(events, key) {
+  if (!events.length) return;
+  const { canonical } = await import('./kopis_venue.mjs');
+  let done = 0, changed = 0;
+  const CONC = 4;
+  for (let i = 0; i < events.length; i += CONC) {
+    await Promise.all(events.slice(i, i + CONC).map(async e => {
+      try {
+        const res = await fetch(`${ENDPOINT}/${encodeURIComponent(e.id)}?service=${encodeURIComponent(key)}`);
+        const fclty = pick(await res.text(), 'fcltynm');
+        const c = fclty && canonical(fclty);
+        if (c && c !== e.venue) { e.venue = c; changed++; }
+      } catch (err) { /* 한 건 실패해도 목록 API가 준 이름이 남으므로 치명적이지 않다 */ }
+    }));
+    done += Math.min(CONC, events.length - i);
+    process.stderr.write(`\r[venue] ${done}/${events.length} 홀 이름 복구… (교정 ${changed})`);
+    await new Promise(r => setTimeout(r, 120));
+  }
+  process.stderr.write(`\n[venue] 공연장 이름 ${changed}건 홀 단위로 교정\n`);
+}
+
 const sq = s => `'${String(s || '').replace(/'/g, "''")}'`;
 
 async function main() {
@@ -353,6 +377,12 @@ async function main() {
     }
     process.stderr.write(`\n[detail] 출연진으로 추가 매칭 ${rescued}건\n`);
   }
+
+  // 공연장 이름을 홀 단위까지 살린다(2026-08-28). 목록 API의 prfplcnm 은 시설 단위라 '올림픽공원'
+  // 하나에 체조경기장·올림픽홀·핸드볼경기장이 뒤섞인다 — 그대로 두면 장소별 모아보기가 뭉개지고,
+  // 나중에 고치려 들면 이미 들어간 행을 전부 다시 매칭해야 해서 훨씬 비싸다. 매칭된 것만 상세를
+  // 부르므로 요청 수는 매칭 건수만큼이다.
+  await normalizeVenues(matched, key);
 
   // 매칭 결과를 JSON으로도 남긴다(2026-08-28). 수집은 몇 분씩 걸리는데 SQL 형식(컬럼·중복키 처리)은
   // 실제 스키마를 보고 정해야 해서, 형식을 바꿀 때마다 다시 긁는 건 낭비다. 이 파일이 있으면

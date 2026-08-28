@@ -130,14 +130,17 @@ if (dropped.length) {
 
 const out = [];
 out.push(`-- KOPIS 공연목록 → kpop_events  (생성 ${keep.length}건 / 매칭 ${rows.length}건 중 ${dropped.length}건 제외)`);
-out.push(`-- 스키마 확인 후 재생성: id는 DB가 만든다(gen_random_uuid), 중복은 (title,date_start,venue)로 막는다.`);
+out.push(`-- 스키마 확인 후 재생성: id는 DB가 만든다(gen_random_uuid), 중복은 (title,date_start)로 막는다.`);
 out.push(`-- 여러 번 실행해도 안전하다(이미 있으면 건너뜀).`);
 out.push(`-- 출처: 공연예술통합전산망(KOPIS) 오픈API`);
 out.push('');
 // ⚠️ 행마다 `insert … where not exists (select … title='…' and date_start='…' and venue='…')`를
 // 반복하면 제목·날짜·공연장이 **두 번씩** 들어가 파일이 두 배로 커진다(376KB → 27개 파일로 쪼개야
 // 했다). VALUES 목록 하나로 묶고 not exists는 그 목록을 참조하면 텍스트가 절반 아래로 줄고, 붙여넣기
-// 횟수도 그만큼 준다. 중복 방지 동작은 완전히 같다(같은 title+date_start+venue면 건너뜀).
+// 횟수도 그만큼 준다. 중복 방지 동작은 완전히 같다(같은 title+date_start면 건너뜀).
+// ⚠️ 키에서 venue를 뺐다(2026-08-28). 공연장 이름을 홀 단위로 표준화하면서 DB의
+//    '올림픽공원 체조경기장'과 KOPIS 목록 API의 '올림픽공원'이 안 맞게 됐고, venue가 키에 있으면
+//    같은 공연이 매 수집마다 새 행으로 다시 들어간다. 같은 팀이 같은 날 두 공연장에 설 수는 없다.
 const BATCH = 60;
 const typeCount = {};
 const vals = [];
@@ -156,7 +159,7 @@ for (let i = 0; i < vals.length; i += BATCH) {
     `insert into kpop_events (title,type,date_start,date_end,venue,city,country,groups,poster_url,official_url)\n` +
     `select v.title,v.type,v.date_start::date,v.date_end::date,v.venue,v.city,v.country,v.groups::text[],v.poster_url,v.official_url\n` +
     `from (values\n${chunk.join(',\n')}\n) as v(title,type,date_start,date_end,venue,city,country,groups,poster_url,official_url)\n` +
-    `where not exists (select 1 from kpop_events k where k.title=v.title and k.date_start=v.date_start::date and k.venue=v.venue);`
+    `where not exists (select 1 from kpop_events k where k.title=v.title and k.date_start=v.date_start::date);`
   );
 }
 console.log(out.join('\n'));

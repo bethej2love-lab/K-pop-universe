@@ -53,7 +53,7 @@ const PROBES = [
   ['adm-home-overlay', '관리자 홈'],
   ['gp-overlay', '그룹 우선순위'],
 ];
-const ADMIN_IDS = ['sp-yt-sec', 'vm-overlay', 'adm-home-overlay', 'hnn-overlay', 'gp-overlay', 'vid-tag-overlay', 'fbv-overlay', 'vm-coverset-overlay'];
+const ADMIN_IDS = ['sp-yt-sec', 'vm-overlay', 'adm-home-overlay', 'hnn-overlay', 'gp-overlay', 'vid-tag-overlay', 'fbv-overlay', 'vm-coverset-overlay', 'ev-overlay'];
 
 let pass = true;
 function fail(msg) { pass = false; console.log(`❌ ${msg}`); }
@@ -161,7 +161,7 @@ async function main() {
     else if (!a.secInPanel) fail('[관리자 복원] sp-yt-sec이 #settings-panel 안에 안 들어감 — 설정 패널에서 안 보인다');
     else if (!a.vmInBody) fail('[관리자 복원] vm-overlay가 body 직속이 아님 — 오버레이 스태킹이 깨질 수 있음');
     else if (!a.text) fail('[관리자 복원] 주입은 됐는데 텍스트가 DOM에 안 잡힘');
-    else ok('[관리자 복원] 8블록 전부 주입 + sp-yt-sec은 설정 패널 안 / 오버레이는 body 직속');
+    else ok(`[관리자 복원] ${ADMIN_IDS.length}블록 전부 주입 + sp-yt-sec은 설정 패널 안 / 오버레이는 body 직속`);
 
     // ── 7. 두 번 호출해도 중복 주입되면 안 된다 ─────────────────────────────────────
     const dup = await ev(`(function(){_mountAdminMarkup();_mountAdminMarkup();

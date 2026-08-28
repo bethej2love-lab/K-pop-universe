@@ -6183,3 +6183,270 @@ document.getElementById('adm-stop-routine')?.addEventListener('click',function()
   _admRoutineStop=true;
   _admSetLog('중단 요청됨 — 지금 단계가 끝나면 멈춰요(진행 중인 단계는 안전하게 마무리).');
 });
+
+// ══════════════════════════════════════════════════════════════════════════
+// 공연(콘서트/팬미팅) 직접 추가 — #ev-overlay
+//
+// KOPIS는 국내 등록 공연만 다룬다. 해외 투어·소규모 팬미팅·자체 명칭 공연은 수집으로 안 잡혀서
+// 그 구멍은 사람이 메울 수밖에 없다(2026-08-28 사용자 요청).
+//
+// 공연장은 **DB에 이미 쓰인 이름 중에서 고르는 게 기본**이다. 같은 장소가 '올림픽공원' /
+// '올림픽공원 체조경기장' / 'KSPO돔' 으로 갈라지면 장소별 모아보기(_openVenueSheet)가 쪼개지고,
+// 그때부터는 되돌리기가 훨씬 비싸진다. 목록에 없을 때만 직접 입력을 연다.
+// ══════════════════════════════════════════════════════════════════════════
+const _EV_TYPES=['콘서트','팬미팅','팬콘','페스티벌']; // DB의 type CHECK 제약과 같은 값이어야 한다
+let _evVenues=null;   // [{name,city,count}] — 패널 열 때 DB에서 1회 로드
+let _evCountries=[];
+let _evWho=[];        // 선택한 그룹/멤버 이름 배열 → groups 컬럼
+let _evAdded=[];      // 이번 세션에 넣은 것 [{id,title,date_start}]
+
+function _evEl(id){return document.getElementById(id);}
+// 이 프로젝트엔 공용 이스케이프 헬퍼가 없다. option value로 공연장·지역 이름이 들어가니 여기서만 쓰는 걸 둔다.
+function _evEsc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function _evStatus(msg,tone){
+  const el=_evEl('ev-status');if(!el)return;
+  el.textContent=msg||'';
+  el.className=tone||'';
+}
+
+// DB에 쓰인 공연장/지역/국가를 모아 온다. 새로 적은 이름은 다음에 열 때 목록에 올라온다.
+async function _evLoadVenues(force){
+  if(_evVenues&&_evVenues.length&&!force)return _evVenues;
+  let data=null,error=null;
+  try{
+    // 응답이 안 오면 select가 '불러오는 중…'에 갇혀 공연장을 아예 못 고르게 된다. 실제로 그렇게
+    // 굳는 걸 보고 타임아웃을 넣었다 — 목록을 못 받아도 직접 입력으로는 넣을 수 있어야 한다.
+    const res=await Promise.race([
+      sb.from('kpop_events').select('venue,city,country').range(0,4999),
+      new Promise((_,rej)=>setTimeout(()=>rej(new Error('시간 초과')),8000))
+    ]);
+    data=res&&res.data;error=res&&res.error;
+  }catch(e){error=e;}
+  if(error||!data){
+    _evVenues=[];
+    _evStatus('공연장 목록을 못 불러왔어요 — 직접 입력으로 넣을 수 있어요.','ev-err');
+    return _evVenues;
+  }
+  const byName=new Map(),cities=new Set(),countries=new Set();
+  data.forEach(r=>{
+    const v=(r.venue||'').trim();
+    if(r.city)cities.add(r.city.trim());
+    if(r.country)countries.add(r.country.trim());
+    if(!v)return;
+    const cur=byName.get(v)||{name:v,city:(r.city||'').trim(),count:0};
+    cur.count++;
+    if(!cur.city&&r.city)cur.city=r.city.trim();
+    byName.set(v,cur);
+  });
+  _evVenues=[...byName.values()].sort((a,b)=>b.count-a.count||a.name.localeCompare(b.name,'ko'));
+  _evCountries=[...countries].sort();
+  const cityDl=_evEl('ev-city-list');
+  if(cityDl)cityDl.innerHTML=[...cities].sort().map(c=>'<option value="'+_evEsc(c)+'">').join('');
+  const cDl=_evEl('ev-country-list');
+  if(cDl)cDl.innerHTML=_evCountries.map(c=>'<option value="'+_evEsc(c)+'">').join('');
+  return _evVenues;
+}
+
+function _evFillVenueSelect(keep){
+  const sel=_evEl('ev-venue');if(!sel)return;
+  const prev=keep||sel.value;
+  const list=_evVenues||[];
+  sel.innerHTML='<option value="">— 공연장 선택 —</option>'
+    +list.map(v=>'<option value="'+_evEsc(v.name)+'">'+_evEsc(v.name)+(v.city?' · '+_evEsc(_shortCity(v.city)):'')+'</option>').join('')
+    +'<option value="__custom__">＋ 목록에 없음 · 직접 입력</option>';
+  if(prev)sel.value=prev;
+  if(sel.value!==prev)sel.value='';
+  // 목록을 못 받았으면 고를 게 없으니 직접 입력을 미리 펼쳐둔다(빈 select 앞에서 막히지 않게).
+  if(!list.length&&!prev){
+    sel.value='__custom__';
+    const box=_evEl('ev-venue-custom');
+    if(box)box.style.display='block';
+  }
+}
+
+// 직접 입력한 이름이 기존 공연장의 표기 흔들림일 가능성을 알려준다. 막지는 않고 경고만 — 진짜 새
+// 공연장일 수도 있으니 판단은 사람이 한다.
+function _evNearestVenues(name){
+  const q=(name||'').replace(/[\s()·・.,]/g,'').toLowerCase();
+  if(q.length<2)return [];
+  return (_evVenues||[]).filter(v=>{
+    const t=v.name.replace(/[\s()·・.,]/g,'').toLowerCase();
+    return t.includes(q)||q.includes(t);
+  }).slice(0,4).map(v=>v.name);
+}
+
+function _evRenderWhoChips(){
+  const box=_evEl('ev-who-chips');if(!box)return;
+  box.innerHTML='';
+  _evWho.forEach(name=>{
+    const chip=document.createElement('span');chip.className='ev-chip';
+    chip.textContent=name;
+    const x=document.createElement('button');x.type='button';x.textContent='×';
+    x.addEventListener('click',()=>{_evWho=_evWho.filter(n=>n!==name);_evRenderWhoChips();});
+    chip.appendChild(x);box.appendChild(chip);
+  });
+}
+
+// 그룹명과 멤버명을 같은 목록에서 찾는다 — 솔로 공연은 groups 컬럼에 멤버 이름이 들어가고,
+// 카드 쪽(_loadMemberConcertRow)이 그 이름으로 바로 조회하기 때문에 별도 구분이 필요 없다.
+function _evRenderWhoResults(q){
+  const box=_evEl('ev-who-results');if(!box)return;
+  box.innerHTML='';
+  const s=(q||'').trim().toLowerCase();
+  if(s.length<1)return;
+  const hits=[];
+  Object.keys(GROUPS).forEach(gko=>{
+    const g=GROUPS[gko];
+    const en=String((g&&g.name&&g.name.en)||(g&&g.en)||'').toLowerCase();
+    if(gko.toLowerCase().includes(s)||(en&&en.includes(s)))hits.push({name:gko,sub:'그룹'});
+  });
+  (typeof ARTISTS!=='undefined'?ARTISTS:[]).forEach(a=>{
+    const ko=(a&&a.name&&a.name.ko)||'';if(!ko)return;
+    const en=String((a&&a.name&&a.name.en)||'').toLowerCase();
+    if(ko.toLowerCase().includes(s)||(en&&en.includes(s))){
+      const gs=(_artistGroups(a)||[]).map(g=>g.ko).join(', ');
+      hits.push({name:ko,sub:gs||'솔로'});
+    }
+  });
+  const seen=new Set();
+  hits.filter(h=>{const k=h.name+'|'+h.sub;if(seen.has(k))return false;seen.add(k);return true;})
+    .slice(0,12).forEach(h=>{
+      const row=document.createElement('button');row.type='button';row.className='ev-res';
+      row.innerHTML='<b>'+_evEsc(h.name)+'</b><span>'+_evEsc(h.sub)+'</span>';
+      row.addEventListener('click',()=>{
+        if(!_evWho.includes(h.name))_evWho.push(h.name);
+        _evRenderWhoChips();
+        const inp=_evEl('ev-who-search');if(inp)inp.value='';
+        box.innerHTML='';
+      });
+      box.appendChild(row);
+    });
+}
+
+// 같은 공연을 두 번 넣는 게 제일 흔한 실수라 저장 전이 아니라 **입력 중에** 알려준다.
+let _evDupTimer=null;
+function _evCheckDup(){
+  clearTimeout(_evDupTimer);
+  _evDupTimer=setTimeout(async()=>{
+    const el=_evEl('ev-dup');if(!el)return;
+    const title=(_evEl('ev-name')?.value||'').trim();
+    const start=_evEl('ev-start')?.value||'';
+    if(!title||!start){el.textContent='';return;}
+    const{data}=await sb.from('kpop_events').select('id,title,date_start,venue').eq('date_start',start).limit(50);
+    const norm=s=>String(s||'').replace(/\s+/g,'').toLowerCase();
+    const hit=(data||[]).find(r=>norm(r.title)===norm(title));
+    el.textContent=hit?('⚠ 같은 날짜에 같은 이름의 공연이 이미 있어요 — '+(hit.venue||'장소 미상')):'';
+  },350);
+}
+
+function _evRenderAdded(){
+  const box=_evEl('ev-recent');if(!box)return;
+  box.innerHTML='';
+  if(!_evAdded.length)return;
+  const head=document.createElement('div');head.className='ev-recent-head';
+  head.textContent='이번에 추가한 공연 '+_evAdded.length+'건';
+  box.appendChild(head);
+  _evAdded.forEach(r=>{
+    const row=document.createElement('div');row.className='ev-recent-row';
+    const t=document.createElement('span');t.textContent=r.date_start+' · '+r.title;
+    const del=document.createElement('button');del.type='button';del.textContent='되돌리기';
+    del.addEventListener('click',async()=>{
+      const{error}=await sb.from('kpop_events').delete().eq('id',r.id);
+      if(error){_evStatus('되돌리기 실패: '+error.message,'ev-err');return;}
+      _evAdded=_evAdded.filter(x=>x.id!==r.id);
+      _evRenderAdded();
+      _evStatus('되돌렸어요.','ev-ok');
+    });
+    row.appendChild(t);row.appendChild(del);box.appendChild(row);
+  });
+}
+
+async function _evSave(){
+  const title=(_evEl('ev-name')?.value||'').trim();
+  const type=_evEl('ev-type')?.value||'';
+  const start=_evEl('ev-start')?.value||'';
+  let end=_evEl('ev-end')?.value||'';
+  const sel=_evEl('ev-venue')?.value||'';
+  const venue=(sel==='__custom__'?(_evEl('ev-venue-custom')?.value||''):sel).trim();
+  const city=(_evEl('ev-city')?.value||'').trim();
+  const country=(_evEl('ev-country')?.value||'').trim()||'대한민국';
+  const poster=(_evEl('ev-poster')?.value||'').trim();
+  const official=(_evEl('ev-official')?.value||'').trim();
+
+  if(!title){_evStatus('공연명을 적어줘.','ev-err');return;}
+  if(!_EV_TYPES.includes(type)){_evStatus('종류가 이상해.','ev-err');return;}
+  if(!start){_evStatus('시작일을 골라줘.','ev-err');return;}
+  if(!venue){_evStatus('공연장을 고르거나 직접 적어줘.','ev-err');return;}
+  if(!_evWho.length){_evStatus('출연 그룹/멤버를 하나 이상 골라줘.','ev-err');return;}
+  if(!end)end=start;
+  if(end<start){_evStatus('종료일이 시작일보다 빨라.','ev-err');return;}
+
+  _evStatus('저장 중…','');
+  const row={title:title,type:type,date_start:start,date_end:end,venue:venue,city:city,country:country,groups:_evWho.slice()};
+  if(poster)row.poster_url=poster;
+  if(official)row.official_url=official;
+  const{data,error}=await sb.from('kpop_events').insert(row).select('id').single();
+  if(error){_evStatus('저장 실패: '+error.message,'ev-err');return;}
+
+  _evAdded.unshift({id:data.id,title:title,date_start:start});
+  _evRenderAdded();
+  // 한 팀의 투어 날짜를 연달아 넣는 일이 많아서 출연·공연장·지역은 남기고 공연명·날짜만 비운다.
+  _evEl('ev-name').value='';
+  _evEl('ev-start').value='';
+  _evEl('ev-end').value='';
+  _evEl('ev-poster').value='';
+  _evEl('ev-official').value='';
+  _evEl('ev-dup').textContent='';
+  _evStatus('저장했어요. 같은 팀 다음 공연을 이어서 넣을 수 있어요.','ev-ok');
+  // 새로 적은 공연장을 목록에 바로 반영해서, 두 번째 공연부터는 고르기만 하면 되게 한다.
+  if(sel==='__custom__'){
+    _evVenues=null;
+    await _evLoadVenues(true);
+    _evFillVenueSelect(venue);
+    _evEl('ev-venue-custom').style.display='none';
+    _evEl('ev-venue-near').textContent='';
+  }
+  _evEl('ev-name').focus();
+}
+
+async function _evOpen(){
+  const ov=_evEl('ev-overlay');if(!ov)return;
+  ov.classList.add('open');
+  if(typeof _bringToFront==='function')_bringToFront(ov);
+  // 지난번에 목록을 못 받았으면 다시 연다 = 다시 시도할 기회다. options 유무가 아니라
+  // 목록을 실제로 갖고 있는지로 판단한다(실패 시 '직접 입력' 옵션만 남아 옵션 수는 0이 아니다).
+  const sel=_evEl('ev-venue');
+  if(sel&&!(_evVenues&&_evVenues.length)){
+    sel.innerHTML='<option value="">불러오는 중…</option>';
+    await _evLoadVenues();
+    _evFillVenueSelect();
+  }
+  _evEl('ev-name')?.focus();
+}
+
+_evEl('sp-ev-btn')?.addEventListener('click',_evOpen);
+_evEl('ev-close')?.addEventListener('click',()=>_evEl('ev-overlay').classList.remove('open'));
+_evEl('ev-cancel')?.addEventListener('click',()=>_evEl('ev-overlay').classList.remove('open'));
+_evEl('ev-overlay')?.addEventListener('click',e=>{if(e.target===e.currentTarget)e.currentTarget.classList.remove('open');});
+_evEl('ev-save')?.addEventListener('click',_evSave);
+_evEl('ev-name')?.addEventListener('input',_evCheckDup);
+_evEl('ev-start')?.addEventListener('change',_evCheckDup);
+_evEl('ev-who-search')?.addEventListener('input',e=>_evRenderWhoResults(e.target.value));
+_evEl('ev-venue')?.addEventListener('change',e=>{
+  const custom=e.target.value==='__custom__';
+  const box=_evEl('ev-venue-custom');
+  if(box){box.style.display=custom?'block':'none';if(custom)box.focus();}
+  _evEl('ev-venue-near').textContent='';
+  if(!custom){
+    // 저장은 DB에 이미 쓰인 표기 그대로(=수집분과 같은 '인천광역시'). 화면에서 '인천'으로 줄이는 건
+    // _shortCity가 표시할 때 하는 일이고, DB에 축약형을 섞어 넣으면 같은 도시가 두 값으로 갈린다.
+    const v=(_evVenues||[]).find(x=>x.name===e.target.value);
+    const cityEl=_evEl('ev-city');
+    if(v&&v.city&&cityEl)cityEl.value=v.city;
+  }
+});
+_evEl('ev-venue-custom')?.addEventListener('input',e=>{
+  const near=_evNearestVenues(e.target.value);
+  const el=_evEl('ev-venue-near');
+  if(el)el.textContent=near.length?('혹시 이거? — '+near.join(' / ')):'';
+});

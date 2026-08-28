@@ -2904,3 +2904,39 @@
     font-size:11px;font-weight:600;color:rgba(210,225,255,0.9);
     background:rgba(30,38,66,0.96);
   }
+
+  /* ── 공연 추가 폼(#ev-overlay) — 관리자 전용. gp-overlay(81)와 같은 층. 설정 패널에서 열리고
+        그 위엔 아무것도 안 뜨므로 vid-tag(82)보다 낮게 둔다(2026-08-28). ── */
+  #ev-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.52);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:81;display:none;align-items:center;justify-content:center;}
+  #ev-overlay.open{display:flex;}
+  #ev-panel{width:min(380px,calc(100vw - 32px));max-height:86vh;overflow-y:auto;background:rgba(13,17,34,0.97);backdrop-filter:blur(40px) saturate(180%);-webkit-backdrop-filter:blur(40px) saturate(180%);border-radius:18px;box-shadow:0 16px 56px rgba(0,0,0,0.72);border:0.5px solid rgba(255,255,255,0.10);padding:20px;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
+  #ev-panel .pp-title{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+  #ev-close{background:none;border:none;color:rgba(155,178,228,0.6);font-size:15px;cursor:pointer;padding:0 2px;line-height:1;}
+  #ev-close:hover{color:rgba(210,225,255,0.9);}
+  #ev-panel .pp-section{margin-bottom:14px;}
+  .ev-row{display:flex;gap:10px;}
+  .ev-hint-inline{font-weight:400;letter-spacing:0;text-transform:none;color:rgba(126,150,204,0.45);font-size:9.5px;margin-left:4px;}
+  .ev-warn{font-size:10.5px;color:rgba(255,190,120,0.9);margin-top:5px;line-height:1.45;}
+  .ev-warn:empty{display:none;}
+  #ev-who-results{margin-top:4px;max-height:150px;overflow-y:auto;border-radius:10px;background:rgba(255,255,255,0.04);}
+  #ev-who-results:empty{display:none;}
+  .ev-res{display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;padding:7px 10px;background:none;border:none;font-family:inherit;text-align:left;cursor:pointer;}
+  .ev-res:hover{background:rgba(255,255,255,0.08);}
+  .ev-res b{font-size:12px;font-weight:600;color:rgba(220,230,250,0.9);}
+  .ev-res span{font-size:10.5px;color:rgba(126,150,204,0.6);}
+  #ev-who-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;}
+  #ev-who-chips:empty{display:none;}
+  .ev-chip{display:flex;align-items:center;gap:5px;font-size:11.5px;color:rgba(220,230,250,0.9);background:rgba(109,140,255,0.16);border:0.5px solid rgba(109,140,255,0.35);border-radius:20px;padding:4px 10px 4px 12px;}
+  .ev-chip button{background:none;border:none;color:rgba(220,230,250,0.7);cursor:pointer;font-size:12px;padding:0;line-height:1;}
+  #ev-status{font-size:11.5px;color:rgba(155,178,228,0.7);margin-top:10px;min-height:14px;}
+  #ev-status.ev-ok{color:rgba(130,220,175,0.9);}
+  #ev-status.ev-err{color:rgba(255,140,140,0.9);}
+  #ev-btns{display:flex;gap:8px;margin-top:14px;}
+  #ev-recent{margin-top:16px;}
+  #ev-recent:empty{display:none;}
+  .ev-recent-head{font-size:9.5px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:rgba(126,150,204,0.5);margin-bottom:7px;padding-top:14px;border-top:0.5px solid rgba(255,255,255,0.07);}
+  .ev-recent-row{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:11.5px;color:rgba(185,205,245,0.72);padding:5px 0;}
+  .ev-recent-row span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .ev-recent-row button{flex:none;background:none;border:none;color:rgba(255,150,150,0.75);font-family:inherit;font-size:10.5px;cursor:pointer;padding:0;text-decoration:underline;}
+  /* 날짜 입력의 네이티브 달력 아이콘이 어두운 배경에서 안 보여서 반전시킨다. */
+  #ev-panel input[type=date]::-webkit-calendar-picker-indicator{filter:invert(0.7);cursor:pointer;}

@@ -27,3 +27,9 @@ events.err
 events.matched.json
 events_sql/
 !events_sql/console_import.js
+!events_sql/venue_fix.js
+events.venue.json
+# 나무위키 수집 실험 산출물(적중률 17%, 방향 미정 — 정리되면 커밋)
+events.namu.json
+namu_*.tsv
+solo_candidates.tsv

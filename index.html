@@ -339,6 +339,8 @@
     <div class="sp-subsec-lbl" style="margin-top:10px;">그룹 데이터 관리</div>
     <button class="sp-yt-sync" id="sp-gp-btn" style="opacity:.8;">그룹 우선순위</button>
     <div class="sp-btn-hint">그룹별 노출 우선순위(A/B/C)를 지정하는 패널을 열어요 — 유저에겐 안 보이는 내부용.</div>
+    <button class="sp-yt-sync" id="sp-ev-btn" style="margin-top:4px;opacity:.8;">공연 추가</button>
+    <div class="sp-btn-hint">콘서트·팬미팅을 직접 넣어요. KOPIS 수집에 안 잡히는 해외 투어·소규모 팬미팅용. 공연장은 기존 목록에서 고르는 게 기본이에요.</div>
 
     <!-- ── 데이터 정합성: 상황별 4묶음으로 재배치(2026-08-25). 핸들러/버튼ID는 그대로, 순서·소제목·라벨만 정리 ── -->
     <div class="sp-subsec-lbl" style="margin-top:10px;">데이터 정합성 · 매일 루틴 <span style="opacity:.6;font-weight:400;">— 평소엔 🏠관리자 홈이 1→4 자동 실행. 아래는 개별로 돌릴 때만</span></div>
@@ -1004,6 +1006,87 @@
       <button id="vid-tag-cancel" class="uc-btn">취소</button>
       <button id="vid-tag-save" class="uc-btn uc-btn-primary">저장</button>
     </div>
+  </div>
+</div>
+</template>
+<!-- 공연(콘서트/팬미팅) 직접 추가 — KOPIS에 등록되지 않는 공연이 꽤 있어서(해외 투어, 소규모 팬미팅 등)
+     수집 파이프라인만으론 구멍이 남는다. 그 구멍을 관리자가 직접 메우는 폼(2026-08-28 사용자 요청).
+     공연장은 **이미 DB에 쓰인 이름 중에서 고르는 게 기본**이고 없을 때만 직접 입력 — 같은 장소가
+     '올림픽공원'/'올림픽공원 체조경기장'/'KSPO돔'으로 갈라지면 장소별 모아보기가 쪼개지기 때문. -->
+<template class="adm-tpl" data-adm-mount="body"><!-- ev-overlay — 관리자 전용 마크업. 문서 트리 밖(inert)이라 읽기 모드/스크린리더/검색엔진에 안 잡힌다. _mountAdminMarkup()이 관리자일 때만 복제해 넣는다. -->
+<div id="ev-overlay" data-modal>
+  <div id="ev-panel">
+    <div class="pp-title"><span id="ev-title-text">공연 추가</span><button id="ev-close" type="button">✕</button></div>
+
+    <div class="pp-section">
+      <label class="pp-label" for="ev-name">공연명</label>
+      <input id="ev-name" type="text" class="pp-input" placeholder="예: 2024 SEVENTEEN TOUR 'FOLLOW' AGAIN" autocomplete="off">
+      <div id="ev-dup" class="ev-warn"></div>
+    </div>
+
+    <div class="pp-section ev-row">
+      <div style="flex:1">
+        <label class="pp-label" for="ev-type">종류</label>
+        <select id="ev-type" class="pp-input" style="cursor:pointer">
+          <option value="콘서트">콘서트</option>
+          <option value="팬미팅">팬미팅</option>
+          <option value="팬콘">팬콘</option>
+          <option value="페스티벌">페스티벌</option>
+        </select>
+      </div>
+      <div style="flex:1">
+        <label class="pp-label" for="ev-country">국가</label>
+        <input id="ev-country" type="text" class="pp-input" value="대한민국" list="ev-country-list" autocomplete="off">
+        <datalist id="ev-country-list"></datalist>
+      </div>
+    </div>
+
+    <div class="pp-section ev-row">
+      <div style="flex:1">
+        <label class="pp-label" for="ev-start">시작일</label>
+        <input id="ev-start" type="date" class="pp-input">
+      </div>
+      <div style="flex:1">
+        <label class="pp-label" for="ev-end">종료일 <span class="ev-hint-inline">하루면 비워둬도 됨</span></label>
+        <input id="ev-end" type="date" class="pp-input">
+      </div>
+    </div>
+
+    <div class="pp-section">
+      <label class="pp-label" for="ev-venue">공연장</label>
+      <select id="ev-venue" class="pp-input" style="cursor:pointer"></select>
+      <!-- 목록에 없을 때만 뜬다. 새로 적은 이름은 다음부터 목록에 자동으로 올라온다. -->
+      <input id="ev-venue-custom" type="text" class="pp-input" placeholder="공연장 이름 직접 입력" autocomplete="off" style="display:none;margin-top:6px">
+      <div id="ev-venue-near" class="ev-warn"></div>
+    </div>
+
+    <div class="pp-section">
+      <label class="pp-label" for="ev-city">지역 <span class="ev-hint-inline">공연장 고르면 자동으로 채워짐</span></label>
+      <input id="ev-city" type="text" class="pp-input" placeholder="예: 서울, 도쿄" list="ev-city-list" autocomplete="off">
+      <datalist id="ev-city-list"></datalist>
+    </div>
+
+    <div class="pp-section">
+      <label class="pp-label" for="ev-who-search">출연 <span class="ev-hint-inline">그룹 또는 멤버(솔로 공연) · 여러 팀 가능</span></label>
+      <input id="ev-who-search" type="text" class="pp-input" placeholder="그룹명/멤버명 검색" autocomplete="off">
+      <div id="ev-who-results"></div>
+      <div id="ev-who-chips"></div>
+    </div>
+
+    <div class="pp-section">
+      <label class="pp-label" for="ev-poster">포스터 URL <span class="ev-hint-inline">선택</span></label>
+      <input id="ev-poster" type="text" class="pp-input" placeholder="https://…" autocomplete="off">
+      <label class="pp-label" for="ev-official" style="margin-top:10px">예매/공식 링크 <span class="ev-hint-inline">선택</span></label>
+      <input id="ev-official" type="text" class="pp-input" placeholder="https://…" autocomplete="off">
+    </div>
+
+    <div id="ev-status"></div>
+    <div id="ev-btns">
+      <button id="ev-cancel" class="uc-btn" type="button">닫기</button>
+      <button id="ev-save" class="uc-btn uc-btn-primary" type="button">저장</button>
+    </div>
+    <!-- 한 팀의 투어 날짜를 연달아 넣는 일이 많아서, 저장 후 출연/공연장은 남기고 날짜·공연명만 비운다. -->
+    <div id="ev-recent"></div>
   </div>
 </div>
 </template>
