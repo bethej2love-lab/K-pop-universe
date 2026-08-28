@@ -110,6 +110,22 @@ async function fetchPage(key, from, to, page, genre) {
   }));
 }
 
+// 공연 상세 조회 — 개발가이드에서 확인한 두 번째 엔드포인트(2026-08-28).
+// 목록(pblprfr)엔 공연명만 있지만 상세엔 **prfcast(출연진)** 가 있다. 공연명은 "2026 OOO CONCERT"처럼
+// 그룹명이 안 들어가는 경우가 많아서, 출연진으로 한 번 더 매칭하면 재현율이 크게 올라간다.
+// relates(관련 링크)엔 예매처 URL이 들어오는 경우가 있어 official_url 후보로 같이 뽑아둔다
+// (사용자는 "일단 비워두자"고 했지만, 공짜로 얻어지면 넣지 않을 이유가 없다 — 없으면 그대로 null).
+async function fetchDetail(key, mt20id) {
+  const res = await fetch(`${ENDPOINT}/${encodeURIComponent(mt20id)}?service=${encodeURIComponent(key)}`);
+  const xml = await res.text();
+  const rel = [...xml.matchAll(/<relateurl>([\s\S]*?)<\/relateurl>/g)].map(m => m[1].replace(/<!\[CDATA\[|\]\]>/g, '').trim());
+  return {
+    cast: pick(xml, 'prfcast'), crew: pick(xml, 'prfcrew'),
+    poster: pick(xml, 'poster'), runtime: pick(xml, 'prfruntime'),
+    relate: rel.find(u => /^https?:\/\//.test(u)) || '',
+  };
+}
+
 const sq = s => `'${String(s || '').replace(/'/g, "''")}'`;
 
 async function main() {
@@ -150,6 +166,29 @@ async function main() {
     else unmatched.push({ ...r, ...m });
   }
 
+  // --detail: 공연명으로 못 잡은 것들만 상세 조회해서 **출연진(prfcast)** 으로 재매칭한다.
+  // 전체가 아니라 미매칭분만 도는 이유: 이미 강하게 매칭된 건 더 볼 게 없고, API 호출을 아끼기 위해.
+  if (args.detail) {
+    let rescued = 0;
+    for (let i = 0; i < unmatched.length; i++) {
+      const u = unmatched[i];
+      process.stderr.write(`\r[detail] ${i + 1}/${unmatched.length} 재매칭 시도… (구제 ${rescued})`);
+      try {
+        const d = await fetchDetail(key, u.id);
+        u.poster = d.poster || u.poster; u.relate = d.relate;
+        if (d.cast) {
+          const m = matchEvent(d.cast);            // 출연진 문자열에 같은 매칭기를 그대로 적용
+          if (m.groups.length && (minConf === 'weak' || m.confidence === 'strong')) {
+            matched.push({ ...u, ...m, why: m.why.concat('via:prfcast') });
+            unmatched.splice(i--, 1); rescued++;
+          }
+        }
+      } catch (e) { /* 한 건 실패로 전체가 멈추면 안 됨 */ }
+      await new Promise(r => setTimeout(r, 250));
+    }
+    process.stderr.write(`\n[detail] 출연진으로 추가 매칭 ${rescued}건\n`);
+  }
+
   console.log(`-- KOPIS 공연목록 → kpop_events (${from}~${to})`);
   console.log(`-- 수집 ${rows.length}건 / 매칭 ${matched.length}건 / 미매칭 ${unmatched.length}건`);
   console.log(`-- ⚠️ official_url(예매 링크)은 KOPIS가 제공하지 않아 비워 둔다(사용자 결정, 2026-08-28).`);
@@ -157,7 +196,7 @@ async function main() {
   for (const e of matched) {
     console.log(`insert into kpop_events (id,title,groups,date_start,date_end,venue,city,official_url) values (` +
       `${sq('kopis_' + e.id)},${sq(e.title)},array[${e.groups.map(sq).join(',')}],` +
-      `${sq(e.date_start)},${sq(e.date_end)},${sq(e.venue)},${sq(e.city)},null) on conflict (id) do nothing;`);
+      `${sq(e.date_start)},${sq(e.date_end)},${sq(e.venue)},${sq(e.city)},${e.relate ? sq(e.relate) : 'null'}) on conflict (id) do nothing;`);
   }
   console.error(`\n미매칭 ${unmatched.length}건 (앞 40개):`);
   unmatched.slice(0, 40).forEach(u => console.error(`  · ${u.title}  [${u.venue}]  ${u.why.join(' ') || '단서 없음'}`));
