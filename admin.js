@@ -4319,11 +4319,24 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
     // 살아남은 멤버가 애매토큰이 아니므로 애매 아님(오탐 방지). selfGko 있으면(자체/오너 채널) 애매 아님.
     let _tokenAmbiguous=false;
     if(!selfGko){
-      const _tokGroups=k=>{const s=new Set();(tokenToArtists.get(k)||new Set()).forEach(x=>(artistToGkos.get(x)||[]).forEach(g=>s.add(g)));return s;};
+      // ⚠️ "서로 다른 **사람** 2명 이상"이 먼저다(2026-08-28 수정). 예전엔 토큰에 걸린 사람들의
+      //    **그룹 합집합** 크기만 봐서, 겸임 멤버는 본인 혼자로도 2를 넘겼다 — 엔시티 해찬(127+드림),
+      //    세이마이네임 히토미(세이마이네임+아이즈원)처럼 동명이인이 전혀 아닌데 애매로 찍혀
+      //    **동기화 즉시 content_flag:'hidden'** 이 박혔다(사용자 제보: "숨김할 영상들이 아닌걸").
+      //    로스터 실측 결과 이 오판 대상이 81명 — 안유진·장원영·사쿠라·은하·김세정·박우진 등
+      //    영상이 많은 대형 그룹 멤버가 대거 포함돼 있었다. 바로 위 주석이 원래 말하던 의도
+      //    ("서로 다른 그룹 2곳 이상의 **사람**과 겹치는 토큰")대로 사람 수 게이트를 먼저 건다.
+      const _tokAmbig=k=>{
+        const people=tokenToArtists.get(k);
+        if(!people||people.size<2)return false; // 한 사람이면 몇 개 그룹을 겸임하든 동명이인이 아니다
+        const s=new Set();
+        people.forEach(x=>(artistToGkos.get(x)||[]).forEach(g=>s.add(g)));
+        return s.size>=2;                       // 그 여러 사람이 서로 다른 그룹에 걸쳐 있을 때만 애매
+      };
       for(const a of artistToTokens.keys()){
         const survived=(artistToGkos.get(a)||[]).some(g=>(inferred.get(g)||[]).includes(a.name.ko));
         if(!survived)continue;
-        if((artistToTokens.get(a)||[]).some(k=>_tokGroups(k).size>=2)){_tokenAmbiguous=true;break;}
+        if((artistToTokens.get(a)||[]).some(_tokAmbig)){_tokenAmbiguous=true;break;}
       }
     }
     const result=[];
