@@ -118,6 +118,16 @@ export function matchEvent(title) {
 const ENDPOINT = args.endpoint || 'http://www.kopis.or.kr/openApi/restful/pblprfr';
 const pick = (xml, tag) => { const m = xml.match(new RegExp(`<${tag}>([\\s\\S]*?)</${tag}>`)); return m ? m[1].replace(/<!\[CDATA\[|\]\]>/g, '').trim() : ''; };
 
+// ── 장르 코드 실측표 (2026-08-28, --genres 로 직접 조회해 확정) ────────────────────
+//   AAAA 연극        BBBC 무용(서양/한국무용)   BBBE 대중무용
+//   CCCA 서양음악(클래식)  CCCC 한국음악(국악)   CCCD 대중음악  ← K팝은 여기
+//   EEEA 복합        EEEB 서커스/마술          GGGA 뮤지컬
+// ⚠️ CCCD가 정답이었다. 처음에 CCCD를 박았다가 공통코드 PDF 추출 목록에 없어서 뺐는데, **그 PDF
+//   추출이 불완전했던 것**이지 코드가 틀린 게 아니었다. 문서에서 못 읽으면 추측으로 되돌리지 말고
+//   이렇게 실측할 것 — 그래서 --genres 를 남겨둔다(코드 체계가 바뀌면 다시 재면 된다).
+// 팬미팅·팬콘은 '복합'(EEEA)으로 등록되는 경우가 있어 --genre=CCCD,EEEA 처럼 여러 개를 줄 수 있다.
+const GENRE_LABEL = { AAAA: '연극', BBBC: '무용', BBBE: '대중무용', CCCA: '클래식', CCCC: '국악', CCCD: '대중음악', EEEA: '복합', EEEB: '서커스/마술', GGGA: '뮤지컬' };
+
 // ⚠️ 장르 코드(shcate)를 하드코딩하지 않는다. 처음엔 'CCCD'로 박아뒀는데, 사용자가 받아둔 공식 문서
 // (공연예술통합전산망OpenAPI공통코드.pdf)에서 뽑아보니 실제 코드는 AAAA/AAAB/BBBA/CCCA/CCCB/CCCC/EEEA
 // 뿐이고 CCCD는 아예 없었다 — 그대로 돌렸으면 조용히 0건이 나왔을 것이다(2026-08-28).
@@ -235,15 +245,21 @@ async function main() {
     return;
   }
 
-  const rows = [];
-  for (let page = 1; page <= 50; page++) {
-    const got = await fetchPage(key, from, to, page, genre);
-    if (!got.length) break;
-    rows.push(...got);
-    process.stderr.write(`\r[kopis] ${from}~${to}${genre ? ' ' + genre : ''} ${rows.length}건 수집…`);
-    await new Promise(r => setTimeout(r, 250));       // 예의상 간격 — 공식 API라도 몰아치지 않는다
+  // 장르는 쉼표로 여러 개 줄 수 있다(예: --genre=CCCD,EEEA). API가 한 번에 여러 코드를 받는지
+  // 불확실해서 코드별로 따로 순회한다 — 확실하고, 진행 상황도 장르별로 보인다.
+  // 안 주면 필터 없이 전체(=null 한 번)를 돈다. ⚠️ 그 경우 50페이지(5,000건) 상한에 쉽게 걸린다.
+  const genres = genre ? String(genre).split(',').map(s => s.trim()).filter(Boolean) : [null];
+  const rows = []; const seen = new Set();
+  for (const g of genres) {
+    for (let page = 1; page <= 50; page++) {
+      const got = await fetchPage(key, from, to, page, g);
+      if (!got.length) break;
+      for (const r of got) { if (!seen.has(r.id)) { seen.add(r.id); rows.push(r); } }
+      process.stderr.write(`\r[kopis] ${from}~${to} ${g ? g + '(' + (GENRE_LABEL[g] || '?') + ')' : '전체'} — 누적 ${rows.length}건…`);
+      await new Promise(r => setTimeout(r, 250));     // 예의상 간격 — 공식 API라도 몰아치지 않는다
+    }
+    process.stderr.write('\n');
   }
-  process.stderr.write('\n');
 
   const matched = [], unmatched = [];
   for (const r of rows) {
