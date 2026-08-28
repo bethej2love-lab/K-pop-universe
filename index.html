@@ -1918,6 +1918,10 @@ function _refreshOpenCardText(){
         const _enEl=document.getElementById('gc-en');
         _enEl.textContent=_enShow?info.en:'';
         _enEl.style.display=_enShow?'':'none'; // 비어있으면 flex 흐름에서 완전히 빼서 뒤 아이콘 앞에 gap이 안 붙게
+        // 영문명이 길어 A안(영문+SNS 한 줄)에서 어정쩡하게 눌리는 그룹만 강제로 세로 분리(4줄)한다
+        // (2026-08-28, 사용자 지정 목록 — 나머지는 flex-wrap 자동). 추가 그룹은 여기 배열에 넣으면 됨.
+        document.getElementById('gc-en-row').classList.toggle('gc-en-stack',
+          ['보이넥스트도어','알파드라이브원','데일리디렉션','올데이프로젝트','클로즈유어아이즈','투모로우바이투게더','하트오브우'].includes(_openGCko));
       }
       if(info.fandom){
         document.getElementById('gc-fandom').textContent=_fandomText(info.fandom);

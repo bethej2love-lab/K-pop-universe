@@ -2355,7 +2355,9 @@
      멤버 카드(#tt-insta-pic-wrap)와 링·셰머·크로스페이드를 공유하고 크기만 다르다.
      그룹 카드는 기본 234px로 멤버 카드보다 좁아서 78px 원을 넣으면 이름/영문명/링크가
      밀린다 — 원은 62px로 줄이고, 사진이 있을 때만 카드를 288px로 넓힌다(멤버와 같은 방식). */
-  #gc-pic-wrap{display:block;position:relative;flex-shrink:0;width:62px;height:62px;border-radius:50%;cursor:pointer;text-decoration:none;margin-left:-4px;}
+  /* 사진 62→70(멤버카드 78과 현재의 중간). 커진 만큼 margin-left를 더 음수로(-4→-12) 줘서 오른쪽 끝(텍스트
+     시작점)은 고정하고 왼쪽으로만 확장 — 텍스트 위치 안 밀림(2026-08-28, 사용자 요청). 세로 중앙은 헤더 flex. */
+  #gc-pic-wrap{display:block;position:relative;flex-shrink:0;width:70px;height:70px;border-radius:50%;cursor:pointer;text-decoration:none;margin-left:-12px;}
   /* 사진이 있으면 SNS 아이콘 줄을 영문명 아래로 내린다. 헤더 글자 영역이 185px인데 아이콘 6개가
      139px를 먹어서, 사진(62px)까지 들어가면 영문명에 38px밖에 안 남는다 — 실측상 268개 그룹 중
      90개(34%)의 영문명이 잘렸다("TOMORROW X TOGETHER"→"TO..."). 사진을 줄여도 아이콘이 공간의
@@ -2363,14 +2365,16 @@
      ⚠️ 카드 폭은 늘릴 수 없다 — 데스크톱은 #side-panel, 모바일은 시트가 폭을 정한다. */
   #gc.has-gc-pic #gc-en-row{flex-wrap:wrap;align-items:center;gap:5px 8px;}
   #gc.has-gc-pic #gc-en{max-width:100%;}
+  /* 지정 그룹(영문명 김)은 강제로 영문/SNS를 세로 분리 = 4줄 허용(index.html gc-en-stack 토글). */
+  #gc-en-row.gc-en-stack{flex-direction:column;align-items:flex-start;}
   /* 사진이 없을 때 뜨는 관리자 업로드 버튼(점선 원)도 같은 크기여야 자리 교대가 자연스럽다.
      #gc-header는 position:static이라 cam-overlay(absolute)의 기준이 되게 relative를 준다. */
   #gc-header{position:relative;}
-  #gc-pic-cam-admin{width:62px;height:62px;}
-  #gc-pic-cam-admin.cam-overlay{width:18px;height:18px;left:44px;top:44px;}
+  #gc-pic-cam-admin{width:70px;height:70px;}
+  #gc-pic-cam-admin.cam-overlay{width:18px;height:18px;left:52px;top:52px;}
   #gc-pic-cam-admin.cam-overlay svg{width:10px;height:10px;}
-  @media(max-width:768px){#gc-pic-wrap,#gc-pic-cam-admin{width:66px;height:66px;}
-    #gc-pic-cam-admin.cam-overlay{width:18px;height:18px;left:48px;top:48px;}}
+  @media(max-width:768px){#gc-pic-wrap,#gc-pic-cam-admin{width:74px;height:74px;}
+    #gc-pic-cam-admin.cam-overlay{width:18px;height:18px;left:56px;top:56px;}}
   #tt-name-row{display:inline-flex;align-items:center;gap:8px;margin-bottom:3px;padding-left:0;max-width:100%;}
   #tt-name-row .tn{margin-bottom:0;padding-left:4px;padding-right:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
   /* 하트/공유 버튼이 align-items:center로도 이름 텍스트보다 살짝 아래로 처져 보인다는 제보(2026-08-11)
