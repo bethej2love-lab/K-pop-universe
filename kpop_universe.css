@@ -1042,7 +1042,10 @@
   /* 영어 모드에선 영문 서브(gc-en)가 빈 문자열이라(index.html: _enShow=한국어일때만) 숨겨서 gap이 안 생기게 —
      그래야 영어 모드는 이름+링크 2줄 그대로 유지된다(2026-08-28, 사용자: "en 모드는 2줄, 그대로 두면 됨"). */
   #gc-en:empty{display:none;}
-  #gc-links{display:flex;align-items:center;gap:9px;flex-shrink:0;}
+  /* SNS를 영문명 반대쪽(오른쪽 끝)으로 밀어 원래 space-between 느낌 복원(2026-08-28, 사용자 요청).
+     단 강제 4줄(gc-en-stack, column)에선 오른쪽으로 튀면 어색해서 왼쪽 정렬로 되돌린다. */
+  #gc-links{display:flex;align-items:center;gap:9px;flex-shrink:0;margin-left:auto;}
+  #gc-en-row.gc-en-stack #gc-links{margin-left:0;}
   #tt-links{display:flex;align-items:center;gap:7px;flex-shrink:0;}
   #tt-links:not(:empty)::after{content:'·';color:rgba(120,145,195,0.46);font-size:10px;}
   #tt-links .gc-link-icon{width:14px;height:14px;}
@@ -1051,6 +1054,9 @@
      margin:-7px 기본값보다 더 음수로 설정해 나무위키 아이콘을 왼쪽으로 당겨야 gap이 줄어든다
      (덜 음수인 -3px는 반대 방향 — 오른쪽으로 밀어 gap을 더 늘림). */
   .gc-link-icon-tiktok + .gc-link-icon-namu{margin-left:-9px;}
+  /* SNS 아이콘 쌍별 간격 미세 정리(2026-08-28, 사용자 요청 — 기본 gap 9px에서 특정 쌍만 좁힘) */
+  .gc-link-icon-instagram + .gc-link-icon-x{margin-left:-2px;}
+  .gc-link-icon-x + .gc-link-icon-tiktok{margin-left:-4px;}
   /* 가족관계 — 연결 카드 헤더 바로 아래, 콜라보 목록과 구분되는 별도 섹션(2026-08-13,
      멤버 카드의 ⓘ 팝업에서 이동해옴). */
   .conn-family-sec{margin-bottom:14px;}
