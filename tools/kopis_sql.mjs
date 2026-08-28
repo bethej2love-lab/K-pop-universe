@@ -57,6 +57,45 @@ const inferType = t =>
 // 먼저 DB의 CHECK 제약을 넓히고 이 목록에 추가할 것 — 순서를 반대로 했다가 전체가 실패했다.
 const ALLOWED_TYPES = new Set(['콘서트', '팬미팅', '팬콘', '페스티벌']);
 
+// ── 흔한단어 그룹명 2차 필터 (2026-08-28, 716건 전수 눈검사) ─────────────────────
+// 수집기(kopis_events.mjs)의 AMBIGUOUS 목록은 1차 표본(5,000건)에서 만든 거라, 2018년까지 넓힌
+// 26,705건에서 새 오탐이 더 나왔다. 재수집은 10분씩 걸리므로 여기서 **조이는 방향으로만** 거른다
+// (조이기만 하니 놓친 건 새로 안 생긴다 — 느슨하게 하려면 그땐 재수집해야 한다).
+//
+// 판별 규칙은 수집기와 같다: 그룹명이 일상어면 **제목 맨 앞**에 와야 그 그룹의 공연이다.
+//   "안치환 콘서트, HISTORY" → 히스토리 ❌   "HISTORY 단독 콘서트" → 히스토리 ✅
+// ⚠️ 반대로 "어썸스테이지, N.Flying", "라이브온, 비투비 x 엔플라잉"처럼 **출연자 나열**은 정당해서
+//    살려야 한다. 그래서 전면 금지가 아니라 "일상어인 이름만" 맨 앞을 요구한다.
+const AMBIGUOUS2 = new Set([
+  // 1차 목록
+  '앨리스', '시그니처', '아르테미스', '하이라이트', '위너', '네이처', '신화', '아이들', '레인보우',
+  '시크릿', '트레저', '슈가', '위클리', '에이프릴', '인피니트', '티아라', '다이아', '펜타곤', '여자친구',
+  // 2차(2018~2026 확대 수집에서 새로 나온 것). 각각 실제로 걸렸던 오탐:
+  '히스토리',      // "안치환 콘서트, HISTORY" / "브레이킹 히스토리"
+  '템페스트',      // "심규선 단독 콘서트, 요란: Tempest" / "장계현과 템페스트 파워 디너 콘서트"
+  '슈퍼노바',      // "너드커넥션 단독 공연: SUPERNOVA!" / "제이림 슈퍼노바 페스티벌"
+  '세븐틴',        // "노들인디션 크리스피 단독공연: Seventeen"(숫자 17)
+  '세이마이네임',  // "KAVE 단독 콘서트 투어: Say My Name"
+  '스텔라',        // "... Fan Concert In Asia: Stellar Time"
+  '유니티',        // "바닐라 유니티 컴백기념 단독 콘서트"
+  '클라씨',        // "12월의 블랜딩 노트, Classy jazz"
+  '앤팀',          // en이 '&TEAM'인데 정규화하면 'TEAM' → "TEAM 노지훈"
+  '온앤오프',      // "이대원의 온앤오프 스테이지"
+  '빌리',          // "현대카드 슈퍼콘서트, 빌리 아일리시"
+  '배틀',          // "네미시스 BATTLE II, 노승호"
+  '피에스타',      // "인천 월드뮤직 피에스타"
+  '아홉',          // "제972회 목요예술무대: 아홉 번째 파장"
+  'god',           // "예레미 모비딕 콘서트, my rock n roll & my God"
+]);
+const GROUPS_JSON = (() => { const g = JSON.parse(fs.readFileSync(path.join(ROOT, 'groups.json'), 'utf8')); return g.groups || g; })();
+const NORM2 = s => ' ' + String(s || '').toUpperCase().replace(/[^가-힣A-Z0-9]/g, ' ').replace(/\s+/g, ' ') + ' ';
+const isLead2 = (nu, tok) => {
+  const w = nu.trim().split(' ').filter(Boolean);
+  let i = 0; while (i < w.length && /^[0-9]+$/.test(w[i])) i++;
+  const t = NORM2(tok).trim().split(' ').filter(Boolean);
+  return t.every((x, k) => w[i + k] === x);
+};
+
 // ── 이벤트 성격 필터 (2026-08-28, 716건 눈검사에서 나온 것) ─────────────────────
 // 이름 매칭 문제가 아니라 **이 행이 애초에 "공연"인가**의 문제라 여기서 거른다(재수집 불필요).
 const dropped = [];
@@ -74,6 +113,14 @@ const keep = rows.filter(e => {
     const days = (new Date(e.date_end) - new Date(e.date_start)) / 86400000;
     if (days > 180) { dropped.push([`기간 ${Math.round(days)}일`, e.title]); return false; }
   }
+  // ③ 흔한단어 그룹명이 제목 맨 앞이 아닌 경우(위 AMBIGUOUS2 주석 참고)
+  const g = e.groups[0];
+  if (AMBIGUOUS2.has(g)) {
+    const nu = NORM2(e.title);
+    const toks = [g, (GROUPS_JSON[g] || {}).en, ...((GROUPS_JSON[g] || {}).altNames || [])].filter(Boolean);
+    const hit = toks.find(t => nu.includes(' ' + NORM2(t).trim() + ' '));
+    if (hit && !isLead2(nu, hit)) { dropped.push([`흔한단어 ${g}`, e.title]); return false; }
+  }
   return true;
 });
 if (dropped.length) {
@@ -87,18 +134,29 @@ out.push(`-- 스키마 확인 후 재생성: id는 DB가 만든다(gen_random_uu
 out.push(`-- 여러 번 실행해도 안전하다(이미 있으면 건너뜀).`);
 out.push(`-- 출처: 공연예술통합전산망(KOPIS) 오픈API`);
 out.push('');
+// ⚠️ 행마다 `insert … where not exists (select … title='…' and date_start='…' and venue='…')`를
+// 반복하면 제목·날짜·공연장이 **두 번씩** 들어가 파일이 두 배로 커진다(376KB → 27개 파일로 쪼개야
+// 했다). VALUES 목록 하나로 묶고 not exists는 그 목록을 참조하면 텍스트가 절반 아래로 줄고, 붙여넣기
+// 횟수도 그만큼 준다. 중복 방지 동작은 완전히 같다(같은 title+date_start+venue면 건너뜀).
+const BATCH = 60;
 const typeCount = {};
+const vals = [];
 for (const e of keep) {
   const type = FIXED_TYPE || inferType(e.title);
   if (!ALLOWED_TYPES.has(type)) { console.error(`허용되지 않은 type "${type}" — 중단합니다: ${e.title}`); process.exit(1); }
   typeCount[type] = (typeCount[type] || 0) + 1;
   const overseas = e.city === '해외';
+  vals.push(`(${sq(e.title)},${sq(type)},${sq(e.date_start)},${e.date_end ? sq(e.date_end) : 'null'},` +
+    `${sq(e.venue)},${e.city ? sq(e.city) : 'null'},${overseas ? sq('해외') : sq('대한민국')},` +
+    `array[${e.groups.map(sq).join(',')}],${e.poster ? sq(e.poster) : 'null'},${e.relate ? sq(e.relate) : 'null'})`);
+}
+for (let i = 0; i < vals.length; i += BATCH) {
+  const chunk = vals.slice(i, i + BATCH);
   out.push(
     `insert into kpop_events (title,type,date_start,date_end,venue,city,country,groups,poster_url,official_url)\n` +
-    `select ${sq(e.title)},${sq(type)},${sq(e.date_start)},${e.date_end ? sq(e.date_end) : 'null'},` +
-    `${sq(e.venue)},${e.city ? sq(e.city) : 'null'},${overseas ? sq('해외') : sq('대한민국')},` +
-    `array[${e.groups.map(sq).join(',')}]::text[],${e.poster ? sq(e.poster) : 'null'},${e.relate ? sq(e.relate) : 'null'}\n` +
-    `where not exists (select 1 from kpop_events where title=${sq(e.title)} and date_start=${sq(e.date_start)} and venue=${sq(e.venue)});`
+    `select v.title,v.type,v.date_start::date,v.date_end::date,v.venue,v.city,v.country,v.groups::text[],v.poster_url,v.official_url\n` +
+    `from (values\n${chunk.join(',\n')}\n) as v(title,type,date_start,date_end,venue,city,country,groups,poster_url,official_url)\n` +
+    `where not exists (select 1 from kpop_events k where k.title=v.title and k.date_start=v.date_start::date and k.venue=v.venue);`
   );
 }
 console.log(out.join('\n'));
