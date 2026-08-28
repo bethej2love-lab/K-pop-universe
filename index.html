@@ -6277,6 +6277,58 @@ function _flyToConnStars(){
   _startFly(center,center.clone().addScaledVector(tilt,dist),900);
 }
 
+// 연결 카드의 "함께한 영상" 섹션만 따로 그린다(2026-08-28). 칩 선택이 실제로 바꾸는 건 이 섹션뿐이라,
+// 여기만 다시 그리면 가족·제작·칩 전체를 재구성하지 않아도 된다 — 칩↔영상 왕복의 끊김이 사라진다.
+function _renderConnVidSec(sec){
+  sec.innerHTML='';
+  const vidLblRow=document.createElement('div');vidLblRow.className='conn-lbl-row';
+  const vidLbl=document.createElement('span');vidLbl.className='conn-lbl';
+  vidLbl.textContent=currentLang==='ko'?'함께한 영상':'together';
+  vidLblRow.appendChild(vidLbl);
+  if(_connSelected.length||_connSelectedGroups.size){
+    const onlyBtn=document.createElement('button');
+    onlyBtn.type='button';
+    onlyBtn.className='conn-only-toggle'+(_connExactOnly?' active':'');
+    onlyBtn.textContent='Only';
+    onlyBtn.setAttribute('aria-pressed',_connExactOnly?'true':'false');
+    onlyBtn.addEventListener('click',e=>{
+      e.stopPropagation();
+      _connExactOnly=!_connExactOnly;
+      _refreshConnVids()||_buildConnContent(_connVidSecHost);
+    });
+    vidLblRow.appendChild(onlyBtn);
+  }
+  if(_isAdmin()){
+    const selBtn=document.createElement('button');
+    selBtn.type='button';
+    selBtn.className='gc-ch-sel-btn conn-sel-toggle'+(_connSelMode?' active':'');
+    selBtn.textContent=_connSelMode?'선택 중':'선택';
+    selBtn.addEventListener('click',e=>{
+      e.stopPropagation();
+      if(_connSelMode)_connExitSelMode();
+      else{_connSelMode=true;selBtn.classList.add('active');selBtn.textContent='선택 중';}
+    });
+    vidLblRow.appendChild(selBtn);
+  }
+  sec.appendChild(vidLblRow);
+  const vidDiv=document.createElement('div');
+  const songs=_getCollabSongs(_connAnchor,_connSelected,_connExactOnly,_connSelectedGroups);
+  const _connCtx=_connAnchor?{groupKo:_connAnchor.group.ko,memberKo:_connAnchor.name.ko,selectable:_isAdmin(),pushExtDown:_connExactOnly}:undefined;
+  if(songs.length)buildVideoSection(songs,vidDiv,_connCtx);
+  else{
+    const e2=document.createElement('div');e2.className='conn-no-video';
+    e2.textContent=_connExactOnly
+      ?(currentLang==='ko'?'이 조합만 나온 영상이 없어요':'No video with only this combination')
+      :(currentLang==='ko'?'해당 조합의 영상이 없어요':'No video for this combination');
+    vidDiv.appendChild(e2);
+  }
+  sec.appendChild(vidDiv);
+}
+// 섹션 노드가 살아 있으면 부분 갱신, 아니면 false를 돌려 호출부가 전체 재구성으로 폴백하게 한다.
+function _refreshConnVids(){
+  if(_connVidSec&&_connVidSec.isConnected){_renderConnVidSec(_connVidSec);return true;}
+  return false;
+}
 function _buildConnContent(container){
   // 그룹/멤버 카드 진입 모션(gc-enter/tt-enter)과 같은 톤 — 패널 자체는 이미 열려있는 채로 안의 콘텐츠만
   // 바뀌는 경우(다른 콜라보 멤버 선택 등)가 많아서, 내용이 새로 채워졌다는 걸 알려주는 짧은 페이드가 필요함.
@@ -6531,15 +6583,23 @@ function _buildConnContent(container){
     chip.addEventListener('click',e=>{
       e.stopPropagation();
       if(_lpFired){_lpFired=false;return;}
-      if(isSel){_connSelected=_connSelected.filter(n=>n!==name);}
+      // ⚠️ isSel(칩 생성 시점 값) 대신 **지금** 상태를 다시 본다 — 부분 갱신으로 바꾸면서 칩 DOM이
+      // 살아남게 됐기 때문에, 생성 시점 클로저 값을 쓰면 같은 칩을 두 번째 누를 때 판정이 뒤집힌다.
+      const nowSel=_connSelected.includes(name);
+      if(nowSel){_connSelected=_connSelected.filter(n=>n!==name);}
       else{_connSelected.push(name);}
+      chip.classList.toggle('sel',_connSelected.includes(name));
       _updateConnLines3d();_applyConnFocus();_flyToConnStars();
-      // ⚠️ 여기서 카드 **전체**를 innerHTML=''로 지우고 다시 그린다(+0.18s 페이드). 칩 하나 누를 때마다
-      // 가족·제작·칩 전체가 재구성되니 왕복 끊김의 구조적 원인이다 — 부분 갱신으로 바꾸기 전에 먼저
-      // 실제 비용을 재둔다(1단계에서 이 숫자를 근거로 고침).
+      // 예전엔 여기서 카드 **전체**를 innerHTML=''로 지우고 다시 그렸다(+0.18s 페이드). 칩 하나 누를
+      // 때마다 가족·제작·칩 전체가 재구성돼서, 사용자가 말한 "칩 누르며 영상 확인하는 왕복이 번거롭다"의
+      // 구조적 원인이었다(2026-08-28). 칩 선택이 실제로 바꾸는 건 **영상 목록뿐**이므로 그 섹션만 다시
+      // 그린다. 섹션 노드가 어떤 이유로 떨어져 나갔으면 예전처럼 전체 재구성으로 폴백한다.
       _connChipTaps++;
-      const _ms=_connTimedBuild(container);
-      _connGa('conn_chip_select',{rerender_ms:_ms,tap_n:_connChipTaps,selected_n:_connSelected.length});
+      const _t0=performance.now();
+      const _partial=_refreshConnVids();
+      if(!_partial)_buildConnContent(container);
+      _connGa('conn_chip_select',{rerender_ms:Math.round(performance.now()-_t0),tap_n:_connChipTaps,
+        selected_n:_connSelected.length,partial:_partial?1:0});
     });
     const gotoBtn=document.createElement('span');gotoBtn.className='conn-chip-goto';gotoBtn.textContent='↗';
     gotoBtn.addEventListener('click',e=>{e.stopPropagation();_gotoMember();});
@@ -6633,48 +6693,10 @@ function _buildConnContent(container){
 
   container.appendChild(chipsDiv);
 
-  const vidLblRow=document.createElement('div');vidLblRow.className='conn-lbl-row';
-  const vidLbl=document.createElement('span');vidLbl.className='conn-lbl';
-  vidLbl.textContent=currentLang==='ko'?'함께한 영상':'together';
-  vidLblRow.appendChild(vidLbl);
-  if(_connSelected.length||_connSelectedGroups.size){
-    const onlyBtn=document.createElement('button');
-    onlyBtn.type='button';
-    onlyBtn.className='conn-only-toggle'+(_connExactOnly?' active':'');
-    onlyBtn.textContent='Only';
-    onlyBtn.setAttribute('aria-pressed',_connExactOnly?'true':'false');
-    onlyBtn.addEventListener('click',e=>{
-      e.stopPropagation();
-      _connExactOnly=!_connExactOnly;
-      _buildConnContent(container);
-    });
-    vidLblRow.appendChild(onlyBtn);
-  }
-  if(_isAdmin()){
-    const selBtn=document.createElement('button');
-    selBtn.type='button';
-    selBtn.className='gc-ch-sel-btn conn-sel-toggle'+(_connSelMode?' active':'');
-    selBtn.textContent=_connSelMode?'선택 중':'선택';
-    selBtn.addEventListener('click',e=>{
-      e.stopPropagation();
-      if(_connSelMode)_connExitSelMode();
-      else{_connSelMode=true;selBtn.classList.add('active');selBtn.textContent='선택 중';}
-    });
-    vidLblRow.appendChild(selBtn);
-  }
-  container.appendChild(vidLblRow);
-  const vidDiv=document.createElement('div');
-  const songs=_getCollabSongs(_connAnchor,_connSelected,_connExactOnly,_connSelectedGroups);
-  const _connCtx=_connAnchor?{groupKo:_connAnchor.group.ko,memberKo:_connAnchor.name.ko,selectable:_isAdmin(),pushExtDown:_connExactOnly}:undefined;
-  if(songs.length)buildVideoSection(songs,vidDiv,_connCtx);
-  else{
-    const e2=document.createElement('div');e2.className='conn-no-video';
-    e2.textContent=_connExactOnly
-      ?(currentLang==='ko'?'이 조합만 나온 영상이 없어요':'No video with only this combination')
-      :(currentLang==='ko'?'해당 조합의 영상이 없어요':'No video for this combination');
-    vidDiv.appendChild(e2);
-  }
-  container.appendChild(vidDiv);
+  const vidSec=document.createElement('div');vidSec.className='conn-vid-sec';
+  _connVidSec=vidSec;_connVidSecHost=container;
+  _renderConnVidSec(vidSec);
+  container.appendChild(vidSec);
   requestAnimationFrame(()=>requestAnimationFrame(()=>{container.style.opacity='1';}));
 }
 
@@ -6689,6 +6711,7 @@ function _buildConnContent(container){
 //   conn_chip_select rerender_ms/tap — 칩 한 번 누를 때 카드 전체 재구성에 걸리는 시간(=왕복 끊김)
 //   conn_video_play  ms_from_open/taps — 열고 나서 실제 영상 재생까지 걸린 시간과 누른 칩 수(핵심 지표)
 let _connOpenT=0,_connChipTaps=0;
+let _connVidSec=null,_connVidSecHost=null; // "함께한 영상" 섹션 부분 갱신용 참조(2026-08-28)
 function _connGa(name,params){
   try{_gaEvent(name,Object.assign({device:isMob()?'mobile':'desktop'},params||{}));}catch(e){}
 }
