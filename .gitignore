@@ -23,5 +23,6 @@ kpop_universe.html.bak*
 # 수집 산출물(미매칭 감사용)
 events.unmatched.txt
 events.err
+# events_import.json은 브라우저 콘솔 import용이라 **일부러 커밋한다**(raw URL로 fetch)
 events.matched.json
 events_sql/
