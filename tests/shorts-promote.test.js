@@ -90,9 +90,13 @@ need(/function _isShortV\(v\)\{return !!v&&\(v\.is_short===true\|\|v\.category==
   '_isShortV 헬퍼 — is_short 우선 + category===\'short\' 레거시 폴백');
 
 // 판별을 헬퍼 한 곳으로 모았는지: 헬퍼 정의/주석 밖에서 category==='short'를 직접 비교하면 안 된다.
+// 면제 대상은 "세로 판별 헬퍼의 정의 줄" 전부다 — 원래 _isShortV만 이름으로 박아뒀는데, 2026-08-27
+// 쇼츠 판별 통일에서 곡 객체용 _songIsShort가 새로 생기면서 이 검사가 그날부터 계속 빨간 상태였다
+// (2026-08-28 발견). 헬퍼가 또 늘어나도 안 깨지게 이름 대신 "헬퍼 정의 줄" 패턴으로 면제한다.
+const HELPER_DEF = /function\s+_(isShortV|songIsShort)\s*\(/;
 const strayReads = html.split('\n').filter(l => {
   const t = l.trim();
-  if (t.startsWith('//') || t.includes('function _isShortV')) return false;
+  if (t.startsWith('//') || HELPER_DEF.test(l)) return false;
   return /category(!|=)=='short'/.test(l);
 });
 need(strayReads.length === 0,

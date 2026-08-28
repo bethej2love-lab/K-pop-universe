@@ -107,9 +107,18 @@ async function main() {
     await waitForLoadEvent(cdp);
     await sleep(3000);
 
-    const ready = await pollUntil(cdp, `(typeof closePanels==='function'&&typeof isMob==='function'&&!isMob()&&!!document.getElementById('vm-overlay'))`, 15000, v => v === true);
+    // ⚠️ 준비 조건에 어드민 요소를 넣지 말 것 — 2026-08-28부터 어드민 마크업은 <template> 안이라
+    //    익명 상태에선 #vm-overlay가 아예 없다(예전 조건이 그걸 기다리다 "isMob=true"로 오진했다).
+    const ready = await pollUntil(cdp, `(typeof closePanels==='function'&&typeof isMob==='function'&&!isMob()&&typeof _mountAdminMarkup==='function')`, 15000, v => v === true);
     if (!ready) { fail('앱 미준비 또는 데스크톱 뷰포트가 아님(isMob=true)'); throw new Error('앱 미준비'); }
     ok('앱 로드 + 데스크톱 뷰포트(1440x900) 준비');
+
+    // 어드민 마크업은 <template> 안에 있어(2026-08-28, 읽기 모드 노출 차단) 관리자가 아니면 DOM에
+    // 존재하지 않는다. 로그인 없이 구조만 검증하려고 주입 함수만 직접 부른다.
+    const mounted = await ev(cdp, `(function(){if(typeof _mountAdminMarkup!=='function')return 'no-fn';
+      _mountAdminMarkup();return !!document.getElementById('vm-overlay');})()`);
+    if (mounted !== true) { fail(`어드민 마크업 주입 실패 (${mounted}) — _mountAdminMarkup/template 구조 확인 필요`); throw new Error('마크업 미주입'); }
+    ok('어드민 마크업 <template> 주입 완료');
 
     // ── 1. 4개 패널이 실제로 좌측에 도킹되는가 (기하 + 스태킹) ───────────────────────
     const GC_Z = await ev(cdp, `(function(){const e=document.getElementById('gc');return +getComputedStyle(e).zIndex||0;})()`);
