@@ -15611,6 +15611,10 @@ async function _buildFeedTrend(){
     const vids=_capByGroup(_filterBannedVideos(data).filter(v=>!_isShortV(v)),v=>v.group_ko,_FEED_TREND_PER_GROUP);
     if(vids.length<3)return; // 3개도 안 되면 선반을 여는 것보다 없는 게 낫다
     const picked=_shuffle([...vids]).slice(0,_FEED_TREND_MAX);
+    // ⚠️ vidUrl은 전역이 아니라 선반 함수마다 자기 안에서 다시 정의하는 지역 함수다(형제 선반 20곳
+    // 전부 이 한 줄을 갖고 있다). 여기서 빠뜨렸더니 ReferenceError가 나고 아래 catch가 그대로 삼켜
+    // **선반만 조용히 안 뜨는** 상태로 배포됐다(2026-08-28 사용자 제보로 발견).
+    const vidUrl=v=>_isShortV(v)?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;
     const songs=picked.map(v=>({t:v.title,u:vidUrl(v),thumb:v.thumb,vc:v.view_count,pa:v.published_at?.slice(0,10),
       groupKo:v.group_ko,memberKos:v.members||[]}));
     const _fmtDay=iso=>{
@@ -15630,7 +15634,11 @@ async function _buildFeedTrend(){
         v.thumb);
     });
     section.style.display='';
-  }catch(e){/* 선반 하나 실패로 탐험 탭 전체가 막히면 안 됨 — 조용히 무시(다른 카드와 동일 방침) */}
+  }catch(e){
+    // 선반 하나 실패로 탐험 탭 전체가 막히면 안 되니 삼키긴 하되, **흔적은 남긴다** — 완전히 조용히
+    // 삼켰다가 위 vidUrl 누락을 못 보고 배포한 적이 있다(2026-08-28).
+    console.warn('[feed] Trend 선반 실패 — 이 선반만 빠집니다',e);
+  }
 }
 function _buildFeedDiscovery(){
   const list=document.getElementById('feed-discovery');
