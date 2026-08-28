@@ -39,7 +39,11 @@ const sq = s => `'${String(s ?? '').replace(/'/g, "''")}'`;
 //    나중에 type으로 거르는 화면이 절반만 보게 된다. 스키마만 맞추고 **어휘를 안 맞추는 것**도
 //    같은 종류의 사고다.
 // ⚠️ 기존 데이터가 팬미팅과 팬콘을 **따로** 두고 있어 추론기도 둘을 나눈다(원래는 뭉뚱그렸다).
-//    쇼케이스는 기존 행에 없지만 콘서트로 뭉뚱그리기보다 자연스러운 확장이라 새 값으로 둔다.
+// ⚠️⚠️ **type에는 CHECK 제약이 걸려 있다.** 처음엔 '쇼케이스'를 "기존에 없지만 자연스러운 확장"이라며
+//    새로 만들어 넣었다가 `kpop_events_type_check` 위반으로 전체가 실패했다 — 바로 위에서 "어휘를
+//    맞춰야 한다"고 써놓고 스스로 어긴 것이다. 허용값을 모르는 상태에서 새 값을 만들면 안 된다.
+//    그래서 **DB에 존재가 확인된 4개 값으로만** 제한한다(콘서트·팬미팅·팬콘·페스티벌).
+//    쇼케이스류는 콘서트로 접는다. 나중에 제약을 넓히면 그때 분리하면 된다.
 const FIXED_TYPE = typeof args.type === 'string' ? args.type : null;
 const inferType = t =>
   /팬\s?콘\b|FAN[-\s]?CON(?!CERT)|FANCON/i.test(t) ? '팬콘'
@@ -48,8 +52,10 @@ const inferType = t =>
       //    Festival", "GOT7 CONCERT: NESTFEST"는 그룹 자기 콘서트지 페스티벌이 아니다.
       //    제목에 CONCERT/LIVE/TOUR가 같이 있으면 그쪽이 실체라 콘서트로 둔다.
       : (/페스티벌|FESTIVAL|FEST\b/i.test(t) && !/CONCERT|콘서트|LIVE|TOUR|투어/i.test(t)) ? '페스티벌'
-        : /쇼케이스|SHOWCASE/i.test(t) ? '쇼케이스'
-          : '콘서트';
+        : '콘서트';   // 쇼케이스도 여기로 접는다(위 CHECK 제약 주석 참고)
+// 안전망: 추론 결과가 허용값 밖이면 절대 내보내지 않는다. 값을 하나 더 늘리고 싶으면
+// 먼저 DB의 CHECK 제약을 넓히고 이 목록에 추가할 것 — 순서를 반대로 했다가 전체가 실패했다.
+const ALLOWED_TYPES = new Set(['콘서트', '팬미팅', '팬콘', '페스티벌']);
 
 // ── 이벤트 성격 필터 (2026-08-28, 716건 눈검사에서 나온 것) ─────────────────────
 // 이름 매칭 문제가 아니라 **이 행이 애초에 "공연"인가**의 문제라 여기서 거른다(재수집 불필요).
@@ -84,6 +90,7 @@ out.push('');
 const typeCount = {};
 for (const e of keep) {
   const type = FIXED_TYPE || inferType(e.title);
+  if (!ALLOWED_TYPES.has(type)) { console.error(`허용되지 않은 type "${type}" — 중단합니다: ${e.title}`); process.exit(1); }
   typeCount[type] = (typeCount[type] || 0) + 1;
   const overseas = e.city === '해외';
   out.push(
