@@ -36,6 +36,14 @@ const args = Object.fromEntries(process.argv.slice(2).map(s => { const m = s.mat
 // 그룹 표시가 없으면 버린다. 이 둘이 없으면 "온"·"여름" 같은 이름이 아무 공연명에나 걸린다.
 const NORM = s => ' ' + String(s || '').toUpperCase().replace(/[^가-힣A-Z0-9]/g, ' ').replace(/\s+/g, ' ') + ' ';
 const hasTok = (nu, tok) => { const t = NORM(tok).trim(); return t.length >= 2 && nu.includes(' ' + t + ' '); };
+// 정규화된 제목에서 이 토큰이 **맨 앞**에 오는가(앞의 연도·회차 숫자는 건너뜀).
+// "2026 HIGHLIGHT FAN CON" → HIGHLIGHT는 선두로 인정, "터치드 단독 콘서트 HIGHLIGHT" → 아님.
+const isLeadToken = (nu, tok) => {
+  const words = nu.trim().split(' ').filter(Boolean);
+  let i = 0; while (i < words.length && /^[0-9]+$/.test(words[i])) i++;   // 앞의 연도/숫자 건너뛰기
+  const t = NORM(tok).trim().split(' ').filter(Boolean);
+  return t.every((w, k) => words[i + k] === w);
+};
 
 // 흔한 단어라 단독으로는 못 믿는 토큰(영상 태깅 쪽에서 사고가 났던 계열 + 공연명에 흔한 일반어)
 const COMMON = new Set(['ONE', 'LOVE', 'STAR', 'DAY', 'THE', 'SHOW', 'LIVE', 'TOUR', 'CONCERT', 'FANMEETING',
@@ -93,6 +101,16 @@ export function matchEvent(title) {
       if (AMBIGUOUS_GROUPS.has(gko) && !kpopish) {
         why.push(`skip:${gko}(흔한단어 · K팝 신호 없음)`); continue;
       }
+      // ⚠️ 신호만으로는 부족했다(2026-08-28 2차 실측). 신호가 있어도 그룹명이 **부제**로 쓰이면 샜다:
+      //   "터치드 단독 콘서트: HIGHLIGHT Ⅲ", "WAX 25주년 콘서트: HIGHLIGHT",
+      //   "김윤아 단독 콘서트, April is the Cruelest Month", "유인원 단독 콘서트: Our Nature",
+      //   "시나 쓰는 앨리스 9th 단독콘서트"(밴드명에 '앨리스'가 들어감).
+      // K팝 공연명은 거의 항상 **아티스트명으로 시작한다**("HIGHLIGHT FAN CON", "TREASURE TOUR",
+      // "ARTMS World Tour", "aespa LIVE TOUR"). 그래서 흔한단어형은 맨 앞 토큰일 때만 인정한다.
+      // 앞의 연도("2026 …")는 건너뛴다.
+      if (AMBIGUOUS_GROUPS.has(gko) && !isLeadToken(nu, tok)) {
+        why.push(`skip:${gko}(흔한단어 · 맨 앞이 아님=부제 취급)`); continue;
+      }
       hits.add(gko); why.push(`group:${gko}(${tok})`); break;
     }
   }
@@ -108,6 +126,9 @@ export function matchEvent(title) {
     if (ko.length < 2) continue;                       // 한 글자 이름은 위험(하이키 '키' 사고)
     if (COMMON.has(ko.toUpperCase())) continue;
     if (!hasTok(nu, ko)) continue;
+    // 그룹 쪽 게이트를 두 번 다 멤버 쪽에도 걸어야 했다(2026-08-28). "시나 쓰는 앨리스 9th 단독콘서트"가
+    // 그룹 '앨리스'에선 막히고 **멤버 '앨리스'로** 또 새어나갔다 — 같은 이름은 같은 위험을 갖는다.
+    if (AMBIGUOUS_GROUPS.has(ko) && !isLeadToken(nu, ko)) { why.push(`skip:member ${ko}(흔한단어 · 맨 앞 아님)`); continue; }
     if (people.length >= 2) { why.push(`member:${ko}(동명이인 ${people.length}명 — 버림)`); continue; }
     return { groups: [ko], confidence: 'weak', why: why.concat(`member:${ko}`) };
   }
@@ -116,7 +137,14 @@ export function matchEvent(title) {
 
 // ── KOPIS 조회 ───────────────────────────────────────────────────────────────
 const ENDPOINT = args.endpoint || 'http://www.kopis.or.kr/openApi/restful/pblprfr';
-const pick = (xml, tag) => { const m = xml.match(new RegExp(`<${tag}>([\\s\\S]*?)</${tag}>`)); return m ? m[1].replace(/<!\[CDATA\[|\]\]>/g, '').trim() : ''; };
+// ⚠️ HTML 엔티티를 풀어준다(2026-08-28 실측): API가 제목을 "&amp;TEAM CONCERT", "Red &amp; Velvet",
+// "N.Flying LIVE, &amp;CON5"처럼 인코딩해서 준다. 안 풀면 ①DB에 &amp;가 그대로 저장돼 화면에 그렇게
+// 보이고 ②그룹명 매칭에서 "&TEAM"(앤팀 별칭 andTEAM)이 어긋난다. 이중 인코딩(&amp;amp;)도 있어 2회 푼다.
+const unent = s => String(s || '')
+  .replace(/&amp;/g, '&').replace(/&amp;/g, '&')
+  .replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;|&apos;/g, "'")
+  .replace(/&nbsp;/g, ' ');
+const pick = (xml, tag) => { const m = xml.match(new RegExp(`<${tag}>([\\s\\S]*?)</${tag}>`)); return m ? unent(m[1].replace(/<!\[CDATA\[|\]\]>/g, '')).trim() : ''; };
 
 // ── 장르 코드 실측표 (2026-08-28, --genres 로 직접 조회해 확정) ────────────────────
 //   AAAA 연극        BBBC 무용(서양/한국무용)   BBBE 대중무용
@@ -250,13 +278,27 @@ async function main() {
   // 안 주면 필터 없이 전체(=null 한 번)를 돈다. ⚠️ 그 경우 50페이지(5,000건) 상한에 쉽게 걸린다.
   const genres = genre ? String(genre).split(',').map(s => s.trim()).filter(Boolean) : [null];
   const rows = []; const seen = new Set();
+  // ⚠️ **월 단위로 쪼개서 조회한다**(2026-08-28). 2년치를 한 번에 요청했더니 페이지 상한(50p=5,000건)에
+  // 걸려 오래된 쪽이 통째로 잘렸다 — 요청은 2025-01~2026-12였는데 결과는 2025-10~2026-10만 들어왔다.
+  // 조용한 누락이라 눈치채기 어렵다(개수만 보면 5,639건이라 많아 보인다). 기간을 잘게 나누면 각 구간이
+  // 상한 아래로 떨어져 전 구간이 온전히 들어온다.
+  const months = [];
+  for (let y = +from.slice(0, 4), m = +from.slice(4, 6); y * 100 + m <= +to.slice(0, 4) * 100 + +to.slice(4, 6);) {
+    const s = `${y}${String(m).padStart(2, '0')}01`;
+    const last = new Date(y, m, 0).getDate();
+    months.push([s, `${y}${String(m).padStart(2, '0')}${last}`]);
+    if (++m > 12) { m = 1; y++; }
+  }
   for (const g of genres) {
-    for (let page = 1; page <= 50; page++) {
-      const got = await fetchPage(key, from, to, page, g);
-      if (!got.length) break;
-      for (const r of got) { if (!seen.has(r.id)) { seen.add(r.id); rows.push(r); } }
-      process.stderr.write(`\r[kopis] ${from}~${to} ${g ? g + '(' + (GENRE_LABEL[g] || '?') + ')' : '전체'} — 누적 ${rows.length}건…`);
-      await new Promise(r => setTimeout(r, 250));     // 예의상 간격 — 공식 API라도 몰아치지 않는다
+    for (const [ms, me] of months) {
+      for (let page = 1; page <= 50; page++) {
+        const got = await fetchPage(key, ms, me, page, g);
+        if (!got.length) break;
+        for (const r of got) { if (!seen.has(r.id)) { seen.add(r.id); rows.push(r); } }
+        if (got.length === 100 && page === 50) console.error(`\n⚠️ ${ms} ${g}: 한 달인데도 상한 도달 — 누락 가능성`);
+        await new Promise(r => setTimeout(r, 200));   // 예의상 간격 — 공식 API라도 몰아치지 않는다
+      }
+      process.stderr.write(`\r[kopis] ${g ? GENRE_LABEL[g] || g : '전체'} ${ms.slice(0, 6)} — 누적 ${rows.length}건…   `);
     }
     process.stderr.write('\n');
   }
@@ -300,8 +342,13 @@ async function main() {
       `${sq('kopis_' + e.id)},${sq(e.title)},array[${e.groups.map(sq).join(',')}],` +
       `${sq(e.date_start)},${sq(e.date_end)},${sq(e.venue)},${sq(e.city)},${e.relate ? sq(e.relate) : 'null'}) on conflict (id) do nothing;`);
   }
-  console.error(`\n미매칭 ${unmatched.length}건 (앞 40개):`);
-  unmatched.slice(0, 40).forEach(u => console.error(`  · ${u.title}  [${u.venue}]  ${u.why.join(' ') || '단서 없음'}`));
+  // 미매칭은 **전량을 파일로** 남긴다. 앞 40개만 찍었더니 "놓친 게 있나" 감사가 표본 부족으로
+  // 무의미했다(2026-08-28). 매칭기를 고칠 때 이 파일이 유일한 근거다.
+  const unmFile = path.join(ROOT, 'events.unmatched.txt');
+  fs.writeFileSync(unmFile, unmatched.map(u => `${u.title}\t${u.venue}\t${u.genre || ''}\t${u.why.join(' ') || '단서없음'}`).join('\n'));
+  console.error(`\n미매칭 ${unmatched.length}건 전량 → ${unmFile}`);
+  console.error('앞 25개:');
+  unmatched.slice(0, 25).forEach(u => console.error(`  · ${u.title}  [${u.venue}]  ${u.why.join(' ') || '단서 없음'}`));
 }
 
 // ── 셀프테스트: 키 없이 매칭기만 점검 ────────────────────────────────────────

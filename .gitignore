@@ -19,3 +19,7 @@ node_modules/
 .vidfn.tmp
 index.html.bak*
 kpop_universe.html.bak*
+
+# 수집 산출물(미매칭 감사용)
+events.unmatched.txt
+events.err
