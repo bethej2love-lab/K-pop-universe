@@ -54,26 +54,56 @@ const memberIndex = (() => {
 
 function groupTokens(gko) {
   const g = GROUPS[gko] || {};
-  return [gko, g.en, ...(g.altNames || [])].filter(Boolean);
+  return [gko, g.en, ...(g.altNames || [])].filter(Boolean)
+    // ⚠️ 숫자만인 토큰 차단(2026-08-28 실측): 피프틴앤드의 en이 '15&'인데 정규화하면 '15'가 되어
+    // "천체관측 vol.15", "July Festival in 고창 1" 같은 제목에 걸렸다. 숫자는 공연명에 널려 있다.
+    .filter(t => !/^\s*[0-9]+\s*$/.test(String(t).replace(/[^0-9A-Za-z가-힣]/g, '')));
 }
+
+// 그룹명이 일상어와 겹쳐 단독으로는 못 믿는 것들(2026-08-28 실측 5,000건에서 나온 오탐 그대로).
+// 메모리의 "흔한 단어형 그룹명" 목록을 공연 도메인에 맞게 확장했다 — 아동극·클래식·발레 제목에
+// 그룹명과 같은 단어가 그대로 등장한다: "이상한 나라의 앨리스", "발레 시그니처", "퀸 엘리자베스
+// 콩쿠르 위너 콘서트", "신카이 마코토 하이라이트 필름", "우리 신화 이야기", "다 내 아이들"…
+// 이 이름들은 **K팝 공연이라는 별도 신호**가 같이 있어야만 인정한다.
+const AMBIGUOUS_GROUPS = new Set(['앨리스', '시그니처', '아르테미스', '하이라이트', '위너', '네이처',
+  '신화', '아이들', '레인보우', '시크릿', '트레저', '슈가', '위클리', '에이프릴', '인피니트', '티아라',
+  '다이아', '펜타곤', '여자친구', '오마이걸', '드림', '뉴이스트', '빅스', '소녀시대']);
+
+// K팝 공연 제목에 붙는 관용 표현. 아동극·클래식 제목엔 거의 안 나온다.
+const KPOP_SIGNAL = /FAN\s?CON|FANCON|FAN\s?MEETING|FANMEETING|팬미팅|팬콘|단독\s?콘서트|WORLD\s?TOUR|ASIA\s?TOUR|CONCERT\s?TOUR|TOUR\s?:|LIVE\s?TOUR|쇼케이스|SHOWCASE|COMEBACK|데뷔\s?\d|주년\s?(단독|콘서트)|ANNIVERSARY\s?(TOUR|CONCERT)/i;
 
 // 공연명 → {groups:[...], confidence:'strong'|'weak', why}
 export function matchEvent(title) {
   const nu = NORM(title);
   const hits = new Set(); const why = [];
+  const kpopish = KPOP_SIGNAL.test(title);
   // ① 그룹명/영문명/별칭 직접 매칭 — 가장 신뢰도 높음
   for (const gko of Object.keys(GROUPS)) {
     for (const tok of groupTokens(gko)) {
       const T = tok.toUpperCase();
       if (COMMON.has(T)) continue;            // 흔한 단어형 그룹명은 단독 매칭 금지
       if (T.replace(/[^A-Z0-9가-힣]/g, '').length < 2) continue;
-      if (hasTok(nu, tok)) { hits.add(gko); why.push(`group:${gko}(${tok})`); break; }
+      if (!hasTok(nu, tok)) continue;
+      // 일상어와 겹치는 그룹명은 K팝 공연 신호(투어·팬콘·단독 콘서트 등)가 같이 있을 때만 인정한다.
+      // ⚠️ 처음엔 "영문 표기로 걸리면 예외"로 뒀는데(ARTMS 같은 건 일상어가 아니니까) **그 가정이
+      //    틀렸다** — 실측에서 WINNER("I AM Winner 마티네 콘서트")·NATURE("Nature Sounds Temple")·
+      //    TREASURE("The Treasure Box")·Sugar("PINK SUGAR CLUB")가 전부 en으로 새어나갔다.
+      //    영문 그룹명도 일상 영단어인 경우가 흔하다. 예외를 없애고 ko/en 구분 없이 신호를 요구한다.
+      //    (ARTMS는 "ARTMS World Tour"처럼 신호가 같이 오므로 그대로 통과한다.)
+      if (AMBIGUOUS_GROUPS.has(gko) && !kpopish) {
+        why.push(`skip:${gko}(흔한단어 · K팝 신호 없음)`); continue;
+      }
+      hits.add(gko); why.push(`group:${gko}(${tok})`); break;
     }
   }
   if (hits.size) return { groups: [...hits], confidence: 'strong', why };
 
   // ② 멤버 이름 매칭(솔로 콘서트) — 동명이인이면 버린다. 그룹 표시가 없는 상황이라
   //    영상 태깅에서 "지유/지원/메이" 사고가 났던 것과 같은 위험이 그대로 있다.
+  // ⚠️ **K팝 신호를 반드시 요구한다**(2026-08-28). 그룹 쪽에만 게이트를 걸었더니 "이상한 나라의
+  //    앨리스"가 그룹 '앨리스'에선 막히고 **멤버 '앨리스'로 새어나갔다**. 이름 하나만으로 공연 전체를
+  //    한 사람에게 배정하는 건 원래 가장 약한 근거라, 신호 없이는 아예 시도하지 않는 게 맞다.
+  if (!kpopish) return { groups: [], confidence: 'none', why: why.concat('skip:member(K팝 신호 없음)') };
   for (const [ko, people] of memberIndex) {
     if (ko.length < 2) continue;                       // 한 글자 이름은 위험(하이키 '키' 사고)
     if (COMMON.has(ko.toUpperCase())) continue;
@@ -262,37 +292,27 @@ async function main() {
 // ⚠️ 아래 코퍼스는 **실제 KOPIS 데이터가 아니라** 실제 그룹명에 흔한 공연명 패턴을 씌운 합성 표본이다.
 //    이름 추출부(가장 위험한 부분)의 정확도만 본다. 진짜 재현율은 키를 받은 뒤 실데이터로 다시 재야 한다.
 function selftest() {
-  const gk = Object.keys(GROUPS);
-  const pos = [
-    ['2026 세이마이네임 단독 콘서트 [SAY MY NAME]', '세이마이네임'],
-    ['에스파 2026 WORLD TOUR - SYNK : PARALLEL LINE - in SEOUL', '에스파'],
-    ['2026 아이브 THE 1ST WORLD TOUR SHOW WHAT I HAVE', '아이브'],
-    ['BOYNEXTDOOR FAN CONCERT 2026', '보이넥스트도어'],       // en 매칭
-    ['제베원 팬미팅 2026', '제로베이스원'],                     // altNames 매칭
-    ['비스트 콘서트 2026', '하이라이트'],                       // altNames(옛 그룹명) 매칭
-  ];
-  const neg = [
-    '2026 신년음악회 - 서울시립교향악단',
-    '뮤지컬 <원스> 앙코르 공연',
-    '2026 THE LOVE CONCERT',        // 흔한 단어만 — 걸리면 안 됨
-    '연극 <라이브> 서울 공연',        // '라이브' 흔한단어
-  ];
-  let ok = 0, bad = 0;
-  console.log(`매칭기 셀프테스트 (그룹 ${gk.length}개 · 합성 표본 ${pos.length + neg.length}건)\n`);
-  for (const [t, want] of pos) {
-    const m = matchEvent(t);
-    const hit = m.groups.includes(want);
-    console.log(`${hit ? '✅' : '❌'} ${t}\n     → ${JSON.stringify(m.groups)} (${m.confidence}) 기대=${want}`);
-    hit ? ok++ : bad++;
+  // ⚠️ 합성 표본이 아니라 **실제 KOPIS 응답**에서 가져온 제목이다(tools/kopis_fixture.json).
+  // 2025~2026 무필터 5,000건 수집분의 매칭 결과를 눈으로 확인해 라벨링했다 — 오탐이 절반이었다.
+  // 정밀도(오탐 안 내기)와 재현율(진짜를 놓치지 않기)을 같이 본다. 새 오탐을 만나면 픽스처에 추가할 것.
+  const fx = JSON.parse(fs.readFileSync(path.join(ROOT, "tools", "kopis_fixture.json"), "utf8")).cases;
+  let tp = 0, fn = 0, fp = 0, tn = 0; const bad = [];
+  for (const c of fx) {
+    const m = matchEvent(c.t);
+    if (c.expect) {
+      if (m.groups.includes(c.expect)) tp++;
+      else { fn++; bad.push("  ❌ 놓침  " + c.t + "\n         기대=" + c.expect + " 결과=" + JSON.stringify(m.groups)); }
+    } else {
+      if (!m.groups.length) tn++;
+      else { fp++; bad.push("  ❌ 오탐  " + c.t + "\n         → " + JSON.stringify(m.groups) + "  (" + m.why.join(" ") + ")"); }
+    }
   }
-  for (const t of neg) {
-    const m = matchEvent(t);
-    const clean = m.groups.length === 0;
-    console.log(`${clean ? '✅' : '❌'} [음성] ${t}\n     → ${JSON.stringify(m.groups)} ${clean ? '' : '(오탐!)'}`);
-    clean ? ok++ : bad++;
-  }
-  console.log(`\n${ok}/${ok + bad} 통과`);
-  process.exit(bad ? 1 : 0);
+  const prec = (tp + fp) ? (tp / (tp + fp) * 100).toFixed(1) : "-";
+  const rec = (tp + fn) ? (tp / (tp + fn) * 100).toFixed(1) : "-";
+  console.log("실데이터 픽스처 " + fx.length + "건 (양성 " + (tp + fn) + " · 음성 " + (tn + fp) + ")\n");
+  if (bad.length) console.log(bad.join("\n") + "\n");
+  console.log("재현율 " + rec + "%  (" + tp + "/" + (tp + fn) + " 찾음)");
+  console.log("정밀도 " + prec + "%  (오탐 " + fp + "건 / 음성 " + (tn + fp) + "건 중)");
+  process.exit((fp || fn) ? 1 : 0);
 }
-
 main().catch(e => { console.error('[kopis] 실패:', e.message); process.exit(2); });
