@@ -17227,6 +17227,17 @@ function _renderConcertRow(containerId,events){
 
   const list=document.createElement('div');list.className='concert-list';
   [...upcoming,...past].forEach(ev=>list.appendChild(_makeConcertItem(ev)));
+  // 출처 표기(2026-08-28) — KOPIS 오픈API 이용약관이 "API를 활용해 서비스를 개발할 경우 아래 사항을
+  // 반드시 함께 명시"하도록 요구한다. 공연 정보를 실제로 보여주는 이 목록 안에 둔다(별도 페이지가
+  // 아니라 데이터 옆에 있어야 표기 의미가 있음). 목록이 열릴 때만 보이므로 평상시 화면은 안 건드린다.
+  // ⚠️ 예매/공연 **통계** API(prfsts*)를 쓰게 되면 "집계기간·집계대상·발권 분량 기준" 세 줄을 여기에
+  //    추가로 명시해야 한다 — 지금은 DB검색(공연목록/상세)만 쓰므로 출처 표기로 충분하다.
+  const credit=document.createElement('div');
+  credit.className='concert-credit';
+  credit.textContent=currentLang==='ko'
+    ? '공연 정보 제공 · 공연예술통합전산망(KOPIS)'
+    : 'Performance data · KOPIS (Korea Performing Arts Box Office Information System)';
+  list.appendChild(credit);
 
   teaser.addEventListener('click',e=>{
     e.stopPropagation();
