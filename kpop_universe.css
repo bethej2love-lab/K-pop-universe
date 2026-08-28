@@ -1035,7 +1035,7 @@
   /* 영문 그룹명 + SNS 링크를 기본 한 줄에 두되, 영문이 길어 한 줄에 안 들어가면 링크만 자동으로 다음 줄로
      내린다(flex-wrap) — 글자수를 세지 않고 공간 기준 자동. 보통 3줄(이름 / 영문+링크 / 상태), 영문 긴 그룹만
      4줄(이름 / 영문 / 링크 / 상태). 사진 유무 무관 통일(2026-08-28, 사용자 요청 — 4줄 남발 방지). */
-  #gc-en-row{display:flex;flex-wrap:wrap;align-items:center;gap:5px 8px;min-width:0;}
+  #gc-en-row{display:flex;flex-wrap:wrap;align-items:center;gap:5px 14px;min-width:0;}
   /* 최후의 안전장치 — #gc-links가 flex-shrink:0이라 영문명이 안 줄면 SNS 아이콘이 카드 밖으로 밀려
      잘린다(#gc는 overflow:hidden이라 조용히 잘린다). 실제 잘림은 아래 .has-gc-pic 규칙으로 막는다. */
   #gc-en{min-width:0;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
@@ -2363,7 +2363,7 @@
      90개(34%)의 영문명이 잘렸다("TOMORROW X TOGETHER"→"TO..."). 사진을 줄여도 아이콘이 공간의
      대부분을 쓰므로 해결이 안 돼서, 아이콘을 한 줄 내려 영문명에 전체 폭을 준다(2026-08-28).
      ⚠️ 카드 폭은 늘릴 수 없다 — 데스크톱은 #side-panel, 모바일은 시트가 폭을 정한다. */
-  #gc.has-gc-pic #gc-en-row{flex-wrap:wrap;align-items:center;gap:5px 8px;}
+  #gc.has-gc-pic #gc-en-row{flex-wrap:wrap;align-items:center;gap:5px 14px;}
   #gc.has-gc-pic #gc-en{max-width:100%;}
   /* 지정 그룹(영문명 김)은 강제로 영문/SNS를 세로 분리 = 4줄 허용(index.html gc-en-stack 토글). */
   #gc-en-row.gc-en-stack{flex-direction:column;align-items:flex-start;}
