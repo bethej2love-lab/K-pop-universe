@@ -10137,14 +10137,10 @@ document.getElementById('dh-feed-btn').addEventListener('click',e=>{
 // 영역이 넘쳐도 휠로는 못 움직였음(2026-08-10, 사용자 제보) — gc-ch-filters와 동일하게 세로 휠 델타를
 // 가로 스크롤로 옮겨준다. 요소가 정적 HTML이라 리스너는 한 번만 등록하면 됨(매번 다시 그려지는 건
 // 안쪽 아이템들뿐, 컨테이너 자체는 그대로).
-{
-  const annivStrip=document.getElementById('feed-anniv');
-  annivStrip?.addEventListener('wheel',e=>{
-    if(annivStrip.scrollWidth<=annivStrip.clientWidth)return;
-    e.preventDefault();
-    annivStrip.scrollLeft+=e.deltaY;
-  },{passive:false});
-}
+// (2026-08-25 정리) 여기 있던 #feed-anniv 휠 핸들러는 **죽은 중복 코드**였다 — ①메인 <script>가
+// #feed-body보다 먼저 끝나서 이 시점엔 요소가 아직 없고(`?.`라 조용히 무시됐다) ②_enableDragScroll이
+// 이미 같은 휠 처리를 품고 있으며, 실제로 동작하던 경로는 _buildFeedAnniversaries의 지연 바인딩이었다.
+// 선반이 늘어날 때마다 여기에 한 줄씩 다는 대신, 각 선반을 그리는 함수에서 _enableDragScroll을 부른다.
 document.getElementById('desktop-header').addEventListener('click',e=>e.stopPropagation());
 document.getElementById('desktop-header').addEventListener('pointerdown',e=>e.stopPropagation());
 ['settings-panel','search-wrap','tabbar','tt','gc','tab-settings','col-picker'].forEach(id=>{
@@ -15501,6 +15497,58 @@ function _buildFeedRandomVideo(list){
   }),vThumb,null,{wide:!_songIsShort(song)}); // 단일 랜덤영상: landscape면 전체폭(썸네일이 mqdefault 16:9라 쇼츠는 세로 처리 안 함)
 }
 
+// ── Trend 선반 — 최근 7일 업로드 영상을 랜덤 순서로(2026-08-25 사용자 요청) ─────────────
+// Discovery의 Trend 카드(category='live' 조회수 상위)와 목적이 다르다: 그건 "많이 본 것"을 한 장으로
+// 접어 두는 카드고, 이건 "새로 올라온 것"을 개별 영상으로 바로 펼쳐 보여주는 선반이다. 그래서 정렬
+// 기준도 조회수가 아니라 **업로드일**이고, 노출 순서는 랜덤이다(순위표처럼 보이지 않게 — Discovery
+// Trend 카드에서 이미 확립된 규칙).
+const _FEED_TREND_DAYS=7,_FEED_TREND_MAX=24,_FEED_TREND_PER_GROUP=2;
+async function _buildFeedTrend(){
+  const strip=document.getElementById('feed-trend');
+  const section=document.getElementById('feed-trend-section');
+  if(!strip||!section||!sb)return;
+  // #feed-trend도 메인 <script>보다 뒤에 있는 정적 HTML이라 최상단 바인딩은 조용히 무시된다 —
+  // 기념일 선반과 같은 지연 바인딩 패턴(자체 _dragScrollBound 가드가 있어 중복 호출 안전).
+  _enableDragScroll(strip);
+  strip.innerHTML='';section.style.display='none';
+  try{
+    const since=new Date(Date.now()-_FEED_TREND_DAYS*86400000).toISOString().slice(0,10);
+    const{data,error}=await _applyLiveExclude(sb.from(_YT_TABLE)
+      .select('id,title,thumb,category,is_short,content_flag,group_ko,members,view_count,published_at'))
+      .gte('published_at',since)
+      // 숨김/무관/보류/기타는 유저 화면에 안 나오는 값 — 다른 피드 카드와 같은 필터를 그대로 쓴다
+      .or('content_flag.is.null,content_flag.neq.기타')
+      .or('content_flag.is.null,content_flag.neq.무관').or('content_flag.is.null,content_flag.neq.보류')
+      .or('content_flag.is.null,content_flag.neq.hidden')
+      .order('published_at',{ascending:false})
+      .limit(300);
+    if(error||!data?.length)return;
+    // 쇼츠(세로)는 제외 — 이 선반의 썸네일 틀이 16:9라 세로 영상을 넣으면 좌우가 크게 남아 어색하다.
+    // (쇼츠는 Shorts 탭과 카드 그리드에서 각자 제 비율로 노출된다.)
+    const vids=_capByGroup(_filterBannedVideos(data).filter(v=>!_isShortV(v)),v=>v.group_ko,_FEED_TREND_PER_GROUP);
+    if(vids.length<3)return; // 3개도 안 되면 선반을 여는 것보다 없는 게 낫다
+    const picked=_shuffle([...vids]).slice(0,_FEED_TREND_MAX);
+    const songs=picked.map(v=>({t:v.title,u:vidUrl(v),thumb:v.thumb,vc:v.view_count,pa:v.published_at?.slice(0,10),
+      groupKo:v.group_ko,memberKos:v.members||[]}));
+    const _fmtDay=iso=>{
+      const d=Math.floor((Date.now()-new Date(iso+'T00:00:00').getTime())/86400000);
+      if(d<=0)return currentLang==='ko'?'오늘':'today';
+      if(d===1)return currentLang==='ko'?'어제':'yesterday';
+      return currentLang==='ko'?`${d}일 전`:`${d}d ago`;
+    };
+    picked.forEach((v,i)=>{
+      const pa=(v.published_at||'').slice(0,10);
+      // 서브는 "그룹 · N일 전" — 조회수를 안 쓰는 이유는 위 주석(순위표처럼 보이지 않게)과 같다.
+      const sub=[v.group_ko,pa?_fmtDay(pa):null].filter(Boolean).join(' · ');
+      _appendFeedCard(strip,'📈',v.title,sub,
+        // 누르면 이 선반 전체가 재생목록이 돼서 그대로 다음 영상으로 넘어갈 수 있다(훑어보기 목적)
+        ()=>openLightbox(songs[i].u,_songIsShort(songs[i]),songs,i,
+          {groupKo:v.group_ko,memberKo:(v.members||[])[0]},false,true),
+        v.thumb);
+    });
+    section.style.display='';
+  }catch(e){/* 선반 하나 실패로 탐험 탭 전체가 막히면 안 됨 — 조용히 무시(다른 카드와 동일 방침) */}
+}
 function _buildFeedDiscovery(){
   const list=document.getElementById('feed-discovery');
   const chartList=document.getElementById('feed-chart');
@@ -15510,6 +15558,7 @@ function _buildFeedDiscovery(){
   _feedUsedRotation={}; // 순환 카드 중복노출 방지 기록도 패널을 새로 열 때 초기화(아래 _feedRotUsed 참고)
   _feedSpreadBoundary=null; // 모아보기류 카드 재배치 진행 지점도 초기화(아래 _spreadFeedCollectionCards 참고)
   _buildFeedRecentlyViewed();
+  _buildFeedTrend(); // 최근 7일 업로드 선반(비동기 — 다른 카드 렌더를 막지 않는다)
   // 랭킹류(주간/월간/연도별/역대 TOP) 카드는 "Discovery"(랜덤 발견)가 아니라 "Charts"(항상 같은 자리,
   // 스포티파이 홈 고정 선반 문법) 섹션으로 분리(2026-08-21, Fable UX 감사 반영 — "차트가 랜덤 안에 섞여
   // 있으면 습관이 안 생긴다"). 실제 호출 순서는 원래도 고정이었지만(랜덤 섞임 아님) 시각적으로 구분이
@@ -17715,6 +17764,14 @@ _totopBtn.addEventListener('click',e=>{
     <div class="feed-section" id="feed-anniv-section" style="display:none">
       <div class="feed-section-ttl">🎂 Today's Anniversary</div>
       <div id="feed-anniv" class="feed-strip hscroll-drag"></div>
+    </div>
+    <!-- 최근 7일 업로드 영상을 랜덤 순서로 나열(2026-08-25 사용자 요청 — "최신 정보·영상이 중요한데
+         Discovery의 Trend 카드 하나로는 부족"). Discovery의 Trend 카드는 category='live' 조회수 상위를
+         **한 장의 카드**로 접어 두는 방식이라 눌러야 목록이 보이는데, 이 선반은 개별 영상을 바로 펼쳐
+         보여준다. Charts와 같은 카드 크기(#feed-chart와 동일 규칙)로 가로 스크롤. -->
+    <div class="feed-section" id="feed-trend-section" style="display:none">
+      <div class="feed-section-ttl">📈 Trend</div>
+      <div id="feed-trend" class="feed-strip hscroll-drag"></div>
     </div>
     <div class="feed-section" id="feed-recent-section" style="display:none">
       <div class="feed-section-ttl">🕐 Recently Viewed</div>
