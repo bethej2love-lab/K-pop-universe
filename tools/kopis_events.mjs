@@ -88,8 +88,16 @@ export function matchEvent(title) {
 const ENDPOINT = args.endpoint || 'http://www.kopis.or.kr/openApi/restful/pblprfr';
 const pick = (xml, tag) => { const m = xml.match(new RegExp(`<${tag}>([\\s\\S]*?)</${tag}>`)); return m ? m[1].replace(/<!\[CDATA\[|\]\]>/g, '').trim() : ''; };
 
-async function fetchPage(key, from, to, page) {
-  const url = `${ENDPOINT}?service=${encodeURIComponent(key)}&stdate=${from}&eddate=${to}&cpage=${page}&rows=100&shcate=CCCD`;
+// ⚠️ 장르 코드(shcate)를 하드코딩하지 않는다. 처음엔 'CCCD'로 박아뒀는데, 사용자가 받아둔 공식 문서
+// (공연예술통합전산망OpenAPI공통코드.pdf)에서 뽑아보니 실제 코드는 AAAA/AAAB/BBBA/CCCA/CCCB/CCCC/EEEA
+// 뿐이고 CCCD는 아예 없었다 — 그대로 돌렸으면 조용히 0건이 나왔을 것이다(2026-08-28).
+// 한글 라벨은 임베디드 폰트라 문서에서 못 읽어냈으므로, **추측 대신 실데이터로 확인**한다:
+//   node tools/kopis_events.mjs --key=... --probe
+// 가 장르 필터 없이 한 달치를 받아 genrenm 분포와 표본 제목을 찍어준다. 거기서 대중음악에 해당하는
+// 코드를 고른 뒤 --genre=XXXX 로 넘기면 된다. 필터를 안 주면 전체를 받아 그룹명 매칭으로만 거른다.
+async function fetchPage(key, from, to, page, genre) {
+  const url = `${ENDPOINT}?service=${encodeURIComponent(key)}&stdate=${from}&eddate=${to}&cpage=${page}&rows=100`
+    + (genre ? `&shcate=${encodeURIComponent(genre)}` : '');
   const res = await fetch(url);
   const xml = await res.text();
   if (/SERVICE KEY IS NOT REGISTERED|errmsg/.test(xml) && !/<db>/.test(xml)) throw new Error('API 오류: ' + xml.slice(0, 200));
@@ -98,6 +106,7 @@ async function fetchPage(key, from, to, page) {
     date_start: pick(b, 'prfpdfrom').replace(/\./g, '-'),
     date_end: pick(b, 'prfpdto').replace(/\./g, '-'),
     venue: pick(b, 'fcltynm'), city: pick(b, 'area'), poster: pick(b, 'poster'),
+    genre: pick(b, 'genrenm'), state: pick(b, 'prfstate'),
   }));
 }
 
@@ -109,13 +118,27 @@ async function main() {
   if (!key) { console.error('키가 필요합니다: --key=... (또는 KOPIS_KEY 환경변수)\n발급: https://www.data.go.kr/data/15097805/openapi.do (자동승인)'); process.exit(1); }
   const from = args.from || '20260101', to = args.to || '20261231';
   const minConf = args['min-conf'] || 'strong';
+  const genre = typeof args.genre === 'string' ? args.genre : null;
+
+  // --probe: 장르 코드를 고르기 위한 정찰. 필터 없이 짧은 기간만 받아 genrenm 분포를 보여준다.
+  if (args.probe) {
+    const p = await fetchPage(key, from, from.slice(0, 6) + '28', 1, null);
+    const dist = new Map();
+    p.forEach(r => dist.set(r.genre || '(없음)', (dist.get(r.genre || '(없음)') || 0) + 1));
+    console.log(`[probe] ${from} 한 달 표본 ${p.length}건의 genrenm 분포:`);
+    [...dist].sort((a, b) => b[1] - a[1]).forEach(([g, n]) => console.log(`  ${String(n).padStart(4)}건  ${g}`));
+    console.log('\n대중음악으로 보이는 장르의 표본 제목:');
+    p.filter(r => /대중|음악|콘서트/.test(r.genre || '')).slice(0, 15).forEach(r => console.log(`  · [${r.genre}] ${r.title}`));
+    console.log('\n→ 맞는 장르를 고른 뒤 --genre=코드 로 다시 실행하세요(코드는 공통코드 PDF 참고).');
+    return;
+  }
 
   const rows = [];
   for (let page = 1; page <= 50; page++) {
-    const got = await fetchPage(key, from, to, page);
+    const got = await fetchPage(key, from, to, page, genre);
     if (!got.length) break;
     rows.push(...got);
-    process.stderr.write(`\r[kopis] ${from}~${to} ${rows.length}건 수집…`);
+    process.stderr.write(`\r[kopis] ${from}~${to}${genre ? ' ' + genre : ''} ${rows.length}건 수집…`);
     await new Promise(r => setTimeout(r, 250));       // 예의상 간격 — 공식 API라도 몰아치지 않는다
   }
   process.stderr.write('\n');
