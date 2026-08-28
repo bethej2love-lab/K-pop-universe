@@ -5316,6 +5316,7 @@ function openMobSheet(cardEl){
   // 잔상 때문에 첫 스크롤이 반대 방향으로 오판되거나 탭바가 숨김 고착되는 걸 막는다.
   mobSheetInner._lastScroll=0;mobCardStackInner._lastScroll=0;
   mobSheetInner._tbAccum=0;mobCardStackInner._tbAccum=0;
+  _showTabbar(); // 추적값 리셋만으론 tab-hidden 클래스가 안 떨어진다(위 _showTabbar 주석 참고)
   document.getElementById('journal-sidebar').classList.remove('open'); // 마이페이지가 열려있는 채로 그룹/멤버 카드를 열어도 카드가 위로 뜨도록
   cardEl.style.maxWidth='';cardEl.style.width='';cardEl.style.left='';cardEl.style.top='';
 
@@ -6596,6 +6597,10 @@ function openConnCard(artist){
     document.getElementById('journal-sidebar').classList.remove('open'); // 마이페이지가 열려있는 채로 연결 카드를 열어도 카드가 위로 뜨도록
     _buildConnContent(connSheetBody);
     connSheetInner.scrollTop=0;
+    // 연결 카드도 새로 여는 것이니 같은 불변식 — 게다가 여기엔 스크롤 추적값 리셋도 없어서, 이전 카드에서
+    // 내려간 _lastScroll이 남아 첫 스크롤 방향이 반대로 읽히기도 했다.
+    connSheetInner._lastScroll=0;connSheetInner._tbAccum=0;
+    _showTabbar();
     // 지금 열려있는 멤버 카드(mob-sheet/mob-card-stack)가 100%(bs-full)였으면 연결 카드도 그 상태를
     // 그대로 물려받아 100%로 열림 — mob-card-stack이 이미 하는 것과 같은 패턴(2026-08-04).
     connSheetEl.classList.toggle('bs-full',_sheetFull);
@@ -9443,6 +9448,7 @@ function updateSheetBottom(){
   _tabbarH=Math.round(tb.offsetHeight+off);
   document.documentElement.style.setProperty('--mob-vh',(window.visualViewport?.height??window.innerHeight)+'px');
   _applySheetMetrics();
+  _ensureTabbarIfUnscrollable(); // 회전/뷰포트 변화로 카드가 더는 안 스크롤되게 됐으면 탭바 복구
 }
 // 시트 기하를 결정하는 단 두 개의 변수를 한 곳에서만 쓴다(kpop_universe.css의 #mob-sheet 주석 참고).
 function _applySheetMetrics(){
@@ -9525,6 +9531,43 @@ function _wireSheetTabbarHide(scrollEl){
   },{passive:true});
 }
 _sheetScrollers.forEach(_wireSheetTabbarHide);
+// ── 카드를 "열 때"의 불변식: 새 카드는 scrollTop=0에서 시작하므로 탭바는 반드시 보이는 상태여야 한다.
+// 원래 tab-hidden을 떼는 코드는 **닫기 경로 4곳**(closeMobSheet / 스택 pop / 연결카드 닫기 / 라이트박스
+// 닫기)에만 있었고, 여는 쪽엔 _lastScroll·_tbAccum 리셋만 있었다. 추적값을 0으로 되돌려도 클래스는 그대로
+// 남으므로, 직전 카드에서 스크롤을 내려 탭바가 숨은 채 새 카드를 열면 탭바가 사라진 상태로 시작한다.
+// (탐험 버튼은 closeMobSheet 로직을 인라인 복사하면서 이 복구 두 줄만 빠뜨렸다 — 2026-08-28 사용자 제보)
+//
+// ⚠️ 사파리에선 왜 안 드러났나 — 이게 "사파리 vs 웹앱(홈화면 설치)" 차이가 반복되는 전형적 구조다.
+// 유일한 복구 안전망이 스크롤 핸들러 안의 "최상단 40px면 무조건 표시"인데 **scroll 이벤트가 와야만 돈다**.
+// 사파리는 주소창 때문에 세로가 짧아 카드가 거의 항상 스크롤 가능 → 안전망이 즉시 발동해 버그를 덮었다.
+// standalone 웹앱은 세로를 100px 가까이 더 쓰므로 짧은 카드가 아예 안 스크롤되고, 그러면 이벤트가 한 번도
+// 안 나서 안전망이 영원히 안 돈다. 즉 원인은 PWA 전용 분기가 아니라 **상태를 명시적으로 복구하지 않고
+// "이벤트가 오겠지"라는 부수효과에 기댄 코드**다. 새 UI 상태를 만들 땐 이벤트가 아니라 진입 시점에
+// 상태를 못박을 것.
+function _showTabbar(){
+  const tb=document.getElementById('tabbar');
+  if(!tb)return;
+  tb.classList.remove('tab-hidden');
+  _retractSheets();
+}
+// 스크롤 이벤트에만 의존하지 않는 보강 — 탭바가 숨은 뒤에 카드 안 탭을 짧은 내용으로 바꾸면 스크롤이
+// 아예 불가능해져 scroll 이벤트가 다신 안 오고, 그러면 위 안전망도 못 돈다(사파리에선 화면이 짧아 이
+// 상태가 잘 안 생긴다 — 웹앱 전용처럼 보이는 증상의 같은 뿌리). 내용 높이가 바뀌는 지점을 일일이
+// 찾는 대신 ResizeObserver로 카드 본문을 감시한다.
+// ⚠️ 맨 위 가드(이미 보이면 즉시 반환)가 무한루프 방지 — _showTabbar가 --sheet-* 변수를 다시 써서
+//    RO를 재발화시키는데, 그땐 tab-hidden이 이미 없으므로 두 번째 콜백에서 바로 빠져나온다.
+function _ensureTabbarIfUnscrollable(){
+  const tb=document.getElementById('tabbar');
+  if(!tb||!tb.classList.contains('tab-hidden'))return;
+  const el=_activeSheetScroller();
+  if(!el)return;
+  if(Math.max(0,el.scrollHeight-el.clientHeight)<=_TB_TOP_ZONE)_showTabbar();
+}
+if(window.ResizeObserver){
+  const _tbRo=new ResizeObserver(()=>_ensureTabbarIfUnscrollable());
+  [document.getElementById('tt'),document.getElementById('gc'),connSheetBody]
+    .forEach(el=>{if(el)_tbRo.observe(el);}); // 컨테이너를 옮겨 다녀도 관찰은 유지됨
+}
 function closePanels(){
   if(myProfile?.nickname||!isMob())document.getElementById('search-wrap').classList.remove('open');
   document.getElementById('settings-panel').classList.remove('open');
@@ -9596,6 +9639,7 @@ document.getElementById('tab-explore').addEventListener('click',e=>{
     if(_stackCard){document.body.appendChild(_stackCard);_stackCard.style.display='none';}
     mobSheetInner._lastScroll=0;mobCardStackInner._lastScroll=0;
     mobSheetInner._tbAccum=0;mobCardStackInner._tbAccum=0;
+    _showTabbar(); // closeMobSheet를 인라인 복사하면서 빠져 있던 복구(2026-08-28) — 이게 "탐험 버튼 누르면 탭바가 사라진다"의 직접 원인
     closeConnCard();clearFocus();_openGCko=null;_openTArtist=null;
     controls.enabled=false;
   }else{
