@@ -4031,7 +4031,10 @@ function openLightbox(url,shorts,playlist,idx,ctx,isAdvance,forceBrowseMode){
   // 안전하게 자동재생시키고, 재생 시작 직후 unMute 커맨드로 소리를 복구(유저가 버튼으로 켜는 것과 동일 동작).
   const startMuted=_lbMuted?1:(isAdvance?1:0);
   _lbShowLoading();
-  iframe.src=`https://www.youtube.com/embed/${vid}?autoplay=1&mute=${startMuted}&controls=1&playsinline=1&modestbranding=1&iv_load_policy=3&rel=0&enablejsapi=1&vq=hd1080`;
+  // 모바일은 720으로 낮춰 1080 강제 디코딩 발열을 완화(2026-08-28, PERFORMANCE.md — 영상 재생 중 발열 1순위).
+  // 6인치 화면엔 720이면 충분히 선명하고, 데스크톱은 큰 화면이라 1080 유지. (유튜브가 이 힌트를 무시할 때도 있음)
+  const _vq=isMob()?'hd720':'hd1080';
+  iframe.src=`https://www.youtube.com/embed/${vid}?autoplay=1&mute=${startMuted}&controls=1&playsinline=1&modestbranding=1&iv_load_policy=3&rel=0&enablejsapi=1&vq=${_vq}`;
   clearTimeout(_lbAutoUnmuteT);
   // 소리 모드에서 isAdvance(스와이프·버튼) 전환: mute=1로 시작해서 자동재생 확보 후
   // YouTube onStateChange(재생 시작) 이벤트 수신 시 즉시 unMute — 타이머보다 신뢰성 높음.

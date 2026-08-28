@@ -655,6 +655,10 @@
     #yt-lightbox.lb-browse #yt-lb-menu-btn:hover{opacity:1;}
   }
   @media(max-width:768px){
+    /* 발열 완화(2026-08-28, PERFORMANCE.md): 영상 위 backdrop-filter blur는 매 프레임 GPU 부하가 커서
+       모바일에선 뺀다. autonext(하단 "다음 영상" 바)는 재생 중 상시 떠있어 특히 영향 큼, menu-panel은
+       더보기 메뉴 열 때만. 배경 반투명(rgba)은 그대로라 시각차는 거의 없다. */
+    #yt-lb-autonext,#yt-lb-menu-panel{backdrop-filter:none;-webkit-backdrop-filter:none;}
     #yt-lb-wrap{width:95vw;}
     /* 브라우즈 모드: 작은 중앙 박스가 아니라 전체화면 시트로 — 추천 목록까지 들어가야 해서.
        ⚠️ 2026-08-12까지는 #yt-lb-wrap 전체를 하나의 overflow-y:auto로 묶어서, "다음 영상" 쪽으로
