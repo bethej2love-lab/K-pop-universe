@@ -169,7 +169,14 @@ async function main() {
   // --genres: 장르 코드↔이름 대응을 **추측 대신 실측**한다. 공통코드 PDF의 한글 라벨이 임베디드
   // 폰트라 안 읽혀서(2026-08-28), 코드를 하나씩 넣어보고 돌아오는 genrenm을 본다.
   if (args.genres) {
-    const CODES = ['AAAA', 'AAAB', 'BBBA', 'CCCA', 'CCCB', 'CCCC', 'EEEA', 'GGGA'];
+    // 1차 실측(2026-08-28): AAAA=연극 / CCCA=서양음악(클래식) / CCCC=한국음악(국악) / EEEA=복합 /
+    // GGGA=뮤지컬. **대중음악이 안 잡혔다.** CCC 계열이 음악이고 A=클래식·C=국악이니 대중음악은
+    // CCCD·CCCB 쪽일 공산이 크다(처음에 CCCD를 넣었다가 PDF 추출 목록에 없어서 뺐는데, 그 추출이
+    // 불완전했을 수 있다). 추측을 더 하지 말고 후보를 넓혀 한 번에 쓸어본다.
+    const CODES = args.all
+      ? 'A B C D E F G'.split(' ').flatMap(x => 'A B C D E'.split(' ').map(y => x.repeat(3) + y))
+      : ['AAAA', 'AAAB', 'AAAC', 'BBBA', 'BBBB', 'BBBC', 'BBBD', 'BBBE',
+        'CCCA', 'CCCB', 'CCCC', 'CCCD', 'CCCE', 'DDDA', 'EEEA', 'EEEB', 'FFFA', 'GGGA', 'GGGB'];
     console.log('장르 코드 실측 (각 코드로 1페이지씩 조회해 genrenm 확인):');
     for (const c of CODES) {
       try {
