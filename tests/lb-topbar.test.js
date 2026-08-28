@@ -132,6 +132,44 @@ async function main() {
     if ((g2.chips || []).length && g2.chips.every(c => c.tag === 'BUTTON' && c.pe === 'auto'))
       ok(`그룹만 태깅된 영상에서도 아래줄 멤버가 눌림 (위 ${JSON.stringify(g2.anchor)} / 아래 ${g2.chips.map(c => c.txt).join(', ')})`);
     else fail(`그룹만 태깅된 영상의 아래줄 멤버가 안 눌림 — ${JSON.stringify(g2)}`);
+
+    // ── 멤버 칩 줄이 영상 위로 넘치지 않는가 (2026-08-28, 사용자 제보) ──────────────────
+    // 증상: 세이마이네임(7명)처럼 멤버가 많으면 칩이 두 줄로 접히면서 영상 위를 덮었다.
+    // 원인: #yt-lb-member-info에 걸린 max-width:56vw. 이건 원래 **1줄(그룹명)**이 ⌄/⋮ 버튼과
+    //       안 부딪히게 하려던 제약인데 아래 칩 줄까지 같이 묶여 있었다 — 390px에서 컨테이너 폭이
+    //       195px뿐이라 좌우 98px씩이 놀고 있었다.
+    // 대응: 폭 제약은 그룹명 줄에만, 칩 줄은 전체 폭 + 넘치면 줄바꿈이 아니라 가로 스크롤(높이 고정).
+    const many = ['히토미', '메이', '카니', '소하', '도희', '준휘', '승주'];
+    await ev("try{_closeLbHalf&&_closeLbHalf()}catch(e){}");
+    for (const [label, names] of [['7명(제보 사례)', many], ['14명(과밀)', many.concat(many)]]) {
+      await ev(`(function(){ try{closeLightbox()}catch(e){}
+        var pl=[{t:'[4K] SAY MY NAME Band LIVE',u:'https://www.youtube.com/watch?v=dQw4w9WgXcQ',thumb:'',pa:'2024-10-24',
+          with:${JSON.stringify(names.map(n => `${n}(세이마이네임)`))}}];
+        openLightbox(pl[0].u,false,pl,0,{groupKo:'세이마이네임'},false,true); return 1;})()`);
+      await sleep(2200);
+      const m = JSON.parse(await ev(`(function(){
+        const wc=document.getElementById('yt-lb-with-chips'), ac=document.getElementById('yt-lb-anchor-chip');
+        const mi=document.getElementById('yt-lb-member-info');
+        const chips=[...wc.children].map(c=>c.getBoundingClientRect());
+        const rows=[...new Set(chips.map(r=>Math.round(r.top)))].length;
+        const cs=getComputedStyle(wc);
+        // 상단바가 영상 위를 덮는지 — 영상(iframe/썸네일) 상단과 비교
+        const vid=document.getElementById('yt-lb-iframe')||document.getElementById('yt-lb-media')||document.getElementById('yt-lb-frame');
+        const vTop=vid?Math.round(vid.getBoundingClientRect().top):null;
+        const close=document.getElementById('yt-lb-close'), menu=document.getElementById('yt-lb-menu-btn');
+        const ar=ac.getBoundingClientRect();
+        return JSON.stringify({rows:rows,infoBottom:Math.round(mi.getBoundingClientRect().bottom),vTop:vTop,
+          overflowX:cs.overflowX,wrap:cs.flexWrap,mt:cs.marginTop,scrollable:wc.scrollWidth>wc.clientWidth+1,
+          anchorL:Math.round(ar.left),anchorR:Math.round(ar.right),
+          closeR:close?Math.round(close.getBoundingClientRect().right):null,
+          menuL:menu?Math.round(menu.getBoundingClientRect().left):null});})()`) || '{}');
+      if (m.rows !== 1) fail(`[칩 넘침/${label}] 칩이 ${m.rows}줄 — 줄바꿈되면 컨테이너가 세로로 자라 영상 위를 덮는다 (wrap=${m.wrap})`);
+      else if (m.overflowX !== 'auto' && m.overflowX !== 'scroll') fail(`[칩 넘침/${label}] overflow-x가 ${m.overflowX} — 넘칠 때 잘려 나간다`);
+      else if (m.vTop != null && m.infoBottom > m.vTop) fail(`[칩 넘침/${label}] 상단바 바닥(${m.infoBottom})이 영상 상단(${m.vTop})을 넘어 겹친다`);
+      else if (m.closeR != null && m.anchorL < m.closeR) fail(`[버튼 충돌/${label}] 그룹명 왼쪽(${m.anchorL})이 닫기 버튼 오른쪽(${m.closeR})과 겹친다`);
+      else if (m.menuL != null && m.anchorR > m.menuL) fail(`[버튼 충돌/${label}] 그룹명 오른쪽(${m.anchorR})이 메뉴 버튼 왼쪽(${m.menuL})과 겹친다`);
+      else ok(`[칩 ${label}] 1줄 유지 · 상단바 바닥 ${m.infoBottom}${m.vTop != null ? ` ≤ 영상 ${m.vTop}` : ''} · ${m.scrollable ? '가로 스크롤 동작' : '스크롤 불필요(다 들어감)'} · 간격 ${m.mt}`);
+    }
   } finally {
     server.close();
     try { if (process.platform === 'win32') execSync(`taskkill /PID ${child.pid} /T /F`); else child.kill('SIGKILL'); } catch (e) { }

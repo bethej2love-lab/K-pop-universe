@@ -682,9 +682,15 @@
        ⚠️ 첫 줄은 여전히 닫기(⌄)·메뉴(⋮) 버튼과 같은 36px 밴드 안에서 세로 중앙이어야 한다 —
        그래서 justify-content:center(전체 중앙)가 아니라 flex-start로 두고, 앵커 줄 자체에 36px를
        준다. 안 그러면 칩이 생길 때마다 첫 줄이 위로 밀려 좌우 버튼과 어긋난다. */
-    #yt-lightbox.lb-browse #yt-lb-member-info{position:fixed;top:14px;left:50%;transform:translateX(-50%);
+    /* 폭 제약은 컨테이너가 아니라 **그룹명 줄에만** 건다(2026-08-28, 사용자 제보 "히토미 왼쪽·소하
+       오른쪽에 자리가 충분한데 칩이 두 줄로 넘쳐 영상 위에 겹친다"). 원래 여기 있던 max-width:56vw는
+       1줄(그룹명)이 ⌄/⋮ 버튼과 안 부딪히게 하려던 제약인데, 그 아래 멤버 칩 줄까지 같이 묶여 있었다.
+       390px 실측: 컨테이너 폭이 195px뿐이라 좌우로 98px씩 놀고 있었고, 칩 7개는 334px면 한 줄에
+       들어간다 — 전체 폭(366px)을 쓰면 세이마이네임 7명도 한 줄로 끝난다. */
+    #yt-lightbox.lb-browse #yt-lb-member-info{position:fixed;top:14px;left:0;right:0;transform:none;
       min-height:36px;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;
-      max-width:56vw;text-align:center;z-index:1;margin-top:0;padding-top:0;border-top:none;
+      max-width:none;padding-left:12px;padding-right:12px;
+      text-align:center;z-index:1;margin-top:0;padding-top:0;border-top:none;
       pointer-events:none;} /* 빈 영역의 탭은 아래(영상)로 그대로 통과 — 누를 것들만 아래에서 되살린다 */
   /* 하프시트 진입점(멤버/그룹 이름)·연결 버튼은 눌려야 하므로 부모의 pointer-events:none를 개별 복구
      — 빈 영역은 여전히 영상으로 통과(2026-08-26 회귀 수정: 하프시트 버튼이 부모 때문에 죽어있던 것). */
@@ -692,8 +698,23 @@
   #yt-lightbox.lb-browse #yt-lb-member-info .lb-with-chip-btn,
   #yt-lightbox.lb-browse #yt-lb-member-info #yt-lb-conn-btn{pointer-events:auto;}
     #yt-lightbox.lb-browse #yt-lb-anchor-chip{font-size:11.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-      height:36px;line-height:36px;} /* 닫기/메뉴 버튼과 같은 밴드 — 안의 버튼은 vertical-align:middle */
-    #yt-lightbox.lb-browse #yt-lb-with-chips{justify-content:center;margin-top:7px;}
+      height:36px;line-height:36px;
+      max-width:56vw;} /* 닫기/메뉴 버튼과 같은 밴드 — 버튼과 안 부딪히게 이 줄만 폭을 제한한다 */
+    /* 멤버 칩 줄: 넘치면 줄바꿈이 아니라 **가로 스크롤**. 줄바꿈을 허용하면 컨테이너가 position:fixed라
+       세로로 자라면서 그대로 영상 위를 덮는다(제보 사례: 세이마이네임 7명 → 2줄 → 영상 침범).
+       가로 스크롤이면 높이가 36px 밴드 아래 한 줄로 고정돼 영상 위치가 그룹마다 안 들쭉날쭉하다.
+       width:max-content — 칩이 적을 땐 내용만큼만 차지해서 가운데 정렬되고(부모가 align-items:center),
+       좌우 빈 영역은 이 줄의 박스 밖이라 탭이 그대로 영상으로 통과한다(pointer-events:auto를 켜도 안전).
+       margin-top은 7px→4px(사용자: "예전엔 너무 좁았는데 이젠 너무 크다"). */
+    #yt-lightbox.lb-browse #yt-lb-with-chips{
+      margin-top:4px;flex-wrap:nowrap;
+      width:max-content;max-width:100%;
+      overflow-x:auto;overflow-y:hidden;
+      scrollbar-width:none;-webkit-overflow-scrolling:touch;
+      overscroll-behavior-x:contain; /* 끝에서 더 밀어도 바깥(라이트박스 닫기)으로 안 새게 */
+      pointer-events:auto;}
+    #yt-lightbox.lb-browse #yt-lb-with-chips::-webkit-scrollbar{display:none;}
+    #yt-lightbox.lb-browse #yt-lb-with-chips>*{flex-shrink:0;}
     /* 볼륨/좋아요 등 툴바 줄과 "다음 영상" 사이 여백은 줄여서, 화면 하나에 다음 영상이 2개 정도는
        바로 보이게(2026-08-12, 사용자 요청). */
     /* overscroll-behavior:contain — 목록 끝에서 계속 밀 때 스크롤 연쇄가 바깥(라이트박스/페이지)으로
