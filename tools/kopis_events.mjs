@@ -333,6 +333,13 @@ async function main() {
     process.stderr.write(`\n[detail] 출연진으로 추가 매칭 ${rescued}건\n`);
   }
 
+  // 매칭 결과를 JSON으로도 남긴다(2026-08-28). 수집은 몇 분씩 걸리는데 SQL 형식(컬럼·중복키 처리)은
+  // 실제 스키마를 보고 정해야 해서, 형식을 바꿀 때마다 다시 긁는 건 낭비다. 이 파일이 있으면
+  // --from-json 으로 재수집 없이 즉시 다시 뽑을 수 있다.
+  const jsonFile = path.join(ROOT, 'events.matched.json');
+  fs.writeFileSync(jsonFile, JSON.stringify(matched, null, 1));
+  console.error(`매칭 ${matched.length}건 → ${jsonFile} (재수집 없이 SQL 재생성용)`);
+
   console.log(`-- KOPIS 공연목록 → kpop_events (${from}~${to})`);
   console.log(`-- 수집 ${rows.length}건 / 매칭 ${matched.length}건 / 미매칭 ${unmatched.length}건`);
   console.log(`-- ⚠️ official_url(예매 링크)은 KOPIS가 제공하지 않아 비워 둔다(사용자 결정, 2026-08-28).`);
