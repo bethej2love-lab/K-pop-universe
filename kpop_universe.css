@@ -2393,6 +2393,11 @@
   #tt-name-row .fav-btn,#tt-name-row .share-btn{position:relative;top:-1.5px;}
   #gc-name-row{display:inline-flex;align-items:center;gap:8px;margin-bottom:6px;max-width:100%;}
   #gc-name-row #gc-name{margin-bottom:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  /* 하트·트로피·공유를 SNS 아이콘과 같은 16px로 통일(원래 svg 13px에 아이콘별 top 미세보정이 얹혀 있어
+     모바일에서 크기·정렬이 들쭉날쭉했음, 2026-08-28 사용자 요청). 보정 top을 0으로 리셋하고 gc-name-row의
+     align-items:center에만 맡겨 서로 + 그룹명과 세로 중앙. (그룹 카드 전용 — 멤버 카드는 안 건드림) */
+  #gc-name-row .fav-btn svg,#gc-name-row .trophy-btn svg,#gc-name-row .share-btn svg{width:16px;height:16px;}
+  #gc-name-row .fav-btn,#gc-name-row .trophy-btn,#gc-name-row .share-btn{top:0;}
   #fav-section{padding-top:12px;padding-bottom:12px;border-top:0.5px solid rgba(255,255,255,0.07);}
   .fav-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
   .fav-hd-lbl{font-size:9.5px;font-weight:700;letter-spacing:.2em;color:rgba(130,150,205,0.56);text-transform:uppercase;}
