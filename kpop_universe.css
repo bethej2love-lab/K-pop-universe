@@ -696,7 +696,11 @@
     #yt-lightbox.lb-browse #yt-lb-with-chips{justify-content:center;margin-top:7px;}
     /* 볼륨/좋아요 등 툴바 줄과 "다음 영상" 사이 여백은 줄여서, 화면 하나에 다음 영상이 2개 정도는
        바로 보이게(2026-08-12, 사용자 요청). */
+    /* overscroll-behavior:contain — 목록 끝에서 계속 밀 때 스크롤 연쇄가 바깥(라이트박스/페이지)으로
+       새는 걸 막는다. 이게 없으면 iOS 바운스가 바깥까지 번져 "둘러보다 갑자기 닫힘"에 힘을 보탠다
+       (2026-08-28, 다른 스크롤러들은 이미 contain을 쓰고 있는데 여기만 빠져 있었음). */
     #yt-lightbox.lb-browse #yt-lb-uplist{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;
+      overscroll-behavior:contain;
       margin-top:10px;padding:10px 0 24px;border-top:0.5px solid rgba(255,255,255,0.07);}
     #yt-lightbox.lb-browse #yt-lb-uplist-scroll{gap:10px;}
     #yt-lightbox.lb-browse .lb-uplist-item{padding:10px 6px;}
