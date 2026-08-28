@@ -1028,7 +1028,10 @@
     animation:deceased-twinkle 2.8s ease-in-out infinite;}
   @keyframes deceased-twinkle{0%,100%{opacity:0.72;transform:scale(0.9);}50%{opacity:1;transform:scale(1.1);}}
   .gc-mem-name .deceased-star{width:6px;height:6px;margin-left:3px;}
-  #gc-en-row{display:flex;align-items:center;justify-content:space-between;gap:8px;}
+  #gc-en-row{display:flex;align-items:center;justify-content:space-between;gap:8px;min-width:0;}
+  /* 최후의 안전장치 — #gc-links가 flex-shrink:0이라 영문명이 안 줄면 SNS 아이콘이 카드 밖으로 밀려
+     잘린다(#gc는 overflow:hidden이라 조용히 잘린다). 실제 잘림은 아래 .has-gc-pic 규칙으로 막는다. */
+  #gc-en{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
   #gc-links{display:flex;align-items:center;gap:9px;flex-shrink:0;}
   #tt-links{display:flex;align-items:center;gap:7px;flex-shrink:0;}
   #tt-links:not(:empty)::after{content:'·';color:rgba(120,145,195,0.46);font-size:10px;}
@@ -2324,20 +2327,40 @@
   /* 사진 URL은 캐시로 즉시 알아도 실제 이미지 바이트 다운로드엔 시간이 걸려서, 다 된 채로 "툭" 튀어
      나오면 어색하다는 제보(2026-08-11) — URL이 확정된 순간 자리부터 차지하고 은은한 로딩 셰머를
      보여주다가, 이미지가 실제로 로드되면 사진으로 크로스페이드한다. */
-  #tt-insta-pic-wrap::after{content:'';position:absolute;inset:0;border-radius:50%;
+  #tt-insta-pic-wrap::after,#gc-pic-wrap::after{content:'';position:absolute;inset:0;border-radius:50%;
     background:linear-gradient(90deg, rgba(160,180,220,0.10) 25%, rgba(220,230,250,0.26) 50%, rgba(160,180,220,0.10) 75%);
     background-size:200% 100%;opacity:0;pointer-events:none;transition:opacity .25s ease;}
-  #tt-insta-pic-wrap.tt-pic-loading::after{opacity:1;animation:tt-pic-shimmer 1.3s ease-in-out infinite;}
+  #tt-insta-pic-wrap.tt-pic-loading::after,#gc-pic-wrap.tt-pic-loading::after{opacity:1;animation:tt-pic-shimmer 1.3s ease-in-out infinite;}
   @keyframes tt-pic-shimmer{0%{background-position:200% 0;}100%{background-position:-200% 0;}}
   /* 인스타 브랜드 그라데이션(주황~빨강) → 인디고~마젠타 성운 톤(2026-08-11 1차) → 그마저도 컬러감이
      남아있어서 블랙앤화이트에 가까운 톤으로 재조정(2026-08-11 2차, 사용자 제보) — 검정~은색~흰색을
      도는 메탈릭한 느낌만 남김. 가장 어두운 지점이 배경(#060612 계열)이랑 거의 같은 밝기라 링과
      배경 경계가 안 보인다는 재제보(2026-08-11 3차) — 최저 밝기만 살짝 올림. */
   .tt-insta-ring{display:block;width:100%;height:100%;border-radius:50%;padding:1.5px;background:conic-gradient(from 0deg,#1e1e26,#50505c,#eceef2,#50505c,#1e1e26);}
-  #tt-insta-pic{display:block;width:100%;height:100%;border-radius:50%;object-fit:cover;border:2px solid rgba(14,18,38,0.98);opacity:0;transition:opacity .3s ease;}
-  #tt-insta-pic-wrap.tt-pic-ready #tt-insta-pic{opacity:1;}
-  #tt-insta-pic-wrap:hover{transform:scale(1.07);transition:transform .15s;}
+  #tt-insta-pic,#gc-pic{display:block;width:100%;height:100%;border-radius:50%;object-fit:cover;border:2px solid rgba(14,18,38,0.98);opacity:0;transition:opacity .3s ease;}
+  #tt-insta-pic-wrap.tt-pic-ready #tt-insta-pic,#gc-pic-wrap.tt-pic-ready #gc-pic{opacity:1;}
+  #tt-insta-pic-wrap:hover,#gc-pic-wrap:hover{transform:scale(1.07);transition:transform .15s;}
   #tt.has-insta-pic{max-width:288px!important;}
+  /* ── 그룹 프로필 사진(2026-08-28) ─────────────────────────────────────────
+     멤버 카드(#tt-insta-pic-wrap)와 링·셰머·크로스페이드를 공유하고 크기만 다르다.
+     그룹 카드는 기본 234px로 멤버 카드보다 좁아서 78px 원을 넣으면 이름/영문명/링크가
+     밀린다 — 원은 62px로 줄이고, 사진이 있을 때만 카드를 288px로 넓힌다(멤버와 같은 방식). */
+  #gc-pic-wrap{display:block;position:relative;flex-shrink:0;width:62px;height:62px;border-radius:50%;cursor:pointer;text-decoration:none;}
+  /* 사진이 있으면 SNS 아이콘 줄을 영문명 아래로 내린다. 헤더 글자 영역이 185px인데 아이콘 6개가
+     139px를 먹어서, 사진(62px)까지 들어가면 영문명에 38px밖에 안 남는다 — 실측상 268개 그룹 중
+     90개(34%)의 영문명이 잘렸다("TOMORROW X TOGETHER"→"TO..."). 사진을 줄여도 아이콘이 공간의
+     대부분을 쓰므로 해결이 안 돼서, 아이콘을 한 줄 내려 영문명에 전체 폭을 준다(2026-08-28).
+     ⚠️ 카드 폭은 늘릴 수 없다 — 데스크톱은 #side-panel, 모바일은 시트가 폭을 정한다. */
+  #gc.has-gc-pic #gc-en-row{flex-direction:column;align-items:flex-start;justify-content:flex-start;gap:5px;}
+  #gc.has-gc-pic #gc-en{max-width:100%;}
+  /* 사진이 없을 때 뜨는 관리자 업로드 버튼(점선 원)도 같은 크기여야 자리 교대가 자연스럽다.
+     #gc-header는 position:static이라 cam-overlay(absolute)의 기준이 되게 relative를 준다. */
+  #gc-header{position:relative;}
+  #gc-pic-cam-admin{width:62px;height:62px;}
+  #gc-pic-cam-admin.cam-overlay{width:18px;height:18px;left:44px;top:44px;}
+  #gc-pic-cam-admin.cam-overlay svg{width:10px;height:10px;}
+  @media(max-width:768px){#gc-pic-wrap,#gc-pic-cam-admin{width:66px;height:66px;}
+    #gc-pic-cam-admin.cam-overlay{width:18px;height:18px;left:48px;top:48px;}}
   #tt-name-row{display:inline-flex;align-items:center;gap:8px;margin-bottom:3px;padding-left:0;max-width:100%;}
   #tt-name-row .tn{margin-bottom:0;padding-left:4px;padding-right:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
   /* 하트/공유 버튼이 align-items:center로도 이름 텍스트보다 살짝 아래로 처져 보인다는 제보(2026-08-11)

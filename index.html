@@ -158,6 +158,9 @@
   <div id="gc-inner">
     <button id="gc-back" class="conn-back-btn" style="display:none" aria-label="이전으로">‹</button><span id="gcx" role="button" tabindex="0" aria-label="그룹 카드 닫기">×</span>
     <div id="gc-header">
+      <!-- 그룹 프로필 사진(2026-08-28) — 멤버 카드(#tt-insta-pic-wrap)와 같은 구조·CSS를 쓴다.
+           인스타 없는 옛날 그룹은 href 없이 사진만 뜨고 클릭이 안 된다(_loadProfilePic의 linkTarget). -->
+      <a id="gc-pic-wrap" style="display:none" target="_blank" rel="noopener noreferrer" aria-label="Instagram 프로필"><span class="tt-insta-ring"><img id="gc-pic" alt="프로필"></span></a>
       <div id="gc-header-text">
         <div id="gc-name-row"><div id="gc-name"></div><button id="gc-fav" class="fav-btn" aria-label="즐겨찾기"><svg viewBox="0 0 24 24"><path d="M12 21L10.55 19.7C5.4 15.1 2 12.1 2 8.5 2 5.4 4.4 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.6 3 22 5.4 22 8.5c0 3.6-3.4 6.6-8.55 11.2L12 21z"/></svg></button><button id="gc-trophy" class="trophy-btn" style="display:none" aria-label="트로피 기록"><svg viewBox="0 0 24 24"><path d="M8 3h8v7a4 4 0 0 1-8 0V3z"/><path d="M8 5H5a1 1 0 0 0-1 1v1a3 3 0 0 0 3 3"/><path d="M16 5h3a1 1 0 0 1 1 1v1a3 3 0 0 1-3 3"/><path d="M12 14v3M9 17h6M8 20h8"/></svg></button><button id="gc-share" class="share-btn" aria-label="공유"><svg viewBox="0 0 24 24"><path d="M12 15V4M12 4l-3.5 3.5M12 4l3.5 3.5"/><path d="M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"/></svg></button></div>
         <div id="gc-en-row"><div id="gc-en"></div><div id="gc-links"></div></div>
@@ -8148,86 +8151,8 @@ function showT(a,cx,cy,keepNavStack,urlMode,_unusedPushMobNav,noFly){
   // 테이블은 콘서트/컬렉션과 다른 파이프라인(멜론/스포티파이 리서치)으로 채워졌고, 거기선 처음부터
   // "솔로 아티스트도 group_ko='솔로'+member_ko=본인이름"으로 저장해뒀기 때문(2026-08-19).
   _loadTrophies(a.group.ko,'tt-trophy',a.name.ko);
-  // 관리자: 프로필 사진 업로드 버튼 — 예전엔 인스타 있는 멤버만 노출했는데, 개인 인스타 없는 신인도
-  // 사진은 붙일 수 있게 전 멤버로 확대(2026-08-14, 사용자 요청). 인스타 없는 멤버는 저장 직후 사진
-  // 클릭 시 연결될 출처 URL(위버스 등)을 추가로 물어봄 — 아래 _maybeAskSourceUrl 참고.
-  {const _existingCamBtn=document.getElementById('tt-insta-cam-admin');if(_existingCamBtn)_existingCamBtn.remove();
-   const _existingCamInput=document.getElementById('tt-insta-cam-input');if(_existingCamInput)_existingCamInput.remove();}
-  if(_isAdmin()){
-    const koName=a.name.ko;
-    const groupKo=a.group?.ko||'';
-    const _waitImgLoad=()=>new Promise(res=>{
-      const img=document.getElementById('tt-insta-pic');
-      if(!img||img.complete){res();return;}
-      const done=()=>{img.removeEventListener('load',done);img.removeEventListener('error',done);res();};
-      img.addEventListener('load',done);img.addEventListener('error',done);
-      setTimeout(res,5000);
-    });
-    // 개인 인스타 없는 멤버는 사진 저장 직후, 클릭 시 연결될 출처 URL(위버스 프로필 등)을 추가로
-    // 물어본다 — 인스타 있는 멤버는 사진이 항상 인스타로 연결되니 여기서 안 물어봄(_loadInstaPic의
-    // linkTarget 우선순위 참고). 취소하거나 빈 값이면 그냥 클릭 안 되는 사진으로 남는다.
-    const _maybeAskSourceUrl=async()=>{
-      if(a.links?.instagram)return;
-      const existing=_instaPicSourceCache.get(_picKey(koName,groupKo))||'';
-      const url=await _promptDialog({
-        title:`${koName} 사진 출처 URL (선택)`,
-        hint:'사진을 눌렀을 때 열릴 페이지 (위버스 프로필 등)\n인스타도 위버스도 없으면 취소를 누르세요 — 사진은 그대로 뜨고 클릭만 안 돼요.',
-        value:existing,placeholder:'https://weverse.io/…'});
-      if(url==null)return;
-      const picUrl=_instaPicCache.get(_picKey(koName,groupKo));
-      if(!picUrl)return;
-      await _saveInstaPic(koName,groupKo,picUrl,url.trim());
-    };
-    const fileInput=document.createElement('input');fileInput.id='tt-insta-cam-input';fileInput.type='file';fileInput.accept='image/*';fileInput.style.display='none';
-    const camBtn=document.createElement('button');camBtn.id='tt-insta-cam-admin';camBtn.className='tt-insta-cam-btn';
-    camBtn.setAttribute('aria-label','프로필 사진 업로드');camBtn.setAttribute('title','프로필 사진 업로드 (길게 누르면 URL로 입력)');
-    camBtn.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>';
-    // 사진 유무에 따라 버튼 외형 전환
-    // (wrap.style.display는 _loadInstaPic의 img.onload가 나중에 등록되어 이 리스너보다 늦게
-    // 갱신될 수 있으므로 참조하지 않고, 이미지 자체의 로드 상태를 직접 확인한다)
-    const _syncCamBtn=()=>{
-      const img=document.getElementById('tt-insta-pic');
-      const hasPic=!!(img&&img.complete&&img.naturalWidth>0);
-      camBtn.classList.toggle('cam-overlay',hasPic);
-    };
-    const picImg=document.getElementById('tt-insta-pic');
-    if(picImg){picImg.addEventListener('load',_syncCamBtn);picImg.addEventListener('error',_syncCamBtn);}
-    _syncCamBtn();
-    // 파일 업로드
-    fileInput.addEventListener('change',async()=>{
-      const file=fileInput.files[0];fileInput.value='';
-      if(!file)return;
-      camBtn.classList.add('cam-uploading');
-      try{
-        const ext=file.name.split('.').pop().toLowerCase()||'jpg';
-        const path=`${crypto.randomUUID()}.${ext}`;
-        const{error:upErr}=await sb.storage.from('artist-pics').upload(path,file,{upsert:true,contentType:file.type});
-        if(upErr){alert('업로드 실패: '+upErr.message);return;}
-        const{data:{publicUrl}}=sb.storage.from('artist-pics').getPublicUrl(path);
-        const ok=await _saveInstaPic(koName,groupKo,publicUrl);
-        if(ok){await _waitImgLoad();_syncCamBtn();await _maybeAskSourceUrl();}
-        else alert('저장 실패');
-      }finally{camBtn.classList.remove('cam-uploading');}
-    });
-    // 짧게 누르면 파일 선택, 길게 누르면 URL 입력
-    let _camPressTimer=null;
-    camBtn.addEventListener('pointerdown',e=>{
-      _camPressTimer=setTimeout(()=>{
-        _camPressTimer=null;
-        const existingUrl=_instaPicCache.get(_picKey(koName,groupKo))||'';
-        _promptDialog({title:`${koName} 프로필 사진 URL`,value:existingUrl,placeholder:'https://...'}).then(async url=>{
-          if(url==null)return;const trimmed=url.trim();if(!trimmed)return;
-          const ok=await _saveInstaPic(koName,groupKo,trimmed);
-          if(ok){await _waitImgLoad();_syncCamBtn();await _maybeAskSourceUrl();}else alert('저장 실패');
-        });
-      },600);
-    });
-    camBtn.addEventListener('pointerup',()=>{if(_camPressTimer){clearTimeout(_camPressTimer);_camPressTimer=null;fileInput.click();}});
-    camBtn.addEventListener('pointerleave',()=>{clearTimeout(_camPressTimer);_camPressTimer=null;});
-    camBtn.addEventListener('click',e=>e.stopPropagation());
-    const picInfoRow=document.getElementById('tt-pic-info-row');
-    if(picInfoRow){picInfoRow.appendChild(fileInput);picInfoRow.appendChild(camBtn);}
-  }
+  // 관리자: 프로필 사진 업로드 버튼 — 그룹 카드와 같은 함수를 쓴다(_mountPicCamBtn, 2026-08-28).
+  _mountPicCamBtn(_ttPicCfg(a));
   // ✦ 연결 버튼 (그룹명 오른쪽) — 정적 소스만으로 우선 판단해 즉시 표시하고, API 콜라보 캐시가 없으면
   // 백그라운드로 받아와서(연결 카드를 아예 안 열어봤어도) 카드 열자마자 정확한 상태로 갱신
   _updateConnBtn(a);
@@ -8344,6 +8269,10 @@ const _instaPicCache=new Map(); // "ko_name␟group_ko" → pic_url (세션 캐�
 // 기존처럼 인스타로 연결되고 이 값은 안 쓰임 — 인스타 소셜 링크 필드("개인 계정만" 원칙)와는 별개 개념.
 const _instaPicSourceCache=new Map();
 function _picKey(koName,groupKo){return koName+'␟'+(groupKo||'');}
+// 그룹 프로필 사진(2026-08-28, 사용자 요청)도 같은 테이블에 담는다 — ko_name을 빈 문자열로 두고
+// group_ko에 그룹명만 넣는다. 멤버 행은 ko_name이 반드시 있으므로 키가 겹칠 일이 없고, 새 테이블을
+// 안 만드니 프리워밍(_warmInstaPicCache)·캐시·업로드·즐겨찾기 아바타까지 전부 그대로 재사용된다.
+function _groupPicKey(gko){return _picKey('',gko);}
 // artist_pics 전체를 한 번에 미리 받아 _instaPicCache를 채워둠(2026-08-11, 사용자 제보 — 멤버마다 사진
 // 뜨는 속도가 들쭉날쭉했던 원인: 카드 열 때마다 DB 조회 1번 + 이미지 로드가 순차로 걸려서, 이 세션에서
 // 이미 한 번 열어본 멤버(캐시 적중)만 빨랐던 것. 행이 32개뿐인 작은 테이블이라(2026-08-11 기준)
@@ -8370,21 +8299,24 @@ async function _warmInstaPicCache(){
     });
   }catch(e){console.error('_warmInstaPicCache failed',e);}
 }
-async function _loadInstaPic(a){
-  const wrap=document.getElementById('tt-insta-pic-wrap');
-  const img=document.getElementById('tt-insta-pic');
+// 멤버 카드와 그룹 카드가 같은 로직을 쓴다(2026-08-28). 다른 건 **어떤 DOM에 그리고 어느 키로
+// 찾느냐**뿐이라 그 부분만 cfg로 뺐다 — 코드를 복사하면 한쪽만 고쳐지는 사고가 반드시 난다.
+//   cfg = {wrapId, imgId, cardId, camBtnId, hasPicClass, koName, groupKo, instaUrl, stillCurrent()}
+async function _loadProfilePic(cfg){
+  const wrap=document.getElementById(cfg.wrapId);
+  const img=document.getElementById(cfg.imgId);
   if(!wrap||!img)return;
   wrap.style.display='none';
   wrap.classList.remove('tt-pic-loading','tt-pic-ready');
   // 사진 있는 멤버 → 없는 멤버로 넘어갈 때 이 클래스가 안 지워지면 카드 너비(max-width:288px)가
   // 이전 멤버 것 그대로 남아 정렬이 흐트러짐(2026-08-12 제보) — 아래 조건부 리턴들보다 먼저,
   // 매번 무조건 리셋해두고 실제 사진 로드에 성공했을 때만 onload에서 다시 붙인다.
-  document.getElementById('tt')?.classList.remove('has-insta-pic');
+  document.getElementById(cfg.cardId)?.classList.remove(cfg.hasPicClass);
   // 예전엔 인스타 있는 멤버만 사진을 보여줬는데(개인 인스타 없는 신인은 사진 자체가 안 뜸), 위버스 등
   // 다른 출처(source_url)로도 사진을 붙일 수 있게 되면서 이 조건은 뺐다(2026-08-14, 사용자 요청).
   if(!sb)return;
-  const koName=a.name.ko;
-  const groupKo=a.group?.ko||'';
+  const koName=cfg.koName;
+  const groupKo=cfg.groupKo||'';
   const cacheKey=_picKey(koName,groupKo);
   if(_instaPicPreloadP)await _instaPicPreloadP;
   let picUrl=_instaPicCache.get(cacheKey);
@@ -8400,13 +8332,20 @@ async function _loadInstaPic(a){
     if(picUrl)_instaPicCache.set(cacheKey,picUrl);
     if(sourceUrl)_instaPicSourceCache.set(cacheKey,sourceUrl);
   }
-  if(!picUrl)return;
-  // 카드가 이미 다른 멤버로 전환됐으면 무시
-  if(_openTArtist?.name?.ko!==koName||(_openTArtist?.group?.ko||'')!==groupKo)return;
-  // 클릭 타겟: 개인 인스타 있으면 그쪽 우선, 없으면 사진 출처(위버스 등)로 — 둘 다 없으면 사진은
-  // 보여주되 클릭은 안 되게(이전 멤버 카드의 href가 남아있지 않도록 명시적으로 지움).
-  const linkTarget=a.links?.instagram||sourceUrl||null;
-  if(linkTarget){wrap.href=linkTarget;wrap.setAttribute('aria-label',a.links?.instagram?'Instagram 프로필':'프로필 페이지');}
+  if(!picUrl){
+    // 사진이 없으면 **이전 대상의 이미지를 확실히 비운다**. 안 비우면 img에 남은 옛 사진 때문에
+    // _syncCamBtn이 "사진 있음"으로 오판해서, 어드민 업로드 버튼이 큰 점선 원이 아니라 작은 코너
+    // 아이콘으로 줄어든 채 뜬다(2026-08-28 그룹 카드 작업 중 발견 — 멤버 카드에도 있던 문제).
+    img.onload=null;img.onerror=null;img.removeAttribute('src');
+    document.getElementById(cfg.camBtnId)?.classList.remove('cam-overlay');
+    return;
+  }
+  // 카드가 이미 다른 대상으로 전환됐으면 무시
+  if(!cfg.stillCurrent())return;
+  // 클릭 타겟: 인스타 있으면 그쪽 우선, 없으면 사진 출처(위버스/멜론 등)로 — 둘 다 없으면 사진은
+  // 보여주되 클릭은 안 되게(이전 카드의 href가 남아있지 않도록 명시적으로 지움).
+  const linkTarget=cfg.instaUrl||sourceUrl||null;
+  if(linkTarget){wrap.href=linkTarget;wrap.setAttribute('aria-label',cfg.instaUrl?'Instagram 프로필':'프로필 페이지');}
   else{wrap.removeAttribute('href');wrap.setAttribute('aria-label','프로필 사진');}
   wrap.onclick=e=>e.stopPropagation();
   // URL이 확정된 시점(캐시 히트든 방금 조회든)에 바로 자리를 차지하고 셰머를 보여준다 — 실제 이미지
@@ -8416,12 +8355,114 @@ async function _loadInstaPic(a){
   wrap.style.display='';
   wrap.classList.add('tt-pic-loading');
   wrap.classList.remove('tt-pic-ready');
-  document.getElementById('tt-insta-cam-admin')?.classList.add('cam-overlay');
+  document.getElementById(cfg.camBtnId)?.classList.add('cam-overlay');
   // 핸들러를 src보다 먼저 등록 (캐시된 이미지는 src 세팅 직후 onload 발화 가능)
-  img.onerror=()=>{wrap.style.display='none';wrap.classList.remove('tt-pic-loading','tt-pic-ready');document.getElementById('tt')?.classList.remove('has-insta-pic');document.getElementById('tt-insta-cam-admin')?.classList.remove('cam-overlay');};
-  img.onload=()=>{wrap.classList.remove('tt-pic-loading');wrap.classList.add('tt-pic-ready');document.getElementById('tt')?.classList.add('has-insta-pic');};
+  img.onerror=()=>{wrap.style.display='none';wrap.classList.remove('tt-pic-loading','tt-pic-ready');document.getElementById(cfg.cardId)?.classList.remove(cfg.hasPicClass);document.getElementById(cfg.camBtnId)?.classList.remove('cam-overlay');};
+  img.onload=()=>{wrap.classList.remove('tt-pic-loading');wrap.classList.add('tt-pic-ready');document.getElementById(cfg.cardId)?.classList.add(cfg.hasPicClass);};
   if(img.src!==picUrl)img.src=picUrl;
-  else if(img.complete&&img.naturalWidth){wrap.classList.remove('tt-pic-loading');wrap.classList.add('tt-pic-ready');document.getElementById('tt')?.classList.add('has-insta-pic');}
+  else if(img.complete&&img.naturalWidth){wrap.classList.remove('tt-pic-loading');wrap.classList.add('tt-pic-ready');document.getElementById(cfg.cardId)?.classList.add(cfg.hasPicClass);}
+}
+// 멤버 카드용 — 기존 호출부(_loadInstaPic(a))는 그대로 두려고 얇은 래퍼로 남긴다.
+function _ttPicCfg(a){
+  const koName=a?.name?.ko||'';
+  const groupKo=a?.group?.ko||'';
+  return{wrapId:'tt-insta-pic-wrap',imgId:'tt-insta-pic',cardId:'tt',camBtnId:'tt-insta-cam-admin',
+    inputId:'tt-insta-cam-input',hostId:'tt-pic-info-row',label:koName,
+    hasPicClass:'has-insta-pic',koName,groupKo,instaUrl:a?.links?.instagram||null,
+    stillCurrent:()=>_openTArtist?.name?.ko===koName&&(_openTArtist?.group?.ko||'')===groupKo};
+}
+function _loadInstaPic(a){return a?_loadProfilePic(_ttPicCfg(a)):Promise.resolve();}
+// 그룹 카드용 — 저장 키는 (ko_name='', group_ko=그룹명). 인스타가 없는 옛날 그룹은 사진만 보여주고
+// 클릭은 안 되게 둔다(2026-08-28 사용자 요청 — 개별 멤버와 같은 방식).
+function _gcPicCfg(gko){
+  return{wrapId:'gc-pic-wrap',imgId:'gc-pic',cardId:'gc',camBtnId:'gc-pic-cam-admin',
+    inputId:'gc-pic-cam-input',hostId:'gc-header',label:gko,
+    hasPicClass:'has-gc-pic',koName:'',groupKo:gko,instaUrl:GROUPS[gko]?.links?.instagram||null,
+    stillCurrent:()=>_openGCko===gko};
+}
+function _loadGroupPic(gko){return gko?_loadProfilePic(_gcPicCfg(gko)):Promise.resolve();}
+
+// 관리자: 프로필 사진 업로드 버튼. 예전엔 인스타 있는 멤버만 노출했는데, 개인 인스타 없는 신인도
+// 사진은 붙일 수 있게 전 멤버로 확대했고(2026-08-14), 2026-08-28엔 그룹까지 확대했다.
+// 인스타 없는 대상은 저장 직후 사진 클릭 시 연결될 출처 URL(위버스/멜론 등)을 추가로 물어본다 —
+// 취소하면 사진은 뜨고 클릭만 안 되는 상태로 남는다(사용자 요청).
+function _mountPicCamBtn(cfg){
+  document.getElementById(cfg.camBtnId)?.remove();
+  document.getElementById(cfg.inputId)?.remove();
+  if(!_isAdmin())return;
+  const koName=cfg.koName,groupKo=cfg.groupKo||'';
+  const cacheKey=_picKey(koName,groupKo);
+  const _waitImgLoad=()=>new Promise(res=>{
+    const img=document.getElementById(cfg.imgId);
+    if(!img||img.complete){res();return;}
+    const done=()=>{img.removeEventListener('load',done);img.removeEventListener('error',done);res();};
+    img.addEventListener('load',done);img.addEventListener('error',done);
+    setTimeout(res,5000);
+  });
+  const _maybeAskSourceUrl=async()=>{
+    if(cfg.instaUrl)return; // 인스타가 있으면 사진이 늘 그쪽으로 연결되니 물어볼 필요가 없다
+    const existing=_instaPicSourceCache.get(cacheKey)||'';
+    const url=await _promptDialog({
+      title:`${cfg.label} 사진 출처 URL (선택)`,
+      hint:'사진을 눌렀을 때 열릴 페이지 (위버스 프로필 등)\n연결할 곳이 없으면 취소를 누르세요 — 사진은 그대로 뜨고 클릭만 안 돼요.',
+      value:existing,placeholder:'https://weverse.io/…'});
+    if(url==null)return;
+    const picUrl=_instaPicCache.get(cacheKey);
+    if(!picUrl)return;
+    await _saveInstaPic(koName,groupKo,picUrl,url.trim());
+  };
+  const fileInput=document.createElement('input');fileInput.id=cfg.inputId;fileInput.type='file';fileInput.accept='image/*';fileInput.style.display='none';
+  const camBtn=document.createElement('button');camBtn.id=cfg.camBtnId;camBtn.className='tt-insta-cam-btn';
+  camBtn.setAttribute('aria-label','프로필 사진 업로드');camBtn.setAttribute('title','프로필 사진 업로드 (길게 누르면 URL로 입력)');
+  camBtn.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>';
+  // 사진 유무에 따라 버튼 외형 전환
+  // (wrap.style.display는 _loadProfilePic의 img.onload가 나중에 등록되어 이 리스너보다 늦게
+  // 갱신될 수 있으므로 참조하지 않고, 이미지 자체의 로드 상태를 직접 확인한다)
+  // ⚠️ 여기서 잠깐 오판이 나는 건 정상이다 — 이 함수는 카드가 열리는 즉시 돌지만 사진 조회는
+  //    비동기라, 이전 대상의 사진이 img에 남아 있으면 "사진 있음"으로 보인다. 조회가 끝나면
+  //    _loadProfilePic이 사진 유무에 맞게 cam-overlay를 붙이거나(있음) 떼면서 img까지 비운다(없음).
+  //    src를 비교해 엄격하게 막아보려다 반대로 "사진 있는데 큰 점선 원"이 되어서 되돌렸다(2026-08-28).
+  const _syncCamBtn=()=>{
+    const img=document.getElementById(cfg.imgId);
+    camBtn.classList.toggle('cam-overlay',!!(img&&img.complete&&img.naturalWidth>0));
+  };
+  const picImg=document.getElementById(cfg.imgId);
+  if(picImg){picImg.addEventListener('load',_syncCamBtn);picImg.addEventListener('error',_syncCamBtn);}
+  _syncCamBtn();
+  // 파일 업로드
+  fileInput.addEventListener('change',async()=>{
+    const file=fileInput.files[0];fileInput.value='';
+    if(!file)return;
+    camBtn.classList.add('cam-uploading');
+    try{
+      const ext=file.name.split('.').pop().toLowerCase()||'jpg';
+      const path=`${crypto.randomUUID()}.${ext}`;
+      const{error:upErr}=await sb.storage.from('artist-pics').upload(path,file,{upsert:true,contentType:file.type});
+      if(upErr){alert('업로드 실패: '+upErr.message);return;}
+      const{data:{publicUrl}}=sb.storage.from('artist-pics').getPublicUrl(path);
+      const ok=await _saveInstaPic(koName,groupKo,publicUrl);
+      if(ok){await _waitImgLoad();_syncCamBtn();await _maybeAskSourceUrl();}
+      else alert('저장 실패');
+    }finally{camBtn.classList.remove('cam-uploading');}
+  });
+  // 짧게 누르면 파일 선택, 길게 누르면 URL 입력
+  let _camPressTimer=null;
+  camBtn.addEventListener('pointerdown',e=>{
+    _camPressTimer=setTimeout(()=>{
+      _camPressTimer=null;
+      const existingUrl=_instaPicCache.get(cacheKey)||'';
+      _promptDialog({title:`${cfg.label} 프로필 사진 URL`,value:existingUrl,placeholder:'https://...'}).then(async url=>{
+        if(url==null)return;const trimmed=url.trim();if(!trimmed)return;
+        const ok=await _saveInstaPic(koName,groupKo,trimmed);
+        if(ok){await _waitImgLoad();_syncCamBtn();await _maybeAskSourceUrl();}else alert('저장 실패');
+      });
+    },600);
+  });
+  camBtn.addEventListener('pointerup',()=>{if(_camPressTimer){clearTimeout(_camPressTimer);_camPressTimer=null;fileInput.click();}});
+  camBtn.addEventListener('pointerleave',()=>{clearTimeout(_camPressTimer);_camPressTimer=null;});
+  camBtn.addEventListener('click',e=>e.stopPropagation());
+  const host=document.getElementById(cfg.hostId);
+  if(host){host.appendChild(fileInput);host.appendChild(camBtn);}
 }
 async function _saveInstaPic(koName,groupKo,picUrl,sourceUrl){
   if(!sb||!window._sbSession)return;
@@ -8438,7 +8479,8 @@ async function _saveInstaPic(koName,groupKo,picUrl,sourceUrl){
   if(!error){
     _instaPicCache.set(_picKey(koName,groupKo),picUrl);
     if(sourceUrl!==undefined){if(sourceUrl)_instaPicSourceCache.set(_picKey(koName,groupKo),sourceUrl);else _instaPicSourceCache.delete(_picKey(koName,groupKo));}
-    _loadInstaPic(_openTArtist);
+    // ko_name이 비어 있으면 그룹 사진이다(_groupPicKey 참고) — 새로 그릴 카드가 다르다.
+    if(koName)_loadInstaPic(_openTArtist);else _loadGroupPic(groupKo);
   }
   return!error;
 }
@@ -9102,6 +9144,9 @@ function showGC(ko,cx,cy,keepMemberPanel,skipRipple,urlMode,_unusedPushMobNav){
   if(info.leader){leaderEl.textContent=info.leader;leaderRow.style.display='';}
   else leaderRow.style.display='none';
   _renderGcLinks(info.links);
+  // 그룹 프로필 사진 + 관리자 업로드 버튼(2026-08-28) — 멤버 카드와 같은 함수를 쓴다.
+  _loadGroupPic(ko);
+  _mountPicCamBtn(_gcPicCfg(ko));
   _gcShowInactive=false;
   ARTISTS.forEach(m=>{
     (m._worldPositions||[]).forEach(wp=>{
@@ -11498,7 +11543,10 @@ async function renderFavList(){
     const name=currentLang==='ko'?ko:(info.en||ko);
     _appendFavRow(el,{
       tag:currentLang==='ko'?'그룹':'Group',name,
-      imgUrl:info.img||null,colorArr:info.color,
+      // 그룹도 프로필 사진을 붙일 수 있게 되면서(2026-08-28) 멤버와 같은 캐시를 본다 — 사진이
+      // 없으면 예전처럼 그룹 고유 색상 원으로 폴백된다(_favAvatarEl).
+      imgUrl:_instaPicCache.get(_groupPicKey(ko))||info.img||null,colorArr:info.color,
+      _picRetryKey:_groupPicKey(ko),
       bdayDays:null,annivDays:_daysSince(favDates['g:'+ko]),dk:'g:'+ko,
       onClick:()=>{
         const bm=bubbleMeshes.find(b=>b.ko===ko);
