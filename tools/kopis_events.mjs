@@ -166,6 +166,38 @@ async function main() {
     return;
   }
 
+  // --genres: 장르 코드↔이름 대응을 **추측 대신 실측**한다. 공통코드 PDF의 한글 라벨이 임베디드
+  // 폰트라 안 읽혀서(2026-08-28), 코드를 하나씩 넣어보고 돌아오는 genrenm을 본다.
+  if (args.genres) {
+    const CODES = ['AAAA', 'AAAB', 'BBBA', 'CCCA', 'CCCB', 'CCCC', 'EEEA', 'GGGA'];
+    console.log('장르 코드 실측 (각 코드로 1페이지씩 조회해 genrenm 확인):');
+    for (const c of CODES) {
+      try {
+        const p = await fetchPage(key, from, from.slice(0, 6) + '28', 1, c);
+        const names = [...new Set(p.map(r => r.genre).filter(Boolean))];
+        console.log(`  ${c}  ${String(p.length).padStart(3)}건  ${names.join(', ') || '(없음)'}`);
+      } catch (e) { console.log(`  ${c}  실패: ${e.message.slice(0, 60)}`); }
+      await new Promise(r => setTimeout(r, 300));
+    }
+    return;
+  }
+
+  // --find=검색어: 공연명 검색(shprfnm)으로 "이 데이터에 K팝 공연이 실제로 들어있나"를 확인한다.
+  // 이게 이 데이터소스를 계속 쓸지 말지를 가르는 질문이라, 수집을 짜기 전에 먼저 답해야 한다.
+  if (typeof args.find === 'string') {
+    const to2 = args.to || '20261231';
+    const url = `${ENDPOINT}?service=${encodeURIComponent(key)}&stdate=${from}&eddate=${to2}&cpage=1&rows=50&shprfnm=${encodeURIComponent(args.find)}`;
+    const xml = await (await fetch(url)).text();
+    const got = [...xml.matchAll(/<db>([\s\S]*?)<\/db>/g)].map(m => m[1]).map(b => ({
+      title: pick(b, 'prfnm'), genre: pick(b, 'genrenm'), venue: pick(b, 'fcltynm'),
+      from: pick(b, 'prfpdfrom'), to: pick(b, 'prfpdto'),
+    }));
+    console.log(`"${args.find}" 검색 (${from}~${to2}) — ${got.length}건`);
+    got.slice(0, 25).forEach(g => console.log(`  · [${g.genre}] ${g.title}  @${g.venue}  ${g.from}~${g.to}`));
+    if (!got.length) console.log('  (0건 — 이 이름의 공연이 KOPIS에 등록돼 있지 않거나 공연명 표기가 다릅니다)');
+    return;
+  }
+
   const rows = [];
   for (let page = 1; page <= 50; page++) {
     const got = await fetchPage(key, from, to, page, genre);
