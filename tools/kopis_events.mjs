@@ -77,6 +77,19 @@ const AMBIGUOUS_GROUPS = new Set(['앨리스', '시그니처', '아르테미스'
   '신화', '아이들', '레인보우', '시크릿', '트레저', '슈가', '위클리', '에이프릴', '인피니트', '티아라',
   '다이아', '펜타곤', '여자친구', '오마이걸', '드림', '뉴이스트', '빅스', '소녀시대']);
 
+// ── 솔로 공연 화이트리스트 (2026-08-28, 사용자 눈검사로 확정) ────────────────────
+// 멤버 이름 매칭은 원리적으로 위험하다: 로스터 **안**의 동명이인은 거를 수 있지만 로스터 **밖**의
+// 동명 가수는 못 잡는다(실측: "신유 콘서트"=트로트 가수, "이승환 어쿠스틱"=가수 이승환,
+// "크리스탈 티 단독 콘서트"=밴드 크리스탈 티, "김준수 X 두번째달"=국악 가수 김준수).
+// 그래서 자동 판정을 쓰지 않고 **사람이 확인한 이름만** 통과시킨다. 후보는
+//   A등급 그룹(pri=4) + 3글자 이상 이름 + 이름이 제목 맨 앞  → 97건/34명
+// 으로 좁혀서 뽑았고, 그중 사용자가 19명을 확정했다(65건). 새 이름을 넣을 땐 같은 방식으로
+// 후보를 뽑아 눈으로 확인한 뒤 이 목록에 추가할 것 — 자동 확장하면 위 오탐들이 그대로 들어온다.
+const SOLO_WHITELIST = new Set((() => {
+  try { return JSON.parse(fs.readFileSync(path.join(ROOT, 'tools', 'solo_whitelist.json'), 'utf8')); }
+  catch (e) { return []; }
+})());
+
 // K팝 공연 제목에 붙는 관용 표현. 아동극·클래식 제목엔 거의 안 나온다.
 const KPOP_SIGNAL = /FAN\s?CON|FANCON|FAN\s?MEETING|FANMEETING|팬미팅|팬콘|단독\s?콘서트|WORLD\s?TOUR|ASIA\s?TOUR|CONCERT\s?TOUR|TOUR\s?:|LIVE\s?TOUR|쇼케이스|SHOWCASE|COMEBACK|데뷔\s?\d|주년\s?(단독|콘서트)|ANNIVERSARY\s?(TOUR|CONCERT)/i;
 
@@ -115,6 +128,14 @@ export function matchEvent(title) {
     }
   }
   if (hits.size) return { groups: [...hits], confidence: 'strong', why };
+
+  // ①.5 확정된 솔로 아티스트 — 사람이 확인한 이름만(위 SOLO_WHITELIST 주석 참고).
+  // 이름이 **제목 맨 앞**일 때만 인정한다: 솔로 공연명은 거의 항상 아티스트명으로 시작하고
+  // ("이창섭 단독콘서트: SPACE", "류수정 첫 단독 콘서트"), 뒤쪽에 나오면 게스트·부제일 확률이 높다.
+  for (const ko of SOLO_WHITELIST) {
+    if (!hasTok(nu, ko) || !isLeadToken(nu, ko)) continue;
+    return { groups: [ko], confidence: 'strong', why: why.concat(`solo:${ko}(화이트리스트)`) };
+  }
 
   // ② 멤버 이름 매칭(솔로 콘서트) — 동명이인이면 버린다. 그룹 표시가 없는 상황이라
   //    영상 태깅에서 "지유/지원/메이" 사고가 났던 것과 같은 위험이 그대로 있다.
