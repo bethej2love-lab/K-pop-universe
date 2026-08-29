@@ -765,6 +765,10 @@
       position:fixed;top:calc(14px + env(safe-area-inset-top,0px));left:50%;transform:translateX(-50%);
       height:36px;max-width:44vw;text-align:center;z-index:1;
       margin-top:0;padding-top:0;border-top:none;pointer-events:none;}
+    /* 컨테이너는 pointer-events:none(빈 영역은 세로 스와이프에 투과) 유지하되, 멤버/그룹 텍스트 버튼만
+       클릭 활성화 — 브라우즈 모드와 동일하게 눌러서 하프카드를 연다(2026-08-29, 사용자 제보 "쇼츠에선
+       카드가 안 열림"). 탭=카드 열기, 스와이프=다음/이전 영상(touch 이벤트는 버블되어 그대로 동작). */
+    #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-member-info .lb-anchor-part{pointer-events:auto;}
     #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-anchor-chip{font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
     #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-with-chips{display:none;}
     #yt-lightbox.lb-shorts:not(.lb-browse){align-items:flex-start;}
