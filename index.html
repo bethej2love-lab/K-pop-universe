@@ -3905,7 +3905,9 @@ const _COVER_EXCLUDE=['be original','original ver','cover story','커버 촬영'
   // 해시태그로 붙어 공백이 없는 표기(#DIGITALCOVER)도 실제로 있어서 같이 넣는다.
   'digital cover','디지털 커버','digitalcover',
   // 2026-08-28 사용자 요청 — 잡지 '커버스토리'(붙여쓰기). 노래 커버가 아니라 화보/기사.
-  '커버스토리'];
+  '커버스토리',
+  // 2026-08-30 — 'cover highlight(s)'(패션 필름/화보 하이라이트). 노래 커버 아님(원곡 v2 fallback 목록과 동기화).
+  'cover highlight','cover highlights'];
 function _applyCoverExcludeQuery(q){
   // 제목 키워드(cover/커버/원곡/original)나 content_formats='cover'뿐 아니라, 원곡을 명시적으로 태깅한 행
   // (cover_of_groups/cover_of_members 비어있지 않음)도 커버로 인정 — 제목에 '커버/원곡' 단어가 없어도

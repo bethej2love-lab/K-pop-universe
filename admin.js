@@ -5148,7 +5148,11 @@ function _extBuildRows(vids,strict,tier,owner,defaultCat,handle){
     let coverSong=null;
     try{
       const cr=_coverResolve({title:v.title,group_ko:owner?ownerGko:match.primaryGroup,members,with_groups:withGroups,with_members:withMembers,cover_of_groups:coverGroups,cover_of_members:coverMembers,published_at:v.published_at},{});
-      if(cr&&!cr.ambiguous&&cr.patch){
+      // 동기화 자동적용은 **명시적 인간 표기만**: 크레딧(원곡:X)·아티스트표기. 실DB 감사(6천 표본)에서
+      // 이 둘은 오탐 0(아일릿→보아, 킥플립→스키즈 등 전부 정확). 반면 따옴표/대시/챌린지태그/평문은
+      // 동음이의 곡명(‘Winter Wonderland’→샤이니, ‘Smoke’·‘Wait’·‘SUMMER_FESTA’ 등)에 우연히 걸리는
+      // 오탐이 섞여, 자동 전파하지 않고 "🎵 원곡 태깅 v2" 스윕(표본 확인+스냅샷)에서만 반영한다.
+      if(cr&&!cr.ambiguous&&cr.patch&&(cr.reason==='credit'||cr.reason==='artist')){
         if(cr.patch.cover_of_groups)coverGroups=cr.patch.cover_of_groups;
         if(cr.patch.cover_of_members)coverMembers=cr.patch.cover_of_members;
         if('with_groups' in cr.patch){withGroups=cr.patch.with_groups;withMembers=cr.patch.with_members;}
