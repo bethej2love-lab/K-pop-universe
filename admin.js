@@ -4437,6 +4437,14 @@ function _extOwnerGko(owner){
 // 안 돌렸으면(컬럼 없음) 첫 시도에서 감지해 그 필드만 빼고 재시도한다. 동기화가 절대 안 깨지게(2026-08-25).
 let _ytHasSourceCols=true;
 async function _ytUpsertVideos(rows,opts){
+  // 세로(쇼츠) 판별 보정 — API 썸네일 비율론 쇼츠도 16:9(letterbox)라 못 잡고(위 _ytFetchNewVideos 주석),
+  // 지금까진 관리자 '가로→쇼츠 승격' 스윕이 나중에 실측했음. 그래서 Trend(최근 7일)처럼 스윕 전 구간은
+  // 세로 영상이 가로 틀에 갇혀 보였다(2026-08-29 사용자 제보). 삽입 직전 oardefault.jpg를 실측(_probeShortsBatch,
+  // index.html)해 세로면 is_short 승격 — 배치가 5초 데드라인으로 스스로 시간을 제한하므로 동기화가 느려지거나
+  // 멈추지 않고, 못 잡은 잔여분은 기존 스윕이 backstop. try/catch로 어떤 경우에도 upsert 자체는 막지 않는다.
+  if(typeof _probeShortsBatch==='function'){
+    try{const toProbe=rows.filter(r=>r&&r.id&&!r.is_short);if(toProbe.length)await _probeShortsBatch(toProbe);}catch(e){}
+  }
   const strip=rs=>rs.map(r=>{const{source_handle,source_tier,...rest}=r;return rest;});
   let{error}=await sb.from(_YT_TABLE).upsert(_ytHasSourceCols?rows:strip(rows),opts);
   if(error&&_ytHasSourceCols&&/source_handle|source_tier/.test(error.message||'')){
