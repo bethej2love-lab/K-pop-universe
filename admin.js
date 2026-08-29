@@ -3547,6 +3547,18 @@ function _atmContextRelaxesHashtagOnly(name,title,groupKo){
   const toks=[groupKo,g.en].filter(Boolean);
   return toks.some(t=>title.toUpperCase().includes(t.toUpperCase()));
 }
+// "하루"(=하루/a day, 일반명사)가 넥스지 멤버 하루로 오매칭되던 것 방어(2026-08-29 사용자 제보 — "○○의 하루"
+// 브이로그류가 그룹 확정 문맥에선 흔한단어 게이트가 안 걸려 평문으로 멤버 하루에 붙어, 매일 동기화마다 재오염).
+// 일반명사 문맥("X의 하루"=누구의 하루·"하루종일"·"하루하루")의 "하루"만 매칭 전에 지운다. 소유자는 보존
+// (리쿠'의' 하루 → 리쿠는 남김), "하루의 …"(하루가 소유자)·"#하루"·"하루 직캠" 등 진짜 멤버 언급도 보존.
+// 두 매처(_atmMatchesMember/_atmResolveMembers·_m2ParseTitle)가 공유한다.
+function _atmStripCommonNounCtx(title){
+  if(!title||title.indexOf('하루')<0)return title||'';
+  return title
+    .replace(/(?<=[가-힣]의\s)하루(?![가-힣])/g,' ') // "○○의 하루" — 소유된 일반명사만 제거(소유자 토큰은 남김)
+    .replace(/하루\s*종일/g,' ')
+    .replace(/하루하루/g,' ');
+}
 function _atmMatchesMember(m,title,tokens,groupKo){
   const name=m.ko;
   if(!name)return false;
@@ -3615,9 +3627,10 @@ function _atmResolveMembers(title,description,roster,groupKo,publishedAt){
   // publishedAt(영상 발행일, "YYYY-MM-DD")이 주어지면 그 시점에 이미 탈퇴한 멤버는 매칭 후보에서 제외
   // (_memberLeftCutoffDate 참고) — 그룹은 활동 중이어도 탈퇴 멤버는 그 이후 영상에 안 나오는 게 정상.
   const roster2=publishedAt?roster.filter(m=>{const c=_memberLeftCutoffDate(m);return !c||publishedAt<=c;}):roster;
-  const t=title||'';
+  const rawT=title||'';
+  const t=_atmStripCommonNounCtx(rawT); // "○○의 하루" 등 일반명사 문맥의 "하루" 제거 후 매칭
   const hitTitle=roster2.filter(m=>_atmMatchesMember(m,t,_atmTokenize(t),groupKo)).map(m=>m.ko);
-  const searchText=description?`${t}\n${description}`:t;
+  const searchText=_atmStripCommonNounCtx(description?`${rawT}\n${description}`:rawT);
   const hitFull=roster2.filter(m=>_atmMatchesMember(m,searchText,_atmTokenize(searchText),groupKo)).map(m=>m.ko);
   if(roster2.length>0&&hitFull.length===roster2.length&&hitTitle.length<roster2.length)return hitTitle;
   return hitFull;
@@ -3976,10 +3989,10 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
   // "OO '노래' 릴댄 하이라이트 | 릴레이댄스"(릴레이댄스 코너 고정 문구), "OO 무대 하이라이트 모음"류가
   // 대량으로 하이라이트 그룹에 잘못 태깅되는 걸 확인함(2026-07-30). 대괄호로 감싼 경우([하이라이트])뿐
   // 아니라 이런 평문 관용구도 매칭 전에 제거한다 — 한 제목에 여러 번 나올 수 있어 전부(g) 제거.
-  const title=strippedTitle
+  const title=_atmStripCommonNounCtx(strippedTitle
     .replace(/[\[(<【]\s*하이라이트\s*[\])>】]/g,' ')
     .replace(/(릴댄|무대|커버|비하인드|메이킹|리허설|티저|예능)\s*하이라이트/g,' ')
-    .replace(/하이라이트\s*모음/g,' ');
+    .replace(/하이라이트\s*모음/g,' '));
   // 특수문자를 공백으로 치환해 토큰 경계 확보, 앞뒤 공백 추가
   const norm=' '+title.toUpperCase().replace(/[^가-힣a-zA-Z0-9]/g,' ').replace(/\s+/g,' ')+' ';
   // n을 넘기면 그 문자열을 대신 검사 — "문빈&산하"처럼 & 로 묶인 유닛명이 정규화되면 "문빈 산하"처럼
