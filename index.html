@@ -11140,6 +11140,8 @@ function _openColPicker(video){
   document.getElementById('col-new-row').style.display='none';
   document.getElementById('col-new-name').value='';
   const cp=document.getElementById('col-picker');
+  const sheet=document.getElementById('col-picker-sheet');
+  if(sheet){sheet.style.transition='';sheet.style.transform='';} // 스와이프-닫기로 남은 translateY 잔상 제거
   document.body.appendChild(cp); // backdrop-filter 컴포짓 레이어보다 위에 오도록 DOM 마지막으로 이동
   cp.classList.add('open');
 }
@@ -12930,6 +12932,37 @@ function saveProfile(){
 // Picker modal events
 document.getElementById('col-picker-bg').addEventListener('click',_closeColPicker);
 document.getElementById('col-picker-close').addEventListener('click',_closeColPicker);
+// 모바일: 바텀시트를 아래로 스와이프해 닫기 (feed-list 오버레이와 동일 패턴, 2026-08-29 사용자 제보).
+function _wireColPickerSwipe(){
+  const sheet=document.getElementById('col-picker-sheet');
+  const list=document.getElementById('col-picker-list');
+  if(!sheet||!list)return;
+  let dragY=0,dragging=false,dragActive=false,_rafId=0,_applyFn=null;
+  sheet.addEventListener('touchstart',e=>{
+    if(!isMob())return;
+    if(e.target.closest('#col-new-row')){dragging=false;return;} // 새 컬렉션 입력창 조작은 스와이프로 잡지 않음
+    dragY=e.touches[0].clientY;dragging=true;dragActive=list.scrollTop<=0;
+  },{passive:true});
+  sheet.addEventListener('touchmove',e=>{
+    if(!dragging)return;
+    const curY=e.touches[0].clientY;
+    if(!dragActive){if(list.scrollTop<=0){dragActive=true;dragY=curY;}else return;}
+    const dy=curY-dragY;
+    if(dy<0)return; // 위로 끌기는 무시
+    if(e.cancelable)e.preventDefault();
+    _applyFn=()=>{sheet.style.transition='none';sheet.style.transform=`translateY(${dy}px)`;};
+    if(!_rafId)_rafId=requestAnimationFrame(()=>{_rafId=0;_applyFn&&_applyFn();});
+  },{passive:false});
+  sheet.addEventListener('touchend',e=>{
+    if(!dragging)return;dragging=false;
+    if(_rafId){cancelAnimationFrame(_rafId);_rafId=0;}_applyFn=null;
+    if(!dragActive)return;dragActive=false;
+    const dy=e.changedTouches[0].clientY-dragY;
+    if(dy>80){sheet.style.transition='';sheet.style.transform='';_closeColPicker();}
+    else{sheet.style.transition='transform 0.22s cubic-bezier(0.32,0.72,0,1)';sheet.style.transform='';setTimeout(()=>{sheet.style.transition='';},220);}
+  },{passive:true});
+}
+_wireColPickerSwipe();
 document.getElementById('col-new-trigger').addEventListener('click',()=>{
   const row=document.getElementById('col-new-row');
   row.style.display=row.style.display==='none'?'flex':'none';

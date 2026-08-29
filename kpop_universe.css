@@ -2616,7 +2616,13 @@
   @media(min-width:769px){#col-picker-sheet{max-width:380px;border-radius:18px;margin-bottom:100px;}}
   .col-picker-hd{padding:16px 18px 10px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
   .col-picker-title{font-size:13px;font-weight:700;color:rgba(200,220,255,0.88);letter-spacing:.03em;}
-  #col-picker-close{background:none;border:none;color:rgba(140,165,220,0.51);font-size:20px;cursor:pointer;padding:0 2px;line-height:1;}
+  #col-picker-close{background:none;border:none;color:rgba(150,175,230,0.62);font-size:23px;cursor:pointer;line-height:1;width:36px;height:36px;display:flex;align-items:center;justify-content:center;padding:0;margin:-8px -8px -8px 0;border-radius:50%;-webkit-tap-highlight-color:transparent;}
+  #col-picker-close:active{background:rgba(255,255,255,0.08);}
+  /* 모바일 바텀시트: 위에서 아래로 스와이프해 닫을 수 있다는 힌트로 손잡이 줄을 얹는다(2026-08-29 사용자 제보). */
+  @media(max-width:768px){
+    #col-picker-sheet::before{content:'';position:absolute;top:8px;left:50%;transform:translateX(-50%);width:38px;height:4px;border-radius:2px;background:rgba(255,255,255,0.20);pointer-events:none;}
+    .col-picker-hd{padding-top:22px;}
+  }
   #col-picker-list{overflow-y:auto;flex:1;padding:0 0 4px;}
   .col-picker-item{display:flex;align-items:center;gap:10px;padding:11px 18px;cursor:pointer;transition:background .12s;}
   .col-picker-item:hover{background:rgba(255,255,255,0.04);}
