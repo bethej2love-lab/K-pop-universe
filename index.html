@@ -4676,7 +4676,7 @@ document.getElementById('yt-lightbox').addEventListener('click',e=>{e.stopPropag
   // 다시 보는데 dy는 **터치 시작점부터의 누적 이동**이다. 목록을 위로 되돌려 스크롤하다 맨 위에 닿는
   // 순간 이 조건이 참이 되고, 그때 dy는 이미 100px 넘게 쌓여 있어서 곧장 큰 translateY로 튀고 손을
   // 떼면 임계값(90px)을 넘겨 닫혀버린다. 목록을 훑어보던 손짓이 그대로 "닫기"로 승격되던 것.
-  let _lbStartedAtTop=true,_lbDidScroll=false;
+  let _lbStartedAtTop=true,_lbDidScroll=false,_lbListCramped=false;
   function _lbSlideIn(fromDir){
     // fromDir=1: 아래서 위로 진입(위로 스와이프→다음 영상)
     // fromDir=-1: 위에서 아래로 진입(아래로 스와이프→이전 영상)
@@ -4699,6 +4699,10 @@ document.getElementById('yt-lightbox').addEventListener('click',e=>{e.stopPropag
     // 닫기 제스처는 "처음부터 맨 위에서 시작한 아래 방향 당김"일 때만 인정한다.
     _lbStartedAtTop=_lbScrollEl.scrollTop<=0;
     _lbDidScroll=false;
+    // 가로(짧은 화면)에서 "다음 영상" 목록 위 제스처는 당겨-닫기로 승격하지 않는다(2026-08-29 제보):
+    // 세로 공간이 좁아 목록을 훑는 손짓이 당김 임계값을 쉽게 넘겨 재생모드가 꺼지던 문제. 세로에선
+    // 인스타식 당겨-닫기를 그대로 유지(공간 충분). 가로에서도 닫기는 상단 드래그 캡·X 버튼이 담당.
+    _lbListCramped=_lbScrollEl===_lbUplist&&window.innerHeight<500;
     _lbWrap.style.transition='none';
   },{passive:true});
   _lbEl.addEventListener('touchmove',e=>{
@@ -4726,7 +4730,7 @@ document.getElementById('yt-lightbox').addEventListener('click',e=>{e.stopPropag
       // ⚠️ scrollTop을 ">2"로 보는 이유: iOS 고무줄 바운스에선 scrollTop이 음수로 내려가는데, 그걸
       // "스크롤했다"로 세면 정작 맨 위에서 당겨 닫으려는 손짓이 막힌다. 아래로 실제로 움직인 것만 센다.
       if(_lbScrollEl.scrollTop>2)_lbDidScroll=true;
-      if(_lbStartedAtTop&&!_lbDidScroll&&_lbScrollEl.scrollTop<=0&&dy>0){
+      if(_lbStartedAtTop&&!_lbDidScroll&&!_lbListCramped&&_lbScrollEl.scrollTop<=0&&dy>0){
         if(e.cancelable)e.preventDefault();
         _lbPullMode=true;
         const eff=Math.pow(dy,0.85);

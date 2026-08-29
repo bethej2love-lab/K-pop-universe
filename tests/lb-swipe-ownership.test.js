@@ -174,6 +174,31 @@ async function main() {
     if (ob !== 'contain') fail(`[overscroll] 목록에 overscroll-behavior:contain이 없음 (${ob}) — 바운스가 바깥으로 번진다`);
     else ok('[overscroll] 목록 overscroll-behavior:contain 적용됨');
 
+    // ── 7. 가로(짧은 화면): 목록 맨 위에서 아래로 당겨도 닫히면 안 된다 (2026-08-29 제보) ────────
+    // 세로에선 3번처럼 "맨 위에서 당김=닫기"가 정상이지만, 가로는 세로공간이 좁아 목록을 훑는 손짓이
+    // 그 판정을 쉽게 넘겨 재생모드가 꺼진다. 가로(innerHeight<500)에서 목록 위 제스처는 당겨-닫기 비활성.
+    await cdp.send('Emulation.setDeviceMetricsOverride', { width: 667, height: 375, deviceScaleFactor: 2, mobile: true });
+    await openLb();
+    const preL = JSON.parse(await ev(`(function(){const up=document.getElementById('yt-lb-uplist');const lb=document.getElementById('yt-lightbox');
+      return JSON.stringify({open:lb.classList.contains('open'),mode:typeof _lbSessionMode!=='undefined'?_lbSessionMode:'?',
+        ih:window.innerHeight,scrollable:Math.max(0,up.scrollHeight-up.clientHeight)});})()`) || '{}');
+    if (preL.ih >= 500) fail(`[가로] 뷰포트 높이가 안 낮아짐(ih=${preL.ih}) — 가로 재현 조건 미달`);
+    else if (preL.mode !== 'browse') fail(`[가로] 브라우즈 모드가 아님 (mode=${preL.mode})`);
+    else {
+      await ev(`document.getElementById('yt-lb-uplist').scrollTop=0`);
+      await sleep(200);
+      // 3번과 동일한 "맨 위에서 아래로 당김" — 세로에선 닫히지만 가로에선 닫히면 안 된다.
+      await ev(GESTURE(160, [
+        { y: 190, scrollTop: 0 }, { y: 240, scrollTop: 0 }, { y: 300, scrollTop: 0 }, { y: 330, scrollTop: 0 },
+      ]));
+      await sleep(700);
+      const s7 = JSON.parse(await ev(LB_STATE) || '{}');
+      if (!s7.open) fail('[가로] 목록 맨 위에서 당김이 여전히 닫기로 승격됨 — 제보 증상 미해결');
+      else if (s7.transform !== '(없음)' && s7.transform !== '') fail(`[가로] 닫히진 않았지만 wrap에 transform 잔상 (${s7.transform})`);
+      else ok('[가로] 짧은 화면에서 목록 위 당김은 닫기로 승격되지 않음 (드래그캡/X만 닫기)');
+    }
+    await cdp.send('Emulation.setDeviceMetricsOverride', { width: 390, height: 844, deviceScaleFactor: 2, mobile: true });
+
     cdp.close();
   } catch (e) {
     fail(`실행 중 예외: ${e.message}`);
