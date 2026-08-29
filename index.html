@@ -14369,11 +14369,15 @@ function _wireFeedListSwipe(){
   const ov=document.getElementById('feed-list-overlay');
   const panel=document.getElementById('feed-list-panel');
   const body=document.getElementById('feed-list-grid');
-  let dragY=0,dragging=false,dragActive=false,_rafId=0,_applyFn=null;
+  let dragY=0,dragging=false,dragActive=false,_fromHeader=false,_rafId=0,_applyFn=null;
   panel.addEventListener('touchstart',e=>{
     if(!isMob())return;
     if(e.target.closest('.hscroll-drag')){dragging=false;return;}
-    dragY=e.touches[0].clientY;dragging=true;dragActive=body.scrollTop<=0;
+    // 헤더/손잡이 등 스크롤 안 되는 영역을 잡으면 목록 스크롤 위치와 무관하게 항상 닫기 드래그로 인정한다
+    // (2026-08-29 제보 — 목록을 좀 스크롤한 뒤 상단 손잡이를 당겨도 안 닫히던 문제. 예전엔 grid.scrollTop>0
+    // 이면 dragActive=false라 헤더를 잡아도 시트가 안 움직였음). 그리드 안에서 시작했을 때만 맨 위 조건을 본다.
+    _fromHeader=!e.target.closest('#feed-list-grid');
+    dragY=e.touches[0].clientY;dragging=true;dragActive=_fromHeader||body.scrollTop<=0;
   },{passive:true});
   panel.addEventListener('touchmove',e=>{
     if(!dragging)return;

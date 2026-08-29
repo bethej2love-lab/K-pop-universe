@@ -1649,8 +1649,11 @@
   #feed-list-desc.placeholder{color:rgba(140,165,220,0.41);font-style:italic;}
   #feed-list-desc-edit{background:none;border:none;color:rgba(140,165,220,0.38);font-size:11px;cursor:pointer;padding:1px 4px;flex-shrink:0;}
   #feed-list-desc-edit:hover{color:rgba(180,200,240,0.66);}
-  #feed-list-close{background:none;border:none;color:rgba(180,195,230,0.5);cursor:pointer;padding:0;line-height:1;flex-shrink:0;display:inline-flex;align-items:center;} /* ✕텍스트→얇은 SVG, 은은하게(2026-08-22) — 옆 공유 아이콘보다 안 튀게 */
-  #feed-list-close svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;}
+  /* 히트영역은 36px로 넉넉히(모바일 탭 타깃), 아이콘 자체는 은은한 톤 유지(2026-08-29 사용자 제보 "닫기버튼
+     너무 작음"). 음수 margin으로 시각 위치는 유지한 채 터치 영역만 넓힌다. */
+  #feed-list-close{background:none;border:none;color:rgba(180,195,230,0.55);cursor:pointer;line-height:1;flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;padding:0;margin:-8px -8px -8px 0;border-radius:50%;-webkit-tap-highlight-color:transparent;}
+  #feed-list-close:active{background:rgba(255,255,255,0.08);}
+  #feed-list-close svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;}
   /* 다른 유저의 공개 컬렉션을 열었을 때만 보이는 줄 — 작성자 표시 + 내 라이브러리로 저장(복제)
      (2026-08-12, 사용자 요청). 내 컬렉션이거나 포맷/장르 모아보기 등 콜렉션이 아닌 목록일 땐 숨김. */
   #feed-list-save-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:0 18px 12px;flex-shrink:0;}
