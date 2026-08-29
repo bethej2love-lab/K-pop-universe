@@ -4026,6 +4026,7 @@ function openLightbox(url,shorts,playlist,idx,ctx,isAdvance,forceBrowseMode){
   // 남아있지만(제거는 별개 정리 작업), 여기서 더 이상 안 읽으므로 무해.
   if(!isAdvance)_lbSessionMode=shorts?'shorts':'browse';
   lb.classList.toggle('lb-browse',_lbSessionMode==='browse');
+  _gaEvent('video_play',{mode:_lbSessionMode,advance:!!isAdvance}); // 쇼츠/브라우즈·최초/넘김 구분(2026-08-29)
   // iOS Safari: display:none 상태의 iframe에서 src를 바꾸면 사용자 제스처 체인이 끊겨 autoplay가 차단됨.
   // 라이트박스를 먼저 열어 iframe이 visible한 상태로 만든 뒤 src를 설정해야 autoplay가 허용됨.
   lb.classList.add('open');
@@ -9900,6 +9901,7 @@ function _pickExploreTarget(){
 }
 document.getElementById('tab-explore').addEventListener('click',e=>{
   e.stopPropagation();
+  _gaEvent('tab_click',{tab:'explore'}); // 별(랜덤 탐험) 버튼 — "사람들이 이걸 쓰나" 근거 수집(2026-08-29)
   exitObSearch();
   _closeFeedOverlay();
   if(!bubbleMeshes.length)return;
@@ -9952,6 +9954,7 @@ document.getElementById('tab-explore').addEventListener('click',e=>{
 });
 document.getElementById('tab-search').addEventListener('click',e=>{
   e.stopPropagation();
+  _gaEvent('tab_click',{tab:'search'});
   if(isMob()){
     const tb=document.getElementById('tabbar');
     const entering=!tb.classList.contains('search-mode');
@@ -10228,7 +10231,7 @@ function flyHome(){
   });
 })();
 document.getElementById('dh-home-btn').addEventListener('click',e=>{e.stopPropagation();flyHome();});
-document.getElementById('tab-home').addEventListener('click',e=>{e.stopPropagation();_closeFeedOverlay();flyHome();});
+document.getElementById('tab-home').addEventListener('click',e=>{e.stopPropagation();_gaEvent('tab_click',{tab:'home'});_closeFeedOverlay();flyHome();});
 document.getElementById('dh-explore-btn').addEventListener('click',e=>{
   e.stopPropagation();
   _dismissFavHint();
@@ -11706,6 +11709,7 @@ const _FEED_BADGE_SEEN_KEY='kpu_feed_badge_seen';
 if(!localStorage.getItem(_FEED_BADGE_SEEN_KEY)&&isMob()&&!JSON.parse(localStorage.getItem('kpu_profile')||'null')?.nickname&&_visitCount<=2)document.getElementById('tab-feed').classList.add('show-badge');
 document.getElementById('tab-feed').addEventListener('click',e=>{
   e.stopPropagation();
+  _gaEvent('tab_click',{tab:'feed'}); // 나침반(탐험 피드) 버튼
   exitObSearch();
   if(!localStorage.getItem(_FEED_BADGE_SEEN_KEY)){
     localStorage.setItem(_FEED_BADGE_SEEN_KEY,'1');
@@ -13054,6 +13058,7 @@ function _toggleMyPagePanel(){
 }
 document.getElementById('tab-profile').addEventListener('click',e=>{
   e.stopPropagation();
+  _gaEvent('tab_click',{tab:'profile'});
   _toggleMyPagePanel();
 });
 document.getElementById('dh-profile-btn').addEventListener('click',e=>{
@@ -13758,6 +13763,7 @@ let _feedDiscoveryBuiltAt=0;
 const _FEED_DISCOVERY_TTL=3*60*1000;
 function _openFeedOverlay(){
   const el=document.getElementById('feed-overlay');
+  _gaEvent('explore_open',{device:isMob()?'mobile':'desktop'}); // 탐험 패널 진입(피드 사용도 근거)
   if(isMob())closeMobSheet(); // 열려있는 카드 먼저 닫고 탐색 오버레이 표시
   if(isMob()){
     // 카드 바텀시트(openMobSheet)와 같은 톤으로 아래에서 위로 슬라이드업 — 예전엔 display:none→flex만
