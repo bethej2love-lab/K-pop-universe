@@ -778,6 +778,403 @@ async function _ytSweepDetectPreview(){
   }catch(e){_ytSetProg('오류: '+e.message);}
   finally{if(btn)btn.disabled=false;}
 }
+
+// ══════════════════════════════════════════════════════════════════════════════════════════════════
+// 원곡 태깅 v2 — 곡명 우선 해석기 (2026-08-30, 사용자 요청 — "이름 기반 세대차 이동은 제대로 된 로직이 아니다")
+// ══════════════════════════════════════════════════════════════════════════════════════════════════
+// 기존 1차/2차 원곡 재분류는 "원곡자 이름이 제목에 있어 with로 잡힌 것"을 세대차로 옮기는 사후 처리라
+// (a) 원곡자 이름이 제목에 없는 대다수 커버·챌린지는 영영 못 잡고 (b) 6/10년 문턱에 안 걸리면 with로 남으며
+// (c) cover_of_song은 따옴표 패턴으로만 따로 채웠다. v2는 **곡명 → 원곡자** 사전을 먼저 만들고, 제목에서 곡명
+// 후보를 뽑아 원곡자를 정한 뒤, 커버로 확정되면 with_*를 정리한다(원곡자 이름은 보조 근거).
+//
+// 사전(_coverIndex) 재료 — 전부 이미 있는 데이터:
+//   · GROUPS[*].discography 트랙(268팀, 1.4만 트랙) — 타이틀곡 B등급, 수록곡 C등급
+//   · GROUPS[*].songs / ARTISTS[*].songs 대표곡 — B등급
+//   · ARTISTS[*].soloDiscography(멤버 솔로) / discography(솔로 아티스트) / unitDiscography(유닛) — B/C
+//   · melon_yearly_top100 · spotify_streaming_milestones(DB) — A등급("유명곡")
+// 원곡자 표기는 기존 컬럼 관례 그대로: 그룹 → cover_of_groups[gko], 멤버 솔로곡 → cover_of_members["이름(그룹)"],
+// 무소속 솔로 → cover_of_members["이름(솔로)"].
+//
+// 판정 원칙(사용자 결정 2026-08-30):
+//   ① 곡명 후보 강도: 크레딧("(원곡: X)"/"Original song by X"/"X - 곡 | Cover by") > 챌린지 해시태그(#곡명_Challenge)
+//      > 따옴표 곡명 > 대시 구간 > 평문 사전 스캔(커버/챌린지 문맥이 있을 때만, 4자 이상·비흔한 키만)
+//   ② 공연자 본인 곡은 커버가 아니다(제외) — 자기 그룹·자기 멤버·자기 유닛의 곡 전부
+//   ③ 여러 원곡자 후보면 등급 A>B>C, 타이틀곡, 곡 발매일<영상일, 원곡자 데뷔<공연자 데뷔 순으로 점수. 동점이
+//      서로 다른 원곡자면 태깅하지 않고 needs_review
+//   ④ 챌린지도 원곡을 태깅한다(커버 탭 노출 = 덜 유명한 그룹의 노출 기회). 자체 채널 챌린지에 with/님과/선배님
+//      같은 동반 표시가 없으면 원곡자 멤버는 출연하지 않은 것 — 원곡자는 cover_of로만, with_*엔 안 넣는다
+//   ⑤ 커버로 확정되면 with_*에서 원곡자를 제거하고, 동반 신호(with·X·feat·님과·선배님·함께…)가 없으면 with_*를 비운다
+//   ⑥ 원곡자가 우리 시스템 밖(저스틴 비버·10CM·크러쉬…)이면 커버이긴 하나 cover_of는 비워둔다 — 대신 with_*
+//      오염(원곡 제목 안의 이름이 게스트로 붙은 것)은 ⑤대로 정리
+//   ⑦ 잡지 '커버'·BE ORIGINAL·STUDIO CHOOM ORIGINAL·언더커버 등 _COVER_EXCLUDE 문맥은 처음부터 커버 후보에서 제외
+
+// 곡명 정규화 — NFKC·소문자, 버전/피처링/프로듀서 괄호 제거, "A (B)"의 B가 번역 표기면 A와 B 둘 다 키로.
+function _coverSongKeys(raw){
+  if(!raw)return[];
+  let s=String(raw).normalize('NFKC').toLowerCase().trim();
+  s=s.replace(/^[\s\p{Extended_Pictographic}\uFE0F♬♪]+/u,'');
+  const out=[];
+  const verRe=/^(?:feat|ft|prod|with|duet|sung by|song by|vocal by|remix|inst|instrumental|acoustic|band|piano|live|korean|japanese|english|chinese|kor|jpn|eng|chn|jp|kr|en|cn|clean|explicit|remastered|remaster|original|ost|op|ed|sped up|slowed|demo|bonus|hidden|\d{4}|.*\bver\.?$|.*\bversion$|.*\bmix$|.*remix$|.*edit$|.*ver\.?\)?$)/;
+  const isVerParen=inner=>verRe.test(inner.trim())||/(?:^|\s)(?:ver\.?|version|remix|edit|mix|remaster(?:ing|ed)?|inst\.?|instrumental|acoustic|feat\.?|ft\.?|prod\.?|ost|solo|special|bonus track|hidden track|clean|explicit)(?:\s|$)/.test(inner);
+  // 괄호 분해: 버전류는 버림, 아니면 별도 키
+  const paren=[];
+  s=s.replace(/[\(（\[【]([^()（）\[\]【】]*)[\)）\]】]/g,(m,inner)=>{if(!isVerParen(inner))paren.push(inner);return ' ';});
+  const clean=t=>t.replace(/[’'"“”‘`]/g,'').replace(/[^\p{L}\p{N}]+/gu,' ').replace(/\s+/g,' ').trim();
+  const main=clean(s);
+  if(main.length>=2)out.push(main);
+  paren.forEach(p=>{const c=clean(p);if(c.length>=2&&c!==main)out.push(c);});
+  // "a & b"→"a and b" 동치, 공백 제거형도 추가(느슨 비교용)
+  return [...new Set(out)];
+}
+function _coverKeyLoose(k){return (k||'').replace(/\s/g,'');}
+// 평문 스캔에서 제외할 흔한 단어 키 — 곡명이 곧 일상어인 것들. 크레딧/따옴표/챌린지태그로 명시되면 그대로 인정.
+const _COVER_COMMON_KEYS=new Set(['love','home','run','fire','hot','dream','baby','bad','good','crazy','monster','candy','boom','wave','crush','icy','hello','cool','work','stay','tonight','forever','summer','winter','spring','fall','magic','party','dance','music','sorry','happy','sad','angel','queen','king','star','moon','sun','sky','blue','red','black','pink','gold','diamond','one','two','up','down','go','on','off','up up','oh','yes','no','why','who','what','love me','i love you','i need you','call me','kiss','kiss me','bubble','gum','alone','again','goodbye','bye','hi','hey','wow','omg','lie','truth','time','day','night','light','dark','sweet','pretty','beautiful','hero','signal','favorite','regular','secret','danger','shut down','shut up','answer','dive','flower','rain','snow','cherry','honey','sugar','free','freedom','power','energy','fever','miracle','wish','breathe','breath','smile','cry','pop','rock','jump','walk','fly','open','close','yellow','white','green','purple','sweat','chains','body','pose','viral','glow','wicked','sign','beep','echo','maze','alive','automatic','trophy','vacation','freeze','feel','feeling','drama','사랑','행복','여름','겨울','가을','봄','하루','오늘','내일','친구','바다','하늘','별','달','꿈','고백','이별','안녕','미안','사랑해','좋아해','우리','너','나','그대','편지','기억','약속','비','눈','꽃','집','길','밤','아침','시간','거짓말','미쳐','나쁜','예쁘다','예뻐','사랑하기 때문에']);
+// 등록 아티스트 이름 키(그룹/멤버/영문) — 크레딧 텍스트에서 "우리 시스템 안의 원곡자"를 찾는 데 씀
+let _coverIndex=null;         // Map(key -> [entry]) entry:{origin:{kind:'group'|'member'|'solo',gko,mko,label}, title, tier:'A'|'B'|'C', isTitle, date, keyLoose}
+let _coverIndexChart=null;    // 마지막으로 빌드에 쓴 차트 행(같으면 재빌드 안 함)
+function _coverOriginLabel(o){return o.kind==='group'?o.gko:`${o.mko}(${o.gko})`;}
+function _coverOriginId(o){return o.kind==='group'?`g:${o.gko}`:`m:${o.mko}(${o.gko})`;}
+function _coverArtistOriginOf(a){
+  // 멤버 솔로곡: "이름(그룹)"; 무소속 솔로(group.ko==='솔로'): "이름(솔로)" — 기존 데이터 관례(아이유(솔로)) 그대로
+  const gko=a.group&&GROUPS[a.group.ko]?a.group.ko:'솔로';
+  return{kind:gko==='솔로'?'solo':'member',gko,mko:a.name.ko};
+}
+// 차트 행(chartRows: [{group_ko,member_ko,song_title,...}])은 선택 — 없으면 A등급 없이 빌드
+function _coverBuildIndex(chartRows){
+  const idx=new Map();
+  const add=(key,entry)=>{if(!key||key.length<2)return;if(!idx.has(key))idx.set(key,[]);const arr=idx.get(key);
+    const dup=arr.find(e=>_coverOriginId(e.origin)===_coverOriginId(entry.origin)&&e.title===entry.title);
+    if(dup){if(entry.tier<dup.tier)dup.tier=entry.tier;if(entry.isTitle)dup.isTitle=true;if(entry.date&&(!dup.date||entry.date<dup.date))dup.date=entry.date;return;}
+    arr.push(entry);};
+  const put=(origin,title,tier,isTitle,date)=>{_coverSongKeys(title).forEach(k=>add(k,{origin,title,tier,isTitle:!!isTitle,date:date?String(date).replace(/\./g,'-').slice(0,10):null,keyLoose:_coverKeyLoose(k)}));};
+  Object.entries(GROUPS).forEach(([gko,g])=>{
+    const origin={kind:'group',gko};
+    (g.discography||[]).forEach(al=>(al.tracks||[]).forEach(t=>t&&t.title&&put(origin,t.title,t.isTitle?'B':'C',t.isTitle,al.releaseDate)));
+    (g.songs||[]).forEach(s=>s&&s.t&&put(origin,s.t,'B',true,null));
+  });
+  ARTISTS.forEach(a=>{
+    const origin=_coverArtistOriginOf(a);
+    // ARTISTS[*].discography는 멤버든 무소속이든 "그 사람 명의 솔로 디스코"(602명) — 그룹 디스코는 GROUPS 쪽에만 있다
+    [...(a.soloDiscography||[]),...(a.discography||[])].forEach(al=>(al.tracks||[]).forEach(t=>t&&t.title&&put(origin,t.title,t.isTitle?'B':'C',t.isTitle,al.releaseDate)));
+    if(origin.kind==='solo')(a.songs||[]).forEach(s=>s&&s.t&&put(origin,s.t,'B',true,null));
+    // 유닛곡(GOT the beat, NCT U…): 유닛 멤버 각자에게 "이름(그룹)"으로 — 같은 유닛명은 dedupe되므로 멤버 수만큼 항목이 생김
+    (a.unitDiscography||[]).forEach(u=>(u.albums||[]).forEach(al=>(al.tracks||[]).forEach(t=>t&&t.title&&put({kind:'member',gko:origin.gko==='솔로'?'솔로':origin.gko,mko:a.name.ko,unit:u.unitName},t.title,t.isTitle?'B':'C',t.isTitle,al.releaseDate))));
+  });
+  (chartRows||[]).forEach(r=>{
+    if(!r||!r.song_title)return;
+    let origin=null;
+    if(r.member_ko){const a=ARTISTS.find(x=>x.name.ko===r.member_ko&&(r.group_ko==='솔로'||_artistGroups(x).some(g=>g.ko===r.group_ko)));origin=a?_coverArtistOriginOf(a):(r.group_ko&&r.group_ko!=='솔로'&&GROUPS[r.group_ko]?{kind:'member',gko:r.group_ko,mko:r.member_ko}:{kind:'solo',gko:'솔로',mko:r.member_ko});}
+    else if(r.group_ko&&GROUPS[r.group_ko])origin={kind:'group',gko:r.group_ko};
+    if(origin)put(origin,r.song_title,'A',true,r.year?`${r.year}-01-01`:null);
+  });
+  _coverIndex=idx;_coverIndexChart=chartRows||null;
+  return idx;
+}
+function _coverIndexEnsure(chartRows){if(!_coverIndex||(chartRows&&chartRows!==_coverIndexChart))_coverBuildIndex(chartRows);return _coverIndex;}
+
+// 제목에서 커버 문맥/제외 문맥 판정. _COVER_EXCLUDE(index.html)가 있으면 그대로 쓰고 없으면(테스트) 최소 목록.
+function _coverContext(title){
+  const n=(title||'').normalize('NFKC').toLowerCase();
+  const ex=(typeof _COVER_EXCLUDE!=='undefined'?_COVER_EXCLUDE:['be original','choom original','cover story','커버 촬영','undercover','언더커버','discover','recover','moving cover','무빙 커버','digital cover','커버스타','cover star','original ver','the original','original contents','_original','original stage','original spot','비하인드','behind','커버스토리','arena cover','dazed cover','cover highlight','cover highlights']);
+  const excluded=ex.some(k=>n.includes(k));
+  const cover=/\bcover(?:ed|s)?\b|커버|원곡|original\s*song|original\s*by|original\s*:|原曲|歌ってみた/.test(n);
+  const challenge=/challenge|챌린지|チャレンジ/.test(n);
+  return{excluded,cover,challenge,hasContext:(cover||challenge)&&!excluded};
+}
+// 동반 출연 신호 — 있으면 with_*를 비우지 않는다(원곡자만 뺌)
+function _coverHasCollabSignal(title){
+  return /\bwith\b|\bw\/|\bfeat\.?\b|\bft\.?\b|\bx\b|×|듀엣|합동|함께|님과|선배님과|후배님과|선배님|후배님|さんと|\bvs\b|콜라보|collab/i.test((title||'').normalize('NFKC'));
+}
+// 제목 → 곡명 후보 [{text, strength:'credit'|'tag'|'quote'|'dash'|'bare', artistText?}]
+function _coverCandidates(title){
+  const t=(title||'').normalize('NFKC').replace(/[│｜]/g,'|');
+  const out=[];
+  const push=(text,strength,artistText)=>{const s=(text||'').replace(/^[\s\-–—|:]+|[\s\-–—|:]+$/g,'').trim();
+    if(strength==='dash'&&/['‘"“「＜《〈]/.test(s))return; // 따옴표를 품은 대시 구간은 따옴표 후보가 대신 처리
+    if(s&&s.length>=2&&s.length<=60)out.push({text:s,strength,artistText:artistText||null});};
+  // ── 크레딧 절 ──
+  // (원곡: X) / (원곡 : X) / (Original song by X) / (Original by X) / (원곡자: X) / 原曲 : X
+  // ⚠️ "by?"는 리터럴 b+옵션 y라 'H.O.T.'·'소녀시대'를 못 잡았다(2026-08-30 테스트로 발견) — (?:by\.?)?로.
+  const creditRe=/[\(（\[【]\s*(?:\*?\s*원곡자?|original(?:\s*song|\s*track)?(?:\s*by\.?|\s*:)?|原曲)\s*[:：]?\s*([^\)）\]】]{1,60})[\)）\]】]/gi;
+  let m;const credits=[];
+  while((m=creditRe.exec(t))){credits.push({artist:m[1].trim(),idx:m.index,end:m.index+m[0].length});}
+  // 크레딧 바로 앞의 곡명: "…'곡명' (원곡: X)" 또는 "… - 곡명 (원곡: X)" 또는 "♬ 곡명 - 그룹 (원곡: X)"
+  credits.forEach(c=>{
+    let before=t.slice(0,c.idx);
+    // "곡명 Covered by 공연자 (원곡: X)" — 크레딧 앞에 커버 표기가 있으면 곡명은 그 앞
+    const cb=before.match(/^(.*?)\s+(?:covered|cover)\s+by\b/i);if(cb)before=cb[1];
+    let song=null;
+    const q=before.match(/['‘"“「「＜《]([^'’"”」＞》]{1,60})['’"”」＞》]\s*$/);
+    if(q)song=q[1];
+    else{const d=before.match(/(?:^|[-–—|:,♬♪]\s*|\]\s*)([^\-–—|:,\[\]♬♪]{1,60}?)\s*$/);if(d)song=d[1];}
+    push(song,'credit',c.artist);
+  });
+  // "X - 곡명 | Cover by …", "X - 곡명 (Cover)", "곡명 - X (cover)", "'곡명' (X) Cover", "X 'S' cover", "X의 S 커버"
+  const coverWord=/\bcover(?:ed)?\b|커버/i;
+  if(coverWord.test(t)&&!credits.length){
+    const core=t.replace(/[\[\(【][^\]\)】]*(?:cover|커버|dance|vocal|band|live|shorts|special|archive|us record|on film|from\.|sub)[^\]\)】]*[\]\)】]/gi,' ').replace(/\|.*$/,'').replace(/(?:dance|vocal|band|piano|guitar|acoustic)?\s*cover(?:ed)?\s*(?:by|ver\.?|version|video|live).*$/i,'').replace(/\s*(?:cover|커버)\s*$/i,'');
+    const dm=core.match(/^\s*(.{1,50}?)\s+[-–—]\s+(.{1,60}?)\s*$/);
+    if(dm){push(dm[2],'dash',dm[1]);push(dm[1],'dash',dm[2]);}
+  }
+  // "곡명 Covered by 공연자" (대시·따옴표 없음)
+  const cbm=t.match(/^\s*(?:[\[【][^\]】]*[\]】]\s*)?(.{2,60}?)\s+(?:covered|cover)\s+by\b/i);
+  if(cbm&&!credits.length&&!/['‘"“「]/.test(cbm[1]))push(cbm[1].replace(/^[\s\p{Extended_Pictographic}\uFE0F]+/u,''),'dash');
+  // ── 챌린지 해시태그: #Song_Challenge / #SongChallenge / #Song챌린지 / #Song_challenge ──
+  const tagRe=/#([^\s#]+?)(?:_?(?:challenge|챌린지|チャレンジ))(?![\p{L}\p{N}])/giu;
+  while((m=tagRe.exec(t))){const raw=m[1].replace(/_/g,' ').replace(/([a-z])([A-Z])/g,'$1 $2');if(!/^(?:dance|댄스|idol|kpop|k-pop|shorts|엠카|mcd|vocal|밴드|band)$/i.test(raw))push(raw,'tag');}
+  // "'곡명' 챌린지" / "〈곡명〉 챌린지"
+  const qc=/['‘"“「＜《〈]([^'’"”」＞》〉]{1,40})['’"”」＞》〉]\s*(?:댄스\s*)?(?:챌린지|challenge)/gi;
+  while((m=qc.exec(t)))push(m[1],'tag');
+  // ── 따옴표 구간 ──
+  const qRe=/(?:^|[\s\]\)\-–—|:])['‘](.+?)['’](?=[\s\(\)\[\]|,.!?]|$)|["“](.+?)["”]|「(.+?)」|＜(.+?)＞|《(.+?)》|〈(.+?)〉/g;
+  while((m=qRe.exec(t))){const inner=m[1]||m[2]||m[3]||m[4]||m[5]||m[6];if(!inner||credits.some(c=>m.index>=c.idx&&m.index<c.end))continue;
+    let cleaned=inner.replace(/\s*[\(（][^)）]*(?:원곡|original)[^)）]*[\)）]/i,'');
+    // "'HOT(LE SSERAFIM)'"처럼 따옴표 안 괄호가 아티스트명이면 곡명과 분리
+    const pa=cleaned.match(/^(.+?)\s*[\(（]([^)）]{1,40})[\)）]\s*$/);
+    if(pa&&_coverOriginFromText(pa[2])){push(pa[1],'quote',pa[2]);continue;}
+    // "방탄소년단(BTS)-Dynamite"·"TWICE - MORE & MORE"처럼 따옴표 안에 아티스트-곡명이 같이 든 관례 — 양쪽을 각각 후보로
+    const qd=cleaned.match(/^\s*(.{1,40}?)\s*[-–—]\s*(.{1,60}?)\s*$/);
+    if(qd){push(qd[2],'quote',qd[1]);push(qd[1],'quote',qd[2]);}
+    else{
+      // "BIGBANG '봄여름가을겨울'"·"SHINee 'Don't Call Me'"처럼 따옴표 바로 앞 같은 구간의 텍스트를 아티스트 후보로
+      const seg=t.slice(0,m.index+1).split(/[|｜\[\]\(\)]/).pop().replace(/[-–—:]\s*$/,'').trim();
+      const lead=seg.split(/\s+[-–—:]\s+/).pop().trim();
+      push(cleaned,'quote',lead&&lead.length<=40?lead:null);
+    }}
+  // ── 대시 구간(크레딧/따옴표 없을 때 보조) ──
+  if(!out.some(o=>o.strength==='credit'||o.strength==='quote')){
+    const core=t.replace(/[\[【][^\]】]*[\]】]/g,' ').replace(/\|.*$/,'').replace(/#\S+/g,' ').trim();
+    const dm=core.match(/^\s*(.{1,50}?)\s+[-–—]\s+(.{1,60}?)\s*(?:[\(（].*)?$/);
+    if(dm){push(dm[2],'dash',dm[1]);push(dm[1],'dash',dm[2]);}
+  }
+  return out;
+}
+// 크레딧/대시 옆 텍스트에서 "우리 시스템 안의 원곡자"를 찾는다 → origin 또는 null(외부 아티스트)
+function _coverOriginFromText(text){
+  if(!text)return null;
+  const s=text.normalize('NFKC').trim();
+  let r=null;try{r=_m2ParseTitle(s,undefined,false,undefined);}catch(e){}
+  if(r&&r.primaryGroup){
+    const g=r.primaryGroup;
+    const mem=(r.membersByGroup&&r.membersByGroup[g])||[];
+    if(GROUPS[g]){
+      if(mem.length===1&&!r.withGroups.length){const a=ARTISTS.find(x=>x.name.ko===mem[0]&&_artistGroups(x).some(y=>y.ko===g));if(a&&(a.soloDiscography||a.discography||a.songs))return{kind:'member',gko:g,mko:mem[0]};}
+      return{kind:'group',gko:g};
+    }
+    const a=ARTISTS.find(x=>x.name.ko===g);
+    if(a)return _coverArtistOriginOf(a);
+  }
+  // 영문/한글 솔로명 직접 대조(파서가 짧은 영문(IU 등)을 게이트할 수 있어 보조)
+  const key=s.toLowerCase().replace(/[^\p{L}\p{N}]+/gu,'');
+  const a=ARTISTS.find(x=>{const ko=(x.name.ko||'').toLowerCase().replace(/[^\p{L}\p{N}]+/gu,'');const en=(x.name.en||'').toLowerCase().replace(/[^\p{L}\p{N}]+/gu,'');return key&&(key===ko||(en&&key===en))&&(x.group.ko==='솔로'||x.soloDiscography||x.discography||x.songs);});
+  if(a)return _coverArtistOriginOf(a);
+  const gk=Object.keys(GROUPS).find(k=>{const ko=k.toLowerCase().replace(/[^\p{L}\p{N}]+/gu,'');const en=(GROUPS[k].en||'').toLowerCase().replace(/[^\p{L}\p{N}]+/gu,'');return key&&(key===ko||(en&&key===en));});
+  return gk?{kind:'group',gko:gk}:null;
+}
+// 공연자(performer) 소속으로 보이는 origin인가 — 자기 곡이면 커버 아님
+function _coverIsSelf(origin,performerGko,performerMembers){
+  if(!origin)return false;
+  if(origin.gko===performerGko)return true;
+  if(origin.kind!=='group'&&performerGko&&!GROUPS[performerGko]&&origin.mko===performerGko)return true; // 무소속 솔로(group_ko=아이유)의 자기 곡
+  if(origin.kind!=='group'&&performerGko&&(performerMembers||[]).includes(origin.mko))return true;
+  // 공연자 그룹 멤버의 솔로곡을 그 그룹이 부른 경우도 자기 곡
+  if(origin.kind!=='group'&&origin.gko===performerGko)return true;
+  return false;
+}
+function _coverDebutYear(gko){const g=GROUPS[gko];return g?(parseInt(g.debut)||0):0;}
+// 핵심 해석기. row:{title,group_ko,members,with_members,with_groups,published_at}, opts:{chartRows}
+// 반환: null(커버 아님/판정 불가) 또는 {isCover, origin|null, song|null, ambiguous, reason, patch}
+function _coverResolve(row,opts){
+  const idx=_coverIndexEnsure(opts&&opts.chartRows);
+  const title=row.title||'';
+  const ctx=_coverContext(title);
+  if(ctx.excluded)return null;
+  let performer=row.group_ko;
+  let members=row.members||[];
+  const pub=(row.published_at||'').slice(0,10);
+  const cands=_coverCandidates(title);
+  // 1) 크레딧 원곡자(가장 강함)
+  let creditOrigin=null,creditSong=null,creditExternal=false,reassign=null;
+  for(const c of cands){
+    if(c.strength!=='credit')continue;
+    const o=_coverOriginFromText(c.artistText);
+    if(o){
+      if(_coverIsSelf(o,performer,members)){
+        // "(원곡: 저장된 그룹)"인데 with_*에 다른 그룹(멤버)이 붙어 있으면 옛 오저장 — 원곡자가 group_ko에, 실제 공연자가
+        // with에 들어간 것(표본: "kep1er - The Boys (원곡 : 소녀시대)"가 group_ko=소녀시대·with 케플러). 공연자를 with 쪽으로 바꿔 재판정.
+        const wg=row.with_groups||[],wm=(row.with_members||[]).map(m=>m.match(/^(.+)\((.+)\)$/)).filter(Boolean);
+        const gk=wg.length===1?wg[0]:(wg.length===0&&wm.length&&wm.every(x=>x[2]===wm[0][2])?wm[0][2]:null);
+        if(gk&&gk!==performer&&GROUPS[gk]){reassign={group_ko:gk,members:wm.filter(x=>x[2]===gk).map(x=>x[1])};performer=gk;members=reassign.members;row=Object.assign({},row,{group_ko:gk,members,with_groups:[],with_members:[]});}
+        else return null; // 자기 곡 라이브, 커버 아님
+      }
+      creditOrigin=o;creditSong=c.text;break;
+    }
+    creditExternal=true;creditSong=creditSong||c.text;
+  }
+  // 대시/따옴표 옆 아티스트 텍스트가 시스템 안 원곡자로 풀리면 그 원곡자 항목을 크게 가산(크레딧 다음 강도)
+  const sideBoost=new Map();
+  cands.forEach(c=>{if(c.strength==='credit'||!c.artistText)return;const o=_coverOriginFromText(c.artistText);if(o&&!_coverIsSelf(o,performer,members))sideBoost.set(_coverOriginId(o),8);});
+  const scored=[];
+  const weightS={credit:6,tag:5,quote:4,dash:2,bare:1};
+  let selfHit=false; // 강한 후보(크레딧/태그/따옴표)가 공연자 자기 곡에 걸림 → 자기 곡 무대, 커버 아님
+  const lookup=(text,strength,lockOrigin)=>{
+    if(strength!=='bare'){const asArtist=_coverOriginFromText(text);if(asArtist&&(!lockOrigin||_coverIsSelf(asArtist,performer,members)))return;} // 후보 텍스트 자체가 아티스트명("TREASURE")이면 곡명이 아님(아티스트가 따로 명시된 후보는 예외 — 'HOT' vs H.O.T. — 단 공연자 자신의 이름은 항상 제외)
+    _coverSongKeys(text).forEach(k=>{
+      const hits=idx.get(k)||[];
+      if(hits.some(e=>_coverIsSelf(e.origin,performer,members))){if(strength!=='bare')selfHit=true;return;} // 같은 제목의 자기 곡이 있으면 그 곡
+      hits.forEach(e=>{
+        if(lockOrigin&&_coverOriginId(e.origin)!==_coverOriginId(lockOrigin))return; // "BIGBANG '곡'"처럼 아티스트가 명시된 후보는 그 원곡자 항목만
+        if(strength==='bare'&&(_COVER_COMMON_KEYS.has(k)||k.replace(/\s/g,'').length<4))return;
+        if(strength==='dash'&&_COVER_COMMON_KEYS.has(k))return;
+        if(strength==='quote'&&!ctx.hasContext&&_COVER_COMMON_KEYS.has(k))return;
+        let s=weightS[strength]+(e.tier==='A'?3:e.tier==='B'?2:0)+(e.isTitle?1:0);
+        if(e.date&&pub){s+=e.date<pub?1:-4;}
+        if(e.origin.kind==='group'&&performer&&GROUPS[performer]){const dy=_coverDebutYear(e.origin.gko),py=_coverDebutYear(performer);if(dy&&py)s+=dy<py?1:(dy>py?-1:0);}
+        // 유명도(groups.json pri: 4 > 1.5 > 0.6) — "유명 그룹이 원곡자일 확률이 높다"(사용자). 동명 곡 동점 깨기용.
+        const pri=e.origin.kind==='solo'?4:((GROUPS[e.origin.gko]||{}).pri||0);s+=pri>=4?2:pri>=1.5?1:0; // 등록된 무소속 솔로(아이유·보아…)는 전부 톱티어
+        if(creditOrigin&&_coverOriginId(e.origin)===_coverOriginId(creditOrigin))s+=10;
+        s+=sideBoost.get(_coverOriginId(e.origin))||0;
+        scored.push({e,s,strength,key:k});
+      });
+    });
+  };
+  cands.forEach(c=>{if(c.strength==='credit')return;const lock=c.artistText?_coverOriginFromText(c.artistText):null;lookup(c.text,c.strength,lock&&!_coverIsSelf(lock,performer,members)?lock:null);});
+  if(selfHit&&!creditOrigin)return null;
+  // 챌린지 태그는 곡명을 줄여 쓰는 관례(#첫만남챌린지 = "첫 만남은 계획대로 되지 않아") — 정확 일치가 없으면 접두 일치
+  cands.filter(c=>c.strength==='tag').forEach(c=>{
+    const keys=_coverSongKeys(c.text);if(keys.some(k=>idx.has(k)))return;
+    const cl=_coverKeyLoose(keys[0]||'');if(cl.length<3)return;
+    let best=null;idx.forEach((hits,k)=>{const kl=_coverKeyLoose(k);if(kl.startsWith(cl)&&(!best||kl.length<best.length))best=k;});
+    if(best)lookup(best,'tag');
+  });
+  if(creditSong)lookup(creditSong,'credit');
+  // 평문 스캔: 커버/챌린지 문맥이 있을 때만 — 제목 전체를 사전 키(4자+, 비흔한, A/B등급)와 단어경계 대조
+  if(ctx.hasContext){
+    const norm=' '+title.normalize('NFKC').toLowerCase().replace(/[@#]\S+/g,' ').replace(/[’'"“”‘`]/g,'').replace(/[^\p{L}\p{N}]+/gu,' ').replace(/\s+/g,' ')+' ';
+    idx.forEach((hits,k)=>{
+      if(k.replace(/\s/g,'').length<4||_COVER_COMMON_KEYS.has(k))return;
+      if(!hits.some(e=>e.tier!=='C'))return;
+      if(norm.includes(' '+k+' '))lookup(k,'bare');
+    });
+  }
+  // 2) 선택 — 같은 원곡자 항목은 최고점만
+  const byOrigin=new Map();
+  scored.forEach(x=>{const id=_coverOriginId(x.e.origin);if(!byOrigin.has(id)||byOrigin.get(id).s<x.s)byOrigin.set(id,x);});
+  const ranked=[...byOrigin.values()].sort((a,b)=>b.s-a.s);
+  let origin=null,song=null,ambiguous=false,reason='';
+  if(creditOrigin){origin=creditOrigin;const hit=ranked.find(x=>_coverOriginId(x.e.origin)===_coverOriginId(creditOrigin));song=hit?hit.e.title:(creditSong||null);reason='credit';}
+  else if(!ranked.some(x=>x.strength!=='bare')&&ctx.cover&&sideBoost.size===1){
+    // 디스코에 없는 곡("BIGBANG '봄여름가을겨울' COVER")이라도 아티스트 표기가 시스템 안 원곡자 하나로 풀리면 그대로 인정
+    const id=[...sideBoost.keys()][0];const pool=cands.filter(x=>x.artistText&&!_coverOriginFromText(x.text)&&_coverOriginFromText(x.artistText)&&_coverOriginId(_coverOriginFromText(x.artistText))===id);
+    const c=pool.find(x=>x.strength==='quote')||pool[0];if(!c)return null;
+    origin=_coverOriginFromText(c.artistText);song=c.text;reason='artist';
+  }
+  else if(ranked.length){
+    const top=ranked[0],second=ranked[1];
+    if(top.s<(ctx.hasContext?6:8)){reason='weak';}
+    else if(second&&top.s-second.s<2&&_coverOriginId(second.e.origin)!==_coverOriginId(top.e.origin)){ambiguous=true;reason='ambiguous';}
+    else{origin=top.e.origin;song=top.e.title;reason=top.strength;}
+  }
+  const isCover=!!(origin||creditExternal||ctx.cover);
+  // 3) 패치 — cover_of/with_* 정리
+  const curWG=row.with_groups||[],curWM=row.with_members||[],curCG=row.cover_of_groups||[],curCM=row.cover_of_members||[];
+  const collab=_coverHasCollabSignal(title);
+  const patch={};
+  if(origin){
+    const label=_coverOriginLabel(origin);
+    if(origin.kind==='group'){patch.cover_of_groups=[...new Set([...curCG.filter(g=>g!==label),label])];patch.cover_of_members=curCM;}
+    else{patch.cover_of_members=[...new Set([...curCM.filter(m=>m!==label),label])];patch.cover_of_groups=curCG;}
+    if(song&&!row.cover_of_song)patch.cover_of_song=song;
+    // with_*에서 원곡자 제거(그룹/그 그룹 멤버 표기 모두)
+    const og=origin.gko;
+    let wg=curWG.filter(g=>g!==og),wm=curWM.filter(m=>!(m.endsWith(`(${og})`)||(origin.kind!=='group'&&m===label)));
+    if(!collab){wg=[];wm=[];}
+    if(wg.length!==curWG.length||wm.length!==curWM.length){patch.with_groups=wg;patch.with_members=wm;}
+  }else if(isCover&&!collab&&(curWG.length||curWM.length)){
+    // 외부 원곡 커버인데 with가 붙어있음(원곡 제목/원곡자 표기가 게스트로 오인된 것) → 정리
+    patch.with_groups=[];patch.with_members=[];
+  }
+  if(reassign&&origin){patch.group_ko=reassign.group_ko;patch.members=reassign.members;if(!('with_groups' in patch)){patch.with_groups=[];patch.with_members=[];}}
+  if(!origin&&!ambiguous&&!isCover)return null;
+  return{isCover,origin,song,ambiguous,reason:reassign?'reassign':reason,patch,collab,candidates:cands};
+}
+
+
+// [원곡 태깅 v2 스윕](2026-08-30) — 위 _coverResolve를 기존 행 전체(커버/챌린지 키워드 or with_* or cover_of_* 있는 행)에
+// 돌려 cover_of_groups/members/song·with_*·(옛 오저장이면 group_ko/members)를 한 번에 정정한다. 기존 1차/2차 원곡 재분류·
+// 커버곡 제목 추출 3버튼을 대체. 안전장치는 다른 재검증 버튼과 동일: tags_manual·content_flag 제외, 유형별 건수+표본 콘솔 →
+// confirm → 스냅샷 → 200건 청크 update. 차트 테이블(melon_yearly_top100·spotify_streaming_milestones)은 있으면 A등급으로 읽고
+// 없으면(권한/미생성) 그냥 빠진 채 진행한다.
+async function _coverLoadChartRows(){
+  if(!sb)return[];
+  const out=[];
+  for(const[tbl,cols]of[['melon_yearly_top100','group_ko,member_ko,song_title,year'],['spotify_streaming_milestones','group_ko,member_ko,song_title']]){
+    try{const{data,error}=await _sbFetchAll(()=>sb.from(tbl).select(cols).order('song_title'));if(!error&&data)out.push(...data);}catch(e){}
+  }
+  return out;
+}
+async function _ytSweepCoverV2(){
+  if(!sb){_ytSetProg('Supabase 연결 없음');return;}
+  const btn=document.getElementById('sp-cover-v2-btn');
+  if(btn)btn.disabled=true;
+  try{
+    _ytSetProg('[원곡 v2] 차트 테이블 로드 중…');
+    const chartRows=await _coverLoadChartRows();
+    _coverBuildIndex(chartRows);
+    _ytSetProg(`[원곡 v2] 사전 ${_coverIndex.size}키 (차트 ${chartRows.length}행) · 대상 조회 중…`);
+    const KW=['*cover*','*커버*','*원곡*','*original*','*challenge*','*챌린지*','*原曲*','*歌ってみた*'];
+    const orExpr=[...KW.map(k=>`title_norm.ilike.${k}`),'with_groups.neq.{}','with_members.neq.{}','cover_of_groups.neq.{}','cover_of_members.neq.{}'].join(',');
+    const{data:rows,error}=await _sbFetchAll(()=>sb.from(_YT_TABLE)
+      .select('id,title,group_ko,members,with_members,with_groups,cover_of_members,cover_of_groups,cover_of_song,published_at,tags_manual,content_flag')
+      .or(orExpr).order('id'));
+    if(error){_ytSetProg('조회 실패: '+error.message);return;}
+    if(!rows?.length){_ytSetProg('대상 행이 없어요');return;}
+    const EXCLUDE=new Set(['무관','보류','hidden','외부인']);
+    const same=(a,b)=>{const x=[...new Set(a||[])].sort(),y=[...new Set(b||[])].sort();return x.length===y.length&&x.every((v,i)=>v===y[i]);};
+    let manualSkipped=0,ambiguous=0,external=0;const updates=[];const sample={cover:[],move:[],wipe:[],reassign:[],ambiguous:[]};
+    const push=(k,line)=>{if(sample[k].length<60)sample[k].push(line);};
+    for(let i=0;i<rows.length;i++){
+      if(i%2000===0){_ytSetProg(`[원곡 v2] 분석 중… ${i}/${rows.length} (후보 ${updates.length})`);await new Promise(r=>setTimeout(r));}
+      const v=rows[i];
+      if(v.content_flag&&EXCLUDE.has(v.content_flag))continue;
+      let r=null;try{r=_coverResolve(v,{chartRows});}catch(e){console.warn('[원곡 v2] 해석 오류',v.id,e);continue;}
+      if(!r)continue;
+      if(r.ambiguous){ambiguous++;push('ambiguous',`#${v.id} ${(v.title||'').slice(0,80)}`);continue;}
+      if(!r.origin)external++;
+      const p=r.patch;const patch={};
+      if(p.cover_of_groups&&!same(p.cover_of_groups,v.cover_of_groups))patch.cover_of_groups=p.cover_of_groups;
+      if(p.cover_of_members&&!same(p.cover_of_members,v.cover_of_members))patch.cover_of_members=p.cover_of_members;
+      if(p.cover_of_song&&!v.cover_of_song)patch.cover_of_song=p.cover_of_song;
+      if('with_groups' in p&&!same(p.with_groups,v.with_groups))patch.with_groups=p.with_groups;
+      if('with_members' in p&&!same(p.with_members,v.with_members))patch.with_members=p.with_members;
+      if(p.group_ko&&p.group_ko!==v.group_ko){patch.group_ko=p.group_ko;patch.members=p.members||[];}
+      if(!Object.keys(patch).length)continue;
+      if(v.tags_manual){manualSkipped++;continue;}
+      updates.push({id:v.id,patch});
+      const line=`#${v.id} [${v.group_ko}${patch.group_ko?'→'+patch.group_ko:''}] cover_of ${JSON.stringify(v.cover_of_groups||[])}${JSON.stringify(v.cover_of_members||[])}→${JSON.stringify(patch.cover_of_groups||v.cover_of_groups||[])}${JSON.stringify(patch.cover_of_members||v.cover_of_members||[])} song=${patch.cover_of_song||v.cover_of_song||''} with ${JSON.stringify(v.with_groups||[])}${JSON.stringify(v.with_members||[])}→${JSON.stringify('with_groups' in patch?patch.with_groups:v.with_groups||[])}${JSON.stringify('with_members' in patch?patch.with_members:v.with_members||[])} | ${(v.title||'').slice(0,70)}`;
+      if(patch.group_ko)push('reassign',line);
+      else if(patch.cover_of_groups||patch.cover_of_members){push((v.with_groups||[]).length||(v.with_members||[]).length?'move':'cover',line);}
+      else push('wipe',line);
+    }
+    const n={cover:updates.filter(u=>(u.patch.cover_of_groups||u.patch.cover_of_members)&&!u.patch.group_ko).length,wipe:updates.filter(u=>!u.patch.cover_of_groups&&!u.patch.cover_of_members&&!u.patch.group_ko).length,reassign:updates.filter(u=>u.patch.group_ko).length};
+    console.log(`[원곡 v2] 조회 ${rows.length} · 정정 후보 ${updates.length} (원곡 태깅/이동 ${n.cover} · with만 정리 ${n.wipe} · 옛 오저장 재배정 ${n.reassign}) · 애매 ${ambiguous} · 외부 원곡 ${external} · 수동보호 ${manualSkipped}`);
+    Object.entries(sample).forEach(([k,arr])=>{if(arr.length)console.log(`[원곡 v2] 표본 — ${k}:\n`+arr.join('\n'));});
+    if(!updates.length){_ytSetProg(`원곡 v2 — 정정할 것 없음 (조회 ${rows.length}, 애매 ${ambiguous}건 콘솔)`);return;}
+    if(!confirm(`원곡 태깅 v2 — ${updates.length}건 정정할까요?\n\n· 원곡 태깅/with→cover_of 이동 ${n.cover}\n· 커버인데 with만 정리 ${n.wipe}\n· 옛 오저장(원곡자가 group_ko) 재배정 ${n.reassign}\n· 애매(동명곡·판정 불가) ${ambiguous}건은 건드리지 않음(콘솔)\n· 수동편집 ${manualSkipped}건 제외 · 표본 콘솔(F12) · 스냅샷 되돌리기 가능`)){
+      _ytSetProg(`취소됨 — 미리보기만 (후보 ${updates.length}, 표본 콘솔).`);return;
+    }
+    await _snapshotBeforeBulk('원곡 태깅 v2',updates.map(u=>u.id));
+    for(let i=0;i<updates.length;i+=200){
+      const results=await Promise.all(updates.slice(i,i+200).map(u=>sb.from(_YT_TABLE).update(u.patch).eq('id',u.id)));
+      const f=results.find(r=>r.error);if(f)throw new Error(f.error.message);
+      _ytSetProg(`[원곡 v2] ${Math.min(i+200,updates.length)}/${updates.length}건 적용 중…`);
+    }
+    _ytSetProg(`완료! 원곡 v2 ${updates.length}건 정정 (태깅 ${n.cover} / with정리 ${n.wipe} / 재배정 ${n.reassign}). 애매 ${ambiguous}건 콘솔. (되돌리기: "↩︎ 마지막 일괄 작업 되돌리기")`);
+  }catch(e){_ytSetProg('오류: '+e.message);}
+  finally{if(btn)btn.disabled=false;}
+}
+document.getElementById('sp-cover-v2-btn')?.addEventListener('click',_ytSweepCoverV2);
+
 // [원곡 소급 재분류](Fable #3, 2026-08-23): 커버 영상인데 원곡 그룹이 with(함께한 그룹)로 잘못 들어간 걸
 // cover_of로 옮긴다. 태깅 시점 라우팅(_extBuildRows)의 소급 버전 — 기존 with 태그만 검사해 조건 맞는 것만
 // 이동(제목 전체 재파싱 아님, 나머지 태그 안 건드림). 자동은 "커버 키워드 + 6년+ 선배"만(고신뢰), "키워드

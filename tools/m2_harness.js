@@ -75,6 +75,15 @@ function load(){
     F(/^function _fancamParseTitle\(/m,'_fancamParseTitle');
   }
   F(/^function _m2ParseTitle\(/m,'_m2ParseTitle');
+  // 원곡 해석기 v2(2026-08-30) — 있으면 싣는다
+  if(/^function _coverResolve\(/m.test(adminSrc)){
+    F(/^function _coverSongKeys\(/m,'_coverSongKeys');
+    F(/^function _coverKeyLoose\(/m,'_coverKeyLoose');
+    S(/^const _COVER_COMMON_KEYS\s*=/m,'_COVER_COMMON_KEYS');
+    S(/^let _coverIndex\s*=/m,'_coverIndex');
+    S(/^let _coverIndexChart\s*=/m,'_coverIndexChart');
+    ['_coverOriginLabel','_coverOriginId','_coverArtistOriginOf','_coverBuildIndex','_coverIndexEnsure','_coverContext','_coverHasCollabSignal','_coverCandidates','_coverOriginFromText','_coverIsSelf','_coverDebutYear','_coverResolve'].forEach(n=>F(new RegExp('^function '+n+'\\(','m'),n));
+  }
   const src=`
 const GROUPS=${JSON.stringify(GROUPS)};
 const ARTISTS=${JSON.stringify(ARTISTS)};
@@ -86,6 +95,7 @@ const _ATM_DYNAMIC_SURNAME_EXCLUDE=new Map();
 const _STRICT_SYNC_GROUPS=new Set(Object.entries(GROUPS).filter(([,v])=>v&&v.strictSync).map(([ko])=>ko));
 ${pieces.join('\n')}
 module.exports={_m2ParseTitle,_atmResolveMembers,_wonkokStripClause,_PROJECT_UNITS,GROUPS,ARTISTS,_STRICT_SYNC_GROUPS,
+  _coverResolve:(typeof _coverResolve==='function')?_coverResolve:null,_coverCandidates:(typeof _coverCandidates==='function')?_coverCandidates:null,_coverSongKeys:(typeof _coverSongKeys==='function')?_coverSongKeys:null,_coverBuildIndex:(typeof _coverBuildIndex==='function')?_coverBuildIndex:null,
   _fancamParseTitle:(typeof _fancamParseTitle==='function')?_fancamParseTitle:null};
 `;
   const mod={exports:{}};
