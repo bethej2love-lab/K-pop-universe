@@ -36,6 +36,7 @@
 
 ## 2026-08-29
 
+- [완료][index.html][kpop_universe.css] **[탐험 재구성 Step 4] 빈/오류 상태 + 다시 시도** — 선반이 하나도 안 뜨면(대개 Supabase 실패, 예전엔 제목만 남고 빈 화면) 각 탭에 "지금은 불러오지 못했어요 · [다시 시도]" 표시. 빌드 1.8초 뒤 `_feedCheckEmpty`가 `.feed-card`/`.feed-onboard-card` 유무로 판정(For You는 온보딩이 있어 거의 안 뜸, 실제로는 Discover 통째 실패 시). 다시 시도=해당 탭 재빌드. 헤드리스로 표시/숨김/버튼핸들러/오발동없음 검증. (탐험 패널 2탭 재구성 Step 1~4 완료 — 다음은 GA 2주 뒤 하단 탭바 개편)
 - [완료·실기기확인필요][index.html][kpop_universe.css] **[탐험 재구성 Step 3] Trend 세로 2단 그리드화 + 쇼츠 9:16** — Trend를 가로 스트립(158px 16:9, 쇼츠 제외)에서 **세로 2단 그리드**로. 이제 쇼츠도 포함해 `.is-short`(9:16)로, 일반은 16:9로 렌더 → "쇼츠가 가로 틀에 갇혀 작고 가로 스크롤 어색"하던 제보 해결. `#feed-trend` class→`feed-grid`, 스트립 폭 규칙에서 제외, `_buildFeedTrend` 쇼츠 포함+`{short:_isShortV(v)}`. 헤드리스 검증(grid 2단·16:9·9:16). ※1열 원하면 `grid-template-columns` 한 줄이면 전환 가능.
 - [완료·실사용확인필요][index.html][kpop_universe.css] **[탐험 재구성 Step 2] 즐겨찾기 신작 선반** — For You 탭에 "💖 New from Favorites" 추가(기념일 다음). 내 즐겨찾기 그룹 + 즐겨찾기 멤버의 소속 그룹(`_feedFavGroupKos`, 솔로는 본인명)의 최신 업로드를 최신순으로(`.in('group_ko',...)`, Trend 쿼리 패턴 재사용). 즐겨찾기 0이면 온보딩 카드로 채워 절대 안 비게. 헤드리스 검증(온보딩/그룹+멤버해석/크래시없음). ⚠️실제 영상은 라이브 Supabase라 실사용 확인 필요.
 - [완료·실기기확인필요][index.html][kpop_universe.css] **[탐험 패널 재구성 Step 1] 2탭 껍데기(For You / Discover) + 지연 로드** — 열자마자 선반 34개를 동시에 치던 걸(덜컹거림·중복 원인) 2탭으로 분리. For You(이어보기·Trend·기념일)는 열 때 빌드, **Discover(차트 11+디스커버리)는 그 탭 처음 누를 때만 지연 빌드**(`_buildFeedDiscovery`→`_buildFeedRec`+`_buildFeedDisc`로 분리, TTL 캐시 각각). 헤드리스 검증: 기본=For You·Discover 미빌드·전환 시 빌드·GA `feed_tab`·복귀. 다음 Step: ②즐겨찾기 신작 선반(그룹+멤버) ③Trend 세로그리드 ④빈/오류 상태.

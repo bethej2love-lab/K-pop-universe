@@ -2722,6 +2722,12 @@
   .feed-pane[hidden]{display:none;}
   /* 즐겨찾기 신작 온보딩 — 아직 하트 누른 게 없을 때 이 선반이 비지 않게 안내 카드로 채운다. */
   .feed-onboard-card{flex:0 0 auto;max-width:min(300px,78vw);display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:14px;background:rgba(255,255,255,0.05);border:0.5px solid rgba(255,255,255,0.10);}
+  /* 빈/오류 상태 — Supabase 실패로 선반이 하나도 안 뜰 때(예전엔 제목만 남고 빈 화면). 다시 시도 버튼. */
+  .feed-empty[hidden]{display:none;}
+  .feed-empty{display:flex;flex-direction:column;align-items:center;gap:12px;padding:48px 24px;text-align:center;}
+  .feed-empty-txt{font-size:13px;color:rgba(190,205,240,0.72);line-height:1.5;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
+  .feed-empty-retry{padding:9px 20px;border-radius:999px;border:0.5px solid rgba(140,175,255,0.4);background:rgba(140,175,255,0.1);color:rgba(200,220,255,0.92);font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;-webkit-tap-highlight-color:transparent;}
+  .feed-empty-retry:active{background:rgba(140,175,255,0.22);}
   .feed-onboard-emoji{font-size:26px;line-height:1;flex-shrink:0;}
   .feed-onboard-txt{font-size:12px;line-height:1.5;color:rgba(210,222,250,0.82);font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
   .feed-section-ttl{font-size:10px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:rgba(120,148,205,0.51);padding:14px 20px 8px;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}

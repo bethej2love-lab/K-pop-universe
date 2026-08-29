@@ -13786,6 +13786,25 @@ function _feedSwitchTab(tab,silent){
   }
   if(!silent)_gaEvent('feed_tab',{tab:rec?'rec':'disc'});
 }
+// 빈/오류 상태 — 빌드 후 선반이 하나도 안 뜨면(대개 Supabase 실패) "다시 시도"를 보여준다. 예전엔 제목만
+// 남고 빈 화면이었음(2026-08-29 Step4). For You는 즐겨찾기 온보딩 카드가 항상 있어 거의 안 뜨고, 실제로는
+// Discover(차트+디스커버리)가 통째로 실패했을 때 뜬다.
+function _feedRetry(which){
+  if(which==='rec'){_feedRecBuiltAt=0;_buildFeedRec();_feedRecBuiltAt=Date.now();}
+  else{_feedDiscoveryBuiltAt=0;_buildFeedDisc();_feedDiscoveryBuiltAt=Date.now();}
+}
+function _feedCheckEmpty(which){
+  const pane=document.getElementById('feed-pane-'+which);
+  const empty=document.getElementById('feed-empty-'+which);
+  if(!pane||!empty)return;
+  const hasContent=!!pane.querySelector('.feed-card,.feed-onboard-card')
+    ||(which==='rec'&&(document.getElementById('feed-anniv')?.children.length>0));
+  if(hasContent){empty.hidden=true;return;}
+  const txt=empty.querySelector('.feed-empty-txt'),btn=empty.querySelector('.feed-empty-retry');
+  if(txt)txt.textContent=currentLang==='ko'?'지금은 불러오지 못했어요.':"Couldn't load right now.";
+  if(btn){btn.textContent=currentLang==='ko'?'다시 시도':'Retry';btn.onclick=()=>{empty.hidden=true;_feedRetry(which);};}
+  empty.hidden=false;
+}
 function _openFeedOverlay(){
   const el=document.getElementById('feed-overlay');
   _gaEvent('explore_open',{device:isMob()?'mobile':'desktop'}); // 탐험 패널 진입(피드 사용도 근거)
@@ -15840,13 +15859,16 @@ async function _buildFeedFavNew(){
 }
 // 추천(For You) 탭 빌드 — 가볍게(이어보기=로컬, 즐겨찾기신작·Trend=Supabase). 나침반 열 때마다 호출(TTL 캐시).
 function _buildFeedRec(){
+  document.getElementById('feed-empty-rec').hidden=true;
   _buildFeedFavNew();       // 즐겨찾기 신작(최상단 근처 — 기념일 다음)
   _buildFeedRecentlyViewed();
   _buildFeedTrend(); // 최근 7일 업로드 선반(비동기 — 다른 카드 렌더를 막지 않는다)
+  setTimeout(()=>_feedCheckEmpty('rec'),1800); // 비동기 선반들이 다 실패해 빈 화면이면 재시도 노출
 }
 // 발견(Discover) 탭 빌드 — 무거운 차트+디스커버리. Discover 탭을 처음 누를 때만 지연 호출(_feedSwitchTab).
 // 열자마자 34개 선반을 동시에 치던 걸 나눠서 추천 탭은 빠르게, 발견은 볼 때만 로드(덜컹거림·중복 완화).
 function _buildFeedDisc(){
+  document.getElementById('feed-empty-disc').hidden=true;
   const list=document.getElementById('feed-discovery');
   const chartList=document.getElementById('feed-chart');
   list.innerHTML='';
@@ -15895,6 +15917,7 @@ function _buildFeedDisc(){
   _buildFeedRandomConnection(list);
   _buildFeedRandomVideo(list);
   _wireFeedDiscoveryInfiniteScroll();
+  setTimeout(()=>_feedCheckEmpty('disc'),1800); // 차트+디스커버리 전부 실패해 빈 화면이면 재시도 노출
 }
 
 // ── 탐험 패널 "모아보기" 무한스크롤 ──────────────────────────────────────
@@ -18167,6 +18190,7 @@ _totopBtn.addEventListener('click',e=>{
         <div class="feed-section-ttl">🕐 Recently Viewed</div>
         <div id="feed-recent" class="feed-strip hscroll-drag"></div>
       </div>
+      <div id="feed-empty-rec" class="feed-empty" hidden><div class="feed-empty-txt"></div><button class="feed-empty-retry" type="button"></button></div>
     </div>
     <div id="feed-pane-disc" class="feed-pane" hidden>
       <div class="feed-section">
@@ -18177,6 +18201,7 @@ _totopBtn.addEventListener('click',e=>{
         <div class="feed-section-ttl">✨ Discovery</div>
         <div id="feed-discovery" class="feed-grid"></div>
       </div>
+      <div id="feed-empty-disc" class="feed-empty" hidden><div class="feed-empty-txt"></div><button class="feed-empty-retry" type="button"></button></div>
     </div>
   </div>
 </div>
