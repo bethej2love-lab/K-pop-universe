@@ -76,6 +76,7 @@ pieces.push(extractStatement(adminSrc, /^const _GROUP_AMBIGUOUS_IF_COMATCHED\s*=
 // 여기에도 반드시 추가해야 함(안 하면 "... is not defined"로 전 케이스가 실패한다).
 pieces.push(extractByBraces(adminSrc, /^function _unitMemberNamedInTitle\(/m, '_unitMemberNamedInTitle'));
 pieces.push(extractByBraces(adminSrc, /^function _atmLeftBefore\(/m, '_atmLeftBefore')); // 탈퇴 게이트(2026-08-25)
+pieces.push(extractByBraces(adminSrc, /^function _atmStripCommonNounCtx\(/m, '_atmStripCommonNounCtx')); // 하루 등 흔한단어 일반명사 문맥 제거(2026-08-29) — _m2ParseTitle이 전처리에서 부름
 pieces.push(extractByBraces(adminSrc, /^function _m2ParseTitle\(/m, '_m2ParseTitle'));
 
 const harnessSrc = `
