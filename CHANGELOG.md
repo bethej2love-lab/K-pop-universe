@@ -36,6 +36,8 @@
 
 ## 2026-08-30
 
+- [완료·실사용확인필요][admin.js] **원곡 태깅 v2 — 동기화 시점 적용**(남은작업①). `_extBuildRows`(외부채널=음악방송·커버 채널 동기화)에서 rows.push 직전 `_coverResolve` 호출(sync, try/catch) → 커버 확정 시 원곡자를 `with_*`→`cover_of_*`로 옮기고 with_ 정리·`cover_of_song` 저장. 기존 "커버키워드+6년선배" 휴리스틱(곡명 근거 없이 세대차만으로 커버 처리) 제거, v2로 대체. 게스트는 일단 with_로 넣고 v2가 재분류. 차트 A등급은 async라 동기화선 생략(디스코 사전만, 나머진 스윕 backfill). group_ko 재배정은 동기화에선 안 함(owner 고정). patch 계약 검증(원곡: 슈주/소시 → cover_of로 이동+with_비움 확인).
+
 - [완료·실DB확인필요][admin.js][index.html][tests/cover-resolve.test.js][tools/m2_harness.js] **원곡(커버) 태깅 v2 엔진 이식**(사용자 요청 — 기존 1차/2차 로직 부실). Fable 설계(base=fancam 포함이라 admin.js 단일 추가 헝크로 클린 이식)를 라이브에 반영·재검증. `_coverResolve`(admin.js): 곡명→원곡자 사전(GROUPS 디스코 1.4만 트랙+멤버 솔로 602명+유닛+멜론799/스포티파이455 A등급) 구축, 제목에서 크레딧`(원곡:X)`>챌린지태그`#곡명_Challenge`>따옴표>대시>평문 순으로 곡명 추출→원곡자 확정. 자기곡은 커버 아님, 커버 확정 시 with_*에서 원곡자 제거·동반신호(with/X/님과/선배/feat) 없으면 with_* 비움(챌린지 포함), 동명곡은 등급·발매일·pri 점수로 동점이면 미확정. 어드민 버튼 "🎵 원곡 태깅 v2"(sp-cover-v2-btn·`_ytSweepCoverV2`, 표본콘솔→확인→스냅샷). 회귀 cover-resolve 45/45 + matching 94/94. ※다음: 동기화 시점 적용(_extBuildRows)·구 3버튼 제거·실DB 감사.
 ## 2026-08-29
 

@@ -5104,34 +5104,22 @@ function _extBuildRows(vids,strict,tier,owner,defaultCat,handle){
     // 있는 채널(팬/아이돌개인)은 위 skip에 안 걸리고 여기로 오므로 반드시 match를 널가드해야 함 — 안 그러면
     // 그룹명 없는 팬캠 제목("성현 직캠" 등) 하나만 걸려도 그 채널 동기화가 통째로 크래시했음(2026-08-23 수정).
     const members=owner?.mko?owner.mko.split(',').map(s=>s.trim()).filter(Boolean):(match?(match.membersByGroup[ownerGko||match.primaryGroup]||[]):[]); // 공동운영이면 소유자 여러 명 다 붙임(2026-08-22)
-    const withGroups=[],withMembers=[];
+    let withGroups=[],withMembers=[]; // v2 원곡 해석기가 아래에서 재배열할 수 있어 let(2026-08-30)
     // owner가 있으면 match.primaryGroup도 게스트 후보에 포함시켜야 함 — owner(솔로 아티스트 등)는
     // GROUPS에 없어 제목의 그룹명 리터럴 매칭 대상이 아니므로, 게스트 그룹이 유일하게 매칭되면 그게
     // withGroups가 아니라 primaryGroup 자리로 잡혀서 게스트가 통째로 누락됐었음(2026-08-11, "이영지랑
     // #에스파 카리나" 같은 제목에서 실측 확인).
     const guestCandidates=owner&&match?[match.primaryGroup,...match.withGroups].filter((g,i,arr)=>g&&arr.indexOf(g)===i):(match?match.withGroups:[]);
-    // 원곡 라우팅(Fable #1·#2, 2026-08-23): "현역 그룹이 선배 명곡 커버 → 원곡 그룹이 with로 오분류" 계열을
-    // 태깅 시점에 cover_of로 돌린다. 채널 그룹(channelGko)과 비교해 게스트가 ⓐ커버 키워드 동반 + 6년 이상
-    // 선배거나 ⓑ커버 키워드 + 게스트 3그룹 이상 나열(모음 영상)이면 with_groups 대신 cover_of_groups로.
-    // ⚠️ 반드시 "커버 키워드"가 있을 때만 라우팅 — 키워드 없는(세대차만 큰) 애매한 건 진짜 콜라보일 수 있어
-    // 여기서 안 건드리고 소급 검수 큐 몫으로 둔다(보수적). "함께"와 "원곡"은 데이터 의미가 완전히 다름.
-    const channelGko=owner?ownerGko:(match?match.primaryGroup:null);
-    const coverGroups=[],coverMembers=[];
-    const _titleHasCoverKw=/원곡|커버|cover|\boriginal\b/i.test(v.title||'');
-    const _seniorYears=gko=>{const g1=GROUPS[gko],g2=GROUPS[channelGko];if(!g1||!g2)return 0;const y1=parseInt(g1.debut)||0,y2=parseInt(g2.debut)||0;return(y1&&y2)?(y2-y1):0;};
-    const _isCompilation=_titleHasCoverKw&&guestCandidates.filter(g=>g!==channelGko).length>=2; // 커버 키워드 + 게스트 그룹 2개+(=총 3그룹+ 나열)
+    // 게스트는 일단 전부 with_로 넣는다 — 원곡(커버) 판정은 아래 v2(_coverResolve)가 곡명 사전으로 정확히 하고
+    // with_에서 원곡자를 cover_of로 옮긴다(2026-08-30). 기존 "커버키워드+6년선배" 휴리스틱은 곡명 근거 없이
+    // 세대차만으로 커버 처리해 오판이 있어 v2로 대체(사용자 요청 — 원곡 태깅은 곡명 기반이 정확).
+    let coverGroups=[],coverMembers=[]; // v2가 채운다
     guestCandidates.forEach(gko=>{
       if(owner&&gko===ownerGko)return; // 본인 그룹이 게스트로 중복 잡히는 것만 방지
       const sec=match.membersByGroup[gko]||[];
       const{asGroup,extraMembers}=_classifyGuestGroup(sec,gko);
-      const _isCoverOriginal=channelGko&&gko!==channelGko&&(_isCompilation||(_titleHasCoverKw&&_seniorYears(gko)>=6));
-      if(_isCoverOriginal){
-        if(asGroup)coverGroups.push(gko);
-        else extraMembers.forEach(mko=>coverMembers.push(`${mko}(${gko})`));
-      }else{
-        if(asGroup)withGroups.push(gko);
-        extraMembers.forEach(mko=>withMembers.push(`${mko}(${gko})`));
-      }
+      if(asGroup)withGroups.push(gko);
+      extraMembers.forEach(mko=>withMembers.push(`${mko}(${gko})`));
     });
     // fans tier는 원래 category(mv/live/short 등)가 뭐였든 무조건 'fan'으로 — "by Fans" 탭은 콘텐츠
     // 종류가 아니라 "팬이 만들었다"는 출처 자체가 기준이라, variety/show처럼 'other'만 덮어쓰는 방식으론
@@ -5154,6 +5142,19 @@ function _extBuildRows(vids,strict,tier,owner,defaultCat,handle){
     // 옵션 A(2026-08-26): 그룹표시 없는 동명이인(영문토큰 교차-ko)은 자신있게 배정하지 않고 검수+숨김으로.
     const ambiguous=!owner&&match.confidence==='ambiguous';
     const needsReview=!owner&&(match.confidence==='weak'||ambiguous);
+    // 원곡 태깅 v2(2026-08-30) — 곡명 사전으로 커버를 확정해 위 "6년 선배" 라우팅을 덮어쓴다. _coverResolve는
+    // sync(디스코 사전 지연빌드). 차트 A등급은 async라 동기화에선 생략(유명곡 대부분 디스코로 커버, 나머진
+    // "원곡 태깅 v2" 스윕이 backfill). group_ko 재배정(reassign)은 owner 채널 group_ko 고정이라 동기화에선 안 함.
+    let coverSong=null;
+    try{
+      const cr=_coverResolve({title:v.title,group_ko:owner?ownerGko:match.primaryGroup,members,with_groups:withGroups,with_members:withMembers,cover_of_groups:coverGroups,cover_of_members:coverMembers,published_at:v.published_at},{});
+      if(cr&&!cr.ambiguous&&cr.patch){
+        if(cr.patch.cover_of_groups)coverGroups=cr.patch.cover_of_groups;
+        if(cr.patch.cover_of_members)coverMembers=cr.patch.cover_of_members;
+        if('with_groups' in cr.patch){withGroups=cr.patch.with_groups;withMembers=cr.patch.with_members;}
+        if(cr.patch.cover_of_song)coverSong=cr.patch.cover_of_song;
+      }
+    }catch(e){}
     rows.push({
       id:v.id,title:v.title,title_norm:_titleNorm(v.title),description:v.description||'',thumb:v.thumb,published_at:v.published_at,
       category,
@@ -5165,6 +5166,7 @@ function _extBuildRows(vids,strict,tier,owner,defaultCat,handle){
       // 저장되려다 NOT NULL 위반으로 배치 전체가 튕겼음(M2·뮤직뱅크·쇼챔피언 백필 실패, 2026-08-25).
       cover_of_groups:coverGroups,
       cover_of_members:coverMembers,
+      cover_of_song:coverSong, // v2가 뽑은 곡명(없으면 null) — 항상 넣어 배치 컬럼 일관성 유지(2026-08-30)
       // 약한 근거 매칭을 더는 hidden으로 감추지 않는다(2026-08-25, 사용자 결정). needs_review 플래그만
       // 남겨 어드민이 사후 감사할 수 있게 하고, 유저에겐 정상 노출한다.
       //   왜: "사람이 검수한다"는 전제가 실제로 안 지켜져서(사용자: "안 누르게 되더라") 큐가 3,051건
