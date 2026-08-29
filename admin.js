@@ -887,6 +887,82 @@ async function _ytSweepMistagReclassify(){
 }
 document.getElementById('sp-mistagfix-btn')?.addEventListener('click',_ytSweepMistagReclassify);
 
+// [음악방송 직캠 재검증](2026-08-29, 사용자 요청 — "적어도 음악방송 직캠은 오태깅이 없어야") — 제목이
+// _fancamParseTitle 구조([태그] 그룹 멤버 '곡명' … / 쇼챔·잇츠라이브·킬링보이스)로 잡히는 행만 골라, 구조
+// 파서가 반영된 지금의 _m2ParseTitle 결과와 저장값(group_ko/members/with_*)을 비교해 어긋난 것만 바로잡는다.
+// 위 _ytSweepMistagReclassify와 같은 안전장치: ① 새 그룹은 출연자 구간(또는 영문 괄호)에 literal로 있어야
+// 재배정 ② tags_manual·content_flag(무관/보류/hidden/외부인) 제외 ③ owner 고정 채널(idol/fans tier)은 제외
+// ④ 건수·유형별 표본을 콘솔에 먼저 출력하고 확인 후 적용 ⑤ 스냅샷 → "마지막 일괄 작업 되돌리기" 가능.
+// 조회는 전량이 아니라 직캠/방송 키워드 ilike로 서버에서 걸러 받는다(Supabase egress 절약).
+async function _ytSweepFancamMistag(){
+  if(!sb){_ytSetProg('Supabase 연결 없음');return;}
+  const btn=document.getElementById('sp-fancamfix-btn');
+  if(btn)btn.disabled=true;
+  try{
+    _ytSetProg('[직캠 재검증] 직캠 구조 제목 조회 중…');
+    const KW=['*직캠*','*팬캠*','*FANCAM*','*FAN CAM*','*FACECAM*','*풀캠*','*세로캠*','*페이스캠*','*보이스캠*','*킬링보이스*','*잇츠라이브*','*MusicBank*','*Inkigayo*','*MCOUNTDOWN*','*Show Champion*','*쇼챔*','*안방1열*','*MPD*'];
+    const orExpr=KW.map(k=>`title.ilike.${k}`).join(',');
+    const cols='id,title,group_ko,members,with_members,with_groups,published_at,tags_manual,content_flag'+(_ytHasSourceCols?',source_tier':'');
+    let{data:rows,error}=await _sbFetchAll(()=>sb.from(_YT_TABLE).select(cols).or(orExpr).order('id'));
+    if(error&&/source_tier/.test(error.message||'')){_ytHasSourceCols=false;({data:rows,error}=await _sbFetchAll(()=>sb.from(_YT_TABLE).select('id,title,group_ko,members,with_members,with_groups,published_at,tags_manual,content_flag').or(orExpr).order('id')));}
+    if(error){_ytSetProg('조회 실패: '+error.message);return;}
+    if(!rows?.length){_ytSetProg('직캠 구조 제목이 없어요');return;}
+    const EXCLUDE=new Set(['무관','보류','hidden','외부인']);
+    const OWNER_TIERS=new Set(['idol','fans']);
+    const same=(a,b)=>{const x=[...new Set(a||[])].sort(),y=[...new Set(b||[])].sort();return x.length===y.length&&x.every((v,i)=>v===y[i]);};
+    let structured=0,manualSkipped=0,ownerSkipped=0;
+    const updates=[];const sample={group:[],members:[],with:[]};
+    for(let i=0;i<rows.length;i++){
+      if(i%3000===0){_ytSetProg(`[직캠 재검증] 분석 중… ${i}/${rows.length} (구조 ${structured} · 후보 ${updates.length})`);await new Promise(r=>setTimeout(r));}
+      const v=rows[i];
+      if(v.content_flag&&EXCLUDE.has(v.content_flag))continue;
+      const fc=_fancamParseTitle(v.title);
+      if(!fc)continue;
+      structured++;
+      if(v.tags_manual){manualSkipped++;continue;}
+      if(v.source_tier&&OWNER_TIERS.has(v.source_tier)){ownerSkipped++;continue;}
+      let m=null;try{m=_m2ParseTitle(v.title,undefined,false,(v.published_at||'').slice(0,10));}catch(e){}
+      if(!m||!m.primaryGroup)continue;
+      const ng=m.primaryGroup,g=v.group_ko;
+      // 강한 근거 게이트 — 새 primary가 출연자 구간(정규화) 또는 영문 괄호 구간에 literal로 있어야 함
+      const gt=[ng,GROUPS[ng]&&GROUPS[ng].en,...((GROUPS[ng]&&GROUPS[ng].altNames)||[])].filter(Boolean).map(_fancamNormTok).filter(Boolean);
+      const literal=gt.some(t=>fc.artistNorm.includes(' '+t+' ')||(fc.enNorm&&fc.enNorm.includes(' '+t+' ')));
+      if(!literal)continue;
+      const members=(m.membersByGroup[ng]||[]);
+      const withGroups=[],withMembers=[];
+      (m.withGroups||[]).forEach(og=>{const{asGroup,extraMembers}=_classifyGuestGroup(m.membersByGroup[og]||[],og);if(asGroup)withGroups.push(og);extraMembers.forEach(mko=>withMembers.push(`${mko}(${og})`));});
+      const patch={};const kinds=[];
+      if(ng!==g){patch.group_ko=ng;patch.members=members;patch.with_groups=withGroups;patch.with_members=withMembers;kinds.push('group');}
+      else{
+        if(!same(members,v.members)){patch.members=members;kinds.push('members');}
+        if(!same(withGroups,v.with_groups)||!same(withMembers,v.with_members)){patch.with_groups=withGroups;patch.with_members=withMembers;kinds.push('with');}
+      }
+      if(!kinds.length)continue;
+      updates.push({id:v.id,patch,kinds});
+      const line=`#${v.id} [${g}→${ng}] m:${JSON.stringify(v.members||[])}→${JSON.stringify(members)} w:${JSON.stringify(v.with_groups||[])}/${JSON.stringify(v.with_members||[])}→${JSON.stringify(withGroups)}/${JSON.stringify(withMembers)} | ${(v.title||'').slice(0,70)}`;
+      kinds.forEach(k=>{if(sample[k].length<60)sample[k].push(line);});
+    }
+    const nG=updates.filter(u=>u.kinds.includes('group')).length,nM=updates.filter(u=>u.kinds.includes('members')).length,nW=updates.filter(u=>u.kinds.includes('with')).length;
+    console.log(`[직캠 재검증] 키워드 조회 ${rows.length} · 구조 인식 ${structured} · 수동보호 ${manualSkipped} · owner채널 제외 ${ownerSkipped} · 정정 후보 ${updates.length} (그룹 ${nG} / 멤버 ${nM} / 콜라보 ${nW})`);
+    console.log('[직캠 재검증] 그룹 재배정 표본:\n'+sample.group.join('\n'));
+    console.log('[직캠 재검증] 멤버 정정 표본:\n'+sample.members.join('\n'));
+    console.log('[직캠 재검증] 콜라보 정정 표본:\n'+sample.with.join('\n'));
+    if(!updates.length){_ytSetProg(`직캠 구조 ${structured}건 검사 — 정정할 오태깅 없음${manualSkipped?` (수동보호 ${manualSkipped})`:''}`);return;}
+    if(!confirm(`음악방송 직캠 재검증 — ${updates.length}건 정정할까요?\n\n· 그룹 재배정 ${nG} / 멤버 정정 ${nM} / 콜라보 정정 ${nW}\n· 구조 인식 ${structured}건 중, 새 그룹이 출연자 구간에 literal로 있는 것만\n· 수동편집 ${manualSkipped}건 · owner 고정 채널 ${ownerSkipped}건 자동 제외\n· 유형별 표본(최대 60)을 콘솔(F12)에 출력함 — 먼저 확인 권장\n· 스냅샷 저장되어 "마지막 일괄 작업 되돌리기"로 복구 가능`)){
+      _ytSetProg(`취소됨 — 미리보기만 (정정 후보 ${updates.length}건, 표본 콘솔).`);return;
+    }
+    await _snapshotBeforeBulk('음악방송 직캠 재검증',updates.map(u=>u.id));
+    for(let i=0;i<updates.length;i+=200){
+      const results=await Promise.all(updates.slice(i,i+200).map(u=>sb.from(_YT_TABLE).update(u.patch).eq('id',u.id)));
+      const f=results.find(r=>r.error);if(f)throw new Error(f.error.message);
+      _ytSetProg(`[직캠 재검증] ${Math.min(i+200,updates.length)}/${updates.length}건 적용 중…`);
+    }
+    _ytSetProg(`완료! 직캠 ${updates.length}건 정정 (그룹 ${nG} / 멤버 ${nM} / 콜라보 ${nW}). (되돌리기: "↩︎ 마지막 일괄 작업 되돌리기")`);
+  }catch(e){_ytSetProg('오류: '+e.message);}
+  finally{if(btn)btn.disabled=false;}
+}
+document.getElementById('sp-fancamfix-btn')?.addEventListener('click',_ytSweepFancamMistag);
+
 // [숨김 목록 재판정](2026-08-27) — 위 _ytSweepMistagReclassify가 content_flag 있는 행을 통째로
 // 제외(EXCLUDE)해서, **숨김 처리된 오태깅은 어떤 스윕으로도 영원히 안 닿는 사각지대**였다.
 // 실측: hidden 2,822건(tags_manual=false) 중 지금 매처로 같은 그룹이 나오는 건 417건뿐이고,
@@ -3977,6 +4053,95 @@ function _atmLeftBefore(a,gko,publishedAt){
   if(!left)return false; // 탈퇴일을 모르면 판단 보류(기존 동작 유지)
   return String(publishedAt).slice(0,10)>String(left).replace(/\./g,'-').slice(0,10);
 }
+// ── 음악방송 직캠 제목 구조 파서(2026-08-29, 사용자 요청 — "적어도 음악방송 직캠은 오태깅이 없어야") ──
+// 뮤직뱅크·쇼!음악중심·엠카운트다운(MPD직캠)·인기가요(안방1열)·쇼챔피언·더쇼·잇츠라이브·딩고 킬링보이스처럼
+// 방송사/제작사 공식 채널이 쓰는 직캠 제목은 구조가 고정돼 있다:
+//   [태그] 그룹명 멤버명 (직캠|세로캠|풀캠…) '곡명' (그룹EN 멤버EN FanCam) | @방송 날짜
+//   [쇼챔직캠 4K] 그룹명 멤버명 - 곡명 (그룹EN 멤버EN) l Show Champion l EP.n l 날짜
+//   [it's Live] 그룹명(EN) - 곡명       /       그룹명(EN)의 킬링보이스를 라이브로! – 곡1, 곡2 | 딩고뮤직
+// 이 구조를 알면 느슨한 전역 매칭이 내던 오태깅의 대부분이 원천 차단된다(tools/fancam_pattern_probe.js로
+// 전 로스터×실제 곡명 15만 제목을 시뮬해 확인한 실제 사고 유형):
+//   ① 따옴표 안 **곡명**이 그룹/유닛명과 겹쳐 엉뚱한 그룹이 primary/with로 붙음 — 'Treasure'(에이티즈·샤이니→트레저),
+//      'After School'(위클리→애프터스쿨), 'Boyfriend'(파우→보이프렌드), 'Alice'(원위→앨리스), 'BOOM POW'(티오원→파우)…
+//      primaryGroup이 "제목 위치"가 아니라 "토큰 길이순"으로 정해져서 곡명 쪽 그룹이 이기는 게 원인.
+//   ② 곡명 안의 멤버명이 출연자로 붙음 — 'Key of Secret'(샤이니 키), 'XXL'(영파씨 XXL) 등.
+//   ③ 그룹명 바로 뒤 **멤버명이 다른 그룹의 이름과 같음** — "다이아 유니스" → group_ko=유니스(2024 데뷔 그룹).
+//   ④ 단일음절 멤버(방탄소년단 뷔·더보이즈 큐·인피니트 엘·빅스 엔·골든차일드 Y)는 그룹명이 바로 옆에 있어도
+//      hit()의 length<2 컷 때문에 members가 영영 비어 있었음(→ 그룹 단체 영상으로 저장).
+//   ⑤ strictSync 그룹(레인보우·시크릿·god·스피드·배틀·슈가)은 "[뮤뱅] 시크릿 효성 'Madonna'"처럼 공식 직캠이어도
+//      전부 skip되거나 멤버 역추론으로 새어나감("god 손호영" → 베리베리 호영).
+// 파서는 태그 뒤 **출연자 구간(artistSeg)**·**곡명 구간(songSeg)**·**영문 괄호 구간(enSeg)**을 잘라 돌려주고,
+// _m2ParseTitle이 이 구조가 잡힌 제목에 한해 (a) 곡명 구간을 매칭 전에 제거, (b) primary를 출연자 구간의
+// 등장 순서로 정렬(구간 밖 그룹은 유닛 확장분만 유지), (c) 출연자 구간에서 "그룹명 바로 뒤 토큰"이 primary
+// 로스터의 이름이면 그 이름과 같은 그룹은 버림, (d) 그룹명 바로 뒤 토큰을 로스터와 **정확히** 대조해 단일음절
+// 이름까지 멤버로 인정, (e) strictSync/해시태그전용 그룹도 출연자 구간 **선두**에 있으면 인정 — 을 적용한다.
+// 구조가 안 잡히는 제목(팬캠 채널의 자유 형식 등)은 기존 경로 그대로라 회귀 위험이 없다.
+// 배열을 함수로 감싼 이유: tests/matching.test.js·tools/m2_harness.js의 "이름으로 잘라오기"가 const 문은 괄호
+// 균형으로 끝을 찾는데, 아래 정규식의 문자 클래스([\[［]·[^\]］])가 그 계산을 깨뜨림 — 함수는 중괄호만 세서 안전.
+function _fancamShowPatterns(){return[
+  {show:'뮤직뱅크',    re:/^[\s\p{Extended_Pictographic}\uFE0F]*[\[［]\s*#?\s*(?:뮤뱅|뮤직뱅크|MUSIC\s*BANK|K-?CHOREO)[^\]］]*[\]］]/iu},
+  {show:'쇼음악중심',  re:/^[\s\p{Extended_Pictographic}\uFE0F]*[\[［]\s*#?\s*(?:음중|예능연구소|쇼!?\s*음악중심|MUSIC\s*CORE)[^\]］]*[\]］]/iu},
+  {show:'엠카운트다운',re:/^[\s\p{Extended_Pictographic}\uFE0F]*[\[［]\s*#?\s*(?:MPD|엠카|M\s*COUNTDOWN)[^\]］]*[\]］]/iu},
+  {show:'인기가요',    re:/^[\s\p{Extended_Pictographic}\uFE0F]*[\[［]\s*#?\s*(?:안방\s*1열|인기가요|INKIGAYO)[^\]］]*[\]］]/iu},
+  {show:'쇼챔피언',    re:/^[\s\p{Extended_Pictographic}\uFE0F]*[\[［]\s*#?\s*(?:쇼챔|SHOW\s*CHAMPION)[^\]］]*[\]］]/iu},
+  {show:'더쇼',        re:/^[\s\p{Extended_Pictographic}\uFE0F]*[\[［]\s*#?\s*(?:THE\s*SHOW|더쇼)[^\]］]*[\]］]/iu},
+  {show:'잇츠라이브',  re:/^[\s\p{Extended_Pictographic}\uFE0F]*[\[［]\s*it['’]?s\s*(?:K-?POP\s*)?LIVE[^\]］]*[\]］]/iu},
+  // 채널 불문 "[…직캠…]"류 태그(팬캠 채널·페스티벌 직캠 등) — 태그 자체가 "출연자가 바로 뒤에 온다"는 구조 신호.
+  {show:'직캠(기타)',  re:/^[\s\p{Extended_Pictographic}\uFE0F]*[\[［][^\]］]*(?:직캠|팬캠|FANCAM|FAN\s*CAM|FACECAM|FACE\s*CAM|풀캠|세로캠|보이스캠|VOICE\s*CAM)[^\]］]*[\]］]/iu},
+  {show:'킬링보이스',  re:/^[\s\p{Extended_Pictographic}\uFE0F]*(.{1,60}?)의\s*킬링\s*보이스/u,style:'dingo'},
+];}
+const _FANCAM_SHOW_PATTERNS=_fancamShowPatterns();
+// 출연자 구간에서 걷어낼 촬영/포맷 수식어(정규화된 대문자 토큰 기준). 'LIVE'는 넣지 않는다(잇츠라이브 그룹EN 등).
+const _FANCAM_FILLER_RE=/ (?:직캠|세로캠|세로|풀캠|페이스캠|원픽캠|교차편집|무대|풀버전|4K|8K|HD|FANCAM|FAN CAM|FACECAM|FACE CAM|FULL CAM|CHOREOGRAPHY|VERTICAL|ONE PICK|FOCUS) /g;
+function _fancamNormTok(s){return (s||'').toUpperCase().replace(/[^가-힣a-zA-Z0-9]/g,' ').replace(/\s+/g,' ').trim();}
+function _fancamParseTitle(rawTitle){
+  const t=rawTitle||'';
+  let pat=null,m=null;
+  for(const p of _FANCAM_SHOW_PATTERNS){m=p.re.exec(t);if(m){pat=p;break;}}
+  if(!pat)return null;
+  let artistSeg='',songSeg=null,songSpan=null,enSeg='';
+  if(pat.style==='dingo'){
+    artistSeg=m[1];
+    // "…의 킬링보이스를 라이브로! – 곡1, 곡2 | 딩고뮤직" — 대시 뒤부터 첫 '|'까지가 곡 목록
+    const after=t.slice(m.index+m[0].length);
+    const sm=/[–—-]\s*(.+?)\s*(?:\||$)/.exec(after);
+    if(sm&&sm[1]){songSeg=sm[1];const s=m.index+m[0].length+sm.index+sm[0].indexOf(sm[1]);songSpan=[s,s+sm[1].length];}
+  }else{
+    const base=m.index+m[0].length;
+    const rest=t.slice(base);
+    // 따옴표 곡명 — 여는 따옴표는 공백/시작 직후, 닫는 따옴표는 공백·괄호·구분자·끝 직전이어야 함
+    // ("Don't Call Me"처럼 곡명 안의 아포스트로피에서 끊기지 않게, 가장 짧은 유효 스팬을 잡는다).
+    const q1=/(?:^|\s)(['‘])(.+?)(['’])(?=[\s(|,)\]]|$)/.exec(rest);
+    const q2=/(?:^|\s)(["“])(.+?)(["”])(?=[\s(|,)\]]|$)/.exec(rest);
+    let q=q1&&q2?(q1.index<=q2.index?q1:q2):(q1||q2);
+    if(q){
+      const s=base+q.index+q[0].indexOf(q[2],1);
+      songSeg=q[2];songSpan=[s,s+q[2].length];
+      artistSeg=rest.slice(0,q.index);
+      const tail=rest.slice(q.index+q[0].length);
+      const em=/\(([^()]*)\)/.exec(tail);
+      if(em)enSeg=em[1];
+    }else{
+      // "그룹 멤버 - 곡명 (EN) l Show Champion …" / "[it's Live] 그룹(EN) - 곡명"
+      const dm=/^(.*?\S)\s+[-–—]\s+(.+?)(?=\s*(?:\(|\sl\s|\||$))/.exec(rest);
+      if(dm){
+        artistSeg=dm[1];songSeg=dm[2];
+        const s=base+dm.index+dm[0].lastIndexOf(dm[2]);songSpan=[s,s+dm[2].length];
+        const em=/\(([^()]*)\)/.exec(rest.slice(dm.index+dm[0].length));
+        if(em)enSeg=em[1];
+      }else{
+        artistSeg=rest.split(/[(|@#]/)[0];
+      }
+    }
+  }
+  // 잇츠라이브식 "아이브(IVE)" — 괄호 안 EN 표기를 enSeg로 분리(출연자 구간엔 한글만 남김)
+  if(!enSeg){const pm=/\(([^()]*)\)/.exec(artistSeg);if(pm){enSeg=pm[1];artistSeg=artistSeg.replace(pm[0],' ');}}
+  const strip=s=>{let n=' '+_fancamNormTok(s)+' ';let prev;do{prev=n;n=n.replace(_FANCAM_FILLER_RE,' ');}while(n!==prev);return n.replace(/\s+/g,' ');};
+  const artistNorm=strip(artistSeg);
+  const enNorm=strip(enSeg);
+  if(artistNorm.trim().length===0)return null; // 출연자 구간이 비면 구조로 볼 수 없음 → 기존 경로
+  return{show:pat.show,artistSeg:artistSeg.trim(),artistNorm,songSeg,songSpan,enSeg:enSeg.trim(),enNorm};
+}
 function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
   // "(원곡: X)"/"[Dance Cover]"/"(BTS 커버)"류 절은 매칭 전에 먼저 제거한다 — 이 절 안의 이름은 실제
   // 출연자가 아니라 커버 대상(원곡자)이라, 그대로 두면 group_ko/with_members가 원곡자 쪽으로 잘못
@@ -3984,7 +4149,16 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
   // 검수 도구(_wonkokScan, "원곡: X 오태깅 의심 목록")에서만 쓰이고 있었는데, 검수는 이미 잘못 들어간
   // 기존 데이터만 찾아줄 뿐 새로 들어오는 영상은 여전히 오염됐음 — 매칭 엔진 진입점에서 바로 걸러
   // 원천 차단한다(2026-08-21, Fable 감사 5번 유형 — "원곡커버 오인").
-  const strippedTitle=_wonkokStripClause(rawTitle);
+  // 음악방송 직캠 구조(_fancamParseTitle) — 잡히면 따옴표/대시 뒤 곡명 구간을 매칭 전에 통째로 비운다
+  // (곡명이 그룹·유닛·멤버명과 겹쳐 생기던 오태깅 원천 차단, 위 파서 주석 ①②). 안 잡히면 null → 기존 경로.
+  const _fc=(typeof _fancamParseTitle==='function')?_fancamParseTitle(rawTitle):null;
+  const _fcSrc=(_fc&&_fc.songSpan)?(rawTitle.slice(0,_fc.songSpan[0])+' '.repeat(_fc.songSpan[1]-_fc.songSpan[0])+rawTitle.slice(_fc.songSpan[1])):rawTitle;
+  const strippedTitle=_wonkokStripClause(_fcSrc);
+  // 출연자 구간(정규화) 안에서 그룹/멤버 토큰의 위치. -1이면 구간에 없음. 선두(head)면 0.
+  const _fcPos=(tok)=>{if(!_fc)return -1;const n=_fancamNormTok(tok);if(!n)return -1;return _fc.artistNorm.indexOf(' '+n+' ');};
+  const _fcHead=(tok)=>_fcPos(tok)===0;
+  const _fcMemberNameSet=_fc?new Set(ARTISTS.map(a=>_fancamNormTok(a.name.ko)).concat(ARTISTS.map(a=>_fancamNormTok(a.name.en))).filter(Boolean)):null;
+  const _fcHeadIsMemberName=(tok)=>!!_fcMemberNameSet&&_fcMemberNameSet.has(_fancamNormTok(tok));
   // "하이라이트"는 그룹명이 아니라 "요약본" 의미로도 흔히 쓰여 그룹 하이라이트로 오매칭되기 쉬움 — 실측으로
   // "OO '노래' 릴댄 하이라이트 | 릴레이댄스"(릴레이댄스 코너 고정 문구), "OO 무대 하이라이트 모음"류가
   // 대량으로 하이라이트 그룹에 잘못 태깅되는 걸 확인함(2026-07-30). 대괄호로 감싼 경우([하이라이트])뿐
@@ -4159,7 +4333,10 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
   // 베이비몬스터(치키타=멤버명)로, "씨아이엑스 배진영 직캠"이 워너원(전 소속)으로, "에이프릴 양예나
   // 직캠"이 아이즈원(예나 동명이인)으로. 자세한 수치는 CHANGELOG 2026-08-27 항목.
   const groupsSorted=Object.entries(GROUPS)
-    .filter(([ko,v])=>!_STRICT_SYNC_GROUPS.has(ko))
+    // 음악방송 직캠 구조가 잡힌 제목에선 strictSync 그룹도 후보에 넣되, 아래 루프에서 "출연자 구간 선두"일
+    // 때만 인정한다(파서 주석 ⑤ — "[뮤뱅] 시크릿 효성 'Madonna'"는 정당한 공식 직캠). 프로그램명·곡명 충돌
+    // ("이영지의 레인보우", 'SECRET' 앨범명)은 선두가 아니거나 곡명 구간이라 이미 비워져 있어 안 걸린다.
+    .filter(([ko,v])=>!_STRICT_SYNC_GROUPS.has(ko)||_fc)
     .map(([ko,v])=>({ko,tokens:[ko,v.en,...(v.altNames||[])].filter(Boolean)}))
     .sort((a,b)=>Math.max(...b.tokens.map(t=>t.length))-Math.max(...a.tokens.map(t=>t.length)));
   const matchedGroupKos=[];
@@ -4170,7 +4347,12 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
     if(conflicts&&conflicts.some(re=>re.test(title)))continue;
     const _reuseCut=_GROUP_DISBAND_REUSE_CUTOFF[ko]; // 이름 재사용 컷오프 이후 영상엔 옛 그룹 매칭 안 함
     if(_reuseCut&&publishedAt&&publishedAt>=_reuseCut)continue;
-    if(tokens.some(t=>_GROUP_TOKEN_HASHTAG_ONLY.has(t)?hitHashtag(t):(_GROUP_TOKEN_LITERAL_ONLY.has(t)||_ATM_DYNAMIC_LITERAL_ONLY.has(t))?hitLiteral(t):hit(t))){matchedGroupKos.push(ko);seen.add(ko);}
+    // 직캠 구조의 출연자 구간 **선두** 토큰은 strictSync/해시태그전용/리터럴전용 게이트 없이 인정(구조 자체가
+    // 근거). 단, 그 토큰이 어떤 아티스트의 등록명과도 같으면(그룹 슈가 ↔ 방탄소년단 슈가, "[직캠] 슈가 'Daechwita'")
+    // 선두여도 우회하지 않는다 — 그 경우는 멤버 쪽이 맞을 가능성이 커서 기존 게이트/역추론에 맡긴다.
+    const _fcHeadOk=t=>_fc&&_fcHead(t)&&!_fcHeadIsMemberName(t);
+    if(_STRICT_SYNC_GROUPS.has(ko)){ if(tokens.some(_fcHeadOk)){matchedGroupKos.push(ko);seen.add(ko);} continue; }
+    if(tokens.some(t=>_fcHeadOk(t)||(_GROUP_TOKEN_HASHTAG_ONLY.has(t)?hitHashtag(t):(_GROUP_TOKEN_LITERAL_ONLY.has(t)||_ATM_DYNAMIC_LITERAL_ONLY.has(t))?hitLiteral(t):hit(t)))){matchedGroupKos.push(ko);seen.add(ko);}
   }
   // 유닛명(V8, GOT the beat 등) 매칭 — 유닛 자체는 그룹이 아니라, 실제 소속 그룹/멤버로 나눠 합류시킴.
   // 제목에 유닛명만 있고 개별 멤버 이름은 없는 경우까지 커버하기 위해, 유닛 멤버를 "그 멤버 이름이
@@ -4182,13 +4364,18 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
   // with로 잘못 잡히는 원인). normMinusUnits는 매칭된 유닛명 토큰의 리터럴 구간을 norm에서 지운
   // 문자열 — 이걸로 다시 검사하면 유닛명이 만든 가짜 개별 언급은 사라지고, 제목 다른 자리에 진짜로
   // 따로 쓰인 이름만 남는다. 아래 멤버 추출 루프에서 이 문자열을 기준으로 재검증한다.
+  const _groupTokNormSet=new Set();
+  Object.entries(GROUPS).forEach(([ko,v])=>[ko,v.en,...(v.altNames||[])].filter(Boolean).forEach(t=>{const n=t.toUpperCase().replace(/[^가-힣a-zA-Z0-9]/g,' ').replace(/\s+/g,' ').trim();if(n)_groupTokNormSet.add(n);}));
+  const _unitTokIsGroup=t=>{const n=t.toUpperCase().replace(/[^가-힣a-zA-Z0-9]/g,' ').replace(/\s+/g,' ').trim();return n!==t.toUpperCase().trim()&&_groupTokNormSet.has(n);};
   const unitExtraMembers={}; // gko -> Set(mko)
   let normMinusUnits=norm;
   Object.values(_PROJECT_UNITS).forEach(unit=>{
     // _UNIT_HASHTAG_ONLY_TOKENS(index.html) — "AAA"/"EVOLution" 등 흔한단어 유닛 트리거는 해시태그로만
     // 인정(2026-08-21, Fable 감사로 트리플에스 유닛명이 아시아 아티스트 어워즈 약칭·다른 그룹 콘서트명과
     // 충돌해 대량 오매칭되는 게 발견됨).
-    if(!unit.names.some(t=>_UNIT_HASHTAG_ONLY_TOKENS.has(t)?hitHashtag(t):hit(t)))return;
+    // 유닛명이 정규화 후 실존 그룹 토큰과 같아지는 경우("마마무+"→"마마무", 2026-08-29 시뮬로 발견 — 마마무
+    // 단체 직캠마다 솔라·문별이 붙었음)는 특수문자가 살아있는 원문 리터럴(hitLiteral)로만 인정한다.
+    if(!unit.names.some(t=>_UNIT_HASHTAG_ONLY_TOKENS.has(t)?hitHashtag(t):(_unitTokIsGroup(t)?hitLiteral(t):hit(t))))return;
     // 로테이션 유닛(NCT U — shared.js 주석 참고)은 members가 "곡마다 바뀌는 참여자 풀"이라 전원
     // 확장하면 참여도 안 한 멤버까지 붙는다(2026-08-25 실측 767건). 제목에 이름이 따로 언급된
     // 멤버만 인정하고, 그 멤버의 그룹만 matchedGroupKos에 넣는다 — 이름이 하나도 없으면 이 유닛으로
@@ -4219,6 +4406,26 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
         matchedGroupKos.splice(matchedGroupKos.indexOf(gko),1);
         seen.delete(gko);
       }
+    }
+  }
+  // 음악방송 직캠 구조 후처리(파서 주석 ①③) — 여러 그룹이 걸렸을 때 primary는 토큰 길이가 아니라
+  // **출연자 구간에서 먼저 나온 순서**로 정한다. 출연자 구간에도 영문 괄호 구간에도 없는 그룹은 곡명·방송
+  // 보일러플레이트에서 온 것이라 버리되, 유닛 확장(유앤비→에이스/핫샷/유키스 등)으로 들어온 그룹은 유지.
+  // 그리고 primary 바로 뒤 토큰(=멤버 자리)이 primary 로스터의 이름과 같으면, 그 이름과 같은 **그룹**
+  // (다이아 "유니스" ↔ 그룹 유니스)은 멤버 표기를 그룹으로 오인한 것이므로 버린다.
+  if(_fc&&matchedGroupKos.length>1){
+    const _gtoks=ko=>[ko,GROUPS[ko]&&GROUPS[ko].en,...((GROUPS[ko]&&GROUPS[ko].altNames)||[])].filter(Boolean);
+    const _gpos=ko=>{let best=-1;for(const t of _gtoks(ko)){const p=_fcPos(t);if(p>=0&&(best<0||p<best))best=p;}return best;};
+    const _inEn=ko=>!!_fc.enNorm&&_gtoks(ko).some(t=>{const n=_fancamNormTok(t);return n&&_fc.enNorm.includes(' '+n+' ');});
+    const kept=matchedGroupKos.filter(ko=>_gpos(ko)>=0||_inEn(ko)||unitExtraMembers[ko]);
+    kept.sort((a,b)=>{const pa=_gpos(a),pb=_gpos(b);return (pa<0?1e9:pa)-(pb<0?1e9:pb);});
+    if(kept.length){
+      const head=kept[0];
+      const headRoster=ARTISTS.filter(a=>_artistGroups(a).some(g=>g.ko===head));
+      const rosterNames=new Set();headRoster.forEach(a=>{_m2NameVariants(a).forEach(t=>rosterNames.add(_fancamNormTok(t)));});
+      const final=kept.filter((ko,i)=>i===0||!_gtoks(ko).some(t=>rosterNames.has(_fancamNormTok(t))&&_gpos(ko)>0));
+      matchedGroupKos.splice(0,matchedGroupKos.length,...final);
+      seen.clear();final.forEach(ko=>seen.add(ko));
     }
   }
   // "이름(그룹명)" 패턴에서 그룹명이 우리 시스템에 없는 경우 → 타 소속 동명이인 신호
@@ -4387,6 +4594,40 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
       // 유닛 멤버 중 아무도 유닛명 밖에서 개별적으로 안 걸리면(유닛명만 제목에 있는 경우) 기존처럼
       // 전원 추가 — 개별 이름이 정말 따로 언급된 경우만 그 멤버만 추가.
       (confirmed.length?confirmed:extraArr).forEach(mko=>{if(!matched.includes(mko))matched.push(mko);});
+    }
+    // 음악방송 직캠 구조(파서 주석 ④) — 출연자 구간/영문 괄호 구간에서 "그룹 토큰 바로 뒤 나머지"를 로스터
+    // 이름과 **정확히** 대조한다(성 뗀 변형·영문 압축형·별칭 포함). 단일음절 이름(뷔·큐·엘·엔·Y)도 여기서는
+    // 인정 — 그룹명 바로 옆 고정 자리라 흔한 단어와 겹칠 여지가 없다. 느슨한 매칭 결과에 합집합.
+    if(_fc){
+      const segs=[_fc.artistNorm,_fc.enNorm].filter(x=>x&&x.trim());
+      const gtoks=[gko,GROUPS[gko]&&GROUPS[gko].en,...((GROUPS[gko]&&GROUPS[gko].altNames)||[])].filter(Boolean);
+      for(const seg of segs){
+        let after=null;
+        for(const t of gtoks){const n=_fancamNormTok(t);if(!n)continue;const i=seg.indexOf(' '+n+' ');if(i>=0){after=seg.slice(i+n.length+2).trim();break;}}
+        if(!after)continue;
+        const ac=after.replace(/\s/g,'');
+        // 점수제: 등록명(ko/en/별칭) 정확 일치 3 > 성 뗀 한글 정확 일치 2 > 영문 성+이름 접미 일치 1
+        // ("JANG WONYOUNG" ↔ 등록 "Wonyoung"). 최고 점수만 남긴다 — "SIYOON"이 시윤(정확)과 윤(접미 YOON)
+        // 둘 다에 걸릴 때 시윤만, "혜리"가 혜리(등록명)와 장혜리(성 뗀 변형) 둘 다에 걸릴 때 혜리만 남기기 위함.
+        // 접미 일치끼리 겹치면 더 긴 이름만(HYUNJIN vs JIN 같은 포함 관계).
+        const scored=[];
+        ARTISTS.forEach(a=>{
+          if(!_artistGroups(a).some(g=>g.ko===gko)||_atmLeftBefore(a,gko,publishedAt))return;
+          let best=0,bestLen=0;
+          [a.name.ko,a.name.en,...(a.matchAliases||[])].filter(Boolean).forEach(c=>{const cc=_fancamNormTok(c).replace(/\s/g,'');if(!cc)return;
+            if(ac===cc){if(best<3){best=3;bestLen=cc.length;}}
+            else if(/^[A-Z0-9]+$/.test(cc)&&cc.length>=4&&ac.endsWith(cc)&&ac.length-cc.length<=6){if(best<1||(best===1&&cc.length>bestLen)){best=1;bestLen=cc.length;}}});
+          const st=_atmStripSurname([...a.name.ko]);
+          if(st&&best<2&&ac===_fancamNormTok(st).replace(/\s/g,'')){best=2;bestLen=st.length;}
+          if(best)scored.push({mko:a.name.ko,best,bestLen});
+        });
+        if(scored.length){
+          const top=Math.max(...scored.map(x=>x.best));
+          let win=scored.filter(x=>x.best===top);
+          if(top===1){const L=Math.max(...win.map(x=>x.bestLen));win=win.filter(x=>x.bestLen===L);}
+          win.forEach(x=>{if(!matched.includes(x.mko))matched.push(x.mko);});
+        }
+      }
     }
     membersByGroup[gko]=matched;
   }

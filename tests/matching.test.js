@@ -77,6 +77,12 @@ pieces.push(extractStatement(adminSrc, /^const _GROUP_AMBIGUOUS_IF_COMATCHED\s*=
 pieces.push(extractByBraces(adminSrc, /^function _unitMemberNamedInTitle\(/m, '_unitMemberNamedInTitle'));
 pieces.push(extractByBraces(adminSrc, /^function _atmLeftBefore\(/m, '_atmLeftBefore')); // 탈퇴 게이트(2026-08-25)
 pieces.push(extractByBraces(adminSrc, /^function _atmStripCommonNounCtx\(/m, '_atmStripCommonNounCtx')); // 하루 등 흔한단어 일반명사 문맥 제거(2026-08-29) — _m2ParseTitle이 전처리에서 부름
+// 음악방송 직캠 구조 파서(2026-08-29) — _m2ParseTitle이 매칭 전에 호출한다
+pieces.push(extractByBraces(adminSrc, /^function _fancamShowPatterns\(/m, '_fancamShowPatterns'));
+pieces.push(extractStatement(adminSrc, /^const _FANCAM_SHOW_PATTERNS\s*=/m, '_FANCAM_SHOW_PATTERNS'));
+pieces.push(extractStatement(adminSrc, /^const _FANCAM_FILLER_RE\s*=/m, '_FANCAM_FILLER_RE'));
+pieces.push(extractByBraces(adminSrc, /^function _fancamNormTok\(/m, '_fancamNormTok'));
+pieces.push(extractByBraces(adminSrc, /^function _fancamParseTitle\(/m, '_fancamParseTitle'));
 pieces.push(extractByBraces(adminSrc, /^function _m2ParseTitle\(/m, '_m2ParseTitle'));
 
 const harnessSrc = `
@@ -476,6 +482,61 @@ test('미래소년 영상에 체리블렛 미래가 안 낌(토큰 경계)',
 test('[알려진 한계] 그룹명 없는 feat 제목은 순서 의존 — 대신 weak로 검수 큐행',
   "[예능연구소 4K] 이승협 직캠 'Superstar (Feat. 해윤)' (J.DON FanCam)", undefined,
   r => !!r && r.confidence === 'weak' && (r.withGroups || []).concat([r.primaryGroup]).includes('엔플라잉'));
+
+// ── 음악방송 직캠 구조 파서(_fancamParseTitle, 2026-08-29) ─────────────────
+// tools/fancam_pattern_probe.js(전 로스터×실제 곡명 15만 제목 시뮬)로 찾은 실제 사고 유형. 구조가 잡힌
+// 제목은 곡명 구간을 비우고 primary를 출연자 구간 순서로 정하므로 아래가 전부 고정돼야 한다.
+test('직캠 — 곡명 \'Treasure\'가 그룹 트레저로 primary를 뺏지 않음(에이티즈 산)',
+  "[MPD직캠] 에이티즈 산 직캠 4K 'Treasure' (ATEEZ SAN FanCam) | @MCOUNTDOWN_2018.11.1", undefined,
+  r => !!r && r.primaryGroup === '에이티즈' && r.withGroups.length === 0 && (r.membersByGroup['에이티즈']||[]).join() === '산', '2018-11-01');
+test('직캠 — 곡명 \'After School\'이 애프터스쿨로 안 감(위클리 먼데이)',
+  "[MPD직캠] 위클리 먼데이 직캠 4K 'After School' (Weeekly MONDAY FanCam)", undefined,
+  r => !!r && r.primaryGroup === '위클리' && r.withGroups.length === 0 && (r.membersByGroup['위클리']||[]).join() === '먼데이', '2021-03-25');
+test('직캠 — 곡명 \'Key of Secret\'의 "키"가 멤버로 안 붙음(샤이니 단체)',
+  "[안방1열 풀캠4K] 샤이니 'Key of Secret' 풀캠 (SHINee Full Cam)", undefined,
+  r => !!r && r.primaryGroup === '샤이니' && (r.membersByGroup['샤이니']||[]).length === 0, '2015-05-24');
+test('직캠 — 그룹명 뒤 멤버명이 다른 그룹명과 같아도 멤버로(다이아 유니스 ≠ 그룹 유니스)',
+  "[쇼챔직캠 4K] 다이아 유니스 - Woowa (DIA EUNICE) l Show Champion l EP.311 l 190327", undefined,
+  r => !!r && r.primaryGroup === '다이아' && r.withGroups.length === 0 && (r.membersByGroup['다이아']||[]).join() === '유니스', '2019-03-27');
+test('직캠 — 단일음절 멤버(방탄소년단 뷔)도 그룹명 바로 뒤면 멤버로',
+  "[뮤직뱅크 직캠] 방탄소년단 뷔 'Dynamite' (BTS V FanCam) | @MusicBank 200904", undefined,
+  r => !!r && r.primaryGroup === '방탄소년단' && (r.membersByGroup['방탄소년단']||[]).join() === '뷔', '2020-09-04');
+test('직캠 — 단일음절 멤버(더보이즈 큐) 영문 괄호(THE BOYZ Q)로도',
+  "[안방1열 직캠4K] 더보이즈 큐 'THRILL RIDE' (THE BOYZ Q FanCam) @SBS Inkigayo 210808", undefined,
+  r => !!r && (r.membersByGroup['더보이즈']||[]).join() === '큐', '2021-08-08');
+test('직캠 — 영문 접미 일치는 최장 우선(나우즈 SIYOON → 시윤만, 윤 아님)',
+  "[MPD직캠] 나우즈 시윤 직캠 4K 'Us' (NOWZ SIYOON FanCam)", undefined,
+  r => !!r && (r.membersByGroup['나우즈']||[]).join() === '시윤', '2025-06-01');
+test('직캠 — strictSync 그룹도 출연자 구간 선두면 인정(시크릿 효성)',
+  "[뮤뱅 원픽캠 4K] 시크릿 효성 'Madonna' (SECRET HYOSUNG FanCam) | @MusicBank 120817", undefined,
+  r => !!r && r.primaryGroup === '시크릿' && (r.membersByGroup['시크릿']||[]).join() === '전효성', '2012-08-17');
+test('직캠 — strictSync god 개인직캠이 성 뗀 이름 역추론(호영→베리베리)으로 안 샘',
+  "[뮤뱅 원픽캠 4K] god 손호영 '보통날' (god SON HOYOUNG FanCam)", undefined,
+  r => !!r && r.primaryGroup === 'god' && r.withGroups.length === 0, '2026-08-01');
+test('직캠 — 곡명 구간의 \'SECRET\'은 strictSync 시크릿을 안 깨움(아이브)',
+  "[MPD직캠] 아이브 직캠 4K 'SECRET' | @MCOUNTDOWN", undefined,
+  r => !!r && r.primaryGroup === '아이브' && r.withGroups.length === 0, '2026-08-01');
+test('직캠 — 선두 토큰이 멤버 등록명과 같으면(슈가) strictSync 우회 안 함',
+  "[직캠] 슈가 (SUGA) 'Daechwita' 페스티벌 직캠", undefined,
+  r => !r || r.primaryGroup !== '슈가', '2020-06-01');
+test('직캠 — 유닛명이 정규화 후 그룹명과 같으면("마마무+"→"마마무") 리터럴일 때만 유닛 확장',
+  "[MPD직캠] 마마무 직캠 4K 'HIP' (MAMAMOO FanCam)", undefined,
+  r => !!r && (r.membersByGroup['마마무']||[]).length === 0, '2019-11-01');
+test('직캠 — "마마무+" 리터럴이면 유닛 확장(솔라·문별)',
+  "[MPD직캠] 마마무+ 직캠 4K 'Chico malo' (MAMAMOO+ FanCam)", undefined,
+  r => !!r && (r.membersByGroup['마마무']||[]).slice().sort().join() === '문별,솔라', '2024-03-01');
+test('직캠 — 콜라보 무대(아이브 X 르세라핌)는 출연자 구간 순서대로 primary/with',
+  "[MPD직캠] 아이브 X 르세라핌 직캠 4K 'Spicy' | @MCOUNTDOWN_2024", undefined,
+  r => !!r && r.primaryGroup === '아이브' && r.withGroups.join() === '르세라핌', '2024-01-01');
+test("it's Live — 그룹(EN) - 곡명 구조",
+  "[it's Live] 아이브(IVE) - After LIKE", undefined,
+  r => !!r && r.primaryGroup === '아이브' && r.withGroups.length === 0, '2022-09-01');
+test('킬링보이스 — 그룹(EN)의 킬링보이스… – 곡 목록은 매칭에서 제외',
+  "아이브(IVE)의 킬링보이스를 라이브로! – I AM, LOVE DIVE, After LIKE, Baddie | 딩고뮤직 | Dingo Music", undefined,
+  r => !!r && r.primaryGroup === '아이브' && r.withGroups.length === 0 && (r.membersByGroup['아이브']||[]).length === 0, '2023-01-01');
+test('직캠 구조 아님(자유 형식)은 기존 경로 그대로 — 하츠투하츠 스텔라',
+  "[안방1열 직캠4K] 하츠투하츠 스텔라 'The Chase' (Hearts2Hearts STELLA FanCam)", undefined,
+  r => !!r && r.primaryGroup === '하츠투하츠' && (r.membersByGroup['하츠투하츠']||[]).join() === '스텔라', '2025-03-01');
 
 // ── 실행 ──────────────────────────────────────────────
 let pass = 0, fail = 0;
