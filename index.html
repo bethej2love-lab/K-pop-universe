@@ -15793,8 +15793,57 @@ async function _buildFeedTrend(){
     console.warn('[feed] Trend 선반 실패 — 이 선반만 빠집니다',e);
   }
 }
-// 추천(For You) 탭 빌드 — 가볍게(이어보기=로컬, Trend=Supabase 1회). 나침반 열 때마다 호출(TTL 캐시).
+// ── 즐겨찾기 신작 선반(2026-08-29 Step2) ─────────────────────────────────────
+// 내가 하트 누른 그룹 + 하트 누른 멤버의 소속 그룹의 최신 업로드를 최신순으로. 즐겨찾기 없으면 온보딩.
+// (_ytGroupKoFor은 admin.js 전용이라 여기선 "실존 그룹이면 그룹명, 아니면 본인명" 규칙을 인라인으로 편다.)
+function _feedFavGroupKos(){
+  const gkos=new Set(favGroups);
+  favMembers.forEach(k=>{const a=ARTISTS.find(x=>_mFavKey(x)===k);if(a)gkos.add(GROUPS[a.group.ko]?a.group.ko:a.name.ko);});
+  return gkos;
+}
+function _appendFeedOnboardCard(strip){
+  const d=document.createElement('div');d.className='feed-onboard-card';
+  const em=document.createElement('div');em.className='feed-onboard-emoji';em.textContent='💖';
+  const tx=document.createElement('div');tx.className='feed-onboard-txt';
+  tx.innerHTML=currentLang==='ko'?'즐겨찾기한 그룹·멤버의 <b>새 영상</b>이 여기 떠요.<br>카드에서 하트(♡)를 눌러보세요.':'<b>New videos</b> from groups & members you favorite appear here.<br>Tap the heart (♡) on any card.';
+  d.appendChild(em);d.appendChild(tx);strip.appendChild(d);
+}
+async function _buildFeedFavNew(){
+  const strip=document.getElementById('feed-favnew');
+  const section=document.getElementById('feed-favnew-section');
+  if(!strip||!section)return;
+  _enableDragScroll(strip);
+  strip.innerHTML='';section.style.display='none';
+  const gkos=_feedFavGroupKos();
+  if(!gkos.size){ _appendFeedOnboardCard(strip); section.style.display=''; return; } // 즐겨찾기 0 → 온보딩
+  if(!sb)return;
+  try{
+    const{data,error}=await _applyLiveExclude(sb.from(_YT_TABLE)
+      .select('id,title,thumb,category,is_short,content_flag,group_ko,members,view_count,published_at'))
+      .in('group_ko',[...gkos].slice(0,80))
+      .or('content_flag.is.null,content_flag.neq.기타')
+      .or('content_flag.is.null,content_flag.neq.무관').or('content_flag.is.null,content_flag.neq.보류')
+      .or('content_flag.is.null,content_flag.neq.hidden')
+      .order('published_at',{ascending:false})
+      .limit(150);
+    if(error||!data?.length)return;
+    // 최신순 유지(신작이라 셔플 안 함), 쇼츠는 16:9 스트립에 안 맞아 제외(Trend와 동일 규칙), 그룹당 최대 3
+    const vids=_capByGroup(_filterBannedVideos(data).filter(v=>!_isShortV(v)),v=>v.group_ko,3).slice(0,_FEED_TREND_MAX);
+    if(!vids.length)return;
+    const vidUrl=v=>_isShortV(v)?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;
+    const songs=vids.map(v=>({t:v.title,u:vidUrl(v),thumb:v.thumb,vc:v.view_count,pa:v.published_at?.slice(0,10),groupKo:v.group_ko,memberKos:v.members||[]}));
+    const _fmtDay=iso=>{const d=Math.floor((Date.now()-new Date(iso+'T00:00:00').getTime())/86400000);if(d<=0)return currentLang==='ko'?'오늘':'today';if(d===1)return currentLang==='ko'?'어제':'yesterday';return currentLang==='ko'?`${d}일 전`:`${d}d ago`;};
+    vids.forEach((v,i)=>{
+      const pa=(v.published_at||'').slice(0,10);
+      const sub=[v.group_ko,pa?_fmtDay(pa):null].filter(Boolean).join(' · ');
+      _appendFeedCard(strip,'💖',v.title,sub,()=>openLightbox(songs[i].u,_songIsShort(songs[i]),songs,i,{groupKo:v.group_ko,memberKo:(v.members||[])[0]},false,true),v.thumb);
+    });
+    section.style.display='';
+  }catch(e){console.warn('[feed] 즐겨찾기 신작 선반 실패 — 이 선반만 빠집니다',e);}
+}
+// 추천(For You) 탭 빌드 — 가볍게(이어보기=로컬, 즐겨찾기신작·Trend=Supabase). 나침반 열 때마다 호출(TTL 캐시).
 function _buildFeedRec(){
+  _buildFeedFavNew();       // 즐겨찾기 신작(최상단 근처 — 기념일 다음)
   _buildFeedRecentlyViewed();
   _buildFeedTrend(); // 최근 7일 업로드 선반(비동기 — 다른 카드 렌더를 막지 않는다)
 }
@@ -18102,6 +18151,12 @@ _totopBtn.addEventListener('click',e=>{
       <div class="feed-section" id="feed-anniv-section" style="display:none">
         <div class="feed-section-ttl">🎂 Today's Anniversary</div>
         <div id="feed-anniv" class="feed-strip hscroll-drag"></div>
+      </div>
+      <!-- 즐겨찾기 신작(2026-08-29 Step2): 내가 하트 누른 그룹 + 하트 누른 멤버의 소속 그룹의 최신 업로드.
+           For You 탭의 핵심 — "매일 다시 오는 이유". 즐겨찾기 없으면 온보딩 카드로 채워 절대 안 비게 한다. -->
+      <div class="feed-section" id="feed-favnew-section" style="display:none">
+        <div class="feed-section-ttl">💖 New from Favorites</div>
+        <div id="feed-favnew" class="feed-strip hscroll-drag"></div>
       </div>
       <!-- 최근 7일 업로드 영상을 랜덤 순서로 나열(2026-08-25 사용자 요청 — "최신 정보·영상이 중요한데
            Discovery의 Trend 카드 하나로는 부족"). Discovery의 Trend 카드는 category='live' 조회수 상위를

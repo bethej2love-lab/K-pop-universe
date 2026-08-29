@@ -2720,6 +2720,10 @@
   .feed-tab.active{background:rgba(255,255,255,0.15);color:#fff;border-color:transparent;}
   .feed-tab:active{transform:scale(0.96);}
   .feed-pane[hidden]{display:none;}
+  /* 즐겨찾기 신작 온보딩 — 아직 하트 누른 게 없을 때 이 선반이 비지 않게 안내 카드로 채운다. */
+  .feed-onboard-card{flex:0 0 auto;max-width:min(300px,78vw);display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:14px;background:rgba(255,255,255,0.05);border:0.5px solid rgba(255,255,255,0.10);}
+  .feed-onboard-emoji{font-size:26px;line-height:1;flex-shrink:0;}
+  .feed-onboard-txt{font-size:12px;line-height:1.5;color:rgba(210,222,250,0.82);font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
   .feed-section-ttl{font-size:10px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:rgba(120,148,205,0.51);padding:14px 20px 8px;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
   /* 기념일 스트립(인스타 스토리 스타일 가로 스크롤) */
   .feed-strip{display:flex;gap:10px;overflow-x:auto;padding:2px 20px 18px;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
