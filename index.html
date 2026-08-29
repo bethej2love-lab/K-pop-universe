@@ -5349,6 +5349,10 @@ function buildVideoSection(songs,containerEl,ctx,mainCandidates){
 const mobSheetEl=document.getElementById('mob-sheet');
 const mobSheetInner=document.getElementById('mob-sheet-inner');
 let _cardStack=[];   // [{type:'gc',data:ko}|{type:'tt',data:artist}]
+// 나침반(탐험 피드)을 "카드 보다가" 눌렀을 때 그 카드를 기억해뒀다가, 피드를 '돌아가기'(닫기버튼/스와이프/
+// 나침반 토글)로 닫으면 그 카드로 복원한다(2026-08-29 사용자 제보 — 예전엔 카드가 파괴되고 주소만 남아 어긋남).
+// 홈/별/검색/프로필로 "이동"하며 닫을 땐 복원하지 않고, 피드 중 다른 카드를 열면(openMobSheet) 기억을 지운다.
+let _feedReturnCard=null;
 let _navHistoryActive=false;
 const mobCardStackEl=document.getElementById('mob-card-stack');
 const mobCardStackInner=document.getElementById('mob-card-stack-inner');
@@ -5453,6 +5457,7 @@ function closeSidePanel(){
 
 function openMobSheet(cardEl){
   clearTimeout(_mobCloseTimer);
+  _feedReturnCard=null; // 새 카드를 열면 "나침반 열기 전 카드로 복원" 기억은 무효(피드 중 다른 카드로 이동한 것)
   controls.enabled=false;
   // 새 카드는 scrollTop=0에서 시작하므로 방향 감지 기준선도 0으로 리셋 — 직전 카드에서 남은 _lastScroll
   // 잔상 때문에 첫 스크롤이 반대 방향으로 오판되거나 탭바가 숨김 고착되는 걸 막는다.
@@ -11715,7 +11720,12 @@ document.getElementById('tab-feed').addEventListener('click',e=>{
     localStorage.setItem(_FEED_BADGE_SEEN_KEY,'1');
     document.getElementById('tab-feed').classList.remove('show-badge');
   }
-  document.body.classList.contains('feed-open')?_closeFeedOverlay():_openFeedOverlay();
+  if(document.body.classList.contains('feed-open')){
+    _closeFeedOverlay(true); // 나침반 다시 눌러 닫기 = "돌아가기" → 기억한 카드 있으면 복원
+  }else{
+    if(isMob()&&_cardStack.length)_feedReturnCard={..._cardStack[_cardStack.length-1]}; // 열기 직전 카드 기억(closeMobSheet가 곧 스택을 비우므로 지금 스냅샷)
+    _openFeedOverlay();
+  }
 });
 // 상단 온보딩 검색바 — 실제 입력창이 아니라 탭하면 기존 검색(하단 돋보기와 동일)으로 그대로 인계한다
 // (결과 렌더링을 중복 구현하지 않기 위함, 2026-08-11).
@@ -13800,7 +13810,7 @@ function _openFeedOverlay(){
   }
   const cb=document.getElementById('feed-close');
   if(!cb._bound){cb._bound=true;
-    cb.addEventListener('click',_closeFeedOverlay);
+    cb.addEventListener('click',()=>_closeFeedOverlay(true)); // 닫기 버튼 = "돌아가기"
     cb.addEventListener('touchstart',e=>_lbRipple(cb,e),{passive:true});
     cb.addEventListener('mousedown',e=>_lbRipple(cb,e));
   }
@@ -13814,7 +13824,14 @@ function _openFeedOverlay(){
     });
   }
 }
-function _closeFeedOverlay(){
+// 나침반 열기 직전 카드로 복원(모바일). 피드-내비와 동일 진입점(showGC/showT)을 쓰되, 카메라는 카드가
+// 열려 있던 자리 그대로라 별도 비행은 하지 않는다. 데이터는 스택 엔트리의 data(gc=ko문자열/tt=아티스트).
+function _reopenCard(entry){
+  if(!entry||!isMob())return;
+  if(entry.type==='gc')showGC(entry.data,window.innerWidth/2,window.innerHeight*0.4,false,false,null,false);
+  else if(entry.type==='tt')showT(entry.data,window.innerWidth/2,window.innerHeight*0.4,false,false,false);
+}
+function _closeFeedOverlay(returning){
   // 스크롤을 내려둔 채로 닫으면 "맨 위로" 버튼이 화면에 그대로 떠 있게 된다(연결 패널에서 이미 겪은
   // 문제와 같음) — 이 패널이 대상일 때만 숨긴다. 다른 컨테이너가 대상이면 건드리지 않는다.
   if(_totopScrollTarget===document.getElementById('feed-body'))_hideTotop();
@@ -13823,6 +13840,10 @@ function _closeFeedOverlay(){
   document.body.classList.remove('feed-open');
   document.getElementById('tab-feed').classList.remove('feed-open');
   document.getElementById('dh-feed-btn')?.classList.remove('active');
+  // "돌아가기"로 닫은 경우에만 기억한 카드 복원 — 홈/별/검색 등으로 이동하며 닫을 땐 그냥 기억만 비운다.
+  const back=(returning===true&&_feedReturnCard)?_feedReturnCard:null;
+  _feedReturnCard=null;
+  if(back)_reopenCard(back);
 }
 // 탐험 오버레이를 카드 바텀시트처럼 아래로 슬라이드아웃하며 닫음 — 스와이프 닫기(_wireFeedSwipeDismiss)와
 // 자동 peek 해제(_dismissOnboardHint)가 공용으로 사용(2026-08-19, 자동 peek가 뚝 꺼지지 않고 자연스럽게
@@ -13832,7 +13853,7 @@ function _slideDownCloseFeed(){
   el.style.transition='transform 0.22s cubic-bezier(0.32,0.72,0,1)';
   el.style.transform=`translateY(${window.innerHeight}px)`;
   setTimeout(()=>{
-    _closeFeedOverlay();
+    _closeFeedOverlay(true); // 아래로 스와이프해 닫기 = "돌아가기"(피크 자동해제는 카드가 없어 no-op)
     el.style.transition='';el.style.transform='';
   },220);
 }
