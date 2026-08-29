@@ -2714,6 +2714,12 @@
   #feed-close{display:none;}
   #feed-close:active{color:rgba(200,218,255,0.85);transform:scale(0.86);transition:transform .07s;}
   #feed-body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;background:rgba(8,11,24,0.78);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);padding-bottom:calc(env(safe-area-inset-bottom,0px) + 80px);}
+  /* 2탭(For You / Discover) — 스크롤해도 위에 붙어있게 sticky. 배경은 #feed-body와 맞춰 콘텐츠가 비쳐도 안 지저분하게. */
+  #feed-tabs{position:sticky;top:0;z-index:3;display:flex;gap:8px;padding:8px 20px 10px;background:rgba(8,11,24,0.92);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);}
+  .feed-tab{flex:0 0 auto;padding:8px 18px;border-radius:999px;border:0.5px solid rgba(255,255,255,0.12);background:rgba(255,255,255,0.04);color:rgba(200,215,250,0.6);font-size:13px;font-weight:700;letter-spacing:.02em;cursor:pointer;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;-webkit-tap-highlight-color:transparent;transition:background .14s,color .14s,border-color .14s;}
+  .feed-tab.active{background:rgba(255,255,255,0.15);color:#fff;border-color:transparent;}
+  .feed-tab:active{transform:scale(0.96);}
+  .feed-pane[hidden]{display:none;}
   .feed-section-ttl{font-size:10px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:rgba(120,148,205,0.51);padding:14px 20px 8px;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
   /* 기념일 스트립(인스타 스토리 스타일 가로 스크롤) */
   .feed-strip{display:flex;gap:10px;overflow-x:auto;padding:2px 20px 18px;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
