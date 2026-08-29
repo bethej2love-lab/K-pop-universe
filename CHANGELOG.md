@@ -36,6 +36,7 @@
 
 ## 2026-08-29
 
+- [완료·실기기확인필요][index.html][kpop_universe.css] **[탐험 재구성 Step 3] Trend 세로 2단 그리드화 + 쇼츠 9:16** — Trend를 가로 스트립(158px 16:9, 쇼츠 제외)에서 **세로 2단 그리드**로. 이제 쇼츠도 포함해 `.is-short`(9:16)로, 일반은 16:9로 렌더 → "쇼츠가 가로 틀에 갇혀 작고 가로 스크롤 어색"하던 제보 해결. `#feed-trend` class→`feed-grid`, 스트립 폭 규칙에서 제외, `_buildFeedTrend` 쇼츠 포함+`{short:_isShortV(v)}`. 헤드리스 검증(grid 2단·16:9·9:16). ※1열 원하면 `grid-template-columns` 한 줄이면 전환 가능.
 - [완료·실사용확인필요][index.html][kpop_universe.css] **[탐험 재구성 Step 2] 즐겨찾기 신작 선반** — For You 탭에 "💖 New from Favorites" 추가(기념일 다음). 내 즐겨찾기 그룹 + 즐겨찾기 멤버의 소속 그룹(`_feedFavGroupKos`, 솔로는 본인명)의 최신 업로드를 최신순으로(`.in('group_ko',...)`, Trend 쿼리 패턴 재사용). 즐겨찾기 0이면 온보딩 카드로 채워 절대 안 비게. 헤드리스 검증(온보딩/그룹+멤버해석/크래시없음). ⚠️실제 영상은 라이브 Supabase라 실사용 확인 필요.
 - [완료·실기기확인필요][index.html][kpop_universe.css] **[탐험 패널 재구성 Step 1] 2탭 껍데기(For You / Discover) + 지연 로드** — 열자마자 선반 34개를 동시에 치던 걸(덜컹거림·중복 원인) 2탭으로 분리. For You(이어보기·Trend·기념일)는 열 때 빌드, **Discover(차트 11+디스커버리)는 그 탭 처음 누를 때만 지연 빌드**(`_buildFeedDiscovery`→`_buildFeedRec`+`_buildFeedDisc`로 분리, TTL 캐시 각각). 헤드리스 검증: 기본=For You·Discover 미빌드·전환 시 빌드·GA `feed_tab`·복귀. 다음 Step: ②즐겨찾기 신작 선반(그룹+멤버) ③Trend 세로그리드 ④빈/오류 상태.
 - [완료·실기기확인필요][index.html] **[Phase 1] 나침반 열 때 보던 카드 복원** — 카드 보다가 나침반(탐험 피드)을 누르면 `closeMobSheet()`로 카드가 파괴돼 사라지고 URL 해시(#g=…)만 남아 화면과 주소가 어긋났음(사용자 제보). 나침반 열 때 그 카드를 `_feedReturnCard`에 스냅샷, 피드를 "돌아가기"(나침반 토글/닫기버튼/스와이프)로 닫으면 `_reopenCard`로 복원. 홈/별/검색/프로필로 "이동"하며 닫을 땐 복원 안 함, 피드 중 다른 카드 열면(openMobSheet) 기억 해제. 헤드리스 3시나리오(복원/이동시비복원/피드내이동시해제) 검증. ※별버튼 인라인 closeMobSheet 중복 통합은 별개 리팩터로 보류. ⚠️실기기 동선 확인 권장.

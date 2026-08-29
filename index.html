@@ -15743,9 +15743,6 @@ async function _buildFeedTrend(){
   const strip=document.getElementById('feed-trend');
   const section=document.getElementById('feed-trend-section');
   if(!strip||!section||!sb)return;
-  // #feed-trend도 메인 <script>보다 뒤에 있는 정적 HTML이라 최상단 바인딩은 조용히 무시된다 —
-  // 기념일 선반과 같은 지연 바인딩 패턴(자체 _dragScrollBound 가드가 있어 중복 호출 안전).
-  _enableDragScroll(strip);
   strip.innerHTML='';section.style.display='none';
   try{
     const since=new Date(Date.now()-_FEED_TREND_DAYS*86400000).toISOString().slice(0,10);
@@ -15759,9 +15756,9 @@ async function _buildFeedTrend(){
       .order('published_at',{ascending:false})
       .limit(300);
     if(error||!data?.length)return;
-    // 쇼츠(세로)는 제외 — 이 선반의 썸네일 틀이 16:9라 세로 영상을 넣으면 좌우가 크게 남아 어색하다.
-    // (쇼츠는 Shorts 탭과 카드 그리드에서 각자 제 비율로 노출된다.)
-    const vids=_capByGroup(_filterBannedVideos(data).filter(v=>!_isShortV(v)),v=>v.group_ko,_FEED_TREND_PER_GROUP);
+    // 세로 2단 그리드라 쇼츠도 그대로 포함(2026-08-29 Step3) — 쇼츠는 9:16(is-short), 일반은 16:9로 렌더.
+    // 예전엔 16:9 스트립이라 세로 영상이 좌우 크게 남아 어색해서 제외했었다(사용자 제보의 그 문제).
+    const vids=_capByGroup(_filterBannedVideos(data),v=>v.group_ko,_FEED_TREND_PER_GROUP);
     if(vids.length<3)return; // 3개도 안 되면 선반을 여는 것보다 없는 게 낫다
     const picked=_shuffle([...vids]).slice(0,_FEED_TREND_MAX);
     // ⚠️ vidUrl은 전역이 아니라 선반 함수마다 자기 안에서 다시 정의하는 지역 함수다(형제 선반 20곳
@@ -15784,7 +15781,7 @@ async function _buildFeedTrend(){
         // 누르면 이 선반 전체가 재생목록이 돼서 그대로 다음 영상으로 넘어갈 수 있다(훑어보기 목적)
         ()=>openLightbox(songs[i].u,_songIsShort(songs[i]),songs,i,
           {groupKo:v.group_ko,memberKo:(v.members||[])[0]},false,true),
-        v.thumb);
+        v.thumb,null,{short:_isShortV(v)}); // 쇼츠면 9:16 세로 카드
     });
     section.style.display='';
   }catch(e){
@@ -18164,7 +18161,7 @@ _totopBtn.addEventListener('click',e=>{
            보여준다. Charts와 같은 카드 크기(#feed-chart와 동일 규칙)로 가로 스크롤. -->
       <div class="feed-section" id="feed-trend-section" style="display:none">
         <div class="feed-section-ttl">📈 Trend</div>
-        <div id="feed-trend" class="feed-strip hscroll-drag"></div>
+        <div id="feed-trend" class="feed-grid"></div>
       </div>
       <div class="feed-section" id="feed-recent-section" style="display:none">
         <div class="feed-section-ttl">🕐 Recently Viewed</div>
