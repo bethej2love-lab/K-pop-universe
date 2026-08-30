@@ -1846,10 +1846,14 @@
   @media(min-width:769px){
     #tabbar{display:none;}
     #settings-panel{top:58px;bottom:auto;right:0;width:320px;border-radius:16px 0 0 16px;max-height:calc(100vh - 78px);overflow-y:auto;}
-    /* 어드민 설정 패널 위치(2026-08-30): 처음엔 카드 가림을 피하려 왼쪽에 도킹했으나, 어드민 작업패널
-       (adm-home/vm/hnn)이 이미 왼쪽 도킹이라 설정과 겹쳤다(사용자 제보 — "설정 뒤로 영상 패널"). 설정은
-       기본대로 오른쪽에 둬서 왼쪽 관리패널과 나란히 놓는다(겹침 없음). 설정은 잠깐 여는 창이라 카드와
-       겹치는 건 감수(닫으면 됨). → 별도 override 없이 위 기본 규칙(right:0) 그대로 사용. */
+    /* 어드민 레이아웃(2026-08-30, 사용자 확정): 설정 패널을 맨 왼쪽에 두고, 어드민 작업패널(adm-home/vm/hnn/gp)은
+       설정 바로 오른쪽 옆으로 밀어 나란히 놓는다(설정 leftmost → 그 옆에 vm). 우주를 가려도 무방(어드민 전용).
+       설정이 닫혀 있으면 작업패널은 원래 좌측 끝에서 시작(아래 :has로 열렸을 때만 밀어냄). */
+    body.is-admin #settings-panel{right:auto;left:0;border-radius:0 16px 16px 0;}
+    body.is-admin:has(#settings-panel.open) #adm-home-overlay,
+    body.is-admin:has(#settings-panel.open) #hnn-overlay,
+    body.is-admin:has(#settings-panel.open) #vm-overlay,
+    body.is-admin:has(#settings-panel.open) #gp-overlay{padding-left:332px;} /* 설정 폭 320 + 여백 12 */
     #search-wrap{top:58px;bottom:auto;left:auto;right:16px;transform:none;width:320px;}
   }
   /* ── Journal sidebar ─────────────────────────────── */
