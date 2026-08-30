@@ -10320,7 +10320,7 @@ window.addEventListener('pointerdown',e=>{if(e.target.closest('[data-modal]')){_
 // 열림이 그대로 튀어나오던 문제). 자동열림 수명(_obTimer 예약 중 or _obActive) 동안만 관여.
 window.addEventListener('pointerdown',e=>{
   if(!_obTimer&&!_obActive)return;
-  if(e.target.closest('#feed-overlay,#tab-feed,#dh-feed-btn'))return; // 탐험 패널/탐험 열기 버튼은 제외
+  if(e.target.closest('#feed-overlay,#tab-feed,#dh-feed-btn,#gc-totop'))return; // 탐험 패널/탐험 열기 버튼/맨위로 버튼은 제외 — #gc-totop은 패널 조작이라 닫기 대상 아님(2026-08-30, "top버튼 눌러도 닫힘" 제보)
   _dismissOnboardHint();
 },true);
 
@@ -18145,6 +18145,10 @@ _wireTotop(memberPanelEl);
 // 달아야 함 — 이전엔 절대 스크롤되지 않는 안쪽 래퍼에 붙어있어서 scrollTop이 항상 0이라 버튼이 아예
 // 안 뜨고 있었음(2026-08-04, 사용자 제보 — "왜 또 사라짐").
 _wireTotop(connPanelEl);
+// window pointerdown 핸들러(closePanels·_dismissOnboardHint)가 "패널 밖 클릭"으로 오인해 탐험 패널을
+// 닫아버리는 것 차단 — 맨위로 버튼은 body 자식이라 [data-modal] 가드에 안 걸린다. click의 stopPropagation은
+// pointerdown보다 늦어 소용없어 여기서 pointerdown을 막는다(2026-08-30 사용자 제보 — "top버튼 눌러도 닫힘").
+_totopBtn.addEventListener('pointerdown',e=>e.stopPropagation());
 _totopBtn.addEventListener('click',e=>{
   e.stopPropagation();
   const _el=_totopScrollTarget;

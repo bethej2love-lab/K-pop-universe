@@ -36,6 +36,8 @@
 
 ## 2026-08-30
 
+- [완료][index.html] **나침반 탐험 패널 "맨 위로(↑)" 버튼이 스크롤 대신 패널을 닫던 버그 수정**(사용자 제보). 원인: "자동 열린 탐험 패널을 밖을 건드리면 닫는" window pointerdown 핸들러가 2겹 — ①capture 단계(10321) 제외목록에 맨위로 버튼(#gc-totop)이 없어 밖으로 오인·닫음(capture라 버튼 bubble stopPropagation보다 먼저 발동) ②bubble 단계(10316)도 [data-modal] 아니라 닫음. 해결: capture 제외목록에 `#gc-totop` 추가 + 버튼에 pointerdown stopPropagation(bubble 차단). 헤드리스(데스크톱)로 버튼=유지·바깥=닫힘 검증.
+
 - [완료][admin.js][index.html] **원곡 v2 — 동기화 자동적용을 credit·artist로 게이트 + 실DB 감사**. 실DB 커버 키워드 6천 표본 감사 결과: cover_of 추가 후보 885건 중 **크레딧(원곡:X)·아티스트표기는 오탐 0**(아일릿→보아·킥플립→스키즈 등 전부 정확), 반면 따옴표/대시/챌린지태그/평문은 **동음이의 곡명 오탐**(‘Winter Wonderland’→샤이니, ‘Smoke’·‘Wait’·‘SUMMER_FESTA’ 등)이 섞임. → 동기화 자동적용은 명시적 인간표기(credit/artist)만, 나머지는 "🎵 원곡 태깅 v2" 스윕(표본확인+스냅샷)이 담당하도록 게이트. `_COVER_EXCLUDE`에 `cover highlight(s)` 추가(패션필름). with_ 정리(원곡자를 콜라보에서 제거)는 감사 표본에서 깨끗(빌리 SHINee 커버 등). cover-resolve 45/45.
 
 - [완료·실사용확인필요][admin.js] **원곡 태깅 v2 — 동기화 시점 적용**(남은작업①). `_extBuildRows`(외부채널=음악방송·커버 채널 동기화)에서 rows.push 직전 `_coverResolve` 호출(sync, try/catch) → 커버 확정 시 원곡자를 `with_*`→`cover_of_*`로 옮기고 with_ 정리·`cover_of_song` 저장. 기존 "커버키워드+6년선배" 휴리스틱(곡명 근거 없이 세대차만으로 커버 처리) 제거, v2로 대체. 게스트는 일단 with_로 넣고 v2가 재분류. 차트 A등급은 async라 동기화선 생략(디스코 사전만, 나머진 스윕 backfill). group_ko 재배정은 동기화에선 안 함(owner 고정). patch 계약 검증(원곡: 슈주/소시 → cover_of로 이동+with_비움 확인).
