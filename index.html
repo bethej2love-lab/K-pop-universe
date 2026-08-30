@@ -15784,7 +15784,7 @@ const _FEED_TREND_DAYS=7,_FEED_TREND_MAX=24,_FEED_TREND_PER_GROUP=2;
 // "varied 메이슨리" — 여백 없는 2열 메이슨리를 기본으로 하되, 가로영상을 간간이 전체폭(featured, 큰 16:9)으로
 // 끼워 큰 것·작은 것이 섞인 잡지/탐색 느낌을 낸다(2026-08-30 사용자 요청). 전체폭 쇼츠는 세로가 과도해 안 함.
 // add(isShort) → {el:붙일 컨테이너, feat:전체폭featured여부}. featured면 새 masonry 세그먼트가 그 아래로 이어짐.
-function _makeVariedMasonry(container){
+function _makeVariedMasonry(container,varied){
   if(!container)return ()=>({el:container,feat:false});
   container.innerHTML='';
   container.classList.remove('feed-grid','feed-masonry'); container.classList.add('feed-varied');
@@ -15793,7 +15793,7 @@ function _makeVariedMasonry(container){
   const newSeg=()=>{const seg=document.createElement('div');seg.className='feed-masonry';colA=document.createElement('div');colB=document.createElement('div');colA.className='feed-masonry-col';colB.className='feed-masonry-col';seg.appendChild(colA);seg.appendChild(colB);container.appendChild(seg);hA=0;hB=0;};
   newSeg();
   return function(isShort){
-    if(!isShort && since>=3){ // 가로영상을 최소 3장 간격으로 전체폭 featured
+    if(varied && !isShort && since>=3){ // (varied=true일 때만) 가로영상을 최소 3장 간격으로 전체폭 featured
       since=0;
       const feat=document.createElement('div');feat.className='feed-varied-feat';container.appendChild(feat);
       newSeg(); // featured 아래로 새 2열 메이슨리 세그먼트
@@ -15841,7 +15841,7 @@ async function _buildFeedTrend(){
     };
     // 큰 것·작은 것, 가로·쇼츠가 섞인 잡지형 배치(2026-08-30 사용자 요청) — varied 메이슨리:
     // 여백 없는 2열 메이슨리 + 가로영상을 간간이 전체폭(featured, 큰 16:9)으로. 순서는 셔플 그대로(비율 안 묶음).
-    const add=_makeVariedMasonry(strip);
+    const add=_makeVariedMasonry(strip,false); // 순수 메이슨리(여백0). varied=true면 큰 featured 섞이지만 경계 여백 생김
     songs.forEach((song,idx)=>{
       const isShort=_songIsShort(song);
       // 서브는 "그룹 · N일 전" — 조회수를 안 쓰는 이유는 위 주석(순위표처럼 보이지 않게)과 같다.
