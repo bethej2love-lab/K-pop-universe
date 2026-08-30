@@ -9957,7 +9957,9 @@ document.getElementById('tab-explore').addEventListener('click',e=>{
   _closeFeedOverlay();
   if(!bubbleMeshes.length)return;
   const item=_pickExploreTarget();const{bm}=item;
+  const _keepSet=_isAdmin()&&document.getElementById('settings-panel').classList.contains('open'); // 어드민 설정 패널 유지(2026-08-30)
   closePanels();
+  if(_keepSet){document.getElementById('settings-panel').classList.add('open');['tab-settings','dh-settings-btn'].forEach(id=>document.getElementById(id)?.classList.add('active'));}
   // 모바일: closeMobSheet의 330ms 타이머 없이 즉시 시트 초기화 (타이머가 fly 완료 후 display를 재조작하는 충돌 방지)
   if(isMob()){
     clearTimeout(_mobCloseTimer);
@@ -10288,7 +10290,10 @@ document.getElementById('dh-explore-btn').addEventListener('click',e=>{
   _dismissFavHint();
   if(!bubbleMeshes.length)return;
   const item=_pickExploreTarget();const{bm}=item;
+  // 어드민 설정 패널은 작업 콘솔이라, 탐험(✦) 눌러도 닫지 않는다(2026-08-30 사용자 요청). 카드는 오른쪽에 열려 안 겹침.
+  const _keepSet=_isAdmin()&&document.getElementById('settings-panel').classList.contains('open');
   closePanels();closeCards();
+  if(_keepSet){document.getElementById('settings-panel').classList.add('open');document.getElementById('dh-settings-btn')?.classList.add('active');}
   flyToBubble(bm.mesh.position,bm.radius);
   flyState.onComplete=()=>{
     setTimeout(()=>{

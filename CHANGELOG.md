@@ -36,6 +36,7 @@
 
 ## 2026-08-30
 
+- [완료][index.html] **어드민 설정 패널: 탐험(✦) 눌러도 안 닫힘**(사용자 요청). 탐험 버튼 핸들러(모바일 tab-explore·데스크톱 dh-explore-btn)가 `closePanels()`로 설정을 닫던 걸, `_isAdmin()`이고 설정이 열려 있으면 closePanels 후 다시 열어 유지(설정은 어드민 작업 콘솔이라). 카드는 오른쪽에 열려 안 겹침. showGC는 설정 안 건드림 확인. 헤드리스: 어드민 유지·비어드민 기존대로 닫힘.
 - [완료][index.html] **검색창 자연 닫힘 로직 개선**(사용자 제보 — 자연스럽게 안 꺼지는 경우). 원인: 바깥클릭 닫기는 `window` pointerdown(버블) 핸들러가 하는데, 탐험 패널(`#feed-overlay` 등)이 자체 pointerdown을 stopPropagation해서 그 안을 누르면 핸들러가 아예 안 불려 검색이 남았음(데스크톱은 탐험 패널이 늘 열려 있어 자주 발생). 해결: **캡처 단계** document pointerdown 리스너 신설 — stopPropagation 전에 항상 먼저 발동, 검색 UI(입력·결과: #search-wrap/#ob-top-search/#ob-sr/#mob-sr/#tab-sb-input/.sr-item)만 빼고 어디를 누르든 열린 검색을 닫는다(`_closeSearchUIs` 공용 헬퍼). `closePanels`에도 ob 검색 닫기 추가(버튼/네비로 닫을 때 누락 방지). 헤드리스: 탐험 패널 안 클릭→검색 닫힘, 검색창 자체 클릭→유지 확인.
 - [완료][index.html] **영상 케밥 정렬 라벨 변경**(사용자 요청) — 카드 영상 ⋮ 정렬: '업로드순'→**'최신순'**, '오래된순'→**'날짜순'**(chSortNew/chSortOld KO 라벨만, 정렬 동작·EN은 그대로).
 - [완료][groups.json][index.html] **그룹 인스타 대량 보강 + 인스타 2개 지원**(사용자 요청). ①무인스타 그룹 82개 웹 전수조사(백그라운드 에이전트) → **활성 40 + 해체-계정잔존 9 = 49개 공식 인스타 추가**(raw 타겟 삽입으로 포맷 보존, 49줄 추가만·삭제0). 개명 3건(클라씨→CLASSy `m25_classy`·걸셋←VCHA·앨리스←ELRIS) 보류, 계정 없는 해체 29개 제외. ②인스타 2개 케이스 지원 — `_LINK_DEFS`에 `instagram2` 키 신설(메인 오른쪽에 보조 아이콘). 브브걸: 새 BBGIRLS `weare_bbgirls`를 메인(프사 클릭 타겟 `_gcPicCfg.instaUrl`)으로, 기존 브레이브걸스 `bravegirls.official`은 삭제 않고 instagram2로 병기. 헤드리스로 프사 타겟·링크 줄 2아이콘 확인. ※클라씨 핸들·섹션B 해체계정은 비활성 가능성 있어 실기기 확인 권장. 감사: 사진 있는데 인스타 없음 0건, 인스타 있는데 사진 없음 3건(플레이브·브브걸=사진만 미업로드 / 라임라잇=MADEIN 개명으로 인스타 사망).
