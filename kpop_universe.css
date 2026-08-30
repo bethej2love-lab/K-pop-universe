@@ -2320,6 +2320,9 @@
   .share-btn:hover{color:rgba(210,222,255,0.95);transform:scale(1.18);}
   .share-btn:active{transform:scale(0.9);}
   .trophy-btn+.share-btn{margin-left:-6px;position:relative;top:-0.25px;}
+  /* 카드 단위 ⋮ 메뉴 버튼(2026-08-30) — 공유 아이콘 옆. 텍스트 글리프라 크기/정렬만 별도로. */
+  .card-menu-btn{font-size:17px;line-height:1;letter-spacing:0;color:rgba(190,205,240,0.5);}
+  .share-btn+.card-menu-btn{margin-left:-3px;position:relative;top:-1px;}
   @media(max-width:768px){.trophy-btn+.share-btn{top:0.5px;}}
   #share-toast{position:fixed;left:50%;bottom:32px;transform:translateX(-50%) translateY(12px);background:rgba(20,24,40,0.94);color:rgba(230,238,255,0.95);font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;font-size:12.5px;font-weight:600;padding:9px 16px;border-radius:20px;box-shadow:0 6px 24px rgba(0,0,0,0.35);z-index:200;opacity:0;pointer-events:none;transition:opacity .2s ease,transform .2s ease;white-space:nowrap;}
   #share-toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
