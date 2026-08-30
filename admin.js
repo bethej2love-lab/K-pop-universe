@@ -1770,6 +1770,60 @@ async function _ytScanAmbiguousNameGroupMisassignment(){
 // _ATM_HASHTAG_ONLY_NAMES에 새로 추가되면, 이미 members에 평문 매칭으로 잘못 들어간 값은 이걸로 걷어낸다.
 // _ytAutoTagMembers는 members가 "비어있는" 행만 채우므로 이미 채워진(오염된) 행은 절대 건드리지 않음 —
 // 그래서 별도 재검증 스윕이 필요함. tags_manual=true(관리자 직접 저장)는 여기서도 절대 안 건드림.
+// ── 편집 모달 오태깅 규칙 등록 + 이름 한정 재검증(2026-08-30) ────────────────────────────────
+// 흔한단어 보호(_ATM_DYNAMIC_HASHTAG_NAMES ← name_match_whitelist)는 유일하게 UI 추가 경로가 없어(스캔 화면
+// 제거 후 SQL 전용) 오태깅이 계속 쌓였다. 이제 연필(편집) 모달에서 잘못 붙은 이름 옆 ⚑로 그 자리에서 규칙을
+// 등록하고, 곧바로 그 이름이 평문으로 붙은 다른 자동태깅 행을 한정 재검증해 기존 오염까지 같이 정리한다.
+// 이름은 실제 로스터(ARTISTS)에 있는 등록명만 허용 — 유령 항목('JIN' 같은 죽은 규칙) 방지.
+async function _atmRegisterHashtagName(name){
+  if(!sb)return{ok:false,msg:'Supabase 연결 없음'};
+  name=(name||'').trim();
+  if(!name)return{ok:false,msg:'이름이 비었어요'};
+  const exists=ARTISTS.some(a=>a.name.ko===name||(a.name.en&&a.name.en.toLowerCase()===name.toLowerCase()));
+  if(!exists)return{ok:false,msg:`"${name}"은(는) 등록된 멤버 이름이 아니에요 — 정확한 등록명으로만 규칙을 만들 수 있어요.`};
+  if(_ATM_HASHTAG_ONLY_NAMES.has(name)||_ATM_DYNAMIC_HASHTAG_NAMES.has(name))return{ok:true,already:true};
+  const{error}=await sb.from('name_match_whitelist').insert({name});
+  if(error&&!/duplicate|unique/i.test(error.message||''))return{ok:false,msg:'추가 실패: '+error.message};
+  _ATM_DYNAMIC_HASHTAG_NAMES.add(name);
+  return{ok:true};
+}
+// 이름 한정 멤버 재검증 — _ytSweepMembersMistag(전체)와 같은 로직·안전장치(스냅샷·수동보호·200배치)를 members에
+// 그 이름이 든 자동태깅 행으로만 좁혀 돌린다. 규칙 등록 직후 기존 오염을 그 이름에 한해 즉시 정리하는 용도.
+async function _atmScopedMemberReverify(name){
+  if(!sb)return;
+  _ytSetProg(`["${name}" 재검증] 조회 중…`);
+  const{data:rows,error}=await _sbFetchAll(()=>sb.from(_YT_TABLE)
+    .select('id,title,description,group_ko,members,published_at')
+    .eq('tags_manual',false).contains('members',[name]).order('id'));
+  if(error){_ytSetProg('조회 실패: '+error.message);return;}
+  if(!rows?.length){_ytSetProg(`"${name}"이(가) 자동 태깅된 영상이 없어요`);return;}
+  const updates=[];
+  rows.forEach(v=>{
+    const roster=ARTISTS.filter(a=>_artistGroups(a).some(g=>g.ko===v.group_ko)).map(a=>({ko:a.name.ko,en:a.name.en,left:a.left}));
+    if(!roster.length)return;
+    const validSet=new Set(_atmResolveMembers(v.title,v.description,roster,v.group_ko,v.published_at));
+    const curM=v.members||[];
+    const newM=curM.filter(mko=>validSet.has(mko));
+    if(newM.length!==curM.length)updates.push({id:v.id,patch:{members:newM}});
+  });
+  if(!updates.length){_ytSetProg(`검사 완료 — "${name}" 관련 근거없는 태그 없음 (${rows.length}개 확인)`);return;}
+  if(!confirm(`"${name}"이(가) 근거 없이(평문 매칭) 붙은 영상 ${updates.length}개에서 이 이름을 뺄까요?\n\n· 자동 태깅(tags_manual=false)만 · 스냅샷 저장되어 되돌리기 가능\n· 그룹 배정까지 틀린 경우(예: group_ko가 이 이름 때문에 잘못 정해진 것)는 "② 오태깅 그룹 재배정"을 따로 돌리세요.`)){_ytSetProg(`취소됨 — 재검증 예정 ${updates.length}개(미적용).`);return;}
+  await _snapshotBeforeBulk(`"${name}" 이름 한정 멤버 재검증`,updates.map(u=>u.id));
+  for(let i=0;i<updates.length;i+=200){
+    const results=await Promise.all(updates.slice(i,i+200).map(u=>sb.from(_YT_TABLE).update(u.patch).eq('id',u.id)));
+    const f=results.find(r=>r.error);if(f){_ytSetProg('오류: '+f.error.message);return;}
+    _ytSetProg(`["${name}" 재검증] ${Math.min(i+200,updates.length)}/${updates.length}개…`);
+  }
+  _ytSetProg(`완료! "${name}"을(를) ${updates.length}개 영상에서 제거함. (되돌리기: "↩︎ 마지막 일괄 작업 되돌리기")`);
+}
+// ⚑ 흐름: 흔한단어 규칙 등록 → 곧바로 그 이름 한정 재검증 제안. 발견→규칙→청소가 한 자리에서 끝난다.
+async function _atmMemberRuleFlow(name){
+  if(!confirm(`"${name}"을(를) 흔한 단어로 등록할까요?\n\n앞으로 제목에 #${name} 해시태그가 명시된 경우만 이 이름으로 매칭돼요. 평문 "${name}"만 있는 무관한 영상엔 더 이상 안 붙어요.`))return;
+  const r=await _atmRegisterHashtagName(name);
+  if(!r.ok){alert(r.msg);return;}
+  _ytSetProg(r.already?`"${name}"은(는) 이미 흔한단어 보호 목록에 있어요.`:`"${name}"을(를) 흔한단어 보호에 등록했어요(#해시태그만 인정).`);
+  await _atmScopedMemberReverify(name); // 기존 오염분 정리 제안(내부에서 건수 확인 후 confirm)
+}
 async function _ytSweepMembersMistag(){
   if(!sb){_ytSetProg('Supabase 연결 없음');return;}
   const btn=document.getElementById('sp-membersfix-btn');
@@ -5704,6 +5758,13 @@ function _renderVidTagMemberCheckboxes(gko,{soloAutoCheck=false,unitGuess=null,s
     if(soloAutoCheck||unitGuess?.has(a.name.ko)||savedMembers?.has(a.name.ko))cb.checked=true;
     label.appendChild(cb);
     label.appendChild(document.createTextNode(a.name.ko));
+    // ⚑ 오태깅 규칙 등록(2026-08-30) — 이 이름이 흔한 단어라 무관 영상에 붙는 경우, 체크 해제하고 여기서
+    // 바로 "해시태그만 인정" 규칙 등록 + 그 이름 한정 재검증(발견→규칙→청소를 이 자리에서).
+    const flag=document.createElement('span');
+    flag.className='vid-tag-rule-flag';flag.textContent='⚑';
+    flag.title='이 이름이 흔한 단어라 오태깅되면: 규칙 등록(해시태그만) + 재검증';
+    flag.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();_atmMemberRuleFlow(a.name.ko);});
+    label.appendChild(flag);
     membersEl.appendChild(label);
   });
 }
