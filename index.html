@@ -10996,6 +10996,39 @@ function _pickColTarget(col,onDone){
   ov.appendChild(hd);ov.appendChild(inp);ov.appendChild(curWrap);ov.appendChild(list);
   refreshCur();render('');setTimeout(()=>inp.focus(),60);
 }
+// 공개 사진 컬렉션(남의 것) 읽기 전용 뷰어(2026-08-30 Phase2) — 업로드/삭제/대상수정 없음. 만든 사람 닉네임 +
+// 은은한 가이드라인 + 신고 버튼(부적절 콘텐츠 takedown 경로, 법적 장치). col은 _loadCollectionRow의 공개 매핑 객체.
+function _openPublicColPhotoGrid(col){
+  const photos=(col.photos||[]).map(p=>typeof p==='string'?{u:p}:p);
+  let ov=document.getElementById('col-photo-overlay');
+  if(!ov){ov=document.createElement('div');ov.id='col-photo-overlay';ov.style.cssText='position:fixed;inset:0;z-index:120;background:rgba(8,10,22,0.97);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);display:none;flex-direction:column;';document.body.appendChild(ov);}
+  ov.innerHTML='';
+  const hd=document.createElement('div');hd.style.cssText='display:flex;align-items:center;gap:8px;padding:calc(14px + env(safe-area-inset-top,0px)) 16px 10px;';
+  const tw=document.createElement('div');tw.style.cssText='flex:1;min-width:0;';
+  const nm=document.createElement('div');nm.style.cssText='font-size:15px;font-weight:700;color:#eef4ff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;';nm.textContent=col.name;
+  const sub=document.createElement('div');sub.style.cssText='font-size:11px;color:rgba(150,175,225,0.6);margin-top:2px;';sub.textContent=(col.ownerNick?`by ${col.ownerNick} · `:'')+(currentLang==='ko'?`${photos.length}장`:`${photos.length} photos`);
+  tw.appendChild(nm);tw.appendChild(sub);
+  const rep=document.createElement('button');rep.textContent=currentLang==='ko'?'신고':'Report';rep.style.cssText='background:none;border:0.5px solid rgba(200,140,140,0.4);color:rgba(220,170,170,0.85);border-radius:14px;padding:5px 11px;font-size:11px;cursor:pointer;white-space:nowrap;';
+  rep.addEventListener('click',()=>_reportPublicCollection(col));
+  const closeBtn=document.createElement('button');closeBtn.textContent='✕';closeBtn.setAttribute('aria-label','닫기');closeBtn.style.cssText='background:none;border:none;color:rgba(200,215,245,0.7);font-size:18px;cursor:pointer;padding:4px 8px;';
+  closeBtn.addEventListener('click',()=>{ov.style.display='none';});
+  hd.appendChild(tw);hd.appendChild(rep);hd.appendChild(closeBtn);
+  const guide=document.createElement('div');guide.style.cssText='font-size:8.5px;color:rgba(150,175,225,0.22);padding:0 16px 6px;line-height:1.3;';guide.textContent=currentLang==='ko'?'비하·성적 대상화 금지 · 저작권자 요청 시 삭제':'No demeaning/sexualizing · removable on request';
+  const grid=document.createElement('div');grid.style.cssText='padding:2px 12px 24px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;align-content:start;';
+  const scrollWrap=document.createElement('div');scrollWrap.style.cssText='flex:1;min-height:0;overflow-y:auto;';scrollWrap.appendChild(grid);
+  if(!photos.length){const em=document.createElement('div');em.style.cssText='grid-column:1/-1;text-align:center;color:rgba(150,175,225,0.45);padding:44px 0;font-size:13px;';em.textContent=currentLang==='ko'?'사진이 없어요':'No photos';grid.appendChild(em);}
+  else photos.forEach((ph,idx)=>{const cell=document.createElement('div');cell.style.cssText='position:relative;border-radius:8px;overflow:hidden;background:rgba(255,255,255,0.05);cursor:pointer;';const im=document.createElement('img');im.src=ph.u;im.loading='lazy';im.style.cssText='display:block;width:100%;aspect-ratio:1;object-fit:cover;';im.addEventListener('click',()=>_openPhotoFull(photos,idx));cell.appendChild(im);grid.appendChild(cell);});
+  ov.appendChild(hd);ov.appendChild(guide);ov.appendChild(scrollWrap);
+  ov.style.display='flex';
+}
+function _reportPublicCollection(col){
+  if(!confirm(currentLang==='ko'?'이 컬렉션을 부적절한 콘텐츠로 신고할까요?':'Report this collection as inappropriate?'))return;
+  const uid=window._sbSession?.user?.id||null;
+  if(sb){sb.from('collection_reports').insert({collection_id:col.id,reporter_id:uid,reason:'user_report'}).then(({error})=>{
+    alert(error?(currentLang==='ko'?'신고 접수에 실패했어요. 잠시 후 다시 시도해주세요.':'Report failed. Try again later.'):(currentLang==='ko'?'신고가 접수됐어요. 검토 후 조치할게요.':"Reported. We'll review it."));
+    if(error)console.error('신고 실패',error.message);
+  });}else alert(currentLang==='ko'?'신고가 접수됐어요.':'Reported.');
+}
 function _openColPhotoGrid(colId){
   const col=collections.find(p=>p.id===colId);if(!col)return;
   if(!col.photos)col.photos=[];
@@ -11254,11 +11287,15 @@ function _syncPublicCollection(col){
     const items=(cover&&col.videos[0]!==cover)?[cover,...col.videos.filter(v=>v!==cover)]:col.videos;
     // return — 기존 호출부는 다 fire-and-forget으로 쓰지만(반환값 무시해도 무해), 공유 카드 업로드처럼
     // "이 upsert가 끝난 뒤에" 순서가 보장돼야 하는 새 호출부가 await할 수 있게 함(2026-08-21).
-    return sb.from('public_collections').upsert({
+    const _payload={
       id:col.id,owner_id:uid,owner_nick:myProfile?.nickname||null,name:col.name,desc:col.desc||null,items,
       cover_img:col.coverImg||null,
       group_kos:_collectionGroupKos(col),member_kos:_collectionMemberKos(col),updated_at:new Date().toISOString()
-    }).then(({error})=>{if(error)console.error('공개 컬렉션 동기화 실패',error.message);});
+    };
+    // 사진 컬렉션은 사진 배열도 함께 올린다(2026-08-30) — 영상 컬렉션 upsert엔 photos를 안 넣어, 마이그레이션
+    // 전에도 영상 공개는 안 깨진다(사진 공개는 photos 컬럼이 있어야 정상 저장됨).
+    if(col.kind==='photo')_payload.photos=col.photos||[];
+    return sb.from('public_collections').upsert(_payload).then(({error})=>{if(error)console.error('공개 컬렉션 동기화 실패',error.message);});
   }else{
     return sb.from('public_collections').delete().eq('id',col.id).eq('owner_id',uid)
       .then(({error})=>{if(error)console.error('공개 컬렉션 비공개 전환 실패',error.message);});
@@ -17917,8 +17954,12 @@ async function _warmPubCollections(){
   try{
     // 유저가 공개하는 만큼 늘어나는 테이블이라 1,000행 함정 대상 — _sbSelectAll 주석 참고.
     // updated_at은 동률이 날 수 있어 id를 2차 정렬로 붙인다(페이지 경계에서 행이 새거나 겹치는 것 방지).
-    const{data,error}=await _sbSelectAll(()=>sb.from('public_collections').select('id,owner_id,owner_nick,name,desc,items,cover_img,member_kos,group_kos,updated_at').order('updated_at',{ascending:false}).order('id'));
-    if(error){console.error('public_collections warm failed',error);return;}
+    // photos 컬럼(사진 컬렉션용, 2026-08-30 마이그레이션)은 있으면 같이 받고, 아직 없으면(마이그레이션 전)
+    // 기존 컬럼만으로 폴백해 영상 공개 컬렉션 로딩이 안 끊기게 한다 — 없는 컬럼을 select하면 쿼리 전체가 에러남.
+    const _base='id,owner_id,owner_nick,name,desc,items,cover_img,member_kos,group_kos,updated_at';
+    const _sel=cols=>_sbSelectAll(()=>sb.from('public_collections').select(cols).order('updated_at',{ascending:false}).order('id'));
+    let{data,error}=await _sel(_base+',photos');
+    if(error){({data,error}=await _sel(_base));if(error){console.error('public_collections warm failed',error);return;}}
     _pubCollectionsCache=data||[];
   }catch(e){console.error('_warmPubCollections failed',e);}
 }
@@ -17942,7 +17983,8 @@ async function _loadCollectionRow(ko,containerId,memberKo,cardMemberKo){
     // 일은 드물어 실사용 누수를 사실상 없앤다.)
     pub=all.filter(r=>!mineIds.has(r.id)&&(memberKo?((r.member_kos||[]).includes(memberKo)&&(r.group_kos||[]).includes(ko)):(r.group_kos||[]).includes(ko)))
       .sort((a,b)=>(_colLikeCounts.get(b.id)||0)-(_colLikeCounts.get(a.id)||0))
-      .slice(0,20).map(r=>({id:r.id,name:r.name,videos:r.items||[],coverImg:r.cover_img||null,mine:r.owner_id===uid,ownerNick:r.owner_nick||null}));
+      .slice(0,20).map(r=>({id:r.id,name:r.name,videos:r.items||[],coverImg:r.cover_img||null,mine:r.owner_id===uid,ownerNick:r.owner_nick||null,
+        kind:Array.isArray(r.photos)?'photo':undefined,photos:Array.isArray(r.photos)?r.photos:[]})); // photos 배열이 실려오면 사진 컬렉션
   }
   // 대기 중 다른 카드로 전환됐으면 건너뜀
   if(cardMemberKo?_openTArtist?.name?.ko!==cardMemberKo:_openGCko!==ko)return;
