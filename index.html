@@ -13847,7 +13847,12 @@ function _openFeedOverlay(){
     _buildFeedRec();
     _feedRecBuiltAt=now;
   }
-  _feedSwitchTab('rec',true); // 열 땐 항상 추천 탭으로(발견은 그 탭을 눌러야 지연 로드)
+  // 시작 탭: For You가 "나"라서 개인화 재료(즐겨찾기/시청기록)가 하나라도 있으면 For You로 연다.
+  // 둘 다 없는 완전 신규는 For You가 안내 카드뿐이라 첫인상이 얇으니 Discover(전체·탐색)로 연다(2026-08-30).
+  // (탭은 둘 다 그대로 있고 안내 카드도 유지 — 즐겨찾기/시청기록이 생기면 자연히 다음부터 For You가 기본.)
+  let _hasHistory=false; try{_hasHistory=JSON.parse(localStorage.getItem(_RECENT_VIEW_KEY)||'[]').length>0;}catch(e){}
+  const _startTab=(favGroups.size||favMembers.size||_hasHistory)?'rec':'disc';
+  _feedSwitchTab(_startTab,true); // Discover는 그 탭으로 전환할 때 지연 로드됨(_feedSwitchTab 내부)
   if(!el._bound){el._bound=true;
     // 데스크톱에서 왼쪽 슬라이드 패널로 뜰 때, 패널 안을 클릭해도 3D 씬 클릭(window의 pointerdown/click
     // 리스너, closePanels 포함)으로 새지 않도록 막음 — #feed-overlay는 본문 스크립트보다 나중에 파싱되는
