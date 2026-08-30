@@ -1846,6 +1846,10 @@
   @media(min-width:769px){
     #tabbar{display:none;}
     #settings-panel{top:58px;bottom:auto;right:0;width:320px;border-radius:16px 0 0 16px;max-height:calc(100vh - 78px);overflow-y:auto;}
+    /* 어드민 설정 패널 스톱갭(2026-08-30): 관리자는 패널이 33버튼+캡션이라 오른쪽 카드(#side-panel)를 통째로
+       가렸다. 왼쪽에 도킹해 카드는 오른쪽에 그대로 열려 있게 한다(P1 좌측 콘솔의 예고편). 일반 유저 패널은
+       항목이 적어 오른쪽 유지. */
+    body.is-admin #settings-panel{right:auto;left:0;border-radius:0 16px 16px 0;}
     #search-wrap{top:58px;bottom:auto;left:auto;right:16px;transform:none;width:320px;}
   }
   /* ── Journal sidebar ─────────────────────────────── */

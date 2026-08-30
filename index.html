@@ -18355,6 +18355,9 @@ function _updateAdminUI(){
   if(_isAdmin())_mountAdminMarkup(); // 마크업이 template 안에 있으므로 먼저 꺼내야 아래 조회가 성립
   const sec=document.getElementById('sp-yt-sec');
   if(sec)sec.style.display=_isAdmin()?'':'none';
+  // 어드민이면 body에 표식 — 데스크톱에서 설정 패널(33버튼)이 오른쪽 카드를 통째로 가리던 문제 스톱갭:
+  // CSS(body.is-admin #settings-panel)로 설정 패널을 왼쪽에 도킹해 카드는 오른쪽에 그대로 보이게 한다(2026-08-30).
+  document.body.classList.toggle('is-admin',_isAdmin());
 }
 // 관리자 전용 도구(동기화/스윕/태깅 모달 등)는 admin.js에 분리해뒀다가, 관리자로 확인될 때만 불러온다 —
 // 일반 방문자는 이 코드를 아예 다운로드하지 않음. 같은 전역 스코프를 쓰는 일반 스크립트라 로드가 끝나야
