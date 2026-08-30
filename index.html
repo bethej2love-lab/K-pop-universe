@@ -16491,9 +16491,11 @@ function _makeChVidController(contId){
       const songs=rows.map(v=>_apiVidToSong(v,memberKo||'',ko));
       const hd=document.createElement('div');hd.className='tv-cover-of-hd';hd.textContent=currentLang==='ko'?'다른 아티스트의 커버':'Covers by Other Artists';
       wrap.appendChild(hd);
-      const grid=document.createElement('div');grid.className='tv-mix-grid';
-      songs.forEach(song=>grid.appendChild(makeSmallThumb(song,songs,0,{groupKo:ko})));
-      wrap.appendChild(grid);
+      // 비율 인지 배치(2026-08-30) — 예전엔 그냥 songs.forEach(appendChild)라 가로/쇼츠가 섞여 여백이 생겼다
+      // (사용자 제보). 연결 카드 영상 그리드와 똑같이 비율별 정렬 후 _renderMixedVidGrid(=_groupMixedVids로
+      // 같은 비율끼리 한 행, 경계는 전체폭)로 통일. 정렬 순서가 곧 라이트박스 스와이프 순서(all)라 일치한다.
+      const _sorted=_sortMixedByAspect(songs);
+      _renderMixedVidGrid(_sorted,wrap,_sorted,{groupKo:ko});
       // 무한 목록 밑에서 파묻히던 걸(2026-08-22 사용자 제보) "커버" 탭 전용으로 옮김 — 카드 열 때 1회
       // 로드해두되, 실제 노출은 커버 탭(짧은 목록)일 때만. 다른 탭에선 숨겨 첫 화면을 깔끔하게 유지.
       wrap.dataset.hasContent='1';
