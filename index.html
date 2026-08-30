@@ -8572,6 +8572,9 @@ async function _fetchArtistPicAnyGroup(a){
 const _LINK_DEFS=[
   {key:'youtube',label:'YouTube',svg:'<svg viewBox="0 0 24 24" fill="none"><rect x="2" y="5" width="20" height="14" rx="4" stroke="currentColor" stroke-width="1.6"/><path d="M10 9.5l5 2.5-5 2.5z" fill="currentColor"/></svg>'},
   {key:'instagram',label:'Instagram',svg:'<svg viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="5" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="12" r="4.2" stroke="currentColor" stroke-width="1.6"/><circle cx="17.2" cy="6.8" r="1.2" fill="currentColor"/></svg>'},
+  // 인스타 2개인 그룹(예: 브브걸=BBGIRLS 새 계정 + 브레이브걸스 구 공식)용 보조 인스타 아이콘 — 메인(instagram) 바로 오른쪽에 그린다.
+  // 프로필 사진 클릭은 여전히 메인(links.instagram)으로 가고(_gcPicCfg), 이건 링크 줄에 아이콘만 하나 더.
+  {key:'instagram2',label:'Instagram',svg:'<svg viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="5" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="12" r="4.2" stroke="currentColor" stroke-width="1.6"/><circle cx="17.2" cy="6.8" r="1.2" fill="currentColor"/></svg>'},
   {key:'x',label:'X',svg:'<svg viewBox="-3 -3 30 30" fill="currentColor"><path d="M18.24 2.25h3.31L14.32 10.5l8.5 11.25H16.2l-4.72-6.23-5.4 6.23H2.75l7.73-8.84L2 2.25h6.06l4.26 5.63L18.24 2.25zm-1.16 17.52h1.83L7.08 4.13H5.12L17.08 19.77z"/></svg>'},
   {key:'weverse',label:'Weverse',svg:'<svg viewBox="0 0 24 24" fill="none"><path d="M12 21C6 17 2 13 2 9 2 6 4.5 4 7.5 4 9.5 4 11.2 5.8 12 7.5 12.8 5.8 14.5 4 16.5 4 19.5 4 22 6 22 9 22 13 18 17 12 21z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>'},
   {key:'tiktok',label:'TikTok',svg:'<svg viewBox="0 0 24 24" fill="none"><path d="M15 17a5 5 0 1 1-5-5V2h3.3c.4 3 2.8 5.4 5.7 5.8v3.2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>'},
