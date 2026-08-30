@@ -2435,6 +2435,7 @@ document.getElementById('hnn-atm-surname-add')?.addEventListener('click',async()
   const nameEl=document.getElementById('hnn-atm-surname-name'),valEl=document.getElementById('hnn-atm-surname-value');
   const name=(nameEl.value||'').trim(),sur=(valEl.value||'').trim();
   if(!name||!sur)return;
+  if(!ARTISTS.some(a=>a.name.ko===name)){alert(`"${name}"은(는) 등록된 멤버 이름이 아니에요 — 정확한 등록명으로 넣어야 규칙이 작동해요(유령 규칙 방지).`);return;} // 입력검증(2026-08-30)
   const existing=_ATM_DYNAMIC_SURNAME_EXCLUDE.get(name);
   const merged=[...(existing||[]),sur];
   const{error}=await sb.from('atm_exception_rules').upsert({type:'surname_exclude',key:name,value:merged},{onConflict:'type,key'});
@@ -2449,6 +2450,7 @@ document.getElementById('hnn-atm-comatch-add')?.addEventListener('click',async()
   const valEl=document.getElementById('hnn-atm-comatch-value');
   const gko=(valEl.value||'').trim();
   if(!gko)return;
+  if(!GROUPS[gko]){alert(`"${gko}"은(는) 등록된 그룹명이 아니에요 — 정확한 그룹 키로 넣어야 규칙이 작동해요(유령 규칙 방지).`);return;} // 입력검증(2026-08-30)
   const{error}=await sb.from('atm_exception_rules').upsert({type:'ambiguous_comatch',key:gko,value:null},{onConflict:'type,key'});
   if(error){alert('추가 실패: '+error.message);return;}
   _ATM_DYNAMIC_AMBIGUOUS_COMATCH.add(gko);
