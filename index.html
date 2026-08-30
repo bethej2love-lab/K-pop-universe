@@ -1766,7 +1766,7 @@ const T={
       all:'전체',girl:'걸그룹',boy:'보이그룹',coed:'혼성그룹',inactive:'비활동/탈퇴 멤버',reset:'↺ 초기화',powerSave:'절전 모드',psAuto:'자동',psOn:'켬',psOff:'끔',psHintAuto:'기기 성능을 보고 알아서 조절해요',psHintAutoOn:'자동 — 지금 절전 중이에요',psHintOn:'화질과 부드러움을 낮춰 발열을 줄여요',psHintOff:'항상 최고 화질로 그려요',
       searchPH:'그룹 · 멤버 검색…',mobileTitle:'케이팝 아이돌 지형도',srGroup:'그룹',
       preparing:'준비 중',gcAgency:'소속',gcDebut:'데뷔',gcFandom:'팬덤',gcLeader:'리더',gcMember:'멤버',gcSNS:'공식',
-      chSortRec:'추천순',chSortNew:'업로드순',chSortOld:'오래된순',chViewCon:'콘텐츠별 보기',chSearch:'영상 검색…',
+      chSortRec:'추천순',chSortNew:'최신순',chSortOld:'날짜순',chViewCon:'콘텐츠별 보기',chSearch:'영상 검색…',
       idxTitle:'인덱스',idxGroupTab:'그룹',idxMemberTab:'멤버',idxSearchPH:'그룹명 검색…',idxSearchPHMember:'멤버명 검색…',
       idxSortName:'이름 (가나다순)',idxSortDebut:'데뷔연도',idxSortAgency:'소속사',idxSortMembers:'멤버 수',
       idxSortBirth:'생년',idxSortGroup:'그룹명',idxSortNation:'국적',ppTitle:'내 프로필',ppNick:'닉네임',ppNickPH:'닉네임을 입력하세요',ppNickErr:'닉네임을 입력해주세요',ppBio:'한 줄 소개',ppBioPH:'선택사항',ppColor:'내 별 색상',ppFavLabel:'좋아요 공개',ppFavSub:'다른 사람들이 볼 수 있어요',ppSyncLabel:'다른 기기와 동기화',ppSyncSub:'다른 기기에서도 좋아요가 유지돼요',ppGoogleBtn:'구글로 연결하기',ppXBtn:'X로 연결하기',ppLinked:'계정에 연결됨 ✓',ppLogout:'로그아웃',ppSave:'저장',
@@ -2992,6 +2992,17 @@ function exitObSearch(){
   if(el){el.classList.remove('ob-show','ob-typing');el.classList.add('ob-hide');}
   const inp=document.getElementById('ob-si');if(inp){inp.value='';inp.blur();}
   const sr=document.getElementById('ob-sr');if(sr){sr.classList.remove('open');sr.innerHTML='';}
+}
+// 열려있는 모든 검색 UI를 닫는다(데스크톱 #search-wrap · 온보딩 ob 검색 · 모바일 검색) — pointerdown·closePanels
+// 양쪽에서 공용으로 써서, 모달/패널(탐험 패널 등 data-modal) 안을 눌러도 검색이 자연스럽게 닫히게 한다(2026-08-30).
+function _closeSearchUIs(){
+  const sw=document.getElementById('search-wrap');
+  if(sw&&sw.classList.contains('open')&&(myProfile?.nickname||!isMob())){
+    sw.classList.remove('open');
+    ['tab-search','dh-search-btn'].forEach(id=>document.getElementById(id)?.classList.remove('active'));
+  }
+  if(_obSearchMode)exitObSearch();
+  if(isMob())exitMobSearch();
 }
 function _dismissOnboardHint(){
   if(_obTimer){clearTimeout(_obTimer);_obTimer=null;}
@@ -9901,6 +9912,7 @@ if(window.ResizeObserver){
 }
 function closePanels(){
   if(myProfile?.nickname||!isMob())document.getElementById('search-wrap').classList.remove('open');
+  if(_obSearchMode)exitObSearch(); // 온보딩 ob 검색도 같이 닫는다(예전엔 pointerdown의 _dismissOnboardHint에만 의존해, 버튼/네비로 닫을 땐 남았음, 2026-08-30)
   document.getElementById('settings-panel').classList.remove('open');
   document.getElementById('journal-sidebar').classList.remove('open');
   _closeFeedOverlay();
@@ -10340,6 +10352,13 @@ document.getElementById('desktop-header').addEventListener('pointerdown',e=>e.st
   document.getElementById(id)?.addEventListener('pointerdown',e=>e.stopPropagation());
 });
 window.addEventListener('pointerdown',e=>{if(e.target.closest('[data-modal]')){_mdx=e.clientX;_mdy=e.clientY;return;}_mdx=e.clientX;_mdy=e.clientY;closePanels();_dismissOnboardHint();});
+// 검색창 자연 닫힘(2026-08-30) — 위 window 핸들러는 탐험 패널(feed-overlay 등)이 pointerdown을 stopPropagation해서
+// 그 안을 누르면 안 불린다. **캡처 단계**로 별도 등록하면 stopPropagation 전에 항상 먼저 발동하므로, 검색 UI
+// 자체(입력·결과)만 빼고 화면 어디를 누르든 열려있는 검색을 닫는다 — 웹앱 표준 "바깥 클릭 시 검색 닫힘".
+document.addEventListener('pointerdown',e=>{
+  if(e.target.closest('#search-wrap,#ob-top-search,#ob-sr,#mob-sr,#tab-sb-input,#tab-sb-clear,#tab-sb-icon,.sr-item'))return; // 검색 UI(입력·결과) 클릭은 유지
+  _closeSearchUIs();
+},true);
 // 자동 탐험 패널: 뜨기 전이면 예약 취소, 반쯤 뜬 뒤면 닫기 — 유저가 탐험 패널/탐험 버튼이 아닌 걸
 // 건드릴 때(2026-08-19, 사용자 요청). capture 단계라 위에서 bubble로 stopPropagation 하는 버튼들
 // (설정·검색바·탭바 등)을 눌러도 먼저 잡힌다(기존 bubble pointerdown은 그런 버튼에선 안 불려서, 자동
