@@ -15777,6 +15777,26 @@ function _buildFeedRandomVideo(list){
 // 기준도 조회수가 아니라 **업로드일**이고, 노출 순서는 랜덤이다(순위표처럼 보이지 않게 — Discovery
 // Trend 카드에서 이미 확립된 규칙).
 const _FEED_TREND_DAYS=7,_FEED_TREND_MAX=24,_FEED_TREND_PER_GROUP=2;
+// 2열 메이슨리(열 독립 스택) — 카드를 "현재 더 짧은 열"에 순서대로 붙여, 16:9(가로)·9:16(쇼츠)가 섞여도
+// 가로영상 아래 여백이 원천적으로 안 생기게 한다(2026-08-30 사용자 제보 — grid+dense의 "한 행=같은 비율"
+// 전제 때문에 여백이 지속 발생). container를 2열 flex로 바꾸고, 반환된 함수 add(isShort)가 붙일 열을 주고
+// 각 열의 높이 추정치(썸네일 비율+캡션)를 누적한다. 무한스크롤도 add만 계속 부르면 되어 단순해진다.
+function _makeMasonry(container){
+  if(!container)return ()=>container;
+  container.innerHTML='';
+  container.classList.remove('feed-grid'); container.classList.add('feed-masonry');
+  const colA=document.createElement('div'),colB=document.createElement('div');
+  colA.className='feed-masonry-col'; colB.className='feed-masonry-col';
+  container.appendChild(colA); container.appendChild(colB);
+  const cw=container.clientWidth||340; const W=Math.max(1,(cw-10)/2); // 열 폭(gap 10)
+  let hA=0,hB=0;
+  return function _mAdd(isShort){
+    const col=hA<=hB?colA:colB;
+    const est=(isShort?W*16/9:W*9/16)+56; // 썸네일 높이 + 캡션 대략
+    if(col===colA)hA+=est; else hB+=est;
+    return col;
+  };
+}
 async function _buildFeedTrend(){
   const strip=document.getElementById('feed-trend');
   const section=document.getElementById('feed-trend-section');
@@ -15811,15 +15831,17 @@ async function _buildFeedTrend(){
       if(d===1)return currentLang==='ko'?'어제':'yesterday';
       return currentLang==='ko'?`${d}일 전`:`${d}d ago`;
     };
+    const mAdd=_makeMasonry(strip); // 2열 메이슨리 — 가로/쇼츠 혼합 여백 방지
     picked.forEach((v,i)=>{
       const pa=(v.published_at||'').slice(0,10);
       // 서브는 "그룹 · N일 전" — 조회수를 안 쓰는 이유는 위 주석(순위표처럼 보이지 않게)과 같다.
       const sub=[v.group_ko,pa?_fmtDay(pa):null].filter(Boolean).join(' · ');
-      _appendFeedCard(strip,'📈',v.title,sub,
+      const isShort=_isShortV(v);
+      _appendFeedCard(mAdd(isShort),'📈',v.title,sub,
         // 누르면 이 선반 전체가 재생목록이 돼서 그대로 다음 영상으로 넘어갈 수 있다(훑어보기 목적)
         ()=>openLightbox(songs[i].u,_songIsShort(songs[i]),songs,i,
           {groupKo:v.group_ko,memberKo:(v.members||[])[0]},false,true),
-        v.thumb,null,{short:_isShortV(v)}); // 쇼츠면 9:16 세로 카드
+        v.thumb,null,{short:isShort}); // 쇼츠면 9:16 세로 카드
     });
     section.style.display='';
   }catch(e){

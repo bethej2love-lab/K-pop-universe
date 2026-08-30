@@ -2760,6 +2760,14 @@
   /* grid-auto-flow:dense — 전체폭(.feed-wide span 2) 카드가 홀수 위치 뒤에 오면 직전 행 오른쪽 칸이
      비던 버그(2026-08-22 사용자 제보) 수정: 빈 칸을 뒤쪽 단일 카드로 자동 메움(구멍 있을 때만 작동). */
   .feed-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 20px 4px;align-items:start;grid-auto-flow:dense;}
+  /* 2열 메이슨리(열 독립 스택, 2026-08-30) — 카드를 더 짧은 열에 붙여 16:9/9:16 혼합에도 여백이 안 생긴다.
+     grid+dense의 "한 행=같은 비율" 전제를 없앤 근본 해법(가로영상 아래 여백 지속 발생 문제). */
+  .feed-masonry{display:flex;gap:10px;padding:0 20px 4px;align-items:flex-start;}
+  .feed-masonry-col{flex:1 1 0;min-width:0;display:flex;flex-direction:column;gap:10px;}
+  .feed-masonry .feed-card{border-bottom:none;border-radius:8px;background:rgba(255,255,255,0.03);}
+  .feed-masonry .feed-card-cap{padding:8px 10px 12px;}
+  .feed-masonry .feed-card-title{font-size:11px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+  .feed-masonry .feed-card-sub{font-size:9.5px;}
   /* 크기 섞기(2026-08-22) — 그룹/멤버 카드 그리드처럼: 하이라이트(단일영상)는 전체폭 16:9, 대표가 쇼츠면 9:16 세로 */
   .feed-grid .feed-card.feed-wide{grid-column:span 2;}
   .feed-card.is-short .feed-card-thumb-wrap{aspect-ratio:9/16;}
