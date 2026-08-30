@@ -2432,7 +2432,7 @@
   /* ── Profile panel ───────────────────────────────── */
   #profile-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.52);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:69;display:none;align-items:center;justify-content:center;}
   #profile-overlay.open{display:flex;}
-  #profile-panel{width:min(312px,calc(100vw - 32px));background:rgba(13,17,34,0.97);backdrop-filter:blur(40px) saturate(180%);-webkit-backdrop-filter:blur(40px) saturate(180%);border-radius:20px;box-shadow:0 16px 56px rgba(0,0,0,0.72);border:0.5px solid rgba(255,255,255,0.10);padding:22px 22px 24px;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
+  #profile-panel{width:min(320px,calc(100vw - 32px));background:rgba(13,17,34,0.97);backdrop-filter:blur(40px) saturate(180%);-webkit-backdrop-filter:blur(40px) saturate(180%);border-radius:20px;box-shadow:0 16px 56px rgba(0,0,0,0.72);border:0.5px solid rgba(255,255,255,0.10);padding:22px 22px 24px;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
   .pp-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;}
   .pp-title{font-size:13.5px;font-weight:700;color:rgba(210,225,255,0.88);letter-spacing:.04em;}
   /* 선택 입력 안내 — 제목보다 한 톤 낮춰야 "필수"로 안 읽힌다. \n을 줄바꿈으로 살리려고 pre-line. */
@@ -2691,13 +2691,13 @@
   /* 데스크톱은 전체화면 오버레이 대신 저널 사이드바와 같은 방식의 왼쪽 슬라이드 패널로 표시 */
   @media(min-width:769px){
     #feed-overlay{
-      display:flex;inset:auto;top:0;left:0;height:100%;width:300px;
+      display:flex;inset:auto;top:0;left:0;height:100%;width:320px;
       background:rgba(14,18,34,0.92);
       backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);
       border-right:0.5px solid rgba(255,255,255,0.10);
       box-shadow:4px 0 24px rgba(0,0,0,0.35);
       z-index:66;
-      transform:translateX(-300px);
+      transform:translateX(-320px);
       transition:transform 0.32s cubic-bezier(0.4,0,0.2,1);
     }
     #feed-overlay.open{transform:translateX(0);}
@@ -2793,7 +2793,10 @@
      쇼츠(9:16)가 가로 16:9 틀에 갇혀 작게 보이던 문제 해결. Trend는 이제 .feed-grid 규칙을 그대로 탄다. */
   /* 즐겨찾기 신작(#feed-favnew)도 Charts와 같은 가로 스트립 카드(158px) — Step3에서 Trend만 그리드로
      빼면서 이 선반이 폭 규칙에서 누락돼 카드가 0폭으로 붕괴("점처럼")되던 것 수정(2026-08-29 사용자 제보). */
-  #feed-chart>.feed-card,#feed-favnew>.feed-card{flex:0 0 auto;width:158px;border-bottom:none;border-radius:8px;background:rgba(255,255,255,0.03);}
+  /* #feed-chart는 가로 스트립이라 고정폭 유지. #feed-favnew는 2열 그리드(.feed-grid)로 바뀌었으므로(2026-08-30)
+     이 고정 width:158px를 주면 안 됨 — 데스크톱 320px 패널에서 안 줄어들어 오른쪽 열이 잘렸다(사용자 제보).
+     그리드 카드는 아래 `.feed-grid .feed-card`(1fr, 유연)를 그대로 쓴다(Trend와 동일). */
+  #feed-chart>.feed-card{flex:0 0 auto;width:158px;border-bottom:none;border-radius:8px;background:rgba(255,255,255,0.03);}
   #feed-chart>.feed-card .feed-card-cap,#feed-favnew>.feed-card .feed-card-cap{padding:8px 10px 12px;}
   #feed-chart>.feed-card .feed-card-title,#feed-favnew>.feed-card .feed-card-title{font-size:11px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;white-space:normal;}
   #feed-chart>.feed-card .feed-card-sub,#feed-favnew>.feed-card .feed-card-sub{font-size:9.5px;}
