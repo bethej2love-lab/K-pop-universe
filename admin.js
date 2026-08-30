@@ -4637,7 +4637,15 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
   // 새어나감). 역추론은 원래 위험한 경로라 여기서 게이트해도 손실이 거의 없다 — 방탄 슈가·하츠투하츠
   // 스텔라의 정당한 태깅은 제목에 그룹명이 있어 '멤버 추출' 경로로 잡히지, 이 이름만의 역추론엔 안 의존함.
   const _atmNameIsGroup=a=>!!GROUPS[a.name.ko]&&a.name.ko!==a.group.ko;
+  // 영단어/흔한말과 통째로 겹치는 등록명(온리원오프 'Love'·'나인'/'Nine' 등)은 역추론(이름→그룹 추정)에서
+  // **아예 제외**한다 — 해시태그(#Love)조차 오탐이 흔해서(인스타 크로스포스트 #love 등), 위 _atmNameNeedsCtx의
+  // "해시태그 전용"보다 한 단계 더 엄격하게 "그룹명이 제목에 확정됐을 때의 멤버 추출 경로에서만" 인정한다
+  // (사용자 결정 2026-08-30 — 실측: members=['Love'] 1059건 중 95%가 온리원오프 무관, 'love'는 최다 오탐 단어).
+  // name.ko/en 둘 다로 막는다. 그룹 자체 매칭·자체 채널 태깅은 별개 경로라 온리원오프 정상 영상은 안 끊긴다.
+  const _ATM_INFER_EXCLUDE_NAMES=new Set(['Love','나인','Nine']);
+  const _atmInferExcluded=a=>_ATM_INFER_EXCLUDE_NAMES.has(a.name.ko)||_ATM_INFER_EXCLUDE_NAMES.has(a.name.en);
   function memberHit(a,names){
+    if(_atmInferExcluded(a))return false; // 역추론 금지 — 그룹명 동반 시에만(멤버 추출 경로)
     if([...a.name.ko].length===1||_isHashtagOnlyName(a.name.ko)||_ATM_COMMON_KO_WORDS.has(a.name.ko)||_atmNameIsGroup(a))return names.some(t=>hitHashtag(t));
     // 흔한단어 게이트는 변형(_m2NameVariants)마다 개별 적용해야 함 — 풀네임만 검사하면 성을 뗀 given-name
     // 변형(유사랑→"사랑")이 게이트를 통과해 평문 "사랑"(=love)에 대량 오매칭됨(이즈나 group_ko 385건 오염,
@@ -4649,6 +4657,7 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
   // ko 기반 dedup(name.ko='지훈' vs '박지훈')만으론 못 잡던 걸, 토큰 단위로 잡아 검수로 보낸다.
   // some→filter만 다르고 판정 로직은 memberHit과 글자 그대로 동일(둘이 갈라지면 감지가 틀어짐).
   function memberHitTokens(a,names){
+    if(_atmInferExcluded(a))return []; // memberHit과 동일 게이트(역추론 제외) — 갈라지면 감지가 틀어짐
     if([...a.name.ko].length===1||_isHashtagOnlyName(a.name.ko)||_ATM_COMMON_KO_WORDS.has(a.name.ko)||_atmNameIsGroup(a))return names.filter(t=>hitHashtag(t));
     return names.filter(t=>(_atmNameNeedsCtx(t)||_ATM_COMMON_KO_WORDS.has(t))?hitHashtag(t):hit(t));
   }

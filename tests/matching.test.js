@@ -538,6 +538,17 @@ test('직캠 구조 아님(자유 형식)은 기존 경로 그대로 — 하츠�
   "[안방1열 직캠4K] 하츠투하츠 스텔라 'The Chase' (Hearts2Hearts STELLA FanCam)", undefined,
   r => !!r && r.primaryGroup === '하츠투하츠' && (r.membersByGroup['하츠투하츠']||[]).join() === '스텔라', '2025-03-01');
 
+// 온리원오프 'Love'·'나인'/'Nine' — 영단어/흔한말과 겹치는 등록명은 역추론 제외(그룹명 동반 시에만, 2026-08-30)
+test("역추론 제외 — 평문 'LOVE'(S.E.S. 커버)는 온리원오프로 안 샌다",
+  "원영 (유원미) - LOVE (원곡 : S.E.S.) [2022 KBS 가요대축제] | KBS 221216 방송", undefined,
+  r => !r || (r.primaryGroup !== '온리원오프' && !(r.withGroups||[]).includes('온리원오프') && !(r.membersByGroup||{})['온리원오프']), '2022-12-16');
+test("역추론 제외 — 'NINE to SIX'의 Nine/나인은 온리원오프로 안 샌다",
+  "[쇼챔직캠 4K] NINE to SIX - Don't Call Me (나인투식스 - 돈콜미) l Show Champion", undefined,
+  r => !r || (r.primaryGroup !== '온리원오프' && !(r.withGroups||[]).includes('온리원오프') && !(r.membersByGroup||{})['온리원오프']), '2024-01-01');
+test("역추론 제외 — 그룹명(OnlyOneOf) 확정되면 온리원오프는 정상 유지",
+  "[Special] OnlyOneOf Nine 'AUTOMATIC' (Chancellor Cover)", undefined,
+  r => !!r && r.primaryGroup === '온리원오프', '2024-01-01');
+
 // ── 실행 ──────────────────────────────────────────────
 let pass = 0, fail = 0;
 cases.forEach(({ name, title, selfGko, check, publishedAt }) => {
