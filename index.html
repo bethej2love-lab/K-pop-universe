@@ -15805,6 +15805,23 @@ function _makeVariedMasonry(container,varied){
     return {el:col,feat:false};
   };
 }
+// 행 패커(2026-08-30) — 그림 같은 배치의 정답. 원래 순서를 최대한 지키면서 "한 행은 같은 비율(가로2 or
+// 쇼츠2)"로만 채운다(→ 한 행 높이가 같아 여백0). 가로영상은 minGap 이상 간격에서 wideProb 확률로, 또는
+// 같은 비율 짝이 없으면 전체폭(featured). 결과: 전체폭가로 | 쇼츠쇼츠 | 가로가로 | 쇼츠쇼츠 … 번갈아.
+// (메이슨리와 달리 "행" 단위라 여백이 안 생기고, 비율그룹핑과 달리 통째 정렬이 아니라 번갈아 나온다.)
+function _packRows(items,isShort,opts){
+  const wideProb=(opts&&opts.wideProb)||0.2, minGap=(opts&&opts.minGap)||2;
+  const rest=items.slice(),rows=[];let sinceWide=minGap;
+  while(rest.length){
+    const a=rest.shift(),sa=isShort(a);
+    if(!sa&&sinceWide>=minGap&&Math.random()<wideProb){rows.push({wide:true,items:[a]});sinceWide=0;continue;}
+    const j=rest.findIndex(x=>isShort(x)===sa); // 뒤에서 같은 비율 하나 당겨와 2열 행
+    if(j!==-1){rows.push({wide:false,items:[a,rest.splice(j,1)[0]]});sinceWide++;}
+    else if(!sa){rows.push({wide:true,items:[a]});sinceWide=0;} // 짝 없는 가로 → 전체폭
+    else rows.push({wide:false,items:[a]}); // 짝 없는 쇼츠(끝에서만) → 반폭 단독
+  }
+  return rows;
+}
 async function _buildFeedTrend(){
   const strip=document.getElementById('feed-trend');
   const section=document.getElementById('feed-trend-section');
@@ -15839,19 +15856,20 @@ async function _buildFeedTrend(){
       if(d===1)return currentLang==='ko'?'어제':'yesterday';
       return currentLang==='ko'?`${d}일 전`:`${d}d ago`;
     };
-    // 큰 것·작은 것, 가로·쇼츠가 섞인 잡지형 배치(2026-08-30 사용자 요청) — varied 메이슨리:
-    // 여백 없는 2열 메이슨리 + 가로영상을 간간이 전체폭(featured, 큰 16:9)으로. 순서는 셔플 그대로(비율 안 묶음).
-    const add=_makeVariedMasonry(strip,false); // 순수 메이슨리(여백0). varied=true면 큰 featured 섞이지만 경계 여백 생김
-    songs.forEach((song,idx)=>{
+    // 행 패커 배치(2026-08-30) — 한 행은 같은 비율(가로2 or 쇼츠2), 가로는 가끔 전체폭. 여백0 + 그림처럼 번갈아.
+    strip.className='feed-grid'; // 이전 렌더가 masonry로 바꿨을 수 있어 그리드로 리셋(.feed-wide span2 사용)
+    const rows=_packRows(songs,_songIsShort,{wideProb:0.28,minGap:2});
+    if(rows.length&&!rows[rows.length-1].wide&&rows[rows.length-1].items.length===1)rows.pop(); // 끝에 홀로 남은 반폭 카드는 제거(여백 방지)
+    const flat=rows.flatMap(r=>r.items); // 라이트박스 재생목록 순서를 화면 순서와 일치
+    rows.forEach(row=>row.items.forEach(song=>{
       const isShort=_songIsShort(song);
       // 서브는 "그룹 · N일 전" — 조회수를 안 쓰는 이유는 위 주석(순위표처럼 보이지 않게)과 같다.
       const sub=[song.groupKo,song.pa?_fmtDay(song.pa):null].filter(Boolean).join(' · ');
-      const p=add(isShort);
-      _appendFeedCard(p.el,'📈',song.t,sub,
+      _appendFeedCard(strip,'📈',song.t,sub,
         // 누르면 이 선반 전체가 재생목록이 돼서 그대로 다음 영상으로 넘어갈 수 있다(훑어보기 목적)
-        ()=>openLightbox(song.u,_songIsShort(song),songs,idx,{groupKo:song.groupKo,memberKo:(song.memberKos||[])[0]},false,true),
-        song.thumb,null, p.feat?{}:(isShort?{short:true}:{})); // featured=전체폭 16:9 / 아니면 쇼츠 9:16 or 작은 16:9
-    });
+        ()=>openLightbox(song.u,isShort,flat,flat.indexOf(song),{groupKo:song.groupKo,memberKo:(song.memberKos||[])[0]},false,true),
+        song.thumb,null, row.wide?{wide:true}:(isShort?{short:true}:{})); // 전체폭 가로 / 쇼츠 9:16 / 작은 가로 16:9
+    }));
     section.style.display='';
   }catch(e){
     // 선반 하나 실패로 탐험 탭 전체가 막히면 안 되니 삼키긴 하되, **흔적은 남긴다** — 완전히 조용히
