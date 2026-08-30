@@ -10897,6 +10897,66 @@ async function _uploadPhotosToCol(colId,files){
 }
 // 사진 컬렉션 그리드 뷰어 — 사용자 데이터(이름 등)가 들어가므로 XSS/깨짐 방지로 전부 DOM 생성. 오버레이는
 // 한 번 만들어 재사용. "+ 사진"으로 업로드, 각 사진 탭하면 크게, 우상단 ×로 삭제(본인 소유 기준).
+// 사진 컬렉션 대상(그룹/멤버) 표시 라벨 — 사진엔 인물 태그가 없어 "누구 것"을 사람이 지정한 값(2026-08-30).
+function _colTargetLabel(col){
+  const mk=col.targetMemberKos||[],gk=col.targetGroupKos||[];
+  if(mk.length)return mk.length>1?`${mk[0]} 외 ${mk.length-1}`:mk[0];
+  if(gk.length)return gk.length>1?`${gk[0]} 외 ${gk.length-1}`:gk[0];
+  return null;
+}
+function _colHasTarget(col){return!!((col.targetGroupKos&&col.targetGroupKos.length)||(col.targetMemberKos&&col.targetMemberKos.length));}
+// 사진 컬렉션 "누구 사진인가" 지정 선택기 — 그룹을 고르면 그룹 카드에, 멤버를 고르면 그 멤버(+그룹) 카드에
+// 노출된다(영상 컬렉션과 같은 group_kos/member_kos 경로). 로스터(GROUPS/ARTISTS)를 이름으로 검색해 하나 고른다.
+function _pickColTarget(col,onDone){
+  let ov=document.getElementById('col-target-overlay');if(ov)ov.remove();
+  ov=document.createElement('div');ov.id='col-target-overlay';
+  ov.style.cssText='position:fixed;inset:0;z-index:130;background:rgba(8,10,22,0.985);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);display:flex;flex-direction:column;';
+  document.body.appendChild(ov);
+  const hd=document.createElement('div');hd.style.cssText='display:flex;align-items:center;gap:8px;padding:calc(14px + env(safe-area-inset-top,0px)) 16px 8px;';
+  const ttl=document.createElement('div');ttl.style.cssText='flex:1;font-size:15px;font-weight:700;color:#eef4ff;';ttl.textContent=currentLang==='ko'?'누구 사진인가요?':'Whose photos?';
+  const cls=document.createElement('button');cls.textContent='✕';cls.setAttribute('aria-label','닫기');cls.style.cssText='background:none;border:none;color:rgba(200,215,245,0.7);font-size:18px;cursor:pointer;padding:4px 8px;';
+  cls.addEventListener('click',()=>ov.remove());
+  hd.appendChild(ttl);hd.appendChild(cls);
+  const inp=document.createElement('input');inp.type='text';inp.placeholder=currentLang==='ko'?'그룹 · 멤버 검색…':'Search group · member…';
+  inp.style.cssText='margin:0 16px 8px;padding:11px 14px;border-radius:12px;border:0.5px solid rgba(160,185,240,0.25);background:rgba(255,255,255,0.06);color:#eef4ff;font-size:14px;font-family:inherit;outline:none;';
+  const curWrap=document.createElement('div');curWrap.style.cssText='display:flex;align-items:center;gap:8px;padding:0 16px 6px;font-size:11px;color:rgba(150,175,225,0.6);';
+  const list=document.createElement('div');list.style.cssText='flex:1;min-height:0;overflow-y:auto;padding:2px 12px 24px;';
+  function pick(gko,mko){
+    col.targetGroupKos=gko?[gko]:[];col.targetMemberKos=mko?[mko]:[];
+    _saveCollections();renderCollectionSection();
+    if(col.isPublic)_syncPublicCollection(col);
+    ov.remove();if(onDone)onDone();
+  }
+  function refreshCur(){
+    curWrap.innerHTML='';
+    const lbl=_colTargetLabel(col);
+    const t=document.createElement('span');t.textContent=lbl?(currentLang==='ko'?`현재 대상: ${lbl}`:`Current: ${lbl}`):(currentLang==='ko'?'대상 없음':'No target');
+    curWrap.appendChild(t);
+    if(lbl&&!col.isPublic){ // 공개 중이면 대상 필수라 지우기 숨김
+      const clr=document.createElement('button');clr.textContent=currentLang==='ko'?'지우기':'Clear';clr.style.cssText='background:none;border:none;color:rgba(180,150,150,0.8);font-size:11px;cursor:pointer;padding:0;text-decoration:underline;';
+      clr.addEventListener('click',()=>{col.targetGroupKos=[];col.targetMemberKos=[];_saveCollections();renderCollectionSection();refreshCur();if(onDone)onDone();});
+      curWrap.appendChild(clr);
+    }
+  }
+  function render(q){
+    q=(q||'').trim().toLowerCase();list.innerHTML='';
+    const addRow=(label,sub,onClick)=>{
+      const r=document.createElement('div');r.style.cssText='display:flex;align-items:center;padding:11px 8px;border-bottom:0.5px solid rgba(255,255,255,0.05);cursor:pointer;';
+      const t=document.createElement('div');t.style.cssText='flex:1;min-width:0;';
+      const a=document.createElement('div');a.style.cssText='font-size:14px;color:#eaf1ff;';a.textContent=label;
+      const b=document.createElement('div');b.style.cssText='font-size:10.5px;color:rgba(150,175,225,0.6);margin-top:1px;';b.textContent=sub;
+      t.appendChild(a);t.appendChild(b);r.appendChild(t);r.addEventListener('click',onClick);list.appendChild(r);
+    };
+    if(!q){const em=document.createElement('div');em.style.cssText='text-align:center;color:rgba(150,175,225,0.4);padding:30px 0;font-size:12.5px;';em.textContent=currentLang==='ko'?'이름을 검색하세요':'Type to search';list.appendChild(em);return;}
+    let n=0;
+    Object.keys(GROUPS).forEach(gko=>{if(n>=40)return;const en=(GROUPS[gko].en||'');if(gko.toLowerCase().includes(q)||en.toLowerCase().includes(q)){addRow(gko,currentLang==='ko'?'그룹 전체':'Whole group',()=>pick(gko,null));n++;}});
+    (typeof ARTISTS!=='undefined'?ARTISTS:[]).forEach(a=>{if(n>=90)return;const ko=a.name&&a.name.ko||'',en=a.name&&a.name.en||'',gko=a.group&&a.group.ko||'';if(ko.toLowerCase().includes(q)||en.toLowerCase().includes(q)){addRow(ko,gko,()=>pick(gko,ko));n++;}});
+    if(!n){const em=document.createElement('div');em.style.cssText='text-align:center;color:rgba(150,175,225,0.4);padding:30px 0;font-size:12.5px;';em.textContent=currentLang==='ko'?'검색 결과가 없어요':'No results';list.appendChild(em);}
+  }
+  inp.addEventListener('input',()=>render(inp.value));
+  ov.appendChild(hd);ov.appendChild(inp);ov.appendChild(curWrap);ov.appendChild(list);
+  refreshCur();render('');setTimeout(()=>inp.focus(),60);
+}
 function _openColPhotoGrid(colId){
   const col=collections.find(p=>p.id===colId);if(!col)return;
   if(!col.photos)col.photos=[];
@@ -10912,7 +10972,12 @@ function _openColPhotoGrid(colId){
   const tw=document.createElement('div');tw.style.cssText='flex:1;min-width:0;';
   const nm=document.createElement('div');nm.style.cssText='font-size:15px;font-weight:700;color:#eef4ff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;';nm.textContent=col.name;
   const cnt=document.createElement('div');cnt.style.cssText='font-size:11px;color:rgba(150,175,225,0.6);margin-top:2px;';
-  tw.appendChild(nm);tw.appendChild(cnt);
+  // 대상(누구 사진인지) 라인 — 눌러서 지정/변경. 카드 노출 기준이자 공개 필수 조건(2026-08-30).
+  const tgt=document.createElement('div');tgt.style.cssText='font-size:11px;color:rgba(150,180,255,0.9);margin-top:3px;cursor:pointer;';
+  function refreshTgt(){const lbl=_colTargetLabel(col);tgt.textContent=(lbl?(currentLang==='ko'?`대상: ${lbl}`:`For: ${lbl}`):(currentLang==='ko'?'+ 대상 지정(누구 사진인지)':'+ Set target'))+' ›';}
+  tgt.addEventListener('click',()=>_pickColTarget(col,refreshTgt));
+  refreshTgt();
+  tw.appendChild(nm);tw.appendChild(cnt);tw.appendChild(tgt);
   const addBtn=document.createElement('button');addBtn.textContent=currentLang==='ko'?'+ 사진':'+ Photo';
   addBtn.style.cssText='background:rgba(120,150,230,0.22);border:0.5px solid rgba(160,185,240,0.35);color:#dbe6ff;border-radius:16px;padding:6px 13px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;';
   const closeBtn=document.createElement('button');closeBtn.textContent='✕';closeBtn.setAttribute('aria-label','닫기');
@@ -11066,11 +11131,27 @@ function _colCoverVideo(col){
   if(col.coverU){const v=(col.videos||[]).find(v=>v.u===col.coverU);if(v)return v;}
   return(col.videos||[])[0]||null;
 }
+// 사진 컬렉션(kind='photo')은 담긴 영상이 없어 "누구 것"인지 자동으로 안 나온다 — 사용자가 직접 지정한
+// 대상(targetGroupKos/targetMemberKos)을 그대로 쓴다(2026-08-30). 영상 컬렉션은 기존대로 영상 태그 집계.
+// 이 두 함수가 노출(_loadCollectionRow)·공개동기화(_syncPublicCollection) 양쪽의 허브라, 여기만 분기하면
+// 나머지 경로(그룹 카드 매칭·public group_kos/member_kos)가 자동으로 사진 대상까지 따라온다.
 function _collectionGroupKos(col){
+  if(col.kind==='photo')return[...new Set(col.targetGroupKos||[])];
   return[...new Set((col.videos||[]).map(v=>v.groupKo).filter(Boolean))];
 }
 function _collectionMemberKos(col){
+  if(col.kind==='photo')return[...new Set(col.targetMemberKos||[])];
   return[...new Set((col.videos||[]).flatMap(v=>v.memberKos&&v.memberKos.length?v.memberKos:(v.memberKo?[v.memberKo]:[])))];
+}
+// 이 컬렉션이 특정 카드(그룹 ko + 선택적 멤버)에 노출돼야 하는지 — 영상은 담긴 영상 태그로, 사진은 지정 대상으로.
+function _collectionMatchesCard(c,ko,memberKo){
+  if(c.kind==='photo'){
+    if(!(c.targetGroupKos||[]).includes(ko))return false;
+    return memberKo?(c.targetMemberKos||[]).includes(memberKo):true;
+  }
+  return memberKo
+    ?(c.videos||[]).some(v=>v.groupKo===ko&&(v.memberKos||[]).includes(memberKo))
+    :_collectionGroupKos(c).includes(ko);
 }
 // 컬렉션에 담긴 영상의 memberKos는 담을 당시 UI 맥락(그리드/라이트박스 등)에서 스냅샷으로 저장되는데,
 // 예전 버그(그리드에서 바로 담으면 실제 DB 태그를 안 읽던 문제, 2026-08-12 수정)로 그 이전에 담긴
@@ -11146,6 +11227,13 @@ function _syncPublicCollection(col){
 }
 function _toggleCollectionPublic(colId){
   const col=collections.find(p=>p.id===colId);if(!col)return;
+  // 공개 사진 컬렉션은 대상(그룹·멤버) 필수 — 사진엔 인물 태그가 없어 대상 없이는 어느 카드에도 못 띄운다
+  // (2026-08-30 사용자 결정: 공개면 필수, 비공개면 선택). 대상 없이 공개 시도하면 선택기를 띄우고, 지정되면 이어서 공개.
+  if(!col.isPublic&&col.kind==='photo'&&!_colHasTarget(col)){
+    alert(currentLang==='ko'?'공개하려면 먼저 이 사진들이 누구 건지(그룹·멤버) 지정해주세요.':'Set a target (group·member) before making a photo collection public.');
+    _pickColTarget(col,()=>{if(_colHasTarget(col))_toggleCollectionPublic(colId);});
+    return;
+  }
   col.isPublic=!col.isPublic;
   _saveCollections();renderCollectionSection();
   _syncPublicCollection(col);
@@ -17802,10 +17890,8 @@ async function _loadCollectionRow(ko,containerId,memberKo,cardMemberKo){
   // 동명이인 누수 방지(2026-08-22 사용자 제보 — 성민(크래비티)에 만든 컬렉션이 다른 성민 카드에도 다 떴음):
   // 이름(memberKo)만 매칭하면 동명이인이 전부 걸린다. 이 카드가 보는 그룹(ko)과 멤버가 "같은 영상"이 담긴
   // 컬렉션만 이 멤버 것으로 인정한다(영상엔 groupKo가 함께 저장돼 있어 인물 구분 가능).
-  const mine=collections.filter(c=>memberKo
-      ?(c.videos||[]).some(v=>v.groupKo===ko&&(v.memberKos||[]).includes(memberKo))
-      :_collectionGroupKos(c).includes(ko))
-    .map(c=>({id:c.id,name:c.name,videos:c.videos,coverU:c.coverU,coverImg:c.coverImg,mine:true}));
+  const mine=collections.filter(c=>_collectionMatchesCard(c,ko,memberKo))
+    .map(c=>({id:c.id,name:c.name,videos:c.videos,coverU:c.coverU,coverImg:c.coverImg,kind:c.kind,photos:c.photos,mine:true}));
   let pub=[];
   if(sb){
     if(_pubCollectionsP)await _pubCollectionsP;
@@ -17834,7 +17920,7 @@ function _renderCollectionRow(containerId,list){
     const chip=document.createElement('div');chip.className='gc-collection-chip';
     const thumbWrap=document.createElement('div');thumbWrap.className='gc-collection-chip-thumb-wrap';
     const img=document.createElement('img');img.className='gc-collection-chip-thumb';img.alt='';
-    const thumbUrl=col.coverImg||_colCoverVideo(col)?.thumb;
+    const thumbUrl=col.coverImg||(col.kind==='photo'?col.photos?.[0]?.u:_colCoverVideo(col)?.thumb);
     if(thumbUrl)img.src=thumbUrl;
     thumbWrap.appendChild(img);
     if(col.mine){const dot=document.createElement('span');dot.className='gc-collection-chip-mine';thumbWrap.appendChild(dot);}
@@ -17858,10 +17944,13 @@ function _renderCollectionRow(containerId,list){
       thumbWrap.appendChild(del);
     }
     const name=document.createElement('div');name.className='gc-collection-chip-name';name.textContent=col.name;
-    const cnt=document.createElement('div');cnt.className='gc-collection-chip-cnt';cnt.textContent=currentLang==='ko'?`${col.videos.length}개`:String(col.videos.length);
+    const isPhoto=col.kind==='photo';
+    const cntN=isPhoto?(col.photos?.length||0):(col.videos?.length||0);
+    const cnt=document.createElement('div');cnt.className='gc-collection-chip-cnt';cnt.textContent=isPhoto?(currentLang==='ko'?`${cntN}장`:`${cntN} photos`):(currentLang==='ko'?`${cntN}개`:String(cntN));
     chip.appendChild(thumbWrap);chip.appendChild(name);chip.appendChild(cnt);
     chip.addEventListener('click',e=>{
       e.stopPropagation();
+      if(isPhoto){ if(col.mine)_openColPhotoGrid(col.id); else if(typeof _openPublicColPhotoGrid==='function')_openPublicColPhotoGrid(col); return; } // 공개 사진(남의 것)은 Phase 2에서 photos 동기화되면 채워짐
       if(!col.videos.length)return;
       const songs=col.videos.map(v=>({t:v.t,u:v.u,thumb:v.thumb,groupKo:v.groupKo,memberKos:v.memberKos}));
       _openFeedListOverlay(col.name,_colVidCountText(col.videos.length),songs,col.mine?{colId:col.id,mine:true}:{colId:col.id,mine:false,ownerNick:col.ownerNick});
