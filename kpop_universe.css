@@ -1846,10 +1846,10 @@
   @media(min-width:769px){
     #tabbar{display:none;}
     #settings-panel{top:58px;bottom:auto;right:0;width:320px;border-radius:16px 0 0 16px;max-height:calc(100vh - 78px);overflow-y:auto;}
-    /* 어드민 설정 패널 스톱갭(2026-08-30): 관리자는 패널이 33버튼+캡션이라 오른쪽 카드(#side-panel)를 통째로
-       가렸다. 왼쪽에 도킹해 카드는 오른쪽에 그대로 열려 있게 한다(P1 좌측 콘솔의 예고편). 일반 유저 패널은
-       항목이 적어 오른쪽 유지. */
-    body.is-admin #settings-panel{right:auto;left:0;border-radius:0 16px 16px 0;}
+    /* 어드민 설정 패널 위치(2026-08-30): 처음엔 카드 가림을 피하려 왼쪽에 도킹했으나, 어드민 작업패널
+       (adm-home/vm/hnn)이 이미 왼쪽 도킹이라 설정과 겹쳤다(사용자 제보 — "설정 뒤로 영상 패널"). 설정은
+       기본대로 오른쪽에 둬서 왼쪽 관리패널과 나란히 놓는다(겹침 없음). 설정은 잠깐 여는 창이라 카드와
+       겹치는 건 감수(닫으면 됨). → 별도 override 없이 위 기본 규칙(right:0) 그대로 사용. */
     #search-wrap{top:58px;bottom:auto;left:auto;right:16px;transform:none;width:320px;}
   }
   /* ── Journal sidebar ─────────────────────────────── */
