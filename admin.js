@@ -1797,14 +1797,14 @@ async function _atmScopedMemberReverify(name){
     .eq('tags_manual',false).contains('members',[name]).order('id'));
   if(error){_ytSetProg('조회 실패: '+error.message);return;}
   if(!rows?.length){_ytSetProg(`"${name}"이(가) 자동 태깅된 영상이 없어요`);return;}
-  const updates=[];
+  const updates=[];const wiped=[];
   rows.forEach(v=>{
     const roster=ARTISTS.filter(a=>_artistGroups(a).some(g=>g.ko===v.group_ko)).map(a=>({ko:a.name.ko,en:a.name.en,left:a.left}));
     if(!roster.length)return;
     const validSet=new Set(_atmResolveMembers(v.title,v.description,roster,v.group_ko,v.published_at));
     const curM=v.members||[];
     const newM=curM.filter(mko=>validSet.has(mko));
-    if(newM.length!==curM.length)updates.push({id:v.id,patch:{members:newM}});
+    if(newM.length!==curM.length){updates.push({id:v.id,patch:{members:newM}});if(!newM.length)wiped.push({id:v.id,removed:curM});}
   });
   if(!updates.length){_ytSetProg(`검사 완료 — "${name}" 관련 근거없는 태그 없음 (${rows.length}개 확인)`);return;}
   if(!confirm(`"${name}"이(가) 근거 없이(평문 매칭) 붙은 영상 ${updates.length}개에서 이 이름을 뺄까요?\n\n· 자동 태깅(tags_manual=false)만 · 스냅샷 저장되어 되돌리기 가능\n· 그룹 배정까지 틀린 경우(예: group_ko가 이 이름 때문에 잘못 정해진 것)는 "② 오태깅 그룹 재배정"을 따로 돌리세요.`)){_ytSetProg(`취소됨 — 재검증 예정 ${updates.length}개(미적용).`);return;}
@@ -1814,7 +1814,8 @@ async function _atmScopedMemberReverify(name){
     const f=results.find(r=>r.error);if(f){_ytSetProg('오류: '+f.error.message);return;}
     _ytSetProg(`["${name}" 재검증] ${Math.min(i+200,updates.length)}/${updates.length}개…`);
   }
-  _ytSetProg(`완료! "${name}"을(를) ${updates.length}개 영상에서 제거함. (되돌리기: "↩︎ 마지막 일괄 작업 되돌리기")`);
+  if(wiped.length)_tagReviewEnqueueBatch(wiped.map(w=>({videoId:w.id,reason:'members_wiped',source:'scoped_reverify',detail:{removed:w.removed}}))); // 태그 전부 빠진 건 검수 대기로
+  _ytSetProg(`완료! "${name}"을(를) ${updates.length}개 영상에서 제거함.`+(wiped.length?` (그중 ${wiped.length}개는 태그가 전부 빠져 검수 대기에 올림)`:'')+` (되돌리기: "↩︎ 마지막 일괄 작업 되돌리기")`);
 }
 // ⚑ 흐름: 흔한단어 규칙 등록 → 곧바로 그 이름 한정 재검증 제안. 발견→규칙→청소가 한 자리에서 끝난다.
 async function _atmMemberRuleFlow(name){
@@ -1823,6 +1824,65 @@ async function _atmMemberRuleFlow(name){
   if(!r.ok){alert(r.msg);return;}
   _ytSetProg(r.already?`"${name}"은(는) 이미 흔한단어 보호 목록에 있어요.`:`"${name}"을(를) 흔한단어 보호에 등록했어요(#해시태그만 인정).`);
   await _atmScopedMemberReverify(name); // 기존 오염분 정리 제안(내부에서 건수 확인 후 confirm)
+}
+// ── 태깅 검수 대기열(2026-08-30) ────────────────────────────────────────────────
+// 스윕이 판단 못 한 "고신뢰 애매" 케이스만 DB에 쌓아 화면에 띄운다(예전엔 console.log 무덤이라 손이 안 감).
+// 테이블(tag_review_queue)이 아직 없으면(마이그 전) 전부 조용히 no-op — 앱이 안 깨지게.
+async function _tagReviewEnqueue(videoId,reason,source,detail){
+  if(!sb||!videoId||!reason)return;
+  try{await sb.from('tag_review_queue').upsert({video_id:videoId,reason,source:source||null,detail:detail||null},{onConflict:'video_id,reason',ignoreDuplicates:true});}catch(e){/* 테이블 없거나 권한 없음 — 조용히 */}
+}
+async function _tagReviewEnqueueBatch(items){ // [{videoId,reason,source,detail}]
+  if(!sb||!items||!items.length)return;
+  try{
+    const payload=items.filter(x=>x&&x.videoId&&x.reason).map(x=>({video_id:x.videoId,reason:x.reason,source:x.source||null,detail:x.detail||null}));
+    for(let i=0;i<payload.length;i+=200)await sb.from('tag_review_queue').upsert(payload.slice(i,i+200),{onConflict:'video_id,reason',ignoreDuplicates:true});
+  }catch(e){/* 조용히 */}
+}
+async function _tagReviewCount(){
+  if(!sb)return null;
+  try{const{count,error}=await sb.from('tag_review_queue').select('id',{count:'exact',head:true}).is('resolved_at',null);return error?null:(count||0);}catch(e){return null;}
+}
+async function _tagReviewResolve(id){
+  if(!sb||!id)return;
+  try{await sb.from('tag_review_queue').update({resolved_at:new Date().toISOString()}).eq('id',id);}catch(e){}
+}
+const _TAGQ_REASON_LABEL={members_wiped:'재검증에서 멤버 태그가 전부 빠짐 — 무관 콘텐츠인지 직접 판단'};
+async function _openTagReviewQueue(){
+  if(!sb){alert('Supabase 연결 없음');return;}
+  let ov=document.getElementById('tagq-overlay');if(ov)ov.remove();
+  ov=document.createElement('div');ov.id='tagq-overlay';
+  ov.style.cssText='position:fixed;inset:0;z-index:125;background:rgba(8,10,22,0.98);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);display:flex;flex-direction:column;';
+  document.body.appendChild(ov);
+  const hd=document.createElement('div');hd.style.cssText='display:flex;align-items:center;gap:8px;padding:calc(14px + env(safe-area-inset-top,0px)) 16px 10px;';
+  const ttl=document.createElement('div');ttl.style.cssText='flex:1;font-size:15px;font-weight:700;color:#eef4ff;';ttl.textContent='검수 대기';
+  const cls=document.createElement('button');cls.textContent='✕';cls.style.cssText='background:none;border:none;color:rgba(200,215,245,0.7);font-size:18px;cursor:pointer;padding:4px 8px;';cls.addEventListener('click',()=>ov.remove());
+  hd.appendChild(ttl);hd.appendChild(cls);
+  const list=document.createElement('div');list.style.cssText='flex:1;min-height:0;overflow-y:auto;padding:2px 12px 24px;color:rgba(200,215,245,0.6);font-size:13px;';
+  ov.appendChild(hd);ov.appendChild(list);
+  list.textContent='불러오는 중…';
+  let q;try{q=await sb.from('tag_review_queue').select('id,video_id,reason,detail,created_at').is('resolved_at',null).order('created_at',{ascending:true}).limit(500);}catch(e){q={error:{message:e.message}};}
+  if(!q||q.error){list.textContent=q&&q.error?('검수 대기열을 못 불러왔어요 — 테이블 마이그레이션(tag_review_queue_migration.sql)이 필요할 수 있어요. '+(q.error.message||'')):'조회 실패';return;}
+  const rows=q.data||[];
+  if(!rows.length){list.textContent='검수 대기 없음 🎉';return;}
+  const ids=[...new Set(rows.map(r=>r.video_id))];
+  const vmap=new Map();
+  for(let i=0;i<ids.length;i+=200){try{const{data}=await sb.from(_YT_TABLE).select('id,title,group_ko,members').in('id',ids.slice(i,i+200));(data||[]).forEach(v=>vmap.set(v.id,v));}catch(e){}}
+  list.innerHTML='';
+  ttl.textContent=`검수 대기 (${rows.length})`;
+  rows.forEach(r=>{
+    const v=vmap.get(r.video_id);
+    const row=document.createElement('div');row.style.cssText='padding:11px 6px;border-bottom:0.5px solid rgba(255,255,255,0.06);';
+    const t=document.createElement('div');t.style.cssText='font-size:13px;color:#eaf1ff;line-height:1.35;';t.textContent=(v?_cleanTitle(v.title):r.video_id)||r.video_id;
+    const meta=document.createElement('div');meta.style.cssText='font-size:10.5px;color:rgba(150,175,225,0.6);margin-top:2px;';
+    meta.textContent=(v?`${v.group_ko||'?'} · `:'')+(_TAGQ_REASON_LABEL[r.reason]||r.reason);
+    const btns=document.createElement('div');btns.style.cssText='display:flex;gap:6px;margin-top:7px;';
+    const mkb=(label,style,on)=>{const b=document.createElement('button');b.textContent=label;b.style.cssText='background:rgba(120,150,230,0.16);border:0.5px solid rgba(160,185,240,0.3);color:#dbe6ff;border-radius:12px;padding:5px 11px;font-size:11px;cursor:pointer;'+(style||'');b.addEventListener('click',on);return b;};
+    btns.appendChild(mkb('편집','',()=>_openVidTagModal({id:r.video_id,title:v?v.title:''},v?v.group_ko:'')));
+    btns.appendChild(mkb('✓ 해결','background:rgba(90,170,120,0.16);border-color:rgba(120,200,150,0.35);color:#cdefd8;',async(e)=>{e.currentTarget.disabled=true;await _tagReviewResolve(r.id);row.remove();ttl.textContent=`검수 대기 (${list.querySelectorAll(':scope > div').length})`;if(!list.children.length)list.textContent='검수 대기 없음 🎉';}));
+    row.appendChild(t);row.appendChild(meta);row.appendChild(btns);
+    list.appendChild(row);
+  });
 }
 async function _ytSweepMembersMistag(){
   if(!sb){_ytSetProg('Supabase 연결 없음');return;}
@@ -1856,6 +1916,8 @@ async function _ytSweepMembersMistag(){
     if(!updates.length){_ytSetProg(`검사 완료 — ${rows.length}개 중 오염 없음`);return;}
     if(wipedOut.length){
       console.log(`[자체 멤버 태깅 재검증] 태그가 전부 빠진 행 ${wipedOut.length}개 — 무관 콘텐츠인지 직접 확인 필요:`,wipedOut);
+      // 콘솔 무덤 대신 검수 대기열에도 적재(2026-08-30) — 홈 카운트 → 목록 → 편집/해결로 이어진다.
+      _tagReviewEnqueueBatch(wipedOut.map(w=>({videoId:w.id,reason:'members_wiped',source:'members_reverify',detail:{removed:w.removed}})));
     }
     await _snapshotBeforeBulk('자체 멤버 태깅 재검증(전체)',updates.map(u=>u.id));
     for(let i=0;i<updates.length;i+=200){
@@ -6779,6 +6841,7 @@ async function _admLoadCards(){
   const cSs=mk('strictSync 오염 검수','흔한 이름 그룹 영상 점검',openVmTab('ss'));
   const cFb=mk('새 피드백','마지막으로 본 뒤 들어온 것',()=>{_admHomeClose();document.getElementById('sp-fb-btn')?.click();});
   const cNew=mk('새로 들어온 영상','눌러서 새 영상 검토·편집',openVmTab('new'));
+  const cTagq=mk('검수 대기','애매한 태깅 — 눌러서 목록',()=>{_admHomeClose();_openTagReviewQueue();}); // 검수 대기열(2026-08-30)
   const set=(card,n,zeroSub)=>{
     const el=card.querySelector('.adm-card-num');
     const sub=card.querySelector('.adm-card-sub');
@@ -6792,12 +6855,13 @@ async function _admLoadCards(){
   // 잠깐 기다렸다 다시 보고, 그래도 없으면 이유를 카드에 적는다.
   for(let i=0;i<20&&!sb;i++)await new Promise(r=>setTimeout(r,250));
   if(!sb){
-    [cReview,cSs,cFb,cNew].forEach(c=>{
+    [cReview,cSs,cFb,cNew,cTagq].forEach(c=>{
       c.querySelector('.adm-card-num').textContent='—';
       c.querySelector('.adm-card-sub').textContent='DB 연결 대기 중';
     });
     return;
   }
+  _tagReviewCount().then(n=>set(cTagq,n,'없어요 🎉')); // 검수 대기열 건수(테이블 없으면 null→"?")
   // 공용 DB의 마지막 실행 시각으로 카드 갱신(기기 간 공유). 로컬보다 최신이면 로컬도 맞춰둔다.
   _admReadLastRunDB().then(dbTs=>{
     const t=Math.max(dbTs,_admLastRunLocal());
