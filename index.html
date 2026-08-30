@@ -3956,6 +3956,16 @@ function _applyGenreTabQuery(q,filter){ // filter: 'variety' | 'show'
 }
 
 let _lbPlaylist=null,_lbIdx=-1,_lbCtx=null;
+// 어드민 편집(연필) 버튼용 영상 DB id — 그룹/멤버 카드 경로는 곡객체에 _apiId를 붙이지만, 탐험 패널·컬렉션·
+// 스크랩 경로는 안 붙여 편집 버튼이 안 떴다(2026-08-30 사용자 제보). DB의 id=유튜브 영상 id라 URL에서 뽑으면
+// 어느 경로에서 열었든 어드민이 항상 편집 가능하다. _openVidTagModal은 id로 실제 group_ko/members를 DB에서
+// 다시 불러오므로(admin.js), group은 있으면 넘기고 없으면 ''(fetch가 채움).
+function _lbApiId(s){
+  if(!s)return null;
+  if(s._apiId)return s._apiId;
+  const m=(s.u||'').match(/(?:[?&]v=|shorts\/|youtu\.be\/|embed\/)([A-Za-z0-9_-]{6,})/);
+  return m?m[1]:null;
+}
 // 세션 모드('shorts'|'browse') — 세션 시작(isAdvance 없는 openLightbox 호출) 시점에만 결정되고,
 // prev/next(_lbGo)로는 절대 안 바뀜(레이아웃이 스와이프↔브라우즈로 확 전환되는 걸 막기 위함,
 // 2026-08-11 설계). 추천 목록의 다른 타입 항목을 탭하면 새 openLightbox 호출이라 자연스럽게 새로 정해짐.
@@ -4147,7 +4157,7 @@ function _lbUpdateToolbar(){
     scrapBtn.style.display='none';colBtn.style.display='none';
   }
   const editBtn=document.getElementById('yt-lb-edit');
-  if(editBtn)editBtn.style.display=(_isAdmin()&&s&&s._apiId)?'':'none';
+  if(editBtn)editBtn.style.display=(_isAdmin()&&_lbApiId(s))?'':'none';
   if(_lbPlaylist&&_lbPlaylist.length>1){
     prevBtn.style.display='';nextBtn.style.display='';
     prevBtn.disabled=(_lbAdjacentIdx(-1)<0);
@@ -4886,8 +4896,9 @@ document.getElementById('yt-lb-edit').addEventListener('click',e=>{
   e.stopPropagation();
   if(!_lbPlaylist||_lbIdx<0)return;
   const s=_lbPlaylist[_lbIdx];
-  if(!s||!s._apiId)return;
-  _openVidTagModal({id:s._apiId,title:s.t},s._apiGroupKo);
+  const _id=_lbApiId(s); if(!_id)return;
+  // group_ko: 곡객체·ctx에 있으면 넘기고, 없으면 ''(모달이 id로 실제 group_ko를 DB에서 불러와 채움)
+  _openVidTagModal({id:_id,title:s.t}, s._apiGroupKo||s.groupKo||(_lbCtx&&_lbCtx.groupKo)||'');
 });
 document.getElementById('yt-lb-mute').addEventListener('click',e=>{
   e.stopPropagation();

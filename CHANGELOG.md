@@ -36,6 +36,8 @@
 
 ## 2026-08-30
 
+- [완료·실기기확인필요][index.html] **어드민 편집(연필) 버튼 — 탐험 패널·컬렉션·스크랩에서 연 영상에도 표시**(사용자 제보). 라이트박스 편집버튼은 `_isAdmin()&&s._apiId`일 때만 떴는데, 그룹/멤버 카드만 곡객체에 `_apiId`를 붙이고 탐험/컬렉션/스크랩 경로는 안 붙여 안 떴음. DB의 id=유튜브 영상 id라 곡 URL에서 유도하는 `_lbApiId(s)` 추가(watch/shorts/youtu.be/embed) → 표시조건·클릭 모두 이걸 사용. group_ko는 있으면 넘기고 없으면 ''(`_openVidTagModal`이 id로 실제 group_ko/members를 DB에서 다시 불러오므로 무방). 헤드리스로 id추출·어드민표시·비어드민숨김 검증. 한 곳 수정으로 전 경로 커버.
+
 - [완료·실사용확인필요][index.html] **즐겨찾기 신작 — 멤버 즐겨찾기 시 그 멤버가 들어간 영상만**(사용자 제보). 전엔 멤버를 즐겨찾기하면 그 그룹 전 영상을 가져와 타 멤버만 나온 직캠도 떴음. `_feedFavGroupKos`→`_feedFavTargets`(그룹 즐찾=전영상 passAll / 멤버 즐찾=그 그룹 영상 중 members에 그 멤버 있는 것만 memberFilter). 특정 멤버 태깅 없는 그룹 전체 영상은 통과, 타 멤버만 태깅된 건 제외. 솔로 즐찾은 그룹처럼 전영상. 헤드리스(카리나/에스파)로 6케이스 검증. 문구 "New from Favorites"→"New from Your Favorites".
 
 - [완료][index.html] **나침반 탐험 패널 "맨 위로(↑)" 버튼이 스크롤 대신 패널을 닫던 버그 수정**(사용자 제보). 원인: "자동 열린 탐험 패널을 밖을 건드리면 닫는" window pointerdown 핸들러가 2겹 — ①capture 단계(10321) 제외목록에 맨위로 버튼(#gc-totop)이 없어 밖으로 오인·닫음(capture라 버튼 bubble stopPropagation보다 먼저 발동) ②bubble 단계(10316)도 [data-modal] 아니라 닫음. 해결: capture 제외목록에 `#gc-totop` 추가 + 버튼에 pointerdown stopPropagation(bubble 차단). 헤드리스(데스크톱)로 버튼=유지·바깥=닫힘 검증.
