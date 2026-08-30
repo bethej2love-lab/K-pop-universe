@@ -15820,10 +15820,21 @@ async function _buildFeedTrend(){
 // ── 즐겨찾기 신작 선반(2026-08-29 Step2) ─────────────────────────────────────
 // 내가 하트 누른 그룹 + 하트 누른 멤버의 소속 그룹의 최신 업로드를 최신순으로. 즐겨찾기 없으면 온보딩.
 // (_ytGroupKoFor은 admin.js 전용이라 여기선 "실존 그룹이면 그룹명, 아니면 본인명" 규칙을 인라인으로 편다.)
-function _feedFavGroupKos(){
-  const gkos=new Set(favGroups);
-  favMembers.forEach(k=>{const a=ARTISTS.find(x=>_mFavKey(x)===k);if(a)gkos.add(GROUPS[a.group.ko]?a.group.ko:a.name.ko);});
-  return gkos;
+// 즐겨찾기 신작 대상 계산(2026-08-30):
+//  · 즐겨찾기 "그룹" → 그 그룹 전 영상(passAll)
+//  · 즐겨찾기 "멤버"(실존 그룹 소속) → 그 그룹 영상 중 "그 멤버가 들어간 것만"(memberFilter). 타 멤버만
+//    태깅된 영상(예: 카리나 즐찾인데 윈터 직캠)은 제외. 특정 멤버 태깅이 아예 없는 그룹 전체 영상은 통과.
+//  · 솔로(group.ko='솔로' 등)로 즐겨찾기한 멤버는 DB group_ko=본인명이고 전 영상이 본인이라 그룹처럼 취급.
+function _feedFavTargets(){
+  const passAll=new Set(favGroups);
+  const memberFilter=new Map(); // gko -> Set(멤버 name.ko)
+  favMembers.forEach(k=>{
+    const a=ARTISTS.find(x=>_mFavKey(x)===k); if(!a)return;
+    if(GROUPS[a.group.ko]){ const g=a.group.ko; if(!memberFilter.has(g))memberFilter.set(g,new Set()); memberFilter.get(g).add(a.name.ko); }
+    else passAll.add(a.name.ko); // 솔로
+  });
+  passAll.forEach(g=>memberFilter.delete(g)); // 그룹으로도 즐겨찾기했으면 멤버필터 무의미(전 영상 통과)
+  return {passAll,memberFilter,queryGkos:new Set([...passAll,...memberFilter.keys()])};
 }
 function _appendFeedOnboardCard(strip){
   const d=document.createElement('div');d.className='feed-onboard-card';
@@ -15838,21 +15849,28 @@ async function _buildFeedFavNew(){
   if(!strip||!section)return;
   _enableDragScroll(strip);
   strip.innerHTML='';section.style.display='none';
-  const gkos=_feedFavGroupKos();
-  if(!gkos.size){ _appendFeedOnboardCard(strip); section.style.display=''; return; } // 즐겨찾기 0 → 온보딩
+  const {passAll,memberFilter,queryGkos}=_feedFavTargets();
+  if(!queryGkos.size){ _appendFeedOnboardCard(strip); section.style.display=''; return; } // 즐겨찾기 0 → 온보딩
   if(!sb)return;
+  // 멤버 즐겨찾기는 그 멤버가 들어간 영상만(그룹 즐겨찾기면 전 영상). 특정 멤버 태깅이 없는 그룹 전체 영상은 통과.
+  const _favMatch=v=>{
+    if(passAll.has(v.group_ko))return true;
+    const mf=memberFilter.get(v.group_ko); if(!mf)return false;
+    const mem=v.members||[];
+    return mem.length===0 ? true : mem.some(m=>mf.has(m)); // 태깅 없음=그룹 전체(통과) / 있으면 즐찾 멤버 포함해야
+  };
   try{
     const{data,error}=await _applyLiveExclude(sb.from(_YT_TABLE)
       .select('id,title,thumb,category,is_short,content_flag,group_ko,members,view_count,published_at'))
-      .in('group_ko',[...gkos].slice(0,80))
+      .in('group_ko',[...queryGkos].slice(0,80))
       .or('content_flag.is.null,content_flag.neq.기타')
       .or('content_flag.is.null,content_flag.neq.무관').or('content_flag.is.null,content_flag.neq.보류')
       .or('content_flag.is.null,content_flag.neq.hidden')
       .order('published_at',{ascending:false})
       .limit(150);
     if(error||!data?.length)return;
-    // 최신순 유지(신작이라 셔플 안 함), 쇼츠는 16:9 스트립에 안 맞아 제외(Trend와 동일 규칙), 그룹당 최대 3
-    const vids=_capByGroup(_filterBannedVideos(data).filter(v=>!_isShortV(v)),v=>v.group_ko,3).slice(0,_FEED_TREND_MAX);
+    // 최신순 유지(신작이라 셔플 안 함), 쇼츠는 16:9 스트립에 안 맞아 제외(Trend와 동일 규칙), 멤버필터 적용, 그룹당 최대 3
+    const vids=_capByGroup(_filterBannedVideos(data).filter(v=>!_isShortV(v)&&_favMatch(v)),v=>v.group_ko,3).slice(0,_FEED_TREND_MAX);
     if(!vids.length)return;
     const vidUrl=v=>_isShortV(v)?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;
     const songs=vids.map(v=>({t:v.title,u:vidUrl(v),thumb:v.thumb,vc:v.view_count,pa:v.published_at?.slice(0,10),groupKo:v.group_ko,memberKos:v.members||[]}));
@@ -18187,7 +18205,7 @@ _totopBtn.addEventListener('click',e=>{
       <!-- 즐겨찾기 신작(2026-08-29 Step2): 내가 하트 누른 그룹 + 하트 누른 멤버의 소속 그룹의 최신 업로드.
            For You 탭의 핵심 — "매일 다시 오는 이유". 즐겨찾기 없으면 온보딩 카드로 채워 절대 안 비게 한다. -->
       <div class="feed-section" id="feed-favnew-section" style="display:none">
-        <div class="feed-section-ttl">💖 New from Favorites</div>
+        <div class="feed-section-ttl">💖 New from Your Favorites</div>
         <div id="feed-favnew" class="feed-strip hscroll-drag"></div>
       </div>
       <!-- 최근 7일 업로드 영상을 랜덤 순서로 나열(2026-08-25 사용자 요청 — "최신 정보·영상이 중요한데
