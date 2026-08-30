@@ -2768,6 +2768,14 @@
   .feed-masonry .feed-card-cap{padding:8px 10px 12px;}
   .feed-masonry .feed-card-title{font-size:11px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
   .feed-masonry .feed-card-sub{font-size:9.5px;}
+  /* varied 메이슨리 — 여백없는 메이슨리 세그먼트 + 가로영상 전체폭 featured가 섞인 잡지형 배치(2026-08-30). */
+  .feed-varied{display:flex;flex-direction:column;gap:10px;padding:0 20px 4px;}
+  .feed-varied>.feed-masonry{padding:0;} /* 세그먼트는 부모(feed-varied)가 패딩을 가짐 */
+  .feed-varied-feat{width:100%;}
+  .feed-varied-feat>.feed-card{border-bottom:none;border-radius:8px;background:rgba(255,255,255,0.03);}
+  .feed-varied-feat>.feed-card .feed-card-cap{padding:8px 12px 12px;}
+  .feed-varied-feat>.feed-card .feed-card-title{font-size:12.5px;font-weight:600;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+  .feed-varied-feat>.feed-card .feed-card-sub{font-size:10px;}
   /* 크기 섞기(2026-08-22) — 그룹/멤버 카드 그리드처럼: 하이라이트(단일영상)는 전체폭 16:9, 대표가 쇼츠면 9:16 세로 */
   .feed-grid .feed-card.feed-wide{grid-column:span 2;}
   .feed-card.is-short .feed-card-thumb-wrap{aspect-ratio:9/16;}
