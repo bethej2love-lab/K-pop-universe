@@ -558,13 +558,13 @@
         <div id="hnn-dup-list"></div>
       </div>
       <div id="hnn-wl-sec">
-        <div class="hnn-sec-lbl">흔한단어 보호 목록 (해시태그로만 인정)</div>
+        <div class="hnn-sec-lbl">흔한단어 보호 목록 — <b>예: "러브·보니·나인"이 무관 영상에 붙을 때.</b> #해시태그로 명시된 경우만 인정(평문 무시). ※영상 편집(연필) 모달의 이름 옆 ⚑로도 바로 추가 가능</div>
         <div id="hnn-wl-list"></div>
       </div>
       <div id="hnn-atm-sec">
         <div class="hnn-sec-lbl">기타 태깅 예외 규칙 (재배포 없이 즉시 반영)</div>
         <div class="hnn-atm-sub">
-          <div class="hnn-atm-sub-lbl">성씨 오매칭 제외 — 이름+성씨 조합 중 우연히 겹치는 흔한 성씨 제외</div>
+          <div class="hnn-atm-sub-lbl">성씨 오매칭 제외 — <b>예: "가인"이 "송가인"에 붙을 때.</b> 그 이름+특정 성씨 조합만 제외(이름 단독·다른 성은 그대로).</div>
           <div id="hnn-atm-surname-list" class="hnn-atm-list"></div>
           <div class="hnn-atm-add-row">
             <input id="hnn-atm-surname-name" type="text" placeholder="멤버 이름(예: 가인)">
@@ -573,7 +573,7 @@
           </div>
         </div>
         <div class="hnn-atm-sub">
-          <div class="hnn-atm-sub-lbl">동시매칭시 무시 — 흔한 곡/유행어와 겹치는 그룹명, 다른 그룹과 같이 잡히면 버림</div>
+          <div class="hnn-atm-sub-lbl">동시매칭시 무시 — <b>예: "슈퍼노바"(에스파 곡)가 다른 그룹 영상에 붙을 때.</b> 그룹명이 곡명/유행어라 타 그룹과 같이 잡히면 버림(자기 채널 단독 매칭은 인정).</div>
           <div id="hnn-atm-comatch-list" class="hnn-atm-list"></div>
           <div class="hnn-atm-add-row">
             <input id="hnn-atm-comatch-value" type="text" placeholder="그룹명(예: 슈퍼노바)">
@@ -581,7 +581,7 @@
           </div>
         </div>
         <div class="hnn-atm-sub">
-          <div class="hnn-atm-sub-lbl">리터럴 전용 토큰 — 특수문자 포함 그룹명, 정규화 없이 원문 그대로만 인정</div>
+          <div class="hnn-atm-sub-lbl">리터럴 전용 토큰 — <b>예: "15&"가 날짜/순위 "15"에 붙을 때.</b> 특수문자 포함 그룹명을 원문 그대로일 때만 인정(정규화로 흔해지는 것 차단).</div>
           <div id="hnn-atm-literal-list" class="hnn-atm-list"></div>
           <div class="hnn-atm-add-row">
             <input id="hnn-atm-literal-value" type="text" placeholder="토큰(예: 15&)">
