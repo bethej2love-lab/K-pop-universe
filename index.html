@@ -14203,8 +14203,13 @@ function _appendFeedCard(container,icon,title,sub,onClick,thumbUrl,cat,opts){
 function _setFeedCardThumb(item,thumbUrl){
   const wrap=item.querySelector('.feed-card-thumb-wrap');
   if(!wrap)return;
-  // 쇼츠(9:16) 카드는 썸네일 뒤에 블러 배경을 깔아 좌우 여백을 채움(그룹/멤버 카드 .gc-ch-thumb-bg와 동일, 2026-08-22)
-  if(thumbUrl&&item.classList.contains('is-short')&&!wrap.querySelector('.feed-card-thumb-bg')){const bg=document.createElement('div');bg.className='feed-card-thumb-bg';bg.style.backgroundImage=`url(${thumbUrl})`;wrap.insertBefore(bg,wrap.firstChild);}
+  const isShort=item.classList.contains('is-short');
+  // 쇼츠(9:16) 카드는 유튜브 **세로 원본 썸네일(oardefault.jpg)** 을 쓴다(2026-08-30 사용자 제보 — 세로 카드에
+  // 16:9 mqdefault를 cover로 넣으면 가운데를 잘라 위로 늘려 흐려짐). 그룹/멤버 카드 그리드(renderItems)와 동일 로직:
+  // oardefault가 없으면 유튜브가 404 대신 120×90 회색 플레이스홀더를 정상 이미지로 응답하므로 onload에서 크기로 감지해 폴백.
+  const vid=isShort?(String(thumbUrl||'').match(/\/vi\/([^/]+)\//)||[])[1]:null;
+  // 쇼츠 카드는 썸네일 뒤에 블러 배경을 깔아 좌우 여백을 채움(그룹/멤버 카드 .gc-ch-thumb-bg와 동일, 2026-08-22)
+  if(thumbUrl&&isShort&&!wrap.querySelector('.feed-card-thumb-bg')){const bg=document.createElement('div');bg.className='feed-card-thumb-bg';bg.style.backgroundImage=`url(${thumbUrl})`;wrap.insertBefore(bg,wrap.firstChild);}
   if(!thumbUrl){
     const sh=wrap.querySelector('.feed-card-shimmer');
     if(sh){wrap.innerHTML='<div class="feed-card-icon-fallback">'+(sh.dataset.icon||'🎵')+'</div>';}
@@ -14214,17 +14219,20 @@ function _setFeedCardThumb(item,thumbUrl){
   const img=document.createElement('img');
   img.className='feed-card-thumb';img.loading='lazy';img.alt='';
   img.addEventListener('load',()=>{
+    if(isShort&&img.src.includes('oardefault')&&img.naturalWidth===120&&img.naturalHeight===90){img.src=thumbUrl;return;} // 세로 썸네일 없음 → 원래(16:9)로 폴백
     img.classList.add('loaded');
     wrap.querySelector('.feed-card-shimmer')?.remove();
     item.classList.add('cap-revealed');
+    if(isShort&&img.src.includes('oardefault')){const bg=wrap.querySelector('.feed-card-thumb-bg');if(bg)bg.style.backgroundImage=`url(${img.src})`;} // 세로 썸네일 로드되면 블러 배경도 그걸로
   });
   img.addEventListener('error',()=>{
+    if(isShort&&vid&&img.src.includes('oardefault')){img.src=thumbUrl;return;} // 세로 실패 → 원래 썸네일 재시도
     const sh=wrap.querySelector('.feed-card-shimmer');
     if(sh){wrap.innerHTML='<div class="feed-card-icon-fallback">'+(sh.dataset.icon||'🎵')+'</div>';}
     img.remove();
     item.classList.add('cap-revealed');
   });
-  img.src=thumbUrl;
+  img.src=(isShort&&vid)?`https://i.ytimg.com/vi/${vid}/oardefault.jpg`:thumbUrl; // 쇼츠는 세로 원본 우선
   wrap.appendChild(img);
 }
 // 탐색 피드의 "모아보기"류 카드(포맷 모아보기, 세대별 직캠 모음)는 눌렀을 때 바로 첫 영상 라이트박스로
