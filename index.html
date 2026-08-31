@@ -3654,7 +3654,151 @@ function _resolveRecentSearches(){
     return{type:'member',name:dispName,sub:dispSub,pos:a._worldPos,data:a};
   }).filter(Boolean);
 }
+// ── 서버 검색: 영상 제목 · 공연(2026-08-31, 검색 확장 4단계) ──────────────────
+// 영상 379,835건 · 공연 741건은 JSON에 없어 DB를 쳐야 한다. 그래서 **동기 결과를 먼저 그리고
+// 도착하면 이어 붙이는** 방식 — 타이핑할 때마다 화면이 비었다 채워지지 않게.
+// ⚠️ 요청은 항상 최신 쿼리 것만 반영한다(토큰 비교) — 빨리 치면 늦게 온 옛 응답이 새 결과를 덮는다.
+// ⚠️ 디바운스 필수: 한 글자마다 38만 행을 치면 안 된다.
+// ⚠️ `title_norm ilike '%q%'`는 **인덱스 없이는 풀스캔**이다. `search_indexes_migration.sql`의
+//    pg_trgm GIN 인덱스를 실행해야 실용 속도가 나온다(미실행이어도 동작은 하되 느림 — limit로 방어).
+let _remoteSearchToken=0,_remoteSearchTimer=null;
+function _searchRemote(q,res,mobSearch,obSearch){
+  const token=++_remoteSearchToken;
+  clearTimeout(_remoteSearchTimer);
+  _remoteSearchTimer=setTimeout(async()=>{
+    if(!sb||token!==_remoteSearchToken)return;
+    const like='%'+q.replace(/[%_]/g,'')+'%';
+    const out={event:[],video:[]};
+    try{
+      const [evR,vidR]=await Promise.all([
+        sb.from('kpop_events').select('id,title,groups,date_start,venue').ilike('title',like).order('date_start',{ascending:false}).limit(5),
+        sb.from(_YT_TABLE).select('id,title,group_ko,is_short,category,content_flag')
+          .ilike('title_norm',like.toLowerCase())
+          .or('content_flag.is.null,content_flag.neq.무관').or('content_flag.is.null,content_flag.neq.보류')
+          .or('content_flag.is.null,content_flag.neq.hidden')
+          .limit(6),
+      ]);
+      if(token!==_remoteSearchToken)return; // 그 사이 다른 걸 쳤으면 버린다
+      (evR.data||[]).forEach(e=>{
+        const gko=(e.groups||[])[0];
+        const owner=GROUPS[gko]?gko:null;
+        out.event.push({type:'event',name:e.title,alias:(e.date_start||'').slice(0,10),
+          sub:e.venue||gko||'',ownerType:'group',data:owner,
+          pos:owner?bubbleMeshes.find(b=>b.ko===owner)?.mesh.position.clone():null});
+      });
+      (vidR.data||[]).forEach(v=>{
+        out.video.push({type:'video',name:_cleanTitle(v.title),sub:v.group_ko||'',
+          url:_isShortV(v)?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`,
+          isShort:_isShortV(v)});
+      });
+    }catch(e){return;} // 조용히 — 동기 결과는 이미 화면에 있다
+    if(token!==_remoteSearchToken)return;
+    _appendSearchSections(out,res,mobSearch,obSearch);
+  },260);
+}
 // hits 렌더링 공통 로직 — 실시간 검색 결과와 최근 검색 목록이 그대로 재사용
+// ── 검색 빈 화면의 "요즘 많이 보는"(2026-08-31, 검색 확장 3단계) ───────────────
+// 검색 로그를 안 남기므로 "인기 검색어"는 만들 수 없다(있는 척하면 가짜다). 대신 **우리가 실제로
+// 가진 신호**를 쓴다 — groups.json의 pri(유명도)와 최근 즐겨찾기. DB를 안 치므로 즉시 뜬다.
+// ⚠️ 매번 같은 순서면 "고정 배너"처럼 보여 아무도 안 누른다 — pri 상위 풀에서 매번 섞어 6개만 낸다.
+function _trendingSearchHits(){
+  const pool=Object.keys(GROUPS)
+    .filter(ko=>(GROUPS[ko].pri||0)>=1.5&&bubbleMeshes.some(b=>b.ko===ko));
+  if(pool.length<3)return[];
+  const picked=_shuffle([...pool]).slice(0,6);
+  return picked.map(ko=>{
+    const bm=bubbleMeshes.find(b=>b.ko===ko);
+    const en=GROUPS[ko].en||'';
+    return{type:'group',name:currentLang==='ko'?ko:(en||ko),sub:currentLang==='ko'?(en||''):'',
+      pos:bm.mesh.position.clone(),data:ko,score:0};
+  });
+}
+function _appendTrendingSection(hits,res,mobSearch,obSearch){
+  const lb=document.createElement('div');lb.className='sr-sec-label';
+  lb.textContent=currentLang==='ko'?'이런 그룹은 어때요':'Try these';
+  res.appendChild(lb);
+  hits.forEach(h=>res.appendChild(_makeSearchItem(h,res,mobSearch,obSearch)));
+}
+// 서버에서 늦게 도착한 결과를 기존 목록 **뒤에** 섹션으로 붙인다(화면을 다시 그리지 않는다 —
+// 사용자가 이미 보고 있는 동기 결과가 깜빡이면 안 되고, 스크롤 위치도 유지돼야 한다).
+function _appendSearchSections(out,res,mobSearch,obSearch){
+  const label={video:{ko:'영상',en:'Videos'},event:{ko:'공연',en:'Events'},
+    group:{ko:'그룹',en:'Groups'},member:{ko:'멤버',en:'Members'},song:{ko:'곡',en:'Songs'}};
+  // 이전 요청이 붙여둔 서버 섹션은 걷어낸다(같은 검색어로 두 번 붙는 것 방지)
+  res.querySelectorAll('.sr-remote').forEach(el=>el.remove());
+  const hasAny=(out.event&&out.event.length)||(out.video&&out.video.length);
+  // 동기 결과가 한 종류뿐이라 헤더를 안 붙였는데 서버 결과가 도착했으면, 그제서야 위쪽에도 헤더를 끼운다
+  // (안 그러면 "영상"만 헤더가 있고 위 목록은 무제목이라 어색하다)
+  const sole=res.dataset.soleType;
+  if(hasAny&&sole&&!res.querySelector('.sr-sec-label')){
+    const top=document.createElement('div');top.className='sr-sec-label sr-remote';
+    top.textContent=(label[sole]||{})[currentLang==='ko'?'ko':'en']||sole;
+    res.insertBefore(top,res.firstChild);
+  }
+  let added=0;
+  for(const t of ['event','video']){
+    const arr=out[t];if(!arr||!arr.length)continue;
+    const lb=document.createElement('div');lb.className='sr-sec-label sr-remote';
+    lb.textContent=(label[t]||{})[currentLang==='ko'?'ko':'en']||t;
+    res.appendChild(lb);
+    arr.forEach(h=>{
+      const div=_makeSearchItem(h,res,mobSearch,obSearch);
+      div.classList.add('sr-remote');
+      res.appendChild(div);added++;
+    });
+  }
+  // 동기 결과가 0건이라 "검색 결과가 없어요"가 떠 있었는데 서버 결과가 왔으면 그 문구를 치운다
+  if(added)res.querySelector('.sr-empty')?.remove();
+}
+// 검색 결과 항목 하나를 만든다 — 실시간 결과와 **나중에 도착하는 서버 결과(영상·공연)**가 같은 클릭
+// 로직을 써야 해서 함수로 뽑았다(2026-08-31). 두 벌로 복사하면 동작이 갈라진다.
+function _makeSearchItem(h,res,mobSearch,obSearch){
+  const div=document.createElement('div');
+  div.className='sr-item';
+  // 타입별 아이콘 — 섹션 헤더가 없는 경우(최근검색·온보딩)에도 한눈에 구분되게 한다
+  const _ico={song:'♪ ',video:'▶ ',event:'📍 '}[h.type]||'';
+  div.innerHTML=`<span class="sr-nl"><span class="sr-item-name${h.type==='group'?' sr-group':''}">${_ico}${h.name}</span>${h.alias?`<span class="sr-alias">${h.alias}</span>`:''}</span>${h.sub?`<span class="sr-tag${h.type==='group'?' sr-group':''}">${h.sub}</span>`:''}`;
+  div.addEventListener('click',e=>{
+    e.stopPropagation();
+    // 곡은 그 자체로 카드가 없으므로 **곡 주인(그룹/멤버)** 기준으로 최근검색에 남긴다 —
+    // 그래야 _resolveRecentSearches가 기존 형식 그대로 복원할 수 있다(별도 타입을 만들지 않음).
+    // 영상은 카드가 아니라 라이트박스로 바로 연다 — 카메라 이동·카드 열기 흐름을 타지 않는다.
+    if(h.type==='video'){
+      if(obSearch)exitObSearch();else if(mobSearch)exitMobSearch();
+      else{document.getElementById('search-input').value='';res.style.display='none';}
+      openLightbox(h.url,!!h.isShort);
+      return;
+    }
+    _recordRecentSearch((h.type==='song'||h.type==='event')?{type:h.ownerType,data:h.data}:h);
+    _closeFeedOverlay();
+    closeCards();
+    flyTo(h.pos);
+    const cx=window.innerWidth/2,cy=window.innerHeight*0.38;
+    const _openCard=()=>{
+      // 곡·공연 결과는 그 주인의 카드를 연다(곡/공연 자체 카드는 없음). 주인이 그룹이면 그룹 카드, 멤버면 멤버 카드.
+      const t=(h.type==='song'||h.type==='event')?h.ownerType:h.type;
+      const d=h.data;
+      if(t==='group'){showGC(d,cx,cy);pulseGroup(d);}
+      else{showT(d,cx,cy);pulseMember(d);pulseGroup(d.group.ko);}
+    };
+    if(obSearch){
+      exitObSearch();
+      flyState.onComplete=()=>setTimeout(_openCard,150);
+    }else if(mobSearch){
+      exitMobSearch();
+      // 모바일은 카드(바텀시트)가 화면 하단 대부분을 덮어서, 카메라 이동이 끝나기 전에 카드부터
+      // 열리면 이동하는 모습이 거의 안 보임 — 탐색(✦) 버튼과 동일하게 도착 후에 카드를 연다.
+      flyState.onComplete=()=>setTimeout(_openCard,150);
+    }else{
+      document.getElementById('search-input').value='';
+      res.style.display='none';
+      closePanels();
+      _openCard();
+    }
+  });
+  return div;
+}
+
 function _renderSearchHits(hits,res,mobSearch,isRecent,obSearch){
   res.innerHTML='';
   if(isRecent&&hits.length){
@@ -3662,42 +3806,31 @@ function _renderSearchHits(hits,res,mobSearch,isRecent,obSearch){
     lbl.textContent=currentLang==='ko'?'최근 검색':'Recent';
     res.appendChild(lbl);
   }
-  hits.forEach(h=>{
-    const div=document.createElement('div');
-    div.className='sr-item';
-    // 곡 결과는 음표를 앞에 붙여 사람/그룹과 한눈에 구분되게 한다(2026-08-31 곡 검색 추가)
-    div.innerHTML=`<span class="sr-nl"><span class="sr-item-name${h.type==='group'?' sr-group':''}">${h.type==='song'?'♪ ':''}${h.name}</span>${h.alias?`<span class="sr-alias">${h.alias}</span>`:''}</span>${h.sub?`<span class="sr-tag${h.type==='group'?' sr-group':''}">${h.sub}</span>`:''}`;
-    div.addEventListener('click',e=>{
-      e.stopPropagation();
-      // 곡은 그 자체로 카드가 없으므로 **곡 주인(그룹/멤버)** 기준으로 최근검색에 남긴다 —
-      // 그래야 _resolveRecentSearches가 기존 형식 그대로 복원할 수 있다(별도 타입을 만들지 않음).
-      _recordRecentSearch(h.type==='song'?{type:h.ownerType,data:h.data}:h);
-      _closeFeedOverlay();
-      closeCards();
-      flyTo(h.pos);
-      const cx=window.innerWidth/2,cy=window.innerHeight*0.38;
-      const _openCard=()=>{
-        // 곡 결과는 그 곡 주인의 카드를 연다(곡 자체 카드는 없음). 주인이 그룹이면 그룹 카드, 멤버면 멤버 카드.
-        const t=h.type==='song'?h.ownerType:h.type;
-        const d=h.data;
-        if(t==='group'){showGC(d,cx,cy);pulseGroup(d);}
-        else{showT(d,cx,cy);pulseMember(d);pulseGroup(d.group.ko);}
-      };
-      if(obSearch){
-        exitObSearch();
-        flyState.onComplete=()=>setTimeout(_openCard,150);
-      }else if(mobSearch){
-        exitMobSearch();
-        // 모바일은 카드(바텀시트)가 화면 하단 대부분을 덮어서, 카메라 이동이 끝나기 전에 카드부터
-        // 열리면 이동하는 모습이 거의 안 보임 — 탐색(✦) 버튼과 동일하게 도착 후에 카드를 연다.
-        flyState.onComplete=()=>setTimeout(_openCard,150);
-      }else{
-        document.getElementById('search-input').value='';
-        res.style.display='none';
-        closePanels();
-        _openCard();
-      }
-    });
+  // ── 타입별 섹션(2026-08-31, 검색 확장 2단계) ──
+  // 결과가 그룹·멤버·곡·영상으로 늘어나면서 평평한 목록으론 "뭐가 뭔지" 안 보였다. 섹션으로 나눈다.
+  // ⚠️ 섹션 헤더에는 `.sr-item` 클래스를 주지 않는다 — 키보드 내비게이션(_wireListKeyboardNav)이
+  //    `.sr-item`으로 항목을 고르므로, 헤더에 그 클래스가 붙으면 화살표가 헤더에서 멈춘다.
+  // ⚠️ 섹션 순서는 고정이 아니라 **점수가 가장 좋은 타입부터**다(hits가 이미 전역 정렬돼 있어서
+  //    첫 등장 순서를 쓰면 그대로 된다) — "카리나"면 멤버가, "Whiplash"면 곡이 먼저 온다.
+  // 최근 검색·온보딩 검색(5칸)은 섹션 없이 기존 그대로.
+  const _secLabel={group:{ko:'그룹',en:'Groups'},member:{ko:'멤버',en:'Members'},
+    song:{ko:'곡',en:'Songs'},video:{ko:'영상',en:'Videos'},event:{ko:'공연',en:'Events'}};
+  let _secOrder=[];const _byType=new Map();
+  if(!isRecent&&!obSearch){
+    hits.forEach(h=>{const t=h.type;if(!_byType.has(t)){_byType.set(t,[]);_secOrder.push(t);}_byType.get(t).push(h);});
+    // 한 종류뿐이면 헤더가 군더더기 — 다만 뒤에 서버 결과(영상·공연)가 붙으면 그때는 필요해지므로,
+    // 그 타입을 컨테이너에 기록해두고 _appendSearchSections가 필요할 때 헤더를 끼워 넣는다.
+    res.dataset.soleType=_secOrder.length===1?_secOrder[0]:'';
+    if(_secOrder.length<2)_secOrder=[];
+  }
+  const _ordered=_secOrder.length?_secOrder.flatMap(t=>[{__sec:t},..._byType.get(t)]):hits;
+  _ordered.forEach(h=>{
+    if(h.__sec){
+      const lb=document.createElement('div');lb.className='sr-sec-label';
+      lb.textContent=(_secLabel[h.__sec]||{})[currentLang==='ko'?'ko':'en']||h.__sec;
+      res.appendChild(lb);return;
+    }
+    const div=_makeSearchItem(h,res,mobSearch,obSearch);
     res.appendChild(div);
   });
   if(!hits.length&&!isRecent){
@@ -3714,12 +3847,19 @@ function doSearch(q){
   q=q.trim();
   if(!q){
     const recentHits=_resolveRecentSearches();
-    if(!recentHits.length){
+    // 빈 화면(2026-08-31, 검색 확장 3단계) — X가 검색창을 열면 트렌드를 보여주는 이유와 같다:
+    // "검색창은 열었는데 뭘 칠지 모르는 사람"에게 출발점을 준다. 나침반(발견)과 겹치지 않는 건
+    // 이게 **콘텐츠 피드가 아니라 검색 진입점**이라서다.
+    // ⚠️ 최근 검색이 하나도 없어도(신규 유저) 빈 화면으로 두지 않고 인기 그룹을 보여준다 —
+    //    원래는 여기서 그냥 닫아버려서 첫 사용자가 아무 단서도 못 받았다.
+    const trending=(obSr||mobSearch)?[]:_trendingSearchHits();
+    if(!recentHits.length&&!trending.length){
       if(obSr||mobSearch){res.classList.remove('open');res.innerHTML='';}
       else{res.style.display='none';}
       return;
     }
     _renderSearchHits(obSr?recentHits.slice(0,5):recentHits,res,mobSearch,true,!!obSr);
+    if(trending.length)_appendTrendingSection(trending,res,mobSearch,!!obSr);
     if(obSr){res.classList.add('open');}
     else if(mobSearch){res.classList.add('open');document.getElementById('tabbar').classList.add('has-sr');}
     else{res.style.display='block';}
@@ -3822,6 +3962,8 @@ function doSearch(q){
   }
   hits.sort((a,b)=>{const sd=a.score-b.score;if(sd!==0)return sd;return a.name.localeCompare(b.name,'ko');});
   _renderSearchHits(hits.slice(0,obSr?5:40),res,mobSearch,false,!!obSr);
+  // 서버가 필요한 결과(영상·공연)는 늦게 도착하므로 뒤에 이어 붙인다(2026-08-31, 검색 확장 4단계)
+  if(!obSr&&q.length>=2)_searchRemote(q,res,mobSearch,!!obSr);
   if(obSr){res.classList.add('open');}
   else if(mobSearch){
     res.classList.add('open');

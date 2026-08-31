@@ -1847,6 +1847,12 @@
   .sr-tag{font-size:10px;color:#9ab8dc;letter-spacing:.05em;text-transform:uppercase;flex-shrink:0;}
   .sr-empty{padding:14px 13px;font-size:12px;color:rgba(140,160,200,0.56);text-align:center;}
   .sr-recent-label{padding:6px 13px 4px;font-size:10px;font-weight:700;color:rgba(140,160,200,0.56);letter-spacing:.06em;text-transform:uppercase;}
+  /* 검색 결과 타입 구분 헤더(2026-08-31). ⚠️ `.sr-item` 클래스를 주면 안 된다 — 키보드 내비게이션이
+     `.sr-item`으로 항목을 고르므로 화살표가 헤더에서 멈춘다. */
+  .sr-sec-label{padding:9px 13px 4px;font-size:10px;font-weight:700;color:rgba(150,175,235,0.52);letter-spacing:.07em;text-transform:uppercase;}
+  .sr-sec-label:first-child{padding-top:6px;}
+  /* 검색 결과가 늦게 도착하는 섹션(영상)의 로딩 표시 */
+  .sr-loading{padding:8px 13px;font-size:11px;color:rgba(140,160,200,0.45);}
   /* ── Responsive: desktop panel positions ────────── */
   @media(min-width:769px){
     #tabbar{display:none;}
