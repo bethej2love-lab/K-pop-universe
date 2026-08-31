@@ -25,7 +25,9 @@ function walk(dir, out = []) {
   return out;
 }
 const pages = [...walk(path.join(ROOT, 'g')), ...walk(path.join(ROOT, 'en', 'g')),
-               ...walk(path.join(ROOT, 'member')), ...walk(path.join(ROOT, 'en', 'member'))];
+               ...walk(path.join(ROOT, 'member')), ...walk(path.join(ROOT, 'en', 'member')),
+               ...walk(path.join(ROOT, 'collab')), ...walk(path.join(ROOT, 'en', 'collab')),
+               ...walk(path.join(ROOT, 'cover')), ...walk(path.join(ROOT, 'en', 'cover'))];
 if (!pages.length) { console.error('정적 페이지가 없음 — 먼저 node build_group_pages.js'); process.exit(2); }
 ok(`정적 페이지 ${pages.length}개 수집`);
 
@@ -67,9 +69,26 @@ sampleMembers.length && linked === sampleMembers.length
   ? ok(`멤버 페이지 표본 ${sampleMembers.length}개가 전부 다른 페이지에서 링크됨(고아 아님)`)
   : bad(`멤버 페이지 표본 ${sampleMembers.length}개 중 ${linked}개만 링크됨 — 고아 페이지 존재`);
 
+// 관계 페이지(/collab/, /cover/)도 고아면 안 된다 — 허브가 유일한 진입점이므로 허브에서 링크돼야 한다
+const hubKo = fs.existsSync(path.join(ROOT, 'g', 'index.html')) ? fs.readFileSync(path.join(ROOT, 'g', 'index.html'), 'utf8') : '';
+const relKo = [...walk(path.join(ROOT, 'collab')), ...walk(path.join(ROOT, 'cover'))];
+if (relKo.length) {
+  const unlinked = relKo.filter(p => {
+    const rel = path.relative(ROOT, path.dirname(p)).split(path.sep).join('/') + '/';
+    return !hubKo.includes(`${SITE}/${rel}"`);
+  });
+  unlinked.length === 0
+    ? ok(`관계 페이지 ${relKo.length}개 전부 허브에서 링크됨`)
+    : bad(`허브에서 안 걸린 관계 페이지 ${unlinked.length}개 (예: ${path.relative(ROOT, unlinked[0])})`);
+} else console.log('ℹ️ 관계 페이지 없음 — DB 조회 실패 시 정상(기존 페이지 유지)');
+
 // sitemap에 허브가 들어갔는가
 const sm = fs.readFileSync(path.join(ROOT, 'sitemap.xml'), 'utf8');
 sm.includes(`<loc>${SITE}/g/</loc>`) ? ok('sitemap에 허브 포함') : bad('sitemap에 허브 없음');
+// 콜라보는 태깅 품질 대기로 기본 비활성이므로 /cover/ 기준으로 확인한다(REL_COLLAB=1이면 둘 다 생김)
+(sm.includes('/cover/') || sm.includes('/collab/'))
+  ? ok('sitemap에 관계 페이지 포함')
+  : console.log('ℹ️ sitemap에 관계 페이지 없음(DB 조회 실패 시 정상)');
 
 console.log(`\n${pass}/${pass + fail} 통과`);
 process.exit(fail ? 1 : 0);

@@ -120,6 +120,7 @@ ${pieces.join('\n')}
 module.exports={_m2ParseTitle,_atmResolveMembers,_atmMatchesMember,_atmTokenize,_wonkokStripClause,_PROJECT_UNITS,GROUPS,ARTISTS,_STRICT_SYNC_GROUPS,
   _atmStripDescNoise:(typeof _atmStripDescNoise==='function')?_atmStripDescNoise:null,
   _m2DebutBlocks:(typeof _m2DebutBlocks==='function')?_m2DebutBlocks:null,
+  _atmStripCommonNounCtx:(typeof _atmStripCommonNounCtx==='function')?_atmStripCommonNounCtx:null,
   _coverResolve:(typeof _coverResolve==='function')?_coverResolve:null,_coverCandidates:(typeof _coverCandidates==='function')?_coverCandidates:null,_coverSongKeys:(typeof _coverSongKeys==='function')?_coverSongKeys:null,_coverBuildIndex:(typeof _coverBuildIndex==='function')?_coverBuildIndex:null,
   _coverContext:(typeof _coverContext==='function')?_coverContext:null,_coverHasCollabSignal:(typeof _coverHasCollabSignal==='function')?_coverHasCollabSignal:null,
   _coverRestoreSignal:(typeof _coverRestoreSignal==='function')?_coverRestoreSignal:null,

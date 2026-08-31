@@ -4364,8 +4364,15 @@ function _atmContextRelaxesHashtagOnly(name,title,groupKo){
 // (리쿠'의' 하루 → 리쿠는 남김), "하루의 …"(하루가 소유자)·"#하루"·"하루 직캠" 등 진짜 멤버 언급도 보존.
 // 두 매처(_atmMatchesMember/_atmResolveMembers·_m2ParseTitle)가 공유한다.
 function _atmStripCommonNounCtx(title){
-  if(!title||title.indexOf('하루')<0)return title||'';
-  return title
+  let t=title||'';
+  // "bts of ○○" = behind the scenes. 방탄소년단(BTS)과 철자가 같아 콜라보로 잘못 잡힌다 —
+  // 실측(2026-08-31): 제목에 'bts of'가 든 62건 중 **55건이 방탄소년단 태그**였고 전부 오탐이었다
+  // (`bts of impossible: day 3 #RIIZE`, `bts of We are FIFTY FIFTY` …). 관용구라 정밀하게 걷어낼 수
+  // 있어서 BTS 전체를 해시태그 전용으로 묶는 것(정상 태깅을 대량으로 죽임)보다 낫다.
+  // ⚠️ 'bts' 단독은 건드리지 않는다 — 그건 진짜 방탄소년단인 경우가 대부분이다. 'of'가 뒤따를 때만.
+  if(/bts\s+of\b/i.test(t))t=t.replace(/\bbts(?=\s+of\b)/gi,' ');
+  if(t.indexOf('하루')<0)return t;
+  return t
     .replace(/(?<=[가-힣]의\s)하루(?![가-힣])/g,' ') // "○○의 하루" — 소유된 일반명사만 제거(소유자 토큰은 남김)
     .replace(/하루\s*종일/g,' ')
     .replace(/하루하루/g,' ');

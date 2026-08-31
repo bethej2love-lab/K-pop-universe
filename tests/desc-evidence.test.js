@@ -71,5 +71,21 @@ t('B.I X BOBBY 처럼 뒤에 단독 글자가 와도 인정',mt('B.I X BOBBY'),t
 t('BI(점 없이)도 인정',mt('iKON BI Solo'),true);
 t('BIG(점 없는 단어)는 아님',mt('BIG BANG 무대'),false);
 
+// ── "bts of ○○" = behind the scenes (2026-08-31) ──
+// 실측: 제목에 'bts of'가 든 62건 중 55건이 방탄소년단으로 잘못 태깅돼 있었다.
+const {_m2ParseTitle,_atmStripCommonNounCtx}=M;
+const gkoOf=(title)=>{const r=_m2ParseTitle(title,undefined,undefined,'2024-06-01');return r?[r.primaryGroup,...(r.withGroups||[])]:[];};
+t('bts of ○○ 는 방탄소년단이 아님',
+  gkoOf('bts of impossible: day 3 #RIIZE #라이즈 #RISEandREALIZE').includes('방탄소년단'),false);
+t('bts of ○○ — 다른 사례',
+  gkoOf('bts of We are FIFTY FIFTY #ATHENA #아테나').includes('방탄소년단'),false);
+t('그래도 라이즈는 정상 인식',
+  gkoOf('bts of impossible: day 3 #RIIZE #라이즈 #RISEandREALIZE').includes('라이즈'),true);
+// ⚠️ 'bts' 단독은 건드리면 안 된다 — 그건 진짜 방탄소년단이다
+t('BTS 단독 언급은 그대로 방탄소년단',
+  gkoOf('BTS (방탄소년단) Dynamite 무대').includes('방탄소년단'),true);
+t('_atmStripCommonNounCtx — bts of만 제거하고 나머지는 보존',
+  /impossible/.test(_atmStripCommonNounCtx('bts of impossible #RIIZE')),true);
+
 console.log(`\n${pass}/${pass+fail} 통과`);
 process.exit(fail?1:0);

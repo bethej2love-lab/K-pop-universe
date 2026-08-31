@@ -507,7 +507,7 @@ artists.forEach(a => {
 // 그래서 그룹 페이지들도 멤버 페이지와 똑같이 sitemap에만 존재하는 고아였다. 이 허브가 그래프를 닫는다:
 //   sitemap → /g/ (허브) → 그룹 페이지 → 멤버 페이지 → 소속 그룹으로 되돌아감
 // 순수 텍스트 목록이라 가볍고, 데뷔연도를 같이 실어 "2015년 데뷔 걸그룹" 류 쿼리도 받는다.
-function hubPageHtml(lang) {
+function hubPageHtml(lang, relLinks) {
   const isEn = lang === 'en';
   const selfUrl = `${SITE}/${isEn ? 'en/g/' : 'g/'}`;
   const altUrl = `${SITE}/${isEn ? 'g/' : 'en/g/'}`;
@@ -542,6 +542,7 @@ function hubPageHtml(lang) {
   .wrap{max-width:760px;margin:0 auto;padding:32px 20px 80px;}
   .brand{font-size:12px;letter-spacing:.08em;color:rgba(150,175,255,0.6);text-decoration:none;}
   h1{font-size:26px;margin:14px 0 6px;color:#fff;}
+  h2{font-size:15px;margin:30px 0 10px;color:rgba(200,220,255,0.9);}
   .sub{font-size:14px;color:rgba(180,200,255,0.6);margin-bottom:22px;}
   ul{list-style:none;padding:0;margin:0;display:flex;flex-wrap:wrap;gap:8px;}
   li{background:rgba(150,175,255,0.08);border:0.5px solid rgba(150,175,255,0.18);border-radius:10px;padding:6px 12px;font-size:13.5px;}
@@ -560,26 +561,301 @@ function hubPageHtml(lang) {
   <ul>
       ${items}
   </ul>
+${(relLinks && relLinks.length) ? `
+  <h2>${isEn ? 'Collaborations & covers' : '콜라보 · 커버'}</h2>
+  <ul>
+      ${relLinks.map(r => `<li><a href="${r.href}">${escHtml(r.label)}</a> <span class="yr">${r.n}</span></li>`).join('\n      ')}
+  </ul>` : ''}
   <div class="lang-switch"><a href="${altUrl}">${isEn ? '한국어로 보기' : 'View in English'}</a></div>
 </div>
 </body>
 </html>
 `;
 }
-fs.mkdirSync(path.join(ROOT, 'g'), { recursive: true });
-fs.mkdirSync(path.join(ROOT, 'en', 'g'), { recursive: true });
-fs.writeFileSync(path.join(ROOT, 'g', 'index.html'), hubPageHtml('ko'));
-fs.writeFileSync(path.join(ROOT, 'en', 'g', 'index.html'), hubPageHtml('en'));
+// ⚠️ 허브 파일 쓰기는 아래 async 블록에서 한다 — 관계 페이지(/collab/, /cover/) 목록을 허브에 실어야
+//    그 페이지들도 고아가 안 된다. 관계 데이터는 DB 조회라 비동기이므로 순서가 이럴 수밖에 없다.
 pages.push({ loc: `${SITE}/g/`, priority: '0.9' }, { loc: `${SITE}/en/g/`, priority: '0.9' });
 
-// sitemap.xml — 루트 + 허브 + 그룹별/멤버별 KO/EN 페이지 전부
-const sitemapUrls = [{ loc: `${SITE}/`, priority: '1.0' }, ...pages.map(p => ({ loc: p.loc, priority: p.priority || '0.7' }))];
-const sitemapXml = `<?xml version="1.0" encoding="UTF-8"?>
+// ── 관계 페이지: /collab/ · /cover/ (2026-08-31) ──────────────────────────────
+// 이 서비스만 가진 데이터로 만드는 페이지. 나무위키·kprofiles가 이미 점유한 "OO 프로필" 구간에서
+// 이기는 건 어렵지만, "에스파 아이브 같이 나온 영상"·"방탄소년단 커버"는 **경쟁이 사실상 0**이고
+// 우리에겐 태깅 36만 건이 있다.
+//
+// ⚠️ 관계 페이지는 **태깅 품질이 곧 콘텐츠 품질**이다. 실측(2026-08-31) 결과 콜라보 상위 쌍이
+//    `아이들 × 제국의아이들`(54건)·`시크릿 × 시크릿넘버`(32건)였는데 둘 다 **부분문자열 오염**이다
+//    (아이들 ⊂ 제국의 아이들). 그대로 만들면 오염을 검색엔진에 색인시키는 꼴이라, 이름이 서로
+//    부분문자열인 쌍은 아예 제외한다. 실측상 3건 이상 264쌍 중 딱 이 2쌍만 걸린다.
+// ⚠️ DB 조회가 실패하면(회사망 TLS·CI 네트워크) 관계 페이지를 **다시 만들지 않고 기존 것을 그대로
+//    둔다** — 빈 페이지를 덮어쓰거나 sitemap에서 통째로 빠지는 게 더 나쁘다.
+const SB_URL = 'https://dukgguehegnembimqvkm.supabase.co';
+const SB_KEY = 'sb_publishable_SjNC-N_9TUqaQcCxhVinGA_ULyX6tA0'; // 앱(index.html)에 이미 공개된 anon 키
+// 영상 이 수 이상인 관계만 페이지로. 3이면 264쌍이지만 노이즈가 섞인다 — 실측에서 `라이즈 × 방탄소년단`이
+// 3건 남았는데 전부 `Fame MV bts 1`처럼 **bts=behind the scenes** 오탐이었다. 5로 올리면 그런 잔여 노이즈가
+// 빠지고(콜라보 86쌍) 페이지도 두꺼워진다 — 얇은 페이지는 그 자체로 SEO에 마이너스라 둘 다 이득.
+const REL_MIN = 5;
+
+// 관계 페이지 URL 조각. 영문은 기존 slugify(a-z0-9+하이픈)를 그대로 쓰고, 한글은 파일시스템·URL에서
+// 문제가 되는 문자만 턴다. ⚠️ `IZ*ONE`처럼 영문명에 `*`가 든 그룹이 있어서 그냥 쓰면 mkdir이 죽는다
+// (2026-08-31 실제로 겪음 — Windows에서 `*`는 경로 금지 문자).
+function relSeg(name, lang) {
+  if (lang === 'en') return slugify(String(name), String(name));
+  return urlSafeKo(String(name)).replace(/[\\/:*?"<>|#%&]+/g, '').trim() || 'x';
+}
+function pairKey(a, b) { return [a, b].sort(); }
+// 두 그룹 이름(한/영)이 서로 부분문자열이면 오염 의심 — 위 주석 참고
+function namesOverlap(a, b) {
+  const n = s => String(s).toLowerCase().replace(/[\s.·\-]/g, '');
+  const A = [a, groups[a] && groups[a].en].filter(Boolean).map(n);
+  const B = [b, groups[b] && groups[b].en].filter(Boolean).map(n);
+  return A.some(x => B.some(y => x !== y && (x.includes(y) || y.includes(x))));
+}
+
+async function fetchRelationRows() {
+  const cols = 'id,title,group_ko,with_groups,cover_of_groups,content_flag,published_at';
+  const filter = 'or=(with_groups.neq.%7B%7D,cover_of_groups.neq.%7B%7D)';
+  const out = [];
+  let last = '';
+  for (let i = 0; i < 20; i++) {
+    const q = `${SB_URL}/rest/v1/yt_channel_videos?select=${cols}&${filter}&order=id&limit=1000${last ? `&id=gt.${encodeURIComponent(last)}` : ''}`;
+    const res = await fetch(q, { headers: { apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}` } });
+    if (!res.ok) throw new Error(`Supabase ${res.status}`);
+    const rows = await res.json();
+    if (!Array.isArray(rows) || !rows.length) break;
+    out.push(...rows);
+    last = rows[rows.length - 1].id;
+    if (rows.length < 1000) break;
+  }
+  return out.filter(r => !r.content_flag && groups[r.group_ko]);
+}
+
+function relPageHtml(o) {
+  const { lang, title, desc, h1, sub, sections, selfPath, altPath } = o;
+  const isEn = lang === 'en';
+  const selfUrl = `${SITE}/${selfPath}`;
+  const altUrl = `${SITE}/${altPath}`;
+  const secHtml = sections.filter(s => s.items.length).map(s => `
+    <h2>${escHtml(s.h)} <span class="yr">${s.items.length}</span></h2>
+    <ul class="vid-list">
+      ${s.items.map(v => `<li><a href="https://www.youtube.com/watch?v=${escHtml(v.id)}" target="_blank" rel="noopener">${escHtml(v.title)}</a>${v.note ? ` <span class="yr">${escHtml(v.note)}</span>` : ''}</li>`).join('\n      ')}
+    </ul>`).join('\n');
+  return `<!doctype html>
+<html lang="${isEn ? 'en' : 'ko'}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>${escHtml(title)}</title>
+<meta name="description" content="${escHtml(desc)}">
+<link rel="canonical" href="${selfUrl}">
+<link rel="alternate" hreflang="${isEn ? 'ko' : 'en'}" href="${altUrl}">
+<link rel="alternate" hreflang="${isEn ? 'en' : 'ko'}" href="${selfUrl}">
+<meta property="og:title" content="${escHtml(title)}">
+<meta property="og:description" content="${escHtml(desc)}">
+<meta property="og:url" content="${selfUrl}">
+<link rel="icon" href="${SITE}/icons/icon-192.png" type="image/png">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-Z5NTV6X3YF"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-Z5NTV6X3YF');</script>
+<style>
+  :root{color-scheme:dark;}
+  body{margin:0;background:#09091a;color:rgba(220,230,255,0.92);font-family:-apple-system,'Pretendard','Apple SD Gothic Neo',sans-serif;line-height:1.6;}
+  .wrap{max-width:720px;margin:0 auto;padding:32px 20px 80px;}
+  .brand{font-size:12px;letter-spacing:.08em;color:rgba(150,175,255,0.6);text-decoration:none;}
+  h1{font-size:24px;margin:14px 0 4px;color:#fff;}
+  .sub{font-size:14px;color:rgba(180,200,255,0.6);margin-bottom:8px;}
+  .sub a{color:rgba(190,210,255,0.9);}
+  h2{font-size:15px;margin:26px 0 8px;color:rgba(200,220,255,0.9);}
+  .vid-list{list-style:none;padding:0;margin:0;}
+  .vid-list li{padding:5px 0;border-bottom:0.5px solid rgba(255,255,255,0.06);font-size:13.5px;}
+  .vid-list a{color:rgba(210,225,255,0.95);text-decoration:none;}
+  .yr{color:rgba(150,175,255,0.55);font-size:12px;}
+  .cta{display:inline-block;margin-top:28px;padding:11px 22px;border-radius:24px;background:rgba(140,165,255,0.16);border:0.5px solid rgba(150,175,255,0.35);color:#fff;text-decoration:none;font-size:14px;font-weight:600;}
+  .lang-switch{margin-top:36px;font-size:12px;}
+  .lang-switch a{color:rgba(150,175,255,0.7);}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="brand" href="${SITE}/">K-POP UNIVERSE</a>
+  <a class="brand" href="${SITE}/${isEn ? 'en/g/' : 'g/'}" style="margin-left:10px;">${isEn ? 'All groups' : '그룹 전체'}</a>
+  <h1>${escHtml(h1)}</h1>
+  <div class="sub">${sub}</div>
+${secHtml}
+  <a class="cta" href="${SITE}/">${isEn ? 'Explore in the Universe →' : '우주에서 탐험하기 →'}</a>
+  <div class="lang-switch"><a href="${altUrl}">${isEn ? '한국어로 보기' : 'View in English'}</a></div>
+</div>
+</body>
+</html>
+`;
+}
+
+let relPageCount = 0;
+async function buildRelationPages() {
+  const rows = await fetchRelationRows();
+  const gname = (gko, lang) => (lang === 'en' ? (groups[gko] && groups[gko].en) || gko : gko);
+  const glink = (gko, lang) => `<a href="${SITE}/${groupPagePath(gko, lang)}">${escHtml(gname(gko, lang))}</a>`;
+
+  // 콜라보 쌍 — 같이 나온 영상
+  // ⚠️ 검색엔진에 색인되는 페이지라 **DB 태그를 그대로 믿지 않는다.** 지금 매처로 다시 돌려서 그 관계가
+  //    여전히 성립하는 것만 싣는다. 실측(2026-08-31)에서 `라이즈 × 방탄소년단` 22건이 상위에 떴는데
+  //    제목이 `bts of RIIZING trailer`, 즉 **behind the scenes**였다 — 그대로 냈으면 오염을 색인시킬 뻔했다.
+  //    보수적으로 가는 게 맞다: 지금 근거를 못 대는 관계는 페이지로 만들지 않는다(태깅이 좋아지면 다음
+  //    빌드에서 자연히 살아난다). 판정 로직을 여기서 새로 짜지 않고 배포 매처를 그대로 부른다.
+  let verify = null;
+  try {
+    const { load } = require('./tools/m2_harness');
+    const M = load();
+    verify = (r, other) => {
+      try {
+        const m = M._m2ParseTitle(r.title || '', r.group_ko, undefined, r.published_at);
+        if (!m) return false;
+        return [m.primaryGroup, ...(m.withGroups || [])].includes(other);
+      } catch (e) { return false; }
+    };
+    console.log('  관계 페이지: 현재 매처로 재검증 켜짐');
+  } catch (e) {
+    console.warn(`  ⚠️ 매처 로드 실패(${e.message}) — 재검증 없이 DB 태그를 그대로 씁니다`);
+  }
+  const pairs = new Map();
+  // 커버 — 그룹별 양방향(내가 커버한 곡 / 내 곡을 커버한 영상)
+  const coverBy = new Map(), coverOf = new Map();
+  for (const r of rows) {
+    const a = r.group_ko;
+    for (const b of (r.with_groups || [])) {
+      if (!groups[b] || b === a || namesOverlap(a, b)) continue;
+      if (verify && !verify(r, b)) continue; // 지금 매처가 근거를 못 대면 페이지에 안 실음
+      const k = pairKey(a, b).join(' ');
+      if (!pairs.has(k)) pairs.set(k, []);
+      pairs.get(k).push(r);
+    }
+    for (const b of (r.cover_of_groups || [])) {
+      if (!groups[b] || b === a) continue;
+      if (verify && !verify(r, b)) continue; // 커버도 동일 — 지금 근거 없는 관계는 색인 안 함
+      if (!coverBy.has(a)) coverBy.set(a, []);
+      coverBy.get(a).push({ ...r, _origin: b });
+      if (!coverOf.has(b)) coverOf.set(b, []);
+      coverOf.get(b).push({ ...r, _origin: b });
+    }
+  }
+
+  const relPages = [];
+  const hubLinks = { ko: [], en: [] }; // 허브에 실어야 관계 페이지도 고아가 안 된다
+  const vid = (r, note) => ({ id: r.id, title: r.title || '', note });
+
+  // ⚠️ 콜라보 페이지는 **기본 비활성**(2026-08-31). 생성기는 완성됐지만 `with_groups` 태깅이 아직
+  //    색인시킬 품질이 아니다 — 실측으로 확인한 잔여 오탐:
+  //      `방탄소년단 × 위너` 6건 = "the Winner Is?"의 영어 단어 winner가 위너로 매칭
+  //      `방탄소년단 × 유니스` 5건 = `@BTS` 멘션(콜라보가 아니라 그냥 언급)
+  //      `라이즈 × 방탄소년단` = `Fame MV bts`의 bts(behind the scenes)
+  //    반면 `cover_of`는 표본 검수 결과 깨끗해서(커버 댄스·원곡:X 등 명시적 근거) 커버 페이지만 낸다.
+  //    with_ 태깅 정리가 끝나면 `REL_COLLAB=1 node build_group_pages.js`로 켜서 확인 후 기본값을 바꾼다.
+  const COLLAB_ON = process.env.REL_COLLAB === '1';
+  if (!COLLAB_ON) console.log('  콜라보 페이지: 비활성(with_ 태깅 품질 대기) — 커버 페이지만 생성');
+  for (const [k, vs] of (COLLAB_ON ? pairs : new Map())) {
+    if (vs.length < REL_MIN) continue;
+    const [a, b] = k.split(' ');
+    for (const lang of ['ko', 'en']) {
+      const isEn = lang === 'en';
+      const seg = `${relSeg(gname(a, lang), lang)}-${relSeg(gname(b, lang), lang)}`;
+      const selfPath = `${isEn ? 'en/' : ''}collab/${seg}/`;
+      const altLang = isEn ? 'ko' : 'en';
+      const altSeg = `${relSeg(gname(a, altLang), altLang)}-${relSeg(gname(b, altLang), altLang)}`;
+      const altPath = `${isEn ? '' : 'en/'}collab/${altSeg}/`;
+      const A = gname(a, lang), B = gname(b, lang);
+      const html = relPageHtml({
+        lang,
+        title: isEn ? `${A} × ${B} — videos together | K-POP UNIVERSE` : `${A} × ${B} 같이 나온 영상 ${vs.length}개 | K-POP UNIVERSE`,
+        desc: isEn ? `${vs.length} videos featuring both ${A} and ${B}.` : `${A}와 ${B}가 함께 나온 영상 ${vs.length}개를 모았어요.`,
+        h1: `${A} × ${B}`,
+        sub: isEn ? `${glink(a, lang)} and ${glink(b, lang)} appeared together` : `${glink(a, lang)} · ${glink(b, lang)} 함께 나온 영상`,
+        sections: [{ h: isEn ? 'Videos together' : '같이 나온 영상', items: vs.slice(0, 60).map(r => vid(r, (r.published_at || '').slice(0, 4))) }],
+        selfPath, altPath,
+      });
+      const dir = path.join(ROOT, selfPath);
+      fs.mkdirSync(dir, { recursive: true });
+      fs.writeFileSync(path.join(dir, 'index.html'), html);
+      relPages.push({ loc: `${SITE}/${selfPath}`, priority: '0.5' });
+      hubLinks[lang].push({ href: `${SITE}/${selfPath}`, label: `${A} × ${B}`, n: vs.length });
+      relPageCount++;
+    }
+  }
+
+  const coverGkos = new Set([...coverBy.keys(), ...coverOf.keys()]);
+  for (const gko of coverGkos) {
+    const mine = coverBy.get(gko) || [], theirs = coverOf.get(gko) || [];
+    if (mine.length < REL_MIN && theirs.length < REL_MIN) continue;
+    for (const lang of ['ko', 'en']) {
+      const isEn = lang === 'en';
+      const altLang = isEn ? 'ko' : 'en';
+      const selfPath = `${isEn ? 'en/' : ''}cover/${relSeg(gname(gko, lang), lang)}/`;
+      const altPath = `${isEn ? '' : 'en/'}cover/${relSeg(gname(gko, altLang), altLang)}/`;
+      const N = gname(gko, lang);
+      const html = relPageHtml({
+        lang,
+        title: isEn ? `${N} cover songs & covered by others | K-POP UNIVERSE` : `${N} 커버곡 · ${N} 곡 커버 영상 | K-POP UNIVERSE`,
+        desc: isEn ? `${mine.length} songs covered by ${N}, and ${theirs.length} covers of ${N} songs by other artists.`
+                   : `${N}이(가) 커버한 곡 ${mine.length}개와, 다른 아티스트가 커버한 ${N} 곡 ${theirs.length}개.`,
+        h1: isEn ? `${N} — covers` : `${N} 커버`,
+        sub: glink(gko, lang),
+        sections: [
+          { h: isEn ? `Covered by ${N}` : `${N}이(가) 커버한 곡`, items: mine.slice(0, 60).map(r => vid(r, `→ ${gname(r._origin, lang)}`)) },
+          { h: isEn ? `${N} songs covered by others` : `다른 아티스트가 커버한 ${N} 곡`, items: theirs.slice(0, 60).map(r => vid(r, `by ${gname(r.group_ko, lang)}`)) },
+        ],
+        selfPath, altPath,
+      });
+      const dir = path.join(ROOT, selfPath);
+      fs.mkdirSync(dir, { recursive: true });
+      fs.writeFileSync(path.join(dir, 'index.html'), html);
+      relPages.push({ loc: `${SITE}/${selfPath}`, priority: '0.5' });
+      hubLinks[lang].push({ href: `${SITE}/${selfPath}`, label: isEn ? `${N} covers` : `${N} 커버`, n: mine.length + theirs.length });
+      relPageCount++;
+    }
+  }
+  return { sitemap: relPages, hubLinks };
+}
+
+// 실패해도 나머지 빌드는 그대로 — 기존 관계 페이지를 스캔해 sitemap 항목만 유지한다
+function existingRelPages() {
+  const out = [];
+  for (const base of ['collab', 'cover', 'en/collab', 'en/cover']) {
+    const dir = path.join(ROOT, base);
+    if (!fs.existsSync(dir)) continue;
+    for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
+      if (e.isDirectory() && fs.existsSync(path.join(dir, e.name, 'index.html')))
+        out.push({ loc: `${SITE}/${base}/${e.name}/`, priority: '0.5' });
+    }
+  }
+  return out;
+}
+
+(async () => {
+  let relPages = [], hubLinks = { ko: [], en: [] };
+  try {
+    const r = await buildRelationPages();
+    relPages = r.sitemap; hubLinks = r.hubLinks;
+    console.log(`관계 페이지 ${relPageCount}개 생성 (/collab/, /cover/ · 양 언어)`);
+  } catch (e) {
+    relPages = existingRelPages();
+    console.warn(`⚠️ 관계 페이지 건너뜀 (${e.message}) — 기존 ${relPages.length}개를 sitemap에만 유지`);
+    console.warn('   회사망이면 NODE_TLS_REJECT_UNAUTHORIZED=0 node build_group_pages.js 로 재실행');
+  }
+
+  // 허브는 관계 페이지 목록을 실어야 하므로 여기서 쓴다(위 pages.push는 sitemap 기록용)
+  const byN = (a, b) => b.n - a.n;
+  fs.mkdirSync(path.join(ROOT, 'g'), { recursive: true });
+  fs.mkdirSync(path.join(ROOT, 'en', 'g'), { recursive: true });
+  fs.writeFileSync(path.join(ROOT, 'g', 'index.html'), hubPageHtml('ko', hubLinks.ko.sort(byN)));
+  fs.writeFileSync(path.join(ROOT, 'en', 'g', 'index.html'), hubPageHtml('en', hubLinks.en.sort(byN)));
+
+  // sitemap.xml — 루트 + 허브 + 그룹별/멤버별 + 관계 페이지 전부
+  const sitemapUrls = [{ loc: `${SITE}/`, priority: '1.0' },
+    ...pages.map(p => ({ loc: p.loc, priority: p.priority || '0.7' })),
+    ...relPages];
+  const sitemapXml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${sitemapUrls.map(u => `  <url>\n    <loc>${u.loc}</loc>\n    <changefreq>weekly</changefreq>\n    <priority>${u.priority}</priority>\n  </url>`).join('\n')}
 </urlset>
 `;
-fs.writeFileSync(path.join(ROOT, 'sitemap.xml'), sitemapXml);
+  fs.writeFileSync(path.join(ROOT, 'sitemap.xml'), sitemapXml);
 
-console.log(`완료: 그룹 ${groupKos.length}개 + 멤버 ${memberPageCount}명 × 2개 언어 = ${pages.length}개 정적 페이지 생성`);
-console.log(`sitemap.xml 갱신 (총 ${sitemapUrls.length}개 URL)`);
+  console.log(`완료: 그룹 ${groupKos.length}개 + 멤버 ${memberPageCount}명 × 2개 언어 = ${pages.length}개 정적 페이지 생성`);
+  console.log(`sitemap.xml 갱신 (총 ${sitemapUrls.length}개 URL)`);
+})();
