@@ -2445,10 +2445,11 @@ async function _ytSweepPromoteShorts(){
     return;
   }
   if(typeof _probeIsPortrait!=='function'){_ytSetProg('오류: 세로 판별 함수(_probeIsPortrait)를 찾을 수 없어요');return;}
-  let cursor=Number(localStorage.getItem(_SHORTS_PROMOTE_CURSOR_KEY)||'0')||0;
-  if(cursor){
-    if(!confirm(`이전에 id ${cursor}까지 진행했어요.\n\n[확인] 이어서 재개\n[취소] 처음부터 다시`)){cursor=0;localStorage.removeItem(_SHORTS_PROMOTE_CURSOR_KEY);}
-  }
+  // 진행은 short_probed_at 표식으로 관리한다(id 커서 폐기, 2026-08-31) — 확인한 행은 표식이 박혀
+  // 조회에서 영구 제외되므로 커서 없이 매번 "남은 것"만 집힌다. 정렬을 부분 인덱스(published_at DESC)에
+  // 맞춰 statement timeout을 없애고(예전 id 정렬은 28만 행 통째 정렬→타임아웃), 최신 영상부터 처리해
+  // 카드/피드 여백이 먼저 사라지게 한다.
+  localStorage.removeItem(_SHORTS_PROMOTE_CURSOR_KEY); // 낡은 커서 잔재 정리
   const runBatchId=(self.crypto&&self.crypto.randomUUID)?self.crypto.randomUUID():('sp'+Date.now());
   _shortsPromoteRunning=true;
   if(btn){btn.textContent='⏹️ 쇼츠 승격 중단';btn.style.borderColor='#d08a8a';}
@@ -2456,13 +2457,13 @@ async function _ytSweepPromoteShorts(){
   let scanned=0, promoted=0, snapOff=false;
   try{
     let remain=null; // 진행률 표시용 대략치(실패해도 무시)
-    try{const{count}=await sb.from(_YT_TABLE).select('id',{count:'exact',head:true}).eq('tags_manual',false).eq('is_short',false).is('short_probed_at',null).gt('id',cursor);remain=count;}catch(_){}
+    try{const{count}=await sb.from(_YT_TABLE).select('id',{count:'exact',head:true}).eq('tags_manual',false).eq('is_short',false).is('short_probed_at',null);remain=count;}catch(_){}
     while(_shortsPromoteRunning){
       const{data:rows,error}=await sb.from(_YT_TABLE)
         .select('id')
-        .eq('tags_manual',false).eq('is_short',false).is('short_probed_at',null).gt('id',cursor)
-        .order('id',{ascending:true}).limit(CHUNK);
-      if(error){_ytSetProg('조회 실패: '+error.message+` (id ${cursor}까지, 재개 가능)`);break;}
+        .eq('tags_manual',false).eq('is_short',false).is('short_probed_at',null)
+        .order('published_at',{ascending:false}).limit(CHUNK);
+      if(error){_ytSetProg('조회 실패: '+error.message+' (표식까지는 저장됨, 다시 눌러 이어서)');break;}
       if(!rows||!rows.length){_ytSetProg(`✅ 쇼츠 승격 완료! 전량 스캔 끝 — 총 ${promoted}개를 쇼츠로 승격(스캔 ${scanned}개).`);localStorage.removeItem(_SHORTS_PROMOTE_CURSOR_KEY);break;}
       // 세로 실측(동시 CONC개) — oardefault.jpg가 로드되고 세로면 쇼츠
       const portraitIds=[]; let idx=0;
@@ -2486,19 +2487,17 @@ async function _ytSweepPromoteShorts(){
        for(let i=0;i<rows.length;i+=100){const _ids=rows.slice(i,i+100).map(r=>r.id);
          const{error:_mErr}=await sb.from(_YT_TABLE).update({short_probed_at:_now}).in('id',_ids);
          if(_mErr)throw new Error(_mErr.message);}}
-      cursor=rows[rows.length-1].id;
-      localStorage.setItem(_SHORTS_PROMOTE_CURSOR_KEY,String(cursor));
       const pct=remain?` · ~${Math.min(99,Math.round(scanned/remain*100))}%`:'';
-      _ytSetProg(`[쇼츠 승격] 스캔 ${scanned}${remain?'/'+remain:''}${pct} · 승격 ${promoted}개 (id ${cursor}까지)`);
+      _ytSetProg(`[쇼츠 승격] 스캔 ${scanned}${remain?'/'+remain:''}${pct} · 승격 ${promoted}개`);
     }
-    if(!_shortsPromoteRunning && localStorage.getItem(_SHORTS_PROMOTE_CURSOR_KEY)){
-      _ytSetProg(`⏸️ 쇼츠 승격 중단됨 (id ${cursor}까지, 누적 승격 ${promoted}개). 버튼 다시 눌러 재개.`);
+    if(!_shortsPromoteRunning){
+      _ytSetProg(`⏸️ 쇼츠 승격 중단됨 (누적 승격 ${promoted}개). 버튼 다시 눌러 남은 것부터 이어서.`);
     }
   }catch(e){
-    _ytSetProg('쇼츠 승격 오류: '+e.message+` (id ${cursor}까지 진행, 재개 가능)`);
+    _ytSetProg('쇼츠 승격 오류: '+e.message+' (확인한 데까진 표식 저장됨, 다시 눌러 이어서)');
   }finally{
     _shortsPromoteRunning=false;
-    if(btn){btn.textContent='⬆️ 가로→쇼츠 일괄 승격'+(localStorage.getItem(_SHORTS_PROMOTE_CURSOR_KEY)?' (재개)':'');btn.style.borderColor='';}
+    if(btn){btn.textContent='⬆️ 가로→쇼츠 일괄 승격';btn.style.borderColor='';}
   }
 }
 
