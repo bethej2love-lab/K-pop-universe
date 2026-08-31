@@ -5538,27 +5538,32 @@ function _weightedShuffleByCat(arr,catOf){
     .sort((a,b)=>b.k-a.k)
     .map(x=>x.v);
 }
-// 같은 멤버 영상이 연속 MAX_CONSEC회를 초과하면 LOOK 범위 안에서 다른 멤버 영상을 앞으로 당겨온다.
+// 같은 key 영상이 연속 maxConsec회를 넘으면 look 범위 안에서 다른 key 영상을 앞으로 당겨온다.
 // 라운드로빈 방식 대비 카테고리 가중치 순서를 훨씬 잘 보존 — 예능이 "자기 차례"에 강제로 끌려오는 현상 제거.
-function _diversifyByMember(arr){
+// (2026-08-31 일반화 — 멤버/날짜 등 여러 기준의 인접 방지에 재사용)
+function _diversifyByKey(arr,keyFn,maxConsec,look){
   const out=[];const temp=[...arr];
   let lastKey=null,sameCount=0;
-  const MAX_CONSEC=2,LOOK=10;
   while(temp.length){
     let pickIdx=0;
-    if(sameCount>=MAX_CONSEC){
-      for(let i=1;i<Math.min(LOOK,temp.length);i++){
-        const k=(temp[i].members&&temp[i].members.length===1)?temp[i].members[0]:'__mixed__';
-        if(k!==lastKey){pickIdx=i;break;}
+    if(sameCount>=maxConsec){
+      for(let i=1;i<Math.min(look,temp.length);i++){
+        if(keyFn(temp[i])!==lastKey){pickIdx=i;break;}
       }
     }
     const[picked]=temp.splice(pickIdx,1);
-    const key=(picked.members&&picked.members.length===1)?picked.members[0]:'__mixed__';
+    const key=keyFn(picked);
     if(key===lastKey)sameCount++;else{lastKey=key;sameCount=1;}
     out.push(picked);
   }
   return out;
 }
+function _diversifyByMember(arr){
+  return _diversifyByKey(arr,v=>(v.members&&v.members.length===1)?v.members[0]:'__mixed__',2,10);
+}
+// 같은 날 올라온 영상(=같은 콘서트/이벤트/컴백일)이 붙지 않게 흩는다 — "3~4개 비슷한 영상이 인접"의
+// 주원인이 같은 날 직캠 뭉치라서(2026-08-31 사용자 제보). 같은 날 후보만 있으면 그대로 둠(graceful).
+const _vidDayKey=v=>(v.published_at||'').slice(0,10)||'__nodate__';
 function _pickMainVideo(pool){
   // 뮤비(type:'mv')·예능/연기(type:'other')는 메인 후보에서 제외 — 직캠이 메인 위주가 되도록.
   const eligible=pool.filter(s=>!s.type);
@@ -17710,8 +17715,11 @@ function _makeChVidController(contId){
       // 멤버 카드에서는 '기타' 플래그 영상을 아예 노출하지 않음(그룹 카드에서는 후순위로만 밀림)
       if(state.memberKo)vids=vids.filter(v=>v.content_flag!=='기타');
       if(state.sortMode==='recommend')vids=_weightedShuffleByCat(vids,v=>v.category);
-      // 멤버 카드(state.memberKo 있음)는 그 멤버 콘텐츠라 다양성 개입이 필요 없고, 오히려 방해가 됨
+      // 멤버 카드(state.memberKo 있음)는 그 멤버 콘텐츠라 멤버 다양성 개입은 방해라 건너뜀
       if(state.sortMode==='recommend'&&!state.memberKo)vids=_diversifyByMember(vids);
+      // 같은 날(=같은 콘서트/이벤트/컴백일) 영상이 인접하지 않게 흩는다 — 멤버·그룹 카드 모두.
+      // 카테고리 셔플 뒤 마지막에 걸어 "인접한 게 너무 비슷" 문제를 직접 해소(2026-08-31 사용자 제보).
+      if(state.sortMode==='recommend')vids=_diversifyByKey(vids,_vidDayKey,1,8);
       // '기타' 플래그 영상은 후순위로 — 대표영상 후보 제외 + 정상 영상 뒤로 밀기
       const _etcVids=vids.filter(v=>v.content_flag==='기타');
       if(_etcVids.length)vids=[...vids.filter(v=>v.content_flag!=='기타'),..._etcVids];
