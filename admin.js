@@ -474,57 +474,6 @@ async function _ytRotateViewCountRefresh(){
   _feedDiscoveryBuiltAt=0;
 }
 
-// 연도별 TOP 100 최초 백필(일회용) — 위 "전체 조회수 갱신"은 이미 조회수가 있는 영상만 다시 갱신하는
-// 거라, 오래된 연도 라이브 영상은 조회수를 한 번도 못 받아본 채로 계속 비어있었음(2026-08-12, 사용자
-// 제보 — "왜 2026년만 뽑히고 다른 연도 TOP은 안 뜨지" → 실측해보니 live 95,461건 중 조회수 있는 건
-// 756건뿐이고 전부 2026년 발행분). "조회수만 갱신"(최근 14일)과 "전체 갱신"(이미 있는 것만) 사이에
-// 뚫려있던 구멍을 메우는 용도 — is('view_count',null)인 것만 대상으로 하므로, 중간에 탭을 닫아도
-// 다시 누르면 이미 채운 것은 건너뛰고 이어서 진행됨(자연히 재개 가능). 규모가 커서(live 전체, API
-// 약 1900회) 한 번 돌리면 오래 걸리니 완료 후엔 다시 쓸 일 없음 — 이후엔 "전체 조회수 갱신"으로 월 1회
-// 최신화만 하면 충분.
-async function _ytBackfillAllViewCounts(){
-  const key=_ytApiKey();
-  if(!key){_ytSetProg('API 키를 먼저 입력해주세요');return;}
-  if(!sb){_ytSetProg('Supabase 연결 없음');return;}
-  _ytSetProg('백필 대상 조회 중 (조회수 없는 live 전체)…');
-  const{data:rows,error}=await _sbFetchAll(()=>sb.from(_YT_TABLE)
-    .select('id')
-    .eq('category','live')
-    .is('view_count',null)
-    .order('id'));
-  if(error){_ytSetProg('대상 조회 실패: '+error.message);return;}
-  if(!rows?.length){_ytSetProg('백필 대상 없음(전부 조회수 있음)');return;}
-  const ids=rows.map(r=>r.id);
-  const totalCalls=Math.ceil(ids.length/50);
-  _ytSetProg(`YouTube API 호출 예정: ${totalCalls}회 (${ids.length}개 영상) — 시간이 꽤 걸릴 수 있어요, 탭을 계속 열어두세요`);
-  let savedTotal=0,failedTotal=0;
-  for(let i=0;i<ids.length;i+=50){
-    const chunk=ids.slice(i,i+50);
-    _ytSetProg(`백필 중… ${Math.min(i+50,ids.length)}/${ids.length} (API ${Math.floor(i/50)+1}/${totalCalls}회, 저장 ${savedTotal}개)`);
-    const statsUpdates=[];
-    try{
-      const r=await fetch(`https://www.googleapis.com/youtube/v3/videos?part=statistics&id=${chunk.join(',')}&key=${key}`);
-      if(!r.ok)throw new Error('YouTube API 오류 '+r.status);
-      const d=await r.json();
-      if(d.error)throw new Error(d.error.message);
-      (d.items||[]).forEach(it=>{
-        const vc=parseInt(it.statistics?.viewCount,10);
-        if(!isNaN(vc))statsUpdates.push({id:it.id,view_count:vc});
-      });
-    }catch(e){
-      _ytSetProg(`YouTube API 오류(${savedTotal}개까지 저장된 채로 중단, 다시 누르면 이어서 진행됨): `+e.message);
-      console.error('[연도별TOP 백필]',e.message);
-      return;
-    }
-    if(statsUpdates.length){
-      const results=await Promise.all(statsUpdates.map(({id,view_count})=>sb.from(_YT_TABLE).update({view_count}).eq('id',id)));
-      results.forEach(({error:ue})=>{if(ue){failedTotal++;console.error('[연도별TOP 백필] 저장 실패:',ue.message);}else savedTotal++;});
-    }
-  }
-  _ytSetProg(`연도별 TOP 백필 완료 — ${savedTotal}개 저장${failedTotal?`, 실패 ${failedTotal}건`:''} (API ${totalCalls}회 사용)`);
-  _feedDiscoveryBuiltAt=0;
-}
-
 function _ytSetProg(msg){const el=document.getElementById('sp-yt-prog');if(el)el.textContent=msg;}
 
 // 유지보수 버튼들이 조회하는 행 수가 PostgREST 기본 응답 상한(보통 1000행)을 넘으면 나머지가 조용히
@@ -1331,54 +1280,6 @@ async function _ytSweepDualMemberTags(){
 }
 document.getElementById('sp-dualtag-btn')?.addEventListener('click',_ytSweepDualMemberTags);
 
-// [원곡 소급 재분류](Fable #3, 2026-08-23): 커버 영상인데 원곡 그룹이 with(함께한 그룹)로 잘못 들어간 걸
-// cover_of로 옮긴다. 태깅 시점 라우팅(_extBuildRows)의 소급 버전 — 기존 with 태그만 검사해 조건 맞는 것만
-// 이동(제목 전체 재파싱 아님, 나머지 태그 안 건드림). 자동은 "커버 키워드 + 6년+ 선배"만(고신뢰), "키워드
-// 없이 세대차만 큰(10년+)" 건 진짜 콜라보일 수 있어 콘솔에 목록만(자동 안 함). 드라이런(confirm 전 건수
-// 표시)+스냅샷 되돌리기+tags_manual 보호.
-async function _ytSweepCoverReclassify(){
-  if(!sb){_ytSetProg('Supabase 연결 없음');return;}
-  const btn=document.getElementById('sp-coverfix-btn');
-  if(btn)btn.disabled=true;
-  try{
-    _ytSetProg('[원곡 재분류] 조회 중…');
-    const{data:rows,error}=await _sbFetchAll(()=>sb.from(_YT_TABLE)
-      .select('id,title,group_ko,with_members,with_groups,cover_of_members,cover_of_groups,tags_manual')
-      .or('with_members.neq.{},with_groups.neq.{}').order('id'));
-    if(error){_ytSetProg('조회 실패: '+error.message);return;}
-    if(!rows?.length){_ytSetProg('검사할 영상이 없어요');return;}
-    const _cov=/원곡|커버|cover|\boriginal\b/i;
-    const _senior=(wg,ch)=>{const g1=GROUPS[wg],g2=GROUPS[ch];if(!g1||!g2)return 0;const y1=parseInt(g1.debut)||0,y2=parseInt(g2.debut)||0;return(y1&&y2)?(y2-y1):0;};
-    const updates=[];let manualSkipped=0;const reviewList=[];
-    rows.forEach(v=>{
-      const ch=v.group_ko,hasCov=_cov.test(v.title||'');
-      const curWG=v.with_groups||[],curWM=v.with_members||[],curCG=v.cover_of_groups||[],curCM=v.cover_of_members||[];
-      const moveG=[],moveM=[];
-      curWG.forEach(wg=>{const sen=_senior(wg,ch);if(hasCov&&sen>=6)moveG.push(wg);else if(!hasCov&&sen>=10)reviewList.push({id:v.id,title:v.title,group_ko:ch,후보:wg,세대차:sen});});
-      curWM.forEach(m=>{const mm=m.match(/^(.+)\((.+)\)$/);if(!mm)return;const sen=_senior(mm[2],ch);if(hasCov&&sen>=6)moveM.push(m);else if(!hasCov&&sen>=10)reviewList.push({id:v.id,title:v.title,group_ko:ch,후보:m,세대차:sen});});
-      if(!moveG.length&&!moveM.length)return;
-      if(v.tags_manual){manualSkipped++;return;}
-      updates.push({id:v.id,patch:{
-        with_groups:curWG.filter(g=>!moveG.includes(g)),
-        with_members:curWM.filter(m=>!moveM.includes(m)),
-        cover_of_groups:[...new Set([...curCG,...moveG])],
-        cover_of_members:[...new Set([...curCM,...moveM])]
-      }});
-    });
-    if(reviewList.length)console.log(`[원곡 재분류] 검수 후보(키워드 없이 10년+ 선배 with) ${reviewList.length}건 — 진짜 콜라보일 수 있어 자동 안 함, 직접 확인 요망:`,reviewList);
-    if(!updates.length){_ytSetProg(`자동 재분류할 원곡 없음 (검수 후보 ${reviewList.length}건은 콘솔 F12). `+(manualSkipped?`수동보호 ${manualSkipped}건.`:''));return;}
-    if(!confirm(`커버 키워드 + 6년 이상 선배인 with 태그 ${updates.length}건을 "함께한 그룹"→"원곡(cover_of)"으로 재분류할까요?\n\n· 검수 후보 ${reviewList.length}건(키워드 없이 세대차만 큰 것)은 자동 안 하고 콘솔에 목록\n· 수동편집 태그는 안 건드림 (${manualSkipped}건)\n· 스냅샷 저장돼서 되돌리기 가능`))
-      {_ytSetProg(`취소됨 — 미리보기만 (재분류 예정 ${updates.length}건, 검수 ${reviewList.length}건 콘솔).`);return;}
-    await _snapshotBeforeBulk('원곡 재분류(with→cover_of)',updates.map(u=>u.id));
-    for(let i=0;i<updates.length;i+=200){
-      const results=await Promise.all(updates.slice(i,i+200).map(u=>sb.from(_YT_TABLE).update(u.patch).eq('id',u.id)));
-      const f=results.find(r=>r.error);if(f)throw new Error(f.error.message);
-      _ytSetProg(`[원곡 재분류] ${Math.min(i+200,updates.length)}/${updates.length}건 처리 중…`);
-    }
-    _ytSetProg(`완료! ${updates.length}건을 원곡(cover_of)으로 재분류함. 검수 후보 ${reviewList.length}건은 콘솔(직접 확인).`+(manualSkipped?` 수동보호 ${manualSkipped}건.`:''));
-  }catch(e){_ytSetProg('오류: '+e.message);}
-  finally{if(btn)btn.disabled=false;}
-}
 // [오태깅 그룹 재배정](2026-08-25): 고친 매칭 엔진(_m2ParseTitle)을 기존 저장 행에 다시 돌려서,
 // "저장된 group_ko는 제목에 근거가 없는데, 엔진이 제목에 대놓고 있는 '다른 그룹'을 찾은" 행을 그 그룹으로
 // 재배정한다. 전수 진단(scratchpad B리포트)에서 이런 3천여 건 대부분이 오염이 아니라 옛 버그로 엉뚱한
@@ -1599,51 +1500,6 @@ document.getElementById('sp-hidden-rejudge-btn')?.addEventListener('click',_ytSw
 // 후배가 선배 명곡을 커버한 케이스가 압도적(CSV 실측: 방탄→라이즈·S.E.S.→앤팀·핑클→보넥도 등 408건).
 // 1차(키워드+6년)가 못 잡는 무키워드 원곡을 cover_of로. ⚠️ 진짜 콜라보 위험은 대부분 "같은 소속사"(가족
 // 콜라보)에 몰려 있어 그건 제외, 제목에 합동/페스티벌 키워드 있는 것도 제외. 1차와 동일한 안전장치.
-async function _ytSweepCoverReclassify2(){
-  if(!sb){_ytSetProg('Supabase 연결 없음');return;}
-  const btn=document.getElementById('sp-coverfix2-btn');
-  if(btn)btn.disabled=true;
-  try{
-    _ytSetProg('[원곡 재분류 2차] 조회 중…');
-    const{data:rows,error}=await _sbFetchAll(()=>sb.from(_YT_TABLE)
-      .select('id,title,group_ko,with_members,with_groups,cover_of_members,cover_of_groups,tags_manual')
-      .or('with_members.neq.{},with_groups.neq.{}').order('id'));
-    if(error){_ytSetProg('조회 실패: '+error.message);return;}
-    if(!rows?.length){_ytSetProg('검사할 영상이 없어요');return;}
-    const _senior=(wg,ch)=>{const g1=GROUPS[wg],g2=GROUPS[ch];if(!g1||!g2)return 0;const y1=parseInt(g1.debut)||0,y2=parseInt(g2.debut)||0;return(y1&&y2)?(y2-y1):0;};
-    const _sameCo=(wg,ch)=>{const c1=(GROUPS[wg]?.co||'').split('/')[0].trim(),c2=(GROUPS[ch]?.co||'').split('/')[0].trim();return !!(c1&&c2)&&c1===c2;};
-    const _collabKw=/합동|콜라보|collab|페스티벌|festival|듀엣|공동무대/i;
-    const _ok=(wg,ch,title)=>_senior(wg,ch)>=10&&!_sameCo(wg,ch)&&!_collabKw.test(title||'');
-    const updates=[];let manualSkipped=0;const excluded=[];
-    rows.forEach(v=>{
-      const ch=v.group_ko,title=v.title||'';
-      const curWG=v.with_groups||[],curWM=v.with_members||[],curCG=v.cover_of_groups||[],curCM=v.cover_of_members||[];
-      const moveG=[],moveM=[];
-      curWG.forEach(wg=>{if(_senior(wg,ch)>=10){if(_ok(wg,ch,title))moveG.push(wg);else excluded.push({id:v.id,title,group_ko:ch,후보:wg,사유:_sameCo(wg,ch)?'같은소속사':'콜라보키워드'});}});
-      curWM.forEach(m=>{const mm=m.match(/^(.+)\((.+)\)$/);if(!mm)return;if(_senior(mm[2],ch)>=10){if(_ok(mm[2],ch,title))moveM.push(m);else excluded.push({id:v.id,title,group_ko:ch,후보:m,사유:_sameCo(mm[2],ch)?'같은소속사':'콜라보키워드'});}});
-      if(!moveG.length&&!moveM.length)return;
-      if(v.tags_manual){manualSkipped++;return;}
-      updates.push({id:v.id,patch:{
-        with_groups:curWG.filter(g=>!moveG.includes(g)),
-        with_members:curWM.filter(m=>!moveM.includes(m)),
-        cover_of_groups:[...new Set([...curCG,...moveG])],
-        cover_of_members:[...new Set([...curCM,...moveM])]
-      }});
-    });
-    if(excluded.length)console.log(`[원곡 재분류 2차] 제외(같은소속사/콜라보키워드 — 진짜 콜라보 가능성) ${excluded.length}건, 직접 확인:`,excluded);
-    if(!updates.length){_ytSetProg(`2차 재분류할 것 없음 (제외 ${excluded.length}건은 콘솔).`+(manualSkipped?` 수동보호 ${manualSkipped}건.`:''));return;}
-    if(!confirm(`[2차] 커버 키워드 없이 "타소속사 + 10년 이상 선배"인 with 태그 ${updates.length}건을 원곡(cover_of)으로 재분류할까요?\n\n· 후배가 선배 명곡 커버한 케이스가 대부분\n· 같은 소속사/합동·페스티벌 키워드는 자동 제외(${excluded.length}건, 콘솔 목록)\n· 수동편집 태그 안 건드림 (${manualSkipped}건)\n· 스냅샷 저장돼서 되돌리기 가능`))
-      {_ytSetProg(`취소됨 — 미리보기만 (2차 재분류 예정 ${updates.length}건, 제외 ${excluded.length}건 콘솔).`);return;}
-    await _snapshotBeforeBulk('원곡 재분류 2차(무키워드·타소속사·10년+)',updates.map(u=>u.id));
-    for(let i=0;i<updates.length;i+=200){
-      const results=await Promise.all(updates.slice(i,i+200).map(u=>sb.from(_YT_TABLE).update(u.patch).eq('id',u.id)));
-      const f=results.find(r=>r.error);if(f)throw new Error(f.error.message);
-      _ytSetProg(`[원곡 재분류 2차] ${Math.min(i+200,updates.length)}/${updates.length}건 처리 중…`);
-    }
-    _ytSetProg(`완료! [2차] ${updates.length}건을 원곡으로 재분류함. 제외(같은소속사 등) ${excluded.length}건은 콘솔에서 직접 확인.`+(manualSkipped?` 수동보호 ${manualSkipped}건.`:''));
-  }catch(e){_ytSetProg('오류: '+e.message);}
-  finally{if(btn)btn.disabled=false;}
-}
 // 잠금-빈값 멤버 채우기(2026-08-23) — tags_manual=true 로 잠겼는데 members가 빈 직캠들을 자동태깅과 동일한
 // 매처로 채운다. 왜 이런 행이 생기나: tags_manual=true는 오직 관리자 액션(태그모달 저장·벌크작업)에서만
 // 설정되는데, category 등 "멤버가 아닌" 필드를 벌크 변경할 때 쓰는 트리거 우회 two-step(해제→수정→재잠금)
@@ -2329,44 +2185,6 @@ function _ytMatchCoverSong(candidate,origNames){
   }
   return null;
 }
-async function _ytExtractCoverSongTitles(){
-  if(!sb){_ytSetProg('Supabase 연결 없음');return;}
-  const btn=document.getElementById('sp-covertitle-btn');
-  if(btn)btn.disabled=true;
-  try{
-    _ytSetProg('[커버곡 제목 추출] 대상 조회 중…');
-    const{data:rows,error}=await _sbFetchAll(()=>sb.from(_YT_TABLE)
-      .select('id,title,cover_of_members,cover_of_groups,tags_manual')
-      .or('cover_of_members.neq.{},cover_of_groups.neq.{}')
-      .or('title_norm.ilike.*cover*,title_norm.ilike.*커버*,title_norm.ilike.*원곡*,title_norm.ilike.*original*,content_formats.cs.{cover}')
-      .is('cover_of_song',null)
-      .order('id'));
-    if(error){_ytSetProg('[커버곡 제목 추출] 조회 실패: '+error.message);return;}
-    if(!rows?.length){_ytSetProg('[커버곡 제목 추출] 대상 없음(이미 다 처리됐거나 새 커버 영상 없음)');return;}
-    const updates=[];
-    let manualSkipped=0,noMatch=0;
-    rows.forEach(v=>{
-      if(v.tags_manual){manualSkipped++;return;}
-      const cand=_ytCoverSongCandidate(v.title);
-      if(!cand){noMatch++;return;}
-      const origNames=[...(v.cover_of_members||[]),...(v.cover_of_groups||[])];
-      const song=_ytMatchCoverSong(cand,origNames);
-      if(song)updates.push({id:v.id,cover_of_song:song});
-      else noMatch++;
-    });
-    await _snapshotBeforeBulk('커버곡 원곡 제목 자동 추출',updates.map(u=>u.id));
-    for(let i=0;i<updates.length;i+=50){
-      _ytSetProg(`[커버곡 제목 추출] 저장 중… ${i}/${updates.length}`);
-      await Promise.all(updates.slice(i,i+50).map(({id,cover_of_song})=>
-        sb.from(_YT_TABLE).update({cover_of_song}).eq('id',id)
-      ));
-    }
-    _ytSetProg(`[커버곡 제목 추출] 완료 — ${rows.length}개 중 ${updates.length}개 확인됨, ${noMatch}개는 확인 불가`+(manualSkipped?`, 수동태그 ${manualSkipped}개 건너뜀`:'')+' (재실행하면 이어서 시도됨)');
-  }finally{
-    if(btn)btn.disabled=false;
-  }
-}
-
 // ── 일괄 작업 실행 취소(undo) 스냅샷 ─────────────────────────────────────────────
 // 대량 스윕/재검증/재스캔 버튼이 수백~수만 행을 자동으로 바꾸기 "직전"에, 바뀔 행들의 현재값을
 // admin_bulk_snapshots 테이블에 1회분(batch)으로 떠둔다. 오조작 시 "↩︎ 마지막 일괄 작업 되돌리기"
@@ -6824,12 +6642,6 @@ document.getElementById('vid-tag-thumb-refresh').addEventListener('click',async 
     await _ytRefreshAllViewCounts();
     if(btn)btn.disabled=false;
   });
-  document.getElementById('sp-yt-backfillviewcount-btn')?.addEventListener('click',async()=>{
-    const btn=document.getElementById('sp-yt-backfillviewcount-btn');
-    if(btn)btn.disabled=true;
-    await _ytBackfillAllViewCounts();
-    if(btn)btn.disabled=false;
-  });
   document.getElementById('sp-yt-rotateviewcount-btn')?.addEventListener('click',async()=>{
     const btn=document.getElementById('sp-yt-rotateviewcount-btn');
     if(btn)btn.disabled=true;
@@ -6844,8 +6656,6 @@ document.getElementById('vid-tag-thumb-refresh').addEventListener('click',async 
   const junkKwLbl=document.getElementById('sp-junk-keywords-lbl');
   if(junkKwLbl)junkKwLbl.textContent='현재 목록: '+_JUNK_TITLE_KEYWORDS_GLOBAL.join(', ');
   document.getElementById('sp-detect-btn')?.addEventListener('click',_ytSweepDetectPreview);
-document.getElementById('sp-coverfix-btn')?.addEventListener('click',_ytSweepCoverReclassify);
-document.getElementById('sp-coverfix2-btn')?.addEventListener('click',_ytSweepCoverReclassify2);
 document.getElementById('sp-lockfill-btn')?.addEventListener('click',_ytSweepFillLockedEmpty);
 document.getElementById('sp-canon-btn')?.addEventListener('click',_ytSweepCanonicalizeMembers);
 document.getElementById('sp-collabfix-btn')?.addEventListener('click',_ytSweepAmbiguousCollabMistag);
@@ -6855,7 +6665,6 @@ document.getElementById('sp-collabfix-btn')?.addEventListener('click',_ytSweepAm
   document.getElementById('sp-catfix-btn')?.addEventListener('click',_ytSweepCategoryMistag);
   document.getElementById('sp-shortspromote-btn')?.addEventListener('click',_ytSweepPromoteShorts);
   {const _spb=document.getElementById('sp-shortspromote-btn');if(_spb&&localStorage.getItem('_kpu_shortsPromoteCursor'))_spb.textContent='⬆️ 가로→쇼츠 일괄 승격 (재개)';}
-  document.getElementById('sp-covertitle-btn')?.addEventListener('click',_ytExtractCoverSongTitles);
   document.getElementById('sp-yt-autotag')?.addEventListener('click',_ytAutoTagMembers);
   document.getElementById('sp-yt-retag-all')?.addEventListener('click',_ytRetagAllIncludingTagged);
   document.getElementById('sp-vm-btn')?.addEventListener('click',()=>_vmOpen());

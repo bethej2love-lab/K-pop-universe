@@ -302,8 +302,6 @@
     <div class="sp-btn-hint">최근 14일 라이브 영상 조회수만 갱신 — 이번 주 직캠 TOP 순위에 씀. 위 전체 동기화에 이미 얹혀있어서 따로 안 눌러도 됨.</div>
     <button class="sp-yt-sync" id="sp-yt-allviewcount-btn" style="margin-top:4px;opacity:.8;">전체 조회수 갱신(연도별 TOP용 · 월 1회)</button>
     <div class="sp-btn-hint">조회수가 이미 있는 라이브 영상 전체를 다시 갱신 — 연도별 TOP 100용. 한 달에 한 번이면 충분해요.</div>
-    <button class="sp-yt-sync" id="sp-yt-backfillviewcount-btn" style="margin-top:4px;opacity:.8;">연도별 TOP 최초 백필(일회용 · 시간 오래 걸림)</button>
-    <div class="sp-btn-hint">조회수를 한 번도 못 받아본 오래된 라이브 영상에 처음 채워넣는 용도 — 이미 다 채워졌으면 다시 누를 일 없어요.</div>
     <button class="sp-yt-sync" id="sp-yt-rotateviewcount-btn" style="margin-top:4px;opacity:.8;">전체 카테고리 조회수 순환 갱신(월 1회 · 배치 5000개씩)</button>
     <div class="sp-btn-hint">라이브 말고 쇼츠·MV 등 나머지 전체를 대상으로, 가장 오래전에 갱신된 5천개씩만 순환 갱신 — 몇 달 걸려 전체를 한 바퀴 돌아요. 월 1회 정도.</div>
     <button class="sp-yt-sync" id="sp-vm-btn" style="margin-top:4px;opacity:.8;">영상 관리 패널</button>
@@ -377,12 +375,6 @@
     <div class="sp-btn-hint">이중소속 멤버가 <b>같은 영상에 두 번</b> 붙은 걸 정리해요 — ①같은 사람이 두 소속으로(<code>이진혁(업텐션)</code>+<code>이진혁(엑스원)</code>) ②members에 이미 있는 사람이 with_members에도. <b>동명이인은 합치지 않아요</b>(세븐틴 민규 ≠ 동키즈 민규 — artists.json에서 같은 인물일 때만). 남길 대표 그룹은 ①제목에 언급된 그룹 ②<code>repGroup</code> ③주 소속 순. 건수 먼저 확인 · 수동보호 · 스냅샷.</div>
     <button class="sp-yt-sync" id="sp-cover-clean-btn" style="margin-top:4px;opacity:.8;">🧹 원곡 오탐 청소 (문맥 없는 cover_of 정리)</button>
     <div class="sp-btn-hint">커버 문맥이 없는데 cover_of가 붙은 행을 걷어냅니다. <b>현재 매처에게 다시 물어보고, 매처도 커버 근거를 못 찾은 것만</b> 정리해요(정상 커버는 제목에 '커버'라는 말이 없어도 그대로 유지). 콜라보 동반신호(선배님과/with/님과)가 있으면 지우지 않고 <b>with_로 되돌립니다</b> — 옛 1차/2차 재분류가 게스트를 원곡자로 강등시킨 걸 복구하는 것. 건수 먼저 확인 · 수동보호 · 스냅샷. ※매처가 지금도 커버라 판정하는 건 대개 group_ko 오배정 문제라 "② 오태깅 그룹 재배정"이 맡습니다.</div>
-    <button class="sp-yt-sync" id="sp-coverfix-btn" style="margin-top:4px;opacity:.35;" disabled>🚫 원곡 재분류 1차 (은퇴 — 누르지 마세요)</button>
-    <div class="sp-btn-hint">⚠️ <b>2026-08-31 은퇴.</b> "커버 키워드 + 6년 이상 선배면 원곡자"라는 세대차 휴리스틱이라 <b>곡명 근거 없이</b> 판단했고, 실측 결과 게스트 출연자를 원곡자로 강등시킨 오염이 1,450건 쌓였습니다(그중 454건은 with_까지 비워져 콜라보 정보가 사라짐). 위 "원곡 태깅 v2"가 대체하고, 이미 생긴 오염은 "원곡 오탐 청소"가 걷어냅니다.</div>
-    <button class="sp-yt-sync" id="sp-coverfix2-btn" style="margin-top:4px;opacity:.35;" disabled>🚫 원곡 재분류 2차 (은퇴 — 누르지 마세요)</button>
-    <div class="sp-btn-hint">⚠️ <b>2026-08-31 은퇴.</b> 1차보다 근거가 더 약합니다(키워드조차 없이 소속사·세대차만으로 판단). 같은 이유로 은퇴.</div>
-    <button class="sp-yt-sync" id="sp-covertitle-btn" style="margin-top:4px;opacity:.8;">커버곡 원곡 제목 자동 추출</button>
-    <div class="sp-btn-hint">제목에서 곡명을 뽑아 원곡 디스코와 대조, 확인되는 것만 저장. 다시 눌러도 새 것만.</div>
 
     <div class="sp-subsec-lbl" style="margin-top:12px;">청소 <span style="opacity:.6;font-weight:400;">— 가끔</span></div>
     <button class="sp-yt-sync" id="sp-yt-sweep-banned" style="margin-top:4px;opacity:.8;">밴 인물 언급 영상 숨김 정리</button>
