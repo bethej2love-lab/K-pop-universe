@@ -1158,6 +1158,7 @@
   <div id="gc-track-videos-sheet">
     <button id="gc-track-videos-close" aria-label="닫기">×</button>
     <div id="gc-track-videos-title"></div>
+    <div id="gc-track-videos-tabs" class="hidden"></div>
     <div id="gc-track-videos-list"></div>
   </div>
 </div>
@@ -3796,6 +3797,11 @@ function _makeSearchItem(h,res,mobSearch,obSearch){
       const d=h.data;
       if(t==='group'){showGC(d,cx,cy);pulseGroup(d);}
       else{showT(d,cx,cy);pulseMember(d);pulseGroup(d.group.ko);}
+      // 곡을 클릭하면 주인 카드 위에 그 곡의 영상 모음(원곡+커버)을 오버레이로 얹는다(2026-08-31).
+      if(h.type==='song'){
+        const owner=t==='group'?{gko:d,memberKo:null}:{gko:_ytGroupKoFor(d),memberKo:d.name.ko};
+        _openSongVideos(h.name,owner);
+      }
     };
     if(obSearch){
       exitObSearch();
@@ -9328,38 +9334,84 @@ function _closeGcDiscogDetail(){document.getElementById('gc-discog-detail').clas
 // 어렵다"는 재피드백(그 자리에서 그리드/검색창을 덮어써버려 원래 보던 앨범 화면으로 못 돌아감) —
 // 그리드를 건드리는 대신, 앨범 상세 팝업(gc-discog-detail) 위에 새 시트를 하나 더 얹는 방식으로
 // 변경. 앨범 상세는 뒤에서 그대로 살아있으니 ×로 닫기만 하면 원래 화면으로 바로 복귀됨.
-async function _filterGcVideosByTrack(title){
-  const gko=_openGCko;
+// 디스코그래피 트랙 클릭 — 현재 열린 그룹 카드의 그 곡 영상을 곡 오버레이로 연다(래퍼).
+function _filterGcVideosByTrack(title){
+  if(!_openGCko)return;
+  _openSongVideos(title,{gko:_openGCko,memberKo:null});
+}
+// 곡 하나의 영상 모음 오버레이 — 원곡(주인 채널/게스트 출연) + 다른 아티스트의 커버를 함께 모아
+// [전체·원곡·커버] 토글로 본다. 디스코그래피 트랙 클릭과 검색의 곡 클릭이 이 함수를 공유한다(2026-08-31).
+// ⚠️ 커버는 cover_of_groups/cover_of_members 태그 기준이라, 아직 태깅 안 된 커버는 빠질 수 있다
+//    (원곡 태깅 스윕이 채우는 중). 커버가 하나도 없으면 토글을 숨겨 기존 단순 목록과 똑같이 보인다.
+// owner: {gko, memberKo}. 그룹 곡이면 memberKo 없음, 솔로/멤버 곡이면 gko=_ytGroupKoFor 키.
+let _songVidReq=0,_songVid=null;
+async function _openSongVideos(title,owner){
+  const gko=owner&&owner.gko,memberKo=(owner&&owner.memberKo)||null;
   if(!gko||!sb)return;
+  const myReq=++_songVidReq;
   const overlay=document.getElementById('gc-track-videos-overlay');
   const listEl=document.getElementById('gc-track-videos-list');
+  const tabsEl=document.getElementById('gc-track-videos-tabs');
   document.getElementById('gc-track-videos-title').textContent=title;
+  tabsEl.classList.add('hidden');tabsEl.innerHTML='';
   listEl.innerHTML=`<div class="tvf-empty">${currentLang==='ko'?'불러오는 중…':'Loading…'}</div>`;
   overlay.classList.add('open');
-  // 그룹 카드 영상 그리드가 쓰는 것과 동일한 노출 조건(무관/숨김 제외, 자체+게스트 태깅 포함)만
-  // 그대로 재사용 — title_norm ilike로 정규화 매칭(대소문자·특수문자 차이 흡수).
-  const{data,error}=await sb.from(_YT_TABLE).select('id,title,thumb,category,is_short,published_at')
-    .or(`group_ko.eq.${_pgFilterVal(gko)},with_groups.cs.{${_pgFilterVal(gko)}}`)
-    .or('content_flag.is.null,content_flag.neq.무관').or('content_flag.is.null,content_flag.neq.보류')
-    .or('content_flag.is.null,content_flag.neq.hidden')
-    .ilike('title_norm',`%${_titleNorm(title)}%`)
-    .order('published_at',{ascending:false})
-    .limit(50);
-  if(!overlay.classList.contains('open'))return; // 그 사이 닫혔으면 반영 안 함
-  if(error){listEl.innerHTML=`<div class="tvf-empty">${currentLang==='ko'?'불러오기 실패':'Failed to load'}</div>`;return;}
-  if(!data||!data.length){listEl.innerHTML=`<div class="tvf-empty">${currentLang==='ko'?'관련 영상이 없어요':'No matching videos'}</div>`;return;}
-  listEl.innerHTML='';
+  const like=`%${_titleNorm(title)}%`;
+  const COLS='id,title,thumb,category,is_short,group_ko,cover_of_members,cover_of_groups,content_flag,published_at';
+  // 그룹/멤버 카드 영상 그리드와 동일한 노출 조건(무관/보류/숨김 제외)
+  const _excl=q=>q.or('content_flag.is.null,content_flag.neq.무관').or('content_flag.is.null,content_flag.neq.보류').or('content_flag.is.null,content_flag.neq.hidden');
+  // 원곡: 주인 채널 영상 + 주인이 게스트(with_groups)로 나온 영상
+  const origP=_excl(sb.from(_YT_TABLE).select(COLS)
+    .or(`group_ko.eq.${_pgFilterVal(gko)},with_groups.cs.{${_pgFilterVal(gko)}}`))
+    .ilike('title_norm',like).order('published_at',{ascending:false}).limit(50);
+  // 커버: 이 주인이 "원곡자"로 태깅된 다른 아티스트 영상 — 커버 조회 키는 _coverOfQueryKeys 한 곳에서만 만든다
+  const{personKeys,groupKey}=_coverOfQueryKeys(gko,memberKo);
+  const coverQs=[];
+  personKeys.forEach(k=>coverQs.push(_excl(sb.from(_YT_TABLE).select(COLS).contains('cover_of_members',[k])).ilike('title_norm',like).limit(50)));
+  if(groupKey)coverQs.push(_excl(sb.from(_YT_TABLE).select(COLS).contains('cover_of_groups',[groupKey])).ilike('title_norm',like).limit(50));
+  let settled;
+  try{settled=await Promise.all([origP,...coverQs].map(q=>q.then(r=>r,()=>({data:null}))));}
+  catch(e){settled=null;}
+  if(!overlay.classList.contains('open')||myReq!==_songVidReq)return; // 그 사이 닫힘/다른 곡 클릭
+  if(!settled){listEl.innerHTML=`<div class="tvf-empty">${currentLang==='ko'?'불러오기 실패':'Failed to load'}</div>`;return;}
+  const[origR,...coverRs]=settled;
+  const origSeen=new Set();
+  const orig=_filterBannedVideos((origR&&origR.data)||[]).filter(v=>!origSeen.has(v.id)&&origSeen.add(v.id));
+  const coverSeen=new Set();
+  // 원곡 목록에 이미 있는 영상은 커버서 제외(주인 채널 자체 커버 영상 등이 양쪽에 걸릴 때 중복 방지)
+  const cover=_filterBannedVideos(coverRs.flatMap(r=>(r&&r.data)||[])).filter(v=>!origSeen.has(v.id)&&!coverSeen.has(v.id)&&coverSeen.add(v.id));
+  _songVid={gko,orig,cover,tab:'all'};
+  _renderSongVideoTabs();
+}
+function _renderSongVideoTabs(){
+  const st=_songVid;if(!st)return;
+  const tabsEl=document.getElementById('gc-track-videos-tabs');
+  if(!st.cover.length){tabsEl.classList.add('hidden');st.tab='all';} // 커버 없으면 토글 숨김(기존 모습)
+  else{
+    tabsEl.classList.remove('hidden');tabsEl.innerHTML='';
+    [['all',currentLang==='ko'?'전체':'All'],['orig',currentLang==='ko'?'원곡':'Original'],['cover',currentLang==='ko'?'커버':'Covers']].forEach(([k,lbl])=>{
+      const b=document.createElement('button');b.className='tvf-tab'+(st.tab===k?' active':'');b.textContent=lbl;
+      b.addEventListener('click',()=>{if(st.tab===k)return;st.tab=k;_renderSongVideoTabs();});
+      tabsEl.appendChild(b);
+    });
+  }
+  const rows=st.tab==='orig'?st.orig:st.tab==='cover'?st.cover:[...st.orig,...st.cover];
+  const listEl=document.getElementById('gc-track-videos-list');
+  if(!rows.length){listEl.innerHTML=`<div class="tvf-empty">${currentLang==='ko'?'관련 영상이 없어요':'No matching videos'}</div>`;return;}
+  const coverIds=new Set(st.cover.map(v=>v.id));
   const _vidUrl=v=>_isShortV(v)?`https://www.youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;
-  const playlist=data.map(v=>({t:v.title,u:_vidUrl(v),thumb:v.thumb,pa:v.published_at?.slice(0,10)}));
-  data.forEach((v,i)=>{
+  const playlist=rows.map(v=>({t:v.title,u:_vidUrl(v),thumb:v.thumb,pa:v.published_at?.slice(0,10)}));
+  listEl.innerHTML='';
+  rows.forEach((v,i)=>{
     const item=document.createElement('div');item.className='tvf-item';
     const img=document.createElement('img');img.className='tvf-thumb';img.loading='lazy';
     img.src=v.thumb||`https://i.ytimg.com/vi/${v.id}/mqdefault.jpg`;img.alt='';
-    const t=document.createElement('div');t.className='tvf-title';t.textContent=v.title;
+    const t=document.createElement('div');t.className='tvf-title';
+    // 전체 탭에선 커버 영상 앞에 "커버" 칩을 붙여 원곡과 구분
+    if(st.tab==='all'&&coverIds.has(v.id)){const chip=document.createElement('span');chip.className='tvf-cover-chip';chip.textContent=currentLang==='ko'?'커버':'Cover';t.appendChild(chip);}
+    t.appendChild(document.createTextNode(v.title));
     item.appendChild(img);item.appendChild(t);
-    item.addEventListener('click',()=>{
-      openLightbox(_vidUrl(v),_isShortV(v),playlist,i,{groupKo:gko});
-    });
+    item.addEventListener('click',()=>openLightbox(_vidUrl(v),_isShortV(v),playlist,i,{groupKo:st.gko}));
     listEl.appendChild(item);
   });
 }

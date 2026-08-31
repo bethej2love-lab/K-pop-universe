@@ -2138,6 +2138,11 @@
   @media(min-width:769px){#gc-track-videos-sheet{max-width:340px;border-radius:18px;margin-bottom:100px;}}
   #gc-track-videos-close{position:absolute;top:10px;right:12px;background:none;border:none;color:rgba(190,205,240,0.66);font-size:20px;cursor:pointer;padding:4px;line-height:1;z-index:2;}
   #gc-track-videos-title{font-size:14px;font-weight:700;color:#e4ecff;line-height:1.32;padding-right:24px;flex-shrink:0;}
+  #gc-track-videos-tabs{display:flex;gap:6px;margin-top:12px;flex-shrink:0;}
+  #gc-track-videos-tabs.hidden{display:none;}
+  .tvf-tab{font-size:12px;font-weight:600;color:rgba(190,205,240,0.72);background:rgba(255,255,255,0.06);border:none;border-radius:14px;padding:5px 14px;cursor:pointer;transition:background .13s,color .13s;}
+  .tvf-tab.active{background:rgba(120,150,255,0.92);color:#fff;}
+  .tvf-cover-chip{display:inline-block;margin-right:6px;font-size:10px;font-weight:700;color:#c7d2ff;background:rgba(120,150,255,0.2);border-radius:6px;padding:1px 5px;vertical-align:middle;}
   #gc-track-videos-list{margin-top:14px;overflow-y:auto;display:flex;flex-direction:column;gap:4px;min-height:0;}
   .tvf-item{display:flex;align-items:center;gap:10px;padding:6px;border-radius:10px;cursor:pointer;transition:background .13s;}
   .tvf-item:hover{background:rgba(255,255,255,0.06);}
