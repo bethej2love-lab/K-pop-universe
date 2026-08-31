@@ -1248,8 +1248,21 @@ async function _ytSweepCoverCleanup(){
     console.log(`[원곡 청소] 조회 ${rows.length} · 정리 후보 ${updates.length} (with_로 되돌림 ${nRestore} · 그냥 해제 ${nClear}) · 커버 문맥 있어 유지 ${hasCtx} · 매처가 커버라 판정해 유지 ${stillCover} · 수동보호 ${manualSkipped} · 플래그 제외 ${excluded}`);
     Object.entries(sample).forEach(([k,arr])=>{if(arr.length)console.log(`[원곡 청소] 표본 — ${k==='restore'?'with_로 되돌림':'그냥 해제'}:\n`+arr.join('\n'));});
     if(!updates.length){_ytSetProg(`원곡 청소 — 정리할 것 없음 (조회 ${rows.length} · 유지 ${hasCtx+stillCover})`);return;}
-    if(!confirm(`원곡(cover_of) 오탐 ${updates.length}건을 정리할까요?\n\n· 콜라보 동반신호 있음 → with_로 되돌림 : ${nRestore}건\n   (원래 게스트 출연인데 옛 휴리스틱이 원곡자로 강등시킨 것 — 그냥 지우면 콜라보 정보가 사라져요)\n· 근거 없음 → cover_of 해제 : ${nClear}건\n\n손대지 않는 것\n· 커버 문맥이 있는 정상 커버 ${hasCtx}건\n· 매처가 지금도 커버라고 판정한 ${stillCover}건 (대개 group_ko 오배정 문제 — "② 오태깅 그룹 재배정"의 몫)\n· 수동편집 ${manualSkipped}건\n\n표본은 콘솔(F12) · 스냅샷 저장돼서 되돌리기 가능`)){
-      _ytSetProg(`취소됨 — 미리보기만 (후보 ${updates.length}, 표본 콘솔).`);return;
+    // 미리보기 숫자는 confirm과 **독립적으로** 패널에 띄운다 — 예전엔 confirm 안에만 있고 취소하면
+    // "취소됨" 한 줄로 덮여서, 숫자를 보려면 F12를 열어야 했다(사용자 제보 2026-08-31). 게다가 브라우저가
+    // "추가 대화상자 차단"을 걸면 confirm이 대화상자 없이 바로 false를 반환해 미리보기조차 못 보게 된다.
+    const summary=`정리 ${updates.length}건 (with_로 되돌림 ${nRestore} · 해제 ${nClear}) / 유지 ${hasCtx+stillCover}건 (정상 커버 ${hasCtx} · 매처가 커버 판정 ${stillCover}) · 수동보호 ${manualSkipped}`;
+    _ytSetProg(`[원곡 청소] 미리보기 — ${summary}`);
+    await new Promise(r=>setTimeout(r,50)); // 확인창 뜨기 전에 화면에 먼저 그려지도록
+    const msg=`원곡(cover_of) 오탐 ${updates.length}건을 정리할까요?\n\n· 콜라보 동반신호 있음 → with_로 되돌림 : ${nRestore}건\n   (원래 게스트 출연인데 옛 휴리스틱이 원곡자로 강등시킨 것 — 그냥 지우면 콜라보 정보가 사라져요)\n· 근거 없음 → cover_of 해제 : ${nClear}건\n\n손대지 않는 것\n· 커버 문맥이 있는 정상 커버 ${hasCtx}건\n· 매처가 지금도 커버라고 판정한 ${stillCover}건 (대개 group_ko 오배정 문제 — "② 오태깅 그룹 재배정"의 몫)\n· 수동편집 ${manualSkipped}건\n\n표본은 콘솔(F12) · 스냅샷 저장돼서 되돌리기 가능`;
+    // 앱 자체 다이얼로그를 우선 쓴다(브라우저 대화상자 차단·PWA 환경에 안 걸림). 없으면 native confirm.
+    let ok;
+    if(typeof _confirmDialog==='function'){
+      ok=await _confirmDialog({title:`원곡 오탐 ${updates.length}건 정리`,msg,okLabel:'정리 실행',wide:true});
+    }else ok=confirm(msg);
+    if(!ok){
+      _ytSetProg(`취소됨 — 적용 안 함. 미리보기: ${summary} · 적용하려면 버튼을 다시 눌러 "정리 실행"을 선택하세요(표본은 F12 콘솔).`);
+      return;
     }
     await _snapshotBeforeBulk('원곡 오탐 청소',updates.map(u=>u.id));
     for(let i=0;i<updates.length;i+=200){

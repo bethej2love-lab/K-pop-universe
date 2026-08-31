@@ -10693,12 +10693,15 @@ let _unfavConfirmResolve=null;
 // Promise 기반 버전. _confirmDialog는 confirm(true/false), _promptDialog는 입력값(string) 또는
 // 취소 시 null을 resolve한다.
 let _genericConfirmResolve=null;
-function _confirmDialog({title,msg,okLabel='확인'}){
+// wide: 여러 줄짜리 긴 요약을 보여줄 때만 켠다(어드민 스윕의 실행 전 확인처럼). 기본값 false라
+// 기존 호출부(사진 삭제 등 한 줄짜리)는 그대로 280px 패널을 쓴다.
+function _confirmDialog({title,msg,okLabel='확인',wide=false}){
   return new Promise(resolve=>{
     _genericConfirmResolve=resolve;
     document.getElementById('generic-confirm-title').textContent=title||'';
     const msgEl=document.getElementById('generic-confirm-msg');
     msgEl.textContent=msg||'';msgEl.style.display=msg?'':'none';
+    document.getElementById('generic-confirm-panel').classList.toggle('wide',!!wide);
     document.getElementById('generic-confirm-ok').textContent=okLabel;
     const _co=document.getElementById('generic-confirm-overlay');_co.classList.add('open');_bringToFront(_co); // 사이드바 등이 _bringToFront로 z-index를 70 위로 올려 다이얼로그를 덮던 문제(2026-08-22) — 다이얼로그도 맨 위로
   });

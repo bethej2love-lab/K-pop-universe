@@ -2490,6 +2490,11 @@
   #unfav-confirm-overlay.open,#date-edit-overlay.open,#link-confirm-overlay.open,#logout-confirm-overlay.open,#generic-confirm-overlay.open,#generic-prompt-overlay.open,#welcome-choice-overlay.open,#welcome-login-overlay.open,#uc-card-overlay.open,#debut-card-overlay.open,#col-card-overlay.open{display:flex;}
   #unfav-confirm-panel,#date-edit-panel,#link-confirm-panel,#logout-confirm-panel,#generic-confirm-panel,#generic-prompt-panel,#welcome-choice-panel,#welcome-login-panel{width:min(280px,calc(100vw - 40px));background:rgba(13,17,34,0.97);backdrop-filter:blur(40px) saturate(180%);-webkit-backdrop-filter:blur(40px) saturate(180%);border-radius:18px;box-shadow:0 16px 56px rgba(0,0,0,0.72);border:0.5px solid rgba(255,255,255,0.10);padding:20px;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
   #unfav-confirm-msg,#link-confirm-msg,#logout-confirm-msg,#generic-confirm-msg,#welcome-choice-msg,#welcome-login-msg{font-size:12px;color:rgba(160,182,222,0.72);line-height:1.5;margin-top:8px;}
+  /* 줄바꿈 보존 — 어드민 스윕 확인창처럼 여러 줄 요약을 넘기는 호출이 생겼다(2026-08-31). 한 줄짜리
+     기존 호출부엔 영향 없음. .wide는 그런 긴 요약일 때만 켜지는 옵트인 모드(_confirmDialog{wide:true}). */
+  #generic-confirm-msg{white-space:pre-wrap;}
+  #generic-confirm-panel.wide{width:min(460px,calc(100vw - 40px));}
+  #generic-confirm-panel.wide #generic-confirm-msg{max-height:52vh;overflow-y:auto;}
   #unfav-confirm-btns,#link-confirm-btns,#logout-confirm-btns,#generic-confirm-btns,#welcome-login-btns{display:flex;gap:8px;margin-top:18px;}
   /* 선택/로그인 패널은 -btns 없이 pp-save-btn을 바로 쌓아서 쓰므로, 메시지 아래 여백만 별도로 확보 */
   #welcome-choice-msg,#welcome-login-msg{margin-bottom:14px;}
