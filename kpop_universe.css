@@ -809,7 +809,12 @@
     /* 모바일은 상하 스와이프로 영상 넘기므로 좌우 버튼은 오히려 잘못된 방향을 암시함 — 숨김 */
     #yt-lb-prev,#yt-lb-next{display:none;}
     #yt-lb-toolbar{justify-content:center;}
-    #yt-lightbox.lb-browse #yt-lb-drag-cap{display:block;position:absolute;top:0;left:0;right:0;height:40px;z-index:1;-webkit-tap-highlight-color:transparent;}
+    /* 가로(browse) 재생모드의 당겨-닫기 손잡이. ⚠️ 예전엔 `right:0`이라 **영상 상단 전체를 가로지르는
+       40px 투명 띠**였고, 유튜브 자체 우상단 버튼(공유·나중에 볼 동영상·더보기)이 정확히 그 아래 깔려
+       눌리지 않았다(2026-08-31 사용자 제보 → elementFromPoint로 확인: 우상단 세 지점 전부
+       #yt-lb-drag-cap이 먹고 있었음). 오른쪽 120px을 비워 유튜브 버튼을 되살리고, 왼쪽·가운데는
+       그대로 남겨 당겨-닫기 제스처를 유지한다(390px 기기 기준 손잡이 폭 약 240px). */
+    #yt-lightbox.lb-browse #yt-lb-drag-cap{display:block;position:absolute;top:0;left:0;right:120px;height:40px;z-index:1;-webkit-tap-highlight-color:transparent;}
     #mob-sr .sr-item{padding:8px 22px;font-size:14px;line-height:1;}
     .sr-tag{font-size:11px;}
     .gc-ch-refresh{font-size:20px;padding:6px 8px;}
