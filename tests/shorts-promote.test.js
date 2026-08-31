@@ -48,19 +48,20 @@ need(fn.includes(".eq('tags_manual',false)"), '수동 편집(tags_manual) 행은
 //    쓰는 값은 오직 is_short:true. category를 건드리면 승격이 곧 장르 소실이 된다(직교화 이전 버그).
 need(fn.includes(".eq('is_short',false)"), '이미 세로인 행은 조회 제외(강등·재프로브 안 함)');
 const updates = fn.match(/\.update\(\{[^}]*\}\)/g) || [];
-need(updates.length > 0 && updates.every(u => u === '.update({is_short:true})'),
-  `쓰기는 항상 is_short:true만(승격 전용, category 불간섭) — 발견 ${JSON.stringify(updates)}`);
+need(updates.length > 0 && updates.every(u => u === '.update({is_short:true})' || u === '.update({short_probed_at:_now})'),
+  `쓰기는 is_short:true(승격) 또는 short_probed_at(표식)만 — category 불간섭 — 발견 ${JSON.stringify(updates)}`);
 need(!/category/.test(fn), '승격 스윕은 category를 아예 언급하지 않음(장르 소실 재발 방지)');
 
 // ③ oardefault 실측으로만 판정
 need(fn.includes('_probeIsPortrait('), 'oardefault 실측(_probeIsPortrait)으로 세로 판정');
 need(fn.includes("typeof _probeIsPortrait!=='function'"), '_probeIsPortrait 부재 시 안전하게 중단');
 
-// ④ 중단/재개 — localStorage 커서 + id 오름차순 이어가기
-need(fn.includes('_SHORTS_PROMOTE_CURSOR_KEY') && fn.includes('localStorage.setItem'),
-  '진행 커서를 localStorage에 저장(재개 지원)');
-need(fn.includes(".gt('id',cursor)") && fn.includes(".order('id',{ascending:true})"),
-  'id 오름차순 + 커서 이후만 조회(이미 확인한 가로 행 재프로브 안 함)');
+// ④ 중단/재개 — short_probed_at 표식(id 커서 폐기, 2026-08-31). 확인한 행은 표식이 박혀 영구 제외돼
+//    재프로브 0이고 커서를 잃어도 안전. 조회는 최신순(부분 인덱스 매칭 → statement timeout 회피).
+need(fn.includes('short_probed_at') && fn.includes("update({short_probed_at"),
+  '확인한 청크를 short_probed_at으로 표식(재프로브 방지)');
+need(fn.includes(".is('short_probed_at',null)") && fn.includes(".order('published_at',{ascending:false})"),
+  '표식 없는 것만 최신순 조회(인덱스 매칭 · 재프로브 안 함)');
 need(fn.includes('_shortsPromoteRunning'), '실행 중 재클릭으로 중단 가능(토글 플래그)');
 
 // ⑤ 실행 전체가 하나의 되돌리기 batch

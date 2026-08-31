@@ -2098,6 +2098,48 @@ function _rookieHaloStrength(debutStr){
   return 0;
 }
 
+// ── discography / tracks_index lazy-load (2026-08-31) ──────────────────────────
+// 초기 로드에서 discography를 뺐다(tools/build_slim_data.mjs가 slim/disco/tracks_index 생성).
+// 카드 열 때 disco/ 파일을, 검색·피드 b-side 첫 사용 때 tracks_index.json을 불러온다. 슬림/인덱스가
+// 없으면(폴백으로 원본 json이 통째로 로드된 경우 _SLIM_MODE=false) 인메모리 discography로 자동 폴백해
+// 어떤 경우에도 앱은 동작한다.
+// ⚠️ _discoFileKey는 build_slim_data.mjs의 fileKey와, 멤버 키 구분자(널 문자 \u0000)도 반드시 동일해야 함.
+let _SLIM_MODE=true, _TI=null, _TIProm=null, _artByNG=null, _curSearchQ='';
+const _discoFileKey=s=>String(s).replace(/[\/\\]/g,'_').replace(/[.\s]+$/,'');
+const _discoProm={};
+function _ensureGroupDisco(gko){
+  const g=GROUPS[gko];
+  if(!g||g.discography!==undefined)return Promise.resolve();
+  if(_discoProm['g:'+gko])return _discoProm['g:'+gko];
+  return _discoProm['g:'+gko]=fetch('disco/g/'+encodeURIComponent(_discoFileKey(gko))+'.json',{cache:'no-cache'})
+    .then(r=>r.ok?r.json():{g:null,m:{}})
+    .then(d=>{
+      g.discography=d.g||[];
+      const mm=d.m||{};
+      for(const nm in mm){const a=ARTISTS.find(x=>x.name&&x.name.ko===nm&&x.group&&x.group.ko===gko);if(a)a.discography=mm[nm].d||[];}
+    })
+    .catch(()=>{g.discography=[];}); // 실패해도 카드는 뜸(디스코 섹션만 빔)
+}
+function _ensureMemberDisco(a){
+  if(!a||a.discography!==undefined)return Promise.resolve();
+  const gko=a.group&&a.group.ko;
+  if(gko&&GROUPS[gko])return _ensureGroupDisco(gko); // 실존 그룹 → 그룹 파일에 멤버 disco까지 들어있음
+  const key=_discoFileKey(gko)+'__'+_discoFileKey(a.name.ko),pk='a:'+key;
+  if(_discoProm[pk])return _discoProm[pk];
+  return _discoProm[pk]=fetch('disco/a/'+encodeURIComponent(key)+'.json',{cache:'no-cache'})
+    .then(r=>r.ok?r.json():{d:null}).then(d=>{a.discography=d.d||[];}).catch(()=>{a.discography=[];});
+}
+function _ensureTracksIndex(){
+  if(_TI)return Promise.resolve(_TI);
+  if(_TIProm)return _TIProm;
+  return _TIProm=fetch('tracks_index.json',{cache:'no-cache'}).then(r=>r.ok?r.json():null).then(d=>{_TI=d;return d;}).catch(()=>null);
+}
+function _artistByNameGroup(nm,gko){ // 검색 인덱스가 멤버 owner(ARTIST 객체)를 복원할 때
+  if(!_artByNG){_artByNG=new Map();ARTISTS.forEach(a=>{if(a.name&&a.group)_artByNG.set(a.name.ko+'\u0000'+a.group.ko,a);});}
+  return _artByNG.get(nm+'\u0000'+gko);
+}
+let _loadDone=0;
+function _loadTick(){ if(_loadDone<3)_loadDone++; const el=document.getElementById('loading'); if(el)el.textContent='Here is Our K-Pop Universe..! ('+_loadDone+'/3)'; }
 // ── Build universe ────────────────────────────────
 async function buildUniverse(){
   const _loadT0=performance.now();
@@ -2108,10 +2150,20 @@ async function buildUniverse(){
   // 전체가 그대로 throw돼 "우주를 불러오지 못했어요" 화면이 뜨고 사용자가 직접 "다시 시도"를 눌러야
   // 했음(2026-08-18, 사용자 제보 — 구글 로그인이 한 번에 안 되고 꼭 재시도해야 됨). 카드 그리드 로딩에
   // 이미 쓰던 것과 같은 조용한 자동 재시도(_withTimeout factory+retries)를 여기 최초 데이터 로드에도 적용.
+  // 슬림 base(discography 뺀 것)를 로드하되, 없으면(배포 레이스 등) 원본 json으로 통째 폴백한다.
+  // 슬림/원본은 **원자적으로** 한쪽만 — groups는 슬림인데 artists는 원본인 혼합을 막아야 _SLIM_MODE가
+  // 일관됨(검색·b-side 폴백 분기가 이 플래그를 봄).
+  const _loadBase=()=>Promise.all([
+    fetch('groups.slim.json',{cache:'no-cache'}).then(r=>{if(!r.ok)throw 0;return r.json();}),
+    fetch('artists.slim.json',{cache:'no-cache'}).then(r=>{if(!r.ok)throw 0;return r.json();})
+  ]).then(d=>{_loadTick();_loadTick();return d;})
+   .catch(()=>{_SLIM_MODE=false;return Promise.all([
+     fetch('groups.json',{cache:'no-cache'}).then(r=>r.json()),
+     fetch('artists.json',{cache:'no-cache'}).then(r=>r.json())
+   ]).then(d=>{_loadTick();_loadTick();return d;});});
   const _jsonPromise=_withTimeout(()=>Promise.all([
-    fetch('groups.json',{cache:'no-cache'}).then(r=>r.json()),
-    fetch('artists.json',{cache:'no-cache'}).then(r=>r.json()),
-    fetch('connections.json',{cache:'no-cache'}).then(r=>r.json())
+    _loadBase(),
+    fetch('connections.json',{cache:'no-cache'}).then(r=>r.json()).then(d=>{_loadTick();return d;})
   ]),8000,undefined,2);
   // 로그인 사용자의 서버 데이터가 첫 렌더 전에 로컬을 덮어써야 하므로 JSON fetch와 병렬로 먼저 완료 대기하지만,
   // 내부의 auth 호출(getSession/signInAnonymously 등)엔 타임아웃이 없어서 네트워크가 불안정하면(특히 모바일)
@@ -2121,7 +2173,7 @@ async function buildUniverse(){
   await _withTimeout(initSupabaseSync(),10000,'로그인 동기화 시간 초과').catch(e=>{
     console.error('[초기화] Supabase 인증 동기화 실패/시간초과 — 로그인 상태 없이 계속 진행:',e.message);
   });
-  const [grpData,artData,connData]=await _jsonPromise;
+  const [[grpData,artData],connData]=await _jsonPromise;
   GROUPS=grpData;ARTISTS=artData;_rawConnData=connData;
   _STRICT_SYNC_GROUPS=new Set(Object.entries(GROUPS).filter(([,v])=>v?.strictSync).map(([ko])=>ko));
   applyLang();
@@ -3627,16 +3679,13 @@ function _buildSongIndex(){
     if(prev&&!(isTitle&&!prev.isTitle))return;
     byKey.set(k,{title,album,isTitle,ownerType,owner,ownerName});
   };
-  Object.keys(GROUPS).forEach(gko=>{
-    (GROUPS[gko].discography||[]).forEach(al=>{
-      (al.tracks||[]).forEach(t=>add(t&&t.title,al.title,!!(t&&t.isTitle),'group',gko,gko));
-    });
-  });
-  ARTISTS.forEach(a=>{
-    (a.discography||[]).forEach(al=>{
-      (al.tracks||[]).forEach(t=>add(t&&t.title,al.title,!!(t&&t.isTitle),'member',a,a.name.ko));
-    });
-  });
+  if(_TI){ // 경량 인덱스(초기 로드엔 discography 없음). t=[title,isTitle01,album]
+    for(const gko in _TI.groups)for(const t of _TI.groups[gko])add(t[0],t[2],!!t[1],'group',gko,gko);
+    for(const key in _TI.members){const i=key.indexOf('\u0000');const nm=key.slice(0,i),gko=key.slice(i+1);const a=_artistByNameGroup(nm,gko);if(a)for(const t of _TI.members[key])add(t[0],t[2],!!t[1],'member',a,a.name.ko);}
+  }else{ // 폴백: 인메모리 discography(원본 json이 통째로 로드된 경우)
+    Object.keys(GROUPS).forEach(gko=>(GROUPS[gko].discography||[]).forEach(al=>(al.tracks||[]).forEach(t=>add(t&&t.title,al.title,!!(t&&t.isTitle),'group',gko,gko))));
+    ARTISTS.forEach(a=>(a.discography||[]).forEach(al=>(al.tracks||[]).forEach(t=>add(t&&t.title,al.title,!!(t&&t.isTitle),'member',a,a.name.ko))));
+  }
   return [...byKey.values()];
 }
 // ── 최근 검색 (검색창 열고 아직 안 쳤을 때 위에 뜨는 목록) ──────
@@ -3866,7 +3915,7 @@ function doSearch(q){
   const obSr=_obSearchMode?document.getElementById('ob-sr'):null;
   const mobSearch=!obSr&&isMob()&&document.getElementById('tabbar').classList.contains('search-mode');
   const res=obSr||(mobSearch?document.getElementById('mob-sr'):document.getElementById('search-results'));
-  q=q.trim();
+  q=q.trim();_curSearchQ=q;
   if(!q){
     const recentHits=_resolveRecentSearches();
     // 빈 화면(2026-08-31, 검색 확장 3단계) — X가 검색창을 열면 트렌드를 보여주는 이유와 같다:
@@ -3962,9 +4011,12 @@ function doSearch(q){
   // ⚠️ 온보딩 검색(obSr)은 결과가 5칸뿐이라 곡을 넣지 않는다 — 첫 검색은 그룹/멤버를 찾는 흐름이다.
   // ⚠️ 개수를 캡한다 — 2만여 곡이라 흔한 단어("love")면 결과를 통째로 덮어버린다.
   if(!obSr&&q.length>=2){
-    if(!_songIndex)_songIndex=_buildSongIndex();
+    // 슬림 모드에선 tracks_index가 있어야 곡을 넣는다. 아직 없으면 로드만 걸고 이번 패스는 건너뛴 뒤,
+    // 도착하면 같은 쿼리로 재검색한다(폴백/원본 모드는 _TI 없이 인메모리로 바로 빌드).
+    if(!_songIndex && (!_SLIM_MODE || _TI)) _songIndex=_buildSongIndex();
+    if(!_songIndex && _SLIM_MODE && !_TI) _ensureTracksIndex().then(()=>{if(_curSearchQ===q){_songIndex=_buildSongIndex();doSearch(q);}});
     const songHits=[];
-    for(const s of _songIndex){
+    for(const s of (_songIndex||[])){
       const t=s.title,tl=t.toLowerCase();
       if(!(t.includes(q)||tl.includes(ql)||(qln.length>=2&&_normEn(t).includes(qln))))continue;
       songHits.push({s,sc:_mScore(t,q,ql)});
@@ -9229,12 +9281,17 @@ function _renderDiscography(prefix,albums){
   updateMoreVisibility();
 }
 function _renderGcDiscography(ko){
-  _renderDiscography('gc',(GROUPS[ko]||{}).discography);
+  const g=GROUPS[ko]||{};
+  if(g.discography!==undefined){_renderDiscography('gc',g.discography);return;} // 이미 로드(원본/재방문)
+  const row=document.getElementById('gc-discog-row');if(row)row.style.display='none'; // 로드 전엔 숨김
+  _ensureGroupDisco(ko).then(()=>{if(_openGCko===ko)_renderDiscography('gc',(GROUPS[ko]||{}).discography);});
 }
 // 솔로 활동 디스코그래피 — artists.json 개인 멤버 항목의 discography 필드(groups.json과 동일 스키마).
 // 없는 멤버가 대부분이라 필드 있는 멤버만 섹션이 뜨고, 나머지는 그룹 디스코그래피처럼 자동으로 숨김.
 function _renderTtDiscography(a){
-  _renderDiscography('tt',a.discography);
+  if(a.discography!==undefined){_renderDiscography('tt',a.discography);return;}
+  const row=document.getElementById('tt-discog-row');if(row)row.style.display='none';
+  _ensureMemberDisco(a).then(()=>{if(_openTArtist===a)_renderDiscography('tt',a.discography);});
 }
 // 2026-08-19, 사용자 요청 — 디스코그래피 트랙이 멜론 연간 TOP100/스포티파이 마일스톤에 해당하면 곡
 // 제목 옆에 작은 아이콘 뱃지 표시. 앨범 상세를 열 때마다 매번 조회하면 앨범 넘길 때(이전/다음)마다
@@ -15874,14 +15931,20 @@ const _BSIDE_NONSTAGE_RE=/behind|teaser|promotion|preview|vlog|브이로그|메�
 const _bsideIndexCache={};
 function _groupBsideIndex(groupKo){
   if(_bsideIndexCache[groupKo])return _bsideIndexCache[groupKo];
-  const info=GROUPS[groupKo];const bside={},titles=new Set();
-  (info?.discography||[]).forEach(al=>(al.tracks||[]).forEach(t=>{
+  // 트랙 소스: tracks_index(초기 로드엔 discography 없음) 우선, 없으면 인메모리 폴백. 둘 다 아직이면
+  // 로드만 걸고 비운 채 반환(캐시 안 함) — tracks_index 도착 후 다음 호출에서 채워진다.
+  let list=null;
+  if(_TI){list=(_TI.groups[groupKo]||[]).map(t=>({title:t[0],isTitle:!!t[1]}));}
+  else{const info=GROUPS[groupKo];if(info&&info.discography!==undefined){list=[];(info.discography||[]).forEach(al=>(al.tracks||[]).forEach(t=>{if(t&&t.title)list.push({title:t.title,isTitle:!!t.isTitle});}));}}
+  if(!list){_ensureTracksIndex();return{bside:{},titles:new Set()};}
+  const bside={},titles=new Set();
+  list.forEach(t=>{
     const ti=t.title;if(!ti)return;
     const n=_bsideNorm(ti);if(n.length<3)return;      // 너무 짧은 곡명은 오매칭 위험 → 제외
     if(t.isTitle){titles.add(n);return;}
     if(_BSIDE_DERIV_RE.test(ti))return;               // Inst./MR/remix 파생 트랙 제외
     bside[n]=ti;
-  }));
+  });
   return _bsideIndexCache[groupKo]={bside,titles};
 }
 // 영상 배열 중 "수록곡 무대"만 골라 반환 — group_ko별로 그 그룹의 수록곡과 대조.
