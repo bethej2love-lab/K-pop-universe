@@ -83,6 +83,14 @@ function load(){
     S(/^let _coverIndex\s*=/m,'_coverIndex');
     S(/^let _coverIndexChart\s*=/m,'_coverIndexChart');
     ['_coverOriginLabel','_coverOriginId','_coverArtistOriginOf','_coverBuildIndex','_coverIndexEnsure','_coverContext','_coverHasCollabSignal','_coverCandidates','_coverOriginFromText','_coverIsSelf','_coverDebutYear','_coverResolve'].forEach(n=>F(new RegExp('^function '+n+'\\(','m'),n));
+    // 원곡 오탐 청소의 되돌리기 게이트(2026-08-31) — 있으면 싣는다
+    if(/^function _coverRestoreSignal\(/m.test(adminSrc))F(/^function _coverRestoreSignal\(/m,'_coverRestoreSignal');
+  }
+  // 수동 편집 이력 diff(2026-08-31) — 있으면 싣는다
+  if(/^const _TAG_LOG_FIELDS\s*=/m.test(adminSrc)){
+    S(/^const _TAG_LOG_FIELDS\s*=/m,'_TAG_LOG_FIELDS');
+    F(/^function _tagLogSame\(/m,'_tagLogSame');
+    F(/^function _tagLogDiff\(/m,'_tagLogDiff');
   }
   const src=`
 const GROUPS=${JSON.stringify(GROUPS)};
@@ -96,7 +104,10 @@ const _STRICT_SYNC_GROUPS=new Set(Object.entries(GROUPS).filter(([,v])=>v&&v.str
 ${pieces.join('\n')}
 module.exports={_m2ParseTitle,_atmResolveMembers,_wonkokStripClause,_PROJECT_UNITS,GROUPS,ARTISTS,_STRICT_SYNC_GROUPS,
   _coverResolve:(typeof _coverResolve==='function')?_coverResolve:null,_coverCandidates:(typeof _coverCandidates==='function')?_coverCandidates:null,_coverSongKeys:(typeof _coverSongKeys==='function')?_coverSongKeys:null,_coverBuildIndex:(typeof _coverBuildIndex==='function')?_coverBuildIndex:null,
-  _fancamParseTitle:(typeof _fancamParseTitle==='function')?_fancamParseTitle:null};
+  _coverContext:(typeof _coverContext==='function')?_coverContext:null,_coverHasCollabSignal:(typeof _coverHasCollabSignal==='function')?_coverHasCollabSignal:null,
+  _coverRestoreSignal:(typeof _coverRestoreSignal==='function')?_coverRestoreSignal:null,
+  _fancamParseTitle:(typeof _fancamParseTitle==='function')?_fancamParseTitle:null,
+  _tagLogDiff:(typeof _tagLogDiff==='function')?_tagLogDiff:null,_tagLogSame:(typeof _tagLogSame==='function')?_tagLogSame:null};
 `;
   const mod={exports:{}};
   new Function('module','exports','require',src)(mod,mod.exports,require);

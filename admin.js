@@ -1175,6 +1175,94 @@ async function _ytSweepCoverV2(){
 }
 document.getElementById('sp-cover-v2-btn')?.addEventListener('click',_ytSweepCoverV2);
 
+// ── [원곡 오탐 청소](2026-08-31) ───────────────────────────────────────────────
+// 2026-08-31 실DB 전수 감사(cover_of가 붙은 7,031행)에서 나온 오염을 걷어낸다.
+//
+// 무엇이 오염인가 — **커버 문맥이 없는데 cover_of가 붙은 행**이다. 대부분 옛 `_ytSweepCoverReclassify`
+// ("커버 키워드 + 6년 이상 선배면 원곡자") 휴리스틱의 잔재로, 곡명 근거 없이 세대차만 보고 **게스트
+// 출연자를 원곡자로 강등**시킨 것이다. 실제로 "#오하영 선배님❤️" 같은 콜라보가 cover_of_members에
+// 들어가 있고, v2가 커버를 확정하면 with_*를 비우는 규칙 때문에 **콜라보 정보 자체가 사라진** 행이 많다.
+//
+// ⚠️ "커버 문맥 없으면 전부 오탐"이 **아니다**(감사 중간 결론을 실측으로 뒤집었다). 음악방송 커버 무대는
+//    제목에 '커버'라는 말이 없는 게 정상이라, 그렇게 잘라내면 정상 커버가 대량으로 날아간다
+//    (리센느 '다시 만난 세계'→소녀시대, 아이브 가을 'Pretty Girl (카라)'→카라 …). 그래서 이 스윕은
+//    **현재 매처(_coverResolve)에게 다시 물어보고, 매처도 커버 근거를 못 찾은 행만** 건드린다.
+//    매처가 여전히 커버라고 하는 행은 손대지 않는다 — 그건 원곡 로직이 아니라 대개 group_ko 오배정
+//    문제라(화사 직캠이 group_ko=몬스타엑스로 박혀 자기 곡인 걸 못 알아봄) "② 오태깅 그룹 재배정"의 몫.
+//
+// 정리 방식은 두 갈래다:
+//   ① 제목에 콜라보 동반신호(선배님과/with/님과/함께/feat…)가 있으면 → cover_of를 **with_로 되돌린다**
+//      (원래 콜라보였는데 강등된 것이므로, 지우면 정보가 영영 사라진다)
+//   ② 없으면 → cover_of를 그냥 비운다
+// tags_manual은 어느 쪽이든 불가침. 스냅샷을 떠서 "↩︎ 마지막 일괄 작업 되돌리기"로 복구 가능.
+// 되돌리기(cover_of → with_) 판정은 `_coverHasCollabSignal`보다 **좁게** 잡는다. 그쪽은 "with_를 비울지"를
+// 정하는 보수적 용도라 `x`/`×`/`vs`까지 콜라보로 세는데, 여기선 그게 그대로 오염이 된다 — 시뮬에서
+// "Good Boy Gone Bad - TOMORROW X TOGETHER"의 **그룹명 안에 든 X**가 콜라보로 읽혀서 지디·태양을
+// 콜라보 태그로 되돌리려 했다(2026-08-31 실측). 태그를 새로 만드는 방향이므로 근거가 명시적일 때만 한다.
+function _coverRestoreSignal(title){
+  return /선배님?|후배님?|님과|함께|\bwith\b|\bw\/|\bfeat\.?\b|\bft\.?\b|듀엣|합동|콜라보|collab|さんと/i.test((title||'').normalize('NFKC'));
+}
+async function _ytSweepCoverCleanup(){
+  if(!sb){_ytSetProg('Supabase 연결 없음');return;}
+  const btn=document.getElementById('sp-cover-clean-btn');
+  if(btn)btn.disabled=true;
+  try{
+    _ytSetProg('[원곡 청소] 차트 테이블 로드 중…');
+    const chartRows=await _coverLoadChartRows();
+    _coverBuildIndex(chartRows);
+    _ytSetProg(`[원곡 청소] 사전 ${_coverIndex.size}키 · 대상 조회 중…`);
+    // cover_of가 실제로 붙어 있는 행만 — 이 스윕은 "붙은 걸 걷어내는" 일이라 그 외는 볼 필요가 없다.
+    const{data:rows,error}=await _sbFetchAll(()=>sb.from(_YT_TABLE)
+      .select('id,title,group_ko,members,with_members,with_groups,cover_of_members,cover_of_groups,cover_of_song,published_at,tags_manual,content_flag')
+      .or('cover_of_groups.neq.{},cover_of_members.neq.{}').order('id'));
+    if(error){_ytSetProg('조회 실패: '+error.message);return;}
+    if(!rows?.length){_ytSetProg('cover_of가 붙은 행이 없어요');return;}
+    const EXCLUDE=new Set(['무관','보류','hidden','외부인']);
+    let manualSkipped=0,hasCtx=0,stillCover=0,excluded=0;
+    const updates=[];const sample={restore:[],clear:[]};
+    const push=(k,line)=>{if(sample[k].length<60)sample[k].push(line);};
+    for(let i=0;i<rows.length;i++){
+      if(i%1000===0){_ytSetProg(`[원곡 청소] 분석 중… ${i}/${rows.length} (후보 ${updates.length})`);await new Promise(r=>setTimeout(r));}
+      const v=rows[i];
+      if(v.content_flag&&EXCLUDE.has(v.content_flag)){excluded++;continue;}
+      const curCG=v.cover_of_groups||[],curCM=v.cover_of_members||[];
+      if(!curCG.length&&!curCM.length)continue;
+      // 커버 문맥이 있으면 정상 커버로 보고 손대지 않는다(이 스윕의 사정권 밖).
+      if(_coverContext(v.title).hasContext){hasCtx++;continue;}
+      // 현재 매처에게 다시 묻는다 — cover_of를 지운 상태로 넣어 "지금 이 제목만 보고도 커버라고 할까?"
+      let out=null;
+      try{out=_coverResolve(Object.assign({},v,{cover_of_groups:[],cover_of_members:[]}),{chartRows});}catch(e){continue;}
+      if(out&&out.origin){stillCover++;continue;} // 매처가 근거를 댐 → 여기서 판단하지 않는다
+      if(v.tags_manual){manualSkipped++;continue;} // 수동 확정은 절대 불가침
+      const patch={cover_of_groups:[],cover_of_members:[]};
+      if(v.cover_of_song)patch.cover_of_song=null;
+      const restore=_coverRestoreSignal(v.title);
+      if(restore){
+        patch.with_groups=[...new Set([...(v.with_groups||[]),...curCG])];
+        patch.with_members=[...new Set([...(v.with_members||[]),...curCM])];
+      }
+      updates.push({id:v.id,patch,restore});
+      push(restore?'restore':'clear',`#${v.id} [${v.group_ko}] ${JSON.stringify([...curCG,...curCM])}${restore?' → with_':' → 삭제'} | ${(v.title||'').slice(0,70)}`);
+    }
+    const nRestore=updates.filter(u=>u.restore).length,nClear=updates.length-nRestore;
+    console.log(`[원곡 청소] 조회 ${rows.length} · 정리 후보 ${updates.length} (with_로 되돌림 ${nRestore} · 그냥 해제 ${nClear}) · 커버 문맥 있어 유지 ${hasCtx} · 매처가 커버라 판정해 유지 ${stillCover} · 수동보호 ${manualSkipped} · 플래그 제외 ${excluded}`);
+    Object.entries(sample).forEach(([k,arr])=>{if(arr.length)console.log(`[원곡 청소] 표본 — ${k==='restore'?'with_로 되돌림':'그냥 해제'}:\n`+arr.join('\n'));});
+    if(!updates.length){_ytSetProg(`원곡 청소 — 정리할 것 없음 (조회 ${rows.length} · 유지 ${hasCtx+stillCover})`);return;}
+    if(!confirm(`원곡(cover_of) 오탐 ${updates.length}건을 정리할까요?\n\n· 콜라보 동반신호 있음 → with_로 되돌림 : ${nRestore}건\n   (원래 게스트 출연인데 옛 휴리스틱이 원곡자로 강등시킨 것 — 그냥 지우면 콜라보 정보가 사라져요)\n· 근거 없음 → cover_of 해제 : ${nClear}건\n\n손대지 않는 것\n· 커버 문맥이 있는 정상 커버 ${hasCtx}건\n· 매처가 지금도 커버라고 판정한 ${stillCover}건 (대개 group_ko 오배정 문제 — "② 오태깅 그룹 재배정"의 몫)\n· 수동편집 ${manualSkipped}건\n\n표본은 콘솔(F12) · 스냅샷 저장돼서 되돌리기 가능`)){
+      _ytSetProg(`취소됨 — 미리보기만 (후보 ${updates.length}, 표본 콘솔).`);return;
+    }
+    await _snapshotBeforeBulk('원곡 오탐 청소',updates.map(u=>u.id));
+    for(let i=0;i<updates.length;i+=200){
+      const results=await Promise.all(updates.slice(i,i+200).map(u=>sb.from(_YT_TABLE).update(u.patch).eq('id',u.id)));
+      const f=results.find(r=>r.error);if(f)throw new Error(f.error.message);
+      _ytSetProg(`[원곡 청소] ${Math.min(i+200,updates.length)}/${updates.length}건 적용 중…`);
+    }
+    _ytSetProg(`완료! 원곡 오탐 ${updates.length}건 정리 (with_ 되돌림 ${nRestore} / 해제 ${nClear}). 유지 ${hasCtx+stillCover}건. (되돌리기: "↩︎ 마지막 일괄 작업 되돌리기")`);
+  }catch(e){_ytSetProg('오류: '+e.message);}
+  finally{if(btn)btn.disabled=false;}
+}
+document.getElementById('sp-cover-clean-btn')?.addEventListener('click',_ytSweepCoverCleanup);
+
 // [원곡 소급 재분류](Fable #3, 2026-08-23): 커버 영상인데 원곡 그룹이 with(함께한 그룹)로 잘못 들어간 걸
 // cover_of로 옮긴다. 태깅 시점 라우팅(_extBuildRows)의 소급 버전 — 기존 with 태그만 검사해 조건 맞는 것만
 // 이동(제목 전체 재파싱 아님, 나머지 태그 안 건드림). 자동은 "커버 키워드 + 6년+ 선배"만(고신뢰), "키워드
@@ -1846,6 +1934,59 @@ async function _tagReviewCount(){
 async function _tagReviewResolve(id){
   if(!sb||!id)return;
   try{await sb.from('tag_review_queue').update({resolved_at:new Date().toISOString()}).eq('id',id);}catch(e){}
+}
+// ── 수동 편집 이력(2026-08-31) ────────────────────────────────────────────────
+// "학습하는 태깅 파이프라인"의 원료. 지금까지 수동 편집은 tags_manual=true 플래그만 남기고 **무엇을
+// 무엇으로 고쳤는지**는 어디에도 안 남아서, 자동 태깅이 뭘 틀렸는지에 대한 가장 값진 신호가 편집할
+// 때마다 버려지고 있었다(사용자 요청: "내 수동 태깅 편집 결과를 보고 학습해서 로직을 고도화"). 여기
+// 쌓인 before/after가 나중에 회귀 골든셋·규칙 후보 자동 제안의 입력이 된다.
+// 테이블(tag_edit_log)이 없으면 전부 조용히 no-op — tag_review_queue와 같은 방어 패턴.
+const _TAG_LOG_FIELDS=['group_ko','members','with_members','with_groups','cover_of_members','cover_of_groups','cover_of_song','content_flag','category','is_short'];
+// 배열/스칼라를 순서 무관하게 비교 — members는 저장 순서가 매번 달라서 그대로 비교하면 안 바뀐 것도
+// "바뀜"으로 잡힌다(로그가 노이즈로 가득 차면 학습 재료로 못 씀).
+function _tagLogSame(a,b){
+  if(Array.isArray(a)||Array.isArray(b)){
+    const x=[...(a||[])].map(String).sort(),y=[...(b||[])].map(String).sort();
+    return x.length===y.length&&x.every((v,i)=>v===y[i]);
+  }
+  return (a??null)===(b??null);
+}
+function _tagLogDiff(before,after){
+  return _TAG_LOG_FIELDS.filter(f=>f in after&&!_tagLogSame(before?.[f],after[f]));
+}
+// entries: [{videoId,title,before,after,source}] — 실제로 바뀐 게 없는 항목은 알아서 버린다.
+async function _tagEditLog(entries){
+  if(!sb||!entries)return;
+  const list=(Array.isArray(entries)?entries:[entries]).filter(e=>e&&e.videoId);
+  if(!list.length)return;
+  try{
+    const editor=(await sb.auth.getUser())?.data?.user?.email||null;
+    const rows=[];
+    for(const e of list){
+      const before=e.before||{},after=e.after||{};
+      const changed=_tagLogDiff(before,after);
+      if(!changed.length)continue; // 값이 그대로면 기록 안 함(저장만 다시 누른 경우)
+      // 바뀐 필드만 남긴다 — 전체 스냅샷을 넣으면 로그가 수십 배로 커지는데, 학습에 쓰는 건 차이뿐이다.
+      const b={},a={};
+      changed.forEach(f=>{b[f]=before[f]??null;a[f]=after[f]??null;});
+      rows.push({video_id:e.videoId,title:e.title||null,before:b,after:a,changed,source:e.source||null,editor});
+    }
+    if(!rows.length)return;
+    // 제목은 로그만 보고도 사례를 읽을 수 있게 비정규화해 두는 값이라, 호출부가 못 넘긴 경우(카드
+    // 그리드처럼 DOM에 제목이 없는 경로) 여기서 한 번에 채운다. 실패하면 제목 없이 그냥 남긴다.
+    const needTitle=rows.filter(r=>!r.title).map(r=>r.video_id);
+    if(needTitle.length){
+      try{
+        const byId=new Map();
+        for(let i=0;i<needTitle.length;i+=300){
+          const{data:tRows}=await sb.from(_YT_TABLE).select('id,title').in('id',needTitle.slice(i,i+300));
+          (tRows||[]).forEach(t=>byId.set(t.id,t.title));
+        }
+        rows.forEach(r=>{if(!r.title)r.title=byId.get(r.video_id)||null;});
+      }catch(e){/* 제목 없이 진행 */}
+    }
+    for(let i=0;i<rows.length;i+=200)await sb.from('tag_edit_log').insert(rows.slice(i,i+200));
+  }catch(err){/* 테이블 없거나 권한 없음 — 편집 자체는 이미 저장됐으므로 조용히 넘어간다 */}
 }
 const _TAGQ_REASON_LABEL={members_wiped:'재검증에서 멤버 태그가 전부 빠짐 — 무관 콘텐츠인지 직접 판단'};
 async function _openTagReviewQueue(){
@@ -3341,6 +3482,7 @@ async function _vmSetFlag(v,newFlag,btn,item){
   btn.disabled=true;
   const{error}=await sb.from(_YT_TABLE).update(_flagPatch(newFlag,'manual')).eq('id',v.id);
   if(error){btn.disabled=false;_showShareToast('오류: '+error.message);return;}
+  _tagEditLog({videoId:v.id,title:v.title,before:{content_flag:v.content_flag||null},after:{content_flag:newFlag||null},source:'vm_flag'});
   v.content_flag=newFlag;
   _vmSetFlagLabel(btn,newFlag);
   btn.disabled=false;
@@ -3936,6 +4078,10 @@ async function _vmBulkSetFlag(newFlag,btnId){
   const done=()=>{if(btn){btn.disabled=false;btn.textContent=restore;}};
   if(error){done();document.getElementById('vm-status').textContent='오류: '+error.message;return;}
   const idSet=new Set(ids);
+  // 편집 이력 — '보류' 더미가 바로 여기서 만들어진다. 어떤 영상을 사람이 보류로 보냈는지가 곧
+  // "매처가 이 영상을 잘못 잡았다"는 라벨이라, 학습 재료로는 태그 편집만큼 값지다.
+  // (_vmRows에 이미 편집 전 상태가 있어서 추가 조회 없이 before를 뜬다.)
+  _tagEditLog(_vmRows.filter(v=>idSet.has(v.id)).map(v=>({videoId:v.id,title:v.title,before:{content_flag:v.content_flag||null},after:{content_flag:newFlag||null},source:'vm_bulk_flag'})));
   // 이 탭이 "그 플래그의 목록"인가 — 목록의 정체성과 다른 값으로 바뀐 행만 화면에서 걷어낸다.
   const tabFlag=_vmTabFlag();
   const staysInList=tabFlag===undefined||newFlag===tabFlag;
@@ -5706,6 +5852,7 @@ let _vidTagGroupsSelected=[]; // [groupKo,...] — "아이유의 팔레트, 뉴�
 let _vidTagCoverSelected=[]; // [{ko,groupKo}] — 커버 영상의 원곡자(멤버) 지정
 let _vidTagCoverGroupsSelected=[]; // [groupKo,...] — 원곡이 그룹 단위 곡일 때
 let _vidTagOrigManual=false; // DB에서 불러온 기존 tags_manual 값 — 트리거 우회 two-step 저장에 사용
+let _vidTagBefore=null; // 모달 열 때 DB에서 읽은 태그 원본 — 저장 시 편집 이력(tag_edit_log)의 before로 씀
 let _vidTagLoadedFormats=[]; // 모달 열 때 DB에서 읽은 content_formats — 저장 시 장르 태그 재계산에 사용
 // content_flag는 한 컬럼에 한 값만 들어가므로(null/기타/외부인/무관/hidden 중 하나) 체크박스 2개(기타/외부인)와
 // 토글 버튼 2개(무관/숨김)를 하나의 배타적 선택으로 묶어서 관리한다 — 예전엔 "숨김"만 별도 버튼으로 즉시
@@ -5964,6 +6111,8 @@ async function _openVidTagModal(v,ko,originKo){
       _vidTagCoverGroupsSelected=data.cover_of_groups||[];
       _vidTagOrigManual=!!data.tags_manual;
       _vidTagLoadedFormats=data.content_formats||[];
+      // 편집 이력용 원본 — 여기서 떠두지 않으면 저장 시점엔 이미 화면 값밖에 없어서 "뭘 고쳤는지"를 못 남긴다.
+      _vidTagBefore={group_ko:data.group_ko,members:data.members||[],with_members:data.with_members||[],with_groups:data.with_groups||[],cover_of_members:data.cover_of_members||[],cover_of_groups:data.cover_of_groups||[],content_flag:data.content_flag||null,category:data.category||null,is_short:_isShortV(data)};
       _renderVidTagChips();
       const catEl=document.getElementById('vid-tag-cat');
       // category='short'는 직교화 전 레거시 — 장르 select엔 더 이상 short 옵션이 없으므로 빈 값으로
@@ -6004,6 +6153,7 @@ function _closeVidTagModal(){
   _vidTagBulkIds=null;
   _vidTagOrigManual=false;
   _vidTagLoadedFormats=[];
+  _vidTagBefore=null;
   _vidTagFlagChoice=null;_vidTagFlagTouched=false;_vidTagApplyFlagUI();
   // 영상 관리 패널이 열려있으면 방금 편집한 행만 갱신한다 — 탭 전체 재조회는 큰 탭(검수 3천 건)에서
   // 편집 한 번마다 몇 초씩 걸려 작업을 사실상 불가능하게 만들었음. 편집한 행을 못 찾은 경우에만
@@ -6270,6 +6420,15 @@ document.getElementById('vid-tag-save').addEventListener('click',async e=>{
     if(newGko)updatePayload.group_ko=newGko;
     if(!Object.keys(updatePayload).length){statusEl.textContent='변경할 항목을 선택해주세요';return;}
     const ids=_vidTagBulkIds;
+    // 편집 이력용 원본 — 일괄 편집은 모달이 행별 값을 안 들고 있어서 쓰기 직전에 따로 읽어야 한다.
+    // 실패해도(권한·네트워크) 원 작업은 그대로 진행한다 — 로그는 부수효과일 뿐이라 편집을 막으면 안 된다.
+    let _bulkBefore=[];
+    try{
+      for(let i=0;i<ids.length;i+=300){
+        const{data:bRows}=await sb.from(_YT_TABLE).select('id,title,group_ko,members,with_members,with_groups,cover_of_members,cover_of_groups,content_flag,category,is_short').in('id',ids.slice(i,i+300));
+        if(bRows)_bulkBefore=_bulkBefore.concat(bRows);
+      }
+    }catch(e){_bulkBefore=[];}
     if(overwriteTags){
       // tags_manual=true인 행도 있을 수 있어서 트리거를 우회하는 two-step 저장:
       // 1) tags_manual=false로 잠금 해제 → 트리거 조건 불만족으로 모든 컬럼 변경 허용
@@ -6282,6 +6441,12 @@ document.getElementById('vid-tag-save').addEventListener('click',async e=>{
       const{error}=await sb.from(_YT_TABLE).update(updatePayload).in('id',ids);
       if(error){statusEl.textContent='저장 실패: '+error.message;return;}
     }
+    // 일괄 편집 이력 — after는 updatePayload로 실제 바꾼 필드만 넘긴다(안 건드린 필드는 diff 대상이 아님).
+    _tagEditLog(_bulkBefore.map(r=>{
+      const after={};
+      _TAG_LOG_FIELDS.forEach(f=>{if(f in updatePayload)after[f]=updatePayload[f];});
+      return {videoId:r.id,title:r.title,before:{...r,is_short:_isShortV(r)},after,source:'modal_bulk'};
+    }));
     statusEl.textContent=`${ids.length}개 저장됨`;
     setTimeout(()=>{
       _closeVidTagModal();
@@ -6322,6 +6487,11 @@ document.getElementById('vid-tag-save').addEventListener('click',async e=>{
     const{error}=await sb.from(_YT_TABLE).update(updatePayload).eq('id',id);
     if(error){statusEl.textContent='저장 실패: '+error.message;return;}
   }
+  // 편집 이력 — 자동 태깅이 뭘 틀렸는지에 대한 유일한 정답 신호라 저장에 성공한 뒤 남긴다.
+  // (_vidTagBefore가 없으면 = 모달 열 때 DB 조회가 실패한 경우라, 허위 diff를 만들지 않게 건너뛴다.)
+  if(_vidTagBefore)_tagEditLog({videoId:id,title:document.getElementById('vid-tag-vidtitle').textContent,before:_vidTagBefore,
+    after:{group_ko:newGko||_vidTagBefore.group_ko,members,with_members:withMembers,with_groups:withGroups,cover_of_members:coverMembers,cover_of_groups:coverGroups,content_flag:contentFlag||null,category:category||null,is_short:isShort===undefined?_vidTagBefore.is_short:isShort},
+    source:'modal_single'});
   statusEl.textContent='저장됨';
   // group_ko도 같이 실어보내야 함 — patchItem 내부의 _buildGridWithList가 "이 영상이 실제로 속한
   // 그룹"과 "지금 보는 카드의 그룹"이 다른지 판단할 때 필요(없으면 게스트 출연 영상의 함께한 멤버 줄이
@@ -6564,6 +6734,8 @@ document.getElementById('admin-bulk-hold-btn')?.addEventListener('click',async()
   btn.disabled=true;btn.textContent='처리 중…';
   const{error}=await sb.from(_YT_TABLE).update(_flagPatch('보류','manual')).in('id',ids);
   if(error){btn.disabled=false;btn.textContent='보류';_showShareToast('오류: '+error.message);return;}
+  // 카드 그리드는 플래그 붙은 행을 서버에서 이미 빼고 오므로 여기 보이는 건 전부 content_flag=null이다.
+  _tagEditLog(ids.map(id=>({videoId:id,before:{content_flag:null},after:{content_flag:'보류'},source:'card_flag'})));
   selectedItems.forEach(el=>el.remove());
   window._adminBulkExitFn?.();
   btn.disabled=false;btn.textContent='보류';
@@ -6578,6 +6750,7 @@ document.getElementById('admin-bulk-hide-btn')?.addEventListener('click',async()
   btn.disabled=true;btn.textContent='처리 중…';
   const{error}=await sb.from(_YT_TABLE).update(_flagPatch('hidden','manual')).in('id',ids);
   if(error){btn.disabled=false;btn.textContent='숨김';_showShareToast('오류: '+error.message);return;}
+  _tagEditLog(ids.map(id=>({videoId:id,before:{content_flag:null},after:{content_flag:'hidden'},source:'card_flag'})));
   selectedItems.forEach(el=>el.remove());
   window._adminBulkExitFn?.();
   btn.disabled=false;btn.textContent='숨김';
@@ -6596,6 +6769,8 @@ document.getElementById('admin-bulk-irrelevant-btn')?.addEventListener('click',a
   btn.disabled=true;btn.textContent='처리 중…';
   const{error}=await sb.from(_YT_TABLE).update(_flagPatch('무관','manual')).in('id',ids);
   if(error){btn.disabled=false;btn.textContent='무관';_showShareToast('오류: '+error.message);return;}
+  // '무관'은 "자동 태깅이 이 그룹/멤버로 잘못 물었다"는 가장 직접적인 오답 라벨이라 학습 가치가 특히 높다.
+  _tagEditLog(ids.map(id=>({videoId:id,before:{content_flag:null},after:{content_flag:'무관'},source:'card_flag'})));
   selectedItems.forEach(el=>el.remove());
   window._adminBulkExitFn?.();
   btn.disabled=false;btn.textContent='무관';
