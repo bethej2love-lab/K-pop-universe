@@ -20176,16 +20176,6 @@
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://kpop-universe.kr/cover/앰퍼샌드원/</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://kpop-universe.kr/en/cover/ampers-one/</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
     <loc>https://kpop-universe.kr/cover/엔싸인/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
@@ -20616,6 +20606,16 @@
     <priority>0.5</priority>
   </url>
   <url>
+    <loc>https://kpop-universe.kr/cover/앰퍼샌드원/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://kpop-universe.kr/en/cover/ampers-one/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
     <loc>https://kpop-universe.kr/cover/킥플립/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
@@ -20656,16 +20656,6 @@
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://kpop-universe.kr/cover/엔하이픈/</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://kpop-universe.kr/en/cover/enhypen/</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
     <loc>https://kpop-universe.kr/cover/르세라핌/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
@@ -20702,16 +20692,6 @@
   </url>
   <url>
     <loc>https://kpop-universe.kr/en/cover/itzy/</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://kpop-universe.kr/cover/여자친구/</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://kpop-universe.kr/en/cover/gfriend/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
@@ -20826,12 +20806,32 @@
     <priority>0.5</priority>
   </url>
   <url>
+    <loc>https://kpop-universe.kr/cover/여자친구/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://kpop-universe.kr/en/cover/gfriend/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
     <loc>https://kpop-universe.kr/cover/펜타곤/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://kpop-universe.kr/en/cover/pentagon/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://kpop-universe.kr/cover/엔하이픈/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://kpop-universe.kr/en/cover/enhypen/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>

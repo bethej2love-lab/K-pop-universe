@@ -87,5 +87,35 @@ t('BTS 단독 언급은 그대로 방탄소년단',
 t('_atmStripCommonNounCtx — bts of만 제거하고 나머지는 보존',
   /impossible/.test(_atmStripCommonNounCtx('bts of impossible #RIIZE')),true);
 
+// ── 영문 BTS는 "게스트 근거"로 인정 안 함 (2026-08-31, 사용자 승인) ──
+// 실측: with_groups에 방탄소년단이 든 329건 중 174건(53%)이 제목에 한글명도 #BTS도 없었고
+// 표본이 전부 비하인드·멘션·플레이리스트였다. ⚠️ primary(group_ko)와 자체 채널은 면제 — 그쪽은
+// 같은 조건에 2,329건이 걸려 범위가 너무 크다.
+t('bare BTS는 게스트로 안 붙음 — 힛지스 영상',
+  gkoOf('HITGS ver. Countdown! BTS 🎬 #HITGS #힛지스').includes('방탄소년단'),false);
+t('bare BTS는 게스트로 안 붙음 — 플레이리스트 나열',
+  gkoOf('[띵곡팔이] 귀성길 플레이리스트 BTS, NCT 127, Stray Kids #스트레이키즈').includes('방탄소년단'),false);
+t('한글명이 있으면 게스트로 인정',
+  gkoOf('힛지스 X 방탄소년단 스페셜 무대 #힛지스').includes('방탄소년단'),true);
+t('#BTS 해시태그가 있으면 게스트로 인정',
+  gkoOf('스페셜 무대 #HITGS #힛지스 #BTS').includes('방탄소년단'),true);
+// ⚠️ 면제가 지켜지는지 — 이게 깨지면 방탄 단독 영상 2,329건이 통째로 영향받는다.
+// 면제 기준은 "위치(primary냐)"가 아니라 **다른 그룹이 같이 안 잡혔는가**다(위치로 하면
+// `HITGS ... BTS #힛지스`에서 방탄이 primary로 뒤집혀 잡혀 규칙이 무력해진다 — 실측 확인).
+t('방탄만 잡힌 영상은 영문만 있어도 유지(면제)',
+  gkoOf('BTS - Dynamite @ MAMA 2020').includes('방탄소년단'),true);
+t('  └ 그 경우 primary도 방탄',gkoOf('BTS - Dynamite @ MAMA 2020')[0],'방탄소년단');
+t('다른 그룹이 같이 잡히면 그 그룹이 주인이 됨',
+  gkoOf('HITGS ver. Countdown! BTS 🎬 #HITGS #힛지스')[0],'힛지스');
+
+// ── 위너(WINNER) = 영어 단어 winner — 같은 규칙 ──
+// 실측: with_groups에 위너가 든 59건 중 55건(93%)이 제목에 한글 '위너'가 없었고 전부 시상식 클립이었다.
+t('the winner of that night 은 위너가 아님',
+  gkoOf('Remember the winner of that night?✨ Best New Female Artist #ive #아이브 #shorts').includes('위너'),false);
+t('the Winner Is? 도 아님',
+  gkoOf('[BANGTAN BOMB] Bickering Over a Camera, and the Winner Is? - BTS (방탄소년단)').includes('위너'),false);
+t('한글 위너가 있으면 인정',
+  gkoOf('아이브 X 위너 스페셜 무대 #아이브').includes('위너'),true);
+
 console.log(`\n${pass}/${pass+fail} 통과`);
 process.exit(fail?1:0);

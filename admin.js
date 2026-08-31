@@ -5239,6 +5239,33 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
       seen.clear();final.forEach(ko=>seen.add(ko));
     }
   }
+  // ── 영문 약칭이 약한 그룹은 "게스트 근거"로 인정하지 않는다(2026-08-31) ──────────
+  // BTS는 behind the scenes의 약자로도 널리 쓰여서, 영문 토큰만으로 콜라보를 판정하면 오탐이 쏟아진다.
+  // 실측: `with_groups`에 방탄소년단이 든 **329건 중 174건(53%)이 제목에 `방탄소년단`도 `#BTS`도 없었고**,
+  // 표본은 전부 `bts of ○○`(비하인드)·`@BTS`(멘션)·플레이리스트 나열이었다 — 콜라보가 하나도 없다.
+  // ⚠️ 면제 기준은 "위치(primary냐)"가 아니라 **다른 그룹이 같이 잡혔는가**다. 위치로 하면
+  //    `HITGS ver. Countdown! BTS #힛지스`에서 방탄이 primary·힛지스가 게스트로 뒤집혀 잡혀서 규칙이
+  //    무력해진다(실측으로 확인). 방탄만 잡힌 영상(`BTS - Dynamite @ MAMA`)은 그대로 두고, **다른
+  //    그룹이 함께 잡힌 경우에만** 영문 BTS를 근거로 인정하지 않는다 — 그러면 그 다른 그룹이 주인이 된다.
+  //    자체 채널(selfGko=방탄소년단)도 당연히 면제. `group_ko` 단독 매칭분 2,329건은 손대지 않는다.
+  // 위너(WINNER)도 같은 병 — 영어 단어 winner와 철자가 같다. 실측: `with_groups`에 위너가 든 59건 중
+  // **55건(93%)이 제목에 한글 '위너'가 없었고**, 전부 `the Winner Is?`·`Remember the winner of that
+  // night?`(시상식 클립)였다. 자체 채널 영상(group_ko=위너 1,085건)은 selfGko 면제라 영향 없다.
+  const _GROUP_WEAK_EN_AS_GUEST={
+    '방탄소년단':/방탄소년단|#\s*BTS/i,
+    '위너':/위너|#\s*WINNER/i,
+  };
+  if(matchedGroupKos.length>1){
+    const kept=matchedGroupKos.filter(ko=>{
+      const re=_GROUP_WEAK_EN_AS_GUEST[ko];
+      if(!re||ko===selfGko)return true;
+      return re.test(title);
+    });
+    if(kept.length!==matchedGroupKos.length){
+      matchedGroupKos.splice(0,matchedGroupKos.length,...kept);
+      seen.clear();kept.forEach(ko=>seen.add(ko));
+    }
+  }
   // 데뷔 이전 게이트 — literal로 매칭된 그룹 중 영상보다 한참 뒤에 데뷔한 그룹을 후보에서 뺀다.
   // (selfGko = owner 채널은 group_ko가 채널로 고정이라 대상 아님)
   if(matchedGroupKos.length){
