@@ -15625,8 +15625,23 @@ async function _renderCoverCard(list,groupKos,icon,labelKo,labelEn,fetchLimit,ca
 // 커버 보유 그룹은 미리 알 수 없어, cover_of 영상의 group_ko를 한 번 집계(페이지네이션)해 캐시 —
 // 그래야 그룹 회전이 커버 없는 그룹에서 헛돌지 않는다.
 let _coverEligibleCache=null;
+// 이건 4,000행을 1,000행씩 **순차로 4번** 왕복해서 만든다 — 실측(2026-08-31 헤드리스)에서 Discover 첫
+// 로딩의 최대 지연 요인이었다(13.8초, 동시 실행 게이트의 슬롯 하나를 그동안 통째로 점유).
+// 결과는 "커버 영상이 _COVER_MIN개 이상인 그룹 목록"이라 하루 단위로도 거의 안 변하므로 localStorage에
+// 캐시한다. 첫 방문에만 값을 치르고 그 뒤 24시간은 즉시 반환된다.
+const _COVER_ELIG_KEY='kpu_cover_eligible_v1',_COVER_ELIG_TTL=24*3600*1000;
+function _coverEligibleFromStore(){
+  try{
+    const raw=localStorage.getItem(_COVER_ELIG_KEY);if(!raw)return null;
+    const o=JSON.parse(raw);
+    if(!o||!Array.isArray(o.list)||!o.ts||Date.now()-o.ts>_COVER_ELIG_TTL)return null;
+    return o.list;
+  }catch(e){return null;} // 프라이빗 모드·저장 차단 등 — 캐시 없이 원래 경로로
+}
 async function _coverEligibleGroups(){
   if(_coverEligibleCache)return _coverEligibleCache;
+  const stored=_coverEligibleFromStore();
+  if(stored){_coverEligibleCache=stored;return _coverEligibleCache;}
   const counts={};let from=0;
   while(from<4000){
     const{data,error}=await sb.from(_YT_TABLE).select('group_ko')
@@ -15639,6 +15654,10 @@ async function _coverEligibleGroups(){
     from+=1000;
   }
   _coverEligibleCache=Object.keys(counts).filter(ko=>counts[ko]>=_COVER_MIN&&GROUPS[ko]);
+  // 빈 결과는 저장하지 않는다 — 네트워크 실패로 0개가 나온 걸 24시간 동안 물고 있으면 선반이 통째로 빈다
+  if(_coverEligibleCache.length){
+    try{localStorage.setItem(_COVER_ELIG_KEY,JSON.stringify({ts:Date.now(),list:_coverEligibleCache}));}catch(e){}
+  }
   return _coverEligibleCache;
 }
 // 그룹별 커버곡 모음 — 커버 보유 그룹만 시간+offset 회전
@@ -16216,7 +16235,27 @@ function _buildFeedRec(){
 }
 // 발견(Discover) 탭 빌드 — 무거운 차트+디스커버리. Discover 탭을 처음 누를 때만 지연 호출(_feedSwitchTab).
 // 열자마자 34개 선반을 동시에 치던 걸 나눠서 추천 탭은 빠르게, 발견은 볼 때만 로드(덜컹거림·중복 완화).
+// ── 선반 빌더 동시 실행 게이트(2026-08-31) ────────────────────────────────────
+// Discover를 열면 선반 34개가 **각자 따로** Supabase에 쿼리를 던진다. 실측(헤드리스, 2026-08-31):
+//   REST 요청 46건 · 개별 소요 **중간값 10.5초**(최대 13.5초) · 차트가 다 차는 데 12초+
+// 그런데 **같은 쿼리를 단독으로 던지면 0.13초**다(curl 3회: 0.147/0.128/0.105s). 즉 쿼리가 느린 게
+// 아니라 46개가 한꺼번에 몰려 서로를 막는 것이다(약 80배 차이).
+// ⚠️ 그래서 "미리 받아두기(prefetch)"는 해법이 아니다 — 미리 던져도 동시에 46개면 똑같이 막힌다.
+//    동시 실행 수를 제한해서 앞쪽 선반이 0.1초대에 끝나고 바로 그려지게 하는 게 맞는 처방이다.
+// 순서도 그대로 보존된다(큐가 FIFO) — 주간/월간 같은 앞 선반이 먼저 채워진다.
+const _FEED_BUILD_CONC=4;
+let _feedBuildQ=[],_feedBuildRunning=0;
+function _feedEnqueue(fn){_feedBuildQ.push(fn);_feedBuildPump();}
+function _feedBuildPump(){
+  while(_feedBuildRunning<_FEED_BUILD_CONC&&_feedBuildQ.length){
+    const fn=_feedBuildQ.shift();
+    _feedBuildRunning++;
+    Promise.resolve().then(fn).catch(e=>console.warn('[feed] 선반 빌드 실패',e))
+      .finally(()=>{_feedBuildRunning--;_feedBuildPump();});
+  }
+}
 function _buildFeedDisc(){
+  _feedBuildQ=[]; // 패널을 다시 열면 이전 대기분은 버린다(중복 그리기·유령 요청 방지)
   _buildFeedAnniversaries(); // 기념일 선반은 Discover 첫 섹션(2026-08-30 이동)
   document.getElementById('feed-empty-disc').hidden=true;
   const list=document.getElementById('feed-discovery');
@@ -16232,41 +16271,41 @@ function _buildFeedDisc(){
   // 없었던 게 문제였으므로, 데이터 흐름은 그대로 두고 담기는 컨테이너만 분리한다.
   const chart=chartList||list;
   _enableDragScroll(chart); // Charts는 가로 선반 — 드래그/휠 가로 스크롤(기념일·최근본 스트립과 동일 패턴, 2026-08-24)
-  _buildFeedWeeklyTopCams(chart,list);
-  _buildFeedYearlyTop(chart);
-  _buildFeedLegend100(chart);
-  _buildFeedAllTimeSoloCam(chart);
-  _buildFeedGirlGroupSoloCam(chart);
-  _buildFeedBoyGroupSoloCam(chart);
-  _buildFeedGenSoloCamTop(chart);
-  _buildFeedGirlGroupStage(chart);
-  _buildFeedBoyGroupStage(chart);
-  _buildFeedGenStageTop(chart);
+  _feedEnqueue(()=>_buildFeedWeeklyTopCams(chart,list));
+  _feedEnqueue(()=>_buildFeedYearlyTop(chart));
+  _feedEnqueue(()=>_buildFeedLegend100(chart));
+  _feedEnqueue(()=>_buildFeedAllTimeSoloCam(chart));
+  _feedEnqueue(()=>_buildFeedGirlGroupSoloCam(chart));
+  _feedEnqueue(()=>_buildFeedBoyGroupSoloCam(chart));
+  _feedEnqueue(()=>_buildFeedGenSoloCamTop(chart));
+  _feedEnqueue(()=>_buildFeedGirlGroupStage(chart));
+  _feedEnqueue(()=>_buildFeedBoyGroupStage(chart));
+  _feedEnqueue(()=>_buildFeedGenStageTop(chart));
   // "연말 무대 모음 TOP 100"은 라벨에 랭킹(TOP)이 붙어있는 이상 다른 TOP류와 마찬가지로 Charts로
   // (2026-08-21, 사용자 요청 — "TOP 들어가면 다 discover 아닌 charts 쪽으로"). KBS/MBC/SBS/썸머는
   // "모아보기"라 TOP이 없어서 그대로 Discovery에 남긴다.
-  _buildFeedFestivalYearEnd(chart);
-  _buildFeedTrend(); // 전체 최근 7일 업로드 그리드(차트와 디스커버리 사이 — #feed-trend 컨테이너를 채운다)
-  _buildFeedFormatPick(list);
-  _buildFeedGenCamPick(list);
-  _buildFeedFestivalKBS(list);
-  _buildFeedFestivalMBC(list);
-  _buildFeedFestivalSBS(list);
-  _buildFeedFestivalSummer(list);
-  _buildFeedGenBsideStages(list);
-  _buildFeedGroupBsideStages(list);
-  _buildFeedGenCovers(list);
-  _buildFeedGroupCovers(list);
-  _buildFeedCoverSpotlight(list);
-  _buildFeedTrendingHearts(list);
-  _buildFeedCollabSpotlight(list);
-  _buildFeedDebutYearPick(list);
-  _buildFeedHiddenGem(list);
-  _buildFeedThrowbackToday(list);
-  _buildFeedRandomGroup(list);
-  _buildFeedRandomMember(list);
-  _buildFeedRandomConnection(list);
-  _buildFeedRandomVideo(list);
+  _feedEnqueue(()=>_buildFeedFestivalYearEnd(chart));
+  _feedEnqueue(()=>_buildFeedTrend()); // 전체 최근 7일 업로드 그리드(차트와 디스커버리 사이 — #feed-trend 컨테이너를 채운다)
+  _feedEnqueue(()=>_buildFeedFormatPick(list));
+  _feedEnqueue(()=>_buildFeedGenCamPick(list));
+  _feedEnqueue(()=>_buildFeedFestivalKBS(list));
+  _feedEnqueue(()=>_buildFeedFestivalMBC(list));
+  _feedEnqueue(()=>_buildFeedFestivalSBS(list));
+  _feedEnqueue(()=>_buildFeedFestivalSummer(list));
+  _feedEnqueue(()=>_buildFeedGenBsideStages(list));
+  _feedEnqueue(()=>_buildFeedGroupBsideStages(list));
+  _feedEnqueue(()=>_buildFeedGenCovers(list));
+  _feedEnqueue(()=>_buildFeedGroupCovers(list));
+  _feedEnqueue(()=>_buildFeedCoverSpotlight(list));
+  _feedEnqueue(()=>_buildFeedTrendingHearts(list));
+  _feedEnqueue(()=>_buildFeedCollabSpotlight(list));
+  _feedEnqueue(()=>_buildFeedDebutYearPick(list));
+  _feedEnqueue(()=>_buildFeedHiddenGem(list));
+  _feedEnqueue(()=>_buildFeedThrowbackToday(list));
+  _feedEnqueue(()=>_buildFeedRandomGroup(list));
+  _feedEnqueue(()=>_buildFeedRandomMember(list));
+  _feedEnqueue(()=>_buildFeedRandomConnection(list));
+  _feedEnqueue(()=>_buildFeedRandomVideo(list));
   _wireFeedDiscoveryInfiniteScroll();
   setTimeout(()=>_feedCheckEmpty('disc'),1800); // 차트+디스커버리 전부 실패해 빈 화면이면 재시도 노출
 }
