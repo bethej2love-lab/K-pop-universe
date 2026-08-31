@@ -3587,6 +3587,22 @@ function _mScore(name,q,ql){
   if(name.startsWith(q)||n.startsWith(ql))return 1;
   return 2;
 }
+// 오타 허용(2026-08-31) — 편집거리 1 이하면 true. "뉴즌스"→"뉴진스"처럼 한 글자 오탈자·빠짐·바뀜을
+// 봐준다. 한글은 음절 단위로 비교(진↔즌 = 1). 결과가 0건일 때만 폴백으로 돌려서 정상 검색은 안 건드림.
+function _editDist1(a,b){
+  if(a===b)return true;
+  const la=a.length,lb=b.length;
+  if(Math.abs(la-lb)>1)return false;
+  // 공통 접두·접미를 걷어내고 남은 가운데 구간의 길이로 판정한다(자리바꿈도 인식).
+  let i=0;while(i<la&&i<lb&&a[i]===b[i])i++;
+  let ea=la-1,eb=lb-1;while(ea>=i&&eb>=i&&a[ea]===b[eb]){ea--;eb--;}
+  const ma=ea-i+1,mb=eb-i+1; // 가운데 남은 글자 수(a쪽/b쪽)
+  if(la===lb){
+    if(ma<=1&&mb<=1)return true; // 치환 1글자
+    return ma===2&&mb===2&&a[i]===b[i+1]&&a[i+1]===b[i]; // 인접 자리바꿈
+  }
+  return la>lb?(ma<=1&&mb<=0):(mb<=1&&ma<=0); // 삽입/삭제 1글자
+}
 // ── 곡 검색 인덱스(2026-08-31) ────────────────────────────────────────────────
 // 검색이 그룹 268 + 아티스트 1,731 ≈ 2,000개만 커버하고 있었다. 실측: 곡 26,506 · 앨범 6,415 ·
 // 영상 379,835 · 공연 741 — **우리 데이터의 0.5%만 검색 가능**이었다. 그중 곡은 groups.json/
@@ -3852,7 +3868,7 @@ function doSearch(q){
     // 이게 **콘텐츠 피드가 아니라 검색 진입점**이라서다.
     // ⚠️ 최근 검색이 하나도 없어도(신규 유저) 빈 화면으로 두지 않고 인기 그룹을 보여준다 —
     //    원래는 여기서 그냥 닫아버려서 첫 사용자가 아무 단서도 못 받았다.
-    const trending=(obSr||mobSearch)?[]:_trendingSearchHits();
+    const trending=obSr?[]:_trendingSearchHits();
     if(!recentHits.length&&!trending.length){
       if(obSr||mobSearch){res.classList.remove('open');res.innerHTML='';}
       else{res.style.display='none';}
@@ -3958,6 +3974,29 @@ function doSearch(q){
         :((_hasLatin&&GROUPS[s.owner]?.en)?GROUPS[s.owner].en:s.owner);
       hits.push({type:'song',name:s.title,alias:s.album&&s.album!==s.title?s.album:'',sub:ownerName,
         pos,data:s.owner,ownerType:s.ownerType,score:sc+1.2});
+    });
+  }
+  // ── 오타 폴백(2026-08-31) ──
+  // 위에서 아무것도 못 찾았을 때만 편집거리 1 이하로 그룹·멤버 이름을 다시 훑는다("뉴즌스"→뉴진스,
+  // "aepsa"→aespa). 정상 검색이 하나라도 걸리면 절대 끼어들지 않는다(오탐 방지). 점수는 최하위(5).
+  if(!hits.length&&q.length>=2){
+    let n=0;
+    Object.keys(GROUPS).forEach(ko=>{
+      if(n>=8)return;
+      const enN=GROUPS[ko].en||'';
+      if(!(_editDist1(ko,q)||(enN&&_editDist1(enN.toLowerCase(),ql))))return;
+      const bm=bubbleMeshes.find(b=>b.ko===ko);if(!bm)return;
+      const dispName=(_hasLatin&&enN)?enN:(currentLang==='ko'?ko:(enN||ko));
+      const dispSub=(enN&&enN!==dispName)?enN:'';
+      hits.push({type:'group',name:dispName,sub:dispSub,pos:bm.mesh.position.clone(),data:ko,score:5});n++;
+    });
+    ARTISTS.forEach(a=>{
+      if(n>=8)return;
+      const koN=a.name.ko,enN=a.name.en||'';
+      if(!(_editDist1(koN,q)||(enN&&_editDist1(enN.toLowerCase(),ql))))return;
+      const dispName=(_hasLatin&&enN)?enN:(currentLang==='ko'?(a.displayName||koN):(enN||koN));
+      const dispSub=!GROUPS[a.group.ko]?'':(currentLang==='ko'?a.group.ko:(a.group.en||a.group.ko));
+      hits.push({type:'member',name:dispName,sub:dispSub,pos:a._worldPos,data:a,score:5});n++;
     });
   }
   hits.sort((a,b)=>{const sd=a.score-b.score;if(sd!==0)return sd;return a.name.localeCompare(b.name,'ko');});
