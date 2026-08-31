@@ -2466,8 +2466,8 @@ async function _ytSweepPromoteShorts(){
       if(error){_ytSetProg('조회 실패: '+error.message+' (표식까지는 저장됨, 다시 눌러 이어서)');break;}
       if(!rows||!rows.length){_ytSetProg(`✅ 쇼츠 승격 완료! 전량 스캔 끝 — 총 ${promoted}개를 쇼츠로 승격(스캔 ${scanned}개).`);localStorage.removeItem(_SHORTS_PROMOTE_CURSOR_KEY);break;}
       // 세로 실측(동시 CONC개) — oardefault.jpg가 로드되고 세로면 쇼츠
-      const portraitIds=[]; let idx=0;
-      const worker=async()=>{while(idx<rows.length){if(!_shortsPromoteRunning)return;const r=rows[idx++];const isP=await _probeIsPortrait(r.id);scanned++;if(isP)portraitIds.push(r.id);}};
+      const portraitIds=[],probedIds=[]; let idx=0;
+      const worker=async()=>{while(idx<rows.length){if(!_shortsPromoteRunning)return;const r=rows[idx++];const isP=await _probeIsPortrait(r.id);scanned++;probedIds.push(r.id);if(isP)portraitIds.push(r.id);}};
       await Promise.all(Array.from({length:CONC},worker));
       // 승격(세로만) — 실행 전체를 runBatchId 하나로 스냅샷
       if(portraitIds.length){
@@ -2480,11 +2480,12 @@ async function _ytSweepPromoteShorts(){
         }
         promoted+=portraitIds.length;
       }
-      // 이 청크 전체를 "실측 확인함"으로 표식 → 다음 스윕(브라우저/서버 tools/shorts_promote.mjs)이 재프로브
-      // 안 함(2026-08-31, 사용자 아이디어). 조회가 short_probed_at IS NULL만 보므로 확인된 가로는 영구
-      // 제외돼 커서를 잃거나 처음부터 다시 눌러도 재프로브 0. 세로는 위에서 is_short도 이미 섰다.
-      {const _now=new Date().toISOString();
-       for(let i=0;i<rows.length;i+=100){const _ids=rows.slice(i,i+100).map(r=>r.id);
+      // **실제로 프로브한 행만** "실측 확인함"으로 표식(2026-08-31) → 다음 스윕(브라우저/서버
+      // tools/shorts_promote.mjs)이 재프로브 안 함. ⚠️ 청크 도중 중단 시 안 본 행(probedIds 밖)은
+      // 표식을 안 남겨야 다음에 다시 훑는다 — rows 전체를 찍으면 안 본 쇼츠가 영영 스킵됨.
+      // 조회가 short_probed_at IS NULL만 보므로 확인된 가로는 영구 제외돼 처음부터 다시 눌러도 재프로브 0.
+      if(probedIds.length){const _now=new Date().toISOString();
+       for(let i=0;i<probedIds.length;i+=100){const _ids=probedIds.slice(i,i+100);
          const{error:_mErr}=await sb.from(_YT_TABLE).update({short_probed_at:_now}).in('id',_ids);
          if(_mErr)throw new Error(_mErr.message);}}
       const pct=remain?` · ~${Math.min(99,Math.round(scanned/remain*100))}%`:'';
