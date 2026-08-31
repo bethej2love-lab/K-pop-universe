@@ -2245,7 +2245,24 @@
   #zoom-ctrl{position:fixed;left:18px;bottom:24px;display:flex;flex-direction:column;align-items:center;gap:0;z-index:50;user-select:none;width:30px;background:rgba(12,16,36,0.60);border:1px solid rgba(140,165,220,0.16);border-radius:14px;padding:10px 0;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);box-shadow:0 2px 14px rgba(0,0,0,0.22);transition:left 0.32s cubic-bezier(0.4,0,0.2,1);}
   #journal-sidebar.open~#zoom-ctrl{left:318px;}
   #zoom-ctrl.zoom-feed-open{left:318px;}
-  @media(max-width:768px){#zoom-ctrl{display:none;}}
+  /* 모바일 줌 컨트롤(2026-08-31, 사용자 요청) — 예전엔 모바일에서 통째로 숨겼는데(핀치 줌이 있으니),
+     "우주만 보이는 상태"에선 줌 레벨을 눈으로 보고 조절할 수 있는 게 낫다는 요청. 카드·탐험 패널·
+     라이트박스·검색 등 **뭐라도 열려 있으면 숨긴다** — 우주가 실제로 보일 때만 뜨는 게 핵심이라
+     상태를 하나라도 빠뜨리면 다른 화면 위에 떠버린다.
+     위치는 하단 탭바 바로 위 오른쪽 끝(엄지 닿는 쪽). 데스크톱은 왼쪽 그대로. */
+  @media(max-width:768px){
+    #zoom-ctrl{display:none;}
+    body:not(.feed-open):not(:has(#mob-sheet.bs-open)):not(:has(#mob-card-stack.bs-open)):not(:has(#yt-lightbox.open)):not(:has(#tabbar.search-mode)):not(:has(#settings-panel.open)):not(:has(#profile-panel.open)):not(:has(#conn-panel.open)) #zoom-ctrl{
+      display:flex;
+      left:auto;right:12px;
+      bottom:calc(78px + env(safe-area-inset-bottom,0px)); /* 탭바(패딩 9+11 + 버튼) 위 */
+      background:rgba(12,16,36,0.52);
+    }
+    /* 터치 타깃 확보 — 데스크톱 10px 점은 손가락으로 못 집는다([[모바일 터치 타겟 수정]]과 같은 이유) */
+    #zoom-ctrl #zoom-track{height:110px;width:3px;}
+    #zoom-ctrl #zoom-thumb{width:18px;height:18px;}
+    #zoom-ctrl{width:38px;padding:12px 0;touch-action:none;}
+  }
   #zoom-track{width:2px;height:96px;background:rgba(140,165,220,0.15);border-radius:1px;position:relative;cursor:pointer;flex-shrink:0;}
   #zoom-thumb{width:10px;height:10px;background:rgba(150,180,255,0.85);border-radius:50%;position:absolute;left:50%;transform:translateX(-50%);top:0;cursor:grab;box-shadow:0 0 6px rgba(110,150,255,0.55);transition:background .15s,box-shadow .15s;}
   #zoom-thumb:hover{background:rgba(185,210,255,1);box-shadow:0 0 10px rgba(130,170,255,0.75);}

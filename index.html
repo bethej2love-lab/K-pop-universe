@@ -10280,6 +10280,47 @@ function flyHome(){
     thumb.style.top=newTop+'px';
     setFrac(maxTop>0?newTop/maxTop:0);
   });
+
+  // 터치 입력(2026-08-31) — 위 핸들러는 전부 mouse* 라서 모바일에서 노출만 시키면 **드래그가 안 된다.**
+  // 기존 마우스 경로는 그대로 두고 touch만 따로 얹는다(포인터 이벤트로 통합하면 마우스 쪽 회귀 위험).
+  // ⚠️ 반드시 stopPropagation — 안 하면 같은 터치가 아래 캔버스(OrbitControls)로 흘러가 우주가 같이 돌아간다.
+  //    CSS에서 #zoom-ctrl에 touch-action:none을 준 것도 같은 이유(브라우저 기본 스크롤/줌 선점 방지).
+  const _tStart=e=>{
+    const t=e.touches[0];if(!t)return;
+    e.preventDefault();e.stopPropagation();
+    dragging=true;dragStartY=t.clientY;
+    dragStartTop=parseFloat(thumb.style.top)||0;
+    thumb.style.transition='none';
+  };
+  const _tMove=e=>{
+    if(!dragging)return;
+    const t=e.touches[0];if(!t)return;
+    e.preventDefault();e.stopPropagation();
+    const trackH=track.clientHeight,thumbH=thumb.offsetHeight,maxTop=trackH-thumbH;
+    const newTop=Math.max(0,Math.min(maxTop,dragStartTop+(t.clientY-dragStartY)));
+    thumb.style.top=newTop+'px';
+    setFrac(maxTop>0?newTop/maxTop:0);
+  };
+  const _tEnd=e=>{
+    if(!dragging)return;
+    dragging=false;thumb.style.transition='';
+    e.stopPropagation();
+  };
+  thumb.addEventListener('touchstart',_tStart,{passive:false});
+  window.addEventListener('touchmove',_tMove,{passive:false});
+  window.addEventListener('touchend',_tEnd);
+  window.addEventListener('touchcancel',_tEnd);
+  // 트랙 탭(썸을 안 집고 위치를 바로 찍는 경우) — click은 터치에서도 오지만 캔버스로 새는 걸 막아야 한다
+  track.addEventListener('touchstart',e=>{
+    if(e.target===thumb)return;
+    const t=e.touches[0];if(!t)return;
+    e.preventDefault();e.stopPropagation();
+    const rect=track.getBoundingClientRect(),thumbH=thumb.offsetHeight;
+    const trackH=track.clientHeight,maxTop=trackH-thumbH;
+    const newTop=Math.max(0,Math.min(maxTop,t.clientY-rect.top-thumbH/2));
+    thumb.style.top=newTop+'px';
+    setFrac(maxTop>0?newTop/maxTop:0);
+  },{passive:false});
 })();
 document.getElementById('dh-home-btn').addEventListener('click',e=>{e.stopPropagation();flyHome();});
 document.getElementById('tab-home').addEventListener('click',e=>{e.stopPropagation();_gaEvent('tab_click',{tab:'home'});_closeFeedOverlay();flyHome();});
