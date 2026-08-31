@@ -2456,11 +2456,11 @@ async function _ytSweepPromoteShorts(){
   let scanned=0, promoted=0, snapOff=false;
   try{
     let remain=null; // 진행률 표시용 대략치(실패해도 무시)
-    try{const{count}=await sb.from(_YT_TABLE).select('id',{count:'exact',head:true}).eq('tags_manual',false).eq('is_short',false).gt('id',cursor);remain=count;}catch(_){}
+    try{const{count}=await sb.from(_YT_TABLE).select('id',{count:'exact',head:true}).eq('tags_manual',false).eq('is_short',false).is('short_probed_at',null).gt('id',cursor);remain=count;}catch(_){}
     while(_shortsPromoteRunning){
       const{data:rows,error}=await sb.from(_YT_TABLE)
         .select('id')
-        .eq('tags_manual',false).eq('is_short',false).gt('id',cursor)
+        .eq('tags_manual',false).eq('is_short',false).is('short_probed_at',null).gt('id',cursor)
         .order('id',{ascending:true}).limit(CHUNK);
       if(error){_ytSetProg('조회 실패: '+error.message+` (id ${cursor}까지, 재개 가능)`);break;}
       if(!rows||!rows.length){_ytSetProg(`✅ 쇼츠 승격 완료! 전량 스캔 끝 — 총 ${promoted}개를 쇼츠로 승격(스캔 ${scanned}개).`);localStorage.removeItem(_SHORTS_PROMOTE_CURSOR_KEY);break;}
@@ -2479,6 +2479,13 @@ async function _ytSweepPromoteShorts(){
         }
         promoted+=portraitIds.length;
       }
+      // 이 청크 전체를 "실측 확인함"으로 표식 → 다음 스윕(브라우저/서버 tools/shorts_promote.mjs)이 재프로브
+      // 안 함(2026-08-31, 사용자 아이디어). 조회가 short_probed_at IS NULL만 보므로 확인된 가로는 영구
+      // 제외돼 커서를 잃거나 처음부터 다시 눌러도 재프로브 0. 세로는 위에서 is_short도 이미 섰다.
+      {const _now=new Date().toISOString();
+       for(let i=0;i<rows.length;i+=100){const _ids=rows.slice(i,i+100).map(r=>r.id);
+         const{error:_mErr}=await sb.from(_YT_TABLE).update({short_probed_at:_now}).in('id',_ids);
+         if(_mErr)throw new Error(_mErr.message);}}
       cursor=rows[rows.length-1].id;
       localStorage.setItem(_SHORTS_PROMOTE_CURSOR_KEY,String(cursor));
       const pct=remain?` · ~${Math.min(99,Math.round(scanned/remain*100))}%`:'';
