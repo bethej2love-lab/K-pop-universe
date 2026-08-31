@@ -79,6 +79,11 @@ function load(){
     F(/^function _fancamNormTok\(/m,'_fancamNormTok');
     F(/^function _fancamParseTitle\(/m,'_fancamParseTitle');
   }
+  // 데뷔 이전 게이트(2026-08-31) — 있으면 싣는다
+  if(/^function _m2DebutBlocks\(/m.test(adminSrc)){
+    S(/^const _M2_DEBUT_GRACE_YEARS\s*=/m,'_M2_DEBUT_GRACE_YEARS');
+    F(/^function _m2DebutBlocks\(/m,'_m2DebutBlocks');
+  }
   F(/^function _m2ParseTitle\(/m,'_m2ParseTitle');
   // 원곡 해석기 v2(2026-08-30) — 있으면 싣는다
   if(/^function _coverResolve\(/m.test(adminSrc)){
@@ -114,6 +119,7 @@ const _STRICT_SYNC_GROUPS=new Set(Object.entries(GROUPS).filter(([,v])=>v&&v.str
 ${pieces.join('\n')}
 module.exports={_m2ParseTitle,_atmResolveMembers,_atmMatchesMember,_atmTokenize,_wonkokStripClause,_PROJECT_UNITS,GROUPS,ARTISTS,_STRICT_SYNC_GROUPS,
   _atmStripDescNoise:(typeof _atmStripDescNoise==='function')?_atmStripDescNoise:null,
+  _m2DebutBlocks:(typeof _m2DebutBlocks==='function')?_m2DebutBlocks:null,
   _coverResolve:(typeof _coverResolve==='function')?_coverResolve:null,_coverCandidates:(typeof _coverCandidates==='function')?_coverCandidates:null,_coverSongKeys:(typeof _coverSongKeys==='function')?_coverSongKeys:null,_coverBuildIndex:(typeof _coverBuildIndex==='function')?_coverBuildIndex:null,
   _coverContext:(typeof _coverContext==='function')?_coverContext:null,_coverHasCollabSignal:(typeof _coverHasCollabSignal==='function')?_coverHasCollabSignal:null,
   _coverRestoreSignal:(typeof _coverRestoreSignal==='function')?_coverRestoreSignal:null,

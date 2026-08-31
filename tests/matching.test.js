@@ -83,6 +83,9 @@ pieces.push(extractStatement(adminSrc, /^const _FANCAM_SHOW_PATTERNS\s*=/m, '_FA
 pieces.push(extractStatement(adminSrc, /^const _FANCAM_FILLER_RE\s*=/m, '_FANCAM_FILLER_RE'));
 pieces.push(extractByBraces(adminSrc, /^function _fancamNormTok\(/m, '_fancamNormTok'));
 pieces.push(extractByBraces(adminSrc, /^function _fancamParseTitle\(/m, '_fancamParseTitle'));
+// 데뷔 이전 게이트(2026-08-31) — _m2ParseTitle이 두 출구(literal 매칭·역추론)에서 부른다
+pieces.push(extractStatement(adminSrc, /^const _M2_DEBUT_GRACE_YEARS\s*=/m, '_M2_DEBUT_GRACE_YEARS'));
+pieces.push(extractByBraces(adminSrc, /^function _m2DebutBlocks\(/m, '_m2DebutBlocks'));
 pieces.push(extractByBraces(adminSrc, /^function _m2ParseTitle\(/m, '_m2ParseTitle'));
 
 const harnessSrc = `

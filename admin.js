@@ -1280,6 +1280,66 @@ async function _ytSweepDualMemberTags(){
 }
 document.getElementById('sp-dualtag-btn')?.addEventListener('click',_ytSweepDualMemberTags);
 
+// ── [데뷔 이전 영상 정리](2026-08-31) ──────────────────────────────────────────
+// _m2DebutBlocks는 **앞으로 붙는** 태그만 막는다. 이미 저장된 행은 이 스윕이 정리한다.
+// 판정은 같은 함수를 그대로 쓰므로 매처와 어긋날 수 없다.
+//
+// 정리 방식: group_ko를 지우는 게 아니라 **'보류'로 보낸다.** '무관'이 아닌 이유 —
+// 이 영상들은 대개 "우리 우주 밖"이 아니라 **아직 등록 안 된 그룹의 영상**이다(제국의 아이들·M4·9초 등).
+// 나중에 그 그룹을 등록하면 재판정 대상이 되어야 하므로 검수 목록에 남겨둔다.
+async function _ytSweepDebutGate(){
+  if(!sb){_ytSetProg('Supabase 연결 없음');return;}
+  const btn=document.getElementById('sp-debutgate-btn');
+  if(btn)btn.disabled=true;
+  try{
+    _ytSetProg('[데뷔 게이트] 대상 조회 중…');
+    // 가장 늦게 데뷔한 그룹 기준으로도 걸릴 수 없는 최신 영상은 아예 안 긁는다(조회량 절감).
+    const maxDebut=Math.max(...Object.values(GROUPS).map(g=>parseInt(String(g.debut).slice(0,4),10)||0));
+    const cutoff=`${maxDebut}-12-31`;
+    const{data:rows,error}=await _sbFetchAll(()=>sb.from(_YT_TABLE)
+      .select('id,title,group_ko,published_at,content_flag,tags_manual,source_tier')
+      .lt('published_at',cutoff).order('id'));
+    if(error){_ytSetProg('조회 실패: '+error.message);return;}
+    if(!rows?.length){_ytSetProg('대상 영상이 없어요');return;}
+    let manualSkipped=0,alreadyFlagged=0,ownerSkipped=0;
+    const updates=[];const byGroup={};const sample=[];
+    for(let i=0;i<rows.length;i++){
+      if(i%3000===0){_ytSetProg(`[데뷔 게이트] 분석 중… ${i}/${rows.length} (후보 ${updates.length})`);await new Promise(r=>setTimeout(r));}
+      const v=rows[i];
+      if(!_m2DebutBlocks(v.group_ko,v.published_at))continue;
+      if(v.content_flag){alreadyFlagged++;continue;}       // 이미 무관/보류/숨김이면 손 안 댐
+      if(v.tags_manual){manualSkipped++;continue;}          // 수동 확정 불가침
+      if(v.source_tier==='idol'||v.source_tier==='fans'){ownerSkipped++;continue;} // owner 채널은 group_ko 고정
+      updates.push(v.id);
+      (byGroup[v.group_ko]=byGroup[v.group_ko]||[]).push(v);
+      if(sample.length<40)sample.push(`#${v.id} [${v.group_ko} 데뷔 ${GROUPS[v.group_ko].debut}] ${v.published_at} | ${(v.title||'').slice(0,66)}`);
+    }
+    const top=Object.entries(byGroup).sort((a,b)=>b[1].length-a[1].length).slice(0,15)
+      .map(([g,l])=>`  ${String(l.length).padStart(4)} ${g} (데뷔 ${GROUPS[g].debut})`).join('\n');
+    console.log(`[데뷔 게이트] 조회 ${rows.length} · 보류 이동 후보 ${updates.length} · 이미 플래그 ${alreadyFlagged} · 수동보호 ${manualSkipped} · owner채널 제외 ${ownerSkipped}`);
+    if(top)console.log('[데뷔 게이트] 그룹별 TOP15:\n'+top);
+    if(sample.length)console.log('[데뷔 게이트] 표본:\n'+sample.join('\n'));
+    if(!updates.length){_ytSetProg(`데뷔 게이트 — 정리할 것 없음 (조회 ${rows.length} · 이미 플래그 ${alreadyFlagged})`);return;}
+    const summary=`보류 이동 ${updates.length}건 / 조회 ${rows.length} · 이미 플래그 ${alreadyFlagged} · 수동보호 ${manualSkipped}`;
+    _ytSetProg(`[데뷔 게이트] 미리보기 — ${summary}`);
+    await new Promise(r=>setTimeout(r,50));
+    const msg=`영상 발행일이 그룹 데뷔보다 ${_M2_DEBUT_GRACE_YEARS}년 이상 앞선 ${updates.length}건을 '보류'로 옮길까요?\n\n· 대개 "우주 밖"이 아니라 **아직 등록 안 된 그룹의 영상**이라 '무관'이 아니라 보류로 보냅니다(제국의 아이들·M4·9초 등). 나중에 그 그룹을 등록하면 재판정 대상이 됩니다.\n· 이미 플래그된 ${alreadyFlagged}건 · 수동편집 ${manualSkipped}건 · owner 채널 ${ownerSkipped}건은 손대지 않습니다.\n\n그룹별 건수와 표본 40건을 콘솔(F12)에 출력했어요 — 먼저 확인 권장.\n스냅샷 저장돼서 되돌리기 가능.`;
+    let ok;
+    if(typeof _confirmDialog==='function')ok=await _confirmDialog({title:`데뷔 이전 영상 ${updates.length}건 보류`,msg,okLabel:'보류로 이동',wide:true});
+    else ok=confirm(msg);
+    if(!ok){_ytSetProg(`취소됨 — 적용 안 함. 미리보기: ${summary} · 적용하려면 다시 눌러 "보류로 이동"을 선택하세요(표본은 F12 콘솔).`);return;}
+    await _snapshotBeforeBulk('데뷔 이전 영상 보류 이동',updates);
+    for(let i=0;i<updates.length;i+=200){
+      const{error:ue}=await sb.from(_YT_TABLE).update(_flagPatch('보류','auto')).in('id',updates.slice(i,i+200));
+      if(ue)throw new Error(ue.message);
+      _ytSetProg(`[데뷔 게이트] ${Math.min(i+200,updates.length)}/${updates.length}건 적용 중…`);
+    }
+    _ytSetProg(`완료! 데뷔 이전 영상 ${updates.length}건 보류 이동. (되돌리기: "↩︎ 마지막 일괄 작업 되돌리기")`);
+  }catch(e){_ytSetProg('오류: '+e.message);}
+  finally{if(btn)btn.disabled=false;}
+}
+document.getElementById('sp-debutgate-btn')?.addEventListener('click',_ytSweepDebutGate);
+
 // [오태깅 그룹 재배정](2026-08-25): 고친 매칭 엔진(_m2ParseTitle)을 기존 저장 행에 다시 돌려서,
 // "저장된 group_ko는 제목에 근거가 없는데, 엔진이 제목에 대놓고 있는 '다른 그룹'을 찾은" 행을 그 그룹으로
 // 재배정한다. 전수 진단(scratchpad B리포트)에서 이런 3천여 건 대부분이 오염이 아니라 옛 버그로 엉뚱한
@@ -4851,6 +4911,32 @@ function _fancamParseTitle(rawTitle){
   if(artistNorm.trim().length===0)return null; // 출연자 구간이 비면 구조로 볼 수 없음 → 기존 경로
   return{show:pat.show,artistSeg:artistSeg.trim(),artistNorm,songSeg,songSpan,enSeg:enSeg.trim(),enNorm};
 }
+// ── 데뷔 이전 게이트(2026-08-31) ───────────────────────────────────────────────
+// "영상이 그룹 데뷔보다 한참 전에 올라왔으면 그 그룹일 수 없다." 탈퇴 이후(_atmLeftBefore)·해체 이후
+// 컷오프는 이미 있었는데 반대쪽 끝이 비어 있었다.
+//
+// 여유 3년인 이유: 데뷔 직전 오디션·연습생 영상이 정상적으로 데뷔보다 먼저 올라온다(대부분 2년 이내,
+// 최장 3년 SM루키즈→NCT). 실측(2016년 이전 12,536건 대상)으로 임계값을 골랐다 —
+//   −0년 783건 / −1년 682건 / −2년 581건 / **−3년 508건** / −5년 374건 / −10년 126건
+// −10년은 너무 느슨해서 126건밖에 못 잡고, −3년이면 오디션 예외를 다 덮으면서 508건을 잡는다.
+//
+// ⚠️ 이 게이트의 진짜 값어치는 "옛날 영상 거르기"가 아니라 **부분문자열 오배정 탐지**다. −3년에 걸리는
+//    미처리분 357건 중 최대가 `아이들`(2018 데뷔)에 붙은 **제국의 아이들(ZE:A) 영상 97건**이고,
+//    이건 `B.I` ⊂ `B.I.G`와 똑같은 병이다(2026-08-31 실측). 이즈나←M4, 엔하이픈←박재범도 같은 계열.
+// ⚠️ 걸린 그룹은 후보에서 빼기만 한다 — 남는 그룹이 없으면 null(무매칭)이 되어 기존 경로대로 **보류**로
+//    간다. '무관'이 아니다: 그 영상의 진짜 그룹이 나중에 등록되면 재판정 대상이 되어야 하므로.
+// ⚠️ 재데뷔 멤버의 이전 그룹 영상은 "예외"가 아니라 오태깅이다 — 이전 그룹이 등록돼 있으면 거기로,
+//    없으면 보류가 맞다. 이걸 살리려고 여유를 늘리면 게이트가 목적을 잃는다.
+const _M2_DEBUT_GRACE_YEARS=3;
+function _m2DebutBlocks(gko,publishedAt){
+  if(!publishedAt)return false;
+  const g=GROUPS[gko];
+  if(!g||!g.debut)return false; // 솔로 자기키(GROUPS에 없음)는 대상 아님
+  const dy=parseInt(String(g.debut).slice(0,4),10);
+  const py=parseInt(String(publishedAt).slice(0,4),10);
+  if(!Number.isFinite(dy)||!Number.isFinite(py))return false;
+  return py<dy-_M2_DEBUT_GRACE_YEARS;
+}
 function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
   // "(원곡: X)"/"[Dance Cover]"/"(BTS 커버)"류 절은 매칭 전에 먼저 제거한다 — 이 절 안의 이름은 실제
   // 출연자가 아니라 커버 대상(원곡자)이라, 그대로 두면 group_ko/with_members가 원곡자 쪽으로 잘못
@@ -5146,6 +5232,15 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
       seen.clear();final.forEach(ko=>seen.add(ko));
     }
   }
+  // 데뷔 이전 게이트 — literal로 매칭된 그룹 중 영상보다 한참 뒤에 데뷔한 그룹을 후보에서 뺀다.
+  // (selfGko = owner 채널은 group_ko가 채널로 고정이라 대상 아님)
+  if(matchedGroupKos.length){
+    const kept=matchedGroupKos.filter(ko=>ko===selfGko||!_m2DebutBlocks(ko,publishedAt));
+    if(kept.length!==matchedGroupKos.length){
+      matchedGroupKos.splice(0,matchedGroupKos.length,...kept);
+      seen.clear();kept.forEach(ko=>seen.add(ko));
+    }
+  }
   // "이름(그룹명)" 패턴에서 그룹명이 우리 시스템에 없는 경우 → 타 소속 동명이인 신호
   const knownGroupTokens=new Set();
   Object.entries(GROUPS).forEach(([ko,v])=>{
@@ -5279,6 +5374,13 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
     }
     const result=[];
     for(const[gko,members]of inferred){result.push({gko,members});}
+    // 데뷔 이전 게이트 — 역추론 경로에도 똑같이 건다. 여기가 원래 가장 약한 경로(이름 하나로 그룹을
+    // 통째로 추정)라 게이트가 더 중요하다. 다 걸리면 아래에서 null이 되어 무매칭(보류)으로 간다.
+    if(result.length){
+      const kept=result.filter(r=>r.gko===selfGko||!_m2DebutBlocks(r.gko,publishedAt));
+      result.splice(0,result.length,...kept);
+    }
+    if(!result.length)return null;
     // confidence:'weak' — 제목에 그룹명/해시태그 리터럴이 전혀 없이 멤버 이름 하나만으로 그룹 자체를
     // 역추론한 경로. Love(온리원오프)/루나(에프엑스)/조이(레드벨벳) 오염 사례가 전부 이 경로에서
     // 나왔음(2026-08-20, 실측 확인) — 무관 채널(THE SHOW 등)의 무관 영상 제목에 흔한 단어 하나 있다고

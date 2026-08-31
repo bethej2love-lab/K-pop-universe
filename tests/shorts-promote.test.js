@@ -156,11 +156,11 @@ for (const [title, wantCat, wantShort] of cases) {
 }
 if (behavOk) ok(`분류기 실제 동작 ${cases.length}건 — #shorts가 붙어도 장르를 잃지 않음`);
 
-// 마이그레이션 SQL이 코드와 같은 전제를 갖고 있는지
-const sql = fs.readFileSync(path.join(__dirname, '..', 'is_short_migration.sql'), 'utf8');
-need(/ADD COLUMN IF NOT EXISTS is_short boolean NOT NULL DEFAULT false/.test(sql), 'SQL이 is_short 컬럼을 추가');
-need(/SET is_short = true WHERE category = 'short'/.test(sql), "SQL이 기존 category='short'를 플래그로 백필");
-need(/WHERE is_short/.test(sql), '조회용 부분 인덱스 predicate가 코드의 .eq(is_short,true)와 같은 형태');
+// ⚠️ 여기 있던 "마이그레이션 SQL이 코드와 같은 전제를 갖는지" 검사 3건은 제거했다(2026-08-31).
+// `is_short_migration.sql`은 이미 실행이 끝나 레포에서 삭제됐고(실행 완료된 마이그레이션 12개 정리),
+// 스키마의 근거는 이제 파일이 아니라 **라이브 DB**다. 지워진 파일을 계속 읽으면 테스트가 ENOENT로
+// 죽기만 하고 실제 스키마와의 어긋남은 못 잡는다(정리 커밋 직후 실제로 이렇게 깨졌다).
+// is_short 컬럼 자체의 전제는 위 ①~⑥ 불변식과 admin.js 주석이 지킨다.
 
 console.log(pass ? '\n✅ 쇼츠 승격 스윕 테스트 통과' : '\n❌ 쇼츠 승격 스윕 테스트 실패');
 process.exit(pass ? 0 : 1);
