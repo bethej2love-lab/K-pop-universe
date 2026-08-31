@@ -79,6 +79,32 @@ function isoDate(d) {
 function membersOf(ko) {
   return artists.filter(a => (a.group && a.group.ko === ko) || (a.groups || []).some(g => g.ko === ko));
 }
+// ── 정적 페이지끼리의 내부 링크(2026-08-31) ────────────────────────────────────
+// 예전엔 그룹→멤버, 멤버→소속그룹 링크가 전부 앱 딥링크 해시(`/#g=에스파&m=카리나`)였다. 그래서
+// **정적 페이지 3,999개가 서로를 전혀 안 가리키는 고아 상태**였고, sitemap.xml 말고는 크롤러가 들어올
+// 경로가 없었다(실측: 그룹 페이지의 href에 멤버 정적 경로가 0건).
+// 사이트맵만으론 크롤링 우선순위도 낮고 내부 링크로 오는 신호가 아예 없다 — 페이지를 두껍게 만들기
+// 전에 이걸 먼저 고친다. 앱으로 보내는 CTA("우주에서 보기 →")는 해시 그대로 둔다(그건 의도된 딥링크).
+// ⚠️ 아래 경로 규칙은 groupPath/memberPath 생성부와 **반드시 같아야 한다** — 어긋나면 404 링크가 3,999개
+//    페이지에 박힌다. 한 곳에서 만들어 양쪽이 같이 쓰도록 뺐다.
+function groupPagePath(gko, lang) {
+  const info = groups[gko];
+  if (!info) return null;
+  return lang === 'en'
+    ? `en/g/${slugify(info.en || gko, gko)}/`
+    : `g/${urlSafeKo(gko)}/`;
+}
+function memberPagePath(a, lang) {
+  const ko = a.name.ko;
+  const primaryGko = a.group.ko;
+  const isSolo = !groups[primaryGko];
+  if (lang === 'en') {
+    const slug = slugify(a.name.en || ko, ko);
+    if (isSolo) return `en/member/${slug}/`;
+    return `en/g/${slugify(groups[primaryGko].en || primaryGko, primaryGko)}/${slug}/`;
+  }
+  return isSolo ? `member/${urlSafeKo(ko)}/` : `g/${urlSafeKo(primaryGko)}/${urlSafeKo(ko)}/`;
+}
 // 공유 미리보기용 대표 영상 썸네일 캐시(2026-08-26, tools/build_og_thumbs.mjs가 생성).
 // 왜: 아래 ogImageFor()는 groups.json/artists.json의 songs[0]에서만 썸네일을 뽑는데 그 필드가
 // 그룹 14개·아티스트 56명에만 있어서, 실측 결과 그룹 페이지의 96%·멤버 페이지의 97%가 전부 같은
@@ -134,9 +160,9 @@ groupKos.forEach(ko => {
     if (!members.length) return '';
     const items = members.map(a => {
       const name = lang === 'en' ? (a.name.en || a.name.ko) : a.name.ko;
-      const mHash = `#g=${hashEsc(ko)}&m=${hashEsc(a.name.ko)}`;
+      const mPath = memberPagePath(a, lang); // 해시 딥링크가 아니라 그 멤버의 정적 페이지로
       const activeTag = a.active === false ? (lang === 'en' ? ' <span class="tag">former</span>' : ' <span class="tag">전멤버</span>') : '';
-      return `<li><a href="${SITE}/${mHash}">${escHtml(name)}</a>${activeTag}</li>`;
+      return `<li><a href="${SITE}/${mPath}">${escHtml(name)}</a>${activeTag}</li>`;
     }).join('\n      ');
     return `
     <h2>${lang === 'en' ? 'Members' : '멤버'}</h2>
@@ -240,6 +266,7 @@ groupKos.forEach(ko => {
 <body>
 <div class="wrap">
   <a class="brand" href="${SITE}/">K-POP UNIVERSE</a>
+  <a class="brand" href="${SITE}/${isEn ? 'en/g/' : 'g/'}" style="margin-left:10px;">${isEn ? 'All groups' : '그룹 전체'}</a>
   <h1>${escHtml(displayName)}</h1>
   ${subName ? `<div class="sub">${escHtml(subName)}</div>` : ''}
   <img class="cover" src="${ogImage}" alt="${escHtml(displayName)}" loading="lazy">
@@ -304,8 +331,8 @@ artists.forEach(a => {
     if (!affiliations.length) return '';
     const items = affiliations.map(g => {
       const gname = lang === 'en' ? (groups[g.ko].en || g.ko) : g.ko;
-      const gHash = '#g=' + hashEsc(g.ko);
-      return `<li><a href="${SITE}/${gHash}">${escHtml(gname)}</a></li>`;
+      const gPath = groupPagePath(g.ko, lang); // 해시 딥링크가 아니라 그 그룹의 정적 페이지로
+      return `<li><a href="${SITE}/${gPath}">${escHtml(gname)}</a></li>`;
     }).join('\n      ');
     return `
     <h2>${lang === 'en' ? 'Groups' : '소속 그룹'}</h2>
@@ -442,6 +469,7 @@ artists.forEach(a => {
 <body>
 <div class="wrap">
   <a class="brand" href="${SITE}/">K-POP UNIVERSE</a>
+  <a class="brand" href="${SITE}/${isEn ? 'en/g/' : 'g/'}" style="margin-left:10px;">${isEn ? 'All groups' : '그룹 전체'}</a>
   <h1>${escHtml(displayName)}</h1>
   ${subName ? `<div class="sub">${escHtml(subName)}</div>` : ''}
   <img class="cover" src="${ogImage}" alt="${escHtml(displayName)}" loading="lazy">
@@ -474,7 +502,77 @@ artists.forEach(a => {
   memberPageCount++;
 });
 
-// sitemap.xml — 루트 + 그룹별/멤버별 KO/EN 페이지 전부
+// ── 그룹 색인 허브(2026-08-31) ────────────────────────────────────────────────
+// 그룹 페이지가 위로 거는 링크는 `SITE/`(3D 앱) 하나뿐인데 그 홈은 SPA라 크롤러가 읽을 링크가 없다.
+// 그래서 그룹 페이지들도 멤버 페이지와 똑같이 sitemap에만 존재하는 고아였다. 이 허브가 그래프를 닫는다:
+//   sitemap → /g/ (허브) → 그룹 페이지 → 멤버 페이지 → 소속 그룹으로 되돌아감
+// 순수 텍스트 목록이라 가볍고, 데뷔연도를 같이 실어 "2015년 데뷔 걸그룹" 류 쿼리도 받는다.
+function hubPageHtml(lang) {
+  const isEn = lang === 'en';
+  const selfUrl = `${SITE}/${isEn ? 'en/g/' : 'g/'}`;
+  const altUrl = `${SITE}/${isEn ? 'g/' : 'en/g/'}`;
+  const title = isEn ? 'All K-pop Groups | K-POP UNIVERSE' : '케이팝 그룹 전체 목록 | K-POP UNIVERSE';
+  const desc = isEn
+    ? `Browse all ${groupKos.length} K-pop groups with debut dates, members, and videos.`
+    : `케이팝 그룹 ${groupKos.length}팀의 데뷔일·멤버·영상을 한눈에.`;
+  const sorted = [...groupKos].sort((a, b) => String(groups[a].debut || '').localeCompare(String(groups[b].debut || '')));
+  const items = sorted.map(gko => {
+    const info = groups[gko];
+    const name = isEn ? (info.en || gko) : gko;
+    const yr = String(info.debut || '').slice(0, 4);
+    return `<li><a href="${SITE}/${groupPagePath(gko, lang)}">${escHtml(name)}</a>${yr ? ` <span class="yr">${yr}</span>` : ''}</li>`;
+  }).join('\n      ');
+  return `<!doctype html>
+<html lang="${isEn ? 'en' : 'ko'}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>${escHtml(title)}</title>
+<meta name="description" content="${escHtml(desc)}">
+<link rel="canonical" href="${selfUrl}">
+<link rel="alternate" hreflang="${isEn ? 'ko' : 'en'}" href="${altUrl}">
+<link rel="alternate" hreflang="${isEn ? 'en' : 'ko'}" href="${selfUrl}">
+<link rel="alternate" hreflang="x-default" href="${SITE}/g/">
+<link rel="icon" href="${SITE}/icons/icon-192.png" type="image/png">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-Z5NTV6X3YF"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-Z5NTV6X3YF');</script>
+<style>
+  :root{color-scheme:dark;}
+  body{margin:0;background:#09091a;color:rgba(220,230,255,0.92);font-family:-apple-system,'Pretendard','Apple SD Gothic Neo',sans-serif;line-height:1.6;}
+  .wrap{max-width:760px;margin:0 auto;padding:32px 20px 80px;}
+  .brand{font-size:12px;letter-spacing:.08em;color:rgba(150,175,255,0.6);text-decoration:none;}
+  h1{font-size:26px;margin:14px 0 6px;color:#fff;}
+  .sub{font-size:14px;color:rgba(180,200,255,0.6);margin-bottom:22px;}
+  ul{list-style:none;padding:0;margin:0;display:flex;flex-wrap:wrap;gap:8px;}
+  li{background:rgba(150,175,255,0.08);border:0.5px solid rgba(150,175,255,0.18);border-radius:10px;padding:6px 12px;font-size:13.5px;}
+  a{color:rgba(210,225,255,0.95);text-decoration:none;}
+  .yr{color:rgba(150,175,255,0.55);font-size:12px;}
+  .lang-switch{margin-top:40px;font-size:12px;}
+  .lang-switch a{color:rgba(150,175,255,0.7);}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="brand" href="${SITE}/">K-POP UNIVERSE</a>
+  <a class="brand" href="${SITE}/${isEn ? 'en/g/' : 'g/'}" style="margin-left:10px;">${isEn ? 'All groups' : '그룹 전체'}</a>
+  <h1>${isEn ? 'All Groups' : '그룹 전체 목록'}</h1>
+  <div class="sub">${escHtml(desc)}</div>
+  <ul>
+      ${items}
+  </ul>
+  <div class="lang-switch"><a href="${altUrl}">${isEn ? '한국어로 보기' : 'View in English'}</a></div>
+</div>
+</body>
+</html>
+`;
+}
+fs.mkdirSync(path.join(ROOT, 'g'), { recursive: true });
+fs.mkdirSync(path.join(ROOT, 'en', 'g'), { recursive: true });
+fs.writeFileSync(path.join(ROOT, 'g', 'index.html'), hubPageHtml('ko'));
+fs.writeFileSync(path.join(ROOT, 'en', 'g', 'index.html'), hubPageHtml('en'));
+pages.push({ loc: `${SITE}/g/`, priority: '0.9' }, { loc: `${SITE}/en/g/`, priority: '0.9' });
+
+// sitemap.xml — 루트 + 허브 + 그룹별/멤버별 KO/EN 페이지 전부
 const sitemapUrls = [{ loc: `${SITE}/`, priority: '1.0' }, ...pages.map(p => ({ loc: p.loc, priority: p.priority || '0.7' }))];
 const sitemapXml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
