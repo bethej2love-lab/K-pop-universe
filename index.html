@@ -3023,6 +3023,11 @@ function _dismissOnboardHint(){
 // 드래그 조작감엔 영향 없음), 실제로 GPU를 태우는 그리기 호출 빈도만 줄인다 — 120Hz 화면일수록 효과가 큼.
 let _lastRenderMs=0;
 const _RENDER_INTERVAL_MS=1000/30;
+// 열려 있으면 3D가 사실상 안 보이는 전체화면 오버레이(2026-08-31 전수 점검). animate()에서 렌더를 건너뛴다.
+// 새 전체화면 오버레이를 만들면 여기 추가할 것 — 안 넣으면 안 보이는 3D를 계속 그려 발열이 붙는다.
+const _FULLSCREEN_OVERLAY_IDS=['feed-list-overlay','profile-overlay','col-card-overlay','feedback-overlay',
+  'venue-overlay','trophy-overlay','pp-bias-emoji-overlay','gc-track-videos-overlay',
+  'vid-tag-overlay','vm-overlay','adm-home-overlay','hnn-overlay','gp-overlay','fbv-overlay','ev-overlay'];
 // Tier 2(2026-08-24, 발열 저감): 사용자가 잠깐 안 만지면(패시브 감상) 렌더를 30→20fps로 낮춘다.
 // autoRotate가 아주 느려(0.25) 20fps로 떨어져도 체감이 없고, 손대면 즉시 30fps로 복귀. idle 발열 절감.
 let _lastInteractMs=performance.now();
@@ -3050,6 +3055,19 @@ function animate(){
   // 열려 있는 동안은 기기 종류와 무관하게 뒤의 3D 우주가 안 보임 — 그런데도 계속 풀 렌더링을 돌리면
   // 안 보이는 화면 그리는 데 GPU/CPU를 써서 정작 그 위에서 재생 중인 유튜브 영상이 끊기게 됨.
   if(document.getElementById('yt-lightbox').classList.contains('open'))return;
+  // 모아보기/차트 TOP 목록(#feed-list-overlay)도 같은 이유로 스킵(2026-08-31, 사용자 제보 — "차트 TOP
+  // 100을 썸네일만 보는데도 발열이 심하다"). 이 오버레이는 `inset:0`으로 화면 전체를 덮고 그 위에
+  // **backdrop-filter:blur(6px)** 가 걸려 있다. 뒤에서 3D가 계속 그려지면 배경이 매 프레임 바뀌므로
+  // **블러를 매 프레임 다시 계산**하게 된다 — 안 보이는 3D 렌더 + 전체 화면 블러 재계산이 겹쳐 발열이
+  // 이중으로 붙는 구조였다. 렌더를 멈추면 배경이 고정되어 블러도 한 번만 계산된다.
+  // ※썸네일은 원인이 아니었다 — DB의 thumb은 이미 mqdefault(320×180)이고 목록 그리드는 lazy 로딩이다.
+  //
+  // 전수 점검(2026-08-31): `position:fixed; inset:0`로 화면을 덮는 오버레이가 **21개**인데 렌더 스킵
+  // 대상은 2개뿐이었다. 그중 대부분이 `backdrop-filter`까지 걸려 있어 같은 이중 부담을 만든다.
+  // 아래 목록은 "열려 있으면 3D가 사실상 안 보이는" 전체화면 오버레이들 — 전부 `.open`으로 토글된다.
+  // ⚠️ 제외한 것: `#loading-veil`(로딩 중엔 3D가 준비돼야 하므로 멈추면 안 됨), `#feed-overlay`(모바일에서
+  //    peek 상태로 반쯤만 덮여 뒤 우주가 보임 — 멈추면 얼어붙은 게 눈에 띈다), `#col-picker`(작은 시트).
+  if(_FULLSCREEN_OVERLAY_IDS.some(id=>document.getElementById(id)?.classList.contains('open')))return;
   // 나머지(모바일 바텀시트류)는 모바일 레이아웃에서만 화면을 덮으므로 기존대로 모바일 한정 스킵
   if(isMob()&&(
     document.getElementById('mob-sheet').classList.contains('bs-open')||
