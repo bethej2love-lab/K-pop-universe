@@ -58,6 +58,11 @@ function load(){
   F(/^function _atmContextRelaxesHashtagOnly\(/m,'_atmContextRelaxesHashtagOnly');
   F(/^function _atmStripCommonNounCtx\(/m,'_atmStripCommonNounCtx');
   F(/^function _atmMatchesMember\(/m,'_atmMatchesMember');
+  // 설명란 노이즈 제거(2026-08-31) — 있으면 싣는다
+  if(/^const _ATM_DESC_NOISE_LINE\s*=/m.test(adminSrc)){
+    S(/^const _ATM_DESC_NOISE_LINE\s*=/m,'_ATM_DESC_NOISE_LINE');
+    F(/^function _atmStripDescNoise\(/m,'_atmStripDescNoise');
+  }
   F(/^function _memberLeftCutoffDate\(/m,'_memberLeftCutoffDate');
   F(/^function _atmResolveMembers\(/m,'_atmResolveMembers');
   S(/^const _m2VariantsCache\s*=/m,'_m2VariantsCache');
@@ -107,7 +112,8 @@ const _ATM_DYNAMIC_LITERAL_ONLY=new Set();
 const _ATM_DYNAMIC_SURNAME_EXCLUDE=new Map();
 const _STRICT_SYNC_GROUPS=new Set(Object.entries(GROUPS).filter(([,v])=>v&&v.strictSync).map(([ko])=>ko));
 ${pieces.join('\n')}
-module.exports={_m2ParseTitle,_atmResolveMembers,_wonkokStripClause,_PROJECT_UNITS,GROUPS,ARTISTS,_STRICT_SYNC_GROUPS,
+module.exports={_m2ParseTitle,_atmResolveMembers,_atmMatchesMember,_atmTokenize,_wonkokStripClause,_PROJECT_UNITS,GROUPS,ARTISTS,_STRICT_SYNC_GROUPS,
+  _atmStripDescNoise:(typeof _atmStripDescNoise==='function')?_atmStripDescNoise:null,
   _coverResolve:(typeof _coverResolve==='function')?_coverResolve:null,_coverCandidates:(typeof _coverCandidates==='function')?_coverCandidates:null,_coverSongKeys:(typeof _coverSongKeys==='function')?_coverSongKeys:null,_coverBuildIndex:(typeof _coverBuildIndex==='function')?_coverBuildIndex:null,
   _coverContext:(typeof _coverContext==='function')?_coverContext:null,_coverHasCollabSignal:(typeof _coverHasCollabSignal==='function')?_coverHasCollabSignal:null,
   _coverRestoreSignal:(typeof _coverRestoreSignal==='function')?_coverRestoreSignal:null,

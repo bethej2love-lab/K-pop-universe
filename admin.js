@@ -4314,6 +4314,14 @@ function _atmMatchesMember(m,title,tokens,groupKo){
   const name=m.ko;
   if(!name)return false;
   const hashtagOnly=_isHashtagOnlyName(name)&&!_atmContextRelaxesHashtagOnly(name,title,groupKo);
+  // 이니셜형 이름(B.I, J.R …)은 아래 한글 경계 규칙 `(?<![가-힣])B\.I(?![가-힣])`으로는 못 거른다 —
+  // "B.I.G"의 다음 글자가 '.'이라 한글이 아니어서 그냥 통과한다. 실측(2026-08-31): 비아이지(B.I.G) 영상
+  // 38건이 아이콘 B.I로 잡혀 group_ko까지 아이콘으로 오배정됐다(비아이지는 GROUPS 미등록).
+  // 양옆에 점이나 영숫자가 안 붙을 때만 인정한다 — "B.I.G"는 탈락, "B.I X BOBBY"·"#B.I"는 통과.
+  if(/^[A-Za-z](?:\.[A-Za-z])+\.?$/.test(name)){
+    const seq=[...name.replace(/\./g,'')].map(_atmEscRe).join('[.\\s]*');
+    return new RegExp(`(?<![a-z0-9.])${seq}(?![a-z0-9.])`,'i').test(title);
+  }
   const nameChars=[...name];
   const multiChar=nameChars.length>1&&!hashtagOnly;
   const particles=['이','가','은','는','을','를','과','와','도','만','의','에','께','님','씨','아','야','랑','한테','에게'].map(_atmEscRe).join('|');
@@ -4356,6 +4364,15 @@ function _atmMatchesMember(m,title,tokens,groupKo){
       }
     }
     if(parts.length>1){
+      // 이니셜형 영문명(B.I, J.R …)은 토큰 대조를 쓰면 안 된다 — _atmTokenize가 "B.I.G"를 b/i/g로 쪼개서
+      // ['b','i']가 앞 두 토큰과 그대로 맞아떨어진다. 실측(2026-08-31): 비아이지(B.I.G) 영상 38건이
+      // 아이콘 B.I로 잡혀 group_ko까지 아이콘으로 오배정됐다(비아이지는 GROUPS 미등록이라 막을 그룹명도 없음).
+      // 원문에서 **양옆에 점이나 영숫자가 안 붙을 때만** 인정한다 — "B.I.G"는 뒤에 점이 붙어 탈락하고,
+      // "B.I X BOBBY"처럼 공백으로 떨어진 정상 표기는 그대로 통과한다(토큰 방식으로는 이 둘을 못 가른다).
+      if(parts.every(p=>p.length===1)){
+        const seq=parts.map(_atmEscRe).join('[.\\s]*');
+        return new RegExp(`(?<![a-z0-9.])${seq}(?![a-z0-9.])`,'i').test(title);
+      }
       for(let i=0;i<=tokens.length-parts.length;i++){if(parts.every((p,j)=>tokens[i+j]===p))return true;}
       // 영문명도 한글과 같은 이유로 "성" 파트(보통 첫 단어)를 뺀 나머지만 제목에 있어도 잡히게 함
       const rest=parts.slice(1);
@@ -4374,6 +4391,21 @@ function _atmMatchesMember(m,title,tokens,groupKo){
 // 5명이 다 태깅돼 미나미 연결 카드에까지 리브 단독 영상이 섞여 나오던 오염 사고로 발견됨(2026-08-03).
 // 신규 태깅(_ytAutoTagMembers)과 재검증(_ytSweepMembersMistag) 양쪽이 이 헬퍼를 공유해야, 재검증
 // 버튼을 눌렀을 때 이미 오염된 기존 행도 같은 기준으로 걷어낼 수 있다.
+// 설명란에서 "출연 근거가 아닌 언급"을 걷어낸다(2026-08-31, 사용자 발견 — "그룹 전체 무대인데 위너는
+// 송민호만 체크돼 있다"). 실측: 위너 표본 40건 중 30건이 제목엔 근거가 없고 설명란에서만 매칭됐는데,
+// 걸린 문자열이 전부 출연이 아니라 **크레딧·목록·링크**였다.
+//   앨범 트랙리스트   ・FIANCE (MINO) ・CALL ANYTIME feat.MINO (JINU)
+//   멀티앵글 목록     [MULTI ANGLE] ・EVERYDAY_YOON / JINU / HOONY / MINO
+//   관련 영상 링크    WINNER's 걔 세(I'm him) MINO SOLO M/V @ http://…
+// 네 명이 다 적힌 목록인데 한 명만 붙는 이유는, MINO만 등록 영문명이고 YOON·JINU·HOONY는 별명이라
+// 로스터에 없기 때문이다 — 그래서 그룹 단체 영상이 특정 멤버 단독처럼 보인다.
+// ⚠️ 이름 목록이 아니라 **포맷 마커**로 자른다(줄 단위). 새 사례에 일반화되고, 설명란 끝의 출연자
+//    해시태그 나열(#세림 #앨런 …)은 마커가 없어 그대로 살아남는다 — 그건 진짜 출연 근거다.
+const _ATM_DESC_NOISE_LINE=/https?:\/\/|^\s*[・･·]|MULTI[ _-]?ANGLE|\bfeat\.|\bft\.|\bProd\.|作詞|作曲|編曲|\bLyrics?\s*by\b|\bCompos(?:ed|er)\b|\bArranged?\b|작사|작곡|편곡|Track\s*list|트랙\s*리스트|^\s*\d{1,2}[.\x29]\s/i; // ⚠️ 닫는 괄호는 반드시 \x29로 쓸 것 — 리터럴로 두면 m2_harness가 괄호 깊이를 세다 슬라이스가 깨진다(2026-08-31 실제로 겪음)
+function _atmStripDescNoise(description){
+  if(!description)return description;
+  return String(description).split('\n').filter(l=>!_ATM_DESC_NOISE_LINE.test(l)).join('\n');
+}
 function _atmResolveMembers(title,description,roster,groupKo,publishedAt){
   // publishedAt(영상 발행일, "YYYY-MM-DD")이 주어지면 그 시점에 이미 탈퇴한 멤버는 매칭 후보에서 제외
   // (_memberLeftCutoffDate 참고) — 그룹은 활동 중이어도 탈퇴 멤버는 그 이후 영상에 안 나오는 게 정상.
@@ -4381,7 +4413,8 @@ function _atmResolveMembers(title,description,roster,groupKo,publishedAt){
   const rawT=title||'';
   const t=_atmStripCommonNounCtx(rawT); // "○○의 하루" 등 일반명사 문맥의 "하루" 제거 후 매칭
   const hitTitle=roster2.filter(m=>_atmMatchesMember(m,t,_atmTokenize(t),groupKo)).map(m=>m.ko);
-  const searchText=_atmStripCommonNounCtx(description?`${rawT}\n${description}`:rawT);
+  const desc=_atmStripDescNoise(description); // 트랙리스트·크레딧·링크 줄은 출연 근거가 아니다
+  const searchText=_atmStripCommonNounCtx(desc?`${rawT}\n${desc}`:rawT);
   const hitFull=roster2.filter(m=>_atmMatchesMember(m,searchText,_atmTokenize(searchText),groupKo)).map(m=>m.ko);
   if(roster2.length>0&&hitFull.length===roster2.length&&hitTitle.length<roster2.length)return hitTitle;
   return hitFull;
