@@ -1109,7 +1109,7 @@ async function _ytSweepCoverV2(){
     console.log(`[원곡 v2] 조회 ${rows.length} · 정정 후보 ${updates.length} (원곡 태깅/이동 ${n.cover} · with만 정리 ${n.wipe} · 옛 오저장 재배정 ${n.reassign}) · 애매 ${ambiguous} · 외부 원곡 ${external} · 수동보호 ${manualSkipped}`);
     Object.entries(sample).forEach(([k,arr])=>{if(arr.length)console.log(`[원곡 v2] 표본 — ${k}:\n`+arr.join('\n'));});
     if(!updates.length){_ytSetProg(`원곡 v2 — 정정할 것 없음 (조회 ${rows.length}, 애매 ${ambiguous}건 콘솔)`);return;}
-    if(!confirm(`원곡 태깅 v2 — ${updates.length}건 정정할까요?\n\n· 원곡 태깅/with→cover_of 이동 ${n.cover}\n· 커버인데 with만 정리 ${n.wipe}\n· 옛 오저장(원곡자가 group_ko) 재배정 ${n.reassign}\n· 애매(동명곡·판정 불가) ${ambiguous}건은 건드리지 않음(콘솔)\n· 수동편집 ${manualSkipped}건 제외 · 표본 콘솔(F12) · 스냅샷 되돌리기 가능`)){
+    if(!await _sweepConfirmSimple("원곡 태깅 v2","정정 실행",`원곡 태깅 v2 — ${updates.length}건 정정할까요?\n\n· 원곡 태깅/with→cover_of 이동 ${n.cover}\n· 커버인데 with만 정리 ${n.wipe}\n· 옛 오저장(원곡자가 group_ko) 재배정 ${n.reassign}\n· 애매(동명곡·판정 불가) ${ambiguous}건은 건드리지 않음(콘솔)\n· 수동편집 ${manualSkipped}건 제외 · 표본 콘솔(F12) · 스냅샷 되돌리기 가능`)){
       _ytSetProg(`취소됨 — 미리보기만 (후보 ${updates.length}, 표본 콘솔).`);return;
     }
     await _snapshotBeforeBulk('원곡 태깅 v2',updates.map(u=>u.id));
@@ -1351,6 +1351,19 @@ document.getElementById('sp-debutgate-btn')?.addEventListener('click',_ytSweepDe
 async function _ytSweepMistagReclassify(){
   if(!sb){_ytSetProg('Supabase 연결 없음');return;}
   const btn=document.getElementById('sp-mistagfix-btn');
+  // 직전 실행의 분석 결과가 보관돼 있으면 **재분석 없이 바로 적용**한다(2026-08-31 사용자 제보 —
+  // "1시간 기다렸는데 취소됨만 뜨고 계산이 다 날아갔다"). 38만 행 재스캔을 다시 시키지 않는 게 요점.
+  const _kept=_sweepPeek('sp-mistagfix-btn');
+  if(_kept){
+    if(btn)btn.disabled=true;
+    try{
+      _ytSetProg(`[오태깅 재배정] 보관된 분석 결과 ${_kept.count}건을 바로 적용합니다(재스캔 없음)…`);
+      _sweepPending.delete('sp-mistagfix-btn');
+      await _kept.apply();
+    }catch(e){_ytSetProg('오류: '+e.message);}
+    finally{if(btn)btn.disabled=false;}
+    return;
+  }
   if(btn)btn.disabled=true;
   try{
     _ytSetProg('[오태깅 재배정] 전체 조회 중…');
@@ -1386,16 +1399,21 @@ async function _ytSweepMistagReclassify(){
     }
     console.log('[오태깅 재배정] 재배정 예정 표본(최대40):\n'+sample.join('\n'));
     if(!updates.length){_ytSetProg(`재배정할 오태깅 없음 (전체 ${rows.length} 스캔${manualSkipped?`, 수동보호 ${manualSkipped}`:''})`);return;}
-    if(!confirm(`오태깅 그룹 재배정 ${updates.length}건을 적용할까요?\n\n· "저장 그룹은 제목에 근거 없음 + 엔진이 제목의 다른 그룹을 literal로 찾음"인 행\n  (대부분 옛 오저장의 정당한 복구 — 하이키·체리블렛 등)\n· 콜라보(with/선배/feat)·수동편집(${manualSkipped}건)은 자동 제외\n· 표본 40건을 콘솔(F12)에 출력함 — 먼저 확인 권장\n· 스냅샷 저장되어 "마지막 일괄 작업 되돌리기"로 복구 가능`)){
-      _ytSetProg(`취소됨 — 미리보기만 (재배정 예정 ${updates.length}건, 표본 콘솔).`);return;
-    }
-    await _snapshotBeforeBulk('오태깅 그룹 재배정',updates.map(u=>u.id));
-    for(let i=0;i<updates.length;i+=200){
-      const results=await Promise.all(updates.slice(i,i+200).map(u=>sb.from(_YT_TABLE).update(u.patch).eq('id',u.id)));
-      const f=results.find(r=>r.error);if(f)throw new Error(f.error.message);
-      _ytSetProg(`[오태깅 재배정] ${Math.min(i+200,updates.length)}/${updates.length}건 적용 중…`);
-    }
-    _ytSetProg(`완료! ${updates.length}건 그룹 재배정함.${manualSkipped?` 수동보호 ${manualSkipped}건.`:''} (되돌리기: "↩︎ 마지막 일괄 작업 되돌리기")`);
+    // 적용부를 함수로 — 취소 시 이걸 보관해두면 다시 누를 때 재분석 없이 바로 돈다(1시간 재스캔 방지).
+    const _apply=async()=>{
+      await _snapshotBeforeBulk('오태깅 그룹 재배정',updates.map(u=>u.id));
+      for(let i=0;i<updates.length;i+=200){
+        const results=await Promise.all(updates.slice(i,i+200).map(u=>sb.from(_YT_TABLE).update(u.patch).eq('id',u.id)));
+        const f=results.find(r=>r.error);if(f)throw new Error(f.error.message);
+        _ytSetProg(`[오태깅 재배정] ${Math.min(i+200,updates.length)}/${updates.length}건 적용 중…`);
+      }
+      _ytSetProg(`완료! ${updates.length}건 그룹 재배정함.${manualSkipped?` 수동보호 ${manualSkipped}건.`:''} (되돌리기: "↩︎ 마지막 일괄 작업 되돌리기")`);
+    };
+    const msg=`오태깅 그룹 재배정 ${updates.length}건을 적용할까요?\n\n· "저장 그룹은 제목에 근거 없음 + 엔진이 제목의 다른 그룹을 literal로 찾음"인 행\n  (대부분 옛 오저장의 정당한 복구 — 하이키·체리블렛 등)\n· 콜라보(with/선배/feat)·수동편집(${manualSkipped}건)은 자동 제외\n· 표본 40건을 콘솔(F12)에 출력함\n· 스냅샷 저장되어 "↩︎ 마지막 일괄 작업 되돌리기"로 복구 가능`;
+    _ytSetProg(`[오태깅 재배정] 분석 완료 — 재배정 예정 ${updates.length}건 (전체 ${rows.length} 스캔, 수동보호 ${manualSkipped})`);
+    await new Promise(r=>setTimeout(r,50)); // 확인창 전에 숫자가 화면에 먼저 남게
+    if(!await _sweepConfirm('sp-mistagfix-btn',`오태깅 그룹 재배정 ${updates.length}건`,msg,'재배정 실행',updates.length,_apply))return;
+    await _apply();
   }catch(e){_ytSetProg('오류: '+e.message);}
   finally{if(btn)btn.disabled=false;}
 }
@@ -1463,7 +1481,7 @@ async function _ytSweepFancamMistag(){
     console.log('[직캠 재검증] 멤버 정정 표본:\n'+sample.members.join('\n'));
     console.log('[직캠 재검증] 콜라보 정정 표본:\n'+sample.with.join('\n'));
     if(!updates.length){_ytSetProg(`직캠 구조 ${structured}건 검사 — 정정할 오태깅 없음${manualSkipped?` (수동보호 ${manualSkipped})`:''}`);return;}
-    if(!confirm(`음악방송 직캠 재검증 — ${updates.length}건 정정할까요?\n\n· 그룹 재배정 ${nG} / 멤버 정정 ${nM} / 콜라보 정정 ${nW}\n· 구조 인식 ${structured}건 중, 새 그룹이 출연자 구간에 literal로 있는 것만\n· 수동편집 ${manualSkipped}건 · owner 고정 채널 ${ownerSkipped}건 자동 제외\n· 유형별 표본(최대 60)을 콘솔(F12)에 출력함 — 먼저 확인 권장\n· 스냅샷 저장되어 "마지막 일괄 작업 되돌리기"로 복구 가능`)){
+    if(!await _sweepConfirmSimple("음악방송 직캠 재검증","정정 실행",`음악방송 직캠 재검증 — ${updates.length}건 정정할까요?\n\n· 그룹 재배정 ${nG} / 멤버 정정 ${nM} / 콜라보 정정 ${nW}\n· 구조 인식 ${structured}건 중, 새 그룹이 출연자 구간에 literal로 있는 것만\n· 수동편집 ${manualSkipped}건 · owner 고정 채널 ${ownerSkipped}건 자동 제외\n· 유형별 표본(최대 60)을 콘솔(F12)에 출력함 — 먼저 확인 권장\n· 스냅샷 저장되어 "마지막 일괄 작업 되돌리기"로 복구 가능`)){
       _ytSetProg(`취소됨 — 미리보기만 (정정 후보 ${updates.length}건, 표본 콘솔).`);return;
     }
     await _snapshotBeforeBulk('음악방송 직캠 재검증',updates.map(u=>u.id));
@@ -1536,7 +1554,7 @@ async function _ytSweepHiddenRejudge(){
     }
     console.log(`[숨김 재판정] 재배정 예정 표본(최대40):\n${sMove.join('\n')}\n\n[숨김 재판정] 보류 이동 표본(최대40):\n${sHold.join('\n')}`);
     if(!moves.length&&!holds.length){_ytSetProg(`옮길 것 없음 (숨김 ${rows.length}건 중 판정 동일 ${same}, 약한추론 ${weak}, 콜라보 ${collab})`);return;}
-    if(!confirm(`숨김 ${rows.length}건을 지금 매처로 재판정한 결과예요.\n\n· 다른 그룹으로 재배정 + 숨김 해제 : ${moves.length}건\n   (제목에 그 그룹명이 literal로 있는 것만)\n· 아무 그룹도 안 잡혀 '보류'로 이동 : ${holds.length}건\n   (무관 아님 — 카드에선 빠지되 검수 목록에 남음)\n\n· 판정 그대로라 손 안 댐 ${same}건 / 약한추론 제외 ${weak}건 / 콜라보·커버 제외 ${collab}건\n· 표본 각 40건을 콘솔(F12)에 출력했어요 — 먼저 확인 권장\n· 스냅샷 저장되어 "↩︎ 마지막 일괄 작업 되돌리기"로 복구 가능\n\n적용할까요?`)){
+    if(!await _sweepConfirmSimple("숨김 재판정","적용",`숨김 ${rows.length}건을 지금 매처로 재판정한 결과예요.\n\n· 다른 그룹으로 재배정 + 숨김 해제 : ${moves.length}건\n   (제목에 그 그룹명이 literal로 있는 것만)\n· 아무 그룹도 안 잡혀 '보류'로 이동 : ${holds.length}건\n   (무관 아님 — 카드에선 빠지되 검수 목록에 남음)\n\n· 판정 그대로라 손 안 댐 ${same}건 / 약한추론 제외 ${weak}건 / 콜라보·커버 제외 ${collab}건\n· 표본 각 40건을 콘솔(F12)에 출력했어요 — 먼저 확인 권장\n· 스냅샷 저장되어 "↩︎ 마지막 일괄 작업 되돌리기"로 복구 가능\n\n적용할까요?`)){
       _ytSetProg(`취소됨 — 미리보기만 (재배정 ${moves.length} · 보류 ${holds.length}, 표본 콘솔).`);return;
     }
     await _snapshotBeforeBulk('숨김 목록 재판정',[...moves.map(u=>u.id),...holds]);
@@ -1687,7 +1705,7 @@ async function _ytSweepCanonicalizeMembers(){
     console.log(`[고아태그 정정] 미매핑 고아(동명이인 의심 — 손 안 댐, 별칭 추가하면 다음번 정정) ${orphanList.length}종:`,orphanList.slice(0,40));
     if(!updates.length){_ytSetProg(`정정할 고아태그 없음. 미매핑 고아 ${orphanList.length}종은 콘솔(별칭 추가 대상).`);return;}
     const lockedCnt=updates.filter(u=>u.locked).length;
-    if(!confirm(`정식명이 아닌 별칭/표시명으로 태깅된 고아 태그 ${updates.length}건을 정식명으로 정정할까요?\n\n· 여정→전여여정, 홍의진→의진처럼 "같은 사람, 이름형태만" 정정\n· matchAliases·groups[].name으로 확실히 아는 것만 (모르는 고아 ${orphanList.length}종은 손 안 댐)\n· 잠금행 ${lockedCnt}건은 해제→정정→재잠금\n· 스냅샷 저장돼 되돌리기 가능 · 샘플 콘솔`))
+    if(!await _sweepConfirmSimple("고아 태그 정정","정정 실행",`정식명이 아닌 별칭/표시명으로 태깅된 고아 태그 ${updates.length}건을 정식명으로 정정할까요?\n\n· 여정→전여여정, 홍의진→의진처럼 "같은 사람, 이름형태만" 정정\n· matchAliases·groups[].name으로 확실히 아는 것만 (모르는 고아 ${orphanList.length}종은 손 안 댐)\n· 잠금행 ${lockedCnt}건은 해제→정정→재잠금\n· 스냅샷 저장돼 되돌리기 가능 · 샘플 콘솔`))
       {_ytSetProg(`취소됨 — 미리보기만 (정정 예정 ${updates.length}건).`);return;}
     await _snapshotBeforeBulk('고아태그 정정(별칭→정식명)',updates.map(u=>u.id));
     let done=0;
@@ -4934,6 +4952,39 @@ function _fancamParseTitle(rawTitle){
 //    간다. '무관'이 아니다: 그 영상의 진짜 그룹이 나중에 등록되면 재판정 대상이 되어야 하므로.
 // ⚠️ 재데뷔 멤버의 이전 그룹 영상은 "예외"가 아니라 오태깅이다 — 이전 그룹이 등록돼 있으면 거기로,
 //    없으면 보류가 맞다. 이걸 살리려고 여유를 늘리면 게이트가 목적을 잃는다.
+// ── 무거운 스윕의 확인 + 결과 보관(2026-08-31) ────────────────────────────────
+// 사용자 제보: "오태깅 그룹 재배정을 눌러두고 1시간 넘게 기다렸는데 그냥 '취소됨 미리보기만' 떴다."
+// 원인이 두 개다.
+//  ① 네이티브 `confirm()`은 **오래 걸린 작업 뒤에 자주 무력화된다** — 탭을 벗어났거나 브라우저가
+//     "추가 대화상자 생성 방지"를 걸면 창을 안 띄우고 즉시 false를 돌려준다. 사용자는 누른 적도 없는데
+//     취소로 처리된다. 앱 자체 다이얼로그(_confirmDialog)는 그 차단에 안 걸린다.
+//  ② 더 나쁜 건 **취소되면 계산을 통째로 버리는 구조**였다. 38만 행을 훑은 1시간이 그대로 사라지고
+//     다시 누르면 처음부터 또 훑는다. 그래서 결과를 보관해두고, 다시 누르면 **재분석 없이 바로 적용**한다.
+// 보관은 30분만 유지한다 — 그 사이 동기화로 DB가 바뀌면 옛 판단을 적용하는 게 위험하다.
+const _SWEEP_KEEP_MS=30*60*1000;
+const _sweepPending=new Map(); // btnId → {ts,count,label,apply}
+function _sweepPeek(btnId){
+  const p=_sweepPending.get(btnId);
+  if(!p)return null;
+  if(Date.now()-p.ts>_SWEEP_KEEP_MS){_sweepPending.delete(btnId);return null;}
+  return p;
+}
+// 확인창 + 보관. ok면 true, 아니면 false를 주고 결과를 보관해둔다(다시 누르면 바로 적용).
+async function _sweepConfirm(btnId,title,msg,okLabel,count,apply){
+  let ok;
+  if(typeof _confirmDialog==='function')ok=await _confirmDialog({title,msg,okLabel:okLabel||'실행',wide:true});
+  else ok=confirm(msg);
+  if(ok){_sweepPending.delete(btnId);return true;}
+  _sweepPending.set(btnId,{ts:Date.now(),count,label:title,apply});
+  _ytSetProg(`취소됨 — 적용 안 함. 분석 결과(${count}건)는 30분간 보관했어요. **다시 누르면 재분석 없이 바로 적용**합니다.`);
+  return false;
+}
+// 결과 보관 없이 **확인창만** 앱 다이얼로그로 바꾸는 가벼운 버전 — 나머지 무거운 스윕들이 쓴다.
+// (오태깅 재배정처럼 분석이 아주 오래 걸리는 건 위 `_sweepConfirm`으로 결과까지 보관한다.)
+async function _sweepConfirmSimple(title,okLabel,msg){
+  if(typeof _confirmDialog==='function')return await _confirmDialog({title,msg,okLabel:okLabel||'실행',wide:true});
+  return confirm(msg);
+}
 const _M2_DEBUT_GRACE_YEARS=3;
 function _m2DebutBlocks(gko,publishedAt){
   if(!publishedAt)return false;
