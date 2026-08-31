@@ -2032,7 +2032,7 @@ function _amtBuildIndex(){
     for(const g of _artistGroups(a))if(g&&g.ko)gs.add(g.ko);
     gs.add(_ytGroupKoFor(a)); // 솔로 자기키(그룹 미소속이면 본인 이름)도 같은 사람의 소속으로 친다
     if(!idx.has(ko))idx.set(ko,[]);
-    idx.get(ko).push({gs,rep:a.repGroup||(a.group&&a.group.ko)||null});
+    idx.get(ko).push({gs,repForced:a.repGroup||null,rep:(a.group&&a.group.ko)||null});
   }
   return idx;
 }
@@ -2050,18 +2050,32 @@ function _amtSamePerson(ko,g1,g2){
 // 겸임 멤버의 대표 그룹 고르기 — ①제목에 literal로 언급된 그룹 ②artists.json repGroup ③주 소속 ④첫 번째.
 // 제목을 먼저 보는 이유: 마시로가 케플러 영상에선 `마시로(케플러)`, 메이딘 영상에선 `마시로(메이딘)`이어야
 // 맞는데, 전역 대표 하나로 고정하면 그 맥락이 날아간다.
+// 제목에 그룹명(한글·영문·별칭)이 literal로 있나 — 공백을 지우고 대조해 "NINE to SIX"/"nineto six" 같은
+// 표기 흔들림을 흡수한다. 한 글자짜리는 오탐이 심해 제외.
+function _amtGroupNamedInTitle(g,title){
+  const gr=GROUPS[g];
+  const t=(title||'').normalize('NFKC').toLowerCase().replace(/\s/g,'');
+  const names=[g,gr&&gr.en,...((gr&&gr.alias)||[]),...((gr&&gr.altNames)||[])].filter(Boolean);
+  return names.some(n=>{const s=String(n).toLowerCase().replace(/\s/g,'');return s.length>=2&&t.includes(s);});
+}
 function _amtPickGroup(ko,cands,title){
   if(cands.length<=1)return cands[0];
-  const t=(title||'').normalize('NFKC').toLowerCase().replace(/\s/g,'');
-  const named=cands.filter(g=>{
-    const gr=GROUPS[g];const names=[g,gr&&gr.en,...((gr&&gr.alias)||[]),...((gr&&gr.altNames)||[])].filter(Boolean);
-    return names.some(n=>{const s=String(n).toLowerCase().replace(/\s/g,'');return s.length>=2&&t.includes(s);});
-  });
+  const named=cands.filter(g=>_amtGroupNamedInTitle(g,title));
   if(named.length===1)return named[0];
   const pool=named.length?named:cands;
   if(!_amtIndex)_amtIndex=_amtBuildIndex();
-  for(const e of (_amtIndex.get(ko)||[]))if(e.rep&&pool.includes(e.rep))return e.rep;
-  return pool[0];
+  const ents=_amtIndex.get(ko)||[];
+  // ② artists.json repGroup — 사람이 못박은 값이 가장 우선
+  for(const e of ents)if(e.repForced&&pool.includes(e.repForced))return e.repForced;
+  // ③ 프로젝트/서바이벌 그룹(projectRing)보다 정규 그룹을 우선. 주 소속이 해체된 프로젝트 그룹으로
+  //    박혀 있는 경우가 있어서(이대휘·박우진의 주 소속이 워너원) 그대로 두면 현 소속 대신 옛 소속이
+  //    남는다. groups.json에 이미 있는 표식을 쓰므로 사람이 따로 채울 게 없다.
+  const regular=pool.filter(g=>!(GROUPS[g]&&GROUPS[g].projectRing));
+  if(regular.length===1)return regular[0];
+  const pool2=regular.length?regular:pool;
+  // ④ 주 소속
+  for(const e of ents)if(e.rep&&pool2.includes(e.rep))return e.rep;
+  return pool2[0];
 }
 // with_members/members를 한 번에 정리한다. 태그를 만드는 지점마다 이 함수를 통과시켜 규칙을 한 곳에 둔다.
 // ⚠️ 파라미터에 구조분해(`function f({a,b})`)를 쓰지 말 것 — tools/m2_harness.js가 함수를 슬라이스할 때
@@ -2099,6 +2113,18 @@ function _normalizeMemberTags(opt){
     if(!p.ko||drop.has(p.raw))return;
     if(!mem.has(p.ko))return;
     if(groupKo&&_amtSamePerson(p.ko,p.g,groupKo))drop.add(p.raw);
+  });
+  // ③ 동명이인 교차 태그 — ②에서 "다른 사람"이라 살려둔 것들. 실측(2026-08-31) 124건 중 **114건(92%)이
+  //    제목에 그 그룹명이 아예 없었다**: 엑스원 김우석 영상에 판타지보이즈 김우석이 52건, 밴드 LUCY
+  //    영상에 위키미키/우아 루시가 15건. 이름이 겹치는데 근거가 이름뿐이면 그건 매칭이 아니라 우연이다.
+  //    그래서 **제목에 그 그룹명이 literal로 있을 때만** 인정한다(_ATM_HASHTAG_ONLY_NAMES와 같은 원칙).
+  //    ⚠️ 이 영상 members에 같은 이름이 있을 때(=홈 로스터와 충돌)로 범위를 좁힌다 — 그게 실측으로
+  //    오탐이 확인된 구간이고, 넓히면 근거를 못 잰 정상 태그까지 날아간다.
+  parsed.forEach(p=>{
+    if(!p.ko||drop.has(p.raw))return;
+    if(!mem.has(p.ko)||!groupKo)return;
+    if(_amtSamePerson(p.ko,p.g,groupKo))return; // 동일인물은 ②가 이미 처리
+    if(!_amtGroupNamedInTitle(p.g,title))drop.add(p.raw);
   });
   const outWM=[];const seen=new Set();
   parsed.forEach(p=>{if(drop.has(p.raw)||seen.has(p.raw))return;seen.add(p.raw);outWM.push(p.raw);});

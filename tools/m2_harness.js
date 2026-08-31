@@ -89,7 +89,7 @@ function load(){
   // 겸임 멤버 태그 정규화(2026-08-31) — 있으면 싣는다
   if(/^function _normalizeMemberTags\(/m.test(adminSrc)){
     S(/^let _amtIndex\s*=/m,'_amtIndex');
-    ['_amtBuildIndex','_amtEntries','_amtSamePerson','_amtPickGroup','_normalizeMemberTags'].forEach(n=>F(new RegExp('^function '+n+'\\(','m'),n));
+    ['_amtBuildIndex','_amtEntries','_amtSamePerson','_amtGroupNamedInTitle','_amtPickGroup','_normalizeMemberTags'].forEach(n=>F(new RegExp('^function '+n+'\\(','m'),n));
   }
   // 수동 편집 이력 diff(2026-08-31) — 있으면 싣는다
   if(/^const _TAG_LOG_FIELDS\s*=/m.test(adminSrc)){
