@@ -9,19 +9,24 @@
    "contestants": "결과 그룹 멤버 — 구성상 확정이라 바로 써도 된다",
    "groups": "reunion형에서 경연에 나온 그룹들",
    "candidates": "제목에서 자동 추출한 등록 아티스트(n=등장 횟수). **사람 검수 대기** — 커버곡으로 언급된 아티스트가 섞일 수 있다.",
+   "patterns": "제목에서 그 프로그램을 알아보는 패턴(소문자 부분일치). gen_shows.js의 ALIAS와 같은 값이어야 한다.",
    "videosScanned": "그 프로그램 패턴으로 찾은 영상 수(근거 규모)"
   },
   "caution": [
    "⚠️ candidates를 검수 없이 태깅에 쓰지 말 것. 실측 예: I-LAND 2의 박예은(언차일드)·손주원(키비츠)는 진짜 참가자지만, 태양(빅뱅)·로제(블랙핑크)는 참가자가 아니라 커버곡으로 언급된 것이다.",
    "⚠️ 영어 프로그램명이 흔한 단어와 겹치면 부분문자열로 오염된다 — LOUD는 %loud%가 \"Cloud\"에 걸려 980건이 잡혔다(한글 \"라우드\"로 좁혀 85건). 새 프로그램을 추가할 때 검색 패턴을 먼저 확인할 것.",
    "⚠️ videosScanned가 0인 프로그램은 우리 DB에 그 프로그램 영상이 아직 없다는 뜻이다(명단이 비어도 정상)."
-  ]
+  ],
+  "notWiredYet": "⚠️ 이 명단을 매처에 연결(프로그램 영상의 멤버 후보를 명단으로 제한)해봤다가 **실측 후 되돌렸다**(2026-08-31). 상위 8개 프로그램 3,770영상 대조: 태그 2,661→2,654로 7개만 줄었는데 그중 6개가 **진짜 참가자를 지운 것**이었다 — 퀸덤퍼즐의 리이나·옐(하이키), 빌드업의 빛새온·김민서·제이 창. 원인은 contestants가 결과 그룹 멤버만이라 **다른 그룹으로 데뷔한 참가자가 명단에 없어서** 잘려나가는 것. 즉 연결하려면 candidates 검수가 먼저다. 부수 소득: 현재 매처는 이 프로그램 영상들을 이미 거의 정확히 태깅하고 있다(바뀐 행 5/3,770) — 보류 더미의 오염은 **과거 매처가 남긴 것**이지 지금 새로 생기는 게 아니다."
  },
  "shows": {
   "I-LAND": {
    "type": "predebut",
    "result": [
     "엔하이픈"
+   ],
+   "patterns": [
+    "i-land"
    ],
    "contestants": [
     "에반(엔하이픈)",
@@ -109,6 +114,9 @@
    "result": [
     "아일릿"
    ],
+   "patterns": [
+    "r u next"
+   ],
    "contestants": [
     "윤아(아일릿)",
     "민주(아일릿)",
@@ -149,6 +157,9 @@
    "result": [
     "트와이스"
    ],
+   "patterns": [
+    "식스틴"
+   ],
    "contestants": [
     "나연(트와이스)",
     "정연(트와이스)",
@@ -168,6 +179,9 @@
    "result": [
     "프로미스나인"
    ],
+   "patterns": [
+    "아이돌학교"
+   ],
    "contestants": [
     "하영(프로미스나인)",
     "지원(프로미스나인)",
@@ -186,6 +200,9 @@
    "type": "predebut",
    "result": [
     "아이즈원"
+   ],
+   "patterns": [
+    "프로듀스 48"
    ],
    "contestants": [
     "안유진(아이즈원)",
@@ -209,6 +226,9 @@
    "result": [
     "아이오아이"
    ],
+   "patterns": [
+    "프로듀스 101"
+   ],
    "contestants": [
     "임나영(아이오아이)",
     "김청하(아이오아이)",
@@ -230,6 +250,10 @@
    "result": [
     "워너원",
     "JBJ"
+   ],
+   "patterns": [
+    "프로듀스 101 시즌2",
+    "produce 101 season 2"
    ],
    "contestants": [
     "윤지성(워너원)",
@@ -258,6 +282,10 @@
    "result": [
     "케플러"
    ],
+   "patterns": [
+    "girls planet 999",
+    "걸스플래닛"
+   ],
    "contestants": [
     "최유진(케플러)",
     "샤오팅(케플러)",
@@ -276,6 +304,11 @@
    "type": "predebut",
    "result": [
     "제로베이스원"
+   ],
+   "patterns": [
+    "boys planet",
+    "보이즈 플래닛",
+    "보이즈플래닛"
    ],
    "contestants": [
     "성한빈(제로베이스원)",
@@ -441,6 +474,10 @@
    "result": [
     "알파드라이브원"
    ],
+   "patterns": [
+    "boys ii planet",
+    "보이즈 ii 플래닛"
+   ],
    "contestants": [
     "리오(알파드라이브원)",
     "준서(알파드라이브원)",
@@ -463,6 +500,11 @@
    "type": "predebut",
    "result": [
     "이즈나"
+   ],
+   "patterns": [
+    "i-land2",
+    "i-land 2",
+    "아이랜드2"
    ],
    "contestants": [
     "마이(이즈나)",
@@ -534,6 +576,10 @@
    "result": [
     "클로즈유어아이즈"
    ],
+   "patterns": [
+    "project 7",
+    "프로젝트 7"
+   ],
    "contestants": [
     "전민욱(클로즈유어아이즈)",
     "마징시앙(클로즈유어아이즈)",
@@ -551,6 +597,9 @@
    "type": "predebut",
    "result": [
     "클라씨"
+   ],
+   "patterns": [
+    "방과후 설렘"
    ],
    "contestants": [
     "명형서(클라씨)",
@@ -574,6 +623,9 @@
    "result": [
     "니쥬"
    ],
+   "patterns": [
+    "nizi project"
+   ],
    "contestants": [
     "마코(니쥬)",
     "리오(니쥬)",
@@ -592,6 +644,10 @@
    "type": "predebut",
    "result": [
     "엑스원"
+   ],
+   "patterns": [
+    "프로듀스 x 101",
+    "produce x 101"
    ],
    "contestants": [
     "민희(엑스원)",
@@ -615,6 +671,9 @@
    "result": [
     "아이딧"
    ],
+   "patterns": [
+    "debut's plan"
+   ],
    "contestants": [
     "장용훈(아이딧)",
     "김민재(아이딧)",
@@ -631,6 +690,10 @@
    "type": "predebut",
    "result": [
     "유니스"
+   ],
+   "patterns": [
+    "유니버스 티켓",
+    "universe ticket"
    ],
    "contestants": [
     "진현주(유니스)",
@@ -767,6 +830,9 @@
    "result": [
     "빅스"
    ],
+   "patterns": [
+    "마이돌(mydol)"
+   ],
    "contestants": [
     "엔(빅스)",
     "레오(빅스)",
@@ -782,6 +848,9 @@
    "type": "predebut",
    "result": [
     "아홉"
+   ],
+   "patterns": [
+    "유니버스 리그"
    ],
    "contestants": [
     "스티븐(아홉)",
@@ -801,6 +870,9 @@
    "type": "predebut",
    "result": [
     "티오원"
+   ],
+   "patterns": [
+    "to be world klass"
    ],
    "contestants": [
     "차웅기(티오원)",
@@ -825,6 +897,9 @@
    "result": [
     "캣츠아이"
    ],
+   "patterns": [
+    "dream academy"
+   ],
    "contestants": [
     "마농(캣츠아이)",
     "소피아(캣츠아이)",
@@ -840,6 +915,10 @@
    "type": "predebut",
    "result": [
     "누에라"
+   ],
+   "patterns": [
+    "makemate1",
+    "메이크메이트원"
    ],
    "contestants": [
     "기현(누에라)",
@@ -871,6 +950,9 @@
    "result": [
     "유니티"
    ],
+   "patterns": [
+    "더 유닛"
+   ],
    "contestants": [
     "진예(유니티)",
     "배우희(유니티)",
@@ -898,6 +980,9 @@
    "type": "predebut",
    "result": [
     "티엔엑스"
+   ],
+   "patterns": [
+    "라우드"
    ],
    "contestants": [
     "최태훈(티엔엑스)",
@@ -940,6 +1025,9 @@
    "result": [
     "배너"
    ],
+   "patterns": [
+    "피크타임"
+   ],
    "contestants": [
     "태환(배너)",
     "GON(배너)",
@@ -980,6 +1068,9 @@
    "result": [
     "악뮤"
    ],
+   "patterns": [
+    "k팝스타 시즌2"
+   ],
    "contestants": [
     "이찬혁(악뮤)",
     "이수현(악뮤)"
@@ -991,6 +1082,9 @@
    "type": "predebut",
    "result": [
     "판타지보이즈"
+   ],
+   "patterns": [
+    "소년판타지"
    ],
    "contestants": [
     "김규래(판타지보이즈)",
@@ -1074,6 +1168,9 @@
    "result": [
     "원더나인"
    ],
+   "patterns": [
+    "언더나인틴"
+   ],
    "contestants": [
     "유용하(원더나인)",
     "신예찬(원더나인)",
@@ -1093,6 +1190,9 @@
    "result": [
     "티에이엔"
    ],
+   "patterns": [
+    "극한데뷔 야생돌"
+   ],
    "contestants": [
     "창선(티에이엔)",
     "임주안(티에이엔)",
@@ -1109,6 +1209,11 @@
    "type": "predebut",
    "result": [
     "엘즈업"
+   ],
+   "patterns": [
+    "퀸덤 퍼즐",
+    "퀸덤퍼즐",
+    "queendom puzzle"
    ],
    "contestants": [
     "장예은(엘즈업)",
@@ -1200,6 +1305,9 @@
    "result": [
     "배틀"
    ],
+   "patterns": [
+    "배틀신화"
+   ],
    "contestants": [
     "류(배틀)",
     "휘찬(배틀)",
@@ -1214,6 +1322,9 @@
    "type": "predebut",
    "result": [
     "엔싸인"
+   ],
+   "patterns": [
+    "청춘스타"
    ],
    "contestants": [
     "카즈타(엔싸인)",
@@ -1231,6 +1342,9 @@
    "type": "reunion",
    "result": [
     "B.D.U"
+   ],
+   "patterns": [
+    "빌드업"
    ],
    "contestants": [
     "승훈(B.D.U)",
@@ -1304,6 +1418,9 @@
    "result": [
     "하입프린세스"
    ],
+   "patterns": [
+    "힙팝프린세스"
+   ],
    "contestants": [
     "코코(하입프린세스)",
     "YSY(하입프린세스)",
@@ -1340,6 +1457,11 @@
   "로드투킹덤": {
    "type": "reunion",
    "result": [],
+   "patterns": [
+    "로드투킹덤",
+    "로드 투 킹덤",
+    "road to kingdom"
+   ],
    "contestants": [],
    "groups": [
     "크래비티",
@@ -1517,6 +1639,9 @@
   "스타 레벨 테스트": {
    "type": "predebut",
    "result": [],
+   "patterns": [
+    "스타 레벨 테스트"
+   ],
    "contestants": [],
    "candidates": [
     {
