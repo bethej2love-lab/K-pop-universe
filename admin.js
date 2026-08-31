@@ -1276,6 +1276,61 @@ async function _ytSweepCoverCleanup(){
 }
 document.getElementById('sp-cover-clean-btn')?.addEventListener('click',_ytSweepCoverCleanup);
 
+// ── [겸임 멤버 중복 태그 정리](2026-08-31) ─────────────────────────────────────
+// 위 _normalizeMemberTags는 **앞으로 붙는** 태그만 고친다. 이미 쌓인 행은 이 스윕이 정리한다.
+// 판정 로직을 따로 쓰지 않고 같은 함수를 그대로 통과시키므로 매처와 정리가 어긋날 수 없다.
+// ⚠️ 동명이인(세븐틴 민규 / 동키즈 민규)은 합치지 않는다 — _amtSamePerson이 artists.json 항목 기준으로
+//    같은 사람일 때만 묶는다. tags_manual은 불가침. 스냅샷 저장 → "↩︎ 마지막 일괄 작업 되돌리기".
+async function _ytSweepDualMemberTags(){
+  if(!sb){_ytSetProg('Supabase 연결 없음');return;}
+  const btn=document.getElementById('sp-dualtag-btn');
+  if(btn)btn.disabled=true;
+  try{
+    _ytSetProg('[겸임 중복] 대상 조회 중…');
+    const{data:rows,error}=await _sbFetchAll(()=>sb.from(_YT_TABLE)
+      .select('id,title,group_ko,members,with_members,with_groups,tags_manual')
+      .neq('with_members','{}').order('id'));
+    if(error){_ytSetProg('조회 실패: '+error.message);return;}
+    if(!rows?.length){_ytSetProg('with_members가 있는 행이 없어요');return;}
+    const same=(a,b)=>a.length===b.length&&a.every((v,i)=>v===b[i]);
+    let manualSkipped=0;const updates=[];const sample=[];
+    for(let i=0;i<rows.length;i++){
+      if(i%2000===0){_ytSetProg(`[겸임 중복] 분석 중… ${i}/${rows.length} (후보 ${updates.length})`);await new Promise(r=>setTimeout(r));}
+      const v=rows[i];
+      const out=_normalizeMemberTags({title:v.title,groupKo:v.group_ko,members:v.members||[],withGroups:v.with_groups||[],withMembers:v.with_members||[]});
+      if(same(out.withMembers,v.with_members||[])&&same(out.withGroups,v.with_groups||[]))continue;
+      if(v.tags_manual){manualSkipped++;continue;}
+      const patch={with_members:out.withMembers};
+      if(!same(out.withGroups,v.with_groups||[]))patch.with_groups=out.withGroups;
+      updates.push({id:v.id,patch});
+      if(sample.length<60){
+        const removed=(v.with_members||[]).filter(x=>!out.withMembers.includes(x));
+        sample.push(`#${v.id} [${v.group_ko}] m:${JSON.stringify(v.members||[])} ${JSON.stringify(v.with_members)}→${JSON.stringify(out.withMembers)} (제거 ${JSON.stringify(removed)}) | ${(v.title||'').slice(0,60)}`);
+      }
+    }
+    console.log(`[겸임 중복] 조회 ${rows.length} · 정리 후보 ${updates.length} · 수동보호 ${manualSkipped}`);
+    if(sample.length)console.log('[겸임 중복] 표본:\n'+sample.join('\n'));
+    if(!updates.length){_ytSetProg(`겸임 중복 — 정리할 것 없음 (조회 ${rows.length}${manualSkipped?` · 수동보호 ${manualSkipped}`:''})`);return;}
+    const summary=`정리 ${updates.length}건 / 조회 ${rows.length} · 수동보호 ${manualSkipped}`;
+    _ytSetProg(`[겸임 중복] 미리보기 — ${summary}`);
+    await new Promise(r=>setTimeout(r,50));
+    const msg=`겸임(이중소속) 멤버 중복 태그 ${updates.length}건을 정리할까요?\n\n· 같은 사람이 두 소속으로 두 번 붙은 것 → 대표 그룹 하나로\n· members에 이미 있는 사람이 with_members에도 든 것 → 제거\n\n동명이인(세븐틴 민규 / 동키즈 민규)은 합치지 않아요 — artists.json에서 같은 인물일 때만.\n남길 대표 그룹은 ①제목에 언급된 그룹 ②artists.json repGroup ③주 소속 순서로 정해집니다.\n\n· 수동편집 ${manualSkipped}건 제외 · 표본 콘솔(F12) · 스냅샷 저장돼서 되돌리기 가능`;
+    let ok;
+    if(typeof _confirmDialog==='function')ok=await _confirmDialog({title:`겸임 중복 ${updates.length}건 정리`,msg,okLabel:'정리 실행',wide:true});
+    else ok=confirm(msg);
+    if(!ok){_ytSetProg(`취소됨 — 적용 안 함. 미리보기: ${summary} · 적용하려면 다시 눌러 "정리 실행"을 선택하세요(표본은 F12 콘솔).`);return;}
+    await _snapshotBeforeBulk('겸임 멤버 중복 태그 정리',updates.map(u=>u.id));
+    for(let i=0;i<updates.length;i+=200){
+      const results=await Promise.all(updates.slice(i,i+200).map(u=>sb.from(_YT_TABLE).update(u.patch).eq('id',u.id)));
+      const f=results.find(r=>r.error);if(f)throw new Error(f.error.message);
+      _ytSetProg(`[겸임 중복] ${Math.min(i+200,updates.length)}/${updates.length}건 적용 중…`);
+    }
+    _ytSetProg(`완료! 겸임 중복 태그 ${updates.length}건 정리. (되돌리기: "↩︎ 마지막 일괄 작업 되돌리기")`);
+  }catch(e){_ytSetProg('오류: '+e.message);}
+  finally{if(btn)btn.disabled=false;}
+}
+document.getElementById('sp-dualtag-btn')?.addEventListener('click',_ytSweepDualMemberTags);
+
 // [원곡 소급 재분류](Fable #3, 2026-08-23): 커버 영상인데 원곡 그룹이 with(함께한 그룹)로 잘못 들어간 걸
 // cover_of로 옮긴다. 태깅 시점 라우팅(_extBuildRows)의 소급 버전 — 기존 with 태그만 검사해 조건 맞는 것만
 // 이동(제목 전체 재파싱 아님, 나머지 태그 안 건드림). 자동은 "커버 키워드 + 6년+ 선배"만(고신뢰), "키워드
@@ -1427,8 +1482,9 @@ async function _ytSweepFancamMistag(){
       const literal=gt.some(t=>fc.artistNorm.includes(' '+t+' ')||(fc.enNorm&&fc.enNorm.includes(' '+t+' ')));
       if(!literal)continue;
       const members=(m.membersByGroup[ng]||[]);
-      const withGroups=[],withMembers=[];
+      let withGroups=[],withMembers=[];
       (m.withGroups||[]).forEach(og=>{const{asGroup,extraMembers}=_classifyGuestGroup(m.membersByGroup[og]||[],og);if(asGroup)withGroups.push(og);extraMembers.forEach(mko=>withMembers.push(`${mko}(${og})`));});
+      ({withGroups,withMembers}=_normalizeMemberTags({title:v.title,groupKo:ng,members,withGroups,withMembers})); // 겸임 중복 제거
       const patch={};const kinds=[];
       if(ng!==g){patch.group_ko=ng;patch.members=members;patch.with_groups=withGroups;patch.with_members=withMembers;kinds.push('group');}
       else{
@@ -1954,6 +2010,104 @@ async function _tagReviewResolve(id){
 // 때마다 버려지고 있었다(사용자 요청: "내 수동 태깅 편집 결과를 보고 학습해서 로직을 고도화"). 여기
 // 쌓인 before/after가 나중에 회귀 골든셋·규칙 후보 자동 제안의 입력이 된다.
 // 테이블(tag_edit_log)이 없으면 전부 조용히 no-op — tag_review_queue와 같은 방어 패턴.
+// ── 겸임(이중소속) 멤버 태그 정규화(2026-08-31) ──────────────────────────────────
+// 사용자 제보 — "사실상 동일인물인데 이중 소속인 친구들 더블 태깅이 너무 많이 됐다".
+// 실측(with_members 있는 행 6,000 표본): 같은 사람이 두 그룹으로 중복 99행, members에 이미 있는
+// 사람이 with_members에도 든 것 164행(그중 동일인물 57 + 솔로 자기키 49).
+//
+// 원인: 2026-08-26에 "부소속 태그가 조용히 버려지던 버그"를 고치면서 매처가 전 소속(_artistGroups)을
+// 보게 됐는데, **한 사람당 태그 하나**라는 규칙이 같이 안 들어갔다. 그래서 이진혁이 `이진혁(업텐션)`과
+// `이진혁(엑스원)`으로 두 번, 엄지가 members[엄지]와 with[엄지(여자친구)]로 두 번 붙는다.
+//
+// ⚠️ 동명이인은 건드리면 안 된다 — 세븐틴 민규와 동키즈 민규는 **다른 사람**이라 둘 다 맞을 수 있다.
+//    그래서 "같은 artists.json 항목이 두 그룹에 다 걸쳐 있을 때"만 동일인물로 보고 합친다.
+// ⚠️ `승한(승한)` 같은 표기는 버그가 아니다 — 솔로는 group_ko 키가 본인 이름이라(_ytGroupKoFor) 그게
+//    정상 표기이고 읽는 쪽도 그렇게 파싱한다. 그 행들의 진짜 문제는 members와의 중복이라 아래 ②가 잡는다.
+let _amtIndex=null; // 이름 → [그 이름을 쓰는 아티스트 각각의 소속 키 Set]
+function _amtBuildIndex(){
+  const idx=new Map();
+  for(const a of ARTISTS){
+    const ko=a.name&&a.name.ko;if(!ko)continue;
+    const gs=new Set();
+    for(const g of _artistGroups(a))if(g&&g.ko)gs.add(g.ko);
+    gs.add(_ytGroupKoFor(a)); // 솔로 자기키(그룹 미소속이면 본인 이름)도 같은 사람의 소속으로 친다
+    if(!idx.has(ko))idx.set(ko,[]);
+    idx.get(ko).push({gs,rep:a.repGroup||(a.group&&a.group.ko)||null});
+  }
+  return idx;
+}
+// 이름 ko를 쓰는 아티스트 중 그룹 g를 소속으로 갖는 항목(동명이인이면 여럿일 수 있음)
+function _amtEntries(ko,g){
+  if(!_amtIndex)_amtIndex=_amtBuildIndex();
+  return (_amtIndex.get(ko)||[]).filter(e=>e.gs.has(g));
+}
+// 같은 사람인가 — 한 아티스트 항목이 두 그룹을 **모두** 소속으로 갖고 있으면 동일인물
+function _amtSamePerson(ko,g1,g2){
+  if(g1===g2)return true;
+  if(!_amtIndex)_amtIndex=_amtBuildIndex();
+  return (_amtIndex.get(ko)||[]).some(e=>e.gs.has(g1)&&e.gs.has(g2));
+}
+// 겸임 멤버의 대표 그룹 고르기 — ①제목에 literal로 언급된 그룹 ②artists.json repGroup ③주 소속 ④첫 번째.
+// 제목을 먼저 보는 이유: 마시로가 케플러 영상에선 `마시로(케플러)`, 메이딘 영상에선 `마시로(메이딘)`이어야
+// 맞는데, 전역 대표 하나로 고정하면 그 맥락이 날아간다.
+function _amtPickGroup(ko,cands,title){
+  if(cands.length<=1)return cands[0];
+  const t=(title||'').normalize('NFKC').toLowerCase().replace(/\s/g,'');
+  const named=cands.filter(g=>{
+    const gr=GROUPS[g];const names=[g,gr&&gr.en,...((gr&&gr.alias)||[]),...((gr&&gr.altNames)||[])].filter(Boolean);
+    return names.some(n=>{const s=String(n).toLowerCase().replace(/\s/g,'');return s.length>=2&&t.includes(s);});
+  });
+  if(named.length===1)return named[0];
+  const pool=named.length?named:cands;
+  if(!_amtIndex)_amtIndex=_amtBuildIndex();
+  for(const e of (_amtIndex.get(ko)||[]))if(e.rep&&pool.includes(e.rep))return e.rep;
+  return pool[0];
+}
+// with_members/members를 한 번에 정리한다. 태그를 만드는 지점마다 이 함수를 통과시켜 규칙을 한 곳에 둔다.
+// ⚠️ 파라미터에 구조분해(`function f({a,b})`)를 쓰지 말 것 — tools/m2_harness.js가 함수를 슬라이스할 때
+// 선언 뒤 **첫 `{`를 본문 시작으로** 보기 때문에, 구조분해 괄호에서 잘려 회귀 테스트가 통째로 깨진다.
+function _normalizeMemberTags(opt){
+  const title=opt.title,groupKo=opt.groupKo,members=opt.members,withGroups=opt.withGroups,withMembers=opt.withMembers;
+  const mem=new Set(members||[]);
+  const parsed=[];
+  for(const w of (withMembers||[])){
+    const m=String(w).match(/^(.+)\((.+)\)$/);
+    if(!m){parsed.push({raw:w,ko:null,g:null});continue;}
+    parsed.push({raw:w,ko:m[1],g:m[2]});
+  }
+  // ① 같은 사람이 여러 그룹으로 들어간 것 → 대표 그룹 하나로
+  const byName=new Map();
+  parsed.forEach(p=>{if(!p.ko)return;if(!byName.has(p.ko))byName.set(p.ko,[]);byName.get(p.ko).push(p);});
+  const drop=new Set();
+  byName.forEach((list,ko)=>{
+    const gs=[...new Set(list.map(p=>p.g))];
+    if(gs.length<2)return;
+    // 동일인물인 소속끼리만 묶는다(동명이인은 각자 남긴다)
+    const clusters=[];
+    gs.forEach(g=>{
+      const c=clusters.find(cl=>cl.some(x=>_amtSamePerson(ko,x,g)));
+      if(c)c.push(g);else clusters.push([g]);
+    });
+    clusters.forEach(cl=>{
+      if(cl.length<2)return;
+      const keep=_amtPickGroup(ko,cl,title);
+      list.forEach(p=>{if(cl.includes(p.g)&&p.g!==keep)drop.add(p.raw);});
+    });
+  });
+  // ② members(=이 영상 group_ko 소속)에 이미 있는 사람이 with_members에도 있으면 중복 — 같은 사람일 때만 제거
+  parsed.forEach(p=>{
+    if(!p.ko||drop.has(p.raw))return;
+    if(!mem.has(p.ko))return;
+    if(groupKo&&_amtSamePerson(p.ko,p.g,groupKo))drop.add(p.raw);
+  });
+  const outWM=[];const seen=new Set();
+  parsed.forEach(p=>{if(drop.has(p.raw)||seen.has(p.raw))return;seen.add(p.raw);outWM.push(p.raw);});
+  // with_groups도 중복 제거(정렬은 바꾸지 않는다 — 기존 비교 로직이 순서를 보는 곳이 있음)
+  const outWG=[];const seenG=new Set();
+  (withGroups||[]).forEach(g=>{if(seenG.has(g))return;seenG.add(g);outWG.push(g);});
+  return{withMembers:outWM,withGroups:outWG};
+}
+
 const _TAG_LOG_FIELDS=['group_ko','members','with_members','with_groups','cover_of_members','cover_of_groups','cover_of_song','content_flag','category','is_short'];
 // 배열/스칼라를 순서 무관하게 비교 — members는 저장 순서가 매번 달라서 그대로 비교하면 안 바뀐 것도
 // "바뀜"으로 잡힌다(로그가 노이즈로 가득 차면 학습 재료로 못 씀).
@@ -4450,13 +4604,14 @@ async function _ytAutoTagMembers(){
           const match=_m2ParseTitle(title,gko,undefined,v.published_at);
           if(match){
             const otherGkos=[match.primaryGroup,...match.withGroups].filter(og=>og&&og!==gko);
-            const withGroups=[],withMembers=[];
+            let withGroups=[],withMembers=[];
             otherGkos.forEach(og=>{
               const sec=match.membersByGroup[og]||[];
               const{asGroup,extraMembers}=_classifyGuestGroup(sec,og);
               if(asGroup)withGroups.push(og);
               extraMembers.forEach(mko=>withMembers.push(`${mko}(${og})`));
             });
+            ({withGroups,withMembers}=_normalizeMemberTags({title,groupKo:gko,members:patch.members||v.members,withGroups,withMembers})); // 겸임 중복 제거
             if(withMembers.length)patch.with_members=withMembers;
             if(withGroups.length)patch.with_groups=withGroups;
           }
@@ -5410,6 +5565,8 @@ function _extBuildRows(vids,strict,tier,owner,defaultCat,handle){
       if(asGroup)withGroups.push(gko);
       extraMembers.forEach(mko=>withMembers.push(`${mko}(${gko})`));
     });
+    // 겸임 멤버가 두 소속으로 두 번 붙거나, members에 이미 있는 사람이 with_에도 붙는 것을 여기서 정리한다.
+    ({withGroups,withMembers}=_normalizeMemberTags({title:v.title,groupKo:owner?ownerGko:(match&&match.primaryGroup),members,withGroups,withMembers}));
     // fans tier는 원래 category(mv/live/short 등)가 뭐였든 무조건 'fan'으로 — "by Fans" 탭은 콘텐츠
     // 종류가 아니라 "팬이 만들었다"는 출처 자체가 기준이라, variety/show처럼 'other'만 덮어쓰는 방식으론
     // 안 됨(직캠류 팬캠도 팬 채널 콘텐츠면 다 여기로 가야 함, 2026-08-21).
@@ -5768,6 +5925,7 @@ async function _ytBuildManualVideoRow(key,vid,manualGroup,manualMembers){
       if(asGroup)withGroups.push(gko);
       extraMembers.forEach(mko=>withMembers.push(`${mko}(${gko})`));
     }
+    ({withGroups,withMembers}=_normalizeMemberTags({title,groupKo,members,withGroups,withMembers})); // 겸임 중복 제거
   }
   // 제목에 멤버 이름이 안 그대로 실려있거나(별명·영문 표기 등) 자동 인식이 틀렸을 때, 직접 입력한
   // 멤버명으로 덮어씀 — 해당 그룹의 실제 멤버인지 검증해서 오타로 엉뚱한 이름이 들어가는 걸 막는다.

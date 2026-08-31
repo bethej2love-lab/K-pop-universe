@@ -86,6 +86,11 @@ function load(){
     // 원곡 오탐 청소의 되돌리기 게이트(2026-08-31) — 있으면 싣는다
     if(/^function _coverRestoreSignal\(/m.test(adminSrc))F(/^function _coverRestoreSignal\(/m,'_coverRestoreSignal');
   }
+  // 겸임 멤버 태그 정규화(2026-08-31) — 있으면 싣는다
+  if(/^function _normalizeMemberTags\(/m.test(adminSrc)){
+    S(/^let _amtIndex\s*=/m,'_amtIndex');
+    ['_amtBuildIndex','_amtEntries','_amtSamePerson','_amtPickGroup','_normalizeMemberTags'].forEach(n=>F(new RegExp('^function '+n+'\\(','m'),n));
+  }
   // 수동 편집 이력 diff(2026-08-31) — 있으면 싣는다
   if(/^const _TAG_LOG_FIELDS\s*=/m.test(adminSrc)){
     S(/^const _TAG_LOG_FIELDS\s*=/m,'_TAG_LOG_FIELDS');
@@ -107,7 +112,8 @@ module.exports={_m2ParseTitle,_atmResolveMembers,_wonkokStripClause,_PROJECT_UNI
   _coverContext:(typeof _coverContext==='function')?_coverContext:null,_coverHasCollabSignal:(typeof _coverHasCollabSignal==='function')?_coverHasCollabSignal:null,
   _coverRestoreSignal:(typeof _coverRestoreSignal==='function')?_coverRestoreSignal:null,
   _fancamParseTitle:(typeof _fancamParseTitle==='function')?_fancamParseTitle:null,
-  _tagLogDiff:(typeof _tagLogDiff==='function')?_tagLogDiff:null,_tagLogSame:(typeof _tagLogSame==='function')?_tagLogSame:null};
+  _tagLogDiff:(typeof _tagLogDiff==='function')?_tagLogDiff:null,_tagLogSame:(typeof _tagLogSame==='function')?_tagLogSame:null,
+  _normalizeMemberTags:(typeof _normalizeMemberTags==='function')?_normalizeMemberTags:null,_amtSamePerson:(typeof _amtSamePerson==='function')?_amtSamePerson:null};
 `;
   const mod={exports:{}};
   new Function('module','exports','require',src)(mod,mod.exports,require);
