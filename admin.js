@@ -3061,7 +3061,10 @@ let _vmOnlyNormal=false;
 //    한쪽만 고치면 "카드엔 156개인데 열어보면 145개"로 어긋난다(같은 날 루틴/버튼 드리프트 사고와
 //    같은 종류라 아예 함수 하나로 묶었다). tests/routine-parity.test.js가 이 대응도 검사한다.
 function _vmReviewQueueFilter(q){
-  return q.eq('needs_review',true).or('content_flag.is.null,content_flag.neq.무관');
+  // tags_manual 제외(2026-08-31 사용자 제보 — "내가 수동편집한 건 아예 안 떠야지"). 편집 모달에서
+  // 직접 고쳐 저장한 행은 사람이 이미 판단을 끝낸 것이라 "그룹배정이 맞나?"를 다시 물을 이유가 없다.
+  // (예전엔 편집 저장이 needs_review를 안 내려서, 큐에서 열어 고쳐도 그 자리에 계속 남았다.)
+  return q.eq('needs_review',true).or('content_flag.is.null,content_flag.neq.무관').or('tags_manual.is.null,tags_manual.is.false');
 }
 
 // ── 탭 조회 결과 캐시 ─────────────────────────────────────────────────────────
@@ -6153,7 +6156,9 @@ async function _vmRefreshRows(ids){
   // 이 탭의 조건에서 벗어난 행(예: 검수 탭에서 승인돼 needs_review가 내려간 행)은 목록에서 뺀다.
   // 무관 처리는 '이 그룹배정이 틀렸다'는 판정이라 검수를 마친 것과 같다 — 편집 모달에서 무관으로
   // 바꾼 행이 목록에 그대로 남아 있던 문제(2026-08-27 제보). 조회 필터(_vmReviewQueueFilter)와 같은 기준.
-  const stillFits=r=>_vmTab!=='review'||(r.needs_review===true&&r.content_flag!=='무관');
+  // _vmReviewQueueFilter(조회 조건)와 **같은 기준**이어야 한다 — 한쪽만 고치면 "편집하면 사라지는데
+  // 탭을 다시 열면 되살아난다"(또는 그 반대)가 된다. tags_manual 조건도 같이 반영(2026-08-31).
+  const stillFits=r=>_vmTab!=='review'||(r.needs_review===true&&r.content_flag!=='무관'&&!r.tags_manual);
   _vmRows=_vmRows.map(r=>byId.has(r.id)?{...r,...byId.get(r.id)}:r).filter(r=>!byId.has(r.id)||stillFits(r));
   _vmCacheSync();_vmCacheDropOthers(); // 방금 쓰기가 있었으므로 다른 탭 캐시는 못 믿는다
   _vmRenderVideoList();
@@ -6426,7 +6431,8 @@ document.getElementById('vid-tag-save').addEventListener('click',async e=>{
     // 날아가는 사고가 날 수 있음).
     const overwriteTags=document.getElementById('vid-tag-bulk-overwrite').checked;
     const updatePayload={};
-    if(overwriteTags){updatePayload.members=members;updatePayload.with_members=withMembers;updatePayload.with_groups=withGroups;updatePayload.cover_of_members=coverMembers;updatePayload.cover_of_groups=coverGroups;updatePayload.tags_manual=true;}
+    // 태그를 덮어쓴다 = 사람이 최종 확정한 것이므로 단일 편집과 같이 검수도 끝난 것으로 본다(needs_review:false).
+    if(overwriteTags){updatePayload.members=members;updatePayload.with_members=withMembers;updatePayload.with_groups=withGroups;updatePayload.cover_of_members=coverMembers;updatePayload.cover_of_groups=coverGroups;updatePayload.tags_manual=true;updatePayload.needs_review=false;}
     if(category)updatePayload.category=category;
     if(_vidTagShortTouched&&isShort!==undefined)updatePayload.is_short=isShort;
     if(_vidTagFlagTouched)Object.assign(updatePayload,_flagPatch(contentFlag,'manual'));
@@ -6477,7 +6483,11 @@ document.getElementById('vid-tag-save').addEventListener('click',async e=>{
   // tags_manual:true — 이 모달에서 직접 저장한 행은 "관리자가 확인한 최종 태그"로 표시해서, 자동
   // 태깅/재검증 스윕(멤버+콜라보 자동 태깅, 콜라보 오태깅 재검증 등)이 알고리즘 판단과 다르더라도
   // 이 값을 절대 덮어쓰지 않게 함(2026-07-31, 자동 재검증이 수동 태그를 지워버린 사고 이후 추가).
-  const updatePayload={members,with_members:withMembers,with_groups:withGroups,cover_of_members:coverMembers,cover_of_groups:coverGroups,..._flagPatch(contentFlag,'manual'),tags_manual:true};
+  // needs_review:false — 이 모달에서 사람이 직접 보고 저장한 순간 검수는 끝난 것이다. 예전엔 이게
+  // 없어서 그룹배정 검수 큐에서 영상을 열어 고쳐 저장해도 needs_review가 true로 남아 **큐에 그대로
+  // 남았다**(2026-08-31 사용자 제보 — "수동편집한 건 아예 안 떠야지"). 승인/거부 버튼은 이미 내리고
+  // 있었는데 편집 경로만 빠져 있었음.
+  const updatePayload={members,with_members:withMembers,with_groups:withGroups,cover_of_members:coverMembers,cover_of_groups:coverGroups,..._flagPatch(contentFlag,'manual',{needs_review:false}),tags_manual:true};
   if(category!==undefined)updatePayload.category=category||null;
   // 단일 편집은 체크박스가 DB 현재값으로 채워져 열리므로 항상 그대로 반영해도 안전하다(일괄 편집만
   // "안 건드림"을 구분해야 함).

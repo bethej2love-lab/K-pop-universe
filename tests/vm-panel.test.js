@@ -27,6 +27,9 @@ need(/function _vmReviewQueueFilter\(q\)\{/.test(src), '검수 큐 정의가 _vm
 const filterBody = (src.match(/function _vmReviewQueueFilter\(q\)\{[\s\S]*?\n\}/) || [''])[0];
 need(/\.eq\('needs_review',true\)/.test(filterBody), '  · needs_review=true 조건 포함');
 need(/content_flag\.neq\.무관/.test(filterBody), "  · content_flag='무관'은 제외");
+// 2026-08-31 — 수동편집분(tags_manual)도 큐에서 빠져야 한다. 사람이 편집 모달에서 직접 고쳐 저장한
+// 행에 "이 그룹배정 맞나요?"를 다시 묻는 건 검수를 끝없이 만든다(사용자 제보).
+need(/tags_manual\.is\.false/.test(filterBody), '  · 수동편집(tags_manual)은 제외');
 
 // 목록 조회(_vmLoad의 review 탭)와 홈 카운트 카드가 둘 다 이 함수를 통과해야 한다.
 const uses = (src.match(/_vmReviewQueueFilter\(/g) || []).length;
@@ -37,8 +40,14 @@ const rawEq = [...src.matchAll(/\.eq\('needs_review',true\)/g)].length;
 need(rawEq === 1, `needs_review=true 직접 필터는 _vmReviewQueueFilter 안 1곳뿐이어야 함 — 발견 ${rawEq}곳`);
 
 // ── ② 무관 처리한 행이 화면에서도 즉시 빠지는가(재조회 없이) ────────────────────────────
-need(/const stillFits=r=>_vmTab!=='review'\|\|\(r\.needs_review===true&&r\.content_flag!=='무관'\)/.test(src),
-  '_vmRefreshRows의 stillFits가 무관 행을 검수 탭에서 제외(조회 필터와 같은 기준)');
+// stillFits(화면에서 걷어낼지)와 _vmReviewQueueFilter(조회 조건)는 **같은 기준**이어야 한다. 한쪽만
+// 고치면 "편집하면 사라지는데 탭을 다시 열면 되살아난다"(또는 그 반대)가 된다. 문자열을 통째로 박아두면
+// 조건이 늘 때마다 깨지므로, 조건별로 하나씩 확인한다.
+const stillFitsBody = (src.match(/const stillFits=r=>[^;]+;/) || [''])[0];
+need(/_vmTab!=='review'/.test(stillFitsBody), '_vmRefreshRows의 stillFits가 검수 탭에만 적용');
+need(/r\.needs_review===true/.test(stillFitsBody), '  · needs_review 조건(조회 필터와 동일)');
+need(/r\.content_flag!=='무관'/.test(stillFitsBody), "  · 무관 행 제외(조회 필터와 동일)");
+need(/!r\.tags_manual/.test(stillFitsBody), '  · 수동편집분 제외(조회 필터와 동일)');
 need(/\(tab==='review'&&newFlag==='무관'\)/.test(src),
   "_vmSetFlag가 검수 탭에서 무관으로 바꾼 행을 목록에서 걷어냄");
 
