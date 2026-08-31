@@ -2751,10 +2751,20 @@
   #feed-close:active{color:rgba(200,218,255,0.85);transform:scale(0.86);transition:transform .07s;}
   #feed-body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;background:rgba(8,11,24,0.78);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);padding-bottom:calc(env(safe-area-inset-bottom,0px) + 80px);}
   /* 2탭(For You / Discover) — 스크롤해도 위에 붙어있게 sticky. 배경은 #feed-body와 맞춰 콘텐츠가 비쳐도 안 지저분하게. */
-  #feed-tabs{position:sticky;top:0;z-index:3;display:flex;gap:8px;padding:8px 20px 10px;background:rgba(8,11,24,0.92);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);}
-  .feed-tab{flex:0 0 auto;padding:8px 18px;border-radius:999px;border:0.5px solid rgba(255,255,255,0.12);background:rgba(255,255,255,0.04);color:rgba(200,215,250,0.6);font-size:13px;font-weight:700;letter-spacing:.02em;cursor:pointer;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;-webkit-tap-highlight-color:transparent;transition:background .14s,color .14s,border-color .14s;}
-  .feed-tab.active{background:rgba(255,255,255,0.15);color:#fff;border-color:transparent;}
-  .feed-tab:active{transform:scale(0.96);}
+  /* 탐험 패널 탭 — X(트위터)식 언더라인 방식(2026-08-31 사용자 요청). 예전엔 알약 버튼(배경+테두리)이라
+     존재감이 컸는데, 배경을 거의 없애고 **탭이 폭을 정확히 반씩 나눠 갖고 활성 탭 글자 밑에만 밑줄**이
+     깔리는 형태로 바꿨다. 알약(.seg-control)과는 다른 카테고리이니 혼동하지 말 것 — 이건 화면 전환용
+     최상위 탭이고, .seg-control은 목록 안의 필터다([[세그먼트 컨트롤 컴포넌트]]).
+     ⚠️ 밑줄은 버튼이 아니라 **안쪽 span**에 건다. 버튼에 걸면 반쪽 폭 전체에 밑줄이 그어져서
+        X처럼 안 보인다(글자 폭에 맞아야 함). */
+  #feed-tabs{position:sticky;top:0;z-index:3;display:flex;gap:0;padding:0;background:rgba(8,11,24,0.92);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-bottom:0.5px solid rgba(255,255,255,0.09);}
+  .feed-tab{flex:1 1 0;display:flex;align-items:center;justify-content:center;padding:14px 4px 0;border:none;border-radius:0;background:none;color:rgba(200,215,250,0.52);font-size:14px;font-weight:700;letter-spacing:.01em;cursor:pointer;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;-webkit-tap-highlight-color:transparent;transition:color .16s,background .16s;}
+  .feed-tab>span{position:relative;display:inline-block;padding-bottom:13px;white-space:nowrap;}
+  .feed-tab>span::after{content:'';position:absolute;left:0;right:0;bottom:0;height:3px;border-radius:3px 3px 0 0;background:rgba(140,175,255,0.95);opacity:0;transform:scaleX(0.4);transition:opacity .16s,transform .16s cubic-bezier(0.32,0.72,0,1);}
+  .feed-tab.active{color:#fff;}
+  .feed-tab.active>span::after{opacity:1;transform:scaleX(1);}
+  .feed-tab:hover:not(.active){color:rgba(220,232,255,0.78);background:rgba(255,255,255,0.03);}
+  .feed-tab:active{background:rgba(255,255,255,0.06);}
   .feed-pane[hidden]{display:none;}
   /* 즐겨찾기 신작 온보딩 — 아직 하트 누른 게 없을 때 이 선반이 비지 않게 안내 카드로 채운다. */
   .feed-onboard-card{flex:0 0 auto;max-width:min(300px,78vw);display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:14px;background:rgba(255,255,255,0.05);border:0.5px solid rgba(255,255,255,0.10);}

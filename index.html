@@ -18535,8 +18535,10 @@ _totopBtn.addEventListener('click',e=>{
          Discover는 무거워서 그 탭을 처음 누를 때만 지연 로드한다(_feedSwitchTab) — 열자마자 34개
          선반을 동시에 치던 덜컹거림·중복을 구조적으로 줄이는 게 목적. -->
     <div id="feed-tabs">
-      <button id="feed-tab-rec" class="feed-tab active" type="button">✨ For You</button>
-      <button id="feed-tab-disc" class="feed-tab" type="button">🧭 Discover</button>
+      <!-- 라벨을 span으로 감싸는 이유: 밑줄(활성 표시)이 **버튼 폭이 아니라 글자 폭**에 맞아야 X처럼
+           보인다. 버튼은 반반을 차지하고, 밑줄은 그 안의 글자 밑에만 깔린다(2026-08-31 사용자 요청). -->
+      <button id="feed-tab-rec" class="feed-tab active" type="button"><span>✨ For You</span></button>
+      <button id="feed-tab-disc" class="feed-tab" type="button"><span>🧭 Discover</span></button>
     </div>
     <!-- For You = "나": 즐겨찾기 신작 → 이어보기 (2026-08-30 재배치. Trend는 "전체·탐색"이라 Discover로 이동). -->
     <div id="feed-pane-rec" class="feed-pane">
