@@ -13,17 +13,25 @@
   }
 
   canvas{display:block;}
+  /* 첫 인상 = 에디토리얼 볼드(Pudding 레퍼런스, 2026-08-31). 묵직한 900 헤드라인 + 리드인 한 줄,
+     'UNIVERSE'만 민트 액센트. 연출은 절제 — 진입 시 fade-up 한 번만(연속 애니 없음). */
   #loading{
     position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);
-    font-family:'Apple SD Gothic Neo',sans-serif;
-    font-size:13px;letter-spacing:0.12em;white-space:nowrap;
     z-index:98;
-    background:linear-gradient(100deg,#7d8ef0 35%,#e8edff 50%,#7d8ef0 65%);
-    background-size:220% 100%;
-    -webkit-background-clip:text;background-clip:text;
-    color:transparent;-webkit-text-fill-color:transparent;
-    animation:loading-shimmer 2.2s linear infinite;
+    font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;
+    display:flex;flex-direction:column;gap:3px;align-items:flex-start;white-space:nowrap;
+    animation:ld-in .7s cubic-bezier(.2,.7,.2,1) backwards;
   }
+  #loading .ld-l1{
+    font-size:clamp(13px,3.2vw,16px);font-weight:600;letter-spacing:0.005em;
+    color:rgba(188,203,240,0.6);padding-left:0.08em;
+  }
+  #loading .ld-l2{
+    font-size:clamp(28px,9vw,52px);font-weight:900;letter-spacing:-0.022em;line-height:1.0;
+    color:#e9eeff;text-shadow:0 3px 34px rgba(120,150,255,0.28);
+  }
+  #loading .ld-ac{ color:#54e0c6;text-shadow:0 0 24px rgba(84,224,198,0.35); }
+  @keyframes ld-in{from{opacity:0;transform:translate(-50%,-44%);}to{opacity:1;transform:translate(-50%,-50%);}}
   @keyframes loading-shimmer{0%{background-position:160% 0;}100%{background-position:-60% 0;}}
   #loading.loading-error{
     animation:none;letter-spacing:0;white-space:normal;

@@ -55,7 +55,7 @@
 <script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@1/index.js"></script>
 </head>
 <body>
-<div id="loading">Here is Our K-Pop Universe..!</div>
+<div id="loading"><span class="ld-l1">Here is our</span><span class="ld-l2">K-pop <span class="ld-ac">UNIVERSE</span>.</span></div>
 <div id="loading-veil"></div>
 <div id="loading-ring"></div>
 <div id="journal-sidebar">
@@ -2139,7 +2139,7 @@ function _artistByNameGroup(nm,gko){ // 검색 인덱스가 멤버 owner(ARTIST 
   return _artByNG.get(nm+'\u0000'+gko);
 }
 let _loadDone=0;
-function _loadTick(){ if(_loadDone<3)_loadDone++; const el=document.getElementById('loading'); if(el)el.textContent='Here is Our K-Pop Universe..! ('+_loadDone+'/3)'; }
+function _loadTick(){ if(_loadDone<3)_loadDone++; } // 진행 카운트만(텍스트엔 표시 안 함)
 // ── Build universe ────────────────────────────────
 async function buildUniverse(){
   const _loadT0=performance.now();
