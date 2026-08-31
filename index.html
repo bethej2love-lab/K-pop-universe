@@ -10409,7 +10409,13 @@ document.addEventListener('pointerdown',e=>{
 // 열림이 그대로 튀어나오던 문제). 자동열림 수명(_obTimer 예약 중 or _obActive) 동안만 관여.
 window.addEventListener('pointerdown',e=>{
   if(!_obTimer&&!_obActive)return;
-  if(e.target.closest('#feed-overlay,#tab-feed,#dh-feed-btn,#gc-totop'))return; // 탐험 패널/탐험 열기 버튼/맨위로 버튼은 제외 — #gc-totop은 패널 조작이라 닫기 대상 아님(2026-08-30, "top버튼 눌러도 닫힘" 제보)
+  // 탐험 패널/탐험 열기 버튼/맨위로 버튼은 제외 — #gc-totop은 패널 조작이라 닫기 대상 아님(2026-08-30, "top버튼 눌러도 닫힘" 제보)
+  // #yt-lightbox 추가(2026-08-31, "탐험 패널에서 영상 눌렀다 닫으면 패널까지 꺼진다" 제보):
+  //   라이트박스는 **탐험 패널에서 열린 것**이라 그걸 만지는 건 "패널 아닌 걸 건드린" 게 아니다.
+  //   ⚠️ 라이트박스에 이미 걸린 `pointerdown` stopPropagation(4685행)은 **bubble**이라 여기(capture)를
+  //      못 막는다. 그래서 터치 기기에서 touchstart 앞에 오는 pointerdown이 항상 먼저 이 핸들러에 잡혀,
+  //      아래로 당겨 닫든 상단 버튼을 누르든 **영상을 건드리는 순간** 밑의 패널이 닫히고 있었다.
+  if(e.target.closest('#feed-overlay,#tab-feed,#dh-feed-btn,#gc-totop,#yt-lightbox'))return;
   _dismissOnboardHint();
 },true);
 
