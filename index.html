@@ -15208,6 +15208,72 @@ async function _buildFeedWeeklyTopCams(list,discList){
 // with_members 둘 다 이 포맷을 씀. 그룹 자체가 통째로 태깅된 cover_of_groups/with_groups는 그룹명 그대로.
 // 연도별 라이브 TOP 100 — 2004~현재 중 랜덤 연도를 뽑아 해당 연도 live 영상을 조회수 내림차순으로 최대 100개 보여줌.
 // 조회수 데이터는 관리자가 "전체 조회수 갱신" 버튼으로 갱신 (월 1회 권장). 데이터 없으면 카드 미표시.
+// ── 올해(2026) 한정 모음 — 매번 랜덤 2개(2026-08-31 사용자 요청) ────────────────
+// 기존 `_buildFeedYearlyTop`은 2004~올해 중 **한 해를 랜덤**으로 골라서, 올해가 걸릴 확률이 1/23이었다
+// ("2026 모음이 잘 안 보인다"는 제보의 원인). 그래서 올해 전용 선반 풀을 따로 두고 **매번 2개를 뽑는다**.
+// ⚠️ 풀을 다 돌리지 않고 2개만 실행한다 — 선반 하나당 쿼리 하나라, 6개를 다 던지면 방금 고친
+//    동시 스탬피드([[Discover 탭 선반 동시 스탬피드]])를 다시 만드는 꼴이 된다.
+// 결과가 3건 미만이면 그 선반은 조용히 건너뛰고 다음 후보를 시도한다(연초엔 데이터가 얇을 수 있음).
+const _FEED_THIS_YEAR_POOL=[
+  {key:'cam',icon:'🎥',ko:y=>`${y}년 개인 직캠 TOP 20`,en:y=>`${y} Solo Fancam TOP 20`,
+   subKo:'올해 올라온 직캠 조회수 기준',subEn:'Top viewed fancams this year',
+   pick:vids=>_capByGroup(vids.filter(v=>_FANCAM_TITLE_RE.test(v.title)&&(v.members||[]).length===1),v=>v.group_ko,3).slice(0,20),
+   cat:'live'},
+  {key:'stage',icon:'🎤',ko:y=>`${y}년 무대 TOP 30`,en:y=>`${y} Stage TOP 30`,
+   subKo:'올해 음악방송·무대 조회수 기준',subEn:'Top viewed stages this year',
+   pick:vids=>_capByGroup(vids.filter(v=>!(_FANCAM_TITLE_RE.test(v.title)&&(v.members||[]).length===1)),v=>v.group_ko,2).slice(0,30),
+   cat:'live'},
+  {key:'mv',icon:'📀',ko:y=>`${y}년 컴백·MV 모음`,en:y=>`${y} Comebacks & MVs`,
+   subKo:'올해 나온 뮤직비디오',subEn:'Music videos released this year',
+   pick:vids=>_capByGroup(vids,v=>v.group_ko,2).slice(0,30),cat:'mv'},
+  {key:'debut',icon:'🌱',ko:y=>`${y}년 데뷔 그룹`,en:y=>`Debuted in ${y}`,
+   subKo:'올해 데뷔한 그룹들',subEn:'Groups that debuted this year',
+   pick:(vids,y)=>{const set=new Set(Object.keys(GROUPS).filter(ko=>String(GROUPS[ko].debut||'').slice(0,4)===String(y)));
+     return set.size?_capByGroup(vids.filter(v=>set.has(v.group_ko)),v=>v.group_ko,4).slice(0,30):[];},
+   cat:'live'},
+  {key:'cover',icon:'🎵',ko:y=>`${y}년 커버 무대`,en:y=>`${y} Cover Stages`,
+   subKo:'올해 올라온 커버',subEn:'Covers uploaded this year',
+   pick:vids=>_capByGroup(vids.filter(v=>(v.cover_of_groups||[]).length||(v.cover_of_members||[]).length),v=>v.group_ko,2).slice(0,30),
+   cat:null,cover:true},
+  {key:'half',icon:'🗓️',ko:y=>`${y}년 ${_thisYearHalf()===1?'상반기':'하반기'} TOP 30`,en:y=>`${y} H${_thisYearHalf()} TOP 30`,
+   subKo:'반기별 조회수 기준',subEn:'Top viewed this half',
+   pick:vids=>_capByGroup(vids,v=>v.group_ko,2).slice(0,30),cat:'live',half:true},
+];
+function _thisYearHalf(){return (Math.floor(Date.now()/3600000)%2)?1:2;} // 시간대별로 상/하반기 번갈아
+async function _buildFeedThisYearPicks(list){
+  if(!sb)return;
+  const y=new Date().getFullYear();
+  const vidUrl=v=>_isShortV(v)?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;
+  const pool=[..._FEED_THIS_YEAR_POOL].sort(()=>Math.random()-0.5);
+  let made=0;
+  for(const opt of pool){
+    if(made>=2)break;
+    try{
+      const half=opt.half?_thisYearHalf():null;
+      const from=half===2?`${y}-07-01`:`${y}-01-01`;
+      const to=half===1?`${y}-07-01`:`${y+1}-01-01`;
+      let q=sb.from(_YT_TABLE)
+        .select('id,title,thumb,category,is_short,content_flag,group_ko,members,cover_of_groups,cover_of_members,view_count,published_at');
+      if(opt.cat)q=_applyLiveExclude(q.eq('category',opt.cat));
+      if(opt.cover)q=q.or('cover_of_groups.neq.{},cover_of_members.neq.{}');
+      const{data,error}=await q
+        .gte('published_at',from).lt('published_at',to)
+        .not('view_count','is',null)
+        .or('content_flag.is.null,content_flag.neq.기타')
+        .or('content_flag.is.null,content_flag.neq.무관').or('content_flag.is.null,content_flag.neq.보류')
+        .or('content_flag.is.null,content_flag.neq.hidden')
+        .order('view_count',{ascending:false}).limit(250);
+      if(error||!data?.length)continue;
+      const vids=opt.pick(_filterBannedVideos(data),y);
+      if(!vids||vids.length<3)continue; // 얇으면 조용히 다음 후보로
+      const label=currentLang==='ko'?opt.ko(y):opt.en(y);
+      const sub=_feedRankSub(label,vids[0].view_count,currentLang==='ko'?opt.subKo:opt.subEn);
+      const songs=vids.map(v=>({t:v.title,u:vidUrl(v),thumb:v.thumb,vc:v.view_count,pa:v.published_at?.slice(0,10)}));
+      _appendFeedCard(list,opt.icon,label,sub,()=>_openFeedListOverlay(label,sub,songs),vids[0].thumb);
+      made++;
+    }catch(e){/* 조용히 다음 후보 */}
+  }
+}
 async function _buildFeedYearlyTop(list){
   if(!sb)return;
   const vidUrl=v=>_isShortV(v)?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;
@@ -16272,6 +16338,7 @@ function _buildFeedDisc(){
   const chart=chartList||list;
   _enableDragScroll(chart); // Charts는 가로 선반 — 드래그/휠 가로 스크롤(기념일·최근본 스트립과 동일 패턴, 2026-08-24)
   _feedEnqueue(()=>_buildFeedWeeklyTopCams(chart,list));
+  _feedEnqueue(()=>_buildFeedThisYearPicks(chart)); // 올해 한정 모음 2개(랜덤) — 주간/월간 바로 뒤 앞자리
   _feedEnqueue(()=>_buildFeedYearlyTop(chart));
   _feedEnqueue(()=>_buildFeedLegend100(chart));
   _feedEnqueue(()=>_buildFeedAllTimeSoloCam(chart));
