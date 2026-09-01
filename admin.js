@@ -2729,7 +2729,7 @@ function _hnnSwitchTab(tab){
 }
 document.querySelectorAll('.hnn-tab').forEach(t=>t.addEventListener('click',()=>_hnnSwitchTab(t.dataset.tab)));
 document.getElementById('hnn-overlay')?.addEventListener('click',e=>{if(e.target===e.currentTarget)e.currentTarget.classList.remove('open');});
-document.getElementById('sp-hnn-btn')?.addEventListener('click',()=>{document.getElementById('hnn-overlay').classList.add('open');_renderHnnWhitelist();_renderHnnDuplicateNames();_renderHnnAtmRules();_hnnSwitchTab('quality');});
+document.getElementById('sp-hnn-btn')?.addEventListener('click',()=>{_admDockShow('hnn-overlay');_renderHnnWhitelist();_renderHnnDuplicateNames();_renderHnnAtmRules();_hnnSwitchTab('quality');});
 document.getElementById('hnn-close')?.addEventListener('click',()=>{
   document.getElementById('hnn-overlay').classList.remove('open');
   // ⚠️ 예전엔 여기서 _wonkokScanned=false로 리셋해서, 검수 센터를 닫았다 열 때마다 원곡 스캔을
@@ -3102,7 +3102,7 @@ document.getElementById('wonkok-apply-btn')?.addEventListener('click',async()=>{
 });
 document.getElementById('wonkok-scan-btn')?.addEventListener('click',_wonkokScan);
 document.getElementById('wonkok-close')?.addEventListener('click',()=>document.getElementById('hnn-overlay').classList.remove('open'));
-document.getElementById('sp-wonkok-btn')?.addEventListener('click',()=>{document.getElementById('hnn-overlay').classList.add('open');_renderHnnWhitelist();_renderHnnDuplicateNames();_renderHnnAtmRules();_hnnSwitchTab('wonkok');});
+document.getElementById('sp-wonkok-btn')?.addEventListener('click',()=>{_admDockShow('hnn-overlay');_renderHnnWhitelist();_renderHnnDuplicateNames();_renderHnnAtmRules();_hnnSwitchTab('wonkok');});
 
 // ── 전체 영상 검색(admin) ── 그룹/멤버 무관하게 title 검색. 3글자 이상은 서버 ILIKE(트라이그램 인덱스로
 // 빠름), 1~2글자는 인덱스 가속이 안 되므로(pg_trgm은 3글자 미만 패턴을 못 씀) id/title/group_ko/thumb/
@@ -3183,13 +3183,21 @@ function _vmCacheSync(){
   _vmCache.set(_vmCacheKeyCur,{rows:_vmRows,status:document.getElementById('vm-status')?.textContent||'',ts:Date.now()});
 }
 
+// 좌측 도킹 슬롯(z58)을 관리 패널 4개(홈·hnn·vm·gp)가 공유하는데 서로 안 닫아 겹쳐 보이던 버그
+// (2026-09-01 사용자 제보 — hnn 열린 채 vm 열면 vm이 밑에 깔림). 하나 열 때 나머지는 반드시 닫는다.
+// ⚠️ _bringToFront는 안 씀 — 카드 위로 올라가 도킹 목적이 뒤집힘(CSS 1584 주석).
+function _admDockShow(id){
+  ['adm-home-overlay','hnn-overlay','vm-overlay','gp-overlay'].forEach(o=>{
+    document.getElementById(o)?.classList[o===id?'add':'remove']('open');
+  });
+}
 function _vmOpen(tab){
   _vmTab=tab||'all';
   document.querySelectorAll('.vm-tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===_vmTab));
   document.getElementById('vm-search').value='';
   document.getElementById('vm-search-2').value='';
   _vmSearch2='';
-  document.getElementById('vm-overlay').classList.add('open');
+  _admDockShow('vm-overlay');
   _vmApplyTab();
 }
 // ── 상태 이동 버튼 4종(2026-08-27 정리) ──────────────────────────────────────
@@ -4045,7 +4053,7 @@ async function _gpSetLevel(ko,level){
   }
 }
 document.getElementById('sp-gp-btn')?.addEventListener('click',()=>{
-  document.getElementById('gp-overlay').classList.add('open');
+  _admDockShow('gp-overlay');
   _gpTab='all';
   document.querySelectorAll('.gp-tab').forEach(t=>t.classList.toggle('active',t.dataset.lvl==='all'));
   const searchEl=document.getElementById('gp-search');if(searchEl)searchEl.value='';
@@ -7333,7 +7341,7 @@ function _admHomeClose(){document.getElementById('adm-home-overlay')?.classList.
 function _admHomeOpen(){
   const ov=document.getElementById('adm-home-overlay');
   if(!ov)return;
-  ov.classList.add('open');
+  _admDockShow('adm-home-overlay');
   const log=document.getElementById('adm-routine-log');if(log)log.innerHTML='';
   _admLoadCards();
 }
