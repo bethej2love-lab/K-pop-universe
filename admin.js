@@ -4658,7 +4658,11 @@ function _atmMatchesMember(m,title,tokens,groupKo){
     const surExcludeDyn=_ATM_DYNAMIC_SURNAME_EXCLUDE.get(name); // DB 이전분(2026-08-20)
     let sm;while((sm=surRe.exec(title))){if(_ATM_KOREAN_SURNAMES.has(sm[1])&&!(surExclude&&surExclude.has(sm[1]))&&!(surExcludeDyn&&surExcludeDyn.has(sm[1])))return true;} // 성+이름(+조사)
     const givenOnly=_atmStripSurname(nameChars);
-    if(givenOnly&&givenOnly.length>=2){
+    // 성 뗀 이름 변형이 '다른 아티스트의 정식 등록명'과 같으면 이 경로에서도 쓰지 않는다(_m2NameVariants
+    // 5038과 동일 가드 — 이 자체채널 매칭 경로는 _m2NameVariants를 안 거쳐 이 가드가 빠져 있었다). 예:
+    // 장혜리→"혜리"가 현 멤버 혜리(name.ko='혜리')와 같아, 걸스데이 혜리 영상마다 장혜리가 딸려붙던
+    // 오태깅의 원인(2026-09-01 실측 388건). 평문·해시태그 둘 다 막는다 — '#혜리'도 현 혜리를 가리킴.
+    if(givenOnly&&givenOnly.length>=2&&!ARTISTS.some(o=>o.name.ko===givenOnly)){
       if(new RegExp(`(?<![가-힣])${_atmEscRe(givenOnly)}(?:${particles}){0,2}(?![가-힣])`).test(title))return true; // 등록명이 성+이름인데 제목엔 이름만
       if(new RegExp(`#${_atmEscRe(givenOnly)}(?![가-힣])`).test(title))return true; // #이름(성 뺀 버전)
     }
