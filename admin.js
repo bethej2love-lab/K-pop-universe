@@ -423,19 +423,31 @@ async function _ytRefreshAllViewCounts(){
 // 밀리므로, 이 버튼을 정기적으로(월 1회 정도) 누르기만 하면 몇 달에 걸쳐 전체가 공평하게 한 바퀴씩
 // 순환 갱신됨 — "어떤 영상이 안 변할지"를 미리 판별하려는 복잡한 로직 없이도 결과적으로 비슷한 효과.
 // (view_count_synced_at 컬럼은 admin_migrations.sql — 사용자가 직접 실행 필요, RLS로 Claude가 못 씀)
-const VIEW_COUNT_ROTATE_BATCH=5000;
+// 배치 크기 — 유튜브 API videos.list는 콜당 50개·1쿼터라 20,000개=400콜=400쿼터(하루 1만 중 4%)로
+// 여유 많다. 정기 동기화(search.list 콜당 100쿼터)와 겹치는 날만 피하면 됨. 자주 눌러도 무방(오래된
+// 것부터 순환이라 누를수록 전체가 빨리 한 바퀴). 40만 건이면 ~20번이면 전체 한 바퀴(2026-09-01 상향).
+const VIEW_COUNT_ROTATE_BATCH=20000;
 async function _ytRotateViewCountRefresh(){
   const key=_ytApiKey();
   if(!key){_ytSetProg('API 키를 먼저 입력해주세요');return;}
   if(!sb){_ytSetProg('Supabase 연결 없음');return;}
   _ytSetProg('순환 갱신 대상 조회 중 (가장 오래전에 갱신된 것부터, 전체 카테고리)…');
-  const{data:rows,error}=await sb.from(_YT_TABLE)
-    .select('id')
-    .order('view_count_synced_at',{ascending:true,nullsFirst:true})
-    .limit(VIEW_COUNT_ROTATE_BATCH);
-  if(error){_ytSetProg('대상 조회 실패: '+error.message);return;}
-  if(!rows?.length){_ytSetProg('순환 갱신 대상 없음');return;}
-  const ids=rows.map(r=>r.id);
+  // ⚠️ PostgREST는 한 요청당 최대 1000행만 준다(db-max-rows) — .limit(5000)을 걸어도 1000개만 왔던 원인
+  //    (2026-09-01 사용자 제보 "5000인데 1000만 됨"). 1000개씩 range로 나눠 받아 실제 BATCH만큼 모은다.
+  //    view_count_synced_at은 미갱신분이 전부 null(동률)이라 id를 2차 정렬로 붙여야 페이지 경계가 안 어긋난다.
+  const ids=[];
+  for(let off=0; off<VIEW_COUNT_ROTATE_BATCH; off+=1000){
+    const to=Math.min(off+1000,VIEW_COUNT_ROTATE_BATCH)-1;
+    const{data,error}=await sb.from(_YT_TABLE).select('id')
+      .order('view_count_synced_at',{ascending:true,nullsFirst:true})
+      .order('id',{ascending:true})
+      .range(off,to);
+    if(error){_ytSetProg('대상 조회 실패: '+error.message);return;}
+    if(!data?.length)break;
+    ids.push(...data.map(r=>r.id));
+    if(data.length<to-off+1)break; // 마지막 페이지(테이블 끝)
+  }
+  if(!ids.length){_ytSetProg('순환 갱신 대상 없음');return;}
   const totalCalls=Math.ceil(ids.length/50);
   _ytSetProg(`YouTube API 호출 예정: ${totalCalls}회 (${ids.length}개 영상)`);
   let savedTotal=0,failedTotal=0;
