@@ -46,7 +46,30 @@ need(rawExec.length === 0,
 need(/if\(_admRoutineRunning\)return;\s*\n\s*if\(_admBusy\)\{alert/.test(src),
   '데일리 루틴 시작 시 실행 버튼이 도는 중이면 막음');
 
-// ── ④ 죽은 코드 제거 ──────────────────────────────────────────────────────────
+// ── ④ 중단(설정패널 개선 3): _admAbort 플래그 + 진행바 중단 버튼 + retag-all 루프가 확인 ────
+need(/,_admAbort=false;/.test(src), '_admAbort 중단 플래그 선언');
+need(/_admAbort=false;/.test(bindBody) || /_admBusyLabel=label;_admAbort=false;/.test(src),
+  '실행 시작 시 _admAbort 리셋');
+need(/aeb-stop/.test(src), '중단 가능 작업엔 진행바에 "✕ 중단" 버튼');
+need(/_admExecBind\('sp-yt-retag-all',_ytRetagAllIncludingTagged,'멤버\+콜라보 재태깅',\{abortable:true\}\)/.test(src),
+  '재태깅 전체는 abortable로 등록');
+const retag = (src.match(/async function _ytRetagAllIncludingTagged\(\)\{[\s\S]*?\n\}/) || [''])[0];
+need(/if\(_admAbort\)\{/.test(retag), '재태깅 전체 그룹 루프가 _admAbort 확인해 중단');
+
+// ── ⑤ (전체) 버튼 규칙(설정패널 개선 4): 확인 + 스냅샷 되돌리기 ───────────────────────
+// 재태깅 전체가 유일하게 확인창·스냅샷 둘 다 없던 이상치였다 → 둘 다 붙인다.
+need(/멤버\+콜라보 재태깅 \(전체\)/.test(retag) && /_confirmDialog\(/.test(retag),
+  '재태깅 전체에 확인창 추가');
+need(/_snapshotBeforeBulk\('멤버\+콜라보 재태깅\(전체\)'/.test(retag),
+  '재태깅 전체에 스냅샷 되돌리기 추가');
+// 나머지 (전체) 3개는 확인창을 추가하되, 데일리 루틴이 부를 땐 skip해야 루틴이 안 멈춘다.
+for (const [fn, tag] of [['_ytSweepAmbiguousCollabMistag','콜라보'],['_ytSweepMembersMistag','자체 멤버'],['_ytSweepCategoryMistag','카테고리']]) {
+  const body = (src.match(new RegExp(`async function ${fn}\\([\\s\\S]*?\\n\\}\\n`)) || [''])[0];
+  need(/!_admRoutineRunning&&typeof _confirmDialog==='function'/.test(body),
+    `${tag} 재검증(전체)에 확인창 + 루틴 중 skip 가드`);
+}
+
+// ── ⑥ 죽은 코드 제거 ──────────────────────────────────────────────────────────
 need(!/sp-wonkok-btn/.test(src), '죽은 sp-wonkok-btn 핸들러 제거됨');
 
 console.log(pass ? '\n✅ 실행 버튼 전역 락 테스트 통과' : '\n❌ 실행 버튼 전역 락 테스트 실패');

@@ -491,7 +491,7 @@ function _ytSetProg(msg){const el=document.getElementById('sp-yt-prog');if(el)el
 // ── 실행 버튼 전역 락 + 상단 진행 바 + 최근/마지막 실행 (설정패널 개선 1·2·8, 2026-09-01) ──
 // 전체 동기화(수십 분) 도는 중에 재태깅·청소를 눌러 같은 행에 쓰기가 겹치던 사고를 막는다. 실행 계열
 // 버튼은 전부 _admExecBind로 감싸 하나의 _admBusy 락을 공유하고, 끝나면 finally로 반드시 푼다.
-let _admBusy=null,_admBusyId=null,_admBusyLabel='';
+let _admBusy=null,_admBusyId=null,_admBusyLabel='',_admAbort=false;
 const _ADM_EXEC_LABELS={};
 function _admIsBusy(){return !!_admBusy||_admRoutineRunning===true;}
 function _admExecBind(id,handler,label,opts){
@@ -505,17 +505,22 @@ function _admExecBind(id,handler,label,opts){
       if(opts.selfRestop&&id===_admBusyId){try{await handler.call(this,e);}catch(err){console.error(err);}return;}
       _admExecNudge();return;
     }
-    _admExecLockOn(id,label||_ADM_EXEC_LABELS[id]||'작업');
+    _admExecLockOn(id,label||_ADM_EXEC_LABELS[id]||'작업',opts.abortable);
     let ok=true;
     try{await handler.call(this,e);}
     catch(err){ok=false;console.error('[admExec] '+id,err);}
     finally{_admExecLockOff(id,ok);}
   });
 }
-function _admExecLockOn(id,label){
-  _admBusy=id;_admBusyId=id;_admBusyLabel=label;
+function _admExecLockOn(id,label,abortable){
+  _admBusy=id;_admBusyId=id;_admBusyLabel=label;_admAbort=false;
   const bar=document.getElementById('adm-exec-bar');
-  if(bar){bar.className='on';bar.textContent='⏳ 실행 중: '+label;}
+  if(!bar)return;
+  bar.className='on';
+  bar.innerHTML='<span class="aeb-txt"></span>'+(abortable?'<button type="button" class="aeb-stop">✕ 중단</button>':'');
+  bar.querySelector('.aeb-txt').textContent='⏳ 실행 중: '+label;
+  const stopBtn=bar.querySelector('.aeb-stop');
+  if(stopBtn)stopBtn.onclick=()=>{_admAbort=true;const t=bar.querySelector('.aeb-txt');if(t)t.textContent='⏳ 중단 요청됨 — 곧 멈춰요…';};
 }
 function _admExecLockOff(id,ok){
   const label=_admBusyLabel;
@@ -537,8 +542,8 @@ function _admExecNudge(){
 }
 function _admExecBarSync(msg){
   if(!_admBusy)return;
-  const bar=document.getElementById('adm-exec-bar');
-  if(bar)bar.textContent='⏳ 실행 중: '+_admBusyLabel+(msg?' · '+msg:'');
+  const t=document.querySelector('#adm-exec-bar .aeb-txt');
+  if(t)t.textContent='⏳ 실행 중: '+_admBusyLabel+(msg?' · '+msg:'');
 }
 function _admFmtAgo(ts){
   const d=Date.now()-ts,H=3600000,day=86400000;
@@ -1854,6 +1859,8 @@ async function _ytSweepAmbiguousCollabMistag(){
     if(wipedOut.length){
       console.log(`[콜라보 오태깅 재검증] 콜라보 태그가 전부 빠진 행 ${wipedOut.length}개 — 무관 콘텐츠인지 직접 확인 필요:`,wipedOut);
     }
+    // (전체) 버튼 규칙(설정패널 개선 4): 확인창. 단 데일리 루틴이 부를 땐 skip(다이얼로그로 멈추면 안 됨).
+    if(updates.length&&!_admRoutineRunning&&typeof _confirmDialog==='function'&&!(await _confirmDialog({title:'콜라보 오태깅 재검증 (전체)',msg:`기존 콜라보 태그 <b>${updates.length}건</b>을 최신 로직으로 재검증·정리해요. 수동태그는 보호되고, 되돌리기 스냅샷을 떠둬요.`,okLabel:'재검증 실행',wide:true})))return;
     await _snapshotBeforeBulk('콜라보 오태깅 재검증(전체)',updates.map(u=>u.id));
     for(let i=0;i<updates.length;i+=200){
       const chunk=updates.slice(i,i+200);
@@ -2275,6 +2282,7 @@ async function _ytSweepMembersMistag(){
       // 콘솔 무덤 대신 검수 대기열에도 적재(2026-08-30) — 홈 카운트 → 목록 → 편집/해결로 이어진다.
       _tagReviewEnqueueBatch(wipedOut.map(w=>({videoId:w.id,reason:'members_wiped',source:'members_reverify',detail:{removed:w.removed}})));
     }
+    if(updates.length&&!_admRoutineRunning&&typeof _confirmDialog==='function'&&!(await _confirmDialog({title:'자체 멤버 태깅 재검증 (전체)',msg:`그룹 자체 채널 멤버 태그 <b>${updates.length}건</b>을 최신 매칭으로 재검증해요. 그룹은 안 건드리고, 되돌리기 스냅샷을 떠둬요.`,okLabel:'재검증 실행',wide:true})))return;
     await _snapshotBeforeBulk('자체 멤버 태깅 재검증(전체)',updates.map(u=>u.id));
     for(let i=0;i<updates.length;i+=200){
       const chunk=updates.slice(i,i+200);
@@ -2493,6 +2501,7 @@ async function _ytSweepCategoryMistag(){
       updates.push({id:v.id,patch});
     });
     if(!updates.length){_ytSetProg(`검사 완료 — ${rows.length}개 중 바뀔 항목 없음`);return;}
+    if(updates.length&&!_admRoutineRunning&&typeof _confirmDialog==='function'&&!(await _confirmDialog({title:'영상 카테고리 재분류 (전체)',msg:`라이브/쇼츠/예능 등 카테고리 <b>${updates.length}건</b>을 최신 로직으로 재분류해요. 되돌리기 스냅샷을 떠둬요.`,okLabel:'재분류 실행',wide:true})))return;
     await _snapshotBeforeBulk('영상 카테고리 재분류(전체)',updates.map(u=>u.id));
     for(let i=0;i<updates.length;i+=200){
       const chunk=updates.slice(i,i+200);
@@ -4785,12 +4794,19 @@ async function _ytAutoTagMembers(){
 // 제보로 바로잡음 — 버튼 표기도 다른 재검증 버튼들과 동일한 "(전체)" 톤으로 통일).
 async function _ytRetagAllIncludingTagged(){
   if(!sb){_ytSetProg('Supabase 연결 없음');return;}
+  // (전체) 버튼 규칙(설정패널 개선 4): 확인 + 스냅샷 되돌리기. additive union이라 파괴적이진 않지만
+  // 전 그룹을 훑어 대량 기록하므로 다른 (전체) 버튼과 같은 안전장치를 건다.
+  let _ok=true;
+  if(typeof _confirmDialog==='function')_ok=await _confirmDialog({title:'멤버+콜라보 재태깅 (전체)',msg:'기존 태깅분까지 전 그룹을 다시 훑어 멤버/콜라보 태그를 보강해요.<br>그룹은 안 건드리고 수동 편집분은 제외하며, 되돌리기 스냅샷을 떠둬요. 수십 분 걸릴 수 있어요.',okLabel:'재태깅 실행',wide:true});
+  if(!_ok)return;
   const btn=document.getElementById('sp-yt-retag-all');
   if(btn)btn.disabled=true;
+  const _snapBatch=(self.crypto&&self.crypto.randomUUID)?self.crypto.randomUUID():('b'+Date.now());
   try{
     const groupKos=Object.keys(GROUPS);
     let grandMatched=0,grandChecked=0;
     for(let gi=0;gi<groupKos.length;gi++){
+      if(_admAbort){_ytSetProg(`중단됨 — ${gi}/${groupKos.length}그룹까지 처리(누적 ${grandMatched}개, 되돌리기 가능)`);break;}
       const gko=groupKos[gi];
       const members=ARTISTS.filter(a=>_artistGroups(a).some(g=>g.ko===gko)).map(a=>({ko:a.name.ko,en:a.name.en,left:a.left,aliases:a.matchAliases}));
       if(!members.length)continue;
@@ -4840,6 +4856,7 @@ async function _ytRetagAllIncludingTagged(){
       });
       grandChecked+=rows.length;
       if(updates.length){
+        await _snapshotBeforeBulk('멤버+콜라보 재태깅(전체)',updates.map(u=>u.id),_snapBatch); // 되돌리기용(전 그룹 한 배치)
         for(let i=0;i<updates.length;i+=200){
           const chunk=updates.slice(i,i+200);
           const results=await Promise.all(chunk.map(u=>sb.from(_YT_TABLE).update(u.patch).eq('id',u.id)));
@@ -7044,7 +7061,7 @@ _admExecBind('sp-collabfix-btn',_ytSweepAmbiguousCollabMistag,'콜라보 재검�
   _admExecBind('sp-shortspromote-btn',_ytSweepPromoteShorts,'쇼츠 승격',{selfRestop:true});
   {const _spb=document.getElementById('sp-shortspromote-btn');if(_spb&&localStorage.getItem('_kpu_shortsPromoteCursor'))_spb.textContent='⬆️ 가로→쇼츠 일괄 승격 (재개)';}
   _admExecBind('sp-yt-autotag',_ytAutoTagMembers,'자동 태깅');
-  _admExecBind('sp-yt-retag-all',_ytRetagAllIncludingTagged,'멤버+콜라보 재태깅');
+  _admExecBind('sp-yt-retag-all',_ytRetagAllIncludingTagged,'멤버+콜라보 재태깅',{abortable:true});
   document.getElementById('sp-vm-btn')?.addEventListener('click',()=>_vmOpen());
   const backfillSel=document.getElementById('sp-yt-backfill-ch');
   if(backfillSel){

@@ -35,9 +35,10 @@ function blockAt(from) {
 }
 
 // ── 1) 설정 패널 "전체 동기화" 버튼이 실제로 부르는 함수들 ────────────────────────
-const btnIdx = src.indexOf(`document.getElementById('sp-yt-sync')?.addEventListener('click'`);
+// 2026-09-01: 실행 버튼은 전역 락 래퍼 _admExecBind(id, handler, label)로 등록(설정패널 개선 1).
+const btnIdx = src.indexOf(`_admExecBind('sp-yt-sync',async()=>{`);
 need(btnIdx > 0, "설정 패널 'sp-yt-sync' 핸들러를 찾음");
-const btnBody = blockAt(btnIdx + `document.getElementById('sp-yt-sync')?.addEventListener('click',async()=>`.length - 1);
+const btnBody = blockAt(btnIdx);
 const btnCalls = [...btnBody.matchAll(/await\s+(_yt[A-Za-z0-9_]+)\s*\(/g)].map(m => m[1]);
 need(btnCalls.length >= 3, `버튼이 부르는 동기화 함수 ${btnCalls.length}개: ${btnCalls.join(' → ')}`);
 
@@ -73,7 +74,7 @@ const PANEL = [
   ['sp-scan-namecollide-btn', '_ytScanAmbiguousNameGroupMisassignment', '4. 동명이인 그룹 오배정 스캔'],
 ];
 for (const [id, fn, label] of PANEL) {
-  const bound = new RegExp(`getElementById\\('${id}'\\)\\?\\.addEventListener\\('click',\\s*${fn}\\b`).test(src);
+  const bound = new RegExp(`_admExecBind\\('${id}',\\s*${fn}\\b`).test(src);
   need(bound && routineAllFns.includes(fn), `${label} — 패널 버튼(#${id})과 루틴이 같은 함수(${fn})`);
 }
 

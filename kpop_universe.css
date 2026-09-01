@@ -1802,10 +1802,14 @@
   .sp-yt-prog{font-size:10.5px;color:rgba(155,178,228,0.56);margin-top:5px;min-height:14px;text-align:center;word-break:break-all;}
   /* 실행 중 상단 고정 진행 바 + 최근 실행 로그 + 버튼별 마지막 실행 배지 (설정패널 개선 1·2·8, 2026-09-01) */
   #adm-exec-bar{display:none;}
-  #adm-exec-bar.on{display:block;position:sticky;top:0;z-index:6;margin:0 0 8px;padding:8px 10px;border-radius:8px;
+  #adm-exec-bar.on{display:flex;align-items:center;gap:8px;position:sticky;top:0;z-index:6;margin:0 0 8px;padding:8px 10px;border-radius:8px;
     background:linear-gradient(90deg,rgba(90,140,255,0.24),rgba(90,140,255,0.10));border:1px solid rgba(140,180,255,0.55);
-    color:#dce8ff;font-size:12px;font-weight:600;line-height:1.35;word-break:break-all;box-shadow:0 4px 14px rgba(0,0,0,0.35);
+    color:#dce8ff;font-size:12px;font-weight:600;line-height:1.35;box-shadow:0 4px 14px rgba(0,0,0,0.35);
     animation:aebPulse 1.6s ease-in-out infinite;}
+  #adm-exec-bar .aeb-txt{flex:1 1 auto;min-width:0;word-break:break-all;}
+  #adm-exec-bar .aeb-stop{flex:0 0 auto;background:rgba(210,120,120,0.22);border:1px solid rgba(230,150,150,0.6);color:#f2d4d4;
+    border-radius:6px;padding:3px 8px;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap;}
+  #adm-exec-bar .aeb-stop:hover{background:rgba(210,120,120,0.35);}
   @keyframes aebPulse{0%,100%{border-color:rgba(140,180,255,0.5)}50%{border-color:rgba(150,190,255,0.95)}}
   #adm-exec-bar.on.nudge{animation:aebNudge .45s ease;}
   @keyframes aebNudge{0%,100%{transform:translateX(0)}20%{transform:translateX(-5px)}40%{transform:translateX(5px)}60%{transform:translateX(-3px)}80%{transform:translateX(3px)}}
