@@ -2948,6 +2948,13 @@ function _revealUniverse(){
     });
     setTimeout(()=>{ _rc.style.transition='';_rc.style.transform='';_rc.style.transformOrigin='';_rc.style.opacity=''; },1500);
   }
+  // ⚠️ 핵심(2026-09-01 데스크톱 원인 규명): mask가 안 열리는 GPU에선 veil이 캔버스를 끝까지 덮어, 위
+  // 스케일 모션이 veil 뒤에 가려 안 보이다가 veil.remove() 순간 '띡' 하고 나타난다. mask와 별개로 veil
+  // 자체를 opacity로도 페이드아웃해(opacity는 어디서나 확실히 합성됨) 어느 GPU에서든 캔버스 모션이 드러나게
+  // 한다. mask가 되는 기기(모바일)에선 iris 확장 + 이 페이드가 함께 자연스럽게 걷힌다.
+  veil.style.transition='opacity 800ms ease';
+  veil.style.opacity='0';
+  if(ring){ ring.style.transition='opacity 800ms ease'; ring.style.opacity='0'; }
 
   // 행성들을 일단 안 보이게 축소 — 마스크가 지나가는 순서대로 안쪽→바깥쪽 블룸인
   const dists=bubbleMeshes.map(bm=>bm.mesh.position.length());
