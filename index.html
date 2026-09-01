@@ -2956,6 +2956,28 @@ function _revealUniverse(){
   veil.style.opacity='0';
   if(ring){ ring.style.transition='opacity 800ms ease'; ring.style.opacity='0'; }
 
+  // ── 임시 리빌 진단(2026-09-01) — kpop-universe.kr/?revealdbg=1 로 접속하면 화면 좌상단 초록 박스에
+  //    리빌 각 단계 실행 상태가 실시간으로 뜬다(원인 규명용, 일반 유저엔 영향 없음). 진단 끝나면 제거 예정.
+  if(location.search.indexOf('revealdbg')>=0){
+    const _bx=document.createElement('div');
+    _bx.style.cssText='position:fixed;top:6px;left:6px;z-index:2147483647;background:rgba(0,0,0,0.82);color:#3f6;font:11px/1.45 monospace;padding:8px 10px;white-space:pre;pointer-events:none;border:1px solid #3f6;';
+    document.body.appendChild(_bx);
+    const _openOv=(typeof _FULLSCREEN_OVERLAY_IDS!=='undefined'?_FULLSCREEN_OVERLAY_IDS:[]).filter(id=>document.getElementById(id)&&document.getElementById(id).classList.contains('open'));
+    const _r0=window._rcnt||0, _t0d=performance.now(); window._revealTick=0;
+    const _iv=setInterval(()=>{
+      const vEl=document.getElementById('loading-veil');
+      _bx.textContent='REVEAL DIAG\n'
+        +'renderer='+(typeof renderer!=='undefined')+'  veil='+!!veil+'  isMob='+isMob()+'\n'
+        +'meshes='+bubbleMeshes.length+'\n'
+        +'openOverlays=['+_openOv.join(',')+']\n'
+        +'tickFrames='+(window._revealTick||0)+'   renderFrames='+((window._rcnt||0)-_r0)+'\n'
+        +'elapsed='+Math.round(performance.now()-_t0d)+'ms\n'
+        +'veilOpacity='+(vEl?getComputedStyle(vEl).opacity:'(removed)')+'\n'
+        +'canvasTransform='+(_rc?getComputedStyle(_rc).transform.replace(/matrix\(?/,'').slice(0,26):'(no canvas)');
+    },100);
+    setTimeout(()=>clearInterval(_iv),5000);
+  }
+
   // 행성들을 일단 안 보이게 축소 — 마스크가 지나가는 순서대로 안쪽→바깥쪽 블룸인
   const dists=bubbleMeshes.map(bm=>bm.mesh.position.length());
   const maxD=Math.max(1,...dists);
@@ -2983,6 +3005,7 @@ function _revealUniverse(){
     const _skipMaskFrame=isMob();
     let _maskFrameToggle=false;
     (function tick(){
+      window._revealTick=(window._revealTick||0)+1; // 리빌 진단(?revealdbg)용 tick 프레임 카운터
       const t=Math.min((performance.now()-t0)/dur,1);
       // 시작~중간은 선형에 가깝게 빠르게, 중간~끝은 기존 지수 가속 곡선 그대로 유지(이음매 없이 매끄럽게 블렌드)
       const e=t<=0?0:0.26*t+0.74*Math.pow(2,6*t-6);
@@ -3561,6 +3584,7 @@ function animate(){
   // 위에서 이미 렌더 fps로 게이트했으므로(Tier 1) 여기선 그냥 그린다.
   renderer.render(scene,camera);
   labelRenderer.render(scene,camera);
+  window._rcnt=(window._rcnt||0)+1; // 리빌 진단(?revealdbg)용 렌더 프레임 카운터
   if(window._syncZoomSlider)_syncZoomSlider();
 }
 animate();
