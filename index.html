@@ -16727,6 +16727,9 @@ function _buildFeedDisc(){
   _enableDragScroll(chart); // Charts는 가로 선반 — 드래그/휠 가로 스크롤(기념일·최근본 스트립과 동일 패턴, 2026-08-24)
   _feedEnqueue(()=>_buildFeedWeeklyTopCams(chart,list));
   _feedEnqueue(()=>_buildFeedThisYearPicks(chart)); // 올해 한정 모음 2개(랜덤) — 주간/월간 바로 뒤 앞자리
+  // Trend(최근 7일 전체 업로드)를 첫 wave로 당김 — 큐 뒤(~13번째)라 앞 선반 10여개가 끝나야 떠서
+  // "너무 늦게 뜬다"는 제보(2026-09-01). DOM 컨테이너(#feed-trend)는 고정이라 표시 위치는 그대로.
+  _feedEnqueue(()=>_buildFeedTrend());
   _feedEnqueue(()=>_buildFeedYearlyTop(chart));
   _feedEnqueue(()=>_buildFeedLegend100(chart));
   _feedEnqueue(()=>_buildFeedAllTimeSoloCam(chart));
@@ -16740,7 +16743,6 @@ function _buildFeedDisc(){
   // (2026-08-21, 사용자 요청 — "TOP 들어가면 다 discover 아닌 charts 쪽으로"). KBS/MBC/SBS/썸머는
   // "모아보기"라 TOP이 없어서 그대로 Discovery에 남긴다.
   _feedEnqueue(()=>_buildFeedFestivalYearEnd(chart));
-  _feedEnqueue(()=>_buildFeedTrend()); // 전체 최근 7일 업로드 그리드(차트와 디스커버리 사이 — #feed-trend 컨테이너를 채운다)
   _feedEnqueue(()=>_buildFeedFormatPick(list));
   _feedEnqueue(()=>_buildFeedGenCamPick(list));
   _feedEnqueue(()=>_buildFeedFestivalKBS(list));
