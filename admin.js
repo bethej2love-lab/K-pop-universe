@@ -3174,6 +3174,17 @@ const _vmCacheKey=(tab,term)=>tab+' '+(term||'');
 // 쓰기가 일어나면 지금 보고 있는 탭 말고 다른 탭 캐시는 버린다 — 무관 처리 한 번으로 '무관' 탭과 검수
 // 큐가 동시에 바뀌므로, 남겨두면 다른 탭에서 사라진 행이 되살아난 것처럼 보인다.
 function _vmCacheDropOthers(){for(const k of[..._vmCache.keys()])if(k!==_vmCacheKeyCur)_vmCache.delete(k);}
+// vm개선 3b(안전형) — 쓰기 후 모든 타탭을 버리는 대신, 이 쓰기로 멤버십이 바뀌는 탭만 폐기한다:
+// 검수계열(항상) + toFlag의 상태탭(도착) + 현재 상태탭(출발). 그 외 상태탭(안 바뀜)·전체검색은 캐시 유지.
+// ⚠️ Fable의 "행 삽입" 대신 '폐기 후 재조회'로 — 탭별 컬럼/검색필터/정렬 불일치 리스크 회피.
+// ⚠️ 현재 탭이 상태탭이 아니면(전체 등) 출발 상태가 행마다 달라 불명 → 상태탭 전부 폐기(안전 폴백).
+function _vmCacheDropAffected(toFlag){
+  const FLAG_TAB={'무관':'nomem','보류':'hold','hidden':'hidden'},STATUS=['nomem','hold','hidden'];
+  const drop=new Set(['ss','review','orphan','catlock','new']); // 검수계열은 플래그 붙으면 큐서 빠짐
+  if(FLAG_TAB[toFlag])drop.add(FLAG_TAB[toFlag]);
+  if(STATUS.includes(_vmTab))drop.add(_vmTab); else STATUS.forEach(t=>drop.add(t));
+  for(const k of[..._vmCache.keys()]){if(k===_vmCacheKeyCur)continue;const tab=k.slice(0,k.indexOf(' '));if(drop.has(tab))_vmCache.delete(k);}
+}
 // 현재 탭 캐시를 지금 _vmRows 상태로 덮어쓴다(조회 직후, 그리고 행을 갱신·삭제한 뒤에 부른다).
 function _vmCacheSync(){
   if(!_vmCacheKeyCur)return;
@@ -3660,7 +3671,7 @@ async function _vmSetFlag(v,newFlag,btn,item){
       item.remove();
       _vmUpdateCount();
       document.getElementById('vm-status').textContent=`총 ${_vmRows.length}개`;
-      _vmCacheSync();_vmCacheDropOthers();
+      _vmCacheSync();_vmCacheDropAffected(newFlag);
       if(!_vmRows.length)_vmRenderVideoList();
     },500);
   }
@@ -3678,7 +3689,7 @@ async function _vmReviewDecide(v,item,approve,approveBtn,rejectBtn){
     _vmRows=_vmRows.filter(r=>r.id!==v.id);
     item.remove();
     document.getElementById('vm-status').textContent=`그룹배정 검수 대상 ${_vmRows.length}개 남음`;
-    _vmCacheSync();_vmCacheDropOthers();
+    _vmCacheSync();_vmCacheDropAffected(newFlag);
     if(!_vmRows.length)_vmRenderVideoList();
   },400);
 }
@@ -3747,7 +3758,7 @@ document.getElementById('vm-confirm-btn')?.addEventListener('click',async()=>{
     }
     const gone=new Set(ids);
     _vmRows=_vmRows.filter(v=>!gone.has(v.id));
-    _vmCacheSync();_vmCacheDropOthers(); // 목록에서 걷어낸 결과를 캐시에도 반영(2026-08-27)
+    _vmCacheSync();_vmCacheDropAffected(approve?null:'무관'); // 목록에서 걷어낸 결과를 캐시에도 반영(2026-08-27)
     _vmRenderVideoList();
     if(statusEl)statusEl.textContent=`${ids.length}개 확인 완료 — 검수 대상 ${_vmRows.length}개 남음`;
     _showShareToast(`${ids.length}개 확인 처리됨`);
@@ -4278,7 +4289,7 @@ async function _vmBulkSetFlag(newFlag,btnId){
     document.getElementById('vm-status').textContent=`${ids.length}개 ${newFlag?(_VM_FLAG_LABEL[newFlag]||newFlag):'정상'} 처리 완료`;
   }else{
     _vmRows=_vmRows.filter(v=>!idSet.has(v.id));
-    _vmCacheSync();_vmCacheDropOthers(); // 목록에서 걷어낸 결과를 캐시에도 반영(2026-08-27)
+    _vmCacheSync();_vmCacheDropAffected(newFlag); // 목록에서 걷어낸 결과를 캐시에도 반영(2026-08-27)
     items.forEach(el=>el.remove());
     const to=newFlag?(_VM_FLAG_LABEL[newFlag]||newFlag):'정상';
     document.getElementById('vm-status').textContent=`${ids.length}개 → ${to} — 남은 ${_vmRows.length}개`;
@@ -4312,7 +4323,7 @@ document.getElementById('vm-indiv-btn')?.addEventListener('click',async()=>{
     document.getElementById('vm-status').textContent=`${ids.length}개 개별출연 처리 완료`;
   }else{
     _vmRows=_vmRows.filter(v=>!idSet.has(v.id));
-    _vmCacheSync();_vmCacheDropOthers(); // 목록에서 걷어낸 결과를 캐시에도 반영(2026-08-27)
+    _vmCacheSync();_vmCacheDropAffected(); // 목록에서 걷어낸 결과를 캐시에도 반영(2026-08-27)
     items.forEach(el=>el.remove());
     document.getElementById('vm-status').textContent=`${ids.length}개 처리 완료 — 남은 ${_vmRows.length}개`;
     if(!_vmRows.length)_vmRenderVideoList();
