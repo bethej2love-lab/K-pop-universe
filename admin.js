@@ -3167,7 +3167,7 @@ function _vmReviewQueueFilter(q){
 // _sbFetchAll로 수만 행을 긁어서 몇 초씩 걸린다(2026-08-27 사용자 요청).
 // 이미 캐시되던 것: '전체' 탭의 1~2글자 검색(_avsEnsureCache — 페이지 새로고침 전까지 전량 유지)과
 // '채널' 탭(_EXT_CHANNELS 메모리 배열이라 네트워크 자체가 없음). 나머지 탭은 전부 매번 재조회였다.
-const _VM_CACHE_TTL=180000; // 3분 — 지나면 자동으로 다시 조회한다
+// (구 _VM_CACHE_TTL 3분 자동만료는 vm개선 3(a)에서 제거 — 세션 동안 캐시 유지, 갱신은 수동 ↻로만)
 const _vmCache=new Map();   // key(tab \0 검색어) → {rows, status, ts}
 let _vmCacheKeyCur=null;
 const _vmCacheKey=(tab,term)=>tab+' '+(term||'');
@@ -3182,6 +3182,13 @@ function _vmCacheSync(){
   _vmSetTabCount(_vmTab,_vmRows.length);
   _vmCache.set(_vmCacheKeyCur,{rows:_vmRows,status:document.getElementById('vm-status')?.textContent||'',ts:Date.now()});
 }
+// vm개선 3(2026-09-01) — 캐시 세션 유지 + 재진입 복원.
+const _VM_LAST_LS='kpu_vm_last';
+function _vmSaveLast(){
+  try{localStorage.setItem(_VM_LAST_LS,JSON.stringify({tab:_vmTab,search:document.getElementById('vm-search')?.value||'',scrollTop:document.getElementById('vm-list')?.scrollTop||0}));}catch(e){}
+}
+// 현재 탭 캐시를 버리고 강제 재조회(상태줄 ↻ 버튼) — TTL을 없앤 대신 수동 갱신 경로.
+function _vmForceReload(){ if(_vmCacheKeyCur)_vmCache.delete(_vmCacheKeyCur); _vmLoad(undefined,true); }
 
 // ── 전체 개수 상시 표시(2026-09-01, vm개선 2) — 패널 상단에 전체·상태별 카운트 ──────────────
 // content_flag 인덱스가 있어 count(head)는 빠름. 캐시(localStorage)를 즉시 그린 뒤 백그라운드로 갱신,
@@ -3217,14 +3224,19 @@ function _admDockShow(id){
   });
 }
 function _vmOpen(tab){
-  _vmTab=tab||'all';
+  // vm개선 3(c): tab 인자 없이(설정 버튼으로) 열면 마지막 탭·검색어·스크롤 복원. 홈 카드처럼 tab을
+  // 명시해 열면 그 탭 우선(복원 안 함).
+  let saved=null;
+  if(!tab){try{saved=JSON.parse(localStorage.getItem(_VM_LAST_LS)||'null');}catch(e){}}
+  _vmTab=tab||(saved&&saved.tab)||'all';
   document.querySelectorAll('.vm-tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===_vmTab));
-  document.getElementById('vm-search').value='';
+  document.getElementById('vm-search').value=(saved&&saved.search)||'';
   document.getElementById('vm-search-2').value='';
   _vmSearch2='';
   _admDockShow('vm-overlay');
   _vmApplyTab();
   _vmRenderTotals();_vmFetchTotals(); // 캐시 즉시 표시 + 백그라운드 갱신(vm개선 2)
+  if(saved&&saved.scrollTop){setTimeout(()=>{const l=document.getElementById('vm-list');if(l)l.scrollTop=saved.scrollTop;},180);}
 }
 // ── 상태 이동 버튼 4종(2026-08-27 정리) ──────────────────────────────────────
 // 각 버튼의 뜻은 탭과 무관하게 **고정**이다. 예전엔 뜻이 고정된 3개(정상·보류·무관)와, 탭마다 뜻이
@@ -3311,11 +3323,15 @@ async function _vmLoad(searchTerm,preserveSearch2){
   const cacheKey=_vmCacheKey(tab,term);
   _vmCacheKeyCur=cacheKey;
   const _cached=_vmCache.get(cacheKey);
-  if(_cached&&Date.now()-_cached.ts<_VM_CACHE_TTL){
+  if(_cached){ // vm개선 3(a): TTL 없앰 — 세션 동안 캐시 유지, 갱신은 아래 ↻(수동)로만
     _vmRows=_cached.rows;
     statusEl.textContent=_cached.status;
-    // ⚠️ 여기서 _vmCacheSync를 부르면 안 된다 — ts가 갱신돼 TTL이 "마지막 방문 기준 3분"으로 미끄러지고,
-    //    탭을 계속 오가면 영원히 재조회가 안 된다. 저장 시각은 실제 조회 시각 그대로 둔다.
+    // "N분 전 · ↻" 표시 — ts는 실제 조회 시각 그대로(슬라이딩 방지). ↻는 캐시 버리고 재조회.
+    const ago=Math.max(0,Math.round((Date.now()-_cached.ts)/60000));
+    const ref=document.createElement('span');
+    ref.innerHTML=` <span style="opacity:.55">· ${ago}분 전</span> <button class="vm-reload-btn" type="button" title="다시 조회" style="background:none;border:none;color:rgba(155,178,228,0.5);cursor:pointer;font-size:12px;padding:0 3px;vertical-align:middle;">↻</button>`;
+    ref.querySelector('.vm-reload-btn')?.addEventListener('click',_vmForceReload);
+    statusEl.appendChild(ref);
     _vmSetTabCount(tab,_vmRows.length); // 개수 배지만 갱신(ts는 안 건드림)
     _vmRenderVideoList();
     return;
@@ -4189,13 +4205,16 @@ document.querySelectorAll('.vm-tab').forEach(btn=>{
     document.querySelectorAll('.vm-tab').forEach(t=>t.classList.toggle('active',t===btn));
     document.getElementById('vm-search').value='';
     _vmApplyTab();
+    _vmSaveLast(); // vm개선 3(c)
   });
 });
+let _vmScrollTimer=null;
+document.getElementById('vm-list')?.addEventListener('scroll',()=>{clearTimeout(_vmScrollTimer);_vmScrollTimer=setTimeout(_vmSaveLast,300);},{passive:true});
 document.getElementById('vm-search')?.addEventListener('input',()=>{
   const val=document.getElementById('vm-search').value;
   if(_vmTab==='channels'){_vmRenderChannels(val);return;} // 채널 목록은 이미 메모리에 있는 배열 필터라 디바운스 불필요
   clearTimeout(_vmSearchTimer);
-  _vmSearchTimer=setTimeout(()=>_vmLoad(val),300);
+  _vmSearchTimer=setTimeout(()=>{_vmLoad(val);_vmSaveLast();},300);
 });
 // 재검색은 새 조회 없이 이미 받아온 _vmRows를 그대로 다시 필터링만 하므로 디바운스를 짧게 둬도 부담 없음
 document.getElementById('vm-search-2')?.addEventListener('input',()=>{

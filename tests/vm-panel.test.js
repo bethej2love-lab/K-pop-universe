@@ -52,11 +52,11 @@ need(/\(tab==='review'&&newFlag==='무관'\)/.test(src),
   "_vmSetFlag가 검수 탭에서 무관으로 바꾼 행을 목록에서 걷어냄");
 
 // ── ③ 탭 결과 캐시 ────────────────────────────────────────────────────────────────────
-need(/const _VM_CACHE_TTL=\d+;/.test(src), '탭 캐시 TTL 상수 존재');
-const ttl = Number((src.match(/const _VM_CACHE_TTL=(\d+);/) || [])[1]);
-need(ttl >= 30000 && ttl <= 600000, `TTL이 상식 범위(30초~10분) — ${ttl}ms`);
+need(!/const _VM_CACHE_TTL=/.test(src), 'TTL 자동만료 제거됨 — 세션 동안 캐시 유지(vm개선 3a)');
 need(/const _vmCache=new Map\(\)/.test(src) && /function _vmCacheSync\(\)/.test(src) && /function _vmCacheDropOthers\(\)/.test(src),
   '캐시 저장소 + 동기화(_vmCacheSync) + 타탭 폐기(_vmCacheDropOthers)');
+need(/function _vmForceReload\(\)/.test(src) && /function _vmSaveLast\(\)/.test(src),
+  '수동 재조회(_vmForceReload) + 재진입 상태 저장(_vmSaveLast)');
 
 // _vmLoad 본문만 잘라서 검사
 function blockAt(from) {
@@ -66,12 +66,12 @@ function blockAt(from) {
 }
 const vmLoad = blockAt(src.indexOf('async function _vmLoad('));
 need(vmLoad.length > 0, '_vmLoad 본문 파싱됨');
-need(/_vmCache\.get\(cacheKey\)/.test(vmLoad) && /Date\.now\(\)-_cached\.ts<_VM_CACHE_TTL/.test(vmLoad),
-  '_vmLoad가 조회 전에 TTL 안의 캐시를 먼저 확인');
-// 캐시 복원 경로에서 ts를 다시 찍으면 TTL이 "마지막 방문 기준"으로 미끄러져 영원히 재조회가 안 된다.
-const restore = vmLoad.slice(vmLoad.indexOf('_cached.ts<_VM_CACHE_TTL'), vmLoad.indexOf('  try{'));
+need(/_vmCache\.get\(cacheKey\)/.test(vmLoad) && /if\(_cached\)\{/.test(vmLoad),
+  '_vmLoad가 조회 전에 캐시를 먼저 확인(TTL 없이 세션 유지)');
+// 복원 경로에서 _vmCacheSync를 부르면 ts가 갱신돼 "N분 전" 표시가 계속 리셋됨 → 부르면 안 됨.
+const restore = vmLoad.slice(vmLoad.indexOf('_vmCache.get(cacheKey)'), vmLoad.indexOf('  try{'));
 need(!/_vmCacheSync\(\)/.test(restore),
-  '캐시 복원 경로는 ts를 갱신하지 않음(TTL이 미끄러지지 않게)');
+  '캐시 복원 경로는 ts를 갱신하지 않음(N분 전 표시 유지)');
 
 // 새 조회가 끝나는 지점마다 캐시에 저장돼야 한다 — 렌더 호출 수와 저장 호출 수가 맞는지로 본다.
 const renders = (vmLoad.match(/_vmRenderVideoList\(\)/g) || []).length;
