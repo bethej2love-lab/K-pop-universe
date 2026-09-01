@@ -2443,37 +2443,60 @@ async function _snapshotBeforeBulk(opLabel,ids,forceBatchId){
 }
 // 가장 최근 일괄 작업(batch)을 이전 상태로 복원한다. 되돌린 batch는 삭제해서 중복 되돌리기를 막는다
 // (그 전 batch가 새 "마지막"이 되어 연속 undo도 가능). tags_manual 값도 스냅샷 시점 그대로 복원됨.
+// 되돌리기 — 최근 일괄 작업 '목록'을 보여주고 고른 배치를 복원(설정패널 개선 10). 스냅샷 테이블은
+// batch당 여러 행이라, 최근 창을 페이지로 긁어 batch_id로 중복 제거해 최근 배치 목록을 만든다
+// (큰 배치가 1페이지를 다 채워도 다음 페이지까지 가서 서로 다른 배치를 모은다).
 async function _ytUndoLastBulk(){
   if(!sb){_ytSetProg('Supabase 연결 없음');return;}
-  const btn=document.getElementById('sp-yt-undo-bulk-btn');
+  const box=document.getElementById('adm-undo-list');
+  _ytSetProg('[되돌리기] 최근 일괄 작업 목록 조회 중…');
+  const seen=new Map();
   try{
-    _ytSetProg('[되돌리기] 마지막 일괄 작업 조회 중…');
-    const{data:last,error:lErr}=await sb.from(_BULK_SNAP_TABLE).select('batch_id,op_label,created_at').order('created_at',{ascending:false}).limit(1);
-    if(lErr){_ytSetProg('되돌리기 조회 실패: '+lErr.message+' (admin_bulk_snapshots 테이블 SQL을 실행했는지 확인)');return;}
-    if(!last||!last.length){_ytSetProg('되돌릴 일괄 작업이 없어요 (스윕/재검증/재스캔을 실행한 적이 있어야 해요)');return;}
-    const{batch_id,op_label,created_at}=last[0];
-    const when=new Date(created_at).toLocaleString('ko-KR');
-    if(!confirm(`마지막 일괄 작업을 되돌릴까요?\n\n작업: ${op_label}\n시각: ${when}\n\n이 작업으로 바뀐 행들을 그 직전 상태로 복원합니다.`)){_ytSetProg('되돌리기 취소됨');return;}
-    if(btn)btn.disabled=true;
-    const{data:snaps,error:sErr}=await _sbFetchAll(()=>sb.from(_BULK_SNAP_TABLE).select('row_id,before_data').eq('batch_id',batch_id).order('snap_id'));
-    if(sErr){_ytSetProg('되돌리기 데이터 로드 실패: '+sErr.message);return;}
-    if(!snaps||!snaps.length){_ytSetProg('되돌릴 스냅샷 데이터가 없어요');return;}
-    let restored=0;
-    for(let i=0;i<snaps.length;i+=100){
-      const chunk=snaps.slice(i,i+100);
-      const results=await Promise.all(chunk.map(s=>sb.from(_YT_TABLE).update(s.before_data).eq('id',s.row_id)));
-      const failed=results.find(r=>r.error);
-      if(failed)throw new Error(failed.error.message);
-      restored+=chunk.length;
-      _ytSetProg(`[되돌리기] ${Math.min(i+100,snaps.length)}/${snaps.length}개 복원 중…`);
+    for(let p=0;p<12&&seen.size<8;p++){
+      const{data,error}=await sb.from(_BULK_SNAP_TABLE).select('batch_id,op_label,created_at').order('created_at',{ascending:false}).range(p*1000,p*1000+999);
+      if(error){_ytSetProg('되돌리기 조회 실패: '+error.message+' (admin_bulk_snapshots 테이블 SQL을 실행했는지 확인)');return;}
+      if(!data||!data.length)break;
+      for(const r of data)if(!seen.has(r.batch_id))seen.set(r.batch_id,{op:r.op_label,at:r.created_at});
+      if(data.length<1000)break;
     }
-    await sb.from(_BULK_SNAP_TABLE).delete().eq('batch_id',batch_id);
-    _ytSetProg(`되돌리기 완료! "${op_label}"으로 바뀐 ${restored}개 행을 이전 상태로 복원했어요.`);
-  }catch(e){
-    _ytSetProg('되돌리기 오류: '+e.message);
-  }finally{
-    if(btn)btn.disabled=false;
+  }catch(e){_ytSetProg('되돌리기 조회 오류: '+e.message);return;}
+  const batches=[...seen.entries()].slice(0,8);
+  if(!batches.length){_ytSetProg('되돌릴 일괄 작업이 없어요 (스윕/재검증을 실행한 적이 있어야 해요)');if(box)box.innerHTML='';return;}
+  _ytSetProg(`최근 일괄 작업 ${batches.length}건 — 아래에서 되돌릴 항목을 고르세요`);
+  if(!box)return;
+  box.innerHTML=batches.map(([id,b],idx)=>{
+    const when=new Date(b.at).toLocaleString('ko-KR',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'});
+    return `<div class="aul-row"><span class="aul-info">${idx===0?'<b>최근</b> ':''}${(b.op||'(이름없음)').replace(/</g,'&lt;')}<span class="aul-meta">${when}</span></span><button class="aul-btn" data-batch="${id}">↩︎ 되돌리기</button></div>`;
+  }).join('');
+  box.querySelectorAll('.aul-btn').forEach((btn,idx)=>{
+    btn.addEventListener('click',async()=>{
+      if(_admIsBusy()){_admExecNudge();return;}
+      const[id,b]=batches[idx];
+      if(!confirm(`"${b.op}" 작업을 되돌릴까요?\n\n이 작업으로 바뀐 행들을 그 직전 상태로 복원합니다.`))return;
+      _admExecLockOn('sp-yt-undo-bulk-btn','되돌리기: '+b.op);
+      try{await _ytUndoBatch(id,b.op);box.innerHTML='';}
+      catch(e){_ytSetProg('되돌리기 오류: '+e.message);}
+      finally{_admExecLockOff('sp-yt-undo-bulk-btn',true);}
+    });
+  });
+}
+// 한 배치를 실제로 복원 — before_data를 그대로 되써넣고 그 배치 스냅샷을 지운다.
+async function _ytUndoBatch(batchId,opLabel){
+  const{data:snaps,error:sErr}=await _sbFetchAll(()=>sb.from(_BULK_SNAP_TABLE).select('row_id,before_data').eq('batch_id',batchId).order('snap_id'));
+  if(sErr){_ytSetProg('되돌리기 데이터 로드 실패: '+sErr.message);return;}
+  if(!snaps||!snaps.length){_ytSetProg('되돌릴 스냅샷 데이터가 없어요');return;}
+  let restored=0;
+  for(let i=0;i<snaps.length;i+=100){
+    const chunk=snaps.slice(i,i+100);
+    const results=await Promise.all(chunk.map(s=>sb.from(_YT_TABLE).update(s.before_data).eq('id',s.row_id)));
+    const failed=results.find(r=>r.error);
+    if(failed)throw new Error(failed.error.message);
+    restored+=chunk.length;
+    _ytSetProg(`[되돌리기] ${Math.min(i+100,snaps.length)}/${snaps.length}개 복원 중…`);
   }
+  await sb.from(_BULK_SNAP_TABLE).delete().eq('batch_id',batchId);
+  try{_vmCache.clear();}catch(_){}
+  _ytSetProg(`되돌리기 완료! "${opLabel}"으로 바뀐 ${restored}개 행을 이전 상태로 복원했어요.`);
 }
 
 // 라이브(직캠/무대) 판정용 정규식(_ytClassify)이 채널 동기화 시점에 딱 한 번만 돌고 이후 재검증이

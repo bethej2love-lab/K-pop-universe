@@ -380,8 +380,9 @@
     <div class="sp-btn-hint">별칭/축약으로 저장된 멤버 태그를 정식명으로 정정.</div>
     <button class="sp-yt-sync" id="sp-lockfill-btn" style="margin-top:4px;opacity:.8;">🔓 잠금-빈값 멤버 채우기 (직캠 solo 복구)</button>
     <div class="sp-btn-hint">멤버가 비어있는 잠금 영상(직캠 solo 등)에 멤버를 채워 복구.</div>
-    <button class="sp-yt-sync" id="sp-yt-undo-bulk-btn" style="margin-top:10px;opacity:.9;border:1px solid #d08a8a;">↩︎ 마지막 일괄 작업 되돌리기</button>
-    <div class="sp-btn-hint">바로 위 스윕/재검증 버튼들이 잘못 돌아갔을 때, 그 작업 직전 상태로 되돌려요(가장 최근 1회분). 각 버튼이 실행 직전 자동으로 스냅샷을 떠두기 때문에 별도 준비 없이 눌러도 돼요. (되돌리기 기능은 admin_bulk_snapshots 테이블 SQL을 1회 실행해야 켜져요.)</div>
+    <button class="sp-yt-sync" id="sp-yt-undo-bulk-btn" style="margin-top:10px;opacity:.9;border:1px solid #d08a8a;">↩︎ 일괄 작업 되돌리기 (목록에서 선택)</button>
+    <div class="sp-btn-hint">스윕/재검증 버튼들이 잘못 돌아갔을 때, 그 작업 직전 상태로 되돌려요. 누르면 <b>최근 일괄 작업 목록</b>이 아래 뜨고, 원하는 걸 골라 되돌립니다. 각 버튼이 실행 직전 자동으로 스냅샷을 떠둬요. (admin_bulk_snapshots 테이블 SQL을 1회 실행해야 켜져요.)</div>
+    <div id="adm-undo-list"></div>
 
     <div class="sp-yt-prog" id="sp-yt-prog"></div>
   </div>
