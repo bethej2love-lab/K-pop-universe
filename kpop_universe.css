@@ -1311,6 +1311,11 @@
   #vm-close{background:none;border:none;color:rgba(180,195,230,0.56);font-size:18px;cursor:pointer;padding:0;line-height:1;}
   /* 세그먼트 컨트롤(hnn-tabs/gp-tab 계열)과 같은 톤 — 공유 배경 컨테이너 + 개별 탭은 무테두리, active만
      배경 강조(2026-08-18, 어드민 패널 전반 스타일 통일). HTML/JS(탭 전환 바인딩)는 그대로, 값만 맞춤. */
+  #vm-totals{display:none;font-size:10.5px;color:rgba(155,178,228,0.58);padding:6px 16px 2px;letter-spacing:.01em;line-height:1.5;flex-shrink:0;}
+  #vm-totals.show{display:block;}
+  #vm-totals b{color:rgba(205,222,255,0.88);font-weight:700;}
+  #vm-totals .vm-totals-refresh{background:none;border:none;color:rgba(155,178,228,0.5);cursor:pointer;font-size:11px;padding:0 2px;vertical-align:middle;}
+  #vm-totals .vm-totals-refresh:hover{color:#c0d6f0;}
   #vm-tabs{display:flex;gap:2px;background:rgba(255,255,255,0.06);border-radius:10px;padding:2px;margin:10px 16px 0;flex-shrink:0;}
   .vm-tab{flex:1;padding:5px 0;border-radius:8px;border:none;background:none;color:rgba(155,178,228,0.61);font-size:11px;font-weight:600;font-family:inherit;cursor:pointer;transition:background .13s,color .13s;}
   .vm-tab:hover{color:rgba(210,225,255,0.85);}

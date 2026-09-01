@@ -3183,6 +3183,31 @@ function _vmCacheSync(){
   _vmCache.set(_vmCacheKeyCur,{rows:_vmRows,status:document.getElementById('vm-status')?.textContent||'',ts:Date.now()});
 }
 
+// ── 전체 개수 상시 표시(2026-09-01, vm개선 2) — 패널 상단에 전체·상태별 카운트 ──────────────
+// content_flag 인덱스가 있어 count(head)는 빠름. 캐시(localStorage)를 즉시 그린 뒤 백그라운드로 갱신,
+// 쓰기가 일어나면 디바운스 재조회(_vmScheduleTotals). 완전 정확한 로컬 가감 대신 재조회로 단순·정확 우선.
+const _VM_TOTALS_LS='kpu_vm_totals';
+let _vmTotalsTimer=null;
+function _vmRenderTotals(){
+  const el=document.getElementById('vm-totals');if(!el)return;
+  let c=null;try{c=JSON.parse(localStorage.getItem(_VM_TOTALS_LS)||'null');}catch(e){}
+  if(!c||!c.counts){el.classList.remove('show');return;}
+  const k=c.counts,ago=Math.max(0,Math.round((Date.now()-c.ts)/60000)),n=x=>Number(x||0).toLocaleString();
+  const etc=Math.max(0,k.total-(k.normal+k.nomem+k.hold+k.hidden));
+  el.innerHTML=`전체 <b>${n(k.total)}</b> · 정상 <b>${n(k.normal)}</b> · 무관 <b>${n(k.nomem)}</b> · 보류 <b>${n(k.hold)}</b> · 숨김 <b>${n(k.hidden)}</b> · 기타 <b>${n(etc)}</b> <span style="opacity:.6">· ${ago}분 전</span> <button class="vm-totals-refresh" type="button" title="다시 조회">↻</button>`;
+  el.querySelector('.vm-totals-refresh')?.addEventListener('click',()=>_vmFetchTotals());
+  el.classList.add('show');
+}
+async function _vmFetchTotals(){
+  if(!sb)return;
+  const cnt=async(f)=>{let q=sb.from(_YT_TABLE).select('id',{count:'exact',head:true});
+    if(f==='__null')q=q.is('content_flag',null);else if(f)q=q.eq('content_flag',f);
+    try{const{count}=await q;return count||0;}catch(e){return 0;}};
+  const[total,normal,nomem,hold,hidden]=await Promise.all([cnt(null),cnt('__null'),cnt('무관'),cnt('보류'),cnt('hidden')]);
+  localStorage.setItem(_VM_TOTALS_LS,JSON.stringify({counts:{total,normal,nomem,hold,hidden},ts:Date.now()}));
+  _vmRenderTotals();
+}
+function _vmScheduleTotals(){clearTimeout(_vmTotalsTimer);_vmTotalsTimer=setTimeout(_vmFetchTotals,800);}
 // 좌측 도킹 슬롯(z58)을 관리 패널 4개(홈·hnn·vm·gp)가 공유하는데 서로 안 닫아 겹쳐 보이던 버그
 // (2026-09-01 사용자 제보 — hnn 열린 채 vm 열면 vm이 밑에 깔림). 하나 열 때 나머지는 반드시 닫는다.
 // ⚠️ _bringToFront는 안 씀 — 카드 위로 올라가 도킹 목적이 뒤집힘(CSS 1584 주석).
@@ -3199,6 +3224,7 @@ function _vmOpen(tab){
   _vmSearch2='';
   _admDockShow('vm-overlay');
   _vmApplyTab();
+  _vmRenderTotals();_vmFetchTotals(); // 캐시 즉시 표시 + 백그라운드 갱신(vm개선 2)
 }
 // ── 상태 이동 버튼 4종(2026-08-27 정리) ──────────────────────────────────────
 // 각 버튼의 뜻은 탭과 무관하게 **고정**이다. 예전엔 뜻이 고정된 3개(정상·보류·무관)와, 탭마다 뜻이
@@ -3605,6 +3631,7 @@ async function _vmSetFlag(v,newFlag,btn,item){
   v.content_flag=newFlag;
   _vmSetFlagLabel(btn,newFlag);
   btn.disabled=false;
+  _vmScheduleTotals(); // 총계 재조회(vm개선 2)
   // 탭 필터와 안 맞는 항목은 페이드 아웃 후 제거
   const tab=_vmTab;
   // review 탭 추가(2026-08-27): 여기서 무관으로 바꾸면 그건 '그룹배정이 틀렸다'는 판정이라 큐에서
@@ -3668,6 +3695,7 @@ async function _vmReviewBulk(approve){
     // 위 _snapshotBeforeBulk가 캐시를 통째로 비웠으므로, 걷어낸 뒤 상태를 현재 탭 캐시로 다시 심는다
     // (안 하면 이 탭도 캐시가 비어 다음 방문에 3천 건을 또 긁는다).
     _vmCacheSync();
+    _vmScheduleTotals(); // 총계 재조회(vm개선 2)
     _showShareToast(`${ids.length}개 ${label}됨`);
   }catch(e){
     if(statusEl)statusEl.textContent='오류: '+e.message;
@@ -4205,6 +4233,7 @@ async function _vmBulkSetFlag(newFlag,btnId){
   const{error}=await sb.from(_YT_TABLE).update(_flagPatch(newFlag,'manual')).in('id',ids);
   const done=()=>{if(btn){btn.disabled=false;btn.textContent=restore;}};
   if(error){done();document.getElementById('vm-status').textContent='오류: '+error.message;return;}
+  _vmScheduleTotals(); // 총계 재조회(vm개선 2)
   const idSet=new Set(ids);
   // 편집 이력 — '보류' 더미가 바로 여기서 만들어진다. 어떤 영상을 사람이 보류로 보냈는지가 곧
   // "매처가 이 영상을 잘못 잡았다"는 라벨이라, 학습 재료로는 태그 편집만큼 값지다.
