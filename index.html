@@ -16508,6 +16508,21 @@ function _buildFeedRandomConnection(list){
   }),connThumb);
 }
 
+// 영상 발행 시각 상대표기(피드 공용) — 오늘 발행분은 "N시간 전"(1시간 미만은 "방금"), 그 외엔 어제·N일 전.
+// (2026-09-01 사용자 요청 — New from Favorites·Trend에서 오늘 영상을 "오늘" 대신 "N시간 전"으로)
+// ⚠️ published_at '전체' timestamp(시각 포함)를 넘겨야 함 — 날짜만 자르면 오늘=자정 기준이라 시간 계산 불가.
+function _fmtVidAgo(iso){
+  if(!iso)return'';
+  const now=Date.now(), then=new Date(iso).getTime();
+  const dayNum=Math.floor((now-new Date(String(iso).slice(0,10)+'T00:00:00').getTime())/86400000);
+  if(dayNum<=0){
+    const h=Math.floor((now-then)/3600000);
+    if(h<1)return currentLang==='ko'?'방금':'just now';
+    return currentLang==='ko'?`${h}시간 전`:`${h}h ago`;
+  }
+  if(dayNum===1)return currentLang==='ko'?'어제':'yesterday';
+  return currentLang==='ko'?`${dayNum}일 전`:`${dayNum}d ago`;
+}
 // 랜덤 영상 — 그룹 영상 + 멤버 영상을 한 풀에 섞어서 뽑는다 (2026-08-19 독립 함수로 분리)
 function _buildFeedRandomVideo(list){
   const isKo=currentLang==='ko';
@@ -16627,14 +16642,8 @@ async function _buildFeedTrend(){
     // 전부 이 한 줄을 갖고 있다). 여기서 빠뜨렸더니 ReferenceError가 나고 아래 catch가 그대로 삼켜
     // **선반만 조용히 안 뜨는** 상태로 배포됐다(2026-08-28 사용자 제보로 발견).
     const vidUrl=v=>_isShortV(v)?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;
-    const songs=picked.map(v=>({t:v.title,u:vidUrl(v),thumb:v.thumb,vc:v.view_count,pa:v.published_at?.slice(0,10),
+    const songs=picked.map(v=>({t:v.title,u:vidUrl(v),thumb:v.thumb,vc:v.view_count,pa:v.published_at?.slice(0,10),paFull:v.published_at,
       groupKo:v.group_ko,memberKos:v.members||[]}));
-    const _fmtDay=iso=>{
-      const d=Math.floor((Date.now()-new Date(iso+'T00:00:00').getTime())/86400000);
-      if(d<=0)return currentLang==='ko'?'오늘':'today';
-      if(d===1)return currentLang==='ko'?'어제':'yesterday';
-      return currentLang==='ko'?`${d}일 전`:`${d}d ago`;
-    };
     // 행 패커 배치(2026-08-30) — 한 행은 같은 비율(가로2 or 쇼츠2), 가로는 가끔 전체폭. 여백0 + 그림처럼 번갈아.
     strip.className='feed-grid'; // 이전 렌더가 masonry로 바꿨을 수 있어 그리드로 리셋(.feed-wide span2 사용)
     const rows=_packRows(songs,_songIsShort,{wideProb:0.28,minGap:2});
@@ -16643,7 +16652,7 @@ async function _buildFeedTrend(){
     rows.forEach(row=>row.items.forEach(song=>{
       const isShort=_songIsShort(song);
       // 서브는 "그룹 · N일 전" — 조회수를 안 쓰는 이유는 위 주석(순위표처럼 보이지 않게)과 같다.
-      const sub=[song.groupKo,song.pa?_fmtDay(song.pa):null].filter(Boolean).join(' · ');
+      const sub=[song.groupKo,song.paFull?_fmtVidAgo(song.paFull):(song.pa?_fmtVidAgo(song.pa):null)].filter(Boolean).join(' · ');
       _appendFeedCard(strip,'📈',song.t,sub,
         // 누르면 이 선반 전체가 재생목록이 돼서 그대로 다음 영상으로 넘어갈 수 있다(훑어보기 목적)
         ()=>openLightbox(song.u,isShort,flat,flat.indexOf(song),{groupKo:song.groupKo,memberKo:(song.memberKos||[])[0]},false,true),
@@ -16720,15 +16729,14 @@ async function _buildFeedFavNew(){
     const vidUrl=v=>_isShortV(v)?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;
     // _apiId/_apiGroupKo: 어드민 편집(연필) 버튼이 어느 DB 행을 고칠지 아는 키 — 카드 그리드(_apiVidToSong)는
     // 붙이는데 이 선반만 빠져서 favnew 영상은 편집이 안 걸렸다(2026-08-31 사용자 제보, 모바일).
-    const songs=vids.map(v=>({t:v.title,u:vidUrl(v),thumb:v.thumb,vc:v.view_count,pa:v.published_at?.slice(0,10),groupKo:v.group_ko,memberKos:v.members||[],_apiId:v.id,_apiGroupKo:v.group_ko,content_flag:v.content_flag||null}));
-    const _fmtDay=iso=>{const d=Math.floor((Date.now()-new Date(iso+'T00:00:00').getTime())/86400000);if(d<=0)return currentLang==='ko'?'오늘':'today';if(d===1)return currentLang==='ko'?'어제':'yesterday';return currentLang==='ko'?`${d}일 전`:`${d}d ago`;};
+    const songs=vids.map(v=>({t:v.title,u:vidUrl(v),thumb:v.thumb,vc:v.view_count,pa:v.published_at?.slice(0,10),paFull:v.published_at,groupKo:v.group_ko,memberKos:v.members||[],_apiId:v.id,_apiGroupKo:v.group_ko,content_flag:v.content_flag||null}));
     // 행 패커(Trend와 동일) — 같은 비율끼리 한 행, 가로 가끔 전체폭, 여백0. 최신순 유지가 중요해 wideProb는 낮게.
     const rows=_packRows(songs,_songIsShort,{wideProb:0.22,minGap:2});
     if(rows.length&&!rows[rows.length-1].wide&&rows[rows.length-1].items.length===1)rows.pop(); // 끝에 홀로 남은 반폭 제거
     const flat=rows.flatMap(r=>r.items); // 라이트박스 재생목록 순서를 화면 순서와 일치
     rows.forEach(row=>row.items.forEach(song=>{
       const isShort=_songIsShort(song);
-      const sub=[song.groupKo,song.pa?_fmtDay(song.pa):null].filter(Boolean).join(' · ');
+      const sub=[song.groupKo,song.paFull?_fmtVidAgo(song.paFull):(song.pa?_fmtVidAgo(song.pa):null)].filter(Boolean).join(' · ');
       _appendFeedCard(strip,'💖',song.t,sub,
         ()=>openLightbox(song.u,isShort,flat,flat.indexOf(song),{groupKo:song.groupKo,memberKo:(song.memberKos||[])[0]},false,true),
         song.thumb,null, row.wide?{wide:true}:(isShort?{short:true}:{}));
