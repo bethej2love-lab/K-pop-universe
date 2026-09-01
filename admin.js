@@ -350,18 +350,13 @@ async function _ytRefreshViewCounts(){
   }
   if(!statsUpdates.length){_ytSetProg('조회수 갱신: 반영할 값 없음');return;}
   let saved=0,failed=0;
-  for(let i=0;i<statsUpdates.length;i+=50){
-    _ytSetProg(`조회수 저장 중… ${i}/${statsUpdates.length}`);
-    const results=await Promise.all(
-      statsUpdates.slice(i,i+50).map(({id,view_count})=>
-        sb.from(_YT_TABLE).update({view_count}).eq('id',id)
-      )
-    );
-    let _firstErr='';
-    results.forEach(({error:ue})=>{if(ue){failed++;if(!_firstErr)_firstErr=ue.message||String(ue);console.error('[조회수 갱신] 저장 실패:',ue.message);}else saved++;});
-    if(failed){_ytSetProg(`저장 실패 (${failed}건): ${_firstErr||'원인 불명'}`);return;}
+  {
+    const _ub=await _sbUpdateBatch(statsUpdates,({id,view_count})=>sb.from(_YT_TABLE).update({view_count}).eq('id',id),
+      {conc:20,retries:2,onProgress:(done,total,sv)=>_ytSetProg(`조회수 저장 중… ${done}/${total} (저장 ${sv}개)`)});
+    saved+=_ub.saved;failed+=_ub.failed;
+    if(_ub.failed)console.error('[조회수 갱신] 재시도 후에도 실패:',_ub.failed,'건 —',_ub.firstErr);
   }
-  _ytSetProg(`조회수 갱신 완료 — ${saved}개`);
+  _ytSetProg(`조회수 갱신 완료 — ${saved}개${failed?` · ${failed}개 일시 실패(다음에 재시도)`:''}`);
   _feedDiscoveryBuiltAt=0; // 다음 탐험 탭 오픈 시 주간 TOP 순위 새로 반영
 }
 
@@ -401,18 +396,13 @@ async function _ytRefreshAllViewCounts(){
   }
   if(!statsUpdates.length){_ytSetProg('갱신할 값 없음 (영상이 모두 삭제되었거나 비공개)');return;}
   let saved=0,failed=0;
-  for(let i=0;i<statsUpdates.length;i+=50){
-    _ytSetProg(`저장 중… ${i}/${statsUpdates.length}`);
-    const results=await Promise.all(
-      statsUpdates.slice(i,i+50).map(({id,view_count})=>
-        sb.from(_YT_TABLE).update({view_count}).eq('id',id)
-      )
-    );
-    let _firstErr='';
-    results.forEach(({error:ue})=>{if(ue){failed++;if(!_firstErr)_firstErr=ue.message||String(ue);console.error('[전체 조회수 갱신] 저장 실패:',ue.message);}else saved++;});
-    if(failed){_ytSetProg(`저장 실패 (${failed}건): ${_firstErr||'원인 불명'}`);return;}
+  {
+    const _ub=await _sbUpdateBatch(statsUpdates,({id,view_count})=>sb.from(_YT_TABLE).update({view_count}).eq('id',id),
+      {conc:20,retries:2,onProgress:(done,total,sv)=>_ytSetProg(`저장 중… ${done}/${total} (저장 ${sv}개)`)});
+    saved+=_ub.saved;failed+=_ub.failed;
+    if(_ub.failed)console.error('[전체 조회수 갱신] 재시도 후에도 실패:',_ub.failed,'건 —',_ub.firstErr);
   }
-  _ytSetProg(`전체 조회수 갱신 완료 — ${saved}개 (live 카테고리 · API ${totalCalls}회 사용)`);
+  _ytSetProg(`전체 조회수 갱신 완료 — ${saved}개${failed?` · ${failed}개 일시 실패(다음에 재시도)`:''} (live 카테고리 · API ${totalCalls}회 사용)`);
   _feedDiscoveryBuiltAt=0;
 }
 
@@ -478,18 +468,43 @@ async function _ytRotateViewCountRefresh(){
       console.error('[조회수 순환 갱신]',e.message);
       return;
     }
-    const results=await Promise.all(statsUpdates.map(({id,view_count,touchOnly})=>
-      sb.from(_YT_TABLE).update(touchOnly?{view_count_synced_at:nowIso}:{view_count,view_count_synced_at:nowIso}).eq('id',id)
-    ));
-    let _firstErr='';
-    results.forEach(({error:ue})=>{if(ue){failedTotal++;if(!_firstErr)_firstErr=ue.message||String(ue);console.error('[조회수 순환 갱신] 저장 실패:',ue.message);}else savedTotal++;});
-    if(failedTotal){_ytSetProg(`저장 실패 (${failedTotal}건): ${_firstErr||'원인 불명'}`);return;}
+    const _ub=await _sbUpdateBatch(statsUpdates,({id,view_count,touchOnly})=>
+      sb.from(_YT_TABLE).update(touchOnly?{view_count_synced_at:nowIso}:{view_count,view_count_synced_at:nowIso}).eq('id',id),
+      {conc:20,retries:2});
+    savedTotal+=_ub.saved;failedTotal+=_ub.failed;
+    // 실패분은 synced_at이 안 찍혀 다음 순환 때 다시 대상이 되므로 건너뛰고 계속 진행한다.
+    if(_ub.failed)console.error('[조회수 순환 갱신] 재시도 후에도 실패:',_ub.failed,'건 —',_ub.firstErr);
   }
-  _ytSetProg(`조회수 순환 갱신 완료 — ${savedTotal}개 (전체 카테고리 · API ${totalCalls}회 사용, 다음 실행 땐 이어서 오래된 것부터)`);
+  _ytSetProg(`조회수 순환 갱신 완료 — ${savedTotal}개 저장${failedTotal?` · ${failedTotal}개는 일시 실패라 다음 실행 때 재시도됨`:''} (전체 카테고리 · API ${totalCalls}회)`);
   _feedDiscoveryBuiltAt=0;
 }
 
 function _ytSetProg(msg){const el=document.getElementById('sp-yt-prog');if(el)el.textContent=msg;_admExecBarSync(msg);}
+
+// 대량 update를 동시요청 제한 + 재시도로 안전하게 보낸다(2026-09-01). 수백 개를 Promise.all로 한꺼번에
+// 발사하면 그중 몇 개가 "TypeError: Failed to fetch"(일시적 네트워크 끊김)로 튕기는데, 예전엔 그 1건에
+// 전체가 멈췄다. 몇 개씩(conc) 나눠 보내고 실패분은 잠깐 뒤 재시도, 재시도 후에도 실패한 것만 세서 돌려준다.
+async function _sbUpdateBatch(items, updateFn, {conc=20, retries=2, onProgress}={}){
+  let saved=0, failed=0, firstErr='';
+  for(let i=0;i<items.length;i+=conc){
+    const slice=items.slice(i,i+conc);
+    const rs=await Promise.all(slice.map(async it=>{
+      for(let a=0;a<=retries;a++){
+        try{
+          const{error}=await updateFn(it);
+          if(!error)return null;
+          if(a===retries)return error.message||String(error);
+        }catch(e){
+          if(a===retries)return e.message||String(e);
+        }
+        await new Promise(r=>setTimeout(r, 400*(a+1))); // 백오프 후 재시도
+      }
+    }));
+    rs.forEach(err=>{ if(err){failed++; if(!firstErr)firstErr=err;} else saved++; });
+    if(onProgress)onProgress(Math.min(i+conc,items.length), items.length, saved, failed);
+  }
+  return {saved, failed, firstErr};
+}
 
 // ── 실행 버튼 전역 락 + 상단 진행 바 + 최근/마지막 실행 (설정패널 개선 1·2·8, 2026-09-01) ──
 // 전체 동기화(수십 분) 도는 중에 재태깅·청소를 눌러 같은 행에 쓰기가 겹치던 사고를 막는다. 실행 계열
