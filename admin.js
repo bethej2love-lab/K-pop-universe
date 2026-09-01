@@ -1237,11 +1237,9 @@ async function _ytSweepCoverV2(){
       _ytSetProg(`취소됨 — 미리보기만 (후보 ${updates.length}, 표본 콘솔).`);return;
     }
     await _snapshotBeforeBulk('원곡 태깅 v2',updates.map(u=>u.id));
-    for(let i=0;i<updates.length;i+=200){
-      const results=await Promise.all(updates.slice(i,i+200).map(u=>sb.from(_YT_TABLE).update(u.patch).eq('id',u.id)));
-      const f=results.find(r=>r.error);if(f)throw new Error(f.error.message);
-      _ytSetProg(`[원곡 v2] ${Math.min(i+200,updates.length)}/${updates.length}건 적용 중…`);
-    }
+    const _ub=await _sbUpdateBatch(updates,u=>sb.from(_YT_TABLE).update(u.patch).eq('id',u.id),
+      {conc:20,retries:2,onProgress:(done,total)=>_ytSetProg(`[원곡 v2] ${done}/${total}건 적용 중…`)});
+    if(_ub.failed)console.error('[원곡 v2] 재시도 후에도 실패:',_ub.failed,'건 —',_ub.firstErr);
     _ytSetProg(`완료! 원곡 v2 ${updates.length}건 정정 (태깅 ${n.cover} / with정리 ${n.wipe} / 재배정 ${n.reassign}). 애매 ${ambiguous}건 콘솔. (되돌리기: "↩︎ 마지막 일괄 작업 되돌리기")`);
   }catch(e){_ytSetProg('오류: '+e.message);}
   finally{if(btn)btn.disabled=false;}
@@ -1338,11 +1336,9 @@ async function _ytSweepCoverCleanup(){
       return;
     }
     await _snapshotBeforeBulk('원곡 오탐 청소',updates.map(u=>u.id));
-    for(let i=0;i<updates.length;i+=200){
-      const results=await Promise.all(updates.slice(i,i+200).map(u=>sb.from(_YT_TABLE).update(u.patch).eq('id',u.id)));
-      const f=results.find(r=>r.error);if(f)throw new Error(f.error.message);
-      _ytSetProg(`[원곡 청소] ${Math.min(i+200,updates.length)}/${updates.length}건 적용 중…`);
-    }
+    const _ub=await _sbUpdateBatch(updates,u=>sb.from(_YT_TABLE).update(u.patch).eq('id',u.id),
+      {conc:20,retries:2,onProgress:(done,total)=>_ytSetProg(`[원곡 청소] ${done}/${total}건 적용 중…`)});
+    if(_ub.failed)console.error('[원곡 청소] 재시도 후에도 실패:',_ub.failed,'건 —',_ub.firstErr);
     _ytSetProg(`완료! 원곡 오탐 ${updates.length}건 정리 (with_ 되돌림 ${nRestore} / 해제 ${nClear}). 유지 ${hasCtx+stillCover}건. (되돌리기: "↩︎ 마지막 일괄 작업 되돌리기")`);
   }catch(e){_ytSetProg('오류: '+e.message);}
   finally{if(btn)btn.disabled=false;}
@@ -1393,11 +1389,9 @@ async function _ytSweepDualMemberTags(){
     else ok=confirm(msg);
     if(!ok){_ytSetProg(`취소됨 — 적용 안 함. 미리보기: ${summary} · 적용하려면 다시 눌러 "정리 실행"을 선택하세요(표본은 F12 콘솔).`);return;}
     await _snapshotBeforeBulk('겸임 멤버 중복 태그 정리',updates.map(u=>u.id));
-    for(let i=0;i<updates.length;i+=200){
-      const results=await Promise.all(updates.slice(i,i+200).map(u=>sb.from(_YT_TABLE).update(u.patch).eq('id',u.id)));
-      const f=results.find(r=>r.error);if(f)throw new Error(f.error.message);
-      _ytSetProg(`[겸임 중복] ${Math.min(i+200,updates.length)}/${updates.length}건 적용 중…`);
-    }
+    const _ub=await _sbUpdateBatch(updates,u=>sb.from(_YT_TABLE).update(u.patch).eq('id',u.id),
+      {conc:20,retries:2,onProgress:(done,total)=>_ytSetProg(`[겸임 중복] ${done}/${total}건 적용 중…`)});
+    if(_ub.failed)console.error('[겸임 중복] 재시도 후에도 실패:',_ub.failed,'건 —',_ub.firstErr);
     _ytSetProg(`완료! 겸임 중복 태그 ${updates.length}건 정리. (되돌리기: "↩︎ 마지막 일괄 작업 되돌리기")`);
   }catch(e){_ytSetProg('오류: '+e.message);}
   finally{if(btn)btn.disabled=false;}
@@ -1526,11 +1520,9 @@ async function _ytSweepMistagReclassify(){
     // 적용부를 함수로 — 취소 시 이걸 보관해두면 다시 누를 때 재분석 없이 바로 돈다(1시간 재스캔 방지).
     const _apply=async()=>{
       await _snapshotBeforeBulk('오태깅 그룹 재배정',updates.map(u=>u.id));
-      for(let i=0;i<updates.length;i+=200){
-        const results=await Promise.all(updates.slice(i,i+200).map(u=>sb.from(_YT_TABLE).update(u.patch).eq('id',u.id)));
-        const f=results.find(r=>r.error);if(f)throw new Error(f.error.message);
-        _ytSetProg(`[오태깅 재배정] ${Math.min(i+200,updates.length)}/${updates.length}건 적용 중…`);
-      }
+      const _ub=await _sbUpdateBatch(updates,u=>sb.from(_YT_TABLE).update(u.patch).eq('id',u.id),
+        {conc:20,retries:2,onProgress:(done,total)=>_ytSetProg(`[오태깅 재배정] ${done}/${total}건 적용 중…`)});
+      if(_ub.failed)console.error('[오태깅 재배정] 재시도 후에도 실패:',_ub.failed,'건 —',_ub.firstErr);
       _ytSetProg(`완료! ${updates.length}건 그룹 재배정함.${manualSkipped?` 수동보호 ${manualSkipped}건.`:''} (되돌리기: "↩︎ 마지막 일괄 작업 되돌리기")`);
     };
     const msg=`오태깅 그룹 재배정 ${updates.length}건을 적용할까요?\n\n· "저장 그룹은 제목에 근거 없음 + 엔진이 제목의 다른 그룹을 literal로 찾음"인 행\n  (대부분 옛 오저장의 정당한 복구 — 하이키·체리블렛 등)\n· 콜라보(with/선배/feat)·수동편집(${manualSkipped}건)은 자동 제외\n· 표본 40건을 콘솔(F12)에 출력함\n· 스냅샷 저장되어 "↩︎ 마지막 일괄 작업 되돌리기"로 복구 가능`;
@@ -1609,11 +1601,9 @@ async function _ytSweepFancamMistag(){
       _ytSetProg(`취소됨 — 미리보기만 (정정 후보 ${updates.length}건, 표본 콘솔).`);return;
     }
     await _snapshotBeforeBulk('음악방송 직캠 재검증',updates.map(u=>u.id));
-    for(let i=0;i<updates.length;i+=200){
-      const results=await Promise.all(updates.slice(i,i+200).map(u=>sb.from(_YT_TABLE).update(u.patch).eq('id',u.id)));
-      const f=results.find(r=>r.error);if(f)throw new Error(f.error.message);
-      _ytSetProg(`[직캠 재검증] ${Math.min(i+200,updates.length)}/${updates.length}건 적용 중…`);
-    }
+    const _ub=await _sbUpdateBatch(updates,u=>sb.from(_YT_TABLE).update(u.patch).eq('id',u.id),
+      {conc:20,retries:2,onProgress:(done,total)=>_ytSetProg(`[직캠 재검증] ${done}/${total}건 적용 중…`)});
+    if(_ub.failed)console.error('[직캠 재검증] 재시도 후에도 실패:',_ub.failed,'건 —',_ub.firstErr);
     _ytSetProg(`완료! 직캠 ${updates.length}건 정정 (그룹 ${nG} / 멤버 ${nM} / 콜라보 ${nW}). (되돌리기: "↩︎ 마지막 일괄 작업 되돌리기")`);
   }catch(e){_ytSetProg('오류: '+e.message);}
   finally{if(btn)btn.disabled=false;}
@@ -1682,10 +1672,10 @@ async function _ytSweepHiddenRejudge(){
       _ytSetProg(`취소됨 — 미리보기만 (재배정 ${moves.length} · 보류 ${holds.length}, 표본 콘솔).`);return;
     }
     await _snapshotBeforeBulk('숨김 목록 재판정',[...moves.map(u=>u.id),...holds]);
-    for(let i=0;i<moves.length;i+=200){
-      const results=await Promise.all(moves.slice(i,i+200).map(u=>sb.from(_YT_TABLE).update(u.patch).eq('id',u.id)));
-      const f=results.find(r=>r.error);if(f)throw new Error(f.error.message);
-      _ytSetProg(`[숨김 재판정] 재배정 ${Math.min(i+200,moves.length)}/${moves.length}건…`);
+    {
+      const _ub=await _sbUpdateBatch(moves,u=>sb.from(_YT_TABLE).update(u.patch).eq('id',u.id),
+        {conc:20,retries:2,onProgress:(d,t)=>_ytSetProg(`[숨김 재판정] 재배정 ${d}/${t}건…`)});
+      if(_ub.failed)console.error('[숨김 재판정] 재시도 후에도 실패:',_ub.failed,'건 —',_ub.firstErr);
     }
     for(let i=0;i<holds.length;i+=200){
       const{error:ue}=await sb.from(_YT_TABLE).update(_flagPatch('보류','auto')).in('id',holds.slice(i,i+200));
@@ -1767,16 +1757,13 @@ async function _ytSweepFillLockedEmpty(){
       {_ytSetProg(`취소됨 — 미리보기만 (채울 예정 ${updates.length}건, 콘솔 샘플).`);return;}
     await _snapshotBeforeBulk('잠금-빈값 멤버 채우기',updates.map(u=>u.id));
     // DB 트리거 우회 two-step(편집 모달과 동일): tags_manual=true라 그냥은 members 변경이 막힘
-    let done=0;
-    for(let i=0;i<updates.length;i+=100){
-      const chunk=updates.slice(i,i+100);
-      const r1=await Promise.all(chunk.map(u=>sb.from(_YT_TABLE).update({members:u.members,tags_manual:false}).eq('id',u.id)));
-      const f1=r1.find(r=>r.error);if(f1)throw new Error(f1.error.message);
-      const r2=await Promise.all(chunk.map(u=>sb.from(_YT_TABLE).update({tags_manual:true}).eq('id',u.id)));
-      const f2=r2.find(r=>r.error);if(f2)throw new Error(f2.error.message);
-      done+=chunk.length;
-      _ytSetProg(`[잠금-빈값 채우기] ${done}/${updates.length}건 처리 중…`);
-    }
+    // two-step을 동시요청 제한+재시도로 안전하게(Failed to fetch 방지) — 전 항목 1단계(멤버 채우고 잠금
+    // 해제) 후 전 항목 2단계(다시 잠금). 각 행의 1→2 순서는 유지된다.
+    const _u1=await _sbUpdateBatch(updates,u=>sb.from(_YT_TABLE).update({members:u.members,tags_manual:false}).eq('id',u.id),
+      {conc:20,retries:2,onProgress:(d,t)=>_ytSetProg(`[잠금-빈값 채우기] ${d}/${t}건 (1/2단계)`)});
+    const _u2=await _sbUpdateBatch(updates,u=>sb.from(_YT_TABLE).update({tags_manual:true}).eq('id',u.id),
+      {conc:20,retries:2,onProgress:(d,t)=>_ytSetProg(`[잠금-빈값 채우기] ${d}/${t}건 (2/2단계)`)});
+    if(_u1.failed||_u2.failed)console.error('[잠금-빈값 채우기] 재시도 후에도 실패:',_u1.failed,'/',_u2.failed,'—',_u1.firstErr||_u2.firstErr);
     _ytSetProg(`완료! 잠금-빈값 ${updates.length}건에 멤버를 채웠어요(잠금 유지).`+(riskyManual.length?` 흔한영단어 ${riskyManual.length}건은 수동확인(콘솔).`:'')+` 카드 라이브 only 탭 확인해보세요.`);
   }catch(e){_ytSetProg('오류: '+e.message);}
   finally{if(btn)btn.disabled=false;}
@@ -1832,21 +1819,15 @@ async function _ytSweepCanonicalizeMembers(){
     if(!await _sweepConfirmSimple("고아 태그 정정","정정 실행",`정식명이 아닌 별칭/표시명으로 태깅된 고아 태그 ${updates.length}건을 정식명으로 정정할까요?\n\n· 여정→전여여정, 홍의진→의진처럼 "같은 사람, 이름형태만" 정정\n· matchAliases·groups[].name으로 확실히 아는 것만 (모르는 고아 ${orphanList.length}종은 손 안 댐)\n· 잠금행 ${lockedCnt}건은 해제→정정→재잠금\n· 스냅샷 저장돼 되돌리기 가능 · 샘플 콘솔`))
       {_ytSetProg(`취소됨 — 미리보기만 (정정 예정 ${updates.length}건).`);return;}
     await _snapshotBeforeBulk('고아태그 정정(별칭→정식명)',updates.map(u=>u.id));
-    let done=0;
-    for(let i=0;i<updates.length;i+=100){
-      const chunk=updates.slice(i,i+100);
-      const r1=await Promise.all(chunk.map(u=>u.locked
-        ? sb.from(_YT_TABLE).update({...u.patch,tags_manual:false}).eq('id',u.id)
-        : sb.from(_YT_TABLE).update(u.patch).eq('id',u.id)));
-      const f1=r1.find(r=>r.error);if(f1)throw new Error(f1.error.message);
-      const relock=chunk.filter(u=>u.locked);
-      if(relock.length){
-        const r2=await Promise.all(relock.map(u=>sb.from(_YT_TABLE).update({tags_manual:true}).eq('id',u.id)));
-        const f2=r2.find(r=>r.error);if(f2)throw new Error(f2.error.message);
-      }
-      done+=chunk.length;
-      _ytSetProg(`[고아태그 정정] ${done}/${updates.length}건 처리 중…`);
-    }
+    // two-step을 동시요청 제한+재시도로(Failed to fetch 방지). 1단계: 전 항목(잠금행은 해제하며 정정),
+    // 2단계: 잠금행만 재잠금. 각 잠금행의 1→2 순서는 유지된다.
+    const _relock=updates.filter(u=>u.locked);
+    const _u1=await _sbUpdateBatch(updates,u=>u.locked
+      ? sb.from(_YT_TABLE).update({...u.patch,tags_manual:false}).eq('id',u.id)
+      : sb.from(_YT_TABLE).update(u.patch).eq('id',u.id),
+      {conc:20,retries:2,onProgress:(d,t)=>_ytSetProg(`[고아태그 정정] ${d}/${t}건 처리 중…`)});
+    const _u2=_relock.length?await _sbUpdateBatch(_relock,u=>sb.from(_YT_TABLE).update({tags_manual:true}).eq('id',u.id),{conc:20,retries:2}):{failed:0,firstErr:''};
+    if(_u1.failed||_u2.failed)console.error('[고아태그 정정] 재시도 후에도 실패:',_u1.failed,'/',_u2.failed,'—',_u1.firstErr||_u2.firstErr);
     _ytSetProg(`완료! 고아태그 ${updates.length}건을 정식명으로 정정(잠금 ${lockedCnt}건 유지). 미매핑 고아 ${orphanList.length}종은 콘솔(별칭 추가 대상).`);
   }catch(e){_ytSetProg('오류: '+e.message);}
   finally{if(btn)btn.disabled=false;}
@@ -1893,13 +1874,9 @@ async function _ytSweepAmbiguousCollabMistag(){
     // (전체) 버튼 규칙(설정패널 개선 4): 확인창. 단 데일리 루틴이 부를 땐 skip(다이얼로그로 멈추면 안 됨).
     if(updates.length&&!_admRoutineRunning&&typeof _confirmDialog==='function'&&!(await _confirmDialog({title:'콜라보 오태깅 재검증 (전체)',msg:`기존 콜라보 태그 <b>${updates.length}건</b>을 최신 로직으로 재검증·정리해요. 수동태그는 보호되고, 되돌리기 스냅샷을 떠둬요.`,okLabel:'재검증 실행',wide:true})))return;
     await _snapshotBeforeBulk('콜라보 오태깅 재검증(전체)',updates.map(u=>u.id));
-    for(let i=0;i<updates.length;i+=200){
-      const chunk=updates.slice(i,i+200);
-      const results=await Promise.all(chunk.map(u=>sb.from(_YT_TABLE).update(u.patch).eq('id',u.id)));
-      const failed=results.find(r=>r.error);
-      if(failed)throw new Error(failed.error.message);
-      _ytSetProg(`[콜라보 오태깅 재검증] ${Math.min(i+200,updates.length)}/${updates.length}개 처리 중…`);
-    }
+    const _ub=await _sbUpdateBatch(updates,u=>sb.from(_YT_TABLE).update(u.patch).eq('id',u.id),
+      {conc:20,retries:2,onProgress:(done,total)=>_ytSetProg(`[콜라보 오태깅 재검증] ${done}/${total}개 처리 중…`)});
+    if(_ub.failed)console.error('[콜라보 오태깅 재검증] 재시도 후에도 실패:',_ub.failed,'건 —',_ub.firstErr);
     _ytSetProg(`완료! ${rows.length}개 중 ${updates.length}개에서 근거 없는 콜라보 태그 제거함`+(wipedOut.length?` (그중 ${wipedOut.length}개는 태그가 전부 빠짐 — 콘솔 확인 필요)`:'')+(manualSkipped?` (수동 편집이라 안 건드리고 넘어간 것 ${manualSkipped}개 — 직접 확인 필요)`:''));
   }catch(e){
     _ytSetProg('오류: '+e.message);
@@ -2026,10 +2003,10 @@ async function _atmScopedMemberReverify(name){
   if(!updates.length){_ytSetProg(`검사 완료 — "${name}" 관련 근거없는 태그 없음 (${rows.length}개 확인)`);return;}
   if(!confirm(`"${name}"이(가) 근거 없이(평문 매칭) 붙은 영상 ${updates.length}개에서 이 이름을 뺄까요?\n\n· 자동 태깅(tags_manual=false)만 · 스냅샷 저장되어 되돌리기 가능\n· 그룹 배정까지 틀린 경우(예: group_ko가 이 이름 때문에 잘못 정해진 것)는 "② 오태깅 그룹 재배정"을 따로 돌리세요.`)){_ytSetProg(`취소됨 — 재검증 예정 ${updates.length}개(미적용).`);return;}
   await _snapshotBeforeBulk(`"${name}" 이름 한정 멤버 재검증`,updates.map(u=>u.id));
-  for(let i=0;i<updates.length;i+=200){
-    const results=await Promise.all(updates.slice(i,i+200).map(u=>sb.from(_YT_TABLE).update(u.patch).eq('id',u.id)));
-    const f=results.find(r=>r.error);if(f){_ytSetProg('오류: '+f.error.message);return;}
-    _ytSetProg(`["${name}" 재검증] ${Math.min(i+200,updates.length)}/${updates.length}개…`);
+  {
+    const _ub=await _sbUpdateBatch(updates,u=>sb.from(_YT_TABLE).update(u.patch).eq('id',u.id),
+      {conc:20,retries:2,onProgress:(d,t)=>_ytSetProg(`["${name}" 재검증] ${d}/${t}개…`)});
+    if(_ub.failed){_ytSetProg(`"${name}" 재검증: ${_ub.failed}건 저장 실패(다시 눌러 재시도) — ${_ub.firstErr}`);}
   }
   if(wiped.length)_tagReviewEnqueueBatch(wiped.map(w=>({videoId:w.id,reason:'members_wiped',source:'scoped_reverify',detail:{removed:w.removed}}))); // 태그 전부 빠진 건 검수 대기로
   _ytSetProg(`완료! "${name}"을(를) ${updates.length}개 영상에서 제거함.`+(wiped.length?` (그중 ${wiped.length}개는 태그가 전부 빠져 검수 대기에 올림)`:'')+` (되돌리기: "↩︎ 마지막 일괄 작업 되돌리기")`);
@@ -2315,14 +2292,12 @@ async function _ytSweepMembersMistag(){
     }
     if(updates.length&&!_admRoutineRunning&&typeof _confirmDialog==='function'&&!(await _confirmDialog({title:'자체 멤버 태깅 재검증 (전체)',msg:`그룹 자체 채널 멤버 태그 <b>${updates.length}건</b>을 최신 매칭으로 재검증해요. 그룹은 안 건드리고, 되돌리기 스냅샷을 떠둬요.`,okLabel:'재검증 실행',wide:true})))return;
     await _snapshotBeforeBulk('자체 멤버 태깅 재검증(전체)',updates.map(u=>u.id));
-    for(let i=0;i<updates.length;i+=200){
-      const chunk=updates.slice(i,i+200);
-      const results=await Promise.all(chunk.map(u=>sb.from(_YT_TABLE).update(u.patch).eq('id',u.id)));
-      const failed=results.find(r=>r.error);
-      if(failed)throw new Error(failed.error.message);
-      _ytSetProg(`[자체 멤버 태깅 재검증] ${Math.min(i+200,updates.length)}/${updates.length}개 처리 중…`);
-    }
-    _ytSetProg(`완료! ${rows.length}개 중 ${updates.length}개에서 근거 없는 멤버 태그 제거함`+(wipedOut.length?` (그중 ${wipedOut.length}개는 태그가 전부 빠짐 — 콘솔 확인 후 무관 처리 여부 직접 판단 필요)`:''));
+    // 200개를 한꺼번에 Promise.all로 쏘면 그중 하나가 일시적 네트워크 끊김(Failed to fetch)으로 튕길 때
+    // 전체가 죽는다(2026-09-01 사용자 제보). 동시요청 20개 제한 + 실패분 재시도로 안전하게(_sbUpdateBatch).
+    const _ub=await _sbUpdateBatch(updates,u=>sb.from(_YT_TABLE).update(u.patch).eq('id',u.id),
+      {conc:20,retries:2,onProgress:(done,total)=>_ytSetProg(`[자체 멤버 태깅 재검증] ${done}/${total}개 처리 중…`)});
+    if(_ub.failed)console.error('[자체 멤버 태깅 재검증] 재시도 후에도 실패:',_ub.failed,'건 —',_ub.firstErr);
+    _ytSetProg(`완료! ${rows.length}개 중 ${updates.length}개에서 근거 없는 멤버 태그 제거함`+(_ub.failed?` · ${_ub.failed}개는 저장 실패(다시 눌러 재시도)`:'')+(wipedOut.length?` (그중 ${wipedOut.length}개는 태그가 전부 빠짐 — 콘솔 확인 후 무관 처리 여부 직접 판단 필요)`:''));
   }catch(e){
     _ytSetProg('오류: '+e.message);
   }finally{
@@ -2500,15 +2475,10 @@ async function _ytUndoBatch(batchId,opLabel){
   const{data:snaps,error:sErr}=await _sbFetchAll(()=>sb.from(_BULK_SNAP_TABLE).select('row_id,before_data').eq('batch_id',batchId).order('snap_id'));
   if(sErr){_ytSetProg('되돌리기 데이터 로드 실패: '+sErr.message);return;}
   if(!snaps||!snaps.length){_ytSetProg('되돌릴 스냅샷 데이터가 없어요');return;}
-  let restored=0;
-  for(let i=0;i<snaps.length;i+=100){
-    const chunk=snaps.slice(i,i+100);
-    const results=await Promise.all(chunk.map(s=>sb.from(_YT_TABLE).update(s.before_data).eq('id',s.row_id)));
-    const failed=results.find(r=>r.error);
-    if(failed)throw new Error(failed.error.message);
-    restored+=chunk.length;
-    _ytSetProg(`[되돌리기] ${Math.min(i+100,snaps.length)}/${snaps.length}개 복원 중…`);
-  }
+  const _ub=await _sbUpdateBatch(snaps,s=>sb.from(_YT_TABLE).update(s.before_data).eq('id',s.row_id),
+    {conc:20,retries:2,onProgress:(d,t)=>_ytSetProg(`[되돌리기] ${d}/${t}개 복원 중…`)});
+  if(_ub.failed)throw new Error(`되돌리기 ${_ub.failed}건 실패(재시도 후) — ${_ub.firstErr}`); // 부분 복원 방지: 실패 시 중단
+  const restored=snaps.length;
   await sb.from(_BULK_SNAP_TABLE).delete().eq('batch_id',batchId);
   try{_vmCache.clear();}catch(_){}
   _ytSetProg(`되돌리기 완료! "${opLabel}"으로 바뀐 ${restored}개 행을 이전 상태로 복원했어요.`);
@@ -2557,13 +2527,9 @@ async function _ytSweepCategoryMistag(){
     if(!updates.length){_ytSetProg(`검사 완료 — ${rows.length}개 중 바뀔 항목 없음`);return;}
     if(updates.length&&!_admRoutineRunning&&typeof _confirmDialog==='function'&&!(await _confirmDialog({title:'영상 카테고리 재분류 (전체)',msg:`라이브/쇼츠/예능 등 카테고리 <b>${updates.length}건</b>을 최신 로직으로 재분류해요. 되돌리기 스냅샷을 떠둬요.`,okLabel:'재분류 실행',wide:true})))return;
     await _snapshotBeforeBulk('영상 카테고리 재분류(전체)',updates.map(u=>u.id));
-    for(let i=0;i<updates.length;i+=200){
-      const chunk=updates.slice(i,i+200);
-      const results=await Promise.all(chunk.map(u=>sb.from(_YT_TABLE).update(u.patch).eq('id',u.id)));
-      const failed=results.find(r=>r.error);
-      if(failed)throw new Error(failed.error.message);
-      _ytSetProg(`[영상 카테고리 재분류] ${Math.min(i+200,updates.length)}/${updates.length}개 처리 중…`);
-    }
+    const _ub=await _sbUpdateBatch(updates,u=>sb.from(_YT_TABLE).update(u.patch).eq('id',u.id),
+      {conc:20,retries:2,onProgress:(done,total)=>_ytSetProg(`[영상 카테고리 재분류] ${done}/${total}개 처리 중…`)});
+    if(_ub.failed)console.error('[영상 카테고리 재분류] 재시도 후에도 실패:',_ub.failed,'건 —',_ub.firstErr);
     _ytSetProg(`완료! ${rows.length}개 중 ${updates.length}개 카테고리 갱신함`);
   }catch(e){
     _ytSetProg('오류: '+e.message);
@@ -2623,11 +2589,9 @@ async function _ytSweepPromoteShorts(){
       // 승격(세로만) — 실행 전체를 runBatchId 하나로 스냅샷
       if(portraitIds.length){
         if(!snapOff){const s=await _snapshotBeforeBulk('가로→쇼츠 승격',portraitIds,runBatchId);if(s===null)snapOff=true;}
-        for(let i=0;i<portraitIds.length;i+=200){
-          const c=portraitIds.slice(i,i+200);
-          const results=await Promise.all(c.map(id=>sb.from(_YT_TABLE).update({is_short:true}).eq('id',id)));
-          const failed=results.find(x=>x.error);
-          if(failed)throw new Error(failed.error.message);
+        {
+          const _ub=await _sbUpdateBatch(portraitIds,id=>sb.from(_YT_TABLE).update({is_short:true}).eq('id',id),{conc:20,retries:2});
+          if(_ub.failed)throw new Error(`쇼츠 승격 ${_ub.failed}건 저장 실패(재시도 후) — ${_ub.firstErr}`); // 중단·재개형이라 실패 시 멈추고 다시 눌러 이어서
         }
         promoted+=portraitIds.length;
       }
@@ -4821,11 +4785,8 @@ async function _ytAutoTagMembers(){
       if(updates.length){
         // update()는 지정한 컬럼만 바꾸므로 upsert와 달리 다른 NOT NULL 컬럼 값을 건드릴 위험이 없음 —
         // 청크 안에서 순차 await 대신 병렬로 날려 왕복 대기 시간만 줄인다.
-        for(let i=0;i<updates.length;i+=200){
-          const chunk=updates.slice(i,i+200);
-          const results=await Promise.all(chunk.map(u=>sb.from(_YT_TABLE).update(u.patch).eq('id',u.id)));
-          results.forEach((r,idx)=>{if(r.error)console.error(`[자동 태깅] ${gko} id=${chunk[idx].id} 업데이트 실패:`,r.error.message);});
-        }
+        const _ub=await _sbUpdateBatch(updates,u=>sb.from(_YT_TABLE).update(u.patch).eq('id',u.id),{conc:20,retries:2});
+        if(_ub.failed)console.error(`[자동 태깅] ${gko} 재시도 후에도 실패 ${_ub.failed}건 — ${_ub.firstErr}`);
         grandMatched+=updates.length;
       }
       completed++;
@@ -4915,11 +4876,8 @@ async function _ytRetagAllIncludingTagged(){
       grandChecked+=rows.length;
       if(updates.length){
         await _snapshotBeforeBulk('멤버+콜라보 재태깅(전체)',updates.map(u=>u.id),_snapBatch); // 되돌리기용(전 그룹 한 배치)
-        for(let i=0;i<updates.length;i+=200){
-          const chunk=updates.slice(i,i+200);
-          const results=await Promise.all(chunk.map(u=>sb.from(_YT_TABLE).update(u.patch).eq('id',u.id)));
-          results.forEach((r,idx)=>{if(r.error)console.error(`[재태깅] ${gko} id=${chunk[idx].id} 업데이트 실패:`,r.error.message);});
-        }
+        const _ub=await _sbUpdateBatch(updates,u=>sb.from(_YT_TABLE).update(u.patch).eq('id',u.id),{conc:20,retries:2});
+        if(_ub.failed)console.error(`[재태깅] ${gko} 재시도 후에도 실패 ${_ub.failed}건 — ${_ub.firstErr}`);
         grandMatched+=updates.length;
       }
       _ytSetProg(`[${gi+1}/${groupKos.length}] ${gko}: ${updates.length}/${rows.length}개 보강 (누적 ${grandMatched}개)`);
