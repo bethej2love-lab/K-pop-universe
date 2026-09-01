@@ -14273,12 +14273,14 @@ document.getElementById('pp-logout-btn').addEventListener('click',e=>{e.stopProp
 // ── 그룹/멤버 카드 상태 한 줄: 실시간 시청자 수 + 즐겨찾기 인기 지표를 한 자리에서 번갈아 표시 ──
 const _gcStatusState={group:{presence:'',favcount:'',traces:''},member:{presence:'',favcount:'',traces:''}};
 const _gcStatusTimers={group:null,member:null};
+const _gcStatusAnimTimers={group:null,member:null}; // 교차 애니 setTimeout — 재렌더 시 취소해 조각 겹침 방지
 const _gcStatusIdx={group:0,member:0};
 function _statusEl(kind){return document.getElementById(kind==='group'?'gc-status-line':'tt-status-line');}
 function _renderGcStatusLine(kind){
   const el=_statusEl(kind);
   if(!el)return;
   clearInterval(_gcStatusTimers[kind]);
+  clearTimeout(_gcStatusAnimTimers[kind]); // 이전 교차 애니의 지연 append가 살아남아 두 조각("좋아해요"+"흔적")이 겹치던 버그 방지(2026-09-01 사용자 제보)
   const entries=[];
   if(_gcStatusState[kind].presence)entries.push({type:'presence',html:_gcStatusState[kind].presence});
   if(_gcStatusState[kind].favcount)entries.push({type:'favcount',html:_gcStatusState[kind].favcount});
@@ -14291,8 +14293,10 @@ function _renderGcStatusLine(kind){
       const old=el.querySelector('.gc-status-inner');
       if(old){
         old.classList.add('anim-out');
-        setTimeout(()=>{
-          if(old.parentNode===el)el.removeChild(old);
+        _gcStatusAnimTimers[kind]=setTimeout(()=>{
+          // 남아있는 조각을 전부 제거한 뒤 새 조각 하나만 붙인다 — 그 사이 재렌더 등으로 조각이
+          // 둘 이상 생겨도 겹치지 않게(항상 정확히 하나 유지).
+          el.querySelectorAll('.gc-status-inner').forEach(x=>el.removeChild(x));
           const newEl=document.createElement('div');
           newEl.className='gc-status-inner type-'+entry.type+' anim-in';
           newEl.innerHTML=entry.html;
