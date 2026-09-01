@@ -283,22 +283,23 @@
     <div id="adm-exec-bar"></div>
     <div id="adm-exec-log"></div>
     <div class="sp-sec-lbl">YouTube 영상 관리</div>
-    <div class="sp-row">
-      <span class="sp-lbl">ⓘ 버튼 설명 보기</span>
+    <!-- 패널 열기 6개 — 흩어져 있던 걸 최상단 2열 그리드로 모음(설정패널 개선 6). DB에 쓰는 실행
+         버튼(.sp-yt-sync)과 달리 이건 '패널만 여는' 버튼이라 .sp-open-btn로 모양을 분리한다. -->
+    <div class="sp-open-grid">
+      <button class="sp-open-btn sp-open-primary" id="sp-adm-home-btn">🏠 관리자 홈</button>
+      <button class="sp-open-btn" id="sp-vm-btn">🎬 영상 관리</button>
+      <button class="sp-open-btn" id="sp-hnn-btn">🏷 태깅 규칙</button>
+      <button class="sp-open-btn" id="sp-gp-btn">⭐ 그룹 우선순위</button>
+      <button class="sp-open-btn" id="sp-ev-btn">🎤 공연 추가</button>
+      <button class="sp-open-btn" id="sp-fb-btn">💬 피드백</button>
+    </div>
+    <div class="sp-row" style="margin-top:8px;">
+      <span class="sp-lbl">ⓘ 설명 모두 펼치기 (버튼별 ⓘ로도 열려요)</span>
       <label class="sw"><input type="checkbox" id="sp-hint-toggle"><span class="sw-track"><span class="sw-thumb"></span></span></label>
     </div>
-
-    <div class="sp-subsec-lbl">사용자 피드백</div>
-    <button class="sp-yt-sync" id="sp-fb-btn" style="opacity:.8;">피드백 보기</button>
-    <div class="sp-btn-hint">유저들이 보낸 피드백 목록을 확인해요.</div>
-
-    <!-- 관리자 홈 — 설정 패널 맨 위에 둔다. 흩어진 버튼을 다 기억할 필요 없이 "숫자 → 할 일"만 보고
-         움직일 수 있게 하는 게 목적(2026-08-25). 아래 개별 버튼들은 그대로 남겨둔다. -->
-    <button class="sp-yt-sync" id="sp-adm-home-btn" style="border-color:rgba(140,180,255,0.45);">🏠 관리자 홈 — 오늘 할 일</button>
-    <div class="sp-btn-hint">밀린 검수·새 피드백·마지막 동기화를 한눈에 보고, 매일 루틴을 한 번에 돌려요.</div>
     <div class="sp-subsec-lbl" style="margin-top:10px;">동기화</div>
     <input type="text" class="sp-yt-key" id="sp-yt-key" placeholder="API 키 (AIzaSy...)" autocomplete="off" spellcheck="false">
-    <button class="sp-yt-sync" id="sp-yt-sync">1. 전체 동기화 (공식 + 외부 채널)</button>
+    <button class="sp-yt-sync" id="sp-yt-sync">전체 동기화 (공식 + 외부 채널)</button>
     <div class="sp-btn-hint">공식 채널 전체 + 외부 채널의 새 영상을 가져와요. 평소엔 이것부터 누르면 돼요.</div>
     <button class="sp-yt-sync" id="sp-yt-viewcount-btn" style="margin-top:4px;opacity:.8;">조회수만 갱신(이번주 직캠 TOP용)</button>
     <div class="sp-btn-hint">최근 14일 라이브 영상 조회수만 갱신 — 이번 주 직캠 TOP 순위에 씀. 위 전체 동기화에 이미 얹혀있어서 따로 안 눌러도 됨.</div>
@@ -306,8 +307,6 @@
     <div class="sp-btn-hint">조회수가 이미 있는 라이브 영상 전체를 다시 갱신 — 연도별 TOP 100용. 한 달에 한 번이면 충분해요.</div>
     <button class="sp-yt-sync" id="sp-yt-rotateviewcount-btn" style="margin-top:4px;opacity:.8;">전체 카테고리 조회수 순환 갱신(월 1회 · 배치 5000개씩)</button>
     <div class="sp-btn-hint">라이브 말고 쇼츠·MV 등 나머지 전체를 대상으로, 가장 오래전에 갱신된 5천개씩만 순환 갱신 — 몇 달 걸려 전체를 한 바퀴 돌아요. 월 1회 정도.</div>
-    <button class="sp-yt-sync" id="sp-vm-btn" style="margin-top:4px;opacity:.8;">영상 관리 패널</button>
-    <div class="sp-btn-hint">영상 하나하나를 검색해서 확인·수정할 수 있는 별도 패널을 열어요.</div>
     <div style="margin-top:6px;padding-top:6px;border-top:0.5px solid rgba(255,255,255,0.07)">
       <div style="font-size:10px;color:rgba(155,178,228,0.4);margin-bottom:2px">과거 영상 백필 (search API, 쿼터 많이 씀)</div>
       <select class="sp-yt-key" id="sp-yt-backfill-ch"></select>
@@ -334,25 +333,15 @@
     </div>
 
 
-    <div class="sp-subsec-lbl" style="margin-top:10px;">검수</div>
-    <button class="sp-yt-sync" id="sp-hnn-btn" style="opacity:.8;">태깅 규칙</button>
-    <div class="sp-btn-hint">흔한단어 보호·동명이인·예외 규칙을 확인·관리해요(실제 영상 검수는 홈의 "검수 대기"·영상 관리에서).</div>
-
-    <div class="sp-subsec-lbl" style="margin-top:10px;">그룹 데이터 관리</div>
-    <button class="sp-yt-sync" id="sp-gp-btn" style="opacity:.8;">그룹 우선순위</button>
-    <div class="sp-btn-hint">그룹별 노출 우선순위(A/B/C)를 지정하는 패널을 열어요 — 유저에겐 안 보이는 내부용.</div>
-    <button class="sp-yt-sync" id="sp-ev-btn" style="margin-top:4px;opacity:.8;">공연 추가</button>
-    <div class="sp-btn-hint">콘서트·팬미팅을 직접 넣어요. KOPIS 수집에 안 잡히는 해외 투어·소규모 팬미팅용. 공연장은 기존 목록에서 고르는 게 기본이에요.</div>
-
     <!-- ── 데이터 정합성: 상황별 4묶음으로 재배치(2026-08-25). 핸들러/버튼ID는 그대로, 순서·소제목·라벨만 정리 ── -->
-    <div class="sp-subsec-lbl" style="margin-top:10px;">데이터 정합성 · 매일 루틴 <span style="opacity:.6;font-weight:400;">— 평소엔 🏠관리자 홈이 1→4 자동 실행. 아래는 개별로 돌릴 때만</span></div>
-    <button class="sp-yt-sync" id="sp-yt-autotag" style="margin-top:4px;opacity:.8;">2. 멤버+콜라보 자동 태깅 (미태깅분)</button>
+    <div class="sp-subsec-lbl" style="margin-top:10px;">데이터 정합성 · 매일 루틴 <span style="opacity:.6;font-weight:400;">— 평소엔 🏠관리자 홈이 한 번에 자동 실행. 아래는 개별로 돌릴 때만</span></div>
+    <button class="sp-yt-sync" id="sp-yt-autotag" style="margin-top:4px;opacity:.8;">멤버+콜라보 자동 태깅 (미태깅분)</button>
     <div class="sp-btn-hint">아직 멤버/콜라보 태그가 하나도 없는 영상만 채워요. <b>그룹(group_ko)은 안 건드림.</b></div>
     <button class="sp-yt-sync" id="sp-detect-btn" style="margin-top:4px;opacity:.8;">🔍 오태깅 미리보기 (읽기전용 · 안 고침)</button>
-    <div class="sp-btn-hint">아래 "3. 콜라보 재검증"이 뭘 얼마나 제거할지 <b>미리보기만</b> — 콘솔(F12)에 출력.</div>
-    <button class="sp-yt-sync" id="sp-collabfix-btn" style="margin-top:4px;opacity:.8;">3. 콜라보 오태깅 재검증(전체)</button>
+    <div class="sp-btn-hint">아래 "콜라보 오태깅 재검증"이 뭘 얼마나 제거할지 <b>미리보기만</b> — 콘솔(F12)에 출력.</div>
+    <button class="sp-yt-sync" id="sp-collabfix-btn" style="margin-top:4px;opacity:.8;">콜라보 오태깅 재검증 (전체)</button>
     <div class="sp-btn-hint">기존 콜라보 태그(함께한 멤버 등)를 최신 로직으로 재검증·정리. 수동태그 보호 · 스냅샷 되돌리기.</div>
-    <button class="sp-yt-sync" id="sp-scan-namecollide-btn" style="margin-top:4px;opacity:.8;">4. 동명이인 그룹 오배정 스캔+재배정</button>
+    <button class="sp-yt-sync" id="sp-scan-namecollide-btn" style="margin-top:4px;opacity:.8;">동명이인 그룹 오배정 스캔+재배정</button>
     <div class="sp-btn-hint">동명이인 때문에 엉뚱한 그룹으로 배정된 걸 찾아 확실한 것만 바로잡음. <b>(그룹 변경)</b></div>
 
     <div class="sp-subsec-lbl" style="margin-top:12px;">데이터 정합성 · 매칭 로직 고친 날 <span style="opacity:.6;font-weight:400;">— 기존 데이터 전체를 새 로직으로 재처리 · 순서대로</span></div>

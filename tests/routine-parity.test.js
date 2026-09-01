@@ -79,7 +79,8 @@ for (const [id, fn, label] of PANEL) {
 }
 
 // ── 5) 라벨이 실제 동작과 어긋나지 않는지(사람이 화면에서 읽는 것) ──────────────
-need(/id="sp-yt-sync">1\. 전체 동기화 \(공식 \+ 외부 채널\)/.test(html),
+// 2026-09-01: 설정패널 개선 5 — 매일 루틴은 홈 원클릭이 있으니 라벨의 "1." 번호는 뺐다(라벨 텍스트만).
+need(/id="sp-yt-sync">전체 동기화 \(공식 \+ 외부 채널\)/.test(html),
   '패널 버튼 라벨이 여전히 "공식 + 외부 채널"이라고 약속함');
 const stepNames = [...rBody.matchAll(/name:\s*'([^']+)'/g)].map(m => m[1]);
 need(stepNames.some(n => /외부 채널/.test(n)),

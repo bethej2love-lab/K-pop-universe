@@ -357,8 +357,9 @@ async function _ytRefreshViewCounts(){
         sb.from(_YT_TABLE).update({view_count}).eq('id',id)
       )
     );
-    results.forEach(({error:ue})=>{if(ue){failed++;console.error('[조회수 갱신] 저장 실패:',ue.message);}else saved++;});
-    if(failed){_ytSetProg(`저장 실패 (${failed}건): 콘솔 확인`);return;}
+    let _firstErr='';
+    results.forEach(({error:ue})=>{if(ue){failed++;if(!_firstErr)_firstErr=ue.message||String(ue);console.error('[조회수 갱신] 저장 실패:',ue.message);}else saved++;});
+    if(failed){_ytSetProg(`저장 실패 (${failed}건): ${_firstErr||'원인 불명'}`);return;}
   }
   _ytSetProg(`조회수 갱신 완료 — ${saved}개`);
   _feedDiscoveryBuiltAt=0; // 다음 탐험 탭 오픈 시 주간 TOP 순위 새로 반영
@@ -407,8 +408,9 @@ async function _ytRefreshAllViewCounts(){
         sb.from(_YT_TABLE).update({view_count}).eq('id',id)
       )
     );
-    results.forEach(({error:ue})=>{if(ue){failed++;console.error('[전체 조회수 갱신] 저장 실패:',ue.message);}else saved++;});
-    if(failed){_ytSetProg(`저장 실패 (${failed}건): 콘솔 확인`);return;}
+    let _firstErr='';
+    results.forEach(({error:ue})=>{if(ue){failed++;if(!_firstErr)_firstErr=ue.message||String(ue);console.error('[전체 조회수 갱신] 저장 실패:',ue.message);}else saved++;});
+    if(failed){_ytSetProg(`저장 실패 (${failed}건): ${_firstErr||'원인 불명'}`);return;}
   }
   _ytSetProg(`전체 조회수 갱신 완료 — ${saved}개 (live 카테고리 · API ${totalCalls}회 사용)`);
   _feedDiscoveryBuiltAt=0;
@@ -479,8 +481,9 @@ async function _ytRotateViewCountRefresh(){
     const results=await Promise.all(statsUpdates.map(({id,view_count,touchOnly})=>
       sb.from(_YT_TABLE).update(touchOnly?{view_count_synced_at:nowIso}:{view_count,view_count_synced_at:nowIso}).eq('id',id)
     ));
-    results.forEach(({error:ue})=>{if(ue){failedTotal++;console.error('[조회수 순환 갱신] 저장 실패:',ue.message);}else savedTotal++;});
-    if(failedTotal){_ytSetProg(`저장 실패 (${failedTotal}건): 콘솔 확인`);return;}
+    let _firstErr='';
+    results.forEach(({error:ue})=>{if(ue){failedTotal++;if(!_firstErr)_firstErr=ue.message||String(ue);console.error('[조회수 순환 갱신] 저장 실패:',ue.message);}else savedTotal++;});
+    if(failedTotal){_ytSetProg(`저장 실패 (${failedTotal}건): ${_firstErr||'원인 불명'}`);return;}
   }
   _ytSetProg(`조회수 순환 갱신 완료 — ${savedTotal}개 (전체 카테고리 · API ${totalCalls}회 사용, 다음 실행 땐 이어서 오래된 것부터)`);
   _feedDiscoveryBuiltAt=0;
@@ -559,6 +562,19 @@ function _admRenderLastRun(){
     if(!badge){badge=document.createElement('span');badge.className='sp-last-badge';btn.appendChild(badge);}
     badge.textContent=' · '+_admFmtAgo(ts);
   }
+}
+// 버튼별 ⓘ 클릭 펼침(설정패널 개선 7) — 각 버튼 뒤 .sp-btn-hint를 그 버튼의 ⓘ로 열고 닫는다.
+// 상단의 "설명 모두 펼치기" 토글(show-hints)과 독립적으로 동작한다.
+function _admWireHints(){
+  const sec=document.getElementById('sp-yt-sec');if(!sec)return;
+  sec.querySelectorAll('.sp-btn-hint').forEach(hint=>{
+    const btn=hint.previousElementSibling;
+    if(!btn||btn.tagName!=='BUTTON'||btn.querySelector('.sp-hint-i'))return;
+    const i=document.createElement('span');
+    i.className='sp-hint-i';i.textContent='ⓘ';i.title='설명 보기';
+    i.addEventListener('click',e=>{e.stopPropagation();hint.classList.toggle('open');});
+    btn.appendChild(i);
+  });
 }
 function _admRenderExecLog(){
   const box=document.getElementById('adm-exec-log');if(!box)return;
@@ -7082,7 +7098,7 @@ _admExecBind('sp-collabfix-btn',_ytSweepAmbiguousCollabMistag,'콜라보 재검�
   },'음악방송 백필');
   _admExecBind('sp-yt-manual-add-btn',_ytAddVideoByUrl,'영상 추가');
   _admExecBind('sp-yt-manual-batch-add-btn',_ytAddVideosBatch,'영상 일괄 추가');
-  _admRenderLastRun();_admRenderExecLog();
+  _admRenderLastRun();_admRenderExecLog();_admWireHints();
   // 버튼마다 한 줄 설명 토글(2026-08-19, 사용자 요청) — 켜둔 상태를 기억해서 매번 다시 켤 필요 없게 함.
   const hintToggle=document.getElementById('sp-hint-toggle');
   const hintSec=document.getElementById('sp-yt-sec');
