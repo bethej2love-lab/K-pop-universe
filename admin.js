@@ -3759,6 +3759,15 @@ function _vmRenderChannels(term){
       own.style.cssText='font-size:11px;color:rgba(155,178,228,0.72);margin-top:1px;';
       info.appendChild(own);
     }
+    // 팬 채널이면 대상(전용멤버 있으면 그 멤버 · 그룹)을 표기 — 아이돌개인처럼 어드민에서 소속이 보이게
+    // (2026-09-01, 사용자 제보 "팬채널 소유자/그룹이 표기 안 됨"). 멤버 미지정이면 그룹만 보여 "그룹 팬채널"임을 알 수 있다.
+    else if(ch.tier==='fans'&&(ch.owner?.gko||ch.owner?.mko)){
+      const own=document.createElement('div');own.className='ec-owner';
+      const mem=ch.owner.mko?ch.owner.mko.split(',').map(s=>s.trim()).filter(Boolean).join(' · '):'';
+      own.textContent='💛 '+[mem,ch.owner.gko].filter(Boolean).join(' / ')+(mem?'':' (그룹 팬채널)');
+      own.style.cssText='font-size:11px;color:rgba(155,178,228,0.72);margin-top:1px;';
+      info.appendChild(own);
+    }
     if(ch.handle){const handle=document.createElement('div');handle.className='ec-handle';handle.textContent='@'+ch.handle;info.appendChild(handle);}
     item.appendChild(info);
     if(!isOfficial){
