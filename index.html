@@ -17414,7 +17414,7 @@ function _makeChVidController(contId){
     if(!correctedIds.length)return;
     if(myGen!==state.gen)return; // 그 사이 다른 그룹/새로고침으로 전환됨: DB 보정만 반영하고 화면은 건너뜀
     // pageItems는 원래(업로드 시간순) 순서를 그대로 유지한 배열이므로, 정정된 category로 그대로 재그룹핑
-    const g=_groupGcVids(pageItems,featured,pageStartPos,pageStartCat,document.body.classList.contains('card-wide'),state.filter==='short',state.filter==='live'?0.24:0.05);
+    const g=_groupGcVids(pageItems,featured,pageStartPos,pageStartCat,document.body.classList.contains('card-wide'),state.filter==='short',state.filter==='live'?0.28:0.12);
     pageNodes.forEach(n=>n.remove());
     const{nodes:newNodes}=renderItems(g.renderList,grid);
     state.pos=g.endPos;state.cat=g.endCat;
@@ -17756,7 +17756,7 @@ function _makeChVidController(contId){
       const pageStartPos=state.pos,pageStartCat=state.cat;
       const incomingTrailingEl=state.trailingEl; // 이전 페이지에서 홀로 남은 카드(있다면)
       const pageItems=vids;
-      const g=_groupGcVids(pageItems,featured,pageStartPos,pageStartCat,document.body.classList.contains('card-wide'),state.filter==='short',state.filter==='live'?0.24:0.05);
+      const g=_groupGcVids(pageItems,featured,pageStartPos,pageStartCat,document.body.classList.contains('card-wide'),state.filter==='short',state.filter==='live'?0.28:0.12);
       state.pos=g.endPos;state.cat=g.endCat;
       const{nodes:pageNodes,pendingProbe}=renderItems(g.renderList,grid);
       state.allVids=state.allVids.concat(g.renderList); // 라이트박스 스와이프 넘기기용으로 지금까지 불러온 영상 누적
