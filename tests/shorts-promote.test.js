@@ -75,8 +75,10 @@ need(/async function _snapshotBeforeBulk\(opLabel,ids,forceBatchId\)\{/.test(src
 need(/const batchId=forceBatchId\|\|/.test(src), 'forceBatchId가 있으면 그 batch로 묶음');
 
 // 핸들러 연결 + category가 스냅샷 백업 컬럼에 포함(되돌리기 실효성)
-need(src.includes("getElementById('sp-shortspromote-btn')?.addEventListener('click',_ytSweepPromoteShorts)"),
-  '버튼 클릭 핸들러 연결됨');
+// 2026-09-01 — 실행 버튼은 전역 락 래퍼 _admExecBind로 등록(설정패널 개선 1). 쇼츠 승격은
+// "실행 중 재클릭=중단" 기능이 있어 selfRestop 옵션으로 등록돼야 그 중단이 락에 막히지 않는다.
+need(src.includes("_admExecBind('sp-shortspromote-btn',_ytSweepPromoteShorts,'쇼츠 승격',{selfRestop:true})"),
+  '버튼 클릭 핸들러 연결됨(전역 락 _admExecBind · selfRestop)');
 need(/_BULK_SNAP_COLS=\[[^\]]*'category'[^\]]*\]/.test(src),
   'category가 스냅샷 백업 컬럼에 포함(되돌리기가 category 복원)');
 need(/_BULK_SNAP_COLS=\[[^\]]*'is_short'[^\]]*\]/.test(src),

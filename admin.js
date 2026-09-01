@@ -486,7 +486,83 @@ async function _ytRotateViewCountRefresh(){
   _feedDiscoveryBuiltAt=0;
 }
 
-function _ytSetProg(msg){const el=document.getElementById('sp-yt-prog');if(el)el.textContent=msg;}
+function _ytSetProg(msg){const el=document.getElementById('sp-yt-prog');if(el)el.textContent=msg;_admExecBarSync(msg);}
+
+// ── 실행 버튼 전역 락 + 상단 진행 바 + 최근/마지막 실행 (설정패널 개선 1·2·8, 2026-09-01) ──
+// 전체 동기화(수십 분) 도는 중에 재태깅·청소를 눌러 같은 행에 쓰기가 겹치던 사고를 막는다. 실행 계열
+// 버튼은 전부 _admExecBind로 감싸 하나의 _admBusy 락을 공유하고, 끝나면 finally로 반드시 푼다.
+let _admBusy=null,_admBusyId=null,_admBusyLabel='';
+const _ADM_EXEC_LABELS={};
+function _admIsBusy(){return !!_admBusy||_admRoutineRunning===true;}
+function _admExecBind(id,handler,label,opts){
+  opts=opts||{};
+  const btn=document.getElementById(id);
+  if(!btn)return;
+  if(label)_ADM_EXEC_LABELS[id]=label;
+  btn.addEventListener('click',async function(e){
+    if(_admIsBusy()){
+      // 실행 중인 바로 그 버튼을 다시 누른 것 = 중단 신호(쇼츠 승격 등) → 핸들러로 넘겨 자체 중단 처리
+      if(opts.selfRestop&&id===_admBusyId){try{await handler.call(this,e);}catch(err){console.error(err);}return;}
+      _admExecNudge();return;
+    }
+    _admExecLockOn(id,label||_ADM_EXEC_LABELS[id]||'작업');
+    let ok=true;
+    try{await handler.call(this,e);}
+    catch(err){ok=false;console.error('[admExec] '+id,err);}
+    finally{_admExecLockOff(id,ok);}
+  });
+}
+function _admExecLockOn(id,label){
+  _admBusy=id;_admBusyId=id;_admBusyLabel=label;
+  const bar=document.getElementById('adm-exec-bar');
+  if(bar){bar.className='on';bar.textContent='⏳ 실행 중: '+label;}
+}
+function _admExecLockOff(id,ok){
+  const label=_admBusyLabel;
+  const result=(document.getElementById('sp-yt-prog')?.textContent||'').trim();
+  _admBusy=null;_admBusyId=null;_admBusyLabel='';
+  const bar=document.getElementById('adm-exec-bar');
+  if(bar)bar.className='';
+  try{
+    localStorage.setItem('kpu_admLast:'+id,String(Date.now()));
+    const logv=JSON.parse(localStorage.getItem('kpu_admExecLog')||'[]');
+    logv.unshift({t:Date.now(),label,ok,result:result.slice(0,120)});
+    localStorage.setItem('kpu_admExecLog',JSON.stringify(logv.slice(0,5)));
+  }catch(_){}
+  _admRenderLastRun();_admRenderExecLog();
+}
+function _admExecNudge(){
+  const bar=document.getElementById('adm-exec-bar');
+  if(bar){bar.classList.add('nudge');setTimeout(()=>bar.classList.remove('nudge'),450);}
+}
+function _admExecBarSync(msg){
+  if(!_admBusy)return;
+  const bar=document.getElementById('adm-exec-bar');
+  if(bar)bar.textContent='⏳ 실행 중: '+_admBusyLabel+(msg?' · '+msg:'');
+}
+function _admFmtAgo(ts){
+  const d=Date.now()-ts,H=3600000,day=86400000;
+  if(!ts||d<0)return'';if(d<H)return'방금';if(d<day)return Math.floor(d/H)+'시간 전';
+  const days=Math.floor(d/day);return days===1?'어제':days+'일 전';
+}
+function _admRenderLastRun(){
+  for(const id in _ADM_EXEC_LABELS){
+    const btn=document.getElementById(id);if(!btn)continue;
+    const ts=+localStorage.getItem('kpu_admLast:'+id);
+    let badge=btn.querySelector('.sp-last-badge');
+    if(!ts){if(badge)badge.remove();continue;}
+    if(!badge){badge=document.createElement('span');badge.className='sp-last-badge';btn.appendChild(badge);}
+    badge.textContent=' · '+_admFmtAgo(ts);
+  }
+}
+function _admRenderExecLog(){
+  const box=document.getElementById('adm-exec-log');if(!box)return;
+  let logv=[];try{logv=JSON.parse(localStorage.getItem('kpu_admExecLog')||'[]');}catch(_){}
+  if(!logv.length){box.innerHTML='';return;}
+  box.innerHTML='<div class="ael-h">최근 실행</div>'+logv.map(e=>
+    `<div class="ael-row"><span class="ael-t">${_admFmtAgo(e.t)}</span><span class="ael-l">${(e.label||'').replace(/</g,'&lt;')}</span><span class="ael-r ${e.ok?'':'bad'}">${(e.result||'').replace(/</g,'&lt;')}</span></div>`
+  ).join('');
+}
 
 // 유지보수 버튼들이 조회하는 행 수가 PostgREST 기본 응답 상한(보통 1000행)을 넘으면 나머지가 조용히
 // 누락되므로, range()로 계속 이어받아 매칭되는 행을 전부 모아온다. buildQuery는 매 페이지 range()를
@@ -1134,7 +1210,7 @@ async function _ytSweepCoverV2(){
   }catch(e){_ytSetProg('오류: '+e.message);}
   finally{if(btn)btn.disabled=false;}
 }
-document.getElementById('sp-cover-v2-btn')?.addEventListener('click',_ytSweepCoverV2);
+_admExecBind('sp-cover-v2-btn',_ytSweepCoverV2,'원곡 태깅 v2');
 
 // ── [원곡 오탐 청소](2026-08-31) ───────────────────────────────────────────────
 // 2026-08-31 실DB 전수 감사(cover_of가 붙은 7,031행)에서 나온 오염을 걷어낸다.
@@ -1235,7 +1311,7 @@ async function _ytSweepCoverCleanup(){
   }catch(e){_ytSetProg('오류: '+e.message);}
   finally{if(btn)btn.disabled=false;}
 }
-document.getElementById('sp-cover-clean-btn')?.addEventListener('click',_ytSweepCoverCleanup);
+_admExecBind('sp-cover-clean-btn',_ytSweepCoverCleanup,'원곡 오탐 청소');
 
 // ── [겸임 멤버 중복 태그 정리](2026-08-31) ─────────────────────────────────────
 // 위 _normalizeMemberTags는 **앞으로 붙는** 태그만 고친다. 이미 쌓인 행은 이 스윕이 정리한다.
@@ -1290,7 +1366,7 @@ async function _ytSweepDualMemberTags(){
   }catch(e){_ytSetProg('오류: '+e.message);}
   finally{if(btn)btn.disabled=false;}
 }
-document.getElementById('sp-dualtag-btn')?.addEventListener('click',_ytSweepDualMemberTags);
+_admExecBind('sp-dualtag-btn',_ytSweepDualMemberTags,'겸임 중복 정리');
 
 // ── [데뷔 이전 영상 정리](2026-08-31) ──────────────────────────────────────────
 // _m2DebutBlocks는 **앞으로 붙는** 태그만 막는다. 이미 저장된 행은 이 스윕이 정리한다.
@@ -1350,7 +1426,7 @@ async function _ytSweepDebutGate(){
   }catch(e){_ytSetProg('오류: '+e.message);}
   finally{if(btn)btn.disabled=false;}
 }
-document.getElementById('sp-debutgate-btn')?.addEventListener('click',_ytSweepDebutGate);
+_admExecBind('sp-debutgate-btn',_ytSweepDebutGate,'데뷔 이전 정리');
 
 // [오태깅 그룹 재배정](2026-08-25): 고친 매칭 엔진(_m2ParseTitle)을 기존 저장 행에 다시 돌려서,
 // "저장된 group_ko는 제목에 근거가 없는데, 엔진이 제목에 대놓고 있는 '다른 그룹'을 찾은" 행을 그 그룹으로
@@ -1429,7 +1505,7 @@ async function _ytSweepMistagReclassify(){
   }catch(e){_ytSetProg('오류: '+e.message);}
   finally{if(btn)btn.disabled=false;}
 }
-document.getElementById('sp-mistagfix-btn')?.addEventListener('click',_ytSweepMistagReclassify);
+_admExecBind('sp-mistagfix-btn',_ytSweepMistagReclassify,'오태깅 그룹 재배정');
 
 // [음악방송 직캠 재검증](2026-08-29, 사용자 요청 — "적어도 음악방송 직캠은 오태깅이 없어야") — 제목이
 // _fancamParseTitle 구조([태그] 그룹 멤버 '곡명' … / 쇼챔·잇츠라이브·킬링보이스)로 잡히는 행만 골라, 구조
@@ -1506,7 +1582,7 @@ async function _ytSweepFancamMistag(){
   }catch(e){_ytSetProg('오류: '+e.message);}
   finally{if(btn)btn.disabled=false;}
 }
-document.getElementById('sp-fancamfix-btn')?.addEventListener('click',_ytSweepFancamMistag);
+_admExecBind('sp-fancamfix-btn',_ytSweepFancamMistag,'직캠 재검증');
 
 // [숨김 목록 재판정](2026-08-27) — 위 _ytSweepMistagReclassify가 content_flag 있는 행을 통째로
 // 제외(EXCLUDE)해서, **숨김 처리된 오태깅은 어떤 스윕으로도 영원히 안 닿는 사각지대**였다.
@@ -1585,7 +1661,7 @@ async function _ytSweepHiddenRejudge(){
   }catch(e){_ytSetProg('오류: '+e.message);}
   finally{if(btn)btn.disabled=false;}
 }
-document.getElementById('sp-hidden-rejudge-btn')?.addEventListener('click',_ytSweepHiddenRejudge);
+_admExecBind('sp-hidden-rejudge-btn',_ytSweepHiddenRejudge,'숨김 재판정');
 // [원곡 소급 재분류 2차](2026-08-23): 커버 키워드는 없지만 "타소속사 + 10년 이상 선배" with 태그 —
 // 후배가 선배 명곡을 커버한 케이스가 압도적(CSV 실측: 방탄→라이즈·S.E.S.→앤팀·핑클→보넥도 등 408건).
 // 1차(키워드+6년)가 못 잡는 무키워드 원곡을 cover_of로. ⚠️ 진짜 콜라보 위험은 대부분 "같은 소속사"(가족
@@ -3102,7 +3178,6 @@ document.getElementById('wonkok-apply-btn')?.addEventListener('click',async()=>{
 });
 document.getElementById('wonkok-scan-btn')?.addEventListener('click',_wonkokScan);
 document.getElementById('wonkok-close')?.addEventListener('click',()=>document.getElementById('hnn-overlay').classList.remove('open'));
-document.getElementById('sp-wonkok-btn')?.addEventListener('click',()=>{_admDockShow('hnn-overlay');_renderHnnWhitelist();_renderHnnDuplicateNames();_renderHnnAtmRules();_hnnSwitchTab('wonkok');});
 
 // ── 전체 영상 검색(admin) ── 그룹/멤버 무관하게 title 검색. 3글자 이상은 서버 ILIKE(트라이그램 인덱스로
 // 빠름), 1~2글자는 인덱스 가속이 안 되므로(pg_trgm은 3글자 미만 패턴을 못 씀) id/title/group_ko/thumb/
@@ -6937,71 +7012,60 @@ document.getElementById('vid-tag-thumb-refresh').addEventListener('click',async 
   if(keyEl&&saved)keyEl.value=saved;
   keyEl?.addEventListener('change',e=>localStorage.setItem('kpu_yt_key',e.target.value.trim()));
   keyEl?.addEventListener('blur',e=>localStorage.setItem('kpu_yt_key',e.target.value.trim()));
-  document.getElementById('sp-yt-sync')?.addEventListener('click',async()=>{
-    const btn=document.getElementById('sp-yt-sync');
-    if(btn)btn.disabled=true;
+  _admExecBind('sp-yt-sync',async()=>{
     await _ytSyncAll();
     await _ytSyncExtChannels();
     await _ytRefreshViewCounts();
-    if(btn)btn.disabled=false;
-  });
-  document.getElementById('sp-yt-viewcount-btn')?.addEventListener('click',async()=>{
-    const btn=document.getElementById('sp-yt-viewcount-btn');
-    if(btn)btn.disabled=true;
+  },'전체 동기화');
+  _admExecBind('sp-yt-viewcount-btn',async()=>{
     await _ytRefreshViewCounts();
-    if(btn)btn.disabled=false;
-  });
-  document.getElementById('sp-yt-allviewcount-btn')?.addEventListener('click',async()=>{
-    const btn=document.getElementById('sp-yt-allviewcount-btn');
-    if(btn)btn.disabled=true;
+  },'조회수 갱신(직캠)');
+  _admExecBind('sp-yt-allviewcount-btn',async()=>{
     await _ytRefreshAllViewCounts();
-    if(btn)btn.disabled=false;
-  });
-  document.getElementById('sp-yt-rotateviewcount-btn')?.addEventListener('click',async()=>{
-    const btn=document.getElementById('sp-yt-rotateviewcount-btn');
-    if(btn)btn.disabled=true;
+  },'전체 조회수 갱신');
+  _admExecBind('sp-yt-rotateviewcount-btn',async()=>{
     await _ytRotateViewCountRefresh();
-    if(btn)btn.disabled=false;
-  });
-  document.getElementById('sp-yt-sweep-banned')?.addEventListener('click',_ytSweepBannedVideos);
-  document.getElementById('sp-yt-sweep-junk')?.addEventListener('click',_ytSweepJunkKeywordVideos);
+  },'조회수 순환 갱신');
+  _admExecBind('sp-yt-sweep-banned',_ytSweepBannedVideos,'밴 인물 숨김');
+  _admExecBind('sp-yt-sweep-junk',_ytSweepJunkKeywordVideos,'제외 키워드 정리');
   // "무조건 제외 키워드" 목록이 코드에만 있어서 관리자가 지금 뭐가 걸려있는지 확인할 방법이 없었음
   // (2026-08-10, 사용자 요청) — 버튼 밑에 현재 목록을 그대로 보여줌. _JUNK_TITLE_KEYWORDS_GLOBAL을
   // 그대로 참조하므로 코드에서 키워드를 추가/삭제하면 이 표시도 자동으로 같이 바뀜(따로 관리 안 해도 됨).
   const junkKwLbl=document.getElementById('sp-junk-keywords-lbl');
   if(junkKwLbl)junkKwLbl.textContent='현재 목록: '+_JUNK_TITLE_KEYWORDS_GLOBAL.join(', ');
-  document.getElementById('sp-detect-btn')?.addEventListener('click',_ytSweepDetectPreview);
-document.getElementById('sp-lockfill-btn')?.addEventListener('click',_ytSweepFillLockedEmpty);
-document.getElementById('sp-canon-btn')?.addEventListener('click',_ytSweepCanonicalizeMembers);
-document.getElementById('sp-collabfix-btn')?.addEventListener('click',_ytSweepAmbiguousCollabMistag);
-  document.getElementById('sp-scan-namecollide-btn')?.addEventListener('click',_ytScanAmbiguousNameGroupMisassignment);
-  document.getElementById('sp-membersfix-btn')?.addEventListener('click',_ytSweepMembersMistag);
-  document.getElementById('sp-yt-undo-bulk-btn')?.addEventListener('click',_ytUndoLastBulk);
-  document.getElementById('sp-catfix-btn')?.addEventListener('click',_ytSweepCategoryMistag);
-  document.getElementById('sp-shortspromote-btn')?.addEventListener('click',_ytSweepPromoteShorts);
+  _admExecBind('sp-detect-btn',_ytSweepDetectPreview,'오태깅 미리보기');
+_admExecBind('sp-lockfill-btn',_ytSweepFillLockedEmpty,'잠금-빈값 채우기');
+_admExecBind('sp-canon-btn',_ytSweepCanonicalizeMembers,'고아태그 정정');
+_admExecBind('sp-collabfix-btn',_ytSweepAmbiguousCollabMistag,'콜라보 재검증');
+  _admExecBind('sp-scan-namecollide-btn',_ytScanAmbiguousNameGroupMisassignment,'동명이인 재배정');
+  _admExecBind('sp-membersfix-btn',_ytSweepMembersMistag,'자체 멤버 재검증');
+  _admExecBind('sp-yt-undo-bulk-btn',_ytUndoLastBulk,'되돌리기');
+  _admExecBind('sp-catfix-btn',_ytSweepCategoryMistag,'카테고리 재분류');
+  _admExecBind('sp-shortspromote-btn',_ytSweepPromoteShorts,'쇼츠 승격',{selfRestop:true});
   {const _spb=document.getElementById('sp-shortspromote-btn');if(_spb&&localStorage.getItem('_kpu_shortsPromoteCursor'))_spb.textContent='⬆️ 가로→쇼츠 일괄 승격 (재개)';}
-  document.getElementById('sp-yt-autotag')?.addEventListener('click',_ytAutoTagMembers);
-  document.getElementById('sp-yt-retag-all')?.addEventListener('click',_ytRetagAllIncludingTagged);
+  _admExecBind('sp-yt-autotag',_ytAutoTagMembers,'자동 태깅');
+  _admExecBind('sp-yt-retag-all',_ytRetagAllIncludingTagged,'멤버+콜라보 재태깅');
   document.getElementById('sp-vm-btn')?.addEventListener('click',()=>_vmOpen());
   const backfillSel=document.getElementById('sp-yt-backfill-ch');
   if(backfillSel){
     backfillSel.innerHTML=_EXT_CHANNELS.map(c=>`<option value="${c.handle}">${c.name}</option>`).join('');
   }
-  document.getElementById('sp-yt-backfill-btn')?.addEventListener('click',()=>{
+  _admExecBind('sp-yt-backfill-btn',()=>{
     const handle=backfillSel?.value;
     const fromYear=+document.getElementById('sp-yt-backfill-from').value;
     const toYear=+document.getElementById('sp-yt-backfill-to').value;
     const query=(document.getElementById('sp-yt-backfill-query')?.value||'').trim();
-    if(handle)_ytBackfillByDateRange(handle,fromYear,toYear,query||undefined);
-  });
-  document.getElementById('sp-yt-backfill-priority-btn')?.addEventListener('click',()=>{
+    if(handle)return _ytBackfillByDateRange(handle,fromYear,toYear,query||undefined);
+  },'채널 백필');
+  _admExecBind('sp-yt-backfill-priority-btn',()=>{
     const fromYear=+document.getElementById('sp-yt-backfill-from').value;
     const toYear=+document.getElementById('sp-yt-backfill-to').value;
     const query=(document.getElementById('sp-yt-backfill-query')?.value||'').trim();
-    _ytBackfillPriorityChannels(fromYear,toYear,query||undefined);
-  });
-  document.getElementById('sp-yt-manual-add-btn')?.addEventListener('click',_ytAddVideoByUrl);
-  document.getElementById('sp-yt-manual-batch-add-btn')?.addEventListener('click',_ytAddVideosBatch);
+    return _ytBackfillPriorityChannels(fromYear,toYear,query||undefined);
+  },'음악방송 백필');
+  _admExecBind('sp-yt-manual-add-btn',_ytAddVideoByUrl,'영상 추가');
+  _admExecBind('sp-yt-manual-batch-add-btn',_ytAddVideosBatch,'영상 일괄 추가');
+  _admRenderLastRun();_admRenderExecLog();
   // 버튼마다 한 줄 설명 토글(2026-08-19, 사용자 요청) — 켜둔 상태를 기억해서 매번 다시 켤 필요 없게 함.
   const hintToggle=document.getElementById('sp-hint-toggle');
   const hintSec=document.getElementById('sp-yt-sec');
@@ -7432,6 +7496,7 @@ document.getElementById('sp-fb-btn')?.addEventListener('click',function(){
 let _admRoutineRunning=false,_admRoutineStop=false;
 async function _admRunRoutine(withSync){
   if(_admRoutineRunning)return;
+  if(_admBusy){alert('다른 작업이 실행 중이에요: '+_admBusyLabel+'\n끝난 뒤에 다시 눌러주세요.');return;}
   _admRoutineRunning=true;_admRoutineStop=false;
   const runBtn=document.getElementById('adm-run-routine');
   const noSyncBtn=document.getElementById('adm-run-routine-nosync');

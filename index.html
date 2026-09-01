@@ -280,6 +280,8 @@
   </div>
 <template class="adm-tpl" data-adm-mount="#settings-panel"><!-- sp-yt-sec — 관리자 전용 마크업. 문서 트리 밖(inert)이라 읽기 모드/스크린리더/검색엔진에 안 잡힌다. _mountAdminMarkup()이 관리자일 때만 복제해 넣는다. -->
   <div class="sp-sec" id="sp-yt-sec" style="display:none">
+    <div id="adm-exec-bar"></div>
+    <div id="adm-exec-log"></div>
     <div class="sp-sec-lbl">YouTube 영상 관리</div>
     <div class="sp-row">
       <span class="sp-lbl">ⓘ 버튼 설명 보기</span>
@@ -335,7 +337,6 @@
     <div class="sp-subsec-lbl" style="margin-top:10px;">검수</div>
     <button class="sp-yt-sync" id="sp-hnn-btn" style="opacity:.8;">태깅 규칙</button>
     <div class="sp-btn-hint">흔한단어 보호·동명이인·예외 규칙을 확인·관리해요(실제 영상 검수는 홈의 "검수 대기"·영상 관리에서).</div>
-    <button class="sp-yt-sync" id="sp-wonkok-btn" style="display:none"></button>
 
     <div class="sp-subsec-lbl" style="margin-top:10px;">그룹 데이터 관리</div>
     <button class="sp-yt-sync" id="sp-gp-btn" style="opacity:.8;">그룹 우선순위</button>

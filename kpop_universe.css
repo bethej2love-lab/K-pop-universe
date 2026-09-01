@@ -1800,6 +1800,24 @@
   .sp-yt-sync:hover:not(:disabled){background:rgba(155,178,228,0.24);}
   .sp-yt-sync:disabled{opacity:.45;cursor:not-allowed;}
   .sp-yt-prog{font-size:10.5px;color:rgba(155,178,228,0.56);margin-top:5px;min-height:14px;text-align:center;word-break:break-all;}
+  /* 실행 중 상단 고정 진행 바 + 최근 실행 로그 + 버튼별 마지막 실행 배지 (설정패널 개선 1·2·8, 2026-09-01) */
+  #adm-exec-bar{display:none;}
+  #adm-exec-bar.on{display:block;position:sticky;top:0;z-index:6;margin:0 0 8px;padding:8px 10px;border-radius:8px;
+    background:linear-gradient(90deg,rgba(90,140,255,0.24),rgba(90,140,255,0.10));border:1px solid rgba(140,180,255,0.55);
+    color:#dce8ff;font-size:12px;font-weight:600;line-height:1.35;word-break:break-all;box-shadow:0 4px 14px rgba(0,0,0,0.35);
+    animation:aebPulse 1.6s ease-in-out infinite;}
+  @keyframes aebPulse{0%,100%{border-color:rgba(140,180,255,0.5)}50%{border-color:rgba(150,190,255,0.95)}}
+  #adm-exec-bar.on.nudge{animation:aebNudge .45s ease;}
+  @keyframes aebNudge{0%,100%{transform:translateX(0)}20%{transform:translateX(-5px)}40%{transform:translateX(5px)}60%{transform:translateX(-3px)}80%{transform:translateX(3px)}}
+  #adm-exec-log{margin:0 0 8px;font-size:10.5px;}
+  #adm-exec-log:empty{margin:0;}
+  #adm-exec-log .ael-h{color:rgba(155,178,228,0.5);margin-bottom:2px;font-size:10px;}
+  #adm-exec-log .ael-row{display:flex;gap:5px;padding:1px 0;line-height:1.35;}
+  #adm-exec-log .ael-t{color:rgba(155,178,228,0.55);flex:0 0 auto;min-width:42px;}
+  #adm-exec-log .ael-l{color:#cdd8f0;flex:0 0 auto;font-weight:600;}
+  #adm-exec-log .ael-r{color:rgba(200,210,230,0.6);flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  #adm-exec-log .ael-r.bad{color:#e39a9a;}
+  .sp-last-badge{font-size:10px;opacity:.5;font-weight:400;}
   /* 버튼마다 한 줄 설명 — 기본은 숨겨져 있다가 위 "ⓘ 버튼 설명 보기" 토글을 켜면 나타남
      (2026-08-19, 사용자 요청 — "버튼마다 이해하기 쉽게 설명 좀"). */
   .sp-btn-hint{display:none;font-size:10.5px;line-height:1.4;color:rgba(155,178,228,0.55);margin:3px 2px 6px;}
