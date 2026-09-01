@@ -2928,6 +2928,13 @@ function _revealUniverse(){
   const ring=document.getElementById('loading-ring');
   if(!veil||!loadingEl)return;
 
+  // ⚠️ 데스크톱 '띡' 원인 규명(2026-09-01, ?revealdbg 진단: tickFrames=2): 리빌 첫 프레임에 행성 268개의
+  // 셰이더/GPU 버퍼가 한꺼번에 업로드·컴파일되며 메인스레드가 ~1초 얼어붙어, 그 사이 rAF 애니메이션도
+  // CSS 트랜지션도 통째로 건너뛰어지고(t가 0→1로 점프) 우주가 '띡' 하고 나타난다. veil이 아직 화면을 덮고
+  // 있는 지금(로딩 텍스트 단계) 셰이더를 미리 컴파일+한 번 렌더해서 그 비용을 앞당긴다 → 이후 리빌은
+  // 웜업된 파이프라인 위에서 매끄럽게 돈다. (모바일은 빌드/렌더 타이밍이 달라 원래도 매끄러웠음)
+  try{ if(typeof renderer!=='undefined'&&renderer.compile){ renderer.compile(scene,camera); renderer.render(scene,camera); } }catch(e){}
+
   // ── "중앙에서 쫙 화면 넓게 펴지는" 모션 보강(2026-09-01, 사용자 제보) ──────────────
   // veil의 backdrop-filter(blur) + 매 프레임 갱신하는 mask-image 확장은 일부 GPU/브라우저에서 합성이
   // 안 그려져(특히 데스크톱), 퍼지는 연출이 통째로 안 보이고 veil이 사라지며 우주가 '띡' 하고 튀어나온다.
@@ -2997,7 +3004,7 @@ function _revealUniverse(){
   loadingEl.style.transition=`opacity ${textFadeMs}ms ease`;
   loadingEl.style.opacity='0';
   {
-    const t0=performance.now();
+    const t0=performance.now(); let _acc=0,_pn=t0; // _acc: 프레임당 상한을 둔 누적 경과 — 프리즈로 t가 0→1 점프(애니 스킵)하는 것 방지
     // 모바일에서는 veil의 mask-image/ring의 background(둘 다 backdrop-filter가 걸린 레이어를 프레임마다
     // 다시 그리게 만드는 원인) 갱신만 한 프레임 걸러 적용 — 별이 커지는 WebGL 쪽(아래 bubbleMeshes)은
     // 그대로 매 프레임 갱신해서 그쪽 체감 부드러움은 유지하면서, 진짜 무거운 CSS 리페인트 횟수만
@@ -3006,7 +3013,8 @@ function _revealUniverse(){
     let _maskFrameToggle=false;
     (function tick(){
       window._revealTick=(window._revealTick||0)+1; // 리빌 진단(?revealdbg)용 tick 프레임 카운터
-      const t=Math.min((performance.now()-t0)/dur,1);
+      const _nw=performance.now(); _acc+=Math.min(_nw-_pn,40); _pn=_nw; // 한 프레임 최대 40ms만 진행
+      const t=Math.min(_acc/dur,1);
       // 시작~중간은 선형에 가깝게 빠르게, 중간~끝은 기존 지수 가속 곡선 그대로 유지(이음매 없이 매끄럽게 블렌드)
       const e=t<=0?0:0.26*t+0.74*Math.pow(2,6*t-6);
       const r=e*112;
