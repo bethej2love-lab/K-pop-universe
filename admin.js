@@ -5341,6 +5341,18 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
   // name.ko/en 둘 다로 막는다. 그룹 자체 매칭·자체 채널 태깅은 별개 경로라 온리원오프 정상 영상은 안 끊긴다.
   const _ATM_INFER_EXCLUDE_NAMES=new Set(['Love','나인','Nine']);
   const _atmInferExcluded=a=>_ATM_INFER_EXCLUDE_NAMES.has(a.name.ko)||_ATM_INFER_EXCLUDE_NAMES.has(a.name.en);
+  // 데뷔보다 1년 이상 전에 나온 영상을 순전히 멤버 이름만으로 이 그룹으로 역추론하는 건 근거가 없다 — 그
+  // 그룹이 존재하기도 전이라 대개 동명이인(옛 가수·배우가 이름만 겹침)이다(2026-09-01 실측: 올아워즈←현빈
+  // 배우, 트리플에스←옛 가수 채연, 유니스←윤하). _atmLeftBefore(탈퇴 후 상한)의 데뷔 하한 대칭 짝.
+  // 데뷔 1년 전까지는 유예해 서바이벌·데뷔직전 프로모는 살리고, 자체 채널(selfGko) 데뷔전 티저도 예외.
+  function _beforeGroupDebut(gko){
+    if(!publishedAt||gko===selfGko)return false;
+    const deb=GROUPS[gko]&&GROUPS[gko].debut;
+    const m=deb&&(String(deb).match(/(\d{4})[.\-](\d{1,2})[.\-](\d{1,2})/)||String(deb).match(/^(\d{4})/));
+    if(!m)return false;
+    const gate=`${(+m[1])-1}-${(m[2]||'01').padStart(2,'0')}-${(m[3]||'01').padStart(2,'0')}`;
+    return String(publishedAt).slice(0,10)<gate;
+  }
   function memberHit(a,names){
     if(_atmInferExcluded(a))return false; // 역추론 금지 — 그룹명 동반 시에만(멤버 추출 경로)
     if([...a.name.ko].length===1||_isHashtagOnlyName(a.name.ko)||_ATM_COMMON_KO_WORDS.has(a.name.ko)||_atmNameIsGroup(a))return names.some(t=>hitHashtag(t));
@@ -5618,7 +5630,7 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
         // 무효로 치고, 실제로 이 경로를 타고 group_ko='솔로'로 저장된 영상이 633건 쌓여 어느 카드에도
         // 안 걸리는 미아가 돼 있었음(2026-08-25 실측). 나머지 코드가 쓰는 관례(`_ytGroupKoFor`)와 똑같이
         // "실존 그룹이면 그룹명, 아니면 본인 이름"으로 바꿔서 넣는다.
-        const artistGkos=_artistGroups(a).filter(g=>!_atmLeftBefore(a,g.ko,publishedAt)) // 탈퇴 후 영상은 그 그룹 아님
+        const artistGkos=_artistGroups(a).filter(g=>!_atmLeftBefore(a,g.ko,publishedAt)&&!_beforeGroupDebut(g.ko)) // 탈퇴 후·데뷔 이전 영상은 그 그룹 아님
           .map(g=>(GROUPS[g.ko]?g.ko:a.name.ko))
           .filter(gko=>viaHashtag||!selfGko||gko===selfGko||!_isCrossGate(gko,selfGko));
         if(artistGkos.length){

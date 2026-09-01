@@ -552,6 +552,19 @@ test("역추론 제외 — 그룹명(OnlyOneOf) 확정되면 온리원오프는 
   "[Special] OnlyOneOf Nine 'AUTOMATIC' (Chancellor Cover)", undefined,
   r => !!r && r.primaryGroup === '온리원오프', '2024-01-01');
 
+// 데뷔 이전 역추론 차단(2026-09-01) — 그룹이 존재하기도 전에 나온 영상을 순전히 멤버 이름만으로 그
+// 그룹으로 역추론하는 건 대개 동명이인(옛 가수·배우)이다. _atmLeftBefore(탈퇴 상한)의 데뷔 하한 대칭 짝.
+test('데뷔 이전 역추론 차단 — 현빈(배우) 2016 영상은 올아워즈(데뷔 2024)로 안 감',
+  "송중기 X 현빈 X 공유 X 소지섭이 내 남자친구라면?! [코스모 크리에디터]", undefined,
+  r => !r || (r.primaryGroup !== '올아워즈' && !(r.withGroups||[]).includes('올아워즈') && !(r.membersByGroup||{})['올아워즈']), '2016-05-01');
+test('데뷔 이전 역추론 차단 — 옛 가수 채연 2010 영상은 트리플에스(데뷔 2023)로 안 감',
+  "Chae Yeon - Look Look Look, 채연 - 봐 봐 봐, Music Core 20100724", undefined,
+  r => !r || (r.primaryGroup !== '트리플에스' && !(r.withGroups||[]).includes('트리플에스') && !(r.membersByGroup||{})['트리플에스']), '2010-07-24');
+// 데뷔 1년 전까지는 유예 — 데뷔 직전 프로모/서바이벌은 안 끊긴다(대칭 짝의 안전 여유 확인)
+test('데뷔 직전(유예 내)은 유지 — 하츠투하츠 스텔라 데뷔직전 직캠',
+  "[안방1열 직캠4K] 하츠투하츠 스텔라 'The Chase' (Hearts2Hearts STELLA FanCam)", undefined,
+  r => !!r && r.primaryGroup === '하츠투하츠', '2025-01-01');
+
 // ── 실행 ──────────────────────────────────────────────
 let pass = 0, fail = 0;
 cases.forEach(({ name, title, selfGko, check, publishedAt }) => {
