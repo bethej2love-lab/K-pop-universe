@@ -3548,9 +3548,9 @@ function _vmRenderVideoList(){
       // 그룹배정 검수 큐 전용 버튼 — 일반 flagBtn의 무관→숨김→정상 순환은 "이 그룹배정이 맞는지"라는
       // 이 탭의 질문과 안 맞아서(정상=현재도 hidden 상태인 게 뭘 뜻하는지 헷갈림) 승인/거부 이진 버튼으로
       // 대체. 둘 다 needs_review를 false로 내려야 큐에서 실제로 빠짐(2026-08-20).
-      const approveBtn=document.createElement('button');approveBtn.className='vm-flag-btn vm-flag-normal';approveBtn.type='button';approveBtn.textContent='승인';
+      const approveBtn=document.createElement('button');approveBtn.className='vm-flag-btn vm-flag-normal';approveBtn.type='button';approveBtn.textContent='정상';
       approveBtn.addEventListener('click',e=>{e.stopPropagation();_vmReviewDecide(v,item,true,approveBtn,rejectBtn);});
-      const rejectBtn=document.createElement('button');rejectBtn.className='vm-flag-btn vm-flag-nomem';rejectBtn.type='button';rejectBtn.textContent='거부';
+      const rejectBtn=document.createElement('button');rejectBtn.className='vm-flag-btn vm-flag-nomem';rejectBtn.type='button';rejectBtn.textContent='무관';
       rejectBtn.addEventListener('click',e=>{e.stopPropagation();_vmReviewDecide(v,item,false,approveBtn,rejectBtn);});
       actions.appendChild(approveBtn);actions.appendChild(rejectBtn);
     }else{
@@ -3647,8 +3647,8 @@ async function _vmReviewBulk(approve){
   const ids=[...document.querySelectorAll('#vm-list .vm-item input[type=checkbox]:checked')]
     .map(c=>c.closest('.vm-item')?.dataset.vidId).filter(Boolean);
   if(!ids.length)return;
-  const label=approve?'승인':'거부';
-  if(!confirm(`선택한 ${ids.length}개를 ${label}할까요?\n\n· 승인: 지금 배정된 그룹이 맞다고 확정(숨김 해제)\n· 거부: 그룹배정이 틀렸다는 뜻이라 '무관' 처리\n\n되돌리기 스냅샷이 저장돼요.`))return;
+  const label=approve?'정상':'무관';
+  if(!confirm(`선택한 ${ids.length}개를 '${label}'(으)로 처리할까요?\n\n· 정상: 지금 배정된 그룹이 맞음 → 정상(숨김 해제)\n· 무관: 그룹배정이 틀림 → '무관'\n\n되돌리기 스냅샷이 저장돼요.`))return;
   const aBtn=document.getElementById('vm-review-approve-btn'),rBtn=document.getElementById('vm-review-reject-btn');
   if(aBtn)aBtn.disabled=true;if(rBtn)rBtn.disabled=true;
   const statusEl=document.getElementById('vm-status');
