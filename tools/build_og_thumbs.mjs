@@ -40,6 +40,19 @@ function better(a, b) {
   return (a.published_at || '') >= (b.published_at || '') ? a : b;
 }
 
+// A안(2026-09-01, 사용자 요청): 대표 썸네일을 "갱신마다 랜덤"으로 돌린다 — 단 예능·커버가 안 걸리게
+// MV·라이브(무대)만 후보로. 완전 무작위면 조회수 적은 구석 영상이 걸릴 수 있어, 인기 상위 TOPN개
+// 중에서 랜덤으로 뽑아 품질은 지키면서 매번 다른 게 나오게 한다. (mv/live가 하나도 없으면 better()로 폴백)
+const ELIGIBLE = new Set(['mv', 'live', 'performance']);
+const TOPN = 20;
+function randomEligible(cands, fallbackRow) {
+  if (cands && cands.length) {
+    const top = cands.slice().sort((a, b) => (b.view_count || 0) - (a.view_count || 0)).slice(0, TOPN);
+    return top[Math.floor(Math.random() * top.length)];
+  }
+  return fallbackRow || null;
+}
+
 async function fetchJson(url) {
   for (let attempt = 1; attempt <= 3; attempt++) {
     try {
@@ -53,9 +66,12 @@ async function fetchJson(url) {
   }
 }
 
-const groupPick = {};             // 그룹명 → row
-const memberPick = {};            // "그룹|이름" → row
+const groupPick = {};             // 그룹명 → row (mv/live 없을 때 폴백용 best)
+const memberPick = {};            // "그룹|이름" → row (폴백)
 const memberAny = {};             // "이름" → row  (겸임/타그룹 영상 폴백)
+const groupCands = {};            // 그룹명 → [row,...]  MV·라이브·무대 후보(이 중 랜덤)
+const memberCands = {};           // "그룹|이름" → [...]
+const memberAnyCands = {};        // "이름" → [...]
 
 const gkos = Object.keys(groups);
 console.log(`[og-thumbs] 그룹 ${gkos.length}개 조회 시작 (그룹당 최대 ${PER_GROUP}행)`);
@@ -73,11 +89,14 @@ for (const gko of gkos) {
   for (const v of rows) {
     if (!v.id) continue;
     if (v.content_flag === 'hidden' || v.content_flag === 'irrelevant') continue; // 숨김/무관 처리분 제외
+    const elig = ELIGIBLE.has(v.category);
     groupPick[gko] = better(groupPick[gko], v);
+    if (elig) (groupCands[gko] ??= []).push(v);
     for (const mname of (v.members || [])) {
       const k = gko + '|' + mname;
       memberPick[k] = better(memberPick[k], v);
       memberAny[mname] = better(memberAny[mname], v);
+      if (elig) { (memberCands[k] ??= []).push(v); (memberAnyCands[mname] ??= []).push(v); }
     }
   }
   if (++done % 40 === 0) console.log(`  … ${done}/${gkos.length}`);
@@ -88,13 +107,14 @@ const memberOut = {};
 let memHit = 0, memFallback = 0, memMiss = 0;
 for (const a of artists) {
   const key = a.group.ko + '|' + a.name.ko;
-  const pick = memberPick[key] || memberAny[a.name.ko];
+  let pick = randomEligible(memberCands[key], memberPick[key]);   // 소속 그룹의 MV/라이브 중 랜덤(없으면 best)
+  if (pick) memHit++;
+  else { pick = randomEligible(memberAnyCands[a.name.ko], memberAny[a.name.ko]); if (pick) memFallback++; } // 겸임/타그룹 폴백
   if (!pick) { memMiss++; continue; }
-  if (memberPick[key]) memHit++; else memFallback++;
   memberOut[key] = pick.id;
 }
 const groupOut = {};
-for (const gko of gkos) if (groupPick[gko]) groupOut[gko] = groupPick[gko].id;
+for (const gko of gkos) { const p = randomEligible(groupCands[gko], groupPick[gko]); if (p) groupOut[gko] = p.id; }
 
 console.log(`\n[og-thumbs] 그룹 ${Object.keys(groupOut).length}/${gkos.length} · 멤버 ${Object.keys(memberOut).length}/${artists.length} (소속영상 ${memHit} · 타그룹폴백 ${memFallback} · 없음 ${memMiss})`);
 
@@ -120,7 +140,7 @@ const urlFor = id => `https://img.youtube.com/vi/${id}/${maxres[id] ? 'maxresdef
 
 const out = {
   _generated: 'tools/build_og_thumbs.mjs',
-  _note: '공유 미리보기용 대표 영상 썸네일. build_group_pages.js가 읽는다. 갱신하려면 이 스크립트를 다시 실행.',
+  _note: '공유 미리보기용 대표 영상 썸네일(MV·라이브 인기 상위 중 랜덤 — 실행할 때마다 바뀜). build_group_pages.js가 읽는다. 주간 자동갱신: .github/workflows/rotate-og-thumbs.yml',
   groups: Object.fromEntries(Object.entries(groupOut).map(([k, v]) => [k, urlFor(v)])),
   members: Object.fromEntries(Object.entries(memberOut).map(([k, v]) => [k, urlFor(v)])),
 };
