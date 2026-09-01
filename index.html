@@ -2928,6 +2928,27 @@ function _revealUniverse(){
   const ring=document.getElementById('loading-ring');
   if(!veil||!loadingEl)return;
 
+  // ── "중앙에서 쫙 화면 넓게 펴지는" 모션 보강(2026-09-01, 사용자 제보) ──────────────
+  // veil의 backdrop-filter(blur) + 매 프레임 갱신하는 mask-image 확장은 일부 GPU/브라우저에서 합성이
+  // 안 그려져(특히 데스크톱), 퍼지는 연출이 통째로 안 보이고 veil이 사라지며 우주가 '띡' 하고 튀어나온다.
+  // 그래서 mask에 의존하지 않는 캔버스 자체의 GPU transform(scale)로 같은 "중앙→바깥 확장"을 항상 보이게
+  // 얹는다 — 살짝 작게(0.86)·흐리게 시작해 전체 크기로 이징하며 우주가 중앙에서 펴져 나온다. body 배경이
+  // 어두운 우주 그라디언트(#060612)라 축소 중 가장자리도 그대로 우주처럼 이어진다.
+  const _rc=(typeof renderer!=='undefined')&&renderer.domElement;
+  if(_rc){
+    _rc.style.transformOrigin='50% 50%';
+    _rc.style.transition='none';
+    _rc.style.transform='scale(0.86)';
+    _rc.style.opacity='0.4';
+    void _rc.offsetHeight; // 초기값을 굳혀서 아래 트랜지션이 시작점부터 적용되게
+    requestAnimationFrame(()=>{
+      _rc.style.transition='transform 1150ms cubic-bezier(.16,.84,.28,1), opacity 950ms ease-out';
+      _rc.style.transform='scale(1)';
+      _rc.style.opacity='1';
+    });
+    setTimeout(()=>{ _rc.style.transition='';_rc.style.transform='';_rc.style.transformOrigin='';_rc.style.opacity=''; },1500);
+  }
+
   // 행성들을 일단 안 보이게 축소 — 마스크가 지나가는 순서대로 안쪽→바깥쪽 블룸인
   const dists=bubbleMeshes.map(bm=>bm.mesh.position.length());
   const maxD=Math.max(1,...dists);
