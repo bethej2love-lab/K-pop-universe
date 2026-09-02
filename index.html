@@ -7711,6 +7711,28 @@ function _buildConnContent(container){
     return wrap;
   }
 
+  // 현재 선택(멤버 sel + 그룹)과 실제로 함께 영상이 있는 이름만 다음 칩으로 남긴다 — 그래야 어떤 칩을
+  // 눌러도 "해당 조합의 영상이 없어요"가 안 뜬다(2026-09-02, 반복 제보의 근본 원인: 칩 필터가 앵커+칩 단독만
+  // 봐서 A+B 선택 후 C를 더하면 A+B+C가 0일 수 있었음). 선택이 없으면 제한 없음. 그룹 전체 태깅
+  // (_groupWideNames)으로만 걸린 이름은 제외 — 그건 선택하면 hasMemberConfirmed에서 빠져 어차피 0이 되므로.
+  let _availNextArtists=null;
+  if(_connSelected.length||_connSelectedGroups.size){
+    _availNextArtists=new Set();
+    _getCollabSongs(_connAnchor,_connSelected,false,_connSelectedGroups).forEach(sg=>{
+      (sg.with||[]).forEach(w=>{
+        if(sg._groupWideNames&&sg._groupWideNames.has(w))return;
+        const a=_findArtistByConnName(w,_connAnchor.group.ko);if(a)_availNextArtists.add(a);
+      });
+    });
+  }
+  const _chipSelKeep=new Set(_connSelected); // 이미 선택된 칩은 항상 유지(토글 해제용)
+  const _chipOk=name=>{
+    if(!(_collabCount(name)>0))return false;
+    if(!_availNextArtists||_chipSelKeep.has(name))return true;
+    const a=_findArtistByConnName(name,_connAnchor.group.ko);
+    return a?_availNextArtists.has(a):false;
+  };
+
   const membersLbl=document.createElement('div');membersLbl.className='conn-lbl';
   membersLbl.textContent=currentLang==='ko'?'함께한 멤버':'collaborated with';
   container.appendChild(membersLbl);
@@ -7719,10 +7741,10 @@ function _buildConnContent(container){
 
   // 같은 그룹 멤버 (개별 칩) — _collabCount가 0이면 그룹 전체 태깅으로만 끌려들어온 이름(실제로 그
   // 멤버가 나왔다고 확인된 적 없음)이라 개별 칩으로 보여줄 근거가 없어 제외한다.
-  sameGroupNames.filter(name=>_collabCount(name)>0).forEach(name=>chipsDiv.appendChild(_makeConnChip(name)));
+  sameGroupNames.filter(_chipOk).forEach(name=>chipsDiv.appendChild(_makeConnChip(name)));
 
   // 솔로 아티스트 칩도 그룹 칩 없이 바로 펼쳐서 표시(위 soloNames 추출부 주석 참고)
-  soloNames.filter(name=>_collabCount(name)>0)
+  soloNames.filter(_chipOk)
     .sort((a,b)=>_collabCount(b)-_collabCount(a)||a.localeCompare(b,'ko'))
     .forEach(name=>chipsDiv.appendChild(_makeConnChip(name)));
 
@@ -7775,7 +7797,7 @@ function _buildConnContent(container){
       // 그룹 내에서도 개별 확인 안 된 멤버(그룹 전체 태깅 영상으로만 끌려들어온 이름)는 제외 —
       // 예: 코르티스 성현 × 아일릿에서 이로하는 개별 영상이 있지만 나머지 4명은 그룹 전체 등장
       // 영상에만 있었다면, 이로하만 개별 칩으로 보여주고 나머지는 숨긴다.
-      const confirmedMembers=members.filter(name=>_collabCount(name)>0);
+      const confirmedMembers=members.filter(_chipOk);
       const memberRow=document.createElement('div');
       memberRow.className='conn-group-members'+(isSelGroup?' open':'');
       confirmedMembers.forEach(name=>memberRow.appendChild(_makeConnChip(name)));
