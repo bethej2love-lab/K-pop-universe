@@ -583,15 +583,11 @@ cases.forEach(({ name, title, selfGko, check, publishedAt }) => {
   }
 });
 
-// ── 소스 회귀: 동명이인 성-뗀 충돌 가드가 자체채널 매칭 경로(_atmMatchesMember)에도 있는지 ──────────
-// (2026-09-01, 걸스데이 혜리 ↔ 장혜리(지인)) — _m2NameVariants엔 가드가 있었지만 _atmMatchesMember는
-// _atmStripSurname을 직접 써서 가드가 빠져 있었고, 혜리 영상마다 장혜리가 딸려붙었다(실측 388건).
-// 성 뗀 변형이 '다른 아티스트의 정식 등록명'과 같으면 이 경로에서도 쓰면 안 된다.
-{
-  const guarded = /const givenOnly=_atmStripSurname\(nameChars\);[\s\S]{0,600}?if\(givenOnly&&givenOnly\.length>=2&&!ARTISTS\.some\(o=>o\.name\.ko===givenOnly\)\)/.test(adminSrc);
-  if (guarded) { pass++; console.log('✅ _atmMatchesMember 성-뗀 변형이 타 멤버 정식명과 겹치면 제외(장혜리→혜리 가드)'); }
-  else { fail++; console.log('❌ _atmMatchesMember에 동명이인 성-뗀 충돌 가드 없음(장혜리→혜리 재발 위험)'); }
-}
+// 동명이인 성-뗀 충돌 가드(걸스데이 혜리 ↔ 장혜리)의 회귀는 desc-evidence.test.js로 옮겼다.
+// 여기선 소스 문자열을 정규식으로 훑는 방식이었는데, 그 검사는 "한글 경로에 가드 문구가 있다"만 보고
+// **영문 경로(#HYERI)가 통째로 뚫린 것은 못 잡아** 통과 상태로 292건이 남아 있었다(2026-09-02).
+// _atmMatchesMember는 이 파일 하네스가 안 싣는 함수라(여긴 _m2ParseTitle 전용), 실동작 검증은
+// 공용 하네스(tools/m2_harness.js)를 쓰는 desc-evidence.test.js가 제자리다.
 
 console.log(`\n${pass}/${pass + fail} 통과${fail ? `, ${fail}개 실패` : ''}`);
 process.exit(fail ? 1 : 0);

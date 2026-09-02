@@ -4552,6 +4552,23 @@ function _atmStripSurname(nameChars){
   if(nameChars.length>=3&&_ATM_KOREAN_SURNAMES.has(nameChars[0]))return nameChars.slice(1).join('');
   return null;
 }
+// 영문명을 비교용 키로 정규화 — _atmMatchesMember가 영문 매칭에 쓰는 토큰 분해와 **같은 규칙**이어야
+// 한다("Jang Hyeri"→"jang hyeri"). 성 뗀 영문 변형이 같은 그룹 멤버의 정식 영문명과 겹치는지 판정하는
+// 가드가 이 키로 대조한다(2026-09-02).
+function _atmEnKey(en){return String(en||'').toLowerCase().split(/[^a-z0-9]+/).filter(Boolean).join(' ');}
+// 성 뗀 이름 변형(한글 givenOnly / 영문 rest)이 **같은 그룹 안 다른 멤버의 정식 등록명**과 겹치는지.
+// 겹치면 그 변형으로는 매칭하지 않는다 — 장혜리(Jang Hyeri)의 "혜리"/"hyeri"가 같은 걸스데이 현 멤버
+// 혜리(Hyeri)를 가리키므로, 혜리 영상마다 장혜리가 딸려붙었다.
+// ⚠️ 전역(모든 아티스트)으로 넓히지 말 것. 이 경로는 group_ko가 이미 확정된 **자체 채널** 매칭이라
+// 다른 그룹의 동명이인은 애초에 충돌이 아니다("스트레이키즈 채널의 #chan"은 티오원 찬일 수 없다).
+// 2026-09-01 수정이 한글 쪽을 전역으로 걸었다가, 실충돌 1명(장혜리)을 잡으려고 188명(안유진→#유진,
+// 홍은채→#은채, 강혜원→#혜원 …)의 정상 매칭까지 꺼진 것을 2026-09-02 실측으로 발견해 그룹 한정으로
+// 좁혔다. 영문 경로(#HYERI)는 그 수정에서 아예 빠져 있어 오태깅 292건이 남아 있었고, 여기서 같이 막는다.
+function _atmNameTakenByGroupmate(nm,gko,isEn){
+  if(!nm||!gko)return false;
+  return ARTISTS.some(o=>(isEn?(o.name.en&&_atmEnKey(o.name.en)===nm):o.name.ko===nm)
+    &&_artistGroups(o).some(g=>g.ko===gko));
+}
 // "가인"(브라운아이드걸스)의 "성+이름" 매칭에서 흔한 성씨 "송"이 우연히 걸려 무관한 트롯 가수 "송가인"이
 // 대량으로 오태깅됨 — 가인의 실명은 "손가인"이라 "손"은 그대로 인정하고 "송"만 예외 처리한다
 // (2026-08-04, 사용자 제보). 이름별로 특정 성씨만 배제해야 하는 경우가 더 생기면 여기에 추가.
@@ -4622,11 +4639,11 @@ function _atmMatchesMember(m,title,tokens,groupKo){
     const surExcludeDyn=_ATM_DYNAMIC_SURNAME_EXCLUDE.get(name); // DB 이전분(2026-08-20)
     let sm;while((sm=surRe.exec(title))){if(_ATM_KOREAN_SURNAMES.has(sm[1])&&!(surExclude&&surExclude.has(sm[1]))&&!(surExcludeDyn&&surExcludeDyn.has(sm[1])))return true;} // 성+이름(+조사)
     const givenOnly=_atmStripSurname(nameChars);
-    // 성 뗀 이름 변형이 '다른 아티스트의 정식 등록명'과 같으면 이 경로에서도 쓰지 않는다(_m2NameVariants
-    // 5038과 동일 가드 — 이 자체채널 매칭 경로는 _m2NameVariants를 안 거쳐 이 가드가 빠져 있었다). 예:
-    // 장혜리→"혜리"가 현 멤버 혜리(name.ko='혜리')와 같아, 걸스데이 혜리 영상마다 장혜리가 딸려붙던
-    // 오태깅의 원인(2026-09-01 실측 388건). 평문·해시태그 둘 다 막는다 — '#혜리'도 현 혜리를 가리킴.
-    if(givenOnly&&givenOnly.length>=2&&!ARTISTS.some(o=>o.name.ko===givenOnly)){
+    // 성 뗀 이름 변형이 '같은 그룹 멤버의 정식 등록명'과 같으면 이 경로에서도 쓰지 않는다. 예:
+    // 장혜리→"혜리"가 같은 걸스데이 현 멤버 혜리(name.ko='혜리')와 같아, 혜리 영상마다 장혜리가
+    // 딸려붙던 오태깅의 원인(2026-09-01 실측 388건). 평문·해시태그 둘 다 막는다 — '#혜리'도 현 혜리를
+    // 가리킴. 그룹 한정인 이유는 _atmNameTakenByGroupmate 주석 참고(전역으로 걸었다가 188명 오차단).
+    if(givenOnly&&givenOnly.length>=2&&!_atmNameTakenByGroupmate(givenOnly,groupKo)){
       if(new RegExp(`(?<![가-힣])${_atmEscRe(givenOnly)}(?:${particles}){0,2}(?![가-힣])`).test(title))return true; // 등록명이 성+이름인데 제목엔 이름만
       if(new RegExp(`#${_atmEscRe(givenOnly)}(?![가-힣])`).test(title))return true; // #이름(성 뺀 버전)
     }
@@ -4662,10 +4679,17 @@ function _atmMatchesMember(m,title,tokens,groupKo){
       for(let i=0;i<=tokens.length-parts.length;i++){if(parts.every((p,j)=>tokens[i+j]===p))return true;}
       // 영문명도 한글과 같은 이유로 "성" 파트(보통 첫 단어)를 뺀 나머지만 제목에 있어도 잡히게 함
       const rest=parts.slice(1);
-      if(rest.length===1){
-        if(tokens.includes(rest[0]))return true;
-      }else if(rest.length>1){
-        for(let i=0;i<=tokens.length-rest.length;i++){if(rest.every((p,j)=>tokens[i+j]===p))return true;}
+      // ⚠️ 위 한글 givenOnly 가드와 **같은 규칙의 영문판**. 장혜리(en:'Jang Hyeri')의 성 뗀 "hyeri"가
+      // 같은 그룹 혜리(en:'Hyeri')와 겹쳐, 설명란 해시태그 "#HYERI"/"#hyeri"로 장혜리가 딸려붙었다.
+      // 2026-09-01 수정이 한글("#혜리")만 막고 이 영문 경로는 빠뜨려서 오태깅 292건이 그대로 남아
+      // 있었다(2026-09-02 실측·재현). 토큰 비교라 대소문자는 이미 무시됨 — "#HYERI"도 같은 구멍.
+      const restKey=rest.join(' ');
+      if(!_atmNameTakenByGroupmate(restKey,groupKo,true)){
+        if(rest.length===1){
+          if(tokens.includes(rest[0]))return true;
+        }else if(rest.length>1){
+          for(let i=0;i<=tokens.length-rest.length;i++){if(rest.every((p,j)=>tokens[i+j]===p))return true;}
+        }
       }
     }
   }

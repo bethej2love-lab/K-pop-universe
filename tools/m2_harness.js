@@ -52,6 +52,8 @@ function load(){
   F(/^function _atmTokenize\(/m,'_atmTokenize');
   S(/^const _ATM_HASHTAG_ONLY_NAMES\s*=/m,'_ATM_HASHTAG_ONLY_NAMES');
   F(/^function _atmStripSurname\(/m,'_atmStripSurname');
+  F(/^function _atmEnKey\(/m,'_atmEnKey');
+  F(/^function _atmNameTakenByGroupmate\(/m,'_atmNameTakenByGroupmate');
   F(/^function _isHashtagOnlyName\(/m,'_isHashtagOnlyName');
   S(/^const _ATM_SURNAME_EXCLUDE\s*=/m,'_ATM_SURNAME_EXCLUDE');
   S(/^const _ATM_NO_CONTEXT_RELAX_NAMES\s*=/m,'_ATM_NO_CONTEXT_RELAX_NAMES');
