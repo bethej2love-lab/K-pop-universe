@@ -176,6 +176,29 @@ async function main() {
     if (exp3 > 0) fail(`[7] 1글자 쿼리인데 그룹 멤버가 ${exp3}명 딸려옴(결과 폭발)`);
     else ok('[7] 1글자 쿼리는 그룹 확장 안 함(결과 폭발 방지)');
 
+    // [8] 동점 타이브레이커 — 활동 중 > 해체(2026-09-02)
+    // "에이"는 가나다순이면 에이스(해체)가 2번째로 올라온다. 활동 중인 그룹이 전부 앞서야 한다.
+    // ⚠️ 매칭 등급은 안 건드리므로 "아이즈원"을 정확히 치면 여전히 맨 위다(등급이 동점일 때만 갈린다).
+    await ev(cdp, `(function(){var i=document.getElementById('msheet-input');i.value='에이';i.dispatchEvent(new Event('input',{bubbles:true}));})()`);
+    await sleep(700);
+    const order = await ev(cdp, `[...document.querySelectorAll('#msheet-body .sr-item[data-type="group"]')]
+      .filter(function(el){return getComputedStyle(el).display!=='none';})
+      .map(function(el){var n=el.querySelector('.sr-item-name');return n?n.textContent.trim():'';})`);
+    const OVER = ['에이스', '에이프릴'];
+    const idxOver = (order || []).findIndex(n => OVER.includes(n));
+    const idxLastActive = (order || []).reduce((acc, n, i) => OVER.includes(n) ? acc : i, -1);
+    if (idxOver < 0) ok('[8] (해체 그룹이 결과에 없어 순서 검증 생략)');
+    else if (idxOver < idxLastActive) fail(`[8] 해체 그룹이 활동 중보다 앞: ${(order || []).join(' · ')}`);
+    else ok(`[8] 활동 중 > 해체 정렬 (${(order || []).join(' · ')})`);
+
+    // 정확 매칭은 타이브레이커와 무관하게 여전히 1위여야 한다(등급을 뒤집지 않았다는 확인)
+    await ev(cdp, `(function(){var i=document.getElementById('msheet-input');i.value='아이즈원';i.dispatchEvent(new Event('input',{bubbles:true}));})()`);
+    await sleep(700);
+    const first = await ev(cdp, `(function(){var el=document.querySelector('#msheet-body .sr-item[data-type]');
+      var n=el&&el.querySelector('.sr-item-name');return n?n.textContent.trim():'';})()`);
+    if (!/아이즈원/.test(first || '')) fail(`[8] 해체 그룹이라도 정확 매칭이면 1위여야 함 (1위: "${first}")`);
+    else ok('[8] 해체 그룹도 정확 매칭이면 1위 유지(등급은 안 뒤집힘)');
+
     // [5] 닫기
     await ev(cdp, `(function(){var i=document.getElementById('msheet-input');i.value='';i.dispatchEvent(new Event('input',{bubbles:true}));})()`);
     await sleep(200);

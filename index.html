@@ -4212,12 +4212,39 @@ function doSearch(q){
         const dispSub=(currentLang==='ko'?ko:(GROUPS[ko].en||ko));
         // 그룹 본체 바로 뒤에 오도록 그룹 점수 + 0.9. 이름으로 직접 걸린 멤버(score 0~2)보다는
         // 뒤지만, 곡(+1.2)이나 오타 폴백(5)보다는 앞이다.
-        hits.push({type:'member',name:dispName,sub:dispSub,pos:a._worldPos,data:a,score:score+0.9,_expanded:true});
+        hits.push({type:'member',name:dispName,sub:dispSub,pos:a._worldPos,data:a,score:score+0.9,_expanded:true,_gko:ko});
         already.add(a);
       });
     });
   }
-  hits.sort((a,b)=>{const sd=a.score-b.score;if(sd!==0)return sd;return a.name.localeCompare(b.name,'ko');});
+  // ── 동점 타이브레이커(2026-09-02) ─────────────────────────────────────────
+  // 매칭 등급(score)은 그대로 두고 **동점만** 가른다 — "소녀시대"를 치면 여전히 정확 매칭이 위다.
+  // 등급을 뒤집지 않으므로 결과가 결정적이고 설명 가능하다("같은 점수면 활동 중이 위, 그다음 내 최애").
+  // ⚠️ 유명도(pri)는 일부러 안 넣는다 — 임의로 정하지 말고 실제 검색 클릭 로그가 쌓이면 그때
+  //    반영하기로 한 방침(search_click_log, 2026-09-02 1단계). 지금 넣으면 그 판단을 선점해버린다.
+  const _isOverHit=h=>{
+    if(h.type==='group')return _groupIsOver(h.data)?1:0;
+    if(h.type==='member'){
+      const a=h.data;if(!a)return 0;
+      // 확장으로 딸려온 멤버는 **그 그룹 문맥**의 활동 상태를 본다(겸임 멤버는 그룹마다 다르다 —
+      // 위키미키 최유정은 위키미키에선 탈퇴, 아이오아이에선 현역).
+      return h._gko?(_activeInGroup(a,h._gko)?0:1):(a.active===false?1:0);
+    }
+    return 0;
+  };
+  const _isFavHit=h=>{
+    try{
+      if(h.type==='group')return favGroups.has(h.data)?0:1;
+      if(h.type==='member'&&h.data)return favMembers.has(_mFavKey(h.data))?0:1;
+    }catch(e){}
+    return 1;
+  };
+  hits.sort((a,b)=>{
+    const sd=a.score-b.score;if(sd!==0)return sd;
+    const od=_isOverHit(a)-_isOverHit(b);if(od!==0)return od;   // 활동 중 > 해체·탈퇴
+    const fd=_isFavHit(a)-_isFavHit(b);if(fd!==0)return fd;     // 내 즐겨찾기 먼저
+    return a.name.localeCompare(b.name,'ko');
+  });
   _renderSearchHits(hits.slice(0,obSr?5:40),res,mobSearch,false,!!obSr);
   // 서버가 필요한 결과(영상·공연)는 늦게 도착하므로 뒤에 이어 붙인다(2026-08-31, 검색 확장 4단계)
   if(!obSr&&q.length>=2)_searchRemote(q,res,mobSearch,!!obSr);
