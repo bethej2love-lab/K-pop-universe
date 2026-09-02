@@ -93,6 +93,14 @@ OPENERS.forEach(([re, label]) => {
 const vtOpens = (admin.match(/vid-tag-overlay'\)\.classList\.add\('open'\)/g) || []).length;
 const vtFront = (admin.match(/_bringToFront\(document\.getElementById\('vid-tag-overlay'\)\)/g) || []).length;
 ck(vtOpens >= 2 && vtFront >= vtOpens, `admin 편집모달 open ${vtOpens}곳 모두 _bringToFront 동반(${vtFront})`);
+// ⚠️ 형제 오버레이 함정(2026-09-02 회귀): openMobSheet은 첫 카드(mob-sheet)와 2번째+ 카드(mob-card-stack)를
+// 같은 함수에서 서로 다른 분기로 연다. 첫 카드만 _bringToFront로 131+ 밴드에 올리고 스택을 정적 z(64)에
+// 두면, 그룹 카드에서 멤버를 눌렀을 때 멤버 카드가 그룹 카드 뒤로 뜬다(실제 발생). 위 Part2는 함수 안에
+// _bringToFront가 "하나라도" 있으면 통과라 이걸 못 잡았고, Part3 스냅샷은 이 상태를 허용목록에 얼려버려
+// 놓쳤다. 그래서 여기서 **두 엘리먼트 모두** 올리는지 명시적으로 고정한다.
+const _oms = fnRegion(html, /^function openMobSheet\(/m, 'openMobSheet');
+ck(/_bringToFront\(mobSheetEl\)/.test(_oms), 'openMobSheet: 첫 카드(mobSheetEl)를 _bringToFront');
+ck(/_bringToFront\(mobCardStackEl\)/.test(_oms), 'openMobSheet: 스택 카드(mobCardStackEl)도 _bringToFront — 멤버 카드가 그룹 카드 뒤로 안 뜨게');
 
 // ── Part 3: 오버레이 open 지점 스냅샷 동결 ──────────────────────────────────
 // 아래 SNAPSHOT = 2026-09-02 현재 "같은 줄에 _bringToFront가 없는" open 지점의 서명→개수.

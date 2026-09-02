@@ -6548,6 +6548,9 @@ function openMobSheet(cardEl){
     // 그대로 물려받아서 열림(안 그러면 100%로 보다가 다음 카드 열 때마다 60vh로 도로 쪼그라듦)
     mobCardStackEl.classList.toggle('bs-full',_sheetFull);
     mobCardStackEl.style.display='block';
+    _bringToFront(mobCardStackEl); // ⚠️ 필수: 첫 카드(mob-sheet)가 _bringToFront로 131+에 올라가 있어서, 스택
+    // 카드도 그 위로 올려야 멤버 카드가 그룹 카드 뒤로 안 뜬다(2026-09-02 회귀 수정 — z통일 때 sheet만 올리고
+    // stack을 빠뜨렸었음). 정적 z(sheet63/stack64)만 믿으면 안 됨.
     mobCardStackInner.scrollTop=0; // display:block 직후 재설정 — display:none 중 무시 보완
     const mySeq=++_stackAnimSeq; // 이 애니메이션 세대 토큰 — 그 사이 새 카드가 열리면 폐기된다
     mobCardStackEl.style.transition='none';
