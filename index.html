@@ -4014,8 +4014,8 @@ function _latestCover(d){
   return wc[0].cover||'';
 }
 // 검색 첫 화면 "이런 그룹은 어때요" — 텍스트 목록 대신 컬러 오브 그리드(2026-09-02). 각 오브는 그룹 컬러
-// 그라디언트로 즉시 뜨고, disco 로드되면 그 그룹 최신 앨범 커버 이미지로 부드럽게 교체(프로필 사진 데이터가
-// 없어 앨범커버·컬러로 시각화). 클릭은 _makeSearchItem이 감아둔 동작을 detached 요소에 위임해 그대로 재사용.
+// 그라디언트로 즉시 뜨고, 그룹 프로필 사진(#gc-pic과 같은 artist_pics 소스, 미리 캐시됨)으로 교체 — 없으면
+// 최신 앨범 커버로 폴백. 클릭은 _makeSearchItem이 감아둔 동작을 detached 요소에 위임해 그대로 재사용.
 function _appendTrendingSection(hits,res,mobSearch,obSearch){
   const lb=document.createElement('div');lb.className='sr-sec-label';
   lb.textContent=currentLang==='ko'?'이런 그룹은 어때요':'Try these';
@@ -4033,13 +4033,16 @@ function _appendTrendingSection(hits,res,mobSearch,obSearch){
     tile.appendChild(disc);tile.appendChild(nm);
     tile.addEventListener('click',()=>wired.click());
     grid.appendChild(tile);
-    _ensureGroupDisco(ko).then(()=>{
-      const cov=_latestCover((GROUPS[ko]||{}).discography);
-      if(!cov)return;
+    (async()=>{
+      // 그룹 프로필 사진 우선(그룹 카드 #gc-pic과 동일 소스, 로드 시 _warmInstaPicCache가 미리 채움).
+      try{ if(_instaPicPreloadP)await _instaPicPreloadP; }catch(e){}
+      let url=_instaPicCache.get(_picKey('',ko));
+      if(!url){ try{ await _ensureGroupDisco(ko); url=_latestCover((GROUPS[ko]||{}).discography); }catch(e){} } // 폴백: 최신 앨범 커버
+      if(!url)return;
       const im=new Image(); // 로드 완료 후에만 교체 — 깨진 이미지·빈칸 방지
-      im.onload=()=>{disc.style.backgroundImage=`url("${String(cov).replace(/"/g,'%22')}")`;disc.classList.add('has-cover');};
-      im.src=cov;
-    }).catch(()=>{});
+      im.onload=()=>{disc.style.backgroundImage=`url("${String(url).replace(/"/g,'%22')}")`;disc.classList.add('has-cover');};
+      im.src=url;
+    })();
   });
   res.appendChild(grid);
 }
