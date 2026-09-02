@@ -27,6 +27,14 @@
   html.booting #desktop-header{
     opacity:0;visibility:hidden;pointer-events:none;
   }
+  /* 탭바·줌 컨트롤은 booting이 풀린 뒤(클립 시작)에도 chrome-wait로 계속 숨겨둔다 — 이 둘은 각자
+     transition을 스크롤숨김(#tabbar line~129)·패널이동(#zoom-ctrl line~2508)에 이미 쓰고 있어서 위
+     booting 규칙의 리빌 트랜지션이 덮여버린다(그래서 클립 시작과 함께 뚝 떠버렸음, 2026-09-02 제보).
+     그래서 이 둘만 JS(_revealChrome)로 화면 확장에 맞춰 페이드인한다. */
+  html.chrome-wait #tabbar,
+  html.chrome-wait #zoom-ctrl{
+    opacity:0;visibility:hidden;pointer-events:none;
+  }
   /* ⚠️ 기존 transition을 덮어쓰지 않도록 각각 이어 붙인다 — #tabbar는 숨김/복귀(transform+opacity),
      #zoom-ctrl은 패널 열릴 때 좌우 이동(left)에 이미 트랜지션을 쓰고 있다. 통째로 재선언하면
      그 애니메이션이 조용히 사라진다.

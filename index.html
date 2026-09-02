@@ -4,7 +4,7 @@
      한 프레임 그려져서 크롬이 깜빡 보인다. 해제는 _revealUniverse가 클립 시작과 동시에 한다.
      (예전엔 veil(z-index 96)이 화면을 통째로 덮어 탭바 40·줌 50을 가렸는데, 2026-09-02에 리빌을
       clip-path로 바꾸며 veil을 없애자 캔버스만 클립돼 나머지 UI가 처음부터 노출됐다.) -->
-<html lang="ko" class="booting">
+<html lang="ko" class="booting chrome-wait">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
@@ -1360,7 +1360,7 @@ if(typeof THREE==='undefined'||!THREE.OrbitControls||!THREE.CSS2DRenderer){
         is_mobile:(window.innerWidth<=768?1:0),
       });
     }catch(_){}
-    try{document.documentElement.classList.remove('booting');}catch(_){} // 에러 화면에선 크롬이 보여야 한다
+    try{document.documentElement.classList.remove('booting');document.documentElement.classList.remove('chrome-wait');}catch(_){} // 에러 화면에선 크롬이 보여야 한다
     var el=document.getElementById('loading');
     if(el){
       el.classList.add('loading-error');
@@ -3108,9 +3108,25 @@ const REVEAL={clip:700,text:350,label:500,hint:1800};
 // 부팅 중 숨겨둔 UI 크롬(탭바·줌·헤더)을 우주와 **같이** 드러낸다. 리빌이 끝난 뒤가 아니라
 // 클립이 시작되는 순간 함께 나타나야 "열리면서 다 보인다"가 된다.
 function _endBooting(){try{document.documentElement.classList.remove('booting');}catch(e){}}
+// 탭바·줌 컨트롤을 화면 확장(clip)에 맞춰 띄운다. booting과 별개(chrome-wait)로 관리하는 이유는
+// 이 둘의 CSS transition이 다른 용도(스크롤숨김·패널이동)에 이미 쓰여 리빌 타이밍을 CSS로 못 싣기
+// 때문 — JS로 인라인 페이드를 걸고, 끝나면 인라인 transition을 걷어 원래 동작을 안 건드린다.
+function _revealChrome(fade){
+  try{
+    if(fade){
+      ['tabbar','zoom-ctrl'].forEach(function(id){
+        var el=document.getElementById(id); if(!el)return;
+        el.style.transition='opacity 450ms ease, visibility 0s linear 0s';
+        setTimeout(function(){ el.style.transition=''; },520); // 페이드 후 인라인 제거(스크롤숨김 .32s 복원)
+      });
+      var _t=document.getElementById('tabbar'); if(_t)void _t.offsetHeight; // 시작값(opacity:0)을 굳힘
+    }
+    document.documentElement.classList.remove('chrome-wait');
+  }catch(e){ try{document.documentElement.classList.remove('chrome-wait');}catch(_){} }
+}
 function _revealUniverse(){
   const loadingEl=document.getElementById('loading');
-  if(!loadingEl){_endBooting();return;}
+  if(!loadingEl){_endBooting();_revealChrome(false);return;}
 
   // 리빌은 **한 가지 메커니즘**으로만 한다: 캔버스에 clip-path 원을 씌워 중앙에서 바깥으로 연다.
   // 예전엔 세 연출이 겹쳐 돌면서 서로를 지웠다(2026-09-02 재작성, 원인 실측):
@@ -3151,9 +3167,11 @@ function _revealUniverse(){
   }
 
   // 동작 줄이기: 클립·블룸을 건너뛰고 텍스트만 사라지게 한다(예전 리빌엔 이 가드가 아예 없었다).
-  if(_reduceMotion){ if(_ring)_ring.remove(); _revealSettle(); _endBooting(); return; }
+  if(_reduceMotion){ if(_ring)_ring.remove(); _revealSettle(); _endBooting(); _revealChrome(false); return; }
 
   _endBooting(); // 크롬 페이드인을 클립과 동시에 시작
+  // 탭바·줌 컨트롤은 클립이 40%쯤 퍼진 시점에 페이드인 시작 → 확장이 끝날 즈음 다 뜬다("열리면서 같이").
+  setTimeout(function(){_revealChrome(true);}, Math.round(REVEAL.clip*0.4));
   if(_rc){
     _rc.style.transition='none';
     _rc.style.clipPath='circle(0% at 50% 50%)';
@@ -15475,7 +15493,7 @@ async function _showTraceCount(kind,key,rpcFn){
 
 buildUniverse().catch(err=>{
   console.error(err);
-  try{document.documentElement.classList.remove('booting');}catch(_){} // 에러 화면에선 크롬이 보여야 한다
+  try{document.documentElement.classList.remove('booting');document.documentElement.classList.remove('chrome-wait');}catch(_){} // 에러 화면에선 크롬이 보여야 한다
   const loadingEl=document.getElementById('loading');
   loadingEl.classList.add('loading-error');
   loadingEl.style.opacity='1';
