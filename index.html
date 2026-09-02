@@ -61,6 +61,22 @@
 </head>
 <body>
 <div id="loading"><span class="ld-l1">Here is our</span><span class="ld-l2">K-pop <span class="ld-ac">UNIVERSE</span>.</span></div>
+<script>
+  // 리빌 텍스트 밀림 방지(2026-09-02) — 로딩 텍스트는 좌측정렬+중앙배치라, 폴백 폰트로 먼저 그려졌다가
+  // Pretendard가 로드되며 스왑되면 폭이 바뀌어 좌우로 튄다. Pretendard(제목 900/리드인 600)가 준비된
+  // 뒤에 .ld-ready로 텍스트를 띄워 스왑이 화면에 보이기 전에 끝나게 한다. 폰트 로드가 느리거나 실패해도
+  // 최대 700ms 뒤엔 폴백 폰트로라도 노출(무한 공백 방지). 에러 상태(.loading-error)는 CSS에서 별도로 노출.
+  (function(){
+    var el=document.getElementById('loading');if(!el)return;
+    var shown=false,show=function(){if(shown)return;shown=true;el.classList.add('ld-ready');};
+    try{
+      if(document.fonts&&document.fonts.load){
+        Promise.all([document.fonts.load('900 40px Pretendard'),document.fonts.load('600 16px Pretendard')]).then(show,show);
+      }
+    }catch(e){}
+    setTimeout(show,700);
+  })();
+</script>
 <div id="journal-sidebar">
   <button id="journal-toggle" aria-label="저널 열기/닫기">
     <span id="journal-toggle-icon">›</span>
@@ -1386,7 +1402,13 @@ camera.position.copy(new THREE.Vector3(0,8,155).normalize().multiplyScalar(UNIVE
 
 const renderer=new THREE.WebGLRenderer({antialias:true,alpha:true});
 renderer.setSize(W,H);
-renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
+// 모바일 발열의 최대 원인은 픽셀비 — 아이폰은 devicePixelRatio가 3이라, 기본 캡 2.0이면 프레임당 채우는
+// 픽셀이 어마어마하다(제보: 영상·탐험 중 발열 심함). setPixelRatio는 3D 캔버스에만 적용되므로 낮춰도
+// UI 텍스트·카드는 그대로 선명하고, 캔버스(별·행성·글로우)는 육안차가 거의 없다. 모바일은 1.5로 캡해
+// 픽셀 수를 약 44% 줄이고(2.0² 대비 1.5²), 데스크톱은 2.0 유지. 저사양/발열 자동감지 시엔 아래
+// _applyPowerSave가 1.25로 한 번 더 낮춘다(2026-09-02). isMob은 함수 선언이라 여기서도 호출 가능.
+const _MOB_DPR_CAP=1.5;
+renderer.setPixelRatio(Math.min(window.devicePixelRatio,isMob()?_MOB_DPR_CAP:2));
 renderer.setClearColor(0x000000,0);
 document.body.appendChild(renderer.domElement);
 
@@ -2987,7 +3009,12 @@ async function buildUniverse(){
 // 갉아먹었다. 자세한 건 아래 _revealUniverse 주석.
 // 2026-09-02 2차 조정: 첫 값(clip 800·text 250)은 "너무 빨라 모션이 보이지도 않는다"는 제보로 늘렸다.
 // 리빌은 눈으로 따라갈 수 있어야 의미가 있다 — 짧게 만드는 게 목적이 아니다.
-const REVEAL={clip:1200,text:350,label:500,hint:1800};
+// 2026-09-02 3차(웅장함 복원, 제보 "원래는 웅장했는데 최근에 바꾸면서 별로다"): clip을 늘려도 밋밋했던
+// 진짜 원인은 duration이 아니라 easing이었다 — 아래 _ease가 극도로 front-loaded(cubic-bezier(.16,.84,…))라
+// 원이 첫 ~240ms에 이미 60%+ 확 커지고 나머지는 눈에 안 띄게 기어갔다(="여는 순간"이 순식간). easing을
+// 덜 front-loaded하게 바꿔 원이 전체 시간 동안 눈으로 퍼지게 하고, duration도 1200→1500으로 늘려 "세계가
+// 천천히 열리는" 웅장함을 살린다. ⚠️ 감각값 — 아이폰 실기기 확인 후 확정(clip·_ease만 바꾸면 재조정 끝).
+const REVEAL={clip:1500,text:350,label:500,hint:1800};
 // 부팅 중 숨겨둔 UI 크롬(탭바·줌·헤더)을 우주와 **같이** 드러낸다. 리빌이 끝난 뒤가 아니라
 // 클립이 시작되는 순간 함께 나타나야 "열리면서 다 보인다"가 된다.
 function _endBooting(){try{document.documentElement.classList.remove('booting');}catch(e){}}
@@ -3010,7 +3037,9 @@ function _revealUniverse(){
   try{ if(typeof renderer!=='undefined'&&renderer.compile){ renderer.compile(scene,camera); renderer.render(scene,camera); } }catch(e){}
 
   const _rc=(typeof renderer!=='undefined')&&renderer.domElement;
-  const _ease='cubic-bezier(.16,.84,.28,1)';
+  // 덜 front-loaded한 곡선 — 원이 초반에만 확 커지지 않고 전체 시간에 걸쳐 눈에 보이게 퍼진다(웅장함 복원,
+  // 2026-09-02). 아래 행성 블룸의 e(smoothstep)와 대략 같은 모양이라 클립 원과 행성이 따로 놀지 않는다.
+  const _ease='cubic-bezier(.4,.15,.35,1)';
 
   // 로딩 텍스트 페이드아웃 — 클립 시작과 동시. 펄스 애니메이션 도중 opacity 트랜지션을 걸면 현재
   // 펄스 값에서 기본값으로 순간 스냅한 뒤 페이드돼 뚝 끊겨 보이므로, 계산된 값을 먼저 굳힌다.
@@ -3074,8 +3103,9 @@ function _revealUniverse(){
     (function tick(){
       var _nw=performance.now(); _acc+=Math.min(_nw-_pn,40); _pn=_nw;
       var t=Math.min(_acc/REVEAL.clip,1);
-      // 클립 원의 반경 진행과 대략 같은 모양(cubic-bezier(.16,.84,.28,1)의 근사)으로 맞춘다.
-      var e=1-Math.pow(1-t,3);
+      // 클립 원의 반경 진행과 대략 같은 모양으로 맞춘다 — 위 _ease(cubic-bezier(.4,.15,.35,1))를 근사하는
+      // smoothstep(덜 front-loaded, 부드러운 가감속)으로 바꿔 클립 원과 행성 블룸이 함께 퍼지게 한다(2026-09-02).
+      var e=t*t*(3-2*t);
       bubbleMeshes.forEach(function(bm){
         var start=bm.mesh._revealFrac*0.55;
         var local=Math.max(0,Math.min(1,(e-start)/0.45));
@@ -8653,11 +8683,12 @@ function _applyPowerSave(){
   document.documentElement.classList.toggle('power-save',want);
   if(want!==_powerSaveOn){
     _powerSaveOn=want;
-    // 픽셀비가 가장 큰 레버 — 채우는 픽셀 수가 제곱으로 줄어든다(2.0→1.25면 약 61% 감소).
+    // 픽셀비가 가장 큰 레버 — 채우는 픽셀 수가 제곱으로 줄어든다. 절전 시 1.25, 아니면 모바일 기본 캡
+    // 1.5(_MOB_DPR_CAP)·데스크톱 2.0으로 되돌린다(2026-09-02, 모바일 기본을 2.0→1.5로 낮춘 것과 한 세트).
     // three r128의 setPixelRatio는 내부에서 setSize를 다시 부르므로 별도 호출이 필요 없다.
     try{
       const dpr=window.devicePixelRatio||1;
-      renderer.setPixelRatio(Math.min(dpr,want?1.25:2));
+      renderer.setPixelRatio(Math.min(dpr,want?1.25:(isMob()?_MOB_DPR_CAP:2)));
     }catch(e){}
   }
   _psRenderHint();
@@ -17239,11 +17270,12 @@ function _buildFeedDisc(){
   // 없었던 게 문제였으므로, 데이터 흐름은 그대로 두고 담기는 컨테이너만 분리한다.
   const chart=chartList||list;
   _enableDragScroll(chart); // Charts는 가로 선반 — 드래그/휠 가로 스크롤(기념일·최근본 스트립과 동일 패턴, 2026-08-24)
+  // Trend(최근 7일 전체 업로드)를 큐 맨 앞으로(2026-09-02 제보 "이미 떠 있어야"). 동시 실행 4개라 3번째여도
+  // 시작은 t=0로 같지만, Trend 쿼리(800건+셔플)가 앞 두 선반보다 무거워 렌더가 뒤로 밀렸음 — 첫 슬롯을 줘서
+  // 제일 먼저 시작·렌더되게 한다. DOM 컨테이너(#feed-trend)는 고정이라 표시 위치는 그대로.
+  _feedEnqueue(()=>_buildFeedTrend());
   _feedEnqueue(()=>_buildFeedWeeklyTopCams(chart,list));
   _feedEnqueue(()=>_buildFeedThisYearPicks(chart)); // 올해 한정 모음 2개(랜덤) — 주간/월간 바로 뒤 앞자리
-  // Trend(최근 7일 전체 업로드)를 첫 wave로 당김 — 큐 뒤(~13번째)라 앞 선반 10여개가 끝나야 떠서
-  // "너무 늦게 뜬다"는 제보(2026-09-01). DOM 컨테이너(#feed-trend)는 고정이라 표시 위치는 그대로.
-  _feedEnqueue(()=>_buildFeedTrend());
   _feedEnqueue(()=>_buildFeedYearlyTop(chart));
   _feedEnqueue(()=>_buildFeedLegend100(chart));
   _feedEnqueue(()=>_buildFeedAllTimeSoloCam(chart));

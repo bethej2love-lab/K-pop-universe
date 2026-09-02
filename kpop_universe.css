@@ -49,8 +49,13 @@
     z-index:98;
     font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;
     display:flex;flex-direction:column;gap:3px;align-items:flex-start;white-space:nowrap;
-    animation:ld-in .7s cubic-bezier(.2,.7,.2,1) backwards;
+    /* 폴백 폰트(Apple SD Gothic Neo)로 먼저 그렸다가 Pretendard가 늦게 로드되면 텍스트 폭이 바뀌며
+       중앙정렬(translate -50%) 박스가 좌우로 "한 칸" 튀는 밀림이 있었음(2026-09-02 제보). 폰트가
+       준비될 때까지 숨겨뒀다가(.ld-ready) 그때 띄워 스왑 리플로우를 화면 밖에서 끝낸다. .ld-ready는
+       body 인라인 스크립트가 document.fonts.load 완료(또는 700ms 폴백) 후 붙인다. */
+    visibility:hidden;
   }
+  #loading.ld-ready{visibility:visible;animation:ld-in .7s cubic-bezier(.2,.7,.2,1) backwards;}
   #loading .ld-l1{
     font-size:clamp(13px,3.2vw,16px);font-weight:600;letter-spacing:0.005em;
     color:rgba(188,203,240,0.6);padding-left:0.08em;
@@ -66,6 +71,7 @@
   @keyframes ld-in{from{opacity:0;transform:translate(-50%,-44%);}to{opacity:1;transform:translate(-50%,-50%);}}
   @keyframes loading-shimmer{0%{background-position:160% 0;}100%{background-position:-60% 0;}}
   #loading.loading-error{
+    visibility:visible; /* 폰트 대기와 무관하게 에러 메시지는 즉시 노출(위 .ld-ready 게이트 우회) */
     animation:none;letter-spacing:0;white-space:normal;
     background:none;-webkit-background-clip:initial;background-clip:initial;
     color:rgba(210,222,248,0.92);-webkit-text-fill-color:rgba(210,222,248,0.92);
@@ -526,7 +532,11 @@
   /* tt-back과 같은 top:-2px를 썼었는데, 그룹 카드는 맨 위가 색상 라인이 아니라 그룹 이름 텍스트라
      3px만큼 중심이 안 맞았음(2026-08-13, 사용자 제보 — 실측으로 확인) — 이름 텍스트 중심에 맞춤. */
   #gc-back{position:absolute;top:1px;left:-2px;z-index:2;padding:14px 16px;}
-  #yt-lightbox{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.9);z-index:67;align-items:center;justify-content:center;}
+  /* 재생 플레이어는 항상 자기를 띄운 시트 위로 떠야 한다 — 곡→영상 목록 오버레이(#gc-track-videos-overlay,
+     z-index:110)에서 영상을 클릭하면 예전 값(67)이 목록보다 낮아 플레이어가 "뒤로" 깔렸음(2026-09-02 제보).
+     곡 시트(110)·퀵토스트(120)보다 위, 상단 토스트(200)·컬렉션 피커(9990)보다는 아래인 130으로.
+     시트는 닫지 않고 뒤에 살려둬서 ×로 플레이어를 닫으면 곡 목록으로 그대로 복귀(디스코 상세와 같은 철학). */
+  #yt-lightbox{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.9);z-index:130;align-items:center;justify-content:center;}
   /* 브라우즈 모드는 화면 전체를 덮는 실제 페이지형 시트라, 반투명(0.9)이면 뒤에 여전히 마운트돼있는
      카드의 제목 텍스트 등이 10%만큼 비쳐 보이는 문제가 있었음(작은 중앙 박스였던 기존 모드는 겹칠
      일이 거의 없어서 안 드러났었음, 2026-08-11 스크린샷으로 실측 확인) — 완전 불투명으로. */
