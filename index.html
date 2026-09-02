@@ -4419,6 +4419,14 @@ function _wireListKeyboardNav(inputEl,resultsEl,itemSelector,onEscape){
   }
   inputEl.addEventListener('input',()=>{idx=-1;});
   inputEl.addEventListener('keydown',e=>{
+    // ⚠️ 한글 IME 조합 중의 키는 "조합을 확정"하려는 것이지 목록을 조작하려는 게 아니다.
+    // 이걸 안 걸러서, 관리자 태그 모달에서 이름을 치고 엔터를 한 번 누른 체감인데도 **두 명이
+    // 선택되는** 버그가 있었다(2026-09-02 사용자 제보 — "제대로 치고 엔터 누르면 여러명 확인됨").
+    // 실제로 일어나는 일: ①조합 확정 엔터(isComposing=true)에 목록 첫 항목이 눌려 1명 추가 →
+    // ②확정되며 input이 다시 떠 결과가 새로 렌더 → ③사용자가 "이제 고르자"고 누른 진짜 엔터에
+    // 또 1명 추가. 화살표도 마찬가지로 IME 후보 이동용이라 조합 중엔 넘긴다.
+    // keyCode 229는 isComposing을 안 채우는 구형 브라우저용 폴백.
+    if(e.isComposing||e.keyCode===229)return;
     const list=items();
     if(e.key==='ArrowDown'){if(list.length){e.preventDefault();setIdx(idx+1);}}
     else if(e.key==='ArrowUp'){if(list.length){e.preventDefault();setIdx(idx-1);}}
