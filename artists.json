@@ -47426,7 +47426,8 @@
     "groups": [
       {
         "ko": "아이오아이",
-        "en": "I.O.I"
+        "en": "I.O.I",
+        "active": false
       },
       {
         "ko": "프리스틴",
@@ -47582,7 +47583,7 @@
       "en": "I.O.I"
     },
     "co": "MNH엔터테인먼트",
-    "active": true,
+    "active": false,
     "color": [
       255,
       179,
@@ -48013,7 +48014,8 @@
     "groups": [
       {
         "ko": "아이오아이",
-        "en": "I.O.I"
+        "en": "I.O.I",
+        "active": false
       },
       {
         "ko": "구구단",
@@ -48499,7 +48501,8 @@
     "groups": [
       {
         "ko": "아이오아이",
-        "en": "I.O.I"
+        "en": "I.O.I",
+        "active": false
       },
       {
         "ko": "다이아",
@@ -48536,7 +48539,7 @@
       "en": "I.O.I"
     },
     "co": "레드라인엔터테인먼트",
-    "active": true,
+    "active": false,
     "color": [
       255,
       179,
@@ -48631,7 +48634,8 @@
     "groups": [
       {
         "ko": "아이오아이",
-        "en": "I.O.I"
+        "en": "I.O.I",
+        "active": false
       },
       {
         "ko": "우주소녀",
@@ -48926,7 +48930,8 @@
     "groups": [
       {
         "ko": "아이오아이",
-        "en": "I.O.I"
+        "en": "I.O.I",
+        "active": false
       },
       {
         "ko": "위키미키",
@@ -49131,7 +49136,8 @@
     "groups": [
       {
         "ko": "아이오아이",
-        "en": "I.O.I"
+        "en": "I.O.I",
+        "active": false
       },
       {
         "ko": "위키미키",
@@ -49188,7 +49194,7 @@
       "en": "I.O.I"
     },
     "co": "더블랙레이블",
-    "active": true,
+    "active": false,
     "color": [
       255,
       179,
