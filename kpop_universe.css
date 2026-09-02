@@ -56,6 +56,11 @@
     visibility:hidden;
   }
   #loading.ld-ready{visibility:visible;animation:ld-in .7s cubic-bezier(.2,.7,.2,1) backwards;}
+  /* 리빌 확장 발광 링(IMAX 조리개) — clip-path가 여는 가장자리를 따라 빛나는 원 테두리가 퍼진다.
+     최근 clip-path 통일 때 사라졌던 걸 되살림(2026-09-02 제보 "퍼지는 라인이 있었다"). _revealUniverse의
+     tick 루프가 매 프레임 radial-gradient background를 갱신하고 끝나면 remove한다. z-index 97=텍스트(98)
+     아래·캔버스 위. mix-blend screen으로 어두운 우주 위에 빛으로 얹힌다(backdrop-filter 없음=프리즈 무관). */
+  #loading-ring{position:fixed;inset:0;z-index:97;pointer-events:none;mix-blend-mode:screen;will-change:background;}
   #loading .ld-l1{
     font-size:clamp(13px,3.2vw,16px);font-weight:600;letter-spacing:0.005em;
     color:rgba(188,203,240,0.6);padding-left:0.08em;

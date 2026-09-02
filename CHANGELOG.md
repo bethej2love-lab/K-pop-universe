@@ -39,9 +39,11 @@
 ### 앱 경험 개선 — 곡재생·리빌·발열·Trend (2026-09-02, 별도 세션)
 - **[완료][kpop_universe.css] 곡→영상 재생이 "뒤로" 열리던 버그** — 곡 영상목록 오버레이(z-index:110)에서 영상 클릭 시 플레이어(#yt-lightbox)가 67이라 목록 뒤로 깔렸음. 130으로(시트110·퀵토스트120 위, 토스트200·피커9990 아래). 시트는 살려둬 ×로 곡목록 복귀.
 - **[완료][index.html][kpop_universe.css] 리빌 텍스트 좌우 밀림 근본 해결** — 폴백폰트로 먼저 그려지다 Pretendard 스왑 시 중앙정렬 박스 폭이 바뀌어 튀었음. `#loading`을 숨겼다가 `document.fonts.load` 완료(또는 700ms 폴백) 후 `.ld-ready`로 노출 → 스왑을 화면 밖에서 끝냄. 에러상태는 즉시 노출.
-- **[완료][index.html] 리빌 웅장함 복원** — 새 clip-path easing이 극도 front-loaded라 원이 첫 ~240ms에 다 커지고 밋밋했음(제보 "원래 웅장했는데 최근 바꿔서 별로"). easing을 cubic-bezier(.4,.15,.35,1)로, clip 1200→1500, 블룸 e도 smoothstep으로 맞춤. ⚠️아이폰 실기 확인(상수라 재조정 쉬움).
+- **[완료][index.html] 리빌 웅장함 복원 1차** — 새 clip-path easing이 극도 front-loaded라 원이 첫 ~240ms에 다 커지고 밋밋했음(제보 "원래 웅장했는데 최근 바꿔서 별로"). easing을 cubic-bezier(.4,.15,.35,1)로, clip 1200→1500, 블룸 e도 smoothstep으로 맞춤.
+- **[완료][index.html][kpop_universe.css] 리빌 확장 발광 링 복원(핵심)** — 재제보 "퍼지는 그 라인(확장하는 원 테두리)이 있었다". commit 8eb0ca22(clip-path 통일)에서 없앤 `#loading-ring`(radial-gradient 글로우 테두리)을 되살려 clip 가장자리를 따라 빛나는 IMAX 조리개 라인이 퍼지게 함. tick 루프서 r=e*112·glow=sin(t·π)·0.24 매 프레임 갱신, 끝나면 remove. backdrop-filter 없어 예전 데스크톱 프리즈와 무관. ⚠️아이폰 실기 확인(r·glow·clip 상수로 재조정).
 - **[완료][index.html] 모바일 발열 완화** — 화면 밖일 땐 이미 렌더 멈추지만, 3D 볼 때 최대 원인은 기본 pixelRatio 2.0. 모바일 캡 1.5(`_MOB_DPR_CAP`, 픽셀 ~44%↓, UI 텍스트·카드 영향 없음). 절전 자동 1.25는 유지. ⚠️아이폰 실기 확인.
 - **[완료][index.html] Discover Trend 늦게 뜨던 것** — 빌드 큐 3번째→맨 앞. 동시4개라 시작은 같으나 Trend 쿼리(800건+셔플)가 무거워 렌더가 밀렸음 → 첫 슬롯.
+- **[완료][index.html] 카드 첫 터치 둔감하게(재제보)** — 시트 끌기 데드존 `_SHEET_DRAG_SLOP` 30→44. 이 거리만큼 손가락이 움직여야 끌기 시작(넘는 순간 재기준점이라 점프 없음). 24→30→44 3번째 조정.
 - **[이슈][index.html] NUL 바이트 5개 잔존**(예: `ownerName+'\0'+`) — 브라우저 관용으로 작동 중이나 잠재 이슈, 나중에 정리 권장. 이번 변경과 무관(origin에도 있던 것).
 
 ### feat. 주객전도 수정 (2026-09-02)
