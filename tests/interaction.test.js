@@ -11,6 +11,8 @@
 //          정상적으로 열려야 한다(회귀 없음). 데스크톱 click 경로 + 실제 모바일 touchend 경로 둘 다.
 //  [버그B] 카드를 스택으로 쌓았다가 닫은 뒤 새 카드를 열면, 시트 바닥에 이전 카드의 얼어붙은 클론이
 //          남아 함께 뜨면 안 된다(새 카드만 있어야 함). 스택→뒤로가기(pop) 정상 복원도 확인.
+//  [버그I] 그룹 카드 위에 멤버 카드를 열고 아래로 스와이프하면 멤버 카드만 닫히고 그룹 카드는 남아야
+//          한다(스와이프 다운 = "이전"의 제스처판, 전부 닫기가 아님 — 2026-09-03 사용자 요청).
 //  [버그C] 카드 안에서 스크롤 다운하면 하단 탭바가 숨고, 스크롤 업/최상단으로 오면 다시 나타나야 한다.
 //          (iOS 고무줄 바운스에서 방향 오판으로 "탭바가 안 돌아오던" 회귀 방지 — 헤드리스는 음수
 //          scrollTop 바운스 자체는 재현 못 하므로, 핵심 안전망 "최상단<40px=무조건 표시"와 방향 감지를 검증.)
@@ -195,6 +197,37 @@ async function main() {
     const back = await ev(cdp, `(_openTArtist&&((_openTArtist.name&&_openTArtist.name.ko)||_openTArtist.name))||null`);
     if (back === pick[0]) ok(`[버그B] 스택→뒤로가기(pop) → 이전 카드(${pick[0]}) 정상 복원`);
     else fail(`[버그B] pop 후 복원 실패 — 기대=${pick[0]}, 실제=${back}`);
+
+    // ── [버그I] 그룹 카드 위에 열린 멤버 카드를 아래로 스와이프 → 멤버 카드만 닫히고 그룹 카드는 살아있어야 ──
+    // 예전엔 카드 스택의 onDismiss가 closeMobSheet라 그룹 카드까지 통째로 닫혔다(2026-09-03 제보).
+    // "이전" 버튼과 같은 경로(_popMobCard)를 타야 하며, 소스 검사로는 못 잡으므로 실제 터치 이벤트로 확인한다.
+    await closeAll(); await ev(cdp, `_sheetFull=false;1`);
+    await ev(cdp, `showGC(window.__T.ko,window.innerWidth/2,window.innerHeight*0.4)`); await sleep(800);
+    await ev(cdp, `showT(ARTISTS.find(a=>a.group&&a.group.ko===window.__T.ko&&a._worldPos))`); await sleep(900);
+    const beforeSwipe = JSON.parse(await ev(cdp, `JSON.stringify({stack:_cardStack.length,disp:mobCardStackEl.style.display})`));
+    if (beforeSwipe.stack === 2 && beforeSwipe.disp === 'block') {
+      // 카드 스택 위에서 아래로 끌기. 데드존(_SHEET_DRAG_SLOP=44)을 넘는 순간 기준점이 재설정되므로
+      // 2번째 move부터가 실제 dy — _sheetFull 상태에서도 닫히도록 넉넉히(310px) 끈다.
+      await ev(cdp, `(function(){
+        const el=mobCardStackEl;
+        const mk=(y)=>new Touch({identifier:7,target:el,clientX:195,clientY:y});
+        const fire=(type,y,end)=>{const t=mk(y);el.dispatchEvent(new TouchEvent(type,{bubbles:true,cancelable:true,touches:end?[]:[t],targetTouches:end?[]:[t],changedTouches:[t]}));};
+        fire('touchstart',200);
+        fire('touchmove',250);   // 데드존 통과 → 여기가 새 기준점
+        fire('touchmove',560);   // dy=310
+        fire('touchend',560,true);
+        return 1;
+      })()`);
+      await sleep(900);
+      const afterSwipe = JSON.parse(await ev(cdp, `JSON.stringify({stack:_cardStack.length,disp:mobCardStackEl.style.display,sheetOpen:mobSheetEl.classList.contains('bs-open'),gc:_openGCko||null})`));
+      if (afterSwipe.stack === 1 && afterSwipe.disp === 'none' && afterSwipe.sheetOpen) {
+        ok(`[버그I] 멤버 카드 스와이프 다운 → 멤버 카드만 닫히고 그룹 카드(${afterSwipe.gc}) 유지`);
+      } else {
+        fail(`[버그I] 스와이프로 그룹 카드까지 닫힘/오동작 — stack=${afterSwipe.stack}(1이어야) stackDisp=${afterSwipe.disp}(none이어야) 그룹시트열림=${afterSwipe.sheetOpen}(true여야) gc=${afterSwipe.gc}`);
+      }
+    } else {
+      fail(`[버그I] 사전조건 실패 — 그룹→멤버 스택이 안 쌓임(stack=${beforeSwipe.stack}, disp=${beforeSwipe.disp})`);
+    }
 
     // ── [버그C] 카드 스크롤 시 탭바 숨김/복귀 (탭바 미복귀 회귀 방지) ──
     // 헤드리스 Chrome은 iOS 고무줄(음수/초과 scrollTop) 자체를 재현 못 하므로, 수정의 핵심인

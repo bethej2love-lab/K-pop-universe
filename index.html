@@ -3422,7 +3422,7 @@ function animate(){
   if(_yearRingMats.length){
     const birth=Math.min(1,Math.max(0,(performance.now()-_yearRingsBornAt)/600)); // 생성 직후 부드럽게 등장
     const rf=Math.max(0,Math.min(1,(zoomT-0.55)/0.45))*birth;
-    const op=rf*0.10; for(let i=0;i<_yearRingMats.length;i++)_yearRingMats[i].opacity=op; // 0.13→0.10 조금 더 은은하게(2026-09-02)
+    const op=rf*0.14; for(let i=0;i<_yearRingMats.length;i++)_yearRingMats[i].opacity=op; // 0.13→0.10→0.14 선만 살짝 더 잘 보이게(2026-09-03 제보)
     const lop=(rf*0.5).toFixed(2); for(let i=0;i<_yearRingLabels.length;i++)_yearRingLabels[i].style.opacity=lop; // 0.6→0.5 조금 더 흐리게
   }
   // 멤버 점 발광: zoomBoost는 홈(≈120)에서 0.06 정도로 거의 0이라, 홈이 사실상 풀브라이트에
@@ -6704,6 +6704,16 @@ function _popMobCardInner(){
     prevEl.style.display='block';
     mobCardStackInner.scrollTop=0;
     mobCardStackInner.appendChild(prevEl);
+    // 스와이프로 팝된 경우엔 오버레이에 드래그 중 붙은 inline transform이 남아있다(터치엔드는 onDismiss
+    // 브랜치에서 transform을 안 지운다 — 예전 onDismiss였던 closeMobSheet가 직접 지웠으니까). 내용만
+    // 바꿔치기하는 이 경로는 오버레이를 안 접으므로 여기서 제자리로 되돌려야 카드가 내려간 채로 멈추지
+    // 않는다. 이전 카드가 아래에서 다시 올라오는 것처럼 보이게 트랜지션을 준다(버튼 팝은 transform이
+    // 처음부터 ''이라 아무 영향 없음).
+    if(mobCardStackEl.style.transform){
+      mobCardStackEl.style.transition='transform .32s cubic-bezier(0.32,0.72,0,1)';
+      mobCardStackEl.style.transform='translateY(0)';
+      setTimeout(()=>{mobCardStackEl.style.transition='';mobCardStackEl.style.transform='';},340);
+    }
     _reopenViaConnIfNeeded(leaving);
     return;
   }
@@ -8120,7 +8130,12 @@ function _wireSheetSwipe(sheetEl,innerEl,onDismiss,syncEl,sensFn){
   },{passive:true});
 }
 let _sheetFull=false;
-_wireSheetSwipe(mobCardStackEl,mobCardStackInner,closeMobSheet,mobSheetEl);
+// 카드 스택(위에 겹쳐 뜬 두 번째 카드)의 스와이프 다운 = "이전"의 제스처판. 예전엔 closeMobSheet라
+// 그룹 카드에서 멤버를 열고 아래로 쓸면 그룹 카드까지 통째로 닫혔음(2026-09-03 제보). 이제 한 겹만
+// 벗겨 아래 카드로 돌아간다(_popMobCard — "이전" 버튼과 같은 경로, 스택이 1겹뿐이면 내부에서
+// closeMobSheet로 폴백). syncEl도 뺐다 — 아래 시트가 같이 내려가면 안 되고, 제자리에 있어야
+// 멤버 카드만 미끄러져 내려가며 그룹 카드가 드러난다. 전부 닫으려면 드러난 카드에서 한 번 더 쓸면 됨.
+_wireSheetSwipe(mobCardStackEl,mobCardStackInner,_popMobCard);
 _wireSheetSwipe(mobSheetEl,mobSheetInner,closeMobSheet);
 // 연결 카드도 그룹/멤버 카드와 완전히 같은 스와이프 로직으로 통일(예전엔 데드존·재기준점·hscroll 제외가
 // 없는 옛 인라인 핸들러라 첫 터치가 훨씬 민감하고 감이 달랐음 — 2026-08-24 사용자 제보).
