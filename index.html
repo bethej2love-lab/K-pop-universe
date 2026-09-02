@@ -3778,7 +3778,18 @@ function _resolveRecentSearches(){
 // ⚠️ `title_norm ilike '%q%'`는 **인덱스 없이는 풀스캔**이다. `search_indexes_migration.sql`의
 //    pg_trgm GIN 인덱스를 실행해야 실용 속도가 나온다(미실행이어도 동작은 하되 느림 — limit로 방어).
 let _remoteSearchToken=0,_remoteSearchTimer=null;
-function _searchRemote(q,res,mobSearch,obSearch){
+// 쿼리에 섞인 카테고리 낱말 — "카리나 직캠"에서 '직캠'은 사람 이름이 아니라 **형식**이다.
+// 값은 DB category 그대로(실측: live 122,923 · variety 8,467 · mv 7,177 · short 2,084 · fan 82 · show 22).
+// ⚠️ '직캠'을 category='live'로만 좁히면 안 된다 — DB에서 직캠과 무대 영상이 같은 live에 묶여
+// 있어서(실측 122,923건, 전체의 대부분) "카리나 직캠"에 일반 무대·MV가 섞여 나온다. 직캠은
+// 제목 표기로 잡는 게 정확하다(titleAny). 나머지는 category만으로 충분히 좁혀진다.
+const _SEARCH_CAT_WORDS=[
+  {re:/직캠|fancam/i,cat:'live',titleAny:['직캠','fancam']},
+  {re:/무대|라이브|live/i,cat:'live'},
+  {re:/뮤비|뮤직비디오|mv/i,cat:'mv'},{re:/예능|variety/i,cat:'variety'},
+  {re:/쇼츠|shorts?/i,cat:'short'},{re:/드라마|영화/i,cat:'show'},
+];
+function _searchRemote(q,res,mobSearch,obSearch,hint){
   const token=++_remoteSearchToken;
   clearTimeout(_remoteSearchTimer);
   _remoteSearchTimer=setTimeout(async()=>{
@@ -3786,14 +3797,50 @@ function _searchRemote(q,res,mobSearch,obSearch){
     const like='%'+q.replace(/[%_]/g,'')+'%';
     const out={event:[],video:[]};
     try{
-      const [evR,vidR]=await Promise.all([
+      // ── 영상 검색: 제목이 아니라 **태그**로 찾는다(2026-09-02) ──────────────────
+      // 예전엔 title_norm ilike뿐이라 "카리나"를 치면 제목에 그 글자가 든 영상만 나왔다. 그런데
+      // 이 서비스가 가진 진짜 자산은 members/with_members 태깅이다 — 제목에 이름이 없어도 카리나가
+      // 나오는 영상을 안다. 그래서 쿼리를 엔티티로 해석했으면(hint) 태그로 조회하고, 못 풀면
+      // 그때만 제목 검색으로 떨어진다. 태깅 품질 개선이 그대로 검색 품질이 되는 구조.
+      // ⚠️ 정렬은 조회수 내림차순 — 태그 조회는 결과가 수백 건이라 무순으로 6개를 자르면 아무거나 나온다.
+      let vq=sb.from(_YT_TABLE).select('id,title,group_ko,is_short,category,content_flag,view_count');
+      if(hint&&hint.kind==='member'){
+        const esc=s=>String(s).replace(/["\\]/g,'');
+        // ⚠️ members 배열엔 **이름만** 들어간다 — 동명이인이 구분되지 않는다. "하니"로만 조회하면
+        //    뉴진스 하니를 찾는데 EXID 하니 영상이 섞여 나온다(실측). 자체 채널 쪽은 group_ko를
+        //    같이 걸어 좁히고, 게스트 출연은 with_members가 "이름(그룹)" 형식이라 그대로 정확하다.
+        vq=hint.gko
+          ? vq.or(`and(members.cs.{"${esc(hint.ko)}"},group_ko.eq.${_pgFilterVal(hint.gko)}),with_members.cs.{"${esc(hint.ko)}(${esc(hint.gko)})"}`)
+          : vq.or(`members.cs.{"${esc(hint.ko)}"}`);
+      }else if(hint&&hint.kind==='group'){
+        vq=vq.or(`group_ko.eq.${_pgFilterVal(hint.ko)},with_groups.cs.{"${String(hint.ko).replace(/["\\]/g,'')}"}`);
+      }else{
+        vq=vq.ilike('title_norm',like.toLowerCase());
+      }
+      // 쿼리에 형식 낱말이 있으면 같이 좁힌다("카리나 직캠" → 카리나 태그 + live)
+      const catHit=hint?_SEARCH_CAT_WORDS.find(c=>c.re.test(q)):null;
+      const _applyCat=v=>{
+        if(!catHit)return v;
+        v=catHit.cat==='short'?v.eq('is_short',true):v.eq('category',catHit.cat);
+        // 직캠처럼 category만으론 안 갈리는 형식은 제목 표기로 한 번 더 좁힌다
+        if(catHit.titleAny)v=v.or(catHit.titleAny.map(w=>`title_norm.ilike.%${w}%`).join(','));
+        return v;
+      };
+      const _finish=v=>v.or('content_flag.is.null,content_flag.neq.무관').or('content_flag.is.null,content_flag.neq.보류')
+        .or('content_flag.is.null,content_flag.neq.hidden')
+        .order('view_count',{ascending:false,nullsFirst:false}).limit(6);
+      const [evR,vidR0]=await Promise.all([
         sb.from('kpop_events').select('id,title,groups,date_start,venue').ilike('title',like).order('date_start',{ascending:false}).limit(5),
-        sb.from(_YT_TABLE).select('id,title,group_ko,is_short,category,content_flag')
-          .ilike('title_norm',like.toLowerCase())
-          .or('content_flag.is.null,content_flag.neq.무관').or('content_flag.is.null,content_flag.neq.보류')
-          .or('content_flag.is.null,content_flag.neq.hidden')
-          .limit(6),
+        _finish(_applyCat(vq)),
       ]);
+      let vidR=vidR0;
+      // 멤버 태그 + 형식으로 0건이면 그 멤버의 **그룹** 영상으로 한 번 더 본다 — 뮤비·예능처럼
+      // 그룹 단위로 만드는 콘텐츠는 개별 멤버 태그가 안 붙어서, "카리나 뮤비"가 통째로 0건이 됐다.
+      if(hint&&hint.kind==='member'&&hint.gko&&!(vidR0.data||[]).length&&token===_remoteSearchToken){
+        const g=sb.from(_YT_TABLE).select('id,title,group_ko,is_short,category,content_flag,view_count')
+          .eq('group_ko',hint.gko);
+        vidR=await _finish(_applyCat(g));
+      }
       if(token!==_remoteSearchToken)return; // 그 사이 다른 걸 쳤으면 버린다
       (evR.data||[]).forEach(e=>{
         const gko=(e.groups||[])[0];
@@ -4189,6 +4236,29 @@ function doSearch(q){
       });
     }
   }
+  // 멤버 토큰도 대칭으로 결과에 넣는다 — "카리나 뮤비"에서 영상만 나오고 정작 카리나 본인이
+  // 결과에 없으면 어색하다("뉴진스 하니"는 그룹 확장 경로로 이미 하니가 나온다).
+  {
+    const _t=q.split(/\s+/).filter(t=>t.length>=2);
+    // ⚠️ 그룹 토큰이 같이 있으면(=_expandFrom이 찼으면) 확장 경로가 이미 그 그룹 안에서 좁혀준다.
+    //    여기서 또 넣으면 동명이인까지 딸려온다 — "뉴진스 하니"에 EXID 하니가 같이 나왔다(실측).
+    if(_t.length>1&&!_expandFrom.length&&!hits.some(h=>h.type==='member')){
+      const seen=new Set();
+      _t.forEach(t=>{
+        const tl=t.toLowerCase();
+        ARTISTS.forEach(a=>{
+          if(seen.has(a)||!a._worldPos)return;
+          if(!(a.name.ko===t||(a.displayName&&a.displayName===t)||((a.name.en||'').toLowerCase()===tl)))return;
+          seen.add(a);
+          const enN=a.name.en||'',dnN=a.displayName||'';
+          const dispName=(_hasLatin&&enN)?enN:(currentLang==='ko'?(dnN||a.name.ko):(enN||a.name.ko));
+          const gko=(a.group&&a.group.ko)||'';
+          const dispSub=!GROUPS[gko]?'':(currentLang==='ko'?gko:((GROUPS[gko]||{}).en||gko));
+          hits.push({type:'member',name:dispName,sub:dispSub,pos:a._worldPos,data:a,score:0});
+        });
+      });
+    }
+  }
   // 이름으로 이미 잡힌 멤버는 건너뛴다(같은 사람이 두 줄로 나오면 안 된다).
   if(_expandFrom.length){
     const already=new Set(hits.filter(h=>h.type==='member').map(h=>h.data));
@@ -4247,7 +4317,30 @@ function doSearch(q){
   });
   _renderSearchHits(hits.slice(0,obSr?5:40),res,mobSearch,false,!!obSr);
   // 서버가 필요한 결과(영상·공연)는 늦게 도착하므로 뒤에 이어 붙인다(2026-08-31, 검색 확장 4단계)
-  if(!obSr&&q.length>=2)_searchRemote(q,res,mobSearch,!!obSr);
+  // 영상은 제목이 아니라 태그로 찾으므로, 방금 푼 엔티티를 힌트로 넘긴다(2026-09-02).
+  // 이름이 **직접** 걸린 멤버를 최우선으로 본다 — 그룹명으로 딸려온 멤버(_expanded)를 힌트로 쓰면
+  // "뉴진스"를 쳤는데 멤버 한 명의 영상만 나오는 엉뚱한 결과가 된다.
+  const _hint=(()=>{
+    const m=hits.find(h=>h.type==='member'&&!h._expanded&&h.data&&h.data.name);
+    if(m)return{kind:'member',ko:m.data.name.ko,gko:(m.data.group&&m.data.group.ko)||''};
+    // 확장으로 딱 한 명만 남았으면("뉴진스 하니") 그 사람 영상을 보여주는 게 맞다. 여럿이면
+    // 그룹을 통째로 친 것("뉴진스")이므로 아래 그룹 힌트로 간다.
+    const exp=hits.filter(h=>h.type==='member'&&h._expanded&&h.data&&h.data.name);
+    if(exp.length===1)return{kind:'member',ko:exp[0].data.name.ko,gko:exp[0]._gko||(exp[0].data.group&&exp[0].data.group.ko)||''};
+    const g=hits.find(h=>h.type==='group'&&h.data);
+    if(g)return{kind:'group',ko:g.data};
+    // 공백 쿼리에서 토큰 하나가 **멤버 이름**인 경우("카리나 뮤비") — 위 매칭은 쿼리 전체로만 보므로
+    // 여기까지 오면 hits가 비어 있고, 그러면 제목 검색으로 떨어져 0건이 된다(실측). 그룹 토큰은
+    // 위 _expandFrom 패스가 이미 처리하므로, 대칭으로 멤버 토큰도 본다.
+    const toks=q.split(/\s+/).filter(t=>t.length>=2);
+    for(const t of toks){
+      const tl=t.toLowerCase();
+      const a=ARTISTS.find(x=>x.name.ko===t||(x.displayName&&x.displayName===t)||((x.name.en||'').toLowerCase()===tl));
+      if(a)return{kind:'member',ko:a.name.ko,gko:(a.group&&a.group.ko)||''};
+    }
+    return null;
+  })();
+  if(!obSr&&q.length>=2)_searchRemote(q,res,mobSearch,!!obSr,_hint);
   if(msOpen)_msSyncTabs();
   else if(obSr){res.classList.add('open');}
   else if(mobSearch){
