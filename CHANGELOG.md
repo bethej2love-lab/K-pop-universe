@@ -46,6 +46,9 @@
 - **[완료][index.html] 카드 첫 터치 둔감하게(재제보)** — 시트 끌기 데드존 `_SHEET_DRAG_SLOP` 30→44. 이 거리만큼 손가락이 움직여야 끌기 시작(넘는 순간 재기준점이라 점프 없음). 24→30→44 3번째 조정.
 - **[완료][index.html] 리빌 속도(4차)** — 1500 "이젠 느리다" → clip 1000, 텍스트 최소노출 1300/700→1000/550. 텍스트~1초+모션~1초, 첫<3초·재방문<2초. 웅장함은 easing·발광 링이 만들지 duration 아님.
 
+### z-index 시스템 통일 (2026-09-02, 별도 세션) — "새 창이 뒤로 뜨는" 반복 문제 근본 해결
+- **[완료][index.html][kpop_universe.css][admin.js] 열리면 항상 맨 위(_bringToFront 시스템 통일)** — 제보 "기능 만들 때마다 새 창이 밑/뒤로 뜬다"(검색→그룹카드 뒤로, 어드민 쇼츠 편집버튼 뒤로 등). 원인: 창마다 static z-index 하드코딩 + `_bringToFront` 기준선(_topLayerZ)이 67로 낮아 mid-static(곡영상110·조합112·퀵토스트120·내가 올린 lightbox130)을 못 이김 = 두더지잡기. 해결: ①`_topLayerZ` 67→**131**(mid-static 위, 토스트200·피커9990 아래) ②yt-lightbox 하드코딩 130→67 되돌리고 openLightbox에서 `_bringToFront` ③카드 패널(openMemberPanel·openSidePanel·openMobSheet)·조합·곡영상·**어드민 편집모달(vid-tag-overlay, admin.js)** 열 때 `_bringToFront` 호출. **원칙: 새 오버레이는 열 때 반드시 `_bringToFront(el)` 호출**(static z 하드코딩 지양). 이제 나중에 연 게 항상 위, 그 위에서 또 열면 또 위로.
+
 ### 오태깅·연결카드·로딩 (2026-09-02, 별도 세션)
 - **[완료][로딩 실질개선][index.html] 로그인 동기화를 임계경로에서 제거** — "로딩 여전히 느림" 재제보. 이전엔 `initSupabaseSync`(getSession 네트워크 왕복)를 우주 뜨기 前 await → 그만큼 지연. 이제 백그라운드(`_authP`)로 돌리고 데이터 오면 즉시 우주, 끝나면 최애·컬렉션·마이스타만 재반영. 재방문자는 localStorage로 이미 맞아 플래시 없음(크로스디바이스만 잠깐 늦음). ⚠️계측: ?perf로 auth 빠졌는지 확인.
 - **[완료][#3 연결카드 빈조합 근본해결][index.html] 칩을 현재 선택과 함께 영상 있는 것만** — 반복 제보 "'해당 조합 영상 없어요' 뜰 일이 없어야". 원인: 칩 필터가 앵커+칩 단독(`_collabCount>0`)만 봐서 A+B 후 C 더하면 A+B+C=0 가능. → `_getCollabSongs(현재선택)`의 `.with` 합집합(그룹전체태깅 제외=hasMemberConfirmed와 정합)으로 `_chipOk` 필터. 어떤 칩 눌러도 비지 않음. 편집 후엔 `_refreshOpenCardCollab` 재렌더로 자동 반영. 선택 없을 땐 기존과 동일.

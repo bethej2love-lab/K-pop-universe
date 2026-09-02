@@ -6791,7 +6791,7 @@ function _openVidTagModalBulk(ids,ko){
   if(shortEl0)shortEl0.checked=false;
   _vidTagShortTouched=false;
   document.getElementById('vid-tag-status').textContent='';
-  document.getElementById('vid-tag-overlay').classList.add('open');
+  document.getElementById('vid-tag-overlay').classList.add('open');if(typeof _bringToFront==='function')_bringToFront(document.getElementById('vid-tag-overlay')); // 재생 플레이어 위에서 열어도 편집모달이 맨 위(z-index 시스템 통일, 2026-09-02)
 }
 async function _openVidTagModal(v,ko,originKo){
   // ko: 폼에 보여줄/저장할 소속 그룹(영상의 실제 group_ko) — originKo: 저장 후 어느 카드를 그 자리에서
@@ -6825,7 +6825,7 @@ async function _openVidTagModal(v,ko,originKo){
   document.getElementById('vid-tag-cover-results').innerHTML='';
   _renderVidTagChips();
   document.getElementById('vid-tag-status').textContent='불러오는 중…';
-  document.getElementById('vid-tag-overlay').classList.add('open');
+  document.getElementById('vid-tag-overlay').classList.add('open');if(typeof _bringToFront==='function')_bringToFront(document.getElementById('vid-tag-overlay')); // 재생 플레이어 위에서 열어도 편집모달이 맨 위(z-index 시스템 통일, 2026-09-02)
   // 카드에 넘어온 v에는 members/with_members가 안 실려있는 경우가 많아서(그룹 카드 그리드는 해당 컬럼을
   // 아예 select하지 않음), 모달을 열 때 저장된 값을 DB에서 직접 불러와 체크박스/칩에 반영한다.
   if(sb){

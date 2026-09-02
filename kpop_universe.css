@@ -544,11 +544,10 @@
   /* tt-back과 같은 top:-2px를 썼었는데, 그룹 카드는 맨 위가 색상 라인이 아니라 그룹 이름 텍스트라
      3px만큼 중심이 안 맞았음(2026-08-13, 사용자 제보 — 실측으로 확인) — 이름 텍스트 중심에 맞춤. */
   #gc-back{position:absolute;top:1px;left:-2px;z-index:2;padding:14px 16px;}
-  /* 재생 플레이어는 항상 자기를 띄운 시트 위로 떠야 한다 — 곡→영상 목록 오버레이(#gc-track-videos-overlay,
-     z-index:110)에서 영상을 클릭하면 예전 값(67)이 목록보다 낮아 플레이어가 "뒤로" 깔렸음(2026-09-02 제보).
-     곡 시트(110)·퀵토스트(120)보다 위, 상단 토스트(200)·컬렉션 피커(9990)보다는 아래인 130으로.
-     시트는 닫지 않고 뒤에 살려둬서 ×로 플레이어를 닫으면 곡 목록으로 그대로 복귀(디스코 상세와 같은 철학). */
-  #yt-lightbox{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.9);z-index:130;align-items:center;justify-content:center;}
+  /* z-index는 정적 67(기준)이고, 열릴 때 openLightbox가 _bringToFront로 동적으로 최상단(132+)에 올린다
+     — 곡→영상 목록·조합 위에서 재생되고, 그 위에서 어드민 편집모달을 열면 그게 또 위로(2026-09-02, 하드코딩
+     130이 어드민 편집(82)을 뒤로 가리던 것을 _bringToFront 시스템으로 통일). */
+  #yt-lightbox{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.9);z-index:67;align-items:center;justify-content:center;}
   /* 브라우즈 모드는 화면 전체를 덮는 실제 페이지형 시트라, 반투명(0.9)이면 뒤에 여전히 마운트돼있는
      카드의 제목 텍스트 등이 10%만큼 비쳐 보이는 문제가 있었음(작은 중앙 박스였던 기존 모드는 겹칠
      일이 거의 없어서 안 드러났었음, 2026-08-11 스크린샷으로 실측 확인) — 완전 불투명으로. */
