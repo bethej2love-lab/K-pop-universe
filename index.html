@@ -10398,6 +10398,13 @@ _fpRender();_fpUpdateVis();
 // ══ 이어서 발견(2026-09-02) — 멤버 카드 하단 컨텍스트 홉. 그래프 엣지(연결·소속사·데뷔연도)에서 "인접하지만
 // 의외인" 다음 발견 2~3개. 전부 인메모리(_rawConnData/GROUPS)라 새 쿼리 0. 홉 클릭=showT/showGC(→발자국 자동
 // 기록)라 "보고→옆으로→되돌아오기" 탐험 루프가 성립. 매 열람마다 랜덤이라 같은 멤버도 다른 길로 이어진다.
+// 그룹별 대표 영상 썸네일(og_thumbs.json) 지연 로드 — "이어서 발견" 오브 이미지용(2026-09-02). {그룹:썸네일URL}
+let _ogThumbs=null,_ogThumbsP=null;
+function _ensureOgThumbs(){
+  if(_ogThumbs)return Promise.resolve(_ogThumbs);
+  if(_ogThumbsP)return _ogThumbsP;
+  return _ogThumbsP=fetch('og_thumbs.json').then(r=>r.ok?r.json():null).then(d=>{_ogThumbs=(d&&d.groups)||{};return _ogThumbs;}).catch(()=>({}));
+}
 function _discoverHops(a){
   const out=[];const gko=a.group&&a.group.ko;if(!gko)return out;
   const g=GROUPS[gko]||{},used=new Set([gko]),nm=a.name&&a.name.ko;
@@ -10433,19 +10440,33 @@ function _renderDiscoverHops(a){
   const lbl=document.createElement('div');lbl.className='ttd-lbl';lbl.textContent=currentLang==='ko'?'이어서 발견':'Keep exploring';
   sec.appendChild(lbl);
   hops.forEach(h=>{
+    const gko=h.type==='tt'?(h.artist.group&&h.artist.group.ko):h.gko;
     const row=document.createElement('button');row.type='button';row.className='ttd-hop';
+    const disc=document.createElement('span');disc.className='ttd-orb'; // 컬러 오브→프로필/앨범커버로 업그레이드
+    const c=GROUPS[gko]&&GROUPS[gko].color;
+    disc.style.background=Array.isArray(c)?`radial-gradient(circle at 34% 28%, rgb(${c[0]},${c[1]},${c[2]}), rgba(6,9,20,0.55))`:'rgba(120,150,255,0.28)';
+    const txt=document.createElement('span');txt.className='ttd-txt';
     const main=document.createElement('span');main.className='ttd-main';main.textContent=h.label+(h.sub?(' · '+h.sub):'');
     const note=document.createElement('span');note.className='ttd-note';note.textContent=h.note;
-    row.appendChild(main);row.appendChild(note);
+    txt.appendChild(main);txt.appendChild(note);
+    row.appendChild(disc);row.appendChild(txt);
     row.addEventListener('click',e=>{
       e.stopPropagation();
       if(h.type==='tt'&&h.artist){if(h.artist._worldPos)flyTo(h.artist._worldPos);showT(h.artist,window.innerWidth/2,window.innerHeight*0.4);}
       else if(h.type==='gc'){const bm=bubbleMeshes.find(b=>b.ko===h.gko);if(bm)flyToBubble(bm.mesh.position,bm.radius);showGC(h.gko,window.innerWidth/2,window.innerHeight*0.4);}
     });
     sec.appendChild(row);
+    // 대표 영상 썸네일(og_thumbs) 우선 — 앨범커버 말고 영상 썸네일(2026-09-02 제보). 없으면 프로필 사진→컬러.
+    (async()=>{
+      let url='';
+      try{ const og=await _ensureOgThumbs(); url=(og&&og[gko])||''; }catch(e){}
+      if(!url){ try{ _instaPicPreloadP=_instaPicPreloadP||_warmInstaPicCache(); await _instaPicPreloadP;
+        url=(h.type==='tt'?_instaPicCache.get(_picKey(h.artist.name.ko,gko)):null)||_instaPicCache.get(_groupPicKey(gko))||''; }catch(e){} }
+      if(!url)return;
+      const im=new Image();im.onload=()=>{disc.style.backgroundImage=`url("${String(url).replace(/"/g,'%22')}")`;disc.classList.add('has-cover');};im.src=url;
+    })();
   });
-  const dr=document.getElementById('tt-discog-row');
-  if(dr&&dr.parentNode)dr.parentNode.insertBefore(sec,dr.nextSibling);else card.appendChild(sec);
+  card.appendChild(sec); // 항상 카드 맨 아래로(위에 있으면 거슬린다는 제보, 2026-09-02)
 }
 
 function _gcDiscogDetailGo(delta){

@@ -2388,9 +2388,11 @@
   /* ── 이어서 발견(2026-09-02) — 멤버 카드 하단 컨텍스트 홉. 탐험 루프 엔진 ── */
   #tt-discover{margin-top:8px;padding-top:12px;border-top:0.5px solid rgba(255,255,255,0.07);}
   .ttd-lbl{font-size:9px;font-weight:700;letter-spacing:.14em;color:rgba(130,150,205,0.56);text-transform:uppercase;margin-bottom:7px;}
-  .ttd-hop{display:flex;flex-direction:column;gap:1px;width:100%;text-align:left;background:rgba(255,255,255,0.03);border:0.5px solid rgba(140,170,240,0.14);border-radius:10px;padding:8px 12px;margin-bottom:6px;cursor:pointer;font-family:inherit;}
+  .ttd-hop{display:flex;align-items:center;gap:10px;width:100%;text-align:left;background:rgba(255,255,255,0.03);border:0.5px solid rgba(140,170,240,0.14);border-radius:10px;padding:7px 11px;margin-bottom:6px;cursor:pointer;font-family:inherit;}
   .ttd-hop:hover{background:rgba(255,255,255,0.06);}
-  .ttd-main{font-size:13px;font-weight:600;color:#e4ecff;}
+  .ttd-orb{width:52px;height:34px;border-radius:8px;flex-shrink:0;background-size:cover;background-position:center;box-shadow:0 2px 8px rgba(0,0,0,0.35);}
+  .ttd-txt{display:flex;flex-direction:column;gap:1px;min-width:0;}
+  .ttd-main{font-size:13px;font-weight:600;color:#e4ecff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   .ttd-note{font-size:10.5px;color:rgba(150,175,235,0.6);}
   .tvf-item{display:flex;align-items:center;gap:10px;padding:6px;border-radius:10px;cursor:pointer;transition:background .13s;}
   .tvf-item:hover{background:rgba(255,255,255,0.06);}
