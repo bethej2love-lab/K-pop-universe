@@ -150,9 +150,16 @@
   인기순일 때만 제목 아래 "조회 54M+" 한 줄 — 순서만 바뀌고 근거가 안 보이면 인기순인지 알 수 없다.
 
 ### ⏭️ 사용자가 직접 해야 하는 것
-- **[대기] `node tests/rls.test.js`를 네트워크 되는 곳에서 1회** — 회사망에서는 Node fetch가
-  Supabase에 못 닿아 전 테이블이 "네트워크 오류"로 나온다. 방금 선언한 기대값 4개는 "이래야 한다"지
-  "실제로 그렇다"가 아니다. 다르면 정책 쪽을 고쳐야 한다.
+- **[완료] 익명 기준 RLS 검증 — 23/23 통과**(2026-09-02). ⚠️ 회사망에서는 Node fetch가 TLS 검증에
+  막혀 전 테이블이 "네트워크 오류"로 나온다 → `NODE_TLS_REJECT_UNAUTHORIZED=0 node tests/rls.test.js`
+  로 우회(테스트가 실패 메시지로 안내해준다). 같은 이유로 build_group_pages.js도 회사망에서 관계
+  페이지를 건너뛴다.
+  - 처음엔 search_click_log 1건이 "익명 INSERT가 open 기대인데 locked"로 실패했는데, **정책이 막힌 게
+    아니라 권한과 값 검증을 한 정책에 섞은 탓**이었다. 이 테스트는 빈 객체를 POST해 에러 코드로 권한을
+    가리는데(23502=권한 통과, 42501=차단), 값 제약이 with_check에 있으면 빈 객체가 거기 먼저 걸려
+    42501이 나온다. → 정책은 권한만(`with check (true)`), 값 제약은 테이블 CHECK로 분리해 해결.
+  - 유저 데이터(user_data·collection_likes·group_priority·rank_snapshots·tag_edit_log·
+    tag_review_queue) 전부 익명 읽기 0행 + 쓰기 차단 확인.
 - **[대기] 로그인 유저 간 RLS 격리 검증** — 테스트 계정 2개 토큰 필요
   (`KPU_TOKEN_A=… KPU_TOKEN_B=… node tests/rls.test.js`). DECISIONS에 "커뮤니티 소개글 게시 전
   반드시"로 적어둔 항목. 계정 B로 먼저 즐겨찾기 등을 만들어 둬야 판정이 유의미하다.
