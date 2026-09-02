@@ -1830,6 +1830,12 @@ const _AGENCY_EN={
   '파라뮤직':'Para Music','패러블':'Parable',
   '포켓돌스튜디오 / 엠이오':'Pocketdol Studio / MEO', // UNVERIFIED — 나무위키/영문자료 확인 못함, 음절 분해 추정치
   '하이헷엔터테인먼트':'Hi-Hat Entertainment',
+  // HYBE 레이블 — co를 "자회사 / 모회사"로 통일하면서 같이 추가(2026-09-02). 이 항목들이 없으면
+  // EN 모드에서 한글이 그대로 나오고, "플레디스 엔터테인먼트"는 뒤 규칙에 걸려 "플레디스 Ent."라는
+  // 한글+영문 혼종이 된다. 영문명은 HYBE LABELS 공식 표기.
+  '빅히트 뮤직 / HYBE':'BIGHIT MUSIC / HYBE','플레디스 / HYBE':'PLEDIS / HYBE',
+  '빌리프랩 / HYBE':'BELIFT LAB / HYBE','쏘스뮤직 / HYBE':'SOURCE MUSIC / HYBE',
+  '플레디스 엔터테인먼트':'PLEDIS Entertainment','쏘스뮤직':'SOURCE MUSIC',
 };
 function _dispAgency(co){
   if(!co||currentLang!=='en')return co;
