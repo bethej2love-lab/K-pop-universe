@@ -74,10 +74,22 @@ need(!/_vmCacheSync\(\)/.test(restore),
   '캐시 복원 경로는 ts를 갱신하지 않음(N분 전 표시 유지)');
 
 // 새 조회가 끝나는 지점마다 캐시에 저장돼야 한다 — 렌더 호출 수와 저장 호출 수가 맞는지로 본다.
-const renders = (vmLoad.match(/_vmRenderVideoList\(\)/g) || []).length;
-const syncs = (vmLoad.match(/_vmCacheSync\(\)/g) || []).length;
-need(syncs === renders - 1,
-  `_vmLoad의 조회 완료 지점이 전부 캐시에 저장됨 (렌더 ${renders}곳 중 캐시복원 1곳 제외 → 저장 ${syncs}곳)`);
+// ⚠️ 예전엔 `syncs === renders - 1`로 "복원 경로는 딱 1곳"을 상수로 박아뒀는데, 영속 캐시(IndexedDB)
+//    복원 경로가 생기자 그 상수가 틀려 깨졌다(2026-09-02). 상수를 2로 올리는 대신 불변식을 제대로
+//    적는다 — **복원 구간(try 이전)과 실제 조회 구간(try 이후)을 나눠서**, 조회 구간에서만 "렌더한
+//    곳 = 저장한 곳"을 본다. 복원 경로가 몇 개로 늘든 이 테스트는 그대로 유효하다.
+const tryAt = vmLoad.indexOf('  try{');
+const headPart = vmLoad.slice(0, tryAt);   // 캐시 복원 경로(메모리·디스크)
+const bodyPart = vmLoad.slice(tryAt);      // 실제 네트워크 조회 경로
+const headRenders = (headPart.match(/_vmRenderVideoList\(\)/g) || []).length;
+const bodyRenders = (bodyPart.match(/_vmRenderVideoList\(\)/g) || []).length;
+const bodySyncs = (bodyPart.match(/_vmCacheSync\(\)/g) || []).length;
+need(headRenders >= 1, `캐시 복원 경로가 조회 전에 있음 (${headRenders}곳)`);
+need(bodySyncs === bodyRenders,
+  `_vmLoad의 조회 완료 지점이 전부 캐시에 저장됨 (조회 구간 렌더 ${bodyRenders}곳 = 저장 ${bodySyncs}곳)`);
+// 영속 캐시(2026-09-02) — 메모리 캐시가 비어도 디스크에서 복원을 시도해야 한다.
+need(/_vmIdbGet\(cacheKey\)/.test(headPart),
+  '메모리 캐시가 비면 IndexedDB(지난 세션 조회분)를 먼저 확인');
 
 // 목록에서 행을 걷어내는 모든 곳이 캐시에도 반영해야 한다 — 안 하면 탭을 다시 열 때 되살아난다.
 const removalLines = src.split('\n');

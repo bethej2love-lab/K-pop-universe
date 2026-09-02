@@ -1662,6 +1662,15 @@ function _gLabel(g){return g?(currentLang==='ko'?(g.dispKo||g.dispEn||g.ko):(g.d
 function _dispGroup(a){return a?(_isSoloDisp(a)?_SOLO_GROUP:a.group):null;}
 function _dispGroupName(a){return _gLabel(_dispGroup(a));}
 function _dispKo(a){return(a&&a.displayName)||(a&&a.name&&a.name.ko)||'';}
+// 화면에 보일 멤버 이름 — **표시는 전부 이걸 거쳐야 한다.**
+// displayName(트레저 최현석·윤재혁처럼 성을 포함한 활동명)은 표기 전용 필드이고 name.ko는 DB members
+// 배열·즐겨찾기 키가 쓰는 식별자라, 둘을 분리해둔 상태다. 그런데 표시 지점마다 `name.ko`를 직접 쓰고
+// 있어서 멤버 카드에만 활동명이 반영되고 그룹 카드·인덱스·칩·검색은 옛 이름 그대로였다(2026-09-02
+// 사용자 제보 — "그룹 카드 표기도 통일해야지"). 새 표시 지점을 만들 때도 name.ko를 직접 쓰지 말 것.
+function _dispName(a){
+  if(currentLang==='ko')return _dispKo(a);
+  return(a&&a.name&&a.name.en)||(a&&a.name&&a.name.ko)||'';
+}
 // 카드 이름 옆 작고 흐린 보조 표기 — ① displayName으로 메인을 덮었으면 원래 활동명(도경수 옆 "디오"),
 // ② subName(옛활동명/실명, 성민 옆 "제롬"). 메인과 너무 유사하면(한쪽이 다른 쪽에 포함, 박재범⊃재범) 생략.
 function _appendSubName(el,a){
@@ -3796,7 +3805,7 @@ function _resolveRecentSearches(){
     const a=ARTISTS.find(x=>x.name.ko===e.ko&&x.group.ko===e.groupKo);
     if(!a)return null;
     const enN=a.name.en||'';
-    const dispName=currentLang==='ko'?a.name.ko:(enN||a.name.ko);
+    const dispName=_dispName(a);
     const dispSub=!GROUPS[a.group.ko]?'':(currentLang==='ko'?a.group.ko:(a.group.en||a.group.ko));
     return{type:'member',name:dispName,sub:dispSub,pos:a._worldPos,data:a};
   }).filter(Boolean);
@@ -4204,7 +4213,7 @@ function doSearch(q){
       unit.members.forEach(({mko,gko})=>{
         const a=ARTISTS.find(x=>x.name.ko===mko&&_artistGroups(x).some(g=>g.ko===gko));
         if(!a)return;
-        const dispName=(_hasLatin&&a.name.en)?a.name.en:(currentLang==='ko'?a.name.ko:(a.name.en||a.name.ko));
+        const dispName=(_hasLatin&&a.name.en)?a.name.en:(_dispName(a));
         hits.push({type:'member',name:dispName,sub:unitName,pos:a._worldPos,data:a,score:s});
       });
     }
@@ -4979,7 +4988,7 @@ function _lbUpdateMemberInfo(){
   let artist=null;
   if(memberKo)artist=ARTISTS.find(a=>a.name.ko===memberKo&&(a.group.ko===groupKo||(a.groups||[]).some(g=>g.ko===groupKo)));
   const gName=groupKo&&GROUPS[groupKo]?(currentLang==='ko'?groupKo:(GROUPS[groupKo].en||groupKo)):'';
-  const mName=artist?(currentLang==='ko'?artist.name.ko:(artist.name.en||artist.name.ko)):'';
+  const mName=artist?(_dispName(artist)):'';
   // ── 하프시트 진입점(2026-08-26, 로드맵 P1-2) ────────────────────────────────────
   // 예전엔 "카리나 · 에스파"가 한 덩어리 텍스트라 누를 수 없었다. 멤버/그룹을 각각 누르면
   // 그 카드가 화면 아래 절반으로 올라온다 — **영상은 계속 재생된다**(연결 카드와 달리 일시정지 안 함).
@@ -5005,7 +5014,7 @@ function _lbUpdateMemberInfo(){
   withEl.innerHTML='';
   (s?.with||[]).forEach(n=>{
     const target=_findArtistByConnName(n,artist?artist.group.ko:groupKo);
-    const label=target?(currentLang==='ko'?target.name.ko:(target.name.en||target.name.ko)):(n.match(/^(.+)\((.+)\)$/)?.[1]||n);
+    const label=target?(_dispName(target)):(n.match(/^(.+)\((.+)\)$/)?.[1]||n);
     // 함께한 멤버도 누르면 그 멤버 카드가 반 열린다(2026-08-27 사용자 요청 — 앵커의 멤버/그룹은
     // 눌리는데 이 칩만 장식이라 '멤버는 클릭이 안 되냐'는 제보). 이름을 실제 아티스트로 해석하지
     // 못한 칩(target 없음)은 열 카드가 없으므로 예전처럼 그냥 텍스트로 둔다.
@@ -5813,7 +5822,7 @@ function _makeGCChip(ko,label){
 }
 function _makeMemberChip(t){
   const chip=document.createElement('span');chip.className='tv-with-chip';
-  chip.textContent=currentLang==='ko'?t.name.ko:(t.name.en||t.name.ko);
+  chip.textContent=_dispName(t);
   chip.addEventListener('click',e=>{
     e.stopPropagation();
     if(t._worldPos)flyTo(t._worldPos);
@@ -5826,7 +5835,7 @@ function _makeMemberChip(t){
 // 그룹명 생략하는 with-line 규칙을 그대로 적용하면 누구 곡인지 헷갈림).
 function _makeCoverMemberChip(t){
   const chip=document.createElement('span');chip.className='tv-with-chip tv-with-chip-cover';
-  const label=currentLang==='ko'?t.name.ko:(t.name.en||t.name.ko);
+  const label=_dispName(t);
   const gInfo=GROUPS[t.group.ko];
   const gLabel=currentLang==='ko'?t.group.ko:((gInfo&&gInfo.en)||t.group.ko);
   chip.textContent=`${label}(${gLabel})`;
@@ -7255,7 +7264,7 @@ function _buildConnContent(container){
   backBtn.setAttribute('aria-label','연결 카드 닫기');
   backBtn.addEventListener('click',e=>{e.stopPropagation();closeConnCard();});
   const anchor=document.createElement('div');anchor.className='conn-anchor-chip';
-  anchor.textContent=currentLang==='ko'?_connAnchor.name.ko:(_connAnchor.name.en||_connAnchor.name.ko);
+  anchor.textContent=_dispName(_connAnchor);
   hd.appendChild(backBtn);hd.appendChild(anchor);
   const favBtn=document.createElement('button');
   favBtn.id='conn-fav-btn';
@@ -7273,7 +7282,7 @@ function _buildConnContent(container){
   shareBtn.addEventListener('click',e=>{
     e.stopPropagation();
     const url=location.origin+location.pathname+location.search+_connShareHash();
-    _shareCurrentView(url,_connAnchor.name.ko+' × '+_connSelected.join(', '));
+    _shareCurrentView(url,_dispName(_connAnchor)+' × '+_connSelected.join(', '));
   });
   hd.appendChild(shareBtn);
   container.appendChild(hd);
@@ -8104,7 +8113,7 @@ async function _showDiscoverToast(artist){
   const textEl=document.getElementById('discover-toast-text');
   const imgEl=document.getElementById('discover-toast-thumb');
   const isKo=currentLang==='ko';
-  const name=isKo?artist.name.ko:(artist.name.en||artist.name.ko);
+  const name=_dispName(artist);
   textEl.innerHTML=isKo?`<b>${name}</b> 카드도 둘러보실래요?♥`:`Check out <b>${name}</b> too?♥`;
   imgEl.classList.remove('has-img');imgEl.src='';
   el.classList.add('show');
@@ -9029,7 +9038,7 @@ function showT(a,cx,cy,keepNavStack,urlMode,_unusedPushMobNav,noFly){
     const n=ttGroupMembers.length;
     const prevM=ttGroupMembers[(ttMemberIdx-1+n)%n];
     const nextM=ttGroupMembers[(ttMemberIdx+1)%n];
-    const _name=m=>currentLang==='ko'?m.name.ko:(m.name.en||m.name.ko);
+    const _name=m=>_dispName(m);
     document.getElementById('tt-prev-name').textContent=_name(prevM);
     document.getElementById('tt-next-name').textContent=_name(nextM);
   }
@@ -9452,7 +9461,7 @@ function _renderGcMemberList(ko,cx,cy){
     })
     .forEach(m=>{
       const sp=document.createElement('span');sp.className='gc-mem-name'+(_activeInGroup(m,ko)?'':' gc-mem-inactive');
-      sp.textContent=currentLang==='ko'?m.name.ko:(m.name.en||m.name.ko);
+      sp.textContent=_dispName(m);
       _appendDeceasedStar(sp,m);
       if(_artistGroups(m).length>1)sp.title=_artistGroups(m).map(g=>g.ko).join(' · ');
       sp.addEventListener('click',e=>{
@@ -10376,7 +10385,7 @@ function _renderFilterPanel(){
       hd.appendChild(dt);listEl.appendChild(hd);
       first=false;
       byMonth[mo].forEach(({m,dd})=>{
-        const name=currentLang==='ko'?m.name.ko:(m.name.en||m.name.ko);
+        const name=_dispName(m);
         const grpName=_dispGroupName(m);
         const div=document.createElement('div');div.className='filter-list-item';
         const row=document.createElement('div');row.className='fli-item-row';
@@ -10399,7 +10408,7 @@ function _renderFilterPanel(){
       grpHd.textContent=currentLang==='ko'?gko:(GROUPS[gko]&&GROUPS[gko].en||gko);
       listEl.appendChild(grpHd);
       ms.forEach(m=>{
-        const name=currentLang==='ko'?m.name.ko:(m.name.en||m.name.ko);
+        const name=_dispName(m);
         const item=_makeFilterListItem(name,'',()=>{if(m._worldPos)flyTo(m._worldPos);showT(m,window.innerWidth/2,window.innerHeight*0.4);});
         listEl.appendChild(item);
       });
@@ -10508,7 +10517,7 @@ function _renderIndexList(){
     members.sort((a,b)=>{
       let r=0;
       if(_idxSortKey==='name'){
-        const an=currentLang==='ko'?a.name.ko:(a.name.en||a.name.ko),bn=currentLang==='ko'?b.name.ko:(b.name.en||b.name.ko);
+        const an=_dispName(a),bn=_dispName(b);
         r=an.localeCompare(bn,locale);
       }
       else if(_idxSortKey==='birth')r=(a.bday||'').localeCompare(b.bday||'');
@@ -10524,7 +10533,7 @@ function _renderIndexList(){
       listEl.appendChild(e);
     }
     members.forEach(m=>{
-      const name=currentLang==='ko'?m.name.ko:(m.name.en||m.name.ko);
+      const name=_dispName(m);
       const grpName=_dispGroupName(m);
       const sub=_idxSortKey==='nation'?_natOf(m):(_idxSortKey==='birth'?(m.bday||''):grpName);
       const item=_makeFilterListItem(name,sub,()=>{
@@ -15720,7 +15729,7 @@ function _buildFeedAnniversaries(){
     _fetchTopVideoThumb(ko,null).then(t=>_setAnnivStripThumb(item,t));
   });
   bdayHits.forEach(a=>{
-    const mName=isKo?a.name.ko:(a.name.en||a.name.ko);
+    const mName=_dispName(a);
     const gName=_dispGroupName(a); // 솔로 취급 멤버는 전 소속 대신 "솔로"
     const sub=gName;
     // 나이 없이 생년월일만(2026-08-12, 사용자 요청 — 처음엔 멤버 카드처럼 나이도 같이 넣었다가
@@ -16860,7 +16869,7 @@ function _buildFeedRandomMember(list){
   const actArtists=(ARTISTS||[]).filter(a=>a.active!==false);
   if(!actArtists.length)return;
   const a=actArtists[Math.floor(Math.random()*actArtists.length)];
-  const mName=isKo?a.name.ko:(a.name.en||a.name.ko);
+  const mName=_dispName(a);
   const mGrps=_artistGroups(a).map(g=>isKo?g.ko:(g.en||g.ko)).join(' · ');
   _fetchTopVideoThumb(_ytGroupKoFor(a),a.name.ko).then(t=>{
     _appendFeedCard(list,'👤',mName,mGrps,()=>_feedNav(()=>{
@@ -16892,8 +16901,8 @@ function _buildFeedRandomConnection(list){
   if(!cliquePool.length)return;
   const{owner,song}=cliquePool[Math.floor(Math.random()*cliquePool.length)];
   const withNames=song.with.map(w=>_findArtistByConnName(w,owner.group.ko));
-  const ownerDisp=isKo?owner.name.ko:(owner.name.en||owner.name.ko);
-  const withDisp=withNames.map((wa,i)=>wa?(isKo?wa.name.ko:(wa.name.en||wa.name.ko)):(song.with[i].match(/^(.+)\(/)?.[1]||song.with[i]));
+  const ownerDisp=_dispName(owner);
+  const withDisp=withNames.map((wa,i)=>wa?(_dispName(wa)):(song.with[i].match(/^(.+)\(/)?.[1]||song.with[i]));
   // 화살표(↔)가 어색하다는 피드백(2026-08-19)으로 물결(~)로 교체, "N인" 인원수 표기도 같이 제거—
   // 인원 정보 없이 "연결 보기"만으로 충분하다는 판단.
   const connLabel=[ownerDisp,...withDisp].join(' ~ ');
@@ -16947,7 +16956,7 @@ function _buildFeedRandomVideo(list){
   const list_=pick.type==='group'?pick.ginfo.songs:pick.artist.songs;
   const vSub=pick.type==='group'
     ?(isKo?pick.gko:(pick.ginfo.en||pick.gko))
-    :(isKo?pick.artist.name.ko:(pick.artist.name.en||pick.artist.name.ko));
+    :(_dispName(pick.artist));
   const vVid=song.u?ytId(song.u):null;
   const vThumb=vVid?`https://img.youtube.com/vi/${vVid}/mqdefault.jpg`:null;
   _appendFeedCard(list,'🎬',song.t,vSub,()=>_feedNav(()=>{

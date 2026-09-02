@@ -62,3 +62,22 @@ CREATE INDEX IF NOT EXISTS idx_ytv_wonkok_title
 -- 같은 스캔의 두 번째 축 — with 태그 보유 행("여러 그룹 커버 메들리" 구조 신호). 실측 25.2초 → 2.0초.
 CREATE INDEX IF NOT EXISTS idx_ytv_has_with_tags
   ON yt_channel_videos (id) WHERE with_groups <> '{}' OR with_members <> '{}';
+
+
+-- ── 2026-09-02 추가: 영상관리 패널 상태 탭(숨김/무관/보류) ────────────────────────
+-- 📌 부분 인덱스를 REST로 확인할 때 주의(2026-09-02에 실제로 한 번 오판함):
+--    `needs_review=is.true`(→ SQL `needs_review IS TRUE`)로 재보면 2,694ms가 나와서 인덱스가 없는
+--    것처럼 보인다. 플래너가 `IS TRUE`가 부분 인덱스 조건(`WHERE needs_review`)을 함의함을 증명하지
+--    못해 순차 스캔으로 빠지기 때문이다. 앱이 실제로 쓰는 `.eq('needs_review',true)`(→ `= true`)는
+--    같은 조회가 79ms다. 정규식 부분 인덱스도 같아서, 조건 문자열이 predicate와 **글자 그대로** 같아야
+--    한다(`'원곡|커버'`로 줄여 물으면 안 탐). 인덱스 유무는 반드시 앱과 같은 형태의 쿼리로 확인할 것.
+--
+-- 숨김 탭이 "canceling statement due to statement timeout"으로 아예 안 열리는 원인(2026-09-02 제보).
+-- content_flag에 인덱스가 없어서, 전체 391,634행 중 0.6%(hidden 2,378행)를 찾느라 매 페이지가 테이블을
+-- 통째로 훑었다 — 실측 1페이지(1,000행) 18,663ms. 키셋 페이지네이션(id > cursor)이라 정렬 축이 id이므로
+-- (content_flag, id) 복합으로 만들어야 필터와 정렬을 한 인덱스로 다 커버하고 seek 한 번으로 끝난다.
+-- content_flag 단독 인덱스로는 매 페이지 id 정렬이 남아 효과가 반감된다.
+CREATE INDEX IF NOT EXISTS idx_ytv_content_flag_id
+  ON yt_channel_videos (content_flag, id);
+
+ANALYZE yt_channel_videos;

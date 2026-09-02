@@ -619,7 +619,10 @@ function _admRenderExecLog(){
 // 페이지 위치와 무관하게 매 요청이 항상 가볍게(PK 인덱스 seek) 유지되게 함. 호출부는 전부 buildQuery()
 // 안에서 .order('id')를 이미 붙이고 있어야 함(대부분 그렇게 돼있었음) — 여기서 .gt('id',cursor)/.limit()만
 // 추가로 체이닝한다.
-async function _sbFetchAll(buildQuery,pageSize=1000){
+// onPage(page,rows): 페이지가 도착할 때마다 부른다 — 호출부가 "받는 대로" 화면에 그릴 수 있게 하는 훅
+// (2026-09-02, 영상관리 패널 "조금씩 로딩되는 대로 보여줘" 요청). false를 반환하면 조기 중단한다
+// (탭을 옮겨 이 조회가 무의미해진 경우 등). 안 넘기면 예전과 100% 같은 동작 — 기존 호출부 무수정.
+async function _sbFetchAll(buildQuery,pageSize=1000,onPage){
   const rows=[];let cursor=null;
   while(true){
     let q=buildQuery().limit(pageSize);
@@ -628,6 +631,11 @@ async function _sbFetchAll(buildQuery,pageSize=1000){
     if(error)return{data:null,error};
     if(!data?.length)break;
     rows.push(...data);
+    if(onPage){
+      let cont=true;
+      try{cont=onPage(data,rows);}catch(e){console.error('[sbFetchAll] onPage 예외',e);}
+      if(cont===false)return{data:rows,error:null,aborted:true};
+    }
     if(data.length<pageSize)break;
     cursor=data[data.length-1].id;
   }
@@ -1692,6 +1700,7 @@ async function _ytSweepHiddenRejudge(){
       _ytSetProg(`[숨김 재판정] 보류 이동 ${Math.min(i+200,holds.length)}/${holds.length}건…`);
     }
     _vmCache&&_vmCache.clear&&_vmCache.clear(); // 영상관리 패널 탭 캐시가 옛 목록을 들고 있지 않도록
+    try{_vmIdbClear();}catch(_){}               // 디스크(IndexedDB) 캐시도 같이 — 안 그러면 새로고침 후 부활
     _ytSetProg(`완료! 재배정 ${moves.length}건 · 보류 이동 ${holds.length}건 (되돌리기: "↩︎ 마지막 일괄 작업 되돌리기")`);
   }catch(e){_ytSetProg('오류: '+e.message);}
   finally{if(btn)btn.disabled=false;}
@@ -2399,7 +2408,7 @@ async function _snapshotBeforeBulk(opLabel,ids,forceBatchId){
   if(!sb||!ids||!ids.length)return null;
   // 일괄 작업은 수천 행을 한꺼번에 바꾸므로 영상 관리 패널의 탭 캐시를 전부 버린다 — 모든 일괄
   // 버튼이 이 함수를 반드시 거치므로(스냅샷은 일괄 작업의 전제) 여기 한 곳이면 충분하다.
-  try{_vmCache.clear();}catch(_){}
+  try{_vmCache.clear();_vmIdbClear();}catch(_){}
   const uniq=[...new Set(ids)];
   const batchId=forceBatchId||((self.crypto&&self.crypto.randomUUID)?self.crypto.randomUUID():('b'+Date.now()+Math.random().toString(36).slice(2)));
   try{
@@ -2489,7 +2498,7 @@ async function _ytUndoBatch(batchId,opLabel){
   if(_ub.failed)throw new Error(`되돌리기 ${_ub.failed}건 실패(재시도 후) — ${_ub.firstErr}`); // 부분 복원 방지: 실패 시 중단
   const restored=snaps.length;
   await sb.from(_BULK_SNAP_TABLE).delete().eq('batch_id',batchId);
-  try{_vmCache.clear();}catch(_){}
+  try{_vmCache.clear();_vmIdbClear();}catch(_){}
   _ytSetProg(`되돌리기 완료! "${opLabel}"으로 바뀐 ${restored}개 행을 이전 상태로 복원했어요.`);
 }
 
@@ -3284,7 +3293,12 @@ let _vmCacheKeyCur=null;
 const _vmCacheKey=(tab,term)=>tab+' '+(term||'');
 // 쓰기가 일어나면 지금 보고 있는 탭 말고 다른 탭 캐시는 버린다 — 무관 처리 한 번으로 '무관' 탭과 검수
 // 큐가 동시에 바뀌므로, 남겨두면 다른 탭에서 사라진 행이 되살아난 것처럼 보인다.
-function _vmCacheDropOthers(){for(const k of[..._vmCache.keys()])if(k!==_vmCacheKeyCur)_vmCache.delete(k);}
+function _vmCacheDropOthers(){
+  for(const k of[..._vmCache.keys()])if(k!==_vmCacheKeyCur)_vmCache.delete(k);
+  // 디스크 쪽은 지금 보고 있는 것 하나만 남기고 전부 폐기(메모리에 없던 지난 세션 캐시 포함).
+  _vmIdbTx('readonly',st=>st.getAllKeys?st.getAllKeys():null)
+    .then(keys=>(keys||[]).forEach(k=>{if(k!==_vmCacheKeyCur)_vmIdbDel(k);}));
+}
 // vm개선 3b(안전형) — 쓰기 후 모든 타탭을 버리는 대신, 이 쓰기로 멤버십이 바뀌는 탭만 폐기한다:
 // 검수계열(항상) + toFlag의 상태탭(도착) + 현재 상태탭(출발). 그 외 상태탭(안 바뀜)·전체검색은 캐시 유지.
 // ⚠️ Fable의 "행 삽입" 대신 '폐기 후 재조회'로 — 탭별 컬럼/검색필터/정렬 불일치 리스크 회피.
@@ -3295,14 +3309,24 @@ function _vmCacheDropAffected(toFlag){
   if(FLAG_TAB[toFlag])drop.add(FLAG_TAB[toFlag]);
   if(STATUS.includes(_vmTab))drop.add(_vmTab); else STATUS.forEach(t=>drop.add(t));
   for(const k of[..._vmCache.keys()]){if(k===_vmCacheKeyCur)continue;const tab=k.slice(0,k.indexOf(' '));if(drop.has(tab))_vmCache.delete(k);}
+  // ⚠️ 메모리에 없고 디스크에만 있는 탭도 같이 버려야 한다 — 위 루프는 _vmCache만 훑으므로, 지난
+  //    세션에 봤던 탭(메모리엔 없음)의 IDB 캐시가 남아 새로고침 후 처리한 행이 되살아난다.
+  _vmIdbDropTabs(drop,_vmCacheKeyCur);
 }
 // 현재 탭 캐시를 지금 _vmRows 상태로 덮어쓴다(조회 직후, 그리고 행을 갱신·삭제한 뒤에 부른다).
+let _vmIdbSaveTimer=null;
 function _vmCacheSync(){
   if(!_vmCacheKeyCur)return;
   // 탭 라벨의 개수 배지도 여기서 같이 갱신한다 — 조회 직후에도, 일괄 처리로 행이 빠진 뒤에도
   // 이 함수가 불리므로 배지가 목록과 항상 붙어 다닌다(따로 부르면 한쪽만 갱신되는 드리프트가 생김).
   _vmSetTabCount(_vmTab,_vmRows.length);
-  _vmCache.set(_vmCacheKeyCur,{rows:_vmRows,status:document.getElementById('vm-status')?.textContent||'',ts:Date.now()});
+  const status=document.getElementById('vm-status')?.textContent||'';
+  _vmCache.set(_vmCacheKeyCur,{rows:_vmRows,status,ts:Date.now()});
+  // 디스크(IndexedDB)에도 남긴다 — 새로고침 후 복원용. 이 함수는 행 하나 고칠 때마다도 불리므로
+  // 수 MB를 매번 쓰지 않도록 디바운스한다(마지막 상태만 남으면 충분).
+  clearTimeout(_vmIdbSaveTimer);
+  const key=_vmCacheKeyCur,rows=_vmRows;
+  _vmIdbSaveTimer=setTimeout(()=>_vmIdbPut(key,rows,status),1200);
 }
 // vm개선 3(2026-09-01) — 캐시 세션 유지 + 재진입 복원.
 const _VM_LAST_LS='kpu_vm_last';
@@ -3310,7 +3334,98 @@ function _vmSaveLast(){
   try{localStorage.setItem(_VM_LAST_LS,JSON.stringify({tab:_vmTab,search:document.getElementById('vm-search')?.value||'',scrollTop:document.getElementById('vm-list')?.scrollTop||0}));}catch(e){}
 }
 // 현재 탭 캐시를 버리고 강제 재조회(상태줄 ↻ 버튼) — TTL을 없앤 대신 수동 갱신 경로.
-function _vmForceReload(){ if(_vmCacheKeyCur)_vmCache.delete(_vmCacheKeyCur); _vmLoad(undefined,true); }
+function _vmForceReload(){ if(_vmCacheKeyCur){_vmCache.delete(_vmCacheKeyCur);_vmIdbDel(_vmCacheKeyCur);} _vmLoad(undefined,true); }
+
+// ── 마지막 조회분 영속 캐시(IndexedDB, 2026-09-02) ────────────────────────────────
+// 위 _vmCache는 메모리라 **새로고침 한 번에 통째로 날아간다** — 어드민이 패널을 다시 열 때마다 수천 행을
+// 처음부터 다시 받고 있었다("매번 조회하는 거 너무 불편하다", 사용자 제보). 마지막 결과를 그대로 저장해
+// 두고 다음 세션에서 즉시 복원한다. localStorage가 아니라 IndexedDB인 이유는 용량 — 무관 탭만 7,443행
+// (행당 약 330B, 약 2.4MB)이라 localStorage 총 5MB 한도를 혼자 절반 넘게 먹는다.
+// ⚠️ 이건 어디까지나 "지난번에 본 것"이다. 그래서 복원 시 항상 조회 시각(N분 전/N시간 전)과 ↻를 같이
+//    띄우고, 캐시를 버리는 모든 경로(_vmCacheDropOthers/_vmCacheDropAffected/clear)에서 IDB도 같이
+//    지운다 — 안 그러면 새로고침 후에 이미 처리한 행이 되살아난 것처럼 보인다.
+const _VM_IDB_NAME='kpu_admin',_VM_IDB_STORE='vm_cache',_VM_IDB_MAX_AGE=7*864e5; // 7일 지나면 안 씀
+let _vmIdbP=null;
+function _vmIdb(){
+  if(_vmIdbP)return _vmIdbP;
+  _vmIdbP=new Promise(res=>{
+    let rq;
+    try{rq=indexedDB.open(_VM_IDB_NAME,1);}catch(e){return res(null);}
+    rq.onupgradeneeded=()=>{const db=rq.result;if(!db.objectStoreNames.contains(_VM_IDB_STORE))db.createObjectStore(_VM_IDB_STORE);};
+    rq.onsuccess=()=>res(rq.result);
+    rq.onerror=rq.onblocked=()=>res(null);
+  });
+  return _vmIdbP;
+}
+// 저장소가 없거나(사생활 보호 모드 등) 실패해도 앱은 그냥 네트워크 조회로 돌아간다 — 전부 fail-open.
+function _vmIdbTx(mode,fn){
+  return _vmIdb().then(db=>{
+    if(!db)return null;
+    return new Promise(res=>{
+      try{
+        const rq=fn(db.transaction(_VM_IDB_STORE,mode).objectStore(_VM_IDB_STORE));
+        if(!rq)return res(null);
+        rq.onsuccess=()=>res(rq.result===undefined?null:rq.result);
+        rq.onerror=()=>res(null);
+      }catch(e){res(null);}
+    });
+  }).catch(()=>null);
+}
+const _vmIdbGet=key=>_vmIdbTx('readonly',st=>st.get(key));
+const _vmIdbDel=key=>_vmIdbTx('readwrite',st=>st.delete(key));
+const _vmIdbClear=()=>_vmIdbTx('readwrite',st=>st.clear());
+// 해당 탭의 디스크 캐시를 **검색어별 변형까지 전부** 지운다. 키가 `탭 검색어` 형태라 탭만 알고
+// 지우려 하면 `탭 ` 하나만 지워져서, "무관 탭에서 검색해둔 목록"이 남아 새로고침 후 이미 처리한
+// 행이 되살아난다 — 실제 키를 열거해서 접두사로 지운다.
+async function _vmIdbDropTabs(tabs,keepKey){
+  const keys=await _vmIdbTx('readonly',st=>st.getAllKeys?st.getAllKeys():null);
+  if(!keys)return;
+  for(const k of keys){
+    if(k===keepKey)continue;
+    const t=String(k).slice(0,String(k).indexOf(' '));
+    if(tabs.has(t))_vmIdbDel(k);
+  }
+}
+function _vmIdbPut(key,rows,status){
+  // 구조화 복제(structured clone)라 순환참조·DOM이 들어있으면 통째로 실패한다 — _vmRows는 순수 데이터지만
+  // orphan 탭의 _orphans처럼 파생 필드가 붙어도 문자열 배열이라 안전하다.
+  return _vmIdbTx('readwrite',st=>st.put({rows,status,ts:Date.now()},key));
+}
+// 캐시 복원 시 상태줄에 "N분 전 · ↻" 표시. 조회 시각(ts)은 실제 조회 시점 그대로 — 볼 때마다 갱신하면
+// (슬라이딩) 얼마나 오래된 목록인지 알 수 없게 된다.
+function _vmAppendCacheChrome(statusEl,ts,fromDisk){
+  const ago=Date.now()-ts;
+  const label=ago<60000?'방금':ago<3600000?`${Math.round(ago/60000)}분 전`
+    :ago<86400000?`${Math.round(ago/3600000)}시간 전`:`${Math.round(ago/86400000)}일 전`;
+  const ref=document.createElement('span');
+  ref.innerHTML=` <span style="opacity:.55">· ${label} 조회${fromDisk?' (저장된 목록)':''}</span> <button class="vm-reload-btn" type="button" title="다시 조회" style="background:none;border:none;color:rgba(155,178,228,0.5);cursor:pointer;font-size:12px;padding:0 3px;vertical-align:middle;">↻</button>`;
+  ref.querySelector('.vm-reload-btn')?.addEventListener('click',_vmForceReload);
+  statusEl.appendChild(ref);
+}
+
+// ── 받는 대로 그리기(2026-09-02) ────────────────────────────────────────────────
+// _sbFetchAll의 onPage 훅에 물릴 콜백을 만든다. _vmRenderVideoList는 목록을 통째로 다시 그리므로
+// 페이지마다 부르면 오히려 버벅인다 → 첫 페이지는 즉시, 이후는 500ms 스로틀.
+// ⚠️ 사용자가 이미 체크박스를 건드렸으면 다시 그리지 않는다 — 재렌더가 선택을 전부 날리기 때문.
+//    스크롤 위치도 재렌더 전후로 보존한다(로딩 중에 목록이 맨 위로 튀지 않게).
+function _vmProgressive(myGen,sortFn,label){
+  let last=0;
+  return (page,acc)=>{
+    if(myGen!==_vmSearchGen)return false; // 탭이 바뀌었으면 이 조회는 버린다
+    const first=acc.length<=page.length;
+    if(!first&&Date.now()-last<500)return true;
+    if(document.querySelector('#vm-list input[type=checkbox]:checked'))return true;
+    last=Date.now();
+    _vmRows=sortFn?sortFn(acc):acc.slice();
+    const st=document.getElementById('vm-status');
+    if(st)st.textContent=`${label} 조회 중… ${acc.length}개`;
+    const lst=document.getElementById('vm-list');
+    const sc=lst?lst.scrollTop:0;
+    _vmRenderVideoList();
+    if(lst)lst.scrollTop=sc;
+    return true;
+  };
+}
 
 // ── 전체 개수 상시 표시(2026-09-01, vm개선 2) — 패널 상단에 전체·상태별 카운트 ──────────────
 // content_flag 인덱스가 있어 count(head)는 빠름. 캐시(localStorage)를 즉시 그린 뒤 백그라운드로 갱신,
@@ -3448,15 +3563,25 @@ async function _vmLoad(searchTerm,preserveSearch2){
   if(_cached){ // vm개선 3(a): TTL 없앰 — 세션 동안 캐시 유지, 갱신은 아래 ↻(수동)로만
     _vmRows=_cached.rows;
     statusEl.textContent=_cached.status;
-    // "N분 전 · ↻" 표시 — ts는 실제 조회 시각 그대로(슬라이딩 방지). ↻는 캐시 버리고 재조회.
-    const ago=Math.max(0,Math.round((Date.now()-_cached.ts)/60000));
-    const ref=document.createElement('span');
-    ref.innerHTML=` <span style="opacity:.55">· ${ago}분 전</span> <button class="vm-reload-btn" type="button" title="다시 조회" style="background:none;border:none;color:rgba(155,178,228,0.5);cursor:pointer;font-size:12px;padding:0 3px;vertical-align:middle;">↻</button>`;
-    ref.querySelector('.vm-reload-btn')?.addEventListener('click',_vmForceReload);
-    statusEl.appendChild(ref);
+    _vmAppendCacheChrome(statusEl,_cached.ts); // "N분 전 · ↻"
     _vmSetTabCount(tab,_vmRows.length); // 개수 배지만 갱신(ts는 안 건드림)
     _vmRenderVideoList();
     return;
+  }
+  // 메모리에 없으면 지난 세션 조회분(IndexedDB)을 먼저 그린다 — 새로고침해도 마지막으로 본 목록이
+  // 그대로 뜬다(2026-09-02). 갱신은 ↻로만 — 자동 재조회하면 영속 캐시를 둔 의미가 없다.
+  if(tab!=='all'||term){
+    const _disk=await _vmIdbGet(cacheKey);
+    if(myGen!==_vmSearchGen)return;
+    if(_disk&&Array.isArray(_disk.rows)&&_disk.rows.length&&Date.now()-_disk.ts<_VM_IDB_MAX_AGE){
+      _vmCache.set(cacheKey,{rows:_disk.rows,status:_disk.status,ts:_disk.ts});
+      _vmRows=_disk.rows;
+      statusEl.textContent=_disk.status||`${_disk.rows.length}개`;
+      _vmAppendCacheChrome(statusEl,_disk.ts,true);
+      _vmSetTabCount(tab,_vmRows.length);
+      _vmRenderVideoList();
+      return;
+    }
   }
   try{
     let rows;
@@ -3508,6 +3633,8 @@ async function _vmLoad(searchTerm,preserveSearch2){
       const _SS_COLS='id,title,group_ko,thumb,content_flag,members,with_members,with_groups,cover_of_members,cover_of_groups';
       let _ssHasReviewedAt=true;
       let error=null;const collected=[];let _ssCursor=0;
+      const _sortSs=arr=>arr.slice().sort((a,b)=>(a.group_ko||'').localeCompare(b.group_ko||'','ko')||(a.title||'').localeCompare(b.title||'','ko'));
+      const _ssProgress=_vmProgressive(myGen,_sortSs,'검수 대상');
       const _ssWorker=async()=>{
         while(_ssCursor<ssGkos.length&&!error){
           const gko=ssGkos[_ssCursor++];
@@ -3525,14 +3652,16 @@ async function _vmLoad(searchTerm,preserveSearch2){
           }
           if(e){error=e;return;}
           collected.push(...(d||[]));
-          if(myGen===_vmSearchGen)statusEl.textContent=`검수 대상 조회 중… (${collected.length}개)`;
+          // 예전엔 개수 텍스트만 갱신했다 — 목록은 23개 그룹을 다 받고서야 한 번에 떴다. 같은 훅으로
+          // 받는 대로 그린다(2026-09-02). d가 빈 배열일 수 있어 first 판정이 흔들리지 않게 acc만 넘긴다.
+          _ssProgress(d||[],collected);
         }
       };
       await Promise.all(Array.from({length:6},_ssWorker));
       const data=collected;
       if(myGen!==_vmSearchGen)return;
       if(error){statusEl.textContent='조회 실패: '+error.message;return;}
-      const all=(data||[]).sort((a,b)=>(a.group_ko||'').localeCompare(b.group_ko||'','ko')||(a.title||'').localeCompare(b.title||'','ko'));
+      const all=_sortSs(data||[]);
       _vmRows=all;
       statusEl.textContent=`검수 대상 ${all.length}개 (strictSync 그룹: ${ssGkos.join(', ')})`;
       _vmCacheSync();_vmRenderVideoList();
@@ -3543,9 +3672,13 @@ async function _vmLoad(searchTerm,preserveSearch2){
       // 없이) group_ko를 역추론했을 때 needs_review:true+content_flag:'hidden'으로 저장해둔 것들
       // (2026-08-20 도입). 여기서 승인하면 그 즉시 실제 그룹으로 확정(content_flag 해제), 거부하면
       // 무관 처리 — 둘 다 needs_review는 false로 내려 큐에서 빠짐.
+      const _sortRev=arr=>arr.slice().sort((a,b)=>
+        String(b.created_at||'').localeCompare(String(a.created_at||''))
+        ||(a.group_ko||'').localeCompare(b.group_ko||'','ko')
+        ||(a.title||'').localeCompare(b.title||'','ko'));
       const{data,error}=await _sbFetchAll(()=>_vmReviewQueueFilter(sb.from(_YT_TABLE)
         .select('id,title,group_ko,thumb,content_flag,members,with_members,with_groups,cover_of_members,cover_of_groups,created_at'))
-        .order('id'));
+        .order('id'),1000,_vmProgressive(myGen,_sortRev,'검수 대기'));
       if(myGen!==_vmSearchGen)return;
       if(error){statusEl.textContent='조회 실패: '+error.message;return;}
       // ⚠️ 정렬을 그룹명순 → **유입 최신순**으로 바꿨다(2026-08-25). 이 큐는 "하루 신규분만 보고
@@ -3567,18 +3700,21 @@ async function _vmLoad(searchTerm,preserveSearch2){
       // 그 태그는 저장돼 있어도 화면에 영향을 주지 못한다(2026-08-27 우즈/조승연 제보로 발견).
       // 판정은 서버에서 못 한다(로스터가 artists.json에만 있음) → members 비어있지 않은 행만 긁어와
       // 클라이언트에서 거른다. 미등록 이름(로스터에 아예 없는 이름)은 별개 문제라 제외한다.
-      const{data,error}=await _sbFetchAll(()=>sb.from(_YT_TABLE)
-        .select('id,title,group_ko,thumb,content_flag,members,with_members,with_groups,cover_of_members,cover_of_groups,tags_manual')
-        .not('members','eq','{}')
-        .order('id'));
-      if(myGen!==_vmSearchGen)return;
-      if(error){statusEl.textContent='조회 실패: '+error.message;return;}
       const _fits=(name,gko)=>ARTISTS.some(a=>a.name.ko===name&&_artistGroups(a).some(g=>g.ko===gko));
       const _known=name=>ARTISTS.some(a=>a.name.ko===name);
-      const all=(data||[]).map(v=>{
+      // 이 탭은 후보 판정이 클라이언트에 있어서(로스터가 artists.json에만 있음) 걸러내기까지가 한 세트다.
+      // 받는 대로 그리려면 페이지마다 같은 변환을 돌려야 하므로 함수로 빼둔다.
+      const _pickOrphans=arr=>arr.map(v=>{
         const orphans=(v.members||[]).filter(m=>_known(m)&&!_fits(m,v.group_ko));
         return orphans.length?{...v,_orphans:orphans}:null;
       }).filter(Boolean).sort((a,b)=>(b.tags_manual?1:0)-(a.tags_manual?1:0)||(a.group_ko||'').localeCompare(b.group_ko||'','ko'));
+      const{data,error}=await _sbFetchAll(()=>sb.from(_YT_TABLE)
+        .select('id,title,group_ko,thumb,content_flag,members,with_members,with_groups,cover_of_members,cover_of_groups,tags_manual')
+        .not('members','eq','{}')
+        .order('id'),1000,_vmProgressive(myGen,_pickOrphans,'고아 태그'));
+      if(myGen!==_vmSearchGen)return;
+      if(error){statusEl.textContent='조회 실패: '+error.message;return;}
+      const all=_pickOrphans(data||[]);
       _vmRows=all;
       const nMan=all.filter(v=>v.tags_manual).length;
       const nTags=all.reduce((n,v)=>n+v._orphans.length,0);
@@ -3593,17 +3729,19 @@ async function _vmLoad(searchTerm,preserveSearch2){
       // 경우들이었음. 그 목록이 지금까지 안 보여서 실수로 잘못 저장된 건지 의도적으로 다르게 둔 건지
       // 확인할 방법이 없었음(2026-08-21, 사용자 요청) — tags_manual=true 안 건드리는 원칙은 그대로 두고,
       // 후보만 여기서 보여줘서 사람이 하나씩 직접(✎) 확인·수정하게 한다.
+      // 후보 판정(_ytClassify)이 클라이언트에 있어 페이지마다 같은 변환이 필요하다(위 orphan과 동일 구조).
+      const _pickCatlock=arr=>arr.filter(v=>_ytClassify(v.title||'')==='live')
+        .sort((a,b)=>(a.group_ko||'').localeCompare(b.group_ko||'','ko')||(a.title||'').localeCompare(b.title||'','ko'));
       const{data,error}=await _sbFetchAll(()=>sb.from(_YT_TABLE)
         .select('id,title,group_ko,thumb,content_flag,members,with_members,with_groups,cover_of_members,cover_of_groups,category,is_short')
         .eq('tags_manual',true)
         .neq('category','live')
         // 예전엔 여기서 쇼츠도 뺐다 — category가 단일값이라 short면 live일 수 없었기 때문. 2026-08-27
         // 직교화로 세로 직캠도 category='live'가 될 수 있게 됐으니 후보에서 빼면 안 된다.
-        .order('id'));
+        .order('id'),1000,_vmProgressive(myGen,_pickCatlock,'라이브 후보'));
       if(myGen!==_vmSearchGen)return;
       if(error){statusEl.textContent='조회 실패: '+error.message;return;}
-      const candidates=(data||[]).filter(v=>_ytClassify(v.title||'')==='live');
-      const all=candidates.sort((a,b)=>(a.group_ko||'').localeCompare(b.group_ko||'','ko')||(a.title||'').localeCompare(b.title||'','ko'));
+      const all=_pickCatlock(data||[]);
       _vmRows=all;
       statusEl.textContent=`라이브로 보이는데 수동 편집으로 다른 카테고리로 저장된 영상 ${all.length}개 — ✎로 하나씩 확인해주세요`;
       _vmCacheSync();_vmRenderVideoList();
@@ -3617,10 +3755,11 @@ async function _vmLoad(searchTerm,preserveSearch2){
     let q=sb.from(_YT_TABLE).select('id,title,group_ko,thumb,content_flag,flag_source,members,with_members,with_groups,cover_of_members,cover_of_groups');
     q=q.eq('content_flag',flag);
     if(term)q=q.or(`title.ilike.${_pgFilterVal('%'+term+'%')},group_ko.ilike.${_pgFilterVal('%'+term+'%')}`);
-    const{data,error}=await _sbFetchAll(()=>q.order('id'));
+    const _sortFlag=arr=>arr.slice().sort((a,b)=>(a.group_ko||'').localeCompare(b.group_ko||'','ko')||(a.title||'').localeCompare(b.title||'','ko'));
+    const{data,error}=await _sbFetchAll(()=>q.order('id'),1000,_vmProgressive(myGen,_sortFlag,flag==='hidden'?'숨김':flag));
     if(myGen!==_vmSearchGen)return;
     if(error){statusEl.textContent='조회 실패: '+error.message;return;}
-    const all=(data||[]).sort((a,b)=>(a.group_ko||'').localeCompare(b.group_ko||'','ko')||(a.title||'').localeCompare(b.title||'','ko'));
+    const all=_sortFlag(data||[]);
     _vmRows=all;
     statusEl.textContent=term?`검색 결과 ${all.length}개`:`총 ${all.length}개`;
     _vmCacheSync();_vmRenderVideoList();
