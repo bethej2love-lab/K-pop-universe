@@ -17,6 +17,12 @@
   permissions:
     contents: write
 
+  # 데이터 커밋을 연달아 push하면 이 워크플로우가 여러 개 동시에 돌면서 서로의 push를 밀어낸다.
+  # 한 번에 하나만 돌리고, 밀린 건 어차피 최신 데이터로 다시 빌드하면 되니 취소한다(2026-09-02).
+  concurrency:
+    group: rebuild-seo-pages
+    cancel-in-progress: true
+
   jobs:
     rebuild:
       runs-on: ubuntu-latest
@@ -25,20 +31,32 @@
 
         - uses: actions/setup-node@v4
           with:
-            node-version: 20
+            node-version: 22
 
-        - name: Build SEO pages
-          run: node build_group_pages.js
-
-        - name: Commit and push if changed
+        - name: Build and push (경합 시 최신 main 위에서 재빌드)
           run: |
             git config user.name "github-actions[bot]"
             git config user.email "github-actions[bot]@users.noreply.github.com"
-            git add g/ en/g/ member/ en/member/ sitemap.xml 2>/dev/null || git add g/ en/g/ sitemap.xml
-            if git diff --cached --quiet; then
-              echo "변경된 정적 페이지 없음"
-            else
+            # 예전엔 "빌드 → commit → pull --rebase → push" 순서였는데, 그 사이 다른 커밋이 올라오면
+            # rebase가 같은 산출물 파일을 두고 충돌하거나 push가 거부돼 exit 128로 죽었다(2026-09-02,
+            # 데이터 커밋 4개를 연달아 push한 날 전부 실패). 생성물은 소스에서 언제든 다시 만들 수 있으니
+            # 재시도 때마다 최신 main으로 리셋하고 처음부터 빌드한다 — 충돌 자체가 생기지 않는다.
+            for i in 1 2 3; do
+              git fetch origin main
+              git reset --hard origin/main
+              node build_group_pages.js || exit 1
+              git add g/ en/g/ member/ en/member/ sitemap.xml 2>/dev/null || git add g/ en/g/ sitemap.xml
+              if git diff --cached --quiet; then
+                echo "변경된 정적 페이지 없음"
+                exit 0
+              fi
               git commit -m "chore: rebuild static SEO pages (auto)"
-              git pull --rebase origin main
-              git push
-            fi
+              if git push; then
+                echo "push 성공 (시도 $i)"
+                exit 0
+              fi
+              echo "push 경합 — 최신 main 위에서 재시도 ($i/3)"
+              sleep $((i * 5))
+            done
+            echo "3회 재시도 후에도 push 실패"
+            exit 1
