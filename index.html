@@ -16882,20 +16882,24 @@ function _buildFeedRandomConnection(list){
   }),connThumb);
 }
 
-// 영상 발행 시각 상대표기(피드 공용) — 오늘 발행분은 "N시간 전"(1시간 미만은 "방금"), 그 외엔 어제·N일 전.
-// (2026-09-01 사용자 요청 — New from Favorites·Trend에서 오늘 영상을 "오늘" 대신 "N시간 전"으로)
-// ⚠️ published_at '전체' timestamp(시각 포함)를 넘겨야 함 — 날짜만 자르면 오늘=자정 기준이라 시간 계산 불가.
+// 영상 발행 시각 상대표기(피드 공용) — New from Favorites·Trend 양쪽이 쓴다.
+//   1시간 미만 "방금" · 23시간까지 "N시간 전" · 하루 지나면 "어제" · 그 밖은 "N일 전"
+// (2026-09-01 오늘 발행분만 시간 표기 → 2026-09-02 사용자 요청으로 경과 시간 기준으로 정리)
+// ⚠️ **달력 날짜가 아니라 실제 경과 시간**으로 판정한다. 예전엔 자정 기준 날짜 차이로 갈라서,
+//    밤 11시에 올라온 영상이 자정을 넘기는 순간 "2시간 전"에서 "어제"로 건너뛰었다 — 실제로는
+//    두 시간밖에 안 지났는데 하루가 지난 것처럼 보였다.
+// ⚠️ published_at '전체' timestamp(시각 포함)를 넘겨야 함 — 날짜만 자르면 그 날 00:00으로 읽혀
+//    최대 하루만큼 과장된다(그래서 호출부가 paFull을 우선 넘긴다).
 function _fmtVidAgo(iso){
   if(!iso)return'';
   const now=Date.now(), then=new Date(iso).getTime();
-  const dayNum=Math.floor((now-new Date(String(iso).slice(0,10)+'T00:00:00').getTime())/86400000);
-  if(dayNum<=0){
-    const h=Math.floor((now-then)/3600000);
-    if(h<1)return currentLang==='ko'?'방금':'just now';
-    return currentLang==='ko'?`${h}시간 전`:`${h}h ago`;
-  }
-  if(dayNum===1)return currentLang==='ko'?'어제':'yesterday';
-  return currentLang==='ko'?`${dayNum}일 전`:`${dayNum}d ago`;
+  if(!isFinite(then))return'';
+  const h=Math.floor((now-then)/3600000);
+  if(h<1)return currentLang==='ko'?'방금':'just now';
+  if(h<24)return currentLang==='ko'?`${h}시간 전`:`${h}h ago`;
+  if(h<48)return currentLang==='ko'?'어제':'yesterday';
+  const d=Math.floor(h/24);
+  return currentLang==='ko'?`${d}일 전`:`${d}d ago`;
 }
 // 랜덤 영상 — 그룹 영상 + 멤버 영상을 한 풀에 섞어서 뽑는다 (2026-08-19 독립 함수로 분리)
 function _buildFeedRandomVideo(list){
