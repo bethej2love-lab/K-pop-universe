@@ -2326,8 +2326,10 @@
   #gc-track-videos-overlay{position:fixed;inset:0;z-index:110;display:none;align-items:flex-end;justify-content:center;}
   #gc-track-videos-overlay.open{display:flex;}
   #gc-track-videos-bg{position:absolute;inset:0;background:rgba(0,0,0,0.55);}
-  #gc-track-videos-sheet{position:relative;width:100%;max-height:78vh;display:flex;flex-direction:column;background:rgba(14,18,38,0.98);backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);border-radius:20px 20px 0 0;padding:22px 22px calc(16px + env(safe-area-inset-bottom,0px));box-sizing:border-box;z-index:1;}
-  @media(min-width:769px){#gc-track-videos-sheet{max-width:340px;border-radius:18px;margin-bottom:100px;}}
+  /* 고정 높이 — 내용 로드에 따라 창이 커지는 "점프"를 없앤다(2026-09-02 제보 "채워진 정도와 무관하게 크기 고정").
+     열리는 순간부터 78vh, 리스트가 내부 스크롤로 채워진다(#...-list flex:1). 큰 콘텐츠 창의 표준 패턴. */
+  #gc-track-videos-sheet{position:relative;width:100%;height:78vh;display:flex;flex-direction:column;background:rgba(14,18,38,0.98);backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);border-radius:20px 20px 0 0;padding:22px 22px calc(16px + env(safe-area-inset-bottom,0px));box-sizing:border-box;z-index:1;}
+  @media(min-width:769px){#gc-track-videos-sheet{max-width:340px;height:min(78vh,600px);border-radius:18px;margin-bottom:100px;}}
   #gc-track-videos-close{position:absolute;top:10px;right:12px;background:none;border:none;color:rgba(190,205,240,0.66);font-size:20px;cursor:pointer;padding:4px;line-height:1;z-index:2;}
   /* 곡 상세 헤더 — 앨범커버 + (제목/아티스트·앨범·연도). 커버·메타는 로드 후 채워짐(2026-09-02) */
   #gc-track-videos-header{display:flex;gap:11px;align-items:center;flex-shrink:0;}
@@ -2342,7 +2344,7 @@
   .tvf-tab{font-size:12px;font-weight:600;color:rgba(190,205,240,0.72);background:rgba(255,255,255,0.06);border:none;border-radius:14px;padding:5px 14px;cursor:pointer;transition:background .13s,color .13s;}
   .tvf-tab.active{background:rgba(120,150,255,0.92);color:#fff;}
   .tvf-cover-chip{display:inline-block;margin-right:6px;font-size:10px;font-weight:700;color:#c7d2ff;background:rgba(120,150,255,0.2);border-radius:6px;padding:1px 5px;vertical-align:middle;}
-  #gc-track-videos-list{margin-top:14px;overflow-y:auto;display:flex;flex-direction:column;gap:4px;min-height:0;}
+  #gc-track-videos-list{margin-top:14px;overflow-y:auto;display:flex;flex-direction:column;gap:4px;min-height:0;flex:1;}
   .tvf-item{display:flex;align-items:center;gap:10px;padding:6px;border-radius:10px;cursor:pointer;transition:background .13s;}
   .tvf-item:hover{background:rgba(255,255,255,0.06);}
   .tvf-thumb{width:88px;flex-shrink:0;aspect-ratio:16/9;object-fit:cover;border-radius:7px;background:rgba(255,255,255,0.06);}
