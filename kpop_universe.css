@@ -30,7 +30,10 @@
     font-size:clamp(28px,9vw,52px);font-weight:900;letter-spacing:-0.022em;line-height:1.0;
     color:#e9eeff;text-shadow:0 3px 34px rgba(120,150,255,0.28);
   }
-  #loading .ld-ac{ color:#54e0c6;text-shadow:0 0 24px rgba(84,224,198,0.35); }
+  /* 액센트는 앱 본체와 같은 페리윙클 블루로 통일(2026-09-02). 예전엔 로딩만 민트(#54e0c6)라 첫 화면과
+     본편이 다른 브랜드처럼 보였다 — 민트는 로딩 밖에선 .trace-dot(실시간 흔적) 말고 안 쓰인다.
+     이 값은 .uc-btn-primary의 rgba(126,156,255) 계열이고, 바로 위 .ld-l2 글로우와도 같은 색이다. */
+  #loading .ld-ac{ color:#7e9cff;text-shadow:0 0 24px rgba(126,156,255,0.38); }
   @keyframes ld-in{from{opacity:0;transform:translate(-50%,-44%);}to{opacity:1;transform:translate(-50%,-50%);}}
   @keyframes loading-shimmer{0%{background-position:160% 0;}100%{background-position:-60% 0;}}
   #loading.loading-error{
@@ -41,25 +44,6 @@
     width:min(280px,80vw);text-align:center;line-height:1.55;font-size:13.5px;
   }
   #loading.loading-error .uc-btn{width:100%;flex:none;}
-  #loading-veil{
-    position:fixed;inset:0;z-index:96;pointer-events:none;
-    backdrop-filter:blur(34px) saturate(0.85);-webkit-backdrop-filter:blur(34px) saturate(0.85);
-    background:rgba(6,9,20,0.28);
-    -webkit-mask-image:radial-gradient(circle at 50% 50%,transparent 0%,#000 0%);
-    mask-image:radial-gradient(circle at 50% 50%,transparent 0%,#000 0%);
-    /* 이 레이어는 매 프레임 mask-image가 JS로 다시 계산되는데(_revealUniverse), backdrop-filter까지
-       같이 걸려있으면 프레임마다 블러+마스크를 전부 다시 그려야 해서 저사양 모바일에서 특히 끊김
-       (2026-08-12, 사용자 제보). will-change로 미리 별도 레이어로 승격해두면 최소한 이 레이어 갱신이
-       WebGL 캔버스 등 나머지 화면까지 다시 그리게 만드는 건 막아준다. */
-    will-change:mask-image,backdrop-filter;
-  }
-  #loading-ring{position:fixed;inset:0;z-index:97;pointer-events:none;mix-blend-mode:screen;will-change:background;}
-  /* 모바일은 GPU가 약해 backdrop-filter의 블러 반경이 성능에 직접적으로 큰 영향을 줌 — 값을 낮출수록
-     비용이 확 줄어서(2026-08-12), 데스크톱보다 더 얇게 블러한다. 시각적으로는 살짝 덜 뿌옇게 보일 뿐
-     연출 자체(마스크가 퍼지며 우주가 드러나는 것)는 동일하게 유지됨. */
-  @media(max-width:768px){
-    #loading-veil{backdrop-filter:blur(16px) saturate(0.85);-webkit-backdrop-filter:blur(16px) saturate(0.85);}
-  }
   /* ── Tab bar ────────────────────────────────────── */
   #tabbar{
     position:fixed;bottom:0;left:0;right:0;
