@@ -1922,6 +1922,10 @@
   }
   .msheet-tab .msheet-tab-n{opacity:.55;margin-left:5px;font-weight:500;}
   #msheet-body{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:20px;}
+  /* ⚠️ 탭 필터는 el.hidden으로 감추는데, HTML [hidden]은 UA 스타일시트의 display:none이라
+     저자 스타일 `.sr-item{display:flex}`에 그냥 진다 — 속성은 붙는데 화면엔 그대로 보였다
+     (테스트가 el.hidden만 확인해서 통과시켰고, 스크린샷을 보고서야 발견). 명시적으로 이긴다. */
+  #msheet-body .sr-item[hidden],#msheet-body .sr-sec-label[hidden]{display:none!important;}
   /* 풀스크린에선 항목을 키운다 — 180px 상자에 욱여넣던 시절의 12px/5px는 손가락에 너무 작다. */
   #msheet-body .sr-item{padding:11px 16px;font-size:14px;}
   #msheet-body .sr-item-name{font-size:14px;}

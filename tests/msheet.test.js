@@ -135,15 +135,50 @@ async function main() {
     if (Array.isArray(tabs) && tabs.includes('artist')) {
       await ev(cdp, `[...document.querySelectorAll('.msheet-tab')].find(b=>b.dataset.k==='artist').click()`);
       await sleep(200);
+      // ⚠️ el.hidden(속성)이 아니라 **실제로 그려지는지**를 본다. HTML [hidden]은 UA 스타일의
+      // display:none이라 저자 스타일(.sr-item{display:flex})에 지므로, 속성만 확인하면 화면엔
+      // 그대로 보이는데 테스트는 통과한다(2026-09-02에 실제로 그렇게 통과시켰고 스크린샷으로 발견).
       const vis = await ev(cdp, `(function(){var o={};document.querySelectorAll('#msheet-body .sr-item[data-type]').forEach(function(el){
-        if(el.hidden)return;var t=el.dataset.type;o[t]=(o[t]||0)+1;});return o;})()`);
+        if(el.offsetParent===null||getComputedStyle(el).display==='none')return;
+        var t=el.dataset.type;o[t]=(o[t]||0)+1;});return o;})()`);
       const keys = Object.keys(vis || {});
       const onlyArtist = keys.length && keys.every(k => k === 'group' || k === 'member');
       if (!onlyArtist) fail(`[3] 아티스트 탭인데 다른 타입이 보임: ${JSON.stringify(vis)}`);
       else ok(`[3] 아티스트 탭 필터 동작 (보이는 것: ${JSON.stringify(vis)})`);
     }
 
+    // [7] 그룹→멤버 확장 + 공백 토큰(2026-09-02)
+    // "뉴진스"를 치면 그룹 한 줄만 나오고 멤버는 안 나왔다. 공백 쿼리는 ko.includes("뉴진스 하니")가
+    // 거짓이라 그룹 매칭 자체가 실패해 확장도 안 돌았다(영상만 나옴).
+    const probe = async (q) => {
+      await ev(cdp, `(function(){var i=document.getElementById('msheet-input');i.value=${JSON.stringify(q)};i.dispatchEvent(new Event('input',{bubbles:true}));})()`);
+      await sleep(700);
+      return await ev(cdp, `(function(){var o=[];document.querySelectorAll('#msheet-body .sr-item[data-type]').forEach(function(el){
+        if(getComputedStyle(el).display==='none')return;
+        var n=el.querySelector('.sr-item-name');o.push({t:el.dataset.type,n:(n?n.textContent.trim():'')});});return o;})()`);
+    };
+    const r1 = await probe('뉴진스');
+    const mem1 = (r1 || []).filter(x => x.t === 'member').map(x => x.n);
+    if (mem1.length < 3) fail(`[7] 그룹명 검색에 멤버가 안 딸려옴 (멤버 ${mem1.length}명: ${mem1.join(',')})`);
+    else ok(`[7] "뉴진스" → 멤버 ${mem1.length}명 확장 (${mem1.slice(0, 5).join(' · ')})`);
+
+    const r2 = await probe('뉴진스 하니');
+    const mem2 = (r2 || []).filter(x => x.t === 'member').map(x => x.n);
+    if (mem2.length !== 1 || !/하니/.test(mem2[0] || '')) fail(`[7] "뉴진스 하니"가 한 명으로 안 좁혀짐: ${JSON.stringify(mem2)}`);
+    else ok(`[7] "뉴진스 하니" → ${mem2[0]} 한 명으로 좁혀짐`);
+
+    // 짧은 쿼리까지 확장하면 결과가 폭발한다 — 확장은 2자 이상 + 정확·접두 매칭에서만 돈다.
+    // ⚠️ "그룹이 결과에 뜨는 것" 자체는 정상이다(스텔라 등 이름이 직접 걸린 것). 확인할 건
+    //    **그 그룹의 멤버가 통째로 딸려왔는지**뿐이라, 확장된 항목에만 붙는 data-expanded로 센다.
+    await ev(cdp, `(function(){var i=document.getElementById('msheet-input');i.value='스';i.dispatchEvent(new Event('input',{bubbles:true}));})()`);
+    await sleep(700);
+    const exp3 = await ev(cdp, `document.querySelectorAll('#msheet-body .sr-item[data-expanded]').length`);
+    if (exp3 > 0) fail(`[7] 1글자 쿼리인데 그룹 멤버가 ${exp3}명 딸려옴(결과 폭발)`);
+    else ok('[7] 1글자 쿼리는 그룹 확장 안 함(결과 폭발 방지)');
+
     // [5] 닫기
+    await ev(cdp, `(function(){var i=document.getElementById('msheet-input');i.value='';i.dispatchEvent(new Event('input',{bubbles:true}));})()`);
+    await sleep(200);
     await ev(cdp, `document.getElementById('msheet-back').click()`);
     await sleep(250);
     const closed = await ev(cdp, `(function(){var e=document.getElementById('msheet');
