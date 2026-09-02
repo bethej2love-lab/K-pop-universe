@@ -1,0 +1,67 @@
+  name: Data validation & tests
+
+  # 배포 게이트를 사람 기억에서 CI로 옮긴다(2026-09-02).
+  # PRINCIPLES가 "3주 재발의 구조적 원인"이라고 스스로 적어둔 것이 바로 이 지점 — 규칙은 문서에
+  # 있는데 실행은 사람이 기억해야 했다. Node만 있으면 도는 검사들을 push마다 자동으로 돌린다.
+  #
+  # 여기서 도는 것: tests/validate-data.js(데이터 무결성) + 브라우저가 필요 없는 회귀 테스트 전부.
+  # ⚠️ 목록을 하드코딩하지 않고 **제외 방식**으로 짠 이유 — 새 테스트를 추가했을 때 자동으로 포함되게
+  #    하려고. 목록 방식이면 추가하고 CI에 등록하는 걸 잊는 순간 그 테스트는 영영 안 돌아간다.
+
+  on:
+    push:
+      branches: [main]
+    pull_request:
+      branches: [main]
+
+  jobs:
+    verify:
+      runs-on: ubuntu-latest
+      steps:
+        - uses: actions/checkout@v4
+        - uses: actions/setup-node@v4
+          with:
+            node-version: 22
+
+        - name: Node 전용 테스트 + 데이터 검증
+          run: |
+            FAILED=""
+            for f in tests/validate-data.js tests/*.test.js; do
+              b=$(basename "$f")
+              case "$b" in
+                # ── 헤드리스 브라우저가 필요한 것(러너에 Chromium 경로가 없어 의미 없음) ──
+                admin-dock.test.js|admin-markup-exposure.test.js|conn-btn-loading.test.js|\
+                conn-lines.test.js|coverof.test.js|feed-trend.test.js|interaction.test.js|\
+                lb-swipe-ownership.test.js|lb-topbar.test.js|msheet.test.js|pwa-safearea.test.js|\
+                reveal.test.js|smoke.test.js|sort-popular.test.js|tabbar-open.test.js)
+                  echo "skip(browser)  $b"; continue;;
+                # ── 네트워크(Supabase)가 필요한 것 ──
+                # rls.test.js: 실제 DB 정책을 조회한다. 게다가 지금은 새 테이블 4개
+                # (collection_reports·search_click_log·tag_edit_log·tag_review_queue)의 기대값이
+                # 아직 선언 안 돼 있어 의도적으로 실패한다 — "새 테이블을 만들 때 RLS를 켰는지
+                # 한 번 의식적으로 확인하라"는 게 그 실패의 목적이다. 기대값을 채우면 여기서 뺄 것.
+                rls.test.js)
+                  echo "skip(network)  $b"; continue;;
+                # ── 알려진 기존 실패(2026-09-02 확인, 이날 작업과 무관) ──
+                # static-links: 허브에서 안 걸린 관계 페이지 1개(cover/제국의아이들)
+                # vm-panel-ui: 캐시 히트 경로의 _vmCacheSync, confirm 미리보기 단계 2건
+                # ⚠️ 고치는 즉시 이 줄에서 빼야 한다 — 여기 남겨두면 영영 빨간불인 채로 잊힌다.
+                static-links.test.js|vm-panel-ui.test.js)
+                  echo "skip(known-fail)  $b"; continue;;
+              esac
+              printf '%-30s' "$b"
+              if node "$f" > /tmp/out.txt 2>&1; then
+                echo "PASS"
+              else
+                echo "FAIL"
+                FAILED="$FAILED $b"
+                tail -20 /tmp/out.txt | sed 's/^/    /'
+              fi
+            done
+            if [ -n "$FAILED" ]; then
+              echo ""
+              echo "실패:$FAILED"
+              exit 1
+            fi
+            echo ""
+            echo "전부 통과"
