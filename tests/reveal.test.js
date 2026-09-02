@@ -88,8 +88,10 @@ function sourceChecks() {
   if (!rel) fail('[4] 후속 타이밍이 REVEAL 상수 기준 상대값이 아님(리빌 길이를 바꾸면 어긋난다)');
   else ok('[4] 후속 타이밍이 REVEAL 기준 상대값');
 
-  if (!/if\(_reduceMotion\)\{ _revealSettle\(\); return; \}/.test(html)) fail('[reduce] _revealUniverse에 _reduceMotion 가드 없음');
-  else ok('[reduce] _reduceMotion 가드 있음');
+  // ⚠️ _reduceMotion 가드는 아래 브라우저 검증([reduce])에서 **실제로 동작하는지**로 본다.
+  //    예전엔 여기서 소스 문자열을 정규식으로 찾았는데, 그 줄에 코드를 한 줄 더하기만 해도 깨졌다
+  //    (2026-09-02 _endBooting 추가 때 실제로 깨짐). 같은 방식이 오늘 아침 매처에서도 실제 구멍을
+  //    통과시킨 전례가 있다 — 소스 문자열 검사는 "있는지"만 보고 "되는지"를 못 본다.
 
   if (/revealdbg/.test(html)) fail('임시 진단 코드(?revealdbg)가 남아있음');
   else ok('임시 진단 코드 제거됨');
@@ -180,6 +182,39 @@ async function main() {
     const veil = await ev(cdp, `!!document.getElementById('loading-veil')||!!document.getElementById('loading-ring')`);
     if (veil) fail('[3] 런타임에 veil/ring이 존재함');
     else ok('[3] 런타임에도 veil/ring 없음');
+
+    // 부팅 중 UI 크롬 숨김(2026-09-02) — 첫 화면엔 로딩 문구만 보여야 한다.
+    // veil을 없애면서 탭바(z40)·줌(z50)·상단바가 로딩 문구와 함께 노출된 회귀를 막는다.
+    const bootLeft = await ev(cdp, `document.documentElement.classList.contains('booting')`);
+    if (bootLeft) fail('[boot] 리빌이 끝났는데 booting 클래스가 남음 — 크롬이 영영 안 보인다');
+    else ok('[boot] 리빌 후 booting 해제됨');
+
+    // [reduce] 동작 줄이기 — 실제로 에뮬레이션해서 클립 없이 끝나는지 본다
+    {
+      const { webSocketDebuggerUrl: u2 } = await (await fetch(`http://127.0.0.1:${CDP_PORT}/json/new?about:blank`, { method: 'PUT' })).json();
+      const c2 = await connectCdp(u2);
+      await c2.send('Page.enable'); await c2.send('Runtime.enable');
+      await c2.send('Emulation.setEmulatedMedia', { features: [{ name: 'prefers-reduced-motion', value: 'reduce' }] });
+      await c2.send('Page.addScriptToEvaluateOnNewDocument', {
+        source: `window.__clipEvents=[];['transitionrun','transitionend'].forEach(function(t){
+          document.addEventListener(t,function(e){
+            if(e.propertyName&&String(e.propertyName).indexOf('clip')>=0)window.__clipEvents.push(t);},true);});`
+      });
+      await c2.send('Page.navigate', { url: `http://127.0.0.1:${PORT}/index.html` });
+      await pollUntil(c2, `typeof bubbleMeshes!=='undefined'&&bubbleMeshes.length>0`, 20000);
+      await sleep(2500);
+      const r = await ev(c2, `(function(){
+        return {clip:(window.__clipEvents||[]).length,
+                booting:document.documentElement.classList.contains('booting'),
+                tiny:(typeof bubbleMeshes==='undefined')?-1:bubbleMeshes.filter(function(b){return b.mesh.scale.x<0.01;}).length,
+                loading:(function(){var l=document.getElementById('loading');return l?getComputedStyle(l).display:'(없음)';})()};})()`);
+      if (!r || r.tiny === -1) fail('[reduce] 우주가 안 그려짐');
+      else if (r.clip > 0) fail(`[reduce] 동작 줄이기인데 clip 트랜지션이 돔(${r.clip}건)`);
+      else if (r.tiny > 0) fail(`[reduce] 행성 ${r.tiny}개가 축소된 채 남음 — 클립을 건너뛰면 즉시 제 크기여야 한다`);
+      else if (r.booting) fail('[reduce] booting이 안 풀림 — 크롬이 영영 안 보인다');
+      else ok('[reduce] 동작 줄이기: 클립 생략 + 행성 정착 + 크롬 노출');
+      c2.close();
+    }
 
     cdp.close();
   } finally {

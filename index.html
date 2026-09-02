@@ -1,5 +1,10 @@
 <!DOCTYPE html>
-<html lang="ko">
+<!-- booting: 첫 화면엔 로딩 문구만 보여야 한다. 상단 헤더·하단 탭바·줌 컨트롤은 우주가 열리는
+     순간 같이 나타난다(2026-09-02). ⚠️ html 태그에 **직접** 박아야 한다 — JS로 붙이면 그 전에
+     한 프레임 그려져서 크롬이 깜빡 보인다. 해제는 _revealUniverse가 클립 시작과 동시에 한다.
+     (예전엔 veil(z-index 96)이 화면을 통째로 덮어 탭바 40·줌 50을 가렸는데, 2026-09-02에 리빌을
+      clip-path로 바꾸며 veil을 없애자 캔버스만 클립돼 나머지 UI가 처음부터 노출됐다.) -->
+<html lang="ko" class="booting">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
@@ -1315,6 +1320,7 @@ if(typeof THREE==='undefined'||!THREE.OrbitControls||!THREE.CSS2DRenderer){
         is_mobile:(window.innerWidth<=768?1:0),
       });
     }catch(_){}
+    try{document.documentElement.classList.remove('booting');}catch(_){} // 에러 화면에선 크롬이 보여야 한다
     var el=document.getElementById('loading');
     if(el){
       el.classList.add('loading-error');
@@ -2941,7 +2947,7 @@ async function buildUniverse(){
   // 3회차부터는 이 문구를 이미 여러 번 본 사용자라 짧게 지나간다(2026-09-02) — 첫 인상은 지키되
   // 습관적으로 여는 사용자가 매번 같은 시간을 기다리지 않게. _visitCount는 이 함수가 도는 시점엔
   // 이미 초기화돼 있다(전역 스크립트가 buildUniverse() 호출보다 먼저 다 돈다).
-  const _minShow=(typeof _visitCount!=='undefined'&&_visitCount>=3)?400:750;
+  const _minShow=(typeof _visitCount!=='undefined'&&_visitCount>=3)?700:1300;
   if(_elapsed<_minShow)await new Promise(res=>setTimeout(res,_minShow-_elapsed));
   // EN 유저가 접속마다 행성 라벨을 한국어로 보던 버그 수정(2026-08-21, Fable EN 모드 감사+실측 확인) —
   // applyLang()의 groupLabels 갱신 루프는 라벨이 아직 생성 전인 데이터로드 직후(위 1681번째 줄)에 딱 한 번만
@@ -2966,10 +2972,15 @@ async function buildUniverse(){
 // 인트로 리빌 타임라인 — 여기 한 곳에서만 시간을 바꾼다(2026-09-02 재작성).
 // 예전엔 텍스트 400 / 아이리스 1050 / veil 페이드 800 / 캔버스 스케일 1150이 각각 따로 정해져 서로를
 // 갉아먹었다. 자세한 건 아래 _revealUniverse 주석.
-const REVEAL={clip:800,text:250,label:500,hint:1800};
+// 2026-09-02 2차 조정: 첫 값(clip 800·text 250)은 "너무 빨라 모션이 보이지도 않는다"는 제보로 늘렸다.
+// 리빌은 눈으로 따라갈 수 있어야 의미가 있다 — 짧게 만드는 게 목적이 아니다.
+const REVEAL={clip:1200,text:350,label:500,hint:1800};
+// 부팅 중 숨겨둔 UI 크롬(탭바·줌·헤더)을 우주와 **같이** 드러낸다. 리빌이 끝난 뒤가 아니라
+// 클립이 시작되는 순간 함께 나타나야 "열리면서 다 보인다"가 된다.
+function _endBooting(){try{document.documentElement.classList.remove('booting');}catch(e){}}
 function _revealUniverse(){
   const loadingEl=document.getElementById('loading');
-  if(!loadingEl)return;
+  if(!loadingEl){_endBooting();return;}
 
   // 리빌은 **한 가지 메커니즘**으로만 한다: 캔버스에 clip-path 원을 씌워 중앙에서 바깥으로 연다.
   // 예전엔 세 연출이 겹쳐 돌면서 서로를 지웠다(2026-09-02 재작성, 원인 실측):
@@ -3007,8 +3018,9 @@ function _revealUniverse(){
   }
 
   // 동작 줄이기: 클립·블룸을 건너뛰고 텍스트만 사라지게 한다(예전 리빌엔 이 가드가 아예 없었다).
-  if(_reduceMotion){ _revealSettle(); return; }
+  if(_reduceMotion){ _revealSettle(); _endBooting(); return; }
 
+  _endBooting(); // 크롬 페이드인을 클립과 동시에 시작
   if(_rc){
     _rc.style.transition='none';
     _rc.style.clipPath='circle(0% at 50% 50%)';
@@ -14819,6 +14831,7 @@ async function _showTraceCount(kind,key,rpcFn){
 
 buildUniverse().catch(err=>{
   console.error(err);
+  try{document.documentElement.classList.remove('booting');}catch(_){} // 에러 화면에선 크롬이 보여야 한다
   const loadingEl=document.getElementById('loading');
   loadingEl.classList.add('loading-error');
   loadingEl.style.opacity='1';

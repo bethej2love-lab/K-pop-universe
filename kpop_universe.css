@@ -15,6 +15,35 @@
   canvas{display:block;}
   /* 첫 인상 = 에디토리얼 볼드(Pudding 레퍼런스, 2026-08-31). 묵직한 900 헤드라인 + 리드인 한 줄,
      'UNIVERSE'만 민트 액센트. 연출은 절제 — 진입 시 fade-up 한 번만(연속 애니 없음). */
+  /* ── 부팅 중 UI 크롬 숨김(2026-09-02) ─────────────────────────
+     첫 화면엔 로딩 문구만 보여야 한다. 예전엔 veil(z-index 96)이 화면을 통째로 덮어 탭바(40)·
+     줌 컨트롤(50)·상단 헤더를 자연히 가렸는데, 리빌을 clip-path로 바꾸며 veil을 없애자 캔버스만
+     클립돼 나머지 UI가 로딩 문구와 함께 노출됐다(사용자 제보).
+     visibility까지 끄는 이유: opacity만 0으로 두면 레이아웃·히트영역은 남아 로딩 중 잘못 눌린다.
+     transition에 visibility를 같이 실어야 페이드인이 끝난 뒤가 아니라 시작과 함께 보인다. */
+  html.booting #tabbar,
+  html.booting #zoom-ctrl,
+  html.booting #mob-top-bar,
+  html.booting #desktop-header{
+    opacity:0;visibility:hidden;pointer-events:none;
+  }
+  /* ⚠️ 기존 transition을 덮어쓰지 않도록 각각 이어 붙인다 — #tabbar는 숨김/복귀(transform+opacity),
+     #zoom-ctrl은 패널 열릴 때 좌우 이동(left)에 이미 트랜지션을 쓰고 있다. 통째로 재선언하면
+     그 애니메이션이 조용히 사라진다.
+     ⚠️ 딜레이 .5s가 핵심 — 크롬 페이드(.55s)가 클립(1.2s)보다 짧아서, 딜레이 없이 같이 시작하면
+     **크롬이 먼저 다 나타나고 우주가 뒤늦게 열린다**(실측 550ms 시점에 줌·상단바만 떠 있었다).
+     클립 중반부터 시작해 거의 같이 끝나야 "열리면서 같이 나타나는" 것으로 보인다. */
+  #mob-top-bar,#desktop-header{
+    transition:opacity .55s ease .5s,visibility 0s linear .5s;
+  }
+  #tabbar{
+    transition:transform .32s cubic-bezier(0.32,0.72,0,1),opacity .55s ease .5s,
+               visibility 0s linear .5s;
+  }
+  html.booting #tabbar{transition:none;}
+  #zoom-ctrl{
+    transition:left 0.32s cubic-bezier(0.4,0,0.2,1),opacity .55s ease .5s,visibility 0s linear .5s;
+  }
   #loading{
     position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);
     z-index:98;
