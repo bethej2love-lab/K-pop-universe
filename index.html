@@ -11059,12 +11059,25 @@ function flyHome(){
   if(!track||!thumb)return;
   let dragging=false,dragStartY=0,dragStartTop=0;
 
+  // 슬라이더 위치 ↔ 카메라 거리는 **로그(지수) 매핑**이다(2026-09-02, "줌 조절이 부드럽지 않다"는 제보).
+  // 예전엔 선형이었는데, 카메라 줌은 곱셈적으로 느껴지므로(2배 멀어지고 또 2배) 선형으로 매핑하면
+  // 가까운 구간이 슬라이더 극히 일부에 압축된다 — 실측(min 5·max 420): 거리 5~50(별과 이름이 보이는
+  // 근접 영역)이 선형에선 슬라이더의 **11%**, 로그에선 **53%**를 차지한다. 즉 89%를 "멀리서 보기"에
+  // 쓰느라 드래그해도 한참 변화가 없다가 맨 아래에서 확 튀었다.
+  // 로그로 두면 슬라이더를 같은 거리만큼 움직일 때 **체감 줌 변화량이 어디서나 비슷**해진다.
+  const _zRange=()=>{
+    const mn=Math.max(0.001,controls.minDistance||0.001);
+    const mx=Math.max(mn*1.001,controls.maxDistance||mn*2); // 0 나눗셈·log(1) 방지
+    return[mn,mx];
+  };
   function getFrac(){
+    const[mn,mx]=_zRange();
     const dist=camera.position.distanceTo(controls.target);
-    return Math.min(1,Math.max(0,(dist-controls.minDistance)/(controls.maxDistance-controls.minDistance)));
+    return Math.min(1,Math.max(0,Math.log(Math.max(mn,dist)/mn)/Math.log(mx/mn)));
   }
   function setFrac(frac){
-    const dist=controls.minDistance+frac*(controls.maxDistance-controls.minDistance);
+    const[mn,mx]=_zRange();
+    const dist=mn*Math.pow(mx/mn,Math.min(1,Math.max(0,frac)));
     const dir=camera.position.clone().sub(controls.target);
     if(dir.lengthSq()<0.0001)dir.set(0,0,1);
     camera.position.copy(controls.target).addScaledVector(dir.normalize(),dist);
