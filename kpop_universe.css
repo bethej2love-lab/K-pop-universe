@@ -2345,6 +2345,37 @@
   .tvf-tab.active{background:rgba(120,150,255,0.92);color:#fff;}
   .tvf-cover-chip{display:inline-block;margin-right:6px;font-size:10px;font-weight:700;color:#c7d2ff;background:rgba(120,150,255,0.2);border-radius:6px;padding:1px 5px;vertical-align:middle;}
   #gc-track-videos-list{margin-top:14px;overflow-y:auto;display:flex;flex-direction:column;gap:4px;min-height:0;flex:1;}
+  /* ── 조합 패널(2026-09-02) — 앵커 없는 대등 멤버 조합. 고정 높이(#3 패턴)+내부 스크롤. tvf-* 재사용 ── */
+  #combo-overlay{position:fixed;inset:0;z-index:112;display:none;align-items:flex-end;justify-content:center;}
+  #combo-overlay.open{display:flex;}
+  #combo-bg{position:absolute;inset:0;background:rgba(0,0,0,0.55);}
+  #combo-sheet{position:relative;width:100%;height:82vh;display:flex;flex-direction:column;background:rgba(14,18,38,0.98);backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);border-radius:20px 20px 0 0;padding:20px 20px calc(16px + env(safe-area-inset-bottom,0px));box-sizing:border-box;}
+  @media(min-width:769px){#combo-sheet{max-width:430px;height:min(82vh,640px);border-radius:18px;margin-bottom:70px;}}
+  #combo-close{position:absolute;top:10px;right:12px;background:none;border:none;color:rgba(190,205,240,0.66);font-size:20px;cursor:pointer;padding:4px;line-height:1;z-index:2;}
+  #combo-hd{display:flex;align-items:baseline;gap:8px;flex-shrink:0;padding-right:24px;}
+  #combo-title{font-size:15px;font-weight:800;color:#e9eeff;}
+  #combo-count{font-size:11px;color:rgba(150,175,235,0.6);}
+  #combo-sub{font-size:11.5px;color:rgba(160,180,220,0.66);margin-top:3px;flex-shrink:0;}
+  #combo-search{margin-top:12px;width:100%;background:rgba(255,255,255,0.06);border:0.5px solid rgba(140,170,240,0.18);border-radius:12px;padding:9px 13px;color:#c8d8f0;font-size:13.5px;outline:none;box-sizing:border-box;font-family:inherit;flex-shrink:0;}
+  #combo-search::placeholder{color:rgba(140,160,200,0.4);}
+  #combo-suggest{display:flex;flex-direction:column;max-height:150px;overflow-y:auto;flex-shrink:0;}
+  #combo-suggest:not(:empty){margin-top:6px;background:rgba(255,255,255,0.03);border-radius:10px;}
+  .combo-sug{display:flex;align-items:baseline;gap:8px;background:none;border:none;text-align:left;padding:8px 12px;cursor:pointer;color:#dbe4fa;font-size:13px;font-family:inherit;}
+  .combo-sug:hover{background:rgba(255,255,255,0.06);}
+  .combo-sug-g{font-size:11px;color:rgba(150,175,235,0.6);}
+  #combo-chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px;flex-shrink:0;}
+  #combo-chips:empty{margin-top:0;}
+  .combo-chip{display:inline-flex;align-items:center;gap:5px;background:rgba(120,150,255,0.16);border:0.5px solid rgba(120,150,255,0.3);border-radius:14px;padding:4px 6px 4px 11px;font-size:12.5px;color:#e4ecff;}
+  .combo-chip-g{font-size:10px;color:rgba(170,190,240,0.62);}
+  .combo-chip button{background:none;border:none;color:rgba(200,215,250,0.7);font-size:15px;line-height:1;cursor:pointer;padding:0 3px;}
+  #combo-actions{display:flex;gap:8px;align-items:center;margin-top:12px;flex-shrink:0;}
+  #combo-go{flex:1;background:rgba(120,150,255,0.92);color:#fff;border:none;border-radius:12px;padding:10px;font-size:13.5px;font-weight:700;cursor:pointer;font-family:inherit;}
+  #combo-go:disabled{background:rgba(255,255,255,0.08);color:rgba(200,215,250,0.4);cursor:default;}
+  #combo-share{background:rgba(255,255,255,0.08);color:#c8d8f0;border:none;border-radius:12px;padding:10px 14px;font-size:12.5px;font-weight:600;cursor:pointer;white-space:nowrap;font-family:inherit;}
+  #combo-results{margin-top:14px;overflow-y:auto;display:flex;flex-direction:column;gap:4px;min-height:0;flex:1;}
+  .combo-entry{display:flex;flex-direction:column;gap:2px;width:calc(100% - 26px);margin:8px 13px 4px;padding:11px 14px;background:linear-gradient(100deg,rgba(120,150,255,0.16),rgba(84,224,198,0.10));border:0.5px solid rgba(120,150,255,0.25);border-radius:13px;cursor:pointer;text-align:left;}
+  .combo-entry-t{font-size:13px;font-weight:700;color:#e9eeff;}
+  .combo-entry-s{font-size:11px;color:rgba(175,195,240,0.7);}
   .tvf-item{display:flex;align-items:center;gap:10px;padding:6px;border-radius:10px;cursor:pointer;transition:background .13s;}
   .tvf-item:hover{background:rgba(255,255,255,0.06);}
   .tvf-thumb{width:88px;flex-shrink:0;aspect-ratio:16/9;object-fit:cover;border-radius:7px;background:rgba(255,255,255,0.06);}

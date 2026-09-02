@@ -1200,6 +1200,22 @@
     <div id="gc-track-videos-list"></div>
   </div>
 </div>
+<div id="combo-overlay" data-modal>
+  <div id="combo-bg"></div>
+  <div id="combo-sheet">
+    <button id="combo-close" aria-label="닫기">×</button>
+    <div id="combo-hd"><div id="combo-title">멤버 조합 찾기</div><div id="combo-count"></div></div>
+    <div id="combo-sub">멤버를 골라 함께 나온 영상을 모아보고 공유하세요</div>
+    <input id="combo-search" type="text" placeholder="멤버 이름 검색해서 추가" autocomplete="off" inputmode="search">
+    <div id="combo-suggest"></div>
+    <div id="combo-chips"></div>
+    <div id="combo-actions">
+      <button id="combo-go" disabled>조합 영상 보기</button>
+      <button id="combo-share" class="share-btn" style="display:none">링크 복사</button>
+    </div>
+    <div id="combo-results"></div>
+  </div>
+</div>
 <div id="col-quick-toast">
   <span id="col-quick-toast-check">✓</span>
   <span id="col-quick-toast-name"></span><span data-i18n="colAddedSuffix">에 추가됨</span>
@@ -4260,6 +4276,7 @@ function doSearch(q){
     }
     _renderSearchHits(obSr?recentHits.slice(0,5):recentHits,res,mobSearch,true,!!obSr);
     if(trending.length)_appendTrendingSection(trending,res,mobSearch,!!obSr);
+    if(!obSr)_appendComboEntry(res); // "멤버 조합 찾기" 진입 배너(온보딩 제외)
     if(msOpen)_msSyncTabs();
     else if(obSr){res.classList.add('open');}
     else if(mobSearch){res.classList.add('open');document.getElementById('tabbar').classList.add('has-sr');}
@@ -8160,6 +8177,8 @@ function _openFromHash(){
   const params=new URLSearchParams(location.hash.slice(1));
   const colId=params.get('col');
   if(colId){_openCollectionFromHash(colId);return;}
+  const comboParam=params.get('combo');
+  if(comboParam){_comboFromHash(comboParam);return;} // 조합 패널 공유 링크(#combo=이름(그룹),…)
   const gko=params.get('g'),mko=params.get('m');
   if(!gko)return;
   // '솔로'는 GROUPS에 없는 placeholder(서로 무관한 솔로 아티스트들이 공유)라 원래 여기서 무조건
@@ -10101,6 +10120,147 @@ function _renderSongVideoTabs(){
 }
 document.getElementById('gc-track-videos-close')?.addEventListener('click',e=>{e.stopPropagation();document.getElementById('gc-track-videos-overlay').classList.remove('open');});
 document.getElementById('gc-track-videos-overlay')?.addEventListener('click',e=>{if(e.target===e.currentTarget)e.currentTarget.classList.remove('open');});
+
+// ══ 조합 패널(2026-09-02) — 앵커 없는 대등 멤버 조합 → 함께 나온 영상 + 공유 ═══════════════════════
+// 연결 카드(_connAnchor 엔진)는 "주인공+with" 구조라 대등 조합엔 안 맞고 결합도가 높아 취약 → 독립 모듈.
+// 저장 형식 직접 사용: 같은그룹 멤버는 members[]에 "이름"(+video.group_ko=그룹), 타그룹 게스트는
+// with_members[]에 "이름(그룹)". Phase1 = 선택 전원이 함께 나온 영상(교집합). 공유 해시 #combo=이름(그룹),…
+const _COMBO_MAX=10;
+let _comboSel=[],_comboReq=0;
+function _openComboPanel(){
+  const ov=document.getElementById('combo-overlay');if(!ov)return;
+  ov.classList.add('open');
+  const s=document.getElementById('combo-search');if(s)s.value='';
+  _comboRenderSuggest('');_comboRenderChips();_comboRenderResults(null);
+  setTimeout(()=>{try{if(!isMob()&&s)s.focus();}catch(e){}},60); // 모바일은 자동 키보드 안 띄움
+}
+function _closeComboPanel(){const ov=document.getElementById('combo-overlay');if(ov)ov.classList.remove('open');}
+function _comboAdd(name,group){
+  if(!name||!group)return;
+  if(_comboSel.some(m=>m.name===name&&m.group===group))return;
+  if(_comboSel.length>=_COMBO_MAX){_showShareToast(currentLang==='ko'?('최대 '+_COMBO_MAX+'명까지'):('Up to '+_COMBO_MAX));return;}
+  _comboSel.push({name:name,group:group});
+  const s=document.getElementById('combo-search');if(s){s.value='';s.focus();}
+  _comboRenderSuggest('');_comboRenderChips();
+}
+function _comboRemove(name,group){_comboSel=_comboSel.filter(m=>!(m.name===name&&m.group===group));_comboRenderChips();}
+function _comboRenderChips(){
+  const el=document.getElementById('combo-chips');if(!el)return;
+  el.innerHTML='';
+  _comboSel.forEach(m=>{
+    const chip=document.createElement('span');chip.className='combo-chip';
+    const nm=document.createElement('span');nm.textContent=m.name;
+    const gp=document.createElement('span');gp.className='combo-chip-g';gp.textContent=m.group;
+    const x=document.createElement('button');x.type='button';x.setAttribute('aria-label','제거');x.textContent='×';
+    x.addEventListener('click',()=>_comboRemove(m.name,m.group));
+    chip.appendChild(nm);chip.appendChild(gp);chip.appendChild(x);el.appendChild(chip);
+  });
+  const go=document.getElementById('combo-go'),sh=document.getElementById('combo-share'),ct=document.getElementById('combo-count');
+  const ok=_comboSel.length>=2;
+  if(go)go.disabled=!ok;
+  if(sh)sh.style.display=ok?'':'none';
+  if(ct)ct.textContent=_comboSel.length?(_comboSel.length+'/'+_COMBO_MAX):'';
+}
+function _comboRenderSuggest(q){
+  const el=document.getElementById('combo-suggest');if(!el)return;
+  el.innerHTML='';q=(q||'').trim().toLowerCase();
+  if(!q)return;
+  const chosen=new Set(_comboSel.map(m=>m.name+'|'+m.group));
+  let n=0;
+  for(const a of ARTISTS){
+    if(!a||!a.name||!a.group)continue;
+    const ko=a.name.ko||'',en=(a.name.en||'').toLowerCase();
+    if(!(ko.toLowerCase().includes(q)||(en&&en.includes(q))))continue;
+    if(chosen.has(ko+'|'+a.group.ko))continue;
+    const row=document.createElement('button');row.type='button';row.className='combo-sug';
+    const nm=document.createElement('span');nm.textContent=a.name.ko;
+    const gp=document.createElement('span');gp.className='combo-sug-g';gp.textContent=a.group.ko;
+    row.appendChild(nm);row.appendChild(gp);
+    row.addEventListener('click',()=>_comboAdd(a.name.ko,a.group.ko));
+    el.appendChild(row);
+    if(++n>=20)break;
+  }
+}
+async function _comboSearch(){
+  if(_comboSel.length<2||!sb)return;
+  const myReq=++_comboReq;
+  _comboRenderResults('loading');
+  const esc=s=>String(s).replace(/["\\]/g,'');
+  const pivot=_comboSel[0];
+  const COLS='id,title,thumb,is_short,group_ko,members,with_members,content_flag,published_at';
+  const _excl=q=>q.or('content_flag.is.null,content_flag.neq.무관').or('content_flag.is.null,content_flag.neq.보류').or('content_flag.is.null,content_flag.neq.hidden');
+  let data=null;
+  try{
+    const r=await _excl(sb.from(_YT_TABLE).select(COLS)
+      .or('and(members.cs.{"'+esc(pivot.name)+'"},group_ko.eq.'+_pgFilterVal(pivot.group)+'),with_members.cs.{"'+esc(pivot.name)+'('+esc(pivot.group)+')"}'))
+      .order('published_at',{ascending:false}).limit(400);
+    data=r.data;
+  }catch(e){}
+  if(myReq!==_comboReq)return;
+  // 선택 전원이 이 영상에 함께 나왔는가(교집합). 같은그룹=members[]+group_ko 일치, 타그룹=with_members[]에 "이름(그룹)".
+  const present=(v,m)=>((v.group_ko===m.group&&(v.members||[]).indexOf(m.name)>=0)||(v.with_members||[]).indexOf(m.name+'('+m.group+')')>=0);
+  const rows=_filterBannedVideos(data||[]).filter(v=>_comboSel.every(m=>present(v,m)));
+  if(myReq!==_comboReq)return;
+  _comboRenderResults(rows);
+}
+function _comboRenderResults(rows){
+  const el=document.getElementById('combo-results');if(!el)return;
+  el.innerHTML='';
+  const empty=t=>{const p=document.createElement('div');p.className='tvf-empty';p.textContent=t;el.appendChild(p);};
+  if(rows===null){empty(currentLang==='ko'?'멤버를 2명 이상 골라 조합 영상을 보세요':'Pick 2+ members to see their videos');return;}
+  if(rows==='loading'){empty(currentLang==='ko'?'불러오는 중…':'Loading…');return;}
+  if(!rows.length){empty(currentLang==='ko'?'이 조합이 함께 나온 영상이 없어요':'No video with all of them together');return;}
+  const _vidUrl=v=>_isShortV(v)?('https://www.youtube.com/shorts/'+v.id):('https://www.youtube.com/watch?v='+v.id);
+  const playlist=rows.map(v=>({t:v.title,u:_vidUrl(v),thumb:v.thumb,pa:(v.published_at||'').slice(0,10)}));
+  rows.forEach((v,i)=>{
+    const item=document.createElement('div');item.className='tvf-item';
+    const img=document.createElement('img');img.className='tvf-thumb';img.loading='lazy';
+    img.src=v.thumb||('https://i.ytimg.com/vi/'+v.id+'/mqdefault.jpg');img.alt='';
+    const t=document.createElement('div');t.className='tvf-title';t.textContent=v.title;
+    item.appendChild(img);item.appendChild(t);
+    item.addEventListener('click',()=>openLightbox(_vidUrl(v),_isShortV(v),playlist,i));
+    el.appendChild(item);
+  });
+}
+function _comboShareHash(){return '#combo='+_comboSel.map(m=>_hashEsc(m.name+'('+m.group+')')).join(',');}
+function _comboFromHash(param){
+  const items=String(param).split(',').map(s=>s.trim()).filter(Boolean);
+  const sel=[];
+  items.forEach(it=>{
+    const mm=it.match(/^(.+)\((.+)\)$/);if(!mm)return;
+    const name=mm[1],group=mm[2];
+    if(ARTISTS.some(a=>a.name&&a.group&&a.name.ko===name&&a.group.ko===group)&&!sel.some(x=>x.name===name&&x.group===group))sel.push({name:name,group:group});
+  });
+  if(!sel.length)return;
+  _comboSel=sel.slice(0,_COMBO_MAX);
+  _openComboPanel();_comboSearch();
+}
+function _appendComboEntry(res){
+  const b=document.createElement('button');b.type='button';b.className='combo-entry';
+  const t=document.createElement('span');t.className='combo-entry-t';t.textContent=currentLang==='ko'?'🔗 멤버 조합 찾기':'🔗 Find a member combo';
+  const s=document.createElement('span');s.className='combo-entry-s';s.textContent=currentLang==='ko'?'여러 멤버가 함께 나온 영상 모아보고 공유':'Videos where members appear together — share it';
+  b.appendChild(t);b.appendChild(s);
+  b.addEventListener('click',e=>{
+    e.stopPropagation();
+    try{
+      if(document.getElementById('tabbar')?.classList.contains('search-mode')&&typeof exitMobSearch==='function')exitMobSearch();
+      else{const si=document.getElementById('search-input');if(si)si.value='';if(res)res.style.display='none';}
+    }catch(e2){}
+    _openComboPanel();
+  });
+  res.appendChild(b);
+}
+document.getElementById('combo-close')?.addEventListener('click',e=>{e.stopPropagation();_closeComboPanel();});
+document.getElementById('combo-bg')?.addEventListener('click',_closeComboPanel);
+document.getElementById('combo-search')?.addEventListener('input',e=>_comboRenderSuggest(e.target.value));
+document.getElementById('combo-go')?.addEventListener('click',e=>{e.stopPropagation();_comboSearch();});
+document.getElementById('combo-share')?.addEventListener('click',async e=>{
+  e.stopPropagation();
+  const url=location.origin+location.pathname+_comboShareHash();
+  try{await navigator.clipboard.writeText(url);_showShareToast(currentLang==='ko'?'링크 복사됨':'Link copied');}
+  catch(err){_showShareToast(url);}
+});
+
 function _gcDiscogDetailGo(delta){
   const ni=_gcDiscogIdx+delta;
   if(ni<0||ni>=_gcDiscogList.length)return;
