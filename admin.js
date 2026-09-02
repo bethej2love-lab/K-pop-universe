@@ -1730,7 +1730,7 @@ async function _ytSweepFillLockedEmpty(){
     const rosterCache=new Map();
     const rosterOf=gko=>{
       if(rosterCache.has(gko))return rosterCache.get(gko);
-      const r=ARTISTS.filter(a=>_artistGroups(a).some(g=>g.ko===gko)).map(a=>({ko:a.name.ko,en:a.name.en,left:a.left,aliases:a.matchAliases}));
+      const r=_atmRosterFor(gko);
       rosterCache.set(gko,r);return r;
     };
     // 흔한 영단어와 겹치는 이름(온리원오프 Love 등)은 곡 제목의 그 단어에 오매칭될 수 있어, 단독으로만
@@ -1993,7 +1993,7 @@ async function _atmScopedMemberReverify(name){
   if(!rows?.length){_ytSetProg(`"${name}"이(가) 자동 태깅된 영상이 없어요`);return;}
   const updates=[];const wiped=[];
   rows.forEach(v=>{
-    const roster=ARTISTS.filter(a=>_artistGroups(a).some(g=>g.ko===v.group_ko)).map(a=>({ko:a.name.ko,en:a.name.en,left:a.left}));
+    const roster=_atmRosterFor(v.group_ko);
     if(!roster.length)return;
     const validSet=new Set(_atmResolveMembers(v.title,v.description,roster,v.group_ko,v.published_at));
     const curM=v.members||[];
@@ -2274,7 +2274,7 @@ async function _ytSweepMembersMistag(){
     // 직접 확인해서 판단(2026-08-19, 사용자 요청 — 자동으로 content_flag='무관' 처리는 위험하다고 판단).
     const wipedOut=[];
     rows.forEach(v=>{
-      const roster=ARTISTS.filter(a=>_artistGroups(a).some(g=>g.ko===v.group_ko)).map(a=>({ko:a.name.ko,en:a.name.en,left:a.left}));
+      const roster=_atmRosterFor(v.group_ko);
       if(!roster.length)return;
       const validSet=new Set(_atmResolveMembers(v.title,v.description,roster,v.group_ko,v.published_at));
       const curM=v.members||[];
@@ -4569,6 +4569,19 @@ function _atmNameTakenByGroupmate(nm,gko,isEn){
   return ARTISTS.some(o=>(isEn?(o.name.en&&_atmEnKey(o.name.en)===nm):o.name.ko===nm)
     &&_artistGroups(o).some(g=>g.ko===gko));
 }
+// 자체 채널 멤버 매칭용 로스터. 태깅/재검증 스윕이 전부 이걸 써야 기준이 갈리지 않는다 — 예전엔 다섯
+// 군데가 각자 손으로 만들면서 두 가지가 어긋나 있었다(2026-09-02에 한 곳으로 모음).
+//   ① left를 a.left(대표값)로만 넘겨서 **그룹별 탈퇴일 override를 통째로 무시**했다. 겸임 멤버는
+//      그룹마다 탈퇴 시점이 다르다(위키미키 최유정은 위키미키에선 2024.08.08 탈퇴, 아이오아이에선
+//      현역) — _atmResolveMembers의 발행일 컷오프가 이 값을 보므로, 그룹별 값이 우선이어야 한다.
+//   ② 재검증 쪽(_atmScopedMemberReverify/_ytSweepMembersMistag)만 aliases를 안 실었다. 그러면 별칭으로만
+//      잡히던 멤버(JAY B→제이비 등)가 재검증에서 "근거 없음"으로 판정돼 멀쩡한 태그가 걷혔다.
+function _atmRosterFor(gko){
+  return ARTISTS.filter(a=>_artistGroups(a).some(g=>g.ko===gko)).map(a=>{
+    const e=_artistGroups(a).find(g=>g.ko===gko)||{};
+    return{ko:a.name.ko,en:a.name.en,left:(e.left!==undefined?e.left:a.left),aliases:a.matchAliases};
+  });
+}
 // "가인"(브라운아이드걸스)의 "성+이름" 매칭에서 흔한 성씨 "송"이 우연히 걸려 무관한 트롯 가수 "송가인"이
 // 대량으로 오태깅됨 — 가인의 실명은 "손가인"이라 "손"은 그대로 인정하고 "송"만 예외 처리한다
 // (2026-08-04, 사용자 제보). 이름별로 특정 성씨만 배제해야 하는 경우가 더 생기면 여기에 추가.
@@ -4742,7 +4755,7 @@ async function _ytAutoTagMembers(){
       // a.group.ko(주 소속)만 보면 유연정(주 소속 아이오아이, 겸임 우주소녀)처럼 이중소속 멤버가 겸임 그룹
       // 채널에서는 영원히 로스터에 안 잡혀 자동 태깅 대상에서 빠짐 — 겸임 소속까지 보는 _artistGroups로 판정
       // (2026-07-31, 우주소녀 채널의 유연정 단독 영상이 계속 미태깅으로 남던 문제의 원인).
-      const members=ARTISTS.filter(a=>_artistGroups(a).some(g=>g.ko===gko)).map(a=>({ko:a.name.ko,en:a.name.en,left:a.left,aliases:a.matchAliases}));
+      const members=_atmRosterFor(gko);
       if(!members.length){completed++;return;}
       // 같은 그룹 멤버(members)가 비어있거나, 콜라보(with_members/with_groups)가 아직 하나도 안 잡힌
       // 행을 대상으로 삼는다 — 자체 채널 챌린지 영상처럼 제목에 "챌린지" 같은 표시 없이 바로 다른 그룹
@@ -4851,7 +4864,7 @@ async function _ytRetagAllIncludingTagged(){
     for(let gi=0;gi<groupKos.length;gi++){
       if(_admAbort){_ytSetProg(`중단됨 — ${gi}/${groupKos.length}그룹까지 처리(누적 ${grandMatched}개, 되돌리기 가능)`);break;}
       const gko=groupKos[gi];
-      const members=ARTISTS.filter(a=>_artistGroups(a).some(g=>g.ko===gko)).map(a=>({ko:a.name.ko,en:a.name.en,left:a.left,aliases:a.matchAliases}));
+      const members=_atmRosterFor(gko);
       if(!members.length)continue;
       _ytSetProg(`[${gi+1}/${groupKos.length}] ${gko}: 전체 영상 조회 중…`);
       // 미태깅분 버튼과 달리 members/with_members 상태로 거르지 않고 이 그룹 전체를 다 훑는다 —
