@@ -2262,8 +2262,21 @@ function _artistByNameGroup(nm,gko){ // 검색 인덱스가 멤버 owner(ARTIST 
 let _loadDone=0;
 function _loadTick(){ if(_loadDone<3)_loadDone++; } // 진행 카운트만(텍스트엔 표시 안 함)
 // ── Build universe ────────────────────────────────
+// 로딩 단계 계측(2026-09-02) — "3초 안이냐"를 추측 말고 측정. URL에 ?perf 붙이면 좌상단에 단계별 ms 표시,
+// 아니면 콘솔에만. auth(로그인 동기화)·data(json)·built(우주 생성 완료)·reveal 각 시점을 _loadT0 기준으로.
+let _perfT0=0,_perfMarks=[];
+function _perfMark(label){
+  if(!_perfT0)return;
+  const t=Math.round(performance.now()-_perfT0);_perfMarks.push(label+' '+t+'ms');
+  try{console.log('[perf]',label,t+'ms');}catch(e){}
+  if(location.search.indexOf('perf')>=0){
+    let el=document.getElementById('perf-ov');
+    if(!el){el=document.createElement('div');el.id='perf-ov';el.style.cssText='position:fixed;top:8px;left:8px;z-index:100000;background:rgba(0,0,0,0.82);color:#5f5;font:11px/1.5 monospace;padding:6px 9px;border-radius:6px;white-space:pre;pointer-events:none;';document.body.appendChild(el);}
+    el.textContent=_perfMarks.join('\n');
+  }
+}
 async function buildUniverse(){
-  const _loadT0=performance.now();
+  const _loadT0=performance.now();_perfT0=_loadT0;
   // no-cache: 항상 서버에 재검증(304면 재다운로드 없이 캐시본 사용)해서, 데이터 파일을 수정한 직후에도
   // 새로고침한 사용자가 브라우저/CDN에 남아있던 옛 캐시본을 계속 보는 일이 없게 함
   // 구글 로그인 후 리디렉트로 이 페이지가 다시 로드되는 순간(모바일에서 외부 인증 화면 갔다 오는
@@ -2294,8 +2307,10 @@ async function buildUniverse(){
   await _withTimeout(initSupabaseSync(),10000,'로그인 동기화 시간 초과').catch(e=>{
     console.error('[초기화] Supabase 인증 동기화 실패/시간초과 — 로그인 상태 없이 계속 진행:',e.message);
   });
+  _perfMark('auth');
   const [[grpData,artData],connData]=await _jsonPromise;
   GROUPS=grpData;ARTISTS=artData;_rawConnData=connData;
+  _perfMark('data');
   _STRICT_SYNC_GROUPS=new Set(Object.entries(GROUPS).filter(([,v])=>v?.strictSync).map(([ko])=>ko));
   applyLang();
   renderFavList();
@@ -3048,7 +3063,9 @@ async function buildUniverse(){
   if(_psDeviceLooksWeak())_psAutoWeak=true;
   _psBuildSeg();_applyPowerSave();
   applyLang();
+  _perfMark('built');
   _revealUniverse();
+  _perfMark('reveal');
   // 연도 링은 리빌(아이맥스 클립) 모션이 끝난 뒤에 만든다 — 리빌 중 큰 링 라인이 클립 가장자리에 걸쳐
   // "화면 오류"처럼 보인다는 제보(2026-09-02). 생성 시점부터 600ms 페이드인(_yearRingsBornAt).
   setTimeout(_buildYearRings,REVEAL.clip+500);
