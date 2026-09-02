@@ -2436,9 +2436,16 @@
       bottom:calc(78px + env(safe-area-inset-bottom,0px)); /* 탭바(패딩 9+11 + 버튼) 위 */
       background:rgba(12,16,36,0.52);
     }
-    /* 터치 타깃 확보 — 데스크톱 10px 점은 손가락으로 못 집는다([[모바일 터치 타겟 수정]]과 같은 이유) */
+    /* 터치 타깃 확보 — 데스크톱 10px 점은 손가락으로 못 집는다([[모바일 터치 타겟 수정]]과 같은 이유).
+       ⚠️ 다만 그때 시각 크기까지 18px로 키웠더니 "원이 너무 크고 눈에 띈다"는 제보(2026-09-02).
+       소셜 링크 아이콘 때와 같은 해법 — **보이는 크기는 줄이고 누르는 영역만 투명하게 넓힌다.**
+       ::before가 34px 히트영역이라 손가락으로 집는 감각은 그대로다(#zoom-ctrl 38px 안에 들어간다). */
     #zoom-ctrl #zoom-track{height:110px;width:3px;}
-    #zoom-ctrl #zoom-thumb{width:18px;height:18px;}
+    #zoom-ctrl #zoom-thumb{width:12px;height:12px;box-shadow:0 0 5px rgba(110,150,255,0.42);}
+    #zoom-ctrl #zoom-thumb::before{
+      content:'';position:absolute;left:50%;top:50%;width:34px;height:34px;
+      transform:translate(-50%,-50%);border-radius:50%;
+    }
     #zoom-ctrl{width:38px;padding:12px 0;touch-action:none;}
   }
   #zoom-track{width:2px;height:96px;background:rgba(140,165,220,0.15);border-radius:1px;position:relative;cursor:pointer;flex-shrink:0;}
