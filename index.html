@@ -10273,6 +10273,10 @@ async function _comboSearch(){
   rows.sort((a,b)=>b.who.length-a.who.length); // 많이 함께 나온 영상 먼저(전원>일부)
   if(myReq!==_comboReq)return;
   _comboRenderResults(rows);
+  // 공유 이미지(썸네일 콜라주) 미리 생성 — 공유 버튼 누를 때 iOS가 async를 막지 않게(2026-09-02)
+  _comboLastThumbs=rows.slice(0,4).map(r=>r.v.thumb||('https://i.ytimg.com/vi/'+r.v.id+'/mqdefault.jpg'));
+  _comboLastCount=rows.length;_comboCardDataURL=null;
+  _buildComboCardDataURL().then(d=>{if(myReq===_comboReq)_comboCardDataURL=d;}).catch(()=>{});
 }
 function _comboRenderResults(rows){
   const el=document.getElementById('combo-results');if(!el)return;
@@ -10295,6 +10299,33 @@ function _comboRenderResults(rows){
 // 공유 해시 — 이름/그룹 구분자는 '~'(괄호 X). 예전 '이름(그룹)' 형식은 그룹명에 괄호가 있으면((여자)아이들 등)
 // 정규식 파싱이 깨져 링크가 안 열렸음(2026-09-02 제보). 멤버 구분자 ',' (이름·그룹엔 안 쓰임).
 function _comboShareHash(){return '#combo='+_comboSel.map(m=>_hashEsc(m.name)+'~'+_hashEsc(m.group)).join(',');}
+// 조합 공유 이미지 — 컬렉션 카드(_buildCollectionCardDataURL)와 같은 톤: 영상 썸네일 2×2 콜라주 + 멤버명 + 개수.
+// 외부 썸네일은 _loadImgSafe(crossOrigin)로 안전 로드, CORS 실패한 낱장은 빈칸. iOS 공유 차단 회피 위해
+// 결과 로드 시 미리 만들어 _comboCardDataURL에 담아둔다(2026-09-02).
+let _comboLastThumbs=[],_comboLastCount=0,_comboCardDataURL=null;
+async function _buildComboCardDataURL(){
+  const W=1080,H=1350,cv=document.createElement('canvas');cv.width=W;cv.height=H;
+  const ctx=cv.getContext('2d');ctx.fillStyle='#040309';ctx.fillRect(0,0,W,H);
+  const coverH=H*0.72,imgs=await Promise.all((_comboLastThumbs||[]).slice(0,4).map(_loadImgSafe));
+  const cell=W/2,cellH=coverH/2;
+  imgs.forEach((img,i)=>{if(img)_drawImgCover(ctx,img,(i%2)*cell,Math.floor(i/2)*cellH,cell,cellH);});
+  ctx.fillStyle='#040309';ctx.fillRect(0,coverH,W,H-coverH);
+  const fade=ctx.createLinearGradient(0,coverH*0.55,0,coverH);fade.addColorStop(0,'rgba(4,3,9,0)');fade.addColorStop(1,'rgba(4,3,9,0.95)');
+  ctx.fillStyle=fade;ctx.fillRect(0,coverH*0.55,W,coverH*0.45);
+  ctx.textAlign='center';
+  const g=GROUPS[_comboSel[0]&&_comboSel[0].group],col_=(g&&Array.isArray(g.color))?g.color:[170,195,255];
+  ctx.font='700 30px "Pretendard","Apple SD Gothic Neo",sans-serif';ctx.fillStyle=`rgba(${col_[0]},${col_[1]},${col_[2]},0.92)`;
+  ctx.fillText(currentLang==='ko'?'함께 나온 무대':'Together on stage',W/2,H-250);
+  let fs=54;const names=_comboSel.map(m=>m.name).join(' · ');
+  ctx.font=`700 ${fs}px "Pretendard","Apple SD Gothic Neo",sans-serif`;
+  while(fs>26&&ctx.measureText(names).width>W-120){fs-=4;ctx.font=`700 ${fs}px "Pretendard","Apple SD Gothic Neo",sans-serif`;}
+  ctx.fillStyle='#f3f6ff';ctx.shadowColor=`rgba(${col_[0]},${col_[1]},${col_[2]},0.6)`;ctx.shadowBlur=20;ctx.fillText(names,W/2,H-180);ctx.shadowBlur=0;
+  ctx.font='400 26px "Pretendard","Apple SD Gothic Neo",sans-serif';ctx.fillStyle='rgba(200,212,240,0.65)';
+  ctx.fillText(currentLang==='ko'?`영상 ${_comboLastCount}개`:`${_comboLastCount} video${_comboLastCount===1?'':'s'}`,W/2,H-120);
+  ctx.font='400 22px "Pretendard","Apple SD Gothic Neo",sans-serif';ctx.fillStyle='rgba(200,212,240,0.55)';
+  ctx.fillText('K · P O P   U N I V E R S E',W/2,H-65);
+  return cv.toDataURL('image/png');
+}
 function _comboFromHash(param){
   const sel=[];
   String(param).split(',').forEach(pair=>{
@@ -10327,9 +10358,23 @@ document.getElementById('combo-search')?.addEventListener('input',e=>_comboRende
 document.getElementById('combo-go')?.addEventListener('click',e=>{e.stopPropagation();_comboSearch();});
 document.getElementById('combo-share')?.addEventListener('click',async e=>{
   e.stopPropagation();
-  const url=location.origin+location.pathname+_comboShareHash();
-  try{await navigator.clipboard.writeText(url);_showShareToast(currentLang==='ko'?'링크 복사됨':'Link copied');}
-  catch(err){_showShareToast(url);}
+  const link=location.origin+location.pathname+_comboShareHash();
+  // 이미지(썸네일 콜라주)가 준비됐으면 이미지로 공유 — 터치=네이티브 공유시트(파일+링크), 데스크톱=이미지 저장+링크복사.
+  if(_comboCardDataURL){
+    try{
+      if(_isTouchPrimary()&&navigator.share){
+        const blob=await(await fetch(_comboCardDataURL)).blob();
+        const file=new File([blob],'kpop-universe-combo.png',{type:'image/png'});
+        if(navigator.canShare&&navigator.canShare({files:[file]})){ await navigator.share({files:[file],text:link,title:'K-POP Universe'}); return; }
+      }
+      const a=document.createElement('a');a.href=_comboCardDataURL;a.download='kpop-universe-combo.png';document.body.appendChild(a);a.click();a.remove();
+      try{await navigator.clipboard.writeText(link);}catch(e2){}
+      _showShareToast(currentLang==='ko'?'이미지 저장됨 · 링크 복사됨':'Image saved · Link copied');
+      return;
+    }catch(err){ /* 취소/실패 → 아래 링크 폴백 */ }
+  }
+  try{await navigator.clipboard.writeText(link);_showShareToast(currentLang==='ko'?'링크 복사됨':'Link copied');}
+  catch(err){_showShareToast(link);}
 });
 
 // ══ 발자국(2026-09-02) — 방금 본 카드로 되돌아가기. 기존 세션 스택(_cardStack/_memberNavStack)은 닫으면
