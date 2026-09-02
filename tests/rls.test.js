@@ -63,7 +63,7 @@ const EXPECT = {
   collection_reports:           { read: 'locked', write: 'open',
                                   why: '_reportPublicCollection(index.html)이 uid를 null로도 insert한다 — 로그인 안 한 방문자도 신고할 수 있어야 함. 남의 신고 내역은 아무나 못 봐야 하므로 읽기는 막힘.' },
   search_click_log:             { read: 'locked', write: 'open',
-                                  why: '로그인 안 한 방문자의 검색도 남아야 랭킹 학습이 가능(2026-09-02 신설). 남이 무엇을 검색했는지는 아무나 못 봐야 하므로 읽기는 관리자만. insert에 with_check로 길이·타입 제약을 걸어 아무 값이나 못 들어오게 했다.' },
+                                  why: '로그인 안 한 방문자의 검색도 남아야 랭킹 학습이 가능(2026-09-02 신설). 남이 무엇을 검색했는지는 아무나 못 봐야 하므로 읽기는 관리자만. ⚠️ 값 제약(길이·타입)은 정책이 아니라 CHECK 제약으로 뺐다 — 정책 with_check에 두면 이 테스트의 빈 객체 탐침이 42501로 떨어져 권한이 열려 있는데도 locked로 오판된다.' },
   // 어드민 도구가 쓰는 로그/큐 — 익명은 읽지도 쓰지도 못해야 함
   tag_edit_log:                 { read: 'locked', write: 'locked',
                                   why: 'admin.js의 _tagEditLog만 기록한다(수동 편집 이력 = 매처 학습용 정답 라벨).' },

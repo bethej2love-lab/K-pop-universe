@@ -30,17 +30,26 @@ create index if not exists idx_scl_hit     on search_click_log (hit_type, hit_ke
 
 alter table search_click_log enable row level security;
 
+-- 값 제약은 **정책이 아니라 CHECK 제약**으로 건다(2026-09-02 정정).
+-- ⚠️ 처음엔 이 조건들을 정책의 with check에 같이 넣었는데, 그러면 **권한 판정이 오염된다** —
+--    tests/rls.test.js는 빈 객체 {}를 POST해서 돌아오는 에러 코드로 권한을 가린다(23502=NOT NULL
+--    위반이면 "권한은 통과", 42501이면 "RLS 차단"). 값 제약이 정책 안에 있으면 빈 객체가 with check에
+--    먼저 걸려 42501이 나오고, 익명 쓰기가 열려 있는데도 'locked'로 잘못 읽힌다(실제로 그렇게 났다).
+--    권한은 정책이, 값 검증은 제약이 맡게 나누면 둘 다 제 역할을 하고 테스트도 정확해진다.
+alter table search_click_log drop constraint if exists search_click_log_sane;
+alter table search_click_log add constraint search_click_log_sane check (
+  length(q) between 1 and 100
+  and hit_type in ('group','member','song','video','event')
+  and length(hit_key) <= 200
+  and (session_id is null or length(session_id) <= 64)
+);
+
 -- 쓰기: 로그인하지 않은 방문자도 검색하므로 anon도 남길 수 있어야 한다. 읽기는 주지 않는다
--- (남이 무엇을 검색했는지 아무나 조회할 수 있으면 안 된다). insert 전용 정책.
+-- (남이 무엇을 검색했는지 아무나 조회할 수 있으면 안 된다). insert 전용 정책 — 권한만 본다.
 drop policy if exists "anyone can log" on search_click_log;
 create policy "anyone can log" on search_click_log
   for insert to anon, authenticated
-  with check (
-    length(q) between 1 and 100
-    and hit_type in ('group','member','song','video','event')
-    and length(hit_key) <= 200
-    and (session_id is null or length(session_id) <= 64)
-  );
+  with check (true);
 
 -- 읽기·삭제: 관리자만(yt_channel_videos의 admin write 정책과 동일 조건).
 drop policy if exists "admin read" on search_click_log;
