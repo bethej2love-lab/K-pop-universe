@@ -1216,6 +1216,7 @@
     <div id="combo-results"></div>
   </div>
 </div>
+<div id="footprint-bar"><button id="fp-toggle" aria-label="발자국 — 방금 본 것으로">🐾</button><div id="fp-trail"></div></div>
 <div id="col-quick-toast">
   <span id="col-quick-toast-check">✓</span>
   <span id="col-quick-toast-name"></span><span data-i18n="colAddedSuffix">에 추가됨</span>
@@ -8053,6 +8054,7 @@ function closeCards(){
   _gcStatusState.group.traces='';_gcStatusState.member.traces='';
   _renderGcStatusLine('group');_renderGcStatusLine('member');
   _syncUrl('replace');
+  _fpUpdateVis(); // 카드 닫혀 우주로 돌아오면 발자국 트레일 노출
 }
 
 // ── 애널리틱스(GA4) ─────────────────────────────
@@ -8991,6 +8993,7 @@ function showT(a,cx,cy,keepNavStack,urlMode,_unusedPushMobNav,noFly){
   const _aGroups=_artistGroups(a);
   const _extraGroupKos=_aGroups.map(g=>g.ko).filter(k=>k!==a.group.ko);
   setFocus(a.group.ko,_extraGroupKos);_openTArtist=a;
+  if(a&&a.group&&a.name)_fpPush({type:'tt',gko:a.group.ko,mko:a.name.ko,label:a.name.ko}); // 발자국 기록
   _syncFavBtn('member',a);
   if(a._flashPulse!==undefined||a._worldPos){a._flashPulse=1.4;}
   const el=document.getElementById('tt');
@@ -10134,7 +10137,7 @@ function _openComboPanel(){
   _comboRenderSuggest('');_comboRenderChips();_comboRenderResults(null);
   setTimeout(()=>{try{if(!isMob()&&s)s.focus();}catch(e){}},60); // 모바일은 자동 키보드 안 띄움
 }
-function _closeComboPanel(){const ov=document.getElementById('combo-overlay');if(ov)ov.classList.remove('open');}
+function _closeComboPanel(){const ov=document.getElementById('combo-overlay');if(ov)ov.classList.remove('open');_fpUpdateVis();}
 function _comboAdd(name,group){
   if(!name||!group)return;
   if(_comboSel.some(m=>m.name===name&&m.group===group))return;
@@ -10184,6 +10187,7 @@ function _comboRenderSuggest(q){
 async function _comboSearch(){
   if(_comboSel.length<2||!sb)return;
   const myReq=++_comboReq;
+  _fpPush({type:'combo',members:_comboSel.map(m=>({name:m.name,group:m.group})),label:_comboSel.map(m=>m.name).join('·')}); // 발자국 기록
   _comboRenderResults('loading');
   const esc=s=>String(s).replace(/["\\]/g,'');
   const pivot=_comboSel[0];
@@ -10261,6 +10265,64 @@ document.getElementById('combo-share')?.addEventListener('click',async e=>{
   catch(err){_showShareToast(url);}
 });
 
+// ══ 발자국(2026-09-02) — 방금 본 카드로 되돌아가기. 기존 세션 스택(_cardStack/_memberNavStack)은 닫으면
+// 비워져 "모르고 껐다 직전으로 못 감"이었음 → 닫혀도 남는 별도 히스토리(localStorage). 카드 열 때 기록하고,
+// 카드가 닫혀 우주로 돌아오면 좌하단 트레일로 복귀. 탐험 루프의 안전망(안심하고 헤매고 되돌아오기).
+const _FP_KEY='kpu_footprints',_FP_MAX=15;
+let _footprints=[],_fpRestoring=false;
+try{_footprints=JSON.parse(localStorage.getItem(_FP_KEY)||'[]');if(!Array.isArray(_footprints))_footprints=[];}catch(e){_footprints=[];}
+function _fpKeyOf(fp){return fp.type+'|'+(fp.gko||'')+'|'+(fp.mko||'')+'|'+((fp.members||[]).map(m=>m.name+':'+m.group).join(','));}
+function _fpSave(){try{localStorage.setItem(_FP_KEY,JSON.stringify(_footprints));}catch(e){}}
+function _fpPush(fp){
+  if(_fpRestoring||!fp)return;
+  const k=_fpKeyOf(fp);
+  _footprints=_footprints.filter(x=>_fpKeyOf(x)!==k); // 같은 카드는 하나만(최신 위치로 이동)
+  _footprints.push(fp);
+  if(_footprints.length>_FP_MAX)_footprints=_footprints.slice(-_FP_MAX);
+  _fpSave();_fpRender();_fpUpdateVis();
+}
+function _fpRender(){
+  const trail=document.getElementById('fp-trail');if(!trail)return;
+  trail.innerHTML='';
+  _footprints.slice().reverse().slice(0,10).forEach(fp=>{
+    const chip=document.createElement('button');chip.type='button';chip.className='fp-chip';
+    const i=document.createElement('span');i.className='fp-ic';i.textContent=fp.type==='gc'?'◆':fp.type==='combo'?'🔗':'●';
+    const t=document.createElement('span');t.textContent=fp.label||'';
+    chip.appendChild(i);chip.appendChild(t);
+    chip.addEventListener('click',e=>{e.stopPropagation();document.getElementById('footprint-bar')?.classList.remove('open');_fpReopen(fp);});
+    trail.appendChild(chip);
+  });
+}
+function _fpUpdateVis(){
+  const bar=document.getElementById('footprint-bar');if(!bar)return;
+  const cardOpen=!!_openTArtist||!!_openGCko
+    ||!!document.getElementById('combo-overlay')?.classList.contains('open')
+    ||!!document.getElementById('gc-track-videos-overlay')?.classList.contains('open')
+    ||(typeof connPanelEl!=='undefined'&&connPanelEl&&connPanelEl.classList.contains('open'))
+    ||(typeof connSheetEl!=='undefined'&&connSheetEl&&connSheetEl.classList.contains('bs-open'));
+  const show=_footprints.length>0&&!cardOpen;
+  bar.style.display=show?'flex':'none';
+  if(!show)bar.classList.remove('open');
+}
+function _fpReopen(fp){
+  if(!fp)return;
+  _fpRestoring=true;
+  try{
+    if(fp.type==='tt'){
+      const a=ARTISTS.find(x=>x.name&&x.group&&x.name.ko===fp.mko&&x.group.ko===fp.gko);
+      if(a){if(a._worldPos)flyTo(a._worldPos);showT(a,window.innerWidth/2,window.innerHeight*0.4);}
+    }else if(fp.type==='gc'){
+      const bm=bubbleMeshes.find(b=>b.ko===fp.gko);if(bm)flyToBubble(bm.mesh.position,bm.radius);
+      showGC(fp.gko,window.innerWidth/2,window.innerHeight*0.4);
+    }else if(fp.type==='combo'){
+      _comboSel=(fp.members||[]).slice(0,_COMBO_MAX);_openComboPanel();_comboSearch();
+    }
+  }catch(e){}
+  _fpRestoring=false;_fpUpdateVis();
+}
+document.getElementById('fp-toggle')?.addEventListener('click',e=>{e.stopPropagation();const b=document.getElementById('footprint-bar');if(b&&_footprints.length)b.classList.toggle('open');});
+_fpRender();_fpUpdateVis();
+
 function _gcDiscogDetailGo(delta){
   const ni=_gcDiscogIdx+delta;
   if(ni<0||ni>=_gcDiscogList.length)return;
@@ -10289,6 +10351,7 @@ function showGC(ko,cx,cy,keepMemberPanel,skipRipple,urlMode,_unusedPushMobNav){
   _dismissOnboardHint();
   const info=GROUPS[ko];if(!info)return;
   setFocus(ko);_openGCko=ko;
+  _fpPush({type:'gc',gko:ko,label:ko}); // 발자국 기록
   _syncFavBtn('group',ko);
   if(!skipRipple)pulseGroupRipple(ko);
   const el=document.getElementById('gc');
