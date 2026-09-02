@@ -2372,7 +2372,7 @@
   #combo-go{flex:1;background:rgba(120,150,255,0.92);color:#fff;border:none;border-radius:12px;padding:10px;font-size:13.5px;font-weight:700;cursor:pointer;font-family:inherit;}
   #combo-go:disabled{background:rgba(255,255,255,0.08);color:rgba(200,215,250,0.4);cursor:default;}
   #combo-share{background:rgba(255,255,255,0.08);color:#c8d8f0;border:none;border-radius:12px;padding:10px 14px;font-size:12.5px;font-weight:600;cursor:pointer;white-space:nowrap;font-family:inherit;}
-  #combo-results{margin-top:14px;overflow-y:auto;display:flex;flex-direction:column;gap:4px;min-height:0;flex:1;}
+  #combo-results{margin-top:14px;overflow-y:auto;display:block;min-height:0;flex:1;} /* buildVideoSection이 자체 레이아웃(대표영상+행패커 그리드)을 붙이므로 일반 블록 */
   .combo-who{font-size:10.5px;color:rgba(150,175,235,0.62);margin-top:2px;} /* 이 영상에 나온 선택 멤버들 */
   .combo-entry{display:flex;flex-direction:column;gap:2px;width:calc(100% - 26px);margin:8px 13px 4px;padding:11px 14px;background:linear-gradient(100deg,rgba(120,150,255,0.16),rgba(84,224,198,0.10));border:0.5px solid rgba(120,150,255,0.25);border-radius:13px;cursor:pointer;text-align:left;}
   .combo-entry-t{font-size:13px;font-weight:700;color:#e9eeff;}
