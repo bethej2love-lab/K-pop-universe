@@ -50,6 +50,7 @@
 - **[완료][A][index.html][kpop_universe.css] 곡 상세 뷰에 앨범 메타 헤더** — 곡 오버레이(`_openSongVideos`)가 제목만 보이던 걸, **앨범커버 + 아티스트·앨범·연도** 헤더를 얹음(제보 예: "안녕이란 말 대신" → 비·앨범·연도 + 원곡/커버 무대). 데이터: 앨범명=검색히트 h.alias·연도/커버=`disco/g/*.json`(releaseDate·cover). `_resolveSongMeta`(disco 로드→앨범 역탐색)+`_fillSongMeta`(아티스트 먼저→커버·연도 채움, myReq 레이스가드). 검색 곡클릭·디스코 트랙클릭 둘 다 메타 전달. songMeta 없으면 헤더 숨김(하위호환). ⚠️아이폰 실기 확인(긴 곡명·커버 로드).
 - **[완료][B][index.html][kpop_universe.css] 검색 첫 화면 시각화** — "이런 그룹은 어때요"를 텍스트 목록→**컬러 오브 그리드**. 그룹 컬러(RGB배열) 그라디언트로 즉시 뜨고, disco 로드되면 **그 그룹 최신 앨범 커버 이미지로 교체**(프로필 사진 데이터 없어 앨범커버+컬러로). 클릭은 `_makeSearchItem` 감아둔 동작을 detached 요소에 위임해 재사용(`_latestCover`+`_appendTrendingSection` 개편). ⚠️아이폰 실기 확인(오브 크기·커버 로드).
 - **[완료][C][index.html][kpop_universe.css] 하트→피드탭 비언어 루프 힌트** — 하트 누르면(그룹·멤버·연결 모두) ♥가 곡선으로 **피드(나침반) 탭에 날아가 흡수 + 탭 글로우 펄스 + 점 배지**(글자 0). `_favBurst`에 `_flyHeartToFeed` 추가. 탭바 숨김·화면밖이면 비행 생략하고 배지만(가림 풀리면 보임). WAAPI element.animate 사용. ⚠️아이폰 실기 확인(비행 곡선·모바일 탭바 가림 여부).
+- **[완료][D][index.html][kpop_universe.css] 탭 라벨(안 짜치게)** — 5개 탭에 라벨(홈·검색·랜덤·탐험·나 / EN Home·Search·Random·Explore·Me, `data-i18n`+T딕셔너리). 기본은 **아이콘만, 활성 탭에만 라벨 노출**(visibility로 자리 예약→정렬 유지). **첫 1~2회 방문엔 전체 라벨 4.2초** 후 활성만(`.show-labels`, _visitCount≤2). 탭 세로배치(flex column). 탭바 높이는 offsetHeight로 측정→--sheet-bottom 자동반영. ⚠️아이폰 실기 확인(높이·정렬).
 - **[이슈][index.html] NUL 바이트 5개 잔존**(예: `ownerName+'\0'+`) — 브라우저 관용으로 작동 중이나 잠재 이슈, 나중에 정리 권장. 이번 변경과 무관(origin에도 있던 것).
 
 ### feat. 주객전도 수정 (2026-09-02)

@@ -97,10 +97,15 @@
     flex:1;background:none;border:none;cursor:pointer;
     color:rgba(190,205,240,0.61);
     font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;
-    font-size:14px;padding:8px 4px;border-radius:10px;
+    font-size:14px;padding:5px 4px;border-radius:10px;
     transition:background .15s,color .15s,opacity .1s;
-    line-height:1;text-align:center;overflow:hidden;white-space:nowrap;
+    line-height:1;overflow:hidden;white-space:nowrap;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
   }
+  /* 탭 라벨(2026-09-02) — 기본은 자리만 잡고 숨김(아이콘만=깔끔). 활성 탭만 노출, 첫 1~2회 방문엔 전체
+     잠깐(.show-labels). visibility로 숨겨 모든 탭 높이를 같게 유지 → 아이콘 세로 정렬이 안 틀어진다. */
+  .tab-label{font-size:9.5px;line-height:1.1;letter-spacing:.02em;visibility:hidden;opacity:.92;}
+  .tab-btn.active .tab-label,#tabbar.show-labels .tab-label{visibility:visible;}
   .tab-btn:hover{color:rgba(210,225,255,0.85);}
   .tab-btn.active{color:rgba(225,238,255,1);text-shadow:0 0 8px rgba(200,220,255,0.5);}
   #mob-fav-btn svg path,#dh-fav-btn svg path{fill:none;transition:fill .15s;}
