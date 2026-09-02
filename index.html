@@ -1189,7 +1189,13 @@
   <div id="gc-track-videos-bg"></div>
   <div id="gc-track-videos-sheet">
     <button id="gc-track-videos-close" aria-label="닫기">×</button>
-    <div id="gc-track-videos-title"></div>
+    <div id="gc-track-videos-header">
+      <img id="gc-track-videos-cover" alt="" hidden>
+      <div id="gc-track-videos-head-txt">
+        <div id="gc-track-videos-title"></div>
+        <div id="gc-track-videos-meta" class="hidden"></div>
+      </div>
+    </div>
     <div id="gc-track-videos-tabs" class="hidden"></div>
     <div id="gc-track-videos-list"></div>
   </div>
@@ -4087,7 +4093,11 @@ function _makeSearchItem(h,res,mobSearch,obSearch){
       // 곡을 클릭하면 주인 카드 위에 그 곡의 영상 모음(원곡+커버)을 오버레이로 얹는다(2026-08-31).
       if(h.type==='song'){
         const owner=t==='group'?{gko:d,memberKo:null}:{gko:_ytGroupKoFor(d),memberKo:d.name.ko};
-        _openSongVideos(h.name,owner);
+        // 곡 상세 헤더용 메타 — h.sub=아티스트 표시명, h.alias=앨범(제목과 다를 때만). 커버·연도는 disco에서 해석.
+        const sMeta=t==='group'
+          ?{ownerType:'group',gko:d,artist:null,album:h.alias||'',ownerName:h.sub}
+          :{ownerType:'member',gko:(d.group&&d.group.ko),artist:d,album:h.alias||'',ownerName:h.sub};
+        _openSongVideos(h.name,owner,sMeta);
       }
     };
     if(obSearch){
@@ -9908,7 +9918,8 @@ function _closeGcDiscogDetail(){document.getElementById('gc-discog-detail').clas
 // 디스코그래피 트랙 클릭 — 현재 열린 그룹 카드의 그 곡 영상을 곡 오버레이로 연다(래퍼).
 function _filterGcVideosByTrack(title){
   if(!_openGCko)return;
-  _openSongVideos(title,{gko:_openGCko,memberKo:null});
+  // 그룹 카드 디스코에서 트랙 클릭 — 그룹 컨텍스트로 곡 상세 헤더 메타도 함께 넘긴다(2026-09-02).
+  _openSongVideos(title,{gko:_openGCko,memberKo:null},{ownerType:'group',gko:_openGCko,artist:null,album:'',ownerName:_openGCko});
 }
 // 곡 하나의 영상 모음 오버레이 — 원곡(주인 채널/게스트 출연) + 다른 아티스트의 커버를 함께 모아
 // [전체·원곡·커버] 토글로 본다. 디스코그래피 트랙 클릭과 검색의 곡 클릭이 이 함수를 공유한다(2026-08-31).
@@ -9916,7 +9927,35 @@ function _filterGcVideosByTrack(title){
 //    (원곡 태깅 스윕이 채우는 중). 커버가 하나도 없으면 토글을 숨겨 기존 단순 목록과 똑같이 보인다.
 // owner: {gko, memberKo}. 그룹 곡이면 memberKo 없음, 솔로/멤버 곡이면 gko=_ytGroupKoFor 키.
 let _songVidReq=0,_songVid=null;
-async function _openSongVideos(title,owner){
+// 곡 상세 헤더용 앨범 메타(커버·연도) 해석 — 소유자 disco를 로드해 곡이 속한 앨범을 찾는다(2026-09-02).
+// album 힌트가 있으면 앨범명으로, 없으면 트랙 제목으로 역탐색. 못 찾으면 null(아티스트명만 표기).
+async function _resolveSongMeta(title,o){
+  if(!o)return null;
+  let disco=[];
+  try{
+    if(o.ownerType==='member'&&o.artist){ await _ensureMemberDisco(o.artist); disco=o.artist.discography||[]; }
+    else if(o.gko&&GROUPS[o.gko]){ await _ensureGroupDisco(o.gko); disco=GROUPS[o.gko].discography||[]; }
+  }catch(e){}
+  if(!disco.length)return null;
+  const key=_songKey(title);
+  let al=o.album?disco.find(a=>a&&a.title===o.album):null;
+  if(!al)al=disco.find(a=>a&&(a.tracks||[]).some(t=>t&&_songKey(t.title)===key));
+  return al?{album:al.title,year:(al.releaseDate||'').slice(0,4),cover:al.cover||''}:null;
+}
+// 헤더 채우기 — 아티스트명을 먼저 보이고, disco 로드 후 앨범·연도·커버를 붙인다. myReq로 레이스 가드.
+async function _fillSongMeta(title,o,myReq){
+  const coverEl=document.getElementById('gc-track-videos-cover');
+  const metaEl=document.getElementById('gc-track-videos-meta');
+  if(!metaEl)return;
+  if(coverEl){coverEl.hidden=true;coverEl.removeAttribute('src');}
+  if(!o||!o.ownerName){metaEl.classList.add('hidden');metaEl.textContent='';return;}
+  metaEl.classList.remove('hidden');metaEl.textContent=o.ownerName; // 앨범 로드 전에도 아티스트는 보이게
+  const m=await _resolveSongMeta(title,o);
+  if(myReq!==_songVidReq)return; // 그새 다른 곡 클릭
+  if(m){metaEl.textContent=[o.ownerName,m.album,m.year].filter(Boolean).join(' · ');
+    if(coverEl&&m.cover){coverEl.src=m.cover;coverEl.hidden=false;}}
+}
+async function _openSongVideos(title,owner,songMeta){
   const gko=owner&&owner.gko,memberKo=(owner&&owner.memberKo)||null;
   if(!gko||!sb)return;
   const myReq=++_songVidReq;
@@ -9924,6 +9963,7 @@ async function _openSongVideos(title,owner){
   const listEl=document.getElementById('gc-track-videos-list');
   const tabsEl=document.getElementById('gc-track-videos-tabs');
   document.getElementById('gc-track-videos-title').textContent=title;
+  _fillSongMeta(title,songMeta,myReq); // 앨범커버+아티스트·앨범·연도 헤더(songMeta 없으면 숨김)
   tabsEl.classList.add('hidden');tabsEl.innerHTML='';
   listEl.innerHTML=`<div class="tvf-empty">${currentLang==='ko'?'불러오는 중…':'Loading…'}</div>`;
   overlay.classList.add('open');
