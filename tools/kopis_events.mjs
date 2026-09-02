@@ -97,6 +97,11 @@ const KPOP_SIGNAL = /FAN\s?CON|FANCON|FAN\s?MEETING|FANMEETING|팬미팅|팬콘|
 export function matchEvent(title) {
   const nu = NORM(title);
   const hits = new Set(); const why = [];
+  // 내한(공연)은 외국 아티스트가 한국에 오는 공연 — K팝 그룹엔 없는 개념이다. 제목 맨 앞 단어가 우연히
+  // K팝 이름과 겹쳐(스텔라 도넬리→스텔라, 스텔라 콜→스텔라, 알레시아 카라→카라) 그룹에 오배정되던 것을
+  // 원천 차단한다(2026-09-02 제보 "하츠투하츠 스텔라 공연"). 내한이 KPOP_SIGNAL(내한·공연)로도 잡혀
+  // 게이트를 통과했었다 — 그 신호보다 먼저, 강하게 끊는다.
+  if (/내한/.test(title)) return { groups: [], confidence: 'none', why: ['skip:내한(외국 아티스트 공연)'] };
   const kpopish = KPOP_SIGNAL.test(title);
   // ① 그룹명/영문명/별칭 직접 매칭 — 가장 신뢰도 높음
   for (const gko of Object.keys(GROUPS)) {
