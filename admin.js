@@ -198,7 +198,14 @@ async function _ytFetchNewVideos(uploadsId,key,sinceId,onProg,startPageToken,cut
       if(vid===sinceId){hit=true;break;}
       const title=_decodeHtmlEntities(item.snippet.title||'');
       if(_isBannedVideoTitle(title))continue; // 성범죄로 퇴출된 인물 관련 영상은 동기화 단계에서부터 저장하지 않음
-      const publishedAt=(item.snippet.publishedAt||'').slice(0,10);
+      // ⚠️ published_at은 **날짜만**(date 컬럼) — 데뷔/탈퇴 게이트·기간 필터가 전부 "YYYY-MM-DD"
+      //    문자열 비교라 이 형태를 바꾸면 매칭 로직이 통째로 흔들린다. 그래서 그대로 두고,
+      //    유튜브가 주는 정확한 업로드 시각은 published_ts(timestamptz)에 따로 담는다.
+      //    이걸 안 담아서 "17시간 전 올라온 영상이 '어제'로 뜬다"는 제보가 있었음(2026-09-02) —
+      //    날짜만 있으면 그 날 00:00(UTC)로 읽혀 한국시간 기준 최대 33시간까지 과장된다.
+      //    응답(part=snippet)에 이미 들어있는 값이라 API 쿼터 추가 비용은 0.
+      const publishedTs=item.snippet.publishedAt||null;
+      const publishedAt=(publishedTs||'').slice(0,10);
       if(cutoffDate&&publishedAt>cutoffDate)continue; // 해체 이후 올라온 영상은 수집 대상에서 제외
       const th=item.snippet.thumbnails||{};
       // 쇼츠는 세로 비율을 유지하는 썸네일(medium/default는 항상 16:9로 잘려있어 세로 판별 불가)이
@@ -220,6 +227,7 @@ async function _ytFetchNewVideos(uploadsId,key,sinceId,onProg,startPageToken,cut
         description:_decodeHtmlEntities(item.snippet.description||''), // part=snippet 응답에 이미 포함돼있던 걸 그냥 버렸었음 — 쿼터 추가 비용 없이 태깅 보조 텍스트로 재사용
         thumb:isShortThumb?(hiTh.url||th.medium?.url||''):(th.medium?.url||th.high?.url||th.default?.url||''),
         published_at:publishedAt,
+        published_ts:publishedTs,
         category:cat,is_short:isShort
       });
     }
@@ -343,19 +351,39 @@ async function _ytRefreshViewCounts(){
   if(!rows?.length){_ytSetProg('조회수 갱신: 최근 영상 없음');return;}
   const ids=rows.map(r=>r.id);
   const statsUpdates=[];
+  const tsUpdates=[]; // 정확한 업로드 시각(published_ts) 백필 — 아래 주석 참고
   for(let i=0;i<ids.length;i+=50){
     const chunk=ids.slice(i,i+50);
     _ytSetProg(`조회수 조회 중… ${Math.min(i+50,ids.length)}/${ids.length}`);
     try{
-      const r=await fetch(`https://www.googleapis.com/youtube/v3/videos?part=statistics&id=${chunk.join(',')}&key=${key}`);
+      // part에 snippet을 얹어 정확한 업로드 시각(publishedAt)도 같이 받는다. videos.list는 part
+      // 개수와 무관하게 **호출당 쿼터 1**이라 추가 비용이 0이고, 이 함수는 이미 "전체 동기화"에
+      // 얹혀 최근 14일치를 정기적으로 훑으므로 백필 전용 버튼을 따로 만들 필요가 없다.
+      // (옛 행은 published_at이 날짜뿐이라 "N시간 전"을 못 만든다 — 2026-09-02 코르티스 제보)
+      const r=await fetch(`https://www.googleapis.com/youtube/v3/videos?part=statistics,snippet&id=${chunk.join(',')}&key=${key}`);
       if(!r.ok)throw new Error('YouTube API 오류 '+r.status);
       const d=await r.json();
       if(d.error)throw new Error(d.error.message);
       (d.items||[]).forEach(it=>{
         const vc=parseInt(it.statistics?.viewCount,10);
         if(!isNaN(vc))statsUpdates.push({id:it.id,view_count:vc});
+        const ts=it.snippet?.publishedAt;
+        if(ts)tsUpdates.push({id:it.id,published_ts:ts});
       });
     }catch(e){console.error('[조회수 갱신] 실패:',e.message);}
+  }
+  // 업로드 시각 저장 — 컬럼이 아직 없으면(마이그레이션 전) 조용히 건너뛴다. 조회수 갱신이 이것 때문에
+  // 실패하면 안 되므로 별도 패스로 두고, 첫 실패에서 컬럼 부재를 감지해 이후 시도를 멈춘다.
+  if(_ytHasPubTs&&tsUpdates.length){
+    const probe=await sb.from(_YT_TABLE).update({published_ts:tsUpdates[0].published_ts}).eq('id',tsUpdates[0].id);
+    if(probe.error&&/published_ts/.test(probe.error.message||'')){
+      _ytHasPubTs=false;
+      console.warn('[업로드 시각] published_ts 컬럼이 없어 건너뜀 — ALTER TABLE 필요');
+    }else{
+      const _tb=await _sbUpdateBatch(tsUpdates.slice(1),({id,published_ts})=>sb.from(_YT_TABLE).update({published_ts}).eq('id',id),
+        {conc:20,retries:2,onProgress:(done,total)=>_ytSetProg(`업로드 시각 저장 중… ${done}/${total}`)});
+      if(_tb.failed)console.error('[업로드 시각] 재시도 후에도 실패:',_tb.failed,'건 —',_tb.firstErr);
+    }
   }
   if(!statsUpdates.length){_ytSetProg('조회수 갱신: 반영할 값 없음');return;}
   let saved=0,failed=0;
@@ -6044,6 +6072,7 @@ function _extOwnerGko(owner){
 // 영상 upsert 공용 래퍼 — source_handle/source_tier(출처 채널 컬럼)를 채우되, 마이그레이션 SQL을 아직
 // 안 돌렸으면(컬럼 없음) 첫 시도에서 감지해 그 필드만 빼고 재시도한다. 동기화가 절대 안 깨지게(2026-08-25).
 let _ytHasSourceCols=true;
+let _ytHasPubTs=true; // published_ts(정확한 업로드 시각) 컬럼 존재 여부 — 없으면 첫 upsert에서 감지해 끈다
 async function _ytUpsertVideos(rows,opts){
   // 세로(쇼츠) 판별 보정 — API 썸네일 비율론 쇼츠도 16:9(letterbox)라 못 잡고(위 _ytFetchNewVideos 주석),
   // 지금까진 관리자 '가로→쇼츠 승격' 스윕이 나중에 실측했음. 그래서 Trend(최근 7일)처럼 스윕 전 구간은
@@ -6053,8 +6082,20 @@ async function _ytUpsertVideos(rows,opts){
   if(typeof _probeShortsBatch==='function'){
     try{const toProbe=rows.filter(r=>r&&r.id&&!r.is_short);if(toProbe.length)await _probeShortsBatch(toProbe);}catch(e){}
   }
-  const strip=rs=>rs.map(r=>{const{source_handle,source_tier,...rest}=r;return rest;});
-  let{error}=await sb.from(_YT_TABLE).upsert(_ytHasSourceCols?rows:strip(rows),opts);
+  // 마이그레이션 전 환경(컬럼 없음)에서도 동기화가 절대 안 깨지게, 없는 컬럼만 빼고 재시도한다.
+  // published_ts(정확한 업로드 시각, 2026-09-02 신설)도 같은 방식으로 감싼다.
+  // 없는 컬럼만 빼고 보낸다 — 플래그가 꺼진 것만 지우므로 조건이 늘어도 이 함수는 그대로 쓴다.
+  const strip=rs=>rs.map(r=>{
+    const o={...r};
+    if(!_ytHasSourceCols){delete o.source_handle;delete o.source_tier;}
+    if(!_ytHasPubTs)delete o.published_ts;
+    return o;
+  });
+  let{error}=await sb.from(_YT_TABLE).upsert(strip(rows),opts);
+  if(error&&_ytHasPubTs&&/published_ts/.test(error.message||'')){
+    _ytHasPubTs=false; // 컬럼 추가 SQL 전이면 시각 없이 진행(추가하면 새로고침 후 자동으로 다시 켜짐)
+    ({error}=await sb.from(_YT_TABLE).upsert(strip(rows),opts));
+  }
   if(error&&_ytHasSourceCols&&/source_handle|source_tier/.test(error.message||'')){
     _ytHasSourceCols=false; // 이후 동기화는 조용히 출처 없이 진행(마이그레이션 실행하면 자동으로 다시 켜짐 — 새로고침 후)
     ({error}=await sb.from(_YT_TABLE).upsert(strip(rows),opts));

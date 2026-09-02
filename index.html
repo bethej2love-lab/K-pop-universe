@@ -16935,12 +16935,35 @@ function _buildFeedRandomConnection(list){
 // ⚠️ **달력 날짜가 아니라 실제 경과 시간**으로 판정한다. 예전엔 자정 기준 날짜 차이로 갈라서,
 //    밤 11시에 올라온 영상이 자정을 넘기는 순간 "2시간 전"에서 "어제"로 건너뛰었다 — 실제로는
 //    두 시간밖에 안 지났는데 하루가 지난 것처럼 보였다.
-// ⚠️ published_at '전체' timestamp(시각 포함)를 넘겨야 함 — 날짜만 자르면 그 날 00:00으로 읽혀
-//    최대 하루만큼 과장된다(그래서 호출부가 paFull을 우선 넘긴다).
+// ⚠️ 시각이 포함된 값(published_ts)을 넘겨야 "N시간 전"이 맞는다. **날짜만 있는 값이면 시간을
+//    지어내지 않고 달력 기준(오늘/어제/N일 전)으로 떨어진다** — 예전엔 날짜만 와도 그대로 시간
+//    계산을 해서, 그 날 00:00 UTC(=한국시간 오전 9시)로 읽히는 바람에 17시간 전에 올라온 영상이
+//    31시간 전으로 계산돼 "어제"로 표기됐다(2026-09-02 사용자 제보, 코르티스 롤라팔루자 영상).
+//    진짜 원인은 동기화가 유튜브의 정확한 업로드 시각을 날짜로 잘라 버린 것이라 그쪽(admin.js)에서
+//    published_ts를 따로 저장하게 고쳤고, 이 함수는 그 값이 아직 없는 옛 행을 정직하게 처리한다.
+// published_ts(정확한 업로드 시각) 컬럼 존재 여부 — 마이그레이션 전이면 select에 넣는 순간 400이 나
+// 피드가 통째로 안 뜬다. 첫 조회에서 감지해 끄고, 이후엔 시각 없이(달력 표기로) 정상 동작한다.
+// 컬럼을 추가하면 새로고침 후 자동으로 다시 켜진다. 이 값이 필요한 건 피드 두 곳뿐이라 거기서만 붙인다.
+let _hasPubTs=true;
+const _FEED_COLS=()=>'id,title,thumb,category,is_short,content_flag,group_ko,members,view_count,published_at'+(_hasPubTs?',published_ts':'');
+const _isPubTsMissing=err=>!!err&&/published_ts/.test(err.message||'');
 function _fmtVidAgo(iso){
   if(!iso)return'';
-  const now=Date.now(), then=new Date(iso).getTime();
+  const s=String(iso);
+  const then=new Date(s).getTime();
   if(!isFinite(then))return'';
+  // "2026-09-01"처럼 시각이 없는 값 — 경과 시간을 못 믿으므로 달력 날짜 차이로만 말한다.
+  if(!/[T ]\d{2}:\d{2}/.test(s)){
+    const d0=new Date(),t0=new Date(d0.getFullYear(),d0.getMonth(),d0.getDate()).getTime();
+    const m=s.match(/^(\d{4})-(\d{2})-(\d{2})/);
+    if(!m)return'';
+    const t1=new Date(+m[1],+m[2]-1,+m[3]).getTime();
+    const days=Math.round((t0-t1)/86400000);
+    if(days<=0)return currentLang==='ko'?'오늘':'today';
+    if(days===1)return currentLang==='ko'?'어제':'yesterday';
+    return currentLang==='ko'?`${days}일 전`:`${days}d ago`;
+  }
+  const now=Date.now();
   const h=Math.floor((now-then)/3600000);
   if(h<1)return currentLang==='ko'?'방금':'just now';
   if(h<24)return currentLang==='ko'?`${h}시간 전`:`${h}h ago`;
@@ -17048,8 +17071,7 @@ async function _buildFeedTrend(){
   strip.innerHTML='';section.style.display='none';
   try{
     const since=new Date(Date.now()-_FEED_TREND_DAYS*86400000).toISOString().slice(0,10);
-    const{data,error}=await _applyLiveExclude(sb.from(_YT_TABLE)
-      .select('id,title,thumb,category,is_short,content_flag,group_ko,members,view_count,published_at'))
+    const _q=()=>_applyLiveExclude(sb.from(_YT_TABLE).select(_FEED_COLS()))
       .gte('published_at',since)
       // 숨김/무관/보류/기타는 유저 화면에 안 나오는 값 — 다른 피드 카드와 같은 필터를 그대로 쓴다
       .or('content_flag.is.null,content_flag.neq.기타')
@@ -17057,6 +17079,8 @@ async function _buildFeedTrend(){
       .or('content_flag.is.null,content_flag.neq.hidden')
       .order('published_at',{ascending:false})
       .limit(800);
+    let{data,error}=await _q();
+    if(_isPubTsMissing(error)){_hasPubTs=false;({data,error}=await _q());} // 컬럼 추가 전이면 빼고 재조회
     if(error||!data?.length)return;
     // 세로 2단 그리드라 쇼츠도 그대로 포함(2026-08-29 Step3) — 쇼츠는 9:16(is-short), 일반은 16:9로 렌더.
     // 예전엔 16:9 스트립이라 세로 영상이 좌우 크게 남아 어색해서 제외했었다(사용자 제보의 그 문제).
@@ -17067,7 +17091,7 @@ async function _buildFeedTrend(){
     // 전부 이 한 줄을 갖고 있다). 여기서 빠뜨렸더니 ReferenceError가 나고 아래 catch가 그대로 삼켜
     // **선반만 조용히 안 뜨는** 상태로 배포됐다(2026-08-28 사용자 제보로 발견).
     const vidUrl=v=>_isShortV(v)?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;
-    const songs=picked.map(v=>({t:v.title,u:vidUrl(v),thumb:v.thumb,vc:v.view_count,pa:v.published_at?.slice(0,10),paFull:v.published_at,
+    const songs=picked.map(v=>({t:v.title,u:vidUrl(v),thumb:v.thumb,vc:v.view_count,pa:v.published_at?.slice(0,10),paFull:v.published_ts||v.published_at,
       groupKo:v.group_ko,memberKos:v.members||[]}));
     // 행 패커 배치(2026-08-30) — 한 행은 같은 비율(가로2 or 쇼츠2), 가로는 가끔 전체폭. 여백0 + 그림처럼 번갈아.
     strip.className='feed-grid'; // 이전 렌더가 masonry로 바꿨을 수 있어 그리드로 리셋(.feed-wide span2 사용)
@@ -17138,8 +17162,7 @@ async function _buildFeedFavNew(){
   };
   try{
     const since=new Date(Date.now()-_FEED_TREND_DAYS*86400000).toISOString().slice(0,10); // 최근 7일만(2026-08-30)
-    const{data,error}=await _applyLiveExclude(sb.from(_YT_TABLE)
-      .select('id,title,thumb,category,is_short,content_flag,group_ko,members,view_count,published_at'))
+    const _q=()=>_applyLiveExclude(sb.from(_YT_TABLE).select(_FEED_COLS()))
       .in('group_ko',[...queryGkos].slice(0,80))
       .gte('published_at',since)
       .or('content_flag.is.null,content_flag.neq.기타')
@@ -17147,6 +17170,8 @@ async function _buildFeedFavNew(){
       .or('content_flag.is.null,content_flag.neq.hidden')
       .order('published_at',{ascending:false})
       .limit(400);
+    let{data,error}=await _q();
+    if(_isPubTsMissing(error)){_hasPubTs=false;({data,error}=await _q());} // 컬럼 추가 전이면 빼고 재조회
     if(error||!data?.length)return;
     // 최신순 유지(셔플 안 함), 쇼츠 포함(그리드라 9:16 그대로 렌더), 멤버필터 적용, 그룹당 캡 없음(즐겨찾기라 "싹 다").
     const vids=_filterBannedVideos(data).filter(_favMatch).slice(0,_FEED_FAVNEW_MAX);
@@ -17154,7 +17179,7 @@ async function _buildFeedFavNew(){
     const vidUrl=v=>_isShortV(v)?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;
     // _apiId/_apiGroupKo: 어드민 편집(연필) 버튼이 어느 DB 행을 고칠지 아는 키 — 카드 그리드(_apiVidToSong)는
     // 붙이는데 이 선반만 빠져서 favnew 영상은 편집이 안 걸렸다(2026-08-31 사용자 제보, 모바일).
-    const songs=vids.map(v=>({t:v.title,u:vidUrl(v),thumb:v.thumb,vc:v.view_count,pa:v.published_at?.slice(0,10),paFull:v.published_at,groupKo:v.group_ko,memberKos:v.members||[],_apiId:v.id,_apiGroupKo:v.group_ko,content_flag:v.content_flag||null}));
+    const songs=vids.map(v=>({t:v.title,u:vidUrl(v),thumb:v.thumb,vc:v.view_count,pa:v.published_at?.slice(0,10),paFull:v.published_ts||v.published_at,groupKo:v.group_ko,memberKos:v.members||[],_apiId:v.id,_apiGroupKo:v.group_ko,content_flag:v.content_flag||null}));
     // 행 패커(Trend와 동일) — 같은 비율끼리 한 행, 가로 가끔 전체폭, 여백0. 최신순 유지가 중요해 wideProb는 낮게.
     const rows=_packRows(songs,_songIsShort,{wideProb:0.22,minGap:2});
     if(rows.length&&!rows[rows.length-1].wide&&rows[rows.length-1].items.length===1)rows.pop(); // 끝에 홀로 남은 반폭 제거
