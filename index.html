@@ -1302,6 +1302,19 @@ if(typeof window.supabase==='undefined'){
 if(typeof THREE==='undefined'||!THREE.OrbitControls||!THREE.CSS2DRenderer){
   (function(){
     var ko=(navigator.language||'').toLowerCase().indexOf('ko')===0;
+    // ── 계측(2026-09-02): 여기 도달했다는 건 **앱 전체를 못 쓴다**는 뜻이다.
+    // three.js는 지금 하드 의존성이라, 로드 실패 시 데이터 로드(buildUniverse)조차 시작 못 하고
+    // 검색·영상·카드까지 통째로 막힌다. 그런데 이 환경이 실제로 얼마나 되는지 숫자가 없었다.
+    // "3D를 필수 부팅 조건에서 선택 레이어로 내릴지"를 감이 아니라 이 수치로 판단하려고 남긴다.
+    // 어느 조각이 없는지도 같이 보낸다 — CDN 차단(THREE 자체 없음)과 애드온만 실패는 원인이 다르다.
+    // ⚠️ gtag는 이 파일 37~42행에서 이미 정의되므로 여기서 안전하게 부를 수 있다(_gaEvent는
+    //    7000번대 선언이라 이 시점엔 없다). 계측이 에러 화면을 막는 일이 없게 try로 감싼다.
+    try{
+      if(typeof gtag==='function')gtag('event','three_load_failed',{
+        missing:(typeof THREE==='undefined'?'core':(!THREE.OrbitControls?'orbitcontrols':'css2drenderer')),
+        is_mobile:(window.innerWidth<=768?1:0),
+      });
+    }catch(_){}
     var el=document.getElementById('loading');
     if(el){
       el.classList.add('loading-error');
