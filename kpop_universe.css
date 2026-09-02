@@ -2544,6 +2544,10 @@
     100%{transform:translate(calc(-50% + var(--px)),calc(-50% + var(--py))) scale(0.15);opacity:0;}
   }
   .fav-particle{position:absolute;left:50%;top:50%;pointer-events:none;line-height:1;color:rgba(255,110,140,0.95);animation:fav-particle .6s cubic-bezier(0.2,0.7,0.4,1) forwards;will-change:transform,opacity;}
+  /* 하트→피드탭 비언어 루프 힌트(2026-09-02) — ♥가 곡선으로 피드 탭에 날아가 흡수되고 탭이 글로우 펄스 */
+  .fav-fly{position:fixed;z-index:9999;font-size:19px;line-height:1;color:#ff5c8a;pointer-events:none;text-shadow:0 0 12px rgba(255,92,138,0.6);will-change:transform,opacity;}
+  @keyframes fav-tab-glow{0%{filter:drop-shadow(0 0 0 rgba(126,156,255,0));}30%{filter:drop-shadow(0 0 8px rgba(126,156,255,0.95));}100%{filter:drop-shadow(0 0 0 rgba(126,156,255,0));}}
+  .tab-btn.fav-tab-pulse{animation:fav-tab-glow .6s ease;}
   /* 첫 즐겨찾기를 유도하는 은은한 펄스 — favGroups/favMembers가 둘 다 비어있는 동안만(_syncFavBtn) */
   @keyframes fav-hint-pulse{
     0%,100%{filter:drop-shadow(0 0 0px rgba(255,95,128,0));transform:scale(1);}

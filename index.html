@@ -12541,12 +12541,43 @@ function _reopenPreHeartCard(){
   else showT(c.artist,cx,cy);
 }
 // 즐겨찾기 추가 순간 하트 바운스 + 작은 하트 조각 파티클 몇 개가 사방으로 톡 터지는 효과
+// 피드 탭에 "새 게 있다" 점 배지 + 짧은 글로우 펄스. 탭이 가려져 있어도 배지는 남아 가림이 풀리면 보인다.
+function _pulseFeedTab(){
+  const tab=document.getElementById('tab-feed');if(!tab)return;
+  tab.classList.add('show-badge'); // 피드를 열면 제거됨(기존 로직)
+  tab.classList.remove('fav-tab-pulse');void tab.offsetWidth;tab.classList.add('fav-tab-pulse');
+  setTimeout(()=>tab.classList.remove('fav-tab-pulse'),650);
+}
+// 비언어 루프 힌트 — 하트를 누르면 ♥가 곡선을 그리며 피드(나침반) 탭으로 날아가 흡수된다. "이 즐겨찾기가
+// 저기(피드)로 간다"를 글자 없이 잇는다(2026-09-02). 탭바가 숨은 상태(모바일 카드 풀오픈 등)면 배지만 남긴다.
+function _flyHeartToFeed(fromEl){
+  try{
+    const tab=document.getElementById('tab-feed'),bar=document.getElementById('tabbar');
+    if(!tab)return;
+    _pulseFeedTab(); // 배지·펄스는 항상(가려져도 배지는 남음)
+    if(!fromEl||(bar&&bar.classList.contains('tab-hidden')))return; // 탭바 숨김이면 비행 생략
+    const a=fromEl.getBoundingClientRect(),b=tab.getBoundingClientRect();
+    if(!a.width||!b.width||b.top>window.innerHeight||b.bottom<0)return; // 타깃이 화면 밖이면 생략
+    const x0=a.left+a.width/2,y0=a.top+a.height/2,x1=b.left+b.width/2,y1=b.top+b.height/2;
+    const fly=document.createElement('div');fly.className='fav-fly';fly.textContent='♥';
+    fly.style.left=x0+'px';fly.style.top=y0+'px';
+    document.body.appendChild(fly);
+    const mx=(x0+x1)/2,my=Math.min(y0,y1)-64; // 중간 제어점을 위로 띄워 곡선처럼
+    const anim=fly.animate([
+      {transform:'translate(-50%,-50%) scale(1)',opacity:1,offset:0},
+      {transform:`translate(calc(-50% + ${(mx-x0).toFixed(1)}px), calc(-50% + ${(my-y0).toFixed(1)}px)) scale(1.15)`,opacity:1,offset:0.5},
+      {transform:`translate(calc(-50% + ${(x1-x0).toFixed(1)}px), calc(-50% + ${(y1-y0).toFixed(1)}px)) scale(0.3)`,opacity:0.15,offset:1}
+    ],{duration:620,easing:'cubic-bezier(.5,.05,.4,1)'});
+    anim.onfinish=()=>fly.remove();anim.oncancel=()=>fly.remove();
+  }catch(e){}
+}
 function _favBurst(btn){
   if(!btn)return;
   btn.classList.remove('fav-burst');
   void btn.offsetWidth; // 강제 리플로우 — 연속으로 눌러도 애니메이션이 처음부터 다시 재생되도록
   btn.classList.add('fav-burst');
   setTimeout(()=>btn.classList.remove('fav-burst'),450);
+  _flyHeartToFeed(btn); // 하트가 피드 탭으로 날아가는 비언어 루프 힌트
   const n=5;
   for(let i=0;i<n;i++){
     const p=document.createElement('span');
