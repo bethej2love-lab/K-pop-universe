@@ -2304,10 +2304,13 @@ async function buildUniverse(){
   // 영원히 안 끝나 로딩 화면에서 우주 진입 자체가 막혀버리는 사고가 있었음(2026-08-06, 사용자 제보 — 폰에서
   // "auth getSession 에러" 뜨며 로딩 멈춤). 타임아웃을 걸어서, 인증 동기화가 안 되더라도(로그인 상태만
   // 못 불러올 뿐) 우주 자체는 반드시 뜨게 한다.
-  await _withTimeout(initSupabaseSync(),10000,'로그인 동기화 시간 초과').catch(e=>{
+  // 로그인 동기화(getSession 네트워크 왕복 포함)를 우주 뜨는 임계경로에서 뺀다(2026-09-02 "로딩 여전히 느림"
+  // — 이전엔 이걸 await하느라 우주가 그만큼 늦게 떴다). 재방문자는 최애·컬렉션이 localStorage에 이미 있어
+  // 즉시 올바르게 뜨고, 서버 동기화가 끝나면 아래 _authP.then에서 그 부분만 다시 반영(크로스디바이스 변경만
+  // 잠깐 늦음). 타임아웃/에러는 기존처럼 관용 — 안 돼도 우주는 뜬다.
+  const _authP=_withTimeout(initSupabaseSync(),10000,'로그인 동기화 시간 초과').catch(e=>{
     console.error('[초기화] Supabase 인증 동기화 실패/시간초과 — 로그인 상태 없이 계속 진행:',e.message);
   });
-  _perfMark('auth');
   const [[grpData,artData],connData]=await _jsonPromise;
   GROUPS=grpData;ARTISTS=artData;_rawConnData=connData;
   _perfMark('data');
@@ -2321,6 +2324,13 @@ async function buildUniverse(){
   placeMyStarInUniverse();
   _updateIdxEntryCount();
   _updateFavHintCallout();
+  // 로그인 동기화가 끝나면(우주는 이미 떠 있음) 서버 유저 데이터로 최애·컬렉션·마이스타만 다시 반영
+  _authP.then(()=>{try{
+    renderFavList();renderCollectionSection();renderScrapList();renderConcertLogList();_renderBiasChips();
+    placeMyStarInUniverse();_updateFavHintCallout();_updateIdxEntryCount();
+    if(typeof favMode!=='undefined'&&favMode&&typeof applyFavHighlight==='function')applyFavHighlight();
+    _perfMark('authDone');
+  }catch(e){}});
 
   // ── Bidirectional 'with' expansion ──────────────────
   (function expandWith(){
