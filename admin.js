@@ -6026,6 +6026,29 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
     }
     membersByGroup[gko]=matched;
   }
+  // ── 일반명사형 그룹명 오매칭 게이트(2026-09-02, 반복 제보) ─────────────────────────────
+  // 아이콘(=icon)·위너(=winner)는 그룹명이 흔한 로드워드/영단어라 제목에 그 단어만 있어도 그룹으로 오태깅됨
+  // ("올해의 아이콘", "the Winner is?"). 그룹명 리터럴만으론 불충분 → 다음 중 하나가 있을 때만 인정:
+  //   ① 자체 채널(selfGko)  ② 그 그룹 멤버가 제목에 확정됨(membersByGroup 비어있지 않음 — 위너 강승윤 팬캠 유지)
+  //   ③ 해시태그(#위너/#WINNER·#아이콘/#iKON)  ④ 고유 표기(iKON 대소문자 그대로 / 올대문자 WINNER — 로드워드
+  //   "Winner/winner/icon"과 구분). 멤버가 잡히면 살리므로 정상 매칭은 유지되고 근거 없는 리터럴만 걸린다.
+  //   (역추론 경로 5964는 멤버→그룹이라 이 로드워드 케이스가 안 옴 — 여긴 그룹명 리터럴 경로.)
+  const _COMMON_NOUN_GROUP_OK={
+    '아이콘':t=>/#\s*아이콘/.test(t)||/#\s*iKON/i.test(t)||/iKON/.test(t),
+    '위너':t=>/#\s*위너/.test(t)||/#\s*WINNER/i.test(t)||/\bWINNER\b/.test(t),
+  };
+  if(matchedGroupKos.length){
+    const kept=matchedGroupKos.filter(gko=>{
+      const chk=_COMMON_NOUN_GROUP_OK[gko];
+      if(!chk||gko===selfGko)return true;
+      if((membersByGroup[gko]||[]).length>0)return true; // 멤버 확정되면 인정(정상 매칭 유지)
+      return chk(rawTitle); // 아니면 해시태그/고유표기 있을 때만
+    });
+    if(kept.length!==matchedGroupKos.length){
+      matchedGroupKos.length=0;matchedGroupKos.push(...kept);
+      for(const k in membersByGroup)if(!kept.includes(k))delete membersByGroup[k];
+    }
+  }
   // confidence:'strong' — 제목에 그룹명(공식명/영문명/altNames) 리터럴이나 해시태그가 실제로 있어서
   // 그룹을 특정한 경로. 위 역추론(약한 근거) 경로와 대비되는 값.
   return{primaryGroup:matchedGroupKos[0],withGroups:matchedGroupKos.slice(1),membersByGroup,confidence:'strong'};

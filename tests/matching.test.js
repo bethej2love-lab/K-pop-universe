@@ -273,6 +273,24 @@ test('앤팀 — bare "Team"은 매칭 안 됨(오염 원인)', 'Team 5JANGNAM -
 test('앤팀 — "Team A vs B"도 매칭 안 됨', 'Hoodie Girls Team A vs B', undefined,
   r => !r || (r.primaryGroup !== '앤팀' && !(r.withGroups || []).includes('앤팀')));
 
+// 일반명사형 그룹명 게이트(아이콘=icon·위너=winner, 2026-09-02) — 근거 없는 로드워드/영단어만 차단, 멤버/해시태그/고유표기는 유지
+test('위너 — 로드워드 "위너" 단독은 그룹 아님', '올해의 위너는 누구? 시상식 하이라이트', undefined,
+  r => !r || (r.primaryGroup !== '위너' && !(r.withGroups || []).includes('위너')));
+test('위너 — 영어 "the Winner is?"도 아님', 'And the Winner is? Best Award clip', undefined,
+  r => !r || (r.primaryGroup !== '위너' && !(r.withGroups || []).includes('위너')));
+test('위너 — 멤버(강승윤) 있으면 유지', '위너 강승윤 직캠', undefined,
+  r => !!r && (r.primaryGroup === '위너' || (r.withGroups || []).includes('위너')));
+test('위너 — 해시태그 #WINNER면 유지', 'Comeback stage #WINNER', undefined,
+  r => !!r && (r.primaryGroup === '위너' || (r.withGroups || []).includes('위너')));
+test('위너 — 올대문자 WINNER 고유표기면 유지', 'WINNER - I LOVE U @ Music Bank', undefined,
+  r => !!r && (r.primaryGroup === '위너' || (r.withGroups || []).includes('위너')));
+test('위너 — 자체 채널이면 근거 약해도 유지(selfGko 면제)', '위너 브이로그 촬영 현장 EP.1', '위너',
+  r => !!r && r.primaryGroup === '위너');
+test('아이콘 — 로드워드 "아이콘" 단독은 그룹 아님', '2024 올해의 아이콘 시상 무대', undefined,
+  r => !r || (r.primaryGroup !== '아이콘' && !(r.withGroups || []).includes('아이콘')));
+test('아이콘 — 고유표기 iKON이면 유지', 'iKON - Killing Me stage', undefined,
+  r => !!r && (r.primaryGroup === '아이콘' || (r.withGroups || []).includes('아이콘')));
+
 // ── "솔로" placeholder 누출(2026-08-25 실측으로 발견) ──────────────────
 // 무소속 솔로(아이유·승한 등)는 artists.json에서 group.ko가 "솔로"인데, 이건 여러 명이 공유하는
 // 가짜 값이라 group_ko로 쓰면 안 됨(_isValidVidGroupKo도 무효 처리). 그런데 역추론 경로가 이걸
