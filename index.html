@@ -4196,6 +4196,7 @@ function _makeSearchItem(h,res,mobSearch,obSearch){
     // 영상은 카드가 아니라 라이트박스로 바로 연다 — 카메라 이동·카드 열기 흐름을 타지 않는다.
     if(h.type==='video'){
       if(obSearch)exitObSearch();else if(mobSearch)exitMobSearch();
+      else if(typeof _msIsOpen==='function'&&_msIsOpen())closeMobSearchSheet(); // 풀스크린 검색 시트 닫고 재생
       else{document.getElementById('search-input').value='';res.style.display='none';}
       openLightbox(h.url,!!h.isShort);
       return;
@@ -4228,6 +4229,9 @@ function _makeSearchItem(h,res,mobSearch,obSearch){
       exitMobSearch();
       // 모바일은 카드(바텀시트)가 화면 하단 대부분을 덮어서, 카메라 이동이 끝나기 전에 카드부터
       // 열리면 이동하는 모습이 거의 안 보임 — 탐색(✦) 버튼과 동일하게 도착 후에 카드를 연다.
+      flyState.onComplete=()=>setTimeout(_openCard,150);
+    }else if(typeof _msIsOpen==='function'&&_msIsOpen()){
+      closeMobSearchSheet(); // 풀스크린 검색 시트를 닫아야 카드가 위로(뒤 아님) 뜨고, 시트가 반쯤 남아 재열 때 텅 비는 것도 방지(2026-09-02)
       flyState.onComplete=()=>setTimeout(_openCard,150);
     }else{
       document.getElementById('search-input').value='';
