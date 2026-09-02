@@ -48,7 +48,7 @@
 
 ### 탐험 루프 트랙 (2026-09-02, 별도 세션) — 진행중
 - **[완료][#1 발자국][index.html][kpop_universe.css] 방금 본 카드로 되돌아가기** — 제보 "뭐 보다 모르고 끄면 직전으로 못 감". 기존 세션 스택(_cardStack·_memberNavStack)은 닫으면 비워짐 → **닫혀도 남는 별도 히스토리**(`kpu_footprints` localStorage, 최대15, 카드단위 dedup). showT/showGC/_comboSearch에 기록 훅(_fpRestoring 가드로 복원 시 재기록 방지). 카드 닫혀 우주로 돌아오면 좌하단 🐾 토글→최근 카드 칩 트레일로 복귀(_fpReopen: 멤버=showT·그룹=showGC·조합=_comboSel복원). 기존 나비 스택 안 건드림. 탐험 루프의 안전망. ⚠️아이폰 실기 확인.
-- **[진행중] #2 카드 내 "이어서 발견" 컨텍스트 홉** — 그래프 엣지(cover_of·with_members·producedBy·데뷔연도) 기반 다음 발견 2~3개. #3(Discovery 선반 정비)는 유저와 재논의.
+- **[완료][#2 이어서 발견][index.html][kpop_universe.css] 멤버 카드 하단 컨텍스트 홉** — 그래프 엣지 기반 "인접하지만 의외인" 다음 발견 2~3개: ①자주 엮이는 사람(_rawConnData, 타그룹 우선) ②같은 소속사 다른 그룹(co) ③같은 해(±1) 데뷔 그룹(debut). 전부 인메모리라 새 쿼리 0. 홉 클릭=showT/showGC→발자국 자동 기록이라 "보고→옆으로→되돌아오기" 루프 성립. 매 열람 랜덤(같은 멤버도 다른 길). `_discoverHops`+`_renderDiscoverHops`(showT 훅, #tt-discog-row 뒤 삽입). bubbleMeshes 있는 그룹만(열 수 있는 것). ⚠️아이폰 실기 확인. **#3(Discovery 선반 정비)는 유저와 재논의 예정.**
 
 ### 조합 패널 트랙 (2026-09-02, 별도 세션) — 진행중
 - **[완료][kpop_universe.css] 콘텐츠 창 고정 높이(#3 1단계)** — 곡영상 시트가 `max-height:78vh`라 내용 로드에 따라 커지는 "점프"가 있었음(제보 "채워진 정도와 무관하게 크기 고정"). `height:78vh`(데스크톱 min(78vh,600px)) 고정 + 리스트 `flex:1` 내부 스크롤로. 새 조합 패널·나머지 큰 창의 표준 패턴. 피드·컬렉션은 inset:0 전체화면이라 점프 없음, 연결 시트는 드래그로 키우는 의도라 제외.

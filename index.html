@@ -8994,6 +8994,7 @@ function showT(a,cx,cy,keepNavStack,urlMode,_unusedPushMobNav,noFly){
   const _extraGroupKos=_aGroups.map(g=>g.ko).filter(k=>k!==a.group.ko);
   setFocus(a.group.ko,_extraGroupKos);_openTArtist=a;
   if(a&&a.group&&a.name)_fpPush({type:'tt',gko:a.group.ko,mko:a.name.ko,label:a.name.ko}); // 발자국 기록
+  try{_renderDiscoverHops(a);}catch(e){} // 카드 하단 "이어서 발견" 컨텍스트 홉
   _syncFavBtn('member',a);
   if(a._flashPulse!==undefined||a._worldPos){a._flashPulse=1.4;}
   const el=document.getElementById('tt');
@@ -10322,6 +10323,59 @@ function _fpReopen(fp){
 }
 document.getElementById('fp-toggle')?.addEventListener('click',e=>{e.stopPropagation();const b=document.getElementById('footprint-bar');if(b&&_footprints.length)b.classList.toggle('open');});
 _fpRender();_fpUpdateVis();
+
+// ══ 이어서 발견(2026-09-02) — 멤버 카드 하단 컨텍스트 홉. 그래프 엣지(연결·소속사·데뷔연도)에서 "인접하지만
+// 의외인" 다음 발견 2~3개. 전부 인메모리(_rawConnData/GROUPS)라 새 쿼리 0. 홉 클릭=showT/showGC(→발자국 자동
+// 기록)라 "보고→옆으로→되돌아오기" 탐험 루프가 성립. 매 열람마다 랜덤이라 같은 멤버도 다른 길로 이어진다.
+function _discoverHops(a){
+  const out=[];const gko=a.group&&a.group.ko;if(!gko)return out;
+  const g=GROUPS[gko]||{},used=new Set([gko]),nm=a.name&&a.name.ko;
+  // 1) 자주 엮이는 사람(connections) — 타그룹 우선
+  if(nm){
+    const conns=_shuffle(_rawConnData.filter(c=>c.type==='member'&&(c.a===nm||c.b===nm)));
+    for(const c of conns){
+      const other=c.a===nm?c.b:c.a;
+      const oa=ARTISTS.find(x=>x.name&&x.group&&x.name.ko===other&&(!c.group||x.group.ko===c.group));
+      if(oa&&oa.group.ko!==gko&&bubbleMeshes.some(b=>b.ko===oa.group.ko)){out.push({type:'tt',artist:oa,label:oa.name.ko,sub:oa.group.ko,note:currentLang==='ko'?'자주 엮여요':'Often together'});used.add(oa.group.ko);break;}
+    }
+  }
+  // 2) 같은 소속사 다른 그룹
+  if(g.co){
+    const same=Object.keys(GROUPS).filter(k=>!used.has(k)&&GROUPS[k].co===g.co&&bubbleMeshes.some(b=>b.ko===k));
+    if(same.length){const p=same[Math.floor(Math.random()*same.length)];used.add(p);out.push({type:'gc',gko:p,label:p,note:currentLang==='ko'?'같은 소속사':'Same label'});}
+  }
+  // 3) 같은 해(±1) 데뷔 그룹
+  const yr=parseInt(g.debut)||0;
+  if(yr){
+    const era=Object.keys(GROUPS).filter(k=>!used.has(k)&&Math.abs((parseInt(GROUPS[k].debut)||0)-yr)<=1&&bubbleMeshes.some(b=>b.ko===k));
+    if(era.length){const p=era[Math.floor(Math.random()*era.length)];used.add(p);out.push({type:'gc',gko:p,label:p,note:currentLang==='ko'?('같은 해 데뷔 · '+yr):('Debuted '+yr)});}
+  }
+  return out.slice(0,3);
+}
+function _renderDiscoverHops(a){
+  const card=document.getElementById('tt');if(!card||!a)return;
+  let sec=document.getElementById('tt-discover');
+  if(!sec){sec=document.createElement('div');sec.id='tt-discover';}
+  sec.innerHTML='';
+  const hops=_discoverHops(a);
+  if(!hops.length){if(sec.parentNode)sec.parentNode.removeChild(sec);return;}
+  const lbl=document.createElement('div');lbl.className='ttd-lbl';lbl.textContent=currentLang==='ko'?'이어서 발견':'Keep exploring';
+  sec.appendChild(lbl);
+  hops.forEach(h=>{
+    const row=document.createElement('button');row.type='button';row.className='ttd-hop';
+    const main=document.createElement('span');main.className='ttd-main';main.textContent=h.label+(h.sub?(' · '+h.sub):'');
+    const note=document.createElement('span');note.className='ttd-note';note.textContent=h.note;
+    row.appendChild(main);row.appendChild(note);
+    row.addEventListener('click',e=>{
+      e.stopPropagation();
+      if(h.type==='tt'&&h.artist){if(h.artist._worldPos)flyTo(h.artist._worldPos);showT(h.artist,window.innerWidth/2,window.innerHeight*0.4);}
+      else if(h.type==='gc'){const bm=bubbleMeshes.find(b=>b.ko===h.gko);if(bm)flyToBubble(bm.mesh.position,bm.radius);showGC(h.gko,window.innerWidth/2,window.innerHeight*0.4);}
+    });
+    sec.appendChild(row);
+  });
+  const dr=document.getElementById('tt-discog-row');
+  if(dr&&dr.parentNode)dr.parentNode.insertBefore(sec,dr.nextSibling);else card.appendChild(sec);
+}
 
 function _gcDiscogDetailGo(delta){
   const ni=_gcDiscogIdx+delta;
