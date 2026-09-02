@@ -561,6 +561,22 @@
      일이 거의 없어서 안 드러났었음, 2026-08-11 스크린샷으로 실측 확인) — 완전 불투명으로. */
   #yt-lightbox.lb-browse{background:#08091a;}
   #yt-lightbox.open{display:flex;}
+  /* ── 웹 전용: 카드 보며 영상 재생 (2026-09-02 제보 "영상 보면서 카드도") ───────────────
+     #yt-lightbox는 inset:0 풀스크린이라 우측 앵커 카드(#side-panel:320, +멤버 2단:640, 넓게:640)를
+     통째로 덮었다. 데스크톱에서 카드가 열려 있으면 그 폭만큼 플레이어의 오른쪽을 비운다 → 카드 영역은
+     루트가 아예 차지하지 않으므로 그대로 보이고 클릭도 네이티브로 동작한다(어드민 좌측도킹과 같은 목적,
+     여기선 루트를 물리적으로 줄여 pointer-events 조작조차 불필요). 카드가 없으면 그대로 풀스크린.
+     min(…,100vw-480px)로 좁은 데스크톱에선 영상이 최소 480px는 유지(그 경우만 카드 일부를 덮음).
+     :has()는 이미 어드민 도킹(#adm-home-overlay 등)에서 쓰는 기법 — 데스크톱 지원 확인됨. */
+  @media(min-width:769px){
+    body:has(#side-panel.open) #yt-lightbox{right:320px;}
+    body:has(#member-panel.open) #yt-lightbox{right:min(640px,calc(100vw - 480px));}
+    body.card-wide:has(#side-panel.open) #yt-lightbox{right:min(640px,calc(100vw - 480px));}
+    body.card-wide:has(#member-panel.open) #yt-lightbox{right:min(960px,calc(100vw - 480px));}
+    /* 좁아진 영역에 맞춰 영상 래퍼가 카드 밑으로 삐져나가지 않게(기본 min(88vw,900px) 위에 캡) */
+    body:has(#side-panel.open) #yt-lb-wrap,
+    body:has(#member-panel.open) #yt-lb-wrap{max-width:88%;}
+  }
   #yt-lb-wrap{position:relative;width:min(88vw,900px);}
   #yt-lb-video-box{position:relative;width:100%;aspect-ratio:16/9;}
   #yt-lb-video-box.is-shorts{aspect-ratio:9/16;width:min(54vw,420px);margin:0 auto;}
