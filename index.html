@@ -4051,10 +4051,11 @@ function _appendTrendingSection(hits,res,mobSearch,obSearch){
     tile.addEventListener('click',()=>wired.click());
     grid.appendChild(tile);
     (async()=>{
-      // 그룹 프로필 사진 우선(그룹 카드 #gc-pic과 동일 소스, 로드 시 _warmInstaPicCache가 미리 채움).
-      try{ if(_instaPicPreloadP)await _instaPicPreloadP; }catch(e){}
-      let url=_instaPicCache.get(_picKey('',ko));
-      if(!url){ try{ await _ensureGroupDisco(ko); url=_latestCover((GROUPS[ko]||{}).discography); }catch(e){} } // 폴백: 최신 앨범 커버
+      // 그룹 프로필 사진 — 데뷔 기념일 카드와 동일 규칙(_groupPicKey → info.img). 검색부터 열면 캐시가 아직
+      // 안 채워져 앨범커버로 폴백되던 문제 → 워밍을 여기서 보장(_instaPicPreloadP 없으면 시작해 기다림).
+      try{ _instaPicPreloadP=_instaPicPreloadP||_warmInstaPicCache(); await _instaPicPreloadP; }catch(e){}
+      let url=_instaPicCache.get(_groupPicKey(ko))||(GROUPS[ko]&&GROUPS[ko].img)||'';
+      if(!url){ try{ await _ensureGroupDisco(ko); url=_latestCover((GROUPS[ko]||{}).discography); }catch(e){} } // 그래도 없으면 최신 앨범 커버
       if(!url)return;
       const im=new Image(); // 로드 완료 후에만 교체 — 깨진 이미지·빈칸 방지
       im.onload=()=>{disc.style.backgroundImage=`url("${String(url).replace(/"/g,'%22')}")`;disc.classList.add('has-cover');};
@@ -10191,20 +10192,33 @@ async function _comboSearch(){
   _fpPush({type:'combo',members:_comboSel.map(m=>({name:m.name,group:m.group})),label:_comboSel.map(m=>m.name).join('·')}); // 발자국 기록
   _comboRenderResults('loading');
   const esc=s=>String(s).replace(/["\\]/g,'');
-  const pivot=_comboSel[0];
-  const COLS='id,title,thumb,is_short,group_ko,members,with_members,content_flag,published_at';
+  const COLS='id,title,thumb,is_short,group_ko,members,with_members,cover_of_members,content_flag,published_at';
   const _excl=q=>q.or('content_flag.is.null,content_flag.neq.무관').or('content_flag.is.null,content_flag.neq.보류').or('content_flag.is.null,content_flag.neq.hidden');
+  // "전원이 함께"(교집합)만 보면 3명 이상에선 거의 안 나옴 → 선택 멤버가 엮인 영상을 싹(2명 이상) 가져온다:
+  // 같은그룹=members[], 타그룹 게스트=with_members["이름(그룹)"], 커버=cover_of_members["이름(그룹)"]. OR로 한 번에.
+  const ors=[];
+  _comboSel.forEach(m=>{
+    ors.push('and(members.cs.{"'+esc(m.name)+'"},group_ko.eq.'+_pgFilterVal(m.group)+')');
+    ors.push('with_members.cs.{"'+esc(m.name)+'('+esc(m.group)+')"}');
+    ors.push('cover_of_members.cs.{"'+esc(m.name)+'('+esc(m.group)+')"}');
+  });
   let data=null;
   try{
-    const r=await _excl(sb.from(_YT_TABLE).select(COLS)
-      .or('and(members.cs.{"'+esc(pivot.name)+'"},group_ko.eq.'+_pgFilterVal(pivot.group)+'),with_members.cs.{"'+esc(pivot.name)+'('+esc(pivot.group)+')"}'))
-      .order('published_at',{ascending:false}).limit(400);
+    const r=await _excl(sb.from(_YT_TABLE).select(COLS).or(ors.join(',')))
+      .order('published_at',{ascending:false}).limit(600);
     data=r.data;
   }catch(e){}
   if(myReq!==_comboReq)return;
-  // 선택 전원이 이 영상에 함께 나왔는가(교집합). 같은그룹=members[]+group_ko 일치, 타그룹=with_members[]에 "이름(그룹)".
-  const present=(v,m)=>((v.group_ko===m.group&&(v.members||[]).indexOf(m.name)>=0)||(v.with_members||[]).indexOf(m.name+'('+m.group+')')>=0);
-  const rows=_filterBannedVideos(data||[]).filter(v=>_comboSel.every(m=>present(v,m)));
+  const inMem=(v,m)=>v.group_ko===m.group&&(v.members||[]).indexOf(m.name)>=0;
+  const inWith=(v,m)=>(v.with_members||[]).indexOf(m.name+'('+m.group+')')>=0;
+  const inCover=(v,m)=>(v.cover_of_members||[]).indexOf(m.name+'('+m.group+')')>=0;
+  const rows=[];
+  _filterBannedVideos(data||[]).forEach(v=>{
+    const who=_comboSel.filter(m=>inMem(v,m)||inWith(v,m)||inCover(v,m));
+    if(who.length<2)return; // 선택 멤버 중 최소 2명이 엮인 영상만
+    rows.push({v:v,who:who,isCover:_comboSel.some(m=>inCover(v,m))});
+  });
+  rows.sort((a,b)=>b.who.length-a.who.length); // 많이 함께 나온 영상 먼저(전원>일부)
   if(myReq!==_comboReq)return;
   _comboRenderResults(rows);
 }
@@ -10214,15 +10228,20 @@ function _comboRenderResults(rows){
   const empty=t=>{const p=document.createElement('div');p.className='tvf-empty';p.textContent=t;el.appendChild(p);};
   if(rows===null){empty(currentLang==='ko'?'멤버를 2명 이상 골라 조합 영상을 보세요':'Pick 2+ members to see their videos');return;}
   if(rows==='loading'){empty(currentLang==='ko'?'불러오는 중…':'Loading…');return;}
-  if(!rows.length){empty(currentLang==='ko'?'이 조합이 함께 나온 영상이 없어요':'No video with all of them together');return;}
+  if(!rows.length){empty(currentLang==='ko'?'이 멤버들이 함께·커버로 엮인 영상이 없어요':'No video connecting them (together or cover)');return;}
   const _vidUrl=v=>_isShortV(v)?('https://www.youtube.com/shorts/'+v.id):('https://www.youtube.com/watch?v='+v.id);
-  const playlist=rows.map(v=>({t:v.title,u:_vidUrl(v),thumb:v.thumb,pa:(v.published_at||'').slice(0,10)}));
-  rows.forEach((v,i)=>{
+  const playlist=rows.map(r=>({t:r.v.title,u:_vidUrl(r.v),thumb:r.v.thumb,pa:(r.v.published_at||'').slice(0,10)}));
+  rows.forEach((r,i)=>{
+    const v=r.v;
     const item=document.createElement('div');item.className='tvf-item';
     const img=document.createElement('img');img.className='tvf-thumb';img.loading='lazy';
     img.src=v.thumb||('https://i.ytimg.com/vi/'+v.id+'/mqdefault.jpg');img.alt='';
-    const t=document.createElement('div');t.className='tvf-title';t.textContent=v.title;
-    item.appendChild(img);item.appendChild(t);
+    const box=document.createElement('div');box.className='tvf-title';
+    if(r.isCover){const chip=document.createElement('span');chip.className='tvf-cover-chip';chip.textContent=currentLang==='ko'?'커버':'Cover';box.appendChild(chip);}
+    box.appendChild(document.createTextNode(v.title));
+    const who=document.createElement('div');who.className='combo-who';who.textContent=r.who.map(m=>m.name).join(' · '); // 이 영상에 나온 선택 멤버들
+    box.appendChild(who);
+    item.appendChild(img);item.appendChild(box);
     item.addEventListener('click',()=>openLightbox(_vidUrl(v),_isShortV(v),playlist,i));
     el.appendChild(item);
   });

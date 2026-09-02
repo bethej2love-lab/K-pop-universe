@@ -47,6 +47,8 @@
 - **[완료][index.html] 리빌 속도(4차)** — 1500 "이젠 느리다" → clip 1000, 텍스트 최소노출 1300/700→1000/550. 텍스트~1초+모션~1초, 첫<3초·재방문<2초. 웅장함은 easing·발광 링이 만들지 duration 아님.
 
 ### 탐험 루프 트랙 (2026-09-02, 별도 세션) — 진행중
+- **[완료][검색오브 사진 재수정][index.html] 데뷔 기념일 카드와 동일 규칙으로** — 오브가 앨범커버로 폴백되던 건 캐시 워밍 타이밍 문제(검색부터 열면 `_instaPicPreloadP`가 null). 애니버서리 규칙(13160) 그대로: 워밍 보장(`_instaPicPreloadP||_warmInstaPicCache()` await)+`_instaPicCache.get(_groupPicKey(ko))||info.img`→없으면 앨범커버.
+- **[완료][조합 확장][index.html][kpop_universe.css] with·커버 싹 다** — "전원이 함께"(교집합)만 나와 3명+에선 거의 없던 것 → **선택 멤버 중 2명 이상 엮인 영상 전부**(members[]·with_members[]·cover_of_members[] OR 한 번에, limit 600). 영상마다 "누가 나왔나"(선택 멤버) 라인 + 커버는 커버 칩. 많이 함께 나온 영상 먼저 정렬.
 - **[완료][#1 발자국][index.html][kpop_universe.css] 방금 본 카드로 되돌아가기** — 제보 "뭐 보다 모르고 끄면 직전으로 못 감". 기존 세션 스택(_cardStack·_memberNavStack)은 닫으면 비워짐 → **닫혀도 남는 별도 히스토리**(`kpu_footprints` localStorage, 최대15, 카드단위 dedup). showT/showGC/_comboSearch에 기록 훅(_fpRestoring 가드로 복원 시 재기록 방지). 카드 닫혀 우주로 돌아오면 좌하단 🐾 토글→최근 카드 칩 트레일로 복귀(_fpReopen: 멤버=showT·그룹=showGC·조합=_comboSel복원). 기존 나비 스택 안 건드림. 탐험 루프의 안전망. ⚠️아이폰 실기 확인.
 - **[완료][#2 이어서 발견][index.html][kpop_universe.css] 멤버 카드 하단 컨텍스트 홉** — 그래프 엣지 기반 "인접하지만 의외인" 다음 발견 2~3개: ①자주 엮이는 사람(_rawConnData, 타그룹 우선) ②같은 소속사 다른 그룹(co) ③같은 해(±1) 데뷔 그룹(debut). 전부 인메모리라 새 쿼리 0. 홉 클릭=showT/showGC→발자국 자동 기록이라 "보고→옆으로→되돌아오기" 루프 성립. 매 열람 랜덤(같은 멤버도 다른 길). `_discoverHops`+`_renderDiscoverHops`(showT 훅, #tt-discog-row 뒤 삽입). bubbleMeshes 있는 그룹만(열 수 있는 것). ⚠️아이폰 실기 확인. **#3(Discovery 선반 정비)는 유저와 재논의 예정.**
 
