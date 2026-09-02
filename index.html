@@ -783,6 +783,24 @@
 </div>
 <div id="ob-sr"></div>
 <div id="mob-sr"></div>
+<!-- 모바일 검색 풀스크린 시트(2026-09-02) — 예전엔 탭바가 검색창으로 변형되고 결과가 탭바 위
+     180px 상자(#mob-sr)에 떴다. 결과 타입이 5종(그룹·멤버·곡·영상·공연)으로 늘면서 섹션 헤더까지
+     들어가 실제로 보이는 건 3~4개뿐이었고, 영상은 서버에서 늦게 도착해 맨 아래 붙으니 존재 자체를
+     모를 가능성이 컸다. #mob-sr은 온보딩(ob-sr)·데스크톱 드롭다운과 코드를 공유하므로 남겨둔다. -->
+<div id="msheet" aria-hidden="true">
+  <div id="msheet-top">
+    <button id="msheet-back" aria-label="검색 닫기">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M12.5 4L6.5 10l6 6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    <div id="msheet-inputwrap">
+      <span id="msheet-icon"><svg width="15" height="15" viewBox="0 0 15 15" fill="none"><circle cx="6" cy="6" r="4.2" stroke="currentColor" stroke-width="1.5"/><line x1="9.2" y1="9.2" x2="13" y2="13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span>
+      <input id="msheet-input" type="text" placeholder="그룹 · 멤버 검색…" autocomplete="off" inputmode="search" enterkeyhint="search">
+      <button id="msheet-clear" aria-label="지우기" hidden>✕</button>
+    </div>
+  </div>
+  <div id="msheet-tabs" role="tablist"></div>
+  <div id="msheet-body"></div>
+</div>
 <div id="member-tooltip"></div>
 <div id="zoom-ctrl">
   <div id="zoom-track"><div id="zoom-thumb"></div></div>
@@ -3111,7 +3129,8 @@ const _RENDER_INTERVAL_MS=1000/30;
 // 새 전체화면 오버레이를 만들면 여기 추가할 것 — 안 넣으면 안 보이는 3D를 계속 그려 발열이 붙는다.
 const _FULLSCREEN_OVERLAY_IDS=['feed-list-overlay','profile-overlay','col-card-overlay','feedback-overlay',
   'venue-overlay','trophy-overlay','pp-bias-emoji-overlay','gc-track-videos-overlay',
-  'vid-tag-overlay','vm-overlay','adm-home-overlay','hnn-overlay','gp-overlay','fbv-overlay','ev-overlay'];
+  'vid-tag-overlay','vm-overlay','adm-home-overlay','hnn-overlay','gp-overlay','fbv-overlay','ev-overlay',
+  'msheet'];
 // Tier 2(2026-08-24, 발열 저감): 사용자가 잠깐 안 만지면(패시브 감상) 렌더를 30→20fps로 낮춘다.
 // autoRotate가 아주 느려(0.25) 20fps로 떨어져도 체감이 없고, 손대면 즉시 30fps로 복귀. idle 발열 절감.
 let _lastInteractMs=performance.now();
@@ -3828,14 +3847,14 @@ function _appendSearchSections(out,res,mobSearch,obSearch){
   // (안 그러면 "영상"만 헤더가 있고 위 목록은 무제목이라 어색하다)
   const sole=res.dataset.soleType;
   if(hasAny&&sole&&!res.querySelector('.sr-sec-label')){
-    const top=document.createElement('div');top.className='sr-sec-label sr-remote';
+    const top=document.createElement('div');top.className='sr-sec-label sr-remote';top.dataset.type=sole;
     top.textContent=(label[sole]||{})[currentLang==='ko'?'ko':'en']||sole;
     res.insertBefore(top,res.firstChild);
   }
   let added=0;
   for(const t of ['event','video']){
     const arr=out[t];if(!arr||!arr.length)continue;
-    const lb=document.createElement('div');lb.className='sr-sec-label sr-remote';
+    const lb=document.createElement('div');lb.className='sr-sec-label sr-remote';lb.dataset.type=t;
     lb.textContent=(label[t]||{})[currentLang==='ko'?'ko':'en']||t;
     res.appendChild(lb);
     arr.forEach(h=>{
@@ -3846,6 +3865,8 @@ function _appendSearchSections(out,res,mobSearch,obSearch){
   }
   // 동기 결과가 0건이라 "검색 결과가 없어요"가 떠 있었는데 서버 결과가 왔으면 그 문구를 치운다
   if(added)res.querySelector('.sr-empty')?.remove();
+  // 풀스크린 시트의 타입 탭은 DOM을 세므로, 늦게 도착한 이 결과들까지 반영되게 여기서 다시 맞춘다
+  if(typeof _msSyncTabs==='function')_msSyncTabs();
 }
 // 검색 결과 항목 하나를 만든다 — 실시간 결과와 **나중에 도착하는 서버 결과(영상·공연)**가 같은 클릭
 // 로직을 써야 해서 함수로 뽑았다(2026-08-31). 두 벌로 복사하면 동작이 갈라진다.
@@ -3891,6 +3912,7 @@ function _logSearchClick(h){
 function _makeSearchItem(h,res,mobSearch,obSearch){
   const div=document.createElement('div');
   div.className='sr-item';
+  div.dataset.type=h.type||''; // 풀스크린 시트 탭 필터가 이 값으로 세고 감춘다
   // 타입별 아이콘 — 섹션 헤더가 없는 경우(최근검색·온보딩)에도 한눈에 구분되게 한다
   const _ico={song:'♪ ',video:'▶ ',event:'📍 '}[h.type]||'';
   div.innerHTML=`<span class="sr-nl"><span class="sr-item-name${h.type==='group'?' sr-group':''}">${_ico}${h.name}</span>${h.alias?`<span class="sr-alias">${h.alias}</span>`:''}</span>${h.sub?`<span class="sr-tag${h.type==='group'?' sr-group':''}">${h.sub}</span>`:''}`;
@@ -3972,7 +3994,7 @@ function _renderSearchHits(hits,res,mobSearch,isRecent,obSearch){
    _ordered.forEach(x=>{if(!x.__sec){x._rank=_r++;x._total=_t;}});}
   _ordered.forEach(h=>{
     if(h.__sec){
-      const lb=document.createElement('div');lb.className='sr-sec-label';
+      const lb=document.createElement('div');lb.className='sr-sec-label';lb.dataset.type=h.__sec;
       lb.textContent=(_secLabel[h.__sec]||{})[currentLang==='ko'?'ko':'en']||h.__sec;
       res.appendChild(lb);return;
     }
@@ -3988,8 +4010,11 @@ function _renderSearchHits(hits,res,mobSearch,isRecent,obSearch){
 }
 function doSearch(q){
   const obSr=_obSearchMode?document.getElementById('ob-sr'):null;
-  const mobSearch=!obSr&&isMob()&&document.getElementById('tabbar').classList.contains('search-mode');
-  const res=obSr||(mobSearch?document.getElementById('mob-sr'):document.getElementById('search-results'));
+  // 풀스크린 시트가 열려 있으면 그 본문이 결과 그릇이다(2026-09-02) — 매칭·랭킹은 그대로 두고
+  // 컨테이너만 바꾼다. 시트는 자체 스크롤이라 mobSearch(탭바 위 180px 상자) 분기를 타지 않는다.
+  const msOpen=!obSr&&typeof _msIsOpen==='function'&&_msIsOpen();
+  const mobSearch=!obSr&&!msOpen&&isMob()&&document.getElementById('tabbar').classList.contains('search-mode');
+  const res=obSr||(msOpen?document.getElementById('msheet-body'):(mobSearch?document.getElementById('mob-sr'):document.getElementById('search-results')));
   q=q.trim();_curSearchQ=q;
   if(!q){
     const recentHits=_resolveRecentSearches();
@@ -4000,13 +4025,15 @@ function doSearch(q){
     //    원래는 여기서 그냥 닫아버려서 첫 사용자가 아무 단서도 못 받았다.
     const trending=obSr?[]:_trendingSearchHits();
     if(!recentHits.length&&!trending.length){
-      if(obSr||mobSearch){res.classList.remove('open');res.innerHTML='';}
+      if(msOpen){res.innerHTML='';_msSyncTabs();}
+      else if(obSr||mobSearch){res.classList.remove('open');res.innerHTML='';}
       else{res.style.display='none';}
       return;
     }
     _renderSearchHits(obSr?recentHits.slice(0,5):recentHits,res,mobSearch,true,!!obSr);
     if(trending.length)_appendTrendingSection(trending,res,mobSearch,!!obSr);
-    if(obSr){res.classList.add('open');}
+    if(msOpen)_msSyncTabs();
+    else if(obSr){res.classList.add('open');}
     else if(mobSearch){res.classList.add('open');document.getElementById('tabbar').classList.add('has-sr');}
     else{res.style.display='block';}
     return;
@@ -4136,7 +4163,8 @@ function doSearch(q){
   _renderSearchHits(hits.slice(0,obSr?5:40),res,mobSearch,false,!!obSr);
   // 서버가 필요한 결과(영상·공연)는 늦게 도착하므로 뒤에 이어 붙인다(2026-08-31, 검색 확장 4단계)
   if(!obSr&&q.length>=2)_searchRemote(q,res,mobSearch,!!obSr);
-  if(obSr){res.classList.add('open');}
+  if(msOpen)_msSyncTabs();
+  else if(obSr){res.classList.add('open');}
   else if(mobSearch){
     res.classList.add('open');
     document.getElementById('tabbar').classList.toggle('has-sr',hits.length>0);
@@ -4190,6 +4218,95 @@ _mobSi.addEventListener('click',e=>e.stopPropagation());
 _mobSrEl.addEventListener('click',e=>e.stopPropagation());
 _mobSrEl.addEventListener('pointerdown',e=>e.stopPropagation()); // 자동완성 탭 시 window pointerdown(closePanels) 차단
 document.getElementById('tab-sb-clear').addEventListener('click',e=>{e.stopPropagation();exitMobSearch();});
+
+// ── 모바일 검색 풀스크린 시트(2026-09-02) ─────────────────────────────────────
+// 매칭·랭킹 로직은 그대로 두고 **결과가 놓이는 그릇만** 바꾼다 — doSearch/_renderSearchHits는
+// 컨테이너를 인자로 받으므로 여기서 #msheet-body를 넘기면 된다.
+const _msEl=document.getElementById('msheet');
+const _msInput=document.getElementById('msheet-input');
+const _msBody=document.getElementById('msheet-body');
+const _msTabs=document.getElementById('msheet-tabs');
+const _msClear=document.getElementById('msheet-clear');
+// 그룹·멤버를 '아티스트' 하나로 묶는다 — 사람은 "뉴진스"를 칠 때 그룹을 찾는지 멤버를 찾는지
+// 구분해서 검색하지 않고, 모바일 가로폭에 6탭은 빡빡하다(사용자 결정 2026-09-02).
+const _MS_TABS=[
+  {k:'all',   ko:'전체',    en:'All',      types:null},
+  {k:'artist',ko:'아티스트', en:'Artists',  types:['group','member']},
+  {k:'song',  ko:'곡',      en:'Songs',    types:['song']},
+  {k:'video', ko:'영상',    en:'Videos',   types:['video']},
+  {k:'event', ko:'공연',    en:'Events',   types:['event']},
+];
+let _msTab='all';
+function _msIsOpen(){return _msEl&&_msEl.classList.contains('open');}
+// ⚠️ 탭 필터는 **결과 배열이 아니라 DOM 기준**이다. 영상·공연은 서버에서 늦게 도착해
+// _appendSearchSections가 DOM에 직접 붙이므로(동기 결과 배열엔 없다), 배열로 필터하면 늦게 온
+// 결과가 탭에서 통째로 사라진다. DOM을 숨기고 세면 나중에 붙는 것도 자동으로 반영된다.
+function _msSyncTabs(){
+  if(!_msIsOpen())return;
+  const cnt={};
+  _msBody.querySelectorAll('.sr-item[data-type]').forEach(el=>{
+    const t=el.dataset.type;cnt[t]=(cnt[t]||0)+1;
+  });
+  const total=Object.values(cnt).reduce((a,b)=>a+b,0);
+  // 최근 검색·트렌드만 떠 있는 빈 화면에서는 탭을 숨긴다(고를 게 없다)
+  if(!_curSearchQ){_msTabs.innerHTML='';_msApplyFilter();return;}
+  const cur=_MS_TABS.find(x=>x.k===_msTab);
+  if(cur&&cur.types&&!cur.types.some(k=>cnt[k]))_msTab='all'; // 보던 탭이 비면 전체로
+  _msTabs.innerHTML='';
+  _MS_TABS.forEach(t=>{
+    const n=t.types?t.types.reduce((s,k)=>s+(cnt[k]||0),0):total;
+    if(t.k!=='all'&&!n)return; // 결과 0인 타입 탭은 아예 안 만든다 — 빈 탭을 눌러보게 할 이유가 없다
+    const b=document.createElement('button');
+    b.className='msheet-tab';b.type='button';b.setAttribute('role','tab');
+    b.setAttribute('aria-selected',_msTab===t.k?'true':'false');
+    b.dataset.k=t.k;
+    b.innerHTML=(currentLang==='ko'?t.ko:t.en)+(n?`<span class="msheet-tab-n">${n}</span>`:'');
+    b.addEventListener('click',e=>{e.stopPropagation();_msTab=t.k;_msSyncTabs();});
+    _msTabs.appendChild(b);
+  });
+  _msApplyFilter();
+}
+// 선택한 탭에 없는 타입은 감춘다. 섹션 헤더는 그 아래 보이는 항목이 하나도 없으면 같이 감춘다.
+function _msApplyFilter(){
+  const t=_MS_TABS.find(x=>x.k===_msTab);
+  const keep=t&&t.types?new Set(t.types):null;
+  _msBody.querySelectorAll('.sr-item[data-type]').forEach(el=>{
+    el.hidden=!!keep&&!keep.has(el.dataset.type);
+  });
+  _msBody.querySelectorAll('.sr-sec-label[data-type]').forEach(el=>{
+    el.hidden=!!keep&&!keep.has(el.dataset.type);
+  });
+}
+function openMobSearchSheet(){
+  if(!_msEl)return;
+  document.getElementById('settings-panel').classList.remove('open');
+  _msTab='all';
+  _msEl.classList.add('open');_msEl.setAttribute('aria-hidden','false');
+  _bringToFront(_msEl); // 겹치는 레이어는 항상 최근 실행 화면이 최상단(프로젝트 원칙)
+  _msInput.value='';_msClear.hidden=true;
+  _msTabs.innerHTML='';_msBody.innerHTML='';
+  doSearch(''); // 빈 화면 = 최근 검색 + 트렌드(X가 검색창을 열면 트렌드를 보여주는 것과 같은 이유)
+  setTimeout(()=>{try{_msInput.focus();}catch(e){}},60);
+}
+function closeMobSearchSheet(){
+  if(!_msEl)return;
+  _msEl.classList.remove('open');_msEl.setAttribute('aria-hidden','true');
+  _msInput.value='';_msBody.innerHTML='';_msTabs.innerHTML='';_msTab='all';
+  _curSearchQ='';
+}
+if(_msEl){
+  _msInput.addEventListener('input',e=>{
+    _msClear.hidden=!e.target.value;
+    _trackSearchDebounced(e.target.value);
+    doSearch(e.target.value);
+  });
+  _msClear.addEventListener('click',e=>{e.stopPropagation();_msInput.value='';_msClear.hidden=true;doSearch('');_msInput.focus();});
+  document.getElementById('msheet-back').addEventListener('click',e=>{e.stopPropagation();closeMobSearchSheet();});
+  // 시트 안 클릭이 바깥 닫기 핸들러(window pointerdown → closePanels 등)로 새지 않게
+  _msEl.addEventListener('click',e=>e.stopPropagation());
+  _msEl.addEventListener('pointerdown',e=>e.stopPropagation());
+  _wireListKeyboardNav(_msInput,_msBody,'.sr-item',()=>closeMobSearchSheet());
+}
 
 // ── Member card nav state ─────────────────────────
 let ttGroupMembers=[];
@@ -10462,13 +10579,11 @@ document.getElementById('tab-search').addEventListener('click',e=>{
   e.stopPropagation();
   _gaEvent('tab_click',{tab:'search'});
   if(isMob()){
-    const tb=document.getElementById('tabbar');
-    const entering=!tb.classList.contains('search-mode');
-    if(entering){
-      document.getElementById('settings-panel').classList.remove('open');
-      tb.classList.add('search-mode');
-      setTimeout(()=>{document.getElementById('tab-sb-input').focus();updateSheetBottom();},60);
-    }else{exitMobSearch();}
+    // 2026-09-02: 탭바 변형(search-mode) + 탭바 위 180px 결과 상자 → 풀스크린 시트로 교체.
+    // 결과 타입이 5종으로 늘면서 그 상자엔 3~4개밖에 안 보였고, 늦게 오는 영상 결과는 맨 아래
+    // 붙어 존재조차 몰랐다. exitMobSearch()도 같이 불러 예전 상태가 남아 있으면 확실히 정리한다.
+    exitMobSearch();
+    if(_msIsOpen())closeMobSearchSheet(); else openMobSearchSheet();
     return;
   }
   const sw=document.getElementById('search-wrap');
@@ -10870,7 +10985,7 @@ window.addEventListener('pointerdown',e=>{
   //   ⚠️ 라이트박스에 이미 걸린 `pointerdown` stopPropagation(4685행)은 **bubble**이라 여기(capture)를
   //      못 막는다. 그래서 터치 기기에서 touchstart 앞에 오는 pointerdown이 항상 먼저 이 핸들러에 잡혀,
   //      아래로 당겨 닫든 상단 버튼을 누르든 **영상을 건드리는 순간** 밑의 패널이 닫히고 있었다.
-  if(e.target.closest('#feed-overlay,#tab-feed,#dh-feed-btn,#gc-totop,#yt-lightbox'))return;
+  if(e.target.closest('#feed-overlay,#tab-feed,#dh-feed-btn,#gc-totop,#yt-lightbox,#msheet'))return;
   _dismissOnboardHint();
 },true);
 
