@@ -3079,6 +3079,7 @@ async function buildUniverse(){
   _perfMark('built');
   _revealUniverse();
   _perfMark('reveal');
+  try{_prefetchFeedTrend();}catch(e){} // Discover Trend를 미리 받아둔다(열자마자 뜨게) — 백그라운드, 논블로킹
   // 연도 링은 리빌(아이맥스 클립) 모션이 끝난 뒤에 만든다 — 리빌 중 큰 링 라인이 클립 가장자리에 걸쳐
   // "화면 오류"처럼 보인다는 제보(2026-09-02). 생성 시점부터 600ms 페이드인(_yearRingsBornAt).
   setTimeout(_buildYearRings,REVEAL.clip+500);
@@ -17673,24 +17674,40 @@ function _packRows(items,isShort,opts){
   }
   return rows;
 }
+// Trend 데이터 프리페치(2026-09-02 제보 "미리 떠 있게") — 예전엔 Discover 열 때 800건 쿼리하느라 몇 초 뒤에
+// 떴다(빌드 큐 앞으로 당겨도 소용없음 — 빌드 자체가 탭 열 때 시작이라). 앱 로드 직후 백그라운드로 미리 받아
+// _feedTrendData에 캐시 → Discover 열면 즉시 렌더. 세션 캐시(그 세션의 7일 창엔 충분). 매번 셔플하므로 순서는 새로.
+let _feedTrendData=null,_feedTrendP=null;
+function _feedTrendQuery(){
+  const since=new Date(Date.now()-_FEED_TREND_DAYS*86400000).toISOString().slice(0,10);
+  return _applyLiveExclude(sb.from(_YT_TABLE).select(_FEED_COLS()))
+    .gte('published_at',since)
+    .or('content_flag.is.null,content_flag.neq.기타')
+    .or('content_flag.is.null,content_flag.neq.무관').or('content_flag.is.null,content_flag.neq.보류')
+    .or('content_flag.is.null,content_flag.neq.hidden')
+    .order('published_at',{ascending:false}).limit(800);
+}
+function _prefetchFeedTrend(){
+  if(!sb)return null;
+  if(_feedTrendP)return _feedTrendP;
+  _feedTrendP=(async()=>{
+    try{ let{data,error}=await _feedTrendQuery();
+      if(_isPubTsMissing(error)){_hasPubTs=false;({data,error}=await _feedTrendQuery());}
+      if(!error&&data&&data.length)_feedTrendData=data;
+    }catch(e){}
+    return _feedTrendData;
+  })();
+  return _feedTrendP;
+}
 async function _buildFeedTrend(){
   const strip=document.getElementById('feed-trend');
   const section=document.getElementById('feed-trend-section');
   if(!strip||!section||!sb)return;
   strip.innerHTML='';section.style.display='none';
   try{
-    const since=new Date(Date.now()-_FEED_TREND_DAYS*86400000).toISOString().slice(0,10);
-    const _q=()=>_applyLiveExclude(sb.from(_YT_TABLE).select(_FEED_COLS()))
-      .gte('published_at',since)
-      // 숨김/무관/보류/기타는 유저 화면에 안 나오는 값 — 다른 피드 카드와 같은 필터를 그대로 쓴다
-      .or('content_flag.is.null,content_flag.neq.기타')
-      .or('content_flag.is.null,content_flag.neq.무관').or('content_flag.is.null,content_flag.neq.보류')
-      .or('content_flag.is.null,content_flag.neq.hidden')
-      .order('published_at',{ascending:false})
-      .limit(800);
-    let{data,error}=await _q();
-    if(_isPubTsMissing(error)){_hasPubTs=false;({data,error}=await _q());} // 컬럼 추가 전이면 빼고 재조회
-    if(error||!data?.length)return;
+    let data=_feedTrendData;                       // 프리페치된 것이 있으면 즉시(Discover 열자마자 렌더)
+    if(!data){ await _prefetchFeedTrend(); data=_feedTrendData; } // 아직이면 기다림(중복 쿼리 없이)
+    if(!data||!data.length)return;
     // 세로 2단 그리드라 쇼츠도 그대로 포함(2026-08-29 Step3) — 쇼츠는 9:16(is-short), 일반은 16:9로 렌더.
     // 예전엔 16:9 스트립이라 세로 영상이 좌우 크게 남아 어색해서 제외했었다(사용자 제보의 그 문제).
     const vids=_capByGroup(_filterBannedVideos(data),v=>v.group_ko,_FEED_TREND_PER_GROUP);
