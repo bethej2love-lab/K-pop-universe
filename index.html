@@ -2182,15 +2182,19 @@ function _buildYearRings(){
     const a=(camera&&camera.aspect)||(window.innerWidth/Math.max(1,window.innerHeight));
     const xSpread=a>1?Math.sqrt(a):1; // 행성 클라우드 x축 확장과 대략 맞춤
     const grp=new THREE.Group(),N=128;
+    // 연도 라벨을 전부 +x(한 방향)에 놓으면 자로 잰 듯 일렬로 늘어서 어색 → 링마다 다른 각도로 흩어놓는다
+    // (2026-09-02 제보 "여기저기 적당히"). ⚠️각도는 감각값 — 아이폰서 겹침/가독성 확인 후 확정.
+    const _lblAng={2025:-0.30*Math.PI,2020:0.32*Math.PI,2015:0.80*Math.PI,2010:1.30*Math.PI};
     [2025,2020,2015,2010].forEach(yr=>{
       const R=debutToRadius(yr),pts=[];
       for(let i=0;i<N;i++){const t=(i/N)*Math.PI*2;pts.push(new THREE.Vector3(Math.cos(t)*R*xSpread,0,Math.sin(t)*R));}
       const geo=new THREE.BufferGeometry().setFromPoints(pts);
       const mat=new THREE.LineBasicMaterial({color:0x8ab0ff,transparent:true,opacity:0,depthWrite:false});
       grp.add(new THREE.LineLoop(geo,mat));_yearRingMats.push(mat);
-      try{ // 연도 라벨(CSS2D) — 링의 +x 지점에
+      try{ // 연도 라벨(CSS2D) — 링마다 다른 각도(_lblAng)로 배치해 흩어놓는다
         const el=document.createElement('div');el.className='year-ring-lbl';el.textContent=yr;el.style.opacity='0';
-        const lo=new THREE.CSS2DObject(el);lo.position.set(R*xSpread,0,0);grp.add(lo);_yearRingLabels.push(el);
+        const _th=_lblAng[yr]||0;
+        const lo=new THREE.CSS2DObject(el);lo.position.set(Math.cos(_th)*R*xSpread,0,Math.sin(_th)*R);grp.add(lo);_yearRingLabels.push(el);
       }catch(e){}
     });
     // 링을 y=0 바닥 평면 그대로 두면 홈 카메라에서 거의 옆에서 봐 납작한 선으로 보임 → 살짝 기울여(대각선)
@@ -3418,8 +3422,8 @@ function animate(){
   if(_yearRingMats.length){
     const birth=Math.min(1,Math.max(0,(performance.now()-_yearRingsBornAt)/600)); // 생성 직후 부드럽게 등장
     const rf=Math.max(0,Math.min(1,(zoomT-0.55)/0.45))*birth;
-    const op=rf*0.13; for(let i=0;i<_yearRingMats.length;i++)_yearRingMats[i].opacity=op;
-    const lop=(rf*0.6).toFixed(2); for(let i=0;i<_yearRingLabels.length;i++)_yearRingLabels[i].style.opacity=lop;
+    const op=rf*0.10; for(let i=0;i<_yearRingMats.length;i++)_yearRingMats[i].opacity=op; // 0.13→0.10 조금 더 은은하게(2026-09-02)
+    const lop=(rf*0.5).toFixed(2); for(let i=0;i<_yearRingLabels.length;i++)_yearRingLabels[i].style.opacity=lop; // 0.6→0.5 조금 더 흐리게
   }
   // 멤버 점 발광: zoomBoost는 홈(≈120)에서 0.06 정도로 거의 0이라, 홈이 사실상 풀브라이트에
   // 가까운 채로 남아 최대 줌아웃(zoomBoost=1, 확인 결과 문제없음)과 밝기 차이가 거의 없었음 —
@@ -4904,7 +4908,10 @@ const _COVER_EXCLUDE=['be original','original ver','cover story','커버 촬영'
   // 2026-08-30 — 'cover highlight(s)'(패션 필름/화보 하이라이트). 노래 커버 아님(원곡 v2 fallback 목록과 동기화).
   'cover highlight','cover highlights',
   // 2026-08-30 사용자 요청 — '메시지'·'인사'(축하/새해 메시지·인사 영상). 노래 커버 아님.
-  '메시지','인사'];
+  '메시지','인사',
+  // 2026-09-02 사용자 요청 — '커버 스토리'(띄어쓰기, 잡지 화보. 붙여쓴 '커버스토리'는 위에 이미 있음),
+  // 'covering'(노래 커버가 아닌 촬영/기사 맥락). 노래 커버 탭에서 뺀다.
+  '커버 스토리','covering'];
 function _applyCoverExcludeQuery(q){
   // 제목 키워드(cover/커버/원곡/original)나 content_formats='cover'뿐 아니라, 원곡을 명시적으로 태깅한 행
   // (cover_of_groups/cover_of_members 비어있지 않음)도 커버로 인정 — 제목에 '커버/원곡' 단어가 없어도
@@ -8055,12 +8062,10 @@ function _wireSheetSwipe(sheetEl,innerEl,onDismiss,syncEl,sensFn){
     }
     const dy=curY-dragY;
     if(dy<0&&!_sheetFull&&innerEl.scrollTop<=0){
-      if(e.cancelable)e.preventDefault();
       const _t=dy*0.35/_sens;
       _applyFn=()=>{sheetEl.style.transition='none';sheetEl.style.transform=`translateY(${_t}px)`;};
       if(!_rafId)_rafId=requestAnimationFrame(()=>{_rafId=0;_applyFn&&_applyFn();});
     }else if(dy>0&&innerEl.scrollTop<=0){
-      if(e.cancelable)e.preventDefault();
       const _t=dy/_sens;
       _applyFn=()=>{
         sheetEl.style.transition='none';sheetEl.style.transform=`translateY(${_t}px)`;
@@ -8068,7 +8073,13 @@ function _wireSheetSwipe(sheetEl,innerEl,onDismiss,syncEl,sensFn){
       };
       if(!_rafId)_rafId=requestAnimationFrame(()=>{_rafId=0;_applyFn&&_applyFn();});
     }
-  },{passive:false});
+  // passive:true — 카드 본문 스크롤을 iOS 컴포지터 스레드에 맡겨 인스타처럼 부드럽게(2026-09-02 제보 "그냥
+  // 인스타 스크롤처럼"). 예전엔 이 리스너가 passive:false라, 끌어서-닫기 감지 때문에 스크롤 전체가 메인
+  // 스레드로 내려가 첫 손짓에 끊기고 훅 넘어갔다(그동안 올린 _SHEET_DRAG_SLOP은 콘텐츠 속도와 무관했음).
+  // 시트 끌기는 전부 scrollTop<=0에서만 일어나고 그 지점 네이티브 스크롤은 overscroll-behavior:contain로
+  // 사실상 no-op이라, preventDefault 없이 transform만으로 시트를 움직여도 된다. ⚠️ 끌어서-닫기 감/미세
+  // 바운스는 아이폰 실기기 확인 필요.
+  },{passive:true});
   sheetEl.addEventListener('touchend',e=>{
     if(!dragging)return;dragging=false;
     if(_rafId){cancelAnimationFrame(_rafId);_rafId=0;}_applyFn=null;
