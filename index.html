@@ -3103,7 +3103,7 @@ async function buildUniverse(){
 // 덜 front-loaded하게 바꿔 원이 전체 시간 동안 눈으로 퍼지게 하고 웅장함(발광 링)도 살렸다.
 // 2026-09-02 4차(속도): 1500은 "이젠 너무 느리다"는 제보 — 웅장함은 easing·링이 만들지 duration이 아니다.
 // 2026-09-02 5차("더 빨라야"): clip 1000→850, 텍스트도 800/450으로(위 _minShow). 첫 ~1.65초+로드버퍼.
-const REVEAL={clip:850,text:350,label:500,hint:1800};
+const REVEAL={clip:700,text:350,label:500,hint:1800};
 // 부팅 중 숨겨둔 UI 크롬(탭바·줌·헤더)을 우주와 **같이** 드러낸다. 리빌이 끝난 뒤가 아니라
 // 클립이 시작되는 순간 함께 나타나야 "열리면서 다 보인다"가 된다.
 function _endBooting(){try{document.documentElement.classList.remove('booting');}catch(e){}}
@@ -3128,7 +3128,7 @@ function _revealUniverse(){
   const _rc=(typeof renderer!=='undefined')&&renderer.domElement;
   // 덜 front-loaded한 곡선 — 원이 초반에만 확 커지지 않고 전체 시간에 걸쳐 눈에 보이게 퍼진다(웅장함 복원,
   // 2026-09-02). 아래 행성 블룸의 e(smoothstep)와 대략 같은 모양이라 클립 원과 행성이 따로 놀지 않는다.
-  const _ease='cubic-bezier(.4,.15,.35,1)';
+  const _ease='cubic-bezier(.3,.1,.55,.4)'; // 갈수록 빨라지는 가속형(감속 꼬리 제거) — 뒤로 갈수록 확 퍼져 빨리 끝남(2026-09-02)
   const _ring=document.getElementById('loading-ring'); // 확장 발광 링(아래 tick에서 매 프레임 갱신)
 
   // 로딩 텍스트 페이드아웃 — 클립 시작과 동시. 펄스 애니메이션 도중 opacity 트랜지션을 걸면 현재
@@ -3193,9 +3193,9 @@ function _revealUniverse(){
     (function tick(){
       var _nw=performance.now(); _acc+=Math.min(_nw-_pn,40); _pn=_nw;
       var t=Math.min(_acc/REVEAL.clip,1);
-      // 클립 원의 반경 진행과 대략 같은 모양으로 맞춘다 — 위 _ease(cubic-bezier(.4,.15,.35,1))를 근사하는
-      // smoothstep(덜 front-loaded, 부드러운 가감속)으로 바꿔 클립 원과 행성 블룸이 함께 퍼지게 한다(2026-09-02).
-      var e=t*t*(3-2*t);
+      // 클립 원의 반경 진행과 대략 같은 모양으로 맞춘다 — 위 _ease가 가속형(갈수록 빠름)이라 블룸도
+      // pow(t,1.35)로 뒤로 갈수록 빨라지게 맞춰 클립 원과 행성이 함께 퍼진다(2026-09-02).
+      var e=Math.pow(t,1.35);
       // 확장하는 발광 링(IMAX 조리개) — clip 원이 열리는 가장자리를 따라 빛나는 테두리가 퍼진다(2026-09-02
       // 제보 "퍼지는 라인이 있었다"로 복원). clip은 basic-shape %, 링은 radial-gradient %라 기준이 달라
       // r=e*112로 두면 clip 가장자리(75%)에 대략 얹힌다(살짝 앞서 어둠 속으로 열리는 인상). glow는 sin으로
