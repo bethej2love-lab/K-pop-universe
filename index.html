@@ -3422,7 +3422,7 @@ function animate(){
   if(_yearRingMats.length){
     const birth=Math.min(1,Math.max(0,(performance.now()-_yearRingsBornAt)/600)); // 생성 직후 부드럽게 등장
     const rf=Math.max(0,Math.min(1,(zoomT-0.55)/0.45))*birth;
-    const op=rf*0.14; for(let i=0;i<_yearRingMats.length;i++)_yearRingMats[i].opacity=op; // 0.13→0.10→0.14 선만 살짝 더 잘 보이게(2026-09-03 제보)
+    const op=rf*0.11; for(let i=0;i<_yearRingMats.length;i++)_yearRingMats[i].opacity=op; // 0.13(너무 튐)→0.10→0.11 선만 한 칸 올림. 0.13은 이미 기각된 값이니 그 위로 가지 말 것(2026-09-03)
     const lop=(rf*0.5).toFixed(2); for(let i=0;i<_yearRingLabels.length;i++)_yearRingLabels[i].style.opacity=lop; // 0.6→0.5 조금 더 흐리게
   }
   // 멤버 점 발광: zoomBoost는 홈(≈120)에서 0.06 정도로 거의 0이라, 홈이 사실상 풀브라이트에
