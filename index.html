@@ -1773,7 +1773,7 @@ const T={
       all:'전체',girl:'걸그룹',boy:'보이그룹',coed:'혼성그룹',inactive:'비활동/탈퇴 멤버',reset:'↺ 초기화',powerSave:'절전 모드',psAuto:'자동',psOn:'켬',psOff:'끔',psHintAuto:'기기 성능을 보고 알아서 조절해요',psHintAutoOn:'자동 — 지금 절전 중이에요',psHintOn:'화질과 부드러움을 낮춰 발열을 줄여요',psHintOff:'항상 최고 화질로 그려요',
       searchPH:'그룹 · 멤버 검색…',mobileTitle:'케이팝 아이돌 지형도',srGroup:'그룹',
       preparing:'준비 중',gcAgency:'소속',gcDebut:'데뷔',gcFandom:'팬덤',gcLeader:'리더',gcMember:'멤버',gcSNS:'공식',
-      chSortRec:'추천순',chSortNew:'최신순',chSortOld:'날짜순',chSortPop:'인기순',chViewCon:'콘텐츠별 보기',chSearch:'영상 검색…',
+      chSortRec:'추천순',chSortNew:'최신순',chSortOld:'날짜순',chSortPop:'인기순',chViewsPfx:'조회 ',chViewsSfx:'',chViewCon:'콘텐츠별 보기',chSearch:'영상 검색…',
       idxTitle:'인덱스',idxGroupTab:'그룹',idxMemberTab:'멤버',idxSearchPH:'그룹명 검색…',idxSearchPHMember:'멤버명 검색…',
       idxSortName:'이름 (가나다순)',idxSortDebut:'데뷔연도',idxSortAgency:'소속사',idxSortMembers:'멤버 수',
       idxSortBirth:'생년',idxSortGroup:'그룹명',idxSortNation:'국적',ppTitle:'내 프로필',ppNick:'닉네임',ppNickPH:'닉네임을 입력하세요',ppNickErr:'닉네임을 입력해주세요',ppBio:'한 줄 소개',ppBioPH:'선택사항',ppColor:'내 별 색상',ppFavLabel:'좋아요 공개',ppFavSub:'다른 사람들이 볼 수 있어요',ppSyncLabel:'다른 기기와 동기화',ppSyncSub:'다른 기기에서도 좋아요가 유지돼요',ppGoogleBtn:'구글로 연결하기',ppXBtn:'X로 연결하기',ppLinked:'계정에 연결됨 ✓',ppLogout:'로그아웃',ppSave:'저장',
@@ -1791,7 +1791,7 @@ const T={
       all:'All',girl:'Girl Groups',boy:'Boy Groups',coed:'Coed Groups',inactive:'Inactive / Left',reset:'↺ Reset',powerSave:'Power saving',psAuto:'Auto',psOn:'On',psOff:'Off',psHintAuto:'Adjusts itself based on your device',psHintAutoOn:'Auto — saving power right now',psHintOn:'Lowers quality and smoothness to run cooler',psHintOff:'Always render at full quality',
       searchPH:'Search groups · members…',mobileTitle:'K-pop Idol Map',srGroup:'Group',
       preparing:'Coming soon',gcAgency:'Agency',gcDebut:'Debut',gcFandom:'Fandom',gcLeader:'Leader',gcMember:'Members',gcSNS:'Official',
-      chSortRec:'Recommended',chSortNew:'Latest',chSortOld:'Oldest',chSortPop:'Popular',chViewCon:'By Content',chSearch:'Search videos…',
+      chSortRec:'Recommended',chSortNew:'Latest',chSortOld:'Oldest',chSortPop:'Popular',chViewsPfx:'',chViewsSfx:' views',chViewCon:'By Content',chSearch:'Search videos…',
       idxTitle:'Index',idxGroupTab:'Groups',idxMemberTab:'Members',idxSearchPH:'Search group name…',idxSearchPHMember:'Search member name…',
       idxSortName:'Name (A–Z)',idxSortDebut:'Debut Year',idxSortAgency:'Agency',idxSortMembers:'Member Count',
       idxSortBirth:'Birth Year',idxSortGroup:'Group',idxSortNation:'Nationality',ppTitle:'My Profile',ppNick:'Nickname',ppNickPH:'Enter nickname',ppNickErr:'Nickname is required',ppBio:'Bio',ppBioPH:'Optional',ppColor:'Star Color',ppFavLabel:'Public Likes',ppFavSub:'Others can see your likes',ppSyncLabel:'Sync Across Devices',ppSyncSub:'Likes stay synced across your devices',ppGoogleBtn:'Connect with Google',ppXBtn:'Connect with X',ppLinked:'Account Connected ✓',ppLogout:'Log Out',ppSave:'Save',
@@ -17749,6 +17749,20 @@ function _makeChVidController(contId){
       // 중이면 이 멤버도 포함" 폴백까지 갖고 있어서(위 정의 참고) 그대로 재사용.
       const s={t:v.title,u:vidUrl,thumb:v.thumb||'',pa:v.published_at?.slice(0,10),vc:v.view_count,with:_buildGridWithList(v,state.ko,state.memberKo),coverOfMembers:v.cover_of_members||[],coverOfGroups:v.cover_of_groups||[],_apiGroupKo:v.group_ko||state.ko,_apiMemberKos:_colMemberKosFor(v)};
       const ctx={groupKo:state.ko,memberKos:_colMemberKosFor(v)};
+      // 인기순일 때만 조회수를 한 줄 보여준다(2026-09-02). 순서만 바뀌고 근거가 안 보이면 "이게
+      // 정말 인기순인가"를 확인할 방법이 없다 — 카드 그리드는 원래 썸네일+제목만 그린다.
+      // ⚠️ 항상 띄우지 않는 이유: 조회수는 실측 59%만 채워져 있어(391,634 중 231,199) 다른 정렬에서는
+      //    있는 줄 없는 줄이 뒤섞여 목록이 들쭉날쭉해 보인다. 인기순에서는 애초에 위쪽이 다 채워진
+      //    항목이라 그 문제가 없다. 스타일은 모아보기·검색 결과가 쓰는 .gc-ch-meta 그대로.
+      if(state.sortMode==='popular'&&v.view_count!=null){
+        const vcEl=document.createElement('div');
+        vcEl.className='gc-ch-meta';
+        // 숫자만 두면("54M+") 그게 조회수인지 모호하다 — 모아보기에선 앞의 날짜가 맥락을 주지만
+        // 여기는 조회수 단독이라 라벨을 붙인다. 한국어는 앞에("조회 54M+"), 영어는 뒤에("54M+ views").
+        const _tt=T[currentLang]||T.ko;
+        vcEl.textContent=(_tt.chViewsPfx||'')+_fmtVidMeta(null,v.view_count)+(_tt.chViewsSfx||'');
+        item.appendChild(vcEl);
+      }
       const withLine=_makeWithLine(s,ctx);
       if(withLine)item.appendChild(withLine);
       item.appendChild(_makeScrapBtn(s,ctx));

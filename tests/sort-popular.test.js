@@ -132,6 +132,16 @@ async function main() {
       if (nums.length < 3) fail(`[2] ${label}: 조회수 있는 항목이 ${nums.length}개뿐 — 검증 불가`);
       else if (!desc) fail(`[2] ${label}: 조회수 내림차순이 아님 — ${nums.slice(0, 6).join(' > ')}`);
       else ok(`[2] ${label}: 조회수 내림차순 (${nums.slice(0, 4).map(v => v >= 1e6 ? (v / 1e6).toFixed(1) + 'M' : Math.round(v / 1e3) + 'K').join(' > ')} …)`);
+
+      // [5] 인기순일 때만 조회수 줄이 보인다 — 순서만 바뀌고 근거가 안 보이면 인기순인지 알 수 없다
+      const metaOn = await ev(cdp, `document.querySelectorAll('.gc-ch-grid .gc-ch-meta').length`);
+      if (!metaOn) fail(`[5] ${label}: 인기순인데 조회수 줄이 하나도 없음`);
+      else ok(`[5] ${label}: 조회수 줄 ${metaOn}개 표시`);
+      await ev(cdp, `document.querySelector('.gc-ch-sort-item[data-sort="recommend"]').click()`);
+      await sleep(2600);
+      const metaOff = await ev(cdp, `document.querySelectorAll('.gc-ch-grid .gc-ch-meta').length`);
+      if (metaOff) fail(`[5] ${label}: 추천순으로 되돌렸는데 조회수 줄이 ${metaOff}개 남음(인기순 전용이어야 한다)`);
+      else ok(`[5] ${label}: 추천순에선 조회수 줄 없음`);
     }
     cdp.close();
   } finally {
