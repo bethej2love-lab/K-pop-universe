@@ -165,6 +165,45 @@ Object.entries(GROUPS).forEach(([gko, info]) => {
   }
 }
 
+// ── 8. 집계용 파생 필드(coKey/coParent/natCodes/endDate)와 그 원본 (2026-09-02) ──────────
+// slim 빌드가 만드는 파생 필드는 시각화 집계의 근거라, 원본이 흔들리면 그림이 통째로 틀린다.
+// 여기선 "원본이 파생을 만들 수 있는 상태인가"를 본다 — 표기가 두 갈래로 갈리거나(SM/SM엔터테인먼트),
+// 슬래시 순서가 뒤집히거나(SM / Label V), ISO가 아닌 국적 코드가 들어오면 잡는다.
+{
+  const coCount = {};
+  const addCo = v => { if (v) coCount[String(v).trim()] = (coCount[String(v).trim()] || 0) + 1; };
+  Object.keys(GROUPS).forEach(k => addCo(GROUPS[k].co));
+  ARTISTS.forEach(a => addCo(a.co));
+  // 같은 회사가 두 표기로 갈리면 coKey는 같아도 co가 화면에서 따로 논다
+  const norm = s => String(s).replace(/\s+/g, '').replace(/엔터테인먼트|엔터|ENTERTAINMENT|ENT\.?/gi, '')
+    .replace(/주식회사|㈜/g, '').toUpperCase();
+  const byNorm = {};
+  Object.keys(coCount).forEach(k => { (byNorm[norm(k)] ??= []).push(k); });
+  Object.entries(byNorm).filter(([, v]) => v.length > 1).forEach(([, v]) => {
+    add('warn', 'co 표기 갈림', v.map(k => `"${k}"(${coCount[k]})`).join(' vs ') + ' — 같은 회사로 보이는데 표기가 다름');
+  });
+  // 슬래시 표기는 "자회사 / 모회사" 순서 — 뒤가 모회사다. 모회사로 알려진 이름이 앞에 오면 뒤집힌 것.
+  const KNOWN_PARENTS = ['HYBE', 'SM', 'JYP', 'YG', '포켓돌스튜디오'];
+  Object.keys(coCount).filter(k => k.includes('/')).forEach(k => {
+    const head = k.split('/')[0].trim();
+    if (KNOWN_PARENTS.includes(head)) add('error', 'co 슬래시 순서 뒤집힘', `"${k}" — 모회사가 앞에 있음("자회사 / 모회사" 순서)`);
+  });
+  // nat.en은 ISO 3166-1 alpha-2여야 natCodes가 코드 배열로 나온다(복합 국적은 '·'로 이어짐)
+  ARTISTS.forEach(a => {
+    const en = a.nat && a.nat.en; if (!en) return;
+    String(en).split(/[·,]/).map(s => s.trim()).filter(Boolean).forEach(c => {
+      if (!/^[A-Z]{2}$/.test(c)) add('error', 'nat 코드가 ISO 2자리가 아님', `${a.name?.ko}: nat.en="${en}" 중 "${c}"`);
+    });
+  });
+  // disbanded는 'YYYY.MM.DD' / 'YYYY.MM' / 'YYYY' / true만 — 그 외는 endDate가 null(unknown)로 떨어진다
+  Object.keys(GROUPS).forEach(k => {
+    const d = GROUPS[k].disbanded;
+    if (d === undefined || d === true) return;
+    if (typeof d !== 'string' || !/^\d{4}(\.\d{1,2}){0,2}$/.test(d.trim()))
+      add('error', 'disbanded 형식', `${k}: ${JSON.stringify(d)} — endDate로 못 바꿈`);
+  });
+}
+
 // ── 리포트 ──────────────────────
 const byCategory = new Map();
 issues.forEach(iss => {

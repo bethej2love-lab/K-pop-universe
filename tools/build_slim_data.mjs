@@ -87,6 +87,55 @@ for (const k of Object.keys(groupsSlim)) delete groupsSlim[k].discography;
 const artistsSlim = JSON.parse(JSON.stringify(artists));
 for (const a of artistsSlim) { delete a.discography; delete a.unitDiscography; }
 
+// ── 집계·시각화용 파생 필드 (2026-09-02) ────────────────────────────────────
+// 원본 co/nat/disbanded는 그대로 두고 여기서 파생만 붙인다. 화면은 원본을 쓰고(_dispAgency·
+// _getNatKo·_groupEndDate가 이미 세 필드의 표기 흔들림을 각자 흡수하고 있다), 집계는 이 필드를 쓴다.
+// 원본을 고치고 사용처 ~85곳을 따라가는 것보다 파생을 얹는 쪽이 안전하다.
+
+// coKey: 소속사 집계 키. co가 "자회사 / 모회사"면 앞이 레이블, 뒤가 모회사(coParent).
+//   "빅히트 뮤직 / HYBE" → coKey:'빅히트뮤직'  coParent:'HYBE'
+//   "SM엔터테인먼트"      → coKey:'SM'         coParent 없음
+// ⚠️ 표기 흔들림만 흡수한다(공백·'엔터테인먼트'·대소문자). 이름이 비슷한 다른 회사를 합치지
+//    않으려면 여기 규칙을 넓히지 말 것 — 실제 표기 통일은 원본 co에서 이미 끝냈다.
+const coNorm = s => String(s || '').replace(/\s+/g, '')
+  .replace(/엔터테인먼트|엔터|ENTERTAINMENT|ENT\.?/gi, '').replace(/주식회사|㈜/g, '').toUpperCase();
+const coFields = co => {
+  if (!co) return null;
+  const parts = String(co).split('/').map(s => s.trim()).filter(Boolean);
+  if (parts.length >= 2) return { coKey: coNorm(parts[0]), coParent: coNorm(parts.slice(1).join('/')) };
+  return { coKey: coNorm(co) };
+};
+// natCodes: nat.en의 ISO 코드를 배열로. 복합 국적은 '·'로 이어져 있다("KR·US" → ['KR','US']).
+// 이미 코드가 들어 있어 매핑 테이블이 필요 없다 — 흔들린 건 nat.ko 쪽('한국'/'대한민국')이고 그건 표시용.
+const natCodes = nat => {
+  const en = nat && nat.en;
+  if (!en) return [];
+  return String(en).split(/[·,]/).map(s => s.trim()).filter(Boolean);
+};
+// endDate/endPrecision: disbanded 3형식(YYYY.MM.DD / YYYY / true)을 하나로. _groupEndDate와 같은
+// 관례 — 연도만이면 그 해 말일, 연·월이면 그 달 말일. true는 "해체는 맞는데 날짜 모름"이라 unknown.
+const endFields = d => {
+  if (d === undefined || d === null) return { endDate: null, endPrecision: 'active' };
+  if (typeof d !== 'string') return { endDate: null, endPrecision: 'unknown' };
+  const m = /^(\d{4})(?:\.(\d{1,2}))?(?:\.(\d{1,2}))?$/.exec(d.trim());
+  if (!m) return { endDate: null, endPrecision: 'unknown' };
+  const p2 = n => String(n).padStart(2, '0');
+  if (!m[2]) return { endDate: `${m[1]}-12-31`, endPrecision: 'year' };
+  if (!m[3]) return { endDate: `${m[1]}-${p2(m[2])}-${new Date(+m[1], +m[2], 0).getDate()}`, endPrecision: 'month' };
+  return { endDate: `${m[1]}-${p2(m[2])}-${p2(m[3])}`, endPrecision: 'day' };
+};
+const unmappedNat = [];
+for (const k of Object.keys(groupsSlim)) {
+  Object.assign(groupsSlim[k], coFields(groupsSlim[k].co) || {}, endFields(groupsSlim[k].disbanded));
+}
+for (const a of artistsSlim) {
+  Object.assign(a, coFields(a.co) || {});
+  const codes = natCodes(a.nat);
+  if (codes.length) a.natCodes = codes;
+  for (const c of codes) if (!/^[A-Z]{2}$/.test(c)) unmappedNat.push(`${a.name?.ko}: ${c}`);
+}
+if (unmappedNat.length) console.log(`⚠️ ISO 2자리가 아닌 국적 코드 ${unmappedNat.length}건 — ${unmappedNat.slice(0, 5).join(', ')}`);
+
 const gSlimStr = JSON.stringify(groupsSlim), aSlimStr = JSON.stringify(artistsSlim), tiStr = JSON.stringify(tracks);
 fs.writeFileSync(path.join(ROOT, 'groups.slim.json'), gSlimStr);
 fs.writeFileSync(path.join(ROOT, 'artists.slim.json'), aSlimStr);
