@@ -3849,6 +3849,45 @@ function _appendSearchSections(out,res,mobSearch,obSearch){
 }
 // 검색 결과 항목 하나를 만든다 — 실시간 결과와 **나중에 도착하는 서버 결과(영상·공연)**가 같은 클릭
 // 로직을 써야 해서 함수로 뽑았다(2026-08-31). 두 벌로 복사하면 동작이 갈라진다.
+// ── 검색 클릭 로그(2026-09-02) ───────────────────────────────────────────────
+// GA에는 검색어만 남고 **무엇을 클릭했는지는 어디에도 안 남았다** — "카"를 친 사람이 카리나를
+// 골랐는지 카이를 골랐는지 모르니, "실제 검색 데이터로 유명도를 반영"할 재료가 없었다.
+// 태깅의 tag_edit_log("사람의 정답 라벨을 버리지 말자")와 같은 구조. 지금은 쌓기만 하고,
+// 충분히 모이면 그때 랭킹 타이브레이커에 반영한다(임의 가중치를 미리 넣지 않는 이유).
+// 익명 세션 ID는 로그인과 무관한 랜덤값 — 없으면 "한 사람이 100번 검색한 것"과 "100명이 한 번씩"을
+// 구분 못 해 유명도가 왜곡된다. localStorage가 막힌 환경에서는 그냥 세션 없이 남긴다.
+const _SEARCH_SID_KEY='kpu_search_sid';
+function _searchSid(){
+  try{
+    let s=localStorage.getItem(_SEARCH_SID_KEY);
+    if(!s){s=(self.crypto&&self.crypto.randomUUID)?self.crypto.randomUUID():('s'+Date.now()+Math.random().toString(36).slice(2));
+      localStorage.setItem(_SEARCH_SID_KEY,s);}
+    return s;
+  }catch(e){return null;}
+}
+// 클릭한 항목을 나중에 다시 식별할 수 있는 키. 멤버는 동명이인이 많아 그룹까지 붙여야 한다.
+function _searchHitKey(h){
+  if(h.type==='member'){const a=h.data;return a&&a.name?`${a.name.ko}|${(a.group&&a.group.ko)||''}`:String(h.name||'');}
+  if(h.type==='video')return String(h.url||h.name||'');
+  if(h.type==='group')return String(h.data||h.name||'');
+  return String(h.name||'');
+}
+function _logSearchClick(h){
+  try{
+    if(!sb||!_curSearchQ)return;
+    const q=String(_curSearchQ).trim(); if(!q||q.length>100)return;
+    const key=_searchHitKey(h).slice(0,200); if(!key)return;
+    // 실패는 삼킨다 — 로그가 안 남는다고 검색이 막히면 안 된다(테이블/정책이 없을 수도 있다).
+    // ⚠️ 그래서 조용히 실패한다 = SQL을 돌린 뒤 실제로 행이 쌓이는지 눈으로 확인해야 한다.
+    //    admin_bulk_snapshots가 정확히 이 방식으로 8/22~9/02 내내 아무것도 안 남기고 있었다.
+    Promise.resolve(sb.from('search_click_log').insert({
+      q,hit_type:h.type,hit_key:key,
+      hit_rank:(typeof h._rank==='number'?h._rank:null),
+      hit_total:(typeof h._total==='number'?h._total:null),
+      session_id:_searchSid(),
+    })).catch(()=>{});
+  }catch(e){}
+}
 function _makeSearchItem(h,res,mobSearch,obSearch){
   const div=document.createElement('div');
   div.className='sr-item';
@@ -3857,6 +3896,7 @@ function _makeSearchItem(h,res,mobSearch,obSearch){
   div.innerHTML=`<span class="sr-nl"><span class="sr-item-name${h.type==='group'?' sr-group':''}">${_ico}${h.name}</span>${h.alias?`<span class="sr-alias">${h.alias}</span>`:''}</span>${h.sub?`<span class="sr-tag${h.type==='group'?' sr-group':''}">${h.sub}</span>`:''}`;
   div.addEventListener('click',e=>{
     e.stopPropagation();
+    _logSearchClick(h); // 무엇을 골랐는지 기록(랭킹 학습용) — 실패해도 아래 흐름은 그대로 간다
     // 곡은 그 자체로 카드가 없으므로 **곡 주인(그룹/멤버)** 기준으로 최근검색에 남긴다 —
     // 그래야 _resolveRecentSearches가 기존 형식 그대로 복원할 수 있다(별도 타입을 만들지 않음).
     // 영상은 카드가 아니라 라이트박스로 바로 연다 — 카메라 이동·카드 열기 흐름을 타지 않는다.
@@ -3926,6 +3966,10 @@ function _renderSearchHits(hits,res,mobSearch,isRecent,obSearch){
     if(_secOrder.length<2)_secOrder=[];
   }
   const _ordered=_secOrder.length?_secOrder.flatMap(t=>[{__sec:t},..._byType.get(t)]):hits;
+  // 클릭 로그용 순위 — "몇 번째에 있던 걸 골랐나"는 랭킹이 맞았는지 판단하는 핵심 신호다.
+  // 섹션 헤더는 세지 않고 실제 항목만 0부터 센다(사용자 눈에 보이는 순서와 같게).
+  {let _r=0;const _t=_ordered.filter(x=>!x.__sec).length;
+   _ordered.forEach(x=>{if(!x.__sec){x._rank=_r++;x._total=_t;}});}
   _ordered.forEach(h=>{
     if(h.__sec){
       const lb=document.createElement('div');lb.className='sr-sec-label';
