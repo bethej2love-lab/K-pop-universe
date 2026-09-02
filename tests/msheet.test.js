@@ -199,6 +199,25 @@ async function main() {
     if (!/아이즈원/.test(first || '')) fail(`[8] 해체 그룹이라도 정확 매칭이면 1위여야 함 (1위: "${first}")`);
     else ok('[8] 해체 그룹도 정확 매칭이면 1위 유지(등급은 안 뒤집힘)');
 
+    // [9] 영상 결과 썸네일 + ⌘K(2026-09-02)
+    await ev(cdp, `(function(){var i=document.getElementById('msheet-input');i.value='카리나 직캠';i.dispatchEvent(new Event('input',{bubbles:true}));})()`);
+    await sleep(1400);
+    const vid = await ev(cdp, `(function(){var els=[...document.querySelectorAll('#msheet-body .sr-item.sr-vid')];
+      return {n:els.length,img:els.filter(function(e){return !!e.querySelector('.sr-vt img');}).length,
+              meta:els.filter(function(e){return !!e.querySelector('.sr-vmeta');}).length};})()`);
+    if (!vid || !vid.n) fail('[9] 영상 결과가 없어 썸네일 검증 불가');
+    else if (vid.img < vid.n) fail(`[9] 썸네일 없는 영상 항목 ${vid.n - vid.img}건`);
+    else if (vid.meta < vid.n) fail(`[9] 메타(그룹·조회수) 없는 항목 ${vid.n - vid.meta}건`);
+    else ok(`[9] 영상 ${vid.n}건 전부 썸네일 + 메타 표시`);
+
+    // Esc로 닫히는지(⌘K 핸들러에 같이 붙어 있다)
+    await ev(cdp, `document.dispatchEvent(new KeyboardEvent('keydown',{key:'Escape',bubbles:true}))`);
+    await sleep(250);
+    const escClosed = await ev(cdp, `!document.getElementById('msheet').classList.contains('open')`);
+    if (!escClosed) fail('[9] Esc로 시트가 안 닫힘');
+    else ok('[9] Esc로 닫힘');
+    await ev(cdp, `document.getElementById('tab-search').click()`); await sleep(400);
+
     // [5] 닫기
     await ev(cdp, `(function(){var i=document.getElementById('msheet-input');i.value='';i.dispatchEvent(new Event('input',{bubbles:true}));})()`);
     await sleep(200);

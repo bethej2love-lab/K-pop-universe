@@ -206,6 +206,8 @@
 </div>
 <div id="search-wrap">
   <input id="search-input" type="text" placeholder="그룹 · 멤버 검색…" autocomplete="off">
+  <!-- 단축키 힌트 — 있다는 걸 알려야 쓴다. 입력이 시작되면 JS가 숨긴다(글자와 겹치지 않게). -->
+  <kbd id="search-kbd" aria-hidden="true">Ctrl K</kbd>
   <div id="search-results"></div>
 </div>
 <div id="settings-panel">
@@ -3803,7 +3805,7 @@ function _searchRemote(q,res,mobSearch,obSearch,hint){
       // 나오는 영상을 안다. 그래서 쿼리를 엔티티로 해석했으면(hint) 태그로 조회하고, 못 풀면
       // 그때만 제목 검색으로 떨어진다. 태깅 품질 개선이 그대로 검색 품질이 되는 구조.
       // ⚠️ 정렬은 조회수 내림차순 — 태그 조회는 결과가 수백 건이라 무순으로 6개를 자르면 아무거나 나온다.
-      let vq=sb.from(_YT_TABLE).select('id,title,group_ko,is_short,category,content_flag,view_count');
+      let vq=sb.from(_YT_TABLE).select('id,title,group_ko,is_short,category,content_flag,view_count,thumb,published_at');
       if(hint&&hint.kind==='member'){
         const esc=s=>String(s).replace(/["\\]/g,'');
         // ⚠️ members 배열엔 **이름만** 들어간다 — 동명이인이 구분되지 않는다. "하니"로만 조회하면
@@ -3837,7 +3839,7 @@ function _searchRemote(q,res,mobSearch,obSearch,hint){
       // 멤버 태그 + 형식으로 0건이면 그 멤버의 **그룹** 영상으로 한 번 더 본다 — 뮤비·예능처럼
       // 그룹 단위로 만드는 콘텐츠는 개별 멤버 태그가 안 붙어서, "카리나 뮤비"가 통째로 0건이 됐다.
       if(hint&&hint.kind==='member'&&hint.gko&&!(vidR0.data||[]).length&&token===_remoteSearchToken){
-        const g=sb.from(_YT_TABLE).select('id,title,group_ko,is_short,category,content_flag,view_count')
+        const g=sb.from(_YT_TABLE).select('id,title,group_ko,is_short,category,content_flag,view_count,thumb,published_at')
           .eq('group_ko',hint.gko);
         vidR=await _finish(_applyCat(g));
       }
@@ -3851,6 +3853,7 @@ function _searchRemote(q,res,mobSearch,obSearch,hint){
       });
       (vidR.data||[]).forEach(v=>{
         out.video.push({type:'video',name:_cleanTitle(v.title),sub:v.group_ko||'',
+          thumb:v.thumb||'',meta:_fmtVidMeta(v.published_at,v.view_count),
           url:_isShortV(v)?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`,
           isShort:_isShortV(v)});
       });
@@ -3963,7 +3966,19 @@ function _makeSearchItem(h,res,mobSearch,obSearch){
   if(h._expanded)div.dataset.expanded='1'; // 그룹명으로 딸려온 멤버(이름이 직접 걸린 게 아님) — 회귀 테스트가 이걸 센다
   // 타입별 아이콘 — 섹션 헤더가 없는 경우(최근검색·온보딩)에도 한눈에 구분되게 한다
   const _ico={song:'♪ ',video:'▶ ',event:'📍 '}[h.type]||'';
+  // 영상은 썸네일 + 2줄(제목·그룹·조회수)로 그린다(2026-09-02) — 텍스트 한 줄만으로는 어떤
+  // 영상인지 알기 어렵고, 검색 결과가 콘텐츠처럼 보이지 않는다. 썸네일은 DB thumb(mqdefault).
+  // ⚠️ 썸네일이 없는 행도 있으므로(구 데이터) 자리만 잡아두고 이미지는 있을 때만 넣는다 —
+  //    안 그러면 깨진 이미지 아이콘이 뜨거나 줄 높이가 들쭉날쭉해진다.
+  if(h.type==='video'){
+    div.classList.add('sr-vid');
+    const esc=t=>String(t==null?'':t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    const meta=[h.sub,h.meta].filter(Boolean).join(' · ');
+    div.innerHTML=`<span class="sr-vt">${h.thumb?`<img src="${esc(h.thumb)}" loading="lazy" alt="" referrerpolicy="no-referrer">`:''}<span class="sr-vp">▶</span></span>`
+      +`<span class="sr-vb"><span class="sr-vtitle">${esc(h.name)}</span>${meta?`<span class="sr-vmeta">${esc(meta)}</span>`:''}</span>`;
+  }else{
   div.innerHTML=`<span class="sr-nl"><span class="sr-item-name${h.type==='group'?' sr-group':''}">${_ico}${h.name}</span>${h.alias?`<span class="sr-alias">${h.alias}</span>`:''}</span>${h.sub?`<span class="sr-tag${h.type==='group'?' sr-group':''}">${h.sub}</span>`:''}`;
+  }
   div.addEventListener('click',e=>{
     e.stopPropagation();
     _logSearchClick(h); // 무엇을 골랐는지 기록(랭킹 학습용) — 실패해도 아래 흐름은 그대로 간다
@@ -4377,7 +4392,11 @@ function _wireListKeyboardNav(inputEl,resultsEl,itemSelector,onEscape){
 }
 const _si=document.getElementById('search-input');
 const _sr=document.getElementById('search-results');
-_si.addEventListener('input',e=>{doSearch(e.target.value);_trackSearchDebounced(e.target.value);});
+_si.addEventListener('input',e=>{
+  doSearch(e.target.value);_trackSearchDebounced(e.target.value);
+  // 입력이 시작되면 ⌘K 힌트 배지를 숨긴다(입력한 글자와 겹치지 않게)
+  document.getElementById('search-wrap')?.classList.toggle('has-q',!!e.target.value);
+});
 _si.addEventListener('focus',()=>doSearch(_si.value)); // 빈 채로 포커스되면 최근 검색 표시
 _wireListKeyboardNav(_si,_sr,'.sr-item',()=>{_si.value='';_sr.style.display='none';});
 _si.addEventListener('click',e=>e.stopPropagation());
@@ -4485,6 +4504,34 @@ if(_msEl){
   _msEl.addEventListener('pointerdown',e=>e.stopPropagation());
   _wireListKeyboardNav(_msInput,_msBody,'.sr-item',()=>closeMobSearchSheet());
 }
+
+// ── ⌘K / Ctrl+K로 검색 열기(2026-09-02) ───────────────────────────────────
+// Slack·Notion·GitHub이 쓰는 관습. 마우스로 검색 아이콘을 찾지 않고 키보드만으로 연다.
+// ⚠️ 입력 중에는 가로채면 안 된다 — 텍스트 필드·textarea·contenteditable 안에서는 그냥 통과시킨다
+//    (브라우저 기본 동작이나 다른 입력을 방해하지 않게). Esc로 닫는 것도 같이 붙인다.
+document.addEventListener('keydown',e=>{
+  const k=(e.key||'').toLowerCase();
+  if(k==='k'&&(e.metaKey||e.ctrlKey)&&!e.altKey&&!e.shiftKey){
+    const t=e.target,tag=t&&t.tagName;
+    const typing=tag==='INPUT'||tag==='TEXTAREA'||(t&&t.isContentEditable);
+    // 검색창 안에서 다시 누르면 닫히는 게 자연스럽다 — 그 경우만 입력 중이어도 받는다
+    const inSearch=t&&(t.id==='msheet-input'||t.id==='search-input'||t.id==='tab-sb-input');
+    if(typing&&!inSearch)return;
+    e.preventDefault();
+    if(isMob()){ if(_msIsOpen())closeMobSearchSheet(); else openMobSearchSheet(); return; }
+    const sw=document.getElementById('search-wrap');
+    const si=document.getElementById('search-input');
+    if(!sw)return;
+    const open=sw.classList.contains('open');
+    document.getElementById('settings-panel')?.classList.remove('open');
+    sw.classList.toggle('open',!open);
+    ['tab-search','dh-search-btn'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.toggle('active',!open);});
+    if(!open&&si)setTimeout(()=>{try{si.focus();si.select();}catch(_){}},40);
+    else if(si)si.blur();
+    return;
+  }
+  if(k==='escape'&&_msIsOpen()){closeMobSearchSheet();}
+});
 
 // ── Member card nav state ─────────────────────────
 let ttGroupMembers=[];
