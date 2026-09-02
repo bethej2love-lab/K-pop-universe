@@ -565,6 +565,32 @@ test('데뷔 직전(유예 내)은 유지 — 하츠투하츠 스텔라 데뷔�
   "[안방1열 직캠4K] 하츠투하츠 스텔라 'The Chase' (Hearts2Hearts STELLA FanCam)", undefined,
   r => !!r && r.primaryGroup === '하츠투하츠', '2025-01-01');
 
+// ── feat./ft. 강등 ────────────────────────────────────
+// feat 뒤 아티스트는 그 곡의 게스트지 영상의 주인공이 아니다 — 근거가 feat 구간 안에만 있는 그룹은
+// primaryGroup 후보에서 뒤로 민다(2026-09-02, 사용자 제보: 마시로 직캠이 group_ko='아이콘'으로 저장됨).
+// 실측 표본 3,893건 전후 비교에서 메인그룹 변경 76건 전부가 개선, 매칭 손실 0건이었다.
+const P = (g, ...w) => r => !!r && r.primaryGroup === g && w.every(x => (r.withGroups || []).includes(x));
+test('feat 강등 — 마시로 직캠의 메인은 메이딘이지 feat 아이콘(바비)이 아니다',
+  "[MPD직캠] 마시로 직캠 4K 'HOTLINE (feat. BOBBY)' (MASHIRO FanCam) | @MCOUNTDOWN_2026.8.20", undefined,
+  P('메이딘'), '2026-08-20');
+test('feat 강등 — 대시 구조에서도(아이콘은 with로)',
+  'MASHIRO - HOTLINE (feat. BOBBY)', undefined, P('메이딘', '아이콘'), '2026-08-20');
+test('feat 강등 — feat 절이 제목 앞에 와도 메인은 뒤쪽 주인공',
+  'HOTLINE (Feat. BOBBY) - 마시로 (MASHIRO) [뮤직뱅크/Music Bank] | KBS 260821 방송', undefined,
+  P('메이딘', '아이콘'), '2026-08-21');
+test('feat 강등 — 지코 SPOT!의 메인은 블락비지 feat 블랙핑크(제니)가 아니다',
+  '[가로] 지코 (ZICO) - SPOT! (Feat. JENNIE) [더 시즌즈-지코의 아티스트] | KBS 240426 방송', undefined,
+  P('블락비', '블랙핑크'), '2024-04-26');
+test('feat 강등 — 그룹명 리터럴 경로에서도(있지 ← feat 스트레이키즈 창빈)',
+  'ITZY Album Recording Behind | GOLD, Imaginary Friend, VAY (Feat. 창빈 of Stray Kids)', undefined,
+  P('있지', '스트레이키즈'), '2025-01-01');
+test('feat 강등 — 주인공이 DB에 없으면 feat 대상이 그대로 메인(사용자 결정)',
+  'Some Unknown Rapper - Song (feat. 제니)', undefined, P('블랙핑크'), '2024-01-01');
+test('feat 무관 — feat이 없는 콜라보 제목은 기존 순서 그대로',
+  '[니얌니얌] 여자친구 예린 & 에이핑크 오하영 | Ep.7', undefined, P('여자친구', '에이핑크'), '2019-01-01');
+test('본인 영문표기 괄호는 타 소속 신호가 아님 — "마시로 (MASHIRO)"로 역추론이 죽지 않는다',
+  '마시로 (MASHIRO) - HOTLINE (feat. BOBBY) | 뮤직뱅크', undefined, P('메이딘'), '2026-08-21');
+
 // ── 실행 ──────────────────────────────────────────────
 let pass = 0, fail = 0;
 cases.forEach(({ name, title, selfGko, check, publishedAt }) => {

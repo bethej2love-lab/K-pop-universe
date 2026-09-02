@@ -1668,7 +1668,11 @@ function _appendSubName(el,a){
   if(!a)return;
   const main=currentLang==='ko'?_dispKo(a):((a.name&&a.name.en)||(a.name&&a.name.ko)||'');
   const subs=[];
-  if(a.displayName&&currentLang==='ko'&&a.name&&a.name.ko&&a.name.ko!==a.displayName)subs.push(a.name.ko);
+  // ⚠️ 포함 관계면 생략하는 규칙(위 주석)이 subName에만 걸려 있어서, displayName 쪽은 "최현석 현석"처럼
+  //    같은 이름이 두 번 보였다(2026-09-02 트레저 성 포함 활동명 반영 때 드러남). 같은 규칙을 여기도 적용 —
+  //    도경수/디오처럼 실제로 다른 이름은 포함 관계가 아니라 그대로 병기된다.
+  if(a.displayName&&currentLang==='ko'&&a.name&&a.name.ko&&a.name.ko!==a.displayName
+     &&!a.displayName.includes(a.name.ko)&&!a.name.ko.includes(a.displayName))subs.push(a.name.ko);
   if(a.subName&&!main.includes(a.subName)&&!a.subName.includes(main))subs.push(a.subName);
   subs.forEach(s=>{const sp=document.createElement('span');sp.className='tn-subname';sp.textContent=s;el.appendChild(sp);});
 }

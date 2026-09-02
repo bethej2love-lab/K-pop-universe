@@ -5271,6 +5271,33 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
     .replace(/하이라이트\s*모음/g,' '));
   // 특수문자를 공백으로 치환해 토큰 경계 확보, 앞뒤 공백 추가
   const norm=' '+title.toUpperCase().replace(/[^가-힣a-zA-Z0-9]/g,' ').replace(/\s+/g,' ')+' ';
+  // ── feat./ft. 구간 ─────────────────────────────────────────────────────────────
+  // "[MPD직캠] 마시로 직캠 'HOTLINE (feat. BOBBY)'"처럼 곡에 피처링이 걸린 제목에서, feat 뒤 아티스트
+  // (아이콘 바비)가 영상의 **주인공**으로 잡히고 정작 무대 주인인 마시로가 with_members·cover_of로
+  // 밀려나는 주객전도가 실측으로 확인됨(2026-09-02 사용자 제보 — group_ko='아이콘' 4건). feat 뒤 이름은
+  // 정의상 그 곡의 게스트지 이 영상의 대표 아티스트가 아니다. 그래서 "매칭 근거가 feat 구간 **안에만**
+  // 있는" 그룹은 primaryGroup 후보에서 **뒤로 민다**(제거가 아니라 순서만) → with_ 쪽으로 간다.
+  // ⚠️ 주인공이 우리 DB에 없는 아티스트라 feat 대상밖에 안 잡히는 경우엔 후보가 그것뿐이라 자연히 그대로
+  // 메인이 된다 — 사용자 요구("메인 출연자가 유니버스에 없으면 feat이어도 기본 그룹-멤버로")와 일치.
+  const _featSpans=[];
+  {
+    // feat 표기 뒤부터 그 절을 닫는 문자(괄호·대괄호·파이프)나 문자열 끝까지를 한 구간으로 본다.
+    const re=/(?:^|[\s([{\-–—,])(?:feat|ft|featuring|피처링|피쳐링)\s*\.?\s*/gi;
+    let m;
+    while((m=re.exec(title))){
+      const s=m.index+m[0].length;
+      let e=s;
+      while(e<title.length&&!/[)\]}|｜]/.test(title[e]))e++;
+      if(e>s)_featSpans.push([s,e]);
+      re.lastIndex=e;
+    }
+  }
+  const _mkNorm=t=>' '+t.toUpperCase().replace(/[^가-힣a-zA-Z0-9]/g,' ').replace(/\s+/g,' ')+' ';
+  // feat 구간만 남긴 문자열 / feat 구간만 지운 문자열(같은 길이 공백으로 치환해 인덱스 유지)
+  const normFeat=_featSpans.length?_mkNorm(_featSpans.map(([s,e])=>title.slice(s,e)).join(' ')):'  ';
+  const normNoFeat=_featSpans.length
+    ?_mkNorm(_featSpans.reduce((acc,[s,e])=>acc.slice(0,s)+' '.repeat(e-s)+acc.slice(e),title))
+    :norm;
   // n을 넘기면 그 문자열을 대신 검사 — "문빈&산하"처럼 & 로 묶인 유닛명이 정규화되면 "문빈 산하"처럼
   // 멤버 이름이 개별 단어로 쪼개져 보여서, 유닛명 자체가 만든 가짜 개별 언급을 걸러내려면 유닛명 구간을
   // 지운 문자열(normMinusUnits, 아래)로 다시 검사해야 함(TODO(unit-name-false-with) 해결, 2026-08-14).
@@ -5291,6 +5318,16 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
     if(!name)return false;
     return new RegExp(`#${_atmEscRe(name)}(?![가-힣a-zA-Z0-9])`,'i').test(title)
       ||new RegExp(`#${_atmEscRe(name.replace(/[^가-힣a-zA-Z0-9]/g,''))}(?![가-힣a-zA-Z0-9])`,'i').test(title);
+  }
+  // 이 이름 변형들이 "feat 구간 안에서만" 등장하는가 — 위 feat 강등 판정용(true면 게스트로 본다).
+  // 해시태그로 명시된 이름은 업로더가 직접 특정해준 근거라 강등하지 않는다(#BOBBY로 박아둔 콜라보 등).
+  function _featOnlyNames(names){
+    if(!_featSpans.length)return false;
+    const list=(names||[]).filter(Boolean);
+    if(!list.length)return false;
+    if(list.some(t=>hitHashtag(t)))return false;
+    if(!list.some(t=>hit(t,normFeat)))return false;  // feat 구간에 아예 없으면 무관
+    return !list.some(t=>hit(t,normNoFeat));         // 구간 밖에도 있으면 게스트로 못 본다
   }
   // Fable 일반화(2026-08-23): "짧은 영문명(≤4자) 또는 흔한 영단어"인 이름 변형은 그룹명/해시태그 등 맥락
   // 없이는 매칭하지 않는다. 러블리즈 JIN·지디→GD·태양→SUN·리세→Rise·천둥→Thunder처럼 짧은 영문 로마자가
@@ -5587,17 +5624,33 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
       seen.clear();kept.forEach(ko=>seen.add(ko));
     }
   }
+  // feat 강등(그룹명 매칭 경로) — 근거가 feat 구간 안에만 있는 그룹을 뒤로 민다. primaryGroup은
+  // matchedGroupKos[0]에서 뽑히므로 순서만 바꿔도 메인/게스트가 갈린다. 전부 feat이면 손대지 않는다.
+  if(matchedGroupKos.length>1&&_featSpans.length){
+    const featOnly=new Set(matchedGroupKos.filter(ko=>
+      _featOnlyNames([ko,GROUPS[ko]&&GROUPS[ko].en,...((GROUPS[ko]&&GROUPS[ko].altNames)||[])])));
+    if(featOnly.size&&featOnly.size<matchedGroupKos.length){
+      matchedGroupKos.splice(0,matchedGroupKos.length,
+        ...matchedGroupKos.filter(ko=>!featOnly.has(ko)),
+        ...matchedGroupKos.filter(ko=>featOnly.has(ko)));
+    }
+  }
   // "이름(그룹명)" 패턴에서 그룹명이 우리 시스템에 없는 경우 → 타 소속 동명이인 신호
   const knownGroupTokens=new Set();
   Object.entries(GROUPS).forEach(([ko,v])=>{
     knownGroupTokens.add(ko.toUpperCase());
     if(v.en)knownGroupTokens.add(v.en.toUpperCase());
   });
-  function hasForeignGroupSuffix(name){
+  function hasForeignGroupSuffix(name,selfNames){
     const escaped=name.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
     const m=title.match(new RegExp(escaped+'\\s*\\(([^)]+)\\)','i'));
     if(!m)return false;
     const adj=m[1].trim().toUpperCase();
+    // "마시로 (MASHIRO)"처럼 괄호 안이 **본인의 다른 표기**(영문명·별칭)면 타 소속 신호가 아니다.
+    // 이걸 안 걸러서 이 패턴의 제목에선 본인이 역추론에서 통째로 탈락하고, 그 빈자리를 feat 아티스트가
+    // 메인으로 차지하는 사고가 있었음(2026-09-02, 위 feat 강등과 같은 제보에서 발견).
+    const _flat=s=>String(s).toUpperCase().replace(/[^가-힣A-Z0-9]/g,'');
+    if(selfNames&&selfNames.some(n=>n&&_flat(n)===_flat(adj)))return false;
     for(const tok of knownGroupTokens){if(adj===tok||adj.includes(tok)||tok.includes(adj))return false;}
     return true;
   }
@@ -5607,6 +5660,7 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
     const nameToGroups=new Map(); // 멤버명(한글) -> Map(아티스트객체 -> 그 사람 소속 groupKo[]) — 동명이인 충돌 감지용
     const tokenToArtists=new Map(),artistToTokens=new Map(),artistToGkos=new Map(); // 옵션 A: 토큰↔사람↔그룹 동명이인 감지용
     let _inferViaHashtag=false;   // 이 역추론에 해시태그 명시가 하나라도 쓰였는가(아래 confidence 판정용)
+    const _featOnlyMembers=new Set(); // 이름이 feat 구간 안에만 있던 멤버(아래 feat 강등용)
     for(const a of ARTISTS){
       // 예전엔 GROUPS에 없는 그룹(아이유·보아처럼 group.ko="솔로"인 솔로 아티스트)을 통째로 건너뛰어서,
       // 제목에 진짜 그룹명 없이 솔로 아티스트 이름만 있는 콜라보(예: 자체 채널 영상에 "아이유"만 언급)가
@@ -5619,7 +5673,7 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
       // 명시된 경우만 인정 — 평문 매칭(memberHit의 일반 분기)은 여기서 아예 시도하지 않는다.
       const _matchedToks=strict?names.filter(t=>hitHashtag(t)):memberHitTokens(a,names);
       const nameMatched=_matchedToks.length>0;
-      if(nameMatched&&!names.some(t=>hasForeignGroupSuffix(t))){
+      if(nameMatched&&!names.some(t=>hasForeignGroupSuffix(t,names))){
         // 겸임 멤버(NCT 마크·해찬, 아이즈원 안유진 등)는 자기 소속 그룹 전부(_artistGroups)에 귀속시켜야
         // 함 — a.group.ko(주 소속)만 보면 부소속 채널/모음영상에서 역추론 자체가 원천 차단됨
         // (2026-08-20, 자체채널 태깅은 이미 _artistGroups 쓰는데 여기만 안 맞춰져 있던 비대칭 수정).
@@ -5642,6 +5696,7 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
           .map(g=>(GROUPS[g.ko]?g.ko:a.name.ko))
           .filter(gko=>viaHashtag||!selfGko||gko===selfGko||!_isCrossGate(gko,selfGko));
         if(artistGkos.length){
+          if(_featOnlyNames(_matchedToks.length?_matchedToks:names))_featOnlyMembers.add(a.name.ko);
           artistGkos.forEach(gko=>{
             if(!inferred.has(gko))inferred.set(gko,[]);
             inferred.get(gko).push(a.name.ko);
@@ -5727,6 +5782,13 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
       result.splice(0,result.length,...kept);
     }
     if(!result.length)return null;
+    // feat 강등(역추론 경로) — 근거 멤버가 전부 feat 구간 안에서만 나온 그룹은 뒤로 민다. 그룹명 매칭
+    // 경로와 같은 원칙이고, 전부 feat이면(주인공이 DB에 없음) 순서를 안 건드려 기존 동작 그대로다.
+    if(result.length>1&&_featOnlyMembers.size){
+      const isFeat=r=>r.members.length&&r.members.every(mko=>_featOnlyMembers.has(mko));
+      const front=result.filter(r=>!isFeat(r)),back=result.filter(isFeat);
+      if(front.length&&back.length)result.splice(0,result.length,...front,...back);
+    }
     // confidence:'weak' — 제목에 그룹명/해시태그 리터럴이 전혀 없이 멤버 이름 하나만으로 그룹 자체를
     // 역추론한 경로. Love(온리원오프)/루나(에프엑스)/조이(레드벨벳) 오염 사례가 전부 이 경로에서
     // 나왔음(2026-08-20, 실측 확인) — 무관 채널(THE SHOW 등)의 무관 영상 제목에 흔한 단어 하나 있다고
