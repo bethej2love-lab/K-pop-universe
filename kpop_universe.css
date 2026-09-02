@@ -106,6 +106,8 @@
      잠깐(.show-labels). visibility로 숨겨 모든 탭 높이를 같게 유지 → 아이콘 세로 정렬이 안 틀어진다. */
   .tab-label{font-size:9.5px;line-height:1.1;letter-spacing:.02em;visibility:hidden;opacity:.92;}
   .tab-btn.active .tab-label,#tabbar.show-labels .tab-label{visibility:visible;}
+  /* 연도 링 라벨(CSS2D) — 줌아웃 스케일 게이지의 연도 숫자. 은은하게, 투명도는 JS가 zoomT로 제어(2026-09-02) */
+  .year-ring-lbl{font-size:9px;font-weight:600;letter-spacing:.08em;color:rgba(150,180,235,0.62);pointer-events:none;white-space:nowrap;text-shadow:0 0 6px rgba(0,0,0,0.55);transition:opacity .35s ease;}
   .tab-btn:hover{color:rgba(210,225,255,0.85);}
   .tab-btn.active{color:rgba(225,238,255,1);text-shadow:0 0 8px rgba(200,220,255,0.5);}
   #mob-fav-btn svg path,#dh-fav-btn svg path{fill:none;transition:fill .15s;}

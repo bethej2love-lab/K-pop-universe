@@ -2153,6 +2153,33 @@ function debutToRadius(debutYear){
   return (2026 - debutYear) * 11.5 + 28;
 }
 
+// 연도 링(2026-09-02) — "반경=데뷔연도"라는 핵심 배치 규칙을 줌아웃 때만 은은하게 드러내는 스케일 게이지.
+// 배치가 구형(방향별 cone + x축 확장 타원체)이라 평면 원반이 아니므로, 원점 중심 수평 타원 링으로 "거리=시대"만
+// 표시한다(행성이 링 위에 정확히 얹히진 않지만 거리 척도로 읽힌다). animate 루프가 zoomT로 페이드(줌인 땐 0).
+let _yearRingGroup=null,_yearRingMats=[],_yearRingLabels=[];
+function _buildYearRings(){
+  try{
+    if(typeof scene==='undefined'||!scene)return;
+    if(_yearRingGroup){scene.remove(_yearRingGroup);}
+    _yearRingGroup=null;_yearRingMats=[];_yearRingLabels=[];
+    const a=(camera&&camera.aspect)||(window.innerWidth/Math.max(1,window.innerHeight));
+    const xSpread=a>1?Math.sqrt(a):1; // 행성 클라우드 x축 확장과 대략 맞춤
+    const grp=new THREE.Group(),N=128;
+    [2025,2020,2015,2010].forEach(yr=>{
+      const R=debutToRadius(yr),pts=[];
+      for(let i=0;i<N;i++){const t=(i/N)*Math.PI*2;pts.push(new THREE.Vector3(Math.cos(t)*R*xSpread,0,Math.sin(t)*R));}
+      const geo=new THREE.BufferGeometry().setFromPoints(pts);
+      const mat=new THREE.LineBasicMaterial({color:0x8ab0ff,transparent:true,opacity:0,depthWrite:false});
+      grp.add(new THREE.LineLoop(geo,mat));_yearRingMats.push(mat);
+      try{ // 연도 라벨(CSS2D) — 링의 +x 지점에
+        const el=document.createElement('div');el.className='year-ring-lbl';el.textContent=yr;el.style.opacity='0';
+        const lo=new THREE.CSS2DObject(el);lo.position.set(R*xSpread,0,0);grp.add(lo);_yearRingLabels.push(el);
+      }catch(e){}
+    });
+    grp.renderOrder=-2;scene.add(grp);_yearRingGroup=grp;
+  }catch(e){}
+}
+
 // 데뷔일 기준 정확한 연차 계산 (달력연도 뺄셈 대신 실제 경과일 사용 — NCT 127 같은 '10주년 임박' 그룹 오조기 판정 방지)
 function _isLegacyGroup(debutStr){
   const parts=String(debutStr||'').split('.').map(Number);
@@ -3004,6 +3031,7 @@ async function buildUniverse(){
   if(_psDeviceLooksWeak())_psAutoWeak=true;
   _psBuildSeg();_applyPowerSave();
   applyLang();
+  _buildYearRings(); // 연도 링(줌아웃 스케일 게이지) — 배치 끝난 뒤 한 번 생성
   _revealUniverse();
   // 후속 연출은 전부 리빌 종료 기준 상대값 — 리빌 길이를 바꿔도 간격이 그대로 따라온다(2026-09-02).
   // 예전엔 1200/2600/2400이 리빌 1050ms를 전제로 각각 하드코딩돼 있어서 리빌만 바꾸면 어긋났다.
@@ -3318,6 +3346,12 @@ function animate(){
   const camDist=camera.position.length();
   const zoomT=Math.max(0,Math.min(1,(camDist-90)/190));
   const zoomBoost=-(Math.cos(Math.PI*zoomT)-1)/2;
+  // 연도 링: 줌아웃 임계(zoomT>0.55)를 넘을 때만 은은하게 페이드 인, 줌인하면 0(2026-09-02)
+  if(_yearRingMats.length){
+    const rf=Math.max(0,Math.min(1,(zoomT-0.55)/0.45));
+    const op=rf*0.13; for(let i=0;i<_yearRingMats.length;i++)_yearRingMats[i].opacity=op;
+    const lop=(rf*0.6).toFixed(2); for(let i=0;i<_yearRingLabels.length;i++)_yearRingLabels[i].style.opacity=lop;
+  }
   // 멤버 점 발광: zoomBoost는 홈(≈120)에서 0.06 정도로 거의 0이라, 홈이 사실상 풀브라이트에
   // 가까운 채로 남아 최대 줌아웃(zoomBoost=1, 확인 결과 문제없음)과 밝기 차이가 거의 없었음 —
   // 홈 부근을 최대 줌아웃 쪽에 훨씬 가깝게 낮춰서 평상시엔 은은하게 유지.
