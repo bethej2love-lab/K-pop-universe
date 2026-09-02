@@ -4088,7 +4088,7 @@ function _appendTrendingSection(hits,res,mobSearch,obSearch){
       if(!url){ try{ await _ensureGroupDisco(ko); url=_latestCover((GROUPS[ko]||{}).discography); }catch(e){} } // 그래도 없으면 최신 앨범 커버
       if(!url)return;
       const im=new Image(); // 로드 완료 후에만 교체 — 깨진 이미지·빈칸 방지
-      im.onload=()=>{disc.style.backgroundImage=`url("${String(url).replace(/"/g,'%22')}")`;disc.classList.add('has-cover');};
+      im.onload=()=>{disc.style.backgroundImage=`url("${String(url).replace(/"/g,'%22')}")`;disc.style.backgroundSize='cover';disc.style.backgroundPosition='center';disc.classList.add('has-cover');};
       im.src=url;
     })();
   });
@@ -10503,7 +10503,7 @@ function _renderDiscoverHops(a){
       if(!url){ try{ _instaPicPreloadP=_instaPicPreloadP||_warmInstaPicCache(); await _instaPicPreloadP;
         url=(h.type==='tt'?_instaPicCache.get(_picKey(h.artist.name.ko,gko)):null)||_instaPicCache.get(_groupPicKey(gko))||''; }catch(e){} }
       if(!url)return;
-      const im=new Image();im.onload=()=>{disc.style.backgroundImage=`url("${String(url).replace(/"/g,'%22')}")`;disc.classList.add('has-cover');};im.src=url;
+      const im=new Image();im.onload=()=>{disc.style.backgroundImage=`url("${String(url).replace(/"/g,'%22')}")`;disc.style.backgroundSize='cover';disc.style.backgroundPosition='center';disc.classList.add('has-cover');};im.src=url;
     })();
   });
   card.appendChild(sec); // 항상 카드 맨 아래로(위에 있으면 거슬린다는 제보, 2026-09-02)
