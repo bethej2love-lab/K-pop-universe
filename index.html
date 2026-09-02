@@ -1773,7 +1773,7 @@ const T={
       all:'전체',girl:'걸그룹',boy:'보이그룹',coed:'혼성그룹',inactive:'비활동/탈퇴 멤버',reset:'↺ 초기화',powerSave:'절전 모드',psAuto:'자동',psOn:'켬',psOff:'끔',psHintAuto:'기기 성능을 보고 알아서 조절해요',psHintAutoOn:'자동 — 지금 절전 중이에요',psHintOn:'화질과 부드러움을 낮춰 발열을 줄여요',psHintOff:'항상 최고 화질로 그려요',
       searchPH:'그룹 · 멤버 검색…',mobileTitle:'케이팝 아이돌 지형도',srGroup:'그룹',
       preparing:'준비 중',gcAgency:'소속',gcDebut:'데뷔',gcFandom:'팬덤',gcLeader:'리더',gcMember:'멤버',gcSNS:'공식',
-      chSortRec:'추천순',chSortNew:'최신순',chSortOld:'날짜순',chViewCon:'콘텐츠별 보기',chSearch:'영상 검색…',
+      chSortRec:'추천순',chSortNew:'최신순',chSortOld:'날짜순',chSortPop:'인기순',chViewCon:'콘텐츠별 보기',chSearch:'영상 검색…',
       idxTitle:'인덱스',idxGroupTab:'그룹',idxMemberTab:'멤버',idxSearchPH:'그룹명 검색…',idxSearchPHMember:'멤버명 검색…',
       idxSortName:'이름 (가나다순)',idxSortDebut:'데뷔연도',idxSortAgency:'소속사',idxSortMembers:'멤버 수',
       idxSortBirth:'생년',idxSortGroup:'그룹명',idxSortNation:'국적',ppTitle:'내 프로필',ppNick:'닉네임',ppNickPH:'닉네임을 입력하세요',ppNickErr:'닉네임을 입력해주세요',ppBio:'한 줄 소개',ppBioPH:'선택사항',ppColor:'내 별 색상',ppFavLabel:'좋아요 공개',ppFavSub:'다른 사람들이 볼 수 있어요',ppSyncLabel:'다른 기기와 동기화',ppSyncSub:'다른 기기에서도 좋아요가 유지돼요',ppGoogleBtn:'구글로 연결하기',ppXBtn:'X로 연결하기',ppLinked:'계정에 연결됨 ✓',ppLogout:'로그아웃',ppSave:'저장',
@@ -1791,7 +1791,7 @@ const T={
       all:'All',girl:'Girl Groups',boy:'Boy Groups',coed:'Coed Groups',inactive:'Inactive / Left',reset:'↺ Reset',powerSave:'Power saving',psAuto:'Auto',psOn:'On',psOff:'Off',psHintAuto:'Adjusts itself based on your device',psHintAutoOn:'Auto — saving power right now',psHintOn:'Lowers quality and smoothness to run cooler',psHintOff:'Always render at full quality',
       searchPH:'Search groups · members…',mobileTitle:'K-pop Idol Map',srGroup:'Group',
       preparing:'Coming soon',gcAgency:'Agency',gcDebut:'Debut',gcFandom:'Fandom',gcLeader:'Leader',gcMember:'Members',gcSNS:'Official',
-      chSortRec:'Recommended',chSortNew:'Latest',chSortOld:'Oldest',chViewCon:'By Content',chSearch:'Search videos…',
+      chSortRec:'Recommended',chSortNew:'Latest',chSortOld:'Oldest',chSortPop:'Popular',chViewCon:'By Content',chSearch:'Search videos…',
       idxTitle:'Index',idxGroupTab:'Groups',idxMemberTab:'Members',idxSearchPH:'Search group name…',idxSearchPHMember:'Search member name…',
       idxSortName:'Name (A–Z)',idxSortDebut:'Debut Year',idxSortAgency:'Agency',idxSortMembers:'Member Count',
       idxSortBirth:'Birth Year',idxSortGroup:'Group',idxSortNation:'Nationality',ppTitle:'My Profile',ppNick:'Nickname',ppNickPH:'Enter nickname',ppNickErr:'Nickname is required',ppBio:'Bio',ppBioPH:'Optional',ppColor:'Star Color',ppFavLabel:'Public Likes',ppFavSub:'Others can see your likes',ppSyncLabel:'Sync Across Devices',ppSyncSub:'Likes stay synced across your devices',ppGoogleBtn:'Connect with Google',ppXBtn:'Connect with X',ppLinked:'Account Connected ✓',ppLogout:'Log Out',ppSave:'Save',
@@ -18028,8 +18028,14 @@ function _makeChVidController(contId){
       // 요청마다 다르게 줘서 .range() 페이지 경계(48↔96…)가 어긋나 일부 영상이 중복(→seenIds로 걸러짐)·
       // 일부는 어느 페이지에도 안 잡혀 누락된다 → 끝까지 안 불러와졌는데 총계 "N개"만 뜨고 멈춤, 새로고침하면
       // 순서가 다시 섞여 이어짐(2026-08-26 사용자 제보). 순차(range)·청크 랜덤 샘플링 둘 다 이 ordered를 탄다.
+      // 인기순(2026-09-02): 조회수 내림차순. ⚠️ nullsFirst:false가 핵심 — view_count는 실측 59%만
+      // 채워져 있어서(391,634 중 231,199) NULL을 앞에 두면 "조회수 모르는 영상"이 인기 상위를 차지한다.
+      // 여기서도 id로 tie-break를 해야 페이지 경계가 안 어긋난다(아래 published_at 주석과 같은 이유 —
+      // 조회수는 같은 값이 흔하다).
       const ordered=q=>state.sortMode==='untagged'
         ?q.order('with_groups',{ascending:false}).order('members',{ascending:true}).order('published_at',{ascending:false}).order('id',{ascending:false})
+        :state.sortMode==='popular'
+        ?q.order('view_count',{ascending:false,nullsFirst:false}).order('id',{ascending:false})
         :q.order('published_at',{ascending:state.sortMode==='oldest'}).order('id',{ascending:state.sortMode==='oldest'});
       // '추천순' 기본 오픈(↻ 아님)도 아래 청크 랜덤 샘플링을 타게 하려면 청크 개수 계산에 쓸 전체
       // 개수를 먼저 알아야 함 — 예전엔 이 총 개수를 화면을 막지 않으려고 항상 백그라운드로만 채웠는데,
@@ -18047,7 +18053,9 @@ function _makeChVidController(contId){
         }catch(e){/* 실패해도 아래에서 total 없이 안전하게 폴백 */}
       }
       let mainP;
-      const isChunkedRandomize=reset&&state.total>_YT_PAGE&&(randomize||state.sortMode==='recommend');
+      // ⚠️ 인기순은 청크 랜덤 샘플링에서 제외 — 조회수 순으로 보려고 고른 건데 ↻를 누르면 랜덤한
+      // 구간을 긁어와 순서가 통째로 깨진다("인기순인데 왜 이게 위에 있지"가 된다).
+      const isChunkedRandomize=reset&&state.total>_YT_PAGE&&state.sortMode!=='popular'&&(randomize||state.sortMode==='recommend');
       if(cacheHit){
         mainP=Promise.resolve({data:cached.data,error:null,count:cached.count});
       }else if(isChunkedRandomize){
@@ -18253,7 +18261,7 @@ function _makeChVidController(contId){
     // "라이브"(무대 직캠 위주) 탭에서 시작 — 그룹 카드는 그대로 "전체"
     state={ko,memberKo:memberKo||null,filter:memberKo?'live':'all',onlyMe:false,searchQ:'',sortMode:'recommend',viewMode:'category',formatFilter:null,formats:[],offset:0,total:0,pos:0,cat:null,gen:state.gen+1,appendLock:false,trailingEl:null,hasMore:false,allVids:[],_liveFallbackDone:false,wrapEnd:0,wrapPhase:false,unitFilter:null};
     const _t=T[currentLang];
-    cont.innerHTML=`<div class="gc-ch-hd"><div class="gc-ch-filters hscroll-drag"></div><div class="gc-ch-sort-wrap"><button class="gc-ch-sort-btn" title="${_t.sortTitle}" data-i18n-title="sortTitle" aria-haspopup="true" aria-expanded="false">⋮</button><div class="gc-ch-sort-menu"><button class="gc-ch-sort-item" data-sort="recommend"><span class="chk">✓</span><span data-i18n="chSortRec">${_t.chSortRec}</span></button><button class="gc-ch-sort-item" data-sort="latest"><span class="chk">✓</span><span data-i18n="chSortNew">${_t.chSortNew}</span></button><button class="gc-ch-sort-item" data-sort="oldest"><span class="chk">✓</span><span data-i18n="chSortOld">${_t.chSortOld}</span></button><div class="gc-ch-sort-divider" style="display:none"></div><button class="gc-ch-view-toggle" style="display:none"><span class="chk">✓</span><span data-i18n="chViewCon">${_t.chViewCon}</span></button></div></div><button class="gc-ch-refresh" title="${_t.refreshTitle}" data-i18n-title="refreshTitle">↻</button></div><div class="gc-ch-search-wrap" style="display:none"><input class="gc-ch-search" placeholder="${_t.chSearch}" data-i18n-ph="chSearch" autocomplete="off" spellcheck="false"><button class="gc-ch-search-clear" aria-label="${_t.searchClearLabel}">\xD7</button></div><div class="gc-ch-grid"></div><div class="gc-ch-more-wrap"></div><div class="tv-cover-of-wrap" style="display:none"></div>`;
+    cont.innerHTML=`<div class="gc-ch-hd"><div class="gc-ch-filters hscroll-drag"></div><div class="gc-ch-sort-wrap"><button class="gc-ch-sort-btn" title="${_t.sortTitle}" data-i18n-title="sortTitle" aria-haspopup="true" aria-expanded="false">⋮</button><div class="gc-ch-sort-menu"><button class="gc-ch-sort-item" data-sort="recommend"><span class="chk">✓</span><span data-i18n="chSortRec">${_t.chSortRec}</span></button><button class="gc-ch-sort-item" data-sort="popular"><span class="chk">✓</span><span data-i18n="chSortPop">${_t.chSortPop}</span></button><button class="gc-ch-sort-item" data-sort="latest"><span class="chk">✓</span><span data-i18n="chSortNew">${_t.chSortNew}</span></button><button class="gc-ch-sort-item" data-sort="oldest"><span class="chk">✓</span><span data-i18n="chSortOld">${_t.chSortOld}</span></button><div class="gc-ch-sort-divider" style="display:none"></div><button class="gc-ch-view-toggle" style="display:none"><span class="chk">✓</span><span data-i18n="chViewCon">${_t.chViewCon}</span></button></div></div><button class="gc-ch-refresh" title="${_t.refreshTitle}" data-i18n-title="refreshTitle">↻</button></div><div class="gc-ch-search-wrap" style="display:none"><input class="gc-ch-search" placeholder="${_t.chSearch}" data-i18n-ph="chSearch" autocomplete="off" spellcheck="false"><button class="gc-ch-search-clear" aria-label="${_t.searchClearLabel}">\xD7</button></div><div class="gc-ch-grid"></div><div class="gc-ch-more-wrap"></div><div class="tv-cover-of-wrap" style="display:none"></div>`;
     _exitSelMode();
     const filEl=cont.querySelector('.gc-ch-filters');
     // 영상 여러 개 선택 버튼 — 예전엔 어드민 태깅 편집용으로만 있었는데, 이제 일반 유저도 여러 영상을
