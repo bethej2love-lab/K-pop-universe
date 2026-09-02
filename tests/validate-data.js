@@ -204,6 +204,30 @@ Object.entries(GROUPS).forEach(([gko, info]) => {
   });
 }
 
+// ── 9. 불변 id (2026-09-02) ──────────────────────
+// id는 "이름이 바뀌어도 안 흔들리는 앵커"가 목적이라, 누락·중복·재부여가 생기면 존재 이유가 사라진다.
+// 특히 **한 번 부여된 id가 바뀌는 것**이 가장 위험하다(그 id를 참조하는 모든 게 조용히 어긋난다).
+// 여기선 형식·중복·누락만 본다 — 값이 바뀌었는지는 git diff가 잡아준다.
+{
+  const gIds = [], aIds = [];
+  Object.keys(GROUPS).forEach(k => {
+    const id = GROUPS[k].id;
+    if (!id) add('error', 'id 누락(그룹)', `${k} — tools/assign_ids.mjs 실행 필요`);
+    else if (!/^g\d{3,}$/.test(id)) add('error', 'id 형식(그룹)', `${k}: ${JSON.stringify(id)} — g + 숫자 3자리 이상`);
+    else gIds.push(id);
+  });
+  ARTISTS.forEach(a => {
+    const id = a.id;
+    const who = `${a.name?.ko} [${a.group?.ko}]`;
+    if (!id) add('error', 'id 누락(아티스트)', `${who} — tools/assign_ids.mjs 실행 필요`);
+    else if (!/^a\d{4,}$/.test(id)) add('error', 'id 형식(아티스트)', `${who}: ${JSON.stringify(id)} — a + 숫자 4자리 이상`);
+    else aIds.push(id);
+  });
+  const dup = arr => { const s = new Set(), d = new Set(); for (const x of arr) { if (s.has(x)) d.add(x); s.add(x); } return [...d]; };
+  dup(gIds).forEach(d => add('error', 'id 중복(그룹)', d));
+  dup(aIds).forEach(d => add('error', 'id 중복(아티스트)', d));
+}
+
 // ── 리포트 ──────────────────────
 const byCategory = new Map();
 issues.forEach(iss => {
