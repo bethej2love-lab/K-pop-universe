@@ -48,6 +48,7 @@
 
 ### 검색·곡 상세 정교화 (2026-09-02, 별도 세션) — A~E 순차
 - **[완료][A][index.html][kpop_universe.css] 곡 상세 뷰에 앨범 메타 헤더** — 곡 오버레이(`_openSongVideos`)가 제목만 보이던 걸, **앨범커버 + 아티스트·앨범·연도** 헤더를 얹음(제보 예: "안녕이란 말 대신" → 비·앨범·연도 + 원곡/커버 무대). 데이터: 앨범명=검색히트 h.alias·연도/커버=`disco/g/*.json`(releaseDate·cover). `_resolveSongMeta`(disco 로드→앨범 역탐색)+`_fillSongMeta`(아티스트 먼저→커버·연도 채움, myReq 레이스가드). 검색 곡클릭·디스코 트랙클릭 둘 다 메타 전달. songMeta 없으면 헤더 숨김(하위호환). ⚠️아이폰 실기 확인(긴 곡명·커버 로드).
+- **[완료][B][index.html][kpop_universe.css] 검색 첫 화면 시각화** — "이런 그룹은 어때요"를 텍스트 목록→**컬러 오브 그리드**. 그룹 컬러(RGB배열) 그라디언트로 즉시 뜨고, disco 로드되면 **그 그룹 최신 앨범 커버 이미지로 교체**(프로필 사진 데이터 없어 앨범커버+컬러로). 클릭은 `_makeSearchItem` 감아둔 동작을 detached 요소에 위임해 재사용(`_latestCover`+`_appendTrendingSection` 개편). ⚠️아이폰 실기 확인(오브 크기·커버 로드).
 - **[이슈][index.html] NUL 바이트 5개 잔존**(예: `ownerName+'\0'+`) — 브라우저 관용으로 작동 중이나 잠재 이슈, 나중에 정리 권장. 이번 변경과 무관(origin에도 있던 것).
 
 ### feat. 주객전도 수정 (2026-09-02)

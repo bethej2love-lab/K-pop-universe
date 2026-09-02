@@ -2029,6 +2029,12 @@
   /* 검색 결과 타입 구분 헤더(2026-08-31). ⚠️ `.sr-item` 클래스를 주면 안 된다 — 키보드 내비게이션이
      `.sr-item`으로 항목을 고르므로 화살표가 헤더에서 멈춘다. */
   .sr-sec-label{padding:9px 13px 4px;font-size:10px;font-weight:700;color:rgba(150,175,235,0.52);letter-spacing:.07em;text-transform:uppercase;}
+  /* 검색 첫 화면 트렌딩 — 컬러 오브(→앨범커버) 그리드(2026-09-02) */
+  .sr-orbs{display:flex;flex-wrap:wrap;gap:15px 12px;padding:9px 13px 8px;}
+  .sr-orb{display:flex;flex-direction:column;align-items:center;gap:6px;width:62px;background:none;border:none;padding:0;cursor:pointer;}
+  .sr-orb-disc{width:56px;height:56px;border-radius:50%;background-size:cover;background-position:center;box-shadow:0 3px 12px rgba(0,0,0,0.42);transition:transform .13s ease;}
+  .sr-orb:hover .sr-orb-disc,.sr-orb:active .sr-orb-disc{transform:scale(1.07);}
+  .sr-orb-name{font-size:11px;color:rgba(212,224,250,0.86);text-align:center;line-height:1.2;max-width:62px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
   .sr-sec-label:first-child{padding-top:6px;}
   /* 검색 결과가 늦게 도착하는 섹션(영상)의 로딩 표시 */
   .sr-loading{padding:8px 13px;font-size:11px;color:rgba(140,160,200,0.45);}

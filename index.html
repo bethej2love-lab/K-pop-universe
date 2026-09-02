@@ -3967,11 +3967,42 @@ function _trendingSearchHits(){
       pos:bm.mesh.position.clone(),data:ko,score:0};
   });
 }
+// 그룹 disco에서 가장 최근(releaseDate 내림차순) 앨범 커버 URL — 없으면 ''.
+function _latestCover(d){
+  const wc=(d||[]).filter(a=>a&&a.cover);
+  if(!wc.length)return '';
+  wc.sort((a,b)=>String(b.releaseDate||'').localeCompare(String(a.releaseDate||'')));
+  return wc[0].cover||'';
+}
+// 검색 첫 화면 "이런 그룹은 어때요" — 텍스트 목록 대신 컬러 오브 그리드(2026-09-02). 각 오브는 그룹 컬러
+// 그라디언트로 즉시 뜨고, disco 로드되면 그 그룹 최신 앨범 커버 이미지로 부드럽게 교체(프로필 사진 데이터가
+// 없어 앨범커버·컬러로 시각화). 클릭은 _makeSearchItem이 감아둔 동작을 detached 요소에 위임해 그대로 재사용.
 function _appendTrendingSection(hits,res,mobSearch,obSearch){
   const lb=document.createElement('div');lb.className='sr-sec-label';
   lb.textContent=currentLang==='ko'?'이런 그룹은 어때요':'Try these';
   res.appendChild(lb);
-  hits.forEach(h=>res.appendChild(_makeSearchItem(h,res,mobSearch,obSearch)));
+  const grid=document.createElement('div');grid.className='sr-orbs';
+  hits.forEach(h=>{
+    const ko=h.data;
+    const wired=_makeSearchItem(h,res,mobSearch,obSearch); // 그룹 열기 동작 재사용(DOM엔 안 붙임)
+    const tile=document.createElement('button');tile.type='button';tile.className='sr-orb';
+    const disc=document.createElement('span');disc.className='sr-orb-disc';
+    const c=GROUPS[ko]&&GROUPS[ko].color;
+    const col=Array.isArray(c)?`rgb(${c[0]},${c[1]},${c[2]})`:'#7e9cff';
+    disc.style.background=`radial-gradient(circle at 34% 28%, ${col}, rgba(6,9,20,0.55))`;
+    const nm=document.createElement('span');nm.className='sr-orb-name';nm.textContent=h.name;
+    tile.appendChild(disc);tile.appendChild(nm);
+    tile.addEventListener('click',()=>wired.click());
+    grid.appendChild(tile);
+    _ensureGroupDisco(ko).then(()=>{
+      const cov=_latestCover((GROUPS[ko]||{}).discography);
+      if(!cov)return;
+      const im=new Image(); // 로드 완료 후에만 교체 — 깨진 이미지·빈칸 방지
+      im.onload=()=>{disc.style.backgroundImage=`url("${String(cov).replace(/"/g,'%22')}")`;disc.classList.add('has-cover');};
+      im.src=cov;
+    }).catch(()=>{});
+  });
+  res.appendChild(grid);
 }
 // 서버에서 늦게 도착한 결과를 기존 목록 **뒤에** 섹션으로 붙인다(화면을 다시 그리지 않는다 —
 // 사용자가 이미 보고 있는 동기 결과가 깜빡이면 안 되고, 스크롤 위치도 유지돼야 한다).
