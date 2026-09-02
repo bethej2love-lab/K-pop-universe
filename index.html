@@ -10292,14 +10292,15 @@ function _comboRenderResults(rows){
   };});
   buildVideoSection(songs,el,{groupKo:(_comboSel[0]&&_comboSel[0].group)||'',memberKo:null});
 }
-function _comboShareHash(){return '#combo='+_comboSel.map(m=>_hashEsc(m.name+'('+m.group+')')).join(',');}
+// 공유 해시 — 이름/그룹 구분자는 '~'(괄호 X). 예전 '이름(그룹)' 형식은 그룹명에 괄호가 있으면((여자)아이들 등)
+// 정규식 파싱이 깨져 링크가 안 열렸음(2026-09-02 제보). 멤버 구분자 ',' (이름·그룹엔 안 쓰임).
+function _comboShareHash(){return '#combo='+_comboSel.map(m=>_hashEsc(m.name)+'~'+_hashEsc(m.group)).join(',');}
 function _comboFromHash(param){
-  const items=String(param).split(',').map(s=>s.trim()).filter(Boolean);
   const sel=[];
-  items.forEach(it=>{
-    const mm=it.match(/^(.+)\((.+)\)$/);if(!mm)return;
-    const name=mm[1],group=mm[2];
-    if(ARTISTS.some(a=>a.name&&a.group&&a.name.ko===name&&a.group.ko===group)&&!sel.some(x=>x.name===name&&x.group===group))sel.push({name:name,group:group});
+  String(param).split(',').forEach(pair=>{
+    const i=pair.indexOf('~');if(i<0)return;                       // 정규식 대신 첫 '~'로 분리 → 괄호 그룹명 안전
+    const name=pair.slice(0,i).trim(),group=pair.slice(i+1).trim();
+    if(name&&group&&!sel.some(x=>x.name===name&&x.group===group))sel.push({name:name,group:group}); // 검증은 쿼리에 맡김(완화)
   });
   if(!sel.length)return;
   _comboSel=sel.slice(0,_COMBO_MAX);
