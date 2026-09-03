@@ -46,6 +46,10 @@
   html.chrome-wait #random-fab{
     opacity:0;visibility:hidden;pointer-events:none;
   }
+  /* 발자국 바는 저장된 발자국이 있으면 JS(_fpUpdateVis)가 로드 즉시 인라인 display:flex로 켜므로,
+     부팅 숨김엔 !important가 필요하다(안 그러면 우주 뜨기 전부터 🐾가 떠버림, 2026-09-03 제보). */
+  html.booting #footprint-bar,
+  html.chrome-wait #footprint-bar{display:none!important;}
   /* 탭바·줌 컨트롤은 booting이 풀린 뒤(클립 시작)에도 chrome-wait로 계속 숨겨둔다 — 이 둘은 각자
      transition을 스크롤숨김(#tabbar line~129)·패널이동(#zoom-ctrl line~2508)에 이미 쓰고 있어서 위
      booting 규칙의 리빌 트랜지션이 덮여버린다(그래서 클립 시작과 함께 뚝 떠버렸음, 2026-09-02 제보).
