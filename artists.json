@@ -47907,12 +47907,12 @@
   },
   {
     "name": {
-      "ko": "김청하",
-      "en": "Chungha"
+      "ko": "청하",
+      "en": "CHUNG HA"
     },
     "group": {
-      "ko": "아이오아이",
-      "en": "I.O.I"
+      "ko": "솔로",
+      "en": "Solo"
     },
     "co": "MNH엔터테인먼트",
     "active": true,
@@ -48317,7 +48317,24 @@
         ]
       }
     ],
-    "id": "a0313"
+    "id": "a0313",
+    "subName": "김찬미",
+    "matchAliases": [
+      "김청하",
+      "Chungha"
+    ],
+    "groups": [
+      {
+        "ko": "솔로",
+        "en": "Solo"
+      },
+      {
+        "ko": "아이오아이",
+        "en": "I.O.I",
+        "active": false,
+        "left": "2017.01.29"
+      }
+    ]
   },
   {
     "name": {
