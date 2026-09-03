@@ -641,7 +641,7 @@ function _admRenderExecLog(){
   let logv=[];try{logv=JSON.parse(localStorage.getItem('kpu_admExecLog')||'[]');}catch(_){}
   if(!logv.length){box.innerHTML='';return;}
   box.innerHTML='<div class="ael-h">최근 실행</div>'+logv.map(e=>
-    `<div class="ael-row"><span class="ael-t">${_admFmtAgo(e.t)}</span><span class="ael-l">${(e.label||'').replace(/</g,'&lt;')}</span><span class="ael-r ${e.ok?'':'bad'}">${(e.result||'').replace(/</g,'&lt;')}</span></div>`
+    `<div class="ael-row"><span class="ael-t">${_admFmtAgo(e.t)}</span><span class="ael-l">${(e.label||'').replace(/</g,'&lt;')}</span><span class="ael-r ${e.ok?'':'bad'}" title="${(e.result||'').replace(/</g,'&lt;').replace(/"/g,'&quot;')}">${(e.result||'').replace(/</g,'&lt;')}</span></div>`
   ).join('');
 }
 
@@ -1756,11 +1756,15 @@ async function _ytSweepExMemberSolo(){
     //    (탈퇴 게이트에 걸려 보류로 가는 건 "새로 들어오는" 영상이고, 기존 재고는 옛 매처가 이미 옛 그룹으로
     //     확정해둔 것들이다.) 그래서 전체를 훑고 클라이언트에서 거른다 — ②와 같은 방식.
     //    무관/외부인은 제외한다("우리 콘텐츠가 아니다"라는 판단이라 귀속과 축이 다름).
-    // ⚠️ 서버 필터(.or/.eq)를 걸지 않는다 — 걸었더니 **38,499건에서 조용히 멈췄다**(전체 392,058건,
-    //    2026-09-03 실측). `_sbFetchAll`은 페이지가 pageSize보다 짧으면 "끝"으로 보고 종료하는데,
-    //    서버가 타임아웃 등으로 짧게 돌려주면 그걸 완료로 오인한다. ②(오태깅 재배정)는 필터 없이
-    //    전체를 훑어 정상 동작하므로 같은 방식으로 맞추고, content_flag는 **클라이언트에서** 거른다.
-    //    (이 세션에서 group_ko/ilike 필터도 서버 500이 반복됐다 — 이 테이블은 필터 조회가 불안정하다.)
+    // content_flag는 서버 필터 대신 **클라이언트에서** 거른다. 서버 `.or()`도 정상 동작하지만
+    // (실측 384,993건, 인덱스 정상) 전체를 한 번 훑는 다른 스윕들과 조회 형태를 맞춰두는 편이
+    // 페이지네이션 동작이 같아 예측하기 쉽다.
+    //
+    // ⚠️ 아래 "잘림 감지"는 실제로 겪은 버그가 아니라 **예방책**이다. 2026-09-03에 진행 로그의
+    //    "384,993건 스캔"이 한 줄 말줄임으로 "38499…"로 보여서 조회가 끊긴 것으로 **두 번 오진했다**
+    //    (덤으로 group_ko 필터가 500이라던 것도 오진이었다 — 셸이 한글을 깨뜨려 보낸 것이지
+    //    서버는 멀쩡했고 인덱스도 149ms로 정상이었다). 그래도 부분 스캔을 조용히 적용하는 건
+    //    위험하므로 감지 자체는 남겨둔다 — 비용은 HEAD 카운트 한 번뿐이다.
     _ytSetProg(`[탈퇴 솔로 귀속] 대상 인물 ${cands.size}명 — 전체 조회 중…`);
     const _cnt=await sb.from(_YT_TABLE).select('id',{count:'exact',head:true});
     const _expected=_cnt&&_cnt.count;
@@ -1771,7 +1775,7 @@ async function _ytSweepExMemberSolo(){
     if(!rows?.length){_ytSetProg('영상이 없어요');return;}
     // 조용한 잘림 감지 — 전체 건수와 크게 어긋나면 분석 결과를 믿을 수 없으므로 멈춘다.
     if(_expected&&rows.length<_expected*0.95){
-      _ytSetProg(`조회가 중간에 끊겼어요 — ${rows.length}/${_expected}건만 받음. 그대로 진행하면 일부만 처리되니 중단합니다. 잠시 후 다시 시도해주세요.`);
+      _ytSetProg(`조회가 중간에 끊겼어요 — ${rows.length.toLocaleString()}/${_expected.toLocaleString()}건만 받음. 그대로 진행하면 일부만 처리되니 중단합니다. 잠시 후 다시 시도해주세요.`);
       console.error('[탈퇴 솔로 귀속] 조회 잘림',{받음:rows.length,전체:_expected});
       return;
     }
@@ -1806,7 +1810,7 @@ async function _ytSweepExMemberSolo(){
     }
     console.log('[탈퇴 솔로 귀속] 예정 표본(최대40):\n'+sample.join('\n'));
     console.log('[탈퇴 솔로 귀속] 인물별 건수:',Object.entries(byPerson).sort((a,b)=>b[1]-a[1]));
-    if(!updates.length){_ytSetProg(`옮길 게 없음 — 대상 ${cands.size}명(${[...cands.keys()].join(", ")}) · ${rows.length}건 스캔. 명단이 예상과 다르면 새로고침 후 재시도(콘솔 F12에 상세)`);return;}
+    if(!updates.length){_ytSetProg(`옮길 게 없음 — 대상 ${cands.size}명(${[...cands.keys()].join(", ")}) · ${rows.length.toLocaleString()}건 스캔. 명단이 예상과 다르면 새로고침 후 재시도(콘솔 F12에 상세)`);return;}
     const _apply=async()=>{
       await _snapshotBeforeBulk('탈퇴 후 솔로 영상 귀속',updates.map(u=>u.id));
       const _ub=await _sbUpdateBatch(updates,u=>sb.from(_YT_TABLE).update(u.patch).eq('id',u.id),
