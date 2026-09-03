@@ -94,7 +94,15 @@ const server = http.createServer((req, res) => {
       return els.reduce((mx,e)=>Math.max(mx,parseInt(getComputedStyle(e).zIndex)||0),0);})()`;
     const zOf = id => `(function(){const e=document.getElementById('${id}');return e?(parseInt(getComputedStyle(e).zIndex)||0):-1;})()`;
 
-    for (const [label, btnId, panelId] of [['검색', 'tab-search', 'search-wrap'], ['설정', 'tab-settings', 'settings-panel']]) {
+    // ⚠️ **데스크톱에서 실제로 보이는 버튼**을 눌러야 한다. 처음엔 탭바 쪽(tab-search)만 클릭했는데,
+    //    데스크톱 헤더에는 dh-search-btn이 **완전히 별개의 리스너**로 붙어 있어서 그쪽은 안 고쳐진 채
+    //    테스트만 초록이었다(2026-09-03 제보 재발로 발각). 두 경로를 모두 검사한다.
+    for (const [label, btnId, panelId] of [
+      ['검색(탭바)', 'tab-search', 'search-wrap'],
+      ['설정(탭바)', 'tab-settings', 'settings-panel'],
+      ['검색(데스크톱 헤더)', 'dh-search-btn', 'search-wrap'],
+      ['설정(데스크톱 헤더)', 'dh-settings-btn', 'settings-panel'],
+    ]) {
       await ev(cdp, `(function(){try{closeCards()}catch(e){};['search-wrap','settings-panel'].forEach(i=>document.getElementById(i).classList.remove('open'));return 1;})()`);
       await sleep(300);
       // 멤버 카드를 하나 연다
