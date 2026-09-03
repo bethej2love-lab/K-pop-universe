@@ -11493,6 +11493,10 @@ document.getElementById('tab-search').addEventListener('click',e=>{
   sp.classList.remove('open');
   ['tab-settings','dh-settings-btn'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.remove('active');});
   sw.classList.toggle('open',!open);
+  // 열릴 때 맨 위로(2026-09-03 제보: "카드 열린 상태에서 검색 누르면 검색창이 뒤로 떠"). #search-wrap은
+  // 정적 z-index:68인데 카드 패널은 _bringToFront로 131+에 올라가 있어서 그대로 가려졌다. 9/2 z-index
+  // 통일 때 카드·조합·곡영상·어드민 모달은 옮겼는데 **데스크톱 검색/설정 패널이 빠져 있었다.**
+  if(!open)_bringToFront(sw);
   ['tab-search','dh-search-btn'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.toggle('active',!open);});
   if(!open)setTimeout(()=>document.getElementById('search-input').focus(),50);
 });
@@ -11504,6 +11508,7 @@ document.getElementById('tab-settings').addEventListener('click',e=>{
   sw.classList.remove('open');
   ['tab-search','dh-search-btn'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.remove('active');});
   sp.classList.toggle('open',!open);
+  if(!open)_bringToFront(sp); // 검색창과 같은 이유 — 정적 z-index:68이라 카드(131+) 뒤로 깔렸다
   ['tab-settings','dh-settings-btn'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.toggle('active',!open);});
   // 모바일: 설정 패널 열릴 때 궤도 컨트롤 비활성화 (열린 상태→닫힘: enable, 닫힌 상태→열림: disable)
   if(isMob()&&!mobSheetEl.classList.contains('bs-open'))controls.enabled=open;
