@@ -5989,6 +5989,11 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
     // 유닛명이 정규화 후 실존 그룹 토큰과 같아지는 경우("마마무+"→"마마무", 2026-08-29 시뮬로 발견 — 마마무
     // 단체 직캠마다 솔라·문별이 붙었음)는 특수문자가 살아있는 원문 리터럴(hitLiteral)로만 인정한다.
     if(!unit.names.some(t=>_UNIT_HASHTAG_ONLY_TOKENS.has(t)?hitHashtag(t):(_unitTokIsGroup(t)?hitLiteral(t):hit(t))))return;
+    // _UNIT_NEED_PARENT_TOKENS(shared.js) — 해시태그도 근거가 못 되는 트리거는 **유닛 소속 그룹이
+    // 따로 매칭됐을 때만** 확장한다. 트렌드지 곡 "GLOW" 해시태그에 트리플에스 유닛이 걸려 4명 × 36건이
+    // 붙던 사고(2026-09-03 실측). 여기(외부 채널 경로)만 필요하다 — 자체 채널 경로
+    // (_unitMembersFromTitle)는 gko===ko인 멤버만 넣으므로 남의 그룹으로는 애초에 안 샌다.
+    if(unit.names.every(t=>_UNIT_NEED_PARENT_TOKENS.has(t))&&!unit.members.some(({gko})=>seen.has(gko)))return;
     // 로테이션 유닛(NCT U — shared.js 주석 참고)은 members가 "곡마다 바뀌는 참여자 풀"이라 전원
     // 확장하면 참여도 안 한 멤버까지 붙는다(2026-08-25 실측 767건). 제목에 이름이 따로 언급된
     // 멤버만 인정하고, 그 멤버의 그룹만 matchedGroupKos에 넣는다 — 이름이 하나도 없으면 이 유닛으로

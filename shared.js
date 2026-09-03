@@ -76,7 +76,17 @@ function _soloReattribGko(gko,memberKos,publishedAt){
 // 'M&N'(미료·나르샤 유닛) 추가(2026-08-25): hit()이 '&'를 공백으로 바꿔 'M N'이 되는데, "A.M.N
 // Showcase @ DMC Festival"류 제목이 정규화되면 'A M N'이 돼서 그 안의 'M N'에 걸림 — 스텔라(Stellar)
 // 페스티벌 직캠들이 통째로 브라운아이드걸스 미료/나르샤로 오태깅되던 원인(실측). '&TEAM'·'15&'와 동일 계열.
-const _UNIT_HASHTAG_ONLY_TOKENS=new Set(['AAA','EVOLution','Glow','hatch!','NXT','M&N']);
+// 'GOOD BOY' 추가(2026-09-03): 지디×태양 유닛곡 제목인데 **평문 매칭으로 열려 있었다.** 그 바람에
+// 투모로우바이투게더 "Good Boy Gone Bad" 영상 94건에 지디·태양이 통째로 붙었다(실측). 영어 흔한 구라
+// AAA·EVOLution과 같은 계열 — 해시태그로만 인정한다.
+const _UNIT_HASHTAG_ONLY_TOKENS=new Set(['AAA','EVOLution','Glow','hatch!','NXT','M&N','GOOD BOY']);
+// ⚠️ **해시태그마저 근거가 못 되는** 유닛 트리거(2026-09-03 신설). 다른 그룹이 같은 단어를 곡명으로 쓰고
+// 그 그룹 콘텐츠에 정식 해시태그로 달면, 위 hashtag-only 가드를 그냥 통과한다.
+// 실사고: 트렌드지의 곡 "GLOW" 홍보 영상에 `#TRENDZ #GLOW #GLOWchallenge`가 달렸고, 트리플에스 유닛
+// 'Glow'가 그 해시태그에 걸려 김채원·설린·서아·지연 4명이 144건에 붙었다(36건 × 4명).
+// 이 토큰들은 **유닛 소속 그룹이 제목에서 따로 확인될 때만** 확장한다 — 진짜 트리플에스 유닛 콘텐츠는
+// 제목에 그룹명이 같이 있고, 자체 채널 경로는 애초에 채널 그룹으로 한정돼 영향이 없다.
+const _UNIT_NEED_PARENT_TOKENS=new Set(['Glow']);
 const _PROJECT_UNITS={
   'V8':{names:['V8','브이에잇'],members:[{mko:'디에잇',gko:'세븐틴'},{mko:'버논',gko:'세븐틴'}]},
   'GOT THE BEAT':{names:['GOT THE BEAT','갓더비트'],members:[{mko:'보아',gko:'보아'},{mko:'태연',gko:'소녀시대'},{mko:'효연',gko:'소녀시대'},

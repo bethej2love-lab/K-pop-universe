@@ -562,6 +562,25 @@ test('위너 — "Wanna One(위너원)" 오타 제목이 그룹 위너로 안 �
 test('위너 — 한글 "위너"가 있으면 인정(아이브 콜라보)',
   '아이브 X 위너 스페셜 무대 #아이브', undefined,
   r => !!r && [r.primaryGroup, ...(r.withGroups||[])].includes('위너'));
+// ── 유닛 트리거 흔한단어 충돌(2026-09-03, 콜라보 태그 전수 스캔으로 발견) ──────
+// 스캔 결과 "제목에 이름이 하나도 없는데 태그가 몰린" 상위 두 건이 전부 유닛 트리거 오매칭이었다.
+//   · 'GOOD BOY'(지디×태양 유닛곡)가 **평문 매칭으로 열려 있어** TXT "Good Boy Gone Bad" 94건 오염
+//   · 'Glow'(트리플에스 유닛)는 해시태그 전용이었는데도, 트렌드지가 자기 곡 "GLOW"에 정식으로
+//     #GLOW를 달아서 그 가드를 그냥 통과 → 4명 × 36건 = 144건 오염
+// 그래서 가드가 두 단계다: ①흔한 단어는 해시태그로만(_UNIT_HASHTAG_ONLY_TOKENS)
+//                        ②해시태그마저 못 믿을 단어는 **소속 그룹 동반 필수**(_UNIT_NEED_PARENT_TOKENS)
+test('유닛 — "Good Boy Gone Bad"(TXT)에 지디·태양이 안 붙음',
+  'Good Boy Gone Bad - TOMORROW X TOGETHER [뮤직뱅크/Music Bank] | KBS 220624 방송', undefined,
+  r => !!r && ![r.primaryGroup, ...(r.withGroups||[])].includes('빅뱅'), '2022-06-24');
+test('유닛 — 해시태그로 명시된 GOOD BOY는 정상 인정(지디×태양)',
+  '[MPD직캠] 지디 X 태양 직캠 #GOODBOY #빅뱅', undefined,
+  r => !!r && [r.primaryGroup, ...(r.withGroups||[])].includes('빅뱅'), '2014-12-01');
+test('유닛 — 트렌드지 곡 #GLOW 해시태그에 트리플에스가 안 붙음(그룹 동반 필수)',
+  '프렌드지 고마워 #TRENDZ #GLOW #GLOWchallenge', undefined,
+  r => !!r && ![r.primaryGroup, ...(r.withGroups||[])].includes('트리플에스'), '2023-05-01');
+test('유닛 — 소속 그룹이 같이 있으면 Glow 유닛 정상 인정',
+  '[MPD직캠] 트리플에스 Glow 무대 #GLOW #tripleS', undefined,
+  r => !!r && [r.primaryGroup, ...(r.withGroups||[])].includes('트리플에스'), '2023-05-01');
 test('직캠 — 곡명 \'Key of Secret\'의 "키"가 멤버로 안 붙음(샤이니 단체)',
   "[안방1열 풀캠4K] 샤이니 'Key of Secret' 풀캠 (SHINee Full Cam)", undefined,
   r => !!r && r.primaryGroup === '샤이니' && (r.membersByGroup['샤이니']||[]).length === 0, '2015-05-24');
