@@ -2,7 +2,7 @@
 // 빌드 스텝이 없는 프로젝트라 캐시 무효화는 이 버전 문자열을 수동으로 올려서 처리한다.
 // 의미 있는 배포(html/css/js 변경) 때마다 CACHE_VERSION을 올릴 것 — 안 올리면 재방문 유저가
 // 옛 캐시를 계속 보게 된다.
-const CACHE_VERSION='kpu-20260902-74599438';
+const CACHE_VERSION='kpu-20260903-940c1b4c';
 
 // index.html이 이제 정식 앱 셸(kpop_universe.html은 index.html로 리다이렉트하는 얇은 파일로 전환,
 // 2026-08-18 — 기존엔 index.html이 kpop_universe.html의 수동 복사본이라 동기화를 깜빡하면 옛 버전이
