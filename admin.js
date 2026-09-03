@@ -1503,6 +1503,23 @@ async function _ytSweepDebutGate(){
 }
 _admExecBind('sp-debutgate-btn',_ytSweepDebutGate,'데뷔 이전 정리');
 
+// 오태깅 재배정 계열 스윕이 공유하는 판정 도구(2026-09-03 추출). 예전엔 함수마다 이 넷을 각자 선언했는데,
+// 같은 뜻의 목록/정규식이 여러 곳에 흩어지면 한쪽만 고칠 때 조용히 어긋난다(이날 위너 게이트가 정확히
+// 그렇게 두 벌이 되면서 서로 다른 기준을 갖게 됐다). 새 재배정 스윕을 추가할 땐 여기서 가져다 쓸 것.
+// ⚠️ 전부 화살표 함수로 둔다 — 쓰는 쪽이 `const{_titleHas}=_MISTAG`로 구조분해하므로 메서드 축약형
+//    (this._grpToks)을 쓰면 this가 끊겨 즉시 터진다.
+const _mtGrpToks=ko=>{const v=GROUPS[ko];return v?[ko,v.en,...(v.altNames||[])].filter(Boolean).map(t=>t.toUpperCase()):[];};
+const _mtNorm=t=>' '+(t||'').toUpperCase().replace(/[^가-힣A-Z0-9]/g,' ').replace(/\s+/g,' ')+' ';
+// 느슨한 포함 — "저장 그룹이 제목에 근거가 있나"(스킵 판정)처럼 **넓게 걸수록 안전한** 쪽에 쓴다.
+const _mtTitleHas=(nu,ko)=>_mtGrpToks(ko).some(t=>nu.includes(t));
+// 단독 토큰 — "이 그룹으로 옮겨도 되나"(적용 판정)처럼 **좁게 걸어야 안전한** 쪽에 쓴다.
+// _norm이 비영숫자를 공백으로 바꾸고 앞뒤에 공백을 덧대므로, 양쪽 공백까지 포함해 찾으면 부분문자열
+// 매칭이 배제된다(미등록 그룹 영상이 제목 속 다른 그룹명 조각에 끌려가는 걸 막는 게 목적).
+const _mtTitleHasToken=(nu,ko)=>_mtGrpToks(ko).some(t=>nu.includes(' '+t+' '));
+// 콜라보 신호는 원문(구두점 유지)에서 검사 — 정규화하면 w/·feat. 같은 신호가 사라져 콜라보를 놓친다.
+const _MT_COLLAB=/with |w\/| feat| ft[ .]|선배|챌린지|challenge|원곡| cover|커버|＆| & |함께|출연|게스트|guest| vs | x /i;
+const _MISTAG={_grpToks:_mtGrpToks,_norm:_mtNorm,_titleHas:_mtTitleHas,_titleHasToken:_mtTitleHasToken,COLLAB:_MT_COLLAB};
+
 // [오태깅 그룹 재배정](2026-08-25): 고친 매칭 엔진(_m2ParseTitle)을 기존 저장 행에 다시 돌려서,
 // "저장된 group_ko는 제목에 근거가 없는데, 엔진이 제목에 대놓고 있는 '다른 그룹'을 찾은" 행을 그 그룹으로
 // 재배정한다. 전수 진단(scratchpad B리포트)에서 이런 3천여 건 대부분이 오염이 아니라 옛 버그로 엉뚱한
@@ -1535,11 +1552,7 @@ async function _ytSweepMistagReclassify(){
     if(error){_ytSetProg('조회 실패: '+error.message);return;}
     if(!rows?.length){_ytSetProg('영상이 없어요');return;}
     const EXCLUDE=new Set(['무관','보류','hidden','외부인']);
-    const _grpToks=ko=>{const v=GROUPS[ko];return v?[ko,v.en,...(v.altNames||[])].filter(Boolean).map(t=>t.toUpperCase()):[];};
-    const _norm=t=>' '+(t||'').toUpperCase().replace(/[^가-힣A-Z0-9]/g,' ').replace(/\s+/g,' ')+' ';
-    const _titleHas=(nu,ko)=>_grpToks(ko).some(t=>nu.includes(t));
-    // 콜라보 신호는 원문(구두점 유지)에서 검사 — 정규화하면 w/·feat. 같은 신호가 사라져 콜라보를 놓친다.
-    const COLLAB=/with |w\/| feat| ft[ .]|선배|챌린지|challenge|원곡| cover|커버|＆| & |함께|출연|게스트|guest| vs | x /i;
+    const {_grpToks,_norm,_titleHas,COLLAB}=_MISTAG; // 아래 보류/숨김 재배정과 **같은 판정을 공유**한다
     let manualSkipped=0;const updates=[];const sample=[];
     for(let i=0;i<rows.length;i++){
       if(i%5000===0){_ytSetProg(`[오태깅 재배정] 분석 중… ${i}/${rows.length} (후보 ${updates.length})`);await new Promise(r=>setTimeout(r));}
@@ -1579,6 +1592,86 @@ async function _ytSweepMistagReclassify(){
   finally{if(btn)btn.disabled=false;}
 }
 _admExecBind('sp-mistagfix-btn',_ytSweepMistagReclassify,'오태깅 그룹 재배정');
+
+// [보류/숨김 그룹 재배정](2026-09-03) — 위 ②가 손대지 않는 사각지대 전용.
+//
+// 왜 따로 만드나: ②는 맨 앞에서 `content_flag`가 무관/보류/hidden/외부인인 행을 **분석 대상에서 통째로
+// 제외**한다. 그런데 실측해보니 오염이 바로 거기 고여 있었다 — 스트레이키즈로 잘못 배정된 제로베이스원
+// 직캠 285건 중 282건(99%)이 보류/hidden이었고, 콜라보 태그된 12,027건 기준으로 "재배정 자격은 되는데
+// 플래그 때문에 스킵되는" 행이 988건이었다(②가 실제로 고친 건 14건). 즉 **오염은 유저에게 안 보이는
+// 큐 안에 있는데, 그걸 고칠 도구가 바로 그 큐를 안 보고 있었다.**
+//
+// ②와 다른 점 세 가지:
+//   ① 대상이 보류/hidden **뿐**이다. 무관·외부인은 계속 제외한다 — 그건 "우리 콘텐츠가 아니다"라는
+//      판단이라 "어느 그룹이냐"와 다른 축이고, 그룹만 고쳐봐야 의미가 없다.
+//   ② 옮겨갈 그룹의 근거를 **단독 토큰**으로 좁힌다(_titleHasToken). 보류 큐엔 서바이벌·미등록 신인
+//      영상이 많아서(실측 기준 다수), 제목 속 등록된 그룹명 **조각**에 끌려가면 곧바로 새 오배정이 된다.
+//      ②의 느슨한 포함(_titleHas)을 그대로 쓰면 위험한 쪽이 바로 여기다.
+//   ③ `content_flag`는 건드리지 않는다. 그룹만 바로잡고, 숨김을 푸는 건 별개 결정으로 남긴다
+//      (지금 같이 풀면 아직 그룹이 틀린 행까지 유저 화면에 나온다 — 순서가 중요).
+// 공통: tags_manual 보호 · 건수 미리보기 후 확인 · 스냅샷 되돌리기.
+async function _ytSweepHeldMistagReclassify(){
+  if(!sb){_ytSetProg('Supabase 연결 없음');return;}
+  const btn=document.getElementById('sp-heldfix-btn');
+  if(btn)btn.disabled=true;
+  try{
+    _ytSetProg('[보류/숨김 재배정] 보류·숨김 행 조회 중…');
+    const{data:rows,error}=await _sbFetchAll(()=>sb.from(_YT_TABLE)
+      .select('id,title,group_ko,members,with_members,with_groups,published_at,tags_manual,content_flag')
+      .in('content_flag',['보류','hidden'])
+      .order('id'));
+    if(error){_ytSetProg('조회 실패: '+error.message);return;}
+    if(!rows?.length){_ytSetProg('보류/숨김 영상이 없어요');return;}
+    const{_norm,_titleHas,_titleHasToken,COLLAB}=_MISTAG;
+    let manualSkipped=0,collabSkipped=0,weakEvidence=0;
+    const updates=[];const sample=[];const byTarget={};
+    for(let i=0;i<rows.length;i++){
+      if(i%2000===0){_ytSetProg(`[보류/숨김 재배정] 분석 중… ${i}/${rows.length} (후보 ${updates.length})`);await new Promise(r=>setTimeout(r));}
+      const v=rows[i];const g=v.group_ko;
+      if(!g||!GROUPS[g])continue;
+      const nu=_norm(v.title);
+      if(_titleHas(nu,g))continue;            // 저장 그룹이 제목에 있음 → 근거 있음, 안 건드림
+      let m=null;try{m=_m2ParseTitle(v.title,undefined,false,(v.published_at||'').slice(0,10));}catch(e){}
+      const ng=m&&m.primaryGroup;
+      if(!ng||ng===g)continue;
+      if(!_titleHasToken(nu,ng)){weakEvidence++;continue;} // ★ 단독 토큰일 때만(미등록 그룹 보호)
+      if(COLLAB.test(v.title||'')){collabSkipped++;continue;}
+      if(v.tags_manual){manualSkipped++;continue;}
+      const members=(m.membersByGroup&&m.membersByGroup[ng])||[];
+      const wgs=m.withGroups||[];
+      const wms=[];wgs.forEach(x=>((m.membersByGroup&&m.membersByGroup[x])||[]).forEach(mm=>wms.push(`${mm}(${x})`)));
+      updates.push({id:v.id,patch:{group_ko:ng,members,with_groups:wgs,with_members:wms}});
+      const key=`${g} → ${ng}`;byTarget[key]=(byTarget[key]||0)+1;
+      if(sample.length<40)sample.push(`[${v.content_flag}] ${g}→${ng}  ${(v.title||'').slice(0,66)}`);
+    }
+    console.log('[보류/숨김 재배정] 재배정 예정 표본(최대40):\n'+sample.join('\n'));
+    console.log('[보류/숨김 재배정] 이동 방향별 건수(많은 순):',Object.entries(byTarget).sort((a,b)=>b[1]-a[1]).slice(0,25));
+    if(!updates.length){_ytSetProg(`재배정할 게 없음 (보류/숨김 ${rows.length} 스캔${manualSkipped?`, 수동보호 ${manualSkipped}`:''})`);return;}
+    const _apply=async()=>{
+      await _snapshotBeforeBulk('보류/숨김 그룹 재배정',updates.map(u=>u.id));
+      const _ub=await _sbUpdateBatch(updates,u=>sb.from(_YT_TABLE).update(u.patch).eq('id',u.id),
+        {conc:20,retries:2,onProgress:(done,total)=>_ytSetProg(`[보류/숨김 재배정] ${done}/${total}건 적용 중…`)});
+      if(_ub.failed)console.error('[보류/숨김 재배정] 재시도 후에도 실패:',_ub.failed,'건 —',_ub.firstErr);
+      _ytSetProg(`완료! ${updates.length}건 그룹 재배정함(숨김/보류 상태는 그대로 유지). (되돌리기: "↩︎ 마지막 일괄 작업 되돌리기")`);
+    };
+    const msg=`보류/숨김 영상 ${rows.length}건을 훑어 ${updates.length}건을 재배정할까요?\n\n`+
+      `· 대상: content_flag가 보류/숨김인 행만 (무관·외부인은 제외)\n`+
+      `· 조건: 저장 그룹은 제목에 근거 없음 + 새 그룹명이 제목에 **단독 토큰**으로 있음\n`+
+      `· content_flag는 안 건드립니다 — 그룹만 바로잡고 숨김 해제는 별도 결정\n\n`+
+      `안 건드리는 것\n`+
+      `· 근거가 약한(부분문자열만 일치) ${weakEvidence}건 ← 미등록 그룹 영상 보호\n`+
+      `· 콜라보/커버 신호 있는 ${collabSkipped}건\n`+
+      `· 수동편집 ${manualSkipped}건\n\n`+
+      `⚠️ 표본 40건과 "이동 방향별 건수"를 콘솔(F12)에 출력했어요 — 먼저 훑어보고 실행하세요.\n`+
+      `스냅샷 저장되어 "↩︎ 마지막 일괄 작업 되돌리기"로 복구 가능`;
+    _ytSetProg(`[보류/숨김 재배정] 분석 완료 — 재배정 예정 ${updates.length}건 (보류/숨김 ${rows.length} 스캔)`);
+    await new Promise(r=>setTimeout(r,50));
+    if(!await _sweepConfirm('sp-heldfix-btn',`보류/숨김 그룹 재배정 ${updates.length}건`,msg,'재배정 실행',updates.length,_apply))return;
+    await _apply();
+  }catch(e){_ytSetProg('오류: '+e.message);}
+  finally{if(btn)btn.disabled=false;}
+}
+_admExecBind('sp-heldfix-btn',_ytSweepHeldMistagReclassify,'보류/숨김 그룹 재배정');
 
 // [음악방송 직캠 재검증](2026-08-29, 사용자 요청 — "적어도 음악방송 직캠은 오태깅이 없어야") — 제목이
 // _fancamParseTitle 구조([태그] 그룹 멤버 '곡명' … / 쇼챔·잇츠라이브·킬링보이스)로 잡히는 행만 골라, 구조
@@ -6254,7 +6347,15 @@ function _extBuildRows(vids,strict,tier,owner,defaultCat,handle){
       //   쌓이는 동안 그 대가로 709건이 유저 화면에서 사라져 있었음. 게다가 실측해보니 큐의 93%가
       //   고유한 이름이고 표본은 전부 정확했음 — 위험한 이름은 이미 앞단 게이트(흔한단어·짧은영문·
       //   동명이인 dedup)가 걸러내기 때문. 이 정책이 도입된 2026-08-20엔 그 게이트들이 없었다.
-      ...(_shouldJunkFlag(v.title,tier)?_flagPatch('무관','auto'):ambiguous?_flagPatch('hidden','auto'):needsReview?{needs_review:true}:{}),
+      // ⚠️ ambiguous도 더는 hidden으로 감추지 않는다(2026-09-03, 사용자 확인). 위 weak 결정(8/25)과
+      //    **같은 논리를 같은 이유로** ambiguous 경로에도 적용한 것 — weak를 풀 때 이 가지가 남아 있었다.
+      //    실측(2026-09-03): hidden 2,377건 중 밴 인물 목록에 걸리는 건 31건뿐이고 **2,346건(98.7%)이
+      //    이 자동 경로로 숨겨진 것**이었다. 그 분포가 곧 한 글자 이름 충돌 그대로다 —
+      //    스트레이키즈 517(한/HAN)·더보이즈 491(뉴/NEW)·세븐틴 262(준/JUN)·스테이씨 202(윤/YOON).
+      //    즉 그룹이 잘못 배정된 영상이 동시에 숨김까지 당해 "틀린 채로 안 보이는" 이중 피해였다.
+      //    hidden의 의도된 용도는 **밴 인물 + 관리자 수동 판단**뿐이다(사용자 확인) — 자동으로 붙이지 말 것.
+      //    ambiguous 행은 needs_review:true로 검수 큐에는 그대로 올라가고, members는 아래처럼 비워둔다.
+      ...(_shouldJunkFlag(v.title,tier)?_flagPatch('무관','auto'):needsReview?{needs_review:true}:{}),
       ...((tier==='variety'||tier==='show')?{content_formats:[tier]}:{})
     });
   }

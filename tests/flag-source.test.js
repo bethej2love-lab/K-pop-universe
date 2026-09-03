@@ -51,8 +51,16 @@ ok(calls >= 15, `_flagPatch 호출이 ${calls}곳뿐 — 배선이 빠진 자리
 // 동기화/백필 insert 경로도 포함돼야 한다(신규 유입분이 출처 없이 들어오면 의미가 없음)
 ok(/_shouldJunkFlag\(v\.title,'official'\)\?_flagPatch\('무관','auto'\)/.test(adminJs),
   '공식 채널 동기화 insert가 _flagPatch를 안 씀');
-ok(/_shouldJunkFlag\(v\.title,tier\)\?_flagPatch\('무관','auto'\):ambiguous\?_flagPatch\('hidden','auto'\)/.test(adminJs),
+ok(/_shouldJunkFlag\(v\.title,tier\)\?_flagPatch\('무관','auto'\)/.test(adminJs),
   '백필 insert가 _flagPatch를 안 씀');
+// ⚠️ 자동 숨김 금지(2026-09-03). hidden의 의도된 용도는 **밴 인물 + 관리자 수동 판단**뿐이다(사용자 확인).
+// 예전엔 동기화가 confidence==='ambiguous'인 행에 곧바로 hidden을 박았는데, 실측해보니 hidden 2,377건 중
+// 밴 목록에 걸리는 건 31건뿐이고 **2,346건(98.7%)이 이 자동 경로**였다. 그 분포가 곧 한 글자 이름 충돌
+// 그대로였다(스트레이키즈 517=한 / 더보이즈 491=뉴 / 세븐틴 262=준 / 스테이씨 202=윤) — 그룹이 잘못
+// 배정된 영상이 동시에 숨김까지 당해 "틀린 채로 안 보이는" 상태였다. weak→hidden은 같은 이유로 이미
+// 2026-08-25에 폐지됐는데 ambiguous 가지가 남아 있었다. 되살리지 말 것.
+ok(!/ambiguous\?_flagPatch\('hidden'/.test(adminJs),
+  "동기화가 ambiguous 행을 자동으로 hidden 처리하고 있음 — hidden은 밴 인물/수동 전용");
 
 // ── 스냅샷(되돌리기)에 새 컬럼이 포함됐는가 ──────────────────────
 const snap = /const _BULK_SNAP_COLS=\[([^\]]*)\]/.exec(adminJs);

@@ -371,6 +371,8 @@
     <div class="sp-btn-hint">미태깅분까지 전부 다시 훑어 멤버/콜라보 갱신 — 이거 누르면 위 "2번"은 안 눌러도 됨. <b>그룹은 안 건드림.</b></div>
     <button class="sp-yt-sync" id="sp-mistagfix-btn" style="margin-top:4px;opacity:.8;">② 🧭 오태깅 그룹 재배정 (제목엔 다른 그룹이 있는데 딴 데 저장된 것)</button>
     <div class="sp-btn-hint">저장 그룹이 제목에 근거 없고 제목엔 다른 그룹이 대놓고 있는 행을 그 그룹으로 재배정(대부분 옛 오저장 복구). <b>건수 먼저 보여주고 확인</b> · 콜라보/수동 제외 · 표본 콘솔(F12) · 스냅샷 되돌리기. <b>(그룹 변경)</b></div>
+    <button class="sp-yt-sync" id="sp-heldfix-btn" style="margin-top:4px;opacity:.8;">②-A 🗃️ 보류/숨김 영상 그룹 재배정 (②가 안 보는 사각지대)</button>
+    <div class="sp-btn-hint">위 ②는 보류·숨김·무관·외부인 행을 <b>분석 대상에서 아예 제외</b>합니다. 그런데 오배정 상당수가 거기 고여 있어요(실측: 스키즈로 잘못 간 제베원 직캠 285건 중 282건이 보류/숨김). 이 버튼은 <b>보류·숨김만</b> 골라 같은 재배정을 돌려요(무관·외부인은 제외). 미등록 그룹 영상 보호를 위해 <b>새 그룹명이 제목에 단독 토큰으로 있을 때만</b> 옮깁니다. <b>content_flag는 안 건드림</b> — 숨김 해제는 별도 결정. 건수·표본 먼저 확인 · 수동 제외 · 스냅샷 되돌리기. <b>(그룹 변경)</b></div>
     <button class="sp-yt-sync" id="sp-fancamfix-btn" style="margin-top:4px;opacity:.8;">②-1 🎥 음악방송 직캠 재검증 (뮤뱅·음중·엠카·인가·쇼챔·더쇼·잇츠라이브·킬링보이스)</button>
     <div class="sp-btn-hint">직캠 구조 제목([태그] 그룹 멤버 '곡명' …)만 골라 그룹/멤버/콜라보를 구조 파서 기준으로 재검증. 곡명이 그룹명과 겹치는 오태깅('Treasure'·'After School' 등)·단일음절 멤버(뷔·큐) 누락·strictSync 그룹 직캠 복구. <b>건수 먼저 보여주고 확인</b> · 수동/owner채널 제외 · 표본 콘솔(F12) · 스냅샷 되돌리기. <b>(그룹 변경)</b></div>
     <button class="sp-yt-sync" id="sp-membersfix-btn" style="margin-top:4px;opacity:.8;">③ (선택) 자체 멤버 태깅 재검증(전체)</button>
@@ -4842,7 +4844,11 @@ const _BANNED_VIDEO_NAMES_GLOBAL=['seungri','태일','taeil','himchan','종훈',
 // 씨엔블루 "종현"(이종현) — 샤이니에도 실존하는 활동중 멤버 "종현"과 완전히 같은 표기라 전역으로 걸면
 // 안 됨(2026-08-21, 사용자 확인 — 승리·태일·크리스와 같은 사유의 퇴출 인물).
 const _BANNED_VIDEO_NAMES_SCOPED={'빅뱅':['승리'],'비에이피':['힘찬'],'씨엔블루':['종현']};
-const _bannedGlobalRe=new RegExp(_BANNED_VIDEO_NAMES_GLOBAL.join('|'),'i');
+// 영문 토큰에만 단어 경계를 건다(2026-09-03). 경계가 없던 탓에 `kris`가 **하파크리스틴(HapaKristin)**
+// 렌즈 광고와 **Kristen Bell**에 걸려 장원영·빌리 영상이 숨겨져 있었다(실측: 밴으로 숨긴 31건 중 6건이
+// 이 오탐, 진짜 크리스는 0건). 한글 토큰엔 경계를 걸지 않는다 — `태일`은 본명 표기 **문태일**에도
+// 걸려야 하는데 한글 경계를 걸면 그게 빠진다(같은 사람이라 걸리는 게 맞다).
+const _bannedGlobalRe=new RegExp(_BANNED_VIDEO_NAMES_GLOBAL.map(n=>/^[\x20-\x7E]+$/.test(n)?'\\b'+n+'\\b':n).join('|'),'i');
 function _isBannedVideoTitle(t,ko){
   const title=t||'';
   if(_bannedGlobalRe.test(title))return true;
