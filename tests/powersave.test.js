@@ -36,7 +36,11 @@ need(!/typeof _powerSaveOn/.test(html), 'typeof 가드를 쓰지 않음(TDZ를 �
 // ── 레버가 실제로 연결돼 있는가 ────────────────────────────────────────────────
 need(/if\(_powerSaveOn\)return \(performance\.now\(\)-_lastInteractMs/.test(html), '프레임 상한 레버');
 need(/_maxFar=_powerSaveOn\?/.test(html), '라벨 LOD 상한 레버');
-need(/renderer\.setPixelRatio\(Math\.min\(dpr,want\?1\.25:2\)\)/.test(html), '픽셀비 레버');
+// ⚠️ 비절전 쪽 상한은 이 테스트의 관심사가 아니다 — 2026-09-02 발열 작업에서 그쪽이 `2`에서
+// `isMob()?_MOB_DPR_CAP:2`로 바뀌었는데, 정규식이 `:2)`까지 통째로 못 박아둬서 **코드는 멀쩡한데
+// 테스트만 빨간불**이 됐고 그대로 CI가 죽어 있었다(2026-09-03 발견). 이 검사가 지켜야 할 건
+// "절전이면 픽셀비를 1.25로 낮추는 레버가 연결돼 있는가" 하나뿐이므로 거기까지만 본다.
+need(/renderer\.setPixelRatio\(Math\.min\(dpr,want\?1\.25:/.test(html), '픽셀비 레버(절전 시 1.25)');
 need(/_psAutoWeak=true;_applyPowerSave\(\);/.test(html), 'fps 실측 결과로 자동 판정 확정');
 need(/navigator\.deviceMemory/.test(html) && /hardwareConcurrency/.test(html), '기기 힌트로 1차 판단');
 
