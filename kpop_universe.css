@@ -41,7 +41,9 @@
   html.booting #tabbar,
   html.booting #zoom-ctrl,
   html.booting #mob-top-bar,
-  html.booting #desktop-header{
+  html.booting #desktop-header,
+  html.booting #random-fab,
+  html.chrome-wait #random-fab{
     opacity:0;visibility:hidden;pointer-events:none;
   }
   /* 탭바·줌 컨트롤은 booting이 풀린 뒤(클립 시작)에도 chrome-wait로 계속 숨겨둔다 — 이 둘은 각자
@@ -151,8 +153,7 @@
   body:has(#msheet.open) #random-fab,
   body:has(#feed-overlay.open) #random-fab,
   body:has(#yt-lightbox.open) #random-fab,
-  body:has(#side-panel.open) #random-fab,
-  html.booting #random-fab, html.chrome-wait #random-fab{opacity:0;pointer-events:none;}
+  body:has(#side-panel.open) #random-fab{opacity:0;pointer-events:none;}
   /* 데스크톱: 탭바 위가 아니라 줌 컨트롤(left:18px, bottom:24px, 세로 슬라이더) **위쪽**에 둬 겹침을 피한다 */
   @media(min-width:769px){ #random-fab{left:18px;bottom:172px;width:40px;height:40px;} }
   /* 연도 링 라벨(CSS2D) — 줌아웃 스케일 게이지의 연도 숫자. 은은하게, 투명도는 JS가 zoomT로 제어(2026-09-02) */
