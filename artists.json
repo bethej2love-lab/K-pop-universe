@@ -81865,8 +81865,8 @@
   },
   {
     "name": {
-      "ko": "김현아",
-      "en": "Kim Hyuna"
+      "ko": "현아",
+      "en": "HyunA"
     },
     "group": {
       "ko": "포미닛",
@@ -81875,11 +81875,19 @@
     "groups": [
       {
         "ko": "포미닛",
-        "en": "4minute"
+        "en": "4minute",
+        "active": false,
+        "left": "2016.06.16"
       },
       {
         "ko": "원더걸스",
-        "en": "Wonder Girls"
+        "en": "Wonder Girls",
+        "active": false,
+        "left": "2007.07.30"
+      },
+      {
+        "ko": "솔로",
+        "en": "Solo"
       }
     ],
     "co": "무소속",
@@ -81899,7 +81907,11 @@
       "namu": "https://namu.wiki/w/현아"
     },
     "left": "2016.06.16",
-    "id": "a0524"
+    "id": "a0524",
+    "subName": "김현아",
+    "matchAliases": [
+      "김현아"
+    ]
   },
   {
     "name": {
