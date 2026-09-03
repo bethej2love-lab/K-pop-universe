@@ -2304,7 +2304,7 @@ async function buildUniverse(){
   // 일관됨(검색·b-side 폴백 분기가 이 플래그를 봄).
   // 데이터 JSON 캐시버스터 — tools/bump_cache_version.mjs가 groups/artists/connections 내용 해시로 자동
   // 갱신한다(손으로 고치지 말 것, css/js의 ?v=와 같은 방식).
-  const _DATA_VER='20260903-80195351';
+  const _DATA_VER='20260903-4d4dfea2';
   // ⚠️ 데이터 JSON에도 **캐시버스터를 붙인다**(_DATA_VER, 2026-09-03). `cache:'no-cache'`는 브라우저에게
   // "재검증하라"는 힌트일 뿐이라 **중간 프록시/CDN이 들고 있는 사본은 못 뚫는다.** 실제 사고:
   // artists.json을 고쳐 배포했는데(서버엔 반영 확인됨) 강력 새로고침을 두 번 해도 어드민 도구가 계속
@@ -20233,7 +20233,7 @@ function _updateAdminUI(){
 // 옛 버전을 계속 서빙해서 고친 코드가 반영 안 되는 것처럼 보이는 사고가 남(2026-08-18, HTML 엔티티 정리
 // 버튼 타임아웃 재수정 후에도 계속 재현된다는 제보로 발견). admin.js 내용을 바꿀 때마다 이 버전 문자열도
 // 같이 올릴 것(sw.js의 CACHE_VERSION과 같은 수동 관리 방식).
-const _ADMIN_JS_VER='20260903-3b73d06e';
+const _ADMIN_JS_VER='20260903-95726c1e';
 function _loadAdminScript(){
   if(!_isAdmin()||document.getElementById('admin-js-script'))return;
   const s=document.createElement('script');
