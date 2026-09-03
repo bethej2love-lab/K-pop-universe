@@ -81869,10 +81869,14 @@
       "en": "HyunA"
     },
     "group": {
-      "ko": "포미닛",
-      "en": "4minute"
+      "ko": "솔로",
+      "en": "Solo"
     },
     "groups": [
+      {
+        "ko": "솔로",
+        "en": "Solo"
+      },
       {
         "ko": "포미닛",
         "en": "4minute",
@@ -81884,14 +81888,10 @@
         "en": "Wonder Girls",
         "active": false,
         "left": "2007.07.30"
-      },
-      {
-        "ko": "솔로",
-        "en": "Solo"
       }
     ],
     "co": "무소속",
-    "active": false,
+    "active": true,
     "color": [
       170,
       140,

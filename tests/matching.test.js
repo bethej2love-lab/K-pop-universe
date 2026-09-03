@@ -86,6 +86,13 @@ pieces.push(extractByBraces(adminSrc, /^function _fancamParseTitle\(/m, '_fancam
 // 데뷔 이전 게이트(2026-08-31) — _m2ParseTitle이 두 출구(literal 매칭·역추론)에서 부른다
 pieces.push(extractStatement(adminSrc, /^const _M2_DEBUT_GRACE_YEARS\s*=/m, '_M2_DEBUT_GRACE_YEARS'));
 pieces.push(extractByBraces(adminSrc, /^function _m2DebutBlocks\(/m, '_m2DebutBlocks'));
+// 동명이인 tie-break(2026-09-03) — _m2ParseTitle이 "영상 시점에 이미 해체된 그룹의 후보는 그 사람일 수
+// 없다"를 판단할 때 부른다. 계산 본체 _groupEndDate는 index.html에 있고(멤버 카드 컷오프와 공유),
+// admin.js의 _disbandCutoffDate가 그걸 그대로 감싼다 — 두 벌로 복제하지 않으려고 이렇게 돼 있으므로
+// 하네스도 양쪽에서 각각 잘라온다.
+const indexSrc = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
+pieces.push(extractByBraces(indexSrc, /^function _groupEndDate\(/m, '_groupEndDate'));
+pieces.push(extractByBraces(adminSrc, /^function _disbandCutoffDate\(/m, '_disbandCutoffDate'));
 pieces.push(extractByBraces(adminSrc, /^function _m2ParseTitle\(/m, '_m2ParseTitle'));
 
 const harnessSrc = `
@@ -581,6 +588,23 @@ test('유닛 — 트렌드지 곡 #GLOW 해시태그에 트리플에스가 안 �
 test('유닛 — 소속 그룹이 같이 있으면 Glow 유닛 정상 인정',
   '[MPD직캠] 트리플에스 Glow 무대 #GLOW #tripleS', undefined,
   r => !!r && [r.primaryGroup, ...(r.withGroups||[])].includes('트리플에스'), '2023-05-01');
+// ── 동명이인 tie-break: 영상 시점에 불가능한 후보 걷어내기(2026-09-03) ──────────
+// 현아 실사고: 나인뮤지스 현아(그룹 2019.02.24 해체)와 솔로 현아(전 포미닛/원더걸스, HyunA)가 같은
+// 이름이라, 2021년 HyunA 솔로 무대 80건이 전부 나인뮤지스로 붙어 있었다. 날짜만 보면 나인뮤지스는
+// 불가능하다 — 그 그룹은 이미 해체됐다. 후보를 줄여 한 명만 남으면 애초에 충돌이 아니다.
+// ⚠️ 전부 불가능하거나 둘 다 가능하면 기존 dedup(둘 다 버림)을 그대로 탄다 — 확신 없이 고르지 않는다.
+test('동명이인 — 해체된 그룹 후보는 영상 시점에 불가능(2021년 현아 = 솔로 HyunA)',
+  '현아 - 굿 걸 (HyunA - GOOD GIRL), MBC 210220 방송', undefined,
+  r => !!r && r.primaryGroup === '현아', '2021-02-20');
+test('동명이인 — 해체 전 영상은 그 그룹이 맞음(2013년 나인뮤지스 현아)',
+  '나인뮤지스 현아 무대', undefined,
+  r => !!r && r.primaryGroup === '나인뮤지스', '2013-05-01');
+test('동명이인 — 그룹 문맥이 있으면 그대로(포미닛 현아)',
+  '포미닛 현아 직캠', undefined,
+  r => !!r && r.primaryGroup === '포미닛' && (r.membersByGroup['포미닛']||[]).join() === '현아', '2014-05-01');
+test('동명이인 — 둘 다 가능한 시점이면 확신 없이 고르지 않음(애매 → 무매칭)',
+  '현아 무대', undefined,
+  r => !r || r.primaryGroup === null || r.primaryGroup === undefined, '2013-05-01');
 test('직캠 — 곡명 \'Key of Secret\'의 "키"가 멤버로 안 붙음(샤이니 단체)',
   "[안방1열 풀캠4K] 샤이니 'Key of Secret' 풀캠 (SHINee Full Cam)", undefined,
   r => !!r && r.primaryGroup === '샤이니' && (r.membersByGroup['샤이니']||[]).length === 0, '2015-05-24');

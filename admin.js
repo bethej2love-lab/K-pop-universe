@@ -6184,6 +6184,24 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
     // 아예 idol 그룹이 아닌 모음채널인 경우까지는 못 걸렀었음.
     nameToGroups.forEach((perPerson,name)=>{
       if(perPerson.size<2)return; // 매칭된 사람이 1명뿐이면(겸임이라 그룹이 여러 개여도) 진짜 동명이인 충돌 아님
+      // ── 동명이인 tie-break: 영상 시점에 **불가능한 후보**를 먼저 걷어낸다(2026-09-03) ────────────
+      // 소속 그룹이 전부 그 영상보다 먼저 해체됐으면 그 사람일 수 없다. 걸러서 한 명만 남으면 애초에
+      // 충돌이 아니므로 그 사람으로 확정한다(무소속 솔로는 GROUPS에 없어 해체일도 없으니 항상 살아남음).
+      // 실사고: 현아 — 나인뮤지스 현아(2019 해체)와 솔로 현아(전 포미닛)가 같은 이름이라, 2021년 HyunA
+      // 솔로 무대 80건이 나인뮤지스로 붙어 있었다. 날짜만 보면 나인뮤지스는 불가능하다.
+      // ⚠️ 제거가 아니라 **후보 축소**다 — 전부 불가능하면 아무도 안 지우고 기존 dedup 동작(둘 다 버림)을
+      //    그대로 탄다. 해체 그룹 단독 영상(회고·레전드)은 충돌 자체가 없어 이 경로에 오지 않는다.
+      if(publishedAt){
+        const alive=[...perPerson.entries()].filter(([,gkos])=>
+          gkos.some(g=>{const end=_disbandCutoffDate(g);return !end||String(publishedAt).slice(0,10)<=end;}));
+        if(alive.length===1){
+          const keep=new Set(alive[0][1]);
+          perPerson.forEach((gkos,person)=>{if(person===alive[0][0])return;
+            gkos.forEach(g=>{if(keep.has(g))return;const l=inferred.get(g);if(!l)return;
+              const i=l.indexOf(name);if(i!==-1)l.splice(i,1);if(!l.length)inferred.delete(g);});});
+          return; // 충돌 해소됨 — 아래 전면 제거로 넘어가지 않는다
+        }
+      }
       const allGkos=new Set();
       perPerson.forEach(gkos=>gkos.forEach(g=>allGkos.add(g)));
       const keepGko=(selfGko&&allGkos.has(selfGko))?selfGko:null;
