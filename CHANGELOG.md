@@ -36,6 +36,13 @@
 
 ## 2026-09-03
 
+### ★ soloSince 신설 — 탈퇴 후 솔로 활동을 데이터로 표시 (2026-09-03)
+- **[완료][shared.js][artists.json][admin.js][tests] `soloSince: "YYYY-MM-DD"` 필드 도입** — "이 날짜 이후 영상은 옛 그룹이 아니라 **본인 이름**이 group_ko"라는 뜻. 기존 솔로 규약(아티스트 `group.ko='솔로'` + 영상 `group_ko=본인 이름`, 아이유·보아·승한)과 **저장 형태가 같아** 카드/쿼리 변경이 0이다 — 멤버 카드는 `group_ko.eq.<멤버이름>` 절로 두 키를 합집합해 가져오므로 그룹 시절 영상과 솔로 영상이 한 카드에 같이 뜨고, 그룹 카드는 group_ko/with_groups만 보므로 옛 그룹은 깨끗해진다. 초기 명단 3명: **우즈**(2020-01-06)·**원호**(2019-10-31)·**에반**(2026-03-10).
+- **⚠️ `left`와 다른 필드다.** `left`는 "떠났다"(원호·설리·마시호 다 해당), `soloSince`는 **"떠난 뒤 솔로로 활동한다"**는 사람이 확정한 사실. 둘을 자동으로 이으면 안 된다는 걸 실측으로 확인했다 — 자동 판정은 사망·은퇴·동명이인을 가를 방법이 없다.
+- **설계: 매처를 안 건드린다.** `_m2ParseTitle`의 `primaryGroup`이 항상 GROUPS 키라는 불변식을 깨면 소비처가 너무 넓다. 대신 group_ko를 **쓰는 지점**에서만 후처리한다 — `shared.js`의 `_soloReattribGko(gko, memberKos, publishedAt)`를 ①동기화 행 생성(`_extBuildRows`) ②②-B 스윕 둘 다 호출. 안전장치: **단독 출연만**(여러 명이면 그룹 콘텐츠일 수 있음)·그 사람 소속 그룹 행만·owner 채널 제외.
+- **명단은 코드가 아니라 데이터다.** ②-B가 prompt로 이름을 받던 걸 `soloSince` 조회로 바꿨다 — 같은 명단을 동기화도 봐야 하므로 한 곳에 둔다. 사람을 추가하려면 artists.json에 `soloSince`만 넣으면 버튼과 신규 동기화가 **동시에** 반영한다. 이 성질 자체를 `tests/solo-since.test.js`가 못 박는다(admin.js가 이름을 하드코딩하지 않는지 검사).
+- **검증**: `tests/solo-since.test.js` 15/15(음성 대조 3/3 정상 실패) · `validate-data.js`에 soloSince 무결성 검사 추가(형식·사망자 오지정·다중소속을 error로, 탈퇴일보다 이른 날짜는 warn) · CI 대상 전체 통과.
+
 ### z-order 잔여 3종 수정 + 고아 데이터 조사 (2026-09-03)
 - **[완료][index.html] 카드 안에서 여는 오버레이 3종이 카드 뒤로 깔리던 것** — 검색/설정과 같은 원인. `gc-discog-detail`(정적 z:102)·`trophy-overlay`(80)·`pp-bias-emoji-overlay`(80) 전부 body 직속 형제라 카드의 스택 컨텍스트 밖인데 `_bringToFront`를 안 불렀다. 여는 함수 세 곳(`_openGcDiscogDetail`·`_openTrophyPanel`·`_openBiasEmojiPicker`)에 배선. **음성 대조로 셋 다 실제로 깨져 있었음을 확인**(카드 z=137~139 vs 오버레이 102/80/80).
   - **⚠️ 테스트를 처음엔 잘못 짰다** — `tests/desktop-search-front.test.js`에서 테스트가 **직접** `.open`+`_bringToFront`를 호출하게 만들었더니, 제품 배선을 되돌려도 초록이었다(테스트가 자기 손으로 z를 올리는 셈). **제품의 여는 함수를 호출**하도록 고쳐야 비로소 검증이 된다. 오늘 세 번째 같은 함정(진입 게이트·위너 경계·이번 건).

@@ -128,6 +128,29 @@ const _KNOWN_EXCLUDED_PEOPLE = new Set(['이종현', '태일', '김가람', '승
   missing.forEach((count, name) => add('error', 'connections.json 유령 참조', `"${name}" — ARTISTS에 없는데 연결 ${count}건에서 참조됨 (이름 오타·개명 잔재·미등록 인물)`));
 }
 
+// ── 6-b. soloSince 무결성 (2026-09-03 신설) ──────────────────────────────────
+// soloSince는 "이 날짜 이후 영상은 옛 그룹이 아니라 본인 이름으로 귀속"이라는 **쓰기에 직접 쓰이는**
+// 값이라, 형식이 틀리면 조용히 아무 일도 안 하거나 엉뚱한 경계가 잡힌다. error로 잡는다.
+// (동명이인 위험 같은 "주의"와 달리 여기엔 고칠 게 명확히 있다 — 승격 기준은 항목 6 주석 참고.)
+{
+  ARTISTS.forEach(a => {
+    const s = a.soloSince;
+    if (s === undefined) return;
+    const nm = (a.name && a.name.ko) || '(이름없음)';
+    if (typeof s !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(s))
+      add('error', 'soloSince 형식 오류', `${nm} — "${s}" (YYYY-MM-DD여야 함)`);
+    if (a.died) add('error', 'soloSince 오지정', `${nm} — 사망자에게 soloSince가 붙어 있음`);
+    const gs = a.groups || [a.group];
+    if (gs.filter(g => g && g.ko).length !== 1)
+      add('error', 'soloSince 오지정', `${nm} — 소속 그룹이 ${gs.length}개라 옛 그룹을 특정할 수 없음`);
+    if (a.left) {
+      const L = String(a.left).replace(/\./g, '-');
+      if (/^\d{4}-\d{2}-\d{2}$/.test(L) && s < L)
+        add('warn', 'soloSince 검토', `${nm} — soloSince(${s})가 탈퇴일(${L})보다 이르다`);
+    }
+  });
+}
+
 // ── 7. 그룹명 ↔ 타 그룹 멤버명 충돌 (오태깅 유발 — 스텔라→하츠투하츠, 슈가→방탄 사례로 발견, 2026-08-23) ──
 // 그룹명(ko/en)이 다른 그룹 멤버의 이름(ko/en)과 같으면, 그 멤버 언급이 그룹으로 오매칭돼 대량 오태깅됨.
 // strictSync 지정한 그룹은 제목 매칭에서 빠지므로(=처리됨) 경고 대상에서 제외. 새 충돌은 검토 후 strictSync.
