@@ -6181,6 +6181,34 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
       }
     }
     if(!inferred.size)return null;
+    // ── ] 뒤 첫 토큰이 우리 DB에 없는 그룹명이면 보류(2026-09-03 사용자 요청) ──────────────
+    // 직캠 구조 "[브랜드] 그룹 멤버 - 곡"에서 그룹명이 우리 유니버스에 있으면 위에서 literal로 잡혀
+    // 여기(역추론)까지 안 온다. 여기 왔는데 출연자 구간 **선두 토큰이 역추론된 멤버명도, 알려진 그룹
+    // 토큰도 아니면** = 우리에 없는 그룹명이 앞에 붙은 것 → 그 뒤 멤버는 **동명이인일 위험이 크다**
+    // (크랙시 혜진→우리 혜진, 핫이슈 예원→피프티피프티 예원, ANS 등). 태그를 붙이지 않고 보류로 넘긴다.
+    // 솔로("[안방1열] 전소미 'XOXO'")는 선두가 곧 그 멤버라 걸리지 않는다.
+    if(_fc&&_fc.artistNorm){
+      const _lead=(_fc.artistNorm.trim().split(/\s+/).filter(Boolean)[0]||'');
+      // ⚠️ 한글 리드만 대상 — 영문 리드는 멤버 이름 로마자(PARK JIHOON·MARK)나 영문 그룹명일 위험이 커서
+      //    보류하면 진짜 콘텐츠를 날린다(실측). 놓치는 영문 미지그룹은 보수적으로 그냥 통과시킨다.
+      const _leadKo=/[가-힣]/.test(_lead);
+      if(_lead.length>=2&&_leadKo){
+        const _leadU=_lead.toUpperCase();
+        // 리드가 **실제 매칭된 멤버 토큰(모든 표기)**과 겹치면 그 사람이므로 보류 아님 — 이름 변형(지드래곤←지디),
+        // 이어붙인 MC("성한빈X명재현"⊃성한빈)까지 자연히 커버된다. tokenToArtists엔 이 제목에서 실제로 매칭된
+        // 모든 토큰이 들어 있다.
+        const _matchedToks=[...tokenToArtists.keys()];
+        const _leadIsMember=_matchedToks.some(t=>t===_leadU||(t.length>=2&&(_leadU.includes(t)||t.includes(_leadU))))
+          // 리드가 로스터의 어떤 아티스트 등록명과 정확히 같으면 보류 아님(known 멤버·솔로가 리드로 온 경우 —
+          // 지드래곤 같은 미등록 예명은 여전히 못 거르지만, 최소한 등록명 일치는 확실히 뺀다).
+          ||ARTISTS.some(a=>a&&a.name&&a.name.ko===_lead);
+        // 리드가 아는 그룹(또는 그 접두, "엔시티"⊂"엔시티 127")이면 보류 아님
+        const _leadIsGroup=[...knownGroupTokens].some(g=>g===_leadU||(_leadU.length>=2&&g.startsWith(_leadU)));
+        if(!_leadIsMember&&!_leadIsGroup){
+          return{primaryGroup:null,withGroups:[],membersByGroup:{},confidence:'none',hold:true,holdReason:'fancam-unknown-group',holdToken:_lead};
+        }
+      }
+    }
     // 동명이인 충돌 처리 — 같은 한글 이름(예: "지유")이 서로 다른 그룹 멤버로 동시에 매칭되면, 제목엔
     // 그 이름이 딱 한 번 나왔을 뿐인데 "누구인지" 그룹명 없이는 알 도리가 없다. selfGko가 그 충돌
     // 그룹 중 하나면 그쪽만 인정하고(자기 채널이니 당연히 자기 소속으로 해석) 나머지 그룹에서는 그
@@ -6508,6 +6536,9 @@ function _extBuildRows(vids,strict,tier,owner,defaultCat,handle){
     // 옵션 A(2026-08-26): 그룹표시 없는 동명이인(영문토큰 교차-ko)은 자신있게 배정하지 않고 검수+숨김으로.
     const ambiguous=!owner&&match.confidence==='ambiguous';
     const needsReview=!owner&&(match.confidence==='weak'||ambiguous);
+    // "] 뒤 미지 그룹" fancam(match.hold) → 그룹 배정 안 하고 content_flag='보류'+검수(2026-09-03 사용자 요청).
+    // 크랙시 혜진·핫이슈 예원처럼 우리에 없는 그룹인데 동명이인 멤버로 엉뚱하게 끌려오던 것을 보류로.
+    const held=!owner&&!!(match&&match.hold);
     // 원곡 태깅 v2(2026-08-30) — 곡명 사전으로 커버를 확정해 위 "6년 선배" 라우팅을 덮어쓴다. _coverResolve는
     // sync(디스코 사전 지연빌드). 차트 A등급은 async라 동기화에선 생략(유명곡 대부분 디스코로 커버, 나머진
     // "원곡 태깅 v2" 스윕이 backfill). group_ko 재배정(reassign)은 owner 채널 group_ko 고정이라 동기화에선 안 함.
@@ -6533,7 +6564,7 @@ function _extBuildRows(vids,strict,tier,owner,defaultCat,handle){
       // 탈퇴 후 솔로 재귀속 — 옛 그룹으로 확정된 행을 본인 이름으로 돌린다(2026-09-03).
       // owner 채널(본인/그룹 소유)은 group_ko가 채널 주인으로 고정이라 대상이 아니다.
       // 대상이 아니면 null을 돌려주므로 기존 값 그대로.
-      group_ko:owner?ownerGko:((!ambiguous&&_soloReattribGko(match.primaryGroup,members,v.published_at))||match.primaryGroup),
+      group_ko:owner?ownerGko:held?null:((!ambiguous&&_soloReattribGko(match.primaryGroup,members,v.published_at))||match.primaryGroup),
       members:ambiguous?[]:members,with_groups:withGroups,with_members:withMembers,
       // 항상 두 칸을 넣는다(빈 값이어도 []). 조건부로 넣으면 200개 배치 안에 커버 영상이 하나라도
       // 섞였을 때, 그 칼럼이 배치의 INSERT 컬럼 목록에 들어가면서 키가 없는 일반 영상 행들이 null로
@@ -6555,7 +6586,7 @@ function _extBuildRows(vids,strict,tier,owner,defaultCat,handle){
       //    즉 그룹이 잘못 배정된 영상이 동시에 숨김까지 당해 "틀린 채로 안 보이는" 이중 피해였다.
       //    hidden의 의도된 용도는 **밴 인물 + 관리자 수동 판단**뿐이다(사용자 확인) — 자동으로 붙이지 말 것.
       //    ambiguous 행은 needs_review:true로 검수 큐에는 그대로 올라가고, members는 아래처럼 비워둔다.
-      ...(_shouldJunkFlag(v.title,tier)?_flagPatch('무관','auto'):needsReview?{needs_review:true}:{}),
+      ...(_shouldJunkFlag(v.title,tier)?_flagPatch('무관','auto'):held?_flagPatch('보류','auto',{needs_review:true}):needsReview?{needs_review:true}:{}),
       ...((tier==='variety'||tier==='show')?{content_formats:[tier]}:{})
     });
   }

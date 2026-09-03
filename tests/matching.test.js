@@ -741,6 +741,19 @@ test('흔한단어 유지 — #바로 해시태그는 비원에이포로 인정'
   '#바로 #비원에이포 무대', undefined,
   r => !!r && (r.primaryGroup === '비원에이포' || (r.withGroups || []).includes('비원에이포')));
 
+// ── 직캠 "] 뒤 미지 그룹" → 보류(2026-09-03 사용자 요청) ─────────────────────────
+// [브랜드] 그룹 멤버 - 곡 에서 그룹명이 우리 DB에 없으면 그 뒤 멤버는 동명이인 위험 → 태그 말고 보류.
+// 아는 그룹·솔로는 그대로. 유예-안쪽 데뷔게이트가 못 잡는 동명이인 오태깅을 잡는다.
+test('미지그룹 보류 — 핫이슈(우리에 없음) 예원 직캠을 피프티피프티로 안 끌고 보류',
+  "[안방1열 직캠4K] 핫이슈 예원 'ICONS' (HOT ISSUE YEWON FanCam)", undefined,
+  r => !!r && r.hold === true && !r.primaryGroup);
+test('미지그룹 보류 아님 — 아는 그룹(아이오아이) 직캠은 그대로 태깅',
+  "[MPD직캠] 아이오아이 정채연 직캠 4K 'Whatta Man'", undefined,
+  r => !!r && !r.hold && r.primaryGroup === '아이오아이', '2016-08-01');
+test('미지그룹 보류 아님 — 솔로(전소미) 직캠은 선두가 곧 멤버라 보류 안 함',
+  "[안방1열 직캠4K] 전소미 'XOXO' (JEON SOMI FanCam)", undefined,
+  r => !!r && !r.hold, '2021-06-01');
+
 // ── 실행 ──────────────────────────────────────────────
 let pass = 0, fail = 0;
 cases.forEach(({ name, title, selfGko, check, publishedAt }) => {
