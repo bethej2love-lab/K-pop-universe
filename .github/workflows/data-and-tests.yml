@@ -30,10 +30,15 @@
               b=$(basename "$f")
               case "$b" in
                 # ── 헤드리스 브라우저가 필요한 것(러너에 Chromium 경로가 없어 의미 없음) ──
+                # ⚠️ 새 브라우저 테스트를 만들면 **여기에 반드시 추가**할 것. 목록이 "제외 방식"이라
+                #    새 테스트가 자동 포함되는 게 장점인데, 브라우저 테스트는 그 장점이 그대로
+                #    독이 된다 — 2026-09-03에 desktop-search-front를 만들고 안 넣어서 CI가 빨개졌다
+                #    (로컬에선 스킵하고 돌려서 초록이라 더 늦게 알았다).
                 admin-dock.test.js|admin-markup-exposure.test.js|conn-btn-loading.test.js|\
                 conn-lines.test.js|coverof.test.js|feed-trend.test.js|interaction.test.js|\
                 lb-swipe-ownership.test.js|lb-topbar.test.js|msheet.test.js|pwa-safearea.test.js|\
-                reveal.test.js|smoke.test.js|sort-popular.test.js|tabbar-open.test.js)
+                reveal.test.js|smoke.test.js|sort-popular.test.js|tabbar-open.test.js|\
+                desktop-search-front.test.js)
                   echo "skip(browser)  $b"; continue;;
                 # ── 네트워크(Supabase)가 필요한 것 ──
                 # rls.test.js: 실제 DB 정책을 조회한다. 게다가 지금은 새 테이블 4개
