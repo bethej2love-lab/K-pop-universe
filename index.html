@@ -4744,6 +4744,8 @@ function openMobSearchSheet(){
   _msTab='all';
   _msEl.classList.add('open');_msEl.setAttribute('aria-hidden','false');
   _bringToFront(_msEl); // 겹치는 레이어는 항상 최근 실행 화면이 최상단(프로젝트 원칙)
+  _showTabbar(); // 검색 중에도 탭바가 보이게(msheet는 탭바 위에서 멈춤) — 다른 탭으로 바로 이동 가능(2026-09-03)
+  document.getElementById('tab-search')?.classList.add('active'); // 검색 탭 활성 표시
   _msInput.value='';_msClear.hidden=true;
   _msTabs.innerHTML='';_msBody.innerHTML='';
   doSearch(''); // 빈 화면 = 최근 검색 + 트렌드(X가 검색창을 열면 트렌드를 보여주는 것과 같은 이유)
@@ -4754,6 +4756,7 @@ function closeMobSearchSheet(){
   _msEl.classList.remove('open');_msEl.setAttribute('aria-hidden','true');
   _msInput.value='';_msBody.innerHTML='';_msTabs.innerHTML='';_msTab='all';
   _curSearchQ='';
+  document.getElementById('tab-search')?.classList.remove('active'); // 검색 탭 활성 해제
 }
 if(_msEl){
   _msInput.addEventListener('input',e=>{
@@ -11440,6 +11443,7 @@ document.getElementById('random-fab').addEventListener('click',e=>{
   e.stopPropagation();
   _gaEvent('tab_click',{tab:'explore'}); // 별(랜덤 탐험) 버튼 — "사람들이 이걸 쓰나" 근거 수집(2026-08-29)
   exitObSearch();
+  if(_msIsOpen())closeMobSearchSheet(); // 검색 열려 있으면 닫고 랜덤 이동(2026-09-03)
   _closeFeedOverlay();
   if(!bubbleMeshes.length)return;
   const item=_pickExploreTarget();const{bm}=item;
@@ -11827,7 +11831,7 @@ function flyHome(){
   },{passive:false});
 })();
 document.getElementById('dh-home-btn').addEventListener('click',e=>{e.stopPropagation();flyHome();});
-document.getElementById('tab-home').addEventListener('click',e=>{e.stopPropagation();_gaEvent('tab_click',{tab:'home'});_closeFeedOverlay();flyHome();});
+document.getElementById('tab-home').addEventListener('click',e=>{e.stopPropagation();_gaEvent('tab_click',{tab:'home'});if(_msIsOpen())closeMobSearchSheet();_closeFeedOverlay();flyHome();});
 document.getElementById('dh-explore-btn').addEventListener('click',e=>{
   e.stopPropagation();
   _dismissFavHint();
@@ -13514,6 +13518,7 @@ if(!localStorage.getItem(_FEED_BADGE_SEEN_KEY)&&isMob()&&!JSON.parse(localStorag
 try{ if(typeof _visitCount!=='undefined'&&_visitCount<=2){ const _tb=document.getElementById('tabbar'); if(_tb){ _tb.classList.add('show-labels'); setTimeout(()=>_tb.classList.remove('show-labels'),4200); } } }catch(e){}
 document.getElementById('tab-feed').addEventListener('click',e=>{
   e.stopPropagation();
+  if(_msIsOpen())closeMobSearchSheet(); // 검색 열려 있으면 닫고 탐험으로(2026-09-03)
   _gaEvent('tab_click',{tab:'feed'}); // 나침반(탐험 피드) 버튼
   exitObSearch();
   if(!localStorage.getItem(_FEED_BADGE_SEEN_KEY)){
@@ -14868,6 +14873,7 @@ function _toggleMyPagePanel(){
 }
 document.getElementById('tab-profile').addEventListener('click',e=>{
   e.stopPropagation();
+  if(_msIsOpen())closeMobSearchSheet(); // 검색 열려 있으면 닫고 프로필로(2026-09-03)
   _gaEvent('tab_click',{tab:'profile'});
   _toggleMyPagePanel();
 });

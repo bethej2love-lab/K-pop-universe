@@ -1989,11 +1989,14 @@
      z-index 69: #mob-sr(68)보다 위, yt-lightbox(67)/_bringToFront 기준선 위. 검색 결과에서 영상을
      누르면 라이트박스가 그 위로 떠야 하므로 라이트박스는 _bringToFront로 따로 올라간다. */
   #msheet{
-    position:fixed;inset:0;z-index:69;display:none;flex-direction:column;
+    /* 하단 탭바를 덮지 않고 그 위에서 멈춘다(2026-09-03 제보 — 검색 중에도 탭 이동이 편하게).
+       bottom = 탭바 높이(≈64px)+안전영역. 값은 실기기서 미세조정 가능. */
+    position:fixed;top:0;left:0;right:0;
+    bottom:calc(64px + env(safe-area-inset-bottom,0px));
+    z-index:69;display:none;flex-direction:column;
     background:rgba(9,12,26,0.97);
     backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);
     padding-top:env(safe-area-inset-top,0px);
-    padding-bottom:env(safe-area-inset-bottom,0px);
   }
   #msheet.open{display:flex;}
   #msheet-top{display:flex;align-items:center;gap:6px;padding:8px 12px 8px 6px;flex:none;}
