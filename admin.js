@@ -6157,7 +6157,16 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
         // 무효로 치고, 실제로 이 경로를 타고 group_ko='솔로'로 저장된 영상이 633건 쌓여 어느 카드에도
         // 안 걸리는 미아가 돼 있었음(2026-08-25 실측). 나머지 코드가 쓰는 관례(`_ytGroupKoFor`)와 똑같이
         // "실존 그룹이면 그룹명, 아니면 본인 이름"으로 바꿔서 넣는다.
+        // 그룹 활동기(era) 구분(2026-09-03) — 솔로 등록된 사람(_artistGroups에 '솔로'+옛그룹)의 영상이
+        // **그 옛그룹 활동기 안**(데뷔~탈퇴/해체 사이)이면 솔로가 아니라 그 **그룹**으로 배정한다. 안 그러면
+        // "최예나 'FIESTA' 2020"(아이즈원 시절, 제목에 그룹명 없이 이름만)이 솔로로 새어나간다(실측). 날짜
+        // 게이트는 '떠난 그룹 제외'만 할 뿐 '그룹 시절이면 그룹 우선'은 못 해서, 솔로 primary가 이겨버렸다.
+        // members에 본인이 그대로 들어가므로 그룹 카드·본인 멤버 카드 양쪽에 정상 노출된다.
+        // ⚠️ publishedAt이 있을 때만 — 날짜가 없으면 era를 확정 못 하므로(게이트가 permissive false 반환)
+        // 그룹으로 잘못 넘기지 말고 솔로 기본을 유지한다(승한=라이즈 탈퇴 솔로가 날짜 없을 때 라이즈로 새던 것).
+        const _realGroupInEra=!!publishedAt&&_artistGroups(a).some(g=>g.ko!=='솔로'&&GROUPS[g.ko]&&!_beforeGroupDebut(g.ko)&&!_atmLeftBefore(a,g.ko,publishedAt));
         const artistGkos=_artistGroups(a).filter(g=>!_atmLeftBefore(a,g.ko,publishedAt)&&!_beforeGroupDebut(g.ko)) // 탈퇴 후·데뷔 이전 영상은 그 그룹 아님
+          .filter(g=>!(g.ko==='솔로'&&_realGroupInEra)) // 그룹 활동기 안이면 솔로 버킷은 빼고 그 그룹으로
           .map(g=>(GROUPS[g.ko]?g.ko:a.name.ko))
           .filter(gko=>viaHashtag||!selfGko||gko===selfGko||!_isCrossGate(gko,selfGko));
         if(artistGkos.length){
