@@ -5794,12 +5794,9 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
   // 위너(WINNER)도 같은 병 — 영어 단어 winner와 철자가 같다. 실측: `with_groups`에 위너가 든 59건 중
   // **55건(93%)이 제목에 한글 '위너'가 없었고**, 전부 `the Winner Is?`·`Remember the winner of that
   // night?`(시상식 클립)였다. 자체 채널 영상(group_ko=위너 1,085건)은 selfGko 면제라 영향 없다.
-  // 위너의 한글 표기에도 단어 경계를 건다(2026-09-03) — 경계 없이 /위너/면 "Wanna One(위너원)"이
-  // 통과해 워너원 영상에 위너가 남는다. 아래 6063 게이트가 backstop이라 실사고로는 안 갔지만, 두 게이트가
-  // 서로 다른 기준을 쓰면 한쪽만 고칠 때 또 어긋난다 — 같은 기준으로 맞춰둔다.
   const _GROUP_WEAK_EN_AS_GUEST={
     '방탄소년단':/방탄소년단|#\s*BTS/i,
-    '위너':/(?<![가-힣])위너(?![가-힣])|#\s*WINNER/i,
+    '위너':/위너|#\s*WINNER/i,
   };
   if(matchedGroupKos.length>1){
     const kept=matchedGroupKos.filter(ko=>{
@@ -6069,13 +6066,17 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
   // 나중에 추가되면서 한글까지 같이 막아 5797의 근거를 덮어썼다(과교정). 그 결과 "아이브 X 위너
   // 스페셜 무대" 같은 정상 콜라보가 통째로 버려졌다(desc-evidence 테스트가 이걸 잡고 있었는데 CI가
   // 빨간불인 채 방치돼 있었음).
-  //   · 위너: 한글 '위너'를 인정한다. 단 **한글 단어 경계 필수** — 그냥 /위너/로 풀면 "Wanna One(위너원)"의
-  //     위너원 ⊂ 위너에 걸려 워너원 영상이 위너로 오태깅된다(실측 5건 확인). B.I ⊂ B.I.G와 같은 병.
+  //   · 위너: 한글 '위너'를 인정한다(5797과 같은 기준).
   //   · 아이콘: 한글 '아이콘'은 그 자체가 흔한 일반명사다("올해의 아이콘", "패션 아이콘"). 위너와 달리
   //     한글 표기가 신호가 못 되므로 해시태그/고유표기(iKON)만 인정하는 기존 기준을 그대로 둔다.
+  // ⚠️ 한글 '위너'에 단어 경계((?<![가-힣])…(?![가-힣]))를 걸지 말 것 — 한 번 걸었다가 뺐다(2026-09-03).
+  //    이유: "Wanna One(위너원)" 오타 제목 5건이 위너로 샐까 봐 넣었는데, **12,025건 전수 비교에서 경계
+  //    유무의 판정 차이가 0건**이었다. 그룹명 리터럴 매칭이 토큰 단위라 "위너원"은 애초에 위너 후보가
+  //    되지 않아서(그리고 영문/해시태그 경로는 어차피 아래 두 분기가 받으므로) 경계가 결정하는 게 없다.
+  //    참고로 '위너'는 '워너원'의 부분문자열도 아니다(위≠워) — 그 5건은 업로더 오타였을 뿐이다.
   const _COMMON_NOUN_GROUP_OK={
     '아이콘':t=>/#\s*아이콘/.test(t)||/#\s*iKON/i.test(t)||/iKON/.test(t),
-    '위너':t=>/(?<![가-힣])위너(?![가-힣])/.test(t)||/#\s*WINNER/i.test(t)||/\bWINNER\b/.test(t),
+    '위너':t=>/위너/.test(t)||/#\s*WINNER/i.test(t)||/\bWINNER\b/.test(t),
   };
   if(matchedGroupKos.length){
     const kept=matchedGroupKos.filter(gko=>{
