@@ -129,8 +129,32 @@
   }
   /* 탭 라벨(2026-09-02) — 기본은 자리만 잡고 숨김(아이콘만=깔끔). 활성 탭만 노출, 첫 1~2회 방문엔 전체
      잠깐(.show-labels). visibility로 숨겨 모든 탭 높이를 같게 유지 → 아이콘 세로 정렬이 안 틀어진다. */
-  .tab-label{font-size:10px;line-height:1.1;letter-spacing:.02em;visibility:hidden;opacity:.92;}
-  .tab-btn.active .tab-label,#tabbar.show-labels .tab-label{visibility:visible;}
+  /* 라벨 상시 표시(2026-09-03 리뷰 — 아이콘만으론 탭 구분 안 됨). 이미 자리를 잡고 있어(예전 visibility:hidden)
+     상시로 바꿔도 탭 높이 안 변함. 11px = --fz-label. */
+  .tab-label{font-size:var(--fz-label);line-height:1.1;letter-spacing:.02em;visibility:visible;opacity:.92;}
+  .tab-btn.active .tab-label{opacity:1;}
+  /* 랜덤 탐험 플로팅 버튼(2026-09-03 리뷰 — 랜덤은 "행동"이라 탭바에서 뺌). 우주/홈에서만 쓰는 액션이라
+     시트·오버레이·카드가 열리면 숨긴다(그 위를 덮지 않게). ⚠️ 위치는 아이폰서 확인(맨위로 버튼과 겹치는지). */
+  #random-fab{
+    position:fixed;left:16px;bottom:calc(70px + env(safe-area-inset-bottom,0px));z-index:41;
+    width:44px;height:44px;border-radius:50%;border:0.5px solid var(--w-border);
+    background:rgba(14,18,36,0.72);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+    color:rgba(190,205,240,0.78);display:flex;align-items:center;justify-content:center;cursor:pointer;
+    box-shadow:0 4px 16px rgba(0,0,0,0.32);transition:transform .15s,color .15s,opacity .2s;
+  }
+  #random-fab:active{transform:scale(0.92);color:var(--accent);}
+  #random-fab svg{opacity:.9;}
+  /* 카드·시트·오버레이·재생 중이면 숨김 */
+  body:has(#mob-sheet.bs-open) #random-fab,
+  body:has(#mob-card-stack.bs-open) #random-fab,
+  body:has(#conn-sheet.bs-open) #random-fab,
+  body:has(#msheet.open) #random-fab,
+  body:has(#feed-overlay.open) #random-fab,
+  body:has(#yt-lightbox.open) #random-fab,
+  body:has(#side-panel.open) #random-fab,
+  html.booting #random-fab, html.chrome-wait #random-fab{opacity:0;pointer-events:none;}
+  /* 데스크톱: 탭바 위가 아니라 줌 컨트롤(left:18px, bottom:24px, 세로 슬라이더) **위쪽**에 둬 겹침을 피한다 */
+  @media(min-width:769px){ #random-fab{left:18px;bottom:172px;width:40px;height:40px;} }
   /* 연도 링 라벨(CSS2D) — 줌아웃 스케일 게이지의 연도 숫자. 은은하게, 투명도는 JS가 zoomT로 제어(2026-09-02) */
   .year-ring-lbl{font-size:8px;font-weight:500;letter-spacing:.08em;color:rgba(150,180,235,0.54);pointer-events:none;white-space:nowrap;text-shadow:0 0 6px rgba(0,0,0,0.55);transition:opacity .35s ease;}
   .tab-btn:hover{color:rgba(210,225,255,0.85);}
