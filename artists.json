@@ -174849,8 +174849,8 @@
  },
  {
   "name": {
-   "ko": "COLD",
-   "en": "COLD"
+   "ko": "위연정",
+   "en": "Wi Yeonjung"
   },
   "group": {
    "ko": "영파씨",
@@ -174869,15 +174869,16 @@
   },
   "sparkle": false,
   "songs": [],
+  "bday": "2004.09.01",
   "links": {
-   "namu": "https://namu.wiki/w/COLD(YOUNG POSSE)"
+   "namu": "https://namu.wiki/w/위연정"
   },
-  "id": "a1155"
+  "id": "a1732"
  },
  {
   "name": {
-   "ko": "OTB",
-   "en": "OTB"
+   "ko": "지아나",
+   "en": "Jiana"
   },
   "group": {
    "ko": "영파씨",
@@ -174896,37 +174897,11 @@
   },
   "sparkle": false,
   "songs": [],
+  "bday": "2006.02.02",
   "links": {
-   "namu": "https://namu.wiki/w/OTB(YOUNG POSSE)"
+   "namu": "https://namu.wiki/w/지아나"
   },
-  "id": "a1156"
- },
- {
-  "name": {
-   "ko": "XXL",
-   "en": "XXL"
-  },
-  "group": {
-   "ko": "영파씨",
-   "en": "YOUNG POSSE"
-  },
-  "co": "DSP미디어",
-  "active": true,
-  "color": [
-   235,
-   200,
-   60
-  ],
-  "nat": {
-   "ko": "한국",
-   "en": "KR"
-  },
-  "sparkle": false,
-  "songs": [],
-  "links": {
-   "namu": "https://namu.wiki/w/XXL(YOUNG POSSE)"
-  },
-  "id": "a1157"
+  "id": "a1733"
  },
  {
   "name": {

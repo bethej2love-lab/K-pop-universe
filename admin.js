@@ -7781,6 +7781,17 @@ document.getElementById('vid-tag-thumb-refresh').addEventListener('click',async 
   _admExecBind('sp-detect-btn',_ytSweepDetectPreview,'오태깅 미리보기');
 _admExecBind('sp-lockfill-btn',_ytSweepFillLockedEmpty,'잠금-빈값 채우기');
 _admExecBind('sp-canon-btn',_ytSweepCanonicalizeMembers,'고아태그 정정');
+// 로스터에서 사라진(또는 애초에 멤버가 아니었던) 이름의 태그 정리 — ⚑ 흔한단어 규칙 플로우는 진입점이
+// "지금 로스터에 있는 멤버" 옆의 아이콘이라, 로스터에서 빼버린 이름은 정작 부를 방법이 없었다(2026-09-04,
+// 영파씨에 곡 제목 COLD·OTB·XXL이 멤버로 잘못 등록돼 있던 걸 고친 뒤 남은 태그 90건이 이 사각지대).
+// 로직은 _atmScopedMemberReverify 그대로 재사용 — 로스터에 없는 이름은 validSet에 못 들어가니 자연히 빠진다.
+_admExecBind('sp-orphanfix-btn',async()=>{
+  const raw=prompt('members에서 걷어낼 이름을 입력하세요(쉼표로 여러 개).\n\n예: COLD, OTB, XXL\n\n· 지금 로스터에 있는 이름을 넣으면 제목/설명에 근거가 있는 행에선 그대로 남습니다(재검증이지 무조건 삭제가 아님)\n· 자동 태깅분만 · 이름마다 건수 확인 후 진행 · 스냅샷 저장');
+  if(!raw)return;
+  const names=[...new Set(raw.split(',').map(s=>s.trim()).filter(Boolean))];
+  if(!names.length)return;
+  for(const n of names)await _atmScopedMemberReverify(n);
+},'로스터 외 태그 정리');
 _admExecBind('sp-collabfix-btn',_ytSweepAmbiguousCollabMistag,'콜라보 재검증');
   _admExecBind('sp-scan-namecollide-btn',_ytScanAmbiguousNameGroupMisassignment,'동명이인 재배정');
   _admExecBind('sp-membersfix-btn',_ytSweepMembersMistag,'자체 멤버 재검증');
