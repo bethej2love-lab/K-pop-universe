@@ -5297,7 +5297,12 @@ function _fancamShowPatterns(){return[
   {show:'더쇼',        re:/^[\s\p{Extended_Pictographic}\uFE0F]*[\[［]\s*#?\s*(?:THE\s*SHOW|더쇼)[^\]］]*[\]］]/iu},
   {show:'잇츠라이브',  re:/^[\s\p{Extended_Pictographic}\uFE0F]*[\[［]\s*it['’]?s\s*(?:K-?POP\s*)?LIVE[^\]］]*[\]］]/iu},
   // 채널 불문 "[…직캠…]"류 태그(팬캠 채널·페스티벌 직캠 등) — 태그 자체가 "출연자가 바로 뒤에 온다"는 구조 신호.
-  {show:'직캠(기타)',  re:/^[\s\p{Extended_Pictographic}\uFE0F]*[\[［][^\]］]*(?:직캠|팬캠|FANCAM|FAN\s*CAM|FACECAM|FACE\s*CAM|풀캠|세로캠|보이스캠|VOICE\s*CAM)[^\]］]*[\]］]/iu},
+  // ⚠️ 이 목록에 표기를 빠뜨리면 그 포맷 전체가 구조 인식에서 탈락하고, 곡명 배제(songSpan)도 같이 안 걸린다.
+  // 실측 사고(2026-09-03): `페이스캠`·`원픽캠`이 아래 _FANCAM_FILLER_RE엔 있는데 **여기엔 없어서**
+  // "[페이스캠4K] 위클리 지한 'After School' (Weeekly JI HAN FaceCam)"이 구조 미인식 → 곡명 'After School'이
+  // 그룹 애프터스쿨로 읽혀 group_ko가 애프터스쿨로 오배정됐다(영문 FACECAM만 있고 한글 표기가 없던 게 원인).
+  // 두 목록은 짝이다 — FILLER에 촬영 포맷을 추가할 땐 반드시 여기도 같이 볼 것.
+  {show:'직캠(기타)',  re:/^[\s\p{Extended_Pictographic}\uFE0F]*[\[［][^\]］]*(?:직캠|팬캠|FANCAM|FAN\s*CAM|FACECAM|FACE\s*CAM|페이스캠|원픽캠|UNFILTERED\s*CAM|풀캠|세로캠|보이스캠|VOICE\s*CAM)[^\]］]*[\]］]/iu},
   {show:'킬링보이스',  re:/^[\s\p{Extended_Pictographic}\uFE0F]*(.{1,60}?)의\s*킬링\s*보이스/u,style:'dingo'},
 ];}
 const _FANCAM_SHOW_PATTERNS=_fancamShowPatterns();

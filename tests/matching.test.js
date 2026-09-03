@@ -98,7 +98,7 @@ const _ATM_DYNAMIC_AMBIGUOUS_COMATCH=new Set();
 const _ATM_DYNAMIC_LITERAL_ONLY=new Set();
 const _STRICT_SYNC_GROUPS=new Set(Object.entries(GROUPS).filter(([,v])=>v&&v.strictSync).map(([ko])=>ko));
 ${pieces.join('\n')}
-module.exports={_m2ParseTitle,_PROJECT_UNITS,GROUPS,ARTISTS};
+module.exports={_m2ParseTitle,_PROJECT_UNITS,_fancamParseTitle,GROUPS,ARTISTS};
 `;
 
 let mod;
@@ -111,7 +111,7 @@ try {
   console.error(e);
   process.exit(2);
 }
-const { _m2ParseTitle, _PROJECT_UNITS } = mod.exports;
+const { _m2ParseTitle, _PROJECT_UNITS, _fancamParseTitle } = mod.exports;
 
 // ── 테스트 케이스 ──────────────────────────────────────────────
 // 각 케이스는 실제 사고/수정 이력(CHANGELOG 2026-07~08) 기반. check(result)가 true를 반환해야 통과.
@@ -513,6 +513,25 @@ test('직캠 — 곡명 \'Treasure\'가 그룹 트레저로 primary를 뺏지 �
 test('직캠 — 곡명 \'After School\'이 애프터스쿨로 안 감(위클리 먼데이)',
   "[MPD직캠] 위클리 먼데이 직캠 4K 'After School' (Weeekly MONDAY FanCam)", undefined,
   r => !!r && r.primaryGroup === '위클리' && r.withGroups.length === 0 && (r.membersByGroup['위클리']||[]).join() === '먼데이', '2021-03-25');
+// ⚠️ 위 'After School' 케이스는 2026-08-29부터 있었는데도 실사고를 못 막았다 — 대괄호를 [MPD직캠]으로
+// 썼기 때문이다. _FANCAM_SHOW_PATTERNS가 인식하는 태그라 구조 파싱이 성공했고, 곡명 배제 로직만 검증됐다.
+// 실제 오염은 **인식 자체가 안 되는 태그**([페이스캠4K])에서 났다(2026-09-03 실측: 위클리 지한 영상의
+// group_ko가 애프터스쿨로 오배정). 곡명·멤버 판정이 같아도 대괄호 표기가 다르면 별개 경로임을 잊지 말 것.
+// ⚠️ 아래 4개 중 실제로 수정에 의존하는 건 첫 번째(페이스캠+곡명충돌)뿐이다 — 나머지는 제목에 정답
+// 그룹명이 그대로 있어 구조 인식이 없어도 통과한다(음성 대조로 확인). 진입 게이트 자체의 회귀 가드는
+// 파일 맨 아래 GATE_CASES가 맡는다. 여기 케이스만 보고 "덮였다"고 판단하지 말 것.
+test('직캠 진입게이트 — [페이스캠4K](한글 표기)도 구조 인식: 곡명 \'After School\'이 애프터스쿨로 안 감',
+  "[페이스캠4K] 위클리 지한 'After School' (Weeekly JI HAN FaceCam)│@SBS Inkigayo 220220", undefined,
+  r => !!r && r.primaryGroup === '위클리' && r.withGroups.length === 0 && (r.membersByGroup['위클리']||[]).join() === '지한', '2022-02-20');
+test('직캠 진입게이트 — [UNFILTERED CAM]도 구조 인식(제로베이스원 한유진)',
+  "[UNFILTERED CAM] ZEROBASEONE HAN YU JIN(한유진) 'In Bloom' 4K | BE ORIGINAL", undefined,
+  r => !!r && r.primaryGroup === '제로베이스원' && (r.membersByGroup['제로베이스원']||[]).join() === '한유진', '2023-07-20');
+test('직캠 진입게이트 — [원픽캠 4K](한글 표기)도 구조 인식(고스트나인 이진우)',
+  '[원픽캠 4K] 고스트나인 이진우 - 밤샜다 (GHOST9 LEE JIN WOO - Up All Night) l #쇼챔피언 l EP.397', undefined,
+  r => !!r && r.primaryGroup === '고스트나인' && (r.membersByGroup['고스트나인']||[]).join() === '이진우', '2021-06-01');
+test('직캠 — 그룹명에 든 X가 콜라보 기호로 안 읽힘(오메가엑스 한겸, 원픽캠)',
+  "[원픽캠 4K] OMEGA X Han Gyeom - WHAT'S GOIN' ON (오메가엑스 한겸 - 왓츠 고잉 온) l #쇼챔피언 l EP.408", undefined,
+  r => !!r && r.primaryGroup === '오메가엑스' && (r.membersByGroup['오메가엑스']||[]).join() === '한겸', '2021-08-01');
 test('직캠 — 곡명 \'Key of Secret\'의 "키"가 멤버로 안 붙음(샤이니 단체)',
   "[안방1열 풀캠4K] 샤이니 'Key of Secret' 풀캠 (SHINee Full Cam)", undefined,
   r => !!r && r.primaryGroup === '샤이니' && (r.membersByGroup['샤이니']||[]).length === 0, '2015-05-24');
@@ -632,6 +651,30 @@ cases.forEach(({ name, title, selfGko, check, publishedAt }) => {
 // **영문 경로(#HYERI)가 통째로 뚫린 것은 못 잡아** 통과 상태로 292건이 남아 있었다(2026-09-02).
 // _atmMatchesMember는 이 파일 하네스가 안 싣는 함수라(여긴 _m2ParseTitle 전용), 실동작 검증은
 // 공용 하네스(tools/m2_harness.js)를 쓰는 desc-evidence.test.js가 제자리다.
+
+// ── 직캠 진입게이트 직접 검증(_FANCAM_SHOW_PATTERNS, 2026-09-03) ─────────────
+// 왜 결과가 아니라 파서를 직접 보는가: 위 end-to-end 케이스들은 **수정 없이도 통과할 수 있다.** 제목에
+// 정답 그룹명이 그대로 있고 곡명 충돌이 없으면 구조 인식이 실패해도 기존 경로가 어차피 정답을 낸다.
+// 실제로 [UNFILTERED CAM]·[원픽캠]·[OMEGA X] 케이스는 패턴을 되돌려도 4개 중 3개가 초록불이었다
+// (2026-09-03 음성 대조로 확인). 그래서 "이 대괄호가 구조로 인식되는가"를 직접 못 박는다 —
+// 인식이 곧 곡명 배제(songSpan)이고, 그게 안 되면 곡명이 그룹명으로 읽히는 사고가 다시 난다.
+const GATE_CASES = [
+  ["[페이스캠4K] 위클리 지한 'After School' (Weeekly JI HAN FaceCam)│@SBS Inkigayo 220220", '페이스캠(한글)', 'After School'],
+  ["[UNFILTERED CAM] ZEROBASEONE HAN YU JIN(한유진) 'In Bloom' 4K | BE ORIGINAL", 'UNFILTERED CAM', 'In Bloom'],
+  ['[원픽캠 4K] 고스트나인 이진우 - 밤샜다 (GHOST9 LEE JIN WOO - Up All Night) l #쇼챔피언 l EP.397', '원픽캠(한글)', '밤샜다'],
+  ["[얼빡직캠 4K] 제로베이스원 한유진 'ICONIK' (ZEROBASEONE HAN YUJIN Facecam) @뮤직뱅크 250905", '직캠(기존 회귀 가드)', 'ICONIK'],
+];
+GATE_CASES.forEach(([title, label, expectSong]) => {
+  const fc = _fancamParseTitle(title);
+  const ok = !!fc && !!fc.songSpan && (fc.songSeg || '').trim() === expectSong;
+  if (ok) { pass++; console.log(`✅ 진입게이트 — [${label}] 구조 인식 + 곡명 '${expectSong}' 구간 확보`); }
+  else {
+    fail++;
+    console.log(`❌ 진입게이트 — [${label}] 구조 인식 실패 → 곡명이 안 지워져 그룹명으로 읽힐 수 있음`);
+    console.log(`   title="${title}"`);
+    console.log(`   _fancamParseTitle=${JSON.stringify(fc)}`);
+  }
+});
 
 console.log(`\n${pass}/${pass + fail} 통과${fail ? `, ${fail}개 실패` : ''}`);
 process.exit(fail ? 1 : 0);
