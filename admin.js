@@ -516,7 +516,15 @@ async function _ytRotateViewCountRefresh(){
   _feedDiscoveryBuiltAt=0;
 }
 
-function _ytSetProg(msg){const el=document.getElementById('sp-yt-prog');if(el)el.textContent=msg;_admExecBarSync(msg);}
+// 진행 표시는 좁은 칸(.sp-yt-prog)이라 긴 메시지가 잘려 보인다 — 결과/오류 메시지는 **콘솔에도 그대로**
+// 남긴다(2026-09-03 제보: "이거 전체 내용 조회 가능하게 일단 되어야할듯"). 진행 틱(분석/적용/조회 중…)은
+// 수천 번 불려 콘솔을 덮어버리므로 제외하고, 사람이 읽어야 하는 메시지만 남긴다.
+const _YT_PROG_TICK=/(분석|적용|조회|수집|스캔|처리)\s*중…/;
+function _ytSetProg(msg){
+  const el=document.getElementById('sp-yt-prog');if(el)el.textContent=msg;
+  if(msg&&!_YT_PROG_TICK.test(msg))console.log('[진행]',msg);
+  _admExecBarSync(msg);
+}
 
 // 대량 update를 동시요청 제한 + 재시도로 안전하게 보낸다(2026-09-01). 수백 개를 Promise.all로 한꺼번에
 // 발사하면 그중 몇 개가 "TypeError: Failed to fetch"(일시적 네트워크 끊김)로 튕기는데, 예전엔 그 1건에
@@ -1736,24 +1744,46 @@ async function _ytSweepExMemberSolo(){
     });
     if(rejected.length)console.log('[탈퇴 솔로 귀속] 제외/주의:\n  '+rejected.join('\n  '));
     if(!cands.size){_ytSetProg("대상 인물이 없어요 — artists.json에서 group.ko를 '솔로'로 바꾸고 옛 소속을 groups[]에 left와 함께 남겨주세요");return;}
+    // ⚠️ **이름을 반드시 보여준다.** 건수만 띄웠더니 "대상 1명"이 나왔는데 그게 누구인지 몰라 원인을
+    //    못 찾았다(2026-09-03) — 실제로는 브라우저가 **페이지 로드 시점의 옛 artists.json**을 들고
+    //    있어서 새로 바꾼 3명이 안 잡힌 것이었다. ARTISTS는 로드 때 한 번만 읽으므로, 데이터를 고친
+    //    뒤엔 **새로고침**해야 한다. 이름이 보이면 그 상황이 한눈에 드러난다.
+    const _names=[...cands.entries()].map(([n,i])=>`${n}(전 ${i.gko}, ${i.leftISO}~)`).join(' · ');
+    console.log(`[탈퇴 솔로 귀속] 대상 ${cands.size}명: ${_names}`);
+    console.log('[탈퇴 솔로 귀속] ⚠️ 명단이 예상과 다르면 페이지를 새로고침하세요 — ARTISTS는 로드 시점 데이터입니다.');
     // ⚠️ 보류/숨김으로 좁히면 안 된다(2026-09-03 실측). 우즈·에반·원호로 시뮬레이션했더니 **전부 0건**이었다 —
     //    이 사람들의 솔로 영상은 보류가 아니라 **정상 노출 중인데 옛 그룹에 붙어 있는** 상태다.
     //    (탈퇴 게이트에 걸려 보류로 가는 건 "새로 들어오는" 영상이고, 기존 재고는 옛 매처가 이미 옛 그룹으로
     //     확정해둔 것들이다.) 그래서 전체를 훑고 클라이언트에서 거른다 — ②와 같은 방식.
     //    무관/외부인은 제외한다("우리 콘텐츠가 아니다"라는 판단이라 귀속과 축이 다름).
+    // ⚠️ 서버 필터(.or/.eq)를 걸지 않는다 — 걸었더니 **38,499건에서 조용히 멈췄다**(전체 392,058건,
+    //    2026-09-03 실측). `_sbFetchAll`은 페이지가 pageSize보다 짧으면 "끝"으로 보고 종료하는데,
+    //    서버가 타임아웃 등으로 짧게 돌려주면 그걸 완료로 오인한다. ②(오태깅 재배정)는 필터 없이
+    //    전체를 훑어 정상 동작하므로 같은 방식으로 맞추고, content_flag는 **클라이언트에서** 거른다.
+    //    (이 세션에서 group_ko/ilike 필터도 서버 500이 반복됐다 — 이 테이블은 필터 조회가 불안정하다.)
     _ytSetProg(`[탈퇴 솔로 귀속] 대상 인물 ${cands.size}명 — 전체 조회 중…`);
+    const _cnt=await sb.from(_YT_TABLE).select('id',{count:'exact',head:true});
+    const _expected=_cnt&&_cnt.count;
     const{data:rows,error}=await _sbFetchAll(()=>sb.from(_YT_TABLE)
       .select('id,title,group_ko,members,with_members,with_groups,published_at,tags_manual,content_flag')
-      .or('content_flag.is.null,and(content_flag.neq.무관,content_flag.neq.외부인)')
       .order('id'));
     if(error){_ytSetProg('조회 실패: '+error.message);return;}
-    if(!rows?.length){_ytSetProg('보류/숨김 영상이 없어요');return;}
+    if(!rows?.length){_ytSetProg('영상이 없어요');return;}
+    // 조용한 잘림 감지 — 전체 건수와 크게 어긋나면 분석 결과를 믿을 수 없으므로 멈춘다.
+    if(_expected&&rows.length<_expected*0.95){
+      _ytSetProg(`조회가 중간에 끊겼어요 — ${rows.length}/${_expected}건만 받음. 그대로 진행하면 일부만 처리되니 중단합니다. 잠시 후 다시 시도해주세요.`);
+      console.error('[탈퇴 솔로 귀속] 조회 잘림',{받음:rows.length,전체:_expected});
+      return;
+    }
+    const EXCLUDE_FLAG=new Set(['무관','외부인']); // "우리 콘텐츠가 아니다"는 판단이라 귀속과 축이 다름
     const{_norm}=_MISTAG;
     let manualSkipped=0,bannedSkipped=0,beforeLeft=0,wrongBase=0,weakEvidence=0;
     const updates=[];const sample=[];const byPerson={};
     for(let i=0;i<rows.length;i++){
       if(i%2000===0){_ytSetProg(`[탈퇴 솔로 귀속] 분석 중… ${i}/${rows.length} (후보 ${updates.length})`);await new Promise(r=>setTimeout(r));}
-      const v=rows[i];const nu=_norm(v.title);const d=(v.published_at||'').slice(0,10);
+      const v=rows[i];
+      if(v.content_flag&&EXCLUDE_FLAG.has(v.content_flag))continue; // 서버 대신 여기서 거른다
+      const nu=_norm(v.title);const d=(v.published_at||'').slice(0,10);
       for(const[name,info]of cands){
         if(!nu.includes(' '+name.toUpperCase()+' '))continue;   // ⑥ 단독 토큰
         if(v.group_ko!==info.gko){wrongBase++;break;}            // ⑦ 옛 그룹 행만
@@ -1776,7 +1806,7 @@ async function _ytSweepExMemberSolo(){
     }
     console.log('[탈퇴 솔로 귀속] 예정 표본(최대40):\n'+sample.join('\n'));
     console.log('[탈퇴 솔로 귀속] 인물별 건수:',Object.entries(byPerson).sort((a,b)=>b[1]-a[1]));
-    if(!updates.length){_ytSetProg(`옮길 게 없음 (대상 ${cands.size}명 · ${rows.length}건 스캔) — 사유별 내역은 콘솔(F12)`);return;}
+    if(!updates.length){_ytSetProg(`옮길 게 없음 — 대상 ${cands.size}명(${[...cands.keys()].join(", ")}) · ${rows.length}건 스캔. 명단이 예상과 다르면 새로고침 후 재시도(콘솔 F12에 상세)`);return;}
     const _apply=async()=>{
       await _snapshotBeforeBulk('탈퇴 후 솔로 영상 귀속',updates.map(u=>u.id));
       const _ub=await _sbUpdateBatch(updates,u=>sb.from(_YT_TABLE).update(u.patch).eq('id',u.id),
