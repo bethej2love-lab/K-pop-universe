@@ -158,6 +158,54 @@ const _KNOWN_EXCLUDED_PEOPLE = new Set(['이종현', '태일', '김가람', '승
   });
 }
 
+// ── 6-c. 날짜 표기 통일 (2026-09-03 신설) ───────────────────────────────────
+// 이 프로젝트의 규약: **데이터는 점(YYYY.MM.DD), 파싱할 때 대시로 바꾼다.** 실제로 날짜를 Date로 넘기는
+// 모든 자리가 이미 `.replace(/\./g,'-')`를 하고 있어서(index.html·tools 전수 확인) 점이 정본이다.
+// 대시로 섞이면 ①`localeCompare` 문자열 정렬이 어긋나고('-'(0x2D) < '.'(0x2E)라 같은 해에서 대시가 항상
+// 먼저 온다) ②replace를 빠뜨린 새 코드가 조용히 다르게 동작한다. 2026-09-03에 unit/soloDiscography의
+// 680건(멜론 vs 애플뮤직 출처 차이)을 점으로 통일했고, 여기서 재발을 막는다.
+//
+// ⚠️ **정밀도는 강제하지 않는다.** `disbanded`는 YYYY / YYYY.MM / true(해체는 했으나 날짜 미상)를
+//    모두 허용한다 — 없는 정보를 만들어내면 안 되고, build_slim_data.mjs가 이미 이 3형식을
+//    endDate/endPrecision('year'/'month'/'day'/'unknown')으로 정규화해 소비한다(사용자 결정 ⓑ).
+{
+  const DOT_FULL = /^\d{4}\.\d{2}\.\d{2}$/;
+  const DOT_ANY = /^\d{4}(\.\d{2}(\.\d{2})?)?$/;   // YYYY | YYYY.MM | YYYY.MM.DD
+  const bad = (lvl, cat, detail) => add(lvl, cat, detail);
+
+  Object.entries(GROUPS).forEach(([ko, g]) => {
+    if (g.disbanded === undefined) return;
+    if (g.disbanded === true) return;              // 날짜 미상 — 허용(ⓑ)
+    if (typeof g.disbanded !== 'string' || !DOT_ANY.test(g.disbanded))
+      bad('error', '날짜 표기 오류', `그룹 "${ko}".disbanded = ${JSON.stringify(g.disbanded)} — YYYY[.MM[.DD]] 또는 true`);
+    if (typeof g.debut === 'string' && g.debut && !DOT_ANY.test(g.debut))
+      bad('error', '날짜 표기 오류', `그룹 "${ko}".debut = ${JSON.stringify(g.debut)} — YYYY[.MM[.DD]]`);
+    });
+  Object.entries(GROUPS).forEach(([ko, g]) => (g.discography || []).forEach(al => {
+    if (al.releaseDate && !DOT_FULL.test(al.releaseDate))
+      bad('error', '날짜 표기 오류', `그룹 "${ko}" 앨범 "${al.title}".releaseDate = ${JSON.stringify(al.releaseDate)} — YYYY.MM.DD(점)`);
+  }));
+
+  ARTISTS.forEach(a => {
+    const nm = (a.name && a.name.ko) || '?';
+    // left는 탈퇴 컷오프·솔로 재귀속 경계로 쓰이므로 **일(day)까지** 있어야 제 역할을 한다.
+    // 형식 자체가 깨진 건 error, 정밀도만 부족한 건 warn(데이터를 모를 수 있으니 막지는 않음).
+    const chkLeft = (v, where) => {
+      if (!v) return;
+      if (typeof v !== 'string' || !DOT_ANY.test(v))
+        bad('error', '날짜 표기 오류', `${nm} ${where}.left = ${JSON.stringify(v)} — YYYY.MM.DD(점)`);
+      else if (!DOT_FULL.test(v))
+        bad('warn', '날짜 정밀도 부족', `${nm} ${where}.left = "${v}" — 일까지 없으면 탈퇴 컷오프·솔로 재귀속 경계가 안 잡힘`);
+    };
+    chkLeft(a.left, '');
+    (a.groups || []).forEach(g => g && chkLeft(g.left, `(${g.ko})`));
+    ['unitDiscography', 'soloDiscography'].forEach(k => (a[k] || []).forEach(u => (u.albums || []).forEach(al => {
+      if (al.releaseDate && !DOT_FULL.test(al.releaseDate))
+        bad('error', '날짜 표기 오류', `${nm} ${k} "${al.title}".releaseDate = ${JSON.stringify(al.releaseDate)} — YYYY.MM.DD(점)`);
+    })));
+  });
+}
+
 // ── 7. 그룹명 ↔ 타 그룹 멤버명 충돌 (오태깅 유발 — 스텔라→하츠투하츠, 슈가→방탄 사례로 발견, 2026-08-23) ──
 // 그룹명(ko/en)이 다른 그룹 멤버의 이름(ko/en)과 같으면, 그 멤버 언급이 그룹으로 오매칭돼 대량 오태깅됨.
 // strictSync 지정한 그룹은 제목 매칭에서 빠지므로(=처리됨) 경고 대상에서 제외. 새 충돌은 검토 후 strictSync.

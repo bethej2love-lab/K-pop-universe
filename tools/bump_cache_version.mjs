@@ -28,6 +28,10 @@ const hash8 = s => crypto.createHash('sha256').update(s).digest('hex').slice(0, 
 // 날짜는 UTC 기준 — Action이 UTC로 돌고, 로컬에서 돌렸을 때와 값이 갈리면 무의미한 diff가 생긴다.
 const today = new Date().toISOString().slice(0, 10).replace(/-/g, '');
 
+// 데이터 JSON도 캐시버스터 대상(2026-09-03) — cache:'no-cache'는 중간 프록시/CDN 사본을 못 뚫어서
+// 데이터 갱신이 유저에게 안 닿는 사고가 있었다. 슬림/원본 다섯 파일을 합쳐 해시한다.
+const dataSrc = ['groups.json','artists.json','connections.json','groups.slim.json','artists.slim.json']
+  .map(f => { try { return read(f); } catch (e) { return ''; } }).join('');
 const cssSrc = read('kpop_universe.css');
 const sharedSrc = read('shared.js');
 const adminSrc = read('admin.js');
@@ -39,13 +43,16 @@ const ver = s => `${today}-${hash8(s)}`;
 const stripVersions = s => s
   .replace(/(kpop_universe\.css\?v=)[^"]*/g, '$1@')
   .replace(/(shared\.js\?v=)[^"]*/g, '$1@')
-  .replace(/(const _ADMIN_JS_VER=')[^']*/g, '$1@');
+  .replace(/(const _ADMIN_JS_VER=')[^']*/g, '$1@')
+  .replace(/(const _DATA_VER=')[^']*/g, '$1@');
 const targets = [
   // [파일, 찾을 정규식, 새 값 만들기, 설명]
   ['index.html', /(<link rel="stylesheet" href="kpop_universe\.css\?v=)([^"]*)(">)/,
     ver(cssSrc), 'kpop_universe.css?v='],
   ['index.html', /(<script src="shared\.js\?v=)([^"]*)(">)/,
     ver(sharedSrc), 'shared.js?v='],
+  ['index.html', /(const _DATA_VER=')([^']*)(';)/,
+    ver(dataSrc), '_DATA_VER'],
   ['index.html', /(const _ADMIN_JS_VER=')([^']*)(';)/,
     ver(adminSrc), '_ADMIN_JS_VER'],
   // ⚠️ CACHE_VERSION은 index.html까지 해시에 넣는데(서비스워커 캐시 대상은 앱 셸 전체),
