@@ -6403,6 +6403,13 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
   const _COMMON_NOUN_GROUP_OK={
     '아이콘':t=>/#\s*아이콘/.test(t)||/#\s*iKON/i.test(t)||/iKON/.test(t),
     '위너':t=>/위너/.test(t)||/#\s*WINNER/i.test(t)||/\bWINNER\b/.test(t),
+    // 카드=신용/게임 카드, 시그니처=signature — 한글 표기가 그대로 일상어라 신호가 못 된다(실측:
+    //   "카드 사용 내역"·"벤의 시그니처 이별곡" 등이 그룹으로 샜다). 두 그룹 다 공식 표기는 영문
+    //   (KARD / cignature)이라, 한글 '카드'·'시그니처' 단독은 인정하지 않고 영문·해시태그·멤버확정만 인정.
+    //   ⚠️ 신화(myth)·시크릿(secret)은 여기 넣지 말 것 — 그룹이 한글 '신화'·'시크릿'을 정당하게 상시
+    //      사용해("신화 - TOUCH", "시크릿 아이스크림 MV") 게이트하면 진짜 콘텐츠가 대량으로 잘린다(검수큐 몫).
+    '카드':t=>/K\.?A\.?R\.?D/i.test(t)||/#\s*카드/.test(t),
+    '시그니처':t=>/cignature/i.test(t)||/#\s*시그니처/.test(t),
   };
   if(matchedGroupKos.length){
     const kept=matchedGroupKos.filter(gko=>{

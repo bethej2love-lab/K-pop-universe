@@ -297,6 +297,18 @@ test('아이콘 — 로드워드 "아이콘" 단독은 그룹 아님', '2024 올
   r => !r || (r.primaryGroup !== '아이콘' && !(r.withGroups || []).includes('아이콘')));
 test('아이콘 — 고유표기 iKON이면 유지', 'iKON - Killing Me stage', undefined,
   r => !!r && (r.primaryGroup === '아이콘' || (r.withGroups || []).includes('아이콘')));
+// 카드(KARD)·시그니처(cignature) 게이트(2026-09-03) — 한글 '카드'=신용/게임카드, '시그니처'=signature라
+// 단독은 근거 못 됨. 영문 표기/멤버/해시태그만 인정. (신화·시크릿은 의도적으로 게이트 안 함 = 검수큐 몫)
+test('카드 — 한글 "카드" 일상어 단독은 그룹 아님', '결혼지옥 남편에 공개한 카드 사용 내역, 또다시 부부 싸움', undefined,
+  r => !r || (r.primaryGroup !== '카드' && !(r.withGroups || []).includes('카드')));
+test('카드 — 영문 KARD면 유지', 'KARD - Without You @ Show Champion', undefined,
+  r => !!r && (r.primaryGroup === '카드' || (r.withGroups || []).includes('카드')));
+test('카드 — 멤버(전소민) 있으면 유지', '카드 전소민 직캠 4K', undefined,
+  r => !!r && (r.primaryGroup === '카드' || (r.withGroups || []).includes('카드')));
+test('시그니처 — 한글 "시그니처" 일상어 단독은 그룹 아님', '벤의 시그니처 이별곡 - 열애중 [더 시즌즈]', undefined,
+  r => !r || (r.primaryGroup !== '시그니처' && !(r.withGroups || []).includes('시그니처')));
+test('시그니처 — 영문 cignature면 유지', 'cignature(시그니처) \'Boyfriend\' MV', undefined,
+  r => !!r && (r.primaryGroup === '시그니처' || (r.withGroups || []).includes('시그니처')));
 
 // ── "솔로" placeholder 누출(2026-08-25 실측으로 발견) ──────────────────
 // 무소속 솔로(아이유·승한 등)는 artists.json에서 group.ko가 "솔로"인데, 이건 여러 명이 공유하는
