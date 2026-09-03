@@ -116,7 +116,16 @@ const _KNOWN_EXCLUDED_PEOPLE = new Set(['이종현', '태일', '김가람', '승
       if (n && !allNames.has(n) && !_KNOWN_EXCLUDED_PEOPLE.has(n)) missing.set(n, (missing.get(n) || 0) + 1);
     });
   });
-  missing.forEach((count, name) => add('warn', 'connections.json 유령 참조', `"${name}" — ARTISTS에 없는데 연결 ${count}건에서 참조됨`));
+  // ⚠️ warn이 아니라 **error**다(2026-09-03 승격). 이건 "위험 신호"가 아니라 **명백히 틀린 데이터**다 —
+  // 참조된 이름이 어디에도 없으면 그 연결선은 그냥 안 그려진다. 그런데 warn이라 exit 0이었고, CI가
+  // 초록으로 통과하는 동안 "Yoona" 6건이 몇 주째 방치됐다(소녀시대 윤아를 영문으로 잘못 저장한 것).
+  // 같이 발견된 "제이미(박지민)" 1건은 **개명 잔재**였다 — 이름을 키로 쓰는 구조의 대가가 데이터에
+  // 그대로 남은 사례(jamie_rename_migration.sql 참고).
+  //
+  // 이 파일의 나머지 경고(동명이인 위험·그룹명↔멤버명 충돌 등)는 **정상 데이터에 대한 주의 환기**라
+  // warn이 맞다. 승격 기준은 "고칠 게 명확히 있는가" — 유령 참조는 있고, 동명이인은 없다.
+  // 새 검사를 추가할 때도 이 기준으로 level을 고를 것.
+  missing.forEach((count, name) => add('error', 'connections.json 유령 참조', `"${name}" — ARTISTS에 없는데 연결 ${count}건에서 참조됨 (이름 오타·개명 잔재·미등록 인물)`));
 }
 
 // ── 7. 그룹명 ↔ 타 그룹 멤버명 충돌 (오태깅 유발 — 스텔라→하츠투하츠, 슈가→방탄 사례로 발견, 2026-08-23) ──
