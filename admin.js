@@ -5355,7 +5355,22 @@ function _fancamParseTitle(rawTitle){
   const artistNorm=strip(artistSeg);
   const enNorm=strip(enSeg);
   if(artistNorm.trim().length===0)return null; // 출연자 구간이 비면 구조로 볼 수 없음 → 기존 경로
-  return{show:pat.show,artistSeg:artistSeg.trim(),artistNorm,songSeg,songSpan,enSeg:enSeg.trim(),enNorm};
+  // 뒤 괄호가 바깥 구조를 그대로 미러링한 "아티스트 - 곡명" 표기면(2020년대 직캠의 지배적 포맷:
+  // `[브랜드] 아티스트 - 곡 (ARTIST - SONG)`), 그 대시 뒤도 **곡명**이다 — 바깥 곡명(songSpan)만
+  // 비우고 여기를 남겨두면 괄호 안 곡명 토큰이 그대로 매칭에 들어간다.
+  // 실측 사고(2026-09-03): `[원픽캠 4K] WONHO - Eye On You (원호 - 아이 온 유)`에서 괄호 안 "아이 온"이
+  // 유아이(드림노트, 성 뗀 변형)로 잡혀 with_groups에 드림노트가 붙었다.
+  // ⚠️ 반드시 **직캠 구조가 인식된 제목에만** 적용할 것 — 괄호는 곡명 전용 구간이 아니다.
+  // `(Feat - iKON 윤형 & LIMELIGHT 수혜, 가은)`처럼 진짜 출연진이 오는 괄호가 있는데, 그런 제목은
+  // 애초에 이 파서가 null을 돌려주므로 여기 오지 않는다(제목 전체에 무차별 적용하면 그걸 죽인다 —
+  // 실제로 그렇게 재보고 "고치면 손해"라고 잘못 판단했던 적이 있다).
+  let koSongSpan=null;
+  if(enSeg){
+    const dm=/\s[-–—]\s/.exec(enSeg);
+    const base=dm?t.indexOf(enSeg):-1;
+    if(dm&&base>=0)koSongSpan=[base+dm.index+dm[0].length,base+enSeg.length];
+  }
+  return{show:pat.show,artistSeg:artistSeg.trim(),artistNorm,songSeg,songSpan,koSongSpan,enSeg:enSeg.trim(),enNorm};
 }
 // ── 데뷔 이전 게이트(2026-08-31) ───────────────────────────────────────────────
 // "영상이 그룹 데뷔보다 한참 전에 올라왔으면 그 그룹일 수 없다." 탈퇴 이후(_atmLeftBefore)·해체 이후
@@ -5426,7 +5441,14 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
   // 음악방송 직캠 구조(_fancamParseTitle) — 잡히면 따옴표/대시 뒤 곡명 구간을 매칭 전에 통째로 비운다
   // (곡명이 그룹·유닛·멤버명과 겹쳐 생기던 오태깅 원천 차단, 위 파서 주석 ①②). 안 잡히면 null → 기존 경로.
   const _fc=(typeof _fancamParseTitle==='function')?_fancamParseTitle(rawTitle):null;
-  const _fcSrc=(_fc&&_fc.songSpan)?(rawTitle.slice(0,_fc.songSpan[0])+' '.repeat(_fc.songSpan[1]-_fc.songSpan[0])+rawTitle.slice(_fc.songSpan[1])):rawTitle;
+  // 곡명 구간은 둘일 수 있다 — 바깥(songSpan)과 미러 괄호 안 한글 곡명(koSongSpan, 2026-09-03).
+  // 같은 길이의 공백으로 치환하므로 인덱스가 안 밀린다(적용 순서 무관).
+  const _fcSrc=(()=>{
+    if(!_fc)return rawTitle;
+    let s=rawTitle;
+    [_fc.songSpan,_fc.koSongSpan].forEach(sp=>{if(sp)s=s.slice(0,sp[0])+' '.repeat(sp[1]-sp[0])+s.slice(sp[1]);});
+    return s;
+  })();
   const strippedTitle=_wonkokStripClause(_fcSrc);
   // 출연자 구간(정규화) 안에서 그룹/멤버 토큰의 위치. -1이면 구간에 없음. 선두(head)면 0.
   const _fcPos=(tok)=>{if(!_fc)return -1;const n=_fancamNormTok(tok);if(!n)return -1;return _fc.artistNorm.indexOf(' '+n+' ');};
