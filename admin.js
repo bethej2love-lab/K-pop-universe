@@ -1673,6 +1673,131 @@ async function _ytSweepHeldMistagReclassify(){
 }
 _admExecBind('sp-heldfix-btn',_ytSweepHeldMistagReclassify,'보류/숨김 그룹 재배정');
 
+// [탈퇴 후 솔로 영상 귀속](2026-09-03) — 그룹을 떠난 뒤 솔로로 활동하는 사람의 영상이 갈 곳을 준다.
+//
+// 문제: 탈퇴 게이트(_atmLeftBefore)는 "탈퇴 이후 영상은 그 그룹 콘텐츠가 아니다"라며 옛 그룹을 후보에서
+// 뺀다(라이즈 승한 사례). 옳은 판정인데, 뺀 다음 **갈 곳이 없어서** 무매칭 → 보류로 쌓인다. 원호의 2021년
+// 솔로 무대가 정확히 그 상태였다.
+//
+// 해결: 이 프로젝트엔 이미 솔로 규약이 있다 — 아티스트는 `group.ko='솔로'`, 영상은 `group_ko=본인 이름`.
+// 아이유·이영지·보아·승한이 그렇게 돌아가고 있고, 멤버 카드 쿼리가 `group_ko.eq.${memberKo}` 절로 두 키를
+// 합집합해 가져오므로 **옛 그룹 시절 영상과 솔로 영상이 한 카드에 같이 뜬다.** 그룹 카드 쿼리는 group_ko와
+// with_groups만 보므로 옛 그룹은 안 더럽혀진다. 그래서 스키마·쿼리 변경 없이 값만 바꾸면 된다.
+//
+// 게이트(전부 통과해야 함) — 느슨하면 곧바로 새 오배정이 된다:
+//   ① 탈퇴일(left)이 있고 소속 그룹이 하나뿐  ② 사망자 제외(died) — 존엄 문제라 예외 없음
+//   ③ 밴 인물 제외(_isBannedVideoTitle)  ④ 이름이 고유(동명이인·영단어·1글자 제외)
+//      ⚠️ ④가 없으면 "Love(전 온리원오프)" 같은 흔한 단어가 401건을 쓸어담는다(실측).
+//   ⑤ 영상이 탈퇴일 이후  ⑥ 제목에 그 이름이 **단독 토큰**으로 존재
+//   ⑦ 저장된 group_ko가 그 사람의 옛 그룹일 때만(엉뚱한 그룹 행은 안 건드림)  ⑧ tags_manual 보호
+// 대상은 보류/숨김 행에 한정한다 — 정상 노출 중인 행을 옮기면 유저 화면이 흔들린다.
+async function _ytSweepExMemberSolo(){
+  if(!sb){_ytSetProg('Supabase 연결 없음');return;}
+  const btn=document.getElementById('sp-exsolo-btn');
+  if(btn)btn.disabled=true;
+  try{
+    const _groupsOf=a=>{const s=new Set();if(a.group&&a.group.ko)s.add(a.group.ko);if(Array.isArray(a.groups))a.groups.forEach(g=>{const ko=typeof g==='string'?g:(g&&(g.ko||g.name));if(ko)s.add(ko);});return[...s];};
+    const nameCount={};ARTISTS.forEach(a=>{const n=a.name&&a.name.ko;if(n)nameCount[n]=(nameCount[n]||0)+1;});
+    const _riskyName=n=>!n||nameCount[n]>1||/^[A-Za-z0-9 ]+$/.test(n)||n.length<2;
+    // ⚠️ **전수 자동 스윕이 아니라 사람을 지정해서 돌린다**(2026-09-03, 실측 후 설계 변경).
+    // 처음엔 "탈퇴+단일소속+생존+이름고유"를 만족하는 181명을 자동으로 훑게 만들었는데, 실데이터
+    // 시뮬레이션에서 정밀도가 형편없었다:
+    //   · 게이트 없이:      75건 중 41건이 **"바로"**(비원에이포) — 한국어 부사 "지금 **바로** 댓글로"에 걸림
+    //   · 강한 근거만:      17건으로 줄었지만 그마저 대부분이 **미등록 신인 그룹의 동명이인**이었다
+    //     (하츠웨이브 리안 ≠ 미래소년 리안, 모디세이 린린 ≠ 체리블렛 린린, 러브홀릭 지선 ≠ 프로미스나인 지선)
+    // "이름 고유" 검사는 **등록된** 아티스트만 세므로 미등록 그룹 멤버를 못 본다(dedup의 알려진 한계).
+    // 탈퇴자 솔로 영상은 애초에 희소해서 이 노이즈가 신호를 압도한다 — 자동화로 풀 문제가 아니다.
+    // 그래서 **관리자가 이름을 직접 지정**한다. 사람이 신원을 확정한 뒤에도 아래 강한 근거 게이트는
+    // 그대로 걸린다(같은 이름의 다른 사람이 섞이는 걸 한 겹 더 막기 위해).
+    const _raw=prompt('솔로로 귀속할 사람 이름을 쉼표로 구분해 입력하세요.\n(예: 우즈, 원호)\n\n· 탈퇴일이 있고 소속 그룹이 하나뿐인 사람만 됩니다\n· 탈퇴일 이후 영상만, 제목에 직캠 출연자 구간이나 #해시태그로 명시된 것만 옮깁니다','');
+    if(_raw===null){_ytSetProg('취소됨');return;}
+    const wanted=_raw.split(',').map(s=>s.trim()).filter(Boolean);
+    if(!wanted.length){_ytSetProg('이름을 입력하지 않았어요');return;}
+    const cands=new Map(); // 이름 → {oldGko, leftISO}
+    const rejected=[];
+    wanted.forEach(n=>{
+      const a=ARTISTS.find(x=>x.name&&x.name.ko===n);
+      if(!a){rejected.push(`${n} — artists.json에 없음`);return;}
+      if(a.died){rejected.push(`${n} — 사망자라 대상 아님`);return;}
+      if(!a.left){rejected.push(`${n} — 탈퇴일(left)이 없음`);return;}
+      const gs=_groupsOf(a);
+      if(gs.length!==1){rejected.push(`${n} — 소속 그룹이 ${gs.length}개(${gs.join('·')})라 옛 그룹을 특정 못 함`);return;}
+      const leftISO=String(a.left).replace(/\./g,'-').replace(/-$/,'');
+      if(!/^\d{4}-\d{2}-\d{2}$/.test(leftISO)){rejected.push(`${n} — 탈퇴일이 "${a.left}"라 경계를 못 그음(YYYY.MM.DD 필요)`);return;}
+      if(_riskyName(n))rejected.push(`${n} — ⚠️ 이름이 위험(동명이인/영단어/1글자)하지만 지정했으므로 진행`);
+      cands.set(n,{gko:gs[0],leftISO});
+    });
+    if(rejected.length)console.log('[탈퇴 솔로 귀속] 제외/주의:\n  '+rejected.join('\n  '));
+    if(!cands.size){_ytSetProg('처리 가능한 인물이 없어요 — 사유는 콘솔(F12) 확인');return;}
+    // ⚠️ 보류/숨김으로 좁히면 안 된다(2026-09-03 실측). 우즈·에반·원호로 시뮬레이션했더니 **전부 0건**이었다 —
+    //    이 사람들의 솔로 영상은 보류가 아니라 **정상 노출 중인데 옛 그룹에 붙어 있는** 상태다.
+    //    (탈퇴 게이트에 걸려 보류로 가는 건 "새로 들어오는" 영상이고, 기존 재고는 옛 매처가 이미 옛 그룹으로
+    //     확정해둔 것들이다.) 그래서 전체를 훑고 클라이언트에서 거른다 — ②와 같은 방식.
+    //    무관/외부인은 제외한다("우리 콘텐츠가 아니다"라는 판단이라 귀속과 축이 다름).
+    _ytSetProg(`[탈퇴 솔로 귀속] 대상 인물 ${cands.size}명 — 전체 조회 중…`);
+    const{data:rows,error}=await _sbFetchAll(()=>sb.from(_YT_TABLE)
+      .select('id,title,group_ko,members,with_members,with_groups,published_at,tags_manual,content_flag')
+      .or('content_flag.is.null,and(content_flag.neq.무관,content_flag.neq.외부인)')
+      .order('id'));
+    if(error){_ytSetProg('조회 실패: '+error.message);return;}
+    if(!rows?.length){_ytSetProg('보류/숨김 영상이 없어요');return;}
+    const{_norm}=_MISTAG;
+    let manualSkipped=0,bannedSkipped=0,beforeLeft=0,wrongBase=0,weakEvidence=0;
+    const updates=[];const sample=[];const byPerson={};
+    for(let i=0;i<rows.length;i++){
+      if(i%2000===0){_ytSetProg(`[탈퇴 솔로 귀속] 분석 중… ${i}/${rows.length} (후보 ${updates.length})`);await new Promise(r=>setTimeout(r));}
+      const v=rows[i];const nu=_norm(v.title);const d=(v.published_at||'').slice(0,10);
+      for(const[name,info]of cands){
+        if(!nu.includes(' '+name.toUpperCase()+' '))continue;   // ⑥ 단독 토큰
+        if(v.group_ko!==info.gko){wrongBase++;break;}            // ⑦ 옛 그룹 행만
+        if(!d||d<info.leftISO){beforeLeft++;break;}              // ⑤ 탈퇴 이후만
+        // ⑨ 강한 근거: 직캠 구조의 **출연자 구간**에 있거나 #해시태그로 명시된 것만.
+        //    평문에 이름이 스쳐 지나가는 것으론 부족하다 — "지금 바로 댓글로"의 '바로'(비원에이포)가
+        //    41건을 쓸어담았던 실측 사례. 사람을 지정해도 같은 이름의 다른 사람은 여전히 섞일 수 있어
+        //    이 겹은 유지한다(하츠웨이브 리안 ≠ 미래소년 리안).
+        let _fc=null;try{_fc=(typeof _fancamParseTitle==='function')?_fancamParseTitle(v.title):null;}catch(e){}
+        const _inArtist=_fc&&_fc.artistNorm&&_fc.artistNorm.includes(' '+name.toUpperCase()+' ');
+        const _hash=new RegExp('#\\s*'+name.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).test(v.title||'');
+        if(!_inArtist&&!_hash){weakEvidence++;break;}
+        if(_isBannedVideoTitle(v.title,v.group_ko)){bannedSkipped++;break;} // ③
+        if(v.tags_manual){manualSkipped++;break;}                // ⑧
+        updates.push({id:v.id,patch:{group_ko:name,members:[name],with_groups:[],with_members:[]}});
+        byPerson[name]=(byPerson[name]||0)+1;
+        if(sample.length<40)sample.push(`[${v.content_flag}] ${info.gko}→${name}  ${(v.title||'').slice(0,62)}`);
+        break;
+      }
+    }
+    console.log('[탈퇴 솔로 귀속] 예정 표본(최대40):\n'+sample.join('\n'));
+    console.log('[탈퇴 솔로 귀속] 인물별 건수:',Object.entries(byPerson).sort((a,b)=>b[1]-a[1]));
+    if(!updates.length){_ytSetProg(`옮길 게 없음 (대상 ${cands.size}명 · ${rows.length}건 스캔) — 사유별 내역은 콘솔(F12)`);return;}
+    const _apply=async()=>{
+      await _snapshotBeforeBulk('탈퇴 후 솔로 영상 귀속',updates.map(u=>u.id));
+      const _ub=await _sbUpdateBatch(updates,u=>sb.from(_YT_TABLE).update(u.patch).eq('id',u.id),
+        {conc:20,retries:2,onProgress:(done,total)=>_ytSetProg(`[탈퇴 솔로 귀속] ${done}/${total}건 적용 중…`)});
+      if(_ub.failed)console.error('[탈퇴 솔로 귀속] 재시도 후에도 실패:',_ub.failed,'건 —',_ub.firstErr);
+      _ytSetProg(`완료! ${updates.length}건을 본인 이름으로 귀속함(보류/숨김 상태는 그대로). (되돌리기: "↩︎ 마지막 일괄 작업 되돌리기")`);
+    };
+    const msg=`탈퇴 후 솔로 영상 ${updates.length}건을 본인 이름으로 옮길까요?\n\n`+
+      `· 대상 인물 ${cands.size}명 (탈퇴 + 단일소속 + 생존 + 이름 고유 + 탈퇴일 정확)\n`+
+      `· group_ko를 "옛 그룹" → "본인 이름"으로. 멤버 카드는 두 키를 합쳐 보므로 카드에선 그대로 다 보이고,\n`+
+      `  옛 그룹 카드에서만 빠집니다(솔로 활동이 옛 그룹 콘텐츠로 잡히던 것 해소)\n`+
+      `· content_flag는 안 건드립니다\n\n`+
+      `안 건드리는 것\n`+
+      `· 탈퇴 이전 영상 ${beforeLeft}건 (그 시절엔 진짜 그 그룹 콘텐츠)\n`+
+      `· 저장 그룹이 그 사람의 옛 그룹이 아닌 ${wrongBase}건\n`+
+      `· 근거 약함(직캠 출연자 구간·#해시태그 아님) ${weakEvidence}건 ← 같은 이름의 다른 사람 방어\n`+
+      `· 밴 인물 ${bannedSkipped}건 · 수동편집 ${manualSkipped}건\n\n`+
+      `⚠️ 표본 40건과 인물별 건수를 콘솔(F12)에 출력했어요 — 먼저 훑어보고 실행하세요.\n`+
+      `스냅샷 저장되어 되돌리기 가능`;
+    _ytSetProg(`[탈퇴 솔로 귀속] 분석 완료 — 예정 ${updates.length}건 (인물 ${Object.keys(byPerson).length}명)`);
+    await new Promise(r=>setTimeout(r,50));
+    if(!await _sweepConfirm('sp-exsolo-btn',`탈퇴 후 솔로 영상 귀속 ${updates.length}건`,msg,'귀속 실행',updates.length,_apply))return;
+    await _apply();
+  }catch(e){_ytSetProg('오류: '+e.message);}
+  finally{if(btn)btn.disabled=false;}
+}
+_admExecBind('sp-exsolo-btn',_ytSweepExMemberSolo,'탈퇴 후 솔로 영상 귀속');
+
 // [음악방송 직캠 재검증](2026-08-29, 사용자 요청 — "적어도 음악방송 직캠은 오태깅이 없어야") — 제목이
 // _fancamParseTitle 구조([태그] 그룹 멤버 '곡명' … / 쇼챔·잇츠라이브·킬링보이스)로 잡히는 행만 골라, 구조
 // 파서가 반영된 지금의 _m2ParseTitle 결과와 저장값(group_ko/members/with_*)을 비교해 어긋난 것만 바로잡는다.
