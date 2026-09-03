@@ -1216,6 +1216,7 @@
     <div id="combo-chips"></div>
     <div id="combo-actions">
       <button id="combo-go" disabled>조합 영상 보기</button>
+      <button id="combo-only" class="conn-only-toggle" type="button" aria-pressed="false" style="display:none" title="이 조합만 정확히 나온 영상(다른 사람 없이)">Only</button>
       <button id="combo-share" class="share-btn" style="display:none">링크 복사</button>
     </div>
     <div id="combo-results"></div>
@@ -10261,10 +10262,13 @@ document.getElementById('gc-track-videos-overlay')?.addEventListener('click',e=>
 // with_members[]에 "이름(그룹)". Phase1 = 선택 전원이 함께 나온 영상(교집합). 공유 해시 #combo=이름(그룹),…
 const _COMBO_MAX=10;
 let _comboSel=[],_comboReq=0;
+let _comboExactOnly=false,_comboAllRows=null; // "Only" 토글 — 선택 조합만 정확히 나온 영상(외부인 없음). 재요청 없이 클라 재필터
 function _openComboPanel(){
   const ov=document.getElementById('combo-overlay');if(!ov)return;
   ov.classList.add('open');_bringToFront(ov); // 조합 패널 열리면 맨 위
   const s=document.getElementById('combo-search');if(s)s.value='';
+  _comboExactOnly=false;_comboAllRows=null; // Only 토글 초기화
+  const _ob=document.getElementById('combo-only');if(_ob){_ob.classList.remove('active');_ob.setAttribute('aria-pressed','false');_ob.style.display='none';}
   _comboRenderSuggest('');_comboRenderChips();_comboRenderResults(null);
   setTimeout(()=>{try{if(!isMob()&&s)s.focus();}catch(e){}},60); // 모바일은 자동 키보드 안 띄움
 }
@@ -10349,11 +10353,33 @@ async function _comboSearch(){
   });
   rows.sort((a,b)=>b.who.length-a.who.length); // 많이 함께 나온 영상 먼저(전원>일부)
   if(myReq!==_comboReq)return;
-  _comboRenderResults(rows);
+  _comboAllRows=rows;
+  _comboApplyAndRender(); // Only 토글 반영해 렌더(원본은 캐시 → 토글 시 재요청 없이 재필터)
   // 공유 이미지(썸네일 콜라주) 미리 생성 — 공유 버튼 누를 때 iOS가 async를 막지 않게(2026-09-02)
   _comboLastThumbs=rows.slice(0,4).map(r=>r.v.thumb||('https://i.ytimg.com/vi/'+r.v.id+'/mqdefault.jpg'));
   _comboLastCount=rows.length;_comboCardDataURL=null;
   _buildComboCardDataURL().then(d=>{if(myReq===_comboReq)_comboCardDataURL=d;}).catch(()=>{});
+}
+// Only 토글 반영: 이미 받아둔 _comboAllRows에서 "선택 조합 외 사람이 안 나온" 영상만 남겨 렌더.
+// 외부인(관리자 표시)·조합 밖 출연자가 있으면 제외. 재요청 없음.
+function _comboApplyAndRender(){
+  const onlyBtn=document.getElementById('combo-only');
+  let rows=_comboAllRows;
+  if(Array.isArray(rows)){
+    if(onlyBtn)onlyBtn.style.display=''; // 결과가 있으면 토글 노출
+    if(_comboExactOnly){
+      const selKeys=new Set(_comboSel.map(m=>m.name+'('+m.group+')'));
+      rows=rows.filter(r=>{
+        const v=r.v;
+        if(v.content_flag==='외부인')return false; // 미표기 외부인 섞임 → 제외
+        const cast=[];
+        (v.members||[]).forEach(n=>cast.push(n+'('+(v.group_ko||'')+')'));
+        (v.with_members||[]).forEach(n=>cast.push(n)); // 이미 이름(그룹) 형식
+        return cast.length>0 && cast.every(k=>selKeys.has(k));
+      });
+    }
+  }else if(onlyBtn){onlyBtn.style.display='none';}
+  _comboRenderResults(rows);
 }
 function _comboRenderResults(rows){
   const el=document.getElementById('combo-results');if(!el)return;
@@ -10361,7 +10387,7 @@ function _comboRenderResults(rows){
   const empty=t=>{const p=document.createElement('div');p.className='tvf-empty';p.textContent=t;el.appendChild(p);};
   if(rows===null){empty(currentLang==='ko'?'멤버를 2명 이상 골라 조합 영상을 보세요':'Pick 2+ members to see their videos');return;}
   if(rows==='loading'){empty(currentLang==='ko'?'불러오는 중…':'Loading…');return;}
-  if(!rows.length){empty(currentLang==='ko'?'이 멤버들이 함께·커버로 엮인 영상이 없어요':'No video connecting them (together or cover)');return;}
+  if(!rows.length){empty(_comboExactOnly?(currentLang==='ko'?'이 조합만 정확히 나온 영상이 없어요':'No video with only this combo'):(currentLang==='ko'?'이 멤버들이 함께·커버로 엮인 영상이 없어요':'No video connecting them (together or cover)'));return;}
   // 카드 안 영상 그리드와 동일하게(제각각 크기+쇼츠 비율+제목/with·원곡 2줄) — buildVideoSection 재사용(2026-09-02 제보).
   // 자체그룹 멤버=members[]→"이름(그룹)", with_members는 그대로. 개별출연은 함께한 멤버 줄 생략.
   const _cw=v=>{ if(v.content_flag==='개별출연')return[]; const o=[]; (v.members||[]).forEach(n=>o.push(v.group_ko?(n+'('+v.group_ko+')'):n)); (v.with_members||[]).forEach(n=>o.push(n)); return o; };
@@ -10433,6 +10459,14 @@ document.getElementById('combo-close')?.addEventListener('click',e=>{e.stopPropa
 document.getElementById('combo-bg')?.addEventListener('click',_closeComboPanel);
 document.getElementById('combo-search')?.addEventListener('input',e=>_comboRenderSuggest(e.target.value));
 document.getElementById('combo-go')?.addEventListener('click',e=>{e.stopPropagation();_comboSearch();});
+document.getElementById('combo-only')?.addEventListener('click',e=>{
+  e.stopPropagation();
+  _comboExactOnly=!_comboExactOnly;
+  const b=e.currentTarget;
+  b.classList.toggle('active',_comboExactOnly);
+  b.setAttribute('aria-pressed',_comboExactOnly?'true':'false');
+  _comboApplyAndRender(); // 재요청 없이 캐시 재필터
+});
 document.getElementById('combo-share')?.addEventListener('click',async e=>{
   e.stopPropagation();
   const link=location.origin+location.pathname+_comboShareHash();
