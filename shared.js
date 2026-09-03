@@ -17,18 +17,23 @@ function _artistGroups(a){return a.groups||[a.group];}
 // 솔로 아티스트면 본인 이름을 키로 써서 본인 채널을 동기화/조회한다(그룹별 group_ko 컬럼 재사용).
 function _ytGroupKoFor(a){return GROUPS[a.group.ko]?a.group.ko:a.name.ko;}
 
-// ── 탈퇴 후 솔로 재귀속(soloSince, 2026-09-03) ──────────────────────────────────
+// ── 탈퇴 후 솔로 재귀속 (2026-09-03) ─────────────────────────────────────────────
 // 그룹을 떠난 뒤의 솔로 활동 영상이 **옛 그룹에 붙어 있는** 문제를 푼다(우즈·원호·에반).
-// `soloSince: "YYYY-MM-DD"`가 있으면 그 날짜 이후 영상은 옛 그룹이 아니라 **본인 이름**이 group_ko다.
-// 이 프로젝트의 기존 솔로 규약(아티스트 group.ko='솔로' + 영상 group_ko=본인 이름, 아이유·보아·승한)과
-// 같은 저장 형태라 카드/쿼리 변경이 필요 없다 — 멤버 카드는 `group_ko.eq.<멤버이름>` 절로 두 키를
-// 합집합해 가져오므로 **그룹 시절 영상과 솔로 영상이 한 카드에 같이 뜨고**, 그룹 카드는 group_ko와
-// with_groups만 보므로 옛 그룹은 깨끗해진다.
 //
-// ⚠️ `left`와 다른 필드다. `left`는 "떠났다"(원호·설리·마시호 다 해당)이고 `soloSince`는 **"떠난 뒤
-//    솔로로 활동한다"**는 사람이 확정한 사실이다. 둘을 자동으로 이으면 안 된다 — 2026-09-03 실측에서
-//    "탈퇴+단일소속+생존+이름고유" 181명 자동 판정이 처참하게 실패했다(한국어 부사 "바로"가 41건,
-//    미등록 신인 그룹의 동명이인 다수). 사망·은퇴·동명이인을 데이터로 가를 방법이 없다.
+// ⚠️ 새 필드를 만들지 않는다 — **이미 있는 구조에서 파생한다.** 처음엔 전용 날짜 필드를
+//    추가했다가 걷어냈다(같은 날, 사용자 지적 "겸임일 순 없는 거야?"). 이 프로젝트엔 이미 답이 있었다:
+//      승한: group={ko:'솔로'}, groups=[{ko:'솔로'}, {ko:'라이즈', active:false, left:'2024.10.13'}]
+//    실제로 `group_ko='승한'` 영상이 295건 돌아가고 있다. 빛새온·김민서도 같은 모양이다.
+//
+// 이 구조가 **겸임과 탈퇴를 이미 구분한다**(현재 소속 162개 vs 탈퇴 표시 28개):
+//   · 겸임  = groups[] 항목에 left/active:false 가 **없다** (마크 = NCT 127 + NCT DREAM, 둘 다 현재)
+//   · 탈퇴  = groups[] 항목에 left(+active:false)가 **있다** (승한의 라이즈)
+//   · 솔로  = group.ko가 GROUPS에 없다(관례상 '솔로') → _ytGroupKoFor가 본인 이름을 키로 돌려준다
+// 그래서 "언제부터 솔로인가"는 별도 필드가 아니라 **그 사람의 그 그룹 탈퇴일**이다. 중복이 없다.
+//
+// ⚠️ 자동 판정은 불가능하다(2026-09-03 실측). "탈퇴+단일소속+생존+이름고유" 181명을 자동으로 훑었더니
+//    75건 중 41건이 한국어 부사 "바로"(비원에이포)였고, 강한 근거만 남겨도 미등록 신인 그룹의
+//    동명이인이 대부분이었다. 그래서 **사람이 group.ko를 '솔로'로 바꿔주는 것**이 곧 확정 행위다.
 //
 // ⚠️ 매처(_m2ParseTitle)는 건드리지 않는다. primaryGroup이 항상 GROUPS 키라는 불변식을 깨면 소비처가
 //    너무 넓다. group_ko를 **쓰는 지점**(동기화 행 생성·재귀속 스윕)에서만 이 후처리를 부른다.
@@ -39,10 +44,14 @@ function _soloReattribGko(gko,memberKos,publishedAt){
   if(!gko||!publishedAt||!Array.isArray(memberKos)||memberKos.length!==1)return null; // 단독 출연만
   const nm=memberKos[0];
   const a=ARTISTS.find(x=>x.name&&x.name.ko===nm);
-  if(!a||!a.soloSince)return null;
-  if(_ytGroupKoFor(a)===nm)return null;              // 이미 본인 이름이 키인 사람(아이유 등)은 대상 아님
-  if(!_artistGroups(a).some(g=>g&&g.ko===gko))return null; // 그 사람의 소속 그룹 행일 때만
-  return String(publishedAt).slice(0,10)>=a.soloSince?nm:null;
+  if(!a)return null;
+  if(GROUPS[a.group&&a.group.ko])return null;   // 현재 소속이 실존 그룹이면 솔로 전향자가 아님
+  if(_ytGroupKoFor(a)!==nm)return null;         // 방어: 본인 이름이 키가 아니면 대상 아님
+  const ent=_artistGroups(a).find(g=>g&&g.ko===gko);
+  if(!ent||!ent.left)return null;               // 그 그룹 소속 이력이 있고 **탈퇴일이 찍혀** 있어야 함
+  const left=String(ent.left).replace(/\./g,'-');
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(left))return null; // 연도만 있는 등 정밀도 부족 → 경계를 못 그음
+  return String(publishedAt).slice(0,10)>=left?nm:null;
 }
 
 // 프로젝트 유닛(여러 그룹 소속 멤버가 모여 결성한 한시적 유닛, 자체 행성은 없음) — 영상 제목에 유닛명이

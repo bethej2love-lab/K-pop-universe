@@ -23210,8 +23210,8 @@
       "en": "EVAN"
     },
     "group": {
-      "ko": "엔하이픈",
-      "en": "ENHYPEN"
+      "ko": "솔로",
+      "en": "Solo"
     },
     "co": "빌리프랩 / HYBE",
     "planet": "main",
@@ -23237,10 +23237,20 @@
       "namu": "https://namu.wiki/w/EVAN(2001)"
     },
     "left": "2026.03.10",
-    "soloDisplay": true,
     "subName": "희승",
     "id": "a0132",
-    "soloSince": "2026-03-10"
+    "groups": [
+      {
+        "ko": "솔로",
+        "en": "Solo"
+      },
+      {
+        "ko": "엔하이픈",
+        "en": "ENHYPEN",
+        "active": false,
+        "left": "2026.03.10"
+      }
+    ]
   },
   {
     "name": {
@@ -71631,8 +71641,8 @@
       "en": "Wonho"
     },
     "group": {
-      "ko": "몬스타엑스",
-      "en": "MONSTA X"
+      "ko": "솔로",
+      "en": "Solo"
     },
     "co": "무소속",
     "active": false,
@@ -71704,7 +71714,18 @@
       }
     ],
     "id": "a0405",
-    "soloSince": "2019-10-31"
+    "groups": [
+      {
+        "ko": "솔로",
+        "en": "Solo"
+      },
+      {
+        "ko": "몬스타엑스",
+        "en": "MONSTA X",
+        "active": false,
+        "left": "2019.10.31"
+      }
+    ]
   },
   {
     "name": {
@@ -95193,8 +95214,8 @@
     },
     "subName": "조승연",
     "group": {
-      "ko": "엑스원",
-      "en": "X1"
+      "ko": "솔로",
+      "en": "Solo"
     },
     "co": "위에화엔터테인먼트",
     "active": false,
@@ -95799,9 +95820,19 @@
         ]
       }
     ],
-    "soloDisplay": true,
     "id": "a0609",
-    "soloSince": "2020-01-06"
+    "groups": [
+      {
+        "ko": "솔로",
+        "en": "Solo"
+      },
+      {
+        "ko": "엑스원",
+        "en": "X1",
+        "active": false,
+        "left": "2020.01.06"
+      }
+    ]
   },
   {
     "name": {

@@ -128,26 +128,33 @@ const _KNOWN_EXCLUDED_PEOPLE = new Set(['이종현', '태일', '김가람', '승
   missing.forEach((count, name) => add('error', 'connections.json 유령 참조', `"${name}" — ARTISTS에 없는데 연결 ${count}건에서 참조됨 (이름 오타·개명 잔재·미등록 인물)`));
 }
 
-// ── 6-b. soloSince 무결성 (2026-09-03 신설) ──────────────────────────────────
-// soloSince는 "이 날짜 이후 영상은 옛 그룹이 아니라 본인 이름으로 귀속"이라는 **쓰기에 직접 쓰이는**
-// 값이라, 형식이 틀리면 조용히 아무 일도 안 하거나 엉뚱한 경계가 잡힌다. error로 잡는다.
-// (동명이인 위험 같은 "주의"와 달리 여기엔 고칠 게 명확히 있다 — 승격 기준은 항목 6 주석 참고.)
+// ── 6-b. 솔로 전향자(group.ko가 실존 그룹이 아님) 구조 검사 (2026-09-03 신설) ──
+// 이 사람들의 영상은 group_ko가 **본인 이름**으로 저장된다(_ytGroupKoFor). 옛 그룹 시절 영상과의 경계는
+// groups[] 항목의 `left`로만 정해지므로, 그 날짜가 없거나 형식이 틀리면 **재귀속이 조용히 안 걸린다.**
+// 고칠 게 명확하므로 error(승격 기준은 항목 6 주석 참고). 새 필드를 만들지 않고 기존 구조를 검사한다.
 {
   ARTISTS.forEach(a => {
-    const s = a.soloSince;
-    if (s === undefined) return;
+    const gko = a.group && a.group.ko;
+    if (!gko || GROUPS[gko]) return;              // 실존 그룹 소속이면 대상 아님
     const nm = (a.name && a.name.ko) || '(이름없음)';
-    if (typeof s !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(s))
-      add('error', 'soloSince 형식 오류', `${nm} — "${s}" (YYYY-MM-DD여야 함)`);
-    if (a.died) add('error', 'soloSince 오지정', `${nm} — 사망자에게 soloSince가 붙어 있음`);
-    const gs = a.groups || [a.group];
-    if (gs.filter(g => g && g.ko).length !== 1)
-      add('error', 'soloSince 오지정', `${nm} — 소속 그룹이 ${gs.length}개라 옛 그룹을 특정할 수 없음`);
-    if (a.left) {
-      const L = String(a.left).replace(/\./g, '-');
-      if (/^\d{4}-\d{2}-\d{2}$/.test(L) && s < L)
-        add('warn', 'soloSince 검토', `${nm} — soloSince(${s})가 탈퇴일(${L})보다 이르다`);
-    }
+    if (a.died) add('error', '솔로 구조 오류', `${nm} — 사망자가 솔로 전향자로 표시돼 있음`);
+    // ⚠️ `left`가 없는 소속은 **오류가 아니라 겸임**이다 — 솔로로 활동하면서 그룹에도 현재 소속인
+    //    경우(빛새온·김민서 = 솔로 + B.D.U). 그런 영상은 그룹 콘텐츠가 맞으므로 재귀속하지 않는 게
+    //    정답이고 `_soloReattribGko`가 이미 그렇게 동작한다. 처음엔 이걸 error로 잡았다가 되물렸다
+    //    (2026-09-03) — "겸임도 있고 아예 탈퇴도 있지"라는 지적이 정확했다.
+    //    검사할 건 "탈퇴일이 있는데 형식이 틀린 것"뿐이다. 형식이 틀리면 경계를 못 그어 조용히 누락된다.
+    (a.groups || []).filter(g => g && g.ko && GROUPS[g.ko] && g.left).forEach(g => {
+      if (!/^\d{4}[.-]\d{2}[.-]\d{2}$/.test(String(g.left)))
+        add('error', '솔로 구조 오류', `${nm} — 옛 소속 "${g.ko}"의 탈퇴일 "${g.left}" 형식 오류(YYYY.MM.DD여야 재귀속 경계가 잡힘)`);
+    });
+    // groups[]가 아예 없으면 옛 소속 이력이 사라진 것 — 아이유처럼 원래 그룹이 없던 솔로는 정상이라 warn.
+    if (!a.groups) add('warn', '솔로 이력 확인', `${nm} — groups[]가 없어 옛 소속 이력이 없음(원래 솔로면 정상)`);
+  });
+  // ⚠️ soloSince는 2026-09-03에 도입했다가 같은 날 걷어냈다(기존 groups[]+left로 파생 가능해 중복이었음).
+  // 되살아나면 두 곳이 서로 다른 명단을 보게 되므로 여기서 막는다.
+  ARTISTS.forEach(a => {
+    if (a.soloSince !== undefined)
+      add('error', 'soloSince 잔존', `${(a.name && a.name.ko) || '?'} — 폐기된 필드. group.ko='솔로' + groups[]의 left로 표현할 것`);
   });
 }
 

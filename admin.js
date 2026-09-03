@@ -1709,24 +1709,33 @@ async function _ytSweepExMemberSolo(){
     // 탈퇴자 솔로 영상은 애초에 희소해서 이 노이즈가 신호를 압도한다 — 자동화로 풀 문제가 아니다.
     // 그래서 **관리자가 이름을 직접 지정**한다. 사람이 신원을 확정한 뒤에도 아래 강한 근거 게이트는
     // 그대로 걸린다(같은 이름의 다른 사람이 섞이는 걸 한 겹 더 막기 위해).
-    // 명단은 **데이터**다 — artists.json의 `soloSince`가 곧 대상 목록이다(2026-09-03 ⓑ안 채택).
+    // 명단은 **데이터**다 — artists.json의 구조 자체가 곧 대상 목록이다(2026-09-03).
     // 처음엔 여기서 prompt로 이름을 받게 했는데, 같은 명단을 동기화(_extBuildRows)도 봐야 해서
-    // 코드 밖 한 곳(데이터)에 두는 쪽으로 옮겼다. 사람을 추가하려면 artists.json에 soloSince만 넣으면
+    // 코드 밖 한 곳(데이터)에 두는 쪽으로 옮겼다. 사람을 추가하려면 artists.json 구조만 바꾸면
     // 이 버튼과 신규 동기화가 **동시에** 그 사람을 처리한다.
-    const cands=new Map(); // 이름 → {gko, since}
+    // 명단은 **기존 구조에서 파생한다** — group.ko가 실존 그룹이 아니고(=솔로 전향) groups[]의 옛 소속에
+    // 탈퇴일이 찍힌 사람. 새 필드를 두지 않으므로 동기화(_soloReattribGko)와 이 버튼이 **같은 데이터**를
+    // 본다. 사람을 추가하려면 artists.json에서 group.ko를 '솔로'로 바꾸고 옛 소속을 groups[]에 left와
+    // 함께 남기면 된다(승한·빛새온·김민서가 이미 그 모양).
+    const cands=new Map(); // 이름 → {gko, leftISO}
     const rejected=[];
     ARTISTS.forEach(a=>{
-      if(!a.soloSince)return;
+      const cur=a.group&&a.group.ko;
+      if(!cur||GROUPS[cur])return;                 // 현재 소속이 실존 그룹이면 대상 아님
       const n=a.name&&a.name.ko;
-      if(a.died){rejected.push(`${n} — 사망자라 대상 아님(soloSince를 지워주세요)`);return;}
-      const gs=_groupsOf(a);
-      if(gs.length!==1){rejected.push(`${n} — 소속 그룹이 ${gs.length}개(${gs.join('·')})라 옛 그룹을 특정 못 함`);return;}
-      if(!/^\d{4}-\d{2}-\d{2}$/.test(String(a.soloSince))){rejected.push(`${n} — soloSince "${a.soloSince}" 형식 오류(YYYY-MM-DD)`);return;}
-      if(_riskyName(n))rejected.push(`${n} — ⚠️ 이름이 위험(동명이인/영단어/1글자)이지만 명단에 있으므로 진행 — 표본을 꼭 확인하세요`);
-      cands.set(n,{gko:gs[0],leftISO:a.soloSince});
+      if(a.died){rejected.push(`${n} — 사망자라 대상 아님`);return;}
+      const past=(a.groups||[]).filter(g=>g&&g.ko&&GROUPS[g.ko]);
+      if(!past.length)return;                      // 옛 그룹 이력이 없는 원래 솔로(아이유 등)는 옮길 게 없음
+      past.forEach(g=>{
+        if(!g.left){rejected.push(`${n} — 옛 소속 "${g.ko}"에 탈퇴일이 없어 경계를 못 그음`);return;}
+        const L=String(g.left).replace(/\./g,'-');
+        if(!/^\d{4}-\d{2}-\d{2}$/.test(L)){rejected.push(`${n} — "${g.ko}" 탈퇴일 "${g.left}" 형식 오류`);return;}
+        if(_riskyName(n))rejected.push(`${n} — ⚠️ 이름이 위험(동명이인/영단어/1글자)이지만 진행 — 표본을 꼭 확인하세요`);
+        cands.set(n,{gko:g.ko,leftISO:L});         // 옛 소속이 여럿이면 마지막 것 — 표본으로 확인할 것
+      });
     });
     if(rejected.length)console.log('[탈퇴 솔로 귀속] 제외/주의:\n  '+rejected.join('\n  '));
-    if(!cands.size){_ytSetProg('soloSince가 지정된 인물이 없어요 — artists.json에 soloSince를 먼저 넣어주세요');return;}
+    if(!cands.size){_ytSetProg("대상 인물이 없어요 — artists.json에서 group.ko를 '솔로'로 바꾸고 옛 소속을 groups[]에 left와 함께 남겨주세요");return;}
     // ⚠️ 보류/숨김으로 좁히면 안 된다(2026-09-03 실측). 우즈·에반·원호로 시뮬레이션했더니 **전부 0건**이었다 —
     //    이 사람들의 솔로 영상은 보류가 아니라 **정상 노출 중인데 옛 그룹에 붙어 있는** 상태다.
     //    (탈퇴 게이트에 걸려 보류로 가는 건 "새로 들어오는" 영상이고, 기존 재고는 옛 매처가 이미 옛 그룹으로
@@ -6457,7 +6466,7 @@ function _extBuildRows(vids,strict,tier,owner,defaultCat,handle){
       category,
       is_short:!!v.is_short, // 형식 플래그는 채널 tier 폴백(위 _fallback)의 영향을 안 받는다 — 장르와 직교(2026-08-27)
       source_handle:handle||null,source_tier:tier||null, // 출처 채널(오너/서바이벌 판단용, 2026-08-25)
-      // 탈퇴 후 솔로 재귀속(soloSince) — 옛 그룹으로 확정된 행을 본인 이름으로 돌린다(2026-09-03).
+      // 탈퇴 후 솔로 재귀속 — 옛 그룹으로 확정된 행을 본인 이름으로 돌린다(2026-09-03).
       // owner 채널(본인/그룹 소유)은 group_ko가 채널 주인으로 고정이라 대상이 아니다.
       // 대상이 아니면 null을 돌려주므로 기존 값 그대로.
       group_ko:owner?ownerGko:((!ambiguous&&_soloReattribGko(match.primaryGroup,members,v.published_at))||match.primaryGroup),
