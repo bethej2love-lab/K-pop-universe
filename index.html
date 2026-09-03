@@ -3189,8 +3189,10 @@ function _revealUniverse(){
   if(_reduceMotion){ if(_ring)_ring.remove(); _revealSettle(); _endBooting(); _revealChrome(false); return; }
 
   _endBooting(); // 크롬 페이드인을 클립과 동시에 시작
-  // 탭바·줌 컨트롤은 클립이 40%쯤 퍼진 시점에 페이드인 시작 → 확장이 끝날 즈음 다 뜬다("열리면서 같이").
-  setTimeout(function(){_revealChrome(true);}, Math.round(REVEAL.clip*0.4));
+  // 탭바·줌 컨트롤은 클립이 80%쯤 퍼진 시점(≈560ms)에 페이드인 시작 → 아이리스가 화면 아래까지
+  // 거의 다 열린 뒤에 크롬이 뜬다. 예전 40%(280ms)는 원이 하단에 닿기 전이라 "탭바가 먼저 보이는"
+  // 느낌을 줬다(2026-09-03 제보). "화면이 열리고 나서 UI가 자리잡는" 아이맥스 감각으로 이동.
+  setTimeout(function(){_revealChrome(true);}, Math.round(REVEAL.clip*0.8));
   if(_rc){
     _rc.style.transition='none';
     _rc.style.clipPath='circle(0% at 50% 50%)';
