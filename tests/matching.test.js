@@ -718,6 +718,29 @@ test('feat 무관 — feat이 없는 콜라보 제목은 기존 순서 그대로
 test('본인 영문표기 괄호는 타 소속 신호가 아님 — "마시로 (MASHIRO)"로 역추론이 죽지 않는다',
   '마시로 (MASHIRO) - HOTLINE (feat. BOBBY) | 뮤직뱅크', undefined, P('메이딘'), '2026-08-21');
 
+// ── 흔한단어 멤버명 평문 오탐 차단(2026-09-03, 실데이터 감사) ─────────────
+// 이런(에버글로우 E:U 김이런)·온다(에버글로우)·바로(비원에이포 BARO)는 흔한 어휘라 그룹 신호 없는
+// 평문에서 대량 오매칭됐다("바로 이런 것"·"비가 온다"·"바로 시작"). _ATM_HASHTAG_ONLY_NAMES로 게이트 —
+// 그룹이 같이 있으면(종현과 동일) 그대로 인정되므로 진짜 콘텐츠는 안 잃는다.
+test('흔한단어 차단 — "바로 이런 것"은 어떤 그룹으로도 안 감',
+  '성공한 사람의 인테리어란 바로 이런 것! #전참시', undefined,
+  r => !r || (!r.primaryGroup && !(r.withGroups || []).length));
+test('흔한단어 차단 — "비가 온다"는 에버글로우로 안 감',
+  '오늘도 비가 온다', undefined,
+  r => !r || (r.primaryGroup !== '에버글로우' && !(r.withGroups || []).includes('에버글로우')));
+test('흔한단어 차단 — "바로 시작"은 비원에이포로 안 감',
+  '바로 시작합니다 브이로그', undefined,
+  r => !r || (r.primaryGroup !== '비원에이포' && !(r.withGroups || []).includes('비원에이포')));
+test('흔한단어 유지 — 그룹이 같이 있으면 에버글로우 이런·온다 인정',
+  '에버글로우 이런 온다 직캠 4K', undefined,
+  r => !!r && r.primaryGroup === '에버글로우' && ['이런', '온다'].every(m => (r.membersByGroup['에버글로우'] || []).includes(m)));
+test('흔한단어 유지 — 비원에이포 바로 직캠은 인정',
+  '[MPD직캠] 비원에이포 바로 직캠', undefined,
+  r => !!r && (r.membersByGroup['비원에이포'] || []).includes('바로'));
+test('흔한단어 유지 — #바로 해시태그는 비원에이포로 인정',
+  '#바로 #비원에이포 무대', undefined,
+  r => !!r && (r.primaryGroup === '비원에이포' || (r.withGroups || []).includes('비원에이포')));
+
 // ── 실행 ──────────────────────────────────────────────
 let pass = 0, fail = 0;
 cases.forEach(({ name, title, selfGko, check, publishedAt }) => {
