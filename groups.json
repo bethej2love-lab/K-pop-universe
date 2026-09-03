@@ -352,7 +352,7 @@
       },
       {
         "title": "MY WORLD",
-        "type": "미니",
+        "type": "미니 3집",
         "isMain": true,
         "cover": "https://cdnimg.melon.co.kr/cm2/album/images/112/36/264/11236264_20230508184331_500.jpg",
         "releaseDate": "2023.05.08",
@@ -393,7 +393,7 @@
       },
       {
         "title": "Girls",
-        "type": "미니",
+        "type": "미니 2집",
         "isMain": true,
         "cover": "https://cdnimg.melon.co.kr/cm2/album/images/109/72/706/10972706_20220708111110_500.jpg",
         "releaseDate": "2022.07.08",
@@ -449,7 +449,7 @@
       },
       {
         "title": "Savage",
-        "type": "미니",
+        "type": "미니 1집",
         "isMain": true,
         "cover": "https://cdnimg.melon.co.kr/cm2/album/images/107/31/792/10731792_20211005145407_500.jpg",
         "releaseDate": "2021.10.05",
@@ -3955,6 +3955,72 @@
     },
     "discography": [
       {
+        "title": "KARMA",
+        "type": "정규 4집",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/120/66/972/12066972_20250821155635_500.jpg",
+        "releaseDate": "2025.08.22",
+        "trackCount": 11,
+        "titleTrack": "CEREMONY",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "삐처리",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "CEREMONY",
+            "isTitle": true
+          },
+          {
+            "no": 3,
+            "title": "CREED",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "엉망 (MESS)",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "In My Head",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "반전 (Half Time)",
+            "isTitle": false
+          },
+          {
+            "no": 7,
+            "title": "Phoenix",
+            "isTitle": false
+          },
+          {
+            "no": 8,
+            "title": "Ghost",
+            "isTitle": false
+          },
+          {
+            "no": 9,
+            "title": "0801",
+            "isTitle": false
+          },
+          {
+            "no": 10,
+            "title": "CEREMONY (Festival Version)",
+            "isTitle": false
+          },
+          {
+            "no": 11,
+            "title": "CEREMONY (English Version)",
+            "isTitle": false
+          }
+        ]
+      },
+      {
         "title": "ATE",
         "type": "미니",
         "isMain": true,
@@ -4078,7 +4144,7 @@
       },
       {
         "title": "MAXIDENT",
-        "type": "미니",
+        "type": "미니 7집",
         "isMain": true,
         "cover": "https://cdnimg.melon.co.kr/cm2/album/images/110/72/730/11072730_20221006174814_500.jpg",
         "releaseDate": "2022.10.07",
@@ -4129,7 +4195,7 @@
       },
       {
         "title": "ODDINARY",
-        "type": "미니",
+        "type": "미니 6집",
         "isMain": true,
         "cover": "https://cdnimg.melon.co.kr/cm2/album/images/108/93/657/10893657_20220317174829_500.jpg",
         "releaseDate": "2022.03.18",
@@ -4175,7 +4241,7 @@
       },
       {
         "title": "NOEASY",
-        "type": "정규",
+        "type": "정규 2집",
         "isMain": true,
         "cover": "https://cdnimg.melon.co.kr/cm2/album/images/106/88/668/10688668_20210823152416_500.jpg",
         "releaseDate": "2021.08.23",
@@ -4352,7 +4418,7 @@
       },
       {
         "title": "GO生",
-        "type": "정규",
+        "type": "정규 1집",
         "isMain": true,
         "cover": "https://cdnimg.melon.co.kr/cm2/album/images/104/45/940/10445940_20200617124653_500.jpg",
         "releaseDate": "2020.06.17",
@@ -4433,7 +4499,7 @@
       },
       {
         "title": "Clé : LEVANTER",
-        "type": "미니",
+        "type": "미니 5집",
         "isMain": true,
         "cover": "https://cdnimg.melon.co.kr/cm2/album/images/103/62/350/10362350_20191209163724_500.jpg",
         "releaseDate": "2019.12.09",
@@ -10793,7 +10859,7 @@
       },
       {
         "title": "READY TO BE",
-        "type": "미니",
+        "type": "미니 12집",
         "isMain": true,
         "cover": "https://cdnimg.melon.co.kr/cm2/album/images/111/53/086/11153086_20230310101001_500.jpg",
         "releaseDate": "2023.03.10",
@@ -10839,7 +10905,7 @@
       },
       {
         "title": "BETWEEN 1&2",
-        "type": "미니",
+        "type": "미니 11집",
         "isMain": true,
         "cover": "https://cdnimg.melon.co.kr/cm2/album/images/110/38/172/11038172_20220825154457_500.jpg",
         "releaseDate": "2022.08.26",
@@ -11027,7 +11093,7 @@
       },
       {
         "title": "Eyes Wide Open",
-        "type": "정규",
+        "type": "정규 2집",
         "isMain": true,
         "cover": "https://cdnimg.melon.co.kr/cm2/album/images/105/08/930/10508930_20201026160407_500.jpg",
         "releaseDate": "2020.10.26",
@@ -11103,7 +11169,7 @@
       },
       {
         "title": "MORE & MORE",
-        "type": "미니",
+        "type": "미니 9집",
         "isMain": true,
         "cover": "https://cdnimg.melon.co.kr/cm2/album/images/104/37/786/10437786_20200601141555_500.jpg",
         "releaseDate": "2020.06.01",
@@ -11149,7 +11215,7 @@
       },
       {
         "title": "Feel Special",
-        "type": "미니",
+        "type": "미니 8집",
         "isMain": true,
         "cover": "https://cdnimg.melon.co.kr/cm2/album/images/103/31/167/10331167_500.jpg",
         "releaseDate": "2019.09.23",
@@ -11236,7 +11302,7 @@
       },
       {
         "title": "YES or YES",
-        "type": "미니",
+        "type": "미니 6집",
         "isMain": true,
         "cover": "https://cdnimg.melon.co.kr/cm/album/images/102/19/298/10219298_500.jpg",
         "releaseDate": "2018.11.05",
@@ -12238,7 +12304,7 @@
       },
       {
         "title": "BIGBANG",
-        "type": "싱글",
+        "type": "정규 1집",
         "isMain": true,
         "cover": "https://cdnimg.melon.co.kr/cm/album/images/003/28/008/328008_500.jpg",
         "releaseDate": "2006.09.29",
@@ -20605,7 +20671,7 @@
     "discography": [
       {
         "title": "a;effect",
-        "type": "미니",
+        "type": "미니 10집",
         "isMain": true,
         "cover": "https://cdnimg.melon.co.kr/cm2/album/images/119/41/412/11941412_20250724202430_500.jpg",
         "releaseDate": "2025.07.28",
@@ -20641,7 +20707,7 @@
       },
       {
         "title": "Unexpected",
-        "type": "정규",
+        "type": "정규 3집",
         "isMain": true,
         "cover": "https://cdnimg.melon.co.kr/cm2/album/images/117/39/409/11739409_20250317105207_500.jpg",
         "releaseDate": "2025.03.17",
@@ -20902,7 +20968,7 @@
       },
       {
         "title": "BE AWAKE",
-        "type": "미니",
+        "type": "미니 8집",
         "isMain": true,
         "cover": "https://cdnimg.melon.co.kr/cm2/album/images/111/80/917/11180917_20230219220315_500.jpg",
         "releaseDate": "2023.02.20",
@@ -20942,6 +21008,47 @@
         ]
       },
       {
+        "title": "THE BOYZ 7TH MINI ALBUM [BE AWARE]",
+        "type": "미니 7집",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/110/24/679/11024679_20220816144744_500.jpg",
+        "releaseDate": "2022.08.16",
+        "trackCount": 6,
+        "titleTrack": "WHISPER",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "WHISPER",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Bump & Love",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "C.O.D.E",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "무중력 (Levitating)",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Survive The Night",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "Timeless",
+            "isTitle": false
+          }
+        ]
+      },
+      {
         "title": "MAVERICK",
         "type": "싱글",
         "isMain": true,
@@ -20969,7 +21076,7 @@
       },
       {
         "title": "THRILL-ING",
-        "type": "미니",
+        "type": "미니 6집",
         "isMain": true,
         "cover": "https://cdnimg.melon.co.kr/cm2/album/images/106/74/988/10674988_20210809143318_500.jpg",
         "releaseDate": "2021.08.09",
@@ -21061,7 +21168,7 @@
       },
       {
         "title": "CHASE",
-        "type": "미니",
+        "type": "미니 5집",
         "isMain": true,
         "cover": "https://cdnimg.melon.co.kr/cm2/album/images/104/93/556/10493556_20200921150848_500.jpg",
         "releaseDate": "2020.09.21",
@@ -21158,7 +21265,7 @@
       },
       {
         "title": "DREAMLIKE",
-        "type": "미니",
+        "type": "미니 4집",
         "isMain": true,
         "cover": "https://cdnimg.melon.co.kr/cm2/album/images/103/19/189/10319189_500.jpg",
         "releaseDate": "2019.08.19",
@@ -29737,8 +29844,110 @@
     },
     "discography": [
       {
+        "title": "REASON",
+        "type": "미니 12집",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/111/41/889/11141889_20230106190700_500.jpg",
+        "releaseDate": "2023.01.09",
+        "trackCount": 6,
+        "titleTrack": "Beautiful Liar",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Beautiful Liar",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Daydream",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "춤사위 (Crescendo)",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "LONE RANGER",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Deny",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "괜찮아",
+            "isTitle": false
+          }
+        ]
+      },
+      {
+        "title": "Fatal Love",
+        "type": "정규 3집",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/105/12/133/10512133_20201102104946_500.jpg",
+        "releaseDate": "2020.11.02",
+        "trackCount": 10,
+        "titleTrack": "Love Killa",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Love Killa",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "갈증",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "Thriller",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Guess Who",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Nobody Else",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "BEASTMODE",
+            "isTitle": false
+          },
+          {
+            "no": 7,
+            "title": "대동단결",
+            "isTitle": false
+          },
+          {
+            "no": 8,
+            "title": "Night View",
+            "isTitle": false
+          },
+          {
+            "no": 9,
+            "title": "Last Carnival",
+            "isTitle": false
+          },
+          {
+            "no": 10,
+            "title": "Sorry I’m Not Sorry",
+            "isTitle": false
+          }
+        ]
+      },
+      {
         "title": "FANTASIA X",
-        "type": "미니",
+        "type": "미니 8집",
         "isMain": true,
         "cover": "https://cdnimg.melon.co.kr/cm2/album/images/104/35/392/10435392_20200526154259_500.jpg",
         "releaseDate": "2020.05.26",
@@ -29778,6 +29987,57 @@
           {
             "no": 7,
             "title": "Stand Up",
+            "isTitle": false
+          }
+        ]
+      },
+      {
+        "title": "'FOLLOW’ : FIND YOU",
+        "type": "미니 7집",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/103/42/315/10342315_500.jpg",
+        "releaseDate": "2019.10.28",
+        "trackCount": 8,
+        "titleTrack": "Follow",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Find you",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "Follow",
+            "isTitle": true
+          },
+          {
+            "no": 3,
+            "title": "Monsta Truck",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "U R",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Disaster",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "Burn it up",
+            "isTitle": false
+          },
+          {
+            "no": 7,
+            "title": "Mirror",
+            "isTitle": false
+          },
+          {
+            "no": 8,
+            "title": "See You Again",
             "isTitle": false
           }
         ]
@@ -29845,7 +30105,7 @@
       },
       {
         "title": "THE CONNECT : DEJAVU",
-        "type": "미니",
+        "type": "미니 6집",
         "isMain": true,
         "cover": "https://cdnimg.melon.co.kr/cm/album/images/101/51/409/10151409_500.jpg",
         "releaseDate": "2018.03.26",
@@ -29890,8 +30150,54 @@
         ]
       },
       {
+        "title": "THE CODE",
+        "type": "미니 5집",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/101/09/536/10109536_500.jpg",
+        "releaseDate": "2017.11.07",
+        "trackCount": 7,
+        "titleTrack": "DRAMARAMA",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "DRAMARAMA",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Now or Never",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "In Time",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "From Zero",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "X",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "열대야",
+            "isTitle": false
+          },
+          {
+            "no": 7,
+            "title": "Deja Vu",
+            "isTitle": false
+          }
+        ]
+      },
+      {
         "title": "THE CLAN pt.2.5 'BEAUTIFUL'",
-        "type": "정규",
+        "type": "정규 1집",
         "isMain": true,
         "cover": "https://cdnimg.melon.co.kr/cm/album/images/100/47/752/10047752_500.jpg",
         "releaseDate": "2017.03.21",
@@ -29952,7 +30258,7 @@
       },
       {
         "title": "THE CLAN pt.2 'GUILTY'",
-        "type": "미니",
+        "type": "미니 4집",
         "isMain": true,
         "cover": "https://cdnimg.melon.co.kr/cm/album/images/100/02/902/10002902_500.jpg",
         "releaseDate": "2016.10.04",
@@ -79678,6 +79984,47 @@
     },
     "discography": [
       {
+        "title": "SAUCIN’",
+        "type": "미니 4집",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/144/69/715/14469715_20260821152501_500.jpg",
+        "releaseDate": "2026.08.24",
+        "trackCount": 6,
+        "titleTrack": "SAUCIN’",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "LOCO",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "SAUCIN’",
+            "isTitle": true
+          },
+          {
+            "no": 3,
+            "title": "APPETITE",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "UPGRADE",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "20 NOW",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "ALIENS",
+            "isTitle": false
+          }
+        ]
+      },
+      {
         "title": "Beat-Boxer",
         "type": "미니 3집",
         "isMain": true,
@@ -81770,8 +82117,54 @@
         ]
       },
       {
+        "title": "Growing Pain pt.1 : FREE",
+        "type": "미니 4집",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/120/44/723/12044723_20250813151530_500.jpg",
+        "releaseDate": "2025.08.14",
+        "trackCount": 7,
+        "titleTrack": "FREESTYLE",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "YSSR",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "FREESTYLE",
+            "isTitle": true
+          },
+          {
+            "no": 3,
+            "title": "ADHD",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "School’s Out (정선혜, 도은)",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "MON3Y 8ANK",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "soju",
+            "isTitle": false
+          },
+          {
+            "no": 7,
+            "title": "Same Shit 中 Another One",
+            "isTitle": false
+          }
+        ]
+      },
+      {
         "title": "ATE THAT",
-        "type": "미니",
+        "type": "미니 3집",
         "isMain": true,
         "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/5c/26/15/5c261598-86fa-98df-807d-7290c477bd49/cover_KM0020256_1.jpg/600x600bb.jpg",
         "releaseDate": "2024.08.21",
@@ -88641,6 +89034,37 @@
       "namu": "https://namu.wiki/w/TUNEXX"
     },
     "discography": [
+      {
+        "title": "BLUE MODE",
+        "type": "미니 2집",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/145/11/290/14511290_20260901151914_500.jpg",
+        "releaseDate": "2026.09.02",
+        "trackCount": 4,
+        "titleTrack": "BLUE MODE",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "SYNC UP",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "BLUE MODE",
+            "isTitle": true
+          },
+          {
+            "no": 3,
+            "title": "ANSWER",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "OVER X",
+            "isTitle": false
+          }
+        ]
+      },
       {
         "title": "SET BY US ONLY",
         "type": "미니 1집",
