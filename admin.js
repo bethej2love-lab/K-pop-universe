@@ -5794,9 +5794,12 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
   // 위너(WINNER)도 같은 병 — 영어 단어 winner와 철자가 같다. 실측: `with_groups`에 위너가 든 59건 중
   // **55건(93%)이 제목에 한글 '위너'가 없었고**, 전부 `the Winner Is?`·`Remember the winner of that
   // night?`(시상식 클립)였다. 자체 채널 영상(group_ko=위너 1,085건)은 selfGko 면제라 영향 없다.
+  // 위너의 한글 표기에도 단어 경계를 건다(2026-09-03) — 경계 없이 /위너/면 "Wanna One(위너원)"이
+  // 통과해 워너원 영상에 위너가 남는다. 아래 6063 게이트가 backstop이라 실사고로는 안 갔지만, 두 게이트가
+  // 서로 다른 기준을 쓰면 한쪽만 고칠 때 또 어긋난다 — 같은 기준으로 맞춰둔다.
   const _GROUP_WEAK_EN_AS_GUEST={
     '방탄소년단':/방탄소년단|#\s*BTS/i,
-    '위너':/위너|#\s*WINNER/i,
+    '위너':/(?<![가-힣])위너(?![가-힣])|#\s*WINNER/i,
   };
   if(matchedGroupKos.length>1){
     const kept=matchedGroupKos.filter(ko=>{
@@ -6060,9 +6063,19 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
   //   ③ 해시태그(#위너/#WINNER·#아이콘/#iKON)  ④ 고유 표기(iKON 대소문자 그대로 / 올대문자 WINNER — 로드워드
   //   "Winner/winner/icon"과 구분). 멤버가 잡히면 살리므로 정상 매칭은 유지되고 근거 없는 리터럴만 걸린다.
   //   (역추론 경로 5964는 멤버→그룹이라 이 로드워드 케이스가 안 옴 — 여긴 그룹명 리터럴 경로.)
+  // ⚠️ 아이콘과 위너를 **일부러 다르게** 판정한다(2026-09-03 정정). 근거는 아래 5797의 실측이다 —
+  //   "with_groups에 위너가 든 59건 중 55건(93%)이 제목에 **한글 '위너'가 없었고** 전부 시상식 클립".
+  // 즉 오탐의 정체는 영문 winner였고 **한글 '위너'는 신뢰할 만한 신호**였는데, 이 게이트가 같은 날
+  // 나중에 추가되면서 한글까지 같이 막아 5797의 근거를 덮어썼다(과교정). 그 결과 "아이브 X 위너
+  // 스페셜 무대" 같은 정상 콜라보가 통째로 버려졌다(desc-evidence 테스트가 이걸 잡고 있었는데 CI가
+  // 빨간불인 채 방치돼 있었음).
+  //   · 위너: 한글 '위너'를 인정한다. 단 **한글 단어 경계 필수** — 그냥 /위너/로 풀면 "Wanna One(위너원)"의
+  //     위너원 ⊂ 위너에 걸려 워너원 영상이 위너로 오태깅된다(실측 5건 확인). B.I ⊂ B.I.G와 같은 병.
+  //   · 아이콘: 한글 '아이콘'은 그 자체가 흔한 일반명사다("올해의 아이콘", "패션 아이콘"). 위너와 달리
+  //     한글 표기가 신호가 못 되므로 해시태그/고유표기(iKON)만 인정하는 기존 기준을 그대로 둔다.
   const _COMMON_NOUN_GROUP_OK={
     '아이콘':t=>/#\s*아이콘/.test(t)||/#\s*iKON/i.test(t)||/iKON/.test(t),
-    '위너':t=>/#\s*위너/.test(t)||/#\s*WINNER/i.test(t)||/\bWINNER\b/.test(t),
+    '위너':t=>/(?<![가-힣])위너(?![가-힣])/.test(t)||/#\s*WINNER/i.test(t)||/\bWINNER\b/.test(t),
   };
   if(matchedGroupKos.length){
     const kept=matchedGroupKos.filter(gko=>{

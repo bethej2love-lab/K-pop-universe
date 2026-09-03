@@ -544,6 +544,19 @@ test('직캠 — 그룹명에 든 X가 콜라보 기호로 안 읽힘(오메가�
 test('직캠 미러괄호 — 괄호 안 한글 곡명이 멤버로 안 읽힘(원호, 드림노트 유아이 오탐)',
   '[원픽캠 4K] WONHO - Eye On You (원호 - 아이 온 유) l Show Champion l EP.425', undefined,
   r => !!r && r.primaryGroup === '몬스타엑스' && !r.withGroups.includes('드림노트') && !(r.membersByGroup['드림노트']||[]).length);
+// ── 일반명사형 그룹명 게이트: 위너의 한글 경계(2026-09-03) ──────────────────
+// 게이트를 "한글 '위너'면 인정"으로 되돌릴 때 경계를 안 걸면 **위너 ⊂ 위너원**에 걸려 워너원(Wanna One)
+// 영상이 위너로 오태깅된다(실측 5건). B.I ⊂ B.I.G, 아이들 ⊂ 제국의아이들과 같은 병.
+// 짝 케이스(영문 winner는 배제)는 desc-evidence.test.js가 맡는다.
+// ⚠️ 성격 구분: 아래 둘 중 **"단독 토큰이면 인정"만 이번 수정에 의존**한다(되돌리면 빨간불).
+// "위너원" 케이스는 완화 전엔 위너가 통째로 배제됐던 터라 양쪽 다 초록이다 — 지금 수정의 가드가 아니라
+// **앞으로 게이트를 더 풀 때를 막는 선행 가드**다. 초록이라고 "덮였다"고 읽지 말 것(오늘의 교훈).
+test('위너 경계 — "Wanna One(위너원)"의 위너원이 그룹 위너로 안 읽힘',
+  '[8회/세로직캠/4K] 보컬 유닛 | #진현주 #JIN HYEONJU ♬Beautiful - Wanna One(위너원) #유닛 스테이션', undefined,
+  r => !!r && ![r.primaryGroup, ...(r.withGroups||[])].includes('위너'));
+test('위너 경계 — 한글 "위너"가 단독 토큰이면 인정(아이브 콜라보)',
+  '아이브 X 위너 스페셜 무대 #아이브', undefined,
+  r => !!r && [r.primaryGroup, ...(r.withGroups||[])].includes('위너'));
 test('직캠 — 곡명 \'Key of Secret\'의 "키"가 멤버로 안 붙음(샤이니 단체)',
   "[안방1열 풀캠4K] 샤이니 'Key of Secret' 풀캠 (SHINee Full Cam)", undefined,
   r => !!r && r.primaryGroup === '샤이니' && (r.membersByGroup['샤이니']||[]).length === 0, '2015-05-24');
