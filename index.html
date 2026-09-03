@@ -20231,10 +20231,17 @@ function _wireTotop(scrollEl){
   if(!scrollEl)return;
   scrollEl.addEventListener('scroll',()=>{
     if(scrollEl.scrollTop>TOTOP_SHOW_AT){
+      // 나타나는 순간 맨 위로 올린다(2026-09-03). 이 버튼은 정적 z-index:66인데, 자기가 붙는 패널들이
+      // _bringToFront로 131+에 올라가면 그대로 뒤에 깔린다 — 실제로 **데스크톱 탐험 패널**에서 그랬다
+      // (데스크톱만 _bringToFront를 부르고 모바일은 정적 39라, 모바일 뷰포트로 도는 회귀 테스트
+      // interaction.test.js [버그G]는 초록인 채 사용자만 겪었다).
+      // 매 스크롤마다 부르면 _topLayerZ가 계속 올라가므로 **숨김→표시 전환일 때만** 부른다.
+      const _wasHidden=_totopScrollTarget!==scrollEl;
       _totopScrollTarget=scrollEl;
       const rect=scrollEl.getBoundingClientRect();
       _totopBtn.style.right=(window.innerWidth-rect.right+16)+'px';
       _totopBtn.style.display='flex';
+      if(_wasHidden)_bringToFront(_totopBtn);
     }else if(_totopScrollTarget===scrollEl){
       _hideTotop();
     }

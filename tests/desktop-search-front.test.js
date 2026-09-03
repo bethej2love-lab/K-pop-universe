@@ -145,6 +145,32 @@ const server = http.createServer((req, res) => {
       if (oz > cardZ) ok(`[${label}] 카드(z=${cardZ}) 위로 뜸 (z=${oz})`);
       else bad(`[${label}] 카드 뒤로 깔림 — 카드 z=${cardZ}, 오버레이 z=${oz}`);
     }
+    // ── 탐험 패널 "맨 위로" 버튼 (For You / Discover 양 탭) ────────────────────
+    // ⚠️ 이건 **데스크톱에서만** 깨졌던 버그다. 탐험 패널은 데스크톱에서만 _bringToFront로 131+에
+    //    올라가고 모바일은 정적 z-index 39라, `.gc-totop`(정적 66)이 모바일에선 위·데스크톱에선 뒤였다.
+    //    기존 회귀 테스트(interaction.test.js [버그G])는 390px 모바일 뷰포트로 돌아 초록이었고
+    //    사용자만 겪었다(2026-09-03 제보). 진입점이 갈리면 테스트도 갈려야 한다.
+    for (const [label, tabId] of [['For You', 'feed-tab-rec'], ['Discover', 'feed-tab-disc']]) {
+      await ev(cdp, `(function(){try{closeCards()}catch(e){};try{_hideTotop()}catch(e){};return 1;})()`);
+      await sleep(250);
+      await ev(cdp, `(function(){try{_openFeedOverlay()}catch(e){}return 1;})()`);
+      await sleep(1200);
+      await ev(cdp, `(function(){const b=document.getElementById('${tabId}');if(b)b.click();return 1;})()`);
+      await sleep(1200);
+      const scrolled = await ev(cdp, `(function(){const b=document.getElementById('feed-body');if(!b)return -1;
+        b.scrollTop=900;b.dispatchEvent(new Event('scroll'));return b.scrollTop;})()`);
+      await sleep(300);
+      const st = await ev(cdp, `(function(){const t=document.getElementById('gc-totop');if(!t)return null;
+        const cs=getComputedStyle(t);const fo=document.getElementById('feed-overlay');
+        return {disp:cs.display,z:parseInt(cs.zIndex)||0,panelZ:parseInt(getComputedStyle(fo).zIndex)||0};})()`);
+      // For You는 로그인·최애 기반 개인화 탭이라 헤드리스(빈 localStorage)에선 내용이 거의 없어
+      // 스크롤 자체가 안 생긴다 — 제품 버그가 아니라 하니스 한계라 소프트 스킵한다(둘 다 같은
+      // #feed-body를 쓰므로 Discover가 통과하면 배선은 검증된 것).
+      if (scrolled <= 0) { console.log(`⏭️  [탐험/${label}] 헤드리스에서 스크롤할 내용이 없음 — 스킵(하니스 한계)`); continue; }
+      if (!st || st.disp === 'none') { bad(`[탐험/${label}] 맨위로 버튼이 안 뜸`); continue; }
+      if (st.z > st.panelZ) ok(`[탐험/${label}] 맨위로 버튼이 패널(z=${st.panelZ}) 위로 뜸 (z=${st.z})`);
+      else bad(`[탐험/${label}] 버튼이 패널 뒤로 깔림 — 패널 z=${st.panelZ}, 버튼 z=${st.z}`);
+    }
   } catch (e) {
     bad('예외: ' + e.message);
   } finally {
