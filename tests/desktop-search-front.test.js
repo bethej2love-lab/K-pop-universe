@@ -110,6 +110,33 @@ const server = http.createServer((req, res) => {
       if (panelZ > cardZ) ok(`[${label}] 카드(z=${cardZ}) 위로 뜸 (패널 z=${panelZ})`);
       else bad(`[${label}] 카드 뒤로 깔림 — 카드 z=${cardZ}, 패널 z=${panelZ}`);
     }
+
+    // ── 카드 안에서 여는 오버레이들 ─────────────────────────────────────────
+    // 전부 body 직속 형제(카드 자식이 아님)라 카드의 스택 컨텍스트 밖이다 → 정적 z-index가 131보다
+    // 낮으면 그대로 가려진다.
+    // ⚠️ **반드시 제품의 여는 함수를 호출한다.** 처음엔 테스트가 직접 `.open`+`_bringToFront`를 하도록
+    //    짰는데, 그러면 테스트가 자기 손으로 z를 올리는 셈이라 **제품 배선을 전혀 검증하지 못한다**
+    //    (수정을 되돌려도 초록이었다 — 2026-09-03에 실제로 그렇게 짰다가 음성 대조에서 들켰다).
+    //    여는 함수가 데이터 없이 중간에 던져도 상관없다 — 우리가 보는 `.open`+z 세팅은 함수 첫머리에서
+    //    일어나므로, 예외를 삼키고 그 시점의 computed z를 본다.
+    for (const [label, id, call] of [
+      ['디스코 상세', 'gc-discog-detail', `_openGcDiscogDetail(ARTISTS.find(x=>x.group&&x.group.ko),0)`],
+      ['트로피', 'trophy-overlay', `_openTrophyPanel({})`],
+      ['최애 이모지', 'pp-bias-emoji-overlay', `_openBiasEmojiPicker({})`],
+    ]) {
+      await ev(cdp, `(function(){try{closeCards()}catch(e){};const e=document.getElementById('${id}');e.classList.remove('open');e.style.zIndex='';return 1;})()`);
+      await sleep(250);
+      await ev(cdp, `(function(){const a=ARTISTS.find(x=>x.group&&x.group.ko);showT(a,700,400);return 1;})()`);
+      await sleep(800);
+      const cardZ = await ev(cdp, zTop);
+      await ev(cdp, `(function(){try{${call}}catch(e){}return 1;})()`); // 제품 함수 호출(예외는 무시)
+      await sleep(250);
+      const opened = await ev(cdp, `document.getElementById('${id}').classList.contains('open')`);
+      const oz = await ev(cdp, zOf(id));
+      if (!opened) { bad(`[${label}] 여는 함수가 .open을 못 켬 — 하니스가 인자를 잘못 줬을 수 있음`); continue; }
+      if (oz > cardZ) ok(`[${label}] 카드(z=${cardZ}) 위로 뜸 (z=${oz})`);
+      else bad(`[${label}] 카드 뒤로 깔림 — 카드 z=${cardZ}, 오버레이 z=${oz}`);
+    }
   } catch (e) {
     bad('예외: ' + e.message);
   } finally {

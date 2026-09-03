@@ -10117,7 +10117,7 @@ function _openGcDiscogDetail(a,idx){
   }else{
     trackLbl.style.display='none';tracksEl.style.display='none';
   }
-  document.getElementById('gc-discog-detail').classList.add('open');
+  {const _d=document.getElementById('gc-discog-detail');_d.classList.add('open');_bringToFront(_d);} // 카드(131+) 위로 — 정적 z-index:102라 그냥 두면 가려진다(2026-09-03)
 }
 function _closeGcDiscogDetail(){document.getElementById('gc-discog-detail').classList.remove('open');}
 // 2026-08-18, 사용자 요청 — 디스코그래피 트랙을 누르면 그 곡 제목이 들어간 영상 목록을 보여줌.
@@ -14542,7 +14542,7 @@ let _biasEmojiTarget=null;
 function _openBiasEmojiPicker(r){
   _biasEmojiTarget=r;
   document.getElementById('pp-bias-emoji-target').textContent=r.type==='group'?r.ko:`${r.ko} (${r.groupKo})`;
-  document.getElementById('pp-bias-emoji-overlay').classList.add('open');
+  {const _b=document.getElementById('pp-bias-emoji-overlay');_b.classList.add('open');_bringToFront(_b);} // 카드 위로(정적 z:80)
 }
 function _closeBiasEmojiPicker(){
   document.getElementById('pp-bias-emoji-overlay').classList.remove('open');
@@ -19943,7 +19943,7 @@ function _openTrophyPanel(dataByKind){
     tabsEl.style.display='none';
   }
   _renderTrophyKind(kinds[0]);
-  document.getElementById('trophy-overlay').classList.add('open');
+  {const _t=document.getElementById('trophy-overlay');_t.classList.add('open');_bringToFront(_t);} // 카드 위로(정적 z:80)
 }
 function _renderTrophyKind(kind){
   _trophyActiveKind=kind;
