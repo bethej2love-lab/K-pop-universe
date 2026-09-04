@@ -16975,13 +16975,36 @@ async function _fetchSoloFancamPool(groupKos,fetchLimit,sinceDate){
 // 성별·세대·기간 세 축을 **모든 순위 차트가 공유**한다. 조합은 3×6×3=54가지지만 차트마다 함수를
 // 만들지 않는다 — 차트는 아래 _CHART_DEFS의 한 줄(후보 풀 + 이름)이고, 나머지는 전부 공용이다.
 // 새 축을 더하려면 _CHART_AXES에 한 줄, 새 차트를 더하려면 _CHART_DEFS에 한 줄이면 된다.
+// 옵션은 칩 글자(ko/en)와 **제목 접두사**(pKo/pEn)를 함께 든다. 둘이 다른 경우가 있어서다 —
+// 기간의 '역대'는 칩이자 접두사이지만(역대 무대 TOP 100), 성별의 '전체'는 칩일 뿐 제목엔 안 붙는다.
+// 접두사를 안 쓰면 pKo:''.
 const _CHART_AXES={
-  gender:[{v:'all',ko:'전체',en:'All'},{v:'f',ko:'여돌',en:'Girls'},{v:'m',ko:'남돌',en:'Boys'}],
-  gen:[{v:'all',ko:'전세대',en:'All gens'},{v:'5',ko:'5세대',en:'Gen 5'},{v:'4',ko:'4세대',en:'Gen 4'},
-       {v:'3',ko:'3세대',en:'Gen 3'},{v:'2',ko:'2세대',en:'Gen 2'},{v:'1',ko:'1세대',en:'Gen 1'}],
-  era:[{v:'all',ko:'역대',en:'All-time'},{v:'y',ko:'최근 1년',en:'Past year'},{v:'m',ko:'최근 30일',en:'Past 30d'}],
+  gender:[{v:'all',ko:'전체',en:'All',pKo:'',pEn:''},{v:'f',ko:'여돌',en:'Girls',pKo:'여돌 ',pEn:'Girl Group '},
+          {v:'m',ko:'남돌',en:'Boys',pKo:'남돌 ',pEn:'Boy Group '}],
+  gen:[{v:'all',ko:'전세대',en:'All gens',pKo:'',pEn:''},{v:'5',ko:'5세대',en:'Gen 5',pKo:'5세대 ',pEn:'Gen 5 '},
+       {v:'4',ko:'4세대',en:'Gen 4',pKo:'4세대 ',pEn:'Gen 4 '},{v:'3',ko:'3세대',en:'Gen 3',pKo:'3세대 ',pEn:'Gen 3 '},
+       {v:'2',ko:'2세대',en:'Gen 2',pKo:'2세대 ',pEn:'Gen 2 '},{v:'1',ko:'1세대',en:'Gen 1',pKo:'1세대 ',pEn:'Gen 1 '}],
+  era:[{v:'all',ko:'역대',en:'All-time',pKo:'역대 ',pEn:'All-Time '},{v:'y',ko:'최근 1년',en:'Past year',pKo:'최근 1년 ',pEn:'Past-Year '},
+       {v:'m',ko:'최근 30일',en:'Past 30d',pKo:'최근 30일 ',pEn:'Past-30d '}],
+  // 방송사 축 — 성별·세대와 달리 그룹이 아니라 **제목 검색어**로 번역된다(축제는 영상 제목에만 남는다).
+  // 연말용(fest)과 모아보기용(festS)이 나뉘는 이유: '전체'의 뜻이 다르다. 연말 전체는 여름판을 빼야
+  // 하고(가요대전 썸머), 모아보기 전체는 여름판까지 포함한다.
+  fest:[{v:'all',ko:'전체',en:'All',pKo:'',pEn:''},{v:'kbs',ko:'KBS',en:'KBS',pKo:'KBS ',pEn:'KBS '},
+        {v:'mbc',ko:'MBC',en:'MBC',pKo:'MBC ',pEn:'MBC '},{v:'sbs',ko:'SBS',en:'SBS',pKo:'SBS ',pEn:'SBS '}],
+  festS:[{v:'all',ko:'전체',en:'All',pKo:'',pEn:''},{v:'kbs',ko:'KBS',en:'KBS',pKo:'KBS ',pEn:'KBS '},
+         {v:'mbc',ko:'MBC',en:'MBC',pKo:'MBC ',pEn:'MBC '},{v:'sbs',ko:'SBS',en:'SBS',pKo:'SBS ',pEn:'SBS '},
+         {v:'summer',ko:'여름',en:'Summer',pKo:'여름 ',pEn:'Summer '}],
 };
-const _CHART_SEL_DEFAULT={gender:'all',gen:'all',era:'all'};
+const _CHART_SEL_DEFAULT={gender:'all',gen:'all',era:'all',fest:'all',festS:'all'};
+// 방송사 → 제목 조건. 연말 '전체'의 여름판 제외만 서버 OR로 표현이 안 돼 postFilter로 뺀다.
+const _FEST_Q={
+  all:q=>q.or('title.ilike.*가요대축제*,title.ilike.*가요대제전*,title.ilike.*가요대전*'),
+  kbs:q=>q.ilike('title','%가요대축제%'),
+  mbc:q=>q.ilike('title','%가요대제전%'),
+  sbs:q=>q.ilike('title','%가요대전%').not('title','ilike','%썸머%'),
+  summer:q=>q.ilike('title','%가요대전%').ilike('title','%썸머%'),
+};
+const _festNoSummer=v=>!/썸머/.test(v.title||'');
 // 성별·세대는 **그룹 집합**으로, 기간은 **발행일 하한**으로 번역된다. 둘 다 null이면 필터 없음.
 const _chartGkos=sel=>{
   if(sel.gender==='all'&&sel.gen==='all')return null;
@@ -16992,67 +17015,82 @@ const _chartGkos=sel=>{
 };
 const _chartSince=v=>v==='y'?new Date(Date.now()-365*86400000).toISOString().slice(0,10)
   :v==='m'?new Date(Date.now()-30*86400000).toISOString().slice(0,10):null;
-// 차트 정의 — pool(그룹집합, 기간하한) 하나만 다르다.
+// 차트 정의 — 차트 하나가 여기 한 줄이다. axes(쓸 축), ranked(조회수 순위인가), pool(후보 조회),
+// cap(목록 길이), kind(_appendFeedCard의 카드 종류)만 다르고 나머지 동작은 전부 공용이다.
+// ranked:false는 '모아보기' — 순위가 없으니 목록을 섞어 보여주고 '1위' 문구도 안 붙인다.
 const _CHART_DEFS={
   soloCam:{icon:'🎬',nameKo:'개인 직캠 TOP 100',nameEn:'Solo Fancam TOP 100',
-    pool:(gkos,since)=>_fetchSoloFancamPool(gkos,1000,since)},
+    axes:['gender','gen','era'],ranked:true,cap:100,
+    pool:sel=>_fetchSoloFancamPool(_chartGkos(sel),1000,_chartSince(sel.era))},
   stage:{icon:'🎤',nameKo:'무대 TOP 100',nameEn:'Stage TOP 100',
-    pool:(gkos,since)=>_fetchStagePool(gkos,1000,15,since)},
+    axes:['gender','gen','era'],ranked:true,cap:100,
+    pool:sel=>_fetchStagePool(_chartGkos(sel),1000,15,_chartSince(sel.era))},
+  festYE:{icon:'🎄',nameKo:'연말 무대 모음 TOP 100',nameEn:'Year-End Stage TOP 100',
+    axes:['fest'],ranked:true,cap:100,
+    pool:sel=>_fetchFestivalPool(_FEST_Q[sel.fest],sel.fest==='all'?_festNoSummer:null,1000,15,true)},
+  festAll:{icon:'🎊',nameKo:'축제 무대 모아보기',nameEn:'Song Festival Stages',
+    axes:['festS'],ranked:false,cap:200,kind:'collection',
+    pool:sel=>_fetchFestivalPool(_FEST_Q[sel.festS],null,1000,15,false)},
 };
+// 제목은 그 차트가 쓰는 축의 접두사를 **선언 순서대로** 이어 붙인다(최근 1년 4세대 여돌 개인 직캠 TOP 100).
 const _chartLabel=(id,sel)=>{
   const d=_CHART_DEFS[id];
-  const g=sel.gender==='f'?(currentLang==='ko'?'여돌 ':'Girl Group '):sel.gender==='m'?(currentLang==='ko'?'남돌 ':'Boy Group '):'';
-  const n=sel.gen==='all'?'':(currentLang==='ko'?`${sel.gen}세대 `:`Gen ${sel.gen} `);
-  const e=sel.era==='y'?(currentLang==='ko'?'최근 1년 ':'Past-Year '):sel.era==='m'?(currentLang==='ko'?'최근 30일 ':'Past-30d '):(currentLang==='ko'?'역대 ':'All-Time ');
-  return currentLang==='ko'?`${e}${n}${g}${d.nameKo}`:`${e}${n}${g}${d.nameEn}`;
+  const pre=d.axes.map(k=>{
+    const o=_CHART_AXES[k].find(x=>x.v===sel[k]);
+    return o?(currentLang==='ko'?o.pKo:o.pEn):'';
+  }).reverse().join(''); // 축은 좁은 것(성별)부터 선언하고 제목은 넓은 것(기간)부터 읽는다
+  return pre+(currentLang==='ko'?d.nameKo:d.nameEn);
 };
 // 조합별 캐시 — '여돌→남돌→여돌'처럼 오가는 경우 재조회를 막는다(같은 값 재클릭은 칩이 애초에 차단).
+// 순위 없는 모아보기는 캐시하지 않는다 — 매번 섞어 보여주는 게 그 카드의 성격이라 캐시하면 굳는다.
 const _chartCache=new Map();
-const _chartKey=(id,sel)=>`${id}|${sel.gender}|${sel.gen}|${sel.era}`;
+const _chartKey=(id,sel)=>id+'|'+_CHART_DEFS[id].axes.map(k=>sel[k]).join('|');
 async function _chartSongs(id,sel){
-  const k=_chartKey(id,sel);
-  if(_chartCache.has(k))return _chartCache.get(k);
+  const d=_CHART_DEFS[id],k=_chartKey(id,sel);
+  if(d.ranked&&_chartCache.has(k))return _chartCache.get(k);
   const vidUrl=x=>_isShortV(x)?`https://youtube.com/shorts/${x.id}`:`https://www.youtube.com/watch?v=${x.id}`;
-  const gkos=_chartGkos(sel);
-  const vids=(gkos&&!gkos.length)?[]:(await _CHART_DEFS[id].pool(gkos,_chartSince(sel.era))).slice(0,100);
+  // 성별·세대 조합이 그룹 0개면(예: 5세대 남돌이 아직 없음) 조회 자체를 건너뛴다. groupKos에 빈 배열을
+  // 그대로 넘기면 .in('group_ko',[])이 되어 서버가 전체를 훑고 0건을 주는 낭비가 생긴다.
+  const gkos=d.axes.includes('gender')?_chartGkos(sel):null;
+  const vids=(gkos&&!gkos.length)?[]:(await d.pool(sel)).slice(0,d.cap);
   const out=vids.map(x=>({t:x.title,u:vidUrl(x),thumb:x.thumb,vc:x.view_count,pa:x.published_at?.slice(0,10),_apiId:x.id,_apiGroupKo:x.group_ko}));
-  _chartCache.set(k,out);
+  if(d.ranked)_chartCache.set(k,out);
   return out;
 }
 async function _openChartList(id,sel){
+  const d=_CHART_DEFS[id];
   sel=Object.assign({},_CHART_SEL_DEFAULT,sel||{});
   const songs=await _chartSongs(id,sel);
   const label=_chartLabel(id,sel);
   // 좁은 조합은 0건일 수 있다(5세대 남돌 최근 30일). 그때도 칩은 그대로 둔다 — 빈 화면에 칩이 없으면
   // 되돌아갈 길이 없어 막다른 골목이 된다.
-  const sub=songs.length?_feedRankSub(label,songs[0].vc)
-    :(currentLang==='ko'?'이 조건에 맞는 영상이 없어요 — 위 필터를 바꿔보세요':'No videos for this filter — try changing it above');
+  const sub=!songs.length?(currentLang==='ko'?'이 조건에 맞는 영상이 없어요 — 위 필터를 바꿔보세요':'No videos for this filter — try changing it above')
+    :d.ranked?_feedRankSub(label,songs[0].vc):'';
   const mk=key=>({key,labelKo:'',labelEn:'',options:_CHART_AXES[key],sel:sel[key],
     onPick:nv=>_openChartList(id,Object.assign({},sel,{[key]:nv}))});
-  _openFeedListOverlay(label,sub,songs,{facets:[mk('gender'),mk('gen'),mk('era')]});
+  // ⚠️ 순위 목록 여부는 원래 **카드 클릭 핸들러**에서만 세워졌다(선반이 feed-chart인지로 판단). 그래서
+  //    칩으로 다시 열면 플래그가 이미 소비돼 순위 목록이 조용히 '발견용'으로 렌더됐다 — 조회수 2위
+  //    쇼츠가 뒤로 밀려 순위가 뒤섞였다(2026-09-04 실측). 칩 경로에선 차트 정의가 직접 세운다.
+  _feedListRankedNext=!!d.ranked;
+  _openFeedListOverlay(label,sub,songs,{facets:d.axes.map(mk)});
 }
-
-async function _buildFeedSoloCamTop100(list,opts){
+// 차트 카드 한 장 — 직캠·무대·축제가 쓰던 빌더 3개를 합쳤다. 카드는 기본 조합을 미리 받아 썸네일과
+// 부제를 채우고, 그 결과를 캐시에 넣어 칩 첫 클릭에서 재조회가 없게 한다.
+async function _buildChartCard(list,id){
   if(!sb)return;
-  const vidUrl=v=>_isShortV(v)?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;
+  const d=_CHART_DEFS[id];
   try{
-    const vids=(await _fetchSoloFancamPool(opts.groupKos,1000)).slice(0,100);
-    if(vids.length<10)return; // 후보가 너무 적으면(세부 필터라 그룹 나눌수록 적어짐) 카드 자체를 생략
-    const songs=vids.map(v=>({t:v.title,u:vidUrl(v),thumb:v.thumb,vc:v.view_count,pa:v.published_at?.slice(0,10),_apiId:v.id,_apiGroupKo:v.group_ko}));
-    if(opts.facet)_chartCache.set(_chartKey(opts.facet,_CHART_SEL_DEFAULT),songs); // 카드가 받아온 기본 조합은 칩에서 재조회 안 함
-    const label=currentLang==='ko'?opts.labelKo:opts.labelEn;
-    const top1=vids[0];
-    const sub=_feedRankSub(label,top1.view_count);
-    _appendFeedCard(list,opts.icon,label,sub,
-      opts.facet?(()=>_openChartList(opts.facet)):(()=>_openFeedListOverlay(label,sub,songs)),top1.thumb);
+    const sel=Object.assign({},_CHART_SEL_DEFAULT);
+    const songs=await _chartSongs(id,sel);
+    if(songs.length<10)return; // 후보가 너무 적으면 카드 자체를 생략
+    const label=_chartLabel(id,sel);
+    // 순위 목록은 1위 썸네일과 '1위 · N회' 부제를, 모아보기는 임의 썸네일에 부제 없이(순위가 없으니).
+    const sub=d.ranked?_feedRankSub(label,songs[0].vc):'';
+    const thumb=d.ranked?songs[0].thumb:songs[Math.floor(Math.random()*songs.length)].thumb;
+    _appendFeedCard(list,d.icon,label,sub,()=>_openChartList(id),thumb,d.kind);
   }catch(e){/* 조용히 무시 */}
 }
-// [통합 2026-09-04] 여돌/남돌 카드는 없앴다 — 성별은 목록 안 칩(_SOLOCAM_FACET)으로 고른다.
-// 카드가 셋일 때는 Charts 선반에서 자리를 세 칸 먹으면서도 "같은 차트의 다른 단면"이라는 관계는
-// 오히려 안 보였다. 되돌리려면 groupKos를 준 래퍼를 다시 만들어 아래 _feedEnqueue에 넣으면 된다.
-function _buildFeedAllTimeSoloCam(list){
-  return _buildFeedSoloCamTop100(list,{groupKos:null,icon:'🎬',facet:'soloCam',labelKo:'역대 개인 직캠 TOP 100',labelEn:'All-Time Solo Fancam TOP 100'});
-}
+
 // 역대/세대별 무대 TOP 100 — 위 "개인 직캠" 계열과 짝을 이루는 시리즈지만, 멤버 1명 단독 필터 없이
 // category='live' 전체(개인 직캠+그룹 완전체 무대 다 포함)를 조회수 기준으로 본다(2026-08-19, 사용자
 // 요청). "역대 전체 무대 TOP 100"은 이미 있는 "케이팝 레전드 100"과 쿼리가 완전히 동일해질 것이라
@@ -17077,28 +17115,6 @@ async function _fetchStagePool(groupKos,fetchLimit,capPerGroup,sinceDate){
   if(error||!data?.length)return[];
   return _capByGroup(_filterBannedVideos(data),v=>v.group_ko,capPerGroup);
 }
-async function _buildFeedStageTop100(list,opts){
-  if(!sb)return;
-  const vidUrl=v=>_isShortV(v)?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;
-  try{
-    const vids=(await _fetchStagePool(opts.groupKos,1000,15)).slice(0,100);
-    if(vids.length<10)return;
-    const songs=vids.map(v=>({t:v.title,u:vidUrl(v),thumb:v.thumb,vc:v.view_count,pa:v.published_at?.slice(0,10),_apiId:v.id,_apiGroupKo:v.group_ko}));
-    const label=currentLang==='ko'?opts.labelKo:opts.labelEn;
-    const top1=vids[0];
-    const sub=_feedRankSub(label,top1.view_count);
-    if(opts.facet)_chartCache.set(_chartKey(opts.facet,_CHART_SEL_DEFAULT),songs); // 카드가 받아온 기본 조합 재사용
-    _appendFeedCard(list,opts.icon,label,sub,
-      opts.facet?(()=>_openChartList(opts.facet)):(()=>_openFeedListOverlay(label,sub,songs)),top1.thumb);
-  }catch(e){/* 조용히 무시 */}
-}
-// [통합 2026-09-04] 여돌/남돌 카드와 세대 회전 카드는 없앴다 — 성별·세대·기간 전부 목록 안 칩이다.
-// 세대 회전 카드(_buildFeedGenStageTop)는 시간마다 조합 하나씩만 보여줘서 "1세대 남돌 무대 TOP"이
-// 뜬금없이 혼자 떠 있는 것처럼 보였다(사용자 지적). 칩이 생긴 이상 그 회전은 존재 이유가 없다.
-function _buildFeedAllTimeStage(list){
-  return _buildFeedStageTop100(list,{groupKos:null,icon:'🎤',facet:'stage',labelKo:'역대 무대 TOP 100',labelEn:'All-Time Stage TOP 100'});
-}
-// ── 연말/여름 음악 축제 무대 모음 ──────────────────────────────────────
 // 3사 연말 시상식 무대(KBS 가요대축제·MBC 가요대제전·SBS 가요대전)와 SBS 여름 축제(가요대전 썸머)를
 // 제목 키워드로 모아 조회수 TOP 100 카드로 노출(2026-08-19, 사용자 요청 — "각 축제 모음도, 연말 무대
 // 모음도"). 무대 TOP 100(_fetchStagePool) 패턴과 동일하지만 그룹이 아니라 제목으로 필터한다.
@@ -17127,46 +17143,6 @@ async function _fetchFestivalPool(applyFilter,postFilter,fetchLimit,capPerGroup,
   if(postFilter)rows=rows.filter(postFilter);
   rows=_capByGroup(rows,v=>v.group_ko,capPerGroup);
   return sortByViews?rows:_shuffle(rows);
-}
-async function _buildFeedFestival(list,opts){
-  if(!sb)return;
-  const vidUrl=v=>_isShortV(v)?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;
-  try{
-    const vids=(await _fetchFestivalPool(opts.filter,opts.postFilter,1000,15,opts.sortByViews)).slice(0,200);
-    if(vids.length<10)return;
-    const songs=vids.map(v=>({t:v.title,u:vidUrl(v),thumb:v.thumb,vc:v.view_count,pa:v.published_at?.slice(0,10),_apiId:v.id,_apiGroupKo:v.group_ko}));
-    const label=currentLang==='ko'?opts.labelKo:opts.labelEn;
-    let sub='',thumb;
-    if(opts.sortByViews){
-      const top1=vids[0];
-      sub=_feedRankSub(label,top1.view_count);
-      thumb=top1.thumb;
-    }else{
-      thumb=vids[Math.floor(Math.random()*vids.length)].thumb; // 정렬이 없으니 "1위" 문구도 안 씀(랜덤이라 순위 의미 없음)
-    }
-    _appendFeedCard(list,opts.icon,label,sub,()=>_openFeedListOverlay(label,sub,songs),thumb,'collection');
-  }catch(e){/* 조용히 무시 */}
-}
-function _buildFeedFestivalYearEnd(list){
-  return _buildFeedFestival(list,{icon:'🎄',labelKo:'연말 무대 모음 TOP 100',labelEn:'Year-End Stage TOP 100',
-    filter:q=>q.or('title.ilike.*가요대축제*,title.ilike.*가요대제전*,title.ilike.*가요대전*'),
-    postFilter:v=>!/썸머/.test(v.title||''),sortByViews:true}); // 여름판(가요대전 썸머)은 연말에서 제외, 제목에 TOP 있으니 조회수 정렬 유지
-}
-function _buildFeedFestivalKBS(list){
-  return _buildFeedFestival(list,{icon:'🎊',labelKo:'KBS 가요대축제 모아보기',labelEn:'KBS Song Festival',
-    filter:q=>q.ilike('title','%가요대축제%')});
-}
-function _buildFeedFestivalMBC(list){
-  return _buildFeedFestival(list,{icon:'🎊',labelKo:'MBC 가요대제전 모아보기',labelEn:'MBC Gayo Daejejeon',
-    filter:q=>q.ilike('title','%가요대제전%')});
-}
-function _buildFeedFestivalSBS(list){
-  return _buildFeedFestival(list,{icon:'🎊',labelKo:'SBS 가요대전 모아보기',labelEn:'SBS Gayo Daejeon',
-    filter:q=>q.ilike('title','%가요대전%').not('title','ilike','%썸머%')}); // 연말 SBS — 여름판 제외
-}
-function _buildFeedFestivalSummer(list){
-  return _buildFeedFestival(list,{icon:'☀️',labelKo:'가요대전 썸머 모아보기',labelEn:'Gayo Daejeon Summer',
-    filter:q=>q.ilike('title','%가요대전%').ilike('title','%썸머%')}); // 여름판 = 가요대전+썸머 둘 다
 }
 // ── 수록곡(타이틀곡 아닌 트랙) 무대 모음 ─────────────────────────────────
 // discography의 tracks[].isTitle로 타이틀/수록곡을 가른다(수록곡 = isTitle 아님). 실제 무대 영상 매칭은
@@ -18078,18 +18054,15 @@ function _buildFeedDisc(){
   _feedEnqueue(()=>_buildFeedThisYearPicks(chart)); // 올해 한정 모음 2개(랜덤) — 주간/월간 바로 뒤 앞자리
   _feedEnqueue(()=>_buildFeedYearlyTop(chart));
   _feedEnqueue(()=>_buildFeedLegend100(chart));
-  _feedEnqueue(()=>_buildFeedAllTimeSoloCam(chart)); // 성별 단면은 목록 안 칩으로(카드 3장 → 1장, 2026-09-04)
-  _feedEnqueue(()=>_buildFeedAllTimeStage(chart)); // 성별·세대·기간 전부 목록 안 칩으로(카드 4장 → 1장, 2026-09-04)
+  _feedEnqueue(()=>_buildChartCard(chart,'soloCam'));
+  _feedEnqueue(()=>_buildChartCard(chart,'stage'));
   // "연말 무대 모음 TOP 100"은 라벨에 랭킹(TOP)이 붙어있는 이상 다른 TOP류와 마찬가지로 Charts로
   // (2026-08-21, 사용자 요청 — "TOP 들어가면 다 discover 아닌 charts 쪽으로"). KBS/MBC/SBS/썸머는
   // "모아보기"라 TOP이 없어서 그대로 Discovery에 남긴다.
-  _feedEnqueue(()=>_buildFeedFestivalYearEnd(chart));
+  _feedEnqueue(()=>_buildChartCard(chart,'festYE'));
   _feedEnqueue(()=>_buildFeedFormatPick(list));
   _feedEnqueue(()=>_buildFeedGenCamPick(list));
-  _feedEnqueue(()=>_buildFeedFestivalKBS(list));
-  _feedEnqueue(()=>_buildFeedFestivalMBC(list));
-  _feedEnqueue(()=>_buildFeedFestivalSBS(list));
-  _feedEnqueue(()=>_buildFeedFestivalSummer(list));
+  _feedEnqueue(()=>_buildChartCard(list,'festAll')); // 방송사(KBS/MBC/SBS/여름)는 목록 안 칩으로(카드 4장 → 1장, 2026-09-04)
   _feedEnqueue(()=>_buildFeedGenBsideStages(list));
   _feedEnqueue(()=>_buildFeedGroupBsideStages(list));
   _feedEnqueue(()=>_buildFeedGenCovers(list));
