@@ -236,6 +236,26 @@ async function _ytFetchNewVideos(uploadsId,key,sinceId,onProg,startPageToken,cut
   return{vids,total,done,interrupted,resumeToken:pageToken,newestId};
 }
 
+// 동기화 시점에 세로(쇼츠)를 실측한다(2026-09-04 사용자 요청 — "승격 버튼 따로 안 눌러도 되게").
+// 동기화 썸네일(high/standard)은 원리상 거의 항상 16:9라 세로를 못 잡고, 제목 #shorts만 잡혔다(가로→쇼츠
+// 일괄 승격 스윕이 뒤에서 oardefault로 메꾸던 이유). 여기서 신규 수집분만 미리 oardefault.jpg 비율로 실측해
+// is_short를 채우면 새로 들어오는 영상은 승격 버튼 없이도 처음부터 정확하다. 옛 백로그는 여전히 스윕 담당.
+// _probeIsPortrait는 index.html 전역(같은 페이지, classic script). 동시 실행을 제한해 썸네일 서버 과부하 방지.
+async function _ytProbeShortsInline(vids,onProg){
+  if(typeof _probeIsPortrait!=='function')return;
+  const targets=(vids||[]).filter(v=>v&&!v.is_short); // 제목으로 이미 잡힌 건 건너뜀
+  if(!targets.length)return;
+  const CONC=10;let idx=0,done=0;
+  async function worker(){
+    while(idx<targets.length){
+      const v=targets[idx++];
+      try{if(await _probeIsPortrait(v.id))v.is_short=true;}catch(e){}
+      done++;
+      if(onProg&&(done%20===0||done===targets.length))onProg(`세로(쇼츠) 실측 ${done}/${targets.length}…`);
+    }
+  }
+  await Promise.all(Array.from({length:Math.min(CONC,targets.length)},worker));
+}
 async function _ytSyncGroup(ko,key,onProg,youtubeUrl,syncKey){
   if(!sb)throw new Error('Supabase 연결 없음');
   // youtubeUrl이 명시적으로 오면 그걸 쓰고(아이유처럼 GROUPS에 없는 솔로 채널 동기화용), 아니면 기존처럼 그룹 링크 사용
@@ -269,6 +289,7 @@ async function _ytSyncGroup(ko,key,onProg,youtubeUrl,syncKey){
   const cutoffDate=_disbandCutoffDate(ko);
   const{vids,done,interrupted,resumeToken,newestId}=await _ytFetchNewVideos(uploadsId,key,sinceId,onProg,resumeTok,cutoffDate);
   if(vids.length){
+    await _ytProbeShortsInline(vids,onProg); // 동기화 시점 세로 실측 — 승격 버튼 없이도 is_short 정확(2026-09-04)
     // 공식 채널 업로드분은 제외 키워드에 걸려도 무관 처리하지 않는다 — 판단은 _shouldJunkFlag
     // 한 곳에 있고(index.html), 여기선 source_tier를 그대로 넘겨 정책을 따른다(2026-08-27).
     const rows=vids.map(v=>({...v,group_ko:ko,title_norm:_titleNorm(v.title),source_handle:skey,source_tier:'official',...(_shouldJunkFlag(v.title,'official')?_flagPatch('무관','auto'):{})}));
@@ -7032,6 +7053,7 @@ async function _ytSyncExtChannels(){
         setProg(`${prefix} ${fetched}${tot?'/'+tot:''}개 수집 중…`+(resumeTok?' (이어받는 중)':''));
       },resumeTok);
       if(vids.length){
+        await _ytProbeShortsInline(vids,setProg); // 동기화 시점 세로 실측(개인/외부 채널도, 승격 버튼 불필요) — 2026-09-04
         const{rows,skipped}=_extBuildRows(vids,_EXT_STRICT_TIERS.has(ch.tier),ch.tier,ch.owner,ch.defaultCategory,ch.handle);
         totalSkipped+=skipped;
         if(rows.length){
@@ -7146,6 +7168,7 @@ async function _ytBackfillChannelCore(ch,fromYear,toYear,callBudget,onProg,query
       });
     }
     if(vids.length){
+      await _ytProbeShortsInline(vids); // 동기화 시점 세로 실측(외부 채널 백필 경로) — 2026-09-04
       const{rows,skipped:sk}=_extBuildRows(vids,_EXT_STRICT_TIERS.has(ch.tier),ch.tier,ch.owner,ch.defaultCategory,ch.handle);
       skipped+=sk;
       if(rows.length){
