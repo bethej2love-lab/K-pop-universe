@@ -3157,6 +3157,11 @@
   .feed-grid .feed-card.feed-wide{grid-column:span 2;}
   .feed-card.is-short .feed-card-thumb-wrap{aspect-ratio:9/16;}
   .feed-card.is-short .feed-card-thumb{object-fit:cover;z-index:1;}
+  /* 전체폭 쇼츠(2026-09-04) — Discover의 랜덤 큰 쇼츠 + For You의 최애 쇼츠가 쓴다.
+     9:16을 그대로 전체폭으로 깔면 390px 뷰포트에서 높이가 620px를 넘어 한 장이 화면을 통째로 먹는다.
+     비율은 유지하되 높이 상한을 걸어 잘리게 둔다(안쪽 img가 object-fit:cover라 가운데가 남는다).
+     max-height를 두 번 쓰는 건 폴백 — svh를 모르는 브라우저는 앞 줄의 px 값에서 멈춘다. */
+  .feed-grid .feed-card.feed-wide.is-short .feed-card-thumb-wrap{max-height:520px;max-height:min(64svh,520px);}
   .feed-card-thumb-bg{position:absolute;inset:0;background-size:cover;background-position:center;filter:blur(16px) brightness(0.42);transform:scale(1.1);z-index:0;}
   .feed-grid .feed-card{border-bottom:none;border-radius:8px;background:rgba(255,255,255,0.03);}
   .feed-grid .feed-card-cap{padding:8px 10px 12px;}

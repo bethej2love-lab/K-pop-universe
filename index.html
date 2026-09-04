@@ -17785,16 +17785,39 @@ function _makeVariedMasonry(container,varied){
 // 쇼츠2)"로만 채운다(→ 한 행 높이가 같아 여백0). 가로영상은 minGap 이상 간격에서 wideProb 확률로, 또는
 // 같은 비율 짝이 없으면 전체폭(featured). 결과: 전체폭가로 | 쇼츠쇼츠 | 가로가로 | 쇼츠쇼츠 … 번갈아.
 // (메이슨리와 달리 "행" 단위라 여백이 안 생기고, 비율그룹핑과 달리 통째 정렬이 아니라 번갈아 나온다.)
+// opts.isBig(item) — "이건 무조건 크게"(최애 영상 등). 확률과 무관하게 단독 행으로 뽑는다.
+// opts.shortWideProb — 쇼츠도 전체폭(큰 세로)으로 승격시킬 확률. **기본 0**이라 이 옵션을 안 주는
+//   호출부(Trend 등)의 동작은 그대로다. 원래는 전체폭 승격 조건이 `!sa`(가로일 때만)여서 쇼츠는
+//   구조적으로 큰 카드가 될 수 없었고, 그래서 For You 탭엔 큰 쇼츠가 하나도 없었다(2026-09-04 사용자
+//   제보 — "쇼츠 큰 게 없으니까 자극적인 요소가 없다"). 9:16을 전체폭으로 깔면 화면을 크게 먹으므로
+//   확률은 낮게 두고, 높이 상한은 CSS(.feed-wide.is-short)에서 건다.
 function _packRows(items,isShort,opts){
-  const wideProb=(opts&&opts.wideProb)||0.2, minGap=(opts&&opts.minGap)||2;
+  // ⚠️ `||` 폴백을 쓰면 안 된다 — 0이 falsy라 "확률 0(=절대 크게 하지 마)"이 조용히 기본값으로
+  //    되살아난다. 최애 모드에서 wideProb:0을 넘겼는데 0.2로 덮여서, 최애가 아닌 카드가 계속 커졌다
+  //    (2026-09-04, _packRows 호출을 계측해서야 찾음 — 화면만 봐선 "가끔 큰 카드"로 보여 못 잡는다).
+  const _o=opts||{};
+  const wideProb=_o.wideProb!==undefined?_o.wideProb:0.2, minGap=_o.minGap!==undefined?_o.minGap:2;
+  const shortWideProb=_o.shortWideProb!==undefined?_o.shortWideProb:0, isBig=_o.isBig;
   const rest=items.slice(),rows=[];let sinceWide=minGap;
   while(rest.length){
     const a=rest.shift(),sa=isShort(a);
+    // 최애는 확률·간격 모두 무시하고 항상 크게(DESIGN_REVIEW 확정 스펙 — "최애만 크게").
+    // sinceWide는 리셋하지 않는다: 최애가 연달아 나올 때 그 사이의 일반 카드까지 덩달아 커지는 걸 막으려면
+    // "마지막 *확률* 전체폭 이후 몇 장"이라는 원래 의미를 유지해야 한다.
+    if(isBig&&isBig(a)){rows.push({wide:true,short:sa,big:true,items:[a]});continue;}
     if(!sa&&sinceWide>=minGap&&Math.random()<wideProb){rows.push({wide:true,items:[a]});sinceWide=0;continue;}
-    const j=rest.findIndex(x=>isShort(x)===sa); // 뒤에서 같은 비율 하나 당겨와 2열 행
+    if(sa&&sinceWide>=minGap&&Math.random()<shortWideProb){rows.push({wide:true,short:true,items:[a]});sinceWide=0;continue;}
+    // 뒤에서 같은 비율 하나 당겨와 2열 행. ⚠️ 최애는 파트너로 끌어오면 안 된다 — 자기 차례가 오기 전에
+    // 남의 반쪽으로 소비돼서 "무조건 크게"가 조용히 깨진다(2026-09-04, 20장 중 7장이 최애인 케이스에서
+    // 실제로 재현됨: big 행이 7개가 아니라 그보다 적게 나왔다).
+    const j=rest.findIndex(x=>isShort(x)===sa&&!(isBig&&isBig(x)));
     if(j!==-1){rows.push({wide:false,items:[a,rest.splice(j,1)[0]]});sinceWide++;}
-    else if(!sa){rows.push({wide:true,items:[a]});sinceWide=0;} // 짝 없는 가로 → 전체폭
-    else rows.push({wide:false,items:[a]}); // 짝 없는 쇼츠(끝에서만) → 반폭 단독
+    // 짝 없는 가로 → 전체폭. ⚠️ 단 isBig 모드(최애 위계)에선 이 폴백도 끈다 — 최애를 짝짓기에서 뺀
+    // 만큼 짝 없는 가로가 늘어나서, 실측상 최애가 아닌 카드 6장이 덩달아 커졌다(2026-09-04). 그러면
+    // "큰 카드 = 최애"가 아니게 되어 위계가 무너진다. 반폭 단독으로 두면 grid-auto-flow:dense가
+    // 뒤쪽 반폭 카드를 끌어올려 빈칸을 메운다(짝 없는 쇼츠가 이미 그렇게 처리되고 있다).
+    else if(!sa&&!isBig){rows.push({wide:true,items:[a]});sinceWide=0;}
+    else rows.push({wide:false,items:[a]}); // 짝 없는 쇼츠(끝에서만)·최애 모드의 짝 없는 가로 → 반폭 단독
   }
   return rows;
 }
@@ -17845,7 +17868,10 @@ async function _buildFeedTrend(){
       groupKo:v.group_ko,memberKos:v.members||[]}));
     // 행 패커 배치(2026-08-30) — 한 행은 같은 비율(가로2 or 쇼츠2), 가로는 가끔 전체폭. 여백0 + 그림처럼 번갈아.
     strip.className='feed-grid'; // 이전 렌더가 masonry로 바꿨을 수 있어 그리드로 리셋(.feed-wide span2 사용)
-    const rows=_packRows(songs,_songIsShort,{wideProb:0.28,minGap:2});
+    // shortWideProb(2026-09-04 사용자 요청) — Discover에는 큰 쇼츠가 섞이게. 전체폭 승격 조건이 원래
+    // "가로일 때만"이라 큰 쇼츠가 구조적으로 하나도 없었고, 그만큼 훑을 때 리듬이 밋밋했다.
+    // ⚠️ For You(즐겨찾기 신작)는 반대다 — 거긴 "최애만 크게"가 규칙이라 이 옵션을 주지 않는다.
+    const rows=_packRows(songs,_songIsShort,{wideProb:0.28,minGap:2,shortWideProb:0.18});
     if(rows.length&&!rows[rows.length-1].wide&&rows[rows.length-1].items.length===1)rows.pop(); // 끝에 홀로 남은 반폭 카드는 제거(여백 방지)
     const flat=rows.flatMap(r=>r.items); // 라이트박스 재생목록 순서를 화면 순서와 일치
     rows.forEach(row=>row.items.forEach(song=>{
@@ -17855,7 +17881,7 @@ async function _buildFeedTrend(){
       _appendFeedCard(strip,'📈',song.t,sub,
         // 누르면 이 선반 전체가 재생목록이 돼서 그대로 다음 영상으로 넘어갈 수 있다(훑어보기 목적)
         ()=>openLightbox(song.u,isShort,flat,flat.indexOf(song),{groupKo:song.groupKo,memberKo:(song.memberKos||[])[0]},false,true),
-        song.thumb,null, row.wide?{wide:true}:(isShort?{short:true}:{})); // 전체폭 가로 / 쇼츠 9:16 / 작은 가로 16:9
+        song.thumb,null, row.wide?{wide:true,short:!!row.short}:(isShort?{short:true}:{})); // 전체폭 가로 / 전체폭 쇼츠 / 쇼츠 9:16 / 작은 가로 16:9
     }));
     section.style.display='';
   }catch(e){
@@ -17882,6 +17908,19 @@ function _feedFavTargets(){
   });
   passAll.forEach(g=>memberFilter.delete(g)); // 그룹으로도 즐겨찾기했으면 멤버필터 무의미(전 영상 통과)
   return {passAll,memberFilter,queryGkos:new Set([...passAll,...memberFilter.keys()])};
+}
+// 최애(bias) 판정자(2026-09-04) — 즐겨찾기 신작 선반의 위계용. 즐겨찾기는 "볼 것", 최애는 "제일 보고
+// 싶은 것"인데 지금까지 둘이 화면에서 구별이 없었다(DESIGN_REVIEW 31~32행에 확정된 방향).
+// bias는 myProfile.bias = [{ko, type:'member'|'group', emoji}] 최대 3개.
+// ⚠️ 최애를 하나도 안 정했으면 null을 준다 — 그러면 호출부가 위계를 아예 안 걸고 현행 자연 배치가 된다
+//    ("최애 미지정이면 전부 자연 배치"). 아무도 안 큰 화면과 다 큰 화면은 둘 다 위계가 없는 것과 같다.
+function _feedBiasMatcher(){
+  const bias=(myProfile&&myProfile.bias)||[];
+  if(!bias.length)return null;
+  const gset=new Set(),mset=new Set();
+  bias.forEach(b=>{if(!b||!b.ko)return;((b.type||'member')==='group'?gset:mset).add(b.ko);});
+  if(!gset.size&&!mset.size)return null;
+  return song=>gset.has(song.groupKo)||(song.memberKos||[]).some(m=>mset.has(m));
 }
 function _appendFeedOnboardCard(strip){
   const d=document.createElement('div');d.className='feed-onboard-card';
@@ -17931,7 +17970,12 @@ async function _buildFeedFavNew(){
     // 붙이는데 이 선반만 빠져서 favnew 영상은 편집이 안 걸렸다(2026-08-31 사용자 제보, 모바일).
     const songs=vids.map(v=>({t:v.title,u:vidUrl(v),thumb:v.thumb,vc:v.view_count,pa:v.published_at?.slice(0,10),paFull:v.published_ts||v.published_at,groupKo:v.group_ko,memberKos:v.members||[],_apiId:v.id,_apiGroupKo:v.group_ko,content_flag:v.content_flag||null}));
     // 행 패커(Trend와 동일) — 같은 비율끼리 한 행, 가로 가끔 전체폭, 여백0. 최신순 유지가 중요해 wideProb는 낮게.
-    const rows=_packRows(songs,_songIsShort,{wideProb:0.22,minGap:2});
+    // 최애만 크게(2026-09-04 사용자 확정, DESIGN_REVIEW 31~32행). 가로면 전체폭 16:9, 쇼츠면 전체폭 9:16 —
+    // **둘 다** 크게 간다(사용자: "가로도 세로도 크게"). 최애를 정했으면 일반 카드의 확률 전체폭은 끈다
+    // (wideProb 0): 최애가 아닌 것도 가끔 커지면 "큰 카드 = 최애"라는 신호가 흐려져서 위계가 안 선다.
+    // 최애 미지정이면 matcher가 null이라 wideProb 0.22 현행 그대로.
+    const _isBias=_feedBiasMatcher();
+    const rows=_packRows(songs,_songIsShort,{wideProb:_isBias?0:0.22,minGap:2,isBig:_isBias||undefined});
     if(rows.length&&!rows[rows.length-1].wide&&rows[rows.length-1].items.length===1)rows.pop(); // 끝에 홀로 남은 반폭 제거
     const flat=rows.flatMap(r=>r.items); // 라이트박스 재생목록 순서를 화면 순서와 일치
     rows.forEach(row=>row.items.forEach(song=>{
@@ -17939,7 +17983,7 @@ async function _buildFeedFavNew(){
       const sub=[song.groupKo,song.paFull?_fmtVidAgo(song.paFull):(song.pa?_fmtVidAgo(song.pa):null)].filter(Boolean).join(' · ');
       _appendFeedCard(strip,'💖',song.t,sub,
         ()=>openLightbox(song.u,isShort,flat,flat.indexOf(song),{groupKo:song.groupKo,memberKo:(song.memberKos||[])[0]},false,true),
-        song.thumb,null, row.wide?{wide:true}:(isShort?{short:true}:{}));
+        song.thumb,null, row.wide?{wide:true,short:!!row.short}:(isShort?{short:true}:{}));
     }));
     section.style.display='';
   }catch(e){console.warn('[feed] 즐겨찾기 신작 선반 실패 — 이 선반만 빠집니다',e);}
