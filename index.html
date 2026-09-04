@@ -1052,6 +1052,12 @@
       <button type="button" id="vid-tag-flag-hidden-btn" class="vid-tag-flag-toggle vid-tag-flag-hidden">숨김</button>
     </div>
     <div id="vid-tag-status"></div>
+    <!-- 연속 편집(2026-09-04) — 영상 관리 패널에서 J/K로 고른 뒤 E로 열어 저장하면 곧바로 다음 항목이
+         열린다. 한 건마다 "저장 → 모달 닫힘 → 마우스로 다음 행 찾기"를 반복하던 왕복을 없애는 게 목적.
+         패널이 안 열려 있거나(카드에서 바로 편집한 경우) 다음 항목이 없으면 그냥 닫힌다. -->
+    <label id="vid-tag-continuous-row" style="display:none;align-items:center;gap:6px;cursor:pointer;font-size:11px;color:rgba(155,178,228,0.62);margin:2px 0 8px;">
+      <input type="checkbox" id="vid-tag-continuous">저장하면 바로 다음 항목 열기 <span style="opacity:.65">(J/K로 고른 목록 순서대로)</span>
+    </label>
     <div id="vid-tag-btns">
       <button id="vid-tag-cancel" class="uc-btn">취소</button>
       <button id="vid-tag-save" class="uc-btn uc-btn-primary">저장</button>

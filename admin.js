@@ -5086,6 +5086,39 @@ async function _vmKbdFlagFocused(flag){
   _vmFocusIdx=Math.min(_vmFocusIdx,Math.max(0,now.length-1));
   _vmFocusPaint();
 }
+// ── 연속 편집 (2026-09-04, Fable T7) ──────────────────────────────────────────
+// 저장 후 곧바로 목록의 다음 항목을 연다. 위 키보드 검수(J/K/E)와 한 세트다 —
+// 분류(1~4)는 키보드로 빨라졌는데 "고쳐야 하는 것"은 여전히 한 건마다 모달을 닫고 마우스로 다음 행을
+// 찾아야 해서, 실제 병목이 그쪽으로 옮겨갔다.
+// ⚠️ 영상 관리 패널이 열려 있을 때만 동작한다. 그룹/멤버 카드에서 연필로 연 편집은 "목록"이 없으므로
+//    이어갈 다음 항목도 없다 — 그 경우 조용히 그냥 닫힌다(체크박스도 안 보인다).
+let _vidTagLastEditedId=null;
+const _vidTagContinuousOn=()=>!!document.getElementById('vid-tag-continuous')?.checked;
+function _vidTagSyncContinuousRow(){
+  const row=document.getElementById('vid-tag-continuous-row');
+  if(!row)return;
+  const vmOpen=!!document.getElementById('vm-overlay')?.classList.contains('open');
+  row.style.display=vmOpen?'flex':'none';
+  const cb=document.getElementById('vid-tag-continuous');
+  if(cb&&!cb._restored){cb._restored=true;
+    try{cb.checked=localStorage.getItem('kpu_vidtag_continuous')==='1';}catch(e){}
+    cb.addEventListener('change',()=>{try{localStorage.setItem('kpu_vidtag_continuous',cb.checked?'1':'0');}catch(e){}});
+  }
+}
+function _vidTagAdvanceIfContinuous(){
+  if(!_vidTagContinuousOn())return;
+  if(!document.getElementById('vm-overlay')?.classList.contains('open'))return;
+  const els=_vmFocusEls();
+  if(!els.length)return;
+  if(_vmFocusIdx<0)_vmFocusIdx=0;
+  // 방금 편집한 행이 아직 그 자리에 남아 있으면 다음으로 한 칸. 목록에서 빠졌으면 이미 다음 행이
+  // 그 인덱스에 와 있으므로 그대로 둔다(안 그러면 한 건씩 건너뛴다).
+  else if(els[_vmFocusIdx]&&els[_vmFocusIdx].dataset.vidId===_vidTagLastEditedId)_vmFocusIdx=Math.min(_vmFocusIdx+1,els.length-1);
+  _vmFocusPaint();
+  const el=_vmFocusEls()[_vmFocusIdx];
+  const v=el&&_vmRows.find(r=>r.id===el.dataset.vidId);
+  if(v)setTimeout(()=>_openVidTagModal({id:v.id,title:v.title},v.group_ko),140);
+}
 const _VM_KBD_FLAG={'1':null,'2':'무관','3':'보류','4':'hidden'};
 document.addEventListener('keydown',e=>{
   const ov=document.getElementById('vm-overlay');
@@ -7461,6 +7494,7 @@ async function _openVidTagModal(v,ko,originKo){
   // 안 그러면 폼엔 정확한 그룹이 뜨는데(ko) 저장 후엔 지금 보던 카드가 안 갱신되는 문제가 생김
   // (2026-08-04, 사용자 제보로 발견).
   _vidTagTarget={id:v.id,ko,originKo:originKo||ko};
+  _vidTagSyncContinuousRow(); // 연속 편집 체크박스는 영상 관리 패널에서 열었을 때만 보인다
   _vidTagBulkIds=null;
   _vidTagWithSelected=[];
   _vidTagGroupsSelected=[];
@@ -7929,8 +7963,10 @@ document.getElementById('vid-tag-save').addEventListener('click',async e=>{
   // 그룹"과 "지금 보는 카드의 그룹"이 다른지 판단할 때 필요(없으면 게스트 출연 영상의 함께한 멤버 줄이
   // "이름(undefined)"처럼 잘못 그려짐, 2026-08-04).
   const patchedRow={title:document.getElementById('vid-tag-vidtitle').textContent,group_ko:newGko||ko,members,with_members:withMembers,with_groups:withGroups,cover_of_members:coverMembers,cover_of_groups:coverGroups,content_flag:contentFlag,category:category||null,is_short:isShort===undefined?false:isShort};
+  _vidTagLastEditedId=id; // 연속 편집이 "방금 이 행을 고쳤다"를 알아야 다음으로 넘어갈 수 있다
   setTimeout(()=>{
     _closeVidTagModal();
+    _vidTagAdvanceIfContinuous();
     // 지금 보고 있던 카드(originKo) 그리드는 재조회 없이 이 카드 하나만 직접 고침(제목/함께한 멤버 갱신
     // 또는 조건 안 맞으면 카드만 제거) — 매번 그리드를 통째로 다시 불러오던 걸 없애서 저장 후 로딩
     // 지연/화면 깜빡임을 없앰. ko(영상의 실제 소속)가 아니라 originKo를 써야 함 — 멤버 카드에 뜬 다른

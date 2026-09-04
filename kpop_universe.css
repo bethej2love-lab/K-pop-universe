@@ -1798,7 +1798,10 @@
   .ec-handle{font-size:11px;color:rgba(155,178,228,0.56);}
   .ec-link{flex-shrink:0;font-size:11px;color:rgba(170,210,255,0.75);text-decoration:none;padding:3px 9px;border-radius:12px;border:0.5px solid rgba(170,210,255,0.25);background:rgba(170,210,255,0.06);}
   .ec-link:hover{background:rgba(170,210,255,0.14);}
-  #vid-tag-panel{width:min(320px,calc(100vw - 40px));max-height:82vh;overflow-y:auto;background:rgba(13,17,34,0.97);backdrop-filter:blur(40px) saturate(180%);-webkit-backdrop-filter:blur(40px) saturate(180%);border-radius:18px;box-shadow:0 16px 56px rgba(0,0,0,0.72);border:0.5px solid rgba(255,255,255,0.10);padding:20px;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
+  /* 320 → 560(2026-09-04, admin_improvement_plan P2-6). 이 모달은 소속 그룹·멤버 체크박스·콜라보·
+     원곡·카테고리·플래그를 한 화면에 담는데 320px에선 멤버 칩이 서너 개마다 줄바꿈돼 스크롤이 길어진다.
+     좁은 화면에선 기존처럼 화면 폭에 맞춘다(min). */
+  #vid-tag-panel{width:min(560px,calc(100vw - 40px));max-height:82vh;overflow-y:auto;background:rgba(13,17,34,0.97);backdrop-filter:blur(40px) saturate(180%);-webkit-backdrop-filter:blur(40px) saturate(180%);border-radius:18px;box-shadow:0 16px 56px rgba(0,0,0,0.72);border:0.5px solid rgba(255,255,255,0.10);padding:20px;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
   #vid-tag-vidtitle{font-size:11px;color:rgba(160,182,222,0.71);margin:6px 0 14px;line-height:1.4;}
   #vid-tag-members{display:flex;flex-wrap:wrap;gap:7px;}
   .vid-tag-mem{display:flex;align-items:center;gap:6px;font-size:13px;color:rgba(220,230,250,0.88);background:rgba(255,255,255,0.05);border:0.5px solid rgba(255,255,255,0.08);border-radius:10px;padding:6px 10px;cursor:pointer;}
