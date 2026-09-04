@@ -24,9 +24,14 @@ import { fileURLToPath } from 'node:url';
 const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
 const DRY = process.argv.includes('--dry');
 const rd = f => JSON.parse(fs.readFileSync(path.join(ROOT, f), 'utf8'));
-// 원본 포맷 유지 — 이 프로젝트의 json은 2칸 들여쓰기에 끝 개행이 없다(라운드트립 확인됨)
+// 원본 포맷 유지 — 끝 개행이 없는 건 공통인데, **들여쓰기는 파일마다 다르다**(2026-09-04 실측 정정):
+//   groups.json 2칸 · artists.json 1칸 · connections.json 0칸(한 줄)
+// 원래 주석은 "2칸"이라고만 적혀 있었고 wr()도 전부 2칸으로 썼다. 그대로 돌렸으면 artists.json(4MB)이
+// 통째로 재포맷돼 +930KB 짜리 diff가 나면서 실제 변경이 파묻혔을 것이다. 파일별 들여쓰기를 실측으로
+// 잡아 쓴다 — 새 json을 추가할 때도 이 표가 자동으로 맞는다.
+const INDENT = { 'groups.json': 2, 'artists.json': 1, 'connections.json': 0 };
 const wr = (f, o) => {
-  let s = JSON.stringify(o, null, 2);
+  let s = JSON.stringify(o, null, INDENT[f] ?? 2);
   if (s.endsWith('\n')) s = s.slice(0, -1);
   fs.writeFileSync(path.join(ROOT, f), s);
 };

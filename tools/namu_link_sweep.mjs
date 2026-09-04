@@ -25,7 +25,16 @@ const missing = h => !h || h.length < 5000 || /문서를 찾을 수 없습니다
 //    뒤로 갈수록 2%→16% 로 늘었는데, 실제로는 다니엘(NewJeans)·키(샤이니)처럼 존재하는 문서였다.
 //    없다고 결론내기 전에 반드시 딜레이+재시도로 재확인할 것.
 const sleepSync = ms => { const t = Date.now(); while (Date.now() - t < ms); };
-const disamb = h => /동음이의|다음을 찾으시나요|여러 뜻/.test(h.replace(/<[^>]+>/g, ' ').slice(0, 20000));
+// 동음이의 **문서**인지 판정. ⚠ "동음이의"라는 낱말이 있는지로 보면 안 된다 — 나무위키는 동명이의
+// 문서를 가진 **정상 문서 맨 위에 안내 문장**을 단다("동음이의어에 대한 내용은 ○○ 문서를 참고하십시오").
+// 그래서 원래 판정은 /w/원필·/w/문별처럼 멀쩡한 멤버 문서를 전부 "동음이의"로 걷어차고 있었고, 그 때문에
+// 회수 가능한 링크 41건이 통째로 "불명"에 갇혀 있었다(2026-09-04 실측으로 원인 확정).
+// 그 안내 문장을 먼저 지운 뒤에 본다 — 안내를 빼고도 남으면 그건 진짜 동음이의 문서다.
+const HATNOTE = /[^.]{0,80}?에 대한 내용은[^.]{0,120}?문서를 참고하십시오\.?/g;
+const disamb = h => {
+  const t = h.replace(/<[^>]+>/g, ' ').slice(0, 20000).replace(HATNOTE, ' ');
+  return /동음이의|다음을 찾으시나요|여러 뜻/.test(t);
+};
 
 let fetched = 0;
 // 존재 확인만 할 땐 앞부분(60KB)만 받는다 — 없는 문서는 통째로 35KB 라 이 안에 다 들어오고,
@@ -113,6 +122,12 @@ fs.writeFileSync(path.join(os.homedir(), 'Downloads', 'melon_solo_audit', 'namu_
 
 if (APPLY && recovered.length) {
   for (const r of recovered) r.a.links.namu = r.url;
-  fs.writeFileSync(path.join(ROOT, 'artists.json'), JSON.stringify(artists, null, 2));
+  // ⚠️ artists.json 은 **들여쓰기 1칸**이다(라운드트립으로 확인: indent 1이면 원본과 바이트 일치).
+  //    여기서 indent 2로 쓰면 링크 몇 줄 고치는 커밋이 4MB 파일 전체 재포맷(+930KB)이 되어, 실제 변경이
+  //    diff 속에 파묻히고 다른 세션과 충돌한다(2026-09-04 발견 — --apply 하기 전에 잡았다).
+  //    assign_ids.mjs 는 2칸으로 쓰고 있으니 그쪽도 손볼 때 같이 확인할 것.
+  let s = JSON.stringify(artists, null, 1);
+  if (s.endsWith('\n')) s = s.slice(0, -1);
+  fs.writeFileSync(path.join(ROOT, 'artists.json'), s);
   console.log('artists.json 저장 완료');
 } else console.log('[dry] 저장 안 함');
