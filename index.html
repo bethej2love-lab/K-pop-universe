@@ -6280,6 +6280,10 @@ function _pickMainVideo(pool){
 // 같은 비율끼리 한 행에 오도록 가로(norm) 먼저·쇼츠(short) 나중으로 안정 정렬한다(각 그룹 내 원래 순서 유지).
 // 호출부는 그리드 표시와 라이트박스 스와이프 playlist 양쪽에 이 순서를 함께 써야 클릭한 영상부터 넘기기가
 // 어긋나지 않는다(2026-08-27 도입, 사용자 요청 "쇼츠는 쇼츠끼리·가로는 가로끼리 한 행에").
+// 카드 클릭 → 목록 오버레이로 "이건 순위 목록이다"를 전달하는 1회용 플래그(_appendFeedCard가 세우고
+// _openFeedListOverlay가 읽자마자 지운다). 인자로 안 넘기는 이유는 _openFeedListOverlay 호출부가 22곳이라
+// 그중 차트 12곳만 골라 손으로 다는 방식이 곧 누락 사고가 되기 때문.
+let _feedListRankedNext=false;
 function _sortMixedByAspect(arr){
   const norms=[],shorts=[];
   for(const s of (arr||[]))(_songIsShort(s)?shorts:norms).push(s);
@@ -15849,7 +15853,11 @@ function _appendFeedCard(container,icon,title,sub,onClick,thumbUrl,cat,opts){
   item.innerHTML='<div class="feed-card-thumb-wrap"><div class="feed-card-shimmer" data-icon="'+icon+'"></div></div>'
     +'<div class="feed-card-cap"><div class="feed-card-title">'+_cleanTitle(title)+'</div>'
     +(sub?'<div class="feed-card-sub">'+sub+'</div>':'')+'</div>';
-  item.addEventListener('click',onClick);
+  // 이 카드가 Charts 섹션(#feed-chart)에 담기면 그건 **순위 목록**이다 — 열었을 때 순서를 비율끼리
+  // 묶느라 갈아엎으면 안 된다(아래 _openFeedListOverlay 참고). 어느 컨테이너에 담기는지는 여기밖에
+  // 모르므로 판정도 여기서 한 번만 한다 — 차트 빌더 12개에 플래그를 손으로 달면 하나 빠뜨렸을 때
+  // 조용히 어긋난다(이 코드베이스의 반복 사고 패턴이 정확히 그것).
+  item.addEventListener('click',e=>{_feedListRankedNext=!!(container&&container.id==='feed-chart');onClick(e);});
   item.addEventListener('touchstart',e=>_lbRipple(item,e),{passive:true});
   item.addEventListener('mousedown',e=>_lbRipple(item,e));
   container.appendChild(item);
@@ -16180,7 +16188,14 @@ function _openFeedListOverlay(title,sub,songs,ctx){
   // 붙어서 쇼츠와 가로 영상이 한 행에 짝지어지고, 세로로 3배 가까이 차이나는 높이가 같은 행에 섞여
   // 그리드가 계단식으로 무너졌음. 바뀐 순서(song)와 그 순서에 맞는 wide 플래그를 함께 써야 함 — 라이트박스
   // 스와이프 목록도 실제 렌더 순서(orderedSongs)와 같아야 클릭한 영상부터 정확히 넘어가므로 같이 바꿈.
-  const _paired=_groupMixedVids(_sortMixedByAspect(songs));
+  // ⚠️ 순위 차트는 비율 정렬을 하면 안 된다(2026-09-04 사용자 제보 "1위 영상 썸네일이 보이면 좋겠는데
+  //    그렇게 안 되고 있음"). _sortMixedByAspect는 **가로를 전부 앞, 쇼츠를 전부 뒤로** 보내는데,
+  //    "월간 무대 TOP 30"의 1위(서인영 워터밤)가 쇼츠라 목록 맨 뒤로 밀렸다. 카드 썸네일은 진짜 1위를
+  //    쓰고 있었는데 열어보면 딴 영상이 맨 앞이라 "썸네일이 1위가 아니다"로 보였던 것.
+  //    부수 효과로 순위 배지도 정상화된다 — 배지 숫자는 렌더 인덱스(idx+1)로 붙는데 변동값(rankDelta)은
+  //    원래 순위로 계산돼서, 재정렬되면 둘이 다른 영상을 가리켰다(지금은 스냅샷이 비어 안 보였을 뿐).
+  const _ranked=_feedListRankedNext; _feedListRankedNext=false; // 클릭 한 번에 한 번만 소비
+  const _paired=_ranked?_groupMixedVids(songs||[]):_groupMixedVids(_sortMixedByAspect(songs));
   const orderedSongs=_paired.map(e=>e.song);
   const _wideFlags=_paired.map(e=>e.wide);
   if(_feedListObserver)_feedListObserver.disconnect(); // 직전에 끝까지 안 스크롤하고 닫았을 경우 대비
