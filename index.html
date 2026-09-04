@@ -16064,19 +16064,25 @@ let _feedListObserver=null; // 무한스크롤 IntersectionObserver — 끝까�
 function _renderFeedListFacet(ctx){
   const el=document.getElementById('feed-list-facets');
   if(!el)return;
-  const f=ctx&&ctx.facet;
-  if(!f||!f.options||!f.options.length){el.style.display='none';el.innerHTML='';return;}
+  // ctx.facets = [{key,labelKo,labelEn,options:[{v,ko,en}],sel,onPick(v)}] — 축이 여럿이면 줄을 나눈다.
+  // (ctx.facet 단수도 받는다 — 축 하나짜리 호출부를 굳이 배열로 바꾸게 하지 않으려고)
+  const facets=(ctx&&ctx.facets)||((ctx&&ctx.facet)?[ctx.facet]:null);
+  if(!facets||!facets.length){el.style.display='none';el.innerHTML='';return;}
   el.innerHTML='';
   el.style.display='flex';
-  const lbl=document.createElement('span');lbl.className='fl-facet-lbl';
-  lbl.textContent=(currentLang==='ko'?f.labelKo:f.labelEn)||'';
-  if(lbl.textContent)el.appendChild(lbl);
-  f.options.forEach(o=>{
-    const b=document.createElement('button');b.type='button';
-    b.className='gc-ch-filter'+(o.v===f.sel?' active':'');
-    b.textContent=currentLang==='ko'?o.ko:(o.en||o.ko);
-    b.addEventListener('click',e=>{e.stopPropagation();if(o.v===f.sel)return;f.onPick(o.v);});
-    el.appendChild(b);
+  facets.forEach(f=>{
+    if(!f||!f.options||!f.options.length)return;
+    const row=document.createElement('div');row.className='fl-facet-row';
+    const t=(currentLang==='ko'?f.labelKo:f.labelEn)||'';
+    if(t){const lbl=document.createElement('span');lbl.className='fl-facet-lbl';lbl.textContent=t;row.appendChild(lbl);}
+    f.options.forEach(o=>{
+      const b=document.createElement('button');b.type='button';
+      b.className='gc-ch-filter'+(o.v===f.sel?' active':'');
+      b.textContent=currentLang==='ko'?o.ko:(o.en||o.ko);
+      b.addEventListener('click',e=>{e.stopPropagation();if(o.v===f.sel)return;f.onPick(o.v);});
+      row.appendChild(b);
+    });
+    el.appendChild(row);
   });
 }
 function _openFeedListOverlay(title,sub,songs,ctx){
@@ -16194,7 +16200,12 @@ function _openFeedListOverlay(title,sub,songs,ctx){
   //    부수 효과로 순위 배지도 정상화된다 — 배지 숫자는 렌더 인덱스(idx+1)로 붙는데 변동값(rankDelta)은
   //    원래 순위로 계산돼서, 재정렬되면 둘이 다른 영상을 가리켰다(지금은 스냅샷이 비어 안 보였을 뿐).
   const _ranked=_feedListRankedNext; _feedListRankedNext=false; // 클릭 한 번에 한 번만 소비
-  const _paired=_ranked?_groupMixedVids(songs||[]):_groupMixedVids(_sortMixedByAspect(songs));
+  // 순위 목록(차트)은 **전부 가로 격자**로 그린다(2026-09-04, 사용자 제안 "TOP 모음은 순서가
+  // 중요하니까 일괄 가로로"). 순위 순서를 지키면 가로/쇼츠가 번갈아 나와 비율 경계가 계속 생기고,
+  // 그 경계에서 앞 카드를 넓히는 기존 규칙 때문에 쇼츠가 자꾸 전체폭(360×685)으로 튀어나왔다.
+  // 비율을 하나로 통일하면 경계 자체가 없어져 넓히기도 자리막이도 필요 없고, 균일한 격자라
+  // 순위가 눈에 그대로 읽힌다. 발견용 목록(모아보기 등)은 기존대로 비율을 섞는다.
+  const _paired=_ranked?(songs||[]).map(x=>({song:x,wide:false})):_groupMixedVids(_sortMixedByAspect(songs));
   const orderedSongs=_paired.map(e=>e.song);
   const _wideFlags=_paired.map(e=>e.wide);
   if(_feedListObserver)_feedListObserver.disconnect(); // 직전에 끝까지 안 스크롤하고 닫았을 경우 대비
@@ -16205,7 +16216,9 @@ function _openFeedListOverlay(title,sub,songs,ctx){
   },{root:grid,rootMargin:'600px 0px'});
   _feedListObserver=observer;
   function renderOne(s,idx){
-    const shortFlag=_songIsShort(s);
+    // 순위 목록에선 쇼츠도 가로 틀에 담는다 — 위 _paired 주석 참고. 세로 썸네일(oardefault) 대신
+    // 기본 가로 썸네일을 쓰므로 가운데가 잘리지 않고, 격자가 균일해 순위가 그대로 읽힌다.
+    const shortFlag=_ranked?false:_songIsShort(s);
     const item=document.createElement('div');
     item.className='gc-ch-item'+(shortFlag?' is-short':'')+(_wideFlags&&_wideFlags[idx]?' gc-ch-wide':'');
     const baseThumb=s.thumb||`https://img.youtube.com/vi/${ytId(s.u)}/mqdefault.jpg`;
@@ -16938,7 +16951,7 @@ async function _buildFeedLegend100(list){
 // "개인 직캠" 판정 기준도 그 카드와 동일: 제목에 직캠/팬캠/FANCAM/음방명이 있고, 태깅된 멤버가 정확히
 // 1명일 때만(그룹 전체 포메이션 직캠과 구분). 전체기간 조회수 기준이라 레전드 100과 마찬가지로 결과가
 // 고정이므로 무한스크롤 반복 풀에는 안 넣음(세대별 카드만 예외 — 아래 참고).
-async function _fetchSoloFancamPool(groupKos,fetchLimit){
+async function _fetchSoloFancamPool(groupKos,fetchLimit,sinceDate){
   let q=_applyLiveExclude(sb.from(_YT_TABLE)
     .select('id,title,thumb,category,is_short,content_flag,group_ko,members,view_count,published_at')
     .eq('category','live'))
@@ -16950,6 +16963,7 @@ async function _fetchSoloFancamPool(groupKos,fetchLimit){
     // 걸러주지만(컴필레이션은 보통 members가 비어있거나 여럿) 우연히 1명만 남는 경우까지 방어.
     .or('content_flag.is.null,content_flag.neq.개별출연');
   if(groupKos)q=q.in('group_ko',groupKos);
+  if(sinceDate)q=q.gte('published_at',sinceDate); // 기간 축(2026-09-04) — 안 주면 기존대로 전체 기간
   const{data,error}=await q.order('view_count',{ascending:false}).limit(fetchLimit);
   if(error||!data?.length)return[];
   return _filterBannedVideos(data).filter(v=>_FANCAM_TITLE_RE.test(v.title)&&(v.members||[]).length===1);
@@ -16957,34 +16971,59 @@ async function _fetchSoloFancamPool(groupKos,fetchLimit){
 // 개인 직캠 TOP 100 — 성별 축은 **칩**으로(2026-09-04). 예전엔 전체/여돌/남돌이 각각 카드였다.
 // 셋은 같은 풀에 groupKos만 다른 것이라, 카드 세 장은 Charts 선반에서 자리만 세 칸 먹고 "이 셋이
 // 같은 차트의 다른 단면"이라는 관계는 오히려 안 보였다. 카드 한 장 + 목록 안 칩으로 접는다.
-const _SOLOCAM_FACET=[
-  {v:'all',ko:'전체',en:'All'},
-  {v:'f',ko:'여돌',en:'Girl groups'},
-  {v:'m',ko:'남돌',en:'Boy groups'},
-];
-const _soloCamGkos=v=>v==='all'?null:Object.entries(GROUPS||{}).filter(([,i])=>i.gender===v).map(([k])=>k);
-const _soloCamLabel=v=>{
-  const ko={all:'역대 개인 직캠 TOP 100',f:'역대 여돌 개인 직캠 TOP 100',m:'역대 남돌 개인 직캠 TOP 100'};
-  const en={all:'All-Time Solo Fancam TOP 100',f:'All-Time Girl Group Solo Fancam TOP 100',m:'All-Time Boy Group Solo Fancam TOP 100'};
-  return currentLang==='ko'?ko[v]:en[v];
+// 축 3개 — 성별 · 세대 · 기간. 조합은 3×6×3=54가지지만 **함수는 하나**다. 새 축을 더하려면
+// 여기 배열에 한 줄 쓰고 _soloCamGkos/_soloCamSince에 해석만 붙이면 된다(카드·빌더를 안 만든다).
+const _SOLOCAM_FACETS={
+  gender:[{v:'all',ko:'전체',en:'All'},{v:'f',ko:'여돌',en:'Girls'},{v:'m',ko:'남돌',en:'Boys'}],
+  gen:[{v:'all',ko:'전세대',en:'All gens'},{v:'5',ko:'5세대',en:'Gen 5'},{v:'4',ko:'4세대',en:'Gen 4'},
+       {v:'3',ko:'3세대',en:'Gen 3'},{v:'2',ko:'2세대',en:'Gen 2'},{v:'1',ko:'1세대',en:'Gen 1'}],
+  era:[{v:'all',ko:'역대',en:'All-time'},{v:'y',ko:'최근 1년',en:'Past year'},{v:'m',ko:'최근 30일',en:'Past 30d'}],
 };
-// 칩을 누를 때마다 그 단면을 새로 조회한다. 같은 단면을 다시 누르면 재조회하지 않는다(칩 렌더에서 차단).
+// 성별·세대는 **그룹 집합**으로, 기간은 **발행일 하한**으로 번역된다. 둘 다 null이면 필터 없음.
+const _soloCamGkos=sel=>{
+  if(sel.gender==='all'&&sel.gen==='all')return null;
+  return Object.entries(GROUPS||{}).filter(([ko,i])=>
+    (sel.gender==='all'||i.gender===sel.gender)&&
+    (sel.gen==='all'||String(_groupGeneration(i.debut,ko))===String(sel.gen))
+  ).map(([k])=>k);
+};
+const _soloCamSince=v=>v==='y'?new Date(Date.now()-365*86400000).toISOString().slice(0,10)
+  :v==='m'?new Date(Date.now()-30*86400000).toISOString().slice(0,10):null;
+const _soloCamLabel=sel=>{
+  const g=sel.gender==='f'?(currentLang==='ko'?'여돌 ':'Girl Group '):sel.gender==='m'?(currentLang==='ko'?'남돌 ':'Boy Group '):'';
+  const n=sel.gen==='all'?'':(currentLang==='ko'?`${sel.gen}세대 `:`Gen ${sel.gen} `);
+  const e=sel.era==='y'?(currentLang==='ko'?'최근 1년 ':'Past-Year '):sel.era==='m'?(currentLang==='ko'?'최근 30일 ':'Past-30d '):(currentLang==='ko'?'역대 ':'All-Time ');
+  return currentLang==='ko'?`${e}${n}${g}개인 직캠 TOP 100`:`${e}${n}${g}Solo Fancam TOP 100`;
+};
+// 조합별로 캐시한다 — 같은 단면을 다시 고르면 재조회하지 않는다(칩 렌더가 같은 값 클릭은 애초에 막고,
+// 이 캐시는 '여돌→남돌→여돌'처럼 오가는 경우를 받아준다).
 const _soloCamCache=new Map();
-async function _soloCamSongs(v){
-  if(_soloCamCache.has(v))return _soloCamCache.get(v);
+const _soloCamKey=sel=>`${sel.gender}|${sel.gen}|${sel.era}`;
+async function _soloCamSongs(sel){
+  const k=_soloCamKey(sel);
+  if(_soloCamCache.has(k))return _soloCamCache.get(k);
   const vidUrl=x=>_isShortV(x)?`https://youtube.com/shorts/${x.id}`:`https://www.youtube.com/watch?v=${x.id}`;
-  const vids=(await _fetchSoloFancamPool(_soloCamGkos(v),1000)).slice(0,100);
+  const gkos=_soloCamGkos(sel);
+  // 세대×성별로 좁히면 후보가 확 줄어 100개를 못 채운다 — 넉넉히 받아 자른다(전체일 때와 동일 상한).
+  const vids=(gkos&&!gkos.length)?[]:(await _fetchSoloFancamPool(gkos,1000,_soloCamSince(sel.era))).slice(0,100);
   const out=vids.map(x=>({t:x.title,u:vidUrl(x),thumb:x.thumb,vc:x.view_count,pa:x.published_at?.slice(0,10),_apiId:x.id,_apiGroupKo:x.group_ko}));
-  _soloCamCache.set(v,out);
+  _soloCamCache.set(k,out);
   return out;
 }
-async function _openSoloCamList(v){
-  const songs=await _soloCamSongs(v);
-  if(!songs.length)return;
-  const label=_soloCamLabel(v);
-  const sub=_feedRankSub(label,songs[0].vc);
-  _openFeedListOverlay(label,sub,songs,{facet:{key:'gender',labelKo:'',labelEn:'',
-    options:_SOLOCAM_FACET,sel:v,onPick:nv=>_openSoloCamList(nv)}});
+const _SOLOCAM_DEFAULT={gender:'all',gen:'all',era:'all'};
+async function _openSoloCamList(sel){
+  sel=Object.assign({},_SOLOCAM_DEFAULT,sel||{});
+  const songs=await _soloCamSongs(sel);
+  const label=_soloCamLabel(sel);
+  // 조합에 따라 결과가 0건일 수 있다(예: 5세대 남돌 최근 30일). 그때도 칩은 그대로 둬서 되돌아갈 수
+  // 있어야 한다 — 빈 화면에 칩이 없으면 사용자가 막다른 길에 갇힌다.
+  const sub=songs.length?_feedRankSub(label,songs[0].vc)
+    :(currentLang==='ko'?'이 조건에 맞는 영상이 없어요 — 위 필터를 바꿔보세요':'No videos for this filter — try changing it above');
+  const mk=(key,labelKo,labelEn)=>({key,labelKo,labelEn,options:_SOLOCAM_FACETS[key],sel:sel[key],
+    onPick:nv=>_openSoloCamList(Object.assign({},sel,{[key]:nv}))});
+  _openFeedListOverlay(label,sub,songs,{facets:[
+    mk('gender','',''),mk('gen','',''),mk('era','',''),
+  ]});
 }
 async function _buildFeedSoloCamTop100(list,opts){
   if(!sb)return;
@@ -16993,12 +17032,12 @@ async function _buildFeedSoloCamTop100(list,opts){
     const vids=(await _fetchSoloFancamPool(opts.groupKos,1000)).slice(0,100);
     if(vids.length<10)return; // 후보가 너무 적으면(세부 필터라 그룹 나눌수록 적어짐) 카드 자체를 생략
     const songs=vids.map(v=>({t:v.title,u:vidUrl(v),thumb:v.thumb,vc:v.view_count,pa:v.published_at?.slice(0,10),_apiId:v.id,_apiGroupKo:v.group_ko}));
-    if(opts.facet)_soloCamCache.set('all',songs); // 카드 만들며 받은 '전체'는 칩에서 재조회 없이 재사용
+    if(opts.facet)_soloCamCache.set('all|all|all',songs); // 카드 만들며 받은 기본 조합은 칩에서 재조회 없이 재사용
     const label=currentLang==='ko'?opts.labelKo:opts.labelEn;
     const top1=vids[0];
     const sub=_feedRankSub(label,top1.view_count);
     _appendFeedCard(list,opts.icon,label,sub,
-      opts.facet?(()=>_openSoloCamList('all')):(()=>_openFeedListOverlay(label,sub,songs)),top1.thumb);
+      opts.facet?(()=>_openSoloCamList()):(()=>_openFeedListOverlay(label,sub,songs)),top1.thumb);
   }catch(e){/* 조용히 무시 */}
 }
 // [통합 2026-09-04] 여돌/남돌 카드는 없앴다 — 성별은 목록 안 칩(_SOLOCAM_FACET)으로 고른다.

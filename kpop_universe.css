@@ -1263,8 +1263,10 @@
      체감상 거의 안 티 나는 수준의 최소 증가. */
   /* 차트 목록의 필터 칩 줄(2026-09-04). 칩 자체는 .gc-ch-filter를 그대로 쓴다 — 이 앱에서 "고르는
      알약"은 이미 그 모양이라 새 스타일을 만들면 같은 뜻의 UI가 두 벌이 된다. */
-  #feed-list-facets{display:flex;flex-wrap:wrap;gap:5px;margin-top:7px;align-items:center;}
-  #feed-list-facets .fl-facet-lbl{font-size:10px;color:rgba(150,175,225,0.5);margin-right:1px;}
+  /* 축이 여럿이면 줄을 나눈다 — 한 줄에 섞으면 어느 알약이 어느 축인지 안 읽힌다. */
+  #feed-list-facets{display:flex;flex-direction:column;gap:5px;margin-top:7px;}
+  #feed-list-facets .fl-facet-row{display:flex;flex-wrap:wrap;gap:5px;align-items:center;}
+  #feed-list-facets .fl-facet-lbl{font-size:10px;color:rgba(150,175,225,0.5);margin-right:1px;min-width:22px;}
   .gc-ch-filter:hover{background:linear-gradient(160deg,rgba(255,255,255,0.16),rgba(255,255,255,0.04));border-color:rgba(255,255,255,0.24);color:rgba(220,235,255,0.95);}
   .gc-ch-filter:active{transform:scale(0.93);}
   .gc-ch-filter.active{
