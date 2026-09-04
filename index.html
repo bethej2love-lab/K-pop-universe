@@ -9296,8 +9296,10 @@ function showT(a,cx,cy,keepNavStack,urlMode,_unusedPushMobNav,noFly){
       // (권은비→아이즈원, 선미→원더걸스) 영상이 그 그룹 group_ko 밑에 있다. 그 그룹으로 멤버카드 쿼리를 태우면
       // 기존 로직(그룹영상+본인태깅+본인 solo group_ko=이름+탈퇴 컷오프)이 그대로 다 잡는다(선미: build('원더걸스','선미')=63건 실측).
       // ⚠️ 그룹 카드에서의 솔로영상 제외는 별도 — group_ko를 본인이름으로 재귀속하는 ②-B 스윕(데이터)이 담당.
-      const _histGko=(_artistGroups(a)||[]).map(g=>g&&g.ko).find(k=>k&&k!=='솔로'&&GROUPS[k]);
-      if(_histGko)_ttChVidCtl.build(_histGko,a.name.ko);
+      const _histAll=[...new Set((_artistGroups(a)||[]).map(g=>g&&g.ko).filter(k=>k&&k!=='솔로'&&GROUPS[k]))];
+      // 옛 그룹이 2개 이상이면(현아=포미닛+원더걸스 등 28명 실측) 첫 그룹을 기준으로 두고 나머지는 histKos로
+      // 넘겨 그 그룹들의 본인 태깅·미태깅(탈퇴 컷오프) 영상도 같이 잡는다. 1개면 histKos 비어 기존과 동일.
+      if(_histAll.length)_ttChVidCtl.build(_histAll[0],a.name.ko,_histAll.slice(1));
       else _ttChVidCtl.build(_ytGroupKoFor(a));
     }
   }else{
@@ -18961,7 +18963,15 @@ function _makeChVidController(contId){
         // +members=[본인]으로 저장되지만, **이 절은 그대로 둔다** — 이관 SQL이 돌기 전까지 기존 1,072건이
         // 이 절 하나로만 보이고 있어서 지우면 그 사이 영상이 통째로 사라진다. 이관이 끝나면 매칭되는
         // 행이 없어져 자연히 no-op이 되므로 남겨둬도 비용이 없다.
-        q=q.or(`${ownGroupWideClause}and(group_ko.eq.${_pgFilterVal(ko)},members.cs.{${_pgFilterVal(state.memberKo)}}),with_members.cs.{${_pgFilterVal(state.memberKo+'('+ko+')')}},group_ko.eq.${_pgFilterVal(state.memberKo)}`);
+        // 솔로 분리 멤버가 옛 그룹 2개+ (state.histKos, 실측 28명)면 나머지 그룹의 본인 태깅·미태깅(탈퇴 컷오프) 영상도 같이.
+        let _extraHistOr='';
+        (state.histKos||[]).forEach(g=>{
+          const c=_memberVideoCutoff(state.memberKo,g);
+          const uw=c.active?`,and(group_ko.eq.${_pgFilterVal(g)},members.eq.{})`
+            :c.left?`,and(group_ko.eq.${_pgFilterVal(g)},members.eq.{},published_at.lte.${c.left})`:'';
+          _extraHistOr+=uw+`,and(group_ko.eq.${_pgFilterVal(g)},members.cs.{${_pgFilterVal(state.memberKo)}}),with_members.cs.{${_pgFilterVal(state.memberKo+'('+g+')')}}`;
+        });
+        q=q.or(`${ownGroupWideClause}and(group_ko.eq.${_pgFilterVal(ko)},members.cs.{${_pgFilterVal(state.memberKo)}}),with_members.cs.{${_pgFilterVal(state.memberKo+'('+ko+')')}},group_ko.eq.${_pgFilterVal(state.memberKo)}${_extraHistOr}`);
       }else{
         // 그룹 카드: 내 채널 영상은 멤버 태깅 여부와 무관하게 전부 노출(그룹 전체가 나오는 영상이든
         // 특정 멤버 몇 명만 나오는 영상이든 다 그룹 콘텐츠) + 다른 채널 영상인데 아이유 팔레트처럼
@@ -19269,14 +19279,14 @@ function _makeChVidController(contId){
     }
   }
 
-  function build(ko,memberKo){
+  function build(ko,memberKo,histKos){
     const cont=document.getElementById(contId);
     if(!cont)return;
     cont.innerHTML='';
     if(!sb)return;
     // 멤버 카드는 미태깅 그룹 영상(MV·Shorts·토크쇼 등)이 뒤섞여 첫 화면이 지저분해지지 않도록
     // "라이브"(무대 직캠 위주) 탭에서 시작 — 그룹 카드는 그대로 "전체"
-    state={ko,memberKo:memberKo||null,filter:memberKo?'live':'all',onlyMe:false,searchQ:'',sortMode:'recommend',viewMode:'category',formatFilter:null,formats:[],offset:0,total:0,pos:0,cat:null,gen:state.gen+1,appendLock:false,trailingEl:null,hasMore:false,allVids:[],_liveFallbackDone:false,wrapEnd:0,wrapPhase:false,unitFilter:null};
+    state={ko,memberKo:memberKo||null,filter:memberKo?'live':'all',onlyMe:false,searchQ:'',sortMode:'recommend',viewMode:'category',formatFilter:null,formats:[],offset:0,total:0,pos:0,cat:null,gen:state.gen+1,appendLock:false,trailingEl:null,hasMore:false,allVids:[],_liveFallbackDone:false,wrapEnd:0,wrapPhase:false,unitFilter:null,histKos:(histKos&&histKos.length)?histKos:null};
     const _t=T[currentLang];
     cont.innerHTML=`<div class="gc-ch-hd"><div class="gc-ch-filters hscroll-drag"></div><div class="gc-ch-sort-wrap"><button class="gc-ch-sort-btn" title="${_t.sortTitle}" data-i18n-title="sortTitle" aria-haspopup="true" aria-expanded="false">⋮</button><div class="gc-ch-sort-menu"><button class="gc-ch-sort-item" data-sort="recommend"><span class="chk">✓</span><span data-i18n="chSortRec">${_t.chSortRec}</span></button><button class="gc-ch-sort-item" data-sort="popular"><span class="chk">✓</span><span data-i18n="chSortPop">${_t.chSortPop}</span></button><button class="gc-ch-sort-item" data-sort="latest"><span class="chk">✓</span><span data-i18n="chSortNew">${_t.chSortNew}</span></button><button class="gc-ch-sort-item" data-sort="oldest"><span class="chk">✓</span><span data-i18n="chSortOld">${_t.chSortOld}</span></button><div class="gc-ch-sort-divider" style="display:none"></div><button class="gc-ch-view-toggle" style="display:none"><span class="chk">✓</span><span data-i18n="chViewCon">${_t.chViewCon}</span></button></div></div><button class="gc-ch-refresh" title="${_t.refreshTitle}" data-i18n-title="refreshTitle">↻</button></div><div class="gc-ch-search-wrap" style="display:none"><input class="gc-ch-search" placeholder="${_t.chSearch}" data-i18n-ph="chSearch" autocomplete="off" spellcheck="false"><button class="gc-ch-search-clear" aria-label="${_t.searchClearLabel}">\xD7</button></div><div class="gc-ch-grid"></div><div class="gc-ch-more-wrap"></div><div class="tv-cover-of-wrap" style="display:none"></div>`;
     _exitSelMode();
