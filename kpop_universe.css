@@ -3352,10 +3352,12 @@
         (겹치는 레이어는 항상 최근 실행 화면이 위라는 프로젝트 규칙). */
   #mob-sheet.lb-half,#mob-card-stack.lb-half{
     bottom:0;                                   /* 라이트박스가 덮고 있어 탭바가 없다 */
-    min-height:52vh;max-height:52vh;
+    /* 52→55vh(2026-09-04): 영상은 상단 고정이라 하프시트가 낮으면 영상~시트 사이 배경 여백이 컸다.
+       시트를 영상 바로 밑까지 살짝 올려 그 여백을 줄인다(영상 덮지 않게 보수적으로 +3vh). */
+    min-height:55vh;max-height:55vh;
   }
   #mob-sheet.lb-half #mob-sheet-inner,
-  #mob-card-stack.lb-half #mob-card-stack-inner{max-height:calc(52vh - 26px);}
+  #mob-card-stack.lb-half #mob-card-stack-inner{max-height:calc(55vh - 26px);}
   /* 영상 위 이름 칩 — 누를 수 있다는 걸 보여주되 툴바가 시끄러워지지 않게 밑줄만 은은하게 */
   /* 탭 영역은 세로로 넓히고(실측 17px → 44px 미만이라 누르기 어려웠음) 밑줄은 안쪽 span이 그린다 —
      버튼에 border-bottom을 두면 padding만큼 글자에서 떨어져 밑줄이 붕 뜬다(2026-08-27). */
