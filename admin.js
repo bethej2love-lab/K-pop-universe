@@ -7985,8 +7985,11 @@ document.getElementById('vid-tag-save').addEventListener('click',async e=>{
     // "플래그만 바꾸려고 연 빈 모달"에서 저장 시 선택 영상 전체 태그가 빈값으로 지워지는 사고를 막는다.
     // 칩을 하나라도 넣었으면(=태그를 확정할 의도) 기존처럼 전체 태그 배열을 모달 값으로 교체한다.
     const _anyTag=members.length||withMembers.length||withGroups.length||coverMembers.length||coverGroups.length;
-    // 태그를 덮어쓴다 = 사람이 최종 확정한 것이므로 단일 편집과 같이 검수도 끝난 것으로 본다(needs_review:false).
-    if(overwriteTags&&_anyTag){updatePayload.members=members;updatePayload.with_members=withMembers;updatePayload.with_groups=withGroups;updatePayload.cover_of_members=coverMembers;updatePayload.cover_of_groups=coverGroups;updatePayload.tags_manual=true;updatePayload.needs_review=false;}
+    // 칩을 하나라도 넣었으면(=태그를 확정할 의도) 체크박스와 무관하게 저장한다(2026-09-04 재수정 — 예전엔
+    // '덮어쓰기'를 안 켜면 태그가 payload에 안 담겨 "변경할 항목 없음"으로 저장이 조용히 중단되던 게 근본 원인).
+    // 칩을 안 넣었으면 태그는 안 건드림(플래그만 바꾸는 케이스 + 빈값 덮어쓰기 삭제 사고 방지).
+    // 태그를 확정 = 사람이 본 것이므로 검수도 끝난 것으로 본다(needs_review:false).
+    if(_anyTag){updatePayload.members=members;updatePayload.with_members=withMembers;updatePayload.with_groups=withGroups;updatePayload.cover_of_members=coverMembers;updatePayload.cover_of_groups=coverGroups;updatePayload.tags_manual=true;updatePayload.needs_review=false;}
     if(category)updatePayload.category=category;
     if(_vidTagShortTouched&&isShort!==undefined)updatePayload.is_short=isShort;
     if(_vidTagFlagTouched)Object.assign(updatePayload,_flagPatch(contentFlag,'manual'));
@@ -8002,17 +8005,29 @@ document.getElementById('vid-tag-save').addEventListener('click',async e=>{
         if(bRows)_bulkBefore=_bulkBefore.concat(bRows);
       }
     }catch(e){_bulkBefore=[];}
-    if(overwriteTags){
-      // tags_manual=true인 행도 있을 수 있어서 트리거를 우회하는 two-step 저장:
-      // 1) tags_manual=false로 잠금 해제 → 트리거 조건 불만족으로 모든 컬럼 변경 허용
+    let _savedN=0;
+    if(_anyTag){
+      // 태그 컬럼은 tags_manual=true 행을 보호하는 DB 트리거가 있어 two-step으로 우회:
+      // 1) tags_manual=false로 잠금 해제(+payload) → 트리거 조건 불만족으로 모든 컬럼 변경 허용
       // 2) tags_manual=true로 재잠금
-      const{error:e1}=await sb.from(_YT_TABLE).update({...updatePayload,tags_manual:false}).in('id',ids);
+      // .select('id')로 실제 반영된 행 수를 받아, 권한(RLS)/매칭 문제로 0건 반영되는 조용한 실패를 드러낸다.
+      const{data:d1,error:e1}=await sb.from(_YT_TABLE).update({...updatePayload,tags_manual:false}).in('id',ids).select('id');
       if(e1){statusEl.textContent='저장 실패: '+e1.message;return;}
+      _savedN=(d1||[]).length;
       const{error:e2}=await sb.from(_YT_TABLE).update({tags_manual:true}).in('id',ids);
       if(e2){statusEl.textContent='저장 실패: '+e2.message;return;}
     }else{
-      const{error}=await sb.from(_YT_TABLE).update(updatePayload).in('id',ids);
+      const{data,error}=await sb.from(_YT_TABLE).update(updatePayload).in('id',ids).select('id');
       if(error){statusEl.textContent='저장 실패: '+error.message;return;}
+      _savedN=(data||[]).length;
+    }
+    if(_savedN<ids.length){
+      // 에러는 없는데 반영 건수가 모자람 = RLS(권한)/매칭 문제. 조용히 "저장됨"으로 넘어가지 않게 경고.
+      console.warn('[일괄편집] 반영 부족',{요청:ids.length,반영:_savedN,payload:updatePayload});
+      statusEl.textContent=_savedN===0
+        ? `⚠️ 0개 반영됨 — 저장이 안 됐어요(관리자 권한/로그인 만료 가능). 콘솔(F12) 확인`
+        : `⚠️ ${_savedN}/${ids.length}개만 반영됨 — 나머지는 권한/보호(수동편집) 때문일 수 있어요`;
+      if(_savedN===0)return; // 하나도 안 됐으면 "저장됨" 흐름으로 안 넘어감
     }
     // 일괄 편집 이력 — after는 updatePayload로 실제 바꾼 필드만 넘긴다(안 건드린 필드는 diff 대상이 아님).
     _tagEditLog(_bulkBefore.map(r=>{
@@ -8020,7 +8035,7 @@ document.getElementById('vid-tag-save').addEventListener('click',async e=>{
       _TAG_LOG_FIELDS.forEach(f=>{if(f in updatePayload)after[f]=updatePayload[f];});
       return {videoId:r.id,title:r.title,before:{...r,is_short:_isShortV(r)},after,source:'modal_bulk'};
     }));
-    statusEl.textContent=`${ids.length}개 저장됨`;
+    if(_savedN>=ids.length)statusEl.textContent=`${ids.length}개 저장됨`; // 부분 반영이면 위 경고 문구 유지
     setTimeout(()=>{
       _closeVidTagModal();
       window._adminBulkExitFn?.();
