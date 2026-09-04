@@ -449,6 +449,20 @@ async function _ytRefreshAllViewCounts(){
 // 여유 많다. 정기 동기화(search.list 콜당 100쿼터)와 겹치는 날만 피하면 됨. 자주 눌러도 무방(오래된
 // 것부터 순환이라 누를수록 전체가 빨리 한 바퀴). 40만 건이면 ~20번이면 전체 한 바퀴(2026-09-01 상향).
 const VIEW_COUNT_ROTATE_BATCH=20000;
+// ── 삭제·비공개 감지 (2026-09-04, Fable T8) ───────────────────────────────────
+// 컬럼(unavailable_at)은 unavailable_migration.sql로 사용자가 직접 넣는다(RLS로 여기서 DDL 불가).
+// 아직 없을 수 있으므로 **한 번만 탐지**해서 없으면 조용히 기능을 끈다 — source_tier(_ytHasSourceCols)와
+// 같은 방어 패턴. 없는 컬럼을 update에 넣으면 그 배치가 통째로 실패해 조회수 갱신까지 같이 죽는다.
+let _ytHasUnavailCol=null; // null=미확인 / true / false
+async function _ytUnavailSupported(){
+  if(_ytHasUnavailCol!==null)return _ytHasUnavailCol;
+  try{
+    const{error}=await sb.from(_YT_TABLE).select('unavailable_at').limit(1);
+    _ytHasUnavailCol=!error;
+    if(error)console.warn('[삭제 감지] unavailable_at 컬럼이 없어 감지를 건너뜁니다 — unavailable_migration.sql 실행 필요');
+  }catch(e){_ytHasUnavailCol=false;}
+  return _ytHasUnavailCol;
+}
 async function _ytRotateViewCountRefresh(){
   const key=_ytApiKey();
   if(!key){_ytSetProg('API 키를 먼저 입력해주세요');return;}
@@ -457,22 +471,25 @@ async function _ytRotateViewCountRefresh(){
   // ⚠️ PostgREST는 한 요청당 최대 1000행만 준다(db-max-rows) — .limit(5000)을 걸어도 1000개만 왔던 원인
   //    (2026-09-01 사용자 제보 "5000인데 1000만 됨"). 1000개씩 range로 나눠 받아 실제 BATCH만큼 모은다.
   //    view_count_synced_at은 미갱신분이 전부 null(동률)이라 id를 2차 정렬로 붙여야 페이지 경계가 안 어긋난다.
+  const _unav=await _ytUnavailSupported(); // 삭제 감지 가능 여부(컬럼 유무)
   const ids=[];
+  const wasUnavail=new Set(); // 이미 "사라짐"으로 찍혀 있던 id — 첫 관측 시각을 덮어쓰지 않기 위해
   for(let off=0; off<VIEW_COUNT_ROTATE_BATCH; off+=1000){
     const to=Math.min(off+1000,VIEW_COUNT_ROTATE_BATCH)-1;
-    const{data,error}=await sb.from(_YT_TABLE).select('id')
+    const{data,error}=await sb.from(_YT_TABLE).select(_unav?'id,unavailable_at':'id')
       .order('view_count_synced_at',{ascending:true,nullsFirst:true})
       .order('id',{ascending:true})
       .range(off,to);
     if(error){_ytSetProg('대상 조회 실패: '+error.message);return;}
     if(!data?.length)break;
     ids.push(...data.map(r=>r.id));
+    if(_unav)data.forEach(r=>{if(r.unavailable_at)wasUnavail.add(r.id);});
     if(data.length<to-off+1)break; // 마지막 페이지(테이블 끝)
   }
   if(!ids.length){_ytSetProg('순환 갱신 대상 없음');return;}
   const totalCalls=Math.ceil(ids.length/50);
   _ytSetProg(`YouTube API 호출 예정: ${totalCalls}회 (${ids.length}개 영상)`);
-  let savedTotal=0,failedTotal=0;
+  let savedTotal=0,failedTotal=0,newlyGone=0,revived=0;
   for(let i=0;i<ids.length;i+=50){
     const chunk=ids.slice(i,i+50);
     _ytSetProg(`순환 갱신 중… ${Math.min(i+50,ids.length)}/${ids.length} (API ${Math.floor(i/50)+1}/${totalCalls}회, 저장 ${savedTotal}개)`);
@@ -487,25 +504,40 @@ async function _ytRotateViewCountRefresh(){
       (d.items||[]).forEach(it=>{
         returned.add(it.id);
         const vc=parseInt(it.statistics?.viewCount,10);
-        if(!isNaN(vc))statsUpdates.push({id:it.id,view_count:vc,touchOnly:false});
+        // 되살아난 것(비공개 해제·지역차단 해제)은 표식을 지운다 — "지금은 있다"가 최신 사실이다
+        const revive=_unav&&wasUnavail.has(it.id);
+        if(!isNaN(vc))statsUpdates.push({id:it.id,view_count:vc,touchOnly:false,revive});
+        else if(revive)statsUpdates.push({id:it.id,touchOnly:true,revive:true});
+        if(revive)revived++;
       });
       // 삭제/비공개라 API 응답에 아예 안 잡힌 것도 "이번에 확인은 했다"는 뜻으로 synced_at만 갱신하고
       // 기존 view_count는 그대로 둠(null로 덮어써서 데이터를 잃으면 안 됨) — 안 그러면 죽은 영상이 계속
       // "가장 오래됨" 취급돼 매번 맨 앞에 다시 뽑히기만 하고 끝나지 않음.
-      chunk.filter(id=>!returned.has(id)).forEach(id=>statsUpdates.push({id,touchOnly:true}));
+      // ⚠️ 이미 찍힌 건 **덮어쓰지 않는다**(첫 관측 시각 유지). 매번 now()로 밀면 "언제 사라졌나"가
+      //    영원히 오늘이 되어 아카이브 기록으로서 값이 없어진다.
+      chunk.filter(id=>!returned.has(id)).forEach(id=>{
+        const isNew=_unav&&!wasUnavail.has(id);
+        if(isNew)newlyGone++;
+        statsUpdates.push({id,touchOnly:true,markGone:isNew});
+      });
     }catch(e){
       _ytSetProg(`YouTube API 오류(${savedTotal}개까지 저장된 채로 중단, 다시 누르면 이어서 진행됨): `+e.message);
       console.error('[조회수 순환 갱신]',e.message);
       return;
     }
-    const _ub=await _sbUpdateBatch(statsUpdates,({id,view_count,touchOnly})=>
-      sb.from(_YT_TABLE).update(touchOnly?{view_count_synced_at:nowIso}:{view_count,view_count_synced_at:nowIso}).eq('id',id),
-      {conc:20,retries:2});
+    const _ub=await _sbUpdateBatch(statsUpdates,({id,view_count,touchOnly,markGone,revive})=>{
+      const patch=touchOnly?{view_count_synced_at:nowIso}:{view_count,view_count_synced_at:nowIso};
+      if(markGone)patch.unavailable_at=nowIso; // 처음 사라진 것만
+      else if(revive)patch.unavailable_at=null; // 되살아난 것
+      return sb.from(_YT_TABLE).update(patch).eq('id',id);
+    },{conc:20,retries:2});
     savedTotal+=_ub.saved;failedTotal+=_ub.failed;
     // 실패분은 synced_at이 안 찍혀 다음 순환 때 다시 대상이 되므로 건너뛰고 계속 진행한다.
     if(_ub.failed)console.error('[조회수 순환 갱신] 재시도 후에도 실패:',_ub.failed,'건 —',_ub.firstErr);
   }
-  _ytSetProg(`조회수 순환 갱신 완료 — ${savedTotal}개 저장${failedTotal?` · ${failedTotal}개는 일시 실패라 다음 실행 때 재시도됨`:''} (전체 카테고리 · API ${totalCalls}회)`);
+  _ytSetProg(`조회수 순환 갱신 완료 — ${savedTotal}개 저장${failedTotal?` · ${failedTotal}개는 일시 실패라 다음 실행 때 재시도됨`:''} (전체 카테고리 · API ${totalCalls}회)`
+    +(_unav?`${newlyGone?` · 🪦 삭제·비공개 새로 감지 ${newlyGone}건`:''}${revived?` · ↩︎ 되살아남 ${revived}건`:''}`
+           :' · (삭제 감지 꺼짐 — unavailable_migration.sql 실행 필요)'));
   _feedDiscoveryBuiltAt=0;
 }
 
@@ -8351,6 +8383,7 @@ async function _admLoadCards(){
   const cNew=mk('새로 들어온 영상','눌러서 새 영상 검토·편집',openVmTab('new'));
   const cTagq=mk('검수 대기','애매한 태깅 — 눌러서 목록',()=>{_admHomeClose();_openTagReviewQueue();}); // 검수 대기열(2026-08-30)
   const cErr=mk('주간 손댄 비율','최근 7일 유입 중 사람이 고친 것',null); // 오류율 지표(2026-09-04)
+  const cGone=mk('삭제·비공개 감지','유튜브에서 사라진 영상 (누적)',null); // 보존 지표(2026-09-04)
   const set=(card,n,zeroSub)=>{
     const el=card.querySelector('.adm-card-num');
     const sub=card.querySelector('.adm-card-sub');
@@ -8364,7 +8397,7 @@ async function _admLoadCards(){
   // 잠깐 기다렸다 다시 보고, 그래도 없으면 이유를 카드에 적는다.
   for(let i=0;i<20&&!sb;i++)await new Promise(r=>setTimeout(r,250));
   if(!sb){
-    [cReview,cSs,cFb,cNew,cTagq,cErr].forEach(c=>{
+    [cReview,cSs,cFb,cNew,cTagq,cErr,cGone].forEach(c=>{
       c.querySelector('.adm-card-num').textContent='—';
       c.querySelector('.adm-card-sub').textContent='DB 연결 대기 중';
     });
@@ -8412,6 +8445,21 @@ async function _admLoadCards(){
     }else sub+=' · 비교할 지난주 없음';
     if(subEl)subEl.textContent=sub;
   });
+  // 삭제·비공개 감지 — 컬럼이 아직 없으면 "꺼짐"으로 정직하게 표시한다(0건으로 보이면 "없다"로 오해한다)
+  (async()=>{
+    const numEl=cGone.querySelector('.adm-card-num'),subEl=cGone.querySelector('.adm-card-sub');
+    if(!await _ytUnavailSupported()){
+      numEl.textContent='—';numEl.className='adm-card-num adm-zero';
+      if(subEl)subEl.textContent='꺼짐 — unavailable_migration.sql 실행 필요';return;
+    }
+    const total=await _admCount(sb.from(_YT_TABLE).select('id',_admHead()).not('unavailable_at','is',null));
+    const wk=await _admCount(sb.from(_YT_TABLE).select('id',_admHead())
+      .gt('unavailable_at',new Date(Date.now()-_ADM_WEEK_MS).toISOString()));
+    if(total===null){numEl.textContent='?';numEl.className='adm-card-num adm-zero';if(subEl)subEl.textContent='조회 실패';return;}
+    numEl.textContent=String(total);
+    numEl.className='adm-card-num'+(total===0?' adm-zero':'');
+    if(subEl)subEl.textContent=total===0?'아직 없음 (순환 갱신이 돌면 쌓여요)':`이번 주 ${wk==null?'?':wk}건 · 카드엔 아직 그대로 떠요`;
+  })();
 }
 // 기준선 표본 채점 적재 (2026-09-04, Fable T1) — 위 "손댄 비율"은 **고친 것만** 세므로 아무도 검수를
 // 안 하면 0%가 된다. 진짜 오류율을 알려면 무작위 표본을 사람이 전수 채점해야 한다. 그 표본을 검수
