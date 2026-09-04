@@ -56,7 +56,7 @@
      ⚠️ 손으로 올리던 시절 2026-08-24에 실제로 빠뜨려서 폰이 "새 마크업 + 옛 CSS"를 그리는 바람에
      화면이 통째로 깨졌음(Charts 카드가 158px→46px로 찌그러짐). 로컬 확인은
      `node tools/bump_cache_version.mjs --check`. -->
-<link rel="stylesheet" href="kpop_universe.css?v=20260904-61d6a954">
+<link rel="stylesheet" href="kpop_universe.css?v=20260904-66b6b825">
 <!-- ⚠️ 2026-09-04에 "라이트박스 반응 피커를 없애니 이 CDN도 뺄 수 있다"고 판단해 지웠다가 되돌렸다 —
      최애(bias) 지정의 이모지 선택기(#pp-bias-emoji-picker)가 같은 컴포넌트를 쓴다. 반응 쪽만 보고
      지우면 프로필 패널이 조용히 깨진다(로드 실패해도 콘솔 에러 없이 그냥 안 뜬다). -->
@@ -18124,8 +18124,8 @@ function _buildFeedDisc(){
   // Trend(최근 7일 전체 업로드)를 큐 맨 앞으로(2026-09-02 제보 "이미 떠 있어야"). 동시 실행 4개라 3번째여도
   // 시작은 t=0로 같지만, Trend 쿼리(800건+셔플)가 앞 두 선반보다 무거워 렌더가 뒤로 밀렸음 — 첫 슬롯을 줘서
   // 제일 먼저 시작·렌더되게 한다. DOM 컨테이너(#feed-trend)는 고정이라 표시 위치는 그대로.
+  _feedEnqueue(()=>_buildFeedJacon()); // 오리지널 콘텐츠(아이돌 개인 채널) 선반 — Trend 위(짧은 가로 선반)
   _feedEnqueue(()=>_buildFeedTrend());
-  _feedEnqueue(()=>_buildFeedJacon()); // 오리지널 콘텐츠(아이돌 개인 채널) 선반 — Trend 바로 뒤
   _feedEnqueue(()=>_buildFeedWeeklyTopCams(chart,list));
   _feedEnqueue(()=>_buildFeedThisYearPicks(chart)); // 올해 한정 모음 2개(랜덤) — 주간/월간 바로 뒤 앞자리
   _feedEnqueue(()=>_buildFeedYearlyTop(chart));
@@ -20526,15 +20526,16 @@ _totopBtn.addEventListener('click',e=>{
         <div class="feed-section-ttl">📊 Charts</div>
         <div id="feed-chart" class="feed-strip hscroll-drag"></div>
       </div>
+      <!-- Original Contents: 여러 아이돌 개인 채널(source_tier='idol', 가을의 온도·따라해볼레이 등) 최근 업로드를 한 가로 선반에.
+           Trend는 세로 그리드라 길어서, 짧은 가로 선반인 이걸 그 위로 올림(2026-09-04 사용자 요청). -->
+      <div class="feed-section" id="feed-jacon-section" style="display:none">
+        <div class="feed-section-ttl">🎥 Original Contents</div>
+        <div id="feed-jacon" class="feed-strip hscroll-drag"></div>
+      </div>
       <!-- Trend: 전체 최근 7일 업로드를 행 패커(가로행/쇼츠행 번갈아·여백0)로 많이 나열 — 탐색용 최신 브라우징. -->
       <div class="feed-section" id="feed-trend-section" style="display:none">
         <div class="feed-section-ttl">📈 Trend</div>
         <div id="feed-trend" class="feed-grid"></div>
-      </div>
-      <!-- Original Contents: 여러 아이돌 개인 채널(source_tier='idol', 가을의 온도·따라해볼레이 등) 최근 업로드를 한 가로 선반에(2026-09-04). -->
-      <div class="feed-section" id="feed-jacon-section" style="display:none">
-        <div class="feed-section-ttl">🎥 Original Contents</div>
-        <div id="feed-jacon" class="feed-strip hscroll-drag"></div>
       </div>
       <div class="feed-section">
         <div class="feed-section-ttl">✨ Discovery</div>
