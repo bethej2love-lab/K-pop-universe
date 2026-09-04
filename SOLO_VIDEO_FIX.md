@@ -43,7 +43,18 @@
 - 권은비 등 groups[]에 옛 그룹 left 날짜 있음 ✓ → ②-B 스윕의 "탈퇴일 이후" 판정 근거 완비.
 - ⚠️ 아이오아이·워너원은 `disbanded` 없음(프로젝트 그룹) — 필요시 추가.
 
-## ④ 사진(artist_pics)도 같은 문제 (2026-09-04)
-- 사진 1,367장 전부 존재(손실 0). 저장 키 `(ko_name, group_ko)` vs 조회 키 `_ytGroupKoFor(=솔로면 이름)` 불일치로 안 뜸.
-- **180명(솔로전향·유니크이름) 재키 SQL로 복구 완료**(`~/Downloads/artist_pics_rekey.sql`, group_ko→본인이름).
-- **남은 ~101장(동명이인·겸임/이적)**: SQL 일괄재키는 동명이인 위험 → **①과 동일하게 앱 조회를 groups[] 히스토리 키로 확장**해서 해결. `_loadInstaPic`/`_warmInstaPicCache`(index.html ~9441/9478)가 `(이름, _ytGroupKoFor)` 단일 조회 → 후보 키 여러 개(이름·group.ko·groups[]) 시도로. 아티스트별 스코프라 동명이인 안 섞임.
+## ④ 사진(artist_pics) — 원인 정정 & 데이터로 해결 (2026-09-04 재진단)
+⚠️ **위 ④ 초판은 조회 키를 `_ytGroupKoFor(=솔로면 이름)`로 오판했다. 실제 앱 사진 조회는 다르다.**
+- `_ttPicCfg`(index.html:9541)는 `groupKo = a.group.ko`를 **그대로** 씀(_ytGroupKoFor 아님). 저장·업로드(`upsert onConflict:'ko_name,group_ko'`)도 동일.
+- 즉 솔로 멤버(group.ko='솔로') 사진의 **정답 키 = (이름, '솔로')**. 그런데 `group_ko='솔로'`에 실측 **0장**이라 솔로 사진이 전부 안 떴다(사용자 제보 "복원 안 됨" = 이것).
+- 내 예전 재키(`artist_pics_rekey.sql`)가 `group_ko→본인이름`으로 옮긴 게 **틀린 타깃**이었다.
+- **해결(앱 수정 불필요, 데이터만):** 각 사진을 `group_ko = 그 아티스트의 현재 a.group.ko`(솔로면 '솔로')로 맞춘다.
+  → **`~/Downloads/artist_pics_rekey_solo.sql` (182건)** 실행하면 복원. 충돌 0(솔로키 비어있었음). 신규 업로드도 같은 키라 앞으로도 정상.
+- ✅ **기능 세션은 ④ 앱 조회 확장 코드 만들 필요 없음.** 사진은 데이터 재키로 끝.
+- 남은 소수: 동명이인 67·실명예명 표기차 6(김청하=청하 등) — 개별 확인, 후순위.
+
+## ②-B 영상 귀속 — 데이터 세션에서 SQL로 처리 (2026-09-04, ①과 별개)
+- 앱 영상 테이블 = **`yt_channel_videos`**(컬럼 group_ko, members[], published_at 등).
+- 안전기준: `group_ko=옛그룹` AND `members=[본인]단독` AND `published_at ≥ 탈퇴/해체일(groups[].left ∥ group.disbanded)`.
+- 실측 드라이런: **2,305건 / 101명** 이동(최예나421·권은비391·이채연246·조유리229·청하147·선미14…). 활동기 직캠은 컷오프로 정확히 제외됨.
+- **`~/Downloads/yt_exsolo_rekey.sql`** 생성됨(id IN 청크, 112줄). 실행 시 옛그룹 그룹카드에서 솔로영상 제외. 멤버카드는 build의 solo group_ko절이 그대로 잡아 영향 없음.
