@@ -6960,13 +6960,18 @@ async function _enrichMemberVideosFromApi(a,tv,baseSongs,basePersonalSongs){
   if(!sb)return;
   const memberKo=a.name.ko;
   const groupKo=_ytGroupKoFor(a); // 솔로면 본인 이름이 곧 채널 동기화 키
+  // ① 솔로 분리 후속(2026-09-04, SOLO_VIDEO_FIX.md): 솔로 등록 후에도 영상은 옛 그룹 group_ko 밑에 그대로
+  // 있으므로(예: 권은비 영상 489개가 group_ko='아이즈원'), 멤버의 groups[] 히스토리 전체를 조회 키로 확장한다.
+  // 실존 그룹이면 그 ko, 솔로/미등록 항목이면 본인 이름 → 권은비 = ['권은비','아이즈원'] → 솔로+그룹 영상 둘 다.
+  // members contains memberKo 조건은 유지(그 멤버 태깅분만). 겸임(마크 등)도 자연히 여러 그룹 다 보이게 됨.
+  const _ownKeys=[...new Set([groupKo,...(_artistGroups(a)||[]).map(g=>(g.ko&&GROUPS[g.ko])?g.ko:memberKo)])];
   const withKey=`${memberKo}(${a.group.ko})`; // 타 채널에서 콜라보로 태깅될 때 쓰는 표시용 키는 원래 그룹 표기 그대로
   try{
     const[ownQ,withQ,generalQ]=await Promise.all([
-      sb.from(_YT_TABLE).select('id,title,category,is_short,group_ko,members,with_members,cover_of_members,cover_of_groups,content_flag').eq('group_ko',groupKo).contains('members',[memberKo]),
+      sb.from(_YT_TABLE).select('id,title,category,is_short,group_ko,members,with_members,cover_of_members,cover_of_groups,content_flag').in('group_ko',_ownKeys).contains('members',[memberKo]),
       sb.from(_YT_TABLE).select('id,title,category,is_short,group_ko,members,with_members,cover_of_members,cover_of_groups,content_flag').contains('with_members',[withKey]),
-      // 멤버 태깅 없는 그룹 전체 영상 — 모든 멤버 카드에 노출
-      sb.from(_YT_TABLE).select('id,title,category,is_short,group_ko,members,with_members,cover_of_members,cover_of_groups,content_flag').eq('group_ko',groupKo).filter('members','eq','{}'),
+      // 멤버 태깅 없는 그룹 전체 영상 — 모든 멤버 카드에 노출(그룹 히스토리 전체 키로)
+      sb.from(_YT_TABLE).select('id,title,category,is_short,group_ko,members,with_members,cover_of_members,cover_of_groups,content_flag').in('group_ko',_ownKeys).filter('members','eq','{}'),
     ]);
     if(ownQ.error)throw new Error(ownQ.error.message);
     if(withQ.error)throw new Error(withQ.error.message);
