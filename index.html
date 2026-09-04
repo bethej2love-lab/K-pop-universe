@@ -57,6 +57,9 @@
      화면이 통째로 깨졌음(Charts 카드가 158px→46px로 찌그러짐). 로컬 확인은
      `node tools/bump_cache_version.mjs --check`. -->
 <link rel="stylesheet" href="kpop_universe.css?v=20260904-09df9ef0">
+<!-- ⚠️ 2026-09-04에 "라이트박스 반응 피커를 없애니 이 CDN도 뺄 수 있다"고 판단해 지웠다가 되돌렸다 —
+     최애(bias) 지정의 이모지 선택기(#pp-bias-emoji-picker)가 같은 컴포넌트를 쓴다. 반응 쪽만 보고
+     지우면 프로필 패널이 조용히 깨진다(로드 실패해도 콘솔 에러 없이 그냥 안 뜬다). -->
 <script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@1/index.js"></script>
 </head>
 <body>
@@ -749,15 +752,6 @@
       <button class="lb-react-btn" data-emoji="✨">✨<span class="lb-react-cnt"></span></button>
       <button class="lb-react-btn" data-emoji="🥹">🥹<span class="lb-react-cnt"></span></button>
       <button class="lb-react-btn" data-emoji="💀">💀<span class="lb-react-cnt"></span></button>
-      <button id="lb-react-more" class="lb-react-more">+</button>
-    </div>
-    <div id="lb-react-extended"></div>
-    <div id="lb-emoji-picker-wrap">
-      <div id="lb-emoji-picker-header">
-        <span id="lb-emoji-picker-title">이모지 선택</span>
-        <button id="lb-emoji-picker-close">✕</button>
-      </div>
-      <emoji-picker id="lb-emoji-picker"></emoji-picker>
     </div>
     <div id="yt-lb-toolbar">
       <button id="yt-lb-prev" aria-label="이전 영상">‹</button>
@@ -5209,10 +5203,6 @@ function _lbUpdateToolbar(){
   const reactUrl=s?s.u:'';
   if(reactUrl!==_lbCurVideoUrl){
     _lbCurVideoUrl=reactUrl;
-    _reactExpandedLevel=0;
-    document.getElementById('lb-react-extended').classList.remove('open');
-    document.getElementById('lb-react-more').textContent='+';
-    if(document.getElementById('lb-react-custom-wrap'))document.getElementById('lb-react-custom-wrap').classList.remove('open');
     _loadReactions(reactUrl);
   }else{
     _renderReactions();
@@ -5328,13 +5318,16 @@ function _lbUpdateUplist(){
 }
 
 // ── 이모지 반응 ───────────────────────────────────────────────────────
+// 반응은 이 6개로 **고정**한다(2026-09-04). 예전엔 + 버튼으로 확장 행을 열고 거기서 다시 +를 누르면
+// emoji-picker-element(CDN)로 전체 이모지를 고를 수 있었는데, 실측에서 그 자유도가 오히려 신호를 죽였다:
+// 누적 185건이 22종에 흩뿌려졌고 그중 9종은 평생 1회였다(=어느 이모지를 봐도 카운트가 0이나 1).
+// 6종으로 모으면 같은 반응 수가 3배 밀도로 보인다. 나중에 사람이 늘어 다시 넓히고 싶으면 이 배열에
+// 더하는 것부터 시작하면 되고, 전체 피커는 그때 다시 붙이면 된다(CDN 의존도 그때 다시 지면 된다).
 const LB_REACT_DEFAULT=['❤️‍🔥','🫠','😭','✨','🥹','💀'];
-const LB_REACT_EXTENDED=['👀','🫢','😳','👏','👑','👼'];
 let _rawConnData=[]; // connections.json raw array
 let _myReactions=new Set(); // "videoUrl\x00emoji"
 let _reactionCounts=new Map(); // "videoUrl\x00emoji" → count
 let _lbCurVideoUrl='';
-let _reactExpandedLevel=0;
 
 async function _loadReactions(videoUrl){
   _renderReactions();
@@ -5389,79 +5382,7 @@ function _renderReactions(){
   });
 }
 
-// 확장 이모지 행 빌드 (첫 번째 + 클릭시 매번 재빌드 — 카운트 기반 정렬)
-function _buildExtendedReactions(){
-  const wrap=document.getElementById('lb-react-extended');
-  wrap.innerHTML='';
-  const row1Set=new Set(LB_REACT_DEFAULT);
-  // 풀: 기본 2행 이모지 + 유저 반응 중 1행에 없는 것
-  const poolSet=new Set(LB_REACT_EXTENDED);
-  _reactionCounts.forEach((cnt,key)=>{
-    const[url,emoji]=key.split(' ');
-    if(url===_lbCurVideoUrl&&cnt>0&&!row1Set.has(emoji)&&!poolSet.has(emoji))poolSet.add(emoji);
-  });
-  _myReactions.forEach(key=>{
-    const[url,emoji]=key.split(' ');
-    if(url===_lbCurVideoUrl&&!row1Set.has(emoji)&&!poolSet.has(emoji))poolSet.add(emoji);
-  });
-  // 반응 수 내림차순 정렬 (0은 뒤로)
-  const pool=[...poolSet].sort((a,b)=>{
-    const cA=_reactionCounts.get(_lbCurVideoUrl+' '+a)||0;
-    const cB=_reactionCounts.get(_lbCurVideoUrl+' '+b)||0;
-    return cB-cA;
-  });
-  // 최대 11개 (+ 버튼 포함 2행 한계)
-  pool.slice(0,11).forEach(emoji=>{
-    const btn=document.createElement('button');
-    btn.className='lb-react-btn';btn.dataset.emoji=emoji;
-    btn.innerHTML=`${emoji}<span class="lb-react-cnt"></span>`;
-    btn.addEventListener('click',()=>_toggleReaction(_lbCurVideoUrl,emoji));
-    wrap.appendChild(btn);
-  });
-  // 두 번째 + → 전체 이모지 피커
-  const more2=document.createElement('button');
-  more2.className='lb-react-more';more2.textContent='+';
-  more2.addEventListener('click',()=>{_reactExpandedLevel=2;_openEmojiPicker();});
-  wrap.appendChild(more2);
-}
 
-// 전체 이모지 피커 (emoji-picker-element)
-function _openEmojiPicker(){
-  const pickerWrap=document.getElementById('lb-emoji-picker-wrap');
-  pickerWrap.classList.add('open');
-  const picker=document.getElementById('lb-emoji-picker');
-  // 이모지 선택 이벤트 (중복 바인딩 방지)
-  if(!picker._bound){
-    picker._bound=true;
-    picker.addEventListener('emoji-click',e=>{
-      const emoji=e.detail.unicode;
-      _toggleReaction(_lbCurVideoUrl,emoji);
-      _closeEmojiPicker();
-    });
-  }
-}
-function _closeEmojiPicker(){
-  document.getElementById('lb-emoji-picker-wrap').classList.remove('open');
-  _reactExpandedLevel=1;
-}
-
-document.getElementById('lb-emoji-picker-close').addEventListener('click',_closeEmojiPicker);
-
-// 첫 번째 +/← 버튼 (확장 토글)
-document.getElementById('lb-react-more').addEventListener('click',()=>{
-  const moreBtn=document.getElementById('lb-react-more');
-  if(_reactExpandedLevel===0){
-    _reactExpandedLevel=1;
-    _buildExtendedReactions();
-    document.getElementById('lb-react-extended').classList.add('open');
-    moreBtn.textContent='←';
-    _renderReactions();
-  }else if(_reactExpandedLevel===1){
-    _reactExpandedLevel=0;
-    document.getElementById('lb-react-extended').classList.remove('open');
-    moreBtn.textContent='+';
-  }
-});
 
 // 기본 반응 버튼 이벤트
 document.querySelectorAll('.lb-react-btn').forEach(btn=>{
@@ -5477,9 +5398,9 @@ function _lbRipple(btn,e){
   btn.appendChild(sp);
   sp.addEventListener('animationend',()=>sp.remove());
 }
-['yt-lb-reactions','lb-react-extended'].forEach(id=>{
+['yt-lb-reactions'].forEach(id=>{
   const el=document.getElementById(id);
-  const sel='.lb-react-btn,.lb-react-more';
+  const sel='.lb-react-btn';
   el.addEventListener('touchstart',e=>{const b=e.target.closest(sel);if(b)_lbRipple(b,e);},{passive:true});
   el.addEventListener('mousedown',e=>{const b=e.target.closest(sel);if(b)_lbRipple(b,e);});
 });
@@ -5670,11 +5591,7 @@ function closeLightbox(){
   const lb=document.getElementById('yt-lightbox');
   lb.classList.remove('open');
   document.getElementById('yt-lb-iframe').src='';
-  document.getElementById('lb-emoji-picker-wrap').classList.remove('open');
   document.querySelector('.lb-menu-wrap')?.classList.remove('open');
-  document.getElementById('lb-react-extended').classList.remove('open');
-  document.getElementById('lb-react-more').textContent='+';
-  _reactExpandedLevel=0;
   _lbCurVideoUrl='';
   _lbSpeed=1;
   _lbConnCardOpenedFromLb=false; // 영상 자체를 닫아버렸으면 나중에 연결 카드를 닫아도 재생을 재개할 대상이 없음
