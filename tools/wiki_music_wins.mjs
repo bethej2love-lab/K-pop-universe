@@ -33,8 +33,9 @@ const SHOWS = [
   { wiki: 'Inkigayo', db: '인기가요' },
   { wiki: 'Show! Music Core', db: '쇼음악중심' },
   { wiki: 'M Countdown', db: '엠카운트다운' },
-  { wiki: 'Show Champion', db: '쇼챔피언' },
-  { wiki: 'The Show', db: '더쇼' },
+  // 쇼챔피언·더쇼는 연도별 페이지가 없고 한 문서(마스터)에 전 연도가 연도 섹션(h2)으로 담긴다.
+  { wiki: 'Show Champion', db: '쇼챔피언', master: true },
+  { wiki: 'The Show', db: '더쇼', master: true },
 ];
 const MONTHS = { January: 1, February: 2, March: 3, April: 4, May: 5, June: 6, July: 7, August: 8, September: 9, October: 10, November: 11, December: 12 };
 
@@ -85,7 +86,60 @@ function fetchWiki(title) {
 
 const strip = s => s.replace(/<[^>]+>/g, '\t').replace(/&#(\d+);/g, (_, d) => String.fromCharCode(+d)).replace(/&amp;/g, '&').replace(/&[a-z]+;/g, ' ').replace(/\t+/g, '\t').replace(/[ ]+/g, ' ').trim();
 
+// 마스터 페이지 감지: "(2020)" URL인데 본문이 여러 해를 담고 있으면(쇼챔피언·더쇼처럼 모든 연도가
+// 한 문서로 리다이렉트) URL 연도를 찍으면 안 된다. 페이지 내 연도 언급 중 URL 연도가 지배적이지
+// 않으면 통째로 버린다(연도별 페이지가 아님).
+function dominantYearOk(html, year) {
+  const yrs = (html.match(/\b20[01]\d\b/g) || []);
+  if (yrs.length < 20) return false;
+  const cnt = {}; yrs.forEach(y => cnt[y] = (cnt[y] || 0) + 1);
+  const top = Object.entries(cnt).sort((a, b) => b[1] - a[1])[0];
+  // URL 연도가 최다 연도이고, 그 비중이 전체의 40% 이상이어야 진짜 연도별 페이지
+  return top[0] === String(year) && cnt[year] / yrs.length >= 0.4;
+}
+// 마스터 페이지(쇼챔피언·더쇼): 연도 섹션 헤더(<h2>…2014…</h2>)로 나눠 각 구간을 그 연도로 파싱.
+function parseMaster(html) {
+  const out = [];
+  // 연도 헤드라인 위치 수집
+  const marks = [];
+  const re = /<h[23][^>]*\bid="(20[01]\d)"[^>]*>/g; // id는 h2 태그 자체 속성(<h2 id="2014">)
+  let m;
+  while ((m = re.exec(html))) marks.push({ year: +m[1], idx: m.index });
+  if (!marks.length) return out;
+  for (let i = 0; i < marks.length; i++) {
+    const seg = html.slice(marks[i].idx, i + 1 < marks.length ? marks[i + 1].idx : html.length);
+    for (const r of parseSection(seg, marks[i].year)) out.push(r);
+  }
+  return out;
+}
+// 한 구간(HTML)에서 수상 행 파싱 — year는 이미 확정
+function parseSection(html, year) {
+  const out = [];
+  const rows = html.match(/<tr[^>]*>[\s\S]*?<\/tr>/g) || [];
+  for (const r of rows) {
+    const row = parseRow(r, year);
+    if (row) out.push(row);
+  }
+  return out;
+}
+function parseRow(r, year) {
+  const cells = (r.match(/<t[dh][^>]*>[\s\S]*?<\/t[dh]>/g) || []).map(strip);
+  const di = cells.findIndex(c => /\b(January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{1,2}\b/.test(c));
+  if (di < 0) return null;
+  const dm = cells[di].match(/\b(January|February|March|April|May|June|July|August|September|October|November|December)\s+(\d{1,2})\b/);
+  const mm = MONTHS[dm[1]], dd = +dm[2];
+  const rest = cells.slice(di + 1).filter(c => c && !/^\d[\d,]*$/.test(c) && !/^\[[\d\s\]\[]*$/.test(c));
+  if (rest.length < 1) return null;
+  let artist = rest[0], song = '';
+  const songCell = rest.find(c => /["“]/.test(c));
+  if (songCell) song = songCell.replace(/["“”]/g, '').trim();
+  if (rest.length >= 2 && !/["“]/.test(rest[0])) { artist = rest[0]; if (!song) song = rest[1].replace(/["“”]/g, '').trim(); }
+  artist = artist.replace(/\s*\((feat|featuring|ft|with)[^)]*\)/gi, '').replace(/\s+(feat|featuring|ft)\.?\s.*$/i, '').trim();
+  if (!artist) return null;
+  return { date: `${year}-${String(mm).padStart(2, '0')}-${String(dd).padStart(2, '0')}`, artist, song };
+}
 function parseYear(html, year) {
+  if (!dominantYearOk(html, year)) return [];
   const out = [];
   const rows = html.match(/<tr[^>]*>[\s\S]*?<\/tr>/g) || [];
   for (const r of rows) {
@@ -102,7 +156,8 @@ function parseYear(html, year) {
     const songCell = rest.find(c => /["“]/.test(c));
     if (songCell) song = songCell.replace(/["“”]/g, '').trim();
     if (rest.length >= 2 && !/["“]/.test(rest[0])) { artist = rest[0]; if (!song) song = rest[1].replace(/["“”]/g, '').trim(); }
-    artist = artist.replace(/\(.*?\)/g, '').replace(/\s+(feat|featuring|ft)\.?\s.*$/i, '').trim();
+    // feat/with 괄호만 제거(f(x)·(G)I-dle 같은 이름 속 괄호는 보존)
+    artist = artist.replace(/\s*\((feat|featuring|ft|with)[^)]*\)/gi, '').replace(/\s+(feat|featuring|ft)\.?\s.*$/i, '').trim();
     if (!artist) continue;
     const date = `${year}-${String(mm).padStart(2, '0')}-${String(dd).padStart(2, '0')}`;
     out.push({ date, artist, song });
@@ -118,7 +173,8 @@ function parseYear(html, year) {
     const BASE = 'https://dukgguehegnembimqvkm.supabase.co', KEY = 'sb_publishable_SjNC-N_9TUqaQcCxhVinGA_ULyX6tA0';
     let fromN = 0;
     while (true) {
-      const r = await fetch(BASE + '/rest/v1/music_show_wins?select=group_ko,win_date,show', { headers: { apikey: KEY, Authorization: 'Bearer ' + KEY, Range: `${fromN}-${fromN + 999}` } });
+      // ⚠️ 원본(2026-07-21 벌크)만 대조 기준으로 — 오늘 잘못 넣은 3512건은 곧 지울 것이라 대조에서 제외
+      const r = await fetch(BASE + '/rest/v1/music_show_wins?select=group_ko,win_date,show&created_at=lt.2026-09-04', { headers: { apikey: KEY, Authorization: 'Bearer ' + KEY, Range: `${fromN}-${fromN + 999}` } });
       const b = await r.json(); if (!Array.isArray(b) || !b.length) break;
       b.forEach(x => existing.add(`${x.group_ko}|${x.win_date}|${x.show}`));
       if (b.length < 1000) break; fromN += 1000;
@@ -128,19 +184,33 @@ function parseYear(html, year) {
 
   const rows = [], unmapped = {};
   let pages = 0;
+  const ingest = (parsed, show) => {
+    for (const w of parsed) {
+      if (w.date.slice(0, 4) < Y0 || w.date.slice(0, 4) > Y1) continue;
+      const res = resolveArtist(w.artist);
+      if (!res) { unmapped[w.artist] = (unmapped[w.artist] || 0) + 1; continue; }
+      const dkey = `${res.group_ko}|${w.date}|${show.db}`;
+      if (existing.has(dkey)) continue;
+      existing.add(dkey);
+      rows.push({ show: show.db, win_date: w.date, song_title: w.song || null, group_ko: res.group_ko, member_ko: res.member_ko });
+    }
+  };
   for (const show of SHOWS) {
-    for (let y = Y0; y <= Y1; y++) {
-      const html = fetchWiki(`List of ${show.wiki} Chart winners (${y})`);
-      if (!html) continue;
-      pages++;
-      for (const w of parseYear(html, y)) {
-        const res = resolveArtist(w.artist);
-        if (!res) { unmapped[w.artist] = (unmapped[w.artist] || 0) + 1; continue; }
-        const gko = res.group_ko;
-        const dkey = `${gko}|${w.date}|${show.db}`;
-        if (existing.has(dkey)) continue;
-        existing.add(dkey); // 이번 수집 내 중복도 방지
-        rows.push({ show: show.db, win_date: w.date, song_title: w.song || null, group_ko: gko, member_ko: res.member_ko });
+    if (show.master) {
+      // 마스터는 전 연도가 한 문서(연도 섹션). 연도-URL이 그 마스터로 리다이렉트되므로 여러 해를
+      // 받아 합친다(문서가 담는 연도 범위가 갈릴 수 있어 초기·최근 둘 다). 중복은 dkey로 걸러짐.
+      for (const probe of [2015, 2020, 2024]) {
+        const html = fetchWiki(`List of ${show.wiki} Chart winners (${probe})`);
+        if (!html || html.length < 20000) continue;
+        pages++;
+        ingest(parseMaster(html), show);
+      }
+    } else {
+      for (let y = Y0; y <= Y1; y++) {
+        const html = fetchWiki(`List of ${show.wiki} Chart winners (${y})`);
+        if (!html) continue;
+        pages++;
+        ingest(parseYear(html, y), show);
       }
     }
   }
