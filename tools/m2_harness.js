@@ -94,7 +94,15 @@ function load(){
     S(/^const _COVER_COMMON_KEYS\s*=/m,'_COVER_COMMON_KEYS');
     S(/^let _coverIndex\s*=/m,'_coverIndex');
     S(/^let _coverIndexChart\s*=/m,'_coverIndexChart');
-    ['_coverOriginLabel','_coverOriginId','_coverArtistOriginOf','_coverBuildIndex','_coverIndexEnsure','_coverContext','_coverHasCollabSignal','_coverCandidates','_coverOriginFromText','_coverIsSelf','_coverDebutYear','_coverResolve'].forEach(n=>F(new RegExp('^function '+n+'\\(','m'),n));
+    // 자기 곡 최장 일치 게이트(2026-09-04) — 있으면 싣는다. ⚠️ 안 실으면 _coverResolve가 통째로
+    // 예외로 죽어 **모든 행이 원곡 없음**으로 나온다. 실제로 그걸 "4,078건 회귀"로 오독할 뻔했다.
+    const coverExtra=[];
+    if(/^const _COVER_BARE_MIN_CHAL_KO\s*=/m.test(adminSrc)){
+      S(/^const _COVER_BARE_MIN_CHAL_KO\s*=/m,'_COVER_BARE_MIN_CHAL_KO');
+      S(/^let _coverKeysByOrigin\s*=/m,'_coverKeysByOrigin');
+      coverExtra.push('_coverSelfKeys','_coverSelfEclipses','_coverBareTooShort');
+    }
+    ['_coverOriginLabel','_coverOriginId','_coverArtistOriginOf','_coverBuildIndex','_coverIndexEnsure',...coverExtra,'_coverContext','_coverHasCollabSignal','_coverCandidates','_coverOriginFromText','_coverIsSelf','_coverDebutYear','_coverResolve'].forEach(n=>F(new RegExp('^function '+n+'\\(','m'),n));
     // 원곡 오탐 청소의 되돌리기 게이트(2026-08-31) — 있으면 싣는다
     if(/^function _coverRestoreSignal\(/m.test(adminSrc))F(/^function _coverRestoreSignal\(/m,'_coverRestoreSignal');
   }

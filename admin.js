@@ -979,8 +979,23 @@ function _coverSongKeys(raw){
 }
 function _coverKeyLoose(k){return (k||'').replace(/\s/g,'');}
 // 평문 스캔에서 제외할 흔한 단어 키 — 곡명이 곧 일상어인 것들. 크레딧/따옴표/챌린지태그로 명시되면 그대로 인정.
+// 챌린지만 있는 문맥에서 평문 후보로 인정할 최소 키 길이(공백 제외). 실측으로 정한 값 — 아래 주석 참고.
+const _COVER_BARE_MIN_CHAL_KO=4;
+// 제목에 '커버/원곡'이라는 말이 없고 챌린지 문맥만 있을 때, 이 평문 후보를 곡명으로 믿을 수 없는가.
+// 댄스 챌린지 제목은 영어 문장으로 가득해서 로마자 곡명 사전과 마구 겹친다 — "Keep me up like a
+// coffee"(아이콘 Keep me up), "Let the $700-Game Begin"(슈주 Calendar), "makes it look EASY"(갓세븐
+// Look), "can't wait"(씨스타 Wait). 길이 기준을 7자로 올려도 오탐이 남아서(실측) 로마자는 아예 안 받는다.
+// 한글 곡명은 사정이 다르다 — 제목의 한국어 문장과 우연히 겹치는 일이 드물어('아무노래 챌린지'는
+// 실제로 지코 곡이다) 4자 이상이면 인정한다. 커버라고 명시했거나 해시태그/따옴표로 곡명을 짚은
+// 후보는 이 게이트를 안 탄다.
+function _coverBareTooShort(k){
+  const loose=_coverKeyLoose(k);
+  if(!/[가-힣]/.test(loose))return true;
+  return loose.length<_COVER_BARE_MIN_CHAL_KO;
+}
 const _COVER_COMMON_KEYS=new Set(['love','home','run','fire','hot','dream','baby','bad','good','crazy','monster','candy','boom','wave','crush','icy','hello','cool','work','stay','tonight','forever','summer','winter','spring','fall','magic','party','dance','music','sorry','happy','sad','angel','queen','king','star','moon','sun','sky','blue','red','black','pink','gold','diamond','one','two','up','down','go','on','off','up up','oh','yes','no','why','who','what','love me','i love you','i need you','call me','kiss','kiss me','bubble','gum','alone','again','goodbye','bye','hi','hey','wow','omg','lie','truth','time','day','night','light','dark','sweet','pretty','beautiful','hero','signal','favorite','regular','secret','danger','shut down','shut up','answer','dive','flower','rain','snow','cherry','honey','sugar','free','freedom','power','energy','fever','miracle','wish','breathe','breath','smile','cry','pop','rock','jump','walk','fly','open','close','yellow','white','green','purple','sweat','chains','body','pose','viral','glow','wicked','sign','beep','echo','maze','alive','automatic','trophy','vacation','freeze','feel','feeling','drama','사랑','행복','여름','겨울','가을','봄','하루','오늘','내일','친구','바다','하늘','별','달','꿈','고백','이별','안녕','미안','사랑해','좋아해','우리','너','나','그대','편지','기억','약속','비','눈','꽃','집','길','밤','아침','시간','거짓말','미쳐','나쁜','예쁘다','예뻐','사랑하기 때문에']);
 // 등록 아티스트 이름 키(그룹/멤버/영문) — 크레딧 텍스트에서 "우리 시스템 안의 원곡자"를 찾는 데 씀
+let _coverKeysByOrigin=null;  // Map(originId -> Set(key)) — 공연자 자기 곡 키를 빠르게 얻는 역인덱스
 let _coverIndex=null;         // Map(key -> [entry]) entry:{origin:{kind:'group'|'member'|'solo',gko,mko,label}, title, tier:'A'|'B'|'C', isTitle, date, keyLoose}
 let _coverIndexChart=null;    // 마지막으로 빌드에 쓴 차트 행(같으면 재빌드 안 함)
 function _coverOriginLabel(o){return o.kind==='group'?o.gko:`${o.mko}(${o.gko})`;}
@@ -993,10 +1008,14 @@ function _coverArtistOriginOf(a){
 // 차트 행(chartRows: [{group_ko,member_ko,song_title,...}])은 선택 — 없으면 A등급 없이 빌드
 function _coverBuildIndex(chartRows){
   const idx=new Map();
+  const byOrigin=new Map(); // originId -> Set(key)
   const add=(key,entry)=>{if(!key||key.length<2)return;if(!idx.has(key))idx.set(key,[]);const arr=idx.get(key);
     const dup=arr.find(e=>_coverOriginId(e.origin)===_coverOriginId(entry.origin)&&e.title===entry.title);
     if(dup){if(entry.tier<dup.tier)dup.tier=entry.tier;if(entry.isTitle)dup.isTitle=true;if(entry.date&&(!dup.date||entry.date<dup.date))dup.date=entry.date;return;}
-    arr.push(entry);};
+    arr.push(entry);
+    const oid=_coverOriginId(entry.origin);
+    if(!byOrigin.has(oid))byOrigin.set(oid,new Set());
+    byOrigin.get(oid).add(key);};
   const put=(origin,title,tier,isTitle,date)=>{_coverSongKeys(title).forEach(k=>add(k,{origin,title,tier,isTitle:!!isTitle,date:date?String(date).replace(/\./g,'-').slice(0,10):null,keyLoose:_coverKeyLoose(k)}));};
   Object.entries(GROUPS).forEach(([gko,g])=>{
     const origin={kind:'group',gko};
@@ -1018,10 +1037,32 @@ function _coverBuildIndex(chartRows){
     else if(r.group_ko&&GROUPS[r.group_ko])origin={kind:'group',gko:r.group_ko};
     if(origin)put(origin,r.song_title,'A',true,r.year?`${r.year}-01-01`:null);
   });
-  _coverIndex=idx;_coverIndexChart=chartRows||null;
+  _coverIndex=idx;_coverIndexChart=chartRows||null;_coverKeysByOrigin=byOrigin;
   return idx;
 }
 function _coverIndexEnsure(chartRows){if(!_coverIndex||(chartRows&&chartRows!==_coverIndexChart))_coverBuildIndex(chartRows);return _coverIndex;}
+// 공연자(그룹 + 그 그룹 멤버 솔로)의 곡 키 전부. "자기 곡이 제목에 더 길게 들어있다" 판정에 쓴다.
+function _coverSelfKeys(performerGko,performerMembers){
+  const out=new Set();
+  if(!performerGko||!_coverKeysByOrigin)return out;
+  const add=oid=>{const st=_coverKeysByOrigin.get(oid);if(st)st.forEach(k=>out.add(k));};
+  add(`g:${performerGko}`);
+  (performerMembers||[]).forEach(m=>add(`m:${m}(${performerGko})`));
+  return out;
+}
+// ⚠️ 곡명 키는 곡 하나가 통째로 하나의 키다. 그래서 공연자 자기 곡이 남의 곡명을 **품고 있으면**
+//    (아이브 'BANG BANG' ⊃ 애프터스쿨 '뱅(Bang)!'의 키 'bang') 같은 항목으로 안 묶여 자기 곡 차단이
+//    안 걸리고, 제목 안의 조각 한 단어가 남의 곡으로 잡힌다. 실제로 '아이브 BANG BANG'이 애프터스쿨
+//    커버로, '엔싸인 Love, Love, Love Love Love!'가 애프터스쿨 커버로 붙어 있었다(2026-09-04 실측).
+//    제목에서 **자기 곡 키가 더 길게 일치하면** 짧은 남의 키는 그 곡의 조각일 뿐이므로 버린다.
+function _coverSelfEclipses(k,titleNorm,selfKeys){
+  if(!selfKeys||!selfKeys.size)return false;
+  for(const sk of selfKeys){
+    if(sk.length<=k.length||!sk.includes(k))continue;
+    if(titleNorm.includes(' '+sk+' '))return true;
+  }
+  return false;
+}
 
 // 제목에서 커버 문맥/제외 문맥 판정. _COVER_EXCLUDE(index.html)가 있으면 그대로 쓰고 없으면(테스트) 최소 목록.
 function _coverContext(title){
@@ -1062,7 +1103,10 @@ function _coverCandidates(title){
   });
   // "X - 곡명 | Cover by …", "X - 곡명 (Cover)", "곡명 - X (cover)", "'곡명' (X) Cover", "X 'S' cover", "X의 S 커버"
   const coverWord=/\bcover(?:ed)?\b|커버/i;
-  if(coverWord.test(t)&&!credits.length){
+  // 챌린지 문맥에도 연다 — "[엠카 댄스 챌린지] ATEEZ(에이티즈) - 레이니즘(Rainism)"처럼 곡명이 대시로
+  // 또렷이 나뉘는 제목이 흔한데 예전엔 '커버'라는 말이 있을 때만 열려서 평문(bare)으로 떨어졌다.
+  // 대시 후보는 제목 **구조**가 근거라 평문 스캔보다 훨씬 정확하다.
+  if((coverWord.test(t)||/challenge|챌린지|チャレンジ/i.test(t))&&!credits.length){
     const core=t.replace(/[\[\(【][^\]\)】]*(?:cover|커버|dance|vocal|band|live|shorts|special|archive|us record|on film|from\.|sub)[^\]\)】]*[\]\)】]/gi,' ').replace(/\|.*$/,'').replace(/(?:dance|vocal|band|piano|guitar|acoustic)?\s*cover(?:ed)?\s*(?:by|ver\.?|version|video|live).*$/i,'').replace(/\s*(?:cover|커버)\s*$/i,'');
     const dm=core.match(/^\s*(.{1,50}?)\s+[-–—]\s+(.{1,60}?)\s*$/);
     if(dm){push(dm[2],'dash',dm[1]);push(dm[1],'dash',dm[2]);}
@@ -1074,7 +1118,10 @@ function _coverCandidates(title){
   const tagRe=/#([^\s#]+?)(?:_?(?:challenge|챌린지|チャレンジ))(?![\p{L}\p{N}])/giu;
   while((m=tagRe.exec(t))){const raw=m[1].replace(/_/g,' ').replace(/([a-z])([A-Z])/g,'$1 $2');if(!/^(?:dance|댄스|idol|kpop|k-pop|shorts|엠카|mcd|vocal|밴드|band)$/i.test(raw))push(raw,'tag');}
   // "'곡명' 챌린지" / "〈곡명〉 챌린지"
-  const qc=/['‘"“「＜《〈]([^'’"”」＞》〉]{1,40})['’"”」＞》〉]\s*(?:댄스\s*)?(?:챌린지|challenge)/gi;
+  // ⚠️ 내용부에 따옴표류를 **허용하면 안 된다**. 허용하면 바깥 괄호가 안쪽 따옴표를 삼켜서
+  //    "〈고양이 장갑 쓰고 ‘Bo Peep Bo Peep’ 챌린지〉"의 곡명이 후보로도 안 올라간다(2026-09-04 실측).
+  //    여는 쪽에 ’·”까지 넣는 건 "〈’Hot Summer’ 챌린지〉"처럼 닫는 따옴표를 여는 데 쓴 제목이 흔해서다.
+  const qc=/['‘’"“”「＜《〈]([^'‘’"“”」＞》〉]{1,40})['‘’"“”」＞》〉]\s*(?:댄스\s*)?(?:챌린지|challenge)/gi;
   while((m=qc.exec(t)))push(m[1],'tag');
   // ── 따옴표 구간 ──
   const qRe=/(?:^|[\s\]\)\-–—|:])['‘](.+?)['’](?=[\s\(\)\[\]|,.!?]|$)|["“](.+?)["”]|「(.+?)」|＜(.+?)＞|《(.+?)》|〈(.+?)〉/g;
@@ -1144,6 +1191,8 @@ function _coverResolve(row,opts){
   let members=row.members||[];
   const pub=(row.published_at||'').slice(0,10);
   const cands=_coverCandidates(title);
+  // 제목 단어열 정규화(자기 곡 최장 일치 판정용) — 아래 평문 스캔이 쓰는 것과 같은 형태
+  const titleNorm=' '+title.normalize('NFKC').toLowerCase().replace(/[@#]\S+/g,' ').replace(/[’'"“”‘`]/g,'').replace(/[^\p{L}\p{N}]+/gu,' ').replace(/\s+/g,' ')+' ';
   // 1) 크레딧 원곡자(가장 강함)
   let creditOrigin=null,creditSong=null,creditExternal=false,reassign=null;
   for(const c of cands){
@@ -1163,6 +1212,7 @@ function _coverResolve(row,opts){
     creditExternal=true;creditSong=creditSong||c.text;
   }
   // 대시/따옴표 옆 아티스트 텍스트가 시스템 안 원곡자로 풀리면 그 원곡자 항목을 크게 가산(크레딧 다음 강도)
+  const selfKeys=_coverSelfKeys(performer,members); // 공연자 재배정(reassign) 뒤 값 기준
   const sideBoost=new Map();
   cands.forEach(c=>{if(c.strength==='credit'||!c.artistText)return;const o=_coverOriginFromText(c.artistText);if(o&&!_coverIsSelf(o,performer,members))sideBoost.set(_coverOriginId(o),8);});
   const scored=[];
@@ -1170,15 +1220,29 @@ function _coverResolve(row,opts){
   let selfHit=false; // 강한 후보(크레딧/태그/따옴표)가 공연자 자기 곡에 걸림 → 자기 곡 무대, 커버 아님
   const lookup=(text,strength,lockOrigin)=>{
     if(strength!=='bare'){const asArtist=_coverOriginFromText(text);if(asArtist&&(!lockOrigin||_coverIsSelf(asArtist,performer,members)))return;} // 후보 텍스트 자체가 아티스트명("TREASURE")이면 곡명이 아님(아티스트가 따로 명시된 후보는 예외 — 'HOT' vs H.O.T. — 단 공연자 자신의 이름은 항상 제외)
-    _coverSongKeys(text).forEach(k=>{
+    const candKeys=_coverSongKeys(text);
+    // 후보가 표기를 여러 개 내놓으면(원제 + 괄호 별칭: "소원을 말해봐 (Genie)" → '소원을 말해봐','genie')
+    // **그 표기를 전부 가진 곡**이 진짜 그 곡이다. 별칭 하나만 우연히 같은 남의 곡(골든차일드 'Genie')과
+    // 동점이 나 ambiguous로 버려지던 걸 이 가산점으로 가른다(2026-09-04 실측).
+    const hasAllKeys=e=>candKeys.length>1&&candKeys.every(k2=>(idx.get(k2)||[]).some(e2=>
+      e2.title===e.title&&_coverOriginId(e2.origin)===_coverOriginId(e.origin)));
+    candKeys.forEach(k=>{
       const hits=idx.get(k)||[];
       if(hits.some(e=>_coverIsSelf(e.origin,performer,members))){if(strength!=='bare')selfHit=true;return;} // 같은 제목의 자기 곡이 있으면 그 곡
+      // 자기 곡이 제목에서 더 길게 일치하면 이 키는 그 곡의 조각(위 _coverSelfEclipses 주석)
+      if(_coverSelfEclipses(k,titleNorm,selfKeys))return;
       hits.forEach(e=>{
         if(lockOrigin&&_coverOriginId(e.origin)!==_coverOriginId(lockOrigin))return; // "BIGBANG '곡'"처럼 아티스트가 명시된 후보는 그 원곡자 항목만
         if(strength==='bare'&&(_COVER_COMMON_KEYS.has(k)||k.replace(/\s/g,'').length<4))return;
+        // 챌린지만 있고 '커버/원곡'이라는 말이 없는 제목의 평문 후보는 짧은 키를 인정하지 않는다.
+        // 댄스 챌린지 제목은 일상 영어로 가득해서(can't **wait**, makes it look **easy**, **heart**
+        // swell, STRESS **BYE BYE**) 짧은 곡명 사전과 마구 걸린다 — 이 경로 표본 16건 중 15건이
+        // 오탐이었다(2026-09-04). 커버라고 명시했거나 해시태그/따옴표로 곡명을 짚은 건 그대로 인정.
+        if(strength==='bare'&&!ctx.cover&&_coverBareTooShort(k))return;
         if(strength==='dash'&&_COVER_COMMON_KEYS.has(k))return;
         if(strength==='quote'&&!ctx.hasContext&&_COVER_COMMON_KEYS.has(k))return;
         let s=weightS[strength]+(e.tier==='A'?3:e.tier==='B'?2:0)+(e.isTitle?1:0);
+        if(hasAllKeys(e))s+=2; // 후보의 표기를 전부 가진 곡(위 hasAllKeys 주석)
         if(e.date&&pub){s+=e.date<pub?1:-4;}
         if(e.origin.kind==='group'&&performer&&GROUPS[performer]){const dy=_coverDebutYear(e.origin.gko),py=_coverDebutYear(performer);if(dy&&py)s+=dy<py?1:(dy>py?-1:0);}
         // 유명도(groups.json pri: 4 > 1.5 > 0.6) — "유명 그룹이 원곡자일 확률이 높다"(사용자). 동명 곡 동점 깨기용.

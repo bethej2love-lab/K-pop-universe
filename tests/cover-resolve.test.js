@@ -75,6 +75,33 @@ t('with 정리 — 원곡 외부(Justin Bieber)인데 with에 게스트 오인 �
 t('약함 — 커버 문맥 없고 곡명도 없는 제목은 null',R("[SUB] 오마이걸을 위협하는 의문의 정체😱 “너도 봤어...?”ㅣ돌프라이즈ㅣOH MY GIRLㅣMBC KPOP ORIGINAL",'오마이걸'),r=>r===null);
 t('약함 — 메들리 나열(BLACKPINK BTS SKZ NCT)은 원곡 1개로 확정하지 않음',R("[4K] 2020년 K-POP 띵곡 커버한 STAYC(스테이씨) | BLACKPINK BTS SKZ NCT | Cover Dance Medley | COUNTDANCE|카운트댄스",'스테이씨'),r=>!r||!r.origin||r.ambiguous);
 
+// ── 흔한 단어·조각 오탐 방어(2026-09-04) ────────────────────────────────────
+// 실DB 자동 태깅 4,991건 재판정에서 나온 실제 오탐들. 사용자 제보("애프터스쿨로 원곡 엄청 태깅됨")의
+// 뿌리 두 가지 — ①자기 곡이 조각으로 쪼개져 남의 짧은 곡명에 걸림 ②챌린지 제목의 일상 영어가 곡명 사전과 겹침.
+t('자기 곡 조각 — 아이브 BANG BANG이 애프터스쿨 뱅(Bang)! 커버로 잡히면 안 됨',
+  R('BANG BANG 막BANG 기념 #IVE #아이브 #REVIVE_PLUS #BANGBANG','아이브'),r=>!r||!r.origin);
+t('자기 곡 조각 — 엔싸인 Love, Love, Love Love Love!가 애프터스쿨 Love Love Love로 잡히면 안 됨',
+  R('🐨🐰 show you Love, Love, Love Love Love!💓#nSSign #엔싸인','엔싸인'),r=>!r||!r.origin);
+t('챌린지 일상어 — "makes it look EASY"가 갓세븐 Look으로 잡히면 안 됨',
+  R("🌼#YUGYEOM makes it look EASY💚 #EASYStepsChallenge",'르세라핌'),r=>!r||!r.origin);
+t('챌린지 일상어 — 코너명 Idol_Challenge가 방탄소년단 IDOL로 잡히면 안 됨',
+  R('(Idol_Challenge - WJSN) 더 맛있게(?) 돌아온 아기MC! 우주소녀와 찢었다?!','우주소녀'),r=>!r||!r.origin);
+t('챌린지 일상어 — "can\'t wait to show"가 씨스타 Wait으로 잡히면 안 됨',
+  R("can't wait to show our performance ❤️‍🔥 #BacktoLife #andTEAM challenge",'앤팀'),r=>!r||!r.origin);
+// 한글 곡명은 로마자와 달리 챌린지 제목의 한국어 문장과 우연히 겹치는 일이 드물어 평문으로도 인정한다.
+// (원곡자는 그룹이 아니라 지코 개인 — 차트 사전에 솔로 명의로 들어있다)
+t('한글 곡명은 챌린지 문맥에서도 인정 — 아무노래 챌린지',
+  R('Weeekly(위클리) TODAY☀ : 수진&지한 도전!😎 신나는 아무노래 챌린지📻🎶','위클리'),
+  r=>!!r&&!!r.origin&&r.origin.mko==='지코'&&r.song==='아무노래');
+t('따옴표 곡명이 바깥 괄호에 삼켜지면 안 됨 — 〈… ‘Bo Peep Bo Peep’ 챌린지〉',
+  R('.˳⁺⁎˚ ꒰ఎ #YoungK #DAY6 가 〈고양이 장갑 쓰고 ‘Bo Peep Bo Peep’ 챌린지〉를 드림','데이식스'),r=>covG(r,'티아라'));
+t('닫는 따옴표를 여는 데 쓴 제목도 인정 — 〈’Hot Summer’ 챌린지〉',
+  R('.˳⁺⁎˚ ꒰ఎ #Hearts2Hearts 가 〈’Hot Summer’ 챌린지〉를 드림','하츠투하츠'),r=>covG(r,'에프엑스'));
+t('챌린지 문맥의 "그룹 - 곡명"은 대시 후보로 — 소원을 말해봐 (Genie)',
+  R('[엠카 댄스 챌린지 풀버전] DRIPPIN(드리핀) - 소원을 말해봐 (Genie) ♬','드리핀'),r=>covG(r,'소녀시대'));
+t('표기를 전부 가진 곡이 이긴다 — Genie 별칭만 같은 골든차일드가 아니라 소녀시대',
+  R('[엠카 댄스 챌린지 풀버전] DRIPPIN(드리핀) - 소원을 말해봐 (Genie) ♬','드리핀'),r=>!!r&&r.song==='소원을 말해봐 (Genie)');
+
 let pass=0,fail=0;
 cases.forEach(({name,row,check})=>{
   let r,ok=false,err=null;
