@@ -56,7 +56,7 @@
      ⚠️ 손으로 올리던 시절 2026-08-24에 실제로 빠뜨려서 폰이 "새 마크업 + 옛 CSS"를 그리는 바람에
      화면이 통째로 깨졌음(Charts 카드가 158px→46px로 찌그러짐). 로컬 확인은
      `node tools/bump_cache_version.mjs --check`. -->
-<link rel="stylesheet" href="kpop_universe.css?v=20260904-61d6a954">
+<link rel="stylesheet" href="kpop_universe.css?v=20260904-7a493ec2">
 <!-- ⚠️ 2026-09-04에 "라이트박스 반응 피커를 없애니 이 CDN도 뺄 수 있다"고 판단해 지웠다가 되돌렸다 —
      최애(bias) 지정의 이모지 선택기(#pp-bias-emoji-picker)가 같은 컴포넌트를 쓴다. 반응 쪽만 보고
      지우면 프로필 패널이 조용히 깨진다(로드 실패해도 콘솔 에러 없이 그냥 안 뜬다). -->
@@ -16623,16 +16623,12 @@ async function _buildFeedJacon(){
     const vidUrl=v=>_isShortV(v)?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;
     const pl=picked.map(v=>({t:v.title,u:vidUrl(v),thumb:v.thumb||`https://img.youtube.com/vi/${v.id}/mqdefault.jpg`,pa:v.published_at?.slice(0,10),paFull:v.published_ts||v.published_at,vc:v.view_count,groupKo:v.group_ko,memberKos:v.members||[],_apiId:v.id,_apiGroupKo:v.group_ko}));
     pl.forEach((song,i)=>{
-      const item=document.createElement('div');
-      item.className='feed-recent-item';
       const sub=[_gLabelKo(song.groupKo),song.paFull?_fmtVidAgo(song.paFull):(song.pa?_fmtVidAgo(song.pa):null)].filter(Boolean).join(' · ');
-      item.innerHTML='<div class="feed-recent-thumb-wrap"><img class="feed-recent-thumb" loading="lazy" decoding="async" src="'+song.thumb+'" alt=""></div>'
-        +'<div class="feed-recent-title">'+_cleanTitle(song.t)+'</div>'
-        +(sub?'<div class="feed-recent-sub">'+sub+'</div>':'');
-      item.addEventListener('click',()=>_feedNav(()=>openLightbox(song.u,_songIsShort(song),pl,i,{groupKo:song.groupKo,memberKo:(song.memberKos||[])[0]},false,true)));
-      item.addEventListener('touchstart',e=>_lbRipple(item,e),{passive:true});
-      item.addEventListener('mousedown',e=>_lbRipple(item,e));
-      list.appendChild(item);
+      // 차트 선반과 동일한 카드(_appendFeedCard=.feed-card, 아래 #feed-jacon>.feed-card CSS로 158px).
+      // 쇼츠도 short 옵션 없이 16:9 틀로 통일 — 가로 선반 카드 높이가 들쭉날쭉하지 않게(차트와 동일 톤).
+      _appendFeedCard(list,'🎥',song.t,sub,
+        ()=>openLightbox(song.u,_songIsShort(song),pl,i,{groupKo:song.groupKo,memberKo:(song.memberKos||[])[0]},false,true),
+        song.thumb,null,{});
     });
     section.style.display='';
   }catch(e){console.warn('[feed] 오리지널 콘텐츠 선반 실패 — 이 선반만 빠집니다',e);}
@@ -16797,6 +16793,17 @@ async function _buildFeedGenCamPick(list,offset){
 // 끼어들다가 화면이 밀리는 느낌이 있어서 나중에(2026-08-06) 이 방식으로 통일함.
 // 음방·직캠 제목 판별 — 음악방송 프로그램명 또는 직캠/팬캠/FANCAM 키워드가 있어야 음방 직캠으로 인정
 const _FANCAM_TITLE_RE=/FANCAM|직캠|팬캠|엠카운트다운|뮤직뱅크|인기가요|음악중심|쇼챔피언|M\s*COUNTDOWN|MUSIC\s*BANK|INKIGAYO|MUSIC\s*CORE|SHOW\s*CHAMPION|\bTHE\s+SHOW\b/i;
+// 진짜 직캠 키워드(음방명이 아니라 '직캠/FanCam' 자체). 아래 _isSoloCam에서 방송사 홍보 쇼츠를 걸러내는 데 쓴다.
+const _FANCAM_STRICT_RE=/FANCAM|FACECAM|FULL\s*CAM|직캠|팬캠|페이스캠|풀캠|얼빡|입덕/i;
+// "개인 직캠" 판정: 제목에 직캠/음방명 + 태깅 멤버 정확히 1명. 단, 방송사 채널의 홍보성 쇼츠
+// ("Today, GUN WOOK turns into something very CUTE 👀 #MCOUNTDOWN #박건욱" 류)는 음방명 해시태그만 있고
+// 실제 직캠 단어가 없다 — 쇼츠인데 직캠 키워드가 없으면 개인 직캠 모음에서 뺀다(2026-09-04 사용자 제보).
+function _isSoloCam(v){
+  if(!v||(v.members||[]).length!==1)return false;
+  if(!_FANCAM_TITLE_RE.test(v.title||''))return false;
+  if(_isShortV(v)&&!_FANCAM_STRICT_RE.test(v.title||''))return false;
+  return true;
+}
 
 // 어제 스냅샷 대비 순위 변동 조회(rank_snapshots, 매일 자정 Vercel Cron이 채움 — kpopuniverse-share/api/cron/
 // snapshot-ranks.js 참고). 스냅샷이 아직 하나도 없으면(신규 배포 직후 등) undefined를 반환해서 배지 자체를
@@ -16841,7 +16848,7 @@ async function _buildFeedWeeklyTopCams(list,discList){
     // 포메이션 영상은 members가 빈 배열([])로, 진짜 개인 직캠은 그 한 명만 담겨있는 패턴이 뚜렷했음
     // (2026-08-18, 사용자 요청 — 그룹 전체 무대 영상 말고 개인만 보고 싶다고 함). 제목엔 이름이 있는데
     // 태깅이 아직 안 된 소수 케이스는 놓칠 수 있음(태깅 정확도의 한계, 이 필터 자체의 문제는 아님).
-    const camVids=_capByGroup(allVids.filter(v=>_FANCAM_TITLE_RE.test(v.title)&&(v.members||[]).length===1),v=>v.group_ko,3).slice(0,20);
+    const camVids=_capByGroup(allVids.filter(_isSoloCam),v=>v.group_ko,3).slice(0,20);
     if(camVids.length>=3){
       const label=currentLang==='ko'?'주간 개인 직캠 TOP 20':'Weekly Solo Fancam TOP 20',sub=_cleanTitle(camVids[0].title);
       // 순위 변동 배지용 이전 순위(_fetchPrevRanks)는 리스트를 '열 때'(클릭)만 쓰인다 — 카드 자체(썸네일/라벨)엔
@@ -16910,21 +16917,21 @@ async function _buildFeedWeeklyTopCams(list,discList){
 const _FEED_THIS_YEAR_POOL=[
   {key:'cam',icon:'🎥',ko:y=>`${y}년 개인 직캠 TOP 20`,en:y=>`${y} Solo Fancam TOP 20`,
    subKo:'올해 올라온 직캠 조회수 기준',subEn:'Top viewed fancams this year',
-   pick:vids=>_capByGroup(vids.filter(v=>_FANCAM_TITLE_RE.test(v.title)&&(v.members||[]).length===1),v=>v.group_ko,3).slice(0,20),
+   pick:vids=>_capByGroup(vids.filter(_isSoloCam),v=>v.group_ko,3).slice(0,20),
    cat:'live'},
   {key:'stage',icon:'🎤',ko:y=>`${y}년 무대 TOP 30`,en:y=>`${y} Stage TOP 30`,
    subKo:'올해 음악방송·무대 조회수 기준',subEn:'Top viewed stages this year',
    pick:vids=>_capByGroup(vids.filter(v=>!(_FANCAM_TITLE_RE.test(v.title)&&(v.members||[]).length===1)),v=>v.group_ko,2).slice(0,30),
    cat:'live'},
-  {key:'mv',icon:'📀',ko:y=>`${y}년 컴백·MV 모음`,en:y=>`${y} Comebacks & MVs`,
+  {key:'mv',coll:true,icon:'📀',ko:y=>`${y}년 컴백·MV 모음`,en:y=>`${y} Comebacks & MVs`,
    subKo:'올해 나온 뮤직비디오',subEn:'Music videos released this year',
    pick:vids=>_capByGroup(vids,v=>v.group_ko,2).slice(0,30),cat:'mv'},
-  {key:'debut',icon:'🌱',ko:y=>`${y}년 데뷔 그룹`,en:y=>`Debuted in ${y}`,
+  {key:'debut',coll:true,icon:'🌱',ko:y=>`${y}년 데뷔 그룹`,en:y=>`Debuted in ${y}`,
    subKo:'올해 데뷔한 그룹들',subEn:'Groups that debuted this year',
    pick:(vids,y)=>{const set=new Set(Object.keys(GROUPS).filter(ko=>String(GROUPS[ko].debut||'').slice(0,4)===String(y)));
      return set.size?_capByGroup(vids.filter(v=>set.has(v.group_ko)),v=>v.group_ko,4).slice(0,30):[];},
    cat:'live'},
-  {key:'cover',icon:'🎵',ko:y=>`${y}년 커버 무대`,en:y=>`${y} Cover Stages`,
+  {key:'cover',coll:true,icon:'🎵',ko:y=>`${y}년 커버 무대`,en:y=>`${y} Cover Stages`,
    subKo:'올해 올라온 커버',subEn:'Covers uploaded this year',
    pick:vids=>_capByGroup(vids.filter(v=>(v.cover_of_groups||[]).length||(v.cover_of_members||[]).length),v=>v.group_ko,2).slice(0,30),
    cat:null,cover:true},
@@ -16933,7 +16940,7 @@ const _FEED_THIS_YEAR_POOL=[
    pick:vids=>_capByGroup(vids,v=>v.group_ko,2).slice(0,30),cat:'live',half:true},
 ];
 function _thisYearHalf(){return (Math.floor(Date.now()/3600000)%2)?1:2;} // 시간대별로 상/하반기 번갈아
-async function _buildFeedThisYearPicks(list){
+async function _buildFeedThisYearPicks(chartEl,discEl){
   if(!sb)return;
   const y=new Date().getFullYear();
   const vidUrl=v=>_isShortV(v)?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;
@@ -16962,7 +16969,9 @@ async function _buildFeedThisYearPicks(list){
       const label=currentLang==='ko'?opt.ko(y):opt.en(y);
       const sub=_feedRankSub(label,vids[0].view_count,currentLang==='ko'?opt.subKo:opt.subEn);
       const songs=vids.map(v=>({t:v.title,u:vidUrl(v),thumb:v.thumb,vc:v.view_count,pa:v.published_at?.slice(0,10),_apiId:v.id,_apiGroupKo:v.group_ko}));
-      _appendFeedCard(list,opt.icon,label,sub,()=>_openFeedListOverlay(label,sub,songs),vids[0].thumb);
+      // 랭킹(TOP)은 Charts, 단순 모음(컴백·MV·데뷔·커버 등 coll:true)은 Discovery로 — "단순 모음은 차트가 아니다"(2026-09-04 사용자).
+      const _dest=opt.coll?(discEl||chartEl):chartEl;
+      _appendFeedCard(_dest,opt.icon,label,sub,()=>_openFeedListOverlay(label,sub,songs),vids[0].thumb);
       made++;
     }catch(e){/* 조용히 다음 후보 */}
   }
@@ -17041,7 +17050,7 @@ async function _fetchSoloFancamPool(groupKos,fetchLimit,sinceDate){
   if(sinceDate)q=q.gte('published_at',sinceDate); // 기간 축(2026-09-04) — 안 주면 기존대로 전체 기간
   const{data,error}=await q.order('view_count',{ascending:false}).limit(fetchLimit);
   if(error||!data?.length)return[];
-  return _filterBannedVideos(data).filter(v=>_FANCAM_TITLE_RE.test(v.title)&&(v.members||[]).length===1);
+  return _filterBannedVideos(data).filter(_isSoloCam);
 }
 // 개인 직캠 TOP 100 — 성별 축은 **칩**으로(2026-09-04). 예전엔 전체/여돌/남돌이 각각 카드였다.
 // 셋은 같은 풀에 groupKos만 다른 것이라, 카드 세 장은 Charts 선반에서 자리만 세 칸 먹고 "이 셋이
@@ -18127,7 +18136,7 @@ function _buildFeedDisc(){
   _feedEnqueue(()=>_buildFeedJacon()); // 오리지널 콘텐츠(아이돌 개인 채널) 선반 — Trend 위(짧은 가로 선반)
   _feedEnqueue(()=>_buildFeedTrend());
   _feedEnqueue(()=>_buildFeedWeeklyTopCams(chart,list));
-  _feedEnqueue(()=>_buildFeedThisYearPicks(chart)); // 올해 한정 모음 2개(랜덤) — 주간/월간 바로 뒤 앞자리
+  _feedEnqueue(()=>_buildFeedThisYearPicks(chart,list)); // 올해 한정 — TOP은 Charts(chart), 모음은 Discovery(list)로 라우팅
   _feedEnqueue(()=>_buildFeedYearlyTop(chart));
   _feedEnqueue(()=>_buildFeedLegend100(chart));
   _feedEnqueue(()=>_buildChartCard(chart,'soloCam'));
