@@ -7573,7 +7573,7 @@ function _openVidTagModalBulk(ids,ko){
   document.getElementById('vid-tag-single-hint').style.display='none';
   const overwriteRow=document.getElementById('vid-tag-bulk-overwrite-row');
   overwriteRow.style.display='flex';
-  document.getElementById('vid-tag-bulk-overwrite').checked=false;
+  document.getElementById('vid-tag-bulk-overwrite').checked=true; // 디폴트 체크(2026-09-04 사용자 요청). 칩을 하나도 안 넣으면 저장 시 태그를 안 건드리므로(아래 _anyTag 가드) 빈값 덮어쓰기로 태그가 지워지는 사고는 안 남.
   _ensureVidTagGroupList();
   document.getElementById('vid-tag-group-ko').value=ko;
   _renderVidTagMemberCheckboxes(ko);
@@ -7981,8 +7981,12 @@ document.getElementById('vid-tag-save').addEventListener('click',async e=>{
     // 날아가는 사고가 날 수 있음).
     const overwriteTags=document.getElementById('vid-tag-bulk-overwrite').checked;
     const updatePayload={};
+    // 덮어쓰기가 켜져 있어도, 칩을 하나도 안 넣었으면 태그를 건드리지 않는다 — 디폴트 체크(2026-09-04)라
+    // "플래그만 바꾸려고 연 빈 모달"에서 저장 시 선택 영상 전체 태그가 빈값으로 지워지는 사고를 막는다.
+    // 칩을 하나라도 넣었으면(=태그를 확정할 의도) 기존처럼 전체 태그 배열을 모달 값으로 교체한다.
+    const _anyTag=members.length||withMembers.length||withGroups.length||coverMembers.length||coverGroups.length;
     // 태그를 덮어쓴다 = 사람이 최종 확정한 것이므로 단일 편집과 같이 검수도 끝난 것으로 본다(needs_review:false).
-    if(overwriteTags){updatePayload.members=members;updatePayload.with_members=withMembers;updatePayload.with_groups=withGroups;updatePayload.cover_of_members=coverMembers;updatePayload.cover_of_groups=coverGroups;updatePayload.tags_manual=true;updatePayload.needs_review=false;}
+    if(overwriteTags&&_anyTag){updatePayload.members=members;updatePayload.with_members=withMembers;updatePayload.with_groups=withGroups;updatePayload.cover_of_members=coverMembers;updatePayload.cover_of_groups=coverGroups;updatePayload.tags_manual=true;updatePayload.needs_review=false;}
     if(category)updatePayload.category=category;
     if(_vidTagShortTouched&&isShort!==undefined)updatePayload.is_short=isShort;
     if(_vidTagFlagTouched)Object.assign(updatePayload,_flagPatch(contentFlag,'manual'));
