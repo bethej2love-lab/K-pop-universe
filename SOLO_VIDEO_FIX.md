@@ -42,3 +42,8 @@
 - 아이즈원 `disbanded:'2021.04.29'`, 여자친구 `'2021.05.22'` — 플래그 있음 ✓.
 - 권은비 등 groups[]에 옛 그룹 left 날짜 있음 ✓ → ②-B 스윕의 "탈퇴일 이후" 판정 근거 완비.
 - ⚠️ 아이오아이·워너원은 `disbanded` 없음(프로젝트 그룹) — 필요시 추가.
+
+## ④ 사진(artist_pics)도 같은 문제 (2026-09-04)
+- 사진 1,367장 전부 존재(손실 0). 저장 키 `(ko_name, group_ko)` vs 조회 키 `_ytGroupKoFor(=솔로면 이름)` 불일치로 안 뜸.
+- **180명(솔로전향·유니크이름) 재키 SQL로 복구 완료**(`~/Downloads/artist_pics_rekey.sql`, group_ko→본인이름).
+- **남은 ~101장(동명이인·겸임/이적)**: SQL 일괄재키는 동명이인 위험 → **①과 동일하게 앱 조회를 groups[] 히스토리 키로 확장**해서 해결. `_loadInstaPic`/`_warmInstaPicCache`(index.html ~9441/9478)가 `(이름, _ytGroupKoFor)` 단일 조회 → 후보 키 여러 개(이름·group.ko·groups[]) 시도로. 아티스트별 스코프라 동명이인 안 섞임.
