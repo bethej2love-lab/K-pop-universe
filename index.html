@@ -454,6 +454,10 @@
     <input type="text" id="vm-search" placeholder="제목·그룹 검색…" autocomplete="off" spellcheck="false">
     <input type="text" id="vm-search-2" placeholder="검색 결과 내 재검색…" autocomplete="off" spellcheck="false" style="display:none">
     <button class="vm-toggle-pill" id="vm-only-normal-btn" type="button" style="display:none;margin:6px 16px 0;">정상만</button>
+    <!-- 검수 정렬(2026-09-04) — 기본은 "유입 최신순"을 그대로 둔다(2026-08-25에 "하루 신규분만 보고
+         끝낸다"는 운영 규칙으로 정한 것). 조회수순은 그 규칙을 덮는 게 아니라, 이미 쌓인 재고를
+         영향 큰 것부터 처리하고 싶을 때 고르는 선택지다. -->
+    <button class="vm-toggle-pill" id="vm-sort-exposure-btn" type="button" style="display:none;margin:6px 16px 0;" title="조회수가 높은 것부터 — 사용자가 실제로 보는 영상부터 고칩니다">👁 조회수순</button>
     <div id="vm-status"></div>
     <div id="vm-toolbar" style="display:none">
       <label id="vm-select-all-row"><input type="checkbox" id="vm-select-all">전체 선택</label>

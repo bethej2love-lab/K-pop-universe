@@ -3735,6 +3735,34 @@ let _vmOnlyNormal=false;
 // ⚠️ 큐 목록(_vmLoad의 review 탭)과 관리자 홈 카운트 카드가 **반드시 같은 정의**를 써야 한다 —
 //    한쪽만 고치면 "카드엔 156개인데 열어보면 145개"로 어긋난다(같은 날 루틴/버튼 드리프트 사고와
 //    같은 종류라 아예 함수 하나로 묶었다). tests/routine-parity.test.js가 이 대응도 검사한다.
+// ── 검수 정렬: 노출도(조회수) ─────────────────────────────────────────────────
+// Fable 아카이브 운영 설계 4-3의 핵심 주장 — "전수 검수를 포기하고 노출도 가중 검수로 간다.
+// 사용자가 보는 것부터 맞춘다." 39만 건을 다 볼 수는 없으므로 순서가 곧 전략이다.
+//
+// ⚠️ 기본값은 바꾸지 않는다. 검수 탭의 "유입 최신순"은 2026-08-25에 **의도해서** 정한 규칙이다
+//    ("하루 신규분만 보고 끝낸다" — 누적 3천 건을 다 봐야 한다는 부담이 1년간 큐를 안 누른 원인이었음).
+//    최신순은 **흐름 관리**, 조회수순은 **재고 처리**라 서로를 대체하지 않는다. 그래서 토글로 둔다.
+// ⚠️ 예전 주석/테스트에 남아 있는 "view_count는 59%만 채워져 있다"는 **낡은 수치다**(2026-09-04 실측:
+//    392,859/392,938 = 99.98%, 검수 대상 276건은 100%). 순환 갱신이 그 사이 거의 다 채웠다.
+//    그래도 null은 뒤로 보낸다 — "조회수 모름"이 상위를 차지하면 정렬의 의미가 없다.
+// ⚠️ **실제로 배선한 탭만** 넣는다. 여기 이름만 늘리면 버튼은 뜨는데 눌러도 아무 일이 없다
+//    (그 탭이 view_count를 select에 안 담고 있거나 정렬을 안 감쌌으면 조용히 무시된다).
+//    지금 배선된 곳: review · ss · orphan · 무관/보류/숨김(플래그 탭 공용 경로).
+const _VM_EXPOSURE_TABS=new Set(['review','ss','orphan','nomem','hold','hidden']);
+let _vmSortExposure=(()=>{try{return localStorage.getItem('kpu_vm_sort_exposure')==='1';}catch(e){return false;}})();
+const _vmByExposure=(a,b)=>{
+  const av=a&&a.view_count,bv=b&&b.view_count;
+  if(av==null&&bv==null)return 0;
+  if(av==null)return 1;   // 조회수 모르는 건 뒤로
+  if(bv==null)return -1;
+  return bv-av;
+};
+// ⚠️ 정렬을 **렌더 한 곳에서만** 건다(_vmRenderVideoList). 처음엔 탭 쿼리마다 정렬을 감쌌는데,
+//    이 패널은 목록을 캐시(_vmCache/IndexedDB)에서 복원하는 경로가 따로 있어서 그 경로가 정렬도
+//    상태 문구도 통째로 우회했다 — 토글을 눌러도 순서가 그대로거나, 순서는 바뀌는데 문구는
+//    "신규 유입 — 위쪽부터"라고 거짓말을 했다(2026-09-04 실측). 렌더 직전에 한 번만 걸면
+//    캐시·상태문구·탭별 기본정렬을 하나도 안 건드리고 항상 일관된다.
+const _vmSortForRender=rows=>_vmSortExposure?rows.slice().sort(_vmByExposure):rows;
 function _vmReviewQueueFilter(q){
   // tags_manual 제외(2026-08-31 사용자 제보 — "내가 수동편집한 건 아예 안 떠야지"). 편집 모달에서
   // 직접 고쳐 저장한 행은 사람이 이미 판단을 끝낸 것이라 "그룹배정이 맞나?"를 다시 물을 이유가 없다.
@@ -3984,6 +4012,8 @@ function _vmApplyTab(){
   _vmOnlyNormal=false;
   const onlyNormalBtn=document.getElementById('vm-only-normal-btn');
   if(onlyNormalBtn){onlyNormalBtn.style.display=_vmTab==='all'?'':'none';onlyNormalBtn.classList.remove('active');}
+  const sortExpBtn=document.getElementById('vm-sort-exposure-btn');
+  if(sortExpBtn){sortExpBtn.style.display=_VM_EXPOSURE_TABS.has(_vmTab)?'':'none';sortExpBtn.classList.toggle('active',_vmSortExposure);}
   _vmSyncFlagBtns();
   if(isCh){
     _vmChTab='official';
@@ -4090,7 +4120,7 @@ async function _vmLoad(searchTerm,preserveSearch2){
       // 정렬도 그 안에서만 하면 돼서 **0.6초**로 떨어진다(실측, 32배). 인덱스 추가 불필요.
       // 동시 6개는 다른 대량 조회(name_pollution_probe 등)에서 쓰던 것과 같은 수준 — 더 늘려도
       // 이득이 크지 않고 무료 티어 커넥션만 압박한다.
-      const _SS_COLS='id,title,group_ko,thumb,content_flag,members,with_members,with_groups,cover_of_members,cover_of_groups';
+      const _SS_COLS='id,title,group_ko,thumb,content_flag,members,with_members,with_groups,cover_of_members,cover_of_groups,view_count';
       let _ssHasReviewedAt=true;
       let error=null;const collected=[];let _ssCursor=0;
       const _sortSs=arr=>arr.slice().sort((a,b)=>(a.group_ko||'').localeCompare(b.group_ko||'','ko')||(a.title||'').localeCompare(b.title||'','ko'));
@@ -4137,17 +4167,14 @@ async function _vmLoad(searchTerm,preserveSearch2){
         ||(a.group_ko||'').localeCompare(b.group_ko||'','ko')
         ||(a.title||'').localeCompare(b.title||'','ko'));
       const{data,error}=await _sbFetchAll(()=>_vmReviewQueueFilter(sb.from(_YT_TABLE)
-        .select('id,title,group_ko,thumb,content_flag,members,with_members,with_groups,cover_of_members,cover_of_groups,created_at'))
+        .select('id,title,group_ko,thumb,content_flag,members,with_members,with_groups,cover_of_members,cover_of_groups,created_at,view_count'))
         .order('id'),1000,_vmProgressive(myGen,_sortRev,'검수 대기'));
       if(myGen!==_vmSearchGen)return;
       if(error){statusEl.textContent='조회 실패: '+error.message;return;}
       // ⚠️ 정렬을 그룹명순 → **유입 최신순**으로 바꿨다(2026-08-25). 이 큐는 "하루 신규분만 보고
       // 끝낸다"는 규칙으로 운영하기로 했는데(누적 3천 건을 다 봐야 한다는 부담이 1년간 안 누른
       // 원인이었음), 그러려면 새로 들어온 게 맨 위에 있어야 한다. created_at이 없는 옛 행은 뒤로.
-      const all=(data||[]).sort((a,b)=>
-        String(b.created_at||'').localeCompare(String(a.created_at||''))
-        ||(a.group_ko||'').localeCompare(b.group_ko||'','ko')
-        ||(a.title||'').localeCompare(b.title||'','ko'));
+      const all=_sortRev(data||[]);
       _vmRows=all;
       const nNew=all.filter(v=>String(v.created_at||'')>_ADM_CREATED_BASELINE).length;
       statusEl.textContent=`그룹배정 검수 대상 ${all.length}개`+(nNew?` (신규 유입 ${nNew}개 — 위쪽부터)`:'')+` — 멤버 이름 하나만으로 그룹을 추측한 영상들이에요`;
@@ -4169,7 +4196,7 @@ async function _vmLoad(searchTerm,preserveSearch2){
         return orphans.length?{...v,_orphans:orphans}:null;
       }).filter(Boolean).sort((a,b)=>(b.tags_manual?1:0)-(a.tags_manual?1:0)||(a.group_ko||'').localeCompare(b.group_ko||'','ko'));
       const{data,error}=await _sbFetchAll(()=>sb.from(_YT_TABLE)
-        .select('id,title,group_ko,thumb,content_flag,members,with_members,with_groups,cover_of_members,cover_of_groups,tags_manual')
+        .select('id,title,group_ko,thumb,content_flag,members,with_members,with_groups,cover_of_members,cover_of_groups,tags_manual,view_count')
         .not('members','eq','{}')
         .order('id'),1000,_vmProgressive(myGen,_pickOrphans,'고아 태그'));
       if(myGen!==_vmSearchGen)return;
@@ -4212,7 +4239,7 @@ async function _vmLoad(searchTerm,preserveSearch2){
     // 실제로는 자동분이 99%(숨김 2,822건 중 사람이 숨긴 건 22건)라 출처가 안 보이면 어느 게 내 판단인지
     // 알 수 없다. 배지에 · 를 붙여 자동분을 구분한다. 컬럼이 없는 환경이면 값이 undefined라 표시만 빠짐.
     const flag=tab==='nomem'?'무관':tab==='hold'?'보류':'hidden';
-    let q=sb.from(_YT_TABLE).select('id,title,group_ko,thumb,content_flag,flag_source,members,with_members,with_groups,cover_of_members,cover_of_groups');
+    let q=sb.from(_YT_TABLE).select('id,title,group_ko,thumb,content_flag,flag_source,members,with_members,with_groups,cover_of_members,cover_of_groups,view_count');
     q=q.eq('content_flag',flag);
     if(term)q=q.or(`title.ilike.${_pgFilterVal('%'+term+'%')},group_ko.ilike.${_pgFilterVal('%'+term+'%')}`);
     const _sortFlag=arr=>arr.slice().sort((a,b)=>(a.group_ko||'').localeCompare(b.group_ko||'','ko')||(a.title||'').localeCompare(b.title||'','ko'));
@@ -4254,7 +4281,7 @@ function _vmRenderVideoList(){
   const toolbarEl=document.getElementById('vm-toolbar');
   const tab=_vmTab;
   listEl.innerHTML='';
-  const rows=_vmSearch2Rows();
+  const rows=_vmSortForRender(_vmSearch2Rows()); // 👁 조회수순 토글은 여기 한 곳에서만 적용된다
   if(!_vmRows.length){
     const emptyMsg=tab==='all'?'검색 결과가 없어요':tab==='new'?'새로 들어온 영상이 없어요':tab==='nomem'?'무관 처리된 영상이 없어요':tab==='hold'?'보류된 영상이 없어요':tab==='review'?'검수 대기 중인 영상이 없어요':tab==='catlock'?'라이브 후보 중 수동 편집으로 막힌 영상이 없어요':'숨김 처리된 영상이 없어요';
     listEl.innerHTML=`<div style="padding:24px;text-align:center;color:rgba(155,178,228,0.45);font-size:12px;">${emptyMsg}</div>`;
@@ -4947,6 +4974,14 @@ document.getElementById('vm-only-normal-btn')?.addEventListener('click',()=>{
   _vmOnlyNormal=!_vmOnlyNormal;
   document.getElementById('vm-only-normal-btn').classList.toggle('active',_vmOnlyNormal);
   _vmRenderVideoList();
+});
+// 조회수순 토글 — 정렬만 바꾸면 되므로 이미 받아둔 _vmRows를 그 자리에서 다시 세운다(재조회 없음).
+// 선택은 기기에 남긴다: 재고 처리 모드로 한 번 들어가면 그 세션 내내 그 순서가 자연스럽다.
+document.getElementById('vm-sort-exposure-btn')?.addEventListener('click',()=>{
+  _vmSortExposure=!_vmSortExposure;
+  try{localStorage.setItem('kpu_vm_sort_exposure',_vmSortExposure?'1':'0');}catch(e){}
+  document.getElementById('vm-sort-exposure-btn').classList.toggle('active',_vmSortExposure);
+  _vmRenderVideoList(); // 정렬은 렌더에서만 적용 — 재조회도, 캐시 변경도 없다
 });
 document.getElementById('vm-select-all')?.addEventListener('change',e=>{
   document.querySelectorAll('#vm-list .vm-item input[type=checkbox]').forEach(cb=>{cb.checked=e.target.checked;});
