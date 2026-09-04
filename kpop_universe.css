@@ -1261,6 +1261,10 @@
      세로 확장분이 그대로 잘려나감(elementFromPoint로 실측 확인, 확장 안 먹힘). 대신 패딩을 4px→6px로
      살짝 늘려 실제 알약 높이 자체를 키움(23px→27px 안팎) — 아이콘 쪽처럼 완전히 안 보이게는 못 하지만
      체감상 거의 안 티 나는 수준의 최소 증가. */
+  /* 차트 목록의 필터 칩 줄(2026-09-04). 칩 자체는 .gc-ch-filter를 그대로 쓴다 — 이 앱에서 "고르는
+     알약"은 이미 그 모양이라 새 스타일을 만들면 같은 뜻의 UI가 두 벌이 된다. */
+  #feed-list-facets{display:flex;flex-wrap:wrap;gap:5px;margin-top:7px;align-items:center;}
+  #feed-list-facets .fl-facet-lbl{font-size:10px;color:rgba(150,175,225,0.5);margin-right:1px;}
   .gc-ch-filter:hover{background:linear-gradient(160deg,rgba(255,255,255,0.16),rgba(255,255,255,0.04));border-color:rgba(255,255,255,0.24);color:rgba(220,235,255,0.95);}
   .gc-ch-filter:active{transform:scale(0.93);}
   .gc-ch-filter.active{
