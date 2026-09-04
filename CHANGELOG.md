@@ -46,6 +46,11 @@
 - **PWA 상단 잘림** — 라이트박스 브라우즈 상단바 3요소+wrap 패딩에 `env(safe-area-inset-top)`(쇼츠 모드 기존 처리 대칭). (⚠️아이폰 확인 대기)
 - **[계측 C1·C2]** GA 이벤트 신설: `share_card`(kind·method, 공유 5종), `shelf_click`(shelf_id·position, `_appendFeedCard` 공통), `login_start`(`_handleAccountLink` 공통), `story_to_app`(`?story`/`?utm` 세션보관·1회). C3(스토리 섹션 스크롤)은 스토리 페이지 생길 때. ⚠️GA4 맞춤측정기준 등록은 사용자 몫.
 
+### [완료] 자컨(자체 채널) 필터 + PWA 재수정 `[index.html][kpop_universe.css][sw.js]`
+- **자컨 필터 탭** — 그룹/멤버 카드에 '전체' 옆 '자컨'(자체·개인 채널=`source_tier in (official,idol)`) 필터. 4곳(catTabs·buildBaseQuery·대표영상쿼리·탭존재체크). 자체 채널 영상 없으면 자동 숨김. ⚠️Discover "자컨" 선반은 다음 단계. ⚠️옛 영상 source_tier NULL이라 재동기화 전 일부만.
+- **PWA 상단 잘림 = 캐시 원인** — CSS `?v=`·sw `CACHE_VERSION` 미갱신이라 첫 수정이 설치된 PWA에 안 내려갔음(코드는 맞았음). 콘텐츠 해시로 `53561594` 갱신해 강제 배포.
+- **하단 탭바 과여백** — PWA에서 `11px + env(safe-area-inset-bottom)`(=45px)로 이중가산 → `max(11px, env(...))`(=34px)로 수정.
+
 ## 2026-09-04 (집 세션 — 인수인계 이어받기)
 
 ### [완료] #2 music_show_wins 커버리지 실측 — 스토리 #1 "첫 1위까지 며칠" **가능**(read-only)

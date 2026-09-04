@@ -56,7 +56,7 @@
      ⚠️ 손으로 올리던 시절 2026-08-24에 실제로 빠뜨려서 폰이 "새 마크업 + 옛 CSS"를 그리는 바람에
      화면이 통째로 깨졌음(Charts 카드가 158px→46px로 찌그러짐). 로컬 확인은
      `node tools/bump_cache_version.mjs --check`. -->
-<link rel="stylesheet" href="kpop_universe.css?v=20260904-a0e00ed2">
+<link rel="stylesheet" href="kpop_universe.css?v=20260904-53561594">
 <!-- ⚠️ 2026-09-04에 "라이트박스 반응 피커를 없애니 이 CDN도 뺄 수 있다"고 판단해 지웠다가 되돌렸다 —
      최애(bias) 지정의 이모지 선택기(#pp-bias-emoji-picker)가 같은 컴포넌트를 쓴다. 반응 쪽만 보고
      지우면 프로필 패널이 조용히 깨진다(로드 실패해도 콘솔 에러 없이 그냥 안 뜬다). -->
@@ -143,7 +143,6 @@
   <div id="dh-right">
     <button class="dh-btn" id="dh-home-btn" aria-label="홈으로 이동"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" style="display:block"><path d="M3 11L12 3l9 8v9a1 1 0 0 1-1 1h-4v-5h-4v5H4a1 1 0 0 1-1-1v-9z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg></button>
     <button class="dh-btn" id="dh-search-btn" aria-label="검색 열기"><svg width="15" height="15" viewBox="0 0 15 15" fill="none" style="display:block"><circle cx="6" cy="6" r="4.2" stroke="currentColor" stroke-width="1.5"/><line x1="9.2" y1="9.2" x2="13" y2="13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></button>
-    <button class="dh-btn" id="dh-explore-btn" aria-label="무작위로 둘러보기"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="display:block"><path d="M12 2L13.4 10.6L22 12L13.4 13.4L12 22L10.6 13.4L2 12L10.6 10.6L12 2Z"/></svg></button>
     <button class="dh-btn" id="dh-feed-btn" aria-label="탐험 피드"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" style="display:block"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.6"/><path d="M16.24 7.76L14.12 14.12L7.76 16.24L9.88 9.88Z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg></button>
     <button class="dh-btn" id="dh-profile-btn" aria-label="내 프로필"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" style="display:block"><circle cx="12" cy="8" r="3.5" stroke="currentColor" stroke-width="1.6"/><path d="M4.5 20c0-4.14 3.36-7.5 7.5-7.5s7.5 3.36 7.5 7.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></button>
     <div class="dh-divider"></div>
@@ -5031,6 +5030,9 @@ function _applyGenreTabQuery(q,filter){ // filter: 'variety' | 'show'
 }
 
 let _lbPlaylist=null,_lbIdx=-1,_lbCtx=null;
+// 영상 id→업로드날짜(원본 YYYY-MM-DD) 캐시. 재생목록에 pa를 안 실은 경로(최근 본 등)에서도 재생모드
+// 메타에 날짜가 항상 뜨도록 통일(2026-09-04 사용자 요청 — 날짜는 DB에 100% 있는데 표기가 경로마다 들쭉).
+const _pubById=new Map();
 // 어드민 편집(연필) 버튼용 영상 DB id — 그룹/멤버 카드 경로는 곡객체에 _apiId를 붙이지만, 탐험 패널·컬렉션·
 // 스크랩 경로는 안 붙여 편집 버튼이 안 떴다(2026-08-30 사용자 제보). DB의 id=유튜브 영상 id라 URL에서 뽑으면
 // 어느 경로에서 열었든 어드민이 항상 편집 가능하다. _openVidTagModal은 id로 실제 group_ko/members를 DB에서
@@ -5090,6 +5092,8 @@ function openLightbox(url,shorts,playlist,idx,ctx,isAdvance,forceBrowseMode){
   _lbIsNativeShorts=!!shorts;
   _recordRecentView(vid,playlist&&idx!=null?playlist[idx]:null,shorts);
   _lbPlaylist=playlist||null;
+  // pa가 실린 항목은 전역 캐시에 모아둔다 — pa 없는 재생목록(최근 본 등)도 같은 영상이면 날짜를 채워준다
+  if(_lbPlaylist)_lbPlaylist.forEach(p=>{if(p&&p.pa){const _pid=ytId(p.u);if(_pid)_pubById.set(_pid,String(p.pa).slice(0,10));}});
   _lbIdx=(idx!=null)?idx:-1;
   _lbCtx=(ctx!=null)?ctx:_lbCtx;
   document.querySelector('.lb-menu-wrap')?.classList.remove('open'); // 이전 영상에서 열어뒀던 더보기 메뉴는 다음 영상으로 안 넘어가게
@@ -5209,7 +5213,8 @@ function _lbUpdateToolbar(){
       titleEl.style.display='none';
     }
     if(s){
-      const metaStr=_fmtVidMeta(s.pa,s.vc);
+      const _pa=s.pa||(s.u?_pubById.get(ytId(s.u)):null); // 재생목록이 pa를 안 실었으면 캐시로 폴백 — 날짜 표기 통일
+      const metaStr=_fmtVidMeta(_pa,s.vc);
       metaEl.textContent=metaStr;
       metaEl.style.display=metaStr?'':'none';
       infoWrap.style.display=(metaStr||s.t)?'':'none';
@@ -6514,7 +6519,11 @@ function openMobSheet(cardEl){
     mobSheetEl.classList.add('bs-full');
     mobSheetEl.style.display='block';
     mobSheetInner.scrollTop=0; // display:none 중 scrollTop=0이 Safari에서 무시되는 문제 보완 — display:block 직후 재설정
+    // 열림 애니메이션(.32s transform) 진행 중엔 스크롤을 잠근다 — 애니메이션의 GPU 레이어 정착과 첫 스크롤이
+    // 겹치면 "첫 손짓만 갑자기 튀는" 현상이 생김(2026-09-04 사용자 제보). 착지 후(340ms) 풀어 첫 스크롤부터 매끄럽게.
+    mobSheetInner.style.overflowY='hidden';
     requestAnimationFrame(()=>mobSheetEl.classList.add('bs-open'));
+    setTimeout(()=>{mobSheetInner.style.overflowY='';},340);
     _bringToFront(mobSheetEl); // 카드 시트도 열리면 맨 위(검색 시트 등 위로 — 2026-09-02 z-index 통일)
     // 카드가 기본 100%(bs-full)로 열려서 우주 자체가 거의 안 보이는데도 별을 화면 위쪽으로 세게
     // 밀어올리고 있었음 — 시트를 끌어내려 살짝 들여다볼 때도 너무 위에 있어 잘 안 보인다는 제보
@@ -6552,6 +6561,7 @@ function openMobSheet(cardEl){
     // 카드도 그 위로 올려야 멤버 카드가 그룹 카드 뒤로 안 뜬다(2026-09-02 회귀 수정 — z통일 때 sheet만 올리고
     // stack을 빠뜨렸었음). 정적 z(sheet63/stack64)만 믿으면 안 됨.
     mobCardStackInner.scrollTop=0; // display:block 직후 재설정 — display:none 중 무시 보완
+    mobCardStackInner.style.overflowY='hidden'; // 열림 애니메이션 중 첫 스크롤 튐 방지(2026-09-04, mob-sheet와 동일 처리) — 아래 340ms 타이머에서 해제
     const mySeq=++_stackAnimSeq; // 이 애니메이션 세대 토큰 — 그 사이 새 카드가 열리면 폐기된다
     mobCardStackEl.style.transition='none';
     mobCardStackEl.style.transform='translateY(200px)';
@@ -6563,6 +6573,7 @@ function openMobSheet(cardEl){
         _stackAnimTimer=null;
         if(mySeq!==_stackAnimSeq)return; // 뒤늦은 콜백이 새 애니메이션을 건드리지 않게 가드
         mobCardStackEl.style.transition='';mobCardStackEl.style.transform='';
+        mobCardStackInner.style.overflowY=''; // 열림 애니메이션 끝 — 스크롤 허용(첫 튐 방지 해제)
         mobCardStackEl.classList.add('bs-open');
       },340);
     }));
@@ -6977,7 +6988,7 @@ async function _enrichMemberVideosFromApi(a,tv,baseSongs,basePersonalSongs){
     // (그룹 카드 영상 그리드에 쓴 것과 동일한 보정 로직 재사용)
     const uncertain=rows.filter(v=>!_isShortV(v));
     if(uncertain.length){
-      const correctedIds=await _probeShortsBatch(uncertain);
+      const {promoted:correctedIds}=await _probeShortsBatch(uncertain); // 여긴 non-short만 넘겨 promote만 발생
       if(correctedIds.length){
         sb.from(_YT_TABLE).update({is_short:true}).in('id',correctedIds).then(({error})=>{
           if(error)console.error('쇼츠 분류 보정 저장 실패',error.message);
@@ -7066,7 +7077,7 @@ async function _fetchApiCollabData(anchor){
     // 갱신되니 다음에 카드를 다시 열면 정확해짐(사소한 정확도보다 버튼이 바로 뜨는 게 우선).
     const uncertain=[...rows,...groupTagRows,...reverseGroupTagRows].filter(v=>!_isShortV(v));
     if(uncertain.length){
-      _probeShortsBatch(uncertain).then(correctedIds=>{
+      _probeShortsBatch(uncertain).then(({promoted:correctedIds})=>{
         if(correctedIds.length){
           sb.from(_YT_TABLE).update({is_short:true}).in('id',correctedIds).then(({error})=>{
             if(error)console.error('연결 카드 쇼츠 분류 보정 저장 실패',error.message);
@@ -8170,6 +8181,32 @@ function closeCards(){
 function _gaEvent(name,params){
   if(typeof gtag==='function')gtag('event',name,params||{});
 }
+// ── 유입 계측(C2, 30일 계획) ────────────────────────────────────────────────
+// 정적 스토리 페이지·외부 게시글에서 "?story=<slug>&utm_source=…"로 앱에 들어오면, 그 진입을 한 번 기록한다.
+// 파라미터는 세션에 보관(sessionStorage) — 앱 내 이동이나 구글 로그인 리다이렉트(?code=…로 덮임)로 URL이
+// 바뀌어도 출처를 유지하고, story_to_app은 세션당 1회만 전송한다(saved 가드). window._entryParams로 노출해
+// 이후 이벤트가 출처를 붙일 수 있게 한다.
+(function _captureEntryParams(){
+  try{
+    const KEY='kpu_entry_params';
+    let saved=null;
+    try{saved=JSON.parse(sessionStorage.getItem(KEY)||'null');}catch(e){}
+    if(!saved){
+      const p=new URLSearchParams(location.search);
+      const story=p.get('story')||'';
+      const utm={};
+      ['utm_source','utm_medium','utm_campaign','utm_content','utm_term'].forEach(k=>{const v=p.get(k);if(v)utm[k]=v;});
+      if(story||Object.keys(utm).length){
+        saved={story,...utm,t:Date.now()};
+        try{sessionStorage.setItem(KEY,JSON.stringify(saved));}catch(e){}
+        // 스토리에서 앱으로 도달한 사건(유입 콘텐츠→제품 연결의 핵심). story 없이 utm만이면 일반 외부 유입이라
+        // story_to_app 대신 GA 기본 utm 귀속에 맡긴다.
+        if(story)_gaEvent('story_to_app',{story,source:utm.utm_source||'(direct)',medium:utm.utm_medium||'',campaign:utm.utm_campaign||''});
+      }
+    }
+    window._entryParams=saved||null;
+  }catch(e){/* 계측 실패가 앱을 막지 않게 */}
+})();
 // ── 성능 실측 계측(2026-08-22, 가오픈 전) — 세그먼트 다이어트 등 최적화 효과를 실기기 숫자로 확인하려고
 // fps/LCP를 GA로 수집한다. 매 프레임·상시 전송이 아니라 세션당 대표값 1회만(GA가 유저 전체로 집계).
 // 계측이 앱을 깨는 일이 없도록 전부 try/catch로 감싸고, isMob/_gaEvent는 함수 선언이라 여기서 안전.
@@ -8425,6 +8462,7 @@ function _copyShareLink(url){
 // (2026-08-19, 사용자 제보 — macOS 시트에 링크 복사 옵션 자체가 없던 사례) 무조건 즉시 클립보드 복사로 통일.
 function _isTouchPrimary(){try{return matchMedia('(pointer: coarse)').matches;}catch(e){return false;}}
 function _shareCurrentView(url,title){
+  _gaEvent('share_card',{kind:'view',target:title||'',method:navigator.share&&_isTouchPrimary()?'native':'link'}); // 30일 계획 계측(C1)
   if(navigator.share&&_isTouchPrimary()){
     navigator.share({title:title||'K-POP Universe',url}).catch(()=>{}); // 취소/실패 시 아무것도 안 함 — 몰래 클립보드로 대체하지 않음
   }else{
@@ -10447,6 +10485,7 @@ document.getElementById('combo-only')?.addEventListener('click',e=>{
 });
 document.getElementById('combo-share')?.addEventListener('click',async e=>{
   e.stopPropagation();
+  _gaEvent('share_card',{kind:'combo',method:_isTouchPrimary()&&navigator.share?'native':'link'}); // C1
   const link=location.origin+location.pathname+_comboShareHash();
   // 이미지(썸네일 콜라주)가 준비됐으면 이미지로 공유 — 터치=네이티브 공유시트(파일+링크), 데스크톱=이미지 저장+링크복사.
   if(_comboCardDataURL){
@@ -11846,29 +11885,6 @@ function flyHome(){
 })();
 document.getElementById('dh-home-btn').addEventListener('click',e=>{e.stopPropagation();flyHome();});
 document.getElementById('tab-home').addEventListener('click',e=>{e.stopPropagation();_gaEvent('tab_click',{tab:'home'});if(_msIsOpen())closeMobSearchSheet();_closeFeedOverlay();flyHome();});
-document.getElementById('dh-explore-btn').addEventListener('click',e=>{
-  e.stopPropagation();
-  _dismissFavHint();
-  if(!bubbleMeshes.length)return;
-  const item=_pickExploreTarget();const{bm}=item;
-  // 어드민 설정 패널은 작업 콘솔이라, 탐험(✦) 눌러도 닫지 않는다(2026-08-30 사용자 요청). 카드는 오른쪽에 열려 안 겹침.
-  const _keepSet=_isAdmin()&&document.getElementById('settings-panel').classList.contains('open');
-  closePanels();closeCards();
-  if(_keepSet){document.getElementById('settings-panel').classList.add('open');document.getElementById('dh-settings-btn')?.classList.add('active');}
-  flyToBubble(bm.mesh.position,bm.radius);
-  flyState.onComplete=()=>{
-    setTimeout(()=>{
-      if(item.type==='group'){
-        showGC(bm.ko,window.innerWidth/2,window.innerHeight*0.38);
-        pulseGroup(bm.ko);
-      }else{
-        showGC(item.artist.group.ko,window.innerWidth/2,window.innerHeight*0.38,false,true);
-        showT(item.artist,window.innerWidth/2,window.innerHeight*0.38);
-        pulseMember(item.artist);pulseGroup(item.artist.group.ko);
-      }
-    },150);
-  };
-});
 document.getElementById('dh-search-btn').addEventListener('click',e=>{
   e.stopPropagation();
   const sw=document.getElementById('search-wrap');
@@ -13930,6 +13946,7 @@ function _downloadUcCard(){
 // 먼저 발견/수정 — _isTouchPrimary 참고). 데스크톱은 바로 다운로드로 확정 처리.
 async function _shareUcCard(){
   if(!_ucCardDataURL)return;
+  _gaEvent('share_card',{kind:'universe',method:_isTouchPrimary()?'native':'download'}); // C1
   if(_isTouchPrimary()){
     try{
       const blob=await(await fetch(_ucCardDataURL)).blob();
@@ -14074,6 +14091,7 @@ function _downloadDebutCard(){
 // 데스크톱 분기 이유는 _shareUcCard 주석 참고(2026-08-21).
 async function _shareDebutCard(){
   if(!_debutCardDataURL)return;
+  _gaEvent('share_card',{kind:'debut',method:_isTouchPrimary()?'native':'download'}); // C1
   if(_isTouchPrimary()){
     try{
       const blob=await(await fetch(_debutCardDataURL)).blob();
@@ -14261,6 +14279,7 @@ function _downloadColCard(){
 // "저장" 버튼(col-card-download)이 따로 있으므로 공유는 링크만 다루게 단순화 — 원치 않는 자동 다운로드 제거.
 async function _shareColCard(){
   if(!_colCardUrl)return;
+  _gaEvent('share_card',{kind:'collection',method:_isTouchPrimary()&&navigator.share?'native':'link'}); // C1
   if(_isTouchPrimary()&&navigator.share){
     try{
       await navigator.share({title:'K-POP Universe',url:_colCardUrl}); // 링크만(이미지 파일 안 실음)
@@ -15402,6 +15421,7 @@ document.getElementById('link-confirm-overlay').addEventListener('pointerdown',e
 
 async function _handleAccountLink(provider){
   if(!sb){console.error('Supabase client not initialized');return;}
+  _gaEvent('login_start',{provider}); // 30일 계획 C1 — 재방문 선행지표(로그인=즐겨찾기/컬렉션 전제). 리다이렉트 전에 먼저 전송.
   const hasLocalData=favGroups.size>0||favMembers.size>0||scraps.length>0;
   if(hasLocalData){
     const ok=await _confirmLinkOverwrite();
@@ -15830,7 +15850,13 @@ function _appendFeedCard(container,icon,title,sub,onClick,thumbUrl,cat,opts){
   // 묶느라 갈아엎으면 안 된다(아래 _openFeedListOverlay 참고). 어느 컨테이너에 담기는지는 여기밖에
   // 모르므로 판정도 여기서 한 번만 한다 — 차트 빌더 12개에 플래그를 손으로 달면 하나 빠뜨렸을 때
   // 조용히 어긋난다(이 코드베이스의 반복 사고 패턴이 정확히 그것).
-  item.addEventListener('click',e=>{_feedListRankedNext=!!(container&&container.id==='feed-chart');onClick(e);});
+  const _shelfId=(container&&container.id)||''; // 선반 식별용 — Discover 어느 선반의 몇 번째를 눌렀나(30일 계획 C1)
+  const _shelfPos=container?container.children.length:0; // 아직 appendChild 전이라 이 값이 곧 이 카드의 인덱스
+  item.addEventListener('click',e=>{
+    _feedListRankedNext=!!(container&&container.id==='feed-chart');
+    if(_shelfId)_gaEvent('shelf_click',{shelf_id:_shelfId,position:_shelfPos});
+    onClick(e);
+  });
   item.addEventListener('touchstart',e=>_lbRipple(item,e),{passive:true});
   item.addEventListener('mousedown',e=>_lbRipple(item,e));
   container.appendChild(item);
@@ -16422,6 +16448,8 @@ async function _pickFeaturedVidFromDB(ko,memberKo,onlyMe,filter,viewMode,formatF
       q=_applyGenreTabQuery(q,filter);
     }else if(filter==='short'){
       q=q.eq('is_short',true); // short는 장르가 아니라 형식 플래그(is_short_migration.sql) — category와 직교
+    }else if(filter==='jacon'){
+      q=q.in('source_tier',['official','idol']); // 자컨 — 자체 채널 업로드
     }else if(filter&&filter!=='all'){
       q=q.eq('category',filter);
     }
@@ -16532,6 +16560,7 @@ function _recordRecentView(vid,song,shorts){
     arr=arr.filter(v=>v.id!==vid);
     arr.unshift({id:vid,t:song?.t||'',thumb:song?.thumb||`https://img.youtube.com/vi/${vid}/mqdefault.jpg`,
       u:song?.u||(shorts?`https://youtube.com/shorts/${vid}`:`https://www.youtube.com/watch?v=${vid}`),
+      pa:(song&&(song.pa||song.paFull))?String(song.pa||song.paFull).slice(0,10):(_pubById.get(vid)||''), // 날짜도 저장해 다음 세션 최근본 재생에서도 표기(2026-09-04)
       groupKo:song?.groupKo,memberKos:song?.memberKos,ts:Date.now()});
     localStorage.setItem(_RECENT_VIEW_KEY,JSON.stringify(arr.slice(0,20)));
   }catch(e){/* localStorage 꽉 참/비활성 등 — 조용히 무시, 기록 실패가 재생을 막으면 안 됨 */}
@@ -16553,7 +16582,7 @@ function _buildFeedRecentlyViewed(){
       +(v.t?'<div class="feed-recent-title">'+_cleanTitle(v.t)+'</div>':'');
     item.addEventListener('click',()=>_feedNav(()=>{
       const ctx=v.groupKo?{groupKo:v.groupKo,memberKo:(v.memberKos&&v.memberKos[0])||undefined}:{};
-      const pl=arr.map(x=>({t:x.t,u:x.u,thumb:x.thumb,groupKo:x.groupKo,memberKos:x.memberKos}));
+      const pl=arr.map(x=>({t:x.t,u:x.u,thumb:x.thumb,pa:x.pa,groupKo:x.groupKo,memberKos:x.memberKos}));
       openLightbox(v.u,_songIsShort(v),pl,i,ctx,false,true);
     }));
     item.addEventListener('touchstart',e=>_lbRipple(item,e),{passive:true});
@@ -18619,10 +18648,16 @@ function _makeChVidController(contId){
           // oardefault.jpg(세로)가 로드되면 블러 배경도 해당 이미지로 교체
           else if(img.src.includes('oardefault'))bg.style.backgroundImage=`url(${img.src})`;
         };
+        // is_short=true인데 실제로는 가로영상(세로 원본 없음)이면 세로 틀에 작게 갇힌다 — 배치 확인 대상에
+        // 넣어 settlePage에서 가로로 강등·재배치한다(2026-09-04 사용자 제보, 스크린샷). 대표도 포함(승격 쪽과 대칭).
+        pendingProbe.push(v);
       }else{
         img.src=baseThumb;
-        // DB 분류상 가로지만 실제로는 쇼츠(세로)일 수 있어 백그라운드에서 재확인 (대표 영상은 제외)
-        if(!v._featured)pendingProbe.push(v);
+        // DB 분류상 가로지만 실제로는 쇼츠(세로)일 수 있어 백그라운드에서 재확인한다.
+        // 대표(featured)도 포함한다 — 예전엔 제외했는데, 세로인데 가로로 잘못 찍힌 대표 영상이 큰 16:9 칸에
+        // 영영 갇히는 문제가 반복됐다(2026-09-04 사용자 제보). 대표가 세로로 정정되면 settlePage가 그 자리에서
+        // 다시 그려 .featured.is-short(큰 9:16)로 바뀐다.
+        pendingProbe.push(v);
       }
       img.alt=_cleanTitle(v.title);img.loading='lazy';img.decoding='async';
       const tEl=document.createElement('div');
@@ -18732,13 +18767,18 @@ function _makeChVidController(contId){
   // 한 번에 깔끔하게 다시 그린다(카드 하나씩 개별로 바뀌면서 행이 잠깐 섞이는 것을 방지).
   // 확인 중엔 state.appendLock으로 "더보기"를 막아 이 페이지가 항상 그리드의 마지막임을 보장한다.
   async function settlePage({myGen,grid,pageItems,featured,pageStartPos,pageStartCat,pageNodes,pendingProbe,hasMore,incomingTrailingEl}){
-    const correctedIds=await _probeShortsBatch(pendingProbe);
-    if(correctedIds.length&&sb){
-      sb.from(_YT_TABLE).update({is_short:true}).in('id',correctedIds).then(({error})=>{
+    const {promoted,demoted}=await _probeShortsBatch(pendingProbe);
+    if(promoted.length&&sb){
+      sb.from(_YT_TABLE).update({is_short:true}).in('id',promoted).then(({error})=>{
         if(error)console.error('쇼츠 분류 보정 저장 실패',error.message);
       });
     }
-    if(!correctedIds.length)return;
+    if(demoted.length&&sb){
+      sb.from(_YT_TABLE).update({is_short:false}).in('id',demoted).then(({error})=>{
+        if(error)console.error('쇼츠 오분류(가로) 강등 저장 실패',error.message);
+      });
+    }
+    if(!promoted.length&&!demoted.length)return;
     if(myGen!==state.gen)return; // 그 사이 다른 그룹/새로고침으로 전환됨: DB 보정만 반영하고 화면은 건너뜀
     // pageItems는 원래(업로드 시간순) 순서를 그대로 유지한 배열이므로, 정정된 category로 그대로 재그룹핑
     const g=_groupGcVids(pageItems,featured,pageStartPos,pageStartCat,document.body.classList.contains('card-wide'),state.filter==='short',state.filter==='live'?0.28:0.12);
@@ -18889,6 +18929,8 @@ function _makeChVidController(contId){
         // Live 탭과 Shorts 탭에 동시에 뜬다. 부분 인덱스 idx_ytv_is_short_group_published가 이 형태를
         // 커버하므로 조건을 바꾸면 SQL 쪽 predicate도 같이 고칠 것.
         q=q.eq('is_short',true);
+      }else if(filter==='jacon'){
+        q=q.in('source_tier',['official','idol']); // 자컨 — 그룹/멤버 자체(공식·개인) 채널 업로드(2026-09-04)
       }else if(filter!=='all'){
         q=q.eq('category',filter);
       }
@@ -19217,7 +19259,10 @@ function _makeChVidController(contId){
     // 방식(채널 화이트리스트 기반)으로 채워질 예정. 아직 채널 화이트리스트가 비어있어 실제 영상은
     // 없을 수 있지만, 'variety'처럼 그룹/멤버 카드에 항상 노출되는 고정 탭으로 둠(팬영상 탭과 다르게
     // "있을 때만" 동적으로 끼워 넣지 않음).
-    let catTabs=memberKo?[['all','All'],['live','Live'],['cover','Cover'],['short','Shorts'],['variety','Variety'],['show','Show']]:[['all','All'],['mv','MV'],['live','Live'],['cover','Cover'],['short','Shorts'],['variety','Variety'],['show','Show']];
+    // 자컨(자체 콘텐츠) 탭 — 그룹/멤버 자체 채널(공식·개인) 업로드. 존재 확인(아래 generic 체크)에서 자체 채널
+    // 영상이 없으면 자동 숨김. source_tier는 2026-08-26 이후 컬럼이라 옛 영상은 비어 있어 재동기화 전엔 일부만 잡힘.
+    const _jaconTab=['jacon',currentLang==='ko'?'자컨':'Self'];
+    let catTabs=memberKo?[['all','All'],_jaconTab,['live','Live'],['cover','Cover'],['short','Shorts'],['variety','Variety'],['show','Show']]:[['all','All'],_jaconTab,['mv','MV'],['live','Live'],['cover','Cover'],['short','Shorts'],['variety','Variety'],['show','Show']];
     // "by Fan" 탭(2026-08-10, 사용자 요청) — 팬이 직접 찍거나 만든 영상 전용. 아직은 어떤 그룹도 팬채널을
     // 등록 안 해서 category='fan'인 행이 하나도 없지만(추후 사용자가 그룹별로 팬채널 링크를 주면 그
     // 채널 동기화 시 category='fan'으로 저장할 예정), 미리 이 자리를 만들어둠. 팬덤명을 알면 "by {영문
@@ -19288,6 +19333,7 @@ function _makeChVidController(contId){
         else if(v==='live')q=_applyLiveTabQuery(q); // 목록 쿼리와 같은 조건 — 예전엔 여기만 제외 조건이 빠져 있었다
         else if(v==='show')q=_applyGenreTabQuery(q,'show');
         else if(v==='short')q=q.eq('is_short',true); // 형식 플래그(위 buildBaseQuery와 같은 기준)
+        else if(v==='jacon')q=q.in('source_tier',['official','idol']); // 자컨 — 자체 채널(존재하면 탭 유지)
         else q=q.eq('category',v);
         const{data}=await q;
         return{v,ok:!!(data?.length)};
@@ -20108,6 +20154,18 @@ function _probeIsPortrait(id){
     setTimeout(()=>finish(false),8000); // 안전장치용 타임아웃(주 판별 수단 아님)
   });
 }
+// oardefault(원본 비율 썸네일)로 세로/가로 판정 — 'portrait'|'landscape'|'unknown'.
+// 세로 원본 있으면 portrait, 120×90 플레이스홀더나 가로 원본이면 landscape, 로드 실패/타임아웃이면 unknown(확신 없음 → 안 건드림).
+function _probeAspect(id){
+  return new Promise(resolve=>{
+    const p=new Image();let done=false;
+    const finish=r=>{if(done)return;done=true;resolve(r);};
+    p.onload=()=>finish(p.naturalHeight>p.naturalWidth?'portrait':'landscape');
+    p.onerror=()=>finish('unknown');
+    p.src=`https://i.ytimg.com/vi/${id}/oardefault.jpg`;
+    setTimeout(()=>finish('unknown'),8000);
+  });
+}
 // refs의 각 항목이 실제로 쇼츠인지 확인. 확인되는 즉시 카드를 바꾸지 않고(그러면 원래 자리에서
 // 잠깐 옆 칸과 비율이 섞여 보임) v.category만 갱신해두고, 배치가 다 끝난 뒤 호출부가 한 번에 재배치한다.
 async function _probeShortsBatch(refs){
@@ -20120,22 +20178,27 @@ async function _probeShortsBatch(refs){
   const _BATCH_DEADLINE_MS=5000;
   const _deadline=performance.now()+_BATCH_DEADLINE_MS;
   let idx=0;
-  const correctedIds=[];
+  const promoted=[],demoted=[];
   async function worker(){
     while(idx<refs.length){
       if(performance.now()>_deadline)return;
       const v=refs[idx++];
-      const isPortrait=await _probeIsPortrait(v.id);
-      if(!isPortrait)continue;
-      v.is_short=true;
-      correctedIds.push(v.id);
+      const cur=_isShortV(v);
+      const asp=await _probeAspect(v.id); // 'portrait'|'landscape'|'unknown'
+      if(!cur){
+        if(asp==='portrait'){v.is_short=true;promoted.push(v.id);} // 가로로 찍혔지만 실제 세로 → 승격
+      }else if(v.is_short===true&&v.category!=='short'){
+        // 세로로 찍혔지만 실제 가로(세로 원본 없음/가로 원본) → 강등해 가로 틀로. 'unknown'(로드실패/타임아웃)은 안 건드림.
+        // category==='short'(옛 분류)는 장르까지 바꿔야 해서 제외 — is_short 플래그로 찍힌 것만 강등한다.
+        if(asp==='landscape'){v.is_short=false;demoted.push(v.id);}
+      }
     }
   }
   const _work=Promise.all(Array.from({length:Math.min(CONCURRENCY,refs.length)},worker));
   let _timedOut=false;
   await Promise.race([_work,new Promise(r=>setTimeout(()=>{_timedOut=true;r();},_BATCH_DEADLINE_MS))]);
   if(_timedOut&&idx<refs.length)_gaEvent('probe_batch_deadline',{pending:refs.length-idx,total:refs.length});
-  return correctedIds;
+  return {promoted,demoted};
 }
 
 // 대표(featured) 영상 후보: 뮤비만 제외하고 스크랩(하트) 최다 영상을 뽑는다. 쇼츠도 후보에 포함되며,
