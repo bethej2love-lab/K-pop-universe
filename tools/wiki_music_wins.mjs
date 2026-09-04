@@ -61,14 +61,39 @@ const ALIAS = {
 };
 const memberByEn = {};
 for (const a of arts) { if (a.name && a.name.en) memberByEn[norm(a.name.en)] = a; }
+// 위키 솔로 표기가 등록 영문명과 다른 유니버스 멤버(동명이인 없는 것만)
+// ⚠️ 동명이인 위험 낮은 것만. 박지훈(Park Ji-hoon)은 워너원 외 동명 가수 다수 → 제외(2008 수상 오매칭 실측).
+const MEMBER_ALIAS = { 'mino': '송민호', 'kimjaehwan': '김재환', 'kimjaehwanwannaone': '김재환' };
+const memberByKo = {}; for (const a of arts) { if (a.name && a.name.ko) memberByKo[a.name.ko] = a; }
 
-function resolveArtist(enName) {
+// 하나의 아티스트 토큰을 유니버스로 해석(단일). 못 찾으면 null.
+function resolveOne(enName) {
   const n = norm(enName);
   if (ALIAS[n] !== undefined) return ALIAS[n] ? { group_ko: ALIAS[n], member_ko: null } : null;
   if (groupByEn[n]) return { group_ko: groupByEn[n], member_ko: null };
+  if (MEMBER_ALIAS[n] && memberByKo[MEMBER_ALIAS[n]]) return { group_ko: '솔로', member_ko: MEMBER_ALIAS[n] };
   const m = memberByEn[n];
   if (m) return { group_ko: '솔로', member_ko: m.name.ko };
   return null;
+}
+// 수상자 없는 주(위키 표의 안내문)는 아티스트가 아니다 — 특히 "…and Winner"류가 컬래버 분리로
+// "Winner"→WINNER(위너)로 둔갑하는 것을 막는다(2026-09-04).
+const NON_ARTIST = /no\s+(chart|winner|winners|broadcast|show|episode)|not\s+announced|winners?\s+(were|not|weren)|special\s+episode|citation|^—|n\/a|festival|dream\s+concert|asia/i;
+// 수상 1행 → 유니버스 결과 배열(컬래버는 각 멤버로 분리, 유니버스에 있는 것만).
+function resolveArtists(enName) {
+  if (NON_ARTIST.test(enName)) return [];
+  const whole = resolveOne(enName);
+  if (whole) return [whole];
+  // 컬래버 분리: A & B, A x B, A and B, A, B (단, 그룹/멤버 단일 매칭이 안 될 때만)
+  if (/\s(?:&|and|x|×|feat\.?|,)\s|＆/i.test(enName)) {
+    const parts = enName.split(/\s*(?:&|and|x|×|feat\.?|,|＆)\s*/i).map(s => s.trim()).filter(s => s.length >= 2);
+    const hits = parts.map(resolveOne).filter(Boolean);
+    // 중복 멤버 제거
+    const seen = new Set(), out = [];
+    for (const h of hits) { const k = h.group_ko + '|' + h.member_ko; if (!seen.has(k)) { seen.add(k); out.push(h); } }
+    if (out.length) return out;
+  }
+  return [];
 }
 
 // ── 위키 페이지 가져오기(캐시) ──
@@ -173,10 +198,10 @@ function parseYear(html, year) {
     const BASE = 'https://dukgguehegnembimqvkm.supabase.co', KEY = 'sb_publishable_SjNC-N_9TUqaQcCxhVinGA_ULyX6tA0';
     let fromN = 0;
     while (true) {
-      // ⚠️ 원본(2026-07-21 벌크)만 대조 기준으로 — 오늘 잘못 넣은 3512건은 곧 지울 것이라 대조에서 제외
-      const r = await fetch(BASE + '/rest/v1/music_show_wins?select=group_ko,win_date,show&created_at=lt.2026-09-04', { headers: { apikey: KEY, Authorization: 'Bearer ' + KEY, Range: `${fromN}-${fromN + 999}` } });
+      // 현재 DB 전체와 대조(원본 1932 + 앞서 넣은 674 그룹분 모두 정상). 솔로는 group_ko가 다 '솔로'라 member_ko까지 키에.
+      const r = await fetch(BASE + '/rest/v1/music_show_wins?select=group_ko,win_date,show,member_ko', { headers: { apikey: KEY, Authorization: 'Bearer ' + KEY, Range: `${fromN}-${fromN + 999}` } });
       const b = await r.json(); if (!Array.isArray(b) || !b.length) break;
-      b.forEach(x => existing.add(`${x.group_ko}|${x.win_date}|${x.show}`));
+      b.forEach(x => existing.add(`${x.group_ko}|${x.member_ko || ''}|${x.win_date}|${x.show}`));
       if (b.length < 1000) break; fromN += 1000;
     }
     console.log(`기존 DB 키 ${existing.size}개 로드(중복제거)`);
@@ -187,12 +212,22 @@ function parseYear(html, year) {
   const ingest = (parsed, show) => {
     for (const w of parsed) {
       if (w.date.slice(0, 4) < Y0 || w.date.slice(0, 4) > Y1) continue;
-      const res = resolveArtist(w.artist);
-      if (!res) { unmapped[w.artist] = (unmapped[w.artist] || 0) + 1; continue; }
-      const dkey = `${res.group_ko}|${w.date}|${show.db}`;
-      if (existing.has(dkey)) continue;
-      existing.add(dkey);
-      rows.push({ show: show.db, win_date: w.date, song_title: w.song || null, group_ko: res.group_ko, member_ko: res.member_ko });
+      const results = resolveArtists(w.artist);
+      if (!results.length) { unmapped[w.artist] = (unmapped[w.artist] || 0) + 1; continue; }
+      for (const res of results) {
+        // 데뷔 이전 수상은 있을 수 없다 — 유령("Winner" 헤더 오매칭) + 동명이인(박지훈 2008 등) 방지.
+        // 그룹: 그 그룹 데뷔. 솔로: 그 멤버 소속그룹 데뷔(솔로 활동은 대개 데뷔 이후).
+        let debSrc = res.member_ko ? (memberByKo[res.member_ko] && memberByKo[res.member_ko].group && G[memberByKo[res.member_ko].group.ko]) : G[res.group_ko];
+        if (debSrc && debSrc.debut) {
+          const deb = debSrc.debut.replace(/\./g, '-').slice(0, 10);
+          if (w.date < deb) { unmapped['[pre-debut] ' + w.artist] = (unmapped['[pre-debut] ' + w.artist] || 0) + 1; continue; }
+        }
+        const dkey = `${res.group_ko}|${res.member_ko || ''}|${w.date}|${show.db}`;
+        if (existing.has(dkey)) continue;
+        existing.add(dkey);
+        const song = (w.song || '').replace(/[\t†‡*]/g, ' ').replace(/\s+/g, ' ').trim() || null; // 각주(†‡)·탭 제거
+        rows.push({ show: show.db, win_date: w.date, song_title: song, group_ko: res.group_ko, member_ko: res.member_ko });
+      }
     }
   };
   for (const show of SHOWS) {
