@@ -2660,7 +2660,11 @@ async function _tagEditLog(entries){
     for(let i=0;i<rows.length;i+=200)await sb.from('tag_edit_log').insert(rows.slice(i,i+200));
   }catch(err){/* 테이블 없거나 권한 없음 — 편집 자체는 이미 저장됐으므로 조용히 넘어간다 */}
 }
-const _TAGQ_REASON_LABEL={members_wiped:'재검증에서 멤버 태그가 전부 빠짐 — 무관 콘텐츠인지 직접 판단'};
+const _TAGQ_REASON_LABEL={
+  members_wiped:'재검증에서 멤버 태그가 전부 빠짐 — 무관 콘텐츠인지 직접 판단',
+  // 오류가 의심돼서가 아니라 **재려고** 넣은 표본 — 맞으면 맞다고 판정해줘야 분모가 채워진다(2026-09-04)
+  baseline_sample:'기준선 표본 — 자동 태깅이 맞는지 채점(맞으면 그대로 ✓ 해결)',
+};
 async function _openTagReviewQueue(){
   if(!sb){alert('Supabase 연결 없음');return;}
   let ov=document.getElementById('tagq-overlay');if(ov)ov.remove();
@@ -7917,6 +7921,7 @@ document.getElementById('vid-tag-thumb-refresh').addEventListener('click',async 
   if(junkKwLbl)junkKwLbl.textContent='현재 목록: '+_JUNK_TITLE_KEYWORDS_GLOBAL.join(', ');
   _admExecBind('sp-detect-btn',_ytSweepDetectPreview,'오태깅 미리보기');
 _admExecBind('sp-lockfill-btn',_ytSweepFillLockedEmpty,'잠금-빈값 채우기');
+_admExecBind('sp-baseline-btn',_admSeedBaselineSample,'기준선 표본 적재');
 _admExecBind('sp-canon-btn',_ytSweepCanonicalizeMembers,'고아태그 정정');
 // 로스터에서 사라진(또는 애초에 멤버가 아니었던) 이름의 태그 정리 — ⚑ 흔한단어 규칙 플로우는 진입점이
 // "지금 로스터에 있는 멤버" 옆의 아이콘이라, 로스터에서 빼버린 이름은 정작 부를 방법이 없었다(2026-09-04,
@@ -8288,6 +8293,44 @@ async function _admCount(q){
   }catch(e){return null;}
 }
 const _admHead=()=>({count:'exact',head:true});
+// ── 주간 오류율 (2026-09-04, Fable 아카이브 운영 설계 T1) ──────────────────────
+// "최근 7일에 들어온 영상 중 사람 손이 간 비율". 자동 태깅이 얼마나 맞는지를 재는 **유일한 상시 지표**다.
+//
+// 분자를 tags_manual만으로 세면 안 된다 — 태그를 안 고치고 **플래그만** 바꾼 편집(무관/보류 처리)은
+// tags_manual을 안 켠다(_flagPatch가 안 건드림). 그래서 flag_source='manual'도 같이 본다.
+//   실측(2026-09-04): tags_manual만 39건 vs 둘 다 87건 — 절반 이상을 놓칠 뻔했다.
+//
+// ⚠️ **이 숫자는 "틀린 비율"이 아니라 "고친 비율"이다.** 아무도 검수를 안 하면 0%로 떨어지는데 그건
+//    품질이 좋아진 게 아니라 안 본 것이다. 진짜 오류율은 기준선 표본 채점(_admSeedBaselineSample)이
+//    있어야 나온다 — 카드 문구도 그래서 "손댐"이라고 쓴다.
+// ⚠️ created_at은 2026-08-25에 추가된 컬럼이라 **그 이전 행 39만 개가 전부 그날로 찍혀 있다**.
+//    이전 주와 비교하려면 비교 구간이 통째로 기준선 뒤여야 한다 — 아니면 "지난주 유입 37만"처럼
+//    말이 안 되는 값이 나온다(실제로 그렇게 나오는 걸 확인하고 이 가드를 넣었다).
+const _ADM_WEEK_MS=7*86400000;
+async function _admWeekTouched(fromISO,toISO){
+  let q=sb.from(_YT_TABLE).select('id',_admHead()).gt('created_at',fromISO);
+  if(toISO)q=q.lte('created_at',toISO);
+  const ingest=await _admCount(q);
+  let q2=sb.from(_YT_TABLE).select('id',_admHead()).gt('created_at',fromISO).or('tags_manual.eq.true,flag_source.eq.manual');
+  if(toISO)q2=q2.lte('created_at',toISO);
+  const touched=await _admCount(q2);
+  return{ingest,touched};
+}
+async function _admErrorRate(){
+  if(!sb)return null;
+  const now=Date.now();
+  const wk1=new Date(now-_ADM_WEEK_MS).toISOString();
+  const cur=await _admWeekTouched(wk1,null);
+  if(cur.ingest==null||cur.touched==null)return null;
+  // 이전 주는 그 구간의 **시작점**이 기준선보다 뒤일 때만 의미가 있다
+  const wk2=new Date(now-2*_ADM_WEEK_MS).toISOString();
+  let prev=null;
+  if(wk2>_ADM_CREATED_BASELINE){
+    const p=await _admWeekTouched(wk2,wk1);
+    if(p.ingest!=null&&p.touched!=null&&p.ingest>0)prev=p;
+  }
+  return{...cur,prev};
+}
 async function _admLoadCards(){
   const wrap=document.getElementById('adm-cards');
   if(!wrap)return;
@@ -8307,6 +8350,7 @@ async function _admLoadCards(){
   const cFb=mk('새 피드백','마지막으로 본 뒤 들어온 것',()=>{_admHomeClose();document.getElementById('sp-fb-btn')?.click();});
   const cNew=mk('새로 들어온 영상','눌러서 새 영상 검토·편집',openVmTab('new'));
   const cTagq=mk('검수 대기','애매한 태깅 — 눌러서 목록',()=>{_admHomeClose();_openTagReviewQueue();}); // 검수 대기열(2026-08-30)
+  const cErr=mk('주간 손댄 비율','최근 7일 유입 중 사람이 고친 것',null); // 오류율 지표(2026-09-04)
   const set=(card,n,zeroSub)=>{
     const el=card.querySelector('.adm-card-num');
     const sub=card.querySelector('.adm-card-sub');
@@ -8320,7 +8364,7 @@ async function _admLoadCards(){
   // 잠깐 기다렸다 다시 보고, 그래도 없으면 이유를 카드에 적는다.
   for(let i=0;i<20&&!sb;i++)await new Promise(r=>setTimeout(r,250));
   if(!sb){
-    [cReview,cSs,cFb,cNew,cTagq].forEach(c=>{
+    [cReview,cSs,cFb,cNew,cTagq,cErr].forEach(c=>{
       c.querySelector('.adm-card-num').textContent='—';
       c.querySelector('.adm-card-sub').textContent='DB 연결 대기 중';
     });
@@ -8352,6 +8396,51 @@ async function _admLoadCards(){
   })().then(n=>set(cFb,n,'새 피드백 없음'));
   _admCount(sb.from(_YT_TABLE).select('id',_admHead()).gt('created_at',_ADM_CREATED_BASELINE))
     .then(n=>set(cNew,n,'아직 없음 (기준: 08/25 컬럼 추가 시점)'));
+  // 주간 손댄 비율 — 퍼센트라 위 set()(정수 전용)을 안 쓰고 직접 채운다
+  _admErrorRate().then(r=>{
+    const numEl=cErr.querySelector('.adm-card-num'),subEl=cErr.querySelector('.adm-card-sub');
+    if(!r||!r.ingest){numEl.textContent=r?'—':'?';numEl.className='adm-card-num adm-zero';
+      if(subEl)subEl.textContent=r?'이번 주 유입 없음':'조회 실패';return;}
+    const pct=r.touched/r.ingest*100;
+    numEl.textContent=(pct<0.1&&pct>0?'<0.1':pct.toFixed(1))+'%';
+    // 높을수록 자동 태깅이 많이 틀렸다는 뜻 → 경고색. 1%는 감각값이라 실사용 뒤 조정 대상.
+    numEl.className='adm-card-num'+(r.touched===0?' adm-zero':(pct>=1?' adm-warn':''));
+    let sub=`유입 ${r.ingest.toLocaleString()}건 중 ${r.touched}건 손댐`;
+    if(r.prev){
+      const p=r.prev.touched/r.prev.ingest*100, d=pct-p;
+      sub+=` · 지난주 ${p.toFixed(1)}% ${Math.abs(d)<0.05?'–':(d>0?'▲':'▼')}`;
+    }else sub+=' · 비교할 지난주 없음';
+    if(subEl)subEl.textContent=sub;
+  });
+}
+// 기준선 표본 채점 적재 (2026-09-04, Fable T1) — 위 "손댄 비율"은 **고친 것만** 세므로 아무도 검수를
+// 안 하면 0%가 된다. 진짜 오류율을 알려면 무작위 표본을 사람이 전수 채점해야 한다. 그 표본을 검수
+// 대기열에 reason='baseline_sample'로 넣어두고, 검수 화면에서 평소처럼 처리하면 그게 곧 채점이다.
+// ⚠️ 무작위성: PostgREST엔 랜덤 정렬이 없어서 최근 유입에서 넉넉히 받아 클라이언트에서 섞는다.
+//    "최근 7일"로 좁히는 이유는 지금 매처의 성능을 재려는 것이기 때문 — 옛날 행을 섞으면 옛 로직의
+//    오류까지 같이 재게 된다.
+async function _admSeedBaselineSample(){
+  if(!sb){_ytSetProg('Supabase 연결 없음');return;}
+  const N=300;
+  const since=new Date(Date.now()-_ADM_WEEK_MS).toISOString();
+  _ytSetProg('[기준선 표본] 최근 7일 유입 조회 중…');
+  const{data,error}=await sb.from(_YT_TABLE).select('id,title,group_ko')
+    .gt('created_at',since).eq('tags_manual',false).order('id').limit(3000);
+  if(error){_ytSetProg('조회 실패: '+error.message);return;}
+  if(!data||data.length<N){_ytSetProg(`표본이 부족해요 — 최근 7일 자동태깅 유입 ${data?data.length:0}건(${N}건 필요)`);return;}
+  const pool=data.slice();
+  for(let i=pool.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[pool[i],pool[j]]=[pool[j],pool[i]];}
+  const pick=pool.slice(0,N);
+  if(!await _sweepConfirmSimple('기준선 표본 채점','큐에 넣기',
+    `최근 7일 자동태깅 영상 ${data.length.toLocaleString()}건 중 무작위 ${N}건을 검수 대기열에 넣을까요?\n\n`+
+    `· 이건 데이터를 고치는 작업이 아니라 **재는** 작업이에요 — 큐에서 한 건씩 보고 맞는지 판정하면\n`+
+    `  그 결과가 곧 "지금 자동 태깅이 몇 %나 맞는가"의 답이 됩니다.\n`+
+    `· 홈의 "주간 손댄 비율"은 고친 것만 세므로 검수를 안 하면 0%로 보여요. 그 착시를 없애는 게 목적.\n`+
+    `· 이미 큐에 있는 건 중복으로 안 들어갑니다(video_id+reason 유니크).\n`+
+    `· 영상 데이터는 하나도 안 바꿔요.`))return;
+  await _tagReviewEnqueueBatch(pick.map(v=>({videoId:v.id,reason:'baseline_sample',source:'baseline',
+    detail:{group_ko:v.group_ko||null,sampled_at:new Date().toISOString().slice(0,10)}})));
+  _ytSetProg(`완료! 기준선 표본 ${N}건을 검수 대기열에 넣었어요 — 홈 "검수 대기" 카드에서 이어서 채점하세요.`);
 }
 function _admHomeClose(){document.getElementById('adm-home-overlay')?.classList.remove('open');}
 function _admHomeOpen(){
