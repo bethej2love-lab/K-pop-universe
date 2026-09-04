@@ -4281,6 +4281,7 @@ function _vmRenderVideoList(){
   const toolbarEl=document.getElementById('vm-toolbar');
   const tab=_vmTab;
   listEl.innerHTML='';
+  _vmFocusIdx=-1; // 목록이 새로 그려지면 키보드 포커스는 초기화(엉뚱한 행에 분류가 걸리는 걸 막는다)
   const rows=_vmSortForRender(_vmSearch2Rows()); // 👁 조회수순 토글은 여기 한 곳에서만 적용된다
   if(!_vmRows.length){
     const emptyMsg=tab==='all'?'검색 결과가 없어요':tab==='new'?'새로 들어온 영상이 없어요':tab==='nomem'?'무관 처리된 영상이 없어요':tab==='hold'?'보류된 영상이 없어요':tab==='review'?'검수 대기 중인 영상이 없어요':tab==='catlock'?'라이브 후보 중 수동 편집으로 막힌 영상이 없어요':'숨김 처리된 영상이 없어요';
@@ -5044,6 +5045,69 @@ async function _vmBulkSetFlag(newFlag,btnId){
   _vmUpdateCount();
 }
 _VM_FLAG_BTNS.forEach(([id,flag])=>document.getElementById(id)?.addEventListener('click',()=>_vmBulkSetFlag(flag,id)));
+
+// ── 키보드 검수 (2026-09-04, Fable 아카이브 운영 설계 8-1) ─────────────────────
+// 설계 기준이 "한 건 판단 5초, 한 세션 20분에 200건"인데, 지금은 한 건마다 마우스로 체크박스를 찍고
+// 툴바 버튼까지 내려가야 한다. 목록·플래그·일괄쓰기는 이미 다 있으므로 **입력 수단만** 얹는다.
+//
+// ⚠️ 새 패널을 만들지 않았다. 보고서는 흩어진 검수 입구를 모으려고 "큐 탭"을 제안했지만, 실측해보니
+//    tag_review_queue는 0행이고 실제 물량은 vm 탭 안에 있다(검수 276·strictSync 1,196·고아태그).
+//    빈 컨테이너를 새로 만드는 대신 **있는 목록을 빠르게** 만드는 쪽이 같은 목적을 더 싸게 이룬다.
+// ⚠️ 쓰기는 _vmBulkSetFlag를 그대로 탄다 — 스냅샷·편집로그(tag_edit_log)·캐시 갱신·탭별 목록 정리를
+//    전부 물려받는다. 키보드용 쓰기 경로를 따로 만들면 그 넷이 조용히 갈라진다.
+let _vmFocusIdx=-1;
+function _vmFocusEls(){return [...document.querySelectorAll('#vm-list .vm-item')];}
+function _vmFocusPaint(){
+  _vmFocusEls().forEach((el,i)=>el.classList.toggle('vm-kbd',i===_vmFocusIdx));
+  const el=_vmFocusEls()[_vmFocusIdx];
+  if(el)el.scrollIntoView({block:'nearest'});
+}
+function _vmFocusMove(delta){
+  const els=_vmFocusEls();
+  if(!els.length){_vmFocusIdx=-1;return;}
+  _vmFocusIdx=Math.max(0,Math.min(els.length-1,(_vmFocusIdx<0?0:_vmFocusIdx+delta)));
+  _vmFocusPaint();
+}
+// 포커스된 한 건에만 플래그를 건다. 기존 다중 선택은 건드리지 않고 되돌려 놓는다 —
+// 50개 골라둔 상태에서 방향키를 누르다 숫자를 눌렀다고 그 선택이 날아가면 안 된다.
+async function _vmKbdFlagFocused(flag){
+  const els=_vmFocusEls();
+  const el=els[_vmFocusIdx];
+  if(!el)return;
+  const cbOf=x=>x.querySelector('input[type=checkbox]');
+  if(!cbOf(el))return; // 체크박스가 없는 탭(고아태그 등)은 이 경로를 안 쓴다
+  const prev=els.filter(x=>cbOf(x)?.checked).map(x=>x.dataset.vidId);
+  els.forEach(x=>{const cb=cbOf(x);if(cb)cb.checked=(x===el);});
+  await _vmBulkSetFlag(flag,null);
+  const now=_vmFocusEls();
+  now.forEach(x=>{const cb=cbOf(x);if(cb)cb.checked=prev.includes(x.dataset.vidId);});
+  _vmUpdateCount();
+  // 행이 목록에서 빠졌으면 다음 행이 그 자리로 온다 — 인덱스를 그대로 두면 자연스럽게 "다음 건"이 된다
+  _vmFocusIdx=Math.min(_vmFocusIdx,Math.max(0,now.length-1));
+  _vmFocusPaint();
+}
+const _VM_KBD_FLAG={'1':null,'2':'무관','3':'보류','4':'hidden'};
+document.addEventListener('keydown',e=>{
+  const ov=document.getElementById('vm-overlay');
+  if(!ov||!ov.classList.contains('open'))return;
+  // 위에 편집 모달이 떠 있으면 그쪽이 주인이다(모달 안에서 숫자를 치면 그건 입력이지 분류가 아니다)
+  if(document.getElementById('vid-tag-overlay')?.classList.contains('open'))return;
+  const t=e.target;
+  if(t&&(t.tagName==='INPUT'||t.tagName==='TEXTAREA'||t.isContentEditable))return;
+  if(e.metaKey||e.ctrlKey||e.altKey)return;
+  const k=e.key;
+  if(k==='j'||k==='ArrowDown'){e.preventDefault();_vmFocusMove(_vmFocusIdx<0?0:1);return;}
+  if(k==='k'||k==='ArrowUp'){e.preventDefault();_vmFocusMove(-1);return;}
+  if(_vmFocusIdx<0)return; // 아직 아무것도 안 골랐으면 숫자/e는 무시(오조작 방지)
+  if(Object.prototype.hasOwnProperty.call(_VM_KBD_FLAG,k)){e.preventDefault();_vmKbdFlagFocused(_VM_KBD_FLAG[k]);return;}
+  if(k==='e'){
+    e.preventDefault();
+    const el=_vmFocusEls()[_vmFocusIdx];
+    const v=el&&_vmRows.find(r=>r.id===el.dataset.vidId);
+    if(v)_openVidTagModal({id:v.id,title:v.title},v.group_ko);
+    return;
+  }
+});
 // 탭과 무관하게 항상 '개별출연'으로 고정 — 각자 그룹/멤버 카드엔 그대로 노출되지만 "함께한 멤버"/연결
 // 카드 집계에서는 빠지는 플래그(진짜 콜라보가 아니라 같은 영상에 각자 따로 출연한 경우), 2026-08-04
 // 사용자 요청으로 무관 처리 버튼과 동일한 자리에 원클릭 버튼으로 추가.
