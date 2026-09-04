@@ -9291,7 +9291,15 @@ function showT(a,cx,cy,keepNavStack,urlMode,_unusedPushMobNav,noFly){
   // 폴백으로 얻는 게 애초에 없었다 — sb만 있으면 DB 경로로 보낸다(잃는 것 없음, 확인 후 변경).
   if(sb){
     if(_hasRealGroup)_ttChVidCtl.build(a.group.ko,a.name.ko);
-    else _ttChVidCtl.build(_ytGroupKoFor(a));
+    else{
+      // 솔로 분리 후속(2026-09-04, 실측 검증): group.ko='솔로'지만 groups[]에 실존 그룹 이력이 있으면
+      // (권은비→아이즈원, 선미→원더걸스) 영상이 그 그룹 group_ko 밑에 있다. 그 그룹으로 멤버카드 쿼리를 태우면
+      // 기존 로직(그룹영상+본인태깅+본인 solo group_ko=이름+탈퇴 컷오프)이 그대로 다 잡는다(선미: build('원더걸스','선미')=63건 실측).
+      // ⚠️ 그룹 카드에서의 솔로영상 제외는 별도 — group_ko를 본인이름으로 재귀속하는 ②-B 스윕(데이터)이 담당.
+      const _histGko=(_artistGroups(a)||[]).map(g=>g&&g.ko).find(k=>k&&k!=='솔로'&&GROUPS[k]);
+      if(_histGko)_ttChVidCtl.build(_histGko,a.name.ko);
+      else _ttChVidCtl.build(_ytGroupKoFor(a));
+    }
   }else{
     buildVideoSection(_memberAllSongs,tv,{groupKo:a.group.ko,memberKo:a.name.ko},_memberMainCandidates);
     _enrichMemberVideosFromApi(a,tv,_memberAllSongs,_memberPersonalSongs);
