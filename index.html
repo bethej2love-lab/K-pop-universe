@@ -56,7 +56,7 @@
      ⚠️ 손으로 올리던 시절 2026-08-24에 실제로 빠뜨려서 폰이 "새 마크업 + 옛 CSS"를 그리는 바람에
      화면이 통째로 깨졌음(Charts 카드가 158px→46px로 찌그러짐). 로컬 확인은
      `node tools/bump_cache_version.mjs --check`. -->
-<link rel="stylesheet" href="kpop_universe.css?v=20260904-45489bf2">
+<link rel="stylesheet" href="kpop_universe.css?v=20260904-258609d2">
 <!-- ⚠️ 2026-09-04에 "라이트박스 반응 피커를 없애니 이 CDN도 뺄 수 있다"고 판단해 지웠다가 되돌렸다 —
      최애(bias) 지정의 이모지 선택기(#pp-bias-emoji-picker)가 같은 컴포넌트를 쓴다. 반응 쪽만 보고
      지우면 프로필 패널이 조용히 깨진다(로드 실패해도 콘솔 에러 없이 그냥 안 뜬다). -->
@@ -20265,7 +20265,7 @@ function _updateAdminUI(){
 // 옛 버전을 계속 서빙해서 고친 코드가 반영 안 되는 것처럼 보이는 사고가 남(2026-08-18, HTML 엔티티 정리
 // 버튼 타임아웃 재수정 후에도 계속 재현된다는 제보로 발견). admin.js 내용을 바꿀 때마다 이 버전 문자열도
 // 같이 올릴 것(sw.js의 CACHE_VERSION과 같은 수동 관리 방식).
-const _ADMIN_JS_VER='20260904-ffe173fa';
+const _ADMIN_JS_VER='20260904-fc07235c';
 function _loadAdminScript(){
   if(!_isAdmin()||document.getElementById('admin-js-script'))return;
   const s=document.createElement('script');
