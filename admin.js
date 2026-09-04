@@ -80,6 +80,9 @@ function _ytClassify(title){
   // 이 함수와 무관한 별도 플래그(_ytIsShortTitle → is_short)라, MC 쇼츠도 여기선 그냥 other가 되고
   // 세로 표시/Shorts 탭 노출은 플래그가 따로 챙긴다.
   if(_ytIsMcHosting(title))return'other';
+  // 인터뷰 영상은 제목에 '라이브/직캠'이 섞여 있어도 라이브·무대 모음에서 뺀다(2026-09-04 사용자 요청).
+  // 인터뷰는 무대가 아니라 토크라 live로 잡히면 '각종 무대 TOP'·라이브 탭에 잘못 낀다 → other로 보내 전체 탭에만 남긴다.
+  if(/\bINTERVIEW\b|인터뷰/.test(t))return'other';
   const looksPrerecorded=_YT_PRERECORDED_RE.test(t);
   if((!looksPrerecorded||_YT_STRONG_LIVE_RE.test(t))&&/\bLIVE\b|\bCONCERT\b|\bPERFORMANCE\b|\bFANCAM\b|라이브|직캠|팬캠/.test(t))return'live';
   if(_YT_LIVE_SHOW_RE.test(t))return'live';
@@ -1278,6 +1281,10 @@ function _coverResolve(row,opts){
   const ranked=[...byOrigin.values()].sort((a,b)=>b.s-a.s);
   let origin=null,song=null,ambiguous=false,reason='';
   if(creditOrigin){origin=creditOrigin;const hit=ranked.find(x=>_coverOriginId(x.e.origin)===_coverOriginId(creditOrigin));song=hit?hit.e.title:(creditSong||null);reason='credit';}
+  // 명시된 원곡자가 유니버스 밖(예: "원곡: Tim-사랑합니다")이면, 제목의 곡명이 우연히 우리 아티스트의
+  // 곡과 겹쳐도 그쪽으로 붙이지 않는다 — 원곡은 명시된 그 외부 아티스트다(불명 처리). 곡명 역매칭 금지.
+  // (2026-09-04 제보: "원곡:Tim-사랑합니다"에 젝스키스/엔하이픈 성훈이 붙던 버그)
+  else if(creditExternal){origin=null;song=creditSong||null;reason='external';}
   else if(!ranked.some(x=>x.strength!=='bare')&&ctx.cover&&sideBoost.size===1){
     // 디스코에 없는 곡("BIGBANG '봄여름가을겨울' COVER")이라도 아티스트 표기가 시스템 안 원곡자 하나로 풀리면 그대로 인정
     const id=[...sideBoost.keys()][0];const pool=cands.filter(x=>x.artistText&&!_coverOriginFromText(x.text)&&_coverOriginFromText(x.artistText)&&_coverOriginId(_coverOriginFromText(x.artistText))===id);

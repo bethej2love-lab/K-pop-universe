@@ -11,6 +11,8 @@ const chart=[
   {group_ko:'방탄소년단',member_ko:null,song_title:'Dynamite',year:2020},
   {group_ko:'블랙핑크',member_ko:null,song_title:'뚜두뚜두 (DDU-DU DDU-DU)',year:2018},
   {group_ko:'솔로',member_ko:'아이유',song_title:'좋은 날',year:2010},
+  {group_ko:'솔로',member_ko:'성훈',song_title:'사랑합니다',year:2010}, // 외부크레딧 회귀용(Tim 케이스)
+  {group_ko:'빅뱅',member_ko:null,song_title:'LOVE SONG',year:2011},     // 부분일치 회귀용
 ];
 M._coverBuildIndex(chart);
 
@@ -28,6 +30,10 @@ t('크레딧 — 원어스 Now (Original by Fin.K.L)',R("[쇼챔직캠 4K] ONEUS
 t('크레딧 — 위클리 Tell Me (Original song by. Wonder Girls)',R("[릴레이댄스 어게인] 위클리(Weeekly) - Tell Me (Original song by. Wonder Girls) (4K)",'위클리'),r=>covG(r,'원더걸스'));
 t('크레딧 — 아이유 원곡은 cover_of_members "아이유(솔로)"',R("규민(GYUMIN) \"이름에게\" Cover (원곡 : IU)",'소디엑'),r=>covM(r,'아이유(솔로)'));
 t('크레딧 — 원곡이 시스템 밖(Mika Nakashima)이면 커버지만 cover_of 없음',R("[COVER] TIOT(티아이오티) 신예찬 - 雪の華 (눈의꽃)  (원곡 : Mika Nakashima )",'티아이오티'),r=>!!r&&r.isCover&&!r.origin);
+// 외부 원곡자 명시(Tim)인데 곡명 "사랑합니다"가 우리 아티스트(성훈) 곡과 겹쳐도 그쪽 붙이지 않음(2026-09-04 제보)
+t('크레딧 — 외부 원곡자(Tim) 명시 시 곡명 우연일치로 유니버스 멤버 안 붙임',R("🎤김재환&크래비티 민희 - 사랑합니다 (원곡 : Tim-사랑합니다)ㅣ딩고뮤직ㅣdingo Music",'크래비티',{members:['민희']}),r=>!!r&&r.isCover&&!r.origin);
+// 크레딧 없는 "La La La Love Song" Cover가 빅뱅 'LOVE SONG'에 부분일치로 안 붙음
+t('부분일치 방지 — La La La Love Song Cover는 빅뱅 LOVE SONG 아님',R("SEONGMIN 성민 'La La La Love Song' Cover",'크래비티',{members:['성민']}),r=>!r||!r.origin||r.origin.gko!=='빅뱅');
 t('크레딧 — 자기 곡(원곡: 코르티스)은 커버 아님',R("[LIVE] CORTIS 성현&건호 - JoyRide (원곡: 코르티스) | 우쥬레코드 코르티스 편",'코르티스',{members:['성현','건호']}),r=>!r||!r.origin);
 t('크레딧 — 자기 곡(ZEROBASEONE 원곡) 커버 아님',R("[LIVE] ZEROBASEONE 장하오&김태래 - SLAM DUNK (원곡: ZEROBASEONE) | 우쥬레코드 제로베이스원 편",'제로베이스원'),r=>!r||!r.origin);
 t('크레딧 — 멤버 솔로곡 원곡(태민)은 "태민(샤이니)"',R("[#퀸덤퍼즐/Full CAM] ♬ Advice - 수윤 (SU YUN) (원곡 : 태민 (TAEMIN)) @업다운배틀 #QUEENDOMPUZZLE",'로켓펀치'),r=>covM(r,'태민(샤이니)'));
