@@ -1708,6 +1708,31 @@ const _SOLO_GROUP={ko:'솔로',en:'Solo'};
 // 한쪽 언어만 채워도 오버라이드가 항상 이긴다 — dispKo만 있는데 영문에서 g.en('Highlight')으로 새면
 // "이 멤버는 개명 후 그룹과 무관"이라는 이 필드의 존재 이유가 그 화면에서만 조용히 무너진다.
 function _gLabel(g){return g?(currentLang==='ko'?(g.dispKo||g.dispEn||g.ko):(g.dispEn||g.dispKo||g.en||g.ko)):'';}
+// 그룹 **키 문자열**(DB의 group_ko, groups.json의 키)을 화면 표기로. _gLabel은 group '객체'를 받는데
+// 화면 상당수는 키 문자열만 들고 있어서(피드 카드 서브·발견 홉·조합 제안) 지금까지 그냥 한글을 박았고,
+// 그래서 영어 모드에서 거기만 "투모로우바이투게더 · yesterday"처럼 튀었다(2026-09-04 전수 스캔).
+// ⚠️ group_ko는 솔로 규약상 **사람 이름**일 수도 있다(아이유·승한·이영지) — GROUPS에 없으면 그 사람의
+//    표시명(_dispName)을 쓴다. 둘 다 아니면(미등록) 원문 그대로 — 없는 걸 지어내지 않는다.
+// 영어 서수 접미사 — 그냥 'th'를 붙이면 1th·2th·3th·21th가 된다(2026-09-04, 영어 모드 실측에서
+// "3th debut anniversary"로 발견). 11~13은 예외라 십의 자리를 먼저 걸러야 한다.
+function _ordEn(n){
+  const v=Math.abs(Math.trunc(Number(n)||0));
+  if(v%100>=11&&v%100<=13)return v+'th';
+  return v+({1:'st',2:'nd',3:'rd'}[v%10]||'th');
+}
+let _gLabelSoloIdx=null;
+function _gLabelKo(ko){
+  if(!ko)return '';
+  const g=GROUPS[ko];
+  if(g)return _gLabel(Object.assign({},g,{ko}));
+  // ARTISTS 선형 탐색이 카드마다 돌면 200장 그릴 때 느려져서 이름→아티스트 인덱스를 한 번만 만든다.
+  if(!_gLabelSoloIdx){
+    _gLabelSoloIdx=new Map();
+    (typeof ARTISTS!=='undefined'?ARTISTS:[]).forEach(a=>{const n=a&&a.name&&a.name.ko;if(n&&!_gLabelSoloIdx.has(n))_gLabelSoloIdx.set(n,a);});
+  }
+  const a=_gLabelSoloIdx.get(ko);
+  return a?_dispName(a):ko;
+}
 // 멤버 옆에 붙일 그룹 표기용 group 객체 — 솔로 취급이면 실제 소속 대신 "솔로".
 function _dispGroup(a){return a?(_isSoloDisp(a)?_SOLO_GROUP:a.group):null;}
 function _dispGroupName(a){return _gLabel(_dispGroup(a));}
@@ -4065,7 +4090,9 @@ function _searchRemote(q,res,mobSearch,obSearch,hint){
           pos:owner?bubbleMeshes.find(b=>b.ko===owner)?.mesh.position.clone():null});
       });
       (vidR.data||[]).forEach(v=>{
-        out.video.push({type:'video',name:_cleanTitle(v.title),sub:v.group_ko||'',
+        // sub은 화면에 그대로 찍히는 값이라 DB 원본(group_ko)이 아니라 표기명을 넣는다 — 예전엔 원본이라
+        // 영어 모드 검색 결과의 영상 메타만 "에스파 · 2025.06.27 · 167M+"처럼 한글로 튀었다(2026-09-04).
+        out.video.push({type:'video',name:_cleanTitle(v.title),sub:_gLabelKo(v.group_ko||''),
           thumb:v.thumb||'',meta:_fmtVidMeta(v.published_at,v.view_count),
           url:_isShortV(v)?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`,
           isShort:_isShortV(v)});
@@ -7751,13 +7778,16 @@ function _buildConnContent(container){
   // 장현승 하나만 들어있는 '하이라이트' 버킷은 "비스트"로 뜨고, 장현승+양요섭처럼 섞여 있으면 어느 쪽으로
   // 써도 반쪽은 틀리므로 실제 그룹명을 그대로 쓴다. 버킷 키(gko)는 showGC·_groupsCoAppear가 쓰는
   // 실제 그룹명이라 절대 안 바꾼다 — 라벨만 갈아끼운다(2026-08-27).
+  // ⚠️ 오버라이드가 없을 때 예전엔 `_gLabel({ko:gko})`로 떨어졌는데, 그 객체엔 en이 없어서 영어 모드에서도
+  //    한글 그룹명이 그대로 나왔다(2026-09-04 전수 스캔 — 소녀시대·하이라이트·레드벨벳). 옛 그룹명
+  //    오버라이드가 있을 때만 _gLabel을 쓰고, 나머지는 groups.json 정식 표기(_gLabelKo)로 보낸다.
   const _connGroupChipLabel=gko=>{
     const labels=new Set((otherByGroup.get(gko)||[]).map(n=>{
       const a=_findArtistByConnName(n,_connAnchor.group.ko);
       const g=a&&_artistGroups(a).find(x=>x.ko===gko);
-      return _gLabel(g||{ko:gko});
+      return (g&&(g.dispKo||g.dispEn))?_gLabel(g):_gLabelKo(gko);
     }));
-    return labels.size===1?[...labels][0]:gko;
+    return labels.size===1?[...labels][0]:_gLabelKo(gko);
   };
   otherGroupsSorted.forEach(gko=>{
     const members=otherByGroup.get(gko);
@@ -10237,7 +10267,7 @@ function _comboRenderSuggest(q){
     if(chosen.has(ko+'|'+a.group.ko))continue;
     const row=document.createElement('button');row.type='button';row.className='combo-sug';
     const nm=document.createElement('span');nm.textContent=a.name.ko;
-    const gp=document.createElement('span');gp.className='combo-sug-g';gp.textContent=a.group.ko;
+    const gp=document.createElement('span');gp.className='combo-sug-g';gp.textContent=_gLabelKo(a.group.ko);
     row.appendChild(nm);row.appendChild(gp);
     row.addEventListener('click',()=>_comboAdd(a.name.ko,a.group.ko));
     el.appendChild(row);
@@ -10490,19 +10520,19 @@ function _discoverHops(a){
     for(const c of conns){
       const other=c.a===nm?c.b:c.a;
       const oa=ARTISTS.find(x=>x.name&&x.group&&x.name.ko===other&&(!c.group||x.group.ko===c.group));
-      if(oa&&oa.group.ko!==gko&&bubbleMeshes.some(b=>b.ko===oa.group.ko)){out.push({type:'tt',artist:oa,label:oa.name.ko,sub:oa.group.ko,note:currentLang==='ko'?'자주 엮여요':'Often together'});used.add(oa.group.ko);break;}
+      if(oa&&oa.group.ko!==gko&&bubbleMeshes.some(b=>b.ko===oa.group.ko)){out.push({type:'tt',artist:oa,label:_dispName(oa),sub:_gLabelKo(oa.group.ko),note:currentLang==='ko'?'자주 엮여요':'Often together'});used.add(oa.group.ko);break;}
     }
   }
   // 2) 같은 소속사 다른 그룹
   if(g.co){
     const same=Object.keys(GROUPS).filter(k=>!used.has(k)&&GROUPS[k].co===g.co&&bubbleMeshes.some(b=>b.ko===k));
-    if(same.length){const p=same[Math.floor(Math.random()*same.length)];used.add(p);out.push({type:'gc',gko:p,label:p,note:currentLang==='ko'?'같은 소속사':'Same label'});}
+    if(same.length){const p=same[Math.floor(Math.random()*same.length)];used.add(p);out.push({type:'gc',gko:p,label:_gLabelKo(p),note:currentLang==='ko'?'같은 소속사':'Same label'});}
   }
   // 3) 같은 해(±1) 데뷔 그룹
   const yr=parseInt(g.debut)||0;
   if(yr){
     const era=Object.keys(GROUPS).filter(k=>!used.has(k)&&Math.abs((parseInt(GROUPS[k].debut)||0)-yr)<=1&&bubbleMeshes.some(b=>b.ko===k));
-    if(era.length){const p=era[Math.floor(Math.random()*era.length)];used.add(p);out.push({type:'gc',gko:p,label:p,note:currentLang==='ko'?('같은 해 데뷔 · '+yr):('Debuted '+yr)});}
+    if(era.length){const p=era[Math.floor(Math.random()*era.length)];used.add(p);out.push({type:'gc',gko:p,label:_gLabelKo(p),note:currentLang==='ko'?('같은 해 데뷔 · '+yr):('Debuted '+yr)});}
   }
   return out.slice(0,3);
 }
@@ -10645,7 +10675,7 @@ function showGC(ko,cx,cy,keepMemberPanel,skipRipple,urlMode,_unusedPushMobNav){
     if(annivBanner){
       if(_isDebutAnniversaryToday(info)){
         const n=new Date().getFullYear()-parseInt(String(info.debut).split('.')[0],10);
-        annivBanner.textContent=currentLang==='ko'?`🎉 오늘 데뷔 ${n}주년! 카드 공유하기`:`🎉 ${n}th Debut Anniversary Today! Share Card`;
+        annivBanner.textContent=currentLang==='ko'?`🎉 오늘 데뷔 ${n}주년! 카드 공유하기`:`🎉 ${_ordEn(n)} Debut Anniversary Today! Share Card`;
         annivBanner.style.display='';
         annivBanner.onclick=()=>_openDebutCardPreview(ko);
       }else{
@@ -14674,7 +14704,10 @@ function updateMyPage(){
     nickEl.onclick=e=>{e.stopPropagation();_toggleMyStarFocus();};
   }
   const editBtn=document.getElementById('my-page-edit');
-  if(editBtn)editBtn.textContent=nick?'편집':'만들기'; // 별을 아직 안 만든 유저에겐 "편집" 대신 "만들기"로 맥락에 맞게 표시
+  // 별을 아직 안 만든 유저에겐 "편집" 대신 "만들기"로 맥락에 맞게. ⚠️ 여기서 textContent를 덮어쓰므로
+  // 마크업의 data-i18n이 무력화된다 — 언어 분기를 여기에도 둬야 한다(2026-09-04, 영어 모드 전수 스캔에서
+  // 홈 화면에 딱 하나 남은 한글이 이 버튼이었다).
+  if(editBtn)editBtn.textContent=currentLang==='ko'?(nick?'편집':'만들기'):(nick?'Edit':'Create');
   if(bioEl)bioEl.textContent=myProfile?.bio||'';
   _myStarSelected=false;
   _renderBiasChips();
@@ -16393,7 +16426,7 @@ function _buildFeedAnniversaries(){
   debutHits.forEach(([ko,info])=>{
     const name=isKo?ko:(info.en||ko);
     const n=now.getFullYear()-parseInt(String(info.debut).split('.')[0]);
-    const sub=isKo?`데뷔 ${n}주년`:`${n}th debut anniversary`;
+    const sub=isKo?`데뷔 ${n}주년`:`${_ordEn(n)} debut anniversary`;
     const item=_appendAnnivStripItem(list,'🎉',name,sub,()=>_feedNav(()=>{
       const bm=bubbleMeshes.find(b=>b.ko===ko);if(bm)flyToBubble(bm.mesh.position,bm.radius);
       if(isMob()){showGC(ko,window.innerWidth/2,window.innerHeight*0.4,false,false,null,false);}
@@ -17809,7 +17842,7 @@ async function _buildFeedTrend(){
     rows.forEach(row=>row.items.forEach(song=>{
       const isShort=_songIsShort(song);
       // 서브는 "그룹 · N일 전" — 조회수를 안 쓰는 이유는 위 주석(순위표처럼 보이지 않게)과 같다.
-      const sub=[song.groupKo,song.paFull?_fmtVidAgo(song.paFull):(song.pa?_fmtVidAgo(song.pa):null)].filter(Boolean).join(' · ');
+      const sub=[_gLabelKo(song.groupKo),song.paFull?_fmtVidAgo(song.paFull):(song.pa?_fmtVidAgo(song.pa):null)].filter(Boolean).join(' · ');
       _appendFeedCard(strip,'📈',song.t,sub,
         // 누르면 이 선반 전체가 재생목록이 돼서 그대로 다음 영상으로 넘어갈 수 있다(훑어보기 목적)
         ()=>openLightbox(song.u,isShort,flat,flat.indexOf(song),{groupKo:song.groupKo,memberKo:(song.memberKos||[])[0]},false,true),
@@ -17912,7 +17945,7 @@ async function _buildFeedFavNew(){
     const flat=rows.flatMap(r=>r.items); // 라이트박스 재생목록 순서를 화면 순서와 일치
     rows.forEach(row=>row.items.forEach(song=>{
       const isShort=_songIsShort(song);
-      const sub=[song.groupKo,song.paFull?_fmtVidAgo(song.paFull):(song.pa?_fmtVidAgo(song.pa):null)].filter(Boolean).join(' · ');
+      const sub=[_gLabelKo(song.groupKo),song.paFull?_fmtVidAgo(song.paFull):(song.pa?_fmtVidAgo(song.pa):null)].filter(Boolean).join(' · ');
       _appendFeedCard(strip,'💖',song.t,sub,
         ()=>openLightbox(song.u,isShort,flat,flat.indexOf(song),{groupKo:song.groupKo,memberKo:(song.memberKos||[])[0]},false,true),
         song.thumb,null, row.wide?{wide:true,short:!!row.short}:(isShort?{short:true}:{}));
