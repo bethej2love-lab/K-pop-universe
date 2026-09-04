@@ -56,7 +56,7 @@
      ⚠️ 손으로 올리던 시절 2026-08-24에 실제로 빠뜨려서 폰이 "새 마크업 + 옛 CSS"를 그리는 바람에
      화면이 통째로 깨졌음(Charts 카드가 158px→46px로 찌그러짐). 로컬 확인은
      `node tools/bump_cache_version.mjs --check`. -->
-<link rel="stylesheet" href="kpop_universe.css?v=20260904-dfbe2356">
+<link rel="stylesheet" href="kpop_universe.css?v=20260904-a7645190">
 <!-- ⚠️ 2026-09-04에 "라이트박스 반응 피커를 없애니 이 CDN도 뺄 수 있다"고 판단해 지웠다가 되돌렸다 —
      최애(bias) 지정의 이모지 선택기(#pp-bias-emoji-picker)가 같은 컴포넌트를 쓴다. 반응 쪽만 보고
      지우면 프로필 패널이 조용히 깨진다(로드 실패해도 콘솔 에러 없이 그냥 안 뜬다). -->
@@ -16449,7 +16449,7 @@ async function _pickFeaturedVidFromDB(ko,memberKo,onlyMe,filter,viewMode,formatF
     }else if(filter==='short'){
       q=q.eq('is_short',true); // short는 장르가 아니라 형식 플래그(is_short_migration.sql) — category와 직교
     }else if(filter==='jacon'){
-      q=q.in('source_tier',['official','idol']); // 자컨 — 자체 채널 업로드
+      q=q.eq('source_tier','idol'); // 자컨 — 자체 채널 업로드
     }else if(filter&&filter!=='all'){
       q=q.eq('category',filter);
     }
@@ -16591,6 +16591,52 @@ function _buildFeedRecentlyViewed(){
   });
 }
 
+// 오리지널 콘텐츠 선반(2026-09-04) — 여러 아이돌의 **개인 채널**(source_tier='idol', 예: 가을의 온도·따라해볼레이)
+// 최근 업로드를 한 가로 선반에 섞어 노출. 공식 그룹 채널(official)은 양이 너무 많아 제외. 그룹당 2개까지 캡해
+// 특정 채널이 독식하지 않고 여러 아이돌이 고루 보이게 한다(Discover 전용, 개인화 아님).
+async function _buildFeedJacon(){
+  const section=document.getElementById('feed-jacon-section');
+  const list=document.getElementById('feed-jacon');
+  if(!section||!list||!sb)return;
+  list.innerHTML='';section.style.display='none';
+  _enableDragScroll(list);
+  try{
+    const _q=()=>sb.from(_YT_TABLE).select(_FEED_COLS())
+      .eq('source_tier','idol')
+      .or('content_flag.is.null,content_flag.neq.기타')
+      .or('content_flag.is.null,content_flag.neq.무관').or('content_flag.is.null,content_flag.neq.보류')
+      .or('content_flag.is.null,content_flag.neq.hidden')
+      .order('published_at',{ascending:false})
+      .limit(200);
+    let{data,error}=await _q();
+    if(_isPubTsMissing(error)){_hasPubTs=false;({data,error}=await _q());}
+    if(error||!data?.length)return;
+    // 그룹당 2개까지(다양성) — 여러 아이돌 개인 채널이 고루 보이게
+    const seen={},picked=[];
+    for(const v of _filterBannedVideos(data)){
+      const g=v.group_ko||'?';
+      seen[g]=(seen[g]||0)+1;
+      if(seen[g]<=2)picked.push(v);
+      if(picked.length>=30)break;
+    }
+    if(!picked.length)return;
+    const vidUrl=v=>_isShortV(v)?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;
+    const pl=picked.map(v=>({t:v.title,u:vidUrl(v),thumb:v.thumb||`https://img.youtube.com/vi/${v.id}/mqdefault.jpg`,pa:v.published_at?.slice(0,10),paFull:v.published_ts||v.published_at,vc:v.view_count,groupKo:v.group_ko,memberKos:v.members||[],_apiId:v.id,_apiGroupKo:v.group_ko}));
+    pl.forEach((song,i)=>{
+      const item=document.createElement('div');
+      item.className='feed-recent-item';
+      const sub=[_gLabelKo(song.groupKo),song.paFull?_fmtVidAgo(song.paFull):(song.pa?_fmtVidAgo(song.pa):null)].filter(Boolean).join(' · ');
+      item.innerHTML='<div class="feed-recent-thumb-wrap"><img class="feed-recent-thumb" loading="lazy" decoding="async" src="'+song.thumb+'" alt=""></div>'
+        +'<div class="feed-recent-title">'+_cleanTitle(song.t)+'</div>'
+        +(sub?'<div class="feed-recent-sub">'+sub+'</div>':'');
+      item.addEventListener('click',()=>_feedNav(()=>openLightbox(song.u,_songIsShort(song),pl,i,{groupKo:song.groupKo,memberKo:(song.memberKos||[])[0]},false,true)));
+      item.addEventListener('touchstart',e=>_lbRipple(item,e),{passive:true});
+      item.addEventListener('mousedown',e=>_lbRipple(item,e));
+      list.appendChild(item);
+    });
+    section.style.display='';
+  }catch(e){console.warn('[feed] 오리지널 콘텐츠 선반 실패 — 이 선반만 빠집니다',e);}
+}
 // Charts 섹션은 세로 그리드+더보기 토글에서 가로 선반(feed-strip)으로 전환(2026-08-24, 사용자 요청 —
 // 기념일·최근본 스트립과 일관되게 가로로. 더보기 토글은 "차트 카드가 Discovery를 아래로 밀어냄"을
 // 막던 땜빵이었는데, 가로 선반이 한 줄 높이만 차지해 근본 원인이 사라져 토글째 제거). 가로 스크롤은
@@ -18079,6 +18125,7 @@ function _buildFeedDisc(){
   // 시작은 t=0로 같지만, Trend 쿼리(800건+셔플)가 앞 두 선반보다 무거워 렌더가 뒤로 밀렸음 — 첫 슬롯을 줘서
   // 제일 먼저 시작·렌더되게 한다. DOM 컨테이너(#feed-trend)는 고정이라 표시 위치는 그대로.
   _feedEnqueue(()=>_buildFeedTrend());
+  _feedEnqueue(()=>_buildFeedJacon()); // 오리지널 콘텐츠(아이돌 개인 채널) 선반 — Trend 바로 뒤
   _feedEnqueue(()=>_buildFeedWeeklyTopCams(chart,list));
   _feedEnqueue(()=>_buildFeedThisYearPicks(chart)); // 올해 한정 모음 2개(랜덤) — 주간/월간 바로 뒤 앞자리
   _feedEnqueue(()=>_buildFeedYearlyTop(chart));
@@ -18930,7 +18977,7 @@ function _makeChVidController(contId){
         // 커버하므로 조건을 바꾸면 SQL 쪽 predicate도 같이 고칠 것.
         q=q.eq('is_short',true);
       }else if(filter==='jacon'){
-        q=q.in('source_tier',['official','idol']); // 자컨 — 그룹/멤버 자체(공식·개인) 채널 업로드(2026-09-04)
+        q=q.eq('source_tier','idol'); // 자컨 — 그룹/멤버 자체(공식·개인) 채널 업로드(2026-09-04)
       }else if(filter!=='all'){
         q=q.eq('category',filter);
       }
@@ -19259,9 +19306,10 @@ function _makeChVidController(contId){
     // 방식(채널 화이트리스트 기반)으로 채워질 예정. 아직 채널 화이트리스트가 비어있어 실제 영상은
     // 없을 수 있지만, 'variety'처럼 그룹/멤버 카드에 항상 노출되는 고정 탭으로 둠(팬영상 탭과 다르게
     // "있을 때만" 동적으로 끼워 넣지 않음).
-    // 자컨(자체 콘텐츠) 탭 — 그룹/멤버 자체 채널(공식·개인) 업로드. 존재 확인(아래 generic 체크)에서 자체 채널
-    // 영상이 없으면 자동 숨김. source_tier는 2026-08-26 이후 컬럼이라 옛 영상은 비어 있어 재동기화 전엔 일부만 잡힘.
-    const _jaconTab=['jacon',currentLang==='ko'?'자컨':'Self'];
+    // 자컨(오리지널 콘텐츠) 탭 — 멤버 **개인 채널**(source_tier='idol', 예: 가을의 온도·따라해볼레이) 업로드만.
+    // 공식 그룹 채널(official)은 양이 너무 많아 제외(2026-09-04 사용자). 존재 확인(아래 generic 체크)에서 개인 채널
+    // 영상이 없으면 탭 자동 숨김. source_tier는 2026-08-26 이후 컬럼이라 옛 영상은 비어 있어 재동기화 전엔 일부만.
+    const _jaconTab=['jacon',currentLang==='ko'?'자컨':'Original'];
     let catTabs=memberKo?[['all','All'],_jaconTab,['live','Live'],['cover','Cover'],['short','Shorts'],['variety','Variety'],['show','Show']]:[['all','All'],_jaconTab,['mv','MV'],['live','Live'],['cover','Cover'],['short','Shorts'],['variety','Variety'],['show','Show']];
     // "by Fan" 탭(2026-08-10, 사용자 요청) — 팬이 직접 찍거나 만든 영상 전용. 아직은 어떤 그룹도 팬채널을
     // 등록 안 해서 category='fan'인 행이 하나도 없지만(추후 사용자가 그룹별로 팬채널 링크를 주면 그
@@ -19333,7 +19381,7 @@ function _makeChVidController(contId){
         else if(v==='live')q=_applyLiveTabQuery(q); // 목록 쿼리와 같은 조건 — 예전엔 여기만 제외 조건이 빠져 있었다
         else if(v==='show')q=_applyGenreTabQuery(q,'show');
         else if(v==='short')q=q.eq('is_short',true); // 형식 플래그(위 buildBaseQuery와 같은 기준)
-        else if(v==='jacon')q=q.in('source_tier',['official','idol']); // 자컨 — 자체 채널(존재하면 탭 유지)
+        else if(v==='jacon')q=q.eq('source_tier','idol'); // 자컨 — 자체 채널(존재하면 탭 유지)
         else q=q.eq('category',v);
         const{data}=await q;
         return{v,ok:!!(data?.length)};
@@ -20482,6 +20530,11 @@ _totopBtn.addEventListener('click',e=>{
       <div class="feed-section" id="feed-trend-section" style="display:none">
         <div class="feed-section-ttl">📈 Trend</div>
         <div id="feed-trend" class="feed-grid"></div>
+      </div>
+      <!-- Original Contents: 여러 아이돌 개인 채널(source_tier='idol', 가을의 온도·따라해볼레이 등) 최근 업로드를 한 가로 선반에(2026-09-04). -->
+      <div class="feed-section" id="feed-jacon-section" style="display:none">
+        <div class="feed-section-ttl">🎥 Original Contents</div>
+        <div id="feed-jacon" class="feed-strip hscroll-drag"></div>
       </div>
       <div class="feed-section">
         <div class="feed-section-ttl">✨ Discovery</div>
