@@ -38,7 +38,7 @@
                 conn-lines.test.js|coverof.test.js|feed-trend.test.js|interaction.test.js|\
                 lb-swipe-ownership.test.js|lb-topbar.test.js|msheet.test.js|pwa-safearea.test.js|\
                 reveal.test.js|smoke.test.js|sort-popular.test.js|tabbar-open.test.js|\
-                desktop-search-front.test.js)|unavailable-detect.test.js
+                desktop-search-front.test.js|unavailable-detect.test.js|vm-kbd-review.test.js)
                   echo "skip(browser)  $b"; continue;;
                 # ── 네트워크(Supabase)가 필요한 것 ──
                 # rls.test.js: 실제 DB 정책을 조회한다. 게다가 지금은 새 테이블 4개
