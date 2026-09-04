@@ -9768,21 +9768,25 @@ function _renderGcMemberList(ko,cx,cy){
   const labelEl=document.getElementById('gc-mem-label');
   memListEl.innerHTML='';
   const allMembers=ARTISTS.filter(a=>_artistGroups(a).some(g=>g.ko===ko));
-  const hasInactive=allMembers.some(a=>!_activeInGroup(a,ko));
+  // 해체 그룹이면 멤버 전원 흐리게(SOLO_VIDEO_FIX.md ③, 2026-09-04) — per-member active만 보면 아이즈원
+  // 멤버가 새 그룹/솔로로 현역이라 안 흐려졌음. "이 그룹에서 현역"=그룹활동 active + 그룹 미해체. _over는 렌더당 1회.
+  const _over=_groupIsOver(ko);
+  const _eff=a=>_activeInGroup(a,ko)&&!_over;
+  const hasInactive=allMembers.some(a=>!_eff(a));
   // 해체 등으로 전원이 비활동 상태인 그룹은 "활동 멤버만" 필터링하면 아무도 안 남아 카드가 텅 비어
   // 보이므로, 이 경우엔 토글 없이 기본값으로 전원 노출(글자색은 기존 비활동 스타일 그대로 어둡게 유지).
-  const noActiveMembers=allMembers.length>0&&!allMembers.some(a=>_activeInGroup(a,ko));
+  const noActiveMembers=allMembers.length>0&&!allMembers.some(a=>_eff(a));
   labelEl.classList.toggle('toggleable',hasInactive&&!noActiveMembers);
   labelEl.classList.toggle('on',hasInactive&&!noActiveMembers&&_gcShowInactive);
   labelEl.title=(hasInactive&&!noActiveMembers)?(currentLang==='ko'?'눌러서 비활동/탈퇴 멤버 보기':'Click to show inactive members'):'';
-  (noActiveMembers||(hasInactive&&_gcShowInactive)?allMembers:allMembers.filter(a=>_activeInGroup(a,ko)))
+  (noActiveMembers||(hasInactive&&_gcShowInactive)?allMembers:allMembers.filter(a=>_eff(a)))
     .sort((a,b)=>{
-      const aAct=_activeInGroup(a,ko),bAct=_activeInGroup(b,ko);
+      const aAct=_eff(a),bAct=_eff(b);
       if(aAct!==bAct)return aAct?-1:1; // 활동 멤버 먼저, 비활동/탈퇴 멤버는 맨 뒤로
       return (a.bday||'9999-99-99')<(b.bday||'9999-99-99')?-1:1;
     })
     .forEach(m=>{
-      const sp=document.createElement('span');sp.className='gc-mem-name'+(_activeInGroup(m,ko)?'':' gc-mem-inactive');
+      const sp=document.createElement('span');sp.className='gc-mem-name'+(_eff(m)?'':' gc-mem-inactive');
       sp.textContent=_dispName(m);
       _appendDeceasedStar(sp,m);
       if(_artistGroups(m).length>1)sp.title=_artistGroups(m).map(g=>g.ko).join(' · ');
@@ -20430,7 +20434,7 @@ function _updateAdminUI(){
 // 옛 버전을 계속 서빙해서 고친 코드가 반영 안 되는 것처럼 보이는 사고가 남(2026-08-18, HTML 엔티티 정리
 // 버튼 타임아웃 재수정 후에도 계속 재현된다는 제보로 발견). admin.js 내용을 바꿀 때마다 이 버전 문자열도
 // 같이 올릴 것(sw.js의 CACHE_VERSION과 같은 수동 관리 방식).
-const _ADMIN_JS_VER='20260904-f2ae8fec';
+const _ADMIN_JS_VER='20260904-ec0da888';
 function _loadAdminScript(){
   if(!_isAdmin()||document.getElementById('admin-js-script'))return;
   const s=document.createElement('script');

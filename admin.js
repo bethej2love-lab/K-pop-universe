@@ -8022,12 +8022,23 @@ document.getElementById('vid-tag-save').addEventListener('click',async e=>{
       _savedN=(data||[]).length;
     }
     if(_savedN<ids.length){
-      // 에러는 없는데 반영 건수가 모자람 = RLS(권한)/매칭 문제. 조용히 "저장됨"으로 넘어가지 않게 경고.
-      console.warn('[일괄편집] 반영 부족',{요청:ids.length,반영:_savedN,payload:updatePayload});
-      statusEl.textContent=_savedN===0
-        ? `⚠️ 0개 반영됨 — 저장이 안 됐어요(관리자 권한/로그인 만료 가능). 콘솔(F12) 확인`
-        : `⚠️ ${_savedN}/${ids.length}개만 반영됨 — 나머지는 권한/보호(수동편집) 때문일 수 있어요`;
-      if(_savedN===0)return; // 하나도 안 됐으면 "저장됨" 흐름으로 안 넘어감
+      // 에러는 없는데 반영 건수가 모자람 = RLS(관리자 쓰기 권한)/세션 문제. 조용히 "저장됨"으로 안 넘어감.
+      const _admin=(typeof _isAdmin==='function')?_isAdmin():'?';
+      const _sess=!!(window._sbSession);
+      console.warn('[일괄편집] 반영 부족',{요청:ids.length,반영:_savedN,payload:updatePayload,세션:_sess,관리자인식:_admin});
+      if(_savedN===0){
+        statusEl.textContent='⚠️ 0개 반영됨 — 권한/세션 문제(재로그인 필요)';
+        // 모달이 곧 닫혀 statusEl은 놓치기 쉬우니 alert로 확실히 — 원인 진단까지 같이 보여준다.
+        alert('저장이 DB에 0개 반영됐어요 (에러 없이 막힘).\n\n'
+          +'원인: yt_channel_videos 쓰기 권한(RLS)이 이 세션을 막고 있어요.\n'
+          +'· 로그인 세션: '+(_sess?'있음':'없음')+'\n'
+          +'· 앱의 관리자 인식: '+(_admin===true?'예':_admin===false?'아니오':'?')+'\n\n'
+          +'조치: ① 로그아웃 후 다시 로그인(세션/역할 갱신)\n'
+          +'      ② 그래도 안 되면 DB RLS 정책 문제 — 데이터 세션에서\n'
+          +'         yt_channel_videos의 UPDATE 정책을 확인해야 해요.');
+        return;
+      }
+      statusEl.textContent=`⚠️ ${_savedN}/${ids.length}개만 반영됨 — 나머지는 권한/보호(수동편집) 때문일 수 있어요`;
     }
     // 일괄 편집 이력 — after는 updatePayload로 실제 바꾼 필드만 넘긴다(안 건드린 필드는 diff 대상이 아님).
     _tagEditLog(_bulkBefore.map(r=>{
