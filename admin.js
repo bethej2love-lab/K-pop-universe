@@ -2151,7 +2151,7 @@ async function _ytSweepSoloReleases(){
     if(_expected&&rows.length<_expected*0.95){_ytSetProg(`조회가 끊김 — ${rows.length}/${_expected}만 받음. 중단.`);return;}
     const EXCLUDE_FLAG=new Set(['무관','외부인']);
     let manualSkipped=0,bannedSkipped=0,notSolo=0,collabSkipped=0,groupInTitle=0,weak=0;
-    const updates=[],sample=[],byPerson={},bySignal={disco:0,fancam:0,format:0,hash:0};
+    const updates=[],sample=[],byPerson={},bySignal={disco:0,fancam:0,format:0,hash:0,show:0};
     for(let i=0;i<rows.length;i++){
       if(i%3000===0){_ytSetProg(`[솔로 릴리스 귀속] 분석 중… ${i}/${rows.length} (후보 ${updates.length})`);await new Promise(r=>setTimeout(r));}
       const v=rows[i];
@@ -2171,13 +2171,17 @@ async function _ytSweepSoloReleases(){
       const _fancam=!!(_fc&&_fc.artistNorm&&_fc.artistNorm.includes(' '+name.toUpperCase()+' '));
       const _format=new RegExp('(?:^|[\\s\\[\\]()·,])(?:'+nameAlt+')\\s*[-–—:(]','i').test(t);
       const _hash=new RegExp('#\\s*(?:'+nameAlt+')','i').test(t);
-      if(!_disco&&!_fancam&&!_format&&!_hash){weak++;continue;}
+      // 직캠 브랜드(MPD/입덕 등)가 없어도 음악방송 프로그램명 + 멤버 이름 토큰이면 솔로 무대로 본다(2026-09-05 사용자).
+      // 그룹 무대는 위 "제목에 그룹명" 게이트에서 이미 걸러지므로(원더걸스 등), 프로그램명+본인이름만 남으면 솔로.
+      const _show=/뮤직뱅크|엠카운트다운|인기가요|음악중심|쇼\s*!?\s*음악중심|쇼챔피언|더\s*쇼|MUSIC\s*BANK|M\s*COUNTDOWN|INKIGAYO|MUSIC\s*CORE|SHOW\s*CHAMPION|THE\s*SHOW/i.test(t)
+        && new RegExp('(?:^|[^가-힣A-Za-z0-9])(?:'+nameAlt+')(?![가-힣A-Za-z0-9])','i').test(t);
+      if(!_disco&&!_fancam&&!_format&&!_hash&&!_show){weak++;continue;}
       if(_isBannedVideoTitle(t,v.group_ko)){bannedSkipped++;continue;}
       if(v.tags_manual){manualSkipped++;continue;}
       updates.push({id:v.id,patch:{group_ko:name}});                       // members는 이미 [본인]이라 group_ko만 이동
       byPerson[name]=(byPerson[name]||0)+1;
-      if(_disco)bySignal.disco++;else if(_fancam)bySignal.fancam++;else if(_format)bySignal.format++;else bySignal.hash++;
-      if(sample.length<50)sample.push(`${v.group_ko}→${name} [${_disco?'곡':_fancam?'직캠':_format?'형식':'#'}] ${t.slice(0,58)}`);
+      if(_disco)bySignal.disco++;else if(_fancam)bySignal.fancam++;else if(_format)bySignal.format++;else if(_hash)bySignal.hash++;else bySignal.show++;
+      if(sample.length<50)sample.push(`${v.group_ko}→${name} [${_disco?'곡':_fancam?'직캠':_format?'형식':_hash?'#':'방송'}] ${t.slice(0,58)}`);
     }
     console.log('[솔로 릴리스 귀속] 예정 표본(최대50):\n'+sample.join('\n'));
     console.log('[솔로 릴리스 귀속] 인물별:',Object.entries(byPerson).sort((a,b)=>b[1]-a[1]).slice(0,60));
@@ -2191,7 +2195,7 @@ async function _ytSweepSoloReleases(){
       _ytSetProg(`완료! ${updates.length}건을 본인 이름 group_ko로 이동함. (되돌리기: "↩︎ 마지막 일괄 작업 되돌리기")`);
     };
     const msg=`솔로 릴리스 ${updates.length}건을 본인 이름 group_ko로 옮길까요?\n\n`+
-      `· 판별: 제목에 솔로곡명(${bySignal.disco}) / 직캠 출연자=본인(${bySignal.fancam}) / "이름-곡" 형식(${bySignal.format}) / #이름(${bySignal.hash})\n`+
+      `· 판별: 솔로곡명(${bySignal.disco}) / 직캠 출연자=본인(${bySignal.fancam}) / "이름-곡" 형식(${bySignal.format}) / #이름(${bySignal.hash}) / 음악방송명+이름(${bySignal.show})\n`+
       `· members=[본인 1명] + 콜라보(with_*) 없음 + 이름 고유 + group_ko가 그 멤버 그룹 + 제목에 그룹명 없음\n`+
       `· group_ko만 본인 이름으로(members는 그대로). 옛/현 그룹 카드에선 빠지고, 본인 카드엔 그대로 보임\n\n`+
       `안 건드리는 것: 제목에 그룹명 있음 ${groupInTitle} · 신호 약함 ${weak} · 콜라보 ${collabSkipped} · 밴 ${bannedSkipped} · 수동편집 ${manualSkipped}\n\n`+
