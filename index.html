@@ -18409,7 +18409,12 @@ function _makeChVidController(contId){
     const activeHere=gEntry.active!==undefined?gEntry.active:a.active;
     if(activeHere!==false)return{active:true};
     const leftHere=gEntry.left!==undefined?gEntry.left:a.left;
-    if(leftHere)return{active:false,left:leftHere.replace(/\./g,'-')};   // ①
+    // ⚠️ 예전엔 `leftHere.replace(/\./g,'-')`였다 — 'YYYY.MM.DD'는 맞았지만 연도만/연·월만 적힌 탈퇴일이
+    //    'YYYY'·'YYYY-MM' 그대로 나가서 Postgres가 그 해(달) **1일**로 읽었다. admin은 같은 값을 그 해(달)
+    //    **마지막 날**로 해석하므로 둘이 정반대. 그 결과 탈퇴 연도 1년치 영상이 조용히 사라졌다.
+    //    이제 해석은 shared.js의 _leftCutoffDate 한 곳만 쓴다(2026-09-04).
+    const _lc=_leftCutoffDate(leftHere);
+    if(_lc)return{active:false,left:_lc};                                // ①
     const end=_groupEndDate(ko);
     if(end)return{active:false,left:end};                                // ②
     if(_groupIsOver(ko))return{active:true};                             // ③

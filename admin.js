@@ -159,16 +159,9 @@ function _disbandCutoffDate(ko){return _groupEndDate(ko);}
 // 영상을 잘라낼 근거가 없으므로 보수적으로 늦게 자르는 쪽. 예전엔 YYYY.MM.DD만 인정하고 나머지는
 // null(=컷오프 없음)이라, 연도밖에 모르는 탈퇴일은 아예 적어둘 수가 없었다(2026-09-02 확장).
 // ⚠️ 확장 시점 기준 기존 left 276개는 전부 YYYY.MM.DD라 동작 변화 없음(실측 확인).
-function _memberLeftCutoffDate(a){
-  const l=a&&a.left;
-  if(!l)return null;
-  const m=/^(\d{4})(?:\.(\d{1,2}))?(?:\.(\d{1,2}))?$/.exec(String(l).trim());
-  if(!m)return null;
-  const p2=n=>String(n).padStart(2,'0');
-  if(!m[2])return `${m[1]}-12-31`;
-  if(!m[3])return `${m[1]}-${p2(m[2])}-${new Date(+m[1],+m[2],0).getDate()}`;
-  return `${m[1]}-${p2(m[2])}-${p2(m[3])}`;
-}
+// 해석 자체는 shared.js의 _leftCutoffDate 한 곳에만 둔다(2026-09-04) — 화면(index.html)도 같은 것을
+// 써야 하는데 예전엔 여기에만 있어서 둘이 정반대로 갈라졌다(shared.js 주석 참고).
+function _memberLeftCutoffDate(a){return _leftCutoffDate(a&&a.left);}
 async function _ytFetchNewVideos(uploadsId,key,sinceId,onProg,startPageToken,cutoffDate){
   const vids=[];let pageToken=startPageToken||'';let total=0;
   let done=false,interrupted=false;

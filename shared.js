@@ -13,6 +13,27 @@
 // 옛 버전을 계속 서빙하는 사고가 있었음).
 
 function _artistGroups(a){return a.groups||[a.group];}
+
+// ── 탈퇴일 → 컷오프 날짜 (2026-09-04 shared로 이전) ────────────────────────────
+// 'YYYY.MM.DD'가 기본이고, **연도만/연·월만 알면 그 해(달)의 마지막 날까지 쳐준다** — 그 구간 안의
+// 영상을 잘라낼 근거가 없으므로 보수적으로 늦게 자르는 쪽(2026-09-02 admin.js에서 확장된 관례).
+//
+// ⚠️ 여기로 옮긴 이유: 그 확장을 **admin.js만 하고 화면(index.html)이 안 따라왔다.** 화면 쪽
+//    _memberVideoCutoff는 점만 하이픈으로 바꿔 넘겨서(`'2015'` 그대로) Postgres가 그 해 **1월 1일**로
+//    읽었다 — admin은 12월 31일, 화면은 1월 1일. 정반대다. 실측: `published_at.lte.2015`는 10,254행,
+//    `lte.2015-12-31`은 13,052행. 탈퇴 연도 1년치가 통째로 사라지는데 에러가 안 나 조용히 어긋났다.
+//    PRINCIPLES의 "같은 동작에 진입점이 둘 이상이면 둘 다 고쳤는지 확인"이 정확히 이 사고다.
+//    앞으로 해석을 바꾸려면 여기 한 곳만 고치면 된다.
+// 반환은 'YYYY-MM-DD'(그 날까지는 출연 인정). 형식이 아예 안 맞으면 null(=컷오프 없음).
+function _leftCutoffDate(left){
+  if(!left)return null;
+  const m=/^(\d{4})(?:\.(\d{1,2}))?(?:\.(\d{1,2}))?$/.exec(String(left).trim());
+  if(!m)return null;
+  const p2=n=>String(n).padStart(2,'0');
+  if(!m[2])return `${m[1]}-12-31`;
+  if(!m[3])return `${m[1]}-${p2(m[2])}-${new Date(+m[1],+m[2],0).getDate()}`;
+  return `${m[1]}-${p2(m[2])}-${p2(m[3])}`;
+}
 // 유튜브 채널 동기화 조회에 쓰는 키: 실존하는 그룹 소속이면 그 그룹 키를, 아이유처럼 소속 그룹이 없는
 // 솔로 아티스트면 본인 이름을 키로 써서 본인 채널을 동기화/조회한다(그룹별 group_ko 컬럼 재사용).
 function _ytGroupKoFor(a){return GROUPS[a.group.ko]?a.group.ko:a.name.ko;}
