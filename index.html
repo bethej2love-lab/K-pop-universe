@@ -56,7 +56,7 @@
      ⚠️ 손으로 올리던 시절 2026-08-24에 실제로 빠뜨려서 폰이 "새 마크업 + 옛 CSS"를 그리는 바람에
      화면이 통째로 깨졌음(Charts 카드가 158px→46px로 찌그러짐). 로컬 확인은
      `node tools/bump_cache_version.mjs --check`. -->
-<link rel="stylesheet" href="kpop_universe.css?v=20260904-0ba2b5bb">
+<link rel="stylesheet" href="kpop_universe.css?v=20260905-68eed20e">
 <!-- ⚠️ 2026-09-04에 "라이트박스 반응 피커를 없애니 이 CDN도 뺄 수 있다"고 판단해 지웠다가 되돌렸다 —
      최애(bias) 지정의 이모지 선택기(#pp-bias-emoji-picker)가 같은 컴포넌트를 쓴다. 반응 쪽만 보고
      지우면 프로필 패널이 조용히 깨진다(로드 실패해도 콘솔 에러 없이 그냥 안 뜬다). -->
@@ -175,7 +175,7 @@
     </div>
   </div>
   <div id="tt-discog-strip" class="gc-discog-strip hscroll-drag"></div>
-</div><div id="tt-concert-row" class="concert-row"></div><div id="tt-collection-row" class="gc-collection-row" style="display:none"><div class="gc-collection-hd">Collections</div><div class="gc-collection-list"></div></div><div id="tv"></div></div>
+</div><div id="tt-concert-row" class="concert-row"></div><div id="tt-collection-row" class="gc-collection-row" style="display:none"><div class="gc-collection-hd">Collections</div><div class="gc-collection-list"></div></div><div id="tt-program-row" class="gc-collection-row" style="display:none"><div class="gc-collection-hd gc-program-hd">Programs</div><div class="gc-collection-list"></div></div><div id="tv"></div></div>
 <div id="gc">
   <div id="gc-bar"></div>
   <div id="gc-inner">
@@ -224,6 +224,10 @@
     <div id="gc-concert-row" class="concert-row"></div>
     <div id="gc-collection-row" class="gc-collection-row" style="display:none">
       <div class="gc-collection-hd">Collections</div>
+      <div class="gc-collection-list"></div>
+    </div>
+    <div id="gc-program-row" class="gc-collection-row" style="display:none">
+      <div class="gc-collection-hd gc-program-hd">Programs</div>
       <div class="gc-collection-list"></div>
     </div>
     <div id="gc-ch-vid"></div>
@@ -9403,6 +9407,7 @@ function showT(a,cx,cy,keepNavStack,urlMode,_unusedPushMobNav,noFly){
   if(_hasRealGroup)_loadMemberConcertRow(a.name.ko,'tt-concert-row');
   else _loadConcertRow(_ttGroupQueryKo,'tt-concert-row');
   _loadCollectionRow(_ttGroupQueryKo,'tt-collection-row',_hasRealGroup?a.name.ko:null,a.name.ko);
+  _loadProgramRow(_ttGroupQueryKo,'tt-program-row',a.name.ko,a.name.ko);
   _renderTtDiscography(a);
   // 트로피 3종(음악방송 1위/멜론 연간 TOP100/스포티파이 마일스톤)의 개인 기록 — 위 콘서트/컬렉션과 달리
   // _ytGroupKoFor가 아니라 a.group.ko(솔로면 "솔로" 그대로)+a.name.ko 조합을 그대로 쓴다. 이 세 트로피
@@ -10875,6 +10880,7 @@ function showGC(ko,cx,cy,keepMemberPanel,skipRipple,urlMode,_unusedPushMobNav){
   _buildGcChVid(ko);
   _loadConcertRow(ko,'gc-concert-row');
   _loadCollectionRow(ko,'gc-collection-row');
+  _loadProgramRow(ko,'gc-program-row');
   _loadTrophies(ko,'gc-trophy');
   const cardW=info.links?.youtube?264:234;
   el.style.maxWidth=cardW+'px';
@@ -20171,6 +20177,76 @@ function _renderCollectionRow(containerId,list){
       const songs=col.videos.map(v=>({t:v.t,u:v.u,thumb:v.thumb,groupKo:v.groupKo,memberKos:v.memberKos}));
       _openFeedListOverlay(col.name,_colVidCountText(col.videos.length),songs,col.mine?{colId:col.id,mine:true}:{colId:col.id,mine:false,ownerNick:col.ownerNick});
     });
+    listEl.appendChild(chip);
+  });
+  row.style.display='';
+}
+// ── 카드 내 프로그램 컬렉션(2026-09-05, Part C) ────────────────────────────────
+// 그룹/멤버 카드에 그 아티스트가 출연한 예능·음악 프로그램을 2x2 모자이크 칩으로 보여준다.
+// 카드 열 때 13번씩 치지 않으려고 **쿼리 1번**(모든 프로그램 키워드 OR)만 하고 클라이언트에서
+// title_norm으로 프로그램별 버킷팅. memberKo가 있으면 members 배열에 그 멤버가 든 영상만
+// (동명이인/타멤버 누수 방지 — _loadCollectionRow와 같은 이유). 칩 클릭은 _openProgramCollection
+// (ctx로 그룹/멤버 한정)을 그대로 재사용 → 검색 오버레이와 같은 목록이 뜬다.
+const _PROGRAM_KW_OR=_PROGRAM_COLLECTIONS.flatMap(p=>p.kw).map(k=>`title_norm.ilike.*${k}*`).join(',');
+async function _loadProgramRow(ko,containerId,memberKo,cardMemberKo){
+  const row=document.getElementById(containerId);
+  if(row)row.style.display='none';
+  if(!sb||!ko)return;
+  try{
+    let q=sb.from(_YT_TABLE)
+      .select('id,title_norm,thumb,group_ko,members,view_count,published_at,is_short,category,content_flag')
+      .or(_PROGRAM_KW_OR)
+      .or('content_flag.is.null,content_flag.neq.기타')
+      .or('content_flag.is.null,content_flag.neq.무관').or('content_flag.is.null,content_flag.neq.보류')
+      .limit(1000);
+    if(memberKo)q=q.contains('members',[memberKo]);
+    else q=q.eq('group_ko',ko);
+    const{data,error}=await q;
+    // 대기 중 다른 카드로 전환됐으면 버린다(_loadCollectionRow와 동일 가드)
+    if(cardMemberKo?_openTArtist?.name?.ko!==cardMemberKo:_openGCko!==ko)return;
+    if(error||!data?.length)return;
+    const rows=_filterBannedVideos(data);
+    // 프로그램별 버킷 — title_norm(쿼리와 동일 필드)에서 공백 무시 포함 매칭.
+    const buckets=new Map();
+    rows.forEach(v=>{
+      const tn=String(v.title_norm||'').toLowerCase().replace(/\s+/g,'');
+      _PROGRAM_COLLECTIONS.forEach(p=>{
+        if(p.kw.some(k=>tn.includes(k.toLowerCase().replace(/\s+/g,'')))){
+          if(!buckets.has(p.key))buckets.set(p.key,{p,vids:[]});
+          buckets.get(p.key).vids.push(v);
+        }
+      });
+    });
+    // "컬렉션"이라 부를 만한 2편 이상만, 영상 많은 순으로.
+    const picks=[...buckets.values()].filter(b=>b.vids.length>=2).sort((a,b)=>b.vids.length-a.vids.length);
+    if(!picks.length)return;
+    _renderProgramRow(containerId,picks,memberKo?{memberKo}:{gko:ko});
+  }catch(e){/* 조용히 — 실패해도 카드는 정상 */}
+}
+function _renderProgramRow(containerId,picks,ctx){
+  const row=document.getElementById(containerId);
+  if(!row)return;
+  const listEl=row.querySelector('.gc-collection-list');
+  if(!listEl)return;
+  const hd=row.querySelector('.gc-program-hd');
+  if(hd)hd.textContent=currentLang==='ko'?'출연 프로그램':'Programs';
+  listEl.innerHTML='';
+  picks.forEach(({p,vids})=>{
+    const chip=document.createElement('div');chip.className='gc-collection-chip';
+    const wrap=document.createElement('div');wrap.className='gc-collection-chip-thumb-wrap';
+    const quad=document.createElement('div');quad.className='gc-collection-quad';
+    // 조회수 상위 4편 썸네일로 2x2 모자이크. 4칸 못 채우면 빈 칸.
+    const top=[...vids].sort((a,b)=>(b.view_count||0)-(a.view_count||0)).slice(0,4);
+    for(let i=0;i<4;i++){
+      const v=top[i];
+      if(v&&v.thumb){const im=document.createElement('img');im.alt='';im.loading='lazy';im.src=v.thumb;quad.appendChild(im);}
+      else{const e=document.createElement('span');e.className='gc-quad-empty';quad.appendChild(e);}
+    }
+    wrap.appendChild(quad);
+    const name=document.createElement('div');name.className='gc-collection-chip-name';name.textContent=p.label;
+    const cnt=document.createElement('div');cnt.className='gc-collection-chip-cnt';cnt.textContent=currentLang==='ko'?`${vids.length}개`:String(vids.length);
+    chip.appendChild(wrap);chip.appendChild(name);chip.appendChild(cnt);
+    chip.addEventListener('click',e=>{e.stopPropagation();_openProgramCollection(p,ctx);});
     listEl.appendChild(chip);
   });
   row.style.display='';
