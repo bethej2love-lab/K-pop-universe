@@ -363,6 +363,8 @@
     <div class="sp-subsec-lbl" style="margin-top:12px;">측정 <span style="opacity:.6;font-weight:400;">— 고치는 게 아니라 재는 도구</span></div>
     <button class="sp-yt-sync" id="sp-baseline-btn" style="margin-top:4px;opacity:.8;">📏 기준선 표본 300건 채점 큐에 넣기</button>
     <div class="sp-btn-hint">홈의 <b>"주간 손댄 비율"은 고친 것만 세요</b> — 검수를 안 하면 0%로 보이는데 그건 품질이 좋아진 게 아니라 <b>안 본 것</b>입니다. 그 착시를 없애려면 무작위 표본을 사람이 전수 채점해야 해요. 최근 7일 자동태깅 영상에서 <b>무작위 300건</b>을 검수 대기열(<code>baseline_sample</code>)에 넣습니다. 큐에서 평소처럼 한 건씩 판정하면 그게 곧 "지금 자동 태깅이 몇 % 맞는가"의 답이 돼요. <b>영상 데이터는 하나도 안 바꿉니다</b> · 중복 적재 안 됨.</div>
+    <button class="sp-yt-sync" id="sp-learnlog-btn" style="margin-top:4px;opacity:.8;">📤 학습 로그 내보내기 (JSON)</button>
+    <div class="sp-btn-hint">사람이 <b>무엇을 무엇으로 고쳤는지</b>(<code>tag_edit_log</code>)를 파일로 내려받습니다. 이 파이프라인에서 가장 값진 신호인데 지금까지 DB에만 쌓이고 아무도 안 읽었어요. 내려받은 뒤 <code>node tools/replay.mjs &lt;파일&gt;</code> 을 돌리면 <b>지금 매처를 그 제목들에 다시 돌려</b> "현재 로직이 사람 판단과 몇 % 맞는가"가 숫자로 나옵니다. 로직을 고칠 때마다 그 숫자가 오르는지 보면 감이 아니라 측정으로 판단할 수 있어요. <b>읽기 전용</b> · 영상 데이터는 안 건드립니다.</div>
 
     <div class="sp-subsec-lbl" style="margin-top:10px;">데이터 정합성 · 매일 루틴 <span style="opacity:.6;font-weight:400;">— 평소엔 🏠관리자 홈이 한 번에 자동 실행. 아래는 개별로 돌릴 때만</span></div>
     <button class="sp-yt-sync" id="sp-yt-autotag" style="margin-top:4px;opacity:.8;">멤버+콜라보 자동 태깅 (미태깅분)</button>

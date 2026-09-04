@@ -120,6 +120,12 @@ const _ATM_DYNAMIC_SURNAME_EXCLUDE=new Map();
 const _STRICT_SYNC_GROUPS=new Set(Object.entries(GROUPS).filter(([,v])=>v&&v.strictSync).map(([ko])=>ko));
 ${pieces.join('\n')}
 module.exports={_m2ParseTitle,_atmResolveMembers,_atmMatchesMember,_atmTokenize,_wonkokStripClause,_PROJECT_UNITS,GROUPS,ARTISTS,_STRICT_SYNC_GROUPS,
+  // ⚠️ 운영 중 DB(name_match_whitelist·atm_exception_rules)에서 채워지는 동적 규칙 집합. 여기선 **빈
+  //    채로** 시작하므로, 채우지 않고 매처를 돌리면 실제 배포보다 **관대하게** 매칭된다(보호가 없는
+  //    상태). 2026-09-04에 그걸 모르고 "우리→고우리 오매칭이 살아있다"고 오판했다 — 실제로는 고우리가
+  //    이미 흔한단어 보호 목록에 있어 막혀 있었다. 시뮬레이션 도구는 이 셋을 채우고 돌릴 것
+  //    (tools/replay.mjs의 loadRules 참고). 테스트는 "코드 기본 로직"을 보는 게 목적이라 안 채워도 된다.
+  _ATM_DYNAMIC_HASHTAG_NAMES,_ATM_DYNAMIC_AMBIGUOUS_COMATCH,_ATM_DYNAMIC_LITERAL_ONLY,_ATM_DYNAMIC_SURNAME_EXCLUDE,
   _atmStripDescNoise:(typeof _atmStripDescNoise==='function')?_atmStripDescNoise:null,
   _m2DebutBlocks:(typeof _m2DebutBlocks==='function')?_m2DebutBlocks:null,
   _atmStripCommonNounCtx:(typeof _atmStripCommonNounCtx==='function')?_atmStripCommonNounCtx:null,

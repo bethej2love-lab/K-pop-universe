@@ -8089,6 +8089,7 @@ document.getElementById('vid-tag-thumb-refresh').addEventListener('click',async 
   _admExecBind('sp-detect-btn',_ytSweepDetectPreview,'오태깅 미리보기');
 _admExecBind('sp-lockfill-btn',_ytSweepFillLockedEmpty,'잠금-빈값 채우기');
 _admExecBind('sp-baseline-btn',_admSeedBaselineSample,'기준선 표본 적재');
+_admExecBind('sp-learnlog-btn',_admExportLearningLog,'학습 로그 내보내기');
 _admExecBind('sp-canon-btn',_ytSweepCanonicalizeMembers,'고아태그 정정');
 // 로스터에서 사라진(또는 애초에 멤버가 아니었던) 이름의 태그 정리 — ⚑ 흔한단어 규칙 플로우는 진입점이
 // "지금 로스터에 있는 멤버" 옆의 아이콘이라, 로스터에서 빼버린 이름은 정작 부를 방법이 없었다(2026-09-04,
@@ -8602,6 +8603,47 @@ async function _admLoadCards(){
 // ⚠️ 무작위성: PostgREST엔 랜덤 정렬이 없어서 최근 유입에서 넉넉히 받아 클라이언트에서 섞는다.
 //    "최근 7일"로 좁히는 이유는 지금 매처의 성능을 재려는 것이기 때문 — 옛날 행을 섞으면 옛 로직의
 //    오류까지 같이 재게 된다.
+// ── 학습 로그 내보내기 (2026-09-04, Fable T4) ─────────────────────────────────
+// tag_edit_log에 쌓인 "사람이 무엇을 무엇으로 고쳤는가"가 이 파이프라인에서 가장 값진 신호인데,
+// 지금까지 DB에만 있고 아무도 안 읽었다. 이걸 JSON으로 빼내면 tools/replay.mjs가 **현재 매처를 그
+// 제목들에 다시 돌려** "지금 로직이 사람 판단과 얼마나 맞는가"를 숫자로 낸다.
+// 로직을 고칠 때마다 이 숫자가 오르는지 내리는지를 보면, 감(感) 대신 측정으로 판단할 수 있다.
+//
+// ⚠️ published_at을 같이 붙인다. 매처가 탈퇴·데뷔 게이트에서 발행일을 쓰기 때문에, 그게 없으면
+//    재실행 결과가 실제 배포 때와 달라져 비교 자체가 의미를 잃는다(로그 테이블엔 발행일이 없다).
+async function _admExportLearningLog(){
+  if(!sb){_ytSetProg('Supabase 연결 없음');return;}
+  _ytSetProg('[학습 로그] 편집 이력 조회 중…');
+  const{data,error}=await _sbFetchAll(()=>sb.from('tag_edit_log')
+    .select('id,video_id,title,before,after,changed,source,created_at').order('id'));
+  if(error){_ytSetProg('조회 실패: '+error.message+' (tag_edit_log 테이블/권한 확인)');return;}
+  if(!data||!data.length){_ytSetProg('학습 로그가 비어 있어요 — 편집 모달로 몇 건 고치면 쌓입니다');return;}
+  _ytSetProg(`[학습 로그] ${data.length}건 — 영상 메타(발행일) 붙이는 중…`);
+  const ids=[...new Set(data.map(r=>r.video_id).filter(Boolean))];
+  const meta=new Map();
+  for(let i=0;i<ids.length;i+=300){
+    try{
+      const{data:vs}=await sb.from(_YT_TABLE).select('id,title,published_at,group_ko').in('id',ids.slice(i,i+300));
+      (vs||[]).forEach(v=>meta.set(v.id,v));
+    }catch(e){/* 메타 없이도 내보낸다 — 제목은 로그에 이미 있다 */}
+  }
+  const rows=data.map(r=>{
+    const m=meta.get(r.video_id)||{};
+    return{id:r.id,video_id:r.video_id,title:r.title||m.title||null,
+      published_at:m.published_at||null,current_group_ko:m.group_ko||null,
+      before:r.before,after:r.after,changed:r.changed,source:r.source,created_at:r.created_at};
+  });
+  const payload={exported_at:new Date().toISOString(),count:rows.length,
+    note:'tools/replay.mjs 로 현재 매처와 대조하세요. published_at은 재실행 시 탈퇴·데뷔 게이트에 필요합니다.',rows};
+  const blob=new Blob([JSON.stringify(payload,null,1)],{type:'application/json'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download=`kpu_learning_log_${new Date().toISOString().slice(0,10)}.json`;
+  document.body.appendChild(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(a.href),3000);
+  const withTitle=rows.filter(r=>r.title).length, withPub=rows.filter(r=>r.published_at).length;
+  _ytSetProg(`완료! 학습 로그 ${rows.length}건 내려받음 (제목 ${withTitle} · 발행일 ${withPub}) — \`node tools/replay.mjs <파일>\``);
+}
 async function _admSeedBaselineSample(){
   if(!sb){_ytSetProg('Supabase 연결 없음');return;}
   const N=300;
