@@ -1681,6 +1681,150 @@ async function _ytSweepHeldMistagReclassify(){
 }
 _admExecBind('sp-heldfix-btn',_ytSweepHeldMistagReclassify,'보류/숨김 그룹 재배정');
 
+// [근거 없는 그룹 배정 정리](2026-09-04) — ②가 구조적으로 못 보는 나머지 절반.
+//
+// ②는 "저장 그룹은 근거 없음 + **다른 등록 그룹**이 제목에 있음"일 때만 움직인다(_ytSweepMistagReclassify
+// 의 `if(!ng||ng===g)continue`). 즉 **갈 곳이 있어야 고친다.** 그런데 오배정의 다수는 갈 곳이 없다 —
+// 우리 우주 밖 아티스트의 영상이 흔한단어 멤버명에 걸려 들어온 것이라서, 매처에게 다시 물어도 아무 그룹도
+// 안 나온다. 그러면 ②는 스킵하고, 그 행은 영원히 엉뚱한 그룹 카드에 남는다.
+//
+// 실측(2026-09-04, 레인보우): 노출중 389건 중
+//   · 117건 제목에 RAINBOW 있음 → ②가 스킵하는 게 **맞다**(진짜 레인보우 영상)
+//   ·   6건 다른 등록 그룹 있음 → ②가 처리
+//   · 266건 아무 그룹도 못 찾음 → ②가 스킵 → **그대로 남음** ← 이 버튼의 대상
+// 뿌리는 멤버명 "우리"(고우리)·"노을"이다. 한국어에서 제일 흔한 단어라 "우리 우정 뽀에버", "Noel(노을)"
+// 같은 게 전부 레인보우로 배정됐다. 그리고 272건 중 271건은 **이미 members가 비어 있었다** — 멤버 태그는
+// 나중에 재검증이 지웠는데 group_ko는 아무도 안 지운 것. 태그 스윕들이 members만 보고 group_ko는 안
+// 건드리기 때문에 생기는 그림자다([[project_kpop_name_collision_group_misassign]]과 같은 뿌리).
+//
+// ⚠️ 이 판정은 **위험한 쪽**이다 — "제목에 그룹명이 없다"는 것 자체는 오염의 증거가 아니다. 그룹 자체
+//    채널의 브이로그·비하인드는 제목에 그룹명이 없는 게 **정상**이고, 그걸 보류로 밀면 2026-08-20의
+//    35,168건 대량 오숨김과 같은 사고가 된다. 그래서 게이트를 다섯 겹으로 두고, 하나라도 근거가 잡히면
+//    손대지 않는다. 그리고 **전수 자동으로 돌리지 않는다** — source_tier(자체 채널 판별용)가 옛 데이터
+//    37만 건에서 null이라 전역 적용은 자체 채널을 못 걸러낸다. 관리자가 그룹을 지정하고, 적용 전에 건수와
+//    표본을 본다(②-B 탈퇴 후 솔로가 같은 이유로 이름 지정 방식인 것과 같은 판단).
+//    `*`를 입력하면 **전 그룹 미리보기**(적용 없음)로 어느 그룹이 오염됐는지 순위만 본다.
+//
+// '무관'이 아니라 '보류'인 이유는 기존 정책 그대로 — 매처가 못 잡는 것과 우주 밖인 것은 다르다. 미등록
+// 그룹의 영상이면 나중에 그 그룹을 등록했을 때 재판정 대상이 되어야 한다(_ytSweepHiddenRejudge 주석 참고).
+const _NOGROUND_OWNER_TIERS=new Set(['official','idol','fans']); // 자체/팬 채널은 group_ko가 채널에서 옴
+async function _ytSweepNoGroundHold(){
+  if(!sb){_ytSetProg('Supabase 연결 없음');return;}
+  const btn=document.getElementById('sp-noground-btn');
+  // 직전 실행에서 확인창을 취소했다면 분석 결과가 보관돼 있다 — 그룹명을 다시 묻지 않고 바로 적용한다
+  // (다른 스윕들과 동일. 여기서 prompt를 먼저 띄우면 "다시 누르면 바로 적용"이 거짓말이 된다).
+  const _kept=_sweepPeek('sp-noground-btn');
+  if(_kept){
+    if(btn)btn.disabled=true;
+    try{
+      _ytSetProg(`[근거없는 배정] 보관된 분석 결과 ${_kept.count}건을 바로 적용합니다(재분석 없음)…`);
+      _sweepPending.delete('sp-noground-btn');
+      await _kept.apply();
+    }catch(e){_ytSetProg('오류: '+e.message);}
+    finally{if(btn)btn.disabled=false;}
+    return;
+  }
+  const raw=(prompt('근거 없이 이 그룹에 배정된 영상을 "보류"로 옮깁니다.\n\n그룹명을 입력하세요(예: 레인보우).\n\n· 제목에 그룹명이 있거나 · 멤버 태그가 있거나 · 제목/설명에 그 그룹 멤버가 잡히거나\n  · 매처가 다른 그룹을 찾았거나 · 자체 채널 영상이면 → 손대지 않습니다\n· 건수와 표본을 먼저 보여주고, 스냅샷을 떠둡니다\n\n※ "*"를 입력하면 전 그룹을 훑어 오염 순위만 봅니다(적용 안 함)')||'').trim();
+  if(!raw)return;
+  const ALL=raw==='*';
+  if(!ALL&&!GROUPS[raw]){alert(`"${raw}"은(는) 등록된 그룹이 아니에요. groups.json의 그룹명(한글 키)을 그대로 넣어주세요.`);return;}
+  if(btn)btn.disabled=true;
+  try{
+    const{_norm,_titleHas}=_MISTAG;
+    _ytSetProg(ALL?'[근거없는 배정] 전 그룹 조회 중… (미리보기 전용)':`[근거없는 배정] "${raw}" 조회 중…`);
+    // description은 지정 모드에서만 받는다 — 전 그룹 모드에서 통째로 받으면 egress가 터진다
+    // (2026-08-06 무료티어 초과 사고와 같은 이유). 전 그룹 모드는 어차피 순위만 보는 용도다.
+    const base='id,title,group_ko,members,with_members,with_groups,published_at'+(ALL?'':',description');
+    const cols=base+(_ytHasSourceCols?',source_tier':'');
+    const build=c=>()=>{let q=sb.from(_YT_TABLE).select(c).eq('tags_manual',false).is('content_flag',null);
+      if(!ALL)q=q.eq('group_ko',raw);return q.order('id');};
+    let{data:rows,error}=await _sbFetchAll(build(cols));
+    if(error&&/source_tier/.test(error.message||'')){_ytHasSourceCols=false;({data:rows,error}=await _sbFetchAll(build(base)));}
+    if(error){_ytSetProg('조회 실패: '+error.message);return;}
+    if(!rows?.length){_ytSetProg(ALL?'노출중인 영상이 없어요':`"${raw}"에 노출중인 자동태깅 영상이 없어요`);return;}
+    const rosterCache=new Map();
+    const rosterOf=g=>{if(!rosterCache.has(g))rosterCache.set(g,_atmRosterFor(g));return rosterCache.get(g);};
+    let grounded=0,tagged=0,toOther=0,byMember=0,owner=0,exMember=0;
+    const holds=[];const sample=[];const exSample=[];const byGroup={};
+    for(let i=0;i<rows.length;i++){
+      if(i%2000===0){_ytSetProg(`[근거없는 배정] 분석 중… ${i}/${rows.length} (후보 ${holds.length})`);await new Promise(r=>setTimeout(r));}
+      const v=rows[i];const g=v.group_ko;
+      if(!g||!GROUPS[g])continue;
+      // ① 자체/팬 채널 — 제목에 그룹명이 없는 게 정상이라 이 판정을 적용하면 안 된다
+      if(v.source_tier&&_NOGROUND_OWNER_TIERS.has(v.source_tier)){owner++;continue;}
+      // ② 사람 태그가 하나라도 있으면 근거 있음(멤버·콜라보 어느 쪽이든)
+      if((v.members||[]).length||(v.with_members||[]).length||(v.with_groups||[]).length){tagged++;continue;}
+      // ③ 제목에 그룹명(한글·영문·altNames) — 느슨하게 걸수록 안전한 쪽이라 _titleHas(부분포함) 사용
+      const nu=_norm(v.title);
+      if(_titleHas(nu,g)){grounded++;continue;}
+      // ④ 제목/설명에서 **그 그룹 멤버**가 잡히면 근거 있음(그룹명 없는 멤버 단독 영상 보호).
+      //    ⑤보다 먼저 본다 — 순서를 바꿔보면 실측에서 이 게이트가 0건으로 놀았다(2026-09-04). 레인보우
+      //    출신 솔로(조현영·김재경) 영상은 매처가 primaryGroup을 '조현영'으로 주기 때문에 ⑤에 먼저
+      //    걸려버리고, 정작 "그 그룹 멤버라서 지켜야 한다"는 판단은 한 번도 실행되지 않았다.
+      const roster=rosterOf(g);
+      if(roster.length&&_atmResolveMembers(v.title,v.description,roster,g,v.published_at).length){byMember++;continue;}
+      // ⑤ 매처가 다른 그룹을 찾았고 **그 그룹명이 제목에 literal로 있으면** ②(오태깅 그룹 재배정)의 몫.
+      //    ⚠️ literal 조건이 핵심이다 — 그냥 primaryGroup이 있다는 이유로 넘기면 아무도 안 고친다.
+      //    ②는 `_titleHas(nu,ng)`가 아니면 "약한 근거"로 스킵하므로, 여기서 무조건 넘기면 그 행은
+      //    ②에서도 걸러지고 여기서도 안 봐서 영원히 남는다(실측: 레인보우 31건 중 상당수가 "우리 우정
+      //    뽀에버"→우당탕탕소녀단, "KBS 특집 음악회"→드림노트 같은 약한 오매칭이었다).
+      let m=null;try{m=_m2ParseTitle(v.title,undefined,false,(v.published_at||'').slice(0,10));}catch(e){}
+      if(m&&m.primaryGroup&&_titleHas(nu,m.primaryGroup)){toOther++;continue;}
+      // 여기까지 왔으면 보류 후보. 다만 그중 **옛 멤버의 탈퇴 후 개인활동**은 다음 단계가 따로 있다 —
+      // ④는 발행일 기준으로 탈퇴 멤버를 로스터에서 빼기 때문에(_atmResolveMembers의 탈퇴 게이트), 해체
+      // 그룹에선 옛 멤버 이름이 제목에 뻔히 있어도 ④가 못 지킨다. 실측(레인보우): 새로 잡힌 31건 중
+      // 13건이 조현영·김재경·고우리·노을의 해체 후 개인활동이었다. 이건 보류가 **맞다** — 지금
+      // group_ko=옛그룹 + members=[] 라서 본인 멤버 카드에도 이미 안 뜨고 옛 그룹 카드만 더럽히는
+      // 상태이고, ②-B(탈퇴 후 솔로 귀속)는 보류/숨김 행만 보므로 보류로 가야 비로소 되찾을 길이 생긴다.
+      // 그래서 막지는 않되 **따로 세어서** 관리자가 다음 단계를 알게 한다.
+      // ⚠️ 이 카운트는 **단서**이지 판정이 아니다 — 탈퇴 게이트만 끄고 다시 물어보는 것이라 흔한단어
+      //    멤버명이 그대로 오탐으로 들어온다(레인보우 실측 30건 중 밴드 "노을"의 곡이 섞였다).
+      //    그래서 문구도 "개인활동 추정"이 아니라 "이름이 제목에 보임"으로 둔다.
+      const exHit=roster.length?_atmResolveMembers(v.title,v.description,roster,g,undefined):[];
+      if(exHit.length){exMember++;if(exSample.length<20)exSample.push(`[${g}/${exHit.join(',')}] ${(v.title||'').slice(0,62)}`);}
+      holds.push(v.id);
+      byGroup[g]=(byGroup[g]||0)+1;
+      if(sample.length<40)sample.push(`[${g}] ${(v.title||'').slice(0,70)}`);
+    }
+    const rank=Object.entries(byGroup).sort((a,b)=>b[1]-a[1]);
+    console.log('[근거없는 배정] 보류 후보 표본(최대40):\n'+sample.join('\n'));
+    console.log('[근거없는 배정] 그룹별 후보 건수(많은 순):',rank.slice(0,40));
+    if(exMember)console.log(`[근거없는 배정] 그중 ${exMember}건은 **옛 멤버 이름이 제목에 보임**(탈퇴 게이트만 끈 재조회 — 흔한단어 동명이인 오탐 섞임). 진짜 본인 영상이면 보류 후 "②-B 탈퇴 후 솔로 영상 귀속"으로 되찾을 수 있음:\n`+exSample.join('\n'));
+    const skipMsg=`제목에 그룹명 ${grounded} · 태그 있음 ${tagged} · 다른 그룹 잡힘 ${toOther}(②의 몫) · 멤버 잡힘 ${byMember} · 자체채널 ${owner}`;
+    if(ALL){
+      _ytSetProg(`[전 그룹 미리보기] 후보 ${holds.length}건 / 스캔 ${rows.length}건 — 상위: `
+        +rank.slice(0,8).map(([g,c])=>`${g} ${c}`).join(' · ')+` · 전체 순위는 콘솔(F12). 적용하려면 그룹명을 지정해 다시 실행하세요.`);
+      return;
+    }
+    if(!holds.length){_ytSetProg(`"${raw}" — 근거 없는 배정 없음 (${rows.length}건 스캔 · ${skipMsg})`);return;}
+    const _apply=async()=>{
+      await _snapshotBeforeBulk(`근거 없는 그룹 배정 보류(${raw})`,holds);
+      for(let i=0;i<holds.length;i+=200){
+        const{error:ue}=await sb.from(_YT_TABLE).update(_flagPatch('보류','auto')).in('id',holds.slice(i,i+200));
+        if(ue)throw new Error(ue.message);
+        _ytSetProg(`[근거없는 배정] 보류 이동 ${Math.min(i+200,holds.length)}/${holds.length}건…`);
+      }
+      _vmCache&&_vmCache.clear&&_vmCache.clear();
+      try{_vmIdbClear();}catch(_){}
+      _ytSetProg(`완료! "${raw}" ${holds.length}건을 보류로 옮겼어요. (되돌리기: "↩︎ 마지막 일괄 작업 되돌리기")`);
+    };
+    const msg=`"${raw}"에 근거 없이 배정된 ${holds.length}건을 '보류'로 옮길까요?\n\n`+
+      `· 조건: 제목에 그룹명 없음 + 멤버/콜라보 태그 없음 + 제목·설명에 그 그룹 멤버 없음\n`+
+      `  + 매처가 다른 그룹도 못 찾음 + 자체 채널 아님 (다섯 겹 전부 통과한 것만)\n`+
+      `· '무관'이 아니라 '보류'입니다 — 미등록 그룹 영상이면 나중에 재판정 대상이 됩니다\n`+
+      (exMember?`\n📌 그중 ${exMember}건은 **옛 멤버 이름이 제목에 보이는** 것들이에요(탈퇴 게이트만 끄고 다시\n   물어본 결과라 흔한단어 동명이인 오탐이 섞여 있어요 — 콘솔 표본을 꼭 훑어보세요).\n   진짜 본인 영상이라면 지금은 옛 그룹에 붙어 있어 본인 카드에도 안 떠요. 보류로 옮긴 뒤\n   "②-B 탈퇴 후 솔로 영상 귀속"을 돌리면 본인 이름으로 되찾을 수 있어요.\n`:'')+`\n`+
+      `안 건드리는 것 (총 ${rows.length}건 스캔)\n· ${skipMsg.replace(/ · /g,'\n· ')}\n\n`+
+      `⚠️ 표본 40건을 콘솔(F12)에 출력했어요 — 먼저 훑어보고 실행하세요.\n`+
+      `스냅샷 저장되어 "↩︎ 마지막 일괄 작업 되돌리기"로 복구 가능`;
+    _ytSetProg(`[근거없는 배정] 분석 완료 — "${raw}" 보류 예정 ${holds.length}건 (${rows.length} 스캔)`);
+    await new Promise(r=>setTimeout(r,50));
+    if(!await _sweepConfirm('sp-noground-btn',`"${raw}" 근거 없는 배정 ${holds.length}건 보류`,msg,'보류로 이동',holds.length,_apply))return;
+    await _apply();
+  }catch(e){_ytSetProg('오류: '+e.message);}
+  finally{if(btn)btn.disabled=false;}
+}
+_admExecBind('sp-noground-btn',_ytSweepNoGroundHold,'근거 없는 배정 정리');
+
 // [탈퇴 후 솔로 영상 귀속](2026-09-03) — 그룹을 떠난 뒤 솔로로 활동하는 사람의 영상이 갈 곳을 준다.
 //
 // 문제: 탈퇴 게이트(_atmLeftBefore)는 "탈퇴 이후 영상은 그 그룹 콘텐츠가 아니다"라며 옛 그룹을 후보에서
