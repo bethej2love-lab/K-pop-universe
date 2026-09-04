@@ -4347,6 +4347,19 @@ function _vmSearch2Rows(){
   }
   return rows;
 }
+// 태그 모달(단일/일괄) 저장 후 영상관리(VM) 목록을 즉시 반영한다 — 예전엔 공개 카드 그리드(_gcChVidCtl)만
+// 리로드하고 VM(_vmRows)은 안 고쳐서, 검색어가 들어간 상태로 저장하면 텍스트(태그)가 그대로였다(2026-09-04 재제보).
+// _vmRows를 바꾼 필드로 in-place 패치 → 탭 캐시 동기화(_vmCacheSync) → 재렌더(_vmRenderVideoList가 재검색 필터를 다시 적용).
+function _vmPatchAfterEdit(ids,payload){
+  if(!document.getElementById('vm-list'))return;      // VM 패널이 안 열려 있으면(카드 그리드에서 연 편집) 건너뜀
+  if(!Array.isArray(_vmRows)||!_vmRows.length||!payload)return;
+  const idset=new Set(Array.isArray(ids)?ids:[ids]);
+  let touched=false;
+  _vmRows.forEach(r=>{if(idset.has(r.id)){Object.assign(r,payload);touched=true;}});
+  if(!touched)return;
+  _vmCacheSync();
+  _vmRenderVideoList();
+}
 function _vmRenderVideoList(){
   const listEl=document.getElementById('vm-list');
   const toolbarEl=document.getElementById('vm-toolbar');
@@ -7984,6 +7997,7 @@ document.getElementById('vid-tag-save').addEventListener('click',async e=>{
     setTimeout(()=>{
       _closeVidTagModal();
       window._adminBulkExitFn?.();
+      _vmPatchAfterEdit(ids,updatePayload); // 영상관리(VM) 목록도 즉시 반영 — 검색 상태에서도 저장분이 바로 보이게(2026-09-04 재제보 수정)
       _gcChVidCtl.reloadIfShowing(ko);
       _ttChVidCtl.reloadIfShowing(ko);
       withGroups.forEach(gko=>_gcChVidCtl.reloadIfShowing(gko));
@@ -8043,6 +8057,7 @@ document.getElementById('vid-tag-save').addEventListener('click',async e=>{
     // 지연/화면 깜빡임을 없앰. ko(영상의 실제 소속)가 아니라 originKo를 써야 함 — 멤버 카드에 뜬 다른
     // 그룹 게스트 출연 영상을 편집한 경우 ko !== originKo라서, ko로 patchItem을 부르면 지금 보고 있는
     // 카드(originKo)는 하나도 안 고쳐지고 조용히 방치됨(2026-08-04, 사용자 제보로 발견).
+    _vmPatchAfterEdit(id,updatePayload); // 영상관리(VM) 목록도 즉시 반영(단일 편집도 검색 상태에서 저장분이 바로 보이게)
     _gcChVidCtl.patchItem(originKo,id,patchedRow);
     _ttChVidCtl.patchItem(originKo,id,patchedRow);
     // with_groups로 새로 태깅된 그룹, 소속을 통째로 옮긴 새 그룹(newGko), 그리고 원래 실제 소속(ko, 지금
