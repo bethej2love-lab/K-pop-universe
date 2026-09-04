@@ -7574,6 +7574,9 @@ function _openVidTagModalBulk(ids,ko){
   const overwriteRow=document.getElementById('vid-tag-bulk-overwrite-row');
   overwriteRow.style.display='flex';
   document.getElementById('vid-tag-bulk-overwrite').checked=true; // 디폴트 체크(2026-09-04 사용자 요청). 칩을 하나도 안 넣으면 저장 시 태그를 안 건드리므로(아래 _anyTag 가드) 빈값 덮어쓰기로 태그가 지워지는 사고는 안 남.
+  const moveRow=document.getElementById('vid-tag-bulk-movegroup-row');
+  if(moveRow)moveRow.style.display='flex'; // "선택 전체를 이 그룹으로 이동"(2026-09-05) — 동명이인·오배정 섞인 선택을 한 번에 교정
+  const moveCb=document.getElementById('vid-tag-bulk-movegroup');if(moveCb)moveCb.checked=false; // 기본 꺼짐(실수로 전체 그룹이동 방지)
   _ensureVidTagGroupList();
   document.getElementById('vid-tag-group-ko').value=ko;
   _renderVidTagMemberCheckboxes(ko);
@@ -7610,6 +7613,7 @@ async function _openVidTagModal(v,ko,originKo){
   document.getElementById('vid-tag-title-text').textContent='출연 멤버 지정';
   document.getElementById('vid-tag-single-hint').style.display='';
   document.getElementById('vid-tag-bulk-overwrite-row').style.display='none';
+  const _mvRow=document.getElementById('vid-tag-bulk-movegroup-row');if(_mvRow)_mvRow.style.display='none'; // 단일 편집은 이동 체크박스 숨김
   document.getElementById('vid-tag-vidtitle').textContent=_cleanTitle(v.title);
   _ensureVidTagGroupList();
   document.getElementById('vid-tag-group-ko').value=ko;
@@ -7968,8 +7972,11 @@ document.getElementById('vid-tag-save').addEventListener('click',async e=>{
   // 잘못 물었을 때(예: "원곡: X그룹" 오태깅) "그룹멤버안나옴+타그룹멤버 크로스태그"로 우회하지 않고
   // 여기서 바로 소속을 바로잡을 수 있게 함.
   const groupKoInput=(document.getElementById('vid-tag-group-ko')?.value||'').trim();
+  // 일괄 "전체를 이 그룹으로 이동" 체크 시엔 첫 영상 그룹과 같아도 강제 적용(섞인 선택을 그 그룹으로 통일).
+  // 안 켜면 기존대로 "첫 영상 그룹과 다를 때만" 이동(단일 편집은 이 체크박스 자체가 없어 항상 후자).
+  const _bulkMoveGroup=!!_vidTagBulkIds&&!!document.getElementById('vid-tag-bulk-movegroup')?.checked;
   let newGko=null;
-  if(groupKoInput&&groupKoInput!==_curGko){
+  if(groupKoInput&&(_bulkMoveGroup||groupKoInput!==_curGko)){
     if(!_isValidVidGroupKo(groupKoInput)){statusEl.textContent=`"${groupKoInput}"는 등록된 그룹명/솔로 아티스트명이 아니에요(정확히 입력해주세요)`;return;}
     newGko=groupKoInput;
   }
