@@ -10,12 +10,19 @@
 //    주면 회사망 TLS 가로채기를 넘어 실제 조회가 된다. 그 전제 때문에 "선반이 실제로 채워지는가"를
 //    검증하지 않았고, _buildFeedTrend가 통째로 실패해도 전부 통과했다(검사 6번 참고). 아래는
 //    **데이터와 무관하게 성립해야 하는 계약**만 검증한다:
-//      · 섹션이 기념일 바로 밑에 있고 제목이 Trend인가
+//      · 섹션이 Charts 바로 밑에 있고 제목이 Trend인가
 //      · 데이터가 없으면 선반이 숨겨지는가(빈 제목만 덜렁 남으면 안 됨)
-//      · 카드 폭이 Charts와 **같은가**(사용자 요구가 "차트와 동일 크기")
-//      · 가로 드래그/휠 스크롤이 바인딩되는가 — ⚠️ 이 레포의 고질 함정: 메인 <script>가 #feed-body보다
-//        먼저 끝나서 최상단 바인딩은 조용히 무시된다(실제로 여기 있던 #feed-anniv 휠 핸들러가 그 이유로
-//        죽은 코드였다). 지연 바인딩이 실제로 걸리는지 본다.
+//      · 2열 그리드로 그려지는가 · 전체폭 승격이 동작하는가(쇼츠 포함)
+//
+// ⚠️ 2026-09-04 계약 갱신 — 이 테스트는 8/30 구조 변경을 따라오지 못해 3건이 계속 빨갛게 떠 있었다.
+//    바뀐 것:
+//      · Trend가 **가로 스트립 → 2열 그리드**(.feed-grid)가 됐다. 그래서 "카드 폭이 Charts(158px 고정)와
+//        같은가"와 "가로 드래그 스크롤이 걸리는가"는 **더 이상 성립할 수 없는 계약**이다 — 코드가 아니라
+//        테스트가 낡은 것이었다. 각각 "2열 그리드인가"와 "전체폭 승격이 되는가"로 바꿨다.
+//      · 그 사이에 📊 Charts 섹션이 새로 생겨(2026-08-21) Trend는 기념일이 아니라 **Charts 바로 밑**이다.
+//    ⚠️ 이 테스트는 CI 스킵 목록(.github/workflows/data-and-tests.yml)에 있다(브라우저 필요). 그래서
+//       빨간 채로 몇 주를 갔다 — PRINCIPLES의 "감지는 되는데 아무도 안 보는" 실패 모드 그대로다.
+//       구조를 바꿀 땐 이 파일도 같이 손볼 것.
 //
 // ⚠️ 브라우저는 이 스크립트가 spawn한 PID만 정확히 종료(프로세스명 일괄 kill 금지).
 // 실행: node tests/feed-trend.test.js
@@ -104,15 +111,20 @@ async function main() {
     await ev(`document.getElementById('tab-feed')?.click()`);
     await sleep(3500);
 
-    // ── 1. 선반이 기념일 바로 밑에 있고 제목이 Trend인가 ─────────────────────────
+    // ── 1. 선반이 Charts 바로 밑에 있고 제목이 Trend인가 ─────────────────────────
+    // 원래 요청은 "기념일 밑"이었지만 그 사이 📊 Charts 섹션이 생겨(2026-08-21 랭킹류 분리) 기념일과
+    // Trend 사이에 들어왔다. 지금 지켜야 할 계약은 "기념일 → Charts → Trend" 순서다.
     const layout = JSON.parse(await ev(`(function(){
       const secs=[...document.querySelectorAll('#feed-body .feed-section')];
       const titles=secs.map(s=>(s.querySelector('.feed-section-ttl')||{}).textContent||'');
       const iAnniv=secs.findIndex(s=>s.id==='feed-anniv-section');
+      const iChart=secs.findIndex(s=>s.querySelector('#feed-chart'));
       const iTrend=secs.findIndex(s=>s.id==='feed-trend-section');
-      return JSON.stringify({titles:titles.map(t=>t.trim()),iAnniv:iAnniv,iTrend:iTrend});})()`) || '{}');
+      return JSON.stringify({titles:titles.map(t=>t.trim()),iAnniv:iAnniv,iChart:iChart,iTrend:iTrend});})()`) || '{}');
     if (layout.iTrend < 0) fail('[배치] #feed-trend-section이 없음');
-    else if (layout.iTrend !== layout.iAnniv + 1) fail(`[배치] Trend가 기념일 바로 밑이 아님 (anniv=${layout.iAnniv}, trend=${layout.iTrend}) — 순서: ${layout.titles.join(' / ')}`);
+    else if (layout.iChart < 0) fail('[배치] Charts 섹션(#feed-chart)이 없음');
+    else if (!(layout.iAnniv < layout.iChart)) fail(`[배치] 기념일이 Charts보다 뒤 (anniv=${layout.iAnniv}, chart=${layout.iChart}) — 순서: ${layout.titles.join(' / ')}`);
+    else if (layout.iTrend !== layout.iChart + 1) fail(`[배치] Trend가 Charts 바로 밑이 아님 (chart=${layout.iChart}, trend=${layout.iTrend}) — 순서: ${layout.titles.join(' / ')}`);
     else if (!/Trend/.test(layout.titles[layout.iTrend])) fail(`[배치] 제목이 Trend가 아님 — "${layout.titles[layout.iTrend]}"`);
     else ok(`[배치] ${layout.titles.join(' / ')}`);
 
@@ -125,35 +137,48 @@ async function main() {
     if (e1.children === 0 && e1.display !== 'none') fail(`[빈 상태] 항목이 0개인데 섹션이 보임(display=${e1.display}) — 제목만 덜렁 남는다`);
     else ok(`[빈 상태] 0개면 숨김 규칙 성립 (display=${e1.display}, 항목 ${e1.children}개)`);
 
-    // ── 3. 카드 폭이 Charts와 같은가 (사용자 요구: "차트 쪽 썸네일 크기와 동일") ────
-    const width = JSON.parse(await ev(`(function(){
+    // ── 3. 2열 그리드로 그려지는가 (2026-08-30 가로 스트립 → 그리드) ───────────────
+    // 예전 계약은 "카드 폭이 Charts와 동일(158px)"이었는데, Trend가 그리드가 되면서 카드가 컨테이너
+    // 폭에 따라 늘어나는 1fr이 됐다. 고정폭 스트립인 Charts와 같을 수가 없다 — 지금 지켜야 할 건
+    // "2열이고, 반폭 카드 둘이 한 행에 들어간다"이다.
+    const grid = JSON.parse(await ev(`(function(){
       const sec=document.getElementById('feed-trend-section'),strip=document.getElementById('feed-trend');
-      sec.style.display='';
-      _appendFeedCard(strip,'📈','테스트 영상 제목','세이마이네임 · 2일 전',function(){},'');
-      const t=document.querySelector('#feed-trend>.feed-card');
-      const c=document.querySelector('#feed-chart>.feed-card');
-      const g=el=>el?{w:Math.round(el.getBoundingClientRect().width),
-        title:getComputedStyle(el.querySelector('.feed-card-title')).fontSize,
-        radius:getComputedStyle(el).borderRadius}:null;
-      return JSON.stringify({trend:g(t),chart:g(c)});})()`) || '{}');
-    if (!width.trend) fail('[크기] Trend 카드가 안 그려짐');
-    else if (!width.chart) fail(`[크기] 비교할 Charts 카드가 없음 — Trend는 ${width.trend.w}px`);
-    else if (width.trend.w !== width.chart.w) fail(`[크기] Trend ${width.trend.w}px ≠ Charts ${width.chart.w}px`);
-    else if (width.trend.title !== width.chart.title) fail(`[크기] 제목 글자 크기가 다름 (${width.trend.title} vs ${width.chart.title})`);
-    else ok(`[크기] Charts와 동일 — 폭 ${width.trend.w}px, 제목 ${width.trend.title}, 라운드 ${width.trend.radius}`);
+      sec.style.display='';strip.innerHTML='';
+      for(let i=0;i<4;i++)_appendFeedCard(strip,'📈','테스트 영상 제목 '+i,'세이마이네임 · 2일 전',function(){},'');
+      const cs=getComputedStyle(strip);
+      const cards=[...strip.querySelectorAll('.feed-card')];
+      const w=Math.round(strip.getBoundingClientRect().width);
+      const c0=cards[0]?Math.round(cards[0].getBoundingClientRect().width):0;
+      const tops=cards.map(c=>Math.round(c.getBoundingClientRect().top));
+      return JSON.stringify({cls:strip.className,display:cs.display,
+        cols:cs.gridTemplateColumns.split(' ').filter(Boolean).length,
+        stripW:w,cardW:c0,sameRow:tops[0]===tops[1]});})()`) || '{}');
+    if (!/feed-grid/.test(grid.cls || '')) fail(`[그리드] #feed-trend에 .feed-grid가 없음 — class="${grid.cls}"`);
+    else if (grid.display !== 'grid') fail(`[그리드] display가 ${grid.display} (grid여야 함)`);
+    else if (grid.cols !== 2) fail(`[그리드] 열이 ${grid.cols}개 — 2열이어야 함`);
+    else if (!grid.sameRow) fail('[그리드] 첫 두 카드가 같은 행에 없음(2열 배치가 안 됨)');
+    else if (!(grid.cardW > grid.stripW * 0.3 && grid.cardW < grid.stripW * 0.7)) fail(`[그리드] 카드 폭 ${grid.cardW}px가 컨테이너 ${grid.stripW}px의 절반 근처가 아님`);
+    else ok(`[그리드] 2열 · 카드 ${grid.cardW}px / 컨테이너 ${grid.stripW}px`);
 
-    // ── 4. 가로 스크롤 바인딩(이 레포 고질 함정: 최상단 바인딩은 조용히 무시된다) ────
-    const scroll = JSON.parse(await ev(`(function(){
-      const strip=document.getElementById('feed-trend');
-      for(let i=0;i<12;i++)_appendFeedCard(strip,'📈','아주 긴 테스트 영상 제목 '+i,'그룹 · 1일 전',function(){},'');
-      return JSON.stringify({dragBound:!!strip._dragScrollBound,
-        overflowX:getComputedStyle(strip).overflowX,
-        scrollable:strip.scrollWidth>strip.clientWidth,
-        sw:strip.scrollWidth,cw:strip.clientWidth});})()`) || '{}');
-    if (!scroll.dragBound) fail('[스크롤] _enableDragScroll이 안 걸림 — 데스크톱에서 드래그·휠로 못 넘긴다(최상단 바인딩은 #feed-body보다 먼저 실행돼 무시된다)');
-    else if (scroll.overflowX !== 'auto' && scroll.overflowX !== 'scroll') fail(`[스크롤] overflow-x가 ${scroll.overflowX}`);
-    else if (!scroll.scrollable) fail(`[스크롤] 카드 13개인데 가로로 안 넘침 (${scroll.sw} ≤ ${scroll.cw})`);
-    else ok(`[스크롤] 드래그 바인딩 + 가로 넘침 ${scroll.sw}px > ${scroll.cw}px`);
+    // ── 4. 전체폭 승격이 동작하는가 — 가로 + **쇼츠**(2026-09-04 신설) ──────────────
+    // 원래 이 자리는 가로 드래그 스크롤 검사였는데 그리드가 되면서 성립하지 않는다. 대신 이 선반의
+    // 리듬을 만드는 계약을 본다: _packRows가 (1) 가로를 확률적으로 전체폭으로 올리고 (2) 쇼츠도
+    // shortWideProb로 올릴 수 있어야 한다. ⚠️ (2)는 오래 없었던 기능이다 — 승격 조건이 "가로일 때만"
+    // 이라 큰 쇼츠가 구조적으로 하나도 안 나왔다. 확률이라 실렌더로 보면 불안정하니 확률을 1로 고정해
+    // 결정적으로 검사한다.
+    const promo = JSON.parse(await ev(`(function(){
+      const items=[];for(let i=0;i<10;i++)items.push({i:i,short:i%2===0});
+      const isShort=x=>x.short;
+      const wideShort=_packRows(items,isShort,{wideProb:0,minGap:0,shortWideProb:1}).filter(r=>r.wide&&r.short).length;
+      const wideNorm=_packRows(items,isShort,{wideProb:1,minGap:0,shortWideProb:0}).filter(r=>r.wide&&!r.short).length;
+      const noShortWide=_packRows(items,isShort,{wideProb:1,minGap:0}).filter(r=>r.wide&&r.items.every(isShort)).length;
+      const kept=_packRows(items,isShort,{wideProb:0.3,minGap:2}).flatMap(r=>r.items).length;
+      return JSON.stringify({wideShort:wideShort,wideNorm:wideNorm,noShortWide:noShortWide,kept:kept});})()`) || '{}');
+    if (!(promo.wideNorm > 0)) fail('[전체폭] 가로 영상이 전체폭으로 안 올라감');
+    else if (!(promo.wideShort > 0)) fail('[전체폭] shortWideProb=1인데 큰 쇼츠가 0개 — 쇼츠 전체폭 승격이 죽었다');
+    else if (promo.noShortWide !== 0) fail(`[전체폭] shortWideProb를 안 줬는데 쇼츠가 전체폭이 됨(${promo.noShortWide}개) — 기본값이 새고 있다`);
+    else if (promo.kept !== 10) fail(`[전체폭] 패킹 중 항목 유실 — 10개 중 ${promo.kept}개만 남음`);
+    else ok(`[전체폭] 가로 ${promo.wideNorm} · 쇼츠 ${promo.wideShort} · 기본값에선 쇼츠 승격 0 · 유실 없음`);
 
     // ── 5. 기준값(최근 7일)이 요청대로인가 ─────────────────────────────────────
     const days = await ev(`typeof _FEED_TREND_DAYS!=='undefined'?_FEED_TREND_DAYS:null`);
