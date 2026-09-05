@@ -4206,7 +4206,7 @@ function _appendTrendingSection(hits,res,mobSearch,obSearch){
 function _appendSearchSections(out,res,mobSearch,obSearch){
   const label={video:{ko:'영상',en:'Videos'},event:{ko:'공연',en:'Events'},
     group:{ko:'그룹',en:'Groups'},member:{ko:'멤버',en:'Members'},song:{ko:'곡',en:'Songs'},
-    program:{ko:'컬렉션',en:'Collections'}};
+    program:{ko:'컬렉션',en:'Collections'},between:{ko:'둘 사이',en:'Between'}};
   // 이전 요청이 붙여둔 서버 섹션은 걷어낸다(같은 검색어로 두 번 붙는 것 방지)
   res.querySelectorAll('.sr-remote').forEach(el=>el.remove());
   const hasAny=(out.event&&out.event.length)||(out.video&&out.video.length);
@@ -4282,7 +4282,7 @@ function _makeSearchItem(h,res,mobSearch,obSearch){
   div.dataset.type=h.type||''; // 풀스크린 시트 탭 필터가 이 값으로 세고 감춘다
   if(h._expanded)div.dataset.expanded='1'; // 그룹명으로 딸려온 멤버(이름이 직접 걸린 게 아님) — 회귀 테스트가 이걸 센다
   // 타입별 아이콘 — 섹션 헤더가 없는 경우(최근검색·온보딩)에도 한눈에 구분되게 한다
-  const _ico={song:'♪ ',video:'▶ ',event:'📍 ',program:'🎬 '}[h.type]||'';
+  const _ico={song:'♪ ',video:'▶ ',event:'📍 ',program:'🎬 ',between:'🔗 '}[h.type]||'';
   // 영상은 썸네일 + 2줄(제목·그룹·조회수)로 그린다(2026-09-02) — 텍스트 한 줄만으로는 어떤
   // 영상인지 알기 어렵고, 검색 결과가 콘텐츠처럼 보이지 않는다. 썸네일은 DB thumb(mqdefault).
   // ⚠️ 썸네일이 없는 행도 있으므로(구 데이터) 자리만 잡아두고 이미지는 있을 때만 넣는다 —
@@ -4317,17 +4317,20 @@ function _makeSearchItem(h,res,mobSearch,obSearch){
       _openProgramCollection(h.data);
       return;
     }
-    _recordRecentSearch((h.type==='song'||h.type==='event')?{type:h.ownerType,data:h.data}:h);
+    _recordRecentSearch((h.type==='song'||h.type==='event')?{type:h.ownerType,data:h.data}:(h.type==='between'?{type:'member',data:h.data}:h));
     _closeFeedOverlay();
     closeCards();
     flyTo(h.pos);
     const cx=window.innerWidth/2,cy=window.innerHeight*0.38;
     const _openCard=()=>{
       // 곡·공연 결과는 그 주인의 카드를 연다(곡/공연 자체 카드는 없음). 주인이 그룹이면 그룹 카드, 멤버면 멤버 카드.
-      const t=(h.type==='song'||h.type==='event')?h.ownerType:h.type;
+      const t=(h.type==='song'||h.type==='event')?h.ownerType:(h.type==='between'?'member':h.type);
       const d=h.data;
       if(t==='group'){showGC(d,cx,cy);pulseGroup(d);}
       else{showT(d,cx,cy);pulseMember(d);pulseGroup(d.group.ko);}
+      // 두 사람 검색(둘 사이) — A 멤버 카드 위에 연결 카드를 열고 B를 자동 선택해 "함께 나온 것"을 바로
+      // 보여준다(2026-09-05, 킬러 6.1 "둘 사이" 정문). B가 영상 콜라보(API)면 늦게 채워질 수 있어 재시도.
+      if(h.type==='between')_openBetweenConn(h.data,h._betweenB);
       // 곡을 클릭하면 주인 카드 위에 그 곡의 영상 모음(원곡+커버)을 오버레이로 얹는다(2026-08-31).
       if(h.type==='song'){
         const owner=t==='group'?{gko:d,memberKo:null}:{gko:_ytGroupKoFor(d),memberKo:d.name.ko};
@@ -4375,7 +4378,7 @@ function _renderSearchHits(hits,res,mobSearch,isRecent,obSearch){
   // 최근 검색·온보딩 검색(5칸)은 섹션 없이 기존 그대로.
   const _secLabel={group:{ko:'그룹',en:'Groups'},member:{ko:'멤버',en:'Members'},
     song:{ko:'곡',en:'Songs'},video:{ko:'영상',en:'Videos'},event:{ko:'공연',en:'Events'},
-    program:{ko:'컬렉션',en:'Collections'}};
+    program:{ko:'컬렉션',en:'Collections'},between:{ko:'둘 사이',en:'Between'}};
   let _secOrder=[];const _byType=new Map();
   if(!isRecent&&!obSearch){
     hits.forEach(h=>{const t=h.type;if(!_byType.has(t)){_byType.set(t,[]);_secOrder.push(t);}_byType.get(t).push(h);});
@@ -4462,6 +4465,35 @@ async function _openProgramCollection(p,ctx){
     const songs=vids.map(v=>({t:v.title,u:vidUrl(v),thumb:v.thumb,vc:v.view_count,pa:v.published_at?.slice(0,10),_apiId:v.id,_apiGroupKo:v.group_ko}));
     _openFeedListOverlay(label,'',songs);
   }catch(e){ _openFeedListOverlay(label,'',[]); }
+}
+// "카리나, 장원영" 같은 두-사람 검색용 — 이름 문자열 하나를 아티스트로 해석(정확 ko/표시명/영문, 없으면
+// 정규화 영문). 활동 중을 우선. 못 찾으면 null.
+function _resolveArtistByStr(s){
+  const q=(s||'').trim(); if(q.length<2)return null;
+  const ql=q.toLowerCase();
+  let c=ARTISTS.filter(a=>a.name.ko===q||(a.displayName&&a.displayName===q)||(a.name.en&&a.name.en.toLowerCase()===ql));
+  if(!c.length){const qn=_normEn(q);if(qn.length>=2)c=ARTISTS.filter(a=>a.name.en&&_normEn(a.name.en)===qn);}
+  if(!c.length)return null;
+  c.sort((a,b)=>((a.active===false)-(b.active===false)));
+  return c[0];
+}
+// 두 사람 검색 결과 클릭 — A의 연결 카드를 열고 B를 자동 선택해 함께 나온 영상을 바로 띄운다(킬러 6.1 "둘 사이").
+// B가 영상 콜라보(API)로만 이어진 경우 목록이 늦게 채워지므로 _connAllNames(로컬+API)로 보고 한 번 더 시도.
+function _openBetweenConn(a,b){
+  if(!a||!b)return;
+  openConnCard(a);
+  const trySelect=()=>{
+    if(typeof _connAnchor==='undefined'||_connAnchor!==a)return false; // 다른 카드로 넘어갔으면 중단
+    const all=(typeof _connAllNames==='function'?_connAllNames():[])||[];
+    if(all.includes(b.name.ko)){
+      _connSelected=[b.name.ko];
+      _updateConnLines3d();_applyConnFocus();_flyToConnStars();
+      _buildConnContent(isMob()?connSheetBody:connPanelInner);
+      return true;
+    }
+    return false;
+  };
+  if(!trySelect())setTimeout(trySelect,1500);
 }
 function doSearch(q){
   const obSr=_obSearchMode?document.getElementById('ob-sr'):null;
@@ -4704,6 +4736,19 @@ function doSearch(q){
       name:(currentLang==='ko'?`${p.label} 모아보기`:`${p.en||p.label} Collection`),
       sub:currentLang==='ko'?'프로그램':'Program',data:p,score:0.6});
   });
+  // ── 두 사람 검색(둘 사이) 정문(2026-09-05, 킬러 6.1) ──────────────────────────
+  // "카리나, 장원영" / "카리나 x 장원영" / "A & B"처럼 두 이름을 구분자로 치면, 둘의 연결 카드를 여는
+  // "함께 보기" 결과를 최상단 가깝게(score 0.2) 넣는다 — 둘 다 아티스트로 해석되고 서로 다를 때만.
+  {
+    const _parts=q.split(/\s*(?:,|·|&|×|\/|\bvs\b| x )\s*/i).map(s=>s.trim()).filter(Boolean);
+    if(_parts.length===2){
+      const _A=_resolveArtistByStr(_parts[0]),_B=_resolveArtistByStr(_parts[1]);
+      if(_A&&_B&&_A!==_B){
+        hits.push({type:'between',name:`${_dispName(_A)} × ${_dispName(_B)}`,
+          sub:currentLang==='ko'?'함께 보기':'Between',pos:_A._worldPos,data:_A,ownerType:'member',_betweenB:_B,score:0.2});
+      }
+    }
+  }
   // ── 동점 타이브레이커(2026-09-02) ─────────────────────────────────────────
   // 매칭 등급(score)은 그대로 두고 **동점만** 가른다 — "소녀시대"를 치면 여전히 정확 매칭이 위다.
   // 등급을 뒤집지 않으므로 결과가 결정적이고 설명 가능하다("같은 점수면 활동 중이 위, 그다음 내 최애").
