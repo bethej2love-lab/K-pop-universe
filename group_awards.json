@@ -1,0 +1,1356 @@
+{
+ "에스파": {
+  "total": 9,
+  "byCeremony": {
+   "AAA": 1,
+   "더팩트뮤직어워드": 1,
+   "골든디스크": 2,
+   "MAMA": 1,
+   "멜론뮤직어워드": 4
+  },
+  "list": [
+   {
+    "year": "2021",
+    "ceremony": "AAA",
+    "category": "Stage of the Year"
+   },
+   {
+    "year": "2024",
+    "ceremony": "더팩트뮤직어워드",
+    "category": "Daesang Award"
+   },
+   {
+    "year": "2022",
+    "ceremony": "골든디스크",
+    "category": "Artist of the Year"
+   },
+   {
+    "year": "2025",
+    "ceremony": "골든디스크",
+    "category": "Song of the Year"
+   },
+   {
+    "year": "2024",
+    "ceremony": "MAMA",
+    "category": "Song of the Year"
+   },
+   {
+    "year": "2021",
+    "ceremony": "멜론뮤직어워드",
+    "category": "Record of the Year"
+   },
+   {
+    "year": "2024",
+    "ceremony": "멜론뮤직어워드",
+    "category": "Album of the Year"
+   },
+   {
+    "year": "2024",
+    "ceremony": "멜론뮤직어워드",
+    "category": "Artist of the Year"
+   },
+   {
+    "year": "2024",
+    "ceremony": "멜론뮤직어워드",
+    "category": "Song of the Year"
+   }
+  ]
+ },
+ "아이브": {
+  "total": 7,
+  "byCeremony": {
+   "AAA": 2,
+   "더팩트뮤직어워드": 1,
+   "골든디스크": 1,
+   "MAMA": 1,
+   "멜론뮤직어워드": 2
+  },
+  "list": [
+   {
+    "year": "2022",
+    "ceremony": "AAA",
+    "category": "Song of the Year"
+   },
+   {
+    "year": "2025",
+    "ceremony": "AAA",
+    "category": "Song of the Year"
+   },
+   {
+    "year": "2025",
+    "ceremony": "더팩트뮤직어워드",
+    "category": "Sound of the Year"
+   },
+   {
+    "year": "2023",
+    "ceremony": "골든디스크",
+    "category": "Song of the Year"
+   },
+   {
+    "year": "2022",
+    "ceremony": "MAMA",
+    "category": "Song of the Year"
+   },
+   {
+    "year": "2022",
+    "ceremony": "멜론뮤직어워드",
+    "category": "Song of the Year"
+   },
+   {
+    "year": "2023",
+    "ceremony": "멜론뮤직어워드",
+    "category": "Album of the Year"
+   }
+  ]
+ },
+ "뉴진스": {
+  "total": 9,
+  "byCeremony": {
+   "AAA": 4,
+   "골든디스크": 1,
+   "MAMA": 2,
+   "멜론뮤직어워드": 2
+  },
+  "list": [
+   {
+    "year": "2022",
+    "ceremony": "AAA",
+    "category": "Performance of the Year"
+   },
+   {
+    "year": "2023",
+    "ceremony": "AAA",
+    "category": "Singer of the Year"
+   },
+   {
+    "year": "2023",
+    "ceremony": "AAA",
+    "category": "Song of the Year"
+   },
+   {
+    "year": "2024",
+    "ceremony": "AAA",
+    "category": "Artist of the Year – Music"
+   },
+   {
+    "year": "2024",
+    "ceremony": "골든디스크",
+    "category": "Digital Daesang"
+   },
+   {
+    "year": "2023",
+    "ceremony": "MAMA",
+    "category": "Artist of the Year"
+   },
+   {
+    "year": "2023",
+    "ceremony": "MAMA",
+    "category": "Song of the Year"
+   },
+   {
+    "year": "2023",
+    "ceremony": "멜론뮤직어워드",
+    "category": "Artist of the Year"
+   },
+   {
+    "year": "2023",
+    "ceremony": "멜론뮤직어워드",
+    "category": "Song of the Year"
+   }
+  ]
+ },
+ "세븐틴": {
+  "total": 16,
+  "byCeremony": {
+   "AAA": 5,
+   "써클차트(가온)": 2,
+   "더팩트뮤직어워드": 4,
+   "골든디스크": 2,
+   "MAMA": 3
+  },
+  "list": [
+   {
+    "year": "2018",
+    "ceremony": "AAA",
+    "category": "Artist of the Year – Music"
+   },
+   {
+    "year": "2019",
+    "ceremony": "AAA",
+    "category": "Album of the Year"
+   },
+   {
+    "year": "2021",
+    "ceremony": "AAA",
+    "category": "Artist of the Year"
+   },
+   {
+    "year": "2022",
+    "ceremony": "AAA",
+    "category": "Singer of the Year"
+   },
+   {
+    "year": "2023",
+    "ceremony": "AAA",
+    "category": "Album of the Year"
+   },
+   {
+    "year": "2024",
+    "ceremony": "써클차트(가온)",
+    "category": "Artist of the Year – Album"
+   },
+   {
+    "year": "2024",
+    "ceremony": "써클차트(가온)",
+    "category": "Kit-Album of the Year"
+   },
+   {
+    "year": "2020",
+    "ceremony": "더팩트뮤직어워드",
+    "category": "Artist of the Year"
+   },
+   {
+    "year": "2021",
+    "ceremony": "더팩트뮤직어워드",
+    "category": "Artist of the Year"
+   },
+   {
+    "year": "2023",
+    "ceremony": "더팩트뮤직어워드",
+    "category": "Artist of the Year"
+   },
+   {
+    "year": "2023",
+    "ceremony": "더팩트뮤직어워드",
+    "category": "Daesang Award"
+   },
+   {
+    "year": "2024",
+    "ceremony": "골든디스크",
+    "category": "Album Daesang (Album of the Year)"
+   },
+   {
+    "year": "2025",
+    "ceremony": "골든디스크",
+    "category": "Album Daesang (Album of the Year)"
+   },
+   {
+    "year": "2023",
+    "ceremony": "MAMA",
+    "category": "Album of the Year"
+   },
+   {
+    "year": "2024",
+    "ceremony": "MAMA",
+    "category": "Artist of the Year"
+   },
+   {
+    "year": "2024",
+    "ceremony": "MAMA",
+    "category": "Album of the Year"
+   }
+  ]
+ },
+ "스트레이키즈": {
+  "total": 10,
+  "byCeremony": {
+   "AAA": 5,
+   "써클차트(가온)": 1,
+   "더팩트뮤직어워드": 2,
+   "골든디스크": 1,
+   "MAMA": 1
+  },
+  "list": [
+   {
+    "year": "2021",
+    "ceremony": "AAA",
+    "category": "Performance of the Year"
+   },
+   {
+    "year": "2022",
+    "ceremony": "AAA",
+    "category": "Album of the Year"
+   },
+   {
+    "year": "2023",
+    "ceremony": "AAA",
+    "category": "Stage of the Year"
+   },
+   {
+    "year": "2025",
+    "ceremony": "AAA",
+    "category": "Artist of the Year"
+   },
+   {
+    "year": "2025",
+    "ceremony": "AAA",
+    "category": "Album of the Year"
+   },
+   {
+    "year": "2024",
+    "ceremony": "써클차트(가온)",
+    "category": "Artist of the Year – Album"
+   },
+   {
+    "year": "2025",
+    "ceremony": "더팩트뮤직어워드",
+    "category": "Honor of the Year"
+   },
+   {
+    "year": "2025",
+    "ceremony": "더팩트뮤직어워드",
+    "category": "Record of the Year"
+   },
+   {
+    "year": "2026",
+    "ceremony": "골든디스크",
+    "category": "Album Daesang"
+   },
+   {
+    "year": "2025",
+    "ceremony": "MAMA",
+    "category": "Visa Album of the Year"
+   }
+  ]
+ },
+ "엔시티 127": {
+  "total": 11,
+  "byCeremony": {
+   "AAA": 3,
+   "써클차트(가온)": 2,
+   "지니뮤직어워드": 2,
+   "멜론뮤직어워드": 1,
+   "서울가요대상": 3
+  },
+  "list": [
+   {
+    "year": "2020",
+    "ceremony": "AAA",
+    "category": "Album of the Year"
+   },
+   {
+    "year": "2021",
+    "ceremony": "AAA",
+    "category": "Album of the Year"
+   },
+   {
+    "year": "2024",
+    "ceremony": "AAA",
+    "category": "Stage of the Year"
+   },
+   {
+    "year": "2024",
+    "ceremony": "써클차트(가온)",
+    "category": "Artist of the Year (Album)"
+   },
+   {
+    "year": "2024",
+    "ceremony": "써클차트(가온)",
+    "category": "Digital Album of the Year"
+   },
+   {
+    "year": "2022",
+    "ceremony": "지니뮤직어워드",
+    "category": "Album of the Year"
+   },
+   {
+    "year": "2022",
+    "ceremony": "지니뮤직어워드",
+    "category": "Singer of the Year"
+   },
+   {
+    "year": "2023",
+    "ceremony": "멜론뮤직어워드",
+    "category": "Record of the Year"
+   },
+   {
+    "year": "2022",
+    "ceremony": "서울가요대상",
+    "category": "Grand Prize"
+   },
+   {
+    "year": "2023",
+    "ceremony": "서울가요대상",
+    "category": "Grand Prize"
+   },
+   {
+    "year": "2024",
+    "ceremony": "서울가요대상",
+    "category": "Grand Prize"
+   }
+  ]
+ },
+ "엔시티 드림": {
+  "total": 11,
+  "byCeremony": {
+   "AAA": 3,
+   "써클차트(가온)": 2,
+   "지니뮤직어워드": 2,
+   "멜론뮤직어워드": 1,
+   "서울가요대상": 3
+  },
+  "list": [
+   {
+    "year": "2020",
+    "ceremony": "AAA",
+    "category": "Album of the Year"
+   },
+   {
+    "year": "2021",
+    "ceremony": "AAA",
+    "category": "Album of the Year"
+   },
+   {
+    "year": "2024",
+    "ceremony": "AAA",
+    "category": "Stage of the Year"
+   },
+   {
+    "year": "2024",
+    "ceremony": "써클차트(가온)",
+    "category": "Artist of the Year (Album)"
+   },
+   {
+    "year": "2024",
+    "ceremony": "써클차트(가온)",
+    "category": "Digital Album of the Year"
+   },
+   {
+    "year": "2022",
+    "ceremony": "지니뮤직어워드",
+    "category": "Album of the Year"
+   },
+   {
+    "year": "2022",
+    "ceremony": "지니뮤직어워드",
+    "category": "Singer of the Year"
+   },
+   {
+    "year": "2023",
+    "ceremony": "멜론뮤직어워드",
+    "category": "Record of the Year"
+   },
+   {
+    "year": "2022",
+    "ceremony": "서울가요대상",
+    "category": "Grand Prize"
+   },
+   {
+    "year": "2023",
+    "ceremony": "서울가요대상",
+    "category": "Grand Prize"
+   },
+   {
+    "year": "2024",
+    "ceremony": "서울가요대상",
+    "category": "Grand Prize"
+   }
+  ]
+ },
+ "엔하이픈": {
+  "total": 2,
+  "byCeremony": {
+   "MAMA": 1,
+   "더팩트뮤직어워드": 1
+  },
+  "list": [
+   {
+    "year": "2025",
+    "ceremony": "MAMA",
+    "category": "Fans' Choice of the Year"
+   },
+   {
+    "year": "2025",
+    "ceremony": "더팩트뮤직어워드",
+    "category": "Icon of the Year"
+   }
+  ]
+ },
+ "방탄소년단": {
+  "total": 54,
+  "byCeremony": {
+   "APAN": 1,
+   "AAA": 4,
+   "더팩트뮤직어워드": 4,
+   "지니뮤직어워드": 3,
+   "골든디스크": 7,
+   "한터뮤직어워드": 1,
+   "MAMA": 15,
+   "멜론뮤직어워드": 13,
+   "서울가요대상": 6
+  },
+  "list": [
+   {
+    "year": "2020",
+    "ceremony": "APAN",
+    "category": "No. 1 Achievement"
+   },
+   {
+    "year": "2018",
+    "ceremony": "AAA",
+    "category": "Artist of the Year – Music"
+   },
+   {
+    "year": "2018",
+    "ceremony": "AAA",
+    "category": "Daesang Award – Music"
+   },
+   {
+    "year": "2020",
+    "ceremony": "AAA",
+    "category": "Song of the Year"
+   },
+   {
+    "year": "2021",
+    "ceremony": "AAA",
+    "category": "Song of the Year"
+   },
+   {
+    "year": "2019",
+    "ceremony": "더팩트뮤직어워드",
+    "category": "Daesang Award"
+   },
+   {
+    "year": "2020",
+    "ceremony": "더팩트뮤직어워드",
+    "category": "Daesang Award"
+   },
+   {
+    "year": "2021",
+    "ceremony": "더팩트뮤직어워드",
+    "category": "Daesang Award"
+   },
+   {
+    "year": "2022",
+    "ceremony": "더팩트뮤직어워드",
+    "category": "Daesang Award"
+   },
+   {
+    "year": "2018",
+    "ceremony": "지니뮤직어워드",
+    "category": "Artist of the Year"
+   },
+   {
+    "year": "2018",
+    "ceremony": "지니뮤직어워드",
+    "category": "Album of the Year (Digital)"
+   },
+   {
+    "year": "2020",
+    "ceremony": "지니뮤직어워드",
+    "category": "Album of the Year"
+   },
+   {
+    "year": "2018",
+    "ceremony": "골든디스크",
+    "category": "Disc Daesang"
+   },
+   {
+    "year": "2019",
+    "ceremony": "골든디스크",
+    "category": "Disc Daesang"
+   },
+   {
+    "year": "2020",
+    "ceremony": "골든디스크",
+    "category": "Digital Daesang"
+   },
+   {
+    "year": "2020",
+    "ceremony": "골든디스크",
+    "category": "Disc Daesang"
+   },
+   {
+    "year": "2021",
+    "ceremony": "골든디스크",
+    "category": "Album of the Year"
+   },
+   {
+    "year": "2022",
+    "ceremony": "골든디스크",
+    "category": "Album of the Year"
+   },
+   {
+    "year": "2023",
+    "ceremony": "골든디스크",
+    "category": "Album of the Year"
+   },
+   {
+    "year": "2023",
+    "ceremony": "한터뮤직어워드",
+    "category": "Artist of the Year"
+   },
+   {
+    "year": "2016",
+    "ceremony": "MAMA",
+    "category": "Artist of the Year"
+   },
+   {
+    "year": "2017",
+    "ceremony": "MAMA",
+    "category": "Artist of the Year"
+   },
+   {
+    "year": "2018",
+    "ceremony": "MAMA",
+    "category": "Album of the Year"
+   },
+   {
+    "year": "2018",
+    "ceremony": "MAMA",
+    "category": "Artist of the Year"
+   },
+   {
+    "year": "2019",
+    "ceremony": "MAMA",
+    "category": "Album of the Year"
+   },
+   {
+    "year": "2019",
+    "ceremony": "MAMA",
+    "category": "Artist of the Year"
+   },
+   {
+    "year": "2019",
+    "ceremony": "MAMA",
+    "category": "Song of the Year"
+   },
+   {
+    "year": "2020",
+    "ceremony": "MAMA",
+    "category": "Album of the Year"
+   },
+   {
+    "year": "2020",
+    "ceremony": "MAMA",
+    "category": "Artist of the Year"
+   },
+   {
+    "year": "2020",
+    "ceremony": "MAMA",
+    "category": "Song of the Year"
+   },
+   {
+    "year": "2021",
+    "ceremony": "MAMA",
+    "category": "Album of the Year"
+   },
+   {
+    "year": "2021",
+    "ceremony": "MAMA",
+    "category": "Artist of the Year"
+   },
+   {
+    "year": "2021",
+    "ceremony": "MAMA",
+    "category": "Song of the Year"
+   },
+   {
+    "year": "2022",
+    "ceremony": "MAMA",
+    "category": "Album of the Year"
+   },
+   {
+    "year": "2022",
+    "ceremony": "MAMA",
+    "category": "Artist of the Year"
+   },
+   {
+    "year": "2016",
+    "ceremony": "멜론뮤직어워드",
+    "category": "Album of the Year"
+   },
+   {
+    "year": "2017",
+    "ceremony": "멜론뮤직어워드",
+    "category": "Song of the Year"
+   },
+   {
+    "year": "2018",
+    "ceremony": "멜론뮤직어워드",
+    "category": "Album of the Year"
+   },
+   {
+    "year": "2018",
+    "ceremony": "멜론뮤직어워드",
+    "category": "Artist of the Year"
+   },
+   {
+    "year": "2019",
+    "ceremony": "멜론뮤직어워드",
+    "category": "Album of the Year"
+   },
+   {
+    "year": "2019",
+    "ceremony": "멜론뮤직어워드",
+    "category": "Artist of the Year"
+   },
+   {
+    "year": "2019",
+    "ceremony": "멜론뮤직어워드",
+    "category": "Record of the Year"
+   },
+   {
+    "year": "2019",
+    "ceremony": "멜론뮤직어워드",
+    "category": "Song of the Year"
+   },
+   {
+    "year": "2020",
+    "ceremony": "멜론뮤직어워드",
+    "category": "Album of the Year"
+   },
+   {
+    "year": "2020",
+    "ceremony": "멜론뮤직어워드",
+    "category": "Artist of the Year"
+   },
+   {
+    "year": "2020",
+    "ceremony": "멜론뮤직어워드",
+    "category": "Song of the Year"
+   },
+   {
+    "year": "2021",
+    "ceremony": "멜론뮤직어워드",
+    "category": "Song of the Year"
+   },
+   {
+    "year": "2022",
+    "ceremony": "멜론뮤직어워드",
+    "category": "Record of the Year"
+   },
+   {
+    "year": "2017",
+    "ceremony": "서울가요대상",
+    "category": "Album of the Year"
+   },
+   {
+    "year": "2018",
+    "ceremony": "서울가요대상",
+    "category": "Artist of the Year"
+   },
+   {
+    "year": "2019",
+    "ceremony": "서울가요대상",
+    "category": "Album of the Year"
+   },
+   {
+    "year": "2019",
+    "ceremony": "서울가요대상",
+    "category": "Artist of the Year"
+   },
+   {
+    "year": "2020",
+    "ceremony": "서울가요대상",
+    "category": "Album Daesang"
+   },
+   {
+    "year": "2021",
+    "ceremony": "서울가요대상",
+    "category": "Grand Award"
+   }
+  ]
+ },
+ "트와이스": {
+  "total": 10,
+  "byCeremony": {
+   "APAN": 1,
+   "AAA": 3,
+   "골든디스크": 1,
+   "MAMA": 3,
+   "멜론뮤직어워드": 1,
+   "서울가요대상": 1
+  },
+  "list": [
+   {
+    "year": "2021",
+    "ceremony": "APAN",
+    "category": "Represent Record of the Year"
+   },
+   {
+    "year": "2018",
+    "ceremony": "AAA",
+    "category": "Artist of the Year – Music"
+   },
+   {
+    "year": "2019",
+    "ceremony": "AAA",
+    "category": "Artist of the Year"
+   },
+   {
+    "year": "2020",
+    "ceremony": "AAA",
+    "category": "Artist of the Year"
+   },
+   {
+    "year": "2017",
+    "ceremony": "골든디스크",
+    "category": "Song of the Year"
+   },
+   {
+    "year": "2016",
+    "ceremony": "MAMA",
+    "category": "Song of the Year"
+   },
+   {
+    "year": "2017",
+    "ceremony": "MAMA",
+    "category": "Song of the Year"
+   },
+   {
+    "year": "2018",
+    "ceremony": "MAMA",
+    "category": "Song of the Year"
+   },
+   {
+    "year": "2016",
+    "ceremony": "멜론뮤직어워드",
+    "category": "Song of the Year"
+   },
+   {
+    "year": "2017",
+    "ceremony": "서울가요대상",
+    "category": "Record of the Year in Digital Release"
+   }
+  ]
+ },
+ "소녀시대": {
+  "total": 9,
+  "byCeremony": {
+   "골든디스크": 3,
+   "멜론뮤직어워드": 3,
+   "MAMA": 1,
+   "서울가요대상": 2
+  },
+  "list": [
+   {
+    "year": "2009",
+    "ceremony": "골든디스크",
+    "category": "Digital Daesang Award"
+   },
+   {
+    "year": "2010",
+    "ceremony": "골든디스크",
+    "category": "Disk Daesang Award"
+   },
+   {
+    "year": "2012",
+    "ceremony": "골든디스크",
+    "category": "Digital Daesang Award"
+   },
+   {
+    "year": "2009",
+    "ceremony": "멜론뮤직어워드",
+    "category": "Artist of the Year"
+   },
+   {
+    "year": "2009",
+    "ceremony": "멜론뮤직어워드",
+    "category": "Song of the Year"
+   },
+   {
+    "year": "2010",
+    "ceremony": "멜론뮤직어워드",
+    "category": "Artist of the Year"
+   },
+   {
+    "year": "2011",
+    "ceremony": "MAMA",
+    "category": "Artist of the Year"
+   },
+   {
+    "year": "2010",
+    "ceremony": "서울가요대상",
+    "category": "Daesang Award"
+   },
+   {
+    "year": "2011",
+    "ceremony": "서울가요대상",
+    "category": "Daesang Award"
+   }
+  ]
+ },
+ "샤이니": {
+  "total": 1,
+  "byCeremony": {
+   "멜론뮤직어워드": 1
+  },
+  "list": [
+   {
+    "year": "2013",
+    "ceremony": "멜론뮤직어워드",
+    "category": "Artist of the Year"
+   }
+  ]
+ },
+ "에이티즈": {
+  "total": 2,
+  "byCeremony": {
+   "AAA": 1,
+   "서울가요대상": 1
+  },
+  "list": [
+   {
+    "year": "2025",
+    "ceremony": "AAA",
+    "category": "Stage of the Year"
+   },
+   {
+    "year": "2026",
+    "ceremony": "서울가요대상",
+    "category": "Grand Prize"
+   }
+  ]
+ },
+ "아이들": {
+  "total": 2,
+  "byCeremony": {
+   "멜론뮤직어워드": 1,
+   "서울가요대상": 1
+  },
+  "list": [
+   {
+    "year": "2024",
+    "ceremony": "멜론뮤직어워드",
+    "category": "Record of the Year"
+   },
+   {
+    "year": "2025",
+    "ceremony": "서울가요대상",
+    "category": "Grand Prize"
+   }
+  ]
+ },
+ "르세라핌": {
+  "total": 2,
+  "byCeremony": {
+   "AAA": 1,
+   "한터뮤직어워드": 1
+  },
+  "list": [
+   {
+    "year": "2024",
+    "ceremony": "AAA",
+    "category": "Performance of the Year"
+   },
+   {
+    "year": "2024",
+    "ceremony": "한터뮤직어워드",
+    "category": "Artist of the Year"
+   }
+  ]
+ },
+ "워너원": {
+  "total": 2,
+  "byCeremony": {
+   "AAA": 1,
+   "멜론뮤직어워드": 1
+  },
+  "list": [
+   {
+    "year": "2018",
+    "ceremony": "AAA",
+    "category": "Artist of the Year – Music"
+   },
+   {
+    "year": "2018",
+    "ceremony": "멜론뮤직어워드",
+    "category": "Record of the Year Daesang"
+   }
+  ]
+ },
+ "엑소": {
+  "total": 20,
+  "byCeremony": {
+   "AAA": 2,
+   "골든디스크": 4,
+   "MAMA": 6,
+   "멜론뮤직어워드": 4,
+   "서울가요대상": 4
+  },
+  "list": [
+   {
+    "year": "2016",
+    "ceremony": "AAA",
+    "category": "Daesang Award – Music"
+   },
+   {
+    "year": "2017",
+    "ceremony": "AAA",
+    "category": "Daesang Award – Music"
+   },
+   {
+    "year": "2014",
+    "ceremony": "골든디스크",
+    "category": "Disc Daesang"
+   },
+   {
+    "year": "2015",
+    "ceremony": "골든디스크",
+    "category": "Disc Daesang"
+   },
+   {
+    "year": "2016",
+    "ceremony": "골든디스크",
+    "category": "Disc Daesang"
+   },
+   {
+    "year": "2017",
+    "ceremony": "골든디스크",
+    "category": "Disc Daesang"
+   },
+   {
+    "year": "2013",
+    "ceremony": "MAMA",
+    "category": "Album of the Year"
+   },
+   {
+    "year": "2014",
+    "ceremony": "MAMA",
+    "category": "Artist of the Year"
+   },
+   {
+    "year": "2014",
+    "ceremony": "MAMA",
+    "category": "Album of the Year"
+   },
+   {
+    "year": "2015",
+    "ceremony": "MAMA",
+    "category": "Album of the Year"
+   },
+   {
+    "year": "2016",
+    "ceremony": "MAMA",
+    "category": "Album of the Year"
+   },
+   {
+    "year": "2017",
+    "ceremony": "MAMA",
+    "category": "Album of the Year"
+   },
+   {
+    "year": "2013",
+    "ceremony": "멜론뮤직어워드",
+    "category": "Song of the Year"
+   },
+   {
+    "year": "2015",
+    "ceremony": "멜론뮤직어워드",
+    "category": "Album of the Year"
+   },
+   {
+    "year": "2016",
+    "ceremony": "멜론뮤직어워드",
+    "category": "Artist of the Year"
+   },
+   {
+    "year": "2017",
+    "ceremony": "멜론뮤직어워드",
+    "category": "Artist of the Year"
+   },
+   {
+    "year": "2014",
+    "ceremony": "서울가요대상",
+    "category": "Daesang Award"
+   },
+   {
+    "year": "2015",
+    "ceremony": "서울가요대상",
+    "category": "Daesang Award"
+   },
+   {
+    "year": "2016",
+    "ceremony": "서울가요대상",
+    "category": "Daesang Award"
+   },
+   {
+    "year": "2017",
+    "ceremony": "서울가요대상",
+    "category": "Daesang Award"
+   }
+  ]
+ },
+ "슈퍼주니어": {
+  "total": 10,
+  "byCeremony": {
+   "골든디스크": 3,
+   "MAMA": 3,
+   "서울가요대상": 1,
+   "더팩트뮤직어워드": 3
+  },
+  "list": [
+   {
+    "year": "2009",
+    "ceremony": "골든디스크",
+    "category": "Disk Daesang"
+   },
+   {
+    "year": "2012",
+    "ceremony": "골든디스크",
+    "category": "Disk Daesang"
+   },
+   {
+    "year": "2013",
+    "ceremony": "골든디스크",
+    "category": "Disk Daesang"
+   },
+   {
+    "year": "2007",
+    "ceremony": "MAMA",
+    "category": "Artist of the Year"
+   },
+   {
+    "year": "2011",
+    "ceremony": "MAMA",
+    "category": "Album of the Year"
+   },
+   {
+    "year": "2012",
+    "ceremony": "MAMA",
+    "category": "Album of the Year"
+   },
+   {
+    "year": "2012",
+    "ceremony": "서울가요대상",
+    "category": "Daesang Award"
+   },
+   {
+    "year": "2020",
+    "ceremony": "더팩트뮤직어워드",
+    "category": "Artist of the year"
+   },
+   {
+    "year": "2020",
+    "ceremony": "더팩트뮤직어워드",
+    "category": "Artist of The Year"
+   },
+   {
+    "year": "2021",
+    "ceremony": "더팩트뮤직어워드",
+    "category": "Artist of the Year"
+   }
+  ]
+ },
+ "하이라이트": {
+  "total": 3,
+  "byCeremony": {
+   "멜론뮤직어워드": 2,
+   "서울가요대상": 1
+  },
+  "list": [
+   {
+    "year": "2011",
+    "ceremony": "멜론뮤직어워드",
+    "category": "Artist of the Year"
+   },
+   {
+    "year": "2012",
+    "ceremony": "멜론뮤직어워드",
+    "category": "Artist of the Year"
+   },
+   {
+    "year": "2014",
+    "ceremony": "서울가요대상",
+    "category": "Record of the Year"
+   }
+  ]
+ },
+ "원더걸스": {
+  "total": 4,
+  "byCeremony": {
+   "멜론뮤직어워드": 2,
+   "MAMA": 1,
+   "서울가요대상": 1
+  },
+  "list": [
+   {
+    "year": "2007",
+    "ceremony": "멜론뮤직어워드",
+    "category": "Song of the Year"
+   },
+   {
+    "year": "2008",
+    "ceremony": "멜론뮤직어워드",
+    "category": "Song of the Year"
+   },
+   {
+    "year": "2008",
+    "ceremony": "MAMA",
+    "category": "Song of the Year"
+   },
+   {
+    "year": "2009",
+    "ceremony": "서울가요대상",
+    "category": "Daesang Award"
+   }
+  ]
+ },
+ "동방신기": {
+  "total": 5,
+  "byCeremony": {
+   "골든디스크": 2,
+   "MAMA": 2,
+   "서울가요대상": 1
+  },
+  "list": [
+   {
+    "year": "2006",
+    "ceremony": "골든디스크",
+    "category": "Grand Prize in Album Releasing (Disk Daesang)"
+   },
+   {
+    "year": "2008",
+    "ceremony": "골든디스크",
+    "category": "Grand Prize in Album Releasing (Disk Daesang)"
+   },
+   {
+    "year": "2006",
+    "ceremony": "MAMA",
+    "category": "Artist of the Year"
+   },
+   {
+    "year": "2008",
+    "ceremony": "MAMA",
+    "category": "Album of the Year"
+   },
+   {
+    "year": "2006",
+    "ceremony": "서울가요대상",
+    "category": "Grand Prize"
+   }
+  ]
+ },
+ "갓세븐": {
+  "total": 4,
+  "byCeremony": {
+   "AAA": 3,
+   "더팩트뮤직어워드": 1
+  },
+  "list": [
+   {
+    "year": "2018",
+    "ceremony": "AAA",
+    "category": "Artist of the Year – Music"
+   },
+   {
+    "year": "2019",
+    "ceremony": "AAA",
+    "category": "Performance of the Year"
+   },
+   {
+    "year": "2020",
+    "ceremony": "AAA",
+    "category": "Performance of the Year"
+   },
+   {
+    "year": "2020",
+    "ceremony": "더팩트뮤직어워드",
+    "category": "Artist of the Year"
+   }
+  ]
+ },
+ "데이식스": {
+  "total": 1,
+  "byCeremony": {
+   "AAA": 1
+  },
+  "list": [
+   {
+    "year": "2024",
+    "ceremony": "AAA",
+    "category": "Album of the Year"
+   }
+  ]
+ },
+ "H.O.T.": {
+  "total": 3,
+  "byCeremony": {
+   "골든디스크": 1,
+   "서울가요대상": 2
+  },
+  "list": [
+   {
+    "year": "1997",
+    "ceremony": "골든디스크",
+    "category": "Album of the Year"
+   },
+   {
+    "year": "1997",
+    "ceremony": "서울가요대상",
+    "category": "Grand Prize"
+   },
+   {
+    "year": "1998",
+    "ceremony": "서울가요대상",
+    "category": "Grand Prize"
+   }
+  ]
+ },
+ "신화": {
+  "total": 1,
+  "byCeremony": {
+   "서울가요대상": 1
+  },
+  "list": [
+   {
+    "year": "2004",
+    "ceremony": "서울가요대상",
+    "category": "Disk Daesang"
+   }
+  ]
+ },
+ "핑클": {
+  "total": 1,
+  "byCeremony": {
+   "서울가요대상": 1
+  },
+  "list": [
+   {
+    "year": "1999",
+    "ceremony": "서울가요대상",
+    "category": "Grand Award"
+   }
+  ]
+ },
+ "뉴이스트": {
+  "total": 1,
+  "byCeremony": {
+   "AAA": 1
+  },
+  "list": [
+   {
+    "year": "2018",
+    "ceremony": "AAA",
+    "category": "Artist of the Year"
+   }
+  ]
+ },
+ "2PM": {
+  "total": 1,
+  "byCeremony": {
+   "MAMA": 1
+  },
+  "list": [
+   {
+    "year": "2009",
+    "ceremony": "MAMA",
+    "category": "Artist of the Year"
+   }
+  ]
+ },
+ "미쓰에이": {
+  "total": 1,
+  "byCeremony": {
+   "MAMA": 1
+  },
+  "list": [
+   {
+    "year": "2010",
+    "ceremony": "MAMA",
+    "category": "Song of the Year"
+   }
+  ]
+ }
+}
