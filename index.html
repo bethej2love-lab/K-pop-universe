@@ -3474,8 +3474,9 @@ function animate(){
     mid.copy(posA).lerp(posB,0.5);
     // 그룹 카드가 열려 포커스된 그룹이면 줌 거리와 무관하게 그 그룹의 연결선은 전부 보이게(부분적으로만 나타나는 것 방지)
     const isFocused=grpKo===focusGroupKo;
-    line.visible=isFocused||camera.position.distanceTo(mid)<20;
-    if(line.visible){
+    const shouldShow=isFocused||camera.position.distanceTo(mid)<20;
+    if(shouldShow){
+      line.visible=true;
       // 해체/서바이벌 프로젝트 그룹(disbanded)은 행성 자체가 0.4배로 옅게 표시되므로,
       // 그 그룹 내 멤버 연결선도 같은 비율로 옅게 해서 행성-선 투명도가 어긋나 보이지 않게 함
       const survivalDim=(GROUPS[grpKo]||{}).disbanded?0.4:1;
@@ -3486,6 +3487,13 @@ function animate(){
       const memAlpha=(artA?._filterAlpha??1)*(artA?._focusAlpha??1)*(artB?._filterAlpha??1)*(artB?._focusAlpha??1);
       const tgt=(focusGroupKo?(isFocused?baseOp*2.4:baseOp*0.18):baseOp)*survivalDim*bmAlpha*memAlpha;
       line.material.opacity+=(tgt-line.material.opacity)*0.10;
+    }else if(line.material.opacity>0.004){
+      // 거리 임계를 벗어나면 예전처럼 툭 꺼지지 않고 0으로 부드럽게 페이드아웃(2026-09-05 사용자 요청).
+      // 다 옅어진 뒤에야 렌더를 끈다(그 전엔 visible 유지). 이미 사라진 선은 아래 분기에서 계산을 건너뛴다.
+      line.material.opacity+=(0-line.material.opacity)*0.12;
+      line.visible=line.material.opacity>0.004;
+    }else if(line.visible){
+      line.visible=false;
     }
   });
   // 줌 레벨: 카메라~원점 거리 기반 (홈≈120, 최대≈300)
@@ -7492,7 +7500,11 @@ function _flyToConnStars(){
   if(!_connAnchor)return;
   const positions=[];
   if(_connAnchor._worldPos)positions.push(_connAnchor._worldPos);
-  _connSelected.forEach(name=>{
+  // 선택이 있으면 그 상대들을, 없으면(카드 열자마자) 콜라보 상대 **전부**를 프레임에 넣어 연결 웹이
+  // 한눈에 들어오게 한다(2026-09-05 사용자 요청 — "웹처럼 연결선 바로 보이게 줌"). 멀리 퍼진 소수 때문에
+  // 과하게 줌아웃되지 않도록 아래 multi 경로에서 거리를 상한(70)으로 캡한다.
+  const _names=_connSelected.length?_connSelected:(_connAllNames()||[]);
+  _names.forEach(name=>{
     const other=_findArtistByConnName(name,_connAnchor.group.ko);
     if(other&&other._worldPos)positions.push(other._worldPos);
   });
@@ -7522,7 +7534,7 @@ function _flyToConnStars(){
   const freeW=Math.max(1,window.innerWidth-_openPanelWidth());
   const distV=spreadNeeded/Math.tan(vFov/2);
   const distH=spreadNeeded/Math.tan(hFov/2)*(window.innerWidth/freeW);
-  const dist=Math.max(Math.max(distV,distH)*1.5,18);
+  const dist=Math.min(Math.max(Math.max(distV,distH)*1.5,18),70); // 상한 70 — 상대가 우주 곳곳이어도 과줌아웃 방지(2026-09-05)
   const tilt=new THREE.Vector3(
     camera.position.x-center.x,
     Math.abs(camera.position.y-center.y)*0.4+2,
@@ -8051,7 +8063,12 @@ function openConnCard(artist){
     // 거기 붙어있음) — 여기를 0으로 안 돌리면 이전 앵커에서 스크롤해둔 위치가 그대로 남아있었음.
     connPanelEl.scrollTop=0;
     connPanelEl.classList.add('open');
-    if(!_connPanelShifted){_connPanelShifted=true;_panWorld(2.5,400);}
+    // 연결 카드를 열면 연결 웹 전체가 화면에 들어오게 카메라를 맞춘다(2026-09-05 — "웹처럼 연결선 바로
+    // 보이게"). _flyToConnStars가 열린 패널 폭(_panelOffsetVec)까지 감안해 좌우로 비켜 프레이밍하므로,
+    // 예전의 단순 _panWorld(2.5) 이동을 대체한다(그래서 _connPanelShifted도 세우지 않음 — 닫을 때
+    // 되돌릴 이동이 없다). 선택이 없으니 _flyToConnStars는 콜라보 상대 전부를 프레임에 넣는다(거리 상한 캡).
+    _applyConnFocus();
+    _flyToConnStars();
   }
 }
 function closeConnCard(){
