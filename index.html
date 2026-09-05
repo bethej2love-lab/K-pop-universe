@@ -9099,7 +9099,10 @@ function _closeTopOverlay(){
   // 이게 없으면 데스크톱에서 카드만 내릴 방법이 없어 영상을 통째로 닫아야 했다(2026-08-26 P1-2).
   if(lb&&lb.classList.contains('lb-half-open')){_closeLbHalf();return true;}
   if(lb&&lb.classList.contains('open')){closeLightbox();return true;}
-  for(const id of ['feedback-overlay','feed-list-overlay','profile-overlay','vm-overlay','hnn-overlay','gp-overlay','fbv-overlay']){
+  // 2026-09-05 UX감사 #4: 바깥클릭으론 닫히는데 Esc 목록엔 빠져 있던 오버레이들을 추가(데스크톱 일관성).
+  //   welcome-*(온보딩 선택 게이트)는 일부러 제외 — 아무 선택 없이 Esc로 건너뛰면 안 되므로.
+  for(const id of ['feedback-overlay','feed-list-overlay','profile-overlay','vm-overlay','hnn-overlay','gp-overlay','fbv-overlay',
+    'gc-track-videos-overlay','venue-overlay','trophy-overlay','uc-card-overlay','debut-card-overlay','col-card-overlay','pp-bias-emoji-overlay','date-edit-overlay']){
     const el=document.getElementById(id);
     if(el&&el.classList.contains('open')){
       const btn=el.querySelector('[id$="-close"],[id$="-cancel"]');
@@ -20267,6 +20270,7 @@ function _renderCollectionRow(containerId,list){
     const isPhoto=col.kind==='photo';
     const cntN=isPhoto?(col.photos?.length||0):(col.videos?.length||0);
     const cnt=document.createElement('div');cnt.className='gc-collection-chip-cnt';cnt.textContent=isPhoto?(currentLang==='ko'?`${cntN}장`:`${cntN} photos`):(currentLang==='ko'?`${cntN}개`:String(cntN));
+    if(!isPhoto&&!cntN)chip.classList.add('gc-collection-chip-empty'); // 영상 0개면 비활성 표시(UX감사 #5)
     chip.appendChild(thumbWrap);chip.appendChild(name);chip.appendChild(cnt);
     chip.addEventListener('click',e=>{
       e.stopPropagation();

@@ -1250,7 +1250,7 @@
   .gc-ch-filter{
     background:linear-gradient(160deg,rgba(255,255,255,0.11),rgba(255,255,255,0.02));
     backdrop-filter:blur(16px) saturate(140%);-webkit-backdrop-filter:blur(16px) saturate(140%);
-    border:0.5px solid rgba(255,255,255,0.16);border-radius:20px;padding:6px 11px;
+    border:0.5px solid rgba(255,255,255,0.16);border-radius:20px;padding:9px 12px;
     font-size:11px;color:rgba(192,214,240,0.71);cursor:pointer;font-family:inherit;
     box-shadow:inset 0 1px 1px rgba(255,255,255,0.2),inset 0 -5px 8px -6px rgba(255,255,255,0.08),0 2px 5px rgba(0,0,0,0.14);
     transition:background .14s,border-color .14s,color .14s,transform .14s,box-shadow .14s;
@@ -1259,8 +1259,9 @@
   /* 23px 높이는 손가락 탭 기준으로 얕음(2026-08-12 실측) — 투명 히트존 확장을 시도했으나 이 부모
      (.gc-ch-filters)가 가로 스크롤용 overflow-x:auto라서 CSS 스펙상 overflow-y도 강제로 auto가 되어
      세로 확장분이 그대로 잘려나감(elementFromPoint로 실측 확인, 확장 안 먹힘). 대신 패딩을 4px→6px로
-     살짝 늘려 실제 알약 높이 자체를 키움(23px→27px 안팎) — 아이콘 쪽처럼 완전히 안 보이게는 못 하지만
-     체감상 거의 안 티 나는 수준의 최소 증가. */
+     살짝 늘려 실제 알약 높이 자체를 키움. 2026-09-05(UX감사 #3) 패딩 6→9px로 한 번 더 올림(~33px) —
+     부모(.gc-ch-filters)는 height 고정이 없어 자식 높이만큼 같이 커지므로 세로 padding 증가는 안 잘린다
+     (예전 '투명 히트존 확장'이 잘린 건 칩 밖으로 삐져나간 영역이라 그랬던 것 — 칩 자체를 키우면 괜찮). */
   /* 차트 목록의 필터 칩 줄(2026-09-04). 칩 자체는 .gc-ch-filter를 그대로 쓴다 — 이 앱에서 "고르는
      알약"은 이미 그 모양이라 새 스타일을 만들면 같은 뜻의 UI가 두 벌이 된다. */
   /* 축이 여럿이면 줄을 나눈다 — 한 줄에 섞으면 어느 알약이 어느 축인지 안 읽힌다. */
@@ -2478,6 +2479,9 @@
   .gc-collection-list{display:flex;gap:8px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none;}
   .gc-collection-list::-webkit-scrollbar{display:none;}
   .gc-collection-chip{flex-shrink:0;width:74px;cursor:pointer;}
+  /* 영상 0개 컬렉션 칩은 눌러도 아무 일 없어 "죽은 클릭"처럼 보였다(2026-09-05 UX감사 #5) — 흐리게+기본
+     커서로 "아직 빔"을 명확히 해 오해를 없앤다. */
+  .gc-collection-chip-empty{opacity:0.45;cursor:default;}
   .gc-collection-chip-thumb-wrap{position:relative;width:74px;height:74px;border-radius:8px;overflow:hidden;background:rgba(255,255,255,0.06);}
   .gc-collection-chip-thumb{width:100%;height:100%;object-fit:cover;display:block;}
   .gc-collection-quad{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:1.5px;width:100%;height:100%;}
@@ -2486,9 +2490,12 @@
   .gc-collection-chip-mine{position:absolute;top:3px;right:3px;width:6px;height:6px;border-radius:50%;background:rgba(130,185,255,0.95);box-shadow:0 0 5px rgba(130,185,255,0.7);}
   .gc-collection-chip-name{margin-top:4px;font-size:11px;color:rgba(200,220,255,0.8);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   .gc-collection-chip-cnt{font-size:10px;color:rgba(120,145,190,0.54);}
-  .gc-collection-chip-del{position:absolute;top:3px;left:3px;width:14px;height:14px;border-radius:50%;background:rgba(130,185,255,0.12);border:0.5px solid rgba(130,185,255,0.25);color:rgba(130,185,255,0.5);font-size:10px;line-height:1;padding:0;cursor:pointer;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity 0.15s,background 0.15s;}
+  .gc-collection-chip-del{position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:rgba(20,26,48,0.72);border:0.5px solid rgba(130,185,255,0.3);color:rgba(210,228,255,0.85);font-size:13px;line-height:1;padding:0;cursor:pointer;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity 0.15s,background 0.15s;}
   .gc-collection-chip:hover .gc-collection-chip-del{opacity:1;}
-  .gc-collection-chip-del:hover{background:rgba(130,185,255,0.28);color:rgba(200,225,255,0.9);}
+  .gc-collection-chip-del:hover{background:rgba(130,185,255,0.35);color:#fff;}
+  /* 폰엔 hover가 없어 삭제 버튼이 영영 안 보이고 못 눌렀다(2026-09-05 UX감사 #1) — scrap-btn/col-btn과
+     동일한 터치 폴백. 14→22px로 히트영역도 키움. */
+  @media(hover:none){ .gc-collection-chip-del{opacity:0.6;} }
   #venue-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.52);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:80;display:none;align-items:center;justify-content:center;}
   #venue-overlay.open{display:flex;}
   #venue-panel{position:relative;width:min(320px,calc(100vw - 40px));max-height:min(480px,calc(100vh - 80px));overflow-y:auto;background:rgba(13,17,34,0.97);backdrop-filter:blur(40px) saturate(180%);-webkit-backdrop-filter:blur(40px) saturate(180%);border-radius:18px;box-shadow:0 16px 56px rgba(0,0,0,0.72);border:0.5px solid rgba(255,255,255,0.10);padding:20px;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
@@ -2692,6 +2699,15 @@
   .card-menu-btn{font-size:17px;line-height:1;letter-spacing:0;color:rgba(190,205,240,0.5);}
   .share-btn+.card-menu-btn{margin-left:-3px;position:relative;top:-1px;}
   @media(max-width:768px){.trophy-btn+.share-btn{top:0.5px;}}
+  /* UX감사 #2(2026-09-05): 카드 상단 버튼(하트·트로피·공유·⋮)이 ~17px에 -6px로 겹쳐 폰에서 오터치 잦음.
+     폰에서만 패딩으로 히트영역을 키우고 음수 마진(겹침)을 완화한다(시각 배치는 크게 안 흔들리게). */
+  @media(max-width:768px){
+    #tt-name-row .fav-btn,#tt-name-row .trophy-btn,#tt-name-row .share-btn,
+    #gc-name-row .fav-btn,#gc-name-row .trophy-btn,#gc-name-row .share-btn{padding:7px 6px;}
+    #tt-name-row .card-menu-btn,#gc-name-row .card-menu-btn{padding:6px 6px;}
+    .fav-btn+.trophy-btn,.trophy-btn+.trophy-btn,.fav-btn+.share-btn,.trophy-btn+.share-btn{margin-left:-2px;}
+    .share-btn+.card-menu-btn{margin-left:0;}
+  }
   #share-toast{position:fixed;left:50%;bottom:32px;transform:translateX(-50%) translateY(12px);background:rgba(20,24,40,0.94);color:rgba(230,238,255,0.95);font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;font-size:13px;font-weight:600;padding:9px 16px;border-radius:20px;box-shadow:0 6px 24px rgba(0,0,0,0.35);z-index:200;opacity:0;pointer-events:none;transition:opacity .2s ease,transform .2s ease;white-space:nowrap;}
   #share-toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
   #discover-toast{position:fixed;left:50%;bottom:32px;transform:translateX(-50%) translateY(12px);display:flex;align-items:center;gap:9px;background:rgba(20,24,40,0.94);color:rgba(230,238,255,0.95);font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;font-size:12px;font-weight:600;padding:6px 16px 6px 6px;border-radius:24px;box-shadow:0 6px 24px rgba(0,0,0,0.35);z-index:200;opacity:0;pointer-events:none;transition:opacity .25s ease,transform .25s ease;white-space:nowrap;cursor:pointer;}
@@ -2914,6 +2930,9 @@
   .col-row-name{font-size:13px;color:rgba(200,220,255,0.85);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   .col-row-cnt{font-size:11px;color:rgba(120,145,190,0.54);margin-top:1px;}
   .col-row-del{background:none;border:none;color:rgba(140,165,220,0.34);font-size:14px;cursor:pointer;padding:2px 6px;flex-shrink:0;}
+  /* UX감사 #6(2026-09-05): 컬렉션 피커 행 끝 아이콘 3개(삭제·공개·커버)가 ~18px로 다닥다닥 → 폰서 오터치.
+     폰에서만 패딩으로 히트영역을 키운다(데스크톱은 마우스라 그대로). */
+  @media(max-width:768px){ .col-row-del,.col-row-cam,.col-row-pub{padding:8px 9px;} }
   .col-row-del:hover{color:rgba(255,100,120,0.7);}
   .col-row-cam{background:none;border:none;color:rgba(140,165,220,0.34);cursor:pointer;padding:2px 5px;flex-shrink:0;display:flex;align-items:center;}
   .col-row-cam svg{width:14px;height:14px;stroke:currentColor;}
