@@ -44,6 +44,12 @@
 - 구현: `_PROGRAM_COLLECTIONS`/`_matchPrograms`/`_openProgramCollection`, doSearch에 type='program' hit(score 0.6), 검색시트 "컬렉션" 탭 추가. `_openProgramCollection(p,ctx)`는 ctx.gko/memberKo로 그룹·멤버 한정 재사용 가능(다음: 카드 내 2x2 컬렉션 — Part C).
 - sw.js CACHE_VERSION 갱신(재방문자 즉시 반영).
 
+### [완료] 프로그램 컬렉션 후속 수정 4종 `[index.html][sw.js]`
+- **모아보기 오버레이가 카드 뒤로 열리던 버그**: `_openFeedListOverlay`가 정적 z-index:65라 카드(_bringToFront 131+)에서 열면 뒤로 깔림 → 열 때 `_bringToFront` 호출(재생 플레이어는 자기도 bringToFront라 여전히 위). [[reference_zindex_bringtofront]]
+- **모아보기 항상 최신순**: _openProgramCollection이 검색 경로에서 shuffle하던 것 제거, published_at desc 그대로.
+- **카드 'Original'(구 자컨) 탭**: 라벨 '자컨'→'Original' 통일(다른 탭과 톤), 초기 배열에서 빼고 개인채널 영상 있을 때만 probe로 삽입(빈 탭·깜빡임 제거).
+- **Discover 오리지널 콘텐츠 선반 쇼츠 제외**: is_short=false만(idol 653중 쇼츠 306 제외, 347편 유지).
+
 ### [완료] 프로그램 컬렉션 Part C — 그룹/멤버 카드에 "출연 프로그램" 2x2 모자이크 `[index.html][kpop_universe.css]`
 - 그룹/멤버 카드에 그 아티스트가 출연한 예능·음악프로 칩(2x2 썸네일 모자이크)이 뜨고, 클릭하면 검색과 동일한 컬렉션 오버레이(_openProgramCollection ctx한정). 예: 에스파 카드 → 주간아이돌·전참시·아는형님·킬링보이스·살롱드립.
 - 구현: `#gc-program-row`/`#tt-program-row` 행 추가, `_loadProgramRow`(쿼리 1번-모든 프로그램 kw OR 후 클라 버킷팅, 2편↑만) + `_renderProgramRow`, showGC/showT에서 호출. 멤버는 members cs 필터(동명이인 누수 방지). CSS `.gc-collection-quad`.

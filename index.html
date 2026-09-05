@@ -4447,8 +4447,8 @@ async function _openProgramCollection(p,ctx){
     if(ctx.memberKo)query=query.contains('members',[ctx.memberKo]);
     const{data,error}=await query;
     const rows=error?[]:_filterBannedVideos(data||[]);
-    // 그룹/멤버 한정이 아니면 그룹별 라운드로빈으로 인기 그룹 쏠림 방지(_buildFeedFormatPick과 동일 규칙).
-    const vids=(ctx.gko||ctx.memberKo)?rows:_diversifyFeed(_shuffle(rows),v=>v.group_ko,5,v=>v.members&&v.members[0]);
+    // 항상 최신순(쿼리가 published_at desc) — 검색·카드 모두 최신 영상부터(2026-09-05 사용자 요청).
+    const vids=rows;
     const songs=vids.map(v=>({t:v.title,u:vidUrl(v),thumb:v.thumb,vc:v.view_count,pa:v.published_at?.slice(0,10),_apiId:v.id,_apiGroupKo:v.group_ko}));
     _openFeedListOverlay(label,'',songs);
   }catch(e){ _openFeedListOverlay(label,'',[]); }
@@ -16241,6 +16241,10 @@ function _openFeedListOverlay(title,sub,songs,ctx){
     }else{
       _flOv.classList.add('open');
     }
+    // ⚠️ 정적 z-index:65라 카드(_bringToFront로 131+)에서 열면 카드 뒤로 깔렸다(2026-09-05 제보 — 프로그램
+    // 컬렉션 칩에서 열 때). 다른 오버레이들처럼 열릴 때 맨 위로 올린다. 그 위 재생 플레이어(openLightbox)는
+    // 자기도 _bringToFront라 여전히 이 오버레이 위로 뜬다(두더지잡기 없음).
+    _bringToFront(_flOv);
   }
   _setupFeedListSaveRow(ctx);
   _setupFeedListDescRow(ctx);
@@ -16711,6 +16715,7 @@ async function _buildFeedJacon(){
   try{
     const _q=()=>sb.from(_YT_TABLE).select(_FEED_COLS())
       .eq('source_tier','idol')
+      .eq('is_short',false) // 쇼츠 형식 제외(2026-09-05 사용자 요청) — 오리지널 콘텐츠 선반은 가로 영상만
       .or('content_flag.is.null,content_flag.neq.기타')
       .or('content_flag.is.null,content_flag.neq.무관').or('content_flag.is.null,content_flag.neq.보류')
       .or('content_flag.is.null,content_flag.neq.hidden')
@@ -19431,11 +19436,11 @@ function _makeChVidController(contId){
     // 방식(채널 화이트리스트 기반)으로 채워질 예정. 아직 채널 화이트리스트가 비어있어 실제 영상은
     // 없을 수 있지만, 'variety'처럼 그룹/멤버 카드에 항상 노출되는 고정 탭으로 둠(팬영상 탭과 다르게
     // "있을 때만" 동적으로 끼워 넣지 않음).
-    // 자컨(오리지널 콘텐츠) 탭 — 멤버 **개인 채널**(source_tier='idol', 예: 가을의 온도·따라해볼레이) 업로드만.
-    // 공식 그룹 채널(official)은 양이 너무 많아 제외(2026-09-04 사용자). 존재 확인(아래 generic 체크)에서 개인 채널
-    // 영상이 없으면 탭 자동 숨김. source_tier는 2026-08-26 이후 컬럼이라 옛 영상은 비어 있어 재동기화 전엔 일부만.
-    const _jaconTab=['jacon',currentLang==='ko'?'자컨':'Original'];
-    let catTabs=memberKo?[['all','All'],_jaconTab,['live','Live'],['cover','Cover'],['short','Shorts'],['variety','Variety'],['show','Show']]:[['all','All'],_jaconTab,['mv','MV'],['live','Live'],['cover','Cover'],['short','Shorts'],['variety','Variety'],['show','Show']];
+    // 자컨(Original) 탭 — 멤버 **개인 채널**(source_tier='idol', 예: 가을의 온도·따라해볼레이) 업로드만.
+    // 공식 그룹 채널(official)은 양이 너무 많아 제외(2026-09-04 사용자). 라벨은 다른 탭과 톤 맞춰 'Original'로
+    // 통일(2026-09-05 — '자컨'만 한글이라 튄다는 지적). ⚠️ 초기 배열에 넣지 않고 **개인채널 영상이 실제로
+    // 있을 때만** 아래 probe로 끼워 넣는다(fan 탭과 같은 방식) — 빈 탭이 잠깐 떴다 사라지는 깜빡임 방지.
+    let catTabs=memberKo?[['all','All'],['live','Live'],['cover','Cover'],['short','Shorts'],['variety','Variety'],['show','Show']]:[['all','All'],['mv','MV'],['live','Live'],['cover','Cover'],['short','Shorts'],['variety','Variety'],['show','Show']];
     // "by Fan" 탭(2026-08-10, 사용자 요청) — 팬이 직접 찍거나 만든 영상 전용. 아직은 어떤 그룹도 팬채널을
     // 등록 안 해서 category='fan'인 행이 하나도 없지만(추후 사용자가 그룹별로 팬채널 링크를 주면 그
     // 채널 동기화 시 category='fan'으로 저장할 예정), 미리 이 자리를 만들어둠. 팬덤명을 알면 "by {영문
@@ -19477,6 +19482,19 @@ function _makeChVidController(contId){
       if(isFormat&&!state.formatFilter&&tabs.length)state.formatFilter=tabs[0][0];
     }
     renderFilterTabs();
+    // 자컨(Original) 탭 — 개인채널(source_tier='idol') 영상이 실제로 있을 때만 'All' 바로 뒤에 끼운다
+    // (빈 탭·깜빡임 방지, 2026-09-05). 멤버 카드는 그 멤버 태깅분까지 좁혀 확인(동명이인/타멤버 누수 방지).
+    if(sb){
+      let _jq=sb.from(_YT_TABLE).select('id').eq('source_tier','idol').limit(1);
+      _jq=memberKo?_jq.eq('group_ko',ko).contains('members',[memberKo]):_jq.eq('group_ko',ko);
+      _jq.then(({data})=>{
+        if(!data?.length)return;
+        if(state.ko!==ko||state.memberKo!==(memberKo||null))return;
+        if(catTabs.some(([v])=>v==='jacon'))return;
+        catTabs.splice(1,0,['jacon','Original']);
+        renderFilterTabs();
+      });
+    }
     // 'all' 탭 제외 각 탭에 실제 영상이 있는지 병렬 limit(1)로 비동기 확인 — 없으면 탭 숨김.
     // fan 탭은 위에서 따로 처리, 여기선 초기 catTabs(fan 제외)만 스냅샷해서 확인.
     (async()=>{
