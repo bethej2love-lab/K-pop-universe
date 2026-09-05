@@ -16669,6 +16669,51 @@ function _buildFeedAnniversaries(){
   });
 }
 
+// For You 상단: 즐겨찾기한 그룹 데뷔기념일 + 멤버 생일이 **일주일 안(D-7~D-DAY)** 다가오면 미리 보여준다
+// (2026-09-05 요청). Discover의 #feed-anniv는 "오늘"만, 여긴 "내 최애의 다가오는" 것 — 겹쳐도 탭이 달라 OK.
+// _daysUntilBday는 연도를 무시하고 다음 (월,일) 발생까지 일수를 주므로 debut(그룹)·bday(멤버) 둘 다에 그대로 쓴다.
+function _buildFeedForYouAnniv(){
+  const section=document.getElementById('feed-foryou-anniv-section');
+  const list=document.getElementById('feed-foryou-anniv');
+  if(!section||!list)return;
+  _enableDragScroll(list);
+  const isKo=currentLang==='ko';
+  const WITHIN=7;
+  const hits=[]; // {d, icon, type, name, onClick, thumb(thunk→Promise)}
+  // 즐겨찾기 그룹 데뷔기념일
+  favGroups.forEach(ko=>{
+    const info=GROUPS[ko];if(!info||!info.debut)return;
+    const d=_daysUntilBday(info.debut);
+    if(d==null||d<0||d>WITHIN)return;
+    const p=String(info.debut).split('.').map(Number);
+    const now=new Date(),today=new Date(now.getFullYear(),now.getMonth(),now.getDate());
+    let next=new Date(today.getFullYear(),p[1]-1,p[2]);if(next<today)next=new Date(today.getFullYear()+1,p[1]-1,p[2]);
+    const n=next.getFullYear()-(p[0]||next.getFullYear());
+    hits.push({d,icon:'🎉',type:isKo?`데뷔 ${n}주년`:`${_ordEn(n)} debut anniv.`,name:isKo?ko:(info.en||ko),
+      onClick:()=>_feedNav(()=>{const bm=bubbleMeshes.find(b=>b.ko===ko);if(bm)flyToBubble(bm.mesh.position,bm.radius);
+        if(isMob())showGC(ko,window.innerWidth/2,window.innerHeight*0.4,false,false,null,false);else showGC(ko,window.innerWidth/2,window.innerHeight/2);}),
+      thumb:()=>_fetchTopVideoThumb(ko,null)});
+  });
+  // 즐겨찾기 멤버 생일
+  (ARTISTS||[]).forEach(a=>{
+    if(!a.bday||!favMembers.has(_mFavKey(a)))return;
+    const d=_daysUntilBday(a.bday);
+    if(d==null||d<0||d>WITHIN)return;
+    hits.push({d,icon:'🎂',type:isKo?'생일':'Birthday',name:_dispName(a),
+      onClick:()=>_feedNav(()=>{if(a._worldPos)flyTo(a._worldPos);
+        if(isMob())showT(a,window.innerWidth/2,window.innerHeight*0.4,false,false,false);else showT(a,window.innerWidth/2,window.innerHeight/2);}),
+      thumb:()=>Promise.resolve(_fetchArtistPicAnyGroup(a)).then(pic=>pic||_fetchTopVideoThumb(_ytGroupKoFor(a),a.name.ko))});
+  });
+  if(!hits.length){section.style.display='none';return;}
+  section.style.display='';
+  list.innerHTML='';
+  hits.sort((x,y)=>x.d-y.d); // 임박순 — D-DAY가 맨 앞
+  hits.forEach(h=>{
+    const dLabel=h.d===0?(isKo?'🔥 오늘':'🔥 Today'):`D-${h.d}`;
+    const item=_appendAnnivStripItem(list,h.icon,h.name,`${dLabel} · ${h.type}`,h.onClick);
+    Promise.resolve(h.thumb()).then(t=>_setAnnivStripThumb(item,t||null)).catch(()=>_setAnnivStripThumb(item,null));
+  });
+}
 // "최근 본" 가로 행(2026-08-21, Fable UX 감사 반영) — 재진입 시 마지막으로 보던 걸 바로 이어볼 수 있는
 // 가장 싸고 강한 패턴. 서버 저장 없이 로컬 기기 기준(localStorage)으로만 최근 20개, id 중복은 최신
 // 시청으로 앞당김. openLightbox를 여는 모든 경로(그룹/멤버 카드, 탐험 패널, 라이트박스 자동재생 등)에서
@@ -18233,6 +18278,7 @@ async function _buildFeedFavNew(){
 // 추천(For You) 탭 빌드 — 가볍게(이어보기=로컬, 즐겨찾기신작·Trend=Supabase). 나침반 열 때마다 호출(TTL 캐시).
 function _buildFeedRec(){
   document.getElementById('feed-empty-rec').hidden=true;
+  _buildFeedForYouAnniv();  // 다가오는 기념일(즐겨찾기 그룹 데뷔·멤버 생일 D-7~D-DAY) — 시간 민감이라 최상단
   _buildFeedFavNew();       // 즐겨찾기 신작(For You 메인 — 7일 전부 최신순 그리드)
   _buildFeedRecentlyViewed();
   setTimeout(()=>_feedCheckEmpty('rec'),1800); // 비동기 선반들이 다 실패해 빈 화면이면 재시도 노출
@@ -20751,6 +20797,12 @@ _totopBtn.addEventListener('click',e=>{
     <div id="feed-pane-rec" class="feed-pane">
       <!-- 즐겨찾기 신작: 하트 누른 그룹 + 하트 누른 멤버(그 멤버 있는 영상만)의 최근 7일 업로드를 최신순으로 싹.
            For You의 메인 — 세로 2단 그리드 + 행 패커(여백0). 즐겨찾기 없으면 온보딩 카드로 채워 안 비게 한다. -->
+      <!-- 다가오는 기념일: 즐겨찾기 그룹 데뷔기념일 + 멤버 생일이 일주일 안(D-7~D-DAY)이면 미리(2026-09-05).
+           Discover의 #feed-anniv는 "오늘"만, 여긴 "내 최애의 다가오는" 것. 시간 민감이라 For You 최상단. -->
+      <div class="feed-section" id="feed-foryou-anniv-section" style="display:none">
+        <div class="feed-section-ttl">🎉 Anniversaries Coming Up</div>
+        <div id="feed-foryou-anniv" class="feed-strip hscroll-drag"></div>
+      </div>
       <div class="feed-section" id="feed-favnew-section" style="display:none">
         <div class="feed-section-ttl">💖 New from Your Favorites</div>
         <div id="feed-favnew" class="feed-grid"></div>
