@@ -1738,7 +1738,9 @@ const _SOLO_GROUP={ko:'솔로',en:'Solo'};
 //    표기만 갈아끼우고 클릭 시엔 여전히 g.ko(하이라이트) 그룹 카드로 간다.
 // 한쪽 언어만 채워도 오버라이드가 항상 이긴다 — dispKo만 있는데 영문에서 g.en('Highlight')으로 새면
 // "이 멤버는 개명 후 그룹과 무관"이라는 이 필드의 존재 이유가 그 화면에서만 조용히 무너진다.
-function _gLabel(g){return g?(currentLang==='ko'?(g.dispKo||g.dispEn||g.ko):(g.dispEn||g.dispKo||g.en||g.ko)):'';}
+// '솔로'는 서로 무관한 솔로 아티스트가 공유하는 placeholder일 뿐 — 화면에 "솔로"라는 라벨로 노출하지
+// 않는다(2026-09-05 사용자: "어디든 '솔로' 텍스트 빼라"). 데이터 g.ko/group_ko는 그대로 두고 **표기만** 비운다.
+function _gLabel(g){if(!g||g.ko==='솔로')return '';return currentLang==='ko'?(g.dispKo||g.dispEn||g.ko):(g.dispEn||g.dispKo||g.en||g.ko);}
 // 그룹 **키 문자열**(DB의 group_ko, groups.json의 키)을 화면 표기로. _gLabel은 group '객체'를 받는데
 // 화면 상당수는 키 문자열만 들고 있어서(피드 카드 서브·발견 홉·조합 제안) 지금까지 그냥 한글을 박았고,
 // 그래서 영어 모드에서 거기만 "투모로우바이투게더 · yesterday"처럼 튀었다(2026-09-04 전수 스캔).
@@ -1753,7 +1755,7 @@ function _ordEn(n){
 }
 let _gLabelSoloIdx=null;
 function _gLabelKo(ko){
-  if(!ko)return '';
+  if(!ko||ko==='솔로')return ''; // '솔로' placeholder는 화면에 라벨로 안 띄운다(2026-09-05, [[_gLabel]] 동일 원칙)
   const g=GROUPS[ko];
   if(g)return _gLabel(Object.assign({},g,{ko}));
   // ARTISTS 선형 탐색이 카드마다 돌면 200장 그릴 때 느려져서 이름→아티스트 인덱스를 한 번만 만든다.
