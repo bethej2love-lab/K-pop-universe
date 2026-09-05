@@ -175,6 +175,7 @@
     </div>
   </div>
   <div id="tt-discog-strip" class="gc-discog-strip hscroll-drag"></div>
+  <div id="tt-timeline-section" style="display:none"><div class="tt-timeline-hd">Timeline</div><div id="tt-timeline"></div></div>
 </div><div id="tt-concert-row" class="concert-row"></div><div id="tt-collection-row" class="gc-collection-row" style="display:none"><div class="gc-collection-hd">Collections</div><div class="gc-collection-list"></div></div><div id="tt-program-row" class="gc-collection-row" style="display:none"><div class="gc-collection-hd gc-program-hd">Programs</div><div class="gc-collection-list"></div></div><div id="tv"></div></div>
 <div id="gc">
   <div id="gc-bar"></div>
@@ -9481,6 +9482,7 @@ function showT(a,cx,cy,keepNavStack,urlMode,_unusedPushMobNav,noFly){
   // 테이블은 콘서트/컬렉션과 다른 파이프라인(멜론/스포티파이 리서치)으로 채워졌고, 거기선 처음부터
   // "솔로 아티스트도 group_ko='솔로'+member_ko=본인이름"으로 저장해뒀기 때문(2026-08-19).
   _loadTrophies(a.group.ko,'tt-trophy',a.name.ko);
+  _buildMemberTimeline(a); // 한 사람의 시간축(데뷔·첫1위·탈퇴·솔로) — 킬러 6.3 v1
   // 관리자: 프로필 사진 업로드 버튼 — 그룹 카드와 같은 함수를 쓴다(_mountPicCamBtn, 2026-08-28).
   _mountPicCamBtn(_ttPicCfg(a));
   // ✦ 연결 버튼 (그룹명 오른쪽) — 정적 소스만으로 우선 판단해 즉시 표시하고, API 콜라보 캐시가 없으면
@@ -20454,6 +20456,62 @@ document.getElementById('venue-overlay').addEventListener('click',e=>{if(e.targe
 function _fmtStreamMilestone(n){
   if(currentLang==='ko')return`${n/1e8}억+`;
   return n>=1e9?`${n/1e9}B+`:`${n/1e6}M+`;
+}
+// ── 한 사람의 시간축(2026-09-05, 킬러 6.3 v1) ────────────────────────────────
+// 멤버 카드에 데뷔→(첫 1위)→탈퇴/이적→솔로 데뷔를 시간순으로 보여준다. v1은 앱에 이미 있는 데이터만
+// 쓴다(그룹 데뷔·groups[].left·솔로 disco + music_show_wins 첫 1위). 크레딧·MC·프리데뷔쇼는 아직 앱에
+// 안 실려 있어 다음 단계(연동 후). "YYYY.MM"로 표기, 임박순 정렬.
+function _tlKey(s){const p=String(s||'').split(/[.\-/]/).map(Number);return p[0]?p[0]*10000+(p[1]||0)*100+(p[2]||0):0;}
+function _tlDate(s){const p=String(s||'').split(/[.\-/]/);return p[0]?(p[1]?`${p[0]}.${String(p[1]).padStart(2,'0')}`:String(p[0])):'';}
+function _renderTimeline(sec,list,ev){
+  ev.sort((x,y)=>x.key-y.key);
+  list.innerHTML='';
+  ev.forEach(e=>{
+    const row=document.createElement('div');row.className='tt-tl-row';
+    const dot=document.createElement('span');dot.className='tt-tl-dot';dot.textContent=e.icon||'•';
+    const dt=document.createElement('span');dt.className='tt-tl-date';dt.textContent=e.date;
+    const lb=document.createElement('span');lb.className='tt-tl-label';lb.textContent=e.label;
+    row.appendChild(dot);row.appendChild(dt);row.appendChild(lb);
+    list.appendChild(row);
+  });
+  sec.style.display='';
+}
+function _buildMemberTimeline(a){
+  const sec=document.getElementById('tt-timeline-section');
+  const list=document.getElementById('tt-timeline');
+  if(!sec||!list||!a){if(sec)sec.style.display='none';return;}
+  sec.style.display='none';
+  const isKo=currentLang==='ko';
+  const hd=sec.querySelector('.tt-timeline-hd');if(hd)hd.textContent=isKo?'이력':'Timeline';
+  // 실존 그룹 수집(현 소속 + 이력) — 현멤버는 a.group.ko, 옛멤버는 groups[]에서.
+  const realGroups=[];
+  if(GROUPS[a.group.ko]&&a.group.ko!=='솔로')realGroups.push({ko:a.group.ko,left:null});
+  (a.groups||[]).forEach(g=>{if(g&&g.ko&&g.ko!=='솔로'&&GROUPS[g.ko]&&!realGroups.some(r=>r.ko===g.ko))realGroups.push({ko:g.ko,left:g.left||null});});
+  const ev=[];
+  realGroups.forEach(rg=>{
+    const info=GROUPS[rg.ko];const gname=isKo?rg.ko:(info.en||rg.ko);
+    if(info.debut){const k=_tlKey(info.debut);if(k)ev.push({key:k,date:_tlDate(info.debut),label:isKo?`${gname} 데뷔`:`${gname} debut`,icon:'🎤'});}
+    if(rg.left){const k=_tlKey(rg.left);if(k)ev.push({key:k,date:_tlDate(rg.left),label:isKo?`${gname} 탈퇴`:`Left ${gname}`,icon:'👋'});}
+  });
+  const solo=(a.soloDiscography||[]).concat(a.group.ko==='솔로'?(a.discography||[]):[]).filter(x=>x&&x.releaseDate);
+  if(solo.length){solo.sort((x,y)=>String(x.releaseDate).localeCompare(String(y.releaseDate)));const s0=solo[0];const k=_tlKey(s0.releaseDate);if(k)ev.push({key:k,date:_tlDate(s0.releaseDate),label:isKo?'솔로 데뷔':'Solo debut',icon:'⭐'});}
+  if(!ev.length){sec.style.display='none';return;}
+  _renderTimeline(sec,list,ev);
+  // 첫 1위(비동기) — 주 그룹 music_show_wins 최소 win_date + "데뷔 N일 후"
+  const primary=realGroups[0];
+  if(sb&&primary){
+    sb.from('music_show_wins').select('win_date').eq('group_ko',primary.ko).order('win_date',{ascending:true}).limit(1)
+      .then(({data})=>{
+        if(_openTArtist!==a)return; // 다른 카드로 넘어갔으면 버림
+        const w=data&&data[0]&&data[0].win_date;if(!w)return;
+        const k=_tlKey(w);if(!k||ev.some(e=>e.icon==='🏆'))return;
+        let label=isKo?'첫 음악방송 1위':'First music-show win';
+        const info=GROUPS[primary.ko];
+        if(info&&info.debut){const dd=new Date(String(info.debut).replace(/\./g,'-')),wd=new Date(String(w).slice(0,10).replace(/\./g,'-'));if(!isNaN(dd)&&!isNaN(wd)){const days=Math.round((wd-dd)/864e5);if(days>0)label+=isKo?` · 데뷔 ${days}일 후`:` · ${days}d after debut`;}}
+        ev.push({key:k,date:_tlDate(w),label,icon:'🏆'});
+        _renderTimeline(sec,list,ev);
+      }).catch(()=>{});
+  }
 }
 const _TROPHY_KIND_ORDER=['music_show','melon_top100','spotify_milestone'];
 const _TROPHY_TABLES={music_show:'music_show_wins',melon_top100:'melon_yearly_top100',spotify_milestone:'spotify_streaming_milestones'};
