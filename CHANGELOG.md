@@ -59,6 +59,11 @@
 
 ## 2026-09-05 (데이터 세션 — 공연 대량보강 + 크레딧 + 솔로사진 복원)
 
+### [완료] 케이팝 씬 신규 데이터 3종 — 대상·밀리언셀러·콜라보 `[group_awards.json][group_certifications.json][collab_network.json]`
+- **대상(시상식)**: `tools/wiki_awards.mjs` — 위키 "List of awards received by X"에서 대상급만(주요시상식 화이트리스트 + Daesang/올해의가수앨범노래, 본상·분기·장르상 제외, ! scope=row 셀 처리). 29그룹 223개. ⚠️NCT유닛 중복·블랙핑크 누락 수동보완.
+- **밀리언셀러**: `tools/wiki_sales.mjs` — 초동은 프로즈 추출이 부정확(READY TO BE 18k 등 오추출)해서 폐기, **KMCA 인증 템플릿**({{Certification Table Entry|award=Million}})으로 전환 = 정확. 상위 18그룹·77앨범(밀리언 45).
+- **콜라보/피처링**: `tools/collab_network.mjs`(트랙제목 (feat.) 파싱, 같은그룹 필터, 27엣지) + `tools/melon_collab.mjs`(멜론 참여F탭=상대아티스트, 수집 진행중). 카드/우주 시각화는 기능세션.
+
 ### [완료] 위키피디아 콘서트 투어 수집 — kpop_events 738 → 3,217건 `[tools/wiki_tours.mjs][tools/tours_to_sql.mjs]`
 - ⚠️ **DECISIONS의 "나무위키 공연보완 17%" 사실상 해결.** 영문 위키가 나무보다 스키마가 안정적(투어 문서 일정표 Date/City/Country/Venue). rowspan/colspan 캐리·[[링크]]·{{템플릿}}·<ref> 정리·"Month D, YYYY" 파싱.
 - 발견 2단계: ①`Category:{Group} concert tours` 열거(13그룹 1021건) ②검색+`List of {Group} concert tours/live performances` 직접파싱(23그룹 1458건). 인포박스 `artist=`로 오귀속 방지, 다중행사(Dream Concert·Music Bank) 블록리스트.
