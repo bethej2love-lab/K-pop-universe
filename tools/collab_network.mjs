@@ -47,9 +47,33 @@ function scan(hostCanon, tracks) {
 for (const k of Object.keys(G)) for (const d of (G[k].discography || [])) scan(k, d.tracks);
 for (const a of ARR) { const ko = a.name?.ko; if (!ko) continue; for (const d of (a.unitDiscography || [])) scan(ko, d.tracks); if (Array.isArray(a.songs)) scan(ko, a.songs.map(s => typeof s === 'string' ? { title: s } : s)); }
 
+// 멜론 참여(F)탭 수집분 병합 — 각 멤버가 참여한 곡의 메인 아티스트(상대)를 유니버스와 매칭
+const MC = '/tmp/melon_collab.json';
+let melonEdges = 0;
+if (fs.existsSync(MC)) {
+  const mc = JSON.parse(fs.readFileSync(MC, 'utf8'));
+  for (const aid of Object.keys(mc)) {
+    const host = mc[aid].ko; if (!host) continue;
+    for (const f of (mc[aid].feats || [])) {
+      // "한글 (English)" / "X of GROUP" 형식 대응 — 후보 이름 여러 개 시도
+      const cands = [f.artist];
+      const paren = f.artist.match(/^(.+?)\s*\((.+?)\)\s*$/); if (paren) { cands.push(paren[1], paren[2]); }
+      const ofm = f.artist.match(/^(.+?)\s+of\s+(.+)$/i); if (ofm) { cands.push(ofm[1], ofm[2]); }
+      let canon = null; for (const c of cands) { canon = nameIdx[norm(c)]; if (canon) break; }
+      if (canon && canon !== host && !sameEntity(host, canon)) {
+        const key = [host, canon].sort().join('||') + '|' + norm(f.song);
+        if (!seen.has(key)) { seen.add(key); edges.push({ song: f.song, a: host, b: canon, src: 'melon' }); melonEdges++; }
+      } else if (!canon) external[f.artist] = (external[f.artist] || 0) + 1;
+    }
+  }
+}
+
 fs.writeFileSync(ROOT + '/collab_network.json', JSON.stringify({ edges, generated: 'from track titles' }, null, 1));
-console.log('유니버스 내부 콜라보 엣지:', edges.length);
-edges.slice(0, 25).forEach(e => console.log(`  ${e.a} ↔ ${e.b} — ${e.song.slice(0, 40)}`));
+console.log('유니버스 내부 콜라보 엣지:', edges.length, `(멜론 참여분 +${melonEdges})`);
+// 인물별 콜라보 수 상위
+const deg = {}; edges.forEach(e => { deg[e.a] = (deg[e.a] || 0) + 1; deg[e.b] = (deg[e.b] || 0) + 1; });
+console.log('콜라보 허브 상위:', Object.entries(deg).sort((a, b) => b[1] - a[1]).slice(0, 12).map(x => x[0] + '(' + x[1] + ')').join(' '));
+edges.filter(e => e.src === 'melon').slice(0, 15).forEach(e => console.log(`  ${e.a} ↔ ${e.b} — ${e.song.slice(0, 40)}`));
 const ext = Object.entries(external).sort((a, b) => b[1] - a[1]);
 console.log('\n외부 피처링(유니버스 밖) 상위:', ext.slice(0, 12).map(x => x[0] + '(' + x[1] + ')').join(' '));
 console.log('→ collab_network.json');
