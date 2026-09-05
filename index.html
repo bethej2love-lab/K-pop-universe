@@ -4930,7 +4930,7 @@ document.addEventListener('keydown',e=>{
     document.getElementById('settings-panel')?.classList.remove('open');
     sw.classList.toggle('open',!open);
     ['tab-search','dh-search-btn'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.toggle('active',!open);});
-    if(!open&&si)setTimeout(()=>{try{si.focus();si.select();}catch(_){}},40);
+    if(!open&&si){doSearch(si.value);setTimeout(()=>{try{si.focus();si.select();}catch(_){}},40);} // 열 때 본문 채움(위 dh-search-btn과 동일 이유)
     else if(si)si.blur();
     return;
   }
@@ -12006,7 +12006,15 @@ document.getElementById('dh-search-btn').addEventListener('click',e=>{
   // 검색창이 카드 뒤로 뜨는 채였다(제보 재발). 브라우저 테스트도 tab-search를 클릭해서 초록이었다.
   if(!open)_bringToFront(sw);
   ['tab-search','dh-search-btn'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.toggle('active',!open);});
-  if(!open){_sizeSearchWrap();setTimeout(()=>document.getElementById('search-input').focus(),50);}
+  if(!open){
+    _sizeSearchWrap();
+    // ⚠️ 열 때 doSearch를 명시적으로 부른다(2026-09-05 제보 — "돋보기 누르면 검색창만 남고 밑엔 텅 빔").
+    // 예전엔 아래 focus 이벤트(_si focus→doSearch)에만 의존했는데, 막 열리는 순간 요소가 아직 보이지
+    // 않아 focus()가 씹히면 doSearch가 안 불려 본문(최근검색/트렌드)이 빈 채로 남았다. 모바일
+    // openMobSearchSheet가 doSearch('')를 명시 호출하는 것과 동일하게 맞춘다.
+    doSearch(document.getElementById('search-input').value);
+    setTimeout(()=>document.getElementById('search-input').focus(),50);
+  }
   _updateFavHintCallout();
 });
 document.getElementById('dh-settings-btn').addEventListener('click',e=>{
@@ -16706,6 +16714,23 @@ function _buildFeedRecentlyViewed(){
 // 오리지널 콘텐츠 선반(2026-09-04) — 여러 아이돌의 **개인 채널**(source_tier='idol', 예: 가을의 온도·따라해볼레이)
 // 최근 업로드를 한 가로 선반에 섞어 노출. 공식 그룹 채널(official)은 양이 너무 많아 제외. 그룹당 2개까지 캡해
 // 특정 채널이 독식하지 않고 여러 아이돌이 고루 보이게 한다(Discover 전용, 개인화 아님).
+// 유튜브 세로 원본 썸네일(oardefault.jpg) 실측으로 "진짜 쇼츠(9:16)"인지 판정(2026-09-05). is_short/
+// category 플래그가 틀린 영상을 걸러낼 때 쓴다 — 세로 원본이 실제로 존재하면(플레이스홀더 120×90이 아니고
+// 세로 비율) 쇼츠. 로드 실패/지연(2.5초)은 "쇼츠 아님(가로)"으로 간주해 선반이 안 멈추게 한다.
+function _thumbIsVertical(vid){
+  return new Promise(res=>{
+    if(!vid)return res(false);
+    let done=false;const fin=v=>{if(!done){done=true;res(v);}};
+    const im=new Image();
+    im.onload=()=>{
+      if(im.naturalWidth===120&&im.naturalHeight===90)return fin(false); // 세로 원본 없음 → 가로 영상
+      fin(im.naturalHeight>im.naturalWidth);
+    };
+    im.onerror=()=>fin(false);
+    setTimeout(()=>fin(false),2500);
+    im.src=`https://i.ytimg.com/vi/${vid}/oardefault.jpg`;
+  });
+}
 async function _buildFeedJacon(){
   const section=document.getElementById('feed-jacon-section');
   const list=document.getElementById('feed-jacon');
@@ -16724,14 +16749,21 @@ async function _buildFeedJacon(){
     let{data,error}=await _q();
     if(_isPubTsMissing(error)){_hasPubTs=false;({data,error}=await _q());}
     if(error||!data?.length)return;
-    // 그룹당 2개까지(다양성) — 여러 아이돌 개인 채널이 고루 보이게
-    const seen={},picked=[];
+    // 그룹당 2개까지(다양성) — 여러 아이돌 개인 채널이 고루 보이게. is_short/category 플래그는 오판이
+    // 있으므로(사용자 지적, 2026-09-05) 먼저 플래그로 거르고, 아래에서 **oardefault 세로 원본 실측**으로
+    // 한 번 더 확실히 쇼츠를 뺀다. 세로 실측 후 30개를 채울 수 있게 풀은 넉넉히(45) 모은다.
+    const seen={},pool=[];
     for(const v of _filterBannedVideos(data)){
+      if(_isShortV(v))continue; // 플래그상 쇼츠 1차 제외
       const g=v.group_ko||'?';
       seen[g]=(seen[g]||0)+1;
-      if(seen[g]<=2)picked.push(v);
-      if(picked.length>=30)break;
+      if(seen[g]<=2)pool.push(v);
+      if(pool.length>=45)break;
     }
+    if(!pool.length)return;
+    // oardefault(9:16 세로 원본) 실측 — 세로 썸네일이 실제로 존재하면 플래그와 무관하게 쇼츠로 보고 제외.
+    const _vert=await Promise.all(pool.map(v=>_thumbIsVertical(v.id)));
+    const picked=pool.filter((v,i)=>!_vert[i]).slice(0,30);
     if(!picked.length)return;
     const vidUrl=v=>_isShortV(v)?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;
     const pl=picked.map(v=>({t:v.title,u:vidUrl(v),thumb:v.thumb||`https://img.youtube.com/vi/${v.id}/mqdefault.jpg`,pa:v.published_at?.slice(0,10),paFull:v.published_ts||v.published_at,vc:v.view_count,groupKo:v.group_ko,memberKos:v.members||[],_apiId:v.id,_apiGroupKo:v.group_ko}));

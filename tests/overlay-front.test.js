@@ -84,6 +84,10 @@ const OPENERS = [
   [/^function openMobSheet\(/m, 'openMobSheet(모바일 카드)'],
   [/^async function _openSongVideos\(/m, '_openSongVideos(곡→영상 오버레이)'],
   [/^function _openComboPanel\(/m, '_openComboPanel(멤버 조합)'],
+  // 2026-09-05 추가: 모아보기/컬렉션 오버레이. 정적 z:65라 카드(131+)에서 프로그램 컬렉션 칩으로 열면
+  // 카드 뒤로 깔리던 버그가 실제로 났다(Part3 스냅샷이 _flOv open을 허용목록에 얼려둬서 못 잡았다 —
+  // line 99~ 형제-오버레이 함정과 같은 유형). _bringToFront 추가로 고치고 여기에 고정한다.
+  [/^function _openFeedListOverlay\(/m, '_openFeedListOverlay(모아보기/컬렉션 오버레이)'],
 ];
 OPENERS.forEach(([re, label]) => {
   const region = fnRegion(html, re, label);
