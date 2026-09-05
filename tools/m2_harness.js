@@ -48,6 +48,7 @@ function load(){
   F(/^function _isBeOriginal\(/m,'_isBeOriginal');
   F(/^function _wonkokStripClause\(/m,'_wonkokStripClause');
   S(/^const _ATM_KOREAN_SURNAMES\s*=/m,'_ATM_KOREAN_SURNAMES');
+  S(/^const _ATM_SURNAME_ROMAJI\s*=/m,'_ATM_SURNAME_ROMAJI');
   F(/^function _atmEscRe\(/m,'_atmEscRe');
   F(/^function _atmTokenize\(/m,'_atmTokenize');
   S(/^const _ATM_HASHTAG_ONLY_NAMES\s*=/m,'_ATM_HASHTAG_ONLY_NAMES');

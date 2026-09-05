@@ -5443,6 +5443,27 @@ const _ATM_KOREAN_SURNAMES=new Set(['김','이','박','최','정','강','조','�
   '진','지','엄','채','원','천','방','공','현','함','변','염','여','추','도','소','석','선','설','마','길','연','위','표','명','기',
   '반','왕','금','옥','육','인','맹','제','모','피','두','예','경','봉','사','부','편','가','복','간','승','팽','상',
   '황보','제갈','남궁','선우']);
+// 성(한글)→로마자 변형(소문자). "성+이름"을 붙여쓴 영문 토큰(anyujin=안+유진, jangwonyoung=장+원영)을
+// 그 멤버로 잡을 때 쓴다(2026-09-05, 사용자 제보 — 아이브 공식채널 제목이 이 형태인데 미태깅). 표준+통용
+// 표기를 함께 담는다. 여기 없는 성은 이 경로가 적용 안 됨(안전 — 매칭을 더 하는 쪽이라 누락돼도 기존과 동일).
+const _ATM_SURNAME_ROMAJI={
+  '김':['kim','gim'],'이':['lee','yi','rhee','i'],'박':['park','pak','bak'],'최':['choi','choe'],
+  '정':['jung','jeong','chung'],'강':['kang','gang'],'조':['cho','jo'],'윤':['yoon','yun'],
+  '장':['jang','chang'],'임':['lim','im','rim'],'한':['han'],'오':['oh','o'],'서':['seo','suh'],
+  '신':['shin','sin'],'권':['kwon','gwon'],'황':['hwang'],'안':['ahn','an'],'송':['song'],
+  '전':['jeon','jun','chun'],'홍':['hong'],'유':['yoo','yu','ryu'],'고':['ko','go','koh'],
+  '문':['moon','mun'],'양':['yang'],'손':['son','sohn'],'배':['bae','pae'],'백':['baek','back','paik'],
+  '허':['heo','hur','huh'],'남':['nam'],'심':['shim','sim'],'노':['noh','no','roh'],'하':['ha'],
+  '곽':['kwak','gwak'],'성':['sung','seong'],'차':['cha'],'주':['joo','ju','chu'],'우':['woo','wu'],
+  '구':['koo','ku','goo','gu'],'민':['min'],'류':['ryu','yoo','lyu'],'나':['na'],'진':['jin','chin'],
+  '지':['ji','jee'],'엄':['eom','um'],'채':['chae'],'원':['won'],'천':['cheon','chun'],'방':['bang','pang'],
+  '공':['kong','gong'],'현':['hyun','hyeon'],'함':['ham'],'변':['byun','byeon'],'염':['yeom','yum'],
+  '여':['yeo','yuh'],'추':['chu','choo'],'도':['do','doh'],'소':['so','soh'],'석':['seok','suk'],
+  '선':['sun','seon'],'설':['seol','sul'],'마':['ma'],'길':['gil','kil'],'연':['yeon','youn'],
+  '위':['wi','wee'],'표':['pyo'],'명':['myung','myeong'],'기':['ki','gi'],'반':['ban','bahn'],
+  '왕':['wang'],'금':['keum','geum'],'육':['yook','yuk'],'인':['in'],'맹':['maeng'],'제':['je','jae'],
+  '모':['mo'],'피':['pi'],'예':['ye'],'경':['kyung','gyeong'],'봉':['bong'],'승':['seung']
+};
 function _atmEscRe(s){return s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');}
 function _atmTokenize(title){return(title||'').toLowerCase().split(/[^a-z0-9]+/).filter(Boolean);}
 // 단일음절이 아니어도(_atmMatchesMember의 multiChar 보호를 안 받는 이름이어도) 아주 흔한 단어/영어 축약형과
@@ -5638,6 +5659,14 @@ function _atmMatchesMember(m,title,tokens,groupKo){
         let joined=tokens[i];
         for(let j=i+1;j<tokens.length&&joined.length<parts[0].length;j++)joined+=tokens[j];
         if(joined===parts[0])return true;
+      }
+      // 붙여쓴 "성(로마자)+이름" 토큰(anyujin=안+유진, jangwonyoung=장+원영). 공백형("jang wonyoung")은
+      // 위 tokens.includes로 이미 잡히고, **붙여쓴 형태만** 여기서 잡는다(2026-09-05 사용자 제보 — 아이브
+      // 공식채널 "jangwonyoung anyujin"이 미태깅). m.ko(=name) 첫 글자가 한국 성이면 그 로마자 변형들로
+      // 조합해 토큰과 **정확히 일치**하는지만 본다 → 부분문자열이 아니라 정확 일치라 오탐 위험이 낮다.
+      if(name&&name.length>=2){
+        const _srSet=_ATM_SURNAME_ROMAJI[name[0]];
+        if(_srSet)for(const sr of _srSet){ if(tokens.includes(sr+parts[0]))return true; }
       }
     }
     if(parts.length>1){
