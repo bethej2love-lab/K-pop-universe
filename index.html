@@ -20495,8 +20495,9 @@ function _buildMemberTimeline(a){
   });
   const solo=(a.soloDiscography||[]).concat(a.group.ko==='솔로'?(a.discography||[]):[]).filter(x=>x&&x.releaseDate);
   if(solo.length){solo.sort((x,y)=>String(x.releaseDate).localeCompare(String(y.releaseDate)));const s0=solo[0];const k=_tlKey(s0.releaseDate);if(k)ev.push({key:k,date:_tlDate(s0.releaseDate),label:isKo?'솔로 데뷔':'Solo debut',icon:'⭐'});}
-  if(!ev.length){sec.style.display='none';return;}
-  _renderTimeline(sec,list,ev);
+  // 1개(데뷔만)면 "이력"이라 부르기 어색하다(2026-09-06 제보) — **2개 이상일 때만** 노출한다. 아래 첫 1위가
+  // 비동기로 붙어 2개가 되면 그때 노출되므로, 활동 그룹 멤버는 데뷔+첫1위로 자연히 채워진다.
+  if(ev.length>=2)_renderTimeline(sec,list,ev);else sec.style.display='none';
   // 첫 1위(비동기) — 주 그룹 music_show_wins 최소 win_date + "데뷔 N일 후"
   const primary=realGroups[0];
   if(sb&&primary){
@@ -20509,7 +20510,16 @@ function _buildMemberTimeline(a){
         const info=GROUPS[primary.ko];
         if(info&&info.debut){const dd=new Date(String(info.debut).replace(/\./g,'-')),wd=new Date(String(w).slice(0,10).replace(/\./g,'-'));if(!isNaN(dd)&&!isNaN(wd)){const days=Math.round((wd-dd)/864e5);if(days>0)label+=isKo?` · 데뷔 ${days}일 후`:` · ${days}d after debut`;}}
         ev.push({key:k,date:_tlDate(w),label,icon:'🏆'});
-        _renderTimeline(sec,list,ev);
+        if(ev.length>=2)_renderTimeline(sec,list,ev); // 첫1위로 2개가 되면 그제서야 노출
+      }).catch(()=>{});
+    // 첫 콘서트/투어(비동기) — kpop_events 최소 date_start. 활동 그룹 멤버 시간축을 데뷔·첫1위에 이어 채운다.
+    sb.from('kpop_events').select('date_start').contains('groups',[primary.ko]).order('date_start',{ascending:true}).limit(1)
+      .then(({data})=>{
+        if(_openTArtist!==a)return;
+        const d=data&&data[0]&&data[0].date_start;if(!d)return;
+        const k=_tlKey(d);if(!k||ev.some(e=>e.icon==='🎫'))return;
+        ev.push({key:k,date:_tlDate(d),label:isKo?'첫 콘서트/투어':'First concert/tour',icon:'🎫'});
+        if(ev.length>=2)_renderTimeline(sec,list,ev);
       }).catch(()=>{});
   }
 }

@@ -33,6 +33,8 @@ ck(/id="tt-timeline-section"/.test(html) && /id="tt-timeline"/.test(html), '멤�
 ck(/_buildMemberTimeline\(a\)/.test(html), 'showT에서 _buildMemberTimeline 호출');
 const fn = extractBraces(html, /^function _buildMemberTimeline\(/m, '_buildMemberTimeline');
 ck(/from\('music_show_wins'\)/.test(fn) && /win_date/.test(fn), "첫 1위: music_show_wins.win_date 조회");
+ck(/from\('kpop_events'\)/.test(fn) && /date_start/.test(fn), "첫 콘서트/투어: kpop_events.date_start 조회");
+ck(/ev\.length>=2/.test(fn), '1개(데뷔만)면 숨김 — 2개 이상일 때만 노출');
 ck(/_openTArtist!==a/.test(fn), '비동기 결과는 현재 카드일 때만 반영(스테일 가드)');
 ck(/a\.group\.ko!=='솔로'/.test(fn) && /a\.groups\|\|\[\]/.test(fn), '실존 그룹 수집: 현소속+groups[] 이력');
 ck(/soloDiscography/.test(fn), '솔로 데뷔 마일스톤(soloDiscography)');
