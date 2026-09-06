@@ -3084,11 +3084,11 @@
   .col-btn.col-on{opacity:1!important;color:rgba(130,185,255,0.95);}
   .col-btn.col-on svg{fill:currentColor;}
   .col-btn:hover{color:rgba(160,210,255,0.98);transform:scale(1.22);}
-  /* 호버가 없는 기기(모바일 등)는 반투명 상태로 항상 보이게 + 탭 가능하게(2026-08-14, 사용자 요청 —
-     "웹처럼 저장/컬렉션 버튼이 은은하게라도 보이면 좋겠다"). 예전엔 opacity:0에 pointer-events:none까지
-     걸려있어서 이미 저장/담은 것 아니면 모바일에서 그리드 위에서 바로 누를 방법이 아예 없었음. */
+  /* 모바일 그리드 = 순수 이미지(디자인리뷰 Q3, 2026-09-07 사용자 동의). 예전(2026-08-14)엔 모바일에서도
+     썸네일 위 저장/컬렉션 버튼을 은은히 보였는데, 화면당 아이콘 40개로 어수선했다 → 그리드에선 숨기고
+     저장·컬렉션은 **라이트박스**(#yt-lb-scrap/#yt-lb-col)에서 한다. 데스크톱 hover 노출은 그대로 유지. */
   @media(hover:none){
-    .scrap-btn:not(.scrapped),.col-btn:not(.col-on){opacity:0.6;}
+    .scrap-btn,.col-btn{display:none;}
   }
   #col-quick-toast{position:fixed;bottom:calc(80px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%) translateY(10px);background:rgba(16,20,44,0.96);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border:0.5px solid rgba(140,170,240,0.18);border-radius:14px;padding:10px 16px;display:flex;align-items:center;gap:10px;font-size:13px;color:rgba(200,220,255,0.88);white-space:nowrap;z-index:120;opacity:0;pointer-events:none;transition:opacity .18s,transform .18s;}
   #col-quick-toast.show{opacity:1;pointer-events:auto;transform:translateX(-50%) translateY(0);}
