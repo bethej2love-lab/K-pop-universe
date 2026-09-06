@@ -175,7 +175,7 @@
     </div>
   </div>
   <div id="tt-discog-strip" class="gc-discog-strip hscroll-drag"></div>
-  <div id="tt-timeline-section" style="display:none"><div class="tt-timeline-hd">Timeline</div><div id="tt-timeline"></div></div>
+  <div id="tt-timeline-section" style="display:none"><div class="tt-timeline-hd">History</div><div id="tt-timeline"></div></div>
 </div><div id="tt-concert-row" class="concert-row"></div><div id="tt-collection-row" class="gc-collection-row" style="display:none"><div class="gc-collection-hd">Collections</div><div class="gc-collection-list"></div></div><div id="tt-program-row" class="gc-collection-row" style="display:none"><div class="gc-collection-hd gc-program-hd">Programs</div><div class="gc-collection-list"></div></div><div id="tv"></div></div>
 <div id="gc">
   <div id="gc-bar"></div>
@@ -20482,7 +20482,7 @@ function _buildMemberTimeline(a){
   if(!sec||!list||!a){if(sec)sec.style.display='none';return;}
   sec.style.display='none';
   const isKo=currentLang==='ko';
-  const hd=sec.querySelector('.tt-timeline-hd');if(hd)hd.textContent=isKo?'이력':'Timeline';
+  const hd=sec.querySelector('.tt-timeline-hd');if(hd)hd.textContent='History';
   // 실존 그룹 수집(현 소속 + 이력) — 현멤버는 a.group.ko, 옛멤버는 groups[]에서.
   const realGroups=[];
   if(GROUPS[a.group.ko]&&a.group.ko!=='솔로')realGroups.push({ko:a.group.ko,left:null});
@@ -20521,6 +20521,16 @@ function _buildMemberTimeline(a){
         ev.push({key:k,date:_tlDate(d),label:isKo?'첫 콘서트/투어':'First concert/tour',icon:'🎫'});
         if(ev.length>=2)_renderTimeline(sec,list,ev);
       }).catch(()=>{});
+    // 정규 1집(비동기) — 그룹 디스코 로드 후 type이 "정규…"인 것 중 최소 releaseDate(첫 정규앨범).
+    _ensureGroupDisco(primary.ko).then(()=>{
+      if(_openTArtist!==a)return;
+      const full=((GROUPS[primary.ko]||{}).discography||[]).filter(x=>x&&x.releaseDate&&/^정규/.test(String(x.type||'')));
+      if(!full.length||ev.some(e=>e.icon==='💿'))return;
+      full.sort((x,y)=>String(x.releaseDate).localeCompare(String(y.releaseDate)));
+      const k2=_tlKey(full[0].releaseDate);if(!k2)return;
+      ev.push({key:k2,date:_tlDate(full[0].releaseDate),label:isKo?'정규 1집':'1st full album',icon:'💿'});
+      if(ev.length>=2)_renderTimeline(sec,list,ev);
+    }).catch(()=>{});
   }
 }
 const _TROPHY_KIND_ORDER=['music_show','melon_top100','spotify_milestone'];
