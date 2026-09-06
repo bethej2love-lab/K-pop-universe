@@ -2170,7 +2170,8 @@ function _groupGeneration(debut,ko){
   if(y<=2022)return 4;
   return 5;
 }
-const FOCUS_DIM=0.06;
+const FOCUS_DIM=0.35; // 카드 열 때 다른 행성/별 휘도 하한(2026-09-06 디자인리뷰 #1 최고임팩트) — 0.06이면 우주가
+// 거의 검정으로 죽어 "대시보드"처럼 보였다. "우주는 항상 뒤에 있다"를 규칙화. ⚠️아이폰 실기기서 대비 확인 후 미세조정(0.3~0.4).
 let focusGroupKo=null;
 let _extraFocusKos=[];
 let _nctRingGroups=[];
@@ -13663,7 +13664,7 @@ async function renderFavList(){
   }
 }
 
-const FAV_DIM=0.03; // 즐겨찾기 하이라이트 모드 전용 — 검색/필터의 FOCUS_DIM보다 다른 행성/별을 더 투명하게
+const FAV_DIM=0.2; // 즐겨찾기 하이라이트 모드 전용(2026-09-06 디자인리뷰 #1: 0.03→0.2) — FOCUS_DIM보다 조금 더 낮게 유지하되 우주가 죽지 않는 하한
 function applyFavHighlight(){
   // 최애(bias)는 좋아요보다 상위 개념이라, 별도로 하트를 안 눌렀어도 "내 별" 하이라이트엔 항상 포함시킴
   const biasList=myProfile?.bias||[];

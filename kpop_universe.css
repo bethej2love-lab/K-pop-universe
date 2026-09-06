@@ -27,6 +27,9 @@
       #060612 100%
     );
     overflow:hidden;transition:background 0.9s ease;
+    /* 폰트 미지정 요소(라이트박스 제목·uplist·with칩·리액션 등)가 브라우저 기본 세리프(Times)로 숫자·영문을
+       렌더하던 문제 수정(2026-09-06 디자인리뷰 #2). body에서 한 번 지정하면 inherit 체인이 전부 해결된다. */
+    font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;
   }
 
   canvas{display:block;}
@@ -1245,7 +1248,11 @@
   .gc-ch-sort-item .chk,.gc-ch-view-toggle .chk{width:11px;flex:0 0 auto;font-size:10px;opacity:0;}
   .gc-ch-sort-item.active .chk,.gc-ch-view-toggle.active .chk{opacity:1;}
   .gc-ch-sort-divider{height:0.5px;background:rgba(255,255,255,0.10);margin:4px 5px;}
-  .gc-ch-filters{display:flex;gap:4px;flex-wrap:nowrap;flex:1;overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
+  .gc-ch-filters{display:flex;gap:4px;flex-wrap:nowrap;flex:1;overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:none;
+    /* 넘치는 알약이 오른쪽 끝에서 글자 중간에 하드 컷 되던 것("Live" 절단, 디자인리뷰 #5) → 가장자리를
+       페이드시켜 "잘림"이 아니라 "더 스크롤"로 읽히게 한다. 순수 CSS, 레이아웃 변화 없음. */
+    -webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 18px),transparent);
+    mask-image:linear-gradient(90deg,#000 calc(100% - 18px),transparent);}
   .gc-ch-filters::-webkit-scrollbar{display:none;}
   .gc-ch-filter{
     background:linear-gradient(160deg,rgba(255,255,255,0.11),rgba(255,255,255,0.02));
