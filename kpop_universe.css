@@ -680,6 +680,11 @@
   .lb-react-btn.reacted{background:rgba(255,255,255,0.20);}
   .lb-react-cnt{font-size:11px;color:rgba(220,235,255,0.75);font-family:'Pretendard',sans-serif;font-weight:600;line-height:1;}
   .lb-react-cnt:empty{display:none;}
+  /* 리액션 3+펼침(디자인리뷰 Q5, 2026-09-07) — 기본 3개+더보기(···), 탭하면 나머지 3개. 플레이어 조작 절제. */
+  #yt-lb-react-more{background:rgba(255,255,255,0.07);border:none;border-radius:18px;padding:5px 11px;cursor:pointer;color:rgba(220,235,255,0.68);font-size:15px;line-height:1;transition:background .15s,transform .12s;}
+  #yt-lb-react-more:active{transform:scale(0.86);}
+  #yt-lb-reactions:not(.expanded) .lb-react-hidden{display:none;}
+  #yt-lb-reactions.expanded #yt-lb-react-more{display:none;}
   @keyframes _lbRipple{0%{transform:scale(0);opacity:.55;}100%{transform:scale(3.5);opacity:0;}}
   .lb-ripple{position:absolute;border-radius:50%;width:44px;height:44px;margin:-22px 0 0 -22px;background:rgba(255,255,255,0.42);pointer-events:none;animation:_lbRipple .48s ease-out forwards;}
   /* [삭제됨 2026-09-04] #lb-react-extended / #lb-emoji-picker-* — 라이트박스 반응의 확장 행과 전체 피커.

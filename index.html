@@ -779,9 +779,10 @@
       <button class="lb-react-btn" data-emoji="❤️‍🔥">❤️‍🔥<span class="lb-react-cnt"></span></button>
       <button class="lb-react-btn" data-emoji="🫠">🫠<span class="lb-react-cnt"></span></button>
       <button class="lb-react-btn" data-emoji="😭">😭<span class="lb-react-cnt"></span></button>
-      <button class="lb-react-btn" data-emoji="✨">✨<span class="lb-react-cnt"></span></button>
-      <button class="lb-react-btn" data-emoji="🥹">🥹<span class="lb-react-cnt"></span></button>
-      <button class="lb-react-btn" data-emoji="💀">💀<span class="lb-react-cnt"></span></button>
+      <button id="yt-lb-react-more" type="button" aria-label="반응 더보기">···</button>
+      <button class="lb-react-btn lb-react-hidden" data-emoji="✨">✨<span class="lb-react-cnt"></span></button>
+      <button class="lb-react-btn lb-react-hidden" data-emoji="🥹">🥹<span class="lb-react-cnt"></span></button>
+      <button class="lb-react-btn lb-react-hidden" data-emoji="💀">💀<span class="lb-react-cnt"></span></button>
     </div>
     <div id="yt-lb-toolbar">
       <button id="yt-lb-prev" aria-label="이전 영상">‹</button>
@@ -5536,6 +5537,7 @@ let _reactionCounts=new Map(); // "videoUrl\x00emoji" → count
 let _lbCurVideoUrl='';
 
 async function _loadReactions(videoUrl){
+  document.getElementById('yt-lb-reactions')?.classList.remove('expanded'); // 새 영상은 접힌 상태로 시작(Q5)
   _renderReactions();
   if(!videoUrl||!sb||!window._sbSession)return;
   try{
@@ -5586,6 +5588,9 @@ function _renderReactions(){
     const _fmt=n=>n<=0?'':(n<1000?n:(n<10000?(Math.floor(n/100)/10).toFixed(n%1000===0?0:1)+'K':Math.floor(n/1000)+'K'));
     if(cntEl)cntEl.textContent=_fmt(cnt);
   });
+  // 숨겨진 반응(4~6번) 중 내가 이미 누른 게 있으면 자동으로 펼쳐 보이게(2026-09-07 Q5 3+펼침)
+  if([...document.querySelectorAll('.lb-react-hidden')].some(b=>b.classList.contains('reacted')))
+    document.getElementById('yt-lb-reactions')?.classList.add('expanded');
 }
 
 
@@ -5594,6 +5599,7 @@ function _renderReactions(){
 document.querySelectorAll('.lb-react-btn').forEach(btn=>{
   btn.addEventListener('click',()=>_toggleReaction(_lbCurVideoUrl,btn.dataset.emoji));
 });
+document.getElementById('yt-lb-react-more')?.addEventListener('click',()=>document.getElementById('yt-lb-reactions')?.classList.add('expanded')); // 반응 펼치기(Q5)
 // 물방울 리플 (이벤트 위임)
 function _lbRipple(btn,e){
   const rc=btn.getBoundingClientRect();
