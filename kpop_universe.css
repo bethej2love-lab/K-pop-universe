@@ -598,8 +598,8 @@
      min(…,100vw-480px)로 좁은 데스크톱에선 영상이 최소 480px는 유지(그 경우만 카드 일부를 덮음).
      :has()는 이미 어드민 도킹(#adm-home-overlay 등)에서 쓰는 기법 — 데스크톱 지원 확인됨. */
   @media(min-width:769px){
-    body:has(#side-panel.open) #yt-lightbox{right:320px;}
-    body:has(#member-panel.open) #yt-lightbox{right:min(640px,calc(100vw - 480px));}
+    body:has(#side-panel.open) #yt-lightbox{right:380px;}
+    body:has(#member-panel.open) #yt-lightbox{right:min(760px,calc(100vw - 480px));}
     body.card-wide:has(#side-panel.open) #yt-lightbox{right:min(640px,calc(100vw - 480px));}
     body.card-wide:has(#member-panel.open) #yt-lightbox{right:min(960px,calc(100vw - 480px));}
     /* 좁아진 영역에 맞춰 영상 래퍼가 카드 밑으로 삐져나가지 않게(기본 min(88vw,900px) 위에 캡) */
@@ -964,7 +964,7 @@
   }
   /* ── Side panel (desktop) ──────────────────────────── */
   #side-panel{
-    position:fixed;right:0;top:64px;bottom:0;width:320px;
+    position:fixed;right:0;top:64px;bottom:0;width:380px; /* 320→380 웹 레일 임시 확대(디자인리뷰 #13, 2026-09-07) */
     overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;
     z-index:63;pointer-events:none;
     transform:translateX(100%);
@@ -991,7 +991,7 @@
   @media(max-width:768px){#side-panel{display:none;}}
   /* ── Member panel (그룹 카드 왼쪽 확장) ───────────── */
   #member-panel{
-    position:fixed;right:320px;top:64px;bottom:0;width:320px;
+    position:fixed;right:380px;top:64px;bottom:0;width:380px;
     overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;
     z-index:62;pointer-events:none;
     transform:translateX(100%);
@@ -1018,7 +1018,7 @@
   /* 접기 탭: member-panel 왼쪽 중간. member-panel 자체와 똑같은 거리(자기 폭 320px)·같은 트랜지션
      커브로 translateX를 같이 줘서, 패널이 슬라이드될 때 탭이 따로 놀지 않고 카드에 붙어서 같이 움직임 */
   #tt-collapse{
-    position:fixed;right:640px;top:50%;
+    position:fixed;right:760px;top:50%;
     width:22px;height:44px;border:none;border-radius:8px 0 0 8px;
     background:rgba(20,24,44,0.88);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
     color:rgba(160,185,230,0.80);font-size:16px;line-height:1;
@@ -1048,10 +1048,10 @@
   /* ── 카드 넓게 보기 (wide mode) ──────────────────────── */
   body.card-wide #side-panel{width:640px;}
   body.card-wide #member-panel{right:640px;}
-  body.card-wide #tt-collapse{right:960px;}
-  body.card-wide #conn-panel{right:960px;transform:translateX(calc(100% + 960px));}
+  body.card-wide #tt-collapse{right:1020px;}
+  body.card-wide #conn-panel{right:1020px;transform:translateX(calc(100% + 1020px));}
   body.card-wide #conn-panel.open{transform:translateX(0);}
-  body.card-wide #conn-collapse{right:1280px;transform:translateY(-50%) translateX(1280px);}
+  body.card-wide #conn-collapse{right:1400px;transform:translateY(-50%) translateX(1400px);}
   body.card-wide #conn-panel.open~#conn-collapse{transform:translateY(-50%) translateX(0);}
   #sp-wide-btn{
     position:absolute;top:10px;left:10px;z-index:62;
@@ -2168,7 +2168,7 @@
   }
   /* ── Connection Card ─────────────────────────────── */
   #conn-panel{
-    position:fixed;right:640px;top:64px;bottom:0;width:320px;
+    position:fixed;right:760px;top:64px;bottom:0;width:380px;
     overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;
     z-index:61;pointer-events:none;
     transform:translateX(calc(100% + 640px));

@@ -7517,9 +7517,9 @@ function _updateConnLines3d(){
 }
 function _openPanelWidth(){
   if(isMob())return 0;
-  return(sidePanelEl.classList.contains('open')?320:0)
-        +(memberPanelEl.classList.contains('open')?320:0)
-        +(connPanelEl.classList.contains('open')?280:0);
+  return(sidePanelEl.classList.contains('open')?380:0)
+        +(memberPanelEl.classList.contains('open')?380:0)
+        +(connPanelEl.classList.contains('open')?380:0);
 }
 function _panelOffsetVec(dist){
   const pw=_openPanelWidth();
@@ -8103,9 +8103,9 @@ function openConnCard(artist){
     // wide 모드에서 패널/접기 탭이 CSS가 계산한 위치보다 320px 왼쪽으로 밀려 어긋났었음(2026-08-10,
     // 사용자 제보 — 연결 카드 접기 버튼 위치가 잘못됐다는 신고, 실제 원인은 이거였음). member-panel
     // 자체 너비는 wide 모드에서도 320으로 안 바뀜(#member-panel엔 width 오버라이드가 없음).
-    const sideW=document.body.classList.contains('card-wide')?640:320;
-    const memberRight=memberPanelEl.classList.contains('open')?sideW+320:sideW;
-    const connW=320; // conn-panel 너비 — CSS(#conn-panel{width:320px})와 일치해야 함(예전엔 280으로 어긋나있었음)
+    const sideW=document.body.classList.contains('card-wide')?640:380;
+    const memberRight=memberPanelEl.classList.contains('open')?sideW+380:sideW;
+    const connW=380; // conn-panel 너비 — CSS(#conn-panel{width:380px})와 일치해야 함(2026-09-07 320→380)
     connPanelEl.style.right=memberRight+'px';
     // conn-collapse 버튼도 conn-panel 왼쪽 끝에 맞춰 동적으로 이동(정적 CSS는 멤버 패널 열림 기준 값만 있어서)
     const collapseEl=document.getElementById('conn-collapse');
