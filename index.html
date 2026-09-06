@@ -95,6 +95,13 @@
       <button id="my-page-edit">편집</button>
     </div>
     <div id="my-page-bias"></div>
+    <!-- 전부 비었을 때(신규 유저) 4개 "없어요" 대신 하나로(디자인리뷰 Q4, 사용자 동의). 문구는 임시 — 최종은 유저 결정. -->
+    <div id="profile-empty" style="display:none">
+      <div id="profile-empty-star">✦</div>
+      <div id="profile-empty-title">아직 내 별이 없어요</div>
+      <div id="profile-empty-sub">마음에 드는 그룹·멤버를 즐겨찾기하면 여기 모여요</div>
+      <button id="profile-empty-cta">그룹·멤버 찾아보기</button>
+    </div>
     <div id="fav-section">
       <div class="fav-hd"><span class="fav-hd-lbl">FAVORITES</span><button id="fav-mode-btn" class="sp-tog">Highlight</button></div>
       <div id="fav-list"><div class="fav-empty" data-i18n="favEmpty">아직 즐겨찾기가 없어요</div></div>
@@ -2407,7 +2414,7 @@ async function buildUniverse(){
   _updateFavHintCallout();
   // 로그인 동기화가 끝나면(우주는 이미 떠 있음) 서버 유저 데이터로 최애·컬렉션·마이스타만 다시 반영
   _authP.then(()=>{try{
-    renderFavList();renderCollectionSection();renderScrapList();renderConcertLogList();_renderBiasChips();
+    renderFavList();renderCollectionSection();renderScrapList();renderConcertLogList();_renderBiasChips();_updateProfileEmpty();
     placeMyStarInUniverse();_updateFavHintCallout();_updateIdxEntryCount();
     if(typeof favMode!=='undefined'&&favMode&&typeof applyFavHighlight==='function')applyFavHighlight();
     _perfMark('authDone');
@@ -11132,7 +11139,7 @@ function _applyTagFocus(){
 }
 
 function _hideMyPageSections(){
-  ['my-page-header','my-page-bias','fav-section','collection-section','scrap-section','concert-section'].forEach(id=>{
+  ['my-page-header','my-page-bias','profile-empty','fav-section','collection-section','scrap-section','concert-section'].forEach(id=>{
     const el=document.getElementById(id);if(el)el.style.display='none';
   });
 }
@@ -11140,7 +11147,28 @@ function _showMyPageSections(){
   ['my-page-header','my-page-bias','fav-section','collection-section','scrap-section','concert-section'].forEach(id=>{
     const el=document.getElementById(id);if(el)el.style.display='';
   });
+  _updateProfileEmpty();
 }
+// 즐겨찾기·컬렉션·좋아요·공연이 **전부** 비면(신규 유저) 4개 "없어요" 섹션 대신 통합 빈 화면 하나만 띄운다
+// (디자인리뷰 Q4). 하나라도 있으면 해당 섹션들이 정상 표시된다.
+function _updateProfileEmpty(){
+  if(typeof _idxOpen!=='undefined'&&_idxOpen)return; // 필터/인덱스 뷰에선 섹션을 건드리지 않는다(_hideMyPageSections 담당)
+  const allEmpty=(typeof favMembers!=='undefined'?favMembers.size:0)===0
+    &&(typeof favGroups!=='undefined'?favGroups.size:0)===0
+    &&(typeof collections!=='undefined'?collections.length:0)===0
+    &&(typeof scraps!=='undefined'?scraps.length:0)===0
+    &&(typeof concertLog!=='undefined'?concertLog.length:0)===0;
+  const empt=document.getElementById('profile-empty');
+  if(empt)empt.style.display=allEmpty?'':'none';
+  ['fav-section','collection-section','scrap-section','concert-section'].forEach(id=>{
+    const el=document.getElementById(id);if(el)el.style.display=allEmpty?'none':'';
+  });
+}
+// 빈 화면 CTA — 검색을 열어 첫 즐겨찾기로 유도(데스크톱 헤더 검색 / 모바일 검색시트)
+document.getElementById('profile-empty-cta')?.addEventListener('click',()=>{
+  document.getElementById('journal-sidebar')?.classList.remove('open');
+  if(isMob())openMobSearchSheet();else document.getElementById('dh-search-btn')?.click();
+});
 function _closeIndexPanel(){
   _idxOpen=false;
   const ic=document.getElementById('idx-ctrl-row');if(ic)ic.style.display='none';

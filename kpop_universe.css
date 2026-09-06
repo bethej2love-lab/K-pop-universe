@@ -2829,6 +2829,13 @@
   .fav-edit{background:none;border:none;cursor:pointer;font-size:14px;color:rgba(120,145,195,0.44);padding:2px 4px;flex-shrink:0;transition:color .13s;line-height:1;}
   .fav-edit:hover{color:rgba(200,220,255,0.85);}
   .fav-empty{font-size:11px;color:rgba(92,112,158,0.48);padding:4px 4px;}
+  /* 프로필 통합 빈 화면(디자인리뷰 Q4) — 4개 "없어요" 대신 하나. 일러스트 없이(§5) ✦+문구+행동 1개. */
+  #profile-empty{display:flex;flex-direction:column;align-items:center;text-align:center;padding:44px 20px 40px;}
+  #profile-empty-star{font-size:26px;color:rgba(140,175,255,0.55);margin-bottom:14px;text-shadow:0 0 18px rgba(130,170,255,0.4);}
+  #profile-empty-title{font-size:15px;font-weight:600;color:rgba(215,228,255,0.9);margin-bottom:6px;}
+  #profile-empty-sub{font-size:12px;color:rgba(150,172,220,0.6);line-height:1.5;margin-bottom:18px;max-width:220px;}
+  #profile-empty-cta{background:rgba(130,170,255,0.14);border:0.5px solid rgba(140,175,255,0.32);border-radius:999px;color:rgba(205,222,255,0.92);font-size:12.5px;font-weight:600;padding:9px 18px;cursor:pointer;font-family:inherit;transition:background .13s,border-color .13s;}
+  #profile-empty-cta:hover{background:rgba(130,170,255,0.24);border-color:rgba(160,190,255,0.5);}
   #mob-fav-btn.fav-mode-on,#dh-fav-btn.fav-mode-on{color:rgba(255,105,135,0.95)!important;text-shadow:0 0 10px rgba(255,100,130,0.45);}
   /* ── Profile panel ───────────────────────────────── */
   #profile-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.52);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:69;display:none;align-items:center;justify-content:center;}
