@@ -243,9 +243,19 @@ async function _ytFetchNewVideos(uploadsId,key,sinceId,onProg,startPageToken,cut
 // _probeIsPortrait는 index.html 전역(같은 페이지, classic script). 동시 실행을 제한해 썸네일 서버 과부하 방지.
 async function _ytProbeShortsInline(vids,onProg){
   if(typeof _probeIsPortrait!=='function')return;
-  const targets=(vids||[]).filter(v=>v&&!v.is_short); // 제목으로 이미 잡힌 건 건너뜀
-  if(!targets.length)return;
-  const CONC=10;let idx=0,done=0;
+  const all=(vids||[]).filter(v=>v&&!v.is_short); // 제목으로 이미 잡힌 건 건너뜀
+  if(!all.length)return;
+  // 한 번의 동기화에서 실측할 상한(2026-09-07). 평상시 하루 유입은 그룹당 수십 건이라 안 걸리지만,
+  // 체크포인트가 없거나(새 기기·localStorage 초기화) 과거 이어받기 중인 채널은 한 번에 수천~수만 건이
+  // 들어와서 이 실측만으로 동기화가 몇십 분씩 잡아먹는다. 상한을 넘긴 나머지는 `short_probed_at`이
+  // 비어 있어 "⬆️ 가로→쇼츠 일괄 승격" 스윕이 그대로 이어받는다(중단/재개 가능한 전용 도구).
+  const CAP=1500;
+  const targets=all.slice(0,CAP);
+  if(all.length>CAP&&onProg)onProg(`세로(쇼츠) 실측 ${CAP}건까지만 — 나머지 ${all.length-CAP}건은 '쇼츠 승격' 스윕이 담당`);
+  // 동시 실행 수 실측(2026-09-07, i.ytimg.com은 HTTP/2라 스트림 병렬이 그대로 이득):
+  //   CONC=10 → 건당 121·149ms / CONC=20 → 57ms / CONC=32 → 48·52ms (각 100건, 순서 섞어 2회 측정)
+  // 10은 명백히 과소였다. 32는 20 대비 이득이 거의 없어(오차) 24로 둔다 — 브라우저 커넥션·발열 여유.
+  const CONC=24;let idx=0,done=0;
   async function worker(){
     while(idx<targets.length){
       const v=targets[idx++];
@@ -330,13 +340,19 @@ async function _ytSyncAll(){
   // 양쪽에 정상 노출된다. 개인 채널 동기화는 이제 "외부채널 동기화" 버튼이 담당.
   const targets=[...groups,...solos];
   let done=0;
+  // 그룹별 소요 시간 누적(2026-09-07) — "루틴이 10시간 걸린다"의 범인을 찾으려면 250개 그룹 중 **어느
+  // 채널이** 시간을 먹는지가 필요하다(대개 체크포인트가 없어 과거를 통째로 다시 긁는 채널). 끝날 때
+  // 상위 10개를 콘솔에 표로 남긴다.
+  const _syncMs=[];
   for(const{ko,url,syncKey}of targets){
     _ytSetProg(`[${done+1}/${targets.length}] ${ko} 동기화 중...`);
+    const _gt0=Date.now();
     try{
       const n=await _ytSyncGroup(ko,key,(fetched,total)=>{
         _ytSetProg(`[${done+1}/${targets.length}] ${ko}: ${fetched}${total?'/'+total:''}개`);
       },url,syncKey);
-      console.log(`[YT sync] ${ko}: +${n}개`);
+      const _ms=Date.now()-_gt0;_syncMs.push({ko,ms:_ms,n});
+      console.log(`[YT sync] ${ko}: +${n}개 (${(_ms/1000).toFixed(1)}초)`);
     }catch(e){
       console.error(`[YT sync] ${ko} 실패:`,e.message);
       _ytSetProg(`[${done+1}/${targets.length}] ${ko} 오류: ${e.message}`);
@@ -344,7 +360,10 @@ async function _ytSyncAll(){
     }
     done++;
   }
-  _ytSetProg(`공식 채널 완료 — ${targets.length}개`);
+  const _tot=_syncMs.reduce((a,b)=>a+b.ms,0);
+  console.log(`[YT sync] 총 ${(_tot/60000).toFixed(1)}분 · 오래 걸린 채널 top10`,
+    _syncMs.sort((a,b)=>b.ms-a.ms).slice(0,10).map(x=>`${x.ko} ${(x.ms/1000).toFixed(1)}초(+${x.n})`));
+  _ytSetProg(`공식 채널 완료 — ${targets.length}개 (${(_tot/60000).toFixed(1)}분)`);
   _ytSyncing=false;
 }
 
@@ -1475,10 +1494,14 @@ async function _ytSweepCoverV2(){
     const orExpr=[...KW.map(k=>`title_norm.ilike.${k}`),'with_groups.neq.{}','with_members.neq.{}','cover_of_groups.neq.{}','cover_of_members.neq.{}'].join(',');
     // cover_manual(사람이 확정한 원곡)도 같이 읽어 아래 루프에서 건너뛴다 — 컬럼 SQL 실행 전이면 한 번만 빼고 재조회.
     const _sel=()=>'id,title,group_ko,members,with_members,with_groups,cover_of_members,cover_of_groups,cover_of_song,published_at,tags_manual,content_flag'+(_hasCoverManualCol?',cover_manual':'');
-    let{data:rows,error}=await _sbFetchAll(()=>sb.from(_YT_TABLE).select(_sel()).or(orExpr).order('id'));
-    if(error&&_coverManualColMissing(error))({data:rows,error}=await _sbFetchAll(()=>sb.from(_YT_TABLE).select(_sel()).or(orExpr).order('id')));
+    // 매일 루틴에서는 증분(마지막 실행 이후 유입분) — 이 조회는 제목 ILIKE 8개 OR라 인덱스를 못 타서
+    // 전량이면 3만 행을 매번 다시 훑는다. 7일마다 한 번은 루틴에서도 전량(_admRoutineScopeSince).
+    const _covSince=_admRoutineScopeSince('cover');
+    const _q=()=>{let q=sb.from(_YT_TABLE).select(_sel()).or(orExpr);if(_covSince)q=q.gt('created_at',_covSince);return q.order('id');};
+    let{data:rows,error}=await _sbFetchAll(_q);
+    if(error&&_coverManualColMissing(error))({data:rows,error}=await _sbFetchAll(_q));
     if(error){_ytSetProg('조회 실패: '+error.message);return;}
-    if(!rows?.length){_ytSetProg('대상 행이 없어요');return;}
+    if(!rows?.length){_ytSetProg('대상 행이 없어요'+(_covSince?' (증분 — 신규 유입 없음)':''));return;}
     const EXCLUDE=new Set(['무관','보류','hidden','외부인']);
     const same=(a,b)=>{const x=[...new Set(a||[])].sort(),y=[...new Set(b||[])].sort();return x.length===y.length&&x.every((v,i)=>v===y[i]);};
     let manualSkipped=0,ambiguous=0,external=0,coverLocked=0,mediumN=0;const updates=[];const sample={cover:[],move:[],wipe:[],reassign:[],ambiguous:[]};
@@ -3546,7 +3569,7 @@ async function _ytSweepPromoteShorts(){
   const runBatchId=(self.crypto&&self.crypto.randomUUID)?self.crypto.randomUUID():('sp'+Date.now());
   _shortsPromoteRunning=true;
   if(btn){btn.textContent='⏹️ 쇼츠 승격 중단';btn.style.borderColor='#d08a8a';}
-  const CHUNK=400, CONC=12;
+  const CHUNK=400, CONC=24; // 12→24(2026-09-07 실측: 건당 121ms→48ms, HTTP/2라 병렬이 그대로 이득)
   let scanned=0, promoted=0, snapOff=false;
   try{
     let remain=null; // 진행률 표시용 대략치(실패해도 무시)
@@ -6037,6 +6060,10 @@ async function _ytAutoTagMembers(){
   if(btn)btn.disabled=true;
   try{
     const groupKos=Object.keys(GROUPS);
+    // 이번 실행이 볼 범위(루틴=증분/주1회 전량, 버튼=전량). 그룹 루프 밖에서 한 번만 정한다 —
+    // 그룹마다 부르면 '전량 실행 시각' 기록이 208번 덮어써진다.
+    const _atmSince=_admRoutineScopeSince('autotag');
+    if(_atmSince)console.log('[자동 태깅] 증분 모드 — '+_atmSince+' 이후 유입분만');
     let grandMatched=0,grandChecked=0;
     let completed=0;
     const CONC=6; // 동시 처리 그룹 수 — 순차 268회 왕복을 병렬화해 시간 단축(결과 동일, egress 총량 불변, 2026-08-23)
@@ -6052,12 +6079,16 @@ async function _ytAutoTagMembers(){
       // 잡힐 수 있으므로, 이미 콜라보가 채워진 행이 아니면 계속 재검사 대상이 된다.
       // 4개 조건을 .or() 한 번에 다 넣어야 OR로 묶임 — .or()를 여러 번 체이닝하면 AND로 묶여서
       // "members도 비고 AND with_members도 빈" 행만 걸리는 버그가 났던 적이 있었음(같은 실수 재발 방지).
-      const{data:rows,error}=await _sbFetchAll(()=>sb.from(_YT_TABLE)
-        .select('id,title,members,with_members,with_groups,published_at')
-        .eq('group_ko',gko)
-        .eq('tags_manual',false) // 관리자가 태그 모달에서 직접 저장한 행은 자동 태깅이 절대 건드리지 않음
-        .or('members.eq.{},members.is.null,with_members.eq.{},with_members.is.null')
-        .order('id'));
+      const{data:rows,error}=await _sbFetchAll(()=>{
+        let q=sb.from(_YT_TABLE)
+          .select('id,title,members,with_members,with_groups,published_at')
+          .eq('group_ko',gko)
+          .eq('tags_manual',false) // 관리자가 태그 모달에서 직접 저장한 행은 자동 태깅이 절대 건드리지 않음
+          .or('members.eq.{},members.is.null,with_members.eq.{},with_members.is.null');
+        // 매일 루틴에서는 증분(마지막 실행 이후 유입분) — 7일마다 한 번은 전량(_admRoutineScopeSince 주석).
+        if(_atmSince)q=q.gt('created_at',_atmSince);
+        return q.order('id');
+      });
       if(error){console.error(`[자동 태깅] ${gko} 조회 실패:`,error.message);completed++;return;}
       if(!rows?.length){completed++;return;}
       // description(설명란)은 members가 아직 빈 행에만 필요(콜라보 감지는 아래 _m2ParseTitle이 제목만
@@ -6121,7 +6152,7 @@ async function _ytAutoTagMembers(){
     let _qi=0;
     const _worker=async()=>{while(_qi<groupKos.length){await processGroup(groupKos[_qi++]);}};
     await Promise.all(Array.from({length:Math.min(CONC,groupKos.length)},()=>_worker()));
-    _ytSetProg(`완료! 미태깅 ${grandChecked}개 중 ${grandMatched}개 새로 태깅됨 (동시 ${CONC})`);
+    _ytSetProg(`완료! 미태깅 ${grandChecked}개 중 ${grandMatched}개 새로 태깅됨 (동시 ${CONC}${_atmSince?' · 증분':' · 전량'})`);
   }catch(e){
     _ytSetProg('오류: '+e.message);
   }finally{
@@ -9017,7 +9048,30 @@ document.getElementById('admin-bulk-clear-collab-btn')?.addEventListener('click'
 //
 // ⚠️ 카드 카운트는 "빨라야" 의미가 있다(느리면 또 안 열게 됨). 무거운 집계(미태깅 155,070건은 5.6초)는
 //    일부러 안 넣었다 — 숫자가 커도 행동으로 안 이어지는 지표라 넣을 이유도 없음.
-const _ADM_LS={fbSeen:'kpu_adm_fb_seen',lastRun:'kpu_adm_last_routine'};
+const _ADM_LS={fbSeen:'kpu_adm_fb_seen',lastRun:'kpu_adm_last_routine',stepMs:'kpu_adm_routine_step_ms',
+  // 루틴이 "전량"으로 돈 마지막 시각(단계별). 평소엔 증분으로 돌고 7일마다 한 번 전량 — 아래
+  // _admRoutineScopeSince 주석 참고.
+  fullAutotag:'kpu_adm_full_autotag',fullCover:'kpu_adm_full_cover'};
+// 루틴(무인 매일 실행)에서 이 스윕이 볼 범위 — null이면 전량, ISO 문자열이면 그 시각 이후 유입분만.
+// 왜: 매일 루틴의 2단계가 **매번 378,604행**(전체 394,351행의 96%)을 받아서 매처를 돌리고, 그중
+// members가 빈 180,632행은 설명란까지 따로 받아온다. 어제 이미 판정한 행을 오늘 똑같이 다시 판정하는
+// 게 대부분이라, 하루 유입(~2,000행)만 보면 같은 결과를 훨씬 싸게 얻는다.
+// 다만 "로스터가 늘어나서 예전엔 안 잡히던 이름이 이제 잡힌다"는 회수 경로가 증분만으로는 죽으므로,
+// 7일에 한 번은 루틴에서도 전량을 돈다. 패널 버튼으로 직접 누르면 항상 전량(_admRoutineRunning=false).
+const _ADM_FULL_EVERY_MS=7*24*3600*1000;
+function _admRoutineScopeSince(kind){
+  if(!_admRoutineRunning)return null; // 사람이 버튼으로 부른 것 = 전량
+  const key=kind==='cover'?_ADM_LS.fullCover:_ADM_LS.fullAutotag;
+  let lastFull=0,lastRun=0;
+  try{lastFull=+(localStorage.getItem(key)||0);lastRun=+(localStorage.getItem(_ADM_LS.lastRun)||0);}catch(e){}
+  if(!lastFull||Date.now()-lastFull>=_ADM_FULL_EVERY_MS){
+    try{localStorage.setItem(key,String(Date.now()));}catch(e){}
+    return null; // 이번엔 전량
+  }
+  if(!lastRun)return null; // 마지막 실행 시각을 모르면 안전하게 전량
+  // 하루치 여유를 두고 겹쳐 본다 — 실행 도중 들어온 유입/시계 오차로 빠지는 행이 없게.
+  return new Date(lastRun-24*3600*1000).toISOString();
+}
 // yt_channel_videos.created_at은 2026-08-25에 추가했다. `add column ... default now()`라 **기존
 // 371,448행이 전부 ALTER 시각(아래 값) 하나로 채워졌다** — 그래서 "최근 24시간" 같은 조건은 오늘
 // 전체 테이블을 다 잡아버린다. 이 기준선보다 **큰** 것만이 진짜 신규 유입이다(실측으로 경계 확인).
@@ -9357,21 +9411,35 @@ async function _admRunRoutine(withSync){
   //    부족한 건 검수 큐로 간다. 게이트 없이 루틴에 넣었으면 bare 오탐이 매일 자동으로 쌓였을 것.
   steps.push({name:'5. 원곡 태깅 v2 (HIGH만 자동 · 나머지는 검수 큐)',fn:_ytSweepCoverV2});
   const t0=Date.now();
+  // 단계별 소요 시간 계측(2026-09-07) — "루틴이 10시간 걸린다"는 제보를 받고도 **어느 단계가** 그런지
+  // 알 방법이 없었다(총 시간만 찍혔음). 매 실행의 단계별 시간을 남기고, 다음 실행 때 지난번 값을 옆에
+  // 같이 보여줘서 어디가 느려졌는지 화면에서 바로 읽히게 한다.
+  const prevTimes=(()=>{try{return JSON.parse(localStorage.getItem(_ADM_LS.stepMs)||'{}');}catch(e){return{};}})();
+  const stepMs={};
+  const _fmtMs=ms=>ms<1000?ms+'ms':(ms<60000?(ms/1000).toFixed(1)+'초':Math.round(ms/60000)+'분 '+Math.round((ms%60000)/1000)+'초');
   for(let i=0;i<steps.length;i++){
     if(_admRoutineStop){_admSetLog('■ 사용자가 중단함','adm-log-fail');break;}
     const s=steps[i];
-    const line=_admSetLog(s.name+' … 진행 중');
+    const prevMs=prevTimes[s.name];
+    const line=_admSetLog(s.name+' … 진행 중'+(prevMs?` (지난번 ${_fmtMs(prevMs)})`:''));
+    const st=Date.now();
     try{
       await s.fn();
+      const ms=Date.now()-st;stepMs[s.name]=ms;
       // 각 함수가 마지막으로 남긴 진행/결과 문구를 그대로 요약으로 채택(문구 중복 정의를 피함)
       const prog=(document.getElementById('sp-yt-prog')?.textContent||'').trim();
-      if(line){line.textContent='✅ '+s.name+'\n   '+(prog||'완료');line.className='adm-log-step adm-log-done';}
+      const delta=prevMs?` (지난번 ${_fmtMs(prevMs)})`:'';
+      if(line){line.textContent=`✅ ${s.name} — ⏱ ${_fmtMs(ms)}${delta}\n   `+(prog||'완료');line.className='adm-log-step adm-log-done';}
     }catch(e){
-      if(line){line.textContent='❌ '+s.name+'\n   '+(e&&e.message?e.message:e);line.className='adm-log-step adm-log-fail';}
+      const ms=Date.now()-st;stepMs[s.name]=ms;
+      if(line){line.textContent=`❌ ${s.name} — ⏱ ${_fmtMs(ms)}\n   `+(e&&e.message?e.message:e);line.className='adm-log-step adm-log-fail';}
     }
   }
+  try{localStorage.setItem(_ADM_LS.stepMs,JSON.stringify(stepMs));}catch(e){}
+  console.log('[루틴] 단계별 소요(ms)',stepMs);
   const mins=Math.round((Date.now()-t0)/60000);
-  _admSetLog('총 '+(mins<1?'1분 미만':mins+'분')+' 소요 — 카드 숫자를 다시 불러왔어요.','adm-log-done');
+  const _slowest=Object.entries(stepMs).sort((a,b)=>b[1]-a[1])[0];
+  _admSetLog('총 '+(mins<1?'1분 미만':mins+'분')+' 소요'+(_slowest?` · 가장 오래 걸린 단계: ${_slowest[0]} (${_fmtMs(_slowest[1])})`:'')+' — 카드 숫자를 다시 불러왔어요.','adm-log-done');
   const _now=Date.now();
   try{localStorage.setItem(_ADM_LS.lastRun,String(_now));}catch(e){}
   await _admWriteLastRunDB(_now);
