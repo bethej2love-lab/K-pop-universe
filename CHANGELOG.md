@@ -36,6 +36,40 @@
 - ~~**`active:false`인데 탈퇴일(`left`)이 없는 멤버 104명 — 그룹 미태깅 영상이 그 멤버 카드에 하나도 안 뜸(2026-08-27 발견)**~~ → **같은 날 처리 완료** — 폴백 4단계 재설계로 차단 110명→11명, 99명 복구. 아래 2026-08-27 항목 참고. ⚠️ 원 진단("탈퇴일 미기입이 원인")은 **틀렸었다** — 실제 원인은 `active` 필드가 "이 그룹 멤버인가"와 "개인이 아직 활동하는가" 두 뜻으로 섞여 쓰인 것이었고, 쥬얼리·걸스데이·스텔라에서 같은 시기 멤버가 은퇴 여부에 따라 갈리고 있었다.
 ---
 
+## 2026-09-07 (기능 세션 — 연결 카드 z-index + 원곡 태깅 P0)
+
+### [완료] 연결 카드가 카드 뒤에서 열리던 버그 `[index.html][kpop_universe.css][tests/overlay-front.test.js]`
+- 사용자 제보 "연결 카드 클릭하니까 뒤로 열린다". 원인: `openConnCard`가 `_bringToFront`를 **한 번도 안 불렀다**. 카드(mob-sheet/side-panel)는 열릴 때 131+로 올라가는데 연결 시트는 정적 z:65, 패널은 z:61 — 390x1100 헤드리스로 재현(conn-sheet z=65 vs mob-sheet z=132, 시트 헤더 지점 최상단 요소가 `gc-fav`) → 수정 후 z=133/최상단 `conn-sheet-body`. 데스크톱도 함께.
+- ⚠️ `tests/overlay-front.test.js`의 Part3 스냅샷이 이 두 open 지점을 **허용목록에 얼려둬서** 못 잡고 있었다(`_flOv`와 같은 함정, 세 번째). Part2 오프너 목록에 `openConnCard` 추가 + 모바일/데스크톱 두 분기를 각각 명시 고정.
+- 레일 320→380(9/7) 때 안 따라온 값 정리: `#conn-panel` 닫힘 transform 640→760, `#conn-collapse` right/transform 960→1140, `#tt-collapse` transform 320→380.
+
+### [완료] 편집 모달 카테고리 select의 조용한 데이터 유실 + 복구 버튼 `[index.html][admin.js]`
+- select에 `other`/`fan` 옵션이 없어서, 그 카테고리 영상을 모달로 저장하면 `select.value=''` → `category=null`로 지워지고 있었다. **실측 854건(853건이 tags_manual=true = 전부 모달 저장분)**. "카테고리 재분류" 스윕은 tags_manual을 안 건드리므로 한 번 null이 되면 영영 복구 불가였고, `_pickMainChVid`가 other/mv만 대표영상에서 제외하므로 잡담 클립이 카드 대표영상으로 뽑힐 수 있었다.
+- 옵션 추가(재발 차단) + 🩹 **카테고리 유실 복구(일회용, `sp-catnull-btn`)** — 제목으로 재추론해 채움. category만 수정·two-step·스냅샷.
+
+### [완료] 원곡(cover_of) 태깅 P0 4종 + 매일 루틴 편입 `[admin.js][index.html][tests/]`
+- 사용자 제보: "아일릿 민주가 이효리 곡 커버한 거, 제목 보고 민주 태깅·쇼츠·원곡 다 할 수 있는데 하나도 안 되어있다". **원인은 매처가 아니라 파이프라인** — 매처는 `(원곡 : 이효리)`를 credit으로 정확히 푼다(하네스 실측). 자체(공식) 채널 동기화는 태깅을 아예 안 하고, 원곡 태깅은 **매일 루틴에 없어서** 사람이 🎵 버튼을 눌러야만 붙는 구조였다. 쇼츠는 동기화 시점 실측이 이미 하고 있었고, 멤버는 루틴 2단계가 붙였을 것.
+- **P0-1 수동 확정 보존(`cover_manual` 신규 컬럼)** — "선택-원곡제외/원곡지정"이 plain update 하나라 ①스냅샷 ②편집로그 ③잠금이 전부 없었고 ④tags_manual 행은 트리거에 막혀 조용히 0건 반영. 공통 경로 `_coverManualApply`로 통합. tags_manual을 재사용하지 않은 건 사용자 결정(원곡만 잠그고 멤버 보강은 계속 받게 — 잠금-빈값 사고 계열 방지). ⚠️ **SQL 1회 실행 필요**(아래), 실행 전엔 잠금만 빠지고 나머지는 정상.
+- **P0-2 모달에 `cover_of_song` 필드** — 사람이 보지도 고치지도 못하던 값. 원곡자를 바꿨는데 곡명을 안 건드렸으면 옛 자동 곡명은 비운다.
+- **P0-3 3단계 결정(`_coverConfidence`)** — reason별 실측 정밀도가 credit≈99% ↔ bare≈6%인데 전부 같은 확신으로 저장하고 있었다. HIGH만 자동, 나머지는 `tag_review_queue`(사유 `cover_candidate`)로. 큐에서 후보 버튼으로 바로 확정(같은 잠금 경로). 상한 400 + 우선순위(게이트가 막은 판단 먼저).
+- **P0-4 원곡자 그룹 멤버의 `with_` 유지**(사용자 결정) — 좁은 동반신호(with/님과/함께/feat)가 있으면 안 지운다. 예전엔 신호와 무관하게 지워 "#Magnetic_Challenge with 아일릿 원희"의 원희가 커버 태깅과 함께 사라졌다. 그룹명 단독 표기는 그대로 제거.
+- **루틴 5단계로 원곡 태깅 v2 추가** — 3단계 게이트가 먼저 들어가서 안전(게이트 없이 넣었으면 bare 오탐이 매일 쌓였다). `_sweepConfirmSimple`은 루틴 중 확인창을 건너뛴다.
+- **실DB 25,000행 오프라인 시뮬로 게이트 튜닝**: 1차안 HIGH 197건 → 표본 15건 중 4건 오탐 → 네 겹으로 조여 최종 HIGH 7건. ①members가 비어도 로스터로 자기 곡 판정(선미·선예·예은 사례) + 솔로 채널의 자기 그룹 곡(민혁) ②챌린지 해시태그는 원곡자가 제목에 있을 때만(#타이거챌린지→태민 등 "사전에 없는 자기 신곡"이 남의 동명곡에 붙던 유형) ③커버 문맥 없는 무대 제목은 자동 안 함(대개 group_ko 오배정) ④유니버스 밖 아티스트 표기(정준일·優里·The Weeknd)면 동명곡으로 안 끌어옴(F2/R5 — 크레딧 경로에만 있던 방어를 따옴표·대시까지).
+- 테스트: `tests/cover-manual.test.js` 신설(구조 고정 25항목), `cover-resolve` 57→65. `tools/m2_harness.js`에 새 함수 등록.
+
+### [실행 대기] cover_manual 마이그레이션 SQL (admin 세션에서 1회)
+```sql
+alter table public.yt_channel_videos add column if not exists cover_manual boolean not null default false;
+create index if not exists idx_ytcv_cover_manual on public.yt_channel_videos (cover_manual) where cover_manual;
+```
+
+### [이슈] 기존 테스트 3종이 이 세션 이전부터 실패 중(내 변경과 무관 — stash 후 재확인)
+- `tabbar-open`: 탐험(별) 버튼을 누르면 탭바가 사라진 채 유지됨 2건. **실제 사용자 증상일 가능성** — 다음 세션 후보.
+- `admin-dock`: 탐험 패널이 도킹 패널 왼쪽을 가림(right=20 > dock.left=12).
+- `vm-panel-ui`: 3건(캐시 히트 경로 `_vmCacheSync`, "confirm 미리보기 단계" — 이건 네이티브 confirm 금지 결정 이후 **테스트가 낡은 것**으로 보임, `_norm` 중복 구현).
+
+---
+
 ## 2026-09-05 (기능 세션 — 프로그램 컬렉션 검색 + 솔로스윕 음악방송신호)
 
 ### [완료] 프로그램 컬렉션 — 검색에서 예능/음악프로 "모아보기" `[index.html][sw.js]`
