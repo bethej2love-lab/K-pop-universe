@@ -1023,6 +1023,26 @@ let _coverKeysByOrigin=null;  // Map(originId -> Set(key)) — 공연자 자기 
 let _coverIndex=null;         // Map(key -> [entry]) entry:{origin:{kind:'group'|'member'|'solo',gko,mko,label}, title, tier:'A'|'B'|'C', isTitle, date, keyLoose}
 let _coverIndexChart=null;    // 마지막으로 빌드에 쓴 차트 행(같으면 재빌드 안 함)
 function _coverOriginLabel(o){return o.kind==='group'?o.gko:`${o.mko}(${o.gko})`;}
+// 원곡자 이름이 제목에 직접 적혀 있는가(2026-09-07). 동명곡 동점을 사람이 읽는 방식으로 깨기 위한 신호 —
+// "#Magnetic_Challenge with 아일릿 원희"에서 Magnetic은 아일릿·베리베리·권은비 셋의 곡이지만 제목이
+// 아일릿이라고 말하고 있다. 점수 체계는 그대로 두고(회귀 위험) 확신 등급에서만 쓴다.
+const _coverEnCache=new Map();
+function _coverOriginNamedInTitle(o,title){
+  if(!o||!title)return false;
+  const t=title.normalize('NFKC').toUpperCase();
+  const toks=[];
+  if(o.kind==='group'){toks.push(o.gko);const g=GROUPS[o.gko];if(g&&g.en)toks.push(g.en);}
+  else{
+    toks.push(o.mko);
+    const ck=`${o.mko}|${o.gko}`;
+    if(!_coverEnCache.has(ck)){
+      const a=ARTISTS.find(x=>x.name&&x.name.ko===o.mko&&((x.group&&x.group.ko===o.gko)||o.gko==='솔로'));
+      _coverEnCache.set(ck,a&&a.name.en?a.name.en:null);
+    }
+    const en=_coverEnCache.get(ck);if(en)toks.push(en);
+  }
+  return toks.filter(x=>x&&String(x).length>=2).some(x=>t.includes(String(x).toUpperCase()));
+}
 function _coverOriginId(o){return o.kind==='group'?`g:${o.gko}`:`m:${o.mko}(${o.gko})`;}
 function _coverArtistOriginOf(a){
   // 멤버 솔로곡: "이름(그룹)"; 무소속 솔로(group.ko==='솔로'): "이름(솔로)" — 기존 데이터 관례(아이유(솔로)) 그대로
@@ -1329,8 +1349,17 @@ function _coverResolve(row,opts){
     else{patch.cover_of_members=[...new Set([...curCM.filter(m=>m!==label),label])];patch.cover_of_groups=curCG;}
     if(song&&!row.cover_of_song)patch.cover_of_song=song;
     // with_*에서 원곡자 제거(그룹/그 그룹 멤버 표기 모두)
+    // ⚠️ 2026-09-07 규칙 변경(사용자 결정): **동반신호가 있으면 원곡자 그룹의 "멤버"는 지우지 않는다.**
+    //    예전엔 동반신호와 무관하게 지워서 "#Magnetic_Challenge with 아일릿 원희"의 원희, "'Good Boy
+    //    Gone Bad' 챌린지 with 연준"의 연준처럼 **실제로 같이 나온 사람**이 커버 태깅과 함께 사라졌다
+    //    (2026-08-30 결정 "with·님과 표시가 있으면 출연"과 코드가 반대였음).
+    //    - 판정에는 넓은 _coverHasCollabSignal(x·×·vs 포함) 대신 좁은 _coverRestoreSignal을 쓴다 —
+    //      TOMORROW X TOGETHER의 X가 신호로 잡히는 문제(2026-08-31 실측) 때문.
+    //    - 그룹명 단독 표기는 그대로 제거한다("TWICE - MORE & MORE Cover by DKB"의 TWICE는 크레딧 표기).
     const og=origin.gko;
-    let wg=curWG.filter(g=>g!==og),wm=curWM.filter(m=>!(m.endsWith(`(${og})`)||(origin.kind!=='group'&&m===label)));
+    const keepOriginMembers=_coverRestoreSignal(title); // 좁은 동반신호 = 실제 출연으로 본다
+    let wg=curWG.filter(g=>g!==og);
+    let wm=keepOriginMembers?curWM.slice():curWM.filter(m=>!(m.endsWith(`(${og})`)||(origin.kind!=='group'&&m===label)));
     if(!collab){wg=[];wm=[];}
     if(wg.length!==curWG.length||wm.length!==curWM.length){patch.with_groups=wg;patch.with_members=wm;}
   }else if(isCover&&!collab&&(curWG.length||curWM.length)){
@@ -1339,7 +1368,14 @@ function _coverResolve(row,opts){
   }
   if(reassign&&origin){patch.group_ko=reassign.group_ko;patch.members=reassign.members;if(!('with_groups' in patch)){patch.with_groups=[];patch.with_members=[];}}
   if(!origin&&!ambiguous&&!isCover)return null;
-  return{isCover,origin,song,ambiguous,reason:reassign?'reassign':reason,patch,collab,candidates:cands};
+  // 관측값(2026-09-07) — 판정 로직은 그대로 두고 "얼마나 확신하는가"를 밖에서 볼 수 있게 노출한다.
+  // 스윕의 3단계 결정(HIGH 자동 / MEDIUM 검수 큐 / LOW 무시)과 검수 큐의 후보 목록이 이걸 쓴다.
+  const alternatives=ranked.slice(0,3).map(x=>({origin:_coverOriginLabel(x.e.origin),song:x.e.title,score:x.s,strength:x.strength,key:x.key}));
+  const topScore=ranked.length?ranked[0].s:null,secondScore=ranked.length>1?ranked[1].s:null;
+  const topKey=ranked.length?ranked[0].key:null;
+  const topNamed=ranked.length?_coverOriginNamedInTitle(ranked[0].e.origin,title):false;
+  const secondNamed=ranked.length>1?_coverOriginNamedInTitle(ranked[1].e.origin,title):false;
+  return{isCover,origin,song,ambiguous,reason:reassign?'reassign':reason,patch,collab,candidates:cands,alternatives,topScore,secondScore,topKey,topNamed,secondNamed};
 }
 
 
@@ -1356,6 +1392,31 @@ async function _coverLoadChartRows(){
   }
   return out;
 }
+// 원곡 판정의 확신 등급(2026-09-07 신설) — 사유별 실측 정밀도가 크게 갈리는데(credit·artist ≈99%,
+// quote·tag ≈90%, bare는 표본 16건 중 15건이 오탐) 지금까지 스윕은 **전부 같은 확신으로** 저장했다.
+//   HIGH   : credit/artist(또는 그 재배정). quote/tag는 경쟁 후보가 없거나 4점 이상 앞서고 흔한단어 키가 아닐 때만.
+//   MEDIUM : 그 외 원곡자가 잡힌 경우(근접 동점=동명곡, dash, bare, ambiguous, 외부 원곡 가능성) → 사람에게 묻는다.
+//   LOW    : 원곡자 없음·weak → 아무것도 안 한다.
+// 임계 4의 근거: 지금 점수 체계에서 등급차(A3/B2/C0)와 타이틀곡(1)만으로 최대 4점이 벌어진다. 그보다
+// 작은 차이는 "등급이 갈랐을 뿐 근거는 같다"로 본다. 골든셋 채점(P0-5) 후 조정 대상.
+function _coverConfidence(r){
+  if(!r)return 'LOW';
+  if(r.ambiguous)return 'MEDIUM';
+  if(!r.origin)return r.reason==='external'?'MEDIUM':'LOW';
+  if(r.reason==='credit'||r.reason==='artist'||r.reason==='reassign')return 'HIGH';
+  if(r.reason==='quote'||r.reason==='tag'||r.reason==='dash'){
+    const gap=(r.secondScore==null)?99:(r.topScore-r.secondScore);
+    const common=!!(r.topKey&&_COVER_COMMON_KEYS.has(r.topKey));
+    if(common)return 'MEDIUM'; // 흔한 단어 곡명은 점수 차와 무관하게 사람이 본다
+    if(gap>=4)return 'HIGH';
+    // 동명곡이라도 제목이 원곡자를 직접 부르고 있으면(그리고 경쟁 후보는 아니면) 사람과 같은 근거로 확정.
+    // "#Magnetic_Challenge with 아일릿 원희" — Magnetic은 아일릿·베리베리·권은비 셋의 곡이지만 제목이
+    // 아일릿이라고 말한다. 이게 없으면 흔한 챌린지가 전부 검수 큐로 가서 큐가 안 읽힌다.
+    if(r.topNamed&&!r.secondNamed)return 'HIGH';
+    return 'MEDIUM';
+  }
+  return 'MEDIUM'; // bare(평문 스캔) — 실측 정밀도가 가장 낮아 항상 사람이 본다
+}
 async function _ytSweepCoverV2(){
   if(!sb){_ytSetProg('Supabase 연결 없음');return;}
   const btn=document.getElementById('sp-cover-v2-btn');
@@ -1367,22 +1428,29 @@ async function _ytSweepCoverV2(){
     _ytSetProg(`[원곡 v2] 사전 ${_coverIndex.size}키 (차트 ${chartRows.length}행) · 대상 조회 중…`);
     const KW=['*cover*','*커버*','*원곡*','*original*','*challenge*','*챌린지*','*原曲*','*歌ってみた*'];
     const orExpr=[...KW.map(k=>`title_norm.ilike.${k}`),'with_groups.neq.{}','with_members.neq.{}','cover_of_groups.neq.{}','cover_of_members.neq.{}'].join(',');
-    const{data:rows,error}=await _sbFetchAll(()=>sb.from(_YT_TABLE)
-      .select('id,title,group_ko,members,with_members,with_groups,cover_of_members,cover_of_groups,cover_of_song,published_at,tags_manual,content_flag')
-      .or(orExpr).order('id'));
+    // cover_manual(사람이 확정한 원곡)도 같이 읽어 아래 루프에서 건너뛴다 — 컬럼 SQL 실행 전이면 한 번만 빼고 재조회.
+    const _sel=()=>'id,title,group_ko,members,with_members,with_groups,cover_of_members,cover_of_groups,cover_of_song,published_at,tags_manual,content_flag'+(_hasCoverManualCol?',cover_manual':'');
+    let{data:rows,error}=await _sbFetchAll(()=>sb.from(_YT_TABLE).select(_sel()).or(orExpr).order('id'));
+    if(error&&_coverManualColMissing(error))({data:rows,error}=await _sbFetchAll(()=>sb.from(_YT_TABLE).select(_sel()).or(orExpr).order('id')));
     if(error){_ytSetProg('조회 실패: '+error.message);return;}
     if(!rows?.length){_ytSetProg('대상 행이 없어요');return;}
     const EXCLUDE=new Set(['무관','보류','hidden','외부인']);
     const same=(a,b)=>{const x=[...new Set(a||[])].sort(),y=[...new Set(b||[])].sort();return x.length===y.length&&x.every((v,i)=>v===y[i]);};
-    let manualSkipped=0,ambiguous=0,external=0;const updates=[];const sample={cover:[],move:[],wipe:[],reassign:[],ambiguous:[]};
+    let manualSkipped=0,ambiguous=0,external=0,coverLocked=0,mediumN=0;const updates=[];const sample={cover:[],move:[],wipe:[],reassign:[],ambiguous:[]};
     const push=(k,line)=>{if(sample[k].length<60)sample[k].push(line);};
+    // MEDIUM(동명곡·약한 근거·외부 원곡 가능성)은 자동으로 붙이지 않고 검수 큐로 — 3단계 결정의 중간 칸.
+    const queue=[];
+    const enqueue=(v,r)=>{queue.push({videoId:v.id,reason:'cover_candidate',source:'sweep_cover_v2',
+      detail:{title:v.title,group_ko:v.group_ko,song:r.song||null,reason:r.reason,
+        origin:r.origin?_coverOriginLabel(r.origin):null,top:r.topScore,second:r.secondScore,alternatives:r.alternatives||[]}});};
     for(let i=0;i<rows.length;i++){
       if(i%2000===0){_ytSetProg(`[원곡 v2] 분석 중… ${i}/${rows.length} (후보 ${updates.length})`);await new Promise(r=>setTimeout(r));}
       const v=rows[i];
       if(v.content_flag&&EXCLUDE.has(v.content_flag))continue;
+      if(v.cover_manual){coverLocked++;continue;} // 사람이 원곡을 확정한 행 — 매처 판정으로 되돌리지 않는다
       let r=null;try{r=_coverResolve(v,{chartRows});}catch(e){console.warn('[원곡 v2] 해석 오류',v.id,e);continue;}
       if(!r)continue;
-      if(r.ambiguous){ambiguous++;push('ambiguous',`#${v.id} ${(v.title||'').slice(0,80)}`);continue;}
+      if(r.ambiguous){ambiguous++;push('ambiguous',`#${v.id} ${(v.title||'').slice(0,80)}`);enqueue(v,r);continue;}
       if(!r.origin)external++;
       const p=r.patch;const patch={};
       if(p.cover_of_groups&&!same(p.cover_of_groups,v.cover_of_groups))patch.cover_of_groups=p.cover_of_groups;
@@ -1393,17 +1461,32 @@ async function _ytSweepCoverV2(){
       if(p.group_ko&&p.group_ko!==v.group_ko){patch.group_ko=p.group_ko;patch.members=p.members||[];}
       if(!Object.keys(patch).length)continue;
       if(v.tags_manual){manualSkipped++;continue;}
+      // 3단계 결정(2026-09-07) — **원곡을 새로 붙이는 패치만** 확신 등급으로 거른다. HIGH가 아니면
+      // 자동 적용하지 않고 검수 큐로 보낸다(사람이 후보 중에서 고르거나 "외부/커버 아님"으로 확정).
+      // with_ 정리만 하는 패치(원곡을 주장하지 않는 것)는 예전 그대로 적용 — 잘못 붙은 콜라보를 걷어내는
+      // 일이라 확신 축이 다르고, 여기까지 큐로 보내면 큐가 정리 작업으로 가득 찬다.
+      const _addsCover=!!((patch.cover_of_groups&&patch.cover_of_groups.length)||(patch.cover_of_members&&patch.cover_of_members.length));
+      if(_addsCover&&_coverConfidence(r)!=='HIGH'){mediumN++;enqueue(v,r);continue;}
       updates.push({id:v.id,patch});
       const line=`#${v.id} [${v.group_ko}${patch.group_ko?'→'+patch.group_ko:''}] cover_of ${JSON.stringify(v.cover_of_groups||[])}${JSON.stringify(v.cover_of_members||[])}→${JSON.stringify(patch.cover_of_groups||v.cover_of_groups||[])}${JSON.stringify(patch.cover_of_members||v.cover_of_members||[])} song=${patch.cover_of_song||v.cover_of_song||''} with ${JSON.stringify(v.with_groups||[])}${JSON.stringify(v.with_members||[])}→${JSON.stringify('with_groups' in patch?patch.with_groups:v.with_groups||[])}${JSON.stringify('with_members' in patch?patch.with_members:v.with_members||[])} | ${(v.title||'').slice(0,70)}`;
       if(patch.group_ko)push('reassign',line);
       else if(patch.cover_of_groups||patch.cover_of_members){push((v.with_groups||[]).length||(v.with_members||[]).length?'move':'cover',line);}
       else push('wipe',line);
     }
+    // 검수 큐 적재는 되돌릴 게 없는(파괴적이지 않은) 작업이라 confirm 앞에서 바로 한다 — 미리보기만
+    // 하고 취소해도 "사람이 봐야 할 목록"은 남는 게 맞다. 첫 실행에 수천 건이 몰리면 아무도 안 누르게
+    // 되므로(2026-08-25 전례) 후보 수가 적은 것부터 상한만큼만 넣는다.
+    const QCAP=1500;
+    if(queue.length){
+      queue.sort((a,b)=>(a.detail.alternatives?.length||0)-(b.detail.alternatives?.length||0));
+      await _tagReviewEnqueueBatch(queue.slice(0,QCAP));
+    }
     const n={cover:updates.filter(u=>(u.patch.cover_of_groups||u.patch.cover_of_members)&&!u.patch.group_ko).length,wipe:updates.filter(u=>!u.patch.cover_of_groups&&!u.patch.cover_of_members&&!u.patch.group_ko).length,reassign:updates.filter(u=>u.patch.group_ko).length};
-    console.log(`[원곡 v2] 조회 ${rows.length} · 정정 후보 ${updates.length} (원곡 태깅/이동 ${n.cover} · with만 정리 ${n.wipe} · 옛 오저장 재배정 ${n.reassign}) · 애매 ${ambiguous} · 외부 원곡 ${external} · 수동보호 ${manualSkipped}`);
+    console.log(`[원곡 v2] 조회 ${rows.length} · 정정 후보 ${updates.length} (원곡 태깅/이동 ${n.cover} · with만 정리 ${n.wipe} · 옛 오저장 재배정 ${n.reassign}) · 애매 ${ambiguous} · 외부 원곡 ${external} · 수동보호 ${manualSkipped} · 원곡잠금 ${coverLocked} · 검수큐 ${Math.min(queue.length,QCAP)}(확신 부족 ${mediumN}+애매 ${ambiguous})`);
     Object.entries(sample).forEach(([k,arr])=>{if(arr.length)console.log(`[원곡 v2] 표본 — ${k}:\n`+arr.join('\n'));});
-    if(!updates.length){_ytSetProg(`원곡 v2 — 정정할 것 없음 (조회 ${rows.length}, 애매 ${ambiguous}건 콘솔)`);return;}
-    if(!await _sweepConfirmSimple("원곡 태깅 v2","정정 실행",`원곡 태깅 v2 — ${updates.length}건 정정할까요?\n\n· 원곡 태깅/with→cover_of 이동 ${n.cover}\n· 커버인데 with만 정리 ${n.wipe}\n· 옛 오저장(원곡자가 group_ko) 재배정 ${n.reassign}\n· 애매(동명곡·판정 불가) ${ambiguous}건은 건드리지 않음(콘솔)\n· 수동편집 ${manualSkipped}건 제외 · 표본 콘솔(F12) · 스냅샷 되돌리기 가능`)){
+    if(!updates.length){_ytSetProg(`원곡 v2 — 자동 정정할 것 없음 (조회 ${rows.length} · 검수 큐 ${Math.min(queue.length,QCAP)}건 적재 · 애매 ${ambiguous}건 콘솔)`);return;}
+    if(!await _sweepConfirmSimple("원곡 태깅 v2","정정 실행",`원곡 태깅 v2 — ${updates.length}건 정정할까요?\n\n· 원곡 태깅/with→cover_of 이동 ${n.cover}\n· 커버인데 with만 정리 ${n.wipe}\n· 옛 오저장(원곡자가 group_ko) 재배정 ${n.reassign}\n· 애매(동명곡·판정 불가) ${ambiguous}건은 건드리지 않음(콘솔)\n· 확신 부족 ${mediumN}건은 자동 적용 대신 검수 큐로(총 ${Math.min(queue.length,QCAP)}건 적재됨)
+· 수동편집 ${manualSkipped}건·원곡잠금 ${coverLocked}건 제외 · 표본 콘솔(F12) · 스냅샷 되돌리기 가능`)){
       _ytSetProg(`취소됨 — 미리보기만 (후보 ${updates.length}, 표본 콘솔).`);return;
     }
     await _snapshotBeforeBulk('원곡 태깅 v2',updates.map(u=>u.id));
@@ -1453,13 +1536,13 @@ async function _ytSweepCoverCleanup(){
     _coverBuildIndex(chartRows);
     _ytSetProg(`[원곡 청소] 사전 ${_coverIndex.size}키 · 대상 조회 중…`);
     // cover_of가 실제로 붙어 있는 행만 — 이 스윕은 "붙은 걸 걷어내는" 일이라 그 외는 볼 필요가 없다.
-    const{data:rows,error}=await _sbFetchAll(()=>sb.from(_YT_TABLE)
-      .select('id,title,group_ko,members,with_members,with_groups,cover_of_members,cover_of_groups,cover_of_song,published_at,tags_manual,content_flag')
-      .or('cover_of_groups.neq.{},cover_of_members.neq.{}').order('id'));
+    const _selC=()=>'id,title,group_ko,members,with_members,with_groups,cover_of_members,cover_of_groups,cover_of_song,published_at,tags_manual,content_flag'+(_hasCoverManualCol?',cover_manual':'');
+    let{data:rows,error}=await _sbFetchAll(()=>sb.from(_YT_TABLE).select(_selC()).or('cover_of_groups.neq.{},cover_of_members.neq.{}').order('id'));
+    if(error&&_coverManualColMissing(error))({data:rows,error}=await _sbFetchAll(()=>sb.from(_YT_TABLE).select(_selC()).or('cover_of_groups.neq.{},cover_of_members.neq.{}').order('id')));
     if(error){_ytSetProg('조회 실패: '+error.message);return;}
     if(!rows?.length){_ytSetProg('cover_of가 붙은 행이 없어요');return;}
     const EXCLUDE=new Set(['무관','보류','hidden','외부인']);
-    let manualSkipped=0,hasCtx=0,stillCover=0,excluded=0;
+    let manualSkipped=0,hasCtx=0,stillCover=0,excluded=0,coverLocked=0;
     const updates=[];const sample={restore:[],clear:[]};
     const push=(k,line)=>{if(sample[k].length<60)sample[k].push(line);};
     for(let i=0;i<rows.length;i++){
@@ -1475,6 +1558,7 @@ async function _ytSweepCoverCleanup(){
       try{out=_coverResolve(Object.assign({},v,{cover_of_groups:[],cover_of_members:[]}),{chartRows});}catch(e){continue;}
       if(out&&out.origin){stillCover++;continue;} // 매처가 근거를 댐 → 여기서 판단하지 않는다
       if(v.tags_manual){manualSkipped++;continue;} // 수동 확정은 절대 불가침
+      if(v.cover_manual){coverLocked++;continue;}  // 원곡만 사람이 확정한 행(cover_manual)도 마찬가지
       const patch={cover_of_groups:[],cover_of_members:[]};
       if(v.cover_of_song)patch.cover_of_song=null;
       const restore=_coverRestoreSignal(v.title);
@@ -1486,13 +1570,13 @@ async function _ytSweepCoverCleanup(){
       push(restore?'restore':'clear',`#${v.id} [${v.group_ko}] ${JSON.stringify([...curCG,...curCM])}${restore?' → with_':' → 삭제'} | ${(v.title||'').slice(0,70)}`);
     }
     const nRestore=updates.filter(u=>u.restore).length,nClear=updates.length-nRestore;
-    console.log(`[원곡 청소] 조회 ${rows.length} · 정리 후보 ${updates.length} (with_로 되돌림 ${nRestore} · 그냥 해제 ${nClear}) · 커버 문맥 있어 유지 ${hasCtx} · 매처가 커버라 판정해 유지 ${stillCover} · 수동보호 ${manualSkipped} · 플래그 제외 ${excluded}`);
+    console.log(`[원곡 청소] 조회 ${rows.length} · 정리 후보 ${updates.length} (with_로 되돌림 ${nRestore} · 그냥 해제 ${nClear}) · 커버 문맥 있어 유지 ${hasCtx} · 매처가 커버라 판정해 유지 ${stillCover} · 수동보호 ${manualSkipped} · 원곡잠금 ${coverLocked} · 플래그 제외 ${excluded}`);
     Object.entries(sample).forEach(([k,arr])=>{if(arr.length)console.log(`[원곡 청소] 표본 — ${k==='restore'?'with_로 되돌림':'그냥 해제'}:\n`+arr.join('\n'));});
     if(!updates.length){_ytSetProg(`원곡 청소 — 정리할 것 없음 (조회 ${rows.length} · 유지 ${hasCtx+stillCover})`);return;}
     // 미리보기 숫자는 confirm과 **독립적으로** 패널에 띄운다 — 예전엔 confirm 안에만 있고 취소하면
     // "취소됨" 한 줄로 덮여서, 숫자를 보려면 F12를 열어야 했다(사용자 제보 2026-08-31). 게다가 브라우저가
     // "추가 대화상자 차단"을 걸면 confirm이 대화상자 없이 바로 false를 반환해 미리보기조차 못 보게 된다.
-    const summary=`정리 ${updates.length}건 (with_로 되돌림 ${nRestore} · 해제 ${nClear}) / 유지 ${hasCtx+stillCover}건 (정상 커버 ${hasCtx} · 매처가 커버 판정 ${stillCover}) · 수동보호 ${manualSkipped}`;
+    const summary=`정리 ${updates.length}건 (with_로 되돌림 ${nRestore} · 해제 ${nClear}) / 유지 ${hasCtx+stillCover}건 (정상 커버 ${hasCtx} · 매처가 커버 판정 ${stillCover}) · 수동보호 ${manualSkipped} · 원곡잠금 ${coverLocked}`;
     _ytSetProg(`[원곡 청소] 미리보기 — ${summary}`);
     await new Promise(r=>setTimeout(r,50)); // 확인창 뜨기 전에 화면에 먼저 그려지도록
     const msg=`원곡(cover_of) 오탐 ${updates.length}건을 정리할까요?\n\n· 콜라보 동반신호 있음 → with_로 되돌림 : ${nRestore}건\n   (원래 게스트 출연인데 옛 휴리스틱이 원곡자로 강등시킨 것 — 그냥 지우면 콜라보 정보가 사라져요)\n· 근거 없음 → cover_of 해제 : ${nClear}건\n\n손대지 않는 것\n· 커버 문맥이 있는 정상 커버 ${hasCtx}건\n· 매처가 지금도 커버라고 판정한 ${stillCover}건 (대개 group_ko 오배정 문제 — "② 오태깅 그룹 재배정"의 몫)\n· 수동편집 ${manualSkipped}건\n\n표본은 콘솔(F12) · 스냅샷 저장돼서 되돌리기 가능`;
@@ -2897,6 +2981,9 @@ const _TAGQ_REASON_LABEL={
   members_wiped:'재검증에서 멤버 태그가 전부 빠짐 — 무관 콘텐츠인지 직접 판단',
   // 오류가 의심돼서가 아니라 **재려고** 넣은 표본 — 맞으면 맞다고 판정해줘야 분모가 채워진다(2026-09-04)
   baseline_sample:'기준선 표본 — 자동 태깅이 맞는지 채점(맞으면 그대로 ✓ 해결)',
+  // 2026-09-07 — 원곡 v2가 "확신 부족(동명곡·약한 근거·외부 원곡 가능성)"으로 자동 적용을 보류한 것.
+  // 예전엔 이런 판정도 credit과 똑같은 확신으로 그냥 저장됐다(bare 평문 스캔 오탐이 여기서 나왔다).
+  cover_candidate:'원곡 후보 — 동명곡/약한 근거라 자동 적용 보류, 사람이 선택',
 };
 async function _openTagReviewQueue(){
   if(!sb){alert('Supabase 연결 없음');return;}
@@ -2926,11 +3013,38 @@ async function _openTagReviewQueue(){
     const t=document.createElement('div');t.style.cssText='font-size:13px;color:#eaf1ff;line-height:1.35;';t.textContent=(v?_cleanTitle(v.title):r.video_id)||r.video_id;
     const meta=document.createElement('div');meta.style.cssText='font-size:10.5px;color:rgba(150,175,225,0.6);margin-top:2px;';
     meta.textContent=(v?`${v.group_ko||'?'} · `:'')+(_TAGQ_REASON_LABEL[r.reason]||r.reason);
+    let _extraInfo=null; // 원곡 후보 행에만 붙는 근거 한 줄
     const btns=document.createElement('div');btns.style.cssText='display:flex;gap:6px;margin-top:7px;';
     const mkb=(label,style,on)=>{const b=document.createElement('button');b.textContent=label;b.style.cssText='background:rgba(120,150,230,0.16);border:0.5px solid rgba(160,185,240,0.3);color:#dbe6ff;border-radius:12px;padding:5px 11px;font-size:11px;cursor:pointer;'+(style||'');b.addEventListener('click',on);return b;};
+    // 원곡 후보(cover_candidate)는 편집 모달까지 안 가고 여기서 바로 확정할 수 있게 후보 버튼을 준다
+    // — 매처가 이미 후보와 점수를 계산해놨는데 사람이 다시 검색해서 고르게 하면 큐를 안 쓰게 된다.
+    // 확정은 "선택-원곡지정"과 같은 경로(_coverManualApply)라 스냅샷·로그·cover_manual 잠금이 다 붙는다.
+    if(r.reason==='cover_candidate'&&r.detail){
+      const d=r.detail;
+      const info=document.createElement('div');info.style.cssText='font-size:10.5px;color:rgba(150,175,225,0.55);margin-top:3px;';
+      info.textContent=`곡 "${d.song||'?'}" · 근거 ${d.reason||'?'}${d.top!=null?` (${d.top}${d.second!=null?` vs ${d.second}`:''}점)`:''}`;
+      _extraInfo=info; // 실제 삽입은 아래 row.appendChild 순서(제목 → meta → 이 줄 → 버튼)에서
+      const alts=(d.alternatives||[]).slice(0,3);
+      const pick=async(e,label,song)=>{
+        e.currentTarget.disabled=true;
+        const isMember=/\(.+\)$/.test(label);
+        const{error}=await _coverManualApply([r.video_id],()=>({
+          cover_of_members:isMember?[label]:[],cover_of_groups:isMember?[]:[label],cover_of_song:song||null
+        }),'검수-원곡 확정','tagq_cover_pick');
+        if(error){alert('저장 실패: '+error.message);e.currentTarget.disabled=false;return;}
+        await _tagReviewResolve(r.id);row.remove();ttl.textContent=`검수 대기 (${list.children.length})`;
+      };
+      alts.forEach(a=>btns.appendChild(mkb(`원곡: ${a.origin}`,'background:rgba(150,120,220,0.16);border-color:rgba(180,155,240,0.32);color:#e6dcff;',e=>pick(e,a.origin,a.song))));
+      btns.appendChild(mkb('커버 아님','background:rgba(200,120,120,0.14);border-color:rgba(230,150,150,0.3);color:#ffdede;',async e=>{
+        e.currentTarget.disabled=true;
+        const{error}=await _coverManualApply([r.video_id],()=>({cover_of_members:[],cover_of_groups:[],cover_of_song:null}),'검수-커버 아님','tagq_cover_none');
+        if(error){alert('저장 실패: '+error.message);e.currentTarget.disabled=false;return;}
+        await _tagReviewResolve(r.id);row.remove();ttl.textContent=`검수 대기 (${list.children.length})`;
+      }));
+    }
     btns.appendChild(mkb('편집','',()=>_openVidTagModal({id:r.video_id,title:v?v.title:''},v?v.group_ko:'')));
     btns.appendChild(mkb('✓ 해결','background:rgba(90,170,120,0.16);border-color:rgba(120,200,150,0.35);color:#cdefd8;',async(e)=>{e.currentTarget.disabled=true;await _tagReviewResolve(r.id);row.remove();ttl.textContent=`검수 대기 (${list.querySelectorAll(':scope > div').length})`;if(!list.children.length)list.textContent='검수 대기 없음 🎉';}));
-    row.appendChild(t);row.appendChild(meta);row.appendChild(btns);
+    row.appendChild(t);row.appendChild(meta);if(_extraInfo)row.appendChild(_extraInfo);row.appendChild(btns);
     list.appendChild(row);
   });
 }
@@ -3051,7 +3165,7 @@ function _ytMatchCoverSong(candidate,origNames){
 // 재스캔 사고 재발 방지책). 어느 버튼이 어느 컬럼을 바꾸든 하나의 헬퍼로 커버하려고, 이 관리도구들이
 // 바꿀 수 있는 컬럼 전부를 고정 목록으로 떠둔다(안 바뀐 컬럼까지 복원해도 값이 같아 무해).
 const _BULK_SNAP_TABLE='admin_bulk_snapshots';
-const _BULK_SNAP_COLS=['group_ko','members','with_members','with_groups','content_flag','needs_review','cover_of_members','cover_of_groups','cover_of_song','tags_manual','category','is_short','reviewed_at','flag_source','flagged_at'];
+const _BULK_SNAP_COLS=['group_ko','members','with_members','with_groups','content_flag','needs_review','cover_of_members','cover_of_groups','cover_of_song','tags_manual','category','is_short','reviewed_at','flag_source','flagged_at','cover_manual'];
 let _snapHasReviewedAt=true;
 // flag_source/flagged_at(2026-08-27 신설)도 스냅샷에 넣는다 — content_flag만 되돌리고 출처를 안
 // 되돌리면 "정상인데 auto가 숨긴 흔적이 남은" 유령 상태가 생긴다. 컬럼이 아직 없는 환경(마이그레이션
@@ -3060,7 +3174,9 @@ let _snapHasFlagSrc=true;
 // is_short도 같은 사정 — is_short_migration.sql 실행 전이면 컬럼이 없어서 스냅샷 select가 400을 낸다.
 // 스냅샷은 모든 일괄 작업의 전제라 여기서 막히면 일괄 기능이 통째로 죽으므로 한 번만 빼고 재시도한다.
 let _snapHasIsShort=true;
-const _snapCols=()=>_BULK_SNAP_COLS.filter(c=>(c!=='reviewed_at'||_snapHasReviewedAt)&&(c!=='is_short'||_snapHasIsShort)&&((c!=='flag_source'&&c!=='flagged_at')||_snapHasFlagSrc));
+// cover_manual(2026-09-07)도 같은 사정 — 되돌리기가 잠금까지 원복해야 "되돌렸는데 잠금만 남은" 상태가 안 생긴다.
+let _snapHasCoverManual=true;
+const _snapCols=()=>_BULK_SNAP_COLS.filter(c=>(c!=='reviewed_at'||_snapHasReviewedAt)&&(c!=='is_short'||_snapHasIsShort)&&((c!=='flag_source'&&c!=='flagged_at')||_snapHasFlagSrc)&&(c!=='cover_manual'||_snapHasCoverManual));
 // 영향받는 id들의 "바꾸기 전" 값을 떠서 batch로 저장한다. 실패해도(테이블 없음/권한 등) 원래 작업은
 // 막지 않고 안내만 남긴다 — 스냅샷이 안 됐다고 관리도구 자체가 멈추면 안 됨(그만큼 되돌리기만 불가).
 // forceBatchId: 여러 번 나눠 호출해도 같은 batch로 묶고 싶을 때(예: 청크로 진행되는 쇼츠 승격 스윕의
@@ -3087,6 +3203,10 @@ async function _snapshotBeforeBulk(opLabel,ids,forceBatchId){
         _snapHasIsShort=false;
         ({data:rows,error}=await sb.from(_YT_TABLE).select(['id',..._snapCols()].join(',')).in('id',chunk));
       }
+      if(error&&_snapHasCoverManual&&/cover_manual/.test(error.message||'')){
+        _snapHasCoverManual=false;
+        ({data:rows,error}=await sb.from(_YT_TABLE).select(['id',..._snapCols()].join(',')).in('id',chunk));
+      }
       if(error&&_snapHasFlagSrc&&/flag_source|flagged_at/.test(error.message||'')){
         _snapHasFlagSrc=false;
         ({data:rows,error}=await sb.from(_YT_TABLE).select(['id',..._snapCols()].join(',')).in('id',chunk));
@@ -3109,6 +3229,80 @@ async function _snapshotBeforeBulk(opLabel,ids,forceBatchId){
     _ytSetProg('ℹ️ 되돌리기 준비 안 됨(작업은 정상 진행됨) — '+e.message+' · admin_bulk_snapshots 테이블 SQL을 1회 실행하면 켜집니다.');
     return null;
   }
+}
+// ── 원곡 수동 확정 잠금(cover_manual) ────────────────────────────────────────
+// 2026-09-07 신설. "선택-원곡제외"/"선택-원곡지정"은 그동안 plain update 하나였다 — ①되돌리기 스냅샷
+// 없음 ②tag_edit_log 없음(가장 자주 쓰였을 원곡 수동 수정이 학습 재료로 하나도 안 남음) ③잠금이 없어
+// 제목에 커버 키워드가 있으면 **다음 🎵 원곡 태깅 v2가 그대로 되돌려놓음**(제외한 게 다시 붙고, 지정한
+// 옆에 매처 원곡이 하나 더 붙음 — 패치가 union이라) ④tags_manual=true 행은 DB 트리거에 막혀 조용히
+// 0건 반영. 이 네 가지를 한 경로에서 해결한다.
+// tags_manual을 재사용하지 않은 이유: 그건 멤버·콜라보 자동 태깅까지 통째로 잠그는 플래그라, 원곡만
+// 고쳤는데 멤버 보강이 영영 안 되는 "잠금-빈값"(2026-08-23, 297건/42명) 계열 사고를 다시 만든다.
+// ⚠️ cover_manual 컬럼 SQL 실행 전에 배포되면 update가 400을 낸다 — 한 번 감지하면 이후로는 빼고 쓴다
+//    (reviewed_at·is_short 폴백과 같은 패턴). 잠금만 빠지고 스냅샷·로그·two-step은 그대로 동작한다.
+let _hasCoverManualCol=true;
+const _coverManualPatch=()=>_hasCoverManualCol?{cover_manual:true}:{};
+function _coverManualColMissing(err){
+  if(err&&/cover_manual/.test(err.message||'')){
+    if(_hasCoverManualCol)console.warn('[원곡 잠금] cover_manual 컬럼이 없어서 잠금 없이 진행 — 마이그레이션 SQL 1회 실행 필요');
+    _hasCoverManualCol=false;return true;
+  }
+  return false;
+}
+// 편집 모달처럼 payload에 cover_manual이 섞여 나가는 저장 경로용 래퍼 — 컬럼이 없는 환경에서 저장이
+// 통째로 실패하지 않게 한 번만 그 키를 빼고 재시도한다. run(payload)는 실제 update 프라미스를 반환.
+async function _saveWithCoverManual(payload,run){
+  let res=await run(payload);
+  if(res&&res.error&&_coverManualColMissing(res.error)){const p={...payload};delete p.cover_manual;res=await run(p);}
+  return res;
+}
+// ids를 patchFor(row)가 돌려주는 패치별로 묶어 쓴다(원곡지정처럼 "원곡자가 바뀐 행만 곡명 초기화" 같은
+// 행별 분기를 호출부가 그대로 표현할 수 있게). 반환: {error, before} — before는 편집 로그/후처리용.
+async function _coverManualApply(ids,patchFor,opLabel,logSource){
+  const before=[];
+  for(let i=0;i<ids.length;i+=300){
+    const{data}=await sb.from(_YT_TABLE).select('id,title,cover_of_members,cover_of_groups,cover_of_song,tags_manual').in('id',ids.slice(i,i+300));
+    if(data)before.push(...data);
+  }
+  await _snapshotBeforeBulk(opLabel,ids); // 되돌리기 — 다른 일괄 버튼과 같은 단위로 묶인다
+  const byPatch=new Map(); // 패치 JSON → {patch, plain:[], manual:[]}
+  before.forEach(r=>{
+    const patch=patchFor(r);
+    const k=JSON.stringify(patch);
+    if(!byPatch.has(k))byPatch.set(k,{patch,plain:[],manual:[]});
+    byPatch.get(k)[r.tags_manual?'manual':'plain'].push(r.id);
+  });
+  const _upd=async(idList,patch,extra)=>{
+    for(let i=0;i<idList.length;i+=200){
+      const chunk=idList.slice(i,i+200);
+      let{error}=await sb.from(_YT_TABLE).update({...patch,..._coverManualPatch(),...extra}).in('id',chunk);
+      if(error&&_coverManualColMissing(error))({error}=await sb.from(_YT_TABLE).update({...patch,...extra}).in('id',chunk));
+      if(error)return error;
+    }
+    return null;
+  };
+  for(const{patch,plain,manual}of byPatch.values()){
+    if(plain.length){const e=await _upd(plain,patch,{});if(e)return{error:e,before};}
+    if(manual.length){
+      // 편집 모달과 같은 two-step — tags_manual=true 행은 태그 컬럼 보호 트리거에 막히므로 잠깐 풀고 다시 잠근다.
+      const e=await _upd(manual,patch,{tags_manual:false});if(e)return{error:e,before};
+      for(let i=0;i<manual.length;i+=200){
+        const{error}=await sb.from(_YT_TABLE).update({tags_manual:true}).in('id',manual.slice(i,i+200));
+        if(error)return{error,before};
+      }
+    }
+  }
+  // 편집 이력 — 사람이 원곡을 어떻게 고쳤는지가 매처 개선의 유일한 정답 신호다(LEARNING_LOOP).
+  _tagEditLog(before.map(r=>{
+    const p=patchFor(r);
+    return{videoId:r.id,title:r.title,
+      before:{cover_of_members:r.cover_of_members||[],cover_of_groups:r.cover_of_groups||[],cover_of_song:r.cover_of_song||null},
+      after:{cover_of_members:'cover_of_members'in p?p.cover_of_members:(r.cover_of_members||[]),
+             cover_of_groups:'cover_of_groups'in p?p.cover_of_groups:(r.cover_of_groups||[]),
+             cover_of_song:'cover_of_song'in p?p.cover_of_song:(r.cover_of_song||null)},
+      source:logSource};
+  }));
+  return{error:null,before};
 }
 // 가장 최근 일괄 작업(batch)을 이전 상태로 복원한다. 되돌린 batch는 삭제해서 중복 되돌리기를 막는다
 // (그 전 batch가 새 "마지막"이 되어 연속 undo도 가능). tags_manual 값도 스냅샷 시점 그대로 복원됨.
@@ -5397,11 +5591,13 @@ document.getElementById('vm-coverclear-btn')?.addEventListener('click',async()=>
   const ids=items.map(el=>el.dataset.vidId).filter(Boolean);
   if(!ids.length)return;
   btn.disabled=true;btn.textContent='처리 중…';
-  const{error}=await sb.from(_YT_TABLE).update({cover_of_members:[],cover_of_groups:[]}).in('id',ids);
+  // 사람이 "이건 커버 아님"이라고 확정한 것 — 스냅샷·로그·cover_manual 잠금까지 한 번에(_coverManualApply).
+  // 곡명(cover_of_song)도 같이 비운다: 원곡자를 지웠는데 자동으로 붙었던 곡명만 남으면 유령 값이 된다.
+  const{error}=await _coverManualApply(ids,()=>({cover_of_members:[],cover_of_groups:[],cover_of_song:null}),'선택-원곡제외','vm_cover_clear');
   btn.textContent='선택-원곡제외';
   if(error){btn.disabled=false;document.getElementById('vm-status').textContent='오류: '+error.message;return;}
   const idSet=new Set(ids);
-  _vmRows.forEach(v=>{if(idSet.has(v.id)){v.cover_of_members=[];v.cover_of_groups=[];}});
+  _vmRows.forEach(v=>{if(idSet.has(v.id)){v.cover_of_members=[];v.cover_of_groups=[];v.cover_of_song=null;}});
   items.forEach(el=>{const cb=el.querySelector('input[type=checkbox]');if(cb)cb.checked=false;});
   document.getElementById('vm-status').textContent=`${ids.length}개 원곡 정보 제외 완료`;
   _vmUpdateCount();
@@ -6232,6 +6428,9 @@ async function _sweepConfirm(btnId,title,msg,okLabel,count,apply){
 // 결과 보관 없이 **확인창만** 앱 다이얼로그로 바꾸는 가벼운 버전 — 나머지 무거운 스윕들이 쓴다.
 // (오태깅 재배정처럼 분석이 아주 오래 걸리는 건 위 `_sweepConfirm`으로 결과까지 보관한다.)
 async function _sweepConfirmSimple(title,okLabel,msg){
+  // 매일 루틴이 돌리는 중이면 확인 창을 띄우지 않는다 — 루틴은 무인 연속 실행이라 여기서 멈추면
+  // 나머지 단계가 통째로 대기한다(다른 스윕들이 이미 쓰는 `!_admRoutineRunning &&` 가드와 같은 규칙).
+  if(_admRoutineRunning)return true;
   if(typeof _confirmDialog==='function')return await _confirmDialog({title,msg,okLabel:okLabel||'실행',wide:true});
   return confirm(msg);
 }
@@ -7555,6 +7754,7 @@ let _vidTagGroupsSelected=[]; // [groupKo,...] — "아이유의 팔레트, 뉴�
 let _vidTagCoverSelected=[]; // [{ko,groupKo}] — 커버 영상의 원곡자(멤버) 지정
 let _vidTagCoverGroupsSelected=[]; // [groupKo,...] — 원곡이 그룹 단위 곡일 때
 let _vidTagOrigManual=false; // DB에서 불러온 기존 tags_manual 값 — 트리거 우회 two-step 저장에 사용
+let _vidTagSongTouched=false; // 원곡 곡명 입력을 사람이 실제로 건드렸는지 — 안 건드렸으면 옛 자동값을 그대로 재저장하지 않는다
 let _vidTagBefore=null; // 모달 열 때 DB에서 읽은 태그 원본 — 저장 시 편집 이력(tag_edit_log)의 before로 씀
 let _vidTagLoadedFormats=[]; // 모달 열 때 DB에서 읽은 content_formats — 저장 시 장르 태그 재계산에 사용
 // content_flag는 한 컬럼에 한 값만 들어가므로(null/기타/외부인/무관/hidden 중 하나) 체크박스 2개(기타/외부인)와
@@ -7725,6 +7925,8 @@ function _openVidTagModalBulk(ids,ko){
   _renderVidTagChips();
   const catEl=document.getElementById('vid-tag-cat');
   if(catEl)catEl.value='';
+  {const _cs=document.getElementById('vid-tag-cover-song');if(_cs)_cs.value='';}
+  _vidTagSongTouched=false;
   // 일괄 편집은 영상마다 기존 플래그가 다를 수 있어 빈 상태(미선택)로 시작 — touched는 false로 둬서
   // 아무 것도 안 누르면 저장 시 content_flag를 아예 건드리지 않는다(기존 태그 보존).
   _vidTagFlagChoice=null;_vidTagFlagTouched=false;_vidTagApplyFlagUI();
@@ -7773,7 +7975,7 @@ async function _openVidTagModal(v,ko,originKo){
   // 카드에 넘어온 v에는 members/with_members가 안 실려있는 경우가 많아서(그룹 카드 그리드는 해당 컬럼을
   // 아예 select하지 않음), 모달을 열 때 저장된 값을 DB에서 직접 불러와 체크박스/칩에 반영한다.
   if(sb){
-    const{data,error}=await sb.from(_YT_TABLE).select('group_ko,members,with_members,with_groups,cover_of_members,cover_of_groups,category,is_short,content_flag,tags_manual,content_formats').eq('id',v.id).maybeSingle();
+    const{data,error}=await sb.from(_YT_TABLE).select('group_ko,members,with_members,with_groups,cover_of_members,cover_of_groups,cover_of_song,category,is_short,content_flag,tags_manual,content_formats').eq('id',v.id).maybeSingle();
     if(!_vidTagTarget||_vidTagTarget.id!==v.id)return; // 응답 오는 사이 모달이 닫히거나 다른 영상으로 전환됨
     if(!error&&data){
       const savedMembers=new Set(data.members||[]);
@@ -7817,10 +8019,12 @@ async function _openVidTagModal(v,ko,originKo){
         return m?{ko:m[1],groupKo:m[2]}:null;
       }).filter(Boolean);
       _vidTagCoverGroupsSelected=data.cover_of_groups||[];
+      {const _cs=document.getElementById('vid-tag-cover-song');if(_cs)_cs.value=data.cover_of_song||'';}
+      _vidTagSongTouched=false;
       _vidTagOrigManual=!!data.tags_manual;
       _vidTagLoadedFormats=data.content_formats||[];
       // 편집 이력용 원본 — 여기서 떠두지 않으면 저장 시점엔 이미 화면 값밖에 없어서 "뭘 고쳤는지"를 못 남긴다.
-      _vidTagBefore={group_ko:data.group_ko,members:data.members||[],with_members:data.with_members||[],with_groups:data.with_groups||[],cover_of_members:data.cover_of_members||[],cover_of_groups:data.cover_of_groups||[],content_flag:data.content_flag||null,category:data.category||null,is_short:_isShortV(data)};
+      _vidTagBefore={group_ko:data.group_ko,members:data.members||[],with_members:data.with_members||[],with_groups:data.with_groups||[],cover_of_members:data.cover_of_members||[],cover_of_groups:data.cover_of_groups||[],cover_of_song:data.cover_of_song||null,content_flag:data.content_flag||null,category:data.category||null,is_short:_isShortV(data)};
       _renderVidTagChips();
       const catEl=document.getElementById('vid-tag-cat');
       // category='short'는 직교화 전 레거시 — 장르 select엔 더 이상 short 옵션이 없으므로 빈 값으로
@@ -7872,6 +8076,7 @@ function _closeVidTagModal(){
     _vmRefreshRows(_editedIds).then(ok=>{if(!ok)_vmLoad(undefined,true);});
   }
 }
+document.getElementById('vid-tag-cover-song')?.addEventListener('input',()=>{_vidTagSongTouched=true;});
 document.getElementById('vid-tag-cancel').addEventListener('click',e=>{e.stopPropagation();_closeVidTagModal();});
 document.getElementById('vid-tag-overlay').addEventListener('click',e=>{e.stopPropagation();if(e.target===e.currentTarget)_closeVidTagModal();});
 document.getElementById('vid-tag-overlay').addEventListener('pointerdown',e=>e.stopPropagation());
@@ -8073,7 +8278,15 @@ document.getElementById('vm-cs-apply')?.addEventListener('click',async()=>{
   const ids=_vmCsIds;
   const btn=document.getElementById('vm-cs-apply');
   btn.disabled=true;statusEl.textContent='저장 중…';
-  const{error}=await sb.from(_YT_TABLE).update({cover_of_members:coverMembers,cover_of_groups:coverGroups}).in('id',ids);
+  // 원곡제외와 같은 경로(스냅샷·로그·cover_manual 잠금·tags_manual two-step).
+  // 곡명은 원곡자가 실제로 바뀐 행에서만 비운다 — 이 UI엔 곡명 입력이 없어서, 원곡자를 바꿨는데 옛
+  // 자동 곡명이 그대로 남으면 "A의 곡인데 B 원곡" 같은 어긋난 조합이 된다. 원곡자가 그대로면 유지.
+  const _same=(a,b)=>{const x=[...new Set(a||[])].sort(),y=[...new Set(b||[])].sort();return x.length===y.length&&x.every((v,i)=>v===y[i]);};
+  const{error}=await _coverManualApply(ids,r=>{
+    const p={cover_of_members:coverMembers,cover_of_groups:coverGroups};
+    if(!(_same(r.cover_of_members,coverMembers)&&_same(r.cover_of_groups,coverGroups)))p.cover_of_song=null;
+    return p;
+  },'선택-원곡지정','vm_cover_set');
   btn.disabled=false;
   if(error){statusEl.textContent='저장 실패: '+error.message;return;}
   const idSet=new Set(ids);
@@ -8097,6 +8310,7 @@ document.getElementById('vid-tag-save').addEventListener('click',async e=>{
   const withGroups=[..._vidTagGroupsSelected];
   const coverMembers=_vidTagCoverSelected.map(m=>`${m.ko}(${m.groupKo})`);
   const coverGroups=[..._vidTagCoverGroupsSelected];
+  const coverSongVal=(document.getElementById('vid-tag-cover-song')?.value||'').trim();
   const catEl=document.getElementById('vid-tag-cat');
   const category=catEl?catEl.value:undefined;
   const shortEl=document.getElementById('vid-tag-isshort');
@@ -8135,6 +8349,12 @@ document.getElementById('vid-tag-save').addEventListener('click',async e=>{
     // 칩을 안 넣었으면 태그는 안 건드림(플래그만 바꾸는 케이스 + 빈값 덮어쓰기 삭제 사고 방지).
     // 태그를 확정 = 사람이 본 것이므로 검수도 끝난 것으로 본다(needs_review:false).
     if(_anyTag){updatePayload.members=members;updatePayload.with_members=withMembers;updatePayload.with_groups=withGroups;updatePayload.cover_of_members=coverMembers;updatePayload.cover_of_groups=coverGroups;updatePayload.tags_manual=true;updatePayload.needs_review=false;}
+    // 원곡 칩을 실제로 넣었으면 원곡도 사람이 확정한 것 — cover_manual로 잠가 v2 스윕이 안 되돌리게 한다
+    // (2026-09-07). 칩이 비어 있는 경우는 "멤버만 덮어쓰기"의 부수효과일 수 있어 잠그지 않는다.
+    if(_anyTag&&(coverMembers.length||coverGroups.length))Object.assign(updatePayload,_coverManualPatch());
+    // 곡명은 영상마다 다르므로 사람이 직접 입력한 경우에만 반영(빈칸은 "안 건드림" — 선택분 전체의
+    // 기존 곡명이 조용히 날아가는 걸 막는다. 일괄 편집의 다른 필드와 같은 규칙).
+    if(_vidTagSongTouched&&coverSongVal)updatePayload.cover_of_song=coverSongVal;
     if(category)updatePayload.category=category;
     if(_vidTagShortTouched&&isShort!==undefined)updatePayload.is_short=isShort;
     if(_vidTagFlagTouched)Object.assign(updatePayload,_flagPatch(contentFlag,'manual'));
@@ -8156,13 +8376,13 @@ document.getElementById('vid-tag-save').addEventListener('click',async e=>{
       // 1) tags_manual=false로 잠금 해제(+payload) → 트리거 조건 불만족으로 모든 컬럼 변경 허용
       // 2) tags_manual=true로 재잠금
       // .select('id')로 실제 반영된 행 수를 받아, 권한(RLS)/매칭 문제로 0건 반영되는 조용한 실패를 드러낸다.
-      const{data:d1,error:e1}=await sb.from(_YT_TABLE).update({...updatePayload,tags_manual:false}).in('id',ids).select('id');
+      const{data:d1,error:e1}=await _saveWithCoverManual({...updatePayload,tags_manual:false},p=>sb.from(_YT_TABLE).update(p).in('id',ids).select('id'));
       if(e1){statusEl.textContent='저장 실패: '+e1.message;return;}
       _savedN=(d1||[]).length;
       const{error:e2}=await sb.from(_YT_TABLE).update({tags_manual:true}).in('id',ids);
       if(e2){statusEl.textContent='저장 실패: '+e2.message;return;}
     }else{
-      const{data,error}=await sb.from(_YT_TABLE).update(updatePayload).in('id',ids).select('id');
+      const{data,error}=await _saveWithCoverManual(updatePayload,p=>sb.from(_YT_TABLE).update(p).in('id',ids).select('id'));
       if(error){statusEl.textContent='저장 실패: '+error.message;return;}
       _savedN=(data||[]).length;
     }
@@ -8214,6 +8434,16 @@ document.getElementById('vid-tag-save').addEventListener('click',async e=>{
   // 남았다**(2026-08-31 사용자 제보 — "수동편집한 건 아예 안 떠야지"). 승인/거부 버튼은 이미 내리고
   // 있었는데 편집 경로만 빠져 있었음.
   const updatePayload={members,with_members:withMembers,with_groups:withGroups,cover_of_members:coverMembers,cover_of_groups:coverGroups,..._flagPatch(contentFlag,'manual',{needs_review:false}),tags_manual:true};
+  // 원곡 칩이 열었을 때와 달라졌으면 = 사람이 원곡을 확정/해제한 것 → cover_manual 잠금(2026-09-07).
+  // tags_manual과 별개인 이유는 _coverManualApply 위 주석 참고(원곡만 잠그고 멤버 보강은 계속 받는다).
+  const _coverChanged=!!_vidTagBefore&&!(_tagLogSame(_vidTagBefore.cover_of_members||[],coverMembers)&&_tagLogSame(_vidTagBefore.cover_of_groups||[],coverGroups));
+  if(_coverChanged)Object.assign(updatePayload,_coverManualPatch());
+  // 곡명 규칙(2026-09-07): ①원곡자를 다 지웠으면 곡명도 null(원곡자 없는 곡명은 유령 값)
+  // ②사람이 입력칸을 건드렸으면 그 값 그대로 ③원곡자만 바꾸고 곡명은 안 건드렸으면 null —
+  // 옛 자동 곡명이 새 원곡자에 그대로 붙어 "A의 곡인데 B 원곡"이 되는 걸 막는다 ④그 외엔 그대로 유지.
+  updatePayload.cover_of_song=(!coverMembers.length&&!coverGroups.length)?null
+    :(_vidTagSongTouched?(coverSongVal||null)
+    :(_coverChanged?null:(coverSongVal||null)));
   if(category!==undefined)updatePayload.category=category||null;
   // 단일 편집은 체크박스가 DB 현재값으로 채워져 열리므로 항상 그대로 반영해도 안전하다(일괄 편집만
   // "안 건드림"을 구분해야 함).
@@ -8228,18 +8458,18 @@ document.getElementById('vid-tag-save').addEventListener('click',async e=>{
     // 기존 행이 tags_manual=true였으므로 DB 트리거를 우회하는 two-step 저장:
     // 1) tags_manual=false → 트리거 조건(OLD.tags_manual=true) 해제 → 모든 컬럼 변경 허용
     // 2) tags_manual=true → 다시 잠금
-    const{error:e1}=await sb.from(_YT_TABLE).update({...updatePayload,tags_manual:false}).eq('id',id);
+    const{error:e1}=await _saveWithCoverManual({...updatePayload,tags_manual:false},p=>sb.from(_YT_TABLE).update(p).eq('id',id));
     if(e1){statusEl.textContent='저장 실패: '+e1.message;return;}
     const{error:e2}=await sb.from(_YT_TABLE).update({tags_manual:true}).eq('id',id);
     if(e2){statusEl.textContent='저장 실패: '+e2.message;return;}
   }else{
-    const{error}=await sb.from(_YT_TABLE).update(updatePayload).eq('id',id);
+    const{error}=await _saveWithCoverManual(updatePayload,p=>sb.from(_YT_TABLE).update(p).eq('id',id));
     if(error){statusEl.textContent='저장 실패: '+error.message;return;}
   }
   // 편집 이력 — 자동 태깅이 뭘 틀렸는지에 대한 유일한 정답 신호라 저장에 성공한 뒤 남긴다.
   // (_vidTagBefore가 없으면 = 모달 열 때 DB 조회가 실패한 경우라, 허위 diff를 만들지 않게 건너뛴다.)
   if(_vidTagBefore)_tagEditLog({videoId:id,title:document.getElementById('vid-tag-vidtitle').textContent,before:_vidTagBefore,
-    after:{group_ko:newGko||_vidTagBefore.group_ko,members,with_members:withMembers,with_groups:withGroups,cover_of_members:coverMembers,cover_of_groups:coverGroups,content_flag:contentFlag||null,category:category||null,is_short:isShort===undefined?_vidTagBefore.is_short:isShort},
+    after:{group_ko:newGko||_vidTagBefore.group_ko,members,with_members:withMembers,with_groups:withGroups,cover_of_members:coverMembers,cover_of_groups:coverGroups,cover_of_song:updatePayload.cover_of_song,content_flag:contentFlag||null,category:category||null,is_short:isShort===undefined?_vidTagBefore.is_short:isShort},
     source:'modal_single'});
   statusEl.textContent='저장됨';
   // group_ko도 같이 실어보내야 함 — patchItem 내부의 _buildGridWithList가 "이 영상이 실제로 속한
@@ -9015,6 +9245,13 @@ async function _admRunRoutine(withSync){
   steps.push({name:'2. 멤버+콜라보 자동 태깅',fn:_ytAutoTagMembers});
   steps.push({name:'3. 콜라보 오태깅 재검증',fn:_ytSweepAmbiguousCollabMistag});
   steps.push({name:'4. 동명이인 그룹 오배정 스캔',fn:_ytScanAmbiguousNameGroupMisassignment});
+  // 5. 원곡 태깅(2026-09-07 추가, 사용자 결정) — 이전엔 루틴에 없어서 사람이 🎵 버튼을 눌러야만
+  //    원곡이 붙었다. 실제로 "아일릿 민주의 이효리 '10 Minutes' 커버"가 제목에 (원곡 : 이효리)까지
+  //    있는데 원곡 없이 들어와 있었다(2026-09-06 유입, 사용자 제보). 매처는 이 제목을 credit으로
+  //    정확히 풀어낸다 — 붙일 기회 자체가 없었던 것.
+  //    ⚠️ 3단계 결정(_coverConfidence)이 먼저 들어간 뒤라서 안전하다 — HIGH만 자동 적용되고 확신이
+  //    부족한 건 검수 큐로 간다. 게이트 없이 루틴에 넣었으면 bare 오탐이 매일 자동으로 쌓였을 것.
+  steps.push({name:'5. 원곡 태깅 v2 (HIGH만 자동 · 나머지는 검수 큐)',fn:_ytSweepCoverV2});
   const t0=Date.now();
   for(let i=0;i<steps.length;i++){
     if(_admRoutineStop){_admSetLog('■ 사용자가 중단함','adm-log-fail');break;}

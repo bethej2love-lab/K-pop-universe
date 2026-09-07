@@ -108,6 +108,34 @@ t('챌린지 문맥의 "그룹 - 곡명"은 대시 후보로 — 소원을 말�
 t('표기를 전부 가진 곡이 이긴다 — Genie 별칭만 같은 골든차일드가 아니라 소녀시대',
   R('[엠카 댄스 챌린지 풀버전] DRIPPIN(드리핀) - 소원을 말해봐 (Genie) ♬','드리핀'),r=>!!r&&r.song==='소원을 말해봐 (Genie)');
 
+// ── 2026-09-07: 원곡자 그룹 멤버의 with_ 유지(P0-4, 사용자 결정) ────────────────
+// 규칙: **좁은** 동반신호(with/님과/함께/feat…)가 있으면 원곡자 그룹의 멤버는 with_에서 지우지 않는다.
+// 예전엔 신호와 무관하게 지워서 실제로 같이 나온 사람이 커버 태깅과 함께 사라졌다(#36·#37 유형).
+// 그룹명 단독 표기는 여전히 제거(크레딧 표기이지 출연이 아님) — 아래 반례 두 건이 그걸 고정한다.
+t('with_ 유지 — #Magnetic_Challenge with 아일릿 원희: 원곡 아일릿 + 원희는 남는다',
+  R('#Magnetic_Challenge with 아일릿 원희 | 투어스','투어스',{with_members:['원희(아일릿)']}),
+  r=>covG(r,'아일릿')&&(!('with_members' in r.patch)||r.patch.with_members.includes('원희(아일릿)')));
+t('with_ 유지 — 챌린지 with 연준(투모로우바이투게더): 연준 남는다',
+  R("'Good Boy Gone Bad' 챌린지 with 연준 | 엔하이픈",'엔하이픈',{with_members:['연준(투모로우바이투게더)']}),
+  r=>covG(r,'투모로우바이투게더')&&(!('with_members' in r.patch)||r.patch.with_members.includes('연준(투모로우바이투게더)')));
+t('반례 — 좁은 신호 없는 X 표기(다크비 X 트와이스)는 원곡자 멤버 제거 유지',
+  R("다크비 X 트와이스 'MORE & MORE' Cover",'다크비',{with_members:['나연(트와이스)'],with_groups:['트와이스']}),
+  r=>covG(r,'트와이스')&&(r.patch.with_members||[]).length===0);
+t('반례 — 그룹명 단독 크레딧(TWICE - MORE & MORE Cover by DKB)은 with_groups 제거 유지',
+  R('TWICE - MORE & MORE Cover by DKB','다크비',{with_groups:['트와이스']}),
+  r=>covG(r,'트와이스')&&(r.patch.with_groups||[]).length===0);
+
+// ── 2026-09-07: 확신 등급(P0-3) ────────────────────────────────────────────────
+// 스윕은 이제 HIGH만 자동 적용하고 나머지는 검수 큐로 보낸다. 여기서는 "무엇이 HIGH여야 하는가"를 고정.
+if(M._coverConfidence){
+  const conf=(title,gko,extra)=>M._coverConfidence(_coverResolve(R(title,gko,extra),{chartRows:chart}));
+  const tc=(name,expect,title,gko,extra)=>t(name,R(title,gko,extra),()=>conf(title,gko,extra)===expect);
+  tc('확신 — 크레딧(원곡 : 이효리)은 HIGH(자동 적용)','HIGH',"[Cover] 🎧'10 Minutes' by ILLIT MINJU (원곡 : 이효리)",'아일릿',{members:['민주']});
+  tc('확신 — 원곡자를 제목이 직접 부르면 동명곡이어도 HIGH','HIGH','#Magnetic_Challenge with 아일릿 원희 | 투어스','투어스',{with_members:['원희(아일릿)']});
+  tc('확신 — 동명곡인데 제목에 원곡자 표기가 없으면 MEDIUM(검수 큐)','MEDIUM',"[가요대제전] 엔시티 위시 'Kissing You' 무대",'엔시티 위시');
+  tc('확신 — 커버 문맥 평문 스캔(bare)은 항상 MEDIUM','MEDIUM','천재아이돌 아이브 막내 이서의 파워풀한 댄스 커버  | IVE LEESEO | BTS FAKE LOVE | Role Model Cover VS','아이브',{members:['이서']});
+}
+
 let pass=0,fail=0;
 cases.forEach(({name,row,check})=>{
   let r,ok=false,err=null;

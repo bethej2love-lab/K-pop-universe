@@ -1037,6 +1037,10 @@
       <input id="vid-tag-cover-search" type="text" class="pp-input" placeholder="이름/그룹 검색" autocomplete="off">
       <div id="vid-tag-cover-results"></div>
       <div id="vid-tag-cover-chips"></div>
+      <!-- 원곡 곡명(cover_of_song) — 2026-09-07 신설. 그동안 이 값은 자동 태깅만 쓰고 사람은 보지도
+           고치지도 못했다. 그래서 원곡자를 손으로 바로잡아도 옛 자동 곡명이 그대로 남고, tags_manual
+           때문에 v2 스윕도 못 고치는 유령 값이 됐다. 여러 곡(메들리)은 ; 로 구분. -->
+      <input type="text" id="vid-tag-cover-song" class="pp-input" placeholder="원곡 곡명 (선택 · 여러 곡은 ; 로 구분)" style="margin-top:8px;width:100%;box-sizing:border-box">
     </div>
     <div class="pp-section" style="margin-top:14px">
       <label class="pp-label" for="vid-tag-cat">영상 포맷 (관리자)</label>
