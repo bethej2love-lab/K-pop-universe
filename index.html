@@ -406,6 +406,8 @@
     <div class="sp-btn-hint">그룹 자체 채널의 멤버 태그를 최신 매칭으로 재검증. 그룹은 안 건드림.</div>
     <button class="sp-yt-sync" id="sp-catfix-btn" style="margin-top:4px;opacity:.8;">④ (선택) 영상 카테고리(라이브 등) 재분류(전체)</button>
     <div class="sp-btn-hint">라이브/쇼츠/예능 등 카테고리를 최신 로직으로 재분류.</div>
+    <button class="sp-yt-sync" id="sp-catnull-btn" style="margin-top:4px;opacity:.8;">🩹 카테고리 유실 복구 (일회용)</button>
+    <div class="sp-btn-hint">편집 모달의 장르 select에 <b>other/fan 옵션이 없어서</b>, 그 카테고리 영상을 모달로 저장할 때마다 category가 조용히 null로 지워지고 있었어요(2026-09-07 실측 854건 · 옵션은 이미 추가됨). 재분류 스윕은 tags_manual 행을 안 건드려서 이 행들은 영영 못 돌아와요. 제목으로 다시 추론해 채웁니다 — <b>category만</b> 건드리고 태그는 손 안 댐 · 스냅샷 되돌리기 가능.</div>
     <button class="sp-yt-sync" id="sp-shortspromote-btn" style="margin-top:4px;opacity:.8;">⬆️ 가로→쇼츠 일괄 승격</button>
     <div class="sp-btn-hint">동기화가 못 잡은 세로 영상(약 2.8만 건 추정)을 oardefault 실측으로 쇼츠 승격. <b>중단/재개 가능</b>(동시 12개·전량 ~90분) · <b>승격만</b>(강등 안 함) · 수동보호 · 스냅샷 되돌리기. 실행 중 다시 누르면 중단.</div>
 

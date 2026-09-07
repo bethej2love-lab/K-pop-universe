@@ -1214,9 +1214,27 @@ function _coverOriginFromText(text){
   return gk?{kind:'group',gko:gk}:null;
 }
 // 공연자(performer) 소속으로 보이는 origin인가 — 자기 곡이면 커버 아님
+// 공연자 그룹의 (전·현) 로스터에 그 이름이 있는가 — members가 비어 있는 행에서도 "자기 곡"을 알아보기 위해.
+// 실측(2026-09-07 시뮬): "[가로] 선미 - Balloon In Love", "핫펠트(예은) - 새 신발", "선예 'Just A Dancer'"가
+// 전부 group_ko=원더걸스인데 members가 비어 있어서, 본인 솔로곡이 **본인 그룹 채널의 커버**로 자동 태깅될
+// 뻔했다(HIGH 표본 15건 중 4건). members 유무와 무관하게 로스터로 한 번 더 본다.
+const _coverRosterCache=new Map();
+function _coverRosterHas(gko,mko){
+  if(!gko||!mko||!GROUPS[gko])return false;
+  if(!_coverRosterCache.has(gko)){
+    const set=new Set();
+    ARTISTS.forEach(a=>{try{if(_artistGroups(a).some(g=>g.ko===gko))set.add(a.name.ko);}catch(e){}});
+    _coverRosterCache.set(gko,set);
+  }
+  return _coverRosterCache.get(gko).has(mko);
+}
 function _coverIsSelf(origin,performerGko,performerMembers){
   if(!origin)return false;
   if(origin.gko===performerGko)return true;
+  if(origin.kind!=='group'&&_coverRosterHas(performerGko,origin.mko))return true; // 이 그룹의 (전)멤버 본인 곡
+  // 솔로/개인 채널(group_ko가 사람 이름이라 GROUPS에 없음)에서 본인이 속한 그룹 곡을 부른 경우도 자기 곡.
+  // 실측: "[몬채널][C] MINHYUK - Dried Flower (COVER.)"가 group_ko='민혁'인데 원곡 몬스타엑스로 붙을 뻔했다.
+  if(origin.kind==='group'&&performerGko&&!GROUPS[performerGko]&&_coverRosterHas(origin.gko,performerGko))return true;
   if(origin.kind!=='group'&&performerGko&&!GROUPS[performerGko]&&origin.mko===performerGko)return true; // 무소속 솔로(group_ko=아이유)의 자기 곡
   if(origin.kind!=='group'&&performerGko&&(performerMembers||[]).includes(origin.mko))return true;
   // 공연자 그룹 멤버의 솔로곡을 그 그룹이 부른 경우도 자기 곡
@@ -1297,7 +1315,22 @@ function _coverResolve(row,opts){
       });
     });
   };
-  cands.forEach(c=>{if(c.strength==='credit')return;const lock=c.artistText?_coverOriginFromText(c.artistText):null;lookup(c.text,c.strength,lock&&!_coverIsSelf(lock,performer,members)?lock:null);});
+  // 곡 옆에 적힌 아티스트 표기가 **우리 유니버스 밖**인지 표시해둔다(2026-09-07). 제목이 "정준일 - 안아줘",
+  // "優里(Yuuri) - ベテルギウス", "The Weeknd 'Sacrifice' Cover"라고 말하는데 그 곡명이 우연히 우리
+  // 아티스트의 동명곡과 겹치면, 지금 구조는 그 K-pop 아티스트에게 원곡을 붙여버린다(실측 HIGH 표본
+  // 23건 중 4건이 이 유형 — 리포트 F2/R5). 크레딧 경로엔 이미 creditExternal 방어가 있는데 따옴표·대시
+  // 경로엔 없었다. 후보를 버리지는 않고(그러면 큐에도 안 남아 발견 자체가 사라짐) 확신만 떨어뜨린다.
+  let externalArtist=false;
+  cands.forEach(c=>{
+    if(c.strength==='credit')return;
+    const lock=c.artistText?_coverOriginFromText(c.artistText):null;
+    if(c.artistText&&!lock){
+      // 문장부호만 남는 조각("'", "-" 등)은 아티스트 표기가 아니다 — 이름처럼 생긴 것만 본다
+      const nameLike=c.artistText.replace(/[^\p{L}\p{N} ]/gu,' ').trim();
+      if(nameLike.length>=2)externalArtist=true;
+    }
+    lookup(c.text,c.strength,lock&&!_coverIsSelf(lock,performer,members)?lock:null);
+  });
   if(selfHit&&!creditOrigin)return null;
   // 챌린지 태그는 곡명을 줄여 쓰는 관례(#첫만남챌린지 = "첫 만남은 계획대로 되지 않아") — 정확 일치가 없으면 접두 일치
   cands.filter(c=>c.strength==='tag').forEach(c=>{
@@ -1375,7 +1408,7 @@ function _coverResolve(row,opts){
   const topKey=ranked.length?ranked[0].key:null;
   const topNamed=ranked.length?_coverOriginNamedInTitle(ranked[0].e.origin,title):false;
   const secondNamed=ranked.length>1?_coverOriginNamedInTitle(ranked[1].e.origin,title):false;
-  return{isCover,origin,song,ambiguous,reason:reassign?'reassign':reason,patch,collab,candidates:cands,alternatives,topScore,secondScore,topKey,topNamed,secondNamed};
+  return{isCover,origin,song,ambiguous,hasContext:!!ctx.hasContext,externalArtist,reason:reassign?'reassign':reason,patch,collab,candidates:cands,alternatives,topScore,secondScore,topKey,topNamed,secondNamed};
 }
 
 
@@ -1405,9 +1438,21 @@ function _coverConfidence(r){
   if(!r.origin)return r.reason==='external'?'MEDIUM':'LOW';
   if(r.reason==='credit'||r.reason==='artist'||r.reason==='reassign')return 'HIGH';
   if(r.reason==='quote'||r.reason==='tag'||r.reason==='dash'){
+    // 제목이 유니버스 밖 아티스트를 원곡자로 말하고 있으면(정준일·Yuuri·The Weeknd…) 동명곡으로 끌어오지
+    // 않는다 — 사람이 큐에서 "외부/커버 아님"으로 확정. credit·artist 경로는 이미 표기가 해석된 것이라 제외.
+    if(r.externalArtist)return 'MEDIUM';
     const gap=(r.secondScore==null)?99:(r.topScore-r.secondScore);
     const common=!!(r.topKey&&_COVER_COMMON_KEYS.has(r.topKey));
     if(common)return 'MEDIUM'; // 흔한 단어 곡명은 점수 차와 무관하게 사람이 본다
+    // 커버/챌린지 문맥이 아예 없는 제목(대개 음악방송 무대 "A - 곡명 | Show! MusicCore")은 자동 적용
+    // 안 함. 실측에서 이 형태는 "A가 자기 곡을 부른 무대인데 group_ko가 다른 그룹으로 잘못 배정된 것"이
+    // 많았다(윤산하·연준 사례) — 커버로 붙이면 오배정이 커버 태그로 굳는다. 사람이 큐에서 판단.
+    if(!r.hasContext)return 'MEDIUM';
+    // 챌린지 해시태그(tag)는 **원곡자가 제목에 없으면** 자동 적용하지 않는다. 실측(2026-09-07 시뮬,
+    // 19,000행): tag/HIGH 118건의 표본 다수가 "자기 신곡 챌린지인데 그 곡이 사전에 없어서 남의 동명곡에
+    // 붙은 것"이었다(#타이거챌린지→태민, #멋쟁이챌린지→아영, #NaNaNaChallenge→우즈). 사전에 없는 자기
+    // 곡은 구조적으로 못 걸러내므로, "제목이 원곡자를 부르고 있는가"를 필수 조건으로 둔다.
+    if(r.reason==='tag')return (r.topNamed&&!r.secondNamed)?'HIGH':'MEDIUM';
     if(gap>=4)return 'HIGH';
     // 동명곡이라도 제목이 원곡자를 직접 부르고 있으면(그리고 경쟁 후보는 아니면) 사람과 같은 근거로 확정.
     // "#Magnetic_Challenge with 아일릿 원희" — Magnetic은 아일릿·베리베리·권은비 셋의 곡이지만 제목이
@@ -1439,8 +1484,10 @@ async function _ytSweepCoverV2(){
     let manualSkipped=0,ambiguous=0,external=0,coverLocked=0,mediumN=0;const updates=[];const sample={cover:[],move:[],wipe:[],reassign:[],ambiguous:[]};
     const push=(k,line)=>{if(sample[k].length<60)sample[k].push(line);};
     // MEDIUM(동명곡·약한 근거·외부 원곡 가능성)은 자동으로 붙이지 않고 검수 큐로 — 3단계 결정의 중간 칸.
+    // pri 0 = 게이트가 막은 건(원곡을 붙일 뻔한 판단이 대기 중) / 1 = 애매(원래도 아무것도 안 하던 것).
+    // 큐가 수천 건이면 아무도 안 누르게 되므로(2026-08-25 전례) 우선순위 낮은 것부터 잘라낸다.
     const queue=[];
-    const enqueue=(v,r)=>{queue.push({videoId:v.id,reason:'cover_candidate',source:'sweep_cover_v2',
+    const enqueue=(v,r,pri)=>{queue.push({videoId:v.id,reason:'cover_candidate',source:'sweep_cover_v2',pri,
       detail:{title:v.title,group_ko:v.group_ko,song:r.song||null,reason:r.reason,
         origin:r.origin?_coverOriginLabel(r.origin):null,top:r.topScore,second:r.secondScore,alternatives:r.alternatives||[]}});};
     for(let i=0;i<rows.length;i++){
@@ -1450,7 +1497,7 @@ async function _ytSweepCoverV2(){
       if(v.cover_manual){coverLocked++;continue;} // 사람이 원곡을 확정한 행 — 매처 판정으로 되돌리지 않는다
       let r=null;try{r=_coverResolve(v,{chartRows});}catch(e){console.warn('[원곡 v2] 해석 오류',v.id,e);continue;}
       if(!r)continue;
-      if(r.ambiguous){ambiguous++;push('ambiguous',`#${v.id} ${(v.title||'').slice(0,80)}`);enqueue(v,r);continue;}
+      if(r.ambiguous){ambiguous++;push('ambiguous',`#${v.id} ${(v.title||'').slice(0,80)}`);enqueue(v,r,1);continue;}
       if(!r.origin)external++;
       const p=r.patch;const patch={};
       if(p.cover_of_groups&&!same(p.cover_of_groups,v.cover_of_groups))patch.cover_of_groups=p.cover_of_groups;
@@ -1466,7 +1513,7 @@ async function _ytSweepCoverV2(){
       // with_ 정리만 하는 패치(원곡을 주장하지 않는 것)는 예전 그대로 적용 — 잘못 붙은 콜라보를 걷어내는
       // 일이라 확신 축이 다르고, 여기까지 큐로 보내면 큐가 정리 작업으로 가득 찬다.
       const _addsCover=!!((patch.cover_of_groups&&patch.cover_of_groups.length)||(patch.cover_of_members&&patch.cover_of_members.length));
-      if(_addsCover&&_coverConfidence(r)!=='HIGH'){mediumN++;enqueue(v,r);continue;}
+      if(_addsCover&&_coverConfidence(r)!=='HIGH'){mediumN++;enqueue(v,r,0);continue;}
       updates.push({id:v.id,patch});
       const line=`#${v.id} [${v.group_ko}${patch.group_ko?'→'+patch.group_ko:''}] cover_of ${JSON.stringify(v.cover_of_groups||[])}${JSON.stringify(v.cover_of_members||[])}→${JSON.stringify(patch.cover_of_groups||v.cover_of_groups||[])}${JSON.stringify(patch.cover_of_members||v.cover_of_members||[])} song=${patch.cover_of_song||v.cover_of_song||''} with ${JSON.stringify(v.with_groups||[])}${JSON.stringify(v.with_members||[])}→${JSON.stringify('with_groups' in patch?patch.with_groups:v.with_groups||[])}${JSON.stringify('with_members' in patch?patch.with_members:v.with_members||[])} | ${(v.title||'').slice(0,70)}`;
       if(patch.group_ko)push('reassign',line);
@@ -1476,9 +1523,9 @@ async function _ytSweepCoverV2(){
     // 검수 큐 적재는 되돌릴 게 없는(파괴적이지 않은) 작업이라 confirm 앞에서 바로 한다 — 미리보기만
     // 하고 취소해도 "사람이 봐야 할 목록"은 남는 게 맞다. 첫 실행에 수천 건이 몰리면 아무도 안 누르게
     // 되므로(2026-08-25 전례) 후보 수가 적은 것부터 상한만큼만 넣는다.
-    const QCAP=1500;
+    const QCAP=400; // 한 번에 사람이 실제로 처리할 수 있는 양. 남은 건 다음 실행에서 다시 후보로 잡힌다.
     if(queue.length){
-      queue.sort((a,b)=>(a.detail.alternatives?.length||0)-(b.detail.alternatives?.length||0));
+      queue.sort((a,b)=>(a.pri-b.pri)||((a.detail.alternatives?.length||0)-(b.detail.alternatives?.length||0)));
       await _tagReviewEnqueueBatch(queue.slice(0,QCAP));
     }
     const n={cover:updates.filter(u=>(u.patch.cover_of_groups||u.patch.cover_of_members)&&!u.patch.group_ko).length,wipe:updates.filter(u=>!u.patch.cover_of_groups&&!u.patch.cover_of_members&&!u.patch.group_ko).length,reassign:updates.filter(u=>u.patch.group_ko).length};
@@ -3372,6 +3419,62 @@ async function _ytUndoBatch(batchId,opLabel){
 // 오히려 그래야 세로 직캠이 Live 탭에 뜬다. **is_short_migration.sql을 돌린 뒤 이 버튼을 한 번 실행하면
 // 기존 category='short' 약 84,286건의 장르 재추론(직교화 3단계)이 그대로 끝난다** — 별도 일회용 버튼을
 // 만들지 않은 이유가 이것이고, 되돌리기(category 스냅샷)도 이미 붙어 있다.
+// ── 카테고리 유실 복구(일회용, 2026-09-07) ───────────────────────────────────
+// 편집 모달의 장르 select에 'other'/'fan' 옵션이 없었다. 그래서 그 카테고리 영상을 모달로 열면
+// select.value가 ''로 떨어지고, 저장할 때 `category=category||null`이 그대로 null을 써버렸다
+// (실측 854건 — 그중 853건이 tags_manual=true = 전부 모달 저장분). 옵션은 이미 추가해서 새로 생기진
+// 않지만, 이미 null이 된 행은 "카테고리 재분류" 스윕이 tags_manual=true를 건드리지 않아 영영 못 돌아온다.
+// 영향: category='other'는 대표영상 후보에서 제외되는데(_pickMainChVid) null은 제외가 안 풀려서
+// 잡담 클립이 카드 대표영상으로 뽑힐 수 있다.
+// ⚠️ category만 쓴다 — 태그(members/with_/cover_of)는 손대지 않는다. tags_manual 행은 편집 모달과
+//    같은 two-step(해제→쓰기→재잠금)으로 보호 트리거를 우회한다.
+async function _ytFixNullCategory(){
+  if(!sb){_ytSetProg('Supabase 연결 없음');return;}
+  const btn=document.getElementById('sp-catnull-btn');
+  if(btn)btn.disabled=true;
+  try{
+    _ytSetProg('[카테고리 유실 복구] 조회 중…');
+    const{data:rows,error}=await _sbFetchAll(()=>sb.from(_YT_TABLE)
+      .select('id,title,category,is_short,tags_manual').is('category',null).order('id'));
+    if(error){_ytSetProg('조회 실패: '+error.message);return;}
+    if(!rows?.length){_ytSetProg('category가 비어 있는 행이 없어요 🎉');return;}
+    const updates=[];
+    rows.forEach(v=>{
+      let cat=_ytClassify(v.title||'');
+      // skip은 "저장하지 않는다"는 뜻이라 이미 저장된 행엔 안 쓴다. 추론이 안 되면 기본 버킷 'other'.
+      if(!cat||cat==='skip'||cat==='short')cat='other';
+      updates.push({id:v.id,cat,manual:!!v.tags_manual});
+    });
+    const byCat={};updates.forEach(u=>{byCat[u.cat]=(byCat[u.cat]||0)+1;});
+    console.log('[카테고리 유실 복구] 대상',updates.length,'건 · 분포',byCat,'· 표본',updates.slice(0,20));
+    if(!await _sweepConfirmSimple('카테고리 유실 복구 (일회용)','복구 실행',
+      `category가 비어 있는 ${updates.length}건을 제목으로 다시 추론해 채울까요?\n\n`+
+      Object.entries(byCat).map(([k,n])=>`· ${k}: ${n}건`).join('\n')+
+      `\n\n· category만 바꾸고 태그는 안 건드려요\n· 표본은 콘솔(F12) · 스냅샷 되돌리기 가능`)){
+      _ytSetProg(`취소됨 — 미리보기만 (대상 ${updates.length}건, 표본 콘솔).`);return;
+    }
+    await _snapshotBeforeBulk('카테고리 유실 복구(일회용)',updates.map(u=>u.id));
+    // 같은 카테고리끼리 묶어서 한 번에 — 수동잠금 행은 two-step
+    const groups=new Map();
+    updates.forEach(u=>{const k=u.cat+'|'+(u.manual?'m':'p');if(!groups.has(k))groups.set(k,{cat:u.cat,manual:u.manual,ids:[]});groups.get(k).ids.push(u.id);});
+    let done=0,failed=0;
+    for(const g of groups.values()){
+      for(let i=0;i<g.ids.length;i+=200){
+        const chunk=g.ids.slice(i,i+200);
+        const{error:e1}=await sb.from(_YT_TABLE).update(g.manual?{category:g.cat,tags_manual:false}:{category:g.cat}).in('id',chunk);
+        if(e1){failed+=chunk.length;console.error('[카테고리 유실 복구] 실패',e1.message);continue;}
+        if(g.manual){
+          const{error:e2}=await sb.from(_YT_TABLE).update({tags_manual:true}).in('id',chunk);
+          if(e2){console.error('[카테고리 유실 복구] 재잠금 실패 — 이 행들은 tags_manual=false로 남았어요',chunk.length,e2.message);failed+=chunk.length;continue;}
+        }
+        done+=chunk.length;
+        _ytSetProg(`[카테고리 유실 복구] ${done}/${updates.length}건 처리 중…`);
+      }
+    }
+    _ytSetProg(`완료! ${done}건 카테고리 복구${failed?` (실패 ${failed}건 — 콘솔 확인)`:''}. (되돌리기: "↩︎ 마지막 일괄 작업 되돌리기")`);
+  }catch(e){_ytSetProg('오류: '+e.message);}
+  finally{if(btn)btn.disabled=false;}
+}
 async function _ytSweepCategoryMistag(){
   if(!sb){_ytSetProg('Supabase 연결 없음');return;}
   const btn=document.getElementById('sp-catfix-btn');
@@ -8621,6 +8724,7 @@ _admExecBind('sp-collabfix-btn',_ytSweepAmbiguousCollabMistag,'콜라보 재검�
   _admExecBind('sp-membersfix-btn',_ytSweepMembersMistag,'자체 멤버 재검증');
   _admExecBind('sp-yt-undo-bulk-btn',_ytUndoLastBulk,'되돌리기');
   _admExecBind('sp-catfix-btn',_ytSweepCategoryMistag,'카테고리 재분류');
+  _admExecBind('sp-catnull-btn',_ytFixNullCategory,'카테고리 유실 복구');
   _admExecBind('sp-shortspromote-btn',_ytSweepPromoteShorts,'쇼츠 승격',{selfRestop:true});
   {const _spb=document.getElementById('sp-shortspromote-btn');if(_spb&&localStorage.getItem('_kpu_shortsPromoteCursor'))_spb.textContent='⬆️ 가로→쇼츠 일괄 승격 (재개)';}
   _admExecBind('sp-yt-autotag',_ytAutoTagMembers,'자동 태깅');

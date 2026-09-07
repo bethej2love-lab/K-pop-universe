@@ -108,6 +108,11 @@ function load(){
       S(/^const _coverEnCache\s*=/m,'_coverEnCache');
       coverExtra.push('_coverOriginNamedInTitle');
     }
+    // 로스터 기반 자기 곡 판정(2026-09-07) — 있으면 싣는다
+    if(/^const _coverRosterCache\s*=/m.test(adminSrc)){
+      S(/^const _coverRosterCache\s*=/m,'_coverRosterCache');
+      coverExtra.push('_coverRosterHas');
+    }
     ['_coverOriginLabel','_coverOriginId','_coverArtistOriginOf','_coverBuildIndex','_coverIndexEnsure',...coverExtra,'_coverContext','_coverHasCollabSignal','_coverCandidates','_coverOriginFromText','_coverIsSelf','_coverDebutYear','_coverResolve'].forEach(n=>F(new RegExp('^function '+n+'\\(','m'),n));
     // 원곡 오탐 청소의 되돌리기 게이트(2026-08-31) — 있으면 싣는다
     if(/^function _coverRestoreSignal\(/m.test(adminSrc))F(/^function _coverRestoreSignal\(/m,'_coverRestoreSignal');
