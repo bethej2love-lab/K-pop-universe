@@ -88,6 +88,10 @@ const OPENERS = [
   // 카드 뒤로 깔리던 버그가 실제로 났다(Part3 스냅샷이 _flOv open을 허용목록에 얼려둬서 못 잡았다 —
   // line 99~ 형제-오버레이 함정과 같은 유형). _bringToFront 추가로 고치고 여기에 고정한다.
   [/^function _openFeedListOverlay\(/m, '_openFeedListOverlay(모아보기/컬렉션 오버레이)'],
+  // 2026-09-07 추가: 연결 카드. Part3 스냅샷이 connPanelEl/connSheetEl의 open 지점을 허용목록에
+  // 얼려둬서 못 잡고 있었다(_flOv와 똑같은 함정, 세 번째). 실제로 모바일 390x1100에서 카드(z=132) 뒤로
+  // 시트(정적 z=65)가 열려 "눌러도 아무 일 없음"으로 보였다.
+  [/^function openConnCard\(/m, 'openConnCard(연결 카드)'],
 ];
 OPENERS.forEach(([re, label]) => {
   const region = fnRegion(html, re, label);
@@ -105,6 +109,10 @@ ck(vtOpens >= 2 && vtFront >= vtOpens, `admin 편집모달 open ${vtOpens}곳 �
 const _oms = fnRegion(html, /^function openMobSheet\(/m, 'openMobSheet');
 ck(/_bringToFront\(mobSheetEl\)/.test(_oms), 'openMobSheet: 첫 카드(mobSheetEl)를 _bringToFront');
 ck(/_bringToFront\(mobCardStackEl\)/.test(_oms), 'openMobSheet: 스택 카드(mobCardStackEl)도 _bringToFront — 멤버 카드가 그룹 카드 뒤로 안 뜨게');
+// 같은 형제-분기 함정: openConnCard도 모바일(시트)/데스크톱(패널)을 한 함수 안 다른 분기에서 연다.
+const _occ = fnRegion(html, /^function openConnCard\(/m, 'openConnCard');
+ck(/_bringToFront\(connSheetEl\)/.test(_occ), 'openConnCard: 모바일 시트(connSheetEl)를 _bringToFront');
+ck(/_bringToFront\(connPanelEl\)/.test(_occ), 'openConnCard: 데스크톱 패널(connPanelEl)도 _bringToFront');
 
 // ── Part 3: 오버레이 open 지점 스냅샷 동결 ──────────────────────────────────
 // 아래 SNAPSHOT = 2026-09-02 현재 "같은 줄에 _bringToFront가 없는" open 지점의 서명→개수.
@@ -115,8 +123,8 @@ const SNAPSHOT = {
   "_flOv.classList.add('open');": 2,
   "_msEl.classList.add('open');_msEl.setAttribute('aria-hidden','false');": 1,
   "_profileOverlayEl.classList.add('open');": 1,
-  "connPanelEl.classList.add('open');": 1,
-  "connSheetEl.classList.add('bs-open');": 1,
+  // connPanelEl open 지점은 2026-09-07에 _bringToFront가 같은 줄에 붙어 스냅샷에서 빠짐(Part2가 대신 고정).
+  "connSheetEl.classList.add('bs-open');": 1, // 애니메이션 끝의 상태 클래스 — _bringToFront는 display='block' 직전에 있음
   "cp.classList.add('open');": 1,
   "detail.classList.add('open');": 1,
   "document.getElementById('date-edit-overlay').classList.add('open');": 1,

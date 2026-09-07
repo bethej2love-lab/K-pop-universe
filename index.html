@@ -1047,6 +1047,14 @@
           <option value="live">라이브</option>
           <option value="variety">예능</option>
           <option value="show">드라마/영화</option>
+          <!-- ⚠️ other/fan은 "관리자가 고르라고" 넣은 게 아니라 **왕복 손실을 막으려고** 넣었다(2026-09-07).
+               DB의 251,247건이 category='other', 82건이 'fan'인데 여기 옵션이 없어서, 그 행을 모달로 열면
+               select.value가 ''로 떨어지고 저장 시 category=null로 조용히 지워졌다(실측 854건, 그중 853건이
+               tags_manual=true). 게다가 "영상 카테고리 재분류" 스윕은 tags_manual=true를 건드리지 않으므로
+               한 번 null이 되면 영구히 못 돌아오고, 대표영상 후보 제외(_pickMainChVid는 other/mv만 제외)도
+               풀려 잡담 클립이 카드 대표영상으로 뽑힐 수 있다. -->
+          <option value="other">기타</option>
+          <option value="fan">팬 영상</option>
         </select>
         <button id="vid-tag-thumb-refresh" class="uc-btn" type="button" style="white-space:nowrap;padding:0 12px">썸네일 새로고침</button>
       </div>
@@ -8092,6 +8100,11 @@ function openConnCard(artist){
     // 지금 열려있는 멤버 카드(mob-sheet/mob-card-stack)가 100%(bs-full)였으면 연결 카드도 그 상태를
     // 그대로 물려받아 100%로 열림 — mob-card-stack이 이미 하는 것과 같은 패턴(2026-08-04).
     connSheetEl.classList.toggle('bs-full',_sheetFull);
+    // ⚠️ 정적 z-index:65인데 그룹/멤버 카드(mob-sheet·mob-card-stack)는 열릴 때 _bringToFront로 131+에
+    // 올라간다 — 그래서 카드에서 "연결"을 누르면 시트가 카드 **뒤에서** 열려 아무 일도 안 일어난 것처럼
+    // 보였다(2026-09-07 제보, 390x1100 재현: conn-sheet z=65 vs mob-sheet z=132). 연결 카드도 방금 연
+    // 화면이니 항상 최상단(프로젝트 원칙). 여기서 부르면 라이트박스 경로(_lbConnCardOpenedFromLb)도 같이 해결.
+    _bringToFront(connSheetEl);
     connSheetEl.style.display='block';
     connSheetEl.style.transition='none';
     connSheetEl.style.transform='translateY(200px)';
@@ -8122,7 +8135,8 @@ function openConnCard(artist){
     // 실제로 스크롤되는 건 conn-panel-inner(패딩 래퍼)가 아니라 바깥 conn-panel 자체(overflow-y:auto가
     // 거기 붙어있음) — 여기를 0으로 안 돌리면 이전 앵커에서 스크롤해둔 위치가 그대로 남아있었음.
     connPanelEl.scrollTop=0;
-    connPanelEl.classList.add('open');
+    {const _cc=document.getElementById('conn-collapse');if(_cc)_bringToFront(_cc);} // 접기 탭 먼저(패널 바로 아래 층)
+    connPanelEl.classList.add('open');_bringToFront(connPanelEl); // 모바일과 같은 이유(정적 z:61 < 카드 131+)
     // 연결 카드를 열면 연결 웹 전체가 화면에 들어오게 카메라를 맞춘다(2026-09-05 — "웹처럼 연결선 바로
     // 보이게"). _flyToConnStars가 열린 패널 폭(_panelOffsetVec)까지 감안해 좌우로 비켜 프레이밍하므로,
     // 예전의 단순 _panWorld(2.5) 이동을 대체한다(그래서 _connPanelShifted도 세우지 않음 — 닫을 때
@@ -8150,7 +8164,7 @@ function closeConnCard(){
     _hideTotop();
   }else{
     connPanelEl.classList.remove('open');
-    // conn-collapse inline style 초기화 — CSS 기본값(right:920px)으로 되돌림
+    // conn-collapse inline style 초기화 — CSS 기본값(right:1140px)으로 되돌림
     const collapseEl=document.getElementById('conn-collapse');
     if(collapseEl)collapseEl.style.right='';
     if(_connPanelShifted){_connPanelShifted=false;_panWorld(-2.5,400);}

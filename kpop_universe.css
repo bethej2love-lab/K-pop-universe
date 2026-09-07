@@ -1020,7 +1020,7 @@
     padding-top:44px;
   }
   #member-panel>#tt #ttx{display:none!important;}
-  /* 접기 탭: member-panel 왼쪽 중간. member-panel 자체와 똑같은 거리(자기 폭 320px)·같은 트랜지션
+  /* 접기 탭: member-panel 왼쪽 중간. member-panel 자체와 똑같은 거리(자기 폭 380px)·같은 트랜지션
      커브로 translateX를 같이 줘서, 패널이 슬라이드될 때 탭이 따로 놀지 않고 카드에 붙어서 같이 움직임 */
   #tt-collapse{
     position:fixed;right:760px;top:50%;
@@ -1029,7 +1029,7 @@
     color:rgba(160,185,230,0.80);font-size:16px;line-height:1;
     cursor:pointer;padding:0;z-index:62;
     opacity:0;pointer-events:none;
-    transform:translateY(-50%) translateX(320px);
+    transform:translateY(-50%) translateX(380px); /* = member-panel 폭(320→380, 2026-09-07) */
     transition:transform 0.26s cubic-bezier(0.32,0,0.15,1),opacity 0.26s,background 0.15s,color 0.15s;
     display:flex;align-items:center;justify-content:center;
   }
@@ -1037,13 +1037,13 @@
   #tt-collapse:hover{background:rgba(40,50,80,0.96);color:rgba(200,220,255,0.95);}
   /* 접기 탭: conn-panel 왼쪽 중간 (동일 패턴, conn-panel 자기 이동거리(280+640px)만큼 같이 슬라이드) */
   #conn-collapse{
-    position:fixed;right:960px;top:50%;
+    position:fixed;right:1140px;top:50%; /* conn-panel(right:760)+폭380 = 왼쪽 끝. 320→380 확대분 반영(2026-09-07) */
     width:22px;height:44px;border:none;border-radius:8px 0 0 8px;
     background:rgba(20,24,44,0.88);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
     color:rgba(160,185,230,0.80);font-size:16px;line-height:1;
     cursor:pointer;padding:0;z-index:61;
     opacity:0;pointer-events:none;
-    transform:translateY(-50%) translateX(960px);
+    transform:translateY(-50%) translateX(1140px);
     transition:transform 0.26s cubic-bezier(0.32,0,0.15,1),opacity 0.26s,background 0.15s,color 0.15s;
     display:flex;align-items:center;justify-content:center;
   }
@@ -2176,7 +2176,9 @@
     position:fixed;right:760px;top:64px;bottom:0;width:380px;
     overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;
     z-index:61;pointer-events:none;
-    transform:translateX(calc(100% + 640px));
+    /* 닫힘 위치 = 자기 폭(100%) + right 오프셋(760=380레일×2)만큼 오른쪽 밖. 레일 320→380 확대(2026-09-07)
+       때 이 640이 안 따라와서 닫을 때 120px 남기고 툭 사라졌다. card-wide 쪽(1020)은 원래 맞음. */
+    transform:translateX(calc(100% + 760px));
     visibility:hidden;
     transition:transform 0.26s cubic-bezier(0.32,0,0.15,1),visibility 0s 0.26s;
     background:rgba(16,20,36,0.88);
