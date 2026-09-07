@@ -2893,6 +2893,14 @@ async function buildUniverse(){
     const mid=posA.clone().lerp(posB,0.5);
     const bm=bubbleMeshes.find(b=>b.ko===shareKo);
     connLines.push({line,mid,baseOp:mat.opacity,grpKo:shareKo,posA,posB,bm,artA,artB});
+    // ⚠️ 생성 시 실제 opacity는 0에서 시작한다(baseOp는 위에서 이미 기록해뒀다). 2026-09-05에 거리
+    // 임계를 벗어난 선을 "툭 끄지 말고 0으로 페이드아웃"하게 바꿨는데, 그 페이드아웃 분기가
+    //   `else if(opacity>0.004){ ...; line.visible = opacity>0.004; }`
+    // 라서 **처음부터 안 보이던 선까지 visible=true로 켜버렸다** — 초기 opacity가 baseOp(0.15)였기
+    // 때문. 그 결과 로딩 직후 4,470개 선이 전부 켜진 채 1초쯤 페이드아웃되는 게 보였다(실측,
+    // 사용자 제보 2026-09-08). 드로우콜 4,470개가 1초간 도는 문제이기도 하다(발열 지표=드로우콜).
+    // 0에서 시작하면 그 분기 자체를 안 타고, 정상 경로(가까워지면 baseOp로 페이드인)는 그대로다.
+    mat.opacity=0;
   });
 
   // ── Member points (fixed pixel size, camera-distance independent) ──
