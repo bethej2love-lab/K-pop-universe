@@ -16799,6 +16799,52 @@ function _feedNav(cb){
   cb();
 }
 
+// ── 생일 카드 dim 판정(2026-09-08, 사용자 제보 "슈가 이하린이 전혀 안 흐리다") ──────────────
+// 그룹 데뷔 항목은 _groupIsOver로 흐려지는데, **멤버 생일 항목은 `a.active===false`만** 보고 있었다.
+// 이하린은 `active:true` / `group.ko:'솔로'` / groups=[솔로, 슈가(active:false)]라 어디에도 안 걸린다.
+// 오늘(9/8) 생일 3명(용희·신종국·이하린)이 전부 이 모양이고 전부 밝게 떴다(헤드리스 실측).
+//
+// ⚠️ "소속 그룹이 전부 해체면 흐리게"로 바꾸면 **안 된다** — 그 규칙이면 375명이 흐려지는데 거기에
+//    청하·강다니엘·효린·권은비·최예나·CL·현아·선미·산다라박·강타가 전부 들어간다(실측). 데뷔연도로
+//    좁혀도(2010년 이전) CL·현아·선미·강타가 남는다. `active`는 "이 그룹 멤버인가"와 "개인이 아직
+//    활동하는가"가 섞인 필드라, 데이터만으로는 **은퇴**와 **해체 후 솔로로 활발**을 가를 수 없다.
+//
+// 그래서 판정 근거를 데이터 플래그가 아니라 **실제 영상 활동**으로 둔다. 실측(최근 2년, 소속 키로 좁힘):
+//   이하린 0 · 노을 0   vs   청하 217 · 최예나 223 · 권은비 95 · 선미 45 · 승한 35 · 산다라박 10 · CL 5
+// 0건과 활동중이 깨끗하게 갈린다.
+//
+// ⚠️ 게이트를 두 겹으로 둔다 — **활동 중인 그룹이 하나라도 있으면 쿼리조차 하지 않고 무조건 밝게.**
+//    그래야 태깅이 비어 있는 신인이 "영상 0건"이라는 이유로 흐려지는 사고가 원천적으로 안 난다.
+//    조회 실패도 "활동중"으로 본다(잘못 흐리게 하느니 안 흐리게).
+//    비용: 생일 카드는 하루 3~6개뿐이고 그중 이 분기를 타는 건 더 적다 + 아티스트별 캐시.
+const _ANNIV_DORMANT_DAYS=730;
+const _annivDormantCache=new Map(); // "이름|주소속" → Promise<boolean>
+// 이 사람의 **실제 그룹**(GROUPS에 있는 것)이 전부 끝났는가. 아이유처럼 애초에 무소속인 사람은
+// 판단 근거 자체가 없으므로 false(=흐리지 않음).
+function _annivAllGroupsOver(a){
+  const gs=(_artistGroups(a)||[]).filter(g=>g&&GROUPS[g.ko]);
+  if(!gs.length)return false;
+  return gs.every(g=>!_activeInGroup(a,g.ko)||_groupIsOver(g.ko));
+}
+async function _annivIsDormant(a){
+  if(!sb||!a||!a.name||!_annivAllGroupsOver(a))return false;
+  const key=a.name.ko+'|'+((a.group&&a.group.ko)||'');
+  if(_annivDormantCache.has(key))return _annivDormantCache.get(key);
+  const p=(async()=>{
+    try{
+      const since=new Date(Date.now()-_ANNIV_DORMANT_DAYS*86400000).toISOString();
+      // 조회 키: _ytGroupKoFor(솔로 재귀속분은 본인 이름이 group_ko다) + 실제 소속 그룹 전부.
+      // group_ko로 좁히지 않으면 동명이인 영상이 섞여 "활동중"으로 잘못 판정된다.
+      const keys=[...new Set([_ytGroupKoFor(a),...(_artistGroups(a)||[]).map(g=>g.ko).filter(k=>GROUPS[k])])];
+      const{count,error}=await sb.from(_YT_TABLE).select('id',{count:'exact',head:true})
+        .in('group_ko',keys).contains('members',[a.name.ko]).gt('published_at',since);
+      if(error)return false;
+      return (count||0)===0;
+    }catch(e){return false;}
+  })();
+  _annivDormantCache.set(key,p);
+  return p;
+}
 // 오늘 생일인 멤버 / 오늘 데뷔 N주년인 그룹만 모아서 보여줌(임박 정보 없이 딱 당일만) — 해당하는 게
 // 하나도 없는 날은 섹션 자체를 숨김. 즐겨찾기 여부와 무관하게 전체 대상.
 function _buildFeedAnniversaries(){
@@ -16851,6 +16897,8 @@ function _buildFeedAnniversaries(){
       else showT(a,window.innerWidth/2,window.innerHeight/2);
     }),undefined,sub2);
     if(a.active===false)item.classList.add('anniv-inactive');
+    // 소속 그룹이 전부 끝난 사람만 실제 영상 활동으로 한 번 더 본다(위 _annivIsDormant 주석 참고).
+    else _annivIsDormant(a).then(d=>{if(d)item.classList.add('anniv-inactive');}).catch(()=>{});
     const _fallbackThumb=()=>_fetchTopVideoThumb(_ytGroupKoFor(a),a.name.ko).then(t=>_setAnnivStripThumb(item,t||null));
     // ⚠️ 예전엔 `if(a.links?.instagram)`으로 감싸서 **인스타가 있는 멤버만** 사진을 조회했다. 2026-08-14에
     // "인스타 없는 멤버도 위버스 등 출처로 사진 등록 가능"으로 확대됐는데 이 조건이 같이 안 고쳐져서,
