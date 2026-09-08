@@ -4479,6 +4479,32 @@ const _PROGRAM_COLLECTIONS=[
   {key:'killingvoice', label:'킬링보이스', en:'Killing Voice', kw:['킬링보이스','킬링 보이스']},
   {key:'theseasons', label:'더 시즌즈', en:'The Seasons', kw:['더시즌즈','더 시즌즈']},
   {key:'chajwippul', label:'차린 건 쥐뿔도 없지만', en:'', kw:['차쥐뿔','차린 건 쥐뿔','차린건 쥐뿔']},
+  // ── 2026-09-08 15개 추가 ─────────────────────────────────────────────────────
+  // 감으로 고르지 않고 DB 전수 카운트로 뽑았다(제목 ilike + 등장 그룹 수). 아래 숫자는 그때 실측값이고,
+  // 기존 13개의 규모(더 시즌즈 3,333 · 주간아이돌 1,405 · … · 킬링보이스 115 · 차쥐뿔 64)와 같은 잣대다.
+  // ⚠️ **채널 브랜드는 넣지 않는다** — '딩고뮤직'(594) · '1theK/원더케이'(779)를 키워드로 넣으면
+  //    이미 등록된 킬링보이스와 세로라이브·이슬라이브를 통째로 삼켜 한 영상이 여러 버킷에 중복으로 뜬다.
+  //    실측으로 신규 항목 간 겹침 0을 확인하고 넣었다(릴레이댄스 ∩ BE ORIGINAL = 0, 세로라이브 ∩ 킬링보이스 = 0).
+  // ⚠️ '인간극장' 단독 키워드는 원본 다큐가 섞이므로 '아이돌 인간극장'으로 좁혔다.
+  {key:'itslive', label:'잇츠라이브', en:"it's Live", kw:['잇츠라이브',"it's live","it’s live",'itslive']}, // 2,568건 203팀
+  // ⚠️ 아포스트로피 2종을 **둘 다** 넣어야 한다 — _titleNorm은 NFKC+lowercase뿐이라 '(U+0027)와 ’(U+2019)를
+  //    같은 글자로 만들지 않는다. 하나만 넣으면 절반이 조용히 빠진다(실제 제목에 둘 다 쓰인다).
+  {key:'beoriginal', label:'BE ORIGINAL', en:'BE ORIGINAL', kw:['be original','unfiltered cam']}, // 2,251건 111팀
+  // UNFILTERED CAM은 같은 스튜디오춤 무대의 **멤버별 개인캠 버전**이라 한 버킷으로 묶는다(제목에
+  // 'BE ORIGINAL' 또는 'STUDIO CHOOM ORIGINAL'이 같이 붙는다). 릴레이댄스와는 겹치지 않는다(실측 0건).
+  {key:'relaydance', label:'릴레이댄스', en:'Relay Dance', kw:['릴레이댄스','릴레이 댄스','relay dance']}, // 2,171건 199팀
+  {key:'homealone', label:'나 혼자 산다', en:'Home Alone', kw:['나혼자산다','나 혼자 산다','나혼산']}, // 514건 108팀
+  {key:'suitdance', label:'수트댄스', en:'Suit Dance', kw:['수트댄스','수트 댄스','suit dance']}, // 365건 105팀
+  {key:'hangout', label:'놀면 뭐하니', en:'Hangout with Yoo', kw:['놀면뭐하니','놀면 뭐하니']}, // 242건 73팀
+  {key:'killpo', label:'원더킬포', en:'1theKILLPO', kw:['원더킬포','1thekillpo','킬포인트']}, // 231건 45팀
+  {key:'idolradio', label:'아이돌라디오', en:'IDOL RADIO', kw:['아이돌라디오','idol radio']}, // 211건 85팀
+  {key:'serolive', label:'세로라이브', en:'Sero Live', kw:['세로라이브','세로 라이브']}, // 195건 108팀
+  {key:'maskedsinger', label:'복면가왕', en:'King of Mask Singer', kw:['복면가왕']}, // 181건 116팀
+  {key:'idoldocu', label:'아이돌 인간극장', en:'Idol Human Theater', kw:['아이돌인간극장','아이돌 인간극장']}, // 172건 56팀
+  {key:'starzoomin', label:'STAR ZOOM IN', en:'STAR ZOOM IN', kw:['star zoom in','스타줌인']}, // 154건 50팀
+  {key:'isac', label:'아이돌스타 선수권대회', en:'Idol Star Athletics', kw:['아육대','아이돌스타 선수권','아이돌 스타 선수권','육상선수권']}, // 139건 76팀
+  {key:'tingle', label:'팅글인터뷰', en:'Tingle Interview', kw:['팅글인터뷰','팅글 인터뷰']}, // 132건 49팀
+  {key:'workman', label:'워크맨', en:'Workman', kw:['워크맨','workman']}, // 111건 44팀
 ];
 // 검색어 q가 프로그램에 매칭되면 그 프로그램 객체를 돌려준다(공백 제거 후 양방향 포함 비교 + 영문명).
 function _matchPrograms(q,ql,qln){
@@ -20525,7 +20551,11 @@ function _renderCollectionRow(containerId,list){
 // title_norm으로 프로그램별 버킷팅. memberKo가 있으면 members 배열에 그 멤버가 든 영상만
 // (동명이인/타멤버 누수 방지 — _loadCollectionRow와 같은 이유). 칩 클릭은 _openProgramCollection
 // (ctx로 그룹/멤버 한정)을 그대로 재사용 → 검색 오버레이와 같은 목록이 뜬다.
-const _PROGRAM_KW_OR=_PROGRAM_COLLECTIONS.flatMap(p=>p.kw).map(k=>`title_norm.ilike.*${k}*`).join(',');
+// ⚠️ 패턴을 큰따옴표로 감싼다 — PostgREST or() 안의 값에 쉼표·괄호 같은 예약문자가 들어가면 필터 구문이
+//    깨지고, 그게 곧바로 에러가 아니라 **인덱스를 못 타는 쿼리 → statement_timeout** 으로 이어진다
+//    (_pgFilterVal 주석의 브브걸 사고와 같은 계열). 지금 키워드엔 아포스트로피뿐이라 무해하지만,
+//    키워드는 앞으로도 계속 늘어나므로 감싸는 쪽을 기본으로 둔다(따옴표 유무 결과 동일함을 실측 확인).
+const _PROGRAM_KW_OR=_PROGRAM_COLLECTIONS.flatMap(p=>p.kw).map(k=>`title_norm.ilike."*${k}*"`).join(',');
 async function _loadProgramRow(ko,containerId,memberKo,cardMemberKo){
   const row=document.getElementById(containerId);
   if(row)row.style.display='none';
@@ -20555,8 +20585,12 @@ async function _loadProgramRow(ko,containerId,memberKo,cardMemberKo){
         }
       });
     });
-    // "컬렉션"이라 부를 만한 2편 이상만, 영상 많은 순으로.
-    const picks=[...buckets.values()].filter(b=>b.vids.length>=2).sort((a,b)=>b.vids.length-a.vids.length);
+    // "컬렉션"이라 부를 만한 4편 이상만, 영상 많은 순으로(2편 → 4편, 2026-09-08 사용자 요청).
+    // 칩 썸네일이 **조회수 상위 4편의 2x2 모자이크**라 4편 미만이면 빈 칸이 남는다 — 즉 임계 2는
+    // 화면상 "덜 채워진 컬렉션"을 만들고 있었다. 프로그램을 13→28개로 늘리면서 꼬리쪽(1~3편짜리)이
+    // 훨씬 많아지므로 여기서 같이 올린다.
+    const PROGRAM_MIN=4;
+    const picks=[...buckets.values()].filter(b=>b.vids.length>=PROGRAM_MIN).sort((a,b)=>b.vids.length-a.vids.length);
     if(!picks.length)return;
     _renderProgramRow(containerId,picks,memberKo?{memberKo}:{gko:ko});
   }catch(e){/* 조용히 — 실패해도 카드는 정상 */}

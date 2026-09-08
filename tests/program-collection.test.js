@@ -124,7 +124,54 @@ console.log('\n── Part 5: 프로그램 컬렉션 배선 ──');
   // 멤버 카드는 members 결속(동명이인/타멤버 누수 방지) — _loadProgramRow가 memberKo로 contains
   const lp = extractBraces(html, /^async function _loadProgramRow\(/m, '_loadProgramRow');
   ck(/contains\('members',\[memberKo\]\)/.test(lp), '_loadProgramRow: memberKo면 members contains로 좁힘');
-  ck(/\.filter\(b=>b\.vids\.length>=2\)/.test(lp), '_loadProgramRow: 2편 이상 프로그램만 노출');
+  // 2026-09-08: 임계 2 → 4(사용자 요청). 칩 썸네일이 상위 4편 2x2 모자이크라 4편 미만은 빈 칸이 남는다.
+  ck(/const PROGRAM_MIN=4/.test(lp) && /\.filter\(b=>b\.vids\.length>=PROGRAM_MIN\)/.test(lp),
+    '_loadProgramRow: 4편 이상 프로그램만 노출(PROGRAM_MIN)');
+})();
+
+// ── Part 6: 프로그램 목록 자체의 불변식(2026-09-08, 13→28개 확장) ───────────────
+// 목록은 앞으로도 계속 늘어난다. 늘릴 때마다 반복될 실수 세 가지를 여기서 못박는다.
+console.log('\n── Part 6: _PROGRAM_COLLECTIONS 불변식 ──');
+(() => {
+  // ⚠️ extractBraces는 `{}`만 세서 배열 리터럴을 못 자른다(첫 객체 하나만 잘려 나온다 — 실제로 겪음).
+  //    `[` 깊이로 자르는 전용 추출기를 쓴다. 문자열 안에 대괄호가 없어서 단순 깊이 계산으로 충분하다.
+  const start = html.indexOf('[', html.search(/^const _PROGRAM_COLLECTIONS=/m));
+  let d = 0, end = start;
+  for (; end < html.length; end++) { if (html[end] === '[') d++; else if (html[end] === ']') { d--; if (d === 0) { end++; break; } } }
+  const list = eval(html.slice(start, end)); // 순수 리터럴 배열
+  ck(list.length >= 28, `프로그램 ${list.length}개 등록(13→28 확장 반영)`);
+
+  // ① 키/키워드 중복 — 같은 키워드가 두 프로그램에 있으면 한 영상이 두 버킷에 뜬다
+  const keys = list.map(p => p.key);
+  ck(new Set(keys).size === keys.length, 'key 중복 없음');
+  const seen = new Map(); const dup = [];
+  list.forEach(p => p.kw.forEach(k => {
+    const n = k.toLowerCase().replace(/\s+/g, '');
+    if (seen.has(n) && seen.get(n) !== p.key) dup.push(`${k}(${seen.get(n)}↔${p.key})`);
+    seen.set(n, p.key);
+  }));
+  ck(!dup.length, `키워드 중복 없음${dup.length ? ' — ' + dup.join(', ') : ''}`);
+
+  // ② 채널 브랜드를 키워드로 쓰지 않는다 — 넣으면 그 채널의 다른 프로그램을 통째로 삼킨다
+  //    (딩고뮤직 → 킬링보이스·세로라이브·이슬라이브 / 1theK·원더케이 → 릴레이댄스·수트댄스·원더킬포)
+  const BRAND = ['딩고뮤직', '딩고 뮤직', 'dingo', '1thek', '원더케이', 'studio choom', '스튜디오춤'];
+  const bad = [];
+  list.forEach(p => p.kw.forEach(k => { const n = k.toLowerCase().replace(/\s+/g, ''); BRAND.forEach(b => { if (n === b.toLowerCase().replace(/\s+/g, '')) bad.push(`${p.key}:${k}`); }); }));
+  ck(!bad.length, `⚠️ 채널 브랜드를 키워드로 쓰지 않음${bad.length ? ' — ' + bad.join(', ') : ''}`);
+
+  // ③ 너무 넓은 단독 키워드 — '인간극장'은 원본 다큐를 끌어온다(실측 6건). '아이돌 인간극장'이어야 함
+  ck(!list.some(p => p.kw.some(k => k.replace(/\s+/g, '') === '인간극장')),
+    "⚠️ '인간극장' 단독 키워드 금지(원본 다큐 혼입) — '아이돌 인간극장'으로 좁힐 것");
+
+  // ④ 아포스트로피 2종 — _titleNorm은 NFKC+lowercase뿐이라 '(U+0027)와 ’(U+2019)를 안 합친다.
+  //    한쪽만 넣으면 실제 제목의 절반이 조용히 빠진다.
+  const its = list.find(p => p.key === 'itslive');
+  ck(its && its.kw.some(k => k.includes("'")) && its.kw.some(k => k.includes('’')),
+    "⚠️ 잇츠라이브 kw에 아포스트로피 2종(' 와 ’) 모두 포함");
+
+  // ⑤ 조회 필터는 큰따옴표로 감싼다(PostgREST 예약문자 → statement_timeout 방지)
+  ck(/_PROGRAM_KW_OR=.*title_norm\.ilike\."\*\$\{k\}\*"/.test(html),
+    '_PROGRAM_KW_OR: ilike 패턴을 큰따옴표로 감쌈');
 })();
 
 console.log(fail ? `\n✗ ${fail}건 실패` : '\n✅ 프로그램 컬렉션 하네스 통과');

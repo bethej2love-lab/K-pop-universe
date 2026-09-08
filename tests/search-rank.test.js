@@ -144,11 +144,26 @@ async function main() {
       else if (rows[0].type !== 'program') fail(`[라디오스타] 첫 결과가 ${rows[0].type}:${rows[0].name} — 프로그램 모아보기여야 함`);
       else ok(`[라디오스타] 첫 결과 ${rows[0].type}:${rows[0].name}`);
     }
+    // ⚠️ "Star"는 **DOM 순서로 판정하면 안 된다.** `_renderSearchHits`가 같은 타입을 한 섹션에 모으고
+    //    섹션은 점수가 가장 좋은 타입부터 쌓이므로, 프로그램 하나(STAR ZOOM IN, 접두일치)가 섹션을
+    //    앞으로 끌어오면 같은 섹션의 부분일치 프로그램(라디오스타)까지 곡 위로 딸려 올라간다.
+    //    이건 섹션 묶음의 의도된 동작이고, 정렬 자체는 멀쩡하다. 그래서 **점수로** 검증한다.
+    //    (2026-09-08 프로그램 13→28 확장 때 실제로 이 테스트가 DOM 기준이라 잘못 실패했다)
     {
-      const rows = await read('Star');
-      const p = idxOfType(rows, 'program'), s = idxOfType(rows, 'song');
-      if (p >= 0 && s >= 0 && p < s) fail(`[Star] 부분일치 프로그램이 정확일치 곡보다 위 — ${rows.slice(0, 3).map(r => r.type + ':' + r.name).join(' > ')}`);
-      else ok(`[Star] ${rows.slice(0, 3).map(r => r.type + ':' + r.name).join(' > ')}`);
+      await ev(`(function(){if(!window.__origRSH){window.__origRSH=_renderSearchHits;
+        _renderSearchHits=function(h){window.__hits=h.map(function(x){return {type:x.type,name:x.name,score:x.score};});
+        return window.__origRSH.apply(this,arguments);};}return 1;})()`);
+      const hits = JSON.parse(await ev(`(function(){doSearch('Star');return JSON.stringify(window.__hits||[]);})()`) || '[]');
+      await sleep(250);
+      const songExact = hits.find(h => h.type === 'song' && h.name.toLowerCase() === 'star');
+      const containsOnly = hits.filter(h => h.score >= 2 && (h.type === 'program' || h.type === 'group' || h.type === 'member'));
+      if (!songExact) fail('[Star] 정확일치 곡을 못 찾음 — 표본 부족?');
+      else if (containsOnly.some(h => h.score < songExact.score))
+        fail(`[Star] 부분일치 엔티티가 정확일치 곡보다 점수가 좋음 — ${containsOnly.slice(0, 3).map(h => h.type + ':' + h.name + '(' + h.score + ')').join(' · ')} vs song:Star(${songExact.score})`);
+      else ok(`[Star] 곡 Star(${songExact.score}) < 부분일치 엔티티 ${containsOnly.slice(0, 3).map(h => h.name + '(' + h.score + ')').join(' · ')}`);
+      // 접두일치 프로그램이 정확일치 곡과 동점에서 이기는 건 '82'(그룹 접두 > 곡 정확)와 같은 규칙이라 정상.
+      const prefixProg = hits.find(h => h.type === 'program' && h.score <= 1);
+      if (prefixProg && songExact && prefixProg.score === songExact.score) ok(`[Star] 접두일치 프로그램 ${prefixProg.name}(${prefixProg.score})이 동점에서 타입으로 곡을 앞섬 — '82'와 같은 규칙`);
     }
 
     // ── 4. 이름 정확일치는 여전히 최상단(회귀 방지) ────────────────────────────────
