@@ -4003,6 +4003,24 @@ function _mScore(name,q,ql){
   if(name.startsWith(q)||n.startsWith(ql))return 1;
   return 2;
 }
+// ── 검색 결과 정렬: 2단(매칭 등급 → 타입) ─────────────────────────────────────
+// 2026-09-08 재설계. 이전엔 타입별 감점을 score에 섞어 넣었다(그룹 +0.5 / 멤버 +0 / 곡 +1.2). 감점
+// 폭(0.7)이 등급 한 칸(1.0)보다 작아서 **"곡 정확일치"가 "그룹 접두일치"를 이기는** 구간이 생겼다 —
+// 사용자 제보 "'82'를 치면 82메이저보다 곡이 위" (곡 0+1.2=1.2 < 그룹 1+0.5=1.5, 심지어 그 곡이
+// 82메이저 본인 곡이었다).
+//
+// 고친 방식: **1순위는 매칭 등급(정확0/접두1/부분2), 2순위가 타입**(그룹>멤버>곡>영상). 타입은 동점을
+// 가르는 데만 쓴다. 콘텐츠(곡)에는 등급 +1 핸디캡을 줘서 "엔티티가 한 등급 위까지는 이긴다"로 맞춘다.
+//
+// ⚠️ 타입을 **1순위로 고정하면 안 된다**(전수 실측, 2~12자 곡 제목 11,246개 기준):
+//    · 엔티티가 접두일치인 충돌 149건 → 고정하면 고쳐짐(82·STAY·MAMA·GO·Tomorrow…)
+//    · 엔티티가 **부분일치만** 인 충돌 96건 → 고정하면 **망가짐**. "OMG"에 범규(투바투)가 뉴진스 곡보다
+//      위로, "Star"에 씨스타가, "Her"에 투모로우바이투게더가, "RUN"에 하루나가 올라온다. 이름 안에
+//      그 단어가 들어있을 뿐인 엔티티가 정확일치 곡을 밀어내는 건 명백한 손해다.
+//    등급을 1순위로 두면 149건은 고치면서 96건은 안 건드린다.
+const _TYPE_RANK={between:0,group:1,member:2,program:3,song:4,video:5,event:6};
+// h._tr로 개별 항목이 순위를 덮어쓸 수 있다(그룹명으로 딸려온 확장 멤버 = 2.5, 직접 걸린 멤버 뒤).
+function _typeRank(h){return(typeof h._tr==='number')?h._tr:(_TYPE_RANK[h.type]!=null?_TYPE_RANK[h.type]:9);}
 // 오타 허용(2026-08-31) — 편집거리 1 이하면 true. "뉴즌스"→"뉴진스"처럼 한 글자 오탈자·빠짐·바뀜을
 // 봐준다. 한글은 음절 단위로 비교(진↔즌 = 1). 결과가 0건일 때만 폴백으로 돌려서 정상 검색은 안 건드림.
 function _editDist1(a,b){
@@ -4585,13 +4603,11 @@ function doSearch(q){
         const s=Math.min(_mScore(ko,q,ql),_mScore(enN,q,ql),csG,...(altScores.length?altScores:[99]));
         const dispName=(_hasLatin&&enN)?enN:(currentLang==='ko'?ko:(enN||ko));
         const dispSub=(enN&&enN!==dispName)?enN:'';
-        // 그룹은 원래 +0.5 감점(멤버 우선순위) — 근데 온보딩 검색(obSr)은 결과가 5개로 캡돼있어서, 짧은
-        // 쿼리(예: "뉴")에서 유닛 멤버 로마자 매칭(NU'EST W 등)이 우연히 같은 점수로 몰리면 감점된 그룹이
-        // 5칸 안에 아예 못 들어가는 사고가 생김(2026-08-21, 사용자 제보+헤드리스로 실측 확인 — "뉴" 검색에
-        // 뉴진스가 안 뜸, 실제로는 NU'EST W 유닛멤버 4명이 자리를 채우고 있었음). 신규 유저의 첫 검색은
-        // 그룹명부터 칠 확률이 높으므로, 결과가 좁게 캡된 온보딩 검색에서만 이 감점을 뺀다 — 일반 검색(40개
-        // 캡)은 이미 자리가 넉넉해서 감점을 그대로 유지.
-        hits.push({type:'group',name:dispName,sub:dispSub,pos:bm.mesh.position.clone(),data:ko,score:s+(obSr?0:0.5)});
+        // score는 **매칭 등급 그대로**다 — 타입 감점을 섞지 않는다(_TYPE_RANK 주석 참고, 2026-09-08).
+        // 예전엔 여기에 +0.5(멤버 우선순위) 감점이 붙어 있었고, 온보딩 검색(5칸 캡)에서만 그 감점을 빼는
+        // 예외가 있었다 — 짧은 쿼리("뉴")에서 감점된 그룹이 5칸 안에 못 들어가 뉴진스가 아예 안 뜨던
+        // 사고 때문(2026-08-21). 이제 감점 자체가 없어져 그 예외도 필요 없다(동점이면 타입으로 그룹이 위).
+        hits.push({type:'group',name:dispName,sub:dispSub,pos:bm.mesh.position.clone(),data:ko,score:s});
         // 정확(0)·접두(1) 매칭이고 쿼리가 2자 이상이면 이 그룹의 멤버도 뒤에 이어 붙일 후보로 둔다.
         // 온보딩 검색(5칸)은 그룹부터 보여주는 게 목적이라 확장하지 않는다.
         if(!obSr&&s<=1&&q.length>=2)_expandFrom.push({ko,score:s});
@@ -4638,8 +4654,10 @@ function doSearch(q){
     }
   });
   // ── 곡(2026-08-31) ──
-  // ⚠️ 사람/그룹 이름보다 **아래**에 오게 감점을 준다 — "카리나"를 쳤는데 곡이 먼저 뜨면 안 된다.
-  //    대신 제목이 정확히 일치하면(score 0) 감점을 받고도 상위에 남는다.
+  // ⚠️ 사람/그룹 이름보다 **아래**에 오게 등급 +1 핸디캡을 준다 — "카리나"를 쳤는데 곡이 먼저 뜨면 안 된다.
+  //    핸디캡이 정확히 한 등급이라, 엔티티는 **한 등급 위까지만** 곡을 이긴다(2026-09-08, 이전 값 1.2):
+  //    그룹 접두일치(1) = 곡 정확일치(0+1) → 동점 → 타입으로 그룹이 위("82"→82메이저 ✓).
+  //    멤버 부분일치(2) > 곡 정확일치(1) → 곡이 위("OMG"→범규가 아니라 뉴진스 곡 ✓).
   // ⚠️ 온보딩 검색(obSr)은 결과가 5칸뿐이라 곡을 넣지 않는다 — 첫 검색은 그룹/멤버를 찾는 흐름이다.
   // ⚠️ 개수를 캡한다 — 2만여 곡이라 흔한 단어("love")면 결과를 통째로 덮어버린다.
   if(!obSr&&q.length>=2){
@@ -4663,7 +4681,7 @@ function doSearch(q){
         ?((_hasLatin&&ownerA.name.en)?ownerA.name.en:(currentLang==='ko'?(ownerA.displayName||ownerA.name.ko):(ownerA.name.en||ownerA.name.ko)))
         :((_hasLatin&&GROUPS[s.owner]?.en)?GROUPS[s.owner].en:s.owner);
       hits.push({type:'song',name:s.title,alias:s.album&&s.album!==s.title?s.album:'',sub:ownerName,
-        pos,data:s.owner,ownerType:s.ownerType,score:sc+1.2});
+        pos,data:s.owner,ownerType:s.ownerType,score:sc+1});
     });
   }
   // ── 오타 폴백(2026-08-31) ──
@@ -4752,21 +4770,36 @@ function doSearch(q){
         }))return;
         const dispName=(_hasLatin&&enN)?enN:(currentLang==='ko'?(dnN||koN):(enN||koN));
         const dispSub=(currentLang==='ko'?ko:(GROUPS[ko].en||ko));
-        // 그룹 본체 바로 뒤에 오도록 그룹 점수 + 0.9. 이름으로 직접 걸린 멤버(score 0~2)보다는
-        // 뒤지만, 곡(+1.2)이나 오타 폴백(5)보다는 앞이다.
-        hits.push({type:'member',name:dispName,sub:dispSub,pos:a._worldPos,data:a,score:score+0.9,_expanded:true,_gko:ko});
+        // 그룹 본체 바로 뒤에 오도록 **그룹과 같은 등급**을 주고, 순서는 타입 순위로 가른다(2026-09-08).
+        // _tr=2.5 → 이름으로 직접 걸린 멤버(2) 뒤, 곡(4)·오타 폴백보다는 앞. 예전엔 +0.9로 등급을
+        // 올려버려서 "82" 같은 케이스에서 그룹 멤버가 곡(등급 1)보다 아래로 밀렸다.
+        hits.push({type:'member',name:dispName,sub:dispSub,pos:a._worldPos,data:a,score,_tr:2.5,_expanded:true,_gko:ko});
         already.add(a);
       });
     });
   }
   // ── 프로그램 컬렉션 매칭(2026-09-05) ──────────────────────────────────────
   // "불후의명곡"·"리무진서비스"처럼 프로그램명을 치면 그 프로그램 영상 모음을 여는 "모아보기" 카드를
-  // 결과에 넣는다. score 0.6 — 정확 이름 매칭(그룹/멤버, ~0)보다는 뒤, 곡(+1.2)·오타 폴백(5)보다는 앞.
-  // 프로그램명은 보통 그룹/멤버 이름과 안 겹쳐서 이 카드가 사실상 단독 상위로 뜬다.
+  // 결과에 넣는다. 프로그램명은 보통 그룹/멤버 이름과 안 겹쳐서 이 카드가 사실상 단독 상위로 뜬다.
+  // ⚠️ score는 고정 0.6이 아니라 **다른 엔티티와 같은 매칭 등급**을 준다(2026-09-08). 고정값이던 시절엔
+  //    `_matchPrograms`가 양방향 부분일치라서 "Star"만 쳐도 영문명 "Radio Star"가 걸려 **라디오스타
+  //    모아보기가 정확일치 곡 "Star"보다 위**로 떴다(실측). 이제 부분일치는 등급 2라 곡(0+1) 아래다.
+  //    "라디오스타"·"유퀴즈"처럼 프로그램명을 제대로 치면 등급 0으로 여전히 최상단.
   _matchPrograms(q,ql,qln).forEach(p=>{
+    const qns=ql.replace(/\s+/g,'');
+    const forms=[p.label,...(p.kw||[])].map(s=>String(s).toLowerCase().replace(/\s+/g,''));
+    if(p.en)forms.push(_normEn(p.en));
+    let grade=2;
+    forms.forEach(f=>{
+      if(!f)return;
+      const qq=/^[a-z0-9]+$/.test(f)?qln:qns; // 영문 표기는 영문 정규화 쿼리와 비교(_normEn 규칙)
+      if(!qq)return;
+      if(f===qq||qq.includes(f))grade=Math.min(grade,0); // 프로그램명이 쿼리에 통째로 들어있으면 정확 취급
+      else if(f.startsWith(qq))grade=Math.min(grade,1);
+    });
     hits.push({type:'program',
       name:(currentLang==='ko'?`${p.label} 모아보기`:`${p.en||p.label} Collection`),
-      sub:currentLang==='ko'?'프로그램':'Program',data:p,score:0.6});
+      sub:currentLang==='ko'?'프로그램':'Program',data:p,score:grade});
   });
   // ── 두 사람 검색(둘 사이) 정문(2026-09-05, 킬러 6.1) ──────────────────────────
   // "카리나, 장원영" / "카리나 x 장원영" / "A & B"처럼 두 이름을 구분자로 치면, 둘의 연결 카드를 여는
@@ -4781,7 +4814,7 @@ function doSearch(q){
       }
     }
   }
-  // ── 동점 타이브레이커(2026-09-02) ─────────────────────────────────────────
+  // ── 동점 타이브레이커(2026-09-02, 2026-09-08 타입 순위 추가) ────────────────
   // 매칭 등급(score)은 그대로 두고 **동점만** 가른다 — "소녀시대"를 치면 여전히 정확 매칭이 위다.
   // 등급을 뒤집지 않으므로 결과가 결정적이고 설명 가능하다("같은 점수면 활동 중이 위, 그다음 내 최애").
   // ⚠️ 유명도(pri)는 일부러 안 넣는다 — 임의로 정하지 말고 실제 검색 클릭 로그가 쌓이면 그때
@@ -4804,7 +4837,8 @@ function doSearch(q){
     return 1;
   };
   hits.sort((a,b)=>{
-    const sd=a.score-b.score;if(sd!==0)return sd;
+    const sd=a.score-b.score;if(sd!==0)return sd;               // 1순위: 매칭 등급
+    const td=_typeRank(a)-_typeRank(b);if(td!==0)return td;     // 2순위: 타입(그룹>멤버>곡>영상)
     const od=_isOverHit(a)-_isOverHit(b);if(od!==0)return od;   // 활동 중 > 해체·탈퇴
     const fd=_isFavHit(a)-_isFavHit(b);if(fd!==0)return fd;     // 내 즐겨찾기 먼저
     return a.name.localeCompare(b.name,'ko');
