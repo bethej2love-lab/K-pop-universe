@@ -10,6 +10,22 @@
 // 검색엔진·SNS 미리보기 전용 "착지 페이지"이고, "우주에서 보기" 버튼으로만 실제 앱(해시 딥링크)에
 // 연결된다(자동 리디렉트 없음 — 검색엔진이 "콘텐츠 없는 리디렉트 페이지"로 오판하는 것 방지).
 //
+// ── "우주에서 보기" 버튼을 화면 하단에 고정(.cta-dock, 2026-09-08) ─────────────────────────
+// 이 페이지엔 성격이 다른 두 방문자가 같이 떨어진다. **검색으로 온 사람**은 정보를 읽으러 온 거라
+// 지금 구조가 맞지만, **공유 링크를 누른 사람**은 이미 뭘 볼지 알고 온 거라 스크롤이 순수 마찰이다.
+// 실측(390x844 모바일, 2026-09-08 사용자 제보로 측정): CTA가 에스파 1.11 · 소녀시대 1.35 · 세븐틴 1.58 ·
+// 방탄소년단 1.61 화면 아래에 있어 **전 그룹이 첫 화면에서 안 보였다**(그룹이 클수록 디스코가 길어져 더 밀림).
+//
+// `position:sticky; bottom:0`으로 스크롤 내내 화면 하단에 떠 있다가 문서 끝에서 제자리에 앉는다.
+//   · fixed가 아닌 이유: 마지막엔 본문 흐름으로 돌아와 언어 전환 링크를 안 가린다(실측 확인).
+//   · JS가 필요 없다 — 정적 SEO 페이지에 스크립트를 늘리지 않는다.
+//   · `.wrap`의 하단 여백을 80→20px로 줄였다. sticky는 자기 흐름상 위치에 정착하므로, 여백이 크면
+//     문서 끝에서 버튼이 그만큼 붕 떠 보이는 자리로 앉는다.
+// ⚠️ 그래도 **자동 리디렉트는 안 한다**(위 문단). 사람만 앱으로 넘기려면 UA 분기가 필요한데 클로킹으로
+//    읽힐 수 있고, 검색 유입자에겐 이 페이지 자체가 착지점이라 SEO 가치를 스스로 버리는 셈이다.
+// ⚠️ 근거 주석을 CSS 안에 쓰지 말 것 — 이 템플릿은 4,000장에 그대로 복제된다(한 번 그렇게 넣었다가
+//    페이지당 ~1.2KB, 합계 ~4.7MB가 불어서 여기로 옮겼다).
+//
 // 실행: node build_group_pages.js (GitHub Actions가 artists.json/groups.json push마다 자동
 // 실행+커밋하도록 이미 세팅돼있음, 2026-08-21 — .github/workflows/rebuild-seo-pages.yml. 로컬에서
 // 수동 실행할 땐 g/, en/g/, member/, en/member/, sitemap.xml을 결과물과 함께 GitHub에 업로드.)
@@ -243,7 +259,7 @@ groupKos.forEach(ko => {
 <style>
   :root{color-scheme:dark;}
   body{margin:0;background:#09091a;color:rgba(220,230,255,0.92);font-family:-apple-system,'Pretendard','Apple SD Gothic Neo',sans-serif;line-height:1.6;}
-  .wrap{max-width:640px;margin:0 auto;padding:32px 20px 80px;}
+  .wrap{max-width:640px;margin:0 auto;padding:32px 20px 20px;}
   .brand{font-size:12px;letter-spacing:.08em;color:rgba(150,175,255,0.6);text-decoration:none;}
   h1{font-size:28px;margin:14px 0 2px;color:#fff;}
   .sub{font-size:15px;color:rgba(180,200,255,0.6);margin-bottom:18px;}
@@ -258,7 +274,8 @@ groupKos.forEach(ko => {
   .member-list a{color:rgba(210,225,255,0.95);text-decoration:none;}
   .tag{font-size:10px;color:rgba(150,175,255,0.6);}
   .yr{color:rgba(150,175,255,0.55);font-size:12px;}
-  .cta{display:inline-block;margin-top:30px;padding:11px 22px;border-radius:24px;background:rgba(140,165,255,0.16);border:0.5px solid rgba(150,175,255,0.35);color:#fff;text-decoration:none;font-size:14px;font-weight:600;}
+  .cta-dock{position:sticky;bottom:0;z-index:5;margin-top:30px;padding:14px 0 calc(14px + env(safe-area-inset-bottom));background:linear-gradient(to top,#09091a 62%,rgba(9,9,26,0));}
+  .cta{display:block;text-align:center;padding:13px 22px;border-radius:24px;background:rgba(140,165,255,0.2);border:0.5px solid rgba(150,175,255,0.42);color:#fff;text-decoration:none;font-size:14.5px;font-weight:600;}
   .lang-switch{margin-top:40px;font-size:12px;}
   .lang-switch a{color:rgba(150,175,255,0.7);}
 </style>
@@ -277,8 +294,8 @@ groupKos.forEach(ko => {
   </div>
   ${memberListHtml(lang)}
   ${discogHtml(lang)}
-  <a class="cta" href="${SITE}/${deepLinkHash}">${isEn ? 'View in the Universe →' : '우주에서 보기 →'}</a>
   <div class="lang-switch"><a href="${altUrl}">${isEn ? '한국어로 보기' : 'View in English'}</a></div>
+  <div class="cta-dock"><a class="cta" href="${SITE}/${deepLinkHash}">${isEn ? 'View in the Universe →' : '우주에서 보기 →'}</a></div>
 </div>
 </body>
 </html>
@@ -446,7 +463,7 @@ artists.forEach(a => {
 <style>
   :root{color-scheme:dark;}
   body{margin:0;background:#09091a;color:rgba(220,230,255,0.92);font-family:-apple-system,'Pretendard','Apple SD Gothic Neo',sans-serif;line-height:1.6;}
-  .wrap{max-width:640px;margin:0 auto;padding:32px 20px 80px;}
+  .wrap{max-width:640px;margin:0 auto;padding:32px 20px 20px;}
   .brand{font-size:12px;letter-spacing:.08em;color:rgba(150,175,255,0.6);text-decoration:none;}
   h1{font-size:28px;margin:14px 0 2px;color:#fff;}
   .sub{font-size:15px;color:rgba(180,200,255,0.6);margin-bottom:18px;}
@@ -461,7 +478,8 @@ artists.forEach(a => {
   .member-list a{color:rgba(210,225,255,0.95);text-decoration:none;}
   .tag{font-size:10px;color:rgba(150,175,255,0.6);}
   .yr{color:rgba(150,175,255,0.55);font-size:12px;}
-  .cta{display:inline-block;margin-top:30px;padding:11px 22px;border-radius:24px;background:rgba(140,165,255,0.16);border:0.5px solid rgba(150,175,255,0.35);color:#fff;text-decoration:none;font-size:14px;font-weight:600;}
+  .cta-dock{position:sticky;bottom:0;z-index:5;margin-top:30px;padding:14px 0 calc(14px + env(safe-area-inset-bottom));background:linear-gradient(to top,#09091a 62%,rgba(9,9,26,0));}
+  .cta{display:block;text-align:center;padding:13px 22px;border-radius:24px;background:rgba(140,165,255,0.2);border:0.5px solid rgba(150,175,255,0.42);color:#fff;text-decoration:none;font-size:14.5px;font-weight:600;}
   .lang-switch{margin-top:40px;font-size:12px;}
   .lang-switch a{color:rgba(150,175,255,0.7);}
 </style>
@@ -483,8 +501,8 @@ artists.forEach(a => {
   ${songsHtml(lang)}
   ${memberDiscogHtml(lang)}
   ${linksHtml(lang)}
-  <a class="cta" href="${SITE}/${deepLinkHash}">${isEn ? 'View in the Universe →' : '우주에서 보기 →'}</a>
   <div class="lang-switch"><a href="${altUrl}">${isEn ? '한국어로 보기' : 'View in English'}</a></div>
+  <div class="cta-dock"><a class="cta" href="${SITE}/${deepLinkHash}">${isEn ? 'View in the Universe →' : '우주에서 보기 →'}</a></div>
 </div>
 </body>
 </html>
@@ -657,7 +675,7 @@ function relPageHtml(o) {
 <style>
   :root{color-scheme:dark;}
   body{margin:0;background:#09091a;color:rgba(220,230,255,0.92);font-family:-apple-system,'Pretendard','Apple SD Gothic Neo',sans-serif;line-height:1.6;}
-  .wrap{max-width:720px;margin:0 auto;padding:32px 20px 80px;}
+  .wrap{max-width:720px;margin:0 auto;padding:32px 20px 20px;}
   .brand{font-size:12px;letter-spacing:.08em;color:rgba(150,175,255,0.6);text-decoration:none;}
   h1{font-size:24px;margin:14px 0 4px;color:#fff;}
   .sub{font-size:14px;color:rgba(180,200,255,0.6);margin-bottom:8px;}
@@ -667,7 +685,8 @@ function relPageHtml(o) {
   .vid-list li{padding:5px 0;border-bottom:0.5px solid rgba(255,255,255,0.06);font-size:13.5px;}
   .vid-list a{color:rgba(210,225,255,0.95);text-decoration:none;}
   .yr{color:rgba(150,175,255,0.55);font-size:12px;}
-  .cta{display:inline-block;margin-top:28px;padding:11px 22px;border-radius:24px;background:rgba(140,165,255,0.16);border:0.5px solid rgba(150,175,255,0.35);color:#fff;text-decoration:none;font-size:14px;font-weight:600;}
+  .cta-dock{position:sticky;bottom:0;z-index:5;margin-top:28px;padding:14px 0 calc(14px + env(safe-area-inset-bottom));background:linear-gradient(to top,#09091a 62%,rgba(9,9,26,0));}
+  .cta{display:block;text-align:center;padding:13px 22px;border-radius:24px;background:rgba(140,165,255,0.2);border:0.5px solid rgba(150,175,255,0.42);color:#fff;text-decoration:none;font-size:14.5px;font-weight:600;}
   .lang-switch{margin-top:36px;font-size:12px;}
   .lang-switch a{color:rgba(150,175,255,0.7);}
 </style>
@@ -679,8 +698,8 @@ function relPageHtml(o) {
   <h1>${escHtml(h1)}</h1>
   <div class="sub">${sub}</div>
 ${secHtml}
-  <a class="cta" href="${SITE}/">${isEn ? 'Explore in the Universe →' : '우주에서 탐험하기 →'}</a>
   <div class="lang-switch"><a href="${altUrl}">${isEn ? '한국어로 보기' : 'View in English'}</a></div>
+  <div class="cta-dock"><a class="cta" href="${SITE}/">${isEn ? 'Explore in the Universe →' : '우주에서 탐험하기 →'}</a></div>
 </div>
 </body>
 </html>
