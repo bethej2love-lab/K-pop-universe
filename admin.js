@@ -3498,6 +3498,72 @@ async function _ytFixNullCategory(){
   }catch(e){_ytSetProg('오류: '+e.message);}
   finally{if(btn)btn.disabled=false;}
 }
+// ── 매거진 채널 예능탭 오분류 정리(일회용, 2026-09-08) ────────────────────────
+// 실측 발단: **예능 탭 9,327건 중 7,841건(84%)이 디스패치(koreadispatch)** 였다. 진짜 예능 채널
+// 콘텐츠는 488건뿐. 공항 입국·화보 현장 클립이 예능 탭을 통째로 덮고 있었다(2026-09-08 사용자 제보로
+// 외부채널 감사하다 발견).
+//
+// 원인은 오탐이 아니라 **폴백 기본값**이다. _extBuildRows의
+//     const _fbRaw = defaultCat || (tier==='show' ? 'show' : 'variety');
+// 에서 채널에 default_category를 안 정해두면 music이 아닌 모든 tier가 'variety'로 떨어진다.
+// magazine tier(디스패치·엘르·GQ…)는 예능이 아닌데 그 폴백을 그대로 맞았다.
+// ⚠️ _ytClassify는 'variety'를 **절대 반환하지 않는다**(skip/mv/live/other뿐) — 그래서 magazine 채널의
+//    category='variety' 행은 예외 없이 이 폴백에서 온 것이다. 제목 분류 결과를 덮어쓸 위험이 없다.
+//
+// 두 가지를 같이 한다 — 한쪽만 하면 의미가 없어서다:
+//   ① 이미 들어온 행을 'other'(전체 탭에만 노출)로 되돌린다.
+//   ② default_category가 비어 있는 magazine 채널을 'none'(전체탭만)으로 못박는다. 안 그러면
+//      내일 동기화가 같은 폴백으로 다시 예능 탭에 붓는다.
+// ⚠️ tags_manual=true(관리자가 직접 저장한 행)는 다른 스윕과 동일하게 절대 안 건드린다.
+async function _ytFixMagazineVarietyCategory(){
+  if(!sb){_ytSetProg('Supabase 연결 없음');return;}
+  const btn=document.getElementById('sp-magcat-btn');
+  if(btn)btn.disabled=true;
+  try{
+    _ytSetProg('[매거진 예능탭 정리] 조회 중…');
+    const{data:rows,error}=await _sbFetchAll(()=>sb.from(_YT_TABLE)
+      .select('id,title,source_handle,group_ko')
+      .eq('source_tier','magazine').eq('category','variety').eq('tags_manual',false).order('id'));
+    if(error){_ytSetProg('조회 실패: '+error.message);return;}
+    // 채널별 분포 — "디스패치만의 문제인지" 실행 전에 눈으로 확인할 수 있게 한다
+    const byCh={};(rows||[]).forEach(v=>{const k=v.source_handle||'(없음)';byCh[k]=(byCh[k]||0)+1;});
+    const chLines=Object.entries(byCh).sort((a,b)=>b[1]-a[1]).map(([k,n])=>`· ${k}: ${n}건`);
+    // 폴백이 다시 붓는 걸 막을 채널 — default_category가 비어 있는 magazine 채널
+    const toPin=_EXT_CHANNELS.filter(c=>c.tier==='magazine'&&!c.defaultCategory);
+    if(!rows?.length&&!toPin.length){_ytSetProg('정리할 것이 없어요 🎉 (매거진 채널이 예능 탭에 넣은 행 없음)');return;}
+    console.log('[매거진 예능탭 정리] 대상',rows?.length||0,'건 · 채널별',byCh,'· 표본',(rows||[]).slice(0,20).map(v=>`[${v.source_handle}] ${v.group_ko} | ${v.title}`));
+    if(!await _sweepConfirmSimple('매거진 예능탭 오분류 정리 (일회용)','정리 실행',
+      `매거진 채널(잡지·연예매체) 영상 ${(rows?.length||0).toLocaleString()}건을 예능 탭에서 빼고 전체 탭에만 남길까요?\n\n`+
+      chLines.join('\n')+
+      `\n\n· category를 'other'로 바꿔요 — 삭제가 아니라 **탭만** 바뀝니다(전체 탭엔 그대로)\n`+
+      `· 예능 탭 9,327건 중 7,841건이 디스패치 공항·화보 클립이었어요(실측)\n`+
+      (toPin.length?`· 재발 방지: 기본 카테고리가 안 정해진 매거진 채널 ${toPin.length}개를 "전체탭만"으로 고정해요\n   (${toPin.map(c=>c.name).join(', ')})\n`:'')+
+      `· 수동편집(tags_manual) 행은 제외 · 표본은 콘솔(F12) · 스냅샷 되돌리기 가능`)){
+      _ytSetProg(`취소됨 — 미리보기만 (대상 ${rows?.length||0}건, 표본 콘솔).`);return;
+    }
+    let done=0;
+    if(rows?.length){
+      const ids=rows.map(v=>v.id);
+      await _snapshotBeforeBulk('매거진 예능탭 오분류 정리(일회용)',ids);
+      for(let i=0;i<ids.length;i+=200){
+        const chunk=ids.slice(i,i+200);
+        const{error:ue}=await sb.from(_YT_TABLE).update({category:'other'}).in('id',chunk);
+        if(ue)throw new Error(ue.message);
+        done+=chunk.length;
+        _ytSetProg(`[매거진 예능탭 정리] ${done}/${ids.length}건 처리 중…`);
+      }
+    }
+    // ② 재발 방지 — 스냅샷 되돌리기는 영상 행만 되돌리므로, 채널 설정은 어드민 UI에서 되돌린다(드롭다운).
+    let pinned=0;
+    for(const c of toPin){
+      await _ecUpdateField(c.handle,{default_category:'none'},'defaultCategory','none',`${c.name} → 전체탭만`);
+      pinned++;
+    }
+    try{_vmCache.clear();_vmIdbClear();}catch(_){}
+    _ytSetProg(`완료! ${done.toLocaleString()}건을 전체 탭으로 이동${pinned?` · 채널 ${pinned}개 기본 카테고리를 "전체탭만"으로 고정`:''}. (영상 되돌리기: "↩︎ 마지막 일괄 작업 되돌리기")`);
+  }catch(e){_ytSetProg('오류: '+e.message);}
+  finally{if(btn)btn.disabled=false;}
+}
 async function _ytSweepCategoryMistag(){
   if(!sb){_ytSetProg('Supabase 연결 없음');return;}
   const btn=document.getElementById('sp-catfix-btn');
@@ -8756,6 +8822,7 @@ _admExecBind('sp-collabfix-btn',_ytSweepAmbiguousCollabMistag,'콜라보 재검�
   _admExecBind('sp-yt-undo-bulk-btn',_ytUndoLastBulk,'되돌리기');
   _admExecBind('sp-catfix-btn',_ytSweepCategoryMistag,'카테고리 재분류');
   _admExecBind('sp-catnull-btn',_ytFixNullCategory,'카테고리 유실 복구');
+  _admExecBind('sp-magcat-btn',_ytFixMagazineVarietyCategory,'매거진 예능탭 정리');
   _admExecBind('sp-shortspromote-btn',_ytSweepPromoteShorts,'쇼츠 승격',{selfRestop:true});
   {const _spb=document.getElementById('sp-shortspromote-btn');if(_spb&&localStorage.getItem('_kpu_shortsPromoteCursor'))_spb.textContent='⬆️ 가로→쇼츠 일괄 승격 (재개)';}
   _admExecBind('sp-yt-autotag',_ytAutoTagMembers,'자동 태깅');
