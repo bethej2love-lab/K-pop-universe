@@ -2603,8 +2603,8 @@
   #filter-panel{display:none;}
   /* ── Zoom slider ────────────────────────────────── */
   #zoom-ctrl{position:fixed;left:18px;bottom:24px;display:flex;flex-direction:column;align-items:center;gap:0;z-index:50;user-select:none;width:30px;background:rgba(12,16,36,0.60);border:1px solid rgba(140,165,220,0.16);border-radius:14px;padding:10px 0;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);box-shadow:0 2px 14px rgba(0,0,0,0.22);transition:left 0.32s cubic-bezier(0.4,0,0.2,1);}
-  #journal-sidebar.open~#zoom-ctrl{left:318px;}
-  #zoom-ctrl.zoom-feed-open{left:318px;}
+  #journal-sidebar.open~#zoom-ctrl{left:318px;} /* 저널 사이드바는 300px 그대로 */
+  #zoom-ctrl.zoom-feed-open{left:378px;} /* 탐험 레일 320→380 확대분 반영(2026-09-09) */
   /* 모바일 줌 컨트롤(2026-08-31, 사용자 요청) — 예전엔 모바일에서 통째로 숨겼는데(핀치 줌이 있으니),
      "우주만 보이는 상태"에선 줌 레벨을 눈으로 보고 조절할 수 있는 게 낫다는 요청. 카드·탐험 패널·
      라이트박스·검색 등 **뭐라도 열려 있으면 숨긴다** — 우주가 실제로 보일 때만 뜨는 게 핵심이라
@@ -3117,13 +3117,14 @@
   /* 데스크톱은 전체화면 오버레이 대신 저널 사이드바와 같은 방식의 왼쪽 슬라이드 패널로 표시 */
   @media(min-width:769px){
     #feed-overlay{
-      display:flex;inset:auto;top:0;left:0;height:100%;width:320px;
+      /* 320→380: 오른쪽 카드 레일(#side-panel 380, 2026-09-07 확대)과 좌우 짝이라 폭을 맞춤(2026-09-09). */
+      display:flex;inset:auto;top:0;left:0;height:100%;width:380px;
       background:rgba(14,18,34,0.92);
       backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);
       border-right:0.5px solid rgba(255,255,255,0.10);
       box-shadow:4px 0 24px rgba(0,0,0,0.35);
       z-index:66;
-      transform:translateX(-320px);
+      transform:translateX(-380px);
       transition:transform 0.32s cubic-bezier(0.4,0,0.2,1);
     }
     #feed-overlay.open{transform:translateX(0);}
