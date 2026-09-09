@@ -17248,18 +17248,29 @@ async function _buildFeedGenCamPick(list,offset){
 // 자체가 안 뜬다(별도 빈 상태 처리 불필요). 처음부터 그냥 제자리에 붙이는 방식이었는데(2026-08-05),
 // 다른 두 모아보기 카드(_buildFeedFormatPick/_buildFeedGenCamPick)도 원래는 insertBefore로 맨 위에
 // 끼어들다가 화면이 밀리는 느낌이 있어서 나중에(2026-08-06) 이 방식으로 통일함.
-// 음방·직캠 제목 판별 — 음악방송 프로그램명 또는 직캠/팬캠/FANCAM 키워드가 있어야 음방 직캠으로 인정
-const _FANCAM_TITLE_RE=/FANCAM|직캠|팬캠|엠카운트다운|뮤직뱅크|인기가요|음악중심|쇼챔피언|M\s*COUNTDOWN|MUSIC\s*BANK|INKIGAYO|MUSIC\s*CORE|SHOW\s*CHAMPION|\bTHE\s+SHOW\b/i;
-// 진짜 직캠 키워드(음방명이 아니라 '직캠/FanCam' 자체). 아래 _isSoloCam에서 방송사 홍보 쇼츠를 걸러내는 데 쓴다.
-const _FANCAM_STRICT_RE=/FANCAM|FACECAM|FULL\s*CAM|직캠|팬캠|페이스캠|풀캠|얼빡|입덕/i;
-// "개인 직캠" 판정: 제목에 직캠/음방명 + 태깅 멤버 정확히 1명. 단, 방송사 채널의 홍보성 쇼츠
-// ("Today, GUN WOOK turns into something very CUTE 👀 #MCOUNTDOWN #박건욱" 류)는 음방명 해시태그만 있고
-// 실제 직캠 단어가 없다 — 쇼츠인데 직캠 키워드가 없으면 개인 직캠 모음에서 뺀다(2026-09-04 사용자 제보).
+// ── 직캠 vs 무대 판별 ────────────────────────────────────────────────────────
+// 음방 영상은 두 종류다. **무대**는 카메라 여러 대를 구도 맞춰 스위칭한 방송 송출본이고, **직캠**은
+// 그 한 사람만 따라간 카메라 1~2대의 별도 영상이다. "개인 직캠" 차트엔 후자만 들어가야 한다.
+// 그 유일한 근거가 제목의 **직캠 브랜드/포맷 낱말**이다(2026-09-10 사용자 제보로 기준 교체):
+//   · 무대  "TAEMIN (태민) - FLOAT | Show! MusicCore | MBC260905방송"
+//   · 직캠  "[#음중팔로우캠4K] TAEMIN (태민) - FLOAT | 쇼! 음악중심 | MBC260905방송"
+// ⚠️ 음악방송 **프로그램명**(뮤직뱅크·음중·엠카·인가·쇼챔·더쇼)은 근거가 못 된다 — 무대·직캠이 같은
+//    프로그램명을 달기 때문이다. 예전 기준(_FANCAM_TITLE_RE)이 정확히 그걸 근거로 삼았고, 그래서 같은
+//    방송분의 무대 영상이 개인 직캠으로 셌다. 그룹 무대는 members가 비거나 여럿이라 아래 "1명" 조건에
+//    걸렸지만, **솔로·솔로곡 무대는 members가 정확히 1명**이라 그대로 새어 들어왔다.
+//    실측(전기간 조회수 상위 1000행): 후보 114건 중 49건(43%)이 무대·홍보물이었고, 이 사전 때문에
+//    잘못 빠지는 진짜 직캠은 0건. 최근 120일 표본도 203건 중 30건 제거·오제거 0건.
+// ⚠️ 방송사가 새 직캠 브랜드를 수시로 만든다(팔로우캠·원픽캠·보컬캠…). 여기 빠뜨리면 그 포맷 전체가
+//    차트에서 조용히 사라진다 — admin.js의 _FANCAM_SHOW_PATTERNS/_FANCAM_FILLER_RE와 짝으로 볼 것.
+// ⚠️ 문자 클래스([...])를 쓰지 말 것 — tests/solo-cam.test.js의 "이름으로 잘라오기"가 괄호 균형으로
+//    문장 끝을 찾는데 그게 깨진다(admin.js _fancamShowPatterns가 함수로 감싸져 있는 것과 같은 이유).
+const _FANCAM_BRAND_RE=/직캠|팬캠|페이스캠|풀캠|세로캠|얼빡|입덕|팔로우캠|원픽캠|보컬캠|보이스캠|최애캠|앵콜캠|단독샷|안방\s*1\s*열|포커스캠|개인캠|멤버캠|FAN\s*CAM|FACE\s*CAM|FULL\s*CAM|VOICE\s*CAM|PICK\s*CAM|FOCUS\s*CAM|SOLO\s*CAM|MEMBER\s*CAM|VERTICAL\s*CAM|UNFILTERED\s*CAM|CLOSE\s*UP\s*CAM/i;
+// "개인 직캠" 판정: 직캠 브랜드 낱말 + 태깅 멤버 정확히 1명(그룹 전체 포메이션 직캠은 members가 비어 있음).
+// 예전엔 쇼츠에만 "진짜 직캠 낱말"을 따로 요구했는데(2026-09-04, 음방명 해시태그만 단 홍보 쇼츠 방어),
+// 이제 그 요구가 전체에 걸리므로 쇼츠 예외는 흡수됐다.
 function _isSoloCam(v){
   if(!v||(v.members||[]).length!==1)return false;
-  if(!_FANCAM_TITLE_RE.test(v.title||''))return false;
-  if(_isShortV(v)&&!_FANCAM_STRICT_RE.test(v.title||''))return false;
-  return true;
+  return _FANCAM_BRAND_RE.test(v.title||'');
 }
 
 // 어제 스냅샷 대비 순위 변동 조회(rank_snapshots, 매일 자정 Vercel Cron이 채움 — kpopuniverse-share/api/cron/
@@ -17300,7 +17311,7 @@ async function _buildFeedWeeklyTopCams(list,discList){
     const allVids=_filterBannedVideos(data);
     if(!allVids.length)return;
 
-    // 카드 1: 음방·직캠 TOP — 제목에 직캠/팬캠/FANCAM/음방명 있는 것만, 그룹당 최대 3개로 다양성 확보.
+    // 카드 1: 음방·직캠 TOP — 제목에 직캠 브랜드 낱말(직캠/팬캠/페이스캠/FanCam…) 있는 것만, 그룹당 최대 3개로 다양성 확보.
     // members 태깅이 정확히 1명일 때만 "개인" 직캠으로 간주 — 실측해보니 K-Choreo/MIX직캠처럼 그룹 전체
     // 포메이션 영상은 members가 빈 배열([])로, 진짜 개인 직캠은 그 한 명만 담겨있는 패턴이 뚜렷했음
     // (2026-08-18, 사용자 요청 — 그룹 전체 무대 영상 말고 개인만 보고 싶다고 함). 제목엔 이름이 있는데
@@ -17378,7 +17389,9 @@ const _FEED_THIS_YEAR_POOL=[
    cat:'live'},
   {key:'stage',icon:'🎤',ko:y=>`${y}년 무대 TOP 30`,en:y=>`${y} Stage TOP 30`,
    subKo:'올해 음악방송·무대 조회수 기준',subEn:'Top viewed stages this year',
-   pick:vids=>_capByGroup(vids.filter(v=>!(_FANCAM_TITLE_RE.test(v.title)&&(v.members||[]).length===1)),v=>v.group_ko,2).slice(0,30),
+   // 개인 직캠 카드(위)의 정확한 여집합 — 같은 판정식을 쓴다. 그래야 직캠에서 빠진 **솔로 무대**가
+   // (태민 'FLOAT' @음악중심 등) 여기로 흘러오고, 어느 쪽에도 안 뜨는 사각지대가 안 생긴다.
+   pick:vids=>_capByGroup(vids.filter(v=>!_isSoloCam(v)),v=>v.group_ko,2).slice(0,30),
    cat:'live'},
   {key:'mv',coll:true,icon:'📀',ko:y=>`${y}년 컴백·MV 모음`,en:y=>`${y} Comebacks & MVs`,
    subKo:'올해 나온 뮤직비디오',subEn:'Music videos released this year',
@@ -17489,8 +17502,8 @@ async function _buildFeedLegend100(list){
 // 역대 개인(멤버 단독) 직캠 TOP 100 계열(2026-08-19, 사용자 요청) — "개인" 용어는 기존 "주간 개인
 // 직캠 TOP 20"(_buildFeedWeeklyTopCams)에서 이미 쓰던 표현을 그대로 통일해서 재사용(사용자가 "개인"/
 // "멤버" 중 뭐가 나을지 물어봐서, 새로 고민하기보다 기존에 이미 정착된 용어를 계속 쓰는 쪽으로 결정).
-// "개인 직캠" 판정 기준도 그 카드와 동일: 제목에 직캠/팬캠/FANCAM/음방명이 있고, 태깅된 멤버가 정확히
-// 1명일 때만(그룹 전체 포메이션 직캠과 구분). 전체기간 조회수 기준이라 레전드 100과 마찬가지로 결과가
+// "개인 직캠" 판정 기준도 그 카드와 동일(_isSoloCam): 제목에 직캠 브랜드 낱말이 있고, 태깅된 멤버가
+// 정확히 1명일 때만(그룹 전체 포메이션 직캠·솔로 무대와 구분). 전체기간 조회수 기준이라 레전드 100과 마찬가지로 결과가
 // 고정이므로 무한스크롤 반복 풀에는 안 넣음(세대별 카드만 예외 — 아래 참고).
 async function _fetchSoloFancamPool(groupKos,fetchLimit,sinceDate){
   let q=_applyLiveExclude(sb.from(_YT_TABLE)
