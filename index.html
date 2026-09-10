@@ -16743,6 +16743,17 @@ async function _fetchTopVideoThumb(gko,memberKo){
 
 // 페이지네이션과 무관하게 이 그룹/멤버의 전체 영상 중 스크랩(하트) 최다 영상을 반환.
 // _warmScrapCounts 완료를 기다린 뒤 결정론적으로 선택 → 새로고침해도 같은 영상 유지.
+// 이 멤버의 "솔로 키"(group_ko=본인 이름) 행을 끌어와도 되는가 — 2026-09-10.
+// 이 프로젝트는 그룹을 떠난 뒤/솔로 활동 영상을 group_ko=본인 이름으로 저장한다(우즈·청하·원호·마시로·
+// 태연·전소미…). 그래서 멤버 카드는 "소속 그룹 키"와 "솔로 키" 두 곳을 합쳐 봐야 한다.
+// ⚠️ 단, **같은 이름이 둘 이상 등록돼 있으면 끌어오면 안 된다** — group_ko는 이름만 들고 있어서 누구
+//    것인지 구분이 안 된다. 실측(2026-09-10)으로 확인된 위험: group_ko='현진'(다른 현진의 솔로 싱글),
+//    '지수', '수빈'. 반대로 group_ko='유진'은 S.E.S. 유진, '하늘'은 키스오브라이프 하늘로 본인 것이 맞다.
+//    artists.json에 147개 이름이 중복이라 이 게이트가 실제로 일한다.
+function _soloKeyUsable(memberKo){
+  if(!memberKo)return false;
+  return (ARTISTS||[]).filter(a=>a&&a.name&&a.name.ko===memberKo).length===1;
+}
 async function _pickFeaturedVidFromDB(ko,memberKo,onlyMe,filter,viewMode,formatFilter,searchQ){
   if(!sb||!window._sbSession)return null;
   try{
@@ -16797,7 +16808,10 @@ async function _pickFeaturedVidFromDB(ko,memberKo,onlyMe,filter,viewMode,formatF
     if(memberKo&&onlyMe){
       // load()의 Only 필터와 동일한 기준(members 외 with_members/with_groups도 비어있어야 진짜 단독) —
       // 안 그러면 게스트가 있는 콜라보 영상이 대표 썸네일로 뽑힐 수 있음(2026-08-04).
-      q=q.eq('group_ko',ko).contains('members',[memberKo]).containedBy('members',[memberKo])
+      // group_ko는 소속 그룹 + 솔로 키(본인 이름)까지 — load()의 Only 필터와 같은 이유(2026-09-10).
+      // 대표 영상만 여기서 다른 기준을 쓰면 "목록엔 있는데 대표 썸네일은 딴 영상"이 된다.
+      q=q.or([ko,_soloKeyUsable(memberKo)?memberKo:null].filter((g,i,a)=>g&&a.indexOf(g)===i).map(g=>`group_ko.eq.${_pgFilterVal(g)}`).join(','))
+         .contains('members',[memberKo]).containedBy('members',[memberKo])
          .or('with_members.eq.{},with_members.is.null')
          .or('with_groups.eq.{},with_groups.is.null')
          .or('content_flag.is.null,content_flag.neq.외부인');
@@ -19474,7 +19488,16 @@ function _makeChVidController(contId){
         // 외부인 포함 플래그 없음. 예전엔 with_members/with_groups를 안 봐서, members는 본인 하나뿐이어도
         // 다른 그룹 멤버가 with_members로 같이 태깅된 콜라보 영상(예: 코르티스 채널의 &TEAM 하루아 게스트
         // 영상)이 그대로 "단독 출연"으로 잘못 걸러졌음(2026-08-04, 사용자 제보).
-        q=q.eq('group_ko',ko).contains('members',[state.memberKo]).containedBy('members',[state.memberKo])
+        // group_ko는 소속 그룹만이 아니라 **솔로 키(본인 이름)와 옛 그룹들**까지 본다 — 아래 일반 멤버
+        // 절(19507줄 근처)이 `group_ko.eq.{본인이름}`으로 끌어오는 그 행들이다. 이 분기에만 그게 빠져
+        // 있어서, 솔로 규약으로 본인 이름에 저장된 영상(우즈·청하·마시로·원호·아이유…)이 Only를 누르면
+        // 통째로 사라졌다(2026-09-10 사용자 제보).
+        // ⚠️ members가 **빈 배열**인 솔로 키 행은 일부러 안 넣는다. 이영지 채널(더 시즌즈)처럼 남의 무대를
+        //    올리는 경우가 섞여 있어서다 — `[] 청하 - Leap Of Faith`, `[] 존박 - 꿈처럼`이 실제로 그렇게
+        //    저장돼 있고, 그걸 "이영지 단독 출연"으로 셀 순 없다. 본인이 명시적으로 태깅된 행만 인정한다.
+        const _onlyGkos=[ko,_soloKeyUsable(state.memberKo)?state.memberKo:null,...(state.histKos||[])].filter((g,i,a)=>g&&a.indexOf(g)===i);
+        q=q.or(_onlyGkos.map(g=>`group_ko.eq.${_pgFilterVal(g)}`).join(','))
+          .contains('members',[state.memberKo]).containedBy('members',[state.memberKo])
           .or('with_members.eq.{},with_members.is.null')
           .or('with_groups.eq.{},with_groups.is.null')
           .or('content_flag.is.null,content_flag.neq.외부인');
