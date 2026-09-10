@@ -17265,12 +17265,34 @@ async function _buildFeedGenCamPick(list,offset){
 // ⚠️ 문자 클래스([...])를 쓰지 말 것 — tests/solo-cam.test.js의 "이름으로 잘라오기"가 괄호 균형으로
 //    문장 끝을 찾는데 그게 깨진다(admin.js _fancamShowPatterns가 함수로 감싸져 있는 것과 같은 이유).
 const _FANCAM_BRAND_RE=/직캠|팬캠|페이스캠|풀캠|세로캠|얼빡|입덕|팔로우캠|원픽캠|보컬캠|보이스캠|최애캠|앵콜캠|단독샷|안방\s*1\s*열|포커스캠|개인캠|멤버캠|FAN\s*CAM|FACE\s*CAM|FULL\s*CAM|VOICE\s*CAM|PICK\s*CAM|FOCUS\s*CAM|SOLO\s*CAM|MEMBER\s*CAM|VERTICAL\s*CAM|UNFILTERED\s*CAM|CLOSE\s*UP\s*CAM/i;
+// 브랜드 낱말은 있는데 **직캠 영상이 아닌** 홍보물 — 실측(직캠 판정 912건)에서 두 유형이 뚜렷했다.
+//  ① 방송사 채널의 서술형 홍보 쇼츠: "니키야 나 울어 #MPD직캠 #엔하이픈 #shorts", "BTS 지민이 진짜
+//     월클인 이유 #MPD직캠 #shorts" — 브랜드가 **괄호 밖 해시태그로만** 붙는다. 진짜 직캠은
+//     "[MPD직캠] 방탄소년단 지민 직캠 4K …"처럼 제목 본문에 브랜드를 단다.
+//  ② 직캠의 부속물: "… | MPD직캠 Behind", "[직캠 보고서🔍] 대장토끼의 엔딩포즈 탄생 비하인드" —
+//     직캠 자체가 아니라 그 뒷이야기다.
+// 실측으로 걸린 32건은 전부 쇼츠 홍보물이었고 진짜 직캠은 한 건도 안 걸렸다(2026-09-10).
+const _FANCAM_PROMO_RE=/비하인드|보고서|메이킹|예고|티저|리액션|코멘터리|BEHIND|MAKING|TEASER|REACTION|COMMENTARY/i;
+// 괄호 **밖**의 해시태그 토큰만 지운다.
+// ⚠️ "[#음중팔로우캠4K] TAEMIN …"처럼 대괄호 안의 #은 진짜 브랜드 태그다 — 통째로 #을 지우면
+//    음중 팔로우캠·최애직캠 계열이 전부 차트에서 사라진다.
+function _fancamStripLooseHashtags(t){
+  let out='',buf='',depth=0;
+  for(const ch of String(t||'')){
+    if(ch==='['||ch==='［'){depth++;out+=buf.replace(/#[^\s#]*/g,' ');buf='';out+=ch;continue;}
+    if(ch===']'||ch==='］'){if(depth)depth--;out+=ch;continue;}
+    if(depth>0)out+=ch;else buf+=ch;
+  }
+  return out+buf.replace(/#[^\s#]*/g,' ');
+}
 // "개인 직캠" 판정: 직캠 브랜드 낱말 + 태깅 멤버 정확히 1명(그룹 전체 포메이션 직캠은 members가 비어 있음).
 // 예전엔 쇼츠에만 "진짜 직캠 낱말"을 따로 요구했는데(2026-09-04, 음방명 해시태그만 단 홍보 쇼츠 방어),
 // 이제 그 요구가 전체에 걸리므로 쇼츠 예외는 흡수됐다.
 function _isSoloCam(v){
   if(!v||(v.members||[]).length!==1)return false;
-  return _FANCAM_BRAND_RE.test(v.title||'');
+  const t=v.title||'';
+  if(_FANCAM_PROMO_RE.test(t))return false;
+  return _FANCAM_BRAND_RE.test(_fancamStripLooseHashtags(t));
 }
 
 // 어제 스냅샷 대비 순위 변동 조회(rank_snapshots, 매일 자정 Vercel Cron이 채움 — kpopuniverse-share/api/cron/

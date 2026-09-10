@@ -44,6 +44,8 @@ function extractByBraces(declStartRe, label) {
 
 const harness = [
   extractStatement(/^const _FANCAM_BRAND_RE\s*=/m, '_FANCAM_BRAND_RE'),
+  extractStatement(/^const _FANCAM_PROMO_RE\s*=/m, '_FANCAM_PROMO_RE'),
+  extractByBraces(/^function _fancamStripLooseHashtags\(/m, '_fancamStripLooseHashtags'),
   extractByBraces(/^function _isSoloCam\(/m, '_isSoloCam'),
   'return {_isSoloCam, _FANCAM_BRAND_RE};',
 ].join('\n');
@@ -102,9 +104,27 @@ check('멤버 0명(그룹 포메이션 직캠)', _isSoloCam({ title: camTitle, m
 check('멤버 2명(콜라보 직캠)', _isSoloCam({ title: camTitle, members: ['A', 'B'] }), false, camTitle);
 check('members 없음', _isSoloCam({ title: camTitle }), false, camTitle);
 check('빈 입력', _isSoloCam(null), false, '(null)');
-console.log('4) 쇼츠 예외가 흡수됐는지 — 브랜드 낱말만 있으면 쇼츠도 통과, 없으면 탈락');
-check('쇼츠 직캠', _isSoloCam({ title: '니키야 나 울어 #MPD직캠 #엔하이픈 #shorts', members: ['니키'], is_short: true }), true, 'shorts 직캠');
+console.log('4) 쇼츠 예외가 흡수됐는지 — 브랜드 낱말이 제목 본문에 있으면 쇼츠도 통과');
+check('쇼츠 직캠', _isSoloCam({ title: "[입덕직캠] 김종인 연습생 | 카이 'Rover' #카이 #KAI", members: ['카이'], is_short: true }), true, 'shorts 직캠');
 check('쇼츠 홍보물', _isSoloCam({ title: '템페스트 왜이리 가족이야😭 #HANBIN #TEMPEST @260901 [THE SHOW]', members: ['한빈'], is_short: true }), false, 'shorts 홍보');
 
-console.log(fail ? `\n❌ 실패 ${fail}건` : `\n✅ 전부 통과 (${CAMS.length + STAGES.length + 6}건)`);
+// 5) 브랜드 낱말은 있지만 직캠 영상이 아닌 홍보물 — 전부 실제 DB 행(2026-09-10 실측 32건 중 표본)
+console.log('5) 직캠 홍보물·부속물은 빠져야 한다');
+const PROMOS = [
+  '니키야 나 울어 #MPD직캠 #엔하이픈 #shorts',                       // 브랜드가 괄호 밖 해시태그로만
+  'BTS 지민이 진짜 월클인 이유 #MPD직캠 #shorts',
+  '빌보드 1위 표정연기 클라쓰 #연준 #TXT #입덕직캠 #shorts',
+  '갈수록 성장하는 이서 Baddie 파트 모음 #IVE #MPD직캠 #shorts',
+  '무대 전 퀸카 추는 퀸카 허윤진 #르세라핌 | MPD직캠 Behind #shorts', // 부속물
+  '[직캠 보고서🔍] 대장토끼의 엔딩포즈 탄생 비하인드🐰💖 #권은비 #Underwater #Shorts',
+  '화제가 된 원영이 입덕직캠 썸네일 탄생 과정 #IVE | 입덕직캠 Behind',
+];
+PROMOS.forEach(t => check('홍보물 유입', _isSoloCam({ title: t, members: ['X'], is_short: true }), false, t));
+// ⚠️ 대괄호 **안**의 #은 진짜 브랜드 태그다 — 통째로 #을 지우면 음중 팔로우캠 계열이 전멸한다.
+console.log('6) 대괄호 안 해시태그 브랜드는 살아야 한다');
+['[#음중팔로우캠4K] TAEMIN (태민) - FLOAT | 쇼! 음악중심 | MBC260905방송',
+ '[#최애직캠] Girls’ Generation-HRS HYO (소녀시대-효리수 효연) – Skibidi | 쇼! 음악중심 | MBC260905',
+].forEach(t => check('괄호 안 태그 오제거', _isSoloCam({ title: t, members: ['X'] }), true, t));
+
+console.log(fail ? `\n❌ 실패 ${fail}건` : `\n✅ 전부 통과 (${CAMS.length + STAGES.length + PROMOS.length + 8}건)`);
 process.exit(fail ? 1 : 0);
