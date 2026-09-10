@@ -17267,6 +17267,15 @@ async function _buildFeedGenCamPick(list,offset){
 // ⚠️ 문자 클래스([...])를 쓰지 말 것 — tests/solo-cam.test.js의 "이름으로 잘라오기"가 괄호 균형으로
 //    문장 끝을 찾는데 그게 깨진다(admin.js _fancamShowPatterns가 함수로 감싸져 있는 것과 같은 이유).
 const _FANCAM_BRAND_RE=/직캠|팬캠|페이스캠|풀캠|세로캠|얼빡|입덕|팔로우캠|원픽캠|보컬캠|보이스캠|최애캠|앵콜캠|단독샷|안방\s*1\s*열|포커스캠|개인캠|멤버캠|FAN\s*CAM|FACE\s*CAM|FULL\s*CAM|VOICE\s*CAM|PICK\s*CAM|FOCUS\s*CAM|SOLO\s*CAM|MEMBER\s*CAM|VERTICAL\s*CAM|UNFILTERED\s*CAM|CLOSE\s*UP\s*CAM/i;
+// 서버에서 미리 좁히는 직캠 제목 낱말 — 위 브랜드 정규식의 "서버 사본"이다(2026-09-10).
+// 최종 판정은 **언제나 _isSoloCam(클라이언트)**이 한다. 이건 조회 1,000행 예산을 직캠에 몰아주기 위한
+// 사전 필터라 조금 넓어도(홍보물이 섞여도) 뒤에서 걸러진다. 반대로 **여기 빠뜨린 낱말은 그 포맷 전체가
+// 조회에조차 안 잡히므로**, _FANCAM_BRAND_RE에 브랜드를 추가할 땐 여기도 같이 볼 것(둘은 짝이다).
+// ⚠️ 이게 없으면 TOP 100이 안 찬다 — 실측: 연도별 live 상위 1,000행 중 직캠은 41~53개뿐(서버가 1,000행에서
+//    자르는데 그 대부분이 무대 영상이라 직캠이 밀려남). 필터를 걸면 같은 1,000행 중 550~660개가 직캠이라
+//    100자리가 그룹 48팀으로 채워진다.
+const _FANCAM_TITLE_ILIKE=['직캠','팬캠','페이스캠','풀캠','세로캠','얼빡','입덕','팔로우캠','원픽캠','보컬캠','최애캠','단독샷','안방','fancam','facecam','fullcam','fan cam','pick cam'];
+const _fancamTitleOr=()=>_FANCAM_TITLE_ILIKE.map(w=>`title.ilike.*${w}*`).join(',');
 // 브랜드 낱말은 있는데 **직캠 영상이 아닌** 홍보물 — 실측(직캠 판정 912건)에서 두 유형이 뚜렷했다.
 //  ① 방송사 채널의 서술형 홍보 쇼츠: "니키야 나 울어 #MPD직캠 #엔하이픈 #shorts", "BTS 지민이 진짜
 //     월클인 이유 #MPD직캠 #shorts" — 브랜드가 **괄호 밖 해시태그로만** 붙는다. 진짜 직캠은
@@ -17384,7 +17393,11 @@ async function _buildFeedWeeklyTopCams(list,discList){
       .order('view_count',{ascending:false})
       .limit(500);
     if(error||!data?.length)return;
-    const allVids30=_filterBannedVideos(data);
+    // 쇼츠 제외(2026-09-10 사용자 요청) — "무대"는 카메라 여러 대로 찍어 방송에 나간 한 편이고, 쇼츠는
+    // 거기서 잘라낸 클립이라 같은 목록에 섞일 물건이 아니다. 실측으로 30자리 중 5칸이 클립이었고
+    // 조회수가 높아 1위까지 차지했다("서인영 워터밤 데뷔 직캠 최초공개", "…말아주는 Live Clip" 등).
+    // ⚠️ 직캠 차트는 반대다 — 세로 직캠은 정상 콘텐츠라 쇼츠도 그대로 둔다(is_short 마이그레이션의 전제).
+    const allVids30=_filterBannedVideos(data).filter(v=>!_isShortV(v));
     const stageVids=_capByGroup(allVids30,v=>v.group_ko,3).slice(0,30);
     if(stageVids.length>=3){
       const label=currentLang==='ko'?'월간 무대 TOP 30':'Monthly Stage TOP 30',sub=_cleanTitle(stageVids[0].title);
@@ -17407,15 +17420,18 @@ async function _buildFeedWeeklyTopCams(list,discList){
 //    동시 스탬피드([[Discover 탭 선반 동시 스탬피드]])를 다시 만드는 꼴이 된다.
 // 결과가 3건 미만이면 그 선반은 조용히 건너뛰고 다음 후보를 시도한다(연초엔 데이터가 얇을 수 있음).
 const _FEED_THIS_YEAR_POOL=[
-  {key:'cam',icon:'🎥',ko:y=>`${y}년 개인 직캠 TOP 20`,en:y=>`${y} Solo Fancam TOP 20`,
+  // TOP 100으로 확대(2026-09-10 사용자 요청). 100자리를 채우려면 조회를 직캠으로 먼저 좁혀야 한다
+  // (titleOr) — 안 그러면 상위 1,000행이 대부분 무대 영상이라 41~53개밖에 안 찬다. fetch도 250→1000.
+  {key:'cam',icon:'🎥',ko:y=>`${y}년 개인 직캠 TOP 100`,en:y=>`${y} Solo Fancam TOP 100`,
    subKo:'올해 올라온 직캠 조회수 기준',subEn:'Top viewed fancams this year',
-   pick:vids=>_capByGroup(vids.filter(_isSoloCam),v=>v.group_ko,3).slice(0,20),
-   cat:'live'},
+   pick:vids=>_capByGroup(vids.filter(_isSoloCam),v=>v.group_ko,3).slice(0,100),
+   cat:'live',titleOr:true,fetch:1000},
   {key:'stage',icon:'🎤',ko:y=>`${y}년 무대 TOP 30`,en:y=>`${y} Stage TOP 30`,
    subKo:'올해 음악방송·무대 조회수 기준',subEn:'Top viewed stages this year',
    // 개인 직캠 카드(위)의 정확한 여집합 — 같은 판정식을 쓴다. 그래야 직캠에서 빠진 **솔로 무대**가
    // (태민 'FLOAT' @음악중심 등) 여기로 흘러오고, 어느 쪽에도 안 뜨는 사각지대가 안 생긴다.
-   pick:vids=>_capByGroup(vids.filter(v=>!_isSoloCam(v)),v=>v.group_ko,2).slice(0,30),
+   // 쇼츠는 제외(2026-09-10) — 무대 차트 공통 규칙, 월간 무대 TOP 30 주석 참고.
+   pick:vids=>_capByGroup(vids.filter(v=>!_isSoloCam(v)&&!_isShortV(v)),v=>v.group_ko,2).slice(0,30),
    cat:'live'},
   {key:'mv',coll:true,icon:'📀',ko:y=>`${y}년 컴백·MV 모음`,en:y=>`${y} Comebacks & MVs`,
    subKo:'올해 나온 뮤직비디오',subEn:'Music videos released this year',
@@ -17450,13 +17466,15 @@ async function _buildFeedThisYearPicks(chartEl,discEl){
         .select('id,title,thumb,category,is_short,content_flag,group_ko,members,cover_of_groups,cover_of_members,view_count,published_at');
       if(opt.cat)q=_applyLiveExclude(q.eq('category',opt.cat));
       if(opt.cover)q=q.or('cover_of_groups.neq.{},cover_of_members.neq.{}');
+      // 직캠 카드만 서버에서 제목으로 먼저 좁힌다 — TOP 100을 채우기 위한 것(위 pool 정의 주석 참고).
+      if(opt.titleOr)q=q.or(_fancamTitleOr());
       const{data,error}=await q
         .gte('published_at',from).lt('published_at',to)
         .not('view_count','is',null)
         .or('content_flag.is.null,content_flag.neq.기타')
         .or('content_flag.is.null,content_flag.neq.무관').or('content_flag.is.null,content_flag.neq.보류')
         .or('content_flag.is.null,content_flag.neq.hidden')
-        .order('view_count',{ascending:false}).limit(250);
+        .order('view_count',{ascending:false}).limit(opt.fetch||250);
       if(error||!data?.length)continue;
       const vids=opt.pick(_filterBannedVideos(data),y);
       if(!vids||vids.length<3)continue; // 얇으면 조용히 다음 후보로
@@ -17539,7 +17557,10 @@ async function _fetchSoloFancamPool(groupKos,fetchLimit,sinceDate){
     .or('content_flag.is.null,content_flag.neq.hidden')
     // '개별출연' 제외 — _fetchStagePool과 동일 이유(2026-08-20). members.length===1 필터가 대부분
     // 걸러주지만(컴필레이션은 보통 members가 비어있거나 여럿) 우연히 1명만 남는 경우까지 방어.
-    .or('content_flag.is.null,content_flag.neq.개별출연');
+    .or('content_flag.is.null,content_flag.neq.개별출연')
+    // 제목으로 서버에서 먼저 좁힌다 — 안 그러면 fetchLimit(1,000행)이 대부분 무대 영상으로 차서
+    // 직캠은 65개쯤만 남고 TOP 100이 안 찼다(2026-09-10 실측). 판정은 아래 _isSoloCam이 그대로 한다.
+    .or(_fancamTitleOr());
   if(groupKos)q=q.in('group_ko',groupKos);
   if(sinceDate)q=q.gte('published_at',sinceDate); // 기간 축(2026-09-04) — 안 주면 기존대로 전체 기간
   const{data,error}=await q.order('view_count',{ascending:false}).limit(fetchLimit);
@@ -17691,7 +17712,8 @@ async function _fetchStagePool(groupKos,fetchLimit,capPerGroup,sinceDate){
   if(sinceDate)q=q.gte('published_at',sinceDate); // 기간 축(2026-09-04)
   const{data,error}=await q.order('view_count',{ascending:false}).limit(fetchLimit);
   if(error||!data?.length)return[];
-  return _capByGroup(_filterBannedVideos(data),v=>v.group_ko,capPerGroup);
+  // 쇼츠 제외 — 무대 차트 공통 규칙(2026-09-10, 월간 무대 TOP 30 주석 참고).
+  return _capByGroup(_filterBannedVideos(data).filter(v=>!_isShortV(v)),v=>v.group_ko,capPerGroup);
 }
 // 3사 연말 시상식 무대(KBS 가요대축제·MBC 가요대제전·SBS 가요대전)와 SBS 여름 축제(가요대전 썸머)를
 // 제목 키워드로 모아 조회수 TOP 100 카드로 노출(2026-08-19, 사용자 요청 — "각 축제 모음도, 연말 무대
@@ -17717,7 +17739,9 @@ async function _fetchFestivalPool(applyFilter,postFilter,fetchLimit,capPerGroup,
   q=sortByViews?q.order('view_count',{ascending:false}):q.order('published_at',{ascending:false});
   const{data,error}=await q.limit(fetchLimit);
   if(error||!data?.length)return[];
-  let rows=_filterBannedVideos(data);
+  // 쇼츠 제외 — 무대 차트 공통 규칙(2026-09-10, 월간 무대 TOP 30 주석 참고). 축제 카드는 category를
+  // 일부러 안 좁히지만(영상이 live/other에 흩어져 있음) 쇼츠 여부는 그것과 별개다 — 실측 2/100이 클립.
+  let rows=_filterBannedVideos(data).filter(v=>!_isShortV(v));
   if(postFilter)rows=rows.filter(postFilter);
   rows=_capByGroup(rows,v=>v.group_ko,capPerGroup);
   return sortByViews?rows:_shuffle(rows);
