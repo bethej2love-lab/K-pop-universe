@@ -3118,6 +3118,58 @@ async function _openTagReviewQueue(){
     list.appendChild(row);
   });
 }
+// ── 멤버 태그 "제거" 가드(2026-09-10) ────────────────────────────────────────
+// ⚠️ 아래 스윕은 **태그를 붙일 때 쓰는** 매처(_atmResolveMembers)를 그대로 **제거 판정**에 쓴다.
+// 그 매처는 "그룹명 없이 이름만 있는 제목"을 일부러 약하게 본다(이름만으로 역추론하는 오염을 막으려고).
+// 그래서 제목에 이름이 뻔히 적혀 있어도 지지하지 않는 경우가 많고, 그걸 그대로 제거 근거로 쓰면
+// 정상 태그가 날아간다. 상위 5,000행 시뮬레이션 실측(2026-09-10) — 바뀌는 38행 중 다수가 정상이었다:
+//   · "GD X TAEYANG - 'GOOD BOY'"                        → 지디 제거(별칭 GD가 로스터에 없음)
+//   · "서인영 VS 이지현 결혼 배틀"                        → 둘 다 제거(제목에 실명이 그대로 있는데도)
+//   · "NAYEON 'NO PROBLEM (Feat. Felix of Stray Kids)'"  → 필릭스 제거(정상 피처링 태그)
+//   · "바스타즈(BASTARZ) - 품행제로 @인기가요"            → 유닛 멤버 3명 전멸
+//   · "tripleS 'Girls Never Die' Official MV"            → 로스터 23명 전멸
+// 이건 이 프로젝트가 이미 아는 실패 모드다("태그는 강한 매처로 붙이고 제거는 약한 매처로 판단" —
+// 성-뗀 가드가 정상 태그 9,000건을 지운 사고와 같은 계열). 그래서 제거에는 가드 둘을 건다:
+//   A) 이름(한글·영문·별칭·성 뗀 변형)이 제목/설명에 **문자로도 전혀 없을 때만** 제거
+//   B) 그 행의 멤버가 **전부 빠지는 경우는 적용하지 않고** 검수 큐로만 보낸다(사람이 판단)
+//   C) 한 행에서 **2명 이상이 한꺼번에 빠지면** 적용하지 않고 큐로만 — 여러 명이 동시에 근거를 잃는 건
+//      "그 영상이 오염됐다"가 아니라 "매처가 이 영상 유형을 통째로 못 읽는다"는 신호다. 실측에서
+//      A·B를 통과하고도 남은 오제거가 정확히 이 모양이었다(트리플에스 MV 23명 중 13명, 르세라핌 Vevo
+//      무대 4명 중 2명 — 둘 다 로스터가 통째로 태깅된 정상 그룹 영상인데 일부만 임의로 빠졌다).
+//      진짜 유령은 대개 한 행에 하나씩 섞인다(예: "'ALL IN'" → 아이엔, "Moving Poster … Ver." → 아이엔).
+// 가드 3개 적용 후 실측(상위 5,000행): 적용 38건 → 0건, 검수 큐 11건. 즉 이 스윕은 이제 **혼자서는
+// 거의 아무것도 안 지우고** 판단을 사람에게 넘긴다 — 이 프로젝트에서 대량 삭제 사고가 반복된 이력을
+// 감안한 의도적 보수화다.
+// ⚠️ 가드를 풀고 싶으면 먼저 시뮬레이션부터 돌릴 것 — "매처가 지지 안 함"은 오태깅의 증거가 아니다.
+function _sweepNormHay(...parts){
+  return parts.filter(Boolean).join(' ').toUpperCase().replace(/[^0-9A-Z가-힣]+/g,' ');
+}
+// 로스터 엔트리에서 그 멤버를 가리킬 수 있는 표기들(정식명·영문명·별칭·성 뗀 이름).
+function _sweepMemberNameTokens(mko,roster){
+  const e=roster.find(r=>r.ko===mko)||{};
+  const out=[mko,e.en].concat(e.aliases||[]).filter(Boolean);
+  const st=_atmStripSurname([...String(mko)]);
+  if(st&&st.length>=2)out.push(st);
+  return out;
+}
+// 제목/설명에 그 이름이 문자로 등장하는가(공백·구두점 무시). 등장하면 "근거 없음"이라 말할 수 없다.
+function _sweepNameAppears(mko,roster,hay){
+  return _sweepMemberNameTokens(mko,roster).some(tok=>{
+    const t=_sweepNormHay(tok).trim();
+    return t.length>=2&&hay.includes(t);
+  });
+}
+// 한 행에 대해 "무엇을 지울지 / 지워도 되는지"를 정하는 순수 판정부 — 가드 A·B·C가 여기 다 모여 있다.
+// DB도 UI도 안 건드리므로 tests/members-sweep-guard.test.js가 실제 제목으로 그대로 돌린다.
+// apply:false는 "손대지 말고 검수 큐로"라는 뜻(태그는 그대로 남는다).
+function _sweepPlanMemberFix(curM,validSet,roster,hay){
+  const keep=(curM||[]).filter(mko=>validSet.has(mko)||_sweepNameAppears(mko,roster,hay)); // 가드 A
+  const removed=(curM||[]).filter(mko=>!keep.includes(mko));
+  if(!removed.length)return{newM:keep,removed:[],apply:false,reason:'no-change'};
+  if(!keep.length)return{newM:keep,removed,apply:false,reason:'would-wipe'};              // 가드 B
+  if(removed.length>=2)return{newM:keep,removed,apply:false,reason:'bulk-removal'};       // 가드 C
+  return{newM:keep,removed,apply:true,reason:'single-ghost'};
+}
 async function _ytSweepMembersMistag(){
   if(!sb){_ytSetProg('Supabase 연결 없음');return;}
   const btn=document.getElementById('sp-membersfix-btn');
@@ -3132,27 +3184,27 @@ async function _ytSweepMembersMistag(){
     if(error){_ytSetProg('조회 실패: '+error.message);return;}
     if(!rows?.length){_ytSetProg('검사할 영상이 없어요');return;}
     const updates=[];
-    // 태그가 완전히 다 빠지는 행(진짜 무관 콘텐츠일 수도, 그냥 특정 멤버명이 제목에 없을 뿐인 정상
-    // 자체채널 영상일 수도 있음 — 이 스윕은 판단 안 하고 목록만 콘솔에 남긴다. 무관 처리 여부는 관리자가
-    // 직접 확인해서 판단(2026-08-19, 사용자 요청 — 자동으로 content_flag='무관' 처리는 위험하다고 판단).
+    // 가드 B·C에 걸려 **적용하지 않고 검수 큐로만** 보내는 행(태그는 그대로 남는다). 진짜 무관 콘텐츠일
+    // 수도, 매처가 못 읽는 정상 영상(유닛·MV·Vevo 무대)일 수도 있어서 이 스윕은 판단하지 않는다. 무관
+    // 처리 여부는 관리자가 직접 확인(2026-08-19 — 자동 content_flag='무관' 처리는 위험하다고 판단).
     const wipedOut=[];
     rows.forEach(v=>{
       const roster=_atmRosterFor(v.group_ko);
       if(!roster.length)return;
       const validSet=new Set(_atmResolveMembers(v.title,v.description,roster,v.group_ko,v.published_at));
-      const curM=v.members||[];
-      const newM=curM.filter(mko=>validSet.has(mko));
-      if(newM.length!==curM.length){
-        updates.push({id:v.id,patch:{members:newM}});
-        if(!newM.length)wipedOut.push({id:v.id,title:v.title,removed:curM});
-      }
+      const plan=_sweepPlanMemberFix(v.members||[],validSet,roster,_sweepNormHay(v.title,v.description));
+      if(plan.reason==='no-change')return;
+      if(!plan.apply){wipedOut.push({id:v.id,title:v.title,removed:plan.removed,reason:plan.reason});return;}
+      updates.push({id:v.id,patch:{members:plan.newM}});
     });
-    if(!updates.length){_ytSetProg(`검사 완료 — ${rows.length}개 중 오염 없음`);return;}
+    // ⚠️ 큐 적재를 updates 조기 반환보다 **먼저** 한다 — 가드 B가 생긴 뒤로는 "고칠 건 없는데 검수할 건
+    //    있는" 상태가 정상이라, 순서가 반대면 그 행들이 조용히 사라진다.
     if(wipedOut.length){
-      console.log(`[자체 멤버 태깅 재검증] 태그가 전부 빠진 행 ${wipedOut.length}개 — 무관 콘텐츠인지 직접 확인 필요:`,wipedOut);
+      console.log(`[자체 멤버 태깅 재검증] 매처가 아무 멤버도 못 찾은 행 ${wipedOut.length}개 — 태그는 그대로 두고 검수 큐로 보냄:`,wipedOut);
       // 콘솔 무덤 대신 검수 대기열에도 적재(2026-08-30) — 홈 카운트 → 목록 → 편집/해결로 이어진다.
       _tagReviewEnqueueBatch(wipedOut.map(w=>({videoId:w.id,reason:'members_wiped',source:'members_reverify',detail:{removed:w.removed}})));
     }
+    if(!updates.length){_ytSetProg(`검사 완료 — ${rows.length}개 중 고칠 건 없음`+(wipedOut.length?` (${wipedOut.length}개는 검수 큐로 보냄 — 태그는 안 건드림)`:''));return;}
     if(updates.length&&!_admRoutineRunning&&typeof _confirmDialog==='function'&&!(await _confirmDialog({title:'자체 멤버 태깅 재검증 (전체)',msg:`그룹 자체 채널 멤버 태그 <b>${updates.length}건</b>을 최신 매칭으로 재검증해요. 그룹은 안 건드리고, 되돌리기 스냅샷을 떠둬요.`,okLabel:'재검증 실행',wide:true})))return;
     await _snapshotBeforeBulk('자체 멤버 태깅 재검증(전체)',updates.map(u=>u.id));
     // 200개를 한꺼번에 Promise.all로 쏘면 그중 하나가 일시적 네트워크 끊김(Failed to fetch)으로 튕길 때
@@ -3160,7 +3212,7 @@ async function _ytSweepMembersMistag(){
     const _ub=await _sbUpdateBatch(updates,u=>sb.from(_YT_TABLE).update(u.patch).eq('id',u.id),
       {conc:20,retries:2,onProgress:(done,total)=>_ytSetProg(`[자체 멤버 태깅 재검증] ${done}/${total}개 처리 중…`)});
     if(_ub.failed)console.error('[자체 멤버 태깅 재검증] 재시도 후에도 실패:',_ub.failed,'건 —',_ub.firstErr);
-    _ytSetProg(`완료! ${rows.length}개 중 ${updates.length}개에서 근거 없는 멤버 태그 제거함`+(_ub.failed?` · ${_ub.failed}개는 저장 실패(다시 눌러 재시도)`:'')+(wipedOut.length?` (그중 ${wipedOut.length}개는 태그가 전부 빠짐 — 콘솔 확인 후 무관 처리 여부 직접 판단 필요)`:''));
+    _ytSetProg(`완료! ${rows.length}개 중 ${updates.length}개에서 근거 없는 멤버 태그 제거함`+(_ub.failed?` · ${_ub.failed}개는 저장 실패(다시 눌러 재시도)`:'')+(wipedOut.length?` · 별도로 ${wipedOut.length}개는 매처가 아무 멤버도 못 찾아 검수 큐로만 보냄(태그는 안 건드림)`:''));
   }catch(e){
     _ytSetProg('오류: '+e.message);
   }finally{
