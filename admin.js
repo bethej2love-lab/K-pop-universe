@@ -3567,6 +3567,75 @@ async function _ytFixNullCategory(){
 //   ② default_category가 비어 있는 magazine 채널을 'none'(전체탭만)으로 못박는다. 안 그러면
 //      내일 동기화가 같은 폴백으로 다시 예능 탭에 붓는다.
 // ⚠️ tags_manual=true(관리자가 직접 저장한 행)는 다른 스윕과 동일하게 절대 안 건드린다.
+// ── 확인된 옛 오태깅 정리 (일회용, 2026-09-10) ───────────────────────────────
+// 2026-09-10 직캠 차트 조사 중 발견한, **지금 매처로는 재현되지 않는** 옛 오태깅 뭉치들. 코드는 이미
+// 고쳐져 있고 DB 행만 옛 값으로 굳어 있다(현재 매처에 같은 제목을 넣으면 전부 null이거나 다른 답).
+// 전수 스윕이 아니라 **제목 시그니처 + 현재 태그가 정확히 일치하는 행만** 골라 건드린다.
+//   · XG(엑스지)의 'NEW DANCE'  → 'NEW'가 더보이즈 "뉴"로            (9건)
+//   · 박재범(Jay Park)          → 'Jay'가 엔하이픈 "제이"로           (80건)
+//   · 태진아(Tae Jin-ah)        → 'Jin'이 러블리즈 "JIN"으로          (20건)
+//   · 마시로 'HOTLINE (Feat. BOBBY)' → 피처링 BOBBY가 primary가 돼 아이콘으로 (13건)
+//   · 문세윤                    → '윤'이 스테이씨 "윤"으로            (3건)
+//   · 하지원(Ha Jiwon)          → '지원'이 프로미스나인 "지원"으로     (2건)
+//   · 현아 "I'm Not Cool"       → "I'm"이 몬스타엑스 "아이엠"으로      (2건)
+// 하는 일은 둘뿐이다: ①members에서 그 이름만 뺀다 ②content_flag가 비어 있으면 '보류'로 옮겨 검수
+// 큐에 올린다. **group_ko는 안 건드린다** — 옳은 그룹이 뭔지는 케이스마다 다르고(XG·태진아·하지원·
+// 문세윤은 아예 미등록 인물, 박재범·마시로는 등록돼 있지만 현 소속이 애매) 자동으로 정할 문제가 아니다.
+// ⚠️ 이 목록에 새 뭉치를 추가할 땐 반드시 "지금 매처에 넣어도 그 오답이 안 나오는지" 먼저 확인할 것 —
+//    아직 재현되는 버그면 여기가 아니라 매처를 고쳐야 한다(안 그러면 다음 동기화가 다시 붓는다).
+const _STALE_MISTAG_CLUSTERS=[
+  {label:'XG(엑스지) → 더보이즈 "뉴"',            gko:'더보이즈',     member:'뉴',     titleAny:['XG','엑스지']},
+  {label:'박재범(Jay Park) → 엔하이픈 "제이"',    gko:'엔하이픈',     member:'제이',   titleAny:['Jay Park','박재범']},
+  {label:'태진아(Tae Jin-ah) → 러블리즈 "JIN"',   gko:'러블리즈',     member:'JIN',    titleAny:['Tae Jin','태진아']},
+  {label:'마시로 HOTLINE → 아이콘 "BOBBY"',       gko:'아이콘',       member:'BOBBY',  titleAny:['MASHIRO','마시로']},
+  {label:'문세윤 → 스테이씨 "윤"',                gko:'스테이씨',     member:'윤',     titleAny:['문세윤','Moon Se Yoon','MOON SE-YOON']},
+  {label:'하지원(Ha Jiwon) → 프로미스나인 "지원"',gko:'프로미스나인', member:'지원',   titleAny:['하지원','Ha Jiwon','HA JIWON']},
+  {label:'현아 I\'m Not Cool → 몬스타엑스 "아이엠"',gko:'몬스타엑스',  member:'아이엠', titleAny:['현아','HyunA']},
+];
+async function _ytFixStaleMistags(){
+  if(!sb){_ytSetProg('Supabase 연결 없음');return;}
+  const btn=document.getElementById('sp-stalemistag-btn');
+  if(btn)btn.disabled=true;
+  try{
+    _ytSetProg('[옛 오태깅 정리] 조회 중…');
+    const hits=[],lines=[];
+    for(const c of _STALE_MISTAG_CLUSTERS){
+      const{data,error}=await _sbFetchAll(()=>sb.from(_YT_TABLE)
+        .select('id,title,group_ko,members,content_flag')
+        .eq('group_ko',c.gko).contains('members',[c.member]).eq('tags_manual',false).order('id'));
+      if(error){_ytSetProg('조회 실패: '+error.message);return;}
+      // 제목 시그니처까지 맞는 행만 — 같은 그룹·같은 멤버라도 정상 영상은 건드리면 안 된다.
+      const rows=(data||[]).filter(v=>c.titleAny.some(t=>String(v.title||'').toUpperCase().includes(t.toUpperCase())));
+      rows.forEach(v=>hits.push({v,c}));
+      lines.push(`· ${c.label}: ${rows.length}건`);
+    }
+    if(!hits.length){_ytSetProg('정리할 것이 없어요 🎉 (이미 정리됐거나 대상 없음)');return;}
+    console.log('[옛 오태깅 정리] 대상',hits.length,'건 · 표본',hits.slice(0,25).map(h=>`[${h.v.group_ko}|${(h.v.members||[]).join(',')}] ${h.v.title}`));
+    const toHold=hits.filter(h=>!h.v.content_flag).length;
+    if(!await _sweepConfirmSimple('확인된 옛 오태깅 정리 (일회용)','정리 실행',
+      `지금 매처로는 재현되지 않는 **옛 오태깅** ${hits.length.toLocaleString()}건을 정리할까요?\n\n`+
+      lines.join('\n')+
+      `\n\n· members에서 **그 이름만** 뺍니다\n`+
+      `· 아직 플래그가 없는 ${toHold}건은 **'보류'**로 옮겨 검수 큐에 올려요(옳은 그룹은 사람이 판단)\n`+
+      `· **group_ko는 안 건드립니다** — XG·태진아·하지원·문세윤은 미등록 인물이고, 박재범·마시로는 현 소속이 애매해서 자동으로 정할 문제가 아니에요\n`+
+      `· 수동편집(tags_manual) 행 제외 · 표본은 콘솔(F12) · 스냅샷 되돌리기 가능`)){
+      _ytSetProg(`취소됨 — 미리보기만 (대상 ${hits.length}건, 표본 콘솔).`);return;
+    }
+    await _snapshotBeforeBulk('확인된 옛 오태깅 정리(일회용)',hits.map(h=>h.v.id));
+    const updates=hits.map(({v,c})=>({id:v.id,patch:Object.assign(
+      {members:(v.members||[]).filter(m=>m!==c.member)},
+      v.content_flag?{}:{content_flag:'보류'})}));
+    const _ub=await _sbUpdateBatch(updates,u=>sb.from(_YT_TABLE).update(u.patch).eq('id',u.id),
+      {conc:20,retries:2,onProgress:(done,total)=>_ytSetProg(`[옛 오태깅 정리] ${done}/${total}건 처리 중…`)});
+    if(_ub.failed)console.error('[옛 오태깅 정리] 재시도 후에도 실패:',_ub.failed,'건 —',_ub.firstErr);
+    _tagReviewEnqueueBatch(hits.filter(h=>!h.v.content_flag).map(h=>({videoId:h.v.id,reason:'stale_mistag',source:'stale_mistag_cleanup',detail:{removed:[h.c.member],was:h.v.group_ko}})));
+    _ytSetProg(`완료! ${hits.length}건에서 옛 오태깅 제거`+(toHold?` · ${toHold}건은 '보류'로 옮겨 검수 큐에 올림`:'')+(_ub.failed?` · ${_ub.failed}건은 저장 실패(다시 눌러 재시도)`:''));
+  }catch(e){
+    _ytSetProg('오류: '+e.message);
+  }finally{
+    if(btn)btn.disabled=false;
+  }
+}
 async function _ytFixMagazineVarietyCategory(){
   if(!sb){_ytSetProg('Supabase 연결 없음');return;}
   const btn=document.getElementById('sp-magcat-btn');
@@ -8875,6 +8944,7 @@ _admExecBind('sp-collabfix-btn',_ytSweepAmbiguousCollabMistag,'콜라보 재검�
   _admExecBind('sp-catfix-btn',_ytSweepCategoryMistag,'카테고리 재분류');
   _admExecBind('sp-catnull-btn',_ytFixNullCategory,'카테고리 유실 복구');
   _admExecBind('sp-magcat-btn',_ytFixMagazineVarietyCategory,'매거진 예능탭 정리');
+  _admExecBind('sp-stalemistag-btn',_ytFixStaleMistags,'옛 오태깅 정리');
   _admExecBind('sp-shortspromote-btn',_ytSweepPromoteShorts,'쇼츠 승격',{selfRestop:true});
   {const _spb=document.getElementById('sp-shortspromote-btn');if(_spb&&localStorage.getItem('_kpu_shortsPromoteCursor'))_spb.textContent='⬆️ 가로→쇼츠 일괄 승격 (재개)';}
   _admExecBind('sp-yt-autotag',_ytAutoTagMembers,'자동 태깅');
