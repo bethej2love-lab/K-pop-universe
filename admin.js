@@ -373,12 +373,40 @@ async function _ytSyncAll(){
 // 삼아서 — 오래된 영상은 어차피 랭킹에 안 쓰이므로 쿼터 낭비를 줄인다. videos.list는 part 개수/id
 // 개수(최대 50개)와 무관하게 호출당 쿼터 1이라 저렴함.
 const VIEW_COUNT_WINDOW_DAYS=14;
+// ── 재생시간(duration_sec) 백필 ──────────────────────────────────────────────
+// "쇼츠"를 우리 데이터에서 가릴 유일한 수단이 is_short였는데, 그건 썸네일의 **세로 여부**만 보고
+// 길이를 안 본다(_probeIsPortrait). 실측하면 그 근사가 깨진다 — 세로+제목상 직캠 173건 중 표본 45건에서
+// 90초 이하 32건(챌린지 클립 13~25초·선공개 42초)과 90초 초과 13건([쇼챔1분직캠] 1분46초~,
+// NiziU 「Too Bad」 FanCam 2분47초~)이 **같은 플래그**를 달고 있었다(2026-09-10). 그래서 길이를 따로 받는다.
+// 쿼터는 안 는다 — videos.list는 part 개수와 무관하게 호출당 1이라 contentDetails를 얹는 비용이 0이다.
+// ⚠️ 컬럼이 없으면(마이그레이션 전) 조용히 건너뛴다. published_ts와 같은 수법이고, 조회수 갱신이
+//    이것 때문에 실패하면 안 되므로 별도 패스로 둔다. duration_migration.sql 참고.
+let _ytHasDuration=true;
+// ISO8601 기간("PT3M28S", "PT1H2M3S", "P1DT2H") → 초. 못 읽으면 null(=모름, 절대 0으로 저장하지 말 것).
+function _ytParseDurationSec(iso){
+  const m=/^P(?:(\d+)D)?T?(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?$/.exec(String(iso||''));
+  if(!m||!(m[1]||m[2]||m[3]||m[4]))return null;
+  return (+(m[1]||0))*86400+(+(m[2]||0))*3600+(+(m[3]||0))*60+(+(m[4]||0));
+}
+async function _ytSaveDurations(durUpdates){
+  if(!_ytHasDuration||!durUpdates?.length)return;
+  const probe=await sb.from(_YT_TABLE).update({duration_sec:durUpdates[0].duration_sec}).eq('id',durUpdates[0].id);
+  if(probe.error&&/duration_sec/.test(probe.error.message||'')){
+    _ytHasDuration=false;
+    console.warn('[재생시간] duration_sec 컬럼이 없어 건너뜀 — duration_migration.sql 실행 필요');
+    return;
+  }
+  const _db=await _sbUpdateBatch(durUpdates.slice(1),({id,duration_sec})=>sb.from(_YT_TABLE).update({duration_sec}).eq('id',id),
+    {conc:20,retries:2,onProgress:(done,total)=>_ytSetProg(`재생시간 저장 중… ${done}/${total}`)});
+  if(_db.failed)console.error('[재생시간] 재시도 후에도 실패:',_db.failed,'건 —',_db.firstErr);
+}
 async function _ytRefreshViewCounts(){
   const key=_ytApiKey();
   if(!key){_ytSetProg('API 키를 먼저 입력해주세요');return;}
   if(!sb){_ytSetProg('Supabase 연결 없음');return;}
   _ytSetProg('조회수 갱신 대상 조회 중…');
   const sinceDate=new Date(Date.now()-VIEW_COUNT_WINDOW_DAYS*86400000).toISOString().slice(0,10);
+  // (아래 _ytParseDurationSec/_ytSaveDurations는 이 파일 하단에 정의 — 두 조회수 갱신 경로가 공유한다)
   const{data:rows,error}=await _sbFetchAll(()=>sb.from(_YT_TABLE)
     .select('id')
     .gte('published_at',sinceDate)
@@ -388,15 +416,18 @@ async function _ytRefreshViewCounts(){
   const ids=rows.map(r=>r.id);
   const statsUpdates=[];
   const tsUpdates=[]; // 정확한 업로드 시각(published_ts) 백필 — 아래 주석 참고
+  const durUpdates=[]; // 재생시간(duration_sec) 백필 — 쇼츠 판별용, duration_migration.sql 참고
   for(let i=0;i<ids.length;i+=50){
     const chunk=ids.slice(i,i+50);
     _ytSetProg(`조회수 조회 중… ${Math.min(i+50,ids.length)}/${ids.length}`);
     try{
-      // part에 snippet을 얹어 정확한 업로드 시각(publishedAt)도 같이 받는다. videos.list는 part
-      // 개수와 무관하게 **호출당 쿼터 1**이라 추가 비용이 0이고, 이 함수는 이미 "전체 동기화"에
-      // 얹혀 최근 14일치를 정기적으로 훑으므로 백필 전용 버튼을 따로 만들 필요가 없다.
+      // part에 snippet·contentDetails를 얹어 정확한 업로드 시각(publishedAt)과 재생시간도 같이 받는다.
+      // videos.list는 part 개수와 무관하게 **호출당 쿼터 1**이라 추가 비용이 0이고, 이 함수는 이미
+      // "전체 동기화"에 얹혀 최근 14일치를 정기적으로 훑으므로 백필 전용 버튼을 따로 만들 필요가 없다.
       // (옛 행은 published_at이 날짜뿐이라 "N시간 전"을 못 만든다 — 2026-09-02 코르티스 제보)
-      const r=await fetch(`https://www.googleapis.com/youtube/v3/videos?part=statistics,snippet&id=${chunk.join(',')}&key=${key}`);
+      // duration_sec은 "쇼츠 판별"에 쓴다 — is_short는 세로 여부만 보고 길이를 안 봐서, 2분48초짜리
+      // 정식 세로 팬캠(NiziU FanCam)과 15초 챌린지 클립이 같은 플래그를 달고 있었다(2026-09-10).
+      const r=await fetch(`https://www.googleapis.com/youtube/v3/videos?part=statistics,snippet,contentDetails&id=${chunk.join(',')}&key=${key}`);
       if(!r.ok)throw new Error('YouTube API 오류 '+r.status);
       const d=await r.json();
       if(d.error)throw new Error(d.error.message);
@@ -405,6 +436,8 @@ async function _ytRefreshViewCounts(){
         if(!isNaN(vc))statsUpdates.push({id:it.id,view_count:vc});
         const ts=it.snippet?.publishedAt;
         if(ts)tsUpdates.push({id:it.id,published_ts:ts});
+        const ds=_ytParseDurationSec(it.contentDetails?.duration);
+        if(ds!=null)durUpdates.push({id:it.id,duration_sec:ds});
       });
     }catch(e){console.error('[조회수 갱신] 실패:',e.message);}
   }
@@ -421,6 +454,7 @@ async function _ytRefreshViewCounts(){
       if(_tb.failed)console.error('[업로드 시각] 재시도 후에도 실패:',_tb.failed,'건 —',_tb.firstErr);
     }
   }
+  await _ytSaveDurations(durUpdates);
   if(!statsUpdates.length){_ytSetProg('조회수 갱신: 반영할 값 없음');return;}
   let saved=0,failed=0;
   {
@@ -453,20 +487,26 @@ async function _ytRefreshAllViewCounts(){
   const totalCalls=Math.ceil(ids.length/50);
   _ytSetProg(`YouTube API 호출 예정: ${totalCalls}회 (${ids.length}개 영상)`);
   const statsUpdates=[];
+  const durUpdates=[]; // 재생시간 백필 — 이 버튼이 기존 전체분의 duration_sec을 채운다
   for(let i=0;i<ids.length;i+=50){
     const chunk=ids.slice(i,i+50);
     _ytSetProg(`조회수 조회 중… ${Math.min(i+50,ids.length)}/${ids.length} (API ${Math.ceil((i+50)/50)}/${totalCalls}회)`);
     try{
-      const r=await fetch(`https://www.googleapis.com/youtube/v3/videos?part=statistics&id=${chunk.join(',')}&key=${key}`);
+      // contentDetails를 얹어 재생시간도 같이 받는다 — 쿼터는 그대로(호출당 1). 기존 전체분의
+      // duration_sec 백필이 이 버튼 하나로 끝난다(별도 백필 버튼 불필요). duration_migration.sql 참고.
+      const r=await fetch(`https://www.googleapis.com/youtube/v3/videos?part=statistics,contentDetails&id=${chunk.join(',')}&key=${key}`);
       if(!r.ok)throw new Error('YouTube API 오류 '+r.status);
       const d=await r.json();
       if(d.error)throw new Error(d.error.message);
       (d.items||[]).forEach(it=>{
         const vc=parseInt(it.statistics?.viewCount,10);
         if(!isNaN(vc))statsUpdates.push({id:it.id,view_count:vc});
+        const ds=_ytParseDurationSec(it.contentDetails?.duration);
+        if(ds!=null)durUpdates.push({id:it.id,duration_sec:ds});
       });
     }catch(e){_ytSetProg('YouTube API 오류: '+e.message);console.error('[전체 조회수 갱신]',e.message);return;}
   }
+  await _ytSaveDurations(durUpdates);
   if(!statsUpdates.length){_ytSetProg('갱신할 값 없음 (영상이 모두 삭제되었거나 비공개)');return;}
   let saved=0,failed=0;
   {

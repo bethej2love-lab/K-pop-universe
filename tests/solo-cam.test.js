@@ -47,6 +47,8 @@ const harness = [
   extractStatement(/^const _FANCAM_PROMO_RE\s*=/m, '_FANCAM_PROMO_RE'),
   extractByBraces(/^function _fancamStripLooseHashtags\(/m, '_fancamStripLooseHashtags'),
   extractByBraces(/^function _isShortV\(/m, '_isShortV'),
+  extractStatement(/^const _SHORT_CLIP_SEC\s*=/m, '_SHORT_CLIP_SEC'),
+  extractByBraces(/^function _isShortClip\(/m, '_isShortClip'),
   extractByBraces(/^function _isSoloCam\(/m, '_isSoloCam'),
   'return {_isSoloCam, _FANCAM_BRAND_RE};',
 ].join('\n');
@@ -105,13 +107,23 @@ check('멤버 0명(그룹 포메이션 직캠)', _isSoloCam({ title: camTitle, m
 check('멤버 2명(콜라보 직캠)', _isSoloCam({ title: camTitle, members: ['A', 'B'] }), false, camTitle);
 check('members 없음', _isSoloCam({ title: camTitle }), false, camTitle);
 check('빈 입력', _isSoloCam(null), false, '(null)');
-// ⚠️ 우리 is_short는 유튜브 Shorts가 아니라 **세로 비율**이다(oardefault 썸네일 기준, 길이는 안 봄).
-//    그래서 3~4분짜리 정식 세로 팬캠(니쥬 「Too Bad」 FanCam 등)도 여기 걸린다 — 알고 내린 결정이다.
-console.log('4) 세로 영상은 제외한다 — 정식 세로 팬캠이라도(2026-09-10 결정)');
-check('세로 팬캠 제외', _isSoloCam({ title: 'NiziU 「Too Bad」 AYAKA FanCam #AYAKA #NiziU #니쥬', members: ['아야카'], is_short: true }), false, '세로 팬캠');
-check('세로 직캠 제외', _isSoloCam({ title: "[입덕직캠] 김종인 연습생 | 카이 'Rover' #카이 #KAI", members: ['카이'], is_short: true }), false, '세로 직캠');
+// ── 쇼츠(짧은 클립) 제외 ─────────────────────────────────────────────────────
+// ⚠️ 기준은 **길이**다(1분 내외 = 쇼츠). is_short는 썸네일의 세로 여부만 보고 길이를 안 보므로
+//    대용으로 쓰면 안 된다 — 아래 니쥬 팬캠(2분48초)과 챌린지 클립(15초)이 둘 다 is_short=true다.
+//    duration_sec이 없을 때만 is_short로 폴백한다(마이그레이션/백필 전 동작).
+// 길이·플래그 값은 전부 실측(2026-09-10, youtube lengthSeconds).
+console.log('4) 짧은 클립은 제외하고, 세로여도 길면 남긴다');
+check('15초 챌린지 클립 제외', _isSoloCam({ title: '계훈 X 채령 〈THAT\'S A NO NO〉 챌린지 직캠 Ver. #MCOUNTDOWN', members: ['채령'], is_short: true, duration_sec: 15 }), false, '15초 클립');
+check('42초 선공개 클립 제외', _isSoloCam({ title: '[리무진서비스] [소희 직캠] Bruno Mars - Versace on the Floor | EP.220 선공개 영상 #shorts', members: ['소희'], is_short: true, duration_sec: 42 }), false, '42초 클립');
+check('46초 워터밤 클립 제외', _isSoloCam({ title: '서인영 워터밤 데뷔 직캠 최초공개 (10년만의 무대)', members: ['서인영'], is_short: true, duration_sec: 46 }), false, '46초 클립');
+check('2분48초 세로 팬캠은 유지', _isSoloCam({ title: 'NiziU 「Too Bad」 AYAKA FanCam #AYAKA #NiziU #니쥬', members: ['아야카'], is_short: true, duration_sec: 168 }), true, '세로 팬캠');
+check('1분46초 쇼챔1분직캠 유지', _isSoloCam({ title: '[쇼챔1분직캠] Hearts2Hearts CARMEN(하츠투하츠 카르멘)의 ＜FOCUS＞♬', members: ['카르멘'], is_short: true, duration_sec: 106 }), true, '쇼챔1분직캠');
+check('가로 정식 직캠 유지', _isSoloCam({ title: "[MPD직캠] 트와이스 나연 직캠 4K 'Alcohol-Free'", members: ['나연'], is_short: false, duration_sec: 211 }), true, '가로 직캠');
+check('가로여도 짧으면 제외', _isSoloCam({ title: '[MPD직캠] 트와이스 나연 직캠 하이라이트', members: ['나연'], is_short: false, duration_sec: 30 }), false, '가로 30초');
+console.log('4-1) duration_sec이 없으면 예전대로 is_short로 폴백');
+check('폴백: 세로 제외', _isSoloCam({ title: 'NiziU 「Too Bad」 AYAKA FanCam', members: ['아야카'], is_short: true }), false, '폴백 세로');
+check('폴백: 가로 통과', _isSoloCam({ title: "[MPD직캠] 트와이스 나연 직캠 4K 'Alcohol-Free'", members: ['나연'], is_short: false }), true, '폴백 가로');
 check('category=short도 세로로 본다', _isSoloCam({ title: '[MPD직캠] 트와이스 나연 직캠', members: ['나연'], category: 'short' }), false, 'category short');
-check('가로 직캠은 그대로 통과', _isSoloCam({ title: "[MPD직캠] 트와이스 나연 직캠 4K 'Alcohol-Free'", members: ['나연'], is_short: false }), true, '가로 직캠');
 check('쇼츠 홍보물', _isSoloCam({ title: '템페스트 왜이리 가족이야😭 #HANBIN #TEMPEST @260901 [THE SHOW]', members: ['한빈'], is_short: true }), false, 'shorts 홍보');
 
 // 5) 브랜드 낱말은 있지만 직캠 영상이 아닌 홍보물 — 전부 실제 DB 행(2026-09-10 실측 32건 중 표본)
@@ -132,5 +144,5 @@ console.log('6) 대괄호 안 해시태그 브랜드는 살아야 한다');
  '[#최애직캠] Girls’ Generation-HRS HYO (소녀시대-효리수 효연) – Skibidi | 쇼! 음악중심 | MBC260905',
 ].forEach(t => check('괄호 안 태그 오제거', _isSoloCam({ title: t, members: ['X'] }), true, t));
 
-console.log(fail ? `\n❌ 실패 ${fail}건` : `\n✅ 전부 통과 (${CAMS.length + STAGES.length + PROMOS.length + 11}건)`);
+console.log(fail ? `\n❌ 실패 ${fail}건` : `\n✅ 전부 통과 (${CAMS.length + STAGES.length + PROMOS.length + 17}건)`);
 process.exit(fail ? 1 : 0);
