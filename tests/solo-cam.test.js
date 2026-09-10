@@ -46,6 +46,7 @@ const harness = [
   extractStatement(/^const _FANCAM_BRAND_RE\s*=/m, '_FANCAM_BRAND_RE'),
   extractStatement(/^const _FANCAM_PROMO_RE\s*=/m, '_FANCAM_PROMO_RE'),
   extractByBraces(/^function _fancamStripLooseHashtags\(/m, '_fancamStripLooseHashtags'),
+  extractByBraces(/^function _isShortV\(/m, '_isShortV'),
   extractByBraces(/^function _isSoloCam\(/m, '_isSoloCam'),
   'return {_isSoloCam, _FANCAM_BRAND_RE};',
 ].join('\n');
@@ -104,8 +105,13 @@ check('멤버 0명(그룹 포메이션 직캠)', _isSoloCam({ title: camTitle, m
 check('멤버 2명(콜라보 직캠)', _isSoloCam({ title: camTitle, members: ['A', 'B'] }), false, camTitle);
 check('members 없음', _isSoloCam({ title: camTitle }), false, camTitle);
 check('빈 입력', _isSoloCam(null), false, '(null)');
-console.log('4) 쇼츠 예외가 흡수됐는지 — 브랜드 낱말이 제목 본문에 있으면 쇼츠도 통과');
-check('쇼츠 직캠', _isSoloCam({ title: "[입덕직캠] 김종인 연습생 | 카이 'Rover' #카이 #KAI", members: ['카이'], is_short: true }), true, 'shorts 직캠');
+// ⚠️ 우리 is_short는 유튜브 Shorts가 아니라 **세로 비율**이다(oardefault 썸네일 기준, 길이는 안 봄).
+//    그래서 3~4분짜리 정식 세로 팬캠(니쥬 「Too Bad」 FanCam 등)도 여기 걸린다 — 알고 내린 결정이다.
+console.log('4) 세로 영상은 제외한다 — 정식 세로 팬캠이라도(2026-09-10 결정)');
+check('세로 팬캠 제외', _isSoloCam({ title: 'NiziU 「Too Bad」 AYAKA FanCam #AYAKA #NiziU #니쥬', members: ['아야카'], is_short: true }), false, '세로 팬캠');
+check('세로 직캠 제외', _isSoloCam({ title: "[입덕직캠] 김종인 연습생 | 카이 'Rover' #카이 #KAI", members: ['카이'], is_short: true }), false, '세로 직캠');
+check('category=short도 세로로 본다', _isSoloCam({ title: '[MPD직캠] 트와이스 나연 직캠', members: ['나연'], category: 'short' }), false, 'category short');
+check('가로 직캠은 그대로 통과', _isSoloCam({ title: "[MPD직캠] 트와이스 나연 직캠 4K 'Alcohol-Free'", members: ['나연'], is_short: false }), true, '가로 직캠');
 check('쇼츠 홍보물', _isSoloCam({ title: '템페스트 왜이리 가족이야😭 #HANBIN #TEMPEST @260901 [THE SHOW]', members: ['한빈'], is_short: true }), false, 'shorts 홍보');
 
 // 5) 브랜드 낱말은 있지만 직캠 영상이 아닌 홍보물 — 전부 실제 DB 행(2026-09-10 실측 32건 중 표본)
@@ -126,5 +132,5 @@ console.log('6) 대괄호 안 해시태그 브랜드는 살아야 한다');
  '[#최애직캠] Girls’ Generation-HRS HYO (소녀시대-효리수 효연) – Skibidi | 쇼! 음악중심 | MBC260905',
 ].forEach(t => check('괄호 안 태그 오제거', _isSoloCam({ title: t, members: ['X'] }), true, t));
 
-console.log(fail ? `\n❌ 실패 ${fail}건` : `\n✅ 전부 통과 (${CAMS.length + STAGES.length + PROMOS.length + 8}건)`);
+console.log(fail ? `\n❌ 실패 ${fail}건` : `\n✅ 전부 통과 (${CAMS.length + STAGES.length + PROMOS.length + 11}건)`);
 process.exit(fail ? 1 : 0);
