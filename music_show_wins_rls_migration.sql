@@ -10,19 +10,18 @@
 -- admin 이메일)가 INSERT할 수 있는 정책이 있는지는 확인되지 않았다**. select 정책만 있고 insert
 -- 정책이 없으면 수집 버튼이 0건 저장으로 조용히 끝난다(admin_bulk_snapshots 전례, 2026-08-22).
 --
--- ⚠️ 그래서 이 파일은 **두 부분**이다. 1번은 무조건 실행해도 안전하고, 2번은 아래 진단 결과를 보고
---    "admin insert 정책이 없을 때만" 실행한다. 이미 있는데 또 만들면 이름만 다른 중복 정책이 쌓인다.
+-- ✅ 확인 완료(2026-09-11) — **쓰기 정책은 이미 있다. 추가할 게 없다.** 실제 pg_policies:
+--     · "music_show_wins 전체 읽기 허용"  SELECT / {public} / using(true)
+--     · "music_show_wins 관리자만 쓰기"    ALL    / {public} /
+--        using·with_check = (current_setting('request.jwt.claims', true) IS NULL
+--                            OR (auth.jwt() ->> 'email') = 'bethej2love@gmail.com')
+--   ALL이라 INSERT·DELETE가 다 덮인다 → 수집 버튼도 되돌리기 버튼도 관리자 세션에서 그대로 동작한다.
+--   anon 키는 JWT 클레임이 항상 실려 있어 앞의 IS NULL 가지에 걸리지 않는다(그래서 42501로 막힘 — 실측 일치).
+--   ⚠️ 그러므로 **정책을 새로 만들지 말 것.** 이름만 다른 중복 정책이 쌓인다.
+--
+-- 남은 건 아래 1번(유니크 인덱스)뿐이다.
 
--- ── 0) 진단 — 먼저 이것만 실행해서 결과를 확인할 것 ─────────────────────────────
-select policyname, cmd, roles, qual, with_check
-from pg_policies
-where tablename = 'music_show_wins'
-order by cmd, policyname;
--- cmd에 INSERT(또는 ALL)가 있고 with_check가 관리자 이메일을 보는 정책이 있으면 → 2번은 건너뛴다.
--- SELECT 정책만 보이면 → 2번을 실행한다.
-
-
--- ── 1) 중복 방지 — 이건 그냥 실행해도 된다 ──────────────────────────────────────
+-- ── 1) 중복 방지 — 이것만 실행하면 된다 ────────────────────────────────────────
 -- 같은 (방송·날짜·그룹·멤버)는 한 번의 수상이다. 지금까지 유니크 제약이 **PK(id)뿐**이라
 -- tools/wiki_music_wins.mjs의 `ON CONFLICT DO NOTHING`은 걸릴 제약이 없어 사실상 no-op였다.
 -- (실측: 지금 중복 0건 — 스크립트가 코드에서 dedup해온 덕분이지 DB가 막아준 게 아니다. 그래서
@@ -32,23 +31,12 @@ create unique index if not exists music_show_wins_uniq
   on public.music_show_wins (show, win_date, group_ko, (coalesce(member_ko, '')));
 
 
--- ── 2) 관리자 쓰기 정책 — 위 진단에 INSERT 정책이 없을 때만 ──────────────────────
--- 조건식은 yt_channel_videos·search_click_log의 admin write와 같은 것을 쓴다.
--- (읽기 정책은 건드리지 않는다 — 이미 공개로 잘 돌고 있고, 잘못 손대면 로그아웃 방문자에게
---  그룹 카드 트로피가 통째로 사라진다.)
+-- ── 2) 실행 뒤 확인 ─────────────────────────────────────────────────────────────
+-- (1) 인덱스가 생겼는지:
+--       select indexname from pg_indexes where tablename = 'music_show_wins';
+--     → music_show_wins_pkey + music_show_wins_uniq 두 개가 나오면 된 것.
+-- (2) 관리자로 로그인한 브라우저에서 "🏆 음악방송 1위 수집" 버튼 → 진행 문구가 "N건 추가"로
+--     끝나는지 확인. "0건 저장됨 — 쓰기 권한(RLS) 확인 필요"가 뜨면 위 정책이 바뀐 것이므로 재진단.
 --
--- create policy "admin insert" on public.music_show_wins
---   for insert to authenticated
---   with check ((auth.jwt() ->> 'email'::text) = 'bethej2love@gmail.com'::text);
---
--- -- 수집 결과를 되돌리는 버튼("↩︎ 방금 넣은 1위 되돌리기")이 delete를 쓴다.
--- create policy "admin delete" on public.music_show_wins
---   for delete to authenticated
---   using ((auth.jwt() ->> 'email'::text) = 'bethej2love@gmail.com'::text);
-
-
--- ── 3) 실행 뒤 확인 ─────────────────────────────────────────────────────────────
--- (1) 정책 목록 다시 조회 — INSERT/DELETE가 관리자 조건으로 보이면 된 것.
--- (2) 관리자로 로그인한 브라우저에서 "🏆 음악방송 1위 수집" 버튼을 누르고, 진행 문구가
---     "N건 추가"로 끝나는지 확인. "0건 저장됨 — 쓰기 권한(RLS) 확인 필요"가 뜨면 2번이 안 걸린 것.
--- (3) 로그아웃 상태에서 아무 그룹 카드나 열어 트로피(🏆)가 그대로 보이는지 확인(읽기 회귀 없음).
+-- 참고: 이 인덱스가 생기면 tools/wiki_music_wins.mjs의 `ON CONFLICT DO NOTHING`도 비로소 실제로
+-- 동작한다(그전엔 걸릴 유니크 제약이 PK뿐이라 아무것도 막지 못했다).

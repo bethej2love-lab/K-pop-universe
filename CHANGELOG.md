@@ -64,7 +64,8 @@
 ## 2026-09-11 (기능 세션 — 음악방송 1위 자동 수집)
 
 > **다음 세션 이어받기(2026-09-11)**
-> - **사용자 확인 대기 1건**: `music_show_wins`에 **관리자 INSERT 정책이 있는지** 미확인. 익명 쓰기가 막힌 건 실측했지만(42501), 관리자가 쓸 수 있는지는 별개다. 없으면 수집 버튼이 "0건 저장됨"으로 끝난다 → `music_show_wins_rls_migration.sql`의 진단 쿼리 → 필요 시 2번 블록 실행.
+> - **권한 확인 끝 — 추가 정책 불필요**: `music_show_wins`에 `ALL / {public} / (jwt claims IS NULL OR email=관리자)` 정책이 이미 있다. INSERT·DELETE가 다 덮이므로 수집·되돌리기 버튼이 관리자 세션에서 그대로 동작한다. **정책을 새로 만들지 말 것**(중복만 쌓인다).
+> - **남은 실행 1건**: `music_show_wins_rls_migration.sql`의 유니크 인덱스(`show, win_date, group_ko, coalesce(member_ko,'')`). 안 해도 코드가 dedup하지만, 넣으면 위키 스크립트의 `ON CONFLICT DO NOTHING`도 비로소 실제로 동작한다.
 > - **첫 실행은 사람이 볼 것**: 버튼을 눌러 미리보기(취소)로 목록부터 확인 권장. 드라이런 기준 신규 43건.
 
 - [완료][admin.js][index.html] **음악방송 1위 자동 수집 신설** — 1위 앵콜 직캠 영상 **제목**에서 수상 정보를 읽어 `music_show_wins`에 넣는다(`_ytSweepMusicShowWins`, 버튼 `#sp-mswin-btn`, 매일 루틴 **6단계**). 발단은 사용자 질문("매일 동기화하면서 1위 직캠이 거의 빠짐없이 올라오는데, 그걸 보고 알아서 수집할 순 없나"). **실측으로 확인된 실체**: 수집이 아니라 **파싱**의 문제였다 — 근거 영상은 외부 채널 동기화로 이미 DB에 있는데 `music_show_wins`는 **2026-07-18에서 8주간 멈춰 있었다**(위키 스크립트를 사람이 돌려야 채워지는 구조). 드라이런 결과 최근 12개월에서 **신규 43건**(2025-10 ~ 2026-09).
@@ -75,7 +76,7 @@
 - [완료][tests][tools/m2_harness.js] `tests/mswin-parse.test.js` 신설(37케이스 전부 실DB 제목) — 6개 방송 템플릿·솔로 수상(연준→투모로우바이투게더/연준, 태용→엔시티 127/태용)·곡명 속 아포스트로피(`Eye-Poppin'`)·더쇼 4갈래·7자리 오타 날짜(`2607028`) 무시·요일 게이트, 그리고 **오탐 방지 10건**("빌보드 1위"/"서열 1위"/"유행템 1위"/"뮤직뱅크 1위 기념 대기실 극장"/뉴비트 채널의 "리센느 선배님들의 1위를 축하드립니다" 등). ⚠️ 하네스 등록만 방식이 다르다 — 템플릿 정규식의 이스케이프된 괄호(`\]`, `[（(]`) 때문에 `extractStatement`의 깊이 계산이 깨져서, `_MSW_TABLE`~`_mswKey` **줄 범위로 통째로** 싣는다(새 함수는 반드시 그 사이에 둘 것).
 - [완료][tests/rls.test.js] `music_show_wins`를 EXPECT에 등록(read public / write locked) — admin.js가 처음 `.from()`으로 쓰기 시작해 검사 대상이 됐다. 실측 통과(읽기 2,626행 / 익명 쓰기 42501 차단).
 - [이슈][tests/rls.test.js] **`rank_snapshots`를 익명이 300행 읽을 수 있다** — EXPECT는 `read:'locked'`인데 실제로 열려 있다. 이번 작업 이전부터 있던 문제이고 이번 변경과 무관. 랭킹 스냅샷이라 민감도는 낮아 보이지만 **RLS 테스트가 계속 빨간 상태로 남아** 다음 실패를 가린다 — 정책을 고치거나 기대값을 고치거나 결정 필요.
-- [완료][music_show_wins_rls_migration.sql] 신설 — ①`(show, win_date, group_ko, coalesce(member_ko,''))` **유니크 인덱스**(지금까지 유니크 제약이 PK뿐이라 위키 스크립트의 `ON CONFLICT DO NOTHING`이 사실상 no-op였다. 현재 중복 0건이라 지금이 걸 수 있는 시점) ②관리자 INSERT/DELETE 정책(진단 결과 없을 때만 실행하도록 주석 처리해 둠).
+- [완료][music_show_wins_rls_migration.sql] 신설 — `(show, win_date, group_ko, coalesce(member_ko,''))` **유니크 인덱스**. 지금까지 유니크 제약이 PK뿐이라 위키 스크립트의 `ON CONFLICT DO NOTHING`이 사실상 no-op였다(현재 중복 0건이라 지금이 걸 수 있는 시점). **쓰기 정책은 추가 불필요 — 확인 결과 이미 있다**: `"music_show_wins 관리자만 쓰기"` `ALL / {public} / (request.jwt.claims IS NULL OR auth.jwt()->>'email' = 관리자)`. ALL이라 INSERT·DELETE가 다 덮이고, anon은 클레임이 항상 실려 있어 첫 가지에 안 걸린다(42501 실측과 일치). 새로 만들면 중복 정책만 쌓이므로 만들지 말 것.
 - ⚠️ **오판했다가 실측으로 정정한 것**: 처음엔 "정책 0행인데 anon으로 읽히니 세 트로피 테이블 모두 RLS가 꺼져 있다(공개 키로 아무나 쓸 수 있다)"고 판단했다. 비파괴 탐침(빈 INSERT)으로 재보니 `music_show_wins`·`melon_yearly_top100`·`spotify_streaming_milestones` **셋 다 42501로 이미 잠겨 있었다**. 받은 자료는 인덱스 조회 결과뿐이었는데 정책도 0행이라고 단정한 게 원인 — **"안 보였다"와 "없다"를 구분할 것.**
 
 ---
