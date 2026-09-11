@@ -139,7 +139,9 @@ console.log('\n── Part 6: _PROGRAM_COLLECTIONS 불변식 ──');
   let d = 0, end = start;
   for (; end < html.length; end++) { if (html[end] === '[') d++; else if (html[end] === ']') { d--; if (d === 0) { end++; break; } } }
   const list = eval(html.slice(start, end)); // 순수 리터럴 배열
-  ck(list.length >= 28, `프로그램 ${list.length}개 등록(13→28 확장 반영)`);
+  // 2026-09-08에 13→28개로 늘렸고, 2026-09-11에 STAR ZOOM IN을 빼서 27개(사용자 요청).
+  // 하한만 본다 — 개수 자체가 목적이 아니라 "확장분이 통째로 날아가지 않았나"를 보는 검사다.
+  ck(list.length >= 27, `프로그램 ${list.length}개 등록(13→28 확장 후 STAR ZOOM IN 제외)`);
 
   // ① 키/키워드 중복 — 같은 키워드가 두 프로그램에 있으면 한 영상이 두 버킷에 뜬다
   const keys = list.map(p => p.key);
