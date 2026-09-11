@@ -79,6 +79,18 @@ const gkos = Object.keys(groups);
 // 예전 루프는 솔로 영상을 **한 건도 조회하지 않았고**, 결과적으로 솔로 341명 중 339명의 공유 미리보기가
 // 일반 og-image.png로 떨어졌다(2026-09-11 사용자 제보: "솔로 가수는 링크 복사하면 영상 썸네일이 안 뜬다").
 // 그룹/그룹멤버는 멀쩡했던 이유도 같다 — 그쪽 키는 groups.json에 있으니까.
+// ⚠️ 커버 무대는 대표 썸네일로 쓰지 않는다(2026-09-11, 사용자 제보로 발견).
+// 태연의 공유 미리보기가 **성한빈이 태연 곡 'INVU'를 부른 영상**이었다 — 그 행은 `group_ko='태연'`,
+// `members=['태연']`로 **태깅 자체가 틀려 있고**(공연자는 성한빈, 원곡자가 공연자 자리에 들어감),
+// 그래서 이 스크립트 입장에선 "태연 영상"으로 보였다. 태깅 오배정은 별도로 다뤄야 할 문제지만,
+// 그게 고쳐지기 전에도 **대표 이미지가 남의 무대가 되는 일은 막아야 한다**.
+// 제목에 원곡 크레딧이 있거나 cover_of_*가 붙은 행은 후보에서 뺀다 — 자기 곡을 자기가 부른 정상
+// 커버여도(CORTIS의 JoyRide 등) 대표 이미지로는 MV·직캠이 낫고, 후보는 어차피 넉넉하다.
+const COVER_CREDIT = /원곡|\bcover(ed)?\b|original\s+(song\s+)?by|歌ってみた/i;
+const isCoverish = v => COVER_CREDIT.test(v.title || '')
+  || (v.cover_of_members || []).length > 0 || (v.cover_of_groups || []).length > 0;
+const dirtyIds = new Set(); // 예전 캐시가 이런 영상을 물고 있으면 --keep-existing이어도 새로 뽑는다
+
 const soloKeys = [...new Set(artists.filter(a => a && a.group && a.name && !groups[a.group.ko]).map(a => a.name.ko))];
 const soloPick = {};   // "이름" → row (폴백용 best)
 const soloCands = {};  // "이름" → [row,...] MV·라이브 후보
@@ -88,7 +100,7 @@ console.log(`[og-thumbs] 그룹 ${gkos.length}개 + 솔로 ${soloKeys.length}명
 let done = 0;
 for (const { key: gko, solo } of queryKeys) {
   const q = new URLSearchParams({
-    select: 'id,category,members,view_count,published_at,content_flag',
+    select: 'id,title,category,members,view_count,published_at,content_flag,cover_of_members,cover_of_groups',
     group_ko: 'eq.' + gko,
     order: 'published_at.desc',
     limit: String(PER_GROUP),
@@ -98,6 +110,7 @@ for (const { key: gko, solo } of queryKeys) {
   for (const v of rows) {
     if (!v.id) continue;
     if (v.content_flag === 'hidden' || v.content_flag === 'irrelevant') continue; // 숨김/무관 처리분 제외
+    if (isCoverish(v)) { dirtyIds.add(v.id); continue; } // 커버 무대는 대표 썸네일 후보에서 제외(위 주석)
     const elig = ELIGIBLE.has(v.category);
     if (solo) {
       // 솔로 카드는 그룹 카드가 아니라 **멤버 페이지**(member/{이름}/)로 공유된다 — groupOut이 아니라
@@ -119,6 +132,67 @@ for (const { key: gko, solo } of queryKeys) {
   if (++done % 40 === 0) console.log(`  … ${done}/${queryKeys.length}`);
 }
 
+// ── 이름 키(솔로 활동분) 배치 조회 ──────────────────────────────────────────────
+// ⚠️ 솔로 아티스트만의 문제가 아니다. **그룹에 속한 멤버도 솔로 활동 영상은 group_ko가 본인 이름**이다
+//    (솔로 규약 — 태연·화사·지코처럼 병행하는 사람이 많다. CHANGELOG의 DECISIONS 실측: 병행 1,009명
+//    ·솔로 키 영상 14,193건). 위 루프는 groups.json 키 + 소속이 없는 솔로만 돌아서 그 행들을 못 본다.
+//    실제 피해: 태연의 공유 썸네일이 **성한빈이 태연 곡을 부른 영상**(group_ko='태연'으로 오배정된 행)
+//    이었는데, 그 행이 조회조차 안 되니 커버 가드에도 안 걸려 교체되지 않았다(2026-09-11).
+// ⚠️ 전 아티스트(1,700여 명)의 이름 키를 매번 조회하면 너무 느리다 — `group_ko=in.(…)`로 묶어봐도
+//    이 컬럼 조건은 인덱스를 제대로 못 타서 실측 12분을 넘겨 중단했다(2026-09-11). 그래서 **검증 우선**
+//    방식으로 바꿨다: 기존 캐시가 물고 있는 영상 id를 **PK로** 한 번에 조회해(빠르다) 커버인지 보고,
+//    오염된 키의 주인만 이름 키로 재조회한다. 실제로 고쳐야 할 사람은 수십 명 수준이다.
+const prevForAudit = (() => {
+  try { return fs.existsSync(OUT) ? JSON.parse(fs.readFileSync(OUT, 'utf8')) : null; } catch (e) { return null; }
+})();
+if (prevForAudit) {
+  const idOfUrl = url => (String(url || '').match(/\/vi\/([\w-]+)\//) || [])[1];
+  const idToKeys = new Map(); // 영상 id → ["members|소녀시대|태연", …]
+  for (const field of ['groups', 'members']) {
+    for (const [k, url] of Object.entries(prevForAudit[field] || {})) {
+      const id = idOfUrl(url); if (!id) continue;
+      if (!idToKeys.has(id)) idToKeys.set(id, []);
+      idToKeys.get(id).push(field + '|' + k);
+    }
+  }
+  const ids = [...idToKeys.keys()];
+  console.log(`[og-thumbs] 기존 캐시 ${ids.length}개 영상을 PK로 검증(커버 무대 가려내기)`);
+  const reQuery = new Set();
+  for (let i = 0; i < ids.length; i += 100) {
+    const batch = ids.slice(i, i + 100);
+    let rows = [];
+    try { rows = await fetchJson(SB + '?' + new URLSearchParams({ select: 'id,title,cover_of_members,cover_of_groups', id: 'in.(' + batch.join(',') + ')', limit: '200' })); }
+    catch (e) { console.warn(`  ! 캐시 검증 배치 실패: ${e.message}`); continue; }
+    for (const v of rows) {
+      if (!isCoverish(v)) continue;
+      dirtyIds.add(v.id);
+      for (const key of (idToKeys.get(v.id) || [])) {
+        const name = key.startsWith('members|') ? key.split('|').pop() : null; // "members|소녀시대|태연" → 태연
+        if (name && !groups[name]) reQuery.add(name);
+      }
+    }
+  }
+  console.log(`  커버로 판정된 기존 캐시 ${dirtyIds.size}개 · 재조회할 인물 ${reQuery.size}명`);
+  // 오염된 키의 주인만 이름 키(솔로 활동분)로 다시 훑는다 — 그 사람 영상이 거기 있기 때문.
+  let rq = 0;
+  for (const name of reQuery) {
+    const q = new URLSearchParams({
+      select: 'id,title,category,members,view_count,published_at,content_flag,cover_of_members,cover_of_groups',
+      group_ko: 'eq.' + name, order: 'published_at.desc', limit: String(PER_GROUP),
+    });
+    let rows = [];
+    try { rows = await fetchJson(SB + '?' + q); } catch (e) { console.warn(`  ! ${name} 재조회 실패: ${e.message}`); continue; }
+    for (const v of rows) {
+      if (!v.id) continue;
+      if (v.content_flag === 'hidden' || v.content_flag === 'irrelevant') continue;
+      if (isCoverish(v)) { dirtyIds.add(v.id); continue; }
+      soloPick[name] = better(soloPick[name], v);
+      if (ELIGIBLE.has(v.category)) (soloCands[name] ??= []).push(v);
+    }
+    if (++rq % 20 === 0) console.log(`  … 재조회 ${rq}/${reQuery.size}`);
+  }
+}
+
 // 멤버별 최종 선택: 소속 그룹 영상 우선, 없으면 이름 기준 폴백(겸임 멤버가 다른 그룹 영상에만 잡힌 경우)
 const memberOut = {};
 let memHit = 0, memFallback = 0, memMiss = 0, memSolo = 0;
@@ -127,9 +201,13 @@ for (const a of artists) {
   // ⚠️ 키는 `a.group.ko|이름`("솔로|아이유") 그대로 둔다 — build_group_pages.js의 ogImageForMember가
   //    정확히 그 형태로 찾는다. 조회만 본인 이름(_ytGroupKoFor)으로 했을 뿐이라 둘을 혼동하면 안 된다.
   const isSolo = !groups[a.group.ko];
+  // 솔로 아티스트는 본인 이름 키가 곧 본인 영상이라 1순위. 그룹 멤버는 소속 그룹 영상이 더 대표적이라
+  // 그쪽이 1순위이고, 본인 이름 키(솔로 활동분)는 그다음 — 둘 다 "본인이 나온 영상"이므로 이름만
+  // 같으면 걸리는 memberAny 폴백보다는 앞에 둔다.
   let pick = isSolo ? randomEligible(soloCands[a.name.ko], soloPick[a.name.ko]) : null;
   if (pick) memSolo++;
   if (!pick) { pick = randomEligible(memberCands[key], memberPick[key]); if (pick) memHit++; } // 소속 그룹의 MV/라이브 중 랜덤
+  if (!pick && !isSolo) { pick = randomEligible(soloCands[a.name.ko], soloPick[a.name.ko]); if (pick) memSolo++; } // 그룹 멤버의 솔로 활동분
   if (!pick) { pick = randomEligible(memberAnyCands[a.name.ko], memberAny[a.name.ko]); if (pick) memFallback++; } // 겸임/타그룹 폴백
   if (!pick) { memMiss++; continue; }
   memberOut[key] = pick.id;
@@ -167,16 +245,26 @@ let membersOut = Object.fromEntries(Object.entries(memberOut).map(([k, v]) => [k
 if (args.includes('--keep-existing') && fs.existsSync(OUT)) {
   try {
     const prev = JSON.parse(fs.readFileSync(OUT, 'utf8'));
-    let kept = 0, added = 0;
+    let kept = 0, added = 0, replaced = 0;
+    // 예전 값이 "커버 무대"를 물고 있으면 유지하지 않는다 — 그게 태연이 성한빈 무대로 떠 있던 이유다.
+    const idOf = url => (String(url || '').match(/\/vi\/([\w-]+)\//) || [])[1];
+    const isDirty = url => { const id = idOf(url); return !!id && dirtyIds.has(id); };
     for (const [field, next] of [['groups', groupsOut], ['members', membersOut]]) {
       for (const k of Object.keys(next)) {
-        if (prev[field] && prev[field][k]) { next[k] = prev[field][k]; kept++; }
+        const old = prev[field] && prev[field][k];
+        if (old && !isDirty(old)) { next[k] = old; kept++; }
+        else if (old) replaced++;   // 커버를 물고 있던 키 → 이번에 새로 뽑은 값으로 교체
         else added++;
       }
-      // 이번 실행에서 못 구한 키라도 예전 값이 있으면 남긴다(영상이 일시적으로 조회 안 된 경우 대비)
-      for (const k of Object.keys(prev[field] || {})) if (!next[k]) { next[k] = prev[field][k]; kept++; }
+      // 이번 실행에서 못 구한 키라도 예전 값이 있으면 남긴다(영상이 일시적으로 조회 안 된 경우 대비).
+      // 단 커버를 물고 있던 값이면 차라리 비워서 기본 이미지로 — 남의 무대를 대표로 두는 것보다 낫다.
+      for (const k of Object.keys(prev[field] || {})) {
+        if (next[k]) continue;
+        if (isDirty(prev[field][k])) { replaced++; continue; }
+        next[k] = prev[field][k]; kept++;
+      }
     }
-    console.log(`[og-thumbs] --keep-existing: 기존 값 ${kept}개 유지 · 새로 채운 키 ${added}개`);
+    console.log(`[og-thumbs] --keep-existing: 기존 값 ${kept}개 유지 · 새로 채운 키 ${added}개 · 커버라서 교체 ${replaced}개`);
   } catch (e) { console.warn('[og-thumbs] 기존 파일 병합 실패 — 전체 새로 씀:', e.message); }
 }
 const out = {
