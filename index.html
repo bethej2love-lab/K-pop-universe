@@ -408,8 +408,6 @@
     <div class="sp-btn-hint">라이브/쇼츠/예능 등 카테고리를 최신 로직으로 재분류.</div>
     <button class="sp-yt-sync" id="sp-catnull-btn" style="margin-top:4px;opacity:.8;">🩹 카테고리 유실 복구 (일회용)</button>
     <div class="sp-btn-hint">편집 모달의 장르 select에 <b>other/fan 옵션이 없어서</b>, 그 카테고리 영상을 모달로 저장할 때마다 category가 조용히 null로 지워지고 있었어요(2026-09-07 실측 854건 · 옵션은 이미 추가됨). 재분류 스윕은 tags_manual 행을 안 건드려서 이 행들은 영영 못 돌아와요. 제목으로 다시 추론해 채웁니다 — <b>category만</b> 건드리고 태그는 손 안 댐 · 스냅샷 되돌리기 가능.</div>
-    <button class="sp-yt-sync" id="sp-magcat-btn" style="margin-top:4px;opacity:.8;">🩹 매거진 예능탭 오분류 정리 (일회용)</button>
-    <div class="sp-btn-hint">예능 탭 9,327건 중 <b>7,841건(84%)이 디스패치</b> 공항·화보 클립이었어요(2026-09-08 실측 · 진짜 예능 채널은 488건). 채널에 기본 카테고리를 안 정해두면 music이 아닌 tier가 전부 '예능'으로 떨어지는 폴백 때문 — 잡지·연예매체는 예능이 아닌데 그 폴백을 맞았어요. <b>전체 탭으로 옮기고</b>(삭제 아님) 해당 채널 기본 카테고리를 "전체탭만"으로 고정해 재발도 막습니다 · 수동편집 제외 · 스냅샷 되돌리기 가능.</div>
     <button class="sp-yt-sync" id="sp-stalemistag-btn" style="margin-top:4px;opacity:.8;">🩹 확인된 옛 오태깅 정리 (일회용)</button>
     <div class="sp-btn-hint">2026-09-10 직캠 차트 조사 중 나온, <b>지금 매처로는 재현되지 않는</b> 옛 오태깅 뭉치 129건(같은 제목을 지금 매처에 넣으면 그 오답이 안 나옴 — 코드는 이미 고쳐졌고 DB 행만 굳어 있는 것):<br>XG의 'NEW DANCE'→더보이즈 <b>뉴</b>(9) · 박재범(Jay Park)→엔하이픈 <b>제이</b>(80) · 태진아(Tae Jin-ah)→러블리즈 <b>JIN</b>(20) · 마시로 'HOTLINE (Feat. BOBBY)'→<b>아이콘</b>(13) · 문세윤→스테이씨 <b>윤</b>(3) · 하지원→프로미스나인 <b>지원</b>(2) · 현아 "I'm Not Cool"→몬스타엑스 <b>아이엠</b>(2).<br>제목 시그니처 + 현재 태그가 <b>정확히 일치하는 행만</b> 골라 ①members에서 그 이름만 빼고 ②플래그 없는 행은 <b>'보류'</b>로 옮겨 검수 큐에 올려요. <b>group_ko는 안 건드림</b> — XG·태진아·하지원·문세윤은 미등록 인물이고 박재범·마시로는 현 소속이 애매해서 사람이 판단할 문제. 건수·표본 먼저 확인 · 수동편집 제외 · 스냅샷 되돌리기.</div>
     <button class="sp-yt-sync" id="sp-shortspromote-btn" style="margin-top:4px;opacity:.8;">⬆️ 가로→쇼츠 일괄 승격</button>
