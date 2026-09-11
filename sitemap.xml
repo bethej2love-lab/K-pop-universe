@@ -20366,16 +20366,6 @@
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://kpop-universe.kr/cover/이펙스/</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://kpop-universe.kr/en/cover/epex/</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
     <loc>https://kpop-universe.kr/cover/뉴진스/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
@@ -20462,6 +20452,16 @@
   </url>
   <url>
     <loc>https://kpop-universe.kr/en/cover/babymonster/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://kpop-universe.kr/cover/이펙스/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://kpop-universe.kr/en/cover/epex/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
