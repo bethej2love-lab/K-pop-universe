@@ -2878,9 +2878,38 @@ async function buildUniverse(){
         }
       }
     }else{
-      for(const ca of candA){const cb=candB.find(b=>b.group.ko===ca.group.ko);if(cb){artA=ca;artB=cb;shareKo=ca.group.ko;break;}}
+      // ⚠️ '솔로'는 실제 그룹이 아니라 **서로 무관한 솔로 아티스트들이 공유하는 placeholder**다
+      //    (grpData/GROUPS에 존재하지도 않는다). 다른 곳은 이미 `ko!=='솔로'` 가드가 있는데
+      //    (_gLabel·딥링크·ttGroupMembers 등) 연결선만 빠져 있었다.
+      //    주 소속(group.ko)만 비교하면 **해체 그룹 출신으로 솔로 이관된 멤버들이 전부 '솔로'를
+      //    공유한다고 판정**돼, 행성도 없는 자리에서 우주를 가로지르는 선이 그려진다. 솔로 아티스트는
+      //    "무소속 배치" 루프에서 소속사 방향·데뷔연도로 흩뿌려지므로 _worldPositions에 groupKo:'솔로'가
+      //    실제로 있고, 그래서 좌표를 찾는 데 성공해 **그려져 버린다**(2026-09-11 실측 464건 — 뉴이스트
+      //    JR·아론·백호·렌, 애프터스쿨 정아 등. 나나↔루시는 원래 '우아' 관계인데 '솔로'로 이어지고 있었다).
+      //    게다가 bubbleMesh가 없어 bmAlpha가 1로 고정 → 필터로 행성을 숨겨도 이 선들만 안 사라진다.
+      // 그래서 **실존 그룹만** 공유 그룹으로 인정한다. 1차는 기존대로 주 소속끼리(기존 동작 보존),
+      // 실패하면 2차로 부소속(groups[])까지 넓힌다 — 옛 그룹 이력이 거기 남아 있어서 464건이 전부
+      // 제자리(네이처·쥬얼리·애프터스쿨 …)를 찾는다.
+      // 실측: 기존 선 4,381개 그대로 + 464개 제자리 이동 + 그동안 아예 해석 못 하던 50개 복구 · 소실 0.
+      for(const ca of candA){const cb=candB.find(b=>b.group.ko===ca.group.ko&&grpData[b.group.ko]);if(cb){artA=ca;artB=cb;shareKo=ca.group.ko;break;}}
+      if(!artA){
+        outer2: for(const ca of candA){
+          for(const cb of candB){
+            for(const ga of _artistGroups(ca)){
+              if(!ga||!ga.ko||!grpData[ga.ko])continue;
+              if(_artistGroups(cb).some(gb=>gb&&gb.ko===ga.ko)){artA=ca;artB=cb;shareKo=ga.ko;break outer2;}
+            }
+          }
+        }
+      }
     }
     if(!artA||!artB)return;
+    // 최종 가드 — 행성이 없는 그룹엔 그릴 자리가 없다. 위 분기에서 이미 걸러지지만, conn.group이
+    // 명시된 경로는 그 값을 그대로 믿기 때문에 여기서 한 번 더 본다(실측: connections.json에
+    // grpData에 없는 '블락비 바스타즈' 3건 — 미등록 서브유닛). 행성이 없으면 _worldPositions에도
+    // 그 groupKo가 없어서 아래 폴백(_worldPos = 주 소속 위치)이 잡히고, 결국 **엉뚱한 자리에**
+    // 선이 그어진다. 그리는 것보다 안 그리는 게 맞다.
+    if(!grpData[shareKo])return;
     if(!artA.active||!artB.active)return; // 비활동/탈퇴 멤버는 행성 밖에 떠 있으므로 그룹 내 관계선을 아예 안 그림(토글로 안에 들어와도 마찬가지)
     const wpA=(artA._worldPositions||[]).find(wp=>wp.groupKo===shareKo);
     const wpB=(artB._worldPositions||[]).find(wp=>wp.groupKo===shareKo);
@@ -4514,6 +4543,21 @@ const _PROGRAM_COLLECTIONS=[
   {key:'isac', label:'아이돌스타 선수권대회', en:'Idol Star Athletics', kw:['아육대','아이돌스타 선수권','아이돌 스타 선수권','육상선수권']}, // 139건 76팀
   {key:'tingle', label:'팅글인터뷰', en:'Tingle Interview', kw:['팅글인터뷰','팅글 인터뷰']}, // 132건 49팀
   {key:'workman', label:'워크맨', en:'Workman', kw:['워크맨','workman']}, // 111건 44팀
+  // ── 개인 진행 자체 콘텐츠(2026-09-11 사용자 요청) ─────────────────────────────
+  // 위 항목들과 성격이 다르다. 멤버 **개인이 호스트**인 시리즈라 게스트가 매회 바뀌고, 그래서 영상의
+  // group_ko가 진행자가 아니라 **게스트 그룹**으로 태깅된다(실측: '사나의 냉터뷰' 19건이 14팀에
+  // 흩어져 있고 정작 트와이스는 4건뿐 — 르세라핌 사쿠라 편, 에스파 닝닝 편 …). 그 상태로는 진행자
+  // 카드에 하나도 안 뜨므로, `host`로 진행자를 명시해 그 카드에서만 group_ko 제약을 푼다.
+  // host가 없는 항목은 영상이 이미 본인 그룹으로 태깅돼 있어 필요 없다(팔레트=아이유 36건 전부
+  // group_ko '아이유' · 슈취타 78건 members에 슈가 75 · n월의 석진 13건 members에 진 13).
+  // ⚠️ 키워드는 공백 있는 형태와 없는 형태를 **둘 다** 넣는다 — 카드 버킷팅은 공백을 지우고 비교하지만
+  //    `_openProgramCollection`은 title_norm에 ilike를 그대로 걸어서, 해시태그 표기(#아이유의팔레트)가
+  //    한쪽에서만 잡힌다(잇츠라이브 아포스트로피 2종과 같은 이유).
+  {key:'iupalette', label:'아이유의 팔레트', en:"IU's Palette", kw:['아이유의 팔레트','아이유의팔레트','미니 팔레트']}, // 36건
+  {key:'suchwita', label:'슈취타', en:'Suchwita', kw:['슈취타','suchwita']}, // 78건(슈가)
+  {key:'monthlyjin', label:'n월의 석진', en:'Jin of the Month', kw:['n월의 석진','월의 석진']}, // 13건(진)
+  {key:'coldterview', label:'사나의 냉터뷰', en:"Sana's Cold Interview", kw:['사나의 냉터뷰','사나의냉터뷰'], host:{gko:'트와이스',mko:'사나'}}, // 19건 14팀
+  {key:'eterview', label:'성찬의 에터뷰', en:"Seongchan's Eterview", kw:['성찬의 에터뷰','성찬의에터뷰'], host:{gko:'라이즈',mko:'성찬'}}, // 4건 4팀
 ];
 // 검색어 q가 프로그램에 매칭되면 그 프로그램 객체를 돌려준다(공백 제거 후 양방향 포함 비교 + 영문명).
 function _matchPrograms(q,ql,qln){
@@ -9589,7 +9633,11 @@ function showT(a,cx,cy,keepNavStack,urlMode,_unusedPushMobNav,noFly){
   if(_hasRealGroup)_loadMemberConcertRow(a.name.ko,'tt-concert-row');
   else _loadConcertRow(_ttGroupQueryKo,'tt-concert-row');
   _loadCollectionRow(_ttGroupQueryKo,'tt-collection-row',_hasRealGroup?a.name.ko:null,a.name.ko);
-  _loadProgramRow(_ttGroupQueryKo,'tt-program-row',a.name.ko,a.name.ko);
+  // ⚠️ memberKo는 바로 위 _loadCollectionRow와 **같은 규칙**이어야 한다(2026-09-11 수정). 여기만
+  //    무조건 a.name.ko를 넘기고 있어서, 솔로 아티스트 카드의 출연 프로그램이 `members`에 이름이
+  //    태깅된 영상만 보고 있었다 — 솔로는 group_ko 자체가 본인 이름이라 members가 비어 있는 게
+  //    정상이라(실측: '아이유의 팔레트' 36건 전부 members=[]) 그 프로그램이 통째로 안 떴다.
+  _loadProgramRow(_ttGroupQueryKo,'tt-program-row',_hasRealGroup?a.name.ko:null,a.name.ko);
   _renderTtDiscography(a);
   // 트로피 3종(음악방송 1위/멜론 연간 TOP100/스포티파이 마일스톤)의 개인 기록 — 위 콘서트/컬렉션과 달리
   // _ytGroupKoFor가 아니라 a.group.ko(솔로면 "솔로" 그대로)+a.name.ko 조합을 그대로 쓴다. 이 세 트로피
@@ -20694,8 +20742,26 @@ async function _loadProgramRow(ko,containerId,memberKo,cardMemberKo){
     const{data,error}=await q;
     // 대기 중 다른 카드로 전환됐으면 버린다(_loadCollectionRow와 동일 가드)
     if(cardMemberKo?_openTArtist?.name?.ko!==cardMemberKo:_openGCko!==ko)return;
-    if(error||!data?.length)return;
-    const rows=_filterBannedVideos(data);
+    // 진행자 본인 카드에서만 — 자체 콘텐츠(사나의 냉터뷰 등)는 게스트 그룹으로 태깅돼 있어 위
+    // group_ko 제약에 안 걸린다. 그 프로그램만 따로, **그룹 제약 없이** 받아 합친다.
+    // title_norm은 인덱스를 타서 싸다(실측 2026-09-11: 같은 키워드가 title 4,565ms vs title_norm 75ms).
+    let rows=_filterBannedVideos(data||[]);
+    // 솔로 아티스트는 memberKo가 null로 들어오므로(위 호출부 주석) 카드 주인은 cardMemberKo로 본다.
+    const _hostMko=memberKo||cardMemberKo;
+    const hosted=_hostMko?_PROGRAM_COLLECTIONS.filter(p=>p.host&&p.host.mko===_hostMko&&p.host.gko===ko):[];
+    for(const hp of hosted){
+      const hq=await sb.from(_YT_TABLE)
+        .select('id,title_norm,thumb,group_ko,members,view_count,published_at,is_short,category,content_flag')
+        .or(hp.kw.map(k=>`title_norm.ilike."*${k}*"`).join(','))
+        .or('content_flag.is.null,content_flag.neq.기타')
+        .or('content_flag.is.null,content_flag.neq.무관').or('content_flag.is.null,content_flag.neq.보류')
+        .limit(500);
+      if(cardMemberKo?_openTArtist?.name?.ko!==cardMemberKo:_openGCko!==ko)return; // 그새 다른 카드로 전환됨
+      if(hq.error||!hq.data?.length)continue;
+      const seen=new Set(rows.map(v=>v.id));
+      _filterBannedVideos(hq.data).forEach(v=>{if(!seen.has(v.id))rows.push(v);});
+    }
+    if(!rows.length)return;
     // 프로그램별 버킷 — title_norm(쿼리와 동일 필드)에서 공백 무시 포함 매칭.
     const buckets=new Map();
     rows.forEach(v=>{
@@ -20740,7 +20806,10 @@ function _renderProgramRow(containerId,picks,ctx){
     const name=document.createElement('div');name.className='gc-collection-chip-name';name.textContent=p.label;
     const cnt=document.createElement('div');cnt.className='gc-collection-chip-cnt';cnt.textContent=currentLang==='ko'?`${vids.length}개`:String(vids.length);
     chip.appendChild(wrap);chip.appendChild(name);chip.appendChild(cnt);
-    chip.addEventListener('click',e=>{e.stopPropagation();_openProgramCollection(p,ctx);});
+    // 진행자 본인 카드에서 연 자체 콘텐츠는 그룹/멤버로 좁히면 안 된다 — 게스트가 매회 다르므로
+    // 사나 카드에서 '사나의 냉터뷰'를 ctx로 좁혀 열면 트와이스 편 4건만 남는다(19건 중).
+    const _hosted=!!(p.host&&ctx&&ctx.memberKo===p.host.mko&&ctx.gko===p.host.gko);
+    chip.addEventListener('click',e=>{e.stopPropagation();_openProgramCollection(p,_hosted?{}:ctx);});
     listEl.appendChild(chip);
   });
   row.style.display='';

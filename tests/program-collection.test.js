@@ -143,6 +143,23 @@ console.log('\n── Part 6: _PROGRAM_COLLECTIONS 불변식 ──');
   // 하한만 본다 — 개수 자체가 목적이 아니라 "확장분이 통째로 날아가지 않았나"를 보는 검사다.
   ck(list.length >= 27, `프로그램 ${list.length}개 등록(13→28 확장 후 STAR ZOOM IN 제외)`);
 
+  // ⓪ host(개인 진행 자체 콘텐츠, 2026-09-11) — 진행자가 로스터에 실제로 있어야 한다.
+  //    host는 "그 카드에서만 group_ko 제약을 푼다"는 표시라, 오타가 나면 **에러 없이 조용히**
+  //    아무 데서도 안 뜬다(사나의 냉터뷰 19건은 게스트 그룹 14팀에 흩어져 있어 진행자 카드 외엔
+  //    볼 곳이 없다). 그래서 여기서 이름을 못박는다.
+  (() => {
+    const ARTISTS = Object.values(JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'artists.json'), 'utf8')));
+    const hosts = list.filter(p => p.host);
+    if (!hosts.length) { ck(true, 'host 지정 프로그램 없음(검사 생략)'); return; }
+    const bad = hosts.filter(p => !ARTISTS.some(a => a.name && a.name.ko === p.host.mko &&
+      ((a.groups || [a.group]).some(g => g && g.ko === p.host.gko))));
+    ck(bad.length === 0, `host 진행자 ${hosts.length}명 전부 로스터에 실존` +
+      (bad.length ? ` — 없음: ${bad.map(p => `${p.label}(${p.host.gko}/${p.host.mko})`).join(', ')}` : ''));
+    const noKw = hosts.filter(p => !p.kw.some(k => k.includes(p.host.mko)));
+    ck(noKw.length === 0, 'host 프로그램 키워드에 진행자 이름이 들어감(다른 진행자 회차 혼입 방지)' +
+      (noKw.length ? ` — ${noKw.map(p => p.label).join(', ')}` : ''));
+  })();
+
   // ① 키/키워드 중복 — 같은 키워드가 두 프로그램에 있으면 한 영상이 두 버킷에 뜬다
   const keys = list.map(p => p.key);
   ck(new Set(keys).size === keys.length, 'key 중복 없음');
