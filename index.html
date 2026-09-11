@@ -183,7 +183,7 @@
   </div>
   <div id="tt-discog-strip" class="gc-discog-strip hscroll-drag"></div>
   <div id="tt-timeline-section" style="display:none"><div class="tt-timeline-hd">History</div><div id="tt-timeline"></div></div>
-</div><div id="tt-concert-row" class="concert-row"></div><div id="tt-collection-row" class="gc-collection-row" style="display:none"><div class="gc-collection-hd">Collections</div><div class="gc-collection-list"></div></div><div id="tt-program-row" class="gc-collection-row" style="display:none"><div class="gc-collection-hd gc-program-hd">Programs</div><div class="gc-collection-list"></div></div><div id="tv"></div></div>
+</div><div id="tt-concert-row" class="concert-row"></div><div id="tt-collection-row" class="gc-collection-row" style="display:none"><div class="gc-collection-hd">Collections</div><div class="gc-collection-list hscroll-drag"></div></div><div id="tt-program-row" class="gc-collection-row" style="display:none"><div class="gc-collection-hd gc-program-hd">Programs</div><div class="gc-collection-list hscroll-drag"></div></div><div id="tv"></div></div>
 <div id="gc">
   <div id="gc-bar"></div>
   <div id="gc-inner">
@@ -232,11 +232,11 @@
     <div id="gc-concert-row" class="concert-row"></div>
     <div id="gc-collection-row" class="gc-collection-row" style="display:none">
       <div class="gc-collection-hd">Collections</div>
-      <div class="gc-collection-list"></div>
+      <div class="gc-collection-list hscroll-drag"></div>
     </div>
     <div id="gc-program-row" class="gc-collection-row" style="display:none">
       <div class="gc-collection-hd gc-program-hd">Programs</div>
-      <div class="gc-collection-list"></div>
+      <div class="gc-collection-list hscroll-drag"></div>
     </div>
     <div id="gc-ch-vid"></div>
   </div>
@@ -406,10 +406,6 @@
     <div class="sp-btn-hint">멤버 태그를 최신 매칭으로 재검증(자동 태깅분 전체 — 자체 채널만이 아님). <b>그룹은 안 건드림</b> · 스냅샷 되돌리기.<br>제거에는 가드 둘이 걸려 있어요(2026-09-10): ①이름이 <b>제목/설명에 문자로도 없을 때만</b> 제거 ②<b>멤버가 전부 빠지는 행은 손대지 않고</b> 검수 큐로만 보냄. 판정에 쓰는 매처는 "태그를 붙일 때" 기준이라 <b>"매처가 모른다 ≠ 오태깅"</b>이거든요 — 가드 없이 돌리면 <code>GD X TAEYANG</code>의 지디, <code>Feat. Felix</code>의 필릭스, 바스타즈 유닛 멤버처럼 정상 태그가 대량으로 날아갑니다(실측).</div>
     <button class="sp-yt-sync" id="sp-catfix-btn" style="margin-top:4px;opacity:.8;">④ (선택) 영상 카테고리(라이브 등) 재분류(전체)</button>
     <div class="sp-btn-hint">라이브/쇼츠/예능 등 카테고리를 최신 로직으로 재분류.</div>
-    <button class="sp-yt-sync" id="sp-catnull-btn" style="margin-top:4px;opacity:.8;">🩹 카테고리 유실 복구 (일회용)</button>
-    <div class="sp-btn-hint">편집 모달의 장르 select에 <b>other/fan 옵션이 없어서</b>, 그 카테고리 영상을 모달로 저장할 때마다 category가 조용히 null로 지워지고 있었어요(2026-09-07 실측 854건 · 옵션은 이미 추가됨). 재분류 스윕은 tags_manual 행을 안 건드려서 이 행들은 영영 못 돌아와요. 제목으로 다시 추론해 채웁니다 — <b>category만</b> 건드리고 태그는 손 안 댐 · 스냅샷 되돌리기 가능.</div>
-    <button class="sp-yt-sync" id="sp-stalemistag-btn" style="margin-top:4px;opacity:.8;">🩹 확인된 옛 오태깅 정리 (일회용)</button>
-    <div class="sp-btn-hint">2026-09-10 직캠 차트 조사 중 나온, <b>지금 매처로는 재현되지 않는</b> 옛 오태깅 뭉치 129건(같은 제목을 지금 매처에 넣으면 그 오답이 안 나옴 — 코드는 이미 고쳐졌고 DB 행만 굳어 있는 것):<br>XG의 'NEW DANCE'→더보이즈 <b>뉴</b>(9) · 박재범(Jay Park)→엔하이픈 <b>제이</b>(80) · 태진아(Tae Jin-ah)→러블리즈 <b>JIN</b>(20) · 마시로 'HOTLINE (Feat. BOBBY)'→<b>아이콘</b>(13) · 문세윤→스테이씨 <b>윤</b>(3) · 하지원→프로미스나인 <b>지원</b>(2) · 현아 "I'm Not Cool"→몬스타엑스 <b>아이엠</b>(2).<br>제목 시그니처 + 현재 태그가 <b>정확히 일치하는 행만</b> 골라 ①members에서 그 이름만 빼고 ②플래그 없는 행은 <b>'보류'</b>로 옮겨 검수 큐에 올려요. <b>group_ko는 안 건드림</b> — XG·태진아·하지원·문세윤은 미등록 인물이고 박재범·마시로는 현 소속이 애매해서 사람이 판단할 문제. 건수·표본 먼저 확인 · 수동편집 제외 · 스냅샷 되돌리기.</div>
     <button class="sp-yt-sync" id="sp-shortspromote-btn" style="margin-top:4px;opacity:.8;">⬆️ 가로→쇼츠 일괄 승격</button>
     <div class="sp-btn-hint">동기화가 못 잡은 세로 영상(약 2.8만 건 추정)을 oardefault 실측으로 쇼츠 승격. <b>중단/재개 가능</b>(동시 12개·전량 ~90분) · <b>승격만</b>(강등 안 함) · 수동보호 · 스냅샷 되돌리기. 실행 중 다시 누르면 중단.</div>
 
@@ -20709,6 +20705,7 @@ function _renderCollectionRow(containerId,list){
     });
     listEl.appendChild(chip);
   });
+  _enableDragScroll(listEl); // 프로그램 행과 같은 컴포넌트(.gc-collection-list) — 같이 가로 스크롤
   row.style.display='';
 }
 // ── 카드 내 프로그램 컬렉션(2026-09-05, Part C) ────────────────────────────────
@@ -20810,6 +20807,12 @@ function _renderProgramRow(containerId,picks,ctx){
     chip.addEventListener('click',e=>{e.stopPropagation();_openProgramCollection(p,_hosted?{}:ctx);});
     listEl.appendChild(chip);
   });
+  // 디스코그래피 스트립과 같은 처리(2026-09-11) — CSS에 overflow-x:auto만 있으면 **데스크톱에선
+  // 사실상 스크롤이 안 된다**: 스크롤바를 숨겨놔서(scrollbar-width:none) 더 있는지도 안 보이고,
+  // 마우스 휠은 세로로만 먹는다. `_enableDragScroll`이 휠(세로 델타→가로)과 드래그를 붙여준다.
+  // 마크업 쪽 `hscroll-drag` 클래스는 짝꿍 — cursor:grab을 주고, 카드 스와이프 닫기 제스처가
+  // 이 영역의 가로 드래그를 가로채지 않게 제외시킨다(모바일에서 특히 중요).
+  _enableDragScroll(listEl);
   row.style.display='';
 }
 
