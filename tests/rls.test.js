@@ -47,6 +47,10 @@ const EXPECT = {
   kpop_events:                  { read: 'public', write: 'locked' },
   melon_yearly_top100:          { read: 'public', write: 'locked' },
   spotify_streaming_milestones: { read: 'public', write: 'locked' },
+  // 트로피 3종의 나머지 하나. 2026-09-11에 admin.js가 처음 쓰기 시작해(음악방송 1위 자동 수집)
+  // 여기 검사 대상으로 들어왔다 — 그전까지는 SQL 에디터 전용이라 코드에 .from()이 없었다.
+  // 읽기는 공개(로그아웃 방문자도 그룹 카드에서 트로피를 본다), 쓰기는 관리자만.
+  music_show_wins:              { read: 'public', write: 'locked' },
   // 유저가 공개하기로 한 것 / 집계
   public_collections:           { read: 'public', write: 'locked' },
   video_reactions:              { read: 'public', write: 'locked' },

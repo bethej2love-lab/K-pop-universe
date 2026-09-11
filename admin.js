@@ -1709,6 +1709,373 @@ async function _ytSweepCoverCleanup(){
 }
 _admExecBind('sp-cover-clean-btn',_ytSweepCoverCleanup,'원곡 오탐 청소');
 
+// ── [음악방송 1위 자동 수집](2026-09-11) ────────────────────────────────────────
+// music_show_wins를 매일 유입되는 **1위 직캠/앵콜 영상 제목**에서 직접 채운다.
+//
+// 왜: 이 테이블은 지금까지 tools/wiki_music_wins.mjs(영문 위키 연도별 표) + SQL 에디터로만 채웠다.
+//     표 자체는 정확하지만 **사람이 스크립트를 돌려줄 때까지 비어 있다** — 2026-09-11 실측에서 마지막
+//     수상이 2026-07-18이었고 그 뒤 8주치가 통째로 없었다. 그런데 그 8주치의 근거 영상은 매일 루틴의
+//     외부 채널 동기화(_ytSyncExtChannels)로 **이미 DB 안에 들어와 있었다** — KBSKpop·SBSKPOP·
+//     MBCkpop·MnetM2·ALLTHEKPOP이 1위 앵콜 직캠을 거의 빠짐없이 올리기 때문이다. 수집이 아니라
+//     파싱의 문제였다(실측: 제목에 '1위'가 든 2026년 영상 229건 → 유니크 수상 80건 → DB에 없던 34건).
+//
+// 왜 제목 파싱이 안전한가: 방송사 공식 채널의 1위 영상 제목은 사람이 쓰는 자유 문장이 아니라 **고정
+//     템플릿**이다 — 방송명·"1위"·따옴표 곡명·방송일(YYMMDD)이 자리까지 같다. LLM 판단이 아니라
+//     결정적 정규식이다. 다만 "빌보드 1위"·"서열 1위"·"올여름 유행템 1위"처럼 무관한 제목이 같은
+//     낱말을 쓰므로, 낱말이 아니라 **템플릿 전체**가 맞을 때만 후보로 삼는다.
+//
+// 자동 반영 게이트(A등급) — 셋을 모두 통과해야 한다:
+//   ① 방송일을 **추측 없이** 안다. 둘 중 하나면 된다:
+//      · 제목에 박혀 있거나(YYMMDD 또는 @MCOUNTDOWN_YYYY.M.D), 또는
+//      · 제목에 날짜가 없어도 **업로드일 자체가 그 방송 요일**이거나(= 방송 당일 업로드).
+//      둘 다 아니면 직전 방송 요일로 역산하는 셈이라 B로 보낸다(쇼챔피언·엠카 본채널 앵콜이 이 경우).
+//   ② 그 날짜의 요일이 그 방송 고정 요일과 맞는다(뮤뱅 금·음중 토·인가 일·엠카 목·쇼챔 수·더쇼 화).
+//      특집 편성으로 요일이 밀리면 A가 아니라 B로 떨어질 뿐, 버리지 않는다.
+//   ③ 아티스트가 로스터에서 **유일하게** 해석된다. 동명이인이면 B(사람이 판단할 몫).
+// ⚠️ B등급을 자동으로 넣지 않는 것은 코드로 걸어야 한다 — 루틴이 도는 중에는 _sweepConfirmSimple가
+//    무조건 true를 돌려주므로(무인 실행 규칙), 확인창은 게이트가 아니다.
+//
+// 되돌리기: 영상 스윕과 달리 여기서 하는 일은 update가 아니라 **insert**라 _snapshotBeforeBulk(영상 행
+//   스냅샷)의 대상이 아니다. 대신 방금 넣은 id를 localStorage에 남겨 "↩︎ 방금 넣은 1위 되돌리기"로 지운다.
+const _MSW_TABLE='music_show_wins';
+const _MSW_LS_LAST='kpu_adm_mswin_last';
+// 방송 고정 요일(0=일 … 6=토). music_show_wins.show 값과 철자가 정확히 같아야 한다(기존 2,626행 기준).
+const _MSW_SHOW_DOW={'뮤직뱅크':5,'쇼음악중심':6,'인기가요':0,'엠카운트다운':4,'쇼챔피언':3,'더쇼':2};
+
+function _mswNorm(s){
+  return String(s||'').toLowerCase().normalize('NFKC').replace(/&amp;/g,'&').replace(/[\s'’`´.\-_!:()·,~]/g,'');
+}
+// 그룹/멤버 이름 색인(지연 생성). 그룹은 ko·en·altNames, 멤버는 ko·en. 한 글자 키는 오매칭이 심해 제외
+// (하이키 'H1-KEY'가 샤이니 '키'로 잡힌 전례 — 여기선 위치가 고정된 템플릿이지만 같은 규칙을 지킨다).
+let _mswIdx=null;
+function _mswNameIdx(){
+  if(_mswIdx)return _mswIdx;
+  const g=new Map(),m=new Map();
+  const put=(map,name,val)=>{
+    const k=_mswNorm(name);
+    if(!k||k.length<2)return;
+    const cur=map.get(k);
+    if(!cur)map.set(k,[val]);
+    else if(!cur.some(x=>x.gko===val.gko&&x.mko===val.mko))cur.push(val);
+  };
+  Object.keys(GROUPS||{}).forEach(ko=>{
+    const info=GROUPS[ko]||{};
+    [ko,info.en,...(info.altNames||[])].filter(Boolean).forEach(n=>put(g,n,{gko:ko,mko:null}));
+  });
+  (ARTISTS||[]).forEach(a=>{
+    if(!a||!a.name||!a.group)return;
+    [a.name.ko,a.name.en].filter(Boolean).forEach(n=>put(m,n,{gko:a.group.ko,mko:a.name.ko}));
+  });
+  return(_mswIdx={g,m});
+}
+// 제목에서 뽑은 아티스트 토큰 하나를 로스터로 해석한다.
+// hintGko(영상에 이미 붙어 있는 group_ko)는 **동명이인·겸임을 가르는 데만** 쓴다 — 영상 태그 자체가
+// 틀릴 수 있어서(뉴비트 채널의 "리센느 선배님들의 1위를 축하드립니다" 같은 행) 단독 근거로는 못 쓴다.
+// 반환: {group_ko,member_ko,kind} | {ambiguous:true,…} | null
+function _mswResolveArtist(tok,hintGko){
+  if(!tok)return null;
+  const s=String(tok).replace(/\s*[（(](?:feat|featuring|ft|with)[^)）]*[)）]/gi,'').replace(/[“”"‘’]/g,' ').replace(/\s+/g,' ').trim();
+  if(!s)return null;
+  const cands=[s];
+  const par=s.match(/^(.+?)\s*[（(]\s*([^)）]+?)\s*[)）]\s*$/); // "ALPHA DRIVE ONE (알파드라이브원)" 양쪽 다 시도
+  if(par){cands.push(par[1].trim(),par[2].trim());}
+  const{g,m}=_mswNameIdx();
+  for(const c of cands){
+    const k=_mswNorm(c);
+    if(!k)continue;
+    const gh=g.get(k);
+    if(gh){
+      if(gh.length===1)return{group_ko:gh[0].gko,member_ko:null,kind:'group'};
+      const pick=hintGko&&gh.find(x=>x.gko===hintGko);
+      if(pick)return{group_ko:pick.gko,member_ko:null,kind:'group'};
+      return{ambiguous:true,tok:c,among:gh.map(x=>x.gko)};
+    }
+    const mh=m.get(k);
+    if(mh&&mh.length){
+      if(mh.length===1)return{group_ko:mh[0].gko,member_ko:mh[0].mko,kind:'member'};
+      // 후보가 여럿 — 같은 사람의 겸임(태용=NCT 127·NCT U)인지, 동명이인(민규=세븐틴·동키즈)인지 가른다.
+      const ko=mh[0].mko;
+      const allSame=mh.every(x=>x.mko===ko&&_amtSamePerson(ko,mh[0].gko,x.gko));
+      // 영상 group_ko가 솔로 표기(=본인 이름)인 경우가 있다 — 연준·태용·아이린 실측. 그때는 그룹으로 못 좁힌다.
+      const pick=hintGko&&mh.find(x=>x.gko===hintGko);
+      if(pick)return{group_ko:pick.gko,member_ko:pick.mko,kind:'member'};
+      if(allSame)return{group_ko:mh[0].gko,member_ko:ko,kind:'member'}; // 겸임 — 주 소속(첫 항목)으로
+      return{ambiguous:true,tok:c,among:mh.map(x=>`${x.mko}(${x.gko})`)};
+    }
+  }
+  return null;
+}
+const _mswIso=(y,mo,d)=>`${y}-${String(mo).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+function _mswValidYmd(y,mo,d){
+  if(mo<1||mo>12||d<1||d>31)return false;
+  const dt=new Date(Date.UTC(y,mo-1,d));
+  return dt.getUTCFullYear()===y&&dt.getUTCMonth()===mo-1&&dt.getUTCDate()===d;
+}
+const _mswDow=iso=>new Date(iso+'T00:00:00Z').getUTCDay();
+const _mswDayDiff=(a,b)=>Math.round((new Date(a+'T00:00:00Z')-new Date(b+'T00:00:00Z'))/86400000);
+// 제목에 박힌 방송일 후보. YYMMDD는 앞뒤로 숫자가 붙지 않은 것만 — 실제로 "2607028"(7자리 오타)이
+// 있는데, 느슨하게 잡으면 260702로 읽혀 엉뚱한 날짜가 된다. 같은 방송의 정상 표기 영상이 따로 있으므로
+// 오타 건은 그냥 버리는 게 맞다.
+function _mswDateCandidates(t){
+  const out=[];let m;
+  const re=/(?<!\d)(\d{2})(\d{2})(\d{2})(?!\d)/g;
+  while((m=re.exec(t))){const y=2000+ +m[1],mo=+m[2],d=+m[3];if(_mswValidYmd(y,mo,d))out.push(_mswIso(y,mo,d));}
+  const re2=/(20\d{2})\.(\d{1,2})\.(\d{1,2})(?!\d)/g; // @MCOUNTDOWN_2026.8.27
+  while((m=re2.exec(t))){const y=+m[1],mo=+m[2],d=+m[3];if(_mswValidYmd(y,mo,d))out.push(_mswIso(y,mo,d));}
+  return[...new Set(out)];
+}
+// 방송일 확정 — 업로드일보다 뒤일 수 없고(하루는 타임존 여유), 너무 오래된 숫자는 EP번호·해상도 오검출이다.
+function _mswPickWinDate(t,pub){
+  const cands=_mswDateCandidates(t).filter(d=>{const diff=_mswDayDiff(pub,d);return diff>=-1&&diff<=14;});
+  if(!cands.length)return null;
+  cands.sort((a,b)=>Math.abs(_mswDayDiff(pub,a))-Math.abs(_mswDayDiff(pub,b)));
+  return cands[0];
+}
+// pub 이전(당일 포함)에서 가장 가까운 요일 — 제목에 날짜가 없는 쇼챔피언·엠카 본채널용.
+function _mswNearestDow(pub,dow){
+  const d=new Date(pub+'T00:00:00Z');
+  for(let i=0;i<8;i++){if(d.getUTCDay()===dow)break;d.setUTCDate(d.getUTCDate()-1);}
+  return d.toISOString().slice(0,10);
+}
+// 제목 템플릿 — 전부 2026년 실DB 표본에서 그대로 가져왔다. 곡명은 greedy(.+)로 잡는다: 곡 안에
+// 아포스트로피가 들어가는 게 흔하다("눈에 거슬리고 싶어 (Eye-Poppin')" 실측).
+const _MSW_RULES=[
+  // [4K] 알파드라이브원 'BORN DIRE' 뮤직뱅크 1위 앵콜직캠 (… Encore Facecam) @뮤직뱅크(Music Bank) 260904
+  {show:'뮤직뱅크',parse:t=>{const m=t.match(/\[4K\]\s*(.+?)\s*['‘](.+)['’]\s*뮤직뱅크\s*1위\s*앵콜/);return m&&{artist:m[1],song:m[2]};}},
+  // [앵콜캠4K] 엔하이픈 'Bloody Paradise' 인기가요 1위 앵콜 직캠 (… Encore Fancam) @SBS Inkigayo 260830
+  {show:'인기가요',parse:t=>{const m=t.match(/\[앵콜캠\s*4K\]\s*(.+?)\s*['‘](.+)['’]\s*인기가요\s*1위/);return m&&{artist:m[1],song:m[2]};}},
+  // [#음중직캠] NCT 127 (엔시티 127) – Blingy 1위 직캠 | 쇼! 음악중심 | MBC260905
+  {show:'쇼음악중심',parse:t=>{const m=t.match(/\[#?\s*음중직캠\s*\]\s*(.+?)\s*[–—-]\s*(.+?)\s*1위\s*직캠/);return m&&{artist:m[1],song:m[2]};}},
+  // [쇼! 음악중심 미방분] 9월 1주차 1위 NCT 127 (엔시티 127) - Blingy | Show! MusicCore | MBC260905방송
+  {show:'쇼음악중심',parse:t=>{const m=t.match(/\[쇼!?\s*음악중심\s*미방분\]\s*\d{1,2}월\s*\d{1,2}주차\s*1위\s*(.+?)\s*-\s*(.+?)\s*\|/);return m&&{artist:m[1],song:m[2]};}},
+  // [MPD직캠] 엔하이픈 1위 앵콜 직캠 4K 'Bloody Paradise' (… FanCam No.1 Encore) | @MCOUNTDOWN_2026.8.27
+  {show:'엠카운트다운',parse:t=>{const m=t.match(/\[MPD직캠\]\s*(.+?)\s*1위\s*앵콜\s*직캠\s*4K\s*['‘](.+?)['’]\s*[（(]/);return m&&{artist:m[1],song:m[2]};}},
+  // 8월 마지막 주 1위 'ENHYPEN (엔하이픈)'의 'Bloody Paradise' 앵콜 무대! (Full ver.) #엠카운트다운 EP.943
+  // — 제목에 방송일이 없다. 같은 1위를 위 MPD직캠이 A등급으로 덮으므로 여기서 B로 남아도 손해가 없다.
+  {show:'엠카운트다운',dow:4,parse:t=>{const m=t.match(/\d{1,2}월\s*(?:마지막|\d)\s*주\s*1위\s*['‘](.+?)['’]의\s*['‘](.+?)['’]\s*앵콜\s*무대/);return m&&{artist:m[1],song:m[2]};}},
+  // [쇼챔 1위] 9월 2주 챔피언송 ＜ 82MAJOR (82메이저)- Like Fire ＞ 앵콜 Full ver.
+  {show:'쇼챔피언',dow:3,parse:t=>{const m=t.match(/\[쇼챔\s*1위\]\s*\d{1,2}월\s*\d\s*주\s*챔피언송\s*[＜<]\s*(.+?)\s*[-–]\s*(.+?)\s*[＞>]/);return m&&{artist:m[1],song:m[2]};}},
+  // 더쇼는 표기가 네 갈래라 정규식 하나로 못 잡는다(2026 실측):
+  //   THE SHOW CHOICE - RESCENE 'MINAMI' [THE SHOW] 260714       (그룹 '팬픽캠 멤버')
+  //   [THE SHOW CHOICE] Pretty Girl - RESCENE [THE SHOW] 260714   (곡 - 그룹)
+  //   [FAN CAM 4K] THE SHOW CHOICE - SWEAT - KISS OF LIFE …       (앞의 CHOICE - 뒤에 곡 - 그룹)
+  //   TWS, THE SHOW CHOICE! [THE SHOW 251021]                     (그룹, CHOICE!)
+  // 그래서 조각을 나눠 **로스터로 해석되는 쪽을 아티스트로** 고르고 나머지를 곡으로 본다.
+  {show:'더쇼',multi:true,parse:t=>{
+    if(!/THE\s*SHOW\s*CHOICE/i.test(t))return null;
+    const pre=t.match(/(?:^|\])\s*([^,\[\]]+?)\s*,\s*THE\s*SHOW\s*CHOICE/i);
+    if(pre)return{artist:pre[1],song:null};
+    let seg=t.replace(/^[\s\S]*?THE\s*SHOW\s*CHOICE\s*\]?\s*[-–]?\s*/i,'');
+    seg=seg.split(/\[\s*THE\s*SHOW|@\s*the\s*show/i)[0];
+    seg=seg.replace(/['‘][^'’]*['’]/g,' ').replace(/\s+/g,' ').trim(); // 팬픽캠 멤버명(따옴표)은 수상자가 아니다
+    if(!seg)return null;
+    return{segs:seg.split(/\s+[-–]\s+/).map(s=>s.trim()).filter(Boolean)};
+  }},
+];
+// 영상 한 행 → 수상 후보 하나. 못 읽으면 null.
+function _mswParseWin(title,pub,hintGko){
+  const t=String(title||'').replace(/\s+/g,' ').trim();
+  if(!t||!pub)return null;
+  for(const R of _MSW_RULES){
+    let hit=null;
+    try{hit=R.parse(t);}catch(e){continue;}
+    if(!hit)continue;
+    let art=null,song=null,reasons=[];
+    if(hit.segs){
+      // 조각 중 로스터로 풀리는 것 하나를 아티스트로 — 전체 문자열을 먼저 시도한다(H1-KEY처럼 이름에
+      // 하이픈이 든 그룹을 조각내지 않기 위해).
+      const whole=_mswResolveArtist(hit.segs.join(' - '),hintGko);
+      if(whole&&!whole.ambiguous){art=whole;}
+      else{
+        for(const s of hit.segs){
+          const r=_mswResolveArtist(s,hintGko);
+          if(r&&!r.ambiguous){art=r;song=hit.segs.filter(x=>x!==s).join(' - ')||null;break;}
+          if(r&&r.ambiguous&&!art)art=r;
+        }
+      }
+    }else{
+      art=_mswResolveArtist(hit.artist,hintGko);
+      song=hit.song;
+    }
+    if(!art)return{show:R.show,grade:'B',why:'아티스트 해석 실패',artistTok:hit.artist||(hit.segs||[]).join(' - '),title:t};
+    if(art.ambiguous)return{show:R.show,grade:'B',why:`동명이인 — ${(art.among||[]).join(' / ')}`,artistTok:art.tok,title:t};
+    let win=_mswPickWinDate(t,pub),dated=!!win,why=[];
+    if(!win){
+      const dow=R.dow!=null?R.dow:_MSW_SHOW_DOW[R.show];
+      win=_mswNearestDow(pub,dow);
+      // 업로드일 자체가 그 방송 요일이면 방송 당일 업로드라 날짜가 확정이다(쇼챔피언 표본 전건이 그랬다).
+      // 그게 아니면 며칠 전 방송을 뒤늦게 올린 것이라 "직전 방송일"이라는 추측이 섞인다 → B.
+      if(_mswDow(pub)!==dow)why.push('제목에 방송일 없음 — 업로드일에서 역산');
+    }
+    const dow=_MSW_SHOW_DOW[R.show];
+    if(dow!=null&&_mswDow(win)!==dow)why.push(`요일 불일치(${'일월화수목금토'[_mswDow(win)]}) — ${R.show}은 ${'일월화수목금토'[dow]}요일`);
+    const gap=_mswDayDiff(pub,win);
+    if(gap<-1||gap>14)why.push(`업로드일과 ${gap}일 차이`);
+    song=(song||'').replace(/[＜＞<>"“”]/g,'').replace(/\s+/g,' ').trim()||null;
+    return{show:R.show,win_date:win,group_ko:art.group_ko,member_ko:art.member_ko||null,song_title:song,
+      grade:why.length?'B':'A',why:why.join(' · '),dated,title:t};
+  }
+  return null;
+}
+const _mswKey=r=>`${r.show}|${r.win_date}|${r.group_ko}|${r.member_ko||''}`;
+// 후보 영상 조회 — 조회 단위를 **월 × 키워드**로 잘게 쪼갠다. 왜 이렇게까지 하냐면(2026-09-11 실측):
+//   · 제목 ILIKE는 인덱스를 못 탄다. 스캔 범위가 넓으면 statement timeout(57014)이 나는데, PostgREST
+//     에러는 화면에서 "0건"과 구분이 안 돼서 **아무것도 못 찾은 것처럼 조용히 지나간다**.
+//   · 실측: 전기간 `1위` 단독 조회 = 죽음 / 2026년 한 해 = 27.8초(같은 쿼리가 어떤 날은 30초 초과로
+//     죽는다) / 최근 90일 = 0.31초. 월 단위로 끊으면 2026년 9개월 × 키워드 3개 = 27쿼리에 19초,
+//     3초 넘긴 쿼리 0개·실패 0개로 안정적이었다.
+//   · OR도 비싸다 — 같은 90일 범위에서 `or(ilike,ilike,ilike)` 5.8초 vs 단일 ilike 0.31초. 그래서
+//     키워드를 OR로 묶지 않고 따로 조회해 합친다(중복은 id로 제거).
+// 과거분은 tools/wiki_music_wins.mjs(위키 표)가 채우는 영역이고, 이 수집기의 일은 "어제 올라온 1위를
+// 오늘 넣는 것"이라 최근만 보면 된다.
+const _MSW_TITLE_KW=['*1위*','*SHOW CHOICE*','*챔피언송*'];
+function _mswMonthSlices(fromISO,toISO){
+  const out=[];
+  let[y,m]=fromISO.split('-').map(Number);
+  for(let i=0;i<64;i++){
+    const a=`${y}-${String(m).padStart(2,'0')}-01`;
+    if(a>=toISO)break;
+    const ny=m===12?y+1:y,nm=m===12?1:m+1;
+    out.push([a,`${ny}-${String(nm).padStart(2,'0')}-01`]);
+    y=ny;m=nm;
+  }
+  return out;
+}
+async function _mswFetchCandidates(monthsBack){
+  const out=[],seen=new Set(),failed=[];
+  const now=new Date();
+  const from=new Date(Date.UTC(now.getUTCFullYear(),now.getUTCMonth()-(monthsBack-1),1)).toISOString().slice(0,10);
+  const to=new Date(Date.UTC(now.getUTCFullYear(),now.getUTCMonth()+1,1)).toISOString().slice(0,10);
+  const slices=_mswMonthSlices(from,to);
+  let done=0;
+  for(const[a,b]of slices){
+    for(const kw of _MSW_TITLE_KW){
+      done++;
+      _ytSetProg(`[음방 1위] 후보 영상 조회 중… ${a.slice(0,7)} (${done}/${slices.length*_MSW_TITLE_KW.length} · ${out.length}건)`);
+      // 월·키워드당 수십 건이라 한 페이지(1000)로 끝나지만, 넘칠 때를 대비해 id 커서로 이어 받는다.
+      let cursor=null;
+      for(let page=0;page<20;page++){
+        let q=sb.from(_YT_TABLE).select('id,title,group_ko,published_at').ilike('title',kw)
+          .gte('published_at',a).lt('published_at',b).order('id').limit(1000);
+        if(cursor)q=q.gt('id',cursor);
+        const{data,error}=await q;
+        // 한 구간이 타임아웃으로 죽어도 나머지는 계속 본다. 다만 **몇 구간이 빠졌는지 반드시 보고**한다
+        // — 조용히 넘어가면 "오늘은 새 1위가 없네"와 구분이 안 된다.
+        if(error){failed.push(`${a.slice(0,7)} ${kw}: ${error.message}`);break;}
+        if(!data||!data.length)break;
+        data.forEach(v=>{if(!seen.has(v.id)){seen.add(v.id);out.push(v);}});
+        if(data.length<1000)break;
+        cursor=data[data.length-1].id;
+      }
+    }
+  }
+  return{rows:out,failed};
+}
+async function _ytSweepMusicShowWins(){
+  if(!sb){_ytSetProg('Supabase 연결 없음');return;}
+  const btn=document.getElementById('sp-mswin-btn');
+  if(btn)btn.disabled=true;
+  try{
+    // 루틴(무인 매일 실행)은 최근 3개월만 본다 — 1위 영상은 방송 당일·다음날 올라오므로 그 안에 다
+    // 들어온다(9쿼리 ≈ 6초). 사람이 버튼으로 부르면 최근 12개월까지 훑는다(36쿼리 ≈ 25초, 놓친 구간 회수).
+    const{rows,failed:fetchFailed}=await _mswFetchCandidates(_admRoutineRunning?3:12);
+    if(fetchFailed.length)console.warn('[음방 1위] 조회 실패 구간:\n'+fetchFailed.join('\n'));
+    if(!rows||!rows.length){
+      _ytSetProg('1위 후보 영상이 없어요'+(fetchFailed.length?` — ⚠️ ${fetchFailed.length}개 구간 조회 실패(콘솔). 다시 눌러주세요.`:''));return;
+    }
+    _ytSetProg(`[음방 1위] 후보 영상 ${rows.length}건 파싱 중…`);
+    const A=new Map(),B=new Map();let parsed=0;
+    for(const v of rows){
+      const r=_mswParseWin(v.title,(v.published_at||'').slice(0,10),v.group_ko);
+      if(!r)continue;
+      parsed++;
+      r.videoId=v.id;
+      if(!r.win_date||!r.group_ko){ // 해석 실패 — 키를 못 만드니 목록으로만
+        B.set('x'+v.id,r);continue;
+      }
+      const map=r.grade==='A'?A:B,k=_mswKey(r);
+      const cur=map.get(k);
+      // 같은 수상을 여러 방송사 채널이 올린다 — 곡명이 있는 쪽을 남긴다(더쇼 팬캠은 곡명이 없음).
+      if(!cur||(!cur.song_title&&r.song_title))map.set(k,r);
+    }
+    // A로 확정된 수상은 B 후보에서 제외 — 같은 1위를 미방분/직캠이 각각 올려 한쪽만 요일이 어긋나는 경우가 있다.
+    for(const k of A.keys())B.delete(k);
+    _ytSetProg('[음방 1위] 기존 수상 기록과 대조 중…');
+    // ⚠️ 이 테이블의 id는 정수가 아니라 **uuid**라 키셋 페이지네이션(_sbFetchAll)의 전제가 깨진다
+    //    (2026-09-11 실측: id=gt.0이 22P02로 죽음). range 기반 _sbSelectAll을 쓴다.
+    const{data:cur,error:e2}=await _sbSelectAll(()=>sb.from(_MSW_TABLE).select('id,show,win_date,group_ko,member_ko').order('win_date').order('show'));
+    if(e2){_ytSetProg('기존 기록 조회 실패: '+e2.message);return;}
+    // 대조 대상이 잘리면 **이미 있는 수상을 새 것으로 착각해 중복 insert**한다 — 몇 건을 읽었는지 남긴다.
+    console.log(`[음방 1위] 기존 수상 ${cur?cur.length:0}건과 대조`);
+    const exist=new Set((cur||[]).map(x=>_mswKey(x)));
+    const newA=[...A.values()].filter(r=>!exist.has(_mswKey(r))).sort((a,b)=>b.win_date.localeCompare(a.win_date));
+    const newB=[...B.values()].filter(r=>!r.win_date||!exist.has(_mswKey(r))).sort((a,b)=>String(b.win_date||'').localeCompare(String(a.win_date||'')));
+    const _line=r=>`${r.win_date||'?'} ${r.show} · ${r.group_ko||'?'}${r.member_ko?' '+r.member_ko:''} · ${r.song_title||'(곡 미상)'}`;
+    console.log(`[음방 1위] 영상 ${rows.length} · 파싱 ${parsed} · 유니크 A ${A.size}/B ${B.size} · 기존 ${exist.size}건과 대조 → 신규 A ${newA.length} · 검수 B ${newB.length}`);
+    if(newA.length)console.log('[음방 1위] 자동 반영 대상(A):\n'+newA.map(r=>_line(r)+'  ← '+r.title.slice(0,70)).join('\n'));
+    if(newB.length)console.log('[음방 1위] 검수 필요(B — 자동 반영 안 함):\n'+newB.map(r=>`${_line(r)}  [${r.why}]  ← ${r.title.slice(0,70)}`).join('\n'));
+    if(newB.length){ // 사람이 SQL 에디터로 바로 넣을 수 있게 — 화면에서 판단할 UI는 아직 없다
+      const esc=s=>s==null?'NULL':`'${String(s).replace(/'/g,"''")}'`;
+      console.log('[음방 1위] B등급을 확인 후 직접 넣을 SQL:\nINSERT INTO music_show_wins (show, win_date, song_title, group_ko, member_ko) VALUES\n'+
+        newB.filter(r=>r.win_date&&r.group_ko).map(r=>`  (${esc(r.show)}, ${esc(r.win_date)}, ${esc(r.song_title)}, ${esc(r.group_ko)}, ${esc(r.member_ko)})`).join(',\n')+';');
+    }
+    if(!newA.length){
+      // "없어요"는 조회가 다 돌았을 때만 믿을 수 있는 말이다 — 구간이 빠졌으면 그걸 같이 말한다.
+      _ytSetProg(`음방 1위 — 새로 넣을 게 없어요 (영상 ${rows.length} · 파싱 ${parsed} · 기존 ${exist.size}건과 중복)`+
+        (newB.length?` · 검수 필요 ${newB.length}건은 콘솔(F12)`:'')+
+        (fetchFailed.length?` · ⚠️ ${fetchFailed.length}개 구간은 타임아웃으로 못 봤어요(콘솔) — 다시 눌러주세요`:''));
+      return;
+    }
+    const preview=newA.slice(0,25).map(r=>'· '+_line(r)).join('\n');
+    if(!await _sweepConfirmSimple('음악방송 1위 수집','반영',
+      `1위 직캠·앵콜 영상 제목에서 찾은 **새 수상 ${newA.length}건**을 넣을까요?\n\n${preview}${newA.length>25?`\n… 외 ${newA.length-25}건(전체 목록 콘솔)`:''}\n\n· 제목에 방송일이 박혀 있고 그 요일이 방송 요일과 맞고 아티스트가 유일하게 해석된 것만(A등급)\n· 확신이 덜한 ${newB.length}건은 넣지 않고 콘솔에 SQL로만 남겨요\n· 되돌리기: "↩︎ 방금 넣은 1위 되돌리기"`)){
+      _ytSetProg(`취소됨 — 미리보기만 (신규 ${newA.length}건, 목록 콘솔).`);return;
+    }
+    const payload=newA.map(r=>({show:r.show,win_date:r.win_date,song_title:r.song_title,group_ko:r.group_ko,member_ko:r.member_ko}));
+    const inserted=[];let failed=0,firstErr='';
+    for(let i=0;i<payload.length;i+=200){
+      _ytSetProg(`[음방 1위] ${i}/${payload.length}건 반영 중…`);
+      const{data,error:e3}=await sb.from(_MSW_TABLE).insert(payload.slice(i,i+200)).select('id');
+      if(e3){failed+=payload.slice(i,i+200).length;firstErr=firstErr||e3.message;console.error('[음방 1위] 반영 실패',e3);continue;}
+      (data||[]).forEach(x=>inserted.push(x.id));
+    }
+    // ⚠️ "넣었다"가 아니라 "들어간 걸 봤다"까지 확인한다 — 정책이 없으면 insert가 조용히 0행으로 끝나는
+    //    사고가 있었다(admin_bulk_snapshots, 2026-08-22). select('id')가 돌려준 개수가 진짜 결과다.
+    if(!inserted.length){
+      _ytSetProg(`반영 실패 — 0건 저장됨. 쓰기 권한(RLS) 확인 필요${firstErr?': '+firstErr:''} (콘솔 SQL로 대신 넣을 수 있어요)`);
+      const esc=s=>s==null?'NULL':`'${String(s).replace(/'/g,"''")}'`;
+      console.log('[음방 1위] 직접 넣을 SQL:\nINSERT INTO music_show_wins (show, win_date, song_title, group_ko, member_ko) VALUES\n'+
+        payload.map(r=>`  (${esc(r.show)}, ${esc(r.win_date)}, ${esc(r.song_title)}, ${esc(r.group_ko)}, ${esc(r.member_ko)})`).join(',\n')+';');
+      return;
+    }
+    try{localStorage.setItem(_MSW_LS_LAST,JSON.stringify({at:Date.now(),ids:inserted}));}catch(e){}
+    _ytSetProg(`완료! 음악방송 1위 ${inserted.length}건 추가${failed?` (실패 ${failed}건 — ${firstErr})`:''}.`+
+      (newB.length?` 검수 필요 ${newB.length}건은 콘솔(F12)에 SQL로 남겼어요.`:'')+
+      (fetchFailed.length?` ⚠️ 영상 조회에서 ${fetchFailed.length}개 구간이 타임아웃으로 빠졌어요(콘솔) — 다시 누르면 그 구간을 다시 봅니다.`:'')+
+      ` (되돌리기: "↩︎ 방금 넣은 1위 되돌리기")`);
+  }catch(e){_ytSetProg('오류: '+e.message);}
+  finally{if(btn)btn.disabled=false;}
+}
+_admExecBind('sp-mswin-btn',_ytSweepMusicShowWins,'음악방송 1위 수집');
+async function _mswUndoLast(){
+  if(!sb){_ytSetProg('Supabase 연결 없음');return;}
+  let last=null;
+  try{last=JSON.parse(localStorage.getItem(_MSW_LS_LAST)||'null');}catch(e){}
+  if(!last||!last.ids||!last.ids.length){_ytSetProg('되돌릴 1위 수집 기록이 없어요');return;}
+  const when=new Date(last.at).toLocaleString('ko-KR');
+  if(!await _sweepConfirmSimple('1위 수집 되돌리기','되돌리기',`${when}에 넣은 음악방송 1위 ${last.ids.length}건을 지울까요?\n\n그때 이 버튼으로 넣은 행만 지웁니다(그 전부터 있던 기록은 그대로).`))
+    {_ytSetProg('취소됨');return;}
+  let del=0;
+  for(let i=0;i<last.ids.length;i+=200){
+    const{error}=await sb.from(_MSW_TABLE).delete().in('id',last.ids.slice(i,i+200));
+    if(error){_ytSetProg('되돌리기 실패: '+error.message);return;}
+    del+=last.ids.slice(i,i+200).length;
+  }
+  try{localStorage.removeItem(_MSW_LS_LAST);}catch(e){}
+  _ytSetProg(`되돌렸어요 — 음악방송 1위 ${del}건 삭제.`);
+}
+_admExecBind('sp-mswin-undo-btn',_mswUndoLast,'1위 수집 되돌리기');
+
 // ── [겸임 멤버 중복 태그 정리](2026-08-31) ─────────────────────────────────────
 // 위 _normalizeMemberTags는 **앞으로 붙는** 태그만 고친다. 이미 쌓인 행은 이 스윕이 정리한다.
 // 판정 로직을 따로 쓰지 않고 같은 함수를 그대로 통과시키므로 매처와 정리가 어긋날 수 없다.
@@ -9639,6 +10006,11 @@ async function _admRunRoutine(withSync){
   //    ⚠️ 3단계 결정(_coverConfidence)이 먼저 들어간 뒤라서 안전하다 — HIGH만 자동 적용되고 확신이
   //    부족한 건 검수 큐로 간다. 게이트 없이 루틴에 넣었으면 bare 오탐이 매일 자동으로 쌓였을 것.
   steps.push({name:'5. 원곡 태깅 v2 (HIGH만 자동 · 나머지는 검수 큐)',fn:_ytSweepCoverV2});
+  // 6. 음악방송 1위 수집(2026-09-11 추가) — 1위 앵콜 직캠은 동기화로 이미 들어와 있는데 수상 기록을
+  //    사람이 위키 스크립트로 채워줄 때까지 비어 있었다(실측: 2026-07-18에서 8주간 정지, 신규 34건).
+  //    ⚠️ 여기서도 안전한 건 확인창이 아니라 **A등급 게이트**다 — 루틴 중엔 _sweepConfirmSimple가
+  //    무조건 true다. B등급(요일 불일치·동명이인·날짜 역산)은 자동 반영 대상이 아니라 콘솔 SQL로만 남는다.
+  steps.push({name:'6. 음악방송 1위 수집 (A등급만 자동)',fn:_ytSweepMusicShowWins});
   const t0=Date.now();
   // 단계별 소요 시간 계측(2026-09-07) — "루틴이 10시간 걸린다"는 제보를 받고도 **어느 단계가** 그런지
   // 알 방법이 없었다(총 시간만 찍혔음). 매 실행의 단계별 시간을 남기고, 다음 실행 때 지난번 값을 옆에

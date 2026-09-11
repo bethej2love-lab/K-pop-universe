@@ -415,6 +415,12 @@
     <button class="sp-yt-sync" id="sp-shortspromote-btn" style="margin-top:4px;opacity:.8;">⬆️ 가로→쇼츠 일괄 승격</button>
     <div class="sp-btn-hint">동기화가 못 잡은 세로 영상(약 2.8만 건 추정)을 oardefault 실측으로 쇼츠 승격. <b>중단/재개 가능</b>(동시 12개·전량 ~90분) · <b>승격만</b>(강등 안 함) · 수동보호 · 스냅샷 되돌리기. 실행 중 다시 누르면 중단.</div>
 
+    <div class="sp-subsec-lbl" style="margin-top:12px;">음악방송 1위 <span style="opacity:.6;font-weight:400;">— 매일 루틴에 포함</span></div>
+    <button class="sp-yt-sync" id="sp-mswin-btn" style="margin-top:4px;opacity:.8;">🏆 음악방송 1위 수집 (1위 직캠·앵콜 제목에서)</button>
+    <div class="sp-btn-hint">이미 동기화된 <b>1위 앵콜 직캠 영상 제목</b>에서 수상 정보를 읽어 <code>music_show_wins</code>에 넣어요. 방송사 채널 제목은 고정 템플릿이라(<code>[4K] 그룹 '곡' 뮤직뱅크 1위 앵콜직캠 … @뮤직뱅크(Music Bank) <b>260904</b></code>) 정규식으로 정확히 뽑힙니다 — 뮤뱅·인가·음중·엠카·쇼챔·더쇼 6개.<br><b>자동 반영은 3중 게이트를 다 통과한 것만</b>(A등급): ①방송일을 추측 없이 알 것(제목에 박혀 있거나, 날짜가 없어도 <b>업로드일이 그 방송 요일</b>=당일 업로드) ②그 날짜의 요일이 그 방송 요일과 맞을 것(뮤뱅 금·음중 토·인가 일·엠카 목·쇼챔 수·더쇼 화) ③아티스트가 로스터에서 <b>유일하게</b> 해석될 것. 하나라도 어긋나면(요일 밀린 특집 편성·동명이인·며칠 뒤에 올라온 앵콜 영상) 넣지 않고 <b>콘솔에 SQL로만</b> 남겨요. 중복은 <code>(방송·날짜·그룹·멤버)</code>로 걸러집니다 · 건수·목록 먼저 확인.</div>
+    <button class="sp-yt-sync" id="sp-mswin-undo-btn" style="margin-top:4px;opacity:.8;">↩︎ 방금 넣은 1위 되돌리기</button>
+    <div class="sp-btn-hint">바로 위 버튼이 <b>마지막으로 넣은 행만</b> 지워요(그 전부터 있던 기록은 그대로). 영상 스윕과 달리 여기서 하는 일은 수정이 아니라 <b>추가</b>라, 공용 "↩︎ 마지막 일괄 작업 되돌리기"(영상 행 스냅샷)의 대상이 아니에요.</div>
+
     <div class="sp-subsec-lbl" style="margin-top:12px;">커버곡 정리 <span style="opacity:.6;font-weight:400;">— 필요할 때 · 순서대로</span></div>
     <button class="sp-yt-sync" id="sp-cover-v2-btn" style="margin-top:4px;opacity:.8;">🎵 원곡 태깅 v2 (곡명 사전 · 전체 재검증)</button>
     <div class="sp-btn-hint">제목의 곡명을 디스코그래피·멜론TOP100·스포티파이 사전과 대조해 원곡자를 정하고(cover_of + cover_of_song), 커버·챌린지면 with_*를 정리. 옛 오저장(원곡자가 group_ko)은 재배정. <b>건수 먼저 보여주고 확인</b> · 애매한 동명곡은 안 건드림(콘솔) · 수동보호 · 스냅샷. 아래 1차/2차/제목추출은 이 버튼이 대체합니다.</div>

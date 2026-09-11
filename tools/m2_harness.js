@@ -124,6 +124,18 @@ function load(){
     S(/^let _amtIndex\s*=/m,'_amtIndex');
     ['_amtBuildIndex','_amtEntries','_amtSamePerson','_amtGroupNamedInTitle','_amtPickGroup','_normalizeMemberTags'].forEach(n=>F(new RegExp('^function '+n+'\\(','m'),n));
   }
+  // 음악방송 1위 파서(2026-09-11) — 있으면 싣는다.
+  // ⚠️ 여기만 추출 방식이 다르다: 제목 템플릿 정규식에 이스케이프된 괄호·대괄호(`\]`, `[（(]`)가 많아
+  //    extractStatement의 괄호 깊이 계산이 어긋난다(정규식 안인지 밖인지를 안 보고 문자만 센다).
+  //    이 블록은 상수와 순수 함수가 _MSW_TABLE~_mswKey 사이에 연속으로 붙어 있으므로 줄 범위로 통째로
+  //    싣는다. 블록에 새 함수를 넣을 땐 반드시 그 사이(=_mswKey 위)에 둘 것.
+  if(/^const _MSW_TABLE\s*=/m.test(adminSrc)){
+    const lines=adminSrc.split('\n');
+    const s=lines.findIndex(l=>/^const _MSW_TABLE\s*=/.test(l));
+    const e=lines.findIndex(l=>/^const _mswKey\s*=/.test(l));
+    if(s<0||e<s)throw new Error('[harness] _MSW 블록 경계를 못 찾음');
+    pieces.push(lines.slice(s,e+1).join('\n'));
+  }
   // 수동 편집 이력 diff(2026-08-31) — 있으면 싣는다
   if(/^const _TAG_LOG_FIELDS\s*=/m.test(adminSrc)){
     S(/^const _TAG_LOG_FIELDS\s*=/m,'_TAG_LOG_FIELDS');
@@ -156,7 +168,9 @@ module.exports={_m2ParseTitle,_atmResolveMembers,_atmMatchesMember,_atmTokenize,
   _coverConfidence:(typeof _coverConfidence==='function')?_coverConfidence:null,
   _fancamParseTitle:(typeof _fancamParseTitle==='function')?_fancamParseTitle:null,
   _tagLogDiff:(typeof _tagLogDiff==='function')?_tagLogDiff:null,_tagLogSame:(typeof _tagLogSame==='function')?_tagLogSame:null,
-  _normalizeMemberTags:(typeof _normalizeMemberTags==='function')?_normalizeMemberTags:null,_amtSamePerson:(typeof _amtSamePerson==='function')?_amtSamePerson:null};
+  _normalizeMemberTags:(typeof _normalizeMemberTags==='function')?_normalizeMemberTags:null,_amtSamePerson:(typeof _amtSamePerson==='function')?_amtSamePerson:null,
+  _mswParseWin:(typeof _mswParseWin==='function')?_mswParseWin:null,_mswResolveArtist:(typeof _mswResolveArtist==='function')?_mswResolveArtist:null,
+  _mswPickWinDate:(typeof _mswPickWinDate==='function')?_mswPickWinDate:null,_mswKey:(typeof _mswKey==='function')?_mswKey:null};
 `;
   const mod={exports:{}};
   new Function('module','exports','require',src)(mod,mod.exports,require);
