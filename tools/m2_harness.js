@@ -118,6 +118,12 @@ function load(){
     if(/^function _coverRestoreSignal\(/m.test(adminSrc))F(/^function _coverRestoreSignal\(/m,'_coverRestoreSignal');
     // 확신 등급(2026-09-07) — 스윕의 3단계 결정(HIGH 자동/MEDIUM 큐/LOW 무시)을 테스트에서 그대로 부른다
     if(/^function _coverConfidence\(/m.test(adminSrc))F(/^function _coverConfidence\(/m,'_coverConfidence');
+    // 크레딧 기반 공연자 재배정(2026-09-11) — 있으면 싣는다
+    if(/^function _coverCreditReassign\(/m.test(adminSrc)){
+      S(/^const _cvNorm=/m,'_cvNorm');
+      F(/^function _coverCreditExact\(/m,'_coverCreditExact');
+      F(/^function _coverCreditReassign\(/m,'_coverCreditReassign');
+    }
   }
   // 겸임 멤버 태그 정규화(2026-08-31) — 있으면 싣는다
   if(/^function _normalizeMemberTags\(/m.test(adminSrc)){
@@ -165,6 +171,11 @@ module.exports={_m2ParseTitle,_atmResolveMembers,_atmMatchesMember,_atmTokenize,
   _coverResolve:(typeof _coverResolve==='function')?_coverResolve:null,_coverCandidates:(typeof _coverCandidates==='function')?_coverCandidates:null,_coverSongKeys:(typeof _coverSongKeys==='function')?_coverSongKeys:null,_coverBuildIndex:(typeof _coverBuildIndex==='function')?_coverBuildIndex:null,
   _coverContext:(typeof _coverContext==='function')?_coverContext:null,_coverHasCollabSignal:(typeof _coverHasCollabSignal==='function')?_coverHasCollabSignal:null,
   _coverRestoreSignal:(typeof _coverRestoreSignal==='function')?_coverRestoreSignal:null,
+  // 크레딧 텍스트("원곡 : X")를 원곡자로 해석 — 크레딧 기반 공연자 재배정(2026-09-11)이 쓴다
+  _coverOriginFromText:(typeof _coverOriginFromText==='function')?_coverOriginFromText:null,
+  _coverIsSelf:(typeof _coverIsSelf==='function')?_coverIsSelf:null,
+  _coverCreditReassign:(typeof _coverCreditReassign==='function')?_coverCreditReassign:null,
+  _coverCreditExact:(typeof _coverCreditExact==='function')?_coverCreditExact:null,
   _coverConfidence:(typeof _coverConfidence==='function')?_coverConfidence:null,
   _fancamParseTitle:(typeof _fancamParseTitle==='function')?_fancamParseTitle:null,
   _tagLogDiff:(typeof _tagLogDiff==='function')?_tagLogDiff:null,_tagLogSame:(typeof _tagLogSame==='function')?_tagLogSame:null,

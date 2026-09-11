@@ -1301,6 +1301,55 @@ function _coverIsSelf(origin,performerGko,performerMembers){
   return false;
 }
 function _coverDebutYear(gko){const g=GROUPS[gko];return g?(parseInt(g.debut)||0):0;}
+// ── 크레딧 기반 공연자 재배정(2026-09-11, 사용자 요청) ─────────────────────────
+// 제목에 `(원곡: X)`가 **명시**돼 있는데 group_ko가 바로 그 X인 행 = **원곡자가 공연자 자리에**
+// 들어간 옛 오저장이다. 실측: `[MCD] 성한빈 - INVU (원곡：태연)`이 group_ko='태연'·members=['태연'],
+// `FANTASY BOYS - Super (원곡 : 세븐틴)`이 group_ko='세븐틴'. 이런 행이 196건 중 100여 건.
+//
+// ⚠️ `_coverResolve`만으로는 영원히 안 고쳐진다 — `_coverIsSelf`가 `origin.gko===performerGko`를 보고
+//    **"자기 곡이니 커버 아님"**으로 끊기 때문이다. group_ko가 틀려서 생긴 닭과 달걀이라, **크레딧이
+//    명시적인 경우에 한해** group_ko를 의심하고 제목에서 공연자를 다시 찾는다.
+//
+// 안전장치 넷:
+//   ① 크레딧이 제목에 **명시된** 행만. 곡명 사전 추론으로는 절대 발동하지 않는다.
+//   ② 엔진(_m2ParseTitle)이 제목에서 **다른 실존 그룹**을 찾아냈을 때만. 못 찾으면 손대지 않는다
+//      (성한빈처럼 로스터 매칭이 안 되는 경우가 실제로 있다 — 그건 사람이 볼 몫).
+//   ③ 공연자 == 원곡자면 **자기 곡**이니 그대로 둔다(`CORTIS 성현&건호 - JoyRide (원곡: 코르티스)`).
+//   ④ tags_manual은 호출부에서 이미 제외된다.
+// 실측 정확도(6개 표본): 판타지보이즈·싸이커스·이즈나·우아 정확 재배정, 코르티스는 자기 곡으로 보존,
+// 성한빈은 공연자 미검출로 보류 — 오재배정 0건.
+// 크레딧 문자열이 해석된 원곡자의 **정식 표기 중 하나와 정확히 일치**하는지. 부분 매칭을 막는 게 목적이다
+// — 실측: `원곡 : 서태지와 아이들`이 (여자)**아이들**로 해석돼서 cover_of에 엉뚱하게 붙었다.
+// 괄호 병기(`TWICE(트와이스)`)나 슬래시 나열은 조각으로 쪼개 각각을 본다.
+const _cvNorm=s=>String(s||'').toLowerCase().normalize('NFKC').replace(/[^a-z0-9가-힣]/g,'');
+function _coverCreditExact(cred,origin){
+  const names=[];
+  if(origin.kind==='group'){const g=GROUPS[origin.gko]||{};names.push(origin.gko,g.en,...(g.altNames||[]));}
+  else{const a=ARTISTS.find(x=>x.name&&x.name.ko===origin.mko);names.push(origin.mko,a&&a.name&&a.name.en);}
+  const set=new Set(names.filter(Boolean).map(_cvNorm));
+  const parts=String(cred||'').split(/[()（）/·,]/).map(s=>s.trim()).filter(Boolean);
+  return [cred,...parts].some(p=>set.has(_cvNorm(p)));
+}
+function _coverCreditReassign(v){
+  const title=v.title||'';
+  const m=title.match(/원곡\s*[:：]\s*([^)）\]|#·]+)/);
+  if(!m)return null;
+  const cred=m[1].trim().replace(/\s*\)$/,'');
+  if(!cred)return null;
+  let origin=null;try{origin=_coverOriginFromText(cred);}catch(e){}
+  if(!origin)return null;
+  if(!_coverCreditExact(cred,origin))return null; // 크레딧이 정식 표기와 정확히 일치할 때만(아래 주석)
+  // 저장된 group_ko가 바로 그 원곡자인가 — 그룹이면 gko, 솔로 키(group_ko=사람 이름)면 mko도 인정
+  if(!(origin.gko===v.group_ko||(origin.kind!=='group'&&origin.mko===v.group_ko)))return null;
+  let r=null;try{r=_m2ParseTitle(title,undefined,false,(v.published_at||'').slice(0,10));}catch(e){}
+  const ng=r&&r.primaryGroup;
+  if(!ng||ng===v.group_ko||!GROUPS[ng])return null; // 공연자 미검출 / 자기 곡 → 보류
+  const members=(r.membersByGroup&&r.membersByGroup[ng])||[];
+  const patch={group_ko:ng,members};
+  if(origin.kind==='group')patch.cover_of_groups=[origin.gko];
+  else patch.cover_of_members=[`${origin.mko}(${origin.gko})`];
+  return{patch,to:ng,origin};
+}
 // 핵심 해석기. row:{title,group_ko,members,with_members,with_groups,published_at}, opts:{chartRows}
 // 반환: null(커버 아님/판정 불가) 또는 {isCover, origin|null, song|null, ambiguous, reason, patch}
 function _coverResolve(row,opts){
@@ -1544,7 +1593,7 @@ async function _ytSweepCoverV2(){
     if(!rows?.length){_ytSetProg('대상 행이 없어요'+(_covSince?' (증분 — 신규 유입 없음)':''));return;}
     const EXCLUDE=new Set(['무관','보류','hidden','외부인']);
     const same=(a,b)=>{const x=[...new Set(a||[])].sort(),y=[...new Set(b||[])].sort();return x.length===y.length&&x.every((v,i)=>v===y[i]);};
-    let manualSkipped=0,ambiguous=0,external=0,coverLocked=0,mediumN=0;const updates=[];const sample={cover:[],move:[],wipe:[],reassign:[],ambiguous:[]};
+    let manualSkipped=0,ambiguous=0,external=0,coverLocked=0,mediumN=0,creditFix=0;const updates=[];const sample={cover:[],move:[],wipe:[],reassign:[],ambiguous:[]};
     const push=(k,line)=>{if(sample[k].length<60)sample[k].push(line);};
     // MEDIUM(동명곡·약한 근거·외부 원곡 가능성)은 자동으로 붙이지 않고 검수 큐로 — 3단계 결정의 중간 칸.
     // pri 0 = 게이트가 막은 건(원곡을 붙일 뻔한 판단이 대기 중) / 1 = 애매(원래도 아무것도 안 하던 것).
@@ -1558,6 +1607,17 @@ async function _ytSweepCoverV2(){
       const v=rows[i];
       if(v.content_flag&&EXCLUDE.has(v.content_flag))continue;
       if(v.cover_manual){coverLocked++;continue;} // 사람이 원곡을 확정한 행 — 매처 판정으로 되돌리지 않는다
+      // ★ 크레딧 기반 공연자 재배정 — _coverResolve보다 **먼저** 본다. 이 행들은 group_ko가 원곡자라
+      //   _coverResolve가 "자기 곡"으로 끊어버려서 아래 경로로는 영원히 안 고쳐진다(위 함수 주석).
+      if(!v.tags_manual){
+        let cr=null;try{cr=_coverCreditReassign(v);}catch(e){}
+        if(cr){
+          creditFix++;
+          push('reassign',`#${v.id} [${v.group_ko}→${cr.to}] 크레딧 원곡=${cr.origin.kind==='group'?cr.origin.gko:cr.origin.mko} | ${(v.title||'').slice(0,66)}`);
+          updates.push({id:v.id,patch:cr.patch});
+          continue;
+        }
+      }
       let r=null;try{r=_coverResolve(v,{chartRows});}catch(e){console.warn('[원곡 v2] 해석 오류',v.id,e);continue;}
       if(!r)continue;
       if(r.ambiguous){ambiguous++;push('ambiguous',`#${v.id} ${(v.title||'').slice(0,80)}`);enqueue(v,r,1);continue;}
@@ -1592,10 +1652,10 @@ async function _ytSweepCoverV2(){
       await _tagReviewEnqueueBatch(queue.slice(0,QCAP));
     }
     const n={cover:updates.filter(u=>(u.patch.cover_of_groups||u.patch.cover_of_members)&&!u.patch.group_ko).length,wipe:updates.filter(u=>!u.patch.cover_of_groups&&!u.patch.cover_of_members&&!u.patch.group_ko).length,reassign:updates.filter(u=>u.patch.group_ko).length};
-    console.log(`[원곡 v2] 조회 ${rows.length} · 정정 후보 ${updates.length} (원곡 태깅/이동 ${n.cover} · with만 정리 ${n.wipe} · 옛 오저장 재배정 ${n.reassign}) · 애매 ${ambiguous} · 외부 원곡 ${external} · 수동보호 ${manualSkipped} · 원곡잠금 ${coverLocked} · 검수큐 ${Math.min(queue.length,QCAP)}(확신 부족 ${mediumN}+애매 ${ambiguous})`);
+    console.log(`[원곡 v2] 조회 ${rows.length} · 정정 후보 ${updates.length} (원곡 태깅/이동 ${n.cover} · with만 정리 ${n.wipe} · 옛 오저장 재배정 ${n.reassign} · 그중 크레딧 재배정 ${creditFix}) · 애매 ${ambiguous} · 외부 원곡 ${external} · 수동보호 ${manualSkipped} · 원곡잠금 ${coverLocked} · 검수큐 ${Math.min(queue.length,QCAP)}(확신 부족 ${mediumN}+애매 ${ambiguous})`);
     Object.entries(sample).forEach(([k,arr])=>{if(arr.length)console.log(`[원곡 v2] 표본 — ${k}:\n`+arr.join('\n'));});
     if(!updates.length){_ytSetProg(`원곡 v2 — 자동 정정할 것 없음 (조회 ${rows.length} · 검수 큐 ${Math.min(queue.length,QCAP)}건 적재 · 애매 ${ambiguous}건 콘솔)`);return;}
-    if(!await _sweepConfirmSimple("원곡 태깅 v2","정정 실행",`원곡 태깅 v2 — ${updates.length}건 정정할까요?\n\n· 원곡 태깅/with→cover_of 이동 ${n.cover}\n· 커버인데 with만 정리 ${n.wipe}\n· 옛 오저장(원곡자가 group_ko) 재배정 ${n.reassign}\n· 애매(동명곡·판정 불가) ${ambiguous}건은 건드리지 않음(콘솔)\n· 확신 부족 ${mediumN}건은 자동 적용 대신 검수 큐로(총 ${Math.min(queue.length,QCAP)}건 적재됨)
+    if(!await _sweepConfirmSimple("원곡 태깅 v2","정정 실행",`원곡 태깅 v2 — ${updates.length}건 정정할까요?\n\n· 원곡 태깅/with→cover_of 이동 ${n.cover}\n· 커버인데 with만 정리 ${n.wipe}\n· 옛 오저장(원곡자가 group_ko) 재배정 ${n.reassign}\n   └ 그중 **제목 크레딧으로 공연자를 되찾은 것 ${creditFix}건** ("성한빈 - INVU (원곡：태연)"이 태연으로 저장돼 있던 유형)\n· 애매(동명곡·판정 불가) ${ambiguous}건은 건드리지 않음(콘솔)\n· 확신 부족 ${mediumN}건은 자동 적용 대신 검수 큐로(총 ${Math.min(queue.length,QCAP)}건 적재됨)
 · 수동편집 ${manualSkipped}건·원곡잠금 ${coverLocked}건 제외 · 표본 콘솔(F12) · 스냅샷 되돌리기 가능`)){
       _ytSetProg(`취소됨 — 미리보기만 (후보 ${updates.length}, 표본 콘솔).`);return;
     }
@@ -2197,14 +2257,35 @@ _admExecBind('sp-debutgate-btn',_ytSweepDebutGate,'데뷔 이전 정리');
 const _mtGrpToks=ko=>{const v=GROUPS[ko];return v?[ko,v.en,...(v.altNames||[])].filter(Boolean).map(t=>t.toUpperCase()):[];};
 const _mtNorm=t=>' '+(t||'').toUpperCase().replace(/[^가-힣A-Z0-9]/g,' ').replace(/\s+/g,' ')+' ';
 // 느슨한 포함 — "저장 그룹이 제목에 근거가 있나"(스킵 판정)처럼 **넓게 걸수록 안전한** 쪽에 쓴다.
-const _mtTitleHas=(nu,ko)=>_mtGrpToks(ko).some(t=>nu.includes(t));
+// ⚠️ 공백을 지운 형태도 같이 본다(2026-09-11). 영문명에 공백이 있는 그룹(`Super Junior`)은 제목에서
+//    해시태그로 붙여 쓰는 게 보통인데(`#superjunior`), _norm이 비영숫자를 공백으로 바꾸므로
+//    'SUPER JUNIOR' ≠ 'SUPERJUNIOR'가 되어 **근거가 있는데도 없다고 판정**했다. 실측: 슈퍼주니어
+//    영상이 `#superjunior #unis` 때문에 유니스로 재배정될 뻔했다. 이 함수는 "넓게 걸수록 안전한"
+//    스킵 판정 전용이라 여기서만 느슨하게 하고, 적용 판정(_mtTitleHasToken)은 그대로 둔다.
+const _mtTitleHas=(nu,ko)=>{
+  const squeezed=nu.replace(/\s+/g,'');
+  return _mtGrpToks(ko).some(t=>nu.includes(t)||(t.includes(' ')&&squeezed.includes(t.replace(/\s+/g,''))));
+};
 // 단독 토큰 — "이 그룹으로 옮겨도 되나"(적용 판정)처럼 **좁게 걸어야 안전한** 쪽에 쓴다.
 // _norm이 비영숫자를 공백으로 바꾸고 앞뒤에 공백을 덧대므로, 양쪽 공백까지 포함해 찾으면 부분문자열
 // 매칭이 배제된다(미등록 그룹 영상이 제목 속 다른 그룹명 조각에 끌려가는 걸 막는 게 목적).
 const _mtTitleHasToken=(nu,ko)=>_mtGrpToks(ko).some(t=>nu.includes(' '+t+' '));
 // 콜라보 신호는 원문(구두점 유지)에서 검사 — 정규화하면 w/·feat. 같은 신호가 사라져 콜라보를 놓친다.
-const _MT_COLLAB=/with |w\/| feat| ft[ .]|선배|챌린지|challenge|원곡| cover|커버|＆| & |함께|출연|게스트|guest| vs | x /i;
-const _MISTAG={_grpToks:_mtGrpToks,_norm:_mtNorm,_titleHas:_mtTitleHas,_titleHasToken:_mtTitleHasToken,COLLAB:_MT_COLLAB};
+// 2026-09-11 보강: `(feat.`처럼 **괄호 바로 뒤**에 오는 신호와 `후배님과`류 호칭이 빠져 있었다.
+// 실측으로 새던 것 — `[COVER] 'Who' - Lauv (feat. BTS)ㅣHYOLYN(효린)`이 방탄소년단으로,
+// `#몬스타엑스 #셔누 후배님과 …`(비투비 채널)가 몬스타엑스로 재배정 후보에 올랐다.
+// 여기 신호가 걸리면 "게스트일 뿐 원태그가 맞을 수 있다"고 보고 건드리지 않으므로, 넓힐수록 안전하다.
+const _MT_COLLAB=/with |w\/|[(\[]?\s*feat| ft[ .]|선배|후배|님과|님\s*과|챌린지|challenge|원곡| cover|커버|＆| & |함께|출연|게스트|guest| vs | x /i;
+// ★ 자체 채널 게이트(2026-09-11) — 이 한 줄이 재배정 오탐의 대부분을 없앤다.
+// 그 그룹 **공식 채널에서 수집된 영상**이면 group_ko는 곧 채널 주인이라 이미 맞다. 제목에 다른
+// 그룹이 나오는 건 게스트·합동·약칭 충돌일 뿐이지 "잘못 저장된 것"이 아니다.
+// 실측(2026-09-11, 표본 4만 행): 재배정 후보 103건 중 **96건(93%)이 자체 채널 영상**이었다.
+//   · 베이비돈크라이 공식 쇼츠 50건이 해시태그 `#BDC`(= 그룹 약칭) 때문에 **비디씨(BDC)**로 갈 뻔했다
+//   · 엔하이픈 채널의 앤팀 멤버 언급, 비투비 채널의 몬스타엑스 언급 등도 전부 여기서 걸린다
+// ⚠️ handle이 group_ko와 **같을 때만** 인정한다 — 다른 그룹 공식 채널에서 온 영상이 이 그룹으로
+//    잘못 태깅된 경우는 진짜 재배정 대상이므로 걸러내면 안 된다.
+const _mtOwnChannel=v=>!!(v&&v.source_tier==='official'&&v.source_handle&&v.source_handle===v.group_ko);
+const _MISTAG={_grpToks:_mtGrpToks,_norm:_mtNorm,_titleHas:_mtTitleHas,_titleHasToken:_mtTitleHasToken,COLLAB:_MT_COLLAB,ownChannel:_mtOwnChannel};
 
 // [오태깅 그룹 재배정](2026-08-25): 고친 매칭 엔진(_m2ParseTitle)을 기존 저장 행에 다시 돌려서,
 // "저장된 group_ko는 제목에 근거가 없는데, 엔진이 제목에 대놓고 있는 '다른 그룹'을 찾은" 행을 그 그룹으로
@@ -2234,18 +2315,19 @@ async function _ytSweepMistagReclassify(){
   try{
     _ytSetProg('[오태깅 재배정] 전체 조회 중…');
     const{data:rows,error}=await _sbFetchAll(()=>sb.from(_YT_TABLE)
-      .select('id,title,group_ko,members,with_members,with_groups,published_at,tags_manual,content_flag').order('id'));
+      .select('id,title,group_ko,members,with_members,with_groups,published_at,tags_manual,content_flag,source_tier,source_handle').order('id'));
     if(error){_ytSetProg('조회 실패: '+error.message);return;}
     if(!rows?.length){_ytSetProg('영상이 없어요');return;}
     const EXCLUDE=new Set(['무관','보류','hidden','외부인']);
-    const {_grpToks,_norm,_titleHas,COLLAB}=_MISTAG; // 아래 보류/숨김 재배정과 **같은 판정을 공유**한다
-    let manualSkipped=0;const updates=[];const sample=[];
+    const {_grpToks,_norm,_titleHas,COLLAB,ownChannel:_ownChannel}=_MISTAG; // 아래 보류/숨김 재배정과 **같은 판정을 공유**한다
+    let manualSkipped=0,ownChSkipped=0;const updates=[];const sample=[];
     for(let i=0;i<rows.length;i++){
       if(i%5000===0){_ytSetProg(`[오태깅 재배정] 분석 중… ${i}/${rows.length} (후보 ${updates.length})`);await new Promise(r=>setTimeout(r));}
       const v=rows[i];const g=v.group_ko;
       if(!g||!GROUPS[g])continue;
       if(v.content_flag&&EXCLUDE.has(v.content_flag))continue;
       const nu=_norm(v.title);
+      if(_ownChannel(v)){ownChSkipped++;continue;} // 자체 채널 = group_ko가 채널 주인(위 _mtOwnChannel 주석)
       if(_titleHas(nu,g))continue; // 저장 그룹이 제목에 있음 → 근거 있음, 안 건드림
       let m=null;try{m=_m2ParseTitle(v.title,undefined,false,(v.published_at||'').slice(0,10));}catch(e){}
       const ng=m&&m.primaryGroup;
@@ -2269,8 +2351,8 @@ async function _ytSweepMistagReclassify(){
       if(_ub.failed)console.error('[오태깅 재배정] 재시도 후에도 실패:',_ub.failed,'건 —',_ub.firstErr);
       _ytSetProg(`완료! ${updates.length}건 그룹 재배정함.${manualSkipped?` 수동보호 ${manualSkipped}건.`:''} (되돌리기: "↩︎ 마지막 일괄 작업 되돌리기")`);
     };
-    const msg=`오태깅 그룹 재배정 ${updates.length}건을 적용할까요?\n\n· "저장 그룹은 제목에 근거 없음 + 엔진이 제목의 다른 그룹을 literal로 찾음"인 행\n  (대부분 옛 오저장의 정당한 복구 — 하이키·체리블렛 등)\n· 콜라보(with/선배/feat)·수동편집(${manualSkipped}건)은 자동 제외\n· 표본 40건을 콘솔(F12)에 출력함\n· 스냅샷 저장되어 "↩︎ 마지막 일괄 작업 되돌리기"로 복구 가능`;
-    _ytSetProg(`[오태깅 재배정] 분석 완료 — 재배정 예정 ${updates.length}건 (전체 ${rows.length} 스캔, 수동보호 ${manualSkipped})`);
+    const msg=`오태깅 그룹 재배정 ${updates.length}건을 적용할까요?\n\n· "저장 그룹은 제목에 근거 없음 + 엔진이 제목의 다른 그룹을 literal로 찾음"인 행\n  (대부분 옛 오저장의 정당한 복구 — 하이키·체리블렛 등)\n· 콜라보(with/선배/후배/feat/님과)·수동편집(${manualSkipped}건)은 자동 제외\n· **자체 채널 영상 ${ownChSkipped}건 제외** — 그 그룹 공식 채널에서 온 영상은 group_ko가 채널 주인이라 이미 맞아요(제목에 다른 그룹이 나와도 게스트·약칭 충돌일 뿐)\n· 표본 40건을 콘솔(F12)에 출력함\n· 스냅샷 저장되어 "↩︎ 마지막 일괄 작업 되돌리기"로 복구 가능`;
+    _ytSetProg(`[오태깅 재배정] 분석 완료 — 재배정 예정 ${updates.length}건 (전체 ${rows.length} 스캔, 자체채널 제외 ${ownChSkipped}, 수동보호 ${manualSkipped})`);
     await new Promise(r=>setTimeout(r,50)); // 확인창 전에 숫자가 화면에 먼저 남게
     if(!await _sweepConfirm('sp-mistagfix-btn',`오태깅 그룹 재배정 ${updates.length}건`,msg,'재배정 실행',updates.length,_apply))return;
     await _apply();
@@ -2303,19 +2385,20 @@ async function _ytSweepHeldMistagReclassify(){
   try{
     _ytSetProg('[보류/숨김 재배정] 보류·숨김 행 조회 중…');
     const{data:rows,error}=await _sbFetchAll(()=>sb.from(_YT_TABLE)
-      .select('id,title,group_ko,members,with_members,with_groups,published_at,tags_manual,content_flag')
+      .select('id,title,group_ko,members,with_members,with_groups,published_at,tags_manual,content_flag,source_tier,source_handle')
       .in('content_flag',['보류','hidden'])
       .order('id'));
     if(error){_ytSetProg('조회 실패: '+error.message);return;}
     if(!rows?.length){_ytSetProg('보류/숨김 영상이 없어요');return;}
-    const{_norm,_titleHas,_titleHasToken,COLLAB}=_MISTAG;
-    let manualSkipped=0,collabSkipped=0,weakEvidence=0;
+    const{_norm,_titleHas,_titleHasToken,COLLAB,ownChannel:_ownChannel}=_MISTAG;
+    let manualSkipped=0,collabSkipped=0,weakEvidence=0,ownChSkipped=0;
     const updates=[];const sample=[];const byTarget={};
     for(let i=0;i<rows.length;i++){
       if(i%2000===0){_ytSetProg(`[보류/숨김 재배정] 분석 중… ${i}/${rows.length} (후보 ${updates.length})`);await new Promise(r=>setTimeout(r));}
       const v=rows[i];const g=v.group_ko;
       if(!g||!GROUPS[g])continue;
       const nu=_norm(v.title);
+      if(_ownChannel(v)){ownChSkipped++;continue;} // 자체 채널 = group_ko가 채널 주인
       if(_titleHas(nu,g))continue;            // 저장 그룹이 제목에 있음 → 근거 있음, 안 건드림
       let m=null;try{m=_m2ParseTitle(v.title,undefined,false,(v.published_at||'').slice(0,10));}catch(e){}
       const ng=m&&m.primaryGroup;
