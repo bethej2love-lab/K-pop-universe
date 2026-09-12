@@ -135,6 +135,7 @@ async function main() {
   console.log(`[routine] 헤드리스 크롬 PID=${child.pid}`);
 
   const errors = [];
+  const perfLines = [];
   let ok = false;
   let summary = '';
   let cdp = null;
@@ -149,6 +150,12 @@ async function main() {
     // alert/confirm은 자동 수락 — 루틴은 무인 실행이라 다이얼로그에서 멈추면 안 된다
     cdp.on('Page.javascriptDialogOpening', () => cdp.send('Page.handleJavaScriptDialog', { accept: true }).catch(() => {}));
     cdp.on('Runtime.exceptionThrown', p => errors.push(p.exceptionDetails?.exception?.description || p.exceptionDetails?.text || 'exception'));
+    // 동기화 속도 계측 — admin.js가 console.log로 남기는 채널별 소요/느린 top10을 모아 Summary에 붙인다.
+    // (어디가 느린지 추측 말고 데이터로 보려는 것, 2026-09-13)
+    cdp.on('Runtime.consoleAPICalled', p => {
+      const txt = (p.args || []).map(a => (a.value !== undefined ? a.value : (a.description || ''))).join(' ');
+      if (/\[YT sync\]|\[루틴\]|\[ext sync\]/.test(txt)) perfLines.push(txt);
+    });
 
     // 1. 사이트 로드 + Supabase 클라이언트 준비 대기
     await cdp.send('Page.navigate', { url: SITE_URL });
@@ -200,6 +207,7 @@ async function main() {
     const failedSteps = (summary.match(/^❌/gm) || []).length;
     ok = failedSteps === 0;
     console.log('\n===== 루틴 결과 =====\n' + summary + '\n=====================');
+    if (perfLines.length) console.log('\n----- 동기화 속도 계측 -----\n' + perfLines.join('\n'));
     if (failedSteps) console.error(`[routine] 실패한 단계 ${failedSteps}개`);
   } catch (e) {
     console.error('\n❌ ' + (e && e.message ? e.message : e));
@@ -213,8 +221,9 @@ async function main() {
   // GitHub Actions 요약 패널에도 남긴다
   if (process.env.GITHUB_STEP_SUMMARY && summary) {
     try {
+      const perf = perfLines.length ? `\n\n### 동기화 속도 계측\n\`\`\`\n${perfLines.join('\n')}\n\`\`\`\n` : '';
       fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY,
-        `## 매일 루틴 ${ok ? '✅ 완료' : '⚠️ 문제 있음'}\n\n\`\`\`\n${summary}\n\`\`\`\n`);
+        `## 매일 루틴 ${ok ? '✅ 완료' : '⚠️ 문제 있음'}\n\n\`\`\`\n${summary}\n\`\`\`\n${perf}`);
     } catch (e) {}
   }
   process.exit(ok ? 0 : 1);

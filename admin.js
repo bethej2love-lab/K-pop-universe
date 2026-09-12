@@ -90,6 +90,12 @@ function _ytClassify(title){
 }
 
 async function _ytGetUploadsId(ytUrl,key){
+  // uploads playlist ID는 채널마다 불변(UC…→UU…) — 한 번 찾으면 영구 캐시한다. 예전엔 매 동기화마다
+  // 250여 채널 전부를 channels.list로 다시 조회(핸들 채널은 forHandle→forUsername 2회씩)해서, 새 영상이
+  // 0개여도 이 조회 왕복만으로 매 실행이 느려졌다(2026-09-13). 채널 URL이 바뀔 때나 캐시가 어긋나는데
+  // 그건 사실상 없고, 어긋나도 뒤의 playlistItems가 실패→그 채널만 그 회차 건너뛰고 다음에 재시도된다.
+  const _upCacheKey='kpu_yt_uploads_'+ytUrl;
+  try{const _c=localStorage.getItem(_upCacheKey);if(_c)return _c;}catch(e){}
   // youtube.com/channel/UC...는 핸들이 아니라 채널ID 자체 직링크라 forHandle/forUsername으로 못 찾음
   // (이즈나·제로베이스원·알파드라이브원·킥플립처럼 이 형식으로 등록된 그룹이 전부 "채널을 찾을 수
   // 없습니다" 오류가 났었음, 2026-08-05 사용자 제보) — id= 파라미터로 바로 조회.
@@ -111,6 +117,7 @@ async function _ytGetUploadsId(ytUrl,key){
   // 안 되면 forUsername으로 재시도(아이유 채널에서 실제로 forUsername 단독으로는 조회 실패했음)
   if(!uploadsId&&slug)uploadsId=await tryParam(`forHandle=${encodeURIComponent(slug)}`)||await tryParam(`forUsername=${encodeURIComponent(slug)}`);
   if(!uploadsId)throw new Error('채널을 찾을 수 없습니다 ('+ytUrl+')');
+  try{localStorage.setItem(_upCacheKey,uploadsId);}catch(e){}
   return uploadsId;
 }
 
@@ -303,10 +310,10 @@ async function _ytSyncGroup(ko,key,onProg,youtubeUrl,syncKey){
     // 공식 채널 업로드분은 제외 키워드에 걸려도 무관 처리하지 않는다 — 판단은 _shouldJunkFlag
     // 한 곳에 있고(index.html), 여기선 source_tier를 그대로 넘겨 정책을 따른다(2026-08-27).
     const rows=vids.map(v=>({...v,group_ko:ko,title_norm:_titleNorm(v.title),source_handle:skey,source_tier:'official',...(_shouldJunkFlag(v.title,'official')?_flagPatch('무관','auto'):{})}));
-    for(let i=0;i<rows.length;i+=200){
-      const{error}=await _ytUpsertVideos(rows.slice(i,i+200));
-      if(error)throw new Error(error.message);
-    }
+    const _batches=[];
+    for(let i=0;i<rows.length;i+=200)_batches.push(_ytUpsertVideos(rows.slice(i,i+200)));
+    const _err=(await Promise.all(_batches)).find(r=>r&&r.error);
+    if(_err)throw new Error(_err.error.message);
   }
   // resumeTok 없이(=맨 최신부터) 시작한 실행이었을 때만 북마크를 갱신한다 — 과거를 이어받는 중엔
   // 건드리지 않음(_ytSyncExtChannels와 동일 원칙). newestId를 쓰는 이유는 위 _ytFetchNewVideos 주석 참고
@@ -344,22 +351,31 @@ async function _ytSyncAll(){
   // 채널이** 시간을 먹는지가 필요하다(대개 체크포인트가 없어 과거를 통째로 다시 긁는 채널). 끝날 때
   // 상위 10개를 콘솔에 표로 남긴다.
   const _syncMs=[];
-  for(const{ko,url,syncKey}of targets){
-    _ytSetProg(`[${done+1}/${targets.length}] ${ko} 동기화 중...`);
-    const _gt0=Date.now();
-    try{
-      const n=await _ytSyncGroup(ko,key,(fetched,total)=>{
-        _ytSetProg(`[${done+1}/${targets.length}] ${ko}: ${fetched}${total?'/'+total:''}개`);
-      },url,syncKey);
-      const _ms=Date.now()-_gt0;_syncMs.push({ko,ms:_ms,n});
-      console.log(`[YT sync] ${ko}: +${n}개 (${(_ms/1000).toFixed(1)}초)`);
-    }catch(e){
-      console.error(`[YT sync] ${ko} 실패:`,e.message);
-      _ytSetProg(`[${done+1}/${targets.length}] ${ko} 오류: ${e.message}`);
-      await new Promise(res=>setTimeout(res,600));
+  // 채널을 여러 개 병렬로 동기화(2026-09-13) — 예전엔 250여 채널을 하나 끝나야 다음 시작하는 순차라,
+  // 각 채널이 새 영상 0개여도 네트워크 왕복을 줄줄이 기다렸다. 이 루틴은 쿼터를 거의 안 써서(호출당 1점,
+  // 비싼 search.list 없음) 병렬로 몰아쳐도 일일 한도(1만)에 한참 못 미친다. 동시 수는 채널당 썸네일 실측
+  // (_ytProbeShortsInline, 최대 24병렬)이 겹치는 걸 감안해 보수적으로 6. 페이지 대기(80ms)는 이제 채널끼리
+  // 겹쳐 흡수되므로 그대로 둔다(줄이면 QPS만 올라 rate limit 위험↑, 이득은 병렬화가 이미 가져감).
+  const _SYNC_CONC=6;
+  let _ti=0;
+  async function _syncWorker(){
+    while(_ti<targets.length){
+      const{ko,url,syncKey}=targets[_ti++];
+      const _gt0=Date.now();
+      try{
+        const n=await _ytSyncGroup(ko,key,(fetched,total)=>{
+          _ytSetProg(`[${done+1}/${targets.length}] ${ko}: ${fetched}${total?'/'+total:''}개`);
+        },url,syncKey);
+        const _ms=Date.now()-_gt0;_syncMs.push({ko,ms:_ms,n});
+        console.log(`[YT sync] ${ko}: +${n}개 (${(_ms/1000).toFixed(1)}초)`);
+      }catch(e){
+        console.error(`[YT sync] ${ko} 실패:`,e.message);
+      }
+      done++;
+      _ytSetProg(`[${done}/${targets.length}] 동기화 중… (${ko})`);
     }
-    done++;
   }
+  await Promise.all(Array.from({length:Math.min(_SYNC_CONC,targets.length)},_syncWorker));
   const _tot=_syncMs.reduce((a,b)=>a+b.ms,0);
   console.log(`[YT sync] 총 ${(_tot/60000).toFixed(1)}분 · 오래 걸린 채널 top10`,
     _syncMs.sort((a,b)=>b.ms-a.ms).slice(0,10).map(x=>`${x.ko} ${(x.ms/1000).toFixed(1)}초(+${x.n})`));
@@ -7999,7 +8015,10 @@ async function _ytSyncExtChannels(){
     const bResume=localStorage.getItem(`kpu_ext_resume_${b.handle}`)?1:0;
     return bResume-aResume;
   });
-  for(let ci=0;ci<_orderedChannels.length;ci++){
+  let _eci=0;
+  async function _extWorker(){
+   while(_eci<_orderedChannels.length){
+    const ci=_eci++;
     const ch=_orderedChannels[ci];
     const prefix=`[${ci+1}/${_EXT_CHANNELS.length}] ${ch.name}`;
     try{
@@ -8020,10 +8039,10 @@ async function _ytSyncExtChannels(){
         totalSkipped+=skipped;
         if(rows.length){
           setProg(`${prefix} ${rows.length}개 저장 중…`);
-          for(let i=0;i<rows.length;i+=200){
-            const{error}=await _ytUpsertVideos(rows.slice(i,i+200),{onConflict:'id',ignoreDuplicates:true});
-            if(error)throw new Error(error.message);
-          }
+          const _eb=[];
+          for(let i=0;i<rows.length;i+=200)_eb.push(_ytUpsertVideos(rows.slice(i,i+200),{onConflict:'id',ignoreDuplicates:true}));
+          const _ee=(await Promise.all(_eb)).find(r=>r&&r.error);
+          if(_ee)throw new Error(_ee.error.message);
           // resumeTok 없이(=맨 최신부터) 이번 실행이 시작됐을 때만 vids[0]가 진짜 "채널의 현재 최신 영상"이므로
           // 그때만 증분 동기화 기준점(sinceId)을 갱신한다 — 과거를 이어받는 중엔 건드리지 않음
           if(!resumeTok&&vids[0]?.id)localStorage.setItem(lsKey,vids[0].id);
@@ -8042,9 +8061,13 @@ async function _ytSyncExtChannels(){
       errors++;
       console.error(`[ext sync] ${ch.name}`,e);
       setProg(`${prefix} 오류: ${e.message}`);
-      await new Promise(r=>setTimeout(r,800));
     }
+   }
   }
+  // 외부 채널도 병렬(2026-09-13) — 이어받기 있는 채널을 앞에 둔 순서는 유지되고(워커가 앞에서부터
+  // 집어감), 채널 수가 적어 공식보다 이득은 작지만 순차 대기를 없앤다. 동시 4(백필 중 채널이 페이지를
+  // 많이 넘길 수 있어 공식보다 낮게 잡아 QPS 여유).
+  await Promise.all(Array.from({length:Math.min(4,_orderedChannels.length)},_extWorker));
   setProg(`전체 완료 — 공식·외부 채널 합산 추가 ${totalAdded}개 / 스킵 ${totalSkipped}개${errors?` / 오류 ${errors}건`:''}`);
   _extSyncing=false;
 }
