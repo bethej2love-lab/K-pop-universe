@@ -22,15 +22,41 @@ if (!PW || PW.length < 8) { console.error('오류: 새 비밀번호를 인자로
 
 const H = { apikey: KEY, Authorization: `Bearer ${KEY}`, 'Content-Type': 'application/json' };
 
+// 이메일로 유저 찾기 — 전체 페이지를 훑는다. admin list users는 per_page 상한(200)이 있고, 이 앱은
+// 방문자마다 익명 세션을 만들어서 auth.users에 익명 유저가 수백 명 쌓인다(=실제 회원 수 아님).
+// 관리자 계정이 뒤 페이지에 묻히므로 1페이지만 보면 못 찾는다(2026-09-13 실측). 못 찾으면 이메일이
+// 달린 진짜 계정 목록을 같이 돌려줘서 실제 관리자 이메일을 눈으로 확인할 수 있게 한다.
+async function findUser(email) {
+  const perPage = 200;
+  let scanned = 0, anon = 0;
+  const emailAccounts = [];
+  for (let page = 1; page <= 500; page++) { // 안전 상한(최대 10만명)
+    const r = await fetch(`${URL}/auth/v1/admin/users?page=${page}&per_page=${perPage}`, { headers: H });
+    if (!r.ok) throw new Error(`유저 목록 조회 실패: ${r.status} ${await r.text()}`);
+    const body = await r.json();
+    const users = Array.isArray(body) ? body : (body.users || []);
+    if (!users.length) break;
+    scanned += users.length;
+    for (const x of users) {
+      if (x.is_anonymous || !x.email) { anon++; continue; }
+      emailAccounts.push(x.email);
+      if (x.email.toLowerCase() === email.toLowerCase()) return { user: x, scanned, anon, emailAccounts };
+    }
+    if (users.length < perPage) break; // 마지막 페이지
+  }
+  return { user: null, scanned, anon, emailAccounts };
+}
+
 async function main() {
-  // 1. 이메일로 유저 찾기
-  const listUrl = `${URL}/auth/v1/admin/users?per_page=200`;
-  const lr = await fetch(listUrl, { headers: H });
-  if (!lr.ok) { console.error('유저 목록 조회 실패:', lr.status, await lr.text()); process.exit(1); }
-  const body = await lr.json();
-  const users = Array.isArray(body) ? body : (body.users || []);
-  const user = users.find(u => (u.email || '').toLowerCase() === EMAIL.toLowerCase());
-  if (!user) { console.error(`오류: ${EMAIL} 계정을 못 찾았습니다(가입된 유저 ${users.length}명 확인). 이메일을 확인하세요.`); process.exit(1); }
+  // 1. 이메일로 유저 찾기(전 페이지)
+  const { user, scanned, anon, emailAccounts } = await findUser(EMAIL);
+  if (!user) {
+    console.error(`오류: ${EMAIL} 계정을 못 찾았습니다.`);
+    console.error(`   전체 ${scanned}명 중 익명 방문자 ${anon}명 · 이메일 계정 ${emailAccounts.length}개(=실제 회원).`);
+    console.error(`   이메일 계정 목록: ${emailAccounts.slice(0, 40).join(', ') || '(없음)'}`);
+    console.error(`   → 이 중 관리자 이메일이 있으면 ADMIN_EMAIL(또는 KPU_ADMIN_EMAIL 시크릿)을 그 값으로 지정하세요.`);
+    process.exit(1);
+  }
 
   // 2. 비번 설정
   const ur = await fetch(`${URL}/auth/v1/admin/users/${user.id}`, {
