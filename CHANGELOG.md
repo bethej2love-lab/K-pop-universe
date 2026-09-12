@@ -198,6 +198,16 @@
 - 실측(DB 읽기 전용 프로브): 전기간 조회수 상위 1000행 중 후보 114건 → **49건(43%)이 무대·홍보물**, 이 사전 때문에 잘못 빠지는 진짜 직캠 **0건**. 최근 120일도 203건 중 30건 제거·오제거 0건. 실제 카드 재현 결과 주간 TOP 20의 **10칸이 무대**였고 교체 후 20/20 직캠(솔로 청하·태민·권은비·마시로는 자기 직캠으로 그대로 남음).
 - 회귀 테스트 신설: `node tests/solo-cam.test.js` — 실제 DB 제목 28건 + 경계 6건. ⚠️ 방송사가 직캠 브랜드를 수시로 만든다(팔로우캠·원픽캠·보컬캠…). 사전에 빠뜨리면 그 포맷이 차트에서 조용히 사라지므로 브랜드 추가 시 테스트 케이스도 같이 추가할 것.
 
+## 2026-09-12 (자동화 세션 — 매일 루틴 무인화)
+
+### [완료] 매일 루틴 무인 자동 실행 `[tools/run_daily_routine.cjs][tools/set_admin_password.mjs][.github/workflows/daily-routine.yml]`
+- 사용자가 관리자 패널에서 손으로 누르던 "▶ 매일 루틴 실행"을 GitHub Actions가 스케줄(기본 3시간마다=하루 8회)로 무인 실행. 사용자 요청("자동으로 실행되게 할 수 있나 + 하루 4번보다 더 자주").
+- **방식은 헤드리스(버튼 그대로 누르기)** — 서버 재구현(방식1)은 태깅 로직이 admin.js 곳곳에 얽혀 이식 시 드리프트 위험이 커서 배제(m2_harness가 매처 하나에 함수 50여 개를 손으로 슬라이스하는 걸 근거로 판단). 헤드리스는 배포 사이트를 그대로 띄워 `_admRunRoutine`을 호출 → 브라우저 동작과 100% 동일.
+- 하네스는 tests/smoke.test.js와 같은 **의존성 0 CDP 직구현**(fetch/WebSocket). 로컬 검증 완료: 크롬 실행→CDP 연결→사이트 로드→`sb` 준비→`signInWithPassword` 호출까지 정상(가짜 비번으로 "Invalid login credentials" 확인 = Email 비번 로그인 이미 켜져 있음).
+- ⚠️ **인증**: 앱 로그인은 구글 OAuth뿐이라 헤드리스 자동화 불가 → 관리자 계정에 비번을 심고(`set_admin_password.mjs`, service_role) 페이지에서 `sb.auth.signInWithPassword`로 로그인. `sb`는 `let` 전역이라 `window.sb`가 아닌 **맨이름 `sb`로 접근**해야 함(`_admRoutineRunning`도 동일 — let).
+- ⚠️ **증분 유지**: `_admRoutineScopeSince`가 localStorage(kpu_adm_*) 기반이라 매번 빈 프로필로 열면 전량 스캔(37만 행)이 됨 → 크롬 `--user-data-dir` 프로필을 actions/cache 롤링 캐시로 실행 간 유지.
+- **사용자 1회 준비 대기**: ①Supabase Email provider 확인(이미 켜진 것으로 관측됨) ②`set_admin_password.mjs`로 비번 심기 ③GitHub Secrets 3개(KPU_ADMIN_PASSWORD·KPU_YT_API_KEY·선택 KPU_ADMIN_EMAIL). 준비 전엔 스케줄 실행이 로그인 단계에서 무해하게 실패(쓰기 없음).
+
 ## 2026-09-09 (UI 세션)
 
 ### [완료] 나침반(탐험) 웹 레일 폭 320→380 — 카드 레일과 맞춤 `[kpop_universe.css]`
