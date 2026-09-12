@@ -1,0 +1,50 @@
+name: 매일 루틴 (무인 자동)
+
+on:
+  schedule:
+    - cron: '0 */3 * * *'
+  workflow_dispatch:
+    inputs:
+      with_sync:
+        description: "동기화(1단계) 포함? '1'=전체 / '0'=스윕만"
+        required: false
+        default: '1'
+
+concurrency:
+  group: daily-routine
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 330
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: install chrome
+        id: chrome
+        uses: browser-actions/setup-chrome@v1
+        with:
+          chrome-version: stable
+
+      - name: restore checkpoint profile
+        uses: actions/cache@v4
+        with:
+          path: ${{ runner.temp }}/kpu-routine-profile
+          key: kpu-routine-profile-${{ github.run_id }}
+          restore-keys: |
+            kpu-routine-profile-
+
+      - name: run daily routine
+        env:
+          KPU_ADMIN_EMAIL: ${{ secrets.KPU_ADMIN_EMAIL }}
+          KPU_ADMIN_PASSWORD: ${{ secrets.KPU_ADMIN_PASSWORD }}
+          KPU_YT_API_KEY: ${{ secrets.KPU_YT_API_KEY }}
+          CHROME_PATH: ${{ steps.chrome.outputs.chrome-path }}
+          PROFILE_DIR: ${{ runner.temp }}/kpu-routine-profile
+          WITH_SYNC: ${{ github.event.inputs.with_sync || '1' }}
+        run: node tools/run_daily_routine.cjs
