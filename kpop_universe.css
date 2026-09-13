@@ -3267,8 +3267,9 @@
   .feed-strip-item.cap-revealed .feed-strip-sub{opacity:1;}
   .feed-strip-item.anniv-inactive{opacity:0.42;filter:grayscale(0.3);}
   /* 최근 본 가로 행 — 원형 아바타(feed-strip-item)와 달리 영상 썸네일이라 16:9 사각 카드로 별도 마크업 */
-  .feed-recent-item{display:flex;flex-direction:column;gap:5px;flex-shrink:0;width:116px;cursor:pointer;-webkit-tap-highlight-color:transparent;position:relative;}
-  .feed-recent-thumb-wrap{width:116px;aspect-ratio:16/9;border-radius:6px;overflow:hidden;background:rgba(255,255,255,0.05);}
+  /* 썸네일 크기를 차트 카드(#feed-chart>.feed-card, 158px)와 동일하게(2026-09-13 사용자 요청 — "너무 작음"). */
+  .feed-recent-item{display:flex;flex-direction:column;gap:5px;flex-shrink:0;width:158px;cursor:pointer;-webkit-tap-highlight-color:transparent;position:relative;}
+  .feed-recent-thumb-wrap{width:158px;aspect-ratio:16/9;border-radius:8px;overflow:hidden;background:rgba(255,255,255,0.05);}
   .feed-recent-thumb{width:100%;height:100%;object-fit:cover;display:block;}
   .feed-recent-title{font-size:10px;color:rgba(200,215,245,0.75);line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
   .feed-card-title{font-size:13px;font-weight:600;color:rgba(220,232,255,0.92);line-height:1.4;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}

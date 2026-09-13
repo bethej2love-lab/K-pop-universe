@@ -5787,7 +5787,7 @@ document.getElementById('vm-ch-add-tier')?.addEventListener('change',e=>{
   if(targetGkoEl){
     const _needTarget=(e.target.value==='fans'||e.target.value==='grpsub'); // 그룹 공식 서브도 '대상 그룹' 입력
     targetGkoEl.style.display=_needTarget?'':'none';
-    if(_needTarget)_ensureVidTagGroupList();
+    if(_needTarget)_fillChTargetGko();
   }
   // 동명이인 그룹선택 드롭다운은 소유자 입력을 쓰는 유형(idol/fans)에서만 유지 — 나머지 유형으로 바꾸면 비움
   if(e.target.value!=='idol'&&e.target.value!=='fans'){
@@ -8517,6 +8517,18 @@ function _ensureVidTagGroupList(){
   const soloNames=[...new Set(ARTISTS.filter(a=>!GROUPS[a.group.ko]||a.channels?.length).map(a=>a.name.ko))];
   const options=[...Object.keys(GROUPS),...soloNames].sort((a,b)=>a.localeCompare(b,'ko'));
   dl.innerHTML=options.map(ko=>`<option value="${ko}"></option>`).join('');
+}
+// 채널 추가 '대상 그룹' 셀렉트 채우기(2026-09-13) — 예전엔 <datalist>라 브라우저가 표시를 잘라(클로즈유어아이즈
+// 근처에서 멈춤) 전체 그룹이 안 보였다. <select>로 바꿔 전부 스크롤되게 하고, 여기서 한 번 채운다.
+let _chTargetGkoFilled=false;
+function _fillChTargetGko(){
+  if(_chTargetGkoFilled)return;
+  const sel=document.getElementById('vm-ch-add-target-gko');
+  if(!sel||sel.tagName!=='SELECT')return;
+  const soloNames=[...new Set(ARTISTS.filter(a=>!GROUPS[a.group.ko]).map(a=>a.name.ko))];
+  const options=[...Object.keys(GROUPS),...soloNames].sort((a,b)=>a.localeCompare(b,'ko'));
+  sel.insertAdjacentHTML('beforeend',options.map(ko=>`<option value="${ko}">${ko}</option>`).join(''));
+  _chTargetGkoFilled=true;
 }
 // 체크박스 목록을 gko 기준으로 새로 그린다 — 단일/일괄 모달이 공용으로 쓰고, "소속 그룹" 필드를 완전히
 // 다른 그룹으로 바꿨을 때도 이걸로 다시 그려서 새 그룹의 멤버 목록이 뜨게 한다(그동안 체크했던 건

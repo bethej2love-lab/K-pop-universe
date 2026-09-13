@@ -56,7 +56,7 @@
      ⚠️ 손으로 올리던 시절 2026-08-24에 실제로 빠뜨려서 폰이 "새 마크업 + 옛 CSS"를 그리는 바람에
      화면이 통째로 깨졌음(Charts 카드가 158px→46px로 찌그러짐). 로컬 확인은
      `node tools/bump_cache_version.mjs --check`. -->
-<link rel="stylesheet" href="kpop_universe.css?v=20260913-86fb5719">
+<link rel="stylesheet" href="kpop_universe.css?v=20260913-ece7efd0">
 <!-- ⚠️ 2026-09-04에 "라이트박스 반응 피커를 없애니 이 CDN도 뺄 수 있다"고 판단해 지웠다가 되돌렸다 —
      최애(bias) 지정의 이모지 선택기(#pp-bias-emoji-picker)가 같은 컴포넌트를 쓴다. 반응 쪽만 보고
      지우면 프로필 패널이 조용히 깨진다(로드 실패해도 콘솔 에러 없이 그냥 안 뜬다). -->
@@ -530,7 +530,7 @@
         </select>
         <input type="text" id="vm-ch-add-owner" placeholder="소유자/전용멤버 실명 · 공동운영이면 쉼표로 (아이돌개인·팬)" autocomplete="off" spellcheck="false" style="display:none">
         <select id="vm-ch-add-owner-gko" style="display:none"></select>
-        <input type="text" id="vm-ch-add-target-gko" list="vid-tag-group-list" placeholder="대상 그룹(팬 채널 · 전용멤버 비울 때)" autocomplete="off" spellcheck="false" style="display:none">
+        <select id="vm-ch-add-target-gko" title="대상 그룹" style="display:none"><option value="">대상 그룹 선택</option></select>
         <!-- 제목으로 분류가 안 된 영상(category='other')을 어느 탭으로 보낼지. 예전엔 유형에서 자동으로
              정해져 개인 채널 브이로그까지 전부 예능으로 갔음(2026-08-25). "분류 안 함"은 all 탭에만 노출. -->
         <select id="vm-ch-add-defcat" title="제목으로 분류 안 된 영상을 어느 탭에 넣을지">
@@ -18682,7 +18682,11 @@ async function _buildFeedFavNew(){
     if(_isPubTsMissing(error)){_hasPubTs=false;({data,error}=await _q());} // 컬럼 추가 전이면 빼고 재조회
     if(error||!data?.length)return;
     // 최신순 유지(셔플 안 함), 쇼츠 포함(그리드라 9:16 그대로 렌더), 멤버필터 적용, 그룹당 캡 없음(즐겨찾기라 "싹 다").
-    const vids=_filterBannedVideos(data).filter(_favMatch).slice(0,_FEED_FAVNEW_MAX);
+    // ⚠️ published_at은 날짜만이라 같은 날 안에서 시간순 정렬이 안 됐다 — 어제 저녁(20시간 전)이 어제 오전
+    //    영상 아래로 밀리는 역전이 생김(2026-09-13 제보). 정확한 시각(published_ts)으로 다시 내림차순 정렬한다.
+    const vids=_filterBannedVideos(data).filter(_favMatch)
+      .sort((a,b)=>String(b.published_ts||b.published_at||'').localeCompare(String(a.published_ts||a.published_at||'')))
+      .slice(0,_FEED_FAVNEW_MAX);
     if(!vids.length)return;
     const vidUrl=v=>_isShortV(v)?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;
     // _apiId/_apiGroupKo: 어드민 편집(연필) 버튼이 어느 DB 행을 고칠지 아는 키 — 카드 그리드(_apiVidToSong)는
@@ -18711,8 +18715,10 @@ async function _buildFeedFavNew(){
 function _buildFeedRec(){
   document.getElementById('feed-empty-rec').hidden=true;
   _buildFeedForYouAnniv();  // 다가오는 기념일(즐겨찾기 그룹 데뷔·멤버 생일 D-7~D-DAY) — 시간 민감이라 최상단
-  _buildFeedFavNew();       // 즐겨찾기 신작(For You 메인 — 7일 전부 최신순 그리드)
-  _buildFeedRecentlyViewed();
+  // 즐겨찾기 신작(비동기)이 자리를 잡은 뒤에 이어보기를 그린다 — 예전엔 이어보기(로컬·즉시)가 먼저 위에
+  // 떴다가 favnew가 나중에 그 위로 끼어들며 이어보기를 아래로 밀어 덜컹거렸다(2026-09-13 사용자 제보).
+  _buildFeedFavNew().finally(()=>_buildFeedRecentlyViewed()); // 즐겨찾기 신작 → 이어보기 순서 확정
+
   setTimeout(()=>_feedCheckEmpty('rec'),1800); // 비동기 선반들이 다 실패해 빈 화면이면 재시도 노출
 }
 // 발견(Discover) 탭 빌드 — 무거운 차트+디스커버리. Discover 탭을 처음 누를 때만 지연 호출(_feedSwitchTab).
@@ -21253,7 +21259,7 @@ function _updateAdminUI(){
 // 옛 버전을 계속 서빙해서 고친 코드가 반영 안 되는 것처럼 보이는 사고가 남(2026-08-18, HTML 엔티티 정리
 // 버튼 타임아웃 재수정 후에도 계속 재현된다는 제보로 발견). admin.js 내용을 바꿀 때마다 이 버전 문자열도
 // 같이 올릴 것(sw.js의 CACHE_VERSION과 같은 수동 관리 방식).
-const _ADMIN_JS_VER='20260913-fc286cef';
+const _ADMIN_JS_VER='20260913-9bd957ae';
 function _loadAdminScript(){
   if(!_isAdmin()||document.getElementById('admin-js-script'))return;
   const s=document.createElement('script');
