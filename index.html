@@ -18431,7 +18431,9 @@ function _fmtVidAgo(iso){
     if(!m)return'';
     const t1=new Date(+m[1],+m[2]-1,+m[3]).getTime();
     const days=Math.round((t0-t1)/86400000);
-    if(days<=0)return currentLang==='ko'?'오늘':'today';
+    // 시각(published_ts)이 없는 오늘 유입분 — "오늘"은 "N시간 전"과 어긋나 어색하다는 제보(2026-09-13).
+    // 시각을 모르면 시간칩을 아예 안 단다(정확한 시각이 backfill되면 자동으로 "N시간 전"으로 뜬다).
+    if(days<=0)return'';
     if(days===1)return currentLang==='ko'?'어제':'yesterday';
     return currentLang==='ko'?`${days}일 전`:`${days}d ago`;
   }
