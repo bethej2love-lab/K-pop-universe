@@ -20900,7 +20900,14 @@ function _buildMemberTimeline(a){
   realGroups.forEach(rg=>{
     const info=GROUPS[rg.ko];const gname=isKo?rg.ko:(info.en||rg.ko);
     if(info.debut){const k=_tlKey(info.debut);if(k)ev.push({key:k,date:_tlDate(info.debut),label:isKo?`${gname} 데뷔`:`${gname} debut`,icon:'🎤'});}
-    if(rg.left){const k=_tlKey(rg.left);if(k)ev.push({key:k,date:_tlDate(rg.left),label:isKo?`${gname} 탈퇴`:`Left ${gname}`,icon:'👋'});}
+    if(rg.left){const k=_tlKey(rg.left);if(k){
+      // 그룹이 해체됐고 멤버가 그 전에 미리 나간 게 아니면(연도 기준) '탈퇴'가 아니라 '해체'로 표기
+      // (2026-09-13 사용자 요청 — 아이즈원처럼 해체까지 함께한 멤버는 '탈퇴'가 아니라 '해체').
+      const _dis=(typeof _disbandCutoffDate==='function')?_disbandCutoffDate(rg.ko):null;
+      let _ended=!!info.disbanded;
+      if(_ended&&_dis){const ly=+String(rg.left).slice(0,4),dy=+String(_dis).slice(0,4);if(ly&&dy&&ly<dy)_ended=false;} // 해체 전에 미리 나감 = 진짜 탈퇴
+      ev.push({key:k,date:_tlDate(rg.left),label:_ended?(isKo?`${gname} 해체`:`${gname} disbanded`):(isKo?`${gname} 탈퇴`:`Left ${gname}`),icon:_ended?'🏁':'👋'});
+    }}
   });
   const solo=(a.soloDiscography||[]).concat(a.group.ko==='솔로'?(a.discography||[]):[]).filter(x=>x&&x.releaseDate);
   if(solo.length){solo.sort((x,y)=>String(x.releaseDate).localeCompare(String(y.releaseDate)));const s0=solo[0];const k=_tlKey(s0.releaseDate);if(k)ev.push({key:k,date:_tlDate(s0.releaseDate),label:isKo?'솔로 데뷔':'Solo debut',icon:'⭐'});}
@@ -20910,12 +20917,13 @@ function _buildMemberTimeline(a){
   // 첫 1위(비동기) — 주 그룹 music_show_wins 최소 win_date + "데뷔 N일 후"
   const primary=realGroups[0];
   if(sb&&primary){
-    sb.from('music_show_wins').select('win_date').eq('group_ko',primary.ko).order('win_date',{ascending:true}).limit(1)
+    sb.from('music_show_wins').select('win_date,song_title').eq('group_ko',primary.ko).order('win_date',{ascending:true}).limit(1)
       .then(({data})=>{
         if(_openTArtist!==a)return; // 다른 카드로 넘어갔으면 버림
         const w=data&&data[0]&&data[0].win_date;if(!w)return;
         const k=_tlKey(w);if(!k||ev.some(e=>e.icon==='🏆'))return;
         let label=isKo?'첫 음악방송 1위':'First music-show win';
+        const song=data[0].song_title;if(song)label+=` — ${song}`; // 어떤 곡으로 1위했는지(2026-09-13 사용자 요청)
         const info=GROUPS[primary.ko];
         if(info&&info.debut){const dd=new Date(String(info.debut).replace(/\./g,'-')),wd=new Date(String(w).slice(0,10).replace(/\./g,'-'));if(!isNaN(dd)&&!isNaN(wd)){const days=Math.round((wd-dd)/864e5);if(days>0)label+=isKo?` · 데뷔 ${days}일 후`:` · ${days}d after debut`;}}
         ev.push({key:k,date:_tlDate(w),label,icon:'🏆'});
