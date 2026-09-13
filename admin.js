@@ -2234,7 +2234,7 @@ async function _ytSweepDebutGate(){
       if(!_m2DebutBlocks(v.group_ko,v.published_at))continue;
       if(v.content_flag){alreadyFlagged++;continue;}       // 이미 무관/보류/숨김이면 손 안 댐
       if(v.tags_manual){manualSkipped++;continue;}          // 수동 확정 불가침
-      if(v.source_tier==='idol'||v.source_tier==='fans'){ownerSkipped++;continue;} // owner 채널은 group_ko 고정
+      if(v.source_tier==='idol'||v.source_tier==='fans'||v.source_tier==='grpsub'){ownerSkipped++;continue;} // owner 채널은 group_ko 고정
       updates.push(v.id);
       (byGroup[v.group_ko]=byGroup[v.group_ko]||[]).push(v);
       if(sample.length<40)sample.push(`#${v.id} [${v.group_ko} 데뷔 ${GROUPS[v.group_ko].debut}] ${v.published_at} | ${(v.title||'').slice(0,66)}`);
@@ -5558,7 +5558,7 @@ function _vmUpdateCount(){
 // "그외"(ext) 채널은 이제 DB(ext_channels) 기반이라 여기서 유형 변경(select)/삭제 버튼을 바로 붙여
 // 코드 배포 없이 관리 가능하게 함 — "공식"(그룹/멤버 자체 채널, _officialChannels)은 GROUPS 데이터에서
 // 자동 생성되는 목록이라 여기서 개별 편집 대상이 아님(2026-08-12, 사용자 요청).
-const _EXT_TIER_OPTIONS=[['music','음악'],['variety','예능'],['magazine','잡지'],['idol','아이돌개인'],['show','드라마/영화'],['fans','팬']];
+const _EXT_TIER_OPTIONS=[['music','음악'],['variety','예능'],['magazine','잡지'],['idol','아이돌개인'],['grpsub','그룹 공식(서브)'],['show','드라마/영화'],['fans','팬']];
 // "그외" 탭에서 유형별로 걸러보는 칩 — official 탭에선 숨김(2026-08-21, 사용자 요청 — 5종이 한 리스트에
 // 섞여 있어 특정 유형만 확인하기 번거로움).
 function _vmRenderChTierChips(){
@@ -5614,6 +5614,13 @@ function _vmRenderChannels(term){
       const own=document.createElement('div');own.className='ec-owner';
       const mem=ch.owner.mko?ch.owner.mko.split(',').map(s=>s.trim()).filter(Boolean).join(' · '):'';
       own.textContent='💛 '+[mem,ch.owner.gko].filter(Boolean).join(' / ')+(mem?'':' (그룹 팬채널)');
+      own.style.cssText='font-size:11px;color:rgba(155,178,228,0.72);margin-top:1px;';
+      info.appendChild(own);
+    }
+    // 그룹 공식 서브채널이면 대상 그룹 표기
+    else if(ch.tier==='grpsub'&&ch.owner?.gko){
+      const own=document.createElement('div');own.className='ec-owner';
+      own.textContent='📺 '+ch.owner.gko+' (그룹 공식 서브)';
       own.style.cssText='font-size:11px;color:rgba(155,178,228,0.72);margin-top:1px;';
       info.appendChild(own);
     }
@@ -5747,10 +5754,17 @@ async function _ecAddChannel(){
     const targetGko=(targetGkoEl?.value||'').trim();
     if(!targetGko||!_isValidVidGroupKo(targetGko)){_showShareToast('팬 채널은 전용 멤버 실명, 또는 대상 그룹을 입력해주세요');return;}
     ownerGko=targetGko;
+  }else if(tier==='grpsub'){
+    // 그룹 공식 서브/스튜디오 채널(studiofromis_9 등) — 특정 멤버가 아니라 그룹 전체가 대상.
+    // owner_gko만 채워 그룹급으로 고정(members는 제목대로 자동). source_tier가 fans가 아니라 grpsub이라
+    // '팬' 탭·팬제작 라벨이 안 붙고 정상 탭으로 들어가며, junk 판정도 공식처럼 면제된다(2026-09-13 사용자 요청).
+    const targetGko=(targetGkoEl?.value||'').trim();
+    if(!targetGko||!_isValidVidGroupKo(targetGko)){_showShareToast('그룹 공식 서브채널은 대상 그룹을 입력해주세요');return;}
+    ownerGko=targetGko;
   }
   // is_primary는 아이돌개인 채널에만 의미가 있음 — 한 멤버가 채널을 여러 개 가질 수 있는데
   // 멤버 카드 SNS 아이콘은 유튜브 슬롯이 하나뿐이라 어느 걸 걸지 정해야 한다(2026-08-25).
-  const row={handle,url:`https://www.youtube.com/@${handle}`,name,tier,owner_mko:memberOwned?ownerMko:null,owner_gko:(memberOwned||tier==='fans')?ownerGko:null,
+  const row={handle,url:`https://www.youtube.com/@${handle}`,name,tier,owner_mko:memberOwned?ownerMko:null,owner_gko:(memberOwned||tier==='fans'||tier==='grpsub')?ownerGko:null,
     default_category:(defCatEl?.value||'')||null,is_primary:tier==='idol'?!!primaryEl?.checked:false};
   const{error}=await sb.from('ext_channels').insert(row);
   if(error){_showShareToast('오류: '+error.message);return;}
@@ -5771,8 +5785,9 @@ document.getElementById('vm-ch-add-tier')?.addEventListener('change',e=>{
   // 소유자(멤버 실명) 입력칸 — 아이돌개인은 필수, 팬은 선택(개인 팬채널이면 그 멤버 지정, 비우면 그룹급).
   if(ownerEl)ownerEl.style.display=(e.target.value==='idol'||e.target.value==='fans')?'':'none';
   if(targetGkoEl){
-    targetGkoEl.style.display=e.target.value==='fans'?'':'none';
-    if(e.target.value==='fans')_ensureVidTagGroupList();
+    const _needTarget=(e.target.value==='fans'||e.target.value==='grpsub'); // 그룹 공식 서브도 '대상 그룹' 입력
+    targetGkoEl.style.display=_needTarget?'':'none';
+    if(_needTarget)_ensureVidTagGroupList();
   }
   // 동명이인 그룹선택 드롭다운은 소유자 입력을 쓰는 유형(idol/fans)에서만 유지 — 나머지 유형으로 바꾸면 비움
   if(e.target.value!=='idol'&&e.target.value!=='fans'){
@@ -6785,7 +6800,7 @@ async function _loadExtChannels(){
   }catch(e){console.error('ext_channels 로드 실패',e);}
 }
 _loadExtChannels();
-const _EXT_STRICT_TIERS=new Set(['variety','magazine','idol','show','fans']); // idol/show/fans tier도 게스트 감지는 strict(해시태그만 인정)
+const _EXT_STRICT_TIERS=new Set(['variety','magazine','idol','grpsub','show','fans']); // idol/grpsub/show/fans tier도 게스트 감지는 strict(해시태그만 인정)
 
 // _PROJECT_UNITS는 kpop_universe.html(main)로 이동함(2026-08-12) — 그쪽의 _unitTagsFor/_onUnitTagClick도
 // 이 상수를 쓰는데 admin.js에만 남아있어서 일반 유저 검색(doSearch)이 통째로 죽는 사고가 있었음. admin.js는

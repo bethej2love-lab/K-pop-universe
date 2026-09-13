@@ -524,6 +524,7 @@
           <option value="variety" selected>예능</option>
           <option value="magazine">잡지</option>
           <option value="idol">아이돌개인</option>
+          <option value="grpsub">그룹 공식(서브)</option>
           <option value="show">드라마/영화</option>
           <option value="fans">팬</option>
         </select>
@@ -5241,7 +5242,7 @@ function _isJunkVideoTitle(t){
 //    옛 행은 공식 채널이었는지 알 방법이 없어 예전과 동일하게 취급된다. 소급 적용하려면 그룹별
 //    동기화 북마크를 지우고 재동기화해서 source_tier를 채워야 한다.
 function _shouldJunkFlag(title,sourceTier){
-  if(sourceTier==='official')return false;
+  if(sourceTier==='official'||sourceTier==='grpsub')return false; // 그룹 공식 서브채널도 공식 취급(junk 면제)
   return _isJunkVideoTitle(title);
 }
 // ── Cover 탭 제외 키워드 ─────────────────────────────────────────────────────
@@ -21252,7 +21253,7 @@ function _updateAdminUI(){
 // 옛 버전을 계속 서빙해서 고친 코드가 반영 안 되는 것처럼 보이는 사고가 남(2026-08-18, HTML 엔티티 정리
 // 버튼 타임아웃 재수정 후에도 계속 재현된다는 제보로 발견). admin.js 내용을 바꿀 때마다 이 버전 문자열도
 // 같이 올릴 것(sw.js의 CACHE_VERSION과 같은 수동 관리 방식).
-const _ADMIN_JS_VER='20260913-a91df9eb';
+const _ADMIN_JS_VER='20260913-fc286cef';
 function _loadAdminScript(){
   if(!_isAdmin()||document.getElementById('admin-js-script'))return;
   const s=document.createElement('script');

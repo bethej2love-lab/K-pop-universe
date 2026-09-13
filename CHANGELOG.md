@@ -200,6 +200,11 @@
 
 ## 2026-09-13 (동기화 속도 최적화)
 
+### [완료] 채널 유형 '그룹 공식(서브)' 신설 — 그룹 2번째/스튜디오 채널 등록 `[admin.js][index.html]`
+- 사용자 질문("@studiofromis_9 같은 그룹 서브 채널은 어떻게 등록?"). 기존엔 슬롯이 없었다 — groups.json은 그룹당 공식 채널 1개, ext_channels tier는 아이돌개인(멤버필수)/팬(팬제작 라벨)뿐이라 그룹 전체·공식 서브채널이 애매했다.
+- 새 tier `grpsub`("그룹 공식(서브)") 추가: 직접관리 → 채널추가에서 유형 선택 → 대상 그룹만 지정(멤버 안 받음). 저장 시 owner_gko=그룹·owner_mko=null → 영상은 group_ko=그룹 고정, members는 제목대로 자동(전체면 그룹). source_tier='grpsub'라 '팬' 탭/팬제작 라벨 안 붙고, junk 판정도 공식처럼 면제(_shouldJunkFlag), 오태깅 재배정 스윕에서도 owner 채널로 취급.
+- 손댄 곳: _EXT_TIER_OPTIONS·_ecAddChannel(grpsub 분기)·tier토글(대상그룹 노출)·목록표기(📺)·source_tier 스킵·_EXT_STRICT_TIERS·추가폼 옵션·_shouldJunkFlag. ⚠️ DB tier 컬럼에 CHECK 제약 있으면 마이그레이션 필요(대개 없음).
+
 ### [완료] History 타임라인 — 해체 그룹은 '탈퇴'→'해체', 첫 1위에 곡명 표기 `[index.html]`
 - **탈퇴→해체**(사용자 제보 "아이즈원은 탈퇴가 아니라 해체"): `_buildMemberTimeline`의 그룹 이탈 이벤트가 해체된 그룹(`info.disbanded`)이고 멤버가 해체 전에 미리 나간 게 아니면(연도 비교) "OO 탈퇴"가 아니라 "OO 해체"(🏁)로 표기. 해체 전에 개인 탈퇴한 경우는 그대로 "탈퇴"(👋). 아이즈원뿐 아니라 disbanded 전체에 적용.
 - **첫 음악방송 1위 곡명**(사용자 요청): 첫 1위 이벤트 라벨에 `— 곡명` 추가(music_show_wins.song_title 조회). 예: "첫 음악방송 1위 — 라비앙로즈 · 데뷔 N일 후".
