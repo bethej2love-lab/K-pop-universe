@@ -3438,6 +3438,34 @@
   .sheet-tovid-btn>svg{display:block;width:20px;height:20px;}
   .sheet-tovid-btn:active{color:rgba(210,228,255,0.95);}
   .sheet-tovid-btn:focus-visible{outline:2px solid rgba(150,180,255,0.8);outline-offset:-4px;border-radius:10px;}
+  /* "카드 크게 보기"(▲) — 손잡이 줄 왼쪽 끝. 반열림(lb-half)이고 아직 꽉 차지 않았을 때만 뜬다
+     (꽉 차면 더 커질 게 없으니 숨김). 오른쪽 '영상으로'(▼)와 위/아래 한 쌍. 2026-09-13 사용자 요청. */
+  .sheet-expand-btn{
+    position:absolute;left:2px;top:0;width:44px;height:44px;z-index:3;
+    display:none;align-items:flex-start;justify-content:center;
+    background:none;border:none;margin:0;cursor:pointer;font-family:inherit;
+    padding:6px 0 0;color:rgba(155,178,228,0.82);
+    -webkit-tap-highlight-color:transparent;transition:color .15s;
+  }
+  #mob-sheet.lb-half:not(.bs-full)>.sheet-expand-btn,
+  #mob-card-stack.lb-half:not(.bs-full)>.sheet-expand-btn{display:flex;}
+  /* '이전 카드로'(.sheet-back-btn.on)도 왼쪽 끝을 쓰므로, 둘 다 있으면 크게보기를 그 옆으로 민다
+     (DOM에서 expand가 back보다 뒤라 ~ 선택자가 먹는다). */
+  .sheet-back-btn.on~.sheet-expand-btn{left:46px;}
+  .sheet-expand-btn>svg{display:block;width:20px;height:20px;}
+  .sheet-expand-btn:active{color:rgba(210,228,255,0.95);}
+  .sheet-expand-btn:focus-visible{outline:2px solid rgba(150,180,255,0.8);outline-offset:-4px;border-radius:10px;}
+  /* ⚠️ 재생 중(lb-half)엔 lb-half(55vh, 소스상 뒤라 우선순위 승)가 bs-full을 덮어써서, 예전엔 스와이프로
+     올려도 실제론 안 커졌다(잠재 버그). lb-half.bs-full 결합 규칙으로 "재생 중에도 꽉 차게" 만든다 —
+     ▲버튼과 스와이프업 둘 다 이걸로 동작. lb-half는 bottom:0(탭바 없음)이라 전체 높이로 채운다. */
+  #mob-sheet.lb-half.bs-full,#mob-card-stack.lb-half.bs-full{
+    min-height:var(--mob-vh,100vh);max-height:var(--mob-vh,100vh);
+    border-radius:0;box-sizing:border-box;padding-top:var(--safe-top);
+  }
+  #mob-sheet.lb-half.bs-full #mob-sheet-inner,
+  #mob-card-stack.lb-half.bs-full #mob-card-stack-inner{
+    max-height:calc(var(--mob-vh,100vh) - 24px - var(--safe-top));
+  }
   /* 절전 모드 설정 행(2026-08-26, P1-3) — 라벨+세그먼트 한 줄, 그 아래 현재 상태 설명 한 줄.
      자동이 기본이라 "지금 절전 중인지"를 글로 알려줘야 사용자가 상태를 안다. */
   .sp-row.sp-row-col{flex-direction:column;align-items:stretch;gap:6px;}
