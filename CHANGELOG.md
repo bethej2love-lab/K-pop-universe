@@ -200,6 +200,10 @@
 
 ## 2026-09-13 (동기화 속도 최적화)
 
+### [완료] z-index "창이 뒤로 뜸" 근본 해결 — data-modal 자동 최상단 `[index.html][RECURRING_BUGS.md]`
+- 사용자 제보(수십 번 반복): 프로필 편집→로그인 등에서 창이 위가 아니라 뒤로 떠 연결 안 됨. 원인은 오버레이 열 때 `_bringToFront`를 개별 코드가 빠뜨리는 두더지잡기(이번엔 `welcome-login-overlay`가 `.classList.add('open')`만 하고 _bringToFront 누락 — openProfilePanel은 2026-08-18에 이미 고쳤지만 그 안의 로그인 창은 빠져 있었음).
+- **systemic 가드**: `_initModalAutoFront` — 모달 29개가 다는 `data-modal` 표식이 'open' 클래스를 얻는 순간 MutationObserver가 자동으로 _bringToFront. 개별 누락이 원천 차단됨(새 모달도 data-modal만 달면 자동). 피커(9990) 등 이미 높은 z는 안 낮추는 가드 포함. RECURRING_BUGS.md에 이력 기록.
+
 ### [완료] 나침반 For You 4종 손질 `[index.html][kpop_universe.css][admin.js]`
 - **레이아웃 밀림 제거**: 이어보기(로컬·즉시)가 먼저 뜬 뒤 즐겨찾기 신작(비동기)이 위로 끼어들어 밀던 덜컹임 → `_buildFeedFavNew().finally(()=>_buildFeedRecentlyViewed())`로 신작이 자리잡은 뒤 이어보기 렌더.
 - **이어보기 썸네일 확대**: 116px → 차트 카드와 동일한 158px(반경 6→8, 사용자 "너무 작음").

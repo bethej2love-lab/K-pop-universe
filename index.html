@@ -11370,6 +11370,25 @@ function _bringToFront(el){
   if(!el)return;
   el.style.zIndex=String(++_topLayerZ);
 }
+// ── [data-modal] 자동 최상단(2026-09-13, 근본 해결) ──────────────────────────
+// 위 규칙("새 오버레이는 열 때 _bringToFront를 부를 것")을 개별 코드가 자꾸 빠뜨려서 "창이 뒤로 뜸"이
+// 기능마다 반복됐다(프로필 편집·로그인 등, 수십 번 제보). 모달은 전부 data-modal 표식을 다니, 그게
+// 'open' 클래스를 얻는 순간 자동으로 최상단으로 올려 개별 누락을 원천 차단한다. ⚠️ 이미 _topLayerZ보다
+// 높은 정적 z를 가진 것(피커 9990 등)은 낮추지 않는다 — 그건 이미 위에 있어야 하는 것.
+function _initModalAutoFront(){
+  const _bringModal=el=>{
+    const cz=parseInt(getComputedStyle(el).zIndex,10);
+    if(isNaN(cz)||cz<=_topLayerZ)_bringToFront(el);
+  };
+  const obs=new MutationObserver(muts=>{
+    for(const m of muts){
+      const el=m.target;
+      if(el.classList&&el.classList.contains('open'))_bringModal(el);
+    }
+  });
+  document.querySelectorAll('[data-modal]').forEach(el=>obs.observe(el,{attributes:true,attributeFilter:['class']}));
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',_initModalAutoFront);else _initModalAutoFront();
 
 function applyTagFilter(type,value){
   if(_tagFilter.type===type&&_tagFilter.value===value){clearTagFilter();return;}
