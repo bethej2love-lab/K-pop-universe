@@ -200,6 +200,10 @@
 
 ## 2026-09-13 (동기화 속도 최적화)
 
+### [완료] SuperM 유닛 + 루카스(WayV 전 멤버) 반영 `[shared.js][artists.json]`
+- 사용자 요청. SuperM(SM 7인 연합 — 백현·카이(엑소)·태민(샤이니)·태용·마크(엔시티127)·텐·루카스(WayV))을 `_PROJECT_UNITS`에 추가(행성 승격 없이 유닛 표기, 태티서·GOT THE BEAT와 동일 원칙). 마크는 엔시티127로 지정(갓세븐 마크 동명이인 방어).
+- 루카스가 우리 DB에 아예 없었음 → 아티스트 신규 추가(id a1734, 웨이션브이, active:false·left 2023.05, 홍콩, 1999.01.25). WayV 좌표대 옆 배치. NCT U 로테이션 멤버에도 추가. 슬림 재생성·validate 0오류.
+
 ### [완료] z-index "창이 뒤로 뜸" 근본 해결 — data-modal 자동 최상단 `[index.html][RECURRING_BUGS.md]`
 - 사용자 제보(수십 번 반복): 프로필 편집→로그인 등에서 창이 위가 아니라 뒤로 떠 연결 안 됨. 원인은 오버레이 열 때 `_bringToFront`를 개별 코드가 빠뜨리는 두더지잡기(이번엔 `welcome-login-overlay`가 `.classList.add('open')`만 하고 _bringToFront 누락 — openProfilePanel은 2026-08-18에 이미 고쳤지만 그 안의 로그인 창은 빠져 있었음).
 - **systemic 가드**: `_initModalAutoFront` — 모달 29개가 다는 `data-modal` 표식이 'open' 클래스를 얻는 순간 MutationObserver가 자동으로 _bringToFront. 개별 누락이 원천 차단됨(새 모달도 data-modal만 달면 자동). 피커(9990) 등 이미 높은 z는 안 낮추는 가드 포함. RECURRING_BUGS.md에 이력 기록.

@@ -205682,5 +205682,40 @@
    "namu": "https://namu.wiki/w/마티(MAVE:)"
   },
   "id": "a1731"
+ },
+ {
+  "name": {
+   "ko": "루카스",
+   "en": "Lucas"
+  },
+  "group": {
+   "ko": "웨이션브이",
+   "en": "WayV"
+  },
+  "co": "SM엔터테인먼트",
+  "planet": "main",
+  "x": 8640,
+  "y": 7600,
+  "sat": 0.72,
+  "op": 0.8,
+  "active": false,
+  "left": "2023.05",
+  "color": [
+   180,
+   165,
+   220
+  ],
+  "bday": "1999.01.25",
+  "nat": {
+   "ko": "홍콩",
+   "en": "HK"
+  },
+  "sparkle": false,
+  "songs": [],
+  "links": {
+   "instagram": "https://www.instagram.com/lucas_xx444",
+   "namu": "https://namu.wiki/w/루카스(NCT)"
+  },
+  "id": "a1734"
  }
 ]

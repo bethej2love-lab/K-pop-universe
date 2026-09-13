@@ -169,9 +169,13 @@ const _PROJECT_UNITS={
   'NCT U':{rotating:true,names:['NCT U','엔시티 유'],members:[
     {mko:'태용',gko:'엔시티 127'},{mko:'도영',gko:'엔시티 127'},{mko:'재현',gko:'엔시티 127'},{mko:'쟈니',gko:'엔시티 127'},{mko:'정우',gko:'엔시티 127'},{mko:'마크',gko:'엔시티 127'},{mko:'해찬',gko:'엔시티 127'},{mko:'유타',gko:'엔시티 127'},
     {mko:'런쥔',gko:'엔시티 드림'},{mko:'제노',gko:'엔시티 드림'},{mko:'재민',gko:'엔시티 드림'},{mko:'천러',gko:'엔시티 드림'},{mko:'지성',gko:'엔시티 드림'},
-    {mko:'텐',gko:'웨이션브이'},{mko:'쿤',gko:'웨이션브이'},{mko:'윈윈',gko:'웨이션브이'},{mko:'샤오쥔',gko:'웨이션브이'},{mko:'양양',gko:'웨이션브이'},{mko:'헨드리',gko:'웨이션브이'},
+    {mko:'텐',gko:'웨이션브이'},{mko:'쿤',gko:'웨이션브이'},{mko:'윈윈',gko:'웨이션브이'},{mko:'샤오쥔',gko:'웨이션브이'},{mko:'양양',gko:'웨이션브이'},{mko:'헨드리',gko:'웨이션브이'},{mko:'루카스',gko:'웨이션브이'},
     {mko:'성찬',gko:'라이즈'},{mko:'쇼타로',gko:'라이즈'}
   ]},
+  // SuperM(2019, SM 7인 연합 유닛 — EXO·SHINee·NCT127·WayV 합작, 2026-09-13 사용자 요청). 태티서·GOT THE
+  // BEAT와 같은 성격(자체 그룹사 공식 연합)이라 행성 승격 없이 유닛 표기. 마크=엔시티127(갓세븐 마크와 동명이인
+  // 방어), 루카스=WayV(전 멤버).
+  'SuperM':{names:['SuperM','슈퍼엠'],members:[{mko:'백현',gko:'엑소'},{mko:'카이',gko:'엑소'},{mko:'태민',gko:'샤이니'},{mko:'태용',gko:'엔시티 127'},{mko:'마크',gko:'엔시티 127'},{mko:'텐',gko:'웨이션브이'},{mko:'루카스',gko:'웨이션브이'}]},
   // EXO 서브유닛
   'EXO-CBX':{names:['EXO-CBX','CBX','첸백시'],members:[{mko:'시우민',gko:'엑소'},{mko:'백현',gko:'엑소'},{mko:'첸',gko:'엑소'}]},
   'EXO-SC':{names:['EXO-SC','SC','세찬'],members:[{mko:'찬열',gko:'엑소'},{mko:'세훈',gko:'엑소'}]},
