@@ -1,0 +1,51 @@
+name: 쇼츠 승격 스윕 (무인 자동)
+
+# 가로로 저장된 영상 중 실제로는 세로(쇼츠)인 것을 찾아 is_short를 세운다.
+# 그동안 tools/shorts_promote.mjs는 레포에 있기만 하고 **어떤 워크플로에도 안 붙어 있었다**(2026-09-14 확인)
+# — 자동으로 돌던 건 매일 루틴 안의 동기화 시점 인라인 실측(_ytProbeShortsInline)뿐이라, 신규 유입만
+# 커버됐고 그마저 옛 판별기라 5~20%를 놓쳤다. 이 워크플로가 백로그와 신규분을 함께 책임진다.
+#
+# 주기를 6시간으로 잡은 이유: 밀린 것을 다 따라잡고 나면 후보가 0에 수렴해서 **몇 초 만에 끝난다**
+# (스크립트가 후보 0이면 즉시 종료). 따라잡는 동안만 오래 걸리고, 그 뒤로는 사실상 공짜다.
+# YouTube Data API를 전혀 안 쓴다(썸네일/쇼츠 URL 직접 조회) — 쿼터와 무관.
+
+on:
+  schedule:
+    - cron: '15 */6 * * *'   # 매일 루틴(정각)과 겹치지 않게 15분 밀어둠
+  workflow_dispatch:
+    inputs:
+      conc:
+        description: "동시 프로브 수 (기본 200 · 실측 80~87건/초)"
+        required: false
+        default: '200'
+      max_promote:
+        description: "이번 실행에서 스캔할 최대 건수 (비우면 무제한)"
+        required: false
+        default: ''
+
+concurrency:
+  group: shorts-promote
+  cancel-in-progress: false
+
+jobs:
+  promote:
+    runs-on: ubuntu-latest
+    timeout-minutes: 330
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: 쇼츠 승격 스윕
+        shell: bash   # 기본 셸(bash -e)과 달리 pipefail이 켜져 있어야 tee로 넘겨도 node의 실패가 잡힌다
+        env:
+          SUPABASE_SERVICE_ROLE: ${{ secrets.SUPABASE_SERVICE_ROLE }}
+          CONC: ${{ github.event.inputs.conc || '200' }}
+          MAX_PROMOTE: ${{ github.event.inputs.max_promote }}
+        run: |
+          echo '## 쇼츠 승격 스윕' >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+          node tools/shorts_promote.mjs | tee -a "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"

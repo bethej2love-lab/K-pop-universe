@@ -1,0 +1,63 @@
+name: 영상 동기화 (매시간)
+
+# 유튜브 신규 영상 수집(루틴 1~3단계)만 매시간 돌린다 — 2026-09-14 사용자 요청("동기화 1시간마다로").
+#
+# 왜 daily-routine.yml의 cron만 1시간으로 안 바꿨나:
+#   그 워크플로는 동기화 + 37만 행을 훑는 스윕(멤버 태깅·오태깅 재검증·원곡·음방1위·포맷 태깅)이
+#   한 덩어리다. 통째로 매시간 돌리면 ①같은 스윕이 하루 24번 반복되고(증분 스코프가 있어도 조회
+#   자체가 비쌈) ②YouTube Data API 쿼터가 빠듯해진다.
+#   쿼터 계산(호출당 1점): 공식 채널 playlistItems ~222 + 외부 채널 ~60 + 조회수 갱신 ~70 ≈ 350/회.
+#   매시간이면 8,400/일로 한도 10,000의 84%다. 스윕까지 얹으면 여유가 없다.
+#   → 매시간은 **동기화만**(MODE=sync), 스윕 포함 전체는 daily-routine.yml이 3시간마다.
+#
+# concurrency 그룹을 daily-routine과 **공유**한다. 둘은 같은 크롬 프로필(actions/cache)에 있는
+# 체크포인트(kpu_yt_last_*·kpu_adm_*)를 읽고 쓰므로 동시에 돌면 서로의 진행을 덮어쓴다.
+# 전체 루틴이 도는 동안 이 워크플로는 대기하다가(오래 걸리면 더 새 실행에 밀려 취소됨) 다음 시각에
+# 다시 온다 — 건너뛴 시간만큼은 그 다음 동기화가 한꺼번에 가져오므로 유실은 없다(sinceId 체크포인트).
+
+on:
+  schedule:
+    - cron: '30 * * * *'   # 매시 30분 — 정각에 도는 daily-routine과 안 겹치게
+  workflow_dispatch:
+
+concurrency:
+  group: daily-routine
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 50   # 동기화만이라 평소 몇 분. 이 시간을 넘기면 다음 시각 실행에 맡긴다.
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: install chrome
+        id: chrome
+        uses: browser-actions/setup-chrome@v1
+        with:
+          chrome-version: stable
+
+      # daily-routine.yml과 **같은 캐시 키 접두사**를 쓴다 — 체크포인트를 공유해야 매시간 동기화가
+      # 증분으로 돈다. 접두사가 다르면 매번 빈 프로필로 열려 채널 전체를 다시 긁는다.
+      - name: restore checkpoint profile
+        uses: actions/cache@v4
+        with:
+          path: ${{ runner.temp }}/kpu-routine-profile
+          key: kpu-routine-profile-${{ github.run_id }}
+          restore-keys: |
+            kpu-routine-profile-
+
+      - name: run sync only
+        env:
+          KPU_ADMIN_EMAIL: ${{ secrets.KPU_ADMIN_EMAIL }}
+          KPU_ADMIN_PASSWORD: ${{ secrets.KPU_ADMIN_PASSWORD }}
+          KPU_YT_API_KEY: ${{ secrets.KPU_YT_API_KEY }}
+          CHROME_PATH: ${{ steps.chrome.outputs.chrome-path }}
+          PROFILE_DIR: ${{ runner.temp }}/kpu-routine-profile
+          MODE: sync
+          ROUTINE_TIMEOUT_MIN: '45'
+        run: node tools/run_daily_routine.cjs

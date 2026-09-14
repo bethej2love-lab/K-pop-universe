@@ -1,14 +1,22 @@
 name: 매일 루틴 (무인 자동)
 
+# 동기화 + 스윕 전체. 3시간마다.
+# ⚠️ 신규 영상 수집만 따로 **매시간** 도는 워크플로가 따로 있다(sync-hourly.yml, MODE=sync).
+#    둘은 같은 크롬 프로필(체크포인트)을 쓰므로 concurrency 그룹 'daily-routine'을 공유해 직렬로 돈다.
+#    여기 cron을 매시간으로 올리지 말 것 — 37만 행 스윕이 하루 24번 돌고 YouTube 쿼터가 넘친다
+#    (sync-hourly.yml 머리 주석에 계산 있음).
+
 on:
   schedule:
     - cron: '0 */3 * * *'
   workflow_dispatch:
     inputs:
-      with_sync:
-        description: "동기화(1단계) 포함? '1'=전체 / '0'=스윕만"
+      mode:
+        description: "full=동기화+스윕 / sync=동기화만 / sweep=스윕만"
         required: false
-        default: '1'
+        default: 'full'
+        type: choice
+        options: ['full', 'sync', 'sweep']
 
 concurrency:
   group: daily-routine
@@ -46,5 +54,5 @@ jobs:
           KPU_YT_API_KEY: ${{ secrets.KPU_YT_API_KEY }}
           CHROME_PATH: ${{ steps.chrome.outputs.chrome-path }}
           PROFILE_DIR: ${{ runner.temp }}/kpu-routine-profile
-          WITH_SYNC: ${{ github.event.inputs.with_sync || '1' }}
+          MODE: ${{ github.event.inputs.mode || 'full' }}
         run: node tools/run_daily_routine.cjs
