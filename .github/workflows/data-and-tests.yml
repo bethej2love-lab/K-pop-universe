@@ -26,6 +26,11 @@
         - name: Node 전용 테스트 + 데이터 검증
           run: |
             FAILED=""
+            # ⚠️ tests/syntax.test.js는 **어떤 이유로도 skip 목록에 넣지 말 것**(2026-09-14 신설).
+            #    index.html 인라인 <script>의 문법을 파싱으로 검사한다. 이게 없던 동안, const 중복
+            #    선언 하나가 그대로 배포돼 사이트가 로딩 화면에서 안 넘어갔다 — 그때 이 CI는 초록이었다
+            #    (인라인 JS를 보는 테스트가 없었고, 유일하게 잡을 smoke.test.js는 브라우저라 skip).
+            #    브라우저도 네트워크도 안 쓰므로 skip할 이유가 없다.
             for f in tests/validate-data.js tests/*.test.js; do
               b=$(basename "$f")
               case "$b" in

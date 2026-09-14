@@ -38,8 +38,17 @@ const U = process.env.SUPABASE_URL || 'https://dukgguehegnembimqvkm.supabase.co'
 const KEY = process.env.SUPABASE_SERVICE_ROLE;
 const TABLE = 'yt_channel_videos';
 const CONC = Number(process.env.CONC) || 60; // 실측 93건/초·오류 0 (2026-09-14). 올려도 이득이 적고 429 위험만 는다.
-const CHUNK = Number(process.env.CHUNK) || 500;
+const CHUNK = Number(process.env.CHUNK) || 1000; // PostgREST가 1000행에서 자른다(max-rows) — 더 키워도 1000만 온다
 const MAX = Number(process.env.MAX_PROMOTE) || Infinity; // 이번 실행에서 스캔할 최대 건수(0/미지정=무제한)
+// ── 옛 판별기로 찍힌 표식을 무효로 보는 기준선 (2026-09-14) ────────────────────────
+// 판별기를 교체했으므로 이 시각 **이전에** 찍힌 short_probed_at은 믿을 수 없다(oardefault 404를
+// "가로 확정"으로 읽던 시절의 표식이라 약 2만 건이 세로인데 가로로 굳어 있다).
+// ⚠️ 처음엔 `UPDATE ... SET short_probed_at=NULL`로 표식을 지우는 마이그레이션을 쓰려 했는데,
+//    29만 행짜리 UPDATE라 Supabase SQL 에디터에서 게이트웨이 타임아웃으로 못 돌린다
+//    ("upstream timeout", 사용자 실측). 기준선을 코드에 두면 **SQL을 아예 안 돌려도 된다** —
+//    재프로브한 행은 새 시각으로 표식이 갱신되어 자연히 기준선 위로 올라가고, 전량이 올라가면
+//    이 조건은 아무것도 안 잡는다(= 스스로 끝난다).
+const REPROBE_BEFORE = process.env.REPROBE_BEFORE || '2026-09-14T00:00:00Z';
 // DRY_RUN=1: 판별만 해보고 DB에 아무것도 안 쓴다. 판별 로직을 바꿨을 때 실제 데이터로 맞는지 확인하는 용도
 // (2026-09-14 판별기 교체 때 쓴 경로). 읽기는 RLS가 열려 있어 공개 anon 키로도 되므로 service_role이 없어도 된다.
 const DRY = process.env.DRY_RUN === '1';
@@ -143,22 +152,38 @@ async function classify(id) {
 }
 
 // ── Supabase REST ────────────────────────────────────────────────────────────
+const BASE = `is_short=eq.false&tags_manual=eq.false`;
+// ⚠️ 정렬은 **id**다(published_at 아님). 실측(2026-09-14, 컷오프 조건 + limit 1000):
+//      published_at.desc → 13.5초/청크 (292k 전량이면 조회만 33분)
+//      id               → 0.1초/청크  (전량 30초)
+//    published_at에는 이 조건을 커버하는 인덱스가 없어 매 청크가 29만 행을 정렬한다. 원래 최신순으로
+//    훑은 건 "카드에 실제로 뜨는 최근 영상부터 고치자"는 뜻이었는데, 그건 아래 1단계(신규 유입)가
+//    이미 보장한다 — 백로그 순서까지 최신순일 이유는 없다(어차피 한 번 돌면 전량이 끝난다).
+// 1단계: 아직 한 번도 안 본 행(신규 유입). 작아서 늘 먼저 끝난다 → 오늘 들어온 영상이 밀리지 않는다.
+// 2단계: 옛 판별기 표식이 남은 행(백필). 1단계가 빌 때만 본다.
 async function fetchChunk() {
-  // short_probed_at IS NULL AND is_short=false AND tags_manual=false, 최신순, 부분 인덱스가 커버
-  // (DRY_RUN은 **이미 확정된 행**을 다시 보는 게 목적이라 표식 조건을 뺀다 — 옛 판별이 놓친 게 얼마나
-  //  되는지 재는 용도. 쓰기는 어차피 안 일어난다.)
-  const url = `${U}/rest/v1/${TABLE}?select=id`
-    + `&is_short=eq.false&tags_manual=eq.false${DRY ? '' : '&short_probed_at=is.null'}`
-    + `&order=published_at.desc&limit=${CHUNK}`;
-  const r = await fetch(url, { headers: H });
+  // DRY_RUN은 **이미 확정된 행**을 다시 보는 게 목적이라 표식 조건을 통째로 뺀다 — 옛 판별이 놓친 게
+  // 얼마나 되는지 재는 용도. 쓰기는 어차피 안 일어난다.
+  const where = DRY ? '' : `&short_probed_at=is.null`;
+  let r = await fetch(`${U}/rest/v1/${TABLE}?select=id&${BASE}${where}&order=id&limit=${CHUNK}`, { headers: H });
   if (!r.ok) throw new Error(`조회 실패 ${r.status}: ${await r.text()}`);
-  return r.json();
+  let rows = await r.json();
+  if (rows.length || DRY) return { rows, phase: DRY ? 'dry' : '신규' };
+  // 1단계가 비었으면 백필로 넘어간다
+  r = await fetch(`${U}/rest/v1/${TABLE}?select=id&${BASE}&short_probed_at=lt.${REPROBE_BEFORE}&order=id&limit=${CHUNK}`, { headers: H });
+  if (!r.ok) throw new Error(`조회 실패 ${r.status}: ${await r.text()}`);
+  return { rows: await r.json(), phase: '백필' };
 }
 async function countRemaining() {
-  const url = `${U}/rest/v1/${TABLE}?select=id&is_short=eq.false&tags_manual=eq.false&short_probed_at=is.null`;
-  const r = await fetch(url, { headers: { ...H, Prefer: 'count=exact', Range: '0-0' } });
-  const cr = r.headers.get('content-range') || '*/?';
-  return cr.split('/')[1];
+  const one = async qs => {
+    const r = await fetch(`${U}/rest/v1/${TABLE}?select=id&${qs}`, { headers: { ...H, Prefer: 'count=exact', Range: '0-0' } });
+    return Number((r.headers.get('content-range') || '*/0').split('/')[1]) || 0;
+  };
+  const [fresh, backfill] = await Promise.all([
+    one(`${BASE}&short_probed_at=is.null`),
+    one(`${BASE}&short_probed_at=lt.${REPROBE_BEFORE}`),
+  ]);
+  return { fresh, backfill, total: fresh + backfill };
 }
 // id 목록에 대해 지정한 patch를 적용(URL 길이 때문에 100개씩 나눠 in()으로)
 async function patchByIds(ids, patch) {
@@ -195,15 +220,19 @@ async function probeAll(ids) {
 async function main() {
   const t0 = Date.now();
   let scanned = 0, promoted = 0;
-  try { console.log(`[shorts-promote] 남은 후보 약 ${await countRemaining()}건 · 동시 ${CONC} · 청크 ${CHUNK}${MAX !== Infinity ? ` · 이번 상한 ${MAX}` : ''}`); } catch {}
+  try {
+    const c = await countRemaining();
+    console.log(`[shorts-promote] 남은 후보 ${c.total.toLocaleString()}건 (신규 ${c.fresh.toLocaleString()} · 백필 ${c.backfill.toLocaleString()}) · 동시 ${CONC} · 청크 ${CHUNK}${MAX !== Infinity ? ` · 이번 상한 ${MAX}` : ''}`);
+  } catch {}
   let unknownTotal = 0;
   // 판정 불가 행은 표식을 안 남기므로 다음 조회에 **또 뽑힌다** — 한 청크가 통째로 판정 불가면
-  // 같은 500개를 무한히 돌 수 있다. 그래서 "이번 실행에서 아무 행도 확정하지 못한 청크"가 연속으로
+  // 같은 청크를 무한히 돌 수 있다. 그래서 "이번 실행에서 아무 행도 확정하지 못한 청크"가 연속으로
   // 나오면 멈춘다(유튜브가 일시적으로 막고 있는 상황 — 다음 스케줄에 다시 온다).
-  let barrenChunks = 0;
+  let barrenChunks = 0, lastPhase = '';
   while (scanned < MAX) {
-    const rows = await fetchChunk();
+    const { rows, phase } = await fetchChunk();
     if (!rows.length) { console.log('✅ 후보 0 — 전량 실측 완료. 더 처리할 게 없어요.'); break; }
+    if (phase !== lastPhase) { console.log(`— ${phase} 단계 시작`); lastPhase = phase; }
     const ids = rows.map(r => r.id);
     const { portrait, landscape } = await probeAll(ids);
     const unknown = ids.length - portrait.length - landscape.length;
