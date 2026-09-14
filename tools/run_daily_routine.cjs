@@ -25,7 +25,8 @@
 //   SITE_URL            기본 https://kpop-universe.kr
 //   PROFILE_DIR         크롬 프로필/체크포인트 보관 폴더 (기본 OS 임시폴더 내 고정 경로)
 //   CHROME_PATH         크롬 실행 파일 경로 (없으면 표준 경로들을 탐색)
-//   WITH_SYNC           '0'이면 동기화(1~3) 빼고 스윕(2~6)만 (기본 '1' = 전체)
+//   MODE                'full'(기본) | 'sync'(동기화 1~3만) | 'sweep'(스윕 2~7만, 동기화 제외)
+//   WITH_SYNC           MODE의 구버전 표기 — '0'이면 sweep과 같다(기존 워크플로 호환용으로 남김)
 //   ROUTINE_TIMEOUT_MIN 루틴 완료 대기 상한(분, 기본 300)
 
 const fs = require('fs');
@@ -37,7 +38,13 @@ const SITE_URL = process.env.SITE_URL || 'https://kpop-universe.kr';
 const ADMIN_EMAIL = (process.env.KPU_ADMIN_EMAIL || 'bethej2love@gmail.com').trim();
 const ADMIN_PW = process.env.KPU_ADMIN_PASSWORD || '';
 const YT_KEY = (process.env.KPU_YT_API_KEY || '').trim();
-const WITH_SYNC = process.env.WITH_SYNC !== '0';
+// MODE(2026-09-14): 동기화를 매시간 돌리게 되면서 "동기화만" 모드가 필요해졌다 — 스윕까지 매시간
+// 돌리면 37만 행 조회가 하루 24번 반복되고 YouTube 쿼터도 빠듯해진다(동기화 1회 ~350점 × 24 = 8,400
+// /일, 한도 10,000). WITH_SYNC='0'은 기존 워크플로가 쓰던 표기라 그대로 받아준다.
+const MODE = (process.env.MODE || (process.env.WITH_SYNC === '0' ? 'sweep' : 'full')).trim();
+if (!['full', 'sync', 'sweep'].includes(MODE)) die(`MODE 값이 이상해요: "${MODE}" — full | sync | sweep 중 하나여야 합니다.`);
+const WITH_SYNC = MODE !== 'sweep';
+const SYNC_ONLY = MODE === 'sync';
 const ROUTINE_TIMEOUT_MS = (Number(process.env.ROUTINE_TIMEOUT_MIN) || 300) * 60 * 1000;
 const PROFILE_DIR = process.env.PROFILE_DIR || path.join(os.tmpdir(), 'kpu-routine-profile');
 const CDP_PORT = 9444;
@@ -124,7 +131,7 @@ async function main() {
 
   fs.mkdirSync(PROFILE_DIR, { recursive: true });
   console.log(`[routine] 브라우저=${BROWSER}`);
-  console.log(`[routine] 사이트=${SITE_URL} · 프로필=${PROFILE_DIR} · 동기화=${WITH_SYNC ? '포함' : '제외'}`);
+  console.log(`[routine] 사이트=${SITE_URL} · 프로필=${PROFILE_DIR} · 모드=${MODE}(${SYNC_ONLY ? '동기화만' : WITH_SYNC ? '동기화+스윕' : '스윕만'})`);
 
   const child = spawn(BROWSER, [
     '--headless=new', '--disable-gpu', '--no-sandbox', '--no-first-run', '--no-default-browser-check',
@@ -191,7 +198,7 @@ async function main() {
     console.log('[routine] admin.js 로드 확인 — 루틴 시작');
 
     // 5. 루틴 실행 — 오래 걸리므로 await 없이 발사하고 완료 여부를 폴링한다
-    await evalExpr(cdp, `_admRunRoutine(${WITH_SYNC ? 'true' : 'false'})`);
+    await evalExpr(cdp, `_admRunRoutine(${WITH_SYNC ? 'true' : 'false'}${SYNC_ONLY ? `,{only:'sync'}` : ''})`);
     // 시작 확인(_admRoutineRunning이 true가 될 때까지 잠깐) — let 전역이라 맨이름으로 접근
     const started = await pollUntil(cdp, `_admRoutineRunning===true`, 15000, v => v === true, 300);
     if (!started) {
@@ -223,7 +230,7 @@ async function main() {
     try {
       const perf = perfLines.length ? `\n\n### 동기화 속도 계측\n\`\`\`\n${perfLines.join('\n')}\n\`\`\`\n` : '';
       fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY,
-        `## 매일 루틴 ${ok ? '✅ 완료' : '⚠️ 문제 있음'}\n\n\`\`\`\n${summary}\n\`\`\`\n${perf}`);
+        `## ${SYNC_ONLY ? '매시간 동기화' : '매일 루틴'} ${ok ? '✅ 완료' : '⚠️ 문제 있음'}\n\n\`\`\`\n${summary}\n\`\`\`\n${perf}`);
     } catch (e) {}
   }
   process.exit(ok ? 0 : 1);

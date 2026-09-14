@@ -405,9 +405,11 @@
     <button class="sp-yt-sync" id="sp-membersfix-btn" style="margin-top:4px;opacity:.8;">③ (선택) 자체 멤버 태깅 재검증(전체)</button>
     <div class="sp-btn-hint">멤버 태그를 최신 매칭으로 재검증(자동 태깅분 전체 — 자체 채널만이 아님). <b>그룹은 안 건드림</b> · 스냅샷 되돌리기.<br>제거에는 가드 둘이 걸려 있어요(2026-09-10): ①이름이 <b>제목/설명에 문자로도 없을 때만</b> 제거 ②<b>멤버가 전부 빠지는 행은 손대지 않고</b> 검수 큐로만 보냄. 판정에 쓰는 매처는 "태그를 붙일 때" 기준이라 <b>"매처가 모른다 ≠ 오태깅"</b>이거든요 — 가드 없이 돌리면 <code>GD X TAEYANG</code>의 지디, <code>Feat. Felix</code>의 필릭스, 바스타즈 유닛 멤버처럼 정상 태그가 대량으로 날아갑니다(실측).</div>
     <button class="sp-yt-sync" id="sp-catfix-btn" style="margin-top:4px;opacity:.8;">④ (선택) 영상 카테고리(라이브 등) 재분류(전체)</button>
-    <div class="sp-btn-hint">라이브/쇼츠/예능 등 카테고리를 최신 로직으로 재분류.</div>
+    <div class="sp-btn-hint">라이브/쇼츠/예능 등 카테고리를 최신 로직으로 재분류. <b>탭 6종(MV·라이브·예능·드라마/영화·기타·팬)은 그대로</b>고, 그 안에서만 옮겨요.<br>2026-09-14 규칙 보강 — <b>직캠 브랜드 낱말</b>(페이스캠·원픽캠·풀캠·세로캠·팔로우캠…)이 라이브 판정에서 빠져 있어 기타에 묻혀 있던 걸 살리고, <b>안무영상·댄스프랙티스·릴레이댄스를 라이브로</b>, <b>인터뷰·라디오·예능 프로그램을 예능으로</b> 보냅니다. 라디오는 <code>[LIVE]</code>·올라이브 표식이 있으면 무대로 남겨요. <b>강등 금지 2종</b>: 팬/드라마 카테고리는 안 건드리고, 이미 구체적인 값이 든 행을 '기타'로 되돌리지 않아요. 실측 표본 기준 약 2만 6천 건 이동 · 수동보호 · 스냅샷 되돌리기.</div>
+    <button class="sp-yt-sync" id="sp-fmttag-btn" style="margin-top:4px;opacity:.8;">④-1 🏷️ 세부 콘텐츠 포맷 태깅(전체)</button>
+    <div class="sp-btn-hint">탭을 늘리지 않고 <b>카드 ⋮ 메뉴 "콘텐츠별 보기"</b>에서 찾을 수 있게, 제목에서 세부 포맷을 뽑아 <code>content_formats</code>에 <b>더해요</b>(챌린지·비하인드·안무/퍼포먼스·라디오·인터뷰·브이로그·쇼케이스). 기존 코너명(릴레이댄스·킬링보이스…)과 장르 태그(<code>variety</code>/<code>show</code>)는 <b>그대로 둬요 — 덮어쓰지 않아요</b>. 실측 표본 기준 약 7만 5천 건에 태그가 붙어요 · 수동보호 · 스냅샷 되돌리기.</div>
     <button class="sp-yt-sync" id="sp-shortspromote-btn" style="margin-top:4px;opacity:.8;">⬆️ 가로→쇼츠 일괄 승격</button>
-    <div class="sp-btn-hint">동기화가 못 잡은 세로 영상(약 2.8만 건 추정)을 oardefault 실측으로 쇼츠 승격. <b>중단/재개 가능</b>(동시 12개·전량 ~90분) · <b>승격만</b>(강등 안 함) · 수동보호 · 스냅샷 되돌리기. 실행 중 다시 누르면 중단.</div>
+    <div class="sp-btn-hint">동기화가 못 잡은 세로 영상을 oardefault 실측으로 쇼츠 승격. <b>중단/재개 가능</b>(동시 12개) · <b>승격만</b>(강등 안 함) · 수동보호 · 스냅샷 되돌리기. 실행 중 다시 누르면 중단.<br>⚠️ <b>이 브라우저 버튼은 보조예요.</b> 본편은 서버에서 6시간마다 도는 <code>쇼츠 승격 스윕</code> 워크플로(<code>tools/shorts_promote.mjs</code>)고, 그쪽이 훨씬 정확해요 — 여기 쓰는 oardefault 실측은 <b>최근 영상의 13~20%를 놓칩니다</b>(유튜브가 쇼츠에 그 썸네일을 안 주는 경우가 많아 404를 '가로'로 읽음, 2026-09-14 실측). 브라우저는 CORS 때문에 쇼츠 URL 확인을 못 해서 이 방법밖에 못 씁니다.</div>
 
     <div class="sp-subsec-lbl" style="margin-top:12px;">음악방송 1위 <span style="opacity:.6;font-weight:400;">— 매일 루틴에 포함</span></div>
     <button class="sp-yt-sync" id="sp-mswin-btn" style="margin-top:4px;opacity:.8;">🏆 음악방송 1위 수집 (1위 직캠·앵콜 제목에서)</button>
@@ -5176,6 +5178,12 @@ function _isShortV(v){return !!v&&(v.is_short===true||v.category==='short');}
 // URL(/shorts/)로 폴백한다. 세로 직캠은 watch?v= URL이 많아 URL만으론 놓치므로, song 생성 지점에서
 // is_short를 실어주면(핵심) 이 판별이 정확해진다. 플래그가 아직 안 실린 소스는 폴백으로 최소 기존 동작 유지.
 function _songIsShort(s){return !!s&&(s.is_short===true||s.category==='short'||isShorts(s.u));}
+// 옛 분류(category==='short')로만 세로인 행인지. 쓰이는 곳은 _probeShortsBatch의 **강등 제외 조건**
+// 하나뿐이다 — 그 행은 is_short를 내리는 것만으로는 안 되고 장르까지 되찾아줘야 해서(그건 카테고리
+// 재분류 스윕 몫) 강등 대상에서 뺀다. 직접 비교를 헬퍼로 뺀 이유는 "세로 판별은 헬퍼 한 곳에서만"
+// 이라는 규칙을 tests/shorts-promote.test.js가 검사하기 때문(2026-09-14, 그 검사가 이 줄 때문에
+// main에서 계속 빨간불이었다 — 실패 자체가 잊혀서 CI가 늘 빨간 상태로 방치됐다).
+function _isLegacyShortCat(v){return !!v&&v.category==='short';}
 function isMob(){return window.innerWidth<=768;}
 // 유튜브 API로 동기화된 일부 영상(주로 인스타 릴스 크로스포스트) 제목엔 실제 줄바꿈 문자가 들어있어서,
 // 한 줄 말줄임(white-space:nowrap)이 안 먹고 제목 영역이 여러 줄로 확 커져 보이는 문제가 있었음 — 표시 직전에 제거.
@@ -18984,7 +18992,13 @@ function _unitOtherMembers(unitName,memberKo,ko){
 
 // 콘텐츠 포맷(⋮ 메뉴 "콘텐츠별 보기") 대표 순서 — 전체 DB 건수 기준 내림차순으로 고정,
 // 멤버마다 다시 정렬하지 않고 이 순서에서 해당 멤버가 가진 것만 걸러 보여준다.
-const _CONTENT_FORMAT_ORDER=['릴레이댄스',"It's Live",'리무진서비스','문명특급','킬링보이스','아이돌등판','안방1열/단독샷/페이스캠','MPD/입덕직캠','음중/최애직캠','원테이크/얼빡직캠','쇼챔직캠','UNFILTERED CAM'];
+// 2026-09-14 — 앞쪽 7개(챌린지~쇼케이스)는 **세부 콘텐츠 포맷**이다. "탭은 그대로 두고 세부 포맷은
+// 콘텐츠별 보기로"라는 결정에 따라, 카테고리 탭을 늘리는 대신 여기로 들어왔다. 값을 채우는 건
+// admin.js의 _YT_FORMAT_RULES / "④-1 세부 콘텐츠 포맷 태깅" 스윕이고 **이름 문자열이 정확히 같아야**
+// 알약이 뜬다(둘은 짝이다 — 한쪽만 고치면 태그가 DB엔 있는데 화면엔 안 나온다).
+// 뒤쪽은 기존 코너명/직캠 브랜드. 건수 실측(2026-09-14 표본 3만 → 45만 환산): 비하인드 ~24,900 ·
+// 챌린지 ~22,500 · 안무/퍼포먼스 ~11,000 · 라디오 ~6,800 · 브이로그 ~5,900 · 쇼케이스 ~3,500 · 인터뷰 ~3,400.
+const _CONTENT_FORMAT_ORDER=['비하인드','챌린지','안무/퍼포먼스','라디오','브이로그','쇼케이스','인터뷰','릴레이댄스',"It's Live",'리무진서비스','문명특급','킬링보이스','아이돌등판','안방1열/단독샷/페이스캠','MPD/입덕직캠','음중/최애직캠','원테이크/얼빡직캠','쇼챔직캠','UNFILTERED CAM'];
 
 // ── 그룹 카드 YouTube 영상 섹션 ──
 // 그룹 카드의 "채널 영상" 섹션(필터 탭 + 무한스크롤 그리드)을 컨테이너 하나당 독립된 상태로 만들어주는 팩토리.
@@ -21117,7 +21131,7 @@ async function _probeShortsBatch(refs){
       const asp=await _probeAspect(v.id); // 'portrait'|'landscape'|'unknown'
       if(!cur){
         if(asp==='portrait'){v.is_short=true;promoted.push(v.id);} // 가로로 찍혔지만 실제 세로 → 승격
-      }else if(v.is_short===true&&v.category!=='short'){
+      }else if(v.is_short===true&&!_isLegacyShortCat(v)){
         // 세로로 찍혔지만 실제 가로(세로 원본 없음/가로 원본) → 강등해 가로 틀로. 'unknown'(로드실패/타임아웃)은 안 건드림.
         // category==='short'(옛 분류)는 장르까지 바꿔야 해서 제외 — is_short 플래그로 찍힌 것만 강등한다.
         if(asp==='landscape'){v.is_short=false;demoted.push(v.id);}

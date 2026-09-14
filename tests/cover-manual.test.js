@@ -62,7 +62,11 @@ console.log('\n── 3. 스윕이 잠금을 존중한다 ──');
   ck(/eq\('tags_manual',false\)|if\(v\.tags_manual\)/.test(v2), '수동편집(tags_manual) 보호도 그대로 — 프로젝트 헌법');
   const cl = body(admin, /^async function _ytSweepCoverCleanup\(/m, '_ytSweepCoverCleanup');
   ck(/if\(v\.cover_manual\)/.test(cl), '원곡 오탐 청소도 cover_manual 행을 건너뛴다');
-  ck(/_snapHasCoverManual/.test(admin) && /'cover_manual'\]/.test(admin), '되돌리기 스냅샷 컬럼에 cover_manual 포함(+폴백)');
+  // ⚠️ 예전엔 `'cover_manual']`로 검사했는데, 그건 **배열의 마지막 원소일 때만** 통과한다 —
+  //    2026-09-14에 뒤에 content_formats를 붙이자마자 빨개졌다(컬럼은 멀쩡히 들어 있는데도).
+  //    "목록에 있는가"를 봐야 할 자리라 위치에 의존하지 않게 고쳤다.
+  const snapCols = (admin.match(/_BULK_SNAP_COLS=\[([^\]]*)\]/) || [, ''])[1];
+  ck(/_snapHasCoverManual/.test(admin) && /'cover_manual'/.test(snapCols), '되돌리기 스냅샷 컬럼에 cover_manual 포함(+폴백)');
 })();
 
 console.log('\n── 4. 3단계 결정(HIGH 자동 / MEDIUM 큐 / LOW 무시) ──');

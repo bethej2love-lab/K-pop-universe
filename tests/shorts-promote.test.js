@@ -96,7 +96,10 @@ need(/function _isShortV\(v\)\{return !!v&&\(v\.is_short===true\|\|v\.category==
 // 면제 대상은 "세로 판별 헬퍼의 정의 줄" 전부다 — 원래 _isShortV만 이름으로 박아뒀는데, 2026-08-27
 // 쇼츠 판별 통일에서 곡 객체용 _songIsShort가 새로 생기면서 이 검사가 그날부터 계속 빨간 상태였다
 // (2026-08-28 발견). 헬퍼가 또 늘어나도 안 깨지게 이름 대신 "헬퍼 정의 줄" 패턴으로 면제한다.
-const HELPER_DEF = /function\s+_(isShortV|songIsShort)\s*\(/;
+// 이름을 하나씩 박아두면 헬퍼가 늘 때마다 이 검사가 빨개진다 — 실제로 _songIsShort 때(2026-08-28),
+// 그리고 _isLegacyShortCat 때(2026-09-14) 두 번 그랬다. 위 주석의 원래 의도대로 **"세로 판별 헬퍼의
+// 정의 줄"이면 이름과 무관하게 면제**한다(_isShortV·_songIsShort·_isLegacyShortCat…).
+const HELPER_DEF = /function\s+_\w*[Ss]hort\w*\s*\(/;
 const strayReads = html.split('\n').filter(l => {
   const t = l.trim();
   if (t.startsWith('//') || HELPER_DEF.test(l)) return false;
@@ -146,8 +149,24 @@ const cases = [
   ['에스파 카리나 직캠 4K #shorts', 'live', true],   // ★ 예전엔 'short'가 돼서 Live 탭에서 사라졌던 케이스
   ['뉴진스 Super Shy M/V #Shorts', 'mv', true],
   ['아이브 안유진 엠카운트다운 무대', 'live', false],
-  ['르세라핌 Performance Video', 'other', false],
   ['OFFICIAL AUDIO - 어떤 곡', 'skip', false],
+  // ── 2026-09-14 재분류 규칙(사용자 결정) ──────────────────────────────────
+  // 퍼포먼스/안무는 other → live. 2026-08-06엔 반대 방향이었다(그때 케이스가 여기 'other'로 박혀
+  // 있었음). 되돌릴 땐 admin.js _YT_PRERECORDED_RE 주석의 안내대로 한 줄만 바꾸면 된다.
+  ['르세라핌 Performance Video', 'live', false],
+  ['CRAVITY (크래비티) \'SWISH\' Dance Practice (Rehearsal ver.)', 'live', false],
+  ['[릴레이댄스] 하이라이트(Highlight) - DAYDREAM (4K)', 'live', false],
+  // 직캠 브랜드 낱말이 라이브 판정에서 빠져 있어 기타에 묻혀 있던 것들(실측 1,182건)
+  ['[2022 가요대전 페이스캠4K] 에이티즈 우영 \'New World\'', 'live', false],
+  ['유니버스 티켓 | 장민주 시그널송 \'같이 갈래?\' 세로캠', 'live', false],
+  // 인터뷰·라디오·예능은 other → variety (라이브 탭에서 빼는 목적은 그대로)
+  ['(ENG)[MusicBank Interview] 아이브 (IVE Interview) l @MusicBank KBS', 'variety', false],
+  ['주간아이돌 - 135회 B1A4편 알랑가몰라 퀴즈', 'variety', false],
+  ['엑소 첸 벌칙 영상 공개! / [슈퍼주니어의 키스 더 라디오]', 'variety', false],
+  // ⚠️ 단, 라디오 **라이브 무대**는 live로 남는다 — 이 예외가 없으면 실측 107건의 진짜 무대가
+  //    라이브 탭에서 사라진다(라디오 채널은 무대에 [LIVE]/올라이브 표식을 붙인다).
+  ['[LIVE] 2am - 가까이 있어서 몰랐어 | 박소현의 러브게임', 'live', false],
+  ['[ALLIVE] 앰퍼샌드원 - Kick Start | 올라이브 | 아이돌 라디오', 'live', false],
 ];
 let behavOk = true;
 for (const [title, wantCat, wantShort] of cases) {

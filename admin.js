@@ -28,9 +28,38 @@ function _decodeHtmlEntities(str){
 // "Performance Video"/"Dance Practice"류는 실제 무대가 아니라 스튜디오에서 미리 찍은 사전제작 콘텐츠
 // 포맷 이름이라, PERFORMANCE/LIVE 단어만 보고 라이브로 오분류되던 문제가 있었음(2026-08-06, 사용자 제보로
 // 실측 확인 — "Performance Video"만 761건, TWICE/NMIXX/베이비몬스터 등. "LIVE Dance Practice"류도 동일).
-// 직캠/팬캠/CONCERT/라이브처럼 더 확실한 신호가 같이 있으면 그쪽을 우선해서 그래도 라이브로 잡는다.
-const _YT_PRERECORDED_RE=/PERFORMANCE\s+VIDEO|DANCE\s+PRACTICE|PRACTICE\s+VIDEO|안무\s*영상|연습\s*영상|MIRRORED/;
-const _YT_STRONG_LIVE_RE=/\bCONCERT\b|\bFANCAM\b|라이브|직캠|팬캠/;
+// 그래서 오래 other로 보내왔다(그때 짝이던 _YT_STRONG_LIVE_RE 예외는 아래 변경으로 필요가 없어져 제거).
+// ⚠️ 2026-09-14 사용자 결정으로 **이 목록은 이제 other가 아니라 live로 간다**. "퍼포먼스/안무는 그냥
+//    라이브로" — 안무영상·댄스프랙티스·릴레이댄스는 무대는 아니어도 퍼포먼스 콘텐츠고, 기타 더미에
+//    묻혀 있느니 라이브에서 찾는 게 낫다는 판단. 실측 대상 6,872건.
+//    되돌리려면 아래 _ytClassify의 해당 한 줄(`return'live'`)을 `return'other'`로 바꾸고 재분류 스윕을
+//    다시 돌리면 된다(스냅샷이 떠지므로 되돌리기 버튼으로도 복구 가능).
+//    부작용 하나만 기억할 것 — 탐험 피드의 무대 차트들이 category='live'를 직접 조회하므로(index.html
+//    _applyLiveExclude 호출부 여러 곳) 안무영상이 그 차트에도 들어온다. 개인 직캠 차트는 제목의 직캠
+//    브랜드 낱말(_FANCAM_BRAND_RE)로 따로 거르므로 영향 없다.
+const _YT_PRERECORDED_RE=/PERFORMANCE\s+VIDEO|DANCE\s+PRACTICE|PRACTICE\s+VIDEO|안무\s*영상|연습\s*영상|MIRRORED|릴레이\s*댄스|RELAY\s*DANCE|CHOREOGRAPHY\s+VIDEO|연습실\s*(직캠|라이브|버전|VER)?/;
+// 직캠/개인캠 **브랜드 낱말** — 이게 제목에 있으면 장르는 무조건 라이브다.
+// 2026-09-14 실측으로 드러난 구멍: 라이브 판정이 `직캠|팬캠|FANCAM`만 보고 있어서 **페이스캠·원픽캠·
+// 풀캠·세로캠 같은 다른 브랜드가 통째로 other에 방치**돼 있었다(페이스캠/FACECAM 772건 + 원픽캠·풀캠·
+// 세로캠·보컬캠·팔로우캠 410건). "[2022 가요대전 페이스캠4K] 에이티즈 우영"이 전부 기타였다는 뜻.
+// ⚠️ 같은 파일 안에 이미 _YT_FANCAM_RE(6낱말)가 있었는데 그건 MC 진행분 예외 판정에만 쓰이고 장르
+//    판정에는 안 쓰였다 — 두 목록이 조용히 어긋나 있던 게 원인이라, 장르용은 이 이름으로 따로 둔다.
+// ⚠️ index.html의 _FANCAM_BRAND_RE와 **어휘가 같은 짝**이다(그쪽은 "개인 직캠 차트" 판정용).
+//    방송사가 새 브랜드를 수시로 만드니(팔로우캠·원픽캠·보컬캠…) 한쪽에 추가할 땐 다른 쪽도 볼 것.
+//    두 곳에 두는 이유: 이 블록은 tests/shorts-promote.test.js가 통째로 잘라 eval하는 자기완결
+//    블록이라 index.html 전역을 참조할 수 없다.
+const _YT_CAM_BRAND_RE=/직캠|팬캠|페이스캠|풀캠|세로캠|얼빡|입덕|팔로우캠|원픽캠|보컬캠|보이스캠|최애캠|앵콜캠|단독샷|안방\s*1\s*열|포커스캠|개인캠|멤버캠|FANCAM|FACECAM|FULLCAM|FAN\s*CAM|FACE\s*CAM|FULL\s*CAM|VOICE\s*CAM|PICK\s*CAM|FOCUS\s*CAM|SOLO\s*CAM|MEMBER\s*CAM|VERTICAL\s*CAM|UNFILTERED\s*CAM|CLOSE\s*UP\s*CAM/;
+// 라디오 — 2026-09-14 사용자 결정 "인터뷰나 라디오 그냥 버라이어티로 일단".
+// 실측: 라디오 4채널(키스더라디오·별밤/MBC라디오·컬투쇼·아이돌라디오)만 해도 other에 7,884건.
+// ⚠️ 프로그램명을 낱개로 나열하는 이유 — 그냥 '라디오' 한 낱말로 잡으면 "라디오 스타"(예능)나 곡
+//    제목에 라디오가 든 무대까지 쓸어간다. 직캠 브랜드가 같이 있으면 위에서 이미 live로 빠진 뒤다.
+const _YT_RADIO_RE=/키스\s*더\s*라디오|키스더라디오|슈퍼주니어의\s*키스|아이돌\s*라디오|아이돌라디오|IDOL\s*RADIO|두시탈출|컬투쇼|별이\s*빛나는\s*밤에|별밤|영스트리트|러브게임|정오의\s*희망곡|슈퍼라디오|굿모닝FM|배철수의\s*음악캠프|MBC\s*RADIO|KBS\s*COOL\s*FM|SBS\s*파워FM|보이는\s*라디오/;
+// 예능 — 제목만으로 예능이 확실한 프로그램명. index.html의 _VARIETY_TITLE_KEYWORDS(예능 탭이 제목으로
+// 건져내는 목록)와 목적이 같지만, 이쪽은 **저장 시점에 category를 아예 variety로 박는다**.
+// ⚠️ 저 목록과 여기를 합치지 않은 건 의도적이다 — 저쪽은 category가 뭐든 예능 탭에 "보이게" 하는
+//    표시용 안전망이고(과거 데이터까지 커버), 여기는 새로 들어오는 행의 값 자체를 정한다.
+//    새 프로그램을 추가할 땐 양쪽 다 보는 게 맞다.
+const _YT_VARIETY_SHOW_RE=/주간아이돌|WEEKLY\s*IDOL|아이돌등판|문명특급|라디오스타|아는\s*형님|놀라운\s*토요일|전지적\s*참견|전참시|놀면\s*뭐하니|런닝맨|RUNNING\s*MAN|나혼자\s*산다|아이돌\s*인간극장|워크맨|장르만\s*코미디|살롱드림|핑계고|뿅뿅\s*지구오락실|지구오락실|신서유기|플레이유|PLAY\s*U|아이돌\s*스타\s*선수권|아육대/;
 // 음악방송(엠카운트다운/뮤직뱅크/인기가요/음악중심/쇼챔피언/THE SHOW) 이름이 제목에 있으면 "라이브"나
 // "직캠" 같은 단어가 따로 없어도 사실상 100% 방송 무대 영상이다 — 기존 정규식은 이 프로그램명들을 전혀
 // 몰라서 이런 영상이 대량으로 other에 방치돼있었음(2026-08-06, 실측 확인 — 'other'인데 제목에 이 방송명이
@@ -76,17 +105,76 @@ function _ytClassify(title){
   // (2026-08-20, 사용자 제보 — 전소미 영상이 남돌 무대 모음에 낀 사고).
   if(/\bM[.\/]?V\.?\b|\bMUSIC\s+VIDEO\b|뮤직?\s*비디오|뮤비/.test(t))return'mv';
   if(_YT_BROADCAST_RE.test(t))return'other';
+  // 직캠 브랜드 낱말은 **가장 강한 신호**라 다른 어떤 판정보다 먼저 본다(2026-09-14).
+  // 원래 이 자리가 없어서 페이스캠·원픽캠·풀캠류가 통째로 other로 샜다(_YT_CAM_BRAND_RE 주석 참고).
+  // 위 MC 예외(_ytIsMcHosting)도 이미 "직캠류가 같이 있으면 라이브로 남긴다"는 같은 원칙이라 순서가 맞다.
+  if(_YT_CAM_BRAND_RE.test(t)||_YT_CAM_BRAND_RE.test(title||''))return'live';
   // MC 진행분은 라이브 판정보다 앞에서 걸러낸다(위 _ytIsMcHosting 주석 참고). 쇼츠 여부는 이제
   // 이 함수와 무관한 별도 플래그(_ytIsShortTitle → is_short)라, MC 쇼츠도 여기선 그냥 other가 되고
   // 세로 표시/Shorts 탭 노출은 플래그가 따로 챙긴다.
   if(_ytIsMcHosting(title))return'other';
-  // 인터뷰 영상은 제목에 '라이브/직캠'이 섞여 있어도 라이브·무대 모음에서 뺀다(2026-09-04 사용자 요청).
-  // 인터뷰는 무대가 아니라 토크라 live로 잡히면 '각종 무대 TOP'·라이브 탭에 잘못 낀다 → other로 보내 전체 탭에만 남긴다.
-  if(/\bINTERVIEW\b|인터뷰/.test(t))return'other';
-  const looksPrerecorded=_YT_PRERECORDED_RE.test(t);
-  if((!looksPrerecorded||_YT_STRONG_LIVE_RE.test(t))&&/\bLIVE\b|\bCONCERT\b|\bPERFORMANCE\b|\bFANCAM\b|라이브|직캠|팬캠/.test(t))return'live';
+  // 인터뷰 영상은 제목에 '라이브'가 섞여 있어도 라이브·무대 모음에서 뺀다(2026-09-04 사용자 요청).
+  // 인터뷰는 무대가 아니라 토크라 live로 잡히면 '각종 무대 TOP'·라이브 탭에 잘못 낀다.
+  // ⚠️ 2026-09-14 도착지를 other→variety로 바꿨다(사용자 결정). 라이브에서 빼는 목적은 그대로 지키면서,
+  //    "기타 3만 건 더미"가 아니라 예능 탭에서 실제로 찾을 수 있는 자리로 보낸다(실측 3,320건).
+  if(/\bINTERVIEW\b|인터뷰/.test(t))return'variety';
+  // 라디오·예능 프로그램도 같은 이유로 예능(variety)에 넣는다(2026-09-14 사용자 결정).
+  // ⚠️ 단, 라디오는 **토크와 라이브 무대가 한 채널에서 같이 나온다**. 실측(표본 3만 건)에서 이 규칙이
+  //    "[LIVE] 2am - 가까이 있어서 몰랐어 | 박소현의 러브게임", "[ALLIVE] 앰퍼샌드원 - Kick Start |
+  //    올라이브 | 아이돌 라디오" 같은 **진짜 라이브 무대 107건을 라이브 탭에서 빼가고 있었다**.
+  //    라디오 채널은 무대에 [LIVE]/올라이브 표식을 붙이는 관례가 확고하므로, 그 표식이 있으면 live로 남긴다.
+  if(_YT_RADIO_RE.test(t)||_YT_RADIO_RE.test(title||'')){
+    return /\bLIVE\b|올라이브|라이브/.test(t)||/올라이브|라이브/.test(title||'')?'live':'variety';
+  }
+  if(_YT_VARIETY_SHOW_RE.test(t)||_YT_VARIETY_SHOW_RE.test(title||''))return'variety';
+  // 안무영상/댄스프랙티스/퍼포먼스비디오/릴레이댄스 — 2026-08-06엔 "무대가 아니다"라며 other로 보냈지만
+  // 2026-09-14 사용자 결정으로 live로 온다(_YT_PRERECORDED_RE 주석에 되돌리는 법까지 적어둠).
+  if(_YT_PRERECORDED_RE.test(t)||_YT_PRERECORDED_RE.test(title||''))return'live';
+  if(/\bLIVE\b|\bCONCERT\b|\bPERFORMANCE\b|\bFANCAM\b|라이브|직캠|팬캠/.test(t))return'live';
   if(_YT_LIVE_SHOW_RE.test(t))return'live';
   return'other';
+}
+
+// ── 세부 콘텐츠 포맷 태깅 (content_formats) ──────────────────────────────────
+// 2026-09-14 사용자 결정: "탭은 지금 그대로 두고 세부 포맷은 콘텐츠별 보기로 밀어넣자".
+// category(단일값 장르)는 탭 6종 그대로 두고, 그보다 잘게 나뉘는 포맷은 content_formats(배열)에 얹어
+// 카드 ⋮ 메뉴의 "콘텐츠별 보기" 알약으로 찾게 한다. 탭을 늘리지 않고도 기타 더미가 탐색 가능해진다.
+//
+// 왜 category가 아니라 여기인가 — 실측(2026-09-14) 기타 312,051건의 실제 구성:
+//   챌린지 21,071(그중 16,665가 이미 세로=Shorts 탭에서 보임) · 비하인드/메이킹 18,343 ·
+//   라디오 7,884 · 안무/퍼포먼스 6,872 · 인터뷰 3,320
+// 이 중 라디오·인터뷰·안무는 이번에 category까지 옮겼고(위 _ytClassify), 챌린지·비하인드처럼
+// "장르를 새로 팔 만큼은 아니지만 팬이 그 이름으로 찾는" 것들이 여기 남는다.
+//
+// ⚠️ 기존 값(코너명 릴레이댄스/킬링보이스…, 장르 태그 variety/show/cover)과 **공존**한다. 스윕은
+//    합집합으로만 쓰고 절대 덮어쓰지 않는다 — 한 영상이 ['variety','비하인드']를 동시에 가질 수 있다.
+// ⚠️ 이름을 바꾸면 이미 저장된 태그가 고아가 된다(알약이 안 뜸). index.html의 _CONTENT_FORMAT_ORDER에
+//    같은 문자열이 있어야 화면에 노출된다 — 둘은 짝이다.
+const _YT_FORMAT_RULES=[
+  // 챌린지 — 압도적 1위(21,071). 대부분 세로라 Shorts 탭에 이미 뜨지만, "챌린지만 모아보기"가 안 됐다.
+  // ⚠️ '챌린지'가 든 프로그램명(아돌라멋진챌린지 등)도 결국 챌린지 클립이라 굳이 빼지 않는다.
+  {name:'챌린지',re:/챌린지|CHALLENGE/i},
+  // 비하인드·메이킹·비로그 촬영분. B-roll/메이킹필름까지 한 이름으로 묶는다 — 팬이 구분해서 찾지 않는다.
+  {name:'비하인드',re:/비하인드|BEHIND|메이킹|MAKING\s*(FILM|VIDEO)?|B-?ROLL|촬영\s*현장/i},
+  // 안무/퍼포먼스 — category는 live로 갔지만(무대와 섞임) "무대 말고 안무영상만" 보고 싶은 수요가 있다.
+  {name:'안무/퍼포먼스',re:/DANCE\s*PRACTICE|PRACTICE\s*VIDEO|PERFORMANCE\s*VIDEO|CHOREOGRAPHY|안무\s*영상|안무\s*연습|연습\s*영상|연습실|릴레이\s*댄스|RELAY\s*DANCE|MIRRORED/i},
+  // ⚠️ _YT_RADIO_RE 자체엔 /i가 없다 — _ytClassify가 대문자로 접은 뒤 쓰기 때문이다. 여기선 원본
+  //    제목을 그대로 보므로 같은 소스에서 /i 사본을 만들어 쓴다(어휘가 갈리지 않게 재사용).
+  {name:'라디오',re:new RegExp(_YT_RADIO_RE.source,'i')},
+  {name:'인터뷰',re:/\bINTERVIEW\b|인터뷰/i},
+  // 브이로그/자컨 에피소드 — "EP." 단독은 너무 넓어서(21,799건에 서바이벌 회차·음방 회차가 섞인다)
+  // 브이로그 계열 낱말만 인정한다. 실측에서 EP.만으로 잡으면 로드투킹덤 회차까지 끌려왔다.
+  // ⚠️ DIARY/일기도 뺐다 — "IZ*ONE COMEBACK SHOW ONEIRIC DIARY"(컴백쇼)처럼 앨범·코너 이름에 흔해서
+  //    브이로그가 아닌 게 섞인다. '…LOG]'·'…로그]' 형태(닫는 대괄호)는 자컨 코너명 관례라 안전하다.
+  {name:'브이로그',re:/VLOG|브이로그|V-?LOG|LOG\]|로그\]/i},
+  // 쇼케이스/컴백쇼 — 무대이긴 한데 방송 무대와 성격이 달라 따로 찾을 수 있게.
+  {name:'쇼케이스',re:/쇼케이스|SHOWCASE|COMEBACK\s*SHOW|컴백\s*쇼/i},
+];
+// 제목에서 세부 포맷 태그를 뽑는다. 기존 배열과 합칠 때 쓰라고 **새로 붙일 것만** 반환하지 않고
+// 전체 후보를 반환한다 — 합집합 계산은 호출부가 한다(기존 값 보존이 호출부 책임이라는 걸 명시적으로).
+function _ytDeriveFormats(title){
+  const s=title||'';
+  return _YT_FORMAT_RULES.filter(r=>r.re.test(s)).map(r=>r.name);
 }
 
 async function _ytGetUploadsId(ytUrl,key){
@@ -3793,7 +3881,10 @@ function _ytMatchCoverSong(candidate,origNames){
 // 재스캔 사고 재발 방지책). 어느 버튼이 어느 컬럼을 바꾸든 하나의 헬퍼로 커버하려고, 이 관리도구들이
 // 바꿀 수 있는 컬럼 전부를 고정 목록으로 떠둔다(안 바뀐 컬럼까지 복원해도 값이 같아 무해).
 const _BULK_SNAP_TABLE='admin_bulk_snapshots';
-const _BULK_SNAP_COLS=['group_ko','members','with_members','with_groups','content_flag','needs_review','cover_of_members','cover_of_groups','cover_of_song','tags_manual','category','is_short','reviewed_at','flag_source','flagged_at','cover_manual'];
+// content_formats(2026-09-14) — "세부 콘텐츠 포맷 태깅" 스윕이 이 컬럼을 바꾸므로 되돌리기 대상에
+// 들어가야 한다. 이 컬럼은 예능/드라마 탭 조건(_applyGenreTabQuery)과 "콘텐츠별 보기" 알약이 같이
+// 읽는 자리라, 스냅샷에 없으면 오태깅 한 번에 그 둘이 같이 틀어진 채 복구 수단이 없다.
+const _BULK_SNAP_COLS=['group_ko','members','with_members','with_groups','content_flag','needs_review','cover_of_members','cover_of_groups','cover_of_song','tags_manual','category','is_short','reviewed_at','flag_source','flagged_at','cover_manual','content_formats'];
 let _snapHasReviewedAt=true;
 // flag_source/flagged_at(2026-08-27 신설)도 스냅샷에 넣는다 — content_flag만 되돌리고 출처를 안
 // 되돌리면 "정상인데 auto가 숨긴 흔적이 남은" 유령 상태가 생긴다. 컬럼이 아직 없는 환경(마이그레이션
@@ -4015,6 +4106,16 @@ async function _ytSweepCategoryMistag(){
     const updates=[];
     rows.forEach(v=>{
       const newCat=_ytClassify(v.title||'');
+      // ── 강등 금지 2종(2026-09-14) ───────────────────────────────────────────
+      // ⓐ 'fan'/'show'는 **채널이 무엇이냐**로 정해지는 값이다(팬채널·드라마/영화 채널). 제목만 보는
+      //    이 분류기가 알 수 없는 정보라 덮어쓰면 안 된다. 실측에서 팬채널 직캠 한 건이 fan→live로
+      //    끌려가 팬 탭에서 사라질 뻔했다.
+      // ⓑ 'other'는 "정보 없음" 더미다. 이미 더 구체적인 값이 들어 있는 행을 여기로 되돌리는 건
+      //    언제나 손실이다. 실측(표본 3만): 예능 채널에서 들어온 variety 201건이 제목에 키워드가
+      //    없다는 이유만으로 other로 강등되고 있었다("[탐나효 EP.8] …", "미미미누의 방구석 분석" 등).
+      //    ⚠️ 이건 이번에 생긴 문제가 아니라 원래 있던 것 — 이 스윕을 돌릴 때마다 조용히 깎여나갔다.
+      if(v.category==='fan'||v.category==='show')return;
+      if(newCat==='other'&&v.category&&v.category!=='other')return;
       // skip은 동기화 시점에 "아예 저장하지 않는다"는 의미라 이미 저장된 행엔 적용 대상이 아니다.
       // (_ytClassify는 2026-08-27부터 'short'를 반환하지 않는다 — 세로는 is_short 플래그 소관.)
       if(!newCat||newCat==='skip')return;
@@ -4032,6 +4133,59 @@ async function _ytSweepCategoryMistag(){
       {conc:20,retries:2,onProgress:(done,total)=>_ytSetProg(`[영상 카테고리 재분류] ${done}/${total}개 처리 중…`)});
     if(_ub.failed)console.error('[영상 카테고리 재분류] 재시도 후에도 실패:',_ub.failed,'건 —',_ub.firstErr);
     _ytSetProg(`완료! ${rows.length}개 중 ${updates.length}개 카테고리 갱신함`);
+  }catch(e){
+    _ytSetProg('오류: '+e.message);
+  }finally{
+    if(btn)btn.disabled=false;
+  }
+}
+
+// ── 세부 콘텐츠 포맷 태깅 스윕 ──────────────────────────────────────────────────
+// 제목에서 챌린지/비하인드/안무·퍼포먼스/라디오/인터뷰/브이로그/쇼케이스를 뽑아 content_formats에 **더한다**
+// (_YT_FORMAT_RULES 주석 참고). 카드 ⋮ 메뉴의 "콘텐츠별 보기" 알약이 이 값을 읽는다.
+//
+// ⚠️ 덮어쓰지 않고 합집합만 쓴다. content_formats에는 이미 두 종류가 살고 있다 —
+//    ① 채널 유형에서 온 장르 태그('variety'/'show'), ② 코너명('릴레이댄스','킬링보이스'…).
+//    통째로 교체하면 그 둘이 날아가고, 예능 탭 조건(_applyGenreTabQuery의 content_formats.cs.{variety})이
+//    깨져서 예능 영상이 탭에서 사라진다.
+// ⚠️ tags_manual=true는 조회 단계에서 제외한다(프로젝트 전역 원칙 — 자동 스윕은 사람 손을 덮지 않는다).
+// ⚠️ 뺄셈은 안 한다. 규칙에서 빠진 태그를 지우면 관리자가 손으로 넣은 코너명까지 같이 사라진다.
+//    규칙 오탐을 되돌릴 땐 되돌리기 스냅샷을 쓴다.
+async function _ytSweepContentFormats(){
+  if(!sb){_ytSetProg('Supabase 연결 없음');return;}
+  const btn=document.getElementById('sp-fmttag-btn');
+  if(btn)btn.disabled=true;
+  try{
+    // 루틴에서는 증분(마지막 실행 이후 유입분), 7일에 한 번은 전량. 패널 버튼으로 직접 누르면 항상 전량.
+    // 규칙(_YT_FORMAT_RULES)에 낱말을 추가했을 땐 **버튼으로 한 번** 돌려야 과거 영상까지 소급된다.
+    const _fmtSince=_admRoutineScopeSince('format');
+    _ytSetProg('[세부 포맷 태깅] 조회 중…'+(_fmtSince?' (증분)':''));
+    const{data:rows,error}=await _sbFetchAll(()=>{
+      let q=sb.from(_YT_TABLE)
+        .select('id,title,content_formats')
+        .eq('tags_manual',false);
+      if(_fmtSince)q=q.gt('created_at',_fmtSince);
+      return q.order('id');
+    });
+    if(error){_ytSetProg('조회 실패: '+error.message);return;}
+    if(!rows?.length){_ytSetProg('검사할 영상이 없어요');return;}
+    const updates=[];
+    const tally={};
+    rows.forEach(v=>{
+      const cur=Array.isArray(v.content_formats)?v.content_formats:[];
+      const add=_ytDeriveFormats(v.title||'').filter(f=>!cur.includes(f));
+      if(!add.length)return;
+      add.forEach(f=>tally[f]=(tally[f]||0)+1);
+      updates.push({id:v.id,patch:{content_formats:cur.concat(add)}});
+    });
+    if(!updates.length){_ytSetProg(`검사 완료 — ${rows.length}개 중 새로 붙일 포맷 없음`);return;}
+    const _sum=Object.entries(tally).sort((a,b)=>b[1]-a[1]).map(([k,c])=>`${k} ${c}`).join(' · ');
+    if(!_admRoutineRunning&&typeof _confirmDialog==='function'&&!(await _confirmDialog({title:'세부 콘텐츠 포맷 태깅',msg:`영상 <b>${updates.length}건</b>에 세부 포맷 태그를 더해요(기존 태그는 그대로 둬요).<br><br>${_sum}`,okLabel:'태깅 실행',wide:true})))return;
+    await _snapshotBeforeBulk('세부 콘텐츠 포맷 태깅',updates.map(u=>u.id));
+    const _ub=await _sbUpdateBatch(updates,u=>sb.from(_YT_TABLE).update(u.patch).eq('id',u.id),
+      {conc:20,retries:2,onProgress:(done,total)=>_ytSetProg(`[세부 포맷 태깅] ${done}/${total}개 처리 중…`)});
+    if(_ub.failed)console.error('[세부 포맷 태깅] 재시도 후에도 실패:',_ub.failed,'건 —',_ub.firstErr);
+    _ytSetProg(`완료! ${rows.length}개 중 ${updates.length}개에 포맷 태그 추가 — ${_sum}`);
   }catch(e){
     _ytSetProg('오류: '+e.message);
   }finally{
@@ -9296,6 +9450,7 @@ _admExecBind('sp-collabfix-btn',_ytSweepAmbiguousCollabMistag,'콜라보 재검�
   _admExecBind('sp-membersfix-btn',_ytSweepMembersMistag,'자체 멤버 재검증');
   _admExecBind('sp-yt-undo-bulk-btn',_ytUndoLastBulk,'되돌리기');
   _admExecBind('sp-catfix-btn',_ytSweepCategoryMistag,'카테고리 재분류');
+  _admExecBind('sp-fmttag-btn',_ytSweepContentFormats,'세부 포맷 태깅');
   _admExecBind('sp-shortspromote-btn',_ytSweepPromoteShorts,'쇼츠 승격',{selfRestop:true});
   {const _spb=document.getElementById('sp-shortspromote-btn');if(_spb&&localStorage.getItem('_kpu_shortsPromoteCursor'))_spb.textContent='⬆️ 가로→쇼츠 일괄 승격 (재개)';}
   _admExecBind('sp-yt-autotag',_ytAutoTagMembers,'자동 태깅');
@@ -9591,7 +9746,7 @@ document.getElementById('admin-bulk-clear-collab-btn')?.addEventListener('click'
 const _ADM_LS={fbSeen:'kpu_adm_fb_seen',lastRun:'kpu_adm_last_routine',stepMs:'kpu_adm_routine_step_ms',
   // 루틴이 "전량"으로 돈 마지막 시각(단계별). 평소엔 증분으로 돌고 7일마다 한 번 전량 — 아래
   // _admRoutineScopeSince 주석 참고.
-  fullAutotag:'kpu_adm_full_autotag',fullCover:'kpu_adm_full_cover'};
+  fullAutotag:'kpu_adm_full_autotag',fullCover:'kpu_adm_full_cover',fullFormat:'kpu_adm_full_format'};
 // 루틴(무인 매일 실행)에서 이 스윕이 볼 범위 — null이면 전량, ISO 문자열이면 그 시각 이후 유입분만.
 // 왜: 매일 루틴의 2단계가 **매번 378,604행**(전체 394,351행의 96%)을 받아서 매처를 돌리고, 그중
 // members가 빈 180,632행은 설명란까지 따로 받아온다. 어제 이미 판정한 행을 오늘 똑같이 다시 판정하는
@@ -9601,7 +9756,7 @@ const _ADM_LS={fbSeen:'kpu_adm_fb_seen',lastRun:'kpu_adm_last_routine',stepMs:'k
 const _ADM_FULL_EVERY_MS=7*24*3600*1000;
 function _admRoutineScopeSince(kind){
   if(!_admRoutineRunning)return null; // 사람이 버튼으로 부른 것 = 전량
-  const key=kind==='cover'?_ADM_LS.fullCover:_ADM_LS.fullAutotag;
+  const key=kind==='cover'?_ADM_LS.fullCover:kind==='format'?_ADM_LS.fullFormat:_ADM_LS.fullAutotag;
   let lastFull=0,lastRun=0;
   try{lastFull=+(localStorage.getItem(key)||0);lastRun=+(localStorage.getItem(_ADM_LS.lastRun)||0);}catch(e){}
   if(!lastFull||Date.now()-lastFull>=_ADM_FULL_EVERY_MS){
@@ -9913,7 +10068,14 @@ document.getElementById('sp-fb-btn')?.addEventListener('click',function(){
 // ⚠️ 동기화(1번)는 YouTube API 쿼터에 걸려 수십 분씩 걸리거나 중간에 끊긴다 — 그래서 "동기화 빼고
 //    실행"을 따로 뒀다. 쿼터를 아껴야 하거나 시간이 없을 때 2~4번만 돌리는 용도.
 let _admRoutineRunning=false,_admRoutineStop=false;
-async function _admRunRoutine(withSync){
+// opts.only='sync' — 동기화(1~3단계)만 돌고 스윕(2~7단계)은 건너뛴다(2026-09-14).
+// 왜 모드가 하나 더 필요했나: 사용자 요청으로 **동기화를 매시간** 돌리게 됐는데, 이 루틴은 동기화와
+// 37만 행을 훑는 스윕이 한 덩어리라 통째로 매시간 돌리면 ①스윕이 하루 24번 돌고(의미 없는 반복 —
+// 증분 스코프가 있어도 조회 자체가 비쌈) ②YouTube 쿼터가 빠듯해진다(동기화 1회 ~350점 × 24 = 8,400
+// /일, 한도 10,000). 그래서 매시간은 sync만, 스윕 포함 전체는 기존대로 3시간마다로 나눴다.
+// (.github/workflows/sync-hourly.yml ↔ daily-routine.yml · tools/run_daily_routine.cjs의 MODE)
+async function _admRunRoutine(withSync,opts){
+  const _syncOnly=!!(opts&&opts.only==='sync');
   if(_admRoutineRunning)return;
   if(_admBusy){alert('다른 작업이 실행 중이에요: '+_admBusyLabel+'\n끝난 뒤에 다시 눌러주세요.');return;}
   _admRoutineRunning=true;_admRoutineStop=false;
@@ -9940,6 +10102,7 @@ async function _admRunRoutine(withSync){
     steps.push({name:'1-2. 외부 채널 동기화 (음방·예능·아이돌주도)',fn:_ytSyncExtChannels});
     steps.push({name:'1-3. 조회수 갱신 (최근 14일 · 이번주 직캠 TOP용)',fn:_ytRefreshViewCounts});
   }
+  if(!_syncOnly){
   steps.push({name:'2. 멤버+콜라보 자동 태깅',fn:_ytAutoTagMembers});
   steps.push({name:'3. 콜라보 오태깅 재검증',fn:_ytSweepAmbiguousCollabMistag});
   steps.push({name:'4. 동명이인 그룹 오배정 스캔',fn:_ytScanAmbiguousNameGroupMisassignment});
@@ -9955,6 +10118,13 @@ async function _admRunRoutine(withSync){
   //    ⚠️ 여기서도 안전한 건 확인창이 아니라 **A등급 게이트**다 — 루틴 중엔 _sweepConfirmSimple가
   //    무조건 true다. B등급(요일 불일치·동명이인·날짜 역산)은 자동 반영 대상이 아니라 콘솔 SQL로만 남는다.
   steps.push({name:'6. 음악방송 1위 수집 (A등급만 자동)',fn:_ytSweepMusicShowWins});
+  // 7. 세부 콘텐츠 포맷 태깅(2026-09-14 추가) — 새로 들어온 영상에도 챌린지/비하인드/안무 같은 세부
+  //    포맷이 자동으로 붙어야 "콘텐츠별 보기"가 계속 살아 있다. 동기화 삽입 시점에 붙이지 않고 여기
+  //    두는 이유: 삽입은 upsert라, 체크포인트를 잃어 채널을 통째로 재수집하는 날 content_formats가
+  //    **덮어써져 관리자가 손으로 넣은 코너명이 날아간다**. 스윕은 합집합만 쓰므로 그 위험이 없다.
+  //    비용도 증분 스코프(_admRoutineScopeSince('format'))로 하루 유입분만 본다.
+  steps.push({name:'7. 세부 콘텐츠 포맷 태깅',fn:_ytSweepContentFormats});
+  }
   const t0=Date.now();
   // 단계별 소요 시간 계측(2026-09-07) — "루틴이 10시간 걸린다"는 제보를 받고도 **어느 단계가** 그런지
   // 알 방법이 없었다(총 시간만 찍혔음). 매 실행의 단계별 시간을 남기고, 다음 실행 때 지난번 값을 옆에
@@ -9984,7 +10154,7 @@ async function _admRunRoutine(withSync){
   console.log('[루틴] 단계별 소요(ms)',stepMs);
   const mins=Math.round((Date.now()-t0)/60000);
   const _slowest=Object.entries(stepMs).sort((a,b)=>b[1]-a[1])[0];
-  _admSetLog('총 '+(mins<1?'1분 미만':mins+'분')+' 소요'+(_slowest?` · 가장 오래 걸린 단계: ${_slowest[0]} (${_fmtMs(_slowest[1])})`:'')+' — 카드 숫자를 다시 불러왔어요.','adm-log-done');
+  _admSetLog((_syncOnly?'[동기화만] ':'')+'총 '+(mins<1?'1분 미만':mins+'분')+' 소요'+(_slowest?` · 가장 오래 걸린 단계: ${_slowest[0]} (${_fmtMs(_slowest[1])})`:'')+' — 카드 숫자를 다시 불러왔어요.','adm-log-done');
   const _now=Date.now();
   try{localStorage.setItem(_ADM_LS.lastRun,String(_now));}catch(e){}
   await _admWriteLastRunDB(_now);
