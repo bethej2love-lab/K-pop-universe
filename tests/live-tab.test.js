@@ -35,7 +35,9 @@ need(/function _applyLiveTabQuery\(q\)\{/.test(html), '라이브 탭 쿼리 조�
 const fnBody = (html.match(/function _applyLiveTabQuery\(q\)\{[\s\S]*?\n\}/) || [''])[0];
 // 제외 루프는 _applyLiveExclude 쪽에 있고 탭 쿼리는 그걸 감싸기만 한다(탐험 차트가 제외만 재사용
 // 하려고 2026-08-27에 쪼갬) — 그래서 배열 사용 여부는 _applyLiveExclude 본문에서 확인한다.
-const excBody = (html.match(/function _applyLiveExclude\(q\)\{[\s\S]*?\n\}/) || [''])[0];
+// 2026-09-14에 인자가 (q) → (q,opts)로 늘었다(차트=무대만 / 탭=안무영상 포함). 시그니처를 통째로
+// 박아두면 이렇게 인자 하나 늘 때마다 빨개지므로 함수 이름까지만 고정한다.
+const excBody = (html.match(/function _applyLiveExclude\([^)]*\)\{[\s\S]*?\n\}/) || [''])[0];
 need(/_LIVE_EXCLUDE/.test(excBody), '  · 제외 함수가 _LIVE_EXCLUDE를 사용(하드코딩 아님)');
 need(/content_formats\.cs\.\{live\}/.test(fnBody), '  · category=live OR content_formats=live 조건 유지');
 need(/리무진서비스/.test(fnBody), '  · 리무진서비스 제목 예외 유지');
@@ -63,7 +65,14 @@ need(/_titleNorm\(newRow\.title\|\|''\)/.test(patchLive),
 // 1차 수정 때 카드 탭만 고쳤더니 "탐험 패널의 이번주 직캠 TOP 같은 섹션엔 그대로 남는다"는 지적을
 // 받았다(2026-08-27). 그 섹션들은 탭 조건이 아니라 category='live'를 직접 조회하므로, 제외 조각만
 // 떼어낸 _applyLiveExclude를 쓰게 했다. category='live' 직접 조회가 하나라도 맨몸으로 남으면 실패.
-need(/function _applyLiveExclude\(q\)\{/.test(html), '제외 조각이 _applyLiveExclude로 분리됨');
+need(/function _applyLiveExclude\([^)]*\)\{/.test(html), '제외 조각이 _applyLiveExclude로 분리됨');
+// 2026-09-14 — 탭(Performance)과 차트(무대)의 범위가 갈렸다. 안무영상은 탭엔 남고 차트엔 안 나와야
+// 한다. 그 갈림이 사라지면(둘 중 하나라도 빠지면) 조회수 최상위를 안무영상이 덮거나, 반대로 탭에서
+// 안무영상이 통째로 사라진다 — 어느 쪽이든 조용히 틀리므로 양쪽을 다 못 박는다.
+need(/const _STAGE_EXCLUDE_FORMATS=\[/.test(html), '  · 차트 전용 제외 포맷 목록(_STAGE_EXCLUDE_FORMATS)이 있음');
+need(/opts&&opts\.includeChoreo/.test(html), '  · 기본은 차트 기준(안무영상 제외), includeChoreo로만 포함');
+need(/_applyLiveExclude\(q\.or\([\s\S]{0,300}?\{includeChoreo:true\}\)/.test(html),
+  '  · 탭 쿼리(_applyLiveTabQuery)는 includeChoreo:true — 안무영상이 Performance 탭엔 남는다');
 need(/return _applyLiveExclude\(q\.or\(/.test(html), '  · 탭 쿼리(_applyLiveTabQuery)도 그 조각을 재사용');
 const bareLive = [];
 html.split('\n').forEach((l, i) => {
@@ -84,9 +93,20 @@ for (const k of ['놀면뭐하니', '놀면 뭐하니', '전참시', '라디오�
   need(varList.includes(k), `  · 예능 키워드에 '${k}' 포함`);
 need(varList.every(k => k === k.toLowerCase()), '  · 전부 소문자(title_norm 정규화 기준)');
 need(/function _applyGenreTabQuery\(q,filter\)\{/.test(html), 'variety/show 탭 쿼리가 _applyGenreTabQuery 한 함수에 있음');
-// 키워드가 함수 밖에 또 하드코딩돼 있으면 드리프트 — 정의 한 줄에만 나와야 한다.
-const raKeyword = (html.match(/라디오스타/g) || []).length;
-need(raKeyword === 1, `예능 키워드 하드코딩은 정의 1곳뿐이어야 함 — '라디오스타' 발견 ${raKeyword}곳`);
+// 키워드가 함수 밖에 또 하드코딩돼 있으면 드리프트.
+// ⚠️ 예전엔 파일 전체에서 '라디오스타' 문자열 개수를 셌는데(=1이어야 통과), 그건 **다른 기능이
+//    같은 낱말을 쓰기만 해도 빨개진다**. 실제로 "출연 프로그램 컬렉션"(_PROGRAM_* 레지스트리)이
+//    들어오면서 5곳이 됐고(정의 1 + 그 레지스트리의 label/kw 2 + 주석 2) main이 계속 빨간 상태로
+//    방치됐다. 프로그램 컬렉션은 예능 탭 조건과 무관한 별개 기능이라 드리프트가 아니다.
+// → 드리프트가 실제로 생기는 모양, 즉 **쿼리 조각에 제목 키워드를 직접 박은 것**만 센다.
+const strayVarietyQ = html.split('\n').filter(l => {
+  const t = l.trim();
+  if (t.startsWith('//') || t.startsWith('*')) return false;
+  if (/const _VARIETY_TITLE_KEYWORDS=/.test(l)) return false; // 정의 줄
+  return /title(_norm)?\.ilike\.\*(라디오스타|아는형님|전참시|놀면뭐하니)/.test(l);
+});
+need(strayVarietyQ.length === 0,
+  `예능 제목 키워드를 쿼리에 직접 박은 곳 없음 — 발견 ${strayVarietyQ.length}건${strayVarietyQ.length ? '\n     ' + strayVarietyQ.map(s => s.trim().slice(0, 70)).join('\n     ') : ''}`);
 const genreUses = (html.match(/_applyGenreTabQuery\(/g) || []).length;
 need(genreUses >= 5, `_applyGenreTabQuery 사용처 ${genreUses}곳(정의 1 + 대표영상/목록/탭노출 variety·show)`);
 need(/_VARIETY_TITLE_KEYWORDS\.some\(k=>t\.includes\(k\)\)/.test(html),

@@ -339,11 +339,11 @@
     <button class="sp-yt-sync" id="sp-yt-sync">전체 동기화 (공식 + 외부 채널)</button>
     <div class="sp-btn-hint">공식 채널 전체 + 외부 채널의 새 영상을 가져와요. 평소엔 이것부터 누르면 돼요.</div>
     <button class="sp-yt-sync" id="sp-yt-viewcount-btn" style="margin-top:4px;opacity:.8;">조회수만 갱신(이번주 직캠 TOP용)</button>
-    <div class="sp-btn-hint">최근 14일 라이브 영상 조회수만 갱신 — 이번 주 직캠 TOP 순위에 씀. 위 전체 동기화에 이미 얹혀있어서 따로 안 눌러도 됨.</div>
+    <div class="sp-btn-hint">최근 14일 퍼포먼스(무대·직캠) 영상 조회수만 갱신 — 이번 주 직캠 TOP 순위에 씀. 위 전체 동기화에 이미 얹혀있어서 따로 안 눌러도 됨.</div>
     <button class="sp-yt-sync" id="sp-yt-allviewcount-btn" style="margin-top:4px;opacity:.8;">전체 조회수 갱신(연도별 TOP용 · 월 1회)</button>
-    <div class="sp-btn-hint">조회수가 이미 있는 라이브 영상 전체를 다시 갱신 — 연도별 TOP 100용. 한 달에 한 번이면 충분해요.<br><b>재생시간(duration_sec)도 같이 채웁니다</b>(쿼터 추가 비용 0 — videos.list는 part를 더 얹어도 호출당 1). 직캠/무대 차트의 "쇼츠 제외"가 <b>세로 여부가 아니라 길이</b>로 판정되려면 이 값이 필요해요 — <code>duration_migration.sql</code>을 먼저 실행하고 이 버튼을 한 번 돌리면 됩니다. 컬럼이 없으면 조용히 건너뛰고 조회수만 갱신해요.</div>
+    <div class="sp-btn-hint">조회수가 이미 있는 퍼포먼스 영상 전체를 다시 갱신 — 연도별 TOP 100용. 한 달에 한 번이면 충분해요.<br><b>재생시간(duration_sec)도 같이 채웁니다</b>(쿼터 추가 비용 0 — videos.list는 part를 더 얹어도 호출당 1). 직캠/무대 차트의 "쇼츠 제외"가 <b>세로 여부가 아니라 길이</b>로 판정되려면 이 값이 필요해요 — <code>duration_migration.sql</code>을 먼저 실행하고 이 버튼을 한 번 돌리면 됩니다. 컬럼이 없으면 조용히 건너뛰고 조회수만 갱신해요.</div>
     <button class="sp-yt-sync" id="sp-yt-rotateviewcount-btn" style="margin-top:4px;opacity:.8;">전체 카테고리 조회수 순환 갱신(월 1회 · 배치 5000개씩)</button>
-    <div class="sp-btn-hint">라이브 말고 쇼츠·MV 등 나머지 전체를 대상으로, 가장 오래전에 갱신된 5천개씩만 순환 갱신 — 몇 달 걸려 전체를 한 바퀴 돌아요. 월 1회 정도.</div>
+    <div class="sp-btn-hint">퍼포먼스 말고 쇼츠·MV 등 나머지 전체를 대상으로, 가장 오래전에 갱신된 5천개씩만 순환 갱신 — 몇 달 걸려 전체를 한 바퀴 돌아요. 월 1회 정도.</div>
     <div style="margin-top:6px;padding-top:6px;border-top:0.5px solid rgba(255,255,255,0.07)">
       <div style="font-size:10px;color:rgba(155,178,228,0.4);margin-bottom:2px">과거 영상 백필 (search API, 쿼터 많이 씀)</div>
       <select class="sp-yt-key" id="sp-yt-backfill-ch"></select>
@@ -404,10 +404,10 @@
     <div class="sp-btn-hint">직캠 구조 제목([태그] 그룹 멤버 '곡명' …)만 골라 그룹/멤버/콜라보를 구조 파서 기준으로 재검증. 곡명이 그룹명과 겹치는 오태깅('Treasure'·'After School' 등)·단일음절 멤버(뷔·큐) 누락·strictSync 그룹 직캠 복구. <b>건수 먼저 보여주고 확인</b> · 수동/owner채널 제외 · 표본 콘솔(F12) · 스냅샷 되돌리기. <b>(그룹 변경)</b></div>
     <button class="sp-yt-sync" id="sp-membersfix-btn" style="margin-top:4px;opacity:.8;">③ (선택) 자체 멤버 태깅 재검증(전체)</button>
     <div class="sp-btn-hint">멤버 태그를 최신 매칭으로 재검증(자동 태깅분 전체 — 자체 채널만이 아님). <b>그룹은 안 건드림</b> · 스냅샷 되돌리기.<br>제거에는 가드 둘이 걸려 있어요(2026-09-10): ①이름이 <b>제목/설명에 문자로도 없을 때만</b> 제거 ②<b>멤버가 전부 빠지는 행은 손대지 않고</b> 검수 큐로만 보냄. 판정에 쓰는 매처는 "태그를 붙일 때" 기준이라 <b>"매처가 모른다 ≠ 오태깅"</b>이거든요 — 가드 없이 돌리면 <code>GD X TAEYANG</code>의 지디, <code>Feat. Felix</code>의 필릭스, 바스타즈 유닛 멤버처럼 정상 태그가 대량으로 날아갑니다(실측).</div>
-    <button class="sp-yt-sync" id="sp-catfix-btn" style="margin-top:4px;opacity:.8;">④ (선택) 영상 카테고리(라이브 등) 재분류(전체)</button>
-    <div class="sp-btn-hint">라이브/쇼츠/예능 등 카테고리를 최신 로직으로 재분류. <b>탭 6종(MV·라이브·예능·드라마/영화·기타·팬)은 그대로</b>고, 그 안에서만 옮겨요.<br>2026-09-14 규칙 보강 — <b>직캠 브랜드 낱말</b>(페이스캠·원픽캠·풀캠·세로캠·팔로우캠…)이 라이브 판정에서 빠져 있어 기타에 묻혀 있던 걸 살리고, <b>안무영상·댄스프랙티스·릴레이댄스를 라이브로</b>, <b>인터뷰·라디오·예능 프로그램을 예능으로</b> 보냅니다. 라디오는 <code>[LIVE]</code>·올라이브 표식이 있으면 무대로 남겨요. <b>강등 금지 2종</b>: 팬/드라마 카테고리는 안 건드리고, 이미 구체적인 값이 든 행을 '기타'로 되돌리지 않아요. 실측 표본 기준 약 2만 6천 건 이동 · 수동보호 · 스냅샷 되돌리기.</div>
+    <button class="sp-yt-sync" id="sp-catfix-btn" style="margin-top:4px;opacity:.8;">④ (선택) 영상 카테고리(퍼포먼스 등) 재분류(전체)</button>
+    <div class="sp-btn-hint">퍼포먼스/쇼츠/예능 등 카테고리를 최신 로직으로 재분류. <b>탭 6종(MV·퍼포먼스·예능·드라마/영화·기타·팬)은 그대로</b>고, 그 안에서만 옮겨요.<br>2026-09-14 규칙 보강 — <b>직캠 브랜드 낱말</b>(페이스캠·원픽캠·풀캠·세로캠·팔로우캠…)이 퍼포먼스 판정에서 빠져 있어 기타에 묻혀 있던 걸 살리고, <b>안무영상·댄스프랙티스·릴레이댄스를 퍼포먼스로</b>, <b>인터뷰·라디오·예능 프로그램을 예능으로</b> 보냅니다. 라디오는 <code>[LIVE]</code>·올라이브 표식이 있으면 무대로 남겨요. <b>강등 금지 2종</b>: 팬/드라마 카테고리는 안 건드리고, 이미 구체적인 값이 든 행을 '기타'로 되돌리지 않아요. 실측 표본 기준 약 2만 6천 건 이동 · 수동보호 · 스냅샷 되돌리기.<br>⚠️ 탐험 피드의 <b>무대 차트는 안무영상을 안 보여줘요</b> — 조회수로 압도적 최상위라 그냥 두면 TOP 20의 95%를 덮습니다(실측). 그 제외는 아래 ④-1이 붙이는 <code>안무영상</code> 태그로 걸리니, <b>④ 다음에 ④-1도 꼭 돌려주세요.</b></div>
     <button class="sp-yt-sync" id="sp-fmttag-btn" style="margin-top:4px;opacity:.8;">④-1 🏷️ 세부 콘텐츠 포맷 태깅(전체)</button>
-    <div class="sp-btn-hint">탭을 늘리지 않고 <b>카드 ⋮ 메뉴 "콘텐츠별 보기"</b>에서 찾을 수 있게, 제목에서 세부 포맷을 뽑아 <code>content_formats</code>에 <b>더해요</b>(챌린지·비하인드·안무/퍼포먼스·라디오·인터뷰·브이로그·쇼케이스). 기존 코너명(릴레이댄스·킬링보이스…)과 장르 태그(<code>variety</code>/<code>show</code>)는 <b>그대로 둬요 — 덮어쓰지 않아요</b>. 실측 표본 기준 약 7만 5천 건에 태그가 붙어요 · 수동보호 · 스냅샷 되돌리기.</div>
+    <div class="sp-btn-hint">탭을 늘리지 않고 <b>카드 ⋮ 메뉴 "콘텐츠별 보기"</b>에서 찾을 수 있게, 제목에서 세부 포맷을 뽑아 <code>content_formats</code>에 <b>더해요</b>(챌린지·비하인드·안무영상·라디오·인터뷰·브이로그·쇼케이스). 기존 코너명(릴레이댄스·킬링보이스…)과 장르 태그(<code>variety</code>/<code>show</code>)는 <b>그대로 둬요 — 덮어쓰지 않아요</b>. 실측 표본 기준 약 7만 5천 건에 태그가 붙어요 · 수동보호 · 스냅샷 되돌리기.</div>
     <button class="sp-yt-sync" id="sp-shortspromote-btn" style="margin-top:4px;opacity:.8;">⬆️ 가로→쇼츠 일괄 승격</button>
     <div class="sp-btn-hint">동기화가 못 잡은 세로 영상을 oardefault 실측으로 쇼츠 승격. <b>중단/재개 가능</b>(동시 12개) · <b>승격만</b>(강등 안 함) · 수동보호 · 스냅샷 되돌리기. 실행 중 다시 누르면 중단.<br>⚠️ <b>이 브라우저 버튼은 보조예요.</b> 본편은 서버에서 6시간마다 도는 <code>쇼츠 승격 스윕</code> 워크플로(<code>tools/shorts_promote.mjs</code>)고, 그쪽이 훨씬 정확해요 — 여기 쓰는 oardefault 실측은 <b>최근 영상의 13~20%를 놓칩니다</b>(유튜브가 쇼츠에 그 썸네일을 안 주는 경우가 많아 404를 '가로'로 읽음, 2026-09-14 실측). 브라우저는 CORS 때문에 쇼츠 URL 확인을 못 해서 이 방법밖에 못 씁니다.</div>
 
@@ -467,7 +467,7 @@
       <button class="vm-tab" data-tab="channels">동기화 채널</button>
       <button class="vm-tab" data-tab="ss">검수</button>
       <button class="vm-tab" data-tab="review">그룹배정 검수</button>
-      <button class="vm-tab" data-tab="catlock">라이브잠금</button>
+      <button class="vm-tab" data-tab="catlock">퍼포먼스잠금</button>
       <!-- 고아 멤버태그(2026-08-27) — members에 이름은 붙었는데 그 행의 group_ko가 그 사람 소속이
            아니라서 어느 카드에서도 조회되지 않는 태그. 편집 모달이 카드 그룹 기준으로 폼을 그리던
            버그로 쌓였고(실측 1,155개), 정정 방법이 영상마다 달라서(group_ko 재배정 vs with_members로
@@ -540,7 +540,8 @@
           <option value="none">분류 안 함(전체 탭만)</option>
           <option value="variety">예능</option>
           <option value="show">드라마/영화</option>
-          <option value="live">라이브</option>
+          <!-- 값은 'live' 그대로, 라벨만 '퍼포먼스'(2026-09-14) — 카드 탭 'Performance'와 같은 것을 가리킨다 -->
+          <option value="live">퍼포먼스 (무대·직캠·안무영상)</option>
           <option value="mv">뮤직비디오</option>
         </select>
         <label id="vm-ch-add-primary-wrap" style="display:none;align-items:center;gap:4px;font-size:11px;color:rgba(175,196,240,0.75);white-space:nowrap;">
@@ -1059,7 +1060,8 @@
         <select id="vid-tag-cat" class="pp-input" style="cursor:pointer;flex:1">
           <option value="">기본</option>
           <option value="mv">MV</option>
-          <option value="live">라이브</option>
+          <!-- 값은 'live' 그대로, 라벨만 '퍼포먼스'(2026-09-14) — 카드 탭 'Performance'와 같은 것을 가리킨다 -->
+          <option value="live">퍼포먼스 (무대·직캠·안무영상)</option>
           <option value="variety">예능</option>
           <option value="show">드라마/영화</option>
           <!-- ⚠️ other/fan은 "관리자가 고르라고" 넣은 게 아니라 **왕복 손실을 막으려고** 넣었다(2026-09-07).
@@ -5299,13 +5301,35 @@ const _LIVE_EXCLUDE=['엠카드림','비하인드','behind'];
 // 제외 조건만 따로 — 탐험 패널의 무대/직캠 차트들은 category='live'를 직접 조회하므로(탭 조건을 안 씀)
 // 이 조각을 그대로 재사용한다. 2026-08-27 1차 수정 때 카드 탭만 고쳤다가 "차트에는 그대로 남는다"는
 // 지적을 받아 분리했다 — 같은 배열(_LIVE_EXCLUDE)을 보므로 키워드를 추가하면 양쪽에 동시에 적용된다.
-function _applyLiveExclude(q){
+// ── 탭(Performance)과 차트(무대)의 범위가 갈리는 지점 (2026-09-14) ──────────────────
+// 안무영상·댄스프랙티스·퍼포먼스비디오가 category='live'로 들어오면서(admin.js _ytClassify), 탭
+// 이름도 Live → **Performance**로 바꿨다 — 무대·직캠·안무영상을 한 우산에 담는 이름이라 탭 안에서는
+// 이게 맞다. 문제는 탐험 피드의 **무대 차트**다.
+// ⚠️ 실측(2026-09-14, 조회수 300만 이상 구간에서 기존 live와 섞어봄): 안무영상이 조회수로 압도적
+//    최상위라 **TOP 20의 95%, TOP 50의 80%를 덮는다**(1위 BLACKPINK 'How You Like That' DANCE
+//    PERFORMANCE VIDEO 20.3억 · 2위 LISA 'MONEY' 12.3억 · TOP 30 중 실제 방송 무대는 3건뿐).
+//    한 그룹 곡이 줄줄이 붙어서 "발견" 카드로서의 값도 떨어진다.
+// → 사용자 결정: **탭은 다 보여주고, 차트는 방송 무대만.** 그래서 제외를 두 단계로 나눈다.
+//   · 기본(opts 없음) = 차트 기준 — _LIVE_EXCLUDE + 안무영상 포맷까지 뺀다.
+//   · {includeChoreo:true} = 탭 기준 — 안무영상을 남긴다.
+// ⚠️ _LIVE_EXCLUDE에 안무 낱말을 넣는 방식은 **안 된다** — 그 배열은 탭과 차트가 같이 보므로
+//    넣는 순간 탭에서도 사라져서 하려던 게 통째로 취소된다.
+const _LIVE_EXCLUDE=['엠카드림','비하인드','behind'];
+// 차트에서만 빼는 콘텐츠 포맷. 제목 낱말 10개를 NOT ILIKE로 나열하는 대신 **태그 한 절**로 거른다 —
+// 어휘가 admin.js _YT_FORMAT_RULES 한 곳에만 살아서 드리프트가 없고, 절도 1개라 싸다.
+// ⚠️ 이 제외는 "④-1 세부 콘텐츠 포맷 태깅" 스윕이 돈 뒤부터 효력이 생긴다(태그가 데이터에 있어야 함).
+// ⚠️ NOT(@>)는 컬럼이 NULL이면 NULL이라 그 행까지 탈락시킨다 — 여기선 안전하다. 실측(2026-09-14)
+//    content_formats IS NULL이 **0건**이고 전부 '{}' 아니면 값이 들어 있다. NULL이 생길 수 있게
+//    스키마가 바뀌면 or(is.null, not.cs)로 감싸야 한다.
+const _STAGE_EXCLUDE_FORMATS=['안무영상'];
+function _applyLiveExclude(q,opts){
   q=q.not('title','ilike','%[live]%');
   for(const k of _LIVE_EXCLUDE)q=q.not('title_norm','ilike',`*${k}*`);
+  if(!(opts&&opts.includeChoreo))for(const f of _STAGE_EXCLUDE_FORMATS)q=q.not('content_formats','cs',`{${f}}`);
   return q;
 }
 function _applyLiveTabQuery(q){
-  return _applyLiveExclude(q.or('category.eq.live,content_formats.cs.{live},title_norm.ilike.*리무진서비스*,title_norm.ilike.*리무진 서비스*'));
+  return _applyLiveExclude(q.or('category.eq.live,content_formats.cs.{live},title_norm.ilike.*리무진서비스*,title_norm.ilike.*리무진 서비스*'),{includeChoreo:true});
 }
 // 예능(variety) 탭에 **제목만으로도** 들어와야 하는 프로그램명 — title_norm(NFKC+소문자) 기준이라
 // 전부 소문자로 적는다. 채널 tier가 예능이 아니거나 content_formats 태깅이 안 된 영상(대부분
@@ -17642,7 +17666,7 @@ async function _buildFeedYearlyTop(list){
     const songs=vids.map(v=>({t:v.title,u:vidUrl(v),thumb:v.thumb,vc:v.view_count,pa:v.published_at?.slice(0,10),_apiId:v.id,_apiGroupKo:v.group_ko}));
     const label=currentLang==='ko'?`${year}년 TOP 100`:`${year} TOP 100`;
     const top1=vids[0];
-    const sub=_feedRankSub(label,top1.view_count,currentLang==='ko'?'라이브·직캠 조회수 기준':'Based on live/fancam views');
+    const sub=_feedRankSub(label,top1.view_count,currentLang==='ko'?'무대·직캠 조회수 기준':'Based on stage/fancam views');
     _appendFeedCard(list,'🏅',label,sub,()=>_openFeedListOverlay(label,sub,songs),top1.thumb);
   }catch(e){/* 조용히 무시 */}
 }
@@ -17668,7 +17692,7 @@ async function _buildFeedLegend100(list){
     const songs=vids.map(v=>({t:v.title,u:vidUrl(v),thumb:v.thumb,vc:v.view_count,pa:v.published_at?.slice(0,10),_apiId:v.id,_apiGroupKo:v.group_ko}));
     const label=currentLang==='ko'?'케이팝 레전드 100':'K-pop Legend 100';
     const top1=vids[0];
-    const sub=_feedRankSub(label,top1.view_count,currentLang==='ko'?'라이브·직캠 역대 조회수 기준':'Based on all-time live/fancam views',true);
+    const sub=_feedRankSub(label,top1.view_count,currentLang==='ko'?'무대·직캠 역대 조회수 기준':'Based on all-time stage/fancam views',true);
     _appendFeedCard(list,'👑',label,sub,()=>_openFeedListOverlay(label,sub,songs),top1.thumb);
   }catch(e){/* 조용히 무시 */}
 }
@@ -18997,8 +19021,10 @@ function _unitOtherMembers(unitName,memberKo,ko){
 // admin.js의 _YT_FORMAT_RULES / "④-1 세부 콘텐츠 포맷 태깅" 스윕이고 **이름 문자열이 정확히 같아야**
 // 알약이 뜬다(둘은 짝이다 — 한쪽만 고치면 태그가 DB엔 있는데 화면엔 안 나온다).
 // 뒤쪽은 기존 코너명/직캠 브랜드. 건수 실측(2026-09-14 표본 3만 → 45만 환산): 비하인드 ~24,900 ·
-// 챌린지 ~22,500 · 안무/퍼포먼스 ~11,000 · 라디오 ~6,800 · 브이로그 ~5,900 · 쇼케이스 ~3,500 · 인터뷰 ~3,400.
-const _CONTENT_FORMAT_ORDER=['비하인드','챌린지','안무/퍼포먼스','라디오','브이로그','쇼케이스','인터뷰','릴레이댄스',"It's Live",'리무진서비스','문명특급','킬링보이스','아이돌등판','안방1열/단독샷/페이스캠','MPD/입덕직캠','음중/최애직캠','원테이크/얼빡직캠','쇼챔직캠','UNFILTERED CAM'];
+// 챌린지 ~22,500 · 안무영상 ~11,000 · 라디오 ~6,800 · 브이로그 ~5,900 · 쇼케이스 ~3,500 · 인터뷰 ~3,400.
+// ⚠️ '안무영상'은 알약일 뿐 아니라 **무대 차트의 제외 키**다(_STAGE_EXCLUDE_FORMATS) — 이름을 바꾸면
+//    admin.js _YT_FORMAT_RULES와 그쪽을 한꺼번에 바꿔야 한다(셋이 같은 문자열을 봐야 함).
+const _CONTENT_FORMAT_ORDER=['비하인드','챌린지','안무영상','라디오','브이로그','쇼케이스','인터뷰','릴레이댄스',"It's Live",'리무진서비스','문명특급','킬링보이스','아이돌등판','안방1열/단독샷/페이스캠','MPD/입덕직캠','음중/최애직캠','원테이크/얼빡직캠','쇼챔직캠','UNFILTERED CAM'];
 
 // ── 그룹 카드 YouTube 영상 섹션 ──
 // 그룹 카드의 "채널 영상" 섹션(필터 탭 + 무한스크롤 그리드)을 컨테이너 하나당 독립된 상태로 만들어주는 팩토리.
@@ -20000,7 +20026,12 @@ function _makeChVidController(contId){
     // 공식 그룹 채널(official)은 양이 너무 많아 제외(2026-09-04 사용자). 라벨은 다른 탭과 톤 맞춰 'Original'로
     // 통일(2026-09-05 — '자컨'만 한글이라 튄다는 지적). ⚠️ 초기 배열에 넣지 않고 **개인채널 영상이 실제로
     // 있을 때만** 아래 probe로 끼워 넣는다(fan 탭과 같은 방식) — 빈 탭이 잠깐 떴다 사라지는 깜빡임 방지.
-    let catTabs=memberKo?[['all','All'],['live','Live'],['cover','Cover'],['short','Shorts'],['variety','Variety'],['show','Show']]:[['all','All'],['mv','MV'],['live','Live'],['cover','Cover'],['short','Shorts'],['variety','Variety'],['show','Show']];
+    // 'Live' → 'Performance'(2026-09-14, 사용자 결정). 안무영상·댄스프랙티스가 이 탭에 들어오면서
+    // '라이브'(=실황)라는 이름이 내용과 어긋났다. 무대·직캠·안무영상을 한 우산에 담는 이름으로 교체.
+    // ⚠️ 값은 'live' 그대로다 — DB category 값이라 바꾸면 수십 개 쿼리와 마이그레이션이 따라온다.
+    //    바뀐 건 화면에 찍히는 라벨뿐이고, 이 줄이 그 **유일한 정의 자리**다(i18n 테이블에도 없음).
+    // ⚠️ 차트(무대 TOP 등)는 여전히 방송 무대만 본다 — _applyLiveExclude 주석 참고.
+    let catTabs=memberKo?[['all','All'],['live','Performance'],['cover','Cover'],['short','Shorts'],['variety','Variety'],['show','Show']]:[['all','All'],['mv','MV'],['live','Performance'],['cover','Cover'],['short','Shorts'],['variety','Variety'],['show','Show']];
     // "by Fan" 탭(2026-08-10, 사용자 요청) — 팬이 직접 찍거나 만든 영상 전용. 아직은 어떤 그룹도 팬채널을
     // 등록 안 해서 category='fan'인 행이 하나도 없지만(추후 사용자가 그룹별로 팬채널 링크를 주면 그
     // 채널 동기화 시 category='fan'으로 저장할 예정), 미리 이 자리를 만들어둠. 팬덤명을 알면 "by {영문

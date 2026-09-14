@@ -156,8 +156,12 @@ const _YT_FORMAT_RULES=[
   {name:'챌린지',re:/챌린지|CHALLENGE/i},
   // 비하인드·메이킹·비로그 촬영분. B-roll/메이킹필름까지 한 이름으로 묶는다 — 팬이 구분해서 찾지 않는다.
   {name:'비하인드',re:/비하인드|BEHIND|메이킹|MAKING\s*(FILM|VIDEO)?|B-?ROLL|촬영\s*현장/i},
-  // 안무/퍼포먼스 — category는 live로 갔지만(무대와 섞임) "무대 말고 안무영상만" 보고 싶은 수요가 있다.
-  {name:'안무/퍼포먼스',re:/DANCE\s*PRACTICE|PRACTICE\s*VIDEO|PERFORMANCE\s*VIDEO|CHOREOGRAPHY|안무\s*영상|안무\s*연습|연습\s*영상|연습실|릴레이\s*댄스|RELAY\s*DANCE|MIRRORED/i},
+  // 안무영상 — category는 live(Performance 탭)로 갔지만 "방송 무대 말고 안무영상만" 보려는 수요가 있다.
+  // ⚠️ 이 태그는 **탐험 피드 무대 차트의 제외 조건**이기도 하다(index.html _STAGE_EXCLUDE_FORMATS).
+  //    이름을 바꾸면 그쪽도 같이 바꿔야 차트가 안 새고, 이미 붙은 태그는 고아가 된다.
+  // ⚠️ 이름이 '안무/퍼포먼스'가 아닌 이유: 카테고리 탭이 'Performance'로 바뀌면서 같은 자리(.gc-ch-filter)에
+  //    'Performance'(카테고리)와 '안무/퍼포먼스'(포맷)가 번갈아 떠 혼동된다. 포맷 쪽을 좁은 이름으로 뒀다.
+  {name:'안무영상',re:/DANCE\s*PRACTICE|PRACTICE\s*VIDEO|PERFORMANCE\s*VIDEO|CHOREOGRAPHY|안무\s*영상|안무\s*연습|연습\s*영상|연습실|릴레이\s*댄스|RELAY\s*DANCE|MIRRORED/i},
   // ⚠️ _YT_RADIO_RE 자체엔 /i가 없다 — _ytClassify가 대문자로 접은 뒤 쓰기 때문이다. 여기선 원본
   //    제목을 그대로 보므로 같은 소스에서 /i 사본을 만들어 쓴다(어휘가 갈리지 않게 재사용).
   {name:'라디오',re:new RegExp(_YT_RADIO_RE.source,'i')},
@@ -3187,7 +3191,7 @@ async function _ytSweepFillLockedEmpty(){
     const _u2=await _sbUpdateBatch(updates,u=>sb.from(_YT_TABLE).update({tags_manual:true}).eq('id',u.id),
       {conc:20,retries:2,onProgress:(d,t)=>_ytSetProg(`[잠금-빈값 채우기] ${d}/${t}건 (2/2단계)`)});
     if(_u1.failed||_u2.failed)console.error('[잠금-빈값 채우기] 재시도 후에도 실패:',_u1.failed,'/',_u2.failed,'—',_u1.firstErr||_u2.firstErr);
-    _ytSetProg(`완료! 잠금-빈값 ${updates.length}건에 멤버를 채웠어요(잠금 유지).`+(riskyManual.length?` 흔한영단어 ${riskyManual.length}건은 수동확인(콘솔).`:'')+` 카드 라이브 only 탭 확인해보세요.`);
+    _ytSetProg(`완료! 잠금-빈값 ${updates.length}건에 멤버를 채웠어요(잠금 유지).`+(riskyManual.length?` 흔한영단어 ${riskyManual.length}건은 수동확인(콘솔).`:'')+` 카드 Performance 탭 확인해보세요.`);
   }catch(e){_ytSetProg('오류: '+e.message);}
   finally{if(btn)btn.disabled=false;}
 }
@@ -4127,7 +4131,7 @@ async function _ytSweepCategoryMistag(){
       updates.push({id:v.id,patch});
     });
     if(!updates.length){_ytSetProg(`검사 완료 — ${rows.length}개 중 바뀔 항목 없음`);return;}
-    if(updates.length&&!_admRoutineRunning&&typeof _confirmDialog==='function'&&!(await _confirmDialog({title:'영상 카테고리 재분류 (전체)',msg:`라이브/쇼츠/예능 등 카테고리 <b>${updates.length}건</b>을 최신 로직으로 재분류해요. 되돌리기 스냅샷을 떠둬요.`,okLabel:'재분류 실행',wide:true})))return;
+    if(updates.length&&!_admRoutineRunning&&typeof _confirmDialog==='function'&&!(await _confirmDialog({title:'영상 카테고리 재분류 (전체)',msg:`퍼포먼스/쇼츠/예능 등 카테고리 <b>${updates.length}건</b>을 최신 로직으로 재분류해요. 되돌리기 스냅샷을 떠둬요.`,okLabel:'재분류 실행',wide:true})))return;
     await _snapshotBeforeBulk('영상 카테고리 재분류(전체)',updates.map(u=>u.id));
     const _ub=await _sbUpdateBatch(updates,u=>sb.from(_YT_TABLE).update(u.patch).eq('id',u.id),
       {conc:20,retries:2,onProgress:(done,total)=>_ytSetProg(`[영상 카테고리 재분류] ${done}/${total}개 처리 중…`)});
@@ -5402,12 +5406,12 @@ async function _vmLoad(searchTerm,preserveSearch2){
         .neq('category','live')
         // 예전엔 여기서 쇼츠도 뺐다 — category가 단일값이라 short면 live일 수 없었기 때문. 2026-08-27
         // 직교화로 세로 직캠도 category='live'가 될 수 있게 됐으니 후보에서 빼면 안 된다.
-        .order('id'),1000,_vmProgressive(myGen,_pickCatlock,'라이브 후보'));
+        .order('id'),1000,_vmProgressive(myGen,_pickCatlock,'퍼포먼스 후보'));
       if(myGen!==_vmSearchGen)return;
       if(error){statusEl.textContent='조회 실패: '+error.message;return;}
       const all=_pickCatlock(data||[]);
       _vmRows=all;
-      statusEl.textContent=`라이브로 보이는데 수동 편집으로 다른 카테고리로 저장된 영상 ${all.length}개 — ✎로 하나씩 확인해주세요`;
+      statusEl.textContent=`퍼포먼스(무대·직캠·안무영상)로 보이는데 수동 편집으로 다른 카테고리로 저장된 영상 ${all.length}개 — ✎로 하나씩 확인해주세요`;
       _vmCacheSync();_vmRenderVideoList();
       return;
     }
@@ -5474,7 +5478,7 @@ function _vmRenderVideoList(){
   _vmFocusIdx=-1; // 목록이 새로 그려지면 키보드 포커스는 초기화(엉뚱한 행에 분류가 걸리는 걸 막는다)
   const rows=_vmSortForRender(_vmSearch2Rows()); // 👁 조회수순 토글은 여기 한 곳에서만 적용된다
   if(!_vmRows.length){
-    const emptyMsg=tab==='all'?'검색 결과가 없어요':tab==='new'?'새로 들어온 영상이 없어요':tab==='nomem'?'무관 처리된 영상이 없어요':tab==='hold'?'보류된 영상이 없어요':tab==='review'?'검수 대기 중인 영상이 없어요':tab==='catlock'?'라이브 후보 중 수동 편집으로 막힌 영상이 없어요':'숨김 처리된 영상이 없어요';
+    const emptyMsg=tab==='all'?'검색 결과가 없어요':tab==='new'?'새로 들어온 영상이 없어요':tab==='nomem'?'무관 처리된 영상이 없어요':tab==='hold'?'보류된 영상이 없어요':tab==='review'?'검수 대기 중인 영상이 없어요':tab==='catlock'?'퍼포먼스 후보 중 수동 편집으로 막힌 영상이 없어요':'숨김 처리된 영상이 없어요';
     listEl.innerHTML=`<div style="padding:24px;text-align:center;color:rgba(155,178,228,0.45);font-size:12px;">${emptyMsg}</div>`;
     toolbarEl.style.display='none';
     return;
@@ -5790,7 +5794,7 @@ function _vmRenderChannels(term){
       item.appendChild(tierSel);
       // 기본 카테고리(제목으로 분류 안 된 영상의 행선지) — 채널마다 성격이 달라 유형으로 강제하지 않음
       const catSel=document.createElement('select');catSel.className='ec-tier-sel';catSel.title='분류 안 된 영상 기본 탭';
-      [['','기본'],['none','전체탭만'],['variety','예능'],['show','드라마/영화'],['live','라이브'],['mv','뮤비']].forEach(([v,label])=>{
+      [['','기본'],['none','전체탭만'],['variety','예능'],['show','드라마/영화'],['live','퍼포먼스'],['mv','뮤비']].forEach(([v,label])=>{
         const o=document.createElement('option');o.value=v;o.textContent=label;
         if((ch.defaultCategory||'')===v)o.selected=true;
         catSel.appendChild(o);
