@@ -54,8 +54,12 @@ need(ctx._fmtVidAgo(hoursAgo(50))==='2일 전','48시간 넘으면 N일 전',ctx
 // 33시간까지 부풀려져 엉뚱한 "N시간 전"/"어제"가 나온다.
 const yd=ctx._fmtVidAgo(daysAgoDate(1));
 need(yd==='어제',`날짜만 있으면 달력 기준 — 어제 날짜는 "어제"`,yd);
+// 2026-09-13 결정으로 기대값이 '오늘' → ''(빈 문자열)로 바뀌었다 — "오늘"이 옆 카드의 "N시간 전"과
+// 나란히 놓이면 어긋나 보인다는 제보 때문에, 시각을 모르면 **시간칩을 아예 안 단다**(index.html의
+// _fmtVidAgo 주석 참고. published_ts가 백필되면 자동으로 "N시간 전"으로 뜬다).
+// 이 테스트가 그 변경을 안 따라와서 계속 빨간 상태였다.
 const td=ctx._fmtVidAgo(daysAgoDate(0));
-need(td==='오늘',`날짜만 있으면 오늘 날짜는 "오늘"(가짜 시간 표기 금지)`,td);
+need(td==='',`날짜만 있는 오늘 유입분은 시간칩 생략(가짜 시간 표기 금지)`,td);
 need(!/시간 전/.test(td)&&!/시간 전/.test(yd),'날짜만 있는 값에서 "N시간 전"이 절대 안 나옴',`오늘=${td} 어제=${yd}`);
 need(ctx._fmtVidAgo(daysAgoDate(3))==='3일 전','날짜만 있어도 며칠 전은 정확',ctx._fmtVidAgo(daysAgoDate(3)));
 
@@ -81,8 +85,11 @@ need(/_isPubTsMissing/.test(src)&&/_hasPubTs=false/.test(src),'index: 컬럼 부
 // 피드가 실제로 새 컬럼을 우선 쓰는가
 need(/paFull:v\.published_ts\|\|v\.published_at/.test(src),
   '피드가 published_ts를 우선 사용(없으면 published_at으로 폴백)');
-need((src.match(/paFull:v\.published_ts/g)||[]).length===2,
-  '피드 두 곳(Trend·즐겨찾기 신규) 모두 반영');
+// ⚠️ ===2였는데 >=2로 완화(2026-09-15). 선반이 늘면서 이 패턴을 쓰는 곳이 3곳이 됐고, 그때마다
+//    "더 많은 곳이 올바르게 쓰고 있다"는 이유로 테스트가 빨개졌다. 지켜야 할 건 "쓰는 곳이 정확히
+//    2곳"이 아니라 "옛 폴백(published_at 단독)으로 되돌아가지 않았는가"다.
+need((src.match(/paFull:v\.published_ts/g)||[]).length>=2,
+  `피드 선반이 published_ts를 우선 사용 (${(src.match(/paFull:v\.published_ts/g)||[]).length}곳)`);
 
 console.log(`\n${pass}/${pass+fail} 통과${fail?`, ${fail}개 실패`:''}`);
 process.exit(fail?1:0);

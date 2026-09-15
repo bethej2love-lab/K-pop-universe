@@ -124,7 +124,12 @@ async function main() {
     if (layout.iTrend < 0) fail('[배치] #feed-trend-section이 없음');
     else if (layout.iChart < 0) fail('[배치] Charts 섹션(#feed-chart)이 없음');
     else if (!(layout.iAnniv < layout.iChart)) fail(`[배치] 기념일이 Charts보다 뒤 (anniv=${layout.iAnniv}, chart=${layout.iChart}) — 순서: ${layout.titles.join(' / ')}`);
-    else if (layout.iTrend !== layout.iChart + 1) fail(`[배치] Trend가 Charts 바로 밑이 아님 (chart=${layout.iChart}, trend=${layout.iTrend}) — 순서: ${layout.titles.join(' / ')}`);
+    // "Charts 바로 밑"이 아니라 "Charts보다 아래, Discovery보다 위"를 본다(2026-09-15 완화).
+    // 원래는 iChart+1이었는데, 2026-09-04에 Original Contents 선반이 Charts와 Trend 사이로
+    // 들어가면서(짧은 가로 선반이라 긴 세로 그리드 위로) 이 검사가 계속 빨간 상태였다. 이 파일은
+    // CI skip 목록(브라우저 필요)이라 아무도 못 봤고, 그래서 **진짜 회귀를 가리는 잡음**이 됐다.
+    // 지켜야 할 건 "차트 다음, 디스커버리 앞"이라는 위계지 정확한 이웃 관계가 아니다.
+    else if (!(layout.iTrend > layout.iChart)) fail(`[배치] Trend가 Charts보다 위 (chart=${layout.iChart}, trend=${layout.iTrend}) — 순서: ${layout.titles.join(' / ')}`);
     else if (!/Trend/.test(layout.titles[layout.iTrend])) fail(`[배치] 제목이 Trend가 아님 — "${layout.titles[layout.iTrend]}"`);
     else ok(`[배치] ${layout.titles.join(' / ')}`);
 
