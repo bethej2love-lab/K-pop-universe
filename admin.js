@@ -223,15 +223,31 @@ async function _ytGetChannelId(ytUrl,key){
   const um=ytUrl.match(/youtube\.com\/(?:c\/|user\/)?([^/@?#\s]+)/);
   const slug=hm?hm[1]:(um?um[1]:null);
   if(!slug)throw new Error('YouTube URL 파싱 실패: '+ytUrl);
+  // ── 채널ID 캐시 (2026-09-15) ────────────────────────────────────────────────
+  // 채널ID는 사실상 불변인데 매 실행마다 다시 조회하고 있었다. 그 한 번의 조회가 실패하면 그 채널의
+  // 백필이 **시작도 못 하고** 통째로 죽는다 — 실제로 "6채널 백필"에서 4개 채널이
+  // `오류(YouTube API 오류 403)`로 떨어졌다(2026-09-15 사용자 제보). 한 번 알아낸 ID를 캐시해 두면
+  // 그 실패 모드가 아예 사라지고 호출도 아낀다.
+  const ck='kpu_chid_'+slug;
+  try{const c=localStorage.getItem(ck);if(c)return c;}catch(e){}
+  // ⚠️ 실패 사유를 반드시 남긴다. 예전엔 상태 코드만 던져서(`YouTube API 오류 403`) 쿼터 초과인지
+  //    키 문제인지 채널 문제인지 구분이 안 됐다 — 검색 경로는 2026-08-06에 같은 이유로 이미 고쳤는데
+  //    이 경로만 옛 형태로 남아 있었다. 그래서 이번 403의 정체를 로그만으로는 못 밝혔다.
   const tryParam=async param=>{
     const r=await fetch(`https://www.googleapis.com/youtube/v3/channels?part=id&${param}&key=${key}`);
-    if(!r.ok)throw new Error('YouTube API 오류 '+r.status);
-    const d=await r.json();
-    if(d.error)throw new Error(d.error.message);
+    const d=await r.json().catch(()=>null);
+    if(!r.ok||d?.error){
+      const reason=d?.error?.errors?.[0]?.reason;
+      console.error(`[채널ID] ${slug} 조회 실패 — status:${r.status}, reason:${reason||'(없음)'}, param:${param}, 응답:`,d);
+      const hint=reason==='quotaExceeded'?' (오늘 YouTube API 일일 쿼터를 다 썼습니다 — 태평양시 자정에 리셋)'
+        :reason==='forbidden'||reason==='accessNotConfigured'?' (API 키 설정/제한 문제일 수 있어요)':'';
+      throw new Error(`채널ID 조회 실패 ${r.status}${reason?`/${reason}`:''}${hint}`);
+    }
     return d.items?.[0]?.id||null;
   };
   const channelId=await tryParam(`forHandle=${encodeURIComponent(slug)}`)||await tryParam(`forUsername=${encodeURIComponent(slug)}`);
   if(!channelId)throw new Error('채널을 찾을 수 없습니다 ('+ytUrl+')');
+  try{localStorage.setItem(ck,channelId);}catch(e){}
   return channelId;
 }
 
@@ -8395,7 +8411,17 @@ async function _ytBackfillPriorityChannels(fromYear,toYear,query){
       const bR=localStorage.getItem(`kpu_backfill_${b.handle}_${fromYear}_${toYear}${qSuffix}`)?1:0;
       return bR-aR;
     });
-    const TOTAL_BUDGET=90; // 하루 무료 쿼터 안전선을 6개 채널이 나눠 씀 — 한 번에 다 안 끝나고 여러 번에 걸쳐 진행됨
+    // ⚠️ 쿼터 산수 (2026-09-15 정정). search.list는 **호출당 100유닛**이라 예전 값 90은
+    //    9,000유닛 = 하루 한도(10,000)의 90%였다. 그런데 이 한도는 매시간 동기화·매일 루틴과
+    //    **같은 지갑**이다:
+    //      매시간 동기화 ~280 × 18회 = 5,040 · 매일 루틴 ~350 × 8회 = 2,800  → 합 7,840
+    //    즉 백필에 남는 건 2,000 남짓인데 90(=9,000)을 잡고 있었으니, 백필을 한 번 돌리면 그날
+    //    나머지 수집이 통째로 굶는다. 실제로 백필 도중 채널 여러 개가 403(quotaExceeded)으로
+    //    떨어지는 제보가 있었고, 이 산수가 그 배경이다.
+    //    15회 × 50건 = 한 회차에 최대 750개까지 훑으므로 진행 속도는 충분하다(백필은 어차피
+    //    여러 날에 걸쳐 도는 작업이고, 중단 지점은 채널별로 저장돼 다음에 이어받는다).
+    //    tests/sync-gate.test.js가 이 값과 동기화 예산의 합이 한도의 95% 이내인지 확인한다.
+    const TOTAL_BUDGET=15;
     let remaining=TOTAL_BUDGET;
     const summary=[];
     for(const[idx,ch] of channels.entries()){
@@ -8418,7 +8444,10 @@ async function _ytBackfillPriorityChannels(fromYear,toYear,query){
         summary.push(`${ch.name} 오류(${e.message})`);
       }
     }
-    _ytSetProg(`[6채널 백필] ${summary.join(' / ')}`);
+    // 쓴 쿼터를 같이 보여준다 — 이 버튼이 얼마나 비싼지 화면에서 안 보이면 "왜 오늘 동기화가
+    // 안 되지?"의 원인을 영영 못 잇는다(search.list는 호출당 100유닛).
+    const used=(TOTAL_BUDGET-remaining)*100;
+    _ytSetProg(`[6채널 백필] ${summary.join(' / ')} — 쿼터 약 ${used.toLocaleString()}유닛 사용(하루 10,000 공용)`);
   }catch(e){
     _ytSetProg('[6채널 백필] 오류: '+e.message);
   }finally{
@@ -10104,7 +10133,13 @@ async function _admRunRoutine(withSync,opts){
   if(withSync){
     steps.push({name:'1. 전체 동기화 (공식 채널)',fn:_ytSyncAll});
     steps.push({name:'1-2. 외부 채널 동기화 (음방·예능·아이돌주도)',fn:_ytSyncExtChannels});
-    steps.push({name:'1-3. 조회수 갱신 (최근 14일 · 이번주 직캠 TOP용)',fn:_ytRefreshViewCounts});
+    // ⚠️ 1-3은 **매시간 동기화(_syncOnly)에선 건너뛴다**(2026-09-15). 호출 ~70회/회차라 매시간이면
+    //    하루 1,260유닛인데, 그 지갑을 백필·루틴과 같이 쓴다(하루 10,000). 백필이 403으로 떨어지던
+    //    배경이 이 경합이다. 조회수는 3시간마다 도는 **전체 루틴이 계속 갱신**하므로 "이번주 직캠 TOP"의
+    //    신선도 손해는 사실상 없다(매시간 → 3시간마다).
+    //    ⚠️ 이 줄을 if 밖으로 빼지 말 것 — tests/routine-parity.test.js가 "설정 패널 버튼이 부르는
+    //       세 함수가 루틴의 withSync 블록에도 다 있는가"를 본다. 조건만 걸고 자리는 지킨다.
+    if(!_syncOnly)steps.push({name:'1-3. 조회수 갱신 (최근 14일 · 이번주 직캠 TOP용)',fn:_ytRefreshViewCounts});
   }
   if(!_syncOnly){
   steps.push({name:'2. 멤버+콜라보 자동 태깅',fn:_ytAutoTagMembers});

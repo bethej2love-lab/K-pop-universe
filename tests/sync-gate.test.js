@@ -46,13 +46,28 @@ let maxRunsPerDay = 0;
 for (let h = 0; h < 24; h++) maxRunsPerDay += 60 / minGapMin(h);
 maxRunsPerDay = Math.ceil(maxRunsPerDay);
 
-const UNITS_PER_SYNC = 350;      // 공식 채널 playlistItems ~222 + 외부 채널 ~60 + 조회수 갱신 ~70
+// ⚠️ 이 지갑은 동기화만 쓰는 게 아니다(2026-09-15). 관리자 "6채널 백필" 버튼이 search.list를
+//    호출당 **100유닛**으로 태운다. 예전엔 동기화가 91%를 잡고 백필이 90회(9,000유닛)를 잡고 있어
+//    둘이 같은 날 돌면 반드시 한쪽이 403(quotaExceeded)으로 죽는 구조였다.
+//    그래서 ①매시간 동기화에서 조회수 갱신(~70)을 빼고(전체 루틴이 3시간마다 계속 갱신한다)
+//          ②백필 예산을 15회(1,500유닛)로 낮췄다.
+//    이 테스트는 그 배분이 유지되는지 본다 — 어느 한쪽을 다시 올리면 여기가 먼저 빨개진다.
+const UNITS_PER_SYNC = 280;      // 공식 채널 playlistItems ~222 + 외부 채널 ~60 (조회수 갱신은 제외)
+const UNITS_PER_FULL = 350;      // 전체 루틴은 조회수 갱신까지 포함
 const DAILY_ROUTINE_RUNS = 8;    // daily-routine.yml: cron '0 */3 * * *'
+const BACKFILL_RESERVE = 1500;   // admin.js _ytBackfillPriorityChannels의 TOTAL_BUDGET 15회 × 100유닛
 const QUOTA = 10000;             // YouTube Data API 일일 한도
-const used = (maxRunsPerDay + DAILY_ROUTINE_RUNS) * UNITS_PER_SYNC;
+const used = maxRunsPerDay * UNITS_PER_SYNC + DAILY_ROUTINE_RUNS * UNITS_PER_FULL + BACKFILL_RESERVE;
 
-console.log(`   동기화 최대 ${maxRunsPerDay}회/일 + 루틴 ${DAILY_ROUTINE_RUNS}회 = ${used.toLocaleString()} units / 한도 ${QUOTA.toLocaleString()}`);
-need(used <= QUOTA, `쿼터 예산 안에 들어옴 (${Math.round(used / QUOTA * 100)}% 사용)`);
+console.log(`   동기화 ${maxRunsPerDay}회×${UNITS_PER_SYNC} + 루틴 ${DAILY_ROUTINE_RUNS}회×${UNITS_PER_FULL} + 백필 예약 ${BACKFILL_RESERVE} = ${used.toLocaleString()} / 한도 ${QUOTA.toLocaleString()}`);
+// 한도에 딱 붙이면 안 된다 — 유닛 추정치에 오차가 있고, 재시도·재수집이 있는 날은 더 쓴다.
+need(used <= QUOTA * 0.95, `쿼터 예산에 여유가 있음 (${Math.round(used / QUOTA * 100)}% 사용 · 상한 95%)`);
+
+// 배분의 양쪽 끝을 코드에서 직접 확인한다(주석만 맞고 코드가 어긋나는 걸 막는다).
+const adm = fs.readFileSync(path.join(__dirname, '..', 'admin.js'), 'utf8');
+const bf = /const TOTAL_BUDGET=(\d+)/.exec(adm);
+need(bf && Number(bf[1]) * 100 <= BACKFILL_RESERVE, `백필 예산이 예약분 이내 (${bf ? bf[1] : '?'}회 × 100유닛)`);
+need(/if\(!_syncOnly\)steps\.push\(\{name:'1-3\./.test(adm), '매시간 동기화(sync 모드)에선 조회수 갱신을 건너뜀');
 
 // ── 3) 게이트가 자기 시도를 기록하는지 ───────────────────────────────────────
 // 루틴이 실패하면 last_routine이 안 써진다. 그때 게이트가 자기 표식을 안 남기면 최소 간격이 풀려
