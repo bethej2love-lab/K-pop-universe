@@ -73597,6 +73597,24 @@
     },
     "discography": [
       {
+        "title": "Fire With Fire (Inspired by the Original Motion Picture K-POPS!)",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b27355e42ede83b63f8b0905b29b",
+        "releaseDate": "2026.06.19",
+        "trackCount": 1,
+        "titleTrack": "Fire With Fire - Inspired by the Original Motion Picture K-POPS!",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Fire With Fire - Inspired by the Original Motion Picture K-POPS!",
+            "isTitle": true
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "5Wea9EBLVR2zPbVp4u0M1b"
+      },
+      {
         "title": "Training Day",
         "type": "미니 2집",
         "isMain": true,
@@ -73631,6 +73649,69 @@
             "isTitle": true
           }
         ]
+      },
+      {
+        "title": "4SHOBOIZ MIXTAPE",
+        "type": "정규",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b2735939de3b4b0d974c3bc791ff",
+        "releaseDate": "2026.01.16",
+        "trackCount": 10,
+        "titleTrack": null,
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Are You Ready",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "Trust Myself",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "Thinking",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "All Good",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Ejeh",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "Next 2 U",
+            "isTitle": false
+          },
+          {
+            "no": 7,
+            "title": "My Side",
+            "isTitle": false
+          },
+          {
+            "no": 8,
+            "title": "Next 2 U (Sped Up)",
+            "isTitle": false
+          },
+          {
+            "no": 9,
+            "title": "Next 2 U (Carol Remix)",
+            "isTitle": false
+          },
+          {
+            "no": 10,
+            "title": "Next 2 U (Carol Remix) (Sped Up)",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "3XzKcbKfLPWSOG7BJbC98O"
       },
       {
         "title": "SHOT CALLERS",
