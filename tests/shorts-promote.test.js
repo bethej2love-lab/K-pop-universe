@@ -184,5 +184,24 @@ if (behavOk) ok(`분류기 실제 동작 ${cases.length}건 — #shorts가 붙�
 // 죽기만 하고 실제 스키마와의 어긋남은 못 잡는다(정리 커밋 직후 실제로 이렇게 깨졌다).
 // is_short 컬럼 자체의 전제는 위 ①~⑥ 불변식과 admin.js 주석이 지킨다.
 
+// ── ⑦ 서버 스윕(tools/shorts_promote.mjs)의 후보 조회에 ORDER BY가 없을 것 (2026-09-15) ──────
+// 이 한 줄이 스케줄 실행 2번을 통째로 죽였다. `order=id&limit=1000`인데 조건에 맞는 행이 1000개보다
+// 적으면(신규 후보 240건) Postgres가 PK 인덱스를 45만 행 끝까지 훑어 statement timeout(57014)이 난다.
+// 백필처럼 후보가 많을 땐 0.2초라 **후보가 줄어든 뒤에야 터진다** — 즉 "거의 다 끝냈을 때" 찾아오는
+// 함정이라, 눈으로 리뷰해서는 다시 들어오기 쉽다. 정렬은 이 스윕에 필요가 없다(어차피 전량을 훑는다).
+const mjs = fs.readFileSync(path.join(__dirname, '..', 'tools', 'shorts_promote.mjs'), 'utf8');
+const chunkIdx = mjs.indexOf('async function fetchChunk(');
+need(chunkIdx > 0, '서버 스윕의 fetchChunk를 찾음');
+let chunkBody = '';
+{
+  let d = 0, s = mjs.indexOf('{', chunkIdx);
+  for (let j = s; j < mjs.length; j++) {
+    if (mjs[j] === '{') d++;
+    else if (mjs[j] === '}') { d--; if (!d) { chunkBody = mjs.slice(s, j + 1); break; } }
+  }
+}
+need(!/[?&]order=/.test(chunkBody), '후보 조회에 order= 가 없음 (있으면 후보가 limit보다 적어질 때 57014로 죽는다)');
+need(/limit=\$\{CHUNK\}/.test(chunkBody), '청크 크기는 limit으로 건다');
+
 console.log(pass ? '\n✅ 쇼츠 승격 스윕 테스트 통과' : '\n❌ 쇼츠 승격 스윕 테스트 실패');
 process.exit(pass ? 0 : 1);

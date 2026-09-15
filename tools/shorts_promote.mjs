@@ -159,26 +159,37 @@ async function classify(id) {
 }
 
 // ── Supabase REST ────────────────────────────────────────────────────────────
-const BASE = `is_short=eq.false&tags_manual=eq.false`;
-// ⚠️ 정렬은 **id**다(published_at 아님). 실측(2026-09-14, 컷오프 조건 + limit 1000):
-//      published_at.desc → 13.5초/청크 (292k 전량이면 조회만 33분)
-//      id               → 0.1초/청크  (전량 30초)
-//    published_at에는 이 조건을 커버하는 인덱스가 없어 매 청크가 29만 행을 정렬한다. 원래 최신순으로
-//    훑은 건 "카드에 실제로 뜨는 최근 영상부터 고치자"는 뜻이었는데, 그건 아래 1단계(신규 유입)가
-//    이미 보장한다 — 백로그 순서까지 최신순일 이유는 없다(어차피 한 번 돌면 전량이 끝난다).
+// ⚠️⚠️ 후보 조회에는 **ORDER BY를 붙이지 않는다**. 이게 2026-09-14 스케줄 실행 2번을 모두 죽인 원인이다.
+//
+// 증상: `실패: 조회 실패 500: {"code":"57014", "message":"canceling statement due to statement timeout"}`
+//       — 그것도 **신규(1단계)에서만**. 백필은 멀쩡했다.
+// 원인: `order=id&limit=1000`인데 조건에 맞는 행이 1000개보다 **적을 때**다. Postgres는 PK 인덱스를
+//       id 순서로 읽으며 조건을 걸어 1000개를 채우려 하는데, 신규 후보는 240건뿐이라 45만 행을
+//       끝까지 훑고서야 "더 없음"을 안다. 매 행마다 힙을 랜덤 접근하므로 30초 제한을 넘는다.
+//       백필은 285,823건이 매칭돼 금방 1000개를 채우니 같은 쿼리가 0.2초에 끝난다 — 그래서
+//       "백필은 되는데 신규만 죽는" 기묘한 모양이 됐다.
+// 실측(2026-09-15, limit 1000):
+//       신규 + order=id  → 30.2초 후 500 (57014)      신규, order 없음 → 4.6초 200 (240건)
+//       백필 + order=id  →  0.21초 200                 백필, order 없음 → 0.06초 200
+// ⚠️ 백필도 남은 후보가 1000 밑으로 떨어지는 **마지막 청크에서 똑같이 죽는다**. 즉 이 함정은
+//    "백필을 거의 다 끝낸 날" 반드시 찾아온다. 그래서 두 단계 모두에서 정렬을 뺐다.
+// 정렬이 필요 없는 이유: 어느 행을 먼저 보든 결국 전량을 훑는다. 원래 최신순으로 훑은 건 "카드에
+//    실제로 뜨는 최근 영상부터 고치자"는 뜻이었는데, 그건 1단계(신규 유입)가 이미 보장한다.
+//    (2026-09-14 기록: published_at.desc는 13.5초/청크로 더 나빴다 — 그 조건을 커버하는 인덱스가 없다.)
 // 1단계: 아직 한 번도 안 본 행(신규 유입). 작아서 늘 먼저 끝난다 → 오늘 들어온 영상이 밀리지 않는다.
 // 2단계: 옛 판별기 표식이 남은 행(백필). 1단계가 빌 때만 본다.
+const BASE = `is_short=eq.false&tags_manual=eq.false`;
 async function fetchChunk() {
   // DRY_RUN은 **이미 확정된 행**을 다시 보는 게 목적이라 표식 조건을 통째로 뺀다 — 옛 판별이 놓친 게
   // 얼마나 되는지 재는 용도. 쓰기는 어차피 안 일어난다.
   const where = DRY ? '' : `&short_probed_at=is.null`;
-  let r = await fetch(`${U}/rest/v1/${TABLE}?select=id&${BASE}${where}&order=id&limit=${CHUNK}`, { headers: H });
+  let r = await fetch(`${U}/rest/v1/${TABLE}?select=id&${BASE}${where}&limit=${CHUNK}`, { headers: H });
   if (!r.ok) throw new Error(`조회 실패 ${r.status}: ${await r.text()}`);
   let rows = await r.json();
   if (rows.length || DRY) return { rows, phase: DRY ? 'dry' : '신규' };
   if (ONLY_FRESH) return { rows: [], phase: '신규' }; // 신규 전용 실행 — 백필로 안 넘어가고 여기서 끝낸다
   // 1단계가 비었으면 백필로 넘어간다
-  r = await fetch(`${U}/rest/v1/${TABLE}?select=id&${BASE}&short_probed_at=lt.${REPROBE_BEFORE}&order=id&limit=${CHUNK}`, { headers: H });
+  r = await fetch(`${U}/rest/v1/${TABLE}?select=id&${BASE}&short_probed_at=lt.${REPROBE_BEFORE}&limit=${CHUNK}`, { headers: H });
   if (!r.ok) throw new Error(`조회 실패 ${r.status}: ${await r.text()}`);
   return { rows: await r.json(), phase: '백필' };
 }
