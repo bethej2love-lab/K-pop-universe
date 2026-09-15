@@ -1,0 +1,65 @@
+name: 공유 썸네일 갱신 (주간)
+
+# 공유 미리보기(og:image)에 쓰는 대표 영상 썸네일 캐시(og_thumbs.json)를 주 1회 새로 뽑는다.
+#
+# ⚠️ 이 워크플로는 **원래 있어야 했는데 없었다**(2026-09-15 확인). tools/build_og_thumbs.mjs의
+#    _note가 "주간 자동갱신: .github/workflows/rotate-og-thumbs.yml"이라고 적어두고 있었지만
+#    실제 파일은 존재하지 않았다 — 즉 캐시는 사람이 기억해서 돌릴 때만 갱신됐다.
+#    그래서 신인 그룹이나 새로 태깅된 멤버는 링크를 공유해도 기본 이미지가 뜨는 상태로 남았다.
+#
+# --keep-existing을 쓴다: 이미 값이 있는 키는 그대로 두고 **비어 있던 키만** 채운다.
+#   대표 썸네일은 실행할 때마다 인기 상위 중 랜덤으로 바뀌는데(2026-09-01 결정), 매주 전량을
+#   다시 뽑으면 4,000개 정적 페이지가 통째로 재생성되는 커밋이 매주 쌓인다. 빠진 곳만 메우는 게
+#   맞고, 커버로 오염된 기존 값은 --keep-existing이어도 알아서 교체된다(dirtyIds).
+#
+# 이 커밋이 rebuild-seo-pages.yml을 깨워 정적 페이지를 다시 만든다(og_thumbs.json이 그쪽
+# 트리거 경로에 있어야 한다 — 없어서 "캐시는 갱신됐는데 페이지는 그대로"이던 게 같은 날 고쳐졌다).
+
+on:
+  schedule:
+    - cron: '23 17 * * 1'   # 매주 월요일 KST 02:23 — 트래픽 적은 시간, 라운드 분 회피
+  workflow_dispatch:
+    inputs:
+      full:
+        description: "전량 재추첨(--keep-existing 없이). 정적 페이지가 통째로 바뀝니다"
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  contents: write
+
+concurrency:
+  group: rotate-og-thumbs
+  cancel-in-progress: true
+
+jobs:
+  rotate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: 썸네일 캐시 갱신
+        run: |
+          node tools/build_og_thumbs.mjs ${{ (github.event_name == 'workflow_dispatch' && inputs.full) && '' || '--keep-existing' }} | tee -a "$GITHUB_STEP_SUMMARY"
+
+      - name: 커밋
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add og_thumbs.json
+          if git diff --cached --quiet; then
+            echo "바뀐 썸네일 없음"
+            exit 0
+          fi
+          git commit -m "chore: rotate og thumbnails (auto)"
+          for i in 1 2 3; do
+            git pull --rebase origin main && git push && exit 0
+            echo "push 경합 — 재시도 ($i/3)"; sleep $((i * 5))
+          done
+          exit 1

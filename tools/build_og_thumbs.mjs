@@ -196,6 +196,7 @@ if (prevForAudit) {
 // 멤버별 최종 선택: 소속 그룹 영상 우선, 없으면 이름 기준 폴백(겸임 멤버가 다른 그룹 영상에만 잡힌 경우)
 const memberOut = {};
 let memHit = 0, memFallback = 0, memMiss = 0, memSolo = 0;
+const misses = [];   // 1차에서 후보를 못 찾은 사람 — 아래에서 그 사람 조건으로 직접 재조회한다
 for (const a of artists) {
   const key = a.group.ko + '|' + a.name.ko;
   // ⚠️ 키는 `a.group.ko|이름`("솔로|아이유") 그대로 둔다 — build_group_pages.js의 ogImageForMember가
@@ -209,8 +210,51 @@ for (const a of artists) {
   if (!pick) { pick = randomEligible(memberCands[key], memberPick[key]); if (pick) memHit++; } // 소속 그룹의 MV/라이브 중 랜덤
   if (!pick && !isSolo) { pick = randomEligible(soloCands[a.name.ko], soloPick[a.name.ko]); if (pick) memSolo++; } // 그룹 멤버의 솔로 활동분
   if (!pick) { pick = randomEligible(memberAnyCands[a.name.ko], memberAny[a.name.ko]); if (pick) memFallback++; } // 겸임/타그룹 폴백
-  if (!pick) { memMiss++; continue; }
+  if (!pick) { misses.push(a); continue; }
   memberOut[key] = pick.id;
+}
+
+// ── 누락 멤버 표적 재조회 (2026-09-15) ───────────────────────────────────────
+// 위 후보 조회는 그룹별로 `published_at.desc` + limit(기본 1500)이라 **최근 1,500건**만 본다.
+// 그래서 활동이 오래전에 끝난 멤버는 영상이 분명히 있는데도 후보 풀에 아예 못 들어온다.
+//   실측(2026-09-15, 사용자 제보 "종현 링크 공유하면 기본 이미지가 뜬다"):
+//     샤이니 영상 3,333건 중 종현 영상보다 최신인 게 2,693건 → 1,500 창 밖. 종현은 태깅된
+//     영상이 33건(최고 97만 조회 라이브)이나 있는데도 캐시에 한 줄도 없었다.
+//   같은 이유로 루한·타오(엑소), 한경·강인(슈퍼주니어), NRG 멤버 등 59명이 누락돼 있었다.
+//   ⚠️ 고인이라 제외된 게 아니다 — memorial/died를 보는 코드는 어디에도 없다. 순전히 최신순
+//      창의 부작용이고, 오래 활동을 쉰 멤버라면 누구에게나 일어난다.
+// 고치는 법: 창을 키우는 건 답이 아니다(그룹당 수천 건을 다 받아야 하고 큰 채널은 여전히 넘친다).
+// 못 찾은 사람만 **그 사람 조건으로 직접** 조회한다 — members 컨테인먼트 + 조회수 내림차순.
+// 비용은 "누락 인원 수"만큼의 쿼리뿐이라 전체 조회에 비하면 무시할 수준이다.
+if (misses.length) {
+  console.log(`[og-thumbs] 후보를 못 찾은 ${misses.length}명 표적 재조회 (최신순 창 밖에 있는 사람들)`);
+  let recovered = 0;
+  for (const a of misses) {
+    const key = a.group.ko + '|' + a.name.ko;
+    const q = new URLSearchParams({
+      select: 'id,title,category,members,view_count,published_at,content_flag,cover_of_members,cover_of_groups',
+      members: `cs.{"${a.name.ko}"}`,
+      order: 'view_count.desc.nullslast',   // 창을 안 쓰므로 처음부터 대표성 높은 순서로 받는다
+      limit: '40',
+    });
+    // 소속 그룹이 실존하면 그 그룹으로 좁힌다(동명이인이 남의 영상을 물어오는 걸 막는다 —
+    // 이 프로젝트에서 반복된 사고 유형이다). 무소속 솔로는 group_ko가 본인 이름이라 그걸로 좁힌다.
+    q.set('group_ko', 'eq.' + (groups[a.group.ko] ? a.group.ko : a.name.ko));
+    let rows = [];
+    try { rows = await fetchJson(SB + '?' + q); } catch (e) { console.warn(`  ! ${key} 재조회 실패: ${e.message}`); }
+    let best = null; const cands = [];
+    for (const v of rows) {
+      if (!v.id) continue;
+      if (v.content_flag === 'hidden' || v.content_flag === 'irrelevant') continue;
+      if (isCoverish(v)) { dirtyIds.add(v.id); continue; }
+      best = better(best, v);
+      if (ELIGIBLE.has(v.category)) cands.push(v);
+    }
+    const pick = randomEligible(cands, best);
+    if (pick) { memberOut[key] = pick.id; recovered++; }
+    else memMiss++;
+  }
+  console.log(`  → ${recovered}명 복구 · 여전히 없음 ${memMiss}명`);
 }
 const groupOut = {};
 for (const gko of gkos) { const p = randomEligible(groupCands[gko], groupPick[gko]); if (p) groupOut[gko] = p.id; }

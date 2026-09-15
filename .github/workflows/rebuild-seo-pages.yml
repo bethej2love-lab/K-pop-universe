@@ -13,6 +13,10 @@
         - 'artists.json'
         - 'groups.json'
         - 'build_group_pages.js'
+        # og_thumbs.json도 트리거에 있어야 한다(2026-09-15). 이 파일은 공유 미리보기(og:image)의
+        # 출처인데 트리거에 빠져 있어서, 썸네일 캐시를 갱신해도 **정적 페이지가 안 바뀌었다** —
+        # 즉 링크를 공유하면 계속 옛 이미지(또는 기본 이미지)가 떴다.
+        - 'og_thumbs.json'
 
   permissions:
     contents: write
