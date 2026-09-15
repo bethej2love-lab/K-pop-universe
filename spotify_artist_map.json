@@ -1,0 +1,120 @@
+{
+  "뉴진스": {
+    "id": "6HvZYsbFfjnjFrWF950C9d",
+    "spotifyName": "NewJeans",
+    "kind": "group",
+    "confidence": "high",
+    "why": "동명 후보 2명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 2
+    },
+    "checkedAt": "2026-09-15"
+  },
+  "세븐틴": {
+    "id": "7nqOGRxlXj7N2JYbgNEjYH",
+    "spotifyName": "SEVENTEEN",
+    "kind": "group",
+    "confidence": "high",
+    "why": "동명 후보 2명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 2
+    },
+    "checkedAt": "2026-09-15"
+  },
+  "아이브": {
+    "id": "6RHTUrRF63xao58xh9FXYJ",
+    "spotifyName": "IVE",
+    "kind": "group",
+    "confidence": "high",
+    "why": "이름 유일 일치 · 수집 전 검증 통과(겹침 6)",
+    "evidence": {
+      "titleOverlap": null,
+      "verifyOverlap": 6,
+      "verifyYears": [
+        2026,
+        2025
+      ]
+    },
+    "checkedAt": "2026-09-15"
+  },
+  "에스파": {
+    "id": "6YVMFz59CuY7ngCxTxjpxE",
+    "spotifyName": "aespa",
+    "kind": "group",
+    "confidence": "high",
+    "why": "이름 유일 일치 · 수집 전 검증 통과(겹침 2)",
+    "evidence": {
+      "titleOverlap": null,
+      "verifyOverlap": 2,
+      "verifyYears": [
+        2024,
+        2023
+      ]
+    },
+    "checkedAt": "2026-09-15"
+  },
+  "있지": {
+    "id": "2KC9Qb60EaY0kW4eH68vr3",
+    "spotifyName": "ITZY",
+    "kind": "group",
+    "confidence": "high",
+    "why": "이름 유일 일치 · 수집 전 검증 통과(겹침 2)",
+    "evidence": {
+      "titleOverlap": null,
+      "verifyOverlap": 2,
+      "verifyYears": [
+        2024,
+        2023
+      ]
+    },
+    "checkedAt": "2026-09-15"
+  },
+  "코르티스": {
+    "id": "1ebt9HnXdyYA6KgLXr1n4P",
+    "spotifyName": "CORTIS",
+    "kind": "group",
+    "confidence": "high",
+    "why": "이름 유일 일치 · 수집 전 검증 통과(겹침 2)",
+    "evidence": {
+      "titleOverlap": null,
+      "verifyOverlap": 2,
+      "verifyYears": [
+        2026,
+        2025
+      ]
+    },
+    "checkedAt": "2026-09-15"
+  },
+  "키스오브라이프": {
+    "id": "4TEK9tIkcoxib4GxT3O4ky",
+    "spotifyName": "KISS OF LIFE",
+    "kind": "group",
+    "confidence": "high",
+    "why": "이름 유일 일치 · 수집 전 검증 통과(겹침 2)",
+    "evidence": {
+      "titleOverlap": null,
+      "verifyOverlap": 2,
+      "verifyYears": [
+        2025,
+        2024
+      ]
+    },
+    "checkedAt": "2026-09-15"
+  },
+  "키키": {
+    "id": "63sat2XSMKdwKfqspmYQKP",
+    "spotifyName": "KiiiKiii",
+    "kind": "group",
+    "confidence": "high",
+    "why": "이름 유일 일치 · 수집 전 검증 통과(겹침 2)",
+    "evidence": {
+      "titleOverlap": null,
+      "verifyOverlap": 2,
+      "verifyYears": [
+        2026,
+        2025
+      ]
+    },
+    "checkedAt": "2026-09-15"
+  }
+}

@@ -69,6 +69,59 @@
     },
     "discography": [
       {
+        "title": "GREENGREEN_playextended",
+        "type": "정규",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273da2a04ef57dfebfb8946fd49",
+        "releaseDate": "2026.08.23",
+        "trackCount": 8,
+        "titleTrack": null,
+        "tracks": [
+          {
+            "no": 1,
+            "title": "TNT",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "REDRED",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "ACAI",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "YOUNGCREATORCREW",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Wassup",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "Blue Lips",
+            "isTitle": false
+          },
+          {
+            "no": 7,
+            "title": "PACK IT UP",
+            "isTitle": false
+          },
+          {
+            "no": 8,
+            "title": "MONEYMONEYMONEY",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "26w4RoexAyiXRogASNJDZj"
+      },
+      {
         "title": "MOTION (feat. Juicy J)",
         "type": "싱글",
         "isMain": true,
@@ -124,6 +177,42 @@
             "isTitle": false
           }
         ]
+      },
+      {
+        "title": "REDRED",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b27324ace1518851b27e9983f739",
+        "releaseDate": "2026.04.20",
+        "trackCount": 1,
+        "titleTrack": "REDRED",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "REDRED",
+            "isTitle": true
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "52J8GQoNp2vgDJ6992NjiM"
+      },
+      {
+        "title": "Mention Me (From The Movie \"GOAT\")",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b27312fbc981d094ef600fd0cb42",
+        "releaseDate": "2026.02.13",
+        "trackCount": 1,
+        "titleTrack": "Mention Me - From The Movie \"GOAT\"",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Mention Me - From The Movie \"GOAT\"",
+            "isTitle": true
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "3M3mRFHjiwrVBBYR5tGGzd"
       },
       {
         "title": "COLOR OUTSIDE THE LINES",
@@ -207,6 +296,209 @@
       "weverse": "https://weverse.io/aespa"
     },
     "discography": [
+      {
+        "title": "SYNK : COMPLaeXITY",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273b219d4d3338ae32e3aaf13b7",
+        "releaseDate": "2026.09.14",
+        "trackCount": 4,
+        "titleTrack": null,
+        "tracks": [
+          {
+            "no": 1,
+            "title": "16 Bit (KARINA Solo)",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "Saddle Up (WINTER Solo)",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "BYEB4HELLO (GISELLE Solo)",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "I Love You But I Gotta Let You Go (NINGNING Solo)",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "6IKPRi6kQgW1HoI8yzEuTQ"
+      },
+      {
+        "title": "SYNK : aeXIS LINE",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b2737a0e88eef1c0bc3247e03a0f",
+        "releaseDate": "2026.08.09",
+        "trackCount": 2,
+        "titleTrack": null,
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Serenade (KARINA & WINTER)",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "Lollipop (GISELLE & NINGNING)",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "0yGIibObNeYQ37RunoFjtG"
+      },
+      {
+        "title": "KISS N TELL",
+        "type": "미니",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273324f6829eabaea3358ac4140",
+        "releaseDate": "2026.07.24",
+        "trackCount": 6,
+        "titleTrack": "KISS N TELL",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "KISS N TELL",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Orbit Pop",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "Fangirl",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "ATTITUDE",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Done with Rules",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "In Halo",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "04kIYv5OBSVLYEoNXaUNrn"
+      },
+      {
+        "title": "LEMONADE",
+        "type": "정규 2집",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b2735f0171c63cceb32ccff8b9a9",
+        "releaseDate": "2026.05.29",
+        "trackCount": 11,
+        "titleTrack": "LEMONADE",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "WDA (Whole Different Animal) (feat. G-DRAGON)",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "LEMONADE",
+            "isTitle": true
+          },
+          {
+            "no": 3,
+            "title": "SHAKIN'",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Can't Help Myself",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Camouflage",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "Bite",
+            "isTitle": false
+          },
+          {
+            "no": 7,
+            "title": "Switchblade (feat. Ty Dolla $ign)",
+            "isTitle": false
+          },
+          {
+            "no": 8,
+            "title": "Roll",
+            "isTitle": false
+          },
+          {
+            "no": 9,
+            "title": "My Plan",
+            "isTitle": false
+          },
+          {
+            "no": 10,
+            "title": "’Til We Die",
+            "isTitle": false
+          },
+          {
+            "no": 11,
+            "title": "LEMONADE (feat. Becky G)",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "1GjT1mri5wvJAYZ3rnZamk"
+      },
+      {
+        "title": "WDA (Whole Different Animal) (feat. G-DRAGON)",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b2739a022a3fd08f159b189df50a",
+        "releaseDate": "2026.05.11",
+        "trackCount": 1,
+        "titleTrack": "WDA (Whole Different Animal) (feat. G-DRAGON)",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "WDA (Whole Different Animal) (feat. G-DRAGON)",
+            "isTitle": true
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "1zL6cXyNIMtyJtmj99fkSS"
+      },
+      {
+        "title": "ATTITUDE",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273f0abbb1c10241c6d51f4c806",
+        "releaseDate": "2026.03.05",
+        "trackCount": 1,
+        "titleTrack": "ATTITUDE",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "ATTITUDE",
+            "isTitle": true
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "2JscSydezwXYMNSDLNBzv9"
+      },
       {
         "title": "Whiplash",
         "type": "미니 5집",
@@ -735,6 +1027,24 @@
             "isTitle": false
           }
         ]
+      },
+      {
+        "title": "BANG BANG",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b27333dac9e774023224032e4bc5",
+        "releaseDate": "2026.02.09",
+        "trackCount": 1,
+        "titleTrack": "BANG BANG",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "BANG BANG",
+            "isTitle": true
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "5tBbxrd5aHP9Q8pv50pQgY"
       },
       {
         "title": "Eternal youth, because you were there. -45th Anniversary Tribute to SEIKO MATSUDA-",
@@ -1574,6 +1884,47 @@
         ]
       },
       {
+        "title": "Perfect Crown OST Part.2",
+        "type": "OST",
+        "isMain": false,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273b5e3080fd4126d49b68ba810",
+        "releaseDate": "2026.04.11",
+        "trackCount": 2,
+        "titleTrack": null,
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Go On",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "Go On (Inst.)",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "3zt0m3BmyFaKcjgBVlh9qH"
+      },
+      {
+        "title": "This Is KiiiKiii",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273f5dbdc0069a30141baf52c0f",
+        "releaseDate": "2026.03.04",
+        "trackCount": 1,
+        "titleTrack": "Message from KiiiKiii",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Message from KiiiKiii",
+            "isTitle": true
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "0U2R7WxaTHvQ6SzmltXTKn"
+      },
+      {
         "title": "Delulu Pack",
         "type": "미니 2집",
         "isMain": true,
@@ -1716,6 +2067,59 @@
       "namu": "https://namu.wiki/w/있지"
     },
     "discography": [
+      {
+        "title": "Motto",
+        "type": "정규",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273959e27c83f78e9bf5c44caa0",
+        "releaseDate": "2026.05.18",
+        "trackCount": 8,
+        "titleTrack": "Motto",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Motto",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Glitch",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "you And I",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Pocket (YEJI)",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Asylum (LIA)",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "LOOK (RYUJIN)",
+            "isTitle": false
+          },
+          {
+            "no": 7,
+            "title": "Undefined (CHAERYEONG)",
+            "isTitle": false
+          },
+          {
+            "no": 8,
+            "title": "Tangerine (YUNA)",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "2I5aOoyW9gzkOrWOuElNdj"
+      },
       {
         "title": "GOLD",
         "type": "미니 8집",
@@ -2368,6 +2772,24 @@
       "namu": "https://namu.wiki/w/세븐틴"
     },
     "discography": [
+      {
+        "title": "Tiny Light",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b2737670ba58cab0b6ad22c031d2",
+        "releaseDate": "2026.02.27",
+        "trackCount": 1,
+        "titleTrack": "Tiny Light",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Tiny Light",
+            "isTitle": true
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "6gfSiZw5R6ZobCSNJki66h"
+      },
       {
         "title": "HAPPY BURSTDAY",
         "type": "정규 5집",
@@ -3266,6 +3688,52 @@
       "namu": "https://namu.wiki/w/KISS OF LIFE"
     },
     "discography": [
+      {
+        "title": "SWEAT",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273473b380c12e0b95969a89b9e",
+        "releaseDate": "2026.08.04",
+        "trackCount": 2,
+        "titleTrack": "SWEAT",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "SWEAT",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "WHAT!",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "4yEWhrGAxvMhNtL4TuO2rq"
+      },
+      {
+        "title": "Who is she",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273aacd08445d13c6f2e41f842c",
+        "releaseDate": "2026.04.06",
+        "trackCount": 2,
+        "titleTrack": "Who is she",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Who is she",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Don't mind me",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "3oKZB7YNsYSvmI4YQjhtdS"
+      },
       {
         "title": "224",
         "type": "미니 4집",

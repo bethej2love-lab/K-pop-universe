@@ -134,18 +134,25 @@ export async function toEntry(album) {
   const full = await api(`/albums/${album.id}?market=KR`);
   const tracks = (full.tracks?.items || []).map(t => ({ no: t.track_number, title: t.name, isTitle: false }));
   const title = stripSuffix(album.name);
+  // OST는 기존 데이터의 관례를 따른다: type 'OST' · isMain false(→ 기본 목록이 아니라 '더보기'로).
+  // 이걸 안 하면 드라마 OST 참여곡이 정규 앨범들과 같은 줄에 서서 디스코그래피가 지저분해진다.
+  const isOst = /\bOST\b/i.test(album.name);
   let one = tracks.length === 1 ? tracks[0] : null;
   if (!one) {
-    const k = norm(title);
-    const same = tracks.filter(t => norm(t.title) === k);
-    if (k && same.length === 1) one = same[0];
+    // ⚠️ 먼저 **원문 그대로** 비교한다. norm()은 괄호를 지우므로 정규화로 비교하면
+    //    `LEMONADE`와 `LEMONADE (feat. Becky G)`가 똑같아져 후보가 2개가 되고 기각된다
+    //    (실측: aespa LEMONADE 11트랙 앨범에서 실제로 그렇게 놓쳤다). 원문 비교면 정확히 하나다.
+    const raw = String(title).trim().toLowerCase();
+    let same = tracks.filter(t => String(t.title).trim().toLowerCase() === raw);
+    if (same.length !== 1) { const k = norm(title); same = k ? tracks.filter(t => norm(t.title) === k) : []; }
+    if (same.length === 1) one = same[0];
   }
   if (one) one.isTitle = true;
   return {
     entry: {
       title,
-      type: parseTypeFromTitle(album.name, album.total_tracks, album.album_type),
-      isMain: true,
+      type: isOst ? 'OST' : parseTypeFromTitle(album.name, album.total_tracks, album.album_type),
+      isMain: !isOst,
       cover: (album.images && album.images[0] && album.images[0].url) || null,
       releaseDate: String(album.release_date || '').slice(0, 10).replace(/-/g, '.'),
       trackCount: album.total_tracks || tracks.length,
