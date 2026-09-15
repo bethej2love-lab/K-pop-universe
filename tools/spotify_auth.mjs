@@ -64,9 +64,27 @@ export async function token() {
   return _token;
 }
 
-// GET 호출 — 429(레이트리밋)는 Retry-After만큼 쉬고 재시도, 5xx는 지수 백오프.
-// ⚠️ 스포티파이는 유튜브와 달리 **일일 쿼터 상한이 없다**. 제한은 짧은 창의 요청 수뿐이라,
-//    429를 정직하게 기다려주기만 하면 호출 횟수 자체는 설계 제약이 아니다.
+// ── ⚠️ 레이트리밋 실측 (2026-09-15) ─────────────────────────────────────────
+// 처음엔 "스포티파이는 일일 쿼터 상한이 없고 짧은 창의 요청 수 제한만 있다"고 적었는데 **틀렸다**.
+// 신규 앱(Development Mode)의 Client Credentials로 실측한 결과:
+//   · `/artists/{id}/albums` 를 약 100회 호출 → 429, **Retry-After: 86,010초 (≈24시간)**
+//   · 429는 **엔드포인트별**이다 — 같은 시각에 `/search`와 `/artists/{id}`는 200으로 멀쩡했다
+//   · `/browse/new-releases` 는 아예 **403 Forbidden**(신규 앱에 막힌 엔드포인트)
+//   · `limit`은 문서상 50까지지만 실제로는 **10을 넘기면 400 "Invalid limit"**
+//   · 아티스트 객체에 `followers`·`genres`·`popularity`가 **아예 안 온다**
+//     (검색·상세 모두 external_urls, href, id, images, name, type, uri 7개 필드뿐)
+// → 호출 횟수는 **설계의 1급 제약**이다. "전 아티스트를 매일 훑는다"는 순진한 설계는 못 쓴다.
+//    발견은 `/search`(type=album, `artist:` + `year:` 필터)로 하고, 한 번에 도는 양은 예산으로 묶는다.
+//
+// 429가 24시간짜리로 오면 기다릴 수 없다 — 그래서 **긴 Retry-After는 기다리지 않고 던진다**.
+// 호출부가 "오늘 예산 소진"으로 보고 다음 실행에 넘기게 하는 게 맞다(무한정 붙잡고 있으면 워크플로가
+// 타임아웃으로 죽고, 진행 상황도 안 남는다). 실제로 그렇게 매달려 있다가 스크립트가 멈춘 적이 있다.
+export class RateLimited extends Error {
+  constructor(sec, where) { super(`레이트리밋 — ${where} (Retry-After ${sec}초 ≈ ${(sec / 3600).toFixed(1)}시간)`); this.retryAfter = sec; }
+}
+const MAX_WAIT_SEC = Number(process.env.SPOTIFY_MAX_WAIT_SEC) || 120; // 이보다 길면 기다리지 않고 포기
+
+// GET 호출 — 짧은 429는 Retry-After만큼 쉬고 재시도, 긴 429는 RateLimited로 던짐, 5xx는 지수 백오프.
 export async function api(pathAndQuery, { retries = 4 } = {}) {
   for (let i = 0; ; i++) {
     const t = await token();
@@ -82,8 +100,9 @@ export async function api(pathAndQuery, { retries = 4 } = {}) {
     }
     if (r.status === 429) {
       const wait = Number(r.headers.get('retry-after') || 2);
+      if (wait > MAX_WAIT_SEC) throw new RateLimited(wait, pathAndQuery.split('?')[0]);
       await sleep((wait + 1) * 1000);
-      continue; // 429는 재시도 횟수에 안 센다 — 기다리면 반드시 풀린다
+      continue; // 짧은 429는 재시도 횟수에 안 센다 — 기다리면 풀린다
     }
     if (r.status === 401) { _token = null; if (i < retries) continue; }   // 토큰 만료 — 한 번 더
     if (r.status >= 500) { if (i >= retries) throw new Error(`${r.status} ${pathAndQuery}`); await sleep(800 * (i + 1)); continue; }

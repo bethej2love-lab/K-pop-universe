@@ -69,56 +69,64 @@ async function spotifyTitles(id) {
   return { titles: new Set((j.items || []).map(a => norm(a.name)).filter(Boolean)), total: (j.items || []).length };
 }
 
-const KPOP_GENRE = /k-?pop|korean|k-?rap|k-?indie/i;
+// ⚠️ 스포티파이 API 제약 (2026-09-15 실측) ─────────────────────────────────────
+// 신규 앱의 Client Credentials 토큰으로는 아티스트 객체에서 **followers·genres·popularity가
+// 아예 안 온다**. 검색(`/search`)은 물론 상세(`/artists/{id}`)도 마찬가지로 다음 7개 필드만 준다:
+//   external_urls, href, id, images, name, type, uri
+// 그래서 "팔로워 많은 쪽" "장르가 k-pop인 쪽" 같은 흔한 순위 신호를 쓸 수 없다.
+// → 판정을 **앨범 제목 겹침**에 전적으로 건다. 원래도 그게 주 신호였고(이름·장르는 보조), 결과적으로
+//   이 제약이 설계를 바꾸지는 않았다. 보조 신호는 이름 일치와 **검색 관련도 순위**로 대체한다.
+// (popularity가 없다는 건 나중에 "가장 인기 있는 트랙 = 타이틀곡" 추론도 못 쓴다는 뜻이다.)
 
 // 한 대상(그룹 또는 솔로)에 대해 최적 스포티파이 아티스트를 고른다.
 async function resolve(target) {
   const { ko, en, aliases } = target;
   const queries = [...new Set([en, ko, ...(aliases || [])].filter(Boolean))];
-  const seen = new Map();                          // id -> artist
+  const seen = new Map();                          // id -> {artist, rank} (rank = 검색 관련도 순위)
   for (const q of queries) {
     const j = await api(`/search?q=${encodeURIComponent(q)}&type=artist&market=KR&limit=10`);
-    for (const a of j.artists?.items || []) if (!seen.has(a.id)) seen.set(a.id, a);
+    (j.artists?.items || []).forEach((a, idx) => {
+      if (!seen.has(a.id)) seen.set(a.id, { a, rank: idx });
+      else seen.get(a.id).rank = Math.min(seen.get(a.id).rank, idx); // 여러 질의 중 가장 앞선 순위
+    });
     await sleep(60);
   }
   if (!seen.size) return { ko, ok: false, reason: '검색 결과 없음' };
 
   const mine = ourTitles([ko]);
-  const cands = [...seen.values()];
-  // 이름이 정확히 같은 후보를 먼저 보되, 최종 판정은 **앨범 겹침**으로 한다.
-  cands.sort((a, b) => (b.followers?.total || 0) - (a.followers?.total || 0));
+  // 팔로워를 못 쓰니 **검색 관련도 순서**를 예선으로 쓴다(스포티파이의 순위는 꽤 쓸 만하다 —
+  // 실측에서 'aespa' 질의의 1위가 정확히 aespa였다). 상위 8명만 실제 앨범 대조를 한다(호출 절약).
+  const cands = [...seen.values()].sort((x, y) => x.rank - y.rank).slice(0, 8);
   const scored = [];
-  for (const a of cands.slice(0, 8)) {             // 팔로워 상위 8명만 실제 대조(호출 절약)
+  for (const { a, rank } of cands) {
     const nameHit = queries.some(q => norm(q) === norm(a.name));
-    const genreHit = (a.genres || []).some(g => KPOP_GENRE.test(g));
     let overlap = 0, spTotal = 0;
     if (mine.size) {
       try { const t = await spotifyTitles(a.id); spTotal = t.total; for (const k of t.titles) if (mine.has(k)) overlap++; }
       catch { /* 이 후보만 대조 실패 — 아래 점수에서 자연히 밀린다 */ }
       await sleep(60);
     }
-    // 점수: 앨범 겹침이 압도적으로 중요하다(이름·장르·팔로워는 겹침이 0일 때의 보조 신호일 뿐).
-    const score = overlap * 100 + (nameHit ? 12 : 0) + (genreHit ? 6 : 0) + Math.min(5, Math.log10((a.followers?.total || 0) + 1));
-    scored.push({ a, overlap, spTotal, nameHit, genreHit, score });
+    // 점수: 앨범 겹침이 압도적으로 중요하다(이름·순위는 겹침이 갈리지 않을 때의 타이브레이커).
+    const score = overlap * 100 + (nameHit ? 12 : 0) + Math.max(0, 8 - rank);
+    scored.push({ a, overlap, spTotal, nameHit, rank, score });
   }
   scored.sort((x, y) => y.score - x.score);
   const best = scored[0], second = scored[1];
   if (!best) return { ko, ok: false, reason: '후보 없음' };
 
-  // 신뢰도: 겹치는 앨범이 여러 장이면 확실. 우리 데이터가 비었거나(mine 0) 겹침이 0이면 사람이 봐야 한다.
+  // 신뢰도. 겹치는 앨범이 여러 장이면 확실하다. 겹침이 0이면 — 이름이 같아도 — 사람이 봐야 한다.
+  // ⚠️ 대조할 우리 앨범이 아예 없는 대상(mine.size===0)은 자동으로 확신할 방법이 없다. 장르로
+  //    보강하던 길이 API 제약으로 막혔으므로 정직하게 low로 떨어뜨린다.
   let confidence;
   if (best.overlap >= 3) confidence = 'high';
   else if (best.overlap >= 1) confidence = 'medium';
-  else if (!mine.size && best.nameHit && best.genreHit) confidence = 'medium'; // 대조할 앨범이 없던 경우
   else confidence = 'low';
 
   return {
     ko, ok: true, confidence,
     id: best.a.id, name: best.a.name,
-    followers: best.a.followers?.total || 0,
-    genres: (best.a.genres || []).slice(0, 4),
-    overlap: best.overlap, ourAlbums: mine.size, spotifyAlbums: best.spTotal,
-    runnerUp: second && second.score > 0 ? { id: second.a.id, name: second.a.name, overlap: second.overlap } : null,
+    overlap: best.overlap, ourAlbums: mine.size, spotifyAlbums: best.spTotal, rank: best.rank,
+    runnerUp: second ? { id: second.a.id, name: second.a.name, overlap: second.overlap } : null,
   };
 }
 
@@ -157,9 +165,8 @@ for (const t of list) {
     stat[r.confidence]++;
     result[t.ko] = {
       id: r.id, spotifyName: r.name, kind: t.kind, confidence: r.confidence,
-      followers: r.followers, genres: r.genres,
       // 판단 근거를 같이 남긴다 — 나중에 "이 매핑 왜 이래?"를 파일만 보고 알 수 있어야 한다.
-      evidence: { titleOverlap: r.overlap, ourAlbums: r.ourAlbums, spotifyAlbums: r.spotifyAlbums },
+      evidence: { titleOverlap: r.overlap, ourAlbums: r.ourAlbums, spotifyAlbums: r.spotifyAlbums, searchRank: r.rank },
       checkedAt: new Date().toISOString().slice(0, 10),
     };
     if (r.confidence !== 'high') review.push(`${t.ko} [${r.confidence}] → ${r.name} (겹침 ${r.overlap}/우리 ${r.ourAlbums}장)${r.runnerUp ? ` · 차순위 ${r.runnerUp.name}(겹침 ${r.runnerUp.overlap})` : ''}`);
