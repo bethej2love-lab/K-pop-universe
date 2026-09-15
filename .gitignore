@@ -3,6 +3,9 @@
 # 대화 기록에 그대로 남는다):
 #   KOPIS_KEY=$(cat .kopis_key) node tools/kopis_events.mjs --from=20260801 --probe
 .kopis_key
+# 스포티파이 앱 키(앨범 수집) — `id:secret` 한 줄 또는 두 줄. tools/spotify_auth.mjs가 읽는다.
+# CI에서는 레포 시크릿 SPOTIFY_CLIENT_ID / SPOTIFY_CLIENT_SECRET을 쓰므로 이 파일은 로컬 전용.
+.spotify.key
 *.key
 .env
 .env.*
