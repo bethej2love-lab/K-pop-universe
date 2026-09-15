@@ -258,6 +258,17 @@
     },
     "checkedAt": "2026-09-15"
   },
+  "모모랜드": {
+    "id": "5RR0MLwcjc87wjSw2JYdwx",
+    "spotifyName": "MOMOLAND",
+    "kind": "group",
+    "confidence": "low",
+    "why": "동명 후보 2명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-09-15"
+  },
   "몬스타엑스": {
     "id": "4TnGh5PKbSjpYqpIdlW5nz",
     "spotifyName": "MONSTA X",
