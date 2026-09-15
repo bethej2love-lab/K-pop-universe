@@ -54,8 +54,21 @@ export function dedupKey(s) {
 //    기본 노출을 뺄 수 있게 detectRegion()이 region을 달아준다(사용자 결정: 케밥 토글로 보기).
 // ⚠️ feat./with도 막지 않는다 — 우리 데이터에 49장 있는 정식 별도 발매다(코르티스 `MOTION (feat.
 //    Juicy J)`). 리믹스·라이브·인스트만 거른다. 라이브는 전례 0장이라 추가했다.
-const VARIANT = /(english\s+ver|inst\.?\b|instrumental|remix|mix\)|acoustic\s+ver|sped\s+up|slowed|special\s+version|a\s+cappella|live\s+(version|ver\.?)|\(live\)|live\s+session)/i;
-export const isVariant = name => VARIANT.test(String(name || ''));
+const VARIANT = /(english\s+ver|inst\.?\b|instrumental|remix|mix\)|acoustic\s+ver|sped\s+up|slowed|a\s+cappella|live\s+(version|ver\.?)|\(live\)|live\s+session)/i;
+// ⚠️ "(… Ver.)" 꼬리는 **기본이 변형판**이고 언어명일 때만 예외다(2026-09-15 백필에서 드러남).
+//    예전엔 `special version`만 막았는데, 실제로 들어온 건 그 형태가 아니었다:
+//      엔하이픈 `THE SIN : BLISS (SUNGHOON Ver.)`  ← 멤버별 버전이 **정규 앨범**으로 들어갔다
+//      몬스타엑스 `The Phase (Deluxe Ver.)`         ← 디럭스판이 별도 정규로
+//      유니스 `mwah...(EN Ver.)`                    ← 영어판(`english ver`엔 안 걸리는 약칭)
+//    멤버 이름·수식어는 끝이 없으니 막을 것을 열거하는 대신 **통과시킬 것만 열거**한다.
+const LANG_VER = /\((?:korean|japanese|chinese|kr|jp|cn)\s*(?:ver\.?|version)\s*\)/i;
+const ANY_VER = /\([^)]*\bver(?:\.|sion)?\s*\)/i;
+export function isVariant(name) {
+  const s = String(name || '');
+  if (VARIANT.test(s)) return true;                 // 리믹스·인스트·라이브는 언어와 무관하게 제외
+  if (LANG_VER.test(s)) return false;               // 한국어·일본어·중국어판은 수집 대상(region으로 구분)
+  return ANY_VER.test(s);
+}
 
 // ── 발매 지역(일본어·중국어판) 추론 ─────────────────────────────────────────
 // 앱은 이 값으로 기본 목록에서 빼고 케밥 토글로 보여준다. 그래서 **틀리면 앨범이 사라진 것처럼 보인다**
@@ -70,8 +83,9 @@ export const isVariant = name => VARIANT.test(String(name || ''));
 //     지정해야 풀리는 문제고, 여기서 억지로 잡으려 들면 정확도만 잃는다.
 // 못 잡은 건 region 없이 들어가 기본 목록에 남는다 — 안 들어오는 것보단 낫다.
 const KANA = /[぀-ゟ゠-ヿ]/;   // 히라가나·가타카나
-const JP_MARK = /(japanese\s*(ver|version)|[-–—]\s*japanese\s*version|日本語)/i;
-const CN_MARK = /(chinese\s*(ver|version)|mandarin|中文)/i;
+// 약칭도 본다 — 실측(유니스 `GimmeSummer☆(JP Ver.)`): `japanese`로만 찾으면 이런 게 region 없이 들어간다.
+const JP_MARK = /(japanese\s*(ver|version)|\bjp\s*(ver\.?|version)|[-–—]\s*japanese\s*version|日本語)/i;
+const CN_MARK = /(chinese\s*(ver|version)|\bcn\s*(ver\.?|version)|mandarin|中文)/i;
 export function detectRegion(albumTitle, trackTitles) {
   const at = String(albumTitle || '');
   // 앨범 제목에 표식이 있으면 그 발매 전체가 그 언어판이다 — 트랙을 볼 것도 없다.
@@ -93,6 +107,12 @@ export function detectRegion(albumTitle, trackTitles) {
 // 다행히 **제목 꼬리에 정답이 적혀 있다**. 거기서 못 읽으면 트랙 수로 보수적으로 떨어뜨린다.
 const ORD = { '1': 1, '2': 2, '3': 3 };
 export function parseTypeFromTitle(name, totalTracks, albumType) {
+  // ⚠️ 리패키지·스페셜을 '정규'로 넣으면 안 된다(2026-09-15). 번호 채우기(tools/disco_number_fill.mjs)가
+  //    정규 계열을 발매순으로 세어 번호를 매기는데, 여기 섞이면 **뒤 앨범 번호가 전부 하나씩 밀린다**.
+  //    실측: 엔시티 127 `Favorite - The 3rd Album Repackage`가 '정규'로 들어가 '정규 4집' 후보가 됐다
+  //    (실제로는 정규 3집의 리패키지). 기존 데이터에 이미 '리패키지'(16장)·'스페셜'(9장) 어휘가 있다.
+  if (/\brepackage\b/i.test(String(name || ''))) return '리패키지';
+  if (/\bspecial\s+album\b/i.test(String(name || ''))) return '스페셜';
   const m = /[-–—]\s*(?:the\s+)?(\d+)(?:st|nd|rd|th)\s+(mini\s+)?album/i.exec(String(name || ''));
   if (m) return `${m[2] ? '미니' : '정규'} ${Number(m[1])}집`;
   if (/[-–—]\s*(?:the\s+)?(?:1st|first)\s+(mini\s+)?album/i.test(name)) return /mini/i.test(name) ? '미니 1집' : '정규 1집';
