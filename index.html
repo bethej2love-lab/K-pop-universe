@@ -2331,6 +2331,26 @@ function _rookieHaloStrength(debutStr){
 // ⚠️ _discoFileKey는 build_slim_data.mjs의 fileKey와, 멤버 키 구분자(널 문자 \u0000)도 반드시 동일해야 함.
 let _SLIM_MODE=true, _TI=null, _TIProm=null, _artByNG=null, _curSearchQ='';
 const _discoFileKey=s=>String(s).replace(/[\/\\]/g,'_').replace(/[.\s]+$/,'');
+// 무소속 솔로 disco 파일키 — (그룹, 이름)이 겹치는 아티스트가 2명 이상이면 전원 id를 덧붙인다.
+// ⚠️ build_slim_data.mjs의 soloFileName과 **규칙이 완전히 같아야** 한다(판정 기준도 "디스코가 있는
+//    아티스트"가 아니라 ARTISTS 전체다 — 앱은 누가 디스코를 갖고 있는지 모른 채 키를 계산해야 하므로).
+// 이게 없던 시절엔 동명이인이 같은 파일을 가리켜 한쪽 앨범이 통째로 안 보였다(2026-09-15, `솔로__레나`
+// — 공원소녀 출신 레나의 솔로 앨범 6장이 프리스틴 출신 레나의 유닛 앨범에 덮여 있었다).
+let _soloDupKeys=null;
+function _soloDiscoKey(a){
+  const base=_discoFileKey(a.group.ko)+'__'+_discoFileKey(a.name.ko);
+  if(!_soloDupKeys){
+    const c={};_soloDupKeys=new Set();
+    ARTISTS.forEach(x=>{
+      if(!x.name||!x.group)return;
+      const g=x.group.ko; if(!g||GROUPS[g])return;      // 실존 그룹 소속은 그룹 파일에 번들됨
+      const k=_discoFileKey(g)+'__'+_discoFileKey(x.name.ko);
+      c[k]=(c[k]||0)+1;
+    });
+    for(const k in c)if(c[k]>1)_soloDupKeys.add(k);
+  }
+  return _soloDupKeys.has(base)&&a.id?base+'__'+a.id:base;
+}
 const _discoProm={};
 function _ensureGroupDisco(gko){
   const g=GROUPS[gko];
@@ -2349,7 +2369,7 @@ function _ensureMemberDisco(a){
   if(!a||a.discography!==undefined)return Promise.resolve();
   const gko=a.group&&a.group.ko;
   if(gko&&GROUPS[gko])return _ensureGroupDisco(gko); // 실존 그룹 → 그룹 파일에 멤버 disco까지 들어있음
-  const key=_discoFileKey(gko)+'__'+_discoFileKey(a.name.ko),pk='a:'+key;
+  const key=_soloDiscoKey(a),pk='a:'+key;
   if(_discoProm[pk])return _discoProm[pk];
   return _discoProm[pk]=fetch('disco/a/'+encodeURIComponent(key)+'.json',{cache:'no-cache'})
     .then(r=>r.ok?r.json():{d:null}).then(d=>{a.discography=d.d||[];}).catch(()=>{a.discography=[];});

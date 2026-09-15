@@ -1,0 +1,37 @@
+name: 앨범 수집 (매일)
+
+# 디스코그래피 일일 파이프라인.
+#
+# 지금 들어 있는 것: 신선도 감시(tools/disco_freshness.mjs) — "앨범 수집이 멈췄다"를 아무도 안 보고
+# 있어도 알아채는 장치. 임계를 넘으면 이 워크플로가 **실패**하고, 기본 알림 설정이면 메일이 온다.
+# 대시보드를 하나 더 만들지 않는 게 요점이다(안 보는 대시보드가 제일 나쁘다).
+#
+# 곧 들어올 것: 스포티파이 신보 동기화(SPOTIFY_CLIENT_ID/SECRET 시크릿이 등록되면).
+#   수집 → groups.json/artists.json 갱신 → 커밋 순서로 이 잡 앞에 붙는다. 파생물(disco/·slim·
+#   tracks_index) 재생성은 그 커밋이 rebuild-disco-artifacts.yml을 깨워서 자동으로 이어진다.
+#
+# 시각: K팝 발매는 대개 KST 18시다. 그날 발매분이 다 반영된 뒤인 KST 22시(=UTC 13시)에 확인한다.
+# 라운드 분(:00)은 GitHub 부하가 몰려 드랍이 잦으므로 어긋난 분을 쓴다(sync-hourly.yml과 같은 이유).
+
+on:
+  schedule:
+    - cron: '11 13 * * *'
+  workflow_dispatch:
+
+concurrency:
+  group: disco-daily
+  cancel-in-progress: false
+
+jobs:
+  freshness:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: 신선도 감시
+        run: node tools/disco_freshness.mjs

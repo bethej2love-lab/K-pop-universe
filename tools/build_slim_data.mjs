@@ -32,10 +32,31 @@ const groups = rd('groups.json');           // 객체 {ko:{...,discography}}
 const artists = rd('artists.json');          // 배열 [{name,group,discography?,unitDiscography?,...}]
 if (!Array.isArray(artists)) throw new Error('artists.json이 배열이 아님 — 구조 확인 필요');
 
+// ── --check: 파일을 안 쓰고 "지금 생성물이 원본과 일치하는가"만 본다 (2026-09-15) ──────────
+// 왜 필요한가: disco/·*.slim.json·tracks_index.json은 groups.json/artists.json에서 만들어지는
+// 파생물인데, 이 빌드가 **어떤 워크플로에도 안 붙어 있었다**. 즉 앨범을 추가하고 이 스크립트를
+// 안 돌리면 원본만 바뀌고 사이트엔 반영이 안 되며, 아무도 그 사실을 모른다.
+// 이제 rebuild-artifacts.yml이 자동으로 재생성하고, 이 --check 모드가 CI에서 어긋남을 잡는다.
+// ⚠️ 검증용이므로 **절대 파일을 쓰지 않는다** — 테스트가 작업 트리를 더럽히면 안 된다.
+const CHECK = process.argv.includes('--check');
+const drift = [];                                        // --check에서 어긋난 경로들
 const discoDir = path.join(ROOT, 'disco');
-fs.rmSync(discoDir, { recursive: true, force: true }); // 이전 생성물 정리(고아 파일 방지)
-fs.mkdirSync(path.join(discoDir, 'g'), { recursive: true });
-fs.mkdirSync(path.join(discoDir, 'a'), { recursive: true });
+const seenDisco = new Set();                             // --check에서 고아 파일 탐지용
+if (!CHECK) {
+  fs.rmSync(discoDir, { recursive: true, force: true }); // 이전 생성물 정리(고아 파일 방지)
+  fs.mkdirSync(path.join(discoDir, 'g'), { recursive: true });
+  fs.mkdirSync(path.join(discoDir, 'a'), { recursive: true });
+}
+// 기대 내용과 디스크 내용을 비교(--check) 하거나 그대로 쓴다. 반환값은 바이트 수(리포트용).
+const emit = (p, s) => {
+  if (CHECK) {
+    seenDisco.add(path.resolve(p));
+    let cur = null;
+    try { cur = fs.readFileSync(p, 'utf8'); } catch { }
+    if (cur !== s) drift.push(path.relative(ROOT, p).replace(/\\/g, '/') + (cur === null ? ' (없음)' : ' (내용 다름)'));
+  } else fs.writeFileSync(p, s);
+  return Buffer.byteLength(s);
+};
 
 const groupBuckets = {};                     // gko -> {g:[]|null, m:{이름:{d,u}}}
 const soloFiles = [];                        // {name, data}
@@ -56,8 +77,36 @@ for (const gko of Object.keys(groups)) {
   }
 }
 
+// ── 무소속 솔로 파일키 동명이인 처리 (2026-09-15) ──────────────────────────────
+// 버그: 아래 아티스트 루프의 충돌 검사는 **그룹 소속 멤버 경로만** 봤고(`b.m[nm]`), 무소속 솔로
+// 경로(soloFiles.push)엔 검사가 없었다. 그래서 같은 파일명을 쓰는 동명이인이 있으면 뒤에 쓴 쪽이
+// 앞을 **조용히 덮어썼다**.
+//   실측: `솔로__레나` — a0473(Lena, 공원소녀 출신, 2002년생) 솔로 앨범 6장이 a1047(강예빈,
+//   프리스틴 출신, 1998년생)의 유닛 앨범 1장에 덮여 통째로 서빙에서 빠져 있었다. 생일·나무위키가
+//   다른 별개 인물이라 병합이 아니라 파일키를 갈라야 한다(동명이인 합치기 금지는 이 프로젝트 원칙).
+// 규칙: (그룹, 이름)이 겹치는 아티스트가 2명 이상이면 **그 전원**의 파일키에 id를 붙인다.
+// ⚠️ 판정 기준은 "디스코가 있는 아티스트"가 아니라 **artists.json 전체**여야 한다 — 앱(index.html의
+//    _soloDiscoKey)은 누가 디스코를 갖고 있는지 모른 채(그게 lazy 로드의 목적) 같은 키를 계산해야
+//    하기 때문이다. 기준이 어긋나면 앱이 없는 파일을 부르거나 엉뚱한 파일을 부른다.
+const soloDupKeys = new Set();
+{
+  const seen = new Map();
+  for (const a of artists) {
+    const nm = a.name?.ko, gko = a.group?.ko;
+    if (!nm || !gko || groups[gko]) continue;
+    const k = fileKey(gko) + '__' + fileKey(nm);
+    seen.set(k, (seen.get(k) || 0) + 1);
+  }
+  for (const [k, n] of seen) if (n > 1) soloDupKeys.add(k);
+}
+const soloFileName = a => {
+  const base = fileKey(a.group.ko) + '__' + fileKey(a.name.ko);
+  return soloDupKeys.has(base) && a.id ? base + '__' + a.id : base;
+};
+
 // ── 아티스트 ──
 const collisions = [];
+const soloSeen = new Set();
 for (const a of artists) {
   const nm = a.name?.ko, gko = a.group?.ko;
   const d = a.discography, u = a.unitDiscography;
@@ -70,14 +119,18 @@ for (const a of artists) {
     if (b.m[nm]) collisions.push('그룹 내 동명 멤버: ' + gko + '/' + nm);
     b.m[nm] = { d: d || null, u: u || null };
   } else {                                    // 무소속 솔로 → 개별 파일
-    soloFiles.push({ name: fileKey(gko) + '__' + fileKey(nm), data: { d: d || null, u: u || null } });
+    const fn = soloFileName(a);
+    // 여기까지 와서 또 겹치면 id로도 못 가른 것(=id 중복). 조용히 덮어쓰느니 빌드를 세운다.
+    if (soloSeen.has(fn)) collisions.push('솔로 파일키 충돌: ' + fn + ' (id=' + a.id + ')');
+    soloSeen.add(fn);
+    soloFiles.push({ name: fn, data: { d: d || null, u: u || null } });
   }
 }
 if (collisions.length) { console.error('⚠️ 키 충돌/이상:\n  ' + collisions.join('\n  ')); process.exit(1); }
 
 // ── 파일 쓰기 ──
 let gFiles = 0, aFiles = 0, discoBytes = 0;
-const wr = (p, obj) => { const s = JSON.stringify(obj); fs.writeFileSync(p, s); discoBytes += Buffer.byteLength(s); };
+const wr = (p, obj) => { discoBytes += emit(p, JSON.stringify(obj)); };
 for (const gko of Object.keys(groupBuckets)) { wr(path.join(discoDir, 'g', fileKey(gko) + '.json'), groupBuckets[gko]); gFiles++; }
 for (const s of soloFiles) { wr(path.join(discoDir, 'a', s.name + '.json'), s.data); aFiles++; }
 
@@ -137,9 +190,22 @@ for (const a of artistsSlim) {
 if (unmappedNat.length) console.log(`⚠️ ISO 2자리가 아닌 국적 코드 ${unmappedNat.length}건 — ${unmappedNat.slice(0, 5).join(', ')}`);
 
 const gSlimStr = JSON.stringify(groupsSlim), aSlimStr = JSON.stringify(artistsSlim), tiStr = JSON.stringify(tracks);
-fs.writeFileSync(path.join(ROOT, 'groups.slim.json'), gSlimStr);
-fs.writeFileSync(path.join(ROOT, 'artists.slim.json'), aSlimStr);
-fs.writeFileSync(path.join(ROOT, 'tracks_index.json'), tiStr);
+emit(path.join(ROOT, 'groups.slim.json'), gSlimStr);
+emit(path.join(ROOT, 'artists.slim.json'), aSlimStr);
+emit(path.join(ROOT, 'tracks_index.json'), tiStr);
+// 원본에서 사라진 그룹·솔로의 disco 파일이 남아 있으면(고아) 실제 빌드는 rm으로 지우지만 --check는
+// 못 지운다 — 그래서 여기서 직접 훑어 어긋남으로 보고한다. 이게 없으면 "그룹 이름이 바뀐 날"
+// 옛 파일이 계속 서빙되는 걸 CI가 못 잡는다.
+if (CHECK) {
+  for (const sub of ['g', 'a']) {
+    let files = [];
+    try { files = fs.readdirSync(path.join(discoDir, sub)); } catch { }
+    for (const f of files) {
+      const p = path.resolve(discoDir, sub, f);
+      if (!seenDisco.has(p)) drift.push(`disco/${sub}/${f} (원본에 없는 고아 파일)`);
+    }
+  }
+}
 
 // ── 무결성 검증 ──
 let origTracks = 0;
@@ -156,3 +222,13 @@ console.log(`tracks_index.json  ${kb(tiStr.length)}(gzip ${kb(gz(tiStr))})  [laz
 console.log(`disco/ 파일: 그룹 ${gFiles} + 솔로 ${aFiles} = ${gFiles + aFiles}개 · 합 ${kb(discoBytes)}`);
 console.log(`트랙 무결성: 원본 ${origTracks} vs 인덱스 ${trackCount} ${ok ? '✓ 일치' : '✗ 불일치!'}`);
 if (!ok) process.exit(1);
+if (CHECK) {
+  if (drift.length) {
+    console.error(`\n✗ 생성물이 원본과 어긋납니다 (${drift.length}건) — groups.json/artists.json을 고치고 빌드를 안 돌렸을 때 납니다.`);
+    drift.slice(0, 20).forEach(d => console.error('  · ' + d));
+    if (drift.length > 20) console.error(`  · … 외 ${drift.length - 20}건`);
+    console.error('\n고치는 법: node tools/build_slim_data.mjs  (그 뒤 생성물까지 함께 커밋)');
+    process.exit(1);
+  }
+  console.log('✓ 생성물이 원본과 일치 (--check · 파일은 쓰지 않았습니다)');
+}
