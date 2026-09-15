@@ -45,10 +45,34 @@ function better(a, b) {
 // 중에서 랜덤으로 뽑아 품질은 지키면서 매번 다른 게 나오게 한다. (mv/live가 하나도 없으면 better()로 폴백)
 const ELIGIBLE = new Set(['mv', 'live', 'performance']);
 const TOPN = 20;
-function randomEligible(cands, fallbackRow) {
-  if (cands && cands.length) {
-    const top = cands.slice().sort((a, b) => (b.view_count || 0) - (a.view_count || 0)).slice(0, TOPN);
-    return top[Math.floor(Math.random() * top.length)];
+
+// ── 대표성 필터 (2026-09-15) ────────────────────────────────────────────────
+// 제보: 샤이니 그룹 썸네일이 `MOVE - 태민(TAEMIN) X 한유진(ZEROBASEONE)`이었다 —
+// **멤버 한 명 + 타 그룹 멤버 콜라보 무대**를 그룹 대표 이미지로 쓰고 있었다.
+// 후보 풀을 실측해보니 우연이 아니라 구조적이다. 샤이니 상위 20개 중:
+//   · 멤버 1명만 태깅 12개(태민 솔로 MV·키 솔로 무대·온유 페이스캠 …)
+//   · 타 그룹 콜라보 2개  ·  진짜 그룹 콘텐츠(멤버 태그 없음) 8개
+// 즉 인기순 상위일수록 **개인 활동이 그룹 영상을 밀어낸다**(솔로가 잘 되는 그룹일수록 심하다).
+// 그래서 "하나하나 눈으로 확인"할 일이 아니라 고를 때 걸러야 한다.
+const isCollab = v => ((v.with_groups || []).length > 0) || ((v.with_members || []).length > 0);
+// 그룹 대표 후보로 부적절한 것: 타 그룹 콜라보, 그리고 **멤버 한 명만 태깅된 영상**(직캠·솔로 무대).
+// 멤버 태그가 아예 없는 건 보통 그룹 전체 콘텐츠라 그대로 둔다.
+const badForGroup = (v, memberCount) => isCollab(v) || (memberCount >= 2 && (v.members || []).length === 1);
+// 그룹별 멤버 수 — "멤버 1명만 태깅" 규칙은 2인 이상 그룹에만 적용한다(1인 그룹은 그게 정상이다).
+const memberCountOf = {};
+for (const a of artists) { const g = a.group && a.group.ko; if (g) memberCountOf[g] = (memberCountOf[g] || 0) + 1; }
+
+// cands에서 랜덤 추출. filters는 "우선 적용할 조건"들을 **차례로** 시도한다 —
+// 첫 조건으로 걸러 남는 게 있으면 그걸 쓰고, 다 걸러져 비면 다음(더 느슨한) 조건으로 내려간다.
+// ⚠️ 필터를 하드 조건으로 걸면 후보가 적은 그룹·멤버가 통째로 썸네일을 잃는다. 품질은 올리되
+//    "없느니만 못한" 상태로는 절대 안 가게, 마지막엔 항상 원래 풀로 떨어진다.
+function randomEligible(cands, fallbackRow, filters) {
+  for (const f of [...(filters || []), null]) {
+    const pool = f ? (cands || []).filter(f) : (cands || []);
+    if (pool.length) {
+      const top = pool.slice().sort((a, b) => (b.view_count || 0) - (a.view_count || 0)).slice(0, TOPN);
+      return top[Math.floor(Math.random() * top.length)];
+    }
   }
   return fallbackRow || null;
 }
@@ -100,7 +124,7 @@ console.log(`[og-thumbs] 그룹 ${gkos.length}개 + 솔로 ${soloKeys.length}명
 let done = 0;
 for (const { key: gko, solo } of queryKeys) {
   const q = new URLSearchParams({
-    select: 'id,title,category,members,view_count,published_at,content_flag,cover_of_members,cover_of_groups',
+    select: 'id,title,category,members,view_count,published_at,content_flag,cover_of_members,cover_of_groups,with_members,with_groups',
     group_ko: 'eq.' + gko,
     order: 'published_at.desc',
     limit: String(PER_GROUP),
@@ -161,10 +185,16 @@ if (prevForAudit) {
   for (let i = 0; i < ids.length; i += 100) {
     const batch = ids.slice(i, i + 100);
     let rows = [];
-    try { rows = await fetchJson(SB + '?' + new URLSearchParams({ select: 'id,title,cover_of_members,cover_of_groups', id: 'in.(' + batch.join(',') + ')', limit: '200' })); }
+    try { rows = await fetchJson(SB + '?' + new URLSearchParams({ select: 'id,title,cover_of_members,cover_of_groups,with_members,with_groups,members,group_ko', id: 'in.(' + batch.join(',') + ')', limit: '200' })); }
     catch (e) { console.warn(`  ! 캐시 검증 배치 실패: ${e.message}`); continue; }
     for (const v of rows) {
-      if (!isCoverish(v)) continue;
+      // 커버뿐 아니라 **대표성 규칙 위반**도 오염으로 본다(2026-09-15). 규칙을 새로 넣었는데
+      // --keep-existing이 옛 픽을 그대로 지키면, 이미 잘못 걸린 그룹은 영원히 안 고쳐진다.
+      // 그룹 키로 쓰이고 있는 픽이 콜라보이거나 멤버 1명짜리면 다시 뽑게 한다.
+      const usedAsGroup = (idToKeys.get(v.id) || []).some(k => k.startsWith('groups|'));
+      const gko = usedAsGroup ? (idToKeys.get(v.id).find(k => k.startsWith('groups|')) || '').split('|')[1] : null;
+      const violates = usedAsGroup && badForGroup(v, memberCountOf[gko] || 0);
+      if (!isCoverish(v) && !violates) continue;
       dirtyIds.add(v.id);
       for (const key of (idToKeys.get(v.id) || [])) {
         const name = key.startsWith('members|') ? key.split('|').pop() : null; // "members|소녀시대|태연" → 태연
@@ -177,7 +207,7 @@ if (prevForAudit) {
   let rq = 0;
   for (const name of reQuery) {
     const q = new URLSearchParams({
-      select: 'id,title,category,members,view_count,published_at,content_flag,cover_of_members,cover_of_groups',
+      select: 'id,title,category,members,view_count,published_at,content_flag,cover_of_members,cover_of_groups,with_members,with_groups',
       group_ko: 'eq.' + name, order: 'published_at.desc', limit: String(PER_GROUP),
     });
     let rows = [];
@@ -205,11 +235,11 @@ for (const a of artists) {
   // 솔로 아티스트는 본인 이름 키가 곧 본인 영상이라 1순위. 그룹 멤버는 소속 그룹 영상이 더 대표적이라
   // 그쪽이 1순위이고, 본인 이름 키(솔로 활동분)는 그다음 — 둘 다 "본인이 나온 영상"이므로 이름만
   // 같으면 걸리는 memberAny 폴백보다는 앞에 둔다.
-  let pick = isSolo ? randomEligible(soloCands[a.name.ko], soloPick[a.name.ko]) : null;
+  let pick = isSolo ? randomEligible(soloCands[a.name.ko], soloPick[a.name.ko], [v => !isCollab(v)]) : null;
   if (pick) memSolo++;
-  if (!pick) { pick = randomEligible(memberCands[key], memberPick[key]); if (pick) memHit++; } // 소속 그룹의 MV/라이브 중 랜덤
-  if (!pick && !isSolo) { pick = randomEligible(soloCands[a.name.ko], soloPick[a.name.ko]); if (pick) memSolo++; } // 그룹 멤버의 솔로 활동분
-  if (!pick) { pick = randomEligible(memberAnyCands[a.name.ko], memberAny[a.name.ko]); if (pick) memFallback++; } // 겸임/타그룹 폴백
+  if (!pick) { pick = randomEligible(memberCands[key], memberPick[key], [v => !isCollab(v)]); if (pick) memHit++; } // 소속 그룹의 MV/라이브 중 랜덤
+  if (!pick && !isSolo) { pick = randomEligible(soloCands[a.name.ko], soloPick[a.name.ko], [v => !isCollab(v)]); if (pick) memSolo++; } // 그룹 멤버의 솔로 활동분
+  if (!pick) { pick = randomEligible(memberAnyCands[a.name.ko], memberAny[a.name.ko], [v => !isCollab(v)]); if (pick) memFallback++; } // 겸임/타그룹 폴백
   if (!pick) { misses.push(a); continue; }
   memberOut[key] = pick.id;
 }
@@ -232,7 +262,7 @@ if (misses.length) {
   for (const a of misses) {
     const key = a.group.ko + '|' + a.name.ko;
     const q = new URLSearchParams({
-      select: 'id,title,category,members,view_count,published_at,content_flag,cover_of_members,cover_of_groups',
+      select: 'id,title,category,members,view_count,published_at,content_flag,cover_of_members,cover_of_groups,with_members,with_groups',
       members: `cs.{"${a.name.ko}"}`,
       order: 'view_count.desc.nullslast',   // 창을 안 쓰므로 처음부터 대표성 높은 순서로 받는다
       limit: '40',
@@ -250,14 +280,23 @@ if (misses.length) {
       best = better(best, v);
       if (ELIGIBLE.has(v.category)) cands.push(v);
     }
-    const pick = randomEligible(cands, best);
+    const pick = randomEligible(cands, best, [v => !isCollab(v)]);
     if (pick) { memberOut[key] = pick.id; recovered++; }
     else memMiss++;
   }
   console.log(`  → ${recovered}명 복구 · 여전히 없음 ${memMiss}명`);
 }
 const groupOut = {};
-for (const gko of gkos) { const p = randomEligible(groupCands[gko], groupPick[gko]); if (p) groupOut[gko] = p.id; }
+let groupFiltered = 0;
+for (const gko of gkos) {
+  const n = memberCountOf[gko] || 0;
+  const p = randomEligible(groupCands[gko], groupPick[gko], [v => !badForGroup(v, n)]);
+  if (p) {
+    groupOut[gko] = p.id;
+    if (badForGroup(p, n)) groupFiltered++; // 필터를 다 통과 못 해 느슨한 풀로 내려간 경우(후보가 적은 그룹)
+  }
+}
+if (groupFiltered) console.log(`[og-thumbs] 그룹 ${groupFiltered}팀은 대표성 필터를 만족하는 후보가 없어 기존 풀에서 골랐습니다(후보 부족)`);
 
 console.log(`\n[og-thumbs] 그룹 ${Object.keys(groupOut).length}/${gkos.length} · 멤버 ${Object.keys(memberOut).length}/${artists.length} (솔로 본인키 ${memSolo} · 소속영상 ${memHit} · 타그룹폴백 ${memFallback} · 없음 ${memMiss})`);
 

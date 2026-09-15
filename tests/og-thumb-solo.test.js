@@ -106,5 +106,28 @@ for (const name of ['아이유', '청하', '태연']) {
   }
 }
 
+// ── 대표성 필터가 살아 있는지 (2026-09-15) ──────────────────────────────────
+// 제보: 샤이니 **그룹** 썸네일이 `MOVE - 태민(TAEMIN) X 한유진(ZEROBASEONE)`이었다 — 멤버 한 명이
+// 타 그룹 멤버와 한 콜라보 무대가 그룹 대표 이미지로 걸린 것. 후보 풀을 재보니 구조적이었다:
+// 샤이니 상위 20개 중 12개가 멤버 개인 활동, 2개가 콜라보, 진짜 그룹 콘텐츠는 8개뿐이었다.
+// 인기순으로 뽑으면 솔로가 잘 되는 그룹일수록 개인 활동이 그룹 영상을 밀어낸다.
+// 이건 눈으로 하나하나 볼 일이 아니라 선정 단계에서 걸러야 하는 문제다.
+{
+  const og = fs.readFileSync(path.join(ROOT, 'tools', 'build_og_thumbs.mjs'), 'utf8');
+  const need2 = (c, m) => { if (c) console.log('✅ ' + m); else { pass = false; console.log('❌ ' + m); } };
+  need2(/const isCollab\s*=/.test(og) && /with_groups/.test(og) && /with_members/.test(og), '콜라보 판정자(isCollab)가 있음');
+  need2(/const badForGroup\s*=/.test(og), '그룹 대표성 필터(badForGroup)가 있음');
+  // ⚠️ 이게 이번 수정에서 제일 미끄러지기 쉬운 지점이었다 — 필터를 넣어도 조회 select에
+  //    with_members/with_groups가 없으면 값이 늘 비어서 isCollab이 **항상 false**가 된다.
+  //    즉 "필터가 있는데 아무것도 안 걸러지는" 상태가 조용히 성립한다.
+  const selects = og.match(/select:\s*'[^']*'/g) || [];
+  const vidSelects = selects.filter(s => /cover_of_members/.test(s));
+  need2(vidSelects.length > 0 && vidSelects.every(s => /with_members/.test(s) && /with_groups/.test(s)),
+    `영상 조회 select ${vidSelects.length}곳 모두 with_members·with_groups를 가져옴`);
+  need2(/badForGroup\(v, memberCountOf/.test(og), '기존 캐시 감사도 대표성 규칙 위반을 오염으로 처리(--keep-existing이 옛 픽을 지키지 못하게)');
+  // 필터가 하드 조건이면 후보가 적은 그룹이 썸네일을 통째로 잃는다 — 마지막엔 원래 풀로 떨어져야 한다.
+  need2(/for \(const f of \[\.\.\.\(filters \|\| \[\]\), null\]\)/.test(og), '필터를 다 통과 못 하면 느슨한 풀로 폴백(썸네일 유실 방지)');
+}
+
 console.log(pass ? '\n✅ og:image 커버리지 테스트 통과' : '\n❌ 실패 있음');
 process.exit(pass ? 0 : 1);
