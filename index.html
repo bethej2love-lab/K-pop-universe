@@ -17190,6 +17190,70 @@ function _thumbIsVertical(vid){
     im.src=`https://i.ytimg.com/vi/${vid}/oardefault.jpg`;
   });
 }
+// ── 💿 이번 주 발매 선반 (2026-09-15) ────────────────────────────────────────
+// Discover의 선반 26종이 전부 유튜브 썸네일(16:9/9:16) 카드라 화면이 한 가지 리듬으로만 읽혔다.
+// 앨범 커버는 **정사각**이라 그 사이에서 눈에 띄는 변주가 되고, 우리가 이미 7,158장을 갖고 있는데
+// 피드에 한 번도 안 나오던 자산이다.
+//
+// 데이터: albums_recent.json(빌드 생성물, 최신 400장). 앱은 앨범을 안 들고 있고 disco/는 카드를
+// 열 때 그룹별로 받는 구조라, 피드용으로는 별도 인덱스가 필요하다(tools/build_slim_data.mjs).
+let _recentAlbumsP=null;
+function _ensureRecentAlbums(){
+  if(_recentAlbumsP)return _recentAlbumsP;
+  return _recentAlbumsP=fetch('albums_recent.json',{cache:'no-cache'})
+    .then(r=>r.ok?r.json():[]).catch(()=>[]);
+}
+// "YYYY.MM.DD" → epoch ms (데이터의 유일한 날짜 표기)
+function _albumDate(s){const m=/^(\d{4})\.(\d{2})\.(\d{2})$/.exec(String(s||''));return m?Date.UTC(+m[1],+m[2]-1,+m[3]):NaN;}
+// ⚠️ 창을 7일로 **고정하지 않는다**. 수집이 아직 얇을 땐(2026-09-15 실측: 최근 7일 1장) 선반이
+//    빈 것처럼 보인다. 최소 개수를 채울 때까지 창을 넓히고, 제목도 그에 맞게 바꾼다. 수집이 정상
+//    페이스(월 ~60장)에 오르면 자연히 7일 창에서 멈춘다 — 데이터가 좋아질수록 알아서 좁혀진다.
+const _FEED_ALBUM_WINDOWS=[7,14,30,60], _FEED_ALBUM_MIN=6, _FEED_ALBUM_MAX=24;
+async function _buildFeedNewAlbums(){
+  const section=document.getElementById('feed-newalbum-section');
+  const list=document.getElementById('feed-newalbum');
+  if(!section||!list)return;
+  list.innerHTML='';section.style.display='none';
+  _enableDragScroll(list); // 가로 목록 공통 — overflow-x만으론 데스크톱에서 휠이 안 먹는다
+  try{
+    const all=await _ensureRecentAlbums();
+    if(!Array.isArray(all)||!all.length)return;
+    const now=Date.now();
+    let picked=[],days=0;
+    for(const w of _FEED_ALBUM_WINDOWS){
+      days=w;
+      picked=all.filter(a=>{const t=_albumDate(a.d);return isFinite(t)&&now-t<=w*86400000;});
+      if(picked.length>=_FEED_ALBUM_MIN)break;
+    }
+    if(!picked.length)return;
+    picked=picked.slice(0,_FEED_ALBUM_MAX); // albums_recent.json이 이미 최신순
+    const isKo=currentLang==='ko';
+    const ttl=document.getElementById('feed-newalbum-ttl');
+    if(ttl)ttl.textContent=days<=7?(isKo?'💿 이번 주 발매':'💿 Released This Week')
+                                  :(isKo?'💿 최근 발매':'💿 Recent Releases');
+    picked.forEach(a=>{
+      const ownerDisp=a.k==='g'?_gLabelKo(a.o):a.o;
+      const sub=[ownerDisp,_discogTypeLabel(a.y)].filter(Boolean).join(' · ');
+      _appendFeedCard(list,'💿',a.t,sub,()=>_feedNav(()=>{
+        // 그룹이면 그룹 카드, 멤버면 멤버 카드 — 다른 발견 카드들과 같은 이동 규칙.
+        if(a.k==='g'&&GROUPS[a.o]){
+          const bm=bubbleMeshes.find(b=>b.ko===a.o);if(bm)flyToBubble(bm.mesh.position,bm.radius);
+          if(isMob())showGC(a.o,window.innerWidth/2,window.innerHeight*0.4,false,false,null,false);
+          else showGC(a.o,window.innerWidth/2,window.innerHeight/2);
+          return;
+        }
+        // 멤버: 같은 이름이 여럿일 수 있어 소속 그룹(g)까지 맞춰 찾는다(동명이인 오이동 방지).
+        const art=(ARTISTS||[]).find(x=>x.name&&x.name.ko===a.o&&(!a.g||(x.group&&x.group.ko===a.g)))
+                ||(ARTISTS||[]).find(x=>x.name&&x.name.ko===a.o);
+        if(!art)return;
+        if(art._worldPos)flyTo(art._worldPos);
+        if(isMob())showT(art,window.innerWidth/2,window.innerHeight*0.4,false,false,false);
+        else showT(art,window.innerWidth/2,window.innerHeight/2);
+      }),a.c);
+    });
+    section.style.display='';
+  }catch(e){console.warn('[feed] 이번 주 발매 선반 실패 — 이 선반만 빠집니다',e);}
+}
 async function _buildFeedJacon(){
   const section=document.getElementById('feed-jacon-section');
   const list=document.getElementById('feed-jacon');
@@ -18880,6 +18944,7 @@ function _buildFeedDisc(){
   // Trend(최근 7일 전체 업로드)를 큐 맨 앞으로(2026-09-02 제보 "이미 떠 있어야"). 동시 실행 4개라 3번째여도
   // 시작은 t=0로 같지만, Trend 쿼리(800건+셔플)가 앞 두 선반보다 무거워 렌더가 뒤로 밀렸음 — 첫 슬롯을 줘서
   // 제일 먼저 시작·렌더되게 한다. DOM 컨테이너(#feed-trend)는 고정이라 표시 위치는 그대로.
+  _feedEnqueue(()=>_buildFeedNewAlbums()); // 이번 주 발매(정사각 앨범 커버) — 시간 민감이라 앞쪽
   _feedEnqueue(()=>_buildFeedJacon()); // 오리지널 콘텐츠(아이돌 개인 채널) 선반 — Trend 위(짧은 가로 선반)
   _feedEnqueue(()=>_buildFeedTrend());
   _feedEnqueue(()=>_buildFeedWeeklyTopCams(chart,list));
@@ -21519,6 +21584,13 @@ _totopBtn.addEventListener('click',e=>{
       <div class="feed-section" id="feed-anniv-section" style="display:none">
         <div class="feed-section-ttl">🎂 Today's Anniversary</div>
         <div id="feed-anniv" class="feed-strip hscroll-drag"></div>
+      </div>
+      <!-- 이번 주 발매(2026-09-15) — 앨범 커버 정사각 카드. 시간 민감이라 기념일 바로 밑, 차트 위.
+           데이터는 albums_recent.json(빌드 생성물)을 lazy 로드한다 — 앱은 앨범을 안 들고 있고
+           disco/는 카드 열 때 그룹별로 받는 구조라 피드에서 쓰려면 별도 인덱스가 필요하다. -->
+      <div class="feed-section" id="feed-newalbum-section" style="display:none">
+        <div class="feed-section-ttl" id="feed-newalbum-ttl">💿 New Releases</div>
+        <div id="feed-newalbum" class="feed-strip hscroll-drag"></div>
       </div>
       <div class="feed-section">
         <div class="feed-section-ttl">📊 Charts</div>

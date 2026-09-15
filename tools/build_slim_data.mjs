@@ -193,6 +193,43 @@ const gSlimStr = JSON.stringify(groupsSlim), aSlimStr = JSON.stringify(artistsSl
 emit(path.join(ROOT, 'groups.slim.json'), gSlimStr);
 emit(path.join(ROOT, 'artists.slim.json'), aSlimStr);
 emit(path.join(ROOT, 'tracks_index.json'), tiStr);
+
+// ── albums_recent.json — 탐험 "이번 주 발매" 선반용 최근 앨범 인덱스 (2026-09-15) ──────────
+// 왜 따로 만드나: 앱은 앨범 데이터를 갖고 있지 않다. discography는 슬림에서 빠지고 disco/ 파일로
+// **카드를 열 때 그룹별로 lazy 로드**되므로, 피드에서 "최근 발매"를 알려면 388개 파일을 전부
+// 받아야 한다. 그래서 최근분만 담은 작은 인덱스를 빌드 때 만들어 둔다(피드가 이것만 lazy 로드).
+//
+// ⚠️ "최근 N일"이 아니라 **최신 N장**으로 담는다. 날짜로 자르면 빌드 시점이 박제돼서, 재빌드가
+//    며칠 안 도는 사이 선반이 조용히 비어버린다. 개수로 담으면 파일이 상하지 않고, 며칠치를
+//    보여줄지는 화면이 그때그때 정한다(수집이 아직 얇을 땐 창을 넓혀 쓸 수 있다).
+const RECENT_ALBUMS = 400;
+{
+  const rows = [];
+  const push = (owner, ownerKind, gko, list) => {
+    for (const al of list || []) {
+      if (!al || !al.releaseDate || !al.cover) continue;   // 커버 없는 건 이 선반의 존재 이유가 없다
+      rows.push({ o: owner, k: ownerKind, g: gko || null, t: al.title, y: al.type || '', d: al.releaseDate, c: al.cover });
+    }
+  };
+  for (const [gko, g] of Object.entries(groups)) push(gko, 'g', null, g.discography);
+  for (const a of artists) {
+    const nm = a.name && a.name.ko, gko = a.group && a.group.ko;
+    if (!nm) continue;
+    push(nm, 'm', gko && groups[gko] ? gko : null, a.discography);
+    for (const u of a.unitDiscography || []) push(nm, 'm', gko && groups[gko] ? gko : null, u && u.albums);
+  }
+  rows.sort((x, y) => String(y.d).localeCompare(String(x.d)));
+  // 같은 앨범이 그룹과 멤버 양쪽에 들어 있는 경우가 있어 (제목+날짜)로 중복 제거한다.
+  const seen = new Set(), out = [];
+  for (const r of rows) {
+    const k = r.d + '|' + String(r.t).toLowerCase().replace(/\s+/g, '');
+    if (seen.has(k)) continue;
+    seen.add(k); out.push(r);
+    if (out.length >= RECENT_ALBUMS) break;
+  }
+  emit(path.join(ROOT, 'albums_recent.json'), JSON.stringify(out));
+  console.log(`albums_recent.json  ${out.length}장 (최신 ${out[0] ? out[0].d : '-'} ~ ${out[out.length - 1] ? out[out.length - 1].d : '-'})`);
+}
 // 원본에서 사라진 그룹·솔로의 disco 파일이 남아 있으면(고아) 실제 빌드는 rm으로 지우지만 --check는
 // 못 지운다 — 그래서 여기서 직접 훑어 어긋남으로 보고한다. 이게 없으면 "그룹 이름이 바뀐 날"
 // 옛 파일이 계속 서빙되는 걸 CI가 못 잡는다.

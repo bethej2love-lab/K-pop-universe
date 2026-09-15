@@ -83,15 +83,25 @@ async function main() {
     const { webSocketDebuggerUrl } = await (await fetch(`http://127.0.0.1:${CDP_PORT}/json/new?about:blank`, { method: 'PUT' })).json();
     const cdp = await connectCdp(webSocketDebuggerUrl);
 
-    cdp.on('Runtime.exceptionThrown', p => errors.push(p.exceptionDetails?.exception?.description || p.exceptionDetails?.text || 'unknown exception'));
-    cdp.on('Console.messageAdded', p => { if (p.message.level === 'error') errors.push(p.message.text); });
-    cdp.on('Runtime.consoleAPICalled', p => { if (p.type === 'error') errors.push((p.args || []).map(a => a.value || a.description).join(' ')); });
+    // ⚠️ 유튜브 썸네일 **탐지용** 404는 에러가 아니다(2026-09-15).
+    //    _thumbIsVertical(오리지널 콘텐츠 선반)은 i.ytimg.com의 oardefault.jpg(세로 원본)를 일부러
+    //    불러보고 **404면 "가로 영상"으로 판정**한다 — 즉 404가 정상 결과값인 프로브다. mqdefault_live도
+    //    마찬가지로 "라이브 아님"을 뜻한다. 브라우저는 이걸 콘솔 에러로 찍으므로 그대로 세면 스모크가
+    //    실행 타이밍에 따라 들쭉날쭉 빨개진다(실제로 선반 하나를 앞에 추가하자 관측창 안으로 들어왔다).
+    //    ⚠️ i.ytimg.com의 **썸네일 프로브 경로만** 제외한다 — 우리 오리진(127.0.0.1)의 404는
+    //       파일 누락이라는 진짜 신호이므로 계속 잡아야 한다.
+    const BENIGN = /i\.ytimg\.com\/vi\/[\w-]+\/(oardefault|mqdefault_live|maxresdefault)\.jpg/;
+    const note = s => { const t = String(s || ''); if (!BENIGN.test(t)) errors.push(t); };
+    cdp.on('Runtime.exceptionThrown', p => note(p.exceptionDetails?.exception?.description || p.exceptionDetails?.text || 'unknown exception'));
+    cdp.on('Console.messageAdded', p => { if (p.message.level === 'error') note(p.message.text + ' ' + (p.message.url || '')); });
+    cdp.on('Runtime.consoleAPICalled', p => { if (p.type === 'error') note((p.args || []).map(a => a.value || a.description).join(' ')); });
 
     await cdp.send('Page.enable');
     await cdp.send('Runtime.enable');
     await cdp.send('Console.enable');
     await cdp.send('Log.enable');
-    cdp.on('Log.entryAdded', p => { if (p.entry.level === 'error') errors.push(p.entry.text); });
+    // 리소스 404는 대개 이쪽(Log)으로 온다 — url까지 붙여야 위 BENIGN 판정이 먹는다
+    cdp.on('Log.entryAdded', p => { if (p.entry.level === 'error') note(p.entry.text + ' ' + (p.entry.url || '')); });
 
     // 3. 실제 로드
     await cdp.send('Page.navigate', { url: `http://127.0.0.1:${PORT}/index.html` });
