@@ -2,13 +2,12 @@ name: 앨범 수집 (매일)
 
 # 디스코그래피 일일 파이프라인.
 #
-# 지금 들어 있는 것: 신선도 감시(tools/disco_freshness.mjs) — "앨범 수집이 멈췄다"를 아무도 안 보고
-# 있어도 알아채는 장치. 임계를 넘으면 이 워크플로가 **실패**하고, 기본 알림 설정이면 메일이 온다.
-# 대시보드를 하나 더 만들지 않는 게 요점이다(안 보는 대시보드가 제일 나쁘다).
-#
-# 곧 들어올 것: 스포티파이 신보 동기화(SPOTIFY_CLIENT_ID/SECRET 시크릿이 등록되면).
-#   수집 → groups.json/artists.json 갱신 → 커밋 순서로 이 잡 앞에 붙는다. 파생물(disco/·slim·
-#   tracks_index) 재생성은 그 커밋이 rebuild-disco-artifacts.yml을 깨워서 자동으로 이어진다.
+# 1단계 수집: 스포티파이에서 신보를 찾아 groups.json/artists.json에 넣고 커밋한다.
+#   파생물(disco/·slim·tracks_index) 재생성은 그 커밋이 rebuild-disco-artifacts.yml을 깨워 자동으로 이어진다.
+# 2단계 감시: 신선도 감시(tools/disco_freshness.mjs) — "수집이 멈췄다"를 아무도 안 보고 있어도
+#   알아채는 장치. 임계를 넘으면 이 워크플로가 **실패**하고 기본 알림 설정이면 메일이 온다.
+#   대시보드를 하나 더 만들지 않는 게 요점이다(안 보는 대시보드가 제일 나쁘다).
+#   ⚠️ 수집 뒤에 둬야 한다 — 방금 넣은 결과까지 반영해서 판정해야 의미가 있다.
 #
 # 시각: 하루 두 번 — **KST 18:11**과 **KST 00:11** (2026-09-15 사용자 결정).
 #   · 18:11 — K팝 발매는 대개 KST 18시다. 발매 직후에 바로 집는다.
@@ -29,14 +28,17 @@ on:
     - cron: '11 15 * * *'   # KST 00:11 — 자정/해외 발매 + 앞 회차 누락분
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 concurrency:
   group: disco-daily
   cancel-in-progress: false
 
 jobs:
-  freshness:
+  collect:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
 
@@ -44,5 +46,33 @@ jobs:
         with:
           node-version: 22
 
+      # 수집. 레이트리밋에 걸려 회차가 접혀도 **실패가 아니다**(설계된 동작 — 커서가 남아 다음 회차가
+      # 이어받는다). 진짜 실패(인증 오류 등)만 예외로 터져 나와 이 스텝을 빨갛게 만든다.
+      - name: 스포티파이 신보 수집
+        env:
+          SPOTIFY_CLIENT_ID: ${{ secrets.SPOTIFY_CLIENT_ID }}
+          SPOTIFY_CLIENT_SECRET: ${{ secrets.SPOTIFY_CLIENT_SECRET }}
+          BUDGET: ${{ vars.SPOTIFY_BUDGET || '80' }}
+        run: node tools/spotify_disco_sync.mjs
+
+      # 수집 결과를 커밋. 여기서 push된 groups.json/artists.json이 rebuild-disco-artifacts.yml을
+      # 깨워 disco/·slim·tracks_index를 자동 재생성한다(수집은 자동인데 반영이 수동이면 의미가 없다).
+      - name: 수집분 커밋
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add groups.json artists.json spotify_artist_map.json spotify_sync_state.json
+          if git diff --cached --quiet; then
+            echo "새 앨범 없음 — 커밋할 것이 없습니다"
+            exit 0
+          fi
+          git commit -m "data(disco): 스포티파이 신보 수집 (auto)"
+          for i in 1 2 3; do
+            git pull --rebase origin main && git push && exit 0
+            echo "push 경합 — 재시도 ($i/3)"; sleep $((i * 5))
+          done
+          exit 1
+
+      # ⚠️ 감시는 커밋 뒤에. 방금 수집한 결과까지 반영해서 판정해야 한다.
       - name: 신선도 감시
         run: node tools/disco_freshness.mjs
