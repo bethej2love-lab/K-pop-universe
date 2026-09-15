@@ -2381,7 +2381,23 @@
   #gc-discog-detail.open{display:flex;}
   #gc-discog-detail-bg{position:absolute;inset:0;background:rgba(0,0,0,0.55);}
   #gc-discog-detail-sheet{position:relative;width:100%;background:rgba(14,18,38,0.98);backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);border-radius:20px 20px 0 0;padding:22px 22px calc(22px + env(safe-area-inset-bottom,0px));box-sizing:border-box;z-index:1;text-align:center;}
-  @media(min-width:769px){#gc-discog-detail-sheet{max-width:320px;border-radius:18px;margin-bottom:100px;}}
+  /* 데스크톱: 상단 기준으로 고정한다(2026-09-15 사용자 제보 — "곡 수마다 창 세로 길이가 바뀌어도
+     위줄 위치는 고정돼야 한다"). 예전엔 컨테이너가 align-items:flex-end라 시트가 **아래에 붙어 위로
+     자랐고**, 트랙 목록이 0~200px까지 늘어나는 만큼 상단이 그대로 튀었다. ‹ › 로 앨범을 넘길 때마다
+     제목·커버가 위아래로 움직여서 특히 거슬린다.
+     → flex-start + 고정 margin-top. 이제 높이는 아래로만 자란다.
+     ⚠️ 모바일은 바꾸지 않는다 — 거긴 바텀시트(아래에서 올라오는) 패턴이 의도된 것이고, 거기서
+        상단을 고정하면 시트가 화면 중간에 떠 버린다. */
+  @media(min-width:769px){
+    #gc-discog-detail{align-items:flex-start;}
+    #gc-discog-detail-sheet{
+      max-width:320px;border-radius:18px;
+      margin-top:clamp(56px,14vh,132px);
+      /* 낮은 창에서도 넘치지 않게 — 트랙 목록이 자체 스크롤을 갖지만 시트 전체에도 안전망을 둔다 */
+      max-height:calc(100dvh - clamp(56px,14vh,132px) - 24px);
+      overflow-y:auto;
+    }
+  }
   #gc-discog-detail-close{position:absolute;top:10px;right:12px;background:none;border:none;color:rgba(190,205,240,0.4);cursor:pointer;padding:4px;line-height:1;z-index:2;display:inline-flex;} /* ×텍스트(밝음)→얇은 SVG, 대비 낮춤(2026-08-22 사용자 요청 — 닫기는 은은하게) */
   #gc-discog-detail-close svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;}
   #gc-discog-detail-covrow{display:flex;align-items:center;justify-content:center;gap:14px;margin:4px 0 14px;}
