@@ -1,6 +1,19 @@
-name: 영상 동기화 (매시간)
+name: 영상 동기화 (게이트 방식)
 
-# 유튜브 신규 영상 수집(루틴 1~3단계)만 매시간 돌린다 — 2026-09-14 사용자 요청("동기화 1시간마다로").
+# 유튜브 신규 영상 수집(루틴 1~3단계)만 돌린다 — 2026-09-14 사용자 요청("동기화 1시간마다로").
+#
+# ── 2026-09-15: cron만으로는 매시간이 안 지켜져서 게이트 방식으로 바꿨다 ──────────
+# 실측(2026-09-14 06:50Z~23:20Z, 약 17시간): `cron: '30 * * * *'`로 매시간을 의도했는데 실제 실행은
+# **4번**뿐이었다(06:50Z / 14:20Z 실패 / 19:32Z / 23:20Z). GitHub의 schedule 이벤트는 고부하 시
+# 지연되거나 통째로 드랍된다 — 우리가 고칠 수 없다.
+#   → **cron은 15분마다 4번 쏘고, 실제로 돌릴지는 tools/sync_gate.mjs가 결정**한다.
+#     4발 중 하나만 살아남아도 그 시간대 동기화는 보장된다(드랍 확률 p → p⁴).
+#     게이트는 "마지막 동기화로부터 최소 N분"을 강제하고, N을 **시간대별로** 다르게 준다:
+#       KST 17~23시 45분 · 00시 60분 · 09~16시 90분 · 01~08시 240분
+#     실측 업로드 분포(최근 14일 3,928건)가 저녁 피크 66% / 새벽 02~08시 0.7%라서다. 쿼터 비용은
+#     새 영상 유무와 무관하게 폴링당 동일하므로, 새벽 폴링을 줄여 저녁에 몰아주는 게 같은 예산으로
+#     체감 신선도를 올리는 길이다. 근거와 상한 계산은 tools/sync_gate.mjs 머리 주석에 다 있다.
+#     상한 ≤ 19회/일 × 350 units = 6,650 (+ daily-routine 2,800 = 9,450 < 한도 10,000).
 #
 # 왜 daily-routine.yml의 cron만 1시간으로 안 바꿨나:
 #   그 워크플로는 동기화 + 37만 행을 훑는 스윕(멤버 태깅·오태깅 재검증·원곡·음방1위·포맷 태깅)이
@@ -17,8 +30,16 @@ name: 영상 동기화 (매시간)
 
 on:
   schedule:
-    - cron: '30 * * * *'   # 매시 30분 — 정각에 도는 daily-routine과 안 겹치게
+    # 15분 간격 4발. 드랍 보험이지 "15분마다 동기화"가 아니다 — 실제 실행 여부는 게이트가 정한다.
+    # 라운드 분(:00/:30)은 GitHub 부하가 몰려 드랍이 잦으므로 어긋난 분을 쓴다.
+    - cron: '8,23,38,53 * * * *'
   workflow_dispatch:
+    inputs:
+      force:
+        description: "게이트 무시하고 무조건 동기화"
+        required: false
+        default: false
+        type: boolean
 
 concurrency:
   group: daily-routine
@@ -35,8 +56,18 @@ jobs:
         with:
           node-version: 22
 
+      # 게이트가 먼저. 건너뛰기로 판정되면 아래 스텝이 전부 스킵되어 20초 만에 끝난다
+      # (크롬 설치·캐시 복원도 안 한다 — 공개 레포라 Actions 분은 무료지만 큐를 점유하지 않는 게 낫다).
+      - name: 동기화 게이트
+        id: gate
+        env:
+          SUPABASE_SERVICE_ROLE: ${{ secrets.SUPABASE_SERVICE_ROLE }}
+          FORCE: ${{ (github.event_name == 'workflow_dispatch' && inputs.force) && '1' || '0' }}
+        run: node tools/sync_gate.mjs
+
       - name: install chrome
         id: chrome
+        if: steps.gate.outputs.run == 'true'
         uses: browser-actions/setup-chrome@v1
         with:
           chrome-version: stable
@@ -44,6 +75,7 @@ jobs:
       # daily-routine.yml과 **같은 캐시 키 접두사**를 쓴다 — 체크포인트를 공유해야 매시간 동기화가
       # 증분으로 돈다. 접두사가 다르면 매번 빈 프로필로 열려 채널 전체를 다시 긁는다.
       - name: restore checkpoint profile
+        if: steps.gate.outputs.run == 'true'
         uses: actions/cache@v4
         with:
           path: ${{ runner.temp }}/kpu-routine-profile
@@ -52,6 +84,7 @@ jobs:
             kpu-routine-profile-
 
       - name: run sync only
+        if: steps.gate.outputs.run == 'true'
         env:
           KPU_ADMIN_EMAIL: ${{ secrets.KPU_ADMIN_EMAIL }}
           KPU_ADMIN_PASSWORD: ${{ secrets.KPU_ADMIN_PASSWORD }}

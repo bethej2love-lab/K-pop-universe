@@ -33,6 +33,7 @@
 //   (service_role 키만 is_short 쓰기가 가능하다 — anon 키는 RLS에 막힘. GitHub Actions에서는
 //    레포 Secrets의 SUPABASE_SERVICE_ROLE로 주입된다.)
 // 옵션 env: MAX_PROMOTE(이번 실행 상한, 기본 무제한) · CONC(동시 프로브, 기본 60) · CHUNK(기본 500)
+//           ONLY_FRESH=1(신규 유입만 보고 백필은 건너뜀 — 매시간 실행용)
 
 const U = process.env.SUPABASE_URL || 'https://dukgguehegnembimqvkm.supabase.co';
 const KEY = process.env.SUPABASE_SERVICE_ROLE;
@@ -52,6 +53,12 @@ const REPROBE_BEFORE = process.env.REPROBE_BEFORE || '2026-09-14T00:00:00Z';
 // DRY_RUN=1: 판별만 해보고 DB에 아무것도 안 쓴다. 판별 로직을 바꿨을 때 실제 데이터로 맞는지 확인하는 용도
 // (2026-09-14 판별기 교체 때 쓴 경로). 읽기는 RLS가 열려 있어 공개 anon 키로도 되므로 service_role이 없어도 된다.
 const DRY = process.env.DRY_RUN === '1';
+// ONLY_FRESH=1: 1단계(아직 한 번도 안 본 신규 유입)만 보고, 2단계(옛 표식 백필)로 넘어가지 않는다.
+// 왜 필요한가(2026-09-15): 백필 28만 건은 한 번 다 돌면 끝나는 일회성이고 53분쯤 걸린다. 반면 **오늘
+// 올라온 쇼츠가 가로로 떠 있는 것**은 매시간 생기는 문제다. 둘을 한 워크플로에 묶으면 신규분이 백필
+// 뒤에 줄을 서게 되므로, 신규 전용(1시간 주기)과 백필 포함(6시간 주기)을 분리한다.
+// 후보가 0이면 몇 초에 끝나므로 매시간 돌려도 사실상 공짜다(유튜브 Data API를 안 쓴다 — 쿼터 무관).
+const ONLY_FRESH = process.env.ONLY_FRESH === '1';
 const READ_KEY = KEY || process.env.SUPABASE_ANON_KEY || 'sb_publishable_SjNC-N_9TUqaQcCxhVinGA_ULyX6tA0';
 
 if (!KEY && !DRY) {
@@ -169,6 +176,7 @@ async function fetchChunk() {
   if (!r.ok) throw new Error(`조회 실패 ${r.status}: ${await r.text()}`);
   let rows = await r.json();
   if (rows.length || DRY) return { rows, phase: DRY ? 'dry' : '신규' };
+  if (ONLY_FRESH) return { rows: [], phase: '신규' }; // 신규 전용 실행 — 백필로 안 넘어가고 여기서 끝낸다
   // 1단계가 비었으면 백필로 넘어간다
   r = await fetch(`${U}/rest/v1/${TABLE}?select=id&${BASE}&short_probed_at=lt.${REPROBE_BEFORE}&order=id&limit=${CHUNK}`, { headers: H });
   if (!r.ok) throw new Error(`조회 실패 ${r.status}: ${await r.text()}`);
@@ -228,21 +236,39 @@ async function main() {
   // 판정 불가 행은 표식을 안 남기므로 다음 조회에 **또 뽑힌다** — 한 청크가 통째로 판정 불가면
   // 같은 청크를 무한히 돌 수 있다. 그래서 "이번 실행에서 아무 행도 확정하지 못한 청크"가 연속으로
   // 나오면 멈춘다(유튜브가 일시적으로 막고 있는 상황 — 다음 스케줄에 다시 온다).
-  let barrenChunks = 0, lastPhase = '';
+  // ── 청크 단위 오류 격리 (2026-09-15) ──────────────────────────────────────
+  // 예전엔 조회/PATCH가 한 번이라도 던지면 main().catch가 그대로 프로세스를 죽였다. 그래서 스윕이
+  // **몇 시간 돌아 쌓은 진행분까지 통째로 날아가고**, 로그엔 마지막 예외 한 줄만 남았다(실제로
+  // 2026-09-14 두 번의 스케줄 실행이 그렇게 23초 만에 죽어서 새 표식이 0건이었다).
+  // 이제는 청크 하나가 실패해도 그 청크만 버리고 다음으로 간다 — 이미 PATCH된 앞 청크의 표식은
+  // DB에 남아 있으므로 다음 실행이 거기서부터 이어간다. 연속 3청크가 실패하면 그때 멈춘다
+  // (일시적 장애가 아니라 구조적 문제라는 뜻 — 다음 스케줄이 다시 시도한다).
+  let barrenChunks = 0, lastPhase = '', errStreak = 0, errTotal = 0, lastErr = '';
   while (scanned < MAX) {
-    const { rows, phase } = await fetchChunk();
-    if (!rows.length) { console.log('✅ 후보 0 — 전량 실측 완료. 더 처리할 게 없어요.'); break; }
-    if (phase !== lastPhase) { console.log(`— ${phase} 단계 시작`); lastPhase = phase; }
-    const ids = rows.map(r => r.id);
-    const { portrait, landscape } = await probeAll(ids);
-    const unknown = ids.length - portrait.length - landscape.length;
-    // 각 id를 정확히 한 번씩만 PATCH한다(예전엔 승격분을 두 번 건드림). 세로=is_short+표식, 가로=표식만.
-    // 두 그룹은 서로 다른 행이라 동시에 보내도 안전 — 청크당 PATCH 왕복을 절반으로 줄인다.
-    const now = new Date().toISOString();
-    await Promise.all([
-      portrait.length ? patchByIds(portrait, { is_short: true, short_probed_at: now }) : null,
-      landscape.length ? patchByIds(landscape, { short_probed_at: now }) : null,
-    ].filter(Boolean));
+    let ids, portrait, landscape, unknown;
+    try {
+      const { rows, phase } = await fetchChunk();
+      if (!rows.length) { console.log('✅ 후보 0 — 전량 실측 완료. 더 처리할 게 없어요.'); break; }
+      if (phase !== lastPhase) { console.log(`— ${phase} 단계 시작`); lastPhase = phase; }
+      ids = rows.map(r => r.id);
+      ({ portrait, landscape } = await probeAll(ids));
+      unknown = ids.length - portrait.length - landscape.length;
+      // 각 id를 정확히 한 번씩만 PATCH한다(예전엔 승격분을 두 번 건드림). 세로=is_short+표식, 가로=표식만.
+      // 두 그룹은 서로 다른 행이라 동시에 보내도 안전 — 청크당 PATCH 왕복을 절반으로 줄인다.
+      const now = new Date().toISOString();
+      await Promise.all([
+        portrait.length ? patchByIds(portrait, { is_short: true, short_probed_at: now }) : null,
+        landscape.length ? patchByIds(landscape, { short_probed_at: now }) : null,
+      ].filter(Boolean));
+    } catch (e) {
+      lastErr = (e && e.message) || String(e);
+      errTotal++;
+      console.error(`  ⚠️ 청크 실패(${++errStreak}/3) — ${lastErr}`);
+      if (errStreak >= 3) { console.error('⛔ 3청크 연속 실패 — 이번 실행은 여기서 멈춥니다(진행분은 DB에 남아 다음 실행이 이어갑니다).'); break; }
+      await new Promise(r => setTimeout(r, 3000)); // 일시적 장애면 잠깐 쉬었다가 같은 청크를 다시
+      continue;
+    }
+    errStreak = 0;
     scanned += ids.length;
     promoted += portrait.length;
     unknownTotal += unknown;
@@ -254,6 +280,10 @@ async function main() {
       if (++barrenChunks >= 3) { console.log('⚠️ 3청크 연속 아무것도 확정 못 함 — 유튜브 응답 이상으로 보고 중단합니다(다음 실행에 재시도).'); break; }
     } else barrenChunks = 0;
   }
+  // 한 청크도 처리 못 하고 오류만 났으면 실패로 끝낸다(워크플로가 빨개져야 알아챈다). 조금이라도
+  // 진행했으면 성공으로 끝낸다 — 그게 "진행분은 살린다"의 의미다.
+  if (errTotal && !scanned) { console.error(`실패: 한 청크도 처리하지 못했습니다 — ${lastErr}`); process.exitCode = 1; }
+  else if (errTotal) console.warn(`⚠️ 실패한 청크 ${errTotal}개 (마지막 오류: ${lastErr}) — 해당 행은 표식이 없어 다음 실행이 다시 봅니다.`);
   console.log(`[shorts-promote] 끝 — 스캔 ${scanned} · 승격 ${promoted}${unknownTotal ? ` · 판정불가 ${unknownTotal}(표식 안 남김, 다음 실행이 재시도)` : ''} · ${((Date.now() - t0) / 1000).toFixed(0)}초`);
 }
 

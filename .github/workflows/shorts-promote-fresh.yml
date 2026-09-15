@@ -1,0 +1,51 @@
+name: 쇼츠 승격 — 신규분만 (매시간)
+
+# 오늘 들어온 영상 중 "세로인데 가로로 저장된 것"만 골라 매시간 바로잡는다(ONLY_FRESH=1).
+#
+# 왜 6시간짜리 shorts-promote.yml과 나눴나 (2026-09-15, 사용자 제보 "쇼츠 형식인데 쇼츠 체크 안 된
+# 게 자주 눈에 띈다"):
+#   그 워크플로는 한 실행에서 ①신규 유입 → ②옛 판별기 표식 백필(28만 건, 실측 90건/초 ≈ 53분) 순으로
+#   돈다. 백필은 한 번 다 돌면 끝나는 **일회성**이지만, "오늘 올라온 쇼츠가 가로로 떠 있다"는
+#   **매시간 새로 생기는** 문제다. 한 워크플로에 묶어두면 신규분이 6시간에 한 번밖에 처리가 안 되고,
+#   그마저 백필 뒤에 줄을 선다.
+#   → 신규 전용(여기, 매시간) / 백필 포함 전량(shorts-promote.yml, 6시간)으로 분리.
+#
+# 비용: 후보가 0이면 스크립트가 즉시 끝난다(실측 몇 초). 유튜브 Data API를 전혀 안 쓰므로
+#       (썸네일·쇼츠 URL 직접 조회) **YouTube 쿼터와 무관**하다 — 매시간 돌려도 동기화에 영향 없음.
+#       한 시간치 신규 유입은 실측 수백 건 수준이라 한 청크(1000)로 대개 한 번에 끝난다.
+#
+# concurrency를 shorts-promote.yml과 **공유하지 않는다**: 백필이 도는 53분 동안 이게 취소되면
+# 분리한 의미가 없다. 둘이 겹쳐도 안전하다 — PATCH는 멱등(같은 값을 다시 쓸 뿐)이고, 겹친 행을
+# 중복 프로브하는 낭비만 생기는데 그건 쿼터가 아니라 HEAD 요청 몇 건이다.
+
+on:
+  schedule:
+    - cron: '42 * * * *'   # 매시 42분 — 정각(daily-routine)·30분(동기화)·15분(쇼츠 백필)과 모두 어긋나게
+  workflow_dispatch:
+
+concurrency:
+  group: shorts-promote-fresh
+  cancel-in-progress: false
+
+jobs:
+  promote-fresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25   # 신규분만이라 평소 몇 초~몇 분. 넘기면 다음 시각에 맡긴다.
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: 신규 유입 쇼츠 승격
+        shell: bash   # 기본 셸과 달리 pipefail이 켜져 있어야 tee로 넘겨도 node의 실패가 잡힌다
+        env:
+          SUPABASE_SERVICE_ROLE: ${{ secrets.SUPABASE_SERVICE_ROLE }}
+          ONLY_FRESH: '1'
+          CONC: '200'
+        run: |
+          echo '## 쇼츠 승격 (신규분)' >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+          node tools/shorts_promote.mjs | tee -a "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
