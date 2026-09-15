@@ -70,6 +70,47 @@ function slugify(en, fallbackKo) {
 function urlSafeKo(ko) {
   return ko.replace(/[.\s]+$/, '');
 }
+
+// ── 한국어 조사 자동 선택 (2026-09-15) ──────────────────────────────────────
+// 공유 미리보기 설명이 이름과 무관하게 `${ko}가`로 고정돼 있어서 "종현가 다른 케이팝 아이돌들…"
+// 처럼 틀린 문장이 나왔다(사용자 제보). 받침 유무로 이/가·은/는·을/를·와/과를 고른다.
+//
+// ⚠️ 이름이 한글로만 끝나지 않는다. 실측(2026-09-15) 그룹·멤버 이름 중 46개가 한글 음절이
+//    아닌 문자로 끝난다 — `엔시티 127`, `2PM`, `CL`, `H.O.T.`, `B.I`, `god` 등. 그래서
+//    ①끝의 마침표·괄호를 떼고 ②숫자·알파벳은 **한국어 읽기의 종성**으로 판정한다.
+//      숫자: 0 영·1 일·3 삼·6 육·7 칠·8 팔 → 받침 O / 2 이·4 사·5 오·9 구 → X
+//      알파벳: l 엘·m 엠·n 엔·r 알 → 받침 O / 나머지는 X (f는 '에프'라 받침 없음 — 흔한 착각)
+//    → `엔시티 127이`, `2PM이`, `CL이`, `NRG가`, `H.O.T.가`처럼 맞게 나온다.
+// ⚠️ 글자를 하나씩 읽지 않고 단어로 읽는 이름은 예외로 둔다(god = "갓"). 발음 사전이 없으면
+//    일반 규칙으로는 못 맞히는 부류라, 발견될 때마다 여기에 추가하는 게 정직하다.
+const JOSA_READ_AS_WORD = { god: true }; // 단어로 읽어서 받침이 생기는 이름
+const JOSA_DIGIT_FINAL = new Set(['0', '1', '3', '6', '7', '8']);
+const JOSA_ALPHA_FINAL = new Set(['l', 'm', 'n', 'r']);
+function hasFinalConsonant(word) {
+  const s = String(word || '').trim().replace(/[^0-9A-Za-z가-힣]+$/, ''); // "H.O.T." → "H.O.T"
+  if (!s) return false;
+  if (JOSA_READ_AS_WORD[s.toLowerCase()] !== undefined) return JOSA_READ_AS_WORD[s.toLowerCase()];
+  const c = s.slice(-1);
+  if (c >= '가' && c <= '힣') return (c.charCodeAt(0) - 0xAC00) % 28 !== 0; // 종성 인덱스 0 = 받침 없음
+  if (c >= '0' && c <= '9') return JOSA_DIGIT_FINAL.has(c);
+  if (/[A-Za-z]/.test(c)) return JOSA_ALPHA_FINAL.has(c.toLowerCase());
+  return false; // 판단 못 하면 받침 없는 쪽(가/는/를/와) — 어느 쪽이든 하나는 틀리므로 기본값을 고정해둔다
+}
+// josa('종현', '이/가') → '이' · josa('아이유', '이/가') → '가'
+// ⚠️ 표를 쓰는 이유: 조사쌍마다 "받침 있을 때 오는 쪽"의 관용 표기 순서가 다르다. 이/가·은/는·을/를은
+//    받침 있는 쪽이 앞이지만 **와/과는 반대**다(받침 있으면 '과'). 인자를 앞/뒤로 해석하게 짰더니
+//    `josa(x,'와/과')`가 "종현와"를 뱉었다. 표기 순서와 무관하게 정답이 나오도록 쌍을 등록해둔다.
+const JOSA_TABLE = {
+  '이/가': ['이', '가'], '가/이': ['이', '가'],
+  '은/는': ['은', '는'], '는/은': ['은', '는'],
+  '을/를': ['을', '를'], '를/을': ['을', '를'],
+  '과/와': ['과', '와'], '와/과': ['과', '와'],
+};
+function josa(word, pair) {
+  const t = JOSA_TABLE[pair];
+  if (!t) throw new Error(`josa: 모르는 조사쌍 "${pair}" — JOSA_TABLE에 등록하세요`);
+  return hasFinalConsonant(word) ? t[0] : t[1];
+}
 function ordinal(n) {
   const s = ['th', 'st', 'nd', 'rd'], v = n % 100;
   return n + (s[(v - 20) % 10] || s[v] || s[0]);
@@ -214,7 +255,7 @@ groupKos.forEach(ko => {
       : `${ko} 멤버 프로필·데뷔일·소속사 | K-POP UNIVERSE`;
     const desc = isEn
       ? `${en} member profiles, debut date, agency, and discography. Explore how ${en} connects with other K-pop idols on K-POP UNIVERSE.`
-      : `${ko} 멤버 프로필, 데뷔일, 소속사, 디스코그래피 정보. ${ko}가 다른 케이팝 아이돌들과 어떻게 연결되는지 K-POP UNIVERSE에서 탐험해보세요.`;
+      : `${ko} 멤버 프로필, 데뷔일, 소속사, 디스코그래피 정보. ${ko}${josa(ko, '이/가')} 다른 케이팝 아이돌들과 어떻게 연결되는지 K-POP UNIVERSE에서 탐험해보세요.`;
     const selfUrl = isEn ? enUrl : koUrl;
     const altUrl = isEn ? koUrl : enUrl;
     const jsonLd = {
@@ -417,7 +458,7 @@ artists.forEach(a => {
       : `${ko} 프로필, 생일, 소속 정보 | K-POP UNIVERSE`;
     const desc = isEn
       ? `${en}'s profile, birthday, group, and featured videos. Explore how ${en} connects with other K-pop idols on K-POP UNIVERSE.`
-      : `${ko}의 프로필, 생일, 소속, 대표 영상 정보. ${ko}가 다른 케이팝 아이돌들과 어떻게 연결되는지 K-POP UNIVERSE에서 탐험해보세요.`;
+      : `${ko}의 프로필, 생일, 소속, 대표 영상 정보. ${ko}${josa(ko, '이/가')} 다른 케이팝 아이돌들과 어떻게 연결되는지 K-POP UNIVERSE에서 탐험해보세요.`;
     const selfUrl = isEn ? enUrl : koUrl;
     const altUrl = isEn ? koUrl : enUrl;
     const jsonLd = {
@@ -782,7 +823,7 @@ async function buildRelationPages() {
       const html = relPageHtml({
         lang,
         title: isEn ? `${A} × ${B} — videos together | K-POP UNIVERSE` : `${A} × ${B} 같이 나온 영상 ${vs.length}개 | K-POP UNIVERSE`,
-        desc: isEn ? `${vs.length} videos featuring both ${A} and ${B}.` : `${A}와 ${B}가 함께 나온 영상 ${vs.length}개를 모았어요.`,
+        desc: isEn ? `${vs.length} videos featuring both ${A} and ${B}.` : `${A}${josa(A, '와/과')} ${B}${josa(B, '이/가')} 함께 나온 영상 ${vs.length}개를 모았어요.`,
         h1: `${A} × ${B}`,
         sub: isEn ? `${glink(a, lang)} and ${glink(b, lang)} appeared together` : `${glink(a, lang)} · ${glink(b, lang)} 함께 나온 영상`,
         sections: [{ h: isEn ? 'Videos together' : '같이 나온 영상', items: vs.slice(0, 60).map(r => vid(r, (r.published_at || '').slice(0, 4))) }],
@@ -811,11 +852,11 @@ async function buildRelationPages() {
         lang,
         title: isEn ? `${N} cover songs & covered by others | K-POP UNIVERSE` : `${N} 커버곡 · ${N} 곡 커버 영상 | K-POP UNIVERSE`,
         desc: isEn ? `${mine.length} songs covered by ${N}, and ${theirs.length} covers of ${N} songs by other artists.`
-                   : `${N}이(가) 커버한 곡 ${mine.length}개와, 다른 아티스트가 커버한 ${N} 곡 ${theirs.length}개.`,
+                   : `${N}${josa(N, '이/가')} 커버한 곡 ${mine.length}개와, 다른 아티스트가 커버한 ${N} 곡 ${theirs.length}개.`,
         h1: isEn ? `${N} — covers` : `${N} 커버`,
         sub: glink(gko, lang),
         sections: [
-          { h: isEn ? `Covered by ${N}` : `${N}이(가) 커버한 곡`, items: mine.slice(0, 60).map(r => vid(r, `→ ${gname(r._origin, lang)}`)) },
+          { h: isEn ? `Covered by ${N}` : `${N}${josa(N, '이/가')} 커버한 곡`, items: mine.slice(0, 60).map(r => vid(r, `→ ${gname(r._origin, lang)}`)) },
           { h: isEn ? `${N} songs covered by others` : `다른 아티스트가 커버한 ${N} 곡`, items: theirs.slice(0, 60).map(r => vid(r, `by ${gname(r.group_ko, lang)}`)) },
         ],
         selfPath, altPath,
