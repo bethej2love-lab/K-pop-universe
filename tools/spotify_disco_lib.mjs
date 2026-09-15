@@ -25,6 +25,21 @@ export const norm = s => stripSuffix(s).toLowerCase()
   .replace(/\b(mini|single|full|repackage|special|deluxe|edition|ver|version)\b/g, ' ')
   .replace(/[^0-9a-z가-힣]/g, '').trim();
 
+// ── 중복 판정 키 ────────────────────────────────────────────────────────────
+// ⚠️ norm()을 중복 판정에 그대로 쓰면 안 된다(2026-09-15). 괄호를 통째로 지우므로
+//    `What You Want`와 `What You Want (feat. Teezo Touchdown)`가 **둘 다 whatyouwant**가 되고,
+//    회차가 갈리면(코르티스 실제 사례: 원곡 8/18, feat.판 8/22) 나중에 나온 feat.판이
+//    "이미 있음"으로 조용히 버려진다. feat.판은 우리 데이터에 49장 있는 정식 별도 발매다.
+//    같은 뿌리의 버그를 toEntry의 타이틀곡 판정에서 먼저 고쳤는데(원문 우선 비교) 여기 남아 있었다.
+// feat./with 부분만 키에 되살린다 — `(Special Ver.)` 같은 건 계속 지워서 중복으로 본다.
+export function dedupKey(s) {
+  const raw = String(s || '');
+  const feat = (raw.match(/\((?:feat\.?|with)[^)]*\)/ig) || [])
+    .map(x => x.toLowerCase().replace(/[^0-9a-z가-힣]/g, '')).join('');
+  const base = norm(raw);
+  return base ? (feat ? `${base}|${feat}` : base) : '';
+}
+
 // ── 변형판 걸러내기 ──────────────────────────────────────────────────────────
 // 스포티파이는 한 발매를 여러 엔트리로 쪼개 놓는다. 실측(에스파 58장)에서 본 것들:
 //   LEMONADE - The 2nd Album (WINTER Special Version)   ← 멤버별 스페셜 4장
@@ -33,8 +48,43 @@ export const norm = s => stripSuffix(s).toLowerCase()
 //   Rich Man (Remixes) / Dirty Work (Remixes)
 // 이걸 그대로 넣으면 디스코그래피가 리믹스로 도배된다. 우리 데이터는 멜론 기준의 "발매 단위"라
 // 이런 변형판은 애초에 없다 — 그 성격을 유지한다.
-const VARIANT = /(english\s+ver|japanese\s+ver|chinese\s+ver|inst\.?\b|instrumental|remix|mix\)|acoustic\s+ver|sped\s+up|slowed|special\s+version|a\s+cappella)/i;
+// ⚠️ 일본어·중국어판은 **여기서 빼야 한다**(2026-09-15). 우리 데이터엔 일본어판 30장·한국어판 15장이
+//    이미 정식 발매로 들어와 있는데(아이브 `LOVE DIVE -Japanese version-` 등) 필터가 막고 있어서
+//    앞으로 나올 일본어판이 안 들어오고 있었다 — 관례와 코드가 정반대였다. 수집은 하되 화면에서
+//    기본 노출을 뺄 수 있게 detectRegion()이 region을 달아준다(사용자 결정: 케밥 토글로 보기).
+// ⚠️ feat./with도 막지 않는다 — 우리 데이터에 49장 있는 정식 별도 발매다(코르티스 `MOTION (feat.
+//    Juicy J)`). 리믹스·라이브·인스트만 거른다. 라이브는 전례 0장이라 추가했다.
+const VARIANT = /(english\s+ver|inst\.?\b|instrumental|remix|mix\)|acoustic\s+ver|sped\s+up|slowed|special\s+version|a\s+cappella|live\s+(version|ver\.?)|\(live\)|live\s+session)/i;
 export const isVariant = name => VARIANT.test(String(name || ''));
+
+// ── 발매 지역(일본어·중국어판) 추론 ─────────────────────────────────────────
+// 앱은 이 값으로 기본 목록에서 빼고 케밥 토글로 보여준다. 그래서 **틀리면 앨범이 사라진 것처럼 보인다**
+// — 재현율보다 정확도가 중요하다.
+//
+// ⚠️ 검증 결과(손으로 태깅한 64장을 정답셋으로): 글자로 잡을 수 있는 건 일부뿐이다.
+//   · "트랙에 표식이 하나라도 있으면" 규칙은 재현 41/64였지만 **한국 앨범을 오분류했다** —
+//     엑소 `THE WAR`, 티아라 `So Good`은 수록곡 하나가 `(Chinese Ver.)`일 뿐인 한국 발매다.
+//   · 그래서 과반 규칙으로 바꿨다. 오분류 0이 됐고 재현은 18/64로 떨어졌다. 이 맞바꿈이 맞다.
+//   · 못 잡는 46장은 `PADO`·`Make you happy`처럼 **제목이 영어/로마자인 일본 발매**라 글자에 단서가
+//     없다. 웨이션브이(중국 활동 유닛)는 10장 전부가 이 경우다. 이건 앨범이 아니라 **아티스트 단위**로
+//     지정해야 풀리는 문제고, 여기서 억지로 잡으려 들면 정확도만 잃는다.
+// 못 잡은 건 region 없이 들어가 기본 목록에 남는다 — 안 들어오는 것보단 낫다.
+const KANA = /[぀-ゟ゠-ヿ]/;   // 히라가나·가타카나
+const JP_MARK = /(japanese\s*(ver|version)|[-–—]\s*japanese\s*version|日本語)/i;
+const CN_MARK = /(chinese\s*(ver|version)|mandarin|中文)/i;
+export function detectRegion(albumTitle, trackTitles) {
+  const at = String(albumTitle || '');
+  // 앨범 제목에 표식이 있으면 그 발매 전체가 그 언어판이다 — 트랙을 볼 것도 없다.
+  if (JP_MARK.test(at) || KANA.test(at)) return 'jp';
+  if (CN_MARK.test(at)) return 'cn';
+  const tt = (trackTitles || []).filter(Boolean);
+  if (!tt.length) return null;
+  const jp = tt.filter(t => JP_MARK.test(t) || KANA.test(t)).length;
+  const cn = tt.filter(t => CN_MARK.test(t)).length;
+  if (jp / tt.length >= 0.5 && jp >= cn) return 'jp';
+  if (cn / tt.length >= 0.5 && cn > jp) return 'cn';
+  return null;
+}
 
 // ── 앨범 타입 ────────────────────────────────────────────────────────────────
 // 우리 스키마의 type은 "정규 2집" "미니 5집" "싱글"처럼 **집 번호까지** 들어간다. 스포티파이의
@@ -148,6 +198,9 @@ export async function toEntry(album) {
     if (same.length === 1) one = same[0];
   }
   if (one) one.isTitle = true;
+  // 일본어·중국어판 표식. 못 잡으면 undefined로 두고 넣지 않는다 — 빈 값을 박아두면 나중에
+  // "이미 판정했는데 없음"과 "판정을 못 함"이 구분되지 않는다.
+  const region = detectRegion(album.name, tracks.map(t => t.title));
   return {
     entry: {
       title,
@@ -157,6 +210,7 @@ export async function toEntry(album) {
       releaseDate: String(album.release_date || '').slice(0, 10).replace(/-/g, '.'),
       trackCount: album.total_tracks || tracks.length,
       titleTrack: one ? one.title : null,
+      ...(region ? { region } : {}),
       tracks,
       src: 'spotify',            // 출처 표식 — 나중에 자동 수집분만 감사할 수 있게
       spotifyId: album.id,

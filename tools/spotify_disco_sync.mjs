@@ -18,14 +18,14 @@
 // ⚠️ 이미 있는 앨범은 절대 덮어쓰지 않는다 — 사람이 고쳐둔 값(타이틀곡·집 번호·커버)을 자동 수집이
 //    되돌리면 안 된다. 이 프로젝트의 tags_manual 원칙과 같은 취지다.
 //
-// 실행: node tools/spotify_disco_sync.mjs [--dry] [--budget N] [--only 에스파,아이브]
+// 실행: node tools/spotify_disco_sync.mjs [--dry] [--budget N] [--only 에스파,아이브] [--years 2024-2026]
 // env: SPOTIFY_CLIENT_ID/SECRET (또는 .spotify.key) · BUDGET
 
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { RateLimited } from './spotify_auth.mjs';
-import { norm, isVariant, searchAlbums, resolveArtist, toEntry } from './spotify_disco_lib.mjs';
+import { dedupKey, isVariant, parseTypeFromTitle, searchAlbums, resolveArtist, toEntry } from './spotify_disco_lib.mjs';
 
 const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
 const P = f => path.join(ROOT, f);
@@ -88,7 +88,7 @@ function owned(t) {
   //    titles 쪽은 반대로 멤버 것까지 넣는 게 맞다(중복 삽입 방지가 목적이라 넓을수록 안전).
   const add = (list, countYear) => {
     for (const al of list || []) {
-      const k = norm(al.title); if (k) set.add(k);
+      const k = dedupKey(al.title); if (k) set.add(k);
       if (!countYear) continue;
       const y = Number(String(al.releaseDate || '').slice(0, 4)); if (y > 1990) years.add(y);
     }
@@ -121,10 +121,25 @@ function insert(t, entry) {
 }
 
 // ── 실행 ─────────────────────────────────────────────────────────────────────
+// 평소(일일 수집)엔 올해만 본다. 연도 하나가 곧 대상당 1콜이라, 안 볼 연도를 보는 건 그만큼
+// 커서 진행을 늦추는 것과 같다.
+// --years는 **사람이 일회성 백필을 돌 때만** 쓴다(예: `--years 2025` 로 과거 구멍 점검,
+// `--years 2024-2026` 로 범위). CI에는 붙이지 않는다 — 붙이면 매일 그 배수만큼 콜을 쓴다.
 const year = new Date().getFullYear();
 const month = new Date().getMonth() + 1;
+function parseYears(spec) {
+  const m = /^(\d{4})\s*-\s*(\d{4})$/.exec(spec.trim());
+  if (m) {
+    const [a, b] = [Number(m[1]), Number(m[2])].sort((x, y) => x - y);
+    // 최신 연도부터 본다 — 예산이 중간에 끊겨도 최근 것부터 들어와 있게.
+    return Array.from({ length: b - a + 1 }, (_, i) => b - i);
+  }
+  const ys = spec.split(',').map(s => Number(s.trim())).filter(y => y > 1990 && y <= year + 1);
+  if (!ys.length) { console.error(`오류: --years 형식이 잘못됐습니다: ${spec}  (예: 2025 · 2024,2026 · 2024-2026)`); process.exit(1); }
+  return [...new Set(ys)].sort((a, b) => b - a);
+}
 // 1월 초엔 지난해 말 발매가 아직 "신보"다 — 그때만 연도를 하나 더 본다(평소엔 콜을 안 쓴다).
-const YEARS = month === 1 ? [year, year - 1] : [year];
+const YEARS = argOf('--years') ? parseYears(argOf('--years')) : (month === 1 ? [year, year - 1] : [year]);
 
 let calls = 0, checked = 0, added = 0, mapped = 0;
 const addedList = [], reviewList = [], problems = [];
@@ -155,12 +170,34 @@ for (const t of list) {
       const items = await searchAlbums(m.spotifyName || t.names[0], y, m.id);
       calls++;
       for (const al of items) {
-        const key = norm(al.name);
+        const key = dedupKey(al.name);
         if (!key || own.titles.has(key)) continue;            // 이미 있음
         if (isVariant(al.name)) continue;                     // 리믹스·영어버전·멤버별 스페셜
         if (String(al.release_date_precision) !== 'day') { problems.push(`${t.ko} — 발매일 정밀도 ${al.release_date_precision}: ${al.name}`); continue; }
         newOnes.push(al);
       }
+    }
+
+    // 2-b) ⚠️ **같은 회차 안의 중복**을 접는다(2026-09-15). own.titles는 회차 시작 시점의 보유 목록이라
+    //      이번에 새로 찾은 것끼리는 서로를 못 본다. 스포티파이는 같은 발매를 선공개 1트랙 + 본편으로
+    //      쪼개 올리는 일이 잦다(실측: 투어스 `SODA SODA` 2026.08.03 1트랙 / 08.04 3트랙 → 두 장이
+    //      그대로 들어갔다).
+    //      다만 **제목이 같다고 무조건 합치면 안 된다** — 투어스 `Hollow`는 선공개 싱글(6/11)과
+    //      미니앨범(6/18)이고 멜론 기준으로도 별개 발매다. 그래서 "제목 + 종류"가 둘 다 같을 때만
+    //      한 장으로 보고, 트랙이 많은 쪽(=본편)을 남긴다.
+    if (newOnes.length > 1) {
+      const pick = new Map();
+      for (const al of newOnes) {
+        const k = `${dedupKey(al.name)} ${parseTypeFromTitle(al.name, al.total_tracks, al.album_type)}`;
+        const prev = pick.get(k);
+        if (!prev) { pick.set(k, al); continue; }
+        const keep = (al.total_tracks || 0) > (prev.total_tracks || 0) ? al : prev;
+        const drop = keep === al ? prev : al;
+        pick.set(k, keep);
+        problems.push(`${t.ko} — 같은 발매로 보여 합침: ${drop.name} (${drop.release_date}, ${drop.total_tracks}트랙) → ${keep.name} (${keep.release_date}) 채택`);
+      }
+      newOnes.length = 0;
+      newOnes.push(...pick.values());
     }
 
     // 3) ⚠️ 검증 게이트 — **확인 안 된 매핑으로는 앨범을 넣지 않는다.**
@@ -173,7 +210,7 @@ for (const t of list) {
         if (calls >= BUDGET) break;
         const items = await searchAlbums(m.spotifyName, y, m.id);
         calls++;
-        for (const al of items) if (own.titles.has(norm(al.name))) ov++;
+        for (const al of items) if (own.titles.has(dedupKey(al.name))) ov++;
         if (ov >= 1) break;
       }
       m.evidence = { ...(m.evidence || {}), verifyOverlap: ov, verifyYears: own.years.slice(0, 2) };
@@ -192,7 +229,7 @@ for (const t of list) {
       if (DRY) { addedList.push(`[DRY] ${t.ko} · ${entry.releaseDate} · ${entry.type} · ${entry.title}${needsTitleTrack ? ' (타이틀곡 미상)' : ''}`); }
       else if (insert(t, entry)) {
         added++;
-        own.titles.add(norm(al.name));
+        own.titles.add(dedupKey(al.name));
         addedList.push(`${t.ko} · ${entry.releaseDate} · ${entry.type} · ${entry.title}${needsTitleTrack ? ' (타이틀곡 미상)' : ''}`);
         if (needsTitleTrack) reviewList.push(`타이틀곡 미상: ${t.ko} — ${entry.title} (${entry.trackCount}트랙)`);
       } else problems.push(`${t.ko} — 넣을 대상을 못 찾음`);
