@@ -3508,6 +3508,22 @@ function _closeSearchUIs(){
   if(_obSearchMode)exitObSearch();
   if(isMob())exitMobSearch();
 }
+// 자동으로 뜬 탐험 패널을 **유저가 실제로 쓴 순간** 온보딩 수명을 끝낸다 — 패널은 그대로 열어둔 채.
+// 왜 필요한가(2026-09-16 제보): `_obActive`는 주석대로 "아직 아무 상호작용도 없었음"을 뜻하는데, 실제로는
+// 패널을 스크롤하고 영상을 열어봐도 해제되지 않았다. 그래서 라이트박스를 닫고 배경을 한 번 탭하면
+// **읽던 위치까지 통째로** 패널이 닫혔다. "처음만 그렇다"는 것도 이걸로 설명된다 — 손으로 다시 열면
+// `_obActive`가 false라 이 경로를 아예 안 타기 때문.
+// ⚠️ `_OB_KEY`는 건드리지 않는다. 그 값은 이제 "검색바 글라스 힌트를 본 적 있는지"만 뜻하고(3461행 주석),
+//    탐험 패널을 썼다는 것과는 별개다 — 여기서 같이 찍으면 검색 힌트가 조용히 사라진다.
+// 이 플래그가 켜져 있으면 **배경 탭으로는** 탐험 패널을 닫지 않는다(탭바·홈·랜덤탐험 등 명시적 닫기는 그대로).
+// `_obActive`만 풀어서는 안 고쳐졌다 — 실측(2026-09-16 헤드리스): _obActive가 false가 된 뒤에도 패널이
+// 닫혔고, 범인은 온보딩이 아니라 **window pointerdown → closePanels() → _closeFeedOverlay()** 경로였다.
+var _feedEngaged=false;
+function _obEngaged(){
+  if(_obTimer){clearTimeout(_obTimer);_obTimer=null;}
+  _obActive=false;
+  _feedEngaged=true;
+}
 function _dismissOnboardHint(){
   if(_obTimer){clearTimeout(_obTimer);_obTimer=null;}
   if(_obSearchMode){exitObSearch();return;}
@@ -12066,12 +12082,15 @@ if(window.ResizeObserver){
   [document.getElementById('tt'),document.getElementById('gc'),connSheetBody]
     .forEach(el=>{if(el)_tbRo.observe(el);}); // 컨테이너를 옮겨 다녀도 관찰은 유지됨
 }
-function closePanels(){
+// opt.keepFeed — "배경 탭"으로 불릴 때만 쓰는 예외. 유저가 이미 탐험 패널을 쓴 뒤라면(영상을 열었거나
+// 스크롤했거나) 배경을 한 번 잘못 짚었다고 읽던 위치까지 날리지 않는다(2026-09-16 제보).
+// ⚠️ 탭바·홈·랜덤탐험처럼 **명시적으로** 닫는 경로는 인수를 안 넘기므로 동작이 그대로다.
+function closePanels(opt){
   if(myProfile?.nickname||!isMob())document.getElementById('search-wrap').classList.remove('open');
   if(_obSearchMode)exitObSearch(); // 온보딩 ob 검색도 같이 닫는다(예전엔 pointerdown의 _dismissOnboardHint에만 의존해, 버튼/네비로 닫을 땐 남았음, 2026-08-30)
   document.getElementById('settings-panel').classList.remove('open');
   document.getElementById('journal-sidebar').classList.remove('open');
-  _closeFeedOverlay();
+  if(!(opt&&opt.keepFeed))_closeFeedOverlay();
   if(isMob())closeMobFilterSheet();
   ['tab-search','tab-settings','dh-search-btn','dh-settings-btn'].forEach(id=>{
     const el=document.getElementById(id);if(el)el.classList.remove('active');
@@ -12562,7 +12581,7 @@ document.getElementById('desktop-header').addEventListener('pointerdown',e=>e.st
 ['settings-panel','search-wrap','tabbar','tt','gc','tab-settings','col-picker'].forEach(id=>{
   document.getElementById(id)?.addEventListener('pointerdown',e=>e.stopPropagation());
 });
-window.addEventListener('pointerdown',e=>{if(e.target.closest('[data-modal]')){_mdx=e.clientX;_mdy=e.clientY;return;}_mdx=e.clientX;_mdy=e.clientY;closePanels();_dismissOnboardHint();});
+window.addEventListener('pointerdown',e=>{if(e.target.closest('[data-modal]')){_mdx=e.clientX;_mdy=e.clientY;return;}_mdx=e.clientX;_mdy=e.clientY;closePanels({keepFeed:_feedEngaged});_dismissOnboardHint();});
 // 검색창 자연 닫힘(2026-08-30) — 위 window 핸들러는 탐험 패널(feed-overlay 등)이 pointerdown을 stopPropagation해서
 // 그 안을 누르면 안 불린다. **캡처 단계**로 별도 등록하면 stopPropagation 전에 항상 먼저 발동하므로, 검색 UI
 // 자체(입력·결과)만 빼고 화면 어디를 누르든 열려있는 검색을 닫는다 — 웹앱 표준 "바깥 클릭 시 검색 닫힘".
@@ -12582,7 +12601,10 @@ window.addEventListener('pointerdown',e=>{
   //   ⚠️ 라이트박스에 이미 걸린 `pointerdown` stopPropagation(4685행)은 **bubble**이라 여기(capture)를
   //      못 막는다. 그래서 터치 기기에서 touchstart 앞에 오는 pointerdown이 항상 먼저 이 핸들러에 잡혀,
   //      아래로 당겨 닫든 상단 버튼을 누르든 **영상을 건드리는 순간** 밑의 패널이 닫히고 있었다.
-  if(e.target.closest('#feed-overlay,#tab-feed,#dh-feed-btn,#gc-totop,#yt-lightbox,#msheet'))return;
+  // 패널(과 패널에서 파생된 라이트박스·시트)을 건드렸다면 그건 "패널 아닌 걸 건드린" 게 아니라 **사용**이다.
+  // 예전엔 그냥 return만 해서 자동닫힘이 계속 무장된 채 남았고, 영상을 보고 나온 뒤 배경을 한 번 탭하면
+  // 읽던 위치째로 패널이 닫혔다(2026-09-16 제보). 이제 한 번 쓰면 일반 패널과 똑같이 동작한다.
+  if(e.target.closest('#feed-overlay,#tab-feed,#dh-feed-btn,#gc-totop,#yt-lightbox,#msheet')){_obEngaged();return;}
   _dismissOnboardHint();
 },true);
 
@@ -16376,6 +16398,9 @@ function _reopenCard(entry){
   else if(entry.type==='tt')showT(entry.data,window.innerWidth/2,window.innerHeight*0.4,false,false,false);
 }
 function _closeFeedOverlay(returning){
+  // 패널이 실제로 닫히면 "썼음" 표식을 되돌린다 — 다음 자동 열림(peek)은 다시 배경 탭으로 사라져야 한다
+  // (관심 없으면 건드리면 사라진다는 원래 설계). 안 되돌리면 한 번 쓴 뒤로 영구히 안 닫힌다.
+  _feedEngaged=false;
   // 스크롤을 내려둔 채로 닫으면 "맨 위로" 버튼이 화면에 그대로 떠 있게 된다(연결 패널에서 이미 겪은
   // 문제와 같음) — 이 패널이 대상일 때만 숨긴다. 다른 컨테이너가 대상이면 건드리지 않는다.
   if(_totopScrollTarget===document.getElementById('feed-body'))_hideTotop();
