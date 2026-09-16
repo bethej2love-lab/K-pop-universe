@@ -181,6 +181,51 @@ function _ytDeriveFormats(title){
   return _YT_FORMAT_RULES.filter(r=>r.re.test(s)).map(r=>r.name);
 }
 
+// ── YouTube API 호출 공용 경로 (2026-09-16) ─────────────────────────────────────
+// ⚠️ 왜 공용으로 묶었나: `if(!r.ok)throw new Error('YouTube API 오류 '+r.status)`가 이 파일에 8군데
+//    복제돼 있었고, 그 형태는 **응답 본문을 안 읽어서 403의 정체를 지운다**. 쿼터 초과·레이트리밋·
+//    키 제한·API 미활성이 전부 똑같이 "403"으로만 보인다. 같은 이유로 2026-08-06(검색 경로),
+//    2026-09-15(채널ID 경로)에 한 경로씩 고쳤는데 나머지가 옛 형태로 남아, 2026-09-16 "순환 갱신 403"에서
+//    또 원인을 못 밝혔다(사용자 제보). 한 경로만 고치는 방식이 세 번째로 실패한 것 — 그래서 전부 이 문을 지난다.
+// reason은 err.reason으로도 붙여서 호출부가 분기할 수 있게 한다.
+// 일시적 오류(레이트리밋·백엔드 오류·5xx)는 여기서 백오프 재시도 — 예전엔 그것도 즉시 중단이라
+// 수백 콜짜리 배치가 한 번 튕기면 통째로 멈췄다.
+const _YT_TRANSIENT=new Set(['rateLimitExceeded','userRateLimitExceeded','backendError','internalError']);
+const _ytQuotaReason=r=>r==='quotaExceeded'||r==='dailyLimitExceeded';
+async function _ytApiGet(url,label,{retries=3}={}){
+  let lastErr=null;
+  for(let a=0;a<=retries;a++){
+    let r=null,d=null;
+    try{
+      r=await fetch(url);
+      d=await r.json().catch(()=>null);
+    }catch(e){ // 네트워크 자체 실패(끊김·차단)도 일시적으로 보고 재시도
+      lastErr=new Error(`${label}: 네트워크 오류 — ${e.message}`);
+      if(a<retries){await new Promise(s=>setTimeout(s,800*(a+1)));continue;}
+      throw lastErr;
+    }
+    if(r.ok&&!d?.error)return d;
+    const reason=d?.error?.errors?.[0]?.reason||d?.error?.status||'';
+    const msg=d?.error?.message||'';
+    // ⚠️ 응답 전체를 콘솔에 남긴다. 이게 없어서 403의 정체를 매번 추측만 했다.
+    console.error(`[${label}] YouTube API status:${r.status} reason:${reason||'(없음)'} — ${msg}`,d);
+    if((_YT_TRANSIENT.has(reason)||r.status>=500)&&a<retries){
+      _ytSetProg(`${label}: 일시 오류(${reason||r.status}) — ${a+1}차 재시도`);
+      await new Promise(s=>setTimeout(s,1200*(a+1)));
+      continue;
+    }
+    const hint=_ytQuotaReason(reason)
+        ?' → 오늘 YouTube API 일일 쿼터(1만 유닛)를 다 썼습니다. 태평양시 자정(한국시간 오후 4~5시)에 리셋돼요. 지금까지 저장된 건 남아 있고, 리셋 후 같은 버튼을 누르면 이어서 진행됩니다.'
+      :(reason==='forbidden'||reason==='accessNotConfigured')
+        ?' → API 키 제한(HTTP 리퍼러/IP)이나 YouTube Data API v3 미활성 문제일 수 있어요.'
+      :(reason==='keyInvalid'||reason==='badRequest')
+        ?' → API 키가 잘못됐을 수 있어요(설정 패널에서 다시 입력).':'';
+    const err=new Error(`${label} 실패 ${r.status}${reason?`/${reason}`:''}${msg?` — ${msg}`:''}${hint}`);
+    err.reason=reason;err.status=r.status;err.isQuota=_ytQuotaReason(reason);
+    throw err;
+  }
+  throw lastErr||new Error(`${label} 실패`);
+}
 async function _ytGetUploadsId(ytUrl,key){
   // uploads playlist ID는 채널마다 불변(UC…→UU…) — 한 번 찾으면 영구 캐시한다. 예전엔 매 동기화마다
   // 250여 채널 전부를 channels.list로 다시 조회(핸들 채널은 forHandle→forUsername 2회씩)해서, 새 영상이
@@ -197,10 +242,8 @@ async function _ytGetUploadsId(ytUrl,key){
   const slug=hm?hm[1]:(um?um[1]:null);
   if(!cm&&!slug)throw new Error('YouTube URL 파싱 실패: '+ytUrl);
   const tryParam=async param=>{
-    const r=await fetch(`https://www.googleapis.com/youtube/v3/channels?part=contentDetails&${param}&key=${key}`);
-    if(!r.ok)throw new Error('YouTube API 오류 '+r.status);
-    const d=await r.json();
-    if(d.error)throw new Error(d.error.message);
+    const d=await _ytApiGet(`https://www.googleapis.com/youtube/v3/channels?part=contentDetails&${param}&key=${key}`,
+      `업로드목록 조회(${ytUrl})`);
     return d.items?.[0]?.contentDetails?.relatedPlaylists?.uploads||null;
   };
   let uploadsId=cm?await tryParam(`id=${encodeURIComponent(cm[1])}`):null;
@@ -230,19 +273,11 @@ async function _ytGetChannelId(ytUrl,key){
   // 그 실패 모드가 아예 사라지고 호출도 아낀다.
   const ck='kpu_chid_'+slug;
   try{const c=localStorage.getItem(ck);if(c)return c;}catch(e){}
-  // ⚠️ 실패 사유를 반드시 남긴다. 예전엔 상태 코드만 던져서(`YouTube API 오류 403`) 쿼터 초과인지
-  //    키 문제인지 채널 문제인지 구분이 안 됐다 — 검색 경로는 2026-08-06에 같은 이유로 이미 고쳤는데
-  //    이 경로만 옛 형태로 남아 있었다. 그래서 이번 403의 정체를 로그만으로는 못 밝혔다.
+  // ⚠️ 실패 사유를 반드시 남긴다(2026-09-15에 이 경로만 고쳤고, 2026-09-16에 _ytApiGet으로 전면 공용화 —
+  //    같은 형태가 8군데 복제돼 있어서 "한 경로만 고치기"가 세 번 실패했다. 위 _ytApiGet 주석 참고).
   const tryParam=async param=>{
-    const r=await fetch(`https://www.googleapis.com/youtube/v3/channels?part=id&${param}&key=${key}`);
-    const d=await r.json().catch(()=>null);
-    if(!r.ok||d?.error){
-      const reason=d?.error?.errors?.[0]?.reason;
-      console.error(`[채널ID] ${slug} 조회 실패 — status:${r.status}, reason:${reason||'(없음)'}, param:${param}, 응답:`,d);
-      const hint=reason==='quotaExceeded'?' (오늘 YouTube API 일일 쿼터를 다 썼습니다 — 태평양시 자정에 리셋)'
-        :reason==='forbidden'||reason==='accessNotConfigured'?' (API 키 설정/제한 문제일 수 있어요)':'';
-      throw new Error(`채널ID 조회 실패 ${r.status}${reason?`/${reason}`:''}${hint}`);
-    }
+    const d=await _ytApiGet(`https://www.googleapis.com/youtube/v3/channels?part=id&${param}&key=${key}`,
+      `채널ID 조회(${slug}, ${param.split('=')[0]})`);
     return d.items?.[0]?.id||null;
   };
   const channelId=await tryParam(`forHandle=${encodeURIComponent(slug)}`)||await tryParam(`forUsername=${encodeURIComponent(slug)}`);
@@ -291,10 +326,7 @@ async function _ytFetchNewVideos(uploadsId,key,sinceId,onProg,startPageToken,cut
     let d;
     try{
       const url=`https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=${uploadsId}&maxResults=50&key=${key}`+(pageToken?'&pageToken='+pageToken:'');
-      const r=await fetch(url);
-      if(!r.ok)throw new Error('YouTube API 오류 '+r.status);
-      d=await r.json();
-      if(d.error)throw new Error(d.error.message);
+      d=await _ytApiGet(url,'업로드 목록 페이지');
     }catch(e){
       console.error('[yt fetch] 페이지 조회 실패, 다음 번에 이어서 받음:',e.message);
       interrupted=true;
@@ -569,10 +601,7 @@ async function _ytRefreshViewCounts(){
       // (옛 행은 published_at이 날짜뿐이라 "N시간 전"을 못 만든다 — 2026-09-02 코르티스 제보)
       // duration_sec은 "쇼츠 판별"에 쓴다 — is_short는 세로 여부만 보고 길이를 안 봐서, 2분48초짜리
       // 정식 세로 팬캠(NiziU FanCam)과 15초 챌린지 클립이 같은 플래그를 달고 있었다(2026-09-10).
-      const r=await fetch(`https://www.googleapis.com/youtube/v3/videos?part=statistics,snippet,contentDetails,liveStreamingDetails&id=${chunk.join(',')}&key=${key}`);
-      if(!r.ok)throw new Error('YouTube API 오류 '+r.status);
-      const d=await r.json();
-      if(d.error)throw new Error(d.error.message);
+      const d=await _ytApiGet(`https://www.googleapis.com/youtube/v3/videos?part=statistics,snippet,contentDetails,liveStreamingDetails&id=${chunk.join(',')}&key=${key}`,'조회수 갱신');
       (d.items||[]).forEach(it=>{
         const vc=parseInt(it.statistics?.viewCount,10);
         if(!isNaN(vc))statsUpdates.push({id:it.id,view_count:vc});
@@ -582,7 +611,13 @@ async function _ytRefreshViewCounts(){
         if(ds!=null)durUpdates.push({id:it.id,val:ds});
         liveUpdates.push({id:it.id,val:_ytWasLive(it)}); // false도 저장해야 "확인했고 아니다"가 남는다
       });
-    }catch(e){console.error('[조회수 갱신] 실패:',e.message);}
+    }catch(e){
+      console.error('[조회수 갱신] 실패:',e.message);
+      // ⚠️ 쿼터가 끝났으면 **멈춘다**. 예전엔 이 catch가 청크 실패를 통째로 삼키고 루프를 계속 돌아서,
+      //    쿼터 초과 뒤 수백 청크가 전부 실패해도 화면엔 "조회수 갱신 완료 — N개"만 떴다(같은 함정을
+      //    검색 백필에서 이미 겪었음 — 남은 청크를 계속 때리는 건 쿼터 회복에도 방해가 된다).
+      if(e.isQuota){_ytSetProg('⛔ '+e.message);return;}
+    }
   }
   // 업로드 시각 저장 — 컬럼이 아직 없으면(마이그레이션 전) 조용히 건너뛴다. 조회수 갱신이 이것 때문에
   // 실패하면 안 되므로 별도 패스로 두고, 첫 실패에서 컬럼 부재를 감지해 이후 시도를 멈춘다.
@@ -639,10 +674,7 @@ async function _ytRefreshAllViewCounts(){
     try{
       // contentDetails를 얹어 재생시간도 같이 받는다 — 쿼터는 그대로(호출당 1). 기존 전체분의
       // duration_sec 백필이 이 버튼 하나로 끝난다(별도 백필 버튼 불필요). duration_migration.sql 참고.
-      const r=await fetch(`https://www.googleapis.com/youtube/v3/videos?part=statistics,contentDetails,liveStreamingDetails&id=${chunk.join(',')}&key=${key}`);
-      if(!r.ok)throw new Error('YouTube API 오류 '+r.status);
-      const d=await r.json();
-      if(d.error)throw new Error(d.error.message);
+      const d=await _ytApiGet(`https://www.googleapis.com/youtube/v3/videos?part=statistics,contentDetails,liveStreamingDetails&id=${chunk.join(',')}&key=${key}`,'전체 조회수 갱신');
       (d.items||[]).forEach(it=>{
         const vc=parseInt(it.statistics?.viewCount,10);
         if(!isNaN(vc))statsUpdates.push({id:it.id,view_count:vc});
@@ -650,7 +682,7 @@ async function _ytRefreshAllViewCounts(){
         if(ds!=null)durUpdates.push({id:it.id,val:ds});
         liveUpdates.push({id:it.id,val:_ytWasLive(it)});
       });
-    }catch(e){_ytSetProg('YouTube API 오류: '+e.message);console.error('[전체 조회수 갱신]',e.message);return;}
+    }catch(e){_ytSetProg((e.isQuota?'⛔ ':'YouTube API 오류: ')+e.message);console.error('[전체 조회수 갱신]',e.message);return;}
   }
   await _ytSaveCol('duration_sec',durUpdates,'재생시간');
   await _ytSaveCol('was_live',liveUpdates,'생방송 여부');
@@ -734,10 +766,7 @@ async function _ytRotateViewCountRefresh(){
     const statsUpdates=[];
     try{
       const _parts='statistics'+(_dur?',contentDetails':'')+(_live?',liveStreamingDetails':'');
-      const r=await fetch(`https://www.googleapis.com/youtube/v3/videos?part=${_parts}&id=${chunk.join(',')}&key=${key}`);
-      if(!r.ok)throw new Error('YouTube API 오류 '+r.status);
-      const d=await r.json();
-      if(d.error)throw new Error(d.error.message);
+      const d=await _ytApiGet(`https://www.googleapis.com/youtube/v3/videos?part=${_parts}&id=${chunk.join(',')}&key=${key}`,'순환 갱신');
       const returned=new Set();
       (d.items||[]).forEach(it=>{
         returned.add(it.id);
@@ -763,7 +792,10 @@ async function _ytRotateViewCountRefresh(){
         statsUpdates.push({id,touchOnly:true,markGone:isNew});
       });
     }catch(e){
-      _ytSetProg(`YouTube API 오류(${savedTotal}개까지 저장된 채로 중단, 다시 누르면 이어서 진행됨): `+e.message);
+      // 쿼터 초과면 "다시 누르면 이어서" 안내가 오히려 헛수고를 부른다(눌러도 0개로 끝남) — 문구를 나눈다.
+      _ytSetProg(e.isQuota
+        ? `⛔ ${e.message} (여기까지 ${savedTotal}개 저장됨 — 이 지점부터 이어집니다)`
+        : `YouTube API 오류(${savedTotal}개까지 저장된 채로 중단, 다시 누르면 이어서 진행됨): ${e.message}`);
       console.error('[조회수 순환 갱신]',e.message);
       return;
     }
@@ -785,6 +817,100 @@ async function _ytRotateViewCountRefresh(){
     +(_unav?`${newlyGone?` · 🪦 삭제·비공개 새로 감지 ${newlyGone}건`:''}${revived?` · ↩︎ 되살아남 ${revived}건`:''}`
            :' · (삭제 감지 꺼짐 — unavailable_migration.sql 실행 필요)'));
   _feedDiscoveryBuiltAt=0;
+}
+
+// ── ⏱ 재생시간·생방송 여부 전용 백필 (2026-09-16) ──────────────────────────────
+// 왜 순환 갱신과 따로 두나: 순환 갱신은 **조회수**가 목적이라 정렬 기준이 view_count_synced_at이고,
+// 이미 duration_sec이 찬 행도 다시 부른다. 쿼터가 부족한 상황에서 목적이 "재생시간을 채우는 것"이면
+// 그건 낭비다 — 여기선 아직 null인 행만 골라 부르므로 호출 1회당 50행이 전부 새로 채워지고, 다 차면
+// "대상 없음"으로 스스로 끝난다(자기 종료). 조회수는 아예 안 건드려서 Supabase 쓰기도 절반이다.
+//
+// ⚠️ 정렬(ORDER BY)을 절대 붙이지 않는다. 이 프로젝트엔 "ORDER BY + LIMIT이 **후보가 적을 때만**
+//    57014 타임아웃을 낸다"는 함정이 있다(쇼츠 스윕 2회 전패의 원인). 백필은 진행될수록 후보가 줄어드니
+//    정렬을 붙이면 정확히 "거의 다 끝냈을 때" 터진다. 대신 offset도 안 쓰고 **매번 "남은 것 중 앞쪽
+//    1,000개"를 다시 집는다** — 방금 채운 행은 필터에서 빠지므로 다음 집기엔 자연히 다른 행이 온다.
+//    (정렬 없는 offset 페이지네이션은 중복/누락이 생기는데, 이 방식은 그 위험 자체가 없다.)
+// ⚠️ 두 컬럼 중 하나만 비어도 대상이다 — 같은 호출 한 번으로 둘 다 채워지므로 따로 돌 이유가 없다.
+const DURFILL_PAGE=1000; // 한 번에 집어오는 후보 수(PostgREST 한 요청 상한과 동일)
+async function _ytBackfillDurations(){
+  const key=_ytApiKey();
+  if(!key){_ytSetProg('API 키를 먼저 입력해주세요');return;}
+  if(!sb){_ytSetProg('Supabase 연결 없음');return;}
+  const budget=Math.max(1,parseInt(document.getElementById('sp-yt-durfill-budget')?.value,10)||600);
+  const _dur=await _ytColSupported('duration_sec');
+  const _live=await _ytColSupported('was_live');
+  if(!_dur&&!_live){_ytSetProg('duration_sec·was_live 컬럼이 둘 다 없어요 — 마이그레이션 SQL을 먼저 실행하세요');return;}
+  const _unav=await _ytUnavailSupported(); // 삭제·비공개 표식을 쓸 수 있는지
+  const _skip=new Set(); // unavailable_at 컬럼이 없을 때의 대체 수단(이 회차 안에서만 유효)
+  // 대상 조건: 켜져 있는 컬럼 중 하나라도 null인 행. 삭제·비공개로 이미 찍힌 행은 제외한다 —
+  // 그것들은 API 응답에 아예 안 잡혀서 영원히 null로 남고, 안 빼면 매번 같은 행이 다시 뽑혀
+  // 이 버튼이 끝나지 않는다.
+  const _target=q=>{
+    let r=(_dur&&_live)?q.or('duration_sec.is.null,was_live.is.null')
+        :_dur?q.is('duration_sec',null):q.is('was_live',null);
+    if(_unav)r=r.is('unavailable_at',null);
+    return r;
+  };
+  const{count:remain}=await _target(sb.from(_YT_TABLE).select('id',{count:'exact',head:true}));
+  _ytSetProg(`남은 대상 ${remain==null?'?':remain.toLocaleString()}행 · 이번 회차 최대 ${budget}콜(${(budget*50).toLocaleString()}행)`);
+  let calls=0,filledDur=0,filledLive=0,gone=0;
+  while(calls<budget){
+    const{data:rows,error}=await _target(sb.from(_YT_TABLE).select('id')).limit(DURFILL_PAGE);
+    if(error){_ytSetProg('대상 조회 실패: '+error.message);return;}
+    const ids=rows.map(r=>r.id).filter(id=>!_skip.has(id));
+    if(!ids.length){
+      _ytSetProg(rows.length
+        ? `⏱ 중단 — 남은 대상이 전부 삭제·비공개로 보여요. unavailable_migration.sql을 실행하면 표식을 남겨 다음부터 건너뜁니다 (이번 회차 ${calls}콜)`
+        : `✅ 백필 완료 — 더 채울 대상이 없어요 (이번 회차 ${calls}콜 · 재생시간 ${filledDur.toLocaleString()}행)`);
+      return;
+    }
+    const parts=[_dur?'contentDetails':'',_live?'liveStreamingDetails':''].filter(Boolean).join(',');
+    for(let i=0;i<ids.length&&calls<budget;i+=50){
+      const chunk=ids.slice(i,i+50);
+      let d;
+      try{
+        d=await _ytApiGet(`https://www.googleapis.com/youtube/v3/videos?part=${parts}&id=${chunk.join(',')}&key=${key}`,'재생시간 백필');
+      }catch(e){
+        _ytSetProg((e.isQuota?'⛔ ':'오류: ')+e.message+` (여기까지 ${calls}콜 · 재생시간 ${filledDur.toLocaleString()}행 저장됨)`);
+        console.error('[재생시간 백필]',e.message);
+        return;
+      }
+      calls++;
+      const durUpdates=[],liveUpdates=[];
+      (d.items||[]).forEach(it=>{
+        if(_dur){
+          // ⚠️ 응답은 받았는데 길이를 못 읽는 경우(진행 중 라이브는 "P0D", 드물게 형식 불일치)에 null로
+          //    남겨두면 **이 행이 매번 다시 뽑혀서 백필이 끝나지 않는다**. 0을 "확인했고 길이 미상"으로
+          //    쓰고, 소비하는 쪽(_isShortClip)이 0 이하를 숫자로 믿지 않도록 해뒀다. 라이브가 끝나 실제
+          //    길이가 생기면 순환 갱신이 나중에 덮어쓴다(자기 치유).
+          const ds=_ytParseDurationSec(it.contentDetails?.duration);
+          durUpdates.push({id:it.id,val:ds!=null&&ds>0?ds:0});
+        }
+        if(_live)liveUpdates.push({id:it.id,val:_ytWasLive(it)});
+      });
+      // ⚠️ API 응답에 없는 id(삭제/비공개)는 **영원히 null로 남아 매번 다시 뽑힌다** — 안 빼면 이 버튼이
+      //    끝나지 않는다. duration_sec에 가짜 값(-1/0)을 박지 않는다 — _isShortClip이 그걸 "90초 이하 =
+      //    쇼츠 클립"으로 읽어서, 지역차단처럼 일시적으로 안 잡힌 정상 영상이 영구히 오분류된다.
+      //    대신 원래 그 용도인 unavailable_at에 첫 관측 시각을 찍어 대상에서 빼낸다(순환 갱신과 같은 의미).
+      //    컬럼이 없으면 이 회차 동안만 메모리로 건너뛴다(그 경우 "대상 없음"까지는 안 내려감).
+      const returned=new Set((d.items||[]).map(x=>x.id));
+      const missing=chunk.filter(id=>!returned.has(id));
+      gone+=missing.length;
+      if(_dur)await _ytSaveCol('duration_sec',durUpdates,'재생시간');
+      if(_live)await _ytSaveCol('was_live',liveUpdates,'생방송 여부');
+      if(missing.length){
+        if(_unav)await _ytSaveCol('unavailable_at',missing.map(id=>({id,val:new Date().toISOString()})),'삭제·비공개 표식');
+        else missing.forEach(id=>_skip.add(id));
+      }
+      filledDur+=durUpdates.length;filledLive+=liveUpdates.length;
+      _ytSetProg(`재생시간 백필 중… ${calls}/${budget}콜 · 재생시간 ${filledDur.toLocaleString()}행`
+        +(gone?` · 삭제·비공개 ${gone.toLocaleString()}`:''));
+    }
+  }
+  const{count:left}=await _target(sb.from(_YT_TABLE).select('id',{count:'exact',head:true}));
+  _ytSetProg(`⏱ 이번 회차 종료 — ${calls}콜 사용 · 재생시간 ${filledDur.toLocaleString()}행`
+    +(_live?` · 생방송여부 ${filledLive.toLocaleString()}행`:'')+(gone?` · 삭제·비공개 ${gone.toLocaleString()}`:'')
+    +` · 남은 대상 ${left==null?'?':left.toLocaleString()}행 (또 누르면 이어서)`);
 }
 
 // 진행 표시는 좁은 칸(.sp-yt-prog)이라 긴 메시지가 잘려 보인다 — 결과/오류 메시지는 **콘솔에도 그대로**
@@ -8333,17 +8459,10 @@ async function _ytBackfillChannelCore(ch,fromYear,toYear,callBudget,onProg,query
       // 백필이 전체적으로 느려지기만 했음(2026-08-06, 사용자 제보) — 그래서 재시도 없이 원래처럼 1번만
       // 시도하고 바로 다음으로 넘어가게 되돌림. 아래 진단 로그(상태/사유)는 시간 비용이 없으므로 유지 —
       // 쿼터초과(403)인지 진짜 빈 구간인지는 이걸로 여전히 구분 가능.
-      const r=await fetch(url);
-      // 예전엔 !r.ok면 응답 바디를 읽지도 않고 바로 던져서, quotaExceeded 같은 실제 에러 사유(d.error.errors[0].reason)가
-      // 콘솔에 전혀 안 남았음 — 0개로 끝나는 백필이 "쿼터 초과라 그런 건지, 진짜 그 구간에 영상이 없는 건지"
-      // 구분이 안 되던 원인(2026-08-06, 사용자 요청으로 진단 로그 추가). 상태 코드와 무관하게 항상 바디를 먼저
-      // 읽고, 실제 API 응답 전체를 콘솔에 남긴 뒤에 에러 여부를 판단한다.
-      d=await r.json().catch(()=>null);
-      if(!r.ok||d?.error){
-        const reason=d?.error?.errors?.[0]?.reason;
-        console.error(`[백필] ${ch.name} API 오류 — status:${r.status}, reason:${reason||'(없음)'}, 응답:`,d);
-        throw new Error(d?.error?.message||('YouTube API 오류 '+r.status));
-      }
+      // 응답 바디를 읽어 실제 사유(quotaExceeded 등)를 남기는 건 _ytApiGet이 공통으로 한다(2026-09-16 공용화).
+      // ⚠️ retries:0 — 위 주석의 결정(429 재시도는 효과 없이 느려지기만 함)을 그대로 지킨다. 공용 헬퍼의
+      //    기본 백오프 재시도를 여기서만 끈다.
+      d=await _ytApiGet(url,`백필(${ch.name})`,{retries:0});
       // 정상 응답인데 결과가 비어있는 경우 — totalResults까지 같이 남겨서 "이 구간엔 진짜 없음"인지
       // "필터 조건이 뭔가 어긋나서 못 찾음"인지 나중에 구분할 수 있게 함.
       if(!d?.items?.length){
@@ -8508,10 +8627,7 @@ function _ytParseVideoId(input){
 // videoId 하나를 조회해서 DB에 저장할 row를 만드는 공용 코어 — 단일 추가 버튼과 일괄(여러 개) 추가
 // 버튼이 둘 다 이걸 재사용한다. manualGroup/manualMembers는 자동인식이 틀렸을 때 덮어쓸 값(둘 다 선택사항).
 async function _ytBuildManualVideoRow(key,vid,manualGroup,manualMembers){
-  const r=await fetch(`https://www.googleapis.com/youtube/v3/videos?part=snippet&id=${vid}&key=${key}`);
-  if(!r.ok)throw new Error('YouTube API 오류 '+r.status);
-  const d=await r.json();
-  if(d.error)throw new Error(d.error.message);
+  const d=await _ytApiGet(`https://www.googleapis.com/youtube/v3/videos?part=snippet&id=${vid}&key=${key}`,'영상 정보 조회');
   const item=d.items?.[0];
   if(!item)throw new Error('영상을 찾을 수 없어요(비공개/삭제됐을 수 있음)');
   const title=_decodeHtmlEntities(item.snippet.title||'');
@@ -9430,10 +9546,7 @@ document.getElementById('vid-tag-thumb-refresh').addEventListener('click',async 
   const{ko,id}=_vidTagTarget;
   statusEl.textContent='썸네일 조회 중…';
   try{
-    const r=await fetch(`https://www.googleapis.com/youtube/v3/videos?part=snippet&id=${id}&key=${key}`);
-    if(!r.ok)throw new Error('YouTube API 오류 '+r.status);
-    const d=await r.json();
-    if(d.error)throw new Error(d.error.message);
+    const d=await _ytApiGet(`https://www.googleapis.com/youtube/v3/videos?part=snippet&id=${id}&key=${key}`,'썸네일 조회');
     const item=d.items?.[0];
     if(!item)throw new Error('유튜브에서 영상을 찾을 수 없음(삭제/비공개 가능성)');
     const th=item.snippet?.thumbnails||{};
@@ -9494,6 +9607,7 @@ document.getElementById('vid-tag-thumb-refresh').addEventListener('click',async 
   _admExecBind('sp-yt-rotateviewcount-btn',async()=>{
     await _ytRotateViewCountRefresh();
   },'조회수 순환 갱신');
+  _admExecBind('sp-yt-durfill-btn',_ytBackfillDurations,'재생시간·생방송 여부 백필');
   _admExecBind('sp-yt-sweep-banned',_ytSweepBannedVideos,'밴 인물 숨김');
   _admExecBind('sp-yt-sweep-junk',_ytSweepJunkKeywordVideos,'제외 키워드 정리');
   // "무조건 제외 키워드" 목록이 코드에만 있어서 관리자가 지금 뭐가 걸려있는지 확인할 방법이 없었음

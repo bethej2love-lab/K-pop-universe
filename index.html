@@ -344,6 +344,11 @@
     <div class="sp-btn-hint">조회수가 이미 있는 퍼포먼스 영상 전체를 다시 갱신 — 연도별 TOP 100용. 한 달에 한 번이면 충분해요.<br><b>재생시간(duration_sec)도 같이 채웁니다</b>(쿼터 추가 비용 0 — videos.list는 part를 더 얹어도 호출당 1). 직캠/무대 차트의 "쇼츠 제외"가 <b>세로 여부가 아니라 길이</b>로 판정되려면 이 값이 필요해요 — <code>duration_migration.sql</code>을 먼저 실행하고 이 버튼을 한 번 돌리면 됩니다. 컬럼이 없으면 조용히 건너뛰고 조회수만 갱신해요.</div>
     <button class="sp-yt-sync" id="sp-yt-rotateviewcount-btn" style="margin-top:4px;opacity:.8;">전체 카테고리 조회수 순환 갱신(월 1회 · 배치 2만개씩)</button>
     <div class="sp-btn-hint">퍼포먼스 말고 쇼츠·MV 등 나머지 전체를 대상으로, 가장 오래전에 갱신된 2만개씩만 순환 갱신 — 전체 45만 건이면 20여 번에 한 바퀴. 월 1회 정도.<br><b>⏱ 재생시간(duration_sec)·🔴 생방송 여부(was_live)도 같이 채웁니다</b>(쿼터 추가 0 — videos.list는 part를 더 얹어도 호출당 1). <b>예능·아이돌 개인채널의 재생시간을 채우는 건 이 버튼뿐이에요</b> — 위 두 버튼은 최근 14일/퍼포먼스만 훑어서, 2026-09-16 실측으로 전체 45.5만 중 12.7만(27.8%)·개인채널은 3,409 중 228건(6.7%)만 채워져 있었어요. 썸네일 재생시간 배지와 탐험 "오리지널 콘텐츠"의 라이브 방송 제외가 이 값을 씁니다(<code>duration_migration.sql</code>·<code>live_broadcast_migration.sql</code> 먼저 실행).</div>
+    <div style="display:flex;gap:4px;margin-top:4px;align-items:center;">
+      <button class="sp-yt-sync" id="sp-yt-durfill-btn" style="margin-top:0;opacity:.8;flex:1;">⏱ 재생시간·생방송 여부만 백필</button>
+      <input type="number" class="sp-yt-key" id="sp-yt-durfill-budget" value="600" min="1" max="9000" style="margin-top:0;width:66px;" title="이번 회차에 쓸 API 호출 수(1콜=영상 50개)">
+    </div>
+    <div class="sp-btn-hint">⏱ <b>아직 안 채워진 행만</b> 골라서 재생시간·생방송 여부를 채워요(조회수는 안 건드림). 호출 1회당 영상 50개 = 쿼터 1유닛이라 <b>옆 칸이 곧 유닛 수</b> — 600콜이면 3만 행. 위 순환 갱신과 달리 <b>이미 채워진 행을 다시 부르지 않고</b>, 다 차면 "대상 없음"으로 스스로 끝나요. 하루 쿼터(1만)는 동기화·루틴과 같이 쓰는 지갑이라, 여유분만큼만 넣어서 며칠에 걸쳐 나눠 돌리는 게 안전해요.</div>
     <div style="margin-top:6px;padding-top:6px;border-top:0.5px solid rgba(255,255,255,0.07)">
       <div style="font-size:10px;color:rgba(155,178,228,0.4);margin-bottom:2px">과거 영상 백필 (search API, 쿼터 많이 씀)</div>
       <select class="sp-yt-key" id="sp-yt-backfill-ch"></select>
@@ -17663,7 +17668,11 @@ const _optColsReady=Promise.all([
 const _SHORT_CLIP_SEC=90;
 function _isShortClip(v){
   if(!v)return false;
-  if(v.duration_sec!=null)return v.duration_sec<=_SHORT_CLIP_SEC;
+  // ⚠️ 0(또는 음수)은 "0초 영상"이 아니라 **"확인했지만 길이를 모름"** 이다. 진행 중인 라이브는 유튜브가
+  //    duration을 "P0D"로 주고(파싱하면 0), 백필도 길이를 못 읽은 행에 0을 찍어 "다시 안 뽑히게" 한다.
+  //    이걸 그냥 숫자로 믿으면 0<=90이라 정상 영상이 전부 "쇼츠 클립"으로 오분류된다 — 그래서 >0만 신뢰하고,
+  //    아니면 예전대로 세로 여부로 근사한다(2026-09-16).
+  if(v.duration_sec!=null&&v.duration_sec>0)return v.duration_sec<=_SHORT_CLIP_SEC;
   return _isShortV(v); // 길이를 모를 때만 세로 여부로 근사(duration_migration.sql 실행 전)
 }
 function _isSoloCam(v){
