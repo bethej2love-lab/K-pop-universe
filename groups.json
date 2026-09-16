@@ -88249,6 +88249,24 @@
             "isTitle": true
           }
         ]
+      },
+      {
+        "title": "MU",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b2738e47313ed624a08d88270c4e",
+        "releaseDate": "2024.12.14",
+        "trackCount": 1,
+        "titleTrack": "MU",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "MU",
+            "isTitle": true
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "5On9NUfc4k7SxVHqxGBQkq"
       }
     ],
     "pri": 4,
@@ -90510,6 +90528,43 @@
     },
     "discography": [
       {
+        "title": "<Deep Dream>",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b2731437e6696ff46cd971a499be",
+        "releaseDate": "2026.08.12",
+        "trackCount": 1,
+        "titleTrack": "Deep Dream",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Deep Dream",
+            "isTitle": true
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "1M8JsrQYONiTwFIQ8ZWqpj"
+      },
+      {
+        "title": "Kids Return (Japanese Ver.)",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b2737defb4c22f096522f8246d43",
+        "releaseDate": "2026.07.16",
+        "trackCount": 1,
+        "titleTrack": "Kids Return (Japanese Ver.)",
+        "region": "jp",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Kids Return (Japanese Ver.)",
+            "isTitle": true
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "0jAXdT0IJoh84Y2pdqmAGT"
+      },
+      {
         "title": "itsnotover",
         "type": "미니 3집",
         "isMain": true,
@@ -90556,6 +90611,24 @@
         ]
       },
       {
+        "title": "<All I Need>",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b2737b6e676378396ef8a0d0efea",
+        "releaseDate": "2026.02.11",
+        "trackCount": 1,
+        "titleTrack": "All I Need",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "All I Need",
+            "isTitle": true
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "2bGsKrRWnJmhnCdF8gc3uN"
+      },
+      {
         "title": "yesweare",
         "type": "미니 2집",
         "isMain": true,
@@ -90585,6 +90658,24 @@
             "isTitle": false
           }
         ]
+      },
+      {
+        "title": "<Eight Eleven>",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b2734d6a8eb992ad79faff73c28f",
+        "releaseDate": "2025.11.11",
+        "trackCount": 1,
+        "titleTrack": "Eight Eleven",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Eight Eleven",
+            "isTitle": true
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "6N0KvZuXQQVp1K8LJmuoMA"
       },
       {
         "title": "unevermet",
@@ -90721,6 +90812,24 @@
         ]
       },
       {
+        "title": "Still, a Flower",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b27381539a14fde67f416b8df45c",
+        "releaseDate": "2026.01.01",
+        "trackCount": 1,
+        "titleTrack": "Still, a Flower",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Still, a Flower",
+            "isTitle": true
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "3N5X7dF6350QVWQUYWX4SV"
+      },
+      {
         "title": "X",
         "type": "미니 10집",
         "isMain": true,
@@ -90765,6 +90874,87 @@
             "isTitle": false
           }
         ]
+      },
+      {
+        "title": "PLEASURES",
+        "type": "정규",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b27335ebb787a4076be3a0fb7150",
+        "releaseDate": "2023.10.25",
+        "trackCount": 10,
+        "titleTrack": null,
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Intro",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "Synchronize",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "LET IT SHINE",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Phantom love",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Magic",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "Dance Dance Dance",
+            "isTitle": false
+          },
+          {
+            "no": 7,
+            "title": "What do you feel",
+            "isTitle": false
+          },
+          {
+            "no": 8,
+            "title": "ZOOM",
+            "isTitle": false
+          },
+          {
+            "no": 9,
+            "title": "Clap your hands",
+            "isTitle": false
+          },
+          {
+            "no": 10,
+            "title": "MOON",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "6Dwg6xCdKavhIjPvysOiGA"
+      },
+      {
+        "title": "Synchronize",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273a691af6ad535f5e81cc60a06",
+        "releaseDate": "2023.10.03",
+        "trackCount": 1,
+        "titleTrack": "Synchronize",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Synchronize",
+            "isTitle": true
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "4sfpO0JbFFgJ7OLqR5xSkj"
       },
       {
         "title": "TRIGGER",
@@ -104109,6 +104299,74 @@
             "isTitle": false
           }
         ]
+      },
+      {
+        "title": "FLOWERING",
+        "type": "정규",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273bd15713cf9824b7842bcd290",
+        "releaseDate": "2026.04.07",
+        "trackCount": 11,
+        "titleTrack": null,
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Paradise of Rumors",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "Spring Colors",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "Paid with Bugs",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Joy, Sorrow, A Beautiful Heart",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Sunshine Bless You",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "Tent",
+            "isTitle": false
+          },
+          {
+            "no": 7,
+            "title": "Young and Married",
+            "isTitle": false
+          },
+          {
+            "no": 8,
+            "title": "The Right Person",
+            "isTitle": false
+          },
+          {
+            "no": 9,
+            "title": "Graceful Breakfast",
+            "isTitle": false
+          },
+          {
+            "no": 10,
+            "title": "Festival of Refugees",
+            "isTitle": false
+          },
+          {
+            "no": 11,
+            "title": "Stains",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "0e4X6KNw1He0mlZ2BK9Loz"
       },
       {
         "title": "DADA (AKMU X 쿠키런)",

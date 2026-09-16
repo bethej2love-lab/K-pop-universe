@@ -32,6 +32,17 @@
     },
     "checkedAt": "2026-09-15"
   },
+  "걸스데이": {
+    "id": "13kJgvU22LHMsJtGWLmx7W",
+    "spotifyName": "Girl's Day",
+    "kind": "group",
+    "confidence": "medium",
+    "why": "이름 유일 일치",
+    "evidence": {
+      "titleOverlap": null
+    },
+    "checkedAt": "2026-09-16"
+  },
   "골든차일드": {
     "id": "5zShiwTHlygdfsXj6eavTu",
     "spotifyName": "Golden Child",
@@ -42,6 +53,22 @@
       "titleOverlap": 3
     },
     "checkedAt": "2026-09-15"
+  },
+  "누에라": {
+    "id": "4YsiijJHnCAjqS9cIXNoTI",
+    "spotifyName": "NouerA",
+    "kind": "group",
+    "confidence": "high",
+    "why": "이름 유일 일치 · 수집 전 검증 통과(겹침 2)",
+    "evidence": {
+      "titleOverlap": null,
+      "verifyOverlap": 2,
+      "verifyYears": [
+        2026,
+        2025
+      ]
+    },
+    "checkedAt": "2026-09-16"
   },
   "뉴진스": {
     "id": "6HvZYsbFfjnjFrWF950C9d",
@@ -171,6 +198,22 @@
       ]
     },
     "checkedAt": "2026-09-15"
+  },
+  "라잇썸": {
+    "id": "57HNdw2ObRmfwWHG8Xhs8t",
+    "spotifyName": "LIGHTSUM",
+    "kind": "group",
+    "confidence": "medium",
+    "why": "이름 유일 일치",
+    "evidence": {
+      "titleOverlap": null,
+      "verifyOverlap": 0,
+      "verifyYears": [
+        2026,
+        2024
+      ]
+    },
+    "checkedAt": "2026-09-16"
   },
   "러블리즈": {
     "id": "3g34PW5oNmDBxMVUTzx2XK",
@@ -387,6 +430,22 @@
       "titleOverlap": 2
     },
     "checkedAt": "2026-09-15"
+  },
+  "브브걸": {
+    "id": "7yXtdZLKdtwH5FrxduK7ti",
+    "spotifyName": "BBGIRLS",
+    "kind": "group",
+    "confidence": "low",
+    "why": "동명 후보 2명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0,
+      "verifyOverlap": 0,
+      "verifyYears": [
+        2022,
+        2021
+      ]
+    },
+    "checkedAt": "2026-09-16"
   },
   "블락비": {
     "id": "4RnezwRV7VBJUCI1S0AE5u",
@@ -648,6 +707,22 @@
     },
     "checkedAt": "2026-09-15"
   },
+  "씨엔블루": {
+    "id": "6dCz3spfpIvqqqsIoP6wXi",
+    "spotifyName": "CNBLUE",
+    "kind": "group",
+    "confidence": "high",
+    "why": "이름 유일 일치 · 수집 전 검증 통과(겹침 1)",
+    "evidence": {
+      "titleOverlap": null,
+      "verifyOverlap": 1,
+      "verifyYears": [
+        2026,
+        2024
+      ]
+    },
+    "checkedAt": "2026-09-16"
+  },
   "아르테미스": {
     "id": "213zHiFZwtDVEqyxeCbk07",
     "spotifyName": "ARTMS",
@@ -669,6 +744,17 @@
       "titleOverlap": 3
     },
     "checkedAt": "2026-09-15"
+  },
+  "아이덴티티": {
+    "id": "18eBHUF4EG1bXtbLZZ6g7M",
+    "spotifyName": "idntt",
+    "kind": "group",
+    "confidence": "high",
+    "why": "동명 후보 2명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 2
+    },
+    "checkedAt": "2026-09-16"
   },
   "아이들": {
     "id": "2AfmfGFbe0A0WsTYm0SDTx",
@@ -776,6 +862,22 @@
     },
     "checkedAt": "2026-09-16"
   },
+  "악뮤": {
+    "id": "6OwKE9Ez6ALxpTaKcT5ayv",
+    "spotifyName": "AKMU",
+    "kind": "group",
+    "confidence": "high",
+    "why": "이름 유일 일치 · 수집 전 검증 통과(겹침 1)",
+    "evidence": {
+      "titleOverlap": null,
+      "verifyOverlap": 1,
+      "verifyYears": [
+        2026,
+        2025
+      ]
+    },
+    "checkedAt": "2026-09-16"
+  },
   "알파드라이브원": {
     "id": "1Sal7hVz3weo0mvYZPiWHT",
     "spotifyName": "ALPHA DRIVE ONE",
@@ -818,6 +920,17 @@
       ]
     },
     "checkedAt": "2026-09-15"
+  },
+  "앰퍼샌드원": {
+    "id": "4T0Chh3DGxJrEs3gM0biqg",
+    "spotifyName": "AMPERS&ONE",
+    "kind": "group",
+    "confidence": "medium",
+    "why": "이름 유일 일치",
+    "evidence": {
+      "titleOverlap": null
+    },
+    "checkedAt": "2026-09-16"
   },
   "에버글로우": {
     "id": "3ZZzT0naD25RhY2uZvIKkJ",
@@ -1363,6 +1476,22 @@
       ]
     },
     "checkedAt": "2026-09-15"
+  },
+  "큐더블유이알": {
+    "id": "0XufO9nLOKNN0w0qNrDrZy",
+    "spotifyName": "QWER",
+    "kind": "group",
+    "confidence": "low",
+    "why": "동명 후보 3명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0,
+      "verifyOverlap": 0,
+      "verifyYears": [
+        2026,
+        2025
+      ]
+    },
+    "checkedAt": "2026-09-16"
   },
   "크래비티": {
     "id": "6FkhUhUwSPl3mGB6mmE8wn",
