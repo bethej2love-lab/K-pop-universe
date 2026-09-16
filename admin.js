@@ -505,25 +505,42 @@ const VIEW_COUNT_WINDOW_DAYS=14;
 // 쿼터는 안 는다 — videos.list는 part 개수와 무관하게 호출당 1이라 contentDetails를 얹는 비용이 0이다.
 // ⚠️ 컬럼이 없으면(마이그레이션 전) 조용히 건너뛴다. published_ts와 같은 수법이고, 조회수 갱신이
 //    이것 때문에 실패하면 안 되므로 별도 패스로 둔다. duration_migration.sql 참고.
-let _ytHasDuration=true;
 // ISO8601 기간("PT3M28S", "PT1H2M3S", "P1DT2H") → 초. 못 읽으면 null(=모름, 절대 0으로 저장하지 말 것).
 function _ytParseDurationSec(iso){
   const m=/^P(?:(\d+)D)?T?(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?$/.exec(String(iso||''));
   if(!m||!(m[1]||m[2]||m[3]||m[4]))return null;
   return (+(m[1]||0))*86400+(+(m[2]||0))*3600+(+(m[3]||0))*60+(+(m[4]||0));
 }
-async function _ytSaveDurations(durUpdates){
-  if(!_ytHasDuration||!durUpdates?.length)return;
-  const probe=await sb.from(_YT_TABLE).update({duration_sec:durUpdates[0].duration_sec}).eq('id',durUpdates[0].id);
-  if(probe.error&&/duration_sec/.test(probe.error.message||'')){
-    _ytHasDuration=false;
-    console.warn('[재생시간] duration_sec 컬럼이 없어 건너뜀 — duration_migration.sql 실행 필요');
-    return;
-  }
-  const _db=await _sbUpdateBatch(durUpdates.slice(1),({id,duration_sec})=>sb.from(_YT_TABLE).update({duration_sec}).eq('id',id),
-    {conc:20,retries:2,onProgress:(done,total)=>_ytSetProg(`재생시간 저장 중… ${done}/${total}`)});
-  if(_db.failed)console.error('[재생시간] 재시도 후에도 실패:',_db.failed,'건 —',_db.firstErr);
+// 컬럼 존재 여부를 **한 번만** 확인해 캐시한다. 없는 컬럼을 update patch에 넣으면 그 배치가 통째로
+// 실패해서 같은 patch에 실린 조회수 갱신까지 같이 죽는다 — unavailable_at에서 이미 겪은 함정이라
+// 새 컬럼은 전부 이 문을 통과시킨다(2026-09-16, was_live 추가 시 공용화).
+const _ytColCache={};
+async function _ytColSupported(col){
+  if(_ytColCache[col]!==undefined)return _ytColCache[col];
+  try{
+    const{error}=await sb.from(_YT_TABLE).select(col).limit(1);
+    _ytColCache[col]=!error;
+    if(error)console.warn(`[수집] ${col} 컬럼이 없어 건너뜁니다 — 해당 마이그레이션 SQL 실행 필요`);
+  }catch(e){_ytColCache[col]=false;}
+  return _ytColCache[col];
 }
+// 컬럼 하나를 대량 백필하는 공용 경로. updates는 [{id,val}] 형태. 컬럼이 없으면 조용히 건너뛴다 —
+// 조회수 갱신이 부가 백필 때문에 실패하면 안 되므로 항상 **별도 패스**로 둔다.
+async function _ytSaveCol(col,updates,label){
+  if(!updates?.length)return;
+  if(!await _ytColSupported(col))return;
+  const _db=await _sbUpdateBatch(updates,({id,val})=>sb.from(_YT_TABLE).update({[col]:val}).eq('id',id),
+    {conc:20,retries:2,onProgress:(done,total)=>_ytSetProg(`${label} 저장 중… ${done}/${total}`)});
+  if(_db.failed)console.error(`[${label}] 재시도 후에도 실패:`,_db.failed,'건 —',_db.firstErr);
+}
+// ── 생방송 여부(was_live) ─────────────────────────────────────────────────────
+// 왜: 탐험 "오리지널 콘텐츠" 선반에서 라이브 방송 아카이브를 빼려는데, 제목에 live/라이브가 있으면
+// 자른다는 규칙은 실측에서 깨진다(idol 채널 가로 1,116건 중 'live' 70건이 거의 전부 라이브 클립·
+// Live Studio Cover·[I'm LIVE] 같은 퍼포먼스 영상). 유튜브가 알려주는 사실을 쓴다 — videos.list의
+// liveStreamingDetails가 응답에 있으면 그 영상은 생방송(또는 프리미어)이었다.
+// 프리미어에도 붙으므로 앱 쪽에서 길이 20분 이상만 "라이브 아카이브"로 본다(index.html _isLiveArchive).
+// 쿼터 추가 비용 0 — videos.list는 part를 더 얹어도 호출당 1이다.
+const _ytWasLive=it=>!!it.liveStreamingDetails;
 async function _ytRefreshViewCounts(){
   const key=_ytApiKey();
   if(!key){_ytSetProg('API 키를 먼저 입력해주세요');return;}
@@ -541,6 +558,7 @@ async function _ytRefreshViewCounts(){
   const statsUpdates=[];
   const tsUpdates=[]; // 정확한 업로드 시각(published_ts) 백필 — 아래 주석 참고
   const durUpdates=[]; // 재생시간(duration_sec) 백필 — 쇼츠 판별용, duration_migration.sql 참고
+  const liveUpdates=[]; // 생방송 여부(was_live) 백필 — live_broadcast_migration.sql 참고
   for(let i=0;i<ids.length;i+=50){
     const chunk=ids.slice(i,i+50);
     _ytSetProg(`조회수 조회 중… ${Math.min(i+50,ids.length)}/${ids.length}`);
@@ -551,7 +569,7 @@ async function _ytRefreshViewCounts(){
       // (옛 행은 published_at이 날짜뿐이라 "N시간 전"을 못 만든다 — 2026-09-02 코르티스 제보)
       // duration_sec은 "쇼츠 판별"에 쓴다 — is_short는 세로 여부만 보고 길이를 안 봐서, 2분48초짜리
       // 정식 세로 팬캠(NiziU FanCam)과 15초 챌린지 클립이 같은 플래그를 달고 있었다(2026-09-10).
-      const r=await fetch(`https://www.googleapis.com/youtube/v3/videos?part=statistics,snippet,contentDetails&id=${chunk.join(',')}&key=${key}`);
+      const r=await fetch(`https://www.googleapis.com/youtube/v3/videos?part=statistics,snippet,contentDetails,liveStreamingDetails&id=${chunk.join(',')}&key=${key}`);
       if(!r.ok)throw new Error('YouTube API 오류 '+r.status);
       const d=await r.json();
       if(d.error)throw new Error(d.error.message);
@@ -561,7 +579,8 @@ async function _ytRefreshViewCounts(){
         const ts=it.snippet?.publishedAt;
         if(ts)tsUpdates.push({id:it.id,published_ts:ts});
         const ds=_ytParseDurationSec(it.contentDetails?.duration);
-        if(ds!=null)durUpdates.push({id:it.id,duration_sec:ds});
+        if(ds!=null)durUpdates.push({id:it.id,val:ds});
+        liveUpdates.push({id:it.id,val:_ytWasLive(it)}); // false도 저장해야 "확인했고 아니다"가 남는다
       });
     }catch(e){console.error('[조회수 갱신] 실패:',e.message);}
   }
@@ -578,7 +597,8 @@ async function _ytRefreshViewCounts(){
       if(_tb.failed)console.error('[업로드 시각] 재시도 후에도 실패:',_tb.failed,'건 —',_tb.firstErr);
     }
   }
-  await _ytSaveDurations(durUpdates);
+  await _ytSaveCol('duration_sec',durUpdates,'재생시간');
+  await _ytSaveCol('was_live',liveUpdates,'생방송 여부');
   if(!statsUpdates.length){_ytSetProg('조회수 갱신: 반영할 값 없음');return;}
   let saved=0,failed=0;
   {
@@ -612,13 +632,14 @@ async function _ytRefreshAllViewCounts(){
   _ytSetProg(`YouTube API 호출 예정: ${totalCalls}회 (${ids.length}개 영상)`);
   const statsUpdates=[];
   const durUpdates=[]; // 재생시간 백필 — 이 버튼이 기존 전체분의 duration_sec을 채운다
+  const liveUpdates=[]; // 생방송 여부(was_live) 백필 — 같은 호출에 얹혀 오므로 추가 쿼터 0
   for(let i=0;i<ids.length;i+=50){
     const chunk=ids.slice(i,i+50);
     _ytSetProg(`조회수 조회 중… ${Math.min(i+50,ids.length)}/${ids.length} (API ${Math.ceil((i+50)/50)}/${totalCalls}회)`);
     try{
       // contentDetails를 얹어 재생시간도 같이 받는다 — 쿼터는 그대로(호출당 1). 기존 전체분의
       // duration_sec 백필이 이 버튼 하나로 끝난다(별도 백필 버튼 불필요). duration_migration.sql 참고.
-      const r=await fetch(`https://www.googleapis.com/youtube/v3/videos?part=statistics,contentDetails&id=${chunk.join(',')}&key=${key}`);
+      const r=await fetch(`https://www.googleapis.com/youtube/v3/videos?part=statistics,contentDetails,liveStreamingDetails&id=${chunk.join(',')}&key=${key}`);
       if(!r.ok)throw new Error('YouTube API 오류 '+r.status);
       const d=await r.json();
       if(d.error)throw new Error(d.error.message);
@@ -626,11 +647,13 @@ async function _ytRefreshAllViewCounts(){
         const vc=parseInt(it.statistics?.viewCount,10);
         if(!isNaN(vc))statsUpdates.push({id:it.id,view_count:vc});
         const ds=_ytParseDurationSec(it.contentDetails?.duration);
-        if(ds!=null)durUpdates.push({id:it.id,duration_sec:ds});
+        if(ds!=null)durUpdates.push({id:it.id,val:ds});
+        liveUpdates.push({id:it.id,val:_ytWasLive(it)});
       });
     }catch(e){_ytSetProg('YouTube API 오류: '+e.message);console.error('[전체 조회수 갱신]',e.message);return;}
   }
-  await _ytSaveDurations(durUpdates);
+  await _ytSaveCol('duration_sec',durUpdates,'재생시간');
+  await _ytSaveCol('was_live',liveUpdates,'생방송 여부');
   if(!statsUpdates.length){_ytSetProg('갱신할 값 없음 (영상이 모두 삭제되었거나 비공개)');return;}
   let saved=0,failed=0;
   {
@@ -679,6 +702,13 @@ async function _ytRotateViewCountRefresh(){
   //    (2026-09-01 사용자 제보 "5000인데 1000만 됨"). 1000개씩 range로 나눠 받아 실제 BATCH만큼 모은다.
   //    view_count_synced_at은 미갱신분이 전부 null(동률)이라 id를 2차 정렬로 붙여야 페이지 경계가 안 어긋난다.
   const _unav=await _ytUnavailSupported(); // 삭제 감지 가능 여부(컬럼 유무)
+  // 재생시간·생방송 여부도 여기서 같이 채운다(2026-09-16). 이 버튼이 **전체 테이블을 공평하게 한 바퀴
+  // 순환**하는 유일한 경로이고, videos.list는 part를 더 얹어도 호출당 쿼터가 1로 그대로라 **추가 비용이
+  // 0**이다. 나머지 두 갱신 경로는 최근 14일(정기 동기화)·live 카테고리(연도별 TOP)만 훑어서 예능·
+  // 아이돌 개인채널 같은 나머지 카테고리의 duration_sec이 영원히 비어 있었다(2026-09-16 실측: 전체
+  // 45.5만 중 12.7만만 채워짐 = 27.8%, idol 채널은 3,409 중 228건 = 6.7%).
+  const _dur=await _ytColSupported('duration_sec');
+  const _live=await _ytColSupported('was_live');
   const ids=[];
   const wasUnavail=new Set(); // 이미 "사라짐"으로 찍혀 있던 id — 첫 관측 시각을 덮어쓰지 않기 위해
   for(let off=0; off<VIEW_COUNT_ROTATE_BATCH; off+=1000){
@@ -703,7 +733,8 @@ async function _ytRotateViewCountRefresh(){
     const nowIso=new Date().toISOString();
     const statsUpdates=[];
     try{
-      const r=await fetch(`https://www.googleapis.com/youtube/v3/videos?part=statistics&id=${chunk.join(',')}&key=${key}`);
+      const _parts='statistics'+(_dur?',contentDetails':'')+(_live?',liveStreamingDetails':'');
+      const r=await fetch(`https://www.googleapis.com/youtube/v3/videos?part=${_parts}&id=${chunk.join(',')}&key=${key}`);
       if(!r.ok)throw new Error('YouTube API 오류 '+r.status);
       const d=await r.json();
       if(d.error)throw new Error(d.error.message);
@@ -713,8 +744,12 @@ async function _ytRotateViewCountRefresh(){
         const vc=parseInt(it.statistics?.viewCount,10);
         // 되살아난 것(비공개 해제·지역차단 해제)은 표식을 지운다 — "지금은 있다"가 최신 사실이다
         const revive=_unav&&wasUnavail.has(it.id);
-        if(!isNaN(vc))statsUpdates.push({id:it.id,view_count:vc,touchOnly:false,revive});
-        else if(revive)statsUpdates.push({id:it.id,touchOnly:true,revive:true});
+        // 재생시간은 못 읽으면 null로 두고 **덮어쓰지 않는다**(0으로 저장하면 "0초 영상"이 된다).
+        const ds=_dur?_ytParseDurationSec(it.contentDetails?.duration):null;
+        const wl=_live?_ytWasLive(it):null;
+        if(!isNaN(vc))statsUpdates.push({id:it.id,view_count:vc,touchOnly:false,revive,ds,wl});
+        else if(revive)statsUpdates.push({id:it.id,touchOnly:true,revive:true,ds,wl});
+        else if(ds!=null||wl!=null)statsUpdates.push({id:it.id,touchOnly:true,ds,wl}); // 조회수만 못 읽은 경우
         if(revive)revived++;
       });
       // 삭제/비공개라 API 응답에 아예 안 잡힌 것도 "이번에 확인은 했다"는 뜻으로 synced_at만 갱신하고
@@ -732,10 +767,12 @@ async function _ytRotateViewCountRefresh(){
       console.error('[조회수 순환 갱신]',e.message);
       return;
     }
-    const _ub=await _sbUpdateBatch(statsUpdates,({id,view_count,touchOnly,markGone,revive})=>{
+    const _ub=await _sbUpdateBatch(statsUpdates,({id,view_count,touchOnly,markGone,revive,ds,wl})=>{
       const patch=touchOnly?{view_count_synced_at:nowIso}:{view_count,view_count_synced_at:nowIso};
       if(markGone)patch.unavailable_at=nowIso; // 처음 사라진 것만
       else if(revive)patch.unavailable_at=null; // 되살아난 것
+      if(ds!=null)patch.duration_sec=ds; // 컬럼 유무는 _ytColSupported로 이미 확인됨(_dur/_live)
+      if(wl!=null)patch.was_live=wl;
       return sb.from(_YT_TABLE).update(patch).eq('id',id);
     },{conc:20,retries:2});
     savedTotal+=_ub.saved;failedTotal+=_ub.failed;
@@ -743,6 +780,8 @@ async function _ytRotateViewCountRefresh(){
     if(_ub.failed)console.error('[조회수 순환 갱신] 재시도 후에도 실패:',_ub.failed,'건 —',_ub.firstErr);
   }
   _ytSetProg(`조회수 순환 갱신 완료 — ${savedTotal}개 저장${failedTotal?` · ${failedTotal}개는 일시 실패라 다음 실행 때 재시도됨`:''} (전체 카테고리 · API ${totalCalls}회)`
+    +(_dur?' · ⏱ 재생시간 같이 채움':' · (재생시간 꺼짐 — duration_migration.sql 실행 필요)')
+    +(_live?' · 🔴 생방송 여부 같이 채움':' · (생방송 여부 꺼짐 — live_broadcast_migration.sql 실행 필요)')
     +(_unav?`${newlyGone?` · 🪦 삭제·비공개 새로 감지 ${newlyGone}건`:''}${revived?` · ↩︎ 되살아남 ${revived}건`:''}`
            :' · (삭제 감지 꺼짐 — unavailable_migration.sql 실행 필요)'));
   _feedDiscoveryBuiltAt=0;
