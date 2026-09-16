@@ -128,7 +128,7 @@ function load(){
   // 겸임 멤버 태그 정규화(2026-08-31) — 있으면 싣는다
   if(/^function _normalizeMemberTags\(/m.test(adminSrc)){
     S(/^let _amtIndex\s*=/m,'_amtIndex');
-    ['_amtBuildIndex','_amtEntries','_amtSamePerson','_amtGroupNamedInTitle','_amtPickGroup','_normalizeMemberTags'].forEach(n=>F(new RegExp('^function '+n+'\\(','m'),n));
+    ['_amtBuildIndex','_amtEntries','_amtSamePerson','_amtRosterHasName','_amtGroupNamedInTitle','_amtPickGroup','_normalizeMemberTags'].forEach(n=>F(new RegExp('^function '+n+'\\(','m'),n));
   }
   // 음악방송 1위 파서(2026-09-11) — 있으면 싣는다.
   // ⚠️ 여기만 추출 방식이 다르다: 제목 템플릿 정규식에 이스케이프된 괄호·대괄호(`\]`, `[（(]`)가 많아

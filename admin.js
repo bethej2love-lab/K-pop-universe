@@ -2464,9 +2464,14 @@ async function _ytSweepDualMemberTags(){
     _ytSetProg(`[겸임 중복] 미리보기 — ${summary}`);
     await new Promise(r=>setTimeout(r,50));
     const msg=`겸임(이중소속) 멤버 중복 태그 ${updates.length}건을 정리할까요?\n\n· 같은 사람이 두 소속으로 두 번 붙은 것 → 대표 그룹 하나로\n· members에 이미 있는 사람이 with_members에도 든 것 → 제거\n\n동명이인(세븐틴 민규 / 동키즈 민규)은 합치지 않아요 — artists.json에서 같은 인물일 때만.\n남길 대표 그룹은 ①제목에 언급된 그룹 ②artists.json repGroup ③주 소속 순서로 정해집니다.\n\n· 수동편집 ${manualSkipped}건 제외 · 표본 콘솔(F12) · 스냅샷 저장돼서 되돌리기 가능`;
-    let ok;
-    if(typeof _confirmDialog==='function')ok=await _confirmDialog({title:`겸임 중복 ${updates.length}건 정리`,msg,okLabel:'정리 실행',wide:true});
-    else ok=confirm(msg);
+    // 루틴(무인)에서는 확인창을 띄우지 않는다 — 스텝3(_ytSweepAmbiguousCollabMistag)와 같은 패턴.
+    // ⚠️ `confirm()`이 아니라 `_confirmDialog`(자체 모달)라서, 루틴에서 그냥 부르면 **누를 사람이 없어
+    //    영원히 멈춘다**(confirm이 자동 true가 되는 것과는 다른 문제). 반드시 플래그로 건너뛸 것.
+    let ok=true;
+    if(!_admRoutineRunning){
+      if(typeof _confirmDialog==='function')ok=await _confirmDialog({title:`겸임 중복 ${updates.length}건 정리`,msg,okLabel:'정리 실행',wide:true});
+      else ok=confirm(msg);
+    }
     if(!ok){_ytSetProg(`취소됨 — 적용 안 함. 미리보기: ${summary} · 적용하려면 다시 눌러 "정리 실행"을 선택하세요(표본은 F12 콘솔).`);return;}
     await _snapshotBeforeBulk('겸임 멤버 중복 태그 정리',updates.map(u=>u.id));
     const _ub=await _sbUpdateBatch(updates,u=>sb.from(_YT_TABLE).update(u.patch).eq('id',u.id),
@@ -3692,6 +3697,13 @@ function _amtSamePerson(ko,g1,g2){
   if(!_amtIndex)_amtIndex=_amtBuildIndex();
   return (_amtIndex.get(ko)||[]).some(e=>e.gs.has(g1)&&e.gs.has(g2));
 }
+// 그룹 g의 로스터에 이름 ko를 쓰는 사람이 있는가 — "이 채널에서 그 이름은 우리 멤버를 가리킨다"는 사실.
+// 이 영상이 그 멤버를 실제로 태깅했는지와 **무관하게** 성립한다(미태깅 영상이 절반이라 그 구분이 중요하다).
+function _amtRosterHasName(gko,ko){
+  if(!gko||!ko)return false;
+  if(!_amtIndex)_amtIndex=_amtBuildIndex();
+  return (_amtIndex.get(ko)||[]).some(e=>e.gs.has(gko));
+}
 // 겸임 멤버의 대표 그룹 고르기 — ①제목에 literal로 언급된 그룹 ②artists.json repGroup ③주 소속 ④첫 번째.
 // 제목을 먼저 보는 이유: 마시로가 케플러 영상에선 `마시로(케플러)`, 메이딘 영상에선 `마시로(메이딘)`이어야
 // 맞는데, 전역 대표 하나로 고정하면 그 맥락이 날아간다.
@@ -3763,11 +3775,16 @@ function _normalizeMemberTags(opt){
   //    제목에 그 그룹명이 아예 없었다**: 엑스원 김우석 영상에 판타지보이즈 김우석이 52건, 밴드 LUCY
   //    영상에 위키미키/우아 루시가 15건. 이름이 겹치는데 근거가 이름뿐이면 그건 매칭이 아니라 우연이다.
   //    그래서 **제목에 그 그룹명이 literal로 있을 때만** 인정한다(_ATM_HASHTAG_ONLY_NAMES와 같은 원칙).
-  //    ⚠️ 이 영상 members에 같은 이름이 있을 때(=홈 로스터와 충돌)로 범위를 좁힌다 — 그게 실측으로
-  //    오탐이 확인된 구간이고, 넓히면 근거를 못 잰 정상 태그까지 날아간다.
+  //    ⚠️ 범위는 "이 영상 members에 같은 이름" → **"이 영상 group_ko의 로스터에 같은 이름"** 으로 넓혔다
+  //    (2026-09-16). 좁은 조건은 **이 영상이 홈 멤버를 태깅했을 때만** 발동해서, 미태깅 영상에서는
+  //    가드가 통째로 비켜갔다. 실측: 엔시티 127 채널의 `마크(갓세븐)` 오태깅 3건이 전부 members:[]였고
+  //    (`[#인생술집]…마크✨`, `#마크 가 춤으로`, `맛피아 트레이드 마크 수준`) 그래서 살아남았다.
+  //    이름이 겹치는지는 **로스터의 사실**이고 그 영상이 태깅을 했는지와 무관하다 — 그게 맞는 기준이다.
+  //    정상 교차 태그는 제목에 그룹명이 있어서 그대로 통과한다(실측 4건 전부 `#GOT7`/`(GOT7)` 명시).
   parsed.forEach(p=>{
     if(!p.ko||drop.has(p.raw))return;
-    if(!mem.has(p.ko)||!groupKo)return;
+    if(!groupKo)return;
+    if(!mem.has(p.ko)&&!_amtRosterHasName(groupKo,p.ko))return;
     if(_amtSamePerson(p.ko,p.g,groupKo))return; // 동일인물은 ②가 이미 처리
     if(!_amtGroupNamedInTitle(p.g,title))drop.add(p.raw);
   });
@@ -10297,6 +10314,10 @@ async function _admRunRoutine(withSync,opts){
   if(!_syncOnly){
   steps.push({name:'2. 멤버+콜라보 자동 태깅',fn:_ytAutoTagMembers});
   steps.push({name:'3. 콜라보 오태깅 재검증',fn:_ytSweepAmbiguousCollabMistag});
+  // 3-2 신설(2026-09-16): 겸임·동명이인 중복 태그 정리. 버튼만 있고 루틴엔 없어서, _normalizeMemberTags를
+  //   고쳐도 관리자가 직접 누르지 않으면 반영이 안 됐다(사용자 방향: 관리자 손 없이 굴러가야 한다).
+  //   유튜브 쿼터 0(순수 DB)이고, 정리가 끝나면 후보 0으로 떨어져 비용이 거의 없다.
+  steps.push({name:'3-2. 겸임·동명이인 중복 태그 정리',fn:_ytSweepDualMemberTags});
   steps.push({name:'4. 동명이인 그룹 오배정 스캔',fn:_ytScanAmbiguousNameGroupMisassignment});
   // 5. 원곡 태깅(2026-09-07 추가, 사용자 결정) — 이전엔 루틴에 없어서 사람이 🎵 버튼을 눌러야만
   //    원곡이 붙었다. 실제로 "아일릿 민주의 이효리 '10 Minutes' 커버"가 제목에 (원곡 : 이효리)까지
