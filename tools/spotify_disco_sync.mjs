@@ -48,6 +48,8 @@ function writeJsonKeepingStyle(file, obj) {
 const DRY = process.argv.includes('--dry');
 const argOf = k => { const i = process.argv.indexOf(k); return i >= 0 ? process.argv[i + 1] : null; };
 const BUDGET = Number(argOf('--budget') || process.env.BUDGET || 80);
+// 같은 날 1트랙 싱글이 이만큼 몰리면 이름 도용 업로드로 보고 보류한다(아래 2-c 주석).
+const BULK_SINGLE_MIN = Number(process.env.BULK_SINGLE_MIN || 3);
 const ONLY = argOf('--only') ? new Set(argOf('--only').split(',')) : null;
 
 const groups = rd('groups.json');
@@ -250,6 +252,38 @@ for (const t of list) {
       newOnes.push(...pick.values());
     }
 
+    // 2-c) 이름 도용 업로드 차단 — **같은 날 1트랙 싱글 무더기**(2026-09-16).
+    //   실제 사고: 베이비복스 아티스트 페이지에 2026.08.13에 1트랙 싱글 5개, 09.14에 3개가 한꺼번에
+    //   붙었다. 전부 저작권자가 `2026 ARAMBULA EDWARD`(소속사와 무관한 개인명)이고 재생시간이
+    //   179·179·180초로 거의 같은, 양산 업로드였다. 스포티파이는 이런 걸 정식 아티스트 페이지에
+    //   그대로 붙여준다 — 우리가 걸러야 한다.
+    //   신호를 "같은 날 1트랙 싱글 N건"으로 잡은 이유: 정식 발매는 한 아티스트가 하루에 별개 싱글을
+    //   3장 이상 내지 않는다(전수 스캔 결과 이 패턴에 걸리는 건 베이비복스뿐이었다 — 오탐 0).
+    //   ⚠️ 이미 갖고 있는 앨범까지 합쳐서 센다. 한 건씩 나눠 들어오면 회차마다 1건이라 안 걸린다.
+    //   ⚠️ 저작권자(개인명 여부)로 막지 않는 이유는 spotify_disco_lib.mjs의 copyright 주석 참고.
+    if (newOnes.length) {
+      const oneTrackByDate = {};
+      const bump = list => { for (const al of list || []) if (al && al.trackCount === 1 && al.releaseDate) oneTrackByDate[al.releaseDate] = (oneTrackByDate[al.releaseDate] || 0) + 1; };
+      if (t.kind === 'group') bump(groups[t.ko]?.discography);
+      else for (const a of artists) if (a.name?.ko === t.ko) bump(a.discography);
+      for (const al of newOnes) {
+        if ((al.total_tracks || 0) !== 1) continue;
+        const d = String(al.release_date || '').slice(0, 10).replace(/-/g, '.');
+        if (d) oneTrackByDate[d] = (oneTrackByDate[d] || 0) + 1;
+      }
+      const bulkDates = new Set(Object.entries(oneTrackByDate).filter(([, n]) => n >= BULK_SINGLE_MIN).map(([d]) => d));
+      if (bulkDates.size) {
+        // ⚠️ 걸린 **날짜의 것만** 뺀다. 예전 초안은 newOnes를 통째로 비워서, 같은 회차에 찾은 정상 신보까지
+        //    같이 날아갈 수 있었다(이 가드가 오히려 수집을 망치는 모양).
+        const keep = newOnes.filter(al => !bulkDates.has(String(al.release_date || '').slice(0, 10).replace(/-/g, '.')));
+        const heldCount = newOnes.length - keep.length;
+        if (heldCount) {
+          newOnes.length = 0;
+          newOnes.push(...keep);
+          reviewList.push(`⛔ 이름 도용 의심으로 보류: ${t.ko} — 같은 날 1트랙 싱글이 ${BULK_SINGLE_MIN}건 이상 몰렸습니다(${[...bulkDates].join(', ')}). ${heldCount}장을 넣지 않았습니다. 정상 발매가 맞다면 손으로 추가하세요.`);
+        }
+      }
+    }
     // 3) ⚠️ 검증 게이트 — **확인 안 된 매핑으로는 앨범을 넣지 않는다.**
     //    confidence가 'medium'인 건 "이름이 유일하게 일치"만 본 것이라 동명이인일 수 있다. 평소엔
     //    검증 비용을 안 쓰다가, **실제로 넣을 게 생겼을 때만** 우리가 앨범을 가진 연도로 대조한다.

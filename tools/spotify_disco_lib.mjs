@@ -234,6 +234,14 @@ export async function toEntry(album) {
       tracks,
       src: 'spotify',            // 출처 표식 — 나중에 자동 수집분만 감사할 수 있게
       spotifyId: album.id,
+      // 저작권 표기(무료 — /albums 응답에 이미 들어온다). 이름 도용 업로드를 가려내는 데 가장
+      // 판별력이 높다: 정상은 회사명이고(에스파 `2026 SM Entertainment` · 있지 `JYP Entertainment` ·
+      // 키스오브라이프 `Nippon Columbia Co., Ltd.`), 도용분은 개인명이다
+      // (베이비복스에 붙었던 가짜 싱글 8건은 전부 `2026 ARAMBULA EDWARD`, 2026-09-16 실측).
+      // ⚠️ `label` 필드는 이 앱 토큰으로 안 내려온다(전부 undefined) — 그래서 copyright를 쓴다.
+      // 자동 차단 기준으로는 아직 안 쓴다(HYBE·ADOR처럼 회사 토큰이 없는 이름이 있어 오탐이 난다).
+      // 지금은 저장만 해두고, 차단은 아래 sync의 "같은 날 1트랙 무더기" 신호가 맡는다.
+      ...(((album.copyrights || [])[0] || {}).text ? { copyright: String(album.copyrights[0].text).slice(0, 120) } : {}),
     },
     needsTitleTrack: !one,
     precision: album.release_date_precision,
