@@ -172,9 +172,13 @@ const YEARS = argOf('--years') ? parseYears(argOf('--years')) : (month === 1 ? [
 // 지금까진 사람이 `--years 2025`로 일회성 백필을 돌아야만 했는데, 그런 "기억해야 도는 절차"는 결국 안 돈다.
 // → 대상마다 과거 연도를 **딱 한 번** 훑고 그 사실을 state.swept에 남긴다. 첫 바퀴에만 대상당 +1콜이
 //   들고(535팀 = 535콜, 하루 160콜이면 3~4일) 그 뒤엔 다시 올해만 본다.
-//   다 메워졌으면 레포 변수 BACKFILL_YEARS를 빈 값으로 두면 꺼진다. 더 과거로 넓히려면 '2024,2025'처럼.
+//   다 메워졌으면 레포 변수 BACKFILL_YEARS를 빈 값으로 두면 꺼진다. 더 과거로 넓히려면 '2022,…'를 추가.
+// 범위를 2023까지로 잡은 근거(실측 2026-09-16): A등급 8팀 표본의 2023·2024를 재보니 16개 조합에서 26장이
+//   비어 있었다(팀·연도당 평균 1.6장 — 아이들 `Wife`·`I DO`처럼 주력 발매도 포함). 2022 이전은 표본에서
+//   누락이 급감하고 OST·`Spotify Singles` 같은 주변 발매 비중이 커져 오탐이 늘어 일단 제외했다.
+//   첫 바퀴 비용은 대상당 +3콜(535팀 = 약 1,600콜 ≈ 13일). 커서가 있어 중간에 끊겨도 이어진다.
 // ⚠️ `--years`로 사람이 직접 돌릴 땐 이 경로를 끈다 — 그 명령이 이미 연도를 명시했으므로 중복이다.
-const BACKFILL_YEARS = (process.env.BACKFILL_YEARS ?? '2025')
+const BACKFILL_YEARS = (process.env.BACKFILL_YEARS ?? '2023,2024,2025')
   .split(',').map(s => Number(s.trim())).filter(y => y > 1990 && y < year);
 state.swept = state.swept || {};
 const pendingBackfill = ko => (argOf('--years') ? [] : BACKFILL_YEARS.filter(y => !(state.swept[ko] || []).includes(y)));
@@ -234,7 +238,7 @@ for (const t of list) {
     if (newOnes.length > 1) {
       const pick = new Map();
       for (const al of newOnes) {
-        const k = `${dedupKey(al.name)} ${parseTypeFromTitle(al.name, al.total_tracks, al.album_type)}`;
+        const k = `${dedupKey(al.name)}${parseTypeFromTitle(al.name, al.total_tracks, al.album_type)}`;
         const prev = pick.get(k);
         if (!prev) { pick.set(k, al); continue; }
         const keep = (al.total_tracks || 0) > (prev.total_tracks || 0) ? al : prev;

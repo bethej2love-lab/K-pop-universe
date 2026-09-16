@@ -139,6 +139,47 @@ try {
   say(`- (유튜브 교차검증 건너뜀 — ${e.message})`);
 }
 
+// ── ③ 수집 파이프라인이 실제로 돌고 있는가 (2026-09-16) ──────────────────────
+// ①은 "데이터의 최신 발매일"만 본다. 그건 **발매가 뜸한 시기와 수집이 멈춘 상황을 구분하지 못하고**,
+// 무엇보다 **과거 구멍에는 눈이 없다**. 실제로 그래서 놓쳤다: 에스파의 2025년 앨범이 0장인 상태에서도
+// ①은 "✓ 정상"이었다(2026-09-16 발견). 최신 발매일은 다른 팀 덕에 늘 신선하기 때문이다.
+// 커서 파일을 보면 "돌았는가 / 어디까지 갔는가"가 직접 보인다 — 발매 빈도와 무관한 신호다.
+try {
+  const stF = path.join(ROOT, 'spotify_sync_state.json');
+  if (fs.existsSync(stF)) {
+    const st = rd('spotify_sync_state.json');
+    const lastRun = st.lastRunAt ? new Date(st.lastRunAt) : null;
+    const runAge = lastRun ? days(now - lastRun.getTime()) : null;
+    say('');
+    say(`- 스포티파이 수집 마지막 실행 **${lastRun ? lastRun.toISOString().slice(0, 16).replace('T', ' ') + ` (${runAge}일 전)` : '기록 없음'}** · 누적 ${st.runs || 0}회`);
+    // 하루 2회차 도는 파이프라인이 2일 넘게 안 돌았으면 스케줄/인증이 깨진 것이다.
+    if (runAge == null || runAge >= 2) {
+      say(`  - ⚠️ 수집이 ${runAge == null ? '한 번도 안 돌았거나 기록이 없습니다' : `${runAge}일간 안 돌았습니다`} — 스케줄(disco-daily.yml)·시크릿을 확인하세요.`);
+      bad = true;
+    }
+    // 과거연도 백필 진행률 — 이게 0이 될 때까지가 "지난해 구멍을 메우는 중"이다.
+    const BF = (process.env.BACKFILL_YEARS ?? '2023,2024,2025').split(',').map(s => Number(s.trim()))
+      .filter(y => y > 1990 && y < new Date().getFullYear());
+    if (BF.length) {
+      const swept = st.swept || {};
+      const kos = [];
+      for (const [ko, g] of Object.entries(groups)) if (!g.disbanded) kos.push(ko);
+      for (const a of artists) {
+        const ko = a.name?.ko, gko = a.group?.ko;
+        if (ko && gko && !groups[gko] && a.active !== false) kos.push(ko);
+      }
+      const all = [...new Set(kos)];
+      const remain = all.filter(ko => BF.some(y => !(swept[ko] || []).includes(y))).length;
+      const pct = all.length ? Math.round((1 - remain / all.length) * 100) : 100;
+      say(`- 과거연도 백필(${BF.join(',')}) 진행 **${pct}%** · 남은 대상 ${remain}/${all.length}팀`
+        + (remain ? '' : ' — 완료(레포 변수 SPOTIFY_BACKFILL_YEARS를 비우면 끕니다)'));
+    }
+  }
+} catch (e) {
+  say('');
+  say(`- (수집 커서 점검 건너뜀 — ${e.message})`);
+}
+
 if (process.env.GITHUB_STEP_SUMMARY) {
   try { fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, lines.join('\n') + '\n'); } catch { }
 }

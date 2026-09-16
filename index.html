@@ -174,7 +174,7 @@
           <div id="tt-discog-ost-divider" class="gc-ch-sort-divider" style="display:none"></div>
           <button id="tt-discog-all-btn" class="gc-ch-sort-item" type="button" style="display:none"><span class="chk">✓</span><span>부가 앨범까지 포함</span></button>
           <button id="tt-discog-ost-btn" class="gc-ch-sort-item" type="button" style="display:none"><span class="chk">✓</span><span>OST·피처링 포함</span></button>
-          <button id="tt-discog-unit-btn" class="gc-ch-sort-item" type="button" style="display:none"><span class="chk">✓</span><span>솔로만 보기</span></button>
+          <button id="tt-discog-unit-btn" class="gc-ch-sort-item" type="button" style="display:none"><span class="chk">✓</span><span>솔로만 보기</span></button><button id="tt-discog-jp-btn" class="gc-ch-sort-item" type="button" style="display:none"><span class="chk">✓</span><span>일본판 보기</span></button>
           <div id="tt-discog-more-divider" class="gc-ch-sort-divider" style="display:none"></div>
           <button id="tt-discog-more-btn" class="gc-ch-view-toggle" type="button" style="display:none"><span class="chk">✓</span><span id="tt-discog-more-label"></span></button>
         </div>
@@ -220,7 +220,7 @@
               <div id="gc-discog-ost-divider" class="gc-ch-sort-divider" style="display:none"></div>
               <button id="gc-discog-all-btn" class="gc-ch-sort-item" type="button" style="display:none"><span class="chk">✓</span><span>부가 앨범까지 포함</span></button>
               <button id="gc-discog-ost-btn" class="gc-ch-sort-item" type="button" style="display:none"><span class="chk">✓</span><span>OST·피처링 포함</span></button>
-              <button id="gc-discog-unit-btn" class="gc-ch-sort-item" type="button" style="display:none"><span class="chk">✓</span><span>솔로만 보기</span></button>
+              <button id="gc-discog-unit-btn" class="gc-ch-sort-item" type="button" style="display:none"><span class="chk">✓</span><span>솔로만 보기</span></button><button id="gc-discog-jp-btn" class="gc-ch-sort-item" type="button" style="display:none"><span class="chk">✓</span><span>일본판 보기</span></button>
               <div id="gc-discog-more-divider" class="gc-ch-sort-divider" style="display:none"></div>
               <button id="gc-discog-more-btn" class="gc-ch-view-toggle" type="button" style="display:none"><span class="chk">✓</span><span id="gc-discog-more-label"></span></button>
             </div>
@@ -10317,6 +10317,49 @@ function _ordinal(n){
   const s=['th','st','nd','rd'],v=n%100;
   return n+(s[(v-20)%10]||s[v]||s[0]);
 }
+// ── 일본판 발매 판정 (2026-09-16) ────────────────────────────────────────────
+// 스포티파이 수집이 일본 발매반까지 가져온다(가져오는 것 자체는 사용자 판단으로 유지). 다만 같은 곡의
+// 일본어 버전이 디스코그래피에 섞이면 목록이 길어지고 "이 그룹이 낸 것"의 윤곽이 흐려지므로 **기본은 숨기고**
+// 케밥의 '일본판 보기'로만 펼친다.
+// ⚠️ 판정은 **제목에 붙은 일본판 표기만** 본다. 가나/한자 같은 문자 기준으로 잡으면 앤팀·니쥬처럼
+//    일본을 기반으로 활동하는 그룹의 **원곡이 통째로 숨는다** — 그들의 원곡엔 이런 표기가 없다
+//    (실측 2026-09-16: 앤팀 11장 중 0장 판정, 전체로는 33장이 21팀에 흩어져 최대 3장씩이라 비는 카드가 없다).
+// ⚠️ 데이터에 플래그를 새로 심지 않는다 — 제목만 보면 **이미 쌓인 33장에도 소급 적용**되고,
+//    판정 기준을 고치면 재수집 없이 바로 반영된다.
+// 두 신호를 OR한다:
+//  ① 수집이 심어둔 `region:'jp'` — 일본 **전용 발매**를 잡는다. 제목에 표기가 없는 게 대부분이라
+//     (실측: 펜타곤 `PADO`·제로베이스원 `YURA YURA`·케플러 `AGAINST THE WORLD` 등 10/4/4장) 이게 본류다.
+//  ② 제목의 일본판 표기 — `region`이 없던 시절(멜론 수집분) 데이터까지 소급해서 잡는다.
+// ⚠️⚠️ `region`만으로 숨기면 **본거지가 해외인 팀의 원곡이 통째로 사라진다.** 실측(2026-09-16):
+//    웨이션브이는 정규 12장 중 11장이 `cn`(SM의 중국 유닛이라 중국어가 원곡), 니쥬는 12장 중 5장이 `jp`,
+//    캣츠아이 정규 `KATSEYE`는 `en`이다. 그래서 **본거지가 한국인 주인에게만** 적용한다.
+//    본거지는 목록을 따로 관리하지 않고 **한국인 멤버 유무로 자동 판정**한다(실측으로 한국인 0명인 팀은
+//    웨이션브이·니쥬·걸셋·A2O MAY 4팀뿐이라 정확히 갈린다). 새 해외 팀이 들어와도 자동으로 맞는다.
+// ⚠️ 중국어판(`cn`)·영어판(`en`)은 일부러 건드리지 않는다 — 위 실측처럼 그쪽은 "해외판"이 아니라
+//    그 팀의 원곡인 경우가 많아서 같은 규칙을 쓰면 오히려 깨진다.
+// ⚠️ `nat.ko`는 '한국'(1,251명)과 '대한민국'(170명) 두 표기가 섞여 있다 — 한쪽만 보면 28팀이
+//    "한국인 0명"으로 잘못 잡힌다(실제로 그렇게 한 번 틀렸다). 둘 다 인정할 것.
+const _JP_RELEASE_RE=/[-–(\[]\s*japan(?:ese)?\s*(?:ver\.?|version|ed(?:ition)?|ep|single|album)?\s*[-–)\]]|japanese\s+(?:ver\.?|version)|\bjp\s*ver\b/i;
+const _isKoNat=a=>!!(a&&a.nat&&/^(한국|대한민국)/.test(a.nat.ko||''));
+const _koBasedGroupCache=new Map();
+function _groupIsKoBased(gko){
+  if(!gko)return true;
+  if(_koBasedGroupCache.has(gko))return _koBasedGroupCache.get(gko);
+  const roster=(typeof ARTISTS!=='undefined'?ARTISTS:[]).filter(a=>_artistGroups(a).some(g=>g&&g.ko===gko));
+  // 로스터를 못 찾으면(데이터 공백) 한국 기반으로 본다 — 숨기는 쪽이 기본이라는 뜻이고, 토글로 펼 수 있다.
+  const v=!roster.length||roster.some(_isKoNat);
+  _koBasedGroupCache.set(gko,v);
+  return v;
+}
+// 이 앨범을 "일본판"으로 볼지 — owner는 그 디스코그래피의 주인(그룹 ko 문자열 또는 아티스트 객체).
+function _isJpRelease(a,owner){
+  if(!a)return false;
+  const jp=a.region==='jp'||_JP_RELEASE_RE.test(a.title||a.t||'');
+  if(!jp)return false;
+  if(typeof owner==='string')return _groupIsKoBased(owner);
+  if(owner&&owner.name)return _isKoNat(owner);   // 멤버/솔로 카드: 본인 국적 기준(일본인 멤버의 일본 발매는 원곡)
+  return true;                                    // 주인을 모르면(피드 선반 등) 숨기는 쪽
+}
 function _discogTypeLabel(type){
   // 영어 모드는 "N집"의 "집"(한국어 단위 명사)이 어색해 서수+Full/Mini로 재배치("정규 2집"→"2nd Full").
   if(currentLang==='en'){
@@ -10347,6 +10390,7 @@ function _renderDiscography(prefix,albums){
   const ostBtn=document.getElementById(prefix+'-discog-ost-btn');
   const unitBtn=document.getElementById(prefix+'-discog-unit-btn');
   const allBtn=document.getElementById(prefix+'-discog-all-btn');
+  const jpBtn=document.getElementById(prefix+'-discog-jp-btn');
   if(!albums||!albums.length){row.style.display='none';return;}
   row.style.display='';
   if(prefix==='gc')_loadGcDiscogTrackTrophies(_openGCko);
@@ -10366,6 +10410,10 @@ function _renderDiscography(prefix,albums){
   let asc=false;
   let extrasIncluded=_onlyExtras; // 디폴트 OST·피처링 제외(2026-08-21) — 단, 부가만 있으면 켜고 시작
   let soloOnly=false; // 디폴트 유닛 앨범 포함(EXO-SC 등) — 케밥 '솔로만 보기' 토글로 제외(2026-08-22, 사용자 요청)
+  let jpIncluded=false; // 디폴트 일본판 제외 — 케밥 '일본판 보기'로만 펼침(2026-09-16, 사용자 요청)
+  // 일본판 판정은 주인의 본거지를 봐야 한다(_isJpRelease 주석) — gc는 그룹 ko, tt는 아티스트 객체.
+  const _jpOwner=prefix==='gc'?_openGCko:(typeof _openTArtist!=='undefined'?_openTArtist:null);
+  const _isJp=a=>_isJpRelease(a,_jpOwner);
   function sortedList(list){
     return[...list].sort((a,b)=>{
       const da=new Date(a.releaseDate.replace(/\./g,'-')),db=new Date(b.releaseDate.replace(/\./g,'-'));
@@ -10384,6 +10432,7 @@ function _renderDiscography(prefix,albums){
       base=base.filter(a=>a.type!=='OST'&&!a.feat); // 디폴트: OST·피처링 제외
     }
     if(soloOnly)base=base.filter(a=>!a.unit); // '솔로만 보기': 유닛(EXO-SC 등) 앨범 제외
+    if(!jpIncluded)base=base.filter(a=>!_isJp(a)); // 디폴트: 일본판 제외(_isJpRelease 주석 참고)
     return sortedList(base);
   }
   function renderItems(){
@@ -10419,6 +10468,7 @@ function _renderDiscography(prefix,albums){
     });
     ostBtn.classList.toggle('active',extrasIncluded);
     if(unitBtn)unitBtn.classList.toggle('active',soloOnly);
+    if(jpBtn)jpBtn.classList.toggle('active',jpIncluded);
   }
   updateSortMenuUI();
   // OST 버튼 — OST 있는 그룹에서만 노출, 매번 핸들러 교체
@@ -10457,6 +10507,16 @@ function _renderDiscography(prefix,albums){
     unitBtn.onclick=e=>{
       e.stopPropagation();
       soloOnly=!soloOnly;
+      updateSortMenuUI();
+      renderItems();
+    };
+  }
+  // '일본판 보기' 버튼 — 그 아티스트에게 일본판이 있을 때만 노출(없으면 메뉴가 괜히 길어진다)
+  if(jpBtn){
+    jpBtn.style.display=albums.some(_isJp)?'':'none';
+    jpBtn.onclick=e=>{
+      e.stopPropagation();
+      jpIncluded=!jpIncluded;
       updateSortMenuUI();
       renderItems();
     };
@@ -17366,7 +17426,12 @@ async function _buildFeedNewAlbums(){
     let picked=[],days=0;
     for(const w of _FEED_ALBUM_WINDOWS){
       days=w;
-      picked=all.filter(a=>{const t=_albumDate(a.d);return isFinite(t)&&now-t<=w*86400000;});
+      // 일본판은 카드 디스코그래피에서 기본 숨김이라 발매 선반에서도 뺀다 — 같은 곡의 일본어 버전이
+      // "이번 주 발매"로 뜨면 신보로 읽힌다(2026-09-16, _isJpRelease 참고). 여기엔 토글을 두지 않는다.
+      picked=all.filter(a=>{const t=_albumDate(a.d);if(!isFinite(t)||now-t>w*86400000)return false;
+        // 선반 항목은 {k:'g'|'m', o:주인이름} 형태 — 그룹이면 ko 문자열, 멤버면 그 아티스트를 찾아 넘긴다.
+        const owner=a.k==='g'?a.o:(ARTISTS||[]).find(x=>x.name&&x.name.ko===a.o);
+        return !_isJpRelease(a,owner);});
       if(picked.length>=_FEED_ALBUM_MIN)break;
     }
     if(!picked.length)return;
