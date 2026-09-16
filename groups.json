@@ -500,6 +500,105 @@
         "spotifyId": "2JscSydezwXYMNSDLNBzv9"
       },
       {
+        "title": "Rich Man",
+        "type": "미니 6집",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273810f7ac94531092b64accd66",
+        "releaseDate": "2025.09.05",
+        "trackCount": 6,
+        "titleTrack": "Rich Man",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Rich Man",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Drift",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "Bubble",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Count On Me",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Angel #48",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "To The Girls",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "7Frk59MgpJw7bDixiMCr49"
+      },
+      {
+        "title": "Dark Arts",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273ec607ab359aa2071ae805c21",
+        "releaseDate": "2025.07.15",
+        "trackCount": 2,
+        "titleTrack": "Dark Arts",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Dark Arts",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Dark Arts - Instrumental",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "1YItIfS2HNJkWIgaoj50SM"
+      },
+      {
+        "title": "Dirty Work",
+        "type": "미니",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273bf35cc79c5b22b1c19065272",
+        "releaseDate": "2025.06.27",
+        "trackCount": 4,
+        "titleTrack": "Dirty Work",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Dirty Work",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Dirty Work (feat. Flo Milli)",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "Dirty Work - English Version",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Dirty Work - Instrumental",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "1oJztb2MfwieRwHZ1t4NrN"
+      },
+      {
         "title": "Whiplash",
         "type": "미니 5집",
         "isMain": true,
@@ -1267,6 +1366,24 @@
             "isTitle": false
           }
         ]
+      },
+      {
+        "title": "REBEL HEART",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273307e7e4ca1b2c02108aec9a0",
+        "releaseDate": "2025.01.13",
+        "trackCount": 1,
+        "titleTrack": "REBEL HEART",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "REBEL HEART",
+            "isTitle": true
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "0Facfeed2mATsDICeHBIz1"
       },
       {
         "title": "Supernova Love",
@@ -2119,6 +2236,150 @@
         ],
         "src": "spotify",
         "spotifyId": "2I5aOoyW9gzkOrWOuElNdj"
+      },
+      {
+        "title": "TUNNEL VISION",
+        "type": "미니",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b27394407384c0b0302328c44376",
+        "releaseDate": "2025.11.10",
+        "trackCount": 6,
+        "titleTrack": "TUNNEL VISION",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Focus",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "TUNNEL VISION",
+            "isTitle": true
+          },
+          {
+            "no": 3,
+            "title": "DYT",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Flicker",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Nocturne",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "8-BIT HEART",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "1lKcgfG0pvj8fXbLmYgNeo"
+      },
+      {
+        "title": "Collector",
+        "type": "정규",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b2736758dbda8b4d2d817cf282bd",
+        "releaseDate": "2025.10.08",
+        "trackCount": 10,
+        "titleTrack": null,
+        "tracks": [
+          {
+            "no": 1,
+            "title": "ROCK & ROLL",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "I. I. Know Me",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "Out of season",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Trigger",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Wind Ride",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "Algorhythm - Final Ver.",
+            "isTitle": false
+          },
+          {
+            "no": 7,
+            "title": "No Biggie - Final Ver.",
+            "isTitle": false
+          },
+          {
+            "no": 8,
+            "title": "GOLD - Japanese ver.",
+            "isTitle": false
+          },
+          {
+            "no": 9,
+            "title": "Imaginary Friend - Japanese ver.",
+            "isTitle": false
+          },
+          {
+            "no": 10,
+            "title": "Girls Will Be Girls - Japanese ver.",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "5CNiFB9vcEJQuosJPZqyJ1"
+      },
+      {
+        "title": "Girls Will Be Girls",
+        "type": "미니",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b2736ec0ea1afe86b93fb1840366",
+        "releaseDate": "2025.06.09",
+        "trackCount": 5,
+        "titleTrack": "Girls Will Be Girls",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Girls Will Be Girls",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Kiss & Tell",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "Locked N Loaded",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Promise",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Walk",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "6TA0VcPiUH1a3tPRp3SjbC"
       },
       {
         "title": "GOLD",
@@ -3689,6 +3950,49 @@
     },
     "discography": [
       {
+        "title": "SWEAT -JAPANESE EP-",
+        "type": "미니",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273b6aa21750407b4a4698177dc",
+        "releaseDate": "2026.09.16",
+        "trackCount": 6,
+        "titleTrack": null,
+        "tracks": [
+          {
+            "no": 1,
+            "title": "SWEAT - Japanese Ver.",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "Was It You",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "BREAK IT",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Who is she - Japanese Ver.",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Igloo - Remix",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "BREAK IT - English Ver.",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "6ODzgKDARFob5VD1Jiu49R"
+      },
+      {
         "title": "SWEAT",
         "type": "싱글",
         "isMain": true,
@@ -3712,6 +4016,24 @@
         "spotifyId": "4yEWhrGAxvMhNtL4TuO2rq"
       },
       {
+        "title": "BREAK IT",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273d153648b7dd847282a761076",
+        "releaseDate": "2026.07.04",
+        "trackCount": 1,
+        "titleTrack": "BREAK IT",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "BREAK IT",
+            "isTitle": true
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "7aA46xGZl0Sef4BumlxQ1e"
+      },
+      {
         "title": "Who is she",
         "type": "싱글",
         "isMain": true,
@@ -3733,6 +4055,68 @@
         ],
         "src": "spotify",
         "spotifyId": "3oKZB7YNsYSvmI4YQjhtdS"
+      },
+      {
+        "title": "Lucky (Korean Ver.)",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273f8426dcd4dd711444b680e28",
+        "releaseDate": "2025.11.18",
+        "trackCount": 1,
+        "titleTrack": "Lucky (Korean Ver.)",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Lucky (Korean Ver.)",
+            "isTitle": true
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "27Kg4RNGzT2vIQ6OvXUjt5"
+      },
+      {
+        "title": "TOKYO MISSION START",
+        "type": "미니",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b2735ff175c9ce3c7428067249f6",
+        "releaseDate": "2025.11.05",
+        "trackCount": 6,
+        "titleTrack": null,
+        "region": "jp",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Lucky",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "Sticky - Japanese Ver.",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "Midas Touch - Japanese Ver.",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Shhh - Japanese Ver.",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Nobody Knows - Remix",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "R.E.M - Remix",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "3isrBYAYBxBerWHVtjD8gE"
       },
       {
         "title": "224",
@@ -3779,6 +4163,34 @@
             "isTitle": false
           }
         ]
+      },
+      {
+        "title": "KISS ROAD",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b2735dbfe6dbae519e734e97f43e",
+        "releaseDate": "2025.05.07",
+        "trackCount": 3,
+        "titleTrack": null,
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Live, Love, Laugh",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "W.House",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "Live, Love, Laugh (Inst.)",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "0drBJNDdHv4qK7XfPtBqee"
       },
       {
         "title": "Lose Yourself",

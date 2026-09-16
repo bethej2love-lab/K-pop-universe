@@ -9,17 +9,19 @@
 // "388팀을 매일 다 훑는다"는 순진한 설계는 쓸 수 없다. 그래서:
 //   · 한 회차에 BUDGET(기본 80)회만 쓰고 멈춘다
 //   · 어디까지 봤는지 spotify_sync_state.json에 남겨 다음 회차가 이어받는다
-//   · 순서는 groups.json의 pri(A/B/C) 우선 → 큰 그룹 신보가 먼저 잡힌다
+//   · 순서는 `안 본 날 수 × 등급 가중치`가 큰 순 — A등급이 자주 돌지만 하위도 굶지 않는다
+//     (등급을 1차 정렬 키로 쓰면 A 114팀이 예산을 매번 다 먹어 C·솔로가 영영 안 돌아간다. 아래 targets() 주석)
 //   · 긴 429가 뜨면 기다리지 않고 그 회차를 접는다(진행분은 이미 파일에 반영돼 있다)
-// 하루 2회차(KST 18:11/00:11) × 80 = 160팀이라 전체 한 바퀴에 2~3일. 신보는 하루 2장 수준이고
-// A등급부터 도니 실질 지연은 거의 없다.
+//   · 네트워크 오류는 커서를 찍지 않고 다음 회차로 넘긴다(아래 NET_ERR — 안 그러면 한 바퀴가 통째로 날아간다)
+// 하루 2회차(KST 18:11/00:11) × 80 = 160콜. 대상 535팀이라 전체 한 바퀴에 3~4일.
+// 지난해 구멍은 대상마다 한 번씩 훑는 과거연도 백필이 따로 메운다(아래 BACKFILL_YEARS).
 //
 // ⚠️ 이 스크립트는 **원본(groups.json/artists.json)만** 고친다. 파생물은 건드리지 않는다.
 // ⚠️ 이미 있는 앨범은 절대 덮어쓰지 않는다 — 사람이 고쳐둔 값(타이틀곡·집 번호·커버)을 자동 수집이
 //    되돌리면 안 된다. 이 프로젝트의 tags_manual 원칙과 같은 취지다.
 //
 // 실행: node tools/spotify_disco_sync.mjs [--dry] [--budget N] [--only 에스파,아이브] [--years 2024-2026]
-// env: SPOTIFY_CLIENT_ID/SECRET (또는 .spotify.key) · BUDGET
+// env: SPOTIFY_CLIENT_ID/SECRET (또는 .spotify.key) · BUDGET · BACKFILL_YEARS(기본 '2025', 빈 값이면 끔)
 
 import fs from 'node:fs';
 import path from 'node:path';
@@ -57,24 +59,46 @@ const state = fs.existsSync(P(STATE_F)) ? rd(STATE_F) : { checked: {}, runs: 0 }
 state.checked = state.checked || {};
 
 // ── 대상 목록과 순서 ─────────────────────────────────────────────────────────
-// pri(A/B/C)가 앞선 순 → 같은 등급 안에서는 **가장 오래 안 본 순**. 이러면 A등급은 매 회차 가깝게
-// 돌고, 하위 등급도 반드시 언젠가 돈다(굶는 대상이 안 생긴다).
-const PRI = { A: 0, B: 1, C: 2 };
+// ⚠️⚠️ 두 번 틀렸던 자리다(2026-09-16 실측으로 발견).
+//
+// ① groups.json의 `pri`는 **'A'/'B'/'C' 문자가 아니라 숫자 가중치**다(A=4 · B=1.5 · C=0.6 —
+//    라벨 LOD가 쓰는 값, tools/bake_group_priority.mjs가 굽는다). 그런데 여기서 `{A:0,B:1,C:2}`로
+//    읽고 있어서 전부 `?? 3`으로 떨어졌다 — 즉 **우선순위가 한 번도 작동한 적이 없었다**
+//    (실측: 대상 535팀 전원 pri 3).
+// ② 그렇다고 등급을 **1차 정렬 키**로 쓰면 하위 등급이 굶는다. A등급만 114팀이라 하루 예산
+//    160콜(80×2회) 중 114를 매번 A가 먼저 다 먹고, C등급 14팀과 솔로 328명은 **영영 차례가 안 온다**.
+//    (원래 주석의 "하위 등급도 반드시 언젠가 돈다"는 그 구조에선 성립하지 않는다.)
+//
+// 그래서 등급은 **문(gate)이 아니라 가중치**로 쓴다: `안 본 날 수 × 등급 가중치`가 큰 순.
+// A는 C보다 6.7배 자주 도는데, 오래 방치된 하위 대상은 날짜가 쌓이면서 결국 A를 추월한다 → 굶지 않는다.
+// 한 번도 안 본 대상은 가장 큰 방치일수를 줘서 최우선으로 끌어온다.
+const PRI_LETTER = { A: 4, B: 1.5, C: 0.6 };   // 옛 표기(문자)도 혹시 섞여 있으면 같은 뜻으로 읽는다
+const SOLO_W = 1;                              // 솔로는 그룹 B등급보다 조금 낮게(= 중립)
+const priWeight = v => (typeof v === 'number' && v > 0 ? v : (PRI_LETTER[v] ?? SOLO_W));
+const NEVER_DAYS = 3650;                       // 한 번도 안 본 대상
+function staleDays(ko) {
+  const d = state.checked[ko];
+  if (!d) return NEVER_DAYS;
+  const t = Date.parse(d + 'T00:00:00Z');
+  if (!Number.isFinite(t)) return NEVER_DAYS;
+  return Math.max(0.25, (Date.now() - t) / 86400000);  // 같은 날 두 번째 회차도 0이 되지 않게 하한
+}
 function targets() {
   const out = [];
   for (const [ko, g] of Object.entries(groups)) {
     if (g.disbanded) continue;                       // 해체 그룹은 신보가 없다
-    out.push({ ko, kind: 'group', names: [g.en, ko, ...(g.altNames || [])].filter(Boolean), pri: PRI[g.pri] ?? 3 });
+    out.push({ ko, kind: 'group', names: [g.en, ko, ...(g.altNames || [])].filter(Boolean), w: priWeight(g.pri) });
   }
   for (const a of artists) {
     const ko = a.name?.ko, gko = a.group?.ko;
     if (!ko || !gko || groups[gko]) continue;        // 실존 그룹 소속은 그룹으로 커버
     if (a.active === false) continue;
-    out.push({ ko, kind: 'solo', names: [a.name?.en, ko].filter(Boolean), pri: 3 });
+    out.push({ ko, kind: 'solo', names: [a.name?.en, ko].filter(Boolean), w: SOLO_W });
   }
   const seen = new Set();
   return out.filter(t => (seen.has(t.ko) ? false : seen.add(t.ko)))
-    .sort((x, y) => x.pri - y.pri || (state.checked[x.ko] || '').localeCompare(state.checked[y.ko] || ''));
+    .map(t => ({ ...t, due: staleDays(t.ko) * t.w }))
+    .sort((x, y) => y.due - x.due);
 }
 
 // 그 대상이 이미 갖고 있는 앨범 (정규화 제목 집합 + 발매 연도 목록)
@@ -141,7 +165,25 @@ function parseYears(spec) {
 // 1월 초엔 지난해 말 발매가 아직 "신보"다 — 그때만 연도를 하나 더 본다(평소엔 콜을 안 쓴다).
 const YEARS = argOf('--years') ? parseYears(argOf('--years')) : (month === 1 ? [year, year - 1] : [year]);
 
-let calls = 0, checked = 0, added = 0, mapped = 0;
+// ── 과거 연도 1회 백필 (2026-09-16) ───────────────────────────────────────────
+// 일일 수집이 **올해만** 보기 때문에 지난해 구멍은 시간이 지나도 저절로 안 메워진다.
+// 실측(2026-09-16): A등급 15팀 중 11팀만 훑었는데 2025년 누락이 12장이었다 —
+// 에스파 미니 6집 `Rich Man`, 아이브 `REBEL HEART`, 있지 정규 `Collector` 같은 **주력 발매**가 빠져 있었다.
+// 지금까진 사람이 `--years 2025`로 일회성 백필을 돌아야만 했는데, 그런 "기억해야 도는 절차"는 결국 안 돈다.
+// → 대상마다 과거 연도를 **딱 한 번** 훑고 그 사실을 state.swept에 남긴다. 첫 바퀴에만 대상당 +1콜이
+//   들고(535팀 = 535콜, 하루 160콜이면 3~4일) 그 뒤엔 다시 올해만 본다.
+//   다 메워졌으면 레포 변수 BACKFILL_YEARS를 빈 값으로 두면 꺼진다. 더 과거로 넓히려면 '2024,2025'처럼.
+// ⚠️ `--years`로 사람이 직접 돌릴 땐 이 경로를 끈다 — 그 명령이 이미 연도를 명시했으므로 중복이다.
+const BACKFILL_YEARS = (process.env.BACKFILL_YEARS ?? '2025')
+  .split(',').map(s => Number(s.trim())).filter(y => y > 1990 && y < year);
+state.swept = state.swept || {};
+const pendingBackfill = ko => (argOf('--years') ? [] : BACKFILL_YEARS.filter(y => !(state.swept[ko] || []).includes(y)));
+
+// 네트워크성 오류 판정 — 이건 "그 대상의 문제"가 아니라 "지금 망이 안 되는 것"이라 커서를 찍지 않는다.
+const NET_ERR = /fetch failed|ECONN|ETIMEDOUT|ENOTFOUND|EAI_AGAIN|socket hang up|UND_ERR|network/i;
+const NET_FAIL_ABORT = 5;   // 연속 이만큼이면 망이 죽은 것으로 보고 회차를 접는다
+let netFails = 0;
+let calls = 0, checked = 0, added = 0, mapped = 0, backfilled = 0;
 const addedList = [], reviewList = [], problems = [];
 let stoppedBy = null;
 
@@ -165,10 +207,14 @@ for (const t of list) {
 
     // 2) 올해(1월이면 작년까지) 앨범을 검색해 우리에 없는 것만 고른다
     const newOnes = [];
-    for (const y of YEARS) {
+    const sweptNow = [];
+    for (const y of [...YEARS, ...pendingBackfill(t.ko)]) {
       if (calls >= BUDGET) { stoppedBy = '예산 소진'; break; }
       const items = await searchAlbums(m.spotifyName || t.names[0], y, m.id);
       calls++;
+      // ⚠️ **실제로 호출이 끝난 연도만** 훑었다고 기록한다. 예산이 끊겨 못 본 연도를 찍으면 그 대상은
+      //    영영 백필이 안 된다(다음 회차가 이어받아야 하는데 "이미 봤다"로 넘어가 버린다).
+      if (BACKFILL_YEARS.includes(y)) sweptNow.push(y);
       for (const al of items) {
         const key = dedupKey(al.name);
         if (!key || own.titles.has(key)) continue;            // 이미 있음
@@ -234,11 +280,26 @@ for (const t of list) {
         if (needsTitleTrack) reviewList.push(`타이틀곡 미상: ${t.ko} — ${entry.title} (${entry.trackCount}트랙)`);
       } else problems.push(`${t.ko} — 넣을 대상을 못 찾음`);
     }
+    if (sweptNow.length) {
+      state.swept[t.ko] = [...new Set([...(state.swept[t.ko] || []), ...sweptNow])].sort();
+      backfilled += sweptNow.length;
+    }
+    netFails = 0;
     state.checked[t.ko] = new Date().toISOString().slice(0, 10);
     checked++;
   } catch (e) {
     if (e instanceof RateLimited) { stoppedBy = `레이트리밋 (${e.message})`; break; }
     problems.push(`${t.ko} — ${e.message}`);
+    // ⚠️ **네트워크 실패를 "봤다"로 기록하면 안 된다.** 실제로 사고를 냈다(2026-09-16): 프록시 때문에
+    //    535팀이 전부 `fetch failed`로 떨어졌는데 커서는 전원 "오늘 확인함"으로 찍혔다 — 아무것도 못
+    //    봤는데 한 바퀴를 건너뛴 셈이고, 리포트만 보면 "문제 535건"이라 원인은 보이지만 커서 오염은
+    //    조용하다. 네트워크성 오류는 그 대상을 **다음 회차로 넘기고**, 연달아 나면 회차를 접는다
+    //    (망이 죽은 상태에서 남은 예산을 다 태울 이유가 없다).
+    if (NET_ERR.test(e.message || '')) {
+      if (++netFails >= NET_FAIL_ABORT) { stoppedBy = `네트워크 오류 ${netFails}연속 — 회차 중단(커서 보존)`; break; }
+      continue;
+    }
+    netFails = 0;
     state.checked[t.ko] = new Date().toISOString().slice(0, 10);
   }
 }
@@ -265,6 +326,11 @@ say('');
 // 한 대상을 처리하다 몇 콜 넘기는 건 정상이다(중간에 끊으면 그 대상만 어중간해진다).
 const done = checked >= list.length;
 say(`- 훑은 대상 **${checked}** / ${list.length} · 콜 **${calls}**/${BUDGET} · 새 매핑 ${mapped}건`);
+// 과거 연도 백필이 얼마나 남았는지 매 회차 보여준다 — 안 보면 "끝났는지" 알 수가 없다(끄는 시점 판단용).
+if (BACKFILL_YEARS.length) {
+  const remain = list.filter(t => pendingBackfill(t.ko).length).length;
+  say(`- 과거연도 백필(${BACKFILL_YEARS.join(',')}) 이번 회차 ${backfilled}건 · 남은 대상 **${remain}**/${list.length}${remain ? '' : ' — 완료(레포 변수 BACKFILL_YEARS를 비우면 끕니다)'}`);
+}
 say(`- 추가한 앨범 **${added}장**${done ? ' · 대상 전부 완주' : ` · 중단: ${stoppedBy || '알 수 없음'} (다음 회차가 이어받음)`}`);
 if (addedList.length) { say(''); addedList.slice(0, 40).forEach(s => say(`  - ${s}`)); if (addedList.length > 40) say(`  - … 외 ${addedList.length - 40}장`); }
 if (reviewList.length) { say(''); say(`<details><summary>사람이 볼 것 ${reviewList.length}건</summary>`); say(''); reviewList.slice(0, 40).forEach(s => say(`  - ${s}`)); say(''); say('</details>'); }

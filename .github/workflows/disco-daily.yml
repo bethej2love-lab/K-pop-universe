@@ -53,6 +53,9 @@ jobs:
           SPOTIFY_CLIENT_ID: ${{ secrets.SPOTIFY_CLIENT_ID }}
           SPOTIFY_CLIENT_SECRET: ${{ secrets.SPOTIFY_CLIENT_SECRET }}
           BUDGET: ${{ vars.SPOTIFY_BUDGET || '80' }}
+          # 과거 연도 1회 백필 — 대상마다 딱 한 번 더 훑어서 지난해 구멍을 메운다(기본 2025).
+          # 다 메워지면(리포트의 "남은 대상 0") 레포 변수 SPOTIFY_BACKFILL_YEARS를 빈 값으로 두면 꺼진다.
+          BACKFILL_YEARS: ${{ vars.SPOTIFY_BACKFILL_YEARS || '2025' }}
         run: node tools/spotify_disco_sync.mjs
 
       # 수집 결과를 커밋. 여기서 push된 groups.json/artists.json이 rebuild-disco-artifacts.yml을
