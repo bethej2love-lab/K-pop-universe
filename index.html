@@ -20156,8 +20156,14 @@ function _makeChVidController(contId){
       // 채워져 있어서(391,634 중 231,199) NULL을 앞에 두면 "조회수 모르는 영상"이 인기 상위를 차지한다.
       // 여기서도 id로 tie-break를 해야 페이지 경계가 안 어긋난다(아래 published_at 주석과 같은 이유 —
       // 조회수는 같은 값이 흔하다).
+      // '미태깅 우선'의 2차 기준을 **최신순 → 조회수순**으로 바꿨다(2026-09-16).
+      // 이유: 자체 채널은 영상에 멤버를 아예 안 적는 경우가 많아 미태깅이 그룹당 1,000건대다
+      // (실측: 코르티스 1,095 · 크래비티 2,690 · 라이즈 1,950 · 투어스 2,163). 최신순으로 훑으면
+      // 끝이 없고, 사람 손은 유한하다. 많이 본 영상부터 채우면 **같은 노력으로 체감 효과가 훨씬 크다**.
+      // (텍스트로 자동 태깅이 왜 불가능한지는 CHANGELOG 2026-09-16 "제목으로 태깅 불가" 항목 참고 —
+      //  제목·설명·유튜브 키워드 전부 정보가 없어서, 이 구간은 구조적으로 수동 판단이 남는 영역이다.)
       const ordered=q=>state.sortMode==='untagged'
-        ?q.order('with_groups',{ascending:false}).order('members',{ascending:true}).order('published_at',{ascending:false}).order('id',{ascending:false})
+        ?q.order('with_groups',{ascending:false}).order('members',{ascending:true}).order('view_count',{ascending:false,nullsFirst:false}).order('id',{ascending:false})
         :state.sortMode==='popular'
         ?q.order('view_count',{ascending:false,nullsFirst:false}).order('id',{ascending:false})
         :q.order('published_at',{ascending:state.sortMode==='oldest'}).order('id',{ascending:state.sortMode==='oldest'});
