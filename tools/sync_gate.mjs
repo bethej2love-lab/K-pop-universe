@@ -78,6 +78,28 @@ async function writeMarker(key, ms) {
   return true;
 }
 
+// ── daily-routine이 지금 돌고 있는가 (2026-09-16) ────────────────────────────
+// 예전엔 두 워크플로가 **같은 concurrency 그룹**을 써서 겹침을 막았다. 그런데 그 방식은 루틴이
+// 길어질 때(실측 241·262분) 이 워크플로의 cron 발화를 **런 자체가 안 만들어진 채** 삼켜버렸다
+// (48시간에 192발 의도 → 실제 런 11개). 그래서 그룹을 분리하고, 겹침은 여기서 막는다.
+// 둘은 같은 크롬 프로필(체크포인트 kpu_yt_last_*)을 공유하므로 동시에 돌면 서로의 진행을 덮어쓴다.
+// ⚠️ last_routine 표식으로는 이 판정을 할 수 없다 — 그 값은 루틴이 **끝날 때** 써지므로, 4시간짜리
+//    루틴이 도는 내내 "오래전에 끝남"으로 보인다. 그래서 실행 상태를 직접 조회한다.
+// 토큰이 없거나 조회가 실패하면 **막지 않는다**(fail-open) — 이 확인 때문에 동기화가 멈추면 안 된다.
+async function routineRunning() {
+  const token = process.env.GH_TOKEN, repo = process.env.GH_REPO;
+  if (!token || !repo) return false;
+  try {
+    const r = await fetch(`https://api.github.com/repos/${repo}/actions/workflows/daily-routine.yml/runs?per_page=5`, {
+      headers: { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github+json' },
+      signal: AbortSignal.timeout(10000),
+    });
+    if (!r.ok) return false;
+    const j = await r.json();
+    return (j.workflow_runs || []).some(x => x.status === 'in_progress' || x.status === 'queued' || x.status === 'waiting');
+  } catch (e) { return false; }
+}
+
 function emit(run, reason) {
   console.log(`[sync-gate] ${run ? '▶ 실행' : '⏭ 건너뜀'} — ${reason}`);
   if (process.env.GITHUB_OUTPUT) fs.appendFileSync(process.env.GITHUB_OUTPUT, `run=${run}\nreason=${reason}\n`);
@@ -89,6 +111,9 @@ const kstHour = new Date(now + 9 * 3600 * 1000).getUTCHours();
 const gap = minGapMin(kstHour);
 
 if (FORCE) { emit(true, `FORCE=1 (수동 실행)`); await writeMarker('last_sync_attempt', now); process.exit(0); }
+
+// 루틴이 도는 중이면 비켜준다 — 표식은 남기지 않는다(다음 발화가 곧바로 다시 시도할 수 있게).
+if (await routineRunning()) { emit(false, '매일 루틴이 실행 중 — 체크포인트 충돌을 피해 건너뜀'); process.exit(0); }
 
 let last = 0, src = '';
 try {

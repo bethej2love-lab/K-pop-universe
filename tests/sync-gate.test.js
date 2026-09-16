@@ -83,5 +83,29 @@ const guarded = (wf.match(/if:\s*steps\.gate\.outputs\.run == 'true'/g) || []).l
 need(guarded >= 3, `게이트 판정을 따르는 스텝 ${guarded}개(크롬 설치·캐시 복원·동기화 실행)`);
 need(/run=\$\{run\}/.test(src) || /run=\$\{/.test(src), '게이트가 GITHUB_OUTPUT에 run= 을 씀');
 
+// ── 5) 매시간이 실제로 매시간이려면 (2026-09-16 실측으로 추가) ───────────────
+// 증상: "1시간마다로 해뒀는데 새 영상이 바로 안 올라온다"(사용자 제보). 실측하니 적재 지연 중앙값이
+// **4.0시간**이고 1시간 안에 적재되는 건 13%뿐이었다(최근 7일 업로드 997건).
+// 원인: sync-hourly가 daily-routine과 **같은 concurrency 그룹**을 썼는데, 루틴이 한 번에 241·262분씩
+// 그룹을 쥐는 바람에 이 워크플로의 cron 발화가 **런 자체가 안 만들어진 채** 사라졌다
+// (시간당 4발 = 48시간에 192발을 의도했는데 실제 런은 11개). 아래가 그 재발을 막는다.
+const droutine = fs.readFileSync(path.join(__dirname, '..', '.github', 'workflows', 'daily-routine.yml'), 'utf8');
+const grpOf = y => (/concurrency:\s*\r?\n\s*group:\s*(\S+)/.exec(y) || [])[1];
+const gname = grpOf(wf), dname = grpOf(droutine);
+need(!!gname && !!dname && gname !== dname,
+  `동기화와 매일 루틴이 서로 다른 concurrency 그룹 (sync=${gname} · routine=${dname})`);
+// 루틴이 자기 주기를 넘겨 돌면 그 자체로 다음 회차를 밀어낸다 — 잡 타임아웃이 주기보다 짧아야 한다.
+const cronH = (/cron:\s*'0 \*\/(\d+) \* \* \*'/.exec(droutine) || [])[1];
+const dto = Number((/timeout-minutes:\s*(\d+)/.exec(droutine) || [])[1]);
+need(!!cronH && !!dto && dto < Number(cronH) * 60,
+  `매일 루틴 잡 타임아웃(${dto}분)이 자기 주기(${cronH}시간)보다 짧음`);
+const rtm = Number((/ROUTINE_TIMEOUT_MIN:\s*'(\d+)'/.exec(droutine) || [])[1]);
+need(!!rtm && rtm < dto, `루틴이 잡 타임아웃보다 먼저 스스로 접음(${rtm}분 < ${dto}분)`);
+// 그룹을 분리했으니 체크포인트 충돌은 게이트가 막아야 한다(둘은 같은 크롬 프로필을 공유한다).
+need(/routineRunning/.test(src), '게이트가 매일 루틴 실행 여부를 확인함(routineRunning)');
+need(/actions:\s*read/.test(wf), '워크플로가 게이트에 actions:read 권한을 줌(실행 상태 조회)');
+need(/GH_TOKEN:/.test(wf) && /GH_REPO:/.test(wf), '게이트 스텝에 GH_TOKEN·GH_REPO가 전달됨');
+
+
 console.log(pass ? '\n✅ 동기화 게이트 테스트 통과' : '\n❌ 실패 항목 있음');
 process.exit(pass ? 0 : 1);
