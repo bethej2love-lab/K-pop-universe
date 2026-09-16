@@ -45400,15 +45400,16 @@
  },
  {
   "name": {
-   "ko": "예담",
-   "en": "Yedam"
+   "ko": "디모렉스",
+   "en": "DIMO REX"
   },
+  "subName": "방예담",
   "group": {
-   "ko": "트레저",
-   "en": "TREASURE"
+   "ko": "솔로",
+   "en": "Solo"
   },
-  "co": "YG엔터테인먼트",
-  "active": false,
+  "co": "GF엔터테인먼트",
+  "active": true,
   "color": [
    212,
    178,
@@ -45421,11 +45422,32 @@
   },
   "links": {
    "namu": "https://namu.wiki/w/방예담",
-   "instagram": "https://www.instagram.com/bangyedam_0257"
+   "instagram": "https://www.instagram.com/bangyedam_0257",
+   "youtube": "https://www.youtube.com/@BANGYEDAMOFFICIAL",
+   "weverse": "https://www.weverse.io/bangyedam"
   },
-  "left": "2022.11.08",
+  "matchAliases": [
+   "예담",
+   "방예담",
+   "Yedam",
+   "Bang Yedam",
+   "디모 렉스",
+   "DIMOREX"
+  ],
   "id": "a0294",
-  "displayName": "방예담"
+  "groups": [
+   {
+    "ko": "솔로",
+    "en": "Solo"
+   },
+   {
+    "ko": "트레저",
+    "en": "TREASURE",
+    "active": false,
+    "left": "2022.11.08",
+    "name": "예담"
+   }
+  ]
  },
  {
   "name": {

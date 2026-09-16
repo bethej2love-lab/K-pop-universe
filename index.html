@@ -1805,9 +1805,50 @@ function _gLabelKo(ko){
   const a=_gLabelSoloIdx.get(ko);
   return a?_dispName(a):ko;
 }
+// 이 멤버가 그 그룹을 **이미 떠났는가**(2026-09-16, 사용자 요청 — "탈퇴 멤버 옆에 옛 소속이 그대로
+// 밝게 떠 있으면 현 소속처럼 읽힌다"). 표기를 지우지는 않고 흐리게만 한다 — "트레저 출신"은 여전히
+// 유용한 정보라서.
+// ⚠️ 최상위 a.left만 보면 안 된다. 실측하면 122명이 오판된다 — 마크(엔시티 127 활동 중)·강미나처럼
+//    **옛 그룹을 떠나 지금은 다른 그룹에 있는** 사람도 최상위 left를 갖고 있다. 그래서 판정은 항상
+//    "그 그룹 항목"(groups[]에서 찾은 것) 기준이고, groups[]가 아예 없는 단일 소속 멤버만 최상위
+//    left+active:false로 본다(실측 133명 — 방예담 등).
+// ⚠️ 이 데이터의 규약을 실측으로 확인한 결과(2026-09-16): **최상위 `left`/`active:false`가 주 소속(group)에
+//    대한 값**이고, `groups[]` 항목은 대부분 비어 있다(마크는 groups=[엔시티 127, 엔시티 드림] 둘 다 빈 채
+//    최상위에 left:'2026.04.08'). 아티스트 레코드는 주 소속별로 하나씩이라(건우: 알파드라이브원 active:false /
+//    솔로 active:true) 최상위 값이 곧 "그 소속에서의 상태"다.
+//    그래서 판정은 **네 갈래를 OR**한다 — 어느 하나만 보면 각각 다른 집단이 빠진다:
+//      ① 그룹 해체 — 해체까지 남아 있던 멤버는 개인 탈퇴 기록이 없다(구구단 강미나)
+//      ② groups[] 항목의 left/active:false — 그룹을 떠나 솔로로 활동 중인 사람(라이즈 승한, 트레저 예담).
+//         최상위 active는 true라 ③으로는 안 잡힌다.
+//      ③ 최상위 active:false — 옛 판정 기준. 겸임 그룹 페이지까지 덮는다(마크의 엔시티 드림).
+//      ④ 주 소속 + 최상위 left
+function _isFormerOf(a,gko){
+  if(!a||!gko)return false;
+  if(GROUPS[gko]&&GROUPS[gko].disbanded)return true;
+  const g=(a.groups||[]).find(x=>x&&x.ko===gko);
+  if(g&&(g.left||g.active===false))return true;
+  if(a.active===false)return true;
+  return gko===(a.group&&a.group.ko)&&!!a.left;
+}
 // 멤버 옆에 붙일 그룹 표기용 group 객체 — 솔로 취급이면 실제 소속 대신 "솔로".
 function _dispGroup(a){return a?(_isSoloDisp(a)?_SOLO_GROUP:a.group):null;}
 function _dispGroupName(a){return _gLabel(_dispGroup(a));}
+// 검색 결과 우측의 그룹 태그 — 표기 문자열과 "이미 떠난 소속인지"를 같이 돌려준다.
+// ⚠️ 힛 생성기 3곳(이름 매칭 · 공백 토큰 정확일치 · 그룹 확장)이 각자 이 문자열을 만들고 있어서 규칙이
+//    갈라져 있었다: soloDisplay('솔로'로 감추기)와 dispKo/dispEn 오버라이드(장현승→비스트)가 **첫 번째
+//    생성기에만** 들어 있었다. 이 프로젝트의 반복 실수라 하나로 모은다(2026-09-16).
+// gko: 그룹 확장 경로처럼 "이 사람의 주 소속이 아닌 특정 그룹"으로 태그를 달아야 할 때 그 그룹. 없으면 주 소속.
+function _searchGroupTag(a,gko,hasLatin){
+  const key=gko||(a&&a.group&&a.group.ko)||'';
+  if(!a||!GROUPS[key])return{sub:'',former:false}; // 아이유의 '솔로'처럼 실존 안 하는 그룹은 태그 없음
+  const isMain=(a.group&&a.group.ko)===key;
+  if(isMain&&_isSoloDisp(a))return{sub:'',former:false}; // 표기상 솔로면 소속을 아예 안 띄운다
+  // 표기 오버라이드(dispKo/dispEn)는 그 그룹 항목에 얹혀 있다 — groups[] 쪽이 우선, 없으면 group.
+  const ent=(a.groups||[]).find(x=>x&&x.ko===key)||(isMain?a.group:null)||{};
+  const en=ent.dispEn||ent.en||GROUPS[key].en||key;
+  const ko=ent.dispKo||key;
+  return{sub:(hasLatin&&en)?en:(currentLang==='ko'?ko:en),former:_isFormerOf(a,key)};
+}
 function _dispKo(a){return(a&&a.displayName)||(a&&a.name&&a.name.ko)||'';}
 // 화면에 보일 멤버 이름 — **표시는 전부 이걸 거쳐야 한다.**
 // displayName(트레저 최현석·윤재혁처럼 성을 포함한 활동명)은 표기 전용 필드이고 name.ko는 DB members
@@ -4409,7 +4450,7 @@ function _makeSearchItem(h,res,mobSearch,obSearch){
     div.innerHTML=`<span class="sr-vt">${h.thumb?`<img src="${esc(h.thumb)}" loading="lazy" alt="" referrerpolicy="no-referrer">`:''}<span class="sr-vp">▶</span></span>`
       +`<span class="sr-vb"><span class="sr-vtitle">${esc(h.name)}</span>${meta?`<span class="sr-vmeta">${esc(meta)}</span>`:''}</span>`;
   }else{
-  div.innerHTML=`<span class="sr-nl"><span class="sr-item-name${h.type==='group'?' sr-group':''}">${_ico}${h.name}</span>${h.alias?`<span class="sr-alias">${h.alias}</span>`:''}</span>${h.sub?`<span class="sr-tag${h.type==='group'?' sr-group':''}">${h.sub}</span>`:''}`;
+  div.innerHTML=`<span class="sr-nl"><span class="sr-item-name${h.type==='group'?' sr-group':''}">${_ico}${h.name}</span>${h.alias?`<span class="sr-alias">${h.alias}</span>`:''}</span>${h.sub?`<span class="sr-tag${h.type==='group'?' sr-group':''}${h.subFormer?' sr-tag-former':''}">${h.sub}</span>`:''}`;
   }
   div.addEventListener('click',e=>{
     e.stopPropagation();
@@ -4735,11 +4776,11 @@ function doSearch(q){
       const aliasScores=aliases.map(al=>_mScore(al,q,ql));
       const s=Math.min(_mScore(koN,q,ql),_mScore(enN,q,ql),csM,...(dnN?[_mScore(dnN,q,ql)]:[]),...(aliasScores.length?aliasScores:[99]));
       const dispName=(_hasLatin&&enN)?enN:(currentLang==='ko'?(dnN||koN):(enN||koN));
-      // 아이유의 "솔로"처럼 실존하지 않는 가짜 그룹은 검색 결과 우측 태그에도 표시하지 않음
-      const dispSub=!GROUPS[a.group.ko]?'':((_hasLatin&&a.group.en)?a.group.en:(currentLang==='ko'?a.group.ko:(a.group.en||a.group.ko)));
+      // 아이유의 "솔로"처럼 실존하지 않는 가짜 그룹은 태그 없음 · 이미 떠난 소속이면 흐리게(_searchGroupTag)
+      const {sub:dispSub,former}=_searchGroupTag(a,null,_hasLatin);
       // displayName 멤버는 카드와 일관되게 원래 활동명(디오)을 항상 흐리게 병기, 아니면 기존 matchedAlias.
       const aliasShown=(dnN&&dnN!==koN&&currentLang==='ko')?koN:matchedAlias;
-      hits.push({type:'member',name:dispName,sub:dispSub,alias:aliasShown,pos:a._worldPos,data:a,score:s});
+      hits.push({type:'member',name:dispName,sub:dispSub,subFormer:former,alias:aliasShown,pos:a._worldPos,data:a,score:s});
     }
   });
   // 프로젝트 유닛(태티서·V8 등)은 자체 행성/카드가 없으므로, 유닛명으로 검색하면 실제 소속 멤버들을
@@ -4849,9 +4890,8 @@ function doSearch(q){
           seen.add(a);
           const enN=a.name.en||'',dnN=a.displayName||'';
           const dispName=(_hasLatin&&enN)?enN:(currentLang==='ko'?(dnN||a.name.ko):(enN||a.name.ko));
-          const gko=(a.group&&a.group.ko)||'';
-          const dispSub=!GROUPS[gko]?'':(currentLang==='ko'?gko:((GROUPS[gko]||{}).en||gko));
-          hits.push({type:'member',name:dispName,sub:dispSub,pos:a._worldPos,data:a,score:0});
+          const {sub:dispSub,former}=_searchGroupTag(a,null,_hasLatin);
+          hits.push({type:'member',name:dispName,sub:dispSub,subFormer:former,pos:a._worldPos,data:a,score:0});
         });
       });
     }
@@ -4876,11 +4916,12 @@ function doSearch(q){
           return koN.includes(t)||enN.toLowerCase().includes(tl)||(dnN&&dnN.includes(t))||_csScore(koN,t)<99;
         }))return;
         const dispName=(_hasLatin&&enN)?enN:(currentLang==='ko'?(dnN||koN):(enN||koN));
-        const dispSub=(currentLang==='ko'?ko:(GROUPS[ko].en||ko));
+        // 확장 경로는 주 소속이 아니라 **검색어로 걸린 그 그룹**(ko)으로 태그를 단다 — 탈퇴 판정도 그 그룹 기준.
+        const {sub:dispSub,former:_subFormer}=_searchGroupTag(a,ko,_hasLatin);
         // 그룹 본체 바로 뒤에 오도록 **그룹과 같은 등급**을 주고, 순서는 타입 순위로 가른다(2026-09-08).
         // _tr=2.5 → 이름으로 직접 걸린 멤버(2) 뒤, 곡(4)·오타 폴백보다는 앞. 예전엔 +0.9로 등급을
         // 올려버려서 "82" 같은 케이스에서 그룹 멤버가 곡(등급 1)보다 아래로 밀렸다.
-        hits.push({type:'member',name:dispName,sub:dispSub,pos:a._worldPos,data:a,score,_tr:2.5,_expanded:true,_gko:ko});
+        hits.push({type:'member',name:dispName,sub:dispSub,subFormer:_subFormer,pos:a._worldPos,data:a,score,_tr:2.5,_expanded:true,_gko:ko});
         already.add(a);
       });
     });
@@ -12785,6 +12826,39 @@ function _logFavHistory(dk,action){
   localStorage.setItem(FAV_HISTORY_KEY,JSON.stringify(favHistory));
   _sbPushColumn('fav_history',favHistory);
 }
+// ── 멤버 개명에 따른 로컬 즐겨찾기 키 이전 (2026-09-16) ─────────────────────────
+// 멤버는 `group.ko:name.ko`로 식별된다(_mFavKey). 그래서 아티스트를 개명하면 그 사람의 즐겨찾기·순서·
+// 기념일·기록이 **조용히 사라진다** — 화면엔 그냥 "즐겨찾기에 없음"으로 보여서 눈치채기 어렵다.
+// ⚠️ 개명(name.ko 또는 group.ko 변경)할 때마다 여기 한 줄 추가할 것. 브라우저마다 한 번만 돌고,
+//    서버 동기화분은 다음 저장 때 이 값으로 따라간다.
+const _MEMBER_KEY_RENAMES={
+  '트레저:예담':'솔로:디모렉스', // 방예담 → DIMO REX 개명(2026-09-16). name.ko가 DB 태그 키라 같이 옮겼다.
+};
+const _FAV_RENAME_DONE_KEY='kpu_fav_key_renames_v1';
+(function _migrateFavKeys(){
+  try{
+    const done=JSON.parse(localStorage.getItem(_FAV_RENAME_DONE_KEY)||'[]');
+    const todo=Object.keys(_MEMBER_KEY_RENAMES).filter(k=>!done.includes(k));
+    if(!todo.length)return;
+    let touched=false;
+    todo.forEach(from=>{
+      const to=_MEMBER_KEY_RENAMES[from];
+      if(favMembers.has(from)){favMembers.delete(from);favMembers.add(to);touched=true;}
+      const oi=favOrder.indexOf('m:'+from);
+      if(oi>=0){favOrder[oi]='m:'+to;touched=true;}
+      if(favDates['m:'+from]!==undefined){favDates['m:'+to]=favDates['m:'+from];delete favDates['m:'+from];touched=true;}
+      favHistory.forEach(h=>{if(h&&h.dk==='m:'+from){h.dk='m:'+to;touched=true;}});
+    });
+    if(touched){
+      localStorage.setItem(FAV_KEY_M,JSON.stringify([...favMembers]));
+      localStorage.setItem(FAV_ORDER_KEY,JSON.stringify(favOrder));
+      localStorage.setItem(FAV_DATE_KEY,JSON.stringify(favDates));
+      localStorage.setItem(FAV_HISTORY_KEY,JSON.stringify(favHistory));
+      console.info('[개명] 즐겨찾기 키 이전 완료:',todo.join(', '));
+    }
+    localStorage.setItem(_FAV_RENAME_DONE_KEY,JSON.stringify([...done,...todo]));
+  }catch(e){/* 로컬 저장이 막힌 브라우저 — 즐겨찾기 자체가 안 쓰이는 상태라 무해 */}
+})();
 function _todayISO(){
   const d=new Date();
   return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');

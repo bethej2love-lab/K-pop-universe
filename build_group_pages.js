@@ -216,9 +216,24 @@ groupKos.forEach(ko => {
   function memberListHtml(lang) {
     if (!members.length) return '';
     const items = members.map(a => {
-      const name = lang === 'en' ? (a.name.en || a.name.ko) : a.name.ko;
+      // ⚠️ 이 그룹 안에서의 정보는 **그 그룹 항목(groups[])** 에서 읽는다. 최상위 a.active/a.name만 보면
+      //    그룹을 떠나 솔로로 활동 중인 사람이 전부 어긋난다(2026-09-16 발견):
+      //      · 전멤버 태그: a.active===false로 판정했더니 승한(라이즈 전멤버, 솔로로 active:true)에 태그가
+      //        안 붙었다. 우즈(active:false)만 우연히 맞던 것.
+      //      · 표기 이름: groups[].name은 "그 그룹에서 쓴 활동명"이다(제롬/성민, 예담/디모 렉스).
+      //        그걸 안 보면 트레저 페이지에 개명 후 이름이 뜬다.
+      // 판정은 index.html의 _isFormerOf와 **같은 네 갈래 OR**이다(거기 주석에 근거 정리) — 어느 하나만
+      // 보면 각각 다른 집단이 빠진다: ①해체(구구단 강미나) ②groups[] 항목의 left(라이즈 승한 — 최상위
+      // active는 true라 ③으로 안 잡힘) ③최상위 active:false(옛 기준, 겸임 그룹 페이지까지 덮음)
+      // ④주 소속+최상위 left. 실측으로 ②를 추가하면 437건이 새로 붙고 잃는 건 0건이다.
+      const ge = (a.groups || []).find(g => g && g.ko === ko);
+      const former = !!info.disbanded
+                  || !!(ge && (ge.left || ge.active === false))
+                  || a.active === false
+                  || (a.group && a.group.ko === ko && !!a.left);
+      const name = lang === 'en' ? (a.name.en || a.name.ko) : ((ge && ge.name) || a.name.ko);
       const mPath = memberPagePath(a, lang); // 해시 딥링크가 아니라 그 멤버의 정적 페이지로
-      const activeTag = a.active === false ? (lang === 'en' ? ' <span class="tag">former</span>' : ' <span class="tag">전멤버</span>') : '';
+      const activeTag = former ? (lang === 'en' ? ' <span class="tag">former</span>' : ' <span class="tag">전멤버</span>') : '';
       return `<li><a href="${SITE}/${mPath}">${escHtml(name)}</a>${activeTag}</li>`;
     }).join('\n      ');
     return `
@@ -267,7 +282,11 @@ groupKos.forEach(ko => {
       foundingDate: debutIso || undefined,
       url: selfUrl,
       image: ogImage,
-      member: members.map(a => ({ '@type': 'Person', name: isEn ? (a.name.en || a.name.ko) : a.name.ko })),
+      // 구조화 데이터의 멤버 이름도 "그 그룹에서 쓴 활동명"(groups[].name)을 따른다 — 위 memberListHtml과 같은 이유.
+      member: members.map(a => {
+        const ge = (a.groups || []).find(g => g && g.ko === ko);
+        return { '@type': 'Person', name: isEn ? (a.name.en || a.name.ko) : ((ge && ge.name) || a.name.ko) };
+      }),
     };
     return `<!DOCTYPE html>
 <html lang="${isEn ? 'en' : 'ko'}">

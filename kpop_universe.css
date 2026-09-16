@@ -2117,6 +2117,9 @@
   .sr-nl .sr-item-name{flex:0 1 auto;}
   .sr-alias{font-size:var(--fz-meta);font-weight:400;color:rgba(180,195,230,0.42);letter-spacing:0;flex-shrink:0;}
   .sr-tag{font-size:var(--fz-meta);color:#9ab8dc;letter-spacing:.05em;text-transform:uppercase;flex-shrink:0;}
+  /* 이미 떠난 소속(탈퇴·그 그룹에서 active:false)은 흐리게 — 현 소속처럼 읽히지 않게(2026-09-16 사용자 요청).
+     지우지 않는 이유: "트레저 출신"은 여전히 유용한 정보라서. 판정은 _isFormerOf. */
+  .sr-tag-former{color:rgba(154,184,220,0.42);}
   .sr-empty{padding:14px 13px;font-size:12px;color:rgba(140,160,200,0.56);text-align:center;}
   .sr-recent-label{padding:6px 13px 4px;font-size:10px;font-weight:700;color:rgba(140,160,200,0.56);letter-spacing:.06em;text-transform:uppercase;}
   /* 검색 결과 타입 구분 헤더(2026-08-31). ⚠️ `.sr-item` 클래스를 주면 안 된다 — 키보드 내비게이션이
