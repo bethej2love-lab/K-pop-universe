@@ -18,6 +18,12 @@ export const stripSuffix = s => String(s || '')
   .replace(/\s*[-–—]\s*(the\s+)?(1st|first)\s+(mini\s+)?album.*$/i, '')
   .replace(/\s*[-–—]\s*\d{0,4}\s*special\s+(digital\s+)?single.*$/i, '')
   .replace(/\s*[-–—]\s*(the\s+)?\d+(st|nd|rd|th)\s+single(\s+album)?.*$/i, '')
+  // 맨 꼬리표 `- EP` / `- Single` / `- Album` (2026-09-16). 우리는 종류를 배지로 따로 표기하므로
+  // 제목에 또 들어가면 중복이고, 무엇보다 **dedupKey가 달라져 같은 앨범이 두 번 들어온다** —
+  // 실제로 베이비복스 `NEW BABY VOX 2025 : THE BEST OF BEST`가 멜론분(`… - EP`)과 스포티파이분으로
+  // 두 장이 돼 있었다. 기존 데이터 287건도 같은 규칙으로 한 번 정리했다.
+  // ⚠️ 대시 **앞의 공백을 필수**로 둔다. 없으면 `2016 Re-ALBUM`이 `2016 Re`로 잘린다(실측 오탐 1건).
+  .replace(/\s+[-–—]\s*(EP|Single|Album)\s*$/i, '')
   .trim();
 
 export const norm = s => stripSuffix(s).toLowerCase()
