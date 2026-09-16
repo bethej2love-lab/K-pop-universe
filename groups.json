@@ -75108,6 +75108,24 @@
     },
     "discography": [
       {
+        "title": "Coward",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273e22c719de1c5bbada025161d",
+        "releaseDate": "2026.09.11",
+        "trackCount": 1,
+        "titleTrack": "Coward",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Coward",
+            "isTitle": true
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "4ogA5zxRpWGu1tcjvzEY2v"
+      },
+      {
         "title": "약속",
         "type": "싱글",
         "isMain": true,
@@ -75122,6 +75140,24 @@
             "isTitle": true
           }
         ]
+      },
+      {
+        "title": "With UNIVERSE",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273e1e2e9a0c95aeb834a68a9a0",
+        "releaseDate": "2023.10.10",
+        "trackCount": 1,
+        "titleTrack": "With UNIVERSE",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "With UNIVERSE",
+            "isTitle": true
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "3LKrKSbVcKfOCF3bYvWOFx"
       },
       {
         "title": "결국 (Love is Pain)",
@@ -75191,6 +75227,24 @@
             "isTitle": true
           }
         ]
+      },
+      {
+        "title": "Shh",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273fb6e03486aff4489ae98af7b",
+        "releaseDate": "2023.05.10",
+        "trackCount": 1,
+        "titleTrack": "Shh",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Shh",
+            "isTitle": true
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "2IFIiCZ8FgprUn7yhqYG49"
       },
       {
         "title": "Feelin' Like",
@@ -79225,6 +79279,67 @@
     },
     "discography": [
       {
+        "title": "4WARD",
+        "type": "미니",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b27331b503a96c3d6d774fa84286",
+        "releaseDate": "2026.06.04",
+        "trackCount": 5,
+        "titleTrack": null,
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Blooming (Intro)",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "4 Flowers",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "4 Flowers (Acoustic Remix)",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "4 Flowers (Latin Remix)",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "4 Flowers (Inst.)",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "4Wu52D5zdJ7HpcvkgxaESk"
+      },
+      {
+        "title": "[Hwa Sa Show Vol.3] MMM Simile",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273661e8f8b008ceeb4b48e2765",
+        "releaseDate": "2023.02.19",
+        "trackCount": 2,
+        "titleTrack": null,
+        "tracks": [
+          {
+            "no": 1,
+            "title": "MMM Simile - Live ver.",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "MMM Simile - Instrumental",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "2xPznUnpJGiaIP1QrQnYAT"
+      },
+      {
         "title": "MIC ON",
         "type": "미니 12집",
         "isMain": true,
@@ -82933,6 +83048,59 @@
     },
     "discography": [
       {
+        "title": "Secret Flavor",
+        "type": "정규",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b2737d8878b745219135d40fda22",
+        "releaseDate": "2026.06.18",
+        "trackCount": 8,
+        "titleTrack": null,
+        "tracks": [
+          {
+            "no": 1,
+            "title": "ICE CREAM",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "GET RIGHT",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "Madonna (2026 Ver.)",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Shy Boy (2026 Ver.)",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Starlight Moonlight (2026 Ver.)",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "Love is MOVE (2026 Ver.)",
+            "isTitle": false
+          },
+          {
+            "no": 7,
+            "title": "Yoo Hoo (2026 Ver.)",
+            "isTitle": false
+          },
+          {
+            "no": 8,
+            "title": "Madonna (Remake 2026 Ver.)",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "6g3FgDbjnoVTKlYaPKI73t"
+      },
+      {
         "title": "SECRET SUMMER",
         "type": "미니 5집",
         "isMain": true,
@@ -85653,6 +85821,24 @@
         ]
       },
       {
+        "title": "Gonna Be Alright",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b27329e17c7f1e9c2316bc49c015",
+        "releaseDate": "2023.01.03",
+        "trackCount": 1,
+        "titleTrack": "Gonna Be Alright",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Gonna Be Alright",
+            "isTitle": true
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "6RPpa5Wj8EfSAkOLBE8Nbe"
+      },
+      {
         "title": "EAU DE VIXX",
         "type": "정규 3집",
         "isMain": true,
@@ -86684,6 +86870,24 @@
             "isTitle": true
           }
         ]
+      },
+      {
+        "title": "Sugar High",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b2735b1c3879aec6706329ee84bb",
+        "releaseDate": "2026.06.12",
+        "trackCount": 1,
+        "titleTrack": "Sugar High",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Sugar High",
+            "isTitle": true
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "4S7T1TAP0pmVeYvPMoqcYP"
       },
       {
         "title": "The Passage",

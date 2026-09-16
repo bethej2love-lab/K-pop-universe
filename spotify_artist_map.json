@@ -242,6 +242,17 @@
     },
     "checkedAt": "2026-09-15"
   },
+  "마마무": {
+    "id": "0XATRDCYuuGhk0oE7C0o5G",
+    "spotifyName": "MAMAMOO",
+    "kind": "group",
+    "confidence": "high",
+    "why": "동명 후보 2명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 2
+    },
+    "checkedAt": "2026-09-16"
+  },
   "메이딘": {
     "id": "5Sso2rRE8bs9Ff6bkfqUKe",
     "spotifyName": "MADEIN",
@@ -377,6 +388,17 @@
     },
     "checkedAt": "2026-09-15"
   },
+  "블락비": {
+    "id": "4RnezwRV7VBJUCI1S0AE5u",
+    "spotifyName": "Block B",
+    "kind": "group",
+    "confidence": "medium",
+    "why": "이름 유일 일치",
+    "evidence": {
+      "titleOverlap": null
+    },
+    "checkedAt": "2026-09-16"
+  },
   "블랙핑크": {
     "id": "41MozSoPIsD1dJM0CLPjZF",
     "spotifyName": "BLACKPINK",
@@ -457,6 +479,17 @@
       ]
     },
     "checkedAt": "2026-09-15"
+  },
+  "빅스": {
+    "id": "5BkB3rXc0qIdUtuEnhbK0A",
+    "spotifyName": "VIXX",
+    "kind": "group",
+    "confidence": "high",
+    "why": "동명 후보 3명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 2
+    },
+    "checkedAt": "2026-09-16"
   },
   "빌리": {
     "id": "2GQxKDojobwBjZMPf7aoh0",
@@ -588,6 +621,22 @@
     },
     "checkedAt": "2026-09-15"
   },
+  "시크릿": {
+    "id": "503DjcVO5Ku1NgLPhVuNg7",
+    "spotifyName": "Secret",
+    "kind": "group",
+    "confidence": "high",
+    "why": "이름 유일 일치 · 수집 전 검증 통과(겹침 1)",
+    "evidence": {
+      "titleOverlap": null,
+      "verifyOverlap": 1,
+      "verifyYears": [
+        2014,
+        2013
+      ]
+    },
+    "checkedAt": "2026-09-16"
+  },
   "신화": {
     "id": "0jVvkFPa6YbFXQ3Qmhita0",
     "spotifyName": "SHINHWA",
@@ -711,6 +760,22 @@
     },
     "checkedAt": "2026-09-15"
   },
+  "아홉": {
+    "id": "4qfEQKZj3GXPjLBEppvHTH",
+    "spotifyName": "AHOF",
+    "kind": "group",
+    "confidence": "high",
+    "why": "이름 유일 일치 · 수집 전 검증 통과(겹침 2)",
+    "evidence": {
+      "titleOverlap": null,
+      "verifyOverlap": 2,
+      "verifyYears": [
+        2026,
+        2025
+      ]
+    },
+    "checkedAt": "2026-09-16"
+  },
   "알파드라이브원": {
     "id": "1Sal7hVz3weo0mvYZPiWHT",
     "spotifyName": "ALPHA DRIVE ONE",
@@ -726,6 +791,17 @@
       ]
     },
     "checkedAt": "2026-09-15"
+  },
+  "앤더블": {
+    "id": "3vAHTO5HJ4FmzrLmVbOKRF",
+    "spotifyName": "AND2BLE",
+    "kind": "group",
+    "confidence": "medium",
+    "why": "이름 유일 일치",
+    "evidence": {
+      "titleOverlap": null
+    },
+    "checkedAt": "2026-09-16"
   },
   "앤팀": {
     "id": "2xfxRiKxoHl5tI0MKyvqV7",
@@ -802,6 +878,17 @@
     },
     "checkedAt": "2026-09-15"
   },
+  "에이오에이": {
+    "id": "54gWVQFHf8IIqbjxAoOarN",
+    "spotifyName": "AOA",
+    "kind": "group",
+    "confidence": "medium",
+    "why": "이름 유일 일치",
+    "evidence": {
+      "titleOverlap": null
+    },
+    "checkedAt": "2026-09-16"
+  },
   "에이티즈": {
     "id": "68KmkJeZGfwe1OUaivBa2L",
     "spotifyName": "ATEEZ",
@@ -817,6 +904,17 @@
       ]
     },
     "checkedAt": "2026-09-15"
+  },
+  "에이핑크": {
+    "id": "2uWcrwgWmZcQc3IPBs3tfU",
+    "spotifyName": "Apink",
+    "kind": "group",
+    "confidence": "medium",
+    "why": "이름 유일 일치",
+    "evidence": {
+      "titleOverlap": null
+    },
+    "checkedAt": "2026-09-16"
   },
   "에프엑스": {
     "id": "3wRA5UYoo08BBKJnzyKkpF",
@@ -935,6 +1033,17 @@
       ]
     },
     "checkedAt": "2026-09-15"
+  },
+  "엠블랙": {
+    "id": "14f1WN9TUDVBK4sHUStmLG",
+    "spotifyName": "MBLAQ",
+    "kind": "group",
+    "confidence": "high",
+    "why": "동명 후보 2명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 2
+    },
+    "checkedAt": "2026-09-16"
   },
   "오마이걸": {
     "id": "2019zR22qK2RBvCqtudBaI",
@@ -1465,6 +1574,17 @@
       ]
     },
     "checkedAt": "2026-09-15"
+  },
+  "펜타곤": {
+    "id": "1wKpMkucynaTfG8lyPprYV",
+    "spotifyName": "PENTAGON",
+    "kind": "group",
+    "confidence": "high",
+    "why": "동명 후보 4명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 4
+    },
+    "checkedAt": "2026-09-16"
   },
   "프로미스나인": {
     "id": "24nUVBIlCGi4twz4nYxJum",
