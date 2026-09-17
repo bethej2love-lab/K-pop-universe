@@ -230,11 +230,27 @@ async function resolveAid(t, ourKeys, ourDates) {
   // ⚠️ '한국'만 보면 안 된다 — 멜론 표기는 **대한민국**이라 /한국/ 로는 한 건도 안 걸린다
   //    (실측: 초신성 gubun '대한민국/남성/그룹'. 이 프로젝트가 nat.ko 에서 이미 한 번 겪은 함정이다).
   const KO_NAT = /대한민국|한국/;
+  // 멜론 아티스트 표기는 `정한 (세븐틴)` · `82MAJOR(82메이저)` 처럼 **괄호에 별칭/소속**을 단다.
+  // 솔로에겐 이게 동명이인을 가르는 가장 강한 신호다 — 괄호 안이 우리 소속 그룹과 같으면 거의 확정.
+  const nameParts = s => {
+    const m = /^(.*?)\s*[(（]([^)）]*)[)）]\s*$/.exec(String(s || ''));
+    return m ? [m[1], m[2]] : [String(s || '')];
+  };
+  const nrm = s => String(s || '').normalize('NFKC').toLowerCase().replace(/[^0-9a-z가-힣]/g, '');
+  const ourNames = new Set(t.names.filter(Boolean).map(nrm));
+  const gnorm = t.kind === 'solo' && t.gko ? nrm(t.gko) : null;
+  const nameScore = c => {
+    const parts = nameParts(c.title).map(nrm);
+    const nameHit = parts.some(p => p && ourNames.has(p));
+    const groupHit = !!(gnorm && parts.some(p => p === gnorm));
+    return (groupHit ? 2 : 0) + (nameHit ? 1 : 0);
+  };
   const pool = (typed.length ? typed : cands)
-    .sort((a, b) => (KO_NAT.test(b.gubun) ? 1 : 0) - (KO_NAT.test(a.gubun) ? 1 : 0))
+    .sort((a, b) => (nameScore(b) - nameScore(a)) || ((KO_NAT.test(b.gubun) ? 1 : 0) - (KO_NAT.test(a.gubun) ? 1 : 0)))
     .slice(0, 5);
 
   let best = null;
+  const scoredCands = [];   // 채택 기준이 "겹친 후보가 몇 명인가"를 봐야 해서 전부 기록한다
   for (const c of pool) {
     const albums = (await albumsOf(c.aid)).filter(a => a.artistAid === c.aid);
     let overlap = 0;
@@ -244,17 +260,31 @@ async function resolveAid(t, ourKeys, ourDates) {
     // ⚠️ 제목만으로는 부족하다 — 에이프릴·엑스원처럼 멜론 제목 표기가 우리와 통째로 다른 팀이 있다.
     //    **발매일 일치**는 표기 차이에 면역이라 같이 센다(정답 아티스트가 아니면 날짜가 안 맞는다).
     for (const a of albums) if (ourKeys.has(mkey(a.title)) || (a.date && ourDates.has(a.date))) overlap++;
-    if (!best || overlap > best.overlap) best = { c, overlap, albums };
-    if (overlap >= 3) break;   // 충분히 확실하면 더 안 본다
+    const ns = nameScore(c);
+    scoredCands.push({ c, overlap, ns });
+    if (!best || overlap > best.overlap || (overlap === best.overlap && ns > best.ns)) best = { c, overlap, albums, ns };
+    if (overlap >= 3) break;   // 충분히 확실하면 더 안 본다(이땐 유일성 판정이 필요 없다)
   }
-  // ⚠️ 솔로는 동명이인이 흔하다(레나 2명 사례). 그룹보다 한 칸 높은 근거를 요구한다 — 겹침 1장은
-  //    "흔한 곡명이 우연히 걸린 것"일 수 있고, 틀린 aid 를 저장하면 그 사람만 영영 남의 앨범을 본다.
-  const floor = t.kind === 'group' ? 1 : 2;
-  if (!best || best.overlap < floor) return { ok: false, why: `앨범 겹침 ${best ? best.overlap : 0}장 (필요 ${floor}, 후보 ${pool.length}명)`, cands: pool };
+  // 채택 기준.
+  // ⚠️ 솔로는 동명이인이 흔하다(레나 2명 사례). 처음엔 "겹침 2장 이상"으로 막았는데 **너무 셌다** —
+  //    실측(2026-09-17 솔로 회차): 매핑 실패 65건 중 40건이 `겹침 1장 (필요 2)`였다. 솔로는 앨범이
+  //    한 장뿐인 사람이 수두룩해서(닝닝·창빈·런쥔…) 그 문턱은 애초에 통과가 불가능하다.
+  // ⚠️ "멜론이 솔로를 `정한 (세븐틴)`처럼 소속과 함께 적어준다"고 가정했다가 **틀렸다**:
+  //    닝닝은 `닝닝 (NINGNING)`(영문 별칭)이고, 정한은 동명이인 4명이 전부 그냥 `정한`이다.
+  //    괄호는 소속일 때도 있고 영문 별칭일 때도 있어서 판정 근거로 못 쓴다(정렬 힌트로만 남긴다).
+  // 그래서 **겹친 후보가 유일한가**로 가른다. 동명이인이 넷이어도 우리 앨범(제목 또는 발매일)을
+  // 가진 사람은 보통 하나뿐이다. 둘 이상이면 그게 진짜 애매한 경우이므로 넘기지 않는다.
+  const need = t.kind === 'group' ? 1 : 2;
+  const hitCount = scoredCands.filter(x => x.overlap >= 1).length;
+  const okByOverlap = best && best.overlap >= need;
+  const okByUnique = best && best.overlap >= 1 && hitCount === 1;
+  if (!okByOverlap && !okByUnique) {
+    return { ok: false, why: `앨범 겹침 ${best ? best.overlap : 0}장 (필요 ${need}, 겹친 후보 ${hitCount}명, 후보 ${pool.length}명)`, cands: pool };
+  }
   return {
     ok: true, aid: best.c.aid, melonName: best.c.title, gubun: best.c.gubun,
-    overlap: best.overlap, albums: best.albums,
-    confidence: best.overlap >= 3 ? 'high' : best.overlap >= 2 ? 'medium' : 'low',
+    overlap: best.overlap, rivals: hitCount, albums: best.albums,
+    confidence: best.overlap >= 3 ? 'high' : best.overlap >= 2 ? 'medium' : (hitCount === 1 ? 'medium' : 'low'),
   };
 }
 
@@ -330,7 +360,7 @@ if (SOLO || BOTH) {
     const ko = a.name && a.name.ko; if (!ko) continue;
     if (!Array.isArray(a.discography) || !a.discography.length) continue;
     const gko = (a.group && a.group.ko) || '솔로';
-    targets.push({ key: `a:${ko}|${gko}`, label: `${ko}(${gko})`, kind: 'solo', names: [a.name.en, ko], disco: a.discography, file: 'artists.json' });
+    targets.push({ key: `a:${ko}|${gko}`, label: `${ko}(${gko})`, kind: 'solo', gko, names: [a.name.en, ko], disco: a.discography, file: 'artists.json' });
   }
 }
 let list = ONLY ? targets.filter(t => ONLY.has(t.label) || ONLY.has(t.key) || ONLY.has(t.names[1])) : targets;
