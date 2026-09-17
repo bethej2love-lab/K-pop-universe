@@ -103,9 +103,12 @@
       <button id="profile-empty-cta">그룹·멤버 찾아보기</button>
     </div>
     <div id="fav-section">
-      <div class="fav-hd"><span class="fav-hd-lbl">FAVORITES</span><button id="fav-mode-btn" class="sp-tog">Highlight</button></div>
+      <!-- 우주 카드는 "만드는 것"이 아니라 이미 모아둔 즐겨찾기의 **결과물을 내보내는** 기능이다.
+           예전엔 리스트 아래 점선 슬롯 버튼(#col-create-btn과 동일 스타일)이라 신규 유저가 "여기서 할 일"로
+           읽고 제일 먼저 눌렀다(2026-09-18 제보) — 섹션 헤더의 공유 아이콘으로 강등하고, 즐겨찾기가
+           하나도 없으면 아예 숨긴다(renderFavList). -->
+      <div class="fav-hd"><span class="fav-hd-lbl">FAVORITES</span><div class="fav-hd-right"><button id="uc-card-btn" class="share-btn" data-i18n-title="ucCardTitle" title="내 우주 카드" aria-label="내 우주 카드" style="display:none"><svg viewBox="0 0 24 24"><path d="M12 15V4M12 4l-3.5 3.5M12 4l3.5 3.5"/><path d="M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"/></svg></button><button id="fav-mode-btn" class="sp-tog">Highlight</button></div></div>
       <div id="fav-list"><div class="fav-empty" data-i18n="favEmpty">아직 즐겨찾기가 없어요</div></div>
-      <button id="uc-card-btn" data-i18n="ucCardBtn">✦ 내 우주 카드 만들기</button>
     </div>
     <div id="collection-section">
       <div class="fav-hd"><span class="fav-hd-lbl">COLLECTIONS</span></div>
@@ -14092,6 +14095,10 @@ function _appendFavRow(el,{tag,name,sub,imgUrl,colorArr,people,bdayDays,annivDay
 let _favListGen=0;
 async function renderFavList(){
   const el=document.getElementById('fav-list');if(!el)return;
+  // 우주 카드 아이콘은 궤도로 모을 그룹/멤버가 하나라도 있을 때만. favConnections(연결선 즐겨찾기)는
+  // 카드 구도에 참여하지 않으므로 여기 안 센다 — 세면 "만들 게 없는" 카드가 열린다.
+  const _ucb=document.getElementById('uc-card-btn');
+  if(_ucb)_ucb.style.display=(favGroups.size||favMembers.size)?'':'none';
   const myGen=++_favListGen;
   if(!favGroups.size&&!favMembers.size&&!favConnections.size){
     el.innerHTML=`<div class="fav-empty">${T[currentLang].favEmpty}</div>`;return;
@@ -14611,12 +14618,38 @@ async function _openUcCardPreview(){
   const shareBtn=document.getElementById('uc-card-share');
   const dlBtn=document.getElementById('uc-card-download');
   const t=T[currentLang];
+  // 카드는 "내 별"을 허브로 궤도를 그린다 → 별(프로필 닉네임)이 없으면 _enterMyUniverseMode가
+  // `if(!myStarSprite)return`으로 통째로 빠져나가 궤도가 0개다. 즉 즐겨찾기를 해도, 하이라이트를
+  // 켜줘도 카드는 영원히 "정렬 중이에요"에 머문다 — 신규 유저가 제일 먼저 부딪히는 진짜 벽이었다
+  // (2026-09-18 헤드리스 검증에서 확인). 문구로 지적하는 대신, 실제로 필요한 "별 만들기" 화면으로
+  // 그대로 넘긴다. 분기(로그인 여부)는 #my-page-edit에 이미 다 있으니 그 경로를 재사용한다.
+  if(!myProfile?.nickname){document.getElementById('my-page-edit')?.click();return;}
   imgEl.classList.remove('loaded');imgEl.src='';
   shareBtn.disabled=true;dlBtn.disabled=true;_ucCardDataURL=null;
   overlay.classList.add('open');
-  if(!_myUniverseActive||!_myUniverseOrbits.length){statusEl.textContent=t.ucCardNeedFav;return;}
-  if(_myUniversePhase!=='active'){statusEl.textContent=t.ucCardAligning;return;}
+  // 예전엔 여기서 "먼저 즐겨찾기 하이라이트(♥)를 켜주세요"로 끝났다(2026-09-18 제보 — 신규 유저가 제일
+  // 먼저 누르는 버튼이 검은 화면 + 지적 한 줄이었음). 하이라이트는 카드가 쓰는 궤도 배치를 만드는
+  // 내부 준비 단계일 뿐이라 유저에게 시킬 일이 아니다 — 안 켜져 있으면 대신 켜고 정렬이 끝나길 기다린다.
+  if(!favGroups.size&&!favMembers.size){statusEl.textContent=t.ucCardNoFav;return;} // 진짜로 만들 게 없는 경우만 안내
   statusEl.textContent=t.ucCardGenerating;
+  if(!_myUniverseActive||!_myUniverseOrbits.length){
+    if(!favMode)_toggleFavMode(); // 토글 경로를 그대로 타야 버튼 on 상태·카메라 이동까지 일관되게 맞는다
+    else{applyFavHighlight();_enterMyUniverseMode();_flyToMyUniverse();} // favMode는 켜져 있는데 궤도만 비어있던 경우
+  }
+  // 궤도 정렬(MY_UNIVERSE_ENTER_MS=750)은 animate 루프에서 진행되므로 phase가 'active'가 될 때까지 대기.
+  // 탭이 백그라운드면 루프가 아예 안 도니 반드시 타임아웃으로 빠져나온다.
+  if(_myUniversePhase!=='active'){
+    const _ok=await new Promise(res=>{
+      const t0=performance.now();
+      (function poll(){
+        if(!overlay.classList.contains('open'))return res(false); // 기다리는 동안 닫혔으면 중단
+        if(_myUniverseActive&&_myUniverseOrbits.length&&_myUniversePhase==='active')return res(true);
+        if(performance.now()-t0>3000)return res(false);
+        requestAnimationFrame(poll);
+      })();
+    });
+    if(!_ok){if(overlay.classList.contains('open'))statusEl.textContent=t.ucCardAligning;return;}
+  }
   try{
     const dataURL=await _buildMyUniverseCardDataURL();
     if(!overlay.classList.contains('open'))return; // 생성 도중 닫혔으면 반영하지 않음

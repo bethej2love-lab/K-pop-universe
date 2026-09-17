@@ -2849,6 +2849,10 @@
   #fav-section{padding-top:12px;padding-bottom:12px;border-top:0.5px solid rgba(255,255,255,0.07);}
   .fav-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
   .fav-hd-lbl{font-size:10px;font-weight:700;letter-spacing:.2em;color:rgba(130,150,205,0.56);text-transform:uppercase;}
+  /* 섹션 헤더 오른쪽 묶음(공유 아이콘 + Highlight 토글). 아이콘은 카드/라이트박스와 같은 .share-btn을
+     그대로 재사용 — 새 컴포넌트를 만들지 않는다. 모바일은 무형 확장으로 탭 타겟만 27px 확보. */
+  .fav-hd-right{display:flex;align-items:center;gap:6px;}
+  @media(max-width:768px){.fav-hd-right .share-btn{padding:7px 6px;margin:-7px -3px;}}
   /* 2026-08-18 — ANNIVERSARIES 섹션을 여기로 통합하면서 아바타(사진/색상원)+기념일 배지가 들어간
      카드형으로 재설계. 멤버=인스타/위버스 사진, 그룹=groups.json img 필드(없으면 그룹 색상 원형). */
   .fav-item{display:flex;align-items:center;gap:9px;padding:6px 4px;border-radius:10px;cursor:pointer;transition:background .13s;}
@@ -3041,8 +3045,8 @@
   #col-create-btn:hover,#col-create-photo-btn:hover{border-color:rgba(140,165,220,0.38);color:rgba(180,200,240,0.78);}
   #col-create-photo-btn{margin-top:5px;}
   /* ── 내 우주 카드 (2026-08-18) ─────────────────────────── */
-  #uc-card-btn{margin-top:8px;background:none;border:0.5px dashed rgba(140,165,220,0.18);border-radius:8px;color:rgba(140,165,220,0.48);font-size:12px;font-weight:600;padding:7px 10px;cursor:pointer;font-family:inherit;width:100%;text-align:left;transition:border-color .13s,color .13s;letter-spacing:.02em;}
-  #uc-card-btn:hover{border-color:rgba(140,165,220,0.38);color:rgba(180,200,240,0.78);}
+  /* #uc-card-btn의 옛 점선 슬롯 스타일은 제거됨(2026-09-18) — #col-create-btn과 픽셀 단위로 같아서
+     "새로 만들기" 칸으로 오인됐다. 지금은 .fav-hd-right 안의 .share-btn이라 별도 룰이 필요 없다. */
   #uc-card-panel{width:min(340px,calc(100vw - 40px));background:rgba(13,17,34,0.97);backdrop-filter:blur(40px) saturate(180%);-webkit-backdrop-filter:blur(40px) saturate(180%);border-radius:18px;box-shadow:0 16px 56px rgba(0,0,0,0.72);border:0.5px solid rgba(255,255,255,0.10);padding:20px;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
   #uc-card-imgwrap{margin-top:12px;border-radius:14px;overflow:hidden;background:rgba(255,255,255,0.03);aspect-ratio:4/5;display:flex;align-items:center;justify-content:center;}
   #uc-card-img{width:100%;height:100%;object-fit:cover;display:none;}
