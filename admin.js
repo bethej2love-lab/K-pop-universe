@@ -782,29 +782,40 @@ async function _ytRotateViewCountRefresh(){
   const _live=await _ytColSupported('was_live');
   const ids=[];
   const wasUnavail=new Set(); // 이미 "사라짐"으로 찍혀 있던 id — 첫 관측 시각을 덮어쓰지 않기 위해
+  const prevTitle=new Map();  // 제목이 실제로 바뀐 것만 쓰기 위해 현재 값을 같이 들고 온다
   for(let off=0; off<VIEW_COUNT_ROTATE_BATCH; off+=1000){
     const to=Math.min(off+1000,VIEW_COUNT_ROTATE_BATCH)-1;
-    const{data,error}=await sb.from(_YT_TABLE).select(_unav?'id,unavailable_at':'id')
+    const{data,error}=await sb.from(_YT_TABLE).select(_unav?'id,title,unavailable_at':'id,title')
       .order('view_count_synced_at',{ascending:true,nullsFirst:true})
       .order('id',{ascending:true})
       .range(off,to);
     if(error){_ytSetProg('대상 조회 실패: '+error.message);return;}
     if(!data?.length)break;
     ids.push(...data.map(r=>r.id));
+    data.forEach(r=>{prevTitle.set(r.id,r.title||'');});
     if(_unav)data.forEach(r=>{if(r.unavailable_at)wasUnavail.add(r.id);});
     if(data.length<to-off+1)break; // 마지막 페이지(테이블 끝)
   }
   if(!ids.length){_ytSetProg('순환 갱신 대상 없음');return;}
   const totalCalls=Math.ceil(ids.length/50);
   _ytSetProg(`YouTube API 호출 예정: ${totalCalls}회 (${ids.length}개 영상)`);
-  let savedTotal=0,failedTotal=0,newlyGone=0,revived=0;
+  let savedTotal=0,failedTotal=0,newlyGone=0,revived=0,titleChanged=0;
   for(let i=0;i<ids.length;i+=50){
     const chunk=ids.slice(i,i+50);
     _ytSetProg(`순환 갱신 중… ${Math.min(i+50,ids.length)}/${ids.length} (API ${Math.floor(i/50)+1}/${totalCalls}회, 저장 ${savedTotal}개)`);
     const nowIso=new Date().toISOString();
     const statsUpdates=[];
     try{
-      const _parts='statistics'+(_dur?',contentDetails':'')+(_live?',liveStreamingDetails':'');
+      // ⚠️ snippet(제목)을 같이 받는다(2026-09-17). 두 가지 이유이고 **추가 쿼터는 0**이다
+      //    (videos.list는 part를 더 얹어도 호출당 1).
+      //    ① 정책: YouTube 개발자 정책 III.E.4는 저장한 API 데이터를 **30일 안에 삭제하거나 갱신**하라고
+      //       요구한다. 조회수 같은 통계는 감사 승인 시 36개월까지 예외지만, **영상 제목은 예외가 없다**
+      //       (derived-metrics 정책 명시: "video titles ... still must follow the 30-day policy").
+      //       지금까지 제목은 최초 수집 때 한 번 받고 영영 갱신되지 않았다 — 이 순환이 유일한 전수 경로다.
+      //    ② 품질: 업로더가 제목을 바꾸면(예고편→본편, 오타 수정) 우리 쪽은 영원히 옛 제목이었다.
+      //    ⚠️ title_norm은 title에서 파생된 컬럼이라(_titleNorm, 저장 시점에 같이 넣는다) **반드시 같이**
+      //       갱신해야 한다. 안 그러면 검색이 옛 제목으로만 걸리는 불일치가 생긴다.
+      const _parts='snippet,statistics'+(_dur?',contentDetails':'')+(_live?',liveStreamingDetails':'');
       const d=await _ytApiGet(`https://www.googleapis.com/youtube/v3/videos?part=${_parts}&id=${chunk.join(',')}&key=${key}`,'순환 갱신');
       const returned=new Set();
       (d.items||[]).forEach(it=>{
@@ -815,9 +826,12 @@ async function _ytRotateViewCountRefresh(){
         // 재생시간은 못 읽으면 null로 두고 **덮어쓰지 않는다**(0으로 저장하면 "0초 영상"이 된다).
         const ds=_dur?_ytParseDurationSec(it.contentDetails?.duration):null;
         const wl=_live?_ytWasLive(it):null;
-        if(!isNaN(vc))statsUpdates.push({id:it.id,view_count:vc,touchOnly:false,revive,ds,wl});
-        else if(revive)statsUpdates.push({id:it.id,touchOnly:true,revive:true,ds,wl});
-        else if(ds!=null||wl!=null)statsUpdates.push({id:it.id,touchOnly:true,ds,wl}); // 조회수만 못 읽은 경우
+        // 제목은 **바뀐 것만** 실어보낸다 — 안 바뀐 47만 건에 title/title_norm을 매번 써넣으면
+        // 업데이트 페이로드만 커지고 얻는 게 없다.
+        const nt=(it.snippet?.title||'').trim()||null;
+        if(!isNaN(vc))statsUpdates.push({id:it.id,view_count:vc,touchOnly:false,revive,ds,wl,nt});
+        else if(revive)statsUpdates.push({id:it.id,touchOnly:true,revive:true,ds,wl,nt});
+        else if(ds!=null||wl!=null||nt)statsUpdates.push({id:it.id,touchOnly:true,ds,wl,nt}); // 조회수만 못 읽은 경우
         if(revive)revived++;
       });
       // 삭제/비공개라 API 응답에 아예 안 잡힌 것도 "이번에 확인은 했다"는 뜻으로 synced_at만 갱신하고
@@ -838,12 +852,14 @@ async function _ytRotateViewCountRefresh(){
       console.error('[조회수 순환 갱신]',e.message);
       return;
     }
-    const _ub=await _sbUpdateBatch(statsUpdates,({id,view_count,touchOnly,markGone,revive,ds,wl})=>{
+    const _ub=await _sbUpdateBatch(statsUpdates,({id,view_count,touchOnly,markGone,revive,ds,wl,nt})=>{
       const patch=touchOnly?{view_count_synced_at:nowIso}:{view_count,view_count_synced_at:nowIso};
       if(markGone)patch.unavailable_at=nowIso; // 처음 사라진 것만
       else if(revive)patch.unavailable_at=null; // 되살아난 것
       if(ds!=null)patch.duration_sec=ds; // 컬럼 유무는 _ytColSupported로 이미 확인됨(_dur/_live)
       if(wl!=null)patch.was_live=wl;
+      // 업로더가 제목을 바꾼 경우에만 — title_norm은 파생 컬럼이라 반드시 같이 간다(위 _parts 주석)
+      if(nt&&nt!==prevTitle.get(id)){patch.title=nt;patch.title_norm=_titleNorm(nt);titleChanged++;}
       return sb.from(_YT_TABLE).update(patch).eq('id',id);
     },{conc:20,retries:2});
     savedTotal+=_ub.saved;failedTotal+=_ub.failed;
@@ -851,6 +867,7 @@ async function _ytRotateViewCountRefresh(){
     if(_ub.failed)console.error('[조회수 순환 갱신] 재시도 후에도 실패:',_ub.failed,'건 —',_ub.firstErr);
   }
   _ytSetProg(`조회수 순환 갱신 완료 — ${savedTotal}개 저장${failedTotal?` · ${failedTotal}개는 일시 실패라 다음 실행 때 재시도됨`:''} (전체 카테고리 · API ${totalCalls}회)`
+    +(titleChanged?` · ✏️ 제목 바뀐 것 ${titleChanged}건 반영`:'')
     +(_dur?' · ⏱ 재생시간 같이 채움':' · (재생시간 꺼짐 — duration_migration.sql 실행 필요)')
     +(_live?' · 🔴 생방송 여부 같이 채움':' · (생방송 여부 꺼짐 — live_broadcast_migration.sql 실행 필요)')
     +(_unav?`${newlyGone?` · 🪦 삭제·비공개 새로 감지 ${newlyGone}건`:''}${revived?` · ↩︎ 되살아남 ${revived}건`:''}`

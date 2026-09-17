@@ -159,7 +159,10 @@ need(ctx._fmtDur(null)===''&&ctx._fmtDur(undefined)===''&&ctx._fmtDur(0)==='',
 // ── ⑦ 수집 경로 — 쿼터 추가 0으로 duration/was_live를 같이 받는가 ────────────
 need(/part=statistics,snippet,contentDetails,liveStreamingDetails/.test(admin),
   '정기 조회수 갱신이 재생시간·생방송여부를 같이 받음');
-need(/part=\$\{_parts\}/.test(admin)&&/'statistics'\+\(_dur\?',contentDetails':''\)/.test(admin),
+// ⚠️ _parts 문자열을 접두사까지 통째로 고정하지 말 것 — part를 하나 더 얹을 때마다(쿼터는 그대로 1)
+//    이 단언이 깨진다. 실제로 2026-09-17에 `snippet`(제목 30일 갱신 정책)을 추가하면서 한 번 깨졌다.
+//    지키려는 건 "순환 갱신도 contentDetails/liveStreamingDetails를 같이 받는가"이지 문자열 모양이 아니다.
+need(/part=\$\{_parts\}/.test(admin)&&/_parts=[^;]*\(_dur\?',contentDetails':''\)/.test(admin),
   '순환 갱신(전체 테이블 한 바퀴)도 같이 받음 — 이게 예능·개인채널 duration을 채우는 유일한 경로');
 need(/_ytWasLive=it=>!!it\.liveStreamingDetails/.test(admin),'was_live 판정은 liveStreamingDetails 유무');
 need(/if\(ds!=null\)patch\.duration_sec=ds;/.test(admin),

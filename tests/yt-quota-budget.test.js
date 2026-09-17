@@ -73,6 +73,26 @@ const sweepBlock = routine.slice(routine.indexOf('if(!_syncOnly){'));
 need(sweepBlock.includes('fn:_ytRotateViewCountDaily'),
   '순환 갱신이 full 루틴(3시간마다)에만 있고 매시간 동기화엔 없음');
 
+/* ③-2 정책: 저장한 제목의 30일 갱신 (YouTube 개발자 정책 III.E.4) */
+// 조회수 같은 통계는 감사 승인 시 36개월까지 예외가 되지만 **영상 제목은 예외가 없다** —
+// derived-metrics 정책이 "video titles ... still must follow the 30-day policy"라고 못박는다.
+// 이 순환 갱신이 전체 테이블을 훑는 유일한 경로라, 여기서 snippet을 빼면 제목이 영영 안 갱신된다.
+const rotate = body('async function _ytRotateViewCountRefresh()');
+need(/_parts\s*=\s*'snippet,statistics'/.test(rotate),
+  '순환 갱신이 snippet(제목)을 같이 받음 — 30일 갱신 정책',
+  'videos.list는 part를 더 얹어도 호출당 1유닛이라 추가 비용이 0이다');
+need(/patch\.title=nt;patch\.title_norm=_titleNorm\(nt\)/.test(rotate),
+  '제목이 바뀌면 title_norm(파생 컬럼)도 같이 갱신',
+  'title만 바꾸면 검색이 옛 제목으로만 걸리는 불일치가 생긴다');
+need(/nt!==prevTitle\.get\(id\)/.test(rotate),
+  '바뀐 제목만 기록(47만 건에 매번 쓰지 않음)');
+// 한 바퀴가 30일 안에 끝나는가 — 배치 × 30일이 전체 행 수를 덮어야 한다.
+const batch = Number(/VIEW_COUNT_ROTATE_BATCH\s*=\s*(\d+)/.exec(admin)?.[1] || 0);
+const TOTAL_ROWS = 471192;   // 2026-09-17 실측
+need(batch * 30 >= TOTAL_ROWS,
+  `하루 ${batch.toLocaleString()}개 × 30일 = ${(batch * 30).toLocaleString()} ≥ 전체 ${TOTAL_ROWS.toLocaleString()}행 (한 바퀴 약 ${Math.ceil(TOTAL_ROWS / batch)}일)`,
+  '배치를 줄이면 한 바퀴가 30일을 넘어 저장 데이터 갱신 정책을 벗어난다');
+
 /* ④ 예산 산술 — 실측값이 주석과 어긋나지 않는지 */
 const withYt = Object.values(groups).filter(g => g && g.links && g.links.youtube);
 const disbanded = withYt.filter(g => g.disbanded).length;
