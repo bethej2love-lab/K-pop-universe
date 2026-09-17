@@ -227,8 +227,11 @@ async function resolveAid(t, ourKeys, ourDates) {
   // 후보 6명 중 5명이 해외였다).
   const want = t.kind === 'group' ? /그룹/ : /솔로/;
   const typed = cands.filter(c => want.test(c.gubun));
+  // ⚠️ '한국'만 보면 안 된다 — 멜론 표기는 **대한민국**이라 /한국/ 로는 한 건도 안 걸린다
+  //    (실측: 초신성 gubun '대한민국/남성/그룹'. 이 프로젝트가 nat.ko 에서 이미 한 번 겪은 함정이다).
+  const KO_NAT = /대한민국|한국/;
   const pool = (typed.length ? typed : cands)
-    .sort((a, b) => (/한국/.test(b.gubun) ? 1 : 0) - (/한국/.test(a.gubun) ? 1 : 0))
+    .sort((a, b) => (KO_NAT.test(b.gubun) ? 1 : 0) - (KO_NAT.test(a.gubun) ? 1 : 0))
     .slice(0, 5);
 
   let best = null;
@@ -317,7 +320,9 @@ const targets = [];
 if (!SOLO) {
   for (const [ko, g] of Object.entries(groups)) {
     if (!Array.isArray(g.discography) || !g.discography.length) continue;
-    targets.push({ key: ko, label: ko, kind: 'group', names: [g.en, ko], disco: g.discography, file: 'groups.json' });
+    // ⚠️ altNames 도 질의에 넣는다 — 슈퍼노바는 멜론에 **초신성**으로 있어서 en/ko 어느 쪽으로도
+    //    안 잡혔다(검색 상위는 전부 동명 해외 그룹). 앱 검색이 이미 쓰는 필드라 새로 만들 게 없다.
+    targets.push({ key: ko, label: ko, kind: 'group', names: [g.en, ko, ...(g.altNames || [])], disco: g.discography, file: 'groups.json' });
   }
 }
 if (SOLO || BOTH) {

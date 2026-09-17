@@ -163818,6 +163818,29 @@
     },
     "discography": [
       {
+        "title": "도도솔솔라라솔 OST Part.12",
+        "type": "OST",
+        "isMain": false,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/105/16/832/10516832_20201111143048_500.jpg",
+        "releaseDate": "2020.11.12",
+        "trackCount": 2,
+        "titleTrack": "Falling In Love",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Falling In Love",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Falling In Love (Inst.)",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "10516832"
+      },
+      {
         "title": "Hello Summer",
         "type": "썸머 스페셜 앨범",
         "isMain": true,
@@ -163852,6 +163875,29 @@
             "isTitle": false
           }
         ]
+      },
+      {
+        "title": "편의점 샛별이 OST Part.2",
+        "type": "OST",
+        "isMain": false,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/104/51/611/10451611_20200626122012_500.jpg",
+        "releaseDate": "2020.06.26",
+        "trackCount": 2,
+        "titleTrack": "Crazy",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Crazy",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Crazy (Inst.)",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "10451611"
       },
       {
         "title": "Da Capo",
@@ -163893,6 +163939,70 @@
             "isTitle": false
           }
         ]
+      },
+      {
+        "title": "어쩌다 발견한 하루 OST Part.1",
+        "type": "OST",
+        "isMain": false,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/103/34/563/10334563_500.jpg",
+        "releaseDate": "2019.10.02",
+        "trackCount": 2,
+        "titleTrack": "Feeling",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Feeling",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Feeling (Inst.)",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "10334563"
+      },
+      {
+        "title": "복수가 돌아왔다 OST Part.9",
+        "type": "OST",
+        "isMain": false,
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/102/42/194/10242194_500.jpg",
+        "releaseDate": "2019.01.15",
+        "trackCount": 2,
+        "titleTrack": "Magic Dream",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Magic Dream",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Magic Dream (Inst.)",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "10242194"
+      },
+      {
+        "title": "은주의 방 OST Part.1",
+        "type": "OST",
+        "isMain": false,
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/102/24/110/10224110_500.jpg",
+        "releaseDate": "2018.11.20",
+        "trackCount": 1,
+        "titleTrack": "네가 좋아",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "네가 좋아",
+            "isTitle": true
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "10224110"
       },
       {
         "title": "the Ruby",
@@ -164003,6 +164113,52 @@
         ]
       },
       {
+        "title": "에이프릴(APRIL) 2nd Single Album 'MAYDAY'",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/100/66/522/10066522_500.jpg",
+        "releaseDate": "2017.05.29",
+        "trackCount": 3,
+        "titleTrack": "MAYDAY",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "따끔",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "MAYDAY",
+            "isTitle": true
+          },
+          {
+            "no": 3,
+            "title": "YES SIR",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "10066522"
+      },
+      {
+        "title": "싱포유 - 다섯번째이야기 하나보단 둘이 좋아",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/100/41/802/10041802_500.jpg",
+        "releaseDate": "2017.02.26",
+        "trackCount": 1,
+        "titleTrack": "이렇게 너",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "이렇게 너",
+            "isTitle": true
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "10041802"
+      },
+      {
         "title": "Prelude",
         "type": "미니 3집",
         "isMain": true,
@@ -164093,6 +164249,57 @@
             "isTitle": false
           }
         ]
+      },
+      {
+        "title": "에이프릴(APRIL) Winter Special Album 'Snowman'",
+        "type": "스페셜",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/026/57/835/2657835_500.jpg",
+        "releaseDate": "2015.12.21",
+        "trackCount": 2,
+        "titleTrack": "Snowman",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Snowman",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Snowman (Inst.)",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "2657835"
+      },
+      {
+        "title": "에이프릴(APRIL) 1st Single Album 'Boing Boing'",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/026/52/802/2652802_500.jpg",
+        "releaseDate": "2015.11.25",
+        "trackCount": 3,
+        "titleTrack": "Muah!",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "유리성",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "Muah!",
+            "isTitle": true
+          },
+          {
+            "no": 3,
+            "title": "Muah! (Inst.)",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "2652802"
       },
       {
         "title": "Dreaming",
@@ -169246,6 +169453,65 @@
             "isTitle": false
           }
         ]
+      },
+      {
+        "title": "Shapeshifter",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/129/10/842/12910842_20260310163422_500.jpg",
+        "releaseDate": "2026.03.11",
+        "trackCount": 1,
+        "titleTrack": "Shapeshifter",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Shapeshifter",
+            "isTitle": true
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "12910842"
+      },
+      {
+        "title": "I DONT CARE",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/123/93/501/12393501_20251117172800_500.jpg",
+        "releaseDate": "2025.11.19",
+        "trackCount": 1,
+        "titleTrack": "I DONT CARE",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "I DONT CARE",
+            "isTitle": true
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "12393501"
+      },
+      {
+        "title": "F Girl",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/118/58/080/11858080_20250623101326_500.jpg",
+        "releaseDate": "2025.06.23",
+        "trackCount": 2,
+        "titleTrack": "F Girl",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "F Girl",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "지금을 놓치면 분명 너 후회할 거야",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "11858080"
       }
     ],
     "pri": 1.5,
@@ -177409,6 +177675,62 @@
             "isTitle": false
           }
         ]
+      },
+      {
+        "title": "삐리뽐 빼리뽐",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/010/46/352/1046352_500.jpg",
+        "releaseDate": "2010.10.19",
+        "trackCount": 3,
+        "titleTrack": "삐리뽐 빼리뽐",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "삐리뽐 빼리뽐",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "삐리뽐 빼리뽐 (Remix Ver.1)",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "내 심장을 뛰게 하는 말",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "1046352"
+      },
+      {
+        "title": "Too Late (Digital Single)",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/010/30/271/1030271_500.jpg",
+        "releaseDate": "2010.09.30",
+        "trackCount": 3,
+        "titleTrack": "Too Late (Part.1)",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Too Late (Part.1)",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Too Late (Part.2)",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "Too Late (Remix Ver.)",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "1030271"
       }
     ],
     "disbanded": "2012",
@@ -178035,6 +178357,319 @@
     ],
     "discography": [
       {
+        "title": "Heaven",
+        "type": "미니",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/137/69/164/13769164_20260629144143_500.jpg",
+        "releaseDate": "2026.06.30",
+        "trackCount": 5,
+        "titleTrack": "Moonlight",
+        "region": "jp",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Moonlight",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Fireworks",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "After the rain",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Stellar",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Sunrise",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "13769164"
+      },
+      {
+        "title": "Ichigo Ichie",
+        "type": "미니",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/133/99/697/13399697_20260518152318_500.jpg",
+        "releaseDate": "2026.05.20",
+        "trackCount": 5,
+        "titleTrack": "HOT",
+        "region": "jp",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "HOT",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Love With You",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "KEEP SHINING",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "More You",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Dark Hollow's Back",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "13399697"
+      },
+      {
+        "title": "정글피쉬 시즌2 OST Part.2",
+        "type": "OST",
+        "isMain": false,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/115/86/869/11586869_20240906141106_500.jpg",
+        "releaseDate": "2024.09.09",
+        "trackCount": 1,
+        "titleTrack": "누가 뭐래도",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "누가 뭐래도",
+            "isTitle": true
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "11586869"
+      },
+      {
+        "title": "Paparazzi",
+        "type": "정규",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/103/21/898/10321898_500.jpg",
+        "releaseDate": "2019.08.28",
+        "trackCount": 10,
+        "titleTrack": "Expect!!",
+        "region": "jp",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Expect!!",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Present",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "Bang",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Vitamin You",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Sunsun Birthday",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "Never Back Down",
+            "isTitle": false
+          },
+          {
+            "no": 7,
+            "title": "Everytime",
+            "isTitle": false
+          },
+          {
+            "no": 8,
+            "title": "Lost In Love",
+            "isTitle": false
+          },
+          {
+            "no": 9,
+            "title": "Cruisin'",
+            "isTitle": false
+          },
+          {
+            "no": 10,
+            "title": "Chapter II",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "10321898"
+      },
+      {
+        "title": "Bang",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/102/84/923/10284923_500.jpg",
+        "releaseDate": "2019.05.15",
+        "trackCount": 4,
+        "titleTrack": "Bang",
+        "region": "jp",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Bang",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Everytime",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "Bang (Instrumental)",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Everytime (Instrumental)",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "10284923"
+      },
+      {
+        "title": "Everytime",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/102/66/151/10266151_500.jpg",
+        "releaseDate": "2019.03.27",
+        "trackCount": 1,
+        "titleTrack": "Everytime",
+        "region": "jp",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Everytime",
+            "isTitle": true
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "10266151"
+      },
+      {
+        "title": "Chapter II",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/102/40/541/10240541_500.jpg",
+        "releaseDate": "2018.11.06",
+        "trackCount": 2,
+        "titleTrack": "Chapter II",
+        "region": "jp",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Chapter II",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Present",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "10240541"
+      },
+      {
+        "title": "폭풍속으로 (She's Gone)",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/021/39/735/2139735_500.jpg",
+        "releaseDate": "2012.08.09",
+        "trackCount": 4,
+        "titleTrack": "폭풍속으로 (She's Gone)",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "폭풍속으로 (She's Gone)",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Addicted",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "폭풍속으로 (She's Gone) (Inst.)",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Addicted (Inst.)",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "2139735"
+      },
+      {
+        "title": "Stupid Love",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/021/12/706/2112706_500.jpg",
+        "releaseDate": "2012.04.17",
+        "trackCount": 6,
+        "titleTrack": "Stupid Love",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Stupid Love",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Saturday",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "Stop Girl",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Stupid Love (Inst.)",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Saturday (Inst.)",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "Stop Girl (Inst.)",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "2112706"
+      },
+      {
         "title": "Time to Shine",
         "type": "미니",
         "isMain": true,
@@ -178074,6 +178709,62 @@
             "isTitle": false
           }
         ]
+      },
+      {
+        "title": "2008 연가 초신성 (Digital Single)",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/003/75/260/375260_500.jpg",
+        "releaseDate": "2008.04.03",
+        "trackCount": 1,
+        "titleTrack": "Super Star",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Super Star",
+            "isTitle": true
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "375260"
+      },
+      {
+        "title": "1st Album",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/003/58/575/358575_500.jpg",
+        "releaseDate": "2007.09.20",
+        "trackCount": 5,
+        "titleTrack": "Hit",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Hit",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Hit (Remix)",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "너는 어디에",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "너는 어디에 (Remix)",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Romance",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "358575"
       },
       {
         "title": "The Beautiful Stardust",
