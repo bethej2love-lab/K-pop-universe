@@ -2722,28 +2722,4488 @@
     "checkedAt": "2026-09-17"
   },
   "a:닝닝|에스파": {
-    "aid": null,
-    "failedWhy": "앨범 겹침 1장 (필요 2, 이름점수 1, 후보 1명)",
+    "aid": "2899561",
+    "melonName": "닝닝 (NINGNING)",
+    "gubun": "중국/여성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
     "checkedAt": "2026-09-17"
   },
   "a:런쥔|엔시티 드림": {
-    "aid": null,
-    "failedWhy": "앨범 겹침 1장 (필요 2, 이름점수 1, 후보 1명)",
+    "aid": "1066423",
+    "melonName": "런쥔 (RENJUN)",
+    "gubun": "중국/남성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
     "checkedAt": "2026-09-17"
   },
   "a:창빈|스트레이키즈": {
-    "aid": null,
-    "failedWhy": "앨범 겹침 1장 (필요 2, 이름점수 1, 후보 1명)",
+    "aid": "2006376",
+    "melonName": "창빈 (Stray Kids)",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
     "checkedAt": "2026-09-17"
   },
   "a:정한|세븐틴": {
-    "aid": null,
-    "failedWhy": "앨범 겹침 1장 (필요 2, 이름점수 1, 후보 5명)",
+    "aid": "874338",
+    "melonName": "정한",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:유타|엔시티 127": {
+    "aid": "991417",
+    "melonName": "유타 (YUTA)",
+    "gubun": "일본/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 6,
+    "checkedAt": "2026-09-17"
+  },
+  "a:리아|있지": {
+    "aid": "2622593",
+    "melonName": "리아 (ITZY)",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 6,
     "checkedAt": "2026-09-17"
   },
   "a:안유진|아이브": {
+    "aid": "2399726",
+    "melonName": "안유진 (IVE)",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 4,
+    "checkedAt": "2026-09-17"
+  },
+  "a:조슈아|세븐틴": {
+    "aid": "874339",
+    "melonName": "조슈아",
+    "gubun": "미국/남성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 2,
+    "checkedAt": "2026-09-17"
+  },
+  "a:재희|엔시티 위시": {
+    "aid": "3574250",
+    "melonName": "재희 (JAEHEE)",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:도영|엔시티 127": {
+    "aid": "830327",
+    "melonName": "도영 (DOYOUNG)",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:천러|엔시티 드림": {
+    "aid": "1066422",
+    "melonName": "천러 (CHENLE)",
+    "gubun": "중국/남성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:쿤|웨이션브이": {
+    "aid": "2111385",
+    "melonName": "쿤 (KUN)",
+    "gubun": "남성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:텐|웨이션브이": {
+    "aid": "965987",
+    "melonName": "텐 (TEN)",
+    "gubun": "타이 왕국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 8,
+    "checkedAt": "2026-09-17"
+  },
+  "a:리노|스트레이키즈": {
+    "aid": "2006375",
+    "melonName": "리노 (Stray Kids)",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:한|스트레이키즈": {
+    "aid": "2006378",
+    "melonName": "한 (Stray Kids)",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 3,
+    "checkedAt": "2026-09-17"
+  },
+  "a:승민|스트레이키즈": {
+    "aid": "2006380",
+    "melonName": "승민 (Stray Kids)",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 6,
+    "checkedAt": "2026-09-17"
+  },
+  "a:유나|있지": {
     "aid": null,
-    "failedWhy": "앨범 겹침 0장 (필요 2, 이름점수 1, 후보 5명)",
+    "failedWhy": "앨범 겹침 0장 (필요 2, 겹친 후보 0명, 후보 8명)",
+    "checkedAt": "2026-09-17"
+  },
+  "a:릴리|엔믹스": {
+    "aid": "829811",
+    "melonName": "릴리 (NMIXX)",
+    "gubun": "여성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:해원|엔믹스": {
+    "aid": "3070788",
+    "melonName": "해원 (NMIXX)",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:배이|엔믹스": {
+    "aid": "3070792",
+    "melonName": "배이 (NMIXX)",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:준|세븐틴": {
+    "aid": "874340",
+    "melonName": "준",
+    "gubun": "중국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 6,
+    "checkedAt": "2026-09-17"
+  },
+  "a:도겸|세븐틴": {
+    "aid": "874344",
+    "melonName": "도겸",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 7,
+    "checkedAt": "2026-09-17"
+  },
+  "a:영재|투어스": {
+    "aid": "3684089",
+    "melonName": "영재 (TWS)",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:다니엘|뉴진스": {
+    "aid": "3116666",
+    "melonName": "다니엘(DANIELLE)",
+    "gubun": "여성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:레이|아이브": {
+    "aid": "3055169",
+    "melonName": "레이 (IVE)",
+    "gubun": "일본/여성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:이서|아이브": {
+    "aid": "3055172",
+    "melonName": "이서 (IVE)",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:이솔|키키": {
+    "aid": null,
+    "failedWhy": "앨범 겹침 0장 (필요 2, 겹친 후보 0명, 후보 8명)",
+    "checkedAt": "2026-09-17"
+  },
+  "a:리브|리센느": {
+    "aid": "3709906",
+    "melonName": "리브 (LIV)",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:윤호|에이티즈": {
+    "aid": "2399811",
+    "melonName": "윤호(ATEEZ)",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:우기|아이들": {
+    "aid": "2138416",
+    "melonName": "우기 (YUQI)",
+    "gubun": "중국/여성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 9,
+    "checkedAt": "2026-09-17"
+  },
+  "a:소희|라이즈": {
+    "aid": "3478523",
+    "melonName": "소희 (SOHEE)",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:앤톤|라이즈": {
+    "aid": "3478525",
+    "melonName": "앤톤 (ANTON)",
+    "gubun": "남성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:범규|투모로우바이투게더": {
+    "aid": "2633360",
+    "melonName": "범규",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:태현|투모로우바이투게더": {
+    "aid": "2633361",
+    "melonName": "태현",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:윤아|아일릿": {
+    "aid": "3743526",
+    "melonName": "윤아",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:원희|아일릿": {
+    "aid": "3743531",
+    "melonName": "원희 (아일릿(ILLIT))",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:김채원|르세라핌": {
+    "aid": "2399729",
+    "melonName": "김채원",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:나린|미야오": {
+    "aid": "3893616",
+    "melonName": "나린 (NARIN)",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:조이|레드벨벳": {
+    "aid": "780922",
+    "melonName": "조이 (JOY)",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:써니|소녀시대": {
+    "aid": "257449",
+    "melonName": "써니 (SUNNY)",
+    "gubun": "미국/여성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 7,
+    "checkedAt": "2026-09-17"
+  },
+  "a:윤아|소녀시대": {
+    "aid": "429140",
+    "melonName": "윤아 (YOONA)",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:서현|소녀시대": {
+    "aid": "401220",
+    "melonName": "서현 (SEOHYUN)",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:앰버|에프엑스": {
+    "aid": "668851",
+    "melonName": "Amber Liu (엠버)",
+    "gubun": "미국/여성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:루나|에프엑스": {
+    "aid": "498356",
+    "melonName": "루나 (LUNA)",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:크리스탈|에프엑스": {
+    "aid": "473703",
+    "melonName": "크리스탈 (Krystal)",
+    "gubun": "미국/여성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 2,
+    "checkedAt": "2026-09-17"
+  },
+  "a:슈가|방탄소년단": {
+    "aid": "725988",
+    "melonName": "SUGA",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:뷔|방탄소년단": {
+    "aid": "725989",
+    "melonName": "V",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:정연|트와이스": {
+    "aid": "906642",
+    "melonName": "정연",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:지효|트와이스": {
+    "aid": "906645",
+    "melonName": "지효 (TWICE)",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:채영|트와이스": {
+    "aid": "906649",
+    "melonName": "채영 (TWICE)",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:쯔위|트와이스": {
+    "aid": "906650",
+    "melonName": "쯔위 (TWICE)",
+    "gubun": "타이완/여성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:성호|보이넥스트도어": {
+    "aid": "3460735",
+    "melonName": "성호 (BOYNEXTDOOR)",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:아이사|스테이씨": {
+    "aid": "2901549",
+    "melonName": "아이사 (ISA)",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:뉴|더보이즈": {
+    "aid": "2020043",
+    "melonName": "뉴(NEW)",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:큐|더보이즈": {
+    "aid": "2020044",
+    "melonName": "큐 (THE BOYZ)",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:민균|온앤오프": {
+    "aid": "1865642",
+    "melonName": "민균",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:김채연|트리플에스": {
+    "aid": "3139881",
+    "melonName": "김채연",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:김나경|트리플에스": {
+    "aid": "3137707",
+    "melonName": "김나경",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:앨런|크래비티": {
+    "aid": "2864442",
+    "melonName": "앨런 (CRAVITY)",
+    "gubun": "남성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:우빈|크래비티": {
+    "aid": "2864444",
+    "melonName": "우빈 (CRAVITY)",
+    "gubun": "남성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 2,
+    "checkedAt": "2026-09-17"
+  },
+  "a:민희|크래비티": {
+    "aid": "2743586",
+    "melonName": "민희 (CRAVITY)",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 2,
+    "checkedAt": "2026-09-17"
+  },
+  "a:강혜원|솔로": {
+    "aid": "2399728",
+    "melonName": "강혜원",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 2,
+    "checkedAt": "2026-09-17"
+  },
+  "a:임나영|아이오아이": {
+    "aid": "968274",
+    "melonName": "임나영",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 4,
+    "checkedAt": "2026-09-17"
+  },
+  "a:청하|솔로": {
+    "aid": "968265",
+    "melonName": "청하",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 7,
+    "checkedAt": "2026-09-17"
+  },
+  "a:김세정|아이오아이": {
+    "aid": "968261",
+    "melonName": "김세정",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 17,
+    "checkedAt": "2026-09-17"
+  },
+  "a:정채연|아이오아이": {
+    "aid": "896291",
+    "melonName": "정채연",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:김소혜|아이오아이": {
+    "aid": "968266",
+    "melonName": "김소혜",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:유연정|아이오아이": {
+    "aid": "968276",
+    "melonName": "유연정",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 12,
+    "checkedAt": "2026-09-17"
+  },
+  "a:최유정|아이오아이": {
+    "aid": "968264",
+    "melonName": "최유정",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 5,
+    "checkedAt": "2026-09-17"
+  },
+  "a:전소미|아이오아이": {
+    "aid": "968260",
+    "melonName": "전소미",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 4,
+    "checkedAt": "2026-09-17"
+  },
+  "a:윤지성|워너원": {
+    "aid": "1865968",
+    "melonName": "윤지성",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 10,
+    "checkedAt": "2026-09-17"
+  },
+  "a:옹성우|워너원": {
+    "aid": "1865967",
+    "melonName": "옹성우",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 5,
+    "checkedAt": "2026-09-17"
+  },
+  "a:김재환|워너원": {
+    "aid": "945663",
+    "melonName": "김재환",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 7,
+    "checkedAt": "2026-09-17"
+  },
+  "a:강다니엘|워너원": {
+    "aid": "1865969",
+    "melonName": "강다니엘",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 29,
+    "checkedAt": "2026-09-17"
+  },
+  "a:박지훈|워너원": {
+    "aid": "1865964",
+    "melonName": "박지훈",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 13,
+    "checkedAt": "2026-09-17"
+  },
+  "a:박우진|워너원": {
+    "aid": "1865375",
+    "melonName": "박우진 (AB6IX)",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 4,
+    "checkedAt": "2026-09-17"
+  },
+  "a:배진영|워너원": {
+    "aid": "1865965",
+    "melonName": "배진영",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 3,
+    "checkedAt": "2026-09-17"
+  },
+  "a:이대휘|워너원": {
+    "aid": "1865373",
+    "melonName": "이대휘 (AB6IX)",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 3,
+    "checkedAt": "2026-09-17"
+  },
+  "a:최유진|케플러": {
+    "aid": "868646",
+    "melonName": "최유진 (Kep1er)",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:김채현|케플러": {
+    "aid": "3058265",
+    "melonName": "김채현 (Kep1er)",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:성한빈|제로베이스원": {
+    "aid": "3466613",
+    "melonName": "성한빈 (ZEROBASEONE)",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:김지웅|제로베이스원": {
+    "aid": "3466615",
+    "melonName": "김지웅 (ZEROBASEONE)",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 3,
+    "checkedAt": "2026-09-17"
+  },
+  "a:석매튜|제로베이스원": {
+    "aid": "3466620",
+    "melonName": "석매튜 (ZEROBASEONE)",
+    "gubun": "캐나다/남성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 2,
+    "checkedAt": "2026-09-17"
+  },
+  "a:김태래|제로베이스원": {
+    "aid": "3466621",
+    "melonName": "김태래 (ZEROBASEONE)",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 6,
+    "checkedAt": "2026-09-17"
+  },
+  "a:장하오|앤더블": {
+    "aid": "3466618",
+    "melonName": "장하오 (AND2BLE)",
+    "gubun": "중국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 3,
+    "checkedAt": "2026-09-17"
+  },
+  "a:리키|앤더블": {
+    "aid": "3466622",
+    "melonName": "리키 (AND2BLE)",
+    "gubun": "중국/남성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:리오|알파드라이브원": {
+    "aid": "3481000",
+    "melonName": "리오 (ALPHA DRIVE ONE)",
+    "gubun": "오스트레일리아/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 3,
+    "checkedAt": "2026-09-17"
+  },
+  "a:최정은|이즈나": {
+    "aid": "4015047",
+    "melonName": "최정은 (izna)",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:시우민|엑소": {
+    "aid": "715175",
+    "melonName": "시우민 (XIUMIN)",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:수호|엑소": {
+    "aid": "672855",
+    "melonName": "수호 (SUHO)",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 7,
+    "checkedAt": "2026-09-17"
+  },
+  "a:레이|엑소": {
+    "aid": "715178",
+    "melonName": "레이 (LAY)",
+    "gubun": "중국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 55,
+    "checkedAt": "2026-09-17"
+  },
+  "a:백현|엑소": {
+    "aid": "672859",
+    "melonName": "백현 (BAEKHYUN)",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 18,
+    "checkedAt": "2026-09-17"
+  },
+  "a:첸|엑소": {
+    "aid": "715176",
+    "melonName": "첸 (CHEN)",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 10,
+    "checkedAt": "2026-09-17"
+  },
+  "a:찬열|엑소": {
+    "aid": "672857",
+    "melonName": "찬열 (CHANYEOL)",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 14,
+    "checkedAt": "2026-09-17"
+  },
+  "a:디오|엑소": {
+    "aid": "672853",
+    "melonName": "도경수(D.O.)",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 4,
+    "checkedAt": "2026-09-17"
+  },
+  "a:카이|엑소": {
+    "aid": "710009",
+    "melonName": "카이 (KAI)",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 4,
+    "checkedAt": "2026-09-17"
+  },
+  "a:세훈|엑소": {
+    "aid": null,
+    "failedWhy": "앨범 겹침 0장 (필요 2, 겹친 후보 0명, 후보 6명)",
+    "checkedAt": "2026-09-17"
+  },
+  "a:이특|슈퍼주니어": {
+    "aid": "517700",
+    "melonName": "이특 (LEETEUK)",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 3,
+    "checkedAt": "2026-09-17"
+  },
+  "a:예성|슈퍼주니어": {
+    "aid": "261447",
+    "melonName": "예성 (YESUNG)",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 11,
+    "checkedAt": "2026-09-17"
+  },
+  "a:신동|슈퍼주니어": {
+    "aid": "237653",
+    "melonName": "신동 (SHINDONG)",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:은혁|슈퍼주니어": {
+    "aid": "548623",
+    "melonName": "은혁 (EUNHYUK)",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 4,
+    "checkedAt": "2026-09-17"
+  },
+  "a:동해|슈퍼주니어": {
+    "aid": "427881",
+    "melonName": "동해 (DONGHAE)",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 7,
+    "checkedAt": "2026-09-17"
+  },
+  "a:려욱|슈퍼주니어": {
+    "aid": "209406",
+    "melonName": "려욱 (RYEOWOOK)",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 10,
+    "checkedAt": "2026-09-17"
+  },
+  "a:규현|슈퍼주니어": {
+    "aid": "205880",
+    "melonName": "규현 (KYUHYUN)",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 14,
+    "checkedAt": "2026-09-17"
+  },
+  "a:성민|슈퍼주니어": {
+    "aid": "55350",
+    "melonName": "성민 (SUNGMIN)",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 7,
+    "checkedAt": "2026-09-17"
+  },
+  "a:강인|슈퍼주니어": {
+    "aid": "41991",
+    "melonName": "강인 (KANGIN)",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 3,
+    "checkedAt": "2026-09-17"
+  },
+  "a:MJ|아스트로": {
+    "aid": "946271",
+    "melonName": "MJ (엠제이)",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 8,
+    "checkedAt": "2026-09-17"
+  },
+  "a:진진|아스트로": {
+    "aid": "946272",
+    "melonName": "진진 (ASTRO)",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 13,
+    "checkedAt": "2026-09-17"
+  },
+  "a:차은우|아스트로": {
+    "aid": "946269",
+    "melonName": "차은우 (ASTRO)",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 9,
+    "checkedAt": "2026-09-17"
+  },
+  "a:윤산하|아스트로": {
+    "aid": "946274",
+    "melonName": "윤산하",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 4,
+    "checkedAt": "2026-09-17"
+  },
+  "a:셔누|몬스타엑스": {
+    "aid": "859389",
+    "melonName": "셔누 (몬스타엑스)",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 3,
+    "checkedAt": "2026-09-17"
+  },
+  "a:민혁|몬스타엑스": {
+    "aid": "859391",
+    "melonName": "민혁 (몬스타엑스)",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:기현|몬스타엑스": {
+    "aid": "828700",
+    "melonName": "기현 (몬스타엑스)",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 17,
+    "checkedAt": "2026-09-17"
+  },
+  "a:형원|몬스타엑스": {
+    "aid": "837993",
+    "melonName": "형원 (몬스타엑스)",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 4,
+    "checkedAt": "2026-09-17"
+  },
+  "a:주헌|몬스타엑스": {
+    "aid": "837027",
+    "melonName": "주헌 (몬스타엑스)",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 5,
+    "checkedAt": "2026-09-17"
+  },
+  "a:인성|에스에프나인": {
+    "aid": "1202377",
+    "melonName": "인성",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 6,
+    "checkedAt": "2026-09-17"
+  },
+  "a:재윤|에스에프나인": {
+    "aid": "1202378",
+    "melonName": "재윤 (SF9)",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 2,
+    "checkedAt": "2026-09-17"
+  },
+  "a:다원|에스에프나인": {
+    "aid": "1202374",
+    "melonName": "다원",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 2,
+    "checkedAt": "2026-09-17"
+  },
+  "a:주호|에스에프나인": {
+    "aid": "1202379",
+    "melonName": "주호",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:유태양|에스에프나인": {
+    "aid": "1202381",
+    "melonName": "유태양",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:휘영|에스에프나인": {
+    "aid": "1202382",
+    "melonName": "휘영",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 3,
+    "checkedAt": "2026-09-17"
+  },
+  "a:찬희|에스에프나인": {
+    "aid": "1202380",
+    "melonName": "찬희 (SF9)",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 4,
+    "checkedAt": "2026-09-17"
+  },
+  "a:동현|킥플립": {
+    "aid": "4093556",
+    "melonName": "동현 (KickFlip)",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:서호|원어스": {
+    "aid": "2299045",
+    "melonName": "서호 (ONEUS)",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:건희|원어스": {
+    "aid": "2299047",
+    "melonName": "건희 (ONEUS)",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:시온|원어스": {
+    "aid": "2299050",
+    "melonName": "시온 (ONEUS)",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:효정|오마이걸": {
+    "aid": "857996",
+    "melonName": "효정 (오마이걸)",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 16,
+    "checkedAt": "2026-09-17"
+  },
+  "a:미미|오마이걸": {
+    "aid": "857998",
+    "melonName": "미미 (오마이걸)",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 3,
+    "checkedAt": "2026-09-17"
+  },
+  "a:유아|오마이걸": {
+    "aid": "858000",
+    "melonName": "유아 (오마이걸)",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 7,
+    "checkedAt": "2026-09-17"
+  },
+  "a:승희|오마이걸": {
+    "aid": "858001",
+    "melonName": "승희 (오마이걸)",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 15,
+    "checkedAt": "2026-09-17"
+  },
+  "a:유빈|오마이걸": {
+    "aid": "858003",
+    "melonName": "유빈 (오마이걸)",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 2,
+    "checkedAt": "2026-09-17"
+  },
+  "a:카엘|솔로": {
+    "aid": "2927128",
+    "melonName": "카엘",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:테오|피원하모니": {
+    "aid": "2896829",
+    "melonName": "테오 (P1Harmony)",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:연호|베리베리": {
+    "aid": "2620166",
+    "melonName": "연호",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 2,
+    "checkedAt": "2026-09-17"
+  },
+  "a:강민|베리베리": {
+    "aid": null,
+    "failedWhy": "앨범 겹침 0장 (필요 2, 겹친 후보 0명, 후보 8명)",
+    "checkedAt": "2026-09-17"
+  },
+  "a:장대현|위아이": {
+    "aid": "1908100",
+    "melonName": "장대현",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:김동한|위아이": {
+    "aid": "1910325",
+    "melonName": "김동한",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 4,
+    "checkedAt": "2026-09-17"
+  },
+  "a:강석화|위아이": {
+    "aid": "2894741",
+    "melonName": "강석화",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:서령|솔로": {
+    "aid": "2295767",
+    "melonName": "서령(SEORYOUNG)",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:레나|솔로": {
+    "aid": "2295763",
+    "melonName": "레나(LENA)",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 6,
+    "checkedAt": "2026-09-17"
+  },
+  "a:지수연|솔로": {
+    "aid": "1866213",
+    "melonName": "지수연",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 4,
+    "checkedAt": "2026-09-17"
+  },
+  "a:엘리|솔로": {
+    "aid": null,
+    "failedWhy": "앨범 겹침 0장 (필요 2, 겹친 후보 0명, 후보 8명)",
+    "checkedAt": "2026-09-17"
+  },
+  "a:김성규|인피니트": {
+    "aid": "672262",
+    "melonName": "김성규",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 18,
+    "checkedAt": "2026-09-17"
+  },
+  "a:장동우|인피니트": {
+    "aid": "622291",
+    "melonName": "장동우 (인피니트)",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 3,
+    "checkedAt": "2026-09-17"
+  },
+  "a:남우현|인피니트": {
+    "aid": "672263",
+    "melonName": "남우현",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 2,
+    "checkedAt": "2026-09-17"
+  },
+  "a:이성열|인피니트": {
+    "aid": "672265",
+    "melonName": "이성열 (인피니트)",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:엘|인피니트": {
+    "aid": "643831",
+    "melonName": "엘(L)",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 5,
+    "checkedAt": "2026-09-17"
+  },
+  "a:이성종|인피니트": {
+    "aid": "672266",
+    "melonName": "이성종",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 2,
+    "checkedAt": "2026-09-17"
+  },
+  "a:문수아|빌리": {
+    "aid": "3050084",
+    "melonName": "문수아(Billlie)",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:수현|빌리": {
+    "aid": "3050085",
+    "melonName": "수현",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:하람|빌리": {
+    "aid": "3050090",
+    "melonName": "하람",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:츠키|빌리": {
+    "aid": "3050089",
+    "melonName": "츠키(Billlie)",
+    "gubun": "일본/여성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:전웅|에이비식스": {
+    "aid": "2640830",
+    "melonName": "전웅 (AB6IX)",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:김동현|에이비식스": {
+    "aid": "1865247",
+    "melonName": "김동현 (AB6IX)",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 2,
+    "checkedAt": "2026-09-17"
+  },
+  "a:민영|브브걸": {
+    "aid": "946038",
+    "melonName": "민영 (BBGIRLS)",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 2,
+    "checkedAt": "2026-09-17"
+  },
+  "a:유정|브브걸": {
+    "aid": "784322",
+    "melonName": "유정(Kim Yujeong)",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:윤두준|하이라이트": {
+    "aid": "418201",
+    "melonName": "윤두준",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:양요섭|하이라이트": {
+    "aid": "510565",
+    "melonName": "양요섭",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 16,
+    "checkedAt": "2026-09-17"
+  },
+  "a:이기광|하이라이트": {
+    "aid": "458181",
+    "melonName": "이기광",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 5,
+    "checkedAt": "2026-09-17"
+  },
+  "a:손동운|하이라이트": {
+    "aid": "512480",
+    "melonName": "손동운",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 5,
+    "checkedAt": "2026-09-17"
+  },
+  "a:박규리|카라": {
+    "aid": "204065",
+    "melonName": "박규리 (카라)",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 4,
+    "checkedAt": "2026-09-17"
+  },
+  "a:한승연|카라": {
+    "aid": "407540",
+    "melonName": "한승연",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 7,
+    "checkedAt": "2026-09-17"
+  },
+  "a:니콜|카라": {
+    "aid": "408880",
+    "melonName": "니콜",
+    "gubun": "미국/여성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 7,
+    "checkedAt": "2026-09-17"
+  },
+  "a:강지영|카라": {
+    "aid": "512342",
+    "melonName": "강지영",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 10,
+    "checkedAt": "2026-09-17"
+  },
+  "a:허영지|카라": {
+    "aid": "778238",
+    "melonName": "허영지 (카라)",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 3,
+    "checkedAt": "2026-09-17"
+  },
+  "a:구하라|카라": {
+    "aid": "556401",
+    "melonName": "구하라 (카라)",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 2,
+    "checkedAt": "2026-09-17"
+  },
+  "a:유빈|솔로": {
+    "aid": "673291",
+    "melonName": "유빈",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 7,
+    "checkedAt": "2026-09-17"
+  },
+  "a:예은|솔로": {
+    "aid": null,
+    "failedWhy": "앨범 겹침 0장 (필요 2, 겹친 후보 0명, 후보 8명)",
+    "checkedAt": "2026-09-17"
+  },
+  "a:선미|솔로": {
+    "aid": "22938",
+    "melonName": "선미",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 18,
+    "checkedAt": "2026-09-17"
+  },
+  "a:혜림|솔로": {
+    "aid": null,
+    "failedWhy": "앨범 겹침 0장 (필요 2, 겹친 후보 0명, 후보 8명)",
+    "checkedAt": "2026-09-17"
+  },
+  "a:선예|솔로": {
+    "aid": "227506",
+    "melonName": "선예",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 8,
+    "checkedAt": "2026-09-17"
+  },
+  "a:남지현|솔로": {
+    "aid": "672411",
+    "melonName": "남지현 (4minute)",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:허가윤|솔로": {
+    "aid": "454903",
+    "melonName": "허가윤 (4minute)",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 2,
+    "checkedAt": "2026-09-17"
+  },
+  "a:전지윤|솔로": {
+    "aid": "520282",
+    "melonName": "전지윤 (JENYER)",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 14,
+    "checkedAt": "2026-09-17"
+  },
+  "a:박봄|투애니원": {
+    "aid": "439341",
+    "melonName": "박봄 (Park Bom)",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:산다라박|투애니원": {
+    "aid": "165537",
+    "melonName": "산다라박",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 5,
+    "checkedAt": "2026-09-17"
+  },
+  "a:CL|투애니원": {
+    "aid": "441844",
+    "melonName": "CL",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:공민지|투애니원": {
+    "aid": "441843",
+    "melonName": "공민지",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 7,
+    "checkedAt": "2026-09-17"
+  },
+  "a:큐리|티아라": {
+    "aid": "672798",
+    "melonName": "큐리 (Qri)",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:은정|티아라": {
+    "aid": "473462",
+    "melonName": "은정 (티아라)",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 4,
+    "checkedAt": "2026-09-17"
+  },
+  "a:효민|티아라": {
+    "aid": "473980",
+    "melonName": "효민",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 6,
+    "checkedAt": "2026-09-17"
+  },
+  "a:지연|티아라": {
+    "aid": null,
+    "failedWhy": "앨범 겹침 0장 (필요 2, 겹친 후보 0명, 후보 8명)",
+    "checkedAt": "2026-09-17"
+  },
+  "a:솔지|이엑스아이디": {
+    "aid": "247582",
+    "melonName": "솔지",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 36,
+    "checkedAt": "2026-09-17"
+  },
+  "a:ELLY|이엑스아이디": {
+    "aid": "593194",
+    "melonName": "ELLY",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:하니|이엑스아이디": {
+    "aid": "673743",
+    "melonName": "하니 (EXID)",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:혜린|이엑스아이디": {
+    "aid": "688631",
+    "melonName": "혜린 (EXID)",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 3,
+    "checkedAt": "2026-09-17"
+  },
+  "a:정화|이엑스아이디": {
+    "aid": "673738",
+    "melonName": "정화 (EXID)",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:김재경|솔로": {
+    "aid": "471743",
+    "melonName": "김재경",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:조현영|솔로": {
+    "aid": "471744",
+    "melonName": "조현영(레인보우)",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 6,
+    "checkedAt": "2026-09-17"
+  },
+  "a:오승아|솔로": {
+    "aid": "672895",
+    "melonName": "오승아",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 2,
+    "checkedAt": "2026-09-17"
+  },
+  "a:희진|아르테미스": {
+    "aid": "1183761",
+    "melonName": "희진 (ARTMS)",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 5,
+    "checkedAt": "2026-09-17"
+  },
+  "a:하슬|아르테미스": {
+    "aid": "1273010",
+    "melonName": "하슬 (ARTMS)",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 4,
+    "checkedAt": "2026-09-17"
+  },
+  "a:김립|아르테미스": {
+    "aid": "3472002",
+    "melonName": "김립 (ARTMS)",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:진솔|아르테미스": {
+    "aid": null,
+    "failedWhy": "앨범 겹침 1장 (필요 2, 겹친 후보 2명, 후보 8명)",
+    "checkedAt": "2026-09-17"
+  },
+  "a:최리|아르테미스": {
+    "aid": "3472006",
+    "melonName": "최리 (ARTMS)",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:현진|솔로": {
+    "aid": "1229119",
+    "melonName": "현진",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:여진|솔로": {
+    "aid": "1383168",
+    "melonName": "여진(L∞na)",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 3,
+    "checkedAt": "2026-09-17"
+  },
+  "a:이브|이달의소녀": {
+    "aid": "2018962",
+    "melonName": "Yves (이브)",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 10,
+    "checkedAt": "2026-09-17"
+  },
+  "a:츄|이달의소녀": {
+    "aid": "2059472",
+    "melonName": "츄 (CHUU)",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 23,
+    "checkedAt": "2026-09-17"
+  },
+  "a:명형서|클라씨": {
+    "aid": "3077799",
+    "melonName": "명형서 (CLASSy)",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:윤채원|클라씨": {
+    "aid": "3077801",
+    "melonName": "윤채원 (CLASSy)",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:박보은|클라씨": {
+    "aid": "3077800",
+    "melonName": "박보은 (CLASSy)",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:오승희|솔로": {
+    "aid": "868642",
+    "melonName": "오승희",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:SORN|솔로": {
+    "aid": "868641",
+    "melonName": "Sorn (손)",
+    "gubun": "타이 왕국/여성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 12,
+    "checkedAt": "2026-09-17"
+  },
+  "a:엘키|솔로": {
+    "aid": "947102",
+    "melonName": "ELKIE (엘키)",
+    "gubun": "홍콩/여성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 2,
+    "checkedAt": "2026-09-17"
+  },
+  "a:마유카|니쥬": {
+    "aid": "4362280",
+    "melonName": "마유카",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:J.seph|카드": {
+    "aid": "1271814",
+    "melonName": "J.seph",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:BM|카드": {
+    "aid": "1271813",
+    "melonName": "BM",
+    "gubun": "미국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 9,
+    "checkedAt": "2026-09-17"
+  },
+  "a:전소민|카드": {
+    "aid": "882817",
+    "melonName": "전소민",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 2,
+    "checkedAt": "2026-09-17"
+  },
+  "a:전지우|카드": {
+    "aid": "1271815",
+    "melonName": "전지우",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:애니|올데이프로젝트": {
+    "blocked": true,
+    "blockedWhy": "멜론 동명 노르웨이 가수 Annie(623811)로 붙음 — 올데이프로젝트 애니는 2025 데뷔라 그 카탈로그와 무관",
+    "checkedAt": "2026-09-17"
+  },
+  "a:유노윤호|동방신기": {
+    "aid": "52613",
+    "melonName": "유노윤호 (U-KNOW)",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 12,
+    "checkedAt": "2026-09-17"
+  },
+  "a:최강창민|동방신기": {
+    "aid": "52604",
+    "melonName": "최강창민 (MAX CHANGMIN)",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 12,
+    "checkedAt": "2026-09-17"
+  },
+  "a:김재중|동방신기": {
+    "aid": "52614",
+    "melonName": "김재중",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 36,
+    "checkedAt": "2026-09-17"
+  },
+  "a:JAY B|갓세븐": {
+    "aid": "644331",
+    "melonName": "JAY B",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 11,
+    "checkedAt": "2026-09-17"
+  },
+  "a:마크|갓세븐": {
+    "aid": "751070",
+    "melonName": "마크 (GOT7)",
+    "gubun": "미국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 6,
+    "checkedAt": "2026-09-17"
+  },
+  "a:잭슨|갓세븐": {
+    "aid": "751071",
+    "melonName": "잭슨 (Jackson Wang)",
+    "gubun": "중국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 7,
+    "checkedAt": "2026-09-17"
+  },
+  "a:진영|갓세븐": {
+    "aid": "640634",
+    "melonName": "진영 (GOT7)",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 2,
+    "checkedAt": "2026-09-17"
+  },
+  "a:뱀뱀|갓세븐": {
+    "aid": "751076",
+    "melonName": "BamBam",
+    "gubun": "타이 왕국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 5,
+    "checkedAt": "2026-09-17"
+  },
+  "a:유겸|갓세븐": {
+    "aid": "751077",
+    "melonName": "유겸 (YUGYEOM)",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 3,
+    "checkedAt": "2026-09-17"
+  },
+  "a:예린|솔로": {
+    "aid": "858236",
+    "melonName": "예린 (YERIN)",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 9,
+    "checkedAt": "2026-09-17"
+  },
+  "a:유주|솔로": {
+    "aid": "858238",
+    "melonName": "유주 (YUJU)",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 26,
+    "checkedAt": "2026-09-17"
+  },
+  "a:한승우|솔로": {
+    "aid": "1229244",
+    "melonName": "한승우",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 9,
+    "checkedAt": "2026-09-17"
+  },
+  "a:우즈|솔로": {
+    "aid": "2086047",
+    "melonName": "WOODZ",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 20,
+    "checkedAt": "2026-09-17"
+  },
+  "a:김우석|엑스원": {
+    "aid": "913165",
+    "melonName": "김우석",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 6,
+    "checkedAt": "2026-09-17"
+  },
+  "a:김요한|위아이": {
+    "aid": "2743582",
+    "melonName": "김요한",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 6,
+    "checkedAt": "2026-09-17"
+  },
+  "a:손동표|솔로": {
+    "aid": "2743585",
+    "melonName": "손동표",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 3,
+    "checkedAt": "2026-09-17"
+  },
+  "a:이협|드리핀": {
+    "aid": "2744624",
+    "melonName": "이협",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:Kevin|솔로": {
+    "aid": null,
+    "failedWhy": "앨범 겹침 0장 (필요 2, 겹친 후보 0명, 후보 8명)",
+    "checkedAt": "2026-09-17"
+  },
+  "a:황광희|솔로": {
+    "aid": "560207",
+    "melonName": "황광희",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:임시완|솔로": {
+    "aid": "672788",
+    "melonName": "임시완 (Yim Siwan)",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 6,
+    "checkedAt": "2026-09-17"
+  },
+  "a:문준영|솔로": {
+    "aid": "672786",
+    "melonName": "문준영 (ZE:After)",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 4,
+    "checkedAt": "2026-09-17"
+  },
+  "a:김태헌|솔로": {
+    "aid": "672792",
+    "melonName": "김태헌",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:정희철|솔로": {
+    "aid": "672793",
+    "melonName": "정희철",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:하민우|솔로": {
+    "aid": "672795",
+    "melonName": "하민우",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 5,
+    "checkedAt": "2026-09-17"
+  },
+  "a:박형식|솔로": {
+    "aid": "672796",
+    "melonName": "박형식",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 7,
+    "checkedAt": "2026-09-17"
+  },
+  "a:김동준|솔로": {
+    "aid": "672797",
+    "melonName": "김동준",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 3,
+    "checkedAt": "2026-09-17"
+  },
+  "a:천지|틴탑": {
+    "aid": "672549",
+    "melonName": "천지 (틴탑)",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 4,
+    "checkedAt": "2026-09-17"
+  },
+  "a:니엘|틴탑": {
+    "aid": "672543",
+    "melonName": "니엘 (틴탑)",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 12,
+    "checkedAt": "2026-09-17"
+  },
+  "a:창조|틴탑": {
+    "aid": "672547",
+    "melonName": "ChangJo",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 12,
+    "checkedAt": "2026-09-17"
+  },
+  "a:이홍기|에프티아일랜드": {
+    "aid": "42554",
+    "melonName": "이홍기 (FT아일랜드)",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 23,
+    "checkedAt": "2026-09-17"
+  },
+  "a:이재진|에프티아일랜드": {
+    "aid": "672431",
+    "melonName": "이재진 (FT아일랜드)",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 3,
+    "checkedAt": "2026-09-17"
+  },
+  "a:최민환|에프티아일랜드": {
+    "aid": "672433",
+    "melonName": "최민환 (FT아일랜드)",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:이승훈|위너": {
+    "aid": "646178",
+    "melonName": "이승훈",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:송민호|위너": {
+    "aid": "742773",
+    "melonName": "MINO (송민호)",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 5,
+    "checkedAt": "2026-09-17"
+  },
+  "a:강승윤|위너": {
+    "aid": "28263",
+    "melonName": "강승윤",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 16,
+    "checkedAt": "2026-09-17"
+  },
+  "a:김진환|아이콘": {
+    "aid": "742767",
+    "melonName": "김진환",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 4,
+    "checkedAt": "2026-09-17"
+  },
+  "a:송윤형|아이콘": {
+    "aid": "742768",
+    "melonName": "송윤형",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:BOBBY|아이콘": {
+    "aid": "742763",
+    "melonName": "BOBBY",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 5,
+    "checkedAt": "2026-09-17"
+  },
+  "a:구준회|아이콘": {
+    "aid": "742770",
+    "melonName": "구준회",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 4,
+    "checkedAt": "2026-09-17"
+  },
+  "a:정찬우|아이콘": {
+    "aid": "896273",
+    "melonName": "정찬우",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:B.I|아이콘": {
+    "aid": "742760",
+    "melonName": "B.I",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 7,
+    "checkedAt": "2026-09-17"
+  },
+  "a:설아|우주소녀": {
+    "aid": "946814",
+    "melonName": "설아 (우주소녀)",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 9,
+    "checkedAt": "2026-09-17"
+  },
+  "a:엑시|우주소녀": {
+    "aid": "923695",
+    "melonName": "엑시 (우주소녀)",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:수빈|우주소녀": {
+    "aid": "946821",
+    "melonName": "수빈 (우주소녀)",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 2,
+    "checkedAt": "2026-09-17"
+  },
+  "a:여름|우주소녀": {
+    "aid": "946823",
+    "melonName": "여름 (우주소녀)",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:다영|우주소녀": {
+    "aid": "946819",
+    "melonName": "다영 (DAYOUNG)",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 4,
+    "checkedAt": "2026-09-17"
+  },
+  "a:루다|우주소녀": {
+    "aid": "946825",
+    "melonName": "루다",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 2,
+    "checkedAt": "2026-09-17"
+  },
+  "a:다원|우주소녀": {
+    "aid": "946820",
+    "melonName": "다원 (우주소녀)",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 2,
+    "checkedAt": "2026-09-17"
+  },
+  "a:선의|우주소녀": {
+    "aid": "946822",
+    "melonName": "선의(XUAN YI)",
+    "gubun": "중국/여성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 8,
+    "checkedAt": "2026-09-17"
+  },
+  "a:성소|우주소녀": {
+    "aid": "946817",
+    "melonName": "성소(CHENG XIAO)",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 3,
+    "checkedAt": "2026-09-17"
+  },
+  "a:미기|우주소녀": {
+    "aid": "946824",
+    "melonName": "미기(MEI QI)",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 3,
+    "checkedAt": "2026-09-17"
+  },
+  "a:로아|키라스": {
+    "aid": "4347365",
+    "melonName": "로아 (Roah)",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:임서원|유니스": {
+    "aid": "2914343",
+    "melonName": "임서원",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:서이|하이키": {
+    "aid": "3064714",
+    "melonName": "서이 (하이키)",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:휘서|하이키": {
+    "aid": "3109894",
+    "melonName": "휘서 (하이키)",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:키나|피프티피프티": {
+    "aid": "3156916",
+    "melonName": "키나",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:산들|비원에이포": {
+    "aid": "672392",
+    "melonName": "산들",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 24,
+    "checkedAt": "2026-09-17"
+  },
+  "a:공찬|비원에이포": {
+    "aid": "672389",
+    "melonName": "공찬 (B1A4)",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:방용국|비에이피": {
+    "aid": "559579",
+    "melonName": "방용국",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 13,
+    "checkedAt": "2026-09-17"
+  },
+  "a:정대현|비에이피": {
+    "aid": "670792",
+    "melonName": "정대현",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 10,
+    "checkedAt": "2026-09-17"
+  },
+  "a:문종업|비에이피": {
+    "aid": "670813",
+    "melonName": "문종업",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 6,
+    "checkedAt": "2026-09-17"
+  },
+  "a:젤로|비에이피": {
+    "aid": "588495",
+    "melonName": "ZELO (젤로)",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 13,
+    "checkedAt": "2026-09-17"
+  },
+  "a:마시로|메이딘": {
+    "aid": "3058263",
+    "melonName": "마시로 (MASHIRO)",
+    "gubun": "일본/여성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:시환|튜넥스": {
+    "aid": "4716524",
+    "melonName": "시환 (TUNEXX)",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:이지함|솔로": {
+    "aid": "1705384",
+    "melonName": "이지함",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 5,
+    "checkedAt": "2026-09-17"
+  },
+  "a:박준희|솔로": {
+    "aid": null,
+    "failedWhy": "앨범 겹침 0장 (필요 2, 겹친 후보 0명, 후보 8명)",
+    "checkedAt": "2026-09-17"
+  },
+  "a:김병관|솔로": {
+    "aid": "1705386",
+    "melonName": "김병관",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 2,
+    "checkedAt": "2026-09-17"
+  },
+  "a:강유찬|솔로": {
+    "aid": "1705388",
+    "melonName": "강유찬",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 2,
+    "checkedAt": "2026-09-17"
+  },
+  "a:재한|오메가엑스": {
+    "aid": "2138912",
+    "melonName": "재한 (OMEGA X)",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 4,
+    "checkedAt": "2026-09-17"
+  },
+  "a:휘찬|오메가엑스": {
+    "aid": "2738131",
+    "melonName": "휘찬 (오메가엑스)",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:한겸|오메가엑스": {
+    "aid": "1626267",
+    "melonName": "한겸 (OMEGA X)",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:태동|오메가엑스": {
+    "aid": "2872673",
+    "melonName": "태동",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:XEN|오메가엑스": {
+    "aid": "2636765",
+    "melonName": "XEN",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 8,
+    "checkedAt": "2026-09-17"
+  },
+  "a:예찬|오메가엑스": {
+    "aid": "2636856",
+    "melonName": "예찬",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:나현|프림로즈": {
+    "aid": "3484998",
+    "melonName": "나현(NAHYUN)",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:현식|소디엑": {
+    "aid": "3208807",
+    "melonName": "현식 (XODIAC)",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:렉스|소디엑": {
+    "aid": "3208787",
+    "melonName": "렉스 (XODIAC)",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:성진|데이식스": {
+    "aid": "895386",
+    "melonName": "성진 (DAY6)",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:Young K|데이식스": {
+    "aid": "895389",
+    "melonName": "Young K (DAY6)",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 11,
+    "checkedAt": "2026-09-17"
+  },
+  "a:원필|데이식스": {
+    "aid": "895390",
+    "melonName": "원필 (DAY6)",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 6,
+    "checkedAt": "2026-09-17"
+  },
+  "a:도운|데이식스": {
+    "aid": "895391",
+    "melonName": "도운 (DAY6)",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:서은광|비투비": {
+    "aid": "672287",
+    "melonName": "서은광 (비투비)",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 19,
+    "checkedAt": "2026-09-17"
+  },
+  "a:이민혁|비투비": {
+    "aid": "30599",
+    "melonName": "이민혁 (허타)",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 6,
+    "checkedAt": "2026-09-17"
+  },
+  "a:이창섭|비투비": {
+    "aid": "672288",
+    "melonName": "이창섭",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 27,
+    "checkedAt": "2026-09-17"
+  },
+  "a:임현식|비투비": {
+    "aid": "672289",
+    "melonName": "임현식 (비투비)",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 8,
+    "checkedAt": "2026-09-17"
+  },
+  "a:프니엘|비투비": {
+    "aid": "672293",
+    "melonName": "프니엘 (비투비)",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 7,
+    "checkedAt": "2026-09-17"
+  },
+  "a:육성재|비투비": {
+    "aid": "672296",
+    "melonName": "육성재",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 14,
+    "checkedAt": "2026-09-17"
+  },
+  "a:용훈|원위": {
+    "aid": "2299051",
+    "melonName": "용훈 (ONEWE)",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 3,
+    "checkedAt": "2026-09-17"
+  },
+  "a:기욱|원위": {
+    "aid": "2299056",
+    "melonName": "기욱 (ONEWE)",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 2,
+    "checkedAt": "2026-09-17"
+  },
+  "a:유지애|러블리즈": {
+    "aid": "722093",
+    "melonName": "유지애",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:서지수|러블리즈": {
+    "aid": "789504",
+    "melonName": "서지수",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 2,
+    "checkedAt": "2026-09-17"
+  },
+  "a:이미주|러블리즈": {
+    "aid": "789503",
+    "melonName": "미주 (MIJOO)",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 4,
+    "checkedAt": "2026-09-17"
+  },
+  "a:Kei|러블리즈": {
+    "aid": "789499",
+    "melonName": "Kei (케이)",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 27,
+    "checkedAt": "2026-09-17"
+  },
+  "a:JIN|러블리즈": {
+    "aid": "744170",
+    "melonName": "JIN (러블리즈)",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 5,
+    "checkedAt": "2026-09-17"
+  },
+  "a:류수정|러블리즈": {
+    "aid": "789505",
+    "melonName": "류수정",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 21,
+    "checkedAt": "2026-09-17"
+  },
+  "a:정예인|러블리즈": {
+    "aid": "789501",
+    "melonName": "정예인 (Yein)",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 12,
+    "checkedAt": "2026-09-17"
+  },
+  "a:문희준|H.O.T.": {
+    "aid": "1583",
+    "melonName": "문희준",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 9,
+    "checkedAt": "2026-09-17"
+  },
+  "a:장우혁|H.O.T.": {
+    "aid": "1585",
+    "melonName": "장우혁",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 18,
+    "checkedAt": "2026-09-17"
+  },
+  "a:토니안|H.O.T.": {
+    "aid": "1586",
+    "melonName": "토니 안",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 17,
+    "checkedAt": "2026-09-17"
+  },
+  "a:강타|H.O.T.": {
+    "aid": "1582",
+    "melonName": "강타 (KANGTA)",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 17,
+    "checkedAt": "2026-09-17"
+  },
+  "a:이재원|H.O.T.": {
+    "aid": "1584",
+    "melonName": "이재원",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 5,
+    "checkedAt": "2026-09-17"
+  },
+  "a:은지원|젝스키스": {
+    "aid": "1682",
+    "melonName": "은지원",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 16,
+    "checkedAt": "2026-09-17"
+  },
+  "a:이재진|젝스키스": {
+    "aid": "1679",
+    "melonName": "이재진",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 3,
+    "checkedAt": "2026-09-17"
+  },
+  "a:강성훈|젝스키스": {
+    "aid": "1677",
+    "melonName": "강성훈",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 8,
+    "checkedAt": "2026-09-17"
+  },
+  "a:이민우|신화": {
+    "aid": "1742",
+    "melonName": "이민우 (M)",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 14,
+    "checkedAt": "2026-09-17"
+  },
+  "a:김동완|신화": {
+    "aid": "1743",
+    "melonName": "김동완",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 13,
+    "checkedAt": "2026-09-17"
+  },
+  "a:신혜성|신화": {
+    "aid": "1741",
+    "melonName": "신혜성",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 26,
+    "checkedAt": "2026-09-17"
+  },
+  "a:전진|신화": {
+    "aid": "1740",
+    "melonName": "전진",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 6,
+    "checkedAt": "2026-09-17"
+  },
+  "a:앤디|신화": {
+    "aid": "1738",
+    "melonName": "앤디",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 7,
+    "checkedAt": "2026-09-17"
+  },
+  "a:윤계상|god": {
+    "aid": "1578",
+    "melonName": "윤계상",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:데니안|god": {
+    "aid": "225888",
+    "melonName": "데니안",
+    "gubun": "미국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 3,
+    "checkedAt": "2026-09-17"
+  },
+  "a:손호영|god": {
+    "aid": "1580",
+    "melonName": "손호영(SHY)",
+    "gubun": "미국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 18,
+    "checkedAt": "2026-09-17"
+  },
+  "a:김태우|god": {
+    "aid": "182430",
+    "melonName": "김태우",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 41,
+    "checkedAt": "2026-09-17"
+  },
+  "a:바다|S.E.S.": {
+    "aid": "1605",
+    "melonName": "바다 (BADA)",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 33,
+    "checkedAt": "2026-09-17"
+  },
+  "a:유진|S.E.S.": {
+    "aid": "432",
+    "melonName": "유진",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 2,
+    "checkedAt": "2026-09-17"
+  },
+  "a:슈|S.E.S.": {
+    "aid": "1604",
+    "melonName": "슈",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:이효리|핑클": {
+    "aid": "1713",
+    "melonName": "이효리",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 22,
+    "checkedAt": "2026-09-17"
+  },
+  "a:옥주현|핑클": {
+    "aid": "1714",
+    "melonName": "옥주현",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 18,
+    "checkedAt": "2026-09-17"
+  },
+  "a:성유리|핑클": {
+    "aid": "1712",
+    "melonName": "성유리",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:김이지|베이비복스": {
+    "aid": "1637",
+    "melonName": "김이지",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:심은진|베이비복스": {
+    "aid": "1638",
+    "melonName": "심은진",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 4,
+    "checkedAt": "2026-09-17"
+  },
+  "a:간미연|베이비복스": {
+    "aid": "1636",
+    "melonName": "간미연",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 14,
+    "checkedAt": "2026-09-17"
+  },
+  "a:윤은혜|베이비복스": {
+    "aid": "1639",
+    "melonName": "윤은혜",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 2,
+    "checkedAt": "2026-09-17"
+  },
+  "a:우연석|클릭비": {
+    "aid": "262069",
+    "melonName": "우연석",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 2,
+    "checkedAt": "2026-09-17"
+  },
+  "a:김태형|클릭비": {
+    "aid": "1729",
+    "melonName": "김태형 (KIM TAE HYONG)",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 4,
+    "checkedAt": "2026-09-17"
+  },
+  "a:오종혁|클릭비": {
+    "aid": "5599",
+    "melonName": "오종혁",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 11,
+    "checkedAt": "2026-09-17"
+  },
+  "a:하현곤|클릭비": {
+    "aid": "261837",
+    "melonName": "하현곤",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 69,
+    "checkedAt": "2026-09-17"
+  },
+  "a:황보|샤크라": {
+    "aid": "1719",
+    "melonName": "황보",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 5,
+    "checkedAt": "2026-09-17"
+  },
+  "a:윤산|핫샷": {
+    "aid": "873538",
+    "melonName": "윤산",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 6,
+    "checkedAt": "2026-09-17"
+  },
+  "a:노태현|핫샷": {
+    "aid": "1760221",
+    "melonName": "노태현",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 5,
+    "checkedAt": "2026-09-17"
+  },
+  "a:하성운|핫샷": {
+    "aid": "875152",
+    "melonName": "하성운",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 36,
+    "checkedAt": "2026-09-17"
+  },
+  "a:이대열|골든차일드": {
+    "aid": "1908079",
+    "melonName": "이대열",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:Y|골든차일드": {
+    "aid": "1908081",
+    "melonName": "최성윤(Y)",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 4,
+    "checkedAt": "2026-09-17"
+  },
+  "a:JR|솔로": {
+    "aid": null,
+    "failedWhy": "앨범 겹침 0장 (필요 2, 겹친 후보 0명, 후보 8명)",
+    "checkedAt": "2026-09-17"
+  },
+  "a:아론|솔로": {
+    "aid": "672807",
+    "melonName": "아론",
+    "gubun": "미국/남성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:백호|솔로": {
+    "aid": "672808",
+    "melonName": "백호",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 14,
+    "checkedAt": "2026-09-17"
+  },
+  "a:렌|솔로": {
+    "aid": "672810",
+    "melonName": "렌 (REN)",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:지유|드림캐쳐": {
+    "aid": "1383068",
+    "melonName": "지유 (드림캐쳐)",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:수아|드림캐쳐": {
+    "aid": "1383072",
+    "melonName": "수아 (드림캐쳐)",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 2,
+    "checkedAt": "2026-09-17"
+  },
+  "a:시연|드림캐쳐": {
+    "aid": "1383070",
+    "melonName": "시연 (드림캐쳐)",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 8,
+    "checkedAt": "2026-09-17"
+  },
+  "a:다미|드림캐쳐": {
+    "aid": "1383073",
+    "melonName": "다미 (드림캐쳐)",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:혜빈|모모랜드": {
+    "aid": "1229547",
+    "melonName": "혜빈",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:제인|모모랜드": {
+    "aid": "1229550",
+    "melonName": "제인",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:주이|모모랜드": {
+    "aid": "1229548",
+    "melonName": "주이",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:아인|모모랜드": {
+    "aid": "1229551",
+    "melonName": "아인",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 2,
+    "checkedAt": "2026-09-17"
+  },
+  "a:초원|라잇썸": {
+    "aid": "2970183",
+    "melonName": "초원",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:금미|크레용팝": {
+    "aid": "685915",
+    "melonName": "금미 (크레용팝)",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:엘린|크레용팝": {
+    "aid": "685914",
+    "melonName": "엘린",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:초아|크레용팝": {
+    "aid": "685917",
+    "melonName": "초아 (크레용팝)",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 2,
+    "checkedAt": "2026-09-17"
+  },
+  "a:웨이|크레용팝": {
+    "aid": "685918",
+    "melonName": "웨이 (크레용팝)",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 3,
+    "checkedAt": "2026-09-17"
+  },
+  "a:소율|크레용팝": {
+    "aid": "685916",
+    "melonName": "소율",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 2,
+    "checkedAt": "2026-09-17"
+  },
+  "a:진호|펜타곤": {
+    "aid": "991777",
+    "melonName": "진호 (펜타곤)",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 6,
+    "checkedAt": "2026-09-17"
+  },
+  "a:후이|펜타곤": {
+    "aid": "991770",
+    "melonName": "후이(HUI)",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 18,
+    "checkedAt": "2026-09-17"
+  },
+  "a:여원|펜타곤": {
+    "aid": "991772",
+    "melonName": "여원",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:키노|펜타곤": {
+    "aid": "991778",
+    "melonName": "KINO",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 10,
+    "checkedAt": "2026-09-17"
+  },
+  "a:던|펜타곤": {
+    "aid": "991776",
+    "melonName": "던 (DAWN)",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 7,
+    "checkedAt": "2026-09-17"
+  },
+  "a:쿤|업텐션": {
+    "aid": "913161",
+    "melonName": "쿤",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:선율|업텐션": {
+    "aid": "913166",
+    "melonName": "선율",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 3,
+    "checkedAt": "2026-09-17"
+  },
+  "a:이동열|업텐션": {
+    "aid": "913169",
+    "melonName": "이동열",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 3,
+    "checkedAt": "2026-09-17"
+  },
+  "a:유니스|다이아": {
+    "aid": "896286",
+    "melonName": "유니스",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 9,
+    "checkedAt": "2026-09-17"
+  },
+  "a:주은|다이아": {
+    "aid": "1628739",
+    "melonName": "주은",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 10,
+    "checkedAt": "2026-09-17"
+  },
+  "a:기희현|다이아": {
+    "aid": "896285",
+    "melonName": "기희현",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:JUN.K|2PM": {
+    "aid": "570851",
+    "melonName": "준케이 (JUN. K)",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 10,
+    "checkedAt": "2026-09-17"
+  },
+  "a:닉쿤|2PM": {
+    "aid": "521583",
+    "melonName": "닉쿤 (2PM)",
+    "gubun": "미국/남성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 2,
+    "checkedAt": "2026-09-17"
+  },
+  "a:택연|2PM": {
+    "aid": "514740",
+    "melonName": "택연",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 5,
+    "checkedAt": "2026-09-17"
+  },
+  "a:준호|2PM": {
+    "aid": "602193",
+    "melonName": "이준호",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:찬성|2PM": {
+    "aid": "672988",
+    "melonName": "찬성",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 5,
+    "checkedAt": "2026-09-17"
+  },
+  "a:이창민|2AM": {
+    "aid": "443620",
+    "melonName": "이창민",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 18,
+    "checkedAt": "2026-09-17"
+  },
+  "a:임슬옹|2AM": {
+    "aid": "474423",
+    "melonName": "임슬옹",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 19,
+    "checkedAt": "2026-09-17"
+  },
+  "a:조권|2AM": {
+    "aid": "434621",
+    "melonName": "조권",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 10,
+    "checkedAt": "2026-09-17"
+  },
+  "a:정진운|2AM": {
+    "aid": "557582",
+    "melonName": "정진운",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 14,
+    "checkedAt": "2026-09-17"
+  },
+  "a:태일|블락비": {
+    "aid": "670611",
+    "melonName": "태일 (블락비)",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 10,
+    "checkedAt": "2026-09-17"
+  },
+  "a:비범|블락비": {
+    "aid": "670651",
+    "melonName": "비범 (블락비)",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 3,
+    "checkedAt": "2026-09-17"
+  },
+  "a:유권|블락비": {
+    "aid": "670633",
+    "melonName": "유권 (블락비)",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 6,
+    "checkedAt": "2026-09-17"
+  },
+  "a:박경|블락비": {
+    "aid": "650832",
+    "melonName": "박경",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 15,
+    "checkedAt": "2026-09-17"
+  },
+  "a:지코|블락비": {
+    "aid": "602056",
+    "melonName": "지코 (ZICO)",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 24,
+    "checkedAt": "2026-09-17"
+  },
+  "a:솔라|마마무": {
+    "aid": "756530",
+    "melonName": "솔라 (마마무)",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 28,
+    "checkedAt": "2026-09-17"
+  },
+  "a:문별|마마무": {
+    "aid": "756529",
+    "melonName": "문별 (마마무)",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 18,
+    "checkedAt": "2026-09-17"
+  },
+  "a:휘인|마마무": {
+    "aid": "756533",
+    "melonName": "휘인 (Whee In)",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 27,
+    "checkedAt": "2026-09-17"
+  },
+  "a:화사|마마무": {
+    "aid": "756531",
+    "melonName": "화사 (HWASA)",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 16,
+    "checkedAt": "2026-09-17"
+  },
+  "a:제아|브라운아이드걸스": {
+    "aid": "230519",
+    "melonName": "제아",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 31,
+    "checkedAt": "2026-09-17"
+  },
+  "a:미료|브라운아이드걸스": {
+    "aid": "6272",
+    "melonName": "미료",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 7,
+    "checkedAt": "2026-09-17"
+  },
+  "a:나르샤|브라운아이드걸스": {
+    "aid": "261744",
+    "melonName": "나르샤 (Brown Eyed Girls)",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 7,
+    "checkedAt": "2026-09-17"
+  },
+  "a:가인|브라운아이드걸스": {
+    "aid": "428821",
+    "melonName": "가인",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 18,
+    "checkedAt": "2026-09-17"
+  },
+  "a:혜정|에이오에이": {
+    "aid": "686996",
+    "melonName": "혜정 (AOA)",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:박초롱|에이핑크": {
+    "aid": "663373",
+    "melonName": "박초롱 (에이핑크)",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:윤보미|에이핑크": {
+    "aid": "670718",
+    "melonName": "윤보미 (에이핑크)",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 2,
+    "checkedAt": "2026-09-17"
+  },
+  "a:정은지|에이핑크": {
+    "aid": "644871",
+    "melonName": "정은지",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 21,
+    "checkedAt": "2026-09-17"
+  },
+  "a:김남주|에이핑크": {
+    "aid": "670717",
+    "melonName": "김남주 (에이핑크)",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 6,
+    "checkedAt": "2026-09-17"
+  },
+  "a:오하영|에이핑크": {
+    "aid": "670711",
+    "melonName": "오하영 (에이핑크)",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 3,
+    "checkedAt": "2026-09-17"
+  },
+  "a:정아|솔로": {
+    "aid": "453920",
+    "melonName": "정아 (애프터스쿨)",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:유이|솔로": {
+    "aid": "433760",
+    "melonName": "유이 (애프터스쿨)",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:레이나|솔로": {
+    "aid": "672337",
+    "melonName": "레이나",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 26,
+    "checkedAt": "2026-09-17"
+  },
+  "a:나나|솔로": {
+    "aid": "672334",
+    "melonName": "나나(NANA)",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 3,
+    "checkedAt": "2026-09-17"
+  },
+  "a:리지|솔로": {
+    "aid": "539120",
+    "melonName": "리지 (오렌지 캬라멜)",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 4,
+    "checkedAt": "2026-09-17"
+  },
+  "a:전효성|시크릿": {
+    "aid": "672325",
+    "melonName": "전효성",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 7,
+    "checkedAt": "2026-09-17"
+  },
+  "a:예빈|시크릿": {
+    "aid": "3809244",
+    "melonName": "예빈",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 2,
+    "checkedAt": "2026-09-17"
+  },
+  "a:페이|미쓰에이": {
+    "aid": "672319",
+    "melonName": "페이",
+    "gubun": "중국/여성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 5,
+    "checkedAt": "2026-09-17"
+  },
+  "a:지아|미쓰에이": {
+    "aid": "672323",
+    "melonName": "지아",
+    "gubun": "중국/여성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:민|미쓰에이": {
+    "aid": "36366",
+    "melonName": "민 (MIN)",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 7,
+    "checkedAt": "2026-09-17"
+  },
+  "a:수지|미쓰에이": {
+    "aid": "514741",
+    "melonName": "수지 (Suzy)",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 26,
+    "checkedAt": "2026-09-17"
+  },
+  "a:지오|엠블랙": {
+    "aid": "468640",
+    "melonName": "지오 (G.O)",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 15,
+    "checkedAt": "2026-09-17"
+  },
+  "a:알렉산더|유키스": {
+    "aid": "595471",
+    "melonName": "알렉산더 (유키스)",
+    "gubun": "미국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 3,
+    "checkedAt": "2026-09-17"
+  },
+  "a:훈|유키스": {
+    "aid": "669912",
+    "melonName": "훈 (유키스)",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 3,
+    "checkedAt": "2026-09-17"
+  },
+  "a:효린|씨스타": {
+    "aid": "573812",
+    "melonName": "효린",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 54,
+    "checkedAt": "2026-09-17"
+  },
+  "a:소유|씨스타": {
+    "aid": "490981",
+    "melonName": "소유 (SOYOU)",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 55,
+    "checkedAt": "2026-09-17"
+  },
+  "a:다솜|씨스타": {
+    "aid": "668651",
+    "melonName": "다솜",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 2,
+    "checkedAt": "2026-09-17"
+  },
+  "a:보아|솔로": {
+    "aid": "2165",
+    "melonName": "보아 (BoA)",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 70,
+    "checkedAt": "2026-09-17"
+  },
+  "a:이영지|솔로": {
+    "aid": "2636153",
+    "melonName": "이영지",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 8,
+    "checkedAt": "2026-09-17"
+  },
+  "a:비|솔로": {
+    "aid": "17671",
+    "melonName": "비",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 11,
+    "checkedAt": "2026-09-17"
+  },
+  "a:세븐|솔로": {
+    "aid": "33513",
+    "melonName": "SE7EN",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 13,
+    "checkedAt": "2026-09-17"
+  },
+  "a:싸이|솔로": {
+    "aid": "3865",
+    "melonName": "싸이 (PSY)",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 13,
+    "checkedAt": "2026-09-17"
+  },
+  "a:티파니|소녀시대": {
+    "aid": null,
+    "failedWhy": "앨범 겹침 0장 (필요 2, 겹친 후보 0명, 후보 8명)",
+    "checkedAt": "2026-09-17"
+  },
+  "a:엔|빅스": {
+    "aid": "673446",
+    "melonName": "차학연(N)",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 5,
+    "checkedAt": "2026-09-17"
+  },
+  "a:레오|빅스": {
+    "aid": "673447",
+    "melonName": "레오(LEO)",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 12,
+    "checkedAt": "2026-09-17"
+  },
+  "a:켄|빅스": {
+    "aid": "673449",
+    "melonName": "켄(KEN)",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 20,
+    "checkedAt": "2026-09-17"
+  },
+  "a:김현중|SS501": {
+    "aid": "253518",
+    "melonName": "김현중",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 26,
+    "checkedAt": "2026-09-17"
+  },
+  "a:허영생|SS501": {
+    "aid": "421340",
+    "melonName": "허영생",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 21,
+    "checkedAt": "2026-09-17"
+  },
+  "a:김규종|SS501": {
+    "aid": "438780",
+    "melonName": "김규종",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 18,
+    "checkedAt": "2026-09-17"
+  },
+  "a:박정민|SS501": {
+    "aid": "5362",
+    "melonName": "박정민",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 16,
+    "checkedAt": "2026-09-17"
+  },
+  "a:김형준|SS501": {
+    "aid": "759",
+    "melonName": "김형준",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 13,
+    "checkedAt": "2026-09-17"
+  },
+  "a:차웅기|아홉": {
+    "aid": "2862262",
+    "melonName": "차웅기",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:장슈아이보|아홉": {
+    "aid": "3458845",
+    "melonName": "장슈아이보",
+    "gubun": "중국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 6,
+    "checkedAt": "2026-09-17"
+  },
+  "a:주연|엑스디너리 히어로즈": {
+    "aid": null,
+    "failedWhy": "앨범 겹침 0장 (필요 2, 겹친 후보 0명, 후보 8명)",
+    "checkedAt": "2026-09-17"
+  },
+  "a:차오루|솔로": {
+    "aid": "695335",
+    "melonName": "차오루",
+    "gubun": "중국/여성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 2,
+    "checkedAt": "2026-09-17"
+  },
+  "a:린지|솔로": {
+    "aid": "695331",
+    "melonName": "린지",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:YEL|솔로": {
+    "aid": "695333",
+    "melonName": "옐 (YEL)",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 8,
+    "checkedAt": "2026-09-17"
+  },
+  "a:예지|솔로": {
+    "aid": "695332",
+    "melonName": "예지",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 16,
+    "checkedAt": "2026-09-17"
+  },
+  "a:나나|우아": {
+    "aid": "2869024",
+    "melonName": "나나 (NANA)",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 2,
+    "checkedAt": "2026-09-17"
+  },
+  "a:우연|우아": {
+    "aid": "2869025",
+    "melonName": "우연 (WOOYEON)",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 2,
+    "checkedAt": "2026-09-17"
+  },
+  "a:민서|우아": {
+    "aid": "2869027",
+    "melonName": "민서 (MINSEO)",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:나고은|솔로": {
+    "aid": "2638028",
+    "melonName": "나고은",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 3,
+    "checkedAt": "2026-09-17"
+  },
+  "a:채인|솔로": {
+    "aid": "2904140",
+    "melonName": "채인",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 2,
+    "checkedAt": "2026-09-17"
+  },
+  "a:수안|솔로": {
+    "aid": "2904144",
+    "melonName": "수안 (퍼플키스)",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 6,
+    "checkedAt": "2026-09-17"
+  },
+  "a:도은|영파씨": {
+    "aid": "3598149",
+    "melonName": "도은 (DOEUN)",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:정용화|씨엔블루": {
+    "aid": "20908",
+    "melonName": "정용화",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 20,
+    "checkedAt": "2026-09-17"
+  },
+  "a:강민혁|씨엔블루": {
+    "aid": "32850",
+    "melonName": "강민혁 (CNBLUE)",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 5,
+    "checkedAt": "2026-09-17"
+  },
+  "a:이정신|씨엔블루": {
+    "aid": "261134",
+    "melonName": "이정신 (CNBLUE)",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 2,
+    "checkedAt": "2026-09-17"
+  },
+  "a:라라|드림노트": {
+    "aid": "2241203",
+    "melonName": "라라 (DreamNote)",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 2,
+    "checkedAt": "2026-09-17"
+  },
+  "a:미소|드림노트": {
+    "aid": "2241204",
+    "melonName": "미소 (DreamNote)",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 3,
+    "checkedAt": "2026-09-17"
+  },
+  "a:보니|드림노트": {
+    "aid": null,
+    "failedWhy": "앨범 겹침 0장 (필요 2, 겹친 후보 0명, 후보 8명)",
+    "checkedAt": "2026-09-17"
+  },
+  "a:남성모|82메이저": {
+    "aid": null,
+    "failedWhy": "검색 결과 없음",
+    "checkedAt": "2026-09-17"
+  },
+  "a:황성빈|82메이저": {
+    "aid": null,
+    "failedWhy": "검색 결과 없음",
+    "checkedAt": "2026-09-17"
+  },
+  "a:백예빈|솔로": {
+    "aid": null,
+    "failedWhy": "검색 결과 없음",
+    "checkedAt": "2026-09-17"
+  },
+  "a:나하은|언차일드": {
+    "aid": null,
+    "failedWhy": "검색 결과 없음",
+    "checkedAt": "2026-09-17"
+  },
+  "a:백예린|피프틴앤드": {
+    "aid": null,
+    "failedWhy": "검색 결과 없음",
+    "checkedAt": "2026-09-17"
+  },
+  "a:제이미|피프틴앤드": {
+    "aid": null,
+    "failedWhy": "검색 결과 없음",
+    "checkedAt": "2026-09-17"
+  },
+  "a:규빈|온리원오프": {
+    "aid": null,
+    "failedWhy": "검색 결과 없음",
+    "checkedAt": "2026-09-17"
+  },
+  "a:리에|온리원오프": {
+    "aid": null,
+    "failedWhy": "검색 결과 없음",
+    "checkedAt": "2026-09-17"
+  },
+  "a:유정|온리원오프": {
+    "aid": "2736618",
+    "melonName": "유정 (OnlyOneOf)",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-09-17"
+  },
+  "a:준지|온리원오프": {
+    "aid": null,
+    "failedWhy": "검색 결과 없음",
+    "checkedAt": "2026-09-17"
+  },
+  "a:나인|온리원오프": {
+    "aid": null,
+    "failedWhy": "검색 결과 없음",
+    "checkedAt": "2026-09-17"
+  },
+  "a:민규|솔로": {
+    "aid": null,
+    "failedWhy": "검색 결과 없음",
+    "checkedAt": "2026-09-17"
+  },
+  "a:재찬|솔로": {
+    "aid": null,
+    "failedWhy": "검색 결과 없음",
+    "checkedAt": "2026-09-17"
+  },
+  "a:로민|엘라스트": {
+    "aid": null,
+    "failedWhy": "검색 결과 없음",
+    "checkedAt": "2026-09-17"
+  },
+  "a:원혁|엘라스트": {
+    "aid": null,
+    "failedWhy": "검색 결과 없음",
+    "checkedAt": "2026-09-17"
+  },
+  "a:원준|엘라스트": {
+    "aid": null,
+    "failedWhy": "검색 결과 없음",
+    "checkedAt": "2026-09-17"
+  },
+  "a:최인|엘라스트": {
+    "aid": null,
+    "failedWhy": "검색 결과 없음",
+    "checkedAt": "2026-09-17"
+  },
+  "a:태환|배너": {
+    "aid": null,
+    "failedWhy": "검색 결과 없음",
+    "checkedAt": "2026-09-17"
+  },
+  "a:이수진|솔로": {
+    "aid": null,
+    "failedWhy": "앨범 겹침 0장 (필요 2, 겹친 후보 0명, 후보 5명)",
+    "checkedAt": "2026-09-17"
+  },
+  "a:박소은|솔로": {
+    "aid": null,
+    "failedWhy": "검색 결과 없음",
+    "checkedAt": "2026-09-17"
+  },
+  "a:명호|에잇턴": {
+    "aid": null,
+    "failedWhy": "검색 결과 없음",
+    "checkedAt": "2026-09-17"
+  },
+  "a:윤규|에잇턴": {
+    "aid": null,
+    "failedWhy": "검색 결과 없음",
+    "checkedAt": "2026-09-17"
+  },
+  "a:윤채경|솔로": {
+    "aid": null,
+    "failedWhy": "검색 결과 없음",
+    "checkedAt": "2026-09-17"
+  },
+  "a:김채원|솔로": {
+    "aid": "882816",
+    "melonName": "김채원",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 9,
+    "checkedAt": "2026-09-17"
+  },
+  "a:이나은|솔로": {
+    "aid": null,
+    "failedWhy": "검색 결과 없음",
+    "checkedAt": "2026-09-17"
+  },
+  "a:이진솔|솔로": {
+    "aid": null,
+    "failedWhy": "검색 결과 없음",
+    "checkedAt": "2026-09-17"
+  },
+  "a:강승식|솔로": {
+    "aid": null,
+    "failedWhy": "검색 결과 없음",
+    "checkedAt": "2026-09-17"
+  },
+  "a:임세준|솔로": {
+    "aid": null,
+    "failedWhy": "검색 결과 없음",
+    "checkedAt": "2026-09-17"
+  },
+  "a:정수빈|솔로": {
+    "aid": null,
+    "failedWhy": "검색 결과 없음",
+    "checkedAt": "2026-09-17"
+  },
+  "a:영서|솔로": {
+    "aid": null,
+    "failedWhy": "검색 결과 없음",
+    "checkedAt": "2026-09-17"
+  },
+  "a:우무티|엑스러브": {
+    "aid": null,
+    "failedWhy": "검색 결과 없음",
+    "checkedAt": "2026-09-17"
+  },
+  "a:홍성준|솔로": {
+    "aid": null,
+    "failedWhy": "검색 결과 없음",
+    "checkedAt": "2026-09-17"
+  },
+  "a:김시훈|솔로": {
+    "aid": null,
+    "failedWhy": "검색 결과 없음",
+    "checkedAt": "2026-09-17"
+  },
+  "a:윤정환|솔로": {
+    "aid": null,
+    "failedWhy": "검색 결과 없음",
+    "checkedAt": "2026-09-17"
+  },
+  "a:세리|솔로": {
+    "aid": null,
+    "failedWhy": "검색 결과 없음",
+    "checkedAt": "2026-09-17"
+  },
+  "a:아영|솔로": {
+    "aid": null,
+    "failedWhy": "검색 결과 없음",
+    "checkedAt": "2026-09-17"
+  },
+  "a:우희|솔로": {
+    "aid": null,
+    "failedWhy": "검색 결과 없음",
+    "checkedAt": "2026-09-17"
+  },
+  "a:경리|솔로": {
+    "aid": null,
+    "failedWhy": "검색 결과 없음",
+    "checkedAt": "2026-09-17"
+  },
+  "a:금조|솔로": {
+    "aid": null,
+    "failedWhy": "검색 결과 없음",
+    "checkedAt": "2026-09-17"
+  },
+  "a:동현|보이프렌드": {
+    "aid": "672779",
+    "melonName": "동현 (보이프렌드)",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 3,
+    "checkedAt": "2026-09-17"
+  },
+  "a:현성|보이프렌드": {
+    "aid": null,
+    "failedWhy": "검색 결과 없음",
+    "checkedAt": "2026-09-17"
+  },
+  "a:정민|보이프렌드": {
+    "aid": null,
+    "failedWhy": "검색 결과 없음",
+    "checkedAt": "2026-09-17"
+  },
+  "a:영민|보이프렌드": {
+    "aid": null,
+    "failedWhy": "검색 결과 없음",
+    "checkedAt": "2026-09-17"
+  },
+  "a:광민|보이프렌드": {
+    "aid": null,
+    "failedWhy": "검색 결과 없음",
+    "checkedAt": "2026-09-17"
+  },
+  "a:민우|보이프렌드": {
+    "aid": null,
+    "failedWhy": "검색 결과 없음",
+    "checkedAt": "2026-09-17"
+  },
+  "a:최립우|플레어유": {
+    "aid": null,
+    "failedWhy": "검색 결과 없음",
+    "checkedAt": "2026-09-17"
+  },
+  "a:요치|파우": {
+    "aid": null,
+    "failedWhy": "검색 결과 없음",
+    "checkedAt": "2026-09-17"
+  },
+  "a:여은|솔로": {
+    "aid": null,
+    "failedWhy": "검색 결과 없음",
+    "checkedAt": "2026-09-17"
+  },
+  "a:차희|솔로": {
+    "aid": null,
+    "failedWhy": "검색 결과 없음",
+    "checkedAt": "2026-09-17"
+  },
+  "a:박서함|크나큰": {
+    "aid": null,
+    "failedWhy": "검색 결과 없음",
+    "checkedAt": "2026-09-17"
+  },
+  "a:오희준|크나큰": {
+    "aid": null,
+    "failedWhy": "검색 결과 없음",
+    "checkedAt": "2026-09-17"
+  },
+  "a:이동원|크나큰": {
+    "aid": null,
+    "failedWhy": "검색 결과 없음",
+    "checkedAt": "2026-09-17"
+  },
+  "a:휘준|엠씨엔디": {
+    "aid": null,
+    "failedWhy": "검색 결과 없음",
+    "checkedAt": "2026-09-17"
+  },
+  "a:이찬혁|악뮤": {
+    "aid": null,
+    "failedWhy": "검색 결과 없음",
+    "checkedAt": "2026-09-17"
+  },
+  "a:이수현|악뮤": {
+    "aid": null,
+    "failedWhy": "검색 결과 없음",
+    "checkedAt": "2026-09-17"
+  },
+  "a:금준현|티아이오티": {
+    "aid": null,
+    "failedWhy": "검색 결과 없음",
+    "checkedAt": "2026-09-17"
+  },
+  "a:이제이|앨리스": {
+    "aid": null,
+    "failedWhy": "검색 결과 없음",
+    "checkedAt": "2026-09-17"
+  },
+  "a:소희|앨리스": {
+    "aid": "1459205",
+    "melonName": "소희",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 10,
+    "checkedAt": "2026-09-17"
+  },
+  "a:도아|앨리스": {
+    "aid": null,
+    "failedWhy": "검색 결과 없음",
+    "checkedAt": "2026-09-17"
+  },
+  "a:이승협|엔플라잉": {
+    "aid": null,
+    "failedWhy": "검색 결과 없음",
+    "checkedAt": "2026-09-17"
+  },
+  "a:유회승|엔플라잉": {
+    "aid": null,
+    "failedWhy": "검색 결과 없음",
+    "checkedAt": "2026-09-17"
+  },
+  "a:이진혁|업텐션": {
+    "aid": null,
+    "failedWhy": "검색 결과 없음",
+    "checkedAt": "2026-09-17"
+  },
+  "a:권나연|솔로": {
+    "aid": null,
+    "failedWhy": "앨범 겹침 0장 (필요 2, 겹친 후보 0명, 후보 8명)",
+    "checkedAt": "2026-09-17"
+  },
+  "a:박대원|솔로": {
+    "aid": null,
+    "failedWhy": "검색 결과 없음",
+    "checkedAt": "2026-09-17"
+  },
+  "a:이형근|솔로": {
+    "aid": null,
+    "failedWhy": "검색 결과 없음",
+    "checkedAt": "2026-09-17"
+  },
+  "a:서성혁|솔로": {
+    "aid": null,
+    "failedWhy": "검색 결과 없음",
+    "checkedAt": "2026-09-17"
+  },
+  "a:진태화|솔로": {
+    "aid": null,
+    "failedWhy": "검색 결과 없음",
+    "checkedAt": "2026-09-17"
+  },
+  "a:김보아|솔로": {
+    "aid": null,
+    "failedWhy": "검색 결과 없음",
+    "checkedAt": "2026-09-17"
+  },
+  "a:양지원|솔로": {
+    "aid": null,
+    "failedWhy": "검색 결과 없음",
+    "checkedAt": "2026-09-17"
+  },
+  "a:카즈타|엔싸인": {
+    "aid": null,
+    "failedWhy": "검색 결과 없음",
+    "checkedAt": "2026-09-17"
+  },
+  "a:빛새온|솔로": {
+    "aid": null,
+    "failedWhy": "검색 결과 없음",
+    "checkedAt": "2026-09-17"
+  },
+  "a:임지민|저스트비": {
+    "aid": null,
+    "failedWhy": "검색 결과 없음",
+    "checkedAt": "2026-09-17"
+  },
+  "a:이건우|저스트비": {
+    "aid": null,
+    "failedWhy": "검색 결과 없음",
+    "checkedAt": "2026-09-17"
+  },
+  "a:배인|저스트비": {
+    "aid": null,
+    "failedWhy": "검색 결과 없음",
+    "checkedAt": "2026-09-17"
+  },
+  "a:베리|나인아이": {
+    "aid": null,
+    "failedWhy": "검색 결과 없음",
+    "checkedAt": "2026-09-17"
+  },
+  "a:애슐리|솔로": {
+    "aid": null,
+    "failedWhy": "검색 결과 없음",
+    "checkedAt": "2026-09-17"
+  },
+  "a:주니|솔로": {
+    "aid": null,
+    "failedWhy": "검색 결과 없음",
+    "checkedAt": "2026-09-17"
+  },
+  "a:박소진|걸스데이": {
+    "aid": null,
+    "failedWhy": "검색 결과 없음",
+    "checkedAt": "2026-09-17"
+  },
+  "a:유라|걸스데이": {
+    "aid": null,
+    "failedWhy": "검색 결과 없음",
+    "checkedAt": "2026-09-17"
+  },
+  "a:방민아|걸스데이": {
+    "aid": null,
+    "failedWhy": "검색 결과 없음",
+    "checkedAt": "2026-09-17"
+  },
+  "a:라임|솔로": {
+    "aid": null,
+    "failedWhy": "검색 결과 없음",
+    "checkedAt": "2026-09-17"
+  },
+  "a:송선|트라이비": {
+    "aid": null,
+    "failedWhy": "검색 결과 없음",
+    "checkedAt": "2026-09-17"
+  },
+  "a:나도균|히스토리": {
+    "aid": null,
+    "failedWhy": "검색 결과 없음",
+    "checkedAt": "2026-09-17"
+  },
+  "a:효은|솔로": {
+    "aid": null,
+    "failedWhy": "검색 결과 없음",
+    "checkedAt": "2026-09-17"
+  },
+  "a:소영|솔로": {
+    "aid": null,
+    "failedWhy": "검색 결과 없음",
+    "checkedAt": "2026-09-17"
+  },
+  "a:가영|솔로": {
+    "aid": null,
+    "failedWhy": "검색 결과 없음",
+    "checkedAt": "2026-09-17"
+  },
+  "a:전율|솔로": {
+    "aid": null,
+    "failedWhy": "검색 결과 없음",
+    "checkedAt": "2026-09-17"
+  },
+  "a:아유미|솔로": {
+    "aid": null,
+    "failedWhy": "검색 결과 없음",
+    "checkedAt": "2026-09-17"
+  },
+  "a:손준형|고스트나인": {
+    "aid": null,
+    "failedWhy": "검색 결과 없음",
+    "checkedAt": "2026-09-17"
+  },
+  "a:최준성|고스트나인": {
+    "aid": null,
+    "failedWhy": "검색 결과 없음",
+    "checkedAt": "2026-09-17"
+  },
+  "a:케빈|솔로": {
+    "aid": null,
+    "failedWhy": "앨범 겹침 0장 (필요 2, 겹친 후보 0명, 후보 8명)",
+    "checkedAt": "2026-09-17"
+  },
+  "a:건우|솔로": {
+    "aid": null,
+    "failedWhy": "검색 결과 없음",
+    "checkedAt": "2026-09-17"
+  },
+  "a:김용국|솔로": {
+    "aid": null,
+    "failedWhy": "검색 결과 없음",
     "checkedAt": "2026-09-17"
   }
 }

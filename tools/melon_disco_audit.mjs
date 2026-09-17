@@ -230,24 +230,38 @@ async function resolveAid(t, ourKeys, ourDates) {
   // ⚠️ '한국'만 보면 안 된다 — 멜론 표기는 **대한민국**이라 /한국/ 로는 한 건도 안 걸린다
   //    (실측: 초신성 gubun '대한민국/남성/그룹'. 이 프로젝트가 nat.ko 에서 이미 한 번 겪은 함정이다).
   const KO_NAT = /대한민국|한국/;
-  // 멜론 아티스트 표기는 `정한 (세븐틴)` · `82MAJOR(82메이저)` 처럼 **괄호에 별칭/소속**을 단다.
-  // 솔로에겐 이게 동명이인을 가르는 가장 강한 신호다 — 괄호 안이 우리 소속 그룹과 같으면 거의 확정.
+  // 멜론 아티스트 표기는 괄호에 **별칭 또는 소속**을 단다. 둘이 섞여 있어서 둘 다 본다:
+  //   소속 — `안유진 (IVE)` · `리아 (ITZY)` · `창빈 (Stray Kids)`   ← 그룹명은 **영문**이다
+  //   별칭 — `닝닝 (NINGNING)` · `82MAJOR(82메이저)`
+  //   아무것도 없음 — `정한`(동명이인 4명이 전부 같은 표기)
+  // ⚠️ 그래서 소속 표기는 **판정 근거가 아니라 후보 정렬 힌트**로만 쓴다(없는 사람이 많다).
+  //    실제 채택은 아래의 겹침/유일성이 한다.
   const nameParts = s => {
     const m = /^(.*?)\s*[(（]([^)）]*)[)）]\s*$/.exec(String(s || ''));
     return m ? [m[1], m[2]] : [String(s || '')];
   };
   const nrm = s => String(s || '').normalize('NFKC').toLowerCase().replace(/[^0-9a-z가-힣]/g, '');
-  const ourNames = new Set(t.names.filter(Boolean).map(nrm));
-  const gnorm = t.kind === 'solo' && t.gko ? nrm(t.gko) : null;
+  const gset = new Set((t.kind === 'solo' ? (t.gnames || []) : []).map(nrm).filter(Boolean));
+  // ⚠️ 한글명 일치를 영문명 일치보다 높게 친다. 영문 이름이 흔한 서양 이름이면(조슈아→`Joshua`)
+  //    멜론에 동명이인이 수십 명이라 전부 같은 점수로 묶여 정답이 후보 컷 밖으로 밀린다
+  //    (실측: 솔로 후보 34명 중 정답이 15번째). 한글 예명은 그 팀 멤버를 거의 유일하게 가리킨다.
+  const koSet = new Set([t.koName].filter(Boolean).map(nrm));
+  const enSet = new Set(t.names.filter(Boolean).map(nrm));
   const nameScore = c => {
     const parts = nameParts(c.title).map(nrm);
-    const nameHit = parts.some(p => p && ourNames.has(p));
-    const groupHit = !!(gnorm && parts.some(p => p === gnorm));
-    return (groupHit ? 2 : 0) + (nameHit ? 1 : 0);
+    const koHit = parts.some(p => p && koSet.has(p));
+    const enHit = parts.some(p => p && enSet.has(p));
+    const groupHit = parts.some(p => gset.has(p));
+    return (groupHit ? 4 : 0) + (koHit ? 2 : 0) + (enHit ? 1 : 0);
   };
+  // ⚠️ 한국 국적 우선은 **그룹에만** 적용한다. K팝 솔로엔 외국 국적이 흔해서(조슈아=미국,
+  //    유타=일본, 닝닝=중국) 솔로에 적용하면 정답이 동명이인들 뒤로 밀려 후보 컷에서 탈락한다
+  //    — 실제로 조슈아가 그렇게 떨어졌다(실측). 동점이면 멜론 검색 순위(=삽입 순서)를 따른다.
+  const koFirst = t.kind === 'group';
   const pool = (typed.length ? typed : cands)
-    .sort((a, b) => (nameScore(b) - nameScore(a)) || ((KO_NAT.test(b.gubun) ? 1 : 0) - (KO_NAT.test(a.gubun) ? 1 : 0)))
-    .slice(0, 5);
+    .sort((a, b) => (nameScore(b) - nameScore(a)) || (koFirst ? ((KO_NAT.test(b.gubun) ? 1 : 0) - (KO_NAT.test(a.gubun) ? 1 : 0)) : 0))
+    // ⚠️ 5명에서 8명으로 늘렸다 — `리아 (ITZY)`가 동명이인 10명 중 7번째라 컷에서 탈락했다(실측).
+    .slice(0, 8);
 
   let best = null;
   const scoredCands = [];   // 채택 기준이 "겹친 후보가 몇 명인가"를 봐야 해서 전부 기록한다
@@ -352,7 +366,7 @@ if (!SOLO) {
     if (!Array.isArray(g.discography) || !g.discography.length) continue;
     // ⚠️ altNames 도 질의에 넣는다 — 슈퍼노바는 멜론에 **초신성**으로 있어서 en/ko 어느 쪽으로도
     //    안 잡혔다(검색 상위는 전부 동명 해외 그룹). 앱 검색이 이미 쓰는 필드라 새로 만들 게 없다.
-    targets.push({ key: ko, label: ko, kind: 'group', names: [g.en, ko, ...(g.altNames || [])], disco: g.discography, file: 'groups.json' });
+    targets.push({ key: ko, label: ko, kind: 'group', koName: ko, names: [g.en, ko, ...(g.altNames || [])], disco: g.discography, file: 'groups.json' });
   }
 }
 if (SOLO || BOTH) {
@@ -360,10 +374,16 @@ if (SOLO || BOTH) {
     const ko = a.name && a.name.ko; if (!ko) continue;
     if (!Array.isArray(a.discography) || !a.discography.length) continue;
     const gko = (a.group && a.group.ko) || '솔로';
-    targets.push({ key: `a:${ko}|${gko}`, label: `${ko}(${gko})`, kind: 'solo', gko, names: [a.name.en, ko], disco: a.discography, file: 'artists.json' });
+    // ⚠️ 소속 그룹은 **한글·영문·별칭을 다 넘긴다** — 멜론 괄호 표기는 영문명이다
+    //    (`안유진 (IVE)` · `리아 (ITZY)` · `창빈 (Stray Kids)`). 한글만 대조하면 한 건도 안 걸린다.
+    const gg = groups[gko];
+    const gnames = [gko, gg && gg.en, ...((gg && gg.altNames) || [])].filter(Boolean);
+        // ⚠️ 솔로는 **한글명을 먼저** 질의한다. 영문 이름이 흔한 서양 이름이면(Joshua) 멜론 검색이
+    //    동명이인 수십 명을 먼저 쏟아내 정답이 후보 컷 밖으로 밀린다(실측: 34명 중 15번째).
+    targets.push({ key: `a:${ko}|${gko}`, label: `${ko}(${gko})`, kind: 'solo', gko, gnames, koName: ko, names: [ko, a.name.en], disco: a.discography, file: 'artists.json' });
   }
 }
-let list = ONLY ? targets.filter(t => ONLY.has(t.label) || ONLY.has(t.key) || ONLY.has(t.names[1])) : targets;
+let list = ONLY ? targets.filter(t => ONLY.has(t.label) || ONLY.has(t.key) || ONLY.has(t.koName) || t.names.some(n => ONLY.has(n))) : targets;
 
 console.log(`[melon-audit] 대상 ${list.length}${SOLO ? '명' : BOTH ? '건(그룹+솔로)' : '팀'}${APPLY ? ` · 적용(${[...FILL_TYPES].join(',')})` : ' · 읽기 전용'}`);
 
@@ -380,6 +400,9 @@ for (const t of list) {
 
   let m = map[t.key];
   let albums = null;
+  // 사람이 "이 대상은 멜론에 매핑하지 말 것"이라고 못박은 경우(동명 외국 아티스트로 계속 붙는 자리).
+  // ⚠️ REFRESH 로도 풀리지 않는다 — 풀려면 melon_artist_map.json 에서 손으로 지워야 한다.
+  if (m && m.blocked) { unresolved.push(`${ko} — 매핑 차단(${m.blockedWhy || '수동'})`); continue; }
   if (!m || !m.aid) {
     if (m && m.failedWhy && !REFRESH) { unresolved.push(`${ko} — ${m.failedWhy} (이전 회차)`); continue; }
     const r = await resolveAid(t, ourKeys, ourDates);
