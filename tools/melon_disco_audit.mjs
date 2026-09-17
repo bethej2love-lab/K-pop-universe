@@ -28,7 +28,7 @@
 //   node tools/melon_disco_audit.mjs --solo --apply     # 솔로 디스코까지
 //   node tools/melon_disco_audit.mjs --all --apply      # 그룹 + 솔로
 //   node tools/melon_disco_audit.mjs --cache-only --apply  # 멜론이 막혔을 때 캐시로만
-// env: MELON_SLEEP(기본 150ms) · MELON_CONC(동시 요청, 기본 4)
+// env: MELON_SLEEP(기본 150ms) · MELON_CONC(동시 요청, 기본 2) · MELON_BLOCK_ABORT(연속 차단 중단, 기본 8)
 
 import fs from 'node:fs';
 import path from 'node:path';
@@ -62,7 +62,9 @@ const CACHE_ONLY = process.argv.includes('--cache-only');
 const FILL_TYPES = new Set((argOf('--types') || '전체').split(',').map(s => s.trim()).filter(Boolean));
 
 const sleep = ms => new Promise(r => setTimeout(r, ms));
-let req = 0, hit = 0, blocked = 0;
+let req = 0, hit = 0, blocked = 0, blockedStreak = 0, aborted = false;
+// 연속 차단 응답이 이만큼이면 회차를 접는다(계속 두드리면 차단만 길어진다).
+const BLOCK_ABORT = Number(process.env.MELON_BLOCK_ABORT || 8);
 
 const dec = s => (s || '')
   .replace(/&#x([0-9a-f]+);/gi, (_, h) => String.fromCodePoint(parseInt(h, 16)))
@@ -82,14 +84,23 @@ async function get(url, key, minSize = 1500) {
     const b = fs.readFileSync(f, 'utf8');
     if (b.length >= minSize && !isBlocked(b)) { hit++; return b; }
   }
-  if (CACHE_ONLY) return '';
+  if (CACHE_ONLY || aborted) return '';
   for (let i = 1; i <= 3; i++) {
     try {
       req++;
       await execFileP('curl', ['-skL', '--max-time', '40', '-A', UA, '-e', 'https://www.melon.com/', encodeURI(url), '-o', f]);
     } catch { /* 재시도 */ }
     const b = fs.existsSync(f) ? fs.readFileSync(f, 'utf8') : '';
-    if (isBlocked(b)) { blocked++; try { fs.unlinkSync(f); } catch {} await sleep(3000 * i); continue; }
+    if (isBlocked(b)) {
+      blocked++; blockedStreak++;
+      try { fs.unlinkSync(f); } catch {}
+      // ⚠️ 막힌 뒤에도 계속 두드리면 차단만 길어지고, 그 사이 대상들은 "앨범 0장"으로 지나가
+      //    **누락이 아니라 정상**처럼 리포트에 찍힌다. 연속으로 막히면 그 회차를 접는다.
+      if (blockedStreak >= BLOCK_ABORT) { aborted = true; return ''; }
+      await sleep(3000 * i);
+      continue;
+    }
+    blockedStreak = 0;
     if (b.length >= minSize) return b;
     if (i < 3) await sleep(800 * i);
   }
@@ -97,8 +108,12 @@ async function get(url, key, minSize = 1500) {
 }
 
 // 아주 작은 동시 실행 풀. 앨범 상세는 **후보 수만큼** 받아야 해서 순차로는 268팀에 1.8시간이 걸린다
-// (실측). 동시 CONC 개면 그만큼 줄어든다. 멜론에 부담을 주지 않도록 기본값은 낮게 둔다.
-const CONC = Number(process.env.MELON_CONC || 4);
+// (실측). 동시 CONC 개면 그만큼 줄어든다.
+// ⚠️ 기본값을 4→2로 낮췄다(2026-09-17). 동시 4 · 무지연으로 2,400요청을 쏘고 나니 멜론이
+//    `albumPaging.htm`·`album/detail.htm` **두 엔드포인트만** 골라 막았다(아티스트 앨범 페이지와
+//    홈은 계속 정상이라 "IP 전면 차단"이 아니라 그 API에 대한 속도 제한으로 보인다).
+//    한 바퀴가 좀 느려지는 것보다 벽에 부딪혀 그날을 통째로 날리는 게 훨씬 비싸다.
+const CONC = Number(process.env.MELON_CONC || 2);
 async function pool(items, fn) {
   const out = new Array(items.length);
   let i = 0;
@@ -383,6 +398,7 @@ for (const t of list) {
     if (wanted) addQueue.push({ target: t, ko, ...x });
   }
 
+  if (aborted) { console.log(`  ⚠️ 멜론 차단 응답이 연속 ${BLOCK_ABORT}회 — 이번 회차를 접습니다(진행분은 캐시에 남아 다음 회차가 이어받습니다).`); break; }
   if (++done % 10 === 0) console.log(`  ...${done}/${list.length} | 누락후보 ${report.reduce((s, r) => s + r.missing.length, 0)} | 요청 ${req} 캐시 ${hit}`);
   if (SLEEP) await sleep(SLEEP);
 }
