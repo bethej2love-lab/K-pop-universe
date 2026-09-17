@@ -25,7 +25,10 @@
 //   node tools/melon_disco_audit.mjs --groups 82메이저,마마무
 //   node tools/melon_disco_audit.mjs --apply             # 싱글만 groups.json 에 추가
 //   node tools/melon_disco_audit.mjs --apply --types 싱글,스페셜
-// env: MELON_SLEEP(기본 150ms)
+//   node tools/melon_disco_audit.mjs --solo --apply     # 솔로 디스코까지
+//   node tools/melon_disco_audit.mjs --all --apply      # 그룹 + 솔로
+//   node tools/melon_disco_audit.mjs --cache-only --apply  # 멜론이 막혔을 때 캐시로만
+// env: MELON_SLEEP(기본 150ms) · MELON_CONC(동시 요청, 기본 4)
 
 import fs from 'node:fs';
 import path from 'node:path';
@@ -193,10 +196,10 @@ const map = fs.existsSync(P(MAP_F)) ? JSON.parse(fs.readFileSync(P(MAP_F), 'utf8
 // 후보 검증: 그 아티스트의 앨범 제목이 우리 디스코와 몇 장이나 겹치는가.
 // ⚠️ 이름만 보고 고르면 동명 그룹·커버 계정이 걸린다. 겹침 0이면 매핑을 저장하지 않는다 —
 //    틀린 aid 를 저장하면 그 뒤로 영영 그 그룹만 엉뚱한 앨범을 본다.
-async function resolveAid(ko, g, ourKeys, ourDates) {
+async function resolveAid(t, ourKeys, ourDates) {
   // ⚠️ 영문명 질의에서 결과가 나오면 거기서 멈추면 안 된다(2026-09-17 실측). `Coed School`(남녀공학)은
   //    엉뚱한 합창단 하나가 잡혀서 한글명 질의로 못 넘어갔다. 두 질의를 **다 모아서** 고른다.
-  const queries = [...new Set([g.en, ko].filter(Boolean))];
+  const queries = [...new Set(t.names.filter(Boolean))];
   const cands = [];
   for (const q of queries) {
     const html = await get(`https://www.melon.com/search/artist/index.htm?q=${encodeURIComponent(q)}`, `asearch_${encodeURIComponent(q)}`, 3000);
@@ -204,10 +207,12 @@ async function resolveAid(ko, g, ourKeys, ourDates) {
   }
   if (!cands.length) return { ok: false, why: '검색 결과 없음' };
 
-  // 그룹만 본다 — '그룹' 표기가 있는 후보가 하나라도 있으면 솔로 후보는 뺀다(동명 솔로 오매칭 방지).
-  // 한국 그룹을 앞으로 당긴다(동명 해외 그룹이 검색 상위에 오는 일이 잦다 — `Supernova` 6명 중 5명이 해외).
-  const groupCands = cands.filter(c => /그룹/.test(c.gubun));
-  const pool = (groupCands.length ? groupCands : cands)
+  // 그룹을 찾을 땐 '그룹' 표기 후보만, 솔로를 찾을 땐 '솔로' 표기 후보만 본다(동명 오매칭 방지).
+  // 한국 아티스트를 앞으로 당긴다(동명 해외 아티스트가 검색 상위에 오는 일이 잦다 — `Supernova`
+  // 후보 6명 중 5명이 해외였다).
+  const want = t.kind === 'group' ? /그룹/ : /솔로/;
+  const typed = cands.filter(c => want.test(c.gubun));
+  const pool = (typed.length ? typed : cands)
     .sort((a, b) => (/한국/.test(b.gubun) ? 1 : 0) - (/한국/.test(a.gubun) ? 1 : 0))
     .slice(0, 5);
 
@@ -224,7 +229,10 @@ async function resolveAid(ko, g, ourKeys, ourDates) {
     if (!best || overlap > best.overlap) best = { c, overlap, albums };
     if (overlap >= 3) break;   // 충분히 확실하면 더 안 본다
   }
-  if (!best || best.overlap === 0) return { ok: false, why: `앨범 겹침 0 (후보 ${pool.length}명)`, cands: pool };
+  // ⚠️ 솔로는 동명이인이 흔하다(레나 2명 사례). 그룹보다 한 칸 높은 근거를 요구한다 — 겹침 1장은
+  //    "흔한 곡명이 우연히 걸린 것"일 수 있고, 틀린 aid 를 저장하면 그 사람만 영영 남의 앨범을 본다.
+  const floor = t.kind === 'group' ? 1 : 2;
+  if (!best || best.overlap < floor) return { ok: false, why: `앨범 겹침 ${best ? best.overlap : 0}장 (필요 ${floor}, 후보 ${pool.length}명)`, cands: pool };
   return {
     ok: true, aid: best.c.aid, melonName: best.c.title, gubun: best.c.gubun,
     overlap: best.overlap, albums: best.albums,
@@ -282,37 +290,60 @@ const NUMBERED = t => /^(정규|미니)\s*\d+집$/.test(t);
 /* --------------------------------- main --------------------------------- */
 
 const groups = JSON.parse(fs.readFileSync(P('groups.json'), 'utf8'));
-let names = Object.keys(groups).filter(k => Array.isArray(groups[k].discography) && groups[k].discography.length);
-if (ONLY) names = names.filter(n => ONLY.has(n));
+const artists = JSON.parse(fs.readFileSync(P('artists.json'), 'utf8'));
 
-console.log(`[melon-audit] 대상 ${names.length}팀${APPLY ? ` · 적용(${[...FILL_TYPES].join(',')})` : ' · 읽기 전용'}`);
+// 대상 목록 — 그룹과 솔로를 같은 모양으로 다룬다. `disco`는 원본 배열 참조라 여기에 push 하면
+// 원본이 그대로 바뀐다(적용 단계에서 쓴다).
+// ⚠️ 솔로 키에 소속 그룹을 붙인다 — artists.json 의 `레나`처럼 **동명이인이 실재**한다. 이름만으로
+//    매핑을 캐시하면 둘이 같은 멜론 aid 를 공유해 한쪽 앨범이 다른 쪽에 붙는다.
+const SOLO = process.argv.includes('--solo');       // 솔로만
+const BOTH = process.argv.includes('--all');        // 그룹 + 솔로
+const targets = [];
+if (!SOLO) {
+  for (const [ko, g] of Object.entries(groups)) {
+    if (!Array.isArray(g.discography) || !g.discography.length) continue;
+    targets.push({ key: ko, label: ko, kind: 'group', names: [g.en, ko], disco: g.discography, file: 'groups.json' });
+  }
+}
+if (SOLO || BOTH) {
+  for (const a of artists) {
+    const ko = a.name && a.name.ko; if (!ko) continue;
+    if (!Array.isArray(a.discography) || !a.discography.length) continue;
+    const gko = (a.group && a.group.ko) || '솔로';
+    targets.push({ key: `a:${ko}|${gko}`, label: `${ko}(${gko})`, kind: 'solo', names: [a.name.en, ko], disco: a.discography, file: 'artists.json' });
+  }
+}
+let list = ONLY ? targets.filter(t => ONLY.has(t.label) || ONLY.has(t.key) || ONLY.has(t.names[1])) : targets;
+
+console.log(`[melon-audit] 대상 ${list.length}${SOLO ? '명' : BOTH ? '건(그룹+솔로)' : '팀'}${APPLY ? ` · 적용(${[...FILL_TYPES].join(',')})` : ' · 읽기 전용'}`);
 
 const report = [];
 const unresolved = [];
 const addQueue = [];
+const touched = new Set();      // 실제로 바뀐 원본 파일만 저장한다
 let done = 0, detailFail = 0;
 
-for (const ko of names) {
-  const g = groups[ko];
-  const ourKeys = new Set(g.discography.map(d => mkey(d.title)).filter(Boolean));
-  const ourDates = new Set(g.discography.map(d => d.releaseDate).filter(Boolean));
+for (const t of list) {
+  const ko = t.label;
+  const ourKeys = new Set(t.disco.map(d => mkey(d.title)).filter(Boolean));
+  const ourDates = new Set(t.disco.map(d => d.releaseDate).filter(Boolean));
 
-  let m = map[ko];
+  let m = map[t.key];
   let albums = null;
   if (!m || !m.aid) {
     if (m && m.failedWhy && !REFRESH) { unresolved.push(`${ko} — ${m.failedWhy} (이전 회차)`); continue; }
-    const r = await resolveAid(ko, g, ourKeys, ourDates);
+    const r = await resolveAid(t, ourKeys, ourDates);
     if (!r.ok) {
       unresolved.push(`${ko} — ${r.why}`);
-      map[ko] = { aid: null, failedWhy: r.why, checkedAt: new Date().toISOString().slice(0, 10) };
+      map[t.key] = { aid: null, failedWhy: r.why, checkedAt: new Date().toISOString().slice(0, 10) };
       continue;
     }
-    m = map[ko] = { aid: r.aid, melonName: r.melonName, gubun: r.gubun, confidence: r.confidence, overlap: r.overlap, checkedAt: new Date().toISOString().slice(0, 10) };
+    m = map[t.key] = { aid: r.aid, melonName: r.melonName, gubun: r.gubun, kind: t.kind, confidence: r.confidence, overlap: r.overlap, checkedAt: new Date().toISOString().slice(0, 10) };
     albums = r.albums;
   }
   if (!albums) albums = (await albumsOf(m.aid)).filter(a => a.artistAid === m.aid);
 
-  const counts = { melon: albums.length, ours: g.discography.length, variant: 0, dup: 0 };
+  const counts = { melon: albums.length, ours: t.disco.length, variant: 0, dup: 0 };
   const cands = [];
   for (const a of albums) {
     const key = mkey(a.title);
@@ -346,12 +377,13 @@ for (const ko of names) {
   if (missing.length) report.push({ ko, aid: m.aid, missing, counts });
   for (const x of missing) {
     if (!x.detail) continue;                                  // 상세 수집 실패분은 넣지 않는다
-    if (FILL_TYPES.has('전체')) { addQueue.push({ ko, ...x }); continue; }
-    const t = x.type;
-    if (FILL_TYPES.has(t) || (FILL_TYPES.has('미니') && /^미니/.test(t)) || (FILL_TYPES.has('정규') && /^정규/.test(t))) addQueue.push({ ko, ...x });
+    const ty = x.type;
+    const wanted = FILL_TYPES.has('전체') || FILL_TYPES.has(ty)
+      || (FILL_TYPES.has('미니') && /^미니/.test(ty)) || (FILL_TYPES.has('정규') && /^정규/.test(ty));
+    if (wanted) addQueue.push({ target: t, ko, ...x });
   }
 
-  if (++done % 10 === 0) console.log(`  ...${done}/${names.length} | 누락후보 ${report.reduce((s, r) => s + r.missing.length, 0)} | 요청 ${req} 캐시 ${hit}`);
+  if (++done % 10 === 0) console.log(`  ...${done}/${list.length} | 누락후보 ${report.reduce((s, r) => s + r.missing.length, 0)} | 요청 ${req} 캐시 ${hit}`);
   if (SLEEP) await sleep(SLEEP);
 }
 
@@ -371,9 +403,9 @@ for (const r of report) for (const x of r.missing) { const b = bucketOf(x); tall
 
 const L = [];
 L.push(`멜론 대조 감사 — ${new Date().toISOString().slice(0, 10)}`);
-L.push(`대상 ${names.length}팀 · 누락 있는 팀 ${report.length} · 누락 후보 ${report.reduce((s, r) => s + r.missing.length, 0)}장`);
+L.push(`대상 ${list.length}건 · 누락 있는 대상 ${report.length} · 누락 후보 ${report.reduce((s, r) => s + r.missing.length, 0)}장`);
 L.push(`분류: ${Object.entries(tally).sort((a, b) => b[1] - a[1]).map(([k, v]) => `${k} ${v}`).join(' · ')}`);
-L.push(`매핑 실패 ${unresolved.length}팀 · 상세 수집 실패 ${detailFail}장 · 요청 ${req} 캐시 ${hit}${blocked ? ` · ⚠️ 차단응답 ${blocked}` : ''}`);
+L.push(`매핑 실패 ${unresolved.length}건 · 상세 수집 실패 ${detailFail}장 · 요청 ${req} 캐시 ${hit}${blocked ? ` · ⚠️ 차단응답 ${blocked}` : ''}`);
 L.push('');
 L.push('범례: 싱글/번호있음 = 기본 노출 · 번호미상 = 집 번호 근거 없음(나무위키 경로가 나중에 채움) · 참고 = OST·컴필·라이브(부가) · 해외반 = 일본/중국 발매(케밥 토글) · 변형판 = 리믹스·Sped Up(부가)');
 L.push('');
@@ -393,7 +425,7 @@ fs.writeFileSync(outFile, L.join('\n'));
 console.log('\n' + L.slice(0, 4).join('\n'));
 console.log(`\n리포트: ${outFile}`);
 
-if (!APPLY) { console.log(`[읽기 전용] groups.json 은 손대지 않았습니다. 채우려면 --apply`); process.exit(0); }
+if (!APPLY) { console.log(`[읽기 전용] 원본(groups.json/artists.json)은 손대지 않았습니다. 채우려면 --apply`); process.exit(0); }
 
 /* --------------------------------- 적용 --------------------------------- */
 
@@ -402,13 +434,14 @@ if (!APPLY) { console.log(`[읽기 전용] groups.json 은 손대지 않았습�
 //    **정상 발매**였다(2026-09-17): 슈퍼주니어 `The Road` 11집 Vol.1/Vol.2, 몬스타엑스 2집
 //    Take.1/Take.2 — 한 집 번호를 두 장이 나눠 갖는 기획이다. 그룹을 통째로 버리면 그 팀의 싱글까지
 //    다 날아간다(실측: 그 두 팀에서 40장). 번호를 지어내지도, 앨범을 버리지도 않는 중간이 맞다.
-const byGroup = {};
-for (const x of addQueue) (byGroup[x.ko] = byGroup[x.ko] || []).push(x);
+const byGroup = new Map();   // target -> [후보]  (같은 이름의 솔로 동명이인이 섞이지 않게 **객체**를 키로)
+for (const x of addQueue) { if (!byGroup.has(x.target)) byGroup.set(x.target, []); byGroup.get(x.target).push(x); }
 const clashDemoted = [];
-for (const [ko, list] of Object.entries(byGroup)) {
+for (const [t, group] of byGroup) {
+  const ko = t.label;
   const seen = new Map();
-  for (const d of groups[ko].discography) if (NUMBERED(d.type)) seen.set(d.type, d.title);
-  for (const x of list) {
+  for (const d of t.disco) if (NUMBERED(d.type)) seen.set(d.type, d.title);
+  for (const x of group) {
     if (!NUMBERED(x.type)) continue;
     if (seen.has(x.type)) {
       clashDemoted.push(`${ko} — ${x.type} 중복("${seen.get(x.type)}" 이미 있음) → "${x.title}" 은 번호 없이 '${x.type.replace(/\s*\d+집$/, '')}' 으로 넣음`);
@@ -421,8 +454,9 @@ for (const [ko, list] of Object.entries(byGroup)) {
 
 let added = 0;
 const addedLog = [];
-for (const [ko, list] of Object.entries(byGroup)) {
-  for (const x of list) {
+for (const [t, group] of byGroup) {
+  const ko = t.label;
+  for (const x of group) {
     const d = x.detail;
     const tracks = d.tracks;
     const titleTrack = (tracks.find(t => t.isTitle) || (tracks.length === 1 ? tracks[0] : null) || {}).title || null;
@@ -444,17 +478,26 @@ for (const [ko, list] of Object.entries(byGroup)) {
       src: 'melon',
       melonAlbumId: x.albumId,
     };
-    const dl = groups[ko].discography;
+    const dl = t.disco;
     if (dl.some(dd => mkey(dd.title) === mkey(entry.title) && dd.releaseDate === entry.releaseDate)) continue;
     dl.push(entry);
     dl.sort((a, b) => String(b.releaseDate || '').localeCompare(String(a.releaseDate || '')));
     added++;
+    touched.add(t.file);
     addedLog.push(`   ${ko}  ${entry.type.padEnd(7)} ${entry.releaseDate}  ${entry.title} [${entry.trackCount}곡, 타이틀:${titleTrack || '미상'}]`);
   }
 }
 
-// ⚠️ groups.json 은 2칸 들여쓰기 + 끝 개행이다. 스타일이 바뀌면 전체 리포맷 diff 가 되어 리뷰가 불가능해진다.
-fs.writeFileSync(P('groups.json'), JSON.stringify(groups, null, 2) + '\n');
+// ⚠️ **원본 파일의 들여쓰기를 보존한다.** groups.json 은 2칸인데 artists.json 은 1칸이라, 둘 다
+//    `null, 2`로 쓰면 artists.json 20만 줄이 통째로 리포맷된 diff 가 되어 뭐가 추가됐는지 아무도 못 본다
+//    (spotify_disco_sync.mjs 가 같은 이유로 같은 처리를 한다).
+function writeKeepingStyle(file, obj) {
+  const raw = fs.readFileSync(P(file), 'utf8');
+  const m = /^[[{]\r?\n([ \t]+)/.exec(raw);
+  fs.writeFileSync(P(file), JSON.stringify(obj, null, m ? m[1] : 2) + (raw.endsWith('\n') ? '\n' : ''));
+}
+if (touched.has('groups.json')) writeKeepingStyle('groups.json', groups);
+if (touched.has('artists.json')) writeKeepingStyle('artists.json', artists);
 console.log(`\n추가 ${added}장${clashDemoted.length ? ` · 번호 중복으로 번호 뗀 앨범 ${clashDemoted.length}` : ''}`);
 console.log(addedLog.join('\n'));
 if (clashDemoted.length) console.log('\n[번호 중복 → 번호 제거]\n' + clashDemoted.map(s => '   ' + s).join('\n'));
