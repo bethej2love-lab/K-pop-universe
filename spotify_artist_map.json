@@ -26,6 +26,17 @@
     },
     "checkedAt": "2026-09-17"
   },
+  "82메이저": {
+    "id": "1wDstpO8XQNU6GV0S92663",
+    "spotifyName": "82MAJOR",
+    "kind": "group",
+    "confidence": "medium",
+    "why": "이름 유일 일치",
+    "evidence": {
+      "titleOverlap": null
+    },
+    "checkedAt": "2026-09-17"
+  },
   "NRG": {
     "id": "7xrfnodwPKuIxS9JuUECaf",
     "spotifyName": "NRG",
@@ -91,6 +102,17 @@
       "titleOverlap": 3
     },
     "checkedAt": "2026-09-15"
+  },
+  "넥스지": {
+    "id": "5TaK8pOYVARAr5cdgoa8EW",
+    "spotifyName": "NEXZ",
+    "kind": "group",
+    "confidence": "medium",
+    "why": "이름 유일 일치",
+    "evidence": {
+      "titleOverlap": null
+    },
+    "checkedAt": "2026-09-17"
   },
   "누에라": {
     "id": "4YsiijJHnCAjqS9cIXNoTI",
@@ -220,6 +242,17 @@
       ]
     },
     "checkedAt": "2026-09-15"
+  },
+  "드림노트": {
+    "id": "3ILvL0HM0cST4iR8RzQh2V",
+    "spotifyName": "DreamNote",
+    "kind": "group",
+    "confidence": "high",
+    "why": "동명 후보 2명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 2
+    },
+    "checkedAt": "2026-09-17"
   },
   "드림캐쳐": {
     "id": "5V1qsQHdXNm4ZEZHWvFnqQ",
@@ -1008,6 +1041,17 @@
     },
     "checkedAt": "2026-09-17"
   },
+  "언차일드": {
+    "id": "6TKweJiG4KC62YFs5KKUqu",
+    "spotifyName": "UNCHILD",
+    "kind": "group",
+    "confidence": "medium",
+    "why": "동명 후보 3명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 1
+    },
+    "checkedAt": "2026-09-17"
+  },
   "업텐션": {
     "id": "2LjaeuGS0ubYXZfNihGp9y",
     "spotifyName": "UP10TION",
@@ -1154,6 +1198,17 @@
     },
     "checkedAt": "2026-09-15"
   },
+  "엑스디너리 히어로즈": {
+    "id": "1khChLj7REGqjM043PlYyn",
+    "spotifyName": "Xdinary Heroes",
+    "kind": "group",
+    "confidence": "high",
+    "why": "동명 후보 2명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 2
+    },
+    "checkedAt": "2026-09-17"
+  },
   "엔믹스": {
     "id": "28ot3wh4oNmoFOdVajibBl",
     "spotifyName": "NMIXX",
@@ -1245,6 +1300,22 @@
     },
     "checkedAt": "2026-09-16"
   },
+  "영파씨": {
+    "id": "5bxwvIM9PX0CkpS6f1L2Ff",
+    "spotifyName": "YOUNG POSSE",
+    "kind": "group",
+    "confidence": "high",
+    "why": "이름 유일 일치 · 수집 전 검증 통과(겹침 4)",
+    "evidence": {
+      "titleOverlap": null,
+      "verifyOverlap": 4,
+      "verifyYears": [
+        2026,
+        2025
+      ]
+    },
+    "checkedAt": "2026-09-17"
+  },
   "오마이걸": {
     "id": "2019zR22qK2RBvCqtudBaI",
     "spotifyName": "OH MY GIRL",
@@ -1266,6 +1337,17 @@
       "titleOverlap": null
     },
     "checkedAt": "2026-09-15"
+  },
+  "온리원오프": {
+    "id": "0iQGSzpJ0G0lsugv8jsJHd",
+    "spotifyName": "OnlyOneOf",
+    "kind": "group",
+    "confidence": "high",
+    "why": "동명 후보 3명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 2
+    },
+    "checkedAt": "2026-09-17"
   },
   "온앤오프": {
     "id": "0eEhOgZ2x6kv8kLz77WO7b",
@@ -1294,6 +1376,22 @@
     },
     "checkedAt": "2026-09-15"
   },
+  "올아워즈": {
+    "id": "2m5lRlEucobWPA1V6xqxWO",
+    "spotifyName": "ALL(H)OURS",
+    "kind": "group",
+    "confidence": "high",
+    "why": "이름 유일 일치 · 수집 전 검증 통과(겹침 2)",
+    "evidence": {
+      "titleOverlap": null,
+      "verifyOverlap": 2,
+      "verifyYears": [
+        2026,
+        2025
+      ]
+    },
+    "checkedAt": "2026-09-17"
+  },
   "우당탕탕소녀단": {
     "id": "5MepLDNyvE91lO3yqJhMIx",
     "spotifyName": "UDTT",
@@ -1304,6 +1402,22 @@
       "titleOverlap": null
     },
     "checkedAt": "2026-09-15"
+  },
+  "우아": {
+    "id": "7mgY992t7YTx6UELsoIMRa",
+    "spotifyName": "WOOAH",
+    "kind": "group",
+    "confidence": "high",
+    "why": "이름 유일 일치 · 수집 전 검증 통과(겹침 2)",
+    "evidence": {
+      "titleOverlap": null,
+      "verifyOverlap": 2,
+      "verifyYears": [
+        2026,
+        2024
+      ]
+    },
+    "checkedAt": "2026-09-17"
   },
   "우주소녀": {
     "id": "6hhqsQZhtp9hfaZhSd0VSD",
@@ -1893,6 +2007,17 @@
       "titleOverlap": 6
     },
     "checkedAt": "2026-09-15"
+  },
+  "피프틴앤드": {
+    "id": "1AAJLswvl7anW1RhTTFzxN",
+    "spotifyName": "15&",
+    "kind": "group",
+    "confidence": "medium",
+    "why": "동명 후보 2명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 1
+    },
+    "checkedAt": "2026-09-17"
   },
   "핑클": {
     "id": "2aRLyjYp7WPr4EkjkI1gvS",

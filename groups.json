@@ -149536,6 +149536,24 @@
         "melonAlbumId": "14474245"
       },
       {
+        "title": "HOP",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b2731d4de3f470b3a4304b5f7faa",
+        "releaseDate": "2026.08.25",
+        "trackCount": 1,
+        "titleTrack": "HOP",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "HOP",
+            "isTitle": true
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "0QGdRswv4CDMBFRWmmEwHF"
+      },
+      {
         "title": "NO DOUBT",
         "type": "미니 5집",
         "isMain": true,
@@ -149595,6 +149613,24 @@
         "melonAlbumId": "12824451"
       },
       {
+        "title": "My Spring, My Light, My Breath",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b2735067754444e6beacc33148ec",
+        "releaseDate": "2026.01.29",
+        "trackCount": 1,
+        "titleTrack": "My Spring, My Light, My Breath",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "My Spring, My Light, My Breath",
+            "isTitle": true
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "1t3qXuMEeETV9HxLvfjfgS"
+      },
+      {
         "title": "CIELOGROOVE 2025 Christmas",
         "type": "싱글",
         "isMain": true,
@@ -149611,6 +149647,24 @@
         ],
         "src": "melon",
         "melonAlbumId": "12420513"
+      },
+      {
+        "title": "White Christmas",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273520911c9c542f074c28e4ab7",
+        "releaseDate": "2025.12.05",
+        "trackCount": 1,
+        "titleTrack": "White Christmas",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "White Christmas",
+            "isTitle": true
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "7FOruuAoRntAE1TmGzukOQ"
       },
       {
         "title": "VCF",
@@ -149683,6 +149737,24 @@
             "isTitle": false
           }
         ]
+      },
+      {
+        "title": "Graffiti",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273b3876bd374e177599d06508d",
+        "releaseDate": "2025.01.17",
+        "trackCount": 1,
+        "titleTrack": "Graffiti",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Graffiti",
+            "isTitle": true
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "6fZwoackvM4x38lZZBuUt5"
       },
       {
         "title": "WITNESS",
@@ -149912,6 +149984,29 @@
         ],
         "src": "melon",
         "melonAlbumId": "11904730"
+      },
+      {
+        "title": "The Nice Guy (Original Television Soundtrack), Pt. 1",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b27331db05d36fb3398fa45841cf",
+        "releaseDate": "2025.07.18",
+        "trackCount": 2,
+        "titleTrack": null,
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Break the Darkness",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "Break the Darkness - Instrumental",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "7EZ037QS2kd1q1hX0smKHh"
       },
       {
         "title": "FiRE (My Sweet Misery)",
@@ -150809,6 +150904,29 @@
         "melonAlbumId": "13348048"
       },
       {
+        "title": "Endlessly you",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b2730f034fd9aeb29e4775836c06",
+        "releaseDate": "2026.04.28",
+        "trackCount": 2,
+        "titleTrack": null,
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Endlessly you (Vocal. MINSEO)",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "Endlessly you (Instrumental)",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "4wiRKxMEo5agPSLttu18FQ"
+      },
+      {
         "title": "Shining on you (The official song of Talk Talk Korea 2024)",
         "type": "싱글",
         "isMain": true,
@@ -150889,6 +151007,29 @@
         ],
         "src": "melon",
         "melonAlbumId": "11477435"
+      },
+      {
+        "title": "Secret princess (Secret Jouju x WOOAH)",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273d8737d84df829b8add536df7",
+        "releaseDate": "2024.05.02",
+        "trackCount": 2,
+        "titleTrack": "Secret princess (Secret Jouju x WOOAH)",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Secret princess (Secret Jouju x WOOAH)",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Secret princess (Secret Jouju x WOOAH) - Instrumental",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "17tkwDkoi0rQ6udpLNzZO1"
       },
       {
         "title": "BLUSH",
@@ -152132,6 +152273,29 @@
         "melonAlbumId": "14449927"
       },
       {
+        "title": "Illustration Music Collaboration with Keykney",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b2735bf44e3a04205a5f8e9f635d",
+        "releaseDate": "2026.08.18",
+        "trackCount": 2,
+        "titleTrack": null,
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Dreams Come True",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "Dreams Come True - Inst.",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "0FU3HiuegqkFqH5xHPl0sm"
+      },
+      {
         "title": "young tape",
         "type": "정규",
         "isMain": true,
@@ -152351,6 +152515,29 @@
         "melonAlbumId": "11871736"
       },
       {
+        "title": "Head over Heels, Pt. 2 (Original Soundtrack)",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b2733403b1804cf6867b1109c435",
+        "releaseDate": "2025.06.30",
+        "trackCount": 2,
+        "titleTrack": null,
+        "tracks": [
+          {
+            "no": 1,
+            "title": "UPSIDE DOWN",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "UPSIDE DOWN - Instrumental",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "596ZPdCUk1fJGAN1MkjoZm"
+      },
+      {
         "title": "COLD",
         "type": "미니",
         "isMain": true,
@@ -152415,6 +152602,24 @@
         ],
         "src": "melon",
         "melonAlbumId": "11665132"
+      },
+      {
+        "title": "Street Carol…(With John Park)",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273e86dad32a776ff874aba5b37",
+        "releaseDate": "2024.12.13",
+        "trackCount": 1,
+        "titleTrack": "Street Carol…(With John Park)",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Street Carol…(With John Park)",
+            "isTitle": true
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "3yZN6pvPBptmsRrhkwkhLi"
       },
       {
         "title": "Year 1 : We Still Loading",
@@ -152491,6 +152696,39 @@
         ]
       },
       {
+        "title": "ATE THAT EP",
+        "type": "미니",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b2734366c86d67db4419c7697457",
+        "releaseDate": "2024.08.21",
+        "trackCount": 4,
+        "titleTrack": null,
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Loading…",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "ATE THAT",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "Bananas",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Umbrella",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "0SUJCQGGE2SMg1ziHwGFHK"
+      },
+      {
         "title": "On My Scars (feat.Lil Cherry, Dbo)",
         "type": "싱글",
         "isMain": true,
@@ -152545,6 +152783,44 @@
         ]
       },
       {
+        "title": "XXL EP",
+        "type": "미니",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b27340fe7489b59d691dea8c016b",
+        "releaseDate": "2024.03.20",
+        "trackCount": 5,
+        "titleTrack": null,
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Scars",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "XXL",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "DND (feat.BM of KARD)",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "ROTY",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Skyline",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "0EbH9upNSg6zsdFZ8g11Yl"
+      },
+      {
         "title": "YOUNG POSSE UP (feat.버벌진트, NSW yoon, Token)",
         "type": "싱글",
         "isMain": true,
@@ -152566,6 +152842,29 @@
         ],
         "src": "melon",
         "melonAlbumId": "11411242"
+      },
+      {
+        "title": "YOUNG POSSE UP (feat.Verbal Jint, NSW yoon, Token)",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b2731aaf2d0c21e2171b982a76e3",
+        "releaseDate": "2024.02.04",
+        "trackCount": 2,
+        "titleTrack": "YOUNG POSSE UP (feat.Verbal Jint, NSW yoon, Token)",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "YOUNG POSSE UP (feat.Verbal Jint, NSW yoon, Token)",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "YOUNG POSSE UP (inst.)",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "4bROg1lfsWUDyNtzmsMywC"
       },
       {
         "title": "MACARONI CHEESE",
@@ -152597,6 +152896,39 @@
             "isTitle": false
           }
         ]
+      },
+      {
+        "title": "MACARONI CHEESE EP",
+        "type": "미니",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b2732fbdd152d4c3fb131b704f70",
+        "releaseDate": "2023.10.18",
+        "trackCount": 4,
+        "titleTrack": null,
+        "tracks": [
+          {
+            "no": 1,
+            "title": "POSSE UP!",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "MACARONI CHEESE",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "OTB",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Cooing",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "3maKjITApQfhgJ13DflK8e"
       }
     ],
     "pri": 1.5,
@@ -157598,6 +157930,30 @@
         "melonAlbumId": "11621905"
       },
       {
+        "title": "Joyful Green",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273447c57c898ce43963efd9dbc",
+        "releaseDate": "2024.10.23",
+        "trackCount": 2,
+        "titleTrack": null,
+        "region": "jp",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Joyful Green (Korean Ver.)",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "Joyful Green (Japanese Ver.)",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "2GQv2VPfMa2VLXEUqbQsTA"
+      },
+      {
         "title": "Lemonade (Eng Ver.)",
         "type": "싱글",
         "isMain": false,
@@ -157643,6 +157999,24 @@
         ],
         "src": "melon",
         "melonAlbumId": "11215936"
+      },
+      {
+        "title": "BLUE",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273414448e27802a942f7b69e2b",
+        "releaseDate": "2023.04.03",
+        "trackCount": 1,
+        "titleTrack": "BLUE",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "BLUE",
+            "isTitle": true
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "40w5Wz53j6VFmxeKIihOLw"
       },
       {
         "title": "꿀벌의 노래",
