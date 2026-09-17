@@ -1,4 +1,31 @@
 {
+  "2AM": {
+    "id": "5SnaL8SsjGMHQNyqpa8Zos",
+    "spotifyName": "2AM",
+    "kind": "group",
+    "confidence": "high",
+    "why": "이름 유일 일치 · 수집 전 검증 통과(겹침 1)",
+    "evidence": {
+      "titleOverlap": null,
+      "verifyOverlap": 1,
+      "verifyYears": [
+        2026,
+        2025
+      ]
+    },
+    "checkedAt": "2026-09-17"
+  },
+  "2PM": {
+    "id": "5iRPbkcPmqAFFwDUj6ywVS",
+    "spotifyName": "2PM",
+    "kind": "group",
+    "confidence": "medium",
+    "why": "이름 유일 일치",
+    "evidence": {
+      "titleOverlap": null
+    },
+    "checkedAt": "2026-09-17"
+  },
   "NRG": {
     "id": "7xrfnodwPKuIxS9JuUECaf",
     "spotifyName": "NRG",
@@ -9,6 +36,17 @@
       "titleOverlap": null
     },
     "checkedAt": "2026-09-15"
+  },
+  "SS501": {
+    "id": "6rmMpoeu2SIV4OLURCOn2e",
+    "spotifyName": "SS501",
+    "kind": "group",
+    "confidence": "high",
+    "why": "동명 후보 2명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 2
+    },
+    "checkedAt": "2026-09-17"
   },
   "god": {
     "id": "1nTCpd63NkuGGpCIbo4Ywl",
@@ -96,6 +134,17 @@
       ]
     },
     "checkedAt": "2026-09-15"
+  },
+  "다이아": {
+    "id": "5Pcx98OUnL52aGZRRQx5v8",
+    "spotifyName": "DIA",
+    "kind": "group",
+    "confidence": "medium",
+    "why": "동명 후보 2명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 1
+    },
+    "checkedAt": "2026-09-17"
   },
   "더보이즈": {
     "id": "0CmvFWTX9zmMNCUi6fHtAx",
@@ -430,6 +479,17 @@
       "titleOverlap": 2
     },
     "checkedAt": "2026-09-15"
+  },
+  "브라운아이드걸스": {
+    "id": "2GEPtT5RDxrmdi0A4mbDi7",
+    "spotifyName": "Brown Eyed Girls",
+    "kind": "group",
+    "confidence": "medium",
+    "why": "동명 후보 2명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 1
+    },
+    "checkedAt": "2026-09-17"
   },
   "브브걸": {
     "id": "7yXtdZLKdtwH5FrxduK7ti",
@@ -932,6 +992,33 @@
     },
     "checkedAt": "2026-09-16"
   },
+  "앳하트": {
+    "id": "0ON7aUm308hzonzZGpZUvB",
+    "spotifyName": "AtHeart",
+    "kind": "group",
+    "confidence": "high",
+    "why": "이름 유일 일치 · 수집 전 검증 통과(겹침 4)",
+    "evidence": {
+      "titleOverlap": null,
+      "verifyOverlap": 4,
+      "verifyYears": [
+        2026,
+        2025
+      ]
+    },
+    "checkedAt": "2026-09-17"
+  },
+  "업텐션": {
+    "id": "2LjaeuGS0ubYXZfNihGp9y",
+    "spotifyName": "UP10TION",
+    "kind": "group",
+    "confidence": "high",
+    "why": "동명 후보 2명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 2
+    },
+    "checkedAt": "2026-09-17"
+  },
   "에버글로우": {
     "id": "3ZZzT0naD25RhY2uZvIKkJ",
     "spotifyName": "EVERGLOW",
@@ -1326,6 +1413,22 @@
     },
     "checkedAt": "2026-09-15"
   },
+  "유키스": {
+    "id": "2GB76Lm833jVI5kLvKEB7Z",
+    "spotifyName": "UKISS",
+    "kind": "group",
+    "confidence": "high",
+    "why": "이름 유일 일치 · 수집 전 검증 통과(겹침 2)",
+    "evidence": {
+      "titleOverlap": null,
+      "verifyOverlap": 2,
+      "verifyYears": [
+        2024,
+        2023
+      ]
+    },
+    "checkedAt": "2026-09-17"
+  },
   "이달의소녀": {
     "id": "52zMTJCKluDlFwMQWmccY7",
     "spotifyName": "LOONA",
@@ -1445,6 +1548,17 @@
     },
     "checkedAt": "2026-09-15"
   },
+  "캣츠아이": {
+    "id": "3c0gDdb9lhnHGFtP4prQpn",
+    "spotifyName": "KATSEYE",
+    "kind": "group",
+    "confidence": "high",
+    "why": "동명 후보 3명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 8
+    },
+    "checkedAt": "2026-09-17"
+  },
   "케플러": {
     "id": "5R7AMwDeroq6Ls0COQYpS4",
     "spotifyName": "Kep1er",
@@ -1503,6 +1617,17 @@
       "titleOverlap": 3
     },
     "checkedAt": "2026-09-15"
+  },
+  "크레용팝": {
+    "id": "0ODX6aegsZkBmBeMA5qqwi",
+    "spotifyName": "Crayon Pop",
+    "kind": "group",
+    "confidence": "medium",
+    "why": "동명 후보 2명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 1
+    },
+    "checkedAt": "2026-09-17"
   },
   "클라씨": {
     "id": "3jcfHmXvjOgHzfyVE55GzZ",
