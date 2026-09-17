@@ -471,7 +471,28 @@ async function _ytSyncAll(){
   if(!key){_ytSetProg('API 키를 먼저 입력해주세요');return;}
   if(!sb){_ytSetProg('Supabase 연결 없음');return;}
   _ytSyncing=true;
-  const groups=Object.entries(GROUPS).filter(([,v])=>v?.links?.youtube).map(([ko,v])=>({ko,url:v.links.youtube,syncKey:ko}));
+  // ── 해체 그룹 채널은 하루 한 번만 (2026-09-17) ─────────────────────────────
+  // 쿼터는 공용 지갑이고, 폴링 비용은 **새 영상이 있든 없든 채널당 1유닛**이다. 그런데 실측:
+  //   · 해체 그룹 채널은 폴링 대상 222개 중 32개 = 14.4%
+  //   · 최근 90일 신규 영상 기여는 29,379건 중 154건 = 0.52%
+  // 14%를 내고 0.5%를 받고 있었다. 그렇다고 끊으면 안 된다 — 동키즈 40·워너원 27·투애니원 25건처럼
+  // 해체 뒤에도 실제로 올라온다(아카이브·기념 업로드). 그래서 **끄는 게 아니라 주기를 낮춘다**.
+  // 하루 27회(동기화 19 + 루틴 8) 중 1회만 포함 → 32×26 = **약 832유닛/일** 확보. 그 예산으로
+  // 조회수 순환 갱신을 자동화한다(아래 _ytRotateViewCountRefresh 자동 실행).
+  // 대가: 해체 그룹의 새 영상이 최대 하루 늦게 들어온다. 전체 신규의 0.5%다.
+  // ⚠️ 시각(KST 몇 시)으로 가르지 않는다 — GitHub Actions cron은 발화가 통째로 드랍되는 일이 잦아
+  //    (sync_gate.mjs 머리 주석) 그 시간대를 놓치면 그날 해체 채널이 통째로 빠진다. 마지막 실행
+  //    시각을 DB에 남겨서 "20시간 지났으면 포함"으로 판단한다.
+  const _DISBANDED_GAP_MS=20*3600*1000;
+  const _lastDis=await _admMetaGet('last_disbanded_sync');
+  const _inclDisbanded=(Date.now()-_lastDis)>=_DISBANDED_GAP_MS;
+  const groups=Object.entries(GROUPS)
+    .filter(([,v])=>v?.links?.youtube)
+    .filter(([,v])=>_inclDisbanded||!v.disbanded)
+    .map(([ko,v])=>({ko,url:v.links.youtube,syncKey:ko}));
+  const _disSkipped=Object.values(GROUPS).filter(v=>v?.links?.youtube&&v.disbanded).length;
+  if(_inclDisbanded)await _admMetaSet('last_disbanded_sync',Date.now());
+  else if(_disSkipped)console.log(`[동기화] 해체 그룹 채널 ${_disSkipped}개 건너뜀 — 하루 1회만 폴링(마지막 ${_lastDis?new Date(_lastDis).toLocaleString('ko-KR'):'기록 없음'})`);
   // 아이유처럼 소속 그룹이 없는(GROUPS에 없는) 솔로 아티스트도, 본인 링크에 유튜브가 있으면 본인 이름을 키로 같이 동기화
   const seenSolo=new Set();
   const solos=[];
@@ -724,6 +745,24 @@ async function _ytUnavailSupported(){
     if(error)console.warn('[삭제 감지] unavailable_at 컬럼이 없어 감지를 건너뜁니다 — unavailable_migration.sql 실행 필요');
   }catch(e){_ytHasUnavailCol=false;}
   return _ytHasUnavailCol;
+}
+// 루틴용 래퍼 — **하루 한 번만** 순환 갱신을 돌린다(2026-09-17).
+// 루틴 자체는 3시간마다 도니까 그대로 넣으면 하루 8배치 = 3,200유닛으로 지갑이 터진다.
+// 마지막 실행 시각을 DB(admin_meta)에 남겨 기기·워크플로가 달라도 하루 1회가 지켜지게 한다
+// — localStorage로 하면 GitHub Actions 러너가 매번 새 프로필이라 "기록 없음"이 되어 매번 돈다.
+const _VIEW_ROTATE_GAP_MS=20*3600*1000;   // 20시간 — 루틴 주기(3h)와 안 겹치게 넉넉히
+async function _ytRotateViewCountDaily(){
+  const last=await _admMetaGet('last_viewcount_rotate');
+  const waited=Date.now()-last;
+  if(waited<_VIEW_ROTATE_GAP_MS){
+    const h=Math.floor(waited/3600000);
+    _ytSetProg(`조회수 순환 갱신 건너뜀 — 마지막 실행 ${last?h+'시간 전':'기록 없음'} (하루 1회)`);
+    return;
+  }
+  // ⚠️ 표식을 **먼저** 쓴다. 나중에 쓰면 중간에 쿼터가 끊겨 예외가 났을 때 표식이 안 남아,
+  //    3시간 뒤 루틴이 또 400유닛을 시도하고 또 터진다(빈 지갑을 하루 8번 두드리는 꼴).
+  await _admMetaSet('last_viewcount_rotate',Date.now());
+  await _ytRotateViewCountRefresh();
 }
 async function _ytRotateViewCountRefresh(){
   const key=_ytApiKey();
@@ -10045,6 +10084,21 @@ async function _admReadLastRunDB(){
 async function _admWriteLastRunDB(ts){
   try{await sb.from('atm_exception_rules').upsert({type:'admin_meta',key:'last_routine',value:ts},{onConflict:'type,key'});}catch(e){}
 }
+// 범용 admin_meta 키-값(2026-09-17). last_routine이 쓰던 그릇을 그대로 재사용한다 — "며칠에 한 번만
+// 하는 일"의 마지막 시각을 기기와 무관하게 공유해야 하는 자리가 늘어서(해체 채널 폴링·조회수 순환)
+// 같은 패턴을 복제하는 대신 함수로 뺐다.
+// ⚠️ 읽기 실패를 0으로 돌려준다 = "아주 오래됐다" = 이번에 실행. 반대로 하면(실패 시 최신으로 간주)
+//    DB가 잠깐 흔들릴 때 그 작업이 조용히 영영 안 돈다.
+async function _admMetaGet(key){
+  try{
+    const{data,error}=await sb.from('atm_exception_rules').select('value').eq('type','admin_meta').eq('key',key).maybeSingle();
+    if(error||!data)return 0;
+    return Number(data.value)||0;
+  }catch(e){return 0;}
+}
+async function _admMetaSet(key,val){
+  try{await sb.from('atm_exception_rules').upsert({type:'admin_meta',key,value:String(val)},{onConflict:'type,key'});}catch(e){}
+}
 // ⚠️ supabase-js는 `.select()`를 **먼저** 부른 뒤에야 필터(.eq/.in/.gt)를 걸 수 있다.
 // 처음엔 `sb.from(X).eq(...)` 순서로 짰다가 카드가 전부 "?"(=조회 실패)로 떴음 — 호출부가
 // "이미 select까지 끝난 쿼리"를 넘기도록 바꿔서 순서를 잘못 쓸 여지를 없앤다.
@@ -10362,6 +10416,14 @@ async function _admRunRoutine(withSync,opts){
   //    **덮어써져 관리자가 손으로 넣은 코너명이 날아간다**. 스윕은 합집합만 쓰므로 그 위험이 없다.
   //    비용도 증분 스코프(_admRoutineScopeSince('format'))로 하루 유입분만 본다.
   steps.push({name:'7. 세부 콘텐츠 포맷 태깅',fn:_ytSweepContentFormats});
+  // 8. 조회수 순환 갱신(2026-09-17 추가, 사용자 결정) — 여기 오기 전까지 이건 **사람이 손으로 누르는
+  //    유일한 정기 작업**이었다. 루틴의 1-3 조회수 갱신은 `live` 카테고리·최근 14일만 훑어서, MV·쇼츠·
+  //    예능 등 나머지 25만여 건은 한 번 수집된 뒤 조회수가 영원히 그대로였다.
+  //    재원은 위 _ytSyncAll의 해체 채널 절약분(약 832유닛/일)이다 — 이 한 배치가 400유닛(2만개÷50).
+  //    47만 건이면 24일에 전체 한 바퀴. 지금(월 1회 수동)보다 촘촘하다.
+  //    ⚠️ 하루 한 번만 — 루틴은 3시간마다 도는데 매번 돌면 3,200유닛/일이라 지갑이 터진다.
+  //    ⚠️ 실패해도 루틴은 계속된다(각 단계가 try/catch). 쿼터가 모자란 날은 이 단계만 건너뛰는 셈.
+  steps.push({name:'8. 조회수 순환 갱신 (하루 1배치 · 2만개)',fn:_ytRotateViewCountDaily});
   }
   const t0=Date.now();
   // 단계별 소요 시간 계측(2026-09-07) — "루틴이 10시간 걸린다"는 제보를 받고도 **어느 단계가** 그런지
