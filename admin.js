@@ -1409,18 +1409,28 @@ function _coverBuildIndex(chartRows){
     if(!byOrigin.has(oid))byOrigin.set(oid,new Set());
     byOrigin.get(oid).add(key);};
   const put=(origin,title,tier,isTitle,date)=>{_coverSongKeys(title).forEach(k=>add(k,{origin,title,tier,isTitle:!!isTitle,date:date?String(date).replace(/\./g,'-').slice(0,10):null,keyLoose:_coverKeyLoose(k)}));};
+  // 색인에 넣을 앨범인가 / 어느 강도로 넣을 것인가 (2026-09-17, 멜론 전수 수집 이후).
+  // ⚠️ 수집 정책이 "멜론의 모든 발매를 태그해서 넣는다"로 바뀌면서 색인이 오염되기 시작했다. 실측 2건:
+  //   · 변형판(리믹스·Sped Up·Inst) — **같은 곡**이 제목만 바꿔 여러 번 들어온다. 새 곡이 아니므로 뺀다.
+  //   · 일본·중국판 — 위아이 일본반 `偽物(FAKE LOVE)`가 **타이틀곡(tier B)** 으로 들어가면서,
+  //     원곡자가 방탄소년단인 "FAKE LOVE Covered by IVE LEESEO"가 동점(ambiguous)으로 떨어졌다.
+  //     빼버리면 니쥬·웨이션브이처럼 원곡이 일본어·중국어인 팀의 곡이 통째로 색인에서 사라지므로,
+  //     **빼지 않고 가장 약한 근거(tier C·타이틀곡 아님)로만** 넣는다 — 찾을 수는 있되 원판을 못 이긴다.
+  const albumTier=(al,baseTier)=>al&&al.region?'C':baseTier;
+  const albumIsTitle=(al,isTitle)=>!!(isTitle&&!(al&&al.region));
+  const indexable=al=>!!al&&!al.variant;
   Object.entries(GROUPS).forEach(([gko,g])=>{
     const origin={kind:'group',gko};
-    (g.discography||[]).forEach(al=>(al.tracks||[]).forEach(t=>t&&t.title&&put(origin,t.title,t.isTitle?'B':'C',t.isTitle,al.releaseDate)));
+    (g.discography||[]).filter(indexable).forEach(al=>(al.tracks||[]).forEach(t=>t&&t.title&&put(origin,t.title,albumTier(al,t.isTitle?'B':'C'),albumIsTitle(al,t.isTitle),al.releaseDate)));
     (g.songs||[]).forEach(s=>s&&s.t&&put(origin,s.t,'B',true,null));
   });
   ARTISTS.forEach(a=>{
     const origin=_coverArtistOriginOf(a);
     // ARTISTS[*].discography는 멤버든 무소속이든 "그 사람 명의 솔로 디스코"(602명) — 그룹 디스코는 GROUPS 쪽에만 있다
-    [...(a.soloDiscography||[]),...(a.discography||[])].forEach(al=>(al.tracks||[]).forEach(t=>t&&t.title&&put(origin,t.title,t.isTitle?'B':'C',t.isTitle,al.releaseDate)));
+    [...(a.soloDiscography||[]),...(a.discography||[])].filter(indexable).forEach(al=>(al.tracks||[]).forEach(t=>t&&t.title&&put(origin,t.title,albumTier(al,t.isTitle?'B':'C'),albumIsTitle(al,t.isTitle),al.releaseDate)));
     if(origin.kind==='solo')(a.songs||[]).forEach(s=>s&&s.t&&put(origin,s.t,'B',true,null));
     // 유닛곡(GOT the beat, NCT U…): 유닛 멤버 각자에게 "이름(그룹)"으로 — 같은 유닛명은 dedupe되므로 멤버 수만큼 항목이 생김
-    (a.unitDiscography||[]).forEach(u=>(u.albums||[]).forEach(al=>(al.tracks||[]).forEach(t=>t&&t.title&&put({kind:'member',gko:origin.gko==='솔로'?'솔로':origin.gko,mko:a.name.ko,unit:u.unitName},t.title,t.isTitle?'B':'C',t.isTitle,al.releaseDate))));
+    (a.unitDiscography||[]).forEach(u=>(u.albums||[]).filter(indexable).forEach(al=>(al.tracks||[]).forEach(t=>t&&t.title&&put({kind:'member',gko:origin.gko==='솔로'?'솔로':origin.gko,mko:a.name.ko,unit:u.unitName},t.title,albumTier(al,t.isTitle?'B':'C'),albumIsTitle(al,t.isTitle),al.releaseDate))));
   });
   (chartRows||[]).forEach(r=>{
     if(!r||!r.song_title)return;
@@ -1765,7 +1775,22 @@ function _coverResolve(row,opts){
   else if(ranked.length){
     const top=ranked[0],second=ranked[1];
     if(top.s<(ctx.hasContext?6:8)){reason='weak';}
-    else if(second&&top.s-second.s<2&&_coverOriginId(second.e.origin)!==_coverOriginId(top.e.origin)){ambiguous=true;reason='ambiguous';}
+    else if(second&&top.s-second.s<2&&_coverOriginId(second.e.origin)!==_coverOriginId(top.e.origin)){
+      // 근접 동점 = 동명곡. 여기서 바로 포기하지 말고 **제목이 후보 중 딱 하나를 직접 부르는지** 본다.
+      // 사람이 읽는 방식 그대로다 — "#Magnetic_Challenge with 아일릿 원희"의 Magnetic은 아일릿·
+      // 몬스타엑스 둘 다의 곡이지만 제목이 아일릿이라고 말하고 있다.
+      // ⚠️ 이 규칙 자체는 원래 _coverConfidence(topNamed&&!secondNamed)에만 있었는데, 거기까지 가려면
+      //    origin이 잡혀야 한다 — ambiguous면 origin이 null이라 그 규칙이 **한 번도 닿지 않는 자리**였다.
+      //    멜론 전수 수집으로 동명곡이 늘면서 드러났다(2026-09-17).
+      const tied=ranked.filter(x=>top.s-x.s<2);
+      const named=tied.filter(x=>_coverOriginNamedInTitle(x.e.origin,title));
+      if(named.length===1){
+        const w=named[0];
+        origin=w.e.origin;song=w.e.title;reason=w.strength;
+        // 아래 topNamed/secondNamed가 "이긴 쪽"을 기준으로 계산되도록 순서를 맞춘다(확신 등급의 근거).
+        ranked.splice(ranked.indexOf(w),1);ranked.unshift(w);
+      }else{ambiguous=true;reason='ambiguous';}
+    }
     else{origin=top.e.origin;song=top.e.title;reason=top.strength;}
   }
   const isCover=!!(origin||creditExternal||ctx.cover);

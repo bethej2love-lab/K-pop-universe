@@ -190,9 +190,18 @@ const _KNOWN_EXCLUDED_PEOPLE = new Set(['이종현', '태일', '김가람', '승
     if (typeof g.debut === 'string' && g.debut && !DOT_ANY.test(g.debut))
       bad('error', '날짜 표기 오류', `그룹 "${ko}".debut = ${JSON.stringify(g.debut)} — YYYY[.MM[.DD]]`);
     });
+  // ⚠️ 앨범 발매일도 **정밀도는 강제하지 않는다**(2026-09-17). 위 disbanded/debut와 같은 이유다:
+  //    1990년대 발매는 멜론 원본에 일(day)이 아예 없다(실측: H.O.T. `I yah!` 1999.09, 베이비복스
+  //    `Equalizeher` 1997 등 20장). 없는 날짜를 `.01`로 채워 넣는 건 데이터를 지어내는 것이고,
+  //    소비하는 쪽은 이미 부분 날짜를 견딘다 — 앱의 _tlKey/_tlDate가 YYYY / YYYY.MM을 그대로 다루고,
+  //    정렬은 점 표기 문자열 비교라 "1999.09" < "1999.09.09"로 순서도 맞는다.
+  //    점(.) 표기 규약 자체는 그대로 강제한다(대시가 섞이면 정렬이 어긋난다는 위 설명 그대로).
   Object.entries(GROUPS).forEach(([ko, g]) => (g.discography || []).forEach(al => {
-    if (al.releaseDate && !DOT_FULL.test(al.releaseDate))
-      bad('error', '날짜 표기 오류', `그룹 "${ko}" 앨범 "${al.title}".releaseDate = ${JSON.stringify(al.releaseDate)} — YYYY.MM.DD(점)`);
+    if (!al.releaseDate) return;
+    if (!DOT_ANY.test(al.releaseDate))
+      bad('error', '날짜 표기 오류', `그룹 "${ko}" 앨범 "${al.title}".releaseDate = ${JSON.stringify(al.releaseDate)} — YYYY[.MM[.DD]](점)`);
+    else if (!DOT_FULL.test(al.releaseDate))
+      bad('warn', '발매일 정밀도', `그룹 "${ko}" 앨범 "${al.title}".releaseDate = ${JSON.stringify(al.releaseDate)} — 원본에 일(day)이 없음`);
   }));
 
   ARTISTS.forEach(a => {

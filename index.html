@@ -174,7 +174,7 @@
           <div id="tt-discog-ost-divider" class="gc-ch-sort-divider" style="display:none"></div>
           <button id="tt-discog-all-btn" class="gc-ch-sort-item" type="button" style="display:none"><span class="chk">✓</span><span>부가 앨범까지 포함</span></button>
           <button id="tt-discog-ost-btn" class="gc-ch-sort-item" type="button" style="display:none"><span class="chk">✓</span><span>OST·피처링 포함</span></button>
-          <button id="tt-discog-unit-btn" class="gc-ch-sort-item" type="button" style="display:none"><span class="chk">✓</span><span>솔로만 보기</span></button><button id="tt-discog-jp-btn" class="gc-ch-sort-item" type="button" style="display:none"><span class="chk">✓</span><span>일본판 보기</span></button>
+          <button id="tt-discog-unit-btn" class="gc-ch-sort-item" type="button" style="display:none"><span class="chk">✓</span><span>솔로만 보기</span></button><button id="tt-discog-jp-btn" class="gc-ch-sort-item" type="button" style="display:none"><span class="chk">✓</span><span>일본판 보기</span></button><button id="tt-discog-variant-btn" class="gc-ch-sort-item" type="button" style="display:none"><span class="chk">✓</span><span>리믹스·변형판 보기</span></button>
           <div id="tt-discog-more-divider" class="gc-ch-sort-divider" style="display:none"></div>
           <button id="tt-discog-more-btn" class="gc-ch-view-toggle" type="button" style="display:none"><span class="chk">✓</span><span id="tt-discog-more-label"></span></button>
         </div>
@@ -220,7 +220,7 @@
               <div id="gc-discog-ost-divider" class="gc-ch-sort-divider" style="display:none"></div>
               <button id="gc-discog-all-btn" class="gc-ch-sort-item" type="button" style="display:none"><span class="chk">✓</span><span>부가 앨범까지 포함</span></button>
               <button id="gc-discog-ost-btn" class="gc-ch-sort-item" type="button" style="display:none"><span class="chk">✓</span><span>OST·피처링 포함</span></button>
-              <button id="gc-discog-unit-btn" class="gc-ch-sort-item" type="button" style="display:none"><span class="chk">✓</span><span>솔로만 보기</span></button><button id="gc-discog-jp-btn" class="gc-ch-sort-item" type="button" style="display:none"><span class="chk">✓</span><span>일본판 보기</span></button>
+              <button id="gc-discog-unit-btn" class="gc-ch-sort-item" type="button" style="display:none"><span class="chk">✓</span><span>솔로만 보기</span></button><button id="gc-discog-jp-btn" class="gc-ch-sort-item" type="button" style="display:none"><span class="chk">✓</span><span>일본판 보기</span></button><button id="gc-discog-variant-btn" class="gc-ch-sort-item" type="button" style="display:none"><span class="chk">✓</span><span>리믹스·변형판 보기</span></button>
               <div id="gc-discog-more-divider" class="gc-ch-sort-divider" style="display:none"></div>
               <button id="gc-discog-more-btn" class="gc-ch-view-toggle" type="button" style="display:none"><span class="chk">✓</span><span id="gc-discog-more-label"></span></button>
             </div>
@@ -10407,6 +10407,7 @@ function _renderDiscography(prefix,albums){
   const unitBtn=document.getElementById(prefix+'-discog-unit-btn');
   const allBtn=document.getElementById(prefix+'-discog-all-btn');
   const jpBtn=document.getElementById(prefix+'-discog-jp-btn');
+  const variantBtn=document.getElementById(prefix+'-discog-variant-btn');
   if(!albums||!albums.length){row.style.display='none';return;}
   row.style.display='';
   if(prefix==='gc')_loadGcDiscogTrackTrophies(_openGCko);
@@ -10427,6 +10428,10 @@ function _renderDiscography(prefix,albums){
   let extrasIncluded=_onlyExtras; // 디폴트 OST·피처링 제외(2026-08-21) — 단, 부가만 있으면 켜고 시작
   let soloOnly=false; // 디폴트 유닛 앨범 포함(EXO-SC 등) — 케밥 '솔로만 보기' 토글로 제외(2026-08-22, 사용자 요청)
   let jpIncluded=false; // 디폴트 일본판 제외 — 케밥 '일본판 보기'로만 펼침(2026-09-16, 사용자 요청)
+  // 디폴트 변형판(리믹스·Sped Up·Inst) 제외 — 케밥 '리믹스·변형판 보기'로만 펼침(2026-09-17).
+  // 수집 정책이 "멜론에 있는 모든 발매를 태그해서 넣는다"로 바뀌면서 생긴 토글이다(수집은 전부,
+  // 노출은 선별). 이게 없으면 82메이저처럼 14장 중 7장이 리믹스인 팀의 목록이 리믹스로 도배된다.
+  let variantIncluded=false;
   // 일본판 판정은 주인의 본거지를 봐야 한다(_isJpRelease 주석) — gc는 그룹 ko, tt는 아티스트 객체.
   const _jpOwner=prefix==='gc'?_openGCko:(typeof _openTArtist!=='undefined'?_openTArtist:null);
   const _isJp=a=>_isJpRelease(a,_jpOwner);
@@ -10449,6 +10454,7 @@ function _renderDiscography(prefix,albums){
     }
     if(soloOnly)base=base.filter(a=>!a.unit); // '솔로만 보기': 유닛(EXO-SC 등) 앨범 제외
     if(!jpIncluded)base=base.filter(a=>!_isJp(a)); // 디폴트: 일본판 제외(_isJpRelease 주석 참고)
+    if(!variantIncluded)base=base.filter(a=>!a.variant); // 디폴트: 리믹스·변형판 제외
     return sortedList(base);
   }
   function renderItems(){
@@ -10485,6 +10491,7 @@ function _renderDiscography(prefix,albums){
     ostBtn.classList.toggle('active',extrasIncluded);
     if(unitBtn)unitBtn.classList.toggle('active',soloOnly);
     if(jpBtn)jpBtn.classList.toggle('active',jpIncluded);
+    if(variantBtn)variantBtn.classList.toggle('active',variantIncluded);
   }
   updateSortMenuUI();
   // OST 버튼 — OST 있는 그룹에서만 노출, 매번 핸들러 교체
@@ -10533,6 +10540,16 @@ function _renderDiscography(prefix,albums){
     jpBtn.onclick=e=>{
       e.stopPropagation();
       jpIncluded=!jpIncluded;
+      updateSortMenuUI();
+      renderItems();
+    };
+  }
+  // '리믹스·변형판 보기' 버튼 — 변형판이 있는 아티스트에서만 노출
+  if(variantBtn){
+    variantBtn.style.display=albums.some(a=>a.variant)?'':'none';
+    variantBtn.onclick=e=>{
+      e.stopPropagation();
+      variantIncluded=!variantIncluded;
       updateSortMenuUI();
       renderItems();
     };
