@@ -9033,16 +9033,13 @@ window.addEventListener('popstate',()=>{
   _histSuppress=false;
 });
 
-function pulseGroupRipple(ko){
-  if(_reduceMotion)return; // 모션 줄이기: 리플은 순수 연출
-  const bm=bubbleMeshes.find(b=>b.ko===ko);
-  if(!bm)return;
-  const[r,g,b]=(bm.info&&bm.info.color)||[180,200,255];
-  // 512px + 가우시안 감쇠 링(2026-08-22) — 기존 128px·4스톱은 좁은 밝은 띠 + 안쪽 급경사(0.45에서 알파가
-  // 0→0.70 급상승)라, 레티나(맥북)에서 저해상도 확대 밴딩과 그 경계선이 또렷한 "도넛"으로 보였음(윈도우/폰은
-  // dpr 낮아 뭉개져 우연히 부드러웠던 것). 가우시안은 어느 반경에도 경계가 없어 dpr·색역 무관하게 매끈 —
-  // 기기 분기 없이 통합 텍스처로 모든 기기에서 자연스럽게. 렌더 비용은 스프라이트 화면 크기로 정해져 512px여도
-  // 성능 영향 없음(텍스처는 그룹 클릭당 1회만 생성). 피크 0.74는 기존 링과 같은 시각 반경.
+// 512px + 가우시안 감쇠 링(2026-08-22) — 기존 128px·4스톱은 좁은 밝은 띠 + 안쪽 급경사(0.45에서 알파가
+// 0→0.70 급상승)라, 레티나(맥북)에서 저해상도 확대 밴딩과 그 경계선이 또렷한 "도넛"으로 보였음(윈도우/폰은
+// dpr 낮아 뭉개져 우연히 부드러웠던 것). 가우시안은 어느 반경에도 경계가 없어 dpr·색역 무관하게 매끈 —
+// 기기 분기 없이 통합 텍스처로 모든 기기에서 자연스럽게. 렌더 비용은 스프라이트 화면 크기로 정해져 512px여도
+// 성능 영향 없음(텍스처는 호출당 1회만 생성). 피크 0.74는 기존 링과 같은 시각 반경.
+// ⚠️ 호출한 쪽이 dispose 책임을 진다.
+function _gaussianRingTex(r,g,b){
   const sz=512,c=sz/2;
   const cv=document.createElement('canvas');cv.width=cv.height=sz;
   const ctx=cv.getContext('2d');
@@ -9054,7 +9051,14 @@ function pulseGroupRipple(ko){
     grd.addColorStop(p,`rgba(${r},${g},${b},${a.toFixed(3)})`);
   }
   ctx.fillStyle=grd;ctx.fillRect(0,0,sz,sz);
-  const tex=new THREE.CanvasTexture(cv);
+  return new THREE.CanvasTexture(cv);
+}
+function pulseGroupRipple(ko){
+  if(_reduceMotion)return; // 모션 줄이기: 리플은 순수 연출
+  const bm=bubbleMeshes.find(b=>b.ko===ko);
+  if(!bm)return;
+  const[r,g,b]=(bm.info&&bm.info.color)||[180,200,255];
+  const tex=_gaussianRingTex(r,g,b);
   const rad=bm.radius;
   let done=0;
   function makeRipple(delay){
@@ -13842,6 +13846,75 @@ function _flyHeartToFeed(fromEl){
     anim.onfinish=()=>fly.remove();anim.oncancel=()=>fly.remove();
   }catch(e){}
 }
+// ── 첫 즐겨찾기: 우주가 한 번 대답한다 (2026-09-18) ──────────────────────────
+// 문제: 하트를 눌러도 반응이 전부 카드 안(DOM)에서만 끝났다 — 파티클·♥비행·탭 펄스. applyFavHighlight는
+// favMode를 켰을 때만 도니까 3D 씬은 1픽셀도 안 변한다. 그래서 앱을 처음 본 사람에겐 "예쁜 별 화면"과
+// "즐겨찾기"가 끝까지 남남이었다(2026-09-18 제보 — 친구가 무슨 기능이 있는지 모르겠다고 함).
+// 축하 문구를 얹는 대신(그건 앱이 유저 대신 감동하는 것이라 오글거린다) **일어난 일을 보여준다**.
+//
+// 절제 규칙(이 연출을 손볼 때 같이 지킬 것):
+//   · 평생 딱 한 번, 그리고 "첫" 즐겨찾기에만.   · 물체 하나, 궤적 하나. 하트 비·컨페티·반짝이 금지.
+//   · bounce/overshoot easing 금지.              · 색은 그 그룹 고유색 그대로(축하색으로 갈아타지 않음).
+//   · _reduceMotion이면 통째로 생략.
+const _FIRST_FAV_KEY='kpu_first_fav_revealed';
+// 그룹 클릭 리플(pulseGroupRipple)은 같은 링이 밖으로 **퍼진다** = "알린다". 이건 방향만 뒤집어 안으로
+// **모인다** = "내 것이 됐다". 새 비주얼 언어를 만들지 않고 이미 있는 링의 뜻만 반전시킨다.
+// ⚠️ 처음엔 glowTex(확산형 블롭)로 만들었다가 프레임 캡처에서 **사실상 안 보인다**는 걸 확인하고 링으로
+//    바꿨다(2026-09-18) — 행성 자체가 이미 큰 글로우를 두르고 있어서, 경계 없는 빛은 그 위에 얹으나 마나다.
+function _favGatherGlow(bm){
+  const[r,g,b]=(bm.info&&bm.info.color)||[200,220,255];
+  const tex=_gaussianRingTex(r,g,b);
+  const mat=new THREE.SpriteMaterial({map:tex,transparent:true,opacity:0,blending:THREE.AdditiveBlending,depthWrite:false,depthTest:false});
+  const sp=new THREE.Sprite(mat);
+  scene.add(sp);
+  // ⚠️ 반경은 **카메라 거리 기준**으로 정한다. flyToBubble이 카메라를 radius*9(모바일)까지 데려오므로
+  //    시작 반경을 radius*9로 잡으면 링이 화면보다 커서 "모이는 과정"이 통째로 화면 밖이다 —
+  //    끝에 잠깐 밝아지는 것만 보였다(2026-09-18 프레임 캡처로 발각). 5배면 화면 절반쯤을 덮는다.
+  // R1은 "행성 테두리에 안착"하는 값 — 링의 밝은 띠가 텍스처 반경의 0.74 지점이므로 1.45×0.74≈1.07,
+  // 즉 행성 반경과 거의 같은 자리에서 사라진다. 더 크면 허공에서 흐려져 '도착'이 안 읽힌다.
+  const t0=performance.now(),dur=1100,R0=bm.radius*5.0,R1=bm.radius*1.45;
+  (function tick(){
+    const t=Math.min((performance.now()-t0)/dur,1);
+    // ease-IN — 처음엔 천천히 좁혀지다 마지막에 빨려 들어간다("모인다"가 읽히는 건 이 가속). ease-out은
+    // 초반 15%에 이미 다 좁혀져서 큰 링이 눈에 남지 않았다. 되튀는 구간은 없다.
+    const e=Math.pow(t,2.2);
+    sp.position.copy(bm.mesh.position); // 우주가 도는 동안 행성이 움직이므로 매 프레임 따라붙는다
+    sp.scale.setScalar(R0+(R1-R0)*e);
+    const fadeIn=Math.min(1,t/0.12),fadeOut=t>0.84?(1-t)/0.16:1;
+    mat.opacity=fadeIn*fadeOut*(0.45+0.55*e); // 넓게 퍼져 있을 때는 옅게, 모일수록 진하게
+    if(t<1)requestAnimationFrame(tick);
+    else{scene.remove(sp);mat.dispose();tex.dispose();}
+  })();
+}
+function _firstFavReveal(ko,artist){
+  if(_reduceMotion)return;
+  if(favMode)return; // 하이라이트가 켜져 있으면 궤도로 모이는 연출이 이미 그 대답이다 — 겹치면 산만
+  const bm=bubbleMeshes.find(b=>b.ko===ko);
+  if(!bm)return;
+  try{if(localStorage.getItem(_FIRST_FAV_KEY))return;localStorage.setItem(_FIRST_FAV_KEY,'1');}catch(e){return;}
+  // ♥가 탭으로 날아가는 620ms(_flyHeartToFeed)가 끝난 뒤에 시작 — 두 연출이 겹치면 둘 다 안 읽힌다
+  setTimeout(()=>{
+    let delay=0;
+    // ⚠️ 모바일은 카드 시트가 열려 있으면 animate()가 **flyState 처리 전에 return**한다(발열 대응,
+    //    3598행). 렌더도 카메라 비행도 통째로 멈추므로, 시트를 60%로 내리는 것만으론 뒤가 '얼어붙은
+    //    정지화면'이라 연출이 아예 안 보인다(2026-09-18 헤드리스 실측 — 처음엔 시트만 내렸다가 발각).
+    //    그래서 모바일에선 카드를 실제로 닫는다. 평생 한 번뿐인 이 순간에 한해, "카드를 닫으면 우주가
+    //    있다"까지 같이 가르치는 셈이라 손해가 아니다.
+    if(isMob()){closeCards();delay=340;} // 시트가 다 내려가야 렌더가 재개된다
+    setTimeout(()=>{
+      // 카메라를 그 행성 앞으로 — 안 그러면 268개 더미 속 한 점이라 무슨 일이 났는지 안 보인다.
+      // 데스크톱은 이미 카드를 열 때 날아와 있지만, 검색/즐겨찾기 목록 등 다른 경로로 왔거나 그
+      // 사이 돌려놨을 수 있으므로 양쪽 다 한 번 잡아준다(1000ms easeInOut, 튀지 않음).
+      flyToBubble(bm.mesh.position,bm.radius);
+      // 비행이 끝나기 조금 전에 시작해 "다가가면서 빛이 모인다"가 한 동작으로 읽히게 한다
+      setTimeout(()=>{
+        _favGatherGlow(bm);
+        pulseGroup(ko);            // 모인 뒤 행성 자체가 잠깐 밝아지는 잔광(2s, sin 엔벨로프)
+        if(artist)pulseMember(artist);
+      },520);
+    },delay);
+  },700);
+}
 function _favBurst(btn){
   if(!btn)return;
   btn.classList.remove('fav-burst');
@@ -13867,6 +13940,7 @@ function toggleFavGroup(ko){
   const dk='g:'+ko;
   const doToggle=()=>{
     const wasFav=favGroups.has(ko);
+    const wasEmpty=!favGroups.size&&!favMembers.size; // ⚠️ 추가 **전**에 재야 "첫 즐겨찾기"를 알 수 있다
     if(wasFav){favGroups.delete(ko);delete favDates[dk];}
     else{favGroups.add(ko);favDates[dk]=_todayISO();}
     _logFavHistory(dk,wasFav?'remove':'add');
@@ -13878,6 +13952,7 @@ function toggleFavGroup(ko){
     if(!wasFav){
       _preHeartCard={heartedType:'group',heartedKey:ko,card:_currentOpenCard()};
       _favBurst(document.getElementById('gc-fav'));
+      if(wasEmpty)_firstFavReveal(ko,null);
     }
     if(favMode){applyFavHighlight();_enterMyUniverseMode();}
     else if(myStarSprite)placeMyStarInUniverse();
@@ -13891,6 +13966,7 @@ function toggleFavMember(artist){
   const dk='m:'+k;
   const doToggle=()=>{
     const wasFav=favMembers.has(k);
+    const wasEmpty=!favGroups.size&&!favMembers.size; // ⚠️ 추가 **전**에 재야 "첫 즐겨찾기"를 알 수 있다
     if(wasFav){favMembers.delete(k);delete favDates[dk];}
     else{favMembers.add(k);favDates[dk]=_todayISO();}
     _logFavHistory(dk,wasFav?'remove':'add');
@@ -13902,6 +13978,8 @@ function toggleFavMember(artist){
     if(!wasFav){
       _preHeartCard={heartedType:'member',heartedKey:k,card:_currentOpenCard()};
       _favBurst(document.getElementById('tt-fav'));
+      // 멤버는 그 멤버가 속한 행성이 대답한다 — 별 하나만 깜빡이면 어디서 일어난 일인지 안 읽힌다
+      if(wasEmpty)_firstFavReveal(artist.group.ko,artist);
     }
     if(favMode){applyFavHighlight();_enterMyUniverseMode();}
     else if(myStarSprite)placeMyStarInUniverse();
