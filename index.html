@@ -1954,6 +1954,7 @@ const FLY_TOGGLE_MS=650;
 let myStarSprite=null,myStarLabel=null,myStarTex=null,myStarBase=2.4;
 let _myStarSelected=false,_myStarSavedCam=null,_myStarSavedTarget=null;
 let _myStarIdleAngle=Math.random()*Math.PI*2; // 평소(하이라이트 안 켰을 때) 내 별이 최애 행성을 도는 공전 각도
+let _myStarFlying=false; // 연출이 내 별을 직접 몰고 가는 중 — animate()의 유휴 공전이 위치를 덮어쓰지 않게
 const connLines=[];
 let _myStarLines=[];
 const _MY_STAR_ORBIT_U=new THREE.Vector3(1,0,0);
@@ -3921,7 +3922,10 @@ function animate(){
     // 평소(즐겨찾기 하이라이트 안 켰을 때)엔 내 별이 첫 번째 최애(bias) 행성 주위를 작은 위성처럼
     // 천천히 공전한다 — 하이라이트를 켜면 반대로 최애들이 내 별 주위를 도는 것으로 반전되는데,
     // 그건 이미 있던 _enterMyUniverseMode 그대로(2026-08-12, 사용자 아이디어로 기본 상태만 추가).
-    if(!_myUniverseActive&&_myUniversePhase==='idle'){
+    // _myStarFlying: 두 번째 즐겨찾기 연출(_secondFavStarReveal)이 별을 직접 몰고 가는 동안엔
+    // 유휴 공전이 매 프레임 위치를 덮어써서 애니메이션이 아예 안 보인다 — 그동안만 비켜준다.
+    // 각도(_myStarIdleAngle)도 같이 멈추므로, 연출이 끝나는 지점과 공전이 이어받는 지점이 정확히 일치한다.
+    if(!_myUniverseActive&&_myUniversePhase==='idle'&&!_myStarFlying){
       const _idleTarget=_myStarIdleOrbitTarget();
       if(_idleTarget){
         _myStarIdleAngle+=0.0009;
@@ -13915,6 +13919,66 @@ function _firstFavReveal(ko,artist){
     },delay);
   },700);
 }
+// ── 두 번째 즐겨찾기: 내 별이 새 자리로 옮겨가는 걸 보여준다 (2026-09-18) ────────────────────
+// 첫 하트가 "우주가 대답한다"(_firstFavReveal)라면, 이건 "**내 별이 움직인다**" — 별을 만들면 뭐가
+// 달라지는지까지 모션으로 잇는다(사용자 결정: 첫 번째 말고 두 번째에 배치).
+//
+// ⚠️ 이건 없는 연출을 지어내는 게 아니다. 내 별의 자리는 원래도 즐겨찾기가 늘 때마다 바뀐다
+//    (_getMyStarPos = 즐겨찾기 중심 / bias가 있으면 그 행성 공전 궤도). 다만 placeMyStarInUniverse가
+//    스프라이트를 통째로 다시 만들면서 **순간이동**시켜 아무도 못 봤을 뿐이다. 그래서 목적지를 매
+//    프레임 _myStarExitRestPos()로 다시 계산한다 — 유휴 로직이 별을 둘 바로 그 지점이라 끝나고
+//    되튀거나 "띡" 하고 튀지 않는다(그 함수가 원래 그 목적으로 만들어졌다).
+const _STAR_MOVE_KEY='kpu_star_move_revealed';
+function _secondFavStarReveal(ko){
+  if(_reduceMotion)return;
+  if(favMode)return;          // 하이라이트는 별 주위로 행성들이 모이는 반대 연출이라 겹치면 안 됨
+  if(!myStarSprite)return;    // 별(프로필 닉네임)이 아직 없으면 보여줄 게 없다 — 플래그도 안 태운다
+  // (그래서 나중에 별을 만든 사람은 그 다음 즐겨찾기에서 이 연출을 본다)
+  try{if(localStorage.getItem(_STAR_MOVE_KEY))return;}catch(e){return;}
+  const bm=bubbleMeshes.find(b=>b.ko===ko);
+  if(!bm)return;
+  const from=myStarSprite.position.clone();
+  // ⚠️ 판정은 **여기서 동기로** 끝낸다. 호출 시점에 favGroups/favMembers는 이미 갱신돼 있으므로
+  //    _myStarExitRestPos()가 곧바로 '새 안착 지점'을 준다. 뒤로 미루면, 보여줄 게 없는 경우(아래)에도
+  //    _myStarFlying을 세운 채 0.7초를 기다리게 돼 그동안 유휴 공전이 멈춰 별이 얼어붙는다.
+  // 실질적으로 안 움직이면 아무것도 하지 않는다 — 플래그도 안 태운다. 최애(bias)를 정해둔 유저가
+  // 여기 해당한다(별이 계속 그 행성 궤도에 있으므로 즐겨찾기를 늘려도 자리가 그대로다). 그런 유저에겐
+  // 이미 공전이 눈에 보이고 있으니 새로 가르칠 것도 없다.
+  if(from.distanceTo(_myStarExitRestPos())<1.5)return;
+  // ⚠️ 이 함수는 doToggle 안에서 placeMyStarInUniverse()보다 **먼저** 불린다. 그 호출이 곧 별을 새
+  //    자리로 순간이동시키므로, 여기서 옛 자리를 붙잡아 두지 않으면 애니메이션할 거리가 사라진다.
+  //    _myStarFlying을 지금 세워 유휴 공전을 막고, 재생성 직후(setTimeout 0) 옛 자리에 도로 고정한다.
+  _myStarFlying=true;
+  setTimeout(()=>{if(myStarSprite)myStarSprite.position.copy(from);},0);
+  const _abort=()=>{_myStarFlying=false;};
+  try{localStorage.setItem(_STAR_MOVE_KEY,'1');}catch(e){}
+  setTimeout(()=>{
+    if(!myStarSprite)return _abort();
+    const to0=_myStarExitRestPos();
+    // 모바일은 카드가 열려 있으면 animate()가 조기 return이라 렌더·비행이 멈춘다(_firstFavReveal 주석 참고)
+    let delay=0;
+    if(isMob()){closeCards();delay=340;}
+    setTimeout(()=>{
+      if(!myStarSprite)return _abort();
+      // 출발점·도착점에 **방금 고른 행성**까지 한 화면에 — 별이 왜 그쪽으로 가는지가 같이 보여야 한다
+      flyToFitPositions([from,to0,bm.mesh.position],900);
+      setTimeout(()=>{
+        if(!myStarSprite)return _abort();
+        const t0=performance.now(),dur=1300,lift=from.distanceTo(to0)*0.18;
+        (function tick(){
+          if(!myStarSprite)return _abort();
+          const t=Math.min((performance.now()-t0)/dur,1);
+          const e=t<0.5?2*t*t:1-Math.pow(-2*t+2,2)/2; // easeInOut — 되튀는 구간 없음
+          const to=_myStarExitRestPos(); // 매 프레임 재계산(행성이 도는 동안 궤도점도 움직인다)
+          myStarSprite.position.lerpVectors(from,to,e);
+          myStarSprite.position.y+=Math.sin(Math.PI*e)*lift; // 직선이 아니라 살짝 떠서 간다
+          if(t<1)requestAnimationFrame(tick);
+          else _myStarFlying=false; // 유휴 공전이 이어받는다(각도가 멈춰 있었으므로 이음새가 없다)
+        })();
+      },400); // 카메라가 자리를 잡기 시작한 뒤 출발 — 한 동작으로 읽히게 겹친다
+    },delay);
+  },700); // ♥가 탭으로 날아가는 620ms(_flyHeartToFeed)가 끝난 뒤
+}
 function _favBurst(btn){
   if(!btn)return;
   btn.classList.remove('fav-burst');
@@ -13952,7 +14016,8 @@ function toggleFavGroup(ko){
     if(!wasFav){
       _preHeartCard={heartedType:'group',heartedKey:ko,card:_currentOpenCard()};
       _favBurst(document.getElementById('gc-fav'));
-      if(wasEmpty)_firstFavReveal(ko,null);
+      // 첫 하트는 우주가 대답하고(링), 그 다음 하트는 내 별이 움직인다. 같은 순간에 둘 다 하면 산만하다.
+      if(wasEmpty)_firstFavReveal(ko,null);else _secondFavStarReveal(ko);
     }
     if(favMode){applyFavHighlight();_enterMyUniverseMode();}
     else if(myStarSprite)placeMyStarInUniverse();
@@ -13979,7 +14044,7 @@ function toggleFavMember(artist){
       _preHeartCard={heartedType:'member',heartedKey:k,card:_currentOpenCard()};
       _favBurst(document.getElementById('tt-fav'));
       // 멤버는 그 멤버가 속한 행성이 대답한다 — 별 하나만 깜빡이면 어디서 일어난 일인지 안 읽힌다
-      if(wasEmpty)_firstFavReveal(artist.group.ko,artist);
+      if(wasEmpty)_firstFavReveal(artist.group.ko,artist);else _secondFavStarReveal(artist.group.ko);
     }
     if(favMode){applyFavHighlight();_enterMyUniverseMode();}
     else if(myStarSprite)placeMyStarInUniverse();

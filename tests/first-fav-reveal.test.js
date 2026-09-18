@@ -234,6 +234,82 @@ const PROBE = `(function(){const bm=bubbleMeshes.find(b=>b.ko===window.__ko);
       r.flag === false ? ok('1회용 플래그를 안 태움') : bad('플래그를 태워버림');
       cdp.close();
     }
+    // ── ⑥ 두 번째 즐겨찾기: 내 별이 새 자리로 **실제로 이동**한다 ──
+    //    예전엔 placeMyStarInUniverse가 순간이동시켜 아무도 못 봤다. 목적지는 _myStarExitRestPos()
+    //    (유휴 로직이 별을 둘 바로 그 지점)이라 착지 후 되튀면 안 된다.
+    {
+      const cdp = await boot({ seed: { kpu_profile: JSON.stringify({ nickname: '검증용', color: [155, 210, 255] }) } });
+      await ev(cdp, OPEN(0)); await sleep(2000);
+      await ev(cdp, `document.getElementById('gc-fav').click()`);
+      await sleep(3600); // 첫 연출(링)이 끝날 때까지
+      (await ev(cdp, `!localStorage.getItem('kpu_star_move_revealed')`))
+        ? ok('첫 즐겨찾기엔 별 이동 연출이 안 뜸 — 링과 같은 순간에 둘 다 하면 산만하다') : bad('첫 하트에 별 연출까지 같이 뜸');
+
+      await ev(cdp, `(function(){try{closeCards()}catch(e){}return 1;})()`); await sleep(600);
+      await ev(cdp, OPEN(5)); await sleep(1800);
+      const p0 = await ev(cdp, `({x:myStarSprite.position.x,y:myStarSprite.position.y,z:myStarSprite.position.z})`);
+      await ev(cdp, `document.getElementById('gc-fav').click()`);
+      let movedSamples = 0, prev = p0, sawFlying = false;
+      for (let i = 0; i < 16; i++) {
+        await sleep(220);
+        const s = await ev(cdp, `({x:myStarSprite.position.x,y:myStarSprite.position.y,z:myStarSprite.position.z,fly:_myStarFlying})`);
+        if (s.fly) sawFlying = true;
+        if (Math.abs(s.x - prev.x) + Math.abs(s.y - prev.y) + Math.abs(s.z - prev.z) > 0.05) movedSamples++;
+        prev = s;
+      }
+      sawFlying ? ok('_myStarFlying이 켜져 유휴 공전이 비켜줌') : bad('_myStarFlying이 안 켜짐 — 유휴 공전이 매 프레임 덮어써서 애니메이션이 안 보인다');
+      movedSamples >= 3 ? ok(`별이 여러 프레임에 걸쳐 실제로 이동함 (${movedSamples}구간)`) : bad(`이동이 안 보임(${movedSamples}구간) — 순간이동이거나 연출이 안 돎`);
+      const dist = await ev(cdp, `(function(){const a=myStarSprite.position;return Math.hypot(a.x-(${p0.x}),a.y-(${p0.y}),a.z-(${p0.z}));})()`);
+      dist > 1.5 ? ok(`출발점에서 ${dist.toFixed(1)} 떨어진 새 자리에 도착`) : bad(`거의 안 움직임(${dist.toFixed(2)})`);
+      (await ev(cdp, `_myStarFlying===false`)) ? ok('끝나면 _myStarFlying 해제(유휴 공전이 이어받음)') : bad('_myStarFlying이 켜진 채 — 별이 영영 얼어붙는다');
+      // 착지 이음새: 유휴 공전이 이어받는 순간 "띡" 튀면 안 된다(_myStarIdleAngle이 멈춰 있었으므로 연속이어야)
+      const a1 = await ev(cdp, `({x:myStarSprite.position.x,y:myStarSprite.position.y,z:myStarSprite.position.z})`);
+      await sleep(250);
+      const jump = await ev(cdp, `(function(){const a=myStarSprite.position;return Math.hypot(a.x-(${a1.x}),a.y-(${a1.y}),a.z-(${a1.z}));})()`);
+      jump < 1.0 ? ok(`착지 후 이음새 없음(250ms 이동 ${jump.toFixed(3)})`) : bad(`착지 직후 순간이동(${jump.toFixed(2)})`);
+      const proj = await ev(cdp, `(function(){const v=myStarSprite.position.clone().project(camera);
+        return {x:Math.round((v.x*0.5+0.5)*innerWidth),y:Math.round((-v.y*0.5+0.5)*innerHeight),vw:innerWidth,vh:innerHeight};})()`);
+      (proj.x >= 0 && proj.x <= proj.vw && proj.y >= 0 && proj.y <= proj.vh)
+        ? ok(`별이 화면 안 (${proj.x},${proj.y})`) : bad(`별이 화면 밖 (${proj.x},${proj.y}) — 연출이 안 보인다`);
+      (await ev(cdp, `!!localStorage.getItem('kpu_star_move_revealed')`)) ? ok('1회용 플래그 기록됨') : bad('플래그 미기록');
+      cdp.close();
+    }
+
+    // ── ⑦ 최애(bias)가 있으면 별이 원래 안 움직인다 → 아무것도 하지 않고, 공전도 안 멈춘다 ──
+    {
+      const gko = Object.keys(JSON.parse(fs.readFileSync(path.join(ROOT, 'groups.json'), 'utf8')))[0];
+      const cdp = await boot({ seed: { kpu_profile: JSON.stringify({ nickname: '검증용', color: [155, 210, 255], bias: [{ ko: gko, type: 'group' }] }) } });
+      await ev(cdp, OPEN(0)); await sleep(2000);
+      await ev(cdp, `document.getElementById('gc-fav').click()`);
+      await sleep(3600);
+      await ev(cdp, `(function(){try{closeCards()}catch(e){}return 1;})()`); await sleep(600);
+      await ev(cdp, OPEN(5)); await sleep(1800);
+      await ev(cdp, `document.getElementById('gc-fav').click()`);
+      let sawFlying = false;
+      for (let i = 0; i < 8; i++) { await sleep(200); if (await ev(cdp, `_myStarFlying`)) sawFlying = true; }
+      !sawFlying ? ok('bias 유저: _myStarFlying을 아예 안 세움 — 그 사이 공전이 멈춰 별이 얼어붙지 않는다')
+                 : bad('보여줄 게 없는데 _myStarFlying을 세워 공전이 멈췄다');
+      (await ev(cdp, `!localStorage.getItem('kpu_star_move_revealed')`))
+        ? ok('플래그를 안 태움 — 나중에 볼 기회가 남는다') : bad('아무것도 안 보여주고 플래그만 태움');
+      cdp.close();
+    }
+
+    // ── ⑧ 별(닉네임)이 없으면 생략하고 플래그도 안 태운다(나중에 별을 만들면 그때 본다) ──
+    {
+      const cdp = await boot();
+      await ev(cdp, OPEN(0)); await sleep(2000);
+      await ev(cdp, `document.getElementById('gc-fav').click()`);
+      await sleep(3600);
+      await ev(cdp, `(function(){try{closeCards()}catch(e){}return 1;})()`); await sleep(600);
+      await ev(cdp, OPEN(5)); await sleep(1800);
+      await ev(cdp, `document.getElementById('gc-fav').click()`);
+      await sleep(2600);
+      const r = await ev(cdp, `({star:!!myStarSprite,flag:!!localStorage.getItem('kpu_star_move_revealed'),fly:_myStarFlying})`);
+      r.star === false ? ok('사전조건: 닉네임 없어 내 별이 없음') : bad('별이 있으면 이 케이스가 아님');
+      (r.flag === false && r.fly === false) ? ok('생략 + 플래그 안 태움 — 나중에 별을 만들면 그 다음 즐겨찾기에서 본다')
+                                            : bad(`별도 없는데 상태가 남음(flag=${r.flag}, fly=${r.fly})`);
+      cdp.close();
+    }
   } catch (e) {
     bad(`예외: ${e.message}`);
   } finally {
