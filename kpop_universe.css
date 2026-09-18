@@ -3304,12 +3304,16 @@
      유튜브 썸네일이라 화면이 한 가지 리듬으로만 읽히는데, 1:1 커버가 그 사이에서 눈에 띄는 변주가 된다.
      ⚠️ 여기선 aspect-ratio를 써도 된다 — 문제가 됐던 건 grid의 row 트랙 사이징(크로미움 버그)이고
         이 선반은 flex 가로 스트립이다. 그래도 폭이 고정이라 height를 직접 박는 게 더 확실하다. */
-  #feed-newalbum>.feed-card{flex:0 0 auto;width:132px;border-bottom:none;border-radius:8px;background:rgba(255,255,255,0.03);}
-  #feed-newalbum>.feed-card .feed-card-thumb-wrap{aspect-ratio:auto;height:132px;border-radius:8px 8px 0 0;}
-  #feed-newalbum>.feed-card .feed-card-thumb{object-fit:cover;}
-  #feed-newalbum>.feed-card .feed-card-cap{padding:8px 10px 12px;}
-  #feed-newalbum>.feed-card .feed-card-title{font-size:11px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;white-space:normal;}
-  #feed-newalbum>.feed-card .feed-card-sub{font-size:10px;}
+  /* 앨범 커버 카드(정사각) — Discover "이번 주 발매"(#feed-newalbum)와 For You "즐겨찾기 신보"
+     (#feed-favalbum)가 같이 쓴다. ⚠️ 원래 #feed-newalbum에만 id로 묶여 있어서, 같은 카드 빌더를
+     쓰는 새 선반이 이 스타일을 못 받아 커버 비율이 제각각이 되고 제목이 한 글자씩 세로로 깨졌다
+     (2026-09-18 캡처에서 발견). 앨범 선반을 또 만들면 여기 셀렉터에 추가할 것. */
+  #feed-newalbum>.feed-card,#feed-favalbum>.feed-card{flex:0 0 auto;width:132px;border-bottom:none;border-radius:8px;background:rgba(255,255,255,0.03);}
+  #feed-newalbum>.feed-card .feed-card-thumb-wrap,#feed-favalbum>.feed-card .feed-card-thumb-wrap{aspect-ratio:auto;height:132px;border-radius:8px 8px 0 0;}
+  #feed-newalbum>.feed-card .feed-card-thumb,#feed-favalbum>.feed-card .feed-card-thumb{object-fit:cover;}
+  #feed-newalbum>.feed-card .feed-card-cap,#feed-favalbum>.feed-card .feed-card-cap{padding:8px 10px 12px;}
+  #feed-newalbum>.feed-card .feed-card-title,#feed-favalbum>.feed-card .feed-card-title{font-size:11px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;white-space:normal;}
+  #feed-newalbum>.feed-card .feed-card-sub,#feed-favalbum>.feed-card .feed-card-sub{font-size:10px;}
   .feed-card-thumb{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .3s ease;}
   /* 재생시간 배지(2026-09-16) — 여기는 썸네일 전용 래퍼(.feed-card-thumb-wrap)가 있어서 그냥 밑변에
      붙이면 된다. 톤은 카드 그리드의 .gc-ch-dur와 동일하게 유지할 것(같은 정보, 같은 생김새). */

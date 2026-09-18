@@ -30,8 +30,18 @@ ck(/_buildFeedForYouAnniv\(\)/.test(rec), '_buildFeedRec가 다가오는-기념�
 
 // 빌더 불변식
 const fn = extractBraces(html, /^function _buildFeedForYouAnniv\(/m, '_buildFeedForYouAnniv');
-ck(/favGroups\.forEach/.test(fn), '즐겨찾기 그룹만 순회(favGroups)');
-ck(/favMembers\.has\(_mFavKey\(a\)\)/.test(fn), '즐겨찾기 멤버만 포함(favMembers, 동명이인 키)');
+// 2026-09-18: 대상을 **교차**로 넓혔다. 예전엔 데뷔기념일=favGroups만 / 생일=favMembers만이라,
+// 그룹 하나만 즐겨찾기한 사람은 이 선반을 1년에 딱 한 번(그 그룹 데뷔일) 봤다(사용자 제보
+// "투데이 애니버서리가 안 보인다"). 아래 세 줄이 그 교차를 지킨다 — 좁히면 같은 증상이 돌아온다.
+ck(/const annivGkos=new Set\(favGroups\)/.test(fn), '데뷔기념일 대상에 즐겨찾기 그룹 포함');
+ck(/favMembers\.forEach\([\s\S]*?annivGkos\.add/.test(fn), '데뷔기념일 대상에 즐겨찾기 **멤버의 소속 그룹**도 포함');
+ck(/annivGkos\.forEach/.test(fn), '넓힌 집합을 순회(favGroups.forEach로 되돌리지 말 것)');
+ck(/favMembers\.has\(_mFavKey\(a\)\)/.test(fn), '즐겨찾기 멤버 본인은 그대로 포함(동명이인 키)');
+ck(/favGroups\.has\(g\.ko\)&&!_isFormerOf\(a,g\.ko\)/.test(fn),
+   '생일 대상에 즐겨찾기 **그룹의 멤버**도 포함하되 탈퇴/해체는 제외(_isFormerOf)');
+// 고인이 된 멤버 6명은 전원 active:false라 _isFormerOf에 걸린다 — 그룹을 타고 들어오는 경로에서
+// 생일 카드가 뜨지 않는다(직접 즐겨찾기한 경우는 본인 선택이라 그대로 둔다).
+ck(/!direct&&_artistGroups\(a\)/.test(fn), '그룹 경유 판정은 직접 즐겨찾기가 아닐 때만(중복 카드 방지)');
 ck(/_daysUntilBday\(info\.debut\)/.test(fn), '그룹은 데뷔일로 D-계산(_daysUntilBday(info.debut))');
 ck(/_daysUntilBday\(a\.bday\)/.test(fn), '멤버는 생일로 D-계산(_daysUntilBday(a.bday))');
 ck(/const WITHIN=7/.test(fn) && /d>WITHIN/.test(fn) && /d<0/.test(fn), '창=7일, 0..7 범위 밖은 제외');

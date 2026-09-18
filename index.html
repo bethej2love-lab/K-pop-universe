@@ -17562,8 +17562,16 @@ function _buildFeedForYouAnniv(){
   const isKo=currentLang==='ko';
   const WITHIN=7;
   const hits=[]; // {d, icon, type, name, onClick, thumb(thunk→Promise)}
-  // 즐겨찾기 그룹 데뷔기념일
-  favGroups.forEach(ko=>{
+  // ⚠️ 대상을 **교차**해서 넓힌다(2026-09-18, 사용자 제보 "투데이 애니버서리가 안 보인다").
+  //    예전엔 데뷔기념일=favGroups만 / 생일=favMembers만이라, 그룹 하나만 즐겨찾기한 사람은 이 선반을
+  //    **1년에 딱 한 번**(그 그룹 데뷔일) 봤다. 에스파 하나만 담아도 멤버 4명 생일+데뷔일로 연 5회가 된다.
+  //      · 데뷔기념일 ← 즐겨찾기 그룹 + 즐겨찾기 **멤버의 소속 그룹**
+  //      · 생일       ← 즐겨찾기 멤버 + 즐겨찾기 **그룹의 현역 멤버**
+  //    ⚠️ 그룹을 타고 들어온 멤버는 _isFormerOf로 탈퇴/해체를 걸러낸다. 고인이 된 멤버 6명은 전원
+  //       active:false라 이 필터에 함께 걸린다(직접 즐겨찾기한 경우는 본인 선택이므로 그대로 둔다).
+  const annivGkos=new Set(favGroups);
+  favMembers.forEach(k=>{const i=k.indexOf(':');const gko=k.slice(0,i);if(GROUPS[gko])annivGkos.add(gko);});
+  annivGkos.forEach(ko=>{
     const info=GROUPS[ko];if(!info||!info.debut)return;
     const d=_daysUntilBday(info.debut);
     if(d==null||d<0||d>WITHIN)return;
@@ -17576,9 +17584,12 @@ function _buildFeedForYouAnniv(){
         if(isMob())showGC(ko,window.innerWidth/2,window.innerHeight*0.4,false,false,null,false);else showGC(ko,window.innerWidth/2,window.innerHeight/2);}),
       thumb:()=>_fetchTopVideoThumb(ko,null)});
   });
-  // 즐겨찾기 멤버 생일
+  // 즐겨찾기 멤버 생일 + 즐겨찾기 그룹의 현역 멤버 생일(위 주석 참고)
   (ARTISTS||[]).forEach(a=>{
-    if(!a.bday||!favMembers.has(_mFavKey(a)))return;
+    if(!a.bday)return;
+    const direct=favMembers.has(_mFavKey(a));
+    const viaGroup=!direct&&_artistGroups(a).some(g=>g&&favGroups.has(g.ko)&&!_isFormerOf(a,g.ko));
+    if(!direct&&!viaGroup)return;
     const d=_daysUntilBday(a.bday);
     if(d==null||d<0||d>WITHIN)return;
     hits.push({d,icon:'🎂',type:isKo?'생일':'Birthday',name:_dispName(a),
@@ -17677,6 +17688,72 @@ function _albumDate(s){const m=/^(\d{4})\.(\d{2})\.(\d{2})$/.exec(String(s||''))
 //    빈 것처럼 보인다. 최소 개수를 채울 때까지 창을 넓히고, 제목도 그에 맞게 바꾼다. 수집이 정상
 //    페이스(월 ~60장)에 오르면 자연히 7일 창에서 멈춘다 — 데이터가 좋아질수록 알아서 좁혀진다.
 const _FEED_ALBUM_WINDOWS=[7,14,30,60], _FEED_ALBUM_MIN=6, _FEED_ALBUM_MAX=24;
+// 앨범 카드 클릭 이동 — Discover의 "이번 주 발매"와 For You의 "즐겨찾기 신보"가 같이 쓴다.
+// 그룹이면 그룹 카드, 멤버면 멤버 카드(다른 발견 카드들과 같은 이동 규칙).
+function _albumCardNav(a){
+  return ()=>_feedNav(()=>{
+    if(a.k==='g'&&GROUPS[a.o]){
+      const bm=bubbleMeshes.find(b=>b.ko===a.o);if(bm)flyToBubble(bm.mesh.position,bm.radius);
+      if(isMob())showGC(a.o,window.innerWidth/2,window.innerHeight*0.4,false,false,null,false);
+      else showGC(a.o,window.innerWidth/2,window.innerHeight/2);
+      return;
+    }
+    // 멤버: 같은 이름이 여럿일 수 있어 소속 그룹(g)까지 맞춰 찾는다(동명이인 오이동 방지).
+    const art=(ARTISTS||[]).find(x=>x.name&&x.name.ko===a.o&&(!a.g||(x.group&&x.group.ko===a.g)))
+            ||(ARTISTS||[]).find(x=>x.name&&x.name.ko===a.o);
+    if(!art)return;
+    if(art._worldPos)flyTo(art._worldPos);
+    if(isMob())showT(art,window.innerWidth/2,window.innerHeight*0.4,false,false,false);
+    else showT(art,window.innerWidth/2,window.innerHeight/2);
+  });
+}
+// ── For You: 즐겨찾기 신보(2026-09-18, 사용자 요청) ────────────────────────────────
+// "New from your fav"가 유튜브 영상만 보여주고 있었다 — 우리가 매일 모으는 디스코그래피가
+// Discover의 전체 신보 선반에만 있어서, 내 최애가 앨범을 내도 For You에선 아무 일도 안 일어났다.
+// ⚠️ 영상 그리드(#feed-favnew)에 섞지 않고 **별도 가로 선반**으로 둔다 — 신작은 16:9 썸네일 2단
+//    그리드인데 앨범 커버는 1:1이라, 섞으면 예전에 _packRows/_sortMixedByAspect로 고생한 비율 혼합
+//    문제가 그대로 재발한다.
+// 창(30일)은 Discover 선반(_FEED_ALBUM_WINDOWS 7→60 단계 확장)보다 고정적으로 넓게 잡는다 —
+// 대상이 내 즐겨찾기로 좁혀져 있어 7일이면 거의 항상 빈 선반이 된다.
+const _FAV_ALBUM_DAYS=30;
+async function _buildFeedFavAlbums(){
+  const section=document.getElementById('feed-favalbum-section');
+  const list=document.getElementById('feed-favalbum');
+  if(!section||!list)return;
+  list.innerHTML='';section.style.display='none';
+  _enableDragScroll(list); // 가로 목록 공통 — overflow-x만으론 데스크톱에서 휠이 안 먹는다
+  if(!favGroups.size&&!favMembers.size)return;
+  try{
+    const all=await _ensureRecentAlbums();
+    if(!Array.isArray(all)||!all.length)return;
+    // 즐겨찾기 멤버는 "이름 → 소속 그룹들"로 펼쳐둔다 — albums_recent.json의 멤버 항목은 {o:이름, g:소속}이라
+    // 이름만 맞추면 동명이인이 섞인다([[project_kpop_name_collision_system]]).
+    const favMemNames=new Map();
+    favMembers.forEach(k=>{const i=k.indexOf(':');const g=k.slice(0,i),m=k.slice(i+1);
+      if(!favMemNames.has(m))favMemNames.set(m,new Set());favMemNames.get(m).add(g);});
+    const now=Date.now();
+    const picked=all.filter(a=>{
+      const t=_albumDate(a.d);
+      if(!isFinite(t)||now-t>_FAV_ALBUM_DAYS*86400000)return false;
+      const owner=a.k==='g'?a.o:(ARTISTS||[]).find(x=>x.name&&x.name.ko===a.o);
+      if(_isJpRelease(a,owner))return false; // 일본판은 카드에서도 기본 숨김이라 선반에서도 뺀다
+      if(a.k==='g')return favGroups.has(a.o);
+      const gs=favMemNames.get(a.o);
+      if(gs&&(!a.g||gs.has(a.g)))return true;     // 그 멤버를 직접 즐겨찾기함
+      return a.g?favGroups.has(a.g):false;        // 즐겨찾기 그룹 멤버의 솔로 앨범도 "내 것"이다
+    }).slice(0,_FEED_ALBUM_MAX); // albums_recent.json이 이미 최신순
+    if(!picked.length)return;
+    const isKo=currentLang==='ko';
+    const ttl=document.getElementById('feed-favalbum-ttl');
+    if(ttl)ttl.textContent=isKo?'💿 즐겨찾기 신보':'💿 New Releases from Your Favorites';
+    picked.forEach(a=>{
+      const ownerDisp=a.k==='g'?_gLabelKo(a.o):a.o;
+      const sub=[ownerDisp,_discogTypeLabel(a.y)].filter(Boolean).join(' · ');
+      _appendFeedCard(list,'💿',a.t,sub,_albumCardNav(a),a.c);
+    });
+    section.style.display='';
+  }catch(e){console.warn('[feed] 즐겨찾기 신보 선반 실패 — 이 선반만 빠집니다',e);}
+}
 async function _buildFeedNewAlbums(){
   const section=document.getElementById('feed-newalbum-section');
   const list=document.getElementById('feed-newalbum');
@@ -17707,22 +17784,7 @@ async function _buildFeedNewAlbums(){
     picked.forEach(a=>{
       const ownerDisp=a.k==='g'?_gLabelKo(a.o):a.o;
       const sub=[ownerDisp,_discogTypeLabel(a.y)].filter(Boolean).join(' · ');
-      _appendFeedCard(list,'💿',a.t,sub,()=>_feedNav(()=>{
-        // 그룹이면 그룹 카드, 멤버면 멤버 카드 — 다른 발견 카드들과 같은 이동 규칙.
-        if(a.k==='g'&&GROUPS[a.o]){
-          const bm=bubbleMeshes.find(b=>b.ko===a.o);if(bm)flyToBubble(bm.mesh.position,bm.radius);
-          if(isMob())showGC(a.o,window.innerWidth/2,window.innerHeight*0.4,false,false,null,false);
-          else showGC(a.o,window.innerWidth/2,window.innerHeight/2);
-          return;
-        }
-        // 멤버: 같은 이름이 여럿일 수 있어 소속 그룹(g)까지 맞춰 찾는다(동명이인 오이동 방지).
-        const art=(ARTISTS||[]).find(x=>x.name&&x.name.ko===a.o&&(!a.g||(x.group&&x.group.ko===a.g)))
-                ||(ARTISTS||[]).find(x=>x.name&&x.name.ko===a.o);
-        if(!art)return;
-        if(art._worldPos)flyTo(art._worldPos);
-        if(isMob())showT(art,window.innerWidth/2,window.innerHeight*0.4,false,false,false);
-        else showT(art,window.innerWidth/2,window.innerHeight/2);
-      }),a.c);
+      _appendFeedCard(list,'💿',a.t,sub,_albumCardNav(a),a.c);
     });
     section.style.display='';
   }catch(e){console.warn('[feed] 이번 주 발매 선반 실패 — 이 선반만 빠집니다',e);}
@@ -19448,7 +19510,10 @@ async function _buildFeedFavNew(){
 // 추천(For You) 탭 빌드 — 가볍게(이어보기=로컬, 즐겨찾기신작·Trend=Supabase). 나침반 열 때마다 호출(TTL 캐시).
 function _buildFeedRec(){
   document.getElementById('feed-empty-rec').hidden=true;
-  _buildFeedForYouAnniv();  // 다가오는 기념일(즐겨찾기 그룹 데뷔·멤버 생일 D-7~D-DAY) — 시간 민감이라 최상단
+  // For You 선반 순서는 **시간 민감도** 순이다 — 오늘 지나면 의미가 없어지는 것일수록 위(2026-09-18).
+  //   기념일(D-DAY가 지나면 끝) → 신보(발매 주간) → 신작 영상(최근 7일) → 이어보기(언제 봐도 됨)
+  _buildFeedForYouAnniv();  // 다가오는 기념일(즐겨찾기 그룹·멤버 교차 D-7~D-DAY) — 시간 민감이라 최상단
+  _buildFeedFavAlbums();    // 즐겨찾기 신보(최근 30일) — 유튜브 영상 말고도 우리가 모으는 걸 드러낸다
   // 즐겨찾기 신작(비동기)이 자리를 잡은 뒤에 이어보기를 그린다 — 예전엔 이어보기(로컬·즉시)가 먼저 위에
   // 떴다가 favnew가 나중에 그 위로 끼어들며 이어보기를 아래로 밀어 덜컹거렸다(2026-09-13 사용자 제보).
   _buildFeedFavNew().finally(()=>_buildFeedRecentlyViewed()); // 즐겨찾기 신작 → 이어보기 순서 확정
@@ -22133,6 +22198,12 @@ _totopBtn.addEventListener('click',e=>{
       <div class="feed-section" id="feed-foryou-anniv-section" style="display:none">
         <div class="feed-section-ttl">🎉 Anniversaries Coming Up</div>
         <div id="feed-foryou-anniv" class="feed-strip hscroll-drag"></div>
+      </div>
+      <!-- 즐겨찾기 신보(2026-09-18) — 영상 그리드와 섞지 않고 별도 가로 선반(비율이 1:1 vs 16:9라
+           섞으면 행 패커가 무너진다). 시간 민감도 순으로 기념일 바로 밑, 신작 영상 위. -->
+      <div class="feed-section" id="feed-favalbum-section" style="display:none">
+        <div class="feed-section-ttl" id="feed-favalbum-ttl">💿 New Releases from Your Favorites</div>
+        <div id="feed-favalbum" class="feed-strip hscroll-drag"></div>
       </div>
       <div class="feed-section" id="feed-favnew-section" style="display:none">
         <div class="feed-section-ttl">💖 New from Your Favorites</div>
