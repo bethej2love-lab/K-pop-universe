@@ -17162,11 +17162,26 @@ function _openFeedListOverlay(title,sub,songs,ctx){
     }
     // 순위 변동 배지 — 주간 개인 직캠 TOP 20/월간 무대 TOP 30처럼 rankDelta가 있는 목록에서만 렌더.
     // 스냅샷 자체가 없으면(신규 배포 직후) rankDelta가 undefined라 배지를 아예 안 그림.
-    if(s.rankDelta!==undefined){
+    // 순위 배지 — 순위 숫자와 변동은 **다른 정보**라 위계를 나눈다(2026-09-18, 사용자 지적 "숫자·기호가
+    // 전부 같은 컬러/크기/굵기라 어색"). 예전엔 textContent 한 덩어리라 3위가 상승이면 "3"까지 초록이 됐다.
+    //  · 순위(.rk-num)는 **항상 흰색·크게** — 변동에 따라 색이 바뀌면 안 되는 사실값이다.
+    //  · 변동(.rk-delta)은 작게·컬러. 유지(0)는 아예 안 그린다 — 실측상 30자리 중 23개가 유지라
+    //    '–'를 다 그리면 노이즈만 된다.
+    // 게이트가 rankDelta가 아니라 s.rank인 이유: 비교 기준이 없는 항목(아래 _withRankDelta 주석)도
+    // 순위 자체는 진실이라 숫자는 보여줘야 하고, 발견용(비랭킹) 목록은 rank를 아예 안 달아 배지가 안 뜬다.
+    if(s.rank!=null){
       const badge=document.createElement('div');
+      badge.className='gc-ch-rank-badge';
+      const num=document.createElement('span');
+      num.className='rk-num';num.textContent=s.rank;
+      badge.appendChild(num);
       const d=s.rankDelta;
-      badge.className='gc-ch-rank-badge '+(d==null?'rd-new':d>0?'rd-up':d<0?'rd-down':'rd-flat');
-      badge.textContent=(idx+1)+(d==null?' NEW':d>0?` ▲${d}`:d<0?` ▼${-d}`:' –');
+      if(d!==undefined&&d!==0){
+        const dl=document.createElement('span');
+        dl.className='rk-delta '+(d===null?'rd-new':d>0?'rd-up':'rd-down');
+        dl.textContent=d===null?'NEW':(d>0?'▲':'▼')+Math.abs(d);
+        badge.appendChild(dl);
+      }
       item.appendChild(badge);
     }
     const titleEl=document.createElement('div');
@@ -18048,9 +18063,10 @@ function _isSoloCam(v){
   return _FANCAM_BRAND_RE.test(_fancamStripLooseHashtags(t));
 }
 
-// 어제 스냅샷 대비 순위 변동 조회(rank_snapshots, 매일 자정 Vercel Cron이 채움 — kpopuniverse-share/api/cron/
-// snapshot-ranks.js 참고). 스냅샷이 아직 하나도 없으면(신규 배포 직후 등) undefined를 반환해서 배지 자체를
+// 직전 스냅샷 대비 순위 변동 조회(rank_snapshots, 매일 자정 Vercel Cron이 채움 — kpopuniverse-share/api/cron/
+// snapshot-ranks.js 참고). 스냅샷이 아직 하나도 없으면(신규 배포 직후 등) undefined를 반환해서 변동 표기를
 // 숨긴다 — 데이터 없이 전부 "NEW"로 잘못 표시되는 것 방지.
+// ⚠️ 날짜를 같이 반환한다. "스냅샷에 없음"을 곧바로 NEW로 읽으면 안 되기 때문 — _withRankDelta 주석 참고.
 async function _fetchPrevRanks(chartType){
   try{
     const{data:dRows}=await sb.from('rank_snapshots').select('snapshot_date').eq('chart_type',chartType).order('snapshot_date',{ascending:false}).limit(1);
@@ -18060,7 +18076,7 @@ async function _fetchPrevRanks(chartType){
     // 잘리면 "순위 변동 없음"으로 조용히 잘못 표시된다(2026-08-27 전수 감사).
     const{data:rows}=await _sbSelectAll(()=>sb.from('rank_snapshots').select('video_id,rank').eq('chart_type',chartType).eq('snapshot_date',prevDate).order('rank'));
     const m={};(rows||[]).forEach(r=>{m[r.video_id]=r.rank;});
-    return m;
+    return{date:prevDate,ranks:m};
   }catch(e){return undefined;}
 }
 async function _buildFeedWeeklyTopCams(list,discList){
@@ -18068,8 +18084,19 @@ async function _buildFeedWeeklyTopCams(list,discList){
   const vidUrl=v=>_isShortV(v)?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;
   const sinceDate=new Date(Date.now()-7*86400000).toISOString().slice(0,10);
   const sinceDate30=new Date(Date.now()-30*86400000).toISOString().slice(0,10);
-  const _withRankDelta=(vids,prevRanks)=>vids.map((v,i)=>({t:v.title,u:vidUrl(v),thumb:v.thumb,vc:v.view_count,dur:v.duration_sec,pa:v.published_at?.slice(0,10),
-    rankDelta:prevRanks===undefined?undefined:(prevRanks[v.id]!=null?prevRanks[v.id]-(i+1):null)}));
+  // ⚠️ "스냅샷에 없다 = NEW"가 아니다(2026-09-18 실측으로 발각). 스냅샷은 Vercel 크론이 **자기 코드로**
+  //    차트를 다시 계산해서 넣는데, 그 로직이 여기와 어긋나면(실제로 어긋나 있었다 — 월간 무대 30자리 중
+  //    15개가 스냅샷에 없어 전부 NEW로 찍혔다) 멀쩡히 어제도 있던 영상이 NEW가 된다.
+  //    그래서 진짜 근거인 published_at을 본다 — 스냅샷 날짜 이후에 올라온 영상만 NEW고, 그냥 스냅샷에서
+  //    빠진 것들은 "비교 기준이 없음"(rankDelta 미설정)으로 두어 변동 표기만 생략한다(순위 숫자는 그대로).
+  //    크론을 고쳐도 이 가드는 남겨둔다 — 두 곳에서 같은 차트를 따로 계산하는 구조인 한 또 어긋난다.
+  const _withRankDelta=(vids,prev)=>vids.map((v,i)=>{
+    const base={t:v.title,u:vidUrl(v),thumb:v.thumb,vc:v.view_count,dur:v.duration_sec,pa:v.published_at?.slice(0,10),rank:i+1};
+    if(!prev)return base; // 스냅샷 자체가 없음 — 순위만 보여주고 변동은 생략
+    const pr=prev.ranks[v.id];
+    if(pr!=null)return{...base,rankDelta:pr-(i+1)};
+    return (v.published_at||'')>=prev.date?{...base,rankDelta:null}:base;
+  });
   try{
     const{data,error}=await _applyLiveExclude(sb.from(_YT_TABLE)
       .select('id,title,thumb,category,is_short,content_flag,group_ko,members,view_count,published_at'+_durCol())

@@ -1328,11 +1328,15 @@
   .gc-ch-thumb{width:100%;aspect-ratio:16/9;object-fit:cover;display:block;}
   .gc-ch-meta{font-size:11px;color:rgba(150,175,215,0.66);padding:0 4px 4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   .gc-ch-item.featured,.gc-ch-item.gc-ch-wide{grid-column:span 2;}
-  .gc-ch-rank-badge{position:absolute;top:4px;left:4px;z-index:2;font-size:10px;font-weight:700;padding:2px 6px;border-radius:4px;background:rgba(10,14,24,0.72);backdrop-filter:blur(2px);color:#fff;}
-  .gc-ch-rank-badge.rd-up{color:#5ee6a0;}
-  .gc-ch-rank-badge.rd-down{color:#ff8a8a;}
-  .gc-ch-rank-badge.rd-new{color:#ffd166;}
-  .gc-ch-rank-badge.rd-flat{color:rgba(255,255,255,0.7);}
+  /* 순위 배지 — 순위와 변동은 다른 정보라 크기·굵기·색으로 위계를 나눈다(2026-09-18).
+     baseline 정렬이라 폰트 크기가 달라도 숫자 밑선이 맞는다. tabular-nums로 자릿수가 바뀌어도 안 흔들림. */
+  .gc-ch-rank-badge{position:absolute;top:4px;left:4px;z-index:2;display:flex;align-items:baseline;gap:3px;padding:2px 6px;border-radius:4px;background:rgba(10,14,24,0.72);backdrop-filter:blur(2px);font-variant-numeric:tabular-nums;}
+  .gc-ch-rank-badge .rk-num{font-size:12px;font-weight:800;color:#fff;line-height:1;}
+  .gc-ch-rank-badge .rk-delta{font-size:9px;font-weight:700;line-height:1;letter-spacing:.02em;}
+  .gc-ch-rank-badge .rk-delta.rd-up{color:#5ee6a0;}
+  .gc-ch-rank-badge .rk-delta.rd-down{color:#ff8a8a;}
+  /* NEW는 글자라 숫자보다 폭이 넓다 — 더 작게·트래킹을 줘서 "라벨"로 읽히게 하고 순위를 안 눌리게 */
+  .gc-ch-rank-badge .rk-delta.rd-new{font-size:8px;letter-spacing:.06em;color:#ffd166;}
   /* 재생시간 배지(2026-09-16) — 유튜브와 같은 위치(썸네일 우측 하단). 썸네일 아래에 제목·조회수 줄이
      붙는 구조라 bottom으로는 썸네일 밑변에 못 붙는다(아이템 전체 높이 기준이 되어 제목 밑으로 내려감).
      그래서 JS가 썸네일 실측 높이를 style.top에 넣어주고(renderItems/renderOne의 높이 못박기 루프에서
