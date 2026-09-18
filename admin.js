@@ -10485,6 +10485,10 @@ async function _admRunRoutine(withSync,opts){
   steps.push({name:'8. 조회수 순환 갱신 (하루 1배치 · 2만개)',fn:_ytRotateViewCountDaily});
   }
   const t0=Date.now();
+  // 단계가 조용히 실패했는지 진행 문구로 가르는 규칙 — 바로 아래 루프 주석에 근거가 있다.
+  // ⚠️ 여기에 '실패'/'오류'를 콜론 없이 넣지 말 것. 성공 문구에도 "N개 일시 실패(다음에 재시도)"처럼
+  //    그 단어가 들어가서, 멀쩡히 끝난 단계가 전부 빨간불이 된다.
+  const _STEP_FAIL_RE=/(실패|오류)\s*:|⛔|Supabase 연결 없음|API 키를 먼저/;
   // 단계별 소요 시간 계측(2026-09-07) — "루틴이 10시간 걸린다"는 제보를 받고도 **어느 단계가** 그런지
   // 알 방법이 없었다(총 시간만 찍혔음). 매 실행의 단계별 시간을 남기고, 다음 실행 때 지난번 값을 옆에
   // 같이 보여줘서 어디가 느려졌는지 화면에서 바로 읽히게 한다.
@@ -10503,7 +10507,20 @@ async function _admRunRoutine(withSync,opts){
       // 각 함수가 마지막으로 남긴 진행/결과 문구를 그대로 요약으로 채택(문구 중복 정의를 피함)
       const prog=(document.getElementById('sp-yt-prog')?.textContent||'').trim();
       const delta=prevMs?` (지난번 ${_fmtMs(prevMs)})`:'';
-      if(line){line.textContent=`✅ ${s.name} — ⏱ ${_fmtMs(ms)}${delta}\n   `+(prog||'완료');line.className='adm-log-step adm-log-done';}
+      // ⚠️ **return으로 끝났다고 성공이 아니다.** 단계 함수 대부분은 실패해도 진행 문구만 바꾸고
+      //    조용히 return하는데, 여기서 무조건 ✅를 찍었고 러너(tools/run_daily_routine.cjs)는 로그의
+      //    `^❌` 줄 수로만 성공을 판정한다 → 워크플로가 계속 초록. 실제로 음방 1위 수집이 그렇게
+      //    7일간 매 3시간마다 아무것도 안 넣고 초록으로 끝났다(2026-09-18 발견). 루틴 8단계 전수를
+      //    훑어보니 같은 모양이 31곳인데, 그중 절반은 **정상 종료**(…없어요 / 오염 없음 / 취소됨 /
+      //    건너뜀)라 개별 함수를 다 고치는 것보다 여기서 문구로 가르는 게 싸고 되돌리기도 쉽다.
+      // 판별 기준(실측 전수 대조): "…실패: <에러>" / "…오류: <에러>" / ⛔ / 연결·설정 누락.
+      //   · 성공 문구의 "N개 일시 실패(다음에 재시도)"·"(실패 N건 — …)"는 콜론이 없어 안 걸린다.
+      //   · 정상 종료 문구("검사할 영상이 없어요", "정리할 것 없음", "취소됨 —", "건너뜀 —")도 안 걸린다.
+      const _failed=_STEP_FAIL_RE.test(prog);
+      if(line){
+        line.textContent=`${_failed?'❌':'✅'} ${s.name} — ⏱ ${_fmtMs(ms)}${delta}\n   `+(prog||'완료');
+        line.className='adm-log-step '+(_failed?'adm-log-fail':'adm-log-done');
+      }
     }catch(e){
       const ms=Date.now()-st;stepMs[s.name]=ms;
       if(line){line.textContent=`❌ ${s.name} — ⏱ ${_fmtMs(ms)}\n   `+(e&&e.message?e.message:e);line.className='adm-log-step adm-log-fail';}
