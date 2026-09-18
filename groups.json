@@ -164454,6 +164454,29 @@
         "melonAlbumId": "12061717"
       },
       {
+        "title": "Electric Heart : Born to Glow",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273bfb7fd38c212b61e5e88079e",
+        "releaseDate": "2025.08.21",
+        "trackCount": 2,
+        "titleTrack": null,
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Electric Heart",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "Close To Me",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "5sImUAE3bd3mCKgj0oNwMW"
+      },
+      {
         "title": "LEGGO",
         "type": "싱글",
         "isMain": true,
@@ -164493,6 +164516,24 @@
         ],
         "src": "melon",
         "melonAlbumId": "11661088"
+      },
+      {
+        "title": "Like a Friend",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273f649a7aa880f79290fd11d8a",
+        "releaseDate": "2024.12.09",
+        "trackCount": 1,
+        "titleTrack": "Like a Friend",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Like a Friend",
+            "isTitle": true
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "2yEWUNnJ9OHFCpZlh6wjER"
       },
       {
         "title": "You Are My Reason",
@@ -164564,6 +164605,59 @@
         ],
         "src": "melon",
         "melonAlbumId": "11611292"
+      },
+      {
+        "title": "ROAD TO KINGDOM : ACE OF ACE 〈IDENTITY〉 Part. 1",
+        "type": "정규",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273707200e28d9da842a46e4f18",
+        "releaseDate": "2024.10.10",
+        "trackCount": 8,
+        "titleTrack": null,
+        "tracks": [
+          {
+            "no": 1,
+            "title": "TIC TAC",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "Love or Die",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "Love or Die",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "WATERFALL",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "TIC TAC (Instrumental)",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "Love or Die (Instrumental)",
+            "isTitle": false
+          },
+          {
+            "no": 7,
+            "title": "Love or Die (Instrumental)",
+            "isTitle": false
+          },
+          {
+            "no": 8,
+            "title": "WATERFALL (Instrumental)",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "5EYG31iiPr1ooTg8RWHm0F"
       },
       {
         "title": "RU-PUM PUM (Japanese version)",
@@ -164642,6 +164736,29 @@
         ],
         "src": "melon",
         "melonAlbumId": "11314185"
+      },
+      {
+        "title": "The Uncanny Counter 2, Pt. 3 (Original Television Soundtrack)",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b2738255b5331d553f2291c284c3",
+        "releaseDate": "2023.08.27",
+        "trackCount": 2,
+        "titleTrack": null,
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Watch",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "Watch - Instrumental",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "4Q6OEoMVgipIOxDH2xBBEP"
       },
       {
         "title": "UNCHARTED DRIFT",
@@ -165283,6 +165400,40 @@
     },
     "discography": [
       {
+        "title": "Which Way is Love?",
+        "type": "미니",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b27361fde9f27fb624ae4cdb60f3",
+        "releaseDate": "2026.08.26",
+        "trackCount": 4,
+        "titleTrack": "Which Way is Love?",
+        "region": "jp",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Which Way is Love?",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "まだあと0cm",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "Which Way is Love? - Instrumental",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "まだあと0cm - Instrumental",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "3VtASfejBscclGl4VXp7Rn"
+      },
+      {
         "title": "아듀솔로 OST",
         "type": "OST",
         "isMain": false,
@@ -165311,6 +165462,34 @@
         "melonAlbumId": "14463456"
       },
       {
+        "title": "ADIEU SOLO (Original Soundtrack)",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273adf0dc7c99a2641feb61bad9",
+        "releaseDate": "2026.08.20",
+        "trackCount": 3,
+        "titleTrack": null,
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Lovin′ Smooth",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "Fit to you",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "Melting",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "5fIQ8e7wAhjL7Q1C9yC9zw"
+      },
+      {
         "title": "On My Knees",
         "type": "싱글",
         "isMain": true,
@@ -165337,6 +165516,25 @@
         ],
         "src": "melon",
         "melonAlbumId": "13781689"
+      },
+      {
+        "title": "まだあと0cm",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b2736e454256c5cdbbc6b41343a1",
+        "releaseDate": "2026.05.27",
+        "trackCount": 1,
+        "titleTrack": "まだあと0cm",
+        "region": "jp",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "まだあと0cm",
+            "isTitle": true
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "33ZHUWf69bn4vtoEbmkNfE"
       },
       {
         "title": "Kart Racer",
@@ -165437,6 +165635,60 @@
         ]
       },
       {
+        "title": "Daybreak",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273f7462f6912de56b36ebcf909",
+        "releaseDate": "2025.03.19",
+        "trackCount": 1,
+        "titleTrack": "Daybreak",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Daybreak",
+            "isTitle": true
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "0DWHw48fL8FFeVUOjgekS6"
+      },
+      {
+        "title": "Best Friend",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b2731ef5cdf3ac1d8a69c0855298",
+        "releaseDate": "2025.02.26",
+        "trackCount": 1,
+        "titleTrack": "Best Friend",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Best Friend",
+            "isTitle": true
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "6AD5IWv6dxm5JGo6D4lulH"
+      },
+      {
+        "title": "BAD ENOUGH",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b2736ed564fb60415b66e85a6df7",
+        "releaseDate": "2025.01.31",
+        "trackCount": 1,
+        "titleTrack": "BAD ENOUGH",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "BAD ENOUGH",
+            "isTitle": true
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "1vq1AQE3xWU0Bp568uIvim"
+      },
+      {
         "title": "REBIRTH",
         "type": "미니 4집",
         "isMain": true,
@@ -165496,6 +165748,47 @@
         "melonAlbumId": "11548334"
       },
       {
+        "title": "Dreams Come True (The Magic Star X TRENDZ)",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273cca69dbfd22816cfc131be9f",
+        "releaseDate": "2024.07.24",
+        "trackCount": 2,
+        "titleTrack": null,
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Dreams Come True",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "Dreams Come True (Inst.)",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "1CemoUYPHmdlYrUnHSsZPa"
+      },
+      {
+        "title": "Season of You",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273bca396fda4605e7e9d9ff047",
+        "releaseDate": "2024.07.03",
+        "trackCount": 1,
+        "titleTrack": "Season of You",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Season of You",
+            "isTitle": true
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "2XDP5UuXMg78I0NtiWhoyL"
+      },
+      {
         "title": "DREAMLIKE",
         "type": "미니 3집",
         "isMain": true,
@@ -165543,6 +165836,24 @@
         ],
         "src": "melon",
         "melonAlbumId": "11397013"
+      },
+      {
+        "title": "Go Up",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273a2ab47e701f90522e7e71a93",
+        "releaseDate": "2024.01.11",
+        "trackCount": 1,
+        "titleTrack": "Go Up",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Go Up",
+            "isTitle": true
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "3aXqasC7WawbbakmVe5miy"
       },
       {
         "title": "STILL ON MY WAY",
@@ -165719,6 +166030,24 @@
       "namu": "https://namu.wiki/w/LIMELIGHT"
     },
     "discography": [
+      {
+        "title": "Same Mistake Again",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b2733760628cd8def104adb5e493",
+        "releaseDate": "2026.07.24",
+        "trackCount": 1,
+        "titleTrack": "Same Mistake Again",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Same Mistake Again",
+            "isTitle": true
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "1v9UqC8bw5myC8vSJ9VE2f"
+      },
       {
         "title": "LAST DANCE",
         "type": "정규",
@@ -165903,6 +166232,64 @@
         ]
       },
       {
+        "title": "LIMELIGHT DEBUT EP 'LOVE & HAPPINESS'",
+        "type": "정규",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273b1dfa7d187cb7c67dd2e6d1c",
+        "releaseDate": "2023.02.17",
+        "trackCount": 9,
+        "titleTrack": null,
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Honestly",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "Blanc Noir",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "Crystal",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Honestly - Instrumental",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Blanc Noir - Instrumental",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "Crystal - Instrumental",
+            "isTitle": false
+          },
+          {
+            "no": 7,
+            "title": "Honestly - Acapella",
+            "isTitle": false
+          },
+          {
+            "no": 8,
+            "title": "Blanc Noir - Acapella",
+            "isTitle": false
+          },
+          {
+            "no": 9,
+            "title": "Crystal - Acapella",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "6bGjdmkGl8QqTa1ElccP3C"
+      },
+      {
         "title": "LIMELIGHT",
         "type": "미니 1집",
         "isMain": true,
@@ -166061,6 +166448,29 @@
         ],
         "src": "melon",
         "melonAlbumId": "12665954"
+      },
+      {
+        "title": "No tail to tell, Pt. 1 (Original Soundtrack)",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273e46517de1637ea680cead9c9",
+        "releaseDate": "2026.01.16",
+        "trackCount": 2,
+        "titleTrack": null,
+        "tracks": [
+          {
+            "no": 1,
+            "title": "One Last Chance (No tail to tell : Original Television Soundtrack)",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "One Last Chance (No tail to tell : Original Television Soundtrack) - Instrumental",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "0Cc433S7vBYomQfXYeG8uz"
       }
     ],
     "pri": 1.5,
@@ -167266,6 +167676,24 @@
         ]
       },
       {
+        "title": "Things We Dream: Vol.1",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b27372fc0dacc1c17f1ac234958e",
+        "releaseDate": "2026.04.15",
+        "trackCount": 1,
+        "titleTrack": "Cherry Blossom",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Cherry Blossom",
+            "isTitle": true
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "3Vd8dh7UmmMnu48AM5f7YP"
+      },
+      {
         "title": "Things we love : I",
         "type": "미니 1집",
         "isMain": true,
@@ -167353,6 +167781,29 @@
             "isTitle": false
           }
         ]
+      },
+      {
+        "title": "The 1st Single Album - Things we love : H",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b2737edddeef8114cd8823ca3bf4",
+        "releaseDate": "2025.04.28",
+        "trackCount": 2,
+        "titleTrack": null,
+        "tracks": [
+          {
+            "no": 1,
+            "title": "SOURPATCH",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "Never Be Me",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "3ioR7gHeadrflzwM5oGqu4"
       }
     ],
     "pri": 1.5,
@@ -167406,6 +167857,24 @@
             "isTitle": false
           }
         ]
+      },
+      {
+        "title": "HUNGRY (Side A)",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273d6ecf792afd415818b7f4b85",
+        "releaseDate": "2026.07.22",
+        "trackCount": 1,
+        "titleTrack": "HUNGRY (Side A)",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "HUNGRY (Side A)",
+            "isTitle": true
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "6ZlLp51LQPwUtxGP84tkCU"
       }
     ],
     "pri": 1.5,
@@ -167546,6 +168015,44 @@
         ]
       },
       {
+        "title": "ONE PACK",
+        "type": "미니",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b2733d6a25cb5b22c0764dea6cef",
+        "releaseDate": "2025.07.01",
+        "trackCount": 5,
+        "titleTrack": null,
+        "tracks": [
+          {
+            "no": 1,
+            "title": "PASSOUT (feat. TAG) - JONG WOO Solo Version",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "180928~ - JAY CHANG Solo Version",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "Signal - SEONG MIN Solo Version",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "someone else - TAG Solo Version",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Keyring - YE DAM Solo Version",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "2CBLrslKQLQF4w3z6eyytT"
+      },
+      {
         "title": "기다려왔어 널 (Until now KR ver.)",
         "type": "싱글",
         "isMain": false,
@@ -167627,6 +168134,49 @@
         ],
         "src": "melon",
         "melonAlbumId": "11676644"
+      },
+      {
+        "title": "fallIn'",
+        "type": "미니",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b27310db5ff748f2e9eb95518e7a",
+        "releaseDate": "2024.10.18",
+        "trackCount": 6,
+        "titleTrack": null,
+        "tracks": [
+          {
+            "no": 1,
+            "title": "At the last moment",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "DESERVED",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "I still do",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Reach you",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Next life",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "My dear",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "0UBt9qU96ZwijUeQHCrPN5"
       },
       {
         "title": "Until now",

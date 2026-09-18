@@ -292,6 +292,17 @@
     },
     "checkedAt": "2026-09-15"
   },
+  "라임라잇": {
+    "id": "1mDDvUPSs2dSr4QKAQmOql",
+    "spotifyName": "LIMELIGHT",
+    "kind": "group",
+    "confidence": "high",
+    "why": "동명 후보 2명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 2
+    },
+    "checkedAt": "2026-09-18"
+  },
   "라잇썸": {
     "id": "57HNdw2ObRmfwWHG8Xhs8t",
     "spotifyName": "LIGHTSUM",
@@ -795,6 +806,17 @@
     },
     "checkedAt": "2026-09-15"
   },
+  "시그니처": {
+    "id": "5x9WawpXGR82PWDFk9CKYQ",
+    "spotifyName": "cignature",
+    "kind": "group",
+    "confidence": "low",
+    "why": "동명 후보 3명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-09-18"
+  },
   "시크릿": {
     "id": "503DjcVO5Ku1NgLPhVuNg7",
     "spotifyName": "Secret",
@@ -875,6 +897,21 @@
       "titleOverlap": 3
     },
     "checkedAt": "2026-09-15"
+  },
+  "아워벌스데이": {
+    "id": "1mXRWMer8YDbBPbj872tmo",
+    "spotifyName": "OURBIRTHDAY",
+    "kind": "group",
+    "confidence": "high",
+    "why": "동명 후보 5명 중 앨범 대조 · 수집 전 검증 통과(겹침 1)",
+    "evidence": {
+      "titleOverlap": 1,
+      "verifyOverlap": 1,
+      "verifyYears": [
+        2026
+      ]
+    },
+    "checkedAt": "2026-09-18"
   },
   "아이덴티티": {
     "id": "18eBHUF4EG1bXtbLZZ6g7M",
@@ -1198,6 +1235,22 @@
     },
     "checkedAt": "2026-09-16"
   },
+  "에잇턴": {
+    "id": "7tCg9aiVKZ5Cmhbfb7UoqM",
+    "spotifyName": "8TURN",
+    "kind": "group",
+    "confidence": "high",
+    "why": "이름 유일 일치 · 수집 전 검증 통과(겹침 2)",
+    "evidence": {
+      "titleOverlap": null,
+      "verifyOverlap": 2,
+      "verifyYears": [
+        2026,
+        2025
+      ]
+    },
+    "checkedAt": "2026-09-18"
+  },
   "에프엑스": {
     "id": "3wRA5UYoo08BBKJnzyKkpF",
     "spotifyName": "f(x)",
@@ -1510,6 +1563,22 @@
       ]
     },
     "checkedAt": "2026-09-15"
+  },
+  "원팩트": {
+    "id": "6ypgjfzuOVkVw9FEyh2UD5",
+    "spotifyName": "ONE PACT",
+    "kind": "group",
+    "confidence": "high",
+    "why": "이름 유일 일치 · 수집 전 검증 통과(겹침 2)",
+    "evidence": {
+      "titleOverlap": null,
+      "verifyOverlap": 2,
+      "verifyYears": [
+        2026,
+        2025
+      ]
+    },
+    "checkedAt": "2026-09-18"
   },
   "웨이션브이": {
     "id": "1qBsABYUrxg9afpMtyoFKz",
@@ -1965,6 +2034,17 @@
     },
     "checkedAt": "2026-09-15"
   },
+  "튜넥스": {
+    "id": "0QofePWBUVHkH00cC1gmpD",
+    "spotifyName": "TUNEXX",
+    "kind": "group",
+    "confidence": "high",
+    "why": "동명 후보 3명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 2
+    },
+    "checkedAt": "2026-09-18"
+  },
   "트레저": {
     "id": "3KonOYiLsU53m4yT7gNotP",
     "spotifyName": "TREASURE",
@@ -1980,6 +2060,22 @@
       ]
     },
     "checkedAt": "2026-09-15"
+  },
+  "트렌드지": {
+    "id": "6Bmr9e9x44iib7equMj5Qj",
+    "spotifyName": "TRENDZ",
+    "kind": "group",
+    "confidence": "high",
+    "why": "이름 유일 일치 · 수집 전 검증 통과(겹침 2)",
+    "evidence": {
+      "titleOverlap": null,
+      "verifyOverlap": 2,
+      "verifyYears": [
+        2026,
+        2025
+      ]
+    },
+    "checkedAt": "2026-09-18"
   },
   "트리플에스": {
     "id": "5Z71xE9prhpHrqL5thVMyK",
@@ -2190,5 +2286,21 @@
       ]
     },
     "checkedAt": "2026-09-15"
+  },
+  "힛지스": {
+    "id": "5a83Luu0ndnR1enk1rn83V",
+    "spotifyName": "HITGS",
+    "kind": "group",
+    "confidence": "high",
+    "why": "이름 유일 일치 · 수집 전 검증 통과(겹침 1)",
+    "evidence": {
+      "titleOverlap": null,
+      "verifyOverlap": 1,
+      "verifyYears": [
+        2026,
+        2025
+      ]
+    },
+    "checkedAt": "2026-09-18"
   }
 }
