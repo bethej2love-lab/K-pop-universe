@@ -168,6 +168,17 @@
     },
     "checkedAt": "2026-09-17"
   },
+  "다크비": {
+    "id": "4DoedGw38ubJdAT1edFsIx",
+    "spotifyName": "DKB",
+    "kind": "group",
+    "confidence": "medium",
+    "why": "동명 후보 6명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 1
+    },
+    "checkedAt": "2026-09-18"
+  },
   "더보이즈": {
     "id": "0CmvFWTX9zmMNCUi6fHtAx",
     "spotifyName": "THE BOYZ",
@@ -447,6 +458,17 @@
       ]
     },
     "checkedAt": "2026-09-15"
+  },
+  "배너": {
+    "id": "05pkCt3DQY5ZC41u7WMk5D",
+    "spotifyName": "VANNER",
+    "kind": "group",
+    "confidence": "high",
+    "why": "동명 후보 2명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 3
+    },
+    "checkedAt": "2026-09-18"
   },
   "베리베리": {
     "id": "1fWUcRSok57yRm8gPKj1Fc",
@@ -799,6 +821,22 @@
       "titleOverlap": null
     },
     "checkedAt": "2026-09-15"
+  },
+  "싸이커스": {
+    "id": "6QHP8St0MzfNDqjKpwtMht",
+    "spotifyName": "xikers",
+    "kind": "group",
+    "confidence": "high",
+    "why": "이름 유일 일치 · 수집 전 검증 통과(겹침 2)",
+    "evidence": {
+      "titleOverlap": null,
+      "verifyOverlap": 2,
+      "verifyYears": [
+        2026,
+        2025
+      ]
+    },
+    "checkedAt": "2026-09-18"
   },
   "씨엔블루": {
     "id": "6dCz3spfpIvqqqsIoP6wXi",
@@ -1289,6 +1327,17 @@
     },
     "checkedAt": "2026-09-15"
   },
+  "엘라스트": {
+    "id": "0NztgA9b1KEJLjLVqMwd9y",
+    "spotifyName": "E'LAST",
+    "kind": "group",
+    "confidence": "low",
+    "why": "동명 후보 2명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-09-18"
+  },
   "엠블랙": {
     "id": "14f1WN9TUDVBK4sHUStmLG",
     "spotifyName": "MBLAQ",
@@ -1500,6 +1549,22 @@
     },
     "checkedAt": "2026-09-15"
   },
+  "유나이트": {
+    "id": "4l4eMvpA4K7X02j08cbkNV",
+    "spotifyName": "YOUNITE",
+    "kind": "group",
+    "confidence": "high",
+    "why": "이름 유일 일치 · 수집 전 검증 통과(겹침 1)",
+    "evidence": {
+      "titleOverlap": null,
+      "verifyOverlap": 1,
+      "verifyYears": [
+        2026,
+        2025
+      ]
+    },
+    "checkedAt": "2026-09-18"
+  },
   "유니스": {
     "id": "48xyu8QHo1IhsQZGlgNGYZ",
     "spotifyName": "UNIS",
@@ -1553,6 +1618,22 @@
       "titleOverlap": 4
     },
     "checkedAt": "2026-09-15"
+  },
+  "이븐": {
+    "id": "6SYJFHPxXkr4SZJR8aLEml",
+    "spotifyName": "EVNNE",
+    "kind": "group",
+    "confidence": "high",
+    "why": "이름 유일 일치 · 수집 전 검증 통과(겹침 4)",
+    "evidence": {
+      "titleOverlap": null,
+      "verifyOverlap": 4,
+      "verifyYears": [
+        2026,
+        2025
+      ]
+    },
+    "checkedAt": "2026-09-18"
   },
   "이엑스아이디": {
     "id": "1xs6WFotNQSXweo0GXrS0O",
@@ -1841,6 +1922,17 @@
     },
     "checkedAt": "2026-09-15"
   },
+  "템페스트": {
+    "id": "1iyFL3CRuKW7PXgPH4VxSP",
+    "spotifyName": "TEMPEST",
+    "kind": "group",
+    "confidence": "high",
+    "why": "동명 후보 3명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 6
+    },
+    "checkedAt": "2026-09-18"
+  },
   "투모로우바이투게더": {
     "id": "0ghlgldX5Dd6720Q3qFyQB",
     "spotifyName": "TOMORROW X TOGETHER",
@@ -1926,6 +2018,17 @@
       "titleOverlap": 2
     },
     "checkedAt": "2026-09-15"
+  },
+  "티엔엑스": {
+    "id": "0DRiXmEOc6dJ6Rug3xi4HZ",
+    "spotifyName": "TNX",
+    "kind": "group",
+    "confidence": "high",
+    "why": "동명 후보 4명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 2
+    },
+    "checkedAt": "2026-09-18"
   },
   "틴탑": {
     "id": "3offPqpKAKmpQkIdWnjzkc",
