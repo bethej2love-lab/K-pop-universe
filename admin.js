@@ -2427,7 +2427,14 @@ async function _ytSweepMusicShowWins(){
       if(!r.win_date||!r.group_ko){ // 해석 실패 — 키를 못 만드니 목록으로만
         B.set('x'+v.id,r);continue;
       }
-      const map=r.grade==='A'?A:B,k=_mswKey(r);
+      // 곡명이 없으면 A라도 자동 반영하지 않는다(2026-09-18, 사용자 결정). 기존 2,626행은 전부
+      // song_title이 차 있어 이 컬럼이 NOT NULL일 가능성이 높고, 실제로 곡명 없는 한 행이 배치를
+      // 통째로 죽여 7일간 21건을 막았다. 게다가 같은 수상은 곡명을 단 다른 방송사 채널이 대개 다시
+      // 올려서(바로 아래 dedup이 그 경우다) 대부분 다음 실행에 제대로 들어온다.
+      // ⚠️ 버리지는 않는다 — B로 내려 콘솔 SQL에 남기므로 사람이 보고 넣을 수 있다.
+      const _noSong=r.grade==='A'&&!r.song_title;
+      if(_noSong)r.why=(r.why?r.why+' · ':'')+'곡명 없음(자동 반영 제외)';
+      const map=(r.grade==='A'&&!_noSong)?A:B,k=_mswKey(r);
       const cur=map.get(k);
       // 같은 수상을 여러 방송사 채널이 올린다 — 곡명이 있는 쪽을 남긴다(더쇼 팬캠은 곡명이 없음).
       if(!cur||(!cur.song_title&&r.song_title))map.set(k,r);
