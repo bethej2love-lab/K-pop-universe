@@ -1305,13 +1305,18 @@
   .gc-ch-only:hover{color:rgba(220,235,255,0.8);}
   .gc-ch-only.active{color:#c8ddff;text-decoration:underline;text-underline-offset:2px;}
   @media(min-width:769px){.gc-ch-only{font-size:9px;}}
+  /* bottom도 탭바를 따라간다(2026-09-18) — 78px로 박아두면 탭바가 숨었을 때 버튼만 허공에 떠 있다.
+     ⚠️ max()로 안전영역 하한을 건다 — 탭바가 숨으면 --sheet-bottom이 0이 되는데, 그대로 두면 버튼이
+     홈 인디케이터 제스처 영역으로 내려간다(헤드리스 캡처에서 발견). 탭바가 보일 땐 그 값이 이미
+     safe-area를 품고 있어(offsetHeight 실측) max가 자연히 탭바 쪽을 고른다. */
   .gc-totop{
-    position:fixed;right:16px;bottom:78px;z-index:66;width:36px;height:36px;border-radius:50%;
+    position:fixed;right:16px;bottom:calc(max(var(--sheet-bottom,73px), env(safe-area-inset-bottom,0px)) + 5px);z-index:66;width:36px;height:36px;border-radius:50%;
     background:rgba(255,255,255,0.08);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
     border:0.5px solid rgba(255,255,255,0.16);color:rgba(220,235,255,0.9);font-size:16px;
     display:none;align-items:center;justify-content:center;cursor:pointer;font-family:inherit;
     box-shadow:inset 0 1px 0 rgba(255,255,255,0.14),0 4px 14px rgba(0,0,0,0.35);
-    transition:background .14s,transform .14s;
+    /* ⚠️ transition은 여기 한 줄뿐이어야 한다 — 위에 따로 쓰면 이 선언이 덮어써서 bottom이 안 따라간다 */
+    transition:background .14s,transform .14s,bottom .32s cubic-bezier(0.32,0.72,0,1);
   }
   .gc-totop:hover{background:rgba(255,255,255,0.14);}
   .gc-totop:active{transform:scale(0.9);}
@@ -3178,7 +3183,11 @@
   #feed-peek-handle{display:none;}
   #feed-close{display:none;}
   #feed-close:active{color:rgba(200,218,255,0.85);transform:scale(0.86);transition:transform .07s;}
-  #feed-body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;background:rgba(8,11,24,0.78);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);padding-bottom:calc(env(safe-area-inset-bottom,0px) + 80px);}
+  /* 아래 여백은 탭바를 따라간다(2026-09-18) — 탐험 패널도 카드처럼 스크롤 다운이면 탭바가 숨는데,
+     여백이 80px로 박혀 있으면 탭바가 사라져도 빈칸이 그대로 남아 "숨은 의미"가 없다.
+     ⚠️ env(safe-area-inset-bottom)을 따로 더하지 않는다 — --sheet-bottom은 탭바의 offsetHeight
+     실측값이고 탭바 자신의 padding-bottom이 이미 safe-area를 품고 있어서, 더하면 이중 계산이 된다. */
+  #feed-body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;background:rgba(8,11,24,0.78);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);padding-bottom:calc(var(--sheet-bottom,73px) + 8px);transition:padding-bottom .32s cubic-bezier(0.32,0.72,0,1);}
   /* 2탭(For You / Discover) — 스크롤해도 위에 붙어있게 sticky. 배경은 #feed-body와 맞춰 콘텐츠가 비쳐도 안 지저분하게. */
   /* 탐험 패널 탭 — X(트위터)식 언더라인 방식(2026-08-31 사용자 요청). 예전엔 알약 버튼(배경+테두리)이라
      존재감이 컸는데, 배경을 거의 없애고 **탭이 폭을 정확히 반씩 나눠 갖고 활성 탭 글자 밑에만 밑줄**이

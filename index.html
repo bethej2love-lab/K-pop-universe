@@ -3490,6 +3490,7 @@ function _showOnboardHint(){
     exitObSearch(); // 탭바 탐험 버튼 수동 클릭(8801번줄)과 동일하게, 자동으로 뜰 때도 검색바를 먼저 닫아 겹쳐 보이지 않게 함
     _openFeedOverlay();
     document.getElementById('feed-overlay')?.classList.add('peek');
+    _showTabbar(); // peek는 자동숨김 대상이 아니다(_activeSheetScroller) — 들어올 때 숨어 있었다면 되돌린다
   }else{
     _openFeedOverlay();
   }
@@ -12030,6 +12031,14 @@ function _activeSheetScroller(){
   if(connSheetEl&&connSheetEl.classList.contains('bs-open'))return connSheetInner;
   if(mobCardStackEl&&mobCardStackEl.style.display==='block')return mobCardStackInner;
   if(mobSheetEl&&mobSheetEl.classList.contains('bs-open'))return mobSheetInner;
+  // 탐험(나침반) 패널도 카드와 같은 스크롤 자동숨김을 쓴다(2026-09-18, 사용자 요청). 우선순위는 **맨 아래** —
+  // 탐험에서 영상/그룹을 열면 카드가 그 위에 뜨므로, 그땐 카드가 탭바를 쥐어야 둘이 안 싸운다.
+  // ⚠️ peek(반 열림)은 제외한다. peek는 "이거 볼래? 아님 말고" 수준의 가벼운 제안 상태라 높이가 짧고,
+  //    거기선 탭바가 화면의 유일한 기준선이라 같이 사라지면 "닫혔나?"로 읽힌다(사용자 확인, 2026-09-18).
+  if(isMob()){
+    const fo=document.getElementById('feed-overlay');
+    if(fo&&fo.classList.contains('open')&&!fo.classList.contains('peek'))return document.getElementById('feed-body');
+  }
   return null;
 }
 function _wireSheetTabbarHide(scrollEl){
@@ -16549,6 +16558,12 @@ function _openFeedOverlay(){
   if(!isMob()){_bringToFront(el);document.getElementById('zoom-ctrl').classList.add('zoom-feed-open');}
   document.body.classList.add('feed-open');
   document.getElementById('tab-feed').classList.add('feed-open');
+  // ⚠️ 진입 시점에 탭바 상태를 **못박는다**. 직전 카드에서 스크롤을 내려 탭바가 숨은 채로 여기 들어오면
+  //    탐험 패널은 scrollTop=0에서 시작하는데 탭바만 사라진 채로 열린다. 추적값 리셋으로는 클래스가 안
+  //    떨어진다. 스크롤 핸들러의 "최상단 40px 안전망"에 기대면 안 되는 이유 — **목록이 짧아 스크롤이
+  //    아예 안 되면 scroll 이벤트가 한 번도 안 와서 안전망이 영영 안 돈다**(사파리는 주소창 때문에 세로가
+  //    짧아 거의 항상 스크롤돼서 이 버그를 덮고, 홈화면 웹앱에서만 터진다 — 2026-08-28에 겪은 그 구조).
+  _showTabbar();
   const now=Date.now();
   if(now-_feedRecBuiltAt>_FEED_DISCOVERY_TTL){
     _buildFeedRec();
@@ -16569,6 +16584,13 @@ function _openFeedOverlay(){
     document.getElementById('feed-tab-rec').addEventListener('click',()=>_feedSwitchTab('rec'));
     document.getElementById('feed-tab-disc').addEventListener('click',()=>_feedSwitchTab('disc'));
     _wireFeedSwipeDismiss(el,document.getElementById('feed-body'));
+    // 카드 시트와 **같은** 스크롤 자동숨김을 재사용한다(2026-09-18). 새로 구현하지 않는 이유: 이 함수엔
+    // iOS 고무줄 구간 방향 반전, 탭바가 숨을 때 브라우저가 스크롤을 당기는 양 상쇄(clampShift),
+    // 방향 전환 시 누적 리셋, 최상단 40px 안전망 — 네 번의 버그 수정이 이미 녹아 있다.
+    // ⚠️ 여기서 바인딩하는 이유는 위 el._bound 블록과 같다(#feed-body는 스크립트보다 나중에 파싱됨).
+    //    _sheetScrollers에도 넣어야 _rebaseSheetScroll(탭바 토글 직후 기준선 재설정)이 이 컨테이너도 챙긴다.
+    const _fb=document.getElementById('feed-body');
+    if(_fb&&!_sheetScrollers.includes(_fb)){_sheetScrollers.push(_fb);_wireSheetTabbarHide(_fb);}
     // 카드와 똑같은 "맨 위로" 버튼을 탐험 패널에도(2026-08-27 사용자 요청). 카드용으로 이미 있던
     // _wireTotop을 그대로 재사용 — 스크롤 컨테이너만 넘기면 되고, 버튼(z-index 66)이 이 오버레이
     // (z-index 39)보다 위라 그대로 뜬다. 여기서 바인딩하는 이유는 위 el._bound 블록과 같다:
@@ -16606,6 +16628,7 @@ function _closeFeedOverlay(returning){
   // 문제와 같음) — 이 패널이 대상일 때만 숨긴다. 다른 컨테이너가 대상이면 건드리지 않는다.
   if(_totopScrollTarget===document.getElementById('feed-body'))_hideTotop();
   document.getElementById('feed-overlay').classList.remove('open','peek');
+  _showTabbar(); // 나갈 때도 못박는다 — 스크롤을 내려둔 채 닫으면 탭바가 숨은 채로 우주에 남는다
   document.getElementById('zoom-ctrl').classList.remove('zoom-feed-open');
   document.body.classList.remove('feed-open');
   document.getElementById('tab-feed').classList.remove('feed-open');

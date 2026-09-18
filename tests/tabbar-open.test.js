@@ -150,7 +150,14 @@ async function main() {
 
     // ── 2. 탐험(별) 버튼: 사용자가 실제로 제보한 경로 ────────────────────────────────
     await ev(cdp, HIDE_TABBAR);
-    await ev(cdp, `document.getElementById('tab-explore').click()`);
+    // ⚠️ 버튼 id가 tab-explore → random-fab으로 바뀌었다(2026-09-03 디자인리뷰 ③: 랜덤을 탭바에서
+    //    분리해 상단바로 이동, 탭은 홈·검색·탐험·나 4개). 테스트만 옛 id를 눌러서 클릭이 아무것도 안 하고
+    //    "탭바가 안 돌아온다"로 계속 빨간불이었다 — CI는 브라우저 테스트를 스킵하므로 아무도 못 봤다
+    //    (2026-09-18 발견). 제품 쪽 복구(_showTabbar)는 2026-08-28부터 멀쩡히 있었다.
+    //    데스크톱 헤더의 #dh-random-btn도 결국 이 버튼을 click()으로 재호출하므로 이 경로 하나면 충분하다.
+    const _exploreBtn = await ev(cdp, `!!document.getElementById('random-fab')`);
+    if (!_exploreBtn) fail('[탐험 버튼] #random-fab이 없음 — 버튼 id가 또 바뀌었으면 이 테스트도 같이 고칠 것');
+    await ev(cdp, `document.getElementById('random-fab').click()`);
     await sleep(400); // 핸들러의 모바일 분기는 동기 — fly 애니메이션을 기다릴 필요 없음
     const s2 = await evJson(cdp, TB_STATE);
     if (s2.hidden) fail(`[탐험 버튼] 별 버튼을 눌렀는데 탭바가 사라진 채 유지됨 (opacity=${s2.opacity}) — 사용자 제보 증상 그대로`);
