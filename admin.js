@@ -2411,7 +2411,11 @@ async function _ytSweepMusicShowWins(){
     const{rows,failed:fetchFailed}=await _mswFetchCandidates(_admRoutineRunning?3:12);
     if(fetchFailed.length)console.warn('[음방 1위] 조회 실패 구간:\n'+fetchFailed.join('\n'));
     if(!rows||!rows.length){
-      _ytSetProg('1위 후보 영상이 없어요'+(fetchFailed.length?` — ⚠️ ${fetchFailed.length}개 구간 조회 실패(콘솔). 다시 눌러주세요.`:''));return;
+      const m='1위 후보 영상이 없어요'+(fetchFailed.length?` — ⚠️ ${fetchFailed.length}개 구간 조회 실패(콘솔). 다시 눌러주세요.`:'');
+      _ytSetProg(m);
+      // 구간이 타임아웃으로 빠져서 0건인 거면 "오늘은 없네"와 구분이 안 된다 — 루틴에선 실패로 올린다.
+      if(fetchFailed.length)throw new Error(m);
+      return;
     }
     _ytSetProg(`[음방 1위] 후보 영상 ${rows.length}건 파싱 중…`);
     const A=new Map(),B=new Map();let parsed=0;
@@ -2462,24 +2466,55 @@ async function _ytSweepMusicShowWins(){
       _ytSetProg(`취소됨 — 미리보기만 (신규 ${newA.length}건, 목록 콘솔).`);return;
     }
     const payload=newA.map(r=>({show:r.show,win_date:r.win_date,song_title:r.song_title,group_ko:r.group_ko,member_ko:r.member_ko}));
+    // 쓰기 직전의 인증 상태를 찍어둔다 — 이 테이블의 RLS는 `auth.jwt()->>'email' = ADMIN_EMAIL`이라
+    // **세션이 중간에 풀리면 42501로 조용히 막힌다**. 루틴은 1~5단계가 15~40분 걸린 뒤 여기 도달하므로
+    // (2026-09-17엔 136분짜리 실행도 있었다) 토큰 갱신이 어긋나면 앞 단계는 성공하고 이 단계만 실패한다.
+    // 아래 실패 메시지에 같이 실어야 다음 실행 로그만 보고 원인을 가를 수 있다(2026-09-18).
+    let _authNote='';
+    try{
+      const _u=window._sbSession&&window._sbSession.user;
+      _authNote=` [admin=${typeof _isAdmin==='function'?_isAdmin():'?'} · email=${_u?(_u.email||'(없음)'):'(세션 없음)'}]`;
+    }catch(e){_authNote=' [인증 상태 확인 실패]';}
     const inserted=[];let failed=0,firstErr='';
+    // ⚠️ 배치 하나가 통째로 죽는 구조였다 — 한 행만 제약에 걸려도 같은 배치 200건이 전부 안 들어가고,
+    //    메시지는 엉뚱하게 "쓰기 권한(RLS) 확인 필요"를 가리켰다. 실측(2026-09-18): 신규 22건 중
+    //    `2026-09-01 더쇼 알파드라이브원` 한 건만 song_title이 없는데(제목에 곡명이 없는 더쇼 팬캠),
+    //    기존 2,626행은 **전부** song_title이 차 있다 → 이 컬럼이 NOT NULL이면 그 한 줄이 나머지 21건을
+    //    7일 동안 막고 있었다는 뜻이다. 원인이 무엇이든 **한 행의 문제가 나머지를 막으면 안 된다.**
+    //    그래서 배치가 실패하면 그 배치만 행 단위로 다시 넣고, 실패한 행은 이유와 함께 이름을 남긴다.
+    const rowErrs=[];
+    const _line2=r=>`${r.win_date} ${r.show} · ${r.group_ko}${r.member_ko?' '+r.member_ko:''} · ${r.song_title||'(곡 미상)'}`;
     for(let i=0;i<payload.length;i+=200){
       _ytSetProg(`[음방 1위] ${i}/${payload.length}건 반영 중…`);
-      const{data,error:e3}=await sb.from(_MSW_TABLE).insert(payload.slice(i,i+200)).select('id');
-      if(e3){failed+=payload.slice(i,i+200).length;firstErr=firstErr||e3.message;console.error('[음방 1위] 반영 실패',e3);continue;}
-      (data||[]).forEach(x=>inserted.push(x.id));
+      const batch=payload.slice(i,i+200);
+      const{data,error:e3}=await sb.from(_MSW_TABLE).insert(batch).select('id');
+      if(!e3){(data||[]).forEach(x=>inserted.push(x.id));continue;}
+      console.warn('[음방 1위] 배치 실패 — 행 단위로 재시도',e3.message);
+      for(const row of batch){
+        const{data:d1,error:e4}=await sb.from(_MSW_TABLE).insert(row).select('id');
+        if(e4){failed++;firstErr=firstErr||e4.message;rowErrs.push(`${_line2(row)} → ${e4.message}`);continue;}
+        (d1||[]).forEach(x=>inserted.push(x.id));
+      }
     }
+    if(rowErrs.length)console.error('[음방 1위] 넣지 못한 행:\n'+rowErrs.join('\n'));
     // ⚠️ "넣었다"가 아니라 "들어간 걸 봤다"까지 확인한다 — 정책이 없으면 insert가 조용히 0행으로 끝나는
     //    사고가 있었다(admin_bulk_snapshots, 2026-08-22). select('id')가 돌려준 개수가 진짜 결과다.
     if(!inserted.length){
-      _ytSetProg(`반영 실패 — 0건 저장됨. 쓰기 권한(RLS) 확인 필요${firstErr?': '+firstErr:''} (콘솔 SQL로 대신 넣을 수 있어요)`);
+      const m=`반영 실패 — 넣을 게 ${payload.length}건 있는데 0건 저장됨${firstErr?': '+firstErr:' (에러 메시지 없음)'}${_authNote} (콘솔 SQL로 대신 넣을 수 있어요)`;
+      _ytSetProg(m);
       const esc=s=>s==null?'NULL':`'${String(s).replace(/'/g,"''")}'`;
       console.log('[음방 1위] 직접 넣을 SQL:\nINSERT INTO music_show_wins (show, win_date, song_title, group_ko, member_ko) VALUES\n'+
         payload.map(r=>`  (${esc(r.show)}, ${esc(r.win_date)}, ${esc(r.song_title)}, ${esc(r.group_ko)}, ${esc(r.member_ko)})`).join(',\n')+';');
-      return;
+      // ⚠️ **반드시 throw한다.** 루틴은 단계 함수가 return으로 끝나면 문구가 뭐든 ✅로 기록하고,
+      //    러너(tools/run_daily_routine.cjs)는 로그의 `^❌` 줄 수로만 성공을 판정한다. 그래서 이 경로가
+      //    "0건 저장됨"을 띄운 채 워크플로는 초록으로 끝났고, 2026-09-11~09-18 7일 동안 매 3시간마다
+      //    22건이 대기 중인 걸 아무도 못 봤다(실측: created_at 기준 9/11 이후 삽입 0행).
+      //    "넣었다"가 아니라 "들어간 걸 봤다"까지 확인해야 한다는 규칙은, 실패를 **시끄럽게** 만들지
+      //    않으면 지켜지지 않는다. 새 스윕을 루틴에 넣을 때마다 같은 함정.
+      throw new Error(m);
     }
     try{localStorage.setItem(_MSW_LS_LAST,JSON.stringify({at:Date.now(),ids:inserted}));}catch(e){}
-    _ytSetProg(`완료! 음악방송 1위 ${inserted.length}건 추가${failed?` (실패 ${failed}건 — ${firstErr})`:''}.`+
+    _ytSetProg(`완료! 음악방송 1위 ${inserted.length}건 추가${failed?` (실패 ${failed}건 — ${firstErr} · 어느 행인지는 콘솔)`:''}.`+
       (newB.length?` 검수 필요 ${newB.length}건은 콘솔(F12)에 SQL로 남겼어요.`:'')+
       (fetchFailed.length?` ⚠️ 영상 조회에서 ${fetchFailed.length}개 구간이 타임아웃으로 빠졌어요(콘솔) — 다시 누르면 그 구간을 다시 봅니다.`:'')+
       ` (되돌리기: "↩︎ 방금 넣은 1위 되돌리기")`);
