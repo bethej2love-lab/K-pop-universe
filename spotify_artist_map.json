@@ -81,6 +81,17 @@
     },
     "checkedAt": "2026-09-15"
   },
+  "걸셋": {
+    "id": "3D2TVeexyIXOtc8F4qEZ6P",
+    "spotifyName": "GIRLSET",
+    "kind": "group",
+    "confidence": "medium",
+    "why": "이름 유일 일치",
+    "evidence": {
+      "titleOverlap": null
+    },
+    "checkedAt": "2026-09-19"
+  },
   "걸스데이": {
     "id": "13kJgvU22LHMsJtGWLmx7W",
     "spotifyName": "Girl's Day",
@@ -102,6 +113,17 @@
       "titleOverlap": 3
     },
     "checkedAt": "2026-09-15"
+  },
+  "네이즈": {
+    "id": "5mj1yVzciUgYQ43ekVwRtX",
+    "spotifyName": "NAZE",
+    "kind": "group",
+    "confidence": "medium",
+    "why": "이름 유일 일치",
+    "evidence": {
+      "titleOverlap": null
+    },
+    "checkedAt": "2026-09-19"
   },
   "넥스지": {
     "id": "5TaK8pOYVARAr5cdgoa8EW",
@@ -129,6 +151,17 @@
       ]
     },
     "checkedAt": "2026-09-16"
+  },
+  "뉴비트": {
+    "id": "5Zj3vazMOh0sADCiAejr3z",
+    "spotifyName": "NEWBEAT",
+    "kind": "group",
+    "confidence": "medium",
+    "why": "이름 유일 일치",
+    "evidence": {
+      "titleOverlap": null
+    },
+    "checkedAt": "2026-09-19"
   },
   "뉴진스": {
     "id": "6HvZYsbFfjnjFrWF950C9d",
@@ -497,6 +530,17 @@
     },
     "checkedAt": "2026-09-15"
   },
+  "베이비돈크라이": {
+    "id": "0dXoF2Q2WnVrhRT26SJNvs",
+    "spotifyName": "Baby DONT Cry",
+    "kind": "group",
+    "confidence": "high",
+    "why": "동명 후보 2명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 3
+    },
+    "checkedAt": "2026-09-19"
+  },
   "베이비몬스터": {
     "id": "1SIocsqdEefUTE6XKGUiVS",
     "spotifyName": "BABYMONSTER",
@@ -545,6 +589,17 @@
       "titleOverlap": 2
     },
     "checkedAt": "2026-09-15"
+  },
+  "보이프렌드": {
+    "id": "2Pw8E6zZoeuksVWtyZPnzd",
+    "spotifyName": "BOYFRIEND",
+    "kind": "group",
+    "confidence": "high",
+    "why": "동명 후보 3명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 2
+    },
+    "checkedAt": "2026-09-19"
   },
   "브라운아이드걸스": {
     "id": "2GEPtT5RDxrmdi0A4mbDi7",
@@ -1300,6 +1355,17 @@
     },
     "checkedAt": "2026-09-17"
   },
+  "엑스러브": {
+    "id": "2b8aDRZFgUGWiUGchpWsyC",
+    "spotifyName": "XLOV",
+    "kind": "group",
+    "confidence": "medium",
+    "why": "이름 유일 일치",
+    "evidence": {
+      "titleOverlap": null
+    },
+    "checkedAt": "2026-09-19"
+  },
   "엔믹스": {
     "id": "28ot3wh4oNmoFOdVajibBl",
     "spotifyName": "NMIXX",
@@ -1704,6 +1770,17 @@
     },
     "checkedAt": "2026-09-18"
   },
+  "이세계아이돌": {
+    "id": "08OoIISROuIG0Hw8pVhYE6",
+    "spotifyName": "ISEGYE IDOL",
+    "kind": "group",
+    "confidence": "medium",
+    "why": "이름 유일 일치",
+    "evidence": {
+      "titleOverlap": null
+    },
+    "checkedAt": "2026-09-19"
+  },
   "이엑스아이디": {
     "id": "1xs6WFotNQSXweo0GXrS0O",
     "spotifyName": "EXID",
@@ -1746,6 +1823,17 @@
       ]
     },
     "checkedAt": "2026-09-15"
+  },
+  "이프아이": {
+    "id": "1g971p3BXozVYNCn7JRMNa",
+    "spotifyName": "ifeye",
+    "kind": "group",
+    "confidence": "medium",
+    "why": "이름 유일 일치",
+    "evidence": {
+      "titleOverlap": null
+    },
+    "checkedAt": "2026-09-19"
   },
   "인피니트": {
     "id": "1bkpTEmumLC3xc7HgMsttU",
@@ -1854,6 +1942,17 @@
       ]
     },
     "checkedAt": "2026-09-15"
+  },
+  "퀸즈아이": {
+    "id": "1OjJhleIzE5CS1BGmVQplW",
+    "spotifyName": "Queenz Eye",
+    "kind": "group",
+    "confidence": "high",
+    "why": "동명 후보 2명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 3
+    },
+    "checkedAt": "2026-09-19"
   },
   "큐더블유이알": {
     "id": "0XufO9nLOKNN0w0qNrDrZy",
@@ -2180,6 +2279,33 @@
     },
     "checkedAt": "2026-09-15"
   },
+  "플레어유": {
+    "id": "2v3JmjJAF2a8JRUft5sOod",
+    "spotifyName": "FLARE U",
+    "kind": "group",
+    "confidence": "medium",
+    "why": "이름 유일 일치",
+    "evidence": {
+      "titleOverlap": null
+    },
+    "checkedAt": "2026-09-19"
+  },
+  "플레이브": {
+    "id": "0k2zyzGq6HX383VlMBOvRG",
+    "spotifyName": "PLAVE",
+    "kind": "group",
+    "confidence": "high",
+    "why": "이름 유일 일치 · 수집 전 검증 통과(겹침 2)",
+    "evidence": {
+      "titleOverlap": null,
+      "verifyOverlap": 2,
+      "verifyYears": [
+        2026,
+        2025
+      ]
+    },
+    "checkedAt": "2026-09-19"
+  },
   "피원하모니": {
     "id": "3JjvsPeGMbDJqsphe2z8xU",
     "spotifyName": "P1Harmony",
@@ -2255,6 +2381,17 @@
       ]
     },
     "checkedAt": "2026-09-15"
+  },
+  "하입프린세스": {
+    "id": "7LCBBRTytlwiWnA2Ugr3s1",
+    "spotifyName": "H//PE Princess",
+    "kind": "group",
+    "confidence": "medium",
+    "why": "이름 유일 일치",
+    "evidence": {
+      "titleOverlap": null
+    },
+    "checkedAt": "2026-09-19"
   },
   "하츠투하츠": {
     "id": "1ZLU77nRzQIaP23mVSYpCQ",
