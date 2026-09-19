@@ -114,6 +114,17 @@
     },
     "checkedAt": "2026-09-15"
   },
+  "나우즈": {
+    "id": "1iZwr6w3TWPNezX8yCtRBg",
+    "spotifyName": "NOWZ",
+    "kind": "group",
+    "confidence": "high",
+    "why": "동명 후보 2명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 5
+    },
+    "checkedAt": "2026-09-19"
+  },
   "네이즈": {
     "id": "5mj1yVzciUgYQ43ekVwRtX",
     "spotifyName": "NAZE",
@@ -389,6 +400,22 @@
       "titleOverlap": 2
     },
     "checkedAt": "2026-09-15"
+  },
+  "루네이트": {
+    "id": "5LkLwB6VSZLQiFkJa9SPOn",
+    "spotifyName": "LUN8",
+    "kind": "group",
+    "confidence": "high",
+    "why": "이름 유일 일치 · 수집 전 검증 통과(겹침 1)",
+    "evidence": {
+      "titleOverlap": null,
+      "verifyOverlap": 1,
+      "verifyYears": [
+        2026,
+        2025
+      ]
+    },
+    "checkedAt": "2026-09-19"
   },
   "르세라핌": {
     "id": "4SpbR6yFEvexJuaBpgAU5p",
@@ -818,6 +845,17 @@
     },
     "checkedAt": "2026-09-15"
   },
+  "슈퍼노바": {
+    "id": "7kydkMNIMNhr7jDgeOQd4H",
+    "spotifyName": "Supernova",
+    "kind": "group",
+    "confidence": "low",
+    "why": "동명 후보 4명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-09-19"
+  },
   "슈퍼주니어": {
     "id": "6gzXCdfYfFe5XKhPKkYqxV",
     "spotifyName": "SUPER JUNIOR",
@@ -887,6 +925,22 @@
       ]
     },
     "checkedAt": "2026-09-16"
+  },
+  "시크릿넘버": {
+    "id": "7qxo9RTWfEoFKN7XGtNV6V",
+    "spotifyName": "SECRET NUMBER",
+    "kind": "group",
+    "confidence": "high",
+    "why": "동명 후보 2명 중 앨범 대조 · 수집 전 검증 통과(겹침 1)",
+    "evidence": {
+      "titleOverlap": 1,
+      "verifyOverlap": 1,
+      "verifyYears": [
+        2025,
+        2024
+      ]
+    },
+    "checkedAt": "2026-09-19"
   },
   "신화": {
     "id": "0jVvkFPa6YbFXQ3Qmhita0",
@@ -1468,6 +1522,22 @@
     },
     "checkedAt": "2026-09-16"
   },
+  "엠씨엔디": {
+    "id": "59dDRtMe8DILtibke8FWLK",
+    "spotifyName": "MCND",
+    "kind": "group",
+    "confidence": "high",
+    "why": "이름 유일 일치 · 수집 전 검증 통과(겹침 1)",
+    "evidence": {
+      "titleOverlap": null,
+      "verifyOverlap": 1,
+      "verifyYears": [
+        2026,
+        2024
+      ]
+    },
+    "checkedAt": "2026-09-19"
+  },
   "영파씨": {
     "id": "5bxwvIM9PX0CkpS6f1L2Ff",
     "spotifyName": "YOUNG POSSE",
@@ -1970,6 +2040,17 @@
     },
     "checkedAt": "2026-09-16"
   },
+  "크나큰": {
+    "id": "5zx2slDKDXNn1e6779RzPd",
+    "spotifyName": "KNK",
+    "kind": "group",
+    "confidence": "high",
+    "why": "동명 후보 6명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 2
+    },
+    "checkedAt": "2026-09-19"
+  },
   "크래비티": {
     "id": "6FkhUhUwSPl3mGB6mmE8wn",
     "spotifyName": "CRAVITY",
@@ -2046,6 +2127,17 @@
       "titleOverlap": 2
     },
     "checkedAt": "2026-09-15"
+  },
+  "키빗업": {
+    "id": "5t5DHjgbcPnJGZJyz3YCnv",
+    "spotifyName": "KEYVITUP",
+    "kind": "group",
+    "confidence": "medium",
+    "why": "동명 후보 2명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 1
+    },
+    "checkedAt": "2026-09-19"
   },
   "키스오브라이프": {
     "id": "4TEK9tIkcoxib4GxT3O4ky",
@@ -2214,6 +2306,17 @@
     },
     "checkedAt": "2026-09-15"
   },
+  "티아이오티": {
+    "id": "2hoCMH0KWwpjFJEGh0ECe7",
+    "spotifyName": "TIOT",
+    "kind": "group",
+    "confidence": "high",
+    "why": "동명 후보 2명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 2
+    },
+    "checkedAt": "2026-09-19"
+  },
   "티엔엑스": {
     "id": "0DRiXmEOc6dJ6Rug3xi4HZ",
     "spotifyName": "TNX",
@@ -2240,6 +2343,22 @@
       ]
     },
     "checkedAt": "2026-09-15"
+  },
+  "파우": {
+    "id": "3aycZMYDTnN0trM2XnTI4Y",
+    "spotifyName": "POW",
+    "kind": "group",
+    "confidence": "high",
+    "why": "이름 유일 일치 · 수집 전 검증 통과(겹침 4)",
+    "evidence": {
+      "titleOverlap": null,
+      "verifyOverlap": 4,
+      "verifyYears": [
+        2026,
+        2025
+      ]
+    },
+    "checkedAt": "2026-09-19"
   },
   "펜타곤": {
     "id": "1wKpMkucynaTfG8lyPprYV",

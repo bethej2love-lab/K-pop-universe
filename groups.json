@@ -174310,6 +174310,24 @@
         ]
       },
       {
+        "title": "Butterfly",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b27333a7a44a1d7d4e8768d27913",
+        "releaseDate": "2025.02.19",
+        "trackCount": 1,
+        "titleTrack": "Butterfly",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Butterfly",
+            "isTitle": true
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "4yi5BI3qDbbMKo4hbaEwv7"
+      },
+      {
         "title": "Together Forever",
         "type": "정규",
         "isMain": true,
@@ -174360,6 +174378,24 @@
             "isTitle": true
           }
         ]
+      },
+      {
+        "title": "FEAR AND GREED",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b27345f9b926a9274635c08f93f3",
+        "releaseDate": "2024.12.04",
+        "trackCount": 1,
+        "titleTrack": "FEAR AND GREED",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "FEAR AND GREED",
+            "isTitle": true
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "6DdDsyictvJHgOr023a7fF"
       },
       {
         "title": "Together Forever",
@@ -175071,6 +175107,24 @@
         ],
         "src": "melon",
         "melonAlbumId": "11787662"
+      },
+      {
+        "title": "항상 그 자리에 있어 (Original Soundtrack)",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273b21f5de5bd3ff7f8b1714e7d",
+        "releaseDate": "2025.04.25",
+        "trackCount": 1,
+        "titleTrack": "항상 그 자리에 있어",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "항상 그 자리에 있어",
+            "isTitle": true
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "3hN3tYag7fQomreeMc23xC"
       },
       {
         "title": "Gimme Love",
@@ -176515,6 +176569,24 @@
         "melonAlbumId": "12059339"
       },
       {
+        "title": "Don't Touch",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273d314d5394d2f5021e38b8991",
+        "releaseDate": "2025.08.19",
+        "trackCount": 1,
+        "titleTrack": "Don't Touch",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Don't Touch",
+            "isTitle": true
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "5nMo3OStsZNGqLxtuE0zfr"
+      },
+      {
         "title": "우연일까? OST Part.1",
         "type": "OST",
         "isMain": false,
@@ -176536,6 +176608,29 @@
         ],
         "src": "melon",
         "melonAlbumId": "11546308"
+      },
+      {
+        "title": "Serendipity's Embrace (Original Soundtrack) Pt.1",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273ec7df12fe80eb246cb1223b4",
+        "releaseDate": "2024.07.22",
+        "trackCount": 2,
+        "titleTrack": null,
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Love Love",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "Love Love - Instrumental",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "7cEXQKlOy1cOT2SLUH2bxl"
       },
       {
         "title": "STARLIGHT",
@@ -176598,6 +176693,29 @@
         ]
       },
       {
+        "title": "DOXA",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b27376f0f8f29bc3bfdb62738ebb",
+        "releaseDate": "2023.05.24",
+        "trackCount": 2,
+        "titleTrack": "DOXA",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "DOXA",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Beautiful One",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "3KSJT0Iq93X4kpauHRx3Ml"
+      },
+      {
         "title": "좋아하면 울리는 짝!짝!짝! OST",
         "type": "OST",
         "isMain": false,
@@ -176619,6 +176737,29 @@
         ],
         "src": "melon",
         "melonAlbumId": "11243400"
+      },
+      {
+        "title": "Love Alarm CLAP! CLAP! CLAP! OST",
+        "type": "OST",
+        "isMain": false,
+        "cover": "https://i.scdn.co/image/ab67616d0000b2735966233785af9ae082ea0b5d",
+        "releaseDate": "2023.05.15",
+        "trackCount": 2,
+        "titleTrack": null,
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Fall In Love",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "Fall In Love (Inst.)",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "0oxUPIv2BUNaag8cyKfT7L"
       },
       {
         "title": "TAP",
@@ -176832,6 +176973,29 @@
         ],
         "src": "melon",
         "melonAlbumId": "11562320"
+      },
+      {
+        "title": "SUMMER SINGLE 'ADDD'",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b2732771700ecfe6e116281921e8",
+        "releaseDate": "2024.08.08",
+        "trackCount": 2,
+        "titleTrack": null,
+        "tracks": [
+          {
+            "no": 1,
+            "title": "ADDD",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "Campfire",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "5UOiBiPPyX2JnabTbCU31w"
       },
       {
         "title": "X10",
@@ -178563,6 +178727,34 @@
         "melonAlbumId": "11881165"
       },
       {
+        "title": "RUN RUN BAREFOOT",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273aadbe4423c6256dd2a0f396b",
+        "releaseDate": "2025.07.07",
+        "trackCount": 3,
+        "titleTrack": "RUN RUN BAREFOOT",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "RUN RUN BAREFOOT",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "RUN RUN BAREFOOT (Inst.)",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "RUN RUN BAREFOOT (Fast ver.)",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "5ldWMA8zXxpFVKd7P7ldHM"
+      },
+      {
         "title": "FLEX LINE",
         "type": "미니 3집",
         "isMain": true,
@@ -178643,6 +178835,29 @@
         ],
         "src": "melon",
         "melonAlbumId": "11605682"
+      },
+      {
+        "title": "The Long Season",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b27359f365f136d6c4c146ab0084",
+        "releaseDate": "2024.10.02",
+        "trackCount": 2,
+        "titleTrack": "The Long Season",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "The Long Season",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "The Long Season (Inst.)",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "0IzmzjWf7eXbOtoPBMZzBQ"
       },
       {
         "title": "Kick-START",
