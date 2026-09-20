@@ -3304,7 +3304,7 @@ async function buildUniverse(){
   // 후속 연출은 전부 리빌 종료 기준 상대값 — 리빌 길이를 바꿔도 간격이 그대로 따라온다(2026-09-02).
   // 예전엔 1200/2600/2400이 리빌 1050ms를 전제로 각각 하드코딩돼 있어서 리빌만 바꾸면 어긋났다.
   _lblFarStartAt=performance.now()+REVEAL.clip+REVEAL.label; // 우주가 다 열린 뒤 이름이 fade in
-  _obTimer=setTimeout(_showOnboardHint,REVEAL.clip+REVEAL.hint);
+  _obTimer=setTimeout(_showOnboardHint,REVEAL.clip+REVEAL.panel);
   // 생일 별똥별: 인트로 연출 끝난 뒤 한 번, 이후 30분마다 오늘 생일인 멤버 확인
   setTimeout(_checkBdayShootingStars,REVEAL.clip+REVEAL.hint);
   setTimeout(_checkDebutAnniversaries,REVEAL.clip+REVEAL.hint);
@@ -3322,7 +3322,9 @@ async function buildUniverse(){
 // 덜 front-loaded하게 바꿔 원이 전체 시간 동안 눈으로 퍼지게 하고 웅장함(발광 링)도 살렸다.
 // 2026-09-02 4차(속도): 1500은 "이젠 너무 느리다"는 제보 — 웅장함은 easing·링이 만들지 duration이 아니다.
 // 2026-09-02 5차("더 빨라야"): clip 1000→850, 텍스트도 800/450으로(위 _minShow). 첫 ~1.65초+로드버퍼.
-const REVEAL={clip:700,text:350,label:500,hint:1800};
+// panel: 탐험(나침반) 패널 peek 자동오픈까지의 대기. hint(별똥별·기념일 연출)와 분리해서 따로 둔다 —
+// 2026-09-21 제보 "첫 화면에서 패널이 조금만 더 빨리 열렸으면". 2500ms(clip+hint) → 2000ms(clip+panel).
+const REVEAL={clip:700,text:350,label:500,hint:1800,panel:1300};
 // 부팅 중 숨겨둔 UI 크롬(탭바·줌·헤더)을 우주와 **같이** 드러낸다. 리빌이 끝난 뒤가 아니라
 // 클립이 시작되는 순간 함께 나타나야 "열리면서 다 보인다"가 된다.
 function _endBooting(){try{document.documentElement.classList.remove('booting');}catch(e){}}
