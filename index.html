@@ -3596,6 +3596,11 @@ function animate(){
   // ⚠️ 제외한 것: `#feed-overlay`(모바일에서
   //    peek 상태로 반쯤만 덮여 뒤 우주가 보임 — 멈추면 얼어붙은 게 눈에 띈다), `#col-picker`(작은 시트).
   if(_FULLSCREEN_OVERLAY_IDS.some(id=>document.getElementById(id)?.classList.contains('open')))return;
+  // col-photo-overlay(사진 그리드)·col-target-overlay(대상 선택기)는 display:flex/none·DOM생성/제거로
+  // 토글되어 위 .open 목록에 넣을 수 없다. 둘 다 inset:0 + backdrop-filter:blur(20px) 전체화면이라
+  // 열려있는 동안 3D+블러 이중 렌더가 걸린다 — 각자 방식에 맞는 조건으로 체크한다(2026-09-20).
+  if(document.getElementById('col-photo-overlay')?.style.display==='flex')return;
+  if(document.getElementById('col-target-overlay'))return;
   // 나머지(모바일 바텀시트류)는 모바일 레이아웃에서만 화면을 덮으므로 기존대로 모바일 한정 스킵
   if(isMob()&&(
     document.getElementById('mob-sheet').classList.contains('bs-open')||

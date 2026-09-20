@@ -8523,6 +8523,32 @@ async function _ytSyncExtChannels(){
       const sinceId=localStorage.getItem(lsKey)||null;
       // 과거로 파고들다가 지난번에 중단된 지점이 있으면(쿼터 초과 등) 처음(최신)부터가 아니라 거기서부터 이어받는다
       const resumeTok=localStorage.getItem(resumeKey)||'';
+      // resumeTok이 있으면(백필 진행 중) 과거 페이지부터 시작해 page 1(신규 영상)을 아예 안 보게 된다.
+      // sinceId가 있는 경우, 백필 전에 최신→sinceId 증분 스캔을 먼저 한 번 돌려 그 사이 올라온
+      // 신규 영상을 놓치지 않는다(예: 잇츠라이브 82MAJOR Like Fire 누락 — 2026-09-20).
+      // playlistItems 1회당 1 쿼터, 신규가 적으면 1~2 페이지라 비용은 미미하다.
+      if(resumeTok&&sinceId){
+        const{vids:incrVids,interrupted:incrInterrupted,newestId:incrNewest}=
+          await _ytFetchNewVideos(uploadsId,key,sinceId,(fetched)=>{
+            setProg(`${prefix} 신규 체크(최신→${fetched}개)…`);
+          });
+        if(!incrInterrupted){
+          if(incrVids.length){
+            await _ytProbeShortsInline(incrVids,setProg);
+            const{rows:incrRows,skipped:incrSkipped}=_extBuildRows(incrVids,_EXT_STRICT_TIERS.has(ch.tier),ch.tier,ch.owner,ch.defaultCategory,ch.handle);
+            totalSkipped+=incrSkipped;
+            if(incrRows.length){
+              setProg(`${prefix} 신규 ${incrRows.length}개 저장 중…`);
+              const _ei=[];
+              for(let i=0;i<incrRows.length;i+=200)_ei.push(_ytUpsertVideos(incrRows.slice(i,i+200),{onConflict:'id',ignoreDuplicates:true}));
+              const _ee2=(await Promise.all(_ei)).find(r=>r&&r.error);
+              if(_ee2)throw new Error(_ee2.error.message);
+              totalAdded+=incrRows.length;
+            }
+          }
+          if(incrNewest)localStorage.setItem(lsKey,incrNewest);
+        }
+      }
       setProg(`${prefix} 영상 목록 가져오는 중…`+(resumeTok?' (이전 중단 지점부터 이어받는 중)':sinceId?'':' (첫 동기화)'));
       const{vids,done,interrupted,resumeToken}=await _ytFetchNewVideos(uploadsId,key,sinceId,(fetched,tot)=>{
         setProg(`${prefix} ${fetched}${tot?'/'+tot:''}개 수집 중…`+(resumeTok?' (이어받는 중)':''));
