@@ -37,6 +37,33 @@
     },
     "checkedAt": "2026-09-17"
   },
+  "A2O MAY": {
+    "id": "6MHvscbuui67TvYTr3ZpV4",
+    "spotifyName": "A2O MAY",
+    "kind": "group",
+    "confidence": "high",
+    "why": "이름 유일 일치 · 수집 전 검증 통과(겹침 1)",
+    "evidence": {
+      "titleOverlap": null,
+      "verifyOverlap": 1,
+      "verifyYears": [
+        2026,
+        2025
+      ]
+    },
+    "checkedAt": "2026-09-20"
+  },
+  "B.D.U": {
+    "id": "1SRmmtrnAo0UK0NUROJRjz",
+    "spotifyName": "B.D.U",
+    "kind": "group",
+    "confidence": "medium",
+    "why": "이름 유일 일치",
+    "evidence": {
+      "titleOverlap": null
+    },
+    "checkedAt": "2026-09-20"
+  },
   "NRG": {
     "id": "7xrfnodwPKuIxS9JuUECaf",
     "spotifyName": "NRG",
@@ -103,6 +130,17 @@
     },
     "checkedAt": "2026-09-16"
   },
+  "고스트나인": {
+    "id": "7f953Uuid7Xrd0nXQ3V3s1",
+    "spotifyName": "GHOST9",
+    "kind": "group",
+    "confidence": "high",
+    "why": "동명 후보 4명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 2
+    },
+    "checkedAt": "2026-09-20"
+  },
   "골든차일드": {
     "id": "5zShiwTHlygdfsXj6eavTu",
     "spotifyName": "Golden Child",
@@ -124,6 +162,17 @@
       "titleOverlap": 5
     },
     "checkedAt": "2026-09-19"
+  },
+  "나인아이": {
+    "id": "4e8UtPYfVPBzWO4PY8CZye",
+    "spotifyName": "NINE.i",
+    "kind": "group",
+    "confidence": "medium",
+    "why": "이름 유일 일치",
+    "evidence": {
+      "titleOverlap": null
+    },
+    "checkedAt": "2026-09-20"
   },
   "네이즈": {
     "id": "5mj1yVzciUgYQ43ekVwRtX",
@@ -540,6 +589,22 @@
       "titleOverlap": 3
     },
     "checkedAt": "2026-09-18"
+  },
+  "배드빌런": {
+    "id": "2Y7fY3aflbCTxp6h5hw0CV",
+    "spotifyName": "BADVILLAIN",
+    "kind": "group",
+    "confidence": "high",
+    "why": "이름 유일 일치 · 수집 전 검증 통과(겹침 1)",
+    "evidence": {
+      "titleOverlap": null,
+      "verifyOverlap": 1,
+      "verifyYears": [
+        2025,
+        2024
+      ]
+    },
+    "checkedAt": "2026-09-20"
   },
   "베리베리": {
     "id": "1fWUcRSok57yRm8gPKj1Fc",
@@ -1096,6 +1161,17 @@
     },
     "checkedAt": "2026-09-15"
   },
+  "아이칠린": {
+    "id": "5357DGet3KsoJNwVkV7qvy",
+    "spotifyName": "ICHILLIN'",
+    "kind": "group",
+    "confidence": "high",
+    "why": "동명 후보 2명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 5
+    },
+    "checkedAt": "2026-09-20"
+  },
   "아이콘": {
     "id": "5qRSs6mvI17zrkJpOHkCoM",
     "spotifyName": "iKON",
@@ -1197,6 +1273,22 @@
       ]
     },
     "checkedAt": "2026-09-15"
+  },
+  "앨리스": {
+    "id": "7fNeWBcx24ttY7l6TxFDJx",
+    "spotifyName": "Alice Syndrome",
+    "kind": "group",
+    "confidence": "low",
+    "why": "이름 불일치 — 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0,
+      "verifyOverlap": 0,
+      "verifyYears": [
+        2024,
+        2023
+      ]
+    },
+    "checkedAt": "2026-09-20"
   },
   "앰퍼샌드원": {
     "id": "4T0Chh3DGxJrEs3gM0biqg",
@@ -1483,6 +1575,38 @@
       ]
     },
     "checkedAt": "2026-09-15"
+  },
+  "엔싸인": {
+    "id": "3IHvi45S5SITyNES9VzSjI",
+    "spotifyName": "n.SSign",
+    "kind": "group",
+    "confidence": "high",
+    "why": "이름 유일 일치 · 수집 전 검증 통과(겹침 3)",
+    "evidence": {
+      "titleOverlap": null,
+      "verifyOverlap": 3,
+      "verifyYears": [
+        2026,
+        2025
+      ]
+    },
+    "checkedAt": "2026-09-20"
+  },
+  "엔플라잉": {
+    "id": "2ZmXexIJAD7PgABrj0qQRb",
+    "spotifyName": "N.Flying",
+    "kind": "group",
+    "confidence": "high",
+    "why": "이름 유일 일치 · 수집 전 검증 통과(겹침 1)",
+    "evidence": {
+      "titleOverlap": null,
+      "verifyOverlap": 1,
+      "verifyYears": [
+        2026,
+        2025
+      ]
+    },
+    "checkedAt": "2026-09-20"
   },
   "엔하이픈": {
     "id": "5t5FqBwTcgKTaWmfEbwQY9",
@@ -2235,6 +2359,22 @@
       "titleOverlap": 2
     },
     "checkedAt": "2026-09-18"
+  },
+  "트라이비": {
+    "id": "6BgYuNomEs12UIrnxhWE9a",
+    "spotifyName": "TRI.BE",
+    "kind": "group",
+    "confidence": "high",
+    "why": "이름 유일 일치 · 수집 전 검증 통과(겹침 1)",
+    "evidence": {
+      "titleOverlap": null,
+      "verifyOverlap": 1,
+      "verifyYears": [
+        2024,
+        2023
+      ]
+    },
+    "checkedAt": "2026-09-20"
   },
   "트레저": {
     "id": "3KonOYiLsU53m4yT7gNotP",
