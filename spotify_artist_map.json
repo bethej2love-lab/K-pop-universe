@@ -108,6 +108,17 @@
     },
     "checkedAt": "2026-09-15"
   },
+  "강혜원": {
+    "id": "1xo99HG7IpzhOVGEI8IgH9",
+    "spotifyName": "Hyewon",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "동명 후보 4명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-09-20"
+  },
   "걸셋": {
     "id": "3D2TVeexyIXOtc8F4qEZ6P",
     "spotifyName": "GIRLSET",
@@ -151,6 +162,28 @@
       "titleOverlap": 3
     },
     "checkedAt": "2026-09-15"
+  },
+  "권은비": {
+    "id": "1EJABgR8HCBdEsSmPCZ52A",
+    "spotifyName": "Eunbi",
+    "kind": "solo",
+    "confidence": "medium",
+    "why": "이름 유일 일치",
+    "evidence": {
+      "titleOverlap": null
+    },
+    "checkedAt": "2026-09-20"
+  },
+  "김민주": {
+    "id": "7lhiEEAGZosFSF2tlSBBKO",
+    "spotifyName": "MINJU",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "동명 후보 5명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-09-20"
   },
   "나우즈": {
     "id": "1iZwr6w3TWPNezX8yCtRBg",
@@ -369,6 +402,17 @@
     },
     "checkedAt": "2026-09-15"
   },
+  "디모렉스": {
+    "id": "0GAYGBzZBTtYKkHIZs9ADH",
+    "spotifyName": "DIMO REX",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "동명 후보 2명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-09-20"
+  },
   "라이즈": {
     "id": "2jOm3cYujQx6o1dxuiuqaX",
     "spotifyName": "RIIZE",
@@ -524,6 +568,17 @@
       ]
     },
     "checkedAt": "2026-09-15"
+  },
+  "메이브": {
+    "id": "2ec7y2L98sHDYFylr7KqEx",
+    "spotifyName": "MAVE:",
+    "kind": "group",
+    "confidence": "medium",
+    "why": "이름 유일 일치",
+    "evidence": {
+      "titleOverlap": null
+    },
+    "checkedAt": "2026-09-20"
   },
   "모모랜드": {
     "id": "5RR0MLwcjc87wjSw2JYdwx",
@@ -964,6 +1019,17 @@
     },
     "checkedAt": "2026-09-15"
   },
+  "승한": {
+    "id": "3pEN1Eyp21WpRkQOVtVCnd",
+    "spotifyName": "Seunghan",
+    "kind": "solo",
+    "confidence": "medium",
+    "why": "이름 유일 일치",
+    "evidence": {
+      "titleOverlap": null
+    },
+    "checkedAt": "2026-09-20"
+  },
   "시그니처": {
     "id": "5x9WawpXGR82PWDFk9CKYQ",
     "spotifyName": "cignature",
@@ -1160,6 +1226,22 @@
       ]
     },
     "checkedAt": "2026-09-15"
+  },
+  "아이유": {
+    "id": "3HqSLMAZ3g3d5poNaI7GOU",
+    "spotifyName": "IU",
+    "kind": "solo",
+    "confidence": "medium",
+    "why": "이름 유일 일치",
+    "evidence": {
+      "titleOverlap": null,
+      "verifyOverlap": 0,
+      "verifyYears": [
+        2026,
+        2025
+      ]
+    },
+    "checkedAt": "2026-09-20"
   },
   "아이칠린": {
     "id": "5357DGet3KsoJNwVkV7qvy",
@@ -2002,6 +2084,17 @@
     },
     "checkedAt": "2026-09-15"
   },
+  "이채연": {
+    "id": "0asUEPExLOkMidYAAKqLs0",
+    "spotifyName": "Chae Yeon",
+    "kind": "solo",
+    "confidence": "medium",
+    "why": "이름 유일 일치",
+    "evidence": {
+      "titleOverlap": null
+    },
+    "checkedAt": "2026-09-20"
+  },
   "이펙스": {
     "id": "4e2umhzNHTSeQnSCWPN0uT",
     "spotifyName": "EPEX",
@@ -2071,6 +2164,38 @@
       ]
     },
     "checkedAt": "2026-09-15"
+  },
+  "조유리": {
+    "id": "5qUT9YBghleRCXg0WifEzf",
+    "spotifyName": "yuri",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "동명 후보 2명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0,
+      "verifyOverlap": 0,
+      "verifyYears": [
+        2025,
+        2024
+      ]
+    },
+    "checkedAt": "2026-09-20"
+  },
+  "최예나": {
+    "id": "49muoiIu4uea4PO8vueUNN",
+    "spotifyName": "YENA",
+    "kind": "solo",
+    "confidence": "high",
+    "why": "이름 유일 일치 · 수집 전 검증 통과(겹침 3)",
+    "evidence": {
+      "titleOverlap": null,
+      "verifyOverlap": 3,
+      "verifyYears": [
+        2026,
+        2025
+      ]
+    },
+    "checkedAt": "2026-09-20"
   },
   "카드": {
     "id": "2JhAlkmukNvarUpGhTFXUQ",
