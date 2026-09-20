@@ -16569,6 +16569,11 @@ function _openFeedOverlay(){
   //    아예 안 되면 scroll 이벤트가 한 번도 안 와서 안전망이 영영 안 돈다**(사파리는 주소창 때문에 세로가
   //    짧아 거의 항상 스크롤돼서 이 버그를 덮고, 홈화면 웹앱에서만 터진다 — 2026-08-28에 겪은 그 구조).
   _showTabbar();
+  // 재진입 시 방향 추적 기준선을 0으로 리셋 — mob-sheet/connSheet처럼 매번 재설정해야 한다.
+  // 첫 열기는 _wireSheetTabbarHide가 0으로 초기화하지만 이후엔 그대로 남아서, 직전에 스크롤을
+  // 내려둔 상태로 닫고 다시 열면 _lastScroll이 옛 위치(예:500px)인 채로 새 scrollTop=0에서
+  // 시작 → 첫 몇 틱이 "위로 스크롤"로 오독돼 탭바가 안 숨는다(2026-09-20).
+  {const _fb=document.getElementById('feed-body');if(_fb){_fb._lastScroll=0;_fb._tbAccum=0;}}
   const now=Date.now();
   if(now-_feedRecBuiltAt>_FEED_DISCOVERY_TTL){
     _buildFeedRec();
