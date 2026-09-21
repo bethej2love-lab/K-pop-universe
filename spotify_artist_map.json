@@ -467,6 +467,17 @@
     },
     "checkedAt": "2026-09-15"
   },
+  "레나": {
+    "id": "5slpk6nu2IwwKx0EHe3GcL",
+    "spotifyName": "Lena",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "동명 후보 2명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-09-21"
+  },
   "레드벨벳": {
     "id": "1z4g3DjTBBZKhvAroFlhOM",
     "spotifyName": "Red Velvet",
@@ -618,6 +629,17 @@
     },
     "checkedAt": "2026-09-15"
   },
+  "미야": {
+    "id": "6L5bLEtpxwd0KOdOr3gtW4",
+    "spotifyName": "MiyaGi & Endspiel",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "이름 불일치 — 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-09-21"
+  },
   "미야오": {
     "id": "08hHTBHlv0WRXWlyrsb6Kv",
     "spotifyName": "MEOVV",
@@ -628,6 +650,17 @@
       "titleOverlap": 2
     },
     "checkedAt": "2026-09-15"
+  },
+  "민주": {
+    "id": "7lhiEEAGZosFSF2tlSBBKO",
+    "spotifyName": "MINJU",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "동명 후보 5명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-09-21"
   },
   "박시영": {
     "id": "2wAjuE3pVtauK8ZQ2p4SXN",
@@ -943,6 +976,33 @@
     },
     "checkedAt": "2026-09-15"
   },
+  "서경": {
+    "id": "2wAZJqYREs9zwWv1X09DPr",
+    "spotifyName": " Seo Youngju",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "이름 불일치 — 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-09-21"
+  },
+  "서령": {
+    "id": "1vngY2RHADlS9t5g4zqS8D",
+    "spotifyName": "SEORYOUNG",
+    "kind": "solo",
+    "confidence": "medium",
+    "why": "이름 유일 일치",
+    "evidence": {
+      "titleOverlap": null,
+      "verifyOverlap": 0,
+      "verifyYears": [
+        2024,
+        2019
+      ]
+    },
+    "checkedAt": "2026-09-21"
+  },
   "세븐틴": {
     "id": "7nqOGRxlXj7N2JYbgNEjYH",
     "spotifyName": "SEVENTEEN",
@@ -986,6 +1046,17 @@
       "titleOverlap": 2
     },
     "checkedAt": "2026-09-15"
+  },
+  "소소": {
+    "id": "0blkYv1mJb5mxQ7NhoLsoI",
+    "spotifyName": "Soosoo",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "이름 불일치 — 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-09-21"
   },
   "슈퍼노바": {
     "id": "7kydkMNIMNhr7jDgeOQd4H",
@@ -1350,6 +1421,17 @@
       ]
     },
     "checkedAt": "2026-09-15"
+  },
+  "앤": {
+    "id": "1zNqDE7qDGCsyzJwohVaoX",
+    "spotifyName": "Anne-Marie",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "이름 불일치 — 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-09-21"
   },
   "앤더블": {
     "id": "3vAHTO5HJ4FmzrLmVbOKRF",
