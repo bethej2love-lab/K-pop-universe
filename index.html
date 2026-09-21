@@ -1272,7 +1272,13 @@
         <div id="gc-track-videos-meta" class="hidden"></div>
       </div>
     </div>
-    <div id="gc-track-videos-tabs" class="hidden"></div>
+    <div id="gc-track-videos-tabs" class="hidden hscroll-drag"></div>
+    <!-- 액션 줄(2026-09-21) — 목록 전체를 그대로 이어재생(라이트박스는 원래도 playlist를 물고 열렸지만
+         버튼이 없어 아무도 몰랐다) + 정렬 토글. 결과가 없으면 hidden. -->
+    <div id="gc-track-videos-actions" class="hidden">
+      <button id="gc-track-videos-play" type="button" class="tvf-play"><span class="tvf-play-ic">▶</span><span id="gc-track-videos-play-lbl"></span></button>
+      <button id="gc-track-videos-sort" type="button" class="tvf-sort" aria-label="정렬"></button>
+    </div>
     <div id="gc-track-videos-list"></div>
   </div>
 </div>
@@ -4257,6 +4263,57 @@ const _SEARCH_CAT_WORDS=[
   {re:/뮤비|뮤직비디오|mv/i,cat:'mv'},{re:/예능|variety/i,cat:'variety'},
   {re:/쇼츠|shorts?/i,cat:'short'},{re:/드라마|영화/i,cat:'show'},
 ];
+// ── 영상 검색 쿼리(2026-09-21 분리) ──────────────────────────────────────────
+// 첫 페이지(6건)와 '더보기'(30건씩)가 **같은 조건**을 써야 해서 쿼리 조립을 한 곳으로 모았다.
+// 예전엔 _searchRemote 안에 인라인이라, 더보기를 붙이려면 같은 조건을 한 벌 더 베껴야 했다.
+const _SR_VID_COLS='id,title,group_ko,is_short,category,content_flag,view_count,thumb,published_at';
+const _SR_VID_FIRST=6;   // 첫 페이지 — 검색 결과 목록에 영상이 화면을 다 먹지 않을 만큼만
+const _SR_VID_STEP=30;   // 더보기 한 번에 가져오는 양
+let _srVidMore=null;     // 더보기가 이어받을 조회 상태(쿼리·오프셋·이미 그린 id)
+function _srVidQuery(q,like,hint,fallbackGroup){
+  let vq=sb.from(_YT_TABLE).select(_SR_VID_COLS);
+  if(fallbackGroup&&hint&&hint.gko){
+    vq=vq.eq('group_ko',hint.gko);
+  }else if(hint&&hint.kind==='member'){
+    const esc=s=>String(s).replace(/["\\]/g,'');
+    // ⚠️ members 배열엔 **이름만** 들어간다 — 동명이인이 구분되지 않는다. "하니"로만 조회하면
+    //    뉴진스 하니를 찾는데 EXID 하니 영상이 섞여 나온다(실측). 자체 채널 쪽은 group_ko를
+    //    같이 걸어 좁히고, 게스트 출연은 with_members가 "이름(그룹)" 형식이라 그대로 정확하다.
+    vq=hint.gko
+      ? vq.or(`and(members.cs.{"${esc(hint.ko)}"},group_ko.eq.${_pgFilterVal(hint.gko)}),with_members.cs.{"${esc(hint.ko)}(${esc(hint.gko)})"}`)
+      : vq.or(`members.cs.{"${esc(hint.ko)}"}`);
+  }else if(hint&&hint.kind==='group'){
+    vq=vq.or(`group_ko.eq.${_pgFilterVal(hint.ko)},with_groups.cs.{"${String(hint.ko).replace(/["\\]/g,'')}"}`);
+  }else{
+    vq=vq.ilike('title_norm',like.toLowerCase());
+  }
+  // 쿼리에 형식 낱말이 있으면 같이 좁힌다("카리나 직캠" → 카리나 태그 + live)
+  const catHit=hint?_SEARCH_CAT_WORDS.find(c=>c.re.test(q)):null;
+  if(catHit){
+    vq=catHit.cat==='short'?vq.eq('is_short',true):vq.eq('category',catHit.cat);
+    // 직캠처럼 category만으론 안 갈리는 형식은 제목 표기로 한 번 더 좁힌다
+    if(catHit.titleAny)vq=vq.or(catHit.titleAny.map(w=>`title_norm.ilike.%${w}%`).join(','));
+  }
+  return vq.or('content_flag.is.null,content_flag.neq.무관').or('content_flag.is.null,content_flag.neq.보류')
+    .or('content_flag.is.null,content_flag.neq.hidden');
+}
+// ⚠️ 정렬은 조회수 내림차순 — 태그 조회는 결과가 수백 건이라 무순으로 6개를 자르면 아무거나 나온다.
+// ⚠️ id 2차 정렬은 페이지네이션 때문이다 — view_count 동점(특히 NULL)이 많아 1차 키만으로는 행 순서가
+//    요청마다 달라질 수 있고, 그러면 다음 쪽에서 같은 영상이 또 오거나 아예 건너뛴다.
+function _srVidPage(q,like,hint,fallbackGroup,from,size){
+  return _srVidQuery(q,like,hint,fallbackGroup)
+    .order('view_count',{ascending:false,nullsFirst:false}).order('id',{ascending:true})
+    .range(from,from+size-1)
+    .then(r=>r,()=>({data:null}));
+}
+// sub은 화면에 그대로 찍히는 값이라 DB 원본(group_ko)이 아니라 표기명을 넣는다 — 예전엔 원본이라
+// 영어 모드 검색 결과의 영상 메타만 "에스파 · 2025.06.27 · 167M+"처럼 한글로 튀었다(2026-09-04).
+function _srVidHit(v){
+  return{type:'video',name:_cleanTitle(v.title),sub:_gLabelKo(v.group_ko||''),
+    thumb:v.thumb||'',meta:_fmtVidMeta(v.published_at,v.view_count),
+    url:_isShortV(v)?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`,
+    isShort:_isShortV(v)};
+}
 function _searchRemote(q,res,mobSearch,obSearch,hint){
   const token=++_remoteSearchToken;
   clearTimeout(_remoteSearchTimer);
@@ -4271,44 +4328,22 @@ function _searchRemote(q,res,mobSearch,obSearch,hint){
       // 나오는 영상을 안다. 그래서 쿼리를 엔티티로 해석했으면(hint) 태그로 조회하고, 못 풀면
       // 그때만 제목 검색으로 떨어진다. 태깅 품질 개선이 그대로 검색 품질이 되는 구조.
       // ⚠️ 정렬은 조회수 내림차순 — 태그 조회는 결과가 수백 건이라 무순으로 6개를 자르면 아무거나 나온다.
-      let vq=sb.from(_YT_TABLE).select('id,title,group_ko,is_short,category,content_flag,view_count,thumb,published_at');
-      if(hint&&hint.kind==='member'){
-        const esc=s=>String(s).replace(/["\\]/g,'');
-        // ⚠️ members 배열엔 **이름만** 들어간다 — 동명이인이 구분되지 않는다. "하니"로만 조회하면
-        //    뉴진스 하니를 찾는데 EXID 하니 영상이 섞여 나온다(실측). 자체 채널 쪽은 group_ko를
-        //    같이 걸어 좁히고, 게스트 출연은 with_members가 "이름(그룹)" 형식이라 그대로 정확하다.
-        vq=hint.gko
-          ? vq.or(`and(members.cs.{"${esc(hint.ko)}"},group_ko.eq.${_pgFilterVal(hint.gko)}),with_members.cs.{"${esc(hint.ko)}(${esc(hint.gko)})"}`)
-          : vq.or(`members.cs.{"${esc(hint.ko)}"}`);
-      }else if(hint&&hint.kind==='group'){
-        vq=vq.or(`group_ko.eq.${_pgFilterVal(hint.ko)},with_groups.cs.{"${String(hint.ko).replace(/["\\]/g,'')}"}`);
-      }else{
-        vq=vq.ilike('title_norm',like.toLowerCase());
-      }
-      // 쿼리에 형식 낱말이 있으면 같이 좁힌다("카리나 직캠" → 카리나 태그 + live)
-      const catHit=hint?_SEARCH_CAT_WORDS.find(c=>c.re.test(q)):null;
-      const _applyCat=v=>{
-        if(!catHit)return v;
-        v=catHit.cat==='short'?v.eq('is_short',true):v.eq('category',catHit.cat);
-        // 직캠처럼 category만으론 안 갈리는 형식은 제목 표기로 한 번 더 좁힌다
-        if(catHit.titleAny)v=v.or(catHit.titleAny.map(w=>`title_norm.ilike.%${w}%`).join(','));
-        return v;
-      };
-      const _finish=v=>v.or('content_flag.is.null,content_flag.neq.무관').or('content_flag.is.null,content_flag.neq.보류')
-        .or('content_flag.is.null,content_flag.neq.hidden')
-        .order('view_count',{ascending:false,nullsFirst:false}).limit(6);
       const [evR,vidR0]=await Promise.all([
         sb.from('kpop_events').select('id,title,groups,date_start,venue').ilike('title',like).order('date_start',{ascending:false}).limit(5),
-        _finish(_applyCat(vq)),
+        _srVidPage(q,like,hint,false,0,_SR_VID_FIRST),
       ]);
-      let vidR=vidR0;
+      let vidR=vidR0,vidFallbackGroup=false;
       // 멤버 태그 + 형식으로 0건이면 그 멤버의 **그룹** 영상으로 한 번 더 본다 — 뮤비·예능처럼
       // 그룹 단위로 만드는 콘텐츠는 개별 멤버 태그가 안 붙어서, "카리나 뮤비"가 통째로 0건이 됐다.
       if(hint&&hint.kind==='member'&&hint.gko&&!(vidR0.data||[]).length&&token===_remoteSearchToken){
-        const g=sb.from(_YT_TABLE).select('id,title,group_ko,is_short,category,content_flag,view_count,thumb,published_at')
-          .eq('group_ko',hint.gko);
-        vidR=await _finish(_applyCat(g));
+        vidFallbackGroup=true;
+        vidR=await _srVidPage(q,like,hint,true,0,_SR_VID_FIRST);
       }
+      // 더보기가 이어서 같은 조건으로 다음 쪽을 가져올 수 있게 조회 조건을 그대로 기억해둔다(2026-09-21)
+      _srVidMore={q,like,hint,fallbackGroup:vidFallbackGroup,offset:(vidR.data||[]).length,
+        ids:new Set((vidR.data||[]).map(v=>v.id)),
+        done:(vidR.data||[]).length<_SR_VID_FIRST,loading:false,
+        res,mobSearch,obSearch};
       if(token!==_remoteSearchToken)return; // 그 사이 다른 걸 쳤으면 버린다
       (evR.data||[]).forEach(e=>{
         const gko=(e.groups||[])[0];
@@ -4317,14 +4352,7 @@ function _searchRemote(q,res,mobSearch,obSearch,hint){
           sub:e.venue||gko||'',ownerType:'group',data:owner,
           pos:owner?bubbleMeshes.find(b=>b.ko===owner)?.mesh.position.clone():null});
       });
-      (vidR.data||[]).forEach(v=>{
-        // sub은 화면에 그대로 찍히는 값이라 DB 원본(group_ko)이 아니라 표기명을 넣는다 — 예전엔 원본이라
-        // 영어 모드 검색 결과의 영상 메타만 "에스파 · 2025.06.27 · 167M+"처럼 한글로 튀었다(2026-09-04).
-        out.video.push({type:'video',name:_cleanTitle(v.title),sub:_gLabelKo(v.group_ko||''),
-          thumb:v.thumb||'',meta:_fmtVidMeta(v.published_at,v.view_count),
-          url:_isShortV(v)?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`,
-          isShort:_isShortV(v)});
-      });
+      (vidR.data||[]).forEach(v=>out.video.push(_srVidHit(v)));
     }catch(e){return;} // 조용히 — 동기 결과는 이미 화면에 있다
     if(token!==_remoteSearchToken)return;
     _appendSearchSections(out,res,mobSearch,obSearch);
@@ -4417,10 +4445,72 @@ function _appendSearchSections(out,res,mobSearch,obSearch){
       res.appendChild(div);added++;
     });
   }
+  // 영상은 첫 쪽(6건)이 꽉 찼으면 뒤에 더 있다 — 그 자리에서 이어 받을 수 있게 더보기 줄을 붙인다.
+  if(out.video&&out.video.length&&_srVidMore&&!_srVidMore.done)res.appendChild(_makeSearchMoreRow('video'));
   // 동기 결과가 0건이라 "검색 결과가 없어요"가 떠 있었는데 서버 결과가 왔으면 그 문구를 치운다
   if(added)res.querySelector('.sr-empty')?.remove();
   // 풀스크린 시트의 타입 탭은 DOM을 세므로, 늦게 도착한 이 결과들까지 반영되게 여기서 다시 맞춘다
   if(typeof _msSyncTabs==='function')_msSyncTabs();
+}
+// ── 검색 결과 '더보기'(2026-09-21) ────────────────────────────────────────────
+// 예전엔 타입마다 소수(곡 8 · 영상 6 · 공연 5)에서 그냥 잘려 끝이었다. 모바일 풀스크린 검색의 타입
+// 탭(_msSyncTabs)은 **이미 그려진 DOM만 세는** 구조라, "영상" 탭을 눌러도 그 6건이 전부였다 —
+// 탭은 있는데 탭 안에 더 줄 게 없는 상태(사용자 제보 2026-09-21).
+// ⚠️ 곡만 결과를 만드는 단계에서 자른다 — 곡 hit 하나마다 행성 좌표를 찾는데(bubbleMeshes.find,
+//    268개 순회) 400건을 다 만들면 한 글자 칠 때마다 수만 번 순회가 된다. 그룹·멤버는 어차피 이미
+//    다 만들어진 뒤라 렌더 단계에서 자른다.
+const _SR_CAPS={song:8,group:12,member:12};
+const _SR_STEP=20;
+let _srLimits={..._SR_CAPS},_srLimitQ=null,_srSongTotal=0;
+function _srCap(t){return _srLimits[t]!=null?_srLimits[t]:Infinity;}
+// 검색어가 바뀌면 처음부터. 같은 검색어면 유지해야 한다 — 더보기를 누르면 같은 q로 doSearch를
+// 다시 부르고, 곡 인덱스가 늦게 도착해도 같은 q로 재검색이 돈다(둘 다 늘려둔 걸 되돌리면 안 됨).
+function _srResetLimits(q){if(q===_srLimitQ)return;_srLimitQ=q;_srLimits={..._SR_CAPS};}
+// 타입별 표시분 자르기 + 남은 게 있으면 더보기 마커를 끝에 붙인다(렌더가 그 자리에 줄을 그린다)
+function _srCapSection(t,arr){
+  const cap=_srCap(t);
+  const total=(t==='song'&&_srSongTotal)?Math.max(_srSongTotal,arr.length):arr.length;
+  const shown=arr.slice(0,cap);
+  const rest=total-shown.length;
+  return rest>0?[...shown,{__more:t,rest}]:shown;
+}
+const _SR_MORE_LABEL={ko:'더보기',en:'Show more'};
+function _makeSearchMoreRow(type,rest){
+  const b=document.createElement('button');
+  b.type='button';b.className='sr-more'+(type==='video'?' sr-remote':'');b.dataset.type=type;
+  // 실제로 이번에 늘어나는 만큼을 적는다 — "132개 더보기"라 해놓고 20개만 늘어나면 그게 더 헷갈린다
+  const step=type==='video'?_SR_VID_STEP:Math.min(_SR_STEP,rest||_SR_STEP);
+  b.textContent=(currentLang==='ko'?_SR_MORE_LABEL.ko:_SR_MORE_LABEL.en)+' '+step;
+  b.addEventListener('click',e=>{
+    e.stopPropagation();
+    if(type==='video'){_srLoadMoreVideos(b);return;}
+    _srLimits[type]=_srCap(type)+_SR_STEP;
+    doSearch(_curSearchQ);
+  });
+  return b;
+}
+// 영상 더보기 — 같은 조건으로 다음 쪽을 받아 **기존 목록 뒤에 이어 붙인다**(화면을 다시 그리지 않는다).
+async function _srLoadMoreVideos(btn){
+  const st=_srVidMore;
+  if(!st||st.loading||st.done||!sb)return;
+  st.loading=true;btn.disabled=true;
+  const prevLabel=btn.textContent;
+  btn.textContent=currentLang==='ko'?'불러오는 중…':'Loading…';
+  const r=await _srVidPage(st.q,st.like,st.hint,st.fallbackGroup,st.offset,_SR_VID_STEP);
+  st.loading=false;btn.disabled=false;btn.textContent=prevLabel;
+  // 그 사이 다른 걸 쳤으면 이 버튼은 이미 화면에서 걷혔다(.sr-remote 정리) — 조용히 버린다
+  if(!btn.isConnected||_srVidMore!==st)return;
+  const rows=(r&&r.data)||[];
+  st.offset+=rows.length;
+  if(rows.length<_SR_VID_STEP)st.done=true;
+  const fresh=rows.filter(v=>!st.ids.has(v.id)&&st.ids.add(v.id));
+  fresh.forEach(v=>{
+    const div=_makeSearchItem(_srVidHit(v),st.res,st.mobSearch,st.obSearch);
+    div.classList.add('sr-remote');
+    btn.parentNode.insertBefore(div,btn); // 더보기 줄은 항상 목록의 맨 끝을 지킨다
+  });
+  if(st.done)btn.remove();
+  if(typeof _msSyncTabs==='function')_msSyncTabs(); // 탭의 개수 표시를 새로 붙은 항목까지 반영
 }
 // 검색 결과 항목 하나를 만든다 — 실시간 결과와 **나중에 도착하는 서버 결과(영상·공연)**가 같은 클릭
 // 로직을 써야 해서 함수로 뽑았다(2026-08-31). 두 벌로 복사하면 동작이 갈라진다.
@@ -4574,17 +4664,22 @@ function _renderSearchHits(hits,res,mobSearch,isRecent,obSearch){
     res.dataset.soleType=_secOrder.length===1?_secOrder[0]:'';
     if(_secOrder.length<2)_secOrder=[];
   }
-  const _ordered=_secOrder.length?_secOrder.flatMap(t=>[{__sec:t},..._byType.get(t)]):hits;
+  // 타입별 '더보기'(2026-09-21) — 최근 검색·온보딩 검색(5칸)은 자르지 않는다(원래 짧다).
+  const _capped=(isRecent||obSearch)?null:_srCapSection;
+  const _ordered=_secOrder.length
+    ?_secOrder.flatMap(t=>[{__sec:t},...(_capped?_capped(t,_byType.get(t)):_byType.get(t))])
+    :((_capped&&hits.length)?_capped(hits[0].type,hits):hits);
   // 클릭 로그용 순위 — "몇 번째에 있던 걸 골랐나"는 랭킹이 맞았는지 판단하는 핵심 신호다.
   // 섹션 헤더는 세지 않고 실제 항목만 0부터 센다(사용자 눈에 보이는 순서와 같게).
-  {let _r=0;const _t=_ordered.filter(x=>!x.__sec).length;
-   _ordered.forEach(x=>{if(!x.__sec){x._rank=_r++;x._total=_t;}});}
+  {let _r=0;const _t=_ordered.filter(x=>!x.__sec&&!x.__more).length;
+   _ordered.forEach(x=>{if(!x.__sec&&!x.__more){x._rank=_r++;x._total=_t;}});}
   _ordered.forEach(h=>{
     if(h.__sec){
       const lb=document.createElement('div');lb.className='sr-sec-label';lb.dataset.type=h.__sec;
       lb.textContent=(_secLabel[h.__sec]||{})[currentLang==='ko'?'ko':'en']||h.__sec;
       res.appendChild(lb);return;
     }
+    if(h.__more){res.appendChild(_makeSearchMoreRow(h.__more,h.rest));return;}
     const div=_makeSearchItem(h,res,mobSearch,obSearch);
     res.appendChild(div);
   });
@@ -4732,6 +4827,8 @@ function doSearch(q){
   const mobSearch=!obSr&&!msOpen&&isMob()&&document.getElementById('tabbar').classList.contains('search-mode');
   const res=obSr||(msOpen?document.getElementById('msheet-body'):(mobSearch?document.getElementById('mob-sr'):document.getElementById('search-results')));
   q=q.trim();_curSearchQ=q;
+  _srResetLimits(q); // 검색어가 바뀌었을 때만 '더보기'로 늘려둔 양을 되돌린다
+  _srSongTotal=0;    // 곡 블록이 이번 패스에서 안 돌 수도 있다(온보딩 검색·1글자) — 지난 값이 남으면 헛더보기가 생긴다
   if(!q){
     const recentHits=_resolveRecentSearches();
     // 빈 화면(2026-08-31, 검색 확장 3단계) — X가 검색창을 열면 트렌드를 보여주는 이유와 같다:
@@ -4852,7 +4949,8 @@ function doSearch(q){
       if(songHits.length>400)break; // 너무 흔한 단어에서 전체 순회를 계속하지 않게
     }
     songHits.sort((a,b)=>(a.sc-b.sc)||(b.s.isTitle-a.s.isTitle)||a.s.title.localeCompare(b.s.title,'ko'));
-    songHits.slice(0,8).forEach(({s,sc})=>{
+    _srSongTotal=songHits.length; // 렌더가 "몇 개 더 있는지"를 알아야 더보기 줄을 붙인다
+    songHits.slice(0,_srCap('song')).forEach(({s,sc})=>{
       const ownerA=s.ownerType==='member'?s.owner:null;
       const pos=ownerA?ownerA._worldPos:(bubbleMeshes.find(b=>b.ko===s.owner)?.mesh.position.clone());
       if(!pos)return; // 행성이 아직 안 만들어졌으면(로딩 중) 건너뜀
@@ -5172,6 +5270,10 @@ function _msApplyFilter(){
     el.hidden=!!keep&&!keep.has(el.dataset.type);
   });
   _msBody.querySelectorAll('.sr-sec-label[data-type]').forEach(el=>{
+    el.hidden=!!keep&&!keep.has(el.dataset.type);
+  });
+  // 더보기 줄도 자기 타입을 따라간다(2026-09-21) — 안 그러면 '아티스트' 탭 밑에 "영상 더보기"가 남는다
+  _msBody.querySelectorAll('.sr-more[data-type]').forEach(el=>{
     el.hidden=!!keep&&!keep.has(el.dataset.type);
   });
 }
@@ -10811,10 +10913,13 @@ async function _openSongVideos(title,owner,songMeta){
   document.getElementById('gc-track-videos-title').textContent=title;
   _fillSongMeta(title,songMeta,myReq); // 앨범커버+아티스트·앨범·연도 헤더(songMeta 없으면 숨김)
   tabsEl.classList.add('hidden');tabsEl.innerHTML='';
+  document.getElementById('gc-track-videos-actions')?.classList.add('hidden');
   listEl.innerHTML=`<div class="tvf-empty">${currentLang==='ko'?'불러오는 중…':'Loading…'}</div>`;
   overlay.classList.add('open');_bringToFront(overlay); // 곡→영상 오버레이 열리면 맨 위(그 위 재생 플레이어는 또 위로)
   const like=`%${_titleNorm(title)}%`;
-  const COLS='id,title,thumb,category,is_short,group_ko,cover_of_members,cover_of_groups,content_flag,published_at';
+  // view_count·duration_sec 추가(2026-09-21) — 이 목록만 썸네일+제목뿐이라 같은 영상인데도 검색 결과
+  // (_fmtVidMeta로 "날짜 · 조회수"를 찍는다)와 표기가 갈렸다. 컬럼 2개라 조회 비용은 사실상 그대로.
+  const COLS='id,title,thumb,category,is_short,group_ko,cover_of_members,cover_of_groups,content_flag,published_at,view_count,duration_sec';
   // 그룹/멤버 카드 영상 그리드와 동일한 노출 조건(무관/보류/숨김 제외)
   const _excl=q=>q.or('content_flag.is.null,content_flag.neq.무관').or('content_flag.is.null,content_flag.neq.보류').or('content_flag.is.null,content_flag.neq.hidden');
   // 원곡: 주인 채널 영상 + 주인이 게스트(with_groups)로 나온 영상
@@ -10824,8 +10929,10 @@ async function _openSongVideos(title,owner,songMeta){
   // 커버: 이 주인이 "원곡자"로 태깅된 다른 아티스트 영상 — 커버 조회 키는 _coverOfQueryKeys 한 곳에서만 만든다
   const{personKeys,groupKey}=_coverOfQueryKeys(gko,memberKo);
   const coverQs=[];
-  personKeys.forEach(k=>coverQs.push(_excl(sb.from(_YT_TABLE).select(COLS).contains('cover_of_members',[k])).ilike('title_norm',like).limit(50)));
-  if(groupKey)coverQs.push(_excl(sb.from(_YT_TABLE).select(COLS).contains('cover_of_groups',[groupKey])).ilike('title_norm',like).limit(50));
+  // ⚠️ 커버 쿼리엔 정렬이 없었다(2026-09-21 수정) — 원곡만 published_at desc라, 전체 탭에서 원곡 뒤에
+  //    무순서 커버가 최대 50개 붙어 "스크롤할수록 뒤죽박죽"으로 보였다. 원곡과 같은 기준으로 맞춘다.
+  personKeys.forEach(k=>coverQs.push(_excl(sb.from(_YT_TABLE).select(COLS).contains('cover_of_members',[k])).ilike('title_norm',like).order('published_at',{ascending:false}).limit(50)));
+  if(groupKey)coverQs.push(_excl(sb.from(_YT_TABLE).select(COLS).contains('cover_of_groups',[groupKey])).ilike('title_norm',like).order('published_at',{ascending:false}).limit(50));
   let settled;
   try{settled=await Promise.all([origP,...coverQs].map(q=>q.then(r=>r,()=>({data:null}))));}
   catch(e){settled=null;}
@@ -10837,41 +10944,121 @@ async function _openSongVideos(title,owner,songMeta){
   const coverSeen=new Set();
   // 원곡 목록에 이미 있는 영상은 커버서 제외(주인 채널 자체 커버 영상 등이 양쪽에 걸릴 때 중복 방지)
   const cover=_filterBannedVideos(coverRs.flatMap(r=>(r&&r.data)||[])).filter(v=>!origSeen.has(v.id)&&!coverSeen.has(v.id)&&coverSeen.add(v.id));
-  _songVid={gko,orig,cover,tab:'all'};
+  _songVid={gko,orig,cover,tab:'all',fmt:'all',sort:'latest',rows:[]};
   _renderSongVideoTabs();
+}
+// 형식 칩(2026-09-21) — 값은 그룹/멤버 카드 영상 탭과 같은 DB category 그대로 쓴다.
+// ⚠️ 'cover'는 칩에 넣지 않는다 — 이 시트엔 이미 "원곡/커버"(cover_of 태깅 기준) 탭이 있어서 같은
+//    낱말이 두 가지를 뜻하게 된다. 칩은 좁히기용일 뿐이라, 칩에 없는 형식도 '전체'에선 그대로 보인다.
+const _TVF_FMTS=[['mv','MV','MV'],['live','무대','Performance'],['short','쇼츠','Shorts'],['variety','예능','Variety'],['show','드라마','Show']];
+function _tvfFmt(v){return _isShortV(v)?'short':(v.category||'other');}
+function _tvfVidUrl(v){return _isShortV(v)?`https://www.youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;}
+// 라이트박스 playlist 항목 — 다른 목록(컬렉션·모아보기)과 같은 모양으로 맞춰 길이·조회수·날짜가
+// 플레이어 쪽에서도 그대로 쓰인다.
+function _tvfPlaylistItem(v){
+  return{t:v.title,u:_tvfVidUrl(v),thumb:v.thumb,pa:v.published_at?.slice(0,10),
+    vc:v.view_count,dur:v.duration_sec,groupKo:v.group_ko,_apiId:v.id,_apiGroupKo:v.group_ko};
 }
 function _renderSongVideoTabs(){
   const st=_songVid;if(!st)return;
   const tabsEl=document.getElementById('gc-track-videos-tabs');
-  if(!st.cover.length){tabsEl.classList.add('hidden');st.tab='all';} // 커버 없으면 토글 숨김(기존 모습)
-  else{
-    tabsEl.classList.remove('hidden');tabsEl.innerHTML='';
-    [['all',currentLang==='ko'?'전체':'All'],['orig',currentLang==='ko'?'원곡':'Original'],['cover',currentLang==='ko'?'커버':'Covers']].forEach(([k,lbl])=>{
-      const b=document.createElement('button');b.className='tvf-tab'+(st.tab===k?' active':'');b.textContent=lbl;
-      b.addEventListener('click',()=>{if(st.tab===k)return;st.tab=k;_renderSongVideoTabs();});
-      tabsEl.appendChild(b);
-    });
-  }
-  const rows=st.tab==='orig'?st.orig:st.tab==='cover'?st.cover:[...st.orig,...st.cover];
+  const actEl=document.getElementById('gc-track-videos-actions');
   const listEl=document.getElementById('gc-track-videos-list');
-  if(!rows.length){listEl.innerHTML=`<div class="tvf-empty">${currentLang==='ko'?'관련 영상이 없어요':'No matching videos'}</div>`;return;}
+  const _ko=currentLang==='ko';
+  if(!st.cover.length)st.tab='all'; // 커버가 없으면 원곡/커버 구분 자체가 없다
+  const base=st.tab==='orig'?st.orig:st.tab==='cover'?st.cover:[...st.orig,...st.cover];
+  const fmtCnt={};base.forEach(v=>{const f=_tvfFmt(v);fmtCnt[f]=(fmtCnt[f]||0)+1;});
+  const fmts=_TVF_FMTS.filter(([k])=>fmtCnt[k]);
+  if(st.fmt!=='all'&&!fmtCnt[st.fmt])st.fmt='all'; // 탭을 바꿔 그 형식이 사라졌으면 전체로 되돌린다
+  // ── 탭 줄: [전체/원곡/커버] + 구분선 + [형식 칩]. 둘 다 없을 일이 흔해서(커버 없고 형식 한 종류)
+  //    그때는 줄 자체를 감춘다 — 고를 게 하나뿐인 필터는 화면만 먹는다.
+  tabsEl.innerHTML='';
+  const showOC=st.cover.length>0,showFmt=fmts.length>=2;
+  if(!showOC&&!showFmt)tabsEl.classList.add('hidden');
+  else{
+    tabsEl.classList.remove('hidden');
+    const mk=(lbl,active,on)=>{
+      const b=document.createElement('button');b.type='button';
+      b.className='tvf-tab'+(active?' active':'');b.textContent=lbl;
+      b.addEventListener('click',on);tabsEl.appendChild(b);
+    };
+    if(showOC)[['all',_ko?'전체':'All'],['orig',_ko?'원곡':'Original'],['cover',_ko?'커버':'Covers']].forEach(([k,lbl])=>{
+      mk(lbl,st.tab===k,()=>{if(st.tab===k)return;st.tab=k;_renderSongVideoTabs();});
+    });
+    if(showFmt){
+      if(showOC){const sp=document.createElement('span');sp.className='tvf-tab-sep';tabsEl.appendChild(sp);}
+      mk(_ko?'모든 형식':'All types',st.fmt==='all',()=>{if(st.fmt==='all')return;st.fmt='all';_renderSongVideoTabs();});
+      fmts.forEach(([k,ko,en])=>mk((_ko?ko:en)+' '+fmtCnt[k],st.fmt===k,()=>{if(st.fmt===k)return;st.fmt=k;_renderSongVideoTabs();}));
+    }
+    _enableDragScroll(tabsEl); // 가로 목록은 드래그로도 넘길 수 있어야 한다(프로젝트 공통)
+    // 방금 고른 칩이 화면 밖에 반쯤 걸쳐 있으면 "눌렀는데 어디가 켜졌는지" 안 보인다 — 보이는 데까지만
+    // 최소로 민다(scrollIntoView는 바깥 스크롤까지 건드릴 수 있어 직접 계산).
+    const _acts=tabsEl.querySelectorAll('.tvf-tab.active'),_last=_acts[_acts.length-1];
+    if(_last&&tabsEl.scrollWidth>tabsEl.clientWidth){
+      const l=_last.offsetLeft,r=l+_last.offsetWidth;
+      if(r>tabsEl.scrollLeft+tabsEl.clientWidth)tabsEl.scrollLeft=r-tabsEl.clientWidth+8;
+      else if(l<tabsEl.scrollLeft)tabsEl.scrollLeft=Math.max(0,l-8);
+    }
+  }
+  // ── 정렬: 최신순(기존 동작) ⇄ 조회수순. 전체 탭에서는 원곡 묶음과 커버 묶음의 **순서를 유지한 채**
+  //    각 묶음 안에서만 정렬한다 — 섞어버리면 "이 곡의 원본 영상"이 남의 커버 사이로 사라진다.
+  const cmp=st.sort==='views'
+    ?(a,b)=>(b.view_count||0)-(a.view_count||0)
+    :(a,b)=>String(b.published_at||'').localeCompare(String(a.published_at||''));
+  const filt=arr=>(st.fmt==='all'?arr.slice():arr.filter(v=>_tvfFmt(v)===st.fmt)).sort(cmp);
+  const rows=st.tab==='all'?[...filt(st.orig),...filt(st.cover)]:filt(base);
+  st.rows=rows;
+  if(actEl){
+    if(!rows.length)actEl.classList.add('hidden');
+    else{
+      actEl.classList.remove('hidden');
+      document.getElementById('gc-track-videos-play-lbl').textContent=(_ko?'전체 재생':'Play all')+' '+rows.length;
+      document.getElementById('gc-track-videos-sort').textContent=st.sort==='views'?(_ko?'조회수순':'Most viewed'):(_ko?'최신순':'Newest');
+    }
+  }
+  if(!rows.length){listEl.innerHTML=`<div class="tvf-empty">${_ko?'관련 영상이 없어요':'No matching videos'}</div>`;return;}
   const coverIds=new Set(st.cover.map(v=>v.id));
-  const _vidUrl=v=>_isShortV(v)?`https://www.youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;
-  const playlist=rows.map(v=>({t:v.title,u:_vidUrl(v),thumb:v.thumb,pa:v.published_at?.slice(0,10)}));
+  const playlist=rows.map(_tvfPlaylistItem);
   listEl.innerHTML='';
   rows.forEach((v,i)=>{
     const item=document.createElement('div');item.className='tvf-item';
+    // 썸네일 래퍼 — 재생시간 배지를 썸네일 밑변에 붙이기 위한 것(다른 목록은 형제 나열 구조라 JS로
+    // 높이를 재야 하지만, 여기는 이 시트 전용 마크업이라 래퍼 하나로 CSS만으로 붙는다).
+    const wrap=document.createElement('span');wrap.className='tvf-thumb-wrap';
     const img=document.createElement('img');img.className='tvf-thumb';img.loading='lazy';
     img.src=v.thumb||`https://i.ytimg.com/vi/${v.id}/mqdefault.jpg`;img.alt='';
+    wrap.appendChild(img);
+    const durTxt=_fmtDur(v.duration_sec);
+    if(durTxt){const d=document.createElement('span');d.className='tvf-dur';d.textContent=durTxt;wrap.appendChild(d);}
+    const txt=document.createElement('div');txt.className='tvf-txt';
     const t=document.createElement('div');t.className='tvf-title';
     // 전체 탭에선 커버 영상 앞에 "커버" 칩을 붙여 원곡과 구분
-    if(st.tab==='all'&&coverIds.has(v.id)){const chip=document.createElement('span');chip.className='tvf-cover-chip';chip.textContent=currentLang==='ko'?'커버':'Cover';t.appendChild(chip);}
+    if(st.tab==='all'&&coverIds.has(v.id)){const chip=document.createElement('span');chip.className='tvf-cover-chip';chip.textContent=_ko?'커버':'Cover';t.appendChild(chip);}
     t.appendChild(document.createTextNode(v.title));
-    item.appendChild(img);item.appendChild(t);
-    item.addEventListener('click',()=>openLightbox(_vidUrl(v),_isShortV(v),playlist,i,{groupKo:st.gko}));
+    txt.appendChild(t);
+    // 메타: (다른 아티스트면) 그룹 · 업로드일 · 조회수. 같은 그룹 영상에까지 그룹명을 반복해 찍으면
+    // 목록 전체가 같은 단어로 도배되므로 주인과 다를 때만 넣는다.
+    const gLbl=(v.group_ko&&v.group_ko!==st.gko)?_gLabelKo(v.group_ko):'';
+    const metaTxt=[gLbl,_fmtVidMeta(v.published_at,v.view_count)].filter(Boolean).join(' · ');
+    if(metaTxt){const m=document.createElement('div');m.className='tvf-meta';m.textContent=metaTxt;txt.appendChild(m);}
+    item.appendChild(wrap);item.appendChild(txt);
+    item.addEventListener('click',()=>openLightbox(_tvfVidUrl(v),_isShortV(v),playlist,i,{groupKo:st.gko}));
     listEl.appendChild(item);
   });
 }
+document.getElementById('gc-track-videos-play')?.addEventListener('click',e=>{
+  e.stopPropagation();
+  const st=_songVid;if(!st||!st.rows||!st.rows.length)return;
+  const rows=st.rows,first=rows[0];
+  // forceBrowseMode:true — 쇼츠가 섞여 있어도 목록 순서대로 이어보게(컬렉션·모아보기와 같은 규칙)
+  openLightbox(_tvfVidUrl(first),_isShortV(first),rows.map(_tvfPlaylistItem),0,{groupKo:st.gko},false,true);
+});
+document.getElementById('gc-track-videos-sort')?.addEventListener('click',e=>{
+  e.stopPropagation();
+  const st=_songVid;if(!st)return;
+  st.sort=st.sort==='views'?'latest':'views';
+  _renderSongVideoTabs();
+});
 document.getElementById('gc-track-videos-close')?.addEventListener('click',e=>{e.stopPropagation();document.getElementById('gc-track-videos-overlay').classList.remove('open');});
 document.getElementById('gc-track-videos-overlay')?.addEventListener('click',e=>{if(e.target===e.currentTarget)e.currentTarget.classList.remove('open');});
 

@@ -2143,6 +2143,14 @@
   .sr-sec-label:first-child{padding-top:6px;}
   /* 검색 결과가 늦게 도착하는 섹션(영상)의 로딩 표시 */
   .sr-loading{padding:8px 13px;font-size:11px;color:rgba(140,160,200,0.45);}
+  /* 타입별 더보기 줄(2026-09-21) — 섹션 끝에 붙는다. ⚠️ `.sr-item`을 주지 않는다(섹션 헤더와 같은
+     이유: 키보드 화살표가 여기서 멈춘다). 항목이 아니라 "이 섹션을 늘리는 조작"이라 톤도 한 단계 죽인다. */
+  .sr-more{display:block;width:calc(100% - 20px);margin:3px 10px 5px;padding:8px 0;background:rgba(255,255,255,0.04);border:none;border-radius:9px;
+    font-family:inherit;font-size:11.5px;font-weight:600;color:rgba(170,192,238,0.72);cursor:pointer;transition:background .13s,color .13s;}
+  .sr-more:hover{background:rgba(255,255,255,0.08);color:rgba(200,218,255,0.9);}
+  .sr-more:disabled{cursor:default;color:rgba(150,170,210,0.45);}
+  #msheet-body .sr-more[hidden]{display:none!important;}
+  #msheet-body .sr-more{margin:5px 16px 8px;width:calc(100% - 32px);padding:10px 0;font-size:12.5px;}
   /* ── Responsive: desktop panel positions ────────── */
   @media(min-width:769px){
     #tabbar{display:none;}
@@ -2455,11 +2463,24 @@
   #gc-track-videos-title{font-size:14px;font-weight:700;color:#e4ecff;line-height:1.32;padding-right:24px;}
   #gc-track-videos-meta{font-size:var(--fz-meta);color:rgba(165,185,225,0.72);margin-top:3px;line-height:1.3;padding-right:24px;}
   #gc-track-videos-meta.hidden{display:none;}
-  #gc-track-videos-tabs{display:flex;gap:6px;margin-top:12px;flex-shrink:0;}
+  /* 탭 줄에 원곡/커버 + 형식 칩이 같이 오면 좁은 시트에선 넘친다 — 가로 스크롤(JS가 _enableDragScroll로
+     드래그도 열어준다). 스크롤바는 숨기고 스크롤만 남긴다(다른 가로 목록과 같은 처리). */
+  #gc-track-videos-tabs{display:flex;gap:6px;margin-top:12px;flex-shrink:0;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;}
+  #gc-track-videos-tabs::-webkit-scrollbar{display:none;}
   #gc-track-videos-tabs.hidden{display:none;}
-  .tvf-tab{font-size:12px;font-weight:600;color:rgba(190,205,240,0.72);background:rgba(255,255,255,0.06);border:none;border-radius:14px;padding:5px 14px;cursor:pointer;transition:background .13s,color .13s;}
+  .tvf-tab{flex-shrink:0;font-size:12px;font-weight:600;color:rgba(190,205,240,0.72);background:rgba(255,255,255,0.06);border:none;border-radius:14px;padding:5px 14px;cursor:pointer;transition:background .13s,color .13s;font-family:inherit;white-space:nowrap;}
   .tvf-tab.active{background:rgba(120,150,255,0.92);color:#fff;}
+  /* 원곡/커버(어느 쪽 영상인가)와 형식(무엇을 찍은 영상인가)은 서로 다른 축이라 같은 줄에서도 구분선으로 가른다 */
+  .tvf-tab-sep{flex-shrink:0;align-self:center;width:1px;height:16px;background:rgba(140,170,240,0.22);margin:0 3px;}
   .tvf-cover-chip{display:inline-block;margin-right:6px;font-size:10px;font-weight:700;color:#c7d2ff;background:rgba(120,150,255,0.2);border-radius:6px;padding:1px 5px;vertical-align:middle;}
+  /* 액션 줄(2026-09-21) — 전체 재생 + 정렬 토글 */
+  #gc-track-videos-actions{display:flex;align-items:center;gap:8px;margin-top:10px;flex-shrink:0;}
+  #gc-track-videos-actions.hidden{display:none;}
+  .tvf-play{display:inline-flex;align-items:center;gap:7px;background:rgba(120,150,255,0.92);color:#fff;border:none;border-radius:12px;padding:8px 14px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap;}
+  .tvf-play:hover{background:rgba(134,162,255,0.96);}
+  .tvf-play-ic{font-size:10px;line-height:1;}
+  .tvf-sort{margin-left:auto;background:rgba(255,255,255,0.06);color:rgba(190,205,240,0.78);border:none;border-radius:12px;padding:8px 12px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap;}
+  .tvf-sort:hover{background:rgba(255,255,255,0.1);}
   #gc-track-videos-list{margin-top:14px;overflow-y:auto;display:flex;flex-direction:column;gap:4px;min-height:0;flex:1;}
   /* ── 조합 패널(2026-09-02) — 앵커 없는 대등 멤버 조합. 고정 높이(#3 패턴)+내부 스크롤. tvf-* 재사용 ── */
   #combo-overlay{position:fixed;inset:0;z-index:112;display:none;align-items:flex-end;justify-content:center;}
@@ -2510,10 +2531,15 @@
   .ttd-txt{display:flex;flex-direction:column;gap:1px;min-width:0;}
   .ttd-main{font-size:13px;font-weight:600;color:#e4ecff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   .ttd-note{font-size:11px;color:rgba(150,175,235,0.6);}
-  .tvf-item{display:flex;align-items:center;gap:10px;padding:6px;border-radius:10px;cursor:pointer;transition:background .13s;}
+  .tvf-item{display:flex;align-items:flex-start;gap:10px;padding:6px;border-radius:10px;cursor:pointer;transition:background .13s;}
   .tvf-item:hover{background:rgba(255,255,255,0.06);}
-  .tvf-thumb{width:88px;flex-shrink:0;aspect-ratio:16/9;object-fit:cover;border-radius:7px;background:rgba(255,255,255,0.06);}
+  /* 썸네일 래퍼 — 재생시간 배지를 붙이기 위한 것. 톤은 .gc-ch-dur/.feed-card-dur와 동일(같은 정보, 같은 생김새) */
+  .tvf-thumb-wrap{position:relative;width:88px;flex-shrink:0;line-height:0;}
+  .tvf-thumb{width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:7px;background:rgba(255,255,255,0.06);display:block;}
+  .tvf-dur{position:absolute;right:4px;bottom:4px;z-index:2;font-size:10px;font-weight:600;padding:1px 4px;border-radius:3px;letter-spacing:0.2px;background:rgba(8,11,20,0.78);color:rgba(240,246,255,0.94);pointer-events:none;line-height:1.35;}
+  .tvf-txt{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px;} /* min-width:0 — 긴 제목이 썸네일을 밀지 않게 */
   .tvf-title{font-size:var(--fz-body);color:rgba(210,225,255,0.85);line-height:1.35;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;}
+  .tvf-meta{font-size:var(--fz-meta);color:rgba(160,182,224,0.66);line-height:1.3;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
   .tvf-empty{font-size:12px;color:rgba(155,178,228,0.5);text-align:center;padding:20px 0;}
   .gc-discog-track-no{flex-shrink:0;width:16px;color:rgba(130,150,205,0.51);font-size:11px;text-align:right;font-variant-numeric:tabular-nums;}
   .gc-discog-track-name{flex:1;min-width:0;color:rgba(200,215,250,0.82);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
