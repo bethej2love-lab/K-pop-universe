@@ -480,7 +480,7 @@ diff가 난다(첫 실행에서 실제로 그렇게 나와 되돌렸다).
 - 현재 실패 6건: `chrome-reveal` · `disco-artifacts` · `disp-group`(en 폴백) · `junk-exempt` · `member-cutoff`(폴백 26명/90명 기대) · `tag-modal-gko`. **전부 이번 세션 작업과 무관한 기존 실패.**
 - ⚠️ 이게 위험한 이유: `9c402c56`에서 부팅 차단 문법오류 가드(`tests/syntax.test.js`)를 넣었는데, **빨간불이 상시면 그 가드가 울려도 묻힌다.** [[feedback_verify_site_boots]]
 
-### [보류] 앱 쪽 `region` 토글 UI — 사용자 결정 완료, 구현 미착수
+### ~~[보류] 앱 쪽 `region` 토글 UI~~ → **이미 구현돼 있었다**(2026-09-16 `_isJpRelease` + `_groupIsKoBased`. 카드 ⋮ 메뉴의 "일본판 보기"가 그것 — 항목만 갱신이 안 됐다. 중국어판을 뺀 것도 의도된 결정)
 
 - **결정**: 일본어·중국어판은 **수집은 하되 디스코그래피 기본 노출에서 제외**하고, 각 그룹/멤버 카드 디스코그래피 섹션의 **⋮ 케밥 메뉴에서 "일본어·중국어판 포함"을 눌러야 보이게**. (세그먼트 컨트롤을 쓸지 등 세부 UI는 차후 결정)
 - **배관은 이미 다 깔려 있다** — `region`이 `disco/g/*.json`까지 실려 나가 앱에 도착하는데 `_renderDiscography`가 안 읽을 뿐. 케밥에 같은 패턴의 토글이 이미 둘 있다(`index.html:222-223`의 `✓ OST·피처링 포함` / `✓ 솔로만 보기`) — `hasOst`/`hasUnit`으로 조건부 노출 + `currentList()` 필터 + `updateSortMenuUI()` ✓. **접점 3군데로 동일하게 붙이면 된다.**
