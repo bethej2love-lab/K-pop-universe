@@ -71,6 +71,8 @@ ctx.globalThis=ctx;
 vm.createContext(ctx);
 vm.runInContext(line(admin,/^const _YT_TRANSIENT=/m,'_YT_TRANSIENT'),ctx);
 vm.runInContext(line(admin,/^const _ytQuotaReason=/m,'_ytQuotaReason'),ctx);
+// 회차 호출 예산(2026-09-21) — _ytApiGet이 호출 수를 세므로 그 변수도 같이 실어야 한다.
+vm.runInContext(line(admin,/^let _ytCalls=/m,'_ytCalls'),ctx);
 vm.runInContext(slice(admin,/async function _ytApiGet\(/,'_ytApiGet'),ctx);
 
 const mkRes=(status,body)=>({ok:status>=200&&status<300,status,json:async()=>body});
