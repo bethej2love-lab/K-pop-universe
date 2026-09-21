@@ -24,7 +24,11 @@ const ck = (c, msg) => { console.log((c ? '✓ ' : '✗ 실패: ') + msg); if (!
 ck(/<html[^>]*class="[^"]*\bchrome-wait\b[^"]*"/.test(html), '<html>에 chrome-wait 초기 클래스');
 
 // ── CSS: chrome-wait가 탭바·줌을 숨긴다(booting 풀린 뒤에도) ──
-const cwRule = css.match(/html\.chrome-wait[^{]*\{[^}]*\}/);
+// ⚠️ `html.chrome-wait` 첫 매치를 쓰면 안 된다(2026-09-21 수정) — 나중에 추가된
+//    `html.chrome-wait #footprint-bar{display:none!important;}`가 먼저 걸려서, 정작 검사하려던
+//    탭바·줌 규칙 대신 그걸 보고 2건이 빨개졌다(코드는 멀쩡했고 CI가 19일간 죽어 있었다).
+//    보려는 규칙을 셀렉터로 콕 집는다.
+const cwRule = css.match(/html\.chrome-wait #tabbar[^{]*\{[^}]*\}/);
 ck(!!cwRule, 'CSS에 html.chrome-wait 규칙 존재');
 if (cwRule) {
   const sel = css.slice(Math.max(0, cwRule.index - 120), cwRule.index + cwRule[0].length);

@@ -47,7 +47,11 @@ const cutSrc = /function _memberVideoCutoff\(memberKo,ko\)\{[\s\S]*?\n  \}/.exec
 ok(!!cutSrc, '_memberVideoCutoff를 못 찾음');
 if (cutSrc) {
   const body = cutSrc[0];
-  const iLeft = body.indexOf('if(leftHere)return');
+  // ⚠️ `if(leftHere)return`을 그대로 찾지 않는다(2026-09-21 수정) — 2026-09-04에 탈퇴일 해석이
+  //    shared.js의 _leftCutoffDate 한 곳으로 통일되면서 `const _lc=_leftCutoffDate(leftHere);`
+  //    형태로 바뀌었다. 코드는 더 정확해졌는데 이 줄만 빨개져 CI가 19일간 죽어 있었다.
+  //    여기서 볼 건 "탈퇴일 분기가 가장 먼저 온다"는 순서다.
+  const iLeft = body.indexOf('_leftCutoffDate(leftHere)');
   const iEnd = body.indexOf('_groupEndDate(ko)');
   const iOver = body.indexOf('_groupIsOver(ko)');
   const iBlock = body.lastIndexOf('return{active:false,left:null}');
@@ -98,8 +102,12 @@ ARTISTS.forEach(a => grps(a).forEach(g => {
 // disbanded 데이터가 지워졌거나 폴백이 깨진 것.
 ok(buckets.blocked.length <= 15,
   `차단 유지 멤버가 ${buckets.blocked.length}명 — 폴백이 깨졌거나 disbanded가 지워짐: ${buckets.blocked.slice(0, 8).join(', ')}`);
-ok(buckets.end + buckets.over >= 90,
-  `폴백으로 살아나는 멤버가 ${buckets.end + buckets.over}명뿐 — 90명 이상이어야 함`);
+// ⚠️ 하한을 90 → 20으로 내렸다(2026-09-21). 이 숫자는 **데이터가 좋아질수록 줄어드는 지표**다 —
+//    탈퇴일(left)이 채워진 멤버가 늘면 그만큼 폴백까지 내려올 일이 없어진다(실측: left 509명 ·
+//    폴백 26명 · 차단 5명). 90은 탈퇴일 수집 전 기준이라 그 뒤로 계속 빨간불이었다.
+//    진짜 감시 지표는 바로 위의 `blocked.length <= 15`다(폴백이 깨지면 그쪽이 폭증한다).
+ok(buckets.end + buckets.over >= 20,
+  `폴백으로 살아나는 멤버가 ${buckets.end + buckets.over}명뿐 — 20명 이상이어야 함(폴백 경로 자체가 죽었는지 확인)`);
 
 // 이번에 채운 해체일이 남아 있는가(다른 세션이 지우면 99명이 도로 막힌다)
 for (const [ko, d] of Object.entries({

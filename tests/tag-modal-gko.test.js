@@ -47,7 +47,11 @@ need(/notice\.style\.display='';/.test(admin) && /실제 소속은/.test(admin),
 
 // ── ③ 저장 시 비교 기준이 '카드 그룹'이 아니라 '실제 소속'인가 ───────────────
 need(/const _curGko=_vidTagTarget\.realGko\|\|ko;/.test(admin), '저장 시 비교 기준을 실제 소속으로 잡음');
-need(/if\(groupKoInput&&groupKoInput!==_curGko\)\{/.test(admin),
+// ⚠️ 조건문 전체를 정확히 매칭하지 않는다(2026-09-21 수정) — 나중에 일괄 이동(_bulkMoveGroup)
+//    분기가 OR로 붙으면서 `if(groupKoInput&&groupKoInput!==_curGko){`가 더는 그대로가 아니게 됐고,
+//    코드는 멀쩡한데 이 줄만 빨개져 CI가 19일간 빨간불이었다. 여기서 지켜야 할 건 "무엇과 비교하는가"
+//    하나뿐이고, 옛 비교가 남았는지는 바로 아래 줄이 따로 본다.
+need(/if\(groupKoInput&&[^\n]*groupKoInput!==_curGko\)/.test(admin),
   '  · group_ko 갱신 여부를 _curGko와 비교(예전엔 ko와 비교해서 판정이 뒤집혔다)');
 need(!/if\(groupKoInput&&groupKoInput!==ko\)\{/.test(admin),
   '  · 옛 비교(ko 기준)가 남아있지 않음');

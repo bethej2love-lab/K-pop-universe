@@ -34,7 +34,11 @@ for (const k of ['닥터킴의', '최강야구', '띵곡팔이'])
 // ── 면제 판단이 한 곳인가 ────────────────────────────────────────────────────
 need(/function _shouldJunkFlag\(title,sourceTier\)\{/.test(html), '면제 판단이 _shouldJunkFlag 한 함수에 있음');
 const body = (html.match(/function _shouldJunkFlag\(title,sourceTier\)\{[\s\S]*?\n\}/) || [''])[0];
-need(/sourceTier==='official'\)return false/.test(body), "  · source_tier==='official'이면 무관 처리 안 함");
+// ⚠️ 정확 매칭하지 않는다(2026-09-21 수정) — 나중에 'grpsub'(그룹 공식 서브채널)이 OR로 붙으면서
+//    `sourceTier==='official')return false`가 그대로가 아니게 됐다. 면제 대상이 **늘어난** 올바른
+//    변경인데 테스트만 빨개져 CI가 19일간 죽어 있었다. 여기서 볼 건 "공식이면 면제한다"는 사실이다.
+need(/sourceTier==='official'[^\n]*\)return false/.test(body), "  · source_tier==='official'이면 무관 처리 안 함");
+need(/sourceTier==='grpsub'/.test(body), "  · 그룹 공식 서브채널(grpsub)도 같이 면제");
 need(/_isJunkVideoTitle\(title\)/.test(body), '  · 그 외에는 기존대로 키워드 검사');
 
 // ── 세 경로가 전부 그 함수를 통과하는가 ──────────────────────────────────────

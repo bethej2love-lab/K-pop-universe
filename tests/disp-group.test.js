@@ -28,7 +28,12 @@ if (m) {
   ok(gEn(beast) === 'BEAST', `en: dispEn 우선 (got ${gEn(beast)})`);
   ok(gKo(plain) === '아이브', `ko: 오버라이드 없으면 ko (got ${gKo(plain)})`);
   ok(gEn(plain) === 'IVE', `en: 오버라이드 없으면 en (got ${gEn(plain)})`);
-  ok(gEn({ ko: '솔로' }) === '솔로', 'en인데 en도 dispEn도 없으면 ko로 폴백');
+  // ⚠️ 예시를 '솔로'에서 일반 그룹으로 바꿨다(2026-09-21) — '솔로'는 그 뒤 **특수 케이스**가 됐다.
+  //    소속 없는 아티스트의 placeholder라 화면에 그대로 찍히면 안 되어 빈 문자열을 돌려준다.
+  //    폴백 규칙 자체를 보려던 케이스인데 하필 그 예외를 예시로 써서 CI가 계속 빨간불이었다.
+  ok(gEn({ ko: '카라' }) === '카라', 'en인데 en도 dispEn도 없으면 ko로 폴백');
+  ok(gEn({ ko: '솔로' }) === '' && gKo({ ko: '솔로' }) === '',
+    "'솔로' placeholder는 어느 언어에서도 화면에 찍히지 않음(빈 문자열)");
   ok(gKo(null) === '' && gEn(undefined) === '', 'null/undefined는 빈 문자열');
   // dispKo만 있고 dispEn이 없는 경우 en에서 en(원래 그룹명)이 아니라 dispKo로 떨어져야 한다 —
   // 표기를 갈아끼우기로 한 이상 영문에서만 옛 이름이 아닌 새 이름이 튀어나오면 안 됨.
