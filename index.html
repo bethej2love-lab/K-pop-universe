@@ -48,6 +48,10 @@
 </script>
 
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<!-- Supabase 오리진 preconnect(2026-09-21) — 첫 쿼리가 DNS+TLS부터 시작하던 걸 없앤다. 실측에서
+     1행짜리 워밍업 쿼리 하나가 713ms였고(웜 상태 137ms), 그 차이의 대부분이 연결 수립 비용이다.
+     ⚠️ crossorigin 필수 — REST 호출이 CORS라, 없으면 연결이 재사용되지 않아 효과가 사라진다. -->
+<link rel="preconnect" href="https://dukgguehegnembimqvkm.supabase.co" crossorigin>
 <link rel="stylesheet" as="style" crossorigin
   href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@1.3.9/dist/web/static/pretendard-dynamic-subset.css">
 <!-- 이 `?v=` 값들과 아래 _ADMIN_JS_VER, sw.js의 CACHE_VERSION은 **손으로 고치지 않는다** —
@@ -3303,7 +3307,9 @@ async function buildUniverse(){
   _perfMark('built');
   _revealUniverse();
   _perfMark('reveal');
-  try{_prefetchFeedTrend();}catch(e){} // Discover Trend를 미리 받아둔다(열자마자 뜨게) — 백그라운드, 논블로킹
+  // Trend 프리페치는 이제 sb 생성 직후(위쪽)에서 이미 시작됐다 — 이 호출은 그때 실패했거나 sb가
+  // 늦게 살아난 경우의 보험이다. 진행 중이면 같은 promise를 돌려주므로 중복 쿼리가 되지 않는다.
+  try{_prefetchFeedTrend();}catch(e){}
   // 연도 링은 리빌(아이맥스 클립) 모션이 끝난 뒤에 만든다 — 리빌 중 큰 링 라인이 클립 가장자리에 걸쳐
   // "화면 오류"처럼 보인다는 제보(2026-09-02). 생성 시점부터 600ms 페이드인(_yearRingsBornAt).
   setTimeout(_buildYearRings,REVEAL.clip+500);
@@ -16116,6 +16122,15 @@ try{
     auth:{flowType:'pkce',persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}
   });
 }catch(e){console.error('Supabase client init failed',e);}
+// ── Discover Trend 프리페치를 **여기서** 건다(2026-09-21) ─────────────────────
+// 예전엔 buildUniverse 맨 끝(_revealUniverse 뒤)이라, 우주 빌드 + _minShow 강제 대기(250~500ms)가
+// 전부 끝난 뒤에야 DNS+TLS부터 시작했다 — 콜드 연결 비용을 우주 빌드와 겹쳐 쓸 수가 없었다
+// (실측: Trend 첫 실행 1,041ms vs 웜 137ms. 정렬 비용은 28ms라 범인이 아니다).
+// 여기서 걸면 데이터 로드·우주 빌드가 도는 동안 백그라운드로 같이 간다.
+// ⚠️ setTimeout 0이 필요하다 — _prefetchFeedTrend 자체는 함수 선언이라 호이스팅되지만, 그 안이
+//    참조하는 _FEED_TREND_TTL·_feedTrendData는 이 줄보다 아래에 있는 const/let이라 지금은 TDZ다.
+//    한 틱 미루면 이 스크립트 블록 평가가 끝난 뒤라 안전하고, 우주 빌드보다는 여전히 훨씬 앞이다.
+setTimeout(()=>{try{_prefetchFeedTrend();}catch(e){}},0);
 // 흔한단어/동명이인 화이트리스트 — 코드에 하드코딩된 _ATM_HASHTAG_ONLY_NAMES(재배포 필요)와 별개로,
 // "동명이인/흔한단어 오염 의심 스캔"에서 admin이 그 자리에서 바로 추가할 수 있게 DB 테이블도 같이 씀
 // (name_match_whitelist, name text primary key). 페이지 로드 시 한 번 받아와 하드코딩 목록과 합쳐서
