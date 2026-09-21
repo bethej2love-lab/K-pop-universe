@@ -203,5 +203,27 @@ let chunkBody = '';
 need(!/[?&]order=/.test(chunkBody), '후보 조회에 order= 가 없음 (있으면 후보가 limit보다 적어질 때 57014로 죽는다)');
 need(/limit=\$\{CHUNK\}/.test(chunkBody), '청크 크기는 limit으로 건다');
 
+// ── 트리거: 시각이 아니라 사건(2026-09-21) ──────────────────────────────────
+// 신규분 승격의 일감은 시간이 지나서가 아니라 **새 영상이 들어와서** 생긴다. 그런데 매시간 cron으로
+// 두면 GitHub schedule 드랍 때문에 실제 간격이 2~5시간이 되고(실측 9/17~9/21 25회), 그 사이 내내
+// 새 쇼츠가 가로로 보인다. 동기화·루틴이 끝난 직후에 붙여서 공백을 수십 초로 줄인 구조를 고정한다.
+{
+  const fresh = fs.readFileSync(path.join(__dirname, '..', '.github', 'workflows', 'shorts-promote-fresh.yml'), 'utf8');
+  need(/on:\s*[\s\S]{0,200}workflow_run:/.test(fresh), '신규분 승격이 workflow_run으로 트리거됨');
+  need(/workflows:\s*\[[^\]]*영상 동기화[^\]]*\]/.test(fresh), '  → 동기화 워크플로 완료에 붙음');
+  need(/workflows:\s*\[[^\]]*매일 루틴[^\]]*\]/.test(fresh), '  → 매일 루틴 완료에도 붙음');
+  need(/types:\s*\[completed\]/.test(fresh), '  → completed 시점(성공·실패 무관, 후보 0이면 몇 초로 끝남)');
+  // schedule은 백업으로만 — 매시간으로 되돌아가면 헛도는 실행이 다시 늘어난다.
+  const freshCron = (fresh.match(/cron:\s*'([^']+)'/) || [])[1] || '';
+  need(/^\S+\s+\S*\/\d+\s/.test(freshCron) || /^\S+\s+\d/.test(freshCron), `  → schedule은 백업 주기만 남김 (${freshCron})`);
+  need(!/cron:\s*'\S+\s+\*\s/.test(fresh), '  → 매시간(cron "* * * *") 발화로 되돌아가지 않음');
+
+  // 백필 쪽은 백로그가 0이라 하루 1회로 낮췄다(실측 2026-09-21: 미처리 0 · 재프로브 0).
+  const backfill = fs.readFileSync(path.join(__dirname, '..', '.github', 'workflows', 'shorts-promote.yml'), 'utf8');
+  const bfCron = (backfill.match(/cron:\s*'([^']+)'/) || [])[1] || '';
+  need(!/\*\/\d+\s+\*\s+\*\s+\*$/.test(bfCron), `백필 스윕이 하루 1회 이하 (${bfCron})`);
+  need(/workflow_dispatch:/.test(backfill), '백필은 수동 실행이 열려 있음(판별기 교체 시 한 번에 따라잡기)');
+}
+
 console.log(pass ? '\n✅ 쇼츠 승격 스윕 테스트 통과' : '\n❌ 쇼츠 승격 스윕 테스트 실패');
 process.exit(pass ? 0 : 1);
