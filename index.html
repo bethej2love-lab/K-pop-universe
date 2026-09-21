@@ -19673,13 +19673,35 @@ function _feedFavTargets(){
 // bias는 myProfile.bias = [{ko, type:'member'|'group', emoji}] 최대 3개.
 // ⚠️ 최애를 하나도 안 정했으면 null을 준다 — 그러면 호출부가 위계를 아예 안 걸고 현행 자연 배치가 된다
 //    ("최애 미지정이면 전부 자연 배치"). 아무도 안 큰 화면과 다 큰 화면은 둘 다 위계가 없는 것과 같다.
-function _feedBiasMatcher(){
+// ── 가로와 쇼츠의 기준을 다르게 준다(2026-09-21, 사용자 요청) ────────────────────
+// 제보: "가로 영상에 비해 쇼츠가 비율 때문에 더 커서 눈에 띄는 경향이 강하다."
+//   · 가로(16:9)는 **최애와 관련된 그룹의 영상이면** 전체폭. 최애가 멤버(카리나)라도 그 소속 그룹
+//     (에스파) 영상 전체가 대상이다 — 그룹 단위 콘텐츠(뮤비·예능)엔 개별 멤버 태그가 잘 안 붙어서,
+//     태깅된 것만 크게 하면 정작 큰 영상이 거의 안 걸린다.
+//   · 쇼츠(9:16)는 **그 멤버가 직접 태깅된 것만** 전체폭. 쇼츠는 2열에서도 이미 충분히 커서,
+//     같은 기준을 쓰면 화면이 통째로 쇼츠 하나가 되는 일이 잦아진다.
+// ⚠️ 멤버 판정에 groupKo를 함께 본다 — memberKos는 **이름만** 담겨 동명이인이 구분되지 않는다
+//    (하니·유나 등). bias 항목엔 groupKo가 있으므로 "이름|그룹"으로 맞춘다. groupKo가 없는 옛
+//    항목만 이름으로 폴백한다.
+function _feedBiasMatchers(){
   const bias=(myProfile&&myProfile.bias)||[];
   if(!bias.length)return null;
-  const gset=new Set(),mset=new Set();
-  bias.forEach(b=>{if(!b||!b.ko)return;((b.type||'member')==='group'?gset:mset).add(b.ko);});
-  if(!gset.size&&!mset.size)return null;
-  return song=>gset.has(song.groupKo)||(song.memberKos||[]).some(m=>mset.has(m));
+  const gset=new Set();        // 최애로 지정한 그룹
+  const mGroups=new Set();     // 최애 멤버의 소속 그룹(가로 승격 대상)
+  const mKeys=new Set();       // 최애 멤버 "이름|그룹"
+  const mLoose=new Set();      // groupKo를 모르는 옛 항목(이름만)
+  bias.forEach(b=>{
+    if(!b||!b.ko)return;
+    if((b.type||'member')==='group'){gset.add(b.ko);return;}
+    if(b.groupKo){mGroups.add(b.groupKo);mKeys.add(b.ko+'|'+b.groupKo);}
+    else mLoose.add(b.ko);
+  });
+  if(!gset.size&&!mKeys.size&&!mLoose.size)return null;
+  const memberHit=song=>(song.memberKos||[]).some(m=>mKeys.has(m+'|'+(song.groupKo||''))||mLoose.has(m));
+  return{
+    wide:song=>gset.has(song.groupKo)||mGroups.has(song.groupKo)||memberHit(song),
+    short:memberHit,
+  };
 }
 function _appendFeedOnboardCard(strip){
   const d=document.createElement('div');d.className='feed-onboard-card';
@@ -19737,7 +19759,10 @@ async function _buildFeedFavNew(){
     // **둘 다** 크게 간다(사용자: "가로도 세로도 크게"). 최애를 정했으면 일반 카드의 확률 전체폭은 끈다
     // (wideProb 0): 최애가 아닌 것도 가끔 커지면 "큰 카드 = 최애"라는 신호가 흐려져서 위계가 안 선다.
     // 최애 미지정이면 matcher가 null이라 wideProb 0.22 현행 그대로.
-    const _isBias=_feedBiasMatcher();
+    // 비율마다 기준이 다르다(_feedBiasMatchers 주석) — 가로는 최애 관련 그룹 전체, 쇼츠는 멤버 태깅만.
+    // _packRows는 판정자 하나만 받으므로 여기서 비율로 갈라 넘긴다.
+    const _bias=_feedBiasMatchers();
+    const _isBias=_bias?(song=>_songIsShort(song)?_bias.short(song):_bias.wide(song)):null;
     const rows=_packRows(songs,_songIsShort,{wideProb:_isBias?0:0.22,minGap:2,isBig:_isBias||undefined});
     if(rows.length&&!rows[rows.length-1].wide&&rows[rows.length-1].items.length===1)rows.pop(); // 끝에 홀로 남은 반폭 제거
     const flat=rows.flatMap(r=>r.items); // 라이트박스 재생목록 순서를 화면 순서와 일치
