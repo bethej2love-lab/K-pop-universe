@@ -16987,7 +16987,50 @@ function _appendFeedCard(container,icon,title,sub,onClick,thumbUrl,cat,opts){
       const b=document.createElement('div');b.className='feed-card-dur';b.textContent=_durTxt;_w.appendChild(b);
     }
   }
+  // 날짜 배지(2026-09-21) — 앨범 선반의 발매일. 영상 카드의 재생시간 배지와 **같은 자리·같은 톤**이다:
+  // 앨범엔 길이가 없어 그 자리가 비어 있고, "썸네일 우하단 = 이 항목의 핵심 수치"라는 규칙이 이미
+  // 카드 그리드(.gc-ch-dur)·탐험 선반에 깔려 있어서 새 규칙을 만들 이유가 없다.
+  // ⚠️ 서브줄에 날짜를 붙이지 않는 이유: 서브는 한 줄 마퀴(addMarquee)라 "아티스트 · 싱글 · 9.19"가
+  //    되면 정작 제일 시간 민감한 발매일이 흘러서 잘린다.
+  // 캡션 셋째 줄(2026-09-21) — 앨범 선반의 "타입 · 발매일". 서브(아티스트)와 분리해서 둔다.
+  // ⚠️ 썸네일 위에 얹지 않는다(사용자 결정 2026-09-21): 앨범 커버는 영상 썸네일과 달리 **그 자체가
+  //    작품**이라 무엇이든 덮으면 안 된다. 영상 카드의 재생시간 배지와 같은 자리를 쓰려다 반려됐다.
+  if(opts&&opts.meta){
+    const cap=item.querySelector('.feed-card-cap');
+    if(cap){
+      const m=document.createElement('div');
+      // 오늘·어제만 한 단계 강조 — 이 선반의 목적이 "따끈한 것 먼저"라서다. 나머지는 같은 톤으로 둔다
+      // (색이 세 종류가 되면 그때부턴 범례가 필요해진다).
+      m.className='feed-card-meta'+(opts.metaFresh?' is-fresh':'');
+      m.textContent=opts.meta;cap.appendChild(m);
+    }
+  }
   return item;
+}
+// 앨범 발매일 표기(2026-09-21) — 선반은 "얼마나 따끈한가"를 먼저 읽는 자리라 최근일수록 상대 표기를
+// 쓴다. 일주일이 넘어가면 상대 표기가 오히려 감이 안 오므로(“23일 전”) 날짜로 바꾼다.
+// ⚠️ 해가 바뀌면 월.일만으론 작년 것과 구분이 안 된다(선반 창이 최대 60일이라 연말연시에 실제로 겹친다).
+function _albumDateLabel(d){
+  const t=_albumDate(d);
+  if(!isFinite(t))return'';
+  const isKo=currentLang==='ko';
+  // 날짜 경계로 센다 — 시각 차로 "어제 23시 발매"가 0일 전이 되면 안 된다.
+  const today=new Date(),todayUTC=Date.UTC(today.getFullYear(),today.getMonth(),today.getDate());
+  const days=Math.round((todayUTC-t)/86400000);
+  if(days<=0)return isKo?'오늘':'Today';
+  if(days===1)return isKo?'어제':'Yesterday';
+  if(days<=6)return isKo?`${days}일 전`:`${days}d ago`;
+  const m=/^(\d{4})\.(\d{2})\.(\d{2})$/.exec(String(d||''));
+  if(!m)return'';
+  const sameYear=+m[1]===today.getFullYear();
+  return sameYear?`${+m[2]}.${+m[3]}`:`${m[1].slice(2)}.${+m[2]}.${+m[3]}`;
+}
+// 오늘·어제 발매인지 — 캡션 메타 줄을 한 단계 강조할지 가른다(_albumDateLabel과 같은 날짜 경계 기준).
+function _albumIsFresh(d){
+  const t=_albumDate(d);
+  if(!isFinite(t))return false;
+  const n=new Date(),todayUTC=Date.UTC(n.getFullYear(),n.getMonth(),n.getDate());
+  return Math.round((todayUTC-t)/86400000)<=1;
 }
 function _setFeedCardThumb(item,thumbUrl){
   const wrap=item.querySelector('.feed-card-thumb-wrap');
@@ -17946,9 +17989,11 @@ async function _buildFeedFavAlbums(){
     const ttl=document.getElementById('feed-favalbum-ttl');
     if(ttl)ttl.textContent=isKo?'💿 즐겨찾기 신보':'💿 New Releases from Your Favorites';
     picked.forEach(a=>{
+      // 캡션 3줄: 앨범명 / 아티스트 / 타입 · 발매일. 예전엔 아티스트와 타입이 한 줄로 붙어 마퀴로
+      // 흘렀는데, 나누니 아티스트가 독립해 읽히고 발매일도 자리가 생겼다(2026-09-21).
       const ownerDisp=a.k==='g'?_gLabelKo(a.o):a.o;
-      const sub=[ownerDisp,_discogTypeLabel(a.y)].filter(Boolean).join(' · ');
-      _appendFeedCard(list,'💿',a.t,sub,_albumCardNav(a),a.c);
+      const meta=[_discogTypeLabel(a.y),_albumDateLabel(a.d)].filter(Boolean).join(' · ');
+      _appendFeedCard(list,'💿',a.t,ownerDisp,_albumCardNav(a),a.c,null,{meta,metaFresh:_albumIsFresh(a.d)});
     });
     section.style.display='';
   }catch(e){console.warn('[feed] 즐겨찾기 신보 선반 실패 — 이 선반만 빠집니다',e);}
@@ -17982,8 +18027,8 @@ async function _buildFeedNewAlbums(){
                                   :(isKo?'💿 최근 발매':'💿 Recent Releases');
     picked.forEach(a=>{
       const ownerDisp=a.k==='g'?_gLabelKo(a.o):a.o;
-      const sub=[ownerDisp,_discogTypeLabel(a.y)].filter(Boolean).join(' · ');
-      _appendFeedCard(list,'💿',a.t,sub,_albumCardNav(a),a.c);
+      const meta=[_discogTypeLabel(a.y),_albumDateLabel(a.d)].filter(Boolean).join(' · ');
+      _appendFeedCard(list,'💿',a.t,ownerDisp,_albumCardNav(a),a.c,null,{meta,metaFresh:_albumIsFresh(a.d)});
     });
     section.style.display='';
   }catch(e){console.warn('[feed] 이번 주 발매 선반 실패 — 이 선반만 빠집니다',e);}
