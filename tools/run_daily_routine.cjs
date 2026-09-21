@@ -41,8 +41,21 @@ const YT_KEY = (process.env.KPU_YT_API_KEY || '').trim();
 // MODE(2026-09-14): 동기화를 매시간 돌리게 되면서 "동기화만" 모드가 필요해졌다 — 스윕까지 매시간
 // 돌리면 37만 행 조회가 하루 24번 반복되고 YouTube 쿼터도 빠듯해진다(동기화 1회 ~350점 × 24 = 8,400
 // /일, 한도 10,000). WITH_SYNC='0'은 기존 워크플로가 쓰던 표기라 그대로 받아준다.
-const MODE = (process.env.MODE || (process.env.WITH_SYNC === '0' ? 'sweep' : 'full')).trim();
+let MODE = (process.env.MODE || (process.env.WITH_SYNC === '0' ? 'sweep' : 'full')).trim();
 if (!['full', 'sync', 'sweep'].includes(MODE)) die(`MODE 값이 이상해요: "${MODE}" — full | sync | sweep 중 하나여야 합니다.`);
+// ── 새벽 무동기화(2026-09-21, 사용자 결정) ──────────────────────────────────
+// KST 01~08시 업로드는 14일간 29건(0.7%)뿐이라 그 시간대 폴링은 쿼터 순손실이다(sync_gate.mjs의
+// 같은 판정과 짝). 다만 **스윕은 그대로 돌린다** — 태깅·재검증류는 YouTube 쿼터를 한 유닛도 안 쓰고,
+// 오히려 한가한 시간에 도는 편이 낫다. 그래서 full → sweep으로만 낮추고, sync 단독 모드는 스킵한다.
+// QUIET_SYNC=0으로 끌 수 있다(수동 실행·긴급 수집용).
+const _kstHour = new Date(Date.now() + 9 * 3600 * 1000).getUTCHours();
+const QUIET_SYNC = process.env.QUIET_SYNC !== '0' && _kstHour >= 1 && _kstHour <= 8;
+if (QUIET_SYNC && MODE !== 'sweep') {
+  const _was = MODE;
+  MODE = MODE === 'sync' ? 'skip' : 'sweep';
+  console.log(`[routine] KST ${_kstHour}시 — 새벽 무동기화 시간대라 ${_was} → ${MODE}`);
+  if (MODE === 'skip') { console.log('[routine] 동기화 전용 모드인데 새벽이라 이번 회차는 아무것도 하지 않습니다.'); process.exit(0); }
+}
 const WITH_SYNC = MODE !== 'sweep';
 const SYNC_ONLY = MODE === 'sync';
 const ROUTINE_TIMEOUT_MS = (Number(process.env.ROUTINE_TIMEOUT_MIN) || 300) * 60 * 1000;

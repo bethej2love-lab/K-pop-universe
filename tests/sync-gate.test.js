@@ -39,11 +39,32 @@ const day = [10, 12, 14, 16].map(minGapMin);
 need(Math.max(...peak) < Math.min(...day), `저녁 피크(${Math.max(...peak)}분)가 낮(${Math.min(...day)}분)보다 촘촘함`);
 need(Math.max(...day) < Math.min(...dawn), `낮(${Math.max(...day)}분)이 새벽(${Math.min(...dawn)}분)보다 촘촘함`);
 
+// ── 1-2) 새벽 무동기화 시간대(2026-09-21, 사용자 결정) ───────────────────────
+// KST 01~08시는 간격이 아니라 **아예 안 돈다**. 이 시간대 업로드는 14일간 29건(0.7%)이라, 폴링
+// 비용(새 영상 유무와 무관하게 채널당 1유닛)이 순손실이었다.
+// ⚠️ 건너뛸 때 표식(last_sync_attempt)을 남기면 안 된다 — 남기면 09시 첫 발화가 "방금 시도함"으로
+//    막혀서 아침 신선도를 그만큼 더 잃는다. 그 순서도 같이 고정한다.
+const qi = src.indexOf('function isQuietHour(');
+need(qi > 0, 'isQuietHour 함수를 찾음');
+const isQuietHour = new Function(`${src.slice(src.indexOf('const QUIET_FROM'), src.indexOf('\n', qi))}; return isQuietHour;`)();
+const quietHours = [1, 2, 3, 4, 5, 6, 7, 8];
+const activeHours = [0, 9, 12, 16, 17, 20, 23];
+need(quietHours.every(isQuietHour), `KST ${quietHours.join('·')}시는 건너뜀`);
+need(!activeHours.some(isQuietHour), `KST ${activeHours.join('·')}시는 그대로 실행`);
+{
+  const quietLine = src.indexOf('if (isQuietHour(kstHour))');
+  need(quietLine > 0, '게이트 본문에 새벽 차단 분기가 있음');
+  const seg = src.slice(quietLine, src.indexOf('\n', quietLine));
+  need(!/writeMarker/.test(seg), '새벽 차단은 표식을 남기지 않음(아침 첫 발화를 막지 않게)');
+  need(quietLine > src.indexOf('if (FORCE)'), 'FORCE(수동 실행)가 새벽 차단보다 먼저 — 긴급 수집은 여전히 가능');
+}
+
 // ── 2) 하루 최대 실행 횟수 → 쿼터 예산 ───────────────────────────────────────
 // 한 시간(60분) 안에 최대 몇 번 통과할 수 있는지를 시간대별로 더한다. 실제로는 간격이 시간 경계를
 // 걸치므로 이보다 적게 돌지만, **상한**을 보는 게 목적이라 낙관하지 않는다.
+// 새벽(isQuietHour)은 0회로 센다 — 간격이 아니라 차단이라서.
 let maxRunsPerDay = 0;
-for (let h = 0; h < 24; h++) maxRunsPerDay += 60 / minGapMin(h);
+for (let h = 0; h < 24; h++) { if (isQuietHour(h)) continue; maxRunsPerDay += 60 / minGapMin(h); }
 maxRunsPerDay = Math.ceil(maxRunsPerDay);
 
 // ⚠️ 이 지갑은 동기화만 쓰는 게 아니다(2026-09-15). 관리자 "6채널 백필" 버튼이 search.list를

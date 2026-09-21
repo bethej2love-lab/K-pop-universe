@@ -62,12 +62,19 @@ const READ_KEY = WRITE_KEY || process.env.SUPABASE_ANON_KEY || 'sb_publishable_S
 const TABLE = 'atm_exception_rules';
 const FORCE = process.env.FORCE === '1';
 
+// ── 새벽 무동기화 시간대(2026-09-21, 사용자 결정) ────────────────────────────
+// KST 01~08시는 **아예 돌리지 않는다**. 예전엔 240분 간격으로 "드물게"는 돌렸는데, 그 시간대 업로드가
+// 14일간 29건(0.7%)뿐이라 폴링 2회 = 약 636 units가 사실상 순손실이었다. 아낀 몫은 낮·저녁으로 간다.
+// ⚠️ 건너뛸 때 표식(last_sync_attempt)을 남기지 않는다 — 남기면 09시 첫 발화가 "방금 시도함"으로
+//    막혀서 아침 신선도를 그만큼 더 잃는다.
+const QUIET_FROM = 1, QUIET_TO = 8; // 포함 구간(KST)
+function isQuietHour(kstHour) { return kstHour >= QUIET_FROM && kstHour <= QUIET_TO; }
 // KST 시각(시) → 이번 동기화까지 비워야 할 최소 간격(분). 위 실측 분포 근거.
 function minGapMin(kstHour) {
   if (kstHour >= 17 && kstHour <= 23) return 45;  // 저녁 피크 — 전체 업로드의 66%
   if (kstHour === 0) return 60;                   // 자정 직후에도 87건 — 한 시간 간격은 유지
   if (kstHour >= 9 && kstHour <= 16) return 90;   // 낮 — 완만(09시 20 · 10시 48 · … · 16시 265)
-  return 240;                                     // 01~08시 새벽 — 14일간 총 29건(0.7%)
+  return 240;                                     // 01~08시 — isQuietHour가 먼저 걸러내므로 도달하지 않는다
 }
 
 const H = k => ({ apikey: k, Authorization: `Bearer ${k}` });
@@ -125,6 +132,9 @@ const kstHour = new Date(now + 9 * 3600 * 1000).getUTCHours();
 const gap = minGapMin(kstHour);
 
 if (FORCE) { emit(true, `FORCE=1 (수동 실행)`); await writeMarker('last_sync_attempt', now); process.exit(0); }
+
+// 새벽(KST 01~08시)은 통째로 건너뛴다. FORCE보다는 뒤, 나머지 판정보다는 앞 — 표식도 남기지 않는다.
+if (isQuietHour(kstHour)) { emit(false, `KST ${kstHour}시 — 새벽 무동기화 시간대(${QUIET_FROM}~${QUIET_TO}시)`); process.exit(0); }
 
 // 루틴이 도는 중이면 비켜준다 — 표식은 남기지 않는다(다음 발화가 곧바로 다시 시도할 수 있게).
 if (await routineRunning()) { emit(false, '매일 루틴이 실행 중 — 체크포인트 충돌을 피해 건너뜀'); process.exit(0); }

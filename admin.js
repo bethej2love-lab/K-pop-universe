@@ -192,7 +192,19 @@ function _ytDeriveFormats(title){
 // 수백 콜짜리 배치가 한 번 튕기면 통째로 멈췄다.
 const _YT_TRANSIENT=new Set(['rateLimitExceeded','userRateLimitExceeded','backendError','internalError']);
 const _ytQuotaReason=r=>r==='quotaExceeded'||r==='dailyLimitExceeded';
+// ── 한 회차가 쓸 수 있는 호출 예산(2026-09-21) ────────────────────────────────
+// 왜: 루틴은 3시간마다 8회 도는데, **쿼터 리셋 직후 한 회차가 하루치 지갑을 통째로 비우고** 있었다
+// (실측 2026-09-21: KST 16~17시 시작 회차만 2h16m 돌며 411건 수집, 나머지 7회는 0~1건에 20분 종료.
+//  사용자가 백필 버튼을 눌러도 403 quotaExceeded). 원인은 아래 _ytFetchNewVideos의 페이지 무제한
+// 스캔이지만, 그게 아니어도 "한 회차가 다 쓸 수 있는" 구조 자체가 위험하다 — 예산으로 못을 박는다.
+// 호출부는 루프 앞에서 _ytBudgetLeft()를 보고 남은 게 없으면 그 단계를 접는다(예외를 던지지 않는다 —
+// 쿼터 초과와 달리 이건 정상적인 "여기까지"라서, 다음 회차가 이어받으면 된다).
+let _ytCalls=0,_ytCallBudget=Infinity;
+function _ytSetCallBudget(n){_ytCalls=0;_ytCallBudget=(n>0)?n:Infinity;}
+function _ytBudgetLeft(){return _ytCallBudget-_ytCalls;}
+function _ytBudgetSpent(){return _ytCalls;}
 async function _ytApiGet(url,label,{retries=3}={}){
+  _ytCalls++;
   let lastErr=null;
   for(let a=0;a<=retries;a++){
     let r=null,d=null;
@@ -315,14 +327,25 @@ function _disbandCutoffDate(ko){return _groupEndDate(ko);}
 // 해석 자체는 shared.js의 _leftCutoffDate 한 곳에만 둔다(2026-09-04) — 화면(index.html)도 같은 것을
 // 써야 하는데 예전엔 여기에만 있어서 둘이 정반대로 갈라졌다(shared.js 주석 참고).
 function _memberLeftCutoffDate(a){return _leftCutoffDate(a&&a.left);}
-async function _ytFetchNewVideos(uploadsId,key,sinceId,onProg,startPageToken,cutoffDate){
+// ── 채널당 페이지 상한(2026-09-21) ────────────────────────────────────────────
+// ⚠️ 여기 상한이 없던 게 "매일 루틴이 하루 한 번만 제대로 돈다"의 진짜 원인이었다.
+//    기준점(sinceId) 영상이 삭제·비공개되면 페이지네이션에서 그 id를 영영 못 만나므로, 아래 루프가
+//    **채널의 맨 처음 영상까지 전부** 훑는다. 영상이 수만 개인 방송사 채널이면 수백~수천 페이지 =
+//    수백~수천 유닛 + 페이지당 80ms 대기. 실측(2026-09-21): 411건 수집하는 데 2시간 16분(=루틴
+//    타임아웃 135분에 걸려 잘림)을 쓰고 하루치 쿼터를 통째로 태웠다. 그 뒤 7회차는 전부 0~1건.
+//    상한에 걸리면 지금까지 받은 건 저장하고 `resumeToken`으로 다음 회차가 이어받는다(기존 인프라).
+const YT_MAX_PAGES=40; // 40페이지 = 2,000영상/채널/회차. 평상시 신규는 1~2페이지라 걸릴 일이 없다.
+async function _ytFetchNewVideos(uploadsId,key,sinceId,onProg,startPageToken,cutoffDate,maxPages){
   const vids=[];let pageToken=startPageToken||'';let total=0;
   let done=false,interrupted=false;
+  const cap=(maxPages>0)?maxPages:YT_MAX_PAGES;
+  let pages=0,cappedOut=false; // cappedOut: 상한에 걸려 끊었나(호출부가 북마크 갱신 여부를 가른다)
   // 컷오프에 걸려 skip된 영상이라도 "채널의 실제 최신 영상 ID"는 북마크로 남겨야 다음 동기화 때마다
   // 매번 같은 컷오프 이후 구간을 재스캔하지 않는다(newestId는 필터 전 페이지네이션에서 가장 먼저
   // 만나는 항목 = 채널 최신 영상).
   let newestId=null;
   do{
+    pages++;
     let d;
     try{
       const url=`https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=${uploadsId}&maxResults=50&key=${key}`+(pageToken?'&pageToken='+pageToken:'');
@@ -378,9 +401,11 @@ async function _ytFetchNewVideos(uploadsId,key,sinceId,onProg,startPageToken,cut
     pageToken=d.nextPageToken||'';
     if(!pageToken)done=true; // 채널의 가장 과거(맨 처음) 영상까지 완주함
     if(onProg)onProg(vids.length,total);
+    // 상한 도달 — 여기까지만 하고 다음 회차에 넘긴다(중단과 같은 취급이되, 이유는 따로 표시).
+    if(pageToken&&pages>=cap){interrupted=true;cappedOut=true;break;}
     if(pageToken)await new Promise(res=>setTimeout(res,80));
   }while(pageToken);
-  return{vids,total,done,interrupted,resumeToken:pageToken,newestId};
+  return{vids,total,done,interrupted,cappedOut,pages,resumeToken:pageToken,newestId};
 }
 
 // 동기화 시점에 세로(쇼츠)를 실측한다(2026-09-04 사용자 요청 — "승격 버튼 따로 안 눌러도 되게").
@@ -519,8 +544,14 @@ async function _ytSyncAll(){
   // 겹쳐 흡수되므로 그대로 둔다(줄이면 QPS만 올라 rate limit 위험↑, 이득은 병렬화가 이미 가져감).
   const _SYNC_CONC=6;
   let _ti=0;
+  let _budgetStopped=false;
+  // ⚠️ 공식 채널이 회차 예산을 **다 쓰면 안 된다** — 이 단계 뒤에 외부 채널 동기화와 조회수 갱신이
+  //    오는데, 여기서 지갑을 비우면 음방 채널이 통째로 굶는다(실제로 음중·인가가 8일간 0건이었다,
+  //    2026-09-21 실측). 그래서 공식 채널 몫은 남은 예산의 60%까지로 못 박는다.
+  const _syncAllCap=_ytBudgetSpent()+Math.max(60,Math.floor(_ytBudgetLeft()*0.6));
   async function _syncWorker(){
     while(_ti<targets.length){
+      if(_ytBudgetSpent()>=_syncAllCap||_ytBudgetLeft()<=2){_budgetStopped=true;break;}
       const{ko,url,syncKey}=targets[_ti++];
       const _gt0=Date.now();
       try{
@@ -540,7 +571,9 @@ async function _ytSyncAll(){
   const _tot=_syncMs.reduce((a,b)=>a+b.ms,0);
   console.log(`[YT sync] 총 ${(_tot/60000).toFixed(1)}분 · 오래 걸린 채널 top10`,
     _syncMs.sort((a,b)=>b.ms-a.ms).slice(0,10).map(x=>`${x.ko} ${(x.ms/1000).toFixed(1)}초(+${x.n})`));
-  _ytSetProg(`공식 채널 완료 — ${targets.length}개 (${(_tot/60000).toFixed(1)}분)`);
+  _ytSetProg(_budgetStopped
+    ?`공식 채널 ${done}/${targets.length}개까지 — 이번 회차 호출 예산(${_ytBudgetSpent()}콜)을 다 써서 나머지는 다음 회차에 이어받아요`
+    :`공식 채널 완료 — ${targets.length}개 (${(_tot/60000).toFixed(1)}분)`);
   _ytSyncing=false;
 }
 
@@ -8512,6 +8545,8 @@ async function _ytSyncExtChannels(){
   let _eci=0;
   async function _extWorker(){
    while(_eci<_orderedChannels.length){
+    // 이 회차 예산이 바닥나면 여기서 접는다 — 남은 채널은 다음 회차가 이어받는다(중단이 아니라 분할).
+    if(_ytBudgetLeft()<=2){setProg(`이번 회차 호출 예산(${_ytBudgetSpent()}콜)을 다 써서 나머지 채널은 다음 회차에 이어받아요`);break;}
     const ci=_eci++;
     const ch=_orderedChannels[ci];
     const prefix=`[${ci+1}/${_EXT_CHANNELS.length}] ${ch.name}`;
@@ -8520,7 +8555,15 @@ async function _ytSyncExtChannels(){
       const uploadsId=await _ytGetUploadsId(ch.url,key);
       const lsKey=`kpu_ext_last_${ch.handle}`;
       const resumeKey=`kpu_ext_resume_${ch.handle}`;
-      const sinceId=localStorage.getItem(lsKey)||null;
+      let sinceId=localStorage.getItem(lsKey)||null;
+      // 체크포인트가 없으면(첫 동기화·프로필 초기화·Actions 캐시 미스) DB의 이 채널 최신 영상으로 시작점을
+      // 잡는다. 공식 채널(_ytSyncGroup)엔 원래 있던 폴백인데 외부 채널엔 빠져 있어서, 캐시를 한 번 잃으면
+      // 그 채널은 **매번 전체 스캔**에 들어가 회차 예산을 통째로 먹었다(2026-09-21).
+      if(!sinceId){
+        const{data:_top}=await sb.from(_YT_TABLE).select('id').eq('source_handle',ch.handle).order('published_at',{ascending:false}).limit(1);
+        sinceId=_top?.[0]?.id||null;
+        if(sinceId)localStorage.setItem(lsKey,sinceId);
+      }
       // 과거로 파고들다가 지난번에 중단된 지점이 있으면(쿼터 초과 등) 처음(최신)부터가 아니라 거기서부터 이어받는다
       const resumeTok=localStorage.getItem(resumeKey)||'';
       // resumeTok이 있으면(백필 진행 중) 과거 페이지부터 시작해 page 1(신규 영상)을 아예 안 보게 된다.
@@ -8550,7 +8593,7 @@ async function _ytSyncExtChannels(){
         }
       }
       setProg(`${prefix} 영상 목록 가져오는 중…`+(resumeTok?' (이전 중단 지점부터 이어받는 중)':sinceId?'':' (첫 동기화)'));
-      const{vids,done,interrupted,resumeToken}=await _ytFetchNewVideos(uploadsId,key,sinceId,(fetched,tot)=>{
+      const{vids,done,interrupted,cappedOut,pages,resumeToken,newestId}=await _ytFetchNewVideos(uploadsId,key,sinceId,(fetched,tot)=>{
         setProg(`${prefix} ${fetched}${tot?'/'+tot:''}개 수집 중…`+(resumeTok?' (이어받는 중)':''));
       },resumeTok);
       if(vids.length){
@@ -8563,19 +8606,26 @@ async function _ytSyncExtChannels(){
           for(let i=0;i<rows.length;i+=200)_eb.push(_ytUpsertVideos(rows.slice(i,i+200),{onConflict:'id',ignoreDuplicates:true}));
           const _ee=(await Promise.all(_eb)).find(r=>r&&r.error);
           if(_ee)throw new Error(_ee.error.message);
-          // resumeTok 없이(=맨 최신부터) 이번 실행이 시작됐을 때만 vids[0]가 진짜 "채널의 현재 최신 영상"이므로
-          // 그때만 증분 동기화 기준점(sinceId)을 갱신한다 — 과거를 이어받는 중엔 건드리지 않음
-          if(!resumeTok&&vids[0]?.id)localStorage.setItem(lsKey,vids[0].id);
           totalAdded+=rows.length;
         }
       }
+      // ── 북마크 갱신(2026-09-21 수정) ──────────────────────────────────────
+      // 예전엔 `if(rows.length)` 안에서 vids[0].id로만 갱신했다. 두 가지가 문제였다:
+      //  ① 새 영상이 0건이면 갱신을 안 한다 → sinceId가 **이미 삭제된 영상**을 가리키는 경우, 매 회차
+      //     그 채널을 끝까지 훑고도 북마크가 그대로라 같은 낭비를 영원히 반복한다.
+      //  ② 필터(_extBuildRows)에 전부 걸려 rows가 0이면 역시 갱신되지 않는다.
+      // newestId는 필터 이전의 "채널 현재 최신 영상"이라 이 두 경우를 다 덮는다. 최신부터 시작한
+      // 회차(resumeTok 없음)에서만 갱신하는 원칙은 그대로다 — 과거 이어받기 중엔 최신이 아니니까.
+      if(!resumeTok&&newestId)localStorage.setItem(lsKey,newestId);
       if(done){
         localStorage.removeItem(resumeKey); // 채널 끝(가장 과거)까지 도달했거나 이미 아는 지점까지 따라잡음 — 이어받을 것 없음
         setProg(`${prefix} 완료 (+${vids.length}개)`);
       }else if(interrupted){
         // 중단된 지점(실패한 페이지의 토큰)을 저장해 다음 동기화 때 여기부터 이어서 더 과거로 계속 파고든다
         if(resumeToken)localStorage.setItem(resumeKey,resumeToken);
-        setProg(`${prefix} 중단됨(다음 동기화 때 이어받음) — 지금까지 +${vids.length}개`);
+        setProg(cappedOut
+          ?`${prefix} ${pages}페이지까지만 — 나머지는 다음 회차에 이어받음 (+${vids.length}개)`
+          :`${prefix} 중단됨(다음 동기화 때 이어받음) — 지금까지 +${vids.length}개`);
       }
     }catch(e){
       errors++;
@@ -10441,6 +10491,9 @@ let _admRoutineRunning=false,_admRoutineStop=false;
 // 증분 스코프가 있어도 조회 자체가 비쌈) ②YouTube 쿼터가 빠듯해진다(동기화 1회 ~350점 × 24 = 8,400
 // /일, 한도 10,000). 그래서 매시간은 sync만, 스윕 포함 전체는 기존대로 3시간마다로 나눴다.
 // (.github/workflows/sync-hourly.yml ↔ daily-routine.yml · tools/run_daily_routine.cjs의 MODE)
+// 회차당 YouTube 호출 예산(2026-09-21). 정상 소비는 회차당 약 350콜(공식 222 + 외부 60 + 조회수 70)이라
+// 평소엔 닿지 않는 천장이고, 어느 채널이 폭주할 때만 걸린다. 못 받은 몫은 다음 회차가 이어받는다.
+const _ADM_BUDGET_FULL=900, _ADM_BUDGET_SYNC=600;
 async function _admRunRoutine(withSync,opts){
   const _syncOnly=!!(opts&&opts.only==='sync');
   if(_admRoutineRunning)return;
@@ -10454,6 +10507,8 @@ async function _admRunRoutine(withSync,opts){
   if(runBtn)runBtn.disabled=true;
   if(noSyncBtn)noSyncBtn.disabled=true;
   if(stopBtn)stopBtn.style.display='';
+  // 이 회차가 쓸 수 있는 호출 수를 못 박는다 — 한 회차가 하루치 지갑을 비우면 나머지 7회가 빈손으로 돈다.
+  _ytSetCallBudget(_syncOnly?_ADM_BUDGET_SYNC:_ADM_BUDGET_FULL);
   const steps=[];
   // ⚠️ 1번은 **설정 패널의 "1. 전체 동기화 (공식 + 외부 채널)" 버튼과 똑같은 3단계**여야 한다.
   //    2026-08-27까지 여기서 _ytSyncAll 하나만 불렀는데, 그 버튼의 핸들러는
