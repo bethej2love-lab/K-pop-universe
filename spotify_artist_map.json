@@ -542,6 +542,17 @@
     },
     "checkedAt": "2026-09-15"
   },
+  "리안": {
+    "id": "2juVsA2NRjRYTlrIOkdzm6",
+    "spotifyName": "Rian",
+    "kind": "solo",
+    "confidence": "medium",
+    "why": "이름 유일 일치",
+    "evidence": {
+      "titleOverlap": null
+    },
+    "checkedAt": "2026-09-21"
+  },
   "마마무": {
     "id": "0XATRDCYuuGhk0oE7C0o5G",
     "spotifyName": "MAMAMOO",
@@ -617,6 +628,17 @@
       "titleOverlap": 2
     },
     "checkedAt": "2026-09-15"
+  },
+  "박시영": {
+    "id": "2wAjuE3pVtauK8ZQ2p4SXN",
+    "spotifyName": "Park Ki Young",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "이름 불일치 — 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-09-21"
   },
   "방탄소년단": {
     "id": "3Nrfpe0tUJi4K4DXYWgMUX",
@@ -1399,6 +1421,17 @@
     },
     "checkedAt": "2026-09-17"
   },
+  "야부키 나코": {
+    "id": "4hdWWoUE60yJX9xrzli94f",
+    "spotifyName": "Nako",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "동명 후보 3명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-09-21"
+  },
   "언차일드": {
     "id": "6TKweJiG4KC62YFs5KKUqu",
     "spotifyName": "UNCHILD",
@@ -1992,6 +2025,17 @@
     },
     "checkedAt": "2026-09-15"
   },
+  "유도현": {
+    "id": "6KsmQPHXE3qhzNNBPSZ0eB",
+    "spotifyName": "Yoon Do Hyun",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "이름 불일치 — 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-09-21"
+  },
   "유스피어": {
     "id": "1p7Fm42iZrBEvG2wIaRCoL",
     "spotifyName": "USPEER",
@@ -2067,6 +2111,17 @@
       "titleOverlap": null
     },
     "checkedAt": "2026-09-15"
+  },
+  "이준혁": {
+    "id": "3S5FdlOtsbXEmbefNCX0Kc",
+    "spotifyName": "LEE JUNHYUK",
+    "kind": "solo",
+    "confidence": "medium",
+    "why": "이름 유일 일치",
+    "evidence": {
+      "titleOverlap": null
+    },
+    "checkedAt": "2026-09-21"
   },
   "이즈나": {
     "id": "6EB5QC7lGAu7bSuWQ416d4",
@@ -2149,6 +2204,17 @@
     },
     "checkedAt": "2026-09-15"
   },
+  "장유빈": {
+    "id": "5f1qpcqhDl49v5gKln3zl2",
+    "spotifyName": "Jang Soo Bin",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "이름 불일치 — 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-09-21"
+  },
   "제로베이스원": {
     "id": "7cjg7EkeZy3OI5o9Qthc6n",
     "spotifyName": "ZEROBASEONE",
@@ -2180,6 +2246,22 @@
       ]
     },
     "checkedAt": "2026-09-20"
+  },
+  "청하": {
+    "id": "2PSJ6YriU7JsFucxACpU7Y",
+    "spotifyName": "CHUNG HA",
+    "kind": "solo",
+    "confidence": "high",
+    "why": "이름 유일 일치 · 수집 전 검증 통과(겹침 2)",
+    "evidence": {
+      "titleOverlap": null,
+      "verifyOverlap": 2,
+      "verifyYears": [
+        2026,
+        2025
+      ]
+    },
+    "checkedAt": "2026-09-21"
   },
   "최예나": {
     "id": "49muoiIu4uea4PO8vueUNN",
@@ -2218,6 +2300,17 @@
       "titleOverlap": null
     },
     "checkedAt": "2026-09-15"
+  },
+  "카엘": {
+    "id": "0o0FUI1ekYRyJ1hn1s7kaN",
+    "spotifyName": "Kael",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "동명 후보 4명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-09-21"
   },
   "캣츠아이": {
     "id": "3c0gDdb9lhnHGFtP4prQpn",
