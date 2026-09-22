@@ -64,6 +64,17 @@
     },
     "checkedAt": "2026-09-20"
   },
+  "BX": {
+    "id": "240yaaOqDBi0EKjl5hFn4R",
+    "spotifyName": "BX",
+    "kind": "solo",
+    "confidence": "medium",
+    "why": "이름 유일 일치",
+    "evidence": {
+      "titleOverlap": null
+    },
+    "checkedAt": "2026-09-22"
+  },
   "NRG": {
     "id": "7xrfnodwPKuIxS9JuUECaf",
     "spotifyName": "NRG",
@@ -521,6 +532,28 @@
     },
     "checkedAt": "2026-09-19"
   },
+  "루시": {
+    "id": "4eh2JeBpQaScfHKKXZh5vO",
+    "spotifyName": "LUCY",
+    "kind": "solo",
+    "confidence": "medium",
+    "why": "이름 유일 일치",
+    "evidence": {
+      "titleOverlap": null
+    },
+    "checkedAt": "2026-09-22"
+  },
+  "루아": {
+    "id": "2pJiP1Q3TnOy1mcAUdown8",
+    "spotifyName": "Rua",
+    "kind": "solo",
+    "confidence": "medium",
+    "why": "이름 유일 일치",
+    "evidence": {
+      "titleOverlap": null
+    },
+    "checkedAt": "2026-09-22"
+  },
   "르세라핌": {
     "id": "4SpbR6yFEvexJuaBpgAU5p",
     "spotifyName": "LE SSERAFIM",
@@ -536,6 +569,17 @@
       ]
     },
     "checkedAt": "2026-09-15"
+  },
+  "리나": {
+    "id": "7aGUH3bFQPq271KGThLzs2",
+    "spotifyName": "Lina",
+    "kind": "solo",
+    "confidence": "medium",
+    "why": "이름 유일 일치",
+    "evidence": {
+      "titleOverlap": null
+    },
+    "checkedAt": "2026-09-22"
   },
   "리센느": {
     "id": "5deOsjuFTKrNMJW3rKuL8S",
@@ -1013,6 +1057,17 @@
       "titleOverlap": 2
     },
     "checkedAt": "2026-09-15"
+  },
+  "세이": {
+    "id": "0hlxfnyzaXgMoS530LxYqS",
+    "spotifyName": "sei",
+    "kind": "solo",
+    "confidence": "medium",
+    "why": "이름 유일 일치",
+    "evidence": {
+      "titleOverlap": null
+    },
+    "checkedAt": "2026-09-22"
   },
   "세이마이네임": {
     "id": "1YPfjEiECyLURKu09GfilS",
@@ -1832,6 +1887,22 @@
     },
     "checkedAt": "2026-09-18"
   },
+  "엘리": {
+    "id": "121bH6E5YZP1MU08HiRmtq",
+    "spotifyName": "ELLY",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "동명 후보 2명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0,
+      "verifyOverlap": 0,
+      "verifyYears": [
+        2025,
+        2018
+      ]
+    },
+    "checkedAt": "2026-09-22"
+  },
   "엠블랙": {
     "id": "14f1WN9TUDVBK4sHUStmLG",
     "spotifyName": "MBLAQ",
@@ -1950,6 +2021,17 @@
       ]
     },
     "checkedAt": "2026-09-17"
+  },
+  "용희": {
+    "id": "1qQRdPpCeVsfDCKz3QFuU5",
+    "spotifyName": "Cho Yonghee",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "이름 불일치 — 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-09-22"
   },
   "우당탕탕소녀단": {
     "id": "5MepLDNyvE91lO3yqJhMIx",
@@ -2328,6 +2410,22 @@
       ]
     },
     "checkedAt": "2026-09-20"
+  },
+  "지수연": {
+    "id": "70iA690AZviTkQKgfjlSK6",
+    "spotifyName": "JI SUYEON",
+    "kind": "solo",
+    "confidence": "medium",
+    "why": "이름 유일 일치",
+    "evidence": {
+      "titleOverlap": null,
+      "verifyOverlap": 0,
+      "verifyYears": [
+        2026,
+        2025
+      ]
+    },
+    "checkedAt": "2026-09-22"
   },
   "청하": {
     "id": "2PSJ6YriU7JsFucxACpU7Y",
@@ -2982,6 +3080,17 @@
       ]
     },
     "checkedAt": "2026-09-15"
+  },
+  "현석": {
+    "id": "1ZeWBvVdP9uL8BdDdUVziR",
+    "spotifyName": "Hyunseok",
+    "kind": "solo",
+    "confidence": "medium",
+    "why": "이름 유일 일치",
+    "evidence": {
+      "titleOverlap": null
+    },
+    "checkedAt": "2026-09-22"
   },
   "힛지스": {
     "id": "5a83Luu0ndnR1enk1rn83V",
