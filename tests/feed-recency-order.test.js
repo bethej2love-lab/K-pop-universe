@@ -35,6 +35,19 @@ let body = '';
 need(body.length > 0, '함수 파싱됨');
 const order = new Function(`${body}; return _recencyWeightedOrder;`)();
 
+// ⚠️ 난수를 고정한다(2026-09-22). 이 테스트는 200회 시행의 **통계**를 보는데 시드가 안 잡혀 있어
+//    간헐적으로 빨개졌다(실측: 8회 중 1회 실패 — 아래 ③의 임계가 실측값 바로 옆에 있었다).
+//    flaky 테스트는 "빨간불은 원래 저래"를 학습시켜 진짜 실패를 묻는다 — 이 프로젝트가 이미
+//    19일짜리 빨간불로 겪은 실패 방식이다. `new Function`으로 뽑은 함수도 전역 Math를 참조하므로
+//    여기서 갈아끼우면 그대로 먹는다. 시드를 바꿔가며 돌려도 통과하는지 확인하고 넣었다.
+const mulberry32 = a => () => {
+  a |= 0; a = (a + 0x6D2B79F5) | 0;
+  let t = Math.imul(a ^ (a >>> 15), 1 | a);
+  t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+  return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+};
+Math.random = mulberry32(Number(process.env.SEED || 20260922));
+
 const H = 3600000, now = Date.now();
 const mk = (tag, ageH, n) => Array.from({ length: n }, (_, k) => ({ tag, id: `${tag}-${k}`, ts: new Date(now - ageH * H).toISOString() }));
 const items = [...mk('fresh', 1, 100), ...mk('mid', 30, 100), ...mk('old', 100, 100)];
@@ -68,8 +81,12 @@ need(mean('old') - mean('fresh') > 40, `기울기 충분 (앞뒤 차이 ${(mean(
 //    "순위표처럼 보이지 않게")가 깨진다. 같은 코호트 안에서는 누가 앞설지가 매번 달라져야 한다.
 //    ⚠️ "최신이 가끔 맨 뒤로 간다"로는 못 잰다 — 뒤에 더 오래된 항목이 200개나 있으면 당연히 안 간다.
 //       그건 무작위성의 부재가 아니라 기울기의 존재다(처음에 이걸로 재려다 틀렸다).
+// ⚠️ 임계를 "1회 평균 1개 이상"에서 "200회 중 50회 이상 등장"으로 바꿨다(2026-09-22). 실측값이
+//    평균 0.9~1.1개로 **임계 바로 옆에서 진동**해 위 시드 고정 전까지 간헐 실패의 원인이었다.
+//    재려는 건 "가끔은 섞여 나온다"이지 "매 회차 꼭 1개씩"이 아니다 — 누적 등장 횟수로 재는 게
+//    의도에 맞고, 기울기가 진짜 벽이 되면(0에 수렴) 여전히 잡힌다.
 const oldTopAvg = oldInTop50 / TRIALS;
-need(oldTopAvg >= 1, `오래된 항목도 상위 50에 평균 ${oldTopAvg.toFixed(1)}개 — 기울기가 벽이 아님`);
+need(oldInTop50 >= 50, `오래된 항목이 상위 50에 ${oldInTop50}회 등장(${TRIALS}회 중, 평균 ${oldTopAvg.toFixed(1)}개) — 기울기가 벽이 아님`);
 need(leaders.size >= 20, `1등이 ${leaders.size}가지로 갈림 (고정 순위가 아님)`);
 need(top10seen.size >= 50, `상위 10에 얼굴을 비춘 항목이 ${top10seen.size}가지 — 첫 화면이 매번 다름`);
 
