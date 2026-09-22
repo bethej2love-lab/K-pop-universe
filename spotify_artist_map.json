@@ -218,6 +218,21 @@
     },
     "checkedAt": "2026-09-20"
   },
+  "남지현": {
+    "id": "23btamSI6vKRCGutrMF6ic",
+    "spotifyName": "Song Nam Hyun",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "이름 불일치 — 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0,
+      "verifyOverlap": 0,
+      "verifyYears": [
+        2013
+      ]
+    },
+    "checkedAt": "2026-09-22"
+  },
   "네이즈": {
     "id": "5mj1yVzciUgYQ43ekVwRtX",
     "spotifyName": "NAZE",
@@ -1047,6 +1062,33 @@
     },
     "checkedAt": "2026-09-21"
   },
+  "선미": {
+    "id": "6MoXcK2GyGg7FIyxPU5yW6",
+    "spotifyName": "SUNMI",
+    "kind": "solo",
+    "confidence": "high",
+    "why": "동명 후보 2명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 3
+    },
+    "checkedAt": "2026-09-22"
+  },
+  "선예": {
+    "id": "5Vf5VWKvTmzz4tW3JvUcGX",
+    "spotifyName": "SUNYE",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "동명 후보 3명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0,
+      "verifyOverlap": 0,
+      "verifyYears": [
+        2025,
+        2024
+      ]
+    },
+    "checkedAt": "2026-09-22"
+  },
   "세븐틴": {
     "id": "7nqOGRxlXj7N2JYbgNEjYH",
     "spotifyName": "SEVENTEEN",
@@ -1112,6 +1154,17 @@
       "titleOverlap": 0
     },
     "checkedAt": "2026-09-21"
+  },
+  "소희": {
+    "id": "3mYdRRihv7Oj0g4a7viHOX",
+    "spotifyName": "SOHEE",
+    "kind": "solo",
+    "confidence": "medium",
+    "why": "동명 후보 5명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 1
+    },
+    "checkedAt": "2026-09-22"
   },
   "슈퍼노바": {
     "id": "7kydkMNIMNhr7jDgeOQd4H",
@@ -1946,6 +1999,22 @@
     },
     "checkedAt": "2026-09-17"
   },
+  "예은": {
+    "id": "4hMhbcPHd2nsZFhY1TNp8Y",
+    "spotifyName": "Yeeun",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "동명 후보 5명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0,
+      "verifyOverlap": 0,
+      "verifyYears": [
+        2020,
+        2014
+      ]
+    },
+    "checkedAt": "2026-09-22"
+  },
   "오마이걸": {
     "id": "2019zR22qK2RBvCqtudBaI",
     "spotifyName": "OH MY GIRL",
@@ -2199,6 +2268,17 @@
       "titleOverlap": 0
     },
     "checkedAt": "2026-09-21"
+  },
+  "유빈": {
+    "id": "3JUj7c2h5xkdOf0GJ07VWE",
+    "spotifyName": "Yubin",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "동명 후보 7명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-09-22"
   },
   "유스피어": {
     "id": "1p7Fm42iZrBEvG2wIaRCoL",
@@ -3081,6 +3161,17 @@
     },
     "checkedAt": "2026-09-15"
   },
+  "허가윤": {
+    "id": "2p8xnRzlHKGxIDJRa8NIMY",
+    "spotifyName": "Heo Gayoon",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "동명 후보 3명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-09-22"
+  },
   "현석": {
     "id": "1ZeWBvVdP9uL8BdDdUVziR",
     "spotifyName": "Hyunseok",
@@ -3089,6 +3180,21 @@
     "why": "이름 유일 일치",
     "evidence": {
       "titleOverlap": null
+    },
+    "checkedAt": "2026-09-22"
+  },
+  "혜림": {
+    "id": "6aXSCh6qagSWkyDHTPf4Bl",
+    "spotifyName": "Hyerim",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "동명 후보 2명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0,
+      "verifyOverlap": 0,
+      "verifyYears": [
+        2019
+      ]
     },
     "checkedAt": "2026-09-22"
   },
