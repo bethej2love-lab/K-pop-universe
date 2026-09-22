@@ -2,8 +2,9 @@ name: 앨범 수집 (매일)
 
 # 디스코그래피 일일 파이프라인.
 #
-# 1단계 수집: 스포티파이에서 신보를 찾아 groups.json/artists.json에 넣고 커밋한다.
-#   파생물(disco/·slim·tracks_index) 재생성은 그 커밋이 rebuild-disco-artifacts.yml을 깨워 자동으로 이어진다.
+# 1단계 수집: 스포티파이에서 신보를 찾아 groups.json/artists.json에 넣고, **같은 잡에서 파생물
+#   (disco/·slim·tracks_index·albums_recent)까지 재생성해** 한 커밋으로 push한다.
+#   ⚠️ 별도 워크플로(rebuild-disco-artifacts.yml)의 트리거에 기대면 안 된다 — 아래 커밋 스텝 주석 참고.
 # 2단계 감시: 신선도 감시(tools/disco_freshness.mjs) — "수집이 멈췄다"를 아무도 안 보고 있어도
 #   알아채는 장치. 임계를 넘으면 이 워크플로가 **실패**하고 기본 알림 설정이면 메일이 온다.
 #   대시보드를 하나 더 만들지 않는 게 요점이다(안 보는 대시보드가 제일 나쁘다).
@@ -58,13 +59,24 @@ jobs:
           BACKFILL_YEARS: ${{ vars.SPOTIFY_BACKFILL_YEARS || '2023,2024,2025' }}
         run: node tools/spotify_disco_sync.mjs
 
-      # 수집 결과를 커밋. 여기서 push된 groups.json/artists.json이 rebuild-disco-artifacts.yml을
-      # 깨워 disco/·slim·tracks_index를 자동 재생성한다(수집은 자동인데 반영이 수동이면 의미가 없다).
-      - name: 수집분 커밋
+      # 수집 결과 + 파생물을 **한 커밋에** 담는다.
+      #
+      # ⚠️ 2026-09-22 정정 — 예전 주석은 "여기서 push된 groups.json/artists.json이
+      #    rebuild-disco-artifacts.yml을 깨워 파생물을 자동 재생성한다"고 적혀 있었는데 **틀렸다**.
+      #    GitHub는 기본 `GITHUB_TOKEN`으로 push한 커밋으로는 **다른 워크플로를 트리거하지 않는다**
+      #    (무한 루프 방지 정책). 그래서 그 체인은 처음부터 끊겨 있었다 — 실측: 재빌드 커밋은
+      #    2026-09-15가 마지막인데 artists.json은 그 뒤로 계속 바뀌었고, disco-artifacts 테스트가
+      #    일주일 내내 빨간불이었다(솔로 6명의 disco 파일이 통째로 없었다 = 그 사람들 앨범이 사이트에
+      #    안 떴다). "수집은 자동인데 반영은 수동"을 없애려던 장치가 정작 자동 경로에선 안 돌았다.
+      #    → 트리거에 기대지 말고 **같은 잡에서 직접 빌드**한다. 원본과 파생물이 한 커밋에 묶여
+      #      어긋날 수가 없고, 워크플로 간 트리거 규칙에도 의존하지 않는다.
+      - name: 파생물 재생성 + 수집분 커밋
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
+          node tools/build_slim_data.mjs
           git add groups.json artists.json spotify_artist_map.json spotify_sync_state.json
+          git add groups.slim.json artists.slim.json tracks_index.json albums_recent.json disco/
           if git diff --cached --quiet; then
             echo "새 앨범 없음 — 커밋할 것이 없습니다"
             exit 0
