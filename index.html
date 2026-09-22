@@ -3585,10 +3585,37 @@ function _curRenderInterval(){
   if(flyState.active)return _RENDER_INTERVAL_MS; // 비행(카메라 이동) 중엔 30fps 유지
   return (performance.now()-_lastInteractMs>_IDLE_MS)?1000/_IDLE_FPS:_RENDER_INTERVAL_MS;
 }
+// 발열(2026-09-22, 사용자 제보 — "가만히 영상만 보는데 폰이 뜨거워서 볼 수가 없다") 대응 2종.
+// 실측(헤드리스 CDP, 라이트박스 open 6초): rAF 콜백 584회(97/s) · renderer.render 0회 ·
+// RecalcStyle 360회(60/s) · 캔버스 visibility:visible. 즉 **3D는 확실히 멈춰 있는데도**
+// 브라우저가 한순간도 idle로 내려가지 못하고 있었다. 원인이 둘로 나뉜다:
+//  ① 렌더를 스킵해도 맨 윗줄에서 rAF를 무조건 다시 예약해, 아무것도 안 그리면서 초당 100회 가까이
+//     JS를 깨우고 DOM을 조회했다(아래 _renderSkipped → 저주파 타이머 전환으로 초당 8회로).
+//  ② 3D "그리기"만 멈췄을 뿐 **캔버스 레이어는 화면에 그대로 남아** 컴포지터가 매 합성 프레임마다
+//     같이 얹고 있었다. 영상 재생 중엔 화면이 초당 60번 갱신되므로, 그릴 내용이 하나도 안 바뀌는
+//     전체화면 캔버스(폰 @3x면 300만 픽셀)를 초당 60번 합성하는 셈 — 그리기 비용 0, 합성·대역폭
+//     비용은 계속. visibility:hidden으로 합성 대상에서 아예 빼면 이 몫이 사라진다.
+//     WebGL 컨텍스트는 살아있으므로 닫을 때 재초기화·재로딩이 없다(캔버스 크기·상태 그대로 복귀).
+let _renderSkipped=false;
+let _uniCanvasHidden=false;
+function _setUniverseCanvasVisible(v){
+  if(v!==_uniCanvasHidden)return;            // 상태가 그대로면 DOM을 건드리지 않는다(매 프레임 호출됨)
+  _uniCanvasHidden=!v;
+  const st=v?'':'hidden';
+  if(renderer?.domElement)renderer.domElement.style.visibility=st;
+  if(typeof labelRenderer!=='undefined'&&labelRenderer?.domElement)labelRenderer.domElement.style.visibility=st;
+}
 function animate(){
-  requestAnimationFrame(animate);
+  // 다음 프레임 예약 — 직전 프레임이 "안 보여서 스킵"으로 끝났으면 rAF(초당 60~120회) 대신 저주파
+  // 타이머로 돈다. rAF를 아예 끊지 않는 이유: 재시작을 한 군데라도 빠뜨리면 우주가 영구히 멈춘다.
+  // 이 방식은 스킵 조건이 풀리면 늦어도 120ms 안에 스스로 rAF로 복귀하므로 정지 위험이 없다
+  // (카드·시트 닫힘 애니메이션이 340ms라 복귀 지연은 묻힌다).
+  if(_renderSkipped)setTimeout(animate,120);else requestAnimationFrame(animate);
   // 탭이 백그라운드(다른 앱 전환, 화면 꺼짐 등)면 아무것도 안 보이므로 완전히 건너뛴다.
-  if(document.hidden)return;
+  // ⚠️ 여기선 _renderSkipped를 false로 되돌려 rAF 경로를 타게 둔다 — 백그라운드에서는 브라우저가
+  //    rAF를 스스로 멈춰주지만, setTimeout은 1초로 스로틀될 뿐 계속 깨어나기 때문.
+  if(document.hidden){_renderSkipped=false;return;}
+  _renderSkipped=true;
   // 모바일에서 카드/라이트박스가 화면을 사실상 다 덮고 조작도 막혀있는 동안은 3D 렌더링을 완전히 건너뛴다.
   // (안 보이고 조작도 안 되니 시각적 차이는 없고, 그만큼 스크롤 등 카드 쪽 인터랙션에 CPU/GPU 여유가 생김)
   // document.getElementById로 직접 조회하는 이유: mobSheetEl 등의 const는 이 함수보다 뒤에 선언되는데
@@ -3596,7 +3623,17 @@ function animate(){
   // yt-lightbox는 데스크톱에서도 화면 전체를 거의 불투명하게(rgba(0,0,0,0.9)) 덮는 풀스크린 오버레이라,
   // 열려 있는 동안은 기기 종류와 무관하게 뒤의 3D 우주가 안 보임 — 그런데도 계속 풀 렌더링을 돌리면
   // 안 보이는 화면 그리는 데 GPU/CPU를 써서 정작 그 위에서 재생 중인 유튜브 영상이 끊기게 됨.
-  if(document.getElementById('yt-lightbox').classList.contains('open'))return;
+  const _lbEl=document.getElementById('yt-lightbox');
+  if(_lbEl.classList.contains('open')){
+    // 캔버스를 합성에서까지 빼는 건 라이트박스가 뒤를 **완전히** 가릴 때만 — 안 그러면 우주가
+    // 사라진 게 눈에 보인다. 가리는 경우: 모바일(아래 CSS에서 .open 배경을 불투명으로 깔았다) 또는
+    // 브라우즈 모드(#08091a 불투명). 데스크톱 "카드 보며 재생"은 라이트박스가 우측을 비워 그
+    // 너머로 우주가 보이므로 제외한다.
+    const _cardOpen=!!document.querySelector('#side-panel.open,#member-panel.open');
+    _setUniverseCanvasVisible(!(!_cardOpen&&(isMob()||_lbEl.classList.contains('lb-browse'))));
+    return;
+  }
+  _setUniverseCanvasVisible(true);
   // 모아보기/차트 TOP 목록(#feed-list-overlay)도 같은 이유로 스킵(2026-08-31, 사용자 제보 — "차트 TOP
   // 100을 썸네일만 보는데도 발열이 심하다"). 이 오버레이는 `inset:0`으로 화면 전체를 덮고 그 위에
   // **backdrop-filter:blur(6px)** 가 걸려 있다. 뒤에서 3D가 계속 그려지면 배경이 매 프레임 바뀌므로
@@ -3623,6 +3660,10 @@ function animate(){
   )){
     return;
   }
+  // 여기까지 왔으면 우주가 실제로 보이는 프레임이다 — 다음 프레임은 rAF(정상 속도)로 예약된다.
+  // ⚠️ 이 줄보다 아래의 return(프레임 페이싱 `_curRenderInterval` 게이트)은 "안 보여서 스킵"이
+  //    아니라 정상적인 fps 제한이므로 저주파 타이머로 내려가면 안 된다 — 그래서 여기서 끊는다.
+  _renderSkipped=false;
   if(flyState.active){
     const raw=Math.min((performance.now()-flyState.t0)/flyState.dur,1);
     const k=easeInOut(raw);
