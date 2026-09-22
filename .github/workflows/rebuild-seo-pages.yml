@@ -49,7 +49,7 @@
               git fetch origin main
               git reset --hard origin/main
               node build_group_pages.js || exit 1
-              git add g/ en/g/ member/ en/member/ sitemap.xml 2>/dev/null || git add g/ en/g/ sitemap.xml
+              git add g/ en/g/ member/ en/member/ cover/ en/cover/ collab/ en/collab/ sitemap.xml 2>/dev/null || git add g/ en/g/ cover/ en/cover/ collab/ en/collab/ sitemap.xml 2>/dev/null || git add g/ en/g/ sitemap.xml
               if git diff --cached --quiet; then
                 echo "변경된 정적 페이지 없음"
                 exit 0
