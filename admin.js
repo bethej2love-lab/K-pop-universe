@@ -3400,23 +3400,24 @@ async function _ytSweepHiddenRejudge(){
   try{
     _ytSetProg('[숨김 재판정] 숨김 목록 조회 중…');
     const{data:rows,error}=await _sbFetchAll(()=>sb.from(_YT_TABLE)
-      .select('id,title,group_ko,published_at')
+      .select('id,title,group_ko,published_at,source_tier,source_handle')
       .eq('content_flag','hidden')
       .eq('tags_manual',false) // 사람이 직접 숨긴 건 절대 안 건드림(프로젝트 헌법)
       .order('id'));
     if(error){_ytSetProg('조회 실패: '+error.message);return;}
     if(!rows?.length){_ytSetProg('재판정할 숨김 영상이 없어요');return;}
     // 판정 보조 함수는 _ytSweepMistagReclassify와 글자 그대로 같은 것을 쓴다 — 둘이 갈라지면
-    // "재배정 버튼은 옮기는데 재판정 버튼은 안 옮기는" 식의 조용한 불일치가 생긴다.
-    const _grpToks=ko=>{const v=GROUPS[ko];return v?[ko,v.en,...(v.altNames||[])].filter(Boolean).map(t=>t.toUpperCase()):[];};
-    const _norm=t=>' '+(t||'').toUpperCase().replace(/[^가-힣A-Z0-9]/g,' ').replace(/\s+/g,' ')+' ';
-    const _titleHas=(nu,ko)=>_grpToks(ko).some(t=>nu.includes(t));
-    const COLLAB=/with |w\/| feat| ft[ .]|선배|챌린지|challenge|원곡| cover|커버|＆| & |함께|출연|게스트|guest| vs | x /i;
-    const moves=[],holds=[];let same=0,weak=0,collab=0;
+    // "재배정 버튼은 옮기는데 재판정 버튼은 안 옮기는" 식의 조용한 불일치가 생긴다. 예전엔 이 넷을
+    // 로컬에 따로 복제해뒀었는데, 2026-09-11 _MISTAG 쪽 안전장치 3종(스퀴즈매칭·COLLAB 키워드 보강·
+    // 자체채널 게이트)이 여기엔 이식되지 않은 채 조용히 갈라져 있었다(2026-09-23 발견) — _MISTAG를
+    // 직접 구조분해해서 갈라질 여지 자체를 없앤다.
+    const{_grpToks,_norm,_titleHas,COLLAB,ownChannel:_ownChannel}=_MISTAG;
+    const moves=[],holds=[];let same=0,weak=0,collab=0,ownCh=0;
     const sMove=[],sHold=[];
     for(let i=0;i<rows.length;i++){
       if(i%2000===0){_ytSetProg(`[숨김 재판정] 분석 중… ${i}/${rows.length} (재배정 ${moves.length} · 보류 ${holds.length})`);await new Promise(r=>setTimeout(r));}
       const v=rows[i];
+      if(_ownChannel(v)){ownCh++;continue;} // 자체 채널 = group_ko가 채널 주인 → 재판정 불필요(_mtOwnChannel 주석)
       let m=null;try{m=_m2ParseTitle(v.title,undefined,false,(v.published_at||'').slice(0,10));}catch(e){}
       const ng=m&&m.primaryGroup;
       if(!ng){ // 아무 그룹도 안 잡힘 → 숨김 유지가 아니라 보류로(검수 목록에 올린다)
@@ -3435,8 +3436,8 @@ async function _ytSweepHiddenRejudge(){
       if(sMove.length<40)sMove.push(`[${v.group_ko}→${ng}] ${(v.title||'').slice(0,60)}`);
     }
     console.log(`[숨김 재판정] 재배정 예정 표본(최대40):\n${sMove.join('\n')}\n\n[숨김 재판정] 보류 이동 표본(최대40):\n${sHold.join('\n')}`);
-    if(!moves.length&&!holds.length){_ytSetProg(`옮길 것 없음 (숨김 ${rows.length}건 중 판정 동일 ${same}, 약한추론 ${weak}, 콜라보 ${collab})`);return;}
-    if(!await _sweepConfirmSimple("숨김 재판정","적용",`숨김 ${rows.length}건을 지금 매처로 재판정한 결과예요.\n\n· 다른 그룹으로 재배정 + 숨김 해제 : ${moves.length}건\n   (제목에 그 그룹명이 literal로 있는 것만)\n· 아무 그룹도 안 잡혀 '보류'로 이동 : ${holds.length}건\n   (무관 아님 — 카드에선 빠지되 검수 목록에 남음)\n\n· 판정 그대로라 손 안 댐 ${same}건 / 약한추론 제외 ${weak}건 / 콜라보·커버 제외 ${collab}건\n· 표본 각 40건을 콘솔(F12)에 출력했어요 — 먼저 확인 권장\n· 스냅샷 저장되어 "↩︎ 마지막 일괄 작업 되돌리기"로 복구 가능\n\n적용할까요?`)){
+    if(!moves.length&&!holds.length){_ytSetProg(`옮길 것 없음 (숨김 ${rows.length}건 중 판정 동일 ${same}, 약한추론 ${weak}, 콜라보 ${collab}, 자체채널 ${ownCh})`);return;}
+    if(!await _sweepConfirmSimple("숨김 재판정","적용",`숨김 ${rows.length}건을 지금 매처로 재판정한 결과예요.\n\n· 다른 그룹으로 재배정 + 숨김 해제 : ${moves.length}건\n   (제목에 그 그룹명이 literal로 있는 것만)\n· 아무 그룹도 안 잡혀 '보류'로 이동 : ${holds.length}건\n   (무관 아님 — 카드에선 빠지되 검수 목록에 남음)\n\n· 판정 그대로라 손 안 댐 ${same}건 / 약한추론 제외 ${weak}건 / 콜라보·커버 제외 ${collab}건 / 자체채널이라 제외 ${ownCh}건\n· 표본 각 40건을 콘솔(F12)에 출력했어요 — 먼저 확인 권장\n· 스냅샷 저장되어 "↩︎ 마지막 일괄 작업 되돌리기"로 복구 가능\n\n적용할까요?`)){
       _ytSetProg(`취소됨 — 미리보기만 (재배정 ${moves.length} · 보류 ${holds.length}, 표본 콘솔).`);return;
     }
     await _snapshotBeforeBulk('숨김 목록 재판정',[...moves.map(u=>u.id),...holds]);

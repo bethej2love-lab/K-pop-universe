@@ -53,12 +53,15 @@ ok(/\.vm-tab-count\{/.test(css), '.vm-tab-count 스타일이 없음');
 // 배지는 목록과 같은 지점에서 갱신돼야 한다(따로 부르면 한쪽만 갱신되는 드리프트)
 ok(/_vmSetTabCount\(_vmTab,_vmRows\.length\);[\s\S]{0,120}_vmCache\.set/.test(adminJs),
   '_vmCacheSync 안에서 배지를 갱신하지 않음');
-// 캐시 히트 경로에서도 배지가 갱신돼야 하고, 거기서 _vmCacheSync를 부르면 TTL이 미끄러진다
+// 캐시 히트 경로에서도 배지가 갱신돼야 하고, 거기서 _vmCacheSync를 부르면 ts가 갱신된다
+// ⚠️ vm개선 3(a)에서 TTL 자동만료 자체를 없앴다(세션 동안 캐시 유지, 갱신은 수동 ↻로만) — 그래서
+//    캐시 히트 조건은 더 이상 `Date.now()-ts<_VM_CACHE_TTL`이 아니라 `if(_cached){`뿐이다.
+//    2026-09-23: 옛 TTL 조건을 찾던 정규식이 매치 자체가 안 돼 항상 실패로 오진하고 있었음 — 정정.
 ok(/_vmSetTabCount\(tab,_vmRows\.length\); \/\/ 개수 배지만 갱신/.test(adminJs),
   '캐시 히트 경로에서 배지 갱신이 없음');
-const hitBlock = /if\(_cached&&Date\.now\(\)-_cached\.ts<_VM_CACHE_TTL\)\{[\s\S]*?return;/.exec(adminJs);
+const hitBlock = /if\(_cached\)\{[\s\S]*?return;/.exec(adminJs);
 ok(hitBlock && !/_vmCacheSync\(\)/.test(hitBlock[0]),
-  '캐시 히트 경로에서 _vmCacheSync를 부름 — ts가 갱신돼 재조회가 영영 안 됨');
+  '캐시 히트 경로에서 _vmCacheSync를 부름 — ts가 갱신돼 "N분 전" 표시·디스크 캐시 갱신 판단이 어긋남');
 
 // ── ③ 패널 높이 고정 / ④ 스크롤바 ────────────────────────────────
 ok(/@media\(min-width:769px\)\{#vm-panel\{height:86vh;\}\}/.test(css),
@@ -82,17 +85,27 @@ if (sweep) {
   ok(/if\(!_titleHas\(nu,ng\)\)\{weak\+\+;continue;\}/.test(b), '약한 추론(제목에 literal 없음)을 안 거름');
   ok(/if\(COLLAB\.test\(v\.title\|\|''\)\)\{collab\+\+;continue;\}/.test(b), '콜라보/커버를 안 거름');
   ok(/_snapshotBeforeBulk\('숨김 목록 재판정'/.test(b), '스냅샷 없이 일괄 수정함 — 되돌리기 불가');
-  ok(/if\(!confirm\(/.test(b), 'confirm 미리보기 단계가 없음');
+  // ⚠️ 무거운 스윕에 native confirm()을 쓰면 즉시 false를 반환해 버튼이 죽는다(확인된 함정) — 그래서
+  //    이 프로젝트는 _sweepConfirmSimple(모달 기반 미리보기)을 쓴다. confirm( 리터럴을 찾던 옛 assert가
+  //    이미 있는 미리보기 단계를 "없다"고 오진하고 있었음(2026-09-23 정정).
+  ok(/if\(!await _sweepConfirmSimple\(/.test(b), 'confirm 미리보기 단계(_sweepConfirmSimple)가 없음');
   ok(/console\.log\(`\[숨김 재판정\]/.test(b), '표본을 콘솔에 안 찍음(사전 확인 불가)');
   ok(/if\(ng===v\.group_ko\)\{same\+\+;continue;\}/.test(b), '판정이 같은 행을 손대고 있음');
   // 무매칭은 '무관'이 아니라 '보류'로 — 매처가 못 잡는 것과 우주 밖인 것은 다르다.
   ok(/content_flag:'보류'|_flagPatch\('보류',/.test(b), '무매칭분을 보류로 안 보냄');
   ok(!/content_flag:'무관'/.test(b), '무매칭분을 무관으로 밀고 있음 — 실존 그룹이 섞여 있어 영영 안 보이게 됨');
   ok(/content_flag:null|_flagPatch\(null,/.test(b), '재배정 시 숨김 해제를 안 함');
+  // 기존 오태깅 재배정 버튼과 판정 보조 함수가 갈라지지 않았는지
+  // ⚠️ 예전엔 숨김 재판정이 _grpToks/_norm/_titleHas/COLLAB를 로컬에 따로 복제해뒀었다 — 문자열이 그
+  //    시점엔 같았지만, 그 뒤 _MISTAG 쪽에 안전장치 3종(스퀴즈매칭·COLLAB 키워드 보강·자체채널 게이트)이
+  //    추가되는 동안 로컬 복제본은 갱신되지 않아 조용히 갈라져 있었다(2026-09-23 발견·수정). 문자열
+  //    동일성 비교는 "복제 자체가 없어졌는지"를 못 잡으므로, 이제 _MISTAG를 직접 구조분해해 쓰는지로
+  //    검증한다 — 갈라질 여지 자체를 없애는 쪽이 드리프트 재발을 막는다.
+  ok(/const\{_grpToks,_norm,_titleHas,COLLAB,ownChannel:_ownChannel\}=_MISTAG;/.test(b),
+    '숨김 재판정이 _MISTAG를 안 쓰고 판정 보조 함수를 로컬에 복제함(다시 갈라질 위험)');
+  ok(/if\(_ownChannel\(v\)\)\{ownCh\+\+;continue;\}/.test(b),
+    '숨김 재판정에 자체채널 게이트가 없음 — 재배정 오탐의 대부분(실측 93%)을 걸러내는 안전장치가 빠져있음');
 }
-// 기존 오태깅 재배정 버튼과 판정 보조 함수가 갈라지지 않았는지(문자열 동일성으로 확인)
-const norm = /const _norm=t=>' '\+\(t\|\|''\)\.toUpperCase\(\)\.replace\(\/\[\^가-힣A-Z0-9\]\/g,' '\)\.replace\(\/\\s\+\/g,' '\)\+' ';/g;
-ok((adminJs.match(norm) || []).length === 2, '_norm 구현이 두 스윕에서 서로 다름(판정이 갈라짐)');
 
 console.log(`vm-panel-ui: ${pass} passed, ${fail} failed`);
 process.exit(fail ? 1 : 0);
