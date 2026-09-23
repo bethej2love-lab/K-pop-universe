@@ -281,3 +281,32 @@ const _PROJECT_UNITS={
   'B.D.U':{names:['B.D.U','비디유','Boys Define Universe'],members:[{mko:'빛새온',gko:'솔로'},{mko:'승훈',gko:'씨아이엑스'},{mko:'제이 창',gko:'원팩트'},{mko:'김민서',gko:'솔로'}]},
   'UNB':{names:['UNB','유앤비'],members:[{mko:'강유찬',gko:'에이스'},{mko:'고호정',gko:'핫샷'},{mko:'준',gko:'유키스'},{mko:'이의진',gko:'유앤비'},{mko:'오광석',gko:'유앤비'},{mko:'박대원',gko:'유앤비'},{mko:'이형근',gko:'유앤비'},{mko:'지한솔',gko:'유앤비'},{mko:'김기중',gko:'유앤비'}]}
 };
+
+// ── 조회수 마일스톤 (2026-09-23) — admin.js(수집)와 index.html(트로피 표시) 양쪽이 봐야 해서 shared로.
+// "이 영상이 새 조회수 단계를 넘었다"를 감지해 yt_view_milestones에 기록한다(view_milestones_
+// migration.sql, 사용자 실행). 트로피 3종(music_show_wins·melon_yearly_top100·
+// spotify_streaming_milestones)과 같은 모양의 append-only 로그.
+// 설계(사용자와 합의): "콘텐츠(수집)는 넓게, 노출은 좁게" — 작은 그룹에게도 100만은 의미 있는 지표라
+// 낮은 단계부터 전부 모으되(일일뉴스 소스), 카드에 영구 배지로 보여주는 건 그중 상위 티어만
+// (_VM_TROPHY_MIN). 데이터는 하나, 화면 노출 기준만 둘로 가른다 — 기준을 바꾸고 싶으면 숫자만 조정.
+const _VM_TIERS=[100000,500000,1000000,3000000,5000000,10000000,30000000,50000000,100000000,300000000,500000000,1000000000];
+const _VM_TROPHY_MIN=10000000; // 트로피(카드 영구 배지)로 승격하는 최소 티어 — 그 아래는 일일뉴스에서만
+// oldTier(이전에 알던 최고 단계, null이면 아직 한 번도 기록 안 됨)~newViewCount 사이에 새로 넘은 티어를
+// 전부 돌려준다 — 순환 갱신 간격이 길면(특히 cold 큐, 최대 24일) 한 번에 여러 단계를 건너뛸 수 있어서
+// 최고 단계 하나만 보면 중간 단계가 통째로 로그에서 빠진다.
+function _vmCrossedTiers(oldTier,newViewCount){
+  if(newViewCount==null||isNaN(newViewCount))return[];
+  const floor=oldTier||0;
+  return _VM_TIERS.filter(t=>t>floor&&t<=newViewCount);
+}
+// 트로피 패널·일일뉴스에서 티어를 한글/영문 숫자 단위로 표기. 스트림 마일스톤용 _fmtStreamMilestone
+// (index.html)은 억/B 단위 전제라 1억 미만 티어(10만~5000만)에서 "0.1억"처럼 어색해져 따로 둔다.
+function _fmtViewMilestone(n){
+  if(currentLang==='ko'){
+    if(n>=1e8)return`${n/1e8}억+`;
+    return`${n/1e4}만+`;
+  }
+  if(n>=1e9)return`${n/1e9}B+`;
+  if(n>=1e6)return`${n/1e6}M+`;
+  return`${n/1e3}K+`;
+}

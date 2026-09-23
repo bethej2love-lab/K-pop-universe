@@ -22110,16 +22110,24 @@ function _buildMemberTimeline(a){
     }).catch(()=>{});
   }
 }
-const _TROPHY_KIND_ORDER=['music_show','melon_top100','spotify_milestone'];
-const _TROPHY_TABLES={music_show:'music_show_wins',melon_top100:'melon_yearly_top100',spotify_milestone:'spotify_streaming_milestones'};
+const _TROPHY_KIND_ORDER=['music_show','melon_top100','spotify_milestone','view_milestone'];
+const _TROPHY_TABLES={music_show:'music_show_wins',melon_top100:'melon_yearly_top100',spotify_milestone:'spotify_streaming_milestones',view_milestone:'yt_view_milestones'};
 async function _loadTrophies(gko,btnId,mko){
   const btn=document.getElementById(btnId);
   if(!btn)return;
   btn.style.display='none';btn.onclick=null;
   if(!sb)return;
   if(!mko&&!GROUPS[gko])return;
-  const orderCol={music_show:'win_date',melon_top100:'year',spotify_milestone:'milestone'};
+  const orderCol={music_show:'win_date',melon_top100:'year',spotify_milestone:'milestone',view_milestone:'crossed_at'};
   const results=await Promise.all(_TROPHY_KIND_ORDER.map(kind=>{
+    // view_milestone(yt_view_milestones)은 다른 셋과 스키마가 다르다 — song_title이 없고 video_id로
+    // yt_channel_videos.title을 FK 임베딩해서 받는다. member_ko 컬럼도 없어서(그룹 단위로만 기록)
+    // 멤버 카드 조회(mko 있음)는 조용히 스킵 — 어차피 "이 멤버가 나온 영상"을 가릴 수 없다.
+    // 노출 기준(수집과 다름, 사용자 결정): tier가 _VM_TROPHY_MIN(1000만) 이상인 것만 트로피로.
+    if(kind==='view_milestone'){
+      if(mko)return Promise.resolve({data:null,error:null});
+      return sb.from(_TROPHY_TABLES[kind]).select('*,yt_channel_videos(title)').eq('group_ko',gko).gte('tier',_VM_TROPHY_MIN).order('crossed_at',{ascending:true});
+    }
     let q=sb.from(_TROPHY_TABLES[kind]).select('*').eq('group_ko',gko);
     if(mko)q=q.eq('member_ko',mko);
     q=q.order(orderCol[kind],{ascending:kind!=='spotify_milestone'});
@@ -22136,8 +22144,8 @@ async function _loadTrophies(gko,btnId,mko){
   btn.onclick=e=>{e.stopPropagation();_openTrophyPanel(dataByKind);};
 }
 const _TROPHY_TAB_LABELS={
-  ko:{music_show:'방송 1위',melon_top100:'멜론',spotify_milestone:'스포티파이'},
-  en:{music_show:'Wins',melon_top100:'Melon',spotify_milestone:'Spotify'}
+  ko:{music_show:'방송 1위',melon_top100:'멜론',spotify_milestone:'스포티파이',view_milestone:'조회수'},
+  en:{music_show:'Wins',melon_top100:'Melon',spotify_milestone:'Spotify',view_milestone:'Views'}
 };
 let _trophyDataByKind=null,_trophyActiveKind=null;
 function _openTrophyPanel(dataByKind){
@@ -22176,7 +22184,8 @@ function _renderTrophyKind(kind){
   const titleTexts={
     melon_top100:currentLang==='ko'?`멜론 연간 TOP100 ${rows.length}회`:`${rows.length}× Melon Yearly TOP100`,
     spotify_milestone:currentLang==='ko'?`스포티파이 스트리밍 마일스톤 ${rows.length}곡`:`${rows.length} Spotify Streaming Milestones`,
-    music_show:currentLang==='ko'?`음악방송 1위 ${rows.length}회`:`${rows.length} Music Show Wins`
+    music_show:currentLang==='ko'?`음악방송 1위 ${rows.length}회`:`${rows.length} Music Show Wins`,
+    view_milestone:currentLang==='ko'?`조회수 마일스톤 ${rows.length}건`:`${rows.length} View Milestones`
   };
   document.getElementById('trophy-panel-title').textContent=titleTexts[kind]||titleTexts.music_show;
   listEl.innerHTML='';
@@ -22190,12 +22199,18 @@ function _renderTrophyKind(kind){
     }else if(kind==='spotify_milestone'){
       d.textContent=r.checked_date?String(new Date(r.checked_date).getFullYear()):'';
       s.textContent=_fmtStreamMilestone(r.milestone);
+    }else if(kind==='view_milestone'){
+      d.textContent=r.crossed_at||'';
+      s.textContent=_fmtViewMilestone(r.tier);
     }else{
       d.textContent=r.win_date;
       s.textContent=r.show;
     }
     const song=document.createElement('span');song.className='trophy-item-song';
-    song.textContent=r.song_title+(r.member_ko?` · ${r.member_ko}`:'');
+    // view_milestone은 song_title이 없다 — FK 임베딩으로 받은 영상 제목(yt_channel_videos.title)을 쓴다.
+    song.textContent=kind==='view_milestone'
+      ?(r.yt_channel_videos?.title||'')
+      :r.song_title+(r.member_ko?` · ${r.member_ko}`:'');
     it.appendChild(d);it.appendChild(s);it.appendChild(song);
     listEl.appendChild(it);
   });

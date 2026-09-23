@@ -765,23 +765,10 @@ async function _ytRefreshAllViewCounts(){
 // 여유 많다. 정기 동기화(search.list 콜당 100쿼터)와 겹치는 날만 피하면 됨. 자주 눌러도 무방(오래된
 // 것부터 순환이라 누를수록 전체가 빨리 한 바퀴). 40만 건이면 ~20번이면 전체 한 바퀴(2026-09-01 상향).
 const VIEW_COUNT_ROTATE_BATCH=20000;
-// ── 조회수 마일스톤 (2026-09-23) ────────────────────────────────────────────
-// "이 영상이 방금 새 조회수 단계를 넘었다"를 감지해 yt_view_milestones에 기록한다(view_milestones_
-// migration.sql — 사용자가 직접 실행, RLS). 트로피 3종(music_show_wins·melon_yearly_top100·
-// spotify_streaming_milestones)과 같은 모양의 append-only 로그.
-// 설계(사용자와 합의): "콘텐츠(수집)는 넓게, 노출은 좁게" — 작은 그룹에게도 100만은 의미 있는 지표라
-// 낮은 단계부터 전부 모으되(일일뉴스 소스), 카드에 영구 배지로 보여주는 건 그중 상위 티어만
-// (_VM_TROPHY_MIN). 데이터는 하나, 화면 노출 기준만 둘로 가른다 — 기준을 바꾸고 싶으면 숫자만 조정.
-const _VM_TIERS=[100000,500000,1000000,3000000,5000000,10000000,30000000,50000000,100000000,300000000,500000000,1000000000];
-const _VM_TROPHY_MIN=10000000; // 트로피(카드 영구 배지)로 승격하는 최소 티어 — 그 아래는 일일뉴스에서만
-// oldTier(이전에 알던 최고 단계, null이면 아직 한 번도 기록 안 됨)~newViewCount 사이에 새로 넘은 티어를
-// 전부 돌려준다 — 순환 갱신 간격이 길면(특히 cold 큐, 최대 24일) 한 번에 여러 단계를 건너뛸 수 있어서
-// 최고 단계 하나만 보면 중간 단계가 통째로 로그에서 빠진다.
-function _vmCrossedTiers(oldTier,newViewCount){
-  if(newViewCount==null||isNaN(newViewCount))return[];
-  const floor=oldTier||0;
-  return _VM_TIERS.filter(t=>t>floor&&t<=newViewCount);
-}
+// _VM_TIERS·_VM_TROPHY_MIN·_vmCrossedTiers·_fmtViewMilestone은 shared.js로 옮겼다(2026-09-23) —
+// index.html(트로피 표시)도 이 값들을 봐야 하는데 admin.js는 관리자 세션에서만 동적 로드되므로
+// 여기 두면 일반 유저 화면에서 못 씀. shared.js는 index.html 본문 스크립트보다 먼저 로드되니
+// admin.js가 나중에 로드돼도 그대로 전역에서 보인다(다른 shared 항목들과 동일한 구조).
 // ── 삭제·비공개 감지 (2026-09-04, Fable T8) ───────────────────────────────────
 // 컬럼(unavailable_at)은 unavailable_migration.sql로 사용자가 직접 넣는다(RLS로 여기서 DDL 불가).
 // 아직 없을 수 있으므로 **한 번만 탐지**해서 없으면 조용히 기능을 끈다 — source_tier(_ytHasSourceCols)와
