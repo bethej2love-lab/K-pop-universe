@@ -72,6 +72,28 @@
 > - 나머지(디스코 백필 433팀·솔로 규약 C안·`duration_sec` 백필·쇼츠 인라인 판별)는 여전히 대기 —
 >   전부 사용자 결정 또는 시간이 걸리는 작업이라 이번 세션 범위 밖.
 
+### [완료] ⑤ 디모렉스(DIMO REX) — 신규 유튜브 채널 미반영으로 7개월째 수집 사각지대였음
+[[project_kpop_dimo_rex_rename]] "남은 일" 관련 — 사용자 제보("이름만 바꾸면 될 게 아니고 새로
+수집 로직도 넣어야지"). 실측해보니 **개명 자체는 문제가 아니었다** — 진짜 원인은 아티스트가 그
+사이 **완전히 새로운 유튜브 채널로 이전**했는데 `artists.json`이 옛 채널을 계속 가리키고 있던 것.
+- 웹 조사로 확인: 옛 채널 `@BANGYEDAMOFFICIAL`("BANG YEDAM OFFICIAL")은 최근 업로드가 **7개월 전**
+  (2026-02)에서 멈췄다. 반면 ANTIDOTE(4월)·METAMORPHOSIS(9월) 시절 MV·비주얼라이저(`SAY MY NAME`·
+  `AT THE BOTTOM`·`KICK IT`·CODE KUNST 콜라보 `BLESSIN` 등)는 전부 **새 채널** "DIMO REX"
+  (`@DIMOREX_official`, 채널ID `UCxSwjh0M_MXwVlAwLfMn5fA`)에 올라가고 있었다 — DB 실측과 정확히
+  일치(공식 tier 최신 수집분이 2026-02-16에서 멈춰있었음).
+- 동기화 로직 자체는 문제 없었다(admin.js가 `artists.json`의 `links.youtube`를 매 회차 그대로 읽어
+  동적으로 대상 채널을 구성 — 별도 하드코딩 없음, `BANGYEDAMOFFICIAL` 리터럴은 `artists.json`·
+  파생 slim 파일 외엔 레포 어디에도 없었음). 즉 **코드를 고칠 게 아니라 데이터를 고칠 문제**였다.
+- **수정**: `artists.json` `links.youtube`를 `@BANGYEDAMOFFICIAL` → `@DIMOREX_official`로 교체
+  (핸들은 채널 원본 HTML의 `canonicalBaseUrl`로 확인 — 추측 금지 원칙 준수). 옛 채널에서 이미 모아둔
+  229건은 DB에 그대로 남는다(데이터 손실 없음), 다음 정기 동기화(매시간)부터 새 채널을 폴링.
+  `tools/build_slim_data.mjs`·`build_group_pages.js` 재실행으로 파생물 동기화. `gh` CLI가 이 환경에
+  없어 수동 트리거는 못 했다 — 다음 예약 실행에서 자동 반영됨.
+- **아직 안 건드린 것**: 솔로 디스코그래피 중 `ONLY ONE`(2023 데뷔 EP)·`GOOD ViBES`(2집)·`왜요` 3장이
+  스포티파이 자동수집에 여전히 안 잡힌다(예전 메모의 미수집 8장 중 5장은 그 사이 자동수집됐음 —
+  Resistance·Desire·ACCEPTANCE·INTOXICATED·ANTIDOTE). 원인 미조사 — 매핑된 스포티파이 아티스트
+  페이지의 앨범 목록에 없는 건지, album_group 필터(`album,single`)가 걸러내는 유형인지 확인 필요.
+
 ### [완료] ① SEO 관계 페이지(cover/collab) 배포 누락 — `git add` 한 줄 누락 [`3b716c377`]
 09-22에 적힌 진단 그대로였다. `rebuild-seo-pages.yml`의 커밋 목록에 `cover/`·`collab/`(양 언어)이
 빠져 있어서 빌더가 만들어도 레포에 반영이 안 됐다. `git add` 목록에 추가 + 로컬 재빌드로 밀려있던
