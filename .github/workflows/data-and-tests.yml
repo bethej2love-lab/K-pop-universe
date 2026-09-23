@@ -54,12 +54,9 @@
                 # 한 번 의식적으로 확인하라"는 게 그 실패의 목적이다. 기대값을 채우면 여기서 뺄 것.
                 rls.test.js)
                   echo "skip(network)  $b"; continue;;
-                # ── 알려진 기존 실패(2026-09-02 확인, 이날 작업과 무관) ──
-                # static-links: 허브에서 안 걸린 관계 페이지 1개(cover/제국의아이들)
-                # vm-panel-ui: 캐시 히트 경로의 _vmCacheSync, confirm 미리보기 단계 2건
-                # ⚠️ 고치는 즉시 이 줄에서 빼야 한다 — 여기 남겨두면 영영 빨간불인 채로 잊힌다.
-                static-links.test.js|vm-panel-ui.test.js)
-                  echo "skip(known-fail)  $b"; continue;;
+                # static-links·vm-panel-ui known-fail 스킵은 2026-09-23에 둘 다 고쳐서(8/8, 50/50)
+                # 여기서 뺐다 — CHANGELOG 2026-09-23 항목 참고. 다시 빨간불이 나면 known-fail로
+                # 숨기지 말고 원인부터 고칠 것(숨기면 여기 남겨두는 걸 또 잊는다).
               esac
               printf '%-30s' "$b"
               if node "$f" > /tmp/out.txt 2>&1; then
