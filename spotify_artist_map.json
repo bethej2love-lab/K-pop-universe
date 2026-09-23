@@ -86,6 +86,17 @@
     },
     "checkedAt": "2026-09-15"
   },
+  "SORN": {
+    "id": "6DY6xsCBGZHrG4PWSG5paz",
+    "spotifyName": "Sorn",
+    "kind": "solo",
+    "confidence": "high",
+    "why": "동명 후보 2명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 2
+    },
+    "checkedAt": "2026-09-23"
+  },
   "SS501": {
     "id": "6rmMpoeu2SIV4OLURCOn2e",
     "spotifyName": "SS501",
@@ -176,6 +187,17 @@
         2025,
         2014
       ]
+    },
+    "checkedAt": "2026-09-23"
+  },
+  "고원": {
+    "id": "0cpnuKCaIq5TKjuJnzIklM",
+    "spotifyName": "Go Won",
+    "kind": "solo",
+    "confidence": "medium",
+    "why": "이름 유일 일치",
+    "evidence": {
+      "titleOverlap": null
     },
     "checkedAt": "2026-09-23"
   },
@@ -975,6 +997,21 @@
       ]
     },
     "checkedAt": "2026-09-15"
+  },
+  "비비": {
+    "id": "6mEgpqXA4yzhhncW4cBHlh",
+    "spotifyName": "Vivid BAD SQUAD",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "이름 불일치 — 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0,
+      "verifyOverlap": 0,
+      "verifyYears": [
+        2017
+      ]
+    },
+    "checkedAt": "2026-09-23"
   },
   "비비지": {
     "id": "7Lq3yAtwi0Z7zpxEwbQQNZ",
@@ -2054,6 +2091,17 @@
     },
     "checkedAt": "2026-09-19"
   },
+  "여진": {
+    "id": "6T1L8TS6LeXIDHYnDAMHFe",
+    "spotifyName": "YEOJIN(L∞na)",
+    "kind": "solo",
+    "confidence": "high",
+    "why": "동명 후보 3명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 2
+    },
+    "checkedAt": "2026-09-23"
+  },
   "영파씨": {
     "id": "5bxwvIM9PX0CkpS6f1L2Ff",
     "spotifyName": "YOUNG POSSE",
@@ -2108,6 +2156,28 @@
     },
     "checkedAt": "2026-09-15"
   },
+  "오승아": {
+    "id": "39j9fMdgexMBOaFPILxerh",
+    "spotifyName": "Oh Seungah",
+    "kind": "solo",
+    "confidence": "medium",
+    "why": "이름 유일 일치",
+    "evidence": {
+      "titleOverlap": null
+    },
+    "checkedAt": "2026-09-23"
+  },
+  "오승희": {
+    "id": "4oIE2ZAuPXuOyHNPwjc2Ku",
+    "spotifyName": "OH SEUNGHEE",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "동명 후보 2명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-09-23"
+  },
   "온리원오프": {
     "id": "0iQGSzpJ0G0lsugv8jsJHd",
     "spotifyName": "OnlyOneOf",
@@ -2145,6 +2215,21 @@
       ]
     },
     "checkedAt": "2026-09-15"
+  },
+  "올리비아 혜": {
+    "id": "00x1fYSGhdqScXBRpSj3DW",
+    "spotifyName": "Olivia Dean",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "이름 불일치 — 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0,
+      "verifyOverlap": 0,
+      "verifyYears": [
+        2018
+      ]
+    },
+    "checkedAt": "2026-09-23"
   },
   "올아워즈": {
     "id": "2m5lRlEucobWPA1V6xqxWO",
@@ -2519,6 +2604,17 @@
     },
     "checkedAt": "2026-09-15"
   },
+  "장승연": {
+    "id": "1zeaekWal9sG8T6INxaeQM",
+    "spotifyName": "Jang Yoon-Jeong",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "이름 불일치 — 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-09-23"
+  },
   "장유빈": {
     "id": "5f1qpcqhDl49v5gKln3zl2",
     "spotifyName": "Jang Soo Bin",
@@ -2538,6 +2634,17 @@
     "why": "이름 불일치 — 앨범 대조",
     "evidence": {
       "titleOverlap": 1
+    },
+    "checkedAt": "2026-09-23"
+  },
+  "정윤혜": {
+    "id": "3R9fsg0ZmbbeFC256sOnLN",
+    "spotifyName": "Jung Hoonhee",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "이름 불일치 — 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
     },
     "checkedAt": "2026-09-23"
   },
@@ -3289,6 +3396,17 @@
     "why": "동명 후보 2명 중 앨범 대조",
     "evidence": {
       "titleOverlap": 0
+    },
+    "checkedAt": "2026-09-23"
+  },
+  "현진": {
+    "id": "3BahfzNxLclSnIM8F6i7rp",
+    "spotifyName": "현진 (LATENCY)",
+    "kind": "solo",
+    "confidence": "medium",
+    "why": "동명 후보 3명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 1
     },
     "checkedAt": "2026-09-23"
   },
