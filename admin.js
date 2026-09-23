@@ -7382,7 +7382,14 @@ function _unitMembersFromTitle(title,ko){
 const _m2VariantsCache=new WeakMap();
 function _m2NameVariants(a){
   if(_m2VariantsCache.has(a))return _m2VariantsCache.get(a);
-  const variants=[a.name.ko,a.name.en].filter(Boolean);
+  // matchAliases(개명 전 이름·로마자 별칭 등, 예: 디모렉스의 "방예담"·"DIMOREX")는 예전엔 여기 안 들어가고
+  // "그룹이 이미 확정된 뒤 멤버를 추출하는" 경로에서만 쓰였다 — 그룹명 없이 이름만으로 그룹을 역추론하는
+  // 경로(이 함수를 쓰는 memberHitTokens)에선 완전히 무시되고 있었다. 그래서 개명한 아티스트를 옛 채널
+  // 핸들/해시태그(#DIMOREX)나 "디모 렉스"처럼 띄어 쓴 표기로만 언급한 콜라보 채널(it's Live·Show
+  // Champion 등) 영상이 이 사람으로 전혀 안 잡히거나, 후보에서 빠진 자리를 우연히 겹치는 다른 사람
+  // (소디엑 멤버 "렉스" — "디모 렉스"의 뒷토큰과 완전히 같은 이름)이 채우는 사고로 이어졌다(2026-09-23
+  // 사용자 제보로 발견). 짧은/흔한 별칭은 아래 memberHitTokens의 토큰별 게이트가 그대로 걸러준다.
+  const variants=[a.name.ko,a.name.en,...(a.matchAliases||[])].filter(Boolean);
   const stripped=_atmStripSurname([...a.name.ko]);
   if(stripped&&stripped.length>=2&&!ARTISTS.some(o=>o!==a&&o.name.ko===stripped))variants.push(stripped);
   _m2VariantsCache.set(a,variants);
@@ -7736,7 +7743,7 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
   // 2026-08-25 전수 감사(tools/name_collision_audit.mjs)로 추가된 6개: 가을(아이브)·노을(레인보우)·
   // 소원(여자친구)·하나(피프티피프티)·루비(프림로즈)·미소(드림노트). 전부 노래 제목·자막에 평문으로
   // 흔히 나오는 단어라 역추론에서 오매칭 위험이 큼(실측: "가을"은 38건 중 5건이 이미 근거 없는 태그).
-  const _ATM_COMMON_KO_WORDS=new Set(['베이비','하루','하늘','바다','봄','여름','겨울','별','사랑','달','천사','하트','메이','가을','노을','소원','하나','루비','미소','마이']); // 메이: en=May(달)+동명이인 3명(리센느/세이마이네임/체리블렛)+A2O MAY 그룹명 — 인퍼런스에선 해시태그/그룹문맥만(2026-08-24). 마이(이즈나 Mai): "마이 코드"·"I Love My Body 마이 바디"의 "마이"(=My)에 대량 오매칭(2026-08-25 실측 146건) — 해시태그(#마이)만 인정
+  const _ATM_COMMON_KO_WORDS=new Set(['베이비','하루','하늘','바다','봄','여름','겨울','별','사랑','달','천사','하트','메이','가을','노을','소원','하나','루비','미소','마이','렉스']); // 메이: en=May(달)+동명이인 3명(리센느/세이마이네임/체리블렛)+A2O MAY 그룹명 — 인퍼런스에선 해시태그/그룹문맥만(2026-08-24). 마이(이즈나 Mai): "마이 코드"·"I Love My Body 마이 바디"의 "마이"(=My)에 대량 오매칭(2026-08-25 실측 146건) — 해시태그(#마이)만 인정. 렉스(소디엑): 아래 matchAliases 반영(2026-09-23)으로 디모렉스의 별칭 "디모 렉스"가 역추론 후보에 들어가게 되면서, 그 안의 " 렉스 " 토큰이 소디엑 멤버 렉스(동명이 아니라 완전히 다른 사람, 남의 2어절 별칭 뒷부분과 우연히 겹침)로 독립 매칭돼 it's Live·Show Champion 콜라보 영상이 소디엑으로 새는 걸 실측으로 확인 — 해시태그(#렉스)만 인정
   // 멤버 이름이 "실존하는 그룹 이름"과 같은 경우(예: 다이아 멤버 "유니스" ↔ 그룹 유니스(UNIS), A2O MAY의
   // "메이" 등): 제목에 평문으로 나온 "유니스"는 거의 항상 그 그룹을 가리키는데, memberHit이 이걸 그 이름의
   // 멤버(다이아 유니스)로 역추론해 엉뚱한 그룹 콜라보(with_members "유니스(다이아)")로 오태깅함 —
@@ -7775,7 +7782,11 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
     // 흔한단어 게이트는 변형(_m2NameVariants)마다 개별 적용해야 함 — 풀네임만 검사하면 성을 뗀 given-name
     // 변형(유사랑→"사랑")이 게이트를 통과해 평문 "사랑"(=love)에 대량 오매칭됨(이즈나 group_ko 385건 오염,
     // 2026-08-25 실측). 변형 t 자체가 흔한 한글단어면 그 변형은 해시태그(#유사랑)로 명시됐을 때만 인정한다.
-    return names.some(t=>(_atmNameNeedsCtx(t)||_ATM_COMMON_KO_WORDS.has(t))?hitHashtag(t):hit(t));
+    // 단일음절 변형도 마찬가지 — 위 첫 줄의 단일음절 게이트는 a.name.ko(본명) 길이만 본다. matchAliases가
+    // _m2NameVariants에 들어가면서(2026-09-23) 본명은 여러 음절이어도 별칭 중 하나가 단일음절인 경우가
+    // 생길 수 있다(예: 러블리즈 JIN의 matchAlias "진") — 그 변형만 따로 게이트해야 "진" 같은 흔한 1음절이
+    // 평문으로 새는 걸 막는다.
+    return names.some(t=>(_atmNameNeedsCtx(t)||_ATM_COMMON_KO_WORDS.has(t)||[...t].length===1)?hitHashtag(t):hit(t));
   }
   // memberHit과 동일한 게이트를 적용하되 "매칭된 토큰들"을 돌려준다 — 교차-ko 영문 동명이인 감지용
   // (2026-08-26 옵션 A). 예: "JIHOON"이 투어스 지훈·트레저 지훈·워너원 박지훈 3명의 en 변형과 겹침을
@@ -7784,7 +7795,7 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
   function memberHitTokens(a,names){
     if(_atmInferExcluded(a))return []; // memberHit과 동일 게이트(역추론 제외) — 갈라지면 감지가 틀어짐
     if([...a.name.ko].length===1||_isHashtagOnlyName(a.name.ko)||_ATM_COMMON_KO_WORDS.has(a.name.ko)||_atmNameIsGroup(a))return names.filter(t=>hitHashtag(t));
-    return names.filter(t=>(_atmNameNeedsCtx(t)||_ATM_COMMON_KO_WORDS.has(t))?hitHashtag(t):hit(t));
+    return names.filter(t=>(_atmNameNeedsCtx(t)||_ATM_COMMON_KO_WORDS.has(t)||[...t].length===1)?hitHashtag(t):hit(t));
   }
   // 해시태그가 "성+이름"을 띄어쓰기 없이 그대로 붙여 쓰는 경우(예: "#HUHYUNJIN" = 허Huh+윤진Yunjin)가
   // 흔한데, 등록명(name.en)은 보통 성 없이 이름만("Yunjin") 등록돼있어서 위 hit()의 단어 경계 매칭으론
@@ -8027,6 +8038,14 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
     // 메인으로 차지하는 사고가 있었음(2026-09-02, 위 feat 강등과 같은 제보에서 발견).
     const _flat=s=>String(s).toUpperCase().replace(/[^가-힣A-Z0-9]/g,'');
     if(selfNames&&selfNames.some(n=>n&&_flat(n)===_flat(adj)))return false;
+    // 콤마 등으로 여러 출연자를 한 괄호에 같이 적은 경우("DIMO REX(몰리얌, 디모 렉스)"— 영문명 뒤
+    // 괄호에 두 사람의 한글 표기를 나란히 적은 것) — 괄호 전체가 본인 한 명의 표기와는 안 맞아 위 검사를
+    // 통과 못 하고 "타 소속 동명이인"으로 오판해 본인이 역추론에서 통째로 탈락했다(2026-09-23, 디모렉스
+    // 제보로 발견). 조각 중 하나라도 본인 표기와 일치하면 타 소속 신호가 아니다.
+    if(selfNames&&/[,·\/&]/.test(adj)){
+      const pieces=adj.split(/[,·\/&]/).map(s=>s.trim()).filter(Boolean);
+      if(pieces.some(p=>selfNames.some(n=>n&&_flat(n)===_flat(p))))return false;
+    }
     for(const tok of knownGroupTokens){if(adj===tok||adj.includes(tok)||tok.includes(adj))return false;}
     return true;
   }

@@ -665,6 +665,35 @@ test('era 구분 — 탈퇴 후 승한 직캠은 솔로(본인)로',
   '승한 직캠 4K', undefined,
   r => !!r && r.primaryGroup === '승한', '2025-06-01');
 
+// ── matchAliases가 역추론(그룹명 없이 이름만) 경로에서도 인정돼야 함 (2026-09-23) ───────────
+// _m2NameVariants가 matchAliases를 안 봐서, 개명한 디모렉스(구 방예담)를 해시태그(#DIMOREX)나 별칭
+// 표기("디모 렉스")로만 언급한 콜라보 채널(it's Live·Show Champion) 영상이 이 사람으로 전혀 안 잡히거나,
+// 그 빈자리를 우연히 겹치는 남(소디엑 멤버 "렉스" — "디모 렉스"의 뒷토큰과 완전히 같은 이름)이
+// 채가는 사고로 이어졌다(사용자 제보 — 실제 DB에 4건 이미 오염돼 있었음).
+test('matchAliases 해시태그 — #DIMOREX만으로 디모렉스 인식(예전엔 null)',
+  '#DIMOREX test', undefined,
+  r => !!r && r.primaryGroup === '디모렉스');
+test('matchAliases 평문 — 구채널 표기 "all the girls wanna say my name"도 #DIMOREX로 디모렉스 확정',
+  "all the girls wanna say my name | it's Live #DIMOREX #잇츠라이브", undefined,
+  r => !!r && r.primaryGroup === '디모렉스' && r.confidence === 'strong');
+test('matchAliases 띄어쓰기 별칭 — "디모 렉스"가 디모렉스로 붙되 소디엑 렉스로는 안 샘',
+  '[쇼챔직캠 4K] Molly Yam & DIMO REX (몰리얌 & 디모 렉스) - 넌 날 미치게 만들겠지만 | Show Champion', undefined,
+  r => !!r && r.primaryGroup === '디모렉스', '2026-02-11');
+// "렉스"(소디엑) 단독은 흔한 이름 게이트로 내려갔으니, 소디엑 본인 콘텐츠는 해시태그로는 계속 잡혀야 함
+// (완전 차단이 아니라 "해시태그만 인정"인지 확인 — 회귀 방지).
+test('흔한이름 게이트 유지 — #렉스 해시태그는 여전히 소디엑으로 인정',
+  '#렉스 무대 직캠', undefined,
+  r => !!r && r.primaryGroup === '소디엑');
+test('흔한이름 게이트 — 평문 단독 "렉스"는 이제 소디엑으로 안 감(디모렉스 문맥 없어도 과매칭 방지)',
+  '오늘 렉스 뭐하지', undefined,
+  r => !r || r.primaryGroup !== '소디엑');
+// 콤마로 여러 출연자를 한 괄호에 묶은 표기("EN이름(한글1, 한글2)")를 "타 소속 동명이인" 신호로
+// 오판해 본인이 역추론에서 통째로 탈락하던 것(hasForeignGroupSuffix) — 조각 중 하나가 본인 표기와
+// 일치하면 타 소속 신호가 아니게 수정.
+test('콤마묶음 괄호 — "DIMO REX(몰리얌, 디모 렉스)"가 타소속 신호로 오판 안 됨',
+  '쇼츠로 모아보는 Molly Yam, DIMO REX(몰리얌, 디모 렉스)의 <넌 날 미치게 만들겠지만>', undefined,
+  r => !!r && r.primaryGroup === '디모렉스', '2026-02-12');
+
 // ── 실행 ──────────────────────────────────────────────
 let pass = 0, fail = 0;
 cases.forEach(({ name, title, selfGko, check, publishedAt }) => {
