@@ -80,12 +80,13 @@ function findBrowser() {
   return null;
 }
 
-async function waitForCdp(retries = 40) {
+// getDiag: 타임아웃 시 붙일 진단 문자열을 만드는 콜백(크롬 종료 여부 + stdout/stderr 꼬리).
+async function waitForCdp(getDiag, retries = 40) {
   for (let i = 0; i < retries; i++) {
     try { await (await fetch(`http://127.0.0.1:${CDP_PORT}/json/version`)).json(); return; }
     catch (e) { await sleep(300); }
   }
-  throw new Error('CDP 포트가 안 열림 — 브라우저 실행 실패');
+  throw new Error('CDP 포트가 안 열림 — 브라우저 실행 실패\n' + getDiag());
 }
 
 function connectCdp(url) {
@@ -146,12 +147,31 @@ async function main() {
   console.log(`[routine] 브라우저=${BROWSER}`);
   console.log(`[routine] 사이트=${SITE_URL} · 프로필=${PROFILE_DIR} · 모드=${MODE}(${SYNC_ONLY ? '동기화만' : WITH_SYNC ? '동기화+스윕' : '스윕만'})`);
 
+  // 프로필이 실행 간 캐시로 유지되는데(위 "증분 유지" 주석), 종료는 항상 SIGKILL이라(아래 finally)
+  // 크롬이 정상 종료 핸들러를 못 밟고 Singleton* 락 파일을 못 지울 수 있다. 대개는 다음 실행의 크롬이
+  // "그 PID는 이미 죽었네"를 보고 알아서 치우지만, 러너가 죽거나 잡 타임아웃으로 프로세스가 통째로
+  // 끊긴 경우엔 락이 그대로 남아 다음 실행에서 크롬이 CDP 포트를 아예 안 여는 사고로 이어질 수 있다
+  // (2026-09-23, 3연속 "CDP 포트가 안 열림" 실패 조사 중 발견 — 근본 원인 확정은 못 했지만 선제 청소가
+  // 안전하고 부작용이 없어 먼저 넣는다. 진단은 아래 stdout/stderr 캡처로).
+  for (const f of ['SingletonLock', 'SingletonCookie', 'SingletonSocket']) {
+    try { fs.rmSync(path.join(PROFILE_DIR, f), { force: true }); } catch (e) {}
+  }
+
+  // stdout/stderr를 'ignore'로 버리고 있었다 — 그래서 "CDP 포트가 안 열림"만 찍히고 크롬 자신이 왜
+  // 못 떴는지(샌드박스·GPU·디스크·프로필 손상 등) 단서가 전혀 안 남았다. 꼬리만 모아뒀다가 실패 시
+  // 에러 메시지에 붙인다 — 평소엔 조용하고, 필요할 때만 보인다.
+  let chromeOut = '';
+  const appendChromeOut = buf => { chromeOut = (chromeOut + buf.toString()).slice(-4000); };
   const child = spawn(BROWSER, [
     '--headless=new', '--disable-gpu', '--no-sandbox', '--no-first-run', '--no-default-browser-check',
     '--enable-unsafe-swiftshader', '--use-gl=angle', '--use-angle=swiftshader',
     `--remote-debugging-port=${CDP_PORT}`, `--user-data-dir=${PROFILE_DIR}`,
     'about:blank',
-  ], { stdio: 'ignore' });
+  ], { stdio: ['ignore', 'pipe', 'pipe'] });
+  child.stdout.on('data', appendChromeOut);
+  child.stderr.on('data', appendChromeOut);
+  let chromeExited = null;
+  child.on('exit', (code, signal) => { chromeExited = { code, signal }; });
   console.log(`[routine] 헤드리스 크롬 PID=${child.pid}`);
 
   const errors = [];
@@ -161,7 +181,11 @@ async function main() {
   let cdp = null;
 
   try {
-    await waitForCdp();
+    await waitForCdp(() => {
+      const exitLine = chromeExited ? `크롬 종료됨: code=${chromeExited.code} signal=${chromeExited.signal}` : `크롬 프로세스는 아직 살아있음(PID=${child.pid})`;
+      const outLine = chromeOut.trim() ? `--- 크롬 stdout/stderr(꼬리) ---\n${chromeOut.trim()}` : '(크롬이 아무 출력도 안 남김)';
+      return `${exitLine}\n${outLine}`;
+    });
     const { webSocketDebuggerUrl } = await (await fetch(`http://127.0.0.1:${CDP_PORT}/json/new?about:blank`, { method: 'PUT' })).json();
     cdp = await connectCdp(webSocketDebuggerUrl);
 
