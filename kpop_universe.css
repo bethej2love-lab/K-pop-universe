@@ -3212,7 +3212,18 @@
     }
     #feed-overlay.open{transform:translateX(0);}
     #feed-hd{padding:16px 20px 14px;}
-    #feed-body{padding-bottom:20px;}
+    /* 세로 스크롤바를 또렷하게(2026-09-23, 사용자 요청) — Discover 탭 상단 가로 선반들(기념일·신보·
+       차트·오리지널 콘텐츠)은 마우스 휠을 가로채 자기 안에서만 옆으로 움직인다(의도적 유지 — 아래
+       #feed-body 자체의 overflow-y:auto는 원래도 있었지만, 그 위에서는 휠로 못 내려가고 데스크톱에서
+       거의 안 보이는 전역 2px 스크롤바(::-webkit-scrollbar, 이 파일 위쪽)만 있어 발견이 안 됐다.
+       #fav-list 등 다른 패널이 쓰는 손잡이 패턴(rgba(140,165,220,...))을 따르되, 선반 사이 틈을 정확히
+       노리지 않고도 드래그로 내릴 수 있게 폭만 살짝 더 넓힌다(3px→6px, 목록 하나보다 패널 전체 스크롤이라
+       그랩 타겟이 더 커야 함). 트랙도 옅게 남겨 "더 있다"는 게 호버 없이도 보이게 한다. */
+    #feed-body{padding-bottom:20px;scrollbar-width:thin;scrollbar-color:rgba(140,165,220,0.32) rgba(255,255,255,0.04);}
+    #feed-body::-webkit-scrollbar{width:6px;}
+    #feed-body::-webkit-scrollbar-track{background:rgba(255,255,255,0.04);border-radius:3px;}
+    #feed-body::-webkit-scrollbar-thumb{background:rgba(140,165,220,0.32);border-radius:3px;border:1px solid transparent;background-clip:content-box;}
+    #feed-body::-webkit-scrollbar-thumb:hover{background:rgba(155,180,240,0.5);background-clip:content-box;}
   }
   /* 탐험 패널이 살짝 열린(peek, 화면 절반) 상태에선 위쪽 절반이 그대로 보이므로 상단바를 가릴 필요가
      없음 — 전체로 펼쳐졌을 때만 숨긴다(2026-08-13, 사용자 제보 — peek 상태에서도 상단바가 사라짐). */
