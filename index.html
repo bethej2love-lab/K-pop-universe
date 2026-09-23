@@ -18056,6 +18056,55 @@ async function _buildFeedFavAlbums(){
     section.style.display='';
   }catch(e){console.warn('[feed] 즐겨찾기 신보 선반 실패 — 이 선반만 빠집니다',e);}
 }
+// ── 오늘의 케이팝 소식(2026-09-23) ────────────────────────────────────────────
+// 앨범 발매·음방 1위·조회수 마일스톤 세 소스를 "오늘"로만 좁혀 한 선반에. 각 소스는 이미 다른
+// 목적으로 수집되고 있던 데이터라(New Releases 선반, music_show_wins 트로피, yt_view_milestones)
+// 여긴 그중 "오늘 날짜"인 것만 추려 합치는 조회 전용 레이어 — 별도 수집 로직 없음.
+// ⚠️ 조회수 마일스톤은 트로피(카드 배지, _VM_TROPHY_MIN=1000만 이상만)와 달리 여기선 **기준 없이
+// 전부** 보여준다("콘텐츠는 넓게, 노출은 좁게" 설계 — 작은 그룹 팬에게 10만·100만도 의미 있는
+// 소식이라는 게 이 선반을 만든 이유 그 자체). seeded=true(최초 시딩분)는 "오늘 일어난 일"이 아니므로
+// 반드시 제외.
+async function _buildFeedDailyNews(){
+  const section=document.getElementById('feed-dailynews-section');
+  const list=document.getElementById('feed-dailynews');
+  if(!section||!list||!sb)return;
+  list.innerHTML='';section.style.display='none';
+  _enableDragScroll(list);
+  try{
+    const today=new Date().toISOString().slice(0,10); // KST/UTC 경계 오차는 다른 "오늘" 판정(기념일 등)과 동일하게 허용
+    const todayDot=today.replace(/-/g,'.'); // albums_recent.json은 "YYYY.MM.DD" 표기
+    const isKo=currentLang==='ko';
+    const [albumsAll,winsRes,vmRes]=await Promise.all([
+      _ensureRecentAlbums().catch(()=>[]),
+      sb.from('music_show_wins').select('*').eq('win_date',today).order('show',{ascending:true}),
+      sb.from('yt_view_milestones').select('*,yt_channel_videos(title,thumb,is_short)')
+        .eq('crossed_at',today).eq('seeded',false).order('tier',{ascending:false}).limit(20)
+    ]);
+    const items=[]; // {icon,title,sub,nav,thumb,meta}
+    (Array.isArray(albumsAll)?albumsAll:[]).filter(a=>a.d===todayDot).forEach(a=>{
+      const ownerDisp=a.k==='g'?_gLabelKo(a.o):a.o;
+      items.push({icon:'💿',title:a.t,sub:ownerDisp,nav:_albumCardNav(a),thumb:a.c,meta:_discogTypeLabel(a.y)});
+    });
+    (winsRes.data||[]).forEach(w=>{
+      const label=isKo?`${w.show} 1위`:`#1 on ${w.show}`;
+      items.push({icon:'🏆',title:w.song_title||'',sub:_gLabelKo(w.group_ko)+(w.member_ko?` · ${w.member_ko}`:''),
+        nav:()=>_feedNav(()=>{if(GROUPS[w.group_ko]){if(isMob())showGC(w.group_ko,window.innerWidth/2,window.innerHeight*0.4,false,false,null,false);else showGC(w.group_ko,window.innerWidth/2,window.innerHeight/2);}}),
+        thumb:null,meta:label});
+    });
+    (vmRes.data||[]).forEach(m=>{
+      const v=m.yt_channel_videos;if(!v)return;
+      const vidUrl=v.is_short?`https://youtube.com/shorts/${m.video_id}`:`https://www.youtube.com/watch?v=${m.video_id}`;
+      items.push({icon:'🎉',title:v.title||'',sub:_gLabelKo(m.group_ko),
+        nav:()=>openLightbox(vidUrl,!!v.is_short,null,0,{groupKo:m.group_ko},false,true),
+        thumb:v.thumb,meta:_fmtViewMilestone(m.tier)});
+    });
+    if(!items.length)return;
+    items.forEach(it=>{
+      _appendFeedCard(list,it.icon,it.title,it.sub,it.nav,it.thumb,null,{meta:it.meta,metaFresh:true});
+    });
+    section.style.display='';
+  }catch(e){console.warn('[feed] 오늘의 소식 선반 실패 — 이 선반만 빠집니다',e);}
+}
 async function _buildFeedNewAlbums(){
   const section=document.getElementById('feed-newalbum-section');
   const list=document.getElementById('feed-newalbum');
@@ -19870,7 +19919,8 @@ function _feedBuildPump(){
 }
 function _buildFeedDisc(){
   _feedBuildQ=[]; // 패널을 다시 열면 이전 대기분은 버린다(중복 그리기·유령 요청 방지)
-  _buildFeedAnniversaries(); // 기념일 선반은 Discover 첫 섹션(2026-08-30 이동)
+  _buildFeedDailyNews(); // 오늘의 소식이 Discover 맨 첫 섹션(2026-09-23) — 기념일보다도 먼저
+  _buildFeedAnniversaries(); // 기념일 선반은 그 다음(2026-08-30 이동)
   document.getElementById('feed-empty-disc').hidden=true;
   const list=document.getElementById('feed-discovery');
   const chartList=document.getElementById('feed-chart');
@@ -22557,8 +22607,16 @@ _totopBtn.addEventListener('click',e=>{
       </div>
       <div id="feed-empty-rec" class="feed-empty" hidden><div class="feed-empty-txt"></div><button class="feed-empty-retry" type="button"></button></div>
     </div>
-    <!-- Discover = "전체·탐색": 기념일 → 차트 → Trend → 디스커버리 (2026-08-30). -->
+    <!-- Discover = "전체·탐색": 오늘의 소식 → 기념일 → 차트 → Trend → 디스커버리 (2026-09-23 오늘의 소식 추가). -->
     <div id="feed-pane-disc" class="feed-pane" hidden>
+      <!-- 오늘의 케이팝 소식(2026-09-23, 사용자 제안) — 앨범 발매·음방 1위·조회수 마일스톤 세 소스를
+           "오늘 일어난 일"로만 좁혀 한 선반에 합친다. 기존 New Releases(최근 최대 60일)·Charts와 달리
+           "오늘"이 유일한 필터라 데이터가 얇은 날은 짧거나 빈 채로 섹션 자체가 숨는다(정상 — 억지로
+           채우지 않는다). 세 소스 다 "시간이 지나면 의미가 옅어지는" 성격이라 맨 위(기념일보다 먼저). -->
+      <div class="feed-section" id="feed-dailynews-section" style="display:none">
+        <div class="feed-section-ttl">📰 Today's K-pop</div>
+        <div id="feed-dailynews" class="feed-strip hscroll-drag"></div>
+      </div>
       <div class="feed-section" id="feed-anniv-section" style="display:none">
         <div class="feed-section-ttl">🎂 Today's Anniversary</div>
         <div id="feed-anniv" class="feed-strip hscroll-drag"></div>
