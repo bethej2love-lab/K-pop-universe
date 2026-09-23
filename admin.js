@@ -8515,7 +8515,16 @@ function _extBuildRows(vids,strict,tier,owner,defaultCat,handle){
       // 탈퇴 후 솔로 재귀속 — 옛 그룹으로 확정된 행을 본인 이름으로 돌린다(2026-09-03).
       // owner 채널(본인/그룹 소유)은 group_ko가 채널 주인으로 고정이라 대상이 아니다.
       // 대상이 아니면 null을 돌려주므로 기존 값 그대로.
-      group_ko:owner?ownerGko:held?null:((!ambiguous&&_soloReattribGko(match.primaryGroup,members,v.published_at))||match.primaryGroup),
+      // ⚠️ held(위 "] 뒤 미지 그룹" 주석)는 원래 null을 넣고 있었는데, group_ko가 NOT NULL 컬럼이라
+      // **이 INSERT 자체가 매번 예외 없이 실패**하고 있었다(2026-09-03 도입 이후 쭉 — 사용자가 로그에서
+      // "null value in column group_ko" 에러 다발을 제보해 발견, 2026-09-23). 배치 insert가 한 행이라도
+      // 실패하면 전체가 롤백되는데, 실패한 채널은 체크포인트도(아래 newestId 저장이 try 블록 안이라
+      // catch로 튀어 못 미침) 전진을 못 해 **그 시점에 held 영상을 하나라도 물면 그 채널이 그 지점에서
+      // 영구 정지**했다 — 인기가요·쇼음악중심이 각각 9/13·9/12에서 멈춰있던 게 이거였고, 동기화 속도
+      // 계측 로그에 뜬 잡지/매체 채널 다발 실패도 전부 같은 원인. group_ko를 null 대신 채널 handle로
+      // 채워 넣는다 — content_flag='보류'라 사용자 화면(그룹/멤버 카드)엔 어차피 안 뜨고, source_handle로
+      // 이미 채널을 구분하니 검수 조회(`content_flag='보류' and group_ko='그 handle'`)에 그대로 쓸 수 있다.
+      group_ko:owner?ownerGko:held?handle:((!ambiguous&&_soloReattribGko(match.primaryGroup,members,v.published_at))||match.primaryGroup),
       members:ambiguous?[]:members,with_groups:withGroups,with_members:withMembers,
       // 항상 두 칸을 넣는다(빈 값이어도 []). 조건부로 넣으면 200개 배치 안에 커버 영상이 하나라도
       // 섞였을 때, 그 칼럼이 배치의 INSERT 컬럼 목록에 들어가면서 키가 없는 일반 영상 행들이 null로
