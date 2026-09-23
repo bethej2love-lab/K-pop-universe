@@ -99137,6 +99137,59 @@
   "subName": "김현아",
   "matchAliases": [
    "김현아"
+  ],
+  "discography": [
+   {
+    "title": "Mrs. Nail",
+    "type": "싱글",
+    "isMain": true,
+    "cover": "https://i.scdn.co/image/ab67616d0000b2731922d4e36ef503e9ef6434ee",
+    "releaseDate": "2025.04.30",
+    "trackCount": 1,
+    "titleTrack": "Mrs. Nail",
+    "tracks": [
+     {
+      "no": 1,
+      "title": "Mrs. Nail",
+      "isTitle": true
+     }
+    ],
+    "src": "spotify",
+    "spotifyId": "2o8lTmzLhENLWHobwzWPDP"
+   },
+   {
+    "title": "Attitude",
+    "type": "미니",
+    "isMain": true,
+    "cover": "https://i.scdn.co/image/ab67616d0000b273d3ec445f902107a725eab6b2",
+    "releaseDate": "2024.05.02",
+    "trackCount": 4,
+    "titleTrack": "Attitude",
+    "tracks": [
+     {
+      "no": 1,
+      "title": "Attitude",
+      "isTitle": true
+     },
+     {
+      "no": 2,
+      "title": "Q&A",
+      "isTitle": false
+     },
+     {
+      "no": 3,
+      "title": "Ah! (Feat. GEMINI)",
+      "isTitle": false
+     },
+     {
+      "no": 4,
+      "title": "RSVP (Feat. CHANGMO)",
+      "isTitle": false
+     }
+    ],
+    "src": "spotify",
+    "spotifyId": "10BUVVtnO0rZlbQBPJTrfj"
+   }
   ]
  },
  {

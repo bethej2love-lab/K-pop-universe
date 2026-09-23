@@ -163,6 +163,22 @@
     },
     "checkedAt": "2026-09-20"
   },
+  "고우리": {
+    "id": "0ZI38JRCqxgSa8hGsuH5f8",
+    "spotifyName": "고우리 Go woori",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "이름 불일치 — 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0,
+      "verifyOverlap": 0,
+      "verifyYears": [
+        2025,
+        2014
+      ]
+    },
+    "checkedAt": "2026-09-23"
+  },
   "골든차일드": {
     "id": "5zShiwTHlygdfsXj6eavTu",
     "spotifyName": "Golden Child",
@@ -173,6 +189,17 @@
       "titleOverlap": 3
     },
     "checkedAt": "2026-09-15"
+  },
+  "권소현": {
+    "id": "4Px9NtHsgJS0Qpu255g99u",
+    "spotifyName": "Kwon Sohyung",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "이름 불일치 — 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-09-23"
   },
   "권은비": {
     "id": "1EJABgR8HCBdEsSmPCZ52A",
@@ -195,6 +222,28 @@
       "titleOverlap": 0
     },
     "checkedAt": "2026-09-20"
+  },
+  "김재경": {
+    "id": "3Gi685Pscm2KnOLVnUnZEC",
+    "spotifyName": "Kim Jaekyung",
+    "kind": "solo",
+    "confidence": "medium",
+    "why": "이름 유일 일치",
+    "evidence": {
+      "titleOverlap": null
+    },
+    "checkedAt": "2026-09-23"
+  },
+  "김지숙": {
+    "id": "5se8HfkMw6SGJEqC5BhEZV",
+    "spotifyName": "Kim Ji Soo",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "이름 불일치 — 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-09-23"
   },
   "나우즈": {
     "id": "1iZwr6w3TWPNezX8yCtRBg",
@@ -254,6 +303,17 @@
       "titleOverlap": null
     },
     "checkedAt": "2026-09-17"
+  },
+  "노을": {
+    "id": "6MucRdwAxiOxHLAAQ0o1I3",
+    "spotifyName": "Noeul",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "동명 후보 2명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-09-23"
   },
   "누에라": {
     "id": "4YsiijJHnCAjqS9cIXNoTI",
@@ -1703,6 +1763,17 @@
     },
     "checkedAt": "2026-09-15"
   },
+  "에이식스": {
+    "id": "3myfCvhAVJP0QcpjgQFGDQ",
+    "spotifyName": "A SIX",
+    "kind": "group",
+    "confidence": "medium",
+    "why": "이름 유일 일치",
+    "evidence": {
+      "titleOverlap": null
+    },
+    "checkedAt": "2026-09-23"
+  },
   "에이오에이": {
     "id": "54gWVQFHf8IIqbjxAoOarN",
     "spotifyName": "AOA",
@@ -2459,6 +2530,17 @@
     },
     "checkedAt": "2026-09-21"
   },
+  "전지윤": {
+    "id": "05uheFGPahVh2nHIZK1KuB",
+    "spotifyName": "Jenyer",
+    "kind": "solo",
+    "confidence": "medium",
+    "why": "이름 불일치 — 앨범 대조",
+    "evidence": {
+      "titleOverlap": 1
+    },
+    "checkedAt": "2026-09-23"
+  },
   "제로베이스원": {
     "id": "7cjg7EkeZy3OI5o9Qthc6n",
     "spotifyName": "ZEROBASEONE",
@@ -2490,6 +2572,22 @@
       ]
     },
     "checkedAt": "2026-09-20"
+  },
+  "조현영": {
+    "id": "2SAaO0ut9ykA6nsqWl2wXg",
+    "spotifyName": "Choi Yoon Young",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "이름 불일치 — 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0,
+      "verifyOverlap": 0,
+      "verifyYears": [
+        2025,
+        2022
+      ]
+    },
+    "checkedAt": "2026-09-23"
   },
   "지수연": {
     "id": "70iA690AZviTkQKgfjlSK6",
@@ -3182,6 +3280,17 @@
       "titleOverlap": null
     },
     "checkedAt": "2026-09-22"
+  },
+  "현아": {
+    "id": "3UwlejyX2b458azZ7eCnHb",
+    "spotifyName": "HyunA",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "동명 후보 2명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-09-23"
   },
   "혜림": {
     "id": "6aXSCh6qagSWkyDHTPf4Bl",
