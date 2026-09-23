@@ -121,7 +121,9 @@ ck(/_bringToFront\(connPanelEl\)/.test(_occ), 'openConnCard: 데스크톱 패널
 // 실패. 해결: 그 오프너에 _bringToFront(el)를 붙이거나(권장), 정적 z가 확실하면 여기 카운트를 올린다.
 const SNAPSHOT = {
   "_flOv.classList.add('open');": 2,
-  "_msEl.classList.add('open');_msEl.setAttribute('aria-hidden','false');": 1,
+  // 2026-09-23: _openSearchOverlayFrom(데스크톱 검색 '더보기' → 전체화면 결과)이 같은 줄을 두 번째로
+  // 씀 — 그 함수도 몇 줄 뒤에 _bringToFront(_msEl)을 부르므로(Part1/2가 실제로 확인) 안전, 카운트만 올림.
+  "_msEl.classList.add('open');_msEl.setAttribute('aria-hidden','false');": 2,
   "_profileOverlayEl.classList.add('open');": 1,
   // connPanelEl open 지점은 2026-09-07에 _bringToFront가 같은 줄에 붙어 스냅샷에서 빠짐(Part2가 대신 고정).
   "connSheetEl.classList.add('bs-open');": 1, // 애니메이션 끝의 상태 클래스 — _bringToFront는 display='block' 직전에 있음

@@ -4532,6 +4532,10 @@ function _makeSearchMoreRow(type,rest){
   b.textContent=(currentLang==='ko'?_SR_MORE_LABEL.ko:_SR_MORE_LABEL.en)+' '+step;
   b.addEventListener('click',e=>{
     e.stopPropagation();
+    // 데스크톱 작은 드롭다운(#search-results)에서 눌렀으면 그 자리에서 늘리지 않고 전체화면
+    // 결과로 넘어간다(2026-09-23, 사용자 요청) — msheet 안에서 눌렀을 땐 이 분기를 안 타므로
+    // 거기선 지금처럼 그 자리에서 이어 늘어난다(이미 전체화면이라 옮길 곳이 없다).
+    if(!isMob()&&b.closest('#search-results')){_openSearchOverlayFrom(_curSearchQ,type);return;}
     if(type==='video'){_srLoadMoreVideos(b);return;}
     _srLimits[type]=_srCap(type)+_SR_STEP;
     doSearch(_curSearchQ);
@@ -4978,6 +4982,17 @@ function doSearch(q){
       });
     }
   });
+  // ── 곡 검색용 소속 아티스트(2026-09-23) ──────────────────────────────────────
+  // "샤이니"를 치면 그룹·멤버 결과만 나오고 곡(디스코그라피)은 하나도 안 나왔다 — 아래 곡 매칭이
+  // **제목에 검색어가 포함된 곡**만 찾아서다("샤이니"가 제목에 들어간 곡은 없으니 0건). 그룹/멤버가
+  // 정확·접두로 잡혔으면(score<=1) 그 사람이 부른 곡도 제목 매칭과 무관하게 곡 섹션에 채워 넣는다.
+  const _songOwner=(()=>{
+    const g=hits.filter(h=>h.type==='group').sort((a,b)=>a.score-b.score)[0];
+    const m=hits.filter(h=>h.type==='member').sort((a,b)=>a.score-b.score)[0];
+    if(m&&m.score<=1&&(!g||m.score<=g.score))return{ownerType:'member',owner:m.data};
+    if(g&&g.score<=1)return{ownerType:'group',owner:g.data};
+    return null;
+  })();
   // ── 곡(2026-08-31) ──
   // ⚠️ 사람/그룹 이름보다 **아래**에 오게 등급 +1 핸디캡을 준다 — "카리나"를 쳤는데 곡이 먼저 뜨면 안 된다.
   //    핸디캡이 정확히 한 등급이라, 엔티티는 **한 등급 위까지만** 곡을 이긴다(2026-09-08, 이전 값 1.2):
@@ -4991,11 +5006,20 @@ function doSearch(q){
     if(!_songIndex && (!_SLIM_MODE || _TI)) _songIndex=_buildSongIndex();
     if(!_songIndex && _SLIM_MODE && !_TI) _ensureTracksIndex().then(()=>{if(_curSearchQ===q){_songIndex=_buildSongIndex();doSearch(q);}});
     const songHits=[];
+    const _songSeen=new Set();
     for(const s of (_songIndex||[])){
       const t=s.title,tl=t.toLowerCase();
       if(!(t.includes(q)||tl.includes(ql)||(qln.length>=2&&_normEn(t).includes(qln))))continue;
-      songHits.push({s,sc:_mScore(t,q,ql)});
+      songHits.push({s,sc:_mScore(t,q,ql)});_songSeen.add(s);
       if(songHits.length>400)break; // 너무 흔한 단어에서 전체 순회를 계속하지 않게
+    }
+    // 소속 아티스트가 확실히 잡혔으면(_songOwner) 제목 매칭 여부와 무관하게 그 사람 곡을 채운다 —
+    // 디스코그라피 전체를 훑는 목적이라 400건 캡을 걸지 않는다(그래봐야 큰 그룹도 수백 곡 안쪽).
+    if(_songOwner){
+      for(const s of (_songIndex||[])){
+        if(_songSeen.has(s)||s.ownerType!==_songOwner.ownerType||s.owner!==_songOwner.owner)continue;
+        songHits.push({s,sc:2}); // 제목 매칭이 아니므로 고정 등급 — 타이틀곡 우선순위만 아래에서 가른다
+      }
     }
     songHits.sort((a,b)=>(a.sc-b.sc)||(b.s.isTitle-a.s.isTitle)||a.s.title.localeCompare(b.s.title,'ko'));
     _srSongTotal=songHits.length; // 렌더가 "몇 개 더 있는지"를 알아야 더보기 줄을 붙인다
@@ -5346,6 +5370,24 @@ function closeMobSearchSheet(){
   _curSearchQ='';
   document.getElementById('tab-search')?.classList.remove('active'); // 검색 탭 활성 해제
 }
+// ── 데스크톱 검색 '더보기' → 전체화면 결과로(2026-09-23) ──────────────────────
+// 사용자 피드백: 작은 드롭다운(#search-results) 안에서 그냥 늘어나기만 하는 '더보기'가 데스크톱에선
+// 갑갑하다 — "아예 다른 창이 뜨는 게 낫지 않아?". 모바일이 이미 쓰던 풀스크린 검색 시트(#msheet)를
+// 그대로 재사용한다(매칭·탭·더보기 로직 전부 컨테이너 무관이라 새로 만들 이유가 없다). 데스크톱용
+// 폭 제한·클릭-바깥-닫기는 위 CSS(min-width:769px 블록)·아래 backdrop 리스너가 맡는다.
+const _MS_TAB_OF_TYPE={group:'artist',member:'artist',song:'song',video:'video',event:'event',program:'program'};
+function _openSearchOverlayFrom(q,type){
+  if(!_msEl)return;
+  document.getElementById('search-results').style.display='none'; // 원래 드롭다운은 닫아둔다(시트가 위를 덮으므로 필수는 아니지만 정리)
+  document.getElementById('settings-panel')?.classList.remove('open');
+  _msTab=_MS_TAB_OF_TYPE[type]||'all';
+  _msEl.classList.add('open');_msEl.setAttribute('aria-hidden','false');
+  _bringToFront(_msEl); // 겹치는 레이어는 항상 최근 실행 화면이 최상단(프로젝트 원칙)
+  _msInput.value=q;_msClear.hidden=!q;
+  _msTabs.innerHTML='';_msBody.innerHTML='';
+  _srLimits[type]=_srCap(type)+_SR_STEP; // 누른 섹션은 열자마자 한 단계 늘어난 채로 보이게
+  doSearch(q);
+}
 if(_msEl){
   _msInput.addEventListener('input',e=>{
     _msClear.hidden=!e.target.value;
@@ -5355,7 +5397,12 @@ if(_msEl){
   _msClear.addEventListener('click',e=>{e.stopPropagation();_msInput.value='';_msClear.hidden=true;doSearch('');_msInput.focus();});
   document.getElementById('msheet-back').addEventListener('click',e=>{e.stopPropagation();closeMobSearchSheet();});
   // 시트 안 클릭이 바깥 닫기 핸들러(window pointerdown → closePanels 등)로 새지 않게
-  _msEl.addEventListener('click',e=>e.stopPropagation());
+  _msEl.addEventListener('click',e=>{
+    e.stopPropagation();
+    // 데스크톱 폭에서만 좌우로 배경이 남는다(목록은 640px로 좁혀져 있음) — 배경 자체를 클릭하면 닫기.
+    // 모바일은 자식이 화면을 꽉 채워 e.target이 _msEl 자신일 일이 없어 아무 영향 없다.
+    if(e.target===_msEl)closeMobSearchSheet();
+  });
   _msEl.addEventListener('pointerdown',e=>e.stopPropagation());
   _wireListKeyboardNav(_msInput,_msBody,'.sr-item',()=>closeMobSearchSheet());
 }
