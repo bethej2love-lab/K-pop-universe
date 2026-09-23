@@ -356,6 +356,8 @@
       <input type="number" class="sp-yt-key" id="sp-yt-durfill-budget" value="600" min="1" max="9000" style="margin-top:0;width:66px;" title="이번 회차에 쓸 API 호출 수(1콜=영상 50개)">
     </div>
     <div class="sp-btn-hint">⏱ <b>아직 안 채워진 행만</b> 골라서 재생시간·생방송 여부를 채워요(조회수는 안 건드림). 호출 1회당 영상 50개 = 쿼터 1유닛이라 <b>옆 칸이 곧 유닛 수</b> — 600콜이면 3만 행. 위 순환 갱신과 달리 <b>이미 채워진 행을 다시 부르지 않고</b>, 다 차면 "대상 없음"으로 스스로 끝나요. 하루 쿼터(1만)는 동기화·루틴과 같이 쓰는 지갑이라, 여유분만큼만 넣어서 며칠에 걸쳐 나눠 돌리는 게 안전해요.</div>
+    <button class="sp-yt-sync" id="sp-vm-seed-btn" style="margin-top:4px;opacity:.8;">🏆 조회수 마일스톤 시딩 (일회용)</button>
+    <div class="sp-btn-hint">🏆 <b>view_milestones_migration.sql 실행 직후 딱 한 번만</b> 누르세요. 이미 100만·1000만 등을 넘어있는 기존 영상들에 "지금까지 도달한 최고 단계"만 조용히 기록해요(seeded 표시 — 일일뉴스엔 안 뜸). 이걸 먼저 안 하면 기존 영상 수만 건이 전부 "오늘 막 마일스톤을 찍었다"로 오인돼 일일뉴스가 헛소식으로 도배됩니다. API 호출 없이 DB 조회만 쓰고, 대상이 없으면 스스로 끝나요 — 다시 눌러도 안전.</div>
     <div style="margin-top:6px;padding-top:6px;border-top:0.5px solid rgba(255,255,255,0.07)">
       <div style="font-size:10px;color:rgba(155,178,228,0.4);margin-bottom:2px">과거 영상 백필 (search API, 쿼터 많이 씀)</div>
       <select class="sp-yt-key" id="sp-yt-backfill-ch"></select>

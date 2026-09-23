@@ -77,7 +77,23 @@ need(sweepBlock.includes('fn:_ytRotateViewCountDaily'),
 // 조회수 같은 통계는 감사 승인 시 36개월까지 예외가 되지만 **영상 제목은 예외가 없다** —
 // derived-metrics 정책이 "video titles ... still must follow the 30-day policy"라고 못박는다.
 // 이 순환 갱신이 전체 테이블을 훑는 유일한 경로라, 여기서 snippet을 빼면 제목이 영영 안 갱신된다.
-const rotate = body('async function _ytRotateViewCountRefresh()');
+// ⚠️ 2026-09-23: videos.list 호출·저장 로직이 _ytRotateViewCountRefresh 밖으로 빠져 공용 코어
+// _ytViewCountCore로 옮겨갔다(조회수 마일스톤용 hot 큐와 공유하기 위해) — 그래서 이 세 검사는 이제
+// 코어 쪽 본문을 본다. 동작은 그대로이고(오히려 hot 큐도 같은 30일 정책을 자동으로 따르게 됨), 검사
+// 대상 함수 이름만 바뀐 것.
+// body()는 decl 뒤 첫 '{'부터 균형을 맞추는데, 이 함수는 매개변수 자체가 구조분해({key,...})라
+// 그 여는 괄호를 몸통 시작으로 착각한다 — decl에 몸통의 '{'까지 통째로 포함시켜 그 지점부터 잡는다.
+function bodyFromExactDecl(declWithOpenBrace) {
+  const i = admin.indexOf(declWithOpenBrace);
+  if (i < 0) return '';
+  let j = i + declWithOpenBrace.length - 1, depth = 0; // declWithOpenBrace의 마지막 '{'에 정확히 착지
+  for (; j < admin.length; j++) {
+    if (admin[j] === '{') depth++;
+    else if (admin[j] === '}') { depth--; if (!depth) return admin.slice(i, j + 1); }
+  }
+  return '';
+}
+const rotate = bodyFromExactDecl('async function _ytViewCountCore(ids,{key,_dur,_live,_vm,_unav,prevTitle,prevTier,prevGko,wasUnavail,progLabel,setProg}){');
 need(/_parts\s*=\s*'snippet,statistics'/.test(rotate),
   '순환 갱신이 snippet(제목)을 같이 받음 — 30일 갱신 정책',
   'videos.list는 part를 더 얹어도 호출당 1유닛이라 추가 비용이 0이다');
@@ -101,6 +117,19 @@ need(disbanded > 0, `그중 해체 그룹 ${disbanded}개 — 하루 1회로 낮
 need(/VIEW_COUNT_ROTATE_BATCH\s*=\s*(\d+)/.test(admin) && Number(RegExp.$1) / 50 <= 600,
   `순환 배치가 600콜 이하 (${Math.ceil(Number(RegExp.$1) / 50)}콜 = ${Math.ceil(Number(RegExp.$1) / 50)}유닛)`,
   '배치를 키우면 확보한 예산(약 832)을 넘어 다시 지갑이 터진다');
+
+/* ⑤ 조회수 마일스톤 hot 큐(2026-09-23) — 얘는 **의도적으로 게이트가 없다**(루틴마다, 3시간마다 실행).
+   cold 순환처럼 하루 1회로 묶으면 "당일 크로싱 감지"라는 존재 이유가 없어진다 — 대신 배치를 작게
+   묶어(VIEW_COUNT_HOT_BATCH÷50콜) 게이트 없이도 지갑이 안 터지게 막는다. */
+need(/async function _ytRotateViewCountHot\(\)/.test(admin), '조회수 핫 순환 함수가 있음');
+need(/fn:_ytRotateViewCountHot/.test(routine), '루틴 단계가 핫 순환을 부름');
+need(sweepBlock.includes('fn:_ytRotateViewCountHot'),
+  '핫 순환이 full 루틴(3시간마다)에만 있고 매시간 동기화엔 없음',
+  '매시간 동기화에 들어가면 하루 24번 돈다(cold 순환의 게이트 우회와 같은 함정)');
+const hotBatch = Number(/VIEW_COUNT_HOT_BATCH\s*=\s*(\d+)/.exec(admin)?.[1] || 0);
+need(hotBatch > 0 && hotBatch <= 5000,
+  `핫 순환 배치가 5,000콜 이하로 작게 묶여 있음 (현재 ${hotBatch.toLocaleString()}개 = ${Math.ceil(hotBatch / 50)}유닛)`,
+  '게이트가 없는 큐라 배치가 커지면 루틴마다(하루 8번) 그대로 곱해져 지갑을 위협한다');
 
 console.log(`\n${pass} passed, ${fail} failed`);
 process.exit(fail ? 1 : 0);

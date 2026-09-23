@@ -765,6 +765,23 @@ async function _ytRefreshAllViewCounts(){
 // 여유 많다. 정기 동기화(search.list 콜당 100쿼터)와 겹치는 날만 피하면 됨. 자주 눌러도 무방(오래된
 // 것부터 순환이라 누를수록 전체가 빨리 한 바퀴). 40만 건이면 ~20번이면 전체 한 바퀴(2026-09-01 상향).
 const VIEW_COUNT_ROTATE_BATCH=20000;
+// ── 조회수 마일스톤 (2026-09-23) ────────────────────────────────────────────
+// "이 영상이 방금 새 조회수 단계를 넘었다"를 감지해 yt_view_milestones에 기록한다(view_milestones_
+// migration.sql — 사용자가 직접 실행, RLS). 트로피 3종(music_show_wins·melon_yearly_top100·
+// spotify_streaming_milestones)과 같은 모양의 append-only 로그.
+// 설계(사용자와 합의): "콘텐츠(수집)는 넓게, 노출은 좁게" — 작은 그룹에게도 100만은 의미 있는 지표라
+// 낮은 단계부터 전부 모으되(일일뉴스 소스), 카드에 영구 배지로 보여주는 건 그중 상위 티어만
+// (_VM_TROPHY_MIN). 데이터는 하나, 화면 노출 기준만 둘로 가른다 — 기준을 바꾸고 싶으면 숫자만 조정.
+const _VM_TIERS=[100000,500000,1000000,3000000,5000000,10000000,30000000,50000000,100000000,300000000,500000000,1000000000];
+const _VM_TROPHY_MIN=10000000; // 트로피(카드 영구 배지)로 승격하는 최소 티어 — 그 아래는 일일뉴스에서만
+// oldTier(이전에 알던 최고 단계, null이면 아직 한 번도 기록 안 됨)~newViewCount 사이에 새로 넘은 티어를
+// 전부 돌려준다 — 순환 갱신 간격이 길면(특히 cold 큐, 최대 24일) 한 번에 여러 단계를 건너뛸 수 있어서
+// 최고 단계 하나만 보면 중간 단계가 통째로 로그에서 빠진다.
+function _vmCrossedTiers(oldTier,newViewCount){
+  if(newViewCount==null||isNaN(newViewCount))return[];
+  const floor=oldTier||0;
+  return _VM_TIERS.filter(t=>t>floor&&t<=newViewCount);
+}
 // ── 삭제·비공개 감지 (2026-09-04, Fable T8) ───────────────────────────────────
 // 컬럼(unavailable_at)은 unavailable_migration.sql로 사용자가 직접 넣는다(RLS로 여기서 DDL 불가).
 // 아직 없을 수 있으므로 **한 번만 탐지**해서 없으면 조용히 기능을 끈다 — source_tier(_ytHasSourceCols)와
@@ -813,12 +830,16 @@ async function _ytRotateViewCountRefresh(){
   // 45.5만 중 12.7만만 채워짐 = 27.8%, idol 채널은 3,409 중 228건 = 6.7%).
   const _dur=await _ytColSupported('duration_sec');
   const _live=await _ytColSupported('was_live');
+  const _vm=await _ytColSupported('view_milestone_tier'); // view_milestones_migration.sql 실행 여부
   const ids=[];
   const wasUnavail=new Set(); // 이미 "사라짐"으로 찍혀 있던 id — 첫 관측 시각을 덮어쓰지 않기 위해
   const prevTitle=new Map();  // 제목이 실제로 바뀐 것만 쓰기 위해 현재 값을 같이 들고 온다
+  const prevTier=new Map();   // 마일스톤 baseline(이전에 알던 최고 단계)
+  const prevGko=new Map();    // 마일스톤 로그에 같이 남길 group_ko
+  const _selCols=['id,title']; if(_unav)_selCols.push('unavailable_at'); if(_vm)_selCols.push('view_milestone_tier,group_ko');
   for(let off=0; off<VIEW_COUNT_ROTATE_BATCH; off+=1000){
     const to=Math.min(off+1000,VIEW_COUNT_ROTATE_BATCH)-1;
-    const{data,error}=await sb.from(_YT_TABLE).select(_unav?'id,title,unavailable_at':'id,title')
+    const{data,error}=await sb.from(_YT_TABLE).select(_selCols.join(','))
       .order('view_count_synced_at',{ascending:true,nullsFirst:true})
       .order('id',{ascending:true})
       .range(off,to);
@@ -827,17 +848,35 @@ async function _ytRotateViewCountRefresh(){
     ids.push(...data.map(r=>r.id));
     data.forEach(r=>{prevTitle.set(r.id,r.title||'');});
     if(_unav)data.forEach(r=>{if(r.unavailable_at)wasUnavail.add(r.id);});
+    if(_vm)data.forEach(r=>{prevTier.set(r.id,r.view_milestone_tier||null);prevGko.set(r.id,r.group_ko||null);});
     if(data.length<to-off+1)break; // 마지막 페이지(테이블 끝)
   }
   if(!ids.length){_ytSetProg('순환 갱신 대상 없음');return;}
+  const r=await _ytViewCountCore(ids,{key,_dur,_live,_vm,_unav,prevTitle,prevTier,prevGko,wasUnavail,progLabel:'순환 갱신',setProg:_ytSetProg});
+  _ytSetProg(`조회수 순환 갱신 완료 — ${r.savedTotal}개 저장${r.failedTotal?` · ${r.failedTotal}개는 일시 실패라 다음 실행 때 재시도됨`:''} (전체 카테고리 · API ${r.totalCalls}회)`
+    +(r.titleChanged?` · ✏️ 제목 바뀐 것 ${r.titleChanged}건 반영`:'')
+    +(_dur?' · ⏱ 재생시간 같이 채움':' · (재생시간 꺼짐 — duration_migration.sql 실행 필요)')
+    +(_live?' · 🔴 생방송 여부 같이 채움':' · (생방송 여부 꺼짐 — live_broadcast_migration.sql 실행 필요)')
+    +(_unav?`${r.newlyGone?` · 🪦 삭제·비공개 새로 감지 ${r.newlyGone}건`:''}${r.revived?` · ↩︎ 되살아남 ${r.revived}건`:''}`
+           :' · (삭제 감지 꺼짐 — unavailable_migration.sql 실행 필요)')
+    +(_vm?` · 🏆 조회수 마일스톤 새로 감지 ${r.milestoneTotal}건`:' · (조회수 마일스톤 꺼짐 — view_milestones_migration.sql 실행 필요)'));
+  _feedDiscoveryBuiltAt=0;
+}
+// ── 공용 코어(2026-09-23) — id 목록을 받아 videos.list로 통계 갱신 + 마일스톤 감지까지.
+// cold(위, 전체 순환)·hot(아래, 최근 업로드 빠른 순환) 둘 다 이걸 쓴다 — 로직이 두 벌로 갈라지면
+// 한쪽만 고쳐지는 드리프트가 난다(오늘 세션에서 겪은 숨김재판정/오태깅재배정 드리프트와 같은 함정을
+// 처음부터 피하려고 공유 함수로 뺐다).
+async function _ytViewCountCore(ids,{key,_dur,_live,_vm,_unav,prevTitle,prevTier,prevGko,wasUnavail,progLabel,setProg}){
   const totalCalls=Math.ceil(ids.length/50);
-  _ytSetProg(`YouTube API 호출 예정: ${totalCalls}회 (${ids.length}개 영상)`);
-  let savedTotal=0,failedTotal=0,newlyGone=0,revived=0,titleChanged=0;
+  setProg(`${progLabel}: YouTube API 호출 예정 ${totalCalls}회 (${ids.length}개 영상)`);
+  let savedTotal=0,failedTotal=0,newlyGone=0,revived=0,titleChanged=0,milestoneTotal=0;
   for(let i=0;i<ids.length;i+=50){
     const chunk=ids.slice(i,i+50);
-    _ytSetProg(`순환 갱신 중… ${Math.min(i+50,ids.length)}/${ids.length} (API ${Math.floor(i/50)+1}/${totalCalls}회, 저장 ${savedTotal}개)`);
+    setProg(`${progLabel} 중… ${Math.min(i+50,ids.length)}/${ids.length} (API ${Math.floor(i/50)+1}/${totalCalls}회, 저장 ${savedTotal}개)`);
     const nowIso=new Date().toISOString();
+    const nowDate=nowIso.slice(0,10);
     const statsUpdates=[];
+    const milestoneRows=[]; // 이번 청크에서 새로 넘은 (video_id,tier) — 각 행이 yt_view_milestones 한 줄
     try{
       // ⚠️ snippet(제목)을 같이 받는다(2026-09-17). 두 가지 이유이고 **추가 쿼터는 0**이다
       //    (videos.list는 part를 더 얹어도 호출당 1).
@@ -849,7 +888,7 @@ async function _ytRotateViewCountRefresh(){
       //    ⚠️ title_norm은 title에서 파생된 컬럼이라(_titleNorm, 저장 시점에 같이 넣는다) **반드시 같이**
       //       갱신해야 한다. 안 그러면 검색이 옛 제목으로만 걸리는 불일치가 생긴다.
       const _parts='snippet,statistics'+(_dur?',contentDetails':'')+(_live?',liveStreamingDetails':'');
-      const d=await _ytApiGet(`https://www.googleapis.com/youtube/v3/videos?part=${_parts}&id=${chunk.join(',')}&key=${key}`,'순환 갱신');
+      const d=await _ytApiGet(`https://www.googleapis.com/youtube/v3/videos?part=${_parts}&id=${chunk.join(',')}&key=${key}`,progLabel);
       const returned=new Set();
       (d.items||[]).forEach(it=>{
         returned.add(it.id);
@@ -862,7 +901,19 @@ async function _ytRotateViewCountRefresh(){
         // 제목은 **바뀐 것만** 실어보낸다 — 안 바뀐 47만 건에 title/title_norm을 매번 써넣으면
         // 업데이트 페이로드만 커지고 얻는 게 없다.
         const nt=(it.snippet?.title||'').trim()||null;
-        if(!isNaN(vc))statsUpdates.push({id:it.id,view_count:vc,touchOnly:false,revive,ds,wl,nt});
+        // 조회수 마일스톤 — 이번에 새로 넘은 단계가 있으면 view_milestone_tier를 그 최고값으로 갱신하고
+        // (기존 값이 이미 더 높으면 절대 안 내려간다 — 컬럼은 "지금까지 본 최고 단계" 캐시), 넘은 단계
+        // 각각을 yt_view_milestones에 한 줄씩 남긴다(중간 단계를 건너뛰어도 전부 기록 — 위 _vmCrossedTiers).
+        let mt=null;
+        if(_vm&&!isNaN(vc)){
+          const crossed=_vmCrossedTiers(prevTier.get(it.id),vc);
+          if(crossed.length){
+            mt=crossed[crossed.length-1];
+            const gko=prevGko.get(it.id);
+            if(gko)crossed.forEach(tier=>milestoneRows.push({video_id:it.id,group_ko:gko,tier,crossed_at:nowDate,seeded:false}));
+          }
+        }
+        if(!isNaN(vc))statsUpdates.push({id:it.id,view_count:vc,touchOnly:false,revive,ds,wl,nt,mt});
         else if(revive)statsUpdates.push({id:it.id,touchOnly:true,revive:true,ds,wl,nt});
         else if(ds!=null||wl!=null||nt)statsUpdates.push({id:it.id,touchOnly:true,ds,wl,nt}); // 조회수만 못 읽은 경우
         if(revive)revived++;
@@ -879,33 +930,134 @@ async function _ytRotateViewCountRefresh(){
       });
     }catch(e){
       // 쿼터 초과면 "다시 누르면 이어서" 안내가 오히려 헛수고를 부른다(눌러도 0개로 끝남) — 문구를 나눈다.
-      _ytSetProg(e.isQuota
+      setProg(e.isQuota
         ? `⛔ ${e.message} (여기까지 ${savedTotal}개 저장됨 — 이 지점부터 이어집니다)`
         : `YouTube API 오류(${savedTotal}개까지 저장된 채로 중단, 다시 누르면 이어서 진행됨): ${e.message}`);
-      console.error('[조회수 순환 갱신]',e.message);
-      return;
+      console.error(`[${progLabel}]`,e.message);
+      // 중간까지의 결과라도 caller가 요약 메시지를 만들 수 있게 그대로 돌려준다(return이 아니라 break).
+      break;
     }
-    const _ub=await _sbUpdateBatch(statsUpdates,({id,view_count,touchOnly,markGone,revive,ds,wl,nt})=>{
+    const _ub=await _sbUpdateBatch(statsUpdates,({id,view_count,touchOnly,markGone,revive,ds,wl,nt,mt})=>{
       const patch=touchOnly?{view_count_synced_at:nowIso}:{view_count,view_count_synced_at:nowIso};
       if(markGone)patch.unavailable_at=nowIso; // 처음 사라진 것만
       else if(revive)patch.unavailable_at=null; // 되살아난 것
       if(ds!=null)patch.duration_sec=ds; // 컬럼 유무는 _ytColSupported로 이미 확인됨(_dur/_live)
       if(wl!=null)patch.was_live=wl;
+      if(mt!=null)patch.view_milestone_tier=mt; // 새로 넘은 단계가 있을 때만(내려가는 값은 절대 안 씀)
       // 업로더가 제목을 바꾼 경우에만 — title_norm은 파생 컬럼이라 반드시 같이 간다(위 _parts 주석)
       if(nt&&nt!==prevTitle.get(id)){patch.title=nt;patch.title_norm=_titleNorm(nt);titleChanged++;}
       return sb.from(_YT_TABLE).update(patch).eq('id',id);
     },{conc:20,retries:2});
     savedTotal+=_ub.saved;failedTotal+=_ub.failed;
     // 실패분은 synced_at이 안 찍혀 다음 순환 때 다시 대상이 되므로 건너뛰고 계속 진행한다.
-    if(_ub.failed)console.error('[조회수 순환 갱신] 재시도 후에도 실패:',_ub.failed,'건 —',_ub.firstErr);
+    if(_ub.failed)console.error(`[${progLabel}] 재시도 후에도 실패:`,_ub.failed,'건 —',_ub.firstErr);
+    // 마일스톤 로그 — 실패해도(예: 트리거·제약 문제) 조회수 갱신 자체는 이미 끝났으므로 별도 try.
+    // onConflict(video_id,tier)라 같은 회차 안에서 겹칠 일은 없지만, 재시도·재실행으로 같은 크로싱이
+    // 다시 감지돼도 중복 없이 조용히 무시된다.
+    if(milestoneRows.length){
+      try{
+        for(let mi=0;mi<milestoneRows.length;mi+=200){
+          const{error:mErr}=await sb.from('yt_view_milestones').upsert(milestoneRows.slice(mi,mi+200),{onConflict:'video_id,tier',ignoreDuplicates:true});
+          if(mErr){console.error('[조회수 마일스톤] 저장 실패:',mErr.message);break;}
+        }
+        milestoneTotal+=milestoneRows.length;
+      }catch(e){console.error('[조회수 마일스톤] 저장 예외:',e.message);}
+    }
   }
-  _ytSetProg(`조회수 순환 갱신 완료 — ${savedTotal}개 저장${failedTotal?` · ${failedTotal}개는 일시 실패라 다음 실행 때 재시도됨`:''} (전체 카테고리 · API ${totalCalls}회)`
-    +(titleChanged?` · ✏️ 제목 바뀐 것 ${titleChanged}건 반영`:'')
-    +(_dur?' · ⏱ 재생시간 같이 채움':' · (재생시간 꺼짐 — duration_migration.sql 실행 필요)')
-    +(_live?' · 🔴 생방송 여부 같이 채움':' · (생방송 여부 꺼짐 — live_broadcast_migration.sql 실행 필요)')
-    +(_unav?`${newlyGone?` · 🪦 삭제·비공개 새로 감지 ${newlyGone}건`:''}${revived?` · ↩︎ 되살아남 ${revived}건`:''}`
-           :' · (삭제 감지 꺼짐 — unavailable_migration.sql 실행 필요)'));
   _feedDiscoveryBuiltAt=0;
+  return{savedTotal,failedTotal,newlyGone,revived,titleChanged,milestoneTotal,totalCalls};
+}
+// ── 조회수 마일스톤 — 최근 업로드 빠른 순환(hot, 2026-09-23) ──────────────────────
+// 마일스톤이 "일일뉴스"로 의미 있으려면 크로싱을 당일에 잡아야 하는데, 위 cold 순환(_ytRotateViewCountRefresh)은
+// 47만 건 전체를 24일에 한 바퀴 돈다 — 어떤 영상이 방금 100만을 찍어도 그 차례가 돌아올 때까지 최대
+// 3주 넘게 몰랐을 수 있어 뉴스로 쓰기엔 너무 늦다(사용자와 설계 논의, 2026-09-23). 최근 업로드만 모아
+// 훨씬 자주(루틴마다, 3시간) 도는 별도 큐를 둔다. videos.list가 50개당 1쿼터라 비용은 미미하다
+// (최근 90일 유입량 기준 하루 몇천 건이어도 수십~수백 유닛 — 위 cold 순환 400유닛/일보다도 적을 것).
+// ⚠️ cold 순환과 달리 하루 1회 게이트가 없다 — 루틴이 돌 때마다(3시간마다) 실행되는 게 의도다.
+const VIEW_COUNT_HOT_DAYS=90;    // 이 기간 이후 업로드만 대상(오래된 영상의 뒤늦은 크로싱은 cold가 언젠가 잡음)
+const VIEW_COUNT_HOT_BATCH=3000; // 회차당 상한
+async function _ytRotateViewCountHot(){
+  // ⚠️ 모든 종료 경로에서 반드시 _ytSetProg를 부른다 — 조용히 return하면 화면(#sp-yt-prog)에 **이전
+  // 단계가 남긴 문구가 그대로 남고**, 루틴 러너는 그 문구로 성공/실패를 가르므로(_STEP_FAIL_RE) 이
+  // 단계가 앞 단계의 결과를 훔쳐 입거나, 반대로 진짜 문제가 있어도 "성공"으로 덮인다(오늘 세션에
+  // "음방 1위가 7일간 조용히 실패"로 겪은 것과 같은 함정 — _admRunRoutine 주석 참고).
+  const key=_ytApiKey();
+  if(!key){_ytSetProg('조회수 핫 순환: API 키가 없어 건너뜀');return;}
+  if(!sb){_ytSetProg('조회수 핫 순환: Supabase 연결 없음');return;}
+  const _vm=await _ytColSupported('view_milestone_tier');
+  if(!_vm){_ytSetProg('조회수 핫 순환: view_milestone_tier 컬럼 없음(view_milestones_migration.sql 실행 필요) — 건너뜀');return;}
+  const _unav=await _ytUnavailSupported();
+  const since=new Date(Date.now()-VIEW_COUNT_HOT_DAYS*86400000).toISOString().slice(0,10);
+  const ids=[];
+  const wasUnavail=new Set();
+  const prevTitle=new Map(),prevTier=new Map(),prevGko=new Map();
+  const _selCols=['id,title,view_milestone_tier,group_ko']; if(_unav)_selCols.push('unavailable_at');
+  for(let off=0; off<VIEW_COUNT_HOT_BATCH; off+=1000){
+    const to=Math.min(off+1000,VIEW_COUNT_HOT_BATCH)-1;
+    const{data,error}=await sb.from(_YT_TABLE).select(_selCols.join(','))
+      .gte('published_at',since)
+      .order('view_count_synced_at',{ascending:true,nullsFirst:true})
+      .order('id',{ascending:true})
+      .range(off,to);
+    if(error){_ytSetProg('조회수 핫 순환 — 대상 조회 실패: '+error.message);return;}
+    if(!data?.length)break;
+    ids.push(...data.map(r=>r.id));
+    data.forEach(r=>{prevTitle.set(r.id,r.title||'');prevTier.set(r.id,r.view_milestone_tier||null);prevGko.set(r.id,r.group_ko||null);});
+    if(_unav)data.forEach(r=>{if(r.unavailable_at)wasUnavail.add(r.id);});
+    if(data.length<to-off+1)break;
+  }
+  if(!ids.length){_ytSetProg(`조회수 핫 순환: 최근 ${VIEW_COUNT_HOT_DAYS}일 업로드 중 대상 없음(전부 최근에 확인됨)`);return;}
+  const _dur=await _ytColSupported('duration_sec');
+  const _live=await _ytColSupported('was_live');
+  const r=await _ytViewCountCore(ids,{key,_dur,_live,_vm,_unav,prevTitle,prevTier,prevGko,wasUnavail,progLabel:'조회수 핫 순환',setProg:_ytSetProg});
+  _ytSetProg(`조회수 핫 순환 완료 — 최근 ${VIEW_COUNT_HOT_DAYS}일 업로드 ${ids.length}건 확인, ${r.savedTotal}개 저장`
+    +(r.milestoneTotal?` · 🏆 마일스톤 새로 감지 ${r.milestoneTotal}건`:''));
+}
+// ── 조회수 마일스톤 최초 시딩(일회용, 2026-09-23) ──────────────────────────────
+// 기능을 막 켠 시점에 이미 33,404건이 100만을 넘어있는 등(2026-09-23 실측), 기존 데이터 전부가
+// "크로싱 기록 없음" 상태다. 이대로 순환 갱신을 돌리면 그 33,404건이 전부 "오늘 막 100만 찍었다"로
+// 오인되어 일일뉴스가 헛소식으로 도배된다. 이 함수는 이미 한 번이라도 임계값을 넘은 행에 대해
+// **지금까지 도달한 최고 단계**만 조용히 채워 넣는다(seeded:true — 일일뉴스는 seeded:false만 봄).
+// 그 baseline 위에서만 이후 순환 갱신(cold/hot)이 "진짜 새 크로싱"을 판정하게 된다.
+// 한 번 돌리면 끝 — 대상이 view_milestone_tier가 null인 행뿐이라 다시 눌러도 이미 시딩된 행은
+// 다시 안 걸린다(자연히 자기 종료, 위 duration 백필과 같은 패턴). 정렬 없음도 같은 이유(ORDER BY+LIMIT
+// 타임아웃 함정 — 위 duration 백필 주석 참고).
+const VM_SEED_PAGE=1000;
+async function _ytSeedViewMilestones(){
+  if(!sb){_ytSetProg('Supabase 연결 없음');return;}
+  const _vm=await _ytColSupported('view_milestone_tier');
+  if(!_vm){_ytSetProg('조회수 마일스톤 시딩: view_milestone_tier 컬럼 없음(view_milestones_migration.sql 실행 필요)');return;}
+  let totalRows=0,totalSeeded=0,pages=0;
+  while(true){
+    const{data,error}=await sb.from(_YT_TABLE).select('id,view_count,group_ko')
+      .is('view_milestone_tier',null).not('view_count','is',null).gte('view_count',_VM_TIERS[0])
+      .limit(VM_SEED_PAGE);
+    if(error){_ytSetProg('조회수 마일스톤 시딩 — 조회 실패: '+error.message);return;}
+    if(!data?.length)break;
+    pages++;
+    _ytSetProg(`조회수 마일스톤 시딩 중… ${pages}페이지째 (누적 baseline 기록 ${totalSeeded}건)`);
+    const today=new Date().toISOString().slice(0,10);
+    const updates=[],milestoneRows=[];
+    data.forEach(r=>{
+      totalRows++;
+      const tiers=_vmCrossedTiers(null,r.view_count); // baseline 없음(첫 시딩) → 지금까지 넘은 단계 전부
+      if(!tiers.length)return;
+      const top=tiers[tiers.length-1];
+      updates.push({id:r.id,tier:top});
+      if(r.group_ko)milestoneRows.push({video_id:r.id,group_ko:r.group_ko,tier:top,crossed_at:today,seeded:true});
+    });
+    const _ub=await _sbUpdateBatch(updates,({id,tier})=>sb.from(_YT_TABLE).update({view_milestone_tier:tier}).eq('id',id),{conc:20,retries:2});
+    totalSeeded+=_ub.saved;
+    if(_ub.failed)console.error('[조회수 마일스톤 시딩] 재시도 후에도 실패:',_ub.failed,'건 —',_ub.firstErr);
+    for(let mi=0;mi<milestoneRows.length;mi+=200){
+      const{error:mErr}=await sb.from('yt_view_milestones').upsert(milestoneRows.slice(mi,mi+200),{onConflict:'video_id,tier',ignoreDuplicates:true});
+      if(mErr){console.error('[조회수 마일스톤 시딩] 로그 저장 실패:',mErr.message);break;}
+    }
+    if(data.length<VM_SEED_PAGE)break; // 마지막 페이지
+  }
+  _ytSetProg(totalRows
+    ?`조회수 마일스톤 시딩 완료 — 대상 ${totalRows}건 중 ${totalSeeded}건에 baseline 기록(일회용, 다시 안 눌러도 됨)`
+    :'조회수 마일스톤 시딩: 대상 없음(이미 전부 baseline이 있거나 100만 미만)');
 }
 
 // ── ⏱ 재생시간·생방송 여부 전용 백필 (2026-09-16) ──────────────────────────────
@@ -9853,6 +10005,7 @@ document.getElementById('vid-tag-thumb-refresh').addEventListener('click',async 
     await _ytRotateViewCountRefresh();
   },'조회수 순환 갱신');
   _admExecBind('sp-yt-durfill-btn',_ytBackfillDurations,'재생시간·생방송 여부 백필');
+  _admExecBind('sp-vm-seed-btn',_ytSeedViewMilestones,'조회수 마일스톤 시딩(일회용)');
   _admExecBind('sp-yt-sweep-banned',_ytSweepBannedVideos,'밴 인물 숨김');
   _admExecBind('sp-yt-sweep-junk',_ytSweepJunkKeywordVideos,'제외 키워드 정리');
   // "무조건 제외 키워드" 목록이 코드에만 있어서 관리자가 지금 뭐가 걸려있는지 확인할 방법이 없었음
@@ -10593,6 +10746,11 @@ async function _admRunRoutine(withSync,opts){
   //    ⚠️ 하루 한 번만 — 루틴은 3시간마다 도는데 매번 돌면 3,200유닛/일이라 지갑이 터진다.
   //    ⚠️ 실패해도 루틴은 계속된다(각 단계가 try/catch). 쿼터가 모자란 날은 이 단계만 건너뛰는 셈.
   steps.push({name:'8. 조회수 순환 갱신 (하루 1배치 · 2만개)',fn:_ytRotateViewCountDaily});
+  // 9. 조회수 마일스톤 — 최근 업로드 빠른 순환(2026-09-23) — 위 8번과 별개 큐. 8번은 전체를 24일에
+  //    한 바퀴 돌아 마일스톤 크로싱을 뉴스로 쓰기엔 너무 늦다 — 최근 90일 업로드만 매 루틴(3시간)마다
+  //    돌려서 당일 크로싱을 잡는다. 게이트 없음(하루 1회 제한 없이 루틴마다 실행), 실패해도 조용히
+  //    스킵(마이그레이션 전이거나 API 키 없으면 즉시 return).
+  steps.push({name:'9. 조회수 마일스톤 (최근 90일 · 3시간마다)',fn:_ytRotateViewCountHot});
   }
   const t0=Date.now();
   // 단계가 조용히 실패했는지 진행 문구로 가르는 규칙 — 바로 아래 루프 주석에 근거가 있다.
