@@ -106977,7 +106977,84 @@
     "left": "2024"
    }
   ],
-  "id": "a0572"
+  "id": "a0572",
+  "discography": [
+   {
+    "title": "Scent of Memories",
+    "type": "미니",
+    "isMain": true,
+    "cover": "https://i.scdn.co/image/ab67616d0000b273345e51df13d9731c1d41d8bf",
+    "releaseDate": "2026.05.12",
+    "trackCount": 4,
+    "titleTrack": "Scent of Memories",
+    "region": "jp",
+    "tracks": [
+     {
+      "no": 1,
+      "title": "Scent of Memories (Japanese Ver.)",
+      "isTitle": false
+     },
+     {
+      "no": 2,
+      "title": "Elevator (Japanese Ver.)",
+      "isTitle": false
+     },
+     {
+      "no": 3,
+      "title": "Scent of Memories",
+      "isTitle": true
+     },
+     {
+      "no": 4,
+      "title": "Elevator",
+      "isTitle": false
+     }
+    ],
+    "src": "spotify",
+    "spotifyId": "2DVZJct24528Nc8hkuJuXr"
+   },
+   {
+    "title": "Picky (Feat. BANG YONGGUK)",
+    "type": "싱글",
+    "isMain": true,
+    "cover": "https://i.scdn.co/image/ab67616d0000b27390c6f71157c9e8a850bc144a",
+    "releaseDate": "2024.07.29",
+    "trackCount": 1,
+    "titleTrack": "Picky (Feat. BANG YONGGUK)",
+    "tracks": [
+     {
+      "no": 1,
+      "title": "Picky (Feat. BANG YONGGUK)",
+      "isTitle": true
+     }
+    ],
+    "src": "spotify",
+    "spotifyId": "463ql45onLs0GhUt7RjUyV"
+   },
+   {
+    "title": "The Beginning",
+    "type": "싱글",
+    "isMain": true,
+    "cover": "https://i.scdn.co/image/ab67616d0000b2737d9adc3323854dac485925c4",
+    "releaseDate": "2023.04.13",
+    "trackCount": 2,
+    "titleTrack": null,
+    "tracks": [
+     {
+      "no": 1,
+      "title": "Strange Way To Love",
+      "isTitle": false
+     },
+     {
+      "no": 2,
+      "title": "Cherry Coke",
+      "isTitle": false
+     }
+    ],
+    "src": "spotify",
+    "spotifyId": "58b2PzOycWE7ynxRqGOOQA"
+   }
+  ]
  },
  {
   "name": {
@@ -107006,6 +107083,90 @@
   },
   "left": "2021.02.03",
   "discography": [
+   {
+    "title": "LOVE is…",
+    "type": "싱글",
+    "isMain": true,
+    "cover": "https://i.scdn.co/image/ab67616d0000b273317bbc054198a58dfa165974",
+    "releaseDate": "2025.04.16",
+    "trackCount": 3,
+    "titleTrack": null,
+    "tracks": [
+     {
+      "no": 1,
+      "title": "我不會唱歌",
+      "isTitle": false
+     },
+     {
+      "no": 2,
+      "title": "你是我最美的星光",
+      "isTitle": false
+     },
+     {
+      "no": 3,
+      "title": "蝴蝶啊蝴蝶",
+      "isTitle": false
+     }
+    ],
+    "src": "spotify",
+    "spotifyId": "3mJO5GScm6ppzcPzVgemLI"
+   },
+   {
+    "title": "写给你（《繁星Star》天蝎座概念主题曲）",
+    "type": "싱글",
+    "isMain": true,
+    "cover": "https://i.scdn.co/image/ab67616d0000b273f10e780974d664f3a52fd066",
+    "releaseDate": "2024.11.19",
+    "trackCount": 2,
+    "titleTrack": "写给你（《繁星Star》天蝎座概念主题曲）",
+    "tracks": [
+     {
+      "no": 1,
+      "title": "写给你（《繁星Star》天蝎座概念主题曲）",
+      "isTitle": true
+     },
+     {
+      "no": 2,
+      "title": "写给你（《繁星Star》天蝎座概念主题曲） - 伴奏版",
+      "isTitle": false
+     }
+    ],
+    "src": "spotify",
+    "spotifyId": "6MTj7BqvP7G59LF1jZ3YfR"
+   },
+   {
+    "title": "#EK",
+    "type": "미니",
+    "isMain": true,
+    "cover": "https://i.scdn.co/image/ab67616d0000b2735bb44da4cef45c75722f08a8",
+    "releaseDate": "2024.06.27",
+    "trackCount": 4,
+    "titleTrack": null,
+    "tracks": [
+     {
+      "no": 1,
+      "title": "沒有你的未來",
+      "isTitle": false
+     },
+     {
+      "no": 2,
+      "title": "沒你在旁的後來",
+      "isTitle": false
+     },
+     {
+      "no": 3,
+      "title": "Everyday",
+      "isTitle": false
+     },
+     {
+      "no": 4,
+      "title": "Be My Enemy",
+      "isTitle": false
+     }
+    ],
+    "src": "spotify",
+    "spotifyId": "6HIQEB77s0TANkyaQBaSq3"
+   },
    {
     "title": "SPEED UP",
     "type": "싱글",
@@ -114828,6 +114989,29 @@
     ]
    },
    {
+    "title": "So Pretty (YERIN X Lulu-lala Friends 2)",
+    "type": "싱글",
+    "isMain": true,
+    "cover": "https://i.scdn.co/image/ab67616d0000b273ec18ee26dd94d8d20e6d38f2",
+    "releaseDate": "2026.05.14",
+    "trackCount": 2,
+    "titleTrack": "So Pretty",
+    "tracks": [
+     {
+      "no": 1,
+      "title": "So Pretty",
+      "isTitle": true
+     },
+     {
+      "no": 2,
+      "title": "So Pretty - inst.",
+      "isTitle": false
+     }
+    ],
+    "src": "spotify",
+    "spotifyId": "244OLXlUTfyQKt9y9HKdUN"
+   },
+   {
     "title": "BünyTune ep.4 [별 너머의 너에게]",
     "type": "싱글",
     "isMain": true,
@@ -114892,6 +115076,29 @@
      }
     ],
     "feat": true
+   },
+   {
+    "title": "To Be Honest (This is a Campus Romance Series X YERIN) (Original Webtoon Soundtrack)",
+    "type": "싱글",
+    "isMain": true,
+    "cover": "https://i.scdn.co/image/ab67616d0000b273707968c8aabd299262db8490",
+    "releaseDate": "2025.02.13",
+    "trackCount": 2,
+    "titleTrack": "To Be Honest",
+    "tracks": [
+     {
+      "no": 1,
+      "title": "To Be Honest",
+      "isTitle": true
+     },
+     {
+      "no": 2,
+      "title": "To Be Honest - Instrumental",
+      "isTitle": false
+     }
+    ],
+    "src": "spotify",
+    "spotifyId": "78aLFDfPK2uw2rfAeVfvTk"
    },
    {
     "title": "Rewrite",
@@ -114985,6 +115192,29 @@
       "isTitle": false
      }
     ]
+   },
+   {
+    "title": "〈Webtoonsinger〉 I Feel You (The Girl Downstairs x YERIN)",
+    "type": "싱글",
+    "isMain": true,
+    "cover": "https://i.scdn.co/image/ab67616d0000b2732d076282749f985f483be89f",
+    "releaseDate": "2023.04.01",
+    "trackCount": 2,
+    "titleTrack": null,
+    "tracks": [
+     {
+      "no": 1,
+      "title": "I Feel You",
+      "isTitle": false
+     },
+     {
+      "no": 2,
+      "title": "I Feel You - Instrumental",
+      "isTitle": false
+     }
+    ],
+    "src": "spotify",
+    "spotifyId": "2NXr8RG1WFEGzow5oMS1yI"
    },
    {
     "title": "굿잡 OST Part 4",
@@ -115104,6 +115334,42 @@
     ]
    },
    {
+    "title": "First Love Is a Curse",
+    "type": "싱글",
+    "isMain": true,
+    "cover": "https://i.scdn.co/image/ab67616d0000b273269eac3b56539ca7646372c6",
+    "releaseDate": "2026.04.29",
+    "trackCount": 1,
+    "titleTrack": "First Love Is a Curse",
+    "tracks": [
+     {
+      "no": 1,
+      "title": "First Love Is a Curse",
+      "isTitle": true
+     }
+    ],
+    "src": "spotify",
+    "spotifyId": "2iENz685ly97rfApjgS1cy"
+   },
+   {
+    "title": "Material Girl",
+    "type": "싱글",
+    "isMain": true,
+    "cover": "https://i.scdn.co/image/ab67616d0000b2735f3a983490d5e08a703807f6",
+    "releaseDate": "2026.02.21",
+    "trackCount": 1,
+    "titleTrack": "Material Girl",
+    "tracks": [
+     {
+      "no": 1,
+      "title": "Material Girl",
+      "isTitle": true
+     }
+    ],
+    "src": "spotify",
+    "spotifyId": "4ve1M3Tr9cev04w0FbKgMh"
+   },
+   {
     "title": "내향남녀 X 유주 (YUJU)",
     "type": "싱글",
     "releaseDate": "2025.10.23",
@@ -115123,6 +115389,29 @@
       "isTitle": false
      }
     ]
+   },
+   {
+    "title": "Introverted Us X YUJU (Original Soundtrack)",
+    "type": "싱글",
+    "isMain": true,
+    "cover": "https://i.scdn.co/image/ab67616d0000b273c2c53ef2573223d7f3cb82e1",
+    "releaseDate": "2025.10.23",
+    "trackCount": 2,
+    "titleTrack": null,
+    "tracks": [
+     {
+      "no": 1,
+      "title": "What If",
+      "isTitle": false
+     },
+     {
+      "no": 2,
+      "title": "What If - Inst.",
+      "isTitle": false
+     }
+    ],
+    "src": "spotify",
+    "spotifyId": "30n4LCJwRTYri06EXSQNIb"
    },
    {
     "title": "In Bloom",
@@ -115188,6 +115477,29 @@
     "feat": true
    },
    {
+    "title": "Rest In You (This is a Campus Romance Series X YUJU) (Original Webtoon Soundtrack)",
+    "type": "싱글",
+    "isMain": true,
+    "cover": "https://i.scdn.co/image/ab67616d0000b273ebf830d224cc1281e17d5d13",
+    "releaseDate": "2025.06.13",
+    "trackCount": 2,
+    "titleTrack": "Rest In You",
+    "tracks": [
+     {
+      "no": 1,
+      "title": "Rest In You",
+      "isTitle": true
+     },
+     {
+      "no": 2,
+      "title": "Rest In You - Instrumental",
+      "isTitle": false
+     }
+    ],
+    "src": "spotify",
+    "spotifyId": "6FEjOw29wqn7LgJ6OHKRn3"
+   },
+   {
     "title": "내가 죽기 일주일 전 OST Part 1",
     "type": "OST",
     "releaseDate": "2025.04.03",
@@ -115210,6 +115522,29 @@
     "feat": true
    },
    {
+    "title": "Way Back Love, Pt. 1 (Original Soundtrack)",
+    "type": "싱글",
+    "isMain": true,
+    "cover": "https://i.scdn.co/image/ab67616d0000b27308e8e905d08bea8f7de31098",
+    "releaseDate": "2025.04.03",
+    "trackCount": 2,
+    "titleTrack": null,
+    "tracks": [
+     {
+      "no": 1,
+      "title": "Spring Is Gone by chance",
+      "isTitle": false
+     },
+     {
+      "no": 2,
+      "title": "Spring Is Gone by chance - Instrumental",
+      "isTitle": false
+     }
+    ],
+    "src": "spotify",
+    "spotifyId": "7EmShrOClzkIRcqTj8n1nu"
+   },
+   {
     "title": "열녀박씨 계약결혼뎐 OST Part. 3 : 온 세상이 나에게",
     "type": "OST",
     "releaseDate": "2023.12.09",
@@ -115230,6 +115565,29 @@
      }
     ],
     "feat": true
+   },
+   {
+    "title": "My Whole World Is You (From \"The story of Park’s marriage contract\" Original Television Sountrack, Pt. 3)",
+    "type": "싱글",
+    "isMain": true,
+    "cover": "https://i.scdn.co/image/ab67616d0000b273597a5b7b9605c21d91bdddba",
+    "releaseDate": "2023.12.09",
+    "trackCount": 2,
+    "titleTrack": "My Whole World Is You",
+    "tracks": [
+     {
+      "no": 1,
+      "title": "My Whole World Is You",
+      "isTitle": true
+     },
+     {
+      "no": 2,
+      "title": "My Whole World Is You - Instrumental",
+      "isTitle": false
+     }
+    ],
+    "src": "spotify",
+    "spotifyId": "2Y1cczdDDLjUmuOPIJfSmZ"
    },
    {
     "title": "No Way (feat. I'MIN)",
@@ -115264,6 +115622,24 @@
       "isTitle": true
      }
     ]
+   },
+   {
+    "title": "DALALA",
+    "type": "싱글",
+    "isMain": true,
+    "cover": "https://i.scdn.co/image/ab67616d0000b27363afb50f4fcb52f570c5fed5",
+    "releaseDate": "2023.09.20",
+    "trackCount": 1,
+    "titleTrack": "DALALA",
+    "tracks": [
+     {
+      "no": 1,
+      "title": "DALALA",
+      "isTitle": true
+     }
+    ],
+    "src": "spotify",
+    "spotifyId": "0q2pMuNvBFB1NEwUhz4uDX"
    },
    {
     "title": "Rewind",

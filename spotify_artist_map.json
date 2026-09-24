@@ -234,6 +234,17 @@
     },
     "checkedAt": "2026-09-20"
   },
+  "권은빈": {
+    "id": "65IeoKlQjPknH8nJvJDXyG",
+    "spotifyName": "KWON EUNBIN",
+    "kind": "solo",
+    "confidence": "medium",
+    "why": "이름 유일 일치",
+    "evidence": {
+      "titleOverlap": null
+    },
+    "checkedAt": "2026-09-24"
+  },
   "김민주": {
     "id": "7lhiEEAGZosFSF2tlSBBKO",
     "spotifyName": "MINJU",
@@ -1252,6 +1263,17 @@
     },
     "checkedAt": "2026-09-21"
   },
+  "소원": {
+    "id": "1qyV7btLIfHJdcSZFMea9a",
+    "spotifyName": "Sowon",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "동명 후보 2명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-09-24"
+  },
   "소희": {
     "id": "3mYdRRihv7Oj0g4a7viHOX",
     "spotifyName": "SOHEE",
@@ -2064,6 +2086,22 @@
     },
     "checkedAt": "2026-09-22"
   },
+  "엘키": {
+    "id": "2LweyRPXsmZdC0OMWMR79w",
+    "spotifyName": "莊錠欣 ELKIE",
+    "kind": "solo",
+    "confidence": "high",
+    "why": "동명 후보 4명 중 앨범 대조 · 수집 전 검증 통과(겹침 1)",
+    "evidence": {
+      "titleOverlap": 1,
+      "verifyOverlap": 1,
+      "verifyYears": [
+        2023,
+        2018
+      ]
+    },
+    "checkedAt": "2026-09-24"
+  },
   "엠블랙": {
     "id": "14f1WN9TUDVBK4sHUStmLG",
     "spotifyName": "MBLAQ",
@@ -2117,6 +2155,17 @@
       ]
     },
     "checkedAt": "2026-09-17"
+  },
+  "예린": {
+    "id": "7htnZJTm5SZsmKRrnOL5mk",
+    "spotifyName": "Yerin",
+    "kind": "solo",
+    "confidence": "high",
+    "why": "동명 후보 3명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 3
+    },
+    "checkedAt": "2026-09-24"
   },
   "예은": {
     "id": "4hMhbcPHd2nsZFhY1TNp8Y",
@@ -2447,6 +2496,22 @@
     },
     "checkedAt": "2026-09-15"
   },
+  "유주": {
+    "id": "7Bu0r4MCDX3sbhcFD5IXyx",
+    "spotifyName": "YUJU",
+    "kind": "solo",
+    "confidence": "high",
+    "why": "동명 후보 2명 중 앨범 대조 · 수집 전 검증 통과(겹침 1)",
+    "evidence": {
+      "titleOverlap": 1,
+      "verifyOverlap": 1,
+      "verifyYears": [
+        2026,
+        2025
+      ]
+    },
+    "checkedAt": "2026-09-24"
+  },
   "유키스": {
     "id": "2GB76Lm833jVI5kLvKEB7Z",
     "spotifyName": "UKISS",
@@ -2614,6 +2679,17 @@
       "titleOverlap": 0
     },
     "checkedAt": "2026-09-23"
+  },
+  "장예은": {
+    "id": "4hMhbcPHd2nsZFhY1TNp8Y",
+    "spotifyName": "Yeeun",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "이름 불일치 — 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-09-24"
   },
   "장유빈": {
     "id": "5f1qpcqhDl49v5gKln3zl2",
@@ -3365,6 +3441,17 @@
       ]
     },
     "checkedAt": "2026-09-15"
+  },
+  "한승우": {
+    "id": "2RSsuFG2pkU9sGZ85UzFgl",
+    "spotifyName": "Han Seungwoo",
+    "kind": "solo",
+    "confidence": "high",
+    "why": "동명 후보 3명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 2
+    },
+    "checkedAt": "2026-09-24"
   },
   "허가윤": {
     "id": "2p8xnRzlHKGxIDJRa8NIMY",
