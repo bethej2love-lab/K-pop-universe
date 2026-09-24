@@ -117620,7 +117620,27 @@
    }
   ],
   "left": "2020.01.06",
-  "id": "a0612"
+  "id": "a0612",
+  "discography": [
+   {
+    "title": "Flower Day Song",
+    "type": "싱글",
+    "isMain": true,
+    "cover": "https://i.scdn.co/image/ab67616d0000b2730a7a7ddf90fd2014089cf72c",
+    "releaseDate": "2026.09.17",
+    "trackCount": 1,
+    "titleTrack": "Flower Day Song",
+    "tracks": [
+     {
+      "no": 1,
+      "title": "Flower Day Song",
+      "isTitle": true
+     }
+    ],
+    "src": "spotify",
+    "spotifyId": "5rDHcE4Wsgue2hL3uBvdv7"
+   }
+  ]
  },
  {
   "name": {
@@ -117781,6 +117801,29 @@
     ]
    },
    {
+    "title": "Wave (2024)",
+    "type": "싱글",
+    "isMain": true,
+    "cover": "https://i.scdn.co/image/ab67616d0000b2734217a1f8fea42f90680a9467",
+    "releaseDate": "2024.08.07",
+    "trackCount": 2,
+    "titleTrack": "Wave (2024)",
+    "tracks": [
+     {
+      "no": 1,
+      "title": "Wave (2024)",
+      "isTitle": true
+     },
+     {
+      "no": 2,
+      "title": "Wave (2024) (Inst.)",
+      "isTitle": false
+     }
+    ],
+    "src": "spotify",
+    "spotifyId": "121H5X8fLVrpEBw1hyMVbp"
+   },
+   {
     "title": "지들맘대로",
     "type": "싱글",
     "releaseDate": "2024.06.24",
@@ -117927,6 +117970,31 @@
     "en": "BAE173",
     "active": false,
     "left": "2026.06.30"
+   }
+  ],
+  "discography": [
+   {
+    "title": "러브 메이트 (Original Television Soundtrack), Pt. 1",
+    "type": "싱글",
+    "isMain": true,
+    "cover": "https://i.scdn.co/image/ab67616d0000b273b6b157deb867e3798366aec0",
+    "releaseDate": "2023.05.24",
+    "trackCount": 2,
+    "titleTrack": null,
+    "tracks": [
+     {
+      "no": 1,
+      "title": "Just Like You",
+      "isTitle": false
+     },
+     {
+      "no": 2,
+      "title": "Just Like You - Instrumental",
+      "isTitle": false
+     }
+    ],
+    "src": "spotify",
+    "spotifyId": "3cTRH6XdFRDUicoUhTOc48"
    }
   ]
  },

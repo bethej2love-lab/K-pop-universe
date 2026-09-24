@@ -75,6 +75,22 @@
     },
     "checkedAt": "2026-09-22"
   },
+  "Kevin": {
+    "id": "4fSMtiyC6lF5BUO1tUMWMs",
+    "spotifyName": "Kevin MacLeod",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "이름 불일치 — 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0,
+      "verifyOverlap": 0,
+      "verifyYears": [
+        2016,
+        2013
+      ]
+    },
+    "checkedAt": "2026-09-24"
+  },
   "NRG": {
     "id": "7xrfnodwPKuIxS9JuUECaf",
     "spotifyName": "NRG",
@@ -300,6 +316,17 @@
     },
     "checkedAt": "2026-09-20"
   },
+  "남도현": {
+    "id": "25lZDZ43ommDJkO6FzS5gL",
+    "spotifyName": "Nam Dohyon",
+    "kind": "solo",
+    "confidence": "medium",
+    "why": "이름 유일 일치",
+    "evidence": {
+      "titleOverlap": null
+    },
+    "checkedAt": "2026-09-24"
+  },
   "남지현": {
     "id": "23btamSI6vKRCGutrMF6ic",
     "spotifyName": "Song Nam Hyun",
@@ -471,6 +498,17 @@
       ]
     },
     "checkedAt": "2026-09-15"
+  },
+  "도하": {
+    "id": "55qNLulWN2EevzZhyLGgCV",
+    "spotifyName": "Doha",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "동명 후보 4명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-09-24"
   },
   "동방신기": {
     "id": "6nVMMEywS5Y4tsHPKx1nIo",
@@ -780,6 +818,17 @@
       ]
     },
     "checkedAt": "2026-09-15"
+  },
+  "문준영": {
+    "id": "6GdRhnyb9YmTPib3p1GG89",
+    "spotifyName": "Jun Young Ho",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "이름 불일치 — 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-09-24"
   },
   "미야": {
     "id": "6L5bLEtpxwd0KOdOr3gtW4",
@@ -1284,6 +1333,22 @@
       "titleOverlap": 1
     },
     "checkedAt": "2026-09-22"
+  },
+  "손동표": {
+    "id": "1azUmeWMhElLW1htKAezsy",
+    "spotifyName": "SON DONG PYO",
+    "kind": "solo",
+    "confidence": "high",
+    "why": "이름 유일 일치 · 수집 전 검증 통과(겹침 1)",
+    "evidence": {
+      "titleOverlap": null,
+      "verifyOverlap": 1,
+      "verifyYears": [
+        2025,
+        2024
+      ]
+    },
+    "checkedAt": "2026-09-24"
   },
   "슈퍼노바": {
     "id": "7kydkMNIMNhr7jDgeOQd4H",
@@ -2577,6 +2642,17 @@
     },
     "checkedAt": "2026-09-15"
   },
+  "이은상": {
+    "id": "23oRZ1WSV1YCPk3Ra7ivzJ",
+    "spotifyName": "EUNSANG",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "이름 불일치 — 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-09-24"
+  },
   "이준혁": {
     "id": "3S5FdlOtsbXEmbefNCX0Kc",
     "spotifyName": "LEE JUNHYUK",
@@ -2642,6 +2718,17 @@
     },
     "checkedAt": "2026-09-19"
   },
+  "이한결": {
+    "id": "2F6e6Ox3fxfcMOFaiReh6k",
+    "spotifyName": "Lee Han Chul",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "이름 불일치 — 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-09-24"
+  },
   "인피니트": {
     "id": "1bkpTEmumLC3xc7HgMsttU",
     "spotifyName": "INFINITE",
@@ -2652,6 +2739,22 @@
       "titleOverlap": 2
     },
     "checkedAt": "2026-09-15"
+  },
+  "임시완": {
+    "id": "2n81IVrBwNFGxXnc8GDWkW",
+    "spotifyName": "Kim Siwon",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "이름 불일치 — 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0,
+      "verifyOverlap": 0,
+      "verifyYears": [
+        2025,
+        2023
+      ]
+    },
+    "checkedAt": "2026-09-24"
   },
   "있지": {
     "id": "2KC9Qb60EaY0kW4eH68vr3",
@@ -3511,6 +3614,17 @@
       ]
     },
     "checkedAt": "2026-09-22"
+  },
+  "황광희": {
+    "id": "2lV9wdnJ3DYJ8JBP5wLB6d",
+    "spotifyName": "Hwang Kwang Hee",
+    "kind": "solo",
+    "confidence": "medium",
+    "why": "이름 유일 일치",
+    "evidence": {
+      "titleOverlap": null
+    },
+    "checkedAt": "2026-09-24"
   },
   "힛지스": {
     "id": "5a83Luu0ndnR1enk1rn83V",
