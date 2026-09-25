@@ -119313,6 +119313,24 @@
     ]
    },
    {
+    "title": "끝이 아니었으면",
+    "type": "싱글",
+    "isMain": true,
+    "cover": "https://i.scdn.co/image/ab67616d0000b273f8d1f22e633026cbc35be180",
+    "releaseDate": "2025.05.16",
+    "trackCount": 1,
+    "titleTrack": "끝이 아니었으면",
+    "tracks": [
+     {
+      "no": 1,
+      "title": "끝이 아니었으면",
+      "isTitle": true
+     }
+    ],
+    "src": "spotify",
+    "spotifyId": "1mWpnc6dIzeH095L4LqulU"
+   },
+   {
     "title": "닥터슬럼프 OST Part.6",
     "type": "OST",
     "releaseDate": "2024.03.10",
@@ -119335,6 +119353,29 @@
     "feat": true
    },
    {
+    "title": "Doctor Slump (Original Television Soundtrack) Pt.6",
+    "type": "싱글",
+    "isMain": true,
+    "cover": "https://i.scdn.co/image/ab67616d0000b2730e1e0bc8a4cd6627bd70b7ec",
+    "releaseDate": "2024.03.10",
+    "trackCount": 2,
+    "titleTrack": null,
+    "tracks": [
+     {
+      "no": 1,
+      "title": "Lean On Me",
+      "isTitle": false
+     },
+     {
+      "no": 2,
+      "title": "Lean On Me - Instrumental",
+      "isTitle": false
+     }
+    ],
+    "src": "spotify",
+    "spotifyId": "0XsiMEcNehoSL8UQF67QCz"
+   },
+   {
     "title": "청춘월담 OST Part.5",
     "type": "OST",
     "releaseDate": "2023.04.11",
@@ -119355,6 +119396,29 @@
      }
     ],
     "feat": true
+   },
+   {
+    "title": "Our Blooming Youth (Original Television Soundtrack), Pt.5",
+    "type": "싱글",
+    "isMain": true,
+    "cover": "https://i.scdn.co/image/ab67616d0000b273b90d41bd718a7f3159dd7831",
+    "releaseDate": "2023.04.11",
+    "trackCount": 2,
+    "titleTrack": null,
+    "tracks": [
+     {
+      "no": 1,
+      "title": "Bud",
+      "isTitle": false
+     },
+     {
+      "no": 2,
+      "title": "Bud - Inst.",
+      "isTitle": false
+     }
+    ],
+    "src": "spotify",
+    "spotifyId": "51ftN67dKvQHlG9Cz5AnGE"
    },
    {
     "title": "'두개의 빛:릴루미노' OST single with 박형식",
@@ -130664,6 +130728,29 @@
     ]
    },
    {
+    "title": "memory",
+    "type": "싱글",
+    "isMain": true,
+    "cover": "https://i.scdn.co/image/ab67616d0000b273db567197e0d41f6bd5771b82",
+    "releaseDate": "2026.05.07",
+    "trackCount": 2,
+    "titleTrack": "memory",
+    "tracks": [
+     {
+      "no": 1,
+      "title": "memory",
+      "isTitle": true
+     },
+     {
+      "no": 2,
+      "title": "memory - Instrumental",
+      "isTitle": false
+     }
+    ],
+    "src": "spotify",
+    "spotifyId": "2XbND9n2T8jWYtKoUEGXxh"
+   },
+   {
     "title": "Love before Me",
     "type": "미니 1집",
     "releaseDate": "2026.02.12",
@@ -130736,6 +130823,29 @@
      }
     ],
     "feat": true
+   },
+   {
+    "title": "신데렐라 게임 (Original Television Soundtrack), Pt. 5",
+    "type": "싱글",
+    "isMain": true,
+    "cover": "https://i.scdn.co/image/ab67616d0000b2736487af75ada45fd012fca0bd",
+    "releaseDate": "2025.03.28",
+    "trackCount": 2,
+    "titleTrack": null,
+    "tracks": [
+     {
+      "no": 1,
+      "title": "마음이 마음에 닿아",
+      "isTitle": false
+     },
+     {
+      "no": 2,
+      "title": "마음이 마음에 닿아 - Instrumental",
+      "isTitle": false
+     }
+    ],
+    "src": "spotify",
+    "spotifyId": "78O90bd6PhmvN3lQiqbfzY"
    },
    {
     "title": "참아본다",
@@ -130836,6 +130946,26 @@
     "en": "A.C.E",
     "active": false,
     "left": "2025.03.31"
+   }
+  ],
+  "discography": [
+   {
+    "title": "LOW",
+    "type": "싱글",
+    "isMain": true,
+    "cover": "https://i.scdn.co/image/ab67616d0000b273ef9e20cfb379c7a8744d63bd",
+    "releaseDate": "2026.09.21",
+    "trackCount": 1,
+    "titleTrack": "LOW",
+    "tracks": [
+     {
+      "no": 1,
+      "title": "LOW",
+      "isTitle": true
+     }
+    ],
+    "src": "spotify",
+    "spotifyId": "1j0RqpH39kTqJrVUFcq0KY"
    }
   ]
  },

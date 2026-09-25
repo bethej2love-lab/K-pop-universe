@@ -261,6 +261,22 @@
     },
     "checkedAt": "2026-09-24"
   },
+  "김동준": {
+    "id": "0XojSZQ9oNETM8AtA9kJe8",
+    "spotifyName": "Kim Won Jun",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "이름 불일치 — 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0,
+      "verifyOverlap": 0,
+      "verifyYears": [
+        2019,
+        2016
+      ]
+    },
+    "checkedAt": "2026-09-25"
+  },
   "김민주": {
     "id": "7lhiEEAGZosFSF2tlSBBKO",
     "spotifyName": "MINJU",
@@ -293,6 +309,21 @@
       "titleOverlap": 0
     },
     "checkedAt": "2026-09-23"
+  },
+  "김태헌": {
+    "id": "3qNVuliS40BLgXGxhdBdqu",
+    "spotifyName": "TAEYEON",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "이름 불일치 — 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0,
+      "verifyOverlap": 0,
+      "verifyYears": [
+        2025
+      ]
+    },
+    "checkedAt": "2026-09-25"
   },
   "나우즈": {
     "id": "1iZwr6w3TWPNezX8yCtRBg",
@@ -873,6 +904,33 @@
       "titleOverlap": 0
     },
     "checkedAt": "2026-09-21"
+  },
+  "박준희": {
+    "id": "19edNqjH3rTGrvHs9VF9Xe",
+    "spotifyName": "JUNHEE",
+    "kind": "solo",
+    "confidence": "high",
+    "why": "동명 후보 2명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 2
+    },
+    "checkedAt": "2026-09-25"
+  },
+  "박형식": {
+    "id": "63CIh5694oJLXgtyXkp92Z",
+    "spotifyName": "Park Hyungsik",
+    "kind": "solo",
+    "confidence": "high",
+    "why": "이름 유일 일치 · 수집 전 검증 통과(겹침 1)",
+    "evidence": {
+      "titleOverlap": null,
+      "verifyOverlap": 1,
+      "verifyYears": [
+        2025,
+        2024
+      ]
+    },
+    "checkedAt": "2026-09-25"
   },
   "방탄소년단": {
     "id": "3Nrfpe0tUJi4K4DXYWgMUX",
@@ -2361,6 +2419,17 @@
     },
     "checkedAt": "2026-09-17"
   },
+  "와우": {
+    "id": "6APYIwbk4XScBpXFMbLYw9",
+    "spotifyName": "WOW",
+    "kind": "solo",
+    "confidence": "medium",
+    "why": "이름 유일 일치",
+    "evidence": {
+      "titleOverlap": null
+    },
+    "checkedAt": "2026-09-25"
+  },
   "용희": {
     "id": "1qQRdPpCeVsfDCKz3QFuU5",
     "spotifyName": "Cho Yonghee",
@@ -2680,6 +2749,17 @@
     },
     "checkedAt": "2026-09-15"
   },
+  "이지함": {
+    "id": "2CZxZ5k6bNDEb1BiKVz1tK",
+    "spotifyName": "Lee jiham",
+    "kind": "solo",
+    "confidence": "high",
+    "why": "이름 불일치 — 앨범 대조",
+    "evidence": {
+      "titleOverlap": 3
+    },
+    "checkedAt": "2026-09-25"
+  },
   "이채연": {
     "id": "0asUEPExLOkMidYAAKqLs0",
     "spotifyName": "Chae Yeon",
@@ -2826,6 +2906,22 @@
       "titleOverlap": 0
     },
     "checkedAt": "2026-09-23"
+  },
+  "정희철": {
+    "id": "7l8rOFwZFQ3G0sgZ7gjGng",
+    "spotifyName": "Jung Seung Hwan",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "이름 불일치 — 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0,
+      "verifyOverlap": 0,
+      "verifyYears": [
+        2016,
+        2015
+      ]
+    },
+    "checkedAt": "2026-09-25"
   },
   "제로베이스원": {
     "id": "7cjg7EkeZy3OI5o9Qthc6n",
@@ -3475,6 +3571,17 @@
       "titleOverlap": 1
     },
     "checkedAt": "2026-09-15"
+  },
+  "하민우": {
+    "id": "1XJLHCj424IVSHZxmq2yve",
+    "spotifyName": "Kim Minwoo",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "이름 불일치 — 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-09-25"
   },
   "하이라이트": {
     "id": "3T0fMfxYBU3q9oAUAdPIsr",
