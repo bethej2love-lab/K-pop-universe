@@ -75,6 +75,22 @@
     },
     "checkedAt": "2026-09-22"
   },
+  "JR": {
+    "id": "250b0Wlc5Vk0CoUsaCY84M",
+    "spotifyName": "JENNIE",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "이름 불일치 — 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0,
+      "verifyOverlap": 0,
+      "verifyYears": [
+        2024,
+        2023
+      ]
+    },
+    "checkedAt": "2026-09-25"
+  },
   "Kevin": {
     "id": "4fSMtiyC6lF5BUO1tUMWMs",
     "spotifyName": "Kevin MacLeod",
@@ -145,6 +161,22 @@
       "titleOverlap": 2
     },
     "checkedAt": "2026-09-15"
+  },
+  "강유찬": {
+    "id": "1LC3ECnlRN78MocLYLbkyR",
+    "spotifyName": "Yuchan",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "동명 후보 2명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0,
+      "verifyOverlap": 0,
+      "verifyYears": [
+        2025,
+        2024
+      ]
+    },
+    "checkedAt": "2026-09-25"
   },
   "강혜원": {
     "id": "1xo99HG7IpzhOVGEI8IgH9",
@@ -287,6 +319,33 @@
       "titleOverlap": 0
     },
     "checkedAt": "2026-09-20"
+  },
+  "김병관": {
+    "id": "5KrpBywBTvZAMRyadIYX1s",
+    "spotifyName": "LEE BYEONGCHAN",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "이름 불일치 — 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0,
+      "verifyOverlap": 0,
+      "verifyYears": [
+        2020,
+        2018
+      ]
+    },
+    "checkedAt": "2026-09-25"
+  },
+  "김은정": {
+    "id": "2ebcZBZzLEgveZKoW1okl7",
+    "spotifyName": "Kim Eun-jung",
+    "kind": "solo",
+    "confidence": "medium",
+    "why": "이름 유일 일치",
+    "evidence": {
+      "titleOverlap": null
+    },
+    "checkedAt": "2026-09-25"
   },
   "김재경": {
     "id": "3Gi685Pscm2KnOLVnUnZEC",
@@ -682,6 +741,17 @@
     },
     "checkedAt": "2026-09-15"
   },
+  "렌": {
+    "id": "0Repe2EiNjaFAFIukrroUM",
+    "spotifyName": "Ren",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "동명 후보 2명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-09-25"
+  },
   "롱샷": {
     "id": "2F4oTJOWkcD1JaTeKEa9h6",
     "spotifyName": "LNGSHOT",
@@ -974,6 +1044,17 @@
       ]
     },
     "checkedAt": "2026-09-20"
+  },
+  "백호": {
+    "id": "5N1kYTtrjl9ksUacreBHZf",
+    "spotifyName": "BAEKHO",
+    "kind": "solo",
+    "confidence": "high",
+    "why": "동명 후보 2명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 2
+    },
+    "checkedAt": "2026-09-25"
   },
   "베리베리": {
     "id": "1fWUcRSok57yRm8gPKj1Fc",
@@ -1558,6 +1639,22 @@
       ]
     },
     "checkedAt": "2026-09-16"
+  },
+  "아론": {
+    "id": "5rCTkyHZUIUcPwKwIz8YOg",
+    "spotifyName": "aron!",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "동명 후보 3명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0,
+      "verifyOverlap": 0,
+      "verifyYears": [
+        2023,
+        2018
+      ]
+    },
+    "checkedAt": "2026-09-25"
   },
   "아르테미스": {
     "id": "213zHiFZwtDVEqyxeCbk07",
@@ -3620,6 +3717,17 @@
       "titleOverlap": null
     },
     "checkedAt": "2026-09-19"
+  },
+  "하주연": {
+    "id": "5i3wHNhSSPZNPfP6JTT0G9",
+    "spotifyName": "Han Yeon Ju",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "이름 불일치 — 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-09-25"
   },
   "하츠투하츠": {
     "id": "1ZLU77nRzQIaP23mVSYpCQ",
