@@ -18116,41 +18116,70 @@ async function _buildFeedDailyNews(){
   const list=document.getElementById('feed-dailynews');
   if(!section||!list||!sb)return;
   list.innerHTML='';section.style.display='none';
-  _enableDragScroll(list);
   try{
-    const today=new Date().toISOString().slice(0,10); // KST/UTC 경계 오차는 다른 "오늘" 판정(기념일 등)과 동일하게 허용
-    const todayDot=today.replace(/-/g,'.'); // albums_recent.json은 "YYYY.MM.DD" 표기
-    const isKo=currentLang==='ko';
-    const [albumsAll,winsRes,vmRes]=await Promise.all([
+    const today=new Date().toISOString().slice(0,10);
+    const todayDot=today.replace(/-/g,'.');
+    const tomorrow=new Date(Date.now()+86400000).toISOString().slice(0,10);
+    const [albumsAll,winsRes,mvRes]=await Promise.all([
       _ensureRecentAlbums().catch(()=>[]),
       sb.from('music_show_wins').select('*').eq('win_date',today).order('show',{ascending:true}),
-      sb.from('yt_view_milestones').select('*,yt_channel_videos(title,thumb,is_short)')
-        .eq('crossed_at',today).eq('seeded',false).order('tier',{ascending:false}).limit(20)
+      sb.from(_YT_TABLE).select('id,title,thumb,is_short,group_ko,content_flag')
+        .gte('published_at',today).lt('published_at',tomorrow)
+        .order('published_at',{ascending:false}).limit(50)
     ]);
-    const items=[]; // {icon,title,sub,nav,thumb,meta}
+    const rows=[];
     (Array.isArray(albumsAll)?albumsAll:[]).filter(a=>a.d===todayDot).forEach(a=>{
-      const ownerDisp=a.k==='g'?_gLabelKo(a.o):a.o;
-      items.push({icon:'💿',title:a.t,sub:ownerDisp,nav:_albumCardNav(a),thumb:a.c,meta:_discogTypeLabel(a.y)});
+      const sub=a.k==='g'?_gLabelKo(a.o):a.o;
+      rows.push({type:'album',title:a.t,sub,thumb:a.c,nav:_albumCardNav(a)});
     });
     (winsRes.data||[]).forEach(w=>{
-      const label=isKo?`${w.show} 1위`:`#1 on ${w.show}`;
-      items.push({icon:'🏆',title:w.song_title||'',sub:_gLabelKo(w.group_ko)+(w.member_ko?` · ${w.member_ko}`:''),
-        nav:()=>_feedNav(()=>{if(GROUPS[w.group_ko]){if(isMob())showGC(w.group_ko,window.innerWidth/2,window.innerHeight*0.4,false,false,null,false);else showGC(w.group_ko,window.innerWidth/2,window.innerHeight/2);}}),
-        thumb:null,meta:label});
+      const sub=_gLabelKo(w.group_ko)+(w.member_ko?` · ${w.member_ko}`:'')+` · ${w.show}`;
+      rows.push({type:'win',title:w.song_title||'',sub,thumb:null,
+        nav:()=>_feedNav(()=>{if(GROUPS[w.group_ko]){if(isMob())showGC(w.group_ko,window.innerWidth/2,window.innerHeight*0.4,false,false,null,false);else showGC(w.group_ko,window.innerWidth/2,window.innerHeight/2);}})});
     });
-    (vmRes.data||[]).forEach(m=>{
-      const v=m.yt_channel_videos;if(!v)return;
-      const vidUrl=v.is_short?`https://youtube.com/shorts/${m.video_id}`:`https://www.youtube.com/watch?v=${m.video_id}`;
-      items.push({icon:'🎉',title:v.title||'',sub:_gLabelKo(m.group_ko),
-        nav:()=>openLightbox(vidUrl,!!v.is_short,null,0,{groupKo:m.group_ko},false,true),
-        thumb:v.thumb,meta:_fmtViewMilestone(m.tier)});
+    (mvRes.data||[]).forEach(v=>{
+      if(v.content_flag==='보류'||v.content_flag==='hidden')return;
+      const t=v.title||'';
+      const isTeaser=/티저|teaser|예고편/i.test(t);
+      const isMv=_isMusicVideoTitle(t);
+      if(!isTeaser&&!isMv)return;
+      const vidUrl=v.is_short?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;
+      rows.push({type:isTeaser?'teaser':'mv',title:t,sub:_gLabelKo(v.group_ko),thumb:v.thumb,
+        nav:()=>openLightbox(vidUrl,!!v.is_short,null,0,{groupKo:v.group_ko},false,true)});
     });
-    if(!items.length)return;
-    items.forEach(it=>{
-      _appendFeedCard(list,it.icon,it.title,it.sub,it.nav,it.thumb,null,{meta:it.meta,metaFresh:true});
-    });
+    if(!rows.length)return;
+    rows.forEach(r=>_appendNewsRow(list,r));
     section.style.display='';
   }catch(e){console.warn('[feed] 오늘의 소식 선반 실패 — 이 선반만 빠집니다',e);}
+}
+function _appendNewsRow(container,{type,title,sub,thumb,nav}){
+  const LABELS={album:'💿 신보',win:'🏆 1위',mv:'🎬 MV',teaser:'🎬 티저'};
+  const CLS={album:'fnb-album',win:'fnb-win',mv:'fnb-mv',teaser:'fnb-teaser'};
+  const row=document.createElement('div');
+  row.className='feed-news-row';
+  const badge=document.createElement('div');
+  badge.className='feed-news-badge '+(CLS[type]||'');
+  badge.textContent=LABELS[type]||type;
+  const body=document.createElement('div');
+  body.className='feed-news-body';
+  const titleEl=document.createElement('div');
+  titleEl.className='feed-news-title';
+  titleEl.textContent=_cleanTitle(title);
+  body.appendChild(titleEl);
+  if(sub){const subEl=document.createElement('div');subEl.className='feed-news-sub';subEl.textContent=sub;body.appendChild(subEl);}
+  row.appendChild(badge);row.appendChild(body);
+  if(thumb){
+    const img=document.createElement('img');
+    img.className='feed-news-thumb'+(type==='album'?' is-square':'');
+    img.loading='lazy';img.alt='';
+    img.addEventListener('load',()=>img.classList.add('loaded'));
+    img.src=thumb;
+    row.appendChild(img);
+  }
+  row.addEventListener('click',nav);
+  row.addEventListener('touchstart',e=>_lbRipple(row,e),{passive:true});
+  row.addEventListener('mousedown',e=>_lbRipple(row,e));
+  container.appendChild(row);
 }
 async function _buildFeedNewAlbums(){
   const section=document.getElementById('feed-newalbum-section');
@@ -22662,7 +22691,7 @@ _totopBtn.addEventListener('click',e=>{
            채우지 않는다). 세 소스 다 "시간이 지나면 의미가 옅어지는" 성격이라 맨 위(기념일보다 먼저). -->
       <div class="feed-section" id="feed-dailynews-section" style="display:none">
         <div class="feed-section-ttl">📰 Today's K-pop</div>
-        <div id="feed-dailynews" class="feed-strip hscroll-drag"></div>
+        <div id="feed-dailynews" class="feed-news-list"></div>
       </div>
       <div class="feed-section" id="feed-anniv-section" style="display:none">
         <div class="feed-section-ttl">🎂 Today's Anniversary</div>
