@@ -151,6 +151,28 @@
     },
     "checkedAt": "2026-09-15"
   },
+  "가은": {
+    "id": "7sxTZy9SLBjsTz4PiSj5tJ",
+    "spotifyName": "Kaeun",
+    "kind": "solo",
+    "confidence": "medium",
+    "why": "이름 유일 일치",
+    "evidence": {
+      "titleOverlap": null
+    },
+    "checkedAt": "2026-09-26"
+  },
+  "가희": {
+    "id": "0XsftMDxoa5aSnak4fk1V3",
+    "spotifyName": "Kahi",
+    "kind": "solo",
+    "confidence": "medium",
+    "why": "이름 유일 일치",
+    "evidence": {
+      "titleOverlap": null
+    },
+    "checkedAt": "2026-09-26"
+  },
   "갓세븐": {
     "id": "6nfDaffa50mKtEOwR8g4df",
     "spotifyName": "GOT7",
@@ -795,6 +817,17 @@
     },
     "checkedAt": "2026-09-25"
   },
+  "로아": {
+    "id": "2xHKnu5YYXM1IrDN5PIWjJ",
+    "spotifyName": "로아",
+    "kind": "solo",
+    "confidence": "medium",
+    "why": "이름 유일 일치",
+    "evidence": {
+      "titleOverlap": null
+    },
+    "checkedAt": "2026-09-26"
+  },
   "롱샷": {
     "id": "2F4oTJOWkcD1JaTeKEa9h6",
     "spotifyName": "LNGSHOT",
@@ -1186,6 +1219,28 @@
     },
     "checkedAt": "2026-09-15"
   },
+  "베카": {
+    "id": "2XDkin9iAWCUudDWzYRNrt",
+    "spotifyName": "Bekah",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "동명 후보 5명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-09-26"
+  },
+  "보아": {
+    "id": "4muJrGMndyYWqZtfk8OWy4",
+    "spotifyName": "BoA",
+    "kind": "solo",
+    "confidence": "high",
+    "why": "동명 후보 2명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 5
+    },
+    "checkedAt": "2026-09-26"
+  },
   "보이넥스트도어": {
     "id": "4hnHLgMSOiqERWBL4jINP1",
     "spotifyName": "BOYNEXTDOOR",
@@ -1261,6 +1316,17 @@
       ]
     },
     "checkedAt": "2026-09-15"
+  },
+  "비": {
+    "id": "5L4EafeXwZ0stGuPtGr5Tz",
+    "spotifyName": "Rain",
+    "kind": "solo",
+    "confidence": "high",
+    "why": "동명 후보 3명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 2
+    },
+    "checkedAt": "2026-09-26"
   },
   "비비": {
     "id": "6mEgpqXA4yzhhncW4cBHlh",
@@ -1449,6 +1515,22 @@
       ]
     },
     "checkedAt": "2026-09-22"
+  },
+  "세븐": {
+    "id": "14yLuCwlBqteUdBqx9soJV",
+    "spotifyName": "SE7EN",
+    "kind": "solo",
+    "confidence": "high",
+    "why": "동명 후보 6명 중 앨범 대조 · 수집 전 검증 통과(겹침 1)",
+    "evidence": {
+      "titleOverlap": 1,
+      "verifyOverlap": 1,
+      "verifyYears": [
+        2025,
+        2022
+      ]
+    },
+    "checkedAt": "2026-09-26"
   },
   "세븐틴": {
     "id": "7nqOGRxlXj7N2JYbgNEjYH",
@@ -1672,6 +1754,17 @@
       "titleOverlap": null
     },
     "checkedAt": "2026-09-15"
+  },
+  "싸이": {
+    "id": "2dd5mrQZvg6SmahdgVKDzh",
+    "spotifyName": "PSY",
+    "kind": "solo",
+    "confidence": "medium",
+    "why": "이름 유일 일치",
+    "evidence": {
+      "titleOverlap": null
+    },
+    "checkedAt": "2026-09-26"
   },
   "싸이커스": {
     "id": "6QHP8St0MzfNDqjKpwtMht",
@@ -2840,6 +2933,17 @@
     },
     "checkedAt": "2026-09-17"
   },
+  "유하": {
+    "id": "2lZFlNiQMLa2fuX3pkXcan",
+    "spotifyName": "YOUHA",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "이름 불일치 — 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-09-26"
+  },
   "이달의소녀": {
     "id": "52zMTJCKluDlFwMQWmccY7",
     "spotifyName": "LOONA",
@@ -2897,6 +3001,17 @@
     "why": "이름 불일치 — 앨범 대조",
     "evidence": {
       "titleOverlap": 0
+    },
+    "checkedAt": "2026-09-26"
+  },
+  "이영지": {
+    "id": "0Y2AcMPMpeuPXtPQGVvRBq",
+    "spotifyName": "Lee Young Ji",
+    "kind": "solo",
+    "confidence": "high",
+    "why": "동명 후보 2명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 2
     },
     "checkedAt": "2026-09-26"
   },
