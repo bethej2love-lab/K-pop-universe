@@ -106,7 +106,7 @@ function load(){
     // 제목에 원곡자 이름이 있는지(2026-09-07, 확신 등급용) — 있으면 싣는다
     if(/^const _coverEnCache\s*=/m.test(adminSrc)){
       S(/^const _coverEnCache\s*=/m,'_coverEnCache');
-      coverExtra.push('_coverOriginNamedInTitle');
+      coverExtra.push('_coverOriginNamedInTitle','_coverOriginHashtaggedInTitle');
     }
     // 로스터 기반 자기 곡 판정(2026-09-07) — 있으면 싣는다
     if(/^const _coverRosterCache\s*=/m.test(adminSrc)){

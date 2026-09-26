@@ -131,7 +131,7 @@ if(M._coverConfidence){
   const conf=(title,gko,extra)=>M._coverConfidence(_coverResolve(R(title,gko,extra),{chartRows:chart}));
   const tc=(name,expect,title,gko,extra)=>t(name,R(title,gko,extra),()=>conf(title,gko,extra)===expect);
   tc('확신 — 크레딧(원곡 : 이효리)은 HIGH(자동 적용)','HIGH',"[Cover] 🎧'10 Minutes' by ILLIT MINJU (원곡 : 이효리)",'아일릿',{members:['민주']});
-  tc('확신 — 원곡자를 제목이 직접 부르면 동명곡이어도 HIGH','HIGH','#Magnetic_Challenge with 아일릿 원희 | 투어스','투어스',{with_members:['원희(아일릿)']});
+  tc('확신 — 챌린지 태그에서 원곡자가 #해시태그 없이 텍스트로만 나오면 MEDIUM','MEDIUM','#Magnetic_Challenge with 아일릿 원희 | 투어스','투어스',{with_members:['원희(아일릿)']});
   tc('확신 — 동명곡인데 제목에 원곡자 표기가 없으면 MEDIUM(검수 큐)','MEDIUM',"[가요대제전] 엔시티 위시 'Kissing You' 무대",'엔시티 위시');
   tc('확신 — 커버 문맥 평문 스캔(bare)은 항상 MEDIUM','MEDIUM','천재아이돌 아이브 막내 이서의 파워풀한 댄스 커버  | IVE LEESEO | BTS FAKE LOVE | Role Model Cover VS','아이브',{members:['이서']});
 }

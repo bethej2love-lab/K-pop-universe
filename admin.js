@@ -1619,6 +1619,30 @@ function _coverOriginNamedInTitle(o,title){
   }
   return toks.filter(x=>x&&String(x).length>=2).some(x=>t.includes(String(x).toUpperCase()));
 }
+// 챌린지 해시태그(reason='tag') 전용 — 원곡자가 #해시태그 형태로 제목에 명시됐는지.
+// _coverOriginNamedInTitle과 달리 텍스트 포함이 아니라 #토큰으로만 찾는다: 평문 "태양 아래서"처럼
+// 우연히 들어간 경우나 "with 아일릿 원희"처럼 콜라보로 읽힐 수 있는 경우를 HIGH에서 제외.
+// → 장하오가 #ZHANGHAO #앤팀으로 해시태그된 영상에 GD·태양이 해시태그 없이 포함되는 일 방지.
+function _coverOriginHashtaggedInTitle(o,title){
+  if(!o||!title)return false;
+  // _coverOriginNamedInTitle이 먼저 호출된다고 가정해 캐시가 채워져 있음
+  const t=title.normalize('NFKC');
+  const toks=[];
+  if(o.kind==='group'){toks.push(o.gko);const g=GROUPS[o.gko];if(g&&g.en)toks.push(g.en);}
+  else{
+    toks.push(o.mko);
+    const ck=`${o.mko}|${o.gko}`;
+    if(!_coverEnCache.has(ck)){
+      const a=ARTISTS.find(x=>x.name&&x.name.ko===o.mko&&((x.group&&x.group.ko===o.gko)||o.gko==='솔로'));
+      _coverEnCache.set(ck,a&&a.name.en?a.name.en:null);
+    }
+    const en=_coverEnCache.get(ck);if(en)toks.push(en);
+  }
+  return toks.filter(x=>x&&String(x).length>=2).some(x=>{
+    const esc=String(x).replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+    return new RegExp('#'+esc+'(?![\\p{L}\\p{N}_])','iu').test(t);
+  });
+}
 function _coverOriginId(o){return o.kind==='group'?`g:${o.gko}`:`m:${o.mko}(${o.gko})`;}
 function _coverArtistOriginOf(a){
   // 멤버 솔로곡: "이름(그룹)"; 무소속 솔로(group.ko==='솔로'): "이름(솔로)" — 기존 데이터 관례(아이유(솔로)) 그대로
@@ -2058,7 +2082,8 @@ function _coverResolve(row,opts){
   const topKey=ranked.length?ranked[0].key:null;
   const topNamed=ranked.length?_coverOriginNamedInTitle(ranked[0].e.origin,title):false;
   const secondNamed=ranked.length>1?_coverOriginNamedInTitle(ranked[1].e.origin,title):false;
-  return{isCover,origin,song,ambiguous,hasContext:!!ctx.hasContext,externalArtist,reason:reassign?'reassign':reason,patch,collab,candidates:cands,alternatives,topScore,secondScore,topKey,topNamed,secondNamed};
+  const topHashtagged=ranked.length?_coverOriginHashtaggedInTitle(ranked[0].e.origin,title):false;
+  return{isCover,origin,song,ambiguous,hasContext:!!ctx.hasContext,externalArtist,reason:reassign?'reassign':reason,patch,collab,candidates:cands,alternatives,topScore,secondScore,topKey,topNamed,secondNamed,topHashtagged};
 }
 
 
@@ -2098,11 +2123,12 @@ function _coverConfidence(r){
     // 안 함. 실측에서 이 형태는 "A가 자기 곡을 부른 무대인데 group_ko가 다른 그룹으로 잘못 배정된 것"이
     // 많았다(윤산하·연준 사례) — 커버로 붙이면 오배정이 커버 태그로 굳는다. 사람이 큐에서 판단.
     if(!r.hasContext)return 'MEDIUM';
-    // 챌린지 해시태그(tag)는 **원곡자가 제목에 없으면** 자동 적용하지 않는다. 실측(2026-09-07 시뮬,
-    // 19,000행): tag/HIGH 118건의 표본 다수가 "자기 신곡 챌린지인데 그 곡이 사전에 없어서 남의 동명곡에
-    // 붙은 것"이었다(#타이거챌린지→태민, #멋쟁이챌린지→아영, #NaNaNaChallenge→우즈). 사전에 없는 자기
-    // 곡은 구조적으로 못 걸러내므로, "제목이 원곡자를 부르고 있는가"를 필수 조건으로 둔다.
-    if(r.reason==='tag')return (r.topNamed&&!r.secondNamed)?'HIGH':'MEDIUM';
+    // 챌린지 해시태그(tag)는 **원곡자가 #해시태그로 명시됐을 때만** 자동 적용한다(2026-09-27 강화).
+    // 구 기준(topNamed: 제목 어디에든 포함)은 "태양 아래서" 같은 우연한 일치나 "with 아일릿 원희"처럼
+    // 콜라보로도 읽히는 표현에서 오탐을 낼 수 있다. 해시태그(#아티스트명)는 업로더가 의도적으로 붙인
+    // 것이라 훨씬 신뢰도가 높다. 예: #GoodBoy_challenge #ZHANGHAO #앤팀 — 장하오는 해시태그됐지만
+    // G-Dragon·태양은 없음 → topHashtagged=false → MEDIUM → 검수 큐.
+    if(r.reason==='tag')return (r.topHashtagged&&!r.secondNamed)?'HIGH':'MEDIUM';
     if(gap>=4)return 'HIGH';
     // 동명곡이라도 제목이 원곡자를 직접 부르고 있으면(그리고 경쟁 후보는 아니면) 사람과 같은 근거로 확정.
     // "#Magnetic_Challenge with 아일릿 원희" — Magnetic은 아일릿·베리베리·권은비 셋의 곡이지만 제목이

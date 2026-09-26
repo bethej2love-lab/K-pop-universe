@@ -63,7 +63,7 @@
 
 ## 2026-09-26 (세션 — Today's K-pop 선반 CSS 수정 · 커버 동명곡 오태깅 방지)
 
-- **[완료][admin.js] `_COVER_COMMON_KEYS`에 `'good boy'`·`'bad boy'` 추가** — 사용자 제보: `#GoodBoy_challenge` 태그 영상에서 G-Dragon·태양이 `with_members`에 오태깅. 근본 원인: "Good Boy"는 G-Dragon×태양 외에도 여러 아티스트가 사용하는 동명곡인데 `_COVER_COMMON_KEYS`에 없었음. `_coverConfidence`는 `common=true`이면 원곡자가 제목에 명시돼 있어도 MEDIUM으로 강제(자동 적용 불가)하는 구조라, 두 키를 추가하면 향후 "Good Boy"·"Bad Boy" 챌린지 영상은 무조건 검수 큐로. 현행 코드는 2026-09-07 `topNamed` 가드로 원곡자가 제목에 없으면 이미 MEDIUM이지만, 동명곡 보호층이 없어서 원곡자 이름이 우연히 제목에 나오는 경우까지 막지 못하던 구멍을 메움.
+- **[완료][admin.js][tests/cover-resolve.test.js][tools/m2_harness.js] 챌린지 해시태그 원곡자 매칭 구조적 강화 — `topNamed`→`topHashtagged`** — 사용자 제보: `#GoodBoy_challenge` 태그 영상에서 G-Dragon·태양이 오태깅. 근본 수정: 챌린지 해시태그(`reason='tag'`) 경로에서 원곡자를 HIGH로 올리려면 원곡자가 **`#해시태그` 형태로 명시**돼야 한다(`_coverOriginHashtaggedInTitle` 신설). 구 기준(`topNamed`: 제목 어디든 텍스트 포함)은 "태양 아래서" 같은 우연한 일치나 "with 아일릿 원희"처럼 콜라보·거울로도 읽히는 표현에서 오탐을 낼 수 있었다. 해시태그는 업로더가 의도적으로 붙이는 것이라 신뢰도가 훨씬 높음. 예: `#ZHANGHAO #앤팀 #GoodBoy_challenge` → 장하오는 해시태그됐지만 G-Dragon·태양은 없음 → `topHashtagged=false` → MEDIUM → 검수 큐. 추가로 `_COVER_COMMON_KEYS`에 `'good boy'`·`'bad boy'` 추가(defense-in-depth — 동명곡이 많은 곡은 `topHashtagged=true`여도 MEDIUM 강제). 테스트 `cover-resolve 65/65`·`cover-manual 17/17`·`cover-cleanup 17/17` 통과.
 
 - **[완료] Today's K-pop 선반 전면 재설계** [`index.html`, `kpop_universe.css`] — 가로 카드 스트립 → 뉴스 리스트형(세로 행) 레이아웃. 조회수 마일스톤 소스 제거, 오늘 공개된 MV·티저 소스 추가. 타입별 배지(💿신보·🏆1위·🎬MV·🎬티저) + 우측 작은 썸네일. `_appendNewsRow` 신설.
 
