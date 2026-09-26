@@ -63,7 +63,7 @@
 
 ## 2026-09-26 (세션 — Today's K-pop 선반 CSS 수정)
 
-- **[완료] `#feed-dailynews` 카드 크기 붕괴 버그** [`kpop_universe.css`] — 선반이 크게 차지하면서 썸네일이 안 보이던 문제. `#feed-dailynews>.feed-card`에 고정 폭 CSS 규칙이 없어서 flex 컨테이너 안에서 카드 폭이 0으로 무너졌음. `#feed-chart`·`#feed-jacon`과 같은 패턴으로 `flex:0 0 auto;width:148px` 등 4개 규칙 추가.
+- **[완료] Today's K-pop 선반 전면 재설계** [`index.html`, `kpop_universe.css`] — 가로 카드 스트립 → 뉴스 리스트형(세로 행) 레이아웃. 조회수 마일스톤 소스 제거, 오늘 공개된 MV·티저 소스 추가. 타입별 배지(💿신보·🏆1위·🎬MV·🎬티저) + 우측 작은 썸네일. `_appendNewsRow` 신설.
 
 ---
 
