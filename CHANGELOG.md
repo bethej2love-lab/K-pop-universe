@@ -61,6 +61,12 @@
 - ~~**`active:false`인데 탈퇴일(`left`)이 없는 멤버 104명 — 그룹 미태깅 영상이 그 멤버 카드에 하나도 안 뜸(2026-08-27 발견)**~~ → **같은 날 처리 완료** — 폴백 4단계 재설계로 차단 110명→11명, 99명 복구. 아래 2026-08-27 항목 참고. ⚠️ 원 진단("탈퇴일 미기입이 원인")은 **틀렸었다** — 실제 원인은 `active` 필드가 "이 그룹 멤버인가"와 "개인이 아직 활동하는가" 두 뜻으로 섞여 쓰인 것이었고, 쥬얼리·걸스데이·스텔라에서 같은 시기 멤버가 은퇴 여부에 따라 갈리고 있었다.
 ---
 
+## 2026-09-27 (세션 — 에이식스 6인 완성 · 보류 큐 그룹 20개 등록)
+
+- **[완료][groups.json][artists.json][shared.js] 에이식스(A SIX) 6인 완성** — 기존 3명(제이민·영서·링치) 외 이한빈(판타지보이즈, a1501)·원지민(클라씨, a0566)·박보은(클라씨, a0567) 3명 추가. 각 멤버 `groups` 배열에 `에이식스` 추가, `_PROJECT_UNITS['A SIX']` 6명으로 확장.
+- **[완료][groups.json][artists.json] 보류 큐 그룹 20개 등록** — `content_flag='보류'` 더미 영상 대상. 그룹 추가: 위아이(WEi, 이미 있었음), ATBO(해산 2025.12.17)·크랙시·버가부(해산 2022.12.08)·픽시(해산)·블랭키(해산)·세븐어스·하이파이유니콘·캔디샵·휘브·어센트·빅오션·다이몬·더블원·비비업·아크(해산 2026.06.23)·퍼즐(해산)·하츠웨이브·모디세이·에이엔·튜이드 등 20개(총 289개). 신규 멤버 66명 추가(ATBO·SEVENUS·WHIB·캔디샵·크랙시·ASC2NT·튜이드·빅오션·하이파이유니콘·AEN·hrtz.wav·비비업·버가부·PIXY). 더블원 BAE173+판타지보이즈 기존 멤버 `groups`에 더블원 추가.
+- **[완료][tests/matching.test.js] 준서 동명이인 테스트 업데이트** — 에이엔 준서 추가로 동명이인 4명이 됨 → 테스트 기대값을 null or ambiguous로 완화.
+
 ## 2026-09-26 (세션 — Today's K-pop 선반 CSS 수정 · 커버 동명곡 오태깅 방지)
 
 - **[완료][admin.js][tests/cover-resolve.test.js][tools/m2_harness.js] 챌린지 해시태그 원곡자 매칭 구조적 강화 — `topNamed`→`topHashtagged`** — 사용자 제보: `#GoodBoy_challenge` 태그 영상에서 G-Dragon·태양이 오태깅. 근본 수정: 챌린지 해시태그(`reason='tag'`) 경로에서 원곡자를 HIGH로 올리려면 원곡자가 **`#해시태그` 형태로 명시**돼야 한다(`_coverOriginHashtaggedInTitle` 신설). 구 기준(`topNamed`: 제목 어디든 텍스트 포함)은 "태양 아래서" 같은 우연한 일치나 "with 아일릿 원희"처럼 콜라보·거울로도 읽히는 표현에서 오탐을 낼 수 있었다. 해시태그는 업로더가 의도적으로 붙이는 것이라 신뢰도가 훨씬 높음. 예: `#ZHANGHAO #앤팀 #GoodBoy_challenge` → 장하오는 해시태그됐지만 G-Dragon·태양은 없음 → `topHashtagged=false` → MEDIUM → 검수 큐. 추가로 `_COVER_COMMON_KEYS`에 `'good boy'`·`'bad boy'` 추가(defense-in-depth — 동명곡이 많은 곡은 `topHashtagged=true`여도 MEDIUM 강제). 테스트 `cover-resolve 65/65`·`cover-manual 17/17`·`cover-cleanup 17/17` 통과.
