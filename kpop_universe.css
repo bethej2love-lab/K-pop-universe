@@ -3350,6 +3350,12 @@
   #feed-chart>.feed-card .feed-card-cap,#feed-jacon>.feed-card .feed-card-cap,#feed-favnew>.feed-card .feed-card-cap{padding:8px 10px 12px;}
   #feed-chart>.feed-card .feed-card-title,#feed-jacon>.feed-card .feed-card-title,#feed-favnew>.feed-card .feed-card-title{font-size:11.5px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;white-space:normal;}
   #feed-chart>.feed-card .feed-card-sub,#feed-jacon>.feed-card .feed-card-sub,#feed-favnew>.feed-card .feed-card-sub{font-size:10.5px;}
+  /* 오늘의 케이팝 선반 — chart/jacon과 같은 가로 스트립 패턴(고정폭 카드). 앨범커버(1:1)·수상·조회수 등
+     종류가 섞이지만 16:9 thumb-wrap이 기본이라 동일 폭으로 통일한다(2026-09-26). */
+  #feed-dailynews>.feed-card{flex:0 0 auto;width:148px;border-bottom:none;border-radius:8px;background:rgba(255,255,255,0.03);}
+  #feed-dailynews>.feed-card .feed-card-cap{padding:8px 10px 12px;}
+  #feed-dailynews>.feed-card .feed-card-title{font-size:11.5px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;white-space:normal;}
+  #feed-dailynews>.feed-card .feed-card-sub{font-size:10.5px;}
   /* 아이콘 전용 셰브런(2026-08-21, 사용자 요청 — 텍스트바가 너무 투박하고 큼) — 작은 원형 버튼, 접힘/펼침은
      회전으로만 표현. 터치 타겟은 실제 시각 크기(28px)보다 무형으로 넉넉히 키움(padding, 기존 소셜아이콘
      확장 패턴과 동일). */
