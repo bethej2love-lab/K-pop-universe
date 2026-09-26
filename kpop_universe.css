@@ -3502,7 +3502,7 @@
      크기 자체가 부드럽게 CSS 트랜지션되게 한다(진입 슬라이드업은 JS에서 처리, 아래 참고).
      세로 여백 없이 카드 바텀시트(#mob-sheet)와 톤을 맞추려고 #feed-hd 배경/구분선은 없앰(아래). */
   @media(max-width:768px){
-    #feed-overlay{transition:transform .32s cubic-bezier(0.32,0.72,0,1),top .32s cubic-bezier(0.32,0.72,0,1),height .32s cubic-bezier(0.32,0.72,0,1),border-radius .32s cubic-bezier(0.32,0.72,0,1);}
+    #feed-overlay{transition:transform .32s cubic-bezier(0.32,0.72,0,1),top .32s cubic-bezier(0.32,0.72,0,1),height .32s cubic-bezier(0.32,0.72,0,1),border-radius .32s cubic-bezier(0.32,0.72,0,1),bottom .32s cubic-bezier(0.32,0.72,0,1);}
     #feed-overlay.open.peek{
       top:44%;height:56%;
       border-radius:20px 20px 0 0;
@@ -3514,6 +3514,10 @@
     #feed-overlay.open.peek #feed-hd{padding:0;height:0;overflow:hidden;}
     /* peek 상태: 불투명하게(backdrop-filter 제거) */
     #feed-overlay.open.peek #feed-body{background:rgba(8,11,24,0.97);backdrop-filter:none;-webkit-backdrop-filter:none;}
+    /* 전체 열림(non-peek): 오버레이 바닥을 --sheet-bottom에 물려서 카드 시트처럼 탭바 숨을 때 같이 확장.
+       padding-bottom도 맞춰 줄여 빈칸 없이 / safe-area는 오버레이가 덮지 않는 구간이므로 env()로 보정. */
+    #feed-overlay.open:not(.peek){bottom:var(--sheet-bottom,73px);}
+    #feed-overlay.open:not(.peek) #feed-body{padding-bottom:calc(env(safe-area-inset-bottom,0px) + 8px);}
     /* peek든 전체든 손잡이는 항상 떠있게(#mob-sheet-handle과 동일 패턴) — "끌 수 있다"는 걸 늘 알려줌 */
     #feed-overlay.open #feed-peek-handle{display:block;width:36px;height:4px;background:rgba(255,255,255,0.18);border-radius:2px;margin:10px auto 0;}
   }

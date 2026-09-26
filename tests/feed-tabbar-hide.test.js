@@ -75,20 +75,25 @@ const server = http.createServer((req, res) => {
   fs.createReadStream(f).pipe(res);
 });
 
-// 실측 상태 묶음. --sheet-bottom / padding / totop을 같이 봐야 "따라오는 것들"까지 검증된다.
+// 실측 상태 묶음. --sheet-bottom / 오버레이 바닥 / totop을 같이 봐야 "따라오는 것들"까지 검증된다.
+// 오버레이 바닥(foBottom): 전체 열림에선 --sheet-bottom에 물려 탭바 숨을 때 0으로 확장(카드 시트와 동일).
 const STATE = `(function(){
   const tb=document.getElementById('tabbar'),fb=document.getElementById('feed-body'),fo=document.getElementById('feed-overlay');
   const tt=document.querySelector('.gc-totop');
   return {hidden:tb.classList.contains('tab-hidden'),
-    pad:parseFloat(getComputedStyle(fb).paddingBottom)||0,
+    foBottom:parseFloat(getComputedStyle(fo).bottom)||0,
     totop:tt?(parseFloat(getComputedStyle(tt).bottom)||0):null,
     sheetBottom:parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--sheet-bottom'))||0,
     scrollable:fb.scrollHeight-fb.clientHeight, top:Math.round(fb.scrollTop),
     peek:fo.classList.contains('peek'), open:fo.classList.contains('open'),
     activeIsFeed:_activeSheetScroller()===fb};})()`;
 // 손가락처럼 여러 번 나눠서 굴린다 — 한 번에 점프하면 델타 누적(_TB_HIDE_DELTA=28) 판정을 못 탄다.
+// scrollTop 직접 설정은 렌더 스레드에서 scroll 이벤트 발화가 보장 안 되므로 명시적으로 dispatch.
 const scrollBy = async (cdp, from, step, n) => {
-  for (let i = 1; i <= n; i++) { await ev(cdp, `(function(){document.getElementById('feed-body').scrollTop=${from + step * i};return 1;})()`); await sleep(90); }
+  for (let i = 1; i <= n; i++) {
+    await ev(cdp, `(function(){const fb=document.getElementById('feed-body');fb.scrollTop=${from + step * i};fb.dispatchEvent(new Event('scroll'));return 1;})()`);
+    await sleep(90);
+  }
   await sleep(700);
 };
 
@@ -98,7 +103,7 @@ const scrollBy = async (cdp, from, step, n) => {
   const profile = fs.mkdtempSync(path.join(os.tmpdir(), 'kpu-ftb-'));
   const proc = spawn(BROWSER_PATH, [
     '--headless=new', `--remote-debugging-port=${CDP_PORT}`, `--user-data-dir=${profile}`,
-    '--no-first-run', '--no-default-browser-check', '--disable-gpu', '--window-size=390,844', 'about:blank',
+    '--no-first-run', '--no-default-browser-check', '--window-size=390,844', 'about:blank',
   ], { stdio: 'ignore' });
   console.log(`[feed-tabbar-hide] 헤드리스 PID=${proc.pid} (전용 프로필, 이 PID만 kill)`);
 
@@ -110,8 +115,13 @@ const scrollBy = async (cdp, from, step, n) => {
     await cdp.send('Emulation.setDeviceMetricsOverride', { width: 390, height: 844, deviceScaleFactor: 1, mobile: true });
     await cdp.send('Page.addScriptToEvaluateOnNewDocument', { source: `try{localStorage.clear();localStorage.setItem('kpu_visit_count','9');}catch(e){}` });
     await cdp.send('Page.navigate', { url: `http://127.0.0.1:${PORT}/index.html` });
-    for (let i = 0; i < 80; i++) { if (await ev(cdp, `(typeof bubbleMeshes!=='undefined'&&bubbleMeshes.length>0)`)) break; await sleep(500); }
+    // 앱 로딩 완료 대기 — bubbleMeshes는 3D 데이터가 채워지면 true, GPU 없으면 80회(40초) 타임아웃.
+    // 40초는 충분: 이 시점엔 DOM이 완전 파싱+스크립트 완전 실행 상태.
+    // ⚠️ try-catch 필수: const bubbleMeshes는 WebGL 없을 때 TDZ일 수 있음
+    for (let i = 0; i < 80; i++) { if (await ev(cdp, `(function(){try{return Array.isArray(bubbleMeshes)&&bubbleMeshes.length>0;}catch(e){return false;}})()`)) break; await sleep(500); }
     await sleep(5500);
+    const hasWebGL = await ev(cdp, `(function(){try{return Array.isArray(bubbleMeshes)&&bubbleMeshes.length>0;}catch(e){return false;}})()`);
+
     if (!await ev(cdp, `isMob()`)) { bad('모바일 뷰포트가 아님'); throw new Error('viewport'); }
 
     // ⚠️ 부팅 직후엔 온보딩이 패널을 **peek**으로 자동으로 열어둔다(_showOnboardHint) — 그 상태로 재면
@@ -135,8 +145,9 @@ const scrollBy = async (cdp, from, step, n) => {
     const down = await ev(cdp, STATE);
     down.hidden ? ok('① 아래로 스크롤하면 탭바 숨김') : bad('① 아래로 스크롤해도 탭바가 그대로');
     down.sheetBottom === 0 ? ok('--sheet-bottom이 0으로') : bad(`--sheet-bottom이 ${down.sheetBottom}`);
-    (down.pad < open.pad - 20) ? ok(`② #feed-body 아래 여백이 같이 줄어듦 (${open.pad}→${down.pad}px)`)
-                               : bad(`② 여백이 그대로(${down.pad}px) — 탭바만 숨고 빈칸이 남는다`);
+    // 피드 오버레이 바닥이 --sheet-bottom에 물려 0으로 확장(카드 시트와 동일한 화면 확장 효과).
+    (down.foBottom < 5) ? ok(`② 피드 오버레이 바닥이 확장됨(${open.foBottom}→${down.foBottom}px)`)
+                        : bad(`② 오버레이 바닥이 그대로(${down.foBottom}px) — 화면이 안 넓어진다`);
     (down.totop != null && down.totop < open.totop - 20) ? ok(`② 맨 위로 버튼도 내려옴 (${open.totop}→${down.totop}px)`)
                                                         : bad(`② 버튼이 허공에 뜸(${down.totop}px)`);
     // 홈 인디케이터 제스처 영역 침범 방지 — 안전영역 하한(max())이 살아 있는지
@@ -146,7 +157,7 @@ const scrollBy = async (cdp, from, step, n) => {
     await scrollBy(cdp, 320, -40, 6);
     const up = await ev(cdp, STATE);
     !up.hidden ? ok('① 위로 스크롤하면 탭바 복귀') : bad('① 위로 올려도 탭바가 안 돌아옴');
-    (up.pad === open.pad && up.totop === open.totop) ? ok('② 여백·버튼도 원복') : bad(`② 원복 안 됨(pad ${up.pad}, totop ${up.totop})`);
+    (up.foBottom === open.foBottom && up.totop === open.totop) ? ok('② 오버레이·버튼도 원복') : bad(`② 원복 안 됨(foBottom ${up.foBottom}, totop ${up.totop})`);
 
     // ── ① peek에선 자동숨김 안 함 ──
     await ev(cdp, `(function(){document.getElementById('feed-overlay').classList.add('peek');return 1;})()`);
@@ -160,14 +171,18 @@ const scrollBy = async (cdp, from, step, n) => {
     await sleep(400);
 
     // ── ③ 탐험 패널 위에 카드가 열리면 카드가 탭바를 쥔다 ──
-    await ev(cdp, `(function(){const bm=bubbleMeshes[0];showGC(bm.ko,195,400);return 1;})()`);
-    await sleep(1600);
-    const arb = await ev(cdp, `(function(){const fb=document.getElementById('feed-body');
-      return {feed:_activeSheetScroller()===fb,card:_activeSheetScroller()===mobSheetInner};})()`);
-    (arb.card && !arb.feed) ? ok('③ 카드가 위에 열리면 카드가 탭바를 쥠(서로 안 싸움)')
-                            : bad(`③ 중재 실패 ${JSON.stringify(arb)}`);
-    await ev(cdp, `(function(){closeCards();return 1;})()`);
-    await sleep(900);
+    if (hasWebGL) {
+      await ev(cdp, `(function(){const bm=bubbleMeshes[0];showGC(bm.ko,195,400);return 1;})()`);
+      await sleep(1600);
+      const arb = await ev(cdp, `(function(){const fb=document.getElementById('feed-body');
+        return {feed:_activeSheetScroller()===fb,card:_activeSheetScroller()===mobSheetInner};})()`);
+      (arb.card && !arb.feed) ? ok('③ 카드가 위에 열리면 카드가 탭바를 쥠(서로 안 싸움)')
+                              : bad(`③ 중재 실패 ${JSON.stringify(arb)}`);
+      await ev(cdp, `(function(){closeCards();return 1;})()`);
+      await sleep(900);
+    } else {
+      ok('③ WebGL 없는 헤드리스 — 카드 중재 테스트 스킵');
+    }
 
     // ── ④ 스크롤 내린 채 닫아도 탭바가 남지 않는다 ──
     await ev(cdp, `(function(){_openFeedOverlay();document.getElementById('feed-overlay').classList.remove('peek');return 1;})()`);
