@@ -336,6 +336,17 @@
     },
     "checkedAt": "2026-09-25"
   },
+  "김예원": {
+    "id": "0a8VoUGsgqX5nqb9FQ20lO",
+    "spotifyName": "Kim Ye Won",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "동명 후보 2명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-09-26"
+  },
   "김은정": {
     "id": "2ebcZBZzLEgveZKoW1okl7",
     "spotifyName": "Kim Eun-jung",
@@ -383,6 +394,22 @@
       ]
     },
     "checkedAt": "2026-09-25"
+  },
+  "나나": {
+    "id": "5kY05o87kyOUC0Z0xdkB3e",
+    "spotifyName": "Nana",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "동명 후보 2명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0,
+      "verifyOverlap": 0,
+      "verifyYears": [
+        2026,
+        2025
+      ]
+    },
+    "checkedAt": "2026-09-26"
   },
   "나우즈": {
     "id": "1iZwr6w3TWPNezX8yCtRBg",
@@ -741,6 +768,22 @@
     },
     "checkedAt": "2026-09-15"
   },
+  "레이나": {
+    "id": "21dQ70DS91icGLN9J4mH7h",
+    "spotifyName": "Raina",
+    "kind": "solo",
+    "confidence": "high",
+    "why": "동명 후보 5명 중 앨범 대조 · 수집 전 검증 통과(겹침 1)",
+    "evidence": {
+      "titleOverlap": 1,
+      "verifyOverlap": 1,
+      "verifyYears": [
+        2026,
+        2025
+      ]
+    },
+    "checkedAt": "2026-09-26"
+  },
   "렌": {
     "id": "0Repe2EiNjaFAFIukrroUM",
     "spotifyName": "Ren",
@@ -855,6 +898,17 @@
     },
     "checkedAt": "2026-09-21"
   },
+  "리지": {
+    "id": "6bzePnsrUCmeGI818m5PQi",
+    "spotifyName": "Lizzy",
+    "kind": "solo",
+    "confidence": "medium",
+    "why": "이름 유일 일치",
+    "evidence": {
+      "titleOverlap": null
+    },
+    "checkedAt": "2026-09-26"
+  },
   "마마무": {
     "id": "0XATRDCYuuGhk0oE7C0o5G",
     "spotifyName": "MAMAMOO",
@@ -963,6 +1017,17 @@
       "titleOverlap": 0
     },
     "checkedAt": "2026-09-21"
+  },
+  "박세미": {
+    "id": "3QoqUHatLMo08sw2PIBuYn",
+    "spotifyName": "박수민",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "이름 불일치 — 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-09-26"
   },
   "박시영": {
     "id": "2wAjuE3pVtauK8ZQ2p4SXN",
@@ -2727,6 +2792,22 @@
     },
     "checkedAt": "2026-09-15"
   },
+  "유이": {
+    "id": "2LzVSPCg9KIiauyM5ohJJw",
+    "spotifyName": "Uee",
+    "kind": "solo",
+    "confidence": "medium",
+    "why": "이름 유일 일치",
+    "evidence": {
+      "titleOverlap": null,
+      "verifyOverlap": 0,
+      "verifyYears": [
+        2011,
+        2009
+      ]
+    },
+    "checkedAt": "2026-09-26"
+  },
   "유주": {
     "id": "7Bu0r4MCDX3sbhcFD5IXyx",
     "spotifyName": "YUJU",
@@ -2807,6 +2888,17 @@
       "titleOverlap": null
     },
     "checkedAt": "2026-09-15"
+  },
+  "이영": {
+    "id": "0qDHjPB7TJPxYaQ0CWMEU4",
+    "spotifyName": "YOUNGTAK",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "이름 불일치 — 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-09-26"
   },
   "이은상": {
     "id": "23oRZ1WSV1YCPk3Ra7ivzJ",
@@ -2993,6 +3085,21 @@
     },
     "checkedAt": "2026-09-23"
   },
+  "정아": {
+    "id": "6qfCoY8Md1jcT1vBQwsmHN",
+    "spotifyName": "Kimmuse",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "이름 불일치 — 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0,
+      "verifyOverlap": 0,
+      "verifyYears": [
+        2015
+      ]
+    },
+    "checkedAt": "2026-09-26"
+  },
   "정윤혜": {
     "id": "3R9fsg0ZmbbeFC256sOnLN",
     "spotifyName": "Jung Hoonhee",
@@ -3067,6 +3174,21 @@
       ]
     },
     "checkedAt": "2026-09-23"
+  },
+  "주연": {
+    "id": "12NEi6RUS3dd12xutpP6CQ",
+    "spotifyName": "Jooyeon",
+    "kind": "solo",
+    "confidence": "medium",
+    "why": "이름 유일 일치",
+    "evidence": {
+      "titleOverlap": null,
+      "verifyOverlap": 0,
+      "verifyYears": [
+        2025
+      ]
+    },
+    "checkedAt": "2026-09-26"
   },
   "지수연": {
     "id": "70iA690AZviTkQKgfjlSK6",

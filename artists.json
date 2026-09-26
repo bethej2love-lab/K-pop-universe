@@ -175828,6 +175828,62 @@
     "active": false,
     "left": "2015"
    }
+  ],
+  "discography": [
+   {
+    "title": "별들의 이야기(동요 프로젝트\"소리로 그리는 우리들의 꿈\")",
+    "type": "싱글",
+    "isMain": true,
+    "cover": "https://i.scdn.co/image/ab67616d0000b273c6611607f1ed082ee9171de9",
+    "releaseDate": "2024.06.12",
+    "trackCount": 1,
+    "titleTrack": "별들의 이야기",
+    "tracks": [
+     {
+      "no": 1,
+      "title": "별들의 이야기",
+      "isTitle": true
+     }
+    ],
+    "src": "spotify",
+    "spotifyId": "3Ey2LIdwaMrrJ2Jqil2T0K"
+   },
+   {
+    "title": "바람의 향기(동요 프로젝트\"소리로 그리는 우리들의 꿈\")",
+    "type": "싱글",
+    "isMain": true,
+    "cover": "https://i.scdn.co/image/ab67616d0000b273468c8a45de93705d5cb273f4",
+    "releaseDate": "2024.06.10",
+    "trackCount": 1,
+    "titleTrack": "바람의 향기",
+    "tracks": [
+     {
+      "no": 1,
+      "title": "바람의 향기",
+      "isTitle": true
+     }
+    ],
+    "src": "spotify",
+    "spotifyId": "3ri5DUV8wsN3MriI4AsG0e"
+   },
+   {
+    "title": "엄마의 자리 (새 학기 새 출발 “새마음을 담아” 동요프로젝트)",
+    "type": "싱글",
+    "isMain": true,
+    "cover": "https://i.scdn.co/image/ab67616d0000b27308d9e00016253e859195efce",
+    "releaseDate": "2023.07.04",
+    "trackCount": 1,
+    "titleTrack": "엄마의 자리",
+    "tracks": [
+     {
+      "no": 1,
+      "title": "엄마의 자리",
+      "isTitle": true
+     }
+    ],
+    "src": "spotify",
+    "spotifyId": "4sK55HYljhpOTDFGp6SsK3"
+   }
   ]
  },
  {
@@ -178262,6 +178318,29 @@
     ]
    },
    {
+    "title": "Tears Keep Falling",
+    "type": "싱글",
+    "isMain": true,
+    "cover": "https://i.scdn.co/image/ab67616d0000b273d265343b1ec61fc3b05490fe",
+    "releaseDate": "2026.08.18",
+    "trackCount": 2,
+    "titleTrack": null,
+    "tracks": [
+     {
+      "no": 1,
+      "title": "Tears Keep Falling (Feat. iHwak)",
+      "isTitle": false
+     },
+     {
+      "no": 2,
+      "title": "Tears Keep Falling (Feat. iHwak) (Instrumental)",
+      "isTitle": false
+     }
+    ],
+    "src": "spotify",
+    "spotifyId": "1qgNRZ0AswO3luJKev0eqt"
+   },
+   {
     "title": "널 사랑하나봐 (Feat. 안재우)",
     "type": "싱글",
     "releaseDate": "2026.07.05",
@@ -178276,6 +178355,24 @@
       "isTitle": true
      }
     ]
+   },
+   {
+    "title": "Loving You (Feat. Jae Woo AN)",
+    "type": "싱글",
+    "isMain": true,
+    "cover": "https://i.scdn.co/image/ab67616d0000b273dc4f9dd142029926ca047cba",
+    "releaseDate": "2026.07.05",
+    "trackCount": 1,
+    "titleTrack": "Loving You (Feat. Jae Woo AN)",
+    "tracks": [
+     {
+      "no": 1,
+      "title": "Loving You (Feat. Jae Woo AN)",
+      "isTitle": true
+     }
+    ],
+    "src": "spotify",
+    "spotifyId": "1ymfOHyDSkCsVTyQe4ufWx"
    },
    {
     "title": "Almost Love",
@@ -178320,6 +178417,29 @@
     ]
    },
    {
+    "title": "Sleepless Night",
+    "type": "싱글",
+    "isMain": true,
+    "cover": "https://i.scdn.co/image/ab67616d0000b273e2d24d38a689c0dd8334098b",
+    "releaseDate": "2025.04.03",
+    "trackCount": 2,
+    "titleTrack": "Sleepless Night",
+    "tracks": [
+     {
+      "no": 1,
+      "title": "Sleepless Night",
+      "isTitle": true
+     },
+     {
+      "no": 2,
+      "title": "Sleepless Night (Inst.)",
+      "isTitle": false
+     }
+    ],
+    "src": "spotify",
+    "spotifyId": "2SbIruPjGLiPuzNZhgjd7S"
+   },
+   {
     "title": "사랑의 다른 말",
     "type": "싱글",
     "releaseDate": "2025.02.19",
@@ -178341,6 +178461,29 @@
     ]
    },
    {
+    "title": "Take It All Away",
+    "type": "싱글",
+    "isMain": true,
+    "cover": "https://i.scdn.co/image/ab67616d0000b2735954e98631e59bd3d68b8ecd",
+    "releaseDate": "2025.02.19",
+    "trackCount": 2,
+    "titleTrack": "Take It All Away",
+    "tracks": [
+     {
+      "no": 1,
+      "title": "Take It All Away",
+      "isTitle": true
+     },
+     {
+      "no": 2,
+      "title": "Take It All Away (Inst.)",
+      "isTitle": false
+     }
+    ],
+    "src": "spotify",
+    "spotifyId": "7mpI6DVRmvsHIFoxm8Jvg6"
+   },
+   {
     "title": "그때 그때 그때",
     "type": "싱글",
     "releaseDate": "2024.09.26",
@@ -178360,6 +178503,29 @@
       "isTitle": false
      }
     ]
+   },
+   {
+    "title": "like that time",
+    "type": "싱글",
+    "isMain": true,
+    "cover": "https://i.scdn.co/image/ab67616d0000b2730ef77833ce46db5a8a436464",
+    "releaseDate": "2024.09.26",
+    "trackCount": 2,
+    "titleTrack": "like that time",
+    "tracks": [
+     {
+      "no": 1,
+      "title": "like that time",
+      "isTitle": true
+     },
+     {
+      "no": 2,
+      "title": "like that time - Instrumental",
+      "isTitle": false
+     }
+    ],
+    "src": "spotify",
+    "spotifyId": "4aC97USs3WDaB5MZFlavNr"
    },
    {
     "title": "[Chapter M Project] 2nd Chapter '스치듯 다시 만나요'",
@@ -178405,6 +178571,29 @@
     "feat": true
    },
    {
+    "title": "CEO-dol Mart (Original Television Soundtrack), Pt. 3",
+    "type": "싱글",
+    "isMain": true,
+    "cover": "https://i.scdn.co/image/ab67616d0000b273483b84e07316b7df5c4072ed",
+    "releaseDate": "2023.09.15",
+    "trackCount": 2,
+    "titleTrack": null,
+    "tracks": [
+     {
+      "no": 1,
+      "title": "Enduring long and clumsily",
+      "isTitle": false
+     },
+     {
+      "no": 2,
+      "title": "Enduring long and clumsily - Instrumental",
+      "isTitle": false
+     }
+    ],
+    "src": "spotify",
+    "spotifyId": "64Kb8AMwt9nRnSsRkhrA8u"
+   },
+   {
     "title": "오! 영심이 OST Part.3",
     "type": "OST",
     "releaseDate": "2023.05.30",
@@ -178427,6 +178616,29 @@
     "feat": true
    },
    {
+    "title": "Oh! Youngsim Pt. 3 (Original Soundtrack)",
+    "type": "싱글",
+    "isMain": true,
+    "cover": "https://i.scdn.co/image/ab67616d0000b273243a81f17331848d5b7fe6dd",
+    "releaseDate": "2023.05.30",
+    "trackCount": 2,
+    "titleTrack": null,
+    "tracks": [
+     {
+      "no": 1,
+      "title": "Angel Wings",
+      "isTitle": false
+     },
+     {
+      "no": 2,
+      "title": "Angel Wings - Instrumental",
+      "isTitle": false
+     }
+    ],
+    "src": "spotify",
+    "spotifyId": "3JhHfGvSnOfWxYSEop0jrp"
+   },
+   {
     "title": "그때 우리처럼",
     "type": "싱글",
     "releaseDate": "2023.02.07",
@@ -178446,6 +178658,29 @@
       "isTitle": false
      }
     ]
+   },
+   {
+    "title": "The way we were",
+    "type": "싱글",
+    "isMain": true,
+    "cover": "https://i.scdn.co/image/ab67616d0000b273b00c92a847498644a5828f28",
+    "releaseDate": "2023.02.07",
+    "trackCount": 2,
+    "titleTrack": "The way we were",
+    "tracks": [
+     {
+      "no": 1,
+      "title": "The way we were",
+      "isTitle": true
+     },
+     {
+      "no": 2,
+      "title": "The way we were - Instrumental",
+      "isTitle": false
+     }
+    ],
+    "src": "spotify",
+    "spotifyId": "5ja9Rqpzs5Y0Q0P6VBKADE"
    },
    {
     "title": "프로젝트 '화음' : 아침향기 with 레이나",
