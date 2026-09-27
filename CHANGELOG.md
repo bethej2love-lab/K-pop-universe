@@ -68,6 +68,10 @@
 - **[완료][artists.json] 하이파이유니콘 태민(a1840) 추가** — 샤이니 태민과 동명이인. 동명이인 처리로 그룹 표시 없는 "태민" 단독 제목은 null(보류)로 처리됨.
 - **[완료][tests/matching.test.js] 태민 동명이인 회귀 테스트 업데이트** — weak → null or weak 허용(샤이니+하이파이유니콘 두 태민이 됨).
 
+## 2026-09-27 (세션 — disbanded 표기 추가)
+
+- **[완료][groups.json] 에프엑스·SS501 disbanded 표기 추가** — 공식 해체 발표 없이 활동 중단 → `disbanded: true`.
+
 ## 2026-09-27 (세션 — disbanded 날짜 보강 + P0 데뷔 이전 게이트 확인)
 
 - **[완료][groups.json] JBJ disbanded 날짜 확정** — `true` → `"2018.05.31"` (계약만료·활동종료 날짜).
