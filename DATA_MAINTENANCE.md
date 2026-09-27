@@ -24,7 +24,33 @@
   멜론에서 커버·트랙까지 채움. 번호충돌 시 그 그룹 통째 스킵(안전).
 - `tools/build_slim_data.mjs` — 원본 수정 후 **반드시** 실행(slim·disco/·tracks_index 재생성).
 
-## 3. 정기 루틴(권장 주기)
+## 3. 신규 그룹·멤버 추가 체크리스트
+
+그룹이나 멤버를 추가할 때 **반드시 이 순서로** 진행한다.
+
+### groups.json 그룹 추가
+1. `en` 필드에 **실제 활동 영문명** 기입 (예: 다이몬 → `"DXMON"`, 단순 로마자 표기 아님)
+2. `debut` 형식 `"YYYY.MM.DD"`, 해산 시 `disbanded: "YYYY.MM.DD"` 또는 `disbanded: true`
+
+### artists.json 멤버 추가
+1. `name.ko` — **예명 우선**, 동명이인 그룹명과 겹치면 본명으로 변경 + `matchAliases` 추가
+2. 동명이인 확인 — 같은 `name.ko`가 이미 2명 이상이면 추가 후 3명이 돼 null 처리됨 → 경고
+3. 멤버 영문명(`name.en`) 기입
+
+### 추가 완료 후 필수 실행
+```bash
+node tests/validate-data.js              # 0 오류 확인
+node tests/groups-matcher.test.js --recent YYYY-MM-DD  # 추가한 그룹 데뷔일 기준으로 검사
+node tests/matching.test.js              # 160/160 확인
+node tools/build_slim_data.mjs           # 파생물 재생성
+# → 커밋 + 배포
+```
+
+> `groups-matcher.test.js`는 실패(❌)가 0이면 OK, 경고(⚠️)는 영문명이 일반 단어라 채널 기반으로만 매칭되는 케이스 — 무시 가능.
+
+---
+
+## 4. 정기 루틴(권장 주기)
 
 ### A. 기본정보 — 월 1회
 ```
