@@ -8,9 +8,14 @@
 //       --group 그룹명       → 특정 그룹 하나만 검사 (예: --group 다이몬)
 //
 // 검사 항목:
-//   1. "한국어그룹명 직캠" → 해당 그룹으로 잡혀야 함
+//   1. "한국어그룹명 직캠" → 해당 그룹으로 잡혀야 함 (의도적 게이트 그룹은 경고만)
 //   2. "영문그룹명 fancam" → 해당 그룹으로 잡혀야 함  (단독 잡힘이 어려우면 경고)
 //   3. "한국어그룹명 + 멤버명 + 직캠" → 해당 그룹으로 잡혀야 함
+//
+// 경고(⚠️)로만 처리되는 그룹:
+//   - strictSync=true: 직캠 구조(방송 태그 등) 없이는 null이 의도된 동작 (레인보우·god·시크릿·스피드·배틀·슈가)
+//   - 공통명사 게이트: 한글 단독 인식 안 됨, 영문/해시태그 필요 (카드·아이콘·시그니처·위너)
+//   - 해시태그 전용 토큰: 에이스·하이라이트 — 흔한단어라 해시태그 없으면 null이 의도된 동작
 
 'use strict';
 const path = require('path');
@@ -18,6 +23,15 @@ const ROOT = path.join(__dirname, '..');
 const { _m2ParseTitle } = require(path.join(ROOT, 'tools/matcher_harness.cjs'));
 const groups = require(path.join(ROOT, 'groups.json'));
 const artists = require(path.join(ROOT, 'artists.json'));
+
+// 의도된 게이트 그룹 — 한국어 단독 직캠은 null/undefined가 맞는 동작이므로 경고만
+const STRICT_SYNC_KOS = new Set(
+  Object.entries(groups).filter(([, v]) => v && v.strictSync).map(([ko]) => ko)
+);
+// 공통명사 게이트: 영문/해시태그 없으면 한글 단독 인식 불가 (admin.js _COMMON_NOUN_GROUP_OK)
+const COMMON_NOUN_GATE = new Set(['카드', '아이콘', '시그니처', '위너']);
+// 해시태그 전용 토큰 그룹 (admin.js _GROUP_TOKEN_HASHTAG_ONLY)
+const HASHTAG_ONLY_GROUPS = new Set(['에이스', '하이라이트']);
 
 // CLI 옵션
 const args = process.argv.slice(2);
@@ -62,8 +76,9 @@ console.log(`검사 대상: ${targetEntries.length}개 그룹${recentDate ? ` ($
 for (const [ko, data] of targetEntries) {
   const en = data.en || '';
 
-  // 1. 한국어 그룹명
-  check(`${ko}/KO`, `${ko} 직캠`, ko);
+  // 1. 한국어 그룹명 — strictSync/공통명사/해시태그 전용 그룹은 경고만
+  const koWarnOnly = STRICT_SYNC_KOS.has(ko) || COMMON_NOUN_GATE.has(ko) || HASHTAG_ONLY_GROUPS.has(ko);
+  check(`${ko}/KO`, `${ko} 직캠`, ko, koWarnOnly);
 
   // 2. 영문 그룹명 (null이면 경고만 — 한국어 그룹명이 없는 외국 채널 타이틀은 채널 기반으로만 매칭)
   if (en && en !== ko) {
@@ -75,7 +90,9 @@ for (const [ko, data] of targetEntries) {
   for (const m of members) {
     const mko = m.name?.ko;
     if (!mko || mko === '솔로') continue;
-    check(`${ko}/${mko}`, `${ko} ${mko} 직캠`, ko);
+    // 멤버명 = 그룹명인 경우 오매칭 가능성 (예: 다이아 유니스 ↔ 그룹 유니스)
+    const memberIsGroup = !!groups[mko];
+    check(`${ko}/${mko}`, `${ko} ${mko} 직캠`, ko, koWarnOnly || memberIsGroup);
   }
 }
 
@@ -86,7 +103,7 @@ if (failures.length) {
   console.log('');
 }
 if (warns.length) {
-  console.log('──── 경고 (채널 기반으로만 매칭 — 영문명 단독 인식 불가) ────');
+  console.log('──── 경고 (의도된 게이트·채널 기반 매칭 — 영문명 단독 인식 불가 포함) ────');
   warns.forEach(w => console.log(w));
   console.log('');
 }
