@@ -1,0 +1,58 @@
+name: 데이터 정합성 청소 (별도 루틴)
+
+# 기존 daily-routine.yml(동기화·태깅 파이프라인)과 **완전히 독립된** 청소 전용 워크플로.
+# admin.js의 _admRunCleanup()을 호출 — 고아태그 정정·원곡 오탐·직캠 재검증·오태깅 재배정.
+#
+# 왜 daily-routine에 합병하지 않나:
+#   핵심 파이프라인(동기화·태깅) 오류가 청소를 막거나, 청소 오류가 루틴을 멈추는 일을 없애기 위해.
+#   청소 스윕이 아무리 오래 걸려도 동기화·태깅은 그대로 돌고, 청소가 실패해도 루틴 알림과 섞이지 않는다.
+#
+# 실행 시각: KST 04:00 (UTC 19:00) — 루틴 03시 회차가 끝난 뒤, 09시 피크 동기화 시작 전 여유.
+#
+# concurrency 그룹 'data-cleanup': daily-routine·sync-hourly와 별개라 서로 기다리지 않는다.
+# 크롬 프로필 캐시 키도 'kpu-cleanup-profile-*'로 분리 — 루틴 체크포인트와 간섭 없음.
+
+on:
+  schedule:
+    - cron: '0 19 * * *'   # KST 04:00
+  workflow_dispatch:
+
+concurrency:
+  group: data-cleanup
+  cancel-in-progress: false
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: install chrome
+        id: chrome
+        uses: browser-actions/setup-chrome@v1
+        with:
+          chrome-version: stable
+
+      - name: restore cleanup profile
+        uses: actions/cache@v4
+        with:
+          path: ${{ runner.temp }}/kpu-cleanup-profile
+          key: kpu-cleanup-profile-${{ github.run_id }}
+          restore-keys: |
+            kpu-cleanup-profile-
+
+      - name: run data cleanup
+        env:
+          KPU_ADMIN_EMAIL: ${{ secrets.KPU_ADMIN_EMAIL }}
+          KPU_ADMIN_PASSWORD: ${{ secrets.KPU_ADMIN_PASSWORD }}
+          KPU_YT_API_KEY: ${{ secrets.KPU_YT_API_KEY }}
+          CHROME_PATH: ${{ steps.chrome.outputs.chrome-path }}
+          PROFILE_DIR: ${{ runner.temp }}/kpu-cleanup-profile
+          MODE: cleanup
+          ROUTINE_TIMEOUT_MIN: '80'
+        run: node tools/run_daily_routine.cjs

@@ -42,7 +42,7 @@ const YT_KEY = (process.env.KPU_YT_API_KEY || '').trim();
 // 돌리면 37만 행 조회가 하루 24번 반복되고 YouTube 쿼터도 빠듯해진다(동기화 1회 ~350점 × 24 = 8,400
 // /일, 한도 10,000). WITH_SYNC='0'은 기존 워크플로가 쓰던 표기라 그대로 받아준다.
 let MODE = (process.env.MODE || (process.env.WITH_SYNC === '0' ? 'sweep' : 'full')).trim();
-if (!['full', 'sync', 'sweep'].includes(MODE)) die(`MODE 값이 이상해요: "${MODE}" — full | sync | sweep 중 하나여야 합니다.`);
+if (!['full', 'sync', 'sweep', 'cleanup'].includes(MODE)) die(`MODE 값이 이상해요: "${MODE}" — full | sync | sweep | cleanup 중 하나여야 합니다.`);
 // ── 새벽 무동기화(2026-09-21, 사용자 결정) ──────────────────────────────────
 // KST 01~08시 업로드는 14일간 29건(0.7%)뿐이라 그 시간대 폴링은 쿼터 순손실이다(sync_gate.mjs의
 // 같은 판정과 짝). 다만 **스윕은 그대로 돌린다** — 태깅·재검증류는 YouTube 쿼터를 한 유닛도 안 쓰고,
@@ -50,13 +50,14 @@ if (!['full', 'sync', 'sweep'].includes(MODE)) die(`MODE 값이 이상해요: "$
 // QUIET_SYNC=0으로 끌 수 있다(수동 실행·긴급 수집용).
 const _kstHour = new Date(Date.now() + 9 * 3600 * 1000).getUTCHours();
 const QUIET_SYNC = process.env.QUIET_SYNC !== '0' && _kstHour >= 1 && _kstHour <= 8;
-if (QUIET_SYNC && MODE !== 'sweep') {
+if (QUIET_SYNC && MODE !== 'sweep' && MODE !== 'cleanup') {
   const _was = MODE;
   MODE = MODE === 'sync' ? 'skip' : 'sweep';
   console.log(`[routine] KST ${_kstHour}시 — 새벽 무동기화 시간대라 ${_was} → ${MODE}`);
   if (MODE === 'skip') { console.log('[routine] 동기화 전용 모드인데 새벽이라 이번 회차는 아무것도 하지 않습니다.'); process.exit(0); }
 }
-const WITH_SYNC = MODE !== 'sweep';
+const IS_CLEANUP = MODE === 'cleanup';
+const WITH_SYNC = !IS_CLEANUP && MODE !== 'sweep';
 const SYNC_ONLY = MODE === 'sync';
 const ROUTINE_TIMEOUT_MS = (Number(process.env.ROUTINE_TIMEOUT_MIN) || 300) * 60 * 1000;
 const PROFILE_DIR = process.env.PROFILE_DIR || path.join(os.tmpdir(), 'kpu-routine-profile');
@@ -232,9 +233,21 @@ async function main() {
       `(typeof _admRunRoutine==='function' && typeof _isAdmin==='function' && _isAdmin()===true)`,
       45000, v => v === true);
     if (!adminReady) throw new Error('admin.js가 로드되지 않음(_admRunRoutine 없음) — 관리자 세션/스크립트 로드 실패');
-    console.log('[routine] admin.js 로드 확인 — 루틴 시작');
+    console.log(`[routine] admin.js 로드 확인 — ${IS_CLEANUP ? '청소 루틴' : '일일 루틴'} 시작`);
 
     // 5. 루틴 실행 — 오래 걸리므로 await 없이 발사하고 완료 여부를 폴링한다
+    if (IS_CLEANUP) {
+      await evalExpr(cdp, `_admRunCleanup()`);
+      const started = await pollUntil(cdp, `_admCleanupRunning===true`, 15000, v => v === true, 300);
+      if (!started) {
+        const already = await evalExpr(cdp, `_admCleanupRunning`);
+        if (already !== false) throw new Error('청소 루틴이 시작되지 않음(_admCleanupRunning 상태 이상)');
+      }
+      console.log(`[routine] 청소 루틴 진행 중… (최대 ${Math.round(ROUTINE_TIMEOUT_MS / 60000)}분 대기)`);
+      const finished = await pollUntil(cdp, `_admCleanupRunning===false`, ROUTINE_TIMEOUT_MS, v => v === true, 3000);
+      summary = (await evalExpr(cdp, `document.getElementById('adm-routine-log')?.innerText || ''`)) || '';
+      if (!finished) throw new Error('청소 루틴이 시간 안에 끝나지 않음(타임아웃)\n--- 그때까지 로그 ---\n' + summary);
+    } else {
     await evalExpr(cdp, `_admRunRoutine(${WITH_SYNC ? 'true' : 'false'}${SYNC_ONLY ? `,{only:'sync'}` : ''})`);
     // 시작 확인(_admRoutineRunning이 true가 될 때까지 잠깐) — let 전역이라 맨이름으로 접근
     const started = await pollUntil(cdp, `_admRoutineRunning===true`, 15000, v => v === true, 300);
@@ -253,6 +266,7 @@ async function main() {
     console.log('\n===== 루틴 결과 =====\n' + summary + '\n=====================');
     if (perfLines.length) console.log('\n----- 동기화 속도 계측 -----\n' + perfLines.join('\n'));
     if (failedSteps) console.error(`[routine] 실패한 단계 ${failedSteps}개`);
+    } // end IS_CLEANUP else
   } catch (e) {
     console.error('\n❌ ' + (e && e.message ? e.message : e));
     if (errors.length) console.error('페이지 콘솔 예외:\n  ' + errors.slice(0, 8).join('\n  '));

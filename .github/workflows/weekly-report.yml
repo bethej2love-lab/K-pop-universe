@@ -1,0 +1,37 @@
+name: 주간 현황 보고
+
+# 매주 월요일 KST 09:00에 Supabase 통계를 조회해 GitHub Issue로 발행.
+# GitHub가 구독자(레포 owner)에게 이메일 알림을 자동으로 보낸다.
+#
+# 발행 내용: 주간 신규 영상·마일스톤·음방 1위 / 보류·검수 큐 현황 / 루틴·청소 마지막 실행 시각
+# 검수 큐가 50건 이상이면 이슈 본문에 경고 표시.
+
+on:
+  schedule:
+    - cron: '0 0 * * 1'   # 매주 월요일 UTC 00:00 = KST 09:00
+  workflow_dispatch:
+
+permissions:
+  issues: write
+  contents: read
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: install supabase client
+        run: npm install @supabase/supabase-js --no-save
+
+      - name: run weekly report
+        env:
+          SUPABASE_SERVICE_ROLE: ${{ secrets.SUPABASE_SERVICE_ROLE }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+        run: node tools/weekly_report.mjs

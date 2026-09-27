@@ -2320,7 +2320,8 @@ async function _ytSweepCoverCleanup(){
     const msg=`원곡(cover_of) 오탐 ${updates.length}건을 정리할까요?\n\n· 콜라보 동반신호 있음 → with_로 되돌림 : ${nRestore}건\n   (원래 게스트 출연인데 옛 휴리스틱이 원곡자로 강등시킨 것 — 그냥 지우면 콜라보 정보가 사라져요)\n· 근거 없음 → cover_of 해제 : ${nClear}건\n\n손대지 않는 것\n· 커버 문맥이 있는 정상 커버 ${hasCtx}건\n· 매처가 지금도 커버라고 판정한 ${stillCover}건 (대개 group_ko 오배정 문제 — "② 오태깅 그룹 재배정"의 몫)\n· 수동편집 ${manualSkipped}건\n\n표본은 콘솔(F12) · 스냅샷 저장돼서 되돌리기 가능`;
     // 앱 자체 다이얼로그를 우선 쓴다(브라우저 대화상자 차단·PWA 환경에 안 걸림). 없으면 native confirm.
     let ok;
-    if(typeof _confirmDialog==='function'){
+    if(_admCleanupRunning){ok=true;}
+    else if(typeof _confirmDialog==='function'){
       ok=await _confirmDialog({title:`원곡 오탐 ${updates.length}건 정리`,msg,okLabel:'정리 실행',wide:true});
     }else ok=confirm(msg);
     if(!ok){
@@ -7753,6 +7754,7 @@ function _sweepPeek(btnId){
 }
 // 확인창 + 보관. ok면 true, 아니면 false를 주고 결과를 보관해둔다(다시 누르면 바로 적용).
 async function _sweepConfirm(btnId,title,msg,okLabel,count,apply){
+  if(_admCleanupRunning){_sweepPending.delete(btnId);return true;}
   let ok;
   if(typeof _confirmDialog==='function')ok=await _confirmDialog({title,msg,okLabel:okLabel||'실행',wide:true});
   else ok=confirm(msg);
@@ -7766,7 +7768,7 @@ async function _sweepConfirm(btnId,title,msg,okLabel,count,apply){
 async function _sweepConfirmSimple(title,okLabel,msg){
   // 매일 루틴이 돌리는 중이면 확인 창을 띄우지 않는다 — 루틴은 무인 연속 실행이라 여기서 멈추면
   // 나머지 단계가 통째로 대기한다(다른 스윕들이 이미 쓰는 `!_admRoutineRunning &&` 가드와 같은 규칙).
-  if(_admRoutineRunning)return true;
+  if(_admRoutineRunning||_admCleanupRunning)return true;
   if(typeof _confirmDialog==='function')return await _confirmDialog({title,msg,okLabel:okLabel||'실행',wide:true});
   return confirm(msg);
 }
@@ -10688,7 +10690,44 @@ document.getElementById('sp-fb-btn')?.addEventListener('click',function(){
 //    있었음(2026-08-25). 단계마다 끝난 시점의 진행 문구를 남겨야 뭘 했는지 나중에 확인할 수 있다.
 // ⚠️ 동기화(1번)는 YouTube API 쿼터에 걸려 수십 분씩 걸리거나 중간에 끊긴다 — 그래서 "동기화 빼고
 //    실행"을 따로 뒀다. 쿼터를 아껴야 하거나 시간이 없을 때 2~4번만 돌리는 용도.
-let _admRoutineRunning=false,_admRoutineStop=false;
+let _admRoutineRunning=false,_admRoutineStop=false,_admCleanupRunning=false;
+
+// ── 데이터 정합성 청소 루틴 (2026-09-27 신설) ─────────────────────────────────
+// 기존 _admRunRoutine(동기화·태깅 파이프라인)과 **완전히 별개**로 도는 청소 전용 함수.
+// data-cleanup.yml 워크플로가 하루 1회 KST 04시에 자동 호출.
+// 분리 이유: 루틴 오류가 청소를 막거나, 청소 오류가 루틴을 멈추는 일 없애기.
+async function _admRunCleanup(){
+  if(_admCleanupRunning)return;
+  if(_admRoutineRunning){console.warn('[cleanup] 일일 루틴 실행 중 — 이번 회차 건너뜀');return;}
+  _admCleanupRunning=true;
+  const log=document.getElementById('adm-routine-log');
+  if(log)log.innerHTML='';
+  const steps=[
+    {name:'C1. 고아태그 정정',fn:_ytSweepCanonicalizeMembers},
+    {name:'C2. 원곡 오탐 청소',fn:_ytSweepCoverCleanup},
+    {name:'C3. 직캠 재검증',fn:_ytSweepFancamMistag},
+    {name:'C4. 오태깅 그룹 재배정',fn:_ytSweepMistagReclassify},
+  ];
+  const t0=Date.now();
+  for(const s of steps){
+    if(!_admCleanupRunning)break;
+    const ts=Date.now();
+    try{
+      console.log(`[cleanup] ▶ ${s.name}`);
+      await s.fn();
+      console.log(`[cleanup] ✓ ${s.name} (${Math.round((Date.now()-ts)/1000)}s)`);
+    }catch(e){
+      console.error(`[cleanup] ✗ ${s.name}:`,e.message);
+    }
+  }
+  _admCleanupRunning=false;
+  const elapsed=Math.round((Date.now()-t0)/1000);
+  const ts=new Date().toISOString();
+  console.log(`[cleanup] 완료 — 총 ${elapsed}s (${ts})`);
+  try{
+    if(typeof atm!=='undefined')await atm.from('atm_exception_rules').upsert({type:'admin_meta',key:'last_cleanup',value:ts},{onConflict:'type,key'});
+  }catch(e){console.warn('[cleanup] 완료 타임스탬프 저장 실패:',e.message);}
+}
 // opts.only='sync' — 동기화(1~3단계)만 돌고 스윕(2~7단계)은 건너뛴다(2026-09-14).
 // 왜 모드가 하나 더 필요했나: 사용자 요청으로 **동기화를 매시간** 돌리게 됐는데, 이 루틴은 동기화와
 // 37만 행을 훑는 스윕이 한 덩어리라 통째로 매시간 돌리면 ①스윕이 하루 24번 돌고(의미 없는 반복 —

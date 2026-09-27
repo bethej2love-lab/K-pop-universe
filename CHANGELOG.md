@@ -61,6 +61,13 @@
 - ~~**`active:false`인데 탈퇴일(`left`)이 없는 멤버 104명 — 그룹 미태깅 영상이 그 멤버 카드에 하나도 안 뜸(2026-08-27 발견)**~~ → **같은 날 처리 완료** — 폴백 4단계 재설계로 차단 110명→11명, 99명 복구. 아래 2026-08-27 항목 참고. ⚠️ 원 진단("탈퇴일 미기입이 원인")은 **틀렸었다** — 실제 원인은 `active` 필드가 "이 그룹 멤버인가"와 "개인이 아직 활동하는가" 두 뜻으로 섞여 쓰인 것이었고, 쥬얼리·걸스데이·스텔라에서 같은 시기 멤버가 은퇴 여부에 따라 갈리고 있었다.
 ---
 
+## 2026-09-27 (세션 — 자동화 3종)
+
+- **[완료][admin.js] `_admRunCleanup()` 신설** — 고아태그 정정·원곡 오탐·직캠 재검증·오태깅 재배정을 묶은 청소 전용 루틴. 기존 `_admRunRoutine`과 완전히 분리. `_admCleanupRunning` 플래그, `_sweepConfirm`/`_sweepConfirmSimple`에 cleanup 자동 yes 처리.
+- **[완료][tools/run_daily_routine.cjs] MODE=cleanup 지원** — cleanup 모드에서 `_admRunCleanup()` 호출, 새벽 무동기화 예외 처리 포함.
+- **[완료][.github/workflows/data-cleanup.yml] 데이터 정합성 청소 워크플로 신설** — KST 04:00 하루 1회 자동. 별도 concurrency 그룹·별도 크롬 프로필. 루틴 파이프라인과 간섭 없음.
+- **[완료][tools/weekly_report.mjs + weekly-report.yml] 주간 현황 보고 신설** — 매주 월요일 KST 09:00 GitHub Issue 자동 발행. 신규 영상·마일스톤·음방 1위·보류·검수 큐·루틴/청소 마지막 실행 시각 포함. 검수 큐 50건↑ 경고 표시.
+
 ## 2026-09-27 (세션 — 오늘의 소식 조회수 마일스톤)
 
 - **[완료][index.html] Discover 오늘의 소식 — 조회수 마일스톤 소스 추가**: `yt_view_milestones`에서 `crossed_at=today` + `seeded=false` 쿼리 추가. 변수명 `rows` → `items`, `_appendNewsRow` LABELS/CLS에 `milestone` 타입 추가. feed-dailynews.test.js 3건 실패 → 전부 통과.
