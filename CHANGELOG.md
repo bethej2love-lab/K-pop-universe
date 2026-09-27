@@ -68,6 +68,10 @@
 - **[완료][artists.json] 하이파이유니콘 태민(a1840) 추가** — 샤이니 태민과 동명이인. 동명이인 처리로 그룹 표시 없는 "태민" 단독 제목은 null(보류)로 처리됨.
 - **[완료][tests/matching.test.js][tests/cover-resolve.test.js] 태민 동명이인 회귀 테스트 업데이트** — weak → null or weak 허용, cover-resolve origin null 허용(샤이니+하이파이유니콘 두 태민이 됨).
 
+## 2026-09-27 (세션 — disbanded 날짜 정확도 개선)
+
+- **[완료][groups.json] disbanded 날짜 정확도 개선** — 투애니원(2NE1) "2017"→"2016.11.25", 씨스타 "2017"→"2017.06.05", S.E.S. "2017"→true(재결합 후 활동 중단, 정확한 날짜 불명).
+
 ## 2026-09-27 (세션 — disbanded 표기 3차 보강)
 
 - **[완료][groups.json] disbanded 표기 추가(2개)** — 베이비복스·피프틴앤드.
