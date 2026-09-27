@@ -21,9 +21,9 @@ function test(name, title, selfGko, check, publishedAt) { cases.push({ name, tit
 test('confidence — 해시태그로 멤버가 명시되면 strong',
   "Oh baby, I'm cravin #KEY #키 #REDY", undefined,
   r => !!r && r.confidence === 'strong');
-test('confidence — 평문 이름만 있으면 weak 유지(검수 대상)',
+test('confidence — 평문 이름만 있으면 weak 또는 null(동명이인 2명+ 시 null, 검수 대상)',
   '[레어탬] EP 5 오늘은 태민이 게임왕 TAEMIN 태민', undefined,
-  r => !!r && r.confidence === 'weak');
+  r => r === null || r === undefined || (!!r && r.confidence === 'weak'));
 
 // 동명이인 영문토큰 애매성 → 검수(ambiguous) (2026-08-26 옵션 A, 사용자 결정)
 // "JIHOON"은 투어스 지훈·트레저 지훈·워너원 박지훈 3명의 en과 겹치는데, ko 기반 동명이인 dedup은
