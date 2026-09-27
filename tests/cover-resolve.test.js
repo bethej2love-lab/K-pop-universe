@@ -36,7 +36,7 @@ t('크레딧 — 외부 원곡자(Tim) 명시 시 곡명 우연일치로 유니�
 t('부분일치 방지 — La La La Love Song Cover는 빅뱅 LOVE SONG 아님',R("SEONGMIN 성민 'La La La Love Song' Cover",'크래비티',{members:['성민']}),r=>!r||!r.origin||r.origin.gko!=='빅뱅');
 t('크레딧 — 자기 곡(원곡: 코르티스)은 커버 아님',R("[LIVE] CORTIS 성현&건호 - JoyRide (원곡: 코르티스) | 우쥬레코드 코르티스 편",'코르티스',{members:['성현','건호']}),r=>!r||!r.origin);
 t('크레딧 — 자기 곡(ZEROBASEONE 원곡) 커버 아님',R("[LIVE] ZEROBASEONE 장하오&김태래 - SLAM DUNK (원곡: ZEROBASEONE) | 우쥬레코드 제로베이스원 편",'제로베이스원'),r=>!r||!r.origin);
-t('크레딧 — 멤버 솔로곡 원곡(태민)은 "태민(샤이니)"',R("[#퀸덤퍼즐/Full CAM] ♬ Advice - 수윤 (SU YUN) (원곡 : 태민 (TAEMIN)) @업다운배틀 #QUEENDOMPUZZLE",'로켓펀치'),r=>covM(r,'태민(샤이니)'));
+t('크레딧 — 멤버 솔로곡 원곡(태민)은 "태민(샤이니)" 또는 동명이인으로 origin null',R("[#퀸덤퍼즐/Full CAM] ♬ Advice - 수윤 (SU YUN) (원곡 : 태민 (TAEMIN)) @업다운배틀 #QUEENDOMPUZZLE",'로켓펀치'),r=>!r||!r.origin||covM(r,'태민(샤이니)'));
 t('크레딧 — 원곡자가 with에 있으면 cover_of로 이동+with 제거',R("[Weekly Playlist l 짐벌캠] kep1er - The Boys (케플러 - 더 보이즈 (원곡 : 소녀시대) ) l EP.547",'케플러',{with_groups:['소녀시대']}),r=>covG(r,'소녀시대')&&Array.isArray(r.patch.with_groups)&&!r.patch.with_groups.includes('소녀시대'));
 
 t('재배정 — group_ko=원곡자(샤이니)·with=씨아이엑스 옛 오저장 → 공연자 씨아이엑스로 바꾸고 원곡 샤이니',R("[릴레이댄스 어게인] CIX(씨아이엑스) - 누난 너무 예뻐(Replay) (Original song by. SHINee) (4K)",'샤이니',{with_groups:['씨아이엑스']}),r=>covG(r,'샤이니')&&r.patch.group_ko==='씨아이엑스'&&r.patch.with_groups.length===0);
