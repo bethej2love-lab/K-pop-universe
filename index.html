@@ -9026,9 +9026,11 @@ function _openFromHash(){
   const gko=params.get('g'),mko=params.get('m');
   if(!gko)return;
   // '솔로'는 GROUPS에 없는 placeholder(서로 무관한 솔로 아티스트들이 공유)라 원래 여기서 무조건
-  // 막혀서 솔로 아티스트는 딥링크(공유 링크·SEO 페이지의 "우주에서 보기")가 전부 깨져있었음
+  // 막혀서 솔로 아티스트는 딥링크(공유 링크·SEO 페이지의 "더 알아보기")가 전부 깨져있었음
   // (2026-08-21, 멤버 정적 SEO 페이지 작업 중 발견) — 멤버가 지정된 경우에 한해 예외로 허용.
   if(gko!=='솔로'&&!GROUPS[gko])return;
+  // 진입 GA — 공유 링크·SEO 페이지 딥링크 모두 여기서 카드가 열린다
+  try{const ref=document.referrer?new URL(document.referrer).hostname:'(direct)';_gaEvent('deeplink_open',{target:mko?'member':'group',gko,ref});}catch(e){}
   if(mko){
     const artist=ARTISTS.find(x=>x.group.ko===gko&&x.name.ko===mko);
     if(!artist)return;
