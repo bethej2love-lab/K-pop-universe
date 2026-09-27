@@ -1532,6 +1532,17 @@
     },
     "checkedAt": "2026-09-26"
   },
+  "세븐어스": {
+    "id": "4wdzXgn8T0JnJdLhdplXfw",
+    "spotifyName": "SEVENUS",
+    "kind": "group",
+    "confidence": "low",
+    "why": "동명 후보 4명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-09-27"
+  },
   "세븐틴": {
     "id": "7nqOGRxlXj7N2JYbgNEjYH",
     "spotifyName": "SEVENTEEN",
@@ -2118,6 +2129,17 @@
       "titleOverlap": 0
     },
     "checkedAt": "2026-09-21"
+  },
+  "어센트": {
+    "id": "4w6MZBLb4aIZpffyA52Doq",
+    "spotifyName": "ASC2NT",
+    "kind": "group",
+    "confidence": "low",
+    "why": "동명 후보 2명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-09-27"
   },
   "언차일드": {
     "id": "6TKweJiG4KC62YFs5KKUqu",
@@ -3386,6 +3408,17 @@
     },
     "checkedAt": "2026-09-21"
   },
+  "캔디샵": {
+    "id": "47bUCJh3LXBeQtrTnWEwXn",
+    "spotifyName": "Candy Shop",
+    "kind": "group",
+    "confidence": "low",
+    "why": "동명 후보 3명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-09-27"
+  },
   "캣츠아이": {
     "id": "3c0gDdb9lhnHGFtP4prQpn",
     "spotifyName": "KATSEYE",
@@ -3477,6 +3510,17 @@
       "titleOverlap": 3
     },
     "checkedAt": "2026-09-15"
+  },
+  "크랙시": {
+    "id": "09WMLsjl9TmvhWznzRdee4",
+    "spotifyName": "CRAXY",
+    "kind": "group",
+    "confidence": "low",
+    "why": "동명 후보 3명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-09-27"
   },
   "크레용팝": {
     "id": "0ODX6aegsZkBmBeMA5qqwi",
@@ -3944,6 +3988,17 @@
     },
     "checkedAt": "2026-09-15"
   },
+  "하이파이유니콘": {
+    "id": "6095rKDrPnRCro0ckAe9hY",
+    "spotifyName": "Hi-Fi Un!corn",
+    "kind": "group",
+    "confidence": "medium",
+    "why": "이름 유일 일치",
+    "evidence": {
+      "titleOverlap": null
+    },
+    "checkedAt": "2026-09-27"
+  },
   "하입프린세스": {
     "id": "7LCBBRTytlwiWnA2Ugr3s1",
     "spotifyName": "H//PE Princess",
@@ -4077,6 +4132,17 @@
       "titleOverlap": null
     },
     "checkedAt": "2026-09-24"
+  },
+  "휘브": {
+    "id": "4pTBL6fTowmWTa61ef7RNb",
+    "spotifyName": "WHIB",
+    "kind": "group",
+    "confidence": "low",
+    "why": "동명 후보 2명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-09-27"
   },
   "힛지스": {
     "id": "5a83Luu0ndnR1enk1rn83V",

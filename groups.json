@@ -191320,35 +191320,1117 @@
     "debut": "2023.07.31",
     "co": "PCS엔터테인먼트",
     "gender": "m",
-    "id": "g276"
+    "id": "g276",
+    "discography": [
+      {
+        "title": "WHITE FALL",
+        "type": "미니",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b2731b8850ff0eb10ba192b831eb",
+        "releaseDate": "2025.11.25",
+        "trackCount": 4,
+        "titleTrack": null,
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Airplane mode",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "Sunny side up",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "An enduring dream",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Airplane mode - Instrumental",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "001IM6ozEtwi2IswBbn5Ki"
+      },
+      {
+        "title": "Can I Love You",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b2735afdbc29d83a4e94b2a22abc",
+        "releaseDate": "2025.05.27",
+        "trackCount": 2,
+        "titleTrack": "Can I Love You",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Can I Love You",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Can I Love You - inst.",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "3iepb1XMwQ1ROMSpXnTz3s"
+      },
+      {
+        "title": "STAY TUNED",
+        "type": "미니",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273f3d151cc3ffe44b09faa8b6f",
+        "releaseDate": "2024.12.09",
+        "trackCount": 6,
+        "titleTrack": null,
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Be My World",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "by",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "Starlight",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "wish",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "SLOMO",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "COLD AND SHINY",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "73EeZk2QtgrQQ54h04GAfq"
+      },
+      {
+        "title": "SPRING CANVAS",
+        "type": "미니",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273462f315460f630a078f30141",
+        "releaseDate": "2024.03.15",
+        "trackCount": 5,
+        "titleTrack": null,
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Want You Back",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "SATELLITE",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "BLUES",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "day by day (feat. RODA)",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Pretty good",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "1qIsvqn1riJIwT2iCbnh7s"
+      },
+      {
+        "title": "Summús",
+        "type": "미니",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273fb9dbc31f27cb5e47b522cfa",
+        "releaseDate": "2023.07.31",
+        "trackCount": 4,
+        "titleTrack": null,
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Summer Ride",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "Wonder Land",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "In a Dream",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Wonder Land - Instrumental",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "4TZB9z07aRMnMucZgPa3fy"
+      }
+    ]
   },
   "하이파이유니콘": {
     "en": "Hi-Fi Un!corn",
     "debut": "2023.06.26",
     "co": "FNC엔터테인먼트",
     "gender": "m",
-    "id": "g277"
+    "id": "g277",
+    "discography": [
+      {
+        "title": "Smile",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b27301bae800da4fec220366ee73",
+        "releaseDate": "2026.09.25",
+        "trackCount": 1,
+        "titleTrack": "Smile",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Smile",
+            "isTitle": true
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "3QIJ8tWBYjYkasEde1d6qq"
+      },
+      {
+        "title": "Gravity",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273d47df913fd4a4dec268c6651",
+        "releaseDate": "2026.08.28",
+        "trackCount": 1,
+        "titleTrack": "Gravity",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Gravity",
+            "isTitle": true
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "0Xz3xmLqS4WHVu6rqubf4M"
+      },
+      {
+        "title": "Telescope",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273c8745479d6754bc0012d9a6d",
+        "releaseDate": "2026.08.19",
+        "trackCount": 3,
+        "titleTrack": "Telescope",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Telescope",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Sunflower",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "UNHERO",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "6tXUYjkX690k0hCwsGCjOL"
+      },
+      {
+        "title": "INDIES COMPLETE ALBUM (Korean ver.)",
+        "type": "정규",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b27331ae26fe05dc7ae6717c3caa",
+        "releaseDate": "2026.08.17",
+        "trackCount": 11,
+        "titleTrack": null,
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Stay With You - KR ver.",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "U&I - KR ver.",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "Over the Rainbow [2026 Remastering] - KR ver.",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Left or Right - KR ver.",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "ABC is - KR ver.",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "PHANTOM PAIN - KR ver.",
+            "isTitle": false
+          },
+          {
+            "no": 7,
+            "title": "Butterfly - KR ver.",
+            "isTitle": false
+          },
+          {
+            "no": 8,
+            "title": "Days - KR ver.",
+            "isTitle": false
+          },
+          {
+            "no": 9,
+            "title": "Icecream Girl - KR ver.",
+            "isTitle": false
+          },
+          {
+            "no": 10,
+            "title": "Running Away - KR ver.",
+            "isTitle": false
+          },
+          {
+            "no": 11,
+            "title": "DoReMiFa-Soul [2026 Remastering] - KR ver.",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "73DIxIXlaOnmZLjHAzLVUW"
+      },
+      {
+        "title": "Airplane",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b2733096071195cfcd677d07ab4b",
+        "releaseDate": "2026.07.31",
+        "trackCount": 1,
+        "titleTrack": "Airplane",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Airplane",
+            "isTitle": true
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "1HBI7VSg6vcsp6Zj9K3dDW"
+      },
+      {
+        "title": "Why",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273248853de7991c29b5d4936a5",
+        "releaseDate": "2026.06.26",
+        "trackCount": 1,
+        "titleTrack": "Why",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Why",
+            "isTitle": true
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "50zd0HmX3dMPRekRw3OtkH"
+      },
+      {
+        "title": "By Chance",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273a543af1248021f94c89b8a61",
+        "releaseDate": "2026.05.29",
+        "trackCount": 1,
+        "titleTrack": "By Chance",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "By Chance",
+            "isTitle": true
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "3dF1IvnkBYaab4EGGdRX77"
+      },
+      {
+        "title": "Only You Shine",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273cc4a08d6ae64f97030bce3d2",
+        "releaseDate": "2026.04.24",
+        "trackCount": 1,
+        "titleTrack": "Only You Shine",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Only You Shine",
+            "isTitle": true
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "6e9S1vf9SZjQFFigB6g47j"
+      },
+      {
+        "title": "FIRST MOVE",
+        "type": "정규",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b2732c932a0170aae91cc2c1f272",
+        "releaseDate": "2026.03.25",
+        "trackCount": 10,
+        "titleTrack": null,
+        "tracks": [
+          {
+            "no": 1,
+            "title": "COMPASS",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "HUNGRY HEART",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "Beat it Beat it",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "SUPER DUPER",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "白昼夢",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "Marionette Wire",
+            "isTitle": false
+          },
+          {
+            "no": 7,
+            "title": "Cotton Candy",
+            "isTitle": false
+          },
+          {
+            "no": 8,
+            "title": "Stop It",
+            "isTitle": false
+          },
+          {
+            "no": 9,
+            "title": "GAME",
+            "isTitle": false
+          },
+          {
+            "no": 10,
+            "title": "Teenage Blue",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "5O8mj0lU5nIEbhhORk3obQ"
+      },
+      {
+        "title": "LAILA",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273555ea7ec5df8844418db87dc",
+        "releaseDate": "2026.01.30",
+        "trackCount": 1,
+        "titleTrack": "LAILA",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "LAILA",
+            "isTitle": true
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "7Axmc0OJr6ultUM30fISGU"
+      },
+      {
+        "title": "Teenage Blue",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b2738cc56ceff660ce7388a56734",
+        "releaseDate": "2025.08.20",
+        "trackCount": 3,
+        "titleTrack": "Teenage Blue",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Teenage Blue",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Cotton Candy",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "Backyard High-Five",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "1wU7pYqblQnF34wDfSiZ2U"
+      },
+      {
+        "title": "Spring of Youth (Original Soundtrack) Part.6",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273e16a96e8f1f1ae609982adb7",
+        "releaseDate": "2025.06.04",
+        "trackCount": 2,
+        "titleTrack": null,
+        "tracks": [
+          {
+            "no": 1,
+            "title": "You And I",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "You And I - Inst.",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "3w8Aa0RF0dWzbZdYERvX0G"
+      },
+      {
+        "title": "Spring of Youth (Original Soundtrack) Part.5",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273684d1bca4bdea50691970690",
+        "releaseDate": "2025.05.28",
+        "trackCount": 2,
+        "titleTrack": null,
+        "tracks": [
+          {
+            "no": 1,
+            "title": "FEVER",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "FEVER - Inst.",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "30Q06TyXVfgPUnfxX3Fw9e"
+      },
+      {
+        "title": "Beat it Beat it / GAME",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b2732369009c14b594ed3a879bee",
+        "releaseDate": "2025.04.30",
+        "trackCount": 2,
+        "titleTrack": null,
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Beat it Beat it",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "GAME",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "0mKv1Vonz05LhmxZyArMwB"
+      },
+      {
+        "title": "Beat it Beat it",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b2739c79ed3347599495e4fdf7c1",
+        "releaseDate": "2025.04.16",
+        "trackCount": 1,
+        "titleTrack": "Beat it Beat it",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Beat it Beat it",
+            "isTitle": true
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "7h6jEvQWk2jGYi0NUnNzZQ"
+      },
+      {
+        "title": "FANTASIA",
+        "type": "정규",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273af318be7fff34e47523a176c",
+        "releaseDate": "2024.08.28",
+        "trackCount": 10,
+        "titleTrack": null,
+        "tracks": [
+          {
+            "no": 1,
+            "title": "U&I",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "Butterfly",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "Left or Right",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Running Away",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "PHANTOM PAIN",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "ABC is",
+            "isTitle": false
+          },
+          {
+            "no": 7,
+            "title": "Stay With You",
+            "isTitle": false
+          },
+          {
+            "no": 8,
+            "title": "Over the Rainbow - JP ver.",
+            "isTitle": false
+          },
+          {
+            "no": 9,
+            "title": "Days",
+            "isTitle": false
+          },
+          {
+            "no": 10,
+            "title": "DoReMiFa-Soul - JP ver.",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "0yxzxnFO0cbLg86pqdJJ4a"
+      },
+      {
+        "title": "Left or Right",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b27375824550586a9efd2d09880c",
+        "releaseDate": "2024.07.29",
+        "trackCount": 1,
+        "titleTrack": "Left or Right",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Left or Right",
+            "isTitle": true
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "21a8JHnJLuvQcepNtOogzr"
+      },
+      {
+        "title": "PHANTOM PAIN",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273259ee9189640480dd0e653c9",
+        "releaseDate": "2024.06.04",
+        "trackCount": 1,
+        "titleTrack": "PHANTOM PAIN",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "PHANTOM PAIN",
+            "isTitle": true
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "6iEFTMUABgNatZGItmTW33"
+      },
+      {
+        "title": "ABC is",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273d6c163a06d2ae048bcf40009",
+        "releaseDate": "2024.03.02",
+        "trackCount": 1,
+        "titleTrack": "ABC is",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "ABC is",
+            "isTitle": true
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "0NR72w6NHH6QINsHNiQK5a"
+      },
+      {
+        "title": "U&I",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273a8e76d28104dfbec2291796f",
+        "releaseDate": "2023.11.29",
+        "trackCount": 3,
+        "titleTrack": "U&I",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "U&I",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Stay With You",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "Icecream Girl",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "1w46fkxv1SeZeQHK6M512f"
+      },
+      {
+        "title": "Over the Rainbow",
+        "type": "미니",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273271d5127442ecbe241898264",
+        "releaseDate": "2023.06.26",
+        "trackCount": 4,
+        "titleTrack": null,
+        "region": "jp",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Over the Rainbow - KR ver.",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "DoReMiFa-Soul - KR ver.",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "Over the Rainbow - JP ver.",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "DoReMiFa-Soul - JP ver.",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "2IX08P71jb8ClpDLUuquwt"
+      }
+    ]
   },
   "캔디샵": {
     "en": "CANDY SHOP",
     "debut": "2024.03.27",
     "co": "브레이브엔터테인먼트",
     "gender": "f",
-    "id": "g278"
+    "id": "g278",
+    "discography": [
+      {
+        "title": "TIP TOE",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273311216250960919d552dc7d2",
+        "releaseDate": "2025.03.18",
+        "trackCount": 2,
+        "titleTrack": "TIP TOE",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "TIP TOE",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "TIP TOE (Inst.)",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "3kPCOgirmmOhEGA6O2T3Te"
+      },
+      {
+        "title": "Girls Don't Cry",
+        "type": "미니",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273500e93a3fe0ed35c5f5eb659",
+        "releaseDate": "2024.06.12",
+        "trackCount": 4,
+        "titleTrack": null,
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Don’t Cry",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "Tumbler (Hot & Cold)",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "Welcome To My World",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Good Girl (Remix)",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "1aQK0v5dMnhb9nEIuey83H"
+      },
+      {
+        "title": "Hashtag#",
+        "type": "미니",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273718a2b30075aaf0f34f2d1e1",
+        "releaseDate": "2024.03.27",
+        "trackCount": 4,
+        "titleTrack": "Hashtag#",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Hashtag#",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Good Girl",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "No Fake",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Candy#",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "6QQIkAdIkRtvu8G2kzcyaB"
+      }
+    ]
   },
   "휘브": {
     "en": "WHIB",
     "debut": "2023.11.08",
     "co": "씨제스스튜디오",
     "gender": "m",
-    "id": "g279"
+    "id": "g279",
+    "discography": [
+      {
+        "title": "CHERRY PIE",
+        "type": "미니",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273f06109b43f4af6950a370613",
+        "releaseDate": "2026.08.05",
+        "trackCount": 5,
+        "titleTrack": "CHERRY PIE",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "PAGES OF US",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "CHERRY PIE",
+            "isTitle": true
+          },
+          {
+            "no": 3,
+            "title": "MOTTO",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "CAN'T STOP=NOT FOUND",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "MAKE IT",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "6r9J12vrlqV47LJcXlYgi2"
+      },
+      {
+        "title": "First Love Never Die",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273990bae0fdc05ac94db7f022e",
+        "releaseDate": "2026.07.29",
+        "trackCount": 2,
+        "titleTrack": "First Love Never Die",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "First Love Never Die",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "First Love Never Die (ENG)",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "1BJRDAvEh0G9qm4wyuWtLR"
+      },
+      {
+        "title": "ROCK THE NATION",
+        "type": "미니",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b2739dda8803eaf4c6541e3b0528",
+        "releaseDate": "2026.01.29",
+        "trackCount": 5,
+        "titleTrack": "ROCK THE NATION",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "WHO'S THE NEXT",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "ROCK THE NATION",
+            "isTitle": true
+          },
+          {
+            "no": 3,
+            "title": "DDANG",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "ELEVATE",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "NO SHINE",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "2TjwZqt5ndVe6sQTNrS6bF"
+      },
+      {
+        "title": "BANG OUT",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b2732fd1729deffc250f578285aa",
+        "releaseDate": "2025.04.09",
+        "trackCount": 2,
+        "titleTrack": "BANG OUT",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "BANG OUT",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Still typing.. (subtitle: blank)",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "7gZyhKRfHbDN1MNJpGewGj"
+      },
+      {
+        "title": "Rush of Joy",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273c34b0d469d9fe4531473da59",
+        "releaseDate": "2024.09.30",
+        "trackCount": 2,
+        "titleTrack": "Rush of Joy",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Rush of Joy",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Play",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "2Juxt6AGZbUjobdNqJzMzb"
+      },
+      {
+        "title": "ETERNAL YOUTH : KICK IT",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273840c2f6f0a39c1e98e698d2c",
+        "releaseDate": "2024.05.14",
+        "trackCount": 3,
+        "titleTrack": null,
+        "tracks": [
+          {
+            "no": 1,
+            "title": "KICK IT",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "IN THE MOOD",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "KICK IT (English ver.)",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "4cl2tOZW0kKrJbAduHQ95G"
+      },
+      {
+        "title": "Cut-Out",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273a18c519c224d56c07b9e1d54",
+        "releaseDate": "2023.11.08",
+        "trackCount": 2,
+        "titleTrack": null,
+        "tracks": [
+          {
+            "no": 1,
+            "title": "BANG!",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "DIZZY",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "3Wzr75gYnFG8l9GbeAExkg"
+      }
+    ]
   },
   "어센트": {
     "en": "ASC2NT",
     "debut": "2024.05.07",
     "co": "뉴웨이즈컴퍼니",
     "gender": "m",
-    "id": "g280"
+    "id": "g280",
+    "discography": [
+      {
+        "title": "Still with you",
+        "type": "미니",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273021980a3a8d88f49c5013c35",
+        "releaseDate": "2026.09.04",
+        "trackCount": 5,
+        "titleTrack": null,
+        "tracks": [
+          {
+            "no": 1,
+            "title": "If I Die Tomorrow",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "Mile Lo",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "I'm thinking 'bout tomorrow",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Morse Code",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Green light, Yellow light, Red light",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "1B4SFynqbrY3g5cWIALlHV"
+      }
+    ]
   },
   "빅오션": {
     "en": "BIG Ocean",

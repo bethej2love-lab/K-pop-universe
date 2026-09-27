@@ -127344,8 +127344,14 @@
       "namu": "https://namu.wiki/w/시안(USPEER)"
     },
     "groups": [
-      {"ko": "유스피어", "en": "USPEER"},
-      {"ko": "버가부", "en": "bugAboo"}
+      {
+        "ko": "유스피어",
+        "en": "USPEER"
+      },
+      {
+        "ko": "버가부",
+        "en": "bugAboo"
+      }
     ],
     "id": "a0707"
   },
@@ -132333,8 +132339,14 @@
       "namu": "https://namu.wiki/w/%EB%A0%88%EC%9D%B4%EB%8B%88(%ED%94%84%EB%A6%BC%EB%A1%9C%EC%A6%88)"
     },
     "groups": [
-      {"ko": "프림로즈", "en": "Primrose"},
-      {"ko": "버가부", "en": "bugAboo"}
+      {
+        "ko": "프림로즈",
+        "en": "Primrose"
+      },
+      {
+        "ko": "버가부",
+        "en": "bugAboo"
+      }
     ],
     "id": "a0776"
   },
@@ -165302,8 +165314,14 @@
       }
     ],
     "groups": [
-      {"ko": "다이아", "en": "DIA"},
-      {"ko": "버가부", "en": "bugAboo"}
+      {
+        "ko": "다이아",
+        "en": "DIA"
+      },
+      {
+        "ko": "버가부",
+        "en": "bugAboo"
+      }
     ],
     "id": "a0953"
   },
@@ -240080,7 +240098,9 @@
     "group": {
       "ko": "ATBO"
     },
-    "matchAliases": ["박원빈"],
+    "matchAliases": [
+      "박원빈"
+    ],
     "id": "a1839"
   },
   {
