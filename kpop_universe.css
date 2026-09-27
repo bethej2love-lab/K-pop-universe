@@ -922,7 +922,7 @@
        #yt-lb-drag-cap이 먹고 있었음). 오른쪽 120px을 비워 유튜브 버튼을 되살리고, 왼쪽·가운데는
        그대로 남겨 당겨-닫기 제스처를 유지한다(390px 기기 기준 손잡이 폭 약 240px). */
     #yt-lightbox.lb-browse #yt-lb-drag-cap{display:block;position:absolute;top:0;left:0;right:120px;height:40px;z-index:1;-webkit-tap-highlight-color:transparent;}
-    #mob-sr .sr-item{padding:8px 22px;font-size:14px;line-height:1;}
+    #mob-sr .sr-item{padding:8px 22px;font-size:var(--fz-title);line-height:1;}
     .sr-tag{font-size:11px;}
     .gc-ch-refresh{font-size:20px;padding:6px 8px;}
   }
@@ -1136,7 +1136,7 @@
   #gcx{position:absolute;top:11px;right:11px;font-size:15px;color:rgba(150,170,215,0.70);cursor:pointer;line-height:1;}
   #gc-header{display:flex;align-items:center;gap:10px;padding-right:2px;margin-bottom:3px;}
   #gc-header-text{flex:1;min-width:0;}
-  #gc-name{font-size:17px;font-weight:700;margin-bottom:4px;padding-right:0;letter-spacing:-.02em;color:#d8e4f6;}
+  #gc-name{font-size:var(--fz-title);font-weight:700;margin-bottom:4px;padding-right:0;letter-spacing:-.02em;color:#d8e4f6;}
   #gc-en{font-size:var(--fz-meta);letter-spacing:.1em;color:#7898b8;margin-bottom:0;text-transform:uppercase;font-weight:500;}
   /* 고인 표기 — 우주에서 멤버가 실제로 발광하는 방식(코어+halo 그라디언트, makeGlowTex 참고)과 같은
      느낌을 내는 작은 발광 점. 이모지/한자 대신 이걸 이름 뒤에 붙인다(2026-08-06, "이모티콘 댕강 붙인
@@ -1206,7 +1206,7 @@
   #gc-mem-label.toggleable:hover{color:#c8dcff;text-shadow:0 0 6px rgba(160,195,255,0.28),0 0 3px rgba(160,195,255,0.14);}
   #gc-mem-label.toggleable.on{color:rgba(170,205,255,0.95);text-shadow:0 0 6px rgba(140,175,255,0.35);}
   .gc-mem-name.gc-mem-inactive{opacity:0.55;}
-  #gc-grid .val,#tt-info-grid .val{font-size:14px;color:#c0d6f0;font-weight:500;line-height:20px;}
+  #gc-grid .val,#tt-info-grid .val{font-size:var(--fz-title);color:#c0d6f0;font-weight:500;line-height:20px;}
   #gc-grid #gc-fandom,#gc-grid #gc-leader,#tt-info-grid #tt-fandom{
     font-size:11px;font-weight:600;letter-spacing:.04em;
     margin-left:4px; /* 작은 글꼴+글로우 특성상 글자 잉크가 다른 값 줄보다 왼쪽에서 시작해 보정 */
@@ -1791,7 +1791,7 @@
   #feed-list-panel{width:min(560px,calc(100vw - 32px));max-height:82vh;display:flex;flex-direction:column;background:rgba(13,17,34,0.97);backdrop-filter:blur(40px);-webkit-backdrop-filter:blur(40px);border-radius:18px;box-shadow:0 16px 56px rgba(0,0,0,0.72);border:0.5px solid rgba(255,255,255,0.10);}
   #feed-list-hd{display:flex;align-items:flex-start;justify-content:space-between;padding:16px 18px 12px;flex-shrink:0;gap:10px;}
   #feed-list-hd-actions{display:flex;align-items:center;gap:8px;flex-shrink:0;}
-  #feed-list-hd-title{font-size:14px;font-weight:600;color:rgba(220,230,255,0.9);}
+  #feed-list-hd-title{font-size:var(--fz-title);font-weight:600;color:rgba(220,230,255,0.9);}
   #feed-list-sub{font-size:11px;color:rgba(155,178,228,0.61);margin-top:3px;}
   /* 콜렉션 한줄평(선택 입력) — 목록/칩처럼 좁은 자리엔 넣을 공간이 없어서 상세를 열었을 때만 보여준다
      (2026-08-12, 사용자 요청). 내 컬렉션일 때만 연필 아이콘으로 수정 가능, 남의 공개 컬렉션은 있을
@@ -2098,8 +2098,8 @@
      (테스트가 el.hidden만 확인해서 통과시켰고, 스크린샷을 보고서야 발견). 명시적으로 이긴다. */
   #msheet-body .sr-item[hidden],#msheet-body .sr-sec-label[hidden]{display:none!important;}
   /* 풀스크린에선 항목을 키운다 — 180px 상자에 욱여넣던 시절의 12px/5px는 손가락에 너무 작다. */
-  #msheet-body .sr-item{padding:11px 16px;font-size:14px;}
-  #msheet-body .sr-item-name{font-size:14px;}
+  #msheet-body .sr-item{padding:11px 16px;font-size:var(--fz-title);}
+  #msheet-body .sr-item-name{font-size:var(--fz-title);}
   #msheet-body .sr-sec-label{padding:14px 16px 5px;font-size:11px;}
   #msheet-body .sr-recent-label{padding:12px 16px 5px;font-size:11px;}
   #msheet-body .sr-empty{padding:28px 16px;font-size:13px;}
@@ -2123,7 +2123,7 @@
     font-size:13px;line-height:1.35;color:#dce8f8;font-weight:500;
     display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
   }
-  #msheet-body .sr-vtitle{font-size:14px;}
+  #msheet-body .sr-vtitle{font-size:var(--fz-title);}
   .sr-vmeta{font-size:11px;color:rgba(150,172,214,0.66);letter-spacing:.01em;}
   .sr-item{
     padding:5px 13px;font-size:12px;color:#dce8f8;font-weight:500;cursor:pointer;
@@ -2483,7 +2483,7 @@
   #gc-track-videos-cover{width:52px;height:52px;border-radius:8px;object-fit:cover;flex-shrink:0;box-shadow:0 2px 12px rgba(0,0,0,0.45);}
   #gc-track-videos-cover[hidden]{display:none;}
   #gc-track-videos-head-txt{min-width:0;flex:1;} /* min-width:0 — 긴 곡명 세로줄바꿈 방지(flex 텍스트 원칙) */
-  #gc-track-videos-title{font-size:14px;font-weight:700;color:#e4ecff;line-height:1.32;padding-right:24px;}
+  #gc-track-videos-title{font-size:var(--fz-title);font-weight:700;color:#e4ecff;line-height:1.32;padding-right:24px;}
   #gc-track-videos-meta{font-size:var(--fz-meta);color:rgba(165,185,225,0.72);margin-top:3px;line-height:1.3;padding-right:24px;}
   #gc-track-videos-meta.hidden{display:none;}
   /* 탭 줄에 원곡/커버 + 형식 칩이 같이 오면 좁은 시트에선 넘친다 — 가로 스크롤(JS가 _enableDragScroll로
