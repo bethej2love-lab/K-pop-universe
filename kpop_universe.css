@@ -598,7 +598,7 @@
      min(…,100vw-480px)로 좁은 데스크톱에선 영상이 최소 480px는 유지(그 경우만 카드 일부를 덮음).
      :has()는 이미 어드민 도킹(#adm-home-overlay 등)에서 쓰는 기법 — 데스크톱 지원 확인됨. */
   @media(min-width:769px){
-    body:has(#side-panel.open) #yt-lightbox{right:380px;}
+    body:has(#side-panel.open) #yt-lightbox{right:440px;}
     body:has(#member-panel.open) #yt-lightbox{right:min(760px,calc(100vw - 480px));}
     body.card-wide:has(#side-panel.open) #yt-lightbox{right:min(640px,calc(100vw - 480px));}
     body.card-wide:has(#member-panel.open) #yt-lightbox{right:min(960px,calc(100vw - 480px));}
@@ -706,7 +706,7 @@
   #yt-lightbox.lb-browse #yt-lb-toolbar #yt-lb-next{display:none;} /* 아래 추천 목록 헤더의 화살표로 대체 */
   #yt-lightbox.lb-browse #yt-lb-toolbar{justify-content:center;}
   #yt-lb-member-info{display:none;}
-  #yt-lightbox.lb-browse #yt-lb-member-info{display:block;padding:10px 2px 0;border-top:0.5px solid rgba(255,255,255,0.07);margin-top:10px;}
+  #yt-lightbox.lb-browse #yt-lb-member-info{display:block;padding:10px 2px;border-bottom:0.5px solid rgba(255,255,255,0.07);margin-top:10px;}
   #yt-lb-anchor-chip{font-size:13px;font-weight:600;color:rgba(215,228,255,0.85);}
   #yt-lb-anchor-chip:empty{display:none;}
   #yt-lb-with-chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:7px;}
@@ -983,7 +983,7 @@
   }
   /* ── Side panel (desktop) ──────────────────────────── */
   #side-panel{
-    position:fixed;right:0;top:64px;bottom:0;width:380px; /* 320→380 웹 레일 임시 확대(디자인리뷰 #13, 2026-09-07) */
+    position:fixed;right:0;top:64px;bottom:0;width:440px;
     overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;
     z-index:63;pointer-events:none;
     transform:translateX(100%);
@@ -1010,7 +1010,7 @@
   @media(max-width:768px){#side-panel{display:none;}}
   /* ── Member panel (그룹 카드 왼쪽 확장) ───────────── */
   #member-panel{
-    position:fixed;right:380px;top:64px;bottom:0;width:380px;
+    position:fixed;right:440px;top:64px;bottom:0;width:380px;
     overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;
     z-index:62;pointer-events:none;
     transform:translateX(100%);
@@ -1037,13 +1037,13 @@
   /* 접기 탭: member-panel 왼쪽 중간. member-panel 자체와 똑같은 거리(자기 폭 380px)·같은 트랜지션
      커브로 translateX를 같이 줘서, 패널이 슬라이드될 때 탭이 따로 놀지 않고 카드에 붙어서 같이 움직임 */
   #tt-collapse{
-    position:fixed;right:760px;top:50%;
+    position:fixed;right:820px;top:50%;
     width:22px;height:44px;border:none;border-radius:8px 0 0 8px;
     background:rgba(20,24,44,0.88);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
     color:rgba(160,185,230,0.80);font-size:16px;line-height:1;
     cursor:pointer;padding:0;z-index:62;
     opacity:0;pointer-events:none;
-    transform:translateY(-50%) translateX(380px); /* = member-panel 폭(320→380, 2026-09-07) */
+    transform:translateY(-50%) translateX(380px);
     transition:transform 0.26s cubic-bezier(0.32,0,0.15,1),opacity 0.26s,background 0.15s,color 0.15s;
     display:flex;align-items:center;justify-content:center;
   }
@@ -1051,13 +1051,13 @@
   #tt-collapse:hover{background:rgba(40,50,80,0.96);color:rgba(200,220,255,0.95);}
   /* 접기 탭: conn-panel 왼쪽 중간 (동일 패턴, conn-panel 자기 이동거리(280+640px)만큼 같이 슬라이드) */
   #conn-collapse{
-    position:fixed;right:1140px;top:50%; /* conn-panel(right:760)+폭380 = 왼쪽 끝. 320→380 확대분 반영(2026-09-07) */
+    position:fixed;right:1200px;top:50%;
     width:22px;height:44px;border:none;border-radius:8px 0 0 8px;
     background:rgba(20,24,44,0.88);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
     color:rgba(160,185,230,0.80);font-size:16px;line-height:1;
     cursor:pointer;padding:0;z-index:61;
     opacity:0;pointer-events:none;
-    transform:translateY(-50%) translateX(1140px);
+    transform:translateY(-50%) translateX(1200px);
     transition:transform 0.26s cubic-bezier(0.32,0,0.15,1),opacity 0.26s,background 0.15s,color 0.15s;
     display:flex;align-items:center;justify-content:center;
   }
@@ -2227,12 +2227,10 @@
   }
   /* ── Connection Card ─────────────────────────────── */
   #conn-panel{
-    position:fixed;right:760px;top:64px;bottom:0;width:380px;
+    position:fixed;right:820px;top:64px;bottom:0;width:380px;
     overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;
     z-index:61;pointer-events:none;
-    /* 닫힘 위치 = 자기 폭(100%) + right 오프셋(760=380레일×2)만큼 오른쪽 밖. 레일 320→380 확대(2026-09-07)
-       때 이 640이 안 따라와서 닫을 때 120px 남기고 툭 사라졌다. card-wide 쪽(1020)은 원래 맞음. */
-    transform:translateX(calc(100% + 760px));
+    transform:translateX(calc(100% + 820px));
     visibility:hidden;
     transition:transform 0.26s cubic-bezier(0.32,0,0.15,1),visibility 0s 0.26s;
     background:rgba(16,20,36,0.88);
