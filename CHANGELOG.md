@@ -61,6 +61,10 @@
 - ~~**`active:false`인데 탈퇴일(`left`)이 없는 멤버 104명 — 그룹 미태깅 영상이 그 멤버 카드에 하나도 안 뜸(2026-08-27 발견)**~~ → **같은 날 처리 완료** — 폴백 4단계 재설계로 차단 110명→11명, 99명 복구. 아래 2026-08-27 항목 참고. ⚠️ 원 진단("탈퇴일 미기입이 원인")은 **틀렸었다** — 실제 원인은 `active` 필드가 "이 그룹 멤버인가"와 "개인이 아직 활동하는가" 두 뜻으로 섞여 쓰인 것이었고, 쥬얼리·걸스데이·스텔라에서 같은 시기 멤버가 은퇴 여부에 따라 갈리고 있었다.
 ---
 
+## 2026-09-27 (세션 — 오늘의 소식 조회수 마일스톤)
+
+- **[완료][index.html] Discover 오늘의 소식 — 조회수 마일스톤 소스 추가**: `yt_view_milestones`에서 `crossed_at=today` + `seeded=false` 쿼리 추가. 변수명 `rows` → `items`, `_appendNewsRow` LABELS/CLS에 `milestone` 타입 추가. feed-dailynews.test.js 3건 실패 → 전부 통과.
+
 ## 2026-09-27 (세션 — 폰트 3단계)
 
 - **[완료][kpop_universe.css] DESIGN_REVIEW 폰트 3단계** — 읽는 텍스트 영역 폰트 var(--fz-title) 토큰화: #gc-name(17→15), #gc-grid/.tt-info-grid .val(14→15), #mob-sr .sr-item(14→15), #msheet-body .sr-item/.sr-item-name/.sr-vtitle(14→15), #gc-track-videos-title(14→15), #feed-list-hd-title(14→15). 버튼·아이콘·어드민·iOS 줌인 방지(16px!important) 제외.
