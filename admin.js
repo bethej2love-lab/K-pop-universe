@@ -7781,6 +7781,7 @@ function _m2DebutBlocks(gko,publishedAt){
   return py<dy-_M2_DEBUT_GRACE_YEARS;
 }
 function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
+  const _trace=[];
   // "(원곡: X)"/"[Dance Cover]"/"(BTS 커버)"류 절은 매칭 전에 먼저 제거한다 — 이 절 안의 이름은 실제
   // 출연자가 아니라 커버 대상(원곡자)이라, 그대로 두면 group_ko/with_members가 원곡자 쪽으로 잘못
   // 붙는다(예: "마마무 - 아주 NICE(원곡: 세븐틴)"에 세븐틴이 콜라보로 붙음). 이 헬퍼는 원래 관리자
@@ -7798,6 +7799,7 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
     [_fc.songSpan,_fc.koSongSpan].forEach(sp=>{if(sp)s=s.slice(0,sp[0])+' '.repeat(sp[1]-sp[0])+s.slice(sp[1]);});
     return s;
   })();
+  if(_fc)_trace.push({rule:'fancam_struct',token:_fc.brand||'',effect:'songtitle_stripped'});
   const strippedTitle=_wonkokStripClause(_fcSrc);
   // 출연자 구간(정규화) 안에서 그룹/멤버 토큰의 위치. -1이면 구간에 없음. 선두(head)면 0.
   const _fcPos=(tok)=>{if(!_fc)return -1;const n=_fancamNormTok(tok);if(!n)return -1;return _fc.artistNorm.indexOf(' '+n+' ');};
@@ -8172,6 +8174,7 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
   if(matchedGroupKos.length){
     const kept=matchedGroupKos.filter(ko=>ko===selfGko||!_m2DebutBlocks(ko,publishedAt));
     if(kept.length!==matchedGroupKos.length){
+      matchedGroupKos.filter(ko=>ko!==selfGko&&_m2DebutBlocks(ko,publishedAt)).forEach(ko=>_trace.push({rule:'debut_gate',token:ko,effect:'blocked'}));
       matchedGroupKos.splice(0,matchedGroupKos.length,...kept);
       seen.clear();kept.forEach(ko=>seen.add(ko));
     }
@@ -8182,6 +8185,7 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
     const featOnly=new Set(matchedGroupKos.filter(ko=>
       _featOnlyNames([ko,GROUPS[ko]&&GROUPS[ko].en,...((GROUPS[ko]&&GROUPS[ko].altNames)||[])])));
     if(featOnly.size&&featOnly.size<matchedGroupKos.length){
+      [...featOnly].forEach(ko=>_trace.push({rule:'feat_demotion',token:ko,effect:'demoted'}));
       matchedGroupKos.splice(0,matchedGroupKos.length,
         ...matchedGroupKos.filter(ko=>!featOnly.has(ko)),
         ...matchedGroupKos.filter(ko=>featOnly.has(ko)));
@@ -8394,6 +8398,7 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
     // 통째로 추정)라 게이트가 더 중요하다. 다 걸리면 아래에서 null이 되어 무매칭(보류)으로 간다.
     if(result.length){
       const kept=result.filter(r=>r.gko===selfGko||!_m2DebutBlocks(r.gko,publishedAt));
+      result.filter(r=>r.gko!==selfGko&&_m2DebutBlocks(r.gko,publishedAt)).forEach(r=>_trace.push({rule:'debut_gate',token:r.gko,effect:'blocked'}));
       result.splice(0,result.length,...kept);
     }
     if(!result.length)return null;
@@ -8402,7 +8407,10 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
     if(result.length>1&&_featOnlyMembers.size){
       const isFeat=r=>r.members.length&&r.members.every(mko=>_featOnlyMembers.has(mko));
       const front=result.filter(r=>!isFeat(r)),back=result.filter(isFeat);
-      if(front.length&&back.length)result.splice(0,result.length,...front,...back);
+      if(front.length&&back.length){
+        back.forEach(r=>_trace.push({rule:'feat_demotion',token:r.gko,effect:'demoted'}));
+        result.splice(0,result.length,...front,...back);
+      }
     }
     // confidence:'weak' — 제목에 그룹명/해시태그 리터럴이 전혀 없이 멤버 이름 하나만으로 그룹 자체를
     // 역추론한 경로. Love(온리원오프)/루나(에프엑스)/조이(레드벨벳) 오염 사례가 전부 이 경로에서
@@ -8411,7 +8419,7 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
     // 매칭에서 이 값을 보고 즉시확정 대신 검수 대기로 돌린다.
     return{primaryGroup:result[0].gko,withGroups:result.slice(1).map(r=>r.gko),
            membersByGroup:Object.fromEntries(result.map(r=>[r.gko,r.members])),
-           confidence:_tokenAmbiguous?'ambiguous':(_inferViaHashtag?'strong':'weak')};
+           confidence:_tokenAmbiguous?'ambiguous':(_inferViaHashtag?'strong':'weak'),trace:_trace};
   }
   // 각 매칭 그룹에서 멤버 추출 — normMinusUnits 기준으로 검사해 유닛명 토큰이 만든 가짜 개별 언급을
   // 제외한다(위 unit-name-false-with 해결 참고).
@@ -8514,13 +8522,14 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
       return chk(rawTitle); // 아니면 해시태그/고유표기 있을 때만
     });
     if(kept.length!==matchedGroupKos.length){
+      matchedGroupKos.filter(gko=>!kept.includes(gko)).forEach(gko=>_trace.push({rule:'common_noun_gate',token:gko,effect:'blocked'}));
       matchedGroupKos.length=0;matchedGroupKos.push(...kept);
       for(const k in membersByGroup)if(!kept.includes(k))delete membersByGroup[k];
     }
   }
   // confidence:'strong' — 제목에 그룹명(공식명/영문명/altNames) 리터럴이나 해시태그가 실제로 있어서
   // 그룹을 특정한 경로. 위 역추론(약한 근거) 경로와 대비되는 값.
-  return{primaryGroup:matchedGroupKos[0],withGroups:matchedGroupKos.slice(1),membersByGroup,confidence:'strong'};
+  return{primaryGroup:matchedGroupKos[0],withGroups:matchedGroupKos.slice(1),membersByGroup,confidence:'strong',trace:_trace};
 }
 
 // (기능 추가, 2026-08-14) with_members/with_groups를 정할 때 그 그룹의 활동중 멤버(탈퇴/비활동 제외)
