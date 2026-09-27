@@ -90,7 +90,7 @@ ${queueCount > 50 ? '> ⚠️ 검수 큐가 50건을 넘었습니다. 어드민�
       'Content-Type': 'application/json',
       Accept: 'application/vnd.github.v3+json',
     },
-    body: JSON.stringify({ title, body, labels: ['weekly-report'] }),
+    body: JSON.stringify({ title, body }),
   });
 
   if (!res.ok) {
