@@ -282,7 +282,9 @@ const _PROJECT_UNITS={
   'UNB':{names:['UNB','유앤비'],members:[{mko:'강유찬',gko:'에이스'},{mko:'고호정',gko:'핫샷'},{mko:'준',gko:'유키스'},{mko:'이의진',gko:'유앤비'},{mko:'오광석',gko:'유앤비'},{mko:'박대원',gko:'유앤비'},{mko:'이형근',gko:'유앤비'},{mko:'지한솔',gko:'유앤비'},{mko:'김기중',gko:'유앤비'}]},
   // A SIX(에이식스, 2024.01.30 데뷔) — 포켓돌스튜디오가 UNB(2018) 이후 9년 만에 다시 낸 혼성 프로젝트
   // 유닛. BAE173·FANTASY BOYS·CLASS:y 멤버들로 구성. 6명 전원 등록(2026-09-27 완성).
-  'A SIX':{names:['A SIX','에이식스'],members:[{mko:'제이민',gko:'BAE173'},{mko:'영서',gko:'BAE173'},{mko:'링치',gko:'판타지보이즈'},{mko:'이한빈',gko:'판타지보이즈'},{mko:'원지민',gko:'클라씨'},{mko:'박보은',gko:'클라씨'}]}
+  'A SIX':{names:['A SIX','에이식스'],members:[{mko:'제이민',gko:'BAE173'},{mko:'영서',gko:'BAE173'},{mko:'링치',gko:'판타지보이즈'},{mko:'이한빈',gko:'판타지보이즈'},{mko:'원지민',gko:'클라씨'},{mko:'박보은',gko:'클라씨'}]},
+  // Double 0ne(더블원, 2025.06.12 데뷔) — 포켓돌스튜디오 BAE173+판타지보이즈 멤버 유닛. 현재 7명(강민서·이한빈·홍성민 2026.04 탈퇴).
+  'Double 0ne':{names:['Double 0ne','더블원'],members:[{mko:'유준',gko:'BAE173'},{mko:'무진',gko:'BAE173'},{mko:'준서',gko:'BAE173'},{mko:'영서',gko:'BAE173'},{mko:'빛',gko:'BAE173'},{mko:'히카루',gko:'판타지보이즈'},{mko:'링치',gko:'판타지보이즈'}]}
 };
 
 // ── 조회수 마일스톤 (2026-09-23) — admin.js(수집)와 index.html(트로피 표시) 양쪽이 봐야 해서 shared로.

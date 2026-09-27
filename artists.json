@@ -239669,5 +239669,385 @@
       "ko": "픽시"
     },
     "id": "a1800"
+  },
+  {
+    "name": {
+      "ko": "민재",
+      "en": "Minjae"
+    },
+    "group": {
+      "ko": "다이몬"
+    },
+    "id": "a1801"
+  },
+  {
+    "name": {
+      "ko": "세이타",
+      "en": "Seita"
+    },
+    "group": {
+      "ko": "다이몬"
+    },
+    "id": "a1802"
+  },
+  {
+    "name": {
+      "ko": "희",
+      "en": "Hee"
+    },
+    "group": {
+      "ko": "다이몬"
+    },
+    "id": "a1803"
+  },
+  {
+    "name": {
+      "ko": "태극",
+      "en": "TK"
+    },
+    "group": {
+      "ko": "다이몬"
+    },
+    "id": "a1804",
+    "matchAliases": [
+      "TK"
+    ]
+  },
+  {
+    "name": {
+      "ko": "김민준",
+      "en": "Rex"
+    },
+    "group": {
+      "ko": "다이몬"
+    },
+    "id": "a1805",
+    "matchAliases": [
+      "렉스",
+      "Rex"
+    ]
+  },
+  {
+    "name": {
+      "ko": "조",
+      "en": "Jo"
+    },
+    "group": {
+      "ko": "다이몬"
+    },
+    "id": "a1806"
+  },
+  {
+    "name": {
+      "ko": "현민",
+      "en": "Hyunmin"
+    },
+    "group": {
+      "ko": "아크"
+    },
+    "id": "a1807"
+  },
+  {
+    "name": {
+      "ko": "끼엔",
+      "en": "Kien"
+    },
+    "group": {
+      "ko": "아크"
+    },
+    "id": "a1808"
+  },
+  {
+    "name": {
+      "ko": "한",
+      "en": "Choi Han"
+    },
+    "group": {
+      "ko": "아크"
+    },
+    "id": "a1809"
+  },
+  {
+    "name": {
+      "ko": "앤디",
+      "en": "Andy"
+    },
+    "group": {
+      "ko": "아크"
+    },
+    "id": "a1810"
+  },
+  {
+    "name": {
+      "ko": "리오토",
+      "en": "Rioto"
+    },
+    "group": {
+      "ko": "아크"
+    },
+    "id": "a1811"
+  },
+  {
+    "name": {
+      "ko": "도하",
+      "en": "Doha"
+    },
+    "group": {
+      "ko": "아크"
+    },
+    "id": "a1812"
+  },
+  {
+    "name": {
+      "ko": "지빈",
+      "en": "Jibeen"
+    },
+    "group": {
+      "ko": "아크"
+    },
+    "id": "a1813"
+  },
+  {
+    "name": {
+      "ko": "지우",
+      "en": "Ziwoo"
+    },
+    "group": {
+      "ko": "아크"
+    },
+    "id": "a1814"
+  },
+  {
+    "name": {
+      "ko": "도균",
+      "en": "DK"
+    },
+    "group": {
+      "ko": "블랭키"
+    },
+    "id": "a1815",
+    "matchAliases": [
+      "DK"
+    ]
+  },
+  {
+    "name": {
+      "ko": "루이",
+      "en": "Louis"
+    },
+    "group": {
+      "ko": "블랭키"
+    },
+    "id": "a1816"
+  },
+  {
+    "name": {
+      "ko": "동혁",
+      "en": "Donghyuk"
+    },
+    "group": {
+      "ko": "블랭키"
+    },
+    "id": "a1817"
+  },
+  {
+    "name": {
+      "ko": "시우",
+      "en": "Siwoo"
+    },
+    "group": {
+      "ko": "블랭키"
+    },
+    "id": "a1818"
+  },
+  {
+    "name": {
+      "ko": "마이키",
+      "en": "Mikey"
+    },
+    "group": {
+      "ko": "블랭키"
+    },
+    "id": "a1819"
+  },
+  {
+    "name": {
+      "ko": "유",
+      "en": "U"
+    },
+    "group": {
+      "ko": "블랭키"
+    },
+    "id": "a1820"
+  },
+  {
+    "name": {
+      "ko": "영빈",
+      "en": "Youngbin"
+    },
+    "group": {
+      "ko": "블랭키"
+    },
+    "id": "a1821"
+  },
+  {
+    "name": {
+      "ko": "성준",
+      "en": "Sungjun"
+    },
+    "group": {
+      "ko": "블랭키"
+    },
+    "id": "a1822"
+  },
+  {
+    "name": {
+      "ko": "소담",
+      "en": "Sodam"
+    },
+    "group": {
+      "ko": "블랭키"
+    },
+    "id": "a1823"
+  },
+  {
+    "name": {
+      "ko": "설희",
+      "en": "Sulhee"
+    },
+    "group": {
+      "ko": "퍼즐"
+    },
+    "id": "a1824"
+  },
+  {
+    "name": {
+      "ko": "채린",
+      "en": "Chaerin"
+    },
+    "group": {
+      "ko": "퍼즐"
+    },
+    "id": "a1825"
+  },
+  {
+    "name": {
+      "ko": "호노카",
+      "en": "Honoka"
+    },
+    "group": {
+      "ko": "퍼즐"
+    },
+    "id": "a1826"
+  },
+  {
+    "name": {
+      "ko": "미즈키",
+      "en": "Mizuki"
+    },
+    "group": {
+      "ko": "퍼즐"
+    },
+    "id": "a1827"
+  },
+  {
+    "name": {
+      "ko": "연서",
+      "en": "Yeonseo"
+    },
+    "group": {
+      "ko": "퍼즐"
+    },
+    "id": "a1828"
+  },
+  {
+    "name": {
+      "ko": "워니",
+      "en": "Wony"
+    },
+    "group": {
+      "ko": "퍼즐"
+    },
+    "id": "a1829"
+  },
+  {
+    "name": {
+      "ko": "로코",
+      "en": "Roko"
+    },
+    "group": {
+      "ko": "퍼즐"
+    },
+    "id": "a1830"
+  },
+  {
+    "name": {
+      "ko": "이첸",
+      "en": "Yichen"
+    },
+    "group": {
+      "ko": "모디세이"
+    },
+    "id": "a1831"
+  },
+  {
+    "name": {
+      "ko": "헝위",
+      "en": "Hengyu"
+    },
+    "group": {
+      "ko": "모디세이"
+    },
+    "id": "a1832"
+  },
+  {
+    "name": {
+      "ko": "로완",
+      "en": "Rowan"
+    },
+    "group": {
+      "ko": "모디세이"
+    },
+    "id": "a1833"
+  },
+  {
+    "name": {
+      "ko": "린린",
+      "en": "Lynnlynn"
+    },
+    "group": {
+      "ko": "모디세이"
+    },
+    "id": "a1834"
+  },
+  {
+    "name": {
+      "ko": "리즈하오",
+      "en": "Li Zihao"
+    },
+    "group": {
+      "ko": "모디세이"
+    },
+    "id": "a1835"
+  },
+  {
+    "name": {
+      "ko": "수런",
+      "en": "Suren"
+    },
+    "group": {
+      "ko": "모디세이"
+    },
+    "id": "a1836"
+  },
+  {
+    "name": {
+      "ko": "판저이",
+      "en": "Fan Zheyi"
+    },
+    "group": {
+      "ko": "모디세이"
+    },
+    "id": "a1837"
   }
 ]
