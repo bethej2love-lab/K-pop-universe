@@ -192437,14 +192437,477 @@
     "debut": "2024.04.20",
     "co": "Parastar Entertainment",
     "gender": "m",
-    "id": "g281"
+    "id": "g281",
+    "discography": [
+      {
+        "title": "Love Sign",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273a6d22cb238167c03ed6ef5d7",
+        "releaseDate": "2026.09.09",
+        "trackCount": 1,
+        "titleTrack": "Love Sign",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Love Sign",
+            "isTitle": true
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "0Ko4E7r0HsaIdIBnFMKfUD"
+      },
+      {
+        "title": "Make it up to you",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b2731605923dc22f85f459518526",
+        "releaseDate": "2026.05.19",
+        "trackCount": 1,
+        "titleTrack": "Make it up to you",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Make it up to you",
+            "isTitle": true
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "51V9U12ZM9HMUlGMlU7nYk"
+      },
+      {
+        "title": "THE GREATEST BATTLE",
+        "type": "정규",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b27383c571ca1963fd81a7bb04fd",
+        "releaseDate": "2026.03.03",
+        "trackCount": 8,
+        "titleTrack": null,
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Alive",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "One Man Army",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "Back",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Cold Moon",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Alive - Inst.",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "One Man Army - Inst.",
+            "isTitle": false
+          },
+          {
+            "no": 7,
+            "title": "Back - Inst.",
+            "isTitle": false
+          },
+          {
+            "no": 8,
+            "title": "Cold Moon - Inst.",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "3i7eiszamKu66caVqosS0j"
+      },
+      {
+        "title": "RED-DY SET GO",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273a0db08c71ea7ef93fadd48d7",
+        "releaseDate": "2025.11.23",
+        "trackCount": 1,
+        "titleTrack": "RED-DY SET GO",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "RED-DY SET GO",
+            "isTitle": true
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "2iRHWlME2d3vLYVGZvwAeY"
+      },
+      {
+        "title": "BUCKET HAT",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273241017cfddfc3d023a03a851",
+        "releaseDate": "2025.07.09",
+        "trackCount": 1,
+        "titleTrack": "BUCKET HAT",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "BUCKET HAT",
+            "isTitle": true
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "2JgBYW7QaZGNx3sOue8NXq"
+      },
+      {
+        "title": "Underwater",
+        "type": "미니",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b27323f941ef7383c308a7c14dbc",
+        "releaseDate": "2025.04.20",
+        "trackCount": 4,
+        "titleTrack": null,
+        "tracks": [
+          {
+            "no": 1,
+            "title": "SINKING",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "FADE OUT",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "ATTENTION",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "END OF TIME",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "4mbdxuv1iXGVFInMrxTyyT"
+      },
+      {
+        "title": "brighT",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b2736a2a3865f700ce1a79fe0762",
+        "releaseDate": "2025.02.10",
+        "trackCount": 1,
+        "titleTrack": "brighT",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "brighT",
+            "isTitle": true
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "0epEuUGqcdoHgYOvvXzh3U"
+      },
+      {
+        "title": "Follow",
+        "type": "미니",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b27330ba7cb8da6347e4f460b0eb",
+        "releaseDate": "2024.11.12",
+        "trackCount": 4,
+        "titleTrack": null,
+        "tracks": [
+          {
+            "no": 1,
+            "title": "FLOW",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "Glow",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "BLOW",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "SLOW (Feat. Young K (DAY6))",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "76RqCgCb3NwR1d9A6Jp7rs"
+      },
+      {
+        "title": "SLOW",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273c7a548b8b24862fa377bebe9",
+        "releaseDate": "2024.08.11",
+        "trackCount": 1,
+        "titleTrack": "SLOW (Feat. Young K (DAY6))",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "SLOW (Feat. Young K (DAY6))",
+            "isTitle": true
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "4gWygxgd6ECSQvnFyu0sAX"
+      },
+      {
+        "title": "BLOW",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273044aa4eb931739ad05ac3a3a",
+        "releaseDate": "2024.06.01",
+        "trackCount": 1,
+        "titleTrack": "BLOW",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "BLOW",
+            "isTitle": true
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "0Auz28ueaba0300gzFbUVo"
+      },
+      {
+        "title": "Glow",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273bdf222430cd454d0c4bd1ace",
+        "releaseDate": "2024.04.20",
+        "trackCount": 1,
+        "titleTrack": "Glow",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Glow",
+            "isTitle": true
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "6HKWAkLHl5PPjfgoT9yvdi"
+      }
+    ]
   },
   "다이몬": {
     "en": "DXMON",
     "debut": "2024.01.17",
     "co": "SSQ엔터테인먼트",
     "gender": "m",
-    "id": "g282"
+    "id": "g282",
+    "discography": [
+      {
+        "title": "HYPER LINK : Vol.3",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273e77622ea419d4158babc152d",
+        "releaseDate": "2026.07.06",
+        "trackCount": 2,
+        "titleTrack": null,
+        "tracks": [
+          {
+            "no": 1,
+            "title": "CHEESE",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "SEXY BACK",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "5JLl4G9vuI7lLoz8jhuEeL"
+      },
+      {
+        "title": "HYPER LINK: Vol.2",
+        "type": "미니",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b27342d2a2a77ce348dc1e3498f0",
+        "releaseDate": "2026.05.20",
+        "trackCount": 4,
+        "titleTrack": null,
+        "tracks": [
+          {
+            "no": 1,
+            "title": "DXMON",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "Make It Rain",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "DXMON (Instrumental)",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Make It Rain (Instrumental)",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "5ODreoYucp5Ac4zwUuL3rw"
+      },
+      {
+        "title": "HYPER LINK: Vol.1",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273189f0b43ea92d5e44ce58817",
+        "releaseDate": "2026.04.14",
+        "trackCount": 2,
+        "titleTrack": null,
+        "tracks": [
+          {
+            "no": 1,
+            "title": "SSS",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "White Tee",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "0MI5lDfMucTOeMK0DPLYPz"
+      },
+      {
+        "title": "Youth Never DIE",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b27348741674fcb7cb9a330da0c3",
+        "releaseDate": "2024.10.21",
+        "trackCount": 3,
+        "titleTrack": null,
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Zip Zip Zip",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "Heart Balloon",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "Zip Zip Zip - Instrumental",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "2oNeawAl6GSDcgx7QHHdeG"
+      },
+      {
+        "title": "HYPERSPACE 911",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273f9da642cc2644c7be786ae0d",
+        "releaseDate": "2024.05.14",
+        "trackCount": 3,
+        "titleTrack": null,
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Girls, Love boys, Love girls",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "Vitamin You",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "Feel The Vxbe",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "6eJCOi8mcxzcr5EQIWnZtP"
+      },
+      {
+        "title": "HYPERSPACE",
+        "type": "미니",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b27307cd4f904e32cc8c6cfa0f8f",
+        "releaseDate": "2024.01.17",
+        "trackCount": 6,
+        "titleTrack": null,
+        "tracks": [
+          {
+            "no": 1,
+            "title": "N.W.B",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "Burn Up",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "SPARK",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Very",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Burn Up - Instrumental",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "SPARK - Instrumental",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "2Z90sx0OCiluXfjGp12ZCA"
+      },
+      {
+        "title": "BURN UP",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b27371fc7e8e9d0b77ce54013ec2",
+        "releaseDate": "2024.01.01",
+        "trackCount": 1,
+        "titleTrack": "Burn Up",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Burn Up",
+            "isTitle": true
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "07zQHX9EnO2n2hg3SFVF5S"
+      }
+    ]
   },
   "더블원": {
     "en": "Double 0ne",
@@ -192452,14 +192915,257 @@
     "co": "포켓돌스튜디오",
     "gender": "m",
     "projectRing": true,
-    "id": "g283"
+    "id": "g283",
+    "discography": [
+      {
+        "title": "Xpert",
+        "type": "미니",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b27376e0f4008314865ea2791b34",
+        "releaseDate": "2025.06.12",
+        "trackCount": 6,
+        "titleTrack": null,
+        "tracks": [
+          {
+            "no": 1,
+            "title": "On the Rocks with Kiss",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "Reserved",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "Toxic Lips",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "To You",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "To You - BAE173 Version",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "To You - FANTASY BOYS Version",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "1PaO7zyCzA3tCw0qFCUyH6"
+      }
+    ]
   },
   "비비업": {
     "en": "VVUP",
     "debut": "2024.04.01",
     "co": "EgoENT",
     "gender": "f",
-    "id": "g284"
+    "id": "g284",
+    "discography": [
+      {
+        "title": "VVON",
+        "type": "정규",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273b01247c15c9228a7753f5aea",
+        "releaseDate": "2025.11.20",
+        "trackCount": 10,
+        "titleTrack": null,
+        "tracks": [
+          {
+            "no": 1,
+            "title": "House Party",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "Super Model",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "INVESTED IN YOU",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Giddy Boy",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "4 Life",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "House Party - Instrumental",
+            "isTitle": false
+          },
+          {
+            "no": 7,
+            "title": "Super Model - Instrumental",
+            "isTitle": false
+          },
+          {
+            "no": 8,
+            "title": "INVESTED IN YOU - Instrumental",
+            "isTitle": false
+          },
+          {
+            "no": 9,
+            "title": "Giddy Boy - Instrumental",
+            "isTitle": false
+          },
+          {
+            "no": 10,
+            "title": "4 Life - Instrumental",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "0lJ71UcwMYWJKeulIvyXmn"
+      },
+      {
+        "title": "House Party",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b2735920ebfdc8989c851453d09b",
+        "releaseDate": "2025.10.22",
+        "trackCount": 2,
+        "titleTrack": "House Party",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "House Party",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "House Party - Instrumental",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "4bNK0dpLLraieylOwZ0gqD"
+      },
+      {
+        "title": "Giddy Boy",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273c7a6f29fb360555e6107874e",
+        "releaseDate": "2025.06.20",
+        "trackCount": 2,
+        "titleTrack": "Giddy Boy",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Giddy Boy",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Giddy Boy - Instrumental",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "0vdXRrm9TL1BUmfrmPksKH"
+      },
+      {
+        "title": "4 Life",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273b10b2b81306d6f93776e4d87",
+        "releaseDate": "2025.01.10",
+        "trackCount": 2,
+        "titleTrack": "4 Life",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "4 Life",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "4 Life - Instrumental",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "0Z2YmCv2eOxRivWfKQVIZN"
+      },
+      {
+        "title": "Ain′t Nobody",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b27341cdbc53480a8ae35d7c6c3b",
+        "releaseDate": "2024.07.03",
+        "trackCount": 3,
+        "titleTrack": "Ain′t Nobody",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Ain′t Nobody",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Locked On - 2024 Remaster",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "Ain′t Nobody - Instrumental",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "7sUkC21fMbWcWwnFa1LKQw"
+      },
+      {
+        "title": "Locked On",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273a48c211b30d4a39f080d6dde",
+        "releaseDate": "2024.04.01",
+        "trackCount": 1,
+        "titleTrack": "Locked On",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Locked On",
+            "isTitle": true
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "2KOyXfulQ7w35Ok4KYtxBw"
+      },
+      {
+        "title": "Doo Doom Chit",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b2736deaab6b24ec9222f9aa570b",
+        "releaseDate": "2024.03.13",
+        "trackCount": 1,
+        "titleTrack": "Doo Doom Chit",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Doo Doom Chit",
+            "isTitle": true
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "5Rt2iN4s8ZvqPDWVXLcUcz"
+      }
+    ]
   },
   "아크": {
     "en": "ARrC",
@@ -192482,21 +193188,233 @@
     "debut": "2026.04.08",
     "co": "카카오엔터테인먼트",
     "gender": "m",
-    "id": "g287"
+    "id": "g287",
+    "discography": [
+      {
+        "title": "The Second Wave : MOMENTUM",
+        "type": "미니",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b27397ce9ffb59037b0ea1a6e71b",
+        "releaseDate": "2026.09.09",
+        "trackCount": 6,
+        "titleTrack": null,
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Mind",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "ALIVE (Feat. SUNGCHAN of RIIZE)",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "Sunday Morning",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Play My Guitar",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Thinkin' Bout You",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "First Daylight",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "6HSALIyE2MZcIWH2gzo4al"
+      },
+      {
+        "title": "Perfect Crown OST Part.8",
+        "type": "OST",
+        "isMain": false,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273784a64a53a6e632130a718d5",
+        "releaseDate": "2026.05.02",
+        "trackCount": 2,
+        "titleTrack": null,
+        "tracks": [
+          {
+            "no": 1,
+            "title": "You Keep Me Here",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "You Keep Me Here (Inst.)",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "4SrWORwSxnQDx7g6luKMt9"
+      },
+      {
+        "title": "The First Wave",
+        "type": "미니",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273a12400572554f6aae5063096",
+        "releaseDate": "2026.04.08",
+        "trackCount": 6,
+        "titleTrack": null,
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Dream",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "NINETEEN",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "Highlight",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "I AM SO FINE",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Outta my mind",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "Close To Me",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "7GMWvw5fpp3bIxK0nRz7tw"
+      }
+    ]
   },
   "모디세이": {
     "en": "MODYSSEY",
     "debut": "2026.04.13",
     "co": "ONECEAD",
     "gender": "m",
-    "id": "g288"
+    "id": "g288",
+    "discography": [
+      {
+        "title": "1.Got Hooked: An Addictive Symphony",
+        "type": "미니",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273ba51be278374dfd7062758c2",
+        "releaseDate": "2026.04.13",
+        "trackCount": 4,
+        "titleTrack": null,
+        "tracks": [
+          {
+            "no": 1,
+            "title": "HOOK",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "REVENANT",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "HOOK Chinese ver.",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "HOOK Inst.",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "4CwdD6lr6ITamrq6jHXa9l"
+      }
+    ]
   },
   "에이엔": {
     "en": "AEN",
     "debut": "2026.08.05",
     "co": "스타쉽엔터테인먼트",
     "gender": "m",
-    "id": "g289"
+    "id": "g289",
+    "discography": [
+      {
+        "title": "A NEW ERA OF NOW",
+        "type": "정규",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273bdcfd0320dd1bbecc60af2c8",
+        "releaseDate": "2026.08.05",
+        "trackCount": 10,
+        "titleTrack": null,
+        "region": "jp",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Clockwise (Korean ver.)",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "X to Z (Next to me) (Korean ver.)",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "Focus On Me (Korean ver.)",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "CHILLS (Korean ver.)",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "HIGHFIVE (Korean ver.)",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "Clockwise (Japanese ver.)",
+            "isTitle": false
+          },
+          {
+            "no": 7,
+            "title": "X to Z (Next to me) (Japanese ver.)",
+            "isTitle": false
+          },
+          {
+            "no": 8,
+            "title": "Focus On Me (Japanese ver.)",
+            "isTitle": false
+          },
+          {
+            "no": 9,
+            "title": "CHILLS (Japanese ver.)",
+            "isTitle": false
+          },
+          {
+            "no": 10,
+            "title": "HIGHFIVE (Japanese ver.)",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "5Ibcfw3ck62eG3JQBoFQWs"
+      }
+    ]
   },
   "튜이드": {
     "en": "TUIDE",
