@@ -46,9 +46,12 @@ async function main() {
   const routineMeta = await safeData(sb.from('atm_exception_rules').select('value').eq('type', 'admin_meta').eq('key', 'last_routine').maybeSingle());
   const cleanupMeta = await safeData(sb.from('atm_exception_rules').select('value').eq('type', 'admin_meta').eq('key', 'last_cleanup').maybeSingle());
 
-  function ageStr(isoStr) {
-    if (!isoStr?.value) return '기록 없음';
-    const diffH = Math.round((now - new Date(isoStr.value)) / 3600000);
+  function ageStr(meta) {
+    if (!meta?.value) return '기록 없음';
+    const v = meta.value;
+    const d = Number(v) > 0 ? new Date(Number(v)) : new Date(v);
+    if (isNaN(d.getTime())) return '기록 없음';
+    const diffH = Math.round((now - d) / 3600000);
     return diffH < 24 ? `${diffH}시간 전` : `${Math.round(diffH / 24)}일 전`;
   }
 

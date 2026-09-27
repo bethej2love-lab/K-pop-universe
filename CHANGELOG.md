@@ -61,6 +61,12 @@
 - ~~**`active:false`인데 탈퇴일(`left`)이 없는 멤버 104명 — 그룹 미태깅 영상이 그 멤버 카드에 하나도 안 뜸(2026-08-27 발견)**~~ → **같은 날 처리 완료** — 폴백 4단계 재설계로 차단 110명→11명, 99명 복구. 아래 2026-08-27 항목 참고. ⚠️ 원 진단("탈퇴일 미기입이 원인")은 **틀렸었다** — 실제 원인은 `active` 필드가 "이 그룹 멤버인가"와 "개인이 아직 활동하는가" 두 뜻으로 섞여 쓰인 것이었고, 쥬얼리·걸스데이·스텔라에서 같은 시기 멤버가 은퇴 여부에 따라 갈리고 있었다.
 ---
 
+## 2026-09-27 (세션 — 자동화 확장)
+
+- **[완료][admin.js] cleanup 루틴 C5~C7 추가** — 보류/숨김 그룹 재배정·자체 멤버 재검증·카테고리 재분류 3단계 추가. `_ytSweepMembersMistag`·`_ytSweepCategoryMistag` confirm 가드에 `_admCleanupRunning` 체크 추가. cleanup 완료 시 localStorage(`kpu_adm_last_cleanup`)에 타임스탬프 저장.
+- **[완료][admin.js] 어드민 홈 카드에 "마지막 청소 실행" 추가** — DB(`last_cleanup`)·localStorage 기반, 루틴 카드와 동일 포맷(3일↑ 노란 경고). 기기 간 공유.
+- **[완료][tools/weekly_report.mjs] 타임스탬프 파싱 수정** — 숫자 타임스탬프·ISO 문자열 모두 처리.
+
 ## 2026-09-27 (세션 — 자동화 3종)
 
 - **[완료][admin.js] `_admRunCleanup()` 신설** — 고아태그 정정·원곡 오탐·직캠 재검증·오태깅 재배정을 묶은 청소 전용 루틴. 기존 `_admRunRoutine`과 완전히 분리. `_admCleanupRunning` 플래그, `_sweepConfirm`/`_sweepConfirmSimple`에 cleanup 자동 yes 처리.

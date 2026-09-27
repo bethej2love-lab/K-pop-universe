@@ -4324,7 +4324,7 @@ async function _ytSweepMembersMistag(){
       _tagReviewEnqueueBatch(wipedOut.map(w=>({videoId:w.id,reason:'members_wiped',source:'members_reverify',detail:{removed:w.removed}})));
     }
     if(!updates.length){_ytSetProg(`검사 완료 — ${rows.length}개 중 고칠 건 없음`+(wipedOut.length?` (${wipedOut.length}개는 검수 큐로 보냄 — 태그는 안 건드림)`:''));return;}
-    if(updates.length&&!_admRoutineRunning&&typeof _confirmDialog==='function'&&!(await _confirmDialog({title:'자체 멤버 태깅 재검증 (전체)',msg:`그룹 자체 채널 멤버 태그 <b>${updates.length}건</b>을 최신 매칭으로 재검증해요. 그룹은 안 건드리고, 되돌리기 스냅샷을 떠둬요.`,okLabel:'재검증 실행',wide:true})))return;
+    if(updates.length&&!_admRoutineRunning&&!_admCleanupRunning&&typeof _confirmDialog==='function'&&!(await _confirmDialog({title:'자체 멤버 태깅 재검증 (전체)',msg:`그룹 자체 채널 멤버 태그 <b>${updates.length}건</b>을 최신 매칭으로 재검증해요. 그룹은 안 건드리고, 되돌리기 스냅샷을 떠둬요.`,okLabel:'재검증 실행',wide:true})))return;
     await _snapshotBeforeBulk('자체 멤버 태깅 재검증(전체)',updates.map(u=>u.id));
     // 200개를 한꺼번에 Promise.all로 쏘면 그중 하나가 일시적 네트워크 끊김(Failed to fetch)으로 튕길 때
     // 전체가 죽는다(2026-09-01 사용자 제보). 동시요청 20개 제한 + 실패분 재시도로 안전하게(_sbUpdateBatch).
@@ -4652,7 +4652,7 @@ async function _ytSweepCategoryMistag(){
       updates.push({id:v.id,patch});
     });
     if(!updates.length){_ytSetProg(`검사 완료 — ${rows.length}개 중 바뀔 항목 없음`);return;}
-    if(updates.length&&!_admRoutineRunning&&typeof _confirmDialog==='function'&&!(await _confirmDialog({title:'영상 카테고리 재분류 (전체)',msg:`퍼포먼스/쇼츠/예능 등 카테고리 <b>${updates.length}건</b>을 최신 로직으로 재분류해요. 되돌리기 스냅샷을 떠둬요.`,okLabel:'재분류 실행',wide:true})))return;
+    if(updates.length&&!_admRoutineRunning&&!_admCleanupRunning&&typeof _confirmDialog==='function'&&!(await _confirmDialog({title:'영상 카테고리 재분류 (전체)',msg:`퍼포먼스/쇼츠/예능 등 카테고리 <b>${updates.length}건</b>을 최신 로직으로 재분류해요. 되돌리기 스냅샷을 떠둬요.`,okLabel:'재분류 실행',wide:true})))return;
     await _snapshotBeforeBulk('영상 카테고리 재분류(전체)',updates.map(u=>u.id));
     const _ub=await _sbUpdateBatch(updates,u=>sb.from(_YT_TABLE).update(u.patch).eq('id',u.id),
       {conc:20,retries:2,onProgress:(done,total)=>_ytSetProg(`[영상 카테고리 재분류] ${done}/${total}개 처리 중…`)});
@@ -10496,6 +10496,10 @@ async function _admLoadCards(){
   const lrLocal=_admLastRunFmt(_admLastRunLocal());
   const lrCard=_admCard({lbl:'마지막 루틴 실행',num:lrLocal.num,sub:lrLocal.sub,tone:lrLocal.tone});
   wrap.appendChild(lrCard);
+  const lcLocalTs=Number(localStorage.getItem('kpu_adm_last_cleanup')||0);
+  const lcLocal=_admLastRunFmt(lcLocalTs);
+  const lcCard=_admCard({lbl:'마지막 청소 실행',num:lcLocal.num,sub:lcLocal.sub,tone:lcLocal.tone});
+  wrap.appendChild(lcCard);
   // 숫자가 늦게 와도 레이아웃이 안 튀도록 카드를 먼저 만들어 두고 나중에 채운다
   const mk=(lbl,sub,onClick)=>{const c=_admCard({lbl:lbl,num:'…',sub:'불러오는 중',onClick:onClick,tone:'adm-zero'});c.dataset.sub=sub;wrap.appendChild(c);return c;};
   const openVmTab=tab=>()=>{
@@ -10539,6 +10543,15 @@ async function _admLoadCards(){
     if(n){n.textContent=f.num;n.className='adm-card-num'+(f.tone?' '+f.tone:'');}
     if(s)s.textContent=f.sub;
     if(dbTs>_admLastRunLocal()){try{localStorage.setItem(_ADM_LS.lastRun,String(dbTs));}catch(e){}}
+  });
+  _admMetaGet('last_cleanup').then(dbTs=>{
+    const t=Math.max(dbTs,lcLocalTs);
+    if(!t)return;
+    const f=_admLastRunFmt(t);
+    const n=lcCard.querySelector('.adm-card-num'),s=lcCard.querySelector('.adm-card-sub');
+    if(n){n.textContent=f.num;n.className='adm-card-num'+(f.tone?' '+f.tone:'');}
+    if(s)s.textContent=f.sub;
+    if(dbTs>lcLocalTs){try{localStorage.setItem('kpu_adm_last_cleanup',String(dbTs));}catch(e){}}
   });
   const ssGkos=[..._STRICT_SYNC_GROUPS];
   // ⚠️ Promise.all로 묶어 한꺼번에 반영하면 **제일 느린 쿼리에 전부 발이 묶인다** — 콜드 커넥션에선
@@ -10707,6 +10720,9 @@ async function _admRunCleanup(){
     {name:'C2. 원곡 오탐 청소',fn:_ytSweepCoverCleanup},
     {name:'C3. 직캠 재검증',fn:_ytSweepFancamMistag},
     {name:'C4. 오태깅 그룹 재배정',fn:_ytSweepMistagReclassify},
+    {name:'C5. 보류/숨김 그룹 재배정',fn:_ytSweepHeldMistagReclassify},
+    {name:'C6. 자체 멤버 재검증',fn:_ytSweepMembersMistag},
+    {name:'C7. 카테고리 재분류',fn:_ytSweepCategoryMistag},
   ];
   const t0=Date.now();
   for(const s of steps){
@@ -10722,10 +10738,11 @@ async function _admRunCleanup(){
   }
   _admCleanupRunning=false;
   const elapsed=Math.round((Date.now()-t0)/1000);
-  const ts=new Date().toISOString();
-  console.log(`[cleanup] 완료 — 총 ${elapsed}s (${ts})`);
+  const tsMs=Date.now();
+  console.log(`[cleanup] 완료 — 총 ${elapsed}s (${new Date(tsMs).toISOString()})`);
+  try{localStorage.setItem('kpu_adm_last_cleanup',String(tsMs));}catch(e){}
   try{
-    if(typeof atm!=='undefined')await atm.from('atm_exception_rules').upsert({type:'admin_meta',key:'last_cleanup',value:ts},{onConflict:'type,key'});
+    if(typeof atm!=='undefined')await atm.from('atm_exception_rules').upsert({type:'admin_meta',key:'last_cleanup',value:String(tsMs)},{onConflict:'type,key'});
   }catch(e){console.warn('[cleanup] 완료 타임스탬프 저장 실패:',e.message);}
 }
 // opts.only='sync' — 동기화(1~3단계)만 돌고 스윕(2~7단계)은 건너뛴다(2026-09-14).
