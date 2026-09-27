@@ -314,8 +314,6 @@ groupKos.forEach(ko => {
 <meta name="twitter:image" content="${ogImage}">
 <link rel="icon" href="${SITE}/icons/icon-192.png" type="image/png">
 <script type="application/ld+json">${JSON.stringify(jsonLd)}</script>
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-Z5NTV6X3YF"></script>
-<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-Z5NTV6X3YF');</script>
 <style>
   :root{color-scheme:dark;}
   body{margin:0;background:#09091a;color:rgba(220,230,255,0.92);font-family:-apple-system,'Pretendard','Apple SD Gothic Neo',sans-serif;line-height:1.6;}
@@ -339,6 +337,8 @@ groupKos.forEach(ko => {
   .lang-switch{margin-top:40px;font-size:12px;}
   .lang-switch a{color:rgba(150,175,255,0.7);}
 </style>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-Z5NTV6X3YF"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-Z5NTV6X3YF');document.addEventListener('DOMContentLoaded',function(){var s=location.pathname.replace(/\/$/,'').split('/').filter(Boolean),i=s[0]==='en'?1:0,type=s.length-i>=3?'member':s.length-i===2&&s[i]==='g'?'group':s.length-i===2?'explore':'group_list',entity=(document.querySelector('h1')||{}).textContent||'';gtag('event','seo_land',{entity_name:entity.trim(),page_type:type});var c=document.querySelector('.cta');c&&c.addEventListener('click',function(){gtag('event','seo_cta_click',{entity_name:entity.trim(),page_type:type});});});</script>
 </head>
 <body>
 <div class="wrap">
@@ -355,7 +355,7 @@ groupKos.forEach(ko => {
   ${memberListHtml(lang)}
   ${discogHtml(lang)}
   <div class="lang-switch"><a href="${altUrl}">${isEn ? '한국어로 보기' : 'View in English'}</a></div>
-  <div class="cta-dock"><a class="cta" href="${SITE}/${deepLinkHash}">${isEn ? 'View in the Universe →' : '우주에서 보기 →'}</a></div>
+  <div class="cta-dock"><a class="cta" href="${SITE}/${deepLinkHash}">${isEn ? 'View in the Universe →' : '더 알아보기 →'}</a></div>
 </div>
 </body>
 </html>
@@ -518,8 +518,6 @@ artists.forEach(a => {
 <meta name="twitter:image" content="${ogImage}">
 <link rel="icon" href="${SITE}/icons/icon-192.png" type="image/png">
 <script type="application/ld+json">${JSON.stringify(jsonLd)}</script>
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-Z5NTV6X3YF"></script>
-<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-Z5NTV6X3YF');</script>
 <style>
   :root{color-scheme:dark;}
   body{margin:0;background:#09091a;color:rgba(220,230,255,0.92);font-family:-apple-system,'Pretendard','Apple SD Gothic Neo',sans-serif;line-height:1.6;}
@@ -543,6 +541,8 @@ artists.forEach(a => {
   .lang-switch{margin-top:40px;font-size:12px;}
   .lang-switch a{color:rgba(150,175,255,0.7);}
 </style>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-Z5NTV6X3YF"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-Z5NTV6X3YF');document.addEventListener('DOMContentLoaded',function(){var s=location.pathname.replace(/\/$/,'').split('/').filter(Boolean),i=s[0]==='en'?1:0,type=s.length-i>=3?'member':s.length-i===2&&s[i]==='g'?'group':s.length-i===2?'explore':'group_list',entity=(document.querySelector('h1')||{}).textContent||'';gtag('event','seo_land',{entity_name:entity.trim(),page_type:type});var c=document.querySelector('.cta');c&&c.addEventListener('click',function(){gtag('event','seo_cta_click',{entity_name:entity.trim(),page_type:type});});});</script>
 </head>
 <body>
 <div class="wrap">
@@ -562,7 +562,7 @@ artists.forEach(a => {
   ${memberDiscogHtml(lang)}
   ${linksHtml(lang)}
   <div class="lang-switch"><a href="${altUrl}">${isEn ? '한국어로 보기' : 'View in English'}</a></div>
-  <div class="cta-dock"><a class="cta" href="${SITE}/${deepLinkHash}">${isEn ? 'View in the Universe →' : '우주에서 보기 →'}</a></div>
+  <div class="cta-dock"><a class="cta" href="${SITE}/${deepLinkHash}">${isEn ? 'View in the Universe →' : '더 알아보기 →'}</a></div>
 </div>
 </body>
 </html>
@@ -612,8 +612,6 @@ function hubPageHtml(lang, relLinks) {
 <link rel="alternate" hreflang="${isEn ? 'en' : 'ko'}" href="${selfUrl}">
 <link rel="alternate" hreflang="x-default" href="${SITE}/g/">
 <link rel="icon" href="${SITE}/icons/icon-192.png" type="image/png">
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-Z5NTV6X3YF"></script>
-<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-Z5NTV6X3YF');</script>
 <style>
   :root{color-scheme:dark;}
   body{margin:0;background:#09091a;color:rgba(220,230,255,0.92);font-family:-apple-system,'Pretendard','Apple SD Gothic Neo',sans-serif;line-height:1.6;}
@@ -629,6 +627,8 @@ function hubPageHtml(lang, relLinks) {
   .lang-switch{margin-top:40px;font-size:12px;}
   .lang-switch a{color:rgba(150,175,255,0.7);}
 </style>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-Z5NTV6X3YF"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-Z5NTV6X3YF');document.addEventListener('DOMContentLoaded',function(){var s=location.pathname.replace(/\/$/,'').split('/').filter(Boolean),i=s[0]==='en'?1:0,type=s.length-i>=3?'member':s.length-i===2&&s[i]==='g'?'group':s.length-i===2?'explore':'group_list',entity=(document.querySelector('h1')||{}).textContent||'';gtag('event','seo_land',{entity_name:entity.trim(),page_type:type});var c=document.querySelector('.cta');c&&c.addEventListener('click',function(){gtag('event','seo_cta_click',{entity_name:entity.trim(),page_type:type});});});</script>
 </head>
 <body>
 <div class="wrap">
@@ -730,8 +730,6 @@ function relPageHtml(o) {
 <meta property="og:description" content="${escHtml(desc)}">
 <meta property="og:url" content="${selfUrl}">
 <link rel="icon" href="${SITE}/icons/icon-192.png" type="image/png">
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-Z5NTV6X3YF"></script>
-<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-Z5NTV6X3YF');</script>
 <style>
   :root{color-scheme:dark;}
   body{margin:0;background:#09091a;color:rgba(220,230,255,0.92);font-family:-apple-system,'Pretendard','Apple SD Gothic Neo',sans-serif;line-height:1.6;}
@@ -750,6 +748,8 @@ function relPageHtml(o) {
   .lang-switch{margin-top:36px;font-size:12px;}
   .lang-switch a{color:rgba(150,175,255,0.7);}
 </style>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-Z5NTV6X3YF"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-Z5NTV6X3YF');document.addEventListener('DOMContentLoaded',function(){var s=location.pathname.replace(/\/$/,'').split('/').filter(Boolean),i=s[0]==='en'?1:0,type=s.length-i>=3?'member':s.length-i===2&&s[i]==='g'?'group':s.length-i===2?'explore':'group_list',entity=(document.querySelector('h1')||{}).textContent||'';gtag('event','seo_land',{entity_name:entity.trim(),page_type:type});var c=document.querySelector('.cta');c&&c.addEventListener('click',function(){gtag('event','seo_cta_click',{entity_name:entity.trim(),page_type:type});});});</script>
 </head>
 <body>
 <div class="wrap">
@@ -759,7 +759,7 @@ function relPageHtml(o) {
   <div class="sub">${sub}</div>
 ${secHtml}
   <div class="lang-switch"><a href="${altUrl}">${isEn ? '한국어로 보기' : 'View in English'}</a></div>
-  <div class="cta-dock"><a class="cta" href="${SITE}/">${isEn ? 'Explore in the Universe →' : '우주에서 탐험하기 →'}</a></div>
+  <div class="cta-dock"><a class="cta" href="${SITE}/">${isEn ? 'Explore in the Universe →' : '더 알아보기 →'}</a></div>
 </div>
 </body>
 </html>
