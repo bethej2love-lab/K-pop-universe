@@ -42,6 +42,12 @@ need(skipLines.length > 0, `_ytClassify의 skip 규칙 ${skipLines.length}줄 �
 for (const s of ['OFFICIAL AUDIO', '공식 음원', 'TEASER', '티저'])
   need(skipRe.test(`[${s}] 테스트`) === skipLines.some(l => new RegExp(/\/(.+?)\/\.test/.exec(l)[1]).test(`[${s}] 테스트`)),
     `skip 판정 일치: "${s}"`);
+// 워치독 파일 자체가 파싱되는가 — import 중복 한 줄로 워치독이 통째로 죽은 적이 있다(2026-09-28, 첫 배포 직후).
+// 감시자가 죽으면 아무 알림도 안 오므로 "알림 없음 = 정상"이 거짓이 된다.
+{
+  const r = require('child_process').spawnSync(process.execPath, ['--check', path.join(__dirname, '..', 'tools', 'sync_watchdog.mjs')], { encoding: 'utf8' });
+  need(r.status === 0, '워치독 문법 검사 통과' + (r.status ? ` — ${(r.stderr || '').split('\n').find(l => /Error/.test(l))}` : ''));
+}
 const admStrict = /const _EXT_STRICT_TIERS=new Set\(\[([^\]]*)\]\)/.exec(admin)[1].replace(/['\s]/g, '').split(',').sort().join(',');
 const wdStrict = /const STRICT_TIERS = new Set\(\[([^\]]*)\]\)/.exec(wdSrc)[1].replace(/['\s]/g, '').split(',').sort().join(',');
 need(admStrict === wdStrict, `워치독 strict tier가 admin.js _EXT_STRICT_TIERS와 같음(${wdStrict})`);

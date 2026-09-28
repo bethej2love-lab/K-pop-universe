@@ -30,7 +30,6 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createRequire } from 'node:module';
-import { createRequire } from 'node:module';
 
 const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
 const U = process.env.SUPABASE_URL || 'https://dukgguehegnembimqvkm.supabase.co';
