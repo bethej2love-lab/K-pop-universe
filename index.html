@@ -18113,8 +18113,8 @@ async function _buildFeedDailyNews(){
       sb.from(_YT_TABLE).select('id,title,thumb,is_short,group_ko,content_flag')
         .gte('published_at',today).lt('published_at',tomorrow)
         .order('published_at',{ascending:false}).limit(50),
-      sb.from('yt_view_milestones').select('*,yt_channel_videos!inner(title,thumb,group_ko)')
-        .eq('crossed_at',today).eq('seeded',false).limit(20)
+      sb.from('yt_view_milestones').select('*,yt_channel_videos!inner(title,thumb,group_ko,published_at)')
+        .eq('crossed_at',today).eq('seeded',false).limit(300)
         // ⚠️ .catch가 아니라 .then(성공,실패) — Supabase 쿼리 빌더는 thenable일 뿐 Promise가 아니라 .catch가 없다.
         //    .catch를 쓰면 여기서 TypeError가 나 선반 전체가 사라졌다(9/27 마일스톤 추가 직후부터, 2026-09-28 발견).
         .then(r=>r,()=>({data:[]}))
@@ -18139,19 +18139,71 @@ async function _buildFeedDailyNews(){
       items.push({type:isTeaser?'teaser':'mv',title:t,sub:_gLabelKo(v.group_ko),thumb:v.thumb,
         nav:()=>openLightbox(vidUrl,!!v.is_short,null,0,{groupKo:v.group_ko},false,true)});
     });
+    // 조회수 돌파 — **뉴스가 되는 것만**(2026-09-28, 사용자: "N 돌파 너무 많다"). 하루 수십 건 중 대부분이 옛 영상의
+    // 10만 돌파라 소식으로서 값이 없었다. ①100만↑ 또는 ②최근 30일 안에 올라온 영상만 남기고, ③같은 그룹은 한 줄로
+    // 묶는다("튜이드 · 영상 3개 돌파 · 최고 10만+"). 표기는 _fmtViewMilestone(트로피와 같은 규칙) — 예전 라벨 표는
+    // 단계를 1~6 번호로 가정해 실제 값(100000)이 날것으로 찍혔다.
+    const _recent30=new Date(Date.now()-30*86400000).toISOString().slice(0,10);
+    const _mg=new Map();
     (milesRes.data||[]).forEach(m=>{
       const v=m.yt_channel_videos;if(!v)return;
+      const tier=+m.tier||0;
+      if(!(tier>=1e6||String(v.published_at||'')>=_recent30))return;
       const gko=v.group_ko||m.group_ko;
-      const TIER_LABEL={1:'10만',2:'100만',3:'500만',4:'1000만',5:'5000만',6:'1억'};
-      const sub=`${_gLabelKo(gko)} · ${TIER_LABEL[m.tier]||m.tier} 돌파`;
-      const vidUrl=`https://www.youtube.com/watch?v=${m.video_id}`;
-      items.push({type:'milestone',title:v.title||'',sub,thumb:v.thumb,
+      const cur=_mg.get(gko);
+      if(!cur)_mg.set(gko,{best:m,n:1});else{cur.n++;if(tier>(+cur.best.tier||0))cur.best=m;}
+    });
+    // 상한 8그룹 — 복구 동기화 같은 날 첫 관측분이 섞여도 소식이 조회수로 도배되지 않게(나머지는 소식감이 아님)
+    [..._mg.entries()].sort((a,b)=>(+b[1].best.tier)-(+a[1].best.tier)).slice(0,8).forEach(([gko,{best,n}])=>{
+      const v=best.yt_channel_videos;
+      const lbl=_fmtViewMilestone(+best.tier);
+      const sub=n>1?(currentLang==='ko'?`${_gLabelKo(gko)} · 영상 ${n}개 돌파 · 최고 ${lbl}`:`${_gLabelKo(gko)} · ${n} videos · top ${lbl}`)
+                   :(currentLang==='ko'?`${_gLabelKo(gko)} · ${lbl} 돌파`:`${_gLabelKo(gko)} · passed ${lbl}`);
+      const vidUrl=`https://www.youtube.com/watch?v=${best.video_id}`;
+      items.push({type:'milestone',title:v.title||'',sub,thumb:v.thumb,score:40+Math.log10(+best.tier||1),
         nav:()=>openLightbox(vidUrl,false,null,0,{groupKo:gko},false,true)});
     });
     if(!items.length)return;
-    items.forEach(r=>_appendNewsRow(list,r));
+    // ── 1면 레이아웃(2026-09-28, 사용자: "일렬 리스트라 보기 별로") ── 신문 1면처럼 **가장 큰 소식 하나**를 크게,
+    // 그다음 4개만 한 줄씩, 나머지는 접는다. 우선순위: 음방 1위 > MV > 앨범 > 티저 > 조회수 돌파(큰 단계일수록 위).
+    const _PRI={win:100,mv:80,album:70,teaser:50};
+    items.forEach((r,i)=>{r._s=(r.score!=null?r.score:(_PRI[r.type]||0))-i*0.001;});
+    items.sort((a,b)=>b._s-a._s);
+    const heroIdx=items.findIndex(r=>r.thumb); // 헤드라인은 이미지가 있는 것 중 최상위
+    const rest=items.slice();
+    if(heroIdx>=0)_appendNewsHero(list,rest.splice(heroIdx,1)[0]);
+    const SHOW=4;
+    rest.slice(0,SHOW).forEach(r=>_appendNewsRow(list,r));
+    if(rest.length>SHOW){
+      const more=document.createElement('button');more.type='button';more.className='feed-news-more';
+      const extra=rest.slice(SHOW);
+      more.textContent=currentLang==='ko'?`+${extra.length}개 더보기`:`+${extra.length} more`;
+      more.addEventListener('click',()=>{more.remove();extra.forEach(r=>_appendNewsRow(list,r));});
+      list.appendChild(more);
+    }
     section.style.display='';
   }catch(e){console.warn('[feed] 오늘의 소식 선반 실패 — 이 선반만 빠집니다',e);}
+}
+// 1면 헤드라인 카드(2026-09-28). 캡션은 **이미지 아래** — 앨범 커버는 그 자체가 작품이라 위에 얹지 않는다는
+// 원칙(영상도 같은 틀로 통일). 앨범은 정사각 커버를 가운데 두고 양옆을 흐린 커버로 채운다(자르지 않음).
+function _appendNewsHero(container,{type,title,sub,thumb,nav}){
+  const LABELS={album:'💿 신보',win:'🏆 1위',mv:'🎬 MV',teaser:'🎬 티저',milestone:'📈 조회수'};
+  const CLS={album:'fnb-album',win:'fnb-win',mv:'fnb-mv',teaser:'fnb-teaser',milestone:'fnb-milestone'};
+  const card=document.createElement('div');card.className='feed-news-hero'+(type==='album'?' is-album':'');
+  const media=document.createElement('div');media.className='fnh-media';
+  if(type==='album'){const bg=document.createElement('div');bg.className='fnh-bg';bg.style.backgroundImage=`url(${thumb})`;media.appendChild(bg);}
+  const img=document.createElement('img');img.alt='';img.loading='lazy';img.className='fnh-img';
+  img.addEventListener('load',()=>img.classList.add('loaded'));img.src=thumb;media.appendChild(img);
+  const cap=document.createElement('div');cap.className='fnh-cap';
+  const badge=document.createElement('span');badge.className='feed-news-badge '+(CLS[type]||'');badge.textContent=LABELS[type]||type;
+  const t=document.createElement('div');t.className='fnh-title';t.textContent=_cleanTitle(title);
+  cap.appendChild(badge);cap.appendChild(t);
+  if(sub){const s=document.createElement('div');s.className='fnh-sub';s.textContent=sub;cap.appendChild(s);}
+  card.appendChild(media);card.appendChild(cap);
+  card.addEventListener('click',nav);
+  card.addEventListener('touchstart',e=>_lbRipple(card,e),{passive:true});
+  card.addEventListener('mousedown',e=>_lbRipple(card,e));
+  container.appendChild(card);
 }
 function _appendNewsRow(container,{type,title,sub,thumb,nav}){
   const LABELS={album:'💿 신보',win:'🏆 1위',mv:'🎬 MV',teaser:'🎬 티저',milestone:'📈 조회수'};

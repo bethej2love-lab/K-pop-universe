@@ -3361,12 +3361,25 @@
   .fnb-win{background:rgba(255,200,60,0.13);color:rgba(255,215,80,0.92);}
   .fnb-mv{background:rgba(160,100,255,0.13);color:rgba(195,150,255,0.92);}
   .fnb-teaser{background:rgba(60,220,180,0.13);color:rgba(90,240,200,0.92);}
+  .fnb-milestone{background:rgba(255,120,150,0.13);color:rgba(255,160,180,0.95);} /* 09-28: 빠져 있어 기본색(어두움)으로 거의 안 보였다 */
   .feed-news-body{flex:1;min-width:0;}
   .feed-news-title{font-size:13px;font-weight:600;color:rgba(220,232,255,0.92);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
   .feed-news-sub{font-size:11px;color:rgba(140,166,215,0.72);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
   .feed-news-thumb{flex-shrink:0;width:60px;height:38px;object-fit:cover;border-radius:5px;opacity:0;transition:opacity .25s ease;}
   .feed-news-thumb.loaded{opacity:1;}
   .feed-news-thumb.is-square{width:38px;height:38px;}
+  /* 투데이스 케이팝 1면(2026-09-28) — 헤드라인 1 + 요약 4 + 더보기 */
+  .feed-news-hero{margin:2px 16px 6px;border-radius:14px;overflow:hidden;background:rgba(255,255,255,0.035);cursor:pointer;position:relative;-webkit-tap-highlight-color:transparent;}
+  .feed-news-hero .fnh-media{position:relative;aspect-ratio:16/9;background:rgba(255,255,255,0.04);overflow:hidden;}
+  .feed-news-hero .fnh-img{width:100%;height:100%;object-fit:cover;display:block;opacity:0;transition:opacity .25s ease;}
+  .feed-news-hero .fnh-img.loaded{opacity:1;}
+  .feed-news-hero.is-album .fnh-bg{position:absolute;inset:-20px;background-size:cover;background-position:center;filter:blur(22px) brightness(.55);}
+  .feed-news-hero.is-album .fnh-img{position:relative;width:auto;height:100%;margin:0 auto;object-fit:contain;}
+  .feed-news-hero .fnh-cap{padding:10px 14px 12px;}
+  .feed-news-hero .feed-news-badge{display:inline-block;min-width:0;}
+  .feed-news-hero .fnh-title{margin-top:7px;font-size:15px;font-weight:700;line-height:1.35;color:rgba(232,240,255,0.95);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
+  .feed-news-hero .fnh-sub{margin-top:3px;font-size:11.5px;color:rgba(150,175,222,0.75);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
+  .feed-news-more{display:block;margin:4px 20px 2px;padding:8px 0;width:calc(100% - 40px);background:none;border:0;border-top:0.5px solid rgba(255,255,255,0.06);color:rgba(150,175,222,0.8);font-size:12px;font-weight:600;cursor:pointer;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
   /* 아이콘 전용 셰브런(2026-08-21, 사용자 요청 — 텍스트바가 너무 투박하고 큼) — 작은 원형 버튼, 접힘/펼침은
      회전으로만 표현. 터치 타겟은 실제 시각 크기(28px)보다 무형으로 넉넉히 키움(padding, 기존 소셜아이콘
      확장 패턴과 동일). */
