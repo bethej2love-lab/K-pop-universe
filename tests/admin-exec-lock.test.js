@@ -29,7 +29,7 @@ need(/opts\.selfRestop&&id===_admBusyId/.test(bindBody),
   '  · selfRestop 버튼(쇼츠 승격)은 실행 중 재클릭=중단 통과');
 
 // ── ② 실행 버튼이 전부 래퍼로 등록됐는가(raw addEventListener로 락 우회 금지) ──────────
-const EXEC_IDS = ['sp-yt-sync','sp-yt-viewcount-btn','sp-yt-allviewcount-btn','sp-yt-rotateviewcount-btn',
+const EXEC_IDS = ['sp-yt-sync', // 조회수 수동 버튼 3종은 09-28 제거(루틴 자동)
   'sp-yt-backfill-btn','sp-yt-backfill-priority-btn','sp-yt-manual-add-btn','sp-yt-manual-batch-add-btn',
   'sp-yt-autotag','sp-detect-btn','sp-collabfix-btn','sp-scan-namecollide-btn','sp-yt-retag-all',
   'sp-mistagfix-btn','sp-fancamfix-btn','sp-membersfix-btn','sp-catfix-btn','sp-shortspromote-btn',
@@ -65,7 +65,8 @@ need(/_snapshotBeforeBulk\('멤버\+콜라보 재태깅\(전체\)'/.test(retag),
 // 나머지 (전체) 3개는 확인창을 추가하되, 데일리 루틴이 부를 땐 skip해야 루틴이 안 멈춘다.
 for (const [fn, tag] of [['_ytSweepAmbiguousCollabMistag','콜라보'],['_ytSweepMembersMistag','자체 멤버'],['_ytSweepCategoryMistag','카테고리']]) {
   const body = (src.match(new RegExp(`async function ${fn}\\([\\s\\S]*?\\n\\}\\n`)) || [''])[0];
-  need(/!_admRoutineRunning&&typeof _confirmDialog==='function'/.test(body),
+  // 청소 루틴(_admCleanupRunning, 2026-09-27)이 부를 때도 skip해야 한다 — 그 조건이 사이에 끼는 걸 허용.
+  need(/!_admRoutineRunning&&(?:!_admCleanupRunning&&)?typeof _confirmDialog==='function'/.test(body),
     `${tag} 재검증(전체)에 확인창 + 루틴 중 skip 가드`);
 }
 

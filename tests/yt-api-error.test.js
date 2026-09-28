@@ -134,8 +134,8 @@ need(!/val:-1/.test(fill),'duration_sec에 -1 같은 가짜 값을 박지 않음
 need(/e\.isQuota\?'⛔ '/.test(fill),'백필도 쿼터 초과를 구분해 표시');
 need(/parseInt\(document\.getElementById\('sp-yt-durfill-budget'\)/.test(admin),
   '이번 회차에 쓸 호출 수를 어드민이 정할 수 있음(하루 쿼터를 동기화와 나눠 쓰므로)');
-need(/id="sp-yt-durfill-btn"/.test(src)&&/id="sp-yt-durfill-budget"/.test(src),'백필 버튼·예산 입력 UI 존재');
-need(/_admExecBind\('sp-yt-durfill-btn'/.test(admin),'백필 버튼이 실제로 바인딩됨');
+// (백필 버튼·예산 입력 UI 검사는 뺐다 — 2026-09-28 버튼 제거. 루틴 순환 갱신이 재생시간을 채우고, 함수는
+//  콘솔 호출용으로 남아 있어 위 본문 검사는 유지한다.)
 
 // ── ⑤ duration_sec=0은 "0초 영상"이 아니라 "길이 미상"이다 ─────────────────────
 // 진행 중 라이브는 유튜브가 "P0D"를 주고, 파싱하면 0이 된다('0'은 JS에서 truthy라 null이 아니다).

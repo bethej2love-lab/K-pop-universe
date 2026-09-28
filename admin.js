@@ -10165,17 +10165,10 @@ document.getElementById('vid-tag-thumb-refresh').addEventListener('click',async 
     await _ytSyncExtChannels();
     await _ytRefreshViewCounts();
   },'전체 동기화');
-  _admExecBind('sp-yt-viewcount-btn',async()=>{
-    await _ytRefreshViewCounts();
-  },'조회수 갱신(직캠)');
-  _admExecBind('sp-yt-allviewcount-btn',async()=>{
-    await _ytRefreshAllViewCounts();
-  },'전체 조회수 갱신');
-  _admExecBind('sp-yt-rotateviewcount-btn',async()=>{
-    await _ytRotateViewCountRefresh();
-  },'조회수 순환 갱신');
-  _admExecBind('sp-yt-durfill-btn',_ytBackfillDurations,'재생시간·생방송 여부 백필');
-  _admExecBind('sp-vm-seed-btn',_ytSeedViewMilestones,'조회수 마일스톤 시딩(일회용)');
+  // 조회수·재생시간 수동 버튼 5개 제거(2026-09-28, 사용자 요청 "일회용·안 쓰는 버튼 정리") — 전부 루틴이 같은
+  // 함수를 자동으로 돈다: 최근 14일 조회수(루틴 1-3, 3시간마다 + 매시간 신규분), 전체 순환(루틴 8, 하루 2만개 —
+  // 라이브 포함 전 카테고리·재생시간까지), 마일스톤 시딩(일회용, 09-23 완료). 함수는 남겨둬 콘솔에서 부를 수 있다.
+  // ⚠️ 재생시간 대량 백필(_ytBackfillDurations)은 쿼터가 95%에 붙어 있어 수동으로 돌리면 그날 동기화가 굶는다.
   _admExecBind('sp-yt-sweep-banned',_ytSweepBannedVideos,'밴 인물 숨김');
   _admExecBind('sp-yt-sweep-junk',_ytSweepJunkKeywordVideos,'제외 키워드 정리');
   // "무조건 제외 키워드" 목록이 코드에만 있어서 관리자가 지금 뭐가 걸려있는지 확인할 방법이 없었음
