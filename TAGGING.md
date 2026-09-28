@@ -25,9 +25,9 @@
 | **흔한단어 게이트가 그룹을 비움** | 잡지 "패션 아이콘" → group_ko null → 배치 사망 | `_m2ParseTitle` 게이트 후 null 반환 + `_extBuildRows` 최종 방어선 | ext-sync-held-groupko | ✅ 09-28 |
 | **동명이인**(다른 그룹 같은 이름) | 지유·혜리(장혜리)·"한빈" | `_normalizeMemberTags`·`_atmNameTakenByGroupmate`·ambiguous 검수 | dual-group-tags | 🟡 표본 기반 — `name_pollution_probe.mjs` |
 | **로스터 밖 동명 인물** | 솔로 가수 카야(KAYA)→마카야·JO1 사토 케이고→마사토 | 성 떼기 수정으로 일부 해소 · 보류(held) 경로 | — | 🟡 로스터 등록으로만 근본 해결 |
-| **챌린지·커버 원곡자가 게스트로** | "Good Boy" 챌린지 → 지디·태양 게스트 · "Twinkle(태티서)" 커버 → 태연·티파니 게스트 | `_coverResolve`(곡명 사전) | cover-resolve | 🔴 **09-28 순위표로 발견, 미착수** |
-| **한 글자 영문명** | 앤팀 케이 "K" ← "K-pop"·"KCON"(24/61) | `_isHashtagOnlyName`(한글 1음절만) | — | 🔴 **09-28 발견, 미착수** |
-| **원인 미상** | 드림캐쳐 수아·유현 ← "UAU(유아유)" 무대(각 7/22) | — | — | 🔴 **09-28 발견, 조사 필요** |
+| **챌린지·커버 원곡자가 게스트로** | "Good Boy" 챌린지 → 지디·태양 게스트 · "Twinkle(태티서)" 커버 → 태연·티파니 게스트 | 곡 제목을 유닛 별명에서 제거(GOOD BOY) · 유닛 매칭에서 "'곡' (유닛)" 원곡 표기 제외 | rank-findings | ✅ 09-28 수정·DB 정리 |
+| **한 글자 영문명** | 앤팀 케이 "K" ← "K-pop"·"KCON"(24/61) | `hitHashtag` — 해시태그 뒤 하이픈+글자는 더 긴 해시태그(#K-pop≠#K) | rank-findings | ✅ 09-28 |
+| **유닛명 = 신인 그룹명** | 드림캐쳐 유닛 유아유(UAU) ← 2026 신인 그룹 UAU 무대 | `_UNIT_NEED_PARENT_TOKENS`(부모 그룹이 제목에 있을 때만) | rank-findings | ✅ 09-28 |
 | **그룹 등록 전 영상 누락**(반대 방향 — 태그 없음) | 비비업 9/27 등록 → 9/24 영상 영구 누락 | 외부 동기화 로스터 재훑기 | ext-sync-fairness | ✅ 09-28 |
 
 ⚠️ DB 정리는 항상 **고친 매처로 다시 판정한 결과**로만 한다(근거 없음 ≠ 오태깅 — 첫 순위표는 #시온·"YE CHAN"

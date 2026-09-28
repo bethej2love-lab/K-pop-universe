@@ -7907,10 +7907,12 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
   // 콜라보 태깅됨, 2026-07-31 실측). 단일음절 멤버는 해시태그로 명시된 경우만 매칭을 인정한다.
   // _ATM_HASHTAG_ONLY_NAMES(여름/아이엠 등)는 단일음절은 아니지만 마찬가지로 흔한 단어/영어 축약형과
   // 겹치는 이름이라 같은 방식(해시태그만 인정)으로 보호한다 — 영문 쪽은 점/공백 뗀 압축형(#IM)까지 인정.
+  // ⚠️ 해시태그 뒤에 하이픈+글자가 이어지면 이름이 아니라 **더 긴 해시태그의 일부**다 — "#K-pop"의 "#K"가
+  //    앤팀 케이(영문명 K)로 잡혀 KOREAPEDIA 같은 영상이 앤팀으로 역추론됐다(2026-09-28 순위표 24/61).
   function hitHashtag(name){
     if(!name)return false;
-    return new RegExp(`#${_atmEscRe(name)}(?![가-힣a-zA-Z0-9])`,'i').test(title)
-      ||new RegExp(`#${_atmEscRe(name.replace(/[^가-힣a-zA-Z0-9]/g,''))}(?![가-힣a-zA-Z0-9])`,'i').test(title);
+    return new RegExp(`#${_atmEscRe(name)}(?![가-힣a-zA-Z0-9]|[-‐][가-힣a-zA-Z0-9])`,'i').test(title)
+      ||new RegExp(`#${_atmEscRe(name.replace(/[^가-힣a-zA-Z0-9]/g,''))}(?![가-힣a-zA-Z0-9]|[-‐][가-힣a-zA-Z0-9])`,'i').test(title);
   }
   // 이 이름 변형들이 "feat 구간 안에서만" 등장하는가 — 위 feat 강등 판정용(true면 게스트로 본다).
   // 해시태그로 명시된 이름은 업로더가 직접 특정해준 근거라 강등하지 않는다(#BOBBY로 박아둔 콜라보 등).
@@ -8142,6 +8144,10 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
     // 붙던 사고(2026-09-03 실측). 여기(외부 채널 경로)만 필요하다 — 자체 채널 경로
     // (_unitMembersFromTitle)는 gko===ko인 멤버만 넣으므로 남의 그룹으로는 애초에 안 샌다.
     if(unit.names.every(t=>_UNIT_NEED_PARENT_TOKENS.has(t))&&!unit.members.some(({gko})=>seen.has(gko)))return;
+    // "'곡명' (유닛)" — 따옴표 곡명 바로 뒤 괄호의 유닛명은 **원곡 표기**지 출연이 아니다(2026-09-28, 오태깅 순위표로
+    // 발견: 피원하모니 "'Twinkle' (태티서) LIVE CLIP"에 태연·티파니·서현이 게스트로 붙음). 그룹명은 원곡 해석기
+    // (_coverResolve)가 같은 형태를 원곡으로 옮기지만 유닛은 그 경로가 없어 게스트로 샜다.
+    if(unit.names.some(n=>new RegExp(`[‘'"“「『][^‘'"“”’」』]{1,80}[’'"”」』]\\s*[(（]\\s*${_atmEscRe(n)}\\s*[)）]`,'i').test(rawTitle)))return;
     // 로테이션 유닛(NCT U — shared.js 주석 참고)은 members가 "곡마다 바뀌는 참여자 풀"이라 전원
     // 확장하면 참여도 안 한 멤버까지 붙는다(2026-08-25 실측 767건). 제목에 이름이 따로 언급된
     // 멤버만 인정하고, 그 멤버의 그룹만 matchedGroupKos에 넣는다 — 이름이 하나도 없으면 이 유닛으로

@@ -100,14 +100,19 @@ function _soloReattribGko(gko,memberKos,publishedAt){
 // 'GOOD BOY' 추가(2026-09-03): 지디×태양 유닛곡 제목인데 **평문 매칭으로 열려 있었다.** 그 바람에
 // 투모로우바이투게더 "Good Boy Gone Bad" 영상 94건에 지디·태양이 통째로 붙었다(실측). 영어 흔한 구라
 // AAA·EVOLution과 같은 계열 — 해시태그로만 인정한다.
-const _UNIT_HASHTAG_ONLY_TOKENS=new Set(['AAA','EVOLution','Glow','hatch!','NXT','M&N','GOOD BOY']);
+// ⚠️ 'GOOD BOY'는 2026-09-28에 유닛 이름에서 아예 뺐다 — 해시태그 전용으로도 부족했다: 다른 그룹들의 "Good Boy"
+// 챌린지가 정식 해시태그 #GoodBoy를 달아서 지디·태양이 게스트로 계속 붙었다(순위표 14~15건). 곡 제목은 유닛
+// 이름이 아니다 — 진짜 지디×태양 콘텐츠는 제목에 "GD X TAEYANG"이 있다.
+const _UNIT_HASHTAG_ONLY_TOKENS=new Set(['AAA','EVOLution','Glow','hatch!','NXT','M&N']);
 // ⚠️ **해시태그마저 근거가 못 되는** 유닛 트리거(2026-09-03 신설). 다른 그룹이 같은 단어를 곡명으로 쓰고
 // 그 그룹 콘텐츠에 정식 해시태그로 달면, 위 hashtag-only 가드를 그냥 통과한다.
 // 실사고: 트렌드지의 곡 "GLOW" 홍보 영상에 `#TRENDZ #GLOW #GLOWchallenge`가 달렸고, 트리플에스 유닛
 // 'Glow'가 그 해시태그에 걸려 김채원·설린·서아·지연 4명이 144건에 붙었다(36건 × 4명).
 // 이 토큰들은 **유닛 소속 그룹이 제목에서 따로 확인될 때만** 확장한다 — 진짜 트리플에스 유닛 콘텐츠는
 // 제목에 그룹명이 같이 있고, 자체 채널 경로는 애초에 채널 그룹으로 한정돼 영향이 없다.
-const _UNIT_NEED_PARENT_TOKENS=new Set(['Glow']);
+// 'UAU'·'유아유'(2026-09-28): 드림캐쳐 유닛명인데 2026년 같은 이름의 신인 그룹 UAU("GENE")가 나와 그 무대마다
+// 지유·수아·유현이 붙었다(순위표 7건씩). 드림캐쳐가 제목에 있을 때만 유닛으로 본다.
+const _UNIT_NEED_PARENT_TOKENS=new Set(['Glow','UAU','유아유']);
 const _PROJECT_UNITS={
   'V8':{names:['V8','브이에잇'],members:[{mko:'디에잇',gko:'세븐틴'},{mko:'버논',gko:'세븐틴'}]},
   'GOT THE BEAT':{names:['GOT THE BEAT','갓더비트'],members:[{mko:'보아',gko:'보아'},{mko:'태연',gko:'소녀시대'},{mko:'효연',gko:'소녀시대'},
@@ -245,7 +250,7 @@ const _PROJECT_UNITS={
   'DAY6 (Even of Day)':{names:['DAY6 (Even of Day)','Even of Day','이븐 오브 데이'],members:[{mko:'Young K',gko:'데이식스'},{mko:'원필',gko:'데이식스'},{mko:'도운',gko:'데이식스'}]},
   // 빅뱅 서브유닛
   'GD&TOP':{names:['GD&TOP','GD & TOP'],members:[{mko:'지디',gko:'빅뱅'},{mko:'탑',gko:'빅뱅'}]},
-  'GD X TAEYANG':{names:['GD X TAEYANG','G-DRAGON X TAEYANG','GOOD BOY'],members:[{mko:'지디',gko:'빅뱅'},{mko:'태양',gko:'빅뱅'}]},
+  'GD X TAEYANG':{names:['GD X TAEYANG','G-DRAGON X TAEYANG','GDXTAEYANG'],members:[{mko:'지디',gko:'빅뱅'},{mko:'태양',gko:'빅뱅'}]},
   // ZE:A 서브유닛
   'ZE:A Five':{names:['ZE:A Five','ZEA Five'],members:[{mko:'Kevin',gko:'제국의아이들'},{mko:'하민우',gko:'제국의아이들'},{mko:'김동준',gko:'제국의아이들'},{mko:'임시완',gko:'제국의아이들'},{mko:'박형식',gko:'제국의아이들'}]},
   // 트리플에스 서브유닛 10종
