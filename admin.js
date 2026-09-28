@@ -7299,7 +7299,11 @@ async function _ytAutoTagMembers(){
   const btn=document.getElementById('sp-yt-autotag');
   if(btn)btn.disabled=true;
   try{
-    const groupKos=Object.keys(GROUPS);
+    // 솔로 아티스트 자체 채널(group_ko=아티스트 이름, groups.json엔 없음)도 콜라보 태깅 대상에 넣는다(2026-09-28).
+    // 예전엔 GROUPS 키만 돌아서 디모렉스 'Officially Cool'(X 윈터)·싸이 'That That'(feat. 슈가) 같은 솔로 채널 콜라보가
+    // 한 번도 with_members에 안 붙었다 — 실측 13명 3,902건 중 콜라보 태그는 65건뿐. Surf "함께한 멤버"가 이걸 읽는다.
+    const soloKos=new Set(ARTISTS.filter(a=>a&&a.name&&a.name.ko&&!GROUPS[a.name.ko]&&a.links&&a.links.youtube).map(a=>a.name.ko));
+    const groupKos=[...Object.keys(GROUPS),...soloKos];
     // 이번 실행이 볼 범위(루틴=증분/주1회 전량, 버튼=전량). 그룹 루프 밖에서 한 번만 정한다 —
     // 그룹마다 부르면 '전량 실행 시각' 기록이 208번 덮어써진다.
     const _atmSince=_admRoutineScopeSince('autotag');
@@ -7311,8 +7315,12 @@ async function _ytAutoTagMembers(){
       // a.group.ko(주 소속)만 보면 유연정(주 소속 아이오아이, 겸임 우주소녀)처럼 이중소속 멤버가 겸임 그룹
       // 채널에서는 영원히 로스터에 안 잡혀 자동 태깅 대상에서 빠짐 — 겸임 소속까지 보는 _artistGroups로 판정
       // (2026-07-31, 우주소녀 채널의 유연정 단독 영상이 계속 미태깅으로 남던 문제의 원인).
-      const members=_atmRosterFor(gko);
-      if(!members.length){completed++;return;}
+      const isSolo=soloKos.has(gko);
+      const members=isSolo?[]:_atmRosterFor(gko);
+      if(!members.length&&!isSolo){completed++;return;}
+      // 솔로: 본인이 속한 그룹(슬기→레드벨벳)에서 본인만 잡힌 건 콜라보가 아니다 — 본인과 본인 그룹은 게스트에서 뺀다.
+      const selfA=isSolo?ARTISTS.find(a=>a.name.ko===gko):null;
+      const selfGroups=new Set(selfA?_artistGroups(selfA).map(g=>g.ko):[]);
       // 같은 그룹 멤버(members)가 비어있거나, 콜라보(with_members/with_groups)가 아직 하나도 안 잡힌
       // 행을 대상으로 삼는다 — 자체 채널 챌린지 영상처럼 제목에 "챌린지" 같은 표시 없이 바로 다른 그룹
       // 멤버 이름만 나오는 경우도 있고, 로스터가 그때그때 늘어나서 예전엔 매칭 안 되던 이름이 이제는
@@ -7336,7 +7344,7 @@ async function _ytAutoTagMembers(){
       // 이 버튼은 "매일" 루틴이라 매번 그룹 전체를 훑는데, with_members만 비어있고 members는 이미 채워진
       // 행까지 description을 통째로 받아오면 그 텍스트가 그냥 버려져서 egress 낭비였음(2026-08-06, 사용자
       // 제보 — Supabase 무료 티어 egress 한도 초과, 관리자 스윕 쿼리들이 유력 원인으로 지목됨).
-      const needDescIds=rows.filter(v=>!v.members?.length).map(v=>v.id);
+      const needDescIds=isSolo?[]:rows.filter(v=>!v.members?.length).map(v=>v.id);
       const descByIdText=new Map();
       for(let i=0;i<needDescIds.length;i+=500){
         const{data:descRows,error:descErr}=await sb.from(_YT_TABLE).select('id,description').in('id',needDescIds.slice(i,i+500));
@@ -7347,7 +7355,7 @@ async function _ytAutoTagMembers(){
       rows.forEach(v=>{
         const title=v.title||'';
         const patch={};
-        if(!v.members?.length){
+        if(!v.members?.length&&!isSolo){
           // 자체 채널 멤버 매칭은 제목뿐 아니라 설명란(description)도 같이 훑는다 — 제목엔 이름이 없어도
           // 설명란 끝의 해시태그 나열(#세림 #앨런 ...)로 출연자를 밝히는 경우가 많음(2026-07-31 추가).
           // 콜라보(다른 그룹) 추론은 설명란까지 넓히면 소개문구/SNS 링크 등 관련 없는 텍스트가 섞여
@@ -7366,12 +7374,14 @@ async function _ytAutoTagMembers(){
             const otherGkos=[match.primaryGroup,...match.withGroups].filter(og=>og&&og!==gko);
             let withGroups=[],withMembers=[];
             otherGkos.forEach(og=>{
-              const sec=match.membersByGroup[og]||[];
+              let sec=match.membersByGroup[og]||[];
+              if(isSolo){sec=sec.filter(m=>m!==gko);if(selfGroups.has(og)&&!sec.length)return;}
               const{asGroup,extraMembers}=_classifyGuestGroup(sec,og);
               if(asGroup)withGroups.push(og);
               extraMembers.forEach(mko=>withMembers.push(`${mko}(${og})`));
             });
             ({withGroups,withMembers}=_normalizeMemberTags({title,groupKo:gko,members:patch.members||v.members,withGroups,withMembers})); // 겸임 중복 제거
+            if(isSolo)withMembers=withMembers.filter(x=>!x.startsWith(gko+'('));
             if(withMembers.length)patch.with_members=withMembers;
             if(withGroups.length)patch.with_groups=withGroups;
           }
@@ -7623,6 +7633,11 @@ const _GROUP_TITLE_CONFLICT_EXCLUDE={
   // 스텔라(Stellar) ↔ 하츠투하츠 멤버 '스텔라': 제목에 하츠투하츠가 있으면 '스텔라'는 그룹 스텔라가
   // 아니라 그 멤버다 → 그룹 스텔라 매칭 제외(멤버는 하츠투하츠 로스터에서 정상 추출). strictSync 해제와 세트.
   '스텔라':[/하츠투하츠|hearts\s*2\s*hearts|\bH2H\b/i],
+  // 솔로 채널 콜라보 태깅 실측(2026-09-28): "April Fools' Day"·"April Issue"→에이프릴, "다이아 버튼"(유튜브 100만/1000만
+  // 기념 버튼)→다이아, "서태지와 아이들"→(여자)아이들. 전부 그룹이 아니라 일반 표현이다.
+  '에이프릴':[/april\s*(fool|issue)/i],
+  '다이아':[/다이아\s*버튼|diamond\s*(play\s*)?button/i],
+  '아이들':[/서태지\s*와\s*아이들/],
 };
 // 위 정규식 목록으로도 다 못 거르는 경우(제목이 그냥 "Supernova"+다른 그룹 해시태그만 있고 곡명/원곡
 // 아티스트 언급이 없는 챌린지 영상들)를 위한 2차 방어선 — 이 그룹이 "다른 실존 그룹과 같이" 매칭됐으면
@@ -7962,7 +7977,13 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
   // 정신(이정신)·학년(주학년) 등. 이름 변형은 자동으로 만들어지므로 사람이 등록한 이름보다 더 위험하다(제이미→"이미"
   // 사고, _atmStripSurname 주석). 조사가 붙으면 토큰 경계에서 이미 걸러지지만 이 단어들은 단독으로도 흔하다.
   const _ATM_COMMON_KO_WORDS=new Set(['베이비','하루','하늘','바다','봄','여름','겨울','별','사랑','달','천사','하트','메이','가을','노을','소원','하나','루비','미소','마이','렉스',
-    '우리','한국','아이','정신','학년','형식','성원','나은','수원','수정','준수']); // ⚠️ '미주'는 뺐다 — 러블리즈 이미주는 예능에서 그룹명 없이 "미주"로 불리는 게 대부분(실측 60건 거의 전부 정당) // 메이: en=May(달)+동명이인 3명(리센느/세이마이네임/체리블렛)+A2O MAY 그룹명 — 인퍼런스에선 해시태그/그룹문맥만(2026-08-24). 마이(이즈나 Mai): "마이 코드"·"I Love My Body 마이 바디"의 "마이"(=My)에 대량 오매칭(2026-08-25 실측 146건) — 해시태그(#마이)만 인정. 렉스(소디엑): 아래 matchAliases 반영(2026-09-23)으로 디모렉스의 별칭 "디모 렉스"가 역추론 후보에 들어가게 되면서, 그 안의 " 렉스 " 토큰이 소디엑 멤버 렉스(동명이 아니라 완전히 다른 사람, 남의 2어절 별칭 뒷부분과 우연히 겹침)로 독립 매칭돼 it's Live·Show Champion 콜라보 영상이 소디엑으로 새는 걸 실측으로 확인 — 해시태그(#렉스)만 인정
+    '우리','한국','아이','정신','학년','형식','성원','나은','수원','수정','준수',
+    // 유니버스 밖 유명인과 겹치는 이름·변형(2026-09-28, 솔로 채널 콜라보 태깅 실측): 윤하(가수 윤하 ≠ 유니스 방윤하의
+    // 성 뗀 변형)·지은(아이유 본명 ≠ 퍼플키스 박지은)·비비(가수 BIBI ≠ 이달의소녀 비비 — 효연 'Second (Feat. 비비)')·
+    // 태양(IU 콘서트 "오렌지 태양 아래" ≠ 빅뱅 태양, 일상어). 해시태그(#태양)로 명시되면 그대로 인정된다.
+    '윤하','지은','비비','태양',
+    // 이래(세븐어스 이래 ↔ "개설 이래")·소민(카드 전소민의 성 뗀 변형 ↔ 아이유 채널 "소민 pd") — 같은 실측.
+    '이래','소민']); // ⚠️ '미주'는 뺐다 — 러블리즈 이미주는 예능에서 그룹명 없이 "미주"로 불리는 게 대부분(실측 60건 거의 전부 정당) // 메이: en=May(달)+동명이인 3명(리센느/세이마이네임/체리블렛)+A2O MAY 그룹명 — 인퍼런스에선 해시태그/그룹문맥만(2026-08-24). 마이(이즈나 Mai): "마이 코드"·"I Love My Body 마이 바디"의 "마이"(=My)에 대량 오매칭(2026-08-25 실측 146건) — 해시태그(#마이)만 인정. 렉스(소디엑): 아래 matchAliases 반영(2026-09-23)으로 디모렉스의 별칭 "디모 렉스"가 역추론 후보에 들어가게 되면서, 그 안의 " 렉스 " 토큰이 소디엑 멤버 렉스(동명이 아니라 완전히 다른 사람, 남의 2어절 별칭 뒷부분과 우연히 겹침)로 독립 매칭돼 it's Live·Show Champion 콜라보 영상이 소디엑으로 새는 걸 실측으로 확인 — 해시태그(#렉스)만 인정
   // 멤버 이름이 "실존하는 그룹 이름"과 같은 경우(예: 다이아 멤버 "유니스" ↔ 그룹 유니스(UNIS), A2O MAY의
   // "메이" 등): 제목에 평문으로 나온 "유니스"는 거의 항상 그 그룹을 가리키는데, memberHit이 이걸 그 이름의
   // 멤버(다이아 유니스)로 역추론해 엉뚱한 그룹 콜라보(with_members "유니스(다이아)")로 오태깅함 —
