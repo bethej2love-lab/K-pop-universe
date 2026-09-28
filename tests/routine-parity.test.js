@@ -66,17 +66,22 @@ need(JSON.stringify(routineSyncFns) === JSON.stringify(btnCalls),
 need(routineSyncFns.includes('_ytSyncExtChannels'), '루틴이 외부 채널 동기화를 포함(음방·예능·아이돌주도 유입)');
 need(routineSyncFns.includes('_ytRefreshViewCounts'), '루틴이 조회수 갱신을 포함(이번주 직캠 TOP10이 의존)');
 
-// ── 4) 2~4번 단계도 각 패널 버튼과 같은 함수인지 ────────────────────────────────
+// ── 4) 2~4번 단계 패널 버튼은 2026-09-28에 걷어냈다(루틴·청소 루틴이 자동으로 돌고, 30일 기록상 수동 실행이
+//    거의 없었음). 대신 그 함수들이 **자동 경로에 실제로 들어 있는지**를 고정한다 — 버튼도 루틴도 없으면 영영 안 돈다.
 const routineAllFns = [...rBody.matchAll(/fn:\s*(_yt[A-Za-z0-9_]+)/g)].map(m => m[1]);
-const PANEL = [
-  ['sp-yt-autotag', '_ytAutoTagMembers', '2. 멤버+콜라보 자동 태깅'],
-  ['sp-collabfix-btn', '_ytSweepAmbiguousCollabMistag', '3. 콜라보 오태깅 재검증'],
-  ['sp-scan-namecollide-btn', '_ytScanAmbiguousNameGroupMisassignment', '4. 동명이인 그룹 오배정 스캔'],
-];
-for (const [id, fn, label] of PANEL) {
-  const bound = new RegExp(`_admExecBind\\('${id}',\\s*${fn}\\b`).test(src);
-  need(bound && routineAllFns.includes(fn), `${label} — 패널 버튼(#${id})과 루틴이 같은 함수(${fn})`);
-}
+const cStart = src.indexOf('async function _admRunCleanup(){');
+const cBody = cStart >= 0 ? src.slice(cStart, src.indexOf('\n}\n', cStart)) : '';
+const cleanupFns = [...cBody.matchAll(/fn:\s*(_yt[A-Za-z0-9_]+)/g)].map(m => m[1]);
+for (const [fn, label] of [['_ytAutoTagMembers','멤버+콜라보 자동 태깅'],['_ytSweepAmbiguousCollabMistag','콜라보 재검증'],
+  ['_ytScanAmbiguousNameGroupMisassignment','동명이인 그룹 오배정'],['_ytSweepCoverV2','원곡 태깅 v2'],['_ytSweepMusicShowWins','음방 1위'],
+  ['_ytSweepContentFormats','세부 포맷'],['_ytSweepDualMemberTags','겸임 중복']])
+  need(routineAllFns.includes(fn), `${label} — 매일 루틴에 들어 있음(${fn})`);
+for (const [fn, label] of [['_ytSweepBannedVideos','밴 인물'],['_ytSweepJunkKeywordVideos','제외 키워드'],['_ytSweepCanonicalizeMembers','고아태그'],
+  ['_ytSweepCoverCleanup','원곡 오탐'],['_ytSweepFancamMistag','직캠 재검증'],['_ytSweepMistagReclassify','오태깅 재배정'],
+  ['_ytSweepHeldMistagReclassify','보류 재배정'],['_ytSweepMembersMistag','자체 멤버'],['_ytSweepCategoryMistag','카테고리']])
+  need(cleanupFns.includes(fn), `${label} — 청소 루틴에 들어 있음(${fn})`);
+need(src.includes("getElementById('adm-run-cleanup')") && html.includes('id="adm-run-cleanup"'), '관리자 홈에 청소 루틴 즉시 실행 버튼');
+need(cBody.includes("const line=typeof _admSetLog==='function'?_admSetLog("), '청소 루틴이 단계 결과를 화면 로그에 남김(러너 성공 판정 근거)');
 
 // ── 5) 라벨이 실제 동작과 어긋나지 않는지(사람이 화면에서 읽는 것) ──────────────
 // 2026-09-01: 설정패널 개선 5 — 매일 루틴은 홈 원클릭이 있으니 라벨의 "1." 번호는 뺐다(라벨 텍스트만).

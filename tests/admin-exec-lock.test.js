@@ -31,10 +31,10 @@ need(/opts\.selfRestop&&id===_admBusyId/.test(bindBody),
 // ── ② 실행 버튼이 전부 래퍼로 등록됐는가(raw addEventListener로 락 우회 금지) ──────────
 const EXEC_IDS = ['sp-yt-sync', // 조회수 수동 버튼 3종은 09-28 제거(루틴 자동)
   'sp-yt-backfill-btn','sp-yt-backfill-priority-btn','sp-yt-manual-add-btn','sp-yt-manual-batch-add-btn',
-  'sp-yt-autotag','sp-detect-btn','sp-collabfix-btn','sp-scan-namecollide-btn','sp-yt-retag-all',
-  'sp-mistagfix-btn','sp-fancamfix-btn','sp-membersfix-btn','sp-catfix-btn','sp-shortspromote-btn',
-  'sp-cover-v2-btn','sp-debutgate-btn','sp-dualtag-btn','sp-cover-clean-btn','sp-yt-sweep-banned',
-  'sp-yt-sweep-junk','sp-hidden-rejudge-btn','sp-canon-btn','sp-lockfill-btn','sp-yt-undo-bulk-btn'];
+  'sp-detect-btn','sp-yt-retag-all',
+  
+  'sp-debutgate-btn',
+  'sp-hidden-rejudge-btn','sp-yt-undo-bulk-btn'];
 const boundVia = EXEC_IDS.filter(id => src.includes(`_admExecBind('${id}'`));
 need(boundVia.length === EXEC_IDS.length,
   `실행 버튼 ${EXEC_IDS.length}개 전부 _admExecBind로 등록 — 누락 ${EXEC_IDS.length - boundVia.length}건${boundVia.length<EXEC_IDS.length?': '+EXEC_IDS.filter(id=>!boundVia.includes(id)).join(','):''}`);

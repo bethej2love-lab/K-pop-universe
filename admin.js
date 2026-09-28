@@ -2256,7 +2256,6 @@ async function _ytSweepCoverV2(){
   }catch(e){_ytSetProg('오류: '+e.message);}
   finally{if(btn)btn.disabled=false;}
 }
-_admExecBind('sp-cover-v2-btn',_ytSweepCoverV2,'원곡 태깅 v2');
 
 // ── [원곡 오탐 청소](2026-08-31) ───────────────────────────────────────────────
 // 2026-08-31 실DB 전수 감사(cover_of가 붙은 7,031행)에서 나온 오염을 걷어낸다.
@@ -2357,7 +2356,6 @@ async function _ytSweepCoverCleanup(){
   }catch(e){_ytSetProg('오류: '+e.message);}
   finally{if(btn)btn.disabled=false;}
 }
-_admExecBind('sp-cover-clean-btn',_ytSweepCoverCleanup,'원곡 오탐 청소');
 
 // ── [음악방송 1위 자동 수집](2026-09-11) ────────────────────────────────────────
 // music_show_wins를 매일 유입되는 **1위 직캠/앵콜 영상 제목**에서 직접 채운다.
@@ -2748,7 +2746,6 @@ async function _ytSweepMusicShowWins(){
   }catch(e){_ytSetProg('오류: '+e.message);}
   finally{if(btn)btn.disabled=false;}
 }
-_admExecBind('sp-mswin-btn',_ytSweepMusicShowWins,'음악방송 1위 수집');
 async function _mswUndoLast(){
   if(!sb){_ytSetProg('Supabase 연결 없음');return;}
   let last=null;
@@ -2766,7 +2763,6 @@ async function _mswUndoLast(){
   try{localStorage.removeItem(_MSW_LS_LAST);}catch(e){}
   _ytSetProg(`되돌렸어요 — 음악방송 1위 ${del}건 삭제.`);
 }
-_admExecBind('sp-mswin-undo-btn',_mswUndoLast,'1위 수집 되돌리기');
 
 // ── [겸임 멤버 중복 태그 정리](2026-08-31) ─────────────────────────────────────
 // 위 _normalizeMemberTags는 **앞으로 붙는** 태그만 고친다. 이미 쌓인 행은 이 스윕이 정리한다.
@@ -2824,7 +2820,6 @@ async function _ytSweepDualMemberTags(){
   }catch(e){_ytSetProg('오류: '+e.message);}
   finally{if(btn)btn.disabled=false;}
 }
-_admExecBind('sp-dualtag-btn',_ytSweepDualMemberTags,'겸임 중복 정리');
 
 // ── [데뷔 이전 영상 정리](2026-08-31) ──────────────────────────────────────────
 // _m2DebutBlocks는 **앞으로 붙는** 태그만 막는다. 이미 저장된 행은 이 스윕이 정리한다.
@@ -2996,7 +2991,6 @@ async function _ytSweepMistagReclassify(){
   }catch(e){_ytSetProg('오류: '+e.message);}
   finally{if(btn)btn.disabled=false;}
 }
-_admExecBind('sp-mistagfix-btn',_ytSweepMistagReclassify,'오태깅 그룹 재배정');
 
 // [보류/숨김 그룹 재배정](2026-09-03) — 위 ②가 손대지 않는 사각지대 전용.
 //
@@ -3077,7 +3071,6 @@ async function _ytSweepHeldMistagReclassify(){
   }catch(e){_ytSetProg('오류: '+e.message);}
   finally{if(btn)btn.disabled=false;}
 }
-_admExecBind('sp-heldfix-btn',_ytSweepHeldMistagReclassify,'보류/숨김 그룹 재배정');
 
 // [근거 없는 그룹 배정 정리](2026-09-04) — ②가 구조적으로 못 보는 나머지 절반.
 //
@@ -3563,7 +3556,6 @@ async function _ytSweepFancamMistag(){
   }catch(e){_ytSetProg('오류: '+e.message);}
   finally{if(btn)btn.disabled=false;}
 }
-_admExecBind('sp-fancamfix-btn',_ytSweepFancamMistag,'직캠 재검증');
 
 // [숨김 목록 재판정](2026-08-27) — 위 _ytSweepMistagReclassify가 content_flag 있는 행을 통째로
 // 제외(EXCLUDE)해서, **숨김 처리된 오태깅은 어떤 스윕으로도 영원히 안 닿는 사각지대**였다.
@@ -10169,18 +10161,14 @@ document.getElementById('vid-tag-thumb-refresh').addEventListener('click',async 
   // 함수를 자동으로 돈다: 최근 14일 조회수(루틴 1-3, 3시간마다 + 매시간 신규분), 전체 순환(루틴 8, 하루 2만개 —
   // 라이브 포함 전 카테고리·재생시간까지), 마일스톤 시딩(일회용, 09-23 완료). 함수는 남겨둬 콘솔에서 부를 수 있다.
   // ⚠️ 재생시간 대량 백필(_ytBackfillDurations)은 쿼터가 95%에 붙어 있어 수동으로 돌리면 그날 동기화가 굶는다.
-  _admExecBind('sp-yt-sweep-banned',_ytSweepBannedVideos,'밴 인물 숨김');
-  _admExecBind('sp-yt-sweep-junk',_ytSweepJunkKeywordVideos,'제외 키워드 정리');
   // "무조건 제외 키워드" 목록이 코드에만 있어서 관리자가 지금 뭐가 걸려있는지 확인할 방법이 없었음
   // (2026-08-10, 사용자 요청) — 버튼 밑에 현재 목록을 그대로 보여줌. _JUNK_TITLE_KEYWORDS_GLOBAL을
   // 그대로 참조하므로 코드에서 키워드를 추가/삭제하면 이 표시도 자동으로 같이 바뀜(따로 관리 안 해도 됨).
   const junkKwLbl=document.getElementById('sp-junk-keywords-lbl');
   if(junkKwLbl)junkKwLbl.textContent='현재 목록: '+_JUNK_TITLE_KEYWORDS_GLOBAL.join(', ');
   _admExecBind('sp-detect-btn',_ytSweepDetectPreview,'오태깅 미리보기');
-_admExecBind('sp-lockfill-btn',_ytSweepFillLockedEmpty,'잠금-빈값 채우기');
 _admExecBind('sp-baseline-btn',_admSeedBaselineSample,'기준선 표본 적재');
 _admExecBind('sp-learnlog-btn',_admExportLearningLog,'학습 로그 내보내기');
-_admExecBind('sp-canon-btn',_ytSweepCanonicalizeMembers,'고아태그 정정');
 // 로스터에서 사라진(또는 애초에 멤버가 아니었던) 이름의 태그 정리 — ⚑ 흔한단어 규칙 플로우는 진입점이
 // "지금 로스터에 있는 멤버" 옆의 아이콘이라, 로스터에서 빼버린 이름은 정작 부를 방법이 없었다(2026-09-04,
 // 영파씨에 곡 제목 COLD·OTB·XXL이 멤버로 잘못 등록돼 있던 걸 고친 뒤 남은 태그 90건이 이 사각지대).
@@ -10192,15 +10180,8 @@ _admExecBind('sp-orphanfix-btn',async()=>{
   if(!names.length)return;
   for(const n of names)await _atmScopedMemberReverify(n);
 },'로스터 외 태그 정리');
-_admExecBind('sp-collabfix-btn',_ytSweepAmbiguousCollabMistag,'콜라보 재검증');
-  _admExecBind('sp-scan-namecollide-btn',_ytScanAmbiguousNameGroupMisassignment,'동명이인 재배정');
-  _admExecBind('sp-membersfix-btn',_ytSweepMembersMistag,'자체 멤버 재검증');
   _admExecBind('sp-yt-undo-bulk-btn',_ytUndoLastBulk,'되돌리기');
-  _admExecBind('sp-catfix-btn',_ytSweepCategoryMistag,'카테고리 재분류');
-  _admExecBind('sp-fmttag-btn',_ytSweepContentFormats,'세부 포맷 태깅');
-  _admExecBind('sp-shortspromote-btn',_ytSweepPromoteShorts,'쇼츠 승격',{selfRestop:true});
   {const _spb=document.getElementById('sp-shortspromote-btn');if(_spb&&localStorage.getItem('_kpu_shortsPromoteCursor'))_spb.textContent='⬆️ 가로→쇼츠 일괄 승격 (재개)';}
-  _admExecBind('sp-yt-autotag',_ytAutoTagMembers,'자동 태깅');
   _admExecBind('sp-yt-retag-all',_ytRetagAllIncludingTagged,'멤버+콜라보 재태깅',{abortable:true});
   document.getElementById('sp-vm-btn')?.addEventListener('click',()=>_vmOpen());
   const backfillSel=document.getElementById('sp-yt-backfill-ch');
@@ -10860,7 +10841,11 @@ async function _admRunCleanup(){
   _admCleanupRunning=true;
   const log=document.getElementById('adm-routine-log');
   if(log)log.innerHTML='';
+  // 설정 패널의 개별 버튼 19개를 걷어내고(2026-09-28, 사용자 요청 — 30일 실행 기록상 자동 루틴과 겹치거나 안 쓰임)
+  // 밴·제외 키워드 정리를 여기로 옮겼다. 둘 다 목록 버전이 안 바뀌면 스스로 건너뛰어 매일 돌아도 비용이 거의 없다.
   const steps=[
+    {name:'C0. 밴 인물 언급 영상 숨김',fn:_ytSweepBannedVideos},
+    {name:'C0-2. 제외 키워드 영상 무관',fn:_ytSweepJunkKeywordVideos},
     {name:'C1. 고아태그 정정',fn:_ytSweepCanonicalizeMembers},
     {name:'C2. 원곡 오탐 청소',fn:_ytSweepCoverCleanup},
     {name:'C3. 직캠 재검증',fn:_ytSweepFancamMistag},
@@ -10870,14 +10855,22 @@ async function _admRunCleanup(){
     {name:'C7. 카테고리 재분류',fn:_ytSweepCategoryMistag},
   ];
   const t0=Date.now();
+  // 단계 결과를 매일 루틴과 같은 형식(✅/❌ 줄)으로 화면 로그에 남긴다(2026-09-28). 예전엔 콘솔에만 찍어서
+  // 관리자 홈 버튼으로 돌려도 결과가 안 보였고, 청소 워크플로(러너)는 로그가 비어 성공 판정을 못 했다.
+  const _FAIL_RE=/(실패|오류)\s*:|⛔|Supabase 연결 없음|API 키를 먼저/; // _admRunRoutine의 _STEP_FAIL_RE와 같은 기준
+  const _fmt=ms=>ms<60000?(ms/1000).toFixed(1)+'초':Math.round(ms/60000)+'분';
   for(const s of steps){
     if(!_admCleanupRunning)break;
     const ts=Date.now();
+    const line=typeof _admSetLog==='function'?_admSetLog(s.name+' … 진행 중'):null;
     try{
       console.log(`[cleanup] ▶ ${s.name}`);
       await s.fn();
-      console.log(`[cleanup] ✓ ${s.name} (${Math.round((Date.now()-ts)/1000)}s)`);
+      const prog=(document.getElementById('sp-yt-prog')?.textContent||'').trim();
+      const failed=_FAIL_RE.test(prog);
+      if(line){line.textContent=`${failed?'❌':'✅'} ${s.name} — ⏱ ${_fmt(Date.now()-ts)}\n   `+(prog||'완료');line.className='adm-log-step '+(failed?'adm-log-fail':'adm-log-done');}
     }catch(e){
+      if(line){line.textContent=`❌ ${s.name} — ⏱ ${_fmt(Date.now()-ts)}\n   `+(e&&e.message?e.message:e);line.className='adm-log-step adm-log-fail';}
       console.error(`[cleanup] ✗ ${s.name}:`,e.message);
     }
   }
@@ -11036,6 +11029,8 @@ async function _admRunRoutine(withSync,opts){
 }
 document.getElementById('adm-run-routine')?.addEventListener('click',function(){_admRunRoutine(true);});
 document.getElementById('adm-run-routine-nosync')?.addEventListener('click',function(){_admRunRoutine(false);});
+// 🧹 청소 루틴 지금 실행(2026-09-28) — 설정 패널에서 걷어낸 개별 청소 버튼 19개를 이 하나로 대신한다.
+document.getElementById('adm-run-cleanup')?.addEventListener('click',function(){if(_admRoutineRunning||_admCleanupRunning){_ytSetProg('다른 루틴이 실행 중이에요');return;}_admRunCleanup();});
 document.getElementById('adm-stop-routine')?.addEventListener('click',function(){
   _admRoutineStop=true;
   _admSetLog('중단 요청됨 — 지금 단계가 끝나면 멈춰요(진행 중인 단계는 안전하게 마무리).');
