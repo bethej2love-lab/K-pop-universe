@@ -4303,7 +4303,7 @@ function _resolveRecentSearches(){
 // 도착하면 이어 붙이는** 방식 — 타이핑할 때마다 화면이 비었다 채워지지 않게.
 // ⚠️ 요청은 항상 최신 쿼리 것만 반영한다(토큰 비교) — 빨리 치면 늦게 온 옛 응답이 새 결과를 덮는다.
 // ⚠️ 디바운스 필수: 한 글자마다 38만 행을 치면 안 된다.
-// ⚠️ `title_norm ilike '%q%'`는 **인덱스 없이는 풀스캔**이다. `search_indexes_migration.sql`의
+// ⚠️ `title_norm ilike '%q%'`는 **인덱스 없이는 풀스캔**이다. `sql/search_indexes_migration.sql`의
 //    pg_trgm GIN 인덱스를 실행해야 실용 속도가 나온다(미실행이어도 동작은 하되 느림 — limit로 방어).
 let _remoteSearchToken=0,_remoteSearchTimer=null;
 // 쿼리에 섞인 카테고리 낱말 — "카리나 직캠"에서 '직캠'은 사람 이름이 아니라 **형식**이다.

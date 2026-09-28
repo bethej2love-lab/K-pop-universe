@@ -6,7 +6,7 @@
 // category='fan'으로 UPDATE 한다(다른 태깅·컬럼은 안 건드림). 재동기화는 ignoreDuplicates라 category가
 // 안 바뀌므로 이 경로가 필요.
 //
-// 실행: node tools/fan_recategorize.mjs   → fan_recategorize.sql 생성(회사가 Supabase서 실행)
+// 실행: node tools/fan_recategorize.mjs   → sql/fan_recategorize.sql 생성(회사가 Supabase서 실행)
 import { execFileSync } from 'child_process';
 import fs from 'fs';
 import path from 'path';
@@ -76,5 +76,5 @@ for (let i = 0; i < ids.length; i += 200) {
   sql += `UPDATE yt_channel_videos SET category='fan' WHERE category IS DISTINCT FROM 'fan' AND id IN (${slice.map(x => `'${x}'`).join(',')});\n`;
 }
 sql += `\n-- 확인: SELECT count(*) FROM yt_channel_videos WHERE category='fan';  -- ${ids.length} 이상이어야 함\n`;
-fs.writeFileSync(path.join(ROOT, 'fan_recategorize.sql'), sql);
+fs.writeFileSync(path.join(ROOT, 'sql', 'fan_recategorize.sql'), sql);
 console.log(`\n✅ fan_recategorize.sql 생성 — 총 ${ids.length}건 category='fan'으로 바꿀 UPDATE`);

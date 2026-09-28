@@ -168,8 +168,8 @@ need(/_ytWasLive=it=>!!it\.liveStreamingDetails/.test(admin),'was_live 판정은
 need(/if\(ds!=null\)patch\.duration_sec=ds;/.test(admin),
   '재생시간을 못 읽으면 덮어쓰지 않음(0으로 저장 금지)');
 need(/_ytColSupported/.test(admin),'없는 컬럼을 patch에 넣어 배치를 통째로 죽이지 않도록 프로브함');
-need(fs.existsSync(path.join(__dirname,'..','live_broadcast_migration.sql')),
-  'live_broadcast_migration.sql 존재');
+// (live_broadcast_migration.sql 존재 검사는 뺐다 — 2026-09-28 was_live 컬럼 DB 반영을 확인하고 실행 끝난
+//  마이그레이션 파일을 정리했다. 파일은 git 기록에 남아 있다.)
 
 // ── ⑧ 재생시간 배지가 실제로 붙는가(썸네일 3개 면) ──────────────────────────
 need(/function _attachDurBadge\(/.test(src)&&/function _placeDurBadge\(/.test(src),'배지 헬퍼 존재');
