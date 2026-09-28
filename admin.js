@@ -335,7 +335,9 @@ function _memberLeftCutoffDate(a){return _leftCutoffDate(a&&a.left);}
 //    타임아웃 135분에 걸려 잘림)을 쓰고 하루치 쿼터를 통째로 태웠다. 그 뒤 7회차는 전부 0~1건.
 //    상한에 걸리면 지금까지 받은 건 저장하고 `resumeToken`으로 다음 회차가 이어받는다(기존 인프라).
 const YT_MAX_PAGES=40; // 40페이지 = 2,000영상/채널/회차. 평상시 신규는 1~2페이지라 걸릴 일이 없다.
-async function _ytFetchNewVideos(uploadsId,key,sinceId,onProg,startPageToken,cutoffDate,maxPages){
+// stopBefore('YYYY-MM-DD', 선택): 이 날짜보다 오래된 영상을 만나면 기준점을 만난 것처럼 끝낸다(done).
+// 외부 채널의 공백 메우기(2단계)가 쓴다 — 기준점 영상이 삭제돼 id로 영영 못 만나도 채널 끝까지 파고들지 않게.
+async function _ytFetchNewVideos(uploadsId,key,sinceId,onProg,startPageToken,cutoffDate,maxPages,stopBefore){
   const vids=[];let pageToken=startPageToken||'';let total=0;
   let done=false,interrupted=false;
   const cap=(maxPages>0)?maxPages:YT_MAX_PAGES;
@@ -362,6 +364,7 @@ async function _ytFetchNewVideos(uploadsId,key,sinceId,onProg,startPageToken,cut
       if(!vid)continue;
       if(newestId===null)newestId=vid;
       if(vid===sinceId){hit=true;break;}
+      if(stopBefore&&item.snippet.publishedAt&&item.snippet.publishedAt.slice(0,10)<stopBefore){hit=true;break;}
       const title=_decodeHtmlEntities(item.snippet.title||'');
       if(_isBannedVideoTitle(title))continue; // 성범죄로 퇴출된 인물 관련 영상은 동기화 단계에서부터 저장하지 않음
       // ⚠️ published_at은 **날짜만**(date 컬럼) — 데뷔/탈퇴 게이트·기간 필터가 전부 "YYYY-MM-DD"
@@ -8528,6 +8531,12 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
       matchedGroupKos.length=0;matchedGroupKos.push(...kept);
       for(const k in membersByGroup)if(!kept.includes(k))delete membersByGroup[k];
     }
+    // 게이트가 후보를 **전부** 걸렀으면 "매칭 없음"(null)이다. 예전엔 여기서 빠져나가지 않고 아래에서
+    // primaryGroup:undefined로 돌려줘서, 호출부(_extBuildRows)의 `!match` 스킵을 통과한 채 group_ko가
+    // 비어 INSERT가 NOT NULL 위반으로 배치째 죽었다 — 잡지·매체 채널의 "패션 아이콘" 같은 제목이 정확히
+    // 이 경로. 실패한 채널은 북마크도 못 전진해 매 회차 40페이지씩 같은 구간을 다시 훑었고, 그 12곳이
+    // 회차 예산을 다 먹어 목록 뒤쪽 채널(음방 직캠·아이돌 개인 채널)이 9/21부터 한 건도 못 들어왔다(2026-09-28).
+    if(!matchedGroupKos.length)return null;
   }
   // confidence:'strong' — 제목에 그룹명(공식명/영문명/altNames) 리터럴이나 해시태그가 실제로 있어서
   // 그룹을 특정한 경로. 위 역추론(약한 근거) 경로와 대비되는 값.
@@ -8725,6 +8734,9 @@ function _extBuildRows(vids,strict,tier,owner,defaultCat,handle){
       ...(_shouldJunkFlag(v.title,tier)?_flagPatch('무관','auto'):held?_flagPatch('보류','auto',{needs_review:true}):needsReview?{needs_review:true}:{}),
       ...((tier==='variety'||tier==='show')?{content_formats:[tier]}:{})
     });
+    // 최종 방어선 — group_ko는 NOT NULL이라 한 행만 비어도 **배치 전체**가 롤백되고 그 채널이 영구 정지한다.
+    // held(9/23)·흔한단어 게이트(9/28)가 같은 사고를 두 번 냈다 — 어느 경로로 비든 그 행 하나만 버린다.
+    if(!rows[rows.length-1].group_ko){rows.pop();skipped++;}
   }
   return{rows,skipped};
 }
@@ -8738,111 +8750,136 @@ async function _ytSyncExtChannels(){
   _extSyncing=true;
   const setProg=msg=>{_ytSetProg(msg);};
   let totalAdded=0,totalSkipped=0,errors=0;
-  // 쿼터는 실행 한 번당 공유되는 자원이라, 목록 앞쪽(M2·Mnet처럼 영상이 아주 많은 채널)이 매번 쿼터를
-  // 다 써버리면 뒤쪽 채널(뮤직뱅크 등)은 이 실행에서 아예 시작도 못 해보고 매번 밀림 — 그러면 그 채널은
-  // "이어받기" 체크포인트가 있어도 영원히 이어받을 기회가 없음. 지난번에 중단된(이어받을 게 있는) 채널을
-  // 목록 맨 앞으로 당겨서, 이번 실행의 쿼터를 걔가 먼저 쓰게 한다(공평하게 돌아가며 진행되도록).
-  const _orderedChannels=[..._EXT_CHANNELS].sort((a,b)=>{
-    const aResume=localStorage.getItem(`kpu_ext_resume_${a.handle}`)?1:0;
-    const bResume=localStorage.getItem(`kpu_ext_resume_${b.handle}`)?1:0;
-    return bResume-aResume;
-  });
-  let _eci=0;
-  async function _extWorker(){
-   while(_eci<_orderedChannels.length){
-    // 이 회차 예산이 바닥나면 여기서 접는다 — 남은 채널은 다음 회차가 이어받는다(중단이 아니라 분할).
-    if(_ytBudgetLeft()<=2){setProg(`이번 회차 호출 예산(${_ytBudgetSpent()}콜)을 다 써서 나머지 채널은 다음 회차에 이어받아요`);break;}
-    const ci=_eci++;
-    const ch=_orderedChannels[ci];
-    const prefix=`[${ci+1}/${_EXT_CHANNELS.length}] ${ch.name}`;
-    try{
-      setProg(`${prefix} 채널 정보 가져오는 중…`);
-      const uploadsId=await _ytGetUploadsId(ch.url,key);
-      const lsKey=`kpu_ext_last_${ch.handle}`;
-      const resumeKey=`kpu_ext_resume_${ch.handle}`;
-      let sinceId=localStorage.getItem(lsKey)||null;
-      // 체크포인트가 없으면(첫 동기화·프로필 초기화·Actions 캐시 미스) DB의 이 채널 최신 영상으로 시작점을
-      // 잡는다. 공식 채널(_ytSyncGroup)엔 원래 있던 폴백인데 외부 채널엔 빠져 있어서, 캐시를 한 번 잃으면
-      // 그 채널은 **매번 전체 스캔**에 들어가 회차 예산을 통째로 먹었다(2026-09-21).
-      if(!sinceId){
-        const{data:_top}=await sb.from(_YT_TABLE).select('id').eq('source_handle',ch.handle).order('published_at',{ascending:false}).limit(1);
-        sinceId=_top?.[0]?.id||null;
-        if(sinceId)localStorage.setItem(lsKey,sinceId);
-      }
-      // 과거로 파고들다가 지난번에 중단된 지점이 있으면(쿼터 초과 등) 처음(최신)부터가 아니라 거기서부터 이어받는다
-      const resumeTok=localStorage.getItem(resumeKey)||'';
-      // resumeTok이 있으면(백필 진행 중) 과거 페이지부터 시작해 page 1(신규 영상)을 아예 안 보게 된다.
-      // sinceId가 있는 경우, 백필 전에 최신→sinceId 증분 스캔을 먼저 한 번 돌려 그 사이 올라온
-      // 신규 영상을 놓치지 않는다(예: 잇츠라이브 82MAJOR Like Fire 누락 — 2026-09-20).
-      // playlistItems 1회당 1 쿼터, 신규가 적으면 1~2 페이지라 비용은 미미하다.
-      if(resumeTok&&sinceId){
-        const{vids:incrVids,interrupted:incrInterrupted,newestId:incrNewest}=
-          await _ytFetchNewVideos(uploadsId,key,sinceId,(fetched)=>{
-            setProg(`${prefix} 신규 체크(최신→${fetched}개)…`);
-          });
-        if(!incrInterrupted){
-          if(incrVids.length){
-            await _ytProbeShortsInline(incrVids,setProg);
-            const{rows:incrRows,skipped:incrSkipped}=_extBuildRows(incrVids,_EXT_STRICT_TIERS.has(ch.tier),ch.tier,ch.owner,ch.defaultCategory,ch.handle);
-            totalSkipped+=incrSkipped;
-            if(incrRows.length){
-              setProg(`${prefix} 신규 ${incrRows.length}개 저장 중…`);
-              const _ei=[];
-              for(let i=0;i<incrRows.length;i+=200)_ei.push(_ytUpsertVideos(incrRows.slice(i,i+200),{onConflict:'id',ignoreDuplicates:true}));
-              const _ee2=(await Promise.all(_ei)).find(r=>r&&r.error);
-              if(_ee2)throw new Error(_ee2.error.message);
-              totalAdded+=incrRows.length;
-            }
-          }
-          if(incrNewest)localStorage.setItem(lsKey,incrNewest);
-        }
-      }
-      setProg(`${prefix} 영상 목록 가져오는 중…`+(resumeTok?' (이전 중단 지점부터 이어받는 중)':sinceId?'':' (첫 동기화)'));
-      const{vids,done,interrupted,cappedOut,pages,resumeToken,newestId}=await _ytFetchNewVideos(uploadsId,key,sinceId,(fetched,tot)=>{
-        setProg(`${prefix} ${fetched}${tot?'/'+tot:''}개 수집 중…`+(resumeTok?' (이어받는 중)':''));
-      },resumeTok);
-      if(vids.length){
-        await _ytProbeShortsInline(vids,setProg); // 동기화 시점 세로 실측(개인/외부 채널도, 승격 버튼 불필요) — 2026-09-04
-        const{rows,skipped}=_extBuildRows(vids,_EXT_STRICT_TIERS.has(ch.tier),ch.tier,ch.owner,ch.defaultCategory,ch.handle);
-        totalSkipped+=skipped;
-        if(rows.length){
-          setProg(`${prefix} ${rows.length}개 저장 중…`);
-          const _eb=[];
-          for(let i=0;i<rows.length;i+=200)_eb.push(_ytUpsertVideos(rows.slice(i,i+200),{onConflict:'id',ignoreDuplicates:true}));
-          const _ee=(await Promise.all(_eb)).find(r=>r&&r.error);
-          if(_ee)throw new Error(_ee.error.message);
-          totalAdded+=rows.length;
-        }
-      }
-      // ── 북마크 갱신(2026-09-21 수정) ──────────────────────────────────────
-      // 예전엔 `if(rows.length)` 안에서 vids[0].id로만 갱신했다. 두 가지가 문제였다:
-      //  ① 새 영상이 0건이면 갱신을 안 한다 → sinceId가 **이미 삭제된 영상**을 가리키는 경우, 매 회차
-      //     그 채널을 끝까지 훑고도 북마크가 그대로라 같은 낭비를 영원히 반복한다.
-      //  ② 필터(_extBuildRows)에 전부 걸려 rows가 0이면 역시 갱신되지 않는다.
-      // newestId는 필터 이전의 "채널 현재 최신 영상"이라 이 두 경우를 다 덮는다. 최신부터 시작한
-      // 회차(resumeTok 없음)에서만 갱신하는 원칙은 그대로다 — 과거 이어받기 중엔 최신이 아니니까.
-      if(!resumeTok&&newestId)localStorage.setItem(lsKey,newestId);
-      if(done){
-        localStorage.removeItem(resumeKey); // 채널 끝(가장 과거)까지 도달했거나 이미 아는 지점까지 따라잡음 — 이어받을 것 없음
-        setProg(`${prefix} 완료 (+${vids.length}개)`);
-      }else if(interrupted){
-        // 중단된 지점(실패한 페이지의 토큰)을 저장해 다음 동기화 때 여기부터 이어서 더 과거로 계속 파고든다
-        if(resumeToken)localStorage.setItem(resumeKey,resumeToken);
-        setProg(cappedOut
-          ?`${prefix} ${pages}페이지까지만 — 나머지는 다음 회차에 이어받음 (+${vids.length}개)`
-          :`${prefix} 중단됨(다음 동기화 때 이어받음) — 지금까지 +${vids.length}개`);
-      }
-    }catch(e){
-      errors++;
-      console.error(`[ext sync] ${ch.name}`,e);
-      setProg(`${prefix} 오류: ${e.message}`);
+  // ── 2단계 구조(2026-09-28) ────────────────────────────────────────────────
+  // 예전엔 채널을 이름순으로 한 번씩 돌며 "신규 체크"와 "과거 이어받기"를 한 채널 안에서 다 했다. 그러면
+  // 앞쪽 채널 몇 곳이 40페이지씩 폭주하는 순간 회차 예산(_ytBudgetLeft)이 바닥나 **목록 뒤쪽 채널은 차례가
+  // 아예 안 온다**. 실측(2026-09-28): 잡지·매체 12곳(전부 영문명이라 목록 앞)이 매 회차 NOT NULL 에러로
+  // 북마크를 못 옮겨 40페이지씩 재스캔 → 9/21부터 음방 직캠(M2·뮤직뱅크·쇼챔피언)과 아이돌 개인 채널
+  // (슬기 등, 126곳 중 98번째)이 한 건도 안 들어왔다. "주간 개인 직캠 TOP 20"이 3개뿐이던 것도 이것.
+  //   1단계: **모든 채널**의 신규만 얕게(_EXT_NEW_PAGES) 본다. 평소 1페이지라 126곳 전부 돌아도 ~130콜.
+  //   2단계: 남은 예산으로만 과거 이어받기(공백 메우기·첫 동기화 백필)를 한다.
+  // 1단계가 그래도 예산에 걸리면 다음 회차는 멈춘 채널 근처부터 시작한다(kpu_ext_rr) — 같은 꼬리가 계속 굶지 않게.
+  const _EXT_NEW_PAGES=10; // 500영상 — 음방 채널 1주일치 공백도 한 번에 메운다
+  const _n=_EXT_CHANNELS.length;
+  let _rr=+(localStorage.getItem('kpu_ext_rr')||0);if(!(_rr>=0&&_rr<_n))_rr=0;
+  const _pass1=_EXT_CHANNELS.map((_,i)=>_EXT_CHANNELS[(i+_rr)%_n]);
+  const _pass2=[]; // 1단계가 끝난 뒤 이어받기가 남아 있는 채널
+  const _saveVids=async(ch,vids,prefix)=>{
+    if(!vids.length)return;
+    await _ytProbeShortsInline(vids,setProg); // 동기화 시점 세로 실측(개인/외부 채널도, 승격 버튼 불필요) — 2026-09-04
+    const{rows,skipped}=_extBuildRows(vids,_EXT_STRICT_TIERS.has(ch.tier),ch.tier,ch.owner,ch.defaultCategory,ch.handle);
+    totalSkipped+=skipped;
+    if(!rows.length)return;
+    setProg(`${prefix} ${rows.length}개 저장 중…`);
+    const _eb=[];
+    for(let i=0;i<rows.length;i+=200)_eb.push(_ytUpsertVideos(rows.slice(i,i+200),{onConflict:'id',ignoreDuplicates:true}));
+    const _ee=(await Promise.all(_eb)).find(r=>r&&r.error);
+    if(_ee)throw new Error(_ee.error.message);
+    totalAdded+=rows.length;
+  };
+  // 1단계 — 최신→북마크(sinceId)까지. 상한에 걸렸다 = 북마크 이후 공백이 500개 넘음(또는 북마크 영상이
+  // 삭제돼 영영 못 만남). 이때 북마크는 최신으로 옮기고, 옛 북마크를 "바닥"(floor)으로 남겨 2단계가
+  // 공백만 메우고 거기서 멈추게 한다. 바닥 날짜도 같이 둔다 — 바닥 영상이 삭제됐어도 날짜로 멈춘다.
+  async function _extNew(ch,prefix){
+    setProg(`${prefix} 채널 정보 가져오는 중…`);
+    const uploadsId=await _ytGetUploadsId(ch.url,key);
+    const lsKey=`kpu_ext_last_${ch.handle}`;
+    const resumeKey=`kpu_ext_resume_${ch.handle}`;
+    const floorKey=`kpu_ext_floor_${ch.handle}`;
+    let sinceId=localStorage.getItem(lsKey)||null;
+    // 체크포인트가 없으면(첫 동기화·프로필 초기화·Actions 캐시 미스) DB의 이 채널 최신 영상으로 시작점을
+    // 잡는다. 공식 채널(_ytSyncGroup)엔 원래 있던 폴백인데 외부 채널엔 빠져 있어서, 캐시를 한 번 잃으면
+    // 그 채널은 **매번 전체 스캔**에 들어가 회차 예산을 통째로 먹었다(2026-09-21).
+    let sinceDate=null;
+    if(!sinceId){
+      const{data:_top}=await sb.from(_YT_TABLE).select('id,published_at').eq('source_handle',ch.handle).order('published_at',{ascending:false}).limit(1);
+      sinceId=_top?.[0]?.id||null;sinceDate=_top?.[0]?.published_at||null;
+      if(sinceId)localStorage.setItem(lsKey,sinceId);
     }
-   }
+    const hadResume=!!localStorage.getItem(resumeKey);
+    setProg(`${prefix} 신규 확인 중…`+(sinceId?'':' (첫 동기화)'));
+    // 이어받기 중이어도 1단계는 **항상 최신부터**(pageToken 없이) 본다 — 백필이 page 1(신규)을 건너뛰어
+    // 새 영상을 놓치던 것(잇츠라이브 82MAJOR, 2026-09-20)도 이 구조로 자연히 덮인다.
+    const resumeTok='';
+    const{vids,interrupted,cappedOut,resumeToken,newestId}=await _ytFetchNewVideos(uploadsId,key,sinceId,(fetched,tot)=>{
+      setProg(`${prefix} ${fetched}${tot?'/'+tot:''}개 수집 중…`);
+    },resumeTok,null,_EXT_NEW_PAGES);
+    await _saveVids(ch,vids,prefix);
+    if(interrupted&&!cappedOut){ // API 실패 — 북마크를 안 옮겨야 다음 회차가 같은 구간을 다시 받는다
+      setProg(`${prefix} 중단됨(다음 동기화 때 다시 받음) — 지금까지 +${vids.length}개`);
+      if(hadResume)_pass2.push(ch);
+      return;
+    }
+    if(cappedOut&&resumeToken&&!hadResume){
+      // 공백이 큼 — 공백 구간만 2단계에서 메운다. 첫 동기화(sinceId 없음)는 바닥 없이 채널 끝까지(기존 백필).
+      localStorage.setItem(resumeKey,resumeToken);
+      if(sinceId){
+        if(!sinceDate){const{data:_s}=await sb.from(_YT_TABLE).select('published_at').eq('id',sinceId).limit(1);sinceDate=_s?.[0]?.published_at||null;}
+        // 바닥 영상 날짜를 모르면(삭제 등) 30일 전으로 — 그보다 오래된 공백은 수동 백필 몫
+        localStorage.setItem(floorKey,JSON.stringify({id:sinceId,date:sinceDate||new Date(Date.now()-30*86400000).toISOString().slice(0,10)}));
+      }
+    }
+    // 북마크는 "채널 현재 최신 영상"(newestId, 필터 이전)으로 — 신규 0건이어도, 전부 필터에 걸려도 전진한다.
+    // 최신부터 시작한 스캔(resumeTok 없음)만 북마크를 옮긴다는 원칙 그대로 — 1단계는 항상 최신부터다.
+    if(!resumeTok&&newestId)localStorage.setItem(lsKey,newestId);
+    if(localStorage.getItem(resumeKey))_pass2.push(ch);
+    setProg(`${prefix} 완료 (+${vids.length}개)`);
   }
-  // 외부 채널도 병렬(2026-09-13) — 이어받기 있는 채널을 앞에 둔 순서는 유지되고(워커가 앞에서부터
-  // 집어감), 채널 수가 적어 공식보다 이득은 작지만 순차 대기를 없앤다. 동시 4(백필 중 채널이 페이지를
-  // 많이 넘길 수 있어 공식보다 낮게 잡아 QPS 여유).
-  await Promise.all(Array.from({length:Math.min(4,_orderedChannels.length)},_extWorker));
+  // 2단계 — 과거 이어받기. 바닥이 있으면 바닥 id/날짜에서 멈추고, 없으면(첫 동기화 백필) 채널 끝까지.
+  // ⚠️ 이 단계 호출은 회차 예산의 **남는 몫**만 쓴다 — 1단계(모든 채널의 신규)가 늘 먼저다.
+  async function _extBackfill(ch,prefix){
+    const resumeKey=`kpu_ext_resume_${ch.handle}`;
+    const floorKey=`kpu_ext_floor_${ch.handle}`;
+    const resumeTok=localStorage.getItem(resumeKey)||'';
+    if(!resumeTok)return;
+    const uploadsId=await _ytGetUploadsId(ch.url,key);
+    let floor=null;try{floor=JSON.parse(localStorage.getItem(floorKey)||'null');}catch(e){}
+    setProg(`${prefix} 과거 이어받는 중…`);
+    const{vids,done,interrupted,cappedOut,pages,resumeToken}=await _ytFetchNewVideos(uploadsId,key,floor?.id||null,(fetched,tot)=>{
+      setProg(`${prefix} ${fetched}${tot?'/'+tot:''}개 수집 중… (이어받는 중)`);
+    },resumeTok,null,undefined,floor?.date||undefined);
+    await _saveVids(ch,vids,prefix);
+    if(done){
+      localStorage.removeItem(resumeKey);localStorage.removeItem(floorKey); // 바닥(또는 채널 끝)까지 메움
+      setProg(`${prefix} 이어받기 완료 (+${vids.length}개)`);
+    }else if(interrupted){
+      // 중단된 지점(실패한 페이지의 토큰)을 저장해 다음 동기화 때 여기부터 이어서 더 과거로 계속 파고든다
+      if(resumeToken)localStorage.setItem(resumeKey,resumeToken);
+      setProg(cappedOut
+        ?`${prefix} ${pages}페이지까지만 — 나머지는 다음 회차에 이어받음 (+${vids.length}개)`
+        :`${prefix} 중단됨(다음 동기화 때 이어받음) — 지금까지 +${vids.length}개`);
+    }
+  }
+  const _runPass=async(list,fn,label,onBudgetStop)=>{
+    let _eci=0,_stopped=false;
+    async function _extWorker(){
+     while(_eci<list.length){
+      // 이 회차 예산이 바닥나면 여기서 접는다 — 남은 채널은 다음 회차가 이어받는다(중단이 아니라 분할).
+      if(_ytBudgetLeft()<=2){
+        if(!_stopped){_stopped=true;if(onBudgetStop)onBudgetStop(_eci);}
+        setProg(`이번 회차 호출 예산(${_ytBudgetSpent()}콜)을 다 써서 나머지 채널(${label})은 다음 회차에 이어받아요`);break;
+      }
+      const ci=_eci++;
+      const ch=list[ci];
+      const prefix=`[${label} ${ci+1}/${list.length}] ${ch.name}`;
+      try{await fn(ch,prefix);}
+      catch(e){
+        errors++;
+        console.error(`[ext sync] ${ch.name}`,e);
+        setProg(`${prefix} 오류: ${e.message}`);
+      }
+     }
+    }
+    // 외부 채널도 병렬(2026-09-13) — 동시 4(백필 중 채널이 페이지를 많이 넘길 수 있어 공식보다 낮게 잡아 QPS 여유).
+    await Promise.all(Array.from({length:Math.min(4,list.length)},_extWorker));
+    return _stopped;
+  };
+  const _p1Stopped=await _runPass(_pass1,_extNew,'신규',ci=>{
+    // 워커 4개가 동시에 돌아 ci 직전 몇 채널은 진행 중이었을 수 있다 — 4칸 겹쳐 다시 봐도 손해는 1페이지씩뿐.
+    localStorage.setItem('kpu_ext_rr',String((_rr+Math.max(0,ci-4))%_n));
+  });
+  if(!_p1Stopped)localStorage.setItem('kpu_ext_rr','0');
+  if(_pass2.length)await _runPass(_pass2,_extBackfill,'이어받기');
   setProg(`전체 완료 — 공식·외부 채널 합산 추가 ${totalAdded}개 / 스킵 ${totalSkipped}개${errors?` / 오류 ${errors}건`:''}`);
   _extSyncing=false;
 }
