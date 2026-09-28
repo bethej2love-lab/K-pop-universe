@@ -110,6 +110,12 @@ async function writeMarker(key, ms) {
   return true;
 }
 
+async function readSyncDone() {
+  const r = await fetch(`${U}/rest/v1/${TABLE}?select=value&type=eq.admin_meta&key=eq.last_official_sync`, { headers: H(READ_KEY) });
+  if (!r.ok) throw new Error(`표식 조회 실패 ${r.status}`);
+  const v = (await r.json())[0]?.value;
+  return v && Number(v.ts) > 0 ? Number(v.ts) : 0;
+}
 // ── daily-routine이 지금 돌고 있는가 (2026-09-16) ────────────────────────────
 // 예전엔 두 워크플로가 **같은 concurrency 그룹**을 써서 겹침을 막았다. 그런데 그 방식은 루틴이
 // 길어질 때(실측 241·262분) 이 워크플로의 cron 발화를 **런 자체가 안 만들어진 채** 삼켜버렸다
@@ -152,9 +158,14 @@ if (await routineRunning()) { emit(false, '매일 루틴이 실행 중 — 체�
 
 let last = 0, src = '';
 try {
-  const [routine, attempt] = await Promise.all([readMarker('last_routine'), readMarker('last_sync_attempt')]);
-  last = Math.max(routine, attempt);
-  src = routine >= attempt ? '루틴 완료' : '게이트 시도';
+  // ⚠️ "마지막 동기화"는 last_routine이 아니라 **실제 동기화 완료 리포트**(last_official_sync.ts)로 본다
+  //    (2026-09-28). last_routine은 새벽 시간대의 스윕 전용 루틴(동기화 없음)도 끝날 때 갱신해서, 09:51에
+  //    끝난 스윕이 "방금 동기화함"으로 읽혀 아침 첫 동기화가 한 시간 밀렸다. 리포트는 _ytSyncAll이 끝날 때만
+  //    써지므로(매시간·전체 루틴 공통) 정확히 "동기화가 돈 시각"이다. 리포트 도입 전이면 옛 표식으로 폴백.
+  const [syncDone, routine, attempt] = await Promise.all([readSyncDone(), readMarker('last_routine'), readMarker('last_sync_attempt')]);
+  const done = syncDone || routine;
+  last = Math.max(done, attempt);
+  src = done >= attempt ? (syncDone ? '동기화 완료' : '루틴 완료') : '게이트 시도';
 } catch (e) {
   // 표식을 못 읽으면 **통과시킨다**(fail-open). 신선도를 잃는 것보다 한 번 더 도는 게 낫고,
   // 아래에서 표식을 새로 남기므로 이 상태가 반복돼도 최소 간격이 곧 복구된다.

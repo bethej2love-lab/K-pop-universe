@@ -106,6 +106,7 @@ need(/if\(!_syncOnly\)steps\.push\(\{name:'1-3\./.test(adm), '매시간 동기�
 // 루틴이 실패하면 last_routine이 안 써진다. 그때 게이트가 자기 표식을 안 남기면 최소 간격이 풀려
 // 15분마다 동기화를 시도하게 되고, 실패하는 동안 쿼터가 타들어간다(sync_gate.mjs 머리 주석의 ⚠️).
 need(/writeMarker\('last_sync_attempt'/.test(src), "통과시킬 때 자기 표식(last_sync_attempt)을 남김");
+need(/readSyncDone()/.test(src) && /key=eq.last_official_sync/.test(src), '게이트가 "마지막 동기화"를 실제 동기화 리포트로 판정(스윕 전용 루틴의 last_routine에 속지 않음)');
 need(src.includes("readMarker('last_routine')") && src.includes("readMarker('last_sync_attempt')"),
   '간격 계산에 루틴 완료 시각과 게이트 시도 시각을 둘 다 본다');
 
