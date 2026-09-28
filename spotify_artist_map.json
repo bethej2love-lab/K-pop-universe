@@ -233,6 +233,17 @@
     },
     "checkedAt": "2026-09-16"
   },
+  "경호": {
+    "id": "15Tra1ytu0naoNByIhZArl",
+    "spotifyName": "Kim Kyung Ho",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "이름 불일치 — 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-09-28"
+  },
   "고스트나인": {
     "id": "7f953Uuid7Xrd0nXQ3V3s1",
     "spotifyName": "GHOST9",
@@ -567,6 +578,17 @@
       ]
     },
     "checkedAt": "2026-09-15"
+  },
+  "다이고": {
+    "id": "4qA6lhHIE0czZQ3xNd1b9e",
+    "spotifyName": "Daigo",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "동명 후보 5명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-09-28"
   },
   "다이몬": {
     "id": "3696Y4dRCxairFC7sQAuI4",
@@ -3341,6 +3363,17 @@
     },
     "checkedAt": "2026-09-21"
   },
+  "재윤": {
+    "id": "5okLurl5ljw9O65rkZGDSG",
+    "spotifyName": "Jaeyun (TO1)",
+    "kind": "solo",
+    "confidence": "medium",
+    "why": "이름 유일 일치",
+    "evidence": {
+      "titleOverlap": null
+    },
+    "checkedAt": "2026-09-28"
+  },
   "전지윤": {
     "id": "05uheFGPahVh2nHIZK1KuB",
     "spotifyName": "Jenyer",
@@ -3410,6 +3443,17 @@
     },
     "checkedAt": "2026-09-15"
   },
+  "제이유": {
+    "id": "0Y2AcMPMpeuPXtPQGVvRBq",
+    "spotifyName": "Lee Young Ji",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "이름 불일치 — 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-09-28"
+  },
   "조유리": {
     "id": "5qUT9YBghleRCXg0WifEzf",
     "spotifyName": "yuri",
@@ -3456,6 +3500,22 @@
       ]
     },
     "checkedAt": "2026-09-26"
+  },
+  "지수": {
+    "id": "1QUxcni0biHr4HFdN44QE9",
+    "spotifyName": "JISU",
+    "kind": "solo",
+    "confidence": "medium",
+    "why": "이름 유일 일치",
+    "evidence": {
+      "titleOverlap": null,
+      "verifyOverlap": 0,
+      "verifyYears": [
+        2026,
+        2025
+      ]
+    },
+    "checkedAt": "2026-09-28"
   },
   "지수연": {
     "id": "70iA690AZviTkQKgfjlSK6",
@@ -3515,6 +3575,17 @@
       ]
     },
     "checkedAt": "2026-09-20"
+  },
+  "치훈": {
+    "id": "6CkFlJJelWw46b1TP1qamO",
+    "spotifyName": "CHIHOON",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "동명 후보 2명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-09-28"
   },
   "카드": {
     "id": "2JhAlkmukNvarUpGhTFXUQ",

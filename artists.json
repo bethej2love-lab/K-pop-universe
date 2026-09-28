@@ -202732,6 +202732,92 @@
         "active": false,
         "left": "2023.12.31"
       }
+    ],
+    "discography": [
+      {
+        "title": "ROBOT",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273650df8e43938abf2cc2b6761",
+        "releaseDate": "2026.02.28",
+        "trackCount": 1,
+        "titleTrack": "ROBOT",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "ROBOT",
+            "isTitle": true
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "127ej3TAW9BZ2Dp4kvgVSg"
+      },
+      {
+        "title": "16 fantasy",
+        "type": "미니",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273086ddf5bcd3bcba7a6850fca",
+        "releaseDate": "2024.06.21",
+        "trackCount": 6,
+        "titleTrack": null,
+        "tracks": [
+          {
+            "no": 1,
+            "title": "16 - Intro",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "My cat",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "Small girl (feat. D.O.)",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "ADHD (feat. Jambino)",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Unknown guy",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "TELL ME !",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "3gshxGN8Bq2vcT1ym9Rvh8"
+      },
+      {
+        "title": "Knight Flower OST Part.2 (Soundtrack)",
+        "type": "OST",
+        "isMain": false,
+        "cover": "https://i.scdn.co/image/ab67616d0000b27337ed4093ec37e8128f61b91c",
+        "releaseDate": "2024.01.26",
+        "trackCount": 2,
+        "titleTrack": null,
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Blade",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "Blade (Inst)",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "5dHBV8XeY5WBlvYMDVmNLu"
+      }
     ]
   },
   {
@@ -202770,6 +202856,140 @@
         "en": "TO1",
         "active": false,
         "left": "2023.12.31"
+      }
+    ],
+    "discography": [
+      {
+        "title": "긴머리 휘날리며 (Original Soundtrack of TV Series)",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273d2f95fd79af85272081fe44a",
+        "releaseDate": "2025.09.10",
+        "trackCount": 2,
+        "titleTrack": null,
+        "tracks": [
+          {
+            "no": 1,
+            "title": "추억만들기",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "추억만들기 - Instrumental",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "7oa5vkqDQaXOiTCWWQurhk"
+      },
+      {
+        "title": "THE ROCKER",
+        "type": "정규",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273d198c066708e9d25f8337cc4",
+        "releaseDate": "2024.05.20",
+        "trackCount": 11,
+        "titleTrack": "The Rocker (feat. 노현태)",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "The Rocker (feat. 노현태)",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Warming Up",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "For 2000 Ad (feat. Kim Jong Seo, Yoon Do Hyun, Park Wan Kyu, Jeong Hongil, Yoon Seong Ki & Kwak dong hyun) - 2024 Version",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Fly Again",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Monster",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "Fade Away",
+            "isTitle": false
+          },
+          {
+            "no": 7,
+            "title": "Going My Way",
+            "isTitle": false
+          },
+          {
+            "no": 8,
+            "title": "Love Hurts",
+            "isTitle": false
+          },
+          {
+            "no": 9,
+            "title": "Secret",
+            "isTitle": false
+          },
+          {
+            "no": 10,
+            "title": "We shine (feat. KimGun, Lee sang hwa, Park sang hyun, Lee kang woo, Macha & 이용기)",
+            "isTitle": false
+          },
+          {
+            "no": 11,
+            "title": "Fly Again - Instrumental",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "20uf9mAvEP0kkL054opDqf"
+      },
+      {
+        "title": "For 2000 Ad",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273a776ca862c7efc3262045a2a",
+        "releaseDate": "2024.05.13",
+        "trackCount": 1,
+        "titleTrack": "For 2000 Ad (feat. Kim Jong Seo, Yoon Do Hyun, Park Wan Kyu, Jeong Hongil, Yoon Seong Ki & Kwak dong hyun) - 2024 Version",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "For 2000 Ad (feat. Kim Jong Seo, Yoon Do Hyun, Park Wan Kyu, Jeong Hongil, Yoon Seong Ki & Kwak dong hyun) - 2024 Version",
+            "isTitle": true
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "0ApwU4GOzs9YOrjig4CtPX"
+      },
+      {
+        "title": "CRASH (Original Soundtrack) Part.1",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b27386c56478a1eb434ba0abb4f0",
+        "releaseDate": "2024.05.13",
+        "trackCount": 2,
+        "titleTrack": null,
+        "tracks": [
+          {
+            "no": 1,
+            "title": "CRASH",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "CRASH - Inst.",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "1R9fxbDIUTrkYXnqZoJps8"
       }
     ]
   },
@@ -202849,6 +203069,1603 @@
         "en": "TO1",
         "active": false,
         "left": "2023.12.31"
+      }
+    ],
+    "discography": [
+      {
+        "title": "The Secret Ghible Courtyard",
+        "type": "정규",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273b536cde693e529e4de68e27a",
+        "releaseDate": "2026.09.28",
+        "trackCount": 10,
+        "titleTrack": "The Secret Ghible Courtyard",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "A Breeze Through the Emerald Garden",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "A Globe Beneath the Skylight",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "Around the World in Four Strings",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Five Winds in a Storybook Town",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Koi Garden Breeze",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "Pages That Travel Far",
+            "isTitle": false
+          },
+          {
+            "no": 7,
+            "title": "The Library of Distant Lands",
+            "isTitle": false
+          },
+          {
+            "no": 8,
+            "title": "The Quiet Atlas",
+            "isTitle": false
+          },
+          {
+            "no": 9,
+            "title": "The Secret Ghible Courtyard",
+            "isTitle": true
+          },
+          {
+            "no": 10,
+            "title": "Whimsical Windows in the Sun",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "6G61GXMdYcQmlM77ERxbbu"
+      },
+      {
+        "title": "The Journey Begins at Gate 23",
+        "type": "정규",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273da72adec387ad94baf9e86d6",
+        "releaseDate": "2026.09.25",
+        "trackCount": 10,
+        "titleTrack": "The Journey Begins at Gate 23",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Between Departures and Dreams",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "Espresso Notes at Noon",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "Guitar Notes Above the Tarmac",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Minimal Mood Maximum Calm",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Morning Roast and Piano Loops",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "Quiet Corners of Intelligentsia",
+            "isTitle": false
+          },
+          {
+            "no": 7,
+            "title": "Seoul Cafe Sketches",
+            "isTitle": false
+          },
+          {
+            "no": 8,
+            "title": "The Journey Begins at Gate 23",
+            "isTitle": true
+          },
+          {
+            "no": 9,
+            "title": "Waiting for the Wings to Move",
+            "isTitle": false
+          },
+          {
+            "no": 10,
+            "title": "Window Seat to Somewhere New",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "0WXJIqTXbQvcga5tpNMgDf"
+      },
+      {
+        "title": "Skylight Departure Lounge",
+        "type": "정규",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b27366869c14b0f8e3553bbcb68e",
+        "releaseDate": "2026.09.22",
+        "trackCount": 10,
+        "titleTrack": "Skylight Departure Lounge",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Boarding in Blue Notes",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "Departure Hall Serenade",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "First Class Evening Swing",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Golden Lights on Stone Roads",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Jazz Beneath the Hanok Roofs",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "Memories Under Amber Lights",
+            "isTitle": false
+          },
+          {
+            "no": 7,
+            "title": "Morning Flights and Smooth Swing",
+            "isTitle": false
+          },
+          {
+            "no": 8,
+            "title": "Quiet Corners of Seoul",
+            "isTitle": false
+          },
+          {
+            "no": 9,
+            "title": "Seoul Alley Serenade",
+            "isTitle": false
+          },
+          {
+            "no": 10,
+            "title": "Skylight Departure Lounge",
+            "isTitle": true
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "03W1jJniAAYNIAPgXzlY72"
+      },
+      {
+        "title": "Espresso After Sunset",
+        "type": "정규",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273ae00292696bc77136c42f63a",
+        "releaseDate": "2026.09.19",
+        "trackCount": 10,
+        "titleTrack": "Espresso After Sunset",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Espresso After Sunset",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Lantern Glow and Piano Loops",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "Last Order, First Melody",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Midnight Pasta and Piano Beats",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Moonlit Bistro Loops",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "Neon Footsteps in Shibuya",
+            "isTitle": false
+          },
+          {
+            "no": 7,
+            "title": "Quiet Signals at 1 AM",
+            "isTitle": false
+          },
+          {
+            "no": 8,
+            "title": "Rainless Night, Endless Keys",
+            "isTitle": false
+          },
+          {
+            "no": 9,
+            "title": "Tokyo Side Street Groove",
+            "isTitle": false
+          },
+          {
+            "no": 10,
+            "title": "Warm Lights on a Quiet Street",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "5qMPNrPsCnTrVkW9IBzXf5"
+      },
+      {
+        "title": "The Last Robot's Lullaby",
+        "type": "정규",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b2739c4ff272c162094f6372f68a",
+        "releaseDate": "2026.09.16",
+        "trackCount": 10,
+        "titleTrack": "The Last Robot's Lullaby",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Flight of the Quiet Sparrow",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "Haneda Tales for Woodwinds",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "Mechanical Heart in the Forest",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Summer Letters from Haneda",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "The Iron Guardian's Afternoon",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "The Last Robot's Lullaby",
+            "isTitle": true
+          },
+          {
+            "no": 7,
+            "title": "The Little Plane and the Five Winds",
+            "isTitle": false
+          },
+          {
+            "no": 8,
+            "title": "The Wind Carries Us Home",
+            "isTitle": false
+          },
+          {
+            "no": 9,
+            "title": "Wind Song of the Hidden Garden",
+            "isTitle": false
+          },
+          {
+            "no": 10,
+            "title": "Woodland Waltz for an Ancient Robot",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "4LKykr0S5H1HHZzYhaZ6gQ"
+      },
+      {
+        "title": "너라는 별을 공전하는 또 다른 별",
+        "type": "미니",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273bd25f12ae637419011f1297d",
+        "releaseDate": "2026.09.14",
+        "trackCount": 6,
+        "titleTrack": "너라는 별을 공전하는 또 다른 별",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "너라는 별을 공전하는 또 다른 별",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "세탁 끝나는 소리",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "이제야 알겠어",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "너라는 별을 공전하는 또 다른 별 (Inst.)",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "세탁 끝나는 소리 (Inst.)",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "이제야 알겠어 (Inst.)",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "5L2Rg5KjFfnC9U8vkSJ8b8"
+      },
+      {
+        "title": "퇴근길",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b2735c70ac67acec781231c994bb",
+        "releaseDate": "2026.09.01",
+        "trackCount": 3,
+        "titleTrack": "퇴근길",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "소소한 행복 그리고 잠시 휴식",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "아침풍경",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "퇴근길",
+            "isTitle": true
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "7calWRufLhbaksZAsybgig"
+      },
+      {
+        "title": "Fairway Afterglow Bossa",
+        "type": "정규",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b2734fafba5f21c428fee669b55c",
+        "releaseDate": "2026.08.26",
+        "trackCount": 10,
+        "titleTrack": "Fairway Afterglow Bossa",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Green Silence of Jeju Afternoon",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "Lonely Tree in Shinhwa Meadow",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "One Tree, Endless Horizon",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Quiet Luxury in Blue Hour Jazz",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Soft Bossa under Jeju Sky",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "Sunset Lobby at Green Hills Club",
+            "isTitle": false
+          },
+          {
+            "no": 7,
+            "title": "Emerald Pathway Serenade",
+            "isTitle": false
+          },
+          {
+            "no": 8,
+            "title": "Evening Breeze over the Putting Green",
+            "isTitle": false
+          },
+          {
+            "no": 9,
+            "title": "Fairway Afterglow Bossa",
+            "isTitle": true
+          },
+          {
+            "no": 10,
+            "title": "Golden Hour Swing in the Lounge",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "5P27Kj1FwAED8RtZhMCjRF"
+      },
+      {
+        "title": "Evening Clouds in Pyeongchang",
+        "type": "정규",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273972fd51b6e887a914d8c05c0",
+        "releaseDate": "2026.07.26",
+        "trackCount": 10,
+        "titleTrack": "Evening Clouds in Pyeongchang",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Sunset over Gangwon",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "Tokyo Alley Bossa",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "Twilight Hills Bossa",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Afternoon at Samgakji",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Cabin Breeze Serenade",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "Creamy Jazz Terrace",
+            "isTitle": false
+          },
+          {
+            "no": 7,
+            "title": "Cutlet and Cappuccino",
+            "isTitle": false
+          },
+          {
+            "no": 8,
+            "title": "Evening Clouds in Pyeongchang",
+            "isTitle": true
+          },
+          {
+            "no": 9,
+            "title": "Itaewon Lunch Breeze",
+            "isTitle": false
+          },
+          {
+            "no": 10,
+            "title": "Lavender Sky Retreat",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "7n0oeUnLjOwuQrNEA6f1b9"
+      },
+      {
+        "title": "Old Bookstore",
+        "type": "미니",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b27341002f62a6e5063327a69e03",
+        "releaseDate": "2026.01.28",
+        "trackCount": 6,
+        "titleTrack": "Old Bookstore",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Before Sunset",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "Black-And-White",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "Neroli 36",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Famous Eco Bag",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Release of a Book",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "Old Bookstore",
+            "isTitle": true
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "02J8PKhlsvlgeKcpZCxMnB"
+      },
+      {
+        "title": "Sunset over Yeouido",
+        "type": "정규",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b2735af4be702a17ae1dcf7c238f",
+        "releaseDate": "2025.12.29",
+        "trackCount": 8,
+        "titleTrack": "Sunset over Yeouido",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Golden Reflection",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "Miles of Calm",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "Moments Between Trees and Towers",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Soft Wings, Quiet Skies",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Sunset Flight",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "Sunset over Yeouido",
+            "isTitle": true
+          },
+          {
+            "no": 7,
+            "title": "Above the Clouds",
+            "isTitle": false
+          },
+          {
+            "no": 8,
+            "title": "Evening Walks in the City",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "5YlB7XWuKeguK2J2UNPR1V"
+      },
+      {
+        "title": "Dean Street Blues",
+        "type": "정규",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b27398e8462b05b8c00eb49c44cb",
+        "releaseDate": "2025.11.06",
+        "trackCount": 10,
+        "titleTrack": "Dean Street Blues",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Shardlight Serenade",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "Sixty Sixty Swing",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "Southwark Blue",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Thames Shadow Waltz",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Vinyl Sunlight",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "Clocktower in 5.4",
+            "isTitle": false
+          },
+          {
+            "no": 7,
+            "title": "Dean Street Blues",
+            "isTitle": true
+          },
+          {
+            "no": 8,
+            "title": "Golden Letters, Dusty Chords",
+            "isTitle": false
+          },
+          {
+            "no": 9,
+            "title": "Guitars Behind Glass",
+            "isTitle": false
+          },
+          {
+            "no": 10,
+            "title": "Maple Wood and Minor 7",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "2MFawluHP2iWgCh76y190l"
+      },
+      {
+        "title": "Venetian Cafe",
+        "type": "정규",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273e33be0bbe8a3853ae926ea72",
+        "releaseDate": "2025.08.01",
+        "trackCount": 7,
+        "titleTrack": "Venetian Cafe",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "A Day More Beautiful Than Night",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "Beauty of Orangelights",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "Calm Stream of Coffee",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Colosseum with Sun Sets",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Romantic Rome",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "Split Coffee Place",
+            "isTitle": false
+          },
+          {
+            "no": 7,
+            "title": "Venetian Cafe",
+            "isTitle": true
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "0hTlHVP9UutvCqxVIx9L1X"
+      },
+      {
+        "title": "Port of Romance",
+        "type": "정규",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273973750a7df77687573c8dc5b",
+        "releaseDate": "2025.07.04",
+        "trackCount": 7,
+        "titleTrack": "Port of Romance",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Port of Romance",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Calm Wave",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "Friendly People",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Retro Nostalgia in Riva",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Small Blue Crabs and Gravel Fields",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "Street Sun Spreads",
+            "isTitle": false
+          },
+          {
+            "no": 7,
+            "title": "The Riva Streets of Youth",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "1RjYfBnLDNX92QkewvWKmV"
+      },
+      {
+        "title": "Battle of Heroes",
+        "type": "정규",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273a600d236f97eae23bd0e6e91",
+        "releaseDate": "2025.06.24",
+        "trackCount": 8,
+        "titleTrack": "Battle of Heroes",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Battle of Heroes",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Bloody Battle, Desperate Fight",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "Clear Air of the Forest",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Forest and Cross Road",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Gladiator's Day",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "Green and Gray",
+            "isTitle": false
+          },
+          {
+            "no": 7,
+            "title": "Live or Die",
+            "isTitle": false
+          },
+          {
+            "no": 8,
+            "title": "Along the Forest Path",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "0k4rgasgwLZ5YQOUHbaLdV"
+      },
+      {
+        "title": "Budapest's Neon",
+        "type": "정규",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b2735e3749013ea43bea937af52d",
+        "releaseDate": "2025.06.06",
+        "trackCount": 9,
+        "titleTrack": "Budapest's Neon",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Budapest's Neon",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Lorenzaccio",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "Neon Night City",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Night Desires",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Night View of an Antique Castle",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "On the Fisherman's Bastion",
+            "isTitle": false
+          },
+          {
+            "no": 7,
+            "title": "Yellow Light, Black Background",
+            "isTitle": false
+          },
+          {
+            "no": 8,
+            "title": "Zodiac",
+            "isTitle": false
+          },
+          {
+            "no": 9,
+            "title": "Breathtaking Night View of Budapest",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "04KA4KDNovT28EuYu9Syvg"
+      },
+      {
+        "title": "The Red Roof, and the Sea",
+        "type": "정규",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273769f476a209fe2476ee4b82d",
+        "releaseDate": "2025.05.16",
+        "trackCount": 7,
+        "titleTrack": "The Red Roof, and the Sea",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "The Red Roof, and the Sea",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Dubrovnik Melody",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "Stradun Street",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Onophrian Fountain",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Mount Srđ",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "Place Where the Wind Blows",
+            "isTitle": false
+          },
+          {
+            "no": 7,
+            "title": "Lakeside Stars",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "5l3zmo2TMzC1EneVCzjP4E"
+      },
+      {
+        "title": "In the Coffe Bar",
+        "type": "정규",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273642dcd2a946ffaa0111243ce",
+        "releaseDate": "2025.05.12",
+        "trackCount": 8,
+        "titleTrack": "in the Coffe Bar",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Looking Down City",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "Don't Stop Singing",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "Parisian Meals",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Fly Under My Feet",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Please Give me a Cup of Coffee",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "Hey Bartender",
+            "isTitle": false
+          },
+          {
+            "no": 7,
+            "title": "The Skies of Paris",
+            "isTitle": false
+          },
+          {
+            "no": 8,
+            "title": "in the Coffe Bar",
+            "isTitle": true
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "3M2I22LwX96ZdsrepJ8OsT"
+      },
+      {
+        "title": "From New York City to Paris",
+        "type": "정규",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273e5d06f9ed7bbec77d54f30e5",
+        "releaseDate": "2025.03.17",
+        "trackCount": 9,
+        "titleTrack": "From New York City to Paris",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "From New York City to Paris",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Le Pont Mirabeau",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "Bouquet of Tulips",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "To the Luna",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Neve E Luxo",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "Zagreb Coffee",
+            "isTitle": false
+          },
+          {
+            "no": 7,
+            "title": "Zagreb's Moon",
+            "isTitle": false
+          },
+          {
+            "no": 8,
+            "title": "Varazdin Glories",
+            "isTitle": false
+          },
+          {
+            "no": 9,
+            "title": "Rue De Remusat",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "2Wm0LA5TcTnJgP9aGLGLpu"
+      },
+      {
+        "title": "Porto Wine",
+        "type": "미니",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273f99f5cc26a5a952270b67acc",
+        "releaseDate": "2025.01.24",
+        "trackCount": 5,
+        "titleTrack": "Porto Wine",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Porto Wine",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Delante de tu casa",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "En la playa",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Los dos",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Período de la Gran Marcha",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "2FKoIyJEtXYJ0wqfqwLcgw"
+      },
+      {
+        "title": "Headlight River",
+        "type": "정규",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273a4a8f7dc53a2a8ac0b847748",
+        "releaseDate": "2024.12.25",
+        "trackCount": 7,
+        "titleTrack": "Headlight River",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Headlight River",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "If with You",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "Night Dream",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Erase Me",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Blue Sentimental",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "Ride Your Car",
+            "isTitle": false
+          },
+          {
+            "no": 7,
+            "title": "Do You Know Me",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "6QoKfNCTSGMJm0xT4QeD61"
+      },
+      {
+        "title": "Silent Night Groove",
+        "type": "정규",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273adb2da87fbf1e47bb410cb82",
+        "releaseDate": "2024.12.24",
+        "trackCount": 10,
+        "titleTrack": "Silent Night Groove",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Silent Night Groove",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Traffic Jam",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "Christmas Bliss",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Holy Night Groove",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Holiday Romance",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "Silent Night Bright",
+            "isTitle": false
+          },
+          {
+            "no": 7,
+            "title": "Christmas Present",
+            "isTitle": false
+          },
+          {
+            "no": 8,
+            "title": "Silent Night in City",
+            "isTitle": false
+          },
+          {
+            "no": 9,
+            "title": "Christmas Nights",
+            "isTitle": false
+          },
+          {
+            "no": 10,
+            "title": "Christmas Dream",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "0Eayrs1Ojha5oUpUuf00F1"
+      },
+      {
+        "title": "A Jazzy Noel",
+        "type": "정규",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273ccd1a7f6c67831016c7d6d4c",
+        "releaseDate": "2024.12.21",
+        "trackCount": 7,
+        "titleTrack": "A Jazzy Noel",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Wanna Be Quiet by Myself",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "Under the Tree",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "A Jazzy Noel",
+            "isTitle": true
+          },
+          {
+            "no": 4,
+            "title": "Christmas Time Gone by",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Snowing Outside the Window",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "Lights Wave in Wonderland",
+            "isTitle": false
+          },
+          {
+            "no": 7,
+            "title": "Good Time with a Good Person",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "168cDdleEoaafHXPWc4xfO"
+      },
+      {
+        "title": "Under the Christmas Tree",
+        "type": "정규",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b2731b45242c965746f9c7b2e634",
+        "releaseDate": "2024.12.21",
+        "trackCount": 11,
+        "titleTrack": "Under the Christmas Tree",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Christmas Love",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "Holiday Promise",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "Noël Avec Toi",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Noël Doux No.2",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Zzz in Christmas",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "Noël Doux",
+            "isTitle": false
+          },
+          {
+            "no": 7,
+            "title": "Under the Christmas Lights",
+            "isTitle": false
+          },
+          {
+            "no": 8,
+            "title": "Christmas Memories",
+            "isTitle": false
+          },
+          {
+            "no": 9,
+            "title": "Busy Street",
+            "isTitle": false
+          },
+          {
+            "no": 10,
+            "title": "Under the Christmas Tree",
+            "isTitle": true
+          },
+          {
+            "no": 11,
+            "title": "Magic of Christmas",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "2sEQ21vagP3w8aBYq6jHBh"
+      },
+      {
+        "title": "Travel",
+        "type": "정규",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b27330146452669285ada4acf9a5",
+        "releaseDate": "2024.12.18",
+        "trackCount": 7,
+        "titleTrack": null,
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Home Sweet Home",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "Rainy Sunday Blues",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "Star Lights",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Night Lights",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "An Old Cassette Tape",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "Rainy Day",
+            "isTitle": false
+          },
+          {
+            "no": 7,
+            "title": "An Old Drawer",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "3tzG7fuONbGjvCEmdn7lrn"
+      },
+      {
+        "title": "City of Angels",
+        "type": "미니",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b27364ed5099bfe69dac1a207729",
+        "releaseDate": "2024.12.16",
+        "trackCount": 6,
+        "titleTrack": "City of Angels",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "City of Angels",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Back to the 80s",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "Retro Groove",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Time Machine Dream",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Time to Say Goodbye",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "City Nights",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "0F6TKzhGiaMQgGPWhmiSBk"
+      },
+      {
+        "title": "Worn Christmas",
+        "type": "정규",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273d459307d465257e7a99b2361",
+        "releaseDate": "2024.12.15",
+        "trackCount": 8,
+        "titleTrack": "Worn Christmas",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Intro",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "Worn Christmas",
+            "isTitle": true
+          },
+          {
+            "no": 3,
+            "title": "With Vinyl",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Hot Cocoa Tea",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "White Window",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "Small Bonfire",
+            "isTitle": false
+          },
+          {
+            "no": 7,
+            "title": "Merry Christmas with Who",
+            "isTitle": false
+          },
+          {
+            "no": 8,
+            "title": "Organizing the Last Time",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "3MJBv8Jpo7Dm7HpCfN3HIp"
+      },
+      {
+        "title": "Break-Even Point",
+        "type": "정규",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b27319588d0daeae64c5a68e427f",
+        "releaseDate": "2024.12.13",
+        "trackCount": 8,
+        "titleTrack": "Breakeven Point",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Breakeven Point",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Fraud Bankruptcy",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "General Stockholders' Meeting",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Haunting",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Moonlit Serenade No.1",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "Stock Buying and Selling",
+            "isTitle": false
+          },
+          {
+            "no": 7,
+            "title": "To You to the Love",
+            "isTitle": false
+          },
+          {
+            "no": 8,
+            "title": "Whispers of the Windy City",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "3hMb3pURJXM3y8hNCJuA2P"
+      },
+      {
+        "title": "Don't Leave Me Now",
+        "type": "정규",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b2739f7043d6283906b25c2f2272",
+        "releaseDate": "2024.12.10",
+        "trackCount": 7,
+        "titleTrack": "Don't Leave Me Now",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Don't Leave Me Now",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Hourglass",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "At the Next Time",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Ssanghwatang",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Vinyl Romance",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "Sugar Dreams",
+            "isTitle": false
+          },
+          {
+            "no": 7,
+            "title": "Warm Nights",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "5Z5K6Ay4108rrehEPB4Jv3"
+      },
+      {
+        "title": "Forest Jazz",
+        "type": "정규",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273e449618347f5c7f344c19385",
+        "releaseDate": "2024.12.07",
+        "trackCount": 7,
+        "titleTrack": null,
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Without You",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "Moonlit Serenade",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "Sticky Jazz",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Jazz Vinyl",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Walking Down the Street",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "Running",
+            "isTitle": false
+          },
+          {
+            "no": 7,
+            "title": "Music Wave",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "1DB1WIKphZsSJ6s6ahuiDq"
       }
     ]
   },
