@@ -641,14 +641,21 @@ async function _ytSaveCol(col,updates,label){
 // 프리미어에도 붙으므로 앱 쪽에서 길이 20분 이상만 "라이브 아카이브"로 본다(index.html _isLiveArchive).
 // 쿼터 추가 비용 0 — videos.list는 part를 더 얹어도 호출당 1이다.
 const _ytWasLive=it=>!!it.liveStreamingDetails;
-async function _ytRefreshViewCounts(){
+// onlyMissing(2026-09-28): 매시간 동기화용 — 조회수가 **아직 없는** 최근 영상만(= 방금 들어온 것). 조회수는
+// 3시간마다 전체 루틴에서만 채워져서, 새 영상은 그 사이 "주간 직캠 TOP"처럼 view_count가 필요한 화면에서
+// 통째로 빠졌다(실측: 적재 재개 직후 최근 7일 live 225개 중 139개가 조회수 없음). 50개당 1유닛이라
+// 회차당 1~2유닛. 삭제·비공개 영상은 응답이 없어 영영 null로 남으므로 최신 500개로 상한(≤10유닛).
+async function _ytRefreshViewCounts(opts){
   const key=_ytApiKey();
   if(!key){_ytSetProg('API 키를 먼저 입력해주세요');return;}
   if(!sb){_ytSetProg('Supabase 연결 없음');return;}
+  const onlyMissing=!!(opts&&opts.onlyMissing);
   _ytSetProg('조회수 갱신 대상 조회 중…');
   const sinceDate=new Date(Date.now()-VIEW_COUNT_WINDOW_DAYS*86400000).toISOString().slice(0,10);
   // (아래 _ytParseDurationSec/_ytSaveDurations는 이 파일 하단에 정의 — 두 조회수 갱신 경로가 공유한다)
-  const{data:rows,error}=await _sbFetchAll(()=>sb.from(_YT_TABLE)
+  const{data:rows,error}=onlyMissing
+    ?await sb.from(_YT_TABLE).select('id').gte('published_at',sinceDate).is('view_count',null).order('published_at',{ascending:false}).limit(500)
+    :await _sbFetchAll(()=>sb.from(_YT_TABLE)
     .select('id')
     .gte('published_at',sinceDate)
     .order('id'));
@@ -10861,6 +10868,9 @@ async function _admRunRoutine(withSync,opts){
     //    ⚠️ 이 줄을 if 밖으로 빼지 말 것 — tests/routine-parity.test.js가 "설정 패널 버튼이 부르는
     //       세 함수가 루틴의 withSync 블록에도 다 있는가"를 본다. 조건만 걸고 자리는 지킨다.
     if(!_syncOnly)steps.push({name:'1-3. 조회수 갱신 (최근 14일 · 이번주 직캠 TOP용)',fn:_ytRefreshViewCounts});
+    // 매시간 동기화에선 **방금 들어온 영상의 조회수만** 채운다(1~2유닛) — 안 그러면 새 영상은 다음 전체
+    // 루틴까지 조회수가 null이라 차트에서 빠진다(_ytRefreshViewCounts onlyMissing 주석).
+    else steps.push({name:'1-3. 신규 영상 조회수 (조회수 없는 것만)',fn:()=>_ytRefreshViewCounts({onlyMissing:true})});
   }
   if(!_syncOnly){
   steps.push({name:'2. 멤버+콜라보 자동 태깅',fn:_ytAutoTagMembers});
