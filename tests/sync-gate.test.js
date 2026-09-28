@@ -87,11 +87,12 @@ const EXT_BACKFILL_PER_SYNC = Number(/const _EXT_BACKFILL_CALLS=(\d+)/.exec(fs.r
 const ROUTINE_VIEWS = 6 * 70 + 8 * 60 + 400;  // full 루틴 조회수 갱신 6회 + 핫 순환 8회 + 일일 순환 1배치
 const DISBANDED_ONCE = 45;       // 해체 그룹 채널 하루 1회
 const WATCHDOG = 300;            // tools/sync_watchdog.mjs 유튜브 실물 대조(하루 1회, 채널당 1유닛)
+const ROSTER_RESCAN = 90;        // 로스터 변경 시 수집 채널 1페이지 재훑기(≈87곳) — 하루 1번 바뀐다고 가정
 const BACKFILL_RESERVE = 1500;   // admin.js _ytBackfillPriorityChannels의 TOTAL_BUDGET 15회 × 100유닛
 const QUOTA = 10000;             // YouTube Data API 일일 한도
-const used = maxRunsPerDay * (UNITS_PER_SYNC + EXT_BACKFILL_PER_SYNC) + ROUTINE_VIEWS + DISBANDED_ONCE + WATCHDOG + BACKFILL_RESERVE;
+const used = maxRunsPerDay * (UNITS_PER_SYNC + EXT_BACKFILL_PER_SYNC) + ROUTINE_VIEWS + DISBANDED_ONCE + WATCHDOG + ROSTER_RESCAN + BACKFILL_RESERVE;
 
-console.log(`   동기화 ${maxRunsPerDay}회×(${UNITS_PER_SYNC}+메우기 ${EXT_BACKFILL_PER_SYNC}) + 루틴 조회수 ${ROUTINE_VIEWS} + 해체 ${DISBANDED_ONCE} + 워치독 ${WATCHDOG} + 백필 예약 ${BACKFILL_RESERVE} = ${used.toLocaleString()} / 한도 ${QUOTA.toLocaleString()}`);
+console.log(`   동기화 ${maxRunsPerDay}회×(${UNITS_PER_SYNC}+메우기 ${EXT_BACKFILL_PER_SYNC}) + 루틴 조회수 ${ROUTINE_VIEWS} + 해체 ${DISBANDED_ONCE} + 워치독 ${WATCHDOG} + 로스터 재훑기 ${ROSTER_RESCAN} + 백필 예약 ${BACKFILL_RESERVE} = ${used.toLocaleString()} / 한도 ${QUOTA.toLocaleString()}`);
 need(EXT_BACKFILL_PER_SYNC <= 60, `외부 채널 과거 메우기에 회차 상한이 있음(${EXT_BACKFILL_PER_SYNC}콜) — 없으면 남는 예산을 매 회차 통째로 쓴다`);
 // 한도에 딱 붙이면 안 된다 — 유닛 추정치에 오차가 있고, 재시도·재수집이 있는 날은 더 쓴다.
 need(used <= QUOTA * 0.95, `쿼터 예산에 여유가 있음 (${Math.round(used / QUOTA * 100)}% 사용 · 상한 95%)`);

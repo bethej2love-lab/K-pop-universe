@@ -17,7 +17,7 @@ const end = src.indexOf('\n}\n', start);
 need(start > 0 && end > start, '_ytSyncExtChannels 본문을 찾음');
 const body = src.slice(start, end + 2);
 
-function run({ channels, budget, ls = {}, fetchImpl, onProg }) {
+function run({ channels, budget, ls = {}, fetchImpl, onProg, groups = { g1: {} }, artists = [{ name: { ko: 'a1' } }], existing = new Set() }) {
   const store = { ...ls };
   const localStorage = {
     getItem: k => (k in store ? store[k] : null),
@@ -26,12 +26,15 @@ function run({ channels, budget, ls = {}, fetchImpl, onProg }) {
   };
   let calls = 0;
   const reports = {};
+  const built = [];
   const fetched = []; // {handle, resumeTok, maxPages, stopBefore, sinceId}
   const deps = {
     localStorage,
     _EXT_CHANNELS: channels,
     _ytApiKey: () => 'KEY',
-    sb: { from: () => { const q = { select: () => q, eq: () => q, order: () => q, limit: async () => ({ data: [] }) }; return q; } },
+    sb: { from: () => { const q = { select: () => q, eq: () => q, order: () => q, limit: async () => ({ data: [] }), in: async (col, ids) => ({ data: ids.filter(id => existing.has(id)).map(id => ({ id })) }) }; return q; } },
+    GROUPS: groups,
+    ARTISTS: artists,
     _ytSetProg: m => { if (onProg) onProg(m); },
     _ytBudgetLeft: () => budget - calls,
     _ytBudgetSpent: () => calls,
@@ -44,7 +47,7 @@ function run({ channels, budget, ls = {}, fetchImpl, onProg }) {
       return r;
     },
     _ytProbeShortsInline: async () => {},
-    _extBuildRows: vids => ({ rows: vids.map(v => ({ ...v, group_ko: 'g' })), skipped: 0 }),
+    _extBuildRows: vids => { built.push(...vids.map(v => v.id)); return { rows: vids.map(v => ({ ...v, group_ko: 'g' })), skipped: 0 }; },
     _ytUpsertVideos: async () => ({ error: null }),
     _EXT_STRICT_TIERS: new Set(),
     _YT_TABLE: 't',
@@ -52,7 +55,7 @@ function run({ channels, budget, ls = {}, fetchImpl, onProg }) {
   };
   const names = Object.keys(deps);
   const fn = new Function(...names, `let _extSyncing=false;\n${body}; return _ytSyncExtChannels;`)(...names.map(n => deps[n]));
-  return fn().then(() => ({ store, fetched, calls, reports }));
+  return fn().then(() => ({ store, fetched, calls, reports, built }));
 }
 
 (async () => {
@@ -97,9 +100,31 @@ function run({ channels, budget, ls = {}, fetchImpl, onProg }) {
       onProg: m => { lastProg = m; },
     });
     const rep = reports.last_ext_sync;
-    need(rep && rep.errors === 1 && rep.errChannels[0].h === 'c2' && /group_ko/.test(rep.errChannels[0].msg), '오류 채널·원문이 리포트에 남음');
+    need(rep && rep.errors >= 1 && rep.errChannels.every(e => e.h === 'c2') && /group_ko/.test(rep.errChannels[0].msg), '오류 채널·원문이 리포트에 남음');
     const STEP_FAIL_RE = new RegExp(src.match(/const _STEP_FAIL_RE=\/(.+)\/;/)[1]);
     need(STEP_FAIL_RE.test(lastProg), `마지막 진행 문구가 루틴의 ❌ 판정에 걸림("${lastProg.slice(0, 80)}")`);
+  }
+
+  // ── 1-c) 로스터가 바뀐 회차에만 수집 채널(owner 없음)을 1페이지씩 다시 훑는다 ─────────────
+  //    (비비업 9/27 등록 전 9/24 영상이 북마크 뒤로 묻혀 영구 누락됐던 구멍)
+  {
+    const channels = [
+      { handle: 'm1', url: 'm1', name: 'm1', tier: 'music' },
+      { handle: 'm2', url: 'm2', name: 'm2', tier: 'variety' },
+      { handle: 'o1', url: 'o1', name: 'o1', tier: 'idol', owner: { mko: '슬기' } },
+    ];
+    const ls = {}; channels.forEach(c => { ls['kpu_ext_last_' + c.handle] = 'top_' + c.handle; });
+    const impl = (h, o) => o.sinceId === null && o.maxPages === 1
+      ? { vids: [{ id: h + '_old1' }, { id: h + '_old2' }], done: true, interrupted: false, cappedOut: false, pages: 1, resumeToken: '', newestId: h + '_old1' }
+      : { vids: [], done: true, interrupted: false, cappedOut: false, pages: 1, resumeToken: '', newestId: 'top_' + h };
+    const r1 = await run({ channels, budget: 100, ls, fetchImpl: impl, existing: new Set(['m1_old2']) });
+    const rescans = r1.fetched.filter(f => f.sinceId === null && f.maxPages === 1);
+    need(rescans.length === 2 && rescans.every(f => f.handle !== 'o1' && f.stopBefore), `로스터 첫 서명 → 수집 채널 2곳만 1페이지 재훑기(${rescans.map(f => f.handle)})`);
+    need(r1.built.includes('m1_old1') && !r1.built.includes('m1_old2'), '이미 DB에 있는 영상은 매칭·쇼츠실측 전에 뺌');
+    const r2 = await run({ channels, budget: 100, ls: r1.store, fetchImpl: impl });
+    need(!r2.fetched.some(f => f.sinceId === null && f.maxPages === 1), '같은 로스터면 다시 안 훑음');
+    const r3 = await run({ channels, budget: 100, ls: r1.store, fetchImpl: impl, groups: { g1: {}, 비비업: {} } });
+    need(r3.fetched.filter(f => f.sinceId === null && f.maxPages === 1).length === 2, '그룹이 새로 등록되면 다시 훑음');
   }
 
   // ── 2) 1단계가 예산에 걸리면 다음 회차는 그 근처부터 시작 ─────────────────────

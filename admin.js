@@ -8786,6 +8786,19 @@ async function _ytSyncExtChannels(){
   const _extErrs=[];let _p1Reached=0;
   const _saveVids=async(ch,vids,prefix)=>{
     if(!vids.length)return;
+    // 이미 DB에 있는 영상은 먼저 뺀다(2026-09-28) — 어차피 ignoreDuplicates로 버려지는데, 그 전에 쇼츠 실측
+    // (썸네일 요청)과 매칭을 다 치르고 있었다. 로스터 재훑기(아래 3단계)처럼 아는 구간을 다시 볼 때 특히 크다.
+    // 조회 실패 시엔 거르지 않고 그대로 진행(예전 동작) — 이 최적화 때문에 저장이 막히면 안 된다.
+    try{
+      const _have=new Set();
+      for(let i=0;i<vids.length;i+=100){
+        const{data,error}=await sb.from(_YT_TABLE).select('id').in('id',vids.slice(i,i+100).map(v=>v.id));
+        if(error)throw error;
+        (data||[]).forEach(r=>_have.add(r.id));
+      }
+      vids=vids.filter(v=>!_have.has(v.id));
+    }catch(e){}
+    if(!vids.length)return;
     await _ytProbeShortsInline(vids,setProg); // 동기화 시점 세로 실측(개인/외부 채널도, 승격 버튼 불필요) — 2026-09-04
     const{rows,skipped}=_extBuildRows(vids,_EXT_STRICT_TIERS.has(ch.tier),ch.tier,ch.owner,ch.defaultCategory,ch.handle);
     totalSkipped+=skipped;
@@ -8899,6 +8912,31 @@ async function _ytSyncExtChannels(){
     localStorage.setItem('kpu_ext_rr',String((_rr+Math.max(0,ci-4))%_n));
   });
   if(!_p1Stopped)localStorage.setItem('kpu_ext_rr','0');
+  // ── 3단계: 로스터가 바뀌면 수집 채널 최신 50개를 다시 훑는다(2026-09-28) ──────────────────────
+  // 수집 채널(owner 없음 — 음방·매체·예능)은 "제목에 아는 아이돌이 있을 때만" 넣고, 북마크는 그 영상들을
+  // 지나쳐 전진한다. 그래서 **그룹·멤버를 나중에 등록하면 그 전에 올라온 관련 영상은 영영 다시 안 본다.**
+  // 실측: 비비업(VVUP)이 9/27 등록 — 아리랑 라디오의 9/24 "Chuseok Special with. VVUP!" 2건이 영구 누락
+  // (워치독 첫 실물 대조로 발견). 로스터 서명이 바뀐 회차에 한 번, 채널당 1페이지(1유닛, 수집 87곳 ≈ 87유닛)만
+  // 다시 보고 이제 매칭되는 것을 넣는다. 등록은 보통 데뷔·활동 직후라 최신 50개면 대부분 덮인다.
+  // 예산이 모자라면 서명을 안 바꾸고 다음 회차로 미룬다(1단계가 늘 먼저).
+  let _rosterAdded=null;
+  try{
+    let _h=5381;const _src=Object.keys(GROUPS).join('|')+'#'+ARTISTS.map(a=>a.name.ko+':'+(a.matchAliases||[]).join(',')).join('|');
+    for(let i=0;i<_src.length;i++)_h=((_h<<5)+_h+_src.charCodeAt(i))|0;
+    const _sig=`${Object.keys(GROUPS).length}:${ARTISTS.length}:${_h}`;
+    const _collect=_EXT_CHANNELS.filter(c=>!c.owner);
+    if(localStorage.getItem('kpu_ext_roster_sig')!==_sig&&_ytBudgetLeft()>_collect.length+5){
+      const _since=new Date(Date.now()-45*86400000).toISOString().slice(0,10);
+      const _a0=totalAdded;
+      await _runPass(_collect,async(ch,prefix)=>{
+        const uploadsId=await _ytGetUploadsId(ch.url,key);
+        const{vids}=await _ytFetchNewVideos(uploadsId,key,null,null,'',null,1,_since);
+        await _saveVids(ch,vids,prefix);
+      },'로스터 재훑기');
+      localStorage.setItem('kpu_ext_roster_sig',_sig);
+      _rosterAdded=totalAdded-_a0;
+    }
+  }catch(e){console.warn('[ext sync] 로스터 재훑기 건너뜀',e);}
   // 2단계는 회차당 _EXT_BACKFILL_CALLS콜로 못 박는다 — "남은 예산 전부"로 두면 매 회차 수백 콜씩, 하루
   // 18회면 수천 유닛이 과거 메우기에 새어 나가 일일 쿼터(1만)를 넘긴다(tests/sync-gate.test.js 배분 참고).
   // 20콜 = 1,000영상/회차(하루 1.8만) — 1주일치 공백 12채널도 하루 안에 메운다. 순차(동시 1)로 돌려 상한을 정확히 지킨다.
@@ -8912,7 +8950,7 @@ async function _ytSyncExtChannels(){
       catch(e){errors++;_extErrs.push({h:ch.handle,name:ch.name,msg:String(e&&e.message||e).slice(0,160)});console.error(`[ext sync] ${ch.name}`,e);}
     }
   }
-  _admSyncReport('last_ext_sync',{total:_n,reached:_p1Reached,budgetStopped:_p1Stopped,backfill:_pass2.length,added:totalAdded,errors,errChannels:_extErrs.slice(0,20)});
+  _admSyncReport('last_ext_sync',{total:_n,reached:_p1Reached,budgetStopped:_p1Stopped,backfill:_pass2.length,added:totalAdded,rosterRescanAdded:_rosterAdded,errors,errChannels:_extErrs.slice(0,20)});
   // ⚠️ "오류:"(콜론)를 넣어야 루틴의 _STEP_FAIL_RE가 ❌로 올린다. 예전 문구("오류 12건")는 콜론이 없어서
   //    1주일 내내 ✅였다(2026-09-28). 채널명과 첫 에러를 같이 적어 로그만 보고도 원인을 알 수 있게 한다.
   const _errTxt=errors?` / 오류: ${errors}건 — ${[...new Set(_extErrs.map(x=>x.name))].slice(0,5).join(', ')}${_extErrs.length>5?' 외':''} (${_extErrs[0]?.msg||''})`:'';
