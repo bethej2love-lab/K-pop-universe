@@ -3253,7 +3253,7 @@
      최상위 탭이고, .seg-control은 목록 안의 필터다([[세그먼트 컨트롤 컴포넌트]]).
      ⚠️ 밑줄은 버튼이 아니라 **안쪽 span**에 건다. 버튼에 걸면 반쪽 폭 전체에 밑줄이 그어져서
         X처럼 안 보인다(글자 폭에 맞아야 함). */
-  #feed-tabs{position:sticky;top:0;z-index:3;display:flex;gap:0;padding:0;background:rgba(8,11,24,0.92);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-bottom:0.5px solid rgba(255,255,255,0.09);}
+  #feed-tabs{position:sticky;top:0;z-index:3;display:flex;flex-shrink:0;gap:0;padding:0;background:rgba(8,11,24,0.92);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-bottom:0.5px solid rgba(255,255,255,0.09);}
   .feed-tab{flex:1 1 0;display:flex;align-items:center;justify-content:center;padding:14px 4px 0;border:none;border-radius:0;background:none;color:rgba(200,215,250,0.52);font-size:14px;font-weight:700;letter-spacing:.01em;cursor:pointer;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;-webkit-tap-highlight-color:transparent;transition:color .16s,background .16s;}
   .feed-tab>span{position:relative;display:inline-block;padding-bottom:13px;white-space:nowrap;}
   .feed-tab>span::after{content:'';position:absolute;left:0;right:0;bottom:0;height:3px;border-radius:3px 3px 0 0;background:rgba(140,175,255,0.95);opacity:0;transform:scaleX(0.4);transition:opacity .16s,transform .16s cubic-bezier(0.32,0.72,0,1);}

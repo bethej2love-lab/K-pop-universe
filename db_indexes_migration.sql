@@ -81,3 +81,10 @@ CREATE INDEX IF NOT EXISTS idx_ytv_content_flag_id
   ON yt_channel_videos (content_flag, id);
 
 ANALYZE yt_channel_videos;
+
+-- ── 2026-09-28: 역대 조회수 차트(레전드 100·개인 직캠 TOP 100·무대 TOP 100) ──────────────────
+-- "category='live' 역대 조회수순"은 기간 조건이 없어서 위 (category, published_at, view_count) 인덱스를
+-- 못 탄다 → 매번 live 전체 정렬. 실측: 레전드 100 20초, 개인 직캠 역대 30초에 statement timeout —
+-- 탐험 Charts 선반에서 '역대' 카드 3장이 조용히 빠져 있던 원인. 조회수순으로 훑다 조건 맞는 N개에서 멈추게 한다.
+CREATE INDEX IF NOT EXISTS idx_ytv_category_viewcount
+  ON yt_channel_videos (category, view_count DESC) WHERE view_count IS NOT NULL;

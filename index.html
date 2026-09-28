@@ -16846,7 +16846,21 @@ function _feedCheckEmpty(which){
   if(btn){btn.textContent=currentLang==='ko'?'다시 시도':'Retry';btn.onclick=()=>{empty.hidden=true;_feedRetry(which);};}
   empty.hidden=false;
 }
+// For You/Discover 탭 자리(2026-09-28 사용자 요청) — 데스크톱에선 탭을 스크롤 영역(#feed-body) **밖**에 둔다.
+// 안에 sticky로 두면 스크롤바 트랙이 탭 위부터 시작해 "탭까지 같이 스크롤되는 영역"처럼 보였다(웹은
+// 6px 스크롤바를 일부러 또렷하게 해서 더 눈에 띔). 탭 아래부터가 스크롤 영역이어야 자연스럽다.
+// ⚠️ 모바일은 그대로 #feed-body 안(sticky) — 바텀시트 제스처·peek 레이아웃이 그 구조를 전제로 한다.
+// CSS만으로는 안 된다: 트랙 여백(::-webkit-scrollbar-track margin)은 표준 scrollbar-width를 쓰면 크롬이 무시한다.
+function _placeFeedTabs(){
+  const tabs=document.getElementById('feed-tabs'),body=document.getElementById('feed-body');
+  if(!tabs||!body)return;
+  if(!isMob()){if(tabs.parentElement!==body.parentElement)body.parentElement.insertBefore(tabs,body);}
+  else if(tabs.parentElement!==body)body.insertBefore(tabs,body.firstChild);
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',_placeFeedTabs);else _placeFeedTabs();
+try{matchMedia('(max-width:768px)').addEventListener('change',_placeFeedTabs);}catch(e){}
 function _openFeedOverlay(){
+  _placeFeedTabs();
   const el=document.getElementById('feed-overlay');
   _gaEvent('explore_open',{device:isMob()?'mobile':'desktop'}); // 탐험 패널 진입(피드 사용도 근거)
   if(isMob())closeMobSheet(); // 열려있는 카드 먼저 닫고 탐색 오버레이 표시
@@ -18150,7 +18164,10 @@ async function _buildFeedDailyNews(){
         .gte('published_at',today).lt('published_at',tomorrow)
         .order('published_at',{ascending:false}).limit(50),
       sb.from('yt_view_milestones').select('*,yt_channel_videos!inner(title,thumb,group_ko)')
-        .eq('crossed_at',today).eq('seeded',false).limit(20).catch(()=>({data:[]}))
+        .eq('crossed_at',today).eq('seeded',false).limit(20)
+        // ⚠️ .catch가 아니라 .then(성공,실패) — Supabase 쿼리 빌더는 thenable일 뿐 Promise가 아니라 .catch가 없다.
+        //    .catch를 쓰면 여기서 TypeError가 나 선반 전체가 사라졌다(9/27 마일스톤 추가 직후부터, 2026-09-28 발견).
+        .then(r=>r,()=>({data:[]}))
     ]);
     const items=[];
     (Array.isArray(albumsAll)?albumsAll:[]).filter(a=>a.d===todayDot).forEach(a=>{
@@ -18847,7 +18864,8 @@ async function _buildFeedLegend100(list){
       .or('content_flag.is.null,content_flag.neq.hidden')
       .order('view_count',{ascending:false})
       .limit(200);
-    if(error||!data?.length)return;
+    if(error){console.warn('[feed] 레전드 100 조회 실패 — 카드만 빠집니다(역대 조회수 정렬: category,view_count 인덱스 필요)',error.message);return;}
+    if(!data?.length)return;
     const vids=_filterBannedVideos(data).slice(0,100);
     if(vids.length<3)return;
     const songs=vids.map(v=>({t:v.title,u:vidUrl(v),thumb:v.thumb,vc:v.view_count,dur:v.duration_sec,pa:v.published_at?.slice(0,10),_apiId:v.id,_apiGroupKo:v.group_ko}));
@@ -18855,7 +18873,7 @@ async function _buildFeedLegend100(list){
     const top1=vids[0];
     const sub=_feedRankSub(label,top1.view_count,currentLang==='ko'?'무대·직캠 역대 조회수 기준':'Based on all-time stage/fancam views',true);
     _appendFeedCard(list,'👑',label,sub,()=>_openFeedListOverlay(label,sub,songs),top1.thumb);
-  }catch(e){/* 조용히 무시 */}
+  }catch(e){console.warn('[feed] 레전드 100 실패 — 카드만 빠집니다',e);}
 }
 // 역대 개인(멤버 단독) 직캠 TOP 100 계열(2026-08-19, 사용자 요청) — "개인" 용어는 기존 "주간 개인
 // 직캠 TOP 20"(_buildFeedWeeklyTopCams)에서 이미 쓰던 표현을 그대로 통일해서 재사용(사용자가 "개인"/
@@ -19003,7 +19021,7 @@ async function _buildChartCard(list,id){
     const sub=d.ranked?_feedRankSub(label,songs[0].vc):'';
     const thumb=d.ranked?songs[0].thumb:songs[Math.floor(Math.random()*songs.length)].thumb;
     _appendFeedCard(list,d.icon,label,sub,()=>_openChartList(id),thumb,d.kind);
-  }catch(e){/* 조용히 무시 */}
+  }catch(e){console.warn(`[feed] 차트 카드(${id}) 실패 — 이 카드만 빠집니다`,e);}
 }
 
 // 역대/세대별 무대 TOP 100 — 위 "개인 직캠" 계열과 짝을 이루는 시리즈지만, 멤버 1명 단독 필터 없이
