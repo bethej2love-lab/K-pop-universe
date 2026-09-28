@@ -17,7 +17,7 @@ const end = src.indexOf('\n}\n', start);
 need(start > 0 && end > start, '_ytSyncExtChannels 본문을 찾음');
 const body = src.slice(start, end + 2);
 
-function run({ channels, budget, ls = {}, fetchImpl }) {
+function run({ channels, budget, ls = {}, fetchImpl, onProg }) {
   const store = { ...ls };
   const localStorage = {
     getItem: k => (k in store ? store[k] : null),
@@ -25,13 +25,14 @@ function run({ channels, budget, ls = {}, fetchImpl }) {
     removeItem: k => { delete store[k]; },
   };
   let calls = 0;
+  const reports = {};
   const fetched = []; // {handle, resumeTok, maxPages, stopBefore, sinceId}
   const deps = {
     localStorage,
     _EXT_CHANNELS: channels,
     _ytApiKey: () => 'KEY',
     sb: { from: () => { const q = { select: () => q, eq: () => q, order: () => q, limit: async () => ({ data: [] }) }; return q; } },
-    _ytSetProg: () => {},
+    _ytSetProg: m => { if (onProg) onProg(m); },
     _ytBudgetLeft: () => budget - calls,
     _ytBudgetSpent: () => calls,
     _ytGetUploadsId: async url => 'UU_' + url,
@@ -47,10 +48,11 @@ function run({ channels, budget, ls = {}, fetchImpl }) {
     _ytUpsertVideos: async () => ({ error: null }),
     _EXT_STRICT_TIERS: new Set(),
     _YT_TABLE: 't',
+    _admSyncReport: (k, o) => { reports[k] = o; },
   };
   const names = Object.keys(deps);
   const fn = new Function(...names, `let _extSyncing=false;\n${body}; return _ytSyncExtChannels;`)(...names.map(n => deps[n]));
-  return fn().then(() => ({ store, fetched, calls }));
+  return fn().then(() => ({ store, fetched, calls, reports }));
 }
 
 (async () => {
@@ -60,7 +62,7 @@ function run({ channels, budget, ls = {}, fetchImpl }) {
     const ls = {};
     channels.forEach(c => { ls['kpu_ext_last_' + c.handle] = 'old_' + c.handle; });
     const broken = new Set(['c0', 'c1', 'c2', 'c3', 'c4']);
-    const { store, fetched } = await run({
+    const { store, fetched, reports } = await run({
       channels, budget: 120, ls,
       fetchImpl: (h, o) => {
         if (broken.has(h) && !o.resumeTok) // 북마크를 못 만나는 채널 — 주어진 상한까지 다 씀
@@ -81,6 +83,23 @@ function run({ channels, budget, ls = {}, fetchImpl }) {
     need(p2.length > 0 && p2.every(f => f.sinceId && f.sinceId.startsWith('old_') && f.stopBefore), '2단계는 바닥 id/날짜에서 멈추도록 호출');
     need(store['kpu_ext_resume_c0'] === 'tok2_c0', '덜 메운 채널은 이어받기 지점을 전진시켜 보존');
     need(!store['kpu_ext_resume_c1'] && !store['kpu_ext_floor_c1'], '공백을 다 메우면 이어받기·바닥 정리');
+    const rep = reports.last_ext_sync;
+    need(rep && rep.reached === 30 && rep.total === 30 && rep.errors === 0, `결과 리포트를 워치독용으로 남김(${JSON.stringify(rep && { reached: rep.reached, total: rep.total, errors: rep.errors })})`);
+  }
+
+  // ── 1-b) 채널 오류는 리포트와 ❌ 판정 문구로 드러난다(예전엔 "오류 12건"이라 ✅였다) ──────
+  {
+    const channels = Array.from({ length: 6 }, (_, i) => ({ handle: 'c' + i, url: 'c' + i, name: 'n' + i, tier: 'music' }));
+    let lastProg = '';
+    const { reports } = await run({
+      channels, budget: 100,
+      fetchImpl: h => { if (h === 'c2') throw new Error('null value in column "group_ko"'); return { vids: [], done: true, interrupted: false, cappedOut: false, pages: 1, resumeToken: '', newestId: h + '_n' }; },
+      onProg: m => { lastProg = m; },
+    });
+    const rep = reports.last_ext_sync;
+    need(rep && rep.errors === 1 && rep.errChannels[0].h === 'c2' && /group_ko/.test(rep.errChannels[0].msg), '오류 채널·원문이 리포트에 남음');
+    const STEP_FAIL_RE = new RegExp(src.match(/const _STEP_FAIL_RE=\/(.+)\/;/)[1]);
+    need(STEP_FAIL_RE.test(lastProg), `마지막 진행 문구가 루틴의 ❌ 판정에 걸림("${lastProg.slice(0, 80)}")`);
   }
 
   // ── 2) 1단계가 예산에 걸리면 다음 회차는 그 근처부터 시작 ─────────────────────

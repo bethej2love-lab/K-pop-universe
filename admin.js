@@ -534,7 +534,12 @@ async function _ytSyncAll(){
   // 있는 영상만 조회하므로 그렇게 저장된 1,072건이 사이트 어디에서도 안 보이는 상태였음(실측).
   // ext 경로(_extBuildRows)는 group_ko=소속그룹 + members=[본인]으로 저장해서 그룹 카드·멤버 카드
   // 양쪽에 정상 노출된다. 개인 채널 동기화는 이제 "외부채널 동기화" 버튼이 담당.
-  const targets=[...groups,...solos];
+  // 순서 로테이션(2026-09-28) — 예산에 걸려 접히면 다음 회차는 멈춘 지점부터 시작한다. 고정 순서면 늘 같은
+  // 꼬리(솔로 채널이 목록 끝)가 굶는다 — 외부 채널이 이 구조로 1주일간 뒤쪽 채널을 통째로 놓쳤다.
+  const _allTargets=[...groups,...solos];
+  let _yrr=+(localStorage.getItem('kpu_yt_rr')||0);if(!(_yrr>=0&&_yrr<_allTargets.length))_yrr=0;
+  const targets=_allTargets.map((_,i)=>_allTargets[(i+_yrr)%_allTargets.length]);
+  const _syncErrs=[]; // {ko,msg} — 예전엔 콘솔에만 찍고 "완료"로 보고해 루틴이 초록불이었다
   let done=0;
   // 그룹별 소요 시간 누적(2026-09-07) — "루틴이 10시간 걸린다"의 범인을 찾으려면 250개 그룹 중 **어느
   // 채널이** 시간을 먹는지가 필요하다(대개 체크포인트가 없어 과거를 통째로 다시 긁는 채널). 끝날 때
@@ -565,6 +570,7 @@ async function _ytSyncAll(){
         console.log(`[YT sync] ${ko}: +${n}개 (${(_ms/1000).toFixed(1)}초)`);
       }catch(e){
         console.error(`[YT sync] ${ko} 실패:`,e.message);
+        _syncErrs.push({ko,msg:String(e&&e.message||e).slice(0,160)});
       }
       done++;
       _ytSetProg(`[${done}/${targets.length}] 동기화 중… (${ko})`);
@@ -574,9 +580,14 @@ async function _ytSyncAll(){
   const _tot=_syncMs.reduce((a,b)=>a+b.ms,0);
   console.log(`[YT sync] 총 ${(_tot/60000).toFixed(1)}분 · 오래 걸린 채널 top10`,
     _syncMs.sort((a,b)=>b.ms-a.ms).slice(0,10).map(x=>`${x.ko} ${(x.ms/1000).toFixed(1)}초(+${x.n})`));
-  _ytSetProg(_budgetStopped
+  // 워커 6개가 동시에 돌아 멈춘 지점 직전 몇 채널은 진행 중이었을 수 있다 — 6칸 겹쳐 다시 봐도 1페이지씩뿐.
+  localStorage.setItem('kpu_yt_rr',String(_budgetStopped?(_yrr+Math.max(0,done-_SYNC_CONC))%targets.length:0));
+  _admSyncReport('last_official_sync',{total:targets.length,reached:done,budgetStopped:_budgetStopped,errors:_syncErrs.length,errChannels:_syncErrs.slice(0,20)});
+  // ⚠️ 오류가 있으면 문구에 "오류:"(콜론)를 넣는다 — 루틴의 _STEP_FAIL_RE가 이걸 보고 ❌로 올린다.
+  const _errTxt=_syncErrs.length?` / 오류: ${_syncErrs.length}개 채널(${_syncErrs.slice(0,5).map(x=>x.ko).join(', ')}${_syncErrs.length>5?' 외':''})`:'';
+  _ytSetProg((_budgetStopped
     ?`공식 채널 ${done}/${targets.length}개까지 — 이번 회차 호출 예산(${_ytBudgetSpent()}콜)을 다 써서 나머지는 다음 회차에 이어받아요`
-    :`공식 채널 완료 — ${targets.length}개 (${(_tot/60000).toFixed(1)}분)`);
+    :`공식 채널 완료 — ${targets.length}개 (${(_tot/60000).toFixed(1)}분)`)+_errTxt);
   _ytSyncing=false;
 }
 
@@ -8760,10 +8771,12 @@ async function _ytSyncExtChannels(){
   //   2단계: 남은 예산으로만 과거 이어받기(공백 메우기·첫 동기화 백필)를 한다.
   // 1단계가 그래도 예산에 걸리면 다음 회차는 멈춘 채널 근처부터 시작한다(kpu_ext_rr) — 같은 꼬리가 계속 굶지 않게.
   const _EXT_NEW_PAGES=10; // 500영상 — 음방 채널 1주일치 공백도 한 번에 메운다
+  const _EXT_BACKFILL_CALLS=20; // 2단계(과거 메우기) 회차당 상한 — 아래 2단계 주석
   const _n=_EXT_CHANNELS.length;
   let _rr=+(localStorage.getItem('kpu_ext_rr')||0);if(!(_rr>=0&&_rr<_n))_rr=0;
   const _pass1=_EXT_CHANNELS.map((_,i)=>_EXT_CHANNELS[(i+_rr)%_n]);
   const _pass2=[]; // 1단계가 끝난 뒤 이어받기가 남아 있는 채널
+  const _extErrs=[];let _p1Reached=0;
   const _saveVids=async(ch,vids,prefix)=>{
     if(!vids.length)return;
     await _ytProbeShortsInline(vids,setProg); // 동기화 시점 세로 실측(개인/외부 채널도, 승격 버튼 불필요) — 2026-09-04
@@ -8827,7 +8840,7 @@ async function _ytSyncExtChannels(){
   }
   // 2단계 — 과거 이어받기. 바닥이 있으면 바닥 id/날짜에서 멈추고, 없으면(첫 동기화 백필) 채널 끝까지.
   // ⚠️ 이 단계 호출은 회차 예산의 **남는 몫**만 쓴다 — 1단계(모든 채널의 신규)가 늘 먼저다.
-  async function _extBackfill(ch,prefix){
+  async function _extBackfill(ch,prefix,maxPages){
     const resumeKey=`kpu_ext_resume_${ch.handle}`;
     const floorKey=`kpu_ext_floor_${ch.handle}`;
     const resumeTok=localStorage.getItem(resumeKey)||'';
@@ -8837,7 +8850,7 @@ async function _ytSyncExtChannels(){
     setProg(`${prefix} 과거 이어받는 중…`);
     const{vids,done,interrupted,cappedOut,pages,resumeToken}=await _ytFetchNewVideos(uploadsId,key,floor?.id||null,(fetched,tot)=>{
       setProg(`${prefix} ${fetched}${tot?'/'+tot:''}개 수집 중… (이어받는 중)`);
-    },resumeTok,null,undefined,floor?.date||undefined);
+    },resumeTok,null,maxPages,floor?.date||undefined);
     await _saveVids(ch,vids,prefix);
     if(done){
       localStorage.removeItem(resumeKey);localStorage.removeItem(floorKey); // 바닥(또는 채널 끝)까지 메움
@@ -8862,9 +8875,9 @@ async function _ytSyncExtChannels(){
       const ci=_eci++;
       const ch=list[ci];
       const prefix=`[${label} ${ci+1}/${list.length}] ${ch.name}`;
-      try{await fn(ch,prefix);}
+      try{await fn(ch,prefix);if(label==='신규')_p1Reached++;}
       catch(e){
-        errors++;
+        errors++;_extErrs.push({h:ch.handle,name:ch.name,msg:String(e&&e.message||e).slice(0,160)});
         console.error(`[ext sync] ${ch.name}`,e);
         setProg(`${prefix} 오류: ${e.message}`);
       }
@@ -8879,8 +8892,24 @@ async function _ytSyncExtChannels(){
     localStorage.setItem('kpu_ext_rr',String((_rr+Math.max(0,ci-4))%_n));
   });
   if(!_p1Stopped)localStorage.setItem('kpu_ext_rr','0');
-  if(_pass2.length)await _runPass(_pass2,_extBackfill,'이어받기');
-  setProg(`전체 완료 — 공식·외부 채널 합산 추가 ${totalAdded}개 / 스킵 ${totalSkipped}개${errors?` / 오류 ${errors}건`:''}`);
+  // 2단계는 회차당 _EXT_BACKFILL_CALLS콜로 못 박는다 — "남은 예산 전부"로 두면 매 회차 수백 콜씩, 하루
+  // 18회면 수천 유닛이 과거 메우기에 새어 나가 일일 쿼터(1만)를 넘긴다(tests/sync-gate.test.js 배분 참고).
+  // 20콜 = 1,000영상/회차(하루 1.8만) — 1주일치 공백 12채널도 하루 안에 메운다. 순차(동시 1)로 돌려 상한을 정확히 지킨다.
+  if(_pass2.length){
+    const _p2End=_ytBudgetSpent()+_EXT_BACKFILL_CALLS;
+    for(let i=0;i<_pass2.length;i++){
+      const left=Math.min(_p2End-_ytBudgetSpent(),_ytBudgetLeft()-2);
+      if(left<=1){setProg(`과거 이어받기는 회차 상한(${_EXT_BACKFILL_CALLS}콜)까지 — 나머지 ${_pass2.length-i}곳은 다음 회차에`);break;}
+      const ch=_pass2[i];
+      try{await _extBackfill(ch,`[이어받기 ${i+1}/${_pass2.length}] ${ch.name}`,left-1);}
+      catch(e){errors++;_extErrs.push({h:ch.handle,name:ch.name,msg:String(e&&e.message||e).slice(0,160)});console.error(`[ext sync] ${ch.name}`,e);}
+    }
+  }
+  _admSyncReport('last_ext_sync',{total:_n,reached:_p1Reached,budgetStopped:_p1Stopped,backfill:_pass2.length,added:totalAdded,errors,errChannels:_extErrs.slice(0,20)});
+  // ⚠️ "오류:"(콜론)를 넣어야 루틴의 _STEP_FAIL_RE가 ❌로 올린다. 예전 문구("오류 12건")는 콜론이 없어서
+  //    1주일 내내 ✅였다(2026-09-28). 채널명과 첫 에러를 같이 적어 로그만 보고도 원인을 알 수 있게 한다.
+  const _errTxt=errors?` / 오류: ${errors}건 — ${[...new Set(_extErrs.map(x=>x.name))].slice(0,5).join(', ')}${_extErrs.length>5?' 외':''} (${_extErrs[0]?.msg||''})`:'';
+  setProg(`전체 완료 — 공식·외부 채널 합산 추가 ${totalAdded}개 / 스킵 ${totalSkipped}개 / 외부 ${_p1Reached}/${_n}곳 확인`+(_p1Stopped?' (예산 소진 — 나머지는 다음 회차)':'')+_errTxt);
   _extSyncing=false;
 }
 
@@ -10461,6 +10490,12 @@ async function _admReadLastRunDB(){
 }
 async function _admWriteLastRunDB(ts){
   try{await sb.from('atm_exception_rules').upsert({type:'admin_meta',key:'last_routine',value:ts},{onConflict:'type,key'});}catch(e){}
+}
+// 동기화 결과 리포트(2026-09-28) — 회차마다 {ts, 도달 채널 수, 오류 채널 목록…}을 admin_meta에 남긴다.
+// 읽는 쪽은 tools/sync_watchdog.mjs(워치독)다. 외부 채널이 1주일간 매 회차 오류 12건을 내는 동안 아무도
+// 몰랐던 게 사고의 절반이었다 — 결과가 브라우저 안에서만 살다 사라졌기 때문. 실패해도 동기화는 계속.
+function _admSyncReport(key,obj){
+  try{sb&&sb.from('atm_exception_rules').upsert({type:'admin_meta',key,value:{ts:Date.now(),...obj}},{onConflict:'type,key'}).then(()=>{},()=>{});}catch(e){}
 }
 // 범용 admin_meta 키-값(2026-09-17). last_routine이 쓰던 그릇을 그대로 재사용한다 — "며칠에 한 번만
 // 하는 일"의 마지막 시각을 기기와 무관하게 공유해야 하는 자리가 늘어서(해체 채널 폴링·조회수 순환)

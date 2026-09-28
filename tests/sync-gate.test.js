@@ -73,14 +73,26 @@ maxRunsPerDay = Math.ceil(maxRunsPerDay);
 //    그래서 ①매시간 동기화에서 조회수 갱신(~70)을 빼고(전체 루틴이 3시간마다 계속 갱신한다)
 //          ②백필 예산을 15회(1,500유닛)로 낮췄다.
 //    이 테스트는 그 배분이 유지되는지 본다 — 어느 한쪽을 다시 올리면 여기가 먼저 빨개진다.
-const UNITS_PER_SYNC = 280;      // 공식 채널 playlistItems ~222 + 외부 채널 ~60 (조회수 갱신은 제외)
-const UNITS_PER_FULL = 350;      // 전체 루틴은 조회수 갱신까지 포함
-const DAILY_ROUTINE_RUNS = 8;    // daily-routine.yml: cron '0 */3 * * *'
+// ── 2026-09-28 재산정(실측 채널 수 기준) ────────────────────────────────────
+// 예전 값 "외부 채널 ~60"은 틀렸었다 — 외부 채널은 126곳이고 회차마다 채널당 최소 1콜이다. 그동안 안
+// 넘쳤던 건 sync-hourly cron이 하루 96발 중 6~7개만 실제로 떠서(드랍) 설계 회차의 1/3만 돌았기 때문이다.
+// sync-ticker로 설계 회차(≤18)가 실제로 돌기 시작하므로 진짜 숫자로 다시 맞춘다.
+// ⚠️ 모델: 게이트는 last_routine(전체 루틴의 동기화)도 "방금 동기화함"으로 보므로 **루틴의 동기화는
+//    매시간 동기화 한 회차를 대체**한다(합산이 아니라 같은 18칸을 나눠 씀). 루틴이 따로 쓰는 건 조회수 계열뿐.
+const G = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'groups.json'), 'utf8'));
+const OFFICIAL_CH = Object.values(G).filter(g => g && g.links && g.links.youtube && !g.disbanded).length + 10; // +솔로 공식 ~7
+const EXT_CH = 135;              // ext_channels 126곳(2026-09-28) + 증가 여유
+const UNITS_PER_SYNC = OFFICIAL_CH + EXT_CH;  // 채널당 playlistItems 1콜(신규 없을 때). 신규분 추가 페이지는 아래 여유로
+const EXT_BACKFILL_PER_SYNC = Number(/const _EXT_BACKFILL_CALLS=(\d+)/.exec(fs.readFileSync(path.join(__dirname, '..', 'admin.js'), 'utf8'))?.[1] || 999);
+const ROUTINE_VIEWS = 6 * 70 + 8 * 60 + 400;  // full 루틴 조회수 갱신 6회 + 핫 순환 8회 + 일일 순환 1배치
+const DISBANDED_ONCE = 45;       // 해체 그룹 채널 하루 1회
+const WATCHDOG = 300;            // tools/sync_watchdog.mjs 유튜브 실물 대조(하루 1회, 채널당 1유닛)
 const BACKFILL_RESERVE = 1500;   // admin.js _ytBackfillPriorityChannels의 TOTAL_BUDGET 15회 × 100유닛
 const QUOTA = 10000;             // YouTube Data API 일일 한도
-const used = maxRunsPerDay * UNITS_PER_SYNC + DAILY_ROUTINE_RUNS * UNITS_PER_FULL + BACKFILL_RESERVE;
+const used = maxRunsPerDay * (UNITS_PER_SYNC + EXT_BACKFILL_PER_SYNC) + ROUTINE_VIEWS + DISBANDED_ONCE + WATCHDOG + BACKFILL_RESERVE;
 
-console.log(`   동기화 ${maxRunsPerDay}회×${UNITS_PER_SYNC} + 루틴 ${DAILY_ROUTINE_RUNS}회×${UNITS_PER_FULL} + 백필 예약 ${BACKFILL_RESERVE} = ${used.toLocaleString()} / 한도 ${QUOTA.toLocaleString()}`);
+console.log(`   동기화 ${maxRunsPerDay}회×(${UNITS_PER_SYNC}+메우기 ${EXT_BACKFILL_PER_SYNC}) + 루틴 조회수 ${ROUTINE_VIEWS} + 해체 ${DISBANDED_ONCE} + 워치독 ${WATCHDOG} + 백필 예약 ${BACKFILL_RESERVE} = ${used.toLocaleString()} / 한도 ${QUOTA.toLocaleString()}`);
+need(EXT_BACKFILL_PER_SYNC <= 60, `외부 채널 과거 메우기에 회차 상한이 있음(${EXT_BACKFILL_PER_SYNC}콜) — 없으면 남는 예산을 매 회차 통째로 쓴다`);
 // 한도에 딱 붙이면 안 된다 — 유닛 추정치에 오차가 있고, 재시도·재수집이 있는 날은 더 쓴다.
 need(used <= QUOTA * 0.95, `쿼터 예산에 여유가 있음 (${Math.round(used / QUOTA * 100)}% 사용 · 상한 95%)`);
 

@@ -1,0 +1,57 @@
+name: 수집 워치독
+
+# 동기화가 실제로 영상을 빠짐없이 넣고 있는지 **동기화와 독립적으로** 확인하고, 이상이 있으면
+# GitHub Issue("🚨 [수집 감시]")로 알린다. 판정 기준은 tools/sync_watchdog.mjs 머리 주석.
+# 평소엔 sync-ticker가 매시간 발사하고, 아래 cron은 티커 체인이 끊겼을 때의 예비다 — 티커가 죽으면
+# 동기화도 같이 멈추므로, 그걸 잡는 감시자가 티커에만 기대면 안 된다.
+# 유튜브 실물 대조(쿼터 약 300유닛)는 하루 1회만(WATCHDOG_API=auto — 마지막 대조 후 20시간).
+on:
+  schedule:
+    - cron: '27 */3 * * *'
+  workflow_dispatch:
+    inputs:
+      api:
+        description: "유튜브 실물 대조를 지금 강제 실행"
+        type: boolean
+        default: false
+      dry:
+        description: "이슈를 건드리지 않고 결과만 출력"
+        type: boolean
+        default: false
+
+permissions:
+  issues: write
+  contents: read
+
+concurrency:
+  group: sync-watchdog
+  cancel-in-progress: false
+
+jobs:
+  watch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      # 채널 URL → uploads 플레이리스트 id 캐시(채널마다 불변). 없으면 핸들 채널당 1유닛씩 더 든다.
+      - name: restore uploads-id cache
+        uses: actions/cache@v4
+        with:
+          path: .cache/yt_uploads_ids.json
+          key: yt-uploads-ids-${{ github.run_id }}
+          restore-keys: |
+            yt-uploads-ids-
+
+      - name: run watchdog
+        env:
+          KPU_YT_API_KEY: ${{ secrets.KPU_YT_API_KEY }}
+          SUPABASE_SERVICE_ROLE: ${{ secrets.SUPABASE_SERVICE_ROLE }}
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          WATCHDOG_API: auto
+        run: node tools/sync_watchdog.mjs ${{ inputs.api && '--api' || '' }} ${{ inputs.dry && '--dry' || '' }}

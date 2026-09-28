@@ -56,7 +56,7 @@ permissions:
 
 concurrency:
   group: sync-hourly
-  cancel-in-progress: true
+  cancel-in-progress: false   # ⚠️ true면 다음 발화가 **돌고 있는 동기화를 끊는다**(20분짜리 회차를 15분 뒤 발화가 죽이고, 그 발화는 게이트에서 skip — 결과적으로 0건). 2026-09-28
 
 jobs:
   sync:
