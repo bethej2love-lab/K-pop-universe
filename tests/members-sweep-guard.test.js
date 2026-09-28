@@ -43,6 +43,9 @@ function extractStatement(re, label) {
 }
 const { _sweepNormHay, _sweepPlanMemberFix } = new Function([
   extractStatement(/^const _ATM_KOREAN_SURNAMES\s*=/m, '_ATM_KOREAN_SURNAMES'),
+  extractStatement(/^const _ATM_STAGE_ONLY_FIRST\s*=/m, '_ATM_STAGE_ONLY_FIRST'),
+  'let _atmForeignNameIdx=null;',
+  extractByBraces(/^function _atmNameIsForeign\(/m, '_atmNameIsForeign'),
   extractByBraces(/^function _atmStripSurname\(/m, '_atmStripSurname'),
   extractByBraces(/^function _sweepNormHay\(/m, '_sweepNormHay'),
   extractByBraces(/^function _sweepMemberNameTokens\(/m, '_sweepMemberNameTokens'),

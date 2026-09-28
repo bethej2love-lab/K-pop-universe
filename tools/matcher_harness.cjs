@@ -58,6 +58,9 @@ pieces.push(extractByBraces(adminSrc, /^function _wonkokStripClause\(/m, '_wonko
 pieces.push(extractStatement(adminSrc, /^const _ATM_KOREAN_SURNAMES\s*=/m, '_ATM_KOREAN_SURNAMES'));
 pieces.push(extractByBraces(adminSrc, /^function _atmEscRe\(/m, '_atmEscRe'));
 pieces.push(extractStatement(adminSrc, /^const _ATM_HASHTAG_ONLY_NAMES\s*=/m, '_ATM_HASHTAG_ONLY_NAMES'));
+pieces.push(extractStatement(adminSrc, /^const _ATM_STAGE_ONLY_FIRST\s*=/m, '_ATM_STAGE_ONLY_FIRST')); // 예명 성 떼기 금지(2026-09-28)
+pieces.push('let _atmForeignNameIdx=null;');
+pieces.push(extractByBraces(adminSrc, /^function _atmNameIsForeign\(/m, '_atmNameIsForeign'));
 pieces.push(extractByBraces(adminSrc, /^function _atmStripSurname\(/m, '_atmStripSurname'));
 pieces.push(extractByBraces(adminSrc, /^function _isHashtagOnlyName\(/m, '_isHashtagOnlyName'));
 pieces.push(extractStatement(adminSrc, /^const _m2VariantsCache\s*=/m, '_m2VariantsCache'));

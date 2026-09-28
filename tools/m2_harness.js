@@ -52,6 +52,9 @@ function load(){
   F(/^function _atmEscRe\(/m,'_atmEscRe');
   F(/^function _atmTokenize\(/m,'_atmTokenize');
   S(/^const _ATM_HASHTAG_ONLY_NAMES\s*=/m,'_ATM_HASHTAG_ONLY_NAMES');
+  S(/^const _ATM_STAGE_ONLY_FIRST\s*=/m,'_ATM_STAGE_ONLY_FIRST'); // 예명 성 떼기 금지(2026-09-28)
+  pieces.push('let _atmForeignNameIdx=null;');
+  F(/^function _atmNameIsForeign\(/m,'_atmNameIsForeign');
   F(/^function _atmStripSurname\(/m,'_atmStripSurname');
   F(/^function _atmEnKey\(/m,'_atmEnKey');
   F(/^function _atmNameTakenByGroupmate\(/m,'_atmNameTakenByGroupmate');
