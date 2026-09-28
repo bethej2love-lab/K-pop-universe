@@ -67,5 +67,13 @@ ok(_fmtViewMilestone(100000) === '100K+', '영문 10만 → "100K+"');
 ok(_fmtViewMilestone(10000000) === '10M+', '영문 1000만 → "10M+"');
 ok(_fmtViewMilestone(1000000000) === '1B+', '영문 10억 → "1B+"');
 
+// 조회수를 처음 재는 영상은 '돌파'가 아니라 기준값(seeded:true) — 복구 동기화 날 옛 영상 수천 개가 '오늘 돌파'로
+// 쏟아진 사고(2026-09-28, 하루 400건). _ytViewCountCore가 prevTier 'NEW'를 seeded로 남기는지 고정.
+{
+  const _s = require('fs').readFileSync(require('path').join(__dirname, '..', 'admin.js'), 'utf8');
+  ok(/_first=_pt==='NEW'/.test(_s) && /seeded:_first/.test(_s) && /view_count==null\?'NEW'/.test(_s), '첫 관측 영상은 seeded:true(일일 소식에 안 뜸)');
+}
+
 console.log(`\nview-milestones: ${pass} passed, ${fail} failed`);
 process.exit(fail ? 1 : 0);
+

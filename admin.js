@@ -844,7 +844,7 @@ async function _ytRotateViewCountRefresh(){
   const prevTitle=new Map();  // 제목이 실제로 바뀐 것만 쓰기 위해 현재 값을 같이 들고 온다
   const prevTier=new Map();   // 마일스톤 baseline(이전에 알던 최고 단계)
   const prevGko=new Map();    // 마일스톤 로그에 같이 남길 group_ko
-  const _selCols=['id,title']; if(_unav)_selCols.push('unavailable_at'); if(_vm)_selCols.push('view_milestone_tier,group_ko');
+  const _selCols=['id,title']; if(_unav)_selCols.push('unavailable_at'); if(_vm)_selCols.push('view_milestone_tier,group_ko,view_count');
   for(let off=0; off<VIEW_COUNT_ROTATE_BATCH; off+=1000){
     const to=Math.min(off+1000,VIEW_COUNT_ROTATE_BATCH)-1;
     const{data,error}=await sb.from(_YT_TABLE).select(_selCols.join(','))
@@ -856,7 +856,8 @@ async function _ytRotateViewCountRefresh(){
     ids.push(...data.map(r=>r.id));
     data.forEach(r=>{prevTitle.set(r.id,r.title||'');});
     if(_unav)data.forEach(r=>{if(r.unavailable_at)wasUnavail.add(r.id);});
-    if(_vm)data.forEach(r=>{prevTier.set(r.id,r.view_milestone_tier||null);prevGko.set(r.id,r.group_ko||null);});
+    // 조회수를 **처음 재는** 영상은 'NEW'로 표시 — 원래부터 넘어 있던 단계를 "오늘 돌파"로 세면 안 된다(_ytViewCountCore 주석)
+    if(_vm)data.forEach(r=>{prevTier.set(r.id,r.view_count==null?'NEW':(r.view_milestone_tier||null));prevGko.set(r.id,r.group_ko||null);});
     if(data.length<to-off+1)break; // 마지막 페이지(테이블 끝)
   }
   if(!ids.length){_ytSetProg('순환 갱신 대상 없음');return;}
@@ -914,11 +915,16 @@ async function _ytViewCountCore(ids,{key,_dur,_live,_vm,_unav,prevTitle,prevTier
         // 각각을 yt_view_milestones에 한 줄씩 남긴다(중간 단계를 건너뛰어도 전부 기록 — 위 _vmCrossedTiers).
         let mt=null;
         if(_vm&&!isNaN(vc)){
-          const crossed=_vmCrossedTiers(prevTier.get(it.id),vc);
+          // ⚠️ 조회수를 **처음 재는** 영상(prevTier 'NEW')은 "돌파"가 아니라 **기준값**이다 — 원래부터 넘어 있던
+          //    단계라 seeded:true로 조용히 남긴다(일일 소식은 seeded:false만 본다). 예전엔 null(=10만 미만)과
+          //    구분이 없어서, 외부 채널 복구로 옛 영상 수천 개가 들어온 날(2026-09-28) "N 돌파"가 하루 200건 넘게
+          //    쏟아졌다(2023~24년 영상·쥬얼리 24건 등 — 사용자: "너무 많다").
+          const _pt=prevTier.get(it.id),_first=_pt==='NEW';
+          const crossed=_vmCrossedTiers(_first?null:_pt,vc);
           if(crossed.length){
             mt=crossed[crossed.length-1];
             const gko=prevGko.get(it.id);
-            if(gko)crossed.forEach(tier=>milestoneRows.push({video_id:it.id,group_ko:gko,tier,crossed_at:nowDate,seeded:false}));
+            if(gko)crossed.forEach(tier=>milestoneRows.push({video_id:it.id,group_ko:gko,tier,crossed_at:nowDate,seeded:_first}));
           }
         }
         if(!isNaN(vc))statsUpdates.push({id:it.id,view_count:vc,touchOnly:false,revive,ds,wl,nt,mt});
@@ -999,7 +1005,7 @@ async function _ytRotateViewCountHot(){
   const ids=[];
   const wasUnavail=new Set();
   const prevTitle=new Map(),prevTier=new Map(),prevGko=new Map();
-  const _selCols=['id,title,view_milestone_tier,group_ko']; if(_unav)_selCols.push('unavailable_at');
+  const _selCols=['id,title,view_milestone_tier,group_ko,view_count']; if(_unav)_selCols.push('unavailable_at');
   for(let off=0; off<VIEW_COUNT_HOT_BATCH; off+=1000){
     const to=Math.min(off+1000,VIEW_COUNT_HOT_BATCH)-1;
     const{data,error}=await sb.from(_YT_TABLE).select(_selCols.join(','))
@@ -1010,7 +1016,7 @@ async function _ytRotateViewCountHot(){
     if(error){_ytSetProg('조회수 핫 순환 — 대상 조회 실패: '+error.message);return;}
     if(!data?.length)break;
     ids.push(...data.map(r=>r.id));
-    data.forEach(r=>{prevTitle.set(r.id,r.title||'');prevTier.set(r.id,r.view_milestone_tier||null);prevGko.set(r.id,r.group_ko||null);});
+    data.forEach(r=>{prevTitle.set(r.id,r.title||'');prevTier.set(r.id,r.view_count==null?'NEW':(r.view_milestone_tier||null));prevGko.set(r.id,r.group_ko||null);});
     if(_unav)data.forEach(r=>{if(r.unavailable_at)wasUnavail.add(r.id);});
     if(data.length<to-off+1)break;
   }
