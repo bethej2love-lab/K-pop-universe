@@ -42,6 +42,10 @@ need(skipLines.length > 0, `_ytClassify의 skip 규칙 ${skipLines.length}줄 �
 for (const s of ['OFFICIAL AUDIO', '공식 음원', 'TEASER', '티저'])
   need(skipRe.test(`[${s}] 테스트`) === skipLines.some(l => new RegExp(/\/(.+?)\/\.test/.exec(l)[1]).test(`[${s}] 테스트`)),
     `skip 판정 일치: "${s}"`);
+const admStrict = /const _EXT_STRICT_TIERS=new Set\(\[([^\]]*)\]\)/.exec(admin)[1].replace(/['\s]/g, '').split(',').sort().join(',');
+const wdStrict = /const STRICT_TIERS = new Set\(\[([^\]]*)\]\)/.exec(wdSrc)[1].replace(/['\s]/g, '').split(',').sort().join(',');
+need(admStrict === wdStrict, `워치독 strict tier가 admin.js _EXT_STRICT_TIERS와 같음(${wdStrict})`);
+need(/createRequire\(import\.meta\.url\)\('\.\/matcher_harness\.cjs'\)/.test(wdSrc), '워치독이 실제 동기화 매처(하네스)로 판정 — 규칙 사본을 따로 두지 않음');
 need(/_admSyncReport\('last_official_sync'/.test(admin) && /_admSyncReport\('last_ext_sync'/.test(admin),
   '공식·외부 동기화가 워치독용 리포트를 남김');
 need(/meta\('last_official_sync'\)/.test(wdSrc) && /meta\('last_ext_sync'\)/.test(wdSrc), '워치독이 같은 키를 읽음');

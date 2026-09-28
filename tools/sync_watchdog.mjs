@@ -16,8 +16,8 @@
 //     지연의 폭이 넓어 임계값은 오탐이거나 늦는다. 리포트 시각 기준이면 "돌았는데 못 넣었다"만 잡힌다.
 //     · 공식 채널·아이돌 개인 채널(owner 있음) — 업로드가 전부 수집 대상이라 1건만 빠져도 🔴
 //       (티저·공식 음원·밴 인물 제목은 동기화가 일부러 버리므로 제외 — admin.js _ytClassify와 같은 규칙)
-//     · 음방·매체 채널(owner 없음) — 제목에 아는 아이돌이 있을 때만 넣는 게 정상이라 개별 누락은 판정 불가.
-//       최신 5개가 **전부** 없고 이 채널이 평소 대부분을 넣던 곳(최근 14일 ≥20건)이면 🟠 의심(채널째 멈춘 패턴).
+//     · 음방·매체 채널(owner 없음) — 제목에 아는 아이돌이 있을 때만 넣는 게 정상이라, 빠진 영상을 **실제
+//       동기화 매처(_m2ParseTitle)로 다시 판정**해 받아들여지는 제목인데 없으면 🔴(추정 없이 진짜 누락만).
 //
 // ── 알림 ────────────────────────────────────────────────────────────────────
 // GitHub Issue 하나("🚨 [수집 감시]")를 열고 본문을 갱신한다. **새 문제가 생길 때만 댓글**을 달아 알림이
@@ -29,6 +29,8 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { createRequire } from 'node:module';
+import { createRequire } from 'node:module';
 
 const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
 const U = process.env.SUPABASE_URL || 'https://dukgguehegnembimqvkm.supabase.co';
@@ -64,6 +66,10 @@ async function setMeta(key, value) {
 
 // 동기화가 일부러 버리는 제목 — admin.js _ytClassify의 'skip' 규칙과 같다(짝이다 — 거기 바꾸면 여기도).
 const SKIP_TITLE_RE = /OFFICIAL\s+AUDIO|공식\s*음원|\bTEASER\b|티저/i;
+// 수집 채널 판정은 실제 동기화 매처로 — tools/matcher_harness.cjs가 admin.js 실코드를 잘라 실행한다(단일 출처).
+const { _m2ParseTitle } = createRequire(import.meta.url)('./matcher_harness.cjs');
+// admin.js _EXT_STRICT_TIERS와 짝(tests/sync-ticker.test.js가 일치를 본다)
+const STRICT_TIERS = new Set(['variety', 'magazine', 'idol', 'grpsub', 'show', 'fans']);
 
 // ── 1) 동기화 리포트 점검 ────────────────────────────────────────────────────
 async function checkReports(problems) {
@@ -138,7 +144,6 @@ async function checkYouTube(problems, rep) {
   // 판정 기준 시각 — 그 종류의 동기화가 마지막으로 **완료된** 시각. 리포트가 없으면(도입 전) 루틴 표식.
   const baseTs = { official: rep.off?.ts || rep.lastRoutine, ext: rep.ext?.ts || rep.lastRoutine };
   const since = new Date(Date.now() - LOOKBACK_DAYS * 86400000).toISOString();
-  const recent14 = new Date(Date.now() - 14 * 86400000).toISOString().slice(0, 10);
   const stats = { channels: chans.length, checked: 0, missing: 0, apiErr: 0 };
   let quotaDead = false;
   const work = [...chans];
@@ -158,14 +163,14 @@ async function checkYouTube(problems, rep) {
         const miss = items.filter(x => !have.has(x.id));
         if (!miss.length) continue;
         if (ch.kind === 'collect') {
-          if (miss.length < items.length || items.length < 5) continue; // 일부 누락은 정상(매칭 안 된 영상)
-          // 평소 대부분을 넣던 채널만 — 예능·대학방송처럼 아이돌 영상이 가끔인 채널은 "최신 5개 전멸"이 정상이다
-          // (첫 실행 오탐 16곳이 전부 이 부류). 최근 14일 적재 ≥ 20건(하루 1.4건 이상)인 채널이면 5연속
-          // 누락은 채널째 멈춘 신호로 본다 — 이번 사고의 M2·뮤직뱅크·쇼챔피언이 이 조건에 든다.
-          const hist = await sbGet(`yt_channel_videos?select=id&source_handle=eq.${encodeURIComponent(ch.handle)}&published_at=gte.${recent14}&limit=20`);
-          if (hist.length < 20) continue;
-          stats.missing += miss.length;
-          problems.push({ key: `collect:${ch.handle}`, sev: '🟠', text: `**${ch.name}**(${ch.tier}) 최신 ${items.length}개가 전부 DB에 없음 — 채널째 멈춘 패턴 의심 · 최신: "${miss[0].title.slice(0, 50)}" (${miss[0].ts.slice(0, 10)})` });
+          // 수집 채널은 "제목에 아는 아이돌이 있을 때만" 넣는 게 정상이라, 빠진 영상을 **실제 동기화 매처로
+          // 다시 판정**한다 — 매처가 받아들이는 제목인데 DB에 없으면 그건 진짜 누락이다(추정 없음).
+          // 첫 실행에서 "최신 5개 전멸" 추정은 오탐 18건(예능·대학방송·로스터 밖 인물)이었다.
+          const lost = miss.filter(x => { try { const r = _m2ParseTitle(x.title, undefined, STRICT_TIERS.has(ch.tier), x.ts.slice(0, 10)); return !!(r && (r.primaryGroup || r.hold)); } catch (e) { return false; } })
+            .filter(x => !SKIP_TITLE_RE.test(x.title));
+          if (!lost.length) continue;
+          stats.missing += lost.length;
+          problems.push({ key: `collect:${ch.handle}:${lost[0].id}`, sev: '🔴', text: `**${ch.name}**(${ch.tier}) 매칭되는 영상 ${lost.length}개 누락 — ` + lost.slice(0, 3).map(x => `"${x.title.slice(0, 40)}" (${x.ts.slice(0, 10)}, https://youtu.be/${x.id})`).join(' · ') });
           continue;
         }
         const real = miss.filter(x => !SKIP_TITLE_RE.test(x.title));
