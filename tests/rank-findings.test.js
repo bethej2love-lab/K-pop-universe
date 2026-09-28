@@ -16,8 +16,9 @@ need(all('GDXTAEYANG SPECIAL EDITION GOOD BOY TEASER', undefined, '2014-11-01').
 // ③ "'곡' (유닛)"은 원곡 표기 — 출연 아님
 need(!all('P1Harmony THEO&KEEHO&JIUNG - ‘Twinkle’ (태티서) LIVE CLIP', '피원하모니', '2026-09-10').some(x => /소녀시대/.test(x)), "'Twinkle' (태티서) 커버 → 태티서 게스트 아님");
 need(all('태티서 TTS Twinkle 무대', undefined, '2012-05-01').includes('태연(소녀시대)'), '진짜 태티서 무대는 그대로');
-// ④ 동명 신인 그룹 — 드림캐쳐가 제목에 없으면 유닛 유아유가 아니다
-need(!all('UAU (유아유) ‘GENE’ | Simply K-Pop EP.14', undefined, '2026-07-10').some(x => /드림캐쳐/.test(x)), '신인 UAU → 드림캐쳐 아님');
+// ④ 유아유(UAU)는 드림캐쳐 유닛(2025 데뷔) — 그룹명 없이 활동하므로 유닛명만으로 잡혀야 한다
+//    (한때 "동명 신인 그룹"으로 오판해 막았다가 사용자 정정으로 되돌림 — 다시 막지 말 것)
+need(all('UAU (유아유) ‘GENE’ | Simply K-Pop EP.14', undefined, '2026-07-10').includes('수아(드림캐쳐)'), 'UAU GENE 무대 → 드림캐쳐 유아유');
 need(all('드림캐쳐 유아유 UAU 무대', undefined, '2024-01-01').includes('수아(드림캐쳐)'), '드림캐쳐 유아유는 그대로');
 
 console.log(pass ? '\n✅ 순위표 발견 4건 회귀 통과' : '\n💥 순위표 발견 4건 회귀 실패');

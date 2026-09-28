@@ -110,9 +110,9 @@ const _UNIT_HASHTAG_ONLY_TOKENS=new Set(['AAA','EVOLution','Glow','hatch!','NXT'
 // 'Glow'가 그 해시태그에 걸려 김채원·설린·서아·지연 4명이 144건에 붙었다(36건 × 4명).
 // 이 토큰들은 **유닛 소속 그룹이 제목에서 따로 확인될 때만** 확장한다 — 진짜 트리플에스 유닛 콘텐츠는
 // 제목에 그룹명이 같이 있고, 자체 채널 경로는 애초에 채널 그룹으로 한정돼 영향이 없다.
-// 'UAU'·'유아유'(2026-09-28): 드림캐쳐 유닛명인데 2026년 같은 이름의 신인 그룹 UAU("GENE")가 나와 그 무대마다
-// 지유·수아·유현이 붙었다(순위표 7건씩). 드림캐쳐가 제목에 있을 때만 유닛으로 본다.
-const _UNIT_NEED_PARENT_TOKENS=new Set(['Glow','UAU','유아유']);
+// ⚠️ 'UAU'·'유아유'는 넣지 말 것(2026-09-28 되돌림) — 드림캐쳐 유닛(2025 데뷔)이 "UAU 'GENE'"처럼 그룹명 없이
+// 활동한다. "동명 신인 그룹"이라 추측해 넣었다가 사용자 정정으로 뺐다. 순위표에 뜬 건 도구가 유닛명을 근거로 안 봐서였다.
+const _UNIT_NEED_PARENT_TOKENS=new Set(['Glow']);
 const _PROJECT_UNITS={
   'V8':{names:['V8','브이에잇'],members:[{mko:'디에잇',gko:'세븐틴'},{mko:'버논',gko:'세븐틴'}]},
   'GOT THE BEAT':{names:['GOT THE BEAT','갓더비트'],members:[{mko:'보아',gko:'보아'},{mko:'태연',gko:'소녀시대'},{mko:'효연',gko:'소녀시대'},

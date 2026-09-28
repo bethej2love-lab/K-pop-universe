@@ -16,7 +16,7 @@
 import { createRequire } from 'node:module';
 import fs from 'node:fs';
 const require = createRequire(import.meta.url);
-const { _m2NameVariants, ARTISTS, GROUPS } = require('./matcher_harness.cjs');
+const { _m2NameVariants, ARTISTS, GROUPS, _PROJECT_UNITS } = require('./matcher_harness.cjs');
 
 const arg = (k, d) => { const i = process.argv.indexOf(k); return i >= 0 ? process.argv[i + 1] : d; };
 const DAYS = +arg('--days', 90), MIN = +arg('--min', 8), TOP = +arg('--top', 20);
@@ -52,13 +52,17 @@ export async function mistagRank({ days = DAYS, min = MIN, top = TOP } = {}) {
   //  · 성 뗀 이름(시온·매튜)은 다른 사람과 겹쳐 매처 변형에선 빠져도 근거로는 인정(첫 실행 오탐: 박시온 #시온)
   //  · 영문은 띄어쓰기 무시 + 이름 부분만(YE CHAN = Yechan, Kim Soomin → SOOMIN)
   //  · 한글 2자↑는 붙어 있어도 인정(#소정환 ⊃ 정환, 승관아 ⊃ 승관) — 1자 이름은 부분일치 금지(진·온)
+  //  · 그 사람이 속한 **유닛 이름**도 근거(드림캐쳐 유아유는 "UAU 'GENE'"처럼 멤버 이름 없이 활동 — 첫 실행에서
+  //    수아·유현을 오탐해 "동명 신인 그룹"으로 오판, 멀쩡한 태그를 지울 뻔했다. 사용자 정정 2026-09-28)
   const tokCache = new Map();
   const { _atmStripSurname } = require('./matcher_harness.cjs');
   const toks = a => {
     if (!tokCache.has(a)) {
       const en = norm(a.name.en), enParts = en.split(' ').filter(Boolean);
       const st = (() => { try { return _atmStripSurname([...a.name.ko]); } catch (e) { return null; } })();
-      const raw = [..._m2NameVariants(a), ...(a.matchAliases || []), a.subName, a.displayName, st, en.replace(/ /g, ''), enParts.length > 1 ? enParts[enParts.length - 1] : null];
+      const gks = new Set((a.groups || [a.group]).map(g => g && g.ko).filter(Boolean));
+      const units = Object.values(_PROJECT_UNITS || {}).filter(u => (u.members || []).some(m => m.mko === a.name.ko && gks.has(m.gko))).flatMap(u => u.names || []);
+      const raw = [..._m2NameVariants(a), ...(a.matchAliases || []), a.subName, a.displayName, st, en.replace(/ /g, ''), enParts.length > 1 ? enParts[enParts.length - 1] : null, ...units];
       tokCache.set(a, [...new Set(raw.filter(Boolean).map(norm).map(t => t.replace(/ /g, '')).filter(t => t.length >= 2 || /[가-힣]/.test(t)))]);
     }
     return tokCache.get(a);
