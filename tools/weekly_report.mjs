@@ -55,6 +55,13 @@ async function main() {
     return diffH < 24 ? `${diffH}시간 전` : `${Math.round(diffH / 24)}일 전`;
   }
 
+  // 오태깅 의심 순위(2026-09-28) — 사용자가 카드에서 발견하기 전에 먼저 보이게. 실패해도 보고는 나간다.
+  let mistagMd = '';
+  try {
+    const { mistagRank, mistagMarkdown } = await import('./mistag_rank.mjs');
+    mistagMd = mistagMarkdown(await mistagRank({ days: 90, min: 8, top: 10 }));
+  } catch (e) { mistagMd = `_(집계 실패: ${e.message})_`; }
+
   const queueWarn = queueCount > 50 ? ` ⚠️ 50건 초과` : '';
   const heldWarn = heldVideos > 200 ? ` ⚠️` : '';
 
@@ -74,6 +81,9 @@ async function main() {
 | 보류 영상 누적 | ${fmt(heldVideos)}건${heldWarn} |
 | 숨김 영상 누적 | ${fmt(hiddenVideos)}건 |
 | 검수 큐 대기 | ${fmt(queueCount)}건${queueWarn} |
+
+### 🏷️ 오태깅 의심 TOP 10
+${mistagMd}
 
 ### 자동화 상태
 - **마지막 일일 루틴**: ${ageStr(routineMeta)}
