@@ -18301,9 +18301,9 @@ async function _buildFeedJacon(){
     const picked=pool.filter((v,i)=>!_vert[i]).slice(0,30);
     if(!picked.length)return;
     const vidUrl=v=>_isShortV(v)?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;
-    const pl=picked.map(v=>({t:v.title,u:vidUrl(v),thumb:v.thumb||`https://img.youtube.com/vi/${v.id}/mqdefault.jpg`,pa:v.published_at?.slice(0,10),paFull:v.published_ts||v.published_at,vc:v.view_count,dur:v.duration_sec,groupKo:v.group_ko,memberKos:v.members||[],_apiId:v.id,_apiGroupKo:v.group_ko}));
+    const pl=picked.map(v=>({t:v.title,u:vidUrl(v),thumb:v.thumb||`https://img.youtube.com/vi/${v.id}/mqdefault.jpg`,pa:v.published_at?.slice(0,10),paFull:v.published_ts||v.published_at,vc:v.view_count,dur:v.duration_sec,groupKo:v.group_ko,memberKos:v.members||[],ownerCh:true,_apiId:v.id,_apiGroupKo:v.group_ko}));
     pl.forEach((song,i)=>{
-      const sub=[_gLabelKo(song.groupKo),song.paFull?_fmtVidAgo(song.paFull):(song.pa?_fmtVidAgo(song.pa):null)].filter(Boolean).join(' · ');
+      const sub=[_feedWhoSub(song),song.paFull?_fmtVidAgo(song.paFull):(song.pa?_fmtVidAgo(song.pa):null)].filter(Boolean).join(' · ');
       // 차트 선반과 동일한 카드(_appendFeedCard=.feed-card, 아래 #feed-jacon>.feed-card CSS로 158px).
       // 쇼츠도 short 옵션 없이 16:9 틀로 통일 — 가로 선반 카드 높이가 들쭉날쭉하지 않게(차트와 동일 톤).
       _appendFeedCard(list,'🎥',song.t,sub,
@@ -19588,7 +19588,22 @@ function _buildFeedRandomConnection(list){
 // 피드가 통째로 안 뜬다. 첫 조회에서 감지해 끄고, 이후엔 시각 없이(달력 표기로) 정상 동작한다.
 // 컬럼을 추가하면 새로고침 후 자동으로 다시 켜진다. 이 값이 필요한 건 피드 두 곳뿐이라 거기서만 붙인다.
 let _hasPubTs=true;
-const _FEED_COLS=()=>'id,title,thumb,category,is_short,content_flag,group_ko,members,view_count,published_at'+_durCol()+_liveCol()+(_hasPubTs?',published_ts':'');
+const _FEED_COLS=()=>'id,title,thumb,category,is_short,content_flag,group_ko,members,source_tier,view_count,published_at'+_durCol()+_liveCol()+(_hasPubTs?',published_ts':'');
+// 피드 카드 캡션의 "누구" 자리(2026-09-28 사용자 지적). **아이돌 개인 채널**(source_tier='idol') 영상은 주어가
+// 채널 주인(멤버)이다 — 슬기 개인 채널 영상 밑에 "레드벨벳"만 뜨면 그룹 채널처럼 읽힌다. 그래서 멤버 먼저,
+// 그룹은 뒤에 작고 흐리게(.feed-sub-grp). 공동운영 채널은 주인이 여럿이라 전부 적는다. 그룹 채널 영상과
+// 멤버 태그가 없는 개인 채널(팬 tier 등)은 예전처럼 그룹만. 표기는 _dispName(영문 모드·활동명 규칙 공유).
+// 오리지널 콘텐츠·Trend·For You(즐겨찾기 신작) 세 선반이 같이 쓴다 — 한 곳만 고치면 선반마다 어긋난다.
+function _feedWhoSub(song){
+  const g=_gLabelKo(song.groupKo);
+  if(!song.ownerCh)return g;
+  const ms=(song.memberKos||[]).map(mko=>{
+    const a=ARTISTS.find(x=>x.name.ko===mko&&(!song.groupKo||_artistGroups(x).some(gg=>gg.ko===song.groupKo)))||ARTISTS.find(x=>x.name.ko===mko);
+    return a?_dispName(a):mko;
+  }).filter(Boolean);
+  if(!ms.length)return g;
+  return ms.join(', ')+(g?` <span class="feed-sub-grp">${g}</span>`:'');
+}
 const _isPubTsMissing=err=>!!err&&/published_ts/.test(err.message||'');
 function _fmtVidAgo(iso){
   if(!iso)return'';
@@ -19822,7 +19837,7 @@ async function _buildFeedTrend(){
     // **선반만 조용히 안 뜨는** 상태로 배포됐다(2026-08-28 사용자 제보로 발견).
     const vidUrl=v=>_isShortV(v)?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;
     const songs=picked.map(v=>({t:v.title,u:vidUrl(v),thumb:v.thumb,vc:v.view_count,dur:v.duration_sec,pa:v.published_at?.slice(0,10),paFull:v.published_ts||v.published_at,
-      groupKo:v.group_ko,memberKos:v.members||[]}));
+      groupKo:v.group_ko,memberKos:v.members||[],ownerCh:v.source_tier==='idol'}));
     // 행 패커 배치(2026-08-30) — 한 행은 같은 비율(가로2 or 쇼츠2), 가로는 가끔 전체폭. 여백0 + 그림처럼 번갈아.
     strip.className='feed-grid'; // 이전 렌더가 masonry로 바꿨을 수 있어 그리드로 리셋(.feed-wide span2 사용)
     // shortWideProb(2026-09-04 사용자 요청) — Discover에는 큰 쇼츠가 섞이게. 전체폭 승격 조건이 원래
@@ -19834,7 +19849,7 @@ async function _buildFeedTrend(){
     rows.forEach(row=>row.items.forEach(song=>{
       const isShort=_songIsShort(song);
       // 서브는 "그룹 · N일 전" — 조회수를 안 쓰는 이유는 위 주석(순위표처럼 보이지 않게)과 같다.
-      const sub=[_gLabelKo(song.groupKo),song.paFull?_fmtVidAgo(song.paFull):(song.pa?_fmtVidAgo(song.pa):null)].filter(Boolean).join(' · ');
+      const sub=[_feedWhoSub(song),song.paFull?_fmtVidAgo(song.paFull):(song.pa?_fmtVidAgo(song.pa):null)].filter(Boolean).join(' · ');
       _appendFeedCard(strip,'📈',song.t,sub,
         // 누르면 이 선반 전체가 재생목록이 돼서 그대로 다음 영상으로 넘어갈 수 있다(훑어보기 목적)
         ()=>openLightbox(song.u,isShort,flat,flat.indexOf(song),{groupKo:song.groupKo,memberKo:(song.memberKos||[])[0]},false,true),
@@ -19951,7 +19966,7 @@ async function _buildFeedFavNew(){
     const vidUrl=v=>_isShortV(v)?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;
     // _apiId/_apiGroupKo: 어드민 편집(연필) 버튼이 어느 DB 행을 고칠지 아는 키 — 카드 그리드(_apiVidToSong)는
     // 붙이는데 이 선반만 빠져서 favnew 영상은 편집이 안 걸렸다(2026-08-31 사용자 제보, 모바일).
-    const songs=vids.map(v=>({t:v.title,u:vidUrl(v),thumb:v.thumb,vc:v.view_count,dur:v.duration_sec,pa:v.published_at?.slice(0,10),paFull:v.published_ts||v.published_at,groupKo:v.group_ko,memberKos:v.members||[],_apiId:v.id,_apiGroupKo:v.group_ko,content_flag:v.content_flag||null}));
+    const songs=vids.map(v=>({t:v.title,u:vidUrl(v),thumb:v.thumb,vc:v.view_count,dur:v.duration_sec,pa:v.published_at?.slice(0,10),paFull:v.published_ts||v.published_at,groupKo:v.group_ko,memberKos:v.members||[],ownerCh:v.source_tier==='idol',_apiId:v.id,_apiGroupKo:v.group_ko,content_flag:v.content_flag||null}));
     // 행 패커(Trend와 동일) — 같은 비율끼리 한 행, 가로 가끔 전체폭, 여백0. 최신순 유지가 중요해 wideProb는 낮게.
     // 최애만 크게(2026-09-04 사용자 확정, DESIGN_REVIEW 31~32행). 가로면 전체폭 16:9, 쇼츠면 전체폭 9:16 —
     // **둘 다** 크게 간다(사용자: "가로도 세로도 크게"). 최애를 정했으면 일반 카드의 확률 전체폭은 끈다
@@ -19966,7 +19981,7 @@ async function _buildFeedFavNew(){
     const flat=rows.flatMap(r=>r.items); // 라이트박스 재생목록 순서를 화면 순서와 일치
     rows.forEach(row=>row.items.forEach(song=>{
       const isShort=_songIsShort(song);
-      const sub=[_gLabelKo(song.groupKo),song.paFull?_fmtVidAgo(song.paFull):(song.pa?_fmtVidAgo(song.pa):null)].filter(Boolean).join(' · ');
+      const sub=[_feedWhoSub(song),song.paFull?_fmtVidAgo(song.paFull):(song.pa?_fmtVidAgo(song.pa):null)].filter(Boolean).join(' · ');
       _appendFeedCard(strip,'💖',song.t,sub,
         ()=>openLightbox(song.u,isShort,flat,flat.indexOf(song),{groupKo:song.groupKo,memberKo:(song.memberKos||[])[0]},false,true),
         song.thumb,null, Object.assign({dur:song.dur}, row.wide?{wide:true,short:!!row.short}:(isShort?{short:true}:{})));
