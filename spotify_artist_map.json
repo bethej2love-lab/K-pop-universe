@@ -671,6 +671,17 @@
     },
     "checkedAt": "2026-09-24"
   },
+  "동건": {
+    "id": "229KhSrjWsm62jVuSpQsBZ",
+    "spotifyName": "Jeong Dong Won",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "이름 불일치 — 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-09-28"
+  },
   "동방신기": {
     "id": "6nVMMEywS5Y4tsHPKx1nIo",
     "spotifyName": "TVXQ!",
@@ -1571,6 +1582,17 @@
     },
     "checkedAt": "2026-09-22"
   },
+  "성연": {
+    "id": "5CyWiZlcsLsaK1LzW7KJlQ",
+    "spotifyName": "성연 (SUNGYEON)",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "동명 후보 2명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-09-28"
+  },
   "세븐": {
     "id": "14yLuCwlBqteUdBqx9soJV",
     "spotifyName": "SE7EN",
@@ -1777,6 +1799,22 @@
       "titleOverlap": 0
     },
     "checkedAt": "2026-09-18"
+  },
+  "시연": {
+    "id": "73T6dNmvgc4IfgU5KUjeWt",
+    "spotifyName": "시연",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "동명 후보 2명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0,
+      "verifyOverlap": 0,
+      "verifyYears": [
+        2025,
+        2024
+      ]
+    },
+    "checkedAt": "2026-09-28"
   },
   "시크릿": {
     "id": "503DjcVO5Ku1NgLPhVuNg7",
@@ -2649,6 +2687,17 @@
     },
     "checkedAt": "2026-09-22"
   },
+  "예하나": {
+    "id": "6vGxXieeyUn45cfSPH2hbE",
+    "spotifyName": "예하나",
+    "kind": "solo",
+    "confidence": "medium",
+    "why": "이름 유일 일치",
+    "evidence": {
+      "titleOverlap": null
+    },
+    "checkedAt": "2026-09-28"
+  },
   "오마이걸": {
     "id": "2019zR22qK2RBvCqtudBaI",
     "spotifyName": "OH MY GIRL",
@@ -3032,6 +3081,21 @@
     },
     "checkedAt": "2026-09-26"
   },
+  "은우": {
+    "id": "7z8deGsnKtaDryEjO8hOjd",
+    "spotifyName": "은우",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "동명 후보 3명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0,
+      "verifyOverlap": 0,
+      "verifyYears": [
+        2018
+      ]
+    },
+    "checkedAt": "2026-09-28"
+  },
   "이달의소녀": {
     "id": "52zMTJCKluDlFwMQWmccY7",
     "spotifyName": "LOONA",
@@ -3409,6 +3473,17 @@
     },
     "checkedAt": "2026-09-22"
   },
+  "찬": {
+    "id": "5Jte273iLRGrRRMA5yJy3F",
+    "spotifyName": "Chan",
+    "kind": "solo",
+    "confidence": "medium",
+    "why": "이름 유일 일치",
+    "evidence": {
+      "titleOverlap": null
+    },
+    "checkedAt": "2026-09-28"
+  },
   "청하": {
     "id": "2PSJ6YriU7JsFucxACpU7Y",
     "spotifyName": "CHUNG HA",
@@ -3473,6 +3548,17 @@
       "titleOverlap": 0
     },
     "checkedAt": "2026-09-21"
+  },
+  "카일라": {
+    "id": "77DAFfvm3O9zT5dIoG0eIO",
+    "spotifyName": "Kyla",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "이름 불일치 — 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-09-28"
   },
   "캔디샵": {
     "id": "47bUCJh3LXBeQtrTnWEwXn",
