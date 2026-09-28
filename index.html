@@ -3649,6 +3649,11 @@ function animate(){
   // ⚠️ 제외한 것: `#feed-overlay`(모바일에서
   //    peek 상태로 반쯤만 덮여 뒤 우주가 보임 — 멈추면 얼어붙은 게 눈에 띈다), `#col-picker`(작은 시트).
   if(_FULLSCREEN_OVERLAY_IDS.some(id=>document.getElementById(id)?.classList.contains('open')))return;
+  // 탐험 패널 **전체 열림**(모바일, peek 아님)도 스킵(2026-09-28, 사용자 제보 — "탐험 패널 둘러보는데 발열 심함").
+  // 위 ⚠️의 제외 사유는 peek(반만 덮음) 때문이었다. 전체 열림은 화면을 탭바까지 다 덮고, 뒤는
+  // rgba(8,11,24,0.78)+blur(18px)라 느린 자동회전이 멈춰도 눈에 안 띈다 — 반대로 계속 그리면 매 프레임
+  // 전체화면 블러 재계산까지 겹친다(#feed-list-overlay와 같은 이중 부담). 데스크톱은 옆 패널이라 제외.
+  if(isMob()){const _fo=document.getElementById('feed-overlay');if(_fo&&_fo.classList.contains('open')&&!_fo.classList.contains('peek'))return;}
   // col-photo-overlay(사진 그리드)·col-target-overlay(대상 선택기)는 display:flex/none·DOM생성/제거로
   // 토글되어 위 .open 목록에 넣을 수 없다. 둘 다 inset:0 + backdrop-filter:blur(20px) 전체화면이라
   // 열려있는 동안 3D+블러 이중 렌더가 걸린다 — 각자 방식에 맞는 조건으로 체크한다(2026-09-20).
@@ -17082,6 +17087,7 @@ function _appendFeedCard(container,icon,title,sub,onClick,thumbUrl,cat,opts){
   // 위에 이미지가 따로 겹쳐 붙는 부자연스러운 모양이 됐었음(2026-08-10, 사용자 제보 — "이상한 음표
   // 이모티콘"). null(명시적으로 "확인해봤는데 없음")은 여전히 즉시 폴백을 보여준다 — undefined(아직
   // 모름)일 때만 셔머가 계속 자연스럽게 돌도록 건너뛰고, 호출부가 나중에 결과로 다시 불러준다.
+  _watchShimmer(item.querySelector('.feed-card-shimmer'));
   if(thumbUrl!==undefined)_setFeedCardThumb(item,thumbUrl);
   // 재생시간 배지 — 단일 영상 카드(오리지널 콘텐츠·Trend·즐겨찾기 신작)만. 모아보기/차트 카드는 여러
   // 영상을 대표하는 한 장이라 길이를 찍으면 그 목록 전체의 길이처럼 읽혀서 안 붙인다.
@@ -17138,6 +17144,21 @@ function _albumIsFresh(d){
   if(!isFinite(t))return false;
   const n=new Date(),todayUTC=Date.UTC(n.getFullYear(),n.getMonth(),n.getDate());
   return Math.round((todayUTC-t)/86400000)<=1;
+}
+// 셔머(로딩 반짝이)는 **화면에 보이는 동안만** 돈다(2026-09-28, 탐험 패널 발열). 셔머는 이미지 로드가 끝나야
+// 지워지는데 카드 이미지가 loading=lazy라, 스크롤로 닿기 전까지 화면 밖 카드 200여 개가 무한
+// background-position 애니메이션을 돌렸다(실측: 탐험 패널 열면 running 애니 218~229개, 거의 전부 셔머).
+// 이 애니는 컴포지터가 못 맡는 속성이라 매 프레임 스타일·페인트를 깨워 폰이 한순간도 idle로 못 내려간다.
+// CSS 기본값을 animation:none으로 두고, 뷰포트에 들어온 셔머에만 .sh-on을 붙인다.
+let _shimmerIO=null;
+function _watchShimmer(el){
+  if(!el)return;
+  if(typeof IntersectionObserver==='undefined'){el.classList.add('sh-on');return;}
+  if(!_shimmerIO)_shimmerIO=new IntersectionObserver(ents=>ents.forEach(e=>{
+    if(!e.target.isConnected){_shimmerIO.unobserve(e.target);return;}
+    e.target.classList.toggle('sh-on',e.isIntersecting);
+  }));
+  _shimmerIO.observe(el);
 }
 function _setFeedCardThumb(item,thumbUrl){
   const wrap=item.querySelector('.feed-card-thumb-wrap');
