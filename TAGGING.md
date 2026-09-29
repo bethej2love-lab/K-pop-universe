@@ -37,7 +37,7 @@
 | **이니셜 이름 = 영어 낱말** | I.N ← "in JAPAN"·"SKZful Days in Jeju"(85) | `_ATM_INITIAL_WORDS`: 두 글자 이니셜이 영어 낱말이면 구분자 있는 표기만 | other-person-fullname | ✅ 09-29 |
 | **"~하는 이유" = 멤버 이유** | "안 되는 이유"·"예뻐 보이는 이유"→힛지스·에버글로우 이유 | `_atmStripCommonNounCtx`: 관형형 어미 뒤 "이유"·"이유 없이"만 제거(해시태그 전용은 자체 브이로그 "이유가 교토에 간 이유"를 죽여서 안 씀) | other-person-fullname | ✅ 09-29 — **순찰(tag_patrol)이 먼저 발견한 첫 사례** |
 | **영문명 = 흔한 영어 낱말(역추론)** | 판(누에라, en Fan) ← "FAN PICK CAM" · 온(올아워즈, en On) ← "Life goes on" | `_ATM_INFER_EXCLUDE_NAMES`에 Fan·On 추가(Love·나인과 같은 처리) | other-person-fullname | ✅ 09-29 — 순찰 B 발견 |
-| 🔎 **순찰로 발견, 확인 중** | 블랙핑크 지수 ← "LEE JISOO - MISMATCH / THE FIRST TAKE"(실명 김지수 — 다른 사람일 가능성) | — | — | 🟡 사실 확인 후 처리 |
+| 🔎 순찰로 발견 → 확인 완료 | 블랙핑크 지수 ← "LEE JISOO"(일본 그룹 출신 솔로 가수 이지수, 사용자 확인) | 로마자 이름 규칙(성 다른 지수) | other-person-fullname | ✅ 09-29 기존 행 무관·보류 |
 
 ⚠️ DB 정리는 항상 **고친 매처로 다시 판정한 결과**로만 한다(근거 없음 ≠ 오태깅 — 첫 순위표는 #시온·"YE CHAN"
 같은 정상 표기를 오탐했다). 정리 SQL은 `sql/`에 두고 `tags_manual=false` 조건 필수(§3 불가침 원칙).
