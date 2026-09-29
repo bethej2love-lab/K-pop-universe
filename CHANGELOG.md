@@ -61,6 +61,16 @@
 - ~~**`active:false`인데 탈퇴일(`left`)이 없는 멤버 104명 — 그룹 미태깅 영상이 그 멤버 카드에 하나도 안 뜸(2026-08-27 발견)**~~ → **같은 날 처리 완료** — 폴백 4단계 재설계로 차단 110명→11명, 99명 복구. 아래 2026-08-27 항목 참고. ⚠️ 원 진단("탈퇴일 미기입이 원인")은 **틀렸었다** — 실제 원인은 `active` 필드가 "이 그룹 멤버인가"와 "개인이 아직 활동하는가" 두 뜻으로 섞여 쓰인 것이었고, 쥬얼리·걸스데이·스텔라에서 같은 시기 멤버가 은퇴 여부에 따라 갈리고 있었다.
 ---
 
+## 2026-09-29 (세션 — Surf 2단계: Today's Path + 제목 곡명 커버)
+
+- [완료] [index.html] [kpop_universe.css] **Today's Path** — 6번 넘어가면 영상 위에 요약 시트 한 번(이름 체인·영상 수·필터, [저장]/[계속]). 저장 = **일반 컬렉션**으로 생성("Today's Path · 9.29", 경로 순서, desc=이름 체인, `surfPath:true`) → 프로필·공개·공유가 기존 기능 그대로. 같은 세션에서 더 가서 다시 저장하면 그 컬렉션을 갱신. trail 오른쪽 저장 아이콘으로 6번 전·시트 닫은 뒤에도 저장 가능. 요약 체인은 연속 같은 이름을 합침("트레저 › 트레저" 방지).
+  - 확인 문구는 Up Next 헤더에 "컬렉션에 저장됨" — 공용 토스트(#col-quick-toast, z120)는 라이트박스 밑에 깔리고 "다른 컬렉션" 버튼도 안 맞음.
+  - 시트는 backdrop-filter 없이 불투명(영상 위 blur 금지, PERFORMANCE.md).
+- [완료] [index.html] [tests/surf-title-people.test.js] **원곡 태그 없는 커버 → 제목 곡명으로 "같은 곡 커버"** (`_surfCoverSong`). 원곡 태그는 유니버스 안 원곡자만 붙어서 팝송 커버는 영영 태그가 없다(실측 조회수 상위 무태그 커버 40건 거의 전부 팝송). 추출 32/40·오추출 0, 조회 0.3초, Honesty → Young K·건희(시안 그대로), Lemon → 진짜 커버 12건. 가드: 커버 판정은 `\bcover\b`+`_COVER_EXCLUDE`('Undercover' M/V 제외), 곡명 4자 미만 버림(Bad·Stay), 결과는 단어 경계로 재확인.
+  - 한계: 'Monster'·'Always'처럼 같은 제목의 다른 원곡(EXO Monster vs Shawn Mendes Monster) 커버는 섞일 수 있음.
+- [완료] 제목 인물 추출에서 ' - ' 뒤(곡명) 제거 — "絢香 - にじいろ" 칩 방지.
+- [이슈] **트레저/아사히 오배정 4건 — "THE FIRST TAKE powered by ASAHI SUPER DRY"**(맥주 브랜드가 멤버 아사히로 매칭): OS2Ak15iIi0·XGmYvJB8mlc·If4e3rpAgj0·IsePSioTVic. 어드민 정리 필요, 'ASAHI SUPER DRY'는 멤버 매칭 제외 후보.
+
 ## 2026-09-29 (세션 — Surf 1단계 구현)
 
 - [완료] [index.html] [kpop_universe.css] [tests/surf-title-people.test.js] **Surf(파도타기) 1단계 — 라이트박스 브라우즈 모드 Up Next.** 시안(c35f0173) 구조 그대로: 관계 행(함께한 멤버·커버/같은 곡 커버·같은 사람/그룹·그룹/원 소속·같은 무대) → 누르면 묶음 펼침+인물 칩 → 타일을 누르면 그 묶음이 새 재생목록(자동 다음 영상도 그 관계 안에서). 종류 필터(라이브/직캠/MV/예능/전체)는 기본=지금 영상 종류, 넘어가도 유지. trail+‹로 되돌아가기. 들어온 원래 목록은 "이어서 보기"로 접힘(Surf 행이 0개면 자동 펼침, 헤더 ‹ › 는 그대로).
@@ -69,7 +79,7 @@
   - "같은 무대"는 `_PROGRAM_COLLECTIONS` 키워드 재사용(it's Live 등). 종류 판정은 `_FANCAM_BRAND_RE`·`_VARIETY_TITLE_KEYWORDS`·`_LIVE_EXCLUDE` 재사용.
   - ⚠️ `cover_of_song` 직접 조회 금지 — 인덱스가 없어 4.3초(실측). 커버는 `cover_of_members/groups`(0.3초)로 받고 같은 곡은 클라이언트에서 추림. 나머지 조회는 조회수순+limit으로 0.25~0.45초(실측).
   - 검증: 헤드리스 390·1280 실제 탭 시나리오(열기→전체→함께한 멤버→윈터 칩→넘어가기→‹). lb-swipe-ownership·interaction·heat-budget 통과, lb-topbar는 변경 전과 동일 실패(기존 이슈).
-  - **다음(2단계)**: Today's Path(6회 넘어가면 경로 요약)·저장. 지금 영상이 커버인데 `cover_of_*` 태그가 없으면(예: Honesty 커버) 같은 곡 커버 행이 안 생김 — 제목에서 곡명 추출은 미착수.
+  - ~~다음(2단계)~~ → 같은 날 2단계 완료(위 항목).
 - [이슈] **세이마이네임 동명 오배정 약 7건** — 곡명 "SAY MY NAME"이 그룹 키로 들어감: 디모렉스 it's Live(vGBW42148Eg, with_members엔 디모렉스), JBJ "Say My Name"(hmGxOR_lhzs), 보이즈플래닛 'Say My Name' 팀 클립 5건(YYpSFGXgQmk·qKhmR6V_BYI·lRwLpfzz8Q0·-s7GvwC6T9E·Cc478k7KtN0, 뒤 2건 tags_manual). Surf에선 디모렉스 콜라보 칩에 "세이마이네임"이 뜨는 증상. 어드민 재배정 필요.
 
 ## 2026-09-28 (세션 — Surf 시안 + 솔로 채널 콜라보 태깅)

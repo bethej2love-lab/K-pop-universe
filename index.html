@@ -5982,6 +5982,11 @@ let _surfLens=null,_surfOpen=null,_surfPick=null,_surfExpanded=false,_surfReq=0;
 let _surfPath=[]; // 지나온 길 [{label,via,u,shorts,playlist,idx,ctx}] — 마지막이 지금
 let _surfHopping=false; // Surf가 연 openLightbox인지(새 세션으로 보고 길을 지우면 안 됨)
 let _surfRows=null,_surfRowsFor=null,_surfRowsPeople=null;
+// 2단계(2026-09-29): Today's Path — _SURF_RECAP_AT번 넘어가면 지나온 길 요약 시트를 한 번 띄우고, 저장하면
+// 일반 컬렉션으로 만든다(프로필·공개·공유가 기존 컬렉션 기능 그대로 따라옴). 같은 세션에서 더 가서
+// 다시 저장하면 새로 만들지 않고 그 컬렉션을 갱신한다(_surfSavedColId).
+const _SURF_RECAP_AT=6;
+let _surfRecapShown=false,_surfSavedColId=null,_surfSavedFlashUntil=0;
 const _surfCache=new Map(); // 영상 id → {rows,label,kind}
 
 // 영상 한 건의 "종류" — 필터 렌즈와 같은 축. 탭 쿼리들과 같은 상수를 재사용한다(어휘 드리프트 방지).
@@ -6029,7 +6034,8 @@ const _SURF_NOT_PERSON=/^(live|band|ver\.?|version|mv|m\/v|official|cover|remix|
 function _surfTitlePeople(title){
   const t=(title||'').replace(/[‘’“”'"「」『』]/g,' '),out=[];
   const grab=s=>s.split(/\s+(?:x|×|&|and)\s+|,|\s&\s/i).forEach(p=>{
-    p=p.replace(/#\d+|\(.*?\)|\[.*?\]/g,'').replace(/\s+of\s+.*$/i,'').trim();
+    // ' - ' 뒤는 곡명이다("白石麻衣 × 絢香 - にじいろ" → 絢香)
+    p=p.split(/\s[-–—]\s/)[0].replace(/#\d+|\(.*?\)|\[.*?\]/g,'').replace(/\s+of\s+.*$/i,'').trim();
     if(p&&p.length<=20&&!_SURF_NOT_PERSON.test(p)&&!/^\d+$/.test(p))out.push(p);
   });
   let m;
@@ -6067,6 +6073,31 @@ function _surfCtxOf(x){
   return{groupKo:x.group_ko};
 }
 
+// 원곡 태그(cover_of_*)가 없는 커버의 곡명을 제목에서 뽑는다(2026-09-29). 원곡 태그는 **유니버스 안 원곡자**만
+// 붙으므로 팝송 커버(Honesty·Lemon·Watermelon Sugar…)는 영영 태그가 없다 — 실측 조회수 상위 무태그 커버 40건이
+// 거의 전부 팝송이었다. 곡명 + 커버 낱말로 찾으면 정밀했다(Honesty → Young K·건희, Lemon → 진짜 커버 12건, 0.3초).
+// ⚠️ 커버 판정은 \bcover\b(단어 경계) — title_norm ilike *cover*는 'Undercover' M/V까지 잡는다.
+function _surfIsCoverTitle(title){
+  const tn=_titleNorm(title);
+  if(_COVER_EXCLUDE.some(k=>tn.includes(k)))return false;
+  return /\bcover(ed)?\b|커버|원곡/.test(tn);
+}
+function _surfCoverSong(title){
+  const t=title||'';
+  if(!_surfIsCoverTitle(t))return null;
+  let m,song=null;
+  // ① 따옴표 안 — "'Someone You Loved' COVER", "“Lemon” (by. Kenshi Yonezu)"
+  if((m=t.match(/(?:^|[\s\-:|(])[‘'“"「]([^’'”"」]{2,50})[’'”"」]/)))song=m[1];
+  // ② "- 곡 (… Cover / 원곡 …)" · "곡 (Pink Sweat$ Cover.)"
+  else if((m=t.match(/(?:^|[-:|]\s)\s*([^()\[\]|/:\-]{2,50}?)\s*\((?=[^)]*(?:\bcover|원곡|original))/i)))song=m[1];
+  // ③ "곡 covered by …" · "곡 (cover) by …" · "곡 Cover by …"
+  else if((m=t.match(/(?:^|[\]\-:|]\s*)([^()\[\]|/:\-]{2,50}?)\s*(?:\(cover\)|\bcover(?:ed)?)\s+by\b/i)))song=m[1];
+  if(!song)return null;
+  song=song.replace(/\(.*?\)|\/.*$/g,'').replace(/\b(?:cover|dance|special|live|ver\.?)\b/gi,'').trim();
+  // 너무 짧거나(Bad·Stay) 흔한 낱말이면 남의 곡까지 끌려온다 — 공백 빼고 4자 이상만
+  if(song.replace(/\s/g,'').length<4||/^(song|music|original|piano|acoustic)$/i.test(song))return null;
+  return song;
+}
 async function _surfFetch(vid,ctx){
   const COLS='id,title,thumb,category,is_short,group_ko,members,with_members,cover_of_members,cover_of_groups,cover_of_song,content_formats,content_flag,published_at,view_count'+_durCol();
   const excl=q=>q.or('content_flag.is.null,content_flag.neq.무관').or('content_flag.is.null,content_flag.neq.보류').or('content_flag.is.null,content_flag.neq.hidden');
@@ -6101,6 +6132,9 @@ async function _surfFetch(vid,ctx){
   }
   // 지금 영상이 커버면 → 같은 원곡의 다른 가수. 원곡 태그(GIN)로 받고 같은 곡을 앞으로.
   const ofM=v.cover_of_members||[],ofG=v.cover_of_groups||[];
+  // 원곡 태그가 없는 커버 → 제목 곡명으로 같은 곡 커버(커버 탭 제외 키워드 그대로 적용)
+  const coverSong=(!ofM.length&&!ofG.length)?_surfCoverSong(v.title):null;
+  if(coverSong)jobs.songTitle=run(_applyCoverExcludeQuery(Q(40).ilike('title_norm','%'+_titleNorm(coverSong).replace(/[%_\\]/g,'')+'%')));
   if(ofM.length||ofG.length)jobs.sameSong=run(Q(80).or([...ofM.map(k=>`cover_of_members.cs.{${f(k)}}`),...ofG.map(k=>`cover_of_groups.cs.{${f(k)}}`)].join(',')));
   // 같은 무대 — 프로그램 컬렉션 어휘(_PROGRAM_COLLECTIONS) 재사용
   const tn=_titleNorm(v.title);
@@ -6161,6 +6195,13 @@ async function _surfFetch(vid,ctx){
   }else if(R.cover){
     mk('cover','커버',R.cover.map(x=>Object.assign({},x,{_ps:[_surfPerformer(x)]})));
   }
+  // ②-b 제목 곡명 커버 — 단어 경계로 한 번 더 거른다(ilike는 'Monster'로 'Monsters'도 잡는다), 내 영상은 뺀다
+  if(R.songTitle){
+    const esc=_titleNorm(coverSong).replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+    const wb=new RegExp('(^|[^a-z0-9가-힣])'+esc+'($|[^a-z0-9가-힣])');
+    const same=R.songTitle.filter(x=>wb.test(_titleNorm(x.title))&&!selfGroups.has(x.group_ko)&&x.group_ko!==v.group_ko);
+    mk('songcover','같은 곡 커버',same.map(x=>Object.assign({},x,{_ps:[_surfPerformer(x)]})));
+  }
   // ③ 같은 사람/그룹
   mk('self',selfLabel||'같은 채널',R.self);
   // ④ 원 소속/그룹
@@ -6197,11 +6238,19 @@ function _surfRender(){
       else b.addEventListener('click',e=>{e.stopPropagation();_surfGoBack(i);});
       crumbs.appendChild(b);
     });
-    tr.appendChild(crumbs);box.appendChild(tr);
+    tr.appendChild(crumbs);
+    const sv=document.createElement('button');sv.type='button';sv.className='surf-save'+(_surfSavedColId?' col-on':'');
+    sv.setAttribute('aria-label',ko?'지나온 길 저장':'Save this path');sv.title=ko?'지나온 길 저장':'Save this path';
+    sv.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M5 3h14a1 1 0 0 1 1 1v16l-8-4.5L4 20V4a1 1 0 0 1 1-1z"/></svg>';
+    sv.addEventListener('click',e=>{e.stopPropagation();_surfSavePath();});
+    tr.appendChild(sv);
+    box.appendChild(tr);
     requestAnimationFrame(()=>{crumbs.scrollLeft=crumbs.scrollWidth;});
   }
   const hd=document.createElement('div');hd.className='surf-hd';
   const h=document.createElement('span');h.className='surf-title';h.textContent='Up Next';hd.appendChild(h);
+  // 저장 확인 — 공용 컬렉션 토스트(#col-quick-toast, z120)는 라이트박스 밑에 깔리고 "다른 컬렉션" 버튼도 경로 저장엔 안 맞아 여기서 짧게 알린다
+  if(Date.now()<_surfSavedFlashUntil){const f=document.createElement('span');f.className='surf-saved';f.textContent=ko?'컬렉션에 저장됨':'Saved to collections';hd.appendChild(f);}
   box.appendChild(hd);
   const seg=document.createElement('div');seg.className='seg-control seg-control-sm surf-seg';
   const thumb=document.createElement('div');thumb.className='seg-thumb';seg.appendChild(thumb);
@@ -6305,7 +6354,7 @@ function _surfHopTo(row,shown,i){
   // 칩 없이 누른 타일은 영상 주인 기준 — 목록 전체에 한 사람 컨텍스트를 씌우면 자동 다음 영상마다 엉뚱한 주인이 붙는다.
   const pa=pick&&_surfRowsPeople?_surfRowsPeople.get(pick):null;
   const ctx=pa?{groupKo:_ytGroupKoFor(pa),memberKo:pa.name.ko}:_surfCtxOf(x);
-  _surfPath.push({label:who,via:row.rel,u:songs[i].u});
+  _surfPath.push({label:who,via:row.rel,u:songs[i].u,song:songs[i]});
   _surfOpen=null;_surfPick=null;_surfExpanded=false;
   _gaEvent('surf_hop',{rel:row.key,lens:_surfLens,depth:_surfPath.length-1});
   _surfHopping=true;
@@ -6323,7 +6372,7 @@ function _surfGoBack(i){
 }
 // openLightbox(브라우즈 세션)마다 호출 — 새 세션이면 길을 새로 시작한다.
 function _surfOnOpen(isAdvance){
-  if(!isAdvance&&!_surfHopping){_surfPath=[];_surfLens=null;_surfOpen=null;_surfPick=null;}
+  if(!isAdvance&&!_surfHopping){_surfPath=[];_surfLens=null;_surfOpen=null;_surfPick=null;_surfRecapShown=false;_surfSavedColId=null;_surfHideRecap();}
 }
 async function _surfUpdate(){
   const box=document.getElementById('yt-lb-surf');
@@ -6331,10 +6380,10 @@ async function _surfUpdate(){
   const vid=s?_lbApiId(s):null;
   if(!box||!sb||!vid){if(box)box.innerHTML='';document.getElementById('yt-lb-uplist')?.classList.remove('surf-on');return;}
   document.getElementById('yt-lb-uplist')?.classList.add('surf-on');
-  if(!_surfPath.length)_surfPath.push({label:null,via:null,u:s.u});
-  else _surfPath[_surfPath.length-1].u=s.u; // 목록 안 이전/다음은 같은 칸에서 영상만 바뀐다
+  if(!_surfPath.length)_surfPath.push({label:null,via:null,u:s.u,song:s});
+  else Object.assign(_surfPath[_surfPath.length-1],{u:s.u,song:s}); // 목록 안 이전/다음은 같은 칸에서 영상만 바뀐다
   const ck=vid+'|'+((_lbCtx&&_lbCtx.memberKo)||'');
-  if(_surfRowsFor===ck&&_surfRows){_surfRender();return;}
+  if(_surfRowsFor===ck&&_surfRows){_surfRender();_surfMaybeRecap();return;}
   const my=++_surfReq;
   _surfRowsFor=ck;
   let data=_surfCache.get(ck);
@@ -6351,6 +6400,60 @@ async function _surfUpdate(){
   _surfRowsPeople=data?data.people:null;
   if(!_surfLens)_surfLens=data&&data.kind!=='other'?data.kind:'all'; // 기본값 = 지금 보는 영상과 같은 종류
   _surfRender();
+  _surfMaybeRecap();
+}
+// 요약 체인 — 같은 주인에 머문 연속 칸은 한 번만("트레저 › 트레저" 방지). trail은 칸마다 되돌아갈 수 있어야 해서 그대로 둔다.
+function _surfChain(){return _surfPath.map(p=>p.label||'…').filter((n,i,a)=>!i||n!==a[i-1]);}
+function _surfMaybeRecap(){
+  if(_surfRecapShown||_surfPath.length-1<_SURF_RECAP_AT)return;
+  _surfRecapShown=true;
+  _surfShowRecap();
+}
+function _surfHideRecap(){document.getElementById('surf-recap')?.remove();}
+function _surfShowRecap(){
+  _surfHideRecap();
+  const ko=currentLang==='ko';
+  const el=document.createElement('div');el.id='surf-recap';el.setAttribute('role','dialog');el.setAttribute('aria-label',"Today's Path");
+  const h=document.createElement('div');h.className='surf-recap-t';h.textContent="Today's Path";
+  const chain=document.createElement('div');chain.className='surf-recap-path';
+  const names=_surfChain();
+  names.forEach((n,i)=>{
+    if(i)chain.appendChild(document.createTextNode(' › '));
+    const sp=document.createElement(i===0||i===names.length-1?'b':'span');sp.textContent=n;chain.appendChild(sp);
+  });
+  const lensName=(_SURF_LENSES.find(l=>l[0]===_surfLens)||[])[ko?1:2]||'';
+  const meta=document.createElement('div');meta.className='surf-recap-meta';
+  meta.textContent=ko?`영상 ${_surfPath.length}개 · ${lensName}`:`${_surfPath.length} videos · ${lensName}`;
+  const btns=document.createElement('div');btns.className='surf-recap-btns';
+  const save=document.createElement('button');save.type='button';save.className='surf-recap-save';save.textContent=ko?'저장':'Save';
+  save.addEventListener('click',e=>{e.stopPropagation();_surfSavePath();_surfHideRecap();});
+  const cont=document.createElement('button');cont.type='button';cont.className='surf-recap-cont';cont.textContent=ko?'계속':'Keep going';
+  cont.addEventListener('click',e=>{e.stopPropagation();_surfHideRecap();});
+  btns.append(save,cont);
+  el.append(h,chain,meta,btns);
+  el.addEventListener('click',e=>e.stopPropagation()); // 라이트박스 바깥 클릭(닫기)으로 새지 않게
+  document.getElementById('yt-lightbox').appendChild(el);
+  _gaEvent('surf_recap',{depth:_surfPath.length-1,lens:_surfLens});
+}
+// 지나온 길 → 컬렉션. 같은 영상을 두 번 지났으면(되돌아갔다 다시 온 경우) 한 번만 담는다.
+function _surfSavePath(){
+  const seen=new Set();
+  const videos=_surfPath.map(p=>p.song).filter(v=>v&&v.u&&!seen.has(v.u)&&seen.add(v.u))
+    .map(v=>({t:v.t,u:v.u,thumb:v.thumb||(ytId(v.u)?`https://i.ytimg.com/vi/${ytId(v.u)}/mqdefault.jpg`:''),groupKo:v.groupKo||v._apiGroupKo||'',memberKos:v.memberKos||[]}));
+  if(!videos.length)return;
+  const desc=_surfChain().join(' › ');
+  let col=_surfSavedColId?collections.find(c=>c.id===_surfSavedColId):null;
+  if(col){col.videos=videos;col.desc=desc;}
+  else{
+    const d=new Date();
+    col={id:_colNewId(),name:`Today's Path · ${d.getMonth()+1}.${d.getDate()}`,videos,createdAt:d.toISOString().slice(0,10),isPublic:false,desc,surfPath:true};
+    collections.unshift(col);_surfSavedColId=col.id;
+  }
+  _saveCollections();renderCollectionSection();_lbUpdateToolbar();
+  _surfSavedFlashUntil=Date.now()+2400;
+  setTimeout(()=>{if(document.querySelector('#yt-lb-surf .surf-saved'))_surfRender();},2500);
+  _gaEvent('surf_path_save',{n:videos.length});
+  _surfRender(); // trail 저장 아이콘 상태 갱신
 }
 
 // ── 이모지 반응 ───────────────────────────────────────────────────────
@@ -6638,6 +6741,7 @@ function closeLightbox(){
   clearTimeout(_lbAutoUnmuteT);
   _closeLbHalf(); // 하프시트로 올려둔 카드 시트를 원래 층으로 되돌린다
   _lbHideLoading();
+  _surfHideRecap();
   const lb=document.getElementById('yt-lightbox');
   lb.classList.remove('open');
   document.getElementById('yt-lb-iframe').src='';

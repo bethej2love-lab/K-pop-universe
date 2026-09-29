@@ -787,6 +787,25 @@
   .surf-tile.seen .surf-tt{color:rgba(150,170,210,0.61);}
   .surf-tm{font-size:10.5px;color:rgba(150,170,210,0.61);font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   .surf-tm em{font-style:normal;color:rgba(195,210,240,0.85);font-weight:500;margin-right:5px;}
+  .surf-saved{font-size:11px;color:rgba(160,185,255,0.95);}
+  .surf-save{flex:none;margin-left:auto;background:none;border:none;width:30px;height:30px;display:flex;align-items:center;justify-content:center;color:rgba(170,190,225,0.7);cursor:pointer;padding:0;}
+  .surf-save svg{width:15px;height:15px;}
+  .surf-save:hover{color:#eef4ff;}
+  .surf-save.col-on{color:rgba(160,185,255,0.95);}
+  .surf-save.col-on svg{fill:currentColor;}
+  /* Today's Path 시트 — ⚠️ backdrop-filter 금지(영상 위 blur는 모바일 발열 1순위, PERFORMANCE.md). 불투명 배경으로. */
+  #surf-recap{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(14px + env(safe-area-inset-bottom,0px));z-index:6;
+    width:min(420px,calc(100vw - 20px));box-sizing:border-box;background:#171b36;border:0.5px solid rgba(255,255,255,0.1);
+    border-radius:22px;padding:20px 20px 12px;box-shadow:0 18px 50px rgba(0,0,0,0.55);display:flex;flex-direction:column;gap:8px;}
+  .surf-recap-t{font-size:17px;font-weight:700;color:#eef4ff;letter-spacing:-.02em;}
+  .surf-recap-path{font-size:13px;line-height:1.6;color:rgba(195,210,240,0.72);word-break:keep-all;}
+  .surf-recap-path b{color:#eef4ff;font-weight:600;}
+  .surf-recap-meta{font-size:12px;color:rgba(150,170,210,0.61);}
+  .surf-recap-btns{display:grid;gap:4px;margin-top:6px;}
+  .surf-recap-save{background:rgba(130,155,255,0.9);color:#0b0d20;border:none;border-radius:13px;padding:12px 0;font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;}
+  .surf-recap-cont{background:none;border:none;color:rgba(170,190,255,0.95);padding:9px 0;font-size:14px;font-weight:500;font-family:inherit;cursor:pointer;}
+  @media (prefers-reduced-motion:no-preference){#surf-recap{animation:surfRecapIn .32s cubic-bezier(.2,.8,.2,1) both;}
+    @keyframes surfRecapIn{from{opacity:0;transform:translate(-50%,30px);}to{opacity:1;transform:translate(-50%,0);}}}
   .surf-more{grid-column:1/-1;background:none;border:none;color:rgba(160,185,255,0.95);font:500 12px inherit;font-family:inherit;padding:2px 0 0;cursor:pointer;text-align:left;}
 
   @media(min-width:769px){
