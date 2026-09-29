@@ -17308,6 +17308,18 @@ async function initSupabaseSync(){
       localStorage.setItem(SB_LAST_UID_KEY,session.user.id);
       if(isNewDeviceForThisAccount)_gaEvent('link_account_success',{});
     }
+    // v2 Surf 학습 기록 — 익명 방문자(대부분)도 계정 행이 있으니 동기화한다. 위 pull은 구글/X 연결 계정에서만 돌아서
+    // 익명 유저는 컬럼 존재 확인을 못 해 기록이 기기에만 남았다(2026-09-29 발견). 컬럼이 없으면(SQL 전) 조용히 건너뜀.
+    if(!_surfPrefsColumn){
+      sb.from('user_data').select('surf_prefs').eq('user_id',session.user.id).maybeSingle().then(({data,error})=>{
+        if(error)return;
+        _surfPrefsColumn=true;
+        const sp=(data&&data.surf_prefs)||{};
+        for(const k in sp)_surfPrefs[k]=Math.max(+_surfPrefs[k]||0,+sp[k]||0);
+        try{localStorage.setItem(_SURF_PREF_KEY,JSON.stringify(_surfPrefs));}catch(e){}
+        if(Object.keys(_surfPrefs).length)_sbPushColumn('surf_prefs',_surfPrefs);
+      },()=>{});
+    }
     _backfillCollectionVideoTags(); // 세션이 확정된 뒤 백그라운드로 — 화면 표시를 막지 않음
   }catch(e){
     _authAlert('initSupabaseSync 예외: '+(e&&e.message||e));
