@@ -779,7 +779,7 @@
     <div id="yt-lb-uplist">
       <div id="yt-lb-surf"></div>
       <div id="yt-lb-uplist-hd">
-        <button id="yt-lb-uplist-label" type="button" aria-expanded="false">이어서 보기</button>
+        <button id="yt-lb-uplist-label" type="button" aria-expanded="true">이어서 보기</button>
         <div id="yt-lb-uplist-nav">
           <button id="yt-lb-uplist-prev" aria-label="이전 영상">‹</button>
           <span id="yt-lb-uplist-cnt"></span>
@@ -6298,7 +6298,7 @@ function _surfRender(){
     box.appendChild(list);return;
   }
   if(!_surfRows.length){
-    // 이어질 연결이 없으면 접어 둔 "이어서 보기"를 펼친다 — 빈 Up Next만 남으면 막다른 길이다
+    // 이어질 연결이 없으면 "이어서 보기" 헤더의 접기 화살표도 뺀다(surf-on 해제) — 빈 Up Next만 남으면 막다른 길이다
     document.getElementById('yt-lb-uplist')?.classList.remove('surf-on');
     list.innerHTML=`<div class="surf-empty">${ko?'이어질 연결이 아직 없어요':'No connections yet'}</div>`;
     box.appendChild(list);return;
@@ -6996,12 +6996,12 @@ document.addEventListener('click',e=>{
 document.getElementById('yt-lb-prev').addEventListener('click',e=>{e.stopPropagation();_lbGo(-1);});
 document.getElementById('yt-lb-next').addEventListener('click',e=>{e.stopPropagation();_lbGo(1);});
 document.getElementById('yt-lb-uplist-prev').addEventListener('click',e=>{e.stopPropagation();_lbGo(-1);});
-// "이어서 보기"(들어온 목록) 접기/펼치기 — Surf가 있을 땐 기본 접힘, 헤더 화살표(이전/다음)는 접혀도 그대로 동작
+// "이어서 보기"(들어온 목록) 접기/펼치기 — 기본 펼침(2026-09-29 사용자 요청), 헤더 화살표(이전/다음)는 접혀도 그대로 동작
 document.getElementById('yt-lb-uplist-label').addEventListener('click',e=>{
   e.stopPropagation();
   const box=document.getElementById('yt-lb-uplist');
-  const open=box.classList.toggle('pl-open');
-  e.currentTarget.setAttribute('aria-expanded',open?'true':'false');
+  const closed=box.classList.toggle('pl-closed');
+  e.currentTarget.setAttribute('aria-expanded',closed?'false':'true');
 });
 document.getElementById('yt-lb-uplist-next').addEventListener('click',e=>{e.stopPropagation();_lbGo(1);});
 document.getElementById('yt-lb-scrap').addEventListener('click',e=>{
