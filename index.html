@@ -6172,12 +6172,20 @@ async function _surfFetch(vid,ctx){
   }
   // ③ 함께 좋아하는 — 이 사람(그룹)을 즐겨찾기한 유저들이 함께 즐겨찾기한 멤버·그룹(서버 익명 집계, 3명 이상 겹친 것만).
   //    RPC(get_co_favorites)가 없거나 유저가 적어 비면 행이 안 뜬다 — sql/co_favorites_rpc_2026-09-29.sql
-  const coFav=await (async()=>{
-    try{
-      const{data,error}=await sb.rpc('get_co_favorites',a?{p_kind:'member',p_key:a.group.ko+':'+a.name.ko,p_limit:6}:{p_kind:'group',p_key:g||v.group_ko,p_limit:6});
-      return error?[]:(data||[]);
-    }catch(e){return[];}
-  })();
+  const coRpc=async(kind,key)=>{try{const{data,error}=await sb.rpc('get_co_favorites',{p_kind:kind,p_key:key,p_limit:6});return error?[]:(data||[]);}catch(e){return[];}};
+  // 멤버 단위 즐겨찾기는 아직 드물다(3명 겹침을 못 채움) — 비면 그 멤버의 그룹 단위로 내려간다(에스파 팬 → 아이브 13명 등 실측)
+  let coFav=a?await coRpc('member',a.group.ko+':'+a.name.ko):await coRpc('group',g||v.group_ko);
+  if(a&&!coFav.length&&GROUPS[a.group.ko])coFav=await coRpc('group',a.group.ko);
+  // v1 의외의 연결 — 약한 관계 사람·팀의 영상
+  const weak=(a||g)?await _surfWeakLinks(a,g):[];
+  if(weak.length){
+    const conds=weak.map(w=>{
+      if(w.kind==='group')return `group_ko.eq.${f(w.group)}`;
+      if(GROUPS[w.group])return `and(group_ko.eq.${f(w.group)},members.cs.{${f(w.name)}})`;
+      return `group_ko.eq.${f(w.name)}`; // 무소속 솔로는 본인 이름이 채널 키
+    });
+    jobs.weak=run(Q(80).or(conds.join(',')));
+  }
   if(coFav.length){
     const conds=coFav.map(r=>{const k=String(r.fav_key);const i=k.indexOf(':');
       return i>0?`and(group_ko.eq.${f(k.slice(0,i))},members.cs.{${f(k.slice(i+1))}})`:`group_ko.eq.${f(k)}`;});
@@ -6300,11 +6308,22 @@ async function _surfFetch(vid,ctx){
     const other=R.stage.filter(x=>!selfGroups.has(x.group_ko)&&!(a&&(x.with_members||[]).some(n=>_surfPersonKeys(a).includes(n))));
     mk('stage','같은 무대',other.map(x=>Object.assign({},x,{_ps:[_surfPerformer(x)]})).map(x=>(x._stage=prog.label,x)));
   }
-  // 행 순서 = 관계 강도(Surf 디깅 기획 2026-09-29, 사용자 "최애 중심으로 깊게"): 함께한 멤버 → 이 사람이 쓴 곡 →
-  // 같은 곡 부른 사람들 → 함께 좋아하는(전체 유저 즐겨찾기) → 커버 → 같은 사람 → 원 소속 → 같은 무대
-  const ORDER={collab:0,written:1,songcover:2,cofav:3,cover:4,self:5,group:6,stage:7};
-  rows.sort((p,q)=>(ORDER[p.key]??9)-(ORDER[q.key]??9));
-  return{rows,label,kind:_surfKind(v),people};
+  // v1 의외의 연결 — 관계마다 최대 4개, 칩 = "이름 · 관계"
+  if(R.weak&&weak.length){
+    const per=new Map(),items=[];
+    R.weak.forEach(x=>{
+      const w=weak.find(w=>w.kind==='group'?x.group_ko===w.group:(GROUPS[w.group]?(x.group_ko===w.group&&(x.members||[]).includes(w.name)):x.group_ko===w.name));
+      if(!w)return;
+      const lab=(w.kind==='group'?_surfGName(w.group):w.name)+' · '+w.rel;
+      if((per.get(lab)||0)>=4)return;per.set(lab,(per.get(lab)||0)+1);
+      items.push(Object.assign({},x,{_ps:[lab]}));
+    });
+    const rels=[...new Set(weak.map(w=>w.rel.replace(/^.+ 동기$/,m=>m.endsWith('데뷔 동기')?m:'서바이벌 동기')))];
+    mk('weak','의외의 연결',items,rels.slice(0,3).join(' · '));
+  }
+  // 행 순서 = 관계 강도(Surf 디깅 기획 2026-09-29, 사용자 "최애 중심으로 깊게") — 기본 순서는 _SURF_ROW_ORDER,
+  // 렌더할 때 _surfSortRows가 넘어간 기록(v2)으로 다시 정렬한다
+  return{rows:_surfSortRows(rows),label,kind:_surfKind(v),people};
 }
 // 단어 경계 정규식(title_norm 기준) — ilike는 'Monster'로 'Monsters'도 잡는다
 function _surfWordRe(s){return new RegExp('(^|[^a-z0-9가-힣])'+_titleNorm(s).replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'($|[^a-z0-9가-힣])');}
@@ -6322,10 +6341,88 @@ async function _surfSongOfVideo(v,a){
   for(const x of lists){
     const core=_surfSongCore(x[0]);
     if(core.replace(/\s/g,'').length<3)continue;
-    if(best&&core.length<=best.core.length)continue;
+    // 긴 곡명 우선, 같은 곡명이면 짧은 표기(원곡 "Next Level" > "Next Level (Habstrakt Remix)")
+    if(best&&(core.length<best.core.length||(core.length===best.core.length&&x[0].length>=best.title.length)))continue;
     if(_surfWordRe(core).test(tn))best={title:x[0],core};
   }
   return best;
+}
+// ── v1 의외의 연결(2026-09-29) — 약한 관계를 한 행으로: MC 짝꿍 · 서바이벌 동기 · 같은 소속사 · 동갑 · 같은 해 데뷔 ──
+// 깊게 파는 흐름(관계 강도순)을 방해하지 않게 맨 아래 한 행. 사람마다 관계 이름을 칩에 붙인다("민니 · 동갑").
+let _surfWeakDataP=null;
+function _surfWeakData(){
+  if(!_surfWeakDataP)_surfWeakDataP=Promise.all([
+    fetch('mc_history.json',{cache:'no-cache'}).then(r=>r.ok?r.json():[]).catch(()=>[]),
+    fetch('shows.json',{cache:'no-cache'}).then(r=>r.ok?r.json():{}).catch(()=>({})),
+  ]).then(([mc,shows])=>({mc:Array.isArray(mc)?mc:[],shows:(shows&&shows.shows)||{}}));
+  return _surfWeakDataP;
+}
+const _surfPri=g=>({A:0,B:1,C:2}[(GROUPS[g]&&GROUPS[g].pri)||'']??3);
+const _surfYear=s=>{const m=String(s||'').match(/(\d{4})/);return m?+m[1]:null;};
+// → [{kind:'person'|'group', name, group, rel}]  (최대 7명·팀, 관계당 상한)
+async function _surfWeakLinks(a,g){
+  const out=[],seen=new Set();
+  const add=(x,cap,cnt)=>{const k=x.kind+'|'+x.group+'|'+(x.name||'');if(seen.has(k)||cnt.n>=cap)return;seen.add(k);cnt.n++;out.push(x);};
+  const ownG=new Set(a?_artistGroups(a).map(x=>x.ko):[g]);
+  if(a){
+    const{mc,shows}=await _surfWeakData();
+    // MC 짝꿍 — 같은 음방에서 기간이 겹친 MC
+    const mine=mc.filter(r=>r.memberKo===a.name.ko&&ownG.has(r.groupKo));
+    const c1={n:0};
+    mine.forEach(r=>mc.forEach(o=>{
+      if(o===r||o.show!==r.show||(o.memberKo===a.name.ko&&ownG.has(o.groupKo)))return;
+      if(String(o.start)<=String(r.end||'9999')&&String(r.start)<=String(o.end||'9999'))add({kind:'person',name:o.memberKo,group:o.groupKo,rel:'MC 짝꿍'},2,c1);
+    }));
+    // 서바이벌 동기 — 같은 오디션 출신(참가자 + 영상에 자주 나온 후보), 지금 다른 그룹
+    const c2={n:0};
+    Object.entries(shows).forEach(([prog,s])=>{
+      const names=[...(s.contestants||[]),...((s.candidates||[]).filter(c=>c.n>=5).map(c=>c.name))];
+      const me=names.some(n=>{const m=n.match(/^(.+)\((.+)\)$/);return m&&m[1]===a.name.ko&&ownG.has(m[2]);});
+      if(!me)return;
+      names.forEach(n=>{const m=n.match(/^(.+)\((.+)\)$/);if(!m||ownG.has(m[2]))return;add({kind:'person',name:m[1],group:m[2],rel:prog+' 동기'},2,c2);});
+    });
+  }
+  // 같은 소속사 — 다른 그룹, 데뷔 시기 가까운 순
+  const co=(a&&a.co)||(GROUPS[a?a.group.ko:g]||{}).co;
+  const myDeb=_surfYear((GROUPS[a?a.group.ko:g]||{}).debut);
+  if(co){
+    const c3={n:0};
+    Object.entries(GROUPS).filter(([k,x])=>x.co===co&&!ownG.has(k))
+      .sort((p,q)=>Math.abs((_surfYear(p[1].debut)||0)-(myDeb||0))-Math.abs((_surfYear(q[1].debut)||0)-(myDeb||0)))
+      .forEach(([k])=>add({kind:'group',group:k,rel:'같은 소속사'},2,c3));
+  }
+  // 동갑(사람) / 같은 해 데뷔(그룹) — 같은 성별, 우선순위(A→B→C) 높은 쪽
+  if(a&&a.bday){
+    const y=_surfYear(a.bday),gen=(GROUPS[a.group.ko]||{}).gender;
+    const c4={n:0};
+    ARTISTS.filter(x=>x!==a&&x.bday&&_surfYear(x.bday)===y&&!_artistGroups(x).some(gg=>ownG.has(gg.ko))&&GROUPS[x.group.ko]&&(!gen||GROUPS[x.group.ko].gender===gen))
+      .sort((p,q)=>_surfPri(p.group.ko)-_surfPri(q.group.ko))
+      .forEach(x=>add({kind:'person',name:x.name.ko,group:x.group.ko,rel:'동갑'},2,c4));
+  }else if(!a&&myDeb){
+    const gen=(GROUPS[g]||{}).gender,c5={n:0};
+    Object.entries(GROUPS).filter(([k,x])=>k!==g&&_surfYear(x.debut)===myDeb&&(!gen||x.gender===gen))
+      .sort((p,q)=>_surfPri(p[0])-_surfPri(q[0])).forEach(([k])=>add({kind:'group',group:k,rel:myDeb+' 데뷔 동기'},2,c5));
+  }
+  return out.slice(0,7);
+}
+
+// ── v2 넘어간 기록 학습(2026-09-29) — 어떤 관계 행을 자주 열고 넘어가는지 세서 행 순서를 개인화 ──
+// 넘어감 1점, 행 펼침 0.3점. 5점 이상 쌓이면 적용: 순위 = 기본 순서 − 2.5×(그 행 비중). 기기(localStorage) + 계정(user_data.surf_prefs,
+// ⚠️ 컬럼이 있을 때만 — sql/surf_prefs_column_2026-09-29.sql). 순위·평가가 아니라 "내가 좋아하는 길"만 앞으로 당긴다.
+const _SURF_PREF_KEY='kpu_surf_prefs';
+let _surfPrefs=(()=>{try{return JSON.parse(localStorage.getItem(_SURF_PREF_KEY)||'{}')||{};}catch(e){return{};}})();
+let _surfPrefsColumn=false; // 서버 컬럼 존재 확인되면 true(_pullServerToLocal)
+function _surfNotePref(key,w){
+  if(!key)return;
+  _surfPrefs[key]=Math.round(((_surfPrefs[key]||0)+w)*10)/10;
+  try{localStorage.setItem(_SURF_PREF_KEY,JSON.stringify(_surfPrefs));}catch(e){}
+  if(_surfPrefsColumn)_sbPushColumn('surf_prefs',_surfPrefs);
+}
+const _SURF_ROW_ORDER={collab:0,written:1,songcover:2,cofav:3,cover:4,self:5,group:6,stage:7,weak:8};
+function _surfSortRows(rows){
+  const tot=Object.values(_surfPrefs).reduce((s,x)=>s+(+x||0),0);
+  const score=r=>(_SURF_ROW_ORDER[r.key]??9)-(tot>=5?2.5*((+_surfPrefs[r.key]||0)/tot):0);
+  return rows.map((r,i)=>[r,i]).sort((p,q)=>(score(p[0])-score(q[0]))||(p[1]-q[1])).map(p=>p[0]);
 }
 let _surfWrittenP=null;
 // 이 사람이 쓴 곡 목록(최대 20곡) — 남에게 써준 곡 전부 먼저, 그다음 본인 곡(타이틀곡 우선). 부른 쪽의 group_ko 후보까지 계산.
@@ -6407,7 +6504,7 @@ function _surfRender(){
     box.appendChild(list);return;
   }
   const lensName=(_SURF_LENSES.find(l=>l[0]===_surfLens)||[])[ko?1:2];
-  _surfRows.forEach(row=>{
+  _surfSortRows(_surfRows).forEach(row=>{
     const items=_surfItemsFor(row);
     const isOpen=_surfOpen===row.key;
     const grp=document.createElement('div');grp.className='surf-grp'+(isOpen?' open':'');
@@ -6417,7 +6514,7 @@ function _surfRender(){
     const nm=document.createElement('span');nm.className='surf-r-name';nm.textContent=row.rel;
     const people=[...new Set(items.flatMap(x=>x._ps||[]))];
     const sub=document.createElement('span');sub.className='surf-r-rel';
-    sub.textContent=row.key==='written'?(row.sub||''):
+    sub.textContent=(row.key==='written'||row.key==='weak')?(row.sub||''):
       row.key==='songcover'?[row.sub,people.slice(0,2).join(' · ')+(people.length>2?(ko?' 외':' +'):'')].filter(Boolean).join(' — '):
       row.key==='stage'?(items[0]&&items[0]._stage||''):row.key==='group'?(items[0]&&items[0]._sub||''):
       row.key==='self'?(_surfPath[_surfPath.length-1]?.label||''):
@@ -6431,7 +6528,9 @@ function _surfRender(){
     btn.append(txt,stack,chev);
     btn.addEventListener('click',e=>{
       e.stopPropagation();
-      _surfOpen=_surfOpen===row.key?null:row.key;_surfExpanded=false;_surfPick=null;_surfRender();
+      _surfOpen=_surfOpen===row.key?null:row.key;_surfExpanded=false;_surfPick=null;
+      if(_surfOpen)_surfNotePref(row.key,0.3); // v2 — 펼쳐 봄
+      _surfRender();
       if(_surfOpen){const g2=document.querySelector('#yt-lb-surf .surf-grp.open');g2&&g2.scrollIntoView({block:'nearest',behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});}
     });
     grp.appendChild(btn);
@@ -6490,6 +6589,7 @@ function _surfHopTo(row,shown,i){
   _surfPath.push({label:who,via:row.rel,u:songs[i].u,song:songs[i]});
   _surfOpen=null;_surfPick=null;_surfExpanded=false;
   _gaEvent('surf_hop',{rel:row.key,lens:_surfLens,depth:_surfPath.length-1});
+  _surfNotePref(row.key,1); // v2 — 이 관계로 넘어감
   _surfHopping=true;
   try{openLightbox(songs[i].u,false,songs,i,ctx,false,true);}finally{_surfHopping=false;}
   document.getElementById('yt-lb-uplist')?.scrollTo?.({top:0});
@@ -17120,6 +17220,8 @@ async function _pullServerToLocal(userId){
   scraps=data.scraps||[];
   collections=data.collections||[];
   myProfile=data.profile||null;
+  // v2 Surf 학습 기록 — 서버 컬럼이 있을 때만 동기화(없는 컬럼에 push하면 매번 에러). 기기 기록과 합친다(큰 값 우선).
+  if('surf_prefs' in data){_surfPrefsColumn=true;const sp=data.surf_prefs||{};for(const k in sp)_surfPrefs[k]=Math.max(+_surfPrefs[k]||0,+sp[k]||0);try{localStorage.setItem(_SURF_PREF_KEY,JSON.stringify(_surfPrefs));}catch(e){}}
   concertLog=data.concert_log||[];
   localStorage.setItem(FAV_KEY_G,JSON.stringify([...favGroups]));
   localStorage.setItem(FAV_KEY_M,JSON.stringify([...favMembers]));
