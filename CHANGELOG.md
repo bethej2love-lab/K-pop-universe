@@ -68,7 +68,7 @@
   - 예외: 그룹명이 같은 텍스트에 있음 · 등록명/별칭과 같음(뒤집은 순서 포함) · 영어 낱말 겹치는 로마자 · wang(Jackson Wang). 한글 쪽은 성 뒤가 괄호·구분자·줄끝일 때만(성씨 목록도 편·상·전 같은 일상어 음절 제외 — "카리나 편 |" 보호).
   - 검증: 기존 매칭 테스트 160/52/2037 그대로 · 새 테스트 17케이스(수정 전 코드로 5건 실패 재현) · 전체 258,752행 재판정.
 - [완료] [admin.js] **협찬 크레딧·브랜드명 제거** — "powered/sponsored/supported by ~"(DB 전체 4건, 전부 ASAHI SUPER DRY) + `_ATM_BRAND_PHRASES`(설명란의 "THE FIRST TAKE × ASAHI SUPER DRY"처럼 크레딧 문구 없이 나오는 브랜드). 진짜 아사히 해시태그는 그대로.
-- [진행중] **기존 오태깅 82건 정리 SQL** `sql/fix_fullname_sponsor_mistags_2026-09-29.sql` — 고친 매처로 재판정해 그 멤버가 안 잡히는 행만, 행별 검토 완료(81건 태그 제거+무관, 1건 태그만 제거), tags_manual=false만. **admin이 Supabase SQL Editor에서 실행 필요.** 재검증 스윕은 with_members만 걷어내고 group_ko는 못 고쳐서 SQL로 함.
+- [완료] **기존 오태깅 82건 정리 SQL**(실행 완료·DB 82/82 반영 확인 후 파일 삭제, 09-29) — 고친 매처로 재판정해 그 멤버가 안 잡히는 행만, 행별 검토 완료(81건 태그 제거+무관, 1건 태그만 제거), tags_manual=false만. **admin이 Supabase SQL Editor에서 실행 필요.** 재검증 스윕은 with_members만 걷어내고 group_ko는 못 고쳐서 SQL로 함.
 
 ## 2026-09-29 (세션 — Surf 2단계: Today's Path + 제목 곡명 커버)
 
