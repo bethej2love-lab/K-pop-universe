@@ -777,8 +777,9 @@
     </div>
     </div>
     <div id="yt-lb-uplist">
+      <div id="yt-lb-surf"></div>
       <div id="yt-lb-uplist-hd">
-        <span id="yt-lb-uplist-label">다음 영상</span>
+        <button id="yt-lb-uplist-label" type="button" aria-expanded="false">이어서 보기</button>
         <div id="yt-lb-uplist-nav">
           <button id="yt-lb-uplist-prev" aria-label="이전 영상">‹</button>
           <span id="yt-lb-uplist-cnt"></span>
@@ -5654,6 +5655,7 @@ function openLightbox(url,shorts,playlist,idx,ctx,isAdvance,forceBrowseMode){
     _connGa('conn_video_play',{ms_from_open:Math.round(performance.now()-_connOpenT),taps:_connChipTaps,
       selected_n:_connSelected.length});
   }
+  _surfOnOpen(isAdvance); // Surf 길: 바깥에서 새로 연 세션이면 처음부터(Surf가 연 건 이어서)
   _lbCancelAutoNext(); // 새 영상을 여는 모든 경로(연속재생 포함)에서 이전 영상의 대기 중인 카운트다운은 취소
   _lbEndedHandled=false; // 새 영상이니 종료 이벤트 중복 가드도 리셋
   _lbIsNativeShorts=!!shorts;
@@ -5727,7 +5729,7 @@ function openLightbox(url,shorts,playlist,idx,ctx,isAdvance,forceBrowseMode){
   _updateLbMuteBtn();
   _maybeShowSwipeHint();
   _lbUpdateMemberInfo();
-  if(_lbSessionMode==='browse'){_lbUpdateUplist();}
+  if(_lbSessionMode==='browse'){_lbUpdateUplist();_surfUpdate();}
 }
 const LB_SWIPE_HINT_KEY='kpu_lb_swipe_hint_shown'; // 상하 스와이프로 영상 넘길 수 있다는 걸 처음 한 번만 안내
 function _maybeShowSwipeHint(){
@@ -5924,8 +5926,10 @@ function _lbUpdateUplist(){
   const scrollEl=document.getElementById('yt-lb-uplist-scroll');
   const cntEl=document.getElementById('yt-lb-uplist-cnt');
   if(!box||!scrollEl)return;
-  if(!_lbPlaylist||_lbPlaylist.length<2){box.style.display='none';return;}
   box.style.display='';
+  // Surf(Up Next)가 같은 박스에 있어서 목록이 1개뿐이어도 박스는 남기고 "이어서 보기" 부분만 숨긴다
+  box.classList.toggle('no-playlist',!_lbPlaylist||_lbPlaylist.length<2);
+  if(!_lbPlaylist||_lbPlaylist.length<2)return;
   if(_lbUplistRenderedFor!==_lbPlaylist){
     _lbUplistRenderedFor=_lbPlaylist;
     scrollEl.innerHTML='';
@@ -5944,7 +5948,8 @@ function _lbUpdateUplist(){
       row.appendChild(thumb);row.appendChild(info);
       // 다음 영상 목록은 브라우즈 모드에서만 보이는 UI라(#yt-lightbox.lb-browse 한정 CSS), 여기서
       // 고르는 항목은 쇼츠여도 항상 브라우즈 세션으로 유지한다(2026-08-11, forceBrowseMode 통일).
-      row.addEventListener('click',e=>{e.stopPropagation();openLightbox(item.u,_songIsShort(item),_lbPlaylist,i,_lbCtx,false,true);});
+      // 같은 목록 안에서 고른 건 Surf 길의 같은 칸 — 길을 지우지 않는다(_surfHopping)
+      row.addEventListener('click',e=>{e.stopPropagation();_surfHopping=true;try{openLightbox(item.u,_songIsShort(item),_lbPlaylist,i,_lbCtx,false,true);}finally{_surfHopping=false;}});
       scrollEl.appendChild(row);
     });
   }
@@ -5958,6 +5963,394 @@ function _lbUpdateUplist(){
   }else{
     if(cntEl)cntEl.textContent=(_lbPlaylist.length>1&&_lbIdx>=0)?`${_lbIdx+1} / ${_lbPlaylist.length}`:'';
   }
+}
+
+// ── Surf(파도타기) — 브라우즈 모드 라이트박스의 Up Next (2026-09-29, 1단계: 연결·필터·묶음) ──────────
+// 시안: https://claude.ai/code/artifact/c35f0173-8b62-4d72-b126-43bbf6467476 (2026-09-28 사용자 방향 OK)
+// "다음 영상"이 들어온 목록 순서대로만 이어지던 걸, 지금 영상에서 **관계로** 뻗어 나가게 한다.
+//  · 행 = 관계가 앞(함께한 멤버·커버·같은 사람/그룹·원 소속·같은 무대). 누르면 그 자리에서 묶음이 펼쳐진다.
+//  · 종류 필터(라이브/직캠/MV/예능/전체)는 넘어가도 유지 — 라이브를 보다가 라이브만 계속 따라갈 수 있게.
+//  · 타일을 누르면 그 묶음이 새 재생목록이 된다(자동 다음 영상도 그 관계 안에서 이어짐). 지나온 길은 trail.
+//  · 들어온 원래 목록은 "이어서 보기"로 접어 둔다(이전/다음 화살표는 그대로 그 목록 기준).
+// ⚠️ cover_of_song으로 직접 조회하지 말 것 — 인덱스가 없어 한 번에 4.3초(2026-09-29 실측). 커버는
+//    GIN이 있는 cover_of_members/cover_of_groups로 받아 온 뒤 같은 곡은 클라이언트에서 추린다(0.3초).
+// ⚠️ 제목 feat./X 인물은 유니버스 밖 이름이어도 칩으로 쓴다(2026-09-28 사용자 결정 — 크러쉬·이무진·권진아처럼
+//    반복 등장하는 사람이 많다). 칩은 거르기만 하고 그 사람으로 넘어가진 않는다(넘어갈 카드가 없으므로).
+const _SURF_LENSES=[['live','라이브','Live'],['cam','직캠','Fancam'],['mv','MV','MV'],['variety','예능','Variety'],['all','전체','All']];
+const _SURF_SHOW=4; // 묶음 펼침 시 처음 보이는 타일 수(나머지는 "N개 더 보기")
+let _surfLens=null,_surfOpen=null,_surfPick=null,_surfExpanded=false,_surfReq=0;
+let _surfPath=[]; // 지나온 길 [{label,via,u,shorts,playlist,idx,ctx}] — 마지막이 지금
+let _surfHopping=false; // Surf가 연 openLightbox인지(새 세션으로 보고 길을 지우면 안 됨)
+let _surfRows=null,_surfRowsFor=null,_surfRowsPeople=null;
+const _surfCache=new Map(); // 영상 id → {rows,label,kind}
+
+// 영상 한 건의 "종류" — 필터 렌즈와 같은 축. 탭 쿼리들과 같은 상수를 재사용한다(어휘 드리프트 방지).
+function _surfKind(v){
+  const t=v.title||'',tn=_titleNorm(t),f=v.content_formats||[];
+  if(_FANCAM_BRAND_RE.test(t))return'cam';
+  if(v.category==='mv')return'mv';
+  if(v.category==='variety'||f.includes('variety')||_VARIETY_TITLE_KEYWORDS.some(k=>tn.includes(k)))return'variety';
+  if(_LIVE_EXCLUDE.some(k=>tn.includes(k)))return'other';
+  if(v.category==='live'||f.includes('live'))return'live';
+  // 시안 결정 — 라이브는 방송 무대만이 아니라 커버·어쿠스틱·듀엣·밴드 라이브까지(인터뷰·MV·티저는 빼고)
+  if(/\blive\b|라이브|cover|커버|acoustic|어쿠스틱|duet|듀엣/.test(tn)&&!/interview|인터뷰|m\/v|teaser|티저/.test(tn))return'live';
+  return'other';
+}
+const _surfGName=g=>currentLang==='ko'?g:((GROUPS[g]&&GROUPS[g].en)||g);
+// 이 영상의 주인 — 멤버(아티스트) 우선, 없으면 그룹.
+function _surfAnchor(v,ctx){
+  const gk=(ctx&&ctx.groupKo)||v.group_ko;
+  const inG=(x,g)=>x.group.ko===g||_ytGroupKoFor(x)===g||_artistGroups(x).some(y=>y.ko===g);
+  let a=null;
+  if(ctx&&ctx.memberKo)a=ARTISTS.find(x=>x.name.ko===ctx.memberKo&&inG(x,gk))||null;
+  const mem=v.members||[];
+  if(!a&&mem.length===1)a=ARTISTS.find(x=>x.name.ko===mem[0]&&inG(x,v.group_ko))||null;
+  if(!a&&!GROUPS[v.group_ko])a=ARTISTS.find(x=>_ytGroupKoFor(x)===v.group_ko)||null; // 솔로 본인 채널
+  // 외부 채널(잇츠라이브 등)에 게스트 한 명만 태깅된 무대 — 그 사람이 주인이다
+  if(!a&&!mem.length&&(v.with_members||[]).length===1)a=_findArtistByConnName(v.with_members[0],v.group_ko)||null;
+  return{a,g:a?null:(GROUPS[gk]?gk:(GROUPS[v.group_ko]?v.group_ko:null))};
+}
+// with_members/cover_of_members 표기("이름(그룹)") 후보 전부 — 솔로는 "디모렉스(디모렉스)"와 "(솔로)"가 섞여 있다
+function _surfPersonKeys(a){
+  return[...new Set([a.group.ko,_ytGroupKoFor(a),..._artistGroups(a).map(g=>g.ko)].filter(Boolean).map(g=>`${a.name.ko}(${g})`))];
+}
+function _surfOwnKeys(a){return[...new Set([_ytGroupKoFor(a),..._artistGroups(a).map(g=>(g.ko&&GROUPS[g.ko])?g.ko:a.name.ko)])];}
+// 이름 문자열 → 후보 아티스트 전부(한글명·영문명·matchAliases). 한 명으로 좁혀질 때만 그 사람으로 표기한다 —
+// "DOYOUNG"(트레저·NCT), "YOON"(스테이씨 윤 ≠ 위너 강승윤)처럼 동명이인을 첫 번째로 찍으면 엉뚱한 사람이 칩에 뜬다.
+function _surfCandidates(raw){
+  const n=raw.trim(),nl=n.toLowerCase().replace(/\s+/g,'');
+  if(!nl)return[];
+  const hit=ARTISTS.filter(x=>x.name.ko===n||(x.name.en||'').toLowerCase().replace(/\s+/g,'')===nl||
+    (x.matchAliases||[]).some(m=>m.toLowerCase().replace(/\s+/g,'')===nl));
+  return[...new Set(hit)];
+}
+// 제목의 feat./ft./with/X 뒤 인물. "방예담 (BANG YEDAM) X 윈터 (WINTER of aespa)" → 윈터
+const _SURF_NOT_PERSON=/^(live|band|ver\.?|version|mv|m\/v|official|cover|remix|prod\.?|acoustic|special|stage|full|4k|hd|the|a|me|you|us|my|love|friends?)$/i;
+function _surfTitlePeople(title){
+  const t=(title||'').replace(/[‘’“”'"「」『』]/g,' '),out=[];
+  const grab=s=>s.split(/\s+(?:x|×|&|and)\s+|,|\s&\s/i).forEach(p=>{
+    p=p.replace(/#\d+|\(.*?\)|\[.*?\]/g,'').replace(/\s+of\s+.*$/i,'').trim();
+    if(p&&p.length<=20&&!_SURF_NOT_PERSON.test(p)&&!/^\d+$/.test(p))out.push(p);
+  });
+  let m;
+  const re=/(?:\bfeat\.?|\bft\.|\bfeaturing|\bwith)\s+([^()\[\]|/]+)/gi;
+  while((m=re.exec(t)))grab(m[1]);
+  const rx=/(?:^|\s|\))(?:X|×)\s+([^()\[\]|/]+)/g; // 대문자 X만 — 소문자 x는 "JIHOON x JUNKYU"(같은 그룹 유닛)가 대부분
+  while((m=rx.exec(t)))grab(m[1]);
+  return out;
+}
+// 행의 사람 표기(칩·타일 부제) — 한 명으로 확정되면 표기명, 아니면 제목 원문 그대로
+function _surfPersonLabel(raw,fallbackGroup){
+  let cands;
+  if(/\(.+\)$/.test(raw)){const a=_findArtistByConnName(raw,fallbackGroup);cands=a?[a]:[];}
+  else cands=_surfCandidates(raw);
+  const a=cands.length===1?cands[0]:null;
+  return{label:a?_dispName(a):raw.replace(/\((.+)\)$/,'').trim(),a,cands};
+}
+function _surfPerformer(x){
+  const mem=x.members||[];
+  if(mem.length===1){const a=ARTISTS.find(y=>y.name.ko===mem[0]&&_artistGroups(y).some(g=>g.ko===x.group_ko));if(a)return _dispName(a);}
+  return _surfGName(x.group_ko||'');
+}
+function _surfSong(x){
+  const u=_isShortV(x)?`https://youtube.com/shorts/${x.id}`:`https://www.youtube.com/watch?v=${x.id}`;
+  return{t:x.title,u,thumb:x.thumb,vc:x.view_count,pa:x.published_at?.slice(0,10),dur:x.duration_sec,_apiId:x.id,_apiGroupKo:x.group_ko};
+}
+// 넘어간 영상의 주인 컨텍스트 — 다음 Up Next가 그 사람 기준으로 다시 묶인다
+function _surfCtxOf(x){
+  const mem=x.members||[];
+  if(mem.length===1)return{groupKo:x.group_ko,memberKo:mem[0]};
+  if(!mem.length&&(x.with_members||[]).length===1&&!GROUPS[x.group_ko]){
+    const a=_findArtistByConnName(x.with_members[0],x.group_ko);
+    if(a)return{groupKo:_ytGroupKoFor(a),memberKo:a.name.ko};
+  }
+  return{groupKo:x.group_ko};
+}
+
+async function _surfFetch(vid,ctx){
+  const COLS='id,title,thumb,category,is_short,group_ko,members,with_members,cover_of_members,cover_of_groups,cover_of_song,content_formats,content_flag,published_at,view_count'+_durCol();
+  const excl=q=>q.or('content_flag.is.null,content_flag.neq.무관').or('content_flag.is.null,content_flag.neq.보류').or('content_flag.is.null,content_flag.neq.hidden');
+  // 조회수순 — 2026-09-29 실측 group_ko·members·with_members·cover_of_*·title_norm 조건 모두 0.25~0.45초
+  const Q=(lim)=>excl(sb.from(_YT_TABLE).select(COLS)).order('view_count',{ascending:false,nullsFirst:false}).limit(lim);
+  const run=q=>q.then(r=>(r&&r.data)?_filterBannedVideos(r.data):[],()=>[]);
+  const{data:curRows}=await sb.from(_YT_TABLE).select(COLS).eq('id',vid).limit(1);
+  const v=curRows&&curRows[0];
+  if(!v)return null;
+  const{a,g}=_surfAnchor(v,ctx);
+  const f=_pgFilterVal;
+  const jobs={};
+  let selfLabel,label,groupRow=null;
+  if(a){
+    const own=_surfOwnKeys(a),pk=_surfPersonKeys(a);
+    label=_dispName(a);selfLabel='같은 사람';
+    const soloKey=!GROUPS[_ytGroupKoFor(a)]?`,group_ko.eq.${f(a.name.ko)}`:'';
+    jobs.self=run(Q(90).or(`and(group_ko.in.(${own.map(f).join(',')}),members.cs.{${f(a.name.ko)}})${soloKey}`));
+    jobs.guest=run(Q(60).or(pk.map(k=>`with_members.cs.{${f(k)}}`).join(',')));
+    jobs.cover=(v.cover_of_members||[]).length||(v.cover_of_groups||[]).length?null:
+      run(Q(60).or(pk.map(k=>`cover_of_members.cs.{${f(k)}}`).join(',')));
+    const cur=GROUPS[a.group.ko]?a.group.ko:null;
+    const former=cur?null:(_artistGroups(a).find(x=>x.ko&&GROUPS[x.ko])||{}).ko;
+    if(cur||former){groupRow={key:cur||former,rel:cur?'그룹':'원 소속'};jobs.group=run(Q(60).eq('group_ko',groupRow.key));}
+  }else if(g){
+    label=_surfGName(g);selfLabel='같은 그룹';
+    jobs.self=run(Q(90).eq('group_ko',g));
+    jobs.guest=run(Q(60).contains('with_groups',[g]));
+    jobs.cover=(v.cover_of_members||[]).length||(v.cover_of_groups||[]).length?null:run(Q(60).contains('cover_of_groups',[g]));
+  }else{
+    label=_surfGName(v.group_ko||'');
+  }
+  // 지금 영상이 커버면 → 같은 원곡의 다른 가수. 원곡 태그(GIN)로 받고 같은 곡을 앞으로.
+  const ofM=v.cover_of_members||[],ofG=v.cover_of_groups||[];
+  if(ofM.length||ofG.length)jobs.sameSong=run(Q(80).or([...ofM.map(k=>`cover_of_members.cs.{${f(k)}}`),...ofG.map(k=>`cover_of_groups.cs.{${f(k)}}`)].join(',')));
+  // 같은 무대 — 프로그램 컬렉션 어휘(_PROGRAM_COLLECTIONS) 재사용
+  const tn=_titleNorm(v.title);
+  const prog=_PROGRAM_COLLECTIONS.find(p=>p.kw.some(k=>tn.includes(k)));
+  if(prog)jobs.stage=run(Q(60).or(prog.kw.map(k=>`title_norm.ilike.*${k}*`).join(',')));
+  const keys=Object.keys(jobs).filter(k=>jobs[k]);
+  const res=await Promise.all(keys.map(k=>jobs[k]));
+  const R={};keys.forEach((k,i)=>R[k]=res[i].filter(x=>x.id!==vid&&!_isShortV(x)));
+
+  // 자기 쪽(앵커·앵커 그룹) 사람은 "함께한 멤버" 칩에서 뺀다 — 같은 그룹 유닛 무대는 콜라보가 아니다
+  // ⚠️ '솔로'는 그룹이 아니다 — 그 키가 들어가면 솔로 아티스트 전원이 "자기 쪽"으로 빠진다(GROUPS에 있는 것만)
+  const selfGroups=new Set((a?_surfOwnKeys(a):(g?[g]:[])).filter(k=>GROUPS[k]));
+  const _nk=n=>(n||'').toLowerCase().replace(/\s+/g,'');
+  // 후보 중 **한 명이라도** 자기 쪽이면 자기 쪽으로 본다(트레저 영상 제목의 DOYOUNG은 트레저 도영)
+  const isSelf=(lab,cands)=>cands.some(ar=>ar===a||_artistGroups(ar).some(x=>selfGroups.has(x.ko)))||
+    (a?[a.name.ko,a.name.en,...(a.matchAliases||[])].some(n=>n&&_nk(n)===_nk(lab)):false);
+  const people=new Map(); // 칩 표기 → 아티스트(확정된 사람만) — 콜라보로 넘어갈 때 그 사람 기준으로 다시 묶는다
+  const rows=[];
+  const mk=(key,rel,items)=>{if(items&&items.length)rows.push({key,rel,items});};
+  // ① 함께한 멤버 — 내 영상에 온 게스트(with_members) + 제목 feat./X + 내가 게스트로 간 남의 영상
+  if(R.self||R.guest){
+    const seen=new Set(),collab=[];
+    // 유니버스 밖 이름은 제목의 "한글 (LATIN)" / "LATIN (한글)" 병기로 한 사람으로 합친다 — 안 그러면
+    // "윈터 X 이무진 (LEE MU JIN)"과 "WINTER X LEE MU JIN"이 칩 두 개(이무진 · LEE MU JIN)로 갈라진다
+    const alias=new Map();
+    [...(R.self||[]),...(R.guest||[])].forEach(x=>{
+      const t=x.title||'';let m;
+      const r1=/([가-힣]{2,})s*(([A-Za-z][A-Za-z .'-]{1,30}))/g,r2=/([A-Za-z][A-Za-z .'-]{1,30}?)s*(([가-힣]{2,}))/g;
+      while((m=r1.exec(t)))alias.set(_nk(m[2]),m[1]);
+      while((m=r2.exec(t)))alias.set(_nk(m[1]),m[2]);
+    });
+    const take=(ps,raw,gk)=>{
+      let{label:l,a:ar,cands}=_surfPersonLabel(raw,gk);
+      if(!ar&&alias.has(_nk(l))){const ko=alias.get(_nk(l));const r=_surfPersonLabel(ko,gk);l=r.label;ar=r.a;cands=cands.concat(r.cands);}
+      if(isSelf(l,cands))return;ps.push(l);if(ar)people.set(l,ar);
+    };
+    // 한 제목 안에 한글·영문 블록이 따로 있는 표기("윈터 X 이무진 | WINTER X LEE MU JIN") — 병기 괄호가 없어
+    // 위 alias로 못 합친다. 같은 제목에 확정 안 된 한글 이름이 있으면 확정 안 된 영문 이름은 버린다.
+    const dropDupLatin=(ps)=>{const ko=ps.some(l=>!people.has(l)&&/[가-힣]/.test(l));return ko?ps.filter(l=>people.has(l)||/[가-힣]/.test(l)):ps;};
+    (R.self||[]).forEach(x=>{
+      const ps=[];
+      (x.with_members||[]).forEach(n=>take(ps,n,x.group_ko));
+      const tp=[];_surfTitlePeople(x.title).forEach(n=>take(tp,n,x.group_ko));ps.push(...dropDupLatin(tp));
+      const u=[...new Set(ps)];
+      if(u.length&&!seen.has(x.id)){seen.add(x.id);collab.push(Object.assign({},x,{_ps:u}));}
+    });
+    // 남의 채널에 내가 게스트로 간 영상 — 채널 주인이 자기 쪽(원 소속 등)이면 콜라보가 아니다
+    (R.guest||[]).forEach(x=>{if(!seen.has(x.id)&&!selfGroups.has(x.group_ko)){seen.add(x.id);collab.push(Object.assign({},x,{_ps:[_surfPerformer(x)]}));}});
+    collab.sort((p,q)=>(q.view_count||0)-(p.view_count||0));
+    mk('collab','함께한 멤버',collab);
+  }
+  // ② 커버 — 지금 영상이 커버면 같은 원곡, 아니면 이 사람/그룹 노래를 부른 다른 가수
+  if(R.sameSong){
+    const song=_titleNorm(v.cover_of_song||'').split(/[(\[]/)[0].trim();
+    const same=song?R.sameSong.filter(x=>_titleNorm(x.cover_of_song||x.title).includes(song)):[];
+    const rest=R.sameSong.filter(x=>!same.includes(x));
+    mk('cover',same.length?'같은 곡 커버':'같은 원곡자 커버',[...same,...rest].map(x=>Object.assign({},x,{_ps:[_surfPerformer(x)]})));
+  }else if(R.cover){
+    mk('cover','커버',R.cover.map(x=>Object.assign({},x,{_ps:[_surfPerformer(x)]})));
+  }
+  // ③ 같은 사람/그룹
+  mk('self',selfLabel||'같은 채널',R.self);
+  // ④ 원 소속/그룹
+  if(groupRow&&R.group)mk('group',groupRow.rel,R.group.map(x=>Object.assign({},x,{_sub:_surfGName(groupRow.key)})));
+  // ⑤ 같은 무대 — 다른 가수만
+  if(R.stage){
+    const other=R.stage.filter(x=>!selfGroups.has(x.group_ko)&&!(a&&(x.with_members||[]).some(n=>_surfPersonKeys(a).includes(n))));
+    mk('stage','같은 무대',other.map(x=>Object.assign({},x,{_ps:[_surfPerformer(x)]})).map(x=>(x._stage=prog.label,x)));
+  }
+  return{rows,label,kind:_surfKind(v),people};
+}
+
+function _surfItemsFor(row){
+  const base=row.items.filter(x=>_surfLens==='all'||_surfKind(x)===_surfLens);
+  return base;
+}
+function _surfRender(){
+  const box=document.getElementById('yt-lb-surf');
+  if(!box)return;
+  box.innerHTML='';
+  const ko=currentLang==='ko';
+  // trail — 두 번째 영상부터
+  if(_surfPath.length>1){
+    const tr=document.createElement('div');tr.className='surf-trail';
+    const back=document.createElement('button');back.type='button';back.className='surf-back';back.textContent='‹';
+    back.setAttribute('aria-label',ko?'이전 영상으로':'Back');
+    back.addEventListener('click',e=>{e.stopPropagation();_surfGoBack(_surfPath.length-2);});
+    tr.appendChild(back);
+    const crumbs=document.createElement('div');crumbs.className='surf-crumbs';
+    _surfPath.forEach((p,i)=>{
+      if(i){const s=document.createElement('i');s.textContent='›';crumbs.appendChild(s);}
+      const b=document.createElement('button');b.type='button';b.textContent=p.label||'…';
+      if(i===_surfPath.length-1)b.className='cur';
+      else b.addEventListener('click',e=>{e.stopPropagation();_surfGoBack(i);});
+      crumbs.appendChild(b);
+    });
+    tr.appendChild(crumbs);box.appendChild(tr);
+    requestAnimationFrame(()=>{crumbs.scrollLeft=crumbs.scrollWidth;});
+  }
+  const hd=document.createElement('div');hd.className='surf-hd';
+  const h=document.createElement('span');h.className='surf-title';h.textContent='Up Next';hd.appendChild(h);
+  box.appendChild(hd);
+  const seg=document.createElement('div');seg.className='seg-control seg-control-sm surf-seg';
+  const thumb=document.createElement('div');thumb.className='seg-thumb';seg.appendChild(thumb);
+  const btns=[];
+  _SURF_LENSES.forEach(([k,kl,el])=>{
+    const b=document.createElement('button');b.type='button';b.className='seg-btn'+(k===_surfLens?' active':'');
+    b.textContent=ko?kl:el;
+    b.addEventListener('click',e=>{e.stopPropagation();_surfLens=k;_surfExpanded=false;_surfPick=null;_surfRender();});
+    seg.appendChild(b);btns.push(b);
+  });
+  box.appendChild(seg);
+  const on=btns[_SURF_LENSES.findIndex(l=>l[0]===_surfLens)];
+  requestAnimationFrame(()=>{if(on){thumb.style.width=on.offsetWidth+'px';thumb.style.transform=`translateX(${on.offsetLeft-1}px)`;}});
+  const list=document.createElement('div');list.className='surf-list';
+  if(!_surfRows){
+    list.innerHTML=`<div class="surf-empty">${ko?'불러오는 중…':'Loading…'}</div>`;
+    box.appendChild(list);return;
+  }
+  if(!_surfRows.length){
+    // 이어질 연결이 없으면 접어 둔 "이어서 보기"를 펼친다 — 빈 Up Next만 남으면 막다른 길이다
+    document.getElementById('yt-lb-uplist')?.classList.remove('surf-on');
+    list.innerHTML=`<div class="surf-empty">${ko?'이어질 연결이 아직 없어요':'No connections yet'}</div>`;
+    box.appendChild(list);return;
+  }
+  const lensName=(_SURF_LENSES.find(l=>l[0]===_surfLens)||[])[ko?1:2];
+  _surfRows.forEach(row=>{
+    const items=_surfItemsFor(row);
+    const isOpen=_surfOpen===row.key;
+    const grp=document.createElement('div');grp.className='surf-grp'+(isOpen?' open':'');
+    const btn=document.createElement('button');btn.type='button';btn.className='surf-row';
+    btn.disabled=!items.length;btn.setAttribute('aria-expanded',isOpen?'true':'false');
+    const txt=document.createElement('span');txt.className='surf-r-txt';
+    const nm=document.createElement('span');nm.className='surf-r-name';nm.textContent=row.rel;
+    const people=[...new Set(items.flatMap(x=>x._ps||[]))];
+    const sub=document.createElement('span');sub.className='surf-r-rel';
+    sub.textContent=row.key==='stage'?(items[0]&&items[0]._stage||''):row.key==='group'?(items[0]&&items[0]._sub||''):
+      row.key==='self'?(_surfPath[_surfPath.length-1]?.label||''):
+      (people.slice(0,3).join(' · ')+(people.length>3?(ko?' 외':' +'):''));
+    txt.appendChild(nm);if(sub.textContent)txt.appendChild(sub);
+    const stack=document.createElement('span');stack.className='surf-stack';
+    items.slice(0,3).forEach(x=>{const im=document.createElement('img');im.src=x.thumb||'';im.alt='';im.loading='lazy';stack.appendChild(im);});
+    const cnt=document.createElement('b');cnt.textContent=items.length?String(items.length):(ko?`${lensName} 없음`:`No ${lensName}`);stack.appendChild(cnt);
+    const chev=document.createElementNS('http://www.w3.org/2000/svg','svg');chev.setAttribute('class','surf-chev');chev.setAttribute('viewBox','0 0 8 13');
+    chev.innerHTML='<path d="M1.5 1.5 6.5 6.5 1.5 11.5"/>';
+    btn.append(txt,stack,chev);
+    btn.addEventListener('click',e=>{
+      e.stopPropagation();
+      _surfOpen=_surfOpen===row.key?null:row.key;_surfExpanded=false;_surfPick=null;_surfRender();
+      if(_surfOpen){const g2=document.querySelector('#yt-lb-surf .surf-grp.open');g2&&g2.scrollIntoView({block:'nearest',behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});}
+    });
+    grp.appendChild(btn);
+    if(isOpen){
+      if(people.length>1&&row.key!=='self'&&row.key!=='group'){
+        const chips=document.createElement('div');chips.className='surf-chips';
+        [null,...people].forEach(p=>{
+          const c=document.createElement('button');c.type='button';
+          c.className='surf-chip'+(((_surfPick&&people.includes(_surfPick))?_surfPick:null)===p?' on':'');
+          c.textContent=p||(ko?'전체':'All');
+          c.addEventListener('click',e=>{e.stopPropagation();_surfPick=p;_surfExpanded=false;_surfRender();});
+          chips.appendChild(c);
+        });
+        grp.appendChild(chips);
+        _enableDragScroll(chips);
+      }
+      const shown=(_surfPick&&people.includes(_surfPick))?items.filter(x=>(x._ps||[]).includes(_surfPick)):items;
+      const grid=document.createElement('div');grid.className='surf-grid';
+      const seenIds=new Set(_surfPath.map(p=>ytId(p.u)));
+      shown.slice(0,_surfExpanded?shown.length:_SURF_SHOW).forEach((x,i)=>{
+        const t=document.createElement('button');t.type='button';t.className='surf-tile'+(seenIds.has(x.id)?' seen':'');
+        const im=document.createElement('img');im.src=x.thumb||'';im.alt='';im.loading='lazy';
+        const tt=document.createElement('span');tt.className='surf-tt';tt.textContent=x.title||'';
+        const tm=document.createElement('span');tm.className='surf-tm';
+        const who=(x._ps||[])[0];
+        if(who&&row.key!=='self'){const em=document.createElement('em');em.textContent=who;tm.appendChild(em);}
+        tm.appendChild(document.createTextNode(_fmtVidMeta(x.published_at,x.view_count)));
+        t.append(im,tt,tm);
+        t.addEventListener('click',e=>{e.stopPropagation();_surfHopTo(row,shown,i);});
+        grid.appendChild(t);
+      });
+      if(shown.length>_SURF_SHOW&&!_surfExpanded){
+        const more=document.createElement('button');more.type='button';more.className='surf-more';
+        more.textContent=ko?`${shown.length-_SURF_SHOW}개 더 보기`:`${shown.length-_SURF_SHOW} more`;
+        more.addEventListener('click',e=>{e.stopPropagation();_surfExpanded=true;_surfRender();});
+        grid.appendChild(more);
+      }
+      grp.appendChild(grid);
+    }
+    list.appendChild(grp);
+  });
+  box.appendChild(list);
+}
+function _surfHopTo(row,shown,i){
+  const x=shown[i];
+  const cur=_surfPath[_surfPath.length-1];
+  if(cur)Object.assign(cur,{playlist:_lbPlaylist,idx:_lbIdx,ctx:_lbCtx}); // 돌아올 자리 저장
+  const songs=shown.map(_surfSong);
+  // 길에 남는 이름 — 인물 칩을 골랐으면 그 사람, 콜라보·커버·같은 무대는 그 영상의 상대, 같은 사람/그룹은 로드 후 주인
+  const pick=_surfPick&&(x._ps||[]).includes(_surfPick)?_surfPick:null;
+  const who=pick||(row.key!=='self'&&row.key!=='group'?(x._ps||[])[0]:null)||null;
+  // 인물 칩을 골랐고 그게 유니버스의 한 사람으로 확정되면 → 다음 Up Next는 그 사람 기준(시안: 윈터를 누르면 윈터로).
+  // 칩 없이 누른 타일은 영상 주인 기준 — 목록 전체에 한 사람 컨텍스트를 씌우면 자동 다음 영상마다 엉뚱한 주인이 붙는다.
+  const pa=pick&&_surfRowsPeople?_surfRowsPeople.get(pick):null;
+  const ctx=pa?{groupKo:_ytGroupKoFor(pa),memberKo:pa.name.ko}:_surfCtxOf(x);
+  _surfPath.push({label:who,via:row.rel,u:songs[i].u});
+  _surfOpen=null;_surfPick=null;_surfExpanded=false;
+  _gaEvent('surf_hop',{rel:row.key,lens:_surfLens,depth:_surfPath.length-1});
+  _surfHopping=true;
+  try{openLightbox(songs[i].u,false,songs,i,ctx,false,true);}finally{_surfHopping=false;}
+  document.getElementById('yt-lb-uplist')?.scrollTo?.({top:0});
+}
+function _surfGoBack(i){
+  const p=_surfPath[i];
+  if(!p||!p.playlist)return;
+  _surfPath=_surfPath.slice(0,i+1);
+  _surfOpen=null;_surfPick=null;_surfExpanded=false;
+  const s=p.playlist[p.idx];
+  _surfHopping=true;
+  try{openLightbox(s?s.u:p.u,false,p.playlist,p.idx,p.ctx,false,true);}finally{_surfHopping=false;}
+}
+// openLightbox(브라우즈 세션)마다 호출 — 새 세션이면 길을 새로 시작한다.
+function _surfOnOpen(isAdvance){
+  if(!isAdvance&&!_surfHopping){_surfPath=[];_surfLens=null;_surfOpen=null;_surfPick=null;}
+}
+async function _surfUpdate(){
+  const box=document.getElementById('yt-lb-surf');
+  const s=(_lbPlaylist&&_lbIdx>=0)?_lbPlaylist[_lbIdx]:null;
+  const vid=s?_lbApiId(s):null;
+  if(!box||!sb||!vid){if(box)box.innerHTML='';document.getElementById('yt-lb-uplist')?.classList.remove('surf-on');return;}
+  document.getElementById('yt-lb-uplist')?.classList.add('surf-on');
+  if(!_surfPath.length)_surfPath.push({label:null,via:null,u:s.u});
+  else _surfPath[_surfPath.length-1].u=s.u; // 목록 안 이전/다음은 같은 칸에서 영상만 바뀐다
+  const ck=vid+'|'+((_lbCtx&&_lbCtx.memberKo)||'');
+  if(_surfRowsFor===ck&&_surfRows){_surfRender();return;}
+  const my=++_surfReq;
+  _surfRowsFor=ck;
+  let data=_surfCache.get(ck);
+  _surfRows=data?data.rows:null;
+  if(!data){
+    _surfRender();
+    try{data=await _surfFetch(vid,_lbCtx);}catch(e){console.error('_surfFetch failed',e);data=null;}
+    if(my!==_surfReq)return;
+    if(data){_surfCache.set(ck,data);if(_surfCache.size>40)_surfCache.delete(_surfCache.keys().next().value);}
+    _surfRows=data?data.rows:[];
+  }
+  const last=_surfPath[_surfPath.length-1];
+  if(last&&data&&!last.label)last.label=data.label;
+  _surfRowsPeople=data?data.people:null;
+  if(!_surfLens)_surfLens=data&&data.kind!=='other'?data.kind:'all'; // 기본값 = 지금 보는 영상과 같은 종류
+  _surfRender();
 }
 
 // ── 이모지 반응 ───────────────────────────────────────────────────────
@@ -6471,6 +6864,13 @@ document.addEventListener('click',e=>{
 document.getElementById('yt-lb-prev').addEventListener('click',e=>{e.stopPropagation();_lbGo(-1);});
 document.getElementById('yt-lb-next').addEventListener('click',e=>{e.stopPropagation();_lbGo(1);});
 document.getElementById('yt-lb-uplist-prev').addEventListener('click',e=>{e.stopPropagation();_lbGo(-1);});
+// "이어서 보기"(들어온 목록) 접기/펼치기 — Surf가 있을 땐 기본 접힘, 헤더 화살표(이전/다음)는 접혀도 그대로 동작
+document.getElementById('yt-lb-uplist-label').addEventListener('click',e=>{
+  e.stopPropagation();
+  const box=document.getElementById('yt-lb-uplist');
+  const open=box.classList.toggle('pl-open');
+  e.currentTarget.setAttribute('aria-expanded',open?'true':'false');
+});
 document.getElementById('yt-lb-uplist-next').addEventListener('click',e=>{e.stopPropagation();_lbGo(1);});
 document.getElementById('yt-lb-scrap').addEventListener('click',e=>{
   e.stopPropagation();
