@@ -5890,7 +5890,30 @@ function _lbUpdateMemberInfo(){
   else if(gName)anchorEl.appendChild(document.createTextNode(gName));
   wrap.style.display=(mName||gName)?'':'none';
   withEl.innerHTML='';
-  (s?.with||[]).forEach(n=>{
+  // 한 그룹이 전원 나온 영상은 멤버 칩 대신 그룹 칩 하나로(2026-09-29 — 빅톤 6명이 칩 6개로 늘어서던 것).
+  // 묶음·전원 판정은 카드 목록 함께한 줄과 같은 헬퍼(_withGroupOf/_withIsFullGroup). 앵커 자신의 그룹은 접지 않는다.
+  const _anchorG=artist?artist.group.ko:groupKo;
+  const _wPairs=(s?.with||[]).map(n=>({n,t:_findArtistByConnName(n,_anchorG)}));
+  const _wBy=new Map();
+  _wPairs.forEach(p=>{if(!p.t)return;const g=_withGroupOf(p.n,p.t,_anchorG);if(!_wBy.has(g))_wBy.set(g,[]);_wBy.get(g).push(p.t);});
+  const _wFull=new Set([..._wBy.entries()].filter(([g,ms])=>g!==groupKo&&_withIsFullGroup(g,ms)).map(([g])=>g));
+  const _wDone=new Set();
+  const _withList=[];
+  _wPairs.forEach(p=>{
+    const g=p.t?_withGroupOf(p.n,p.t,_anchorG):null;
+    if(g&&_wFull.has(g)){if(!_wDone.has(g)){_wDone.add(g);_withList.push({group:g});}return;}
+    _withList.push({n:p.n});
+  });
+  _withList.forEach(it=>{
+    if(it.group){
+      const gchip=document.createElement('button');
+      gchip.type='button';gchip.className='lb-with-chip lb-with-chip-btn';
+      gchip.textContent=currentLang==='ko'?it.group:((GROUPS[it.group]&&GROUPS[it.group].en)||it.group);
+      gchip.addEventListener('click',e=>{e.stopPropagation();_openLbHalf('group',it.group);});
+      withEl.appendChild(gchip);
+      return;
+    }
+    const n=it.n;
     const target=_findArtistByConnName(n,artist?artist.group.ko:groupKo);
     const label=target?(_dispName(target)):(n.match(/^(.+)\((.+)\)$/)?.[1]||n);
     // 함께한 멤버도 누르면 그 멤버 카드가 반 열린다(2026-08-27 사용자 요청 — 앵커의 멤버/그룹은
@@ -6176,7 +6199,12 @@ async function _surfFetch(vid,ctx){
     const dropDupLatin=(ps)=>{const ko=ps.some(l=>!people.has(l)&&/[가-힣]/.test(l));return ko?ps.filter(l=>people.has(l)||/[가-힣]/.test(l)):ps;};
     (R.self||[]).forEach(x=>{
       const ps=[];
-      (x.with_members||[]).forEach(n=>take(ps,n,x.group_ko));
+      // 한 그룹 전원이 게스트면 이름 나열 대신 그룹명 칩 하나(카드·재생 화면과 같은 헬퍼, 2026-09-29 빅톤)
+      const _gBy=new Map();
+      (x.with_members||[]).forEach(n=>{const t=_findArtistByConnName(n,x.group_ko);if(!t)return;const g=_withGroupOf(n,t,x.group_ko);if(!_gBy.has(g))_gBy.set(g,[]);_gBy.get(g).push(t);});
+      const _gFull=new Set([..._gBy.entries()].filter(([g,ms])=>!selfGroups.has(g)&&_withIsFullGroup(g,ms)).map(([g])=>g));
+      _gFull.forEach(g=>ps.push(_surfGName(g)));
+      (x.with_members||[]).forEach(n=>{const t=_findArtistByConnName(n,x.group_ko);if(t&&_gFull.has(_withGroupOf(n,t,x.group_ko)))return;take(ps,n,x.group_ko);});
       const tp=[];_surfTitlePeople(x.title).forEach(n=>take(tp,n,x.group_ko));ps.push(...dropDupLatin(tp));
       const u=[...new Set(ps)];
       if(u.length&&!seen.has(x.id)){seen.add(x.id);collab.push(Object.assign({},x,{_ps:u}));}
@@ -7167,9 +7195,38 @@ function _makeCoverMemberChip(t){
   });
   return chip;
 }
+// ── "함께한" 이름을 그룹 단위로 묶는 공용 헬퍼(2026-09-29) ──────────────────────────────────────
+// ⚠️ 주 소속(a.group.ko)으로 묶으면 안 된다 — 해체 그룹은 멤버 주 소속이 전부 '솔로'로 바뀌어 있어서, 빅톤 6명이
+//    태깅된 영상이 "빅톤"이 아니라 이름 6개로 나열됐다(사용자 제보). 태그 문자열 "한승우(빅톤)"의 (그룹)이 실제로
+//    그 사람이 속했던 그룹이면 그걸 쓴다. 겸임 멤버도 태깅된 쪽 그룹으로 묶인다.
+// 카드 영상 목록의 함께한 줄(_makeWithLine)과 재생 화면 상단 칩(_lbUpdateMemberInfo)이 같이 쓴다.
+function _withGroupOf(w,t,anchorGroupKo){
+  const m=String(w).match(/^(.+)\((.+)\)$/);
+  const tagG=m?m[2]:anchorGroupKo;
+  if(tagG&&GROUPS[tagG]&&_artistGroups(t).some(g=>g.ko===tagG))return tagG;
+  return t.group.ko;
+}
+// 그 그룹이 "전원 출연"인지 비교할 로스터 — 겸임(groups[])·그룹별 active까지 본다. 활동 멤버가 없으면(해체)
+// 해체 시점까지 남아 있던 멤버(가장 늦은 탈퇴일을 공유)만 — 중간 탈퇴자까지 세면 "전원"이 영영 안 된다.
+function _withCompareRoster(gko){
+  const full=ARTISTS.filter(a=>_artistGroups(a).some(g=>g.ko===gko));
+  const inG=a=>_artistGroups(a).find(g=>g.ko===gko)||{};
+  const act=full.filter(a=>{const e=inG(a);return (e.active!==undefined?e.active:a.active)!==false;});
+  if(act.length)return act;
+  const lefts=full.map(a=>String(inG(a).left||a.left||''));
+  const last=lefts.filter(Boolean).sort().pop();
+  const atEnd=last?full.filter((a,i)=>!lefts[i]||lefts[i]===last):full;
+  return atEnd.length?atEnd:full;
+}
+function _withIsFullGroup(gko,members){
+  if(!GROUPS[gko])return false;
+  const r=_withCompareRoster(gko);
+  return r.length>1&&r.every(a=>members.includes(a));
+}
 function _makeWithLine(song,ctx){
   if(!ctx||!ctx.groupKo)return null;
-  const withTargets=(song.with||[]).map(w=>_findArtistByConnName(w,ctx.groupKo)).filter(Boolean);
+  const withPairs=(song.with||[]).map(w=>({w,t:_findArtistByConnName(w,ctx.groupKo)})).filter(p=>p.t);
+  const withTargets=withPairs.map(p=>p.t);
   const hasOrig=song.origGroup&&GROUPS[song.origGroup]&&!withTargets.some(t=>t.group.ko===song.origGroup);
   // 커버 영상 원곡자(cover_of) — with(함께 출연)와 무관하게 별도로 표기. 원곡자가 이 영상에 실제로
   // 출연한 것은 아니므로 연결 카드(콜라보) 로직에는 절대 섞이지 않고, 이 표시 줄에서만 부가 정보로 노출.
@@ -7181,9 +7238,10 @@ function _makeWithLine(song,ctx){
   line.className='tv-with-line';
   // 같은 그룹끼리 묶어서 그룹명은 한 번만 — 앵커(현재 보고 있는 멤버)의 소속 그룹을 맨 앞에, 나머지는 그룹명 가나다순, 그룹 내 멤버는 이름 가나다순
   const byGroup=new Map();
-  withTargets.forEach(t=>{
-    if(!byGroup.has(t.group.ko))byGroup.set(t.group.ko,[]);
-    byGroup.get(t.group.ko).push(t);
+  withPairs.forEach(({w,t})=>{
+    const g=_withGroupOf(w,t,ctx.groupKo);
+    if(!byGroup.has(g))byGroup.set(g,[]);
+    if(!byGroup.get(g).includes(t))byGroup.get(g).push(t);
   });
   const groupKos=[...byGroup.keys()].sort((a,b)=>{
     if(a===ctx.groupKo)return -1;
@@ -7198,10 +7256,8 @@ function _makeWithLine(song,ctx){
     // "활동 멤버 전원 태깅"이 영원히 성립 안 해서 늘 개별 이름으로만 풀어지던 사각지대가 있었음 —
     // 이럴 땐 전체 로스터(활동 여부 무관)로 대신 비교한다(2026-08-05, 사용자 제보 — 르세라핌 카드의
     // 여자친구 소원/예린/유주 3명 다 태깅된 영상이 계속 개별 이름으로만 뜨던 문제).
-    const fullRoster=ARTISTS.filter(a=>a.group.ko===gko);
-    const activeRoster=fullRoster.filter(a=>a.active!==false);
-    const compareRoster=activeRoster.length>0?activeRoster:fullRoster;
-    const isFullGroup=compareRoster.length>0&&members.length>=compareRoster.length;
+    // (2026-09-29) 로스터는 _withCompareRoster — 주 소속만 세던 예전 방식은 해체 그룹(빅톤)에서 로스터가 0명이었다.
+    const isFullGroup=_withIsFullGroup(gko,members);
     // 지금 보고 있는 카드 자신의 그룹인데 그 그룹 전원이 다 나온 경우엔 "함께한" 정보로서 의미가 없음
     // (당연한 얘기라 표시할 값어치가 없음) — 이 그룹 항목 자체를 통째로 생략. 일부 멤버만 나온 경우는
     // 아래에서 그 멤버 이름만 정상적으로 표시된다(그룹칩 없이 이름만 — "코르티스 성현 건호"가 아니라
