@@ -385,6 +385,28 @@
     },
     "checkedAt": "2026-09-25"
   },
+  "김수윤": {
+    "id": "31VffPWiL2AAwNIMODB9qZ",
+    "spotifyName": "Kim Seungmin",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "이름 불일치 — 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-09-29"
+  },
+  "김연희": {
+    "id": "6XAymhtlGpm4EOWElxhjC0",
+    "spotifyName": "Kim Yoon Hee",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "이름 불일치 — 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-09-29"
+  },
   "김예원": {
     "id": "0a8VoUGsgqX5nqb9FQ20lO",
     "spotifyName": "Kim Ye Won",
@@ -454,6 +476,17 @@
       ]
     },
     "checkedAt": "2026-09-25"
+  },
+  "나고은": {
+    "id": "4dvmLXorXADxVq8EcySEWk",
+    "spotifyName": "Kim Na Young",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "이름 불일치 — 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-09-29"
   },
   "나나": {
     "id": "5kY05o87kyOUC0Z0xdkB3e",
@@ -649,6 +682,17 @@
       "titleOverlap": 1
     },
     "checkedAt": "2026-09-18"
+  },
+  "다현": {
+    "id": "5mq0LKFisC0tRxuvBVAY5P",
+    "spotifyName": "DAHYUN",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "동명 후보 2명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-09-29"
   },
   "더보이즈": {
     "id": "0CmvFWTX9zmMNCUi6fHtAx",
@@ -2769,6 +2813,17 @@
     },
     "checkedAt": "2026-09-22"
   },
+  "예지": {
+    "id": "1gxqARIQMXaohXEFKUQAhn",
+    "spotifyName": "Yezi",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "동명 후보 4명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-09-29"
+  },
   "예하나": {
     "id": "6vGxXieeyUn45cfSPH2hbE",
     "spotifyName": "예하나",
@@ -3636,6 +3691,17 @@
     },
     "checkedAt": "2026-09-21"
   },
+  "체스카": {
+    "id": "3YQ0W8a3WpzUo1XKy707JH",
+    "spotifyName": "Cheska",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "동명 후보 2명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-09-29"
+  },
   "최예나": {
     "id": "49muoiIu4uea4PO8vueUNN",
     "spotifyName": "YENA",
@@ -3940,6 +4006,17 @@
       "titleOverlap": 2
     },
     "checkedAt": "2026-09-15"
+  },
+  "타카하시 쥬리": {
+    "id": "53JsFUDYcN2jw6v1nF7Z82",
+    "spotifyName": "Kuniyuki Takahashi",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "이름 불일치 — 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-09-29"
   },
   "템페스트": {
     "id": "1iyFL3CRuKW7PXgPH4VxSP",
