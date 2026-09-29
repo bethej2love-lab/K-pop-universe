@@ -140,6 +140,22 @@
     },
     "checkedAt": "2026-09-17"
   },
+  "YEL": {
+    "id": "6vz9KUVgEo1gXIobqiwJ15",
+    "spotifyName": "Yel",
+    "kind": "solo",
+    "confidence": "medium",
+    "why": "이름 유일 일치",
+    "evidence": {
+      "titleOverlap": null,
+      "verifyOverlap": 0,
+      "verifyYears": [
+        2026,
+        2023
+      ]
+    },
+    "checkedAt": "2026-09-29"
+  },
   "god": {
     "id": "1nTCpd63NkuGGpCIbo4Ywl",
     "spotifyName": "god",
@@ -401,6 +417,17 @@
       "titleOverlap": null
     },
     "checkedAt": "2026-09-23"
+  },
+  "김재이": {
+    "id": "3qNVuliS40BLgXGxhdBdqu",
+    "spotifyName": "TAEYEON",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "이름 불일치 — 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-09-29"
   },
   "김지숙": {
     "id": "5se8HfkMw6SGJEqC5BhEZV",
@@ -872,6 +899,17 @@
     },
     "checkedAt": "2026-09-25"
   },
+  "렌타": {
+    "id": "6ttz1LgWFVgRiNDOjtDb2L",
+    "spotifyName": "Renaud Capuçon",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "이름 불일치 — 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-09-29"
+  },
   "로아": {
     "id": "2xHKnu5YYXM1IrDN5PIWjJ",
     "spotifyName": "로아",
@@ -997,6 +1035,17 @@
     },
     "checkedAt": "2026-09-26"
   },
+  "린지": {
+    "id": "6m9EewCnInHNApDOMhlwxM",
+    "spotifyName": "Linzy",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "동명 후보 3명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-09-29"
+  },
   "마마무": {
     "id": "0XATRDCYuuGhk0oE7C0o5G",
     "spotifyName": "MAMAMOO",
@@ -1105,6 +1154,17 @@
       "titleOverlap": 2
     },
     "checkedAt": "2026-09-15"
+  },
+  "민수": {
+    "id": "1o13ZguNtAOcOe1k0chkta",
+    "spotifyName": "Minsu",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "동명 후보 3명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-09-29"
   },
   "민주": {
     "id": "7lhiEEAGZosFSF2tlSBBKO",
@@ -3532,6 +3592,22 @@
       ]
     },
     "checkedAt": "2026-09-22"
+  },
+  "차오루": {
+    "id": "73sIBHcqh3Z3NyqHKZ7FOL",
+    "spotifyName": "Childish Gambino",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "이름 불일치 — 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0,
+      "verifyOverlap": 0,
+      "verifyYears": [
+        2019,
+        2017
+      ]
+    },
+    "checkedAt": "2026-09-29"
   },
   "찬": {
     "id": "5Jte273iLRGrRRMA5yJy3F",
