@@ -7152,6 +7152,91 @@ function _atmContextRelaxesHashtagOnly(name,title,groupKo){
 // 일반명사 문맥("X의 하루"=누구의 하루·"하루종일"·"하루하루")의 "하루"만 매칭 전에 지운다. 소유자는 보존
 // (리쿠'의' 하루 → 리쿠는 남김), "하루의 …"(하루가 소유자)·"#하루"·"하루 직캠" 등 진짜 멤버 언급도 보존.
 // 두 매처(_atmMatchesMember/_atmResolveMembers·_m2ParseTitle)가 공유한다.
+// ── 등록 이름 + 한국 성씨 = 다른 사람의 풀네임(2026-09-29) ─────────────────────────────────────
+// "제임스 안 (James An)"은 코르티스 제임스가 아니라 가수 제임스 안이다 — 외부 채널(arirangradio·HIJACKLIVE)
+// 영상 8건이 코르티스 제임스로 역추론됐다(사용자 제보). 활동명이 서양식 이름(제임스·마크·제이크…)이면
+// 제목에서 그 뒤에 **성**이 붙은 표기는 대개 동명의 다른 사람 풀네임이다. 그 이름 토큰만 매칭 전에 지운다.
+//  · 영문: "James An" — 이름 뒤 토큰이 한국 성 로마자(_ATM_SURNAME_ROMAJI)면. 영어 낱말과 겹치는 로마자
+//    (go·so·do·no·oh·song·moon·bang…)는 뺀다 — "JAMES GO"·"Mark song cover"를 풀네임으로 오인하지 않게.
+//  · 한글: "제임스 안" — 성 뒤가 괄호·구분자·줄끝일 때만. "제임스 안 나와"(안=부정) 같은 문장은 안 건드린다.
+//    붙여 쓴 "제임스안"은 원래 한글 경계 규칙으로 매칭되지 않는다.
+//  · 예외 ①: 그 이름을 가진 아티스트의 **그룹명이 같은 텍스트에 있으면** 유지 — "NCT 127 MARK LEE"는 본인(실명 이민형).
+//  · 예외 ②: 풀네임이 그 아티스트의 matchAliases에 있으면 유지 — 본인 실명 표기(예: "Jake Sim")는 별칭으로 등록해 살린다.
+// ⚠️ 전처리(_atmStripCommonNounCtx) 안에 두어 자체 채널 태깅·외부 채널 역추론·재검증이 전부 같은 기준을 쓴다.
+const _ATM_FULLNAME_SUR_NOT_WORD=new Set(['i','o','so','do','go','no','oh','ha','ma','na','im','in','on','ki','gi','wi','jo','ko','ku','gu','yu','ji','ju','jin','min','sun','song','won','bang','moon','ham','rim','woo','bae','gil','kong','gong','ban','chin','doh','soh','back','pang','kil',
+  'sung','son','huh','gang','goo','um','yum','wee',
+  'wang']); // wang: 중국계 멤버 실명 성(Jackson Wang=갓세븐 잭슨 본인) — 한국 성 왕은 드물어 빼는 편이 안전
+// 한글 쪽은 "확실히 성으로만 읽히는" 음절만 — 편(○○ 편 = 에피소드)·상·전·반·부·도·기·차·공·제·소·마·사·가 같은
+// 일상어 음절을 넣으면 "[주간아이돌] 카리나 편 |"의 카리나가 지워진다.
+const _ATM_FULLNAME_SUR_KO=new Set(['안','김','이','박','최','정','강','조','윤','장','임','한','오','서','신','권','황','송','홍',
+  '유','고','문','양','손','배','백','허','남','심','노','곽','성','우','구','민','류','나','진','지','엄','채','천','방',
+  '현','함','변','염','여','추','석','설','길','연','표','명','황보','제갈','남궁','선우']);
+let _atmFullNameIdx=null;
+// 영문 이름이 한국어 로마자 음절로 전부 쪼개지는가(Yerin=ye+rin, Taeyang=tae+yang, Mirae=mi+rae, Yoon=yoon).
+// 쪼개지면 한국 이름 로마자라서 "이름+성" 풀네임 규칙에 안 쓴다 — "YOON JAE HYUK"·"Taeyang Kim"(뉴비트 김태양 본인)
+// 같은 로마자 한국 이름은 음절마다 성 로마자와 겹쳐 멀쩡한 태그가 지워졌다(2026-09-29 실데이터 4만 건 점검).
+// 안 쪼개지는 James·Eric·Kevin·Stella·Bobby·Steve·Mark 같은 **서양식 이름만** 대상. (Jake·Lena처럼 우연히
+// 쪼개지는 서양 이름은 빠지는데, 놓치는 쪽이라 안전하다.)
+function _atmIsKoRomaji(w){
+  const s=String(w||'').toLowerCase();
+  if(!/^[a-z]+$/.test(s))return false;
+  const syl=/^(?:kk|tt|pp|ss|jj|ch|sh|g|k|n|d|t|r|l|m|b|p|s|j|h|y|w)?(?:yae|yeo|wae|ae|ya|eo|ye|wa|oe|yo|wo|we|wi|yu|eu|ui|oo|ee|a|e|o|u|i)(?:ng|n|k|l|m|p|t)?/;
+  const ok=new Array(s.length+1).fill(false);ok[0]=true;
+  for(let i=0;i<s.length;i++){
+    if(!ok[i])continue;
+    for(let j=i+1;j<=Math.min(s.length,i+7);j++){const m=s.slice(i,j).match(syl);if(m&&m[0].length===j-i)ok[j]=true;}
+  }
+  return ok[s.length];
+}
+function _atmStripOtherPersonFullNames(t){
+  if(!t||typeof ARTISTS==='undefined'||!ARTISTS.length)return t;
+  const nk=s=>String(s||'').toLowerCase().replace(/[^a-z0-9가-힣]/g,'');
+  if(!_atmFullNameIdx){
+    const en=new Map(),ko=new Map(),reg=new Set();
+    const push=(m,k,a)=>{if(!m.has(k))m.set(k,[]);m.get(k).push(a);};
+    const allSur=new Set(Object.values(_ATM_SURNAME_ROMAJI).flat());
+    // 그룹 영문명(LUCY·ALICE·MIRAE…)은 사람 이름이 아니다 — "LUCY SHIN YECHAN"은 그룹+멤버
+    const groupNames=new Set();
+    Object.keys(GROUPS).forEach(k=>{groupNames.add(nk(k));if(GROUPS[k]&&GROUPS[k].en)groupNames.add(nk(GROUPS[k].en));});
+    ARTISTS.forEach(a=>{
+      const e=(a.name&&a.name.en||'').trim();
+      const western=/^[A-Za-z]{3,}$/.test(e)&&!_atmIsKoRomaji(e)&&!groupNames.has(nk(e));
+      if(western)push(en,e.toLowerCase(),a);
+      // 한글 쪽도 서양식 활동명(제임스·케빈·스티븐·스텔라…)만 — "지민 정 |" 같은 한국 이름은 건드리지 않는다
+      const n=a.name&&a.name.ko;
+      if(western&&n&&[...n].length>=2&&/^[가-힣]+$/.test(n))push(ko,n,a);
+      // 등록된 이름·별칭 전체 + 영문은 뒤집은 순서까지 — "Jay Chang"(원팩트 제이 창)·"Yerin Baek"(백예린=Baek Yerin)은
+      // 본인이라 풀네임이어도 지우면 안 된다
+      [a.name&&a.name.en,a.name&&a.name.ko,...(a.matchAliases||[])].forEach(x=>{
+        const k=nk(x);if(!k)return;reg.add(k);
+        const parts=String(x).trim().split(/\s+/);
+        if(parts.length>=2&&/^[A-Za-z\s.'-]+$/.test(x))reg.add(nk([...parts.slice(1),parts[0]].join('')));
+      });
+    });
+    const sur=new Set([...allSur].filter(s=>!_ATM_FULLNAME_SUR_NOT_WORD.has(s)));
+    _atmFullNameIdx={en,ko,sur,reg};
+  }
+  const{en,ko,sur,reg}=_atmFullNameIdx;
+  const tu=t.toUpperCase();
+  const keep=(arts,full)=>reg.has(nk(full))||arts.some(a=>(a.matchAliases||[]).some(al=>nk(al)===nk(full))||
+    _artistGroups(a).some(g=>{const G=GROUPS[g.ko];return !!G&&[g.ko,G.en].filter(x=>x&&x.length>=2).some(x=>tu.includes(x.toUpperCase()));}));
+  // 영문 — 이름 토큰만 같은 길이 공백으로(뒤 성 토큰은 혼자 남아도 매칭 근거가 안 된다)
+  t=t.replace(/\b([A-Za-z]{3,})(?=\s+([A-Za-z]{2,})\b)/g,(m,g,s)=>{
+    const arts=en.get(g.toLowerCase());
+    if(!arts||!sur.has(s.toLowerCase())||keep(arts,g+' '+s))return m;
+    return ' '.repeat(m.length);
+  });
+  // 한글 — 성 뒤가 괄호·구분자·줄끝
+  t=t.replace(/(?<![가-힣])([가-힣]{2,})(?=\s([가-힣]{1,2})(?=\s*(?:[()\[\]|\-–—·,/:]|$)))/gm,(m,n,s)=>{
+    const arts=ko.get(n);
+    if(!arts||!_ATM_FULLNAME_SUR_KO.has(s)||keep(arts,n+' '+s))return m;
+    return ' '.repeat(m.length);
+  });
+  return t;
+}
+// 멤버 영문명과 철자가 같은 브랜드·방송사 고유명(2026-09-29 — 트레저 아사히 ↔ 아사히 맥주·TV아사히).
+// 브랜드는 두 단어 이상 고유 표기로만 적는다 — 'asahi' 단독을 넣으면 진짜 아사히 해시태그(#ASAHI)까지 죽는다.
+const _ATM_BRAND_PHRASES=/\basahi\s*super\s*dry\b|\basahi\s*beer\b|\basahibeer\b|\btv\s*asahi\b/i;
 function _atmStripCommonNounCtx(title){
   let t=title||'';
   // "bts of ○○" = behind the scenes. 방탄소년단(BTS)과 철자가 같아 콜라보로 잘못 잡힌다 —
@@ -7160,6 +7245,15 @@ function _atmStripCommonNounCtx(title){
   // 있어서 BTS 전체를 해시태그 전용으로 묶는 것(정상 태깅을 대량으로 죽임)보다 낫다.
   // ⚠️ 'bts' 단독은 건드리지 않는다 — 그건 진짜 방탄소년단인 경우가 대부분이다. 'of'가 뒤따를 때만.
   if(/bts\s+of\b/i.test(t))t=t.replace(/\bbts(?=\s+of\b)/gi,' ');
+  // 협찬 크레딧("powered by ASAHI SUPER DRY")은 출연 근거가 아니다 — 브랜드명이 멤버 영문명과 겹치면
+  // 무관 영상이 그 멤버·그룹으로 잡힌다(2026-09-29: THE FIRST TAKE 4건이 트레저 아사히로). 실측 DB 전체에서
+  // 'powered by' 제목 4건이 전부 이 브랜드라 지워도 잃는 태그가 없다. 구분자(| / 줄바꿈 ])까지만 지운다.
+  // 'presented by'는 넣지 않는다 — "…presented by SEVENTEEN"처럼 뒤에 진짜 출연자가 오는 표기가 있다.
+  if(/\b(?:powered|sponsored|supported)\s+by\b/i.test(t))t=t.replace(/\b(?:powered|sponsored|supported)\s+by\b[^|/\n\]]*/gi,' ');
+  // 크레딧 문구 없이 브랜드명만 나오는 경우(설명란 "THE FIRST TAKE × ASAHI SUPER DRY" 특설 페이지 등) — 멤버 이름과
+  // 겹치는 **브랜드·방송사 고유명**만 목록으로 지운다. 새 충돌 브랜드는 _ATM_BRAND_PHRASES에 추가.
+  if(_ATM_BRAND_PHRASES.test(t))t=t.replace(new RegExp(_ATM_BRAND_PHRASES.source,'gi'),' ');
+  t=_atmStripOtherPersonFullNames(t);
   if(t.indexOf('하루')<0)return t;
   return t
     .replace(/(?<=[가-힣]의\s)하루(?![가-힣])/g,' ') // "○○의 하루" — 소유된 일반명사만 제거(소유자 토큰은 남김)

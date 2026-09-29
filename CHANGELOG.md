@@ -61,6 +61,15 @@
 - ~~**`active:false`인데 탈퇴일(`left`)이 없는 멤버 104명 — 그룹 미태깅 영상이 그 멤버 카드에 하나도 안 뜸(2026-08-27 발견)**~~ → **같은 날 처리 완료** — 폴백 4단계 재설계로 차단 110명→11명, 99명 복구. 아래 2026-08-27 항목 참고. ⚠️ 원 진단("탈퇴일 미기입이 원인")은 **틀렸었다** — 실제 원인은 `active` 필드가 "이 그룹 멤버인가"와 "개인이 아직 활동하는가" 두 뜻으로 섞여 쓰인 것이었고, 쥬얼리·걸스데이·스텔라에서 같은 시기 멤버가 은퇴 여부에 따라 갈리고 있었다.
 ---
 
+## 2026-09-29 (세션 — 다른 사람 풀네임·협찬 브랜드 오태깅 차단)
+
+- [완료] [admin.js] [tools/matcher_harness.cjs] [tools/m2_harness.js] [tests/other-person-fullname.test.js] [TAGGING.md] **"서양식 활동명 + 한국 성 = 동명의 다른 사람" 규칙** (`_atmStripOtherPersonFullNames`, `_atmStripCommonNounCtx` 안 — 자체 채널 태깅·외부 역추론·재검증 공용). 사용자 제보: "제임스 안 (James An)" 외부 채널 영상이 코르티스 제임스로. 전수 점검에서 같은 유형 Eric Nam(31)·Stella Jang(18)·Bobby Kim·Steve Yoo·밴드 LUCY 등이 더 나옴.
+  - 대상은 **한국어 로마자로 안 쪼개지는 서양식 이름만**(`_atmIsKoRomaji`: Yerin=ye+rin·Taeyang·Mirae는 제외) — 첫 버전은 "YOON JAE HYUK"·"CHOI HYUN SUK" 같은 로마자 한국 이름을 잘못 잘랐다(실데이터 4만 건 점검에서 발견·수정).
+  - 예외: 그룹명이 같은 텍스트에 있음 · 등록명/별칭과 같음(뒤집은 순서 포함) · 영어 낱말 겹치는 로마자 · wang(Jackson Wang). 한글 쪽은 성 뒤가 괄호·구분자·줄끝일 때만(성씨 목록도 편·상·전 같은 일상어 음절 제외 — "카리나 편 |" 보호).
+  - 검증: 기존 매칭 테스트 160/52/2037 그대로 · 새 테스트 17케이스(수정 전 코드로 5건 실패 재현) · 전체 258,752행 재판정.
+- [완료] [admin.js] **협찬 크레딧·브랜드명 제거** — "powered/sponsored/supported by ~"(DB 전체 4건, 전부 ASAHI SUPER DRY) + `_ATM_BRAND_PHRASES`(설명란의 "THE FIRST TAKE × ASAHI SUPER DRY"처럼 크레딧 문구 없이 나오는 브랜드). 진짜 아사히 해시태그는 그대로.
+- [진행중] **기존 오태깅 82건 정리 SQL** `sql/fix_fullname_sponsor_mistags_2026-09-29.sql` — 고친 매처로 재판정해 그 멤버가 안 잡히는 행만, 행별 검토 완료(81건 태그 제거+무관, 1건 태그만 제거), tags_manual=false만. **admin이 Supabase SQL Editor에서 실행 필요.** 재검증 스윕은 with_members만 걷어내고 group_ko는 못 고쳐서 SQL로 함.
+
 ## 2026-09-29 (세션 — Surf 2단계: Today's Path + 제목 곡명 커버)
 
 - [완료] [index.html] [kpop_universe.css] **Today's Path** — 6번 넘어가면 영상 위에 요약 시트 한 번(이름 체인·영상 수·필터, [저장]/[계속]). 저장 = **일반 컬렉션**으로 생성("Today's Path · 9.29", 경로 순서, desc=이름 체인, `surfPath:true`) → 프로필·공개·공유가 기존 기능 그대로. 같은 세션에서 더 가서 다시 저장하면 그 컬렉션을 갱신. trail 오른쪽 저장 아이콘으로 6번 전·시트 닫은 뒤에도 저장 가능. 요약 체인은 연속 같은 이름을 합침("트레저 › 트레저" 방지).

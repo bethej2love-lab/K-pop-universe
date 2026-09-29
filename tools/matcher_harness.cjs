@@ -72,6 +72,14 @@ pieces.push(extractStatement(adminSrc, /^const _GROUP_AMBIGUOUS_IF_COMATCHED\s*=
 // 여기에도 반드시 추가해야 함(안 하면 "... is not defined"로 전 케이스가 실패한다).
 pieces.push(extractByBraces(adminSrc, /^function _unitMemberNamedInTitle\(/m, '_unitMemberNamedInTitle'));
 pieces.push(extractByBraces(adminSrc, /^function _atmLeftBefore\(/m, '_atmLeftBefore')); // 탈퇴 게이트(2026-08-25)
+// 다른 사람 풀네임("제임스 안 (James An)") 제거(2026-09-29) — _atmStripCommonNounCtx가 부른다
+if (!/^const _ATM_SURNAME_ROMAJI\s*=/m.test(pieces.join('\n'))) pieces.push(extractStatement(adminSrc, /^const _ATM_SURNAME_ROMAJI\s*=/m, '_ATM_SURNAME_ROMAJI'));
+pieces.push(extractStatement(adminSrc, /^const _ATM_FULLNAME_SUR_NOT_WORD\s*=/m, '_ATM_FULLNAME_SUR_NOT_WORD'));
+pieces.push(extractStatement(adminSrc, /^const _ATM_FULLNAME_SUR_KO\s*=/m, '_ATM_FULLNAME_SUR_KO'));
+pieces.push('let _atmFullNameIdx=null;');
+pieces.push(extractStatement(adminSrc, /^const _ATM_BRAND_PHRASES\s*=/m, '_ATM_BRAND_PHRASES'));
+pieces.push(extractByBraces(adminSrc, /^function _atmIsKoRomaji\(/m, '_atmIsKoRomaji'));
+pieces.push(extractByBraces(adminSrc, /^function _atmStripOtherPersonFullNames\(/m, '_atmStripOtherPersonFullNames'));
 pieces.push(extractByBraces(adminSrc, /^function _atmStripCommonNounCtx\(/m, '_atmStripCommonNounCtx')); // 하루 등 흔한단어 일반명사 문맥 제거(2026-08-29) — _m2ParseTitle이 전처리에서 부름
 // 음악방송 직캠 구조 파서(2026-08-29) — _m2ParseTitle이 매칭 전에 호출한다
 pieces.push(extractByBraces(adminSrc, /^function _fancamShowPatterns\(/m, '_fancamShowPatterns'));

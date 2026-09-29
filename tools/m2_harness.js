@@ -62,6 +62,13 @@ function load(){
   S(/^const _ATM_SURNAME_EXCLUDE\s*=/m,'_ATM_SURNAME_EXCLUDE');
   S(/^const _ATM_NO_CONTEXT_RELAX_NAMES\s*=/m,'_ATM_NO_CONTEXT_RELAX_NAMES');
   F(/^function _atmContextRelaxesHashtagOnly\(/m,'_atmContextRelaxesHashtagOnly');
+  // 다른 사람 풀네임("제임스 안") 제거(2026-09-29) — _atmStripCommonNounCtx가 부른다
+  S(/^const _ATM_FULLNAME_SUR_NOT_WORD\s*=/m,'_ATM_FULLNAME_SUR_NOT_WORD');
+  S(/^const _ATM_FULLNAME_SUR_KO\s*=/m,'_ATM_FULLNAME_SUR_KO');
+  pieces.push('let _atmFullNameIdx=null;');
+  S(/^const _ATM_BRAND_PHRASES\s*=/m,'_ATM_BRAND_PHRASES');
+  F(/^function _atmIsKoRomaji\(/m,'_atmIsKoRomaji');
+  F(/^function _atmStripOtherPersonFullNames\(/m,'_atmStripOtherPersonFullNames');
   F(/^function _atmStripCommonNounCtx\(/m,'_atmStripCommonNounCtx');
   F(/^function _atmMatchesMember\(/m,'_atmMatchesMember');
   // 설명란 노이즈 제거(2026-08-31) — 있으면 싣는다
