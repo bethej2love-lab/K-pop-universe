@@ -66,7 +66,12 @@ function load(){
   S(/^const _ATM_FULLNAME_SUR_NOT_WORD\s*=/m,'_ATM_FULLNAME_SUR_NOT_WORD');
   S(/^const _ATM_FULLNAME_SUR_KO\s*=/m,'_ATM_FULLNAME_SUR_KO');
   pieces.push('let _atmFullNameIdx=null;');
+  pieces.push('let _atmRomanFullIdx=null;');
+  S(/^const _ATM_NAME_SYL\s*=/m,'_ATM_NAME_SYL');
+  F(/^function _atmKoSylCount\(/m,'_atmKoSylCount');
+  F(/^function _atmNormalizeRegisteredRomanNames\(/m,'_atmNormalizeRegisteredRomanNames');
   S(/^const _ATM_BRAND_PHRASES\s*=/m,'_ATM_BRAND_PHRASES');
+  S(/^const _ATM_INITIAL_WORDS\s*=/m,'_ATM_INITIAL_WORDS');
   F(/^function _atmIsKoRomaji\(/m,'_atmIsKoRomaji');
   F(/^function _atmStripOtherPersonFullNames\(/m,'_atmStripOtherPersonFullNames');
   F(/^function _atmStripCommonNounCtx\(/m,'_atmStripCommonNounCtx');
@@ -178,6 +183,7 @@ module.exports={_m2ParseTitle,_atmResolveMembers,_atmMatchesMember,_atmTokenize,
   _atmStripDescNoise:(typeof _atmStripDescNoise==='function')?_atmStripDescNoise:null,
   _m2DebutBlocks:(typeof _m2DebutBlocks==='function')?_m2DebutBlocks:null,
   _atmStripCommonNounCtx:(typeof _atmStripCommonNounCtx==='function')?_atmStripCommonNounCtx:null,
+  _atmNormalizeRegisteredRomanNames:(typeof _atmNormalizeRegisteredRomanNames==='function')?_atmNormalizeRegisteredRomanNames:null,
   _coverResolve:(typeof _coverResolve==='function')?_coverResolve:null,_coverCandidates:(typeof _coverCandidates==='function')?_coverCandidates:null,_coverSongKeys:(typeof _coverSongKeys==='function')?_coverSongKeys:null,_coverBuildIndex:(typeof _coverBuildIndex==='function')?_coverBuildIndex:null,
   _coverContext:(typeof _coverContext==='function')?_coverContext:null,_coverHasCollabSignal:(typeof _coverHasCollabSignal==='function')?_coverHasCollabSignal:null,
   _coverRestoreSignal:(typeof _coverRestoreSignal==='function')?_coverRestoreSignal:null,

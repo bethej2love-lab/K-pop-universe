@@ -7057,6 +7057,8 @@ const _ATM_HASHTAG_ONLY_NAMES=new Set(['종현','문빈','구하라','설리',
   // 게이트돼도 그룹이 같이 있으면(예 "에버글로우 이런 직캠") 그대로 매칭된다(종현과 동일) — 순수
   // 평문 오탐만 막는다. 미아·고우리 등 다른 흔한단어는 DB name_match_whitelist에 있음.
   '이런','온다','바로']);
+// ⚠️ '이유'(힛지스·에버글로우 멤버)는 여기 넣지 않는다 — 해시태그 전용으로 묶으면 힛지스 자체 브이로그 "[Hit-log] 이유가
+//    교토에 간 이유"의 멤버 언급까지 죽는다. "~는/한/간 이유"(reason) 문맥만 _atmStripCommonNounCtx에서 지운다(하루와 같은 방식).
 // 보니/미소(드림노트): "알고 보니"/"어쩌다 보니"/"미소 짓다"처럼 흔한 관용구·단어의 일부로 대량 오매칭됨
 // (2026-08-06, 사용자 제보 — 실측 결과 보니 151건 중 상당수, 미소 76건 다수가 무관 예능/뉴스 클립).
 // 하드코딩 목록 + DB(name_match_whitelist, admin이 스캔 화면에서 바로 추가) 목록을 합쳐서 판단.
@@ -7163,6 +7165,188 @@ function _atmContextRelaxesHashtagOnly(name,title,groupKo){
 //  · 예외 ①: 그 이름을 가진 아티스트의 **그룹명이 같은 텍스트에 있으면** 유지 — "NCT 127 MARK LEE"는 본인(실명 이민형).
 //  · 예외 ②: 풀네임이 그 아티스트의 matchAliases에 있으면 유지 — 본인 실명 표기(예: "Jake Sim")는 별칭으로 등록해 살린다.
 // ⚠️ 전처리(_atmStripCommonNounCtx) 안에 두어 자체 채널 태깅·외부 채널 역추론·재검증이 전부 같은 기준을 쓴다.
+// ── 긴 이름이 이긴다: 등록된 로마자 풀네임 → 그 사람 한글 이름(2026-09-29) ──────────────────────────────
+// "(HAN SEUNG WOO FanCam)"의 han이 스트레이키즈 한(en 'Han')으로 역추론돼 한승우 솔로 영상 48건·도한세("DO HAN SE")
+// 3건이 스키즈로 들어갔다. 제목에 **등록된 사람의 로마자 풀네임이 통째로**(띄어쓰기·하이픈 무관, 순서 뒤집힘 포함)
+// 있으면 그 구간을 그 사람 한글 등록명으로 바꾼다 → 긴 이름 속 조각이 짧은 이름의 근거가 되지 않는다.
+//  · 2토큰 이상으로 쓰인 경우만(단일 토큰 'Han'은 원래 그 사람 근거) · 영문명이 겹치는 동명이인이 한글명까지 다르면 안 바꾼다.
+//  · 한글명이 1음절이면 안 바꾼다(아크 한 'Choi Han' → '한'이 되면 해시태그 전용 규칙에 걸려 오히려 못 잡는다).
+let _atmRomanFullIdx=null;
+// 한국 이름 셋째 토큰 이후에 오는 흔한 이름 음절(로마자). 로마자 런을 이어 붙일지 판단용 — 목록에 없으면 이름이 끝난 것으로 본다.
+const _ATM_NAME_SYL=new Set(('a ah ae bin bit bo bom byul beom bum chae chan cheol chul da dam dong eon eun eum gi gu gun gyu gyeong gwang ha hae han hee heon ho '
+  +'hoon hun hwa hwan hwi hye hyeon hyun hyuk hyeok hyung hyo in ja jae jeong jung ji jin jo joo ju jun kyung kyu kyeong kang kwan mi min mo mun myung '
+  +'na nam ra rae ran rang rin ro ryeong ryung rim ri sa san se seo seob seop sub seok suk seon sun seong sung seung si sik so sol soo su sook ta tae '
+  +'u woo won woong wook ye yeon yeong young yi yoon yun yu yul yeol yong nyeong ryeon ryun won hwi eui ui').split(' '));
+// 로마자 토큰을 한국어 음절로 쪼갤 때 최소 음절 수(안 쪼개지면 0) — seo=1, ryeong=1, seungwoo=2, arena=3
+function _atmKoSylCount(w){
+  const s=String(w||'').toLowerCase();
+  if(!/^[a-z]+$/.test(s))return 0;
+  const syl=/^(?:kk|tt|pp|ss|jj|ch|sh|g|k|n|d|t|r|l|m|b|p|s|j|h|y|w)?(?:yae|yeo|wae|ae|ya|eo|ye|wa|oe|yo|wo|we|wi|yu|eu|ui|oo|ee|a|e|o|u|i)(?:ng|n|k|l|m|p|t)?/;
+  const best=new Array(s.length+1).fill(Infinity);best[0]=0;
+  for(let i=0;i<s.length;i++){
+    if(best[i]===Infinity)continue;
+    for(let j=i+1;j<=Math.min(s.length,i+7);j++){const m=s.slice(i,j).match(syl);if(m&&m[0].length===j-i&&best[i]+1<best[j])best[j]=best[i]+1;}
+  }
+  return best[s.length]===Infinity?0:best[s.length];
+}
+function _atmNormalizeRegisteredRomanNames(t){
+  if(!t||typeof ARTISTS==='undefined'||!ARTISTS.length||!/[A-Za-z]/.test(t))return t;
+  if(!_atmRomanFullIdx){
+    const m=new Map(); // 붙인 소문자 영문명 → 한글명(겹치면 null)
+    const mShort=new Map(); // 같은데 3~4자(JiU·San) — 로마자 런 **전체**와 대조할 때만 쓴다(창 대조엔 너무 짧아 위험)
+    const put=(k,ko)=>{if(!k||k.length<3)return;const mp=k.length<5?mShort:m;if(mp.has(k)&&mp.get(k)!==ko)mp.set(k,null);else mp.set(k,ko);};
+    const single=new Map(); // 단일 토큰 영문명 → 그 이름의 아티스트들(런 지우기 예외 판정용)
+    ARTISTS.forEach(a=>{
+      const ko=a.name&&a.name.ko;
+      const en=(a.name&&a.name.en||'').trim();
+      if(/^[A-Za-z]+$/.test(en)){const k=en.toLowerCase();if(!single.has(k))single.set(k,[]);single.get(k).push(a);}
+      if(!ko||[...ko].length<2)return;
+      // 영문명 + 라틴 문자 별칭(방예담 'Bang Yedam' → 디모렉스)
+      [en,...(a.matchAliases||[])].forEach(x=>{
+        x=String(x||'').trim();
+        if(!/^[A-Za-z][A-Za-z\s.'-]*$/.test(x))return;
+        const parts=x.toLowerCase().split(/[\s.'-]+/).filter(Boolean);
+        put(parts.join(''),ko);
+        if(parts.length>=2)put([...parts.slice(1),parts[0]].join(''),ko);
+      });
+    });
+    const sur=new Set(Object.values(_ATM_SURNAME_ROMAJI).flat());
+    // 로마자 성 → 한글 성(An·Ahn→안, Lee·Yi→이). 성 표기가 등록명과 달라도 같은 사람으로 대조하려고.
+    const surH=new Map();Object.entries(_ATM_SURNAME_ROMAJI).forEach(([h,rs])=>rs.forEach(r=>{if(!surH.has(r))surH.set(r,[]);surH.get(r).push(h);}));
+    // "한글성|이름로마자" → 한글명: 안유진('Ahn Yujin')→"안|yujin", 홍은채('Eunchae')→"홍|eunchae"
+    // 성 없이 등록된 2글자 이름(현석 'Hyunsuk')은 이름로마자만 → givenOnly. 둘 다 겹치면 null.
+    const surGiven=new Map(),givenOnly=new Map(),givenKeys=new Set(),givenNoSur=new Set();
+    const put2=(mp,k,ko)=>{if(mp.has(k)&&mp.get(k)!==ko)mp.set(k,null);else mp.set(k,ko);};
+    ARTISTS.forEach(a=>{
+      const ko=a.name&&a.name.ko,en=(a.name&&a.name.en||'').trim();
+      if(!ko||!/^[가-힣]+$/.test(ko)||!/^[A-Za-z][A-Za-z\s.'-]*$/.test(en))return;
+      const parts=en.toLowerCase().split(/[\s.'-]+/).filter(Boolean);
+      const kc=[...ko];
+      const hs=kc.length>=4&&_ATM_KOREAN_SURNAMES.has(kc[0]+kc[1])?kc[0]+kc[1]:(kc.length>=3&&_ATM_KOREAN_SURNAMES.has(kc[0])?kc[0]:null);
+      if(hs){
+        const rs=_ATM_SURNAME_ROMAJI[hs]||[];
+        let given=parts;
+        if(parts.length>=2&&rs.includes(parts[0]))given=parts.slice(1);
+        else if(parts.length>=2&&rs.includes(parts[parts.length-1]))given=parts.slice(0,-1);
+        const g=given.join('');
+        if(g.length>=3){put2(surGiven,hs+'|'+g,ko);givenKeys.add(g);}
+      }else if(kc.length===2&&parts.length===1&&parts[0].length>=3){if(!givenOnly.has(parts[0]))givenOnly.set(parts[0],[]);givenOnly.get(parts[0]).push(a);givenKeys.add(parts[0]);givenNoSur.add(parts[0]);}
+    });
+    // 런 판정용 성: 영어 낱말·한 글자와 겹치는 로마자(i·o·so·go·no·oh…)는 성으로 안 친다("Yes, I am Nayeon")
+    const runSur=new Set([...sur].filter(s=>s.length>=2&&!['so','do','go','no','oh','ha','ma','na','on','am','an','in','ko','ki','gi','wi','yu','ju','gu','ku'].includes(s)));
+    _atmRomanFullIdx={m,mShort,single,sur,surH,surGiven,givenOnly,givenKeys,givenNoSur,runSur};
+  }
+  const{m:idx,mShort,single,sur,surH,surGiven,givenOnly,givenKeys,givenNoSur,runSur}=_atmRomanFullIdx;
+  const toks=[];const re=/[A-Za-z]+/g;let mm;
+  // 런에 드는 토큰: 성 로마자이거나 **1~2음절** 로마자(yoon·seo·ryeong·seungwoo). 3음절↑(arena·korea·killing?)은 이름 음절로 안 본다.
+  while((mm=re.exec(t))){const w=mm[0].toLowerCase();const sc=_atmKoSylCount(w);toks.push({s:mm.index,e:mm.index+mm[0].length,w,ko:(sc>=1&&sc<=2)||sur.has(w)});}
+  // 토큰 사이가 공백만 또는 붙은 하이픈(Seung-woo)만 — " - "는 제목 구분자라 이름을 잇지 않는다("iKON - Killing Me")
+  const adj=j=>/^(?:\s+|-)$/.test(t.slice(toks[j].e,toks[j+1].s));
+  // 한국 이름 로마자 런 — "YOON SEO RYEONG"·"PARK HAN BIN"처럼 로마자 음절(또는 성)이 이어진 구간은 한 사람이다
+  // 런은 **한국 이름 모양**으로만 만든다: 성으로 시작 → 바로 뒤는 1~2음절(성+붙여 쓴 이름 "seungwoo"·"soyeon"),
+  // 그 뒤로는 1음절만(seo·ryeong·han·bin). 영어 낱말이 이름 뒤에 붙어 런이 늘어나는 걸 막는다 — "Jung Kook eat"(eat=e+at)·
+  // "JI HYUN MINI"(mi+ni)가 3토큰 한국 이름으로 읽혀 통째로 지워졌다(2026-09-29 3차 전수 점검에서 발견).
+  const runOf=new Array(toks.length).fill(null);
+  for(let i=0;i<toks.length;){
+    if(!sur.has(toks[i].w)){i++;continue;}
+    let j=i;
+    while(j+1<toks.length&&adj(j)){
+      const w=toks[j+1].w,sc=_atmKoSylCount(w),pos=j+1-i;
+      // 성 바로 뒤(pos 1)는 1~2음절 아무거나(kook·seungwoo), 그 뒤는 **흔한 한국 이름 음절**만 — "Jung Kook lip sync"의
+      // lip처럼 1음절 영어 낱말이 이름에 붙어 통째로 지워지던 것(3차 점검)
+      if((pos===1&&(sc===1||sc===2))||(pos>=2&&sc===1&&_ATM_NAME_SYL.has(w)))j++;else break;
+    }
+    if(j>i){const run={a:i,b:j};for(let k=i;k<=j;k++)runOf[k]=run;}
+    i=j+1;
+  }
+  const reps=[];const covered=new Set();
+  // 바꿀 글: 한글 등록명 + (안전하면) 원문. 영문 풀네임은 그 자체로 강한 근거다("Lee Know"만으로 스키즈 리노를 역추론 —
+  // 한글 "리노" 두 글자만으로는 그룹을 못 정한다). 원문을 지우는 건 그 안에 **다른 사람의 한 토큰 영문명**(han·yoon·jay)이
+  // 있어서 조각이 새어 나갈 때만.
+  // ⚠️ 안전하면 한글을 **덧붙이지도 않는다** — 한글 두 글자 이름("리노")이 옆에 생기면 역추론이 그 이름을 모호하다고 보고
+  //    영문 풀네임("Lee Know")으로 잡던 그룹까지 버린다(이전 매처도 같은 동작, 2026-09-29 실측).
+  const repTxt=(a,b,ko)=>{
+    const risky=toks.slice(a,b+1).some(x=>(single.get(x.w)||[]).some(ar=>ar.name.ko!==ko));
+    return risky?' '+ko+' ':t.slice(toks[a].s,toks[b].e);
+  };
+  for(let i=0;i<toks.length;i++){
+    for(let len=Math.min(4,toks.length-i);len>=2;len--){
+      let ok=true;for(let j=i;j<i+len-1;j++){if(!adj(j)){ok=false;break;}}
+      if(!ok)continue;
+      // ⚠️ 로마자 런의 **일부**만 맞는 건 안 된다 — "YOON SEO RYEONG"(윤서령)의 앞 두 토큰이 배드빌런 윤서('Yoon Seo')와
+      //    같아서, 일부 매칭을 허용하면 이 규칙이 새 오태깅을 만든다(2026-09-29 전수 점검에서 발견)
+      const e=i+len-1;
+      // 창이 **전부** 한 런 안에 있을 때만 적용 — "JAY CHANG solo"·"KIM GYU VIN"처럼 로마자 아닌 토큰(Jay·vin)이
+      // 섞인 창은 런의 일부가 아니다
+      const allIn=toks.slice(i,e+1).every((x,q)=>runOf[i+q]&&runOf[i+q]===runOf[i]);
+      if(allIn&&(runOf[i].a<i||runOf[i].b>e))continue;
+      const key=toks.slice(i,e+1).map(x=>x.w).join('');
+      // 성 로마자 + 이름만 등록된 경우("KIM GYU VIN"=김규빈 'Gyuvin')는 한글 성까지 맞으면 인정
+      const sg=(surH.get(toks[i].w)||[]).map(h=>surGiven.get(h+'|'+toks.slice(i+1,e+1).map(x=>x.w).join(''))).filter(Boolean);
+      const ko=idx.get(key)||([...new Set(sg)].length===1?sg[0]:null);
+      if(ko){reps.push({s:toks[i].s,e:toks[e].e,txt:repTxt(i,e,ko)});for(let k=i;k<=e;k++)covered.add(k);i=e;break;}
+      // 등록명인데 주인이 여럿이라 못 정한 경우(지현·Jungkook 동명) — 바꾸지도 지우지도 않고 원문 그대로 둔다
+      if(idx.has(key)){for(let k=i;k<=e;k++)covered.add(k);i=e;break;}
+    }
+  }
+  // 등록 안 된 한국 이름 로마자 런(3음절 이상, 또는 성+이름 2토큰)은 매칭 근거에서 뺀다 — 그 안의 한·윤·진 같은
+  // 짧은 이름을 멤버로 읽지 않게(PARK HAN BIN→스키즈 한, JIN HYEONJU→방탄 진, ROH YOON SEO→스테이씨 윤).
+  // 예외: 그 짧은 이름 주인의 그룹명이 같은 텍스트에 있으면 둔다("STRAY KIDS HAN JISUNG").
+  const tu=t.toUpperCase();
+  const seen=new Set();
+  runOf.forEach(run=>{
+    if(!run||seen.has(run))return;seen.add(run);
+    const n=run.b-run.a+1;
+    for(let k=run.a;k<=run.b;k++)if(covered.has(k))return; // 일부라도 이미 등록명으로 바뀐 런은 건드리지 않는다
+    // 한국 이름 로마자 풀네임은 성으로 시작한다(YOON SEO RYEONG). 영어 낱말도 로마자 음절로 우연히 쪼개지므로
+    // (killing=kil+ling, me, ikon) 성으로 시작하지 않는 런은 이름으로 보지 않는다. 끝자리 성은 안 본다("NI-KI"의 ki).
+    if(n<2||!runSur.has(toks[run.a].w))return;
+    // ⚠️ 등록명 대조는 **런 전체**로만 — 앞부분만 맞춰 주면 "YOON SEO RYEONG"이 배드빌런 윤서('Yoon Seo')가 된다.
+    //    런이 영어 낱말로 늘어나는 건 런 구성에서 막는다(3음절↑ 토큰은 런에 안 넣음: arena·korea·magazine).
+    //    예외: 한글 성까지 맞는 등록자(surGiven)는 앞부분이어도 인정 — "HONG EUNCHAE Doosan"의 홍은채. 윤서('Yoon Seo')는
+    //    성 없는 2글자 등록명이라 surGiven에 없어서 "YOON SEO RYEONG"엔 안 걸린다.
+    for(let k=2;k<Math.min(n,4);k++){
+      const b=run.a+k-1;
+      const rest=toks.slice(run.a+1,b+1).map(x=>x.w).join('');
+      const hit=(surH.get(toks[run.a].w)||[]).map(h=>surGiven.get(h+'|'+rest)).filter(Boolean);
+      if([...new Set(hit)].length===1){reps.push({s:toks[run.a].s,e:toks[b].e,txt:repTxt(run.a,b,hit[0])});return;}
+    }
+    for(let k=n;k===n&&k<=4;k++){
+      const b=run.a+k-1;
+      const whole=toks.slice(run.a,b+1).map(x=>x.w).join('');
+      const rest=toks.slice(run.a+1,b+1).map(x=>x.w).join('');
+      // ① 성을 한글로 환산해 등록자와 대조 — "AN YU-JIN"=안유진('Ahn Yujin'), "HONG EUNCHAE"=홍은채('Eunchae')
+      const hit=(surH.get(toks[run.a].w)||[]).map(h=>surGiven.get(h+'|'+rest)).filter(Boolean);
+      const ko1=[...new Set(hit)].length===1?hit[0]:null;
+      // ② 성 없이 등록된 2글자 이름 — "TREASURE … CHOI HYUN SUK"=현석('Hyunsuk'). 실명 성을 모르므로 **그 사람 그룹명이
+      //    같은 텍스트에 있을 때만** — 아니면 "LEE EUNCHAE"(이은채)가 다이아 은채('Eunchae')가 된다.
+      const go=!ko1?(givenOnly.get(rest)||[]).filter(a=>_artistGroups(a).some(g=>{const G=GROUPS[g.ko];return !!G&&[g.ko,G.en].filter(y=>y&&y.length>=2).some(y=>tu.includes(y.toUpperCase()));})):[];
+      const ko2=[...new Set(go.map(a=>a.name.ko))].length===1?go[0].name.ko:null;
+      const ko0=idx.get(whole)||mShort.get(whole)||null; // JiU·San처럼 짧은 등록명은 런 전체일 때만
+      if(ko0||ko1||ko2){reps.push({s:toks[run.a].s,e:toks[b].e,txt:repTxt(run.a,b,ko0||ko1||ko2)});return;}
+      if(idx.has(whole)||mShort.has(whole))return; // 등록명인데 동명이인이라 주인 미정 — 원문 유지(지우지 않음)
+      // ③ 등록자의 이름 부분과 같으면 성이 아니라 이름이다 — "HAN BIN"(성한빈의 한빈)·"JI WOONG"(김지웅)은 건드리지 않는다
+      if(givenKeys.has(whole))return;
+      // ④ 성 + 등록자의 이름 부분 — 실명 성을 모르는 본인일 수 있다("JEON SOYEON"=아이들 소연, "Choi San"=에이티즈 산,
+      //    "YOON JAE HYUK"=트레저 재혁). 지우지 않고 **이름 음절만 붙여** 남긴다("YOON JAEHYUK") → 본인 근거는 살고,
+      //    그 안의 한·윤 같은 한 음절 조각은 토큰에서 사라진다.
+      //    성을 아는 등록자(홍은채=홍)는 ①에서 이미 대조했으니, 여기선 **실명 성을 모르는 2글자 등록명**만 —
+      //    "LEE EUNCHAE"(이은채)가 홍은채의 이름 부분이라고 살려 두면 안 된다(이≠홍).
+      //    같은 이름을 쓰는 성 아는 등록자가 있는데 성이 다르면(eunchae: 홍은채 vs 이은채) 역시 다른 사람으로 본다.
+      const claimed=[...surGiven.keys()].some(k=>k.endsWith('|'+rest));
+      if(givenNoSur.has(rest)&&!claimed){reps.push({s:toks[run.a].s,e:toks[b].e,txt:toks[run.a].w+' '+rest});return;}
+    }
+    const cut=Math.min(run.b,run.a+2); // 지울 땐 한국 이름 길이(성+2음절)까지만 — 뒤에 붙은 영어 낱말은 남긴다
+    const ctx=toks.slice(run.a,cut+1).some(x=>(single.get(x.w)||[]).some(a=>_artistGroups(a).some(g=>{const G=GROUPS[g.ko];return !!G&&[g.ko,G.en].filter(y=>y&&y.length>=2).some(y=>tu.includes(y.toUpperCase()));})));
+    if(ctx)return;
+    reps.push({s:toks[run.a].s,e:toks[cut].e,txt:' '});
+  });
+  if(!reps.length)return t;
+  reps.sort((x,y)=>x.s-y.s);
+  let out='',p=0;
+  reps.forEach(r=>{if(r.s<p)return;out+=t.slice(p,r.s)+r.txt;p=r.e;});
+  return out+t.slice(p);
+}
 const _ATM_FULLNAME_SUR_NOT_WORD=new Set(['i','o','so','do','go','no','oh','ha','ma','na','im','in','on','ki','gi','wi','jo','ko','ku','gu','yu','ji','ju','jin','min','sun','song','won','bang','moon','ham','rim','woo','bae','gil','kong','gong','ban','chin','doh','soh','back','pang','kil',
   'sung','son','huh','gang','goo','um','yum','wee',
   'wang']); // wang: 중국계 멤버 실명 성(Jackson Wang=갓세븐 잭슨 본인) — 한국 성 왕은 드물어 빼는 편이 안전
@@ -7237,6 +7421,8 @@ function _atmStripOtherPersonFullNames(t){
 // 멤버 영문명과 철자가 같은 브랜드·방송사 고유명(2026-09-29 — 트레저 아사히 ↔ 아사히 맥주·TV아사히).
 // 브랜드는 두 단어 이상 고유 표기로만 적는다 — 'asahi' 단독을 넣으면 진짜 아사히 해시태그(#ASAHI)까지 죽는다.
 const _ATM_BRAND_PHRASES=/\basahi\s*super\s*dry\b|\basahi\s*beer\b|\basahibeer\b|\btv\s*asahi\b/i;
+// 이니셜형 이름(I.N·B.I …)을 붙여 쓰면 영어 낱말이 되는 것들 — 이 경우 구분자 있는 표기("I.N"·"I N")만 인정
+const _ATM_INITIAL_WORDS=new Set(['in','is','it','on','up','at','an','as','be','by','do','go','he','me','my','no','of','or','so','to','us','we','if','am']);
 function _atmStripCommonNounCtx(title){
   let t=title||'';
   // "bts of ○○" = behind the scenes. 방탄소년단(BTS)과 철자가 같아 콜라보로 잘못 잡힌다 —
@@ -7253,7 +7439,12 @@ function _atmStripCommonNounCtx(title){
   // 크레딧 문구 없이 브랜드명만 나오는 경우(설명란 "THE FIRST TAKE × ASAHI SUPER DRY" 특설 페이지 등) — 멤버 이름과
   // 겹치는 **브랜드·방송사 고유명**만 목록으로 지운다. 새 충돌 브랜드는 _ATM_BRAND_PHRASES에 추가.
   if(_ATM_BRAND_PHRASES.test(t))t=t.replace(new RegExp(_ATM_BRAND_PHRASES.source,'gi'),' ');
+  t=_atmNormalizeRegisteredRomanNames(t);
   t=_atmStripOtherPersonFullNames(t);
+  // "이유"(reason) — 2026-09-29 순찰(tools/tag_patrol.mjs)에서 발견: "폰 비번을 알려주면 안 되는 이유"·"술 마신 다음날
+  // 예뻐 보이는 이유"가 힛지스·에버글로우 멤버 이유로 잡혔다. 관형형 어미(~는/은/한/된/던/인/할/간/운 …) 바로 뒤의 "이유"와
+  // "이유 없이"만 지운다 — 멤버 언급("이유가 교토에 간 이유"의 앞 이유·"#이유"·"이유 직캠")은 남는다.
+  if(t.indexOf('이유')>=0)t=t.replace(/(?<=(?:는|은|한|된|던|인|할|간|운|른|린|난|진|쁜|픈)\s)이유(?![가-힣])/g,' ').replace(/(?<![가-힣])이유\s*없이/g,' ');
   if(t.indexOf('하루')<0)return t;
   return t
     .replace(/(?<=[가-힣]의\s)하루(?![가-힣])/g,' ') // "○○의 하루" — 소유된 일반명사만 제거(소유자 토큰은 남김)
@@ -7269,7 +7460,13 @@ function _atmMatchesMember(m,title,tokens,groupKo){
   // 38건이 아이콘 B.I로 잡혀 group_ko까지 아이콘으로 오배정됐다(비아이지는 GROUPS 미등록).
   // 양옆에 점이나 영숫자가 안 붙을 때만 인정한다 — "B.I.G"는 탈락, "B.I X BOBBY"·"#B.I"는 통과.
   if(/^[A-Za-z](?:\.[A-Za-z])+\.?$/.test(name)){
-    const seq=[...name.replace(/\./g,'')].map(_atmEscRe).join('[.\\s]*');
+    const letters=[...name.replace(/\./g,'')];
+    // 두 글자 이니셜이 영어 낱말과 같으면(I.N=in, I.T=it …) 구분자 없는 "IN"은 인정하지 않는다 — "in JAPAN"·"SKZful Days
+    // in Jeju"의 in이 스트레이키즈 I.N으로 잡혔다(2026-09-29 순찰·차분에서 발견, 85건).
+    const isWord=_ATM_INITIAL_WORDS.has(letters.join('').toLowerCase());
+    const seq=letters.map(_atmEscRe).join(isWord?'[.\\s]+':'[.\\s]*');
+    // 해시태그 "#IN"·"#DO"는 붙여 써도 그 사람(해시태그는 낱말로 쓰지 않는다)
+    if(isWord&&new RegExp(`#${letters.map(_atmEscRe).join('[._]?')}(?![a-z0-9])`,'i').test(title))return true;
     return new RegExp(`(?<![a-z0-9.])${seq}(?![a-z0-9.])`,'i').test(title);
   }
   const nameChars=[...name];
@@ -7332,7 +7529,7 @@ function _atmMatchesMember(m,title,tokens,groupKo){
       // 원문에서 **양옆에 점이나 영숫자가 안 붙을 때만** 인정한다 — "B.I.G"는 뒤에 점이 붙어 탈락하고,
       // "B.I X BOBBY"처럼 공백으로 떨어진 정상 표기는 그대로 통과한다(토큰 방식으로는 이 둘을 못 가른다).
       if(parts.every(p=>p.length===1)){
-        const seq=parts.map(_atmEscRe).join('[.\\s]*');
+        const seq=parts.map(_atmEscRe).join(_ATM_INITIAL_WORDS.has(parts.join(''))?'[.\\s]+':'[.\\s]*'); // I.N≠in (위 이니셜 분기와 같은 규칙)
         return new RegExp(`(?<![a-z0-9.])${seq}(?![a-z0-9.])`,'i').test(title);
       }
       for(let i=0;i<=tokens.length-parts.length;i++){if(parts.every((p,j)=>tokens[i+j]===p))return true;}
@@ -8096,7 +8293,9 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
   // "해시태그 전용"보다 한 단계 더 엄격하게 "그룹명이 제목에 확정됐을 때의 멤버 추출 경로에서만" 인정한다
   // (사용자 결정 2026-08-30 — 실측: members=['Love'] 1059건 중 95%가 온리원오프 무관, 'love'는 최다 오탐 단어).
   // name.ko/en 둘 다로 막는다. 그룹 자체 매칭·자체 채널 태깅은 별개 경로라 온리원오프 정상 영상은 안 끊긴다.
-  const _ATM_INFER_EXCLUDE_NAMES=new Set(['Love','나인','Nine']);
+  // 2026-09-29 순찰(tag_patrol B 약한 근거)에서 발견: 누에라 판(en 'Fan') ← "FAN PICK CAM"·"FAN CAM",
+  // 올아워즈 온(en 'On') ← "Life goes on"·"We on Fire". 영문명이 흔한 영어 낱말이라 이름만으로 그룹을 역추론하면 안 된다.
+  const _ATM_INFER_EXCLUDE_NAMES=new Set(['Love','나인','Nine','Fan','On']);
   const _atmInferExcluded=a=>_ATM_INFER_EXCLUDE_NAMES.has(a.name.ko)||_ATM_INFER_EXCLUDE_NAMES.has(a.name.en);
   // 데뷔보다 1년 이상 전에 나온 영상을 순전히 멤버 이름만으로 이 그룹으로 역추론하는 건 근거가 없다 — 그
   // 그룹이 존재하기도 전이라 대개 동명이인(옛 가수·배우가 이름만 겹침)이다(2026-09-01 실측: 올아워즈←현빈

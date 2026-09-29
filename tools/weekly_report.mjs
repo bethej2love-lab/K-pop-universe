@@ -61,6 +61,12 @@ async function main() {
     const { mistagRank, mistagMarkdown } = await import('./mistag_rank.mjs');
     mistagMd = mistagMarkdown(await mistagRank({ days: 90, min: 8, top: 10 }));
   } catch (e) { mistagMd = `_(집계 실패: ${e.message})_`; }
+  // 태그 순찰(2026-09-29) — 재판정 불일치(고친 코드 기준 옛 오태깅)·약한 근거(새 유형 후보). 실패해도 보고는 나간다.
+  let patrolMd = '';
+  try {
+    const { tagPatrol, patrolMarkdown } = await import('./tag_patrol.mjs');
+    patrolMd = patrolMarkdown(await tagPatrol({ days: 30, top: 10 }));
+  } catch (e) { patrolMd = `_(순찰 실패: ${e.message})_`; }
 
   const queueWarn = queueCount > 50 ? ` ⚠️ 50건 초과` : '';
   const heldWarn = heldVideos > 200 ? ` ⚠️` : '';
@@ -84,6 +90,9 @@ async function main() {
 
 ### 🏷️ 오태깅 의심 TOP 10
 ${mistagMd}
+
+### 🔎 태그 순찰
+${patrolMd}
 
 ### 자동화 상태
 - **마지막 일일 루틴**: ${ageStr(routineMeta)}

@@ -33,6 +33,11 @@
 | **유니버스 밖 유명인 동명** | 효연 'Second (Feat. 비비)'=가수 BIBI≠이달의소녀 비비 · "With 윤하"≠유니스 방윤하 · 아이유 본명 "지은"≠퍼플키스 박지은 · "April Fools'"→에이프릴 · "다이아 버튼" · "서태지와 아이들" | 이름은 `_ATM_COMMON_KO_WORDS`(해시태그만), 그룹은 `_GROUP_TITLE_CONFLICT_EXCLUDE` | solo-channel-collab | ✅ 09-28 — 솔로 채널 추가하며 실측으로 발견 |
 | **서양식 활동명 + 한국 성 = 다른 사람** | "제임스 안 (James An)"→코르티스 제임스(9) · Eric Nam→더보이즈 에릭(31) · Stella Jang→하츠투하츠 스텔라(18) · Bobby Kim→아이콘 BOBBY · Steve Yoo→유나이트 스티브 · 밴드 LUCY→위키미키 루시 | `_atmStripOtherPersonFullNames`(전 매처 공용 전처리): 한국어 로마자로 안 쪼개지는 **서양식 이름**(`_atmIsKoRomaji`) 뒤에 성 로마자/한글 성이 오면 그 이름 토큰 제거. 예외 — 그룹명이 같이 있음(NCT MARK LEE)·등록명/별칭(뒤집은 순서 포함: Jay Chang·Yerin Baek). 영어 낱말과 겹치는 로마자(go·so·song…)·wang(Jackson Wang=잭슨 본인) 제외, 한글은 성 뒤가 괄호·구분자·줄끝일 때만 | other-person-fullname | ✅ 09-29 · DB 82건 정리 완료 |
 | **협찬·브랜드명 = 멤버 영문명** | "THE FIRST TAKE powered by ASAHI SUPER DRY"→트레저 아사히(4) | `_atmStripCommonNounCtx`: "powered/sponsored/supported by ~" 제거(DB 전체 4건뿐, 잃는 태그 0) + `_ATM_BRAND_PHRASES`(asahi super dry·asahi beer·tv asahi) — 새 충돌 브랜드는 여기에 추가 | other-person-fullname | ✅ 09-29 |
+| **로마자 풀네임 속 한 음절 조각** | "HAN SEUNG WOO"→스키즈 한(한승우 48·도한세 3) · "YOON SEO RYEONG"/"YOON SANHA"→스테이씨 윤 · "LEE JIN HYUK"→러블리즈 JIN · "Kim Hee Jae"→데이식스 Jae · "LEE JUN YOUNG"→세븐틴 준 | `_atmNormalizeRegisteredRomanNames`: 로마자 런(성→1~2음절→1음절)=한 사람, 등록명은 런 **전체**로만(부분 일치는 새 오태깅 — 윤서령→배드빌런 윤서), 성은 한글 환산(An=Ahn), 성 없는 2글자 등록명은 "성+이름"이면 이름만 붙여 남김, 동명이인 등록명은 원문 유지, 안전하면 영문 원문도 남김(Lee Know) | other-person-fullname(49) | ✅ 09-29 · 이전/새 매처 전 행 차분으로 검증 |
+| **이니셜 이름 = 영어 낱말** | I.N ← "in JAPAN"·"SKZful Days in Jeju"(85) | `_ATM_INITIAL_WORDS`: 두 글자 이니셜이 영어 낱말이면 구분자 있는 표기만 | other-person-fullname | ✅ 09-29 |
+| **"~하는 이유" = 멤버 이유** | "안 되는 이유"·"예뻐 보이는 이유"→힛지스·에버글로우 이유 | `_atmStripCommonNounCtx`: 관형형 어미 뒤 "이유"·"이유 없이"만 제거(해시태그 전용은 자체 브이로그 "이유가 교토에 간 이유"를 죽여서 안 씀) | other-person-fullname | ✅ 09-29 — **순찰(tag_patrol)이 먼저 발견한 첫 사례** |
+| **영문명 = 흔한 영어 낱말(역추론)** | 판(누에라, en Fan) ← "FAN PICK CAM" · 온(올아워즈, en On) ← "Life goes on" | `_ATM_INFER_EXCLUDE_NAMES`에 Fan·On 추가(Love·나인과 같은 처리) | other-person-fullname | ✅ 09-29 — 순찰 B 발견 |
+| 🔎 **순찰로 발견, 확인 중** | 블랙핑크 지수 ← "LEE JISOO - MISMATCH / THE FIRST TAKE"(실명 김지수 — 다른 사람일 가능성) | — | — | 🟡 사실 확인 후 처리 |
 
 ⚠️ DB 정리는 항상 **고친 매처로 다시 판정한 결과**로만 한다(근거 없음 ≠ 오태깅 — 첫 순위표는 #시온·"YE CHAN"
 같은 정상 표기를 오탐했다). 정리 SQL은 `sql/`에 두고 `tags_manual=false` 조건 필수(§3 불가침 원칙).

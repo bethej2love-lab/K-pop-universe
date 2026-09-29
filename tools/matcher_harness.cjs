@@ -77,7 +77,12 @@ if (!/^const _ATM_SURNAME_ROMAJI\s*=/m.test(pieces.join('\n'))) pieces.push(extr
 pieces.push(extractStatement(adminSrc, /^const _ATM_FULLNAME_SUR_NOT_WORD\s*=/m, '_ATM_FULLNAME_SUR_NOT_WORD'));
 pieces.push(extractStatement(adminSrc, /^const _ATM_FULLNAME_SUR_KO\s*=/m, '_ATM_FULLNAME_SUR_KO'));
 pieces.push('let _atmFullNameIdx=null;');
+pieces.push('let _atmRomanFullIdx=null;');
+pieces.push(extractStatement(adminSrc, /^const _ATM_NAME_SYL\s*=/m, '_ATM_NAME_SYL'));
+pieces.push(extractByBraces(adminSrc, /^function _atmKoSylCount\(/m, '_atmKoSylCount'));
+pieces.push(extractByBraces(adminSrc, /^function _atmNormalizeRegisteredRomanNames\(/m, '_atmNormalizeRegisteredRomanNames'));
 pieces.push(extractStatement(adminSrc, /^const _ATM_BRAND_PHRASES\s*=/m, '_ATM_BRAND_PHRASES'));
+pieces.push(extractStatement(adminSrc, /^const _ATM_INITIAL_WORDS\s*=/m, '_ATM_INITIAL_WORDS'));
 pieces.push(extractByBraces(adminSrc, /^function _atmIsKoRomaji\(/m, '_atmIsKoRomaji'));
 pieces.push(extractByBraces(adminSrc, /^function _atmStripOtherPersonFullNames\(/m, '_atmStripOtherPersonFullNames'));
 pieces.push(extractByBraces(adminSrc, /^function _atmStripCommonNounCtx\(/m, '_atmStripCommonNounCtx')); // 하루 등 흔한단어 일반명사 문맥 제거(2026-08-29) — _m2ParseTitle이 전처리에서 부름
