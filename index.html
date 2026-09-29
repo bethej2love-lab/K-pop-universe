@@ -6176,6 +6176,10 @@ async function _surfFetch(vid,ctx){
   // 멤버 단위 즐겨찾기는 아직 드물다(3명 겹침을 못 채움) — 비면 그 멤버의 그룹 단위로 내려간다(에스파 팬 → 아이브 13명 등 실측)
   let coFav=a?await coRpc('member',a.group.ko+':'+a.name.ko):await coRpc('group',g||v.group_ko);
   if(a&&!coFav.length&&GROUPS[a.group.ko])coFav=await coRpc('group',a.group.ko);
+  // v3 다음에 많이 본 — 이 영상에서 서로 다른 2명↑가 넘어간 영상(get_surf_next). 없으면 행 없음.
+  _surfLoadGlobalW();
+  const nextIds=await (async()=>{try{const{data,error}=await sb.rpc('get_surf_next',{p_vid:vid,p_limit:12});return error?[]:(data||[]);}catch(e){return[];}})();
+  if(nextIds.length)jobs.trail=run(excl(sb.from(_YT_TABLE).select(COLS)).in('id',nextIds.map(r=>r.to_vid)).limit(20));
   // v1 의외의 연결 — 약한 관계 사람·팀의 영상
   const weak=(a||g)?await _surfWeakLinks(a,g):[];
   if(weak.length){
@@ -6308,6 +6312,12 @@ async function _surfFetch(vid,ctx){
     const other=R.stage.filter(x=>!selfGroups.has(x.group_ko)&&!(a&&(x.with_members||[]).some(n=>_surfPersonKeys(a).includes(n))));
     mk('stage','같은 무대',other.map(x=>Object.assign({},x,{_ps:[_surfPerformer(x)]})).map(x=>(x._stage=prog.label,x)));
   }
+  // v3 다음에 많이 본 — 이어 본 인원 많은 순
+  if(R.trail&&nextIds.length){
+    const cnt=new Map(nextIds.map(r=>[r.to_vid,r.cnt]));
+    const items=R.trail.map(x=>Object.assign({},x,{_ps:[_surfPerformer(x)],_nc:cnt.get(x.id)||0})).sort((p,q)=>q._nc-p._nc);
+    mk('trail','다음에 많이 본',items);
+  }
   // v1 의외의 연결 — 관계마다 최대 4개, 칩 = "이름 · 관계"
   if(R.weak&&weak.length){
     const per=new Map(),items=[];
@@ -6418,10 +6428,18 @@ function _surfNotePref(key,w){
   try{localStorage.setItem(_SURF_PREF_KEY,JSON.stringify(_surfPrefs));}catch(e){}
   if(_surfPrefsColumn)_sbPushColumn('surf_prefs',_surfPrefs);
 }
-const _SURF_ROW_ORDER={collab:0,written:1,songcover:2,cofav:3,cover:4,self:5,group:6,stage:7,weak:8};
+const _SURF_ROW_ORDER={collab:0,written:1,songcover:2,trail:3,cofav:4,cover:5,self:6,group:7,stage:8,weak:9};
+// v3 전체 유저 관계 선호(get_surf_rel_weights, 3명↑ 기록된 행만) — 개인 기록이 5점 미만인 사람은 이걸로 정렬
+let _surfGlobalW=null,_surfGlobalWP=null;
+function _surfLoadGlobalW(){
+  if(!_surfGlobalWP)_surfGlobalWP=(async()=>{try{const{data,error}=await sb.rpc('get_surf_rel_weights');if(!error&&data){_surfGlobalW={};data.forEach(r=>_surfGlobalW[r.rel]=+r.total||0);}}catch(e){}})();
+  return _surfGlobalWP;
+}
 function _surfSortRows(rows){
   const tot=Object.values(_surfPrefs).reduce((s,x)=>s+(+x||0),0);
-  const score=r=>(_SURF_ROW_ORDER[r.key]??9)-(tot>=5?2.5*((+_surfPrefs[r.key]||0)/tot):0);
+  const gtot=_surfGlobalW?Object.values(_surfGlobalW).reduce((s,x)=>s+x,0):0;
+  const boost=k=>tot>=5?2.5*((+_surfPrefs[k]||0)/tot):(gtot>=10?1.5*((_surfGlobalW[k]||0)/gtot):0);
+  const score=r=>(_SURF_ROW_ORDER[r.key]??9)-boost(r.key);
   return rows.map((r,i)=>[r,i]).sort((p,q)=>(score(p[0])-score(q[0]))||(p[1]-q[1])).map(p=>p[0]);
 }
 let _surfWrittenP=null;
@@ -6590,6 +6608,9 @@ function _surfHopTo(row,shown,i){
   _surfOpen=null;_surfPick=null;_surfExpanded=false;
   _gaEvent('surf_hop',{rel:row.key,lens:_surfLens,depth:_surfPath.length-1});
   _surfNotePref(row.key,1); // v2 — 이 관계로 넘어감
+  // v3 — 전체 유저 익명 집계용(영상 A→B). 같은 사람의 같은 A→B는 서버가 한 번만 센다(unique). 테이블 없으면 조용히 실패.
+  {const fromS=(_lbPlaylist&&_lbIdx>=0)?_lbPlaylist[_lbIdx]:null;const fromId=fromS?_lbApiId(fromS):null;
+   if(sb&&window._sbSession&&fromId&&x.id&&fromId!==x.id)sb.from('surf_hops').insert({from_vid:fromId,to_vid:x.id,rel:row.key}).then(()=>{},()=>{});}
   _surfHopping=true;
   try{openLightbox(songs[i].u,false,songs,i,ctx,false,true);}finally{_surfHopping=false;}
   document.getElementById('yt-lb-uplist')?.scrollTo?.({top:0});
@@ -13956,6 +13977,37 @@ function _logFavHistory(dk,action){
   if(favHistory.length>FAV_HISTORY_MAX)favHistory=favHistory.slice(-FAV_HISTORY_MAX);
   localStorage.setItem(FAV_HISTORY_KEY,JSON.stringify(favHistory));
   _sbPushColumn('fav_history',favHistory);
+  if(action==='add')_maybeLinkNudge();
+}
+// ── 계정 연결 안내(2026-09-29) — 익명 계정으로 즐겨찾기를 쌓는 사람에게 한두 번만 ────────────────────
+// 실측: 즐겨찾기가 있는 익명 방문자 118명 중 계정 연결은 0명. 익명 계정은 브라우저 데이터 삭제·기기 변경 시 즐겨찾기가
+// 통째로 사라진다. 즐겨찾기 3개째에 한 번, 닫았으면 10개째에 한 번 더 — 그 뒤로는 안 띄운다(연결 버튼은 프로필에 늘 있음).
+const _LINK_NUDGE_KEY='kpu_link_nudge'; // 띄운 횟수
+function _maybeLinkNudge(){
+  const u=window._sbSession&&window._sbSession.user;
+  if(!u||u.is_anonymous!==true)return; // 이미 연결된 계정 / 세션 없음
+  const n=favGroups.size+favMembers.size;
+  let shown=0;try{shown=+localStorage.getItem(_LINK_NUDGE_KEY)||0;}catch(e){}
+  if(!((shown===0&&n>=3)||(shown===1&&n>=10)))return;
+  try{localStorage.setItem(_LINK_NUDGE_KEY,String(shown+1));}catch(e){}
+  setTimeout(_showLinkNudge,1200); // 하트 연출이 끝난 뒤
+}
+function _showLinkNudge(){
+  if(document.getElementById('link-nudge'))return;
+  const ko=currentLang==='ko';
+  const el=document.createElement('div');el.id='link-nudge';el.setAttribute('role','dialog');el.setAttribute('aria-label','Keep your favorites');
+  const t=document.createElement('div');t.className='ln-t';t.textContent='Keep your favorites';
+  const d=document.createElement('div');d.className='ln-d';
+  d.textContent=ko?'지금 즐겨찾기는 이 브라우저에만 저장돼 있어요. 계정을 연결하면 다른 기기에서도 그대로예요.':'Your favorites live in this browser only. Link an account to keep them on any device.';
+  const row=document.createElement('div');row.className='ln-btns';
+  const mk=(label,cls,fn)=>{const b=document.createElement('button');b.type='button';b.className=cls;b.textContent=label;b.addEventListener('click',e=>{e.stopPropagation();el.remove();fn();});row.appendChild(b);};
+  mk('Google','ln-go',()=>{_gaEvent('link_nudge',{action:'google'});_handleAccountLink('google');});
+  mk('X','ln-go',()=>{_gaEvent('link_nudge',{action:'x'});_handleAccountLink('x');});
+  mk(ko?'나중에':'Later','ln-later',()=>_gaEvent('link_nudge',{action:'later'}));
+  el.append(t,d,row);
+  el.addEventListener('click',e=>e.stopPropagation());
+  document.body.appendChild(el);
+  _gaEvent('link_nudge',{action:'show'});
 }
 // ── 멤버 개명에 따른 로컬 즐겨찾기 키 이전 (2026-09-16) ─────────────────────────
 // 멤버는 `group.ko:name.ko`로 식별된다(_mFavKey). 그래서 아티스트를 개명하면 그 사람의 즐겨찾기·순서·

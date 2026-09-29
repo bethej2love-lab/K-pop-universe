@@ -2887,6 +2887,16 @@
     .fav-btn+.trophy-btn,.trophy-btn+.trophy-btn,.fav-btn+.share-btn,.trophy-btn+.share-btn{margin-left:-2px;}
     .share-btn+.card-menu-btn{margin-left:0;}
   }
+  /* 계정 연결 안내(2026-09-29) — 즐겨찾기 3개째·10개째 한 번씩. 불투명 배경(blur 없음 — 발열 기준) */
+  #link-nudge{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(24px + env(safe-area-inset-bottom,0px));z-index:190;
+    width:min(380px,calc(100vw - 24px));box-sizing:border-box;background:#171b36;border:0.5px solid rgba(255,255,255,0.12);border-radius:18px;
+    padding:16px 16px 12px;box-shadow:0 14px 40px rgba(0,0,0,0.5);font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
+  #link-nudge .ln-t{font-size:15px;font-weight:700;color:#eef4ff;letter-spacing:-.01em;}
+  #link-nudge .ln-d{margin-top:6px;font-size:12.5px;line-height:1.5;color:rgba(195,210,240,0.75);word-break:keep-all;}
+  #link-nudge .ln-btns{display:flex;gap:8px;margin-top:12px;align-items:center;}
+  #link-nudge .ln-go{flex:1;background:rgba(130,155,255,0.9);color:#0b0d20;border:none;border-radius:11px;padding:9px 0;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;}
+  #link-nudge .ln-later{background:none;border:none;color:rgba(170,190,255,0.85);font-size:13px;font-family:inherit;cursor:pointer;padding:9px 6px;}
+  @media(max-width:768px){#link-nudge{bottom:calc(84px + env(safe-area-inset-bottom,0px));}}
   #share-toast{position:fixed;left:50%;bottom:32px;transform:translateX(-50%) translateY(12px);background:rgba(20,24,40,0.94);color:rgba(230,238,255,0.95);font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;font-size:13px;font-weight:600;padding:9px 16px;border-radius:20px;box-shadow:0 6px 24px rgba(0,0,0,0.35);z-index:200;opacity:0;pointer-events:none;transition:opacity .2s ease,transform .2s ease;white-space:nowrap;}
   #share-toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
   #discover-toast{position:fixed;left:50%;bottom:32px;transform:translateX(-50%) translateY(12px);display:flex;align-items:center;gap:9px;background:rgba(20,24,40,0.94);color:rgba(230,238,255,0.95);font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;font-size:12px;font-weight:600;padding:6px 16px 6px 6px;border-radius:24px;box-shadow:0 6px 24px rgba(0,0,0,0.35);z-index:200;opacity:0;pointer-events:none;transition:opacity .25s ease,transform .25s ease;white-space:nowrap;cursor:pointer;}
