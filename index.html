@@ -5437,6 +5437,12 @@ function _songIsShort(s){return !!s&&(s.is_short===true||s.category==='short'||i
 // 이라는 규칙을 tests/shorts-promote.test.js가 검사하기 때문(2026-09-14, 그 검사가 이 줄 때문에
 // main에서 계속 빨간불이었다 — 실패 자체가 잊혀서 CI가 늘 빨간 상태로 방치됐다).
 function _isLegacyShortCat(v){return !!v&&v.category==='short';}
+// 쇼츠인데 세로 원본 썸네일(oardefault)이 없을 때의 폴백(2026-09-30 사용자 제보 "쇼츠인데 썸네일 갇힘").
+// 유튜브가 요즘 쇼츠 상당수(최근 표본 40건 중 3건)에 oardefault를 안 준다. 그때 가로 썸네일을 세로 틀에
+// contain으로 넣으면, 그 가로 썸네일 자체가 이미 "세로 화면 + 좌우 검은 띠"라 작은 그림이 가운데 갇힌다.
+// hqdefault(480×360)를 cover로 넣으면 9:16 틀이 정확히 가운데 세로 화면(≈202×360)만 잘라낸다 —
+// 검은 띠가 틀 밖으로 나가 세로 원본과 거의 같아 보인다(mqdefault보다 해상도도 2배).
+function _shortThumbFallback(img,id){img.onerror=null;img.onload=null;img.classList.add('is-fallback');if(id)img.src=`https://i.ytimg.com/vi/${id}/hqdefault.jpg`;}
 function isMob(){return window.innerWidth<=768;}
 // 유튜브 API로 동기화된 일부 영상(주로 인스타 릴스 크로스포스트) 제목엔 실제 줄바꿈 문자가 들어있어서,
 // 한 줄 말줄임(white-space:nowrap)이 안 먹고 제목 영역이 여러 줄로 확 커져 보이는 문제가 있었음 — 표시 직전에 제거.
@@ -6143,8 +6149,20 @@ async function _surfFetch(vid,ctx){
     jobs.guest=run(Q(60).or(pk.map(k=>`with_members.cs.{${f(k)}}`).join(',')));
     jobs.cover=(v.cover_of_members||[]).length||(v.cover_of_groups||[]).length?null:
       run(Q(60).or(pk.map(k=>`cover_of_members.cs.{${f(k)}}`).join(',')));
-    const cur=GROUPS[a.group.ko]?a.group.ko:null;
-    const former=cur?null:(_artistGroups(a).find(x=>x.ko&&GROUPS[x.ko])||{}).ko;
+    // ⚠️ **탈퇴한 그룹은 행으로 안 띄운다**(2026-09-30 사용자 제보 "디모렉스 트레저 전 소속인데 왜 뜨노").
+    //    예전엔 솔로면 groups[]의 첫 실제 그룹을 무조건 "원 소속"으로 붙여서, 트레저를 떠난 디모렉스 영상 밑에
+    //    트레저 영상 행이 떴다. **그룹은 계속 활동 중인데 본인만 나간 경우**는 빼고(주 소속을 떠난 마크·탑도 같다),
+    //    해체한 그룹(아이즈원·엑스원 — 끝까지 함께한 소속)은 예전처럼 남긴다.
+    //    _isFormerOf를 그대로 쓰지 않는 이유: 최상위 active:false·left(고인 종현·문빈)까지 "나감"으로 봐서 샤이니·아스트로
+    //    행이 사라진다. 해체 그룹 멤버도 groups[] 항목에 left가 찍혀 있어서(해체일) 해체 여부를 따로 본다.
+    const _left=k=>{
+      if(GROUPS[k].disbanded)return false;
+      const e=(a.groups||[]).find(x=>x&&x.ko===k);
+      if(e&&(e.left||e.active===false))return true;
+      return k===a.group.ko&&!!a.left&&!(a.died&&a.left>=a.died); // 고인은 left=사망일 — 나간 게 아니다
+    };
+    const cur=GROUPS[a.group.ko]&&!_left(a.group.ko)?a.group.ko:null;
+    const former=cur?null:(_artistGroups(a).find(x=>x.ko&&GROUPS[x.ko]&&!_left(x.ko))||{}).ko;
     if(cur||former){groupRow={key:cur||former,rel:cur?'그룹':'원 소속'};jobs.group=run(Q(60).eq('group_ko',groupRow.key));}
   }else if(g){
     label=_surfGName(g);selfLabel='같은 그룹';
@@ -17974,7 +17992,7 @@ function _setFeedCardThumb(item,thumbUrl){
   const img=document.createElement('img');
   img.className='feed-card-thumb';img.loading='lazy';img.alt='';
   img.addEventListener('load',()=>{
-    if(isShort&&img.src.includes('oardefault')&&img.naturalWidth===120&&img.naturalHeight===90){img.src=thumbUrl;return;} // 세로 썸네일 없음 → 원래(16:9)로 폴백
+    if(isShort&&img.src.includes('oardefault')&&img.naturalWidth===120&&img.naturalHeight===90){img.src=vid?`https://i.ytimg.com/vi/${vid}/hqdefault.jpg`:thumbUrl;return;} // 세로 썸네일 없음 → hqdefault를 cover로(_shortThumbFallback 주석)
     img.classList.add('loaded');
     wrap.querySelector('.feed-card-shimmer')?.remove();
     item.classList.add('cap-revealed');
@@ -18343,8 +18361,8 @@ function _openFeedListOverlay(title,sub,songs,ctx){
       const bg=document.createElement('div');bg.className='gc-ch-thumb-bg';bg.style.backgroundImage=`url(${baseThumb})`;item.appendChild(bg);
       const _vid=ytId(s.u);
       img.src=`https://i.ytimg.com/vi/${_vid}/oardefault.jpg`;
-      img.onerror=()=>{img.onerror=null;img.src=baseThumb;};
-      img.onload=()=>{if(img.naturalWidth===120&&img.naturalHeight===90){img.onerror=null;img.onload=null;img.src=baseThumb;}else if(img.src.includes('oardefault'))bg.style.backgroundImage=`url(${img.src})`;};
+      img.onerror=()=>_shortThumbFallback(img,_vid);
+      img.onload=()=>{if(img.naturalWidth===120&&img.naturalHeight===90){_shortThumbFallback(img,_vid);}else if(img.src.includes('oardefault'))bg.style.backgroundImage=`url(${img.src})`;};
     }else{
       img.src=baseThumb;
     }
@@ -21488,11 +21506,11 @@ function _makeChVidController(contId){
       if(isShort){
         const bg=document.createElement('div');bg.className='gc-ch-thumb-bg';bg.style.backgroundImage=`url(${baseThumb})`;item.appendChild(bg);
         img.src=`https://i.ytimg.com/vi/${v.id}/oardefault.jpg`;
-        img.onerror=()=>{img.onerror=null;img.src=baseThumb;};
+        img.onerror=()=>_shortThumbFallback(img,v.id);
         // 쇼츠 썸네일이 없으면 유튜브가 진짜 404 대신 120×90 회색 "재생 아이콘" 플레이스홀더를
         // 정상 이미지로 응답해서 onerror가 안 걸림 — onload에서 그 크기를 직접 감지해 폴백시킨다.
         img.onload=()=>{
-          if(img.naturalWidth===120&&img.naturalHeight===90){img.onerror=null;img.onload=null;img.src=baseThumb;}
+          if(img.naturalWidth===120&&img.naturalHeight===90){_shortThumbFallback(img,v.id);}
           // oardefault.jpg(세로)가 로드되면 블러 배경도 해당 이미지로 교체
           else if(img.src.includes('oardefault'))bg.style.backgroundImage=`url(${img.src})`;
         };
@@ -23265,7 +23283,11 @@ function _probeAspect(id){
   return new Promise(resolve=>{
     const p=new Image();let done=false;
     const finish=r=>{if(done)return;done=true;resolve(r);};
-    p.onload=()=>finish(p.naturalHeight>p.naturalWidth?'portrait':'landscape');
+    // ⚠️ 120×90 플레이스홀더 = "세로 원본 썸네일이 없음"이지 "가로 영상"이 아니다(2026-09-30 사용자 제보).
+    //    유튜브가 진짜 쇼츠에도 oardefault를 자주 안 줘서, 예전엔 서버가 /shorts/ HEAD로 확정한 쇼츠를
+    //    브라우저가 여기서 가로로 강등해 가로 틀에 세로 화면이 갇혔다. 서버 판정(tools/shorts_promote.mjs)이
+    //    권위이므로 확신 없음(unknown)으로 두고, 실제 가로 원본이 올 때만 landscape.
+    p.onload=()=>finish(p.naturalWidth===120&&p.naturalHeight===90?'unknown':p.naturalHeight>p.naturalWidth?'portrait':'landscape');
     p.onerror=()=>finish('unknown');
     p.src=`https://i.ytimg.com/vi/${id}/oardefault.jpg`;
     setTimeout(()=>finish('unknown'),8000);

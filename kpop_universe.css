@@ -1437,6 +1437,8 @@
     background:rgba(8,11,20,0.78);color:rgba(240,246,255,0.94);pointer-events:none;
   }
   .gc-ch-item.is-short .gc-ch-thumb{aspect-ratio:9/16;object-fit:contain;position:relative;z-index:1;}
+  /* 세로 원본이 없어 가로 썸네일(좌우 검은 띠 포함)로 폴백한 쇼츠 — cover로 가운데 세로 화면만 남긴다(_shortThumbFallback) */
+  .gc-ch-item.is-short .gc-ch-thumb.is-fallback{object-fit:cover;}
   .gc-ch-item.is-short .gc-ch-thumb-bg{position:absolute;inset:0;background-size:cover;background-position:center;filter:blur(18px) brightness(0.45);transform:scale(1.08);z-index:0;}
   /* 쇼츠가 대표(featured)로 뽑히면 2열 폭 전체를 채워 9:16 비율로 최대 크기로 표시한다(사용자 요청).
      버튼은 기본값(right/left 4px)을 그대로 사용 — 썸네일이 전체 폭이라 별도 조정 불필요. */
