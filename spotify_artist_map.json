@@ -171,13 +171,12 @@
     "id": "7sxTZy9SLBjsTz4PiSj5tJ",
     "spotifyName": "Kaeun",
     "kind": "solo",
-    "confidence": "medium",
-    "why": "이름 유일 일치 · ⛔ 2026-09-30 사람 확인: 동명이인(다른 아티스트) — 수집 차단",
+    "confidence": "low",
+    "why": "이름 유일 일치 · 2026-09-30 본인 여부 불확실 — 앨범 제거, 영상 증거 생기기 전까지 수집 보류",
     "evidence": {
       "titleOverlap": null
     },
-    "checkedAt": "2026-09-30",
-    "rejected": true
+    "checkedAt": "2026-09-30"
   },
   "가희": {
     "id": "0XsftMDxoa5aSnak4fk1V3",
@@ -1726,12 +1725,11 @@
     "spotifyName": "성연 (SUNGYEON)",
     "kind": "solo",
     "confidence": "low",
-    "why": "동명 후보 2명 중 앨범 대조 · ⛔ 2026-09-30 사람 확인: 동명이인(다른 아티스트) — 수집 차단",
+    "why": "동명 후보 2명 중 앨범 대조 · 2026-09-30 본인 여부 불확실 — 앨범 제거, 영상 증거 생기기 전까지 수집 보류",
     "evidence": {
       "titleOverlap": 0
     },
-    "checkedAt": "2026-09-30",
-    "rejected": true
+    "checkedAt": "2026-09-30"
   },
   "세븐": {
     "id": "14yLuCwlBqteUdBqx9soJV",
@@ -2968,13 +2966,12 @@
     "id": "6APYIwbk4XScBpXFMbLYw9",
     "spotifyName": "WOW",
     "kind": "solo",
-    "confidence": "medium",
-    "why": "이름 유일 일치 · ⛔ 2026-09-30 사람 확인: 동명이인(다른 아티스트) — 수집 차단",
+    "confidence": "low",
+    "why": "이름 유일 일치 · 2026-09-30 본인 여부 불확실 — 앨범 제거, 영상 증거 생기기 전까지 수집 보류",
     "evidence": {
       "titleOverlap": null
     },
-    "checkedAt": "2026-09-30",
-    "rejected": true
+    "checkedAt": "2026-09-30"
   },
   "용희": {
     "id": "1qQRdPpCeVsfDCKz3QFuU5",
@@ -3480,13 +3477,12 @@
     "id": "4hMhbcPHd2nsZFhY1TNp8Y",
     "spotifyName": "Yeeun",
     "kind": "solo",
-    "confidence": "low",
-    "why": "이름 불일치 — 앨범 대조 · ⛔ 2026-09-30 사람 확인: 동명이인(다른 아티스트) — 수집 차단",
+    "confidence": "high",
+    "why": "이름 불일치 — 앨범 대조 · 2026-09-30 영상 제목 대조로 본인 확인(쇼챔 Strange Way To Love · 더쇼 Cherry Coke)",
     "evidence": {
       "titleOverlap": 0
     },
-    "checkedAt": "2026-09-30",
-    "rejected": true
+    "checkedAt": "2026-09-30"
   },
   "장유빈": {
     "id": "5f1qpcqhDl49v5gKln3zl2",
@@ -3691,13 +3687,12 @@
     "id": "5Jte273iLRGrRRMA5yJy3F",
     "spotifyName": "Chan",
     "kind": "solo",
-    "confidence": "medium",
-    "why": "이름 유일 일치 · ⛔ 2026-09-30 사람 확인: 동명이인(다른 아티스트) — 수집 차단",
+    "confidence": "low",
+    "why": "이름 유일 일치 · 2026-09-30 본인 여부 불확실 — 앨범 제거, 영상 증거 생기기 전까지 수집 보류",
     "evidence": {
       "titleOverlap": null
     },
-    "checkedAt": "2026-09-30",
-    "rejected": true
+    "checkedAt": "2026-09-30"
   },
   "청하": {
     "id": "2PSJ6YriU7JsFucxACpU7Y",

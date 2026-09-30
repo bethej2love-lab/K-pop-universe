@@ -27,7 +27,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { RateLimited } from './spotify_auth.mjs';
-import { dedupKey, isVariant, parseTypeFromTitle, searchAlbums, resolveArtist, toEntry } from './spotify_disco_lib.mjs';
+import { dedupKey, isVariant, parseTypeFromTitle, searchAlbums, resolveArtist, toEntry, videoEvidence, VIDEO_EVIDENCE_MIN } from './spotify_disco_lib.mjs';
 
 const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
 const P = f => path.join(ROOT, f);
@@ -59,6 +59,16 @@ const STATE_F = 'spotify_sync_state.json';
 const map = fs.existsSync(P(MAP_F)) ? rd(MAP_F) : {};
 const state = fs.existsSync(P(STATE_F)) ? rd(STATE_F) : { checked: {}, runs: 0 };
 state.checked = state.checked || {};
+// 신원 미확인으로 보류 중인 대상(사람이 볼 것). 리포트는 회차마다 사라지지만 이건 남는다 — 해결되면 지운다.
+state.pending = state.pending || {};
+// 영상 대조(videoEvidence)용 — 공개(anon) 키라 index.html에 이미 박혀 있는 값을 그대로 읽는다(비밀 아님).
+const SB_KEY = (fs.readFileSync(P('index.html'), 'utf8').match(/sb_publishable_[A-Za-z0-9_-]+/) || [])[0] || '';
+// 우주 안 사람·그룹 이름 — 트랙명이 사람 이름이면(예: `Jisu`) 영상 대조 증거로 치지 않는다
+const PERSON_NAMES = new Set([
+  ...artists.flatMap(a => [a.name?.ko, a.name?.en]),
+  ...Object.entries(groups).flatMap(([ko, g]) => [ko, g.en]),
+].filter(Boolean).map(x => String(x).toLowerCase().normalize('NFKC').replace(/[^\p{L}\p{N}]/gu, '')).filter(x => x.length >= 2));
+const entryCache = new Map(); // 앨범 id → toEntry 결과(검증 단계에서 받은 상세를 넣을 때 재사용 — 콜 절약)
 
 // ── 대상 목록과 순서 ─────────────────────────────────────────────────────────
 // ⚠️⚠️ 두 번 틀렸던 자리다(2026-09-16 실측으로 발견).
@@ -95,7 +105,8 @@ function targets() {
     const ko = a.name?.ko, gko = a.group?.ko;
     if (!ko || !gko || groups[gko]) continue;        // 실존 그룹 소속은 그룹으로 커버
     if (a.active === false) continue;
-    out.push({ ko, kind: 'solo', names: [a.name?.en, ko].filter(Boolean), w: SOLO_W });
+    out.push({ ko, kind: 'solo', names: [a.name?.en, ko].filter(Boolean), w: SOLO_W,
+      groupKeys: [...new Set([gko, ...(a.groups || []).map(g => g?.ko)].filter(g => g && groups[g]))] }); // 영상 대조용 옛 소속
   }
   const seen = new Set();
   return out.filter(t => (seen.has(t.ko) ? false : seen.add(t.ko)))
@@ -290,20 +301,7 @@ for (const t of list) {
     //    confidence가 'medium'인 건 "이름이 유일하게 일치"만 본 것이라 동명이인일 수 있다. 평소엔
     //    검증 비용을 안 쓰다가, **실제로 넣을 게 생겼을 때만** 우리가 앨범을 가진 연도로 대조한다.
     //    신보는 하루 2장 수준이라 이 비용은 사실상 없는 것과 같고, 엉뚱한 사람의 앨범이 쌓이는 건 막는다.
-    // 3-0) ⚠️ **대조할 앨범이 0장이면 아래 검증 자체가 불가능하다**(2026-09-30 사고). 예전엔 아래 조건의
-    //      `own.years.length`에서 게이트를 통째로 건너뛰어 미검증 매핑이 그대로 수집됐다 — 티오원 치훈이
-    //      재즈 연주 계정 `CHIHOON`의 앨범 30장을, 렌타가 바이올리니스트 Renaud Capuçon을, 앤이 Anne-Marie를
-    //      받았다(솔로 27명 오염). 솔로 이름은 흔해서 "이름 유일 일치"가 아무 증거도 못 된다.
-    //      · 그룹: 스포티파이 이름이 우리 그룹명(영문/한글/별칭)과 **정확히** 같을 때만 통과 — 실측 13팀 전부 정답
-    //      · 솔로: 통과시키지 않는다. 사람이 확인하고 map에 confidence:'high'를 찍어야 들어온다.
-    if (newOnes.length && m.confidence !== 'high' && !own.years.length) {
-      const norm = s => String(s || '').toLowerCase().replace(/[^\p{L}\p{N}]/gu, '');
-      const exact = t.kind === 'group' && t.names.some(n => norm(n) && norm(n) === norm(m.spotifyName));
-      if (!exact) {
-        reviewList.push(`⛔ 대조할 앨범이 없어 보류: ${t.ko} → ${m.spotifyName} (${m.confidence}) — 신보 ${newOnes.length}장(${newOnes.slice(0, 3).map(al => al.name).join(', ')}${newOnes.length > 3 ? ' …' : ''}). 본인이 맞으면 spotify_artist_map.json에 confidence:'high', 아니면 rejected:true.`);
-        newOnes.length = 0;
-      }
-    }
+    // 3-a) 앨범 겹침 대조 — 우리가 그 대상의 앨범을 가진 연도로 스포티파이를 다시 검색해 겹치는지 본다.
     if (newOnes.length && m.confidence !== 'high' && own.years.length && calls < BUDGET) {
       let ov = 0;
       for (const y of own.years.slice(0, 2)) {
@@ -315,8 +313,45 @@ for (const t of list) {
       }
       m.evidence = { ...(m.evidence || {}), verifyOverlap: ov, verifyYears: own.years.slice(0, 2) };
       if (ov >= 1) { m.confidence = 'high'; m.why = (m.why || '') + ` · 수집 전 검증 통과(겹침 ${ov})`; }
-      else {
-        reviewList.push(`⛔ 매핑 미검증이라 보류: ${t.ko} → ${m.spotifyName} — 우리가 앨범을 가진 연도(${own.years.slice(0, 2).join(',')})에 겹치는 앨범이 0. 신보 ${newOnes.length}장을 넣지 않았습니다.`);
+    }
+    // 3-b) ⚠️ **앨범 대조로 확인이 안 되면(대조할 앨범이 0장인 경우 포함) 다른 증거를 요구한다**(2026-09-30 사고).
+    //      예전엔 3-a 조건의 `own.years.length`에서 게이트를 통째로 건너뛰어, 대조할 게 없는 대상은 미검증 매핑이
+    //      그대로 수집됐다 — 티오원 치훈이 재즈 연주 계정 `CHIHOON`의 앨범 30장을, 렌타가 바이올리니스트
+    //      Renaud Capuçon을, 앤이 Anne-Marie를 받았다(솔로 27명 · 201장). 솔로 이름은 흔해서 "이름 유일 일치"는
+    //      아무 증거도 못 된다. 통과 조건(하나라도):
+    //        · 그룹이고, 대조할 앨범이 없고, 스포티파이 이름이 우리 그룹명(영문/한글/별칭)과 **정확히** 같다 — 실측 13팀 전부 정답
+    //        · **우리 영상에 그 앨범 곡이 곡 제목 자리로 VIDEO_EVIDENCE_MIN곡 이상** 있다(videoEvidence 주석)
+    //      못 넘으면 보류하고 state.pending에 남긴다(사람이 confidence:'high' 또는 rejected:true로 정리).
+    //      영상 대조가 네트워크로 실패하면 **통과가 아니라 보류**다 — 확인 못 한 걸 확인한 걸로 치지 않는다.
+    if (newOnes.length && m.confidence !== 'high') {
+      const nn = s => String(s || '').toLowerCase().replace(/[^\p{L}\p{N}]/gu, '');
+      // 이름 정확일치 예외는 **대조할 앨범이 없을 때만**. 앨범이 있는데 3-a에서 겹침 0이 나왔다면 그건 반대 증거다.
+      const exactGroup = t.kind === 'group' && !own.years.length && t.names.some(n => nn(n) && nn(n) === nn(m.spotifyName));
+      let ev = null, evErr = null;
+      if (!exactGroup) {
+        // 트랙까지 봐야 증거가 충분하다(앨범명만으론 미니앨범이 안 걸린다) — 상세를 미리 받아 두고 넣을 때 재사용
+        const sample = newOnes.slice(0, 4);
+        for (const al of sample) {
+          if (calls >= BUDGET || entryCache.has(al.id)) continue;
+          entryCache.set(al.id, await toEntry(al)); calls++;
+        }
+        const albums = sample.map(al => (entryCache.get(al.id) || {}).entry || { title: al.name, tracks: [] });
+        try {
+          ev = await videoEvidence({ ko: t.ko, kind: t.kind, groupKeys: t.groupKeys || [], albums, personNames: PERSON_NAMES, key: SB_KEY });
+        } catch (e) { evErr = e.message; }
+      }
+      const byVideo = ev && ev.hits.length >= VIDEO_EVIDENCE_MIN;
+      if (exactGroup || byVideo) {
+        if (byVideo) {
+          m.confidence = 'high';
+          m.why = (m.why || '') + ` · 영상 제목 대조 통과(${ev.hits.length}곡)`;
+          m.evidence = { ...(m.evidence || {}), videoHits: ev.hits.slice(0, 5) };
+        }
+        delete state.pending[t.ko];
+      } else {
+        const why = evErr ? `영상 대조 실패(${evErr})` : ev ? `영상 증거 ${ev.hits.length}곡(영상 ${ev.checked}개 대조${ev.hits.length ? ': ' + ev.hits.map(h => h.song).join(', ') : ''})` : '대조 불가';
+        reviewList.push(`⛔ 신원 미확인으로 보류: ${t.ko} → ${m.spotifyName} (${m.confidence}) — ${why}. 신보 ${newOnes.length}장(${newOnes.slice(0, 3).map(al => al.name).join(', ')}${newOnes.length > 3 ? ' …' : ''}). 본인이면 spotify_artist_map.json에 confidence:'high', 아니면 rejected:true.`);
+        state.pending[t.ko] = { spotifyName: m.spotifyName, spotifyId: m.id, since: state.pending[t.ko]?.since || new Date().toISOString().slice(0, 10), heldAlbums: newOnes.slice(0, 5).map(al => `${al.release_date} ${al.name}`), why };
         newOnes.length = 0;
       }
     }
@@ -324,8 +359,9 @@ for (const t of list) {
     // 4) 넣기
     for (const al of newOnes) {
       if (calls >= BUDGET) { stoppedBy = '예산 소진'; break; }
-      const { entry, needsTitleTrack } = await toEntry(al);
-      calls++;
+      const cached = entryCache.get(al.id);
+      const { entry, needsTitleTrack } = cached || await toEntry(al);
+      if (!cached) calls++;
       if (DRY) { addedList.push(`[DRY] ${t.ko} · ${entry.releaseDate} · ${entry.type} · ${entry.title}${needsTitleTrack ? ' (타이틀곡 미상)' : ''}`); }
       else if (insert(t, entry)) {
         added++;

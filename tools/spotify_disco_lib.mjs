@@ -247,9 +247,61 @@ export async function toEntry(album) {
       // ⚠️ `label` 필드는 이 앱 토큰으로 안 내려온다(전부 undefined) — 그래서 copyright를 쓴다.
       // 자동 차단 기준으로는 아직 안 쓴다(HYBE·ADOR처럼 회사 토큰이 없는 이름이 있어 오탐이 난다).
       // 지금은 저장만 해두고, 차단은 아래 sync의 "같은 날 1트랙 무더기" 신호가 맡는다.
-      ...(((album.copyrights || [])[0] || {}).text ? { copyright: String(album.copyrights[0].text).slice(0, 120) } : {}),
+      // ⚠️ 2026-09-30 정정: 예전엔 `album.copyrights`(검색 결과 객체)에서 읽었는데 **검색 결과엔 copyrights가
+      //    아예 없다** — 실측 713장 중 0장 저장. 위 주석의 판별 신호가 한 번도 안 쌓이고 있었다. 상세(full)에서 읽는다.
+      ...((((full.copyrights || album.copyrights) || [])[0] || {}).text ? { copyright: String((full.copyrights || album.copyrights)[0].text).slice(0, 120) } : {}),
     },
     needsTitleTrack: !one,
     precision: album.release_date_precision,
   };
 }
+
+// ── 신원 확인 ②: 우리 영상 제목 대조 (2026-09-30) ─────────────────────────────
+// 앨범 겹침 대조(①)는 **우리가 이미 앨범을 가진 대상**에만 쓸 수 있다. 전 멤버 솔로처럼 첫 앨범을 받는
+// 대상은 대조할 게 없어서, 예전엔 그냥 통과됐다 → 솔로 27명이 동명이인 앨범 201장을 받은 사고
+// (치훈→재즈 CHIHOON 30장, 렌타→Renaud Capuçon, 앤→Anne-Marie …).
+// 대신 우리가 가진 **그 사람의 영상**(yt_channel_videos)을 증거로 쓴다: 진짜 본인이면 그 앨범의 곡으로
+// 무대·MV·직캠이 있다. 실측(오수집 27 / 정답 16): 오수집은 전부 증거 0~1, 정답 그룹은 대부분 2 이상,
+// 디모렉스 13. 조건을 이렇게 좁힌 이유(전부 실측 오탐):
+//   · **곡 제목 자리**에 있을 때만 — 따옴표 안이나 ` - ` 뒤. 그냥 포함이면 해시태그 `#STEP`,
+//     문장 `paint the town red`, 그룹명 `#로켓펀치 RocketPunch`가 걸린다.
+//   · 커버 영상 제외 — `[COVER] TXT - Magic`이 박시영(미래소년)의 증거가 됐다.
+//   · 우주 안 사람 이름 제외 — 트랙명 `Jisu`가 `TO1's DONG GEON, JI SU`에 걸렸다.
+//   · **서로 다른 곡 2개 이상** — 오태깅된 영상 1건(`Minsu - Go for Love`가 티오원 민수로 태깅)이
+//     그대로 통과시키지 않게.
+// 반환: { hits:[{song, video}], checked:영상 수 } — 네트워크 실패는 예외로 던진다(호출부가 "미확인"으로 보류).
+const SB_URL = 'https://dukgguehegnembimqvkm.supabase.co/rest/v1/yt_channel_videos';
+const GENERIC_SONG = new Set(['intro', 'outro', 'inst', 'instrumental', 'interlude', 'love', 'home', 'dream', 'blue', 'stay', 'star', 'light', 'night', 'summer', 'winter', 'spring', 'hello', 'forever', 'together', 'remix']);
+const vnorm = s => String(s || '').toLowerCase().normalize('NFKC').replace(/\(.*?\)|\[.*?\]/g, ' ').replace(/[^\p{L}\p{N}]/gu, '');
+const escRe = s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+// 곡 제목 자리: 여는 따옴표/대시 뒤 ~ 닫는 따옴표/괄호/구분자 앞. 공백·기호는 느슨하게.
+const SLOT_OPEN = String.raw`(?:^|['"‘’“”「『]|\s[-–—:]\s*|\s[xX×]\s|,\s)`; // 콤마: THE SHOW 표기 "YEEUN, Cherry Coke (…"
+const SLOT_CLOSE = String.raw`(?=\s*(?:['"‘’“”」』(\[|│,]|[-–—]\s|$))`;
+const SLOT_GAP = String.raw`[^\p{L}\p{N}]*`;
+function songSlotRe(song) {
+  const core = String(song).replace(/\(.*?\)|\[.*?\]/g, ' ').trim().split(/[^\p{L}\p{N}]+/u).filter(Boolean).map(escRe).join(SLOT_GAP);
+  if (!core) return null;
+  return new RegExp(SLOT_OPEN + core + SLOT_CLOSE, 'iu');
+}
+export async function videoEvidence({ ko, kind, groupKeys = [], albums, personNames = new Set(), key }) {
+  const K = key;
+  const pg = s => `"${String(s).replace(/"/g, '\\"')}"`;
+  let or;
+  if (kind === 'group') or = [`group_ko.eq.${pg(ko)}`];
+  else or = [`group_ko.eq.${pg(ko)}`, ...groupKeys.map(g => `and(group_ko.eq.${pg(g)},members.cs.{${pg(ko)}})`), ...groupKeys.map(g => `with_members.cs.{${pg(`${ko}(${g})`)}}`)];
+  const r = await fetch(`${SB_URL}?select=title&or=(${encodeURIComponent(or.join(','))})&limit=3000`, { headers: { apikey: K, Authorization: `Bearer ${K}` } });
+  if (!r.ok) throw new Error(`videoEvidence ${r.status}`);
+  const titles = (await r.json()).map(x => x.title || '').filter(t => !/\bcover\b|커버|covered by/i.test(t));
+  const hits = new Map();
+  for (const al of albums) {
+    for (const song of [al.title, ...(al.tracks || []).map(x => x.title)]) {
+      const k = vnorm(song);
+      if (k.length < 3 || GENERIC_SONG.has(k) || personNames.has(k) || hits.has(k)) continue;
+      const re = songSlotRe(song); if (!re) continue;
+      const v = titles.find(t => re.test(t));
+      if (v) hits.set(k, { song, video: v.slice(0, 80) });
+    }
+  }
+  return { hits: [...hits.values()], checked: titles.length };
+}
+export const VIDEO_EVIDENCE_MIN = 2;
