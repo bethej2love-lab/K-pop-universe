@@ -70,6 +70,7 @@
 - [완료] "After School Club"(아리랑 프로그램) → 그룹 애프터스쿨 오매칭 ~2,000건 — _stripProgramNames를 매처와 재배정 스윕의 근거 판정(_mtNorm)이 같이 쓰게. 이전/새 매처 차분 2,863건: 2,018건 교정, 우아·위키미키·티오원 정당 태그 손실 0. [admin.js] [tools/matcher_harness.cjs] [tools/m2_harness.js] [tests/matching.test.js]
 - [완료] 유니버스 밖 동명 — 민수(싱어송라이터 Minsu)·루시(밴드 LUCY)를 _ATM_COMMON_KO_WORDS에(해시태그·그룹 문맥만 인정). 기존 오태깅 120건 정리 SQL. [admin.js] [sql/fix_homonym_mistags_2026-09-30.sql]
 - [진행중·사용자 실행 필요] ① sql/fix_homonym_mistags_2026-09-30.sql 실행 ② 배포 후 어드민 "② 오태깅 그룹 재배정"(애프터스쿨 → 게스트 그룹 ~1,400건) ③ "근거 없는 배정 → 보류"에 애프터스쿨 입력(남은 ~600건)
+- [완료] 관리자 홈 청소 루틴 설명 — 매일 루틴과 분리된 섹션 + 9단계 한 줄 설명, 로그 단계명(C0~C7 → 1~9)을 설명 목록과 맞춤. [index.html] [kpop_universe.css] [admin.js]
 - [이슈] 남은 것: 2열로 넓힌 쇼츠(gc-ch-wide)는 설계상 세로 그림 양옆이 블러(아홉 카드 4건) · 정사각 원본 쇼츠는 위아래 블러 · 챌린지 커버 제목("cignature Challenge 'BLACKPINK - Shut Down'")이 원곡자로 가는 매처 약점 · 동명 솔로(현아 2명·가은 2명)는 매핑 키가 name.ko라 첫 레코드만 수집 대상
 
 ## 2026-09-30 (세션 — 사용자 제보 3건: 쇼츠 썸네일 갇힘 · 디모렉스 Surf 트레저 행 · 치훈 앨범 오수집)

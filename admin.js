@@ -11197,16 +11197,17 @@ async function _admRunCleanup(){
   if(log)log.innerHTML='';
   // 설정 패널의 개별 버튼 19개를 걷어내고(2026-09-28, 사용자 요청 — 30일 실행 기록상 자동 루틴과 겹치거나 안 쓰임)
   // 밴·제외 키워드 정리를 여기로 옮겼다. 둘 다 목록 버전이 안 바뀌면 스스로 건너뛰어 매일 돌아도 비용이 거의 없다.
+  // ⚠️ 단계 이름은 관리자 홈 #adm-cleanup-steps 설명 목록(index.html)과 번호·이름을 맞춘다 — 로그와 설명이 어긋나면 헷갈린다(2026-09-30)
   const steps=[
-    {name:'C0. 밴 인물 언급 영상 숨김',fn:_ytSweepBannedVideos},
-    {name:'C0-2. 제외 키워드 영상 무관',fn:_ytSweepJunkKeywordVideos},
-    {name:'C1. 고아태그 정정',fn:_ytSweepCanonicalizeMembers},
-    {name:'C2. 원곡 오탐 청소',fn:_ytSweepCoverCleanup},
-    {name:'C3. 직캠 재검증',fn:_ytSweepFancamMistag},
-    {name:'C4. 오태깅 그룹 재배정',fn:_ytSweepMistagReclassify},
-    {name:'C5. 보류/숨김 그룹 재배정',fn:_ytSweepHeldMistagReclassify},
-    {name:'C6. 자체 멤버 재검증',fn:_ytSweepMembersMistag},
-    {name:'C7. 카테고리 재분류',fn:_ytSweepCategoryMistag},
+    {name:'1. 밴 인물 숨김',fn:_ytSweepBannedVideos},
+    {name:'2. 제외 키워드',fn:_ytSweepJunkKeywordVideos},
+    {name:'3. 고아 태그 정정',fn:_ytSweepCanonicalizeMembers},
+    {name:'4. 원곡 오탐',fn:_ytSweepCoverCleanup},
+    {name:'5. 직캠 재검증',fn:_ytSweepFancamMistag},
+    {name:'6. 오태깅 그룹 재배정',fn:_ytSweepMistagReclassify},
+    {name:'7. 보류·숨김 재배정',fn:_ytSweepHeldMistagReclassify},
+    {name:'8. 자체 멤버 재검증',fn:_ytSweepMembersMistag},
+    {name:'9. 카테고리 재분류',fn:_ytSweepCategoryMistag},
   ];
   const t0=Date.now();
   // 단계 결과를 매일 루틴과 같은 형식(✅/❌ 줄)으로 화면 로그에 남긴다(2026-09-28). 예전엔 콘솔에만 찍어서

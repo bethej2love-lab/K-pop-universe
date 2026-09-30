@@ -554,8 +554,25 @@
       <div id="adm-routine-btns">
         <button id="adm-run-routine">▶ 매일 루틴 실행</button>
         <button id="adm-run-routine-nosync" title="유튜브 API 쿼터를 아낄 때 — 동기화를 건너뛰고 2~4번만">동기화 빼고 실행</button>
-        <button id="adm-run-cleanup" type="button" title="청소 루틴(고아태그·원곡 오탐·직캠·오태깅 재배정·자체 멤버·카테고리·밴·제외 키워드)을 지금 실행 — 평소엔 매일 KST 04:00 자동">🧹 청소 루틴 실행</button>
         <button id="adm-stop-routine" style="display:none">■ 중단</button>
+      </div>
+      <!-- 청소 루틴 단계 설명(2026-09-30 사용자 요청 — "뭐 하는지 표기가 안 돼 있다"). 단계가 바뀌면 admin.js _admRunCleanup의 steps와 같이 고칠 것 -->
+      <div class="adm-sec-lbl">청소 루틴</div>
+      <div id="adm-cleanup-desc">이미 저장된 영상을 지금 규칙으로 다시 훑어 틀린 태그를 바로잡아요. 매일 04:00 자동 실행 · 수동 편집한 영상은 안 건드림 · 일괄 변경은 되돌리기 가능.
+        <ol id="adm-cleanup-steps">
+          <li><b>밴 인물 숨김</b> — 퇴출 인물이 제목에 나온 영상 숨김</li>
+          <li><b>제외 키워드</b> — 제외 목록 키워드가 든 영상을 무관 처리</li>
+          <li><b>고아 태그 정정</b> — 별칭으로 붙은 멤버 태그를 정식 이름으로</li>
+          <li><b>원곡 오탐</b> — 근거 없이 붙은 원곡자 태그 정리</li>
+          <li><b>직캠 재검증</b> — 음방 직캠의 그룹·멤버를 제목 구조로 다시 판정</li>
+          <li><b>오태깅 그룹 재배정</b> — 제목에 다른 그룹이 뚜렷한데 엉뚱한 그룹에 있는 영상 옮김</li>
+          <li><b>보류·숨김 재배정</b> — 보류·숨김 영상 중 그룹을 찾은 것만 그룹 교정</li>
+          <li><b>자체 멤버 재검증</b> — 공식 채널 영상에서 근거 없는 멤버 태그 1명 제거</li>
+          <li><b>카테고리 재분류</b> — 라이브·MV·예능 등 분류를 제목 기준으로 다시</li>
+        </ol>
+      </div>
+      <div id="adm-cleanup-btns">
+        <button id="adm-run-cleanup" type="button" title="평소엔 매일 KST 04:00 자동">🧹 청소 루틴 실행</button>
       </div>
       <div id="adm-routine-log"></div>
     </div>
