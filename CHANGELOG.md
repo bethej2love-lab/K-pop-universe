@@ -64,6 +64,7 @@
 ## 2026-10-01 (세션 — 통합 검색 방향 + 시안, 방예담 크레딧 백필)
 - [완료] 디모렉스(방예담) 작사·작곡 크레딧이 통째로 없던 것 — 멤버 크레딧 스윕 두 번(솔로 디스코 3+ / 감사 명단) 어디에도 트레저 예담이 안 걸렸음. 멜론 aid 4359860으로 작사 40·작곡 41 수집 → 이 사람이 쓴 곡 17곡(다이몬 White Tee·루네이트 Life is A Movie 포함). tools/melon_credits.mjs에 한 사람씩 저장하는 --save 추가. [artist_credits.json] [written_songs.json] [tools/melon_credits.mjs]
 - [결정 대기] 통합 검색 — "케이팝 포털"보다 "관계를 답하는 검색"(작곡·작사 / 같이 나온 영상 / 커버 / 직캠 의도 인식 → 인물 카드 + 관계별 줄). 실데이터 시안: https://claude.ai/code/artifact/70c03866-ea0f-4d8b-b933-6bbeb9354adc
+- [완료] **"이 사람이 쓴 곡" 남의 곡 오연결 96건** — 곡명만으로 부른 쪽을 추측해 유니버스 밖 가수의 동명곡을 우리 가수에 붙였음(방예담 White-Tee=YC→다이몬, Life is A Movie=콜드→루네이트 · 알엠 이상하지 않은가=Agust D→슈가 · 이기광 Chains=하이라이트→알파드라이브원 · 소연 SPACEMAN→판타지보이즈 등, 사용자 제보). 멜론 크레딧 목록의 부른 아티스트를 수집(melon_credits fetchCredits 행 단위 + --refresh-artists로 104명 재수집)하고 남의 곡은 부른 가수가 주인 이름과 맞을 때만 채택 → 236→139건. tests/written-songs.test.js가 불변식으로 지킴. [tools/melon_credits.mjs] [tools/build_written_songs.mjs] [artist_credits.json] [written_songs.json]
 - [이슈] 트레저 시절 참여곡(직진 등)은 방예담 멤버 aid 크레딧에 안 잡힘 — 그룹 곡 크레딧 경로 별도 확인 필요.
 
 ## 2026-10-01 (세션 — 활동 중인 그룹을 떠난 솔로는 우주에 따로 + 카드 열린 별 이름 표시)

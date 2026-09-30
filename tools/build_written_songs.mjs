@@ -3,7 +3,11 @@
 // 입력: artist_credits.json(멜론 작사·작곡 크레딧 — 아이돌 본인이 크레딧된 곡) + tracks_index.json(가수별 곡 목록)
 // 출력: written_songs.json  { "이름\u0000그룹": [ {t:곡명, o:부른 쪽 키, s:1(본인/본인 그룹 곡)|0(남에게 써준 곡), l:작사, c:작곡} ] }
 //
-// ⚠️ 크레딧엔 "누가 불렀는지"가 없다 — 곡명으로 가수별 곡 목록에 잇는다. 그래서:
+// ⚠️ (옛 설명) 크레딧엔 "누가 불렀는지"가 없다 — 곡명으로 가수별 곡 목록에 잇는다. 그래서:
+//  ⭐ 2026-10-01 정정: 멜론 크레딧 목록엔 **부른 아티스트 열이 있다**(tools/melon_credits.mjs가 이제 artists로 저장).
+//     곡명만으로 잇던 "남에게 써준 곡"이 유니버스 밖 가수의 동명곡을 우리 가수에 붙였다 — 방예담 작곡 "White-Tee"(YC 곡)가
+//     다이몬 "White Tee"로, "Life is A Movie"(콜드 곡)가 루네이트로(사용자 제보). 이제 남의 곡은 **멜론의 부른 아티스트가
+//     그 주인(그룹·솔로)의 이름과 맞을 때만** 채택하고, 아티스트 정보가 없는 옛 크레딧은 남의 곡으로 쓰지 않는다.
 //  · 본인·본인 그룹(겸임 포함) 곡에 같은 제목이 있으면 본인 곡(s:1).
 //  · 남의 곡은 **전체 곡 목록에서 그 제목을 가진 가수가 딱 한 명**이고 제목이 6자 이상일 때만(s:0) —
 //    "Goodbye"·"Butterfly" 같은 흔한 제목은 엉뚱한 가수에 붙는다(첫 시도에서 실측).
@@ -14,7 +18,19 @@ import fs from 'node:fs';
 import path from 'node:path';
 const ROOT = path.join(path.dirname(new URL(import.meta.url).pathname).replace(/^\/([A-Za-z]:)/, '$1'), '..');
 const rd = f => JSON.parse(fs.readFileSync(path.join(ROOT, f), 'utf8'));
-const credits = rd('artist_credits.json'), TI = rd('tracks_index.json'), ARTISTS = rd('artists.json');
+const credits = rd('artist_credits.json'), TI = rd('tracks_index.json'), ARTISTS = rd('artists.json'), GROUPS = rd('groups.json');
+// 멜론 아티스트명 비교용 — "루네이트 (LUN8)"처럼 한·영 병기가 흔해 괄호 안팎을 따로 본다
+const nameKey = s => String(s || '').toLowerCase().replace(/[^a-z0-9가-힣]/g, '');
+const nameParts = s => { const m = String(s || '').match(/^(.*?)\s*\((.*)\)\s*$/); return (m ? [m[1], m[2]] : [s]).map(nameKey).filter(Boolean); };
+// 곡 주인 키(그룹 "ko" 또는 솔로 "이름\u0000그룹")가 부를 수 있는 이름들
+function ownerNames(o) {
+  const [p0, p1] = o.split('\u0000'); const out = new Set();
+  const g = GROUPS[p0];
+  if (g) [p0, g.en, ...(g.altNames || [])].forEach(n => nameParts(n).forEach(x => out.add(x)));
+  ARTISTS.filter(a => a.name.ko === p0 && (p1 === undefined || a.group.ko === p1 || !GROUPS[p0])).forEach(a =>
+    [a.name.ko, a.name.en, a.subName, ...(a.matchAliases || [])].forEach(n => nameParts(n).forEach(x => out.add(x))));
+  return out;
+}
 
 // 검토에서 뺀 것 — "작곡가 키|곡명(정규화)" (동명 다른 곡)
 const EXCLUDE = new Set([
@@ -50,7 +66,7 @@ for (const [key, v] of Object.entries(credits)) {
   for (const s2 of [...(v.lyrics || []), ...(v.compose || [])]) { const k = norm(s2.title); if (seen.has(k)) continue; seen.add(k); sameGroupWriters.set(g + '|' + k, (sameGroupWriters.get(g + '|' + k) || 0) + 1); }
 }
 const artistByKey = new Map(ARTISTS.map(a => [a.name.ko + '\u0000' + a.group.ko, a]));
-const out = {}; let nSelf = 0, nOther = 0;
+const out = {}; let nSelf = 0, nOther = 0, skippedNoArtist = 0; const rejectedArtist = [];
 const review = [];
 for (const [key, v] of Object.entries(credits)) {
   const a = artistByKey.get(key); if (!a) continue;
@@ -59,8 +75,9 @@ for (const [key, v] of Object.entries(credits)) {
   const songs = new Map(); // norm → {title,l,c}
   for (const [role, list] of [['l', v.lyrics || []], ['c', v.compose || []]]) for (const s of list) {
     const k = norm(s.title); if (k.length < 2) continue;
-    const e = songs.get(k) || { title: s.title, l: 0, c: 0, ver: VERSION_RE.test(s.title) };
-    e[role] = 1; if (!VERSION_RE.test(s.title)) { e.title = s.title; e.ver = false; }
+    const e = songs.get(k) || { title: s.title, l: 0, c: 0, ver: VERSION_RE.test(s.title), artists: null };
+    e[role] = 1;
+    if (Array.isArray(s.artists)) { e.artists = e.artists || new Set(); s.artists.forEach(x => nameParts(x.name).forEach(n => e.artists.add(n))); } if (!VERSION_RE.test(s.title)) { e.title = s.title; e.ver = false; }
     songs.set(k, e);
   }
   const list = [];
@@ -73,6 +90,10 @@ for (const [key, v] of Object.entries(credits)) {
     if ((sameGroupWriters.get(a.group.ko + '|' + k) || 0) >= 2) continue;
     if (GENERIC_OTHER.has(k)) continue;
     const [o] = owners.keys();
+    // 부른 아티스트 확인 — 정보가 없으면(옛 크레딧) 채택하지 않고, 있으면 주인 이름과 하나라도 맞아야 한다
+    if (!e.artists) { skippedNoArtist++; continue; }
+    const on = ownerNames(o);
+    if (![...e.artists].some(n => on.has(n))) { rejectedArtist.push(`${a.name.ko} → ${e.title}: 멜론 가수 ${[...e.artists].join('/')} ≠ ${o.replace('\u0000', '/')}`); continue; }
     list.push({ t: owners.get(o).t, o, s: 0, l: e.l, c: e.c, tt: owners.get(o).title ? 1 : 0 }); nOther++;
     review.push(`${a.name.ko}(${a.group.ko}) → ${owners.get(o).t} @${o.replace('\u0000', '/')}`);
   }
@@ -80,5 +101,6 @@ for (const [key, v] of Object.entries(credits)) {
   if (list.length) { list.sort((x, y) => (x.s - y.s) || (y.tt - x.tt)); const others = list.filter(x => !x.s), own = list.filter(x => x.s).slice(0, 15); out[key] = [...others, ...own].map(({ l, c, ...r }) => r); }
 }
 fs.writeFileSync(path.join(ROOT, 'written_songs.json'), JSON.stringify(out));
-console.log(`작곡가 ${Object.keys(out).length}명 · 본인 곡 ${nSelf} · 남에게 써준 곡 ${nOther} → written_songs.json`);
+console.log(`작곡가 ${Object.keys(out).length}명 · 본인 곡 ${nSelf} · 남에게 써준 곡 ${nOther} (부른 가수 불일치로 뺀 것 ${rejectedArtist.length} · 가수 정보 없어 보류 ${skippedNoArtist}) → written_songs.json`);
+if (process.argv.includes('--rejected')) console.log(rejectedArtist.join('\n'));
 if (process.argv.includes('--review')) console.log(review.join('\n'));
