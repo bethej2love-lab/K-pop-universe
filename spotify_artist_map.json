@@ -172,22 +172,23 @@
     "spotifyName": "Kaeun",
     "kind": "solo",
     "confidence": "medium",
-    "why": "이름 유일 일치",
+    "why": "이름 유일 일치 · ⛔ 2026-09-30 사람 확인: 동명이인(다른 아티스트) — 수집 차단",
     "evidence": {
       "titleOverlap": null
     },
-    "checkedAt": "2026-09-26"
+    "checkedAt": "2026-09-30",
+    "rejected": true
   },
   "가희": {
     "id": "0XsftMDxoa5aSnak4fk1V3",
     "spotifyName": "Kahi",
     "kind": "solo",
-    "confidence": "medium",
-    "why": "이름 유일 일치",
+    "confidence": "high",
+    "why": "이름 유일 일치 · 2026-09-30 사람 확인: 본인 맞음(레이블·발매 대조)",
     "evidence": {
       "titleOverlap": null
     },
-    "checkedAt": "2026-09-26"
+    "checkedAt": "2026-09-30"
   },
   "갓세븐": {
     "id": "6nfDaffa50mKtEOwR8g4df",
@@ -254,11 +255,12 @@
     "spotifyName": "Kim Kyung Ho",
     "kind": "solo",
     "confidence": "low",
-    "why": "이름 불일치 — 앨범 대조",
+    "why": "이름 불일치 — 앨범 대조 · ⛔ 2026-09-30 사람 확인: 동명이인(다른 아티스트) — 수집 차단",
     "evidence": {
       "titleOverlap": 0
     },
-    "checkedAt": "2026-09-28"
+    "checkedAt": "2026-09-30",
+    "rejected": true
   },
   "고스트나인": {
     "id": "7f953Uuid7Xrd0nXQ3V3s1",
@@ -390,22 +392,24 @@
     "spotifyName": "Kim Seungmin",
     "kind": "solo",
     "confidence": "low",
-    "why": "이름 불일치 — 앨범 대조",
+    "why": "이름 불일치 — 앨범 대조 · ⛔ 2026-09-30 사람 확인: 동명이인(다른 아티스트) — 수집 차단",
     "evidence": {
       "titleOverlap": 0
     },
-    "checkedAt": "2026-09-29"
+    "checkedAt": "2026-09-30",
+    "rejected": true
   },
   "김연희": {
     "id": "6XAymhtlGpm4EOWElxhjC0",
     "spotifyName": "Kim Yoon Hee",
     "kind": "solo",
     "confidence": "low",
-    "why": "이름 불일치 — 앨범 대조",
+    "why": "이름 불일치 — 앨범 대조 · ⛔ 2026-09-30 사람 확인: 동명이인(다른 아티스트) — 수집 차단",
     "evidence": {
       "titleOverlap": 0
     },
-    "checkedAt": "2026-09-29"
+    "checkedAt": "2026-09-30",
+    "rejected": true
   },
   "김예원": {
     "id": "0a8VoUGsgqX5nqb9FQ20lO",
@@ -445,11 +449,12 @@
     "spotifyName": "TAEYEON",
     "kind": "solo",
     "confidence": "low",
-    "why": "이름 불일치 — 앨범 대조",
+    "why": "이름 불일치 — 앨범 대조 · ⛔ 2026-09-30 사람 확인: 동명이인(다른 아티스트) — 수집 차단",
     "evidence": {
       "titleOverlap": 0
     },
-    "checkedAt": "2026-09-29"
+    "checkedAt": "2026-09-30",
+    "rejected": true
   },
   "김지숙": {
     "id": "5se8HfkMw6SGJEqC5BhEZV",
@@ -758,22 +763,24 @@
     "spotifyName": "Doha",
     "kind": "solo",
     "confidence": "low",
-    "why": "동명 후보 4명 중 앨범 대조",
+    "why": "동명 후보 4명 중 앨범 대조 · ⛔ 2026-09-30 사람 확인: 동명이인(다른 아티스트) — 수집 차단",
     "evidence": {
       "titleOverlap": 0
     },
-    "checkedAt": "2026-09-24"
+    "checkedAt": "2026-09-30",
+    "rejected": true
   },
   "동건": {
     "id": "229KhSrjWsm62jVuSpQsBZ",
     "spotifyName": "Jeong Dong Won",
     "kind": "solo",
     "confidence": "low",
-    "why": "이름 불일치 — 앨범 대조",
+    "why": "이름 불일치 — 앨범 대조 · ⛔ 2026-09-30 사람 확인: 동명이인(다른 아티스트) — 수집 차단",
     "evidence": {
       "titleOverlap": 0
     },
-    "checkedAt": "2026-09-28"
+    "checkedAt": "2026-09-30",
+    "rejected": true
   },
   "동방신기": {
     "id": "6nVMMEywS5Y4tsHPKx1nIo",
@@ -828,12 +835,12 @@
     "id": "0GAYGBzZBTtYKkHIZs9ADH",
     "spotifyName": "DIMO REX",
     "kind": "solo",
-    "confidence": "low",
-    "why": "동명 후보 2명 중 앨범 대조",
+    "confidence": "high",
+    "why": "동명 후보 2명 중 앨범 대조 · 2026-09-30 사람 확인: 본인 맞음(레이블·발매 대조)",
     "evidence": {
       "titleOverlap": 0
     },
-    "checkedAt": "2026-09-20"
+    "checkedAt": "2026-09-30"
   },
   "라이즈": {
     "id": "2jOm3cYujQx6o1dxuiuqaX",
@@ -948,11 +955,12 @@
     "spotifyName": "Renaud Capuçon",
     "kind": "solo",
     "confidence": "low",
-    "why": "이름 불일치 — 앨범 대조",
+    "why": "이름 불일치 — 앨범 대조 · ⛔ 2026-09-30 사람 확인: 동명이인(다른 아티스트) — 수집 차단",
     "evidence": {
       "titleOverlap": 0
     },
-    "checkedAt": "2026-09-29"
+    "checkedAt": "2026-09-30",
+    "rejected": true
   },
   "로아": {
     "id": "2xHKnu5YYXM1IrDN5PIWjJ",
@@ -997,11 +1005,12 @@
     "spotifyName": "LUCY",
     "kind": "solo",
     "confidence": "medium",
-    "why": "이름 유일 일치",
+    "why": "이름 유일 일치 · ⛔ 2026-09-30 사람 확인: 동명이인(다른 아티스트) — 수집 차단",
     "evidence": {
       "titleOverlap": null
     },
-    "checkedAt": "2026-09-22"
+    "checkedAt": "2026-09-30",
+    "rejected": true
   },
   "루아": {
     "id": "2pJiP1Q3TnOy1mcAUdown8",
@@ -1182,11 +1191,12 @@
     "spotifyName": "MiyaGi & Endspiel",
     "kind": "solo",
     "confidence": "low",
-    "why": "이름 불일치 — 앨범 대조",
+    "why": "이름 불일치 — 앨범 대조 · ⛔ 2026-09-30 사람 확인: 동명이인(다른 아티스트) — 수집 차단",
     "evidence": {
       "titleOverlap": 0
     },
-    "checkedAt": "2026-09-21"
+    "checkedAt": "2026-09-30",
+    "rejected": true
   },
   "미야오": {
     "id": "08hHTBHlv0WRXWlyrsb6Kv",
@@ -1204,11 +1214,12 @@
     "spotifyName": "Minsu",
     "kind": "solo",
     "confidence": "low",
-    "why": "동명 후보 3명 중 앨범 대조",
+    "why": "동명 후보 3명 중 앨범 대조 · ⛔ 2026-09-30 사람 확인: 동명이인(다른 아티스트) — 수집 차단",
     "evidence": {
       "titleOverlap": 0
     },
-    "checkedAt": "2026-09-29"
+    "checkedAt": "2026-09-30",
+    "rejected": true
   },
   "민주": {
     "id": "7lhiEEAGZosFSF2tlSBBKO",
@@ -1226,22 +1237,24 @@
     "spotifyName": "박수민",
     "kind": "solo",
     "confidence": "low",
-    "why": "이름 불일치 — 앨범 대조",
+    "why": "이름 불일치 — 앨범 대조 · ⛔ 2026-09-30 사람 확인: 동명이인(다른 아티스트) — 수집 차단",
     "evidence": {
       "titleOverlap": 0
     },
-    "checkedAt": "2026-09-26"
+    "checkedAt": "2026-09-30",
+    "rejected": true
   },
   "박시영": {
     "id": "2wAjuE3pVtauK8ZQ2p4SXN",
     "spotifyName": "Park Ki Young",
     "kind": "solo",
     "confidence": "low",
-    "why": "이름 불일치 — 앨범 대조",
+    "why": "이름 불일치 — 앨범 대조 · ⛔ 2026-09-30 사람 확인: 동명이인(다른 아티스트) — 수집 차단",
     "evidence": {
       "titleOverlap": 0
     },
-    "checkedAt": "2026-09-21"
+    "checkedAt": "2026-09-30",
+    "rejected": true
   },
   "박준희": {
     "id": "19edNqjH3rTGrvHs9VF9Xe",
@@ -1713,11 +1726,12 @@
     "spotifyName": "성연 (SUNGYEON)",
     "kind": "solo",
     "confidence": "low",
-    "why": "동명 후보 2명 중 앨범 대조",
+    "why": "동명 후보 2명 중 앨범 대조 · ⛔ 2026-09-30 사람 확인: 동명이인(다른 아티스트) — 수집 차단",
     "evidence": {
       "titleOverlap": 0
     },
-    "checkedAt": "2026-09-28"
+    "checkedAt": "2026-09-30",
+    "rejected": true
   },
   "세븐": {
     "id": "14yLuCwlBqteUdBqx9soJV",
@@ -1806,11 +1820,12 @@
     "spotifyName": "Soosoo",
     "kind": "solo",
     "confidence": "low",
-    "why": "이름 불일치 — 앨범 대조",
+    "why": "이름 불일치 — 앨범 대조 · ⛔ 2026-09-30 사람 확인: 동명이인(다른 아티스트) — 수집 차단",
     "evidence": {
       "titleOverlap": 0
     },
-    "checkedAt": "2026-09-21"
+    "checkedAt": "2026-09-30",
+    "rejected": true
   },
   "소원": {
     "id": "1qyV7btLIfHJdcSZFMea9a",
@@ -2262,11 +2277,12 @@
     "spotifyName": "Anne-Marie",
     "kind": "solo",
     "confidence": "low",
-    "why": "이름 불일치 — 앨범 대조",
+    "why": "이름 불일치 — 앨범 대조 · ⛔ 2026-09-30 사람 확인: 동명이인(다른 아티스트) — 수집 차단",
     "evidence": {
       "titleOverlap": 0
     },
-    "checkedAt": "2026-09-21"
+    "checkedAt": "2026-09-30",
+    "rejected": true
   },
   "앤더블": {
     "id": "3vAHTO5HJ4FmzrLmVbOKRF",
@@ -2953,11 +2969,12 @@
     "spotifyName": "WOW",
     "kind": "solo",
     "confidence": "medium",
-    "why": "이름 유일 일치",
+    "why": "이름 유일 일치 · ⛔ 2026-09-30 사람 확인: 동명이인(다른 아티스트) — 수집 차단",
     "evidence": {
       "titleOverlap": null
     },
-    "checkedAt": "2026-09-25"
+    "checkedAt": "2026-09-30",
+    "rejected": true
   },
   "용희": {
     "id": "1qQRdPpCeVsfDCKz3QFuU5",
@@ -3131,11 +3148,12 @@
     "spotifyName": "Yoon Do Hyun",
     "kind": "solo",
     "confidence": "low",
-    "why": "이름 불일치 — 앨범 대조",
+    "why": "이름 불일치 — 앨범 대조 · ⛔ 2026-09-30 사람 확인: 동명이인(다른 아티스트) — 수집 차단",
     "evidence": {
       "titleOverlap": 0
     },
-    "checkedAt": "2026-09-21"
+    "checkedAt": "2026-09-30",
+    "rejected": true
   },
   "유빈": {
     "id": "3JUj7c2h5xkdOf0GJ07VWE",
@@ -3396,11 +3414,12 @@
     "spotifyName": "Lee Han Chul",
     "kind": "solo",
     "confidence": "low",
-    "why": "이름 불일치 — 앨범 대조",
+    "why": "이름 불일치 — 앨범 대조 · ⛔ 2026-09-30 사람 확인: 동명이인(다른 아티스트) — 수집 차단",
     "evidence": {
       "titleOverlap": 0
     },
-    "checkedAt": "2026-09-24"
+    "checkedAt": "2026-09-30",
+    "rejected": true
   },
   "인피니트": {
     "id": "1bkpTEmumLC3xc7HgMsttU",
@@ -3450,33 +3469,36 @@
     "spotifyName": "Jang Yoon-Jeong",
     "kind": "solo",
     "confidence": "low",
-    "why": "이름 불일치 — 앨범 대조",
+    "why": "이름 불일치 — 앨범 대조 · ⛔ 2026-09-30 사람 확인: 동명이인(다른 아티스트) — 수집 차단",
     "evidence": {
       "titleOverlap": 0
     },
-    "checkedAt": "2026-09-23"
+    "checkedAt": "2026-09-30",
+    "rejected": true
   },
   "장예은": {
     "id": "4hMhbcPHd2nsZFhY1TNp8Y",
     "spotifyName": "Yeeun",
     "kind": "solo",
     "confidence": "low",
-    "why": "이름 불일치 — 앨범 대조",
+    "why": "이름 불일치 — 앨범 대조 · ⛔ 2026-09-30 사람 확인: 동명이인(다른 아티스트) — 수집 차단",
     "evidence": {
       "titleOverlap": 0
     },
-    "checkedAt": "2026-09-24"
+    "checkedAt": "2026-09-30",
+    "rejected": true
   },
   "장유빈": {
     "id": "5f1qpcqhDl49v5gKln3zl2",
     "spotifyName": "Jang Soo Bin",
     "kind": "solo",
     "confidence": "low",
-    "why": "이름 불일치 — 앨범 대조",
+    "why": "이름 불일치 — 앨범 대조 · ⛔ 2026-09-30 사람 확인: 동명이인(다른 아티스트) — 수집 차단",
     "evidence": {
       "titleOverlap": 0
     },
-    "checkedAt": "2026-09-21"
+    "checkedAt": "2026-09-30",
+    "rejected": true
   },
   "재윤": {
     "id": "5okLurl5ljw9O65rkZGDSG",
@@ -3563,11 +3585,12 @@
     "spotifyName": "Lee Young Ji",
     "kind": "solo",
     "confidence": "low",
-    "why": "이름 불일치 — 앨범 대조",
+    "why": "이름 불일치 — 앨범 대조 · ⛔ 2026-09-30 사람 확인: 동명이인(다른 아티스트) — 수집 차단",
     "evidence": {
       "titleOverlap": 0
     },
-    "checkedAt": "2026-09-28"
+    "checkedAt": "2026-09-30",
+    "rejected": true
   },
   "조유리": {
     "id": "5qUT9YBghleRCXg0WifEzf",
@@ -3669,11 +3692,12 @@
     "spotifyName": "Chan",
     "kind": "solo",
     "confidence": "medium",
-    "why": "이름 유일 일치",
+    "why": "이름 유일 일치 · ⛔ 2026-09-30 사람 확인: 동명이인(다른 아티스트) — 수집 차단",
     "evidence": {
       "titleOverlap": null
     },
-    "checkedAt": "2026-09-28"
+    "checkedAt": "2026-09-30",
+    "rejected": true
   },
   "청하": {
     "id": "2PSJ6YriU7JsFucxACpU7Y",
@@ -3723,11 +3747,12 @@
     "spotifyName": "CHIHOON",
     "kind": "solo",
     "confidence": "low",
-    "why": "동명 후보 2명 중 앨범 대조",
+    "why": "동명 후보 2명 중 앨범 대조 · ⛔ 2026-09-30 사람 확인: 동명이인(다른 아티스트) — 수집 차단",
     "evidence": {
       "titleOverlap": 0
     },
-    "checkedAt": "2026-09-28"
+    "checkedAt": "2026-09-30",
+    "rejected": true
   },
   "카드": {
     "id": "2JhAlkmukNvarUpGhTFXUQ",
@@ -3767,11 +3792,12 @@
     "spotifyName": "Kyla",
     "kind": "solo",
     "confidence": "low",
-    "why": "이름 불일치 — 앨범 대조",
+    "why": "이름 불일치 — 앨범 대조 · ⛔ 2026-09-30 사람 확인: 동명이인(다른 아티스트) — 수집 차단",
     "evidence": {
       "titleOverlap": 0
     },
-    "checkedAt": "2026-09-28"
+    "checkedAt": "2026-09-30",
+    "rejected": true
   },
   "캔디샵": {
     "id": "47bUCJh3LXBeQtrTnWEwXn",
@@ -4012,11 +4038,12 @@
     "spotifyName": "Kuniyuki Takahashi",
     "kind": "solo",
     "confidence": "low",
-    "why": "이름 불일치 — 앨범 대조",
+    "why": "이름 불일치 — 앨범 대조 · ⛔ 2026-09-30 사람 확인: 동명이인(다른 아티스트) — 수집 차단",
     "evidence": {
       "titleOverlap": 0
     },
-    "checkedAt": "2026-09-29"
+    "checkedAt": "2026-09-30",
+    "rejected": true
   },
   "템페스트": {
     "id": "1iyFL3CRuKW7PXgPH4VxSP",
@@ -4487,12 +4514,12 @@
     "id": "3UwlejyX2b458azZ7eCnHb",
     "spotifyName": "HyunA",
     "kind": "solo",
-    "confidence": "low",
-    "why": "동명 후보 2명 중 앨범 대조",
+    "confidence": "high",
+    "why": "동명 후보 2명 중 앨범 대조 · 2026-09-30 사람 확인: 본인 맞음(레이블·발매 대조)",
     "evidence": {
       "titleOverlap": 0
     },
-    "checkedAt": "2026-09-23"
+    "checkedAt": "2026-09-30"
   },
   "현진": {
     "id": "3BahfzNxLclSnIM8F6i7rp",

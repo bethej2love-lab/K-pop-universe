@@ -202,6 +202,8 @@ for (const t of list) {
     const own = owned(t);
     // 1) 매핑이 없으면 먼저 해석한다(여기서도 콜을 쓰므로 같은 예산에서 깎는다)
     let m = map[t.ko];
+    // ⚠️ 사람이 "동명이인"으로 판정해 막아둔 매핑 — 다시 풀면 같은 사람이 또 잡히므로 아예 건너뛴다.
+    if (m?.rejected) { state.checked[t.ko] = new Date().toISOString().slice(0, 10); checked++; continue; }
     if (!m || !m.id) {
       const r = await resolveArtist({ names: t.names, ourTitles: own.titles, ourYears: own.years });
       calls += r.calls;
@@ -288,6 +290,20 @@ for (const t of list) {
     //    confidence가 'medium'인 건 "이름이 유일하게 일치"만 본 것이라 동명이인일 수 있다. 평소엔
     //    검증 비용을 안 쓰다가, **실제로 넣을 게 생겼을 때만** 우리가 앨범을 가진 연도로 대조한다.
     //    신보는 하루 2장 수준이라 이 비용은 사실상 없는 것과 같고, 엉뚱한 사람의 앨범이 쌓이는 건 막는다.
+    // 3-0) ⚠️ **대조할 앨범이 0장이면 아래 검증 자체가 불가능하다**(2026-09-30 사고). 예전엔 아래 조건의
+    //      `own.years.length`에서 게이트를 통째로 건너뛰어 미검증 매핑이 그대로 수집됐다 — 티오원 치훈이
+    //      재즈 연주 계정 `CHIHOON`의 앨범 30장을, 렌타가 바이올리니스트 Renaud Capuçon을, 앤이 Anne-Marie를
+    //      받았다(솔로 27명 오염). 솔로 이름은 흔해서 "이름 유일 일치"가 아무 증거도 못 된다.
+    //      · 그룹: 스포티파이 이름이 우리 그룹명(영문/한글/별칭)과 **정확히** 같을 때만 통과 — 실측 13팀 전부 정답
+    //      · 솔로: 통과시키지 않는다. 사람이 확인하고 map에 confidence:'high'를 찍어야 들어온다.
+    if (newOnes.length && m.confidence !== 'high' && !own.years.length) {
+      const norm = s => String(s || '').toLowerCase().replace(/[^\p{L}\p{N}]/gu, '');
+      const exact = t.kind === 'group' && t.names.some(n => norm(n) && norm(n) === norm(m.spotifyName));
+      if (!exact) {
+        reviewList.push(`⛔ 대조할 앨범이 없어 보류: ${t.ko} → ${m.spotifyName} (${m.confidence}) — 신보 ${newOnes.length}장(${newOnes.slice(0, 3).map(al => al.name).join(', ')}${newOnes.length > 3 ? ' …' : ''}). 본인이 맞으면 spotify_artist_map.json에 confidence:'high', 아니면 rejected:true.`);
+        newOnes.length = 0;
+      }
+    }
     if (newOnes.length && m.confidence !== 'high' && own.years.length && calls < BUDGET) {
       let ov = 0;
       for (const y of own.years.slice(0, 2)) {

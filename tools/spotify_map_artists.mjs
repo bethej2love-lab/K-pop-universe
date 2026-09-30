@@ -145,7 +145,9 @@ function targets() {
 }
 
 const prev = fs.existsSync(MAP_FILE) ? JSON.parse(fs.readFileSync(MAP_FILE, 'utf8')) : {};
-let list = targets();
+// ⚠️ `rejected:true`는 사람이 "이 스포티파이 아티스트는 우리 사람이 아니다"라고 판정한 것 — 전체 재매핑(--all)
+//    에서도 다시 풀지 않는다. 풀면 같은 동명이인이 그대로 다시 잡힌다(2026-09-30 치훈→재즈 CHIHOON 사고).
+let list = targets().filter(t => !prev[t.ko]?.rejected);
 if (ONLY) list = list.filter(t => ONLY.has(t.ko));
 else if (!ALL) list = list.filter(t => !prev[t.ko] || prev[t.ko].confidence === 'low');
 
