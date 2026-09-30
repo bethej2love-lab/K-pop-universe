@@ -1337,6 +1337,24 @@ async function _sbFetchAll(buildQuery,pageSize=1000,onPage){
 // 이후로 밴 대상이 새로 늘어나지 않는 한(=_BANNED_VIDEO_NAMES_* 코드가 안 바뀐 한) 이미 훑은 기존 행에서
 // 새로 걸릴 게 없으므로(신규 동기화분은 sync-time skip으로 애초에 안 들어옴), 밴 목록 버전이 그대로면
 // 전체 테이블 재스캔을 건너뛴다 — 테이블이 커질수록 매번 전량 스캔하는 비용을 아끼기 위함.
+// "목록이 안 바뀌었으면 전수 스캔 건너뛰기" 기록(2026-09-30). 예전엔 localStorage에만 남겨서, 브라우저 프로필이
+// 매번 새로 뜨는 청소 워크플로(data-cleanup.yml)에선 **한 번도 스킵이 안 됐다** — 46만 행 전수 스캔 두 번(18+17분)이
+// 매일 돌아 80분 타임아웃으로 청소 루틴이 3회 연속 실패(9/27~29, 뒤 단계 3~9는 한 번도 자동으로 안 끝남).
+// 게다가 실패하면 프로필 캐시가 저장 안 돼 다음 회차도 빈 프로필 — 스스로 안 풀리는 고리였다.
+// 이제 공용 DB(admin_meta)에 목록 해시를 남긴다. localStorage는 즉시 판단용으로 같이 둔다.
+function _sweepVerHash(v){let h=5381;for(let i=0;i<v.length;i++)h=((h<<5)+h+v.charCodeAt(i))|0;return (h>>>0).toString(36)+":"+v.length;}
+async function _sweepVersionDone(key,version){
+  const hv=_sweepVerHash(version);
+  try{if(localStorage.getItem(key)===version)return true;}catch(e){}
+  try{
+    const{data,error}=await sb.from('atm_exception_rules').select('value').eq('type','admin_meta').eq('key',key).maybeSingle();
+    return !error&&!!data&&String(data.value)===hv; // 읽기 실패는 "안 한 것"으로 — 스캔이 한 번 더 도는 쪽이 안전
+  }catch(e){return false;}
+}
+async function _sweepVersionMark(key,version){
+  try{localStorage.setItem(key,version);}catch(e){}
+  await _admMetaSet(key,_sweepVerHash(version));
+}
 function _ytBannedListVersion(){return _BANNED_VIDEO_NAMES_GLOBAL.join(',')+'|'+JSON.stringify(_BANNED_VIDEO_NAMES_SCOPED);}
 async function _ytSweepBannedVideos(){
   if(!sb){_ytSetProg('Supabase 연결 없음');return;}
@@ -1344,7 +1362,7 @@ async function _ytSweepBannedVideos(){
   if(btn)btn.disabled=true;
   try{
     const version=_ytBannedListVersion();
-    if(localStorage.getItem('kpu_banned_sweep_version')===version){
+    if(await _sweepVersionDone('kpu_banned_sweep_version',version)){
       _ytSetProg('밴 목록 변경 없음 — 스킵함(코드의 밴 목록을 수정했을 때만 다시 돌리면 됩니다)');
       return;
     }
@@ -1355,15 +1373,15 @@ async function _ytSweepBannedVideos(){
       .or('content_flag.is.null,content_flag.neq.hidden')
       .order('id'));
     if(error){_ytSetProg('조회 실패: '+error.message);return;}
-    if(!rows?.length){_ytSetProg('검사할 영상이 없어요');localStorage.setItem('kpu_banned_sweep_version',version);return;}
+    if(!rows?.length){_ytSetProg('검사할 영상이 없어요');await _sweepVersionMark('kpu_banned_sweep_version',version);return;}
     const toHide=rows.filter(v=>_isBannedVideoTitle(v.title,v.group_ko)).map(v=>v.id);
-    if(!toHide.length){_ytSetProg(`검사 완료 — ${rows.length}개 중 해당 없음`);localStorage.setItem('kpu_banned_sweep_version',version);return;}
+    if(!toHide.length){_ytSetProg(`검사 완료 — ${rows.length}개 중 해당 없음`);await _sweepVersionMark('kpu_banned_sweep_version',version);return;}
     await _snapshotBeforeBulk('밴 인물 언급 영상 숨김 정리',toHide);
     for(let i=0;i<toHide.length;i+=200){
       const{error:ue}=await sb.from(_YT_TABLE).update(_flagPatch('hidden','auto',{needs_review:false})).in('id',toHide.slice(i,i+200));
       if(ue)throw new Error(ue.message);
     }
-    localStorage.setItem('kpu_banned_sweep_version',version);
+    await _sweepVersionMark('kpu_banned_sweep_version',version);
     _ytSetProg(`완료! ${rows.length}개 중 ${toHide.length}개 숨김 처리함(숨김 목록에서 검토 가능)`);
   }catch(e){
     _ytSetProg('오류: '+e.message);
@@ -1382,7 +1400,7 @@ async function _ytSweepJunkKeywordVideos(){
   if(btn)btn.disabled=true;
   try{
     const version=_ytJunkKeywordsVersion();
-    if(localStorage.getItem('kpu_junk_sweep_version')===version){
+    if(await _sweepVersionDone('kpu_junk_sweep_version',version)){
       _ytSetProg('제외 키워드 목록 변경 없음 — 스킵함(코드의 키워드 목록을 수정했을 때만 다시 돌리면 됩니다)');
       return;
     }
@@ -1393,16 +1411,16 @@ async function _ytSweepJunkKeywordVideos(){
       .or('content_flag.is.null,content_flag.neq.무관')
       .order('id'));
     if(error){_ytSetProg('조회 실패: '+error.message);return;}
-    if(!rows?.length){_ytSetProg('검사할 영상이 없어요');localStorage.setItem('kpu_junk_sweep_version',version);return;}
+    if(!rows?.length){_ytSetProg('검사할 영상이 없어요');await _sweepVersionMark('kpu_junk_sweep_version',version);return;}
     // 공식 채널 업로드분은 제외 — 동기화 시점과 같은 규칙(_shouldJunkFlag)을 그대로 쓴다.
     const toFlag=rows.filter(v=>_shouldJunkFlag(v.title,v.source_tier)).map(v=>v.id);
-    if(!toFlag.length){_ytSetProg(`검사 완료 — ${rows.length}개 중 해당 없음`);localStorage.setItem('kpu_junk_sweep_version',version);return;}
+    if(!toFlag.length){_ytSetProg(`검사 완료 — ${rows.length}개 중 해당 없음`);await _sweepVersionMark('kpu_junk_sweep_version',version);return;}
     await _snapshotBeforeBulk('제외 키워드 영상 무관 정리',toFlag);
     for(let i=0;i<toFlag.length;i+=200){
       const{error:ue}=await sb.from(_YT_TABLE).update(_flagPatch('무관','auto')).in('id',toFlag.slice(i,i+200));
       if(ue)throw new Error(ue.message);
     }
-    localStorage.setItem('kpu_junk_sweep_version',version);
+    await _sweepVersionMark('kpu_junk_sweep_version',version);
     _ytSetProg(`완료! ${rows.length}개 중 ${toFlag.length}개 무관 처리함`);
   }catch(e){
     _ytSetProg('오류: '+e.message);

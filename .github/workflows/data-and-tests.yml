@@ -23,6 +23,12 @@
           with:
             node-version: 22
 
+        # 순위 스냅샷 크론(kpopuniverse-share)과 화면 차트 계산의 일치 검사용(tests/chart-snapshot-parity.test.js).
+        # ⚠️ 2026-09-30까지 CI엔 이 레포가 없어 그 테스트가 **항상 스킵**됐다 — 그 사이 화면 필터만 바뀌어 4일간 어긋났다.
+        #    워크스페이스 **밖**(옆 폴더)에 받는다: 안에 두면 레포 파일을 훑는 다른 테스트가 그 파일까지 본다. 공개 레포라 토큰 불필요.
+        - name: 순위 스냅샷 크론 레포 받기(parity 검사용)
+          run: git clone --depth 1 https://github.com/bethej2love-lab/kpopuniverse-share.git ../kpopuniverse-share
+
         - name: Node 전용 테스트 + 데이터 검증
           run: |
             FAILED=""

@@ -21,7 +21,9 @@ const fs = require('fs');
 const path = require('path');
 
 const ROOT = path.join(__dirname, '..');
-const CRON = path.join(ROOT, '..', 'kpopuniverse-share', 'api', 'cron', 'snapshot-ranks.js');
+// CI는 SHARE_DIR로 체크아웃 위치를 넘긴다(data-and-tests.yml). ⚠️ 2026-09-30까지 CI에선 이 레포가 없어 **항상 스킵**됐고,
+// 그 사이 화면만 바뀐 필터(시즌N EP.N)가 스냅샷 크론과 4일간 어긋나 있었다 — 로컬에서만 도는 검사는 안 도는 검사다.
+const CRON = path.join(process.env.SHARE_DIR || path.join(ROOT, '..', 'kpopuniverse-share'), 'api', 'cron', 'snapshot-ranks.js');
 
 if (!fs.existsSync(CRON)) {
   console.log('⏭️  kpopuniverse-share 레포가 옆에 없음 — 스킵 (로컬에서만 도는 검사)');

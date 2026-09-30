@@ -24,7 +24,10 @@ concurrency:
 jobs:
   cleanup:
     runs-on: ubuntu-latest
-    timeout-minutes: 90
+    # ⚠️ 2026-09-30: 90분(루틴 80분)으로는 한 번도 못 끝났다(9/27~29 3연속 타임아웃, 6단계 오태깅 재배정에서 끊김).
+    #    1·2단계 전수 스캔 35분이 매일 헛돌던 게 주원인(admin.js _sweepVersionDone 주석) — 그건 고쳤고, 3~9단계만으로도
+    #    40분+α라 여유를 둔다. 새벽 4시 단독 실행이라 길어도 다른 잡과 안 겹친다.
+    timeout-minutes: 170
     steps:
       - uses: actions/checkout@v4
 
@@ -38,8 +41,10 @@ jobs:
         with:
           chrome-version: stable
 
+      # 프로필(로그인 세션·localStorage) 복원. ⚠️ 예전엔 actions/cache@v4 한 스텝이라 **잡이 실패하면 저장을 건너뛰었다** —
+      # 타임아웃 → 저장 안 됨 → 다음 회차 빈 프로필 → 또 타임아웃. 복원/저장을 나누고 저장은 always()로 돈다.
       - name: restore cleanup profile
-        uses: actions/cache@v4
+        uses: actions/cache/restore@v4
         with:
           path: ${{ runner.temp }}/kpu-cleanup-profile
           key: kpu-cleanup-profile-${{ github.run_id }}
@@ -54,5 +59,12 @@ jobs:
           CHROME_PATH: ${{ steps.chrome.outputs.chrome-path }}
           PROFILE_DIR: ${{ runner.temp }}/kpu-cleanup-profile
           MODE: cleanup
-          ROUTINE_TIMEOUT_MIN: '80'
+          ROUTINE_TIMEOUT_MIN: '150'
         run: node tools/run_daily_routine.cjs
+
+      - name: save cleanup profile
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: ${{ runner.temp }}/kpu-cleanup-profile
+          key: kpu-cleanup-profile-${{ github.run_id }}

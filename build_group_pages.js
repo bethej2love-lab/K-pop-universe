@@ -888,6 +888,20 @@ async function buildRelationPages() {
       relPageCount++;
     }
   }
+  // 이번에 안 만든 옛 관계 페이지는 지운다(2026-09-30). 예전엔 쓰기만 해서, 오태깅 청소로 커버 수가 REL_MIN 아래로
+  // 떨어진 그룹(아이콘·하이라이트·온리원오프 — 흔한 단어형 이름이라 오탐 커버가 많았던 곳)의 페이지가 **허브에서 빠진
+  // 채 디스크에 남아** 고아가 됐다(static-links 테스트가 이걸로 계속 빨간불). 틀린 데이터로 만든 페이지가 검색에
+  // 남는 것도 막는다. ⚠️ 생성이 성공한 경우에만 여기까지 온다(실패 시 existingRelPages가 옛 목록을 보존).
+  const made = new Set(relPages.map(p => p.loc.slice(SITE.length + 1)));
+  for (const base of ['collab', 'cover', 'en/collab', 'en/cover']) {
+    const dir = path.join(ROOT, base);
+    if (!fs.existsSync(dir)) continue;
+    for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
+      if (!e.isDirectory() || made.has(`${base}/${e.name}/`)) continue;
+      fs.rmSync(path.join(dir, e.name), { recursive: true, force: true });
+      console.log(`  옛 관계 페이지 삭제: ${base}/${e.name}/`);
+    }
+  }
   return { sitemap: relPages, hubLinks };
 }
 

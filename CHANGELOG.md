@@ -61,6 +61,11 @@
 - ~~**`active:false`인데 탈퇴일(`left`)이 없는 멤버 104명 — 그룹 미태깅 영상이 그 멤버 카드에 하나도 안 뜸(2026-08-27 발견)**~~ → **같은 날 처리 완료** — 폴백 4단계 재설계로 차단 110명→11명, 99명 복구. 아래 2026-08-27 항목 참고. ⚠️ 원 진단("탈퇴일 미기입이 원인")은 **틀렸었다** — 실제 원인은 `active` 필드가 "이 그룹 멤버인가"와 "개인이 아직 활동하는가" 두 뜻으로 섞여 쓰인 것이었고, 쥬얼리·걸스데이·스텔라에서 같은 시기 멤버가 은퇴 여부에 따라 갈리고 있었다.
 ---
 
+## 2026-09-30 (세션 — CI·자동 루틴 실패 메일 정리)
+- [완료] **청소 루틴 3연속 실패(9/27~29, 한 번도 완주 못 함)** — 1·2단계(밴·제외 키워드) "목록 안 바뀌면 스킵" 기록이 localStorage에만 있어, 매번 빈 프로필로 뜨는 워크플로에선 스킵이 안 되고 46만 행 전수 스캔 35분 → 80분 타임아웃 → 실패하면 프로필 캐시 저장도 건너뜀 → 다음 회차도 빈 프로필(스스로 안 풀리는 고리). 스킵 기록을 공용 DB(admin_meta)로, 캐시 저장을 always()로 분리, 타임아웃 80→150분. 매일 루틴 워크플로의 체크포인트 캐시도 같은 구조라 같이 고침. [admin.js] [.github/workflows/data-cleanup.yml] [.github/workflows/daily-routine.yml]
+- [완료] **Data validation & tests 매 push 빨간불(하루 ~10통)** — main에서 원래 실패하던 3개: ① member-cutoff — 9/27 다른 세션이 걸스데이에 disbanded를 넣었는데 9/21 결정("공식 해체 선언 없음 → 넣지 않는다", 테스트로 고정)과 충돌 → 되돌림 ② cover-credit-reassign — 성한빈이 이제 로스터에 정확히 잡혀(제로베이스원) 테스트가 낡음 → 정답으로 갱신, "못 찾으면 보류"는 없는 이름으로 유지 ③ static-links — 커버 수가 기준 아래로 내려간 그룹(아이콘·하이라이트·온리원오프) 페이지를 빌더가 안 지워 고아로 남음 → 빌드 때 옛 관계 페이지 삭제. [groups.json] [tests/cover-credit-reassign.test.js] [build_group_pages.js]
+- [완료] chart-snapshot-parity가 CI에서 항상 스킵이었음(공유 레포 없음) — 그 사이 화면의 직캠 차트 필터(9/26 시즌N EP.N)가 스냅샷 크론과 어긋남. 크론 수정(kpopuniverse-share 0623757) + CI가 공유 레포를 옆에 받아 실제로 비교. [.github/workflows/data-and-tests.yml] [tests/chart-snapshot-parity.test.js]
+
 ## 2026-09-30 (세션 — 후속: 근본 대책 — 앨범 신원 검증 다층화 · 쇼츠 썸네일 단일 경로 · 프로그램명/동명 오태깅)
 - [완료] 앨범 신원 검증 2단계 — 앨범 겹침 대조가 불가능하면(대조할 앨범 0장) **우리 영상 제목에 그 앨범 곡이 곡 제목 자리로 2곡 이상** 있어야 통과(videoEvidence). 실측 오수집 27명 중 통과 0, 디모렉스 9곡으로 자동 통과. 못 넘으면 state.pending 보류 + 어드민 홈 "앨범 확인 대기" 카드. [tools/spotify_disco_lib.mjs] [tools/spotify_disco_sync.mjs] [admin.js]
 - [완료] 출처 불변식 테스트 — 어떤 경로로 들어왔든 미검증·rejected 매핑의 앨범, 서로 다른 솔로에게 같은 앨범이면 실패. 일일 수집 워크플로에서 **커밋 전 게이트**(실패 시 커밋 안 함). 사고 시점 데이터로 돌리면 31건 적발. [tests/disco-provenance.test.js] [.github/workflows/disco-daily.yml]
