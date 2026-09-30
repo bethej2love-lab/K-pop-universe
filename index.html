@@ -2535,6 +2535,11 @@ async function buildUniverse(){
     a._worldPositions=[];
     _artistGroups(a).forEach(g=>{
       const k=g.ko;
+      // 활동 중인 그룹을 **떠나서** 지금은 다른 데(솔로·다른 그룹)에 있는 사람은 그 행성 안에 두지 않는다(2026-10-01 사용자
+      // 제보 — 디모렉스를 검색해 카드를 열면 별이 여전히 트레저 행성 안에 있었다). 주 소속이 그 그룹인 탈퇴 멤버는 기존
+      // "행성 밖으로 날려두기" 연출(아래 _flyOutside)이 맡고, 해체 그룹(아이즈원 등)은 끝까지 함께한 소속이라 그대로 둔다.
+      // 솔로가 된 사람은 아래 "무소속(솔로) 배치"에서 소속사 방향·데뷔연도로 우주에 따로 뜬다. 해당 11명(승한·에반·디모렉스·청하…).
+      if(k!==a.group.ko&&GROUPS[k]&&!GROUPS[k].disbanded&&(g.left||g.active===false))return;
       if(!memberMap[k])memberMap[k]=[];
       if(!memberMap[k].includes(a))memberMap[k].push(a);
     });
@@ -2912,6 +2917,9 @@ async function buildUniverse(){
     m._ptsIdx=_pIdx;
     m._bdayYear=parseInt(m.bday)||0;
     m._filterAlpha=1;m._filterTarget=1;
+    // 이름 라벨 — 행성 소속 별과 같은 모양. 예전엔 행성 루프에서만 만들어서 우주에 따로 뜬 솔로 별엔 이름이 아예 없었다
+    // (2026-10-01 사용자 제보 "별 주위에 디모렉스라고 떠 있어야 — 설명이 없어 알아보기 어렵다"). 표시 조건은 animate 루프.
+    {const _nd=document.createElement('div');_nd.className='member-name-label';_nd.textContent=_starLabelName(m,m.group.ko);const _nl=new THREE.CSS2DObject(_nd);_nl.position.copy(mPos).add(new THREE.Vector3(0,0.42,0));_nl.visible=false;scene.add(_nl);m._nameLabel=_nl;m._nameLabelEl=_nd;}
   });
 
   // ── Connection lines ──────────────────────────────
@@ -3932,16 +3940,22 @@ function animate(){
   }else if(_gcLabelCacheKo!==null){
     _gcLabelCacheKo=null;_gcLabelSet=null;
   }
-  if(isMob()||_gcLabelSet){
+  // 멤버 카드가 열려 있으면 그 사람 별 옆 이름은 **항상** 띄운다(2026-10-01) — 카드와 별을 이어 주는 유일한 단서라,
+  // 줌 거리·행성 유무(우주에 따로 뜬 솔로)와 무관하게. 나머지 별은 예전 규칙(모바일 줌인·데스크톱 그룹 카드) 그대로.
+  const _tOpen=(typeof _openTArtist!=='undefined')?_openTArtist:null;
+  if(isMob()||_gcLabelSet||_tOpen){
     _gcLabelsWereShown=true;
     ARTISTS.forEach(a=>{
       if(!a._nameLabel||!a._worldPos)return;
+      a._nameLabelEl.classList.toggle('is-focus',a===_tOpen); // 카드 열린 사람만 크고 밝게 — 그룹 라벨과 구분
+      if(a===_tOpen){a._nameLabel.visible=true;a._nameLabelEl.style.opacity='1';return;}
+      if(!isMob()&&!_gcLabelSet){a._nameLabel.visible=false;return;}
       if(_gcLabelSet&&!_gcLabelSet.has(a)){a._nameLabel.visible=false;return;}
       const bm=bubbleMeshes.find(b=>b.ko===a.group.ko);
-      if(!bm){a._nameLabel.visible=false;return;}
-      const d=camera.position.distanceTo(bm.mesh.position);
+      // 행성이 없는 솔로 별은 자기 위치까지의 거리로 줌인 판정(모바일)
+      const d=camera.position.distanceTo(bm?bm.mesh.position:a._worldPos);
       const fade=d<STAR_LABEL_FADE_DIST?Math.max(0,Math.min(1,(STAR_LABEL_FADE_DIST-d)/13)):0;
-      const alpha=fade*(bm.mesh._filterAlpha??1)*(bm.mesh._focusAlpha??1);
+      const alpha=fade*(bm?(bm.mesh._filterAlpha??1)*(bm.mesh._focusAlpha??1):(a._filterAlpha??1));
       if(alpha<0.01){a._nameLabel.visible=false;return;}
       a._nameLabel.visible=true;
       a._nameLabelEl.style.opacity=alpha.toFixed(3);
@@ -10922,6 +10936,9 @@ function showT(a,cx,cy,keepNavStack,urlMode,_unusedPushMobNav,noFly){
     document.getElementById('tt-prev-name').textContent=_name(prevM);
     document.getElementById('tt-next-name').textContent=_name(nextM);
   }
+  // 행성 없이 우주에 따로 뜬 솔로 별 — setFocus가 날아갈 행성이 없어서 카메라가 전체 조망에 그대로 멈춰 있었다
+  // (2026-10-01, 디모렉스). 그 별로 직접 날아간다. 이름 라벨은 animate 루프가 카드 열린 동안 항상 띄운다.
+  if(!noFly&&a._worldPos&&!GROUPS[a.group.ko]&&(a._worldPositions||[]).length<=1)flyTo(a._worldPos,950);
   // 다중 그룹 소속 멤버 → 각 행성 내 별 사이 선 연결 + 카메라 프레이밍
   if(a._worldPositions&&a._worldPositions.length>1){
     const SEG=48;
