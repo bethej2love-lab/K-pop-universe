@@ -1147,6 +1147,17 @@
     },
     "checkedAt": "2026-09-27"
   },
+  "모리 코유키": {
+    "id": "6sJihoYjCzAFgxBHQ2yBQb",
+    "spotifyName": "森みゆき",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "이름 불일치 — 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-09-30"
+  },
   "모모랜드": {
     "id": "5RR0MLwcjc87wjSw2JYdwx",
     "spotifyName": "MOMOLAND",
@@ -1265,6 +1276,17 @@
       "titleOverlap": 2
     },
     "checkedAt": "2026-09-25"
+  },
+  "박지은": {
+    "id": "2b9Q943vzno2HNZokj4ziM",
+    "spotifyName": "Swan",
+    "kind": "solo",
+    "confidence": "medium",
+    "why": "이름 유일 일치",
+    "evidence": {
+      "titleOverlap": null
+    },
+    "checkedAt": "2026-09-30"
   },
   "박형식": {
     "id": "63CIh5694oJLXgtyXkp92Z",
@@ -1825,6 +1847,22 @@
     "checkedAt": "2026-09-30",
     "rejected": true
   },
+  "소연": {
+    "id": "6Xg22wJOAcnvPUfk5WvODH",
+    "spotifyName": "SOYEON",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "동명 후보 2명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0,
+      "verifyOverlap": 0,
+      "verifyYears": [
+        2026,
+        2025
+      ]
+    },
+    "checkedAt": "2026-09-30"
+  },
   "소원": {
     "id": "1qyV7btLIfHJdcSZFMea9a",
     "spotifyName": "Sowon",
@@ -1862,6 +1900,22 @@
       ]
     },
     "checkedAt": "2026-09-24"
+  },
+  "수안": {
+    "id": "3YwUhszWyfajC0yEXETJxR",
+    "spotifyName": "Suan",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "동명 후보 4명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0,
+      "verifyOverlap": 0,
+      "verifyYears": [
+        2026,
+        2025
+      ]
+    },
+    "checkedAt": "2026-09-30"
   },
   "슈퍼노바": {
     "id": "7kydkMNIMNhr7jDgeOQd4H",
@@ -2395,6 +2449,31 @@
       "titleOverlap": 2
     },
     "checkedAt": "2026-09-17"
+  },
+  "에반": {
+    "id": "3olOSNzFWX5z21YMEFFVMw",
+    "spotifyName": "EVAN",
+    "kind": "solo",
+    "confidence": "high",
+    "why": "동명 후보 2명 중 앨범 대조 · 영상 제목 대조 통과(3곡)",
+    "evidence": {
+      "titleOverlap": 0,
+      "videoHits": [
+        {
+          "song": "DEATH OF ME",
+          "video": "[FAN PICK CAM 4K] EVAN 'Death of Me' [에반] [THE SHOW] 260915 방송"
+        },
+        {
+          "song": "Immature",
+          "video": "[4K] EVAN(에반) “Immature” Band LIVE | it's Live"
+        },
+        {
+          "song": "Overflow",
+          "video": "[KCON LA 2026] 에반(EVAN) - Overflow | Mnet 260906 방송"
+        }
+      ]
+    },
+    "checkedAt": "2026-09-30"
   },
   "에버글로우": {
     "id": "3ZZzT0naD25RhY2uZvIKkJ",
@@ -3259,6 +3338,17 @@
     },
     "checkedAt": "2026-09-15"
   },
+  "이레": {
+    "id": "1FCug8HMxqearaZB5qwWQj",
+    "spotifyName": "IRENE",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "이름 불일치 — 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-09-30"
+  },
   "이븐": {
     "id": "6SYJFHPxXkr4SZJR8aLEml",
     "spotifyName": "EVNNE",
@@ -3496,6 +3586,17 @@
     "checkedAt": "2026-09-30",
     "rejected": true
   },
+  "장은성": {
+    "id": "7D1fNaKBVN2GyV53i9QTum",
+    "spotifyName": "Jang Hyunsung",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "이름 불일치 — 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-09-30"
+  },
   "재윤": {
     "id": "5okLurl5ljw9O65rkZGDSG",
     "spotifyName": "Jaeyun (TO1)",
@@ -3667,6 +3768,17 @@
     },
     "checkedAt": "2026-09-22"
   },
+  "진예": {
+    "id": "2FgZrgTMX6Sk0VNcOsEPmm",
+    "spotifyName": "Punch",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "이름 불일치 — 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-09-30"
+  },
   "차오루": {
     "id": "73sIBHcqh3Z3NyqHKZ7FOL",
     "spotifyName": "Childish Gambino",
@@ -3691,6 +3803,21 @@
     "why": "이름 유일 일치 · 2026-09-30 본인 여부 불확실 — 앨범 제거, 영상 증거 생기기 전까지 수집 보류",
     "evidence": {
       "titleOverlap": null
+    },
+    "checkedAt": "2026-09-30"
+  },
+  "채인": {
+    "id": "6JFcbujqKt4RPN9ThKKU3n",
+    "spotifyName": "Chaein",
+    "kind": "solo",
+    "confidence": "medium",
+    "why": "이름 유일 일치",
+    "evidence": {
+      "titleOverlap": null,
+      "verifyOverlap": 0,
+      "verifyYears": [
+        2026
+      ]
     },
     "checkedAt": "2026-09-30"
   },

@@ -356,10 +356,19 @@
     "서윤경": "2026-09-29",
     "다현": "2026-09-29",
     "타카하시 쥬리": "2026-09-29",
-    "나고은": "2026-09-29"
+    "나고은": "2026-09-29",
+    "에반": "2026-09-30",
+    "장은성": "2026-09-30",
+    "이레": "2026-09-30",
+    "모리 코유키": "2026-09-30",
+    "채인": "2026-09-30",
+    "수안": "2026-09-30",
+    "박지은": "2026-09-30",
+    "소연": "2026-09-30",
+    "진예": "2026-09-30"
   },
-  "runs": 39,
-  "lastRunAt": "2026-09-29T19:57:40.859Z",
+  "runs": 40,
+  "lastRunAt": "2026-09-30T15:52:23.538Z",
   "swept": {
     "에스파": [
       2025
@@ -1511,6 +1520,98 @@
     "나고은": [
       2023,
       2024
+    ],
+    "에반": [
+      2023,
+      2024,
+      2025
+    ],
+    "장은성": [
+      2023,
+      2024,
+      2025
+    ],
+    "이레": [
+      2023,
+      2024,
+      2025
+    ],
+    "모리 코유키": [
+      2023,
+      2024,
+      2025
+    ],
+    "채인": [
+      2023,
+      2024,
+      2025
+    ],
+    "수안": [
+      2023,
+      2024,
+      2025
+    ],
+    "박지은": [
+      2023,
+      2024,
+      2025
+    ],
+    "소연": [
+      2023,
+      2024,
+      2025
     ]
+  },
+  "pending": {
+    "이레": {
+      "spotifyName": "IRENE",
+      "spotifyId": "1FCug8HMxqearaZB5qwWQj",
+      "since": "2026-09-30",
+      "heldAlbums": [
+        "2026-03-30 Biggest Fan - The 1st Album",
+        "2024-11-26 Like A Flower - The 1st Mini Album"
+      ],
+      "why": "영상 증거 0곡(영상 291개 대조)"
+    },
+    "채인": {
+      "spotifyName": "Chaein",
+      "spotifyId": "6JFcbujqKt4RPN9ThKKU3n",
+      "since": "2026-09-30",
+      "heldAlbums": [
+        "2026-04-26 Movie '18 Youth' Special Track. 2 (Original Soundtrack)",
+        "2026-06-01 Movie ‘Little toad, Little toad’ Special Track. 4 (Original Soundtrack)"
+      ],
+      "why": "영상 증거 0곡(영상 232개 대조)"
+    },
+    "수안": {
+      "spotifyName": "Suan",
+      "spotifyId": "3YwUhszWyfajC0yEXETJxR",
+      "since": "2026-09-30",
+      "heldAlbums": [
+        "2023-08-25 LOYALTY",
+        "2023-07-21 FINAL DESTINATION"
+      ],
+      "why": "영상 증거 0곡(영상 304개 대조)"
+    },
+    "박지은": {
+      "spotifyName": "Swan",
+      "spotifyId": "2b9Q943vzno2HNZokj4ziM",
+      "since": "2026-09-30",
+      "heldAlbums": [
+        "2024-03-05 Spring Road"
+      ],
+      "why": "영상 증거 0곡(영상 289개 대조)"
+    },
+    "소연": {
+      "spotifyName": "SOYEON",
+      "spotifyId": "6Xg22wJOAcnvPUfk5WvODH",
+      "since": "2026-09-30",
+      "heldAlbums": [
+        "2026-09-07 What a Wonderful Life",
+        "2023-08-23 A-MOONO-KE",
+        "2025-06-27 My Name Is Malguem [The Seasons: Cantabile of Park Bo Gum]"
+      ],
+      "why": "영상 증거 0곡(영상 54개 대조)"
+    }
   }
 }
