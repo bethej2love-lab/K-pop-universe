@@ -18488,6 +18488,9 @@ function _openFeedListOverlay(title,sub,songs,ctx){
       metaEl.textContent=_fmtVidMeta(s.pa,s.vc);
       item.appendChild(metaEl);
     }
+    // 태깅(누가 나왔나)도 항상(2026-10-01) — 차트·모아보기는 여러 그룹이 섞여서 카드 그리드보다 더 필요하다
+    const whoLine=_songWhoLine(s);
+    if(whoLine)item.appendChild(whoLine);
     item.addEventListener('click',e=>{
       e.stopPropagation();
       if(_flSelMode){
@@ -18525,9 +18528,12 @@ function _openFeedListOverlay(title,sub,songs,ctx){
       const titleH=it.querySelector('.tv-sm-title')?.getBoundingClientRect().height||0;
       const metaEl=it.querySelector('.gc-ch-meta');
       const metaH=metaEl?Math.max(metaEl.getBoundingClientRect().height,20):0;
+      // 태깅 줄(_songWhoLine, 2026-10-01)도 높이에 넣는다 — 안 넣으면 고정 높이에 잘려 안 보인다
+      const whoEl=it.querySelector('.tv-with-line');
+      const whoH=whoEl?Math.ceil(whoEl.getBoundingClientRect().height)+4:0;
       if(!w)return;
       const thumbH=it.classList.contains('is-short')?w*16/9:w*9/16;
-      it.style.height=Math.ceil(thumbH+titleH+metaH)+'px';
+      it.style.height=Math.ceil(thumbH+titleH+metaH+whoH)+'px';
       _placeDurBadge(it,thumbH); // 재생시간 배지를 썸네일 밑변에 맞춤
     });
     if(rendered<orderedSongs.length){grid.appendChild(sentinel);observer.observe(sentinel);}
@@ -20580,6 +20586,23 @@ const _FEED_COLS=()=>'id,title,thumb,category,is_short,content_flag,group_ko,mem
 // 그룹은 뒤에 작고 흐리게(.feed-sub-grp). 공동운영 채널은 주인이 여럿이라 전부 적는다. 그룹 채널 영상과
 // 멤버 태그가 없는 개인 채널(팬 tier 등)은 예전처럼 그룹만. 표기는 _dispName(영문 모드·활동명 규칙 공유).
 // 오리지널 콘텐츠·Trend·For You(즐겨찾기 신작) 세 선반이 같이 쓴다 — 한 곳만 고치면 선반마다 어긋난다.
+// 목록 타일의 태깅 줄 — "멤버 · 그룹"(2026-10-01). 한 그룹 전원이면 그룹명만, 멤버가 많으면 3명 + "외 N".
+// song에 태그가 실려 있어야 한다(_rowTags). 태그가 없는 목록(옛 컬렉션 등)은 줄을 안 만든다.
+function _songWhoLine(song){
+  const gk=song&&(song.groupKo||song._apiGroupKo);
+  if(!gk)return null;
+  const inG=a=>_artistGroups(a).some(g=>g.ko===gk)||_ytGroupKoFor(a)===gk;
+  const arts=[...new Set(song.memberKos||[])].map(n=>ARTISTS.find(a=>a.name.ko===n&&inG(a))).filter(Boolean);
+  const full=arts.length>1&&GROUPS[gk]&&_withIsFullGroup(gk,arts);
+  const gLabel=GROUPS[gk]?(currentLang==='ko'?gk:(GROUPS[gk].en||gk)):'';
+  let names=full?[]:arts.map(_dispName);
+  if(!names.length&&!gLabel){const solo=ARTISTS.find(a=>_ytGroupKoFor(a)===gk);if(solo)names=[_dispName(solo)];}
+  if(!names.length&&!gLabel)return null;
+  const more=names.length>3?names.length-3:0;
+  const line=document.createElement('div');line.className='tv-with-line';
+  line.textContent=[names.slice(0,3).join(', ')+(more?(currentLang==='ko'?` 외 ${more}`:` +${more}`):''),gLabel].filter(Boolean).join(' · ');
+  return line;
+}
 function _feedWhoSub(song){
   const g=_gLabelKo(song.groupKo);
   if(!song.ownerCh)return g;
@@ -21558,6 +21581,18 @@ function _makeChVidController(contId){
 
   // members/with_members/with_groups를 buildVideoSection과 같은 song.with 포맷("이름" 또는 "이름(그룹)")으로 변환 —
   // 그룹/멤버 카드의 자체 영상 그리드에도 연결 카드처럼 "함께한 멤버" 줄이 뜨게 하기 위함.
+  // 함께한 정보가 없을 때의 태깅 줄 — 멤버 카드에서 본인만 나온 영상이면 본인, 그 밖엔 영상 소속 그룹(2026-10-01)
+  function _gridOwnerLine(v){
+    let chip=null;
+    if(state.memberKo){
+      const me=ARTISTS.find(a=>a.name.ko===state.memberKo&&(_ytGroupKoFor(a)===state.ko||a.group.ko===state.ko||_artistGroups(a).some(g=>g.ko===state.ko)));
+      if(me&&((v.members||[]).includes(state.memberKo)||!GROUPS[v.group_ko]))chip=_makeMemberChip(me);
+    }
+    if(!chip&&v.group_ko&&GROUPS[v.group_ko])chip=_makeGCChip(v.group_ko,currentLang==='ko'?v.group_ko:(GROUPS[v.group_ko].en||v.group_ko));
+    if(!chip)return null;
+    const line=document.createElement('div');line.className='tv-with-line';line.appendChild(chip);
+    return line;
+  }
   function _buildGridWithList(v,ownGko,selfKo){
     // '개별출연'(컴필레이션 — 각자 따로 나온 영상, 콜라보 아님)은 함께한 멤버 줄을 안 만듦
     // (_apiVidToSong과 동일한 이유, 2026-08-04).
@@ -21631,21 +21666,21 @@ function _makeChVidController(contId){
       // 중이면 이 멤버도 포함" 폴백까지 갖고 있어서(위 정의 참고) 그대로 재사용.
       const s={t:v.title,u:vidUrl,thumb:v.thumb||'',pa:v.published_at?.slice(0,10),vc:v.view_count,dur:v.duration_sec,with:_buildGridWithList(v,state.ko,state.memberKo),coverOfMembers:v.cover_of_members||[],coverOfGroups:v.cover_of_groups||[],_apiGroupKo:v.group_ko||state.ko,_apiMemberKos:_colMemberKosFor(v)};
       const ctx={groupKo:state.ko,memberKos:_colMemberKosFor(v)};
-      // 인기순일 때만 조회수를 한 줄 보여준다(2026-09-02). 순서만 바뀌고 근거가 안 보이면 "이게
-      // 정말 인기순인가"를 확인할 방법이 없다 — 카드 그리드는 원래 썸네일+제목만 그린다.
-      // ⚠️ 항상 띄우지 않는 이유: 조회수는 실측 59%만 채워져 있어(391,634 중 231,199) 다른 정렬에서는
-      //    있는 줄 없는 줄이 뒤섞여 목록이 들쭉날쭉해 보인다. 인기순에서는 애초에 위쪽이 다 채워진
-      //    항목이라 그 문제가 없다. 스타일은 모아보기·검색 결과가 쓰는 .gc-ch-meta 그대로.
-      if(state.sortMode==='popular'&&v.view_count!=null){
-        const vcEl=document.createElement('div');
-        vcEl.className='gc-ch-meta';
-        // 숫자만 두면("54M+") 그게 조회수인지 모호하다 — 모아보기에선 앞의 날짜가 맥락을 주지만
-        // 여기는 조회수 단독이라 라벨을 붙인다. 한국어는 앞에("조회 54M+"), 영어는 뒤에("54M+ views").
+      // 제목·업로드일·조회수·태깅은 **정렬과 무관하게 항상** 보인다(2026-10-01 사용자 결정). 예전엔 조회수를 인기순에서만
+      // 띄웠는데(조회수는 59%만 채워져 있어 다른 정렬에선 줄이 들쭉날쭉) — 업로드일은 모든 행에 있으므로 한 줄로 묶으면
+      // 줄 자체는 항상 생기고, 조회수는 있을 때만 붙는다. 조회수 라벨("조회 9M+")은 숫자만으론 뭔지 모호해서 유지.
+      {
         const _tt=T[currentLang]||T.ko;
-        vcEl.textContent=(_tt.chViewsPfx||'')+_fmtVidMeta(null,v.view_count)+(_tt.chViewsSfx||'');
-        item.appendChild(vcEl);
+        const _pa=v.published_at?.slice(0,10);
+        const _dp=_pa?_pa.slice(0,4)+'.'+_pa.slice(5,7)+'.'+_pa.slice(8,10):'';
+        const _vcRaw=v.view_count!=null?_fmtVC(v.view_count):'';
+        const _vc=_vcRaw?(_tt.chViewsPfx||'')+_vcRaw+(_tt.chViewsSfx||''):'';
+        const metaTxt=[_dp,_vc].filter(Boolean).join(' · ');
+        if(metaTxt){const vcEl=document.createElement('div');vcEl.className='gc-ch-meta';vcEl.textContent=metaTxt;item.appendChild(vcEl);}
       }
-      const withLine=_makeWithLine(s,ctx);
+      // 태깅 줄도 항상 — "함께한" 정보가 없을 때(그룹 전원·그룹 채널 무태깅·멤버 카드 본인 단독)는 비어 있었다.
+      // 그땐 이 영상의 주인(그룹명 또는 카드 주인 멤버)을 같은 칩 모양으로 적는다.
+      const withLine=_makeWithLine(s,ctx)||_gridOwnerLine(v);
       if(withLine)item.appendChild(withLine);
       item.appendChild(_makeScrapBtn(s,ctx));
       item.appendChild(_makeColBtn(s,ctx));

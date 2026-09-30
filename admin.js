@@ -8326,7 +8326,9 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
   // name.ko/en 둘 다로 막는다. 그룹 자체 매칭·자체 채널 태깅은 별개 경로라 온리원오프 정상 영상은 안 끊긴다.
   // 2026-09-29 순찰(tag_patrol B 약한 근거)에서 발견: 누에라 판(en 'Fan') ← "FAN PICK CAM"·"FAN CAM",
   // 올아워즈 온(en 'On') ← "Life goes on"·"We on Fire". 영문명이 흔한 영어 낱말이라 이름만으로 그룹을 역추론하면 안 된다.
-  const _ATM_INFER_EXCLUDE_NAMES=new Set(['Love','나인','Nine','Fan','On']);
+  // 2026-10-01: 데일리디렉션 E-VAN(이반)은 하이픈을 떼면 'EVAN'이 돼 솔로 에반(전 엔하이픈 희승)의 영상 ~50건을 가져갔다
+  //   ("[쇼챔1분직캠] 에반 (EVAN)의 Death of Me" → 데일리디렉션). 이름만으로는 역추론하지 않고, 데일리디렉션이 제목에 있을 때만.
+  const _ATM_INFER_EXCLUDE_NAMES=new Set(['Love','나인','Nine','Fan','On','E-VAN']);
   const _atmInferExcluded=a=>_ATM_INFER_EXCLUDE_NAMES.has(a.name.ko)||_ATM_INFER_EXCLUDE_NAMES.has(a.name.en);
   // 데뷔보다 1년 이상 전에 나온 영상을 순전히 멤버 이름만으로 이 그룹으로 역추론하는 건 근거가 없다 — 그
   // 그룹이 존재하기도 전이라 대개 동명이인(옛 가수·배우가 이름만 겹침)이다(2026-09-01 실측: 올아워즈←현빈

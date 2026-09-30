@@ -714,6 +714,17 @@ test('그룹 문맥 있는 루시는 그대로 — 위키미키 루시 직캠',
   "[MPD직캠] 위키미키 루시 직캠 'La La La' (Weki Meki LUCY FanCam) | @MCOUNTDOWN_2018.2.22", undefined,
   r => !!r && r.primaryGroup === '위키미키', '2018-02-22');
 
+// 솔로 에반(전 엔하이픈 희승) ↔ 데일리디렉션 E-VAN(이반) — 하이픈 뗀 EVAN 충돌(2026-10-01, ~50건 오배정)
+test('에반 — 쇼챔 직캠은 솔로 에반(데일리디렉션 E-VAN 아님)',
+  '[쇼챔1분직캠] 에반 (EVAN)의 ＜Death of Me＞♬ #에반 #EVAN #Death of Me', undefined,
+  r => !!r && r.primaryGroup === '에반' && !(r.membersByGroup && r.membersByGroup['데일리디렉션']), '2026-09-24');
+test('에반 — 해시태그만(#EVAN)도 솔로 에반',
+  '[#KCONLA2026] #EVAN CHECK-IN', undefined,
+  r => !!r && r.primaryGroup === '에반', '2026-08-01');
+test('E-VAN — 데일리디렉션 문맥이면 그대로 데일리디렉션',
+  'Can we just talk?#DAILYDIRECTION #DD #데일리디렉션#EVAN #이반', undefined,
+  r => !!r && r.primaryGroup === '데일리디렉션', '2026-06-01');
+
 // ── 실행 ──────────────────────────────────────────────
 let pass = 0, fail = 0;
 cases.forEach(({ name, title, selfGko, check, publishedAt }) => {

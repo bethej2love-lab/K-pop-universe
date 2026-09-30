@@ -24558,7 +24558,7 @@
     "y": 8212,
     "sat": 0.78,
     "op": 0.8,
-    "active": false,
+    "active": true,
     "color": [
       148,
       138,
@@ -127329,7 +127329,10 @@
       "instagram": "https://www.instagram.com/jangyub1n",
       "namu": "https://namu.wiki/w/E-VAN"
     },
-    "id": "a0725"
+    "id": "a0725",
+    "matchAliases": [
+      "이반"
+    ]
   },
   {
     "name": {

@@ -133,15 +133,18 @@ async function main() {
       else if (!desc) fail(`[2] ${label}: 조회수 내림차순이 아님 — ${nums.slice(0, 6).join(' > ')}`);
       else ok(`[2] ${label}: 조회수 내림차순 (${nums.slice(0, 4).map(v => v >= 1e6 ? (v / 1e6).toFixed(1) + 'M' : Math.round(v / 1e3) + 'K').join(' > ')} …)`);
 
-      // [5] 인기순일 때만 조회수 줄이 보인다 — 순서만 바뀌고 근거가 안 보이면 인기순인지 알 수 없다
+      // [5] 인기순에서 조회수 줄이 보인다 — 순서만 바뀌고 근거가 안 보이면 인기순인지 알 수 없다
       const metaOn = await ev(cdp, `document.querySelectorAll('.gc-ch-grid .gc-ch-meta').length`);
       if (!metaOn) fail(`[5] ${label}: 인기순인데 조회수 줄이 하나도 없음`);
       else ok(`[5] ${label}: 조회수 줄 ${metaOn}개 표시`);
+      // 2026-10-01 사용자 결정: 업로드일·조회수·태깅은 정렬과 무관하게 **항상** 보인다(예전엔 인기순 전용). 추천순으로
+      // 돌려도 메타 줄(업로드일 · 조회수)이 모든 타일에 남아 있어야 한다.
       await ev(cdp, `document.querySelector('.gc-ch-sort-item[data-sort="recommend"]').click()`);
       await sleep(2600);
-      const metaOff = await ev(cdp, `document.querySelectorAll('.gc-ch-grid .gc-ch-meta').length`);
-      if (metaOff) fail(`[5] ${label}: 추천순으로 되돌렸는데 조회수 줄이 ${metaOff}개 남음(인기순 전용이어야 한다)`);
-      else ok(`[5] ${label}: 추천순에선 조회수 줄 없음`);
+      const tiles = await ev(cdp, `document.querySelectorAll('.gc-ch-grid .gc-ch-item').length`);
+      const metaRec = await ev(cdp, `[...document.querySelectorAll('.gc-ch-grid .gc-ch-meta')].filter(e=>/[0-9]{4}[.][0-9]{2}[.][0-9]{2}/.test(e.textContent)).length`);
+      if (!tiles || metaRec < tiles) fail(`[5] ${label}: 추천순에서 업로드일 줄이 ${metaRec}/${tiles}개뿐(항상 보여야 한다)`);
+      else ok(`[5] ${label}: 추천순에서도 업로드일·조회수 줄 ${metaRec}/${tiles}개`);
     }
     cdp.close();
   } finally {
