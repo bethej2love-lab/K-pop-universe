@@ -6045,6 +6045,8 @@ function _lbUpdateUplist(){
 //    반복 등장하는 사람이 많다). 칩은 거르기만 하고 그 사람으로 넘어가진 않는다(넘어갈 카드가 없으므로).
 const _SURF_LENSES=[['live','라이브','Live'],['cam','직캠','Fancam'],['mv','MV','MV'],['variety','예능','Variety'],['all','전체','All']];
 const _SURF_SHOW=4; // 묶음 펼침 시 처음 보이는 타일 수(나머지는 "N개 더 보기")
+// 이름 줄·그룹 줄 조회 범위(2026-10-01, 90→300 · 60→200) + 직캠 보강 60개(조회수 상위에 밀려 직캠 필터가 비던 것)
+const _SURF_SELF_LIM=300,_SURF_GROUP_LIM=200,_SURF_CAM_LIM=60;
 let _surfLens=null,_surfOpen=null,_surfPick=null,_surfExpanded=false,_surfReq=0;
 let _surfPath=[]; // 지나온 길 [{label,via,u,shorts,playlist,idx,ctx}] — 마지막이 지금
 let _surfHopping=false; // Surf가 연 openLightbox인지(새 세션으로 보고 길을 지우면 안 됨)
@@ -6059,7 +6061,7 @@ const _surfCache=new Map(); // 영상 id → {rows,label,kind}
 // 영상 한 건의 "종류" — 필터 렌즈와 같은 축. 탭 쿼리들과 같은 상수를 재사용한다(어휘 드리프트 방지).
 function _surfKind(v){
   const t=v.title||'',tn=_titleNorm(t),f=v.content_formats||[];
-  if(_FANCAM_BRAND_RE.test(t))return'cam';
+  if(_isFancamLike(t))return'cam';
   if(v.category==='mv')return'mv';
   if(v.category==='variety'||f.includes('variety')||_VARIETY_TITLE_KEYWORDS.some(k=>tn.includes(k)))return'variety';
   if(_LIVE_EXCLUDE.some(k=>tn.includes(k)))return'other';
@@ -6181,9 +6183,13 @@ async function _surfFetch(vid,ctx){
   let selfLabel,label,groupRow=null;
   if(a){
     const own=_surfOwnKeys(a),pk=_surfPersonKeys(a);
-    label=_dispName(a);selfLabel='같은 사람';
+    // 줄 이름은 관계어("같은 사람") 대신 그 사람 이름 그대로(2026-10-01 사용자 결정 — "코르티스", "원빈")
+    label=_dispName(a);selfLabel=label;
     const soloKey=!GROUPS[_ytGroupKoFor(a)]?`,group_ko.eq.${f(a.name.ko)}`:'';
-    jobs.self=run(Q(90).or(`and(group_ko.in.(${own.map(f).join(',')}),members.cs.{${f(a.name.ko)}})${soloKey}`));
+    const selfCond=`and(group_ko.in.(${own.map(f).join(',')}),members.cs.{${f(a.name.ko)}})${soloKey}`;
+    // 조회수 상위 300개(예전 90개 — 활동 긴 사람은 직캠·예능이 MV·무대에 밀려 거의 안 보였다) + 직캠만 따로 60개 더
+    jobs.self=run(Q(_SURF_SELF_LIM).or(selfCond));
+    jobs.selfCam=run(Q(_SURF_CAM_LIM).or(selfCond).or(_surfCamOr()));
     jobs.guest=run(Q(60).or(pk.map(k=>`with_members.cs.{${f(k)}}`).join(',')));
     jobs.cover=(v.cover_of_members||[]).length||(v.cover_of_groups||[]).length?null:
       run(Q(60).or(pk.map(k=>`cover_of_members.cs.{${f(k)}}`).join(',')));
@@ -6201,10 +6207,13 @@ async function _surfFetch(vid,ctx){
     };
     const cur=GROUPS[a.group.ko]&&!_left(a.group.ko)?a.group.ko:null;
     const former=cur?null:(_artistGroups(a).find(x=>x.ko&&GROUPS[x.ko]&&!_left(x.ko))||{}).ko;
-    if(cur||former){groupRow={key:cur||former,rel:cur?'그룹':'원 소속'};jobs.group=run(Q(60).eq('group_ko',groupRow.key));}
+    // 그룹 줄도 그룹명만. 지금 소속이 아니거나(끝까지 함께한 옛 그룹) 해체한 그룹이면 작게 '원 소속'
+    if(cur||former){const k=cur||former;groupRow={key:k,rel:_surfGName(k),sub:(former||GROUPS[k].disbanded)?'원 소속':''};
+      jobs.group=run(Q(_SURF_GROUP_LIM).eq('group_ko',k));jobs.groupCam=run(Q(_SURF_CAM_LIM).eq('group_ko',k).or(_surfCamOr()));}
   }else if(g){
-    label=_surfGName(g);selfLabel='같은 그룹';
-    jobs.self=run(Q(90).eq('group_ko',g));
+    label=_surfGName(g);selfLabel=label;
+    jobs.self=run(Q(_SURF_SELF_LIM).eq('group_ko',g));
+    jobs.selfCam=run(Q(_SURF_CAM_LIM).eq('group_ko',g).or(_surfCamOr()));
     jobs.guest=run(Q(60).contains('with_groups',[g]));
     jobs.cover=(v.cover_of_members||[]).length||(v.cover_of_groups||[]).length?null:run(Q(60).contains('cover_of_groups',[g]));
   }else{
@@ -6258,11 +6267,15 @@ async function _surfFetch(vid,ctx){
   const keys=Object.keys(jobs).filter(k=>jobs[k]);
   const res=await Promise.all(keys.map(k=>jobs[k]));
   const R={};keys.forEach((k,i)=>R[k]=res[i].filter(x=>x.id!==vid&&!_isShortV(x)));
+  // 직캠 보강분을 본 목록에 합친다(중복 제거, 조회수순 유지) — 상위 300개 밖의 직캠도 직캠 필터에서 빠지지 않게
+  const _mergeCam=(k,c)=>{if(!R[c])return;const ids=new Set((R[k]||[]).map(x=>x.id));R[k]=[...(R[k]||[]),...R[c].filter(x=>!ids.has(x.id))].sort((p,q)=>(q.view_count||0)-(p.view_count||0));delete R[c];};
+  _mergeCam('self','selfCam');_mergeCam('group','groupCam');
 
   // 자기 쪽(앵커·앵커 그룹) 사람은 "함께한 멤버" 칩에서 뺀다 — 같은 그룹 유닛 무대는 콜라보가 아니다
   // ⚠️ '솔로'는 그룹이 아니다 — 그 키가 들어가면 솔로 아티스트 전원이 "자기 쪽"으로 빠진다(GROUPS에 있는 것만)
   const selfGroups=new Set((a?_surfOwnKeys(a):(g?[g]:[])).filter(k=>GROUPS[k]));
-  const _nk=n=>(n||'').toLowerCase().replace(/\s+/g,'');
+  // 공백뿐 아니라 문장부호도 뗀다 — "Won Bin." 표기가 원빈 본인으로 안 잡혀 "함께한 멤버"에 따로 떴다(2026-10-01)
+  const _nk=n=>(n||'').toLowerCase().replace(/[^\p{L}\p{N}]/gu,'');
   // 후보 중 **한 명이라도** 자기 쪽이면 자기 쪽으로 본다(트레저 영상 제목의 DOYOUNG은 트레저 도영)
   const isSelf=(lab,cands)=>cands.some(ar=>ar===a||_artistGroups(ar).some(x=>selfGroups.has(x.ko)))||
     (a?[a.name.ko,a.name.en,...(a.matchAliases||[])].some(n=>n&&_nk(n)===_nk(lab)):false);
@@ -6360,9 +6373,9 @@ async function _surfFetch(vid,ctx){
     mk('cofav','함께 좋아하는',items);
   }
   // ③ 같은 사람/그룹
-  mk('self',selfLabel||'같은 채널',R.self);
+  mk('self',selfLabel||label||'같은 채널',R.self);
   // ④ 원 소속/그룹
-  if(groupRow&&R.group)mk('group',groupRow.rel,R.group.map(x=>Object.assign({},x,{_sub:_surfGName(groupRow.key)})));
+  if(groupRow&&R.group)mk('group',groupRow.rel,R.group,groupRow.sub);
   // ⑤ 같은 무대 — 다른 가수만
   if(R.stage){
     const other=R.stage.filter(x=>!selfGroups.has(x.group_ko)&&!(a&&(x.with_members||[]).some(n=>_surfPersonKeys(a).includes(n))));
@@ -6513,6 +6526,19 @@ async function _surfWrittenSongsOf(a){
   }).filter(w=>w.core.replace(/\s/g,'').length>=3);
 }
 
+// 직캠 한 편의 주인 칩 — 멤버 1명 태그면 그 멤버, 솔로 본인 채널이면 그 사람, 그 밖(여럿·그룹 풀캠)은 '단체'
+const _SURF_CAM_GROUP='단체';
+function _surfCamWho(x){
+  const m=x.members||[];
+  if(m.length===1){const ar=ARTISTS.find(y=>y.name.ko===m[0]&&(y.group.ko===x.group_ko||_artistGroups(y).some(g=>g.ko===x.group_ko)));return[ar?_dispName(ar):m[0]];}
+  if(!m.length&&!GROUPS[x.group_ko]){const ar=ARTISTS.find(y=>_ytGroupKoFor(y)===x.group_ko);if(ar)return[_dispName(ar)];}
+  return[_SURF_CAM_GROUP];
+}
+// 칩 순서: 단체 먼저, 멤버는 직캠 많은 순
+function _surfCamChipList(items){
+  const n=new Map();items.forEach(x=>_surfCamWho(x).forEach(w=>n.set(w,(n.get(w)||0)+1)));
+  return[...n.keys()].sort((p,q)=>((q===_SURF_CAM_GROUP)-(p===_SURF_CAM_GROUP))||(n.get(q)-n.get(p)));
+}
 function _surfItemsFor(row){
   const base=row.items.filter(x=>_surfLens==='all'||_surfKind(x)===_surfLens);
   // 전체 보기일 땐 라이브·밴드·커버·직캠을 앞으로(사용자 선호, 2026-09-29) — 같은 종류 안에선 원래 순서 유지
@@ -6590,8 +6616,8 @@ function _surfRender(){
     const sub=document.createElement('span');sub.className='surf-r-rel';
     sub.textContent=(row.key==='written'||row.key==='weak')?(row.sub||''):
       row.key==='songcover'?[row.sub,people.slice(0,2).join(' · ')+(people.length>2?(ko?' 외':' +'):'')].filter(Boolean).join(' — '):
-      row.key==='stage'?(items[0]&&items[0]._stage||''):row.key==='group'?(items[0]&&items[0]._sub||''):
-      row.key==='self'?(_surfPath[_surfPath.length-1]?.label||''):
+      row.key==='stage'?(items[0]&&items[0]._stage||''):row.key==='group'?(row.sub||''):
+      row.key==='self'?'':
       (people.slice(0,3).join(' · ')+(people.length>3?(ko?' 외':' +'):''));
     txt.appendChild(nm);if(sub.textContent)txt.appendChild(sub);
     const stack=document.createElement('span');stack.className='surf-stack';
@@ -6609,11 +6635,15 @@ function _surfRender(){
     });
     grp.appendChild(btn);
     if(isOpen){
-      if(people.length>1&&row.key!=='self'&&row.key!=='group'){
+      // 직캠 필터에서 이름 줄·그룹 줄은 "전체 / 단체 / 멤버…" 칩으로 가른다(2026-10-01) — 다른 줄은 원래대로 사람 칩
+      const camSplit=_surfLens==='cam'&&(row.key==='self'||row.key==='group');
+      const whoOf=x=>camSplit?_surfCamWho(x):(x._ps||[]);
+      const chipList=camSplit?_surfCamChipList(items):people;
+      if(chipList.length>1&&(camSplit||(row.key!=='self'&&row.key!=='group'))){
         const chips=document.createElement('div');chips.className='surf-chips';
-        [null,...people].forEach(p=>{
+        [null,...chipList].forEach(p=>{
           const c=document.createElement('button');c.type='button';
-          c.className='surf-chip'+(((_surfPick&&people.includes(_surfPick))?_surfPick:null)===p?' on':'');
+          c.className='surf-chip'+(((_surfPick&&chipList.includes(_surfPick))?_surfPick:null)===p?' on':'');
           c.textContent=p||(ko?'전체':'All');
           c.addEventListener('click',e=>{e.stopPropagation();_surfPick=p;_surfExpanded=false;_surfRender();});
           chips.appendChild(c);
@@ -6621,7 +6651,7 @@ function _surfRender(){
         grp.appendChild(chips);
         _enableDragScroll(chips);
       }
-      const shown=(_surfPick&&people.includes(_surfPick))?items.filter(x=>(x._ps||[]).includes(_surfPick)):items;
+      const shown=(_surfPick&&chipList.includes(_surfPick))?items.filter(x=>whoOf(x).includes(_surfPick)):items;
       const grid=document.createElement('div');grid.className='surf-grid';
       const seenIds=new Set(_surfPath.map(p=>ytId(p.u)));
       shown.slice(0,_surfExpanded?shown.length:_SURF_SHOW).forEach((x,i)=>{
@@ -19421,6 +19451,15 @@ const _FANCAM_BRAND_RE=/직캠|팬캠|페이스캠|풀캠|세로캠|얼빡|입�
 //    100자리가 그룹 48팀으로 채워진다.
 const _FANCAM_TITLE_ILIKE=['직캠','팬캠','페이스캠','풀캠','세로캠','얼빡','입덕','팔로우캠','원픽캠','보컬캠','최애캠','단독샷','안방','fancam','facecam','fullcam','fan cam','pick cam'];
 const _fancamTitleOr=()=>_FANCAM_TITLE_ILIKE.map(w=>`title.ilike.*${w}*`).join(',');
+// "직캠으로 볼 영상"의 넓은 판정 — 탐색·필터용(2026-10-01). 위 브랜드에 더해 달리캠·DOLLY STAGE·별도녹화처럼
+// 한 사람/한 팀을 따로 찍은 포맷까지 직캠으로 본다. 필요한 곳은 이걸 가져다 쓴다(Surf 직캠 렌즈 등).
+// ⚠️ **개인 직캠 차트(_isSoloCam)는 이걸 쓰지 않는다** — 차트 기준은 순위 스냅샷 크론(kpopuniverse-share
+//    api/cron/snapshot-ranks.js)과 글자 그대로 맞물려 있어서(tests/chart-snapshot-parity.test.js), 여기만 넓히면
+//    화면 순위와 스냅샷이 어긋나 순위 변동 배지가 거짓이 된다. 차트에 넣으려면 크론과 같이 바꿀 것.
+const _FANCAM_EXTRA_RE=/달리캠|DOLLY\s*(STAGE|CAM)|별도\s*녹화/i;
+const _FANCAM_EXTRA_ILIKE=['달리캠','dolly','별도녹화','별도 녹화'];
+function _isFancamLike(t){return _FANCAM_BRAND_RE.test(t||'')||_FANCAM_EXTRA_RE.test(t||'');}
+const _surfCamOr=()=>[..._FANCAM_TITLE_ILIKE,..._FANCAM_EXTRA_ILIKE].map(w=>`title.ilike.*${w}*`).join(',');
 // 브랜드 낱말은 있는데 **직캠 영상이 아닌** 홍보물 — 실측(직캠 판정 912건)에서 두 유형이 뚜렷했다.
 //  ① 방송사 채널의 서술형 홍보 쇼츠: "니키야 나 울어 #MPD직캠 #엔하이픈 #shorts", "BTS 지민이 진짜
 //     월클인 이유 #MPD직캠 #shorts" — 브랜드가 **괄호 밖 해시태그로만** 붙는다. 진짜 직캠은
