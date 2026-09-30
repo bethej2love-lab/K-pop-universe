@@ -4812,7 +4812,7 @@ async function _openProgramCollection(p,ctx){
     const rows=error?[]:_filterBannedVideos(data||[]);
     // 항상 최신순(쿼리가 published_at desc) — 검색·카드 모두 최신 영상부터(2026-09-05 사용자 요청).
     const vids=rows;
-    const songs=vids.map(v=>({t:v.title,u:vidUrl(v),thumb:v.thumb,vc:v.view_count,dur:v.duration_sec,pa:v.published_at?.slice(0,10),_apiId:v.id,_apiGroupKo:v.group_ko}));
+    const songs=vids.map(v=>({..._rowTags(v),t:v.title,u:vidUrl(v),thumb:v.thumb,vc:v.view_count,dur:v.duration_sec,pa:v.published_at?.slice(0,10),_apiId:v.id,_apiGroupKo:v.group_ko}));
     _openFeedListOverlay(label,'',songs);
   }catch(e){ _openFeedListOverlay(label,'',[]); }
 }
@@ -5906,9 +5906,21 @@ function _lbUpdateMemberInfo(){
   const anchorEl=document.getElementById('yt-lb-anchor-chip');
   const withEl=document.getElementById('yt-lb-with-chips');
   const connBtn=document.getElementById('yt-lb-conn-btn');
-  const groupKo=_lbCtx?.groupKo,memberKo=_lbCtx?.memberKo;
+  // ⚠️ 영상마다 **그 영상의 태그**로 그린다(2026-10-01). 예전엔 세션 ctx(처음 연 영상의 주인)만 봐서 ① 태그를 안 실은
+  //    목록(탐험 차트)에선 상단이 통째로 비고 ② 목록에서 다음 영상으로 넘어가도 첫 영상 멤버가 그대로 남았다.
+  //    곡에 태그가 실려 있으면(_rowTags) 그걸, 없으면(멤버·그룹 카드 그리드 — 카드 주인이 곧 주인) ctx를 쓴다.
+  const _own=!!(s&&Array.isArray(s.memberKos)&&(s.groupKo||s._apiGroupKo));
+  const groupKo=_own?(s.groupKo||s._apiGroupKo):_lbCtx?.groupKo;
+  const _mems=_own?[...new Set(s.memberKos.filter(Boolean))]:(_lbCtx?.memberKo?[_lbCtx.memberKo]:[]);
+  const _inG=a=>a.group.ko===groupKo||(a.groups||[]).some(g=>g.ko===groupKo)||_ytGroupKoFor(a)===groupKo;
+  const memberKo=_mems.length===1?_mems[0]:null;
   let artist=null;
-  if(memberKo)artist=ARTISTS.find(a=>a.name.ko===memberKo&&(a.group.ko===groupKo||(a.groups||[]).some(g=>g.ko===groupKo)));
+  if(memberKo)artist=ARTISTS.find(a=>a.name.ko===memberKo&&_inG(a))||null;
+  // 솔로 본인 채널(group_ko=본인 이름, 멤버 태그 없음) — 그 사람이 주인
+  if(!artist&&!_mems.length&&groupKo&&!GROUPS[groupKo])artist=ARTISTS.find(a=>_ytGroupKoFor(a)===groupKo)||null;
+  // 여러 명 태깅 — 앵커는 그룹명, 태깅된 멤버는 **전부** 칩으로(첫 명만 뜨던 것). 한 그룹 전원이면 그룹명만.
+  const _multi=_mems.length>1?_mems.map(n=>ARTISTS.find(a=>a.name.ko===n&&_inG(a))).filter(Boolean):[];
+  const _multiChips=_multi.length>1&&!(GROUPS[groupKo]&&_withIsFullGroup(groupKo,_multi));
   const gName=groupKo&&GROUPS[groupKo]?(currentLang==='ko'?groupKo:(GROUPS[groupKo].en||groupKo)):'';
   const mName=artist?(_dispName(artist)):'';
   // ── 하프시트 진입점(2026-08-26, 로드맵 P1-2) ────────────────────────────────────
@@ -5937,7 +5949,14 @@ function _lbUpdateMemberInfo(){
   // 한 그룹이 전원 나온 영상은 멤버 칩 대신 그룹 칩 하나로(2026-09-29 — 빅톤 6명이 칩 6개로 늘어서던 것).
   // 묶음·전원 판정은 카드 목록 함께한 줄과 같은 헬퍼(_withGroupOf/_withIsFullGroup). 앵커 자신의 그룹은 접지 않는다.
   const _anchorG=artist?artist.group.ko:groupKo;
-  const _wPairs=(s?.with||[]).map(n=>({n,t:_findArtistByConnName(n,_anchorG)}));
+  if(_multiChips)_multi.forEach(ar=>{
+    const c=document.createElement('button');c.type='button';c.className='lb-with-chip lb-with-chip-btn lb-mem-chip';
+    c.textContent=_dispName(ar);
+    c.addEventListener('click',e=>{e.stopPropagation();_openLbHalf('member',ar);});
+    withEl.appendChild(c);
+  });
+  // 콜라보: 카드 그리드 곡은 앵커 기준으로 정리된 s.with, 차트·선반 곡은 DB 원본 "이름(그룹)"(s.withMembers)
+  const _wPairs=(s?.with||s?.withMembers||[]).map(n=>({n,t:_findArtistByConnName(n,_anchorG)}));
   const _wBy=new Map();
   _wPairs.forEach(p=>{if(!p.t)return;const g=_withGroupOf(p.n,p.t,_anchorG);if(!_wBy.has(g))_wBy.set(g,[]);_wBy.get(g).push(p.t);});
   const _wFull=new Set([..._wBy.entries()].filter(([g,ms])=>g!==groupKo&&_withIsFullGroup(g,ms)).map(([g])=>g));
@@ -5974,6 +5993,7 @@ function _lbUpdateMemberInfo(){
   });
   const hasCollab=!!(artist&&_getCollabMembers(artist).length>0);
   connBtn.style.display=hasCollab?'':'none';
+  document.getElementById('yt-lightbox')?.classList.toggle('lb-has-chips',withEl.children.length>0); // 칩 줄만큼 영상 내림(CSS 주석)
   connBtn.onclick=hasCollab?e=>{
     e.stopPropagation();
     const iframe=document.getElementById('yt-lb-iframe');
@@ -6130,7 +6150,7 @@ function _surfPerformer(x){
 }
 function _surfSong(x){
   const u=_isShortV(x)?`https://youtube.com/shorts/${x.id}`:`https://www.youtube.com/watch?v=${x.id}`;
-  return{t:x.title,u,thumb:x.thumb,vc:x.view_count,pa:x.published_at?.slice(0,10),dur:x.duration_sec,_apiId:x.id,_apiGroupKo:x.group_ko};
+  return{..._rowTags(x),t:x.title,u,thumb:x.thumb,vc:x.view_count,pa:x.published_at?.slice(0,10),dur:x.duration_sec,_apiId:x.id,_apiGroupKo:x.group_ko};
 }
 // 넘어간 영상의 주인 컨텍스트 — 다음 Up Next가 그 사람 기준으로 다시 묶인다
 function _surfCtxOf(x){
@@ -8401,6 +8421,10 @@ function _dedupSongs(songs){
 }
 // Supabase yt_channel_videos 행을 artists.json songs 항목({t,u,with,type})과 같은 형태로 변환.
 // members/with_members 태깅은 [[project_kpop_map]] "영상 노출 로직 설계" 참고.
+// DB 행의 태그(그룹·멤버·콜라보·행 id)를 song 객체에 싣는 공용 헬퍼(2026-10-01). 차트·선반 빌더 10여 곳이 song을
+// 제각각 손으로 만들면서 groupKo/memberKos를 빼먹어, 탐험 Discover 차트에서 영상을 열면 재생 화면 상단에 멤버·그룹이
+// 아예 안 떴다(사용자 제보). 새 목록을 만들 땐 **song을 직접 조립하지 말고 이걸 펼쳐 넣을 것** — tests/lb-song-tags.test.js.
+function _rowTags(v){return{groupKo:v.group_ko||'',memberKos:v.members||[],withMembers:v.with_members||[],_apiId:v.id,_apiGroupKo:v.group_ko};}
 function _apiVidToSong(v,memberKo,groupKo){
   const withList=[];
   // '개별출연' — 연말 가요제 무대를 순서대로 이어붙였거나, 엠카 비하인드처럼 여러 그룹/멤버가 한 영상
@@ -19253,7 +19277,7 @@ async function _buildFeedJacon(){
     const picked=pool.filter((v,i)=>!_vert[i]).slice(0,30);
     if(!picked.length)return;
     const vidUrl=v=>_isShortV(v)?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;
-    const pl=picked.map(v=>({t:v.title,u:vidUrl(v),thumb:v.thumb||`https://img.youtube.com/vi/${v.id}/mqdefault.jpg`,pa:v.published_at?.slice(0,10),paFull:v.published_ts||v.published_at,vc:v.view_count,dur:v.duration_sec,groupKo:v.group_ko,memberKos:v.members||[],ownerCh:true,_apiId:v.id,_apiGroupKo:v.group_ko}));
+    const pl=picked.map(v=>({..._rowTags(v),t:v.title,u:vidUrl(v),thumb:v.thumb||`https://img.youtube.com/vi/${v.id}/mqdefault.jpg`,pa:v.published_at?.slice(0,10),paFull:v.published_ts||v.published_at,vc:v.view_count,dur:v.duration_sec,groupKo:v.group_ko,memberKos:v.members||[],ownerCh:true,_apiId:v.id,_apiGroupKo:v.group_ko}));
     pl.forEach((song,i)=>{
       const sub=[_feedWhoSub(song),song.paFull?_fmtVidAgo(song.paFull):(song.pa?_fmtVidAgo(song.pa):null)].filter(Boolean).join(' · ');
       // 차트 선반과 동일한 카드(_appendFeedCard=.feed-card, 아래 #feed-jacon>.feed-card CSS로 158px).
@@ -19345,7 +19369,7 @@ async function _buildFeedFormatPick(list,offset){
       if(!vids.length)continue;
       // 업로드일·조회수(2026-08-10, 사용자 요청) — 조회수는 관리자 동기화 안 됐으면 null일 수 있는데
       // _fmtVidMeta/렌더 쪽이 null이면 알아서 생략하므로 그대로 넘겨도 됨.
-      const songs=vids.map(v=>({t:v.title,u:vidUrl(v),thumb:v.thumb,vc:v.view_count,dur:v.duration_sec,pa:v.published_at?.slice(0,10),_apiId:v.id,_apiGroupKo:v.group_ko}));
+      const songs=vids.map(v=>({..._rowTags(v),t:v.title,u:vidUrl(v),thumb:v.thumb,vc:v.view_count,dur:v.duration_sec,pa:v.published_at?.slice(0,10),_apiId:v.id,_apiGroupKo:v.group_ko}));
       const thumb=vids[Math.floor(Math.random()*vids.length)].thumb;
       const label=currentLang==='ko'?`${fmt} 모아보기`:`${fmt} Collection`,sub='';
       // 예전엔 insertBefore로 맨 앞에 끼워넣었는데, 이미 렌더링된 다른 카드들 사이로 늦게(무거운
@@ -19407,7 +19431,7 @@ async function _buildFeedGenCamPick(list,offset){
       // 사용자 제보).
       const vids=_diversifyFeed(_shuffle(bannedFiltered),v=>v.group_ko,5,v=>v.members&&v.members[0]);
       // 업로드일·조회수(2026-08-10, 사용자 요청) — _buildFeedFormatPick과 동일하게 추가.
-      const songs=vids.map(v=>({t:v.title,u:vidUrl(v),thumb:v.thumb,vc:v.view_count,dur:v.duration_sec,pa:v.published_at?.slice(0,10),_apiId:v.id,_apiGroupKo:v.group_ko}));
+      const songs=vids.map(v=>({..._rowTags(v),t:v.title,u:vidUrl(v),thumb:v.thumb,vc:v.view_count,dur:v.duration_sec,pa:v.published_at?.slice(0,10),_apiId:v.id,_apiGroupKo:v.group_ko}));
       const thumb=vids[Math.floor(Math.random()*vids.length)].thumb;
       const label=currentLang==='ko'?`${gen}세대 ${gender==='f'?'여돌':'남돌'} 직캠 모음`:`Gen ${gen} ${gender==='f'?'Girl Group':'Boy Group'} Fancams`,sub='';
       // insertBefore 제거 이유는 위 _buildFeedFormatPick과 동일(2026-08-06).
@@ -19579,7 +19603,7 @@ async function _buildFeedWeeklyTopCams(list,discList){
   //    빠진 것들은 "비교 기준이 없음"(rankDelta 미설정)으로 두어 변동 표기만 생략한다(순위 숫자는 그대로).
   //    크론을 고쳐도 이 가드는 남겨둔다 — 두 곳에서 같은 차트를 따로 계산하는 구조인 한 또 어긋난다.
   const _withRankDelta=(vids,prev)=>vids.map((v,i)=>{
-    const base={t:v.title,u:vidUrl(v),thumb:v.thumb,vc:v.view_count,dur:v.duration_sec,pa:v.published_at?.slice(0,10),rank:i+1};
+    const base={..._rowTags(v),t:v.title,u:vidUrl(v),thumb:v.thumb,vc:v.view_count,dur:v.duration_sec,pa:v.published_at?.slice(0,10),rank:i+1};
     if(!prev)return base; // 스냅샷 자체가 없음 — 순위만 보여주고 변동은 생략
     const pr=prev.ranks[v.id];
     if(pr!=null)return{...base,rankDelta:pr-(i+1)};
@@ -19626,7 +19650,7 @@ async function _buildFeedWeeklyTopCams(list,discList){
     const topVids=_capByGroup(allVids,v=>v.group_ko,3).slice(0,50);
     if(topVids.length>=3){
       const top1=topVids[0];
-      const songs=_shuffle([...topVids]).map(v=>({t:v.title,u:vidUrl(v),thumb:v.thumb,vc:v.view_count,dur:v.duration_sec,pa:v.published_at?.slice(0,10)}));
+      const songs=_shuffle([...topVids]).map(v=>({..._rowTags(v),t:v.title,u:vidUrl(v),thumb:v.thumb,vc:v.view_count,dur:v.duration_sec,pa:v.published_at?.slice(0,10)}));
       // 발견용(셔플·비랭킹) 카드라 순위/조회수 대신 대표 영상 제목을 보여준다 — 카드1·카드3과 동일 패턴
       // (2026-08-25, 사용자 제보: TOP 모음도 아닌데 "1위·조회수"가 뜨는 게 이상함).
       const label='Trend',sub=_cleanTitle(top1.title);
@@ -19736,7 +19760,7 @@ async function _buildFeedThisYearPicks(chartEl,discEl){
       if(!vids||vids.length<3)continue; // 얇으면 조용히 다음 후보로
       const label=currentLang==='ko'?opt.ko(y):opt.en(y);
       const sub=_feedRankSub(label,vids[0].view_count,currentLang==='ko'?opt.subKo:opt.subEn);
-      const songs=vids.map(v=>({t:v.title,u:vidUrl(v),thumb:v.thumb,vc:v.view_count,dur:v.duration_sec,pa:v.published_at?.slice(0,10),_apiId:v.id,_apiGroupKo:v.group_ko}));
+      const songs=vids.map(v=>({..._rowTags(v),t:v.title,u:vidUrl(v),thumb:v.thumb,vc:v.view_count,dur:v.duration_sec,pa:v.published_at?.slice(0,10),_apiId:v.id,_apiGroupKo:v.group_ko}));
       // 랭킹(TOP)은 Charts, 단순 모음(컴백·MV·데뷔·커버 등 coll:true)은 Discovery로 — "단순 모음은 차트가 아니다"(2026-09-04 사용자).
       const _dest=opt.coll?(discEl||chartEl):chartEl;
       _appendFeedCard(_dest,opt.icon,label,sub,()=>_openFeedListOverlay(label,sub,songs),vids[0].thumb);
@@ -19764,7 +19788,7 @@ async function _buildFeedYearlyTop(list){
     if(error||!data?.length)return;
     const vids=_filterBannedVideos(data).slice(0,100);
     if(vids.length<3)return;
-    const songs=vids.map(v=>({t:v.title,u:vidUrl(v),thumb:v.thumb,vc:v.view_count,dur:v.duration_sec,pa:v.published_at?.slice(0,10),_apiId:v.id,_apiGroupKo:v.group_ko}));
+    const songs=vids.map(v=>({..._rowTags(v),t:v.title,u:vidUrl(v),thumb:v.thumb,vc:v.view_count,dur:v.duration_sec,pa:v.published_at?.slice(0,10),_apiId:v.id,_apiGroupKo:v.group_ko}));
     const label=currentLang==='ko'?`${year}년 TOP 100`:`${year} TOP 100`;
     const top1=vids[0];
     const sub=_feedRankSub(label,top1.view_count,currentLang==='ko'?'무대·직캠 조회수 기준':'Based on stage/fancam views');
@@ -19791,7 +19815,7 @@ async function _buildFeedLegend100(list){
     if(!data?.length)return;
     const vids=_filterBannedVideos(data).slice(0,100);
     if(vids.length<3)return;
-    const songs=vids.map(v=>({t:v.title,u:vidUrl(v),thumb:v.thumb,vc:v.view_count,dur:v.duration_sec,pa:v.published_at?.slice(0,10),_apiId:v.id,_apiGroupKo:v.group_ko}));
+    const songs=vids.map(v=>({..._rowTags(v),t:v.title,u:vidUrl(v),thumb:v.thumb,vc:v.view_count,dur:v.duration_sec,pa:v.published_at?.slice(0,10),_apiId:v.id,_apiGroupKo:v.group_ko}));
     const label=currentLang==='ko'?'케이팝 레전드 100':'K-pop Legend 100';
     const top1=vids[0];
     const sub=_feedRankSub(label,top1.view_count,currentLang==='ko'?'무대·직캠 역대 조회수 기준':'Based on all-time stage/fancam views',true);
@@ -19909,7 +19933,7 @@ async function _chartSongs(id,sel){
   // 그대로 넘기면 .in('group_ko',[])이 되어 서버가 전체를 훑고 0건을 주는 낭비가 생긴다.
   const gkos=d.axes.includes('gender')?_chartGkos(sel):null;
   const vids=(gkos&&!gkos.length)?[]:(await d.pool(sel)).slice(0,d.cap);
-  const out=vids.map(x=>({t:x.title,u:vidUrl(x),thumb:x.thumb,vc:x.view_count,dur:x.duration_sec,pa:x.published_at?.slice(0,10),_apiId:x.id,_apiGroupKo:x.group_ko}));
+  const out=vids.map(x=>({..._rowTags(x),t:x.title,u:vidUrl(x),thumb:x.thumb,vc:x.view_count,dur:x.duration_sec,pa:x.published_at?.slice(0,10),_apiId:x.id,_apiGroupKo:x.group_ko}));
   if(d.ranked)_chartCache.set(k,out);
   return out;
 }
@@ -20086,7 +20110,7 @@ async function _renderBsideCard(list,groupKos,icon,labelKo,labelEn,fetchLimit,ca
   const stages=_capByGroup(_bsideStagesFromVideos(vids),v=>v.group_ko,capPerGroup).slice(0,200);
   if(stages.length<_BSIDE_MIN)return false;
   const vidUrl=v=>_isShortV(v)?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;
-  const songs=stages.map(v=>({t:v.title,u:vidUrl(v),thumb:v.thumb,vc:v.view_count,dur:v.duration_sec,pa:v.published_at?.slice(0,10)}));
+  const songs=stages.map(v=>({..._rowTags(v),t:v.title,u:vidUrl(v),thumb:v.thumb,vc:v.view_count,dur:v.duration_sec,pa:v.published_at?.slice(0,10)}));
   const label=currentLang==='ko'?labelKo:labelEn;
   const top1=stages[0];
   const sub=_feedRankSub(label,top1.view_count);
@@ -20149,7 +20173,7 @@ async function _renderCoverCard(list,groupKos,icon,labelKo,labelEn,fetchLimit,ca
   const vids=_capByGroup(await _fetchCoverPool(groupKos,fetchLimit),v=>v.group_ko,capPerGroup).slice(0,200);
   if(vids.length<_COVER_MIN)return false;
   const vidUrl=v=>_isShortV(v)?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;
-  const songs=vids.map(v=>({t:v.title,u:vidUrl(v),thumb:v.thumb,vc:v.view_count,dur:v.duration_sec,pa:v.published_at?.slice(0,10),_apiId:v.id,_apiGroupKo:v.group_ko}));
+  const songs=vids.map(v=>({..._rowTags(v),t:v.title,u:vidUrl(v),thumb:v.thumb,vc:v.view_count,dur:v.duration_sec,pa:v.published_at?.slice(0,10),_apiId:v.id,_apiGroupKo:v.group_ko}));
   const label=currentLang==='ko'?labelKo:labelEn;
   const top1=vids[0];
   const sub=_feedRankSub(label,top1.view_count);
@@ -20249,7 +20273,7 @@ async function _buildFeedCoverSpotlight(list){
     // 여는 게 자연스러움 — insertBefore/_feedNav 안 쓰는 이유는 위 _buildFeedFormatPick과 동일하게,
     // 탐험 탭을 안 닫고 그 위에 그냥 라이트박스만 띄우기 위함(2026-08-06).
     _appendFeedCard(list,'🎤',label,sub,()=>{
-      openLightbox(vidUrl,_isShortV(v),[{t:v.title,u:vidUrl,thumb:v.thumb,pa:v.published_at?.slice(0,10)}],0,{groupKo:v.group_ko});
+      openLightbox(vidUrl,_isShortV(v),[{..._rowTags(v),t:v.title,u:vidUrl,thumb:v.thumb,pa:v.published_at?.slice(0,10)}],0,{groupKo:v.group_ko});
     },v.thumb,null,{wide:!_isShortV(v),short:_isShortV(v)});
   }catch(e){/* 조용히 무시 */}
 }
@@ -20285,7 +20309,7 @@ async function _buildFeedTrendingHearts(list){
     const label=_cleanTitle(top.title);
     const sub=(currentLang==='ko'?`❤️ ${countOf(top)}개 · 인기 급상승`:`❤️ ${countOf(top)} · trending`);
     _appendFeedCard(list,'🔥',label,sub,()=>{
-      openLightbox(vidUrl,_isShortV(top),[{t:top.title,u:vidUrl,thumb:top.thumb,pa:top.published_at?.slice(0,10)}],0,{});
+      openLightbox(vidUrl,_isShortV(top),[{..._rowTags(top),t:top.title,u:vidUrl,thumb:top.thumb,pa:top.published_at?.slice(0,10)}],0,{});
     },top.thumb,null,{wide:!_isShortV(top),short:_isShortV(top)});
   }catch(e){/* 조용히 무시 */}
 }
@@ -20314,7 +20338,7 @@ async function _buildFeedCollabSpotlight(list){
     const label=_cleanTitle(v.title);
     const sub=`${v.group_ko} × ${_feedFormatNameList(v.with_members,v.with_groups)}`;
     _appendFeedCard(list,'🤝',label,sub,()=>{
-      openLightbox(vidUrl,_isShortV(v),[{t:v.title,u:vidUrl,thumb:v.thumb,pa:v.published_at?.slice(0,10)}],0,{groupKo:v.group_ko});
+      openLightbox(vidUrl,_isShortV(v),[{..._rowTags(v),t:v.title,u:vidUrl,thumb:v.thumb,pa:v.published_at?.slice(0,10)}],0,{groupKo:v.group_ko});
     },v.thumb,null,{wide:!_isShortV(v),short:_isShortV(v)});
   }catch(e){/* 조용히 무시 */}
 }
@@ -20358,7 +20382,7 @@ async function _buildFeedDebutYearPick(list,offset){
       // 그룹별 라운드로빈 인터리빙(각 그룹 최대 3개) — 데뷔 연도가 앵커인데 특정 그룹 영상이 목록을 장악하면 안 됨.
       // 그 3개 안에서도 멤버 단위로 한 번 더 라운드로빈(subKeyFn, 2026-08-19 — 위 두 모아보기와 동일 이유).
       const vids=_diversifyFeed(_shuffle(bannedFiltered),v=>v.group_ko,3,v=>v.members&&v.members[0]);
-      const songs=vids.map(v=>({t:v.title,u:vidUrl(v),thumb:v.thumb,vc:v.view_count,dur:v.duration_sec,pa:v.published_at?.slice(0,10),_apiId:v.id,_apiGroupKo:v.group_ko}));
+      const songs=vids.map(v=>({..._rowTags(v),t:v.title,u:vidUrl(v),thumb:v.thumb,vc:v.view_count,dur:v.duration_sec,pa:v.published_at?.slice(0,10),_apiId:v.id,_apiGroupKo:v.group_ko}));
       const thumb=vids[Math.floor(Math.random()*vids.length)].thumb;
       const label=currentLang==='ko'?`${year}년 데뷔 그룹 모아보기`:`${year} Debut Groups`,sub=currentLang==='ko'?`${groupKos.length}개 그룹`:`${groupKos.length} groups`;
       _appendFeedCard(list,'🌱',label,sub,()=>_openFeedListOverlay(label,sub,songs),thumb,'collection');
@@ -20404,7 +20428,7 @@ async function _buildFeedHiddenGem(list){
     const label=_cleanTitle(top.title);
     const sub=currentLang==='ko'?`❤️ ${heartsOf(top)}개 · 숨은 명무대`:`❤️ ${heartsOf(top)} · Hidden gem`;
     _appendFeedCard(list,'💎',label,sub,()=>{
-      openLightbox(vidUrl,_isShortV(top),[{t:top.title,u:vidUrl,thumb:top.thumb,pa:top.published_at?.slice(0,10)}],0,{groupKo:top.group_ko});
+      openLightbox(vidUrl,_isShortV(top),[{..._rowTags(top),t:top.title,u:vidUrl,thumb:top.thumb,pa:top.published_at?.slice(0,10)}],0,{groupKo:top.group_ko});
     },top.thumb);
   }catch(e){/* 조용히 무시 */}
 }
@@ -20444,7 +20468,7 @@ async function _buildFeedThrowbackToday(list){
       const label=_cleanTitle(v.title);
       const sub=currentLang==='ko'?`${year}년 오늘`:`${year}, today`;
       _appendFeedCard(list,'🕰️',label,sub,()=>{
-        openLightbox(vUrl,_isShortV(v),[{t:v.title,u:vUrl,thumb:v.thumb,pa:v.published_at?.slice(0,10)}],0,{groupKo:v.group_ko});
+        openLightbox(vUrl,_isShortV(v),[{..._rowTags(v),t:v.title,u:vUrl,thumb:v.thumb,pa:v.published_at?.slice(0,10)}],0,{groupKo:v.group_ko});
       },v.thumb);
       return;
     }catch(e){/* 다음 연도로 */}
@@ -20798,7 +20822,7 @@ async function _buildFeedTrend(){
     // 전부 이 한 줄을 갖고 있다). 여기서 빠뜨렸더니 ReferenceError가 나고 아래 catch가 그대로 삼켜
     // **선반만 조용히 안 뜨는** 상태로 배포됐다(2026-08-28 사용자 제보로 발견).
     const vidUrl=v=>_isShortV(v)?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;
-    const songs=picked.map(v=>({t:v.title,u:vidUrl(v),thumb:v.thumb,vc:v.view_count,dur:v.duration_sec,pa:v.published_at?.slice(0,10),paFull:v.published_ts||v.published_at,
+    const songs=picked.map(v=>({..._rowTags(v),t:v.title,u:vidUrl(v),thumb:v.thumb,vc:v.view_count,dur:v.duration_sec,pa:v.published_at?.slice(0,10),paFull:v.published_ts||v.published_at,
       groupKo:v.group_ko,memberKos:v.members||[],ownerCh:v.source_tier==='idol'}));
     // 행 패커 배치(2026-08-30) — 한 행은 같은 비율(가로2 or 쇼츠2), 가로는 가끔 전체폭. 여백0 + 그림처럼 번갈아.
     strip.className='feed-grid'; // 이전 렌더가 masonry로 바꿨을 수 있어 그리드로 리셋(.feed-wide span2 사용)
@@ -20928,7 +20952,7 @@ async function _buildFeedFavNew(){
     const vidUrl=v=>_isShortV(v)?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;
     // _apiId/_apiGroupKo: 어드민 편집(연필) 버튼이 어느 DB 행을 고칠지 아는 키 — 카드 그리드(_apiVidToSong)는
     // 붙이는데 이 선반만 빠져서 favnew 영상은 편집이 안 걸렸다(2026-08-31 사용자 제보, 모바일).
-    const songs=vids.map(v=>({t:v.title,u:vidUrl(v),thumb:v.thumb,vc:v.view_count,dur:v.duration_sec,pa:v.published_at?.slice(0,10),paFull:v.published_ts||v.published_at,groupKo:v.group_ko,memberKos:v.members||[],ownerCh:v.source_tier==='idol',_apiId:v.id,_apiGroupKo:v.group_ko,content_flag:v.content_flag||null}));
+    const songs=vids.map(v=>({..._rowTags(v),t:v.title,u:vidUrl(v),thumb:v.thumb,vc:v.view_count,dur:v.duration_sec,pa:v.published_at?.slice(0,10),paFull:v.published_ts||v.published_at,groupKo:v.group_ko,memberKos:v.members||[],ownerCh:v.source_tier==='idol',_apiId:v.id,_apiGroupKo:v.group_ko,content_flag:v.content_flag||null}));
     // 행 패커(Trend와 동일) — 같은 비율끼리 한 행, 가로 가끔 전체폭, 여백0. 최신순 유지가 중요해 wideProb는 낮게.
     // 최애만 크게(2026-09-04 사용자 확정, DESIGN_REVIEW 31~32행). 가로면 전체폭 16:9, 쇼츠면 전체폭 9:16 —
     // **둘 다** 크게 간다(사용자: "가로도 세로도 크게"). 최애를 정했으면 일반 카드의 확률 전체폭은 끈다
