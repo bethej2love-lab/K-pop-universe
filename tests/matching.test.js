@@ -693,6 +693,26 @@ test('흔한이름 게이트 — 평문 단독 "렉스"는 이제 소디엑으�
 test('콤마묶음 괄호 — "DIMO REX(몰리얌, 디모 렉스)"가 타소속 신호로 오판 안 됨',
   '쇼츠로 모아보는 Molly Yam, DIMO REX(몰리얌, 디모 렉스)의 <넌 날 미치게 만들겠지만>', undefined,
   r => !!r && r.primaryGroup === '디모렉스', '2026-02-12');
+// 아리랑 "After School Club" 프로그램명이 그룹 애프터스쿨로 매칭되던 것(2026-09-30, DB에 ~1,000건 누적)
+test('프로그램명 After School Club — 게스트(템페스트)로 가고 애프터스쿨로 안 감',
+  "[After School Club] TEMPEST's 5959 song (Rehearsal) (템페스트의 5959송 (리허설))", undefined,
+  r => !!r && r.primaryGroup === '템페스트', '2022-03-16');
+test('프로그램명 Before School Club 코너 — 게스트(하이키)로',
+  '[After School Club] Before School Club by H1-KEY (하이키의 오프닝 인사 비하인드)', undefined,
+  r => !!r && r.primaryGroup === '하이키', '2023-01-25');
+test('진짜 애프터스쿨 영상은 그대로 애프터스쿨',
+  '애프터스쿨 (AFTERSCHOOL) - 첫사랑 @인기가요', undefined,
+  r => !!r && r.primaryGroup === '애프터스쿨', '2013-03-20');
+// 유니버스 밖 동명 가수 — 이름만으로 역추론 금지, 그룹 문맥·해시태그는 인정
+test('유니버스 밖 싱어송라이터 Minsu — 티오원으로 안 감',
+  'Minsu - Go for Love | K-Pop Live Session | Culture', undefined,
+  r => !r || r.primaryGroup !== '티오원', '2026-01-10');
+test('밴드 LUCY 무대 — 위키미키/우아로 안 감',
+  '[2023 MBC 가요대제전] 루시 - 부기맨 (LUCY - Boogie Man), MBC 231231 방송', undefined,
+  r => !r || (r.primaryGroup !== '위키미키' && r.primaryGroup !== '우아'), '2023-12-31');
+test('그룹 문맥 있는 루시는 그대로 — 위키미키 루시 직캠',
+  "[MPD직캠] 위키미키 루시 직캠 'La La La' (Weki Meki LUCY FanCam) | @MCOUNTDOWN_2018.2.22", undefined,
+  r => !!r && r.primaryGroup === '위키미키', '2018-02-22');
 
 // ── 실행 ──────────────────────────────────────────────
 let pass = 0, fail = 0;

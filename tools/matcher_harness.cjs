@@ -102,6 +102,9 @@ pieces.push(extractByBraces(adminSrc, /^function _m2DebutBlocks\(/m, '_m2DebutBl
 const indexSrc = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
 pieces.push(extractByBraces(indexSrc, /^function _groupEndDate\(/m, '_groupEndDate'));
 pieces.push(extractByBraces(adminSrc, /^function _disbandCutoffDate\(/m, '_disbandCutoffDate'));
+// 프로그램명 제거(2026-09-30) — 있으면 싣는다(옛 admin.js로 전/후 차분을 돌릴 때도 하네스가 뜨게)
+if (/^function _stripProgramNames\(/m.test(adminSrc)) pieces.push(extractByBraces(adminSrc, /^function _stripProgramNames\(/m, '_stripProgramNames'));
+else pieces.push('function _stripProgramNames(t){return String(t||"");}');
 pieces.push(extractByBraces(adminSrc, /^function _m2ParseTitle\(/m, '_m2ParseTitle'));
 
 const harnessSrc = `

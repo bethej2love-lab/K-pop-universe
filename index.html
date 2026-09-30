@@ -5442,7 +5442,28 @@ function _isLegacyShortCat(v){return !!v&&v.category==='short';}
 // contain으로 넣으면, 그 가로 썸네일 자체가 이미 "세로 화면 + 좌우 검은 띠"라 작은 그림이 가운데 갇힌다.
 // hqdefault(480×360)를 cover로 넣으면 9:16 틀이 정확히 가운데 세로 화면(≈202×360)만 잘라낸다 —
 // 검은 띠가 틀 밖으로 나가 세로 원본과 거의 같아 보인다(mqdefault보다 해상도도 2배).
-function _shortThumbFallback(img,id){img.onerror=null;img.onload=null;img.classList.add('is-fallback');if(id)img.src=`https://i.ytimg.com/vi/${id}/hqdefault.jpg`;}
+// ⭐ **쇼츠 썸네일은 반드시 이 함수 하나로만 그린다**(2026-09-30). 예전엔 그룹/멤버 카드 그리드·모아보기 목록·탐험
+//    피드 카드 세 곳에 같은 로직이 복붙돼 있었고, 폴백 처리가 서로 달라(한 곳은 cover, 두 곳은 contain) 한 곳만
+//    고치면 나머지에서 같은 증상이 계속 났다. tests/short-thumb.test.js가 oardefault URL을 여기 밖에서 만들면 실패시킨다.
+//  순서: ① 세로 원본(oardefault) → ② 없으면(120×90 플레이스홀더 또는 404) hqdefault + .is-fallback(CSS에서 cover)
+//        → ③ 그것도 실패하면 opts.onFail. bg(블러 배경 요소)가 있으면 실제로 뜬 이미지로 맞춘다.
+//  opts: {bg, onReady(img), onFail(img)}
+function _mountShortThumb(img,id,opts){
+  const o=opts||{};
+  const setBg=()=>{if(o.bg)o.bg.style.backgroundImage=`url(${img.src})`;};
+  const fallback=()=>{img.classList.add('is-fallback');img.src=`https://i.ytimg.com/vi/${id}/hqdefault.jpg`;};
+  img.onload=()=>{
+    if(img.src.includes('oardefault')&&img.naturalWidth===120&&img.naturalHeight===90){fallback();return;}
+    setBg();
+    if(o.onReady)o.onReady(img);
+  };
+  img.onerror=()=>{
+    if(img.src.includes('oardefault')){fallback();return;}
+    img.onerror=null;img.onload=null;
+    if(o.onFail)o.onFail(img);
+  };
+  img.src=`https://i.ytimg.com/vi/${id}/oardefault.jpg`;
+}
 function isMob(){return window.innerWidth<=768;}
 // 유튜브 API로 동기화된 일부 영상(주로 인스타 릴스 크로스포스트) 제목엔 실제 줄바꿈 문자가 들어있어서,
 // 한 줄 말줄임(white-space:nowrap)이 안 먹고 제목 영역이 여러 줄로 확 커져 보이는 문제가 있었음 — 표시 직전에 제거.
@@ -17991,21 +18012,19 @@ function _setFeedCardThumb(item,thumbUrl){
   }
   const img=document.createElement('img');
   img.className='feed-card-thumb';img.loading='lazy';img.alt='';
-  img.addEventListener('load',()=>{
-    if(isShort&&img.src.includes('oardefault')&&img.naturalWidth===120&&img.naturalHeight===90){img.src=vid?`https://i.ytimg.com/vi/${vid}/hqdefault.jpg`:thumbUrl;return;} // 세로 썸네일 없음 → hqdefault를 cover로(_shortThumbFallback 주석)
+  const ready=()=>{
     img.classList.add('loaded');
     wrap.querySelector('.feed-card-shimmer')?.remove();
     item.classList.add('cap-revealed');
-    if(isShort&&img.src.includes('oardefault')){const bg=wrap.querySelector('.feed-card-thumb-bg');if(bg)bg.style.backgroundImage=`url(${img.src})`;} // 세로 썸네일 로드되면 블러 배경도 그걸로
-  });
-  img.addEventListener('error',()=>{
-    if(isShort&&vid&&img.src.includes('oardefault')){img.src=thumbUrl;return;} // 세로 실패 → 원래 썸네일 재시도
+  };
+  const failed=()=>{
     const sh=wrap.querySelector('.feed-card-shimmer');
     if(sh){wrap.innerHTML='<div class="feed-card-icon-fallback">'+(sh.dataset.icon||'🎵')+'</div>';}
     img.remove();
     item.classList.add('cap-revealed');
-  });
-  img.src=(isShort&&vid)?`https://i.ytimg.com/vi/${vid}/oardefault.jpg`:thumbUrl; // 쇼츠는 세로 원본 우선
+  };
+  if(isShort&&vid)_mountShortThumb(img,vid,{bg:wrap.querySelector('.feed-card-thumb-bg'),onReady:ready,onFail:failed}); // 쇼츠는 세로 원본 우선(공용 헬퍼)
+  else{img.addEventListener('load',ready);img.addEventListener('error',failed);img.src=thumbUrl;}
   wrap.appendChild(img);
 }
 // 탐색 피드의 "모아보기"류 카드(포맷 모아보기, 세대별 직캠 모음)는 눌렀을 때 바로 첫 영상 라이트박스로
@@ -18359,10 +18378,7 @@ function _openFeedListOverlay(title,sub,songs,ctx){
       // 갇혀 위아래가 블러로 빈다(사용자 제보, 2026-08-27). 카드 그리드(renderItems)와 동일 로직: oardefault가
       // 없으면(유튜브가 120x90 회색 플레이스홀더로 응답) 가로 썸네일로 폴백, 로드되면 블러 배경도 세로로 교체.
       const bg=document.createElement('div');bg.className='gc-ch-thumb-bg';bg.style.backgroundImage=`url(${baseThumb})`;item.appendChild(bg);
-      const _vid=ytId(s.u);
-      img.src=`https://i.ytimg.com/vi/${_vid}/oardefault.jpg`;
-      img.onerror=()=>_shortThumbFallback(img,_vid);
-      img.onload=()=>{if(img.naturalWidth===120&&img.naturalHeight===90){_shortThumbFallback(img,_vid);}else if(img.src.includes('oardefault'))bg.style.backgroundImage=`url(${img.src})`;};
+      _mountShortThumb(img,ytId(s.u),{bg});
     }else{
       img.src=baseThumb;
     }
@@ -21505,15 +21521,7 @@ function _makeChVidController(contId){
       const baseThumb=v.thumb||`https://img.youtube.com/vi/${v.id}/mqdefault.jpg`;
       if(isShort){
         const bg=document.createElement('div');bg.className='gc-ch-thumb-bg';bg.style.backgroundImage=`url(${baseThumb})`;item.appendChild(bg);
-        img.src=`https://i.ytimg.com/vi/${v.id}/oardefault.jpg`;
-        img.onerror=()=>_shortThumbFallback(img,v.id);
-        // 쇼츠 썸네일이 없으면 유튜브가 진짜 404 대신 120×90 회색 "재생 아이콘" 플레이스홀더를
-        // 정상 이미지로 응답해서 onerror가 안 걸림 — onload에서 그 크기를 직접 감지해 폴백시킨다.
-        img.onload=()=>{
-          if(img.naturalWidth===120&&img.naturalHeight===90){_shortThumbFallback(img,v.id);}
-          // oardefault.jpg(세로)가 로드되면 블러 배경도 해당 이미지로 교체
-          else if(img.src.includes('oardefault'))bg.style.backgroundImage=`url(${img.src})`;
-        };
+        _mountShortThumb(img,v.id,{bg});
         // is_short=true인데 실제로는 가로영상(세로 원본 없음)이면 세로 틀에 작게 갇힌다 — 배치 확인 대상에
         // 넣어 settlePage에서 가로로 강등·재배치한다(2026-09-04 사용자 제보, 스크린샷). 대표도 포함(승격 쪽과 대칭).
         pendingProbe.push(v);

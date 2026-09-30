@@ -2893,7 +2893,7 @@ _admExecBind('sp-debutgate-btn',_ytSweepDebutGate,'데뷔 이전 정리');
 // ⚠️ 전부 화살표 함수로 둔다 — 쓰는 쪽이 `const{_titleHas}=_MISTAG`로 구조분해하므로 메서드 축약형
 //    (this._grpToks)을 쓰면 this가 끊겨 즉시 터진다.
 const _mtGrpToks=ko=>{const v=GROUPS[ko];return v?[ko,v.en,...(v.altNames||[])].filter(Boolean).map(t=>t.toUpperCase()):[];};
-const _mtNorm=t=>' '+(t||'').toUpperCase().replace(/[^가-힣A-Z0-9]/g,' ').replace(/\s+/g,' ')+' ';
+const _mtNorm=t=>' '+_stripProgramNames(t||'').toUpperCase().replace(/[^가-힣A-Z0-9]/g,' ').replace(/\s+/g,' ')+' ';
 // 느슨한 포함 — "저장 그룹이 제목에 근거가 있나"(스킵 판정)처럼 **넓게 걸수록 안전한** 쪽에 쓴다.
 // ⚠️ 공백을 지운 형태도 같이 본다(2026-09-11). 영문명에 공백이 있는 그룹(`Super Junior`)은 제목에서
 //    해시태그로 붙여 쓰는 게 보통인데(`#superjunior`), _norm이 비영숫자를 공백으로 바꾸므로
@@ -8132,6 +8132,16 @@ function _m2DebutBlocks(gko,publishedAt){
   if(!Number.isFinite(dy)||!Number.isFinite(py))return false;
   return py<dy-_M2_DEBUT_GRACE_YEARS;
 }
+// 그룹명을 품은 **프로그램명**을 매칭 전에 지운다(2026-09-30). 아리랑 "After School Club"(ASC)은 프로그램이지
+// 그룹 애프터스쿨이 아니다 — "[After School Club] TEMPEST's 5959 song" 같은 게스트 클립이 group_ko=애프터스쿨로
+// 약 2,000건 쌓여 있었다(스포티파이 신원 대조 중 발견). "Before School Club"은 같은 프로그램의 오프닝 코너.
+// ⚠️ 매처(_m2ParseTitle)와 재배정 스윕의 "저장 그룹이 제목에 있나" 판정(_mtNorm)이 **같은 함수**를 써야 한다.
+//    한쪽만 지우면 스윕이 "제목에 애프터스쿨 근거 있음"으로 보고 오염 행을 전부 건너뛴다(실제로 그럴 뻔했다).
+function _stripProgramNames(t){
+  return String(t||'')
+    .replace(/\b(after|before)\s*school\s*club\b/gi,' ')
+    .replace(/(애프터|비포)\s*스쿨\s*클럽/g,' ');
+}
 function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
   const _trace=[];
   // "(원곡: X)"/"[Dance Cover]"/"(BTS 커버)"류 절은 매칭 전에 먼저 제거한다 — 이 절 안의 이름은 실제
@@ -8152,7 +8162,7 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
     return s;
   })();
   if(_fc)_trace.push({rule:'fancam_struct',token:_fc.brand||'',effect:'songtitle_stripped'});
-  const strippedTitle=_wonkokStripClause(_fcSrc);
+  const strippedTitle=_stripProgramNames(_wonkokStripClause(_fcSrc));
   // 출연자 구간(정규화) 안에서 그룹/멤버 토큰의 위치. -1이면 구간에 없음. 선두(head)면 0.
   const _fcPos=(tok)=>{if(!_fc)return -1;const n=_fancamNormTok(tok);if(!n)return -1;return _fc.artistNorm.indexOf(' '+n+' ');};
   const _fcHead=(tok)=>_fcPos(tok)===0;
@@ -8274,7 +8284,10 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
     // 태양(IU 콘서트 "오렌지 태양 아래" ≠ 빅뱅 태양, 일상어). 해시태그(#태양)로 명시되면 그대로 인정된다.
     '윤하','지은','비비','태양',
     // 이래(세븐어스 이래 ↔ "개설 이래")·소민(카드 전소민의 성 뗀 변형 ↔ 아이유 채널 "소민 pd") — 같은 실측.
-    '이래','소민']); // ⚠️ '미주'는 뺐다 — 러블리즈 이미주는 예능에서 그룹명 없이 "미주"로 불리는 게 대부분(실측 60건 거의 전부 정당) // 메이: en=May(달)+동명이인 3명(리센느/세이마이네임/체리블렛)+A2O MAY 그룹명 — 인퍼런스에선 해시태그/그룹문맥만(2026-08-24). 마이(이즈나 Mai): "마이 코드"·"I Love My Body 마이 바디"의 "마이"(=My)에 대량 오매칭(2026-08-25 실측 146건) — 해시태그(#마이)만 인정. 렉스(소디엑): 아래 matchAliases 반영(2026-09-23)으로 디모렉스의 별칭 "디모 렉스"가 역추론 후보에 들어가게 되면서, 그 안의 " 렉스 " 토큰이 소디엑 멤버 렉스(동명이 아니라 완전히 다른 사람, 남의 2어절 별칭 뒷부분과 우연히 겹침)로 독립 매칭돼 it's Live·Show Champion 콜라보 영상이 소디엑으로 새는 걸 실측으로 확인 — 해시태그(#렉스)만 인정
+    '이래','소민',
+    // 민수(티오원 ↔ 싱어송라이터 Minsu "Minsu - Go for Love", 2026-09-30 스포티파이 신원 대조 중 발견)·루시(위키미키/우아 ↔
+    // 밴드 LUCY — 신예찬·최상엽 무대 95건이 옛 로직으로 위키미키 루시에 붙어 있었다. 현 매처는 이미 안 붙이지만 명시해 둔다).
+    '민수','루시']); // ⚠️ '미주'는 뺐다 — 러블리즈 이미주는 예능에서 그룹명 없이 "미주"로 불리는 게 대부분(실측 60건 거의 전부 정당) // 메이: en=May(달)+동명이인 3명(리센느/세이마이네임/체리블렛)+A2O MAY 그룹명 — 인퍼런스에선 해시태그/그룹문맥만(2026-08-24). 마이(이즈나 Mai): "마이 코드"·"I Love My Body 마이 바디"의 "마이"(=My)에 대량 오매칭(2026-08-25 실측 146건) — 해시태그(#마이)만 인정. 렉스(소디엑): 아래 matchAliases 반영(2026-09-23)으로 디모렉스의 별칭 "디모 렉스"가 역추론 후보에 들어가게 되면서, 그 안의 " 렉스 " 토큰이 소디엑 멤버 렉스(동명이 아니라 완전히 다른 사람, 남의 2어절 별칭 뒷부분과 우연히 겹침)로 독립 매칭돼 it's Live·Show Champion 콜라보 영상이 소디엑으로 새는 걸 실측으로 확인 — 해시태그(#렉스)만 인정
   // 멤버 이름이 "실존하는 그룹 이름"과 같은 경우(예: 다이아 멤버 "유니스" ↔ 그룹 유니스(UNIS), A2O MAY의
   // "메이" 등): 제목에 평문으로 나온 "유니스"는 거의 항상 그 그룹을 가리키는데, memberHit이 이걸 그 이름의
   // 멤버(다이아 유니스)로 역추론해 엉뚱한 그룹 콜라보(with_members "유니스(다이아)")로 오태깅함 —
@@ -10960,6 +10973,27 @@ async function _admLoadCards(){
   const cTagq=mk('검수 대기','애매한 태깅 — 눌러서 목록',()=>{_admHomeClose();_openTagReviewQueue();}); // 검수 대기열(2026-08-30)
   const cErr=mk('주간 손댄 비율','최근 7일 유입 중 사람이 고친 것',null); // 오류율 지표(2026-09-04)
   const cGone=mk('삭제·비공개 감지','유튜브에서 사라진 영상 (누적)',null); // 보존 지표(2026-09-04)
+  // 앨범 자동 수집이 "신원 미확인"으로 보류한 대상(2026-09-30, 치훈 30장 오수집 사고 후속). 수집은 이제
+  // 확인 안 된 계정의 앨범을 넣지 않고 spotify_sync_state.json의 pending에 남긴다 — 여기서 안 보이면
+  // 진짜 본인의 신보도 영영 안 들어온다(보류 = 조용한 누락이 되지 않게). 누르면 목록을 아래 로그에 편다.
+  let _discoPending=null;
+  const cDisco=mk('앨범 확인 대기','자동 수집이 본인 확인을 못 해 보류',()=>{
+    if(!_discoPending)return;
+    const log=document.getElementById('adm-routine-log');if(log)log.innerHTML='';
+    const rows=Object.entries(_discoPending);
+    if(!rows.length){_admSetLog('보류된 앨범 수집 없음','ok');return;}
+    _admSetLog(`앨범 수집 보류 ${rows.length}건 — 본인이면 spotify_artist_map.json에 confidence:'high', 아니면 rejected:true`);
+    rows.forEach(([ko,p])=>_admSetLog(`${ko} → ${p.spotifyName} (${p.since}~) · ${(p.heldAlbums||[]).slice(0,3).join(' / ')} · ${p.why||''}`));
+  });
+  fetch('spotify_sync_state.json',{cache:'no-cache'}).then(r=>r.ok?r.json():null).then(st=>{
+    const numEl=cDisco.querySelector('.adm-card-num'),subEl=cDisco.querySelector('.adm-card-sub');
+    if(!st){numEl.textContent='?';if(subEl)subEl.textContent='조회 실패';return;}
+    _discoPending=st.pending||{};
+    const n=Object.keys(_discoPending).length;
+    numEl.textContent=String(n);
+    numEl.className='adm-card-num'+(n===0?' adm-zero':' adm-warn');
+    if(subEl)subEl.textContent=n?Object.keys(_discoPending).slice(0,3).join(' · ')+(n>3?' …':'')+' — 눌러서 목록':'보류 없음';
+  }).catch(()=>{});
   const set=(card,n,zeroSub)=>{
     const el=card.querySelector('.adm-card-num');
     const sub=card.querySelector('.adm-card-sub');

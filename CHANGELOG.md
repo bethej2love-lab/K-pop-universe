@@ -61,6 +61,17 @@
 - ~~**`active:false`인데 탈퇴일(`left`)이 없는 멤버 104명 — 그룹 미태깅 영상이 그 멤버 카드에 하나도 안 뜸(2026-08-27 발견)**~~ → **같은 날 처리 완료** — 폴백 4단계 재설계로 차단 110명→11명, 99명 복구. 아래 2026-08-27 항목 참고. ⚠️ 원 진단("탈퇴일 미기입이 원인")은 **틀렸었다** — 실제 원인은 `active` 필드가 "이 그룹 멤버인가"와 "개인이 아직 활동하는가" 두 뜻으로 섞여 쓰인 것이었고, 쥬얼리·걸스데이·스텔라에서 같은 시기 멤버가 은퇴 여부에 따라 갈리고 있었다.
 ---
 
+## 2026-09-30 (세션 — 후속: 근본 대책 — 앨범 신원 검증 다층화 · 쇼츠 썸네일 단일 경로 · 프로그램명/동명 오태깅)
+- [완료] 앨범 신원 검증 2단계 — 앨범 겹침 대조가 불가능하면(대조할 앨범 0장) **우리 영상 제목에 그 앨범 곡이 곡 제목 자리로 2곡 이상** 있어야 통과(videoEvidence). 실측 오수집 27명 중 통과 0, 디모렉스 9곡으로 자동 통과. 못 넘으면 state.pending 보류 + 어드민 홈 "앨범 확인 대기" 카드. [tools/spotify_disco_lib.mjs] [tools/spotify_disco_sync.mjs] [admin.js]
+- [완료] 출처 불변식 테스트 — 어떤 경로로 들어왔든 미검증·rejected 매핑의 앨범, 서로 다른 솔로에게 같은 앨범이면 실패. 일일 수집 워크플로에서 **커밋 전 게이트**(실패 시 커밋 안 함). 사고 시점 데이터로 돌리면 31건 적발. [tests/disco-provenance.test.js] [.github/workflows/disco-daily.yml]
+- [완료] copyright 저장 버그 — 검색 결과 객체엔 copyrights가 없어 713장 중 0장 저장돼 있었음(이름 도용 판별 신호가 한 번도 안 쌓임). 앨범 상세에서 읽게. [tools/spotify_disco_lib.mjs]
+- [완료] 장예은 복원(오전에 불확실로 막았는데 영상 대조로 본인 확인 — 쇼챔 Strange Way To Love·더쇼 Cherry Coke). 성연·찬·와우·가은은 rejected(다른 사람 확정)가 아니라 미확인으로 되돌림 — 영상 증거 생기면 자동 통과. [artists.json] [spotify_artist_map.json]
+- [완료] 쇼츠 썸네일 단일 경로 — 그리드·모아보기·탐험 피드에 복붙돼 폴백이 서로 달랐던 로직을 _mountShortThumb 하나로. 헤드리스 390px 전/후 스크린샷 확인(아홉 카드 164×291 틀에 164×92 → 꽉 참). 테스트가 헬퍼 밖 oardefault URL 생성을 막음. [index.html] [tests/short-thumb.test.js]
+- [완료] "After School Club"(아리랑 프로그램) → 그룹 애프터스쿨 오매칭 ~2,000건 — _stripProgramNames를 매처와 재배정 스윕의 근거 판정(_mtNorm)이 같이 쓰게. 이전/새 매처 차분 2,863건: 2,018건 교정, 우아·위키미키·티오원 정당 태그 손실 0. [admin.js] [tools/matcher_harness.cjs] [tools/m2_harness.js] [tests/matching.test.js]
+- [완료] 유니버스 밖 동명 — 민수(싱어송라이터 Minsu)·루시(밴드 LUCY)를 _ATM_COMMON_KO_WORDS에(해시태그·그룹 문맥만 인정). 기존 오태깅 120건 정리 SQL. [admin.js] [sql/fix_homonym_mistags_2026-09-30.sql]
+- [진행중·사용자 실행 필요] ① sql/fix_homonym_mistags_2026-09-30.sql 실행 ② 배포 후 어드민 "② 오태깅 그룹 재배정"(애프터스쿨 → 게스트 그룹 ~1,400건) ③ "근거 없는 배정 → 보류"에 애프터스쿨 입력(남은 ~600건)
+- [이슈] 남은 것: 2열로 넓힌 쇼츠(gc-ch-wide)는 설계상 세로 그림 양옆이 블러(아홉 카드 4건) · 정사각 원본 쇼츠는 위아래 블러 · 챌린지 커버 제목("cignature Challenge 'BLACKPINK - Shut Down'")이 원곡자로 가는 매처 약점 · 동명 솔로(현아 2명·가은 2명)는 매핑 키가 name.ko라 첫 레코드만 수집 대상
+
 ## 2026-09-30 (세션 — 사용자 제보 3건: 쇼츠 썸네일 갇힘 · 디모렉스 Surf 트레저 행 · 치훈 앨범 오수집)
 - [완료] 스포티파이 앨범 오수집 — 대조할 앨범이 0장이면 매핑 검증 게이트를 통째로 건너뛰던 구멍. 솔로 27명이 동명이인 앨범 201장을 받았음(치훈→재즈 CHIHOON 30장, 렌타→Renaud Capuçon, 앤→Anne-Marie, 김재이→태연 등). 앨범 삭제 + 매핑 `rejected:true`, 솔로는 사람 확인(`confidence:high`) 전엔 수집 보류, 그룹은 이름 정확일치만 통과. 디모렉스·현아·가희는 본인 확인해 high로. [tools/spotify_disco_sync.mjs] [tools/spotify_map_artists.mjs] [spotify_artist_map.json] [artists.json]
 - [완료] 쇼츠 썸네일이 세로 틀에 작게 갇힘 — 세로 원본(oardefault) 없는 쇼츠(최근 표본 3/40)가 좌우 검은 띠 있는 가로 썸네일을 contain으로 넣고 있었음 → hqdefault를 cover로(가운데 세로 화면만 정확히 잘림). 브라우저 프로브가 120×90 플레이스홀더를 "가로"로 보고 서버 확정 쇼츠를 강등하던 것도 unknown으로. [index.html] [kpop_universe.css]

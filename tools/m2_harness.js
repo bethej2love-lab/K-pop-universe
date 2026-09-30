@@ -102,6 +102,7 @@ function load(){
     S(/^const _M2_DEBUT_GRACE_YEARS\s*=/m,'_M2_DEBUT_GRACE_YEARS');
     F(/^function _m2DebutBlocks\(/m,'_m2DebutBlocks');
   }
+  F(/^function _stripProgramNames\(/m,'_stripProgramNames'); // 프로그램명 제거(2026-09-30)
   F(/^function _m2ParseTitle\(/m,'_m2ParseTitle');
   // 원곡 해석기 v2(2026-08-30) — 있으면 싣는다
   if(/^function _coverResolve\(/m.test(adminSrc)){
