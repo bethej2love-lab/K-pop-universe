@@ -488,6 +488,17 @@
     },
     "checkedAt": "2026-09-23"
   },
+  "김채원": {
+    "id": "39j6wByxxNDb92rODch4mT",
+    "spotifyName": "KIM CHAEWON",
+    "kind": "solo",
+    "confidence": "medium",
+    "why": "동명 후보 5명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 1
+    },
+    "checkedAt": "2026-10-01"
+  },
   "김태헌": {
     "id": "3qNVuliS40BLgXGxhdBdqu",
     "spotifyName": "TAEYEON",
@@ -1308,6 +1319,21 @@
     },
     "checkedAt": "2026-09-30",
     "rejected": true
+  },
+  "박소은": {
+    "id": "4wxCzHXqVGEWmcnGDWTwVh",
+    "spotifyName": "SoEun",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "동명 후보 3명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0,
+      "verifyOverlap": 0,
+      "verifyYears": [
+        2026
+      ]
+    },
+    "checkedAt": "2026-10-01"
   },
   "박시영": {
     "id": "2wAjuE3pVtauK8ZQ2p4SXN",
@@ -2134,6 +2160,17 @@
     },
     "checkedAt": "2026-09-19"
   },
+  "신지윤": {
+    "id": "4lwkPuURX1XYNq6hrSoFRO",
+    "spotifyName": "jiyoon",
+    "kind": "solo",
+    "confidence": "medium",
+    "why": "이름 유일 일치",
+    "evidence": {
+      "titleOverlap": null
+    },
+    "checkedAt": "2026-10-01"
+  },
   "신화": {
     "id": "0jVvkFPa6YbFXQ3Qmhita0",
     "spotifyName": "SHINHWA",
@@ -2520,6 +2557,17 @@
       "titleOverlap": 0
     },
     "checkedAt": "2026-09-21"
+  },
+  "양예나": {
+    "id": "49muoiIu4uea4PO8vueUNN",
+    "spotifyName": "YENA",
+    "kind": "solo",
+    "confidence": "medium",
+    "why": "이름 유일 일치",
+    "evidence": {
+      "titleOverlap": null
+    },
+    "checkedAt": "2026-10-01"
   },
   "어센트": {
     "id": "4w6MZBLb4aIZpffyA52Doq",
@@ -3454,6 +3502,17 @@
     },
     "checkedAt": "2026-09-30"
   },
+  "윤채경": {
+    "id": "25QShsOqe68UZq3GLfTp8c",
+    "spotifyName": "Chaekyung",
+    "kind": "solo",
+    "confidence": "medium",
+    "why": "이름 불일치 — 앨범 대조",
+    "evidence": {
+      "titleOverlap": 1
+    },
+    "checkedAt": "2026-10-01"
+  },
   "율희": {
     "id": "5ZE5S6mFYisCsjhVKpEJ7v",
     "spotifyName": "Do Yul Hee",
@@ -3479,6 +3538,17 @@
       ]
     },
     "checkedAt": "2026-09-28"
+  },
+  "이나은": {
+    "id": "16Jm6AxcL9XKkwOemxmbXc",
+    "spotifyName": "Naeun",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "동명 후보 5명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-10-01"
   },
   "이달의소녀": {
     "id": "52zMTJCKluDlFwMQWmccY7",
@@ -3598,6 +3668,17 @@
       "titleOverlap": 0
     },
     "checkedAt": "2026-09-24"
+  },
+  "이재희": {
+    "id": "3x6kdr5qAfzrfPBLj7a9pO",
+    "spotifyName": "Jaehee",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "동명 후보 4명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-10-01"
   },
   "이준혁": {
     "id": "3S5FdlOtsbXEmbefNCX0Kc",
@@ -3879,6 +3960,17 @@
     "checkedAt": "2026-09-30",
     "rejected": true
   },
+  "조아": {
+    "id": "6Un27f1TcYPd6AGEIJPqiK",
+    "spotifyName": "ZOA",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "동명 후보 3명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-10-01"
+  },
   "조유리": {
     "id": "5qUT9YBghleRCXg0WifEzf",
     "spotifyName": "yuri",
@@ -3972,6 +4064,17 @@
       ]
     },
     "checkedAt": "2026-09-22"
+  },
+  "지한": {
+    "id": "4EVCVGMbSJvwRvY9JmdjV6",
+    "spotifyName": "Jihan",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "동명 후보 5명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-10-01"
   },
   "진예": {
     "id": "2FgZrgTMX6Sk0VNcOsEPmm",

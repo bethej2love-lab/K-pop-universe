@@ -384,10 +384,19 @@
     "문익": "2026-10-01",
     "경윤": "2026-10-01",
     "이수진": "2026-10-01",
-    "먼데이": "2026-10-01"
+    "먼데이": "2026-10-01",
+    "박소은": "2026-10-01",
+    "이재희": "2026-10-01",
+    "지한": "2026-10-01",
+    "조아": "2026-10-01",
+    "신지윤": "2026-10-01",
+    "윤채경": "2026-10-01",
+    "김채원": "2026-10-01",
+    "이나은": "2026-10-01",
+    "양예나": "2026-10-01"
   },
-  "runs": 42,
-  "lastRunAt": "2026-10-01T16:20:37.294Z",
+  "runs": 43,
+  "lastRunAt": "2026-10-01T20:19:46.288Z",
   "swept": {
     "에스파": [
       2025
@@ -1669,6 +1678,46 @@
       2023,
       2024,
       2025
+    ],
+    "박소은": [
+      2023,
+      2024,
+      2025
+    ],
+    "이재희": [
+      2023,
+      2024,
+      2025
+    ],
+    "지한": [
+      2023,
+      2024,
+      2025
+    ],
+    "조아": [
+      2023,
+      2024,
+      2025
+    ],
+    "신지윤": [
+      2023,
+      2024,
+      2025
+    ],
+    "윤채경": [
+      2023,
+      2024,
+      2025
+    ],
+    "김채원": [
+      2023,
+      2024,
+      2025
+    ],
+    "이나은": [
+      2023,
+      2024,
+      2025
     ]
   },
   "pending": {
@@ -1815,6 +1864,59 @@
         "2025-08-27 BADITUDE"
       ],
       "why": "영상 증거 1곡(영상 227개 대조: MONA LISA)"
+    },
+    "박소은": {
+      "spotifyName": "SoEun",
+      "spotifyId": "4wxCzHXqVGEWmcnGDWTwVh",
+      "since": "2026-10-01",
+      "heldAlbums": [
+        "2025-10-30 Someday, I'll Let You Go"
+      ],
+      "why": "영상 증거 0곡(영상 279개 대조)"
+    },
+    "이재희": {
+      "spotifyName": "Jaehee",
+      "spotifyId": "3x6kdr5qAfzrfPBLj7a9pO",
+      "since": "2026-10-01",
+      "heldAlbums": [
+        "2025-05-30 Laundry"
+      ],
+      "why": "영상 증거 0곡(영상 192개 대조)"
+    },
+    "조아": {
+      "spotifyName": "ZOA",
+      "spotifyId": "6Un27f1TcYPd6AGEIJPqiK",
+      "since": "2026-10-01",
+      "heldAlbums": [
+        "2026-09-03 Anatomy of a Ghost (i miss you so)",
+        "2026-07-16 The Eras Within",
+        "2023-05-26 You Are Colour",
+        "2023-02-20 Purity",
+        "2023-10-13 Break My Heart"
+      ],
+      "why": "영상 증거 0곡(영상 228개 대조)"
+    },
+    "신지윤": {
+      "spotifyName": "jiyoon",
+      "spotifyId": "4lwkPuURX1XYNq6hrSoFRO",
+      "since": "2026-10-01",
+      "heldAlbums": [
+        "2026-07-08 Get out my life!"
+      ],
+      "why": "영상 증거 0곡(영상 31개 대조)"
+    },
+    "양예나": {
+      "spotifyName": "YENA",
+      "spotifyId": "49muoiIu4uea4PO8vueUNN",
+      "since": "2026-10-01",
+      "heldAlbums": [
+        "2026-03-11 LOVE CATCHER",
+        "2026-04-25 Catch Catch (Chinese Ver.)",
+        "2026-04-29 Mirror Mirror",
+        "2026-06-10 Mirror Mirror / STAR! (feat. Hatsune Miku)",
+        "2026-01-21 NEMONEMO - Japanese Ver. -"
+      ],
+      "why": "영상 증거 0곡(영상 258개 대조)"
     }
   }
 }
