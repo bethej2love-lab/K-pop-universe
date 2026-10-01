@@ -8,8 +8,12 @@ BEGIN;
 UPDATE yt_channel_videos SET group_ko = '에반', members = ARRAY['에반']
 WHERE tags_manual = false AND group_ko = '데일리디렉션' AND members = ARRAY['E-VAN'] AND id IN ('uecqs4w9KP8','wfxdHsy4sHk','w57XUw3zgJc','BmItOgbEK_c','gQ9axTeJBQc','0HlepX0gu7U','_HI1PThzkeQ','LEVMiy1w2FQ','mHbMmT947nQ','uXkfxb5_ZIM','yn3MW2IrUFU','bTqDFI3LO9A','S1rsJmTx_MU','MsxiNAAQWaE','z2KEYfT2PVI','JVKYQHlsAh0','Tu2683JFi-Y','5PgsHn7QqxM','bFeLgQnuH7Y','Jmvu3OsrHrA','c1eKIPpUGpk','ve_YZtx2seQ','GZYi4yZ9lRE','-hYIhmBY64s','-7qYnwgnI2U','a44NoIBASns','F_Kt2yx68xA','y2bSScf-K-g','jM9MAmr7ug4','L88jONzUv20','cB1TVFlFEtc','2xumHpsxEDg','MT7aTqsDR_g','nAQj963YK9Q','PVkxR42rr7A','QMjYhW-QF5o','tdFHDK_Nk6Y','uzZwfo9h4bQ','EWB5VSegWgY','_XVaGt8V0yc','eSycpx48uts','LMeR9bd-JiY','IoovISVA1L0','lvzsJM5rvCY','RQ7rZa7n3t4');
 
--- ② 콜라보 교정 4건 — with_members의 E-VAN(데일리디렉션) → 에반(에반)
-UPDATE yt_channel_videos SET with_members = array_replace(with_members, 'E-VAN(데일리디렉션)', '에반(에반)')
-WHERE tags_manual = false AND id IN ('Ks7jBJVqk6Y','LlsgSILVH_8','fJbwhXmwfs8','qHv8fiNYF54');
+-- ② 콜라보 교정 4건 — 에반(에반)을 with_members에 넣는다
+--    10-02 실측: E-VAN(데일리디렉션)은 그새 빠져 with_members가 빈 배열이 됐다(array_replace는 헛돌게 됨).
+--    그래서 "E-VAN은 빼고, 에반이 없으면 추가"로 바꿨다. 두 상태 어느 쪽이든 같은 결과.
+UPDATE yt_channel_videos
+SET with_members = array_append(array_remove(with_members, 'E-VAN(데일리디렉션)'), '에반(에반)')
+WHERE tags_manual = false AND NOT ('에반(에반)' = ANY(with_members))
+  AND id IN ('Ks7jBJVqk6Y','LlsgSILVH_8','fJbwhXmwfs8','qHv8fiNYF54');
 
 COMMIT;
