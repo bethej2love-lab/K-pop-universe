@@ -249,6 +249,17 @@
     },
     "checkedAt": "2026-09-16"
   },
+  "경윤": {
+    "id": "7uv6GgFILw5jZxPnsGzER3",
+    "spotifyName": "Min Kyunghoon",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "이름 불일치 — 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-10-01"
+  },
   "경호": {
     "id": "15Tra1ytu0naoNByIhZArl",
     "spotifyName": "Kim Kyung Ho",
@@ -342,6 +353,17 @@
       "titleOverlap": null
     },
     "checkedAt": "2026-09-24"
+  },
+  "기석": {
+    "id": "2gXZHBWe9Woza2RyGoBdjy",
+    "spotifyName": "kiseok",
+    "kind": "solo",
+    "confidence": "medium",
+    "why": "이름 유일 일치",
+    "evidence": {
+      "titleOverlap": null
+    },
+    "checkedAt": "2026-10-01"
   },
   "김동준": {
     "id": "0XojSZQ9oNETM8AtA9kJe8",
@@ -1109,6 +1131,17 @@
     },
     "checkedAt": "2026-09-16"
   },
+  "먼데이": {
+    "id": "2QdvFxDbJCy6w1TBx4nKGY",
+    "spotifyName": "Monday",
+    "kind": "solo",
+    "confidence": "medium",
+    "why": "이름 유일 일치",
+    "evidence": {
+      "titleOverlap": null
+    },
+    "checkedAt": "2026-10-01"
+  },
   "메이딘": {
     "id": "5Sso2rRE8bs9Ff6bkfqUKe",
     "spotifyName": "MADEIN",
@@ -1185,6 +1218,17 @@
     },
     "checkedAt": "2026-09-15"
   },
+  "문익": {
+    "id": "35TmRxVcUTTyA1RdYzHcdk",
+    "spotifyName": "Munik",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "동명 후보 2명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-10-01"
+  },
   "문준영": {
     "id": "6GdRhnyb9YmTPib3p1GG89",
     "spotifyName": "Jun Young Ho",
@@ -1218,6 +1262,17 @@
       "titleOverlap": 2
     },
     "checkedAt": "2026-09-15"
+  },
+  "민규": {
+    "id": "5gUpo0BRmo6EOTbyU3z5Ay",
+    "spotifyName": "MINGYU",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "동명 후보 5명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-10-01"
   },
   "민수": {
     "id": "1o13ZguNtAOcOe1k0chkta",
@@ -1828,6 +1883,17 @@
       "titleOverlap": 3
     },
     "checkedAt": "2026-09-15"
+  },
+  "세현": {
+    "id": "2sNAZRKQXyibbrjsYdRYm9",
+    "spotifyName": "Sehyun",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "동명 후보 4명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-10-01"
   },
   "소녀시대": {
     "id": "0Sadg1vgvaPqGTOjxu0N6c",
@@ -3139,6 +3205,17 @@
     },
     "checkedAt": "2026-09-15"
   },
+  "원대": {
+    "id": "73i3x0ABouiU6czWJX0O8b",
+    "spotifyName": "Wondae",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "동명 후보 2명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-10-01"
+  },
   "원어스": {
     "id": "3CVYSpM7nfHFG5qCTW7Ht9",
     "spotifyName": "ONEUS",
@@ -3463,6 +3540,21 @@
     },
     "checkedAt": "2026-09-30"
   },
+  "이수진": {
+    "id": "0kB3Vlf3xDNZQz6NjAPJV8",
+    "spotifyName": "SOOJIN",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "동명 후보 4명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0,
+      "verifyOverlap": 0,
+      "verifyYears": [
+        2025
+      ]
+    },
+    "checkedAt": "2026-10-01"
+  },
   "이엑스아이디": {
     "id": "1xs6WFotNQSXweo0GXrS0O",
     "spotifyName": "EXID",
@@ -3695,6 +3787,17 @@
     },
     "checkedAt": "2026-09-28"
   },
+  "재찬": {
+    "id": "2ggXDRbe4d24r7MD54kVbE",
+    "spotifyName": "JAECHAN",
+    "kind": "solo",
+    "confidence": "medium",
+    "why": "이름 유일 일치",
+    "evidence": {
+      "titleOverlap": null
+    },
+    "checkedAt": "2026-10-01"
+  },
   "전지윤": {
     "id": "05uheFGPahVh2nHIZK1KuB",
     "spotifyName": "Jenyer",
@@ -3822,6 +3925,21 @@
       ]
     },
     "checkedAt": "2026-09-26"
+  },
+  "주원": {
+    "id": "0u4U1V54qBzBdnqAUz67vR",
+    "spotifyName": "Juwon",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "동명 후보 5명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0,
+      "verifyOverlap": 0,
+      "verifyYears": [
+        2023
+      ]
+    },
+    "checkedAt": "2026-10-01"
   },
   "지수": {
     "id": "1QUxcni0biHr4HFdN44QE9",
