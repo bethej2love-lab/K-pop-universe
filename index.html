@@ -6576,10 +6576,18 @@ function _surfSortRows(rows){
 }
 let _surfWrittenP=null;
 // 이 사람이 쓴 곡 목록(최대 20곡) — 남에게 써준 곡 전부 먼저, 그다음 본인 곡(타이틀곡 우선). 부른 쪽의 group_ko 후보까지 계산.
+// 크레딧 키 — "이름\0그룹", 같은 (이름, 그룹)이 둘 이상이면 "이름\0그룹\0id"(2026-10-02 — 솔로 소희 3명·레나 2명이 한 키를 공유하면
+// 남의 곡이 섞인다). ⚠️ tools/build_written_songs.mjs creditKey · tools/melon_credits.mjs와 규칙이 같아야 한다.
+let _creditDup=null;
+function _creditKey(a){
+  const k=a.name.ko+'\u0000'+a.group.ko;
+  if(!_creditDup){const c={};ARTISTS.forEach(x=>{if(x.name&&x.group){const kk=x.name.ko+'\u0000'+x.group.ko;c[kk]=(c[kk]||0)+1;}});_creditDup=new Set(Object.keys(c).filter(kk=>c[kk]>1));}
+  return _creditDup.has(k)&&a.id?k+'\u0000'+a.id:k;
+}
 async function _surfWrittenSongsOf(a){
   if(!_surfWrittenP)_surfWrittenP=fetch('written_songs.json',{cache:'no-cache'}).then(r=>r.ok?r.json():{}).catch(()=>({}));
   const W=await _surfWrittenP;
-  const list=W[a.name.ko+'\u0000'+a.group.ko]||[];
+  const list=W[_creditKey(a)]||[];
   const picked=[...list.filter(w=>!w.s),...list.filter(w=>w.s&&w.tt),...list.filter(w=>w.s&&!w.tt)].slice(0,20);
   return picked.map(w=>{
     const [p0,p1]=String(w.o).split('\u0000');

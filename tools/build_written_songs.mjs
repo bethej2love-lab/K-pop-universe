@@ -65,7 +65,11 @@ for (const [key, v] of Object.entries(credits)) {
   const g = key.split('\u0000')[1], seen = new Set();
   for (const s2 of [...(v.lyrics || []), ...(v.compose || [])]) { const k = norm(s2.title); if (seen.has(k)) continue; seen.add(k); sameGroupWriters.set(g + '|' + k, (sameGroupWriters.get(g + '|' + k) || 0) + 1); }
 }
-const artistByKey = new Map(ARTISTS.map(a => [a.name.ko + '\u0000' + a.group.ko, a]));
+// 크레딧 키 — "이름\0그룹", 같은 (이름, 그룹)이 둘 이상이면 "이름\0그룹\0id"(2026-10-02, 솔로 소희 3명·레나 2명…).
+// ⚠️ melon_credits.mjs(creditKey)·index.html(_creditKey)과 규칙이 같아야 한다 — 어긋나면 그 사람 곡이 조용히 빈다.
+const _ngCnt = {}; ARTISTS.forEach(a => { const k = a.name.ko + '\u0000' + a.group.ko; _ngCnt[k] = (_ngCnt[k] || 0) + 1; });
+const creditKey = a => { const k = a.name.ko + '\u0000' + a.group.ko; return _ngCnt[k] > 1 && a.id ? k + '\u0000' + a.id : k; };
+const artistByKey = new Map(ARTISTS.map(a => [creditKey(a), a]));
 const out = {}; let nSelf = 0, nOther = 0, skippedNoArtist = 0; const rejectedArtist = [];
 const review = [];
 for (const [key, v] of Object.entries(credits)) {
