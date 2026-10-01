@@ -7609,5 +7609,1690 @@
     "overlap": 0,
     "evidence": "그룹멤버 7/7명 일치",
     "checkedAt": "2026-10-01"
+  },
+  "a:승한|솔로": {
+    "aid": null,
+    "failedWhy": "본인확인 실패 — 후보 2명 중 소속그룹=옛 그룹 없음",
+    "checkedAt": "2026-10-01"
+  },
+  "a:김민주|솔로": {
+    "aid": "2399730",
+    "melonName": "김민주",
+    "gubun": "",
+    "kind": "solo",
+    "confidence": "identity",
+    "overlap": 0,
+    "evidence": "소속그룹 aid 2398653 일치",
+    "checkedAt": "2026-10-01"
+  },
+  "a:야부키 나코|솔로": {
+    "aid": "2399721",
+    "melonName": "야부키 나코",
+    "gubun": "",
+    "kind": "solo",
+    "confidence": "identity",
+    "overlap": 0,
+    "evidence": "소속그룹 aid 2398653 일치",
+    "checkedAt": "2026-10-01"
+  },
+  "a:원호|솔로": {
+    "aid": null,
+    "failedWhy": "본인확인 실패 — 후보 4명 중 소속그룹=옛 그룹 없음",
+    "checkedAt": "2026-10-01"
+  },
+  "a:이준혁|솔로": {
+    "aid": "2927125",
+    "melonName": "이준혁",
+    "gubun": "",
+    "kind": "solo",
+    "confidence": "identity",
+    "overlap": 0,
+    "evidence": "소속그룹 aid 2918508 일치",
+    "checkedAt": "2026-10-01"
+  },
+  "a:리안|솔로": {
+    "aid": "2927126",
+    "melonName": "리안",
+    "gubun": "",
+    "kind": "solo",
+    "confidence": "identity",
+    "overlap": 0,
+    "evidence": "소속그룹 aid 2918508 일치",
+    "checkedAt": "2026-10-01"
+  },
+  "a:유도현|솔로": {
+    "aid": "2927127",
+    "melonName": "유도현",
+    "gubun": "",
+    "kind": "solo",
+    "confidence": "identity",
+    "overlap": 0,
+    "evidence": "소속그룹 aid 2918508 일치",
+    "checkedAt": "2026-10-01"
+  },
+  "a:박시영|솔로": {
+    "aid": "2927130",
+    "melonName": "박시영",
+    "gubun": "",
+    "kind": "solo",
+    "confidence": "identity",
+    "overlap": 0,
+    "evidence": "소속그룹 aid 2918508 일치",
+    "checkedAt": "2026-10-01"
+  },
+  "a:장유빈|솔로": {
+    "aid": "2927131",
+    "melonName": "장유빈",
+    "gubun": "",
+    "kind": "solo",
+    "confidence": "identity",
+    "overlap": 0,
+    "evidence": "소속그룹 aid 2918508 일치",
+    "checkedAt": "2026-10-01"
+  },
+  "a:미야|솔로": {
+    "aid": "2295764",
+    "melonName": "미야(MIYA)",
+    "gubun": "",
+    "kind": "solo",
+    "confidence": "identity",
+    "overlap": 0,
+    "evidence": "소속그룹 aid 2295762 일치",
+    "checkedAt": "2026-10-01"
+  },
+  "a:서경|솔로": {
+    "aid": "2295766",
+    "melonName": "서경(SEOKYOUNG)",
+    "gubun": "",
+    "kind": "solo",
+    "confidence": "identity",
+    "overlap": 0,
+    "evidence": "소속그룹 aid 2295762 일치",
+    "checkedAt": "2026-10-01"
+  },
+  "a:앤|솔로": {
+    "aid": "2295769",
+    "melonName": "앤(ANNE)",
+    "gubun": "",
+    "kind": "solo",
+    "confidence": "identity",
+    "overlap": 0,
+    "evidence": "소속그룹 aid 2295762 일치",
+    "checkedAt": "2026-10-01"
+  },
+  "a:민주|솔로": {
+    "aid": "2295765",
+    "melonName": "민주(MINJU)",
+    "gubun": "",
+    "kind": "solo",
+    "confidence": "identity",
+    "overlap": 0,
+    "evidence": "소속그룹 aid 2295762 일치",
+    "checkedAt": "2026-10-01"
+  },
+  "a:소소|솔로": {
+    "aid": "2295768",
+    "melonName": "소소(SOSO)",
+    "gubun": "",
+    "kind": "solo",
+    "confidence": "identity",
+    "overlap": 0,
+    "evidence": "소속그룹 aid 2295762 일치",
+    "checkedAt": "2026-10-01"
+  },
+  "a:세이|솔로": {
+    "aid": "1866215",
+    "melonName": "세이 (Weki Meki)",
+    "gubun": "",
+    "kind": "solo",
+    "confidence": "identity",
+    "overlap": 0,
+    "evidence": "소속그룹 aid 1816806 일치",
+    "checkedAt": "2026-10-01"
+  },
+  "a:루아|솔로": {
+    "aid": "1866216",
+    "melonName": "루아 (Weki Meki)",
+    "gubun": "",
+    "kind": "solo",
+    "confidence": "identity",
+    "overlap": 0,
+    "evidence": "소속그룹 aid 1816806 일치",
+    "checkedAt": "2026-10-01"
+  },
+  "a:리나|솔로": {
+    "aid": "1866218",
+    "melonName": "리나 (Weki Meki)",
+    "gubun": "",
+    "kind": "solo",
+    "confidence": "identity",
+    "overlap": 0,
+    "evidence": "소속그룹 aid 1816806 일치",
+    "checkedAt": "2026-10-01"
+  },
+  "a:루시|솔로": {
+    "aid": "1866219",
+    "melonName": "루시 (Weki Meki)",
+    "gubun": "",
+    "kind": "solo",
+    "confidence": "identity",
+    "overlap": 0,
+    "evidence": "소속그룹 aid 1816806 일치",
+    "checkedAt": "2026-10-01"
+  },
+  "a:BX|솔로": {
+    "aid": "2738872",
+    "melonName": "BX (CIX)",
+    "gubun": "",
+    "kind": "solo",
+    "confidence": "identity",
+    "overlap": 0,
+    "evidence": "소속그룹 aid 2738871 일치",
+    "checkedAt": "2026-10-01"
+  },
+  "a:현석|솔로": {
+    "aid": "2738877",
+    "melonName": "현석 (CIX)",
+    "gubun": "",
+    "kind": "solo",
+    "confidence": "identity",
+    "overlap": 0,
+    "evidence": "소속그룹 aid 2738871 일치",
+    "checkedAt": "2026-10-01"
+  },
+  "a:용희|솔로": {
+    "aid": "2738876",
+    "melonName": "용희 (CIX)",
+    "gubun": "",
+    "kind": "solo",
+    "confidence": "identity",
+    "overlap": 0,
+    "evidence": "소속그룹 aid 2738871 일치",
+    "checkedAt": "2026-10-01"
+  },
+  "a:소희|솔로|원더걸스": {
+    "aid": null,
+    "failedWhy": "본인확인 실패 — 후보 18명 중 소속그룹=옛 그룹 없음",
+    "checkedAt": "2026-10-01"
+  },
+  "a:권소현|솔로": {
+    "aid": "672415",
+    "melonName": "권소현 (4minute)",
+    "gubun": "",
+    "kind": "solo",
+    "confidence": "identity",
+    "overlap": 0,
+    "evidence": "소속그룹 aid 417985 일치",
+    "checkedAt": "2026-10-01"
+  },
+  "a:고우리|솔로": {
+    "aid": "672890",
+    "melonName": "고우리",
+    "gubun": "",
+    "kind": "solo",
+    "confidence": "identity",
+    "overlap": 0,
+    "evidence": "소속그룹 aid 440320 일치",
+    "checkedAt": "2026-10-01"
+  },
+  "a:김지숙|솔로": {
+    "aid": null,
+    "failedWhy": "본인확인 실패 — 후보 5명 중 소속그룹=옛 그룹 없음",
+    "checkedAt": "2026-10-01"
+  },
+  "a:노을|솔로": {
+    "aid": "672894",
+    "melonName": "노을",
+    "gubun": "",
+    "kind": "solo",
+    "confidence": "identity",
+    "overlap": 0,
+    "evidence": "소속그룹 aid 440320 일치",
+    "checkedAt": "2026-10-01"
+  },
+  "a:정윤혜|솔로": {
+    "aid": "672897",
+    "melonName": "정윤혜",
+    "gubun": "",
+    "kind": "solo",
+    "confidence": "identity",
+    "overlap": 0,
+    "evidence": "소속그룹 aid 440320 일치",
+    "checkedAt": "2026-10-01"
+  },
+  "a:비비|솔로": {
+    "aid": "1459669",
+    "melonName": "비비 (Loossemble)",
+    "gubun": "",
+    "kind": "solo",
+    "confidence": "identity",
+    "overlap": 0,
+    "evidence": "소속그룹 aid 1229429,3563234 일치",
+    "checkedAt": "2026-10-01"
+  },
+  "a:고원|솔로": {
+    "aid": "2084651",
+    "melonName": "고원 (Loossemble)",
+    "gubun": "",
+    "kind": "solo",
+    "confidence": "identity",
+    "overlap": 0,
+    "evidence": "소속그룹 aid 1229429,3563234 일치",
+    "checkedAt": "2026-10-01"
+  },
+  "a:올리비아 혜|솔로": {
+    "aid": null,
+    "failedWhy": "이름 맞는 후보 없음(디스코 0 · 본인확인 모드)",
+    "checkedAt": "2026-10-01"
+  },
+  "a:장승연|솔로": {
+    "aid": null,
+    "failedWhy": "본인확인 실패 — 후보 6명 중 소속그룹=옛 그룹 없음",
+    "checkedAt": "2026-10-01"
+  },
+  "a:권은빈|솔로": {
+    "aid": "947101",
+    "melonName": "권은빈",
+    "gubun": "",
+    "kind": "solo",
+    "confidence": "identity",
+    "overlap": 0,
+    "evidence": "소속그룹 aid 839579 일치",
+    "checkedAt": "2026-10-01"
+  },
+  "a:소원|솔로": {
+    "aid": "858235",
+    "melonName": "소원 (여자친구)",
+    "gubun": "",
+    "kind": "solo",
+    "confidence": "identity",
+    "overlap": 0,
+    "evidence": "소속그룹 aid 828478 일치",
+    "checkedAt": "2026-10-01"
+  },
+  "a:이한결|솔로": {
+    "aid": null,
+    "failedWhy": "본인확인 실패 — 후보 15명 중 소속그룹=옛 그룹 없음",
+    "checkedAt": "2026-10-01"
+  },
+  "a:이은상|솔로": {
+    "aid": null,
+    "failedWhy": "본인확인 실패 — 후보 4명 중 소속그룹=옛 그룹 없음",
+    "checkedAt": "2026-10-01"
+  },
+  "a:남도현|솔로": {
+    "aid": null,
+    "failedWhy": "본인확인 실패 — 후보 2명 중 소속그룹=옛 그룹 없음",
+    "checkedAt": "2026-10-01"
+  },
+  "a:도하|솔로": {
+    "aid": "2894497",
+    "melonName": "도하",
+    "gubun": "",
+    "kind": "solo",
+    "confidence": "identity",
+    "overlap": 0,
+    "evidence": "소속그룹 aid 2894491 일치",
+    "checkedAt": "2026-10-01"
+  },
+  "a:와우|솔로": {
+    "aid": "1705385",
+    "melonName": "WOW",
+    "gubun": "",
+    "kind": "solo",
+    "confidence": "identity",
+    "overlap": 0,
+    "evidence": "소속그룹 aid 1705318 일치",
+    "checkedAt": "2026-10-01"
+  },
+  "a:하주연|솔로": {
+    "aid": "446668",
+    "melonName": "하주연",
+    "gubun": "",
+    "kind": "solo",
+    "confidence": "identity",
+    "overlap": 0,
+    "evidence": "소속그룹 aid 101487 일치",
+    "checkedAt": "2026-10-01"
+  },
+  "a:김은정|솔로": {
+    "aid": "261743",
+    "melonName": "김은정",
+    "gubun": "",
+    "kind": "solo",
+    "confidence": "identity",
+    "overlap": 0,
+    "evidence": "소속그룹 aid 101487 일치",
+    "checkedAt": "2026-10-01"
+  },
+  "a:김예원|솔로": {
+    "aid": null,
+    "failedWhy": "본인확인 실패 — 후보 19명 중 소속그룹=옛 그룹 없음",
+    "checkedAt": "2026-10-01"
+  },
+  "a:박세미|솔로": {
+    "aid": "253498",
+    "melonName": "박세미",
+    "gubun": "",
+    "kind": "solo",
+    "confidence": "identity",
+    "overlap": 0,
+    "evidence": "소속그룹 aid 101487 일치",
+    "checkedAt": "2026-10-01"
+  },
+  "a:주연|솔로": {
+    "aid": null,
+    "failedWhy": "본인확인 실패 — 후보 21명 중 소속그룹=옛 그룹 없음",
+    "checkedAt": "2026-10-01"
+  },
+  "a:이영|솔로": {
+    "aid": "672339",
+    "melonName": "이영 (애프터스쿨)",
+    "gubun": "",
+    "kind": "solo",
+    "confidence": "identity",
+    "overlap": 0,
+    "evidence": "소속그룹 aid 322666 일치",
+    "checkedAt": "2026-10-01"
+  },
+  "a:가은|솔로|애프터스쿨": {
+    "aid": null,
+    "failedWhy": "본인확인 실패 — 후보 20명 중 소속그룹=옛 그룹 없음",
+    "checkedAt": "2026-10-01"
+  },
+  "a:베카|솔로": {
+    "aid": null,
+    "failedWhy": "본인확인 실패 — 후보 6명 중 소속그룹=옛 그룹 없음",
+    "checkedAt": "2026-10-01"
+  },
+  "a:로아|솔로": {
+    "aid": null,
+    "failedWhy": "본인확인 실패 — 후보 13명 중 소속그룹=옛 그룹 없음",
+    "checkedAt": "2026-10-01"
+  },
+  "a:유하|솔로": {
+    "aid": null,
+    "failedWhy": "본인확인 실패 — 후보 19명 중 소속그룹=옛 그룹 없음",
+    "checkedAt": "2026-10-01"
+  },
+  "a:은우|솔로": {
+    "aid": "990458",
+    "melonName": "은우",
+    "gubun": "",
+    "kind": "solo",
+    "confidence": "identity",
+    "overlap": 0,
+    "evidence": "소속그룹 aid 958953 일치",
+    "checkedAt": "2026-10-01"
+  },
+  "a:레나|솔로|프리스틴": {
+    "aid": null,
+    "failedWhy": "본인확인 실패 — 후보 4명 중 소속그룹=옛 그룹 없음",
+    "checkedAt": "2026-10-01"
+  },
+  "a:예하나|솔로": {
+    "aid": "990455",
+    "melonName": "예하나",
+    "gubun": "",
+    "kind": "solo",
+    "confidence": "identity",
+    "overlap": 0,
+    "evidence": "소속그룹 aid 958953 일치",
+    "checkedAt": "2026-10-01"
+  },
+  "a:성연|솔로": {
+    "aid": null,
+    "failedWhy": "본인확인 실패 — 후보 6명 중 소속그룹=옛 그룹 없음",
+    "checkedAt": "2026-10-01"
+  },
+  "a:시연|솔로": {
+    "aid": "990456",
+    "melonName": "시연",
+    "gubun": "",
+    "kind": "solo",
+    "confidence": "identity",
+    "overlap": 0,
+    "evidence": "소속그룹 aid 958953 일치",
+    "checkedAt": "2026-10-01"
+  },
+  "a:카일라|솔로": {
+    "aid": "990459",
+    "melonName": "카일라",
+    "gubun": "",
+    "kind": "solo",
+    "confidence": "identity",
+    "overlap": 0,
+    "evidence": "소속그룹 aid 958953 일치",
+    "checkedAt": "2026-10-01"
+  },
+  "a:동건|솔로": {
+    "aid": "2928992",
+    "melonName": "동건 (TO1)",
+    "gubun": "",
+    "kind": "solo",
+    "confidence": "identity",
+    "overlap": 0,
+    "evidence": "소속그룹 aid 2928965 일치",
+    "checkedAt": "2026-10-01"
+  },
+  "a:찬|솔로": {
+    "aid": null,
+    "failedWhy": "본인확인 실패 — 후보 26명 중 소속그룹=옛 그룹 없음",
+    "checkedAt": "2026-10-01"
+  },
+  "a:지수|솔로": {
+    "aid": "2928995",
+    "melonName": "지수 (TO1)",
+    "gubun": "",
+    "kind": "solo",
+    "confidence": "identity",
+    "overlap": 0,
+    "evidence": "소속그룹 aid 2928965 일치",
+    "checkedAt": "2026-10-01"
+  },
+  "a:재윤|솔로": {
+    "aid": null,
+    "failedWhy": "본인확인 실패 — 후보 11명 중 소속그룹=옛 그룹 없음",
+    "checkedAt": "2026-10-01"
+  },
+  "a:제이유|솔로": {
+    "aid": null,
+    "failedWhy": "본인확인 실패 — 후보 3명 중 소속그룹=옛 그룹 없음",
+    "checkedAt": "2026-10-01"
+  },
+  "a:경호|솔로": {
+    "aid": "2929002",
+    "melonName": "경호 (TO1)",
+    "gubun": "",
+    "kind": "solo",
+    "confidence": "identity",
+    "overlap": 0,
+    "evidence": "소속그룹 aid 2928965 일치",
+    "checkedAt": "2026-10-01"
+  },
+  "a:다이고|솔로": {
+    "aid": "3116107",
+    "melonName": "다이고 (TO1)",
+    "gubun": "",
+    "kind": "solo",
+    "confidence": "identity",
+    "overlap": 0,
+    "evidence": "소속그룹 aid 2928965 일치",
+    "checkedAt": "2026-10-01"
+  },
+  "a:치훈|솔로": {
+    "aid": null,
+    "failedWhy": "본인확인 실패 — 후보 5명 중 소속그룹=옛 그룹 없음",
+    "checkedAt": "2026-10-01"
+  },
+  "a:민수|솔로": {
+    "aid": null,
+    "failedWhy": "본인확인 실패 — 후보 18명 중 소속그룹=옛 그룹 없음",
+    "checkedAt": "2026-10-01"
+  },
+  "a:렌타|솔로": {
+    "aid": "3116108",
+    "melonName": "렌타 (TO1)",
+    "gubun": "",
+    "kind": "solo",
+    "confidence": "identity",
+    "overlap": 0,
+    "evidence": "소속그룹 aid 2928965 일치",
+    "checkedAt": "2026-10-01"
+  },
+  "a:김재이|솔로": {
+    "aid": null,
+    "failedWhy": "본인확인 실패 — 후보 4명 중 소속그룹=옛 그룹 없음",
+    "checkedAt": "2026-10-01"
+  },
+  "a:체스카|솔로": {
+    "aid": null,
+    "failedWhy": "본인확인 실패 — 후보 1명 중 소속그룹=옛 그룹 없음",
+    "checkedAt": "2026-10-01"
+  },
+  "a:김연희|솔로": {
+    "aid": null,
+    "failedWhy": "본인확인 실패 — 후보 10명 중 소속그룹=옛 그룹 없음",
+    "checkedAt": "2026-10-01"
+  },
+  "a:김수윤|솔로": {
+    "aid": null,
+    "failedWhy": "본인확인 실패 — 후보 1명 중 소속그룹=옛 그룹 없음",
+    "checkedAt": "2026-10-01"
+  },
+  "a:서윤경|솔로": {
+    "aid": null,
+    "failedWhy": "본인확인 실패 — 후보 1명 중 소속그룹=옛 그룹 없음",
+    "checkedAt": "2026-10-01"
+  },
+  "a:소희|솔로|로켓펀치": {
+    "aid": "2741592",
+    "melonName": "소희",
+    "gubun": "",
+    "kind": "solo",
+    "confidence": "identity",
+    "overlap": 0,
+    "evidence": "소속그룹 aid 2740955 일치",
+    "checkedAt": "2026-10-01"
+  },
+  "a:다현|솔로": {
+    "aid": "2741593",
+    "melonName": "다현",
+    "gubun": "",
+    "kind": "solo",
+    "confidence": "identity",
+    "overlap": 0,
+    "evidence": "소속그룹 aid 2740955 일치",
+    "checkedAt": "2026-10-01"
+  },
+  "a:타카하시 쥬리|솔로": {
+    "aid": null,
+    "failedWhy": "이름 맞는 후보 없음(디스코 0 · 본인확인 모드)",
+    "checkedAt": "2026-10-01"
+  },
+  "a:장은성|솔로": {
+    "aid": null,
+    "failedWhy": "본인확인 실패 — 후보 2명 중 소속그룹=옛 그룹 없음",
+    "checkedAt": "2026-10-01"
+  },
+  "a:이레|솔로": {
+    "aid": "2904137",
+    "melonName": "이레",
+    "gubun": "",
+    "kind": "solo",
+    "confidence": "identity",
+    "overlap": 0,
+    "evidence": "소속그룹 aid 2903540 일치",
+    "checkedAt": "2026-10-01"
+  },
+  "a:모리 코유키|솔로": {
+    "aid": null,
+    "failedWhy": "이름 맞는 후보 없음(디스코 0 · 본인확인 모드)",
+    "checkedAt": "2026-10-01"
+  },
+  "a:박지은|솔로": {
+    "aid": null,
+    "failedWhy": "본인확인 실패 — 후보 37명 중 소속그룹=옛 그룹 없음",
+    "checkedAt": "2026-10-01"
+  },
+  "a:소연|솔로": {
+    "aid": null,
+    "failedWhy": "본인확인 실패 — 후보 22명 중 소속그룹=옛 그룹 없음",
+    "checkedAt": "2026-10-01"
+  },
+  "a:진예|솔로": {
+    "aid": "784318",
+    "melonName": "진예 (LABOUM)",
+    "gubun": "",
+    "kind": "solo",
+    "confidence": "identity",
+    "overlap": 0,
+    "evidence": "소속그룹 aid 783462,2111639 일치",
+    "checkedAt": "2026-10-01"
+  },
+  "a:해인|솔로": {
+    "aid": "784320",
+    "melonName": "해인 (LABOUM)",
+    "gubun": "",
+    "kind": "solo",
+    "confidence": "identity",
+    "overlap": 0,
+    "evidence": "소속그룹 aid 783462 일치",
+    "checkedAt": "2026-10-01"
+  },
+  "a:솔빈|솔로": {
+    "aid": "784315",
+    "melonName": "솔빈 (LABOUM)",
+    "gubun": "",
+    "kind": "solo",
+    "confidence": "identity",
+    "overlap": 0,
+    "evidence": "소속그룹 aid 783462 일치",
+    "checkedAt": "2026-10-01"
+  },
+  "a:율희|솔로": {
+    "aid": null,
+    "failedWhy": "본인확인 실패 — 후보 1명 중 소속그룹=옛 그룹 없음",
+    "checkedAt": "2026-10-01"
+  },
+  "a:유정|솔로": {
+    "aid": null,
+    "failedWhy": "본인확인 실패 — 후보 19명 중 소속그룹=옛 그룹 없음",
+    "checkedAt": "2026-10-01"
+  },
+  "a:배우희|솔로": {
+    "aid": null,
+    "failedWhy": "이름 맞는 후보 없음(디스코 0 · 본인확인 모드)",
+    "checkedAt": "2026-10-01"
+  },
+  "a:윤조|솔로|유니티": {
+    "aid": "672259",
+    "melonName": "윤조",
+    "gubun": "",
+    "kind": "solo",
+    "confidence": "identity",
+    "overlap": 0,
+    "evidence": "소속그룹 aid 2111639 일치",
+    "checkedAt": "2026-10-01"
+  },
+  "a:앤씨아|솔로": {
+    "aid": null,
+    "failedWhy": "이름 맞는 후보 없음(디스코 0 · 본인확인 모드)",
+    "checkedAt": "2026-10-01"
+  },
+  "a:이수지|솔로": {
+    "aid": null,
+    "failedWhy": "본인확인 실패 — 후보 20명 중 소속그룹=옛 그룹 없음",
+    "checkedAt": "2026-10-01"
+  },
+  "a:세현|솔로": {
+    "aid": "3088765",
+    "melonName": "세현",
+    "gubun": "",
+    "kind": "solo",
+    "confidence": "identity",
+    "overlap": 0,
+    "evidence": "소속그룹 aid 2402489 일치",
+    "checkedAt": "2026-10-01"
+  },
+  "a:주원|솔로": {
+    "aid": "2402496",
+    "melonName": "주원",
+    "gubun": "",
+    "kind": "solo",
+    "confidence": "identity",
+    "overlap": 0,
+    "evidence": "소속그룹 aid 2402489 일치",
+    "checkedAt": "2026-10-01"
+  },
+  "a:기석|솔로": {
+    "aid": "3088777",
+    "melonName": "기석",
+    "gubun": "",
+    "kind": "solo",
+    "confidence": "identity",
+    "overlap": 0,
+    "evidence": "소속그룹 aid 2402489 일치",
+    "checkedAt": "2026-10-01"
+  },
+  "a:원대|솔로": {
+    "aid": null,
+    "failedWhy": "본인확인 실패 — 후보 1명 중 소속그룹=옛 그룹 없음",
+    "checkedAt": "2026-10-01"
+  },
+  "a:문익|솔로": {
+    "aid": null,
+    "failedWhy": "본인확인 실패 — 후보 1명 중 소속그룹=옛 그룹 없음",
+    "checkedAt": "2026-10-01"
+  },
+  "a:경윤|솔로": {
+    "aid": null,
+    "failedWhy": "본인확인 실패 — 후보 2명 중 소속그룹=옛 그룹 없음",
+    "checkedAt": "2026-10-01"
+  },
+  "a:먼데이|솔로": {
+    "aid": null,
+    "failedWhy": "본인확인 실패 — 후보 5명 중 소속그룹=옛 그룹 없음",
+    "checkedAt": "2026-10-01"
+  },
+  "a:이재희|솔로": {
+    "aid": null,
+    "failedWhy": "본인확인 실패 — 후보 15명 중 소속그룹=옛 그룹 없음",
+    "checkedAt": "2026-10-01"
+  },
+  "a:지한|솔로": {
+    "aid": null,
+    "failedWhy": "본인확인 실패 — 후보 8명 중 소속그룹=옛 그룹 없음",
+    "checkedAt": "2026-10-01"
+  },
+  "a:조아|솔로|위클리": {
+    "aid": null,
+    "failedWhy": "본인확인 실패 — 후보 16명 중 소속그룹=옛 그룹 없음",
+    "checkedAt": "2026-10-01"
+  },
+  "a:신지윤|솔로": {
+    "aid": null,
+    "failedWhy": "본인확인 실패 — 후보 11명 중 소속그룹=옛 그룹 없음",
+    "checkedAt": "2026-10-01"
+  },
+  "a:양예나|솔로": {
+    "aid": "882813",
+    "melonName": "양예나 (에이프릴)",
+    "gubun": "",
+    "kind": "solo",
+    "confidence": "identity",
+    "overlap": 0,
+    "evidence": "소속그룹 aid 882818 일치",
+    "checkedAt": "2026-10-01"
+  },
+  "a:레이첼|솔로": {
+    "aid": "1239284",
+    "melonName": "레이첼 (성나연)",
+    "gubun": "",
+    "kind": "solo",
+    "confidence": "identity",
+    "overlap": 0,
+    "evidence": "소속그룹 aid 882818 일치",
+    "checkedAt": "2026-10-01"
+  },
+  "a:이현주|솔로": {
+    "aid": "882814",
+    "melonName": "이현주",
+    "gubun": "",
+    "kind": "solo",
+    "confidence": "identity",
+    "overlap": 0,
+    "evidence": "소속그룹 aid 2111639 일치",
+    "checkedAt": "2026-10-01"
+  },
+  "a:정유진|솔로": {
+    "aid": null,
+    "failedWhy": "본인확인 실패 — 후보 19명 중 소속그룹=옛 그룹 없음",
+    "checkedAt": "2026-10-01"
+  },
+  "a:전은미|솔로": {
+    "aid": null,
+    "failedWhy": "본인확인 실패 — 후보 1명 중 소속그룹=옛 그룹 없음",
+    "checkedAt": "2026-10-01"
+  },
+  "a:이지현|솔로": {
+    "aid": null,
+    "failedWhy": "본인확인 실패 — 후보 20명 중 소속그룹=옛 그룹 없음",
+    "checkedAt": "2026-10-01"
+  },
+  "a:조민아|솔로": {
+    "aid": null,
+    "failedWhy": "본인확인 실패 — 후보 3명 중 소속그룹=옛 그룹 없음",
+    "checkedAt": "2026-10-01"
+  },
+  "a:박정아|솔로": {
+    "aid": null,
+    "failedWhy": "본인확인 실패 — 후보 11명 중 소속그룹=옛 그룹 없음",
+    "checkedAt": "2026-10-01"
+  },
+  "a:서인영|솔로": {
+    "aid": null,
+    "failedWhy": "본인확인 실패 — 후보 3명 중 소속그룹=옛 그룹 없음",
+    "checkedAt": "2026-10-01"
+  },
+  "a:도한세|솔로": {
+    "aid": null,
+    "failedWhy": "이름 맞는 후보 없음(디스코 0 · 본인확인 모드)",
+    "checkedAt": "2026-10-01"
+  },
+  "a:최병찬|솔로": {
+    "aid": "1229239",
+    "melonName": "최병찬 (빅톤)",
+    "gubun": "",
+    "kind": "solo",
+    "confidence": "identity",
+    "overlap": 0,
+    "evidence": "소속그룹 aid 1066850 일치",
+    "checkedAt": "2026-10-01"
+  },
+  "a:유준|솔로": {
+    "aid": "2894506",
+    "melonName": "유준",
+    "gubun": "",
+    "kind": "solo",
+    "confidence": "identity",
+    "overlap": 0,
+    "evidence": "소속그룹 aid 2894491 일치",
+    "checkedAt": "2026-10-01"
+  },
+  "a:무진|솔로": {
+    "aid": "2894499",
+    "melonName": "무진",
+    "gubun": "",
+    "kind": "solo",
+    "confidence": "identity",
+    "overlap": 0,
+    "evidence": "소속그룹 aid 2894491 일치",
+    "checkedAt": "2026-10-01"
+  },
+  "a:준서|솔로": {
+    "aid": "2894509",
+    "melonName": "준서",
+    "gubun": "",
+    "kind": "solo",
+    "confidence": "identity",
+    "overlap": 0,
+    "evidence": "소속그룹 aid 2894491 일치",
+    "checkedAt": "2026-10-01"
+  },
+  "a:빛|솔로": {
+    "aid": "2894502",
+    "melonName": "빛",
+    "gubun": "",
+    "kind": "solo",
+    "confidence": "identity",
+    "overlap": 0,
+    "evidence": "소속그룹 aid 2894491 일치",
+    "checkedAt": "2026-10-01"
+  },
+  "a:수빈|솔로": {
+    "aid": null,
+    "failedWhy": "본인확인 실패 — 후보 22명 중 소속그룹=옛 그룹 없음",
+    "checkedAt": "2026-10-01"
+  },
+  "a:비키|솔로": {
+    "aid": null,
+    "failedWhy": "본인확인 실패 — 후보 6명 중 소속그룹=옛 그룹 없음",
+    "checkedAt": "2026-10-01"
+  },
+  "a:지율|솔로": {
+    "aid": null,
+    "failedWhy": "본인확인 실패 — 후보 6명 중 소속그룹=옛 그룹 없음",
+    "checkedAt": "2026-10-01"
+  },
+  "a:가은|솔로|달샤벳": {
+    "aid": null,
+    "failedWhy": "본인확인 실패 — 후보 21명 중 소속그룹=옛 그룹 없음",
+    "checkedAt": "2026-10-01"
+  },
+  "a:현아|솔로|나인뮤지스": {
+    "aid": null,
+    "failedWhy": "본인확인 실패 — 후보 17명 중 소속그룹=옛 그룹 없음",
+    "checkedAt": "2026-10-01"
+  },
+  "a:이유애린|솔로": {
+    "aid": null,
+    "failedWhy": "본인확인 실패 — 후보 1명 중 소속그룹=옛 그룹 없음",
+    "checkedAt": "2026-10-01"
+  },
+  "a:성아|솔로": {
+    "aid": null,
+    "failedWhy": "본인확인 실패 — 후보 9명 중 소속그룹=옛 그룹 없음",
+    "checkedAt": "2026-10-01"
+  },
+  "a:혜미|솔로": {
+    "aid": null,
+    "failedWhy": "본인확인 실패 — 후보 11명 중 소속그룹=옛 그룹 없음",
+    "checkedAt": "2026-10-01"
+  },
+  "a:민하|솔로": {
+    "aid": null,
+    "failedWhy": "본인확인 실패 — 후보 6명 중 소속그룹=옛 그룹 없음",
+    "checkedAt": "2026-10-01"
+  },
+  "a:소진|솔로": {
+    "aid": "830459",
+    "melonName": "소진 (나인뮤지스)",
+    "gubun": "",
+    "kind": "solo",
+    "confidence": "identity",
+    "overlap": 0,
+    "evidence": "소속그룹 aid 465680 일치",
+    "checkedAt": "2026-10-01"
+  },
+  "a:나유민|솔로": {
+    "aid": null,
+    "failedWhy": "본인확인 실패 — 후보 8명 중 소속그룹=옛 그룹 없음",
+    "checkedAt": "2026-10-01"
+  },
+  "a:안예인|솔로": {
+    "aid": null,
+    "failedWhy": "본인확인 실패 — 후보 11명 중 소속그룹=옛 그룹 없음",
+    "checkedAt": "2026-10-01"
+  },
+  "a:해윤|솔로": {
+    "aid": "2621361",
+    "melonName": "해윤 (HAEYOON)",
+    "gubun": "",
+    "kind": "solo",
+    "confidence": "identity",
+    "overlap": 0,
+    "evidence": "소속그룹 aid 2620522 일치",
+    "checkedAt": "2026-10-01"
+  },
+  "a:유주|솔로|체리블렛": {
+    "aid": "2621357",
+    "melonName": "유주",
+    "gubun": "",
+    "kind": "solo",
+    "confidence": "identity",
+    "overlap": 0,
+    "evidence": "소속그룹 aid 2620522 일치",
+    "checkedAt": "2026-10-01"
+  },
+  "a:보라|솔로": {
+    "aid": "2621356",
+    "melonName": "보라 (BORA)",
+    "gubun": "",
+    "kind": "solo",
+    "confidence": "identity",
+    "overlap": 0,
+    "evidence": "소속그룹 aid 2620522 일치",
+    "checkedAt": "2026-10-01"
+  },
+  "a:지원|솔로": {
+    "aid": "2621358",
+    "melonName": "지원",
+    "gubun": "",
+    "kind": "solo",
+    "confidence": "identity",
+    "overlap": 0,
+    "evidence": "소속그룹 aid 2620522 일치",
+    "checkedAt": "2026-10-01"
+  },
+  "a:레미|솔로": {
+    "aid": "2621352",
+    "melonName": "레미",
+    "gubun": "",
+    "kind": "solo",
+    "confidence": "identity",
+    "overlap": 0,
+    "evidence": "소속그룹 aid 2620522 일치",
+    "checkedAt": "2026-10-01"
+  },
+  "a:채린|솔로": {
+    "aid": "2621359",
+    "melonName": "채린",
+    "gubun": "",
+    "kind": "solo",
+    "confidence": "identity",
+    "overlap": 0,
+    "evidence": "소속그룹 aid 2620522 일치",
+    "checkedAt": "2026-10-01"
+  },
+  "a:메이|솔로": {
+    "aid": "2621354",
+    "melonName": "메이",
+    "gubun": "",
+    "kind": "solo",
+    "confidence": "identity",
+    "overlap": 0,
+    "evidence": "소속그룹 aid 2620522 일치",
+    "checkedAt": "2026-10-01"
+  },
+  "a:미래|솔로": {
+    "aid": null,
+    "failedWhy": "본인확인 실패 — 후보 14명 중 소속그룹=옛 그룹 없음",
+    "checkedAt": "2026-10-01"
+  },
+  "a:코코로|솔로": {
+    "aid": null,
+    "failedWhy": "본인확인 실패 — 후보 9명 중 소속그룹=옛 그룹 없음",
+    "checkedAt": "2026-10-01"
+  },
+  "a:린린|솔로": {
+    "aid": null,
+    "failedWhy": "본인확인 실패 — 후보 5명 중 소속그룹=옛 그룹 없음",
+    "checkedAt": "2026-10-01"
+  },
+  "a:수미|솔로": {
+    "aid": null,
+    "failedWhy": "본인확인 실패 — 후보 12명 중 소속그룹=옛 그룹 없음",
+    "checkedAt": "2026-10-01"
+  },
+  "a:찬미|솔로": {
+    "aid": null,
+    "failedWhy": "본인확인 실패 — 후보 10명 중 소속그룹=옛 그룹 없음",
+    "checkedAt": "2026-10-01"
+  },
+  "a:효영|솔로": {
+    "aid": null,
+    "failedWhy": "본인확인 실패 — 후보 1명 중 소속그룹=옛 그룹 없음",
+    "checkedAt": "2026-10-01"
+  },
+  "a:혜원|솔로": {
+    "aid": null,
+    "failedWhy": "본인확인 실패 — 후보 18명 중 소속그룹=옛 그룹 없음",
+    "checkedAt": "2026-10-01"
+  },
+  "a:은교|솔로": {
+    "aid": null,
+    "failedWhy": "본인확인 실패 — 후보 3명 중 소속그룹=옛 그룹 없음",
+    "checkedAt": "2026-10-01"
+  },
+  "a:나연|솔로": {
+    "aid": null,
+    "failedWhy": "본인확인 실패 — 후보 18명 중 소속그룹=옛 그룹 없음",
+    "checkedAt": "2026-10-01"
+  },
+  "a:샤넌|솔로": {
+    "aid": null,
+    "failedWhy": "본인확인 실패 — 후보 5명 중 소속그룹=옛 그룹 없음",
+    "checkedAt": "2026-10-01"
+  },
+  "a:지현|솔로": {
+    "aid": null,
+    "failedWhy": "본인확인 실패 — 후보 24명 중 소속그룹=옛 그룹 없음",
+    "checkedAt": "2026-10-01"
+  },
+  "a:승희|솔로": {
+    "aid": null,
+    "failedWhy": "본인확인 실패 — 후보 3명 중 소속그룹=옛 그룹 없음",
+    "checkedAt": "2026-10-01"
+  },
+  "a:연경|솔로": {
+    "aid": null,
+    "failedWhy": "본인확인 실패 — 후보 6명 중 소속그룹=옛 그룹 없음",
+    "checkedAt": "2026-10-01"
+  },
+  "a:우태운|솔로": {
+    "aid": "679651",
+    "melonName": "우태운",
+    "gubun": "",
+    "kind": "solo",
+    "confidence": "identity",
+    "overlap": 0,
+    "evidence": "소속그룹 aid 13149 일치",
+    "checkedAt": "2026-10-01"
+  },
+  "a:김정우|솔로": {
+    "aid": null,
+    "failedWhy": "본인확인 실패 — 후보 19명 중 소속그룹=옛 그룹 없음",
+    "checkedAt": "2026-10-01"
+  },
+  "a:김유환|솔로": {
+    "aid": null,
+    "failedWhy": "본인확인 실패 — 후보 4명 중 소속그룹=옛 그룹 없음",
+    "checkedAt": "2026-10-01"
+  },
+  "a:오태하|솔로": {
+    "aid": null,
+    "failedWhy": "이름 맞는 후보 없음(디스코 0 · 본인확인 모드)",
+    "checkedAt": "2026-10-01"
+  },
+  "a:신종국|솔로": {
+    "aid": null,
+    "failedWhy": "본인확인 실패 — 후보 2명 중 소속그룹=옛 그룹 없음",
+    "checkedAt": "2026-10-01"
+  },
+  "a:박세준|솔로": {
+    "aid": null,
+    "failedWhy": "본인확인 실패 — 후보 9명 중 소속그룹=옛 그룹 없음",
+    "checkedAt": "2026-10-01"
+  },
+  "a:키오|솔로|스피드": {
+    "aid": "868886",
+    "melonName": "KI-O",
+    "gubun": "",
+    "kind": "solo",
+    "confidence": "identity",
+    "overlap": 0,
+    "evidence": "소속그룹 aid 714785 일치",
+    "checkedAt": "2026-10-01"
+  },
+  "a:최성민|솔로": {
+    "aid": null,
+    "failedWhy": "본인확인 실패 — 후보 17명 중 소속그룹=옛 그룹 없음",
+    "checkedAt": "2026-10-01"
+  },
+  "a:강지욱|솔로": {
+    "aid": null,
+    "failedWhy": "본인확인 실패 — 후보 1명 중 소속그룹=옛 그룹 없음",
+    "checkedAt": "2026-10-01"
+  },
+  "a:이노|솔로": {
+    "aid": "679671",
+    "melonName": "이노",
+    "gubun": "",
+    "kind": "solo",
+    "confidence": "identity",
+    "overlap": 0,
+    "evidence": "소속그룹 aid 13149 일치",
+    "checkedAt": "2026-10-01"
+  },
+  "a:이의진|솔로": {
+    "aid": null,
+    "failedWhy": "본인확인 실패 — 후보 3명 중 소속그룹=옛 그룹 없음",
+    "checkedAt": "2026-10-01"
+  },
+  "a:오광석|솔로": {
+    "aid": null,
+    "failedWhy": "본인확인 실패 — 후보 3명 중 소속그룹=옛 그룹 없음",
+    "checkedAt": "2026-10-01"
+  },
+  "a:지한솔|솔로": {
+    "aid": "2019318",
+    "melonName": "지한솔",
+    "gubun": "",
+    "kind": "solo",
+    "confidence": "identity",
+    "overlap": 0,
+    "evidence": "소속그룹 aid 2111640 일치",
+    "checkedAt": "2026-10-01"
+  },
+  "a:김기중|솔로": {
+    "aid": null,
+    "failedWhy": "본인확인 실패 — 후보 7명 중 소속그룹=옛 그룹 없음",
+    "checkedAt": "2026-10-01"
+  },
+  "a:이승환|솔로": {
+    "aid": "2636861",
+    "melonName": "ONLEE (이승환)",
+    "gubun": "",
+    "kind": "solo",
+    "confidence": "identity",
+    "overlap": 0,
+    "evidence": "소속그룹 aid 2636843 일치",
+    "checkedAt": "2026-10-01"
+  },
+  "a:김준서|솔로": {
+    "aid": null,
+    "failedWhy": "본인확인 실패 — 후보 18명 중 소속그룹=옛 그룹 없음",
+    "checkedAt": "2026-10-01"
+  },
+  "a:정진성|솔로": {
+    "aid": "2636853",
+    "melonName": "정진성",
+    "gubun": "",
+    "kind": "solo",
+    "confidence": "identity",
+    "overlap": 0,
+    "evidence": "소속그룹 aid 2636843 일치",
+    "checkedAt": "2026-10-01"
+  },
+  "a:정택현|솔로": {
+    "aid": "2636858",
+    "melonName": "정택현",
+    "gubun": "",
+    "kind": "solo",
+    "confidence": "identity",
+    "overlap": 0,
+    "evidence": "소속그룹 aid 2636843 일치",
+    "checkedAt": "2026-10-01"
+  },
+  "a:박성원|솔로": {
+    "aid": "2636860",
+    "melonName": "박성원",
+    "gubun": "",
+    "kind": "solo",
+    "confidence": "identity",
+    "overlap": 0,
+    "evidence": "소속그룹 aid 2636843 일치",
+    "checkedAt": "2026-10-01"
+  },
+  "a:창선|솔로": {
+    "aid": "1024055",
+    "melonName": "창선",
+    "gubun": "",
+    "kind": "solo",
+    "confidence": "identity",
+    "overlap": 0,
+    "evidence": "소속그룹 aid 3078919 일치",
+    "checkedAt": "2026-10-01"
+  },
+  "a:임주안|솔로": {
+    "aid": null,
+    "failedWhy": "본인확인 실패 — 후보 1명 중 소속그룹=옛 그룹 없음",
+    "checkedAt": "2026-10-01"
+  },
+  "a:재준|솔로": {
+    "aid": "1908138",
+    "melonName": "재준",
+    "gubun": "",
+    "kind": "solo",
+    "confidence": "identity",
+    "overlap": 0,
+    "evidence": "소속그룹 aid 3078919 일치",
+    "checkedAt": "2026-10-01"
+  },
+  "a:김현엽|솔로": {
+    "aid": null,
+    "failedWhy": "이름 맞는 후보 없음(디스코 0 · 본인확인 모드)",
+    "checkedAt": "2026-10-01"
+  },
+  "a:방태훈|솔로": {
+    "aid": null,
+    "failedWhy": "본인확인 실패 — 후보 8명 중 소속그룹=옛 그룹 없음",
+    "checkedAt": "2026-10-01"
+  },
+  "a:지성|솔로": {
+    "aid": "2888473",
+    "melonName": "JISEONG (지성)",
+    "gubun": "",
+    "kind": "solo",
+    "confidence": "identity",
+    "overlap": 0,
+    "evidence": "소속그룹 aid 3078919 일치",
+    "checkedAt": "2026-10-01"
+  },
+  "a:김태우|솔로": {
+    "aid": null,
+    "failedWhy": "본인확인 실패 — 후보 21명 중 소속그룹=옛 그룹 없음",
+    "checkedAt": "2026-10-01"
+  },
+  "a:류|솔로": {
+    "aid": "682173",
+    "melonName": "류",
+    "gubun": "",
+    "kind": "solo",
+    "confidence": "identity",
+    "overlap": 0,
+    "evidence": "소속그룹 aid 209785 일치",
+    "checkedAt": "2026-10-01"
+  },
+  "a:휘찬|솔로": {
+    "aid": "682174",
+    "melonName": "휘찬",
+    "gubun": "",
+    "kind": "solo",
+    "confidence": "identity",
+    "overlap": 0,
+    "evidence": "소속그룹 aid 209785 일치",
+    "checkedAt": "2026-10-01"
+  },
+  "a:리오|솔로": {
+    "aid": "682172",
+    "melonName": "리오",
+    "gubun": "",
+    "kind": "solo",
+    "confidence": "identity",
+    "overlap": 0,
+    "evidence": "소속그룹 aid 209785 일치",
+    "checkedAt": "2026-10-01"
+  },
+  "a:크리스|솔로": {
+    "aid": "682171",
+    "melonName": "크리스",
+    "gubun": "",
+    "kind": "solo",
+    "confidence": "identity",
+    "overlap": 0,
+    "evidence": "소속그룹 aid 209785 일치",
+    "checkedAt": "2026-10-01"
+  },
+  "a:박시현|솔로": {
+    "aid": "669977",
+    "melonName": "박시현 (스피카)",
+    "gubun": "",
+    "kind": "solo",
+    "confidence": "identity",
+    "overlap": 0,
+    "evidence": "소속그룹 aid 615471 일치",
+    "checkedAt": "2026-10-01"
+  },
+  "a:나래|솔로": {
+    "aid": null,
+    "failedWhy": "본인확인 실패 — 후보 19명 중 소속그룹=옛 그룹 없음",
+    "checkedAt": "2026-10-01"
+  },
+  "a:김보형|솔로": {
+    "aid": null,
+    "failedWhy": "본인확인 실패 — 후보 3명 중 소속그룹=옛 그룹 없음",
+    "checkedAt": "2026-10-01"
+  },
+  "a:정미미|솔로": {
+    "aid": null,
+    "failedWhy": "본인확인 실패 — 후보 14명 중 소속그룹=옛 그룹 없음",
+    "checkedAt": "2026-10-01"
+  },
+  "a:신보라|솔로": {
+    "aid": null,
+    "failedWhy": "본인확인 실패 — 후보 10명 중 소속그룹=옛 그룹 없음",
+    "checkedAt": "2026-10-01"
+  },
+  "a:한해빈|솔로": {
+    "aid": null,
+    "failedWhy": "본인확인 실패 — 후보 5명 중 소속그룹=옛 그룹 없음",
+    "checkedAt": "2026-10-01"
+  },
+  "a:김나영|솔로": {
+    "aid": null,
+    "failedWhy": "본인확인 실패 — 후보 20명 중 소속그룹=옛 그룹 없음",
+    "checkedAt": "2026-10-01"
+  },
+  "a:류셰닝|솔로": {
+    "aid": null,
+    "failedWhy": "본인확인 실패 — 후보 10명 중 소속그룹=옛 그룹 없음",
+    "checkedAt": "2026-10-01"
+  },
+  "a:장소진|솔로": {
+    "aid": null,
+    "failedWhy": "본인확인 실패 — 후보 5명 중 소속그룹=옛 그룹 없음",
+    "checkedAt": "2026-10-01"
+  },
+  "a:조아람|솔로": {
+    "aid": null,
+    "failedWhy": "본인확인 실패 — 후보 5명 중 소속그룹=옛 그룹 없음",
+    "checkedAt": "2026-10-01"
+  },
+  "a:김민서|솔로": {
+    "aid": "3691037",
+    "melonName": "김민서",
+    "gubun": "",
+    "kind": "solo",
+    "confidence": "identity",
+    "overlap": 0,
+    "evidence": "소속그룹 aid 3813218 일치",
+    "checkedAt": "2026-10-01"
+  },
+  "a:소정|솔로": {
+    "aid": null,
+    "failedWhy": "본인확인 실패 — 후보 9명 중 소속그룹=옛 그룹 없음",
+    "checkedAt": "2026-10-01"
+  },
+  "a:앨리스|솔로": {
+    "aid": "672256",
+    "melonName": "ALICE(송주희)",
+    "gubun": "",
+    "kind": "solo",
+    "confidence": "identity",
+    "overlap": 0,
+    "evidence": "소속그룹 aid 668491 일치",
+    "checkedAt": "2026-10-01"
+  },
+  "a:나라|솔로": {
+    "aid": "672258",
+    "melonName": "나라 (헬로비너스)",
+    "gubun": "",
+    "kind": "solo",
+    "confidence": "identity",
+    "overlap": 0,
+    "evidence": "소속그룹 aid 668491 일치",
+    "checkedAt": "2026-10-01"
+  },
+  "a:유영|솔로": {
+    "aid": "672261",
+    "melonName": "유영 (헬로비너스)",
+    "gubun": "",
+    "kind": "solo",
+    "confidence": "identity",
+    "overlap": 0,
+    "evidence": "소속그룹 aid 668491 일치",
+    "checkedAt": "2026-10-01"
+  },
+  "a:서영|솔로": {
+    "aid": null,
+    "failedWhy": "본인확인 실패 — 후보 21명 중 소속그룹=옛 그룹 없음",
+    "checkedAt": "2026-10-01"
+  },
+  "a:써머|솔로": {
+    "aid": null,
+    "failedWhy": "본인확인 실패 — 후보 17명 중 소속그룹=옛 그룹 없음",
+    "checkedAt": "2026-10-01"
+  },
+  "a:유아라|솔로": {
+    "aid": null,
+    "failedWhy": "본인확인 실패 — 후보 1명 중 소속그룹=옛 그룹 없음",
+    "checkedAt": "2026-10-01"
+  },
+  "a:윤조|솔로|헬로비너스": {
+    "aid": null,
+    "failedWhy": "본인확인 실패 — 후보 2명 중 소속그룹=옛 그룹 없음",
+    "checkedAt": "2026-10-01"
+  },
+  "a:수민|솔로": {
+    "aid": "792819",
+    "melonName": "수민",
+    "gubun": "",
+    "kind": "solo",
+    "confidence": "identity",
+    "overlap": 0,
+    "evidence": "소속그룹 aid 792822 일치",
+    "checkedAt": "2026-10-01"
+  },
+  "a:나현|솔로": {
+    "aid": "792817",
+    "melonName": "나현",
+    "gubun": "",
+    "kind": "solo",
+    "confidence": "identity",
+    "overlap": 0,
+    "evidence": "소속그룹 aid 792822 일치",
+    "checkedAt": "2026-10-01"
+  },
+  "a:민제|솔로": {
+    "aid": null,
+    "failedWhy": "본인확인 실패 — 후보 4명 중 소속그룹=옛 그룹 없음",
+    "checkedAt": "2026-10-01"
+  },
+  "a:다이애나|솔로": {
+    "aid": null,
+    "failedWhy": "본인확인 실패 — 후보 7명 중 소속그룹=옛 그룹 없음",
+    "checkedAt": "2026-10-01"
+  },
+  "a:의진|솔로": {
+    "aid": null,
+    "failedWhy": "본인확인 실패 — 후보 6명 중 소속그룹=옛 그룹 없음",
+    "checkedAt": "2026-10-01"
+  },
+  "a:하이디|솔로": {
+    "aid": null,
+    "failedWhy": "본인확인 실패 — 후보 16명 중 소속그룹=옛 그룹 없음",
+    "checkedAt": "2026-10-01"
+  },
+  "a:뉴선|솔로": {
+    "aid": "792809",
+    "melonName": "NEW SUN(뉴썬)",
+    "gubun": "",
+    "kind": "solo",
+    "confidence": "identity",
+    "overlap": 0,
+    "evidence": "소속그룹 aid 792822 일치",
+    "checkedAt": "2026-10-01"
+  },
+  "a:소희|솔로|네이처": {
+    "aid": null,
+    "failedWhy": "본인확인 실패 — 후보 18명 중 소속그룹=옛 그룹 없음",
+    "checkedAt": "2026-10-01"
+  },
+  "a:오로라|솔로": {
+    "aid": "2242429",
+    "melonName": "오로라 (AURORA)",
+    "gubun": "",
+    "kind": "solo",
+    "confidence": "identity",
+    "overlap": 0,
+    "evidence": "소속그룹 aid 2241921 일치",
+    "checkedAt": "2026-10-01"
+  },
+  "a:새봄|솔로": {
+    "aid": "2242422",
+    "melonName": "새봄 (SAEBOM)",
+    "gubun": "",
+    "kind": "solo",
+    "confidence": "identity",
+    "overlap": 0,
+    "evidence": "소속그룹 aid 2241921 일치",
+    "checkedAt": "2026-10-01"
+  },
+  "a:루|솔로": {
+    "aid": "2242413",
+    "melonName": "루 (LU)",
+    "gubun": "",
+    "kind": "solo",
+    "confidence": "identity",
+    "overlap": 0,
+    "evidence": "소속그룹 aid 2241921 일치",
+    "checkedAt": "2026-10-01"
+  },
+  "a:채빈|솔로": {
+    "aid": "2242425",
+    "melonName": "채빈 (CHAEBIN)",
+    "gubun": "",
+    "kind": "solo",
+    "confidence": "identity",
+    "overlap": 0,
+    "evidence": "소속그룹 aid 2241921 일치",
+    "checkedAt": "2026-10-01"
+  },
+  "a:하루|솔로": {
+    "aid": "2242431",
+    "melonName": "하루 (HARU)",
+    "gubun": "",
+    "kind": "solo",
+    "confidence": "identity",
+    "overlap": 0,
+    "evidence": "소속그룹 aid 2241921 일치",
+    "checkedAt": "2026-10-01"
+  },
+  "a:로하|솔로": {
+    "aid": "2402256",
+    "melonName": "로하 (LOHA)",
+    "gubun": "",
+    "kind": "solo",
+    "confidence": "identity",
+    "overlap": 0,
+    "evidence": "소속그룹 aid 2241921 일치",
+    "checkedAt": "2026-10-01"
+  },
+  "a:유채|솔로": {
+    "aid": "2242426",
+    "melonName": "유채 (UCHAE)",
+    "gubun": "",
+    "kind": "solo",
+    "confidence": "identity",
+    "overlap": 0,
+    "evidence": "소속그룹 aid 2241921 일치",
+    "checkedAt": "2026-10-01"
+  },
+  "a:선샤인|솔로": {
+    "aid": "2242428",
+    "melonName": "선샤인 (SUNSHINE)",
+    "gubun": "",
+    "kind": "solo",
+    "confidence": "identity",
+    "overlap": 0,
+    "evidence": "소속그룹 aid 2241921 일치",
+    "checkedAt": "2026-10-01"
+  },
+  "a:가가|솔로": {
+    "aid": null,
+    "failedWhy": "본인확인 실패 — 후보 6명 중 소속그룹=옛 그룹 없음",
+    "checkedAt": "2026-10-01"
+  },
+  "a:민희|솔로": {
+    "aid": "672873",
+    "melonName": "민희",
+    "gubun": "",
+    "kind": "solo",
+    "confidence": "identity",
+    "overlap": 0,
+    "evidence": "소속그룹 aid 559971 일치",
+    "checkedAt": "2026-10-01"
+  },
+  "a:영흔|솔로": {
+    "aid": null,
+    "failedWhy": "이름 맞는 후보 없음(디스코 0 · 본인확인 모드)",
+    "checkedAt": "2026-10-01"
+  },
+  "a:이슬|솔로": {
+    "aid": null,
+    "failedWhy": "본인확인 실패 — 후보 29명 중 소속그룹=옛 그룹 없음",
+    "checkedAt": "2026-10-01"
+  },
+  "a:조아|솔로|스텔라": {
+    "aid": null,
+    "failedWhy": "본인확인 실패 — 후보 22명 중 소속그룹=옛 그룹 없음",
+    "checkedAt": "2026-10-01"
+  },
+  "a:황정음|솔로": {
+    "aid": null,
+    "failedWhy": "본인확인 실패 — 후보 1명 중 소속그룹=옛 그룹 없음",
+    "checkedAt": "2026-10-01"
+  },
+  "a:박수진|솔로": {
+    "aid": null,
+    "failedWhy": "본인확인 실패 — 후보 18명 중 소속그룹=옛 그룹 없음",
+    "checkedAt": "2026-10-01"
+  },
+  "a:육혜승|솔로": {
+    "aid": null,
+    "failedWhy": "이름 맞는 후보 없음(디스코 0 · 본인확인 모드)",
+    "checkedAt": "2026-10-01"
+  },
+  "a:이하린|솔로": {
+    "aid": null,
+    "failedWhy": "본인확인 실패 — 후보 5명 중 소속그룹=옛 그룹 없음",
+    "checkedAt": "2026-10-01"
+  },
+  "a:노아|솔로": {
+    "aid": "2900789",
+    "melonName": "노아",
+    "gubun": "",
+    "kind": "solo",
+    "confidence": "identity",
+    "overlap": 0,
+    "evidence": "소속그룹 aid 2900782 일치",
+    "checkedAt": "2026-10-01"
+  },
+  "a:시안|솔로": {
+    "aid": "2900791",
+    "melonName": "시안",
+    "gubun": "",
+    "kind": "solo",
+    "confidence": "identity",
+    "overlap": 0,
+    "evidence": "소속그룹 aid 2900782 일치",
+    "checkedAt": "2026-10-01"
+  },
+  "a:레오|솔로": {
+    "aid": "2900790",
+    "melonName": "레오",
+    "gubun": "",
+    "kind": "solo",
+    "confidence": "identity",
+    "overlap": 0,
+    "evidence": "소속그룹 aid 2900782 일치",
+    "checkedAt": "2026-10-01"
+  },
+  "a:온|솔로": {
+    "aid": "2900786",
+    "melonName": "온",
+    "gubun": "",
+    "kind": "solo",
+    "confidence": "identity",
+    "overlap": 0,
+    "evidence": "소속그룹 aid 2900782 일치",
+    "checkedAt": "2026-10-01"
+  },
+  "a:제로|솔로": {
+    "aid": "2900784",
+    "melonName": "제로",
+    "gubun": "",
+    "kind": "solo",
+    "confidence": "identity",
+    "overlap": 0,
+    "evidence": "소속그룹 aid 2900782 일치",
+    "checkedAt": "2026-10-01"
+  },
+  "a:카이리|솔로": {
+    "aid": "2900792",
+    "melonName": "카이리",
+    "gubun": "",
+    "kind": "solo",
+    "confidence": "identity",
+    "overlap": 0,
+    "evidence": "소속그룹 aid 2900782 일치",
+    "checkedAt": "2026-10-01"
+  },
+  "a:키오|솔로|티에프엔": {
+    "aid": "2900793",
+    "melonName": "키오",
+    "gubun": "",
+    "kind": "solo",
+    "confidence": "identity",
+    "overlap": 0,
+    "evidence": "소속그룹 aid 2900782 일치",
+    "checkedAt": "2026-10-01"
+  },
+  "a:김상균|솔로": {
+    "aid": "742382",
+    "melonName": "김상균",
+    "gubun": "",
+    "kind": "solo",
+    "confidence": "identity",
+    "overlap": 0,
+    "evidence": "소속그룹 aid 1910321 일치",
+    "checkedAt": "2026-10-01"
+  },
+  "a:타카다 켄타|솔로": {
+    "aid": null,
+    "failedWhy": "이름 맞는 후보 없음(디스코 0 · 본인확인 모드)",
+    "checkedAt": "2026-10-01"
+  },
+  "a:권현빈|솔로": {
+    "aid": "1910327",
+    "melonName": "VIINI (권현빈)",
+    "gubun": "",
+    "kind": "solo",
+    "confidence": "identity",
+    "overlap": 0,
+    "evidence": "소속그룹 aid 1910321 일치",
+    "checkedAt": "2026-10-01"
   }
 }

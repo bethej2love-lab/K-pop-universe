@@ -345,7 +345,13 @@ async function resolveByIdentity(t) {
       if (hitN >= 2) passed.push({ c, ev: `그룹멤버 ${hitN}/${roster.length}명 일치` , score: hitN });
     } else {
       const hit = d.groupAids.filter(g => (t.prevGroupAids || []).includes(g));
-      if (hit.length) passed.push({ c, ev: `소속그룹 aid ${hit.join(',')} 일치`, score: hit.length });
+      if (hit.length) { passed.push({ c, ev: `소속그룹 aid ${hit.join(',')} 일치`, score: hit.length }); continue; }
+      // ② 오래된 아티스트는 상세에 **소속그룹 칸 자체가 없다**(서인영·쥬얼리 실측). 그룹멤버 목록에도 전 멤버는
+      //    빠져 있다. 대신 멤버 개인 앨범 목록엔 **그룹 앨범이 섞여 나온다**(대표 아티스트 aid=그룹 aid) —
+      //    동명이인 목록엔 그 그룹 앨범이 있을 수 없으므로, 2장 이상이면 그 그룹 멤버로 본다.
+      const all = await albumsOf(c.aid);
+      const gAlb = all.filter(a => (t.prevGroupAids || []).includes(a.artistAid)).length;
+      if (gAlb >= 2) passed.push({ c, ev: `앨범목록에 옛 그룹 앨범 ${gAlb}장`, score: gAlb });
     }
   }
   if (!passed.length) return { ok: false, why: `본인확인 실패 — 후보 ${cands.length}명 중 ${t.kind === 'group' ? '그룹멤버 2명↑ 일치' : '소속그룹=옛 그룹'} 없음`, cands };
@@ -440,6 +446,9 @@ if (SOLO || BOTH) {
     const ko = a.name && a.name.ko; if (!ko) continue;
     if (!keepTarget(a)) continue;
     const gko = (a.group && a.group.ko) || '솔로';
+    // --empty 솔로는 **무소속 솔로만**(group.ko='솔로', 342명 중 디스코 0 228명). 그룹 현역 멤버는 솔로 앨범이
+    // 없는 게 보통이라 넣으면 대상이 1,224명으로 불어나 요청 폭주(멜론 차단)만 부른다.
+    if (EMPTY && gko !== '솔로') continue;
     // ⚠️ 소속 그룹은 **한글·영문·별칭을 다 넘긴다** — 멜론 괄호 표기는 영문명이다
     //    (`안유진 (IVE)` · `리아 (ITZY)` · `창빈 (Stray Kids)`). 한글만 대조하면 한 건도 안 걸린다.
     const gg = groups[gko];
@@ -476,7 +485,8 @@ for (const t of list) {
   // ⚠️ REFRESH 로도 풀리지 않는다 — 풀려면 melon_artist_map.json 에서 손으로 지워야 한다.
   if (m && m.blocked) { unresolved.push(`${ko} — 매핑 차단(${m.blockedWhy || '수동'})`); continue; }
   if (!m || !m.aid) {
-    if (m && m.failedWhy && !REFRESH) { unresolved.push(`${ko} — ${m.failedWhy} (이전 회차)`); continue; }
+    // --empty 의 본인확인 실패는 다시 시도한다 — 근거 규칙이 늘면(소속그룹 → 앨범목록) 결과가 달라지고, 요청은 캐시가 받는다
+    if (m && m.failedWhy && !REFRESH && !(EMPTY && /본인확인|이름 맞는 후보/.test(m.failedWhy))) { unresolved.push(`${ko} — ${m.failedWhy} (이전 회차)`); continue; }
     const r = (!ourKeys.size && !ourDates.size) ? await resolveByIdentity(t) : await resolveAid(t, ourKeys, ourDates);
     if (!r.ok) {
       unresolved.push(`${ko} — ${r.why}`);
