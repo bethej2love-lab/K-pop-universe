@@ -213798,6 +213798,693 @@
         "active": false,
         "left": "2015"
       }
+    ],
+    "discography": [
+      {
+        "title": "학교 2021 OST Part.5",
+        "type": "OST",
+        "isMain": false,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/108/13/866/10813866_20211215151255_500.jpg",
+        "releaseDate": "2021.12.15",
+        "trackCount": 2,
+        "titleTrack": "내가 많은 걸 바라는 게 아니잖아",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "내가 많은 걸 바라는 게 아니잖아",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "내가 많은 걸 바라는 게 아니잖아 (Inst.)",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "10813866"
+      },
+      {
+        "title": "용왕님 보우하사 OST Part.1",
+        "type": "OST",
+        "isMain": false,
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/102/46/582/10246582_500.jpg",
+        "releaseDate": "2019.01.29",
+        "trackCount": 2,
+        "titleTrack": "무지개 닮은 너",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "무지개 닮은 너",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "무지개 닮은 너 (Inst.)",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "10246582"
+      },
+      {
+        "title": "편해졌니 (Believe Me)",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/102/17/553/10217553_500.jpg",
+        "releaseDate": "2018.10.31",
+        "trackCount": 4,
+        "titleTrack": "편해졌니",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "편해졌니",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Always",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "편해졌니 (Inst.)",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Always (Inst.)",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "10217553"
+      },
+      {
+        "title": "숨바꼭질 OST Part.2",
+        "type": "OST",
+        "isMain": false,
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/102/07/046/10207046_500.jpg",
+        "releaseDate": "2018.09.22",
+        "trackCount": 2,
+        "titleTrack": "Someday",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Someday",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Someday (Inst.)",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "10207046"
+      },
+      {
+        "title": "눈을 감아요",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/101/90/401/10190401_500.jpg",
+        "releaseDate": "2018.08.02",
+        "trackCount": 1,
+        "titleTrack": "눈을 감아요",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "눈을 감아요",
+            "isTitle": true
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "10190401"
+      },
+      {
+        "title": "추리의 여왕 시즌2 OST Part.9",
+        "type": "OST",
+        "isMain": false,
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/101/57/464/10157464_500.jpg",
+        "releaseDate": "2018.04.12",
+        "trackCount": 2,
+        "titleTrack": "여전히 사랑하고 있어 (I still love you)",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "여전히 사랑하고 있어 (I still love you)",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "여전히 사랑하고 있어 (I still love you) (Inst.)",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "10157464"
+      },
+      {
+        "title": "너에게 안겨",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/026/88/318/2688318_500.jpg",
+        "releaseDate": "2016.06.03",
+        "trackCount": 1,
+        "titleTrack": "너에게 안겨",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "너에게 안겨",
+            "isTitle": true
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "2688318"
+      },
+      {
+        "title": "SIY",
+        "type": "미니",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/026/51/127/2651127_500.jpg",
+        "releaseDate": "2015.11.17",
+        "trackCount": 4,
+        "titleTrack": "소리질러",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "높은 하이힐 (Feat. DOK2)",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "소리질러",
+            "isTitle": true
+          },
+          {
+            "no": 3,
+            "title": "R U READY",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "잘 지내줘",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "2651127"
+      },
+      {
+        "title": "사랑했다 치자",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/023/34/051/2334051_500.jpg",
+        "releaseDate": "2015.08.11",
+        "trackCount": 1,
+        "titleTrack": "사랑했다치자 (Feat. 릴보이)",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "사랑했다치자 (Feat. 릴보이)",
+            "isTitle": true
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "2334051"
+      },
+      {
+        "title": "Re Birth",
+        "type": "미니",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/023/23/142/2323142_500.jpg",
+        "releaseDate": "2015.06.10",
+        "trackCount": 4,
+        "titleTrack": "거짓말 (Feat. 칸토 Of 트로이)",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "거짓말 (Feat. 칸토 Of 트로이)",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "엉망이야",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "영화찍지마",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "ON & ON",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "2323142"
+      },
+      {
+        "title": "생각나",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/022/85/273/2285273_500.jpg",
+        "releaseDate": "2014.10.17",
+        "trackCount": 2,
+        "titleTrack": "생각나 (Feat. Zion T)",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "생각나 (Feat. Zion T)",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "생각나 (Inst.)",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "2285273"
+      },
+      {
+        "title": "나를 사랑해줘",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/022/06/048/2206048_500.jpg",
+        "releaseDate": "2013.10.04",
+        "trackCount": 1,
+        "titleTrack": "나를 사랑해줘 (Feat. 개코 Of 다이나믹 듀오)",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "나를 사랑해줘 (Feat. 개코 Of 다이나믹 듀오)",
+            "isTitle": true
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "2206048"
+      },
+      {
+        "title": "Forever Young",
+        "type": "미니",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/021/85/326/2185326_500.jpg",
+        "releaseDate": "2013.05.15",
+        "trackCount": 7,
+        "titleTrack": "헤어지자",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "I Want You Back",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "Anymore",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "헤어지자",
+            "isTitle": true
+          },
+          {
+            "no": 4,
+            "title": "편지",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Let's Dance",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "Anymore (Remix)",
+            "isTitle": false
+          },
+          {
+            "no": 7,
+            "title": "헤어지자 (Inst.)",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "2185326"
+      },
+      {
+        "title": "돈의 화신 OST Part.6",
+        "type": "OST",
+        "isMain": false,
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/021/79/606/2179606_500.jpg",
+        "releaseDate": "2013.03.28",
+        "trackCount": 2,
+        "titleTrack": "너는 사랑이다",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "너는 사랑이다",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "너는 사랑이다 (Inst)",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "2179606"
+      },
+      {
+        "title": "Let's Dance",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/021/55/347/2155347_500.jpg",
+        "releaseDate": "2012.10.18",
+        "trackCount": 1,
+        "titleTrack": "Let's Dance",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Let's Dance",
+            "isTitle": true
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "2155347"
+      },
+      {
+        "title": "ANYMORE",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/021/44/146/2144146_500.jpg",
+        "releaseDate": "2012.08.20",
+        "trackCount": 1,
+        "titleTrack": "ANYMORE",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "ANYMORE",
+            "isTitle": true
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "2144146"
+      },
+      {
+        "title": "Brand New ELLY",
+        "type": "미니",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/020/32/647/2032647_500.jpg",
+        "releaseDate": "2011.11.16",
+        "trackCount": 5,
+        "titleTrack": "Oh My Gosh",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Magical Radio (Elly Mhz.) (Feat. 낯선 da YEIZON)",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "웃기셔",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "Oh My Gosh",
+            "isTitle": true
+          },
+          {
+            "no": 4,
+            "title": "Girl (Feat. Baby-J Of Jewelry)",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "So Sweet",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "2032647"
+      },
+      {
+        "title": "Lov-Elly Part.2 세수",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/012/67/864/1267864_500.jpg",
+        "releaseDate": "2011.05.06",
+        "trackCount": 2,
+        "titleTrack": "세수",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "세수",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "세수 (Inst.)",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "1267864"
+      },
+      {
+        "title": "Ellythm",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/010/93/712/1093712_20260326164750_500.jpg",
+        "releaseDate": "2010.12.10",
+        "trackCount": 2,
+        "titleTrack": "리듬속으로",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "리듬속으로",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "리듬속으로 (Inst.)",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "1093712"
+      },
+      {
+        "title": "Lov-Elly",
+        "type": "미니",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/009/09/755/909755_500.jpg",
+        "releaseDate": "2010.06.01",
+        "trackCount": 5,
+        "titleTrack": "사랑이라 쓰고 아픔이라 부른다",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "잘가요 로맨스",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "사랑이라 쓰고 아픔이라 부른다",
+            "isTitle": true
+          },
+          {
+            "no": 3,
+            "title": "사랑하면 안되나요",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "가르쳐줘요",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "애인있어요",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "909755"
+      },
+      {
+        "title": "Lov-Elly",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/008/87/451/887451_500.jpg",
+        "releaseDate": "2010.05.12",
+        "trackCount": 1,
+        "titleTrack": "잘가요 로맨스",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "잘가요 로맨스",
+            "isTitle": true
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "887451"
+      },
+      {
+        "title": "검사 프린세스 OST (Part 2)",
+        "type": "OST",
+        "isMain": false,
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/008/50/951/850951_500.jpg",
+        "releaseDate": "2010.04.07",
+        "trackCount": 1,
+        "titleTrack": "Give Me",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Give Me",
+            "isTitle": true
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "850951"
+      },
+      {
+        "title": "아이리스 OST (Part 6)",
+        "type": "OST",
+        "isMain": false,
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/007/37/351/737351_500.jpg",
+        "releaseDate": "2009.12.08",
+        "trackCount": 1,
+        "titleTrack": "사랑하면 안되나요",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "사랑하면 안되나요",
+            "isTitle": true
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "737351"
+      },
+      {
+        "title": "Elly Is Cinderella",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/003/90/270/390270_500.jpg",
+        "releaseDate": "2008.07.23",
+        "trackCount": 6,
+        "titleTrack": "신데렐라",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "신데렐라",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "I Like It (Feat. Crown J)",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "Too Much (Club Remix Ver.)",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "신데렐라 (Hip Hop Ver.)",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "I Like It (Feat. Crown J (Inst.))",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "신데렐라 (Inst.)",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "390270"
+      },
+      {
+        "title": "Elly Is So Hot",
+        "type": "정규",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/003/45/657/345657_500.jpg",
+        "releaseDate": "2007.02.26",
+        "trackCount": 12,
+        "titleTrack": "너를 원해",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Intro",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "Hit",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "너를 원해",
+            "isTitle": true
+          },
+          {
+            "no": 4,
+            "title": "가르쳐줘요",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Blue Song",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "6th Sense",
+            "isTitle": false
+          },
+          {
+            "no": 7,
+            "title": "Something",
+            "isTitle": false
+          },
+          {
+            "no": 8,
+            "title": "UR My Style",
+            "isTitle": false
+          },
+          {
+            "no": 9,
+            "title": "Seaes Hotel",
+            "isTitle": false
+          },
+          {
+            "no": 10,
+            "title": "Just Tonight (너를 원해 Lo-Fi House Remix)",
+            "isTitle": false
+          },
+          {
+            "no": 11,
+            "title": "Hit (Hi-Voltage Remix)",
+            "isTitle": false
+          },
+          {
+            "no": 12,
+            "title": "가르쳐줘요 (Inst.)",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "345657"
+      }
     ]
   },
   {

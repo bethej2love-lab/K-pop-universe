@@ -8411,8 +8411,13 @@
     "checkedAt": "2026-10-01"
   },
   "a:서인영|솔로": {
-    "aid": null,
-    "failedWhy": "본인확인 실패 — 후보 3명 중 소속그룹=옛 그룹 없음",
+    "aid": "26265",
+    "melonName": "서인영",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "identity",
+    "overlap": 0,
+    "evidence": "생일 1984.09.03 일치",
     "checkedAt": "2026-10-01"
   },
   "a:도한세|솔로": {

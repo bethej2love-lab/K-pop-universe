@@ -315,7 +315,8 @@ function parseArtistDetail(html) {
   for (const m of memBlk.matchAll(/goArtistDetail\('(\d+)'\);" title="([^"]*)" class="ellipsis"/g)) members.push({ aid: m[1], title: dec(m[2]) });
   const grpBlk = between('<dt>소속그룹</dt>', '</dd>');
   const groupAids = [...grpBlk.matchAll(/goArtistDetail\('(\d+)'\)/g)].map(m => m[1]);
-  return { members, groupAids };
+  const bday = (html.match(/<dt>생일<\/dt>\s*<dd>\s*(\d{4}\.\d{2}\.\d{2})\s*<\/dd>/) || [])[1] || null;
+  return { members, groupAids, bday };
 }
 async function detailOf(aid) {
   return parseArtistDetail(await get(`https://www.melon.com/artist/detail.htm?artistId=${aid}`, `adetail_${aid}`, 5000));
@@ -346,6 +347,9 @@ async function resolveByIdentity(t) {
     } else {
       const hit = d.groupAids.filter(g => (t.prevGroupAids || []).includes(g));
       if (hit.length) { passed.push({ c, ev: `소속그룹 aid ${hit.join(',')} 일치`, score: hit.length }); continue; }
+      // ③ 이름 + **생년월일(연·월·일 전부)** 일치. 옛 아티스트는 소속그룹 칸이 없고 개인 앨범목록에 그룹 앨범도 안 섞인다
+      //    (서인영 실측: 본인 명의 41장, 쥬얼리 0장). 상세의 '생일'은 대개 있다 — 이름까지 같고 생일까지 같은 동명이인은 없다고 본다.
+      if (t.bday && d.bday && d.bday === t.bday) { passed.push({ c, ev: `생일 ${d.bday} 일치`, score: 1 }); continue; }
       // ② 오래된 아티스트는 상세에 **소속그룹 칸 자체가 없다**(서인영·쥬얼리 실측). 그룹멤버 목록에도 전 멤버는
       //    빠져 있다. 대신 멤버 개인 앨범 목록엔 **그룹 앨범이 섞여 나온다**(대표 아티스트 aid=그룹 aid) —
       //    동명이인 목록엔 그 그룹 앨범이 있을 수 없으므로, 2장 이상이면 그 그룹 멤버로 본다.
@@ -461,7 +465,7 @@ if (SOLO || BOTH) {
     const label = `${ko}(${gko}${dupName && prevG.length ? `·전 ${prevG.join('+')}` : ''})`;
     // 옛 그룹의 멜론 aid — 솔로 본인 확인(소속그룹) 근거. 매핑 안 된 그룹은 근거가 될 수 없어 뺀다.
     const prevGroupAids = prevG.map(g => map[g] && map[g].aid).filter(Boolean);
-    targets.push({ key, label, kind: 'solo', gko, gnames: [...gnames, ...prevG], koName: ko, names: [ko, a.name.en], obj: a, disco: a.discography || [], prevGroupAids, file: 'artists.json' });
+    targets.push({ key, label, kind: 'solo', gko, gnames: [...gnames, ...prevG], koName: ko, names: [ko, a.name.en], bday: /^\d{4}\.\d{2}\.\d{2}$/.test(a.bday || '') ? a.bday : null, obj: a, disco: a.discography || [], prevGroupAids, file: 'artists.json' });
   }
 }
 let list = ONLY ? targets.filter(t => ONLY.has(t.label) || ONLY.has(t.key) || ONLY.has(t.koName) || t.names.some(n => ONLY.has(n))) : targets;
