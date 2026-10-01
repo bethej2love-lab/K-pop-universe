@@ -191281,14 +191281,528 @@
     "co": "IST엔터테인먼트",
     "gender": "m",
     "disbanded": "2025.12.17",
-    "id": "g271"
+    "id": "g271",
+    "discography": [
+      {
+        "title": "MUST HAVE",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/113/72/752/11372752_20231124180005_500.jpg",
+        "releaseDate": "2023.11.27",
+        "trackCount": 4,
+        "titleTrack": "Must Have Love",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Must Have Love",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Mayday",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "우린 뭐 없이도",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Must Have Love (Eng Ver.) (Duet)",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "11372752"
+      },
+      {
+        "title": "K-909 : WARRIOR",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/112/61/724/11261724_20230609113238_500.jpg",
+        "releaseDate": "2023.06.11",
+        "trackCount": 1,
+        "titleTrack": "WARRIOR",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "WARRIOR",
+            "isTitle": true
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "11261724"
+      },
+      {
+        "title": "The Beginning : 飛上",
+        "type": "미니",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/112/46/678/11246678_20230517152042_500.jpg",
+        "releaseDate": "2023.05.18",
+        "trackCount": 6,
+        "titleTrack": "Next to Me",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "BOUNCE",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "Next to Me",
+            "isTitle": true
+          },
+          {
+            "no": 3,
+            "title": "Just Dance",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "사랑해줘",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Good Thing",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "Just for Us",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "11246678"
+      },
+      {
+        "title": "The Beginning : 始作",
+        "type": "미니",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/110/86/383/11086383_20221025174143_500.jpg",
+        "releaseDate": "2022.10.26",
+        "trackCount": 6,
+        "titleTrack": "ATTITUDE",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "ATTITUDE",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Time To Go!",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "MAGIC",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Boost",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "The Way",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "Good Vibes Only",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "11086383"
+      },
+      {
+        "title": "The Beginning : 開花",
+        "type": "미니",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/110/14/923/11014923_20220727101155_500.jpg",
+        "releaseDate": "2022.07.27",
+        "trackCount": 6,
+        "titleTrack": "Monochrome (Color)",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "7IBE (VIBE)",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "Monochrome (Color)",
+            "isTitle": true
+          },
+          {
+            "no": 3,
+            "title": "Graffiti",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "High Five",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "WoW",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "RUN",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "11014923"
+      }
+    ]
   },
   "크랙시": {
     "en": "CRAXY",
     "debut": "2020.03.03",
     "co": "레벨엔엠",
     "gender": "f",
-    "id": "g272"
+    "id": "g272",
+    "discography": [
+      {
+        "title": "MASQUERADE",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/115/51/477/11551477_20240726101050_500.jpg",
+        "releaseDate": "2024.07.27",
+        "trackCount": 1,
+        "titleTrack": "MASQUERADE",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "MASQUERADE",
+            "isTitle": true
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "11551477"
+      },
+      {
+        "title": "1st SINGLE ALBUM 'RE_'",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/115/21/555/11521555_20240625170454_500.jpg",
+        "releaseDate": "2024.06.26",
+        "trackCount": 4,
+        "titleTrack": "STUPIDZ",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "CRAZY RACER",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "STUPIDZ",
+            "isTitle": true
+          },
+          {
+            "no": 3,
+            "title": "DAISY(3월6일)",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "STUPIDZ (Inst.)",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "11521555"
+      },
+      {
+        "title": "NO LIMIT",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/112/39/511/11239511_20230508140310_500.jpg",
+        "releaseDate": "2023.05.09",
+        "trackCount": 1,
+        "titleTrack": "NO LIMIT",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "NO LIMIT",
+            "isTitle": true
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "11239511"
+      },
+      {
+        "title": "XX",
+        "type": "미니",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/112/08/098/11208098_20230322093201_500.jpg",
+        "releaseDate": "2023.03.23",
+        "trackCount": 8,
+        "titleTrack": "NUGUDOM",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "BLACK OUT",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "NUGUDOM",
+            "isTitle": true
+          },
+          {
+            "no": 3,
+            "title": "FINGER FLICK",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "It's alright",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Lucid Dream",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "Poison Rose",
+            "isTitle": false
+          },
+          {
+            "no": 7,
+            "title": "Undercover (EDM ver.)",
+            "isTitle": false
+          },
+          {
+            "no": 8,
+            "title": "Cypher(Position)",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "11208098"
+      },
+      {
+        "title": "Poison Rose",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/110/89/569/11089569_20221028150358_500.jpg",
+        "releaseDate": "2022.11.10",
+        "trackCount": 2,
+        "titleTrack": "Poison Rose",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Poison Rose",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Poison Rose (Inst.)",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "11089569"
+      },
+      {
+        "title": "Who Am I",
+        "type": "미니",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/110/29/402/11029402_20220812165547_500.jpg",
+        "releaseDate": "2022.08.16",
+        "trackCount": 6,
+        "titleTrack": "Undercover",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Interlude：Who am I",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "Undercover",
+            "isTitle": true
+          },
+          {
+            "no": 3,
+            "title": "REQUIEM",
+            "isTitle": true
+          },
+          {
+            "no": 4,
+            "title": "LION",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "REAL",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "Butterfly",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "11029402"
+      },
+      {
+        "title": "ZERO 2",
+        "type": "미니",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/108/78/162/10878162_20220223153137_500.jpg",
+        "releaseDate": "2022.02.24",
+        "trackCount": 3,
+        "titleTrack": "Dance with God",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Dance with God",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Trigger",
+            "isTitle": true
+          },
+          {
+            "no": 3,
+            "title": "Dance with God (Inst.)",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "10878162"
+      },
+      {
+        "title": "제로",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/107/33/415/10733415_20211006170525_500.jpg",
+        "releaseDate": "2021.10.07",
+        "trackCount": 5,
+        "titleTrack": "가이아",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "가이아",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "크랙시 테마 (피아노 ver.)",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "크랙시 테마 (오케스트라 ver.)",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "크랙시 테마 (트레일러 ver.)",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "가이아 (Inst.)",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "10733415"
+      },
+      {
+        "title": "My Universe",
+        "type": "미니",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/103/97/144/10397144_20200302180739_500.jpg",
+        "releaseDate": "2020.03.03",
+        "trackCount": 9,
+        "titleTrack": "아리아",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "나의 우주",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "아리아",
+            "isTitle": true
+          },
+          {
+            "no": 3,
+            "title": "나의 우주 (Inst.)",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "아리아 (Inst.)",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "카 카 카 (Remaster Ver.)",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "내 노래가 들리나요 (Remaster Ver.)",
+            "isTitle": false
+          },
+          {
+            "no": 7,
+            "title": "SIXTEEN (Remaster Ver.)",
+            "isTitle": false
+          },
+          {
+            "no": 8,
+            "title": "보이프렌드 (Remaster Ver.)",
+            "isTitle": false
+          },
+          {
+            "no": 9,
+            "title": "이슈 (Remaster Ver.)",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "10397144"
+      },
+      {
+        "title": "My Universe",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/103/88/535/10388535_20200214152331_500.jpg",
+        "releaseDate": "2020.02.16",
+        "trackCount": 1,
+        "titleTrack": "나의 우주",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "나의 우주",
+            "isTitle": true
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "10388535"
+      }
+    ]
   },
   "버가부": {
     "en": "bugAboo",
@@ -191296,7 +191810,88 @@
     "co": "에이팀엔터테인먼트",
     "gender": "f",
     "disbanded": "2022.12.08",
-    "id": "g273"
+    "id": "g273",
+    "discography": [
+      {
+        "title": "열국 스캔들 OST Part 2",
+        "type": "OST",
+        "isMain": false,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/111/59/187/11159187_20230127154248_500.jpg",
+        "releaseDate": "2023.01.28",
+        "trackCount": 2,
+        "titleTrack": "Bonita",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Bonita",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Bonita (Inst.)",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "11159187"
+      },
+      {
+        "title": "POP",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/109/80/428/10980428_20220613101627_500.jpg",
+        "releaseDate": "2022.06.13",
+        "trackCount": 3,
+        "titleTrack": "POP",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "POP",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Easy Move",
+            "isTitle": true
+          },
+          {
+            "no": 3,
+            "title": "POP(Inst.)",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "10980428"
+      },
+      {
+        "title": "bugAboo",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/107/50/697/10750697_20211025102402_500.jpg",
+        "releaseDate": "2021.10.25",
+        "trackCount": 3,
+        "titleTrack": "bugAboo",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "bugAboo",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "All Night Play",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "bugAboo (Inst.)",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "10750697"
+      }
+    ]
   },
   "픽시": {
     "en": "PIXY",
@@ -191304,7 +191899,285 @@
     "co": "Allart Entertainment",
     "gender": "f",
     "disbanded": true,
-    "id": "g274"
+    "id": "g274",
+    "discography": [
+      {
+        "title": "The Voice",
+        "type": "미니",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/113/49/408/11349408_20231023135853_500.jpg",
+        "releaseDate": "2023.10.24",
+        "trackCount": 4,
+        "titleTrack": "Truth or Dare",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Truth or Dare",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "편지",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "P.S.",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Truth or Dare (English Version)",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "11349408"
+      },
+      {
+        "title": "CHOSEN KARMA",
+        "type": "미니",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/111/98/161/11198161_20230308100314_500.jpg",
+        "releaseDate": "2023.03.10",
+        "trackCount": 6,
+        "titleTrack": "KARMA",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Hide & Seek",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "Flip a coin",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "KARMA",
+            "isTitle": true
+          },
+          {
+            "no": 4,
+            "title": "Falling",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "귓속말",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "KARMA (Inst.)",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "11198161"
+      },
+      {
+        "title": "REBORN",
+        "type": "미니",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/109/83/205/10983205_20220614165437_500.jpg",
+        "releaseDate": "2022.06.15",
+        "trackCount": 7,
+        "titleTrack": "Villain",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Villain",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "숨",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "Natural",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Deja vu",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "안부",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "Swan Song",
+            "isTitle": false
+          },
+          {
+            "no": 7,
+            "title": "Villain (Inst.)",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "10983205"
+      },
+      {
+        "title": "불러불러 (Call me)",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/108/11/609/10811609_20211214103148_500.jpg",
+        "releaseDate": "2021.12.14",
+        "trackCount": 2,
+        "titleTrack": "불러불러 (Call me)",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "불러불러 (Call me)",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "불러불러 (Call me) (Inst.)",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "10811609"
+      },
+      {
+        "title": "Fairyforest : Temptation",
+        "type": "미니",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/107/33/813/10733813_20211007102910_500.jpg",
+        "releaseDate": "2021.10.07",
+        "trackCount": 9,
+        "titleTrack": "중독 (Addicted)",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Intro (End of the forest)",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "중독 (Addicted)",
+            "isTitle": true
+          },
+          {
+            "no": 3,
+            "title": "Bewitched",
+            "isTitle": true
+          },
+          {
+            "no": 4,
+            "title": "Moonlight",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Still with me (To.Winxy)",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "Bewitched (Eng Ver.)",
+            "isTitle": false
+          },
+          {
+            "no": 7,
+            "title": "Moonlight (Eng Ver.)",
+            "isTitle": false
+          },
+          {
+            "no": 8,
+            "title": "Bewitched (Inst.)",
+            "isTitle": false
+          },
+          {
+            "no": 9,
+            "title": "중독 (Addicted) (Inst.)",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "10733813"
+      },
+      {
+        "title": "Fairy forest : Bravery",
+        "type": "미니",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/106/08/772/10608772_20210517100944_500.jpg",
+        "releaseDate": "2021.05.20",
+        "trackCount": 8,
+        "titleTrack": "Let Me Know",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Intro : sgniw ym htiw ylF (Fly with my wings)",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "Let Me Know",
+            "isTitle": true
+          },
+          {
+            "no": 3,
+            "title": "The Moon",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Greedy",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Insomnia",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "날개 (Wings) Remix (CD ONLY)",
+            "isTitle": false
+          },
+          {
+            "no": 7,
+            "title": "Let Me Know (Inst.)",
+            "isTitle": false
+          },
+          {
+            "no": 8,
+            "title": "The Moon (Inst.)",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "10608772"
+      },
+      {
+        "title": "With My Wings",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/105/69/550/10569550_20210224112201_500.jpg",
+        "releaseDate": "2021.02.24",
+        "trackCount": 1,
+        "titleTrack": "날개 (Wings)",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "날개 (Wings)",
+            "isTitle": true
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "10569550"
+      }
+    ]
   },
   "블랭키": {
     "en": "BLANK2Y",
@@ -191312,7 +192185,80 @@
     "co": "키스톤엔터테인먼트",
     "gender": "m",
     "disbanded": true,
-    "id": "g275"
+    "id": "g275",
+    "discography": [
+      {
+        "title": "K2Y II : PASSION [FUEGO]",
+        "type": "미니",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/110/35/473/11035473_20220823113551_500.jpg",
+        "releaseDate": "2022.08.24",
+        "trackCount": 4,
+        "titleTrack": "FUEGO(Burn it up)",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "INTRO [U]",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "FUEGO(Burn it up)",
+            "isTitle": true
+          },
+          {
+            "no": 3,
+            "title": "FUEGO(Fearless)",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "I Wish – Fan Song",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "11035473"
+      },
+      {
+        "title": "K2Y I : CONFIDENCE [Thumbs Up]",
+        "type": "미니",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/109/65/726/10965726_20220524121956_500.jpg",
+        "releaseDate": "2022.05.24",
+        "trackCount": 5,
+        "titleTrack": "Thumbs Up",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Intro [R]",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "Thumbs Up",
+            "isTitle": true
+          },
+          {
+            "no": 3,
+            "title": "Thumbs Up (ENG Ver.)",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Touch",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "별자리 - Fan Song",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "10965726"
+      }
+    ]
   },
   "세븐어스": {
     "en": "SEVENUS",
@@ -193172,7 +194118,164 @@
     "co": "미스틱스토리",
     "gender": "m",
     "disbanded": "2026.06.23",
-    "id": "g285"
+    "id": "g285",
+    "discography": [
+      {
+        "title": "CTRL+ALT+SKIID",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/121/87/916/12187916_20251103103739_500.jpg",
+        "releaseDate": "2025.11.03",
+        "trackCount": 2,
+        "titleTrack": "SKIID",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "SKIID",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "WoW (Way of Winning) (with 문수아X시윤)",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "12187916"
+      },
+      {
+        "title": "HOPE",
+        "type": "미니",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/118/97/617/11897617_20250715180002_500.jpg",
+        "releaseDate": "2025.07.16",
+        "trackCount": 5,
+        "titleTrack": "awesome",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "awesome",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "dawns",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "kick back",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "vitamin I",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "night life",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "11897617"
+      },
+      {
+        "title": "nu kidz: out the box",
+        "type": "미니",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/117/16/988/11716988_20250217164739_500.jpg",
+        "releaseDate": "2025.02.18",
+        "trackCount": 5,
+        "titleTrack": "nu kidz",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "nu kidz",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "loop.dll",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "accident ~ at the studio",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "alien in Seoul",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "connected",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "11716988"
+      },
+      {
+        "title": "AR^C",
+        "type": "미니",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/115/68/447/11568447_20240814163608_500.jpg",
+        "releaseDate": "2024.08.19",
+        "trackCount": 5,
+        "titleTrack": "S&S (sour and sweet)",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "S&S (sour and sweet)",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "light up",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "shadow",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "duality",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "dummy - nu skull mix",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "11568447"
+      },
+      {
+        "title": "dummy",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/115/51/172/11551172_20240725162658_500.jpg",
+        "releaseDate": "2024.07.26",
+        "trackCount": 1,
+        "titleTrack": "dummy",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "dummy",
+            "isTitle": true
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "11551172"
+      }
+    ]
   },
   "퍼즐": {
     "en": "PUZZLE",
@@ -193180,7 +194283,32 @@
     "co": "Good Choice Entertainment",
     "gender": "coed",
     "disbanded": true,
-    "id": "g286"
+    "id": "g286",
+    "discography": [
+      {
+        "title": "I",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/113/68/223/11368223_20231117173959_500.jpg",
+        "releaseDate": "2023.11.20",
+        "trackCount": 2,
+        "titleTrack": "SAVIOR",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "SAVIOR",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "SAVIOR (INST)",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "11368223"
+      }
+    ]
   },
   "하츠웨이브": {
     "en": "hrtz.wav",
@@ -193420,6 +194548,46 @@
     "debut": "2026.08.24",
     "co": "ABD",
     "gender": "f",
-    "id": "g290"
+    "id": "g290",
+    "discography": [
+      {
+        "title": "The 1st EP [TUNE & PLAY]",
+        "type": "미니",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/144/73/644/14473644_20260824114752_500.jpg",
+        "releaseDate": "2026.08.24",
+        "trackCount": 5,
+        "titleTrack": "SUN KISS",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "ABD",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "SUN KISS",
+            "isTitle": true
+          },
+          {
+            "no": 3,
+            "title": "Echo",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Flip-Flop Girl",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "GRLS",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "14473644"
+      }
+    ]
   }
 }

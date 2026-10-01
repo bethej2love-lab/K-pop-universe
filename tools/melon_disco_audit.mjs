@@ -302,6 +302,59 @@ async function resolveAid(t, ourKeys, ourDates) {
   };
 }
 
+// ── 디스코가 빈 대상의 본인 확인(2026-10-02) ───────────────────────────────────────────
+// resolveAid 의 겹침 검증은 **비교할 우리 앨범이 0장이면 구조적으로 통과 불가**다. 이름만으로 붙이면
+// 동명이인이 섞인다(픽시 후보 7명 — Fixy·Pixy·레인보우 픽시…). 그래서 멜론 아티스트 상세에 적힌 사실로 확인한다:
+//   그룹 — 상세의 '그룹멤버' 목록이 우리 명단(현재+전 멤버)과 **2명 이상** 겹친다
+//   솔로 — 상세의 '소속그룹'에 그 사람 **옛 그룹의 멜론 aid**가 있다(옛 그룹은 이미 겹침 검증으로 매핑됨)
+// 둘 다 이름 표기와 무관한 링크(aid) 또는 명단 대조라 동명이인을 가른다. 통과한 후보가 둘 이상이면 넘기지 않는다.
+function parseArtistDetail(html) {
+  const between = (a, b) => { const i = html.indexOf(a); if (i < 0) return ''; const j = html.indexOf(b, i + a.length); return html.slice(i, j < 0 ? i + 30000 : j); };
+  const memBlk = between('<!-- 그룹멤버 시작-->', '<!-- //그룹멤버 종료 -->');
+  const members = [];
+  for (const m of memBlk.matchAll(/goArtistDetail\('(\d+)'\);" title="([^"]*)" class="ellipsis"/g)) members.push({ aid: m[1], title: dec(m[2]) });
+  const grpBlk = between('<dt>소속그룹</dt>', '</dd>');
+  const groupAids = [...grpBlk.matchAll(/goArtistDetail\('(\d+)'\)/g)].map(m => m[1]);
+  return { members, groupAids };
+}
+async function detailOf(aid) {
+  return parseArtistDetail(await get(`https://www.melon.com/artist/detail.htm?artistId=${aid}`, `adetail_${aid}`, 5000));
+}
+async function resolveByIdentity(t) {
+  const nrm = s => String(s || '').normalize('NFKC').toLowerCase().replace(/[^0-9a-z가-힣]/g, '');
+  const partsOf = s => { const m = /^(.*?)\s*[(（]([^)）]*)[)）]\s*$/.exec(String(s || '')); return (m ? [m[1], m[2]] : [String(s || '')]).map(nrm).filter(Boolean); };
+  const cands = [];
+  const addC = c => { if (c && c.aid && !cands.some(x => x.aid === c.aid)) cands.push(c); };
+  const myNames = new Set(t.names.map(nrm).filter(Boolean));
+  // 솔로: 옛 그룹 상세의 그룹멤버 목록에서 이름이 맞는 사람을 먼저 후보로(검색보다 정확하다 — 링크가 곧 그 그룹의 멤버)
+  if (t.kind === 'solo') for (const gaid of t.prevGroupAids || []) {
+    for (const m of (await detailOf(gaid)).members) if (partsOf(m.title).some(p => myNames.has(p))) addC({ aid: m.aid, title: m.title, gubun: '' });
+  }
+  const want = t.kind === 'group' ? /그룹/ : /솔로/;
+  for (const q of [...new Set(t.names.filter(Boolean))]) {
+    const html = await get(`https://www.melon.com/search/artist/index.htm?q=${encodeURIComponent(q)}`, `asearch_${encodeURIComponent(q)}`, 3000);
+    for (const c of parseArtistSearch(html)) if (want.test(c.gubun) && partsOf(c.title).some(p => myNames.has(p))) addC(c);
+  }
+  if (!cands.length) return { ok: false, why: '이름 맞는 후보 없음(디스코 0 · 본인확인 모드)' };
+  const passed = [];
+  for (const c of cands.slice(0, 10)) {
+    const d = await detailOf(c.aid);
+    if (t.kind === 'group') {
+      const roster = t.roster || [];
+      const hitN = roster.filter(ns => ns.some(n => d.members.some(m => partsOf(m.title).includes(nrm(n))))).length;
+      if (hitN >= 2) passed.push({ c, ev: `그룹멤버 ${hitN}/${roster.length}명 일치` , score: hitN });
+    } else {
+      const hit = d.groupAids.filter(g => (t.prevGroupAids || []).includes(g));
+      if (hit.length) passed.push({ c, ev: `소속그룹 aid ${hit.join(',')} 일치`, score: hit.length });
+    }
+  }
+  if (!passed.length) return { ok: false, why: `본인확인 실패 — 후보 ${cands.length}명 중 ${t.kind === 'group' ? '그룹멤버 2명↑ 일치' : '소속그룹=옛 그룹'} 없음`, cands };
+  if (passed.length > 1) return { ok: false, why: `본인확인 애매 — 통과 후보 ${passed.length}명(${passed.map(p => p.c.aid).join('/')})`, cands };
+  const p = passed[0];
+  return { ok: true, aid: p.c.aid, melonName: p.c.title, gubun: p.c.gubun, overlap: 0, rivals: 1, evidence: p.ev, confidence: 'identity',
+    albums: (await albumsOf(p.c.aid)).filter(a => a.artistAid === p.c.aid) };
+}
+
 /* ------------------------------ 분류 규칙 ------------------------------ */
 
 // 멜론 제목 꼬리표 정리 — **대조용 키를 만들 때만** 쓴다(저장하는 제목은 건드리지 않는다).
@@ -360,19 +413,32 @@ const artists = JSON.parse(fs.readFileSync(P('artists.json'), 'utf8'));
 //    매핑을 캐시하면 둘이 같은 멜론 aid 를 공유해 한쪽 앨범이 다른 쪽에 붙는다.
 const SOLO = process.argv.includes('--solo');       // 솔로만
 const BOTH = process.argv.includes('--all');        // 그룹 + 솔로
+// --empty: 디스코가 **비어 있는** 대상만 본다(2026-10-02 전수조사). 원래는 겹침 검증에 쓸 앨범이 없어서
+// 대상에서 아예 빠졌다 — 그래서 ATBO·픽시 같은 팀은 어떤 회차에서도 한 번도 시도되지 않았다.
+// 본인 확인은 resolveByIdentity(멜론 아티스트 상세의 그룹멤버·소속그룹)가 대신한다.
+const EMPTY = process.argv.includes('--empty');
+const hasDisco = o => Array.isArray(o.discography) && o.discography.length > 0;
+const keepTarget = o => EMPTY ? !hasDisco(o) : hasDisco(o);
+// 그룹 명단(현재+전 멤버) — 그룹 본인 확인용
+const rosterOf = gko => artists.filter(a => a.name && ((a.group && a.group.ko === gko) || (a.groups || []).some(g => g.ko === gko)))
+  .map(a => [a.name.ko, a.name.en].filter(Boolean));
+// ⚠️ 솔로는 같은 이름이 실재한다(group.ko='솔로' 안에서만 소희 3·레나·현아·유주·가은·윤조·조아·키오 2명씩).
+//    키가 `a:이름|솔로`면 둘이 한 매핑을 공유해 남의 앨범이 붙는다 → 이름이 겹치면 옛 그룹까지 키에 넣는다.
+const _soloNameCnt = {};
+for (const a of artists) if (a.name && a.name.ko) { const k = `${a.name.ko}|${(a.group && a.group.ko) || '솔로'}`; _soloNameCnt[k] = (_soloNameCnt[k] || 0) + 1; }
 const targets = [];
 if (!SOLO) {
   for (const [ko, g] of Object.entries(groups)) {
-    if (!Array.isArray(g.discography) || !g.discography.length) continue;
+    if (!keepTarget(g)) continue;
     // ⚠️ altNames 도 질의에 넣는다 — 슈퍼노바는 멜론에 **초신성**으로 있어서 en/ko 어느 쪽으로도
     //    안 잡혔다(검색 상위는 전부 동명 해외 그룹). 앱 검색이 이미 쓰는 필드라 새로 만들 게 없다.
-    targets.push({ key: ko, label: ko, kind: 'group', koName: ko, names: [g.en, ko, ...(g.altNames || [])], disco: g.discography, file: 'groups.json' });
+    targets.push({ key: ko, label: ko, kind: 'group', koName: ko, names: [g.en, ko, ...(g.altNames || [])], obj: g, disco: g.discography || [], roster: rosterOf(ko), file: 'groups.json' });
   }
 }
 if (SOLO || BOTH) {
   for (const a of artists) {
     const ko = a.name && a.name.ko; if (!ko) continue;
-    if (!Array.isArray(a.discography) || !a.discography.length) continue;
+    if (!keepTarget(a)) continue;
     const gko = (a.group && a.group.ko) || '솔로';
     // ⚠️ 소속 그룹은 **한글·영문·별칭을 다 넘긴다** — 멜론 괄호 표기는 영문명이다
     //    (`안유진 (IVE)` · `리아 (ITZY)` · `창빈 (Stray Kids)`). 한글만 대조하면 한 건도 안 걸린다.
@@ -380,7 +446,13 @@ if (SOLO || BOTH) {
     const gnames = [gko, gg && gg.en, ...((gg && gg.altNames) || [])].filter(Boolean);
         // ⚠️ 솔로는 **한글명을 먼저** 질의한다. 영문 이름이 흔한 서양 이름이면(Joshua) 멜론 검색이
     //    동명이인 수십 명을 먼저 쏟아내 정답이 후보 컷 밖으로 밀린다(실측: 34명 중 15번째).
-    targets.push({ key: `a:${ko}|${gko}`, label: `${ko}(${gko})`, kind: 'solo', gko, gnames, koName: ko, names: [ko, a.name.en], disco: a.discography, file: 'artists.json' });
+    const prevG = (a.groups || []).map(g => g.ko).filter(g => g && g !== gko && g !== '솔로');
+    const dupName = _soloNameCnt[`${ko}|${gko}`] > 1;
+    const key = `a:${ko}|${gko}` + (dupName && prevG.length ? `|${prevG.join('+')}` : '');
+    const label = `${ko}(${gko}${dupName && prevG.length ? `·전 ${prevG.join('+')}` : ''})`;
+    // 옛 그룹의 멜론 aid — 솔로 본인 확인(소속그룹) 근거. 매핑 안 된 그룹은 근거가 될 수 없어 뺀다.
+    const prevGroupAids = prevG.map(g => map[g] && map[g].aid).filter(Boolean);
+    targets.push({ key, label, kind: 'solo', gko, gnames: [...gnames, ...prevG], koName: ko, names: [ko, a.name.en], obj: a, disco: a.discography || [], prevGroupAids, file: 'artists.json' });
   }
 }
 let list = ONLY ? targets.filter(t => ONLY.has(t.label) || ONLY.has(t.key) || ONLY.has(t.koName) || t.names.some(n => ONLY.has(n))) : targets;
@@ -405,13 +477,15 @@ for (const t of list) {
   if (m && m.blocked) { unresolved.push(`${ko} — 매핑 차단(${m.blockedWhy || '수동'})`); continue; }
   if (!m || !m.aid) {
     if (m && m.failedWhy && !REFRESH) { unresolved.push(`${ko} — ${m.failedWhy} (이전 회차)`); continue; }
-    const r = await resolveAid(t, ourKeys, ourDates);
+    const r = (!ourKeys.size && !ourDates.size) ? await resolveByIdentity(t) : await resolveAid(t, ourKeys, ourDates);
     if (!r.ok) {
       unresolved.push(`${ko} — ${r.why}`);
-      map[t.key] = { aid: null, failedWhy: r.why, checkedAt: new Date().toISOString().slice(0, 10) };
+      // ⚠️ 차단으로 접힌 회차의 실패는 기록하지 않는다 — 기록하면 다음 회차가 "이전 회차 실패"로 건너뛴다
+      if (!aborted) map[t.key] = { aid: null, failedWhy: r.why, checkedAt: new Date().toISOString().slice(0, 10) };
       continue;
     }
-    m = map[t.key] = { aid: r.aid, melonName: r.melonName, gubun: r.gubun, kind: t.kind, confidence: r.confidence, overlap: r.overlap, checkedAt: new Date().toISOString().slice(0, 10) };
+    m = map[t.key] = { aid: r.aid, melonName: r.melonName, gubun: r.gubun, kind: t.kind, confidence: r.confidence, overlap: r.overlap, ...(r.evidence ? { evidence: r.evidence } : {}), checkedAt: new Date().toISOString().slice(0, 10) };
+    if (r.evidence) console.log(`  ✓ ${ko} → ${r.melonName} (${r.aid}) · ${r.evidence}`);
     albums = r.albums;
   }
   if (!albums) albums = (await albumsOf(m.aid)).filter(a => a.artistAid === m.aid);
@@ -552,6 +626,8 @@ for (const [t, group] of byGroup) {
       src: 'melon',
       melonAlbumId: x.albumId,
     };
+    // 디스코가 비어 있던 대상은 배열이 원본에 없을 수 있다 — 실제로 넣을 때만 붙인다(빈 배열을 남기지 않게)
+    if (t.obj && t.obj.discography !== t.disco) t.obj.discography = t.disco;
     const dl = t.disco;
     if (dl.some(dd => mkey(dd.title) === mkey(entry.title) && dd.releaseDate === entry.releaseDate)) continue;
     dl.push(entry);

@@ -7529,5 +7529,85 @@
     "confidence": "high",
     "overlap": 11,
     "checkedAt": "2026-09-17"
+  },
+  "ATBO": {
+    "aid": "3111493",
+    "melonName": "ATBO",
+    "gubun": "대한민국/남성/그룹",
+    "kind": "group",
+    "confidence": "identity",
+    "overlap": 0,
+    "evidence": "그룹멤버 6/7명 일치",
+    "checkedAt": "2026-10-01"
+  },
+  "크랙시": {
+    "aid": "2854654",
+    "melonName": "CRAXY (크랙시)",
+    "gubun": "대한민국/여성/그룹",
+    "kind": "group",
+    "confidence": "identity",
+    "overlap": 0,
+    "evidence": "그룹멤버 4/4명 일치",
+    "checkedAt": "2026-10-01"
+  },
+  "버가부": {
+    "aid": "2970892",
+    "melonName": "bugAboo (버가부)",
+    "gubun": "대한민국/여성/그룹",
+    "kind": "group",
+    "confidence": "identity",
+    "overlap": 0,
+    "evidence": "그룹멤버 6/6명 일치",
+    "checkedAt": "2026-10-01"
+  },
+  "픽시": {
+    "aid": "2920014",
+    "melonName": "PIXY (픽시)",
+    "gubun": "대한민국/여성/그룹",
+    "kind": "group",
+    "confidence": "identity",
+    "overlap": 0,
+    "evidence": "그룹멤버 2/7명 일치",
+    "checkedAt": "2026-10-01"
+  },
+  "블랭키": {
+    "aid": "3092901",
+    "melonName": "BLANK2Y",
+    "gubun": "남성/그룹",
+    "kind": "group",
+    "confidence": "identity",
+    "overlap": 0,
+    "evidence": "그룹멤버 9/9명 일치",
+    "checkedAt": "2026-10-01"
+  },
+  "아크": {
+    "aid": "3874264",
+    "melonName": "ARrC (아크)",
+    "gubun": "대한민국/남성/그룹",
+    "kind": "group",
+    "confidence": "identity",
+    "overlap": 0,
+    "evidence": "그룹멤버 6/8명 일치",
+    "checkedAt": "2026-10-01"
+  },
+  "퍼즐": {
+    "aid": "3613342",
+    "melonName": "PUZZLE (퍼즐)",
+    "gubun": "대한민국/여성/그룹",
+    "kind": "group",
+    "confidence": "identity",
+    "overlap": 0,
+    "evidence": "그룹멤버 7/7명 일치",
+    "checkedAt": "2026-10-01"
+  },
+  "튜이드": {
+    "aid": "5161926",
+    "melonName": "TUIDE (튜이드)",
+    "gubun": "대한민국/여성/그룹",
+    "kind": "group",
+    "confidence": "identity",
+    "overlap": 0,
+    "evidence": "그룹멤버 7/7명 일치",
+    "checkedAt": "2026-10-01"
   }
 }
