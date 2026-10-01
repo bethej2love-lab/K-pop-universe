@@ -4302,7 +4302,7 @@ const _SEARCH_CAT_WORDS=[
 // ── 영상 검색 쿼리(2026-09-21 분리) ──────────────────────────────────────────
 // 첫 페이지(6건)와 '더보기'(30건씩)가 **같은 조건**을 써야 해서 쿼리 조립을 한 곳으로 모았다.
 // 예전엔 _searchRemote 안에 인라인이라, 더보기를 붙이려면 같은 조건을 한 벌 더 베껴야 했다.
-const _SR_VID_COLS='id,title,group_ko,is_short,category,content_flag,view_count,thumb,published_at';
+const _SR_VID_COLS='id,title,group_ko,members,with_members,is_short,category,content_flag,view_count,thumb,published_at';
 const _SR_VID_FIRST=6;   // 첫 페이지 — 검색 결과 목록에 영상이 화면을 다 먹지 않을 만큼만
 const _SR_VID_STEP=30;   // 더보기 한 번에 가져오는 양
 let _srVidMore=null;     // 더보기가 이어받을 조회 상태(쿼리·오프셋·이미 그린 id)
@@ -4344,11 +4344,14 @@ function _srVidPage(q,like,hint,fallbackGroup,from,size){
 }
 // sub은 화면에 그대로 찍히는 값이라 DB 원본(group_ko)이 아니라 표기명을 넣는다 — 예전엔 원본이라
 // 영어 모드 검색 결과의 영상 메타만 "에스파 · 2025.06.27 · 167M+"처럼 한글로 튀었다(2026-09-04).
+// item = 라이트박스 재생목록 항목(제목·날짜·조회수·태그) — 이게 없으면 라이트박스가 제목·저장·멤버 칩·다음 영상이 빈
+// 껍데기로 뜬다(2026-10-01, 사용자: "검색해서 영상 누르면 라이트박스 모드 아니네").
 function _srVidHit(v){
+  const url=_isShortV(v)?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;
   return{type:'video',name:_cleanTitle(v.title),sub:_gLabelKo(v.group_ko||''),
     thumb:v.thumb||'',meta:_fmtVidMeta(v.published_at,v.view_count),
-    url:_isShortV(v)?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`,
-    isShort:_isShortV(v)};
+    url,isShort:_isShortV(v),
+    item:{..._rowTags(v),t:v.title,u:url,thumb:v.thumb||'',pa:v.published_at?.slice(0,10),vc:v.view_count}};
 }
 function _searchRemote(q,res,mobSearch,obSearch,hint){
   const token=++_remoteSearchToken;
@@ -4606,6 +4609,7 @@ function _makeSearchItem(h,res,mobSearch,obSearch){
   //    안 그러면 깨진 이미지 아이콘이 뜨거나 줄 높이가 들쭉날쭉해진다.
   if(h.type==='video'){
     div.classList.add('sr-vid');
+    div._lbItem=h.item||null; // 클릭 시 같은 결과의 영상 전부를 재생목록으로 묶는다(아래 click)
     const esc=t=>String(t==null?'':t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
     const meta=[h.sub,h.meta].filter(Boolean).join(' · ');
     div.innerHTML=`<span class="sr-vt">${h.thumb?`<img src="${esc(h.thumb)}" loading="lazy" alt="" referrerpolicy="no-referrer">`:''}<span class="sr-vp">▶</span></span>`
@@ -4620,10 +4624,14 @@ function _makeSearchItem(h,res,mobSearch,obSearch){
     // 그래야 _resolveRecentSearches가 기존 형식 그대로 복원할 수 있다(별도 타입을 만들지 않음).
     // 영상은 카드가 아니라 라이트박스로 바로 연다 — 카메라 이동·카드 열기 흐름을 타지 않는다.
     if(h.type==='video'){
+      // 검색 결과 영상 전부를 재생목록으로 — 시트를 닫으면 DOM이 비워지므로 닫기 전에 모은다.
+      const _vEls=[...res.querySelectorAll('.sr-vid')].filter(el=>el._lbItem);
+      let _pl=_vEls.map(el=>el._lbItem),_pi=_vEls.indexOf(div);
+      if(_pi<0){_pl=h.item?[h.item]:null;_pi=0;}
       if(obSearch)exitObSearch();else if(mobSearch)exitMobSearch();
       else if(typeof _msIsOpen==='function'&&_msIsOpen())closeMobSearchSheet(); // 풀스크린 검색 시트 닫고 재생
       else{document.getElementById('search-input').value='';res.style.display='none';}
-      openLightbox(h.url,!!h.isShort);
+      openLightbox(h.url,!!h.isShort,_pl,_pi,{groupKo:h.item?.groupKo||''});
       return;
     }
     // 프로그램 컬렉션 — 영상과 마찬가지로 카드/카메라 흐름을 안 타고 목록 오버레이만 연다(2026-09-05).
@@ -5717,6 +5725,11 @@ function openLightbox(url,shorts,playlist,idx,ctx,isAdvance,forceBrowseMode){
   _lbCancelAutoNext(); // 새 영상을 여는 모든 경로(연속재생 포함)에서 이전 영상의 대기 중인 카운트다운은 취소
   _lbEndedHandled=false; // 새 영상이니 종료 이벤트 중복 가드도 리셋
   _lbIsNativeShorts=!!shorts;
+  // 어디서 열든 라이트박스는 같은 모습이어야 한다(2026-10-01) — 재생목록 없이 URL만 넘긴 호출부가 있으면
+  // 현재 항목이 null이 돼 제목·저장·컬렉션·멤버 칩·리액션이 통째로 빠졌다. 1개짜리 목록을 만들고
+  // 제목·태그는 DB에서 채운다(_lbHydrateItem). 새 세션인데 ctx가 없으면 이전 세션 주인이 남지 않게 비운다.
+  if(!playlist||!playlist.length){playlist=[{u:url,thumb:`https://i.ytimg.com/vi/${vid}/mqdefault.jpg`}];idx=0;}
+  if(!isAdvance&&ctx==null)ctx={};
   _recordRecentView(vid,playlist&&idx!=null?playlist[idx]:null,shorts);
   _lbPlaylist=playlist||null;
   // pa가 실린 항목은 전역 캐시에 모아둔다 — pa 없는 재생목록(최근 본 등)도 같은 영상이면 날짜를 채워준다
@@ -5788,6 +5801,22 @@ function openLightbox(url,shorts,playlist,idx,ctx,isAdvance,forceBrowseMode){
   _maybeShowSwipeHint();
   _lbUpdateMemberInfo();
   if(_lbSessionMode==='browse'){_lbUpdateUplist();_surfUpdate();}
+  _lbHydrateItem(_lbPlaylist[_lbIdx]);
+}
+// 제목 없이 들어온 항목(URL만 넘긴 호출부)을 DB 행으로 채우고, 아직 그 영상이 떠 있으면 상단·툴바를 다시 그린다.
+// 제목이 이미 있는 항목은 건드리지 않는다 — 카드 그리드 곡은 일부러 태그 대신 ctx를 쓴다(_lbUpdateMemberInfo 주석).
+async function _lbHydrateItem(item){
+  if(!item||item.t||!sb)return;
+  const id=ytId(item.u);if(!id)return;
+  try{
+    const {data}=await sb.from(_YT_TABLE).select(_SR_VID_COLS).eq('id',id).maybeSingle();
+    if(!data)return;
+    Object.assign(item,_rowTags(data),{t:data.title||'',pa:item.pa||data.published_at?.slice(0,10),vc:item.vc??data.view_count});
+    if(data.thumb)item.thumb=data.thumb;
+    if(!_lbPlaylist||_lbPlaylist[_lbIdx]!==item)return; // 그새 다른 영상으로 넘어갔다
+    _lbUpdateToolbar();_lbUpdateMemberInfo();
+    if(_lbSessionMode==='browse'){_lbUplistRenderedFor=null;_lbUpdateUplist();_surfUpdate();}
+  }catch(e){}
 }
 const LB_SWIPE_HINT_KEY='kpu_lb_swipe_hint_shown'; // 상하 스와이프로 영상 넘길 수 있다는 걸 처음 한 번만 안내
 function _maybeShowSwipeHint(){

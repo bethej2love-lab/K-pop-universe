@@ -184,7 +184,9 @@ async function main() {
     const order = await ev(cdp, `[...document.querySelectorAll('#msheet-body .sr-item[data-type="group"]')]
       .filter(function(el){return getComputedStyle(el).display!=='none';})
       .map(function(el){var n=el.querySelector('.sr-item-name');return n?n.textContent.trim():'';})`);
-    const OVER = ['에이스', '에이프릴'];
+    // 해체 판정은 앱의 _groupIsOver를 그대로 쓴다 — 예전엔 ['에이스','에이프릴'] 하드코딩이라 에이오에이(전원 비활동)가
+    // 해체로 정렬되자 "해체 그룹이 활동 중보다 앞"으로 오탐했다(2026-10-01).
+    const OVER = await ev(cdp, `${JSON.stringify(order || [])}.filter(function(n){return _groupIsOver(n);})`);
     const idxOver = (order || []).findIndex(n => OVER.includes(n));
     const idxLastActive = (order || []).reduce((acc, n, i) => OVER.includes(n) ? acc : i, -1);
     if (idxOver < 0) ok('[8] (해체 그룹이 결과에 없어 순서 검증 생략)');
