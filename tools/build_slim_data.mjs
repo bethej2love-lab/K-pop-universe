@@ -205,18 +205,22 @@ emit(path.join(ROOT, 'tracks_index.json'), tiStr);
 const RECENT_ALBUMS = 400;
 {
   const rows = [];
-  const push = (owner, ownerKind, gko, list) => {
+  // 멤버 항목엔 아티스트 id(i)를 꼭 넣는다 — 무소속 솔로는 g가 null이라 이름만으론 동명이인을 못 가른다
+  // (2026-10-02 TAN 출신 솔로 지성 신보가 엔시티 드림 지성 것으로 떴다). 앱은 _albumOwnerArt로 i부터 찾는다.
+  const push = (owner, ownerKind, gko, list, id) => {
     for (const al of list || []) {
       if (!al || !al.releaseDate || !al.cover) continue;   // 커버 없는 건 이 선반의 존재 이유가 없다
-      rows.push({ o: owner, k: ownerKind, g: gko || null, t: al.title, y: al.type || '', d: al.releaseDate, c: al.cover });
+      const row = { o: owner, k: ownerKind, g: gko || null, t: al.title, y: al.type || '', d: al.releaseDate, c: al.cover };
+      if (id) row.i = id;
+      rows.push(row);
     }
   };
   for (const [gko, g] of Object.entries(groups)) push(gko, 'g', null, g.discography);
   for (const a of artists) {
     const nm = a.name && a.name.ko, gko = a.group && a.group.ko;
     if (!nm) continue;
-    push(nm, 'm', gko && groups[gko] ? gko : null, a.discography);
-    for (const u of a.unitDiscography || []) push(nm, 'm', gko && groups[gko] ? gko : null, u && u.albums);
+    push(nm, 'm', gko && groups[gko] ? gko : null, a.discography, a.id);
+    for (const u of a.unitDiscography || []) push(nm, 'm', gko && groups[gko] ? gko : null, u && u.albums, a.id);
   }
   rows.sort((x, y) => String(y.d).localeCompare(String(x.d)));
   // 같은 앨범이 그룹과 멤버 양쪽에 들어 있는 경우가 있어 (제목+날짜)로 중복 제거한다.
