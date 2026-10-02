@@ -78,7 +78,7 @@
 - [사용자 실행 대기] ⚠️ **`sql/merge_duplicate_artists_2026-10-02.sql`** — 병합된 사람들의 영상 태그 이름 바꾸기(유나이트 은상→이은상 155 · 나인아이 주형→김주형 49 · 다이아 예빈→백예빈 42 · 엘즈업 권나연→나나 31) + 솔로 이름으로 묶인 영상 이동 + 장기하 "너나 나나" 6건 무관. **실행 전까지는 이 영상들 멤버 태그가 화면에서 안 잡힘.**
 - [완료] 차단 풀린 뒤 전체 회차 완주 — 16명 추가 확인(스피드 5·구구단 3·멜로디데이 2·민하 나무위키 근거 등), 10명 54장 추가. 오늘 솔로 디스코 합계 **133장**. [artists.json] [melon_artist_map.json]
 - [완료] 크레딧 `--from-map` 48명(오늘 디스코 감사가 확인한 aid 재사용, 1곡↑ 25명) + `--identify` 첫 실행 12명(윈윈·설리·루한·타오·한경·기범 등, 전부 생일 근거) — 작곡가 890→912+. `melon_credits.mjs` get()이 HTTP 200 차단 페이지를 못 알아채던 것 수정. [artist_credits.json] [written_songs.json] [tools/melon_credits.mjs]
-- [진행중] 크레딧 `--identify` 24/347에서 멜론 406 차단으로 접힘 — 1시간+ 뒤 `NODE_TLS_REJECT_UNAUTHORIZED=0 node tools/melon_credits.mjs --identify` 재실행(확인된 사람은 저장돼 건너뜀, 근거없음은 매번 재시도).
+- [진행중] 크레딧 `--identify` — 누적 23명 확인(+박유천·유주(여자친구)·Kevin(제국의아이들)), 본 사람 47명/약 335명. 멜론이 100~150요청에서 막아 **1시간 간격으로 `--identify --limit 25`**. 본 사람(근거없음 포함)은 `tools/melon_credits_identify_seen.json`에 기록돼 건너뜀(다시 보려면 --recheck), 차단 응답 섞인 판정은 기록 안 함. 끝나면 build_written_songs + written-songs 테스트. [tools/melon_credits.mjs]
 - [진행중] 솔로 본인확인 실패 **69명** 남음(후보 많은 흔한 이름: 주연·소연·수빈·지현·나연·박지은 등 / 멜론 후보 자체 없음: 올리비아 혜·타카하시 쥬리·앤씨아 등). 지금 근거 4종(소속그룹 aid·옛 그룹 앨범·생일·나무위키 앨범)으로는 더 안 걸림 — 다음 근거 후보: 멜론 아티스트 소개글에 옛 그룹명 언급.
 - [메모] artists.json 들여쓰기는 지금 2칸(예전 1칸) — 도구는 writeKeepingStyle로 원본에서 읽을 것.
 
