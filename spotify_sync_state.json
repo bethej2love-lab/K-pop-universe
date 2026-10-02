@@ -393,10 +393,19 @@
     "윤채경": "2026-10-01",
     "김채원": "2026-10-01",
     "이나은": "2026-10-01",
-    "양예나": "2026-10-01"
+    "양예나": "2026-10-01",
+    "레이첼": "2026-10-02",
+    "이진솔": "2026-10-02",
+    "이현주": "2026-10-02",
+    "정유진": "2026-10-02",
+    "전은미": "2026-10-02",
+    "이지현": "2026-10-02",
+    "조민아": "2026-10-02",
+    "박정아": "2026-10-02",
+    "서인영": "2026-10-02"
   },
-  "runs": 43,
-  "lastRunAt": "2026-10-01T20:19:46.288Z",
+  "runs": 44,
+  "lastRunAt": "2026-10-02T15:44:17.091Z",
   "swept": {
     "에스파": [
       2025
@@ -1718,6 +1727,51 @@
       2023,
       2024,
       2025
+    ],
+    "레이첼": [
+      2023,
+      2024,
+      2025
+    ],
+    "이진솔": [
+      2023,
+      2024,
+      2025
+    ],
+    "이현주": [
+      2023,
+      2024,
+      2025
+    ],
+    "정유진": [
+      2023,
+      2024,
+      2025
+    ],
+    "전은미": [
+      2023,
+      2024,
+      2025
+    ],
+    "이지현": [
+      2023,
+      2024,
+      2025
+    ],
+    "조민아": [
+      2023,
+      2024,
+      2025
+    ],
+    "박정아": [
+      2023,
+      2024,
+      2025
+    ],
+    "서인영": [
+      2023,
+      2024,
+      2025
     ]
   },
   "pending": {
@@ -1917,6 +1971,62 @@
         "2026-01-21 NEMONEMO - Japanese Ver. -"
       ],
       "why": "영상 증거 0곡(영상 258개 대조)"
+    },
+    "레이첼": {
+      "spotifyName": "Rachael Yamagata",
+      "spotifyId": "7w0qj2HiAPIeUcoPogvOZ6",
+      "since": "2026-10-02",
+      "heldAlbums": [
+        "2026-09-04 The Starlit String Sessions (Live From The Living Room)",
+        "2025-10-03 Starlit Alchemy",
+        "2025-09-05 Backwards",
+        "2025-08-08 Birds"
+      ],
+      "why": "영상 증거 0곡(영상 250개 대조)"
+    },
+    "정유진": {
+      "spotifyName": "Lim Young Woong",
+      "spotifyId": "75MOYjGEyyH5U4ZFHOPvxR",
+      "since": "2026-10-02",
+      "heldAlbums": [
+        "2026-09-08 IM HERO 10",
+        "2026-06-14 Love Call Center Lim Young Woong Compilation PART10",
+        "2023-06-05 Grain of Sand",
+        "2023-10-09 Do or Die",
+        "2024-05-06 Warmth"
+      ],
+      "why": "영상 증거 0곡(영상 6개 대조)"
+    },
+    "전은미": {
+      "spotifyName": "김정은",
+      "spotifyId": "2jc3bBIKdaAFZnnQBCLLmh",
+      "since": "2026-10-02",
+      "heldAlbums": [
+        "2026-06-09 아직도 우린 (We Still)"
+      ],
+      "why": "영상 증거 0곡(영상 0개 대조)"
+    },
+    "조민아": {
+      "spotifyName": "Kwon Jin Ah",
+      "spotifyId": "0kRAVpQhUUArA8UnYwEdeZ",
+      "since": "2026-10-02",
+      "heldAlbums": [
+        "2026-07-15 SAVE ME",
+        "2026-06-23 Rain on me",
+        "2026-08-01 When You Believe",
+        "2026-01-04 Surely Tomorrow (Original Television Soundtrack) Vol.4",
+        "2026-02-05 Terror Man Ending (Original Soundtrack)"
+      ],
+      "why": "영상 증거 0곡(영상 6개 대조)"
+    },
+    "서인영": {
+      "spotifyName": "SEO IN YOUNG",
+      "spotifyId": "6UaKk8mT8NH0BuUTFIhxN7",
+      "since": "2026-10-02",
+      "heldAlbums": [
+        "2026-08-09 Transparent Promises"
+      ],
+      "why": "영상 증거 0곡(영상 178개 대조)"
     }
   }
 }

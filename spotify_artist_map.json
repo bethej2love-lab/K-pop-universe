@@ -971,6 +971,17 @@
     },
     "checkedAt": "2026-09-26"
   },
+  "레이첼": {
+    "id": "7w0qj2HiAPIeUcoPogvOZ6",
+    "spotifyName": "Rachael Yamagata",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "이름 불일치 — 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-10-02"
+  },
   "렌": {
     "id": "0Repe2EiNjaFAFIukrroUM",
     "spotifyName": "Ren",
@@ -1346,6 +1357,17 @@
     },
     "checkedAt": "2026-09-30",
     "rejected": true
+  },
+  "박정아": {
+    "id": "3DQ5KUdFYQn0hGkQFnthhf",
+    "spotifyName": "Park Jung Ah",
+    "kind": "solo",
+    "confidence": "medium",
+    "why": "이름 유일 일치",
+    "evidence": {
+      "titleOverlap": null
+    },
+    "checkedAt": "2026-10-02"
   },
   "박준희": {
     "id": "19edNqjH3rTGrvHs9VF9Xe",
@@ -1811,6 +1833,22 @@
       ]
     },
     "checkedAt": "2026-09-21"
+  },
+  "서인영": {
+    "id": "6UaKk8mT8NH0BuUTFIhxN7",
+    "spotifyName": "SEO IN YOUNG",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "동명 후보 2명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0,
+      "verifyOverlap": 0,
+      "verifyYears": [
+        2021,
+        2019
+      ]
+    },
+    "checkedAt": "2026-10-02"
   },
   "선미": {
     "id": "6MoXcK2GyGg7FIyxPU5yW6",
@@ -3718,6 +3756,28 @@
     },
     "checkedAt": "2026-09-25"
   },
+  "이지현": {
+    "id": "2FlaEYRC7FcXKeRAK77cAY",
+    "spotifyName": "Lee ji Hyun",
+    "kind": "solo",
+    "confidence": "medium",
+    "why": "이름 유일 일치",
+    "evidence": {
+      "titleOverlap": null
+    },
+    "checkedAt": "2026-10-02"
+  },
+  "이진솔": {
+    "id": "3g0GCvyJM0GmjBlLV8NIAV",
+    "spotifyName": "JINSOL",
+    "kind": "solo",
+    "confidence": "high",
+    "why": "동명 후보 5명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 3
+    },
+    "checkedAt": "2026-10-02"
+  },
   "이채연": {
     "id": "0asUEPExLOkMidYAAKqLs0",
     "spotifyName": "Chae Yeon",
@@ -3767,6 +3827,17 @@
     },
     "checkedAt": "2026-09-30",
     "rejected": true
+  },
+  "이현주": {
+    "id": "5Pe2RuKJIpAiFXU5Z2EWWe",
+    "spotifyName": "LEE Hyunjoo",
+    "kind": "solo",
+    "confidence": "medium",
+    "why": "이름 유일 일치",
+    "evidence": {
+      "titleOverlap": null
+    },
+    "checkedAt": "2026-10-02"
   },
   "인피니트": {
     "id": "1bkpTEmumLC3xc7HgMsttU",
@@ -3879,6 +3950,17 @@
     },
     "checkedAt": "2026-10-01"
   },
+  "전은미": {
+    "id": "2jc3bBIKdaAFZnnQBCLLmh",
+    "spotifyName": "김정은",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "이름 불일치 — 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-10-02"
+  },
   "전지윤": {
     "id": "05uheFGPahVh2nHIZK1KuB",
     "spotifyName": "Jenyer",
@@ -3904,6 +3986,17 @@
       ]
     },
     "checkedAt": "2026-09-26"
+  },
+  "정유진": {
+    "id": "75MOYjGEyyH5U4ZFHOPvxR",
+    "spotifyName": "Lim Young Woong",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "이름 불일치 — 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-10-02"
   },
   "정윤혜": {
     "id": "3R9fsg0ZmbbeFC256sOnLN",
@@ -3959,6 +4052,17 @@
     },
     "checkedAt": "2026-09-30",
     "rejected": true
+  },
+  "조민아": {
+    "id": "0kRAVpQhUUArA8UnYwEdeZ",
+    "spotifyName": "Kwon Jin Ah",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "이름 불일치 — 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-10-02"
   },
   "조아": {
     "id": "6Un27f1TcYPd6AGEIJPqiK",
