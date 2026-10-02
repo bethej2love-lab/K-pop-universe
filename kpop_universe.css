@@ -3437,10 +3437,11 @@
   .feed-grid .feed-card.feed-fav{
     --fav-soft:rgb(var(--fav-rgb));
     --fav-soft:color-mix(in srgb,rgb(var(--fav-rgb)) 60%,#ffffff);
-    box-shadow:0 0 4px 0 rgba(var(--fav-rgb),0.30),0 0 14px 2px rgba(var(--fav-rgb),0.16),0 0 30px 6px rgba(var(--fav-rgb),0.07);
-    box-shadow:0 0 4px 0 color-mix(in srgb,var(--fav-soft) 34%,transparent),
-               0 0 14px 2px color-mix(in srgb,var(--fav-soft) 18%,transparent),
-               0 0 30px 6px color-mix(in srgb,var(--fav-soft) 8%,transparent);
+    /* 세기: 3차 첫 값(34/18/8%)이 "너무 은은해 티가 안 난다"(사용자) → 약 1.6배 + 번짐 조금 넓힘 */
+    box-shadow:0 0 5px 1px rgba(var(--fav-rgb),0.48),0 0 16px 3px rgba(var(--fav-rgb),0.26),0 0 36px 8px rgba(var(--fav-rgb),0.12);
+    box-shadow:0 0 5px 1px color-mix(in srgb,var(--fav-soft) 55%,transparent),
+               0 0 16px 3px color-mix(in srgb,var(--fav-soft) 30%,transparent),
+               0 0 36px 8px color-mix(in srgb,var(--fav-soft) 14%,transparent);
   }
   .feed-card.is-short .feed-card-thumb-wrap{aspect-ratio:9/16;}
   .feed-card.is-short .feed-card-thumb{object-fit:cover;z-index:1;}
