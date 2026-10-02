@@ -3430,25 +3430,17 @@
   .feed-grid .feed-card.feed-wide{grid-column:span 2;}
   /* 최애 표시(2026-10-02) — 크기 대신 카드 둘레의 은은한 빛. --fav-rgb = 최애 멤버(없으면 그룹) 색 "r,g,b".
      텍스트 배지는 안 붙인다(빛과 겹치면 과함). 순서(맨 앞)는 _buildFeedFavNew가 맡는다. */
-  /* 2026-10-02 2차(사용자: "얇아서 없어 보이고 네온 같다 → 우주 쉬머처럼 은은한 그라데이션"): 단색 1px 선+번짐 대신
-     프로필 사진 링(.tt-insta-ring)의 은빛 원뿔 그라데이션을 링으로 쓴다. 은색 구간에만 최애 색을 옅게 섞어
-     "그 사람 색이 살짝 도는 은빛". 링은 ::before + mask로 카드 안쪽 가장자리에 그린다(.feed-card가 overflow:hidden).
+  /* 2026-10-02 3차(사용자: "선처럼 말고, 별·행성처럼 뿌옇고 반투명하게 — 같은 거리면 같은 밝기, 바깥으로 갈수록
+     옅어지게"): 선·방향성 그라데이션 없이 **블러만 다른 그림자 3겹**으로 둘레 전체에 고르게 번지는 후광.
+     가장자리 바로 바깥이 가장 진하고 멀어질수록 사라진다. 색은 최애 색을 흰빛으로 풀어(--fav-soft) 네온감을 뺀다.
      ⚠️ 애니메이션 없음 — 화면 밖 카드의 무한 애니가 탐험 패널 발열 주범이었다(2026-09-28). */
-  .feed-grid .feed-card.feed-fav{box-shadow:0 0 16px 0 rgba(var(--fav-rgb),0.13);}
-  .feed-grid .feed-card.feed-fav::before{
-    content:'';position:absolute;inset:0;border-radius:inherit;padding:1.6px;z-index:3;pointer-events:none;
-    /* color-mix 미지원 브라우저(사파리 16.1↓ 등)는 아래 선언을 통째로 버리므로 순수 은빛을 먼저 깐다 */
-    background:conic-gradient(from 210deg,rgba(30,30,38,0.55) 0deg,#8a8a96 55deg,#eceef2 95deg,#8a8a96 135deg,rgba(30,30,38,0.55) 190deg,#5a5a66 270deg,rgba(30,30,38,0.55) 360deg);
-    background:conic-gradient(from 210deg,
-      rgba(30,30,38,0.55) 0deg,
-      color-mix(in srgb,rgb(var(--fav-rgb)) 38%,#8a8a96) 55deg,
-      #eceef2 95deg,
-      color-mix(in srgb,rgb(var(--fav-rgb)) 38%,#8a8a96) 135deg,
-      rgba(30,30,38,0.55) 190deg,
-      color-mix(in srgb,rgb(var(--fav-rgb)) 30%,#5a5a66) 270deg,
-      rgba(30,30,38,0.55) 360deg);
-    -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;
-    mask:linear-gradient(#000 0 0) content-box exclude,linear-gradient(#000 0 0);
+  .feed-grid .feed-card.feed-fav{
+    --fav-soft:rgb(var(--fav-rgb));
+    --fav-soft:color-mix(in srgb,rgb(var(--fav-rgb)) 60%,#ffffff);
+    box-shadow:0 0 4px 0 rgba(var(--fav-rgb),0.30),0 0 14px 2px rgba(var(--fav-rgb),0.16),0 0 30px 6px rgba(var(--fav-rgb),0.07);
+    box-shadow:0 0 4px 0 color-mix(in srgb,var(--fav-soft) 34%,transparent),
+               0 0 14px 2px color-mix(in srgb,var(--fav-soft) 18%,transparent),
+               0 0 30px 6px color-mix(in srgb,var(--fav-soft) 8%,transparent);
   }
   .feed-card.is-short .feed-card-thumb-wrap{aspect-ratio:9/16;}
   .feed-card.is-short .feed-card-thumb{object-fit:cover;z-index:1;}
