@@ -18021,6 +18021,8 @@ function _appendFeedCard(container,icon,title,sub,onClick,thumbUrl,cat,opts){
   item.className='feed-card';
   if(opts&&opts.wide)item.classList.add('feed-wide'); // 하이라이트: 전체폭 16:9(2026-08-22)
   if(opts&&opts.short)item.classList.add('is-short'); // 대표가 쇼츠: 9:16 세로(안 잘리게)
+  // 최애 표시(2026-10-02) — 크기 대신 썸네일 둘레의 은은한 빛. 값은 "r,g,b"(최애 멤버/그룹 색)
+  if(opts&&opts.fav){item.classList.add('feed-fav');item.style.setProperty('--fav-rgb',opts.fav);}
   if(cat)item.dataset.cat=cat; // '모아보기'류 카드 표시용(연속 노출 방지 재배치에 사용, 2026-08-21)
   item.innerHTML='<div class="feed-card-thumb-wrap"><div class="feed-card-shimmer" data-icon="'+icon+'"></div></div>'
     +'<div class="feed-card-cap"><div class="feed-card-title">'+_cleanTitle(title)+'</div>'
@@ -20797,6 +20799,19 @@ function _packRows(items,isShort,opts){
   const wideProb=_o.wideProb!==undefined?_o.wideProb:0.2, minGap=_o.minGap!==undefined?_o.minGap:2;
   const shortWideProb=_o.shortWideProb!==undefined?_o.shortWideProb:0, isBig=_o.isBig;
   const rest=items.slice(),rows=[];let sinceWide=minGap;
+  // opts.landscapeFull(2026-10-02, 사용자 결정 — 유튜브 모바일 홈 방식): **가로는 항상 전체폭 1열, 쇼츠는
+  // 2열**. 예전 "한 행 = 같은 비율 2개"는 반폭 가로(높이≈106px)가 옆 쇼츠 2개 행(≈334px)의 1/3이라 가로가
+  // 묻혔다. 크기로 위계를 주지 않으므로 이 모드에선 wideProb·shortWideProb·isBig(크기)를 쓰지 않는다 —
+  // 최애 강조는 호출부가 순서(앞으로)와 은은한 빛(_appendFeedCard opts.fav)으로 한다.
+  if(_o.landscapeFull){
+    while(rest.length){
+      const a=rest.shift();
+      if(!isShort(a)){rows.push({wide:true,items:[a]});continue;}
+      const j=rest.findIndex(x=>isShort(x)); // 다음 쇼츠를 짝으로 당겨와 2열
+      rows.push(j!==-1?{wide:false,items:[a,rest.splice(j,1)[0]]}:{wide:false,items:[a]});
+    }
+    return rows;
+  }
   while(rest.length){
     const a=rest.shift(),sa=isShort(a);
     // 최애는 확률·간격 모두 무시하고 항상 크게(DESIGN_REVIEW 확정 스펙 — "최애만 크게").
@@ -20915,7 +20930,8 @@ async function _buildFeedTrend(){
     // shortWideProb(2026-09-04 사용자 요청) — Discover에는 큰 쇼츠가 섞이게. 전체폭 승격 조건이 원래
     // "가로일 때만"이라 큰 쇼츠가 구조적으로 하나도 없었고, 그만큼 훑을 때 리듬이 밋밋했다.
     // ⚠️ For You(즐겨찾기 신작)는 반대다 — 거긴 "최애만 크게"가 규칙이라 이 옵션을 주지 않는다.
-    const rows=_packRows(songs,_songIsShort,{wideProb:0.28,minGap:2,shortWideProb:0.18});
+    // 2026-10-02: 가로 전체폭·쇼츠 2열(landscapeFull). 큰 쇼츠(shortWideProb)는 화면을 통째로 먹어서 뺐다.
+    const rows=_packRows(songs,_songIsShort,{landscapeFull:true});
     if(rows.length&&!rows[rows.length-1].wide&&rows[rows.length-1].items.length===1)rows.pop(); // 끝에 홀로 남은 반폭 카드는 제거(여백 방지)
     const flat=rows.flatMap(r=>r.items); // 라이트박스 재생목록 순서를 화면 순서와 일치
     rows.forEach(row=>row.items.forEach(song=>{
@@ -20983,9 +20999,19 @@ function _feedBiasMatchers(){
   });
   if(!gset.size&&!mKeys.size&&!mLoose.size)return null;
   const memberHit=song=>(song.memberKos||[]).some(m=>mKeys.has(m+'|'+(song.groupKo||''))||mLoose.has(m));
+  // fav: 최애 표시(순서·빛) 대상 — 최애 그룹 영상이거나 최애 멤버가 태깅된 영상. favRgb: 빛 색 —
+  // 그 최애 멤버(없으면 그룹)의 색. 색 데이터가 없으면 하트 핑크.
+  const favRgb=song=>{
+    const m=(song.memberKos||[]).find(n=>mKeys.has(n+'|'+(song.groupKo||''))||mLoose.has(n));
+    const a=m&&ARTISTS.find(x=>x.name&&x.name.ko===m&&(_ytGroupKoFor(x)===song.groupKo||(x.group&&x.group.ko===song.groupKo)));
+    const c=(a&&a.color)||(GROUPS[song.groupKo]&&GROUPS[song.groupKo].color);
+    return Array.isArray(c)&&c.length===3?c.join(','):'255,120,170';
+  };
   return{
     wide:song=>gset.has(song.groupKo)||mGroups.has(song.groupKo)||memberHit(song),
     short:memberHit,
+    fav:song=>gset.has(song.groupKo)||memberHit(song),
+    favRgb,
   };
 }
 function _appendFeedOnboardCard(strip){
@@ -21039,16 +21065,16 @@ async function _buildFeedFavNew(){
     // _apiId/_apiGroupKo: 어드민 편집(연필) 버튼이 어느 DB 행을 고칠지 아는 키 — 카드 그리드(_apiVidToSong)는
     // 붙이는데 이 선반만 빠져서 favnew 영상은 편집이 안 걸렸다(2026-08-31 사용자 제보, 모바일).
     const songs=vids.map(v=>({..._rowTags(v),t:v.title,u:vidUrl(v),thumb:v.thumb,vc:v.view_count,dur:v.duration_sec,pa:v.published_at?.slice(0,10),paFull:v.published_ts||v.published_at,groupKo:v.group_ko,memberKos:v.members||[],ownerCh:v.source_tier==='idol',_apiId:v.id,_apiGroupKo:v.group_ko,content_flag:v.content_flag||null}));
-    // 행 패커(Trend와 동일) — 같은 비율끼리 한 행, 가로 가끔 전체폭, 여백0. 최신순 유지가 중요해 wideProb는 낮게.
-    // 최애만 크게(2026-09-04 사용자 확정, DESIGN_REVIEW 31~32행). 가로면 전체폭 16:9, 쇼츠면 전체폭 9:16 —
-    // **둘 다** 크게 간다(사용자: "가로도 세로도 크게"). 최애를 정했으면 일반 카드의 확률 전체폭은 끈다
-    // (wideProb 0): 최애가 아닌 것도 가끔 커지면 "큰 카드 = 최애"라는 신호가 흐려져서 위계가 안 선다.
-    // 최애 미지정이면 matcher가 null이라 wideProb 0.22 현행 그대로.
-    // 비율마다 기준이 다르다(_feedBiasMatchers 주석) — 가로는 최애 관련 그룹 전체, 쇼츠는 멤버 태깅만.
-    // _packRows는 판정자 하나만 받으므로 여기서 비율로 갈라 넘긴다.
+    // 행 패커(Trend와 동일, landscapeFull) — 가로 전체폭 1열 · 쇼츠 2열. 최신순은 최애 묶음/나머지 각자 안에서 유지.
+    // (이전 스펙 "최애만 크게"(2026-09-04, DESIGN_REVIEW 31~32행)는 아래 이유로 폐기)
+    // 2026-10-02 개편(사용자 결정): 가로 전체폭·쇼츠 2열이 기본이 되면서 "최애만 크게"는 성립하지 않는다 —
+    // 가로 최애는 더 커질 데가 없고 쇼츠 최애만 전체폭 9:16(≈680px)으로 튀었다. 그래서 최애는 **크기 대신
+    // 순서(맨 앞)와 은은한 빛**으로 표시한다. 판정은 좁은 쪽 — 최애 그룹 영상 + 최애 멤버가 태깅된 영상
+    // (_feedBiasMatchers().fav). 예전 가로 판정(최애 멤버의 그룹 전체)은 빛까지 주기엔 너무 넓다.
     const _bias=_feedBiasMatchers();
-    const _isBias=_bias?(song=>_songIsShort(song)?_bias.short(song):_bias.wide(song)):null;
-    const rows=_packRows(songs,_songIsShort,{wideProb:_isBias?0:0.22,minGap:2,isBig:_isBias||undefined});
+    const _isFav=_bias?_bias.fav:()=>false;
+    const _favFirst=songs.filter(_isFav),_rest=songs.filter(s=>!_isFav(s)); // 각자 최신순 유지
+    const rows=_packRows(_favFirst.concat(_rest),_songIsShort,{landscapeFull:true});
     if(rows.length&&!rows[rows.length-1].wide&&rows[rows.length-1].items.length===1)rows.pop(); // 끝에 홀로 남은 반폭 제거
     const flat=rows.flatMap(r=>r.items); // 라이트박스 재생목록 순서를 화면 순서와 일치
     rows.forEach(row=>row.items.forEach(song=>{
@@ -21056,7 +21082,8 @@ async function _buildFeedFavNew(){
       const sub=[_feedWhoSub(song),song.paFull?_fmtVidAgo(song.paFull):(song.pa?_fmtVidAgo(song.pa):null)].filter(Boolean).join(' · ');
       _appendFeedCard(strip,'💖',song.t,sub,
         ()=>openLightbox(song.u,isShort,flat,flat.indexOf(song),{groupKo:song.groupKo,memberKo:(song.memberKos||[])[0]},false,true),
-        song.thumb,null, Object.assign({dur:song.dur}, row.wide?{wide:true,short:!!row.short}:(isShort?{short:true}:{})));
+        song.thumb,null, Object.assign({dur:song.dur}, row.wide?{wide:true,short:!!row.short}:(isShort?{short:true}:{}),
+          _isFav(song)?{fav:_bias.favRgb(song)}:{}));
     }));
     section.style.display='';
   }catch(e){console.warn('[feed] 즐겨찾기 신작 선반 실패 — 이 선반만 빠집니다',e);}
@@ -21794,7 +21821,9 @@ function _makeChVidController(contId){
       // img 자신의 너비를 재야 함 — 각종 보정(gc-ch-wide 등)이 적용된 실제 렌더 너비가 기준이 되어야 함.
       const w=img.getBoundingClientRect().width;
       if(!w)return;
-      const h=item.classList.contains('is-short')?w*16/9:w*9/16;
+      // 대표(featured) 쇼츠는 16:9 상자 안에 세로 영상 + 흐린 배경(2026-10-02) — 전체폭 9:16이면 높이가 ~680px라
+      // 카드 한 화면을 통째로 먹었다. 일반 쇼츠 칸만 9:16.
+      const h=item.classList.contains('is-short')&&!item.classList.contains('featured')?w*16/9:w*9/16;
       img.style.height=h+'px';
       _placeDurBadge(item,h); // 재생시간 배지를 썸네일 밑변에 맞춤 — 이미 잰 높이를 그대로 재사용
     });

@@ -1,4 +1,4 @@
-// 즐겨찾기 신작 선반의 비율별 최애 위계 (2026-09-21)
+// 즐겨찾기 신작 선반의 비율별 최애 위계 (2026-09-21) — ⚠️ 2026-10-02 크기 위계는 폐기, 순서+빛으로(아래 5)
 //
 // 규칙(사용자 결정): 가로와 쇼츠의 기준이 **다르다**.
 //   · 가로(16:9) → 최애와 관련된 **그룹**의 영상이면 전체폭. 최애가 멤버라도 그 소속 그룹 영상 전체가
@@ -61,10 +61,31 @@ const vid = (groupKo, memberKos) => ({ groupKo, memberKos: memberKos || [] });
   need(load([{ type: 'member' }]) === null, 'ko 없는 쓰레기 항목만 있으면 null');
 }
 
-// ── 5) 호출부 배선 ──────────────────────────────────────────────────────────
-// 판정자를 비율로 갈라 _packRows의 isBig 하나로 넘기는 부분.
-need(/_songIsShort\(song\)\?_bias\.short\(song\):_bias\.wide\(song\)/.test(src), '호출부가 비율로 갈라 판정자를 고른다');
-need(/wideProb:_isBias\?0:0\.22/.test(src), '최애를 정했으면 일반 카드의 확률 전체폭은 끈다(위계 유지)');
+// ── 5) 2026-10-02 개편: 크기 대신 순서+빛 ───────────────────────────────────────
+// 그리드가 "가로 전체폭 1열 · 쇼츠 2열"(유튜브 모바일 홈 방식)이 되면서 "최애만 크게"는 폐기됐다 — 가로 최애는
+// 더 커질 데가 없고 쇼츠 최애만 전체폭 9:16으로 튀었다. 위 wide/short 판정자는 남아 있지만 즐겨찾기 신작
+// 선반은 이제 fav(최애 그룹 영상 + 최애 멤버 태깅 영상)로 **맨 앞 정렬 + 은은한 빛**만 준다.
+{
+  const m = load([{ type: 'member', ko: '카리나', groupKo: '에스파' }]);
+  need(m.fav(vid('에스파', ['카리나'])) === true, '[최애 표시] 최애 멤버가 태깅된 영상');
+  need(m.fav(vid('에스파', [])) === false, '[최애 표시] 멤버 태그 없는 그룹 영상은 빛까지 주지 않음(가로 판정보다 좁게)');
+  const g = load([{ type: 'group', ko: '에스파' }]);
+  need(g.fav(vid('에스파', [])) === true, '[최애 표시] 최애 그룹 영상');
+}
+// _packRows landscapeFull — 가로는 항상 단독 전체폭, 쇼츠는 2개씩, 크기 위계 없음
+{
+  const ps = src.indexOf('function _packRows(');
+  const pe = src.indexOf('\n}', ps);
+  const packRows = new Function(src.slice(ps, pe + 2) + '; return _packRows;')();
+  const items = ['L1', 'S1', 'L2', 'S2', 'S3', 'L3', 'S4'];
+  const rows = packRows(items, x => x[0] === 'S', { landscapeFull: true });
+  need(rows.filter(r => r.items.some(x => x[0] === 'L')).every(r => r.wide && r.items.length === 1), '[배치] 가로는 전부 단독 전체폭');
+  need(rows.filter(r => r.items[0][0] === 'S').every(r => !r.wide && r.items.every(x => x[0] === 'S')), '[배치] 쇼츠는 2열(전체폭 쇼츠 없음)');
+  need(rows.flatMap(r => r.items).length === items.length, '[배치] 빠지는 영상 없음');
+}
+need(/_packRows\(_favFirst\.concat\(_rest\),_songIsShort,\{landscapeFull:true\}\)/.test(src), '[배선] 즐겨찾기 신작: 최애 먼저 + landscapeFull');
+need(/_isFav\(song\)\?\{fav:_bias\.favRgb\(song\)\}/.test(src), '[배선] 최애 카드에 빛(opts.fav) 전달');
+need(!/isBig:_isBias/.test(src), '[배선] 최애를 크기로 키우는 옛 경로(isBig)가 남아 있지 않음');
 
 console.log(pass ? '\n✅ 최애 위계 배치 테스트 통과' : '\n💥 최애 위계 배치 테스트 실패');
 process.exit(pass ? 0 : 1);
