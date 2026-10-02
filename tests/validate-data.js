@@ -37,7 +37,29 @@ const add = (level, category, detail) => issues.push({ level, category, detail }
   seen.forEach((count, key) => {
     if (count > 1) add('error', '중복 인물(이름+생일 동일)', `${key} — ${count}건`);
   });
+  // 1-b. 생일이 같고 한쪽 이름이 다른 쪽에서 성만 뗀 형태(이은상↔은상, 배우희↔우희) — 위 검사는 이름이 정확히
+  //      같아야 걸려서 이 꼴을 못 봤다. 2026-10-02 전수조사에서 5쌍(김준서=준서·김주형=주형·백예빈=예빈 포함)이
+  //      전부 동일인이었다(+ 권나연=나나는 실명↔활동명이라 영문명 Nana가 같은 것으로 잡는다).
+  //      그룹을 옮기며 새 레코드를 만들 때 생기는 중복이다.
+  const byBday = new Map();
+  ARTISTS.forEach(a => { if (a.bday && a.name && a.name.ko) { if (!byBday.has(a.bday)) byBday.set(a.bday, []); byBday.get(a.bday).push(a); } });
+  const stripOf = (long, short) => long.length === short.length + 1 && long.endsWith(short);
+  byBday.forEach(list => {
+    for (let i = 0; i < list.length; i++) for (let j = i + 1; j < list.length; j++) {
+      const x = list[i].name.ko, y = list[j].name.ko;
+      const ex = String(list[i].name.en || '').toLowerCase(), ey = String(list[j].name.en || '').toLowerCase();
+      if (x !== y && (stripOf(x, y) || stripOf(y, x) || (ex && ex === ey)))
+        add('error', '중복 인물(생일 같고 성 뗀 이름/같은 영문명)', `${x}(${list[i].group.ko}, ${list[i].id}) ↔ ${y}(${list[j].group.ko}, ${list[j].id}) — ${list[i].bday}`);
+    }
+  });
 }
+
+// ── 1-c. groups[] 항목은 {ko, en} 객체여야 한다 ──────────────────────
+// 문자열("더블원")로 넣으면 앱(index.html)은 g.ko로 읽어 소속을 통째로 못 본다 — 2026-10-02 실측: 더블원
+// 카드 멤버 0명. 09-27 그룹 일괄 등록 때 20건이 이 꼴로 들어갔다.
+ARTISTS.forEach(a => (a.groups || []).forEach(g => {
+  if (!g || typeof g !== 'object' || !g.ko) add('error', 'groups[] 항목 형식', `${a.name && a.name.ko}(${a.id}) — ${JSON.stringify(g)} (객체 {ko,en}이어야 함)`);
+}));
 
 // ── 2. group.ko / groups[].ko 유령 참조 ──────────────────────
 // "솔로"는 GROUPS에 없는 게 정상인 공유 placeholder(그 자체가 이미 확립된 관례) — 유일한 예외.

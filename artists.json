@@ -116236,8 +116236,8 @@
     },
     "left": "2020.01.06",
     "links": {
-      "instagram": "https://www.instagram.com/2eunsang_official",
-      "namu": "https://namu.wiki/w/이은상(2002)"
+      "namu": "https://namu.wiki/w/이은상(2002)",
+      "instagram": "https://www.instagram.com/2eunsang_official"
     },
     "id": "a0615",
     "groups": [
@@ -116250,6 +116250,12 @@
         "en": "X1",
         "active": false,
         "left": "2020.01.06"
+      },
+      {
+        "ko": "유나이트",
+        "en": "YOUNITE",
+        "active": false,
+        "left": "2026.06.30"
       }
     ],
     "discography": [
@@ -128242,10 +128248,22 @@
       "en": "KR"
     },
     "links": {
-      "instagram": "https://www.instagram.com/j00oo0o_",
-      "namu": "https://namu.wiki/w/김주형(DAILY:DIRECTION)"
+      "namu": "https://namu.wiki/w/김주형(DAILY:DIRECTION)",
+      "instagram": "https://www.instagram.com/j00oo0o_"
     },
-    "id": "a0723"
+    "id": "a0723",
+    "groups": [
+      {
+        "ko": "데일리디렉션",
+        "en": "DAILY:DIRECTION"
+      },
+      {
+        "ko": "나인아이",
+        "en": "NINE.i",
+        "active": false,
+        "left": "2025.03.11"
+      }
+    ]
   },
   {
     "name": {
@@ -163663,58 +163681,6 @@
       }
     ],
     "id": "a0951"
-  },
-  {
-    "name": {
-      "ko": "예빈",
-      "en": "Yebin"
-    },
-    "group": {
-      "ko": "다이아",
-      "en": "DIA"
-    },
-    "co": "포켓돌스튜디오",
-    "active": true,
-    "color": [
-      190,
-      215,
-      235
-    ],
-    "bday": "1997.07.13",
-    "nat": {
-      "ko": "한국",
-      "en": "KR"
-    },
-    "sparkle": false,
-    "songs": [],
-    "links": {
-      "namu": "https://namu.wiki/w/예빈(DIA)",
-      "instagram": "https://www.instagram.com/yeb1n_100"
-    },
-    "unitDiscography": [
-      {
-        "unitName": "빈챈현스",
-        "albums": [
-          {
-            "title": "First Miracle DIAID I",
-            "type": "싱글",
-            "isMain": true,
-            "cover": "https://cdnimg.melon.co.kr/cm/album/images/100/26/725/10026725_500.jpg",
-            "releaseDate": "2016.12.29",
-            "trackCount": 1,
-            "titleTrack": "너는 달 지구",
-            "tracks": [
-              {
-                "no": 1,
-                "title": "너는 달 지구",
-                "isTitle": true
-              }
-            ]
-          }
-        ]
-      }
-    ],
-    "id": "a0952"
   },
   {
     "name": {
@@ -202782,8 +202748,8 @@
     "songs": [],
     "bday": "2001.03.09",
     "links": {
-      "instagram": "https://www.instagram.com/nana_ye0nn",
-      "namu": "https://namu.wiki/w/나나(WOOAH)"
+      "namu": "https://namu.wiki/w/나나(WOOAH)",
+      "instagram": "https://www.instagram.com/nana_ye0nn"
     },
     "discography": [
       {
@@ -202831,7 +202797,19 @@
         "feat": true
       }
     ],
-    "id": "a1133"
+    "id": "a1133",
+    "groups": [
+      {
+        "ko": "우아",
+        "en": "WOOAH"
+      },
+      {
+        "ko": "엘즈업",
+        "en": "EL7Z UP",
+        "active": false,
+        "left": "2024"
+      }
+    ]
   },
   {
     "name": {
@@ -207535,307 +207513,6 @@
   },
   {
     "name": {
-      "ko": "배우희",
-      "en": "Bae Woohee"
-    },
-    "group": {
-      "ko": "솔로",
-      "en": "Solo"
-    },
-    "co": "포켓돌스튜디오",
-    "active": true,
-    "color": [
-      190,
-      175,
-      220
-    ],
-    "nat": {
-      "ko": "한국",
-      "en": "KR"
-    },
-    "sparkle": false,
-    "songs": [],
-    "bday": "1991.11.21",
-    "links": {
-      "namu": "https://namu.wiki/w/%EB%B0%B0%EC%9A%B0%ED%9D%AC",
-      "instagram": "https://www.instagram.com/woohee91"
-    },
-    "id": "a1190",
-    "groups": [
-      {
-        "ko": "솔로",
-        "en": "Solo"
-      },
-      {
-        "ko": "유니티",
-        "en": "UNI.T",
-        "active": false,
-        "left": "2018.10.12"
-      }
-    ],
-    "discography": [
-      {
-        "title": "서울의 별",
-        "type": "OST",
-        "isMain": false,
-        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/120/06/782/12006782_20250806145919_500.jpg",
-        "releaseDate": "2025.08.07",
-        "trackCount": 1,
-        "titleTrack": "서울의 별",
-        "tracks": [
-          {
-            "no": 1,
-            "title": "서울의 별",
-            "isTitle": true
-          }
-        ],
-        "src": "melon",
-        "melonAlbumId": "12006782"
-      },
-      {
-        "title": "달",
-        "type": "싱글",
-        "isMain": true,
-        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/116/45/864/11645864_20241120103407_500.jpg",
-        "releaseDate": "2024.11.21",
-        "trackCount": 2,
-        "titleTrack": "달",
-        "tracks": [
-          {
-            "no": 1,
-            "title": "달",
-            "isTitle": true
-          },
-          {
-            "no": 2,
-            "title": "달 (Inst.)",
-            "isTitle": false
-          }
-        ],
-        "src": "melon",
-        "melonAlbumId": "11645864"
-      },
-      {
-        "title": "너만 너만 좋아",
-        "type": "싱글",
-        "isMain": true,
-        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/115/67/859/11567859_20240814144547_500.jpg",
-        "releaseDate": "2024.08.18",
-        "trackCount": 2,
-        "titleTrack": "너만 너만 좋아",
-        "tracks": [
-          {
-            "no": 1,
-            "title": "너만 너만 좋아",
-            "isTitle": true
-          },
-          {
-            "no": 2,
-            "title": "너만 너만 좋아 (Inst.)",
-            "isTitle": false
-          }
-        ],
-        "src": "melon",
-        "melonAlbumId": "11567859"
-      },
-      {
-        "title": "그대 내게",
-        "type": "싱글",
-        "isMain": true,
-        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/115/26/904/11526904_20240701144132_500.jpg",
-        "releaseDate": "2024.07.02",
-        "trackCount": 2,
-        "titleTrack": "그대 내게",
-        "tracks": [
-          {
-            "no": 1,
-            "title": "그대 내게",
-            "isTitle": true
-          },
-          {
-            "no": 2,
-            "title": "그대 내게 (Inst.)",
-            "isTitle": false
-          }
-        ],
-        "src": "melon",
-        "melonAlbumId": "11526904"
-      },
-      {
-        "title": "알고있다고",
-        "type": "싱글",
-        "isMain": true,
-        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/110/96/985/11096985_20221108111237_500.jpg",
-        "releaseDate": "2022.11.09",
-        "trackCount": 2,
-        "titleTrack": "알고있다고",
-        "tracks": [
-          {
-            "no": 1,
-            "title": "알고있다고",
-            "isTitle": true
-          },
-          {
-            "no": 2,
-            "title": "알고있다고 (Inst.)",
-            "isTitle": false
-          }
-        ],
-        "src": "melon",
-        "melonAlbumId": "11096985"
-      },
-      {
-        "title": "아이돌레시피 OST Part.2",
-        "type": "OST",
-        "isMain": false,
-        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/107/58/562/10758562_20211101102301_500.jpg",
-        "releaseDate": "2021.11.01",
-        "trackCount": 2,
-        "titleTrack": "Perfume (feat. Z.NU, FEELGOOD)",
-        "tracks": [
-          {
-            "no": 1,
-            "title": "Perfume (feat. Z.NU, FEELGOOD)",
-            "isTitle": true
-          },
-          {
-            "no": 2,
-            "title": "Perfume (feat. Z.NU, FEELGOOD) (Inst.)",
-            "isTitle": false
-          }
-        ],
-        "src": "melon",
-        "melonAlbumId": "10758562"
-      },
-      {
-        "title": "실종아동 찾기 Part 2 '마지막인 것처럼'",
-        "type": "싱글",
-        "isMain": true,
-        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/106/00/856/10600856_20210430115159_500.jpg",
-        "releaseDate": "2021.05.02",
-        "trackCount": 2,
-        "titleTrack": "마지막인 것처럼 (두 번째 ′실종아동 찾기 캠페인′)",
-        "tracks": [
-          {
-            "no": 1,
-            "title": "마지막인 것처럼 (두 번째 ′실종아동 찾기 캠페인′)",
-            "isTitle": true
-          },
-          {
-            "no": 2,
-            "title": "마지막인 것처럼 (두 번째 ′실종아동 찾기 캠페인′) (inst.)",
-            "isTitle": false
-          }
-        ],
-        "src": "melon",
-        "melonAlbumId": "10600856"
-      },
-      {
-        "title": "제자리",
-        "type": "싱글",
-        "isMain": true,
-        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/105/56/060/10556060_20210129103714_500.jpg",
-        "releaseDate": "2021.01.30",
-        "trackCount": 2,
-        "titleTrack": "제자리",
-        "tracks": [
-          {
-            "no": 1,
-            "title": "제자리",
-            "isTitle": true
-          },
-          {
-            "no": 2,
-            "title": "제자리 (Inst.)",
-            "isTitle": false
-          }
-        ],
-        "src": "melon",
-        "melonAlbumId": "10556060"
-      },
-      {
-        "title": "Cafe Romance",
-        "type": "싱글",
-        "isMain": true,
-        "cover": "https://cdnimg.melon.co.kr/cm/album/images/102/95/229/10295229_500.jpg",
-        "releaseDate": "2019.06.11",
-        "trackCount": 2,
-        "titleTrack": "Cafe Romance (Feat. THERAY)",
-        "tracks": [
-          {
-            "no": 1,
-            "title": "Cafe Romance (Feat. THERAY)",
-            "isTitle": true
-          },
-          {
-            "no": 2,
-            "title": "Cafe Romance (Inst.)",
-            "isTitle": false
-          }
-        ],
-        "src": "melon",
-        "melonAlbumId": "10295229"
-      },
-      {
-        "title": "왔다! 장보리 OST Part.1",
-        "type": "OST",
-        "isMain": false,
-        "cover": "https://cdnimg.melon.co.kr/cm/album/images/022/53/901/2253901_500.jpg",
-        "releaseDate": "2014.04.29",
-        "trackCount": 2,
-        "titleTrack": "내 사랑 안녕",
-        "tracks": [
-          {
-            "no": 1,
-            "title": "내 사랑 안녕",
-            "isTitle": true
-          },
-          {
-            "no": 2,
-            "title": "내 사랑 안녕 (Inst.)",
-            "isTitle": false
-          }
-        ],
-        "src": "melon",
-        "melonAlbumId": "2253901"
-      },
-      {
-        "title": "무한동력 OST Part 1",
-        "type": "OST",
-        "isMain": false,
-        "cover": "https://cdnimg.melon.co.kr/cm/album/images/022/16/044/2216044_500.jpg",
-        "releaseDate": "2013.11.14",
-        "trackCount": 4,
-        "titleTrack": "내일로",
-        "tracks": [
-          {
-            "no": 1,
-            "title": "내일로",
-            "isTitle": true
-          },
-          {
-            "no": 2,
-            "title": "Walking On The Dream",
-            "isTitle": false
-          },
-          {
-            "no": 3,
-            "title": "Don't Say Goodbye",
-            "isTitle": false
-          },
-          {
-            "no": 4,
-            "title": "내일로 (Inst.)",
-            "isTitle": false
-          }
-        ],
-        "src": "melon",
-        "melonAlbumId": "2216044"
-      }
-    ]
-  },
-  {
-    "name": {
       "ko": "윤조",
       "en": "Yoon Jo"
     },
@@ -207940,8 +207617,8 @@
     "songs": [],
     "bday": "1997.07.13",
     "links": {
-      "instagram": "https://www.instagram.com/yeb1n_100",
-      "namu": "https://namu.wiki/w/%EB%B0%B1%EC%98%88%EB%B9%88"
+      "namu": "https://namu.wiki/w/%EB%B0%B1%EC%98%88%EB%B9%88",
+      "instagram": "https://www.instagram.com/yeb1n_100"
     },
     "discography": [
       {
@@ -208038,6 +207715,35 @@
         "en": "UNI.T",
         "active": false,
         "left": "2018.10.12"
+      },
+      {
+        "ko": "다이아",
+        "en": "DIA",
+        "active": false,
+        "left": "2022.09.17"
+      }
+    ],
+    "unitDiscography": [
+      {
+        "unitName": "빈챈현스",
+        "albums": [
+          {
+            "title": "First Miracle DIAID I",
+            "type": "싱글",
+            "isMain": true,
+            "cover": "https://cdnimg.melon.co.kr/cm/album/images/100/26/725/10026725_500.jpg",
+            "releaseDate": "2016.12.29",
+            "trackCount": 1,
+            "titleTrack": "너는 달 지구",
+            "tracks": [
+              {
+                "no": 1,
+                "title": "너는 달 지구",
+                "isTitle": true
+              }
+            ]
+          }
+        ]
       }
     ]
   },
@@ -212747,34 +212453,6 @@
     },
     "left": "2024.07.02",
     "id": "a1284"
-  },
-  {
-    "name": {
-      "ko": "은상",
-      "en": "Eunsang"
-    },
-    "group": {
-      "ko": "유나이트",
-      "en": "YOUNITE"
-    },
-    "co": "파라뮤직",
-    "active": false,
-    "color": [
-      186,
-      156,
-      76
-    ],
-    "bday": "2002.10.26",
-    "nat": {
-      "ko": "대한민국",
-      "en": "KR"
-    },
-    "links": {
-      "namu": "https://namu.wiki/w/이은상(2002)",
-      "instagram": "https://www.instagram.com/2eunsang_official"
-    },
-    "left": "2026.06.30",
-    "id": "a1285"
   },
   {
     "name": {
@@ -219145,6 +218823,12 @@
         "en": "Dal Shabet",
         "active": false,
         "left": "2018.12.05"
+      },
+      {
+        "ko": "유니티",
+        "en": "UNI.T",
+        "active": false,
+        "left": "2018.10.12"
       }
     ]
   },
@@ -230612,94 +230296,6 @@
   },
   {
     "name": {
-      "ko": "권나연",
-      "en": "Nana"
-    },
-    "group": {
-      "ko": "솔로",
-      "en": "Solo"
-    },
-    "co": "애플몬스터",
-    "active": true,
-    "color": [
-      180,
-      130,
-      220
-    ],
-    "bday": "2001.03.09",
-    "nat": {
-      "ko": "한국",
-      "en": "KR"
-    },
-    "links": {
-      "namu": "https://namu.wiki/w/나나(WOOAH)",
-      "instagram": "https://www.instagram.com/nana_ye0nn"
-    },
-    "matchAliases": [
-      "나나"
-    ],
-    "discography": [
-      {
-        "title": "미래의 미래 OST Part.1",
-        "type": "OST",
-        "releaseDate": "2025.11.28",
-        "trackCount": 2,
-        "isMain": false,
-        "titleTrack": "Timing",
-        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/124/09/427/12409427_20260206170628_500.jpg",
-        "tracks": [
-          {
-            "no": 1,
-            "title": "Timing",
-            "isTitle": true
-          },
-          {
-            "no": 2,
-            "title": "Timing (Inst.)",
-            "isTitle": false
-          }
-        ],
-        "feat": true
-      },
-      {
-        "title": "네가 빠진 세계 OST Part.1",
-        "type": "OST",
-        "releaseDate": "2022.10.27",
-        "trackCount": 2,
-        "isMain": false,
-        "titleTrack": "미지로부터(Fly Away)",
-        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/110/87/040/11087040_20221026164321_500.jpg",
-        "tracks": [
-          {
-            "no": 1,
-            "title": "미지로부터(Fly Away)",
-            "isTitle": true
-          },
-          {
-            "no": 2,
-            "title": "미지로부터(Fly Away) (Inst.)",
-            "isTitle": false
-          }
-        ],
-        "feat": true
-      }
-    ],
-    "id": "a1551",
-    "groups": [
-      {
-        "ko": "솔로",
-        "en": "Solo"
-      },
-      {
-        "ko": "엘즈업",
-        "en": "EL7Z UP",
-        "active": false,
-        "left": "2024"
-      }
-    ]
-  },
-  {
-    "name": {
       "ko": "이의진",
       "en": "Euijin"
     },
@@ -234654,35 +234250,6 @@
     },
     "left": "2024.01.29",
     "id": "a1639"
-  },
-  {
-    "name": {
-      "ko": "주형",
-      "en": "Juhyung"
-    },
-    "group": {
-      "ko": "나인아이",
-      "en": "NINE.i"
-    },
-    "co": "FC ENM",
-    "active": false,
-    "color": [
-      137,
-      179,
-      217
-    ],
-    "bday": "2003.03.15",
-    "nat": {
-      "ko": "한국",
-      "en": "KR"
-    },
-    "sparkle": false,
-    "songs": [],
-    "links": {
-      "namu": "https://namu.wiki/w/NINE.i"
-    },
-    "left": "2025.03.11",
-    "id": "a1640"
   },
   {
     "name": {

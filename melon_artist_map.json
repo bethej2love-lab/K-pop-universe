@@ -7279,11 +7279,6 @@
     "overlap": 5,
     "checkedAt": "2026-09-17"
   },
-  "a:권나연|솔로": {
-    "aid": null,
-    "failedWhy": "앨범 겹침 0장 (필요 2, 겹친 후보 0명, 후보 8명)",
-    "checkedAt": "2026-09-17"
-  },
   "a:박대원|솔로": {
     "aid": "786519",
     "melonName": "대원 (DAEWON)",
@@ -8328,16 +8323,6 @@
   "a:유정|솔로": {
     "aid": null,
     "failedWhy": "본인확인 실패 — 후보 19명 중 소속그룹=옛 그룹 없음",
-    "checkedAt": "2026-10-02"
-  },
-  "a:배우희|솔로": {
-    "aid": "711336",
-    "melonName": "우희",
-    "gubun": "",
-    "kind": "solo",
-    "confidence": "identity",
-    "overlap": 0,
-    "evidence": "소속그룹 aid 2111639 일치",
     "checkedAt": "2026-10-02"
   },
   "a:윤조|솔로|유니티": {
