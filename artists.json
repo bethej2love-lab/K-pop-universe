@@ -216130,6 +216130,45 @@
         ]
       },
       {
+        "title": "The Season of Us",
+        "type": "미니",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b27388cf0bef8a04f2cb558d4a44",
+        "releaseDate": "2026.07.15",
+        "trackCount": 5,
+        "titleTrack": "The Season of Us",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Shooting Star",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "afterimage",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "Perfectly Imperfect",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "The Season of Us",
+            "isTitle": true
+          },
+          {
+            "no": 5,
+            "title": "Dear. Tomorrow",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "6wQg2nU5BVszEtguptNdm9",
+        "copyright": "2026 MUMW"
+      },
+      {
         "title": "Sur(fp)hase",
         "type": "싱글",
         "releaseDate": "2026.04.08",
@@ -216175,6 +216214,25 @@
             "isTitle": true
           }
         ]
+      },
+      {
+        "title": "Perfectly Imperfect",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273dac0d16f98d60e4c4bee216b",
+        "releaseDate": "2025.10.01",
+        "trackCount": 1,
+        "titleTrack": "Perfectly Imperfect",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Perfectly Imperfect",
+            "isTitle": true
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "0hSLLiwB1NwfUTe0iyiuJg",
+        "copyright": "2025 MUMW"
       },
       {
         "title": "Listen-Up(리슨업) EP.8",
@@ -216697,6 +216755,25 @@
         "melonAlbumId": "11467625"
       },
       {
+        "title": "Scent of Skin",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273e573f65e8375bd4dce756078",
+        "releaseDate": "2024.04.18",
+        "trackCount": 1,
+        "titleTrack": "Scent of Skin",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Scent of Skin",
+            "isTitle": true
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "6045ZGUfocYF8I3VlvyhvF",
+        "copyright": "© 2024 The Dial Music"
+      },
+      {
         "title": "How Time Flies",
         "type": "싱글",
         "isMain": true,
@@ -216713,6 +216790,25 @@
         ],
         "src": "melon",
         "melonAlbumId": "11444109"
+      },
+      {
+        "title": "How Time Flies (feat. BIGONE & Dive)",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273ac221570838b133886b93731",
+        "releaseDate": "2024.03.18",
+        "trackCount": 1,
+        "titleTrack": "How Time Flies (feat. BIGONE & Dive)",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "How Time Flies (feat. BIGONE & Dive)",
+            "isTitle": true
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "6hVKC1sx3OZ8GIi4g2ernc",
+        "copyright": "© 2024 The Dial Music"
       },
       {
         "title": "Gummy Bear",

@@ -200,6 +200,22 @@
     },
     "checkedAt": "2026-09-15"
   },
+  "강승식": {
+    "id": "6KQYNyGaP0jX300OaEdaY0",
+    "spotifyName": "Kang Seung Sik",
+    "kind": "solo",
+    "confidence": "high",
+    "why": "동명 후보 2명 중 앨범 대조 · 수집 전 검증 통과(겹침 1)",
+    "evidence": {
+      "titleOverlap": 1,
+      "verifyOverlap": 1,
+      "verifyYears": [
+        2026,
+        2025
+      ]
+    },
+    "checkedAt": "2026-10-02"
+  },
   "강유찬": {
     "id": "1LC3ECnlRN78MocLYLbkyR",
     "spotifyName": "Yuchan",
@@ -802,6 +818,17 @@
     "checkedAt": "2026-09-30",
     "rejected": true
   },
+  "도한세": {
+    "id": "0vpzOOH7hVL9KdsCus9v5v",
+    "spotifyName": "DOHANSE",
+    "kind": "solo",
+    "confidence": "high",
+    "why": "동명 후보 2명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 3
+    },
+    "checkedAt": "2026-10-02"
+  },
   "동건": {
     "id": "229KhSrjWsm62jVuSpQsBZ",
     "spotifyName": "Jeong Dong Won",
@@ -1239,6 +1266,17 @@
       ]
     },
     "checkedAt": "2026-09-15"
+  },
+  "무진": {
+    "id": "2nR3HIgrF5irB5FLRYaluH",
+    "spotifyName": "MUJIN",
+    "kind": "solo",
+    "confidence": "medium",
+    "why": "이름 유일 일치",
+    "evidence": {
+      "titleOverlap": null
+    },
+    "checkedAt": "2026-10-02"
   },
   "문익": {
     "id": "35TmRxVcUTTyA1RdYzHcdk",
@@ -1779,6 +1817,17 @@
       ]
     },
     "checkedAt": "2026-09-15"
+  },
+  "빛": {
+    "id": "1dh4cCsXfBe1invQ5lalLS",
+    "spotifyName": "Bit",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "동명 후보 4명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-10-02"
   },
   "샤이니": {
     "id": "2hRQKC0gqlZGPrmUKbcchR",
@@ -3053,6 +3102,17 @@
     },
     "checkedAt": "2026-09-23"
   },
+  "영서": {
+    "id": "28c9XwRowiuuOX2aZ5rfYT",
+    "spotifyName": "YOUNGSEO",
+    "kind": "solo",
+    "confidence": "medium",
+    "why": "이름 유일 일치",
+    "evidence": {
+      "titleOverlap": null
+    },
+    "checkedAt": "2026-10-02"
+  },
   "영파씨": {
     "id": "5bxwvIM9PX0CkpS6f1L2Ff",
     "spotifyName": "YOUNG POSSE",
@@ -3502,6 +3562,17 @@
     },
     "checkedAt": "2026-09-24"
   },
+  "유준": {
+    "id": "3Zn4L9YjGN3ATQNEIxLhev",
+    "spotifyName": "Lim Yu Jeong",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "이름 불일치 — 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-10-02"
+  },
   "유키스": {
     "id": "2GB76Lm833jVI5kLvKEB7Z",
     "spotifyName": "UKISS",
@@ -3850,6 +3921,17 @@
     },
     "checkedAt": "2026-09-15"
   },
+  "임세준": {
+    "id": "6UPJRONOWFOTFZPfwQS6u5",
+    "spotifyName": "LIM SEJUN",
+    "kind": "solo",
+    "confidence": "medium",
+    "why": "이름 유일 일치",
+    "evidence": {
+      "titleOverlap": null
+    },
+    "checkedAt": "2026-10-02"
+  },
   "임시완": {
     "id": "2n81IVrBwNFGxXnc8GDWkW",
     "spotifyName": "Kim Siwon",
@@ -3971,6 +4053,21 @@
       "titleOverlap": 1
     },
     "checkedAt": "2026-09-23"
+  },
+  "정수빈": {
+    "id": "7mJe9MyvwEVccLfQODmRN1",
+    "spotifyName": "Jung Sumin",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "이름 불일치 — 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0,
+      "verifyOverlap": 0,
+      "verifyYears": [
+        2025
+      ]
+    },
+    "checkedAt": "2026-10-02"
   },
   "정아": {
     "id": "6qfCoY8Md1jcT1vBQwsmHN",
@@ -4137,6 +4234,17 @@
     },
     "checkedAt": "2026-10-01"
   },
+  "준서": {
+    "id": "0UEsgbrswxiG7FhW1A8prR",
+    "spotifyName": "Junseo",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "동명 후보 3명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-10-02"
+  },
   "지수": {
     "id": "1QUxcni0biHr4HFdN44QE9",
     "spotifyName": "JISU",
@@ -4259,6 +4367,17 @@
       "titleOverlap": 0
     },
     "checkedAt": "2026-09-29"
+  },
+  "최병찬": {
+    "id": "0sXgWbzsjLtrn7fKvHAor2",
+    "spotifyName": "Choi Byungchan",
+    "kind": "solo",
+    "confidence": "medium",
+    "why": "이름 유일 일치",
+    "evidence": {
+      "titleOverlap": null
+    },
+    "checkedAt": "2026-10-02"
   },
   "최예나": {
     "id": "49muoiIu4uea4PO8vueUNN",
