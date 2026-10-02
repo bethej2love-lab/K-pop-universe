@@ -321,6 +321,25 @@ function parseArtistDetail(html) {
 async function detailOf(aid) {
   return parseArtistDetail(await get(`https://www.melon.com/artist/detail.htm?artistId=${aid}`, `adetail_${aid}`, 5000));
 }
+// 본인확인 때 상세까지 보는 후보 수. 10이면 소희·주연처럼 후보 18~21명인 이름은 정답이 컷 밖으로 밀린다.
+const ID_CAND_MAX = Number(process.env.MELON_ID_CAND_MAX || 20);
+// 나무위키 본문(정규화) — 근거 ④용. 멜론과 다른 사이트라 멜론 차단 카운트와 무관하게 따로 받는다.
+const _namuMem = new Map();
+async function namuTextOf(t) {
+  if (!t.namu) return '';
+  if (_namuMem.has(t.namu)) return _namuMem.get(t.namu);
+  const f = path.join(CACHE_DIR, `snamu_${(t.obj && t.obj.id) || encodeURIComponent(t.koName)}.html`);
+  const bad = h => !h || h.length < 5000 || /문서를 찾을 수 없습니다/.test(h);
+  let h = !REFRESH && fs.existsSync(f) ? fs.readFileSync(f, 'utf8') : '';
+  if (bad(h) && !CACHE_ONLY) {
+    try { await execFileP('curl', ['-skL', '--max-time', '40', '-A', UA, encodeURI(t.namu), '-o', f]); } catch {}
+    h = fs.existsSync(f) ? fs.readFileSync(f, 'utf8') : '';
+  }
+  const txt = bad(h) ? '' : h.replace(/<script[\s\S]*?<\/script>/g, ' ').replace(/<style[\s\S]*?<\/style>/g, ' ').replace(/<[^>]+>/g, ' ')
+    .normalize('NFKC').toLowerCase().replace(/[^0-9a-z가-힣]/g, '');
+  _namuMem.set(t.namu, txt);
+  return txt;
+}
 async function resolveByIdentity(t) {
   const nrm = s => String(s || '').normalize('NFKC').toLowerCase().replace(/[^0-9a-z가-힣]/g, '');
   const partsOf = s => { const m = /^(.*?)\s*[(（]([^)）]*)[)）]\s*$/.exec(String(s || '')); return (m ? [m[1], m[2]] : [String(s || '')]).map(nrm).filter(Boolean); };
@@ -328,8 +347,14 @@ async function resolveByIdentity(t) {
   const addC = c => { if (c && c.aid && !cands.some(x => x.aid === c.aid)) cands.push(c); };
   const myNames = new Set(t.names.map(nrm).filter(Boolean));
   // 솔로: 옛 그룹 상세의 그룹멤버 목록에서 이름이 맞는 사람을 먼저 후보로(검색보다 정확하다 — 링크가 곧 그 그룹의 멤버)
+  // ⚠️ 그룹 시절 활동명은 성을 뗀 이름인 경우가 많다(이한결 → `한결(BAE173)`, 남도현 → `도현` — 2026-10-02 실측).
+  //    이름 검색으론 후보에도 안 잡히므로, **옛 그룹 멤버 목록 안에서만** 성 뗀 이름도 인정한다. 그 목록은 그룹 링크로
+  //    묶여 있어 동명이인이 들어올 수 없고, 통과 여부는 어차피 아래 소속그룹 aid 규칙이 판정한다.
+  const koName = String(t.koName || '');
+  const memberNames = new Set(myNames);
+  if (/^[가-힣]{3}$/.test(koName)) memberNames.add(koName.slice(1));
   if (t.kind === 'solo') for (const gaid of t.prevGroupAids || []) {
-    for (const m of (await detailOf(gaid)).members) if (partsOf(m.title).some(p => myNames.has(p))) addC({ aid: m.aid, title: m.title, gubun: '' });
+    for (const m of (await detailOf(gaid)).members) if (partsOf(m.title).some(p => memberNames.has(p))) addC({ aid: m.aid, title: m.title, gubun: '' });
   }
   const want = t.kind === 'group' ? /그룹/ : /솔로/;
   for (const q of [...new Set(t.names.filter(Boolean))]) {
@@ -338,7 +363,7 @@ async function resolveByIdentity(t) {
   }
   if (!cands.length) return { ok: false, why: '이름 맞는 후보 없음(디스코 0 · 본인확인 모드)' };
   const passed = [];
-  for (const c of cands.slice(0, 10)) {
+  for (const c of cands.slice(0, ID_CAND_MAX)) {
     const d = await detailOf(c.aid);
     if (t.kind === 'group') {
       const roster = t.roster || [];
@@ -355,7 +380,17 @@ async function resolveByIdentity(t) {
       //    동명이인 목록엔 그 그룹 앨범이 있을 수 없으므로, 2장 이상이면 그 그룹 멤버로 본다.
       const all = await albumsOf(c.aid);
       const gAlb = all.filter(a => (t.prevGroupAids || []).includes(a.artistAid)).length;
-      if (gAlb >= 2) passed.push({ c, ev: `앨범목록에 옛 그룹 앨범 ${gAlb}장`, score: gAlb });
+      if (gAlb >= 2) { passed.push({ c, ev: `앨범목록에 옛 그룹 앨범 ${gAlb}장`, score: gAlb }); continue; }
+      // ④ 우리가 사람별로 걸어둔 **나무위키 문서 본문**에 후보의 앨범 제목이 2장 이상 나온다(2026-10-02).
+      //    원호처럼 멜론 상세에 생일·소속그룹 칸이 아예 없는 사람은 ①~③이 구조적으로 불가능하다. 나무위키 링크는
+      //    사람 단위로 큐레이션된 것이라 동명이인이 섞이지 않는다. 짧은 제목(5자 미만)·OST류는 우연히 겹치므로 안 센다.
+      const nt = await namuTextOf(t);
+      if (nt) {
+        const own = all.filter(a => a.artistAid === c.aid);
+        const keys = new Set(own.map(a => nrm(preStrip(a.title))).filter(k => k.length >= 5 && !/ost|part\d|vol\d/.test(k)));
+        const hits = [...keys].filter(k => nt.includes(k));
+        if (hits.length >= 2) passed.push({ c, ev: `나무위키 문서에 앨범 ${hits.length}장(${hits.slice(0, 3).join('·')})`, score: hits.length });
+      }
     }
   }
   if (!passed.length) return { ok: false, why: `본인확인 실패 — 후보 ${cands.length}명 중 ${t.kind === 'group' ? '그룹멤버 2명↑ 일치' : '소속그룹=옛 그룹'} 없음`, cands };
@@ -465,7 +500,7 @@ if (SOLO || BOTH) {
     const label = `${ko}(${gko}${dupName && prevG.length ? `·전 ${prevG.join('+')}` : ''})`;
     // 옛 그룹의 멜론 aid — 솔로 본인 확인(소속그룹) 근거. 매핑 안 된 그룹은 근거가 될 수 없어 뺀다.
     const prevGroupAids = prevG.map(g => map[g] && map[g].aid).filter(Boolean);
-    targets.push({ key, label, kind: 'solo', gko, gnames: [...gnames, ...prevG], koName: ko, names: [ko, a.name.en], bday: /^\d{4}\.\d{2}\.\d{2}$/.test(a.bday || '') ? a.bday : null, obj: a, disco: a.discography || [], prevGroupAids, file: 'artists.json' });
+    targets.push({ key, label, kind: 'solo', gko, gnames: [...gnames, ...prevG], koName: ko, names: [ko, a.name.en], bday: /^\d{4}\.\d{2}\.\d{2}$/.test(a.bday || '') ? a.bday : null, obj: a, disco: a.discography || [], prevGroupAids, namu: (a.links && a.links.namu) || null, file: 'artists.json' });
   }
 }
 let list = ONLY ? targets.filter(t => ONLY.has(t.label) || ONLY.has(t.key) || ONLY.has(t.koName) || t.names.some(n => ONLY.has(n))) : targets;

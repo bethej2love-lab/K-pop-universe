@@ -178035,6 +178035,31 @@
         "active": false,
         "left": "2011"
       }
+    ],
+    "discography": [
+      {
+        "title": "Take Me To The place",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/013/33/853/1333853_500.jpg",
+        "releaseDate": "2011.07.11",
+        "trackCount": 2,
+        "titleTrack": "Take Me To The Place",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Take Me To The Place",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Take Me To The Place (Inst.)",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "1333853"
+      }
     ]
   },
   {
@@ -201776,6 +201801,67 @@
         "active": false,
         "left": "2018.05.15"
       }
+    ],
+    "discography": [
+      {
+        "title": "Aura",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/100/86/998/10086998_500.jpg",
+        "releaseDate": "2017.08.11",
+        "trackCount": 1,
+        "titleTrack": "Aura (Feat. 릴보이)",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Aura (Feat. 릴보이)",
+            "isTitle": true
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "10086998"
+      },
+      {
+        "title": "Faded",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/100/47/084/10047084_500.jpg",
+        "releaseDate": "2017.03.19",
+        "trackCount": 1,
+        "titleTrack": "Faded (Feat. Ja Mezz)",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Faded (Feat. Ja Mezz)",
+            "isTitle": true
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "10047084"
+      },
+      {
+        "title": "Swish",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/100/09/191/10009191_500.jpg",
+        "releaseDate": "2016.10.25",
+        "trackCount": 2,
+        "titleTrack": "Swish (Feat. TakeOne)",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Swish (Feat. TakeOne)",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Panorama",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "10009191"
+      }
     ]
   },
   {
@@ -209223,6 +209309,31 @@
         "active": false,
         "left": "2026.05.31"
       }
+    ],
+    "discography": [
+      {
+        "title": "노빠꾸 로맨스 OST Part.2",
+        "type": "OST",
+        "isMain": false,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/105/34/618/10534618_20201215183707_500.jpg",
+        "releaseDate": "2020.12.16",
+        "trackCount": 2,
+        "titleTrack": "I Wanna Be With You",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "I Wanna Be With You",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "I Wanna Be With You (Inst.)",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "10534618"
+      }
     ]
   },
   {
@@ -213759,6 +213870,181 @@
         "en": "Jewelry",
         "active": false,
         "left": "2015"
+      }
+    ],
+    "discography": [
+      {
+        "title": "닥터 이방인 OST Part.6",
+        "type": "OST",
+        "isMain": false,
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/022/60/860/2260860_500.jpg",
+        "releaseDate": "2014.06.16",
+        "trackCount": 2,
+        "titleTrack": "Because Of You",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Because Of You",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Because Of You (Inst.)",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "2260860"
+      },
+      {
+        "title": "Star Empire",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/020/42/766/2042766_500.jpg",
+        "releaseDate": "2011.11.30",
+        "trackCount": 2,
+        "titleTrack": "Shooting Star",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Shooting Star",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Shooting Star (Inst.)",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "2042766"
+      },
+      {
+        "title": "New Ways Always (Digital Single)",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/003/99/675/399675_500.jpg",
+        "releaseDate": "2008.10.27",
+        "trackCount": 1,
+        "titleTrack": "New Ways Always",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "New Ways Always",
+            "isTitle": true
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "399675"
+      },
+      {
+        "title": "M.Net Summer Break",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/003/54/085/354085_500.jpg",
+        "releaseDate": "2007.07.23",
+        "trackCount": 1,
+        "titleTrack": "Summer Breeze",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Summer Breeze",
+            "isTitle": true
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "354085"
+      },
+      {
+        "title": "Shining Star",
+        "type": "OST",
+        "isMain": false,
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/003/38/546/338546_500.jpg",
+        "releaseDate": "2006.12.27",
+        "trackCount": 2,
+        "titleTrack": "Shining Star",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Shining Star",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Shining Star (Inst.)",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "338546"
+      },
+      {
+        "title": "Yeah",
+        "type": "정규",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/003/25/271/325271_500.jpg",
+        "releaseDate": "2006.08.25",
+        "trackCount": 11,
+        "titleTrack": "Yeah",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "My Time",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "결국... 사랑 (Feat. 전제덕)",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "Yeah",
+            "isTitle": true
+          },
+          {
+            "no": 4,
+            "title": "눈물을 멈추고",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Fly Away",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "D-Day (하루만 더)",
+            "isTitle": false
+          },
+          {
+            "no": 7,
+            "title": "Don't Let Me Go",
+            "isTitle": false
+          },
+          {
+            "no": 8,
+            "title": "Beautiful Today",
+            "isTitle": false
+          },
+          {
+            "no": 9,
+            "title": "이러지 마세요",
+            "isTitle": false
+          },
+          {
+            "no": 10,
+            "title": "약해질까봐",
+            "isTitle": false
+          },
+          {
+            "no": 11,
+            "title": "You're My Friend",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "325271"
       }
     ]
   },
@@ -226343,6 +226629,286 @@
         "active": false,
         "left": "2015.03.10"
       }
+    ],
+    "discography": [
+      {
+        "title": "아이템 OST Part.6",
+        "type": "OST",
+        "isMain": false,
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/102/68/608/10268608_500.jpg",
+        "releaseDate": "2019.04.02",
+        "trackCount": 2,
+        "titleTrack": "바람",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "바람",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "바람 (Inst.)",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "10268608"
+      },
+      {
+        "title": "두니아~ 처음 만난 세계 OST Part.3",
+        "type": "OST",
+        "isMain": false,
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/102/07/070/10207070_500.jpg",
+        "releaseDate": "2018.09.23",
+        "trackCount": 2,
+        "titleTrack": "Blue (Feat. 딘딘)",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Blue (Feat. 딘딘)",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Blue (Inst.)",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "10207070"
+      },
+      {
+        "title": "미워해 널 잘 지내지는 마",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/101/78/545/10178545_500.jpg",
+        "releaseDate": "2018.06.24",
+        "trackCount": 2,
+        "titleTrack": "미워해 널 잘 지내지는 마",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "미워해 널 잘 지내지는 마",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "미워해 널 잘 지내지는 마 (Inst.)",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "10178545"
+      },
+      {
+        "title": "'나만 알고 싶은 가수' 이런 밤이면",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/101/10/192/10110192_500.jpg",
+        "releaseDate": "2017.11.10",
+        "trackCount": 2,
+        "titleTrack": "이런 밤이면",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "이런 밤이면",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "이런 밤이면 (Inst.)",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "10110192"
+      },
+      {
+        "title": "HELLO",
+        "type": "미니",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/100/83/450/10083450_500.jpg",
+        "releaseDate": "2017.07.28",
+        "trackCount": 5,
+        "titleTrack": "HELLO",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "HELLO",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "가도 돼",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "눈물이 흘러 (Feat. Lil Boi)",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Love Don't Hurt (Feat. Amber Of f(x))",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "HELLO (Inst.)",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "10083450"
+      },
+      {
+        "title": "Love Don't Hurt",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/100/74/419/10074419_500.jpg",
+        "releaseDate": "2017.06.27",
+        "trackCount": 2,
+        "titleTrack": "눈물이 흘러 (Feat. Lil Boi)",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "눈물이 흘러 (Feat. Lil Boi)",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Love Don't Hurt (Feat. Amber Of f(x))",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "10074419"
+      },
+      {
+        "title": "복면가왕 115회",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/100/70/195/10070195_500.jpg",
+        "releaseDate": "2017.06.11",
+        "trackCount": 1,
+        "titleTrack": "애인있어요 (오늘의 여우주연상 사막여우)",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "애인있어요 (오늘의 여우주연상 사막여우)",
+            "isTitle": true
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "10070195"
+      },
+      {
+        "title": "Eighteen",
+        "type": "미니",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/023/06/611/2306611_500.jpg",
+        "releaseDate": "2015.03.06",
+        "trackCount": 7,
+        "titleTrack": "왜요 왜요",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "왜요 왜요",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "I Know",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "Gossip Girl",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "20inch",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Hate you",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "숨",
+            "isTitle": false
+          },
+          {
+            "no": 7,
+            "title": "새벽비",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "2306611"
+      },
+      {
+        "title": "빛나거나 미치거나 OST Part.4",
+        "type": "OST",
+        "isMain": false,
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/023/05/239/2305239_500.jpg",
+        "releaseDate": "2015.02.17",
+        "trackCount": 2,
+        "titleTrack": "기억해 사랑해",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "기억해 사랑해",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "기억해 사랑해 (Inst.)",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "2305239"
+      },
+      {
+        "title": "새벽비",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/022/92/982/2292982_500.jpg",
+        "releaseDate": "2014.12.01",
+        "trackCount": 1,
+        "titleTrack": "새벽비",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "새벽비",
+            "isTitle": true
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "2292982"
+      },
+      {
+        "title": "Remember You",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/022/29/812/2229812_500.jpg",
+        "releaseDate": "2014.01.29",
+        "trackCount": 1,
+        "titleTrack": "Remember You (Feat. 스피드 종국)",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Remember You (Feat. 스피드 종국)",
+            "isTitle": true
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "2229812"
+      }
     ]
   },
   {
@@ -238831,23 +239397,31 @@
   },
   {
     "name": {
-      "ko": "가을",
-      "en": "Gaeul"
+      "ko": "엘라",
+      "en": "Ella"
     },
     "group": {
-      "ko": "픽시"
+      "ko": "픽시",
+      "en": "PIXY"
     },
-    "id": "a1795"
+    "id": "a1795",
+    "bday": "1998.03.26",
+    "active": false,
+    "left": "2022.08.27"
   },
   {
     "name": {
-      "ko": "이의",
-      "en": "Eui"
+      "ko": "로라",
+      "en": "Lola"
     },
     "group": {
-      "ko": "픽시"
+      "ko": "픽시",
+      "en": "PIXY"
     },
-    "id": "a1796"
+    "id": "a1796",
+    "bday": "2001.02.22",
+    "active": false,
+    "left": "2024.09.11"
   },
   {
     "name": {
@@ -238855,19 +239429,25 @@
       "en": "Satbyeol"
     },
     "group": {
-      "ko": "픽시"
+      "ko": "픽시",
+      "en": "PIXY"
     },
-    "id": "a1797"
+    "id": "a1797",
+    "bday": "2001.02.27",
+    "active": false,
+    "left": "2022.08.27"
   },
   {
     "name": {
-      "ko": "인하",
-      "en": "Inha"
+      "ko": "디아",
+      "en": "Dia"
     },
     "group": {
-      "ko": "픽시"
+      "ko": "픽시",
+      "en": "PIXY"
     },
-    "id": "a1798"
+    "id": "a1798",
+    "bday": "2001.07.16"
   },
   {
     "name": {
@@ -238875,19 +239455,25 @@
       "en": "Sua"
     },
     "group": {
-      "ko": "픽시"
+      "ko": "픽시",
+      "en": "PIXY"
     },
-    "id": "a1799"
+    "id": "a1799",
+    "bday": "2003.02.24"
   },
   {
     "name": {
-      "ko": "릴리",
-      "en": "Lilly"
+      "ko": "다정",
+      "en": "Dajeong"
     },
     "group": {
-      "ko": "픽시"
+      "ko": "픽시",
+      "en": "PIXY"
     },
-    "id": "a1800"
+    "id": "a1800",
+    "bday": "2003.07.31",
+    "active": false,
+    "left": "2024.06.20"
   },
   {
     "name": {
@@ -239275,9 +239861,11 @@
       "en": "Rinji"
     },
     "group": {
-      "ko": "픽시"
+      "ko": "픽시",
+      "en": "PIXY"
     },
-    "id": "a1838"
+    "id": "a1838",
+    "bday": "2006.05.05"
   },
   {
     "name": {
