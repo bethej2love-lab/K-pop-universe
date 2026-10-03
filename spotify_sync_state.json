@@ -421,10 +421,18 @@
     "우희": "2026-10-03",
     "수빈": "2026-10-03",
     "비키": "2026-10-03",
-    "지율": "2026-10-03"
+    "지율": "2026-10-03",
+    "이유애린": "2026-10-03",
+    "성아": "2026-10-03",
+    "경리": "2026-10-03",
+    "혜미": "2026-10-03",
+    "민하": "2026-10-03",
+    "소진": "2026-10-03",
+    "금조": "2026-10-03",
+    "여은": "2026-10-03"
   },
-  "runs": 46,
-  "lastRunAt": "2026-10-03T14:17:40.814Z",
+  "runs": 47,
+  "lastRunAt": "2026-10-03T18:39:54.539Z",
   "swept": {
     "에스파": [
       2025
@@ -1879,6 +1887,46 @@
     ],
     "지율": [
       2023
+    ],
+    "이유애린": [
+      2023,
+      2024,
+      2025
+    ],
+    "성아": [
+      2023,
+      2024,
+      2025
+    ],
+    "경리": [
+      2023,
+      2024,
+      2025
+    ],
+    "혜미": [
+      2023,
+      2024,
+      2025
+    ],
+    "민하": [
+      2023,
+      2024,
+      2025
+    ],
+    "소진": [
+      2023,
+      2024,
+      2025
+    ],
+    "금조": [
+      2023,
+      2024,
+      2025
+    ],
+    "여은": [
+      2023,
+      2024,
+      2025
     ]
   },
   "pending": {
@@ -2207,6 +2255,43 @@
         "2023-10-16 있잖아"
       ],
       "why": "영상 증거 0곡(영상 5개 대조)"
+    },
+    "성아": {
+      "spotifyName": "Sungha Jung",
+      "spotifyId": "3OpWOvjJnk86geCHrAxkHA",
+      "since": "2026-10-03",
+      "heldAlbums": [
+        "2026-05-29 L’Atelier (feat. 심소정 So jeong Shim)",
+        "2023-04-01 Sungha Jung Cover Compilation 11",
+        "2023-04-01 Canon Rock",
+        "2024-04-22 Sungha Jung Cover Compilation 12",
+        "2024-08-02 All the Best"
+      ],
+      "why": "영상 증거 0곡(영상 2개 대조)"
+    },
+    "경리": {
+      "spotifyName": "Han Kyung Il",
+      "spotifyId": "1QWsO985ZVETFz5Odn4spA",
+      "since": "2026-10-03",
+      "heldAlbums": [
+        "2026-06-25 You're standing like a regret",
+        "2026-05-27 하루를 살아도 난 너여야만 해",
+        "2026-04-29 I Can't Bring Myself To Say We Broke Up",
+        "2026-05-09 이별은 늘 아프기만 해",
+        "2026-05-18 Where did our love go?"
+      ],
+      "why": "영상 증거 0곡(영상 37개 대조)"
+    },
+    "소진": {
+      "spotifyName": "Sojin",
+      "spotifyId": "6oqIg9s1R1rEP5VsSqK0mw",
+      "since": "2026-10-03",
+      "heldAlbums": [
+        "2026-07-22 Theatre <A Light in the Blooming Dawn> Original Sound Track (Soundtrack)",
+        "2024-12-13 꿈에라도",
+        "2025-02-26 Hidden Masterpiece Re'born Episode.6 Close Your Eyes"
+      ],
+      "why": "영상 증거 0곡(영상 13개 대조)"
     }
   }
 }

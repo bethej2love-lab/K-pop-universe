@@ -265,6 +265,22 @@
     },
     "checkedAt": "2026-09-16"
   },
+  "경리": {
+    "id": "1QWsO985ZVETFz5Odn4spA",
+    "spotifyName": "Han Kyung Il",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "이름 불일치 — 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0,
+      "verifyOverlap": 0,
+      "verifyYears": [
+        2024,
+        2021
+      ]
+    },
+    "checkedAt": "2026-10-03"
+  },
   "경윤": {
     "id": "7uv6GgFILw5jZxPnsGzER3",
     "spotifyName": "Min Kyunghoon",
@@ -369,6 +385,17 @@
       "titleOverlap": null
     },
     "checkedAt": "2026-09-24"
+  },
+  "금조": {
+    "id": "1mhrp6X9dQ4DPvsbt5seca",
+    "spotifyName": "KEUMJO",
+    "kind": "solo",
+    "confidence": "medium",
+    "why": "이름 유일 일치",
+    "evidence": {
+      "titleOverlap": null
+    },
+    "checkedAt": "2026-10-03"
   },
   "기석": {
     "id": "2gXZHBWe9Woza2RyGoBdjy",
@@ -1373,6 +1400,17 @@
     },
     "checkedAt": "2026-09-21"
   },
+  "민하": {
+    "id": "0zLIYfDBlOM1W3Rz2LFQee",
+    "spotifyName": "Minha",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "동명 후보 2명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-10-03"
+  },
   "박세미": {
     "id": "3QoqUHatLMo08sw2PIBuYn",
     "spotifyName": "박수민",
@@ -1953,6 +1991,17 @@
     },
     "checkedAt": "2026-09-22"
   },
+  "성아": {
+    "id": "3OpWOvjJnk86geCHrAxkHA",
+    "spotifyName": "Sungha Jung",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "이름 불일치 — 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-10-03"
+  },
   "성연": {
     "id": "5CyWiZlcsLsaK1LzW7KJlQ",
     "spotifyName": "성연 (SUNGYEON)",
@@ -2106,6 +2155,21 @@
       "titleOverlap": 0
     },
     "checkedAt": "2026-09-24"
+  },
+  "소진": {
+    "id": "6oqIg9s1R1rEP5VsSqK0mw",
+    "spotifyName": "Sojin",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "동명 후보 2명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0,
+      "verifyOverlap": 0,
+      "verifyYears": [
+        2016
+      ]
+    },
+    "checkedAt": "2026-10-03"
   },
   "소희": {
     "id": "3mYdRRihv7Oj0g4a7viHOX",
@@ -3155,6 +3219,17 @@
     },
     "checkedAt": "2026-09-19"
   },
+  "여은": {
+    "id": "05ymeYZDsPYz6TsR6KjrrQ",
+    "spotifyName": "Yeoeun",
+    "kind": "solo",
+    "confidence": "high",
+    "why": "동명 후보 7명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 4
+    },
+    "checkedAt": "2026-10-03"
+  },
   "여진": {
     "id": "6T1L8TS6LeXIDHYnDAMHFe",
     "spotifyName": "YEOJIN(L∞na)",
@@ -3852,6 +3927,17 @@
       "titleOverlap": 2
     },
     "checkedAt": "2026-09-26"
+  },
+  "이유애린": {
+    "id": "5zET2SGjX1wARDONfx8rt8",
+    "spotifyName": "EU Erine",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "이름 불일치 — 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-10-03"
   },
   "이은상": {
     "id": "23oRZ1WSV1YCPk3Ra7ivzJ",
@@ -5307,6 +5393,17 @@
       ]
     },
     "checkedAt": "2026-09-22"
+  },
+  "혜미": {
+    "id": "3p5x0haXhLh8wqPySnbjOv",
+    "spotifyName": "혜미",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "동명 후보 4명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-10-03"
   },
   "홍성준": {
     "id": "33gvxMeV0QfzHFdicHJbQh",

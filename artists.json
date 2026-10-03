@@ -223024,6 +223024,30 @@
         ]
       },
       {
+        "title": "I Love You, I Love You",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b27304fb20ea63d3037a883a3c00",
+        "releaseDate": "2026.01.22",
+        "trackCount": 2,
+        "titleTrack": "I Love You, I Love You",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "I Love You, I Love You",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "I Love You, I Love You(inst.)",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "5gKGMgIbxb1hg1GA5CrEKD",
+        "copyright": "2026 WM Ent, Yoghurt Studio"
+      },
+      {
         "title": "너무 예뻐서",
         "type": "싱글",
         "releaseDate": "2026.01.13",
@@ -223703,6 +223727,30 @@
           }
         ],
         "feat": true
+      },
+      {
+        "title": "결혼하자 맹꽁아! (Original Television Soundtrack) Pt.5",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b27318dd8f37eeaf01d1587b967c",
+        "releaseDate": "2024.11.14",
+        "trackCount": 2,
+        "titleTrack": null,
+        "tracks": [
+          {
+            "no": 1,
+            "title": "사진 속 우리",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "사진 속 우리 - Instrumental",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "6BNoaq9CdyubdAIwDwcged",
+        "copyright": "2024 나인원나인뮤직"
       },
       {
         "title": "꽃이 피면 다시 찾아올까 봐",
