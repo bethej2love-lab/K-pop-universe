@@ -436,6 +436,22 @@
     "checkedAt": "2026-09-30",
     "rejected": true
   },
+  "김시훈": {
+    "id": "0ShvHs85z1wjYqH6r03kUM",
+    "spotifyName": "Kim Jihoon",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "이름 불일치 — 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0,
+      "verifyOverlap": 0,
+      "verifyYears": [
+        2026,
+        2025
+      ]
+    },
+    "checkedAt": "2026-10-03"
+  },
   "김연희": {
     "id": "6XAymhtlGpm4EOWElxhjC0",
     "spotifyName": "Kim Yoon Hee",
@@ -1753,6 +1769,17 @@
     },
     "checkedAt": "2026-09-15"
   },
+  "비키": {
+    "id": "3pUFjpTXA4WDBhXjSBbtYX",
+    "spotifyName": "Viki",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "동명 후보 3명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-10-03"
+  },
   "비투비": {
     "id": "2hcsKca6hCfFMwwdbFvenJ",
     "spotifyName": "BTOB",
@@ -1937,6 +1964,17 @@
     },
     "checkedAt": "2026-09-30"
   },
+  "세리": {
+    "id": "38oZ3lMBfgejBalxm1GDgc",
+    "spotifyName": "Serri",
+    "kind": "solo",
+    "confidence": "medium",
+    "why": "이름 유일 일치",
+    "evidence": {
+      "titleOverlap": null
+    },
+    "checkedAt": "2026-10-03"
+  },
   "세븐": {
     "id": "14yLuCwlBqteUdBqx9soJV",
     "spotifyName": "SE7EN",
@@ -2106,6 +2144,17 @@
       "titleOverlap": null
     },
     "checkedAt": "2026-09-30"
+  },
+  "수빈": {
+    "id": "7KaqAfbFzadsy3h7yx2YBT",
+    "spotifyName": "SUBIN",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "동명 후보 5명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-10-03"
   },
   "수안": {
     "id": "3YwUhszWyfajC0yEXETJxR",
@@ -2349,6 +2398,21 @@
       "titleOverlap": 3
     },
     "checkedAt": "2026-09-15"
+  },
+  "아영": {
+    "id": "3zn7JBquw6hDgcEOVYlNTU",
+    "spotifyName": "Ahyoung",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "동명 후보 2명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0,
+      "verifyOverlap": 0,
+      "verifyYears": [
+        2018
+      ]
+    },
+    "checkedAt": "2026-10-03"
   },
   "아워벌스데이": {
     "id": "1mXRWMer8YDbBPbj872tmo",
@@ -3351,6 +3415,17 @@
     },
     "checkedAt": "2026-09-15"
   },
+  "우희": {
+    "id": "2eDqpbMcyVqQIWiYGPv2T4",
+    "spotifyName": "Woohee",
+    "kind": "solo",
+    "confidence": "high",
+    "why": "동명 후보 5명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 2
+    },
+    "checkedAt": "2026-10-03"
+  },
   "원대": {
     "id": "73i3x0ABouiU6czWJX0O8b",
     "spotifyName": "Wondae",
@@ -3599,6 +3674,17 @@
       "titleOverlap": 0
     },
     "checkedAt": "2026-09-26"
+  },
+  "윤정환": {
+    "id": "4oL3S5gVJMmZPzdog0QgXl",
+    "spotifyName": "LUVEN",
+    "kind": "solo",
+    "confidence": "high",
+    "why": "이름 불일치 — 앨범 대조",
+    "evidence": {
+      "titleOverlap": 2
+    },
+    "checkedAt": "2026-10-03"
   },
   "윤조": {
     "id": "0hW1muryuCdZLfjoLrUhnw",
@@ -4276,6 +4362,17 @@
       ]
     },
     "checkedAt": "2026-09-22"
+  },
+  "지율": {
+    "id": "6r3dTDt9C9UFI6HR8c0y4D",
+    "spotifyName": "jiyul",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "동명 후보 4명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-10-03"
   },
   "지한": {
     "id": "4EVCVGMbSJvwRvY9JmdjV6",
@@ -5210,6 +5307,17 @@
       ]
     },
     "checkedAt": "2026-09-22"
+  },
+  "홍성준": {
+    "id": "33gvxMeV0QfzHFdicHJbQh",
+    "spotifyName": "홍성준",
+    "kind": "solo",
+    "confidence": "medium",
+    "why": "이름 유일 일치",
+    "evidence": {
+      "titleOverlap": null
+    },
+    "checkedAt": "2026-10-03"
   },
   "황광희": {
     "id": "2lV9wdnJ3DYJ8JBP5wLB6d",

@@ -218123,6 +218123,25 @@
         "melonAlbumId": "14541820"
       },
       {
+        "title": "As always",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273fb299e688d9aa037411b2365",
+        "releaseDate": "2026.09.13",
+        "trackCount": 1,
+        "titleTrack": "As always",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "As always",
+            "isTitle": true
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "1Mm37QG92EFmpwmsag8tth",
+        "copyright": "2026 LUVEN, under license to Candid Music Ent."
+      },
+      {
         "title": "MADE BY",
         "type": "정규",
         "releaseDate": "2026.01.15",
@@ -218685,6 +218704,25 @@
           }
         ],
         "feat": true
+      },
+      {
+        "title": "Star of Seoul",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273ba62ea9210dd66fb6fca1be8",
+        "releaseDate": "2025.08.07",
+        "trackCount": 1,
+        "titleTrack": "Star of Seoul",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Star of Seoul",
+            "isTitle": true
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "3HZ4DFBJVAtw4PJs5Iu5F5",
+        "copyright": "2025 조이컬쳐스"
       },
       {
         "title": "달",
