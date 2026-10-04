@@ -18097,7 +18097,7 @@ function _albumDateLabel(d){
   const today=new Date(),todayUTC=Date.UTC(today.getFullYear(),today.getMonth(),today.getDate());
   const days=Math.round((todayUTC-t)/86400000);
   if(days<=0)return isKo?'오늘':'Today';
-  if(days===1)return isKo?'어제':'Yesterday';
+  if(days===1)return isKo?'1일 전':'1d ago';
   if(days<=6)return isKo?`${days}일 전`:`${days}d ago`;
   const m=/^(\d{4})\.(\d{2})\.(\d{2})$/.exec(String(d||''));
   if(!m)return'';
