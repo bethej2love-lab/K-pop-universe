@@ -88,6 +88,10 @@ const PRI_LETTER = { A: 4, B: 1.5, C: 0.6 };   // 옛 표기(문자)도 혹시 �
 const SOLO_W = 1;                              // 솔로는 그룹 B등급보다 조금 낮게(= 중립)
 const priWeight = v => (typeof v === 'number' && v > 0 ? v : (PRI_LETTER[v] ?? SOLO_W));
 const NEVER_DAYS = 3650;                       // 한 번도 안 본 대상
+// 솔로 최대 방치일수 상한 — 솔로가 새로 추가될 때마다 NEVER_DAYS(3650)를 받아 A등급 그룹 재체크를
+// 무기한 밀어내는 문제를 막는다(2026-10-04, 실측: 크래비티·보이넥스트도어 등이 9/15 이후 재체크 0).
+// 상한 50 → 솔로 신규 포인트 50, A등급 그룹 13일 방치 포인트 52 → 13일 후엔 그룹이 앞선다.
+const SOLO_STALE_CAP = 50;
 function staleDays(ko) {
   const d = state.checked[ko];
   if (!d) return NEVER_DAYS;
@@ -110,7 +114,7 @@ function targets() {
   }
   const seen = new Set();
   return out.filter(t => (seen.has(t.ko) ? false : seen.add(t.ko)))
-    .map(t => ({ ...t, due: staleDays(t.ko) * t.w }))
+    .map(t => ({ ...t, due: Math.min(staleDays(t.ko), t.kind === 'solo' ? SOLO_STALE_CAP : NEVER_DAYS) * t.w }))
     .sort((x, y) => y.due - x.due);
 }
 
