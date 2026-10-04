@@ -18290,6 +18290,30 @@
     },
     "discography": [
       {
+        "title": "Swingin’ Magic",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273cbc08d904eced92ee7a9bcaf",
+        "releaseDate": "2026.09.21",
+        "trackCount": 2,
+        "titleTrack": "Swingin’ Magic",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Swingin’ Magic",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Swingin’ Magic (Korean Ver.)",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "3jxHSMqdk4qxioSWM2YxCT",
+        "copyright": "2026 Belift Lab Inc."
+      },
+      {
         "title": "I Got Your Back (Feat. JISOO, MOMOKA of HANA) (Korean Ver.)",
         "type": "싱글",
         "isMain": true,
@@ -19259,6 +19283,30 @@
         "melonAlbumId": "11643640"
       },
       {
+        "title": "BREWING LOVE, Pt. 5 (Original Soundtrack)",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b27340ffbf6ef3eb3dafd5df72e9",
+        "releaseDate": "2024.11.18",
+        "trackCount": 2,
+        "titleTrack": null,
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Can′t Stop",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "Can′t Stop - Instrumental",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "5EefRGqibq87o8RYMMQgn2",
+        "copyright": "2024 GENIE MUSIC, MUSIC BUDDY under licence to Genie Music Corporation"
+      },
+      {
         "title": "Love Story [THE 시즌즈: 이영지의 레인보우]",
         "type": "싱글",
         "isMain": true,
@@ -19280,6 +19328,70 @@
         ],
         "src": "melon",
         "melonAlbumId": "11641763"
+      },
+      {
+        "title": "The Star Chapter: SANCTUARY (Expanded Edition)",
+        "type": "정규",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b27396540ba5f88727371f0fa71b",
+        "releaseDate": "2024.11.08",
+        "trackCount": 10,
+        "titleTrack": null,
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Heaven",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "Over The Moon",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "Danger",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Resist (Not Gonna Run Away)",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Forty One Winks",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "Higher Than Heaven",
+            "isTitle": false
+          },
+          {
+            "no": 7,
+            "title": "Over The Moon - English Ver.",
+            "isTitle": false
+          },
+          {
+            "no": 8,
+            "title": "Over The Moon - Deep House Remix",
+            "isTitle": false
+          },
+          {
+            "no": 9,
+            "title": "Over The Moon - R&B Remix",
+            "isTitle": false
+          },
+          {
+            "no": 10,
+            "title": "Over The Moon - Rock Remix",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "4SFhJGHrFtYqYGIe8VzM6O",
+        "copyright": "© 2024 BIGHIT MUSIC"
       },
       {
         "title": "별의 장: SANCTUARY",
@@ -19323,6 +19435,50 @@
         ]
       },
       {
+        "title": "The Star Chapter: SANCTUARY",
+        "type": "미니",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273b612b8d797e8e3ec375ca60d",
+        "releaseDate": "2024.11.04",
+        "trackCount": 6,
+        "titleTrack": null,
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Heaven",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "Over The Moon",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "Danger",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Resist (Not Gonna Run Away)",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Forty One Winks",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "Higher Than Heaven",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "72JboNccBYyXR676YNfcYE",
+        "copyright": "© 2024 BIGHIT MUSIC"
+      },
+      {
         "title": "Open Always Wins",
         "type": "싱글",
         "isMain": true,
@@ -19339,6 +19495,35 @@
         ],
         "src": "melon",
         "melonAlbumId": "11543725"
+      },
+      {
+        "title": "CHIKAI",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b2730873cb6290cc80acbdb95bf6",
+        "releaseDate": "2024.07.03",
+        "trackCount": 3,
+        "titleTrack": null,
+        "tracks": [
+          {
+            "no": 1,
+            "title": "We’ll Never Change",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "Deja Vu - Japanese Version",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "Kitto Zutto",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "55VNwGRncFq00QLt9cNfxC",
+        "copyright": "BIGHIT MUSIC"
       },
       {
         "title": "minisode 3: TOMORROW with Remixes",
@@ -19505,6 +19690,70 @@
             "isTitle": false
           }
         ]
+      },
+      {
+        "title": "The Name Chapter: FREEFALL",
+        "type": "정규",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b2736067880e6c410727ac5a5f8b",
+        "releaseDate": "2023.10.13",
+        "trackCount": 10,
+        "titleTrack": null,
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Growing Pain",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "Chasing That Feeling",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "Back for More (TXT Ver.)",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Dreamer",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Deep Down",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "Happily Ever After",
+            "isTitle": false
+          },
+          {
+            "no": 7,
+            "title": "Skipping Stones",
+            "isTitle": false
+          },
+          {
+            "no": 8,
+            "title": "Blue Spring",
+            "isTitle": false
+          },
+          {
+            "no": 9,
+            "title": "Do It Like That",
+            "isTitle": false
+          },
+          {
+            "no": 10,
+            "title": "Chasing That Feeling (English Ver. – Digital Only)",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "63fWdGyeBj8VDjvHSUROx3",
+        "copyright": "© 2023 BIGHIT MUSIC"
       },
       {
         "title": "Back for More (More Edition)",
@@ -19736,6 +19985,25 @@
         "melonAlbumId": "11279188"
       },
       {
+        "title": "Hydrangea Love",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273ed3c7e12e376d87ae97620e1",
+        "releaseDate": "2023.07.01",
+        "trackCount": 1,
+        "titleTrack": "Hydrangea Love",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Hydrangea Love",
+            "isTitle": true
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "3p8v1BbBce9ELvb2mwaMgG",
+        "copyright": "BIGHIT MUSIC"
+      },
+      {
         "title": "Sugar Rush Ride [Japanese Ver.]",
         "type": "싱글",
         "isMain": true,
@@ -19778,6 +20046,30 @@
         "melonAlbumId": "11183717"
       },
       {
+        "title": "Goodbye Now (Love Revolution X TOMORROW X TOGETHER) [Original Webtoon Soundtrack]",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273786dd4b5a868cb9233456f1c",
+        "releaseDate": "2023.02.22",
+        "trackCount": 2,
+        "titleTrack": "Goodbye Now",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Goodbye Now",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Goodbye Now - Instrumental",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "6dT50XMh2FjyJOINykOAd3",
+        "copyright": "2023 MOST CONTENTS"
+      },
+      {
         "title": "이름의 장: TEMPTATION",
         "type": "미니 5집",
         "isMain": true,
@@ -19812,6 +20104,45 @@
             "isTitle": false
           }
         ]
+      },
+      {
+        "title": "The Name Chapter: TEMPTATION",
+        "type": "미니",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b2733bb056e3160b85ee86c1194d",
+        "releaseDate": "2023.01.27",
+        "trackCount": 5,
+        "titleTrack": null,
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Devil by the Window",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "Sugar Rush Ride",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "Happy Fools (feat. Coi Leray)",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Tinnitus (Wanna be a rock)",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Farewell, Neverland",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "7gkb4MxKe9rnoR3wxbJXJg",
+        "copyright": "© 2023 BIGHIT MUSIC"
       },
       {
         "title": "Free Falling",
@@ -39107,6 +39438,25 @@
         ]
       },
       {
+        "title": "Wife",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273f59b3f04997d1b9c245c8c4e",
+        "releaseDate": "2024.01.22",
+        "trackCount": 1,
+        "titleTrack": "Wife",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Wife",
+            "isTitle": true
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "3pkb4MByYl7ahbQT8CIwdZ",
+        "copyright": "2024 CUBE Entertainment,under license to kakao Entertainment"
+      },
+      {
         "title": "HEAT",
         "type": "미니",
         "isMain": true,
@@ -42459,6 +42809,25 @@
         ]
       },
       {
+        "title": "Dangerous",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b2737fb98b1d769149e4b172f791",
+        "releaseDate": "2024.09.02",
+        "trackCount": 1,
+        "titleTrack": "Dangerous",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Dangerous",
+            "isTitle": true
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "6ufSIMU4eAQjkI37l8ecoO",
+        "copyright": "© 2024 KOZ Entertainment"
+      },
+      {
         "title": "AND,",
         "type": "싱글",
         "isMain": true,
@@ -42511,6 +42880,50 @@
         ],
         "src": "melon",
         "melonAlbumId": "11525129"
+      },
+      {
+        "title": "Miss Night and Day (Original Television Soundtrack), Pt. 3",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273cff150e20b797dafee0683b3",
+        "releaseDate": "2024.06.29",
+        "trackCount": 2,
+        "titleTrack": null,
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Lucky Charm",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "Lucky Charm - Instrumental",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "3kHpmhoOVHOPE8m3AKlIJ9",
+        "copyright": "© 2024 SLL"
+      },
+      {
+        "title": "Earth, Wind & Fire (Japanese Ver.)",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273cf25505a23ee3d48866acc7e",
+        "releaseDate": "2024.06.19",
+        "trackCount": 1,
+        "titleTrack": "Earth, Wind & Fire (Japanese Ver.)",
+        "region": "jp",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Earth, Wind & Fire (Japanese Ver.)",
+            "isTitle": true
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "41bHSIzBCVnLiS0SbyEGbl",
+        "copyright": "KOZ Entertainment"
       },
       {
         "title": "HOW?",
