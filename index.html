@@ -19116,11 +19116,15 @@ async function _buildFeedDailyNews(){
     const today=new Date().toISOString().slice(0,10);
     const todayDot=today.replace(/-/g,'.');
     const tomorrow=new Date(Date.now()+86400000).toISOString().slice(0,10);
+    const sevenDaysAgo=new Date(Date.now()-7*86400000).toISOString().slice(0,10);
+    const sevenDaysAgoDot=sevenDaysAgo.replace(/-/g,'.');
+    // N일 전 라벨 — 오늘이면 빈 문자열, 아니면 " · N일 전"
+    const _agoLabel=(d)=>{const diff=Math.round((new Date(today)-new Date(d))/86400000);return diff<=0?'':(currentLang==='ko'?` · ${diff}일 전`:` · ${diff}d ago`);};
     const [albumsAll,winsRes,mvRes,milesRes]=await Promise.all([
       _ensureRecentAlbums().catch(()=>[]),
       sb.from('music_show_wins').select('*').eq('win_date',today).order('show',{ascending:true}),
-      sb.from(_YT_TABLE).select('id,title,thumb,is_short,group_ko,content_flag')
-        .gte('published_at',today).lt('published_at',tomorrow)
+      sb.from(_YT_TABLE).select('id,title,thumb,is_short,group_ko,content_flag,published_at')
+        .gte('published_at',sevenDaysAgo).lt('published_at',tomorrow)
         .order('published_at',{ascending:false}).limit(50),
       sb.from('yt_view_milestones').select('*,yt_channel_videos!inner(title,thumb,group_ko,published_at)')
         .eq('crossed_at',today).eq('seeded',false).limit(300)
@@ -19129,9 +19133,10 @@ async function _buildFeedDailyNews(){
         .then(r=>r,()=>({data:[]}))
     ]);
     const items=[];
-    (Array.isArray(albumsAll)?albumsAll:[]).filter(a=>a.d===todayDot).forEach(a=>{
-      const sub=a.k==='g'?_gLabelKo(a.o):a.o;
-      items.push({type:'album',title:a.t,sub,thumb:a.c,nav:_albumCardNav(a)});
+    (Array.isArray(albumsAll)?albumsAll:[]).filter(a=>a.d>=sevenDaysAgoDot&&a.d<=todayDot).forEach(a=>{
+      const isoDate=a.d.replace(/\./g,'-');
+      const sub=(a.k==='g'?_gLabelKo(a.o):a.o)+_agoLabel(isoDate);
+      items.push({type:'album',title:a.t,sub,thumb:a.c,score:70-Math.round((new Date(today)-new Date(isoDate))/86400000)*2,nav:_albumCardNav(a)});
     });
     (winsRes.data||[]).forEach(w=>{
       const sub=_gLabelKo(w.group_ko)+(w.member_ko?` · ${w.member_ko}`:'')+` · ${w.show}`;
@@ -19145,7 +19150,9 @@ async function _buildFeedDailyNews(){
       const isMv=_isMusicVideoTitle(t);
       if(!isTeaser&&!isMv)return;
       const vidUrl=v.is_short?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;
-      items.push({type:isTeaser?'teaser':'mv',title:t,sub:_gLabelKo(v.group_ko),thumb:v.thumb,
+      const pubDate=(v.published_at||'').slice(0,10);
+      const mvScore=(isTeaser?50:80)-Math.round((new Date(today)-new Date(pubDate||today))/86400000)*2;
+      items.push({type:isTeaser?'teaser':'mv',title:t,sub:_gLabelKo(v.group_ko)+_agoLabel(pubDate),thumb:v.thumb,score:mvScore,
         nav:()=>openLightbox(vidUrl,!!v.is_short,null,0,{groupKo:v.group_ko},false,true)});
     });
     // 조회수 돌파 — **뉴스가 되는 것만**(2026-09-28, 사용자: "N 돌파 너무 많다"). 하루 수십 건 중 대부분이 옛 영상의
@@ -23831,7 +23838,7 @@ _totopBtn.addEventListener('click',e=>{
            "오늘"이 유일한 필터라 데이터가 얇은 날은 짧거나 빈 채로 섹션 자체가 숨는다(정상 — 억지로
            채우지 않는다). 세 소스 다 "시간이 지나면 의미가 옅어지는" 성격이라 맨 위(기념일보다 먼저). -->
       <div class="feed-section" id="feed-dailynews-section" style="display:none">
-        <div class="feed-section-ttl">📰 Today's K-pop</div>
+        <div class="feed-section-ttl">📰 This Week's K-pop</div>
         <div id="feed-dailynews" class="feed-news-list"></div>
       </div>
       <div class="feed-section" id="feed-anniv-section" style="display:none">
