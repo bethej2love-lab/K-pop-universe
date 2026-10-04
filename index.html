@@ -19573,7 +19573,10 @@ const _surfCamOr=()=>[..._FANCAM_TITLE_ILIKE,..._FANCAM_EXTRA_ILIKE].map(w=>`tit
 // 실측으로 걸린 32건은 전부 쇼츠 홍보물이었고 진짜 직캠은 한 건도 안 걸렸다(2026-09-10).
 // ③ 예능 에피소드: "뚝섬한강공원 자원봉사페스티벌 직캠 여신 라잇썸 초원│ 노빠꾸탁재훈 시즌4 EP.45"
 //    처럼 제목에 "직캠" 낱말이 있어도 시즌+에피소드 구조면 예능 클립이지 팬캠이 아님(2026-09-26).
-const _FANCAM_PROMO_RE=/비하인드|보고서|메이킹|예고|티저|리액션|코멘터리|BEHIND|MAKING|TEASER|REACTION|COMMENTARY|시즌\s*\d+\s*EP\.?\s*\d+/i;
+// ④ 공항/생일기념 직캠: "생일기념 🐹직캠🎥 … [공항]" — 공연 직캠이 아닌 공항·팬미팅 촬영(2026-10-04).
+const _FANCAM_PROMO_RE=/비하인드|보고서|메이킹|예고|티저|리액션|코멘터리|BEHIND|MAKING|TEASER|REACTION|COMMENTARY|시즌\s*\d+\s*EP\.?\s*\d+|공항|생일\s*기념/i;
+// 무대 TOP에서 제외할 예능 에피소드 패턴 — 직캠 TOP은 _FANCAM_PROMO_RE가 처리, 무대 TOP은 이걸 쓴다(2026-10-04).
+const _STAGE_VARIETY_RE=/시즌\s*\d+\s*EP\.?\s*\d+/i;
 // 괄호 **밖**의 해시태그 토큰만 지운다.
 // ⚠️ "[#음중팔로우캠4K] TAEMIN …"처럼 대괄호 안의 #은 진짜 브랜드 태그다 — 통째로 #을 지우면
 //    음중 팔로우캠·최애직캠 계열이 전부 차트에서 사라진다.
@@ -20073,8 +20076,8 @@ async function _fetchStagePool(groupKos,fetchLimit,capPerGroup,sinceDate){
   if(sinceDate)q=q.gte('published_at',sinceDate); // 기간 축(2026-09-04)
   const{data,error}=await q.order('view_count',{ascending:false}).limit(fetchLimit);
   if(error||!data?.length)return[];
-  // 쇼츠 제외 — 무대 차트 공통 규칙(2026-09-10, 월간 무대 TOP 30 주석 참고).
-  return _capByGroup(_filterBannedVideos(data).filter(v=>!_isShortClip(v)),v=>v.group_ko,capPerGroup);
+  // 쇼츠 + 예능 에피소드(시즌N EP.N) 제외 — 예능은 _STAGE_VARIETY_RE로 판정(2026-10-04).
+  return _capByGroup(_filterBannedVideos(data).filter(v=>!_isShortClip(v)&&!_STAGE_VARIETY_RE.test(v.title||'')),v=>v.group_ko,capPerGroup);
 }
 // 3사 연말 시상식 무대(KBS 가요대축제·MBC 가요대제전·SBS 가요대전)와 SBS 여름 축제(가요대전 썸머)를
 // 제목 키워드로 모아 조회수 TOP 100 카드로 노출(2026-08-19, 사용자 요청 — "각 축제 모음도, 연말 무대
