@@ -7117,12 +7117,14 @@ function _openLbHalf(kind,data){
   _lbHalfEls=[];
   if(host){
     host.classList.add('lb-half');
+    host.classList.remove('bs-full'); // openMobSheet가 bs-full로 여는데, lb-half와 합쳐지면 꽉 찬 상태로 시작됨 — 반열림으로 시작하도록 제거
+    _sheetFull=false;
     _bringToFront(host);
     _lbHalfEls.push(host);
     // 스택 2겹이면 아래 시트도 같이 올려야 카드가 통째로 보인다
     const sheet=document.getElementById('mob-sheet');
     if(host.id==='mob-card-stack'&&sheet&&sheet.style.display!=='none'){
-      sheet.classList.add('lb-half');_bringToFront(sheet);_lbHalfEls.push(sheet);
+      sheet.classList.add('lb-half');sheet.classList.remove('bs-full');_bringToFront(sheet);_lbHalfEls.push(sheet);
       _bringToFront(host); // 스택이 시트보다 위여야 함
     }
   }
