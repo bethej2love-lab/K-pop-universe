@@ -20642,7 +20642,7 @@ function _buildFeedRandomConnection(list){
 }
 
 // 영상 발행 시각 상대표기(피드 공용) — New from Favorites·Trend 양쪽이 쓴다.
-//   1시간 미만 "방금" · 23시간까지 "N시간 전" · 하루 지나면 "어제" · 그 밖은 "N일 전"
+//   1시간 미만 "방금" · 23시간까지 "N시간 전" · 하루 지나면 "1일 전" · 그 밖은 "N일 전"
 // (2026-09-01 오늘 발행분만 시간 표기 → 2026-09-02 사용자 요청으로 경과 시간 기준으로 정리)
 // ⚠️ **달력 날짜가 아니라 실제 경과 시간**으로 판정한다. 예전엔 자정 기준 날짜 차이로 갈라서,
 //    밤 11시에 올라온 영상이 자정을 넘기는 순간 "2시간 전"에서 "어제"로 건너뛰었다 — 실제로는
@@ -20706,14 +20706,14 @@ function _fmtVidAgo(iso){
     // 시각(published_ts)이 없는 오늘 유입분 — "오늘"은 "N시간 전"과 어긋나 어색하다는 제보(2026-09-13).
     // 시각을 모르면 시간칩을 아예 안 단다(정확한 시각이 backfill되면 자동으로 "N시간 전"으로 뜬다).
     if(days<=0)return'';
-    if(days===1)return currentLang==='ko'?'어제':'yesterday';
+    if(days===1)return currentLang==='ko'?'1일 전':'1d ago';
     return currentLang==='ko'?`${days}일 전`:`${days}d ago`;
   }
   const now=Date.now();
   const h=Math.floor((now-then)/3600000);
   if(h<1)return currentLang==='ko'?'방금':'just now';
   if(h<24)return currentLang==='ko'?`${h}시간 전`:`${h}h ago`;
-  if(h<48)return currentLang==='ko'?'어제':'yesterday';
+  if(h<48)return currentLang==='ko'?'1일 전':'1d ago';
   const d=Math.floor(h/24);
   return currentLang==='ko'?`${d}일 전`:`${d}d ago`;
 }
