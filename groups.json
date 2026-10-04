@@ -254,6 +254,44 @@
             "isTitle": false
           }
         ]
+      },
+      {
+        "title": "What You Want (feat. Teezo Touchdown)",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273d0673e1ea402302f5d487060",
+        "releaseDate": "2025.08.22",
+        "trackCount": 1,
+        "titleTrack": "What You Want (feat. Teezo Touchdown)",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "What You Want (feat. Teezo Touchdown)",
+            "isTitle": true
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "0YoNZBlXu7clpO3QcBrldX",
+        "copyright": "© 2025 BIGHIT MUSIC"
+      },
+      {
+        "title": "What You Want",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273c99e4b439fcb318678a9a1a6",
+        "releaseDate": "2025.08.18",
+        "trackCount": 1,
+        "titleTrack": "What You Want",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "What You Want",
+            "isTitle": true
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "6HQEHkwhLmwN0VTJSWgOgE",
+        "copyright": "© 2025 BIGHIT MUSIC"
       }
     ],
     "pri": 4,
@@ -2703,6 +2741,25 @@
             "isTitle": false
           }
         ]
+      },
+      {
+        "title": "I DO ME",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b2739e9ac9734925e3891401d91d",
+        "releaseDate": "2025.02.24",
+        "trackCount": 1,
+        "titleTrack": "I DO ME",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "I DO ME",
+            "isTitle": true
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "66zYzKVkt1U0VCRi94Ek0x",
+        "copyright": "2025 STARSHIP Entertainment,under license to Kakao Entertainment"
       }
     ],
     "pri": 4,
@@ -4021,6 +4078,30 @@
         "melonAlbumId": "11372139"
       },
       {
+        "title": "MY DEMON, Pt. 1 (Original Soundtrack)",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b2732607d28cb8c311349c815cc0",
+        "releaseDate": "2023.11.24",
+        "trackCount": 2,
+        "titleTrack": null,
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Our Night is more beautiful than your Day",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "Our Night is more beautiful than your Day (Instrumental)",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "51uMPxMLefUHXEgkNdpxc0",
+        "copyright": "2023 Studio S Co.,Ltd under licence to Genie Music Corporation"
+      },
+      {
         "title": "2023 리그 오브 레전드 월드 챔피언십 주제곡",
         "type": "OST",
         "isMain": false,
@@ -4055,6 +4136,25 @@
         ],
         "src": "melon",
         "melonAlbumId": "11318018"
+      },
+      {
+        "title": "A Time Called You (Original Soundtrack from the Netflix Series)",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b2738745052bd0875c90d9c0c8bb",
+        "releaseDate": "2023.09.01",
+        "trackCount": 1,
+        "titleTrack": "Beautiful Restriction",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Beautiful Restriction",
+            "isTitle": true
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "5qHH0SHWf5yQxG4yqHnIzY",
+        "copyright": "2023 Netflix"
       },
       {
         "title": "Get Up",
@@ -4096,6 +4196,74 @@
             "isTitle": false
           }
         ]
+      },
+      {
+        "title": "NewJeans 2nd EP 'Get Up'",
+        "type": "미니",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b2730744690248ef3ba7b776ea7b",
+        "releaseDate": "2023.07.21",
+        "trackCount": 6,
+        "titleTrack": null,
+        "tracks": [
+          {
+            "no": 1,
+            "title": "New Jeans",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "Super Shy",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "ETA",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Cool With You",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Get Up",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "ASAP",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "4N1fROq2oeyLGAlQ1C1j18",
+        "copyright": "© 2023 ADOR Co., Ltd."
+      },
+      {
+        "title": "NewJeans 'Super Shy'",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b2733d98a0ae7c78a3a9babaf8af",
+        "releaseDate": "2023.07.07",
+        "trackCount": 2,
+        "titleTrack": null,
+        "tracks": [
+          {
+            "no": 1,
+            "title": "New Jeans",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "Super Shy",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "5V729UqvhwNOcMejx0m55I",
+        "copyright": "© 2023 ADOR Co., Ltd."
       },
       {
         "title": "Zero (J.I.D Remix)",
@@ -4154,6 +4322,30 @@
             "isTitle": true
           }
         ]
+      },
+      {
+        "title": "NewJeans 'OMG'",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273d70036292d54f29e8b68ec01",
+        "releaseDate": "2023.01.02",
+        "trackCount": 2,
+        "titleTrack": null,
+        "tracks": [
+          {
+            "no": 1,
+            "title": "OMG",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "Ditto",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "45ozep8uHHnj5CCittuyXj",
+        "copyright": "© 2023 ADOR Co., Ltd."
       },
       {
         "title": "New Jeans",
@@ -4793,6 +4985,35 @@
         ],
         "src": "melon",
         "melonAlbumId": "11389051"
+      },
+      {
+        "title": "God of Light Music",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b2737994bb03ec228dde677a37b3",
+        "releaseDate": "2023.12.25",
+        "trackCount": 3,
+        "titleTrack": "God of Light Music",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "God of Light Music",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "God of Music (Trot Remix)",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "God of Light Music (Inst.)",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "2tVPLB5F9IsgPn4mvLQ7RJ",
+        "copyright": "© 2023 PLEDIS Entertainment"
       },
       {
         "title": "SEVENTEENTH HEAVEN",
@@ -7124,6 +7345,30 @@
         ]
       },
       {
+        "title": "FEIFEI",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273211dd4f1141b597f5f1c2ac9",
+        "releaseDate": "2024.07.31",
+        "trackCount": 2,
+        "titleTrack": "FEIFEI",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "FEIFEI",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "FEIFEI - Instrumental",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "3iM9IcCKlZrTtvjgKvbtBW",
+        "copyright": "2024 I ONE Entertainment"
+      },
+      {
         "title": "Fe3O4:BREAK",
         "type": "미니 2집",
         "isMain": true,
@@ -7201,6 +7446,25 @@
         ]
       },
       {
+        "title": "Roller Coaster",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b2732267918182f5ebbbf2828a98",
+        "releaseDate": "2023.07.03",
+        "trackCount": 1,
+        "titleTrack": "Roller Coaster",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Roller Coaster",
+            "isTitle": true
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "7AShWpCGBxsv3XMxXI3geX",
+        "copyright": "2023 JYP Entertainment"
+      },
+      {
         "title": "expérgo",
         "type": "미니 1집",
         "isMain": true,
@@ -7240,6 +7504,25 @@
             "isTitle": false
           }
         ]
+      },
+      {
+        "title": "Young, Dumb, Stupid",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273335510c423df5f2eafa84c2b",
+        "releaseDate": "2023.03.12",
+        "trackCount": 1,
+        "titleTrack": "Young, Dumb, Stupid",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Young, Dumb, Stupid",
+            "isTitle": true
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "56oDXOvFPVFqDq6k576Y18",
+        "copyright": "2023 JYP Entertainment"
       },
       {
         "title": "1st Intermixxion Single <Funky Glitter Christmas>",
@@ -7966,6 +8249,80 @@
         "melonAlbumId": "11665879"
       },
       {
+        "title": "HOP",
+        "type": "정규",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b27318dcf7871c4c0a16c56cbe3b",
+        "releaseDate": "2024.12.13",
+        "trackCount": 12,
+        "titleTrack": null,
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Walkin On Water",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "Bounce Back",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "U (Feat. TABLO)",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Walkin On Water (HIP Ver.)",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Railway (방찬) Railway (Bang Chan)",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "Unfair (필릭스) Unfair (Felix)",
+            "isTitle": false
+          },
+          {
+            "no": 7,
+            "title": "HALLUCINATION (아이엔) HALLUCINATION (I.N)",
+            "isTitle": false
+          },
+          {
+            "no": 8,
+            "title": "Youth (리노) Youth (Lee Know)",
+            "isTitle": false
+          },
+          {
+            "no": 9,
+            "title": "So Good (현진) So Good (Hyunjin)",
+            "isTitle": false
+          },
+          {
+            "no": 10,
+            "title": "ULTRA (창빈) ULTRA (Changbin)",
+            "isTitle": false
+          },
+          {
+            "no": 11,
+            "title": "Hold my hand (한) Hold my hand (HAN)",
+            "isTitle": false
+          },
+          {
+            "no": 12,
+            "title": "그렇게, 천천히, 우리 (승민) As we are (Seungmin)",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "5Xbf2qpOjnQmRkDyVGq4O8",
+        "copyright": "2024 JYP Entertainment"
+      },
+      {
         "title": "GIANT",
         "type": "정규",
         "isMain": true,
@@ -8369,6 +8726,60 @@
         "melonAlbumId": "11362594"
       },
       {
+        "title": "ROCK-STAR",
+        "type": "정규",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273b2766e740a3f6a4562a229ff",
+        "releaseDate": "2023.11.10",
+        "trackCount": 8,
+        "titleTrack": null,
+        "tracks": [
+          {
+            "no": 1,
+            "title": "MEGAVERSE",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "락 (樂) LALALALA",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "사각지대 BLIND SPOT",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "COMFLEX",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "가려줘 Cover Me",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "Leave",
+            "isTitle": false
+          },
+          {
+            "no": 7,
+            "title": "Social Path (Feat. LiSA) - Korean",
+            "isTitle": false
+          },
+          {
+            "no": 8,
+            "title": "락 (樂) (Rock Ver.) LALALALA (Rock Ver.)",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "4oM4SqWZutOJTC288qzKjr",
+        "copyright": "2023 JYP Entertainment"
+      },
+      {
         "title": "Social Path (feat. LiSA) / Super Bowl -Japanese ver.-",
         "type": "미니",
         "isMain": true,
@@ -8477,6 +8888,80 @@
             "isTitle": false
           }
         ]
+      },
+      {
+        "title": "5-STAR",
+        "type": "정규",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273f50dce3e166b3b248e1ba983",
+        "releaseDate": "2023.06.02",
+        "trackCount": 12,
+        "titleTrack": null,
+        "tracks": [
+          {
+            "no": 1,
+            "title": "위인전 Hall of Fame",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "특 S-Class",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "ITEM",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Super Bowl",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "TOPLINE",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "DLC",
+            "isTitle": false
+          },
+          {
+            "no": 7,
+            "title": "죽어보자 GET LIT",
+            "isTitle": false
+          },
+          {
+            "no": 8,
+            "title": "충돌 Collision",
+            "isTitle": false
+          },
+          {
+            "no": 9,
+            "title": "FNF",
+            "isTitle": false
+          },
+          {
+            "no": 10,
+            "title": "Youtiful",
+            "isTitle": false
+          },
+          {
+            "no": 11,
+            "title": "THE SOUND - Korean",
+            "isTitle": false
+          },
+          {
+            "no": 12,
+            "title": "Time Out Mixtape : Time Out",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "4lbEN1l4OJOm7iWlqevb67",
+        "copyright": "2023 JYP Entertainment"
       },
       {
         "title": "THE SOUND",
@@ -13100,6 +13585,25 @@
         "region": "cn"
       },
       {
+        "title": "HIGH FIVE",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b2732fe73a070ca9471270b87633",
+        "releaseDate": "2024.11.19",
+        "trackCount": 1,
+        "titleTrack": "HIGH FIVE",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "HIGH FIVE",
+            "isTitle": true
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "3qXcP38yQQay5WeyoK2bd7",
+        "copyright": "2024 SM Entertainment, LABEL V"
+      },
+      {
         "title": "The Highest",
         "type": "미니",
         "isMain": true,
@@ -13655,6 +14159,26 @@
     },
     "discography": [
       {
+        "title": "hey! hey! (Chinese ver.)",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273f18c6c8c8363776716d79e29",
+        "releaseDate": "2026.09.21",
+        "trackCount": 1,
+        "titleTrack": "hey! hey! - Chinese ver.",
+        "region": "cn",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "hey! hey! - Chinese ver.",
+            "isTitle": true
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "3SWO6YZCCDD6whU109BteP",
+        "copyright": "© 2026 PLEDIS Entertainment"
+      },
+      {
         "title": "SODA SODA",
         "type": "싱글",
         "isMain": true,
@@ -14113,6 +14637,25 @@
             "isTitle": false
           }
         ]
+      },
+      {
+        "title": "Oh Mymy : 7s",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b2733904f48d9f39b3ee4dbea88f",
+        "releaseDate": "2024.01.02",
+        "trackCount": 1,
+        "titleTrack": "Oh Mymy : 7s",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Oh Mymy : 7s",
+            "isTitle": true
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "4JxcTD9gDjCRbZPhDVoD40",
+        "copyright": "© 2024 PLEDIS Entertainment"
       }
     ],
     "pri": 4,
@@ -14372,6 +14915,30 @@
         "melonAlbumId": "12432134"
       },
       {
+        "title": "Princess Catch! Teenieping : Princeping Song (Original Soundtrack)",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273fe9a258b6fa488ddb62afeec",
+        "releaseDate": "2025.12.11",
+        "trackCount": 2,
+        "titleTrack": null,
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Princeping Song",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "Princeping Song - Instrumental",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "6W6ah2RXiWcY2okWjO0lpf",
+        "copyright": "2025 SAMG Entertainment under licence to Genie Music Corporation"
+      },
+      {
         "title": "Dreamcatcher",
         "type": "싱글",
         "isMain": true,
@@ -14412,6 +14979,30 @@
         ],
         "src": "melon",
         "melonAlbumId": "12164321"
+      },
+      {
+        "title": "Would You Marry Me?, Pt. 3 (Original Soundtrack)",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b27332b8ebb4d34c568b6d66b826",
+        "releaseDate": "2025.10.17",
+        "trackCount": 2,
+        "titleTrack": null,
+        "tracks": [
+          {
+            "no": 1,
+            "title": "If you love me let me know (Would You Marry Me? : Original Television Soundtrack)",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "If you love me let me know (Would You Marry Me? : Original Television Soundtrack) - Instrumental",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "7gi0kRiZQicfrD97qWyJv6",
+        "copyright": "2025 Studio S Co.,Ltd under licence to Genie Music Corporation"
       },
       {
         "title": "COLOR",
@@ -14458,6 +15049,25 @@
             "isTitle": false
           }
         ]
+      },
+      {
+        "title": "Surf",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b2730c3daaa8cea392771f8ab987",
+        "releaseDate": "2025.08.12",
+        "trackCount": 1,
+        "titleTrack": "Surf",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Surf",
+            "isTitle": true
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "5XC6zgE2x581zlkJdOxjsZ",
+        "copyright": "2025 SM Entertainment"
       },
       {
         "title": "poppop",
@@ -14664,6 +15274,30 @@
         "melonAlbumId": "11615204"
       },
       {
+        "title": "Pokémon | Make You Shine",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273e7223636c15b06c1711a0972",
+        "releaseDate": "2024.10.15",
+        "trackCount": 2,
+        "titleTrack": null,
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Make You Shine",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "Make You Shine - Instrumental",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "6DDyjcjzezPkC912QMkf6j",
+        "copyright": "2024 Pokémon Korea, Inc. under licence to Genie Music Corporation"
+      },
+      {
         "title": "Steady",
         "type": "미니 1집",
         "isMain": true,
@@ -14708,6 +15342,25 @@
             "isTitle": false
           }
         ]
+      },
+      {
+        "title": "Dunk Shot",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b27399c3dd28368fef0126f9a990",
+        "releaseDate": "2024.09.09",
+        "trackCount": 1,
+        "titleTrack": "Dunk Shot",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Dunk Shot",
+            "isTitle": true
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "4mC1EE9p4dHGws7cxoTZk4",
+        "copyright": "2024 SM Entertainment"
       },
       {
         "title": "Songbird",
@@ -15871,6 +16524,49 @@
         "melonAlbumId": "11503509"
       },
       {
+        "title": "Impossible",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273aaaa5e731ac13b961d02dc2f",
+        "releaseDate": "2024.04.18",
+        "trackCount": 2,
+        "titleTrack": "Impossible",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Impossible",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Siren",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "3oELknq4SW9vcfxyQh5sYb",
+        "copyright": "2024 SM Entertainment"
+      },
+      {
+        "title": "Siren",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273616e4eb4a85d64815adeb889",
+        "releaseDate": "2024.04.03",
+        "trackCount": 1,
+        "titleTrack": "Siren",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Siren",
+            "isTitle": true
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "5whOwELTMY3WN89Z1Ppz0G",
+        "copyright": "2024 SM Entertainment"
+      },
+      {
         "title": "Love 119 (Japanese Ver.)",
         "type": "싱글",
         "isMain": true,
@@ -16021,6 +16717,25 @@
             "isTitle": false
           }
         ]
+      },
+      {
+        "title": "Memories",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273de06b9790ac6c49ff680cf70",
+        "releaseDate": "2023.08.21",
+        "trackCount": 1,
+        "titleTrack": "Memories",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Memories",
+            "isTitle": true
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "6mYpshqw0Y8pQTT6iRX8s1",
+        "copyright": "2023 SM Entertainment"
       }
     ],
     "pri": 4,
