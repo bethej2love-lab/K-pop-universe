@@ -1773,10 +1773,15 @@
     "id": "7Lq3yAtwi0Z7zpxEwbQQNZ",
     "spotifyName": "VIVIZ",
     "kind": "group",
-    "confidence": "medium",
-    "why": "이름 유일 일치",
+    "confidence": "high",
+    "why": "이름 유일 일치 · 수집 전 검증 통과(겹침 1)",
     "evidence": {
-      "titleOverlap": null
+      "titleOverlap": null,
+      "verifyOverlap": 1,
+      "verifyYears": [
+        2025,
+        2024
+      ]
     },
     "checkedAt": "2026-09-15"
   },
@@ -4966,14 +4971,14 @@
     "id": "3KonOYiLsU53m4yT7gNotP",
     "spotifyName": "TREASURE",
     "kind": "group",
-    "confidence": "low",
-    "why": "동명 후보 2명 중 앨범 대조",
+    "confidence": "high",
+    "why": "동명 후보 2명 중 앨범 대조 · 수집 전 검증 통과(겹침 1)",
     "evidence": {
       "titleOverlap": 0,
-      "verifyOverlap": 0,
+      "verifyOverlap": 1,
       "verifyYears": [
-        2025,
-        2023
+        2026,
+        2025
       ]
     },
     "checkedAt": "2026-09-15"
