@@ -3013,10 +3013,15 @@
     "id": "3cjEqqelV9zb4BYE3qDQ4O",
     "spotifyName": "EXO",
     "kind": "group",
-    "confidence": "medium",
-    "why": "이름 유일 일치",
+    "confidence": "high",
+    "why": "이름 유일 일치 · 수집 전 검증 통과(겹침 1)",
     "evidence": {
-      "titleOverlap": null
+      "titleOverlap": null,
+      "verifyOverlap": 1,
+      "verifyYears": [
+        2026,
+        2023
+      ]
     },
     "checkedAt": "2026-09-15"
   },
@@ -4041,11 +4046,11 @@
     "id": "4e2umhzNHTSeQnSCWPN0uT",
     "spotifyName": "EPEX",
     "kind": "group",
-    "confidence": "medium",
-    "why": "이름 유일 일치",
+    "confidence": "high",
+    "why": "이름 유일 일치 · 수집 전 검증 통과(겹침 2)",
     "evidence": {
       "titleOverlap": null,
-      "verifyOverlap": 0,
+      "verifyOverlap": 2,
       "verifyYears": [
         2026,
         2025
