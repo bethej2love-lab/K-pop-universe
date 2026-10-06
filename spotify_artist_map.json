@@ -991,10 +991,15 @@
     "id": "3g34PW5oNmDBxMVUTzx2XK",
     "spotifyName": "Lovelyz",
     "kind": "group",
-    "confidence": "medium",
-    "why": "이름 유일 일치",
+    "confidence": "high",
+    "why": "이름 유일 일치 · 수집 전 검증 통과(겹침 1)",
     "evidence": {
-      "titleOverlap": null
+      "titleOverlap": null,
+      "verifyOverlap": 1,
+      "verifyYears": [
+        2024,
+        2020
+      ]
     },
     "checkedAt": "2026-09-15"
   },
@@ -4214,6 +4219,17 @@
     },
     "checkedAt": "2026-10-01"
   },
+  "저스트비": {
+    "id": "2f0bPttugNpkg34HIxBIWe",
+    "spotifyName": "JUSTB",
+    "kind": "group",
+    "confidence": "high",
+    "why": "동명 후보 2명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 5
+    },
+    "checkedAt": "2026-10-06"
+  },
   "전은미": {
     "id": "2jc3bBIKdaAFZnnQBCLLmh",
     "spotifyName": "김정은",
@@ -4719,11 +4735,11 @@
     "id": "0XufO9nLOKNN0w0qNrDrZy",
     "spotifyName": "QWER",
     "kind": "group",
-    "confidence": "low",
-    "why": "동명 후보 3명 중 앨범 대조",
+    "confidence": "high",
+    "why": "동명 후보 3명 중 앨범 대조 · 수집 전 검증 통과(겹침 2)",
     "evidence": {
       "titleOverlap": 0,
-      "verifyOverlap": 0,
+      "verifyOverlap": 2,
       "verifyYears": [
         2026,
         2025
@@ -5100,6 +5116,17 @@
       ]
     },
     "checkedAt": "2026-09-19"
+  },
+  "판타지보이즈": {
+    "id": "4IAcb0MN1CCHpwUaq5iEUU",
+    "spotifyName": "FANTASY BOYS",
+    "kind": "group",
+    "confidence": "high",
+    "why": "동명 후보 2명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 3
+    },
+    "checkedAt": "2026-10-06"
   },
   "펜타곤": {
     "id": "1wKpMkucynaTfG8lyPprYV",
