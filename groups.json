@@ -78034,6 +78034,25 @@
         "melonAlbumId": "11546516"
       },
       {
+        "title": "Hello",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273be2af5b456143f9ba3d3cdc6",
+        "releaseDate": "2024.07.16",
+        "trackCount": 1,
+        "titleTrack": "Hello",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Hello",
+            "isTitle": true
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "3c10yfkPgxyiB3r8m0DPlT",
+        "copyright": "2024 RBW Inc.,under license to Kakao Entertainment"
+      },
+      {
         "title": "MOVE AGAIN (Japan Edition)",
         "type": "싱글",
         "isMain": true,
@@ -87269,6 +87288,45 @@
       "namu": "https://namu.wiki/w/ALLDAY%20PROJECT"
     },
     "discography": [
+      {
+        "title": "CRASH",
+        "type": "미니",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b2730be29921b44bffabaa059c3f",
+        "releaseDate": "2026.09.28",
+        "trackCount": 5,
+        "titleTrack": "CRASH",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "TALK",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "CRASH",
+            "isTitle": true
+          },
+          {
+            "no": 3,
+            "title": "DO IT LIKE THIS",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "NO LIMIT",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "UP ALL NIGHT",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "2aYxa2gszF0aAZI8adt7oI",
+        "copyright": "2026 THEBLACKLABEL"
+      },
       {
         "title": "I DON'T BARGAIN",
         "type": "싱글",
@@ -97583,6 +97641,49 @@
     },
     "discography": [
       {
+        "title": "너란 섬",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273d5d6e4885d16989795bac857",
+        "releaseDate": "2026.10.02",
+        "trackCount": 2,
+        "titleTrack": "너란 섬",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "너란 섬",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "너란 섬 - Instrumental",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "1t4GxqmW8ekvATIxR10QLA",
+        "copyright": "2026 RIAK"
+      },
+      {
+        "title": "Like The First Day",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b2733808b500b9062a42a4e30e53",
+        "releaseDate": "2026.09.30",
+        "trackCount": 1,
+        "titleTrack": "Like The First Day",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Like The First Day",
+            "isTitle": true
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "2RHMzN71sHSMoPGjJ8ryJs",
+        "copyright": "2026 NONUNI ENTERTAINMENT under licence to Genie Music Corporation"
+      },
+      {
         "title": "Lemonade",
         "type": "싱글",
         "isMain": true,
@@ -97952,6 +98053,30 @@
         "melonAlbumId": "11439992"
       },
       {
+        "title": "The rose of Versailles (Original Soundtrack from the Webtoon The Siren : Becoming the Villain's Family)",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b27371532015c8437310d5a516e6",
+        "releaseDate": "2024.03.14",
+        "trackCount": 2,
+        "titleTrack": "The rose of Versailles (Original Soundtrack from the Webtoon The Siren : Becoming the Villain's Family)",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "The rose of Versailles (Original Soundtrack from the Webtoon The Siren : Becoming the Villain's Family)",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "The rose of Versailles (Original Soundtrack from the Webtoon The Siren : Becoming the Villain's Family) - Instrumental",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "4WQJRte55LW59HJTanmH5V",
+        "copyright": "2024 TOON STUDIO under licence to Genie Music Corporation"
+      },
+      {
         "title": "마중 (2023) (낮에 뜨는 달 X FTISLAND (FT아일랜드))",
         "type": "싱글",
         "isMain": true,
@@ -97973,6 +98098,30 @@
         ]
       },
       {
+        "title": "Meeting (The Moon during the Day) [2023 Remake]",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273498d7d4109bcaff0faec429d",
+        "releaseDate": "2023.12.10",
+        "trackCount": 2,
+        "titleTrack": "Meeting (The Moon during the Day) [2023 Remake]",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Meeting (The Moon during the Day) [2023 Remake]",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Meeting (The Moon during the Day) [2023 Remake] - Instrumental",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "6nJUKPcAwwAnogj2e4DW0g",
+        "copyright": "© 2023 TOON STUDIO"
+      },
+      {
         "title": "사랑하는 법을 몰라서 (2023)",
         "type": "싱글",
         "isMain": true,
@@ -97992,6 +98141,30 @@
             "isTitle": false
           }
         ]
+      },
+      {
+        "title": "Because I Don't Know How to Love (2023)",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b2735b746d4afc4eab7401a00571",
+        "releaseDate": "2023.10.27",
+        "trackCount": 2,
+        "titleTrack": "Because I Don't Know How to Love (2023)",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Because I Don't Know How to Love (2023)",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Because I Don't Know How to Love (2023) (Inst.)",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "6O6MPet3yYqVgUXcJCTpfP",
+        "copyright": "2023 BHGW, TOON STUDIO,under license to Kakao Entertainment"
       },
       {
         "title": "F-R-I-E-N-DS",
@@ -104829,6 +105002,30 @@
         "spotifyId": "3Jgic38bRcv9eiunNaxv3z"
       },
       {
+        "title": "Doctor Slump (Original Television Soundtrack) Pt.5",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273b91ca4da403338b68941d638",
+        "releaseDate": "2024.03.02",
+        "trackCount": 2,
+        "titleTrack": null,
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Love Is",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "Love Is - Instrumental",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "3qXqCqUZNEumobtfNL3Wcv",
+        "copyright": "2024 SLL"
+      },
+      {
         "title": "Sequence",
         "type": "싱글",
         "isMain": true,
@@ -106511,6 +106708,40 @@
         ]
       },
       {
+        "title": "H1-KEY 3rd Mini Album [LOVE or HATE]",
+        "type": "미니",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b2732eae1ee8ebed17bbc7029df7",
+        "releaseDate": "2024.06.19",
+        "trackCount": 4,
+        "titleTrack": null,
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Let It Burn",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "♥ Letter",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "Iconic",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Rainfalls",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "6SCL9tVHIBgOyr4GIRPFfN",
+        "copyright": "(P) 2024 GLG"
+      },
+      {
         "title": "H1-KEYnote #2 [기뻐] (Deeper)",
         "type": "싱글",
         "isMain": true,
@@ -106603,6 +106834,74 @@
         ]
       },
       {
+        "title": "H1-KEY 2nd Mini Album [Seoul Dreaming]",
+        "type": "정규",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b2735d7a6b4c5cc648ba4423dd8e",
+        "releaseDate": "2023.08.30",
+        "trackCount": 7,
+        "titleTrack": null,
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Intro : Seoul Dreaming",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "SEOUL (Such a Beautiful City)",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "Time to Shine",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Low-key Scared But H1-KEY Ready",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Magical Dream",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "SEOUL (Such a Beautiful City) - Instrumental",
+            "isTitle": false
+          },
+          {
+            "no": 7,
+            "title": "Time to Shine - Instrumental",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "1J2t0ySjwCZNGelpARbw3d",
+        "copyright": "(P) 2023 GLG"
+      },
+      {
+        "title": "Time to Shine",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b2737d3f83f00a95e083d55749d0",
+        "releaseDate": "2023.08.23",
+        "trackCount": 1,
+        "titleTrack": "Time to Shine",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Time to Shine",
+            "isTitle": true
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "6Smoxllzq1IoD6J11YAEb3",
+        "copyright": "(P) 2023 GLG"
+      },
+      {
         "title": "패밀리 OST Part 1",
         "type": "OST",
         "isMain": false,
@@ -106624,6 +106923,30 @@
         ],
         "src": "melon",
         "melonAlbumId": "11224510"
+      },
+      {
+        "title": "Family, Pt. 1 (Original Television Soundtrack)",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273862b7b36989a3e3f2a9661d2",
+        "releaseDate": "2023.04.18",
+        "trackCount": 2,
+        "titleTrack": null,
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Danger",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "Danger - Instrumental",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "3UuCYFcC1896HqIgX6icXW",
+        "copyright": "2023 Stone Music Entertainment"
       },
       {
         "title": "Rose Blossom",
@@ -106670,6 +106993,55 @@
             "isTitle": false
           }
         ]
+      },
+      {
+        "title": "H1-KEY 1st Mini Album [Rose Blossom]",
+        "type": "정규",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b27396ee3a02b72db60d065f1dd4",
+        "releaseDate": "2023.01.05",
+        "trackCount": 7,
+        "titleTrack": null,
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Ring the Alarm",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "Rose Blossom",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "Crown Jewel (feat. Tachaya)",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "You Are My Key (for M1-KEY)",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Dream Trip",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "Rose Blossom - Instrumental",
+            "isTitle": false
+          },
+          {
+            "no": 7,
+            "title": "ATHLETIC GIRL (2023 Remaster)",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "6SiQfUj2qhO7kg66BwvY9L",
+        "copyright": "(P) 2022 GLG"
       },
       {
         "title": "RUN",
@@ -106760,6 +107132,30 @@
       "namu": "https://namu.wiki/w/FIFTY%20FIFTY"
     },
     "discography": [
+      {
+        "title": "Called it Love (Serena X FIFTY FIFTY) (Original Webtoon Soundtrack)",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273db2137fc276081ab38b5ffa4",
+        "releaseDate": "2026.09.18",
+        "trackCount": 2,
+        "titleTrack": "Called it Love",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Called it Love",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Called it Love - Instrumental",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "4NgQBVMTPo91vUnpgPKxyu",
+        "copyright": "2026 ㈜뮤직앤뉴"
+      },
       {
         "title": "See You At Work Tomorrow! (Original Television Soundtrack), Pt. 1",
         "type": "정규",
@@ -107221,6 +107617,25 @@
         ]
       },
       {
+        "title": "Starry Night",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273978b8ed73154a4d73ea1a3b5",
+        "releaseDate": "2024.08.30",
+        "trackCount": 1,
+        "titleTrack": "Starry Night",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Starry Night",
+            "isTitle": true
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "78apBBu1uPlG87Da0InFhr",
+        "copyright": "(P) 2024 ATTRAKT Distributed by Sony Music Entertainment Korea Inc."
+      },
+      {
         "title": "The Beginning",
         "type": "미니",
         "isMain": true,
@@ -107301,6 +107716,44 @@
             "isTitle": true
           }
         ]
+      },
+      {
+        "title": "Cupid – Twin Ver. (feat. Sabrina Carpenter)",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273835d9603d8b4feffae5f1d68",
+        "releaseDate": "2023.08.18",
+        "trackCount": 1,
+        "titleTrack": "Cupid – Twin Ver. (feat. Sabrina Carpenter)",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Cupid – Twin Ver. (feat. Sabrina Carpenter)",
+            "isTitle": true
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "78cUZ3f7KXyEIPVTD3WsDp",
+        "copyright": "© 2023 ATTRAKT under exclusive license to Warner Music Korea"
+      },
+      {
+        "title": "Barbie Dreams (feat. Kaliii) [From Barbie The Album]",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273aeefb16d3425c37fc15df75b",
+        "releaseDate": "2023.07.06",
+        "trackCount": 1,
+        "titleTrack": "Barbie Dreams (feat. Kaliii) [From Barbie The Album]",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Barbie Dreams (feat. Kaliii) [From Barbie The Album]",
+            "isTitle": true
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "5x9fQvlmhZqWoifJs9dVVL",
+        "copyright": "© 2023 Atlantic Recording Corporation, Warner Bros. Entertainment, Inc. & Mattel, Inc."
       },
       {
         "title": "Cupid – Twin Ver. (Snack)",

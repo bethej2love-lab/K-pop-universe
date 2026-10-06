@@ -4615,10 +4615,15 @@
     "id": "7aZ221EQfonNG2lO9Hh192",
     "spotifyName": "KARA",
     "kind": "group",
-    "confidence": "medium",
-    "why": "이름 유일 일치",
+    "confidence": "high",
+    "why": "이름 유일 일치 · 수집 전 검증 통과(겹침 1)",
     "evidence": {
-      "titleOverlap": null
+      "titleOverlap": null,
+      "verifyOverlap": 1,
+      "verifyYears": [
+        2024,
+        2022
+      ]
     },
     "checkedAt": "2026-09-15"
   },
