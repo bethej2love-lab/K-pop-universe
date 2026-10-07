@@ -213,6 +213,7 @@
       <div class="row" id="gc-fandom-row" style="display:none"><span class="lbl" data-i18n="gcFandom">팬덤</span><span class="val" id="gc-fandom"></span></div>
       <div class="row" id="gc-leader-row" style="display:none"><span class="lbl" data-i18n="gcLeader">리더</span><span class="val" id="gc-leader"></span></div>
       <div class="row" id="gc-mem-row"><span class="lbl" id="gc-mem-label" data-i18n="gcMember">멤버</span><span class="val" id="gc-mem-list"></span></div>
+      <div class="row" id="gc-unit-row" style="display:none"><span class="lbl">유닛</span><span class="val" id="gc-unit-list"></span></div>
     </div>
     <div id="gc-discog-row" class="gc-discog-row" style="display:none">
       <div class="gc-discog-hd">
@@ -12597,6 +12598,22 @@ function showGC(ko,cx,cy,keepMemberPanel,skipRipple,urlMode,_unusedPushMobNav){
   });
   if(regularPts)regularPts.geometry.attributes.position.needsUpdate=true;
   _renderGcMemberList(ko,cx,cy);
+  {
+    const unitRow=document.getElementById('gc-unit-row');
+    const unitList=document.getElementById('gc-unit-list');
+    if(unitRow&&unitList){
+      const units=Object.entries(_PROJECT_UNITS).filter(([,u])=>u.members.some(m=>m.gko===ko));
+      unitList.innerHTML='';
+      units.forEach(([name],i)=>{
+        if(i>0){const sep=document.createElement('span');sep.textContent=' · ';sep.style.cssText='color:rgba(150,170,210,0.45);pointer-events:none;';unitList.appendChild(sep);}
+        const chip=document.createElement('span');chip.className='tg-unit';chip.textContent=name;
+        chip.style.cursor='pointer';
+        chip.addEventListener('click',e=>{e.stopPropagation();const mem=(_PROJECT_UNITS[name]?.members||[]).find(m=>m.gko===ko);const artist=mem?ARTISTS.find(a=>a.name.ko===mem.mko&&a.group.ko===mem.gko):null;if(artist)openConnCard(artist);});
+        unitList.appendChild(chip);
+      });
+      unitRow.style.display=units.length?'':'none';
+    }
+  }
   _renderGcDiscography(ko);
   _buildGcChVid(ko);
   _loadConcertRow(ko,'gc-concert-row');
@@ -22398,7 +22415,8 @@ function _makeChVidController(contId){
     // ⚠️ 값은 'live' 그대로다 — DB category 값이라 바꾸면 수십 개 쿼리와 마이그레이션이 따라온다.
     //    바뀐 건 화면에 찍히는 라벨뿐이고, 이 줄이 그 **유일한 정의 자리**다(i18n 테이블에도 없음).
     // ⚠️ 차트(무대 TOP 등)는 여전히 방송 무대만 본다 — _applyLiveExclude 주석 참고.
-    let catTabs=memberKo?[['all','All'],['live','Performance'],['cover','Cover'],['short','Shorts'],['variety','Variety'],['show','Show']]:[['all','All'],['mv','MV'],['live','Performance'],['cover','Cover'],['short','Shorts'],['variety','Variety'],['show','Show']];
+    const _ko=currentLang==='ko';
+    let catTabs=memberKo?[['all',_ko?'전체':'All'],['live',_ko?'무대':'Performance'],['cover',_ko?'커버':'Cover'],['short',_ko?'쇼츠':'Shorts'],['variety',_ko?'예능':'Variety'],['show',_ko?'드라마':'Show']]:[['all',_ko?'전체':'All'],['mv','MV'],['live',_ko?'무대':'Performance'],['cover',_ko?'커버':'Cover'],['short',_ko?'쇼츠':'Shorts'],['variety',_ko?'예능':'Variety'],['show',_ko?'드라마':'Show']];
     // "by Fan" 탭(2026-08-10, 사용자 요청) — 팬이 직접 찍거나 만든 영상 전용. 아직은 어떤 그룹도 팬채널을
     // 등록 안 해서 category='fan'인 행이 하나도 없지만(추후 사용자가 그룹별로 팬채널 링크를 주면 그
     // 채널 동기화 시 category='fan'으로 저장할 예정), 미리 이 자리를 만들어둠. 팬덤명을 알면 "by {영문
@@ -23813,7 +23831,7 @@ _totopBtn.addEventListener('click',e=>{
       <!-- 라벨을 span으로 감싸는 이유: 밑줄(활성 표시)이 **버튼 폭이 아니라 글자 폭**에 맞아야 X처럼
            보인다. 버튼은 반반을 차지하고, 밑줄은 그 안의 글자 밑에만 깔린다(2026-08-31 사용자 요청). -->
       <button id="feed-tab-rec" class="feed-tab active" type="button"><span>✨ For You</span></button>
-      <button id="feed-tab-disc" class="feed-tab" type="button"><span>🧭 Discover</span></button>
+      <button id="feed-tab-disc" class="feed-tab" type="button"><span>🧭 탐색</span></button>
     </div>
     <!-- For You = "나": 즐겨찾기 신작 → 이어보기 (2026-08-30 재배치. Trend는 "전체·탐색"이라 Discover로 이동). -->
     <div id="feed-pane-rec" class="feed-pane">
@@ -23878,7 +23896,7 @@ _totopBtn.addEventListener('click',e=>{
         <div id="feed-trend" class="feed-grid"></div>
       </div>
       <div class="feed-section">
-        <div class="feed-section-ttl">✨ Discovery</div>
+        <div class="feed-section-ttl">✨ 추천</div>
         <div id="feed-discovery" class="feed-grid"></div>
       </div>
       <div id="feed-empty-disc" class="feed-empty" hidden><div class="feed-empty-txt"></div><button class="feed-empty-retry" type="button"></button></div>
