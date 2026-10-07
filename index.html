@@ -14442,10 +14442,11 @@ function _createCollection(name,kind){
 function _openCardMenu(btn,ctx){
   document.getElementById('card-menu-pop')?.remove();
   const pop=document.createElement('div');pop.id='card-menu-pop';
-  pop.style.cssText='position:fixed;z-index:135;background:rgba(20,25,44,0.98);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:0.5px solid rgba(255,255,255,0.12);border-radius:12px;box-shadow:0 8px 28px rgba(0,0,0,0.5);padding:5px;min-width:190px;';
+  pop.style.cssText='position:fixed;background:rgba(20,25,44,0.98);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:0.5px solid rgba(255,255,255,0.12);border-radius:12px;box-shadow:0 8px 28px rgba(0,0,0,0.5);padding:5px;min-width:190px;';
   const item=(label,onClick)=>{const b=document.createElement('button');b.textContent=label;b.style.cssText='display:block;width:100%;text-align:left;background:none;border:none;color:#e6edff;font-family:inherit;font-size:13px;padding:10px 12px;border-radius:8px;cursor:pointer;white-space:nowrap;';b.addEventListener('click',e=>{e.stopPropagation();pop.remove();onClick();});pop.appendChild(b);};
   item(currentLang==='ko'?'+ 사진 컬렉션 만들기':'+ New photo collection',()=>_createPhotoColFromCard(ctx));
   document.body.appendChild(pop);
+  _bringToFront(pop);
   const r=btn.getBoundingClientRect();
   pop.style.top=(r.bottom+6)+'px';
   pop.style.right=Math.max(8,window.innerWidth-r.right)+'px';

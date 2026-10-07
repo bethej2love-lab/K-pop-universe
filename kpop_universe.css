@@ -2686,6 +2686,8 @@
   /* 별자리 글리프(디자인리뷰 Q2) — 카드 헤더 이름 왼쪽. 빈 span(글리프 없음)이면 자리·여백 0. */
   .card-glyph{display:inline-flex;align-items:center;justify-content:center;vertical-align:middle;margin-right:7px;flex-shrink:0;opacity:0.92;}
   .card-glyph:empty{display:none;margin:0;}
+  /* 이름 행 안에서는 gap이 이미 여백을 만들므로 glyph의 margin-right를 제거해 이중여백 방지 */
+  #tt-name-row .card-glyph,#gc-name-row .card-glyph{margin-right:0;}
   .gc-collection-chip-thumb-wrap{position:relative;width:74px;height:74px;border-radius:8px;overflow:hidden;background:rgba(255,255,255,0.06);}
   .gc-collection-chip-thumb{width:100%;height:100%;object-fit:cover;display:block;}
   .gc-collection-quad{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:1.5px;width:100%;height:100%;}
@@ -2913,6 +2915,8 @@
     #tt-name-row .card-menu-btn,#gc-name-row .card-menu-btn{padding:6px 6px;}
     .fav-btn+.trophy-btn,.trophy-btn+.trophy-btn,.fav-btn+.share-btn,.trophy-btn+.share-btn{margin-left:-2px;}
     .share-btn+.card-menu-btn{margin-left:0;}
+    /* 멤버 카드(tt-name-row) 버튼 수직 보정값 리셋 — 모바일에선 패딩이 커서 -1.5px 보정이 오히려 엇나감 */
+    #tt-name-row .fav-btn,#tt-name-row .share-btn{top:0;}
   }
   /* 계정 연결 안내(2026-09-29) — 즐겨찾기 3개째·10개째 한 번씩. 불투명 배경(blur 없음 — 발열 기준) */
   #link-nudge{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(24px + env(safe-area-inset-bottom,0px));z-index:190;
