@@ -55,10 +55,16 @@ if (!VAPID_PRIV) {
 
 webpush.setVapidDetails(VAPID_SUBJECT, VAPID_PUB, VAPID_PRIV);
 
+// ── 알림 대상 그룹 ────────────────────────────────────────────────────────
+// 제목에 멤버 힌트가 없어 자동 태깅이 잘 안 되는 그룹만 알림.
+// 전체 출연 영상은 members={} 여도 상관없으므로 나머지 그룹은 제외.
+const ALERT_GROUPS = ['코르티스', '크래비티', '아일릿'];
+
 // ── 메인 ──────────────────────────────────────────────────────────────────
 const sevenDaysAgo = new Date(Date.now() - 7 * 86400000).toISOString().slice(0, 10);
 
 // 1) 미태깅 live 영상 조회 (members가 null이거나 빈 배열 = pg 배열 {}로 저장)
+const groupIn = `(${ALERT_GROUPS.map(g => encodeURIComponent(g)).join(',')})`;
 const videosRes = await sbGet(
   `/rest/v1/${YT_TABLE}` +
   `?select=id,title,group_ko,published_at` +
@@ -66,6 +72,7 @@ const videosRes = await sbGet(
   `&or=(members.is.null,members.eq.%7B%7D)` +
   `&published_at=gte.${sevenDaysAgo}` +
   `&content_flag=is.null` +
+  `&group_ko=in.${groupIn}` +
   `&order=published_at.desc&limit=50`
 );
 
