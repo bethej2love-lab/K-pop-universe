@@ -2499,7 +2499,7 @@
   .gc-discog-hd-right .gc-ch-sort-wrap{flex-shrink:0;}
   .seg-control{position:relative;display:flex;background:rgba(255,255,255,0.05);border:0.5px solid rgba(255,255,255,0.09);border-radius:10px;padding:2px;flex:1;min-width:0;}
   .seg-control-sm{flex:0 1 auto;padding:1px;border-radius:8px;}
-  .seg-control-sm .seg-btn{padding:3px 8px;font-size:9px;letter-spacing:-.01em;} /* 2026-08-22 크기 살짝 축소(높이 4→3, 너비 11→8) */
+  .seg-control-sm .seg-btn{padding:4px 10px;font-size:10px;letter-spacing:-.01em;}
   .seg-control-sm .seg-thumb{top:1px;bottom:1px;border-radius:7px;}
   .seg-thumb{position:absolute;top:2px;bottom:2px;left:2px;width:0;border-radius:8px;
     background:linear-gradient(160deg,rgba(190,212,255,0.42),rgba(140,170,230,0.16));
@@ -2513,8 +2513,8 @@
   .gc-discog-hd-right .gc-ch-sort-btn{font-size:12px;padding:2px 3px;}
   .gc-discog-strip{display:flex;gap:9px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none;cursor:grab;}
   .gc-discog-strip::-webkit-scrollbar{display:none;}
-  .gc-discog-item{flex-shrink:0;width:68px;cursor:pointer;}
-  .gc-discog-cover{width:68px;height:68px;border-radius:8px;object-fit:cover;background:rgba(255,255,255,0.06);display:block;box-shadow:0 3px 10px rgba(0,0,0,0.35);}
+  .gc-discog-item{flex-shrink:0;width:80px;cursor:pointer;}
+  .gc-discog-cover{width:80px;height:80px;border-radius:8px;object-fit:cover;background:rgba(255,255,255,0.06);display:block;box-shadow:0 3px 10px rgba(0,0,0,0.35);}
   .gc-discog-type{font-size:8px;font-weight:700;letter-spacing:.03em;color:rgba(150,175,225,0.66);margin-top:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   .gc-discog-item-title{font-size:10px;color:rgba(215,228,255,0.85);line-height:1.28;margin-top:1px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
   .gc-discog-extra .gc-discog-cover{opacity:.55;}
@@ -2668,7 +2668,7 @@
   .gc-collection-hd{font-size:10px;font-weight:700;letter-spacing:.16em;color:rgba(130,150,205,0.56);text-transform:uppercase;margin-bottom:7px;}
   .gc-collection-list{display:flex;gap:8px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none;}
   .gc-collection-list::-webkit-scrollbar{display:none;}
-  .gc-collection-chip{flex-shrink:0;width:74px;cursor:pointer;}
+  .gc-collection-chip{flex-shrink:0;width:80px;cursor:pointer;}
   /* 영상 0개 컬렉션 칩은 눌러도 아무 일 없어 "죽은 클릭"처럼 보였다(2026-09-05 UX감사 #5) — 흐리게+기본
      커서로 "아직 빔"을 명확히 해 오해를 없앤다. */
   .gc-collection-chip-empty{opacity:0.45;cursor:default;}
@@ -2684,7 +2684,7 @@
   .card-glyph:empty{display:none;margin:0;}
   /* 이름 행 안에서는 gap이 이미 여백을 만들므로 glyph의 margin-right를 제거해 이중여백 방지 */
   #tt-name-row .card-glyph,#gc-name-row .card-glyph{margin-right:0;}
-  .gc-collection-chip-thumb-wrap{position:relative;width:74px;height:74px;border-radius:8px;overflow:hidden;background:rgba(255,255,255,0.06);}
+  .gc-collection-chip-thumb-wrap{position:relative;width:80px;height:80px;border-radius:8px;overflow:hidden;background:rgba(255,255,255,0.06);}
   .gc-collection-chip-thumb{width:100%;height:100%;object-fit:cover;display:block;}
   .gc-collection-quad{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:1.5px;width:100%;height:100%;}
   .gc-collection-quad img{width:100%;height:100%;object-fit:cover;display:block;}

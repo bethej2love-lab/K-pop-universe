@@ -11464,8 +11464,8 @@ const _DISCOG_BUCKETS=['정규','미니(EP)','싱글']; // 탭 노출 순서: Al
 // 번복, "미니"→"Mini"가 맞다고 정정 + "정규"↔"Full" 언어별 전환 추가).
 function _discogBucketLabel(val){
   if(val==='all')return'All';
-  if(val==='싱글')return'Single';
-  if(val==='미니(EP)')return'Mini';
+  if(val==='싱글')return currentLang==='en'?'Single':'싱글';
+  if(val==='미니(EP)')return currentLang==='en'?'Mini':'미니';
   if(val==='정규')return currentLang==='en'?'Full':'정규';
   return val;
 }
@@ -11616,7 +11616,8 @@ function _renderDiscography(prefix,albums){
       const typeEl=document.createElement('div');typeEl.className='gc-discog-type';
       const typeLabel=_discogTypeLabel(a.type);
       const yr=a.releaseDate?a.releaseDate.slice(0,4):'';
-      typeEl.textContent=yr?`${typeLabel} · ${yr}`:typeLabel;
+      const jp=(a.region==='jp'||_JP_RELEASE_RE.test(a.title||''));
+      typeEl.textContent=yr?`${typeLabel} · ${yr}${jp?' · JP':''}`:typeLabel+(jp?' · JP':'');
       const titleEl=document.createElement('div');titleEl.className='gc-discog-item-title';titleEl.textContent=a.title;
       item.appendChild(img);item.appendChild(typeEl);item.appendChild(titleEl);
       item.addEventListener('click',e=>{e.stopPropagation();_gcDiscogList=list;_openGcDiscogDetail(a,idx);});
@@ -22232,7 +22233,7 @@ function _makeChVidController(contId){
         // 멤버 카드 기본 탭(라이브)에 아직 태깅/분류된 영상이 없으면 "전체"로 자동 폴백(한 번만)
         if(state.memberKo&&state.filter==='live'&&!state._liveFallbackDone){
           state._liveFallbackDone=true;state.filter='all';state.offset=0;
-          cont.querySelectorAll('.gc-ch-filter').forEach(b=>b.classList.toggle('active',b.textContent==='전체'));
+          cont.querySelectorAll('.gc-ch-filter').forEach(b=>b.classList.toggle('active',b.textContent==='All'));
           releaseLock();
           load(ko,true);
           return;
@@ -22428,7 +22429,7 @@ function _makeChVidController(contId){
     //    바뀐 건 화면에 찍히는 라벨뿐이고, 이 줄이 그 **유일한 정의 자리**다(i18n 테이블에도 없음).
     // ⚠️ 차트(무대 TOP 등)는 여전히 방송 무대만 본다 — _applyLiveExclude 주석 참고.
     const _ko=currentLang==='ko';
-    let catTabs=memberKo?[['all',_ko?'전체':'All'],['live',_ko?'무대':'Performance'],['cover',_ko?'커버':'Cover'],['short',_ko?'쇼츠':'Shorts'],['variety',_ko?'예능':'Variety'],['show',_ko?'드라마':'Show']]:[['all',_ko?'전체':'All'],['mv','MV'],['live',_ko?'무대':'Performance'],['cover',_ko?'커버':'Cover'],['short',_ko?'쇼츠':'Shorts'],['variety',_ko?'예능':'Variety'],['show',_ko?'드라마':'Show']];
+    let catTabs=memberKo?[['all','All'],['live',_ko?'무대':'Performance'],['cover',_ko?'커버':'Cover'],['short',_ko?'쇼츠':'Shorts'],['variety',_ko?'예능':'Variety'],['show',_ko?'드라마':'Show']]:[['all','All'],['mv','MV'],['live',_ko?'무대':'Performance'],['cover',_ko?'커버':'Cover'],['short',_ko?'쇼츠':'Shorts'],['variety',_ko?'예능':'Variety'],['show',_ko?'드라마':'Show']];
     // "by Fan" 탭(2026-08-10, 사용자 요청) — 팬이 직접 찍거나 만든 영상 전용. 아직은 어떤 그룹도 팬채널을
     // 등록 안 해서 category='fan'인 행이 하나도 없지만(추후 사용자가 그룹별로 팬채널 링크를 주면 그
     // 채널 동기화 시 category='fan'으로 저장할 예정), 미리 이 자리를 만들어둠. 팬덤명을 알면 "by {영문
