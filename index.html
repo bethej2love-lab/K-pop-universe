@@ -4411,9 +4411,11 @@ function _searchRemote(q,res,mobSearch,obSearch,hint){
 // ⚠️ 매번 같은 순서면 "고정 배너"처럼 보여 아무도 안 누른다 — pri 상위 풀에서 매번 섞어 6개만 낸다.
 function _trendingSearchHits(){
   const pool=Object.keys(GROUPS)
-    .filter(ko=>(GROUPS[ko].pri||0)>=1.5&&bubbleMeshes.some(b=>b.ko===ko));
+    .filter(ko=>(GROUPS[ko].pri||0)>=1.5&&bubbleMeshes.some(b=>b.ko===ko))
+    .sort((a,b)=>(GROUPS[b].pri||0)-(GROUPS[a].pri||0));
   if(pool.length<3)return[];
-  const picked=_shuffle([...pool]).slice(0,6);
+  // 상위 12개에서 랜덤 6개 → 항상 유명 그룹 위주지만 매번 다르게
+  const picked=_shuffle(pool.slice(0,Math.max(12,pool.length))).slice(0,6);
   return picked.map(ko=>{
     const bm=bubbleMeshes.find(b=>b.ko===ko);
     const en=GROUPS[ko].en||'';
@@ -4433,7 +4435,7 @@ function _latestCover(d){
 // 최신 앨범 커버로 폴백. 클릭은 _makeSearchItem이 감아둔 동작을 detached 요소에 위임해 그대로 재사용.
 function _appendTrendingSection(hits,res,mobSearch,obSearch){
   const lb=document.createElement('div');lb.className='sr-sec-label';
-  lb.textContent=currentLang==='ko'?'이런 그룹은 어때요':'Try these';
+  lb.textContent=currentLang==='ko'?'요즘 인기 그룹':'Popular now';
   res.appendChild(lb);
   const grid=document.createElement('div');grid.className='sr-orbs';
   hits.forEach(h=>{
