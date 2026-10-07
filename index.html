@@ -11451,6 +11451,11 @@ function _discogBucket(type){
   if(/^싱글/.test(type))return'싱글';
   if(/^(미니|EP)/.test(type))return'미니(EP)';
   if(/^정규/.test(type))return'정규';
+  if(/리패키지/.test(type)){
+    if(/미니/.test(type))return'미니(EP)';
+    if(/정규/.test(type))return'정규';
+    if(/싱글/.test(type))return'싱글';
+  }
   return null;
 }
 const _DISCOG_BUCKETS=['정규','미니(EP)','싱글']; // 탭 노출 순서: All-정규-Mini-Single
