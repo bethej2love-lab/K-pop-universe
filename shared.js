@@ -163,6 +163,8 @@ const _PROJECT_UNITS={
   '도겸X승관':{names:['도겸X승관'],members:[{mko:'도겸',gko:'세븐틴'},{mko:'승관',gko:'세븐틴'}]},
   '아이린&슬기':{names:['아이린&슬기','레드벨벳 아이린&슬기','IRENE & SEULGI'],members:[{mko:'아이린',gko:'레드벨벳'},{mko:'슬기',gko:'레드벨벳'}]},
   'SM THE BALLAD':{names:['SM THE BALLAD','에스엠 더 발라드'],members:[{mko:'규현',gko:'슈퍼주니어'},{mko:'종현',gko:'샤이니'},{mko:'예성',gko:'슈퍼주니어'},{mko:'최강창민',gko:'동방신기'},{mko:'태연',gko:'소녀시대'},{mko:'첸',gko:'엑소'},{mko:'크리스탈',gko:'에프엑스'}]},
+  // WayV 서브유닛 — 텐&양양(Ten & Yangyang) 음방 공동 활동(직캠 다수)
+  '텐&양양':{names:['텐&양양','Ten & Yangyang','Ten&Yangyang'],members:[{mko:'텐',gko:'웨이션브이'},{mko:'양양',gko:'웨이션브이'}]},
   // ⚠️ rotating:true — "고정 멤버 유닛"이 아니라 곡마다 참여자가 바뀌는 로테이션 유닛.
   // 다른 유닛(부석순·V8 등)은 유닛명이 제목에 뜨면 그 멤버 전원이 참여한 게 맞지만, NCT U는 아래
   // members가 "NCT U로 활동한 적 있는 사람 명단"일 뿐이라 전원 확장하면 참여도 안 한 멤버까지

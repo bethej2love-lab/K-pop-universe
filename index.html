@@ -237,6 +237,7 @@
       </div>
       <div id="gc-discog-strip" class="gc-discog-strip hscroll-drag"></div>
     </div>
+    <div id="gc-timeline-section" style="display:none"><div class="tt-timeline-hd">History</div><div id="gc-timeline"></div></div>
     <div id="gc-concert-row" class="concert-row"></div>
     <div id="gc-collection-row" class="gc-collection-row" style="display:none">
       <div class="gc-collection-hd">Collections</div>
@@ -12617,6 +12618,7 @@ function showGC(ko,cx,cy,keepMemberPanel,skipRipple,urlMode,_unusedPushMobNav){
     }
   }
   _renderGcDiscography(ko);
+  _buildGroupTimeline(ko);
   _buildGcChVid(ko);
   _loadConcertRow(ko,'gc-concert-row');
   _loadCollectionRow(ko,'gc-collection-row');
@@ -23409,6 +23411,51 @@ function _buildMemberTimeline(a){
       if(ev.length>=2)_renderTimeline(sec,list,ev);
     }).catch(()=>{});
   }
+}
+function _buildGroupTimeline(ko){
+  const sec=document.getElementById('gc-timeline-section');
+  const list=document.getElementById('gc-timeline');
+  if(!sec||!list){if(sec)sec.style.display='none';return;}
+  sec.style.display='none';
+  const info=GROUPS[ko];if(!info)return;
+  const isKo=currentLang==='ko';
+  const gname=isKo?ko:(info.en||ko);
+  const ev=[];
+  if(info.debut){const k=_tlKey(info.debut);if(k)ev.push({key:k,date:_tlDate(info.debut),label:isKo?`${gname} 데뷔`:`${gname} debut`,icon:'🎤'});}
+  if(info.disbanded){const k=_tlKey(info.disbanded);if(k)ev.push({key:k,date:_tlDate(info.disbanded),label:isKo?`${gname} 해체`:`${gname} disbanded`,icon:'🏁'});}
+  if(ev.length>=2)_renderTimeline(sec,list,ev);
+  if(!sb)return;
+  // 첫 음악방송 1위
+  sb.from('music_show_wins').select('win_date,song_title').eq('group_ko',ko).order('win_date',{ascending:true}).limit(1)
+    .then(({data})=>{
+      if(_openGCko!==ko)return;
+      const w=data&&data[0]&&data[0].win_date;if(!w)return;
+      const k=_tlKey(w);if(!k||ev.some(e=>e.icon==='🏆'))return;
+      let label=isKo?'첫 음악방송 1위':'First music-show win';
+      const song=data[0].song_title;if(song)label+=` — ${song}`;
+      if(info.debut){const dd=new Date(String(info.debut).replace(/\./g,'-')),wd=new Date(String(w).slice(0,10).replace(/\./g,'-'));if(!isNaN(dd)&&!isNaN(wd)){const days=Math.round((wd-dd)/864e5);if(days>0)label+=isKo?` · 데뷔 ${days}일 후`:` · ${days}d after debut`;}}
+      ev.push({key:k,date:_tlDate(w),label,icon:'🏆'});
+      if(ev.length>=2)_renderTimeline(sec,list,ev);
+    }).catch(()=>{});
+  // 첫 콘서트
+  sb.from('kpop_events').select('date_start').contains('groups',[ko]).order('date_start',{ascending:true}).limit(1)
+    .then(({data})=>{
+      if(_openGCko!==ko)return;
+      const d=data&&data[0]&&data[0].date_start;if(!d)return;
+      const k=_tlKey(d);if(!k||ev.some(e=>e.icon==='🎫'))return;
+      ev.push({key:k,date:_tlDate(d),label:isKo?'첫 콘서트/투어':'First concert/tour',icon:'🎫'});
+      if(ev.length>=2)_renderTimeline(sec,list,ev);
+    }).catch(()=>{});
+  // 첫 정규앨범
+  _ensureGroupDisco(ko).then(()=>{
+    if(_openGCko!==ko)return;
+    const full=((GROUPS[ko]||{}).discography||[]).filter(x=>x&&x.releaseDate&&/^정규/.test(String(x.type||'')));
+    if(!full.length||ev.some(e=>e.icon==='💿'))return;
+    full.sort((x,y)=>String(x.releaseDate).localeCompare(String(y.releaseDate)));
+    const k2=_tlKey(full[0].releaseDate);if(!k2)return;
+    ev.push({key:k2,date:_tlDate(full[0].releaseDate),label:isKo?'정규 1집':'1st full album',icon:'💿'});
+    if(ev.length>=2)_renderTimeline(sec,list,ev);
+  }).catch(()=>{});
 }
 const _TROPHY_KIND_ORDER=['music_show','melon_top100','spotify_milestone','view_milestone'];
 const _TROPHY_TABLES={music_show:'music_show_wins',melon_top100:'melon_yearly_top100',spotify_milestone:'spotify_streaming_milestones',view_milestone:'yt_view_milestones'};
