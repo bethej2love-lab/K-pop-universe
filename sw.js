@@ -39,6 +39,25 @@ self.addEventListener('activate',event=>{
   );
 });
 
+// ── 웹 푸시 알림 (2026-10-07) ─────────────────────────────────────────────
+// 관리자용 미태깅 영상 알림. 같은 tag('untagged-alert')라 여러 번 쌓이지 않고 덮어쓴다.
+self.addEventListener('push',event=>{
+  let d={};try{d=event.data?.json()??{};}catch{}
+  event.waitUntil(self.registration.showNotification(d.title||'K-pop Universe',{
+    body:d.body||'',icon:'./icons/icon-192.png',badge:'./icons/icon-192.png',
+    data:{url:d.url||'./'},tag:'untagged-alert',renotify:true
+  }));
+});
+
+self.addEventListener('notificationclick',event=>{
+  event.notification.close();
+  event.waitUntil(clients.matchAll({type:'window',includeUncontrolled:true}).then(list=>{
+    const u=event.notification.data?.url||'./';
+    const w=list.find(c=>c.url.includes(self.location.origin));
+    return w?w.focus():clients.openWindow(u);
+  }));
+});
+
 // 그룹/아티스트/연결 JSON은 앱 코드 자체가 이미 cache:'no-cache'로 fetch해서 항상 최신을 받으려 하므로,
 // 서비스 워커는 그 위에 캐시-우선 전략을 얹지 않는다 — 네트워크 우선, 실패(오프라인)했을 때만 캐시로
 // 대체하는 방식으로 기존 "항상 최신 데이터" 의도를 그대로 유지한다.

@@ -110,3 +110,12 @@ jobs:
           MODE: sync
           ROUTINE_TIMEOUT_MIN: '45'
         run: node tools/run_daily_routine.cjs
+
+      - name: 미태깅 알림 전송
+        if: steps.gate.outputs.run == 'true'
+        env:
+          VAPID_PRIVATE_KEY: ${{ secrets.VAPID_PRIVATE_KEY }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+        run: |
+          npm install web-push --no-save --quiet
+          node tools/send_untagged_alert.mjs

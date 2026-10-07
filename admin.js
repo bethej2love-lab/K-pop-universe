@@ -11196,6 +11196,99 @@ document.getElementById('sp-fb-btn')?.addEventListener('click',function(){
   try{localStorage.setItem(_ADM_LS.fbSeen,new Date().toISOString());}catch(e){}
 });
 
+// ── 웹 푸시 알림 구독 (2026-10-07) ──────────────────────────────────────────
+(function(){
+  const btn=document.getElementById('sp-push-btn');
+  const status=document.getElementById('sp-push-status');
+  if(!btn)return;
+
+  function urlB64ToUint8Array(b64){
+    const pad='='.repeat((4-b64.length%4)%4);
+    const raw=atob((b64+pad).replace(/-/g,'+').replace(/_/g,'/'));
+    return Uint8Array.from([...raw].map(c=>c.charCodeAt(0)));
+  }
+
+  async function checkState(){
+    if(!('serviceWorker' in navigator)||!('PushManager' in window)){
+      btn.textContent='미지원';btn.disabled=true;return;
+    }
+    const reg=await navigator.serviceWorker.ready;
+    const sub=await reg.pushManager.getSubscription();
+    if(sub){
+      btn.textContent='끄기';
+      if(status){status.textContent='알림 켜짐';status.style.display='block';}
+    }else{
+      btn.textContent='켜기';
+      if(status)status.style.display='none';
+    }
+  }
+
+  async function subscribe(){
+    try{
+      const perm=await Notification.requestPermission();
+      if(perm!=='granted'){
+        if(status){status.textContent='알림 권한 거부됨';status.style.display='block';}
+        return;
+      }
+      const cfg=await fetch('./push_config.json').then(r=>r.json());
+      const reg=await navigator.serviceWorker.ready;
+      const sub=await reg.pushManager.subscribe({
+        userVisibleOnly:true,
+        applicationServerKey:urlB64ToUint8Array(cfg.vapidPublicKey)
+      });
+      const j=sub.toJSON();
+      // Supabase push_subscriptions에 저장 (anon insert 허용)
+      await fetch('https://dukgguehegnembimqvkm.supabase.co/rest/v1/push_subscriptions',{
+        method:'POST',
+        headers:{
+          'Content-Type':'application/json',
+          'apikey':'sb_publishable_SjNC-N_9TUqaQcCxhVinGA_ULyX6tA0',
+          'Authorization':'Bearer sb_publishable_SjNC-N_9TUqaQcCxhVinGA_ULyX6tA0',
+          'Prefer':'resolution=merge-duplicates'
+        },
+        body:JSON.stringify({
+          endpoint:j.endpoint,
+          p256dh:j.keys.p256dh,
+          auth:j.keys.auth
+        })
+      });
+      await checkState();
+    }catch(e){
+      console.error('[push] 구독 실패',e);
+      if(status){status.textContent='구독 실패: '+e.message;status.style.display='block';}
+    }
+  }
+
+  async function unsubscribe(){
+    try{
+      const reg=await navigator.serviceWorker.ready;
+      const sub=await reg.pushManager.getSubscription();
+      if(sub){
+        await fetch('https://dukgguehegnembimqvkm.supabase.co/rest/v1/push_subscriptions'+
+          '?endpoint=eq.'+encodeURIComponent(sub.endpoint),{
+          method:'DELETE',
+          headers:{
+            'apikey':'sb_publishable_SjNC-N_9TUqaQcCxhVinGA_ULyX6tA0',
+            'Authorization':'Bearer sb_publishable_SjNC-N_9TUqaQcCxhVinGA_ULyX6tA0'
+          }
+        });
+        await sub.unsubscribe();
+      }
+      await checkState();
+    }catch(e){
+      console.error('[push] 구독 취소 실패',e);
+    }
+  }
+
+  btn.addEventListener('click',async function(){
+    const reg=await navigator.serviceWorker.ready;
+    const sub=await reg.pushManager.getSubscription();
+    if(sub)await unsubscribe();else await subscribe();
+  });
+
+  checkState();
+})();
+
 // ── 매일 루틴 실행기 ──────────────────────────────────────────────────────────
 // 기존 1~4번 버튼을 순서대로 돌린다. 각 단계는 원래 함수를 그대로 호출하므로 동작이 갈릴 일이 없고,
 // 진행 상황은 그 함수들이 쓰는 #sp-yt-prog 텍스트를 그대로 읽어서 보여준다.
