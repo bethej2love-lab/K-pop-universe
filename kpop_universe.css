@@ -1001,7 +1001,6 @@
     #yt-lightbox.lb-browse #yt-lb-drag-cap{display:block;position:absolute;top:0;left:0;right:120px;height:40px;z-index:1;-webkit-tap-highlight-color:transparent;}
     #mob-sr .sr-item{padding:8px 22px;font-size:var(--fz-title);line-height:1;}
     .sr-tag{font-size:11px;}
-    .gc-ch-refresh{font-size:20px;padding:6px 8px;}
   }
   #mob-sheet-handle{width:36px;height:4px;background:rgba(255,255,255,0.14);border-radius:2px;margin:10px auto 6px;display:block;}
   /* 카드 뒤로가기 — 시트 손잡이 줄 왼쪽 끝에 고정(2026-08-26).
@@ -1291,6 +1290,8 @@
     text-shadow:0 0 4px rgba(140,175,255,0.16),0 0 2px rgba(140,175,255,0.07);
   }
   #gc-grid #gc-mem-row{align-items:baseline;margin-top:0;}
+  #gc-grid #gc-unit-row{align-items:flex-start;}
+  #gc-unit-list{display:flex;flex-wrap:wrap;gap:4px;margin-top:3px;}
   #gc-mem-list{display:flex;flex-wrap:wrap;gap:4px;margin-top:2px;padding-left:4px;}
   .gc-mem-name{
     cursor:pointer;padding:2px 6px 2px 0;font-size:13px;font-weight:600;
@@ -1326,10 +1327,7 @@
   .gc-ch-search-toggle{background:none;border:none;padding:3px 5px;cursor:pointer;color:rgba(145,170,220,0.44);display:flex;align-items:center;border-radius:6px;transition:color .15s,background .15s;flex-shrink:0;}
   .gc-ch-search-toggle:hover,.gc-ch-search-toggle.active{color:rgba(190,210,255,0.82);background:rgba(255,255,255,0.06);}
   .gc-ch-total{font-size:var(--fz-meta);color:rgba(140,165,210,0.25);text-align:center;padding:6px 0 2px;letter-spacing:0.04em;}
-  .gc-ch-refresh{flex:0 0 auto;background:none;border:none;cursor:pointer;color:rgba(155,178,228,0.46);font-size:17px;padding:4px 6px;transition:color .15s;font-family:inherit;}
-  .gc-ch-refresh:hover{color:#c0d6f0;}
   @keyframes gc-ch-spin{to{transform:rotate(360deg);}}
-  .gc-ch-refresh.spinning{animation:gc-ch-spin .5s linear;}
   .gc-ch-sort-wrap{position:relative;flex:0 0 auto;}
   .gc-ch-sort-btn{background:none;border:none;cursor:pointer;color:rgba(155,178,228,0.46);font-size:15px;padding:4px 5px;transition:color .15s;font-family:inherit;line-height:1;}
   .gc-ch-sort-btn:hover,.gc-ch-sort-btn.active{color:#c0d6f0;}
@@ -1380,14 +1378,12 @@
   }
   @media(min-width:769px){
     .gc-ch-filter{font-size:9px;}
-    .gc-ch-refresh{font-size:15px;}
     .gc-ch-sort-btn{font-size:13px;}
     /* 데스크톱 사이드 카드 폭이 좁아 필터 알약(전체/MV/라이브/Shorts)이 두 줄로 밀리기 쉬움 —
        돋보기/정렬/새로고침 아이콘 사이 여백을 줄여 필터 쪽에 가로 공간을 더 확보 */
     .gc-ch-hd{gap:6px;}
     .gc-ch-search-toggle{padding:3px 5px;}
     .gc-ch-sort-btn{padding:4px 4px;}
-    .gc-ch-refresh{padding:4px 4px;}
   }
   /* 멤버 카드 전용 Only 토글 — 전체/라이브/Shorts는 서로 배타적인 "모드"라 알약 버튼이지만, Only는 그 위에
      얹는 부가 조건이라 같은 버튼 모양이면 넷 다 같은 종류의 선택지처럼 보여 헷갈림. 텍스트만 둬서 구분. */

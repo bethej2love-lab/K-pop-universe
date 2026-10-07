@@ -22358,7 +22358,7 @@ function _makeChVidController(contId){
     // "라이브"(무대 직캠 위주) 탭에서 시작 — 그룹 카드는 그대로 "전체"
     state={ko,memberKo:memberKo||null,filter:memberKo?'live':'all',onlyMe:false,searchQ:'',sortMode:'recommend',viewMode:'category',formatFilter:null,formats:[],offset:0,total:0,pos:0,cat:null,gen:state.gen+1,appendLock:false,trailingEl:null,hasMore:false,allVids:[],_liveFallbackDone:false,wrapEnd:0,wrapPhase:false,unitFilter:null,histKos:(histKos&&histKos.length)?histKos:null};
     const _t=T[currentLang];
-    cont.innerHTML=`<div class="gc-ch-hd"><div class="gc-ch-filters hscroll-drag"></div><div class="gc-ch-sort-wrap"><button class="gc-ch-sort-btn" title="${_t.sortTitle}" data-i18n-title="sortTitle" aria-haspopup="true" aria-expanded="false">⋮</button><div class="gc-ch-sort-menu"><button class="gc-ch-sort-item" data-sort="recommend"><span class="chk">✓</span><span data-i18n="chSortRec">${_t.chSortRec}</span></button><button class="gc-ch-sort-item" data-sort="popular"><span class="chk">✓</span><span data-i18n="chSortPop">${_t.chSortPop}</span></button><button class="gc-ch-sort-item" data-sort="latest"><span class="chk">✓</span><span data-i18n="chSortNew">${_t.chSortNew}</span></button><button class="gc-ch-sort-item" data-sort="oldest"><span class="chk">✓</span><span data-i18n="chSortOld">${_t.chSortOld}</span></button><div class="gc-ch-sort-divider" style="display:none"></div><button class="gc-ch-view-toggle" style="display:none"><span class="chk">✓</span><span data-i18n="chViewCon">${_t.chViewCon}</span></button></div></div><button class="gc-ch-refresh" title="${_t.refreshTitle}" data-i18n-title="refreshTitle">↻</button></div><div class="gc-ch-search-wrap" style="display:none"><input class="gc-ch-search" placeholder="${_t.chSearch}" data-i18n-ph="chSearch" autocomplete="off" spellcheck="false"><button class="gc-ch-search-clear" aria-label="${_t.searchClearLabel}">\xD7</button></div><div class="gc-ch-grid"></div><div class="gc-ch-more-wrap"></div><div class="tv-cover-of-wrap" style="display:none"></div>`;
+    cont.innerHTML=`<div class="gc-ch-hd"><div class="gc-ch-filters hscroll-drag"></div><div class="gc-ch-sort-wrap"><button class="gc-ch-sort-btn" title="${_t.sortTitle}" data-i18n-title="sortTitle" aria-haspopup="true" aria-expanded="false">⋮</button><div class="gc-ch-sort-menu"><button class="gc-ch-sort-item" data-sort="recommend"><span class="chk">✓</span><span data-i18n="chSortRec">${_t.chSortRec}</span></button><button class="gc-ch-sort-item" data-sort="popular"><span class="chk">✓</span><span data-i18n="chSortPop">${_t.chSortPop}</span></button><button class="gc-ch-sort-item" data-sort="latest"><span class="chk">✓</span><span data-i18n="chSortNew">${_t.chSortNew}</span></button><button class="gc-ch-sort-item" data-sort="oldest"><span class="chk">✓</span><span data-i18n="chSortOld">${_t.chSortOld}</span></button><div class="gc-ch-sort-divider gc-ch-refresh-div"></div><button class="gc-ch-refresh gc-ch-sort-item"><span class="chk" style="visibility:hidden">✓</span><span data-i18n="refreshTitle">${_t.refreshTitle}</span></button><div class="gc-ch-sort-divider" style="display:none"></div><button class="gc-ch-view-toggle" style="display:none"><span class="chk">✓</span><span data-i18n="chViewCon">${_t.chViewCon}</span></button></div></div></div><div class="gc-ch-search-wrap" style="display:none"><input class="gc-ch-search" placeholder="${_t.chSearch}" data-i18n-ph="chSearch" autocomplete="off" spellcheck="false"><button class="gc-ch-search-clear" aria-label="${_t.searchClearLabel}">\xD7</button></div><div class="gc-ch-grid"></div><div class="gc-ch-more-wrap"></div><div class="tv-cover-of-wrap" style="display:none"></div>`;
     _exitSelMode();
     const filEl=cont.querySelector('.gc-ch-filters');
     // 영상 여러 개 선택 버튼 — 예전엔 어드민 태깅 편집용으로만 있었는데, 이제 일반 유저도 여러 영상을
@@ -22547,9 +22547,9 @@ function _makeChVidController(contId){
     });
     _loadCoverOfSection(cont,ko,memberKo);
     const refBtn=cont.querySelector('.gc-ch-refresh');
-    refBtn?.addEventListener('click',()=>{
-      refBtn.classList.add('spinning');
-      setTimeout(()=>refBtn.classList.remove('spinning'),500);
+    refBtn?.addEventListener('click',e=>{
+      e.stopPropagation();
+      closeSortMenu();
       load(ko,true,true);
     });
     // 정렬 메뉴(⋮): 추천순/업로드순/오래된순 세 개, 나중에 항목이 늘어나도 같은 팝오버에 추가하면 됨
