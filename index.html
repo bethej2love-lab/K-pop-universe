@@ -11521,17 +11521,20 @@ function _isJpRelease(a,owner){
   return true;                                    // 주인을 모르면(피드 선반 등) 숨기는 쪽
 }
 function _discogTypeLabel(type){
-  // 영어 모드는 "N집"의 "집"(한국어 단위 명사)이 어색해 서수+Full/Mini로 재배치("정규 2집"→"2nd Full").
+  const t=type||'';
   if(currentLang==='en'){
-    if(type==='싱글')return'Single';
-    const m=(type||'').match(/^(미니|정규|EP)\s*(\d+)집$/);
+    if(t==='싱글')return'Single';
+    // 리패키지: "미니 6집 리패키지"→"6th Mini Re", "정규 3집 리패키지"→"3rd Full Re"
+    const mr=t.match(/^(미니|정규|EP)\s*(\d+)집\s*리패키지$/);
+    if(mr)return`${_ordinal(+mr[2])} ${mr[1]==='정규'?'Full':'Mini'} Re`;
+    if(/리패키지/.test(t))return t.replace(/^(미니|EP)/,'Mini').replace(/^정규/,'Full').replace('리패키지','Re');
+    const m=t.match(/^(미니|정규|EP)\s*(\d+)집$/);
     if(m)return `${_ordinal(+m[2])} ${m[1]==='정규'?'Full':'Mini'}`;
-    return (type||'').replace(/^(미니|EP)/,'Mini').replace(/^정규/,'Full');
+    return t.replace(/^(미니|EP)/,'Mini').replace(/^정규/,'Full');
   }
-  // 한국어 모드: 앨범 커버 밑 캡션은 원본 한국어 그대로 표기("미니 5집"/"정규 2집"/"싱글") — 필터 탭
-  // (_discogBucketLabel)만 Mini/Single 영문 유지(2026-08-19, 사용자 요청 — 이전 "미니"→"Mini" 통일 번복).
-  // 원본에 그냥 "EP" 단독으로 박힌 것만 "미니"로 정리("EP" 문구가 화면에 남지 않게).
-  return (type||'').replace(/^EP\b/,'미니');
+  // 리패키지: "미니 6집 리패키지"→"미니 6집 Re", "정규 리패키지"→"정규 Re"
+  if(/리패키지/.test(t))return t.replace('리패키지','Re');
+  return t.replace(/^EP\b/,'미니');
 }
 // prefix='gc'(그룹 카드)/'tt'(멤버 카드, 솔로 디스코그래피) 공용 — DOM id만 접두어로 갈라서 재사용.
 // 트로피 뱃지 조회(_loadGcDiscogTrackTrophies)는 그룹 단위 캐시라 멤버(tt) 쪽에선 호출하지 않음 —
