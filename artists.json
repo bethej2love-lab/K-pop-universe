@@ -226209,6 +226209,30 @@
         "melonAlbumId": "11551482"
       },
       {
+        "title": "I miss you now",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273c6794b174b0ccb64a4b166f2",
+        "releaseDate": "2024.07.28",
+        "trackCount": 2,
+        "titleTrack": "I miss you now",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "I miss you now",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "I miss you now (Instrumental)",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "4jrGJO4NMfJpnIA3TPIc2O",
+        "copyright": "2024 AIDEM STUDIO,under license to Kakao Entertainment"
+      },
+      {
         "title": "연모 OST Part.6",
         "type": "OST",
         "isMain": false,

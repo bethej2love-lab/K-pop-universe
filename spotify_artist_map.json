@@ -611,6 +611,17 @@
     },
     "checkedAt": "2026-09-19"
   },
+  "나유민": {
+    "id": "7mpr6KFA3Ss5MDZA0cy6ve",
+    "spotifyName": "Yumin",
+    "kind": "solo",
+    "confidence": "high",
+    "why": "동명 후보 3명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 2
+    },
+    "checkedAt": "2026-10-07"
+  },
   "나인아이": {
     "id": "4e8UtPYfVPBzWO4PY8CZye",
     "spotifyName": "NINE.i",
@@ -1650,6 +1661,17 @@
     },
     "checkedAt": "2026-09-26"
   },
+  "보라": {
+    "id": "7KXHzbR3efLUXGkvrP7Edv",
+    "spotifyName": "Bora",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "동명 후보 5명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-10-07"
+  },
   "보아": {
     "id": "4muJrGMndyYWqZtfk8OWy4",
     "spotifyName": "BoA",
@@ -1704,8 +1726,8 @@
       "titleOverlap": 0,
       "verifyOverlap": 0,
       "verifyYears": [
-        2022,
-        2021
+        2023,
+        2022
       ]
     },
     "checkedAt": "2026-09-16"
@@ -2662,6 +2684,22 @@
       ]
     },
     "checkedAt": "2026-09-16"
+  },
+  "안예인": {
+    "id": "5uIx7p8cOycuJYZSpmTfVY",
+    "spotifyName": "YEIN",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "동명 후보 7명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0,
+      "verifyOverlap": 0,
+      "verifyYears": [
+        2025,
+        2022
+      ]
+    },
+    "checkedAt": "2026-10-07"
   },
   "알파드라이브원": {
     "id": "1Sal7hVz3weo0mvYZPiWHT",
@@ -4475,6 +4513,21 @@
     },
     "checkedAt": "2026-09-22"
   },
+  "지원": {
+    "id": "4LyqJpHI1a45aZHIkVRBSQ",
+    "spotifyName": "Jiwon",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "동명 후보 4명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0,
+      "verifyOverlap": 0,
+      "verifyYears": [
+        2026
+      ]
+    },
+    "checkedAt": "2026-10-07"
+  },
   "지율": {
     "id": "6r3dTDt9C9UFI6HR8c0y4D",
     "spotifyName": "jiyul",
@@ -4523,6 +4576,22 @@
       ]
     },
     "checkedAt": "2026-09-29"
+  },
+  "차희": {
+    "id": "301YSqsW0Smz66b614rHlE",
+    "spotifyName": "chaehee",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "이름 불일치 — 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0,
+      "verifyOverlap": 0,
+      "verifyYears": [
+        2020,
+        2017
+      ]
+    },
+    "checkedAt": "2026-10-07"
   },
   "찬": {
     "id": "5Jte273iLRGrRRMA5yJy3F",
@@ -5365,6 +5434,22 @@
       "titleOverlap": 2
     },
     "checkedAt": "2026-09-24"
+  },
+  "해윤": {
+    "id": "2hD3aiYb8kpzjuxoLvqckk",
+    "spotifyName": "HAE YOON",
+    "kind": "solo",
+    "confidence": "high",
+    "why": "동명 후보 2명 중 앨범 대조 · 수집 전 검증 통과(겹침 1)",
+    "evidence": {
+      "titleOverlap": 1,
+      "verifyOverlap": 1,
+      "verifyYears": [
+        2024,
+        2021
+      ]
+    },
+    "checkedAt": "2026-10-07"
   },
   "해인": {
     "id": "0aS9pFU2CEyRxbZazDAMgb",
