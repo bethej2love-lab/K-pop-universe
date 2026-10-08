@@ -4961,6 +4961,13 @@ function _renderCreditResults(container,cq,songs){
   const showBadge=cq.role==='both';
   songs.slice(0,20).forEach(s=>{
     const row=document.createElement('div');row.className='sr-item sr-credit-item';
+    row.style.cursor='pointer';
+    row.addEventListener('click',e=>{
+      e.stopPropagation();
+      const si=document.getElementById('search-input')||document.getElementById('mob-search-input');
+      if(si){si.value=s.title||'';}
+      doSearch(s.title||'');
+    });
     if(showBadge){
       const badge=document.createElement('span');
       badge.className='sr-credit-badge '+(s.role==='lyrics'?'src-lyrics':'src-compose');
