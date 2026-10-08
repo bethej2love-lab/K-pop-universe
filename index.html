@@ -1235,6 +1235,10 @@
   <div id="pp-bias-emoji-panel">
     <div class="pp-title">이모티콘 선택</div>
     <div id="pp-bias-emoji-target"></div>
+    <div id="pp-bias-emoji-native" style="display:none">
+      <div id="pp-bias-emoji-native-hint">아래 키보드에서 이모지를 선택하세요</div>
+      <input id="pp-bias-emoji-input" type="text" inputmode="emoji" autocomplete="off" autocorrect="off" spellcheck="false" placeholder="😊">
+    </div>
     <emoji-picker id="pp-bias-emoji-picker"></emoji-picker>
     <button id="pp-bias-emoji-skip" class="uc-btn">기본(🤍)으로 넘어가기</button>
   </div>
@@ -16784,7 +16788,15 @@ let _biasEmojiTarget=null;
 function _openBiasEmojiPicker(r){
   _biasEmojiTarget=r;
   document.getElementById('pp-bias-emoji-target').textContent=r.type==='group'?r.ko:`${r.ko} (${r.groupKo})`;
-  {const _b=document.getElementById('pp-bias-emoji-overlay');_b.classList.add('open');_bringToFront(_b);} // 카드 위로(정적 z:80)
+  document.getElementById('pp-bias-emoji-native').style.display='';
+  document.getElementById('pp-bias-emoji-picker').style.display='none';
+  // 플랫폼별 힌트
+  const isMac=/Mac/.test(navigator.platform||navigator.userAgentData?.platform||'');
+  const isTouch=navigator.maxTouchPoints>0;
+  const hint=document.getElementById('pp-bias-emoji-native-hint');
+  if(hint)hint.textContent=isTouch?'키보드에서 이모지를 선택하세요':isMac?'⌃⌘Space 로 이모지 선택 · 또는 직접 입력':'Win+마침표(.) 로 이모지 선택 · 또는 직접 입력';
+  const _b=document.getElementById('pp-bias-emoji-overlay');_b.classList.add('open');_bringToFront(_b);
+  const inp=document.getElementById('pp-bias-emoji-input');inp.value='';setTimeout(()=>inp.focus(),120);
 }
 function _closeBiasEmojiPicker(){
   document.getElementById('pp-bias-emoji-overlay').classList.remove('open');
@@ -16857,6 +16869,14 @@ document.getElementById('pp-bias-search').addEventListener('input',e=>{
   });
 });
 document.getElementById('pp-bias-emoji-picker').addEventListener('emoji-click',e=>{_addBias(e.detail.unicode);});
+document.getElementById('pp-bias-emoji-input').addEventListener('input',e=>{
+  const val=e.target.value;
+  if(!val)return;
+  // Intl.Segmenter로 첫 번째 grapheme cluster(복합 이모지 포함) 추출
+  let emoji=val;
+  try{const seg=new Intl.Segmenter([],{granularity:'grapheme'});emoji=[...seg.segment(val)][0]?.segment||val[0];}catch(_){emoji=[...val][0]||val[0];}
+  if(emoji){e.target.value='';_addBias(emoji);}
+});
 document.getElementById('pp-bias-emoji-skip').addEventListener('click',e=>{e.stopPropagation();_addBias('🤍');});
 document.getElementById('pp-bias-emoji-overlay').addEventListener('click',e=>{e.stopPropagation();if(e.target===e.currentTarget)_closeBiasEmojiPicker();});
 document.getElementById('pp-bias-emoji-overlay').addEventListener('pointerdown',e=>e.stopPropagation());
