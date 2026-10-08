@@ -155,7 +155,7 @@
      별 아이콘이 살짝 눌린 듯 도드라지게만 하고 나머진 .mob-top-btn/.dh-btn 스타일을 그대로 쓴다. */
   #random-fab:active,#dh-random-btn:active{transform:scale(0.92);color:var(--accent);}
   /* 연도 링 라벨(CSS2D) — 줌아웃 스케일 게이지의 연도 숫자. 은은하게, 투명도는 JS가 zoomT로 제어(2026-09-02) */
-  .year-ring-lbl{font-size:8px;font-weight:500;letter-spacing:.08em;color:rgba(150,180,235,0.54);pointer-events:none;white-space:nowrap;text-shadow:0 0 6px rgba(0,0,0,0.55);transition:opacity .35s ease;}
+  .year-ring-lbl{font-size:8px;font-weight:300;letter-spacing:.08em;color:rgba(150,180,235,0.42);pointer-events:none;white-space:nowrap;text-shadow:0 0 6px rgba(0,0,0,0.55);transition:opacity .35s ease;}
   .tab-btn:hover{color:rgba(210,225,255,0.85);}
   .tab-btn.active{color:rgba(225,238,255,1);text-shadow:0 0 8px rgba(200,220,255,0.5);}
   #mob-fav-btn svg path,#dh-fav-btn svg path{fill:none;transition:fill .15s;}
@@ -398,9 +398,9 @@
   }
   .group-label{
     font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;
-    font-size:11px;font-weight:500;letter-spacing:0.08em;
+    font-size:11px;font-weight:300;letter-spacing:0.08em;
     pointer-events:none;user-select:none;white-space:nowrap;
-    text-shadow:0 0 18px currentColor,0 0 7px currentColor,0 1px 4px rgba(0,0,0,0.80);
+    text-shadow:0 0 12px currentColor,0 0 4px currentColor,0 1px 4px rgba(0,0,0,0.70);
     transition:opacity 0.6s ease; /* 떴다 사라지는 로테이션이라 조금 더 부드럽게(2026-08-26) */
   }
   /* ── Cards ───────────────────────────────────── */
@@ -3926,3 +3926,11 @@
   .ev-recent-row button{flex:none;background:none;border:none;color:rgba(255,150,150,0.75);font-family:inherit;font-size:11px;cursor:pointer;padding:0;text-decoration:underline;}
   /* 날짜 입력의 네이티브 달력 아이콘이 어두운 배경에서 안 보여서 반전시킨다. */
   #ev-panel input[type=date]::-webkit-calendar-picker-indicator{filter:invert(0.7);cursor:pointer;}
+
+/* ── Film grain overlay (전체 앱 배경 텍스처) ──────────────────────── */
+#grain-overlay{
+  position:fixed;inset:0;pointer-events:none;z-index:9998;
+  opacity:0.028;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.70' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-repeat:repeat;background-size:220px 220px;
+}

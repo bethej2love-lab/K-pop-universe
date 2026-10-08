@@ -94,6 +94,7 @@
 <script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@1/index.js"></script>
 </head>
 <body>
+<div id="grain-overlay" aria-hidden="true"></div>
 <div id="loading"><span class="ld-l1">Here is our</span><span class="ld-l2">K-pop <span class="ld-ac">UNIVERSE</span>.</span></div>
 <div id="loading-ring"></div>
 <script>
@@ -2371,9 +2372,14 @@ function _buildYearRings(){
     // 연도 라벨을 전부 +x(한 방향)에 놓으면 자로 잰 듯 일렬로 늘어서 어색 → 링마다 다른 각도로 흩어놓는다
     // (2026-09-02 제보 "여기저기 적당히"). ⚠️각도는 감각값 — 아이폰서 겹침/가독성 확인 후 확정.
     const _lblAng={2025:-0.30*Math.PI,2020:0.32*Math.PI,2015:0.80*Math.PI,2010:1.30*Math.PI};
-    [2025,2020,2015,2010].forEach(yr=>{
+    [2025,2020,2015,2010].forEach((yr,_ri)=>{
       const R=debutToRadius(yr),pts=[];
-      for(let i=0;i<N;i++){const t=(i/N)*Math.PI*2;pts.push(new THREE.Vector3(Math.cos(t)*R*xSpread,0,Math.sin(t)*R));}
+      const _ws=_ri*5.31+1.7; // 링마다 다른 wobble 시드
+      for(let i=0;i<N;i++){
+        const t=(i/N)*Math.PI*2;
+        const w=1+0.006*Math.sin(_ws+t*3.9)*Math.cos(_ws*0.4+t*2.1); // 0.6% 이내 반지름 미세 변동
+        pts.push(new THREE.Vector3(Math.cos(t)*R*w*xSpread,0,Math.sin(t)*R*w));
+      }
       const geo=new THREE.BufferGeometry().setFromPoints(pts);
       const mat=new THREE.LineBasicMaterial({color:0x8ab0ff,transparent:true,opacity:0,depthWrite:false});
       grp.add(new THREE.LineLoop(geo,mat));_yearRingMats.push(mat);
@@ -2821,7 +2827,7 @@ async function buildUniverse(){
     const div=document.createElement('div');
     div.className='group-label';
     div.textContent=ko;
-    div.style.color='rgba(255,255,255,0.92)';
+    div.style.color='rgba(255,255,255,0.62)';
     div.style.cursor='pointer';
     div.style.position='absolute';
     div.style.left='50%';
@@ -3255,8 +3261,11 @@ async function buildUniverse(){
     ringGroup.renderOrder=5;
     const [cr,cg,cb]=info.color||[220,200,160];
     const centerR=R*1.45;
+    // 그룹명 기반 시드로 패턴에 미세 jitter → 그룹마다 다른 불규칙한 느낌
+    const _ps=_rko.split('').reduce((s,c)=>s+c.charCodeAt(0),0);
+    const _pj1=1+0.18*(((_ps*7)%13)/13-0.5),_pj2=1+0.18*(((_ps*11)%17)/17-0.5),_pj3=1+0.12*(((_ps*13)%11)/11-0.5);
     // 점-줄-점-줄 반복 패턴의 "켜짐" 구간(각도 범위)만 한 번 계산해서 레이어마다 재사용
-    const dotLen=centerR*0.010,dashLen=centerR*0.05,gapLen=centerR*0.022;
+    const dotLen=centerR*0.010*_pj1,dashLen=centerR*0.05*_pj2,gapLen=centerR*0.022*_pj3;
     const pattern=[dotLen,gapLen,dashLen,gapLen];
     const isOn=[true,false,true,false];
     const circumference=2*Math.PI*centerR;
