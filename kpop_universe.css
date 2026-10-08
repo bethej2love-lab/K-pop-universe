@@ -1,8 +1,9 @@
   *{margin:0;padding:0;box-sizing:border-box;}
   /* ── 커스텀 커서 (마우스 장치에서만) ─────────────────────────────────────────── */
+  /* ✦ 4각별: 아이유 이별로부터 뮤비 별자리 비주얼 레퍼런스 */
   @media (pointer:fine){
-    *{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'%3E%3Cpolygon points='11,2 13.2,8.2 20,8.2 14.4,12.2 16.6,18.5 11,14.5 5.4,18.5 7.6,12.2 2,8.2 8.8,8.2' fill='rgba(255,255,255,0.88)' stroke='rgba(255,255,255,0.25)' stroke-width='0.5'/%3E%3C/svg%3E") 11 11,auto;}
-    a,button,[role=button],select,[tabindex],[onclick],.tg,.tg-unit,.sr-item,.sr-credit-item{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'%3E%3Cpolygon points='11,2 13.2,8.2 20,8.2 14.4,12.2 16.6,18.5 11,14.5 5.4,18.5 7.6,12.2 2,8.2 8.8,8.2' fill='%23FFE566' stroke='%23FFD040' stroke-width='0.6'/%3E%3Ccircle cx='3.5' cy='3.5' r='1.2' fill='white' opacity='0.75'/%3E%3Ccircle cx='19' cy='2.5' r='0.8' fill='white' opacity='0.65'/%3E%3Ccircle cx='20' cy='18.5' r='1' fill='white' opacity='0.6'/%3E%3Ccircle cx='2.5' cy='18' r='0.7' fill='white' opacity='0.65'/%3E%3C/svg%3E") 11 11,pointer;}
+    *{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 28 28'%3E%3Cpath d='M14,1 L14.9,13.1 L27,14 L14.9,14.9 L14,27 L13.1,14.9 L1,14 L13.1,13.1 Z' fill='rgba(255,255,255,0.11)' transform='translate(14,14) scale(1.35) translate(-14,-14)'/%3E%3Cpath d='M14,1 L14.9,13.1 L27,14 L14.9,14.9 L14,27 L13.1,14.9 L1,14 L13.1,13.1 Z' fill='rgba(255,255,255,0.85)'/%3E%3C/svg%3E") 14 14,auto;}
+    a,button,[role=button],select,[tabindex],[onclick],.tg,.tg-unit,.sr-item,.sr-credit-item{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 28 28'%3E%3Cpath d='M14,1 L14.9,13.1 L27,14 L14.9,14.9 L14,27 L13.1,14.9 L1,14 L13.1,13.1 Z' fill='rgba(255,238,160,0.16)' transform='translate(14,14) scale(1.4) translate(-14,-14)'/%3E%3Cpath d='M14,1 L14.9,13.1 L27,14 L14.9,14.9 L14,27 L13.1,14.9 L1,14 L13.1,13.1 Z' fill='rgba(255,238,160,0.92)'/%3E%3C/svg%3E") 14 14,pointer;}
     input[type=text],input[type=search],input[type=email],input[type=password],textarea{cursor:text;}
     .hscroll-drag{cursor:grab;}
     .hscroll-drag.drag-scrolling{cursor:grabbing;}
