@@ -5690,6 +5690,7 @@ const _STAGE_EXCLUDE_FORMATS=['안무영상'];
 function _applyLiveExclude(q,opts){
   q=q.not('title','ilike','%[live]%');
   for(const k of _LIVE_EXCLUDE)q=q.not('title_norm','ilike',`*${k}*`);
+  q=q.not('title_norm','ilike','*시즌*ep.*');
   if(!(opts&&opts.includeChoreo))for(const f of _STAGE_EXCLUDE_FORMATS)q=q.not('content_formats','cs',`{${f}}`);
   return q;
 }
@@ -6133,6 +6134,7 @@ function _lbUpdateUplist(){
     });
   }
   [...scrollEl.children].forEach((row,i)=>row.classList.toggle('is-current',i===_lbIdx));
+  if(_lbIdx>=0)scrollEl.children[_lbIdx]?.scrollIntoView({block:'nearest',behavior:'smooth'});
   // 카운터: 쇼츠 세션은 예전처럼 같은 타입끼리만 세고, 브라우즈 세션은(쇼츠 섞인 목록도 그대로 순서대로
   // 넘어가므로) 목록 전체 기준 "몇 번째 / 총 몇 개"로 센다(2026-08-11, forceBrowseMode 통일).
   if(_lbSessionMode==='shorts'){
@@ -10643,9 +10645,14 @@ document.getElementById('conn-collapse').addEventListener('click',e=>{
   closeConnCard();
 });
 window.addEventListener('keydown',e=>{
+  if(document.activeElement&&['INPUT','TEXTAREA'].includes(document.activeElement.tagName))return;
+  // 데스크톱 라이트박스: ← → 로 이전/다음 영상 이동
+  if(!isMob()&&_lbSessionMode==='browse'&&document.getElementById('yt-lightbox')?.classList.contains('open')){
+    if(e.key==='ArrowLeft'){e.preventDefault();_lbGo(-1);return;}
+    if(e.key==='ArrowRight'){e.preventDefault();_lbGo(1);return;}
+  }
   const ttEl=document.getElementById('tt');
   if(isMob()||ttEl.style.display==='none'||!_openTArtist)return;
-  if(document.activeElement&&['INPUT','TEXTAREA'].includes(document.activeElement.tagName))return;
   if(e.key==='ArrowLeft'){e.preventDefault();navigateMember(-1);}
   else if(e.key==='ArrowRight'){e.preventDefault();navigateMember(1);}
   else if(e.key==='Escape'){
@@ -19859,52 +19866,63 @@ async function _buildFeedWeeklyTopCams(list,discList){
     if(pr!=null)return{...base,rankDelta:pr-(i+1)};
     return (v.published_at||'')>=prev.date?{...base,rankDelta:null}:base;
   });
+  // 카드 1(직캠 TOP 20)과 카드 3(무대 TOP 30)을 병렬로 조회해 순서대로 붙인다.
+  // 순차 실행이면 7일 쿼리가 끝나고 카드1을 붙인 뒤 30일 쿼리가 돌아 카드3을 붙이는 사이에
+  // _feedEnqueue의 다른 슬롯(ThisYearPicks 등)이 차트 선반에 카드를 먼저 끼워넣을 수 있다.
+  // Promise.allSettled로 두 쿼리를 동시에 던지면 둘 다 받은 뒤 순서대로 처리해 이 경쟁을 없앤다.
+  const _sel='id,title,thumb,category,is_short,content_flag,group_ko,members,view_count,published_at'+_durCol();
+  const _cf='.or(\'content_flag.is.null,content_flag.neq.기타\')';void _cf;
+  const _base=()=>_applyLiveExclude(sb.from(_YT_TABLE).select(_sel).eq('category','live'))
+    .not('view_count','is',null)
+    .or('content_flag.is.null,content_flag.neq.기타')
+    .or('content_flag.is.null,content_flag.neq.무관').or('content_flag.is.null,content_flag.neq.보류')
+    .or('content_flag.is.null,content_flag.neq.hidden')
+    .order('view_count',{ascending:false});
+  const [r7,r30]=await Promise.allSettled([
+    _base().gte('published_at',sinceDate).limit(300),
+    _base().gte('published_at',sinceDate30).limit(500)
+  ]);
+
+  // 카드 1+2: 7일 결과 → 직캠 TOP 20(list) + Trend(discList)
   try{
-    const{data,error}=await _applyLiveExclude(sb.from(_YT_TABLE)
-      .select('id,title,thumb,category,is_short,content_flag,group_ko,members,view_count,published_at'+_durCol())
-      .eq('category','live'))
-      .gte('published_at',sinceDate)
-      .not('view_count','is',null)
-      .or('content_flag.is.null,content_flag.neq.기타')
-      .or('content_flag.is.null,content_flag.neq.무관').or('content_flag.is.null,content_flag.neq.보류')
-      .or('content_flag.is.null,content_flag.neq.hidden')
-      .order('view_count',{ascending:false})
-      .limit(300);
-    if(error||!data?.length)return;
-    const allVids=_filterBannedVideos(data);
-    if(!allVids.length)return;
-
-    // 카드 1: 음방·직캠 TOP — 제목에 직캠 브랜드 낱말(직캠/팬캠/페이스캠/FanCam…) 있는 것만, 그룹당 최대 3개로 다양성 확보.
-    // members 태깅이 정확히 1명일 때만 "개인" 직캠으로 간주 — 실측해보니 K-Choreo/MIX직캠처럼 그룹 전체
-    // 포메이션 영상은 members가 빈 배열([])로, 진짜 개인 직캠은 그 한 명만 담겨있는 패턴이 뚜렷했음
-    // (2026-08-18, 사용자 요청 — 그룹 전체 무대 영상 말고 개인만 보고 싶다고 함). 제목엔 이름이 있는데
-    // 태깅이 아직 안 된 소수 케이스는 놓칠 수 있음(태깅 정확도의 한계, 이 필터 자체의 문제는 아님).
-    const camVids=_capByGroup(allVids.filter(_isSoloCam),v=>v.group_ko,3).slice(0,20);
-    if(camVids.length>=3){
-      const label=currentLang==='ko'?'주간 개인 직캠 TOP 20':'Weekly Solo Fancam TOP 20',sub=_cleanTitle(camVids[0].title);
-      // 순위 변동 배지용 이전 순위(_fetchPrevRanks)는 리스트를 '열 때'(클릭)만 쓰인다 — 카드 자체(썸네일/라벨)엔
-      // 안 쓰이므로 await로 붙잡지 않고 백그라운드로 가져온다. await하면 이 조회가 끝날 때까지 디스커버리 탭
-      // 콘텐츠 등장이 통째로 밀렸다(2026-08-27, 1000행 잘림 방지로 이 조회가 페이지네이션되며 무거워진 뒤 체감
-      // 저하). 클릭 시점엔 대개 이미 채워져 있고, 혹시 아직이면 _withRankDelta가 undefined→배지 숨김으로 안전 폴백.
-      let _prevSolo;
-      _fetchPrevRanks('solo_cam').then(r=>{_prevSolo=r;});
-      _appendFeedCard(list,'🏆',label,sub,()=>_openFeedListOverlay(label,sub,_withRankDelta(camVids,_prevSolo)),camVids[0].thumb);
-    }
-
-    // 카드 2: Trend — category='live' 전체 조회수 기준으로 뽑되(최근 7일 50개, 그룹당 최대 3개), 노출
-    // 순서는 랜덤 셔플 — "차트"가 아니라 발견용 카드라 순위 나열 느낌을 주지 않기 위함(2026-08-21, 사용자
-    // 요청 — 셀렉 기준은 조회수여도 노출은 랜덤하게, 순위 변동 배지도 불필요). 카드 자체의 라벨/썸네일은
-    // 셔플 전의 진짜 1위 영상 기준을 그대로 쓴다. 순위가 고정된 "차트"가 아니라 매번 순서가 바뀌는
-    // 발견용 카드라 Charts 선반이 아니라 Discovery 쪽(discList)에 넣는다(2026-08-21, 사용자 요청 —
-    // Charts 선반은 "항상 같은 자리"인 랭킹류로만 채우기로 함).
-    const topVids=_capByGroup(allVids,v=>v.group_ko,3).slice(0,50);
-    if(topVids.length>=3){
-      const top1=topVids[0];
-      const songs=_shuffle([...topVids]).map(v=>({..._rowTags(v),t:v.title,u:vidUrl(v),thumb:v.thumb,vc:v.view_count,dur:v.duration_sec,pa:v.published_at?.slice(0,10)}));
-      // 발견용(셔플·비랭킹) 카드라 순위/조회수 대신 대표 영상 제목을 보여준다 — 카드1·카드3과 동일 패턴
-      // (2026-08-25, 사용자 제보: TOP 모음도 아닌데 "1위·조회수"가 뜨는 게 이상함).
-      const label='Trend',sub=_cleanTitle(top1.title);
-      _appendFeedCard(discList||list,'📈',label,sub,()=>_openFeedListOverlay(label,sub,songs),top1.thumb);
+    if(r7.status==='fulfilled'){
+      const{data,error}=r7.value;
+      if(!error&&data?.length){
+        const allVids=_filterBannedVideos(data);
+        if(allVids.length){
+          // 카드 1: 음방·직캠 TOP — 제목에 직캠 브랜드 낱말(직캠/팬캠/페이스캠/FanCam…) 있는 것만, 그룹당 최대 3개로 다양성 확보.
+          // members 태깅이 정확히 1명일 때만 "개인" 직캠으로 간주 — 실측해보니 K-Choreo/MIX직캠처럼 그룹 전체
+          // 포메이션 영상은 members가 빈 배열([])로, 진짜 개인 직캠은 그 한 명만 담겨있는 패턴이 뚜렷했음
+          // (2026-08-18, 사용자 요청 — 그룹 전체 무대 영상 말고 개인만 보고 싶다고 함). 제목엔 이름이 있는데
+          // 태깅이 아직 안 된 소수 케이스는 놓칠 수 있음(태깅 정확도의 한계, 이 필터 자체의 문제는 아님).
+          const camVids=_capByGroup(allVids.filter(_isSoloCam),v=>v.group_ko,3).slice(0,20);
+          if(camVids.length>=3){
+            const label=currentLang==='ko'?'주간 개인 직캠 TOP 20':'Weekly Solo Fancam TOP 20',sub=_cleanTitle(camVids[0].title);
+            // 순위 변동 배지용 이전 순위(_fetchPrevRanks)는 리스트를 '열 때'(클릭)만 쓰인다 — 카드 자체(썸네일/라벨)엔
+            // 안 쓰이므로 await로 붙잡지 않고 백그라운드로 가져온다. await하면 이 조회가 끝날 때까지 디스커버리 탭
+            // 콘텐츠 등장이 통째로 밀렸다(2026-08-27, 1000행 잘림 방지로 이 조회가 페이지네이션되며 무거워진 뒤 체감
+            // 저하). 클릭 시점엔 대개 이미 채워져 있고, 혹시 아직이면 _withRankDelta가 undefined→배지 숨김으로 안전 폴백.
+            let _prevSolo;
+            _fetchPrevRanks('solo_cam').then(r=>{_prevSolo=r;});
+            _appendFeedCard(list,'🏆',label,sub,()=>_openFeedListOverlay(label,sub,_withRankDelta(camVids,_prevSolo)),camVids[0].thumb);
+          }
+          // 카드 2: Trend — category='live' 전체 조회수 기준으로 뽑되(최근 7일 50개, 그룹당 최대 3개), 노출
+          // 순서는 랜덤 셔플 — "차트"가 아니라 발견용 카드라 순위 나열 느낌을 주지 않기 위함(2026-08-21, 사용자
+          // 요청 — 셀렉 기준은 조회수여도 노출은 랜덤하게, 순위 변동 배지도 불필요). 카드 자체의 라벨/썸네일은
+          // 셔플 전의 진짜 1위 영상 기준을 그대로 쓴다. 순위가 고정된 "차트"가 아니라 매번 순서가 바뀌는
+          // 발견용 카드라 Charts 선반이 아니라 Discovery 쪽(discList)에 넣는다(2026-08-21, 사용자 요청 —
+          // Charts 선반은 "항상 같은 자리"인 랭킹류로만 채우기로 함).
+          const topVids=_capByGroup(allVids,v=>v.group_ko,3).slice(0,50);
+          if(topVids.length>=3){
+            const top1=topVids[0];
+            const songs=_shuffle([...topVids]).map(v=>({..._rowTags(v),t:v.title,u:vidUrl(v),thumb:v.thumb,vc:v.view_count,dur:v.duration_sec,pa:v.published_at?.slice(0,10)}));
+            // 발견용(셔플·비랭킹) 카드라 순위/조회수 대신 대표 영상 제목을 보여준다 — 카드1·카드3과 동일 패턴
+            // (2026-08-25, 사용자 제보: TOP 모음도 아닌데 "1위·조회수"가 뜨는 게 이상함).
+            const label='Trend',sub=_cleanTitle(top1.title);
+            _appendFeedCard(discList||list,'📈',label,sub,()=>_openFeedListOverlay(label,sub,songs),top1.thumb);
+          }
+        }
+      }
     }
   }catch(e){/* 카드 하나 실패했다고 탐험 탭 전체가 막히면 안 됨 — 조용히 무시 */}
 
@@ -19912,29 +19930,23 @@ async function _buildFeedWeeklyTopCams(list,discList){
   // 그대로 노출하고 어제 대비 순위 변동 배지를 붙인다(2026-08-21, 사용자 요청 — "완전체 무대"는 이름이
   // 어색하다고 해서 폐기, 그룹 전체로 필터링하지 않고 그냥 기간을 늘린 별도 차트로 단순화).
   try{
-    const{data,error}=await _applyLiveExclude(sb.from(_YT_TABLE)
-      .select('id,title,thumb,category,is_short,content_flag,group_ko,members,view_count,published_at'+_durCol())
-      .eq('category','live'))
-      .gte('published_at',sinceDate30)
-      .not('view_count','is',null)
-      .or('content_flag.is.null,content_flag.neq.기타')
-      .or('content_flag.is.null,content_flag.neq.무관').or('content_flag.is.null,content_flag.neq.보류')
-      .or('content_flag.is.null,content_flag.neq.hidden')
-      .order('view_count',{ascending:false})
-      .limit(500);
-    if(error||!data?.length)return;
-    // 쇼츠 제외(2026-09-10 사용자 요청) — "무대"는 카메라 여러 대로 찍어 방송에 나간 한 편이고, 쇼츠는
-    // 거기서 잘라낸 클립이라 같은 목록에 섞일 물건이 아니다. 실측으로 30자리 중 5칸이 클립이었고
-    // 조회수가 높아 1위까지 차지했다("서인영 워터밤 데뷔 직캠 최초공개", "…말아주는 Live Clip" 등).
-    // ⚠️ 직캠 차트는 반대다 — 세로 직캠은 정상 콘텐츠라 쇼츠도 그대로 둔다(is_short 마이그레이션의 전제).
-    const allVids30=_filterBannedVideos(data).filter(v=>!_isShortClip(v));
-    const stageVids=_capByGroup(allVids30,v=>v.group_ko,3).slice(0,30);
-    if(stageVids.length>=3){
-      const label=currentLang==='ko'?'월간 무대 TOP 30':'Monthly Stage TOP 30',sub=_cleanTitle(stageVids[0].title);
-      // 카드1과 동일 — 순위 배지 조회는 클릭 시점에만 필요하므로 콘텐츠 렌더를 막지 않게 백그라운드로 뺀다.
-      let _prevStage;
-      _fetchPrevRanks('monthly_stage').then(r=>{_prevStage=r;});
-      _appendFeedCard(list,'🎤',label,sub,()=>_openFeedListOverlay(label,sub,_withRankDelta(stageVids,_prevStage)),stageVids[0].thumb);
+    if(r30.status==='fulfilled'){
+      const{data,error}=r30.value;
+      if(!error&&data?.length){
+        // 쇼츠 제외(2026-09-10 사용자 요청) — "무대"는 카메라 여러 대로 찍어 방송에 나간 한 편이고, 쇼츠는
+        // 거기서 잘라낸 클립이라 같은 목록에 섞일 물건이 아니다. 실측으로 30자리 중 5칸이 클립이었고
+        // 조회수가 높아 1위까지 차지했다("서인영 워터밤 데뷔 직캠 최초공개", "…말아주는 Live Clip" 등).
+        // ⚠️ 직캠 차트는 반대다 — 세로 직캠은 정상 콘텐츠라 쇼츠도 그대로 둔다(is_short 마이그레이션의 전제).
+        const allVids30=_filterBannedVideos(data).filter(v=>!_isShortClip(v));
+        const stageVids=_capByGroup(allVids30,v=>v.group_ko,3).slice(0,30);
+        if(stageVids.length>=3){
+          const label=currentLang==='ko'?'월간 무대 TOP 30':'Monthly Stage TOP 30',sub=_cleanTitle(stageVids[0].title);
+          // 카드1과 동일 — 순위 배지 조회는 클릭 시점에만 필요하므로 콘텐츠 렌더를 막지 않게 백그라운드로 뺀다.
+          let _prevStage;
+          _fetchPrevRanks('monthly_stage').then(r=>{_prevStage=r;});
+          _appendFeedCard(list,'🎤',label,sub,()=>_openFeedListOverlay(label,sub,_withRankDelta(stageVids,_prevStage)),stageVids[0].thumb);
+        }
+      }
     }
   }catch(e){/* 조용히 무시 */}
 }

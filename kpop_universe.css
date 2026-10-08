@@ -737,7 +737,8 @@
   #yt-lb-uplist-scroll{display:flex;flex-direction:column;gap:2px;}
   .lb-uplist-item{display:flex;gap:9px;padding:6px 4px;border-radius:8px;cursor:pointer;align-items:center;}
   .lb-uplist-item:hover{background:rgba(255,255,255,0.05);}
-  .lb-uplist-item.is-current{background:rgba(130,155,255,0.11);}
+  .lb-uplist-item.is-current{background:rgba(130,155,255,0.11);box-shadow:inset 2.5px 0 0 rgba(130,155,255,0.7);}
+  .lb-uplist-item.is-current .lb-uplist-title{color:rgba(220,230,255,0.98);font-weight:600;}
   .lb-uplist-thumb{width:78px;height:44px;flex-shrink:0;border-radius:6px;object-fit:cover;background:rgba(255,255,255,0.06);}
   .lb-uplist-thumb.is-shorts{width:38px;height:66px;}
   .lb-uplist-info{min-width:0;flex:1;}
@@ -859,6 +860,11 @@
     #yt-lightbox.lb-browse #yt-lb-main{flex:1;min-width:0;}
     #yt-lightbox.lb-browse #yt-lb-uplist{width:320px;flex-shrink:0;max-height:min(80vh,720px);overflow-y:auto;padding-left:2px;}
     #yt-lightbox.lb-browse #yt-lb-uplist-scroll{padding-bottom:8px;}
+    /* 데스크톱: toolbar prev/next 표시, reactions 왼쪽 정렬 */
+    #yt-lightbox.lb-browse #yt-lb-toolbar #yt-lb-prev,
+    #yt-lightbox.lb-browse #yt-lb-toolbar #yt-lb-next{display:flex;}
+    #yt-lightbox.lb-browse #yt-lb-toolbar{justify-content:space-between;}
+    #yt-lightbox.lb-browse #yt-lb-reactions{justify-content:flex-start;}
     /* "연결 보기"를 담는 더보기 메뉴 — 닫기 버튼과 같은 자리(영상 위 여백)에 나란히 배치.
        데스크톱은 화면 폭에 여유가 있어 기존 인라인 배치도 문제 없었지만, 모바일과 구조를 통일해서
        유지보수 포인트를 하나로 줄임(2026-08-12). */
