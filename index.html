@@ -4677,20 +4677,6 @@ function _makeSearchItem(h,res,mobSearch,obSearch){
       +`<span class="sr-vb"><span class="sr-vtitle">${esc(h.name)}</span>${meta?`<span class="sr-vmeta">${esc(meta)}</span>`:''}</span>`;
   }else{
   div.innerHTML=`<span class="sr-nl"><span class="sr-item-name${h.type==='group'?' sr-group':''}">${_ico}${h.name}</span>${h.alias?`<span class="sr-alias">${h.alias}</span>`:''}</span>${h.sub?`<span class="sr-tag${h.type==='group'?' sr-group':''}${h.subFormer?' sr-tag-former':''}">${h.sub}</span>`:''}`;
-  if(h.type==='member'&&h.data&&h.data.name){
-    const _nameKo=h.data.name.ko;
-    const _addHint=(ac)=>{
-      if(div.querySelector('.sr-credit-hint'))return;
-      const NUL=String.fromCharCode(0);let lc=0,cc=0;
-      for(const[k,v]of Object.entries(ac)){if(k.split(NUL)[0].toLowerCase()===_nameKo.toLowerCase()){lc+=(v.lyrics||[]).length;cc+=(v.compose||[]).length;}}
-      if(!lc&&!cc)return;
-      const kw=lc&&cc?'작사/작곡':lc?'작사':'작곡';
-      const hint=document.createElement('span');hint.className='sr-credit-hint';hint.textContent=`${kw} ${lc+cc}`;
-      hint.addEventListener('click',e=>{e.stopPropagation();const q2=`${_nameKo} ${lc&&cc?'작사작곡':kw}`;const si=document.getElementById('search-input')||document.getElementById('mob-search-input');if(si)si.value=q2;doSearch(q2);});
-      div.appendChild(hint);
-    };
-    if(_acData)_addHint(_acData);else _loadAcData().then(_addHint);
-  }
   }
   div.addEventListener('click',e=>{
     e.stopPropagation();
