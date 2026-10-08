@@ -232,6 +232,17 @@
     },
     "checkedAt": "2026-09-25"
   },
+  "강지욱": {
+    "id": "75MOYjGEyyH5U4ZFHOPvxR",
+    "spotifyName": "Lim Young Woong",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "이름 불일치 — 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-10-08"
+  },
   "강혜원": {
     "id": "1xo99HG7IpzhOVGEI8IgH9",
     "spotifyName": "Hyewon",
@@ -501,6 +512,21 @@
       "titleOverlap": 0
     },
     "checkedAt": "2026-09-26"
+  },
+  "김유환": {
+    "id": "5rZa6gd8Aicp4N8QlPbhVl",
+    "spotifyName": "Kim Do Hwan",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "이름 불일치 — 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0,
+      "verifyOverlap": 0,
+      "verifyYears": [
+        2021
+      ]
+    },
+    "checkedAt": "2026-10-08"
   },
   "김은정": {
     "id": "2ebcZBZzLEgveZKoW1okl7",
@@ -1505,6 +1531,17 @@
     "checkedAt": "2026-09-30",
     "rejected": true
   },
+  "박세준": {
+    "id": "6NudWSh9xMZQ1fQyERNRDW",
+    "spotifyName": "Park Sejun",
+    "kind": "solo",
+    "confidence": "medium",
+    "why": "이름 유일 일치",
+    "evidence": {
+      "titleOverlap": null
+    },
+    "checkedAt": "2026-10-08"
+  },
   "박소은": {
     "id": "4wxCzHXqVGEWmcnGDWTwVh",
     "spotifyName": "SoEun",
@@ -2501,6 +2538,17 @@
     },
     "checkedAt": "2026-09-19"
   },
+  "신종국": {
+    "id": "60YNqzrSj7rJkuqHkpHPqG",
+    "spotifyName": "Kim Jong Kook",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "이름 불일치 — 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-10-08"
+  },
   "신지윤": {
     "id": "4lwkPuURX1XYNq6hrSoFRO",
     "spotifyName": "jiyoon",
@@ -3490,6 +3538,17 @@
     },
     "checkedAt": "2026-09-28"
   },
+  "오광석": {
+    "id": "1Ri5P0CfdNxdIkHX6es8Xd",
+    "spotifyName": "Polodared",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "이름 불일치 — 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-10-08"
+  },
   "오마이걸": {
     "id": "2019zR22qK2RBvCqtudBaI",
     "spotifyName": "OH MY GIRL",
@@ -3533,6 +3592,17 @@
       "titleOverlap": 0
     },
     "checkedAt": "2026-09-23"
+  },
+  "오태하": {
+    "id": "1giyHM5uC1nTldlq9GLstl",
+    "spotifyName": "Oh Tae Ho",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "이름 불일치 — 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-10-08"
   },
   "온리원오프": {
     "id": "0iQGSzpJ0G0lsugv8jsJHd",
@@ -4015,6 +4085,17 @@
     },
     "checkedAt": "2026-10-01"
   },
+  "이노": {
+    "id": "6T5PU9ZU40GJ9tta3zZdc3",
+    "spotifyName": "INO",
+    "kind": "solo",
+    "confidence": "medium",
+    "why": "이름 유일 일치",
+    "evidence": {
+      "titleOverlap": null
+    },
+    "checkedAt": "2026-10-08"
+  },
   "이달의소녀": {
     "id": "52zMTJCKluDlFwMQWmccY7",
     "spotifyName": "LOONA",
@@ -4144,6 +4225,17 @@
       "titleOverlap": 0
     },
     "checkedAt": "2026-09-24"
+  },
+  "이의진": {
+    "id": "2i6hsEhNtL3SGDpRhMoP0l",
+    "spotifyName": "Euijin",
+    "kind": "solo",
+    "confidence": "high",
+    "why": "동명 후보 3명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 2
+    },
+    "checkedAt": "2026-10-08"
   },
   "이재희": {
     "id": "3x6kdr5qAfzrfPBLj7a9pO",
@@ -4832,6 +4924,17 @@
     },
     "checkedAt": "2026-10-02"
   },
+  "최성민": {
+    "id": "7K3B42i5F0Wd38SJGENvgu",
+    "spotifyName": "Choi Sung Min",
+    "kind": "solo",
+    "confidence": "medium",
+    "why": "이름 유일 일치",
+    "evidence": {
+      "titleOverlap": null
+    },
+    "checkedAt": "2026-10-08"
+  },
   "최예나": {
     "id": "49muoiIu4uea4PO8vueUNN",
     "spotifyName": "YENA",
@@ -5127,6 +5230,17 @@
       ]
     },
     "checkedAt": "2026-09-15"
+  },
+  "키오": {
+    "id": "0eykMUiuUHtA5QVsOibyWQ",
+    "spotifyName": "Kio",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "동명 후보 2명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-10-08"
   },
   "키키": {
     "id": "63sat2XSMKdwKfqspmYQKP",
