@@ -8,7 +8,7 @@ name: StagePick 공연 자동 수집
 
 on:
   schedule:
-    - cron: '0 0 1 * *'   # 매월 1일 UTC 00:00 = KST 09:00
+    - cron: '0 0 * * 1,4'  # 매주 월/목 UTC 00:00 = KST 09:00
   workflow_dispatch:
     inputs:
       months:
