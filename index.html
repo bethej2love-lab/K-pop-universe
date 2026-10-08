@@ -4677,6 +4677,20 @@ function _makeSearchItem(h,res,mobSearch,obSearch){
       +`<span class="sr-vb"><span class="sr-vtitle">${esc(h.name)}</span>${meta?`<span class="sr-vmeta">${esc(meta)}</span>`:''}</span>`;
   }else{
   div.innerHTML=`<span class="sr-nl"><span class="sr-item-name${h.type==='group'?' sr-group':''}">${_ico}${h.name}</span>${h.alias?`<span class="sr-alias">${h.alias}</span>`:''}</span>${h.sub?`<span class="sr-tag${h.type==='group'?' sr-group':''}${h.subFormer?' sr-tag-former':''}">${h.sub}</span>`:''}`;
+  if(h.type==='member'&&h.data&&h.data.name){
+    const _nameKo=h.data.name.ko;
+    const _addHint=(ac)=>{
+      if(div.querySelector('.sr-credit-hint'))return;
+      const NUL=String.fromCharCode(0);let lc=0,cc=0;
+      for(const[k,v]of Object.entries(ac)){if(k.split(NUL)[0].toLowerCase()===_nameKo.toLowerCase()){lc+=(v.lyrics||[]).length;cc+=(v.compose||[]).length;}}
+      if(!lc&&!cc)return;
+      const kw=lc&&cc?'작사/작곡':lc?'작사':'작곡';
+      const hint=document.createElement('span');hint.className='sr-credit-hint';hint.textContent=`${kw} ${lc+cc}`;
+      hint.addEventListener('click',e=>{e.stopPropagation();const q2=`${_nameKo} ${lc&&cc?'작사작곡':kw}`;const si=document.getElementById('search-input')||document.getElementById('mob-search-input');if(si)si.value=q2;doSearch(q2);});
+      div.appendChild(hint);
+    };
+    if(_acData)_addHint(_acData);else _loadAcData().then(_addHint);
+  }
   }
   div.addEventListener('click',e=>{
     e.stopPropagation();
@@ -4952,6 +4966,17 @@ function _parseCreditQuery(q){
   }
   return null;
 }
+let _acCoIndex=null;
+function _buildCoIndex(ac){
+  if(_acCoIndex)return _acCoIndex;
+  const NUL=String.fromCharCode(0);const idx=new Map();
+  for(const[k,v]of Object.entries(ac)){
+    const name=k.split(NUL)[0];
+    for(const s of(v.lyrics||[])){if(!idx.has(s.songId))idx.set(s.songId,[]);idx.get(s.songId).push({name,role:'lyrics'});}
+    for(const s of(v.compose||[])){if(!idx.has(s.songId))idx.set(s.songId,[]);idx.get(s.songId).push({name,role:'compose'});}
+  }
+  return(_acCoIndex=idx);
+}
 function _renderCreditResults(container,cq,songs){
   container.querySelector('.sr-credit-section')?.remove();
   const sec=document.createElement('div');sec.className='sr-credit-section';
@@ -4980,7 +5005,64 @@ function _renderCreditResults(container,cq,songs){
     sec.appendChild(row);
   });
   if(songs.length>20){const more=document.createElement('div');more.className='sr-credit-more';more.textContent=`외 ${songs.length-20}곡 더`;sec.appendChild(more);}
+  if(_acData){
+    const coIdx=_buildCoIndex(_acData);const coMap=new Map();
+    for(const s of songs){for(const w of(coIdx.get(s.songId)||[])){if(w.name.toLowerCase()===cq.name.toLowerCase())continue;coMap.set(w.name,(coMap.get(w.name)||0)+1);}}
+    if(coMap.size){
+      const top=[...coMap.entries()].sort((a,b)=>b[1]-a[1]).slice(0,5);
+      const cwSec=document.createElement('div');cwSec.className='sr-cowriter-section';
+      const cwHd=document.createElement('div');cwHd.className='sr-sec-label';cwHd.textContent='함께 작업한 사람';cwSec.appendChild(cwHd);
+      const cwWrap=document.createElement('div');cwWrap.className='sr-cowriter-chips';
+      top.forEach(([name,cnt])=>{
+        const b=document.createElement('button');b.className='sr-cowriter-chip';b.textContent=`${name} (${cnt})`;
+        b.addEventListener('click',e=>{e.stopPropagation();const q2=`${name} 작사작곡`;const si=document.getElementById('search-input')||document.getElementById('mob-search-input');if(si)si.value=q2;doSearch(q2);});
+        cwWrap.appendChild(b);
+      });
+      cwSec.appendChild(cwWrap);sec.appendChild(cwSec);
+    }
+  }
   container.appendChild(sec);
+}
+function _parseCollabQuery(q){
+  const toks=q.trim().split(/\s+/);
+  if(toks.length!==2)return null;
+  const find=t=>ARTISTS.find(a=>a.name.ko===t||(a.displayName&&a.displayName===t));
+  const a=find(toks[0]),b=find(toks[1]);
+  if(!a||!b||a===b)return null;
+  return{a,b};
+}
+function _renderRelatedChips(hits,res,q){
+  res.querySelector('.sr-related')?.remove();
+  const NUL=String.fromCharCode(0);
+  const mHit=hits.find(h=>h.type==='member'&&h.data&&!h._expanded&&h.score<=1);
+  const gHit=!mHit&&hits.find(h=>h.type==='group'&&h.data&&h.score<=1);
+  if(!mHit&&!gHit)return;
+  const rel=document.createElement('div');rel.className='sr-related';
+  const wrap=document.createElement('div');wrap.className='sr-related-chips';
+  rel.appendChild(wrap);res.appendChild(rel);
+  const addChip=(label,cq,cls)=>{
+    const b=document.createElement('button');b.className='sr-chip'+(cls?' '+cls:'');b.textContent=label;
+    b.addEventListener('click',e=>{e.stopPropagation();const si=document.getElementById('search-input')||document.getElementById('mob-search-input');if(si)si.value=cq;doSearch(cq);});
+    wrap.appendChild(b);
+  };
+  if(mHit){
+    const nameKo=mHit.data.name.ko;
+    const gko=(mHit.data.group&&mHit.data.group.ko)||'';
+    if(gko&&GROUPS[gko])addChip(GROUPS[gko].en||gko,gko);
+    _loadAcData().then(ac=>{
+      if(_curSearchQ!==q)return;
+      let lc=0,cc=0;
+      for(const[k,v]of Object.entries(ac)){if(k.split(NUL)[0].toLowerCase()===nameKo.toLowerCase()){lc+=(v.lyrics||[]).length;cc+=(v.compose||[]).length;}}
+      if(!lc&&!cc)return;
+      const kw=lc&&cc?'작사작곡':lc?'작사':'작곡';
+      const b=document.createElement('button');b.className='sr-chip sr-chip-credit';b.textContent=`${nameKo} ${kw}`;
+      b.addEventListener('click',e=>{e.stopPropagation();const si=document.getElementById('search-input')||document.getElementById('mob-search-input');if(si)si.value=`${nameKo} ${kw}`;doSearch(`${nameKo} ${kw}`);});
+      wrap.insertBefore(b,wrap.firstChild);
+    });
+  }else if(gHit){
+    const gko=gHit.data;
+    ARTISTS.filter(a=>a._worldPos&&a.group&&a.group.ko===gko).slice(0,4).forEach(a=>addChip(a.displayName||a.name.ko,a.name.ko));
+  }
 }
 function doSearch(q){
   const obSr=_obSearchMode?document.getElementById('ob-sr'):null;
@@ -5304,6 +5386,7 @@ function doSearch(q){
     return a.name.localeCompare(b.name,'ko');
   });
   _renderSearchHits(hits.slice(0,obSr?5:40),res,mobSearch,false,!!obSr);
+  if(!obSr)_renderRelatedChips(hits,res,q);
   // 서버가 필요한 결과(영상·공연)는 늦게 도착하므로 뒤에 이어 붙인다(2026-08-31, 검색 확장 4단계)
   // 영상은 제목이 아니라 태그로 찾으므로, 방금 푼 엔티티를 힌트로 넘긴다(2026-09-02).
   // 이름이 **직접** 걸린 멤버를 최우선으로 본다 — 그룹명으로 딸려온 멤버(_expanded)를 힌트로 쓰면
@@ -5329,6 +5412,21 @@ function doSearch(q){
     return null;
   })();
   if(!obSr&&q.length>=2)_searchRemote(q,res,mobSearch,!!obSr,_hint);
+  if(!obSr&&sb&&q.length>=2){const _coll=_parseCollabQuery(q);if(_coll){(async()=>{
+    const esc=s=>String(s).replace(/["\\]/g,'');
+    const nA=esc(_coll.a.name.ko),nB=esc(_coll.b.name.ko);
+    const gA=esc((_coll.a.group&&_coll.a.group.ko)||''),gB=esc((_coll.b.group&&_coll.b.group.ko)||'');
+    const ors=[`and(members.cs.{"${nA}"},members.cs.{"${nB}"})`];
+    if(gA)ors.push(`and(with_members.cs.{"${nA}(${gA})"},members.cs.{"${nB}"})`);
+    if(gB)ors.push(`and(with_members.cs.{"${nB}(${gB})"},members.cs.{"${nA}"})`);
+    if(gA&&gB)ors.push(`and(with_members.cs.{"${nA}(${gA})"},with_members.cs.{"${nB}(${gB})"})`);
+    const r=await sb.from(_YT_TABLE).select(_SR_VID_COLS).or(ors.join(','))
+      .or('content_flag.is.null,content_flag.neq.무관').or('content_flag.is.null,content_flag.neq.보류')
+      .or('content_flag.is.null,content_flag.neq.hidden')
+      .order('view_count',{ascending:false,nullsFirst:false}).limit(6);
+    if(q!==_curSearchQ||!r.data||!r.data.length)return;
+    _appendSearchSections({video:r.data.map(v=>_srVidHit(v))},res,mobSearch,!!obSr);
+  })().catch(()=>{});}}
   // 작사·작곡 크레딧 검색 — "[이름] 작사/작곡" 패턴이 감지되면 JSON에서 목록 비동기 표시
   if(!obSr){const _cq=_parseCreditQuery(q);if(_cq){_loadAcData().then(acData=>{
     if(q!==_curSearchQ)return; // 다른 검색어로 바뀌면 무시

@@ -2300,6 +2300,18 @@
   .sr-credit-title{flex:1;min-width:0;font-size:13px;color:rgba(218,230,255,0.88);font-weight:500;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;}
   .sr-credit-album{flex-shrink:0;max-width:38%;font-size:11px;color:rgba(140,165,215,0.48);overflow:hidden;white-space:nowrap;text-overflow:ellipsis;text-align:right;}
   .sr-credit-more{padding:4px 13px 8px;font-size:11px;color:rgba(140,160,200,0.52);}
+  .sr-credit-hint{margin-left:auto;font-size:10px;padding:1px 6px;border-radius:3px;background:rgba(255,200,80,0.10);color:rgba(255,210,100,0.75);flex-shrink:0;cursor:pointer;white-space:nowrap;}
+  .sr-credit-hint:hover{background:rgba(255,200,80,0.18);}
+  .sr-related{border-top:0.5px solid rgba(255,255,255,0.05);margin-top:2px;}
+  .sr-related-chips{display:flex;flex-wrap:wrap;gap:6px;padding:7px 10px 5px;}
+  .sr-chip{flex-shrink:0;font-size:11px;padding:4px 10px;border-radius:20px;background:rgba(255,255,255,0.07);color:rgba(200,220,255,0.8);border:none;cursor:pointer;font-family:inherit;}
+  .sr-chip:hover{background:rgba(255,255,255,0.13);}
+  .sr-chip-credit{background:rgba(255,200,80,0.09);color:rgba(255,215,100,0.82);}
+  .sr-chip-credit:hover{background:rgba(255,200,80,0.16);}
+  .sr-cowriter-section{border-top:0.5px solid rgba(255,255,255,0.05);padding-bottom:4px;}
+  .sr-cowriter-chips{display:flex;flex-wrap:wrap;gap:6px;padding:4px 13px 6px;}
+  .sr-cowriter-chip{font-size:11px;padding:3px 9px;border-radius:12px;background:rgba(150,200,255,0.08);color:rgba(170,210,255,0.75);border:none;cursor:pointer;font-family:inherit;}
+  .sr-cowriter-chip:hover{background:rgba(150,200,255,0.15);}
   .sr-recent-label{padding:6px 13px 4px;font-size:10px;font-weight:700;color:rgba(140,160,200,0.56);letter-spacing:.06em;text-transform:uppercase;}
   /* 검색 결과 타입 구분 헤더(2026-08-31). ⚠️ `.sr-item` 클래스를 주면 안 된다 — 키보드 내비게이션이
      `.sr-item`으로 항목을 고르므로 화살표가 헤더에서 멈춘다. */
