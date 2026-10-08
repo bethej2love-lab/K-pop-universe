@@ -2291,6 +2291,25 @@
      지우지 않는 이유: "트레저 출신"은 여전히 유용한 정보라서. 판정은 _isFormerOf. */
   .sr-tag-former{color:rgba(154,184,220,0.42);}
   .sr-empty{padding:14px 13px;font-size:12px;color:rgba(140,160,200,0.56);text-align:center;}
+  /* 크레딧 검색 결과 ('백현 작사' 등 2026-10-08) */
+  .sr-credit-section{margin-top:4px;}
+  .sr-credit-item{display:flex!important;align-items:center;gap:8px;padding:7px 13px;}
+  .sr-credit-badge{flex-shrink:0;font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;letter-spacing:.02em;}
+  .src-lyrics{background:rgba(255,180,60,0.13);color:rgba(255,210,90,0.9);}
+  .src-compose{background:rgba(120,200,120,0.13);color:rgba(150,220,160,0.9);}
+  .sr-credit-body{display:flex;flex-direction:column;flex:1;min-width:0;}
+  .sr-credit-title{font-size:13px;color:rgba(218,230,255,0.88);font-weight:500;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;}
+  .sr-credit-album{font-size:11px;color:rgba(140,165,215,0.55);margin-top:1px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;}
+  .sr-credit-more{padding:3px 13px 6px;font-size:11px;color:rgba(140,160,200,0.5);}
+  /* 작사·작곡 크레딧 검색 결과(2026-10-08) */
+  .sr-credit-item{display:flex!important;align-items:flex-start;gap:8px;padding:7px 13px;}
+  .sr-credit-badge{flex-shrink:0;font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;margin-top:1px;}
+  .src-lyrics{background:rgba(255,180,60,0.13);color:rgba(255,210,90,0.9);}
+  .src-compose{background:rgba(120,200,120,0.13);color:rgba(150,230,165,0.9);}
+  .sr-credit-body{display:flex;flex-direction:column;flex:1;min-width:0;}
+  .sr-credit-title{font-size:13px;color:rgba(218,230,255,0.88);font-weight:500;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;}
+  .sr-credit-album{font-size:11px;color:rgba(140,165,215,0.5);margin-top:1px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;}
+  .sr-credit-more{padding:4px 13px 8px;font-size:11px;color:rgba(140,160,200,0.52);}
   .sr-recent-label{padding:6px 13px 4px;font-size:10px;font-weight:700;color:rgba(140,160,200,0.56);letter-spacing:.06em;text-transform:uppercase;}
   /* 검색 결과 타입 구분 헤더(2026-08-31). ⚠️ `.sr-item` 클래스를 주면 안 된다 — 키보드 내비게이션이
      `.sr-item`으로 항목을 고르므로 화살표가 헤더에서 멈춘다. */
@@ -3548,6 +3567,13 @@
   .feed-news-thumb{flex-shrink:0;width:60px;height:38px;object-fit:cover;border-radius:5px;opacity:0;transition:opacity .25s ease;}
   .feed-news-thumb.loaded{opacity:1;}
   .feed-news-thumb.is-square{width:38px;height:38px;}
+  /* 조회수 돌파 — 썸네일 전폭 상단, 뱃지+텍스트 하단 */
+  .feed-news-row.is-milestone{flex-direction:column;align-items:stretch;padding:0;margin:4px 16px 2px;border-radius:12px;overflow:hidden;background:rgba(255,255,255,0.028);border-top:none!important;}
+  .feed-news-row.is-milestone+.feed-news-row{border-top:0.5px solid rgba(255,255,255,0.06);}
+  .feed-news-row.is-milestone:active{background:rgba(255,255,255,0.055);}
+  .feed-news-thumb--milestone{width:100%;height:auto;aspect-ratio:16/9;border-radius:0;flex-shrink:0;}
+  .fnr-cap{display:flex;align-items:center;gap:10px;padding:8px 12px 10px;}
+  .fnr-cap .feed-news-body{flex:1;min-width:0;}
   /* 투데이스 케이팝 1면(2026-09-28) — 헤드라인 1 + 요약 4 + 더보기 */
   .feed-news-hero{margin:2px 16px 6px;border-radius:14px;overflow:hidden;background:rgba(255,255,255,0.035);cursor:pointer;position:relative;-webkit-tap-highlight-color:transparent;}
   .feed-news-hero .fnh-media{position:relative;aspect-ratio:16/9;background:rgba(255,255,255,0.04);overflow:hidden;}

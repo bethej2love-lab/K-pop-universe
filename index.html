@@ -1870,7 +1870,19 @@ function _dispGroupName(a){return _gLabel(_dispGroup(a));}
 // gko: 그룹 확장 경로처럼 "이 사람의 주 소속이 아닌 특정 그룹"으로 태그를 달아야 할 때 그 그룹. 없으면 주 소속.
 function _searchGroupTag(a,gko,hasLatin){
   const key=gko||(a&&a.group&&a.group.ko)||'';
-  if(!a||!GROUPS[key])return{sub:'',former:false}; // 아이유의 '솔로'처럼 실존 안 하는 그룹은 태그 없음
+  if(!a||!GROUPS[key]){
+    // '솔로'/본인이름 등 실존하지 않는 그룹 → groups[]에서 실제 전 그룹 찾아 흐리게 표기
+    // (원호 검색 시 "몬스타엑스(흐림)", 우즈 검색 시 "엑스원(흐림)" — 동명이인 구분용)
+    if(!gko&&a&&a.groups){
+      const fg=a.groups.find(g=>g&&g.ko&&GROUPS[g.ko]);
+      if(fg){
+        const en=fg.dispEn||fg.en||(GROUPS[fg.ko]&&GROUPS[fg.ko].en)||fg.ko;
+        const ko=fg.dispKo||fg.ko;
+        return{sub:(hasLatin&&en)?en:(currentLang==='ko'?ko:en),former:true};
+      }
+    }
+    return{sub:'',former:false}; // 아이유의 '솔로'처럼 실존 안 하는 그룹은 태그 없음
+  }
   const isMain=(a.group&&a.group.ko)===key;
   if(isMain&&_isSoloDisp(a))return{sub:'',former:false}; // 표기상 솔로면 소속을 아예 안 띄운다
   // 표기 오버라이드(dispKo/dispEn)는 그 그룹 항목에 얹혀 있다 — groups[] 쪽이 우선, 없으면 group.
@@ -4916,6 +4928,48 @@ function _openBetweenConn(a,b){
   };
   if(!trySelect())setTimeout(trySelect,1500);
 }
+// ── 작사·작곡 크레딧 검색 ──────────────────────────────────────────────────────────────────
+// "백현 작사" / "찬열 작곡" 처럼 "[이름] [역할]" 패턴을 잡아 artist_credits.json에서 목록 표시.
+// JSON은 첫 조회 때 한 번만 로드하고 이후 캐시된 객체를 재사용한다(약 600KB — 지연 로드가 적절).
+let _acData=null;
+async function _loadAcData(){
+  if(_acData)return _acData;
+  try{const r=await fetch('artist_credits.json');_acData=await r.json();}catch(e){_acData={};}
+  return _acData;
+}
+const _CREDIT_KW={
+  '작사':'lyrics','작곡':'compose','작사작곡':'both','작사/작곡':'both',
+  'lyrics':'lyrics','lyric':'lyrics','compose':'compose','composition':'compose'
+};
+function _parseCreditQuery(q){
+  const ql=q.toLowerCase().trim();
+  for(const[kw,role]of Object.entries(_CREDIT_KW)){
+    const kwl=kw.toLowerCase();
+    if(ql.endsWith(' '+kwl)){const name=q.slice(0,-(kwl.length+1)).trim();if(name.length>=1)return{name,role};}
+    if(ql.startsWith(kwl+' ')){const name=q.slice(kwl.length+1).trim();if(name.length>=1)return{name,role};}
+  }
+  return null;
+}
+function _renderCreditResults(container,cq,songs){
+  container.querySelector('.sr-credit-section')?.remove();
+  const sec=document.createElement('div');sec.className='sr-credit-section';
+  const hd=document.createElement('div');hd.className='sr-sec-label';
+  const roleLabel=cq.role==='lyrics'?'작사':cq.role==='compose'?'작곡':'작사/작곡';
+  hd.textContent=`${cq.name} ${roleLabel} (${songs.length})`;sec.appendChild(hd);
+  songs.slice(0,20).forEach(s=>{
+    const row=document.createElement('div');row.className='sr-item sr-credit-item';
+    const badge=document.createElement('span');
+    badge.className='sr-credit-badge '+(s.role==='lyrics'?'src-lyrics':'src-compose');
+    badge.textContent=s.role==='lyrics'?'작사':'작곡';
+    const body=document.createElement('span');body.className='sr-credit-body';
+    const title=document.createElement('span');title.className='sr-credit-title';title.textContent=s.title||'';
+    body.appendChild(title);
+    if(s.album){const alb=document.createElement('span');alb.className='sr-credit-album';alb.textContent=s.album;body.appendChild(alb);}
+    row.appendChild(badge);row.appendChild(body);sec.appendChild(row);
+  });
+  if(songs.length>20){const more=document.createElement('div');more.className='sr-credit-more';more.textContent=`외 ${songs.length-20}곡 더`;sec.appendChild(more);}
+  container.appendChild(sec);
+}
 function doSearch(q){
   const obSr=_obSearchMode?document.getElementById('ob-sr'):null;
   // 풀스크린 시트가 열려 있으면 그 본문이 결과 그릇이다(2026-09-02) — 매칭·랭킹은 그대로 두고
@@ -5263,6 +5317,23 @@ function doSearch(q){
     return null;
   })();
   if(!obSr&&q.length>=2)_searchRemote(q,res,mobSearch,!!obSr,_hint);
+  // 작사·작곡 크레딧 검색 — "[이름] 작사/작곡" 패턴이 감지되면 JSON에서 목록 비동기 표시
+  if(!obSr){const _cq=_parseCreditQuery(q);if(_cq){_loadAcData().then(acData=>{
+    if(q!==_curSearchQ)return; // 다른 검색어로 바뀌면 무시
+    const NUL=' ';
+    const nameL=_cq.name.toLowerCase();
+    const matches=Object.entries(acData).filter(([k])=>k.split(NUL)[0].toLowerCase()===nameL);
+    if(!matches.length)return;
+    const songs=[],seen=new Set();
+    for(const[,v]of matches){
+      const list=_cq.role==='both'
+        ?[...(v.lyrics||[]).map(s=>({...s,role:'lyrics'})),...(v.compose||[]).map(s=>({...s,role:'compose'}))]
+        :(_cq.role==='lyrics'?(v.lyrics||[]).map(s=>({...s,role:'lyrics'})):(v.compose||[]).map(s=>({...s,role:'compose'})));
+      for(const s of list)if(!seen.has(s.songId)){seen.add(s.songId);songs.push(s);}
+    }
+    if(!songs.length)return;
+    _renderCreditResults(res,_cq,songs);
+  });}}
   if(msOpen)_msSyncTabs();
   else if(obSr){res.classList.add('open');}
   else if(mobSearch){
@@ -19399,7 +19470,7 @@ function _appendNewsRow(container,{type,title,sub,thumb,nav}){
   const LABELS={album:'💿 신보',win:'🏆 1위',mv:'🎬 MV',teaser:'🎬 티저',milestone:'📈 조회수'};
   const CLS={album:'fnb-album',win:'fnb-win',mv:'fnb-mv',teaser:'fnb-teaser',milestone:'fnb-milestone'};
   const row=document.createElement('div');
-  row.className='feed-news-row';
+  row.className='feed-news-row'+(type==='milestone'?' is-milestone':'');
   const badge=document.createElement('div');
   badge.className='feed-news-badge '+(CLS[type]||'');
   badge.textContent=LABELS[type]||type;
@@ -19410,14 +19481,26 @@ function _appendNewsRow(container,{type,title,sub,thumb,nav}){
   titleEl.textContent=_cleanTitle(title);
   body.appendChild(titleEl);
   if(sub){const subEl=document.createElement('div');subEl.className='feed-news-sub';subEl.textContent=sub;body.appendChild(subEl);}
-  row.appendChild(badge);row.appendChild(body);
-  if(thumb){
+  if(type==='milestone'&&thumb){
+    // 조회수 돌파는 썸네일이 주인공 — 이미지를 맨 위 전폭으로, 뱃지+텍스트는 아래에
     const img=document.createElement('img');
-    img.className='feed-news-thumb'+(type==='album'?' is-square':'');
+    img.className='feed-news-thumb feed-news-thumb--milestone';
     img.loading='lazy';img.alt='';
     img.addEventListener('load',()=>img.classList.add('loaded'));
     img.src=thumb;
-    row.appendChild(img);
+    const cap=document.createElement('div');cap.className='fnr-cap';
+    cap.appendChild(badge);cap.appendChild(body);
+    row.appendChild(img);row.appendChild(cap);
+  }else{
+    row.appendChild(badge);row.appendChild(body);
+    if(thumb){
+      const img=document.createElement('img');
+      img.className='feed-news-thumb'+(type==='album'?' is-square':'');
+      img.loading='lazy';img.alt='';
+      img.addEventListener('load',()=>img.classList.add('loaded'));
+      img.src=thumb;
+      row.appendChild(img);
+    }
   }
   row.addEventListener('click',nav);
   row.addEventListener('touchstart',e=>_lbRipple(row,e),{passive:true});
