@@ -15568,6 +15568,19 @@ function _favBurst(btn){
   setTimeout(()=>btn.classList.remove('fav-burst'),450);
   _flyHeartToFeed(btn); // 하트가 피드 탭으로 날아가는 비언어 루프 힌트
   const n=5;
+  // ✦ 별 파티클 2개 추가 (뮤비 스타차트 별 비주얼 레퍼런스)
+  for(let s=0;s<2;s++){
+    const sp=document.createElement('span');
+    sp.className='fav-particle fav-star-particle';
+    sp.textContent='✦';
+    sp.style.fontSize=(9+Math.random()*5)+'px';
+    const sa=(Math.PI*2/2)*s+Math.PI/4+(Math.random()-0.5)*0.5;
+    const sd=18+Math.random()*10;
+    sp.style.setProperty('--px',`${Math.cos(sa)*sd}px`);
+    sp.style.setProperty('--py',`${Math.sin(sa)*sd}px`);
+    btn.appendChild(sp);
+    sp.addEventListener('animationend',()=>sp.remove());
+  }
   for(let i=0;i<n;i++){
     const p=document.createElement('span');
     p.className='fav-particle';
