@@ -536,6 +536,17 @@
     "checkedAt": "2026-09-30",
     "rejected": true
   },
+  "김정우": {
+    "id": "4QzN6n7tK3NNCZnloWCKzi",
+    "spotifyName": "Kim Jang-Hoon",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "이름 불일치 — 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-10-08"
+  },
   "김지숙": {
     "id": "5se8HfkMw6SGJEqC5BhEZV",
     "spotifyName": "Kim Ji Soo",
@@ -599,6 +610,17 @@
       ]
     },
     "checkedAt": "2026-09-26"
+  },
+  "나연": {
+    "id": "1VwDG9aBflQupaFNjUru9A",
+    "spotifyName": "NAYEON",
+    "kind": "solo",
+    "confidence": "high",
+    "why": "동명 후보 2명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 2
+    },
+    "checkedAt": "2026-10-08"
   },
   "나우즈": {
     "id": "1iZwr6w3TWPNezX8yCtRBg",
@@ -1970,6 +1992,22 @@
     },
     "checkedAt": "2026-10-02"
   },
+  "샤넌": {
+    "id": "1PKDFembgxdtHG207rsJSO",
+    "spotifyName": "Shannon",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "동명 후보 4명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0,
+      "verifyOverlap": 0,
+      "verifyYears": [
+        2019,
+        2018
+      ]
+    },
+    "checkedAt": "2026-10-08"
+  },
   "샤이니": {
     "id": "2hRQKC0gqlZGPrmUKbcchR",
     "spotifyName": "SHINee",
@@ -2387,6 +2425,22 @@
       "titleOverlap": null
     },
     "checkedAt": "2026-09-20"
+  },
+  "승희": {
+    "id": "1kTabwjnM8SrHC9SNQRjZU",
+    "spotifyName": "SeungHee",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "동명 후보 3명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0,
+      "verifyOverlap": 0,
+      "verifyYears": [
+        2026,
+        2023
+      ]
+    },
+    "checkedAt": "2026-10-08"
   },
   "시그니처": {
     "id": "5x9WawpXGR82PWDFk9CKYQ",
@@ -3349,6 +3403,17 @@
     },
     "checkedAt": "2026-09-23"
   },
+  "연경": {
+    "id": "7aN06I9vO5mdTYvjZvVEoN",
+    "spotifyName": "Yeonkyung Jennison Kim",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "이름 불일치 — 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-10-08"
+  },
   "영서": {
     "id": "28c9XwRowiuuOX2aZ5rfYT",
     "spotifyName": "YOUNGSEO",
@@ -3597,6 +3662,17 @@
       "titleOverlap": 2
     },
     "checkedAt": "2026-09-15"
+  },
+  "우태운": {
+    "id": "5G48jt4U9koVbgkkcZn1nN",
+    "spotifyName": "Woo Tae Woon",
+    "kind": "solo",
+    "confidence": "medium",
+    "why": "이름 유일 일치",
+    "evidence": {
+      "titleOverlap": null
+    },
+    "checkedAt": "2026-10-08"
   },
   "우희": {
     "id": "2eDqpbMcyVqQIWiYGPv2T4",
@@ -3901,6 +3977,17 @@
       "titleOverlap": 0
     },
     "checkedAt": "2026-09-30"
+  },
+  "은교": {
+    "id": "6z4R3mCiiIiLgpicseyNkV",
+    "spotifyName": "LEE SEUNG YOON",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "이름 불일치 — 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-10-08"
   },
   "은우": {
     "id": "7z8deGsnKtaDryEjO8hOjd",
@@ -4604,6 +4691,17 @@
       "titleOverlap": 0
     },
     "checkedAt": "2026-10-01"
+  },
+  "지현": {
+    "id": "5R2bWWAOeZBukWYd03LNDn",
+    "spotifyName": "Jihyun",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "동명 후보 2명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-10-08"
   },
   "진예": {
     "id": "2FgZrgTMX6Sk0VNcOsEPmm",

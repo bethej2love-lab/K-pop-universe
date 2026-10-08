@@ -447,10 +447,18 @@
     "수미": "2026-10-07",
     "찬미": "2026-10-07",
     "효영": "2026-10-07",
-    "혜원": "2026-10-07"
+    "혜원": "2026-10-07",
+    "은교": "2026-10-08",
+    "나연": "2026-10-08",
+    "샤넌": "2026-10-08",
+    "지현": "2026-10-08",
+    "승희": "2026-10-08",
+    "연경": "2026-10-08",
+    "우태운": "2026-10-08",
+    "김정우": "2026-10-08"
   },
-  "runs": 55,
-  "lastRunAt": "2026-10-07T20:34:51.628Z",
+  "runs": 56,
+  "lastRunAt": "2026-10-08T16:24:21.677Z",
   "swept": {
     "에스파": [
       2023,
@@ -2421,6 +2429,44 @@
       2023,
       2024,
       2025
+    ],
+    "은교": [
+      2023,
+      2024,
+      2025
+    ],
+    "나연": [
+      2023,
+      2024,
+      2025
+    ],
+    "샤넌": [
+      2023,
+      2024,
+      2025
+    ],
+    "지현": [
+      2023,
+      2024,
+      2025
+    ],
+    "승희": [
+      2023,
+      2024,
+      2025
+    ],
+    "연경": [
+      2023,
+      2024,
+      2025
+    ],
+    "우태운": [
+      2023,
+      2024,
+      2025
+    ],
+    "김정우": [
+      2023
     ]
   },
   "pending": {
@@ -2884,6 +2930,53 @@
       "since": "2026-10-07",
       "heldAlbums": [
         "2026-06-12 Still On My Mind"
+      ],
+      "why": "영상 증거 0곡(영상 1개 대조)"
+    },
+    "은교": {
+      "spotifyName": "LEE SEUNG YOON",
+      "spotifyId": "6z4R3mCiiIiLgpicseyNkV",
+      "since": "2026-10-08",
+      "heldAlbums": [
+        "2026-06-26 Album 0",
+        "2023-01-26 Shelter Of Dreams",
+        "2023-01-06 Pricey Hangover",
+        "2024-10-24 YEOK SEONG",
+        "2024-05-21 LEE SEUNG YOON CONCERT [DOCKING : LIFTOFF] LIVE ALBUM"
+      ],
+      "why": "영상 증거 0곡(영상 0개 대조)"
+    },
+    "샤넌": {
+      "spotifyName": "Shannon",
+      "spotifyId": "1PKDFembgxdtHG207rsJSO",
+      "since": "2026-10-08",
+      "heldAlbums": [
+        "2026-01-16 Sounds at Work!",
+        "2023-02-14 Solitary Industrial Revolution (feat. RIME)",
+        "2024-03-27 The First Symbol System",
+        "2024-10-01 Shinkansen Too Hard Ice Cream",
+        "2025-07-02 kinda nice places"
+      ],
+      "why": "영상 증거 0곡(영상 16개 대조)"
+    },
+    "승희": {
+      "spotifyName": "SeungHee",
+      "spotifyId": "1kTabwjnM8SrHC9SNQRjZU",
+      "since": "2026-10-08",
+      "heldAlbums": [
+        "2026-08-23 Movie ‘Choir of God’ Special Track. 1",
+        "2023-03-09 Elsword : Set Fire (Original Game Soundtrack)"
+      ],
+      "why": "영상 증거 0곡(영상 0개 대조)"
+    },
+    "김정우": {
+      "spotifyName": "Kim Jang-Hoon",
+      "spotifyId": "4QzN6n7tK3NNCZnloWCKzi",
+      "since": "2026-10-08",
+      "heldAlbums": [
+        "2026-05-03 I Just Sang",
+        "2026-02-02 I Have Nothing, But Everything",
+        "2023-12-29 고려거란전쟁 (Original Soundtrack) Part.2"
       ],
       "why": "영상 증거 0곡(영상 1개 대조)"
     }
