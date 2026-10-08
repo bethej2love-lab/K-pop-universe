@@ -4938,12 +4938,14 @@ async function _loadAcData(){
   return _acData;
 }
 const _CREDIT_KW={
-  '작사':'lyrics','작곡':'compose','작사작곡':'both','작사/작곡':'both',
+  '작사작곡':'both','작사/작곡':'both','작사 작곡':'both',
+  '작사':'lyrics','작곡':'compose',
   'lyrics':'lyrics','lyric':'lyrics','compose':'compose','composition':'compose'
 };
 function _parseCreditQuery(q){
   const ql=q.toLowerCase().trim();
-  for(const[kw,role]of Object.entries(_CREDIT_KW)){
+  // 긴 키워드 먼저 — "작사"가 "작사 작곡"의 부분 문자열이라 짧은 것이 앞에 오면 오탐
+  for(const[kw,role]of Object.entries(_CREDIT_KW).sort((a,b)=>b[0].length-a[0].length)){
     const kwl=kw.toLowerCase();
     if(ql.endsWith(' '+kwl)){const name=q.slice(0,-(kwl.length+1)).trim();if(name.length>=1)return{name,role};}
     if(ql.startsWith(kwl+' ')){const name=q.slice(kwl.length+1).trim();if(name.length>=1)return{name,role};}
@@ -4956,16 +4958,19 @@ function _renderCreditResults(container,cq,songs){
   const hd=document.createElement('div');hd.className='sr-sec-label';
   const roleLabel=cq.role==='lyrics'?'작사':cq.role==='compose'?'작곡':'작사/작곡';
   hd.textContent=`${cq.name} ${roleLabel} (${songs.length})`;sec.appendChild(hd);
+  const showBadge=cq.role==='both';
   songs.slice(0,20).forEach(s=>{
     const row=document.createElement('div');row.className='sr-item sr-credit-item';
-    const badge=document.createElement('span');
-    badge.className='sr-credit-badge '+(s.role==='lyrics'?'src-lyrics':'src-compose');
-    badge.textContent=s.role==='lyrics'?'작사':'작곡';
-    const body=document.createElement('span');body.className='sr-credit-body';
+    if(showBadge){
+      const badge=document.createElement('span');
+      badge.className='sr-credit-badge '+(s.role==='lyrics'?'src-lyrics':'src-compose');
+      badge.textContent=s.role==='lyrics'?'작사':'작곡';
+      row.appendChild(badge);
+    }
     const title=document.createElement('span');title.className='sr-credit-title';title.textContent=s.title||'';
-    body.appendChild(title);
-    if(s.album){const alb=document.createElement('span');alb.className='sr-credit-album';alb.textContent=s.album;body.appendChild(alb);}
-    row.appendChild(badge);row.appendChild(body);sec.appendChild(row);
+    row.appendChild(title);
+    if(s.album){const alb=document.createElement('span');alb.className='sr-credit-album';alb.textContent=s.album;row.appendChild(alb);}
+    sec.appendChild(row);
   });
   if(songs.length>20){const more=document.createElement('div');more.className='sr-credit-more';more.textContent=`외 ${songs.length-20}곡 더`;sec.appendChild(more);}
   container.appendChild(sec);
