@@ -799,7 +799,10 @@
       </div>
     </div>
     <div id="yt-lb-info">
-      <div id="yt-lb-title-text"></div>
+      <div id="yt-lb-info-row">
+        <div id="yt-lb-title-text"></div>
+        <button id="yt-lb-queue-btn" aria-label="재생 목록">≡</button>
+      </div>
       <div id="yt-lb-meta-text"></div>
       <div id="yt-lb-yt-src" style="font-size:9px;color:rgba(255,255,255,0.13);letter-spacing:0.03em;margin-top:1px;">youtube</div>
     </div>
@@ -827,6 +830,7 @@
       </div>
       <button id="yt-lb-next" aria-label="다음 영상">›</button>
     </div>
+    <div id="yt-lb-uplist-preview"></div>
     </div>
     <div id="yt-lb-uplist">
       <div id="yt-lb-surf"></div>
@@ -840,6 +844,10 @@
       </div>
       <div id="yt-lb-uplist-scroll"></div>
     </div>
+  </div>
+  <div id="yt-lb-queue-backdrop"></div>
+  <div id="yt-lb-queue-sheet">
+    <div id="yt-lb-queue-sheet-handle"></div>
   </div>
 </div>
 <div id="mob-top-bar">
@@ -5802,7 +5810,7 @@ function openLightbox(url,shorts,playlist,idx,ctx,isAdvance,forceBrowseMode){
   // 어디서 열리든 몰입형 하나로 통일하기로 함 — "다음 영상" 목록은 좌상단 목록 버튼으로 언제든 그대로
   // 펼쳐볼 수 있으니 브라우즈 전용 레이아웃 자체가 필요 없어짐. 파라미터 자체는 호출부 여러 곳에 아직
   // 남아있지만(제거는 별개 정리 작업), 여기서 더 이상 안 읽으므로 무해.
-  if(!isAdvance)_lbSessionMode=shorts?'shorts':'browse';
+  if(!isAdvance){_resetQueueSheet();_lbSessionMode=shorts?'shorts':'browse';}
   lb.classList.toggle('lb-browse',_lbSessionMode==='browse');
   _gaEvent('video_play',{mode:_lbSessionMode,advance:!!isAdvance}); // 쇼츠/브라우즈·최초/넘김 구분(2026-08-29)
   // iOS Safari: display:none 상태의 iframe에서 src를 바꾸면 사용자 제스처 체인이 끊겨 autoplay가 차단됨.
@@ -6134,6 +6142,71 @@ function _lbUpdateUplist(){
   }else{
     if(cntEl)cntEl.textContent=(_lbPlaylist.length>1&&_lbIdx>=0)?`${_lbIdx+1} / ${_lbPlaylist.length}`:'';
   }
+  // 미리보기 꼬리 — 현재 다음 2개 항목 표시
+  const _prevEl=document.getElementById('yt-lb-uplist-preview');
+  if(_prevEl){
+    _prevEl.innerHTML='';
+    const _nextItems=(_lbPlaylist&&_lbIdx>=0)?_lbPlaylist.slice(_lbIdx+1,_lbIdx+3):[];
+    if(_nextItems.length){
+      const _ph=document.createElement('div');_ph.id='yt-lb-uplist-preview-hd';_ph.textContent='다음';_prevEl.appendChild(_ph);
+      _nextItems.forEach((item,i)=>{
+        const idx=_lbIdx+1+i;
+        const row=document.createElement('div');row.className='lb-preview-item';
+        const thumb=document.createElement(item.thumb?'img':'div');
+        thumb.className='lb-preview-thumb'+(_songIsShort(item)?' is-shorts':'');
+        if(item.thumb){thumb.src=item.thumb;thumb.loading='lazy';thumb.alt='';}
+        const info=document.createElement('div');info.className='lb-preview-info';
+        const tEl=document.createElement('div');tEl.className='lb-preview-title';tEl.textContent=item.t||'';
+        info.appendChild(tEl);
+        const meta=_fmtVidMeta(item.pa,item.vc);
+        if(meta){const m=document.createElement('div');m.className='lb-preview-meta';m.textContent=meta;info.appendChild(m);}
+        row.appendChild(thumb);row.appendChild(info);
+        row.addEventListener('click',e=>{e.stopPropagation();_surfHopping=true;try{openLightbox(item.u,_songIsShort(item),_lbPlaylist,idx,_lbCtx,false,true);}finally{_surfHopping=false;}});
+        _prevEl.appendChild(row);
+      });
+      const _mb=document.createElement('button');
+      _mb.id='yt-lb-uplist-more-btn';_mb.type='button';
+      _mb.textContent='이어서 보기 전체 ›';
+      _mb.addEventListener('click',e=>{e.stopPropagation();_openQueueSheet();});
+      _prevEl.appendChild(_mb);
+    }
+  }
+}
+
+// ── 큐 시트 열기/닫기 ─────────────────────────────────────────────────────────
+let _queueSheetOpen=false;
+function _resetQueueSheet(){
+  if(!_queueSheetOpen)return;
+  _queueSheetOpen=false;
+  const sheet=document.getElementById('yt-lb-queue-sheet');
+  const backdrop=document.getElementById('yt-lb-queue-backdrop');
+  const wrap=document.getElementById('yt-lb-wrap');
+  const uplist=document.getElementById('yt-lb-uplist');
+  sheet?.classList.remove('open');backdrop?.classList.remove('open');
+  if(uplist&&wrap&&!wrap.contains(uplist)){uplist.classList.remove('qs-in');wrap.appendChild(uplist);}
+}
+function _openQueueSheet(){
+  if(_queueSheetOpen)return;
+  _queueSheetOpen=true;
+  const sheet=document.getElementById('yt-lb-queue-sheet');
+  const backdrop=document.getElementById('yt-lb-queue-backdrop');
+  const uplist=document.getElementById('yt-lb-uplist');
+  if(!sheet||!uplist)return;
+  uplist.classList.add('qs-in');
+  sheet.appendChild(uplist);
+  requestAnimationFrame(()=>{sheet.classList.add('open');backdrop?.classList.add('open');});
+}
+function _closeQueueSheet(){
+  if(!_queueSheetOpen)return;
+  _queueSheetOpen=false;
+  const sheet=document.getElementById('yt-lb-queue-sheet');
+  const backdrop=document.getElementById('yt-lb-queue-backdrop');
+  sheet?.classList.remove('open');backdrop?.classList.remove('open');
+  const wrap=document.getElementById('yt-lb-wrap');
+  const uplist=document.getElementById('yt-lb-uplist');
+  setTimeout(()=>{
+    if(!_queueSheetOpen&&uplist&&wrap&&!wrap.contains(uplist)){uplist.classList.remove('qs-in');wrap.appendChild(uplist);}
+  },350);
 }
 
 // ── Surf(파도타기) — 브라우즈 모드 라이트박스의 Up Next (2026-09-29, 1단계: 연결·필터·묶음) ──────────
@@ -7194,6 +7267,7 @@ function _closeLbHalf(){
 function closeLightbox(){
   clearTimeout(_lbAutoUnmuteT);
   _closeLbHalf(); // 하프시트로 올려둔 카드 시트를 원래 층으로 되돌린다
+  _resetQueueSheet();
   _lbHideLoading();
   _surfHideRecap();
   const lb=document.getElementById('yt-lightbox');
@@ -7267,7 +7341,7 @@ document.getElementById('yt-lightbox').addEventListener('click',e=>{e.stopPropag
     }));
   }
   _lbEl.addEventListener('touchstart',e=>{
-    if(e.touches.length!==1)return;
+    if(e.touches.length!==1||_queueSheetOpen)return;
     _lbTX=e.touches[0].clientX;_lbTY=e.touches[0].clientY;
     _lbDragging=true;_lbAxis=null;_lbTStart=e.timeStamp;_lbPullMode=false;
     _lbScrollEl=e.target.closest('#yt-lb-uplist')?_lbUplist:_lbWrap;
@@ -7430,6 +7504,15 @@ document.getElementById('yt-lb-uplist-label').addEventListener('click',e=>{
   e.currentTarget.setAttribute('aria-expanded',closed?'false':'true');
 });
 document.getElementById('yt-lb-uplist-next').addEventListener('click',e=>{e.stopPropagation();_lbGo(1);});
+// 큐 시트 이벤트
+document.getElementById('yt-lb-queue-btn').addEventListener('click',e=>{e.stopPropagation();_openQueueSheet();});
+document.getElementById('yt-lb-queue-backdrop').addEventListener('click',_closeQueueSheet);
+{
+  const _qs=document.getElementById('yt-lb-queue-sheet');
+  let _qsDragY=0;
+  _qs.addEventListener('touchstart',e=>{if(e.target.closest('#yt-lb-queue-sheet-handle'))_qsDragY=e.touches[0].clientY;},{passive:true});
+  _qs.addEventListener('touchend',e=>{if(_qsDragY&&e.changedTouches[0].clientY-_qsDragY>60)_closeQueueSheet();_qsDragY=0;},{passive:true});
+}
 document.getElementById('yt-lb-scrap').addEventListener('click',e=>{
   e.stopPropagation();
   if(!_lbPlaylist||_lbIdx<0)return;
