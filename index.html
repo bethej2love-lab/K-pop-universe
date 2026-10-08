@@ -5320,7 +5320,7 @@ function doSearch(q){
   // 작사·작곡 크레딧 검색 — "[이름] 작사/작곡" 패턴이 감지되면 JSON에서 목록 비동기 표시
   if(!obSr){const _cq=_parseCreditQuery(q);if(_cq){_loadAcData().then(acData=>{
     if(q!==_curSearchQ)return; // 다른 검색어로 바뀌면 무시
-    const NUL=' ';
+    const NUL=String.fromCharCode(0);
     const nameL=_cq.name.toLowerCase();
     const matches=Object.entries(acData).filter(([k])=>k.split(NUL)[0].toLowerCase()===nameL);
     if(!matches.length)return;
