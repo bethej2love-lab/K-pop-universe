@@ -401,7 +401,14 @@
     font-size:11px;font-weight:300;letter-spacing:0.08em;
     pointer-events:none;user-select:none;white-space:nowrap;
     text-shadow:0 0 12px currentColor,0 0 4px currentColor,0 1px 4px rgba(0,0,0,0.70);
-    transition:opacity 0.6s ease; /* 떴다 사라지는 로테이션이라 조금 더 부드럽게(2026-08-26) */
+    transition:opacity 0.6s ease,color 0.4s ease,text-shadow 0.4s ease,font-weight 0.3s ease; /* 떴다 사라지는 로테이션이라 조금 더 부드럽게(2026-08-26) */
+  }
+  .group-label.gl-focused{
+    color:rgba(255,255,255,0.95)!important;
+    font-weight:500;
+    font-size:12px;
+    letter-spacing:0.12em;
+    text-shadow:0 0 20px rgba(200,220,255,0.85),0 0 8px rgba(255,255,255,0.7),0 0 3px rgba(255,255,255,0.5),0 1px 3px rgba(0,0,0,0.8);
   }
   /* ── Cards ───────────────────────────────────── */
   #tt,#gc{
@@ -2762,7 +2769,7 @@
      커서로 "아직 빔"을 명확히 해 오해를 없앤다. */
   .gc-collection-chip-empty{opacity:0.45;cursor:default;}
   /* 한 사람의 시간축(2026-09-05, 킬러 6.3) — 컬렉션 헤더와 같은 톤의 미니 라벨 + 세로 마일스톤 목록 */
-  #tt-timeline-section{margin-top:7px;padding-top:8px;border-top:0.5px solid rgba(255,255,255,0.10);}
+  #tt-timeline-section,#gc-timeline-section{margin-top:16px;padding-top:12px;border-top:0.5px solid rgba(255,255,255,0.10);}
   .tt-timeline-hd{font-size:10px;font-weight:700;letter-spacing:.16em;color:rgba(130,150,205,0.56);text-transform:uppercase;margin-bottom:6px;}
   .tt-tl-row{display:flex;align-items:baseline;gap:8px;padding:2px 0;font-size:12px;}
   .tt-tl-dot{width:15px;text-align:center;flex-shrink:0;font-size:11px;}

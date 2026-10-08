@@ -3929,6 +3929,9 @@ function animate(){
     const d=camera.position.distanceTo(bm?bm.mesh.position:worldPos);
     const distFade=d<40?1:d<70?(70-d)/30:0;
     const fa=(bm?bm.mesh._filterAlpha??1:1)*(bm?bm.mesh._focusAlpha??1:1)*(bm?bm.mesh._legacyAlpha??1:1);
+    // 포커스된 그룹 라벨은 밝고 선명하게
+    const isFocusedLbl=bm&&(bm.mesh._focusTarget??1)>0.8&&!!focusGroupKo;
+    el.classList.toggle('gl-focused',isFocusedLbl);
     // ⚠️ labelObj는 bubble의 자식이고 bubble.scale=radius라 로컬 위치가 이미 radius배로 변환된다.
     // 따라서 이 오프셋은 "단위구체 기준 배수"여야 함(1.0=표면, 1.05=표면 위 5%). radius를 곱하면
     // radius²가 돼서 큰 행성일수록 라벨이 붕 뜬다(2026-08-22 실제 버그). 숫자만 조정할 것.
