@@ -1,0 +1,42 @@
+name: StagePick 공연 자동 수집
+
+# 멜론티켓·인터파크/NOL 포함 케이팝 공연을 StagePick 캘린더에서 수집해 kpop_events에 저장.
+# KOPIS는 정부 등록 공연만 커버해 주요 그룹이 빠지는 문제를 보완한다(2026-10-09 신설).
+#
+# 매월 1일 KST 09:00에 돌아 당월~3개월 뒤 일정을 수집한다.
+# workflow_dispatch로 수동 실행도 가능(months 파라미터 조정 가능).
+
+on:
+  schedule:
+    - cron: '0 0 1 * *'   # 매월 1일 UTC 00:00 = KST 09:00
+  workflow_dispatch:
+    inputs:
+      months:
+        description: '수집할 개월 수 (기본 4)'
+        required: false
+        default: '4'
+      from:
+        description: '시작 월 YYYY-MM (미지정 시 오늘 기준)'
+        required: false
+        default: ''
+
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: StagePick 공연 수집 → Supabase 저장
+        env:
+          SUPABASE_SERVICE_ROLE: ${{ secrets.SUPABASE_SERVICE_ROLE }}
+        run: |
+          MONTHS="${{ github.event.inputs.months || '4' }}"
+          FROM="${{ github.event.inputs.from }}"
+          ARGS="--months=${MONTHS} --direct"
+          if [ -n "$FROM" ]; then ARGS="$ARGS --from=${FROM}"; fi
+          node tools/stagepick_concerts.mjs $ARGS

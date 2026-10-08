@@ -441,4 +441,5 @@ function selftest() {
   console.log("정밀도 " + prec + "%  (오탐 " + fp + "건 / 음성 " + (tn + fp) + "건 중)");
   process.exit((fp || fn) ? 1 : 0);
 }
-main().catch(e => { console.error('[kopis] 실패:', e.message); process.exit(2); });
+if (process.argv[1] === fileURLToPath(import.meta.url))
+  main().catch(e => { console.error('[kopis] 실패:', e.message); process.exit(2); });
