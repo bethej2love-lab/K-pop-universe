@@ -2293,8 +2293,9 @@ function _groupGeneration(debut,ko){
   if(y<=2022)return 4;
   return 5;
 }
-const FOCUS_DIM=0.35; // 카드 열 때 다른 행성/별 휘도 하한(2026-09-06 디자인리뷰 #1 최고임팩트) — 0.06이면 우주가
+const FOCUS_DIM=0.18; // 카드 열 때 다른 행성/별 휘도 하한(2026-09-06 디자인리뷰 #1 최고임팩트) — 0.06이면 우주가
 // 거의 검정으로 죽어 "대시보드"처럼 보였다. "우주는 항상 뒤에 있다"를 규칙화. ⚠️아이폰 실기기서 대비 확인 후 미세조정(0.3~0.4).
+// 0.35→0.18(2026-10-09): 포커스 행성 뒤 dim 행성들이 너무 비쳐 보인다는 피드백. 배경 별이 안 보일 정도까지 죽이진 않음.
 let focusGroupKo=null;
 let _extraFocusKos=[];
 let _nctRingGroups=[];
@@ -3839,6 +3840,8 @@ function animate(){
     mesh._focusTarget=mesh._focusTarget??1;
     mesh._focusAlpha=mesh._focusAlpha??1;
     mesh._focusAlpha+=(mesh._focusTarget-mesh._focusAlpha)*0.10;
+    // 포커스 행성이 dim 행성보다 반드시 나중에 그려지게 — depthWrite:false 환경의 depth sorting 문제 완화
+    mesh.renderOrder=mesh._focusTarget>0.8?2:0;
     // 레거시(데뷔 10년+) 행성: 멀리서는 은은하게 죽이고, 가까이 다가가면 다시 선명하게
     const legacyTarget=mesh._isLegacy?(dist<26?1:dist<80?1-((dist-26)/54)*0.82:0.18):1;
     mesh._legacyAlpha=mesh._legacyAlpha??1;
@@ -13015,7 +13018,12 @@ function setFocus(groupKo, extra=[]){
   // 실존하는 행성(그룹)일 때만 다른 행성들을 dim — 아이유처럼 무소속 별은 대응하는 행성이 없어서
   // 전체를 dim해봐야 아무것도 밝아지지 않고 화면만 어두워지는 부작용이 있었음
   if(GROUPS[groupKo]){
-    bubbleMeshes.forEach(({mesh,ko})=>{mesh._focusTarget=allKos.includes(ko)?1:FOCUS_DIM;});
+    bubbleMeshes.forEach(({mesh,ko})=>{
+      const focused=allKos.includes(ko);
+      mesh._focusTarget=focused?1:FOCUS_DIM;
+      // depthWrite:false 환경에서 dim 행성이 포커스 행성 앞에 끼어드는 depth sorting 문제 완화
+      mesh.renderOrder=focused?2:0;
+    });
   }
   ARTISTS.forEach(a=>{a._focusTarget=_artistGroups(a).some(g=>allKos.includes(g.ko))?1:FOCUS_DIM;});
 }
@@ -13030,7 +13038,7 @@ function clearFocus(){
   focusGroupKo=null;
   _extraFocusKos=[];
   if(favMode){applyFavHighlight();return;}
-  bubbleMeshes.forEach(({mesh})=>{mesh._focusTarget=1;});
+  bubbleMeshes.forEach(({mesh})=>{mesh._focusTarget=1;mesh.renderOrder=0;});
   ARTISTS.forEach(a=>{a._focusTarget=1;});
   _setNctRingScale(1);
 }
