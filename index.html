@@ -95,6 +95,29 @@
 </head>
 <body>
 <div id="grain-overlay" aria-hidden="true"></div>
+<div id="cursor-dot" aria-hidden="true"><span id="cursor-inner">✦</span></div>
+<script>
+(function(){
+  if(!window.matchMedia('(pointer:fine)').matches)return;
+  const dot=document.getElementById('cursor-dot');
+  dot.style.display='block';
+  document.addEventListener('mousemove',function(e){
+    dot.style.transform='translate('+e.clientX+'px,'+e.clientY+'px)';
+  },{passive:true});
+  document.addEventListener('mouseleave',function(){dot.classList.add('ch');});
+  document.addEventListener('mouseenter',function(){dot.classList.remove('ch');});
+  document.addEventListener('mouseover',function(e){
+    var el=e.target;
+    if(!el)return;
+    var isText=!!(el.matches&&el.matches('input,textarea'));
+    if(isText){dot.classList.remove('cp');dot.classList.add('ch');return;}
+    dot.classList.remove('ch');
+    var isPtr=!!(el.matches&&el.matches('a,button,[role=button],select,[tabindex]:not([tabindex="-1"]),[onclick],.tg,.tg-unit,.sr-item,.sr-credit-item,.fav-btn,.tab-btn,.mob-top-btn,.dh-btn,.tt-nav-btn,.conn-back-btn,.sw'));
+    if(!isPtr){try{isPtr=window.getComputedStyle(el).cursor==='pointer';}catch(e){}}
+    dot.classList.toggle('cp',isPtr);
+  });
+})();
+</script>
 <div id="loading"><span class="ld-l1">Here is our</span><span class="ld-l2">K-pop <span class="ld-ac">UNIVERSE</span>.</span></div>
 <div id="loading-ring"></div>
 <script>
