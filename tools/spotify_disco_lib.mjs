@@ -123,10 +123,11 @@ export function parseTypeFromTitle(name, totalTracks, albumType) {
   if (m) return `${m[2] ? '미니' : '정규'} ${Number(m[1])}집`;
   if (/[-–—]\s*(?:the\s+)?(?:1st|first)\s+(mini\s+)?album/i.test(name)) return /mini/i.test(name) ? '미니 1집' : '정규 1집';
   if (/special\s+(digital\s+)?single/i.test(name)) return '싱글';
-  // 꼬리가 없을 때: 트랙 수로 본다. 멜론 관행상 1~3트랙은 싱글, 그 이상은 미니로 보는 게 무난하다.
-  // 번호는 **붙이지 않는다** — 근거 없이 "미니 7집"이라고 적으면 나중에 사람이 고치기가 더 어렵다.
+  // 꼬리가 없을 때: 트랙 수로 본다. K팝 관행상 1~3=싱글, 4~9=미니, 10+=정규.
+  // albumType('album'/'single'/…)은 믿을 수 없다(주석 참고) — 트랙 수만 본다.
+  // 번호는 붙이지 않는다 — 근거 없이 "미니 7집"이라고 적으면 나중에 고치기가 더 어렵다.
   if ((totalTracks || 0) <= 3) return '싱글';
-  if (albumType === 'album' || (totalTracks || 0) >= 7) return '정규';
+  if ((totalTracks || 0) >= 10) return '정규';
   return '미니';
 }
 
