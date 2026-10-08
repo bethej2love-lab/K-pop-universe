@@ -257,6 +257,33 @@ export async function toEntry(album) {
   };
 }
 
+// ── 합작 앨범 수집 ─────────────────────────────────────────────────────────────
+// appears_on 앨범 = 이 아티스트가 공동 발매한 앨범(DIMOLLY 같은 합작 프로젝트 포함).
+// Various Artists 컴필레이션은 제외. 2~4명이 같이 낸 것만 합작으로 본다.
+//
+// ⚠️ /artists/{id}/albums 는 하루 ~100회에 잠기는 엔드포인트다(spotify_auth.mjs 실측).
+//    그래서 이 함수는 **대상당 한 번만** 호출하고 state.collabSwept에 기록해야 한다.
+//    매일 전체를 돌리면 rate limit에 걸린다.
+export async function getAppearsOn(artistId) {
+  const VARIOUS = /various\s*artists?/i;
+  const results = [];
+  let url = `/artists/${artistId}/albums?include_groups=appears_on&market=KR&limit=50`;
+  // 페이지네이션(보통 1~2페이지)
+  while (url) {
+    const j = await api(url);
+    for (const al of j.items || []) {
+      const arts = al.artists || [];
+      // 2~4명, various artists 없음, 해당 아티스트 포함
+      if (arts.length < 2 || arts.length > 4) continue;
+      if (arts.some(a => VARIOUS.test(a.name))) continue;
+      if (!arts.some(a => a.id === artistId)) continue;
+      results.push(al);
+    }
+    url = j.next ? j.next.replace('https://api.spotify.com/v1', '') : null;
+  }
+  return results;
+}
+
 // ── 신원 확인 ②: 우리 영상 제목 대조 (2026-09-30) ─────────────────────────────
 // 앨범 겹침 대조(①)는 **우리가 이미 앨범을 가진 대상**에만 쓸 수 있다. 전 멤버 솔로처럼 첫 앨범을 받는
 // 대상은 대조할 게 없어서, 예전엔 그냥 통과됐다 → 솔로 27명이 동명이인 앨범 201장을 받은 사고

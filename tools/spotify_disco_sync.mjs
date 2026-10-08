@@ -27,7 +27,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { RateLimited } from './spotify_auth.mjs';
-import { dedupKey, isVariant, parseTypeFromTitle, searchAlbums, resolveArtist, toEntry, videoEvidence, VIDEO_EVIDENCE_MIN } from './spotify_disco_lib.mjs';
+import { dedupKey, isVariant, parseTypeFromTitle, searchAlbums, resolveArtist, toEntry, videoEvidence, VIDEO_EVIDENCE_MIN, getAppearsOn } from './spotify_disco_lib.mjs';
 
 const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
 const P = f => path.join(ROOT, f);
@@ -378,6 +378,42 @@ for (const t of list) {
       state.swept[t.ko] = [...new Set([...(state.swept[t.ko] || []), ...sweptNow])].sort();
       backfilled += sweptNow.length;
     }
+
+    // 5) 합작 앨범 수집 — 대상당 한 번만(state.collabSwept 기록).
+    //    /artists/{id}/albums?include_groups=appears_on 로 2~4명 합작 앨범을 가져온다.
+    //    rate limit 대응: 한 번 훑으면 재방문 안 함. 매핑 확인된 대상에만 실행.
+    state.collabSwept = state.collabSwept || {};
+    if (m?.id && m.confidence === 'high' && !state.collabSwept[t.ko] && calls < BUDGET) {
+      try {
+        const collabAlbums = await getAppearsOn(m.id);
+        calls++;
+        state.collabSwept[t.ko] = new Date().toISOString().slice(0, 10);
+        for (const al of collabAlbums) {
+          if (calls >= BUDGET) { stoppedBy = '예산 소진'; break; }
+          const key = dedupKey(al.name);
+          if (!key || own.titles.has(key)) continue;
+          if (isVariant(al.name)) continue;
+          if (String(al.release_date_precision) !== 'day') continue;
+          // 합작 참여 아티스트 이름 목록(본인 제외)
+          const collabWith = (al.artists || []).filter(a => a.id !== m.id).map(a => a.name);
+          const { entry, needsTitleTrack } = await toEntry(al);
+          calls++;
+          entry.collabWith = collabWith;  // 합작 표식
+          if (DRY) {
+            addedList.push(`[DRY/합작] ${t.ko} · ${entry.releaseDate} · ${entry.type} · ${entry.title} (with ${collabWith.join(', ')})`);
+          } else if (insert(t, entry)) {
+            added++;
+            own.titles.add(key);
+            addedList.push(`${t.ko} · ${entry.releaseDate} · ${entry.type} · ${entry.title} (합작: ${collabWith.join(', ')})`);
+            if (needsTitleTrack) reviewList.push(`타이틀곡 미상: ${t.ko} — ${entry.title}`);
+          }
+        }
+      } catch (e) {
+        if (e instanceof RateLimited) { stoppedBy = `레이트리밋 (${e.message})`; /* 합작 스윕 기록 안 함 — 재시도 가능하게 */ delete state.collabSwept[t.ko]; }
+        else problems.push(`${t.ko} — 합작 수집 실패: ${e.message}`);
+      }
+    }
+
     netFails = 0;
     state.checked[t.ko] = new Date().toISOString().slice(0, 10);
     checked++;
@@ -425,6 +461,8 @@ if (BACKFILL_YEARS.length) {
   const remain = list.filter(t => pendingBackfill(t.ko).length).length;
   say(`- 과거연도 백필(${BACKFILL_YEARS.join(',')}) 이번 회차 ${backfilled}건 · 남은 대상 **${remain}**/${list.length}${remain ? '' : ' — 완료(레포 변수 BACKFILL_YEARS를 비우면 끕니다)'}`);
 }
+const collabRemain = list.filter(t => !(state.collabSwept || {})[t.ko]).length;
+if (collabRemain < list.length) say(`- 합작 앨범 스윕 완료 ${list.length - collabRemain}/${list.length} · 남은 대상 ${collabRemain}`);
 say(`- 추가한 앨범 **${added}장**${done ? ' · 대상 전부 완주' : ` · 중단: ${stoppedBy || '알 수 없음'} (다음 회차가 이어받음)`}`);
 if (addedList.length) { say(''); addedList.slice(0, 40).forEach(s => say(`  - ${s}`)); if (addedList.length > 40) say(`  - … 외 ${addedList.length - 40}장`); }
 if (reviewList.length) { say(''); say(`<details><summary>사람이 볼 것 ${reviewList.length}건</summary>`); say(''); reviewList.slice(0, 40).forEach(s => say(`  - ${s}`)); say(''); say('</details>'); }
