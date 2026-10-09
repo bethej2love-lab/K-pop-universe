@@ -14,15 +14,15 @@
     display:none; /* JS가 (pointer:fine) 확인 후 block으로 */
   }
   #cursor-inner{
-    display:block;font-size:14px;line-height:1;
-    width:1em;height:1em;margin:-.5em 0 0 -.5em;
+    display:block;width:16px;height:16px;margin:-8px 0 0 -8px;
     color:rgba(255,255,255,0.85);
-    transition:color .18s,font-size .18s;
+    transition:color .18s,width .18s,height .18s,margin .18s;
     user-select:none;
   }
+  #cursor-inner svg{display:block;width:100%;height:100%;}
   #cursor-dot.cp #cursor-inner{
     color:rgba(255,232,80,1);
-    font-size:18px;
+    width:20px;height:20px;margin:-10px 0 0 -10px;
     animation:cursor-twinkle .58s ease-in-out infinite;
   }
   #cursor-dot.ch #cursor-inner{opacity:0;} /* text 입력 위 — 실제 커서 보임 */
