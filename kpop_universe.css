@@ -421,15 +421,15 @@
     font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;
     font-size:11px;font-weight:300;letter-spacing:0.08em;
     pointer-events:none;user-select:none;white-space:nowrap;
-    text-shadow:0 0 12px currentColor,0 0 4px currentColor,0 1px 4px rgba(0,0,0,0.70);
+    text-shadow:0 1px 3px rgba(0,0,0,0.55);
     transition:opacity 0.6s ease,color 0.4s ease,text-shadow 0.4s ease,font-weight 0.3s ease; /* 떴다 사라지는 로테이션이라 조금 더 부드럽게(2026-08-26) */
   }
   .group-label.gl-focused{
-    color:rgba(255,255,255,0.95)!important;
+    color:rgba(255,255,255,0.96)!important;
     font-weight:500;
     font-size:12px;
     letter-spacing:0.12em;
-    text-shadow:0 0 20px rgba(200,220,255,0.85),0 0 8px rgba(255,255,255,0.7),0 0 3px rgba(255,255,255,0.5),0 1px 3px rgba(0,0,0,0.8);
+    text-shadow:0 0 10px rgba(200,220,255,0.32),0 1px 2px rgba(0,0,0,0.75);
   }
   /* ── Cards ───────────────────────────────────── */
   #tt,#gc{
@@ -2974,9 +2974,9 @@
   #member-tooltip{position:fixed;pointer-events:none;z-index:99;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;font-size:13px;font-weight:600;color:rgba(245,248,255,0.95);text-shadow:0 0 11px rgba(225,235,255,0.55),0 0 4px rgba(225,235,255,0.45),0 1px 4px rgba(0,0,0,0.85);white-space:nowrap;opacity:0;transition:opacity 0.15s;transform:translate(-50%,-130%);letter-spacing:.04em;}
   /* 모바일 줌인 시 멤버 이름 레이블 (CSS2DObject) */
   /* .group-label(줄 303 부근)과 거의 동일한 스타일 — currentColor 이중 글로우, 불투명도 높임(2026-08-14). */
-  .member-name-label{font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;font-size:9px;font-weight:500;color:rgba(255,255,255,0.82);white-space:nowrap;pointer-events:none;user-select:none;letter-spacing:.1em;text-shadow:0 0 14px currentColor,0 0 5px currentColor,0 1px 4px rgba(0,0,0,0.80);transform:translate(-50%,-100%);}
+  .member-name-label{font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;font-size:9px;font-weight:500;color:rgba(255,255,255,0.82);white-space:nowrap;pointer-events:none;user-select:none;letter-spacing:.1em;text-shadow:0 1px 3px rgba(0,0,0,0.65);transform:translate(-50%,-100%);}
   /* 멤버 카드가 열린 사람의 별 이름(2026-10-01) — 우주에 따로 뜬 솔로 별은 주변에 행성 라벨이 많아 기본 9px로는 묻힌다 */
-  .member-name-label.is-focus{font-size:12px;font-weight:700;color:#fff;text-shadow:0 0 6px rgba(160,190,255,0.9),0 1px 2px rgba(0,0,0,0.8);}
+  .member-name-label.is-focus{font-size:12px;font-weight:700;color:#fff;text-shadow:0 0 8px rgba(160,190,255,0.28),0 1px 2px rgba(0,0,0,0.8);}
   ::-webkit-scrollbar{-webkit-appearance:none;width:2px;height:2px;}
   ::-webkit-scrollbar-track{background:transparent;}
   ::-webkit-scrollbar-thumb{-webkit-appearance:none;background:rgba(180,200,240,0.07);border-radius:2px;}

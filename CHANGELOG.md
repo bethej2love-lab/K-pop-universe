@@ -80,6 +80,11 @@
 
 ---
 
+## 2026-10-09 (세션 — OG 이미지·우주 텍스트 질감 개선·심볼 미결)
+- [완료] **디모렉스 OG 이미지 → SAY MY NAME M/V**(id `-XCN1YYLXss`, maxresdefault). groups/members 두 키 모두 교체. [og_thumbs.json] [member/디모렉스/index.html] [en/member/dimo-rex/index.html]
+- [완료] **우주 라벨 텍스트 — 네온글로우 제거(IU 뮤비 질감)** — `.group-label`·`.member-name-label` `text-shadow`에서 `currentColor` 이중 발광 삭제 → drop shadow만(`0 1px 3px rgba(0,0,0,0.55~0.65)`). gl-focused도 glow 대폭 완화. 라벨 색 흰색→약간 쿨 오프화이트(`rgba(210,222,242,0.58)`). "씬에 납작하게 눌린" 느낌. [kpop_universe.css] [index.html]
+- **[보류·미결] 앱 심볼/아이콘** — v1(구림)·v2(그레이 링+핑크 별, 개선)·v3(베이비핑크·연한 그레이·타원 궤도 4시안) 제작. 방향: 기울어진 타원 궤도 + 크기 다른 ✦ 별. 색상 과제: 주황끼 뺀 순수 핑크, 손글씨/유기적 질감. 아직 확정 안 됨 → **다음 세션에서 계속**.
+
 ## 2026-10-02 저녁 (세션 — 탐험 패널 폭 + 영상 그리드 유튜브 모바일 방식)
 - [완료] 탐험 패널 폭 380→440(카드 레일과 같게). 09-27에 카드만 440이 되고 탐험 패널·줌 위치·JS(_openPanelWidth 카메라 오프셋, 연결 카드 sideW)가 380으로 남아 있었음 — JS는 이제 실제 폭을 읽는다. [index.html] [kpop_universe.css]
 - [완료] **영상 그리드 = 가로 전체폭 1열 · 쇼츠 2열**(사용자 결정, 유튜브 모바일 홈 방식) — 탐험 Trend·즐겨찾기 신작(`_packRows` landscapeFull) + 카드 그리드(.gc-ch-grid·.tv-mix-grid CSS 강제, JS 짝짓기는 그대로). 반폭 가로(≈106px)가 쇼츠 2개 행(≈334px)의 1/3이라 묻히던 문제. 카드 대표영상이 쇼츠면 16:9 상자+흐린 배경(전체폭 9:16 ≈680px 방지). 큰 쇼츠(shortWideProb) 제거.
