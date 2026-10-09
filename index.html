@@ -2967,15 +2967,15 @@ async function buildUniverse(){
     }
     if(!mPos){mPos=randomInCone(dir,coneSpread(m.co)).multiplyScalar(distBase);mPos.x*=_xSpread;}
 
-    const pArr=m.sparkle?sparklePos:regularPos;
-    const cArr=m.sparkle?sparkleColors:regularColors;
-    const aArr=m.sparkle?sparkleArtists:regularArtists;
-    pArr.push(mPos.x,mPos.y,mPos.z);
-    cArr.push(mColor.r,mColor.g,mColor.b);
-    aArr.push(m);
-    const _pType=m.sparkle?'sparkle':'regular';
-    const _pIdx=m.sparkle?sparkleIdx++:regularIdx++;
-    const _origCol=[mColor.r,mColor.g,mColor.b];
+    // 무소속 솔로는 항상 sparkle — 더 크고(74.4) 밝으며 halo 발광 정상 포함
+    const spColor=mColor.clone().lerp(new THREE.Color(1,1,1),0.25);
+    sparklePos.push(mPos.x,mPos.y,mPos.z);
+    sparkleColors.push(spColor.r,spColor.g,spColor.b);
+    sparkleArtists.push(m);
+    sparkleHalo.push(1);
+    const _pType='sparkle';
+    const _pIdx=sparkleIdx++;
+    const _origCol=[spColor.r,spColor.g,spColor.b];
     m._worldPositions.push({groupKo:m.group.ko,pos:mPos.clone(),ptsType:_pType,ptsIdx:_pIdx,origColor:_origCol});
     m._worldPos=mPos.clone();
     m._origColor=_origCol;
