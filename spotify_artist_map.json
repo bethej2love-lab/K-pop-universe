@@ -419,6 +419,17 @@
     },
     "checkedAt": "2026-10-01"
   },
+  "김기중": {
+    "id": "3SqnTAwj36AgFDT1XVIPD8",
+    "spotifyName": "Kim Jung Min",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "이름 불일치 — 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-10-09"
+  },
   "김동준": {
     "id": "0XojSZQ9oNETM8AtA9kJe8",
     "spotifyName": "Kim Won Jun",
@@ -1518,6 +1529,21 @@
       "titleOverlap": 0
     },
     "checkedAt": "2026-10-03"
+  },
+  "박대원": {
+    "id": "4UeorDtRRqdtpAcfhFFv3e",
+    "spotifyName": "Daewon Lee",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "이름 불일치 — 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0,
+      "verifyOverlap": 0,
+      "verifyYears": [
+        2019
+      ]
+    },
+    "checkedAt": "2026-10-09"
   },
   "박세미": {
     "id": "3QoqUHatLMo08sw2PIBuYn",
@@ -4171,6 +4197,17 @@
     },
     "checkedAt": "2026-10-01"
   },
+  "이승환": {
+    "id": "6LPV5KZBc1zBjX8AFZ2WWY",
+    "spotifyName": "LEE SEUNG HWAN",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "이름 불일치 — 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-10-09"
+  },
   "이엑스아이디": {
     "id": "1xs6WFotNQSXweo0GXrS0O",
     "spotifyName": "EXID",
@@ -4368,6 +4405,22 @@
       "titleOverlap": null
     },
     "checkedAt": "2026-10-02"
+  },
+  "이형근": {
+    "id": "5I0EPnV9gwrZYTbScjnaOk",
+    "spotifyName": "Marcos Valle",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "이름 불일치 — 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0,
+      "verifyOverlap": 0,
+      "verifyYears": [
+        2025,
+        2020
+      ]
+    },
+    "checkedAt": "2026-10-09"
   },
   "인피니트": {
     "id": "1bkpTEmumLC3xc7HgMsttU",
@@ -4576,6 +4629,28 @@
     },
     "checkedAt": "2026-09-23"
   },
+  "정진성": {
+    "id": "2FgZrgTMX6Sk0VNcOsEPmm",
+    "spotifyName": "Punch",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "이름 불일치 — 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-10-09"
+  },
+  "정택현": {
+    "id": "3qNVuliS40BLgXGxhdBdqu",
+    "spotifyName": "TAEYEON",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "이름 불일치 — 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-10-09"
+  },
   "정희철": {
     "id": "7l8rOFwZFQ3G0sgZ7gjGng",
     "spotifyName": "Jung Seung Hwan",
@@ -4783,6 +4858,17 @@
       "titleOverlap": 0
     },
     "checkedAt": "2026-10-01"
+  },
+  "지한솔": {
+    "id": "3lfv9X5P62DboYv1TBhGek",
+    "spotifyName": "Hansol",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "동명 후보 3명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-10-09"
   },
   "지현": {
     "id": "5R2bWWAOeZBukWYd03LNDn",

@@ -465,10 +465,17 @@
     "강지욱": "2026-10-08",
     "이노": "2026-10-08",
     "이의진": "2026-10-08",
-    "오광석": "2026-10-08"
+    "오광석": "2026-10-08",
+    "박대원": "2026-10-09",
+    "이형근": "2026-10-09",
+    "지한솔": "2026-10-09",
+    "김기중": "2026-10-09",
+    "이승환": "2026-10-09",
+    "정진성": "2026-10-09",
+    "정택현": "2026-10-09"
   },
-  "runs": 57,
-  "lastRunAt": "2026-10-08T20:40:28.964Z",
+  "runs": 58,
+  "lastRunAt": "2026-10-09T16:07:41.471Z",
   "swept": {
     "에스파": [
       2023,
@@ -2522,6 +2529,41 @@
       2023,
       2024,
       2025
+    ],
+    "박대원": [
+      2023,
+      2024,
+      2025
+    ],
+    "이형근": [
+      2023,
+      2024,
+      2025
+    ],
+    "지한솔": [
+      2023,
+      2024,
+      2025
+    ],
+    "김기중": [
+      2023,
+      2024,
+      2025
+    ],
+    "이승환": [
+      2023,
+      2024,
+      2025
+    ],
+    "정진성": [
+      2023,
+      2024,
+      2025
+    ],
+    "정택현": [
+      2023,
+      2024,
+      2025
     ]
   },
   "pending": {
@@ -3077,6 +3119,66 @@
         "2024-05-06 Warmth"
       ],
       "why": "영상 증거 0곡(영상 0개 대조)"
+    },
+    "박대원": {
+      "spotifyName": "Daewon Lee",
+      "spotifyId": "4UeorDtRRqdtpAcfhFFv3e",
+      "since": "2026-10-09",
+      "heldAlbums": [
+        "2023-07-28 Precious One",
+        "2023-02-28 For All of Us",
+        "2023-11-16 Jingle Bells & Silent Night"
+      ],
+      "why": "영상 증거 0곡(영상 21개 대조)"
+    },
+    "이형근": {
+      "spotifyName": "Marcos Valle",
+      "spotifyId": "5I0EPnV9gwrZYTbScjnaOk",
+      "since": "2026-10-09",
+      "heldAlbums": [
+        "2024-09-20 Túnel Acústico",
+        "2024-08-15 Bora Meu Bem",
+        "2024-07-25 Life Is What It Is"
+      ],
+      "why": "영상 증거 0곡(영상 15개 대조)"
+    },
+    "김기중": {
+      "spotifyName": "Kim Jung Min",
+      "spotifyId": "3SqnTAwj36AgFDT1XVIPD8",
+      "since": "2026-10-09",
+      "heldAlbums": [
+        "2026-04-10 Blooming only for you",
+        "2023-11-17 eternity",
+        "2024-10-19 pray for you"
+      ],
+      "why": "영상 증거 0곡(영상 17개 대조)"
+    },
+    "정진성": {
+      "spotifyName": "Punch",
+      "spotifyId": "2FgZrgTMX6Sk0VNcOsEPmm",
+      "since": "2026-10-09",
+      "heldAlbums": [
+        "2026-08-16 Still Missing You",
+        "2026-05-21 Beautiful Days, Lovely Eyes (from Sold Out On You (Original Soundtrack) Part 11)",
+        "2023-06-28 Even days (My love X Punch)",
+        "2023-12-11 Just Another Day",
+        "2023-07-09 KING THE LAND (Original Television Soundtrack), Pt.5"
+      ],
+      "why": "영상 증거 0곡(영상 9개 대조)"
+    },
+    "정택현": {
+      "spotifyName": "TAEYEON",
+      "spotifyId": "3qNVuliS40BLgXGxhdBdqu",
+      "since": "2026-10-09",
+      "heldAlbums": [
+        "2026-06-29 J-POP REMAKE Vol.1",
+        "2026-04-26 We Are All Trying Here (Original Soundtrack) Part.3",
+        "2023-12-17 Welcome to Samdal-ri (Original Television Soundtrack), Pt.3",
+        "2023-11-27 To. X - The 5th Mini Album",
+        "2023-02-02 Naul <Ballad Pop City>"
+      ],
+      "why": "영상 증거 0곡(영상 1개 대조)"
     }
-  }
+  },
+  "collabSwept": {}
 }
