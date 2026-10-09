@@ -106,9 +106,11 @@
   },{passive:true});
   document.addEventListener('mouseleave',function(){dot.classList.add('ch');});
   document.addEventListener('mouseenter',function(){dot.classList.remove('ch');});
+  var _lastEl=null;
   document.addEventListener('mouseover',function(e){
     var el=e.target;
-    if(!el)return;
+    if(!el||el===_lastEl)return;
+    _lastEl=el;
     var isText=!!(el.matches&&el.matches('input,textarea'));
     if(isText){dot.classList.remove('cp');dot.classList.add('ch');return;}
     dot.classList.remove('ch');
