@@ -613,7 +613,7 @@
   /* 브라우즈 모드는 화면 전체를 덮는 실제 페이지형 시트라, 반투명(0.9)이면 뒤에 여전히 마운트돼있는
      카드의 제목 텍스트 등이 10%만큼 비쳐 보이는 문제가 있었음(작은 중앙 박스였던 기존 모드는 겹칠
      일이 거의 없어서 안 드러났었음, 2026-08-11 스크린샷으로 실측 확인) — 완전 불투명으로. */
-  #yt-lightbox.lb-browse{background:#08091a;}
+  #yt-lightbox.lb-browse{background:#08091a;will-change:transform;}
   #yt-lightbox.open{display:flex;}
   /* ── 웹 전용: 카드 보며 영상 재생 (2026-09-02 제보 "영상 보면서 카드도") ───────────────
      #yt-lightbox는 inset:0 풀스크린이라 우측 앵커 카드(#side-panel:320, +멤버 2단:640, 넓게:640)를
