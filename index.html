@@ -15967,7 +15967,7 @@ var _TIPS_STEP=0;
 var _tipsOpenedFeed=false;
 var _TIPS_STEPS=[
   '행성을 눌러보세요. 직캠·앨범·멤버 프로필이 그룹별로 정리돼 있어요.',
-  '오늘 생일인 멤버, 이번 주 음방 1위, 막 나온 신보가 한눈에 보여요.',
+  '차트·생일·신보, 케이팝 오늘의 흐름이 다 모여 있어요.',
   '최애를 저장하면 새 영상이 올라올 때 For You 탭에 자동으로 모여요.',
 ];
 function _initTips(){
@@ -15998,11 +15998,16 @@ function _showTipStep(n){
   }
   el.removeAttribute('hidden');
   requestAnimationFrame(()=>requestAnimationFrame(()=>el.classList.add('show')));
-  // 탐색 탭 열기/닫기 (데스크톱, 2번째 단계만)
+  // 탐색 탭 열기/닫기·내부 탭 전환 (데스크톱, 2번째 단계만)
   if(!isMob()){
     if(n===1){
       const feedEl=document.getElementById('feed-overlay');
       if(feedEl&&!feedEl.classList.contains('open')){_tipsOpenedFeed=true;_openFeedOverlay();}
+      // 탐색(disc) 탭으로 전환 — 차트·생일·신보가 바로 보이게
+      try{_feedSwitchTab('disc',true);}catch(e){}
+    }else if(n===2&&document.getElementById('feed-overlay')?.classList.contains('open')){
+      // 3단계는 For You 탭 맥락 — 다시 전환
+      try{_feedSwitchTab('rec',true);}catch(e){}
     }else if(_tipsOpenedFeed){_tipsOpenedFeed=false;_closeFeedOverlay();}
   }
 }
