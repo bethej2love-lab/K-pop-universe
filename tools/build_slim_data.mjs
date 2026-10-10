@@ -28,6 +28,73 @@ const kb = n => (n / 1024).toFixed(0) + 'KB';
 // 그 외 한글·괄호는 그대로 둔다(이 호스트는 이미 한글 경로 정적 파일 g/에스파/ 를 서빙함).
 const fileKey = s => String(s).replace(/[\/\\]/g, '_').replace(/[.\s]+$/, '');
 
+// 영문→한국어 발음 룩업 (곡명 한글 검색: "러브다이브"→"LOVE DIVE" 매칭용)
+const EN_TO_KO = {
+  love:'러브',luv:'러브',lover:'러버',lovely:'러블리',lovey:'러비',
+  heart:'하트',hearts:'하트',kiss:'키스',hug:'허그',crush:'크러쉬',
+  desire:'디자이어',romance:'로맨스',romantic:'로맨틱',fantasy:'판타지',fancy:'팬시',
+  dream:'드림',dreamy:'드리미',magic:'매직',magical:'매지컬',
+  beautiful:'뷰티풀',beauty:'뷰티',pretty:'프리티',sweet:'스윗',sugar:'슈가',honey:'허니',
+  miss:'미스',missing:'미싱',emotion:'이모션',feeling:'필링',feel:'필',vibe:'바이브',vibes:'바이브',
+  dive:'다이브',diving:'다이빙',run:'런',running:'러닝',fly:'플라이',flying:'플라잉',flight:'플라이트',
+  dance:'댄스',dancing:'댄싱',sing:'싱',jump:'점프',walk:'워크',rise:'라이즈',rising:'라이징',
+  shine:'샤인',shining:'샤이닝',burn:'번',burning:'버닝',break:'브레이크',breaking:'브레이킹',
+  fade:'페이드',fall:'폴',falling:'폴링',flow:'플로우',glow:'글로우',kill:'킬',killing:'킬링',
+  fire:'파이어',flame:'플레임',flames:'플레임즈',water:'워터',wave:'웨이브',waves:'웨이브',
+  ocean:'오션',sea:'씨',sky:'스카이',heaven:'헤븐',
+  star:'스타',stars:'스타즈',starry:'스타리',moon:'문',moonlight:'문라이트',
+  sun:'선',sunrise:'선라이즈',sunset:'선셋',sunshine:'선샤인',
+  cloud:'클라우드',rain:'레인',rainbow:'레인보우',rainy:'레이니',snow:'스노우',wind:'윈드',
+  flower:'플라워',flowers:'플라워즈',garden:'가든',forest:'포레스트',jungle:'정글',
+  universe:'유니버스',galaxy:'갤럭시',cosmos:'코스모스',planet:'플래닛',space:'스페이스',
+  night:'나이트',midnight:'미드나이트',day:'데이',morning:'모닝',evening:'이브닝',
+  today:'투데이',tomorrow:'투모로우',tonight:'투나잇',
+  forever:'포에버',eternity:'이터니티',eternal:'이터널',moment:'모먼트',time:'타임',
+  season:'시즌',winter:'윈터',summer:'썸머',spring:'스프링',autumn:'오텀',
+  red:'레드',blue:'블루',green:'그린',yellow:'옐로우',pink:'핑크',purple:'퍼플',orange:'오렌지',
+  white:'화이트',black:'블랙',grey:'그레이',gray:'그레이',
+  gold:'골드',golden:'골든',silver:'실버',crystal:'크리스탈',diamond:'다이아몬드',ruby:'루비',
+  rose:'로즈',violet:'바이올렛',neon:'네온',
+  girl:'걸',girls:'걸즈',boy:'보이',boys:'보이즈',man:'맨',woman:'우먼',
+  baby:'베이비',babe:'베이브',angel:'엔젤',hero:'히어로',queen:'퀸',king:'킹',
+  princess:'프린세스',prince:'프린스',friend:'프렌드',friends:'프렌즈',soul:'소울',monster:'몬스터',
+  butter:'버터',dynamite:'다이너마이트',permission:'퍼미션',ditto:'디토',
+  thunder:'썬더',lightning:'라이트닝',shadow:'쉐도우',mirror:'미러',paradise:'파라다이스',
+  journey:'저니',story:'스토리',stories:'스토리즈',song:'송',music:'뮤직',
+  melody:'멜로디',harmony:'하모니',rhythm:'리듬',beat:'비트',sound:'사운드',voice:'보이스',
+  key:'키',door:'도어',road:'로드',path:'패스',way:'웨이',bridge:'브릿지',
+  ring:'링',crown:'크라운',power:'파워',force:'포스',energy:'에너지',
+  light:'라이트',lights:'라이트',storm:'스톰',
+  hope:'호프',faith:'페이스',trust:'트러스트',fear:'피어',pain:'페인',
+  freedom:'프리덤',free:'프리',wild:'와일드',crazy:'크레이지',real:'리얼',
+  new:'뉴',good:'굿',bad:'배드',hot:'핫',cool:'쿨',
+  yeah:'예',hey:'헤이',hi:'하이',hello:'헬로',bye:'바이',goodbye:'굿바이',sorry:'쏘리',
+  idol:'아이돌',stage:'스테이지',show:'쇼',concert:'콘서트',fan:'팬',fandom:'팬덤',
+  superstar:'슈퍼스타',bloom:'블룸',blossom:'블라썸',spark:'스파클',sparkle:'스파클',
+  twinkle:'트윙클',glitter:'글리터',fantastic:'판타스틱',wonderful:'원더풀',
+  perfect:'퍼펙트',amazing:'어메이징',miracle:'미라클',wonder:'원더',
+  better:'베터',best:'베스트',super:'슈퍼',next:'넥스트',back:'백',
+  over:'오버',after:'애프터',before:'비포',with:'위드',
+  on:'온',off:'오프',out:'아웃',to:'투',for:'포',of:'오브',at:'앳',in:'인',
+  mic:'마이크',drop:'드롭',blood:'블러드',sweat:'스웻',tears:'티어즈',world:'월드',
+  map:'맵',answer:'앤서',outro:'아우트로',intro:'인트로',
+  whistle:'휘슬',playing:'플레잉',type:'타입',
+  birthday:'버스데이',holiday:'홀리데이',party:'파티',secret:'시크릿',
+  vintage:'빈티지',classic:'클래식',modern:'모던',future:'퓨처',retro:'레트로',
+  cyber:'사이버',digital:'디지털',electric:'일렉트릭',ghost:'고스트',phantom:'팬텀',
+  dark:'다크',darkness:'다크니스',loud:'라우드',noise:'노이즈',silence:'사일런스',
+  zero:'제로',one:'원',two:'투',three:'쓰리',four:'포',five:'파이브',
+  six:'식스',seven:'세븐',eight:'에잇',nine:'나인',ten:'텐',million:'밀리언',
+  ok:'오케이',okay:'오케이',
+};
+// 영문 제목 → 한국어 발음 (매핑 안 되는 단어는 건너뜀, 1개 이상 변환되면 반환)
+const enKoPho = t => {
+  if (/[가-힣]/.test(t)) return ''; // 이미 한글 포함이면 불필요
+  const parts = t.toLowerCase().replace(/[^a-z0-9\s]/g, ' ').split(/\s+/).filter(Boolean);
+  const mapped = parts.map(w => EN_TO_KO[w]).filter(Boolean);
+  return mapped.length ? mapped.join('') : '';
+};
+
 const groups = rd('groups.json');           // 객체 {ko:{...,discography}}
 const artists = rd('artists.json');          // 배열 [{name,group,discography?,unitDiscography?,...}]
 if (!Array.isArray(artists)) throw new Error('artists.json이 배열이 아님 — 구조 확인 필요');
@@ -64,7 +131,11 @@ const tracks = { groups: {}, members: {} };  // tracks_index 원자료
 let trackCount = 0;
 const pushTracks = (dest, disco) => {
   for (const al of (disco || [])) for (const t of (al.tracks || [])) {
-    if (t && t.title) { dest.push([t.title, t.isTitle ? 1 : 0, al.title || '']); trackCount++; }
+    if (t && t.title) {
+      const ko = enKoPho(t.title);
+      dest.push(ko ? [t.title, t.isTitle ? 1 : 0, al.title || '', ko] : [t.title, t.isTitle ? 1 : 0, al.title || '']);
+      trackCount++;
+    }
   }
 };
 
