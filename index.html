@@ -2985,7 +2985,7 @@ async function buildUniverse(){
     m._filterAlpha=1;m._filterTarget=1;
     // 이름 라벨 — 행성 소속 별과 같은 모양. 예전엔 행성 루프에서만 만들어서 우주에 따로 뜬 솔로 별엔 이름이 아예 없었다
     // (2026-10-01 사용자 제보 "별 주위에 디모렉스라고 떠 있어야 — 설명이 없어 알아보기 어렵다"). 표시 조건은 animate 루프.
-    {const _nd=document.createElement('div');_nd.className='member-name-label';_nd.textContent=_starLabelName(m,m.group.ko);const _nl=new THREE.CSS2DObject(_nd);_nl.position.copy(mPos).add(new THREE.Vector3(0,0.42,0));_nl.visible=false;scene.add(_nl);m._nameLabel=_nl;m._nameLabelEl=_nd;}
+    {const _nd=document.createElement('div');_nd.className='member-name-label';_nd.textContent=_starLabelName(m,m.group.ko);const _nl=new THREE.CSS2DObject(_nd);_nl.position.copy(mPos).add(new THREE.Vector3(0,1.5,0));_nl.visible=false;scene.add(_nl);m._nameLabel=_nl;m._nameLabelEl=_nd;}
   });
 
   // ── Connection lines ──────────────────────────────

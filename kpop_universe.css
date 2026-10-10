@@ -2956,9 +2956,9 @@
   #member-tooltip{position:fixed;pointer-events:none;z-index:99;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;font-size:13px;font-weight:600;color:rgba(245,248,255,0.95);text-shadow:0 0 11px rgba(225,235,255,0.55),0 0 4px rgba(225,235,255,0.45),0 1px 4px rgba(0,0,0,0.85);white-space:nowrap;opacity:0;transition:opacity 0.15s;transform:translate(-50%,-130%);letter-spacing:.04em;}
   /* 모바일 줌인 시 멤버 이름 레이블 (CSS2DObject) */
   /* .group-label(줄 303 부근)과 거의 동일한 스타일 — currentColor 이중 글로우, 불투명도 높임(2026-08-14). */
-  .member-name-label{font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;font-size:9px;font-weight:500;color:rgba(255,255,255,0.82);white-space:nowrap;pointer-events:none;user-select:none;letter-spacing:.1em;text-shadow:0 1px 3px rgba(0,0,0,0.65);transform:translate(-50%,-100%);}
+  .member-name-label{font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;font-size:9px;font-weight:400;color:rgba(200,215,240,0.52);white-space:nowrap;pointer-events:none;user-select:none;letter-spacing:.08em;text-shadow:0 1px 3px rgba(0,0,0,0.65);transform:translate(-50%,-100%);}
   /* 멤버 카드가 열린 사람의 별 이름(2026-10-01) — 우주에 따로 뜬 솔로 별은 주변에 행성 라벨이 많아 기본 9px로는 묻힌다 */
-  .member-name-label.is-focus{font-size:12px;font-weight:700;color:#fff;text-shadow:0 0 8px rgba(160,190,255,0.28),0 1px 2px rgba(0,0,0,0.8);}
+  .member-name-label.is-focus{font-size:12px;font-weight:500;color:rgba(215,228,248,0.88);text-shadow:0 1px 2px rgba(0,0,0,0.8);}
   ::-webkit-scrollbar{-webkit-appearance:none;width:2px;height:2px;}
   ::-webkit-scrollbar-track{background:transparent;}
   ::-webkit-scrollbar-thumb{-webkit-appearance:none;background:rgba(180,200,240,0.07);border-radius:2px;}
