@@ -9970,7 +9970,7 @@ function closeConnCard(){
   // ⚠️ 선택 유무와 무관하게 복원한다(2026-08-28). 예전엔 `_connSelected.length`가 있을 때만 되돌렸는데,
   // 이제는 선택이 없어도 카드를 여는 순간 콜라보 상대 전부를 밝히므로(_applyConnFocus) 안 되돌리면
   // 카드를 닫아도 우주가 페이드된 채 남는다.
-  if(_connAnchor)setFocus(_connAnchor.group.ko);
+  if(_connAnchor)setFocus(_connAnchor.group.ko,[],GROUPS[_connAnchor.group.ko]?null:_connAnchor);
   _connAnchor=null;_connSelected=[];
   if(isMob()){
     connSheetEl.classList.remove('bs-open');
@@ -11177,7 +11177,7 @@ function showT(a,cx,cy,keepNavStack,urlMode,_unusedPushMobNav,noFly){
   _clearMemberCardLines();
   const _aGroups=_artistGroups(a);
   const _extraGroupKos=_aGroups.map(g=>g.ko).filter(k=>k!==a.group.ko);
-  setFocus(a.group.ko,_extraGroupKos);_openTArtist=a;
+  setFocus(a.group.ko,_extraGroupKos,GROUPS[a.group.ko]?null:a);_openTArtist=a;
   if(a&&a.group&&a.name)_fpPush({type:'tt',gko:a.group.ko,mko:a.name.ko,label:a.name.ko}); // 발자국 기록
   try{_renderDiscoverHops(a);}catch(e){} // 카드 하단 "이어서 발견" 컨텍스트 홉
   _syncFavBtn('member',a);
@@ -13194,7 +13194,7 @@ function applyFilter(){
 }
 
 // ── Focus mode ────────────────────────────────────
-function setFocus(groupKo, extra=[]){
+function setFocus(groupKo, extra=[], soloArtist=null){
   _clearMyStarSel();
   focusGroupKo=groupKo;
   _extraFocusKos=[...extra];
@@ -13209,7 +13209,12 @@ function setFocus(groupKo, extra=[]){
       mesh.renderOrder=focused?2:0;
     });
   }
-  ARTISTS.forEach(a=>{a._focusTarget=_artistGroups(a).some(g=>allKos.includes(g.ko))?1:FOCUS_DIM;});
+  // soloArtist: _artistGroups가 빈 솔로 아티스트는 inGroup 체크에서 false가 나와 자기 자신도 FOCUS_DIM이 되는 버그
+  // — group.ko='솔로' 아이유·보아 등이 카드 열면 자기 별이 어두워지는 원인(2026-10-10)
+  ARTISTS.forEach(a=>{
+    const inGroup=_artistGroups(a).some(g=>allKos.includes(g.ko));
+    a._focusTarget=(inGroup||(soloArtist&&a===soloArtist))?1:FOCUS_DIM;
+  });
 }
 function _clearMyStarSel(){
   if(!_myStarSelected)return;
