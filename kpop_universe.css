@@ -272,22 +272,28 @@
   }
   #dh-title .title-u{color:#7e9cff;}
   /* 즐겨찾기 유도 말풍선 — 첫 즐겨찾기 전까지 탐색 버튼을 가리킨다 */
+  @keyframes fhc-pulse{0%,100%{box-shadow:0 8px 28px rgba(0,0,0,0.52),0 0 0 0 rgba(140,175,255,0.22);}60%{box-shadow:0 8px 28px rgba(0,0,0,0.52),0 0 0 7px rgba(140,175,255,0);}}
   #fav-hint-callout{
     position:fixed;top:58px;z-index:39;
-    background:rgba(18,22,40,0.90);
+    background:rgba(16,20,40,0.94);
     backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
-    box-shadow:0 8px 24px rgba(0,0,0,0.42);
-    border:0.5px solid rgba(255,255,255,0.10);border-radius:12px;
-    padding:8px 14px;font-size:12px;font-weight:700;letter-spacing:.02em;
-    color:rgba(235,240,255,0.95);white-space:nowrap;
-    pointer-events:none;opacity:0;transform:translateY(-4px);
+    box-shadow:0 8px 28px rgba(0,0,0,0.52);
+    border:0.5px solid rgba(140,175,255,0.22);border-radius:14px;
+    padding:12px 18px;font-size:13px;font-weight:700;letter-spacing:.01em;
+    color:rgba(235,242,255,0.97);white-space:nowrap;
+    pointer-events:all;cursor:pointer;opacity:0;transform:translateY(-4px);
     transition:opacity .3s ease,transform .3s ease;
+    display:flex;flex-direction:column;gap:3px;
   }
-  #fav-hint-callout.show{opacity:1;transform:translateY(0);}
+  #fav-hint-callout.show{opacity:1;transform:translateY(0);animation:fhc-pulse 2.4s ease-in-out 0.6s infinite;}
+  #fav-hint-callout:hover{background:rgba(20,26,50,0.97);border-color:rgba(160,195,255,0.38);}
+  #fhc-icon{font-size:11px;color:rgba(160,195,255,0.75);display:inline;margin-right:4px;}
+  #fhc-main{display:inline;font-weight:700;}
+  #fhc-sub{display:block;font-size:11px;font-weight:400;color:rgba(180,200,240,0.62);margin-top:1px;letter-spacing:.01em;}
   #fhc-arrow{
     position:absolute;top:-5px;left:22px;width:9px;height:9px;
-    background:rgba(18,22,40,0.90);
-    border-left:0.5px solid rgba(255,255,255,0.10);border-top:0.5px solid rgba(255,255,255,0.10);
+    background:rgba(16,20,40,0.94);
+    border-left:0.5px solid rgba(140,175,255,0.22);border-top:0.5px solid rgba(140,175,255,0.22);
     transform:rotate(45deg);
   }
   @media(max-width:768px){#fav-hint-callout{display:none!important;}}
@@ -3489,11 +3495,11 @@
        #fav-list 등 다른 패널이 쓰는 손잡이 패턴(rgba(140,165,220,...))을 따르되, 선반 사이 틈을 정확히
        노리지 않고도 드래그로 내릴 수 있게 폭만 살짝 더 넓힌다(3px→6px, 목록 하나보다 패널 전체 스크롤이라
        그랩 타겟이 더 커야 함). 트랙도 옅게 남겨 "더 있다"는 게 호버 없이도 보이게 한다. */
-    #feed-body{padding-bottom:20px;scrollbar-width:thin;scrollbar-color:rgba(140,165,220,0.32) rgba(255,255,255,0.04);}
-    #feed-body::-webkit-scrollbar{width:6px;}
-    #feed-body::-webkit-scrollbar-track{background:rgba(255,255,255,0.04);border-radius:3px;}
-    #feed-body::-webkit-scrollbar-thumb{background:rgba(140,165,220,0.32);border-radius:3px;border:1px solid transparent;background-clip:content-box;}
-    #feed-body::-webkit-scrollbar-thumb:hover{background:rgba(155,180,240,0.5);background-clip:content-box;}
+    #feed-body{padding-bottom:20px;scrollbar-width:thin;scrollbar-color:rgba(140,165,220,0.28) rgba(10,13,28,0.70);}
+    #feed-body::-webkit-scrollbar{-webkit-appearance:none;width:6px;}
+    #feed-body::-webkit-scrollbar-track{-webkit-appearance:none;background:rgba(10,13,28,0.70);border-radius:3px;}
+    #feed-body::-webkit-scrollbar-thumb{-webkit-appearance:none;background:rgba(140,165,220,0.28);border-radius:3px;}
+    #feed-body::-webkit-scrollbar-thumb:hover{background:rgba(155,180,240,0.48);}
   }
   /* 탐험 패널이 살짝 열린(peek, 화면 절반) 상태에선 위쪽 절반이 그대로 보이므로 상단바를 가릴 필요가
      없음 — 전체로 펼쳐졌을 때만 숨긴다(2026-08-13, 사용자 제보 — peek 상태에서도 상단바가 사라짐). */
