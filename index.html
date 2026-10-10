@@ -3425,7 +3425,8 @@ function _revealUniverse(){
   // 덜 front-loaded한 곡선 — 원이 초반에만 확 커지지 않고 전체 시간에 걸쳐 눈에 보이게 퍼진다(웅장함 복원,
   // 2026-09-02). 아래 행성 블룸의 e(smoothstep)와 대략 같은 모양이라 클립 원과 행성이 따로 놀지 않는다.
   const _ease='cubic-bezier(.3,.1,.55,.4)'; // 갈수록 빨라지는 가속형(감속 꼬리 제거) — 뒤로 갈수록 확 퍼져 빨리 끝남(2026-09-02)
-  const _ring=document.getElementById('loading-ring'); // 확장 발광 링(아래 tick에서 매 프레임 갱신)
+  const _ring=document.getElementById('loading-ring'); // 확장 발광 링 — CSS keyframe, duration만 주입
+  if(_ring) _ring.style.setProperty('--rc-dur', REVEAL.clip+'ms');
 
   // 로딩 텍스트 페이드아웃 — 클립 시작과 동시. 펄스 애니메이션 도중 opacity 트랜지션을 걸면 현재
   // 펄스 값에서 기본값으로 순간 스냅한 뒤 페이드돼 뚝 끊겨 보이므로, 계산된 값을 먼저 굳힌다.
@@ -3500,11 +3501,6 @@ function _revealUniverse(){
       // 제보 "퍼지는 라인이 있었다"로 복원). clip은 basic-shape %, 링은 radial-gradient %라 기준이 달라
       // r=e*112로 두면 clip 가장자리(75%)에 대략 얹힌다(살짝 앞서 어둠 속으로 열리는 인상). glow는 sin으로
       // 중간이 가장 밝고 양끝 0. veil의 backdrop-filter가 아니라 단순 그라디언트+screen이라 프리즈 무관.
-      if(_ring){
-        var _rr=e*112;
-        var _gop=Math.sin(Math.min(t,1)*Math.PI)*0.24;
-        _ring.style.background='radial-gradient(circle at 50% 50%, transparent '+Math.max(0,_rr-16).toFixed(1)+'%, rgba(150,190,255,'+_gop.toFixed(3)+') '+_rr.toFixed(1)+'%, transparent '+(_rr+20).toFixed(1)+'%)';
-      }
       bubbleMeshes.forEach(function(bm){
         var start=bm.mesh._revealFrac*0.55;
         var local=Math.max(0,Math.min(1,(e-start)/0.45));
