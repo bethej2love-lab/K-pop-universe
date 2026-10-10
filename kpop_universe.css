@@ -225,10 +225,11 @@
       z-index:40;
     }
     #mob-top-title{
-      font-size:13px;font-weight:700;letter-spacing:.18em;
+      font-size:13px;font-weight:700;letter-spacing:.06em;
       color:rgba(180,200,240,0.61);
       font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;
     }
+    #mob-top-title .title-u{color:#7e9cff;}
     #mob-top-right{display:flex;align-items:center;gap:6px;}
     .mob-top-btn{
       background:none;border:none;cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><path d='M11,1 L12.3,9.7 L21,11 L12.3,12.3 L11,21 L9.7,12.3 L1,11 L9.7,9.7Z' fill='%23FFB0D0' opacity='.97'/></svg>") 11 11,pointer;
@@ -251,12 +252,12 @@
     padding:0 16px;z-index:55;pointer-events:none;
   }
   @media(max-width:768px){#desktop-header{display:none;}}
-  /* 모바일 상단 타이틀과 동일한 톤 — 지금은 자리만(placeholder), 텍스트 디자인은 추후 다듬을 예정 */
   #dh-title{
-    margin-right:auto;margin-left:10px;font-size:13px;font-weight:700;letter-spacing:.2em;
+    margin-right:auto;margin-left:10px;font-size:13px;font-weight:700;letter-spacing:.06em;
     color:rgba(180,200,240,0.61);
     font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;
   }
+  #dh-title .title-u{color:#7e9cff;}
   /* 즐겨찾기 유도 말풍선 — 첫 즐겨찾기 전까지 탐색 버튼을 가리킨다 */
   #fav-hint-callout{
     position:fixed;top:58px;z-index:39;
