@@ -312,6 +312,8 @@
   #ob-tips-dots{display:flex;gap:6px;margin-bottom:18px;}
   .ob-dot{width:5px;height:5px;border-radius:50%;background:rgba(140,175,255,0.22);transition:background .2s;}
   .ob-dot.active{background:rgba(140,175,255,0.78);}
+  #ob-tips-cta{width:100%;background:rgba(100,140,255,0.10);border:0.5px solid rgba(100,140,255,0.22);color:rgba(200,220,255,0.85);font-size:13px;font-weight:600;padding:10px;border-radius:10px;cursor:pointer;margin-bottom:16px;transition:background .15s;text-align:center;}
+  #ob-tips-cta:hover{background:rgba(100,140,255,0.20);}
   #ob-tips-btns{display:flex;justify-content:space-between;align-items:center;}
   #ob-tips-skip{background:none;border:none;color:rgba(180,200,240,0.42);font-size:12px;cursor:pointer;padding:4px 0;}
   #ob-tips-skip:hover{color:rgba(180,200,240,0.68);}
