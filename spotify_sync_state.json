@@ -499,10 +499,18 @@
     "류셰닝": "2026-10-10",
     "장소진": "2026-10-10",
     "조아람": "2026-10-10",
-    "김민서": "2026-10-10"
+    "김민서": "2026-10-10",
+    "애슐리": "2026-10-10",
+    "소정": "2026-10-10",
+    "주니": "2026-10-10",
+    "나라": "2026-10-10",
+    "라임": "2026-10-10",
+    "유영": "2026-10-10",
+    "서영": "2026-10-10",
+    "써머": "2026-10-10"
   },
-  "runs": 61,
-  "lastRunAt": "2026-10-10T17:18:49.309Z",
+  "runs": 62,
+  "lastRunAt": "2026-10-10T19:15:20.306Z",
   "swept": {
     "에스파": [
       2023,
@@ -2716,6 +2724,46 @@
       2023,
       2024,
       2025
+    ],
+    "애슐리": [
+      2023,
+      2024,
+      2025
+    ],
+    "소정": [
+      2023,
+      2024,
+      2025
+    ],
+    "주니": [
+      2023,
+      2024,
+      2025
+    ],
+    "나라": [
+      2023,
+      2024,
+      2025
+    ],
+    "라임": [
+      2023,
+      2024,
+      2025
+    ],
+    "유영": [
+      2023,
+      2024,
+      2025
+    ],
+    "서영": [
+      2023,
+      2024,
+      2025
+    ],
+    "써머": [
+      2023,
+      2024,
+      2025
     ]
   },
   "pending": {
@@ -3490,6 +3538,83 @@
         "2025-06-27 My Name Is Malguem [The Seasons: Cantabile of Park Bo Gum]"
       ],
       "why": "영상 증거 0곡(영상 0개 대조)"
+    },
+    "소정": {
+      "spotifyName": "Sojung",
+      "spotifyId": "3tguePgWKGvSKBrRZYs5lP",
+      "since": "2026-10-10",
+      "heldAlbums": [
+        "2026-04-05 You Ruined Me",
+        "2023-02-02 Hello",
+        "2023-06-25 Far Away",
+        "2023-05-29 The Day",
+        "2023-04-20 True to Love, Pt. 3 (Original Soundtrack)"
+      ],
+      "why": "영상 증거 0곡(영상 47개 대조)"
+    },
+    "주니": {
+      "spotifyName": "Zundamon",
+      "spotifyId": "4h7vIVbBIGc5hHeKdha5tc",
+      "since": "2026-10-10",
+      "heldAlbums": [
+        "2026-05-28 Into The Night (Cover)",
+        "2023-08-10 Tokyo Pubic Hair University",
+        "2023-10-26 I wish I were a human (Cover)",
+        "2024-10-19 Zunda life hack series Vol.1",
+        "2024-12-08 Zundamoncoveralbum"
+      ],
+      "why": "영상 증거 0곡(영상 10개 대조)"
+    },
+    "라임": {
+      "spotifyName": "Lime",
+      "spotifyId": "7730R73XHBuQuE1fl9U96E",
+      "since": "2026-10-10",
+      "heldAlbums": [
+        "2024-12-24 End of Beginning",
+        "2024-09-29 Wake Me Up When September Ends (Japanese Version)",
+        "2025-01-30 Blue (Japanese Version)",
+        "2025-07-12 From The Start (Japanese Version)"
+      ],
+      "why": "영상 증거 0곡(영상 8개 대조)"
+    },
+    "유영": {
+      "spotifyName": "Young K",
+      "spotifyId": "34HmvZztvxqAo2mBSAieRe",
+      "since": "2026-10-10",
+      "heldAlbums": [
+        "2026-07-27 YOUNGEST",
+        "2026-05-16 My Royal Nemesis, Pt. 2 (Original Soundtrack)",
+        "2023-09-04 Letters with notes",
+        "2023-08-25 let it be summer",
+        "2023-06-15 Move Up K-Billboard Pt.2"
+      ],
+      "why": "영상 증거 0곡(영상 6개 대조)"
+    },
+    "서영": {
+      "spotifyName": "SeoYoung",
+      "spotifyId": "3LrmNcX7FkBTwPVlIkt3As",
+      "since": "2026-10-10",
+      "heldAlbums": [
+        "2026-06-24 Cherry-Allergy",
+        "2023-05-02 아니야 (Feat. E-EUN)",
+        "2023-08-11 한 여름 밤의 꿈 (Feat. Moon Su Jeong)",
+        "2023-08-22 거짓말 (Feat. kun & Lani)",
+        "2024-04-29 Sealavender (Feat. sica)"
+      ],
+      "why": "영상 증거 0곡(영상 0개 대조)"
+    },
+    "써머": {
+      "spotifyName": "Summer Walker",
+      "spotifyId": "57LYzLEk2LcFghVwuWbcuS",
+      "since": "2026-10-10",
+      "heldAlbums": [
+        "2023-05-19 CLEAR 2: SOFT LIFE EP",
+        "2024-10-24 Heart Of A Woman",
+        "2024-10-11 +1 (404) 476-6404",
+        "2025-11-19 Finally Over It (The Afterparty)",
+        "2025-05-02 Spend It"
+      ],
+      "why": "영상 증거 0곡(영상 4개 대조)"
     }
   },
   "collabSwept": {}
