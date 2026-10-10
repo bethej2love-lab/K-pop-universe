@@ -12810,21 +12810,25 @@ function _ensureOgThumbs(){
   if(_ogThumbsP)return _ogThumbsP;
   return _ogThumbsP=fetch('og_thumbs.json').then(r=>r.ok?r.json():null).then(d=>{_ogThumbs=(d&&d.groups)||{};return _ogThumbs;}).catch(()=>({}));
 }
-function _discoverHops(a){
+function _discoverHops(a,cofavHop){
   const out=[];const gko=a.group&&a.group.ko;if(!gko)return out;
   const g=GROUPS[gko]||{},used=new Set([gko]),nm=a.name&&a.name.ko;
-  // 0) 같은 그룹 내 다른 멤버 — 가장 직접적인 단서
+  // 0) 같은 그룹 내 다른 멤버
   if(nm){
     const mates=_shuffle(ARTISTS.filter(x=>x.name&&x.name.ko!==nm&&_artistGroups(x).some(gg=>gg.ko===gko)));
     if(mates.length){const pick=mates[0];out.push({type:'tt',artist:pick,label:_dispName(pick),sub:_gLabelKo(gko),note:currentLang==='ko'?'같은 그룹':'Same group'});}
   }
-  // 1) 자주 엮이는 사람(connections) — 타그룹
-  if(nm){
+  // 1) 타그룹 추천 — cofavHop(서버 집계)이 있으면 그걸 쓰고, 없으면 connections.json fallback (NCT 계열 등 실제 멀티유닛)
+  if(cofavHop){
+    out.push(cofavHop);
+    const fgko=cofavHop.type==='tt'?(cofavHop.artist&&cofavHop.artist.group&&cofavHop.artist.group.ko):cofavHop.gko;
+    if(fgko)used.add(fgko);
+  }else if(nm){
     const conns=_shuffle(_rawConnData.filter(c=>c.type==='member'&&(c.a===nm||c.b===nm)));
     for(const c of conns){
       const other=c.a===nm?c.b:c.a;
       const oa=ARTISTS.find(x=>x.name&&x.group&&x.name.ko===other&&(!c.group||x.group.ko===c.group));
-      if(oa&&oa.group.ko!==gko&&bubbleMeshes.some(b=>b.ko===oa.group.ko)){out.push({type:'tt',artist:oa,label:_dispName(oa),sub:_gLabelKo(oa.group.ko),note:currentLang==='ko'?'자주 엮여요':'Often together'});used.add(oa.group.ko);break;}
+      if(oa&&oa.group.ko!==gko&&bubbleMeshes.some(b=>b.ko===oa.group.ko)){out.push({type:'tt',artist:oa,label:_dispName(oa),sub:_gLabelKo(oa.group.ko),note:currentLang==='ko'?'같이 작업해요':'Worked together'});used.add(oa.group.ko);break;}
     }
   }
   // 2) 같은 소속사 다른 그룹
@@ -12832,7 +12836,7 @@ function _discoverHops(a){
     const same=Object.keys(GROUPS).filter(k=>!used.has(k)&&GROUPS[k].co===g.co&&bubbleMeshes.some(b=>b.ko===k));
     if(same.length){const p=same[Math.floor(Math.random()*same.length)];used.add(p);out.push({type:'gc',gko:p,label:_gLabelKo(p),note:currentLang==='ko'?'같은 소속사':'Same label'});}
   }
-  // 3) 같은 해(±0) 데뷔 그룹 — ±1에서 정확히 같은 해로 좁힘
+  // 3) 같은 해 데뷔 그룹
   const yr=parseInt(g.debut)||0;
   if(yr&&out.length<3){
     const era=Object.keys(GROUPS).filter(k=>!used.has(k)&&(parseInt(GROUPS[k].debut)||0)===yr&&(!g.gender||GROUPS[k].gender===g.gender)&&bubbleMeshes.some(b=>b.ko===k));
@@ -12840,19 +12844,14 @@ function _discoverHops(a){
   }
   return out.slice(0,3);
 }
-function _renderDiscoverHops(a){
-  const card=document.getElementById('tt');if(!card||!a)return;
-  let sec=document.getElementById('tt-discover');
-  if(!sec){sec=document.createElement('div');sec.id='tt-discover';}
-  sec.innerHTML='';
-  const hops=_discoverHops(a);
-  if(!hops.length){if(sec.parentNode)sec.parentNode.removeChild(sec);return;}
+function _paintDiscoverHops(sec,hops,card){
+  if(!hops.length)return;
   const lbl=document.createElement('div');lbl.className='ttd-lbl';lbl.textContent=currentLang==='ko'?'이어서 발견':'Keep exploring';
   sec.appendChild(lbl);
   hops.forEach(h=>{
-    const gko=h.type==='tt'?(h.artist.group&&h.artist.group.ko):h.gko;
+    const gko=h.type==='tt'?(h.artist&&h.artist.group&&h.artist.group.ko):h.gko;
     const row=document.createElement('button');row.type='button';row.className='ttd-hop';
-    const disc=document.createElement('span');disc.className='ttd-orb'; // 컬러 오브→프로필/앨범커버로 업그레이드
+    const disc=document.createElement('span');disc.className='ttd-orb';
     const c=GROUPS[gko]&&GROUPS[gko].color;
     disc.style.background=Array.isArray(c)?`radial-gradient(circle at 34% 28%, rgb(${c[0]},${c[1]},${c[2]}), rgba(6,9,20,0.55))`:'rgba(120,150,255,0.28)';
     const txt=document.createElement('span');txt.className='ttd-txt';
@@ -12866,18 +12865,52 @@ function _renderDiscoverHops(a){
       else if(h.type==='gc'){const bm=bubbleMeshes.find(b=>b.ko===h.gko);if(bm)flyToBubble(bm.mesh.position,bm.radius);showGC(h.gko,window.innerWidth/2,window.innerHeight*0.4);}
     });
     sec.appendChild(row);
-    // 대표 영상 썸네일(og_thumbs) 우선 — 앨범커버 말고 영상 썸네일(2026-09-02 제보). 없으면 프로필 사진→컬러.
     (async()=>{
       let url='';
-      try{ const og=await _ensureOgThumbs(); url=(og&&og[gko])||''; }catch(e){}
-      if(!url){ try{ _instaPicPreloadP=_instaPicPreloadP||_warmInstaPicCache(); await _instaPicPreloadP;
-        url=(h.type==='tt'?_instaPicCache.get(_picKey(h.artist.name.ko,gko)):null)||_instaPicCache.get(_groupPicKey(gko))||''; }catch(e){} }
+      try{const og=await _ensureOgThumbs();url=(og&&og[gko])||'';}catch(e){}
+      if(!url){try{_instaPicPreloadP=_instaPicPreloadP||_warmInstaPicCache();await _instaPicPreloadP;
+        url=(h.type==='tt'?_instaPicCache.get(_picKey(h.artist.name.ko,gko)):null)||_instaPicCache.get(_groupPicKey(gko))||'';}catch(e){}}
       if(!url)return;
       const im=new Image();im.onload=()=>{disc.style.backgroundImage=`url("${String(url).replace(/"/g,'%22')}")`;disc.style.backgroundSize='cover';disc.style.backgroundPosition='center';disc.classList.add('has-cover');};im.src=url;
     })();
   });
+}
+async function _renderDiscoverHops(a){
+  const card=document.getElementById('tt');if(!card||!a)return;
+  const aKey=(a.name&&a.name.ko)||'';
+  let sec=document.getElementById('tt-discover');
+  if(!sec){sec=document.createElement('div');sec.id='tt-discover';}
+  sec.dataset.akey=aKey;sec.innerHTML='';
+  // 즉시 sync 렌더 (cofav 없이)
+  const hops0=_discoverHops(a,null);
+  _paintDiscoverHops(sec,hops0,card);
   const tvEl=card.querySelector('#tv');
-  if(tvEl)card.insertBefore(sec,tvEl);else card.appendChild(sec);
+  if(hops0.length){if(tvEl)card.insertBefore(sec,tvEl);else card.appendChild(sec);}
+  else if(sec.parentNode)sec.parentNode.removeChild(sec);
+  // async: cofav 업그레이드
+  try{
+    const gko=a.group&&a.group.ko;if(!gko||!aKey)return;
+    let cofav=[];
+    {const{data,error}=await sb.rpc('get_co_favorites',{p_kind:'member',p_key:gko+':'+aKey,p_limit:8});if(!error&&data&&data.length)cofav=data;}
+    if(!cofav.length){const{data,error}=await sb.rpc('get_co_favorites',{p_kind:'group',p_key:gko,p_limit:8});if(!error&&data&&data.length)cofav=data;}
+    if(!cofav.length)return;
+    // stale 체크 — 다른 카드가 열렸으면 무시
+    const cur=document.getElementById('tt-discover');if(!cur||cur.dataset.akey!==aKey)return;
+    // 타그룹 후보 추출
+    let cofavHop=null;
+    for(const r of cofav){
+      const k=String(r.fav_key),i=k.indexOf(':');
+      const gko2=i>0?k.slice(0,i):k,memName=i>0?k.slice(i+1):null;
+      if(gko2===gko||!bubbleMeshes.some(b=>b.ko===gko2))continue;
+      const note=currentLang==='ko'?'함께 좋아하는':'Often liked together';
+      if(memName){const oa=ARTISTS.find(x=>x.name&&x.name.ko===memName&&x.group&&x.group.ko===gko2);if(oa){cofavHop={type:'tt',artist:oa,label:_dispName(oa),sub:_gLabelKo(gko2),note};break;}}
+      else{cofavHop={type:'gc',gko:gko2,label:_gLabelKo(gko2),note};break;}
+    }
+    if(!cofavHop)return;
+    // cofav로 re-render
+    cur.innerHTML='';
+    _paintDiscoverHops(cur,_discoverHops(a,cofavHop),card);
+  }catch(e){}
 }
 
 function _gcDiscogDetailGo(delta){
