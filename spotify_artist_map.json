@@ -473,6 +473,17 @@
     },
     "checkedAt": "2026-09-25"
   },
+  "김보아": {
+    "id": "6NJTdlLzuPZJg22hL0ku1p",
+    "spotifyName": "KIM BOA",
+    "kind": "solo",
+    "confidence": "high",
+    "why": "동명 후보 2명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 5
+    },
+    "checkedAt": "2026-10-10"
+  },
   "김수윤": {
     "id": "31VffPWiL2AAwNIMODB9qZ",
     "spotifyName": "Kim Seungmin",
@@ -674,6 +685,17 @@
       ]
     },
     "checkedAt": "2026-09-26"
+  },
+  "나래": {
+    "id": "2yJAWTapuF3PEzQF9FUOhN",
+    "spotifyName": "NARAE",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "동명 후보 3명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-10-10"
   },
   "나연": {
     "id": "1VwDG9aBflQupaFNjUru9A",
@@ -1249,6 +1271,17 @@
     },
     "checkedAt": "2026-09-22"
   },
+  "류": {
+    "id": "1tcgfoMTT1szjUeaikxRjA",
+    "spotifyName": "Ryuichi Sakamoto",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "이름 불일치 — 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-10-10"
+  },
   "르세라핌": {
     "id": "4SpbR6yFEvexJuaBpgAU5p",
     "spotifyName": "LE SSERAFIM",
@@ -1302,6 +1335,17 @@
       "titleOverlap": null
     },
     "checkedAt": "2026-09-21"
+  },
+  "리오": {
+    "id": "6xr9i4ozDKCobWg5lUKHPj",
+    "spotifyName": "LEO",
+    "kind": "solo",
+    "confidence": "medium",
+    "why": "이름 유일 일치",
+    "evidence": {
+      "titleOverlap": null
+    },
+    "checkedAt": "2026-10-10"
   },
   "리지": {
     "id": "6bzePnsrUCmeGI818m5PQi",
@@ -1632,6 +1676,17 @@
     },
     "checkedAt": "2026-09-30",
     "rejected": true
+  },
+  "박시현": {
+    "id": "4CFPY7gjBXwLIaDhkngkjj",
+    "spotifyName": "Park Hyun-Bin",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "이름 불일치 — 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-10-10"
   },
   "박정아": {
     "id": "3DQ5KUdFYQn0hGkQFnthhf",
@@ -3074,6 +3129,17 @@
       "titleOverlap": null
     },
     "checkedAt": "2026-10-01"
+  },
+  "양지원": {
+    "id": "3WV95p2aFUxGwgVyE8QIHO",
+    "spotifyName": "Yang Jiwon",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "동명 후보 2명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-10-10"
   },
   "어센트": {
     "id": "4w6MZBLb4aIZpffyA52Doq",
@@ -4989,6 +5055,21 @@
     },
     "checkedAt": "2026-09-30"
   },
+  "진태화": {
+    "id": "0kRAVpQhUUArA8UnYwEdeZ",
+    "spotifyName": "Kwon Jin Ah",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "이름 불일치 — 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0,
+      "verifyOverlap": 0,
+      "verifyYears": [
+        2009
+      ]
+    },
+    "checkedAt": "2026-10-10"
+  },
   "차오루": {
     "id": "73sIBHcqh3Z3NyqHKZ7FOL",
     "spotifyName": "Childish Gambino",
@@ -5342,6 +5423,17 @@
       "titleOverlap": 1
     },
     "checkedAt": "2026-09-17"
+  },
+  "크리스": {
+    "id": "7bXgB6jMjp9ATFy66eO08Z",
+    "spotifyName": "Chris Brown",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "이름 불일치 — 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-10-10"
   },
   "클라씨": {
     "id": "3jcfHmXvjOgHzfyVE55GzZ",
@@ -6080,6 +6172,21 @@
       "titleOverlap": 0
     },
     "checkedAt": "2026-09-27"
+  },
+  "휘찬": {
+    "id": "3cGOguFmXDKF2br20DfBKA",
+    "spotifyName": "Hwichan",
+    "kind": "solo",
+    "confidence": "medium",
+    "why": "이름 유일 일치",
+    "evidence": {
+      "titleOverlap": null,
+      "verifyOverlap": 0,
+      "verifyYears": [
+        2023
+      ]
+    },
+    "checkedAt": "2026-10-10"
   },
   "힛지스": {
     "id": "5a83Luu0ndnR1enk1rn83V",

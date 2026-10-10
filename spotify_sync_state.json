@@ -481,10 +481,19 @@
     "김현엽": "2026-10-09",
     "방태훈": "2026-10-09",
     "지성": "2026-10-09",
-    "김태우": "2026-10-09"
+    "김태우": "2026-10-09",
+    "류": "2026-10-10",
+    "휘찬": "2026-10-10",
+    "진태화": "2026-10-10",
+    "리오": "2026-10-10",
+    "크리스": "2026-10-10",
+    "박시현": "2026-10-10",
+    "김보아": "2026-10-10",
+    "나래": "2026-10-10",
+    "양지원": "2026-10-10"
   },
-  "runs": 59,
-  "lastRunAt": "2026-10-09T20:05:07.124Z",
+  "runs": 60,
+  "lastRunAt": "2026-10-10T15:16:52.868Z",
   "swept": {
     "에스파": [
       2023,
@@ -2618,6 +2627,46 @@
       2023,
       2024,
       2025
+    ],
+    "류": [
+      2023,
+      2024,
+      2025
+    ],
+    "휘찬": [
+      2023,
+      2024,
+      2025
+    ],
+    "진태화": [
+      2023,
+      2024,
+      2025
+    ],
+    "리오": [
+      2023,
+      2024,
+      2025
+    ],
+    "크리스": [
+      2023,
+      2024,
+      2025
+    ],
+    "박시현": [
+      2023,
+      2024,
+      2025
+    ],
+    "김보아": [
+      2023,
+      2024,
+      2025
+    ],
+    "나래": [
+      2023,
+      2024,
+      2025
     ]
   },
   "pending": {
@@ -3276,6 +3325,75 @@
         "2023-08-14 Burger n fries"
       ],
       "why": "영상 증거 0곡(영상 6개 대조)"
+    },
+    "류": {
+      "spotifyName": "Ryuichi Sakamoto",
+      "spotifyId": "1tcgfoMTT1szjUeaikxRjA",
+      "since": "2026-10-10",
+      "heldAlbums": [
+        "2026-10-09 Sakamoto: The Wuthering Heights",
+        "2026-09-25 Sakamoto: Solitude",
+        "2026-05-27 G.T.",
+        "2026-03-25 The Best of Tohoku Youth Orchestra 2025",
+        "2023-11-20 MONSTER Original Soundtrack (From 영화 \"괴물\")"
+      ],
+      "why": "영상 증거 0곡(영상 2개 대조)"
+    },
+    "휘찬": {
+      "spotifyName": "Hwichan",
+      "spotifyId": "3cGOguFmXDKF2br20DfBKA",
+      "since": "2026-10-10",
+      "heldAlbums": [
+        "2023-07-30 Dolsingles4 OST Part.2 (Soundtrack)"
+      ],
+      "why": "영상 증거 0곡(영상 0개 대조)"
+    },
+    "진태화": {
+      "spotifyName": "Kwon Jin Ah",
+      "spotifyId": "0kRAVpQhUUArA8UnYwEdeZ",
+      "since": "2026-10-10",
+      "heldAlbums": [
+        "2026-10-09 Doctor X : Mafia in White, Pt. 1 (Original Soundtrack)",
+        "2026-07-15 SAVE ME",
+        "2026-06-23 Rain on me",
+        "2026-08-01 When You Believe",
+        "2026-01-04 Surely Tomorrow (Original Television Soundtrack) Vol.4"
+      ],
+      "why": "영상 증거 0곡(영상 6개 대조)"
+    },
+    "크리스": {
+      "spotifyName": "Chris Brown",
+      "spotifyId": "7bXgB6jMjp9ATFy66eO08Z",
+      "since": "2026-10-10",
+      "heldAlbums": [
+        "2026-06-19 BROWN (The Chocolate Edition)",
+        "2026-04-10 Obvious",
+        "2026-05-01 Fallin' (feat. Leon Thomas)",
+        "2024-04-11 11:11 (Deluxe)",
+        "2023-06-26 Summer Too Hot"
+      ],
+      "why": "영상 증거 0곡(영상 25개 대조)"
+    },
+    "박시현": {
+      "spotifyName": "Park Hyun-Bin",
+      "spotifyId": "4CFPY7gjBXwLIaDhkngkjj",
+      "since": "2026-10-10",
+      "heldAlbums": [
+        "2026-08-27 장수로 갈꺼나",
+        "2023-09-28 Drinking the liquid"
+      ],
+      "why": "영상 증거 0곡(영상 8개 대조)"
+    },
+    "나래": {
+      "spotifyName": "NARAE",
+      "spotifyId": "2yJAWTapuF3PEzQF9FUOhN",
+      "since": "2026-10-10",
+      "heldAlbums": [
+        "2026-08-26 LoLliPoP",
+        "2025-12-29 wanna DANCE?",
+        "2025-03-17 ParallaX"
+      ],
+      "why": "영상 증거 0곡(영상 7개 대조)"
     }
   },
   "collabSwept": {}
