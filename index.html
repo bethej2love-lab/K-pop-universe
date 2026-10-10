@@ -11408,7 +11408,15 @@ function showT(a,cx,cy,keepNavStack,urlMode,_unusedPushMobNav,noFly){
   }
   // 행성 없이 우주에 따로 뜬 솔로 별 — setFocus가 날아갈 행성이 없어서 카메라가 전체 조망에 그대로 멈춰 있었다
   // (2026-10-01, 디모렉스). 그 별로 직접 날아간다. 이름 라벨은 animate 루프가 카드 열린 동안 항상 띄운다.
-  if(!noFly&&a._worldPos&&!GROUPS[a.group.ko]&&(a._worldPositions||[]).length<=1)flyTo(a._worldPos,950);
+  // 모바일: 카드 패널이 화면 하단 ~60%를 가리므로 별이 카드 뒤에 숨는다. orbit target을 별 아래에 놓아
+  // 카메라가 살짝 위를 바라보게 → 별이 화면 상단(카드 위)에 위치.
+  if(!noFly&&a._worldPos&&!GROUPS[a.group.ko]&&(a._worldPositions||[]).length<=1){
+    if(isMob()){
+      const _fd=camera.position.clone().sub(controls.target).normalize();
+      if(_fd.lengthSq()<0.001)_fd.set(0,0,1);
+      _startFly(a._worldPos.clone().sub(new THREE.Vector3(0,13,0)),a._worldPos.clone().addScaledVector(_fd,33),950);
+    }else{flyTo(a._worldPos,950);}
+  }
   // 다중 그룹 소속 멤버 → 각 행성 내 별 사이 선 연결 + 카메라 프레이밍
   if(a._worldPositions&&a._worldPositions.length>1){
     const SEG=48;
