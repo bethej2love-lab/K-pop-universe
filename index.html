@@ -20148,7 +20148,7 @@ async function _buildFeedGenCamPick(list,offset){
 //    차트에서 조용히 사라진다 — admin.js의 _FANCAM_SHOW_PATTERNS/_FANCAM_FILLER_RE와 짝으로 볼 것.
 // ⚠️ 문자 클래스([...])를 쓰지 말 것 — tests/solo-cam.test.js의 "이름으로 잘라오기"가 괄호 균형으로
 //    문장 끝을 찾는데 그게 깨진다(admin.js _fancamShowPatterns가 함수로 감싸져 있는 것과 같은 이유).
-const _FANCAM_BRAND_RE=/직캠|팬캠|페이스캠|풀캠|세로캠|얼빡|입덕|팔로우캠|원픽캠|보컬캠|보이스캠|최애캠|앵콜캠|단독샷|안방\s*1\s*열|포커스캠|개인캠|멤버캠|FAN\s*CAM|FACE\s*CAM|FULL\s*CAM|VOICE\s*CAM|PICK\s*CAM|FOCUS\s*CAM|SOLO\s*CAM|MEMBER\s*CAM|VERTICAL\s*CAM|UNFILTERED\s*CAM|CLOSE\s*UP\s*CAM/i;
+const _FANCAM_BRAND_RE=/직캠|팬캠|페이스캠|풀캠|세로캠|얼빡|입덕직캠|팔로우캠|원픽캠|보컬캠|보이스캠|최애캠|앵콜캠|단독샷|안방\s*1\s*열|포커스캠|개인캠|멤버캠|FAN\s*CAM|FACE\s*CAM|FULL\s*CAM|VOICE\s*CAM|PICK\s*CAM|FOCUS\s*CAM|SOLO\s*CAM|MEMBER\s*CAM|VERTICAL\s*CAM|UNFILTERED\s*CAM|CLOSE\s*UP\s*CAM/i;
 // 서버에서 미리 좁히는 직캠 제목 낱말 — 위 브랜드 정규식의 "서버 사본"이다(2026-09-10).
 // 최종 판정은 **언제나 _isSoloCam(클라이언트)**이 한다. 이건 조회 1,000행 예산을 직캠에 몰아주기 위한
 // 사전 필터라 조금 넓어도(홍보물이 섞여도) 뒤에서 걸러진다. 반대로 **여기 빠뜨린 낱말은 그 포맷 전체가
@@ -20156,7 +20156,7 @@ const _FANCAM_BRAND_RE=/직캠|팬캠|페이스캠|풀캠|세로캠|얼빡|입�
 // ⚠️ 이게 없으면 TOP 100이 안 찬다 — 실측: 연도별 live 상위 1,000행 중 직캠은 41~53개뿐(서버가 1,000행에서
 //    자르는데 그 대부분이 무대 영상이라 직캠이 밀려남). 필터를 걸면 같은 1,000행 중 550~660개가 직캠이라
 //    100자리가 그룹 48팀으로 채워진다.
-const _FANCAM_TITLE_ILIKE=['직캠','팬캠','페이스캠','풀캠','세로캠','얼빡','입덕','팔로우캠','원픽캠','보컬캠','최애캠','단독샷','안방','fancam','facecam','fullcam','fan cam','pick cam'];
+const _FANCAM_TITLE_ILIKE=['직캠','팬캠','페이스캠','풀캠','세로캠','얼빡','입덕직캠','팔로우캠','원픽캠','보컬캠','최애캠','단독샷','안방','fancam','facecam','fullcam','fan cam','pick cam'];
 const _fancamTitleOr=()=>_FANCAM_TITLE_ILIKE.map(w=>`title.ilike.*${w}*`).join(',');
 // "직캠으로 볼 영상"의 넓은 판정 — 탐색·필터용(2026-10-01). 위 브랜드에 더해 달리캠·DOLLY STAGE·별도녹화처럼
 // 한 사람/한 팀을 따로 찍은 포맷까지 직캠으로 본다. 필요한 곳은 이걸 가져다 쓴다(Surf 직캠 렌즈 등).
