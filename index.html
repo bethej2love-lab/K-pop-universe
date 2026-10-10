@@ -12389,8 +12389,14 @@ async function _openSongVideos(title,owner,songMeta){
 // 형식 칩(2026-09-21) — 값은 그룹/멤버 카드 영상 탭과 같은 DB category 그대로 쓴다.
 // ⚠️ 'cover'는 칩에 넣지 않는다 — 이 시트엔 이미 "원곡/커버"(cover_of 태깅 기준) 탭이 있어서 같은
 //    낱말이 두 가지를 뜻하게 된다. 칩은 좁히기용일 뿐이라, 칩에 없는 형식도 '전체'에선 그대로 보인다.
-const _TVF_FMTS=[['mv','MV','MV'],['live','무대','Performance'],['short','쇼츠','Shorts'],['variety','예능','Variety'],['show','드라마','Show']];
-function _tvfFmt(v){return _isShortV(v)?'short':(v.category||'other');}
+const _TVF_FMTS=[['mv','MV','MV'],['live','무대','Performance'],['short','쇼츠','Shorts'],['challenge','챌린지','Challenge'],['variety','예능','Variety'],['show','드라마','Show']];
+function _tvfFmt(v){
+  if(_isShortV(v)){
+    if(/챌린지|challenge/i.test(v.title||''))return 'challenge';
+    return 'short';
+  }
+  return v.category||'other';
+}
 function _tvfVidUrl(v){return _isShortV(v)?`https://www.youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;}
 // 라이트박스 playlist 항목 — 다른 목록(컬렉션·모아보기)과 같은 모양으로 맞춰 길이·조회수·날짜가
 // 플레이어 쪽에서도 그대로 쓰인다.
