@@ -19658,7 +19658,6 @@ async function _buildFeedFavAlbums(){
   const list=document.getElementById('feed-favalbum');
   if(!section||!list)return;
   list.innerHTML='';section.style.display='none';
-  _enableDragScroll(list); // 가로 목록 공통 — overflow-x만으론 데스크톱에서 휠이 안 먹는다
   if(!favGroups.size&&!favMembers.size)return;
   try{
     const all=await _ensureRecentAlbums();
@@ -19858,7 +19857,6 @@ async function _buildFeedNewAlbums(){
   const list=document.getElementById('feed-newalbum');
   if(!section||!list)return;
   list.innerHTML='';section.style.display='none';
-  _enableDragScroll(list); // 가로 목록 공통 — overflow-x만으론 데스크톱에서 휠이 안 먹는다
   try{
     const all=await _ensureRecentAlbums();
     if(!Array.isArray(all)||!all.length)return;
@@ -24477,7 +24475,7 @@ _totopBtn.addEventListener('click',e=>{
            섞으면 행 패커가 무너진다). 시간 민감도 순으로 기념일 바로 밑, 신작 영상 위. -->
       <div class="feed-section" id="feed-favalbum-section" style="display:none">
         <div class="feed-section-ttl" id="feed-favalbum-ttl">💿 New Releases from Your Favorites</div>
-        <div id="feed-favalbum" class="feed-strip hscroll-drag"></div>
+        <div id="feed-favalbum" class="feed-album-grid"></div>
       </div>
       <div class="feed-section" id="feed-favnew-section" style="display:none">
         <div class="feed-section-ttl">💖 New from Your Favorites</div>
@@ -24508,7 +24506,7 @@ _totopBtn.addEventListener('click',e=>{
            disco/는 카드 열 때 그룹별로 받는 구조라 피드에서 쓰려면 별도 인덱스가 필요하다. -->
       <div class="feed-section" id="feed-newalbum-section" style="display:none">
         <div class="feed-section-ttl" id="feed-newalbum-ttl">💿 New Releases</div>
-        <div id="feed-newalbum" class="feed-strip hscroll-drag"></div>
+        <div id="feed-newalbum" class="feed-album-grid"></div>
       </div>
       <div class="feed-section">
         <div class="feed-section-ttl">📊 Charts</div>
