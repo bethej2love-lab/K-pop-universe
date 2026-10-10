@@ -1278,7 +1278,12 @@
     <button id="gc-discog-detail-close" aria-label="닫기"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
     <div id="gc-discog-detail-covrow">
       <button id="gc-discog-detail-prev" class="gc-discog-nav-btn" aria-label="이전 앨범">‹</button>
-      <img id="gc-discog-detail-cover" alt="">
+      <div class="gc-discog-cover-wrap">
+        <img id="gc-discog-detail-cover" alt="">
+        <button id="gc-discog-detail-flag" class="gc-discog-flag-btn" aria-label="깃발 꽂기" title="이 앨범에 깃발 꽂기">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>
+        </button>
+      </div>
       <button id="gc-discog-detail-next" class="gc-discog-nav-btn" aria-label="다음 앨범">›</button>
     </div>
     <div id="gc-discog-detail-type"></div>
@@ -12223,6 +12228,7 @@ function _appendGcDiscogTrackBadges(row,title){
   row.appendChild(icon);row.appendChild(info);
 }
 function _openGcDiscogDetail(a,idx){
+  _discogDetailGko=_openGCko||(_openTArtist?.group?.ko)||'';
   _gcDiscogIdx=idx!=null?idx:_gcDiscogList.indexOf(a);
   document.getElementById('gc-discog-detail-prev').disabled=_gcDiscogIdx<=0;
   document.getElementById('gc-discog-detail-next').disabled=_gcDiscogIdx<0||_gcDiscogIdx>=_gcDiscogList.length-1;
@@ -12259,6 +12265,7 @@ function _openGcDiscogDetail(a,idx){
     trackLbl.style.display='none';tracksEl.style.display='none';
   }
   {const _d=document.getElementById('gc-discog-detail');_d.classList.add('open');_bringToFront(_d);}
+  _updateDiscogFlagBtn();
   const credEl=document.getElementById('gc-discog-detail-credits');
   if(credEl){
     const titles=(a.tracks||[]).map(t=>t.title).filter(Boolean);
@@ -12267,6 +12274,16 @@ function _openGcDiscogDetail(a,idx){
   }
 }
 function _closeGcDiscogDetail(){document.getElementById('gc-discog-detail').classList.remove('open');}
+document.getElementById('gc-discog-detail-flag').addEventListener('click',e=>{
+  e.stopPropagation();
+  const a=_gcDiscogList[_gcDiscogIdx];if(!a||!_discogDetailGko)return;
+  const wasOn=_isAlbumFlagged(_discogDetailGko,a.title);
+  _setAlbumFlag(a,_discogDetailGko);
+  if(!wasOn){
+    const name=GROUPS[_discogDetailGko]?.ko||_discogDetailGko;
+    _showToast(currentLang==='ko'?`🚩 ${name} — ${a.title}`:`🚩 ${a.title}`,1800);
+  }
+});
 // 2026-08-18, 사용자 요청 — 디스코그래피 트랙을 누르면 그 곡 제목이 들어간 영상 목록을 보여줌.
 // 처음엔 기존 영상검색창(.gc-ch-search)에 값을 채워넣는 방식으로 만들었는데, "돌아가기가 너무
 // 어렵다"는 재피드백(그 자리에서 그리드/검색창을 덮어써버려 원래 보던 앨범 화면으로 못 돌아감) —
@@ -14764,6 +14781,27 @@ let favMode=false;
 // 키: 'm:groupKo:memberKo' (멤버) or 'g:groupKo' (그룹). Supabase flag_videos 컬럼으로 동기화.
 const FLAG_KEY='kpu_flag_videos';
 let flagVideos=JSON.parse(localStorage.getItem(FLAG_KEY)||'{}');
+const FLAG_ALBUMS_KEY='kpu_flag_albums';
+let flagAlbums=JSON.parse(localStorage.getItem(FLAG_ALBUMS_KEY)||'{}');
+let _discogDetailGko='';
+function _flagAlbumKey(gko,title){return 'al:'+gko+':'+title;}
+function _isAlbumFlagged(gko,title){return !!(gko&&title&&flagAlbums[_flagAlbumKey(gko,title)]);}
+function _saveFlagAlbums(){localStorage.setItem(FLAG_ALBUMS_KEY,JSON.stringify(flagAlbums));_sbPushColumn('flag_albums',flagAlbums);}
+function _setAlbumFlag(a,gko){
+  const k=_flagAlbumKey(gko,a.title);
+  if(flagAlbums[k]){delete flagAlbums[k];}
+  else{flagAlbums[k]={cover:a.cover||'',title:a.title||'',albumType:a.type||'',gko,releaseDate:a.releaseDate||'',at:new Date().toISOString()};}
+  _saveFlagAlbums();renderFlagList();_updateDiscogFlagBtn();
+}
+function _updateDiscogFlagBtn(){
+  const btn=document.getElementById('gc-discog-detail-flag');if(!btn)return;
+  const a=_gcDiscogList[_gcDiscogIdx];
+  if(!a||!_discogDetailGko){btn.classList.remove('flagged');return;}
+  const on=_isAlbumFlagged(_discogDetailGko,a.title);
+  btn.classList.toggle('flagged',on);
+  btn.title=on?'깃발 빼기':'이 앨범에 깃발 꽂기';
+  btn.querySelector('svg').style.fill=on?'currentColor':'none';
+}
 function _flagArtistKey(gko,mko){return mko?'m:'+gko+':'+mko:'g:'+gko;}
 function _isFlagged(gko,mko){return !!(gko&&flagVideos[_flagArtistKey(gko,mko)]);}
 function _saveFlagVideos(){localStorage.setItem(FLAG_KEY,JSON.stringify(flagVideos));_sbPushColumn('flag_videos',flagVideos);}
@@ -15497,30 +15535,41 @@ function renderFlagList(){
   const el=document.getElementById('flag-list');
   const sec=document.getElementById('flag-section');
   if(!el||!sec)return;
-  const entries=Object.values(flagVideos).sort((a,b)=>(b.at||'')>(a.at||'')?1:-1);
+  const vEntries=Object.values(flagVideos).map(f=>({...f,_kind:'video'}));
+  const aEntries=Object.values(flagAlbums).map(f=>({...f,_kind:'album'}));
+  const entries=[...vEntries,...aEntries].sort((a,b)=>(b.at||'')>(a.at||'')?1:-1);
   if(!entries.length){sec.style.display='none';return;}
   sec.style.display='';
   el.innerHTML=entries.map(f=>{
-    const name=f.memberKo||GROUPS[f.groupKo]?.ko||f.groupKo||'';
-    const ytid=f.ytId||'';
-    const thumb=f.thumb||(ytid?`https://i.ytimg.com/vi/${ytid}/mqdefault.jpg`:'');
-    const dateStr=f.at?f.at.slice(0,10):'';
-    return `<div class="flag-item" data-ytid="${ytid}" data-gko="${f.groupKo||''}" data-mko="${f.memberKo||''}" data-thumb="${thumb}" data-title="${(f.title||'').replace(/"/g,'&quot;')}">
-      <div class="flag-thumb-wrap">${thumb?`<img class="flag-thumb" src="${thumb}" loading="lazy" alt="">`:'<div class="flag-thumb flag-thumb-empty"></div>'}</div>
-      <div class="flag-info">
-        <div class="flag-name">🚩 ${name}</div>
-        <div class="flag-title-txt">${f.title||''}</div>
-        ${dateStr?`<div class="flag-date">${dateStr}</div>`:''}
-      </div>
-    </div>`;
+    if(f._kind==='video'){
+      const ytid=f.ytId||'';
+      const thumb=f.thumb||(ytid?`https://i.ytimg.com/vi/${ytid}/mqdefault.jpg`:'');
+      const name=f.memberKo||GROUPS[f.groupKo]?.ko||f.groupKo||'';
+      return `<div class="flag-item" data-kind="video" data-ytid="${ytid}" data-gko="${f.groupKo||''}" data-mko="${f.memberKo||''}" data-thumb="${thumb}" data-title="${(f.title||'').replace(/"/g,'&quot;')}">
+        <div class="flag-thumb-wrap">${thumb?`<img class="flag-thumb" src="${thumb}" loading="lazy" alt="">`:'<div class="flag-thumb flag-thumb-empty"></div>'}</div>
+        <div class="flag-info"><div class="flag-name">🚩 ${name}</div><div class="flag-title-txt">${f.title||''}</div><div class="flag-date">${f.at?f.at.slice(0,10):''}</div></div>
+      </div>`;
+    }else{
+      const name=GROUPS[f.gko]?.ko||f.gko||'';
+      const sub=[f.albumType,f.releaseDate?f.releaseDate.slice(0,4):''].filter(Boolean).join(' · ');
+      return `<div class="flag-item" data-kind="album" data-gko="${f.gko||''}" data-album="${(f.title||'').replace(/"/g,'&quot;')}">
+        <div class="flag-thumb-wrap">${f.cover?`<img class="flag-thumb flag-thumb-sq" src="${f.cover}" loading="lazy" alt="">`:'<div class="flag-thumb flag-thumb-empty flag-thumb-sq"></div>'}</div>
+        <div class="flag-info"><div class="flag-name">🚩 ${name}</div><div class="flag-title-txt">${f.title||''}</div><div class="flag-date">${sub}</div></div>
+      </div>`;
+    }
   }).join('');
   el.querySelectorAll('.flag-item').forEach(item=>{
     item.addEventListener('click',()=>{
-      const ytid=item.dataset.ytid;if(!ytid)return;
-      const gko=item.dataset.gko||'';
-      const mko=item.dataset.mko||'';
-      const s={t:item.querySelector('.flag-title-txt')?.textContent||'',u:'https://youtu.be/'+ytid,thumb:item.dataset.thumb||'',groupKo:gko,memberKos:mko?[mko]:[]};
-      openLightbox('https://youtu.be/'+ytid,false,[s],0,{groupKo:gko,memberKo:mko||undefined});
+      if(item.dataset.kind==='video'){
+        const ytid=item.dataset.ytid;if(!ytid)return;
+        const gko=item.dataset.gko||'',mko=item.dataset.mko||'';
+        const s={t:item.querySelector('.flag-title-txt')?.textContent||'',u:'https://youtu.be/'+ytid,thumb:item.dataset.thumb||'',groupKo:gko,memberKos:mko?[mko]:[]};
+        openLightbox('https://youtu.be/'+ytid,false,[s],0,{groupKo:gko,memberKo:mko||undefined});
+      }else{
+        const gko=item.dataset.gko;if(!gko)return;
+        const cx=window.innerWidth/2,cy=window.innerHeight*0.4;
+        showGC(gko,cx,cy);
+      }
     });
   });
 }
@@ -17960,6 +18009,7 @@ async function _pullServerToLocal(userId){
   collections=data.collections||[];
   myProfile=data.profile||null;
   if(data.flag_videos){flagVideos=data.flag_videos;localStorage.setItem(FLAG_KEY,JSON.stringify(flagVideos));}
+  if(data.flag_albums){flagAlbums=data.flag_albums;localStorage.setItem(FLAG_ALBUMS_KEY,JSON.stringify(flagAlbums));}
   // v2 Surf 학습 기록 — 서버 컬럼이 있을 때만 동기화(없는 컬럼에 push하면 매번 에러). 기기 기록과 합친다(큰 값 우선).
   if('surf_prefs' in data){_surfPrefsColumn=true;const sp=data.surf_prefs||{};for(const k in sp)_surfPrefs[k]=Math.max(+_surfPrefs[k]||0,+sp[k]||0);try{localStorage.setItem(_SURF_PREF_KEY,JSON.stringify(_surfPrefs));}catch(e){}}
   concertLog=data.concert_log||[];
