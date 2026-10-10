@@ -430,6 +430,17 @@
     },
     "checkedAt": "2026-10-09"
   },
+  "김나영": {
+    "id": "4k7tx63ZM9eM5eigY29syL",
+    "spotifyName": "Na Young",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "동명 후보 2명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-10-10"
+  },
   "김동준": {
     "id": "0XojSZQ9oNETM8AtA9kJe8",
     "spotifyName": "Kim Won Jun",
@@ -445,6 +456,17 @@
       ]
     },
     "checkedAt": "2026-09-25"
+  },
+  "김민서": {
+    "id": "3qo507hAo0pjRj42AmioUv",
+    "spotifyName": "MINSEO",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "동명 후보 6명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-10-10"
   },
   "김민주": {
     "id": "7lhiEEAGZosFSF2tlSBBKO",
@@ -481,6 +503,17 @@
     "why": "동명 후보 2명 중 앨범 대조",
     "evidence": {
       "titleOverlap": 5
+    },
+    "checkedAt": "2026-10-10"
+  },
+  "김보형": {
+    "id": "374BqLVt4zpEYsa1Em7X7x",
+    "spotifyName": "Kim Bo Hyung",
+    "kind": "solo",
+    "confidence": "medium",
+    "why": "이름 유일 일치",
+    "evidence": {
+      "titleOverlap": null
     },
     "checkedAt": "2026-10-10"
   },
@@ -1279,6 +1312,17 @@
     "why": "이름 불일치 — 앨범 대조",
     "evidence": {
       "titleOverlap": 0
+    },
+    "checkedAt": "2026-10-10"
+  },
+  "류셰닝": {
+    "id": "4pot37midUs2oiz2Mt1N48",
+    "spotifyName": "Sally",
+    "kind": "solo",
+    "confidence": "medium",
+    "why": "이름 유일 일치",
+    "evidence": {
+      "titleOverlap": null
     },
     "checkedAt": "2026-10-10"
   },
@@ -2678,6 +2722,17 @@
       ]
     },
     "checkedAt": "2026-09-19"
+  },
+  "신보라": {
+    "id": "7fmXV2O48buswss04YetaN",
+    "spotifyName": "HANA",
+    "kind": "solo",
+    "confidence": "medium",
+    "why": "이름 유일 일치",
+    "evidence": {
+      "titleOverlap": null
+    },
+    "checkedAt": "2026-10-10"
   },
   "신종국": {
     "id": "60YNqzrSj7rJkuqHkpHPqG",
@@ -4613,6 +4668,17 @@
     },
     "checkedAt": "2026-09-15"
   },
+  "장소진": {
+    "id": "6Xg22wJOAcnvPUfk5WvODH",
+    "spotifyName": "SOYEON",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "이름 불일치 — 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-10-10"
+  },
   "장승연": {
     "id": "1zeaekWal9sG8T6INxaeQM",
     "spotifyName": "Jang Yoon-Jeong",
@@ -4728,6 +4794,22 @@
       "titleOverlap": 1
     },
     "checkedAt": "2026-09-23"
+  },
+  "정미미": {
+    "id": "0nwGsQzwVqdlBAg0eSNxmd",
+    "spotifyName": "MIMI",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "동명 후보 3명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0,
+      "verifyOverlap": 0,
+      "verifyYears": [
+        2026,
+        2025
+      ]
+    },
+    "checkedAt": "2026-10-10"
   },
   "정수빈": {
     "id": "7mJe9MyvwEVccLfQODmRN1",
@@ -4868,6 +4950,17 @@
       "titleOverlap": 0
     },
     "checkedAt": "2026-10-01"
+  },
+  "조아람": {
+    "id": "4hW9QstyUJL1ZcnxT248kN",
+    "spotifyName": "Hyeyeon Kang",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "이름 불일치 — 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-10-10"
   },
   "조유리": {
     "id": "5qUT9YBghleRCXg0WifEzf",
@@ -6020,6 +6113,17 @@
       "titleOverlap": 2
     },
     "checkedAt": "2026-09-24"
+  },
+  "한해빈": {
+    "id": "79e9aBzsPX9kSAqUxMNKQL",
+    "spotifyName": "HAEBIN",
+    "kind": "solo",
+    "confidence": "high",
+    "why": "동명 후보 2명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 2
+    },
+    "checkedAt": "2026-10-10"
   },
   "해윤": {
     "id": "2hD3aiYb8kpzjuxoLvqckk",

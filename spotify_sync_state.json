@@ -490,10 +490,19 @@
     "박시현": "2026-10-10",
     "김보아": "2026-10-10",
     "나래": "2026-10-10",
-    "양지원": "2026-10-10"
+    "양지원": "2026-10-10",
+    "김보형": "2026-10-10",
+    "정미미": "2026-10-10",
+    "신보라": "2026-10-10",
+    "한해빈": "2026-10-10",
+    "김나영": "2026-10-10",
+    "류셰닝": "2026-10-10",
+    "장소진": "2026-10-10",
+    "조아람": "2026-10-10",
+    "김민서": "2026-10-10"
   },
-  "runs": 60,
-  "lastRunAt": "2026-10-10T15:16:52.868Z",
+  "runs": 61,
+  "lastRunAt": "2026-10-10T17:18:49.309Z",
   "swept": {
     "에스파": [
       2023,
@@ -2667,6 +2676,46 @@
       2023,
       2024,
       2025
+    ],
+    "김보형": [
+      2023,
+      2024,
+      2025
+    ],
+    "정미미": [
+      2023,
+      2024,
+      2025
+    ],
+    "신보라": [
+      2023,
+      2024,
+      2025
+    ],
+    "한해빈": [
+      2023,
+      2024,
+      2025
+    ],
+    "김나영": [
+      2023,
+      2024,
+      2025
+    ],
+    "류셰닝": [
+      2023,
+      2024,
+      2025
+    ],
+    "장소진": [
+      2023,
+      2024,
+      2025
+    ],
+    "조아람": [
+      2023,
+      2024,
+      2025
     ]
   },
   "pending": {
@@ -3394,6 +3443,53 @@
         "2025-03-17 ParallaX"
       ],
       "why": "영상 증거 0곡(영상 7개 대조)"
+    },
+    "정미미": {
+      "spotifyName": "MIMI",
+      "spotifyId": "0nwGsQzwVqdlBAg0eSNxmd",
+      "since": "2026-10-10",
+      "heldAlbums": [
+        "2026-09-30 Dear Everyday (feat. ChimaMachita)",
+        "2026-09-09 QED (feat. saewool & KASANE TETO)",
+        "2026-06-10 MIMI 10th Anniversary Album",
+        "2026-01-04 TRICK HEART (feat. KASANE TETO)",
+        "2023-11-08 Hug (feat. HATSUNE MIKU & KAFU)"
+      ],
+      "why": "영상 증거 0곡(영상 4개 대조)"
+    },
+    "신보라": {
+      "spotifyName": "HANA",
+      "spotifyId": "7fmXV2O48buswss04YetaN",
+      "since": "2026-10-10",
+      "heldAlbums": [
+        "2026-02-23 HANA",
+        "2026-03-27 Bad Girl",
+        "2025-07-14 Blue Jeans",
+        "2025-04-23 ROSE",
+        "2025-10-13 My Body"
+      ],
+      "why": "영상 증거 0곡(영상 5개 대조)"
+    },
+    "류셰닝": {
+      "spotifyName": "Sally",
+      "spotifyId": "4pot37midUs2oiz2Mt1N48",
+      "since": "2026-10-10",
+      "heldAlbums": [
+        "2025-02-05 BURN IT"
+      ],
+      "why": "영상 증거 0곡(영상 7개 대조)"
+    },
+    "장소진": {
+      "spotifyName": "SOYEON",
+      "spotifyId": "6Xg22wJOAcnvPUfk5WvODH",
+      "since": "2026-10-10",
+      "heldAlbums": [
+        "2026-09-07 What a Wonderful Life",
+        "2023-11-16 NOBODY",
+        "2023-08-23 A-MOONO-KE",
+        "2025-06-27 My Name Is Malguem [The Seasons: Cantabile of Park Bo Gum]"
+      ],
+      "why": "영상 증거 0곡(영상 0개 대조)"
     }
   },
   "collabSwept": {}
