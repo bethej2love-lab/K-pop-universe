@@ -12827,7 +12827,7 @@ function _discoverHops(a){
   // 3) 같은 해(±0) 데뷔 그룹 — ±1에서 정확히 같은 해로 좁힘
   const yr=parseInt(g.debut)||0;
   if(yr&&out.length<3){
-    const era=Object.keys(GROUPS).filter(k=>!used.has(k)&&(parseInt(GROUPS[k].debut)||0)===yr&&bubbleMeshes.some(b=>b.ko===k));
+    const era=Object.keys(GROUPS).filter(k=>!used.has(k)&&(parseInt(GROUPS[k].debut)||0)===yr&&(!g.gender||GROUPS[k].gender===g.gender)&&bubbleMeshes.some(b=>b.ko===k));
     if(era.length){const p=era[Math.floor(Math.random()*era.length)];used.add(p);out.push({type:'gc',gko:p,label:_gLabelKo(p),note:currentLang==='ko'?('같은 해 데뷔 · '+yr):('Debuted '+yr)});}
   }
   return out.slice(0,3);
