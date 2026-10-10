@@ -879,7 +879,7 @@
     /* 데스크톱: 좌측(재생 중) + 우측(추천 목록) 2열 — 모바일 세로 스택과 다르게 별도 설계 */
     #yt-lightbox.lb-browse #yt-lb-wrap{width:min(92vw,1080px);display:flex;align-items:flex-start;gap:26px;}
     #yt-lightbox.lb-browse #yt-lb-main{flex:1;min-width:0;}
-    #yt-lightbox.lb-browse #yt-lb-uplist{width:320px;flex-shrink:0;max-height:min(80vh,720px);overflow-y:auto;padding-left:2px;}
+    #yt-lightbox.lb-browse #yt-lb-uplist{width:320px;flex-shrink:0;max-height:min(80vh,720px);overflow-y:auto;padding-left:2px;overscroll-behavior:contain;will-change:transform;}
     #yt-lightbox.lb-browse #yt-lb-uplist-scroll{padding-bottom:8px;}
     /* 데스크톱: toolbar prev/next 표시, reactions 왼쪽 정렬 */
     #yt-lightbox.lb-browse #yt-lb-toolbar #yt-lb-prev,
