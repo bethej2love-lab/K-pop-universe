@@ -51,6 +51,7 @@ const BUDGET = Number(argOf('--budget') || process.env.BUDGET || 80);
 // 같은 날 1트랙 싱글이 이만큼 몰리면 이름 도용 업로드로 보고 보류한다(아래 2-c 주석).
 const BULK_SINGLE_MIN = Number(process.env.BULK_SINGLE_MIN || 3);
 const ONLY = argOf('--only') ? new Set(argOf('--only').split(',')) : null;
+const MIN_PRI = Number(argOf('--min-pri') || process.env.MIN_PRI || 0); // 0=전체, 3=A등급만
 
 const groups = rd('groups.json');
 const artists = rd('artists.json');
@@ -208,7 +209,9 @@ let calls = 0, checked = 0, added = 0, mapped = 0, backfilled = 0;
 const addedList = [], reviewList = [], problems = [];
 let stoppedBy = null;
 
-const list = ONLY ? targets().filter(t => ONLY.has(t.ko)) : targets();
+const list = targets()
+  .filter(t => !ONLY || ONLY.has(t.ko))
+  .filter(t => MIN_PRI === 0 || priWeight(groups[t.ko]?.pri ?? (t.kind === 'solo' ? 1 : 0)) >= MIN_PRI);
 console.log(`[disco-sync] 대상 ${list.length} · 예산 ${BUDGET}콜 · 연도 ${YEARS.join(',')}${DRY ? ' · DRY' : ''}`);
 
 for (const t of list) {

@@ -19,9 +19,20 @@ const OUT = path.join(os.homedir(), 'Downloads', 'wiki_wins');
 const CACHE = path.join(OUT, 'cache');
 fs.mkdirSync(CACHE, { recursive: true });
 const argv = process.argv.slice(2);
+const INSERT_MODE = argv.includes('--insert'); // Supabase 직접 INSERT 모드 (자동화용)
+const curYear = new Date().getFullYear();
 const yarg = (() => { const i = argv.indexOf('--years'); if (i < 0) return null; const m = argv[i + 1].match(/(\d{4})-(\d{4})/); return m ? [+m[1], +m[2]] : null; })();
-const [Y0, Y1] = yarg || [2008, 2026];
+// --insert 기본값: 올해만 (위키피디아 최신 업데이트 반영용)
+const [Y0, Y1] = yarg || (INSERT_MODE ? [curYear, curYear] : [2008, curYear]);
 const DEDUP = !argv.includes('--no-dedup');
+
+// --insert 모드에서 올해 캐시 무효화 — 항상 최신 위키 데이터로
+if (INSERT_MODE) {
+  for (const show of ['Music_Bank', 'Inkigayo', 'Show__Music_Core', 'M_Countdown', 'Show_Champion', 'The_Show']) {
+    const f = path.join(CACHE, `List_of_${show}_Chart_winners__${curYear}_.html`);
+    if (fs.existsSync(f)) fs.unlinkSync(f);
+  }
+}
 
 const G = JSON.parse(fs.readFileSync(path.join(ROOT, 'groups.json'), 'utf8'));
 const A = JSON.parse(fs.readFileSync(path.join(ROOT, 'artists.json'), 'utf8'));
@@ -250,21 +261,43 @@ function parseYear(html, year) {
     }
   }
 
-  // SQL 생성
-  const esc = s => s == null ? 'NULL' : `'${String(s).replace(/'/g, "''")}'`;
-  const sql = ['-- music_show_wins 보강 (위키피디아 방송1위 표, ' + Y0 + '-' + Y1 + ')',
-    '-- 생성: tools/wiki_music_wins.mjs · Supabase SQL 에디터에서 실행',
-    'INSERT INTO music_show_wins (show, win_date, song_title, group_ko, member_ko) VALUES'];
-  const vals = rows.map(r => `  (${esc(r.show)}, ${esc(r.win_date)}, ${esc(r.song_title)}, ${esc(r.group_ko)}, ${esc(r.member_ko)})`);
-  sql.push(vals.join(',\n') + '\nON CONFLICT DO NOTHING;');
-  fs.writeFileSync(path.join(OUT, 'import.sql'), sql.join('\n'));
-  const un = Object.entries(unmapped).sort((a, b) => b[1] - a[1]);
-  fs.writeFileSync(path.join(OUT, 'unmapped.txt'), un.map(([a, n]) => `${n}\t${a}`).join('\n'));
-
   // 그룹별 신규 건수
   const byG = {}; rows.forEach(r => byG[r.group_ko] = (byG[r.group_ko] || 0) + 1);
   console.log(`\n페이지 ${pages}개 파싱 · 신규 수상 ${rows.length}건 (그룹 ${Object.keys(byG).length})`);
   console.log('신규 상위:', Object.entries(byG).sort((a, b) => b[1] - a[1]).slice(0, 20).map(([g, n]) => `${g}(${n})`).join(' · '));
+  const un = Object.entries(unmapped).sort((a, b) => b[1] - a[1]);
   console.log(`매핑 실패 아티스트 ${un.length}종(상위): ` + un.slice(0, 15).map(([a, n]) => `${a}(${n})`).join(', '));
-  console.log(`\n→ ${path.join(OUT, 'import.sql')}  ·  unmapped.txt`);
+
+  if (INSERT_MODE) {
+    // Supabase REST API로 직접 upsert — ON CONFLICT DO NOTHING 역할을 resolution=ignore-duplicates가 함
+    const SB_URL = process.env.SUPABASE_URL || 'https://dukgguehegnembimqvkm.supabase.co';
+    const SB_KEY = process.env.SUPABASE_SERVICE_ROLE;
+    if (!SB_KEY) { console.error('오류: SUPABASE_SERVICE_ROLE 환경변수가 없습니다'); process.exit(1); }
+    if (!rows.length) { console.log('삽입할 신규 행 없음'); return; }
+    const CHUNK = 500;
+    let inserted = 0;
+    for (let i = 0; i < rows.length; i += CHUNK) {
+      const chunk = rows.slice(i, i + CHUNK);
+      const r = await fetch(`${SB_URL}/rest/v1/music_show_wins`, {
+        method: 'POST',
+        headers: { apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}`, 'Content-Type': 'application/json', Prefer: 'resolution=ignore-duplicates,return=minimal' },
+        body: JSON.stringify(chunk),
+      });
+      if (!r.ok) { const t = await r.text(); console.error(`INSERT 실패 (${r.status}):`, t.slice(0, 300)); process.exit(1); }
+      inserted += chunk.length;
+      console.log(`INSERT ${inserted}/${rows.length}건 완료`);
+    }
+    console.log(`→ ${rows.length}건 DB 삽입 완료`);
+  } else {
+    // SQL 파일 생성 (수동 실행용)
+    const esc = s => s == null ? 'NULL' : `'${String(s).replace(/'/g, "''")}'`;
+    const sql = ['-- music_show_wins 보강 (위키피디아 방송1위 표, ' + Y0 + '-' + Y1 + ')',
+      '-- 생성: tools/wiki_music_wins.mjs · Supabase SQL 에디터에서 실행',
+      'INSERT INTO music_show_wins (show, win_date, song_title, group_ko, member_ko) VALUES'];
+    const vals = rows.map(r => `  (${esc(r.show)}, ${esc(r.win_date)}, ${esc(r.song_title)}, ${esc(r.group_ko)}, ${esc(r.member_ko)})`);
+    sql.push(vals.join(',\n') + '\nON CONFLICT DO NOTHING;');
+    fs.writeFileSync(path.join(OUT, 'import.sql'), sql.join('\n'));
+    fs.writeFileSync(path.join(OUT, 'unmapped.txt'), un.map(([a, n]) => `${n}\t${a}`).join('\n'));
+    console.log(`\n→ ${path.join(OUT, 'import.sql')}  ·  unmapped.txt`);
+  }
 })();

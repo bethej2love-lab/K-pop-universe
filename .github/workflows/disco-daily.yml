@@ -25,15 +25,16 @@ name: 앨범 수집 (매일)
 
 on:
   schedule:
-    - cron: '11 9 * * *'    # KST 18:11 — 발매 직후
-    - cron: '11 15 * * *'   # KST 00:11 — 자정/해외 발매 + 앞 회차 누락분
+    - cron: '11 9 * * *'    # KST 18:11 — 발매 직후 (전체 순환)
+    - cron: '11 15 * * *'   # KST 00:11 — 자정/해외 발매 + 앞 회차 누락분 (전체 순환)
+    - cron: '11 1 * * *'    # KST 10:11 — A등급 인기그룹 전용 매일 스캔
   workflow_dispatch:
 
 permissions:
   contents: write
 
 concurrency:
-  group: disco-daily
+  group: disco-daily-${{ github.event.schedule || 'manual' }}
   cancel-in-progress: false
 
 jobs:
@@ -53,7 +54,10 @@ jobs:
         env:
           SPOTIFY_CLIENT_ID: ${{ secrets.SPOTIFY_CLIENT_ID }}
           SPOTIFY_CLIENT_SECRET: ${{ secrets.SPOTIFY_CLIENT_SECRET }}
-          BUDGET: ${{ vars.SPOTIFY_BUDGET || '80' }}
+          # KST 10:11 회차(cron '11 1 * * *')는 A등급(인기그룹) 전용 — MIN_PRI=3으로 97팀만 돌림.
+          # 나머지 두 회차는 전체 순환(MIN_PRI=0).
+          MIN_PRI: ${{ github.event.schedule == '11 1 * * *' && '3' || '0' }}
+          BUDGET: ${{ github.event.schedule == '11 1 * * *' && '92' || vars.SPOTIFY_BUDGET || '80' }}
           # 과거 연도 1회 백필 — 대상마다 딱 한 번 더 훑어서 지난해 구멍을 메운다(기본 2025).
           # 다 메워지면(리포트의 "남은 대상 0") 레포 변수 SPOTIFY_BACKFILL_YEARS를 빈 값으로 두면 꺼진다.
           BACKFILL_YEARS: ${{ vars.SPOTIFY_BACKFILL_YEARS || '2023,2024,2025' }}

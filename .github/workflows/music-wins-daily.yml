@@ -1,0 +1,33 @@
+name: 음방 1위 수집 (매일)
+
+# 위키피디아 "List of {방송} Chart winners (연도)" 표를 매일 파싱해
+# music_show_wins 테이블에 직접 upsert한다.
+#
+# 위키피디아는 방송 당일~다음날 업데이트되므로, 매일 새벽 실행하면 "어제의 1위"를 당일 반영할 수 있다.
+# 이미 DB에 있는 행은 resolution=ignore-duplicates로 중복 없이 넘어간다.
+#
+# 시각: KST 05:11 (UTC 20:11 전날) — 새벽에 돌아 방송 다음날 아침엔 앱에 반영돼 있게.
+
+on:
+  schedule:
+    - cron: '11 20 * * *'   # KST 05:11
+  workflow_dispatch:
+
+permissions:
+  contents: none
+
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: 위키피디아 1위 파싱 + DB 직접 삽입
+        env:
+          SUPABASE_SERVICE_ROLE: ${{ secrets.SUPABASE_SERVICE_ROLE }}
+        run: node tools/wiki_music_wins.mjs --insert
