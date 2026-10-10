@@ -130,6 +130,7 @@ function _ytClassify(title){
   // 안무영상/댄스프랙티스/퍼포먼스비디오/릴레이댄스 — 2026-08-06엔 "무대가 아니다"라며 other로 보냈지만
   // 2026-09-14 사용자 결정으로 live로 온다(_YT_PRERECORDED_RE 주석에 되돌리는 법까지 적어둠).
   if(_YT_PRERECORDED_RE.test(t)||_YT_PRERECORDED_RE.test(title||''))return'live';
+  if(/챌린지|CHALLENGE/.test(t))return'challenge';
   if(/\bLIVE\b|\bCONCERT\b|\bPERFORMANCE\b|\bFANCAM\b|라이브|직캠|팬캠/.test(t))return'live';
   if(_YT_LIVE_SHOW_RE.test(t))return'live';
   return'other';
