@@ -2841,7 +2841,7 @@ async function buildUniverse(){
     const div=document.createElement('div');
     div.className='group-label';
     div.textContent=ko;
-    div.style.color='rgba(210,222,242,0.58)';
+    div.style.color='rgba(210,222,242,0.82)';
     div.style.cursor='pointer';
     div.style.position='absolute';
     div.style.left='50%';
@@ -4511,7 +4511,7 @@ function _latestCover(d){
 // 최신 앨범 커버로 폴백. 클릭은 _makeSearchItem이 감아둔 동작을 detached 요소에 위임해 그대로 재사용.
 function _appendTrendingSection(hits,res,mobSearch,obSearch){
   const lb=document.createElement('div');lb.className='sr-sec-label';
-  lb.textContent=currentLang==='ko'?'요즘 인기 그룹':'Popular now';
+  lb.textContent=currentLang==='ko'?'여기서 시작해 보세요':'Start here';
   res.appendChild(lb);
   const grid=document.createElement('div');grid.className='sr-orbs';
   hits.forEach(h=>{
