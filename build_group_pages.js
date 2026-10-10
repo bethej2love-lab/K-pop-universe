@@ -211,6 +211,7 @@ groupKos.forEach(ko => {
   const discogItems = (info.discography || [])
     .filter(a => a.isMain !== false)
     .sort((a, b) => (b.releaseDate || '').localeCompare(a.releaseDate || ''))
+    .filter((a, i, arr) => arr.findIndex(b => b.title === a.title) === i)
     .slice(0, 30);
 
   function memberListHtml(lang) {
@@ -355,7 +356,7 @@ groupKos.forEach(ko => {
   ${memberListHtml(lang)}
   ${discogHtml(lang)}
   <div class="lang-switch"><a href="${altUrl}">${isEn ? '한국어로 보기' : 'View in English'}</a></div>
-  <div class="cta-dock"><a class="cta" href="${SITE}/${deepLinkHash}">${isEn ? 'View in the Universe →' : '더 알아보기 →'}</a></div>
+  <div class="cta-dock"><a class="cta" href="${SITE}/${deepLinkHash}">${isEn ? 'View videos in the Universe →' : '직캠·영상 아카이브 보기 →'}</a></div>
 </div>
 </body>
 </html>
@@ -402,6 +403,7 @@ artists.forEach(a => {
   const discogItems = (a.discography || [])
     .filter(al => al.isMain !== false)
     .sort((x, y) => (y.releaseDate || '').localeCompare(x.releaseDate || ''))
+    .filter((al, i, arr) => arr.findIndex(b => b.title === al.title) === i)
     .slice(0, 30);
 
   function affiliationHtml(lang) {
@@ -562,7 +564,7 @@ artists.forEach(a => {
   ${memberDiscogHtml(lang)}
   ${linksHtml(lang)}
   <div class="lang-switch"><a href="${altUrl}">${isEn ? '한국어로 보기' : 'View in English'}</a></div>
-  <div class="cta-dock"><a class="cta" href="${SITE}/${deepLinkHash}">${isEn ? 'View in the Universe →' : '더 알아보기 →'}</a></div>
+  <div class="cta-dock"><a class="cta" href="${SITE}/${deepLinkHash}">${isEn ? 'View fancams & videos →' : '직캠·무대 영상 보기 →'}</a></div>
 </div>
 </body>
 </html>

@@ -872,7 +872,7 @@
 <div id="ob-top-search" aria-hidden="true">
   <button id="ob-top-search-btn" type="button" aria-label="검색 열기">
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="10.5" cy="10.5" r="6.5" stroke="currentColor" stroke-width="1.8"/><line x1="15.5" y1="15.5" x2="21" y2="21" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-    <span>Who's Your Bias?</span>
+    <span>Who's Your Bias?<small>최애 이름 치면 직캠·무대 영상 모아줘요</small></span>
   </button>
   <input id="ob-si" type="text" placeholder="Who's Your Bias?" autocomplete="off" inputmode="search">
   <button id="ob-si-clear" aria-label="검색 닫기">✕</button>
@@ -4482,7 +4482,7 @@ function _trendingSearchHits(){
     .sort((a,b)=>(GROUPS[b].pri||0)-(GROUPS[a].pri||0));
   if(pool.length<3)return[];
   // 상위 12개에서 랜덤 6개 → 항상 유명 그룹 위주지만 매번 다르게
-  const picked=_shuffle(pool.slice(0,Math.max(12,pool.length))).slice(0,6);
+  const picked=_shuffle(pool.filter(ko=>!GROUPS[ko].disbanded).slice(0,14)).slice(0,6);
   return picked.map(ko=>{
     const bm=bubbleMeshes.find(b=>b.ko===ko);
     const en=GROUPS[ko].en||'';
@@ -17265,7 +17265,7 @@ function updateMyPage(){
   // 별을 아직 안 만든 유저에겐 "편집" 대신 "만들기"로 맥락에 맞게. ⚠️ 여기서 textContent를 덮어쓰므로
   // 마크업의 data-i18n이 무력화된다 — 언어 분기를 여기에도 둬야 한다(2026-09-04, 영어 모드 전수 스캔에서
   // 홈 화면에 딱 하나 남은 한글이 이 버튼이었다).
-  if(editBtn)editBtn.textContent=currentLang==='ko'?(nick?'편집':'만들기'):(nick?'Edit':'Create');
+  if(editBtn)editBtn.textContent=currentLang==='ko'?(nick?'편집':'내 별 만들기'):(nick?'Edit':'Create My Star');
   if(bioEl)bioEl.textContent=myProfile?.bio||'';
   _myStarSelected=false;
   _renderBiasChips();
@@ -22906,7 +22906,7 @@ function _makeChVidController(contId){
     if(memberKo){
       const onlyBtn=document.createElement('button');
       onlyBtn.className='gc-ch-only';
-      onlyBtn.textContent='Only';
+      onlyBtn.textContent='단독만';
       onlyBtn.title='이 멤버만 단독 출연한 영상만 보기';
       onlyBtn.setAttribute('aria-pressed','false');
       onlyBtn.addEventListener('click',()=>{

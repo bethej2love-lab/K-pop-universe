@@ -3707,8 +3707,9 @@
   }
   #ob-top-search-btn:active{transform:scale(0.98);background:rgba(255,255,255,0.10);}
   #ob-top-search-btn svg{flex-shrink:0;opacity:.6;}
-  #ob-top-search-btn span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  #ob-top-search-btn span{overflow:hidden;display:flex;flex-direction:column;gap:2px;
     color:rgba(255,255,255,0.85);text-shadow:0 0 14px rgba(255,255,255,0.55),0 0 5px rgba(255,255,255,0.35);}
+  #ob-top-search-btn span small{display:block;font-size:10px;font-weight:400;letter-spacing:.02em;color:rgba(255,255,255,0.42);text-shadow:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   /* 타이핑 모드: 버튼 숨기고 인풋으로 전환 */
   #ob-top-search.ob-typing{
     display:flex;align-items:center;gap:8px;
