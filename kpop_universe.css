@@ -707,16 +707,19 @@
   #yt-lb-prev:hover,#yt-lb-next:hover{color:rgba(255,255,255,0.9);}
   #yt-lb-prev:disabled,#yt-lb-next:disabled{color:rgba(255,255,255,0.12);cursor:default;}
   #yt-lb-actions{display:flex;align-items:center;gap:10px;}
-  #yt-lb-scrap,#yt-lb-col,#yt-lb-edit,#yt-lb-mute,#yt-lb-rotate{background:rgba(255,255,255,0.08);border:none;border-radius:50%;width:38px;height:38px;display:flex;align-items:center;justify-content:center;cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><path d='M11,1 L12.3,9.7 L21,11 L12.3,12.3 L11,21 L9.7,12.3 L1,11 L9.7,9.7Z' fill='%23FFB0D0' opacity='.97'/></svg>") 11 11,pointer;color:rgba(200,215,255,0.7);transition:color .15s,background .15s;font-size:15px;}
+  #yt-lb-scrap,#yt-lb-col,#yt-lb-flag,#yt-lb-edit,#yt-lb-mute,#yt-lb-rotate{background:rgba(255,255,255,0.08);border:none;border-radius:50%;width:38px;height:38px;display:flex;align-items:center;justify-content:center;cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><path d='M11,1 L12.3,9.7 L21,11 L12.3,12.3 L11,21 L9.7,12.3 L1,11 L9.7,9.7Z' fill='%23FFB0D0' opacity='.97'/></svg>") 11 11,pointer;color:rgba(200,215,255,0.7);transition:color .15s,background .15s;font-size:15px;}
   #yt-lb-rotate.is-portrait{background:rgba(155,178,228,0.22);color:#c8ddff;}
   #yt-lb-edit:hover{background:rgba(255,255,255,0.16);color:#fff;}
   #yt-lb-mute:hover{background:rgba(255,255,255,0.16);color:#fff;}
   #yt-lb-mute.is-on{color:rgba(255,255,255,0.95);}
   #yt-lb-scrap svg,#yt-lb-col svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linejoin:round;}
+  #yt-lb-flag svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.8;}
   #yt-lb-scrap.scrapped{color:rgba(255,92,125,0.92);}
   #yt-lb-scrap.scrapped svg{fill:currentColor;}
   #yt-lb-col.col-on{color:rgba(130,185,255,0.9);}
   #yt-lb-col.col-on svg{fill:currentColor;}
+  #yt-lb-flag.flagged{color:rgba(255,185,80,0.95);}
+  #yt-lb-flag.flagged svg{fill:currentColor;stroke:currentColor;}
   .lb-action-cnt{font-size:var(--fz-meta);font-weight:700;color:rgba(200,215,255,0.66);margin-left:3px;font-family:'Pretendard',sans-serif;line-height:1;}
   .lb-action-cnt:empty{display:none;}
   #yt-lb-reactions{display:flex;align-items:center;justify-content:center;gap:4px;padding:10px 0 4px;flex-wrap:wrap;}
@@ -1058,6 +1061,7 @@
     #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-rotate,
     #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-mute,
     #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-col,
+    #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-flag,
     #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-scrap,
     #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-edit{
       position:fixed;right:12px;left:auto;z-index:2;}
@@ -1067,10 +1071,12 @@
       top:calc(52px + env(safe-area-inset-top, 0px) + min(68vh,530px) - 90px - 1*52px);}
     #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-col{
       top:calc(52px + env(safe-area-inset-top, 0px) + min(68vh,530px) - 90px - 2*52px);}
-    #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-scrap{
+    #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-flag{
       top:calc(52px + env(safe-area-inset-top, 0px) + min(68vh,530px) - 90px - 3*52px);}
-    #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-edit{
+    #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-scrap{
       top:calc(52px + env(safe-area-inset-top, 0px) + min(68vh,530px) - 90px - 4*52px);}
+    #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-edit{
+      top:calc(52px + env(safe-area-inset-top, 0px) + min(68vh,530px) - 90px - 5*52px);}
     /* 모바일은 상하 스와이프로 영상 넘기므로 좌우 버튼은 오히려 잘못된 방향을 암시함 — 숨김 */
     #yt-lb-prev,#yt-lb-next{display:none;}
     #yt-lb-toolbar{justify-content:center;}
@@ -3389,6 +3395,17 @@
   .scrap-sub{font-size:10px;color:rgba(112,136,180,0.54);margin-top:1px;letter-spacing:.02em;}
   .scrap-del{background:none;border:none;cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><path d='M11,1 L12.3,9.7 L21,11 L12.3,12.3 L11,21 L9.7,12.3 L1,11 L9.7,9.7Z' fill='%23FFB0D0' opacity='.97'/></svg>") 11 11,pointer;color:rgba(138,158,208,0.36);font-size:13px;line-height:1;padding:2px 4px;flex-shrink:0;transition:color .13s;}
   .scrap-del:hover{color:rgba(255,100,130,0.72);}
+  /* ── 입덕 여정(FLAGS) ── */
+  #flag-list{display:flex;flex-direction:column;gap:4px;}
+  .flag-item{display:flex;align-items:center;gap:10px;padding:6px 4px;border-radius:8px;cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><path d='M11,1 L12.3,9.7 L21,11 L12.3,12.3 L11,21 L9.7,12.3 L1,11 L9.7,9.7Z' fill='%23FFB0D0' opacity='.97'/></svg>") 11 11,pointer;transition:background .13s;}
+  .flag-item:hover{background:rgba(255,255,255,0.05);}
+  .flag-thumb-wrap{flex-shrink:0;}
+  .flag-thumb{width:68px;height:45px;border-radius:6px;object-fit:cover;background:rgba(255,255,255,0.06);}
+  .flag-thumb-empty{width:68px;height:45px;border-radius:6px;background:rgba(255,255,255,0.06);}
+  .flag-info{flex:1;min-width:0;}
+  .flag-name{font-size:10px;font-weight:700;color:rgba(255,185,80,0.85);letter-spacing:.04em;margin-bottom:2px;}
+  .flag-title-txt{font-size:11px;color:rgba(195,215,255,0.82);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .flag-date{font-size:10px;color:rgba(110,135,185,0.5);margin-top:2px;}
   /* 썸네일 위 스크랩 버튼 */
   .tv-sm{position:relative!important;}
   #tv-big-wrap{position:relative;}

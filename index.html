@@ -152,6 +152,10 @@
       <div id="scrap-list"><div class="fav-empty" data-i18n="scrapEmpty">아직 담아둔 영상이 없어요</div></div>
       <button id="scrap-viewall-btn" style="display:none">전체보기</button>
     </div>
+    <div id="flag-section" style="display:none">
+      <div class="fav-hd"><span class="fav-hd-lbl">🚩 MOMENTS</span></div>
+      <div id="flag-list"></div>
+    </div>
     <div id="concert-section">
       <div class="fav-hd"><span class="fav-hd-lbl">CONCERTS</span></div>
       <div id="concert-log-list"><div class="fav-empty" data-i18n="concertEmpty">아직 기록한 공연이 없어요</div></div>
@@ -826,6 +830,7 @@
         <button id="yt-lb-rotate" aria-label="세로/가로 전환"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="2" width="10" height="16" rx="1.5"/><path d="M4 20h7M7.5 17l-3 3 3 3" transform="translate(0,-2)"/></svg></button>
         <button id="yt-lb-mute" aria-label="소리 켜기">🔇</button>
         <button id="yt-lb-col" aria-label="컬렉션에 추가"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M5 3h14a1 1 0 0 1 1 1v16l-8-4.5L4 20V4a1 1 0 0 1 1-1z"/></svg></button>
+        <button id="yt-lb-flag" aria-label="입덕 영상으로 깃발 꽂기"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg></button>
         <button id="yt-lb-scrap" aria-label="좋아요"><svg viewBox="0 0 24 24"><path d="M12 21L10.55 19.7C5.4 15.1 2 12.1 2 8.5 2 5.4 4.4 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.6 3 22 5.4 22 8.5c0 3.6-3.4 6.6-8.55 11.2L12 21z"/></svg><span id="yt-lb-scrap-cnt" class="lb-action-cnt"></span></button>
         <button id="yt-lb-edit" aria-label="출연 멤버 지정" style="display:none">✎</button>
       </div>
@@ -2549,6 +2554,7 @@ async function buildUniverse(){
   renderFavList();
   renderCollectionSection();
   renderScrapList();
+  renderFlagList();
   renderConcertLogList();
   _renderBiasChips(); // 최애 칩은 스크립트 초기 실행 시점엔 ARTISTS가 비어있어 클릭 대상 매칭이 안 됐으므로, 데이터 로드 후 다시 렌더
   placeMyStarInUniverse();
@@ -2556,7 +2562,7 @@ async function buildUniverse(){
   _updateFavHintCallout();
   // 로그인 동기화가 끝나면(우주는 이미 떠 있음) 서버 유저 데이터로 최애·컬렉션·마이스타만 다시 반영
   _authP.then(()=>{try{
-    renderFavList();renderCollectionSection();renderScrapList();renderConcertLogList();_renderBiasChips();_updateProfileEmpty();
+    renderFavList();renderCollectionSection();renderScrapList();renderFlagList();renderConcertLogList();_renderBiasChips();_updateProfileEmpty();
     placeMyStarInUniverse();_updateFavHintCallout();_updateIdxEntryCount();
     if(typeof favMode!=='undefined'&&favMode&&typeof applyFavHighlight==='function')applyFavHighlight();
     _perfMark('authDone');
@@ -6129,17 +6135,19 @@ function _lbUpdateToolbar(){
   }
   const scrapBtn=document.getElementById('yt-lb-scrap');
   const colBtn=document.getElementById('yt-lb-col');
+  const flagBtn=document.getElementById('yt-lb-flag');
   const prevBtn=document.getElementById('yt-lb-prev');
   const nextBtn=document.getElementById('yt-lb-next');
   if(s){
-    scrapBtn.style.display='';colBtn.style.display='';
+    scrapBtn.style.display='';colBtn.style.display='';if(flagBtn)flagBtn.style.display='';
     const sc=_isScraped(s);
     scrapBtn.classList.toggle('scrapped',sc);
     scrapBtn.querySelector('svg').style.fill=sc?'currentColor':'none';
     const inAnyCol=collections.some(p=>p.videos.some(v=>v.u===s.u));
     colBtn.classList.toggle('col-on',inAnyCol);
+    _updateLbFlagBtn();
   }else{
-    scrapBtn.style.display='none';colBtn.style.display='none';
+    scrapBtn.style.display='none';colBtn.style.display='none';if(flagBtn)flagBtn.style.display='none';
   }
   const editBtn=document.getElementById('yt-lb-edit');
   if(editBtn)editBtn.style.display=(_isAdmin()&&_lbApiId(s))?'':'none';
@@ -7693,6 +7701,22 @@ document.getElementById('yt-lb-queue-backdrop').addEventListener('click',_closeQ
   _qs.addEventListener('touchstart',e=>{if(e.target.closest('#yt-lb-queue-sheet-handle'))_qsDragY=e.touches[0].clientY;},{passive:true});
   _qs.addEventListener('touchend',e=>{if(_qsDragY&&e.changedTouches[0].clientY-_qsDragY>60)_closeQueueSheet();_qsDragY=0;},{passive:true});
 }
+document.getElementById('yt-lb-flag').addEventListener('click',e=>{
+  e.stopPropagation();
+  if(!_lbPlaylist||_lbIdx<0)return;
+  const s=_lbPlaylist[_lbIdx];
+  const gko=s.groupKo||s._apiGroupKo||_lbCtx?.groupKo||'';
+  if(!gko)return; // 아티스트 맥락 없으면 조용히 무시
+  const mkoList=(s.memberKos&&s.memberKos.length)?s.memberKos:(s._apiMemberKos&&s._apiMemberKos.length)?s._apiMemberKos:(_lbCtx?.memberKo?[_lbCtx.memberKo]:[]);
+  const mko=mkoList[0]||'';
+  const wasOn=_isFlagged(gko,mko);
+  _setFlag(s,gko,mko);
+  if(!wasOn){
+    // 꽂을 때 토스트
+    const name=mko||GROUPS[gko]?.ko||gko;
+    _showToast(currentLang==='ko'?`🚩 ${name}에 깃발 꽂았어요`:`🚩 Flagged for ${name}`,1800);
+  }
+});
 document.getElementById('yt-lb-scrap').addEventListener('click',e=>{
   e.stopPropagation();
   if(!_lbPlaylist||_lbIdx<0)return;
@@ -13138,7 +13162,7 @@ function _applyTagFocus(){
 }
 
 function _hideMyPageSections(){
-  ['my-page-header','my-page-bias','profile-empty','fav-section','collection-section','scrap-section','concert-section'].forEach(id=>{
+  ['my-page-header','my-page-bias','profile-empty','fav-section','collection-section','scrap-section','flag-section','concert-section'].forEach(id=>{
     const el=document.getElementById(id);if(el)el.style.display='none';
   });
 }
@@ -14694,6 +14718,36 @@ function toggleConnFavorite(anchor,sel){
 let favMode=false;
 
 // ── Scraps (playlist) ──────────────────────────────
+// ── 깃발(입덕 영상) ─────────────────────────────────────────────────────────
+// 아티스트 1명당 1개 — 이 영상을 보다가 빠졌다는 기록. 날짜 비공개, 영상 공개 단서.
+// 키: 'm:groupKo:memberKo' (멤버) or 'g:groupKo' (그룹). Supabase flag_videos 컬럼으로 동기화.
+const FLAG_KEY='kpu_flag_videos';
+let flagVideos=JSON.parse(localStorage.getItem(FLAG_KEY)||'{}');
+function _flagArtistKey(gko,mko){return mko?'m:'+gko+':'+mko:'g:'+gko;}
+function _isFlagged(gko,mko){return !!(gko&&flagVideos[_flagArtistKey(gko,mko)]);}
+function _saveFlagVideos(){localStorage.setItem(FLAG_KEY,JSON.stringify(flagVideos));_sbPushColumn('flag_videos',flagVideos);}
+function _setFlag(s,gko,mko){
+  const k=_flagArtistKey(gko,mko);
+  const vid=ytId(s.u||'');
+  if(flagVideos[k]&&flagVideos[k].ytId===vid){delete flagVideos[k];}
+  else{flagVideos[k]={ytId:vid,title:s.t||'',thumb:s.thumb||`https://i.ytimg.com/vi/${vid}/mqdefault.jpg`,groupKo:gko,memberKo:mko||'',at:new Date().toISOString()};}
+  _saveFlagVideos();
+  _updateLbFlagBtn();
+}
+function _updateLbFlagBtn(){
+  const btn=document.getElementById('yt-lb-flag');if(!btn)return;
+  if(!_lbPlaylist||_lbIdx<0){btn.classList.remove('flagged');return;}
+  const s=_lbPlaylist[_lbIdx];
+  const gko=s.groupKo||s._apiGroupKo||_lbCtx?.groupKo||'';
+  const mkoList=(s.memberKos&&s.memberKos.length)?s.memberKos:(s._apiMemberKos&&s._apiMemberKos.length)?s._apiMemberKos:(_lbCtx?.memberKo?[_lbCtx.memberKo]:[]);
+  const mko=mkoList[0]||'';
+  const on=_isFlagged(gko,mko);
+  btn.classList.toggle('flagged',on);
+  btn.title=on?'깃발 빼기':'이 영상으로 깃발 꽂기';
+  btn.querySelector('svg').style.fill=on?'currentColor':'none';
+  btn.querySelector('svg').style.stroke=on?'currentColor':'currentColor';
+}
+
 const SCRAP_KEY='kpu_scraps';
 let scraps=JSON.parse(localStorage.getItem(SCRAP_KEY)||'[]');
 function _scrapId(s){return s.u;}
@@ -15397,6 +15451,38 @@ document.getElementById('scrap-viewall-btn')?.addEventListener('click',()=>{
   const songs=scraps.map(item=>({t:item.t,u:item.u,groupKo:item.groupKo,memberKos:item.memberKo?[item.memberKo]:undefined}));
   _openFeedListOverlay('LIKES',_colVidCountText(scraps.length),songs);
 });
+
+function renderFlagList(){
+  const el=document.getElementById('flag-list');
+  const sec=document.getElementById('flag-section');
+  if(!el||!sec)return;
+  const entries=Object.values(flagVideos).sort((a,b)=>(b.at||'')>(a.at||'')?1:-1);
+  if(!entries.length){sec.style.display='none';return;}
+  sec.style.display='';
+  el.innerHTML=entries.map(f=>{
+    const name=f.memberKo||GROUPS[f.groupKo]?.ko||f.groupKo||'';
+    const ytid=f.ytId||'';
+    const thumb=f.thumb||(ytid?`https://i.ytimg.com/vi/${ytid}/mqdefault.jpg`:'');
+    const dateStr=f.at?f.at.slice(0,10):'';
+    return `<div class="flag-item" data-ytid="${ytid}" data-gko="${f.groupKo||''}" data-mko="${f.memberKo||''}" data-thumb="${thumb}" data-title="${(f.title||'').replace(/"/g,'&quot;')}">
+      <div class="flag-thumb-wrap">${thumb?`<img class="flag-thumb" src="${thumb}" loading="lazy" alt="">`:'<div class="flag-thumb flag-thumb-empty"></div>'}</div>
+      <div class="flag-info">
+        <div class="flag-name">🚩 ${name}</div>
+        <div class="flag-title-txt">${f.title||''}</div>
+        ${dateStr?`<div class="flag-date">${dateStr}</div>`:''}
+      </div>
+    </div>`;
+  }).join('');
+  el.querySelectorAll('.flag-item').forEach(item=>{
+    item.addEventListener('click',()=>{
+      const ytid=item.dataset.ytid;if(!ytid)return;
+      const gko=item.dataset.gko||'';
+      const mko=item.dataset.mko||'';
+      const s={t:item.querySelector('.flag-title-txt')?.textContent||'',u:'https://youtu.be/'+ytid,thumb:item.dataset.thumb||'',groupKo:gko,memberKos:mko?[mko]:[]};
+      openLightbox('https://youtu.be/'+ytid,false,[s],0,{groupKo:gko,memberKo:mko||undefined});
+    });
+  });
+}
 
 function _connSelKey(sel){return[...sel].sort().join(',');}
 
@@ -17832,6 +17918,7 @@ async function _pullServerToLocal(userId){
   scraps=data.scraps||[];
   collections=data.collections||[];
   myProfile=data.profile||null;
+  if(data.flag_videos){flagVideos=data.flag_videos;localStorage.setItem(FLAG_KEY,JSON.stringify(flagVideos));}
   // v2 Surf 학습 기록 — 서버 컬럼이 있을 때만 동기화(없는 컬럼에 push하면 매번 에러). 기기 기록과 합친다(큰 값 우선).
   if('surf_prefs' in data){_surfPrefsColumn=true;const sp=data.surf_prefs||{};for(const k in sp)_surfPrefs[k]=Math.max(+_surfPrefs[k]||0,+sp[k]||0);try{localStorage.setItem(_SURF_PREF_KEY,JSON.stringify(_surfPrefs));}catch(e){}}
   concertLog=data.concert_log||[];
