@@ -12774,7 +12774,8 @@ function _renderDiscoverHops(a){
       const im=new Image();im.onload=()=>{disc.style.backgroundImage=`url("${String(url).replace(/"/g,'%22')}")`;disc.style.backgroundSize='cover';disc.style.backgroundPosition='center';disc.classList.add('has-cover');};im.src=url;
     })();
   });
-  card.appendChild(sec); // 항상 카드 맨 아래로(위에 있으면 거슬린다는 제보, 2026-09-02)
+  const tvEl=card.querySelector('#tv');
+  if(tvEl)card.insertBefore(sec,tvEl);else card.appendChild(sec);
 }
 
 function _gcDiscogDetailGo(delta){
