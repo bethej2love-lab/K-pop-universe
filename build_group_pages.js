@@ -397,7 +397,7 @@ artists.forEach(a => {
   const enUrl = `${SITE}/${enPath}`;
   const ogImage = ogImageForMember(a);
   const bdayIso = isoDate(a.bday);
-  const deepLinkHash = '#g=' + hashEsc(primaryGko) + '&m=' + hashEsc(ko);
+  const deepLinkHash = isSolo ? '#m=' + hashEsc(ko) : '#g=' + hashEsc(primaryGko) + '&m=' + hashEsc(ko);
 
   const discogItems = (a.discography || [])
     .filter(al => al.isMain !== false)
@@ -463,7 +463,7 @@ artists.forEach(a => {
     const isEn = lang === 'en';
     const displayName = isEn ? en : ko;
     const subName = isEn ? (ko !== en ? ko : '') : (a.name.en && a.name.en !== ko ? a.name.en : '');
-    const groupDisplay = isSolo ? (isEn ? 'Solo Artist' : '솔로 아티스트') : (isEn ? (groupInfo.en || primaryGko) : primaryGko);
+    const groupDisplay = isSolo ? '' : (isEn ? (groupInfo.en || primaryGko) : primaryGko);
     const agency = isEn ? agencyEn(a.co) : a.co;
     const statusLabel = a.active === false
       ? (isEn ? (a.left ? `Inactive (left ${a.left})` : 'Inactive') : (a.left ? `활동종료(${a.left} 탈퇴)` : '활동종료'))
@@ -552,7 +552,7 @@ artists.forEach(a => {
   ${subName ? `<div class="sub">${escHtml(subName)}</div>` : ''}
   <img class="cover" src="${ogImage}" alt="${escHtml(displayName)}" loading="lazy">
   <div class="meta">
-    <span><b>${groupLabel}</b> ${escHtml(groupDisplay)}</span>
+    ${groupDisplay ? `<span><b>${groupLabel}</b> ${escHtml(groupDisplay)}</span>` : ''}
     ${bdayIso ? `<span><b>${debutLabel}</b> ${escHtml(a.bday)}</span>` : ''}
     ${agency ? `<span><b>${agencyLabel}</b> ${escHtml(agency)}</span>` : ''}
     <span><b>${statusLbl}</b> ${escHtml(statusLabel)}</span>

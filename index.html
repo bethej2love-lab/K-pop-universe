@@ -10174,12 +10174,17 @@ function _hashEsc(s){return String(s).replace(/[ &=#%+]/g,encodeURIComponent);}
 // 새로고침/공유하면 사용자가 방금 빠져나온 멤버 카드가 다시 열렸음. 모바일은 카드 스택이 곧 화면
 // 순서이므로 스택 최상단을 진실로 삼는다(데스크톱은 스택 개념이 없어 기존 로직 유지).
 function _cardHash(){
+  function _memberHash(a){
+    // 솔로(그룹 없는 독립 아티스트)는 g= 없이 m= 만으로 — 주소창에 "솔로" 노출 방지
+    if(!GROUPS[a.group.ko])return'#m='+_hashEsc(a.name.ko);
+    return'#g='+_hashEsc(a.group.ko)+'&m='+_hashEsc(a.name.ko);
+  }
   if(isMob()&&_cardStack.length){
     const top=_cardStack[_cardStack.length-1];
-    if(top.type==='tt'&&top.data)return'#g='+_hashEsc(top.data.group.ko)+'&m='+_hashEsc(top.data.name.ko);
+    if(top.type==='tt'&&top.data)return _memberHash(top.data);
     if(top.type==='gc'&&top.data)return'#g='+_hashEsc(top.data);
   }
-  if(_openTArtist)return'#g='+_hashEsc(_openTArtist.group.ko)+'&m='+_hashEsc(_openTArtist.name.ko);
+  if(_openTArtist)return _memberHash(_openTArtist);
   if(_openGCko)return'#g='+_hashEsc(_openGCko);
   return'';
 }
@@ -10189,6 +10194,14 @@ function _stackIndexForHash(hash){
   if(!isMob()||!_cardStack.length||!hash)return -1;
   const params=new URLSearchParams(String(hash).slice(1));
   const gko=params.get('g'),mko=params.get('m');
+  // 솔로 전용 해시(#m=이름, g= 없음) 처리
+  if(!gko&&mko){
+    for(let i=_cardStack.length-1;i>=0;i--){
+      const e=_cardStack[i];
+      if(e.type==='tt'&&e.data&&e.data.name.ko===mko&&!GROUPS[e.data.group.ko])return i;
+    }
+    return -1;
+  }
   if(!gko)return -1;
   for(let i=_cardStack.length-1;i>=0;i--){
     const e=_cardStack[i];
@@ -10239,10 +10252,17 @@ function _openFromHash(){
   const comboParam=params.get('combo');
   if(comboParam){_comboFromHash(comboParam);return;} // 조합 패널 공유 링크(#combo=이름(그룹),…)
   const gko=params.get('g'),mko=params.get('m');
+  // 솔로 전용 해시(#m=이름, g= 없음) — 새 포맷. 구 포맷(#g=솔로&m=이름)도 아래에서 계속 지원.
+  if(!gko&&mko){
+    const artist=ARTISTS.find(x=>x.name.ko===mko&&!GROUPS[x.group.ko]);
+    if(!artist)return;
+    try{const ref=document.referrer?new URL(document.referrer).hostname:'(direct)';_gaEvent('deeplink_open',{target:'member',gko:'(solo)',ref});}catch(e){}
+    if(artist._worldPos)flyTo(artist._worldPos);
+    showT(artist,window.innerWidth/2,window.innerHeight*0.4,false,'skip');
+    return;
+  }
   if(!gko)return;
-  // '솔로'는 GROUPS에 없는 placeholder(서로 무관한 솔로 아티스트들이 공유)라 원래 여기서 무조건
-  // 막혀서 솔로 아티스트는 딥링크(공유 링크·SEO 페이지의 "더 알아보기")가 전부 깨져있었음
-  // (2026-08-21, 멤버 정적 SEO 페이지 작업 중 발견) — 멤버가 지정된 경우에 한해 예외로 허용.
+  // '솔로'는 GROUPS에 없는 placeholder — 구 포맷 하위 호환 유지
   if(gko!=='솔로'&&!GROUPS[gko])return;
   // 진입 GA — 공유 링크·SEO 페이지 딥링크 모두 여기서 카드가 열린다
   try{const ref=document.referrer?new URL(document.referrer).hostname:'(direct)';_gaEvent('deeplink_open',{target:mko?'member':'group',gko,ref});}catch(e){}
