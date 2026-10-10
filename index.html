@@ -3780,7 +3780,9 @@ function animate(){
     }
   });
   // 줌 레벨: 카메라~원점 거리 기반 (홈≈120, 최대≈300)
-  const camDist=camera.position.length();
+  // 원점~카메라 대신 오빗 타깃~카메라(실제 줌 거리)로 계산 — 원점에서 먼 별(아이유 등) 근처에
+  // 날아갔을 때도 "줌인 상태"로 올바르게 판단해 별 불투명도가 정상 유지됨(2026-10-10)
+  const camDist=camera.position.distanceTo(controls.target);
   const zoomT=Math.max(0,Math.min(1,(camDist-90)/190));
   const zoomBoost=-(Math.cos(Math.PI*zoomT)-1)/2;
   // 연도 링: 줌아웃 임계(zoomT>0.55)를 넘을 때만 은은하게 페이드 인, 줌인하면 0(2026-09-02)
