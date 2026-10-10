@@ -1286,6 +1286,7 @@
     <div id="gc-discog-detail-meta"></div>
     <div id="gc-discog-detail-track-lbl">Tracklist</div>
     <div id="gc-discog-detail-tracks"></div>
+    <div id="gc-discog-detail-credits"></div>
   </div>
 </div>
 <div id="gc-track-videos-overlay" data-modal>
@@ -1299,6 +1300,7 @@
         <div id="gc-track-videos-meta" class="hidden"></div>
       </div>
     </div>
+    <div id="gc-track-videos-credits"></div>
     <div id="gc-track-videos-tabs" class="hidden hscroll-drag"></div>
     <!-- 액션 줄(2026-09-21) — 목록 전체를 그대로 이어재생(라이트박스는 원래도 playlist를 물고 열렸지만
          버튼이 없어 아무도 몰랐다) + 정렬 토글. 결과가 없으면 hidden. -->
@@ -4953,6 +4955,37 @@ async function _loadAcData(){
   if(_acData)return _acData;
   try{const r=await fetch('artist_credits.json');_acData=await r.json();}catch(e){_acData={};}
   return _acData;
+}
+async function _renderCreditsInto(el,titles){
+  el.innerHTML='';el.style.display='none';
+  if(!titles||!titles.length)return;
+  const ac=await _loadAcData();if(!ac)return;
+  const NUL=String.fromCharCode(0);
+  const norms=new Set(titles.map(t=>_titleNorm(t)));
+  const map=new Map();
+  for(const[k,v]of Object.entries(ac)){
+    const name=k.split(NUL)[0];
+    for(const s of(v.lyrics||[])){if(norms.has(_titleNorm(s.title))){const e=map.get(name)||{name,l:0,c:0};e.l++;map.set(name,e);}}
+    for(const s of(v.compose||[])){if(norms.has(_titleNorm(s.title))){const e=map.get(name)||{name,l:0,c:0};e.c++;map.set(name,e);}}
+  }
+  if(!map.size)return;
+  const sorted=[...map.values()].sort((a,b)=>(b.l+b.c)-(a.l+a.c));
+  const lbl=document.createElement('div');lbl.className='gcdc-lbl';lbl.textContent='크레딧';
+  const chips=document.createElement('div');chips.className='gcdc-chips';
+  sorted.slice(0,14).forEach(({name,l,c})=>{
+    const role=l&&c?'작사/작곡':l?'작사':'작곡';
+    const chip=document.createElement('button');chip.type='button';chip.className='gcdc-chip';
+    chip.innerHTML=`<span class="gcdc-name">${name}</span><span class="gcdc-role">${role}</span>`;
+    chip.addEventListener('click',e=>{
+      e.stopPropagation();
+      const q=`${name} ${role}`;
+      const si=document.getElementById('search-input')||document.getElementById('mob-search-input');
+      if(si)si.value=q;
+      doSearch(q);
+    });
+    chips.appendChild(chip);
+  });
+  el.appendChild(lbl);el.appendChild(chips);el.style.display='';
 }
 const _CREDIT_KW={
   '작사작곡':'both','작사/작곡':'both','작사 작곡':'both',
@@ -12225,7 +12258,13 @@ function _openGcDiscogDetail(a,idx){
   }else{
     trackLbl.style.display='none';tracksEl.style.display='none';
   }
-  {const _d=document.getElementById('gc-discog-detail');_d.classList.add('open');_bringToFront(_d);} // 카드(131+) 위로 — 정적 z-index:102라 그냥 두면 가려진다(2026-09-03)
+  {const _d=document.getElementById('gc-discog-detail');_d.classList.add('open');_bringToFront(_d);}
+  const credEl=document.getElementById('gc-discog-detail-credits');
+  if(credEl){
+    const titles=(a.tracks||[]).map(t=>t.title).filter(Boolean);
+    if(!titles.length&&a.titleTrack)titles.push(a.titleTrack);
+    _renderCreditsInto(credEl,titles);
+  }
 }
 function _closeGcDiscogDetail(){document.getElementById('gc-discog-detail').classList.remove('open');}
 // 2026-08-18, 사용자 요청 — 디스코그래피 트랙을 누르면 그 곡 제목이 들어간 영상 목록을 보여줌.
@@ -12281,7 +12320,9 @@ async function _openSongVideos(title,owner,songMeta){
   const listEl=document.getElementById('gc-track-videos-list');
   const tabsEl=document.getElementById('gc-track-videos-tabs');
   document.getElementById('gc-track-videos-title').textContent=title;
-  _fillSongMeta(title,songMeta,myReq); // 앨범커버+아티스트·앨범·연도 헤더(songMeta 없으면 숨김)
+  _fillSongMeta(title,songMeta,myReq);
+  const credEl=document.getElementById('gc-track-videos-credits');
+  if(credEl)_renderCreditsInto(credEl,[title]);
   tabsEl.classList.add('hidden');tabsEl.innerHTML='';
   document.getElementById('gc-track-videos-actions')?.classList.add('hidden');
   listEl.innerHTML=`<div class="tvf-empty">${currentLang==='ko'?'불러오는 중…':'Loading…'}</div>`;
