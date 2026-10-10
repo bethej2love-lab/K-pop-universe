@@ -61,6 +61,15 @@
 - ~~**`active:false`인데 탈퇴일(`left`)이 없는 멤버 104명 — 그룹 미태깅 영상이 그 멤버 카드에 하나도 안 뜸(2026-08-27 발견)**~~ → **같은 날 처리 완료** — 폴백 4단계 재설계로 차단 110명→11명, 99명 복구. 아래 2026-08-27 항목 참고. ⚠️ 원 진단("탈퇴일 미기입이 원인")은 **틀렸었다** — 실제 원인은 `active` 필드가 "이 그룹 멤버인가"와 "개인이 아직 활동하는가" 두 뜻으로 섞여 쓰인 것이었고, 쥬얼리·걸스데이·스텔라에서 같은 시기 멤버가 은퇴 여부에 따라 갈리고 있었다.
 ---
 
+## 2026-10-10 (세션 — 솔로 별 개선·URL 정리·스크롤 성능)
+- [완료] **솔로 아티스트 별 가시성** — `m.sparkle` 의존 제거, 솔로는 항상 `sparklePts`(74.4px, opacity 1.0) + `sparkleHalo.push(1)` 강제. 기존엔 `regularPts`(33.6px) + haloScale 미등록으로 별이 안 보이고 발광도 없었음. [index.html]
+- [완료] **URL에서 '솔로' 제거** — `#g=솔로&m=디모렉스` → `#m=디모렉스`. `_cardHash`, `_stackIndexForHash`, `_openFromHash` 수정, 구 포맷 하위 호환 유지. `build_group_pages.js` deeplink·그룹 표기 분기 후 정적 페이지 4242개 재빌드(654개 솔로 SEO). [index.html] [build_group_pages.js]
+- [완료] **솔로 별 이름 라벨 간격·색** — Y오프셋 0.42→1.5, 흰색→쿨 오프화이트(`rgba(200,215,240,0.52)`), is-focus 글로우 제거. [kpop_universe.css] [index.html]
+- [완료] **모바일 스크롤 끊김** — `#feed-body` backdrop-filter 제거(iOS 매 프레임 재합성 원인), `overscroll-behavior:contain` 추가. hover 반응 80ms→40ms. [kpop_universe.css]
+- [이슈·미해결] **데스크톱 영상 목록 스크롤 끊김** — `#yt-lb-uplist`에 `will-change:transform`·`overscroll-behavior:contain` 추가, `#yt-lightbox.lb-browse`에도 `will-change:transform` 추가(캔버스 레이어 분리 목적). 개선됐으나 완전히 매끄럽지 않음. 비passive wheel 리스너(OrbitControls canvas, `_enableDragScroll` #tco·#tg-row)는 모두 `#yt-lb-uplist` ancestor 아님 → 원인 미특정. YouTube iframe 활성 상태에서 recompositing 비용 or 다른 원인 가능. 추후 DevTools 프로파일링 필요. [kpop_universe.css]
+
+---
+
 ## 2026-10-08 (세션 — 라이트박스 개선 완성 + UX/검색 다수)
 - [완료] **데스크톱 라이트박스 5종** — is-current 강조 테두리+타이틀볼드, toolbar prev/next 복원, reactions 좌정렬, scrollIntoView, ←→ 키보드 이동. [index.html] [kpop_universe.css]
 - [완료] **예능 에피소드 무대탭 제외** — `_applyLiveExclude`에 `시즌*ep.*` ilike 필터 추가. "노빠꾸탁재훈 시즌4 EP.45" 등 무대탭+차트 공통 제외됨. [index.html]
