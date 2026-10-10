@@ -5924,8 +5924,6 @@ function _applyLiveExclude(q,opts){
   q=q.not('title','ilike','%[live]%');
   for(const k of _LIVE_EXCLUDE)q=q.not('title_norm','ilike',`*${k}*`);
   q=q.not('title_norm','ilike','*시즌*ep.*');
-  // was_live=true && 20분↑ = 생일방송·토크라이브 등 생방 아카이브 → 퍼포먼스 탭·차트 모두 제외
-  if(_hasLiveCol)q=q.or(`was_live.is.null,was_live.eq.false,duration_sec.is.null,duration_sec.lt.${_LIVE_ARCHIVE_MIN_SEC}`);
   if(!(opts&&opts.includeChoreo))for(const f of _STAGE_EXCLUDE_FORMATS)q=q.not('content_formats','cs',`{${f}}`);
   return q;
 }
