@@ -4961,36 +4961,47 @@ async function _loadAcData(){
   try{const r=await fetch('artist_credits.json');_acData=await r.json();}catch(e){_acData={};}
   return _acData;
 }
-async function _renderCreditsInto(el,titles){
+async function _renderCreditsInto(el,titles,showSongs=false){
   el.innerHTML='';el.style.display='none';
   if(!titles||!titles.length)return;
   const ac=await _loadAcData();if(!ac)return;
   const NUL=String.fromCharCode(0);
-  const norms=new Set(titles.map(t=>_titleNorm(t)));
+  const norms=new Map(titles.map(t=>[_titleNorm(t),t])); // norm→원본 제목
   const map=new Map();
   for(const[k,v]of Object.entries(ac)){
     const name=k.split(NUL)[0];
-    for(const s of(v.lyrics||[])){if(norms.has(_titleNorm(s.title))){const e=map.get(name)||{name,l:0,c:0};e.l++;map.set(name,e);}}
-    for(const s of(v.compose||[])){if(norms.has(_titleNorm(s.title))){const e=map.get(name)||{name,l:0,c:0};e.c++;map.set(name,e);}}
+    for(const s of(v.lyrics||[])){const orig=norms.get(_titleNorm(s.title));if(orig){const e=map.get(name)||{name,l:0,c:0,lSongs:[],cSongs:[]};if(!e.lSongs.includes(orig))e.lSongs.push(orig);e.l++;map.set(name,e);}}
+    for(const s of(v.compose||[])){const orig=norms.get(_titleNorm(s.title));if(orig){const e=map.get(name)||{name,l:0,c:0,lSongs:[],cSongs:[]};if(!e.cSongs.includes(orig))e.cSongs.push(orig);e.c++;map.set(name,e);}}
   }
   if(!map.size)return;
   const sorted=[...map.values()].sort((a,b)=>(b.l+b.c)-(a.l+a.c));
   const lbl=document.createElement('div');lbl.className='gcdc-lbl';lbl.textContent='크레딧';
-  const chips=document.createElement('div');chips.className='gcdc-chips';
-  sorted.slice(0,14).forEach(({name,l,c})=>{
+  const list=document.createElement('div');list.className=showSongs?'gcdc-list':'gcdc-chips';
+  sorted.slice(0,14).forEach(({name,l,c,lSongs,cSongs})=>{
     const role=l&&c?'작사/작곡':l?'작사':'작곡';
-    const chip=document.createElement('button');chip.type='button';chip.className='gcdc-chip';
-    chip.innerHTML=`<span class="gcdc-name">${name}</span><span class="gcdc-role">${role}</span>`;
-    chip.addEventListener('click',e=>{
-      e.stopPropagation();
-      const q=`${name} ${role}`;
-      const si=document.getElementById('search-input')||document.getElementById('mob-search-input');
-      if(si)si.value=q;
-      doSearch(q);
-    });
-    chips.appendChild(chip);
+    if(showSongs){
+      // 앨범 모드: 이름·역할·곡 목록을 한 행으로
+      const row=document.createElement('div');row.className='gcdc-row';
+      const head=document.createElement('button');head.type='button';head.className='gcdc-row-head';
+      head.innerHTML=`<span class="gcdc-name">${name}</span><span class="gcdc-role">${role}</span>`;
+      head.addEventListener('click',e=>{e.stopPropagation();const q=`${name} ${role}`;const si=document.getElementById('search-input')||document.getElementById('mob-search-input');if(si)si.value=q;doSearch(q);});
+      row.appendChild(head);
+      // 곡 목록: 작사·작곡 겹치면 합쳐서, 아니면 분리
+      const allSongs=l&&c?[...new Set([...lSongs,...cSongs])]:l?lSongs:cSongs;
+      if(allSongs.length){
+        const songs=document.createElement('div');songs.className='gcdc-song-list';
+        songs.textContent=allSongs.slice(0,6).join(' · ')+(allSongs.length>6?` 외 ${allSongs.length-6}곡`:'');
+        row.appendChild(songs);
+      }
+      list.appendChild(row);
+    }else{
+      const chip=document.createElement('button');chip.type='button';chip.className='gcdc-chip';
+      chip.innerHTML=`<span class="gcdc-name">${name}</span><span class="gcdc-role">${role}</span>`;
+      chip.addEventListener('click',e=>{e.stopPropagation();const q=`${name} ${role}`;const si=document.getElementById('search-input')||document.getElementById('mob-search-input');if(si)si.value=q;doSearch(q);});
+      list.appendChild(chip);
+    }
   });
-  el.appendChild(lbl);el.appendChild(chips);el.style.display='';
+  el.appendChild(lbl);el.appendChild(list);el.style.display='';
 }
 const _CREDIT_KW={
   '작사작곡':'both','작사/작곡':'both','작사 작곡':'both',
@@ -12270,7 +12281,7 @@ function _openGcDiscogDetail(a,idx){
   if(credEl){
     const titles=(a.tracks||[]).map(t=>t.title).filter(Boolean);
     if(!titles.length&&a.titleTrack)titles.push(a.titleTrack);
-    _renderCreditsInto(credEl,titles);
+    _renderCreditsInto(credEl,titles,true);
   }
 }
 function _closeGcDiscogDetail(){document.getElementById('gc-discog-detail').classList.remove('open');}
