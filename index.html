@@ -12805,7 +12805,12 @@ function _ensureOgThumbs(){
 function _discoverHops(a){
   const out=[];const gko=a.group&&a.group.ko;if(!gko)return out;
   const g=GROUPS[gko]||{},used=new Set([gko]),nm=a.name&&a.name.ko;
-  // 1) 자주 엮이는 사람(connections) — 타그룹 우선
+  // 0) 같은 그룹 내 다른 멤버 — 가장 직접적인 단서
+  if(nm){
+    const mates=_shuffle(ARTISTS.filter(x=>x.name&&x.name.ko!==nm&&_artistGroups(x).some(gg=>gg.ko===gko)));
+    if(mates.length){const pick=mates[0];out.push({type:'tt',artist:pick,label:_dispName(pick),sub:_gLabelKo(gko),note:currentLang==='ko'?'같은 그룹':'Same group'});}
+  }
+  // 1) 자주 엮이는 사람(connections) — 타그룹
   if(nm){
     const conns=_shuffle(_rawConnData.filter(c=>c.type==='member'&&(c.a===nm||c.b===nm)));
     for(const c of conns){
@@ -12819,10 +12824,10 @@ function _discoverHops(a){
     const same=Object.keys(GROUPS).filter(k=>!used.has(k)&&GROUPS[k].co===g.co&&bubbleMeshes.some(b=>b.ko===k));
     if(same.length){const p=same[Math.floor(Math.random()*same.length)];used.add(p);out.push({type:'gc',gko:p,label:_gLabelKo(p),note:currentLang==='ko'?'같은 소속사':'Same label'});}
   }
-  // 3) 같은 해(±1) 데뷔 그룹
+  // 3) 같은 해(±0) 데뷔 그룹 — ±1에서 정확히 같은 해로 좁힘
   const yr=parseInt(g.debut)||0;
-  if(yr){
-    const era=Object.keys(GROUPS).filter(k=>!used.has(k)&&Math.abs((parseInt(GROUPS[k].debut)||0)-yr)<=1&&bubbleMeshes.some(b=>b.ko===k));
+  if(yr&&out.length<3){
+    const era=Object.keys(GROUPS).filter(k=>!used.has(k)&&(parseInt(GROUPS[k].debut)||0)===yr&&bubbleMeshes.some(b=>b.ko===k));
     if(era.length){const p=era[Math.floor(Math.random()*era.length)];used.add(p);out.push({type:'gc',gko:p,label:_gLabelKo(p),note:currentLang==='ko'?('같은 해 데뷔 · '+yr):('Debuted '+yr)});}
   }
   return out.slice(0,3);
