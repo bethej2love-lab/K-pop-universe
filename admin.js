@@ -70,7 +70,7 @@ const _YT_LIVE_SHOW_RE=/엠카운트다운|뮤직뱅크|인기가요|음악중�
 // 무대 직캠/공연만 나와야 할 라이브 탭을 오염시킴(2026-08-10, 사용자 제보). 바로 이 단어(생방송) 하나만으론
 // "생방송 음악중심 직캠"처럼 진짜 방송 무대 직캠 제목과도 겹쳐서 못 씀 — 그래서 플랫폼 이름이 같이 있는
 // 경우만 "실시간 방송"으로 확정해서 잡는다.
-const _YT_BROADCAST_RE=/브이라이브|V\s*LIVE|VLIVE|위버스\s*라이브|WEVERSE\s*LIVE|유튜브\s*라이브|YOUTUBE\s*LIVE|인스타\s*라이브|인스타그램\s*라이브|INSTAGRAM\s*LIVE|아프리카\s*TV|AFREECA|트위치|TWITCH|틱톡\s*라이브|TIKTOK\s*LIVE|라이브\s*방송|LIVE\s*CHAT|Q\s*&\s*A\s*LIVE/;
+const _YT_BROADCAST_RE=/브이라이브|V\s*LIVE|VLIVE|위버스\s*라이브|WEVERSE\s*LIVE|유튜브\s*라이브|YOUTUBE\s*LIVE|인스타\s*라이브|인스타그램\s*라이브|INSTAGRAM\s*LIVE|아프리카\s*TV|AFREECA|트위치|TWITCH|틱톡\s*라이브|TIKTOK\s*LIVE|라이브\s*방송|LIVE\s*CHAT|Q\s*&\s*A\s*LIVE|라이브\s*스트리밍|LIVE\s*STREAM(?:ING)?|공항|AIRPORT/;
 // 음악방송 MC 진행분(“MC 컷 모음”, “NEW MC THE SHOW”, “MC석” 등)은 채널이 음방이라 제목의 방송명
 // (_YT_LIVE_SHOW_RE)에 걸려 전부 라이브(무대)로 분류돼 있었다 — 실제론 무대가 아니라 진행 영상이라
 // 라이브 탭을 오염시킨다(2026-08-26, 사용자 요청 — "제목에 mc 있으면 all로 보내달라").
