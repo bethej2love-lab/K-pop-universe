@@ -22512,6 +22512,7 @@ function _makeChVidController(contId){
     if(!reset&&moreWrap)moreWrap.innerHTML='<div class="gc-ch-more-loading"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>'; // 무한 스크롤로 다음 페이지 가져오는 동안 표시
     if(reset){
       state.gen++;
+      state.hasMore=false;
       grid.innerHTML='<div class="gc-ch-skeleton featured"><div class="gc-ch-skeleton-thumb"></div><div class="gc-ch-skeleton-title"></div><div class="gc-ch-skeleton-title short"></div></div>'
         +Array(6).fill('<div class="gc-ch-skeleton"><div class="gc-ch-skeleton-thumb"></div><div class="gc-ch-skeleton-title"></div><div class="gc-ch-skeleton-title short"></div></div>').join('');
       if(moreWrap)moreWrap.innerHTML='';
