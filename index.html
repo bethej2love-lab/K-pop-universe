@@ -12814,8 +12814,8 @@ function _ensureOgThumbs(){
 function _discoverHops(a,cofavHop){
   const out=[];const gko=a.group&&a.group.ko;if(!gko)return out;
   const g=GROUPS[gko]||{},used=new Set([gko]),nm=a.name&&a.name.ko;
-  // 0) 같은 그룹 내 다른 멤버
-  if(nm){
+  // 0) 같은 그룹 내 다른 멤버 — 솔로 아티스트끼리는 그룹이 없으므로 스킵
+  if(nm&&gko!=='솔로'){
     const mates=_shuffle(ARTISTS.filter(x=>x.name&&x.name.ko!==nm&&_artistGroups(x).some(gg=>gg.ko===gko)));
     if(mates.length){const pick=mates[0];out.push({type:'tt',artist:pick,label:_dispName(pick),sub:_gLabelKo(gko),note:currentLang==='ko'?'같은 그룹':'Same group'});}
   }
@@ -12893,7 +12893,8 @@ async function _renderDiscoverHops(a){
     const gko=a.group&&a.group.ko;if(!gko||!aKey)return;
     let cofav=[];
     {const{data,error}=await sb.rpc('get_co_favorites',{p_kind:'member',p_key:gko+':'+aKey,p_limit:8});if(!error&&data&&data.length)cofav=data;}
-    if(!cofav.length){const{data,error}=await sb.rpc('get_co_favorites',{p_kind:'group',p_key:gko,p_limit:8});if(!error&&data&&data.length)cofav=data;}
+    // 솔로 아티스트는 group-level fallback 스킵 — '솔로' 키가 모든 솔로 아티스트를 뭉뚱그리므로 무관한 결과 나옴
+    if(!cofav.length&&gko!=='솔로'){const{data,error}=await sb.rpc('get_co_favorites',{p_kind:'group',p_key:gko,p_limit:8});if(!error&&data&&data.length)cofav=data;}
     if(!cofav.length)return;
     // stale 체크 — 다른 카드가 열렸으면 무시
     const cur=document.getElementById('tt-discover');if(!cur||cur.dataset.akey!==aKey)return;
@@ -15972,6 +15973,8 @@ var _TIPS_STEPS=[
 ];
 function _initTips(){
   if(localStorage.getItem(_TIPS_KEY))return;
+  // 즐겨찾기 있거나 닉네임 설정된 기존 유저는 팁 스킵
+  if(favGroups.size>0||favMembers.size>0||myProfile?.nickname){localStorage.setItem(_TIPS_KEY,'1');return;}
   _showTipStep(0);
 }
 function _showTipStep(n){
