@@ -2652,12 +2652,13 @@
   @media(min-width:769px){
     #gc-discog-detail{align-items:flex-start;}
     #gc-discog-detail-sheet{
-      max-width:320px;border-radius:18px;
-      margin-top:clamp(56px,14vh,132px);
-      /* 낮은 창에서도 넘치지 않게 — 트랙 목록이 자체 스크롤을 갖지만 시트 전체에도 안전망을 둔다 */
-      max-height:calc(100dvh - clamp(56px,14vh,132px) - 24px);
+      max-width:480px;border-radius:18px;
+      margin-top:clamp(56px,12vh,120px);
+      max-height:calc(100dvh - clamp(56px,12vh,120px) - 24px);
       overflow-y:auto;
     }
+    #gc-discog-detail-cover{width:200px;height:200px;}
+    #gc-discog-detail-tracks{max-height:none;}
   }
   #gc-discog-detail-close{position:absolute;top:10px;right:12px;background:none;border:none;color:rgba(190,205,240,0.4);cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><path d='M11,1 L12.3,9.7 L21,11 L12.3,12.3 L11,21 L9.7,12.3 L1,11 L9.7,9.7Z' fill='%23FFB0D0' opacity='.97'/></svg>") 11 11,pointer;padding:4px;line-height:1;z-index:2;display:inline-flex;} /* ×텍스트(밝음)→얇은 SVG, 대비 낮춤(2026-08-22 사용자 요청 — 닫기는 은은하게) */
   #gc-discog-detail-close svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;}
@@ -2690,7 +2691,10 @@
   /* 고정 높이 — 내용 로드에 따라 창이 커지는 "점프"를 없앤다(2026-09-02 제보 "채워진 정도와 무관하게 크기 고정").
      열리는 순간부터 78vh, 리스트가 내부 스크롤로 채워진다(#...-list flex:1). 큰 콘텐츠 창의 표준 패턴. */
   #gc-track-videos-sheet{position:relative;width:100%;height:78vh;display:flex;flex-direction:column;background:rgba(14,18,38,0.98);backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);border-radius:20px 20px 0 0;padding:22px 22px calc(16px + env(safe-area-inset-bottom,0px));box-sizing:border-box;z-index:1;}
-  @media(min-width:769px){#gc-track-videos-sheet{max-width:340px;height:min(78vh,600px);border-radius:18px;margin-bottom:100px;}}
+  @media(min-width:769px){
+    #gc-track-videos-overlay{align-items:center;}
+    #gc-track-videos-sheet{max-width:580px;width:580px;height:min(85vh,780px);border-radius:18px;margin-bottom:0;}
+  }
   #gc-track-videos-close{position:absolute;top:10px;right:12px;background:none;border:none;color:rgba(190,205,240,0.66);font-size:20px;cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><path d='M11,1 L12.3,9.7 L21,11 L12.3,12.3 L11,21 L9.7,12.3 L1,11 L9.7,9.7Z' fill='%23FFB0D0' opacity='.97'/></svg>") 11 11,pointer;padding:4px;line-height:1;z-index:2;}
   /* 곡 상세 헤더 — 앨범커버 + (제목/아티스트·앨범·연도). 커버·메타는 로드 후 채워짐(2026-09-02) */
   #gc-track-videos-header{display:flex;gap:11px;align-items:center;flex-shrink:0;}
