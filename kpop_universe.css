@@ -1180,7 +1180,7 @@
   @media(max-width:768px){#side-panel{display:none;}}
   /* ── Member panel (그룹 카드 왼쪽 확장) ───────────── */
   #member-panel{
-    position:fixed;right:440px;top:64px;bottom:0;width:380px;
+    position:fixed;right:440px;top:64px;bottom:0;width:440px;
     overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;
     z-index:62;pointer-events:none;
     transform:translateX(100%);
@@ -1207,13 +1207,13 @@
   /* 접기 탭: member-panel 왼쪽 중간. member-panel 자체와 똑같은 거리(자기 폭 380px)·같은 트랜지션
      커브로 translateX를 같이 줘서, 패널이 슬라이드될 때 탭이 따로 놀지 않고 카드에 붙어서 같이 움직임 */
   #tt-collapse{
-    position:fixed;right:820px;top:50%;
+    position:fixed;right:880px;top:50%;
     width:22px;height:44px;border:none;border-radius:8px 0 0 8px;
     background:rgba(20,24,44,0.88);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
     color:rgba(160,185,230,0.80);font-size:16px;line-height:1;
     cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><path d='M11,1 L12.3,9.7 L21,11 L12.3,12.3 L11,21 L9.7,12.3 L1,11 L9.7,9.7Z' fill='%23FFB0D0' opacity='.97'/></svg>") 11 11,pointer;padding:0;z-index:62;
     opacity:0;pointer-events:none;
-    transform:translateY(-50%) translateX(380px);
+    transform:translateY(-50%) translateX(440px);
     transition:transform 0.26s cubic-bezier(0.32,0,0.15,1),opacity 0.26s,background 0.15s,color 0.15s;
     display:flex;align-items:center;justify-content:center;
   }
@@ -1221,13 +1221,13 @@
   #tt-collapse:hover{background:rgba(40,50,80,0.96);color:rgba(200,220,255,0.95);}
   /* 접기 탭: conn-panel 왼쪽 중간 (동일 패턴, conn-panel 자기 이동거리(280+640px)만큼 같이 슬라이드) */
   #conn-collapse{
-    position:fixed;right:1200px;top:50%;
+    position:fixed;right:1320px;top:50%;
     width:22px;height:44px;border:none;border-radius:8px 0 0 8px;
     background:rgba(20,24,44,0.88);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
     color:rgba(160,185,230,0.80);font-size:16px;line-height:1;
     cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><path d='M11,1 L12.3,9.7 L21,11 L12.3,12.3 L11,21 L9.7,12.3 L1,11 L9.7,9.7Z' fill='%23FFB0D0' opacity='.97'/></svg>") 11 11,pointer;padding:0;z-index:61;
     opacity:0;pointer-events:none;
-    transform:translateY(-50%) translateX(1200px);
+    transform:translateY(-50%) translateX(1320px);
     transition:transform 0.26s cubic-bezier(0.32,0,0.15,1),opacity 0.26s,background 0.15s,color 0.15s;
     display:flex;align-items:center;justify-content:center;
   }
@@ -1237,10 +1237,10 @@
   /* ── 카드 넓게 보기 (wide mode) ──────────────────────── */
   body.card-wide #side-panel{width:640px;}
   body.card-wide #member-panel{right:640px;}
-  body.card-wide #tt-collapse{right:1020px;}
-  body.card-wide #conn-panel{right:1020px;transform:translateX(calc(100% + 1020px));}
+  body.card-wide #tt-collapse{right:1080px;}
+  body.card-wide #conn-panel{right:1080px;transform:translateX(calc(100% + 1080px));}
   body.card-wide #conn-panel.open{transform:translateX(0);}
-  body.card-wide #conn-collapse{right:1400px;transform:translateY(-50%) translateX(1400px);}
+  body.card-wide #conn-collapse{right:1520px;transform:translateY(-50%) translateX(1520px);}
   body.card-wide #conn-panel.open~#conn-collapse{transform:translateY(-50%) translateX(0);}
   #sp-wide-btn{
     position:absolute;top:10px;left:10px;z-index:62;
@@ -2436,10 +2436,10 @@
   }
   /* ── Connection Card ─────────────────────────────── */
   #conn-panel{
-    position:fixed;right:820px;top:64px;bottom:0;width:380px;
+    position:fixed;right:880px;top:64px;bottom:0;width:440px;
     overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;
     z-index:61;pointer-events:none;
-    transform:translateX(calc(100% + 820px));
+    transform:translateX(calc(100% + 880px));
     visibility:hidden;
     transition:transform 0.26s cubic-bezier(0.32,0,0.15,1),visibility 0s 0.26s;
     background:rgba(16,20,36,0.88);
