@@ -4964,17 +4964,28 @@ async function _loadAcData(){
   try{const r=await fetch('artist_credits.json');_acData=await r.json();}catch(e){_acData={};}
   return _acData;
 }
-async function _renderCreditsInto(el,titles,showSongs=false){
+async function _renderCreditsInto(el,titles,showSongs=false,ownerName=null){
   el.innerHTML='';el.style.display='none';
   if(!titles||!titles.length)return;
   const ac=await _loadAcData();if(!ac)return;
   const NUL=String.fromCharCode(0);
   const norms=new Map(titles.map(t=>[_titleNorm(t),t])); // norm→원본 제목
+  // ownerName으로 특정 songId 확정 — 같은 제목 다른 곡(겨울잠 by 아이유 vs 준호)이 섞이는 오매칭 방지
+  const resolvedIds=new Set();
+  if(ownerName){
+    const ownerL=ownerName.toLowerCase();
+    for(const[k,v]of Object.entries(ac)){
+      if(k.split(NUL)[0].toLowerCase()!==ownerL)continue;
+      for(const s of[...(v.lyrics||[]),...(v.compose||[])]){if(s.songId&&norms.has(_titleNorm(s.title)))resolvedIds.add(s.songId);}
+    }
+  }
+  const useIdFilter=resolvedIds.size>0;
+  const _chk=s=>useIdFilter?(resolvedIds.has(s.songId)?(norms.get(_titleNorm(s.title))||titles[0]):null):norms.get(_titleNorm(s.title));
   const map=new Map();
   for(const[k,v]of Object.entries(ac)){
     const name=k.split(NUL)[0];
-    for(const s of(v.lyrics||[])){const orig=norms.get(_titleNorm(s.title));if(orig){const e=map.get(name)||{name,l:0,c:0,lSongs:[],cSongs:[]};if(!e.lSongs.includes(orig))e.lSongs.push(orig);e.l++;map.set(name,e);}}
-    for(const s of(v.compose||[])){const orig=norms.get(_titleNorm(s.title));if(orig){const e=map.get(name)||{name,l:0,c:0,lSongs:[],cSongs:[]};if(!e.cSongs.includes(orig))e.cSongs.push(orig);e.c++;map.set(name,e);}}
+    for(const s of(v.lyrics||[])){const orig=_chk(s);if(orig){const e=map.get(name)||{name,l:0,c:0,lSongs:[],cSongs:[]};if(!e.lSongs.includes(orig))e.lSongs.push(orig);e.l++;map.set(name,e);}}
+    for(const s of(v.compose||[])){const orig=_chk(s);if(orig){const e=map.get(name)||{name,l:0,c:0,lSongs:[],cSongs:[]};if(!e.cSongs.includes(orig))e.cSongs.push(orig);e.c++;map.set(name,e);}}
   }
   if(!map.size)return;
   const sorted=[...map.values()].sort((a,b)=>(b.l+b.c)-(a.l+a.c));
@@ -12284,7 +12295,9 @@ function _openGcDiscogDetail(a,idx){
   if(credEl){
     const titles=(a.tracks||[]).map(t=>t.title).filter(Boolean);
     if(!titles.length&&a.titleTrack)titles.push(a.titleTrack);
-    _renderCreditsInto(credEl,titles,true);
+    // 솔로 아티스트는 멤버명으로 songId 특정 — 같은 제목 다른 곡 오매칭 방지
+    const _credOwner=(_openTArtist&&_openTArtist.name&&_openTArtist.name.ko)||null;
+    _renderCreditsInto(credEl,titles,true,_credOwner);
   }
 }
 function _closeGcDiscogDetail(){document.getElementById('gc-discog-detail').classList.remove('open');}
@@ -12353,7 +12366,7 @@ async function _openSongVideos(title,owner,songMeta){
   document.getElementById('gc-track-videos-title').textContent=title;
   _fillSongMeta(title,songMeta,myReq);
   const credEl=document.getElementById('gc-track-videos-credits');
-  if(credEl)_renderCreditsInto(credEl,[title]);
+  if(credEl)_renderCreditsInto(credEl,[title],false,songMeta&&(songMeta.ownerType==='member'?songMeta.ownerName:null));
   tabsEl.classList.add('hidden');tabsEl.innerHTML='';
   document.getElementById('gc-track-videos-actions')?.classList.add('hidden');
   listEl.innerHTML=`<div class="tvf-empty">${currentLang==='ko'?'불러오는 중…':'Loading…'}</div>`;
