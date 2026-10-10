@@ -15930,6 +15930,7 @@ function _dismissFavHint(){
 // 온보딩 팁 시퀀스 (최초 1회, 모든 기기)
 var _TIPS_KEY='kpu_tips_v1';
 var _TIPS_STEP=0;
+var _tipsOpenedFeed=false;
 var _TIPS_STEPS=[
   '행성을 눌러보세요. 그룹이나 멤버를 탭하면 영상과 앨범이 열려요.',
   '최애를 설정하면 새 영상과 앨범이 올라올 때 바로 볼 수 있어요.',
@@ -15956,6 +15957,14 @@ function _showTipStep(n){
   nxtBtn.textContent=n===_TIPS_STEPS.length-1?'확인':'다음';
   el.removeAttribute('hidden');
   requestAnimationFrame(()=>requestAnimationFrame(()=>el.classList.add('show')));
+  // 3단계: 탐색 탭을 직접 보여줌 (데스크톱만 — 모바일은 탭바가 이미 보임)
+  if(n===2&&!isMob()){
+    const feedEl=document.getElementById('feed-overlay');
+    if(feedEl&&!feedEl.classList.contains('open')){
+      _tipsOpenedFeed=true;
+      _openFeedOverlay();
+    }
+  }
 }
 function _dismissTips(){
   const el=document.getElementById('ob-tips');
@@ -15963,6 +15972,7 @@ function _dismissTips(){
   el.classList.remove('show');
   setTimeout(()=>el.setAttribute('hidden',''),320);
   try{localStorage.setItem(_TIPS_KEY,'1');}catch(e){}
+  if(_tipsOpenedFeed){_tipsOpenedFeed=false;_closeFeedOverlay();}
   _updateFavHintCallout();
 }
 function _nextTip(){
