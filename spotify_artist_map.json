@@ -785,6 +785,17 @@
     },
     "checkedAt": "2026-09-20"
   },
+  "나현": {
+    "id": "2st8ONbJEJpWTtmXUUItY0",
+    "spotifyName": "Nahyun",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "동명 후보 4명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-10-11"
+  },
   "남도현": {
     "id": "25lZDZ43ommDJkO6FzS5gL",
     "spotifyName": "Nam Dohyon",
@@ -871,6 +882,17 @@
     },
     "checkedAt": "2026-09-19"
   },
+  "뉴선": {
+    "id": "0BHYZCuuyLl53LVgeC3pUa",
+    "spotifyName": "Nosun",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "이름 불일치 — 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-10-11"
+  },
   "뉴진스": {
     "id": "6HvZYsbFfjnjFrWF950C9d",
     "spotifyName": "NewJeans",
@@ -930,6 +952,17 @@
       "titleOverlap": 1
     },
     "checkedAt": "2026-09-17"
+  },
+  "다이애나": {
+    "id": "5z1VAFwT35EVvCp1XlZZuL",
+    "spotifyName": "Diana Krall",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "이름 불일치 — 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-10-11"
   },
   "다크비": {
     "id": "4DoedGw38ubJdAT1edFsIx",
@@ -1648,6 +1681,17 @@
     },
     "checkedAt": "2026-09-30",
     "rejected": true
+  },
+  "민제": {
+    "id": "05xiPGDb1IgdlCs67mhP3I",
+    "spotifyName": "Min Hae",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "이름 불일치 — 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-10-11"
   },
   "민주": {
     "id": "7lhiEEAGZosFSF2tlSBBKO",
@@ -2603,6 +2647,17 @@
       "titleOverlap": null
     },
     "checkedAt": "2026-10-07"
+  },
+  "수민": {
+    "id": "2clir4GbcAlDm0dWotUilr",
+    "spotifyName": "Soomin",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "동명 후보 2명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-10-11"
   },
   "수빈": {
     "id": "7KaqAfbFzadsy3h7yx2YBT",
@@ -3826,6 +3881,17 @@
     },
     "checkedAt": "2026-10-08"
   },
+  "오로라": {
+    "id": "1WgXqy2Dd70QQOU7Ay074N",
+    "spotifyName": "AURORA",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "동명 후보 3명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-10-11"
+  },
   "오마이걸": {
     "id": "2019zR22qK2RBvCqtudBaI",
     "spotifyName": "OH MY GIRL",
@@ -4195,6 +4261,17 @@
     },
     "checkedAt": "2026-09-15"
   },
+  "유아라": {
+    "id": "5pLZCIFt4KeXVDbfQ9ENCp",
+    "spotifyName": "Yuara",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "동명 후보 3명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-10-11"
+  },
   "유영": {
     "id": "34HmvZztvxqAo2mBSAieRe",
     "spotifyName": "Young K",
@@ -4361,6 +4438,17 @@
       ]
     },
     "checkedAt": "2026-09-28"
+  },
+  "의진": {
+    "id": "1RFt4tXLs13NUpZjPAsI7g",
+    "spotifyName": "uijin",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "동명 후보 3명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-10-11"
   },
   "이나은": {
     "id": "16Jm6AxcL9XKkwOemxmbXc",
@@ -6096,6 +6184,17 @@
       "titleOverlap": 0
     },
     "checkedAt": "2026-09-25"
+  },
+  "하이디": {
+    "id": "3l69XXFaH67o6EO0de5389",
+    "spotifyName": "Heidi",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "동명 후보 6명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-10-11"
   },
   "하이라이트": {
     "id": "3T0fMfxYBU3q9oAUAdPIsr",
