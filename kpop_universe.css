@@ -109,10 +109,12 @@
   #loading-ring::after{
     content:'';display:block;position:absolute;border-radius:50%;
     top:50%;left:50%;transform:translate(-50%,-50%);
-    width:0;height:0;
+    width:0;height:0;opacity:0;
     box-shadow:0 0 55px 28px rgba(150,190,255,0.22);
-    animation:ring-burst var(--rc-dur,700ms) cubic-bezier(.3,.1,.55,.4) both;
     will-change:width,height,opacity;
+  }
+  #loading-ring.ring-go::after{
+    animation:ring-burst var(--rc-dur,700ms) cubic-bezier(.3,.1,.55,.4) both;
   }
   @keyframes ring-burst{
     0%{width:0;height:0;opacity:0;}

@@ -3450,7 +3450,7 @@ function _revealUniverse(){
   // 2026-09-02). 아래 행성 블룸의 e(smoothstep)와 대략 같은 모양이라 클립 원과 행성이 따로 놀지 않는다.
   const _ease='cubic-bezier(.3,.1,.55,.4)'; // 갈수록 빨라지는 가속형(감속 꼬리 제거) — 뒤로 갈수록 확 퍼져 빨리 끝남(2026-09-02)
   const _ring=document.getElementById('loading-ring'); // 확장 발광 링 — CSS keyframe, duration만 주입
-  if(_ring) _ring.style.setProperty('--rc-dur', REVEAL.clip+'ms');
+  if(_ring){_ring.style.setProperty('--rc-dur',REVEAL.clip+'ms');_ring.classList.add('ring-go');}
 
   // 로딩 텍스트 페이드아웃 — 클립 시작과 동시. 펄스 애니메이션 도중 opacity 트랜지션을 걸면 현재
   // 펄스 값에서 기본값으로 순간 스냅한 뒤 페이드돼 뚝 끊겨 보이므로, 계산된 값을 먼저 굳힌다.
