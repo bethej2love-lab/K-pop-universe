@@ -96,7 +96,7 @@ function _ytIsShortTitle(title){
   const t=(title||'').toUpperCase();
   return /\bSHORTS?\b/.test(t)||/#SHORTS?/.test(t);
 }
-function _ytClassify(title){
+function _ytClassify(title,{isShort=false}={}){
   const t=(title||'').toUpperCase();
   if(/OFFICIAL\s+AUDIO|공식\s*음원/.test(t))return'skip';
   if(/\bTEASER\b|티저/.test(t))return'skip';
@@ -130,7 +130,7 @@ function _ytClassify(title){
   // 안무영상/댄스프랙티스/퍼포먼스비디오/릴레이댄스 — 2026-08-06엔 "무대가 아니다"라며 other로 보냈지만
   // 2026-09-14 사용자 결정으로 live로 온다(_YT_PRERECORDED_RE 주석에 되돌리는 법까지 적어둠).
   if(_YT_PRERECORDED_RE.test(t)||_YT_PRERECORDED_RE.test(title||''))return'live';
-  if(/챌린지|CHALLENGE/.test(t))return'challenge';
+  if(isShort&&/챌린지|CHALLENGE/.test(t))return'challenge';
   if(/\bLIVE\b|\bCONCERT\b|\bPERFORMANCE\b|\bFANCAM\b|라이브|직캠|팬캠/.test(t))return'live';
   if(_YT_LIVE_SHOW_RE.test(t))return'live';
   return'other';
@@ -388,8 +388,8 @@ async function _ytFetchNewVideos(uploadsId,key,sinceId,onProg,startPageToken,cut
       // 세로 여부는 category가 아니라 is_short 플래그로 나간다(2026-08-27 직교화). 동기화 시점
       // 썸네일 비율(isShortThumb)은 원리적으로 거의 항상 false지만, 제목의 #shorts 표기는 잡을 수 있어
       // 둘을 OR로 묶는다 — 진짜 판별은 관리자 '가로→쇼츠 일괄 승격' 스윕이 oardefault 실측으로 한다.
-      const cat=_ytClassify(title);
       const isShort=isShortThumb||_ytIsShortTitle(title);
+      const cat=_ytClassify(title,{isShort});
       if(cat==='skip')continue;
       vids.push({
         id:vid,
@@ -4668,7 +4668,7 @@ async function _ytSweepCategoryMistag(){
     if(!rows?.length){_ytSetProg('검사할 영상이 없어요');return;}
     const updates=[];
     rows.forEach(v=>{
-      const newCat=_ytClassify(v.title||'');
+      const newCat=_ytClassify(v.title||'',{isShort:!!v.is_short});
       // ── 강등 금지 2종(2026-09-14) ───────────────────────────────────────────
       // ⓐ 'fan'/'show'는 **채널이 무엇이냐**로 정해지는 값이다(팬채널·드라마/영화 채널). 제목만 보는
       //    이 분류기가 알 수 없는 정보라 덮어쓰면 안 된다. 실측에서 팬채널 직캠 한 건이 fan→live로
@@ -9403,8 +9403,8 @@ async function _ytBackfillChannelCore(ch,fromYear,toYear,callBudget,onProg,query
       // 세로 여부는 category가 아니라 is_short 플래그로 나간다(2026-08-27 직교화). 동기화 시점
       // 썸네일 비율(isShortThumb)은 원리적으로 거의 항상 false지만, 제목의 #shorts 표기는 잡을 수 있어
       // 둘을 OR로 묶는다 — 진짜 판별은 관리자 '가로→쇼츠 일괄 승격' 스윕이 oardefault 실측으로 한다.
-      const cat=_ytClassify(title);
       const isShort=isShortThumb||_ytIsShortTitle(title);
+      const cat=_ytClassify(title,{isShort});
       if(cat==='skip')continue;
       vids.push({
         id:vid,title,description:_decodeHtmlEntities(item.snippet.description||''),
@@ -9548,8 +9548,8 @@ async function _ytBuildManualVideoRow(key,vid,manualGroup,manualMembers){
   const th=item.snippet.thumbnails||{};
   const hiTh=th.high||th.standard||th.maxres; // 세로 판별용, 가벼운 순으로(2026-08-10, 위 동기화 루프와 동일 이유)
   const isShortThumb=!!(hiTh&&hiTh.height>hiTh.width);
-  let category=_ytClassify(title);
   const isShort=isShortThumb||_ytIsShortTitle(title); // 세로는 category가 아닌 is_short 플래그로(2026-08-27 직교화)
+  let category=_ytClassify(title,{isShort});
   if(category==='skip')category='other'; // 수동으로 콕 집어 추가하는 거라 티저/음원이어도 그냥 기타로 저장(스킵하지 않음)
   const thumb=isShortThumb?(hiTh.url||th.medium?.url||''):(th.medium?.url||th.high?.url||th.default?.url||'');
   const publishedAt=(item.snippet.publishedAt||'').slice(0,10);
