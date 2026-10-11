@@ -8042,50 +8042,61 @@ function _makeWithLine(song,ctx){
   if(!withTargets.length&&!hasOrig&&!hasCover)return null;
   const line=document.createElement('div');
   line.className='tv-with-line';
-  // 같은 그룹끼리 묶어서 그룹명은 한 번만 — 앵커(현재 보고 있는 멤버)의 소속 그룹을 맨 앞에, 나머지는 그룹명 가나다순, 그룹 내 멤버는 이름 가나다순
-  const byGroup=new Map();
-  withPairs.forEach(({w,t})=>{
-    const g=_withGroupOf(w,t,ctx.groupKo);
-    if(!byGroup.has(g))byGroup.set(g,[]);
-    if(!byGroup.get(g).includes(t))byGroup.get(g).push(t);
-  });
-  const groupKos=[...byGroup.keys()].sort((a,b)=>{
-    if(a===ctx.groupKo)return -1;
-    if(b===ctx.groupKo)return 1;
-    return a.localeCompare(b,'ko');
-  });
+  // 크로스그룹 유닛 감지: withTargets 전원이 한 유닛 소속이고, 빠진 멤버가 없거나 앵커 그룹에 속하면 유닛명 칩 하나로 표시
+  const _detUnit=(()=>{
+    if(!withTargets.length)return null;
+    for(const[un,ud]of Object.entries(_PROJECT_UNITS)){
+      const um=ud.members;
+      if(!withTargets.every(t=>um.some(m=>m.mko===t.name.ko)))continue;
+      const miss=um.filter(m=>!withTargets.some(t=>t.name.ko===m.mko));
+      if(!miss.length||miss.every(m=>m.gko===ctx.groupKo))return un;
+    }
+    return null;
+  })();
   let _wlRenderedAny=false;
-  groupKos.forEach(gko=>{
-    const members=byGroup.get(gko).sort((a,b)=>a.name.ko.localeCompare(b.name.ko,'ko'));
-    // 활동 멤버 전원이 이 영상에 다 태깅돼 있으면(그룹 전체 출연) 한 명씩 나열할 필요 없이 그룹명만으로 충분함.
-    // 여자친구처럼 등록된 멤버 전원이 active:false인(완전 해체된) 그룹은 activeRoster가 항상 0명이라
-    // "활동 멤버 전원 태깅"이 영원히 성립 안 해서 늘 개별 이름으로만 풀어지던 사각지대가 있었음 —
-    // 이럴 땐 전체 로스터(활동 여부 무관)로 대신 비교한다(2026-08-05, 사용자 제보 — 르세라핌 카드의
-    // 여자친구 소원/예린/유주 3명 다 태깅된 영상이 계속 개별 이름으로만 뜨던 문제).
-    // (2026-09-29) 로스터는 _withCompareRoster — 주 소속만 세던 예전 방식은 해체 그룹(빅톤)에서 로스터가 0명이었다.
-    const isFullGroup=_withIsFullGroup(gko,members);
-    // 지금 보고 있는 카드 자신의 그룹인데 그 그룹 전원이 다 나온 경우엔 "함께한" 정보로서 의미가 없음
-    // (당연한 얘기라 표시할 값어치가 없음) — 이 그룹 항목 자체를 통째로 생략. 일부 멤버만 나온 경우는
-    // 아래에서 그 멤버 이름만 정상적으로 표시된다(그룹칩 없이 이름만 — "코르티스 성현 건호"가 아니라
-    // "성현 건호"만).
-    if(gko===ctx.groupKo&&isFullGroup)return;
-    if(_wlRenderedAny){const sep=document.createElement('span');sep.textContent=' · ';sep.style.color='rgba(120,145,195,0.35)';line.appendChild(sep);}
-    // 아이유처럼 GROUPS에 실존하지 않는 가짜 "솔로" placeholder 그룹도 칩을 생략 — "솔로 아이유"처럼
-    // 의미 없는 라벨이 붙는 걸 방지.
-    const skipChip=(gko===ctx.groupKo||!GROUPS[gko])&&!isFullGroup;
-    if(!skipChip){
-      const gInfo=GROUPS[gko];
-      const gk=currentLang==='ko'?gko:((gInfo&&gInfo.en)||gko);
-      line.appendChild(_makeGCChip(gko,gk));
-    }
-    if(!isFullGroup){
-      members.forEach((m,mi)=>{
-        if(!(skipChip&&mi===0))line.appendChild(document.createTextNode(' '));
-        line.appendChild(_makeMemberChip(m));
-      });
-    }
-    _wlRenderedAny=true;
-  });
+  if(_detUnit){
+    const uChip=document.createElement('span');uChip.className='tv-with-chip';uChip.textContent=_detUnit;
+    uChip.addEventListener('click',e=>{
+      e.stopPropagation();
+      const um=_PROJECT_UNITS[_detUnit].members;
+      const me=um.find(m=>m.gko===ctx.groupKo)||um[0];
+      const ar=me?ARTISTS.find(a=>a.name.ko===me.mko&&a.group.ko===me.gko):null;
+      if(ar){if(ar._worldPos)flyTo(ar._worldPos);showT(ar,window.innerWidth/2,window.innerHeight*0.4);}
+    });
+    line.appendChild(uChip);_wlRenderedAny=true;
+  }else{
+    // 같은 그룹끼리 묶어서 그룹명은 한 번만 — 앵커의 소속 그룹을 맨 앞에, 나머지는 그룹명 가나다순, 그룹 내 멤버는 이름 가나다순
+    const byGroup=new Map();
+    withPairs.forEach(({w,t})=>{
+      const g=_withGroupOf(w,t,ctx.groupKo);
+      if(!byGroup.has(g))byGroup.set(g,[]);
+      if(!byGroup.get(g).includes(t))byGroup.get(g).push(t);
+    });
+    const groupKos=[...byGroup.keys()].sort((a,b)=>{
+      if(a===ctx.groupKo)return -1;
+      if(b===ctx.groupKo)return 1;
+      return a.localeCompare(b,'ko');
+    });
+    groupKos.forEach(gko=>{
+      const members=byGroup.get(gko).sort((a,b)=>a.name.ko.localeCompare(b.name.ko,'ko'));
+      const isFullGroup=_withIsFullGroup(gko,members);
+      if(gko===ctx.groupKo&&isFullGroup)return;
+      if(_wlRenderedAny){const sep=document.createElement('span');sep.textContent=' · ';sep.style.color='rgba(120,145,195,0.35)';line.appendChild(sep);}
+      const skipChip=(gko===ctx.groupKo||!GROUPS[gko])&&!isFullGroup;
+      if(!skipChip){
+        const gInfo=GROUPS[gko];
+        const gk=currentLang==='ko'?gko:((gInfo&&gInfo.en)||gko);
+        line.appendChild(_makeGCChip(gko,gk));
+      }
+      if(!isFullGroup){
+        members.forEach((m,mi)=>{
+          if(!(skipChip&&mi===0))line.appendChild(document.createTextNode(' '));
+          line.appendChild(_makeMemberChip(m));
+        });
+      }
+      _wlRenderedAny=true;
+    });
+  }
   if(!_wlRenderedAny&&!hasOrig&&!hasCover)return null;
   if(hasOrig){
     const label=currentLang==='ko'?'원곡':'Original';

@@ -135529,9 +135529,12 @@
       "en": "Ilhoon"
     },
     "group": {
-      "ko": "비투비",
-      "en": "BTOB"
+      "ko": "솔로",
+      "en": "Solo"
     },
+    "groups": [
+      {"ko": "비투비", "en": "BTOB", "active": false, "left": "2020.12.31"}
+    ],
     "co": "비투비 컴퍼니",
     "active": false,
     "color": [
@@ -135550,7 +135553,6 @@
       "namu": "https://namu.wiki/w/정일훈",
       "instagram": "https://www.instagram.com/ilhoonmj"
     },
-    "left": "2020.12.31",
     "id": "a0805"
   },
   {
