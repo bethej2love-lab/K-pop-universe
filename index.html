@@ -3160,9 +3160,13 @@ async function buildUniverse(){
         );
       mat.userData.shader=shader; // 매 프레임 uTime 갱신(_syncPtsTime)이 이 참조로 breathe 애니메이션을 굴림
     };
+    // three r128은 onBeforeCompile.toString()을 캐시 키로 쓰는데, 클로저 변수 이름이 값 대신 들어가서
+    // sizeClamp·useHaloScale가 달라도 같은 키 → 네 재질이 프로그램을 공유 → 헤일로 셰이더 오컴파일.
+    // 재질 파라미터 조합별 고유 키를 명시해 각자 독립 컴파일 보장.
+    mat.customProgramCacheKey=()=>`pts_h${useHaloScale?1:0}_c${sizeClamp.toFixed(0)}_m${isMob()?1:0}`;
     return mat;
   }
-  function makePoints(positions,colors,haloScale,sizeW,opacity,artists){
+  function makePoints(positions,colors,haloScale,sizeW,opacity,artists,coreClampCSS=46.0){
     if(!positions.length)return;
     const geo=new THREE.BufferGeometry();
     geo.setAttribute('position',new THREE.BufferAttribute(new Float32Array(positions),3));
@@ -3180,7 +3184,7 @@ async function buildUniverse(){
     // 데스크톱은 DPR(레티나=2)만큼 곱해서 CSS 픽셀 기준으로 동일하게 맞춤: DPR=2 맥에서 46물리=23CSS였던
     // 별이 헤일로(150물리=75CSS) 안에 묻혀 안 보이던 문제를 수정(2026-10-11).
     const _dpr=isMob()?1:Math.min(window.devicePixelRatio,2);
-    const mat=makePointsMat(glowTex,sizeW,opacity,46.0*_dpr,false);
+    const mat=makePointsMat(glowTex,sizeW,opacity,coreClampCSS*_dpr,false);
     const pts=new THREE.Points(geo,mat);
     scene.add(pts);
     // 후처리 블룸 없이 '빛이 실제로 번지는' 느낌을 내기 위한 halo 레이어 — 같은 geometry(포지션/컬러)를
@@ -3193,7 +3197,8 @@ async function buildUniverse(){
     return pts;
   }
   regularPts=makePoints(regularPos,regularColors,regularHalo,33.6,0.82*opScale,regularArtists);
-  sparklePts=makePoints(sparklePos,sparkleColors,sparkleHalo,74.4,1.0*opScale,sparkleArtists);
+  // 솔로 별은 은하 전체에 1개씩 흩어져 있어 그룹 별 클러스터보다 눈에 덜 띔 — coreClamp를 더 크게 줘서 개별 별이 충분히 보이게.
+  sparklePts=makePoints(sparklePos,sparkleColors,sparkleHalo,74.4,1.0*opScale,sparkleArtists,80.0);
   if(regularPts){
     regColorAttr=regularPts.geometry.attributes.color;
     regularPts.userData.baseOp=0.82*opScale;
@@ -3827,11 +3832,20 @@ function animate(){
     _updatePtsHalo(regularPts);
   }
   if(sparklePts){
-    const tgt=Math.min(1,sparklePts.userData.baseOp*ptsOpMult);
+    // 솔로 별은 그룹처럼 모여있지 않고 은하 전체에 흩어진 개별 점 → 같은 ptsOpMult(0.15)로는 안 보임.
+    // 비포커스 상태에서도 최소 0.55를 보장해 단독 별이 눈에 띄게 유지.
+    const _spkOpMult=focusGroupKo?ptsOpMult:Math.max(ptsOpMult,0.55);
+    const tgt=Math.min(1,sparklePts.userData.baseOp*_spkOpMult);
     sparklePts.material.opacity+=(tgt-sparklePts.material.opacity)*0.08;
     sparklePts.material.size=sparklePts.userData.baseSize*ptsSizeMult*focusBoost;
     _syncPtsTime(sparklePts.material);
-    _updatePtsHalo(sparklePts);
+    const _spH=sparklePts.userData.halo;
+    if(_spH){
+      const _spHT=Math.min(1,_spH.userData.baseOp*_spkOpMult);
+      _spH.material.opacity+=(_spHT-_spH.material.opacity)*0.08;
+      _spH.material.size=_spH.userData.baseSize*ptsSizeMult*haloFocusBoost;
+      _syncPtsTime(_spH.material);
+    }
   }
   let colorsDirty=false;
   bubbleMeshes.forEach(({mesh,labelEl,halo})=>{
