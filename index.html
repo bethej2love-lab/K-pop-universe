@@ -4454,7 +4454,7 @@ function _srVidPage(q,like,hint,fallbackGroup,from,size){
 // 껍데기로 뜬다(2026-10-01, 사용자: "검색해서 영상 누르면 라이트박스 모드 아니네").
 function _srVidHit(v){
   const url=_isShortV(v)?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;
-  return{type:'video',name:_cleanTitle(v.title),sub:_gLabelKo(v.group_ko||''),
+  return{type:'video',name:_cleanTitle(v.title),sub:(!v.group_ko||!GROUPS[v.group_ko]||GROUPS[v.group_ko].disbanded)?'':_gLabelKo(v.group_ko),
     thumb:v.thumb||'',meta:_fmtVidMeta(v.published_at,v.view_count),
     url,isShort:_isShortV(v),
     item:{..._rowTags(v),t:v.title,u:url,thumb:v.thumb||'',pa:v.published_at?.slice(0,10),vc:v.view_count}};
@@ -13134,7 +13134,7 @@ function showGC(ko,cx,cy,keepMemberPanel,skipRipple,urlMode,_unusedPushMobNav){
     const unitRow=document.getElementById('gc-unit-row');
     const unitList=document.getElementById('gc-unit-list');
     if(unitRow&&unitList){
-      const units=Object.entries(_PROJECT_UNITS).filter(([,u])=>u.members.some(m=>m.gko===ko));
+      const units=Object.entries(_PROJECT_UNITS).filter(([,u])=>u.members.some(m=>m.gko===ko)).sort(([,a],[,b])=>{const ap=a.members.every(m=>m.gko===ko),bp=b.members.every(m=>m.gko===ko);return ap===bp?0:ap?-1:1;});
       unitList.innerHTML='';
       units.forEach(([name],i)=>{
         if(i>0){const sep=document.createElement('span');sep.textContent=' · ';sep.style.cssText='color:rgba(150,170,210,0.45);pointer-events:none;';unitList.appendChild(sep);}
@@ -19917,7 +19917,7 @@ async function _buildFeedDailyNews(){
       const vidUrl=v.is_short?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;
       const pubDate=(v.published_at||'').slice(0,10);
       const mvScore=(isTeaser?50:80)-Math.round((new Date(today)-new Date(pubDate||today))/86400000)*2;
-      items.push({type:isTeaser?'teaser':'mv',title:t,sub:_gLabelKo(v.group_ko)+_agoLabel(pubDate),thumb:v.thumb,score:mvScore,
+      items.push({type:isTeaser?'teaser':'mv',title:t,sub:(GROUPS[v.group_ko]&&!GROUPS[v.group_ko].disbanded?_gLabelKo(v.group_ko):'')+_agoLabel(pubDate),thumb:v.thumb,score:mvScore,
         nav:()=>openLightbox(vidUrl,!!v.is_short,null,0,{groupKo:v.group_ko},false,true)});
     });
     // 조회수 돌파 — **뉴스가 되는 것만**(2026-09-28, 사용자: "N 돌파 너무 많다"). 하루 수십 건 중 대부분이 옛 영상의
