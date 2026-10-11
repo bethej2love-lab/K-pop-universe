@@ -10443,6 +10443,8 @@ document.getElementById('vid-tag-flag-ext').addEventListener('change',e=>{
 document.getElementById('vid-tag-flag-indiv').addEventListener('change',e=>{
   _vidTagFlagTouched=true;_vidTagFlagChoice=e.target.checked?'개별출연':null;_vidTagApplyFlagUI();
 });
+document.getElementById('vid-tag-with-clear-all').addEventListener('click',e=>{e.stopPropagation();_vidTagWithSelected.length=0;_vidTagGroupsSelected.length=0;_renderVidTagChips();});
+document.getElementById('vid-tag-cover-clear-all').addEventListener('click',e=>{e.stopPropagation();_vidTagCoverSelected.length=0;_vidTagCoverGroupsSelected.length=0;_renderVidTagChips();});
 document.getElementById('vid-tag-flag-nomem-btn').addEventListener('click',e=>{e.stopPropagation();_vidTagSetFlagChoice('무관');});
 // 보류(2026-08-27) — 무관/숨김과 같은 3택 토글이라 하나를 고르면 나머지는 자동으로 풀린다
 // (_vidTagSetFlagChoice가 단일 선택). 같은 걸 다시 누르면 해제.

@@ -1067,13 +1067,19 @@
     </div>
     <div id="vid-tag-members"></div>
     <div class="pp-section" style="margin-top:14px">
-      <label class="pp-label" for="vid-tag-with-search">타 그룹 멤버 (선택)</label>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+        <label class="pp-label" for="vid-tag-with-search" style="margin-bottom:0">타 그룹 멤버 (선택)</label>
+        <button type="button" id="vid-tag-with-clear-all" class="uc-btn" style="font-size:10px;padding:2px 8px;opacity:.7">전체 삭제</button>
+      </div>
       <input id="vid-tag-with-search" type="text" class="pp-input" placeholder="이름 검색 (예: 성호)" autocomplete="off">
       <div id="vid-tag-with-results"></div>
       <div id="vid-tag-with-chips"></div>
     </div>
     <div class="pp-section" style="margin-top:14px">
-      <label class="pp-label" for="vid-tag-cover-search">원곡자 지정 (커버 영상일 때만, 선택)</label>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+        <label class="pp-label" for="vid-tag-cover-search" style="margin-bottom:0">원곡자 지정 (커버 영상일 때만, 선택)</label>
+        <button type="button" id="vid-tag-cover-clear-all" class="uc-btn" style="font-size:10px;padding:2px 8px;opacity:.7">전체 삭제</button>
+      </div>
       <input id="vid-tag-cover-search" type="text" class="pp-input" placeholder="이름/그룹 검색" autocomplete="off">
       <div id="vid-tag-cover-results"></div>
       <div id="vid-tag-cover-chips"></div>
@@ -1090,6 +1096,7 @@
           <option value="mv">MV</option>
           <!-- 값은 'live' 그대로, 라벨만 '퍼포먼스'(2026-09-14) — 카드 탭 'Performance'와 같은 것을 가리킨다 -->
           <option value="live">퍼포먼스 (무대·직캠·안무영상)</option>
+          <option value="challenge">챌린지</option>
           <option value="variety">예능</option>
           <option value="show">드라마/영화</option>
           <!-- ⚠️ other/fan은 "관리자가 고르라고" 넣은 게 아니라 **왕복 손실을 막으려고** 넣었다(2026-09-07).
