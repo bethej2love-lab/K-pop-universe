@@ -3176,13 +3176,17 @@ async function buildUniverse(){
     }
     geo.setAttribute('flareSeed',new THREE.BufferAttribute(flareSeeds,1));
     geo.setAttribute('haloScale',new THREE.BufferAttribute(new Float32Array(haloScale),1));
-    const mat=makePointsMat(glowTex,sizeW,opacity,46.0,false);
+    // sizeClamp은 물리 픽셀 기준 상한 — iOS Safari는 큰 point sprite 렌더링 버그로 46 고정 유지.
+    // 데스크톱은 DPR(레티나=2)만큼 곱해서 CSS 픽셀 기준으로 동일하게 맞춤: DPR=2 맥에서 46물리=23CSS였던
+    // 별이 헤일로(150물리=75CSS) 안에 묻혀 안 보이던 문제를 수정(2026-10-11).
+    const _dpr=isMob()?1:Math.min(window.devicePixelRatio,2);
+    const mat=makePointsMat(glowTex,sizeW,opacity,46.0*_dpr,false);
     const pts=new THREE.Points(geo,mat);
     scene.add(pts);
     // 후처리 블룸 없이 '빛이 실제로 번지는' 느낌을 내기 위한 halo 레이어 — 같은 geometry(포지션/컬러)를
     // 공유해서 즐겨찾기·필터 등으로 색이 바뀌어도 자동으로 같이 반영되고, 훨씬 크고 옅은 텍스처로
     // additive 겹쳐 그려서 코어 바깥으로 빛이 새어나가는 것처럼 보이게 한다.
-    const haloMat=makePointsMat(bloomHaloTex,sizeW*3.4,opacity*0.55,150.0,true);
+    const haloMat=makePointsMat(bloomHaloTex,sizeW*3.4,opacity*0.55,150.0*_dpr,true);
     const haloPts=new THREE.Points(geo,haloMat);
     scene.add(haloPts);
     pts.userData.halo=haloPts;
