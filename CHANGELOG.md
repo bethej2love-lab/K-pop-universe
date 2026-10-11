@@ -61,6 +61,18 @@
 - ~~**`active:false`인데 탈퇴일(`left`)이 없는 멤버 104명 — 그룹 미태깅 영상이 그 멤버 카드에 하나도 안 뜸(2026-08-27 발견)**~~ → **같은 날 처리 완료** — 폴백 4단계 재설계로 차단 110명→11명, 99명 복구. 아래 2026-08-27 항목 참고. ⚠️ 원 진단("탈퇴일 미기입이 원인")은 **틀렸었다** — 실제 원인은 `active` 필드가 "이 그룹 멤버인가"와 "개인이 아직 활동하는가" 두 뜻으로 섞여 쓰인 것이었고, 쥬얼리·걸스데이·스텔라에서 같은 시기 멤버가 은퇴 여부에 따라 갈리고 있었다.
 ---
 
+## 2026-10-11 (세션 — 이어서 발견 내비·오프닝 애니·그룹 분류 정리)
+- [완료] **이어서 발견 뒤로가기** — `_discoverNavStack` 신설(기존 `_memberNavStack`과 분리). 탐험 홉 클릭 시 이전 카드 push → 뒤로가기 버튼으로 복귀. `gc-back`·`tt-back` 두 버튼 모두 적용. [index.html]
+- [완료] **"같이 작업해요" 홉 동작** — 홉 클릭 시 멤버 카드로 이동하는 대신 `_openBetweenConn(fromArtist, h.artist)` 호출 → 콜라보 영상 오버레이 바로 열림. [index.html]
+- [완료] **오프닝 ring-burst 타이밍 버그** — CSS 애니메이션이 DOM 로드 즉시 소진되던 문제. `#loading-ring::after` 기본 규칙에서 animation 제거, `.ring-go` 클래스 추가 시에만 실행. `_revealUniverse()`에서 `classList.add('ring-go')` 트리거. [kpop_universe.css] [index.html]
+- [완료] **해체/탈퇴 그룹 영상 서브라벨 제거** — 검색 결과·MV 목록에서 해체 그룹(워너원 등) 표기 억제. `soloDisplay:true` 플래그로 워너원 주요 9명 솔로 처리. [index.html] [artists.json]
+- [완료] **EXO 유닛 표시 순서** — 그룹 카드 유닛 목록에서 순수 소속 유닛(EXO-CBX·EXO-SC) 먼저, 크로스그룹 유닛(SuperM·SM THE BALLAD) 뒤로. [index.html]
+- [완료] **함께한 멤버 줄 유닛 감지** — `_makeWithLine`에 `_detUnit` 로직 추가. withTargets 전원이 한 유닛 소속이면 개별 이름 나열 대신 유닛명 칩 하나("SuperM", "EXO-CBX" 등). 클릭 시 앵커 그룹의 해당 유닛원 카드로 이동. [index.html]
+- [완료] **정일훈 탈퇴 후 솔로 귀속 준비** — `artists.json`에서 `group.ko → '솔로'`, 비투비 이력을 `groups[{ko:'비투비', left:'2020.12.31'}]`로 이전. 어드민 "탈퇴 후 솔로 영상 귀속" 버튼으로 DB 스윕 가능. [artists.json]
+- [완료] **백현 영상 group_ko 엑소로 일괄 수정** — `group_ko='백현'` 77건 전부 `'엑소'`로 변경(SQL 사용자 실행). 엑소 그룹 카드에서 백현 솔로 활동 영상 표시됨. members=['백현'] 유지라 멤버 카드도 정상.
+
+---
+
 ## 2026-10-10 (세션 — 솔로 별 개선·URL 정리·스크롤 성능)
 - [완료] **솔로 아티스트 별 가시성** — `m.sparkle` 의존 제거, 솔로는 항상 `sparklePts`(74.4px, opacity 1.0) + `sparkleHalo.push(1)` 강제. 기존엔 `regularPts`(33.6px) + haloScale 미등록으로 별이 안 보이고 발광도 없었음. [index.html]
 - [완료] **URL에서 '솔로' 제거** — `#g=솔로&m=디모렉스` → `#m=디모렉스`. `_cardHash`, `_stackIndexForHash`, `_openFromHash` 수정, 구 포맷 하위 호환 유지. `build_group_pages.js` deeplink·그룹 표기 분기 후 정적 페이지 4242개 재빌드(654개 솔로 SEO). [index.html] [build_group_pages.js]
