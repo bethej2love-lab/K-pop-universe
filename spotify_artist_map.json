@@ -281,6 +281,17 @@
     },
     "checkedAt": "2026-09-20"
   },
+  "건우": {
+    "id": "5FlijjKXj8GW8QnIjC4wvT",
+    "spotifyName": "Gunwoo",
+    "kind": "solo",
+    "confidence": "medium",
+    "why": "이름 유일 일치",
+    "evidence": {
+      "titleOverlap": null
+    },
+    "checkedAt": "2026-10-11"
+  },
   "걸셋": {
     "id": "3D2TVeexyIXOtc8F4qEZ6P",
     "spotifyName": "GIRLSET",
@@ -871,6 +882,17 @@
     },
     "checkedAt": "2026-09-17"
   },
+  "노아": {
+    "id": "31aMmlq8isIAgojvmIwiS4",
+    "spotifyName": "Noah",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "동명 후보 2명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-10-11"
+  },
   "노을": {
     "id": "6MucRdwAxiOxHLAAQ0o1I3",
     "spotifyName": "Noeul",
@@ -1278,6 +1300,17 @@
       "titleOverlap": 0
     },
     "checkedAt": "2026-10-07"
+  },
+  "레오": {
+    "id": "6xr9i4ozDKCobWg5lUKHPj",
+    "spotifyName": "LEO",
+    "kind": "solo",
+    "confidence": "medium",
+    "why": "이름 유일 일치",
+    "evidence": {
+      "titleOverlap": null
+    },
+    "checkedAt": "2026-10-11"
   },
   "레이나": {
     "id": "21dQ70DS91icGLN9J4mH7h",
@@ -1838,6 +1871,17 @@
       ]
     },
     "checkedAt": "2026-10-01"
+  },
+  "박수진": {
+    "id": "64TKnMaNvSxtMl6diCzvOw",
+    "spotifyName": "박수진",
+    "kind": "solo",
+    "confidence": "medium",
+    "why": "이름 유일 일치",
+    "evidence": {
+      "titleOverlap": null
+    },
+    "checkedAt": "2026-10-11"
   },
   "박시영": {
     "id": "2wAjuE3pVtauK8ZQ2p4SXN",
@@ -2870,6 +2914,17 @@
       "titleOverlap": 0
     },
     "checkedAt": "2026-09-18"
+  },
+  "시안": {
+    "id": "6vsf1Na3mWulGPB487Sng9",
+    "spotifyName": "SiAN",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "동명 후보 2명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-10-11"
   },
   "시연": {
     "id": "73T6dNmvgc4IfgU5KUjeWt",
@@ -4495,6 +4550,17 @@
     },
     "checkedAt": "2026-09-26"
   },
+  "육혜승": {
+    "id": "6z4R3mCiiIiLgpicseyNkV",
+    "spotifyName": "LEE SEUNG YOON",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "이름 불일치 — 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-10-11"
+  },
   "윤정환": {
     "id": "4oL3S5gVJMmZPzdog0QgXl",
     "spotifyName": "LUVEN",
@@ -4869,6 +4935,22 @@
       "titleOverlap": null
     },
     "checkedAt": "2026-09-19"
+  },
+  "이하린": {
+    "id": "1cDDtQ75Yz5Xi9sA16wl3N",
+    "spotifyName": "Lee Yerin",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "이름 불일치 — 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0,
+      "verifyOverlap": 0,
+      "verifyYears": [
+        2013,
+        2012
+      ]
+    },
+    "checkedAt": "2026-10-11"
   },
   "이한결": {
     "id": "2F6e6Ox3fxfcMOFaiReh6k",
@@ -5751,6 +5833,21 @@
     },
     "checkedAt": "2026-09-17"
   },
+  "케빈": {
+    "id": "4fSMtiyC6lF5BUO1tUMWMs",
+    "spotifyName": "Kevin MacLeod",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "이름 불일치 — 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0,
+      "verifyOverlap": 0,
+      "verifyYears": [
+        2022
+      ]
+    },
+    "checkedAt": "2026-10-11"
+  },
   "케플러": {
     "id": "5R7AMwDeroq6Ls0COQYpS4",
     "spotifyName": "Kep1er",
@@ -6624,6 +6721,17 @@
       "titleOverlap": null
     },
     "checkedAt": "2026-09-24"
+  },
+  "황정음": {
+    "id": "7k6j4WTcEPqlJMGX772WPU",
+    "spotifyName": "Hwang Jungeum",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "동명 후보 2명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-10-11"
   },
   "효영": {
     "id": "73RRzEpK7IQexOhC0CuTRZ",

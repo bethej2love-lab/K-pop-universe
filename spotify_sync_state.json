@@ -532,10 +532,19 @@
     "이슬": "2026-10-11",
     "가영": "2026-10-11",
     "전율": "2026-10-11",
-    "아유미": "2026-10-11"
+    "아유미": "2026-10-11",
+    "황정음": "2026-10-11",
+    "박수진": "2026-10-11",
+    "육혜승": "2026-10-11",
+    "이하린": "2026-10-11",
+    "노아": "2026-10-11",
+    "시안": "2026-10-11",
+    "케빈": "2026-10-11",
+    "건우": "2026-10-11",
+    "레오": "2026-10-11"
   },
-  "runs": 66,
-  "lastRunAt": "2026-10-11T15:35:31.857Z",
+  "runs": 67,
+  "lastRunAt": "2026-10-11T17:40:00.647Z",
   "swept": {
     "에스파": [
       2023,
@@ -2908,6 +2917,50 @@
     "아유미": [
       2023,
       2024
+    ],
+    "황정음": [
+      2023,
+      2024,
+      2025
+    ],
+    "박수진": [
+      2023,
+      2024,
+      2025
+    ],
+    "육혜승": [
+      2023,
+      2024,
+      2025
+    ],
+    "이하린": [
+      2023,
+      2024,
+      2025
+    ],
+    "노아": [
+      2023,
+      2024,
+      2025
+    ],
+    "시안": [
+      2023,
+      2024,
+      2025
+    ],
+    "케빈": [
+      2023,
+      2024,
+      2025
+    ],
+    "건우": [
+      2023,
+      2024,
+      2025
+    ],
+    "레오": [
+      2023,
+      2024
     ]
   },
   "pending": {
@@ -3887,6 +3940,74 @@
         "2023-10-24 Neverland"
       ],
       "why": "영상 증거 0곡(영상 5개 대조)"
+    },
+    "박수진": {
+      "spotifyName": "박수진",
+      "spotifyId": "64TKnMaNvSxtMl6diCzvOw",
+      "since": "2026-10-11",
+      "heldAlbums": [
+        "2026-08-08 SUZININE Vol.7: Cinematic Piano Collection",
+        "2026-06-26 사랑하는 당신에게/가을에 온 여자"
+      ],
+      "why": "영상 증거 0곡(영상 5개 대조)"
+    },
+    "육혜승": {
+      "spotifyName": "LEE SEUNG YOON",
+      "spotifyId": "6z4R3mCiiIiLgpicseyNkV",
+      "since": "2026-10-11",
+      "heldAlbums": [
+        "2026-06-26 Album 0",
+        "2023-01-26 Shelter Of Dreams",
+        "2023-01-06 Pricey Hangover",
+        "2024-05-21 LEE SEUNG YOON CONCERT [DOCKING : LIFTOFF] LIVE ALBUM",
+        "2024-10-24 YEOK SEONG"
+      ],
+      "why": "영상 증거 0곡(영상 0개 대조)"
+    },
+    "이하린": {
+      "spotifyName": "Lee Yerin",
+      "spotifyId": "1cDDtQ75Yz5Xi9sA16wl3N",
+      "since": "2026-10-11",
+      "heldAlbums": [
+        "2026-04-14 NEVER NEVER LAND",
+        "2026-02-25 Dear",
+        "2023-02-25 Talk is cheap",
+        "2023-06-03 LERGRYN",
+        "2023-12-22 It's Christmas!"
+      ],
+      "why": "영상 증거 0곡(영상 0개 대조)"
+    },
+    "시안": {
+      "spotifyName": "SiAN",
+      "spotifyId": "6vsf1Na3mWulGPB487Sng9",
+      "since": "2026-10-11",
+      "heldAlbums": [
+        "2026-09-14 i miss you a little, but i'm alright"
+      ],
+      "why": "영상 증거 0곡(영상 20개 대조)"
+    },
+    "케빈": {
+      "spotifyName": "Kevin MacLeod",
+      "spotifyId": "4fSMtiyC6lF5BUO1tUMWMs",
+      "since": "2026-10-11",
+      "heldAlbums": [
+        "2026-05-15 Funk & Jazz Mood",
+        "2023-08-08 The August Album",
+        "2023-01-18 Paradise Found",
+        "2024-05-01 25 Years (Volume 2)",
+        "2024-05-01 25 Years, Vol. 1"
+      ],
+      "why": "영상 증거 0곡(영상 40개 대조)"
+    },
+    "레오": {
+      "spotifyName": "LEO",
+      "spotifyId": "6xr9i4ozDKCobWg5lUKHPj",
+      "since": "2026-10-11",
+      "heldAlbums": [
+        "2023-08-17 One Look",
+        "2024-05-09 COME CLOSER"
+      ],
+      "why": "영상 증거 0곡(영상 23개 대조)"
     }
   },
   "collabSwept": {}
