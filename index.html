@@ -8832,6 +8832,8 @@ function _connUpdateBulkBar(){
 }
 // 연결 카드 콜라보 칩(꾹 누르기/↗)으로 다른 멤버 카드로 넘어갔을 때 "뒤로" 갈 수 있도록 이전 상태를 쌓아두는 스택
 let _memberNavStack=[];
+// 이어서 발견 홉 클릭 시 이전 카드로 되돌아갈 수 있도록 쌓아두는 스택 ({type:'tt',artist}|{type:'gc',gko})
+let _discoverNavStack=[];
 // 모바일 카드 스택 전용 — 연결 카드 칩으로 다른 멤버로 점프한 직후 openMobSheet가 _cardStack에 새로
 // push할 항목에 "이 화면은 연결 카드에서 왔다"는 표시를 붙이기 위한 1회용 전달값(2026-08-11, 사용자
 // 요청 — 뒤로가기가 카드스택이든 연결카드든 실제로 "바로 이전 화면"에 맞게 돌아가야 함). _memberNavStack는
@@ -10188,7 +10190,7 @@ _wireSheetSwipe(connSheetEl,connSheetInner,closeConnCard,undefined,()=>_connSele
 function closeCards(){
   _clearMemberCardLines();
   closeConnCard();
-  _memberNavStack=[];
+  _memberNavStack=[];_discoverNavStack=[];
   _gcFromGenList=null;
   if(isMob()){closeMobSheet();}
   else{closeMemberPanel(false);closeSidePanel();}
@@ -11118,9 +11120,9 @@ function _updateTtBackBtn(){
   // 카드 안 버튼(tt-back/gc-back)은 데스크톱 전용으로 남기되, 클릭 핸들러는 그대로 재사용한다
   // (연결 시트 닫기·세대 목록 복귀 같은 특수 케이스가 그 안에 들어있어서 옮기면 깨진다).
   const btn=document.getElementById('tt-back');
-  if(btn)btn.style.display=(!mob&&_memberNavStack.length>0)?'block':'none';
+  if(btn)btn.style.display=(!mob&&(_memberNavStack.length>0||_discoverNavStack.length>0))?'block':'none';
   const gcBack=document.getElementById('gc-back');
-  if(gcBack)gcBack.style.display='none'; // 데스크톱 그룹 카드는 원래도 뒤로가기가 없었음(별도 과제)
+  if(gcBack)gcBack.style.display=(!mob&&_discoverNavStack.length>0)?'block':'none';
   const show=mobBack||(mob&&_memberNavStack.length>0);
   // 스택이 2겹 이상이면 위에 떠 있는 건 mob-card-stack이고, 1겹이면 mob-sheet다 — 보이는 쪽에만 붙인다.
   const sheetBtn=document.getElementById('mob-sheet-back');
@@ -11139,6 +11141,13 @@ function _mobSheetBack(){
   if(el)el.addEventListener('click',e=>{e.stopPropagation();_mobSheetBack();});
 });
 function _ttGoBack(){
+  if(_discoverNavStack.length){
+    const prev=_discoverNavStack.pop();
+    _updateTtBackBtn();
+    if(prev.type==='tt'&&prev.artist){if(prev.artist._worldPos)flyTo(prev.artist._worldPos);showT(prev.artist,window.innerWidth/2,window.innerHeight*0.4,true);}
+    else if(prev.type==='gc'){const bm=bubbleMeshes.find(b=>b.ko===prev.gko);if(bm)flyToBubble(bm.mesh.position,bm.radius);showGC(prev.gko,window.innerWidth/2,window.innerHeight*0.4);}
+    return;
+  }
   const prev=_memberNavStack.pop();
   if(!prev)return;
   showT(prev.anchor,window.innerWidth/2,window.innerHeight*0.4,true);
@@ -11171,6 +11180,7 @@ document.getElementById('gc-back').addEventListener('click',e=>{
     _renderGenDetail(g);
     return;
   }
+  if(_discoverNavStack.length){_ttGoBack();return;}
   _popMobCard();
 });
 
@@ -11191,7 +11201,7 @@ function positionCard(el,cx,cy,cardW,estH){
 function showT(a,cx,cy,keepNavStack,urlMode,_unusedPushMobNav,noFly){
   _freezeSheetBottomBeforeOverwrite('tt');
   _dismissOnboardHint();
-  if(!keepNavStack)_memberNavStack=[];
+  if(!keepNavStack){_memberNavStack=[];_discoverNavStack=[];}
   _updateTtBackBtn();
   closeConnCard();
   _clearMemberCardLines();
@@ -12891,7 +12901,7 @@ function _discoverHops(a,cofavHop){
   }
   return out.slice(0,3);
 }
-function _paintDiscoverHops(sec,hops,card){
+function _paintDiscoverHops(sec,hops,card,fromArtist){
   if(!hops.length)return;
   const lbl=document.createElement('div');lbl.className='ttd-lbl';lbl.textContent=currentLang==='ko'?'이어서 발견':'Keep exploring';
   sec.appendChild(lbl);
@@ -12908,7 +12918,10 @@ function _paintDiscoverHops(sec,hops,card){
     row.appendChild(disc);row.appendChild(txt);
     row.addEventListener('click',e=>{
       e.stopPropagation();
-      if(h.type==='tt'&&h.artist){if(h.artist._worldPos)flyTo(h.artist._worldPos);showT(h.artist,window.innerWidth/2,window.innerHeight*0.4);}
+      if((h.note==='같이 작업해요'||h.note==='Worked together')&&fromArtist&&h.artist){_openBetweenConn(fromArtist,h.artist);return;}
+      if(_openTArtist)_discoverNavStack.push({type:'tt',artist:_openTArtist});
+      else if(_openGCko)_discoverNavStack.push({type:'gc',gko:_openGCko});
+      if(h.type==='tt'&&h.artist){if(h.artist._worldPos)flyTo(h.artist._worldPos);showT(h.artist,window.innerWidth/2,window.innerHeight*0.4,true);}
       else if(h.type==='gc'){const bm=bubbleMeshes.find(b=>b.ko===h.gko);if(bm)flyToBubble(bm.mesh.position,bm.radius);showGC(h.gko,window.innerWidth/2,window.innerHeight*0.4);}
     });
     sec.appendChild(row);
@@ -12930,7 +12943,7 @@ async function _renderDiscoverHops(a){
   sec.dataset.akey=aKey;sec.innerHTML='';
   // 즉시 sync 렌더 (cofav 없이)
   const hops0=_discoverHops(a,null);
-  _paintDiscoverHops(sec,hops0,card);
+  _paintDiscoverHops(sec,hops0,card,a);
   const tvEl=card.querySelector('#tv');
   if(hops0.length){if(tvEl)card.insertBefore(sec,tvEl);else card.appendChild(sec);}
   else if(sec.parentNode)sec.parentNode.removeChild(sec);
@@ -12957,7 +12970,7 @@ async function _renderDiscoverHops(a){
     if(!cofavHop)return;
     // cofav로 re-render
     cur.innerHTML='';
-    _paintDiscoverHops(cur,_discoverHops(a,cofavHop),card);
+    _paintDiscoverHops(cur,_discoverHops(a,cofavHop),card,a);
   }catch(e){}
 }
 
