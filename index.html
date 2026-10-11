@@ -3088,7 +3088,7 @@ async function buildUniverse(){
   // 체감상 DPR^2에 비례해 작아지는 결과가 됨(2026-08-18, 사용자 제보 — "웹에서 볼 때 멤버 별이 유독
   // 작게 느껴진다"). scale이 DPR을 아예 안 보는 만큼, 반대로 "곱해서" 상쇄해야 실제 화면상 크기가
   // DPR과 무관하게 일정해짐 — 나누기를 곱하기로 뒤집어서 수정.
-  function makePointsMat(tex,sizeW,opacity,sizeClamp,useHaloScale){
+  function makePointsMat(tex,sizeW,opacity,sizeClamp,useHaloScale,writeAlpha=false){
     const mat=new THREE.PointsMaterial({
       size:sizeW*Math.min(window.devicePixelRatio,2),map:tex,vertexColors:true,
       transparent:true,opacity,
@@ -3107,7 +3107,9 @@ async function buildUniverse(){
       blendEquation:THREE.AddEquation,
       blendSrc:THREE.SrcAlphaFactor,blendDst:THREE.OneFactor,
       blendEquationAlpha:THREE.AddEquation,
-      blendSrcAlpha:THREE.ZeroFactor,blendDstAlpha:THREE.OneFactor,
+      // 솔로 별(writeAlpha=true)은 행성이 없어 canvas.A=0인 위치에 홀로 렌더링됨 → alpha도 써야 브라우저 합성으로 보임.
+      // 그룹 별(writeAlpha=false)은 행성 렌더 후 canvas.A>0이 이미 확보돼 있고, alpha 누적 시 검은 점 버그 재발 위험.
+      blendSrcAlpha:writeAlpha?THREE.SrcAlphaFactor:THREE.ZeroFactor,blendDstAlpha:THREE.OneFactor,
       sizeAttenuation:true
     });
     // 카메라를 아주 가까이 붙였을 때 gl_PointSize가 한없이 커지는 걸 막는다.
@@ -3160,13 +3162,9 @@ async function buildUniverse(){
         );
       mat.userData.shader=shader; // 매 프레임 uTime 갱신(_syncPtsTime)이 이 참조로 breathe 애니메이션을 굴림
     };
-    // three r128은 onBeforeCompile.toString()을 캐시 키로 쓰는데, 클로저 변수 이름이 값 대신 들어가서
-    // sizeClamp·useHaloScale가 달라도 같은 키 → 네 재질이 프로그램을 공유 → 헤일로 셰이더 오컴파일.
-    // 재질 파라미터 조합별 고유 키를 명시해 각자 독립 컴파일 보장.
-    mat.customProgramCacheKey=()=>`pts_h${useHaloScale?1:0}_c${sizeClamp.toFixed(0)}_m${isMob()?1:0}`;
     return mat;
   }
-  function makePoints(positions,colors,haloScale,sizeW,opacity,artists,coreClampCSS=46.0){
+  function makePoints(positions,colors,haloScale,sizeW,opacity,artists,writeAlpha=false){
     if(!positions.length)return;
     const geo=new THREE.BufferGeometry();
     geo.setAttribute('position',new THREE.BufferAttribute(new Float32Array(positions),3));
@@ -3184,21 +3182,20 @@ async function buildUniverse(){
     // 데스크톱은 DPR(레티나=2)만큼 곱해서 CSS 픽셀 기준으로 동일하게 맞춤: DPR=2 맥에서 46물리=23CSS였던
     // 별이 헤일로(150물리=75CSS) 안에 묻혀 안 보이던 문제를 수정(2026-10-11).
     const _dpr=isMob()?1:Math.min(window.devicePixelRatio,2);
-    const mat=makePointsMat(glowTex,sizeW,opacity,coreClampCSS*_dpr,false);
+    const mat=makePointsMat(glowTex,sizeW,opacity,46.0*_dpr,false,writeAlpha);
     const pts=new THREE.Points(geo,mat);
     scene.add(pts);
     // 후처리 블룸 없이 '빛이 실제로 번지는' 느낌을 내기 위한 halo 레이어 — 같은 geometry(포지션/컬러)를
     // 공유해서 즐겨찾기·필터 등으로 색이 바뀌어도 자동으로 같이 반영되고, 훨씬 크고 옅은 텍스처로
     // additive 겹쳐 그려서 코어 바깥으로 빛이 새어나가는 것처럼 보이게 한다.
-    const haloMat=makePointsMat(bloomHaloTex,sizeW*3.4,opacity*0.55,150.0*_dpr,true);
+    const haloMat=makePointsMat(bloomHaloTex,sizeW*3.4,opacity*0.55,150.0*_dpr,true,writeAlpha);
     const haloPts=new THREE.Points(geo,haloMat);
     scene.add(haloPts);
     pts.userData.halo=haloPts;
     return pts;
   }
   regularPts=makePoints(regularPos,regularColors,regularHalo,33.6,0.82*opScale,regularArtists);
-  // 솔로 별은 은하 전체에 1개씩 흩어져 있어 그룹 별 클러스터보다 눈에 덜 띔 — coreClamp를 더 크게 줘서 개별 별이 충분히 보이게.
-  sparklePts=makePoints(sparklePos,sparkleColors,sparkleHalo,74.4,1.0*opScale,sparkleArtists,80.0);
+  sparklePts=makePoints(sparklePos,sparkleColors,sparkleHalo,74.4,1.0*opScale,sparkleArtists,true);
   if(regularPts){
     regColorAttr=regularPts.geometry.attributes.color;
     regularPts.userData.baseOp=0.82*opScale;
