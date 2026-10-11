@@ -167,6 +167,17 @@
     },
     "checkedAt": "2026-09-15"
   },
+  "가가": {
+    "id": "0kolce4lQQT3kf9QJmEuMX",
+    "spotifyName": "Gaga",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "동명 후보 3명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-10-11"
+  },
   "가은": {
     "id": "7sxTZy9SLBjsTz4PiSj5tJ",
     "spotifyName": "Kaeun",
@@ -1313,6 +1324,17 @@
     },
     "checkedAt": "2026-09-26"
   },
+  "로하": {
+    "id": "7iMk721CtVRwU1x381rvtg",
+    "spotifyName": "Roha",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "동명 후보 2명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-10-11"
+  },
   "롱샷": {
     "id": "2F4oTJOWkcD1JaTeKEa9h6",
     "spotifyName": "LNGSHOT",
@@ -1323,6 +1345,17 @@
       "titleOverlap": 2
     },
     "checkedAt": "2026-09-15"
+  },
+  "루": {
+    "id": "4flinhIhFYE7Ehy3fFBg3l",
+    "spotifyName": "Ruru",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "이름 불일치 — 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-10-11"
   },
   "루네이트": {
     "id": "5LkLwB6VSZLQiFkJa9SPOn",
@@ -1714,6 +1747,17 @@
       "titleOverlap": 0
     },
     "checkedAt": "2026-10-03"
+  },
+  "민희": {
+    "id": "5ZWGt7L29WWgPoVwDulAvV",
+    "spotifyName": "Minhee",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "동명 후보 3명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-10-11"
   },
   "박대원": {
     "id": "4UeorDtRRqdtpAcfhFFv3e",
@@ -2273,6 +2317,17 @@
     },
     "checkedAt": "2026-10-02"
   },
+  "새봄": {
+    "id": "4RrgkZpiUeXN1HF5LgUODY",
+    "spotifyName": "Saebom Byun",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "이름 불일치 — 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-10-11"
+  },
   "샤넌": {
     "id": "1PKDFembgxdtHG207rsJSO",
     "spotifyName": "Shannon",
@@ -2391,6 +2446,17 @@
       "titleOverlap": 3
     },
     "checkedAt": "2026-09-22"
+  },
+  "선샤인": {
+    "id": "1DGlJ2nbZBX8JtWBADZ44O",
+    "spotifyName": "Sunshine",
+    "kind": "solo",
+    "confidence": "medium",
+    "why": "이름 유일 일치",
+    "evidence": {
+      "titleOverlap": null
+    },
+    "checkedAt": "2026-10-11"
   },
   "선예": {
     "id": "5Vf5VWKvTmzz4tW3JvUcGX",
@@ -4342,6 +4408,17 @@
     },
     "checkedAt": "2026-10-02"
   },
+  "유채": {
+    "id": "2CbFbg6yKWd554rBia0Svq",
+    "spotifyName": "Uchae",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "동명 후보 2명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-10-11"
+  },
   "유키스": {
     "id": "2GB76Lm833jVI5kLvKEB7Z",
     "spotifyName": "UKISS",
@@ -5423,6 +5500,17 @@
     },
     "checkedAt": "2026-10-07"
   },
+  "채빈": {
+    "id": "08uCWg0IfpddqmNEyIEjXJ",
+    "spotifyName": "Chaemin yang",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "이름 불일치 — 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-10-11"
+  },
   "채인": {
     "id": "6JFcbujqKt4RPN9ThKKU3n",
     "spotifyName": "Chaein",
@@ -6174,6 +6262,17 @@
     },
     "checkedAt": "2026-09-15"
   },
+  "하루": {
+    "id": "2922XgJBF3fDph8ZAC7c4u",
+    "spotifyName": "HARU",
+    "kind": "solo",
+    "confidence": "medium",
+    "why": "이름 유일 일치",
+    "evidence": {
+      "titleOverlap": null
+    },
+    "checkedAt": "2026-10-11"
+  },
   "하민우": {
     "id": "1XJLHCj424IVSHZxmq2yve",
     "spotifyName": "Kim Minwoo",
@@ -6460,6 +6559,17 @@
       "titleOverlap": 0
     },
     "checkedAt": "2026-10-07"
+  },
+  "효은": {
+    "id": "783X6fgt3U1pLscYCIhDxW",
+    "spotifyName": "HYOEUN",
+    "kind": "solo",
+    "confidence": "high",
+    "why": "동명 후보 2명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 2
+    },
+    "checkedAt": "2026-10-11"
   },
   "휘브": {
     "id": "4pTBL6fTowmWTa61ef7RNb",
