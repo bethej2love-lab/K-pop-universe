@@ -223,7 +223,7 @@
   </div>
   <div id="tt-discog-strip" class="gc-discog-strip hscroll-drag"></div>
   <div id="tt-timeline-section" style="display:none"><div class="tt-timeline-hd">History</div><div id="tt-timeline"></div></div>
-</div><div id="tt-concert-row" class="concert-row"></div><div id="tt-collection-row" class="gc-collection-row" style="display:none"><div class="gc-collection-hd">Collections</div><div class="gc-collection-list hscroll-drag"></div></div><div id="tt-program-row" class="gc-collection-row" style="display:none"><div class="gc-collection-hd gc-program-hd">Programs</div><div class="gc-collection-list hscroll-drag"></div></div><div id="tv"></div></div>
+</div><div id="tt-concert-row" class="concert-row"></div><div id="tt-collection-row" class="gc-collection-row" style="display:none"><div class="gc-collection-hd">Collections</div><div class="gc-collection-list hscroll-drag"></div></div><div id="tv"></div></div>
 <div id="gc">
   <div id="gc-bar"></div>
   <div id="gc-inner">
@@ -274,10 +274,6 @@
     <div id="gc-concert-row" class="concert-row"></div>
     <div id="gc-collection-row" class="gc-collection-row" style="display:none">
       <div class="gc-collection-hd">Collections</div>
-      <div class="gc-collection-list hscroll-drag"></div>
-    </div>
-    <div id="gc-program-row" class="gc-collection-row" style="display:none">
-      <div class="gc-collection-hd gc-program-hd">Programs</div>
       <div class="gc-collection-list hscroll-drag"></div>
     </div>
     <div id="gc-ch-vid"></div>
@@ -11371,11 +11367,6 @@ function showT(a,cx,cy,keepNavStack,urlMode,_unusedPushMobNav,noFly){
   if(_hasRealGroup)_loadMemberConcertRow(a.name.ko,'tt-concert-row');
   else _loadConcertRow(_ttGroupQueryKo,'tt-concert-row');
   _loadCollectionRow(_ttGroupQueryKo,'tt-collection-row',_hasRealGroup?a.name.ko:null,a.name.ko);
-  // ⚠️ memberKo는 바로 위 _loadCollectionRow와 **같은 규칙**이어야 한다(2026-09-11 수정). 여기만
-  //    무조건 a.name.ko를 넘기고 있어서, 솔로 아티스트 카드의 출연 프로그램이 `members`에 이름이
-  //    태깅된 영상만 보고 있었다 — 솔로는 group_ko 자체가 본인 이름이라 members가 비어 있는 게
-  //    정상이라(실측: '아이유의 팔레트' 36건 전부 members=[]) 그 프로그램이 통째로 안 떴다.
-  _loadProgramRow(_ttGroupQueryKo,'tt-program-row',_hasRealGroup?a.name.ko:null,a.name.ko);
   _renderTtDiscography(a);
   // 트로피 3종(음악방송 1위/멜론 연간 TOP100/스포티파이 마일스톤)의 개인 기록 — 위 콘서트/컬렉션과 달리
   // _ytGroupKoFor가 아니라 a.group.ko(솔로면 "솔로" 그대로)+a.name.ko 조합을 그대로 쓴다. 이 세 트로피
@@ -13140,7 +13131,6 @@ function showGC(ko,cx,cy,keepMemberPanel,skipRipple,urlMode,_unusedPushMobNav){
   _buildGcChVid(ko);
   _loadConcertRow(ko,'gc-concert-row');
   _loadCollectionRow(ko,'gc-collection-row');
-  _loadProgramRow(ko,'gc-program-row');
   _loadTrophies(ko,'gc-trophy');
   const cardW=info.links?.youtube?264:234;
   el.style.maxWidth=cardW+'px';
@@ -23871,6 +23861,7 @@ async function _loadCollectionRow(ko,containerId,memberKo,cardMemberKo){
   // 대기 중 다른 카드로 전환됐으면 건너뜀
   if(cardMemberKo?_openTArtist?.name?.ko!==cardMemberKo:_openGCko!==ko)return;
   _renderCollectionRow(containerId,[...mine,...pub]);
+  _loadProgramRow(ko,containerId,memberKo,cardMemberKo);
 }
 function _renderCollectionRow(containerId,list){
   const row=document.getElementById(containerId);
@@ -24000,9 +23991,6 @@ function _renderProgramRow(containerId,picks,ctx){
   if(!row)return;
   const listEl=row.querySelector('.gc-collection-list');
   if(!listEl)return;
-  const hd=row.querySelector('.gc-program-hd');
-  if(hd)hd.textContent=currentLang==='ko'?'출연 프로그램':'Programs';
-  listEl.innerHTML='';
   picks.forEach(({p,vids})=>{
     const chip=document.createElement('div');chip.className='gc-collection-chip';
     const wrap=document.createElement('div');wrap.className='gc-collection-chip-thumb-wrap';
