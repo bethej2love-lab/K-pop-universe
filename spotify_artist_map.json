@@ -435,6 +435,22 @@
     },
     "checkedAt": "2026-09-24"
   },
+  "권현빈": {
+    "id": "0kRAVpQhUUArA8UnYwEdeZ",
+    "spotifyName": "Kwon Jin Ah",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "이름 불일치 — 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0,
+      "verifyOverlap": 0,
+      "verifyYears": [
+        2021,
+        2020
+      ]
+    },
+    "checkedAt": "2026-10-11"
+  },
   "금조": {
     "id": "1mhrp6X9dQ4DPvsbt5seca",
     "spotifyName": "KEUMJO",
@@ -555,6 +571,17 @@
     },
     "checkedAt": "2026-10-10"
   },
+  "김상균": {
+    "id": "4PfR275IK3M1H0jqxTvmU2",
+    "spotifyName": "Kim Sang Gyun",
+    "kind": "solo",
+    "confidence": "medium",
+    "why": "이름 유일 일치",
+    "evidence": {
+      "titleOverlap": null
+    },
+    "checkedAt": "2026-10-11"
+  },
   "김수윤": {
     "id": "31VffPWiL2AAwNIMODB9qZ",
     "spotifyName": "Kim Seungmin",
@@ -605,6 +632,17 @@
       "titleOverlap": 0
     },
     "checkedAt": "2026-09-26"
+  },
+  "김용국": {
+    "id": "7q2WBV0Hvpbk0pHxLgYW9X",
+    "spotifyName": "Kim Yong-guk",
+    "kind": "solo",
+    "confidence": "medium",
+    "why": "이름 유일 일치",
+    "evidence": {
+      "titleOverlap": null
+    },
+    "checkedAt": "2026-10-11"
   },
   "김유환": {
     "id": "5rZa6gd8Aicp4N8QlPbhVl",
@@ -4117,6 +4155,17 @@
     },
     "checkedAt": "2026-10-08"
   },
+  "온": {
+    "id": "4iqYuabNc82ifR0N1VGJeb",
+    "spotifyName": "On",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "동명 후보 2명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-10-11"
+  },
   "온리원오프": {
     "id": "0iQGSzpJ0G0lsugv8jsJHd",
     "spotifyName": "OnlyOneOf",
@@ -5305,6 +5354,17 @@
     },
     "checkedAt": "2026-09-25"
   },
+  "제로": {
+    "id": "6htaqouwVH0LnEY2gU0KKI",
+    "spotifyName": "Zero",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "동명 후보 2명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-10-11"
+  },
   "제로베이스원": {
     "id": "7cjg7EkeZy3OI5o9Qthc6n",
     "spotifyName": "ZEROBASEONE",
@@ -5799,6 +5859,17 @@
     },
     "checkedAt": "2026-09-21"
   },
+  "카이리": {
+    "id": "5QFePyT6iMMMifrOCtL5KQ",
+    "spotifyName": "Kairi",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "동명 후보 5명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-10-11"
+  },
   "카일라": {
     "id": "77DAFfvm3O9zT5dIoG0eIO",
     "spotifyName": "Kyla",
@@ -6092,6 +6163,17 @@
       "titleOverlap": 2
     },
     "checkedAt": "2026-09-15"
+  },
+  "타카다 켄타": {
+    "id": "2RqKd9voOvH8U1Q7hlpLSM",
+    "spotifyName": "KENTA",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "이름 불일치 — 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-10-11"
   },
   "타카하시 쥬리": {
     "id": "53JsFUDYcN2jw6v1nF7Z82",
