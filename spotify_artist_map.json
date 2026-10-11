@@ -178,6 +178,22 @@
     },
     "checkedAt": "2026-10-11"
   },
+  "가영": {
+    "id": "7vY0rKdpSg895pSZEu4QUc",
+    "spotifyName": "Gayoung",
+    "kind": "solo",
+    "confidence": "high",
+    "why": "동명 후보 2명 중 앨범 대조 · 수집 전 검증 통과(겹침 1)",
+    "evidence": {
+      "titleOverlap": 1,
+      "verifyOverlap": 1,
+      "verifyYears": [
+        2026,
+        2025
+      ]
+    },
+    "checkedAt": "2026-10-11"
+  },
   "가은": {
     "id": "7sxTZy9SLBjsTz4PiSj5tJ",
     "spotifyName": "Kaeun",
@@ -2628,6 +2644,17 @@
     },
     "checkedAt": "2026-09-30"
   },
+  "소영": {
+    "id": "174hr94Y2NrF032J4oMk3g",
+    "spotifyName": "Soyoung",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "동명 후보 2명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-10-11"
+  },
   "소원": {
     "id": "1qyV7btLIfHJdcSZFMea9a",
     "spotifyName": "Sowon",
@@ -3057,6 +3084,17 @@
       ]
     },
     "checkedAt": "2026-09-18"
+  },
+  "아유미": {
+    "id": "6Iw6TdobDb6ZkYpW3H0kFH",
+    "spotifyName": "Ayumi",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "동명 후보 4명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-10-11"
   },
   "아이덴티티": {
     "id": "18eBHUF4EG1bXtbLZZ6g7M",
@@ -3887,6 +3925,17 @@
     },
     "checkedAt": "2026-09-17"
   },
+  "영흔": {
+    "id": "4GzuNU3GlvlfNB4xweeTVR",
+    "spotifyName": "Lee Young Hyun",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "이름 불일치 — 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-10-11"
+  },
   "예린": {
     "id": "7htnZJTm5SZsmKRrnOL5mk",
     "spotifyName": "Yerin",
@@ -4624,6 +4673,17 @@
     },
     "checkedAt": "2026-10-01"
   },
+  "이슬": {
+    "id": "7j9VXBIPcjfX3x2euuD9mO",
+    "spotifyName": "seul",
+    "kind": "solo",
+    "confidence": "medium",
+    "why": "이름 유일 일치",
+    "evidence": {
+      "titleOverlap": null
+    },
+    "checkedAt": "2026-10-11"
+  },
   "이승환": {
     "id": "6LPV5KZBc1zBjX8AFZ2WWY",
     "spotifyName": "LEE SEUNG HWAN",
@@ -5018,6 +5078,22 @@
       "titleOverlap": 5
     },
     "checkedAt": "2026-10-06"
+  },
+  "전율": {
+    "id": "0Dw3QbByZg3dKYrYPrisMX",
+    "spotifyName": "JEON YU JIN",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "이름 불일치 — 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0,
+      "verifyOverlap": 0,
+      "verifyYears": [
+        2026,
+        2025
+      ]
+    },
+    "checkedAt": "2026-10-11"
   },
   "전은미": {
     "id": "2jc3bBIKdaAFZnnQBCLLmh",

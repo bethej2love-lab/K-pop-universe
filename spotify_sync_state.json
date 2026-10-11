@@ -526,10 +526,16 @@
     "선샤인": "2026-10-11",
     "가가": "2026-10-11",
     "민희": "2026-10-11",
-    "효은": "2026-10-11"
+    "효은": "2026-10-11",
+    "소영": "2026-10-11",
+    "영흔": "2026-10-11",
+    "이슬": "2026-10-11",
+    "가영": "2026-10-11",
+    "전율": "2026-10-11",
+    "아유미": "2026-10-11"
   },
-  "runs": 65,
-  "lastRunAt": "2026-10-11T12:41:51.066Z",
+  "runs": 66,
+  "lastRunAt": "2026-10-11T15:35:31.857Z",
   "swept": {
     "에스파": [
       2023,
@@ -2873,6 +2879,35 @@
       2023,
       2024,
       2025
+    ],
+    "소영": [
+      2023,
+      2024,
+      2025
+    ],
+    "영흔": [
+      2023,
+      2024,
+      2025
+    ],
+    "이슬": [
+      2023,
+      2024,
+      2025
+    ],
+    "가영": [
+      2023,
+      2024,
+      2025
+    ],
+    "전율": [
+      2023,
+      2024,
+      2025
+    ],
+    "아유미": [
+      2023,
+      2024
     ]
   },
   "pending": {
@@ -3817,6 +3852,41 @@
         "2025-06-12 Piano Stories From Roads We Never Took"
       ],
       "why": "영상 증거 0곡(영상 207개 대조)"
+    },
+    "영흔": {
+      "spotifyName": "Lee Young Hyun",
+      "spotifyId": "4GzuNU3GlvlfNB4xweeTVR",
+      "since": "2026-10-11",
+      "heldAlbums": [
+        "2026-01-29 Where Love Ends",
+        "2023-06-29 To You My Light",
+        "2023-06-16 Yell Out the Love",
+        "2023-12-19 PROJECT if, Vol. 2",
+        "2023-03-16 The Heavenly Idol (Original Television Soundtrack), Pt.6"
+      ],
+      "why": "영상 증거 0곡(영상 0개 대조)"
+    },
+    "이슬": {
+      "spotifyName": "seul",
+      "spotifyId": "7j9VXBIPcjfX3x2euuD9mO",
+      "since": "2026-10-11",
+      "heldAlbums": [
+        "2025-10-14 Dawn",
+        "2025-08-19 Name of the Season"
+      ],
+      "why": "영상 증거 0곡(영상 3개 대조)"
+    },
+    "전율": {
+      "spotifyName": "JEON YU JIN",
+      "spotifyId": "0Dw3QbByZg3dKYrYPrisMX",
+      "since": "2026-10-11",
+      "heldAlbums": [
+        "2026-04-05 My Love, My Destiny (Original Soundtrack from Recipe for Love, Pt. 5)",
+        "2026-03-26 GAYO GAYO",
+        "2023-04-19 FIRST YUJIN",
+        "2023-10-24 Neverland"
+      ],
+      "why": "영상 증거 0곡(영상 5개 대조)"
     }
   },
   "collabSwept": {}

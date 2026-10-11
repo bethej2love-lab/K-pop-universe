@@ -135533,7 +135533,12 @@
       "en": "Solo"
     },
     "groups": [
-      {"ko": "비투비", "en": "BTOB", "active": false, "left": "2020.12.31"}
+      {
+        "ko": "비투비",
+        "en": "BTOB",
+        "active": false,
+        "left": "2020.12.31"
+      }
     ],
     "co": "비투비 컴퍼니",
     "active": false,
@@ -238790,6 +238795,30 @@
         ]
       },
       {
+        "title": "Maybe We Don't Need Words",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273f5cdcc6f6970a9071a157e38",
+        "releaseDate": "2026.08.17",
+        "trackCount": 2,
+        "titleTrack": "Maybe We Don't Need Words",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Maybe We Don't Need Words",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Maybe We Don't Need Words (inst.)",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "7k8c6I5FJdhDRHfrJCRlxy",
+        "copyright": "2026 요구르트 스튜디오"
+      },
+      {
         "title": "우리의 내일은 더 빛날 거야",
         "type": "싱글",
         "releaseDate": "2026.01.28",
@@ -238809,6 +238838,30 @@
             "isTitle": false
           }
         ]
+      },
+      {
+        "title": "Our tomorrow will shine even more",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273a6cb0117978e883070178c71",
+        "releaseDate": "2026.01.28",
+        "trackCount": 2,
+        "titleTrack": "Our tomorrow will shine even more",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Our tomorrow will shine even more",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Our tomorrow will shine even more - Instrumental",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "0otTdMbo1JoPpDzMXetegc",
+        "copyright": "2026 Winner J"
       },
       {
         "title": "사랑 예보",
@@ -238832,6 +238885,30 @@
         ]
       },
       {
+        "title": "Love forecast",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273be692330e5c79e7d1ece08f5",
+        "releaseDate": "2025.12.03",
+        "trackCount": 2,
+        "titleTrack": "Love forecast",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Love forecast",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Love forecast - Instrumental",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "3NaaIYEsh7UuwnT3oz32t9",
+        "copyright": "2025 Winner J"
+      },
+      {
         "title": "말해줘요",
         "type": "싱글",
         "releaseDate": "2025.10.06",
@@ -238853,6 +238930,30 @@
         ]
       },
       {
+        "title": "Tell me",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b2731c9ceb6f8abee193903bce4c",
+        "releaseDate": "2025.10.06",
+        "trackCount": 2,
+        "titleTrack": "Tell me",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Tell me",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Tell me - Instrumental",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "2Q9rDpFfsXo6JRHe1bPIoK",
+        "copyright": "2025 Winner J"
+      },
+      {
         "title": "그대가 전부인 걸요",
         "type": "싱글",
         "releaseDate": "2025.09.03",
@@ -238872,6 +238973,30 @@
             "isTitle": false
           }
         ]
+      },
+      {
+        "title": "You're everything",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b27333e7512209a377942bf5ad97",
+        "releaseDate": "2025.09.03",
+        "trackCount": 2,
+        "titleTrack": "You're everything",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "You're everything",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "You're everything - Instrumental",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "0EoaTYhlGu8ogRAe9Ccxfq",
+        "copyright": "2025 Winner J"
       },
       {
         "title": "너를 닮은 이 밤",
@@ -238937,6 +239062,30 @@
         ]
       },
       {
+        "title": "I like you like you",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b27302a1cb137b2137ad19d2c737",
+        "releaseDate": "2025.05.30",
+        "trackCount": 2,
+        "titleTrack": "I like you like you",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "I like you like you",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "I like you like you - Instrumental",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "4TcNK3nNgY6KtsHdcFAcv5",
+        "copyright": "2025 Winner J"
+      },
+      {
         "title": "우린 어떤 사이야",
         "type": "싱글",
         "releaseDate": "2025.04.30",
@@ -238958,6 +239107,30 @@
         ]
       },
       {
+        "title": "What kind of relationship are we",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273bd2d51e68cd6573307e48122",
+        "releaseDate": "2025.04.30",
+        "trackCount": 2,
+        "titleTrack": "What kind of relationship are we",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "What kind of relationship are we",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "What kind of relationship are we - Instrumental",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "2rjI2rLmy4TGZFwoXKOiIn",
+        "copyright": "2025 Winner J"
+      },
+      {
         "title": "주말엔 집순이 모드",
         "type": "싱글",
         "releaseDate": "2025.03.31",
@@ -238977,6 +239150,30 @@
             "isTitle": false
           }
         ]
+      },
+      {
+        "title": "Homebody mode on weekends",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273ac9c9c0f39bb45d73c8976a6",
+        "releaseDate": "2025.03.31",
+        "trackCount": 2,
+        "titleTrack": "Homebody mode on weekends",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Homebody mode on weekends",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Homebody mode on weekends - Instrumental",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "6aEX5lbCj9SkzPY1kybhMX",
+        "copyright": "2025 Winner J"
       },
       {
         "title": "꽃 한 송이",
@@ -239045,6 +239242,75 @@
         ]
       },
       {
+        "title": "A flower",
+        "type": "정규",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b27335a46ac41ed376fea19da293",
+        "releaseDate": "2025.02.27",
+        "trackCount": 11,
+        "titleTrack": "A flower",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "A flower",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "a drink",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "Pretty, pretty",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Summer night",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "I'll meet you like fate",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "I can only see you in my eyes",
+            "isTitle": false
+          },
+          {
+            "no": 7,
+            "title": "I'll be honest with you",
+            "isTitle": false
+          },
+          {
+            "no": 8,
+            "title": "Our past when love began",
+            "isTitle": false
+          },
+          {
+            "no": 9,
+            "title": "The truth is",
+            "isTitle": false
+          },
+          {
+            "no": 10,
+            "title": "I really hated you",
+            "isTitle": false
+          },
+          {
+            "no": 11,
+            "title": "A flower - Instrumental",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "0zRcZIBkPbjoIx7EMSDdam",
+        "copyright": "2025 Winner J"
+      },
+      {
         "title": "사랑이 시작된 우리들의 지난날",
         "type": "싱글",
         "releaseDate": "2025.01.27",
@@ -239064,6 +239330,30 @@
             "isTitle": false
           }
         ]
+      },
+      {
+        "title": "Our past when love began",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273220d07a71ec89391f271c98b",
+        "releaseDate": "2025.01.27",
+        "trackCount": 2,
+        "titleTrack": "Our past when love began",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Our past when love began",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Our past when love began - Instrumental",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "158JPJLzDhPidVt9ITlILA",
+        "copyright": "2025 Winner J"
       },
       {
         "title": "우리만의 크리스마스",
@@ -239087,6 +239377,30 @@
         ]
       },
       {
+        "title": "Our own Christmas",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273cd54d28185b78620547496c3",
+        "releaseDate": "2024.12.05",
+        "trackCount": 2,
+        "titleTrack": "Our own Christmas",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Our own Christmas",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Our own Christmas - Instrumental",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "7jaFqRO34l6E62iXymhPC0",
+        "copyright": "2024 Winner J"
+      },
+      {
         "title": "사실은 말야",
         "type": "싱글",
         "releaseDate": "2024.11.20",
@@ -239106,6 +239420,30 @@
             "isTitle": false
           }
         ]
+      },
+      {
+        "title": "The truth is",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b2730f74950bb7ae9be7021adfca",
+        "releaseDate": "2024.11.20",
+        "trackCount": 2,
+        "titleTrack": "The truth is",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "The truth is",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "The truth is - Instrumental",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "5fxJzeH8rCYv4dRg4uVQOq",
+        "copyright": "2024 Winner J"
       },
       {
         "title": "참 미웠어",
@@ -239129,6 +239467,30 @@
         ]
       },
       {
+        "title": "I really hated you",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273a3c2c289387d772effce5475",
+        "releaseDate": "2024.10.10",
+        "trackCount": 2,
+        "titleTrack": "I really hated you",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "I really hated you",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "I really hated you - Instrumental",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "3w1rzgXBnuVNNOLfRe2UWK",
+        "copyright": "2024 Winner J"
+      },
+      {
         "title": "내 눈엔 너만 보이는 걸",
         "type": "싱글",
         "releaseDate": "2024.09.02",
@@ -239148,6 +239510,30 @@
             "isTitle": false
           }
         ]
+      },
+      {
+        "title": "I can only see you in my eyes",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b27323ac09f252823668f3a37d0b",
+        "releaseDate": "2024.09.02",
+        "trackCount": 2,
+        "titleTrack": "I can only see you in my eyes",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "I can only see you in my eyes",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "I can only see you in my eyes - Instrumental",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "048K6TMsbPurg3pjkvHXaI",
+        "copyright": "2024 Winner J"
       },
       {
         "title": "솔직히 말할게",
@@ -239171,6 +239557,30 @@
         ]
       },
       {
+        "title": "I'll be honest with you",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b27308b93567e30a68faaa092cc7",
+        "releaseDate": "2024.07.29",
+        "trackCount": 2,
+        "titleTrack": "I'll be honest with you",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "I'll be honest with you",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "I'll be honest with you - Instrumental",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "2XOjoa52AuyTMdDxQd6QhW",
+        "copyright": "2024 Winner J"
+      },
+      {
         "title": "운명처럼 그댈 만나",
         "type": "싱글",
         "releaseDate": "2024.06.17",
@@ -239190,6 +239600,30 @@
             "isTitle": false
           }
         ]
+      },
+      {
+        "title": "I'll meet you like fate",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b27351b9541f96a5c3a37e2566f7",
+        "releaseDate": "2024.06.17",
+        "trackCount": 2,
+        "titleTrack": "I'll meet you like fate",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "I'll meet you like fate",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "I'll meet you like fate - Instrumental",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "5WaRyCSliWnbNx4Ll91noa",
+        "copyright": "2024 Winner J"
       },
       {
         "title": "여름밤",
@@ -239213,6 +239647,30 @@
         ]
       },
       {
+        "title": "Summer night",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273cdc4e4cad45084d053123851",
+        "releaseDate": "2024.05.16",
+        "trackCount": 2,
+        "titleTrack": "Summer night",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Summer night",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Summer night - Instrumental",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "7zAr1Xluk5AZFmpG1o0zgI",
+        "copyright": "2024 Winner J"
+      },
+      {
         "title": "예뻐 예뻐",
         "type": "싱글",
         "releaseDate": "2024.04.08",
@@ -239234,6 +239692,30 @@
         ]
       },
       {
+        "title": "Pretty Pretty",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b27353ac9a9230a52a8fed3962b9",
+        "releaseDate": "2024.04.08",
+        "trackCount": 2,
+        "titleTrack": "Pretty Pretty",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Pretty Pretty",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Pretty Pretty - Instrumental",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "3ET5XX4ou4pS98z7S4VTmZ",
+        "copyright": "2024 Winner J"
+      },
+      {
         "title": "한 잔",
         "type": "싱글",
         "releaseDate": "2024.03.05",
@@ -239253,6 +239735,30 @@
             "isTitle": false
           }
         ]
+      },
+      {
+        "title": "a drink",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b27319e9d9f3c53a6e1f0e2b7d49",
+        "releaseDate": "2024.03.05",
+        "trackCount": 2,
+        "titleTrack": "a drink",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "a drink",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "a drink - Instrumental",
+            "isTitle": false
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "7DNURtXtuEbOJSJz67s0mr",
+        "copyright": "2024 Winner J"
       }
     ],
     "id": "a1699",
