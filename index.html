@@ -6641,6 +6641,16 @@ function _surfTitlePeople(title){
   return out;
 }
 // 행의 사람 표기(칩·타일 부제) — 한 명으로 확정되면 표기명, 아니면 제목 원문 그대로
+// cover_of_song을 곡 단위로 — 괄호 밖의 ';'만 구분자로 본다(괄호 안 '英雄; Kick It'은 곡명 일부). 쉼표는 곡 제목에 흔해 구분자 아님.
+function _coverSongParts(s){
+  const out=[];let depth=0,cur='';
+  for(const ch of String(s||'')){
+    if('([（【'.includes(ch))depth++;else if(')]）】'.includes(ch))depth=Math.max(0,depth-1);
+    if(ch===';'&&depth===0){if(cur.trim())out.push(cur.trim());cur='';}else cur+=ch;
+  }
+  if(cur.trim())out.push(cur.trim());
+  return out;
+}
 function _surfPersonLabel(raw,fallbackGroup){
   let cands;
   if(/\(.+\)$/.test(raw)){const a=_findArtistByConnName(raw,fallbackGroup);cands=a?[a]:[];}
@@ -6846,8 +6856,11 @@ async function _surfFetch(vid,ctx){
   }
   // ② 커버 — 지금 영상이 커버면 같은 원곡, 아니면 이 사람/그룹 노래를 부른 다른 가수
   if(R.sameSong){
-    const song=_titleNorm(v.cover_of_song||'').split(/[(\[]/)[0].trim();
-    const same=song?R.sameSong.filter(x=>_titleNorm(x.cover_of_song||x.title).includes(song)):[];
+    // 원곡이 여러 곡이면 cover_of_song에 ';'로 이어 적는다(어드민 입력칸 안내). 예전엔 칸 전체를 한 곡으로 비교해
+    // "Likey; 약속해요" 커버가 다른 Likey 커버와 안 묶였다(2026-10-12). ⚠️ 쉼표는 구분자가 아니다 — 곡 제목 자체에
+    // 쉼표가 흔하다("안돼, 난 안돼", "XO, My Cyberlove"). 괄호 안의 ';'(불가사의; 不可思議)는 곡명 일부라 괄호 밖만 자른다.
+    const songs=_coverSongParts(v.cover_of_song).map(s=>_titleNorm(s).split(/[(\[]/)[0].trim()).filter(Boolean);
+    const same=songs.length?R.sameSong.filter(x=>{const t=_titleNorm(x.cover_of_song||x.title);return songs.some(s=>t.includes(s));}):[];
     const rest=R.sameSong.filter(x=>!same.includes(x));
     mk('cover',same.length?'같은 곡 커버':'같은 원곡자 커버',[...same,...rest].map(x=>Object.assign({},x,{_ps:[_surfPerformer(x)]})));
   }else if(R.cover){
