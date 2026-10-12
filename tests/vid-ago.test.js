@@ -45,15 +45,15 @@ need(ctx._fmtVidAgo(hoursAgo(3))==='3시간 전','3시간 전',ctx._fmtVidAgo(ho
 // 사용자가 제보한 바로 그 케이스
 need(ctx._fmtVidAgo(hoursAgo(17))==='17시간 전','17시간 전 영상은 "17시간 전"(제보 케이스)',ctx._fmtVidAgo(hoursAgo(17)));
 need(ctx._fmtVidAgo(hoursAgo(23))==='23시간 전','23시간까지는 시간 표기',ctx._fmtVidAgo(hoursAgo(23)));
-need(ctx._fmtVidAgo(hoursAgo(25))==='어제','24시간 넘으면 어제',ctx._fmtVidAgo(hoursAgo(25)));
-need(ctx._fmtVidAgo(hoursAgo(47))==='어제','47시간까지 어제',ctx._fmtVidAgo(hoursAgo(47)));
+need(ctx._fmtVidAgo(hoursAgo(25))==='1일 전','24시간 넘으면 1일 전',ctx._fmtVidAgo(hoursAgo(25)));
+need(ctx._fmtVidAgo(hoursAgo(47))==='1일 전','47시간까지 1일 전',ctx._fmtVidAgo(hoursAgo(47)));
 need(ctx._fmtVidAgo(hoursAgo(50))==='2일 전','48시간 넘으면 N일 전',ctx._fmtVidAgo(hoursAgo(50)));
 
 // ── ② 시각이 없는 값(옛 행의 published_at) — 시간을 지어내면 안 된다 ───────────
 // 이게 이번 버그의 핵심. "어제 날짜"에 시간 계산을 하면 자정 UTC 기준이라 한국시간에서 최대
 // 33시간까지 부풀려져 엉뚱한 "N시간 전"/"어제"가 나온다.
 const yd=ctx._fmtVidAgo(daysAgoDate(1));
-need(yd==='어제',`날짜만 있으면 달력 기준 — 어제 날짜는 "어제"`,yd);
+need(yd==='1일 전',`날짜만 있으면 달력 기준 — 어제 날짜는 "1일 전"`,yd);
 // 2026-09-13 결정으로 기대값이 '오늘' → ''(빈 문자열)로 바뀌었다 — "오늘"이 옆 카드의 "N시간 전"과
 // 나란히 놓이면 어긋나 보인다는 제보 때문에, 시각을 모르면 **시간칩을 아예 안 단다**(index.html의
 // _fmtVidAgo 주석 참고. published_ts가 백필되면 자동으로 "N시간 전"으로 뜬다).
@@ -69,7 +69,7 @@ need(ctx._fmtVidAgo('')===''&&ctx._fmtVidAgo(null)===''&&ctx._fmtVidAgo('그냥�
 // 영어
 ctx.currentLang='en';
 need(ctx._fmtVidAgo(hoursAgo(17))==='17h ago','영어 — 17h ago',ctx._fmtVidAgo(hoursAgo(17)));
-need(ctx._fmtVidAgo(daysAgoDate(1))==='yesterday','영어 — 날짜만이면 yesterday',ctx._fmtVidAgo(daysAgoDate(1)));
+need(ctx._fmtVidAgo(daysAgoDate(1))==='1d ago','영어 — 날짜만이면 1d ago',ctx._fmtVidAgo(daysAgoDate(1)));
 ctx.currentLang='ko';
 
 // ── ③ 데이터 쪽(동기화)이 정확한 시각을 실제로 저장하는가 ──────────────────────
