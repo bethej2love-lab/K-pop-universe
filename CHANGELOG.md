@@ -61,6 +61,11 @@
 - ~~**`active:false`인데 탈퇴일(`left`)이 없는 멤버 104명 — 그룹 미태깅 영상이 그 멤버 카드에 하나도 안 뜸(2026-08-27 발견)**~~ → **같은 날 처리 완료** — 폴백 4단계 재설계로 차단 110명→11명, 99명 복구. 아래 2026-08-27 항목 참고. ⚠️ 원 진단("탈퇴일 미기입이 원인")은 **틀렸었다** — 실제 원인은 `active` 필드가 "이 그룹 멤버인가"와 "개인이 아직 활동하는가" 두 뜻으로 섞여 쓰인 것이었고, 쥬얼리·걸스데이·스텔라에서 같은 시기 멤버가 은퇴 여부에 따라 갈리고 있었다.
 ---
 
+## 2026-10-12 (세션 — 시청 진행 바·CI 수정)
+- [완료][index.html][kpop_universe.css] **시청 진행 바** — YouTube 빨간 줄처럼 썸네일 하단에 빨간 진행 바. infoDelivery postMessage로 currentTime/duration 캡처 → localStorage 저장(기기 로컬), 로그인 시 Supabase `video_progress` 테이블 동기화(기기 간). `.gc-ch-item`·`.tv-sm`·feed-list 오버레이 3종 모두 적용. Supabase 테이블/RLS 생성 SQL 사용자 실행 완료.
+- [완료][tests/] **CI 빨간불 수정** — program-collection(gc-program-row→gc-collection-row), shorts-promote(_ytClassify 시그니처 변경), vid-ago('어제'→'1일 전' 의도적 변경 테스트 반영).
+- [아이디어][보류] **스토리 조각 굿즈** — 인스타 스토리처럼 짧은 행동 유도 + 퍼즐/찢어진 사진 조각 같은 수집 요소. 아이디어 단계, 구체화 전 보류.
+
 ## 2026-10-12 (세션 — 탐험 패널 정리·우주 렌더 일관성)
 - [진행중][tests/] **CI(Data validation & tests) 10-10부터 계속 빨간불** — 이번에 고친 것: member-cutoff(컷오프 본문이 `_memberVideoCutoffCore`로 이동), chart-snapshot-parity(**실제 불일치** — 크론 직캠 필터가 화면의 공항·생일 제외/'입덕직캠'을 못 따라옴 → kpopuniverse-share 0f07ee2로 크론 수정), overlay-front(라이트박스 큐 시트 스냅샷 추가). **남은 것(다음 세션 바로)**: program-collection(10-11 c00240235 프로그램 행→컬렉션 행 병합 후 낡은 문자열 검사), shorts-promote(`_ytClassify` 슬라이스 실패 — a7ad48d04 isShort 파라미터 추가 후), vid-ago('어제' 판정 4건 — 로직 회귀인지 테스트 낡음인지 확인 필요). 브라우저 테스트(admin-dock·coverof·foryou·lb-swipe·reveal)는 CI 스킵 대상이지만 로컬에서도 실패 — 별도 확인.
 - [이슈] **멜론 경로 러너 첫 실행 관찰 필요** — disco-daily 18:11 회차 요약에 "차단 N"이 0인지, 플레이브 HYPERDRIVE(10/12 18시)가 들어왔는지 확인. 차단되면 멜론 단계는 로컬/다른 경로로 돌려야 함.
