@@ -1953,7 +1953,18 @@ function _dispKo(a){return(a&&a.displayName)||(a&&a.name&&a.name.ko)||'';}
 // 배열·즐겨찾기 키가 쓰는 식별자라, 둘을 분리해둔 상태다. 그런데 표시 지점마다 `name.ko`를 직접 쓰고
 // 있어서 멤버 카드에만 활동명이 반영되고 그룹 카드·인덱스·칩·검색은 옛 이름 그대로였다(2026-09-02
 // 사용자 제보 — "그룹 카드 표기도 통일해야지"). 새 표시 지점을 만들 때도 name.ko를 직접 쓰지 말 것.
-function _dispName(a){
+// gko(선택): 그 그룹 문맥에서 보일 이름 — groups[]의 name 오버라이드(그 그룹 시절 활동명)가 있으면 그걸 쓴다(2026-10-12,
+// 사용자: "티오원 활동엔 제롬, 이후 활동엔 성민"). 성민(티오원→제롬)·전여여정(티오원→여정)·디모렉스(트레저→예담).
+// ⚠️ 그룹 문맥이 확실한 곳(영상의 group_ko, "이름(그룹)" 태그, 그룹 카드 멤버 목록)에서만 넘길 것 — 멤버 카드 제목처럼
+//    "사람 자체"를 가리키는 곳은 지금 이름이 맞다(옛 이름은 _appendSubName이 옆에 작게 붙인다).
+function _groupStageName(a,gko){
+  if(!a||!gko)return null;
+  const g=(_artistGroups(a)||[]).find(x=>x&&x.ko===gko);
+  return g&&g.name?{ko:g.name,en:g.nameEn||null}:null;
+}
+function _dispName(a,gko){
+  const gs=_groupStageName(a,gko);
+  if(gs)return currentLang==='ko'?gs.ko:(gs.en||gs.ko);
   if(currentLang==='ko')return _dispKo(a);
   return(a&&a.name&&a.name.en)||(a&&a.name&&a.name.ko)||'';
 }
@@ -6350,7 +6361,7 @@ function _lbUpdateMemberInfo(){
   const _multi=_mems.length>1?_mems.map(n=>ARTISTS.find(a=>a.name.ko===n&&_inG(a))).filter(Boolean):[];
   const _multiChips=_multi.length>1&&!(GROUPS[groupKo]&&_withIsFullGroup(groupKo,_multi));
   const gName=groupKo&&GROUPS[groupKo]?(currentLang==='ko'?groupKo:(GROUPS[groupKo].en||groupKo)):'';
-  const mName=artist?(_dispName(artist)):'';
+  const mName=artist?(_dispName(artist,groupKo)):'';
   // ── 하프시트 진입점(2026-08-26, 로드맵 P1-2) ────────────────────────────────────
   // 예전엔 "카리나 · 에스파"가 한 덩어리 텍스트라 누를 수 없었다. 멤버/그룹을 각각 누르면
   // 그 카드가 화면 아래 절반으로 올라온다 — **영상은 계속 재생된다**(연결 카드와 달리 일시정지 안 함).
@@ -6379,7 +6390,7 @@ function _lbUpdateMemberInfo(){
   const _anchorG=artist?artist.group.ko:groupKo;
   if(_multiChips)_multi.forEach(ar=>{
     const c=document.createElement('button');c.type='button';c.className='lb-with-chip lb-with-chip-btn lb-mem-chip';
-    c.textContent=_dispName(ar);
+    c.textContent=_dispName(ar,groupKo);
     c.addEventListener('click',e=>{e.stopPropagation();_openLbHalf('member',ar);});
     withEl.appendChild(c);
   });
@@ -6406,7 +6417,7 @@ function _lbUpdateMemberInfo(){
     }
     const n=it.n;
     const target=_findArtistByConnName(n,artist?artist.group.ko:groupKo);
-    const label=target?(_dispName(target)):(n.match(/^(.+)\((.+)\)$/)?.[1]||n);
+    const label=target?(_dispName(target,n.match(/\(([^()]+)\)$/)?.[1]||groupKo)):(n.match(/^(.+)\((.+)\)$/)?.[1]||n);
     // 함께한 멤버도 누르면 그 멤버 카드가 반 열린다(2026-08-27 사용자 요청 — 앵커의 멤버/그룹은
     // 눌리는데 이 칩만 장식이라 '멤버는 클릭이 안 되냐'는 제보). 이름을 실제 아티스트로 해석하지
     // 못한 칩(target 없음)은 열 카드가 없으므로 예전처럼 그냥 텍스트로 둔다.
@@ -6635,11 +6646,11 @@ function _surfPersonLabel(raw,fallbackGroup){
   if(/\(.+\)$/.test(raw)){const a=_findArtistByConnName(raw,fallbackGroup);cands=a?[a]:[];}
   else cands=_surfCandidates(raw);
   const a=cands.length===1?cands[0]:null;
-  return{label:a?_dispName(a):raw.replace(/\((.+)\)$/,'').trim(),a,cands};
+  return{label:a?_dispName(a,raw.match(/\(([^()]+)\)$/)?.[1]):raw.replace(/\((.+)\)$/,'').trim(),a,cands};
 }
 function _surfPerformer(x){
   const mem=x.members||[];
-  if(mem.length===1){const a=ARTISTS.find(y=>y.name.ko===mem[0]&&_artistGroups(y).some(g=>g.ko===x.group_ko));if(a)return _dispName(a);}
+  if(mem.length===1){const a=ARTISTS.find(y=>y.name.ko===mem[0]&&_artistGroups(y).some(g=>g.ko===x.group_ko));if(a)return _dispName(a,x.group_ko);}
   return _surfGName(x.group_ko||'');
 }
 function _surfSong(x){
@@ -7052,7 +7063,7 @@ async function _surfWrittenSongsOf(a){
 const _SURF_CAM_GROUP='단체';
 function _surfCamWho(x){
   const m=x.members||[];
-  if(m.length===1){const ar=ARTISTS.find(y=>y.name.ko===m[0]&&(y.group.ko===x.group_ko||_artistGroups(y).some(g=>g.ko===x.group_ko)));return[ar?_dispName(ar):m[0]];}
+  if(m.length===1){const ar=ARTISTS.find(y=>y.name.ko===m[0]&&(y.group.ko===x.group_ko||_artistGroups(y).some(g=>g.ko===x.group_ko)));return[ar?_dispName(ar,x.group_ko):m[0]];}
   if(!m.length&&!GROUPS[x.group_ko]){const ar=ARTISTS.find(y=>_ytGroupKoFor(y)===x.group_ko);if(ar)return[_dispName(ar)];}
   return[_SURF_CAM_GROUP];
 }
@@ -8031,9 +8042,9 @@ function _makeGCChip(ko,label){
   });
   return chip;
 }
-function _makeMemberChip(t){
+function _makeMemberChip(t,gko){
   const chip=document.createElement('span');chip.className='tv-with-chip';
-  chip.textContent=_dispName(t);
+  chip.textContent=_dispName(t,gko); // gko: 이 칩이 속한 그룹 묶음(그 그룹 시절 활동명 — 티오원 영상의 성민은 "제롬")
   chip.addEventListener('click',e=>{
     e.stopPropagation();
     if(t._worldPos)flyTo(t._worldPos);
@@ -8147,7 +8158,7 @@ function _makeWithLine(song,ctx){
       if(!isFullGroup){
         members.forEach((m,mi)=>{
           if(!(skipChip&&mi===0))line.appendChild(document.createTextNode(' '));
-          line.appendChild(_makeMemberChip(m));
+          line.appendChild(_makeMemberChip(m,gko));
         });
       }
       _wlRenderedAny=true;
@@ -11930,7 +11941,7 @@ function _renderGcMemberList(ko,cx,cy){
     })
     .forEach(m=>{
       const sp=document.createElement('span');sp.className='gc-mem-name'+(_eff(m)?'':' gc-mem-inactive');
-      sp.textContent=_dispName(m);
+      sp.textContent=_dispName(m,ko); // 그룹 카드 = 그 그룹 시절 이름(티오원 카드의 성민은 "제롬")
       _appendDeceasedStar(sp,m);
       if(_artistGroups(m).length>1)sp.title=_artistGroups(m).map(g=>g.ko).join(' · ');
       sp.addEventListener('click',e=>{
@@ -13618,7 +13629,7 @@ function _renderFilterPanel(){
       grpHd.textContent=currentLang==='ko'?gko:(GROUPS[gko]&&GROUPS[gko].en||gko);
       listEl.appendChild(grpHd);
       ms.forEach(m=>{
-        const name=_dispName(m);
+        const name=_dispName(m,gko);
         const item=_makeFilterListItem(name,'',()=>{if(m._worldPos)flyTo(m._worldPos);showT(m,window.innerWidth/2,window.innerHeight*0.4);});
         listEl.appendChild(item);
       });
@@ -21552,7 +21563,7 @@ function _buildFeedRandomConnection(list){
   const{owner,song}=cliquePool[Math.floor(Math.random()*cliquePool.length)];
   const withNames=song.with.map(w=>_findArtistByConnName(w,owner.group.ko));
   const ownerDisp=_dispName(owner);
-  const withDisp=withNames.map((wa,i)=>wa?(_dispName(wa)):(song.with[i].match(/^(.+)\(/)?.[1]||song.with[i]));
+  const withDisp=withNames.map((wa,i)=>wa?(_dispName(wa,song.with[i].match(/\(([^()]+)\)$/)?.[1])):(song.with[i].match(/^(.+)\(/)?.[1]||song.with[i]));
   // 화살표(↔)가 어색하다는 피드백(2026-08-19)으로 물결(~)로 교체, "N인" 인원수 표기도 같이 제거—
   // 인원 정보 없이 "연결 보기"만으로 충분하다는 판단.
   const connLabel=[ownerDisp,...withDisp].join(' ~ ');
@@ -21602,7 +21613,7 @@ function _songWhoLine(song){
   const arts=[...new Set(song.memberKos||[])].map(n=>ARTISTS.find(a=>a.name.ko===n&&inG(a))).filter(Boolean);
   const full=arts.length>1&&GROUPS[gk]&&_withIsFullGroup(gk,arts);
   const gLabel=GROUPS[gk]?(currentLang==='ko'?gk:(GROUPS[gk].en||gk)):'';
-  let names=full?[]:arts.map(_dispName);
+  let names=full?[]:arts.map(a=>_dispName(a,gk));
   if(!names.length&&!gLabel){const solo=ARTISTS.find(a=>_ytGroupKoFor(a)===gk);if(solo)names=[_dispName(solo)];}
   if(!names.length&&!gLabel)return null;
   const more=names.length>3?names.length-3:0;
@@ -21615,7 +21626,7 @@ function _feedWhoSub(song){
   if(!song.ownerCh)return g;
   const ms=(song.memberKos||[]).map(mko=>{
     const a=ARTISTS.find(x=>x.name.ko===mko&&(!song.groupKo||_artistGroups(x).some(gg=>gg.ko===song.groupKo)))||ARTISTS.find(x=>x.name.ko===mko);
-    return a?_dispName(a):mko;
+    return a?_dispName(a,song.groupKo):mko;
   }).filter(Boolean);
   if(!ms.length)return g;
   return ms.join(', ')+(g?` <span class="feed-sub-grp">${g}</span>`:'');
@@ -22618,7 +22629,7 @@ function _makeChVidController(contId){
     let chip=null;
     if(state.memberKo){
       const me=ARTISTS.find(a=>a.name.ko===state.memberKo&&(_ytGroupKoFor(a)===state.ko||a.group.ko===state.ko||_artistGroups(a).some(g=>g.ko===state.ko)));
-      if(me&&((v.members||[]).includes(state.memberKo)||!GROUPS[v.group_ko]))chip=_makeMemberChip(me);
+      if(me&&((v.members||[]).includes(state.memberKo)||!GROUPS[v.group_ko]))chip=_makeMemberChip(me,v.group_ko);
     }
     if(!chip&&v.group_ko&&GROUPS[v.group_ko])chip=_makeGCChip(v.group_ko,currentLang==='ko'?v.group_ko:(GROUPS[v.group_ko].en||v.group_ko));
     if(!chip)return null;

@@ -34,6 +34,8 @@ function slice(re,label){
 const ctx={currentLang:'ko'};
 vm.createContext(ctx);
 vm.runInContext(slice(/function _dispKo\(/,'_dispKo'),ctx);
+vm.runInContext('function _artistGroups(a){return a.groups||[a.group];}',ctx); // shared.js와 동일
+vm.runInContext(slice(/function _groupStageName\(/,'_groupStageName'),ctx);
 vm.runInContext(slice(/function _dispName\(/,'_dispName'),ctx);
 need(typeof ctx._dispName==='function','_dispName 로드됨');
 
@@ -52,6 +54,15 @@ need(ctx._dispName(hs)==='Choi Hyunsuk','영어 — 한글 활동명이 영문 �
 need(ctx._dispName(dk)==='Doh Kyungsoo','영어 — displayName이 있어도 영문명 우선',ctx._dispName(dk));
 need(ctx._dispName(noEn)==='하루토','영어 — 영문명이 없으면 name.ko로 폴백',ctx._dispName(noEn));
 need(ctx._dispName(null)===''&&ctx._dispName(undefined)==='','아티스트가 없으면 빈 문자열(예외 안 남)');
+ctx.currentLang='ko';
+
+// 그룹 문맥 이름(2026-10-12, 사용자: "티오원 활동엔 제롬, 이후 활동엔 성민") — groups[].name/nameEn 오버라이드
+const sm={name:{ko:'성민',en:'Seongmin'},group:{ko:'원팩트'},groups:[{ko:'원팩트'},{ko:'티오원',name:'제롬',nameEn:'Jerome'}]};
+need(ctx._dispName(sm,'티오원')==='제롬','그룹 문맥 — 그 그룹 시절 활동명(티오원 → 제롬)',ctx._dispName(sm,'티오원'));
+need(ctx._dispName(sm,'원팩트')==='성민','그룹 문맥 — 오버라이드 없는 그룹은 지금 이름',ctx._dispName(sm,'원팩트'));
+need(ctx._dispName(sm)==='성민','문맥 없음 — 지금 이름(멤버 카드 제목 등)',ctx._dispName(sm));
+ctx.currentLang='en';
+need(ctx._dispName(sm,'티오원')==='Jerome','영어 — 그룹 시절 영문 활동명(nameEn)',ctx._dispName(sm,'티오원'));
 ctx.currentLang='ko';
 
 // ⚠️ 표기용 displayName이 식별자(name.ko)를 대체하면 안 된다 — DB members 배열과 즐겨찾기 키

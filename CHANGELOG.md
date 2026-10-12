@@ -62,6 +62,7 @@
 ---
 
 ## 2026-10-12 (세션 — 탐험 패널 정리·우주 렌더 일관성)
+- [완료][index.html][artists.json][tests/disp-name.test.js] **그룹 시절 활동명 표기** — `_dispName(a,gko)`: groups[].name/nameEn 오버라이드를 그룹 문맥(그룹 카드 멤버 목록·영상 멤버/함께한 칩·피드 부제)에서 사용. 성민→티오원에선 제롬, 전여여정→여정, 디모렉스→트레저에선 예담. 멤버 카드 제목 등 사람 자체 표기는 현재 이름 유지. nameEn 3건 추가(Jerome·Yeojeong·Yedam).
 - [완료][admin.js][tests/matching.test.js][sql/2026-10-12_to1_mistag_cleanup.sql] **티오원 오태깅** — 09-23 altNames 'TOO'가 대소문자 무시로 영어 'too'·니쥬/위아이 'Too Bad'에 걸림(함께한 그룹 티오원 509건 중 446건 오태깅, 그룹 키 ~160건) + 별칭 '여정'·민수·경호 일반명사 + LOUIS VUITTON→블랭키 루이. 매처 보강(대문자+근거 필수)·흔한단어 추가·브랜드 제거. 최근 3만건 이전/새 차분 47건 변화(거의 전부 개선). ⚠️ 정리 SQL은 사용자 실행 대기(tags_manual=false만).
 - [완료][index.html] 솔로 카드도 그룹 카드처럼 나머지 딤('솔로' placeholder 비교 제외 — 전 솔로 별이 같이 밝던 버그).
 - [완료][index.html][tests/collection-row-reset.test.js] **카드 Collections 행에 직전 카드 칩 잔존·잇츠라이브 중복**. 10-11 프로그램 행 병합(c00240235)이 innerHTML='' 를 지운 회귀 — 디모렉스→아이유 순으로 열면 아이유 카드에 디모렉스 칩, 재로드마다 프로그램 칩 증식(헤드리스 재현). 행 선비우기 + 호출 토큰.
