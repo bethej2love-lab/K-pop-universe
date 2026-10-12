@@ -14,6 +14,21 @@ const cases = [];
 // publishedAt: 탈퇴 게이트(_atmLeftBefore) 검증용 4번째 인자. 안 주면 기존처럼 날짜 없이 파싱.
 function test(name, title, selfGko, check, publishedAt) { cases.push({ name, title, selfGko, check, publishedAt }); }
 
+// ── TOO(티오원 옛 이름) 영어 일상어 게이트(2026-10-12) ─────────────────────
+// altNames 'TOO'가 대소문자 무시로 "too"에 걸려 티오원 키 1,337건 중 200여 건, 함께한 그룹 509건 중 446건이 오태깅
+// (니쥬·위아이 'Too Bad', G-DRAGON 'TOO BAD', 디스패치 "way too cute"…). 대문자 TOO + 멤버/곡/시절 근거가 있어야 인정.
+const _to1 = r => !!r && (r.primaryGroup === '티오원' || (r.withGroups || []).includes('티오원'));
+test('TOO — 소문자 too 문장은 티오원 아님', 'TXT looked too good and the camera gave up', undefined, r => !_to1(r));
+test('TOO — Too Much Advice(아리랑 코너)는 티오원 아님', "[K-Poppin'] Too Much Advice with Christian Burgos", undefined, r => !_to1(r));
+test("TOO — 니쥬 'Too Bad'는 니쥬 단독", 'NiziU 「Too Bad」 MAYA FanCam #MAYA #NiziU #니쥬', undefined, r => !!r && r.primaryGroup === '니쥬' && !_to1(r));
+test("TOO — G-DRAGON 'TOO BAD'(대문자)도 근거 없으면 티오원 아님", '[One Take/4K] G-DRAGON - TOO BAD #엠카운트다운 EP.877', undefined, r => !_to1(r));
+test('TOO — 전부 대문자 문장(디스패치)', 'PARK JIHOON TOO CUTE. ILLEGALLY CUTE!!', undefined, r => !_to1(r));
+test('TOO — 멤버명 동반 직캠은 티오원', "[MPD직캠] TOO 제이유 직캠 4K '오늘은 이만큼(Take It Slow)'", undefined, r => !!r && r.primaryGroup === '티오원');
+test('TOO — 시절 곡명 동반은 티오원', "(Full Focused) TOO '하나 둘 세고 (Count 1, 2)' 4K | BE ORIGINAL", undefined, r => _to1(r));
+test('TOO — 더쇼 제목 맨 앞 아티스트 표기는 티오원', 'TOO, TOO YOU [THE SHOW, Fancam, 200421] 60P', undefined, r => _to1(r));
+test("여정 — 일반명사 '여정'은 전여여정 역추론 안 함", "인간 펜디 한예슬의 특별한 여정 / Han Ye Seul with FENDI", undefined, r => !r || (r.primaryGroup !== '티오원' && r.primaryGroup !== '뉴비트'));
+test("LOUIS VUITTON — 블랭키 루이(Louis)로 안 감", "나홍진 감독의 LOUIS VUITTON ‘Spirit of Travel’ 프로젝트 세 번째 여정 with 정호연", undefined, r => !r || r.primaryGroup !== '블랭키');
+
 // ── confidence 판정(2026-08-25) ─────────────────────────────────
 // 역추론 결과는 전부 'weak'라 검수 큐로 갔는데, 실측해보니 큐 3,051건 중 661건(22%)이 #KEY·#키처럼
 // 해시태그로 멤버가 박혀 있었음 — 업로더가 태그로 특정해준 걸 "추측"으로 볼 이유가 없어 strong으로.

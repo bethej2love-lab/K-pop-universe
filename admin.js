@@ -8156,10 +8156,12 @@ function _m2DebutBlocks(gko,publishedAt){
 // 약 2,000건 쌓여 있었다(스포티파이 신원 대조 중 발견). "Before School Club"은 같은 프로그램의 오프닝 코너.
 // ⚠️ 매처(_m2ParseTitle)와 재배정 스윕의 "저장 그룹이 제목에 있나" 판정(_mtNorm)이 **같은 함수**를 써야 한다.
 //    한쪽만 지우면 스윕이 "제목에 애프터스쿨 근거 있음"으로 보고 오염 행을 전부 건너뛴다(실제로 그럴 뻔했다).
+// 브랜드명도 같은 이유로 지운다(2026-10-12): "LOUIS VUITTON"의 Louis가 블랭키 루이(en Louis)로 잡혔다(티오원 전수 중 발견).
 function _stripProgramNames(t){
   return String(t||'')
     .replace(/\b(after|before)\s*school\s*club\b/gi,' ')
-    .replace(/(애프터|비포)\s*스쿨\s*클럽/g,' ');
+    .replace(/(애프터|비포)\s*스쿨\s*클럽/g,' ')
+    .replace(/\blouis\s*vuitton\b/gi,' ').replace(/루이\s*비통/g,' ');
 }
 function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
   const _trace=[];
@@ -8298,6 +8300,10 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
   // 사고, _atmStripSurname 주석). 조사가 붙으면 토큰 경계에서 이미 걸러지지만 이 단어들은 단독으로도 흔하다.
   const _ATM_COMMON_KO_WORDS=new Set(['베이비','하루','하늘','바다','봄','여름','겨울','별','사랑','달','천사','하트','메이','가을','노을','소원','하나','루비','미소','마이','렉스',
     '우리','한국','아이','정신','학년','형식','성원','나은','수원','수정','준수',
+    // 2026-10-12 티오원 전수(사용자: "티오원 오태깅 엄청 많다"): 여정(전여여정 별칭 — "특별한 여정"·"다이어트 여정"·
+    // 포레스텔라 '사랑의 여정' 등 수십 건)·민수(가수 민수·최민수)·경호(슬기로운의사생활 캐릭터·"경호원"). 티오원 확정
+    // 문맥(자체 채널·TO1 표기)에선 평문 그대로 잡히고, 역추론만 해시태그로 좁혀진다.
+    '여정','민수','경호',
     // 유니버스 밖 유명인과 겹치는 이름·변형(2026-09-28, 솔로 채널 콜라보 태깅 실측): 윤하(가수 윤하 ≠ 유니스 방윤하의
     // 성 뗀 변형)·지은(아이유 본명 ≠ 퍼플키스 박지은)·비비(가수 BIBI ≠ 이달의소녀 비비 — 효연 'Second (Feat. 비비)')·
     // 태양(IU 콘서트 "오렌지 태양 아래" ≠ 빅뱅 태양, 일상어). 해시태그(#태양)로 명시되면 그대로 인정된다.
@@ -8390,6 +8396,27 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
   //    groups.json 앤팀에 altNames:["andTEAM"]을 같이 넣어야 정상 영상이 안 끊긴다. 둘은 세트.
   const _GROUP_TOKEN_LITERAL_ONLY=new Set(['15&','&TEAM']);
   function hitLiteral(t){return title.toUpperCase().includes(t.toUpperCase());}
+  // 영어 일상어와 같은 altNames — **대문자 단어 그대로 + 그 그룹의 멤버명/곡명이 같은 제목에 있을 때만** 인정한다.
+  // TOO(티오원 옛 이름, 2026-09-23 altNames 추가): hit()이 대소문자를 무시해 "way too cute"·"Too Much Advice"·"TXT looked
+  // too good"까지 전부 티오원이 됐다(2026-10-12 실측: 티오원 키 1,337건 중 'too' 단어만 근거인 게 200건 넘음). 대문자만으론
+  // 부족하다 — 디스패치는 "PARK JIHOON TOO CUTE."처럼 문장을 통째로 대문자로 쓰고 G-DRAGON 'TOO BAD'도 있다. 그래서
+  // 멤버명(2글자↑, 흔한 단어 제외)이나 그 그룹 디스코 곡명(4글자↑)이 함께 있어야 한다("TOO 제이유 직캠", "TOO '하나 둘 세고'").
+  // 직캠 구조 선두 토큰(_fcHeadOk)은 이 게이트와 무관하게 인정된다.
+  // ctx: 지금 로스터·디스코에 없는 시절 근거(TOO 시절 곡·탈퇴 멤버 제롬·출연 프로그램 로드 투 킹덤). 이게 없으면
+  //      "(Full Focused) TOO '하나 둘 세고'"·"Road to Kingdom [직캠] TOO 제롬"이 같이 빠졌다(이전/새 매처 차분으로 확인).
+  const _GROUP_TOKEN_NEEDS_CORROBORATION={'TOO':{gko:'티오원',ctx:['하나 둘 세고','COUNT 1','MAGNOLIA','매그놀리아','오늘은 이만큼','TAKE IT SLOW','제롬','JEROME','웅기','WOONG','ROAD TO KINGDOM','로드 투 킹덤']}};
+  function hitCorroborated(t){
+    const {gko,ctx}=_GROUP_TOKEN_NEEDS_CORROBORATION[t];
+    if(!new RegExp('(^|[^A-Za-z])'+_atmEscRe(t)+'(?![A-Za-z])').test(title||''))return false; // 대소문자 그대로
+    if((ctx||[]).some(c=>String(title||'').toUpperCase().includes(c)))return true;
+    if(new RegExp('^\\s*'+_atmEscRe(t)+'\\s*[,:|\\-–]').test(title||''))return true; // 제목 맨 앞 아티스트 표기("TOO, TOO YOU [THE SHOW…]")
+    const names=ARTISTS.filter(a=>_artistGroups(a).some(g=>g&&g.ko===gko))
+      .flatMap(a=>[a.name.ko,a.name.en]).filter(n=>n&&[...n].length>=2&&!_ATM_COMMON_KO_WORDS.has(n));
+    if(names.some(n=>hit(n)))return true;
+    const up=String(title||'').toUpperCase();
+    return ((GROUPS[gko]||{}).discography||[]).flatMap(al=>[al.title,...(al.tracks||[]).map(x=>x.title)])
+      .some(x=>x&&x.length>=4&&up.includes(x.toUpperCase()));
+  }
   // 영문명이 흔한 가사/구절인 그룹의 EN 토큰은 해시태그(#SAYMYNAME)로 명시됐을 때만 인정한다.
   // 세이마이네임(Say My Name): "When You Say My Name : YEWON"·"MIYEON – Say My Name" 등 곡명·가사에
   // 걸려 남의 영상을 대량으로 훔침(2026-08-25 실측). 한글 '세이마이네임' 토큰은 여기 없어 그대로 평문
@@ -8461,7 +8488,7 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
     // 선두여도 우회하지 않는다 — 그 경우는 멤버 쪽이 맞을 가능성이 커서 기존 게이트/역추론에 맡긴다.
     const _fcHeadOk=t=>_fc&&_fcHead(t)&&!_fcHeadIsMemberName(t);
     if(_STRICT_SYNC_GROUPS.has(ko)){ if(tokens.some(_fcHeadOk)){matchedGroupKos.push(ko);seen.add(ko);} continue; }
-    if(tokens.some(t=>_fcHeadOk(t)||(_GROUP_TOKEN_HASHTAG_ONLY.has(t)?hitHashtag(t):(_GROUP_TOKEN_LITERAL_ONLY.has(t)||_ATM_DYNAMIC_LITERAL_ONLY.has(t))?hitLiteral(t):hit(t)))){matchedGroupKos.push(ko);seen.add(ko);}
+    if(tokens.some(t=>_fcHeadOk(t)||(_GROUP_TOKEN_NEEDS_CORROBORATION[t]?hitCorroborated(t):_GROUP_TOKEN_HASHTAG_ONLY.has(t)?hitHashtag(t):(_GROUP_TOKEN_LITERAL_ONLY.has(t)||_ATM_DYNAMIC_LITERAL_ONLY.has(t))?hitLiteral(t):hit(t)))){matchedGroupKos.push(ko);seen.add(ko);}
   }
   // 유닛명(V8, GOT the beat 등) 매칭 — 유닛 자체는 그룹이 아니라, 실제 소속 그룹/멤버로 나눠 합류시킴.
   // 제목에 유닛명만 있고 개별 멤버 이름은 없는 경우까지 커버하기 위해, 유닛 멤버를 "그 멤버 이름이
