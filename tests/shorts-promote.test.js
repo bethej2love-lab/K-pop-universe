@@ -137,7 +137,7 @@ need(/category:cat,is_short:isShort/.test(src), '동기화 행에 category와 is
 // ── 실제 동작 확인: 분류기를 잘라와 진짜 제목으로 돌려본다(문자열 검사만으론 못 잡는 회귀 대비) ──
 // _YT_PRERECORDED_RE 선언부터 _ytClassify 끝까지가 자기완결 블록이라 그대로 eval한다.
 const clsStart = src.indexOf('const _YT_PRERECORDED_RE=');
-const clsEnd = src.indexOf('\n}', src.indexOf('function _ytClassify(title){')) + 2;
+const clsEnd = src.indexOf('\n}', src.indexOf('function _ytClassify(title,')) + 2;
 need(clsStart > 0 && clsEnd > clsStart, '분류기 블록 슬라이스 성공');
 const { _ytClassify, _ytIsShortTitle } =
   new Function(src.slice(clsStart, clsEnd) + '\nreturn{_ytClassify,_ytIsShortTitle};')();

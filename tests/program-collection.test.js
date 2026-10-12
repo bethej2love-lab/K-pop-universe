@@ -117,9 +117,9 @@ console.log('\n── Part 5: 프로그램 컬렉션 배선 ──');
   ck(/if\(h\.type==='program'\)/.test(html), "_makeSearchItem: program 클릭 분기 존재");
   ck(/_openProgramCollection\(h\.data\)/.test(html), '검색 클릭 → _openProgramCollection(h.data)');
   // 카드: HTML 행 + showGC/showT 호출 + 칩 클릭
-  ck(/id="gc-program-row"/.test(html) && /id="tt-program-row"/.test(html), '그룹/멤버 카드에 program-row DOM 존재');
-  ck(/_loadProgramRow\(ko,'gc-program-row'\)/.test(html), 'showGC: _loadProgramRow 호출');
-  ck(/_loadProgramRow\(_ttGroupQueryKo,'tt-program-row'/.test(html), 'showT: _loadProgramRow 호출');
+  ck(/id="gc-collection-row"/.test(html) && /id="tt-collection-row"/.test(html), '그룹/멤버 카드에 collection-row DOM 존재');
+  ck(/_loadCollectionRow\(ko,'gc-collection-row'\)/.test(html), 'showGC: _loadCollectionRow 호출');
+  ck(/_loadCollectionRow\(_ttGroupQueryKo,'tt-collection-row'/.test(html), 'showT: _loadCollectionRow 호출');
   ck(/_openProgramCollection\(p,ctx\)/.test(html), '카드 칩 클릭 → _openProgramCollection(p,ctx)');
   // 멤버 카드는 members 결속(동명이인/타멤버 누수 방지) — _loadProgramRow가 memberKo로 contains
   const lp = extractBraces(html, /^async function _loadProgramRow\(/m, '_loadProgramRow');
