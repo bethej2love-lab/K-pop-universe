@@ -43,5 +43,13 @@ ck(/occ\.raycast=\(\)=>\{\}/.test(html), '차폐막은 클릭 판정 제외');
 ck(/occ\.visible=!!\(focusGroupKo&&GROUPS\[focusGroupKo\]\)&&mesh\._focusTarget>0\.8/.test(html),
   '차폐막은 실제 그룹 포커스일 때만(솔로 카드에서 전 행성 차폐 방지)');
 
+// ⑦ 솔로 카드 포커스(2026-10-12) — 그룹 카드처럼 나머지를 흐리게. '솔로' placeholder로 비교하면 모든 솔로 별이 같이 밝아진다.
+const sfM = /^function setFocus\(groupKo, extra=\[\], soloArtist=null\)\{[\s\S]*?\n\}/m.exec(html);
+const sf = sfM ? sfM[0] : '';
+ck(/if\(GROUPS\[groupKo\]\|\|soloArtist\)\{/.test(sf), '솔로 카드도 행성 딤');
+ck(/const artKos=allKos\.filter\(k=>GROUPS\[k\]\);/.test(sf) && /artKos\.includes\(g\.ko\)/.test(sf), "별 딤 비교에서 '솔로' placeholder 제외");
+ck(/_focusSoloArtist=soloArtist;/.test(sf) && (html.match(/setFocus\(focusGroupKo,\[\.\.\._extraFocusKos\],_focusSoloArtist\)/g) || []).length === 2,
+  '재호출(필터 닫기·내 우주 해제)도 솔로 주인공을 유지');
+
 console.log(`\n${fail === 0 ? '✅' : '❌'} ${fail} 실패`);
 process.exit(fail ? 1 : 0);

@@ -9458,7 +9458,7 @@ function _applyConnFocus(){
   // 별 밝기는 상대가 수백 명이어도 화면이 지저분해지지 않고 드로우콜도 안 늘어서, 선(상한 30개)보다
   // 이쪽이 "이 사람의 연결"을 보여주는 주력이다.
   const src=_connSelected.length?_connSelected:(_connAllNames()||[]);
-  if(!_connSelected.length&&!src.length){setFocus(_connAnchor.group.ko);return;} // 상대 정보가 아직 없으면 기존 동작
+  if(!_connSelected.length&&!src.length){setFocus(_connAnchor.group.ko,[],GROUPS[_connAnchor.group.ko]?null:_connAnchor);return;} // 상대 정보가 아직 없으면 기존 동작
   src.forEach(name=>{
     const other=_findArtistByConnName(name,_connAnchor.group.ko);
     if(other){brightArtists.add(other);brightGroups.add(other.group.ko);}
@@ -13296,14 +13296,18 @@ function applyFilter(){
 }
 
 // ── Focus mode ────────────────────────────────────
+let _focusSoloArtist=null; // 솔로 카드 포커스의 주인공 — setFocus 재호출(필터·내 우주 해제)이 잃지 않게 기억
 function setFocus(groupKo, extra=[], soloArtist=null){
   _clearMyStarSel();
   focusGroupKo=groupKo;
   _extraFocusKos=[...extra];
+  _focusSoloArtist=soloArtist;
   const allKos=[groupKo,...extra];
   // 실존하는 행성(그룹)일 때만 다른 행성들을 dim — 아이유처럼 무소속 별은 대응하는 행성이 없어서
   // 전체를 dim해봐야 아무것도 밝아지지 않고 화면만 어두워지는 부작용이 있었음
-  if(GROUPS[groupKo]){
+  // 솔로 카드(2026-10-12, 사용자: "그룹 카드처럼 솔로도 나머지 흐리게")도 딤한다 — 예전 판단("밝아질 행성이 없어
+  // 화면만 어두워진다")과 달리 이제 주인공은 솔로 별 자신이다(아래 ARTISTS에서 1 유지). 전 소속 그룹(extra)은 밝게 둔다.
+  if(GROUPS[groupKo]||soloArtist){
     bubbleMeshes.forEach(({mesh,ko})=>{
       const focused=allKos.includes(ko);
       mesh._focusTarget=focused?1:FOCUS_DIM;
@@ -13313,8 +13317,11 @@ function setFocus(groupKo, extra=[], soloArtist=null){
   }
   // soloArtist: _artistGroups가 빈 솔로 아티스트는 inGroup 체크에서 false가 나와 자기 자신도 FOCUS_DIM이 되는 버그
   // — group.ko='솔로' 아이유·보아 등이 카드 열면 자기 별이 어두워지는 원인(2026-10-10)
+  // ⚠️ '솔로'는 그룹이 아니라 placeholder다 — 솔로 아티스트는 전부 group.ko='솔로'라, 이걸 비교에 넣으면 아이유 카드를
+  //    열 때 **모든 솔로 별이 같은 그룹으로 판정돼 같이 밝게 남았다**(2026-10-12 헤드리스 실측). 실제 그룹 키만 비교한다.
+  const artKos=allKos.filter(k=>GROUPS[k]);
   ARTISTS.forEach(a=>{
-    const inGroup=_artistGroups(a).some(g=>allKos.includes(g.ko));
+    const inGroup=_artistGroups(a).some(g=>g&&artKos.includes(g.ko));
     a._focusTarget=(inGroup||(soloArtist&&a===soloArtist))?1:FOCUS_DIM;
   });
 }
@@ -13328,6 +13335,7 @@ function clearFocus(){
   _clearMyStarSel();
   focusGroupKo=null;
   _extraFocusKos=[];
+  _focusSoloArtist=null;
   if(favMode){applyFavHighlight();return;}
   bubbleMeshes.forEach(({mesh})=>{mesh._focusTarget=1;mesh.renderOrder=0;});
   ARTISTS.forEach(a=>{a._focusTarget=1;});
@@ -13494,7 +13502,7 @@ function _resetToMyPage(){
   const jh=document.getElementById('journal-hd');if(jh)jh.style.display='';
   _showMyPageSections();
   if(_connAnchor){_applyConnFocus();}
-  else if(focusGroupKo){setFocus(focusGroupKo,[..._extraFocusKos]);}
+  else if(focusGroupKo){setFocus(focusGroupKo,[..._extraFocusKos],_focusSoloArtist);}
   else{clearFocus();}
 }
 // 우주에서 내 별 클릭 시 열리는 "마이페이지"(즐겨찾기·컬렉션·기념일) — 프로필 버튼(탭바/데스크톱 헤더)과
@@ -16432,7 +16440,7 @@ function _toggleFavMode(){
   }else{
     _clearMyStarLines();
     _exitMyUniverseMode();
-    if(focusGroupKo)setFocus(focusGroupKo,[..._extraFocusKos]);else clearFocus();
+    if(focusGroupKo)setFocus(focusGroupKo,[..._extraFocusKos],_focusSoloArtist);else clearFocus();
     // 하이라이트를 끄면 별/행성은 원래 자리로 돌아가지만 카메라 줌은 그대로 남아 답답해 보이는
     // 문제(2026-08-13, 사용자 제보) — 보던 방향은 유지한 채 살짝 뒤로 빠지게 한다.
     const _exitDir=camera.position.clone().sub(controls.target);
