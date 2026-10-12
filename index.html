@@ -15147,7 +15147,23 @@ function _makeColBtn(s,ctx){
 const COLLECTION_KEY='kpu_collections';
 const _COLLECTION_KEY_OLD='kpu_playlists';
 let collections=JSON.parse(localStorage.getItem(COLLECTION_KEY)||localStorage.getItem(_COLLECTION_KEY_OLD)||'[]');
-function _saveCollections(){localStorage.setItem(COLLECTION_KEY,JSON.stringify(collections));localStorage.removeItem(_COLLECTION_KEY_OLD);_sbPushColumn('collections',collections);}
+function _saveCollections(){localStorage.setItem(COLLECTION_KEY,JSON.stringify(collections));localStorage.removeItem(_COLLECTION_KEY_OLD);_sbPushColumn('collections',collections);_refreshCardCollectionRowsSoon();}
+// 컬렉션을 만들거나 영상을 담고 빼면 **열려 있는 그룹/멤버 카드의 Collections 행도 바로** 다시 그린다(2026-10-12, 사용자:
+// "컬렉션 만들면 새로고침 안 해도 바로 반영되게"). 예전엔 내 페이지 목록(renderCollectionSection)만 갱신하고 카드 행은
+// 그대로라 새로고침해야 보였다. 저장이 연달아 일어나도(담기 여러 개) 한 번만 다시 그리게 짧게 모은다.
+let _cardColRefreshT=null;
+function _refreshCardCollectionRowsSoon(){
+  clearTimeout(_cardColRefreshT);
+  _cardColRefreshT=setTimeout(()=>{
+    try{
+      if(typeof _openGCko!=='undefined'&&_openGCko)_loadCollectionRow(_openGCko,'gc-collection-row');
+      if(typeof _openTArtist!=='undefined'&&_openTArtist){
+        const _hasRealGroup=!!GROUPS[_openTArtist.group.ko];
+        _loadCollectionRow(_ytGroupKoFor(_openTArtist),'tt-collection-row',_hasRealGroup?_openTArtist.name.ko:null,_openTArtist.name.ko);
+      }
+    }catch(e){console.warn('카드 컬렉션 행 갱신 실패',e);}
+  },250);
+}
 function _colNewId(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6);}
 function _createCollection(name,kind){
   const col={id:_colNewId(),name:name.trim(),videos:[],createdAt:new Date().toISOString().slice(0,10),isPublic:false};
@@ -15587,8 +15603,11 @@ function _syncPublicCollection(col){
     // 사진 컬렉션은 사진 배열도 함께 올린다(2026-08-30) — 영상 컬렉션 upsert엔 photos를 안 넣어, 마이그레이션
     // 전에도 영상 공개는 안 깨진다(사진 공개는 photos 컬럼이 있어야 정상 저장됨).
     if(col.kind==='photo')_payload.photos=col.photos||[];
+    // 화면이 들고 있는 공개 목록 캐시에도 즉시 반영 — 안 하면 다른 카드/기기 화면이 새로고침 전까지 옛 목록을 쓴다
+    if(_pubCollectionsCache){_pubCollectionsCache=[_payload,..._pubCollectionsCache.filter(r=>r.id!==col.id)];_refreshCardCollectionRowsSoon();}
     return sb.from('public_collections').upsert(_payload).then(({error})=>{if(error)console.error('공개 컬렉션 동기화 실패',error.message);});
   }else{
+    if(_pubCollectionsCache){_pubCollectionsCache=_pubCollectionsCache.filter(r=>r.id!==col.id);_refreshCardCollectionRowsSoon();}
     return sb.from('public_collections').delete().eq('id',col.id).eq('owner_id',uid)
       .then(({error})=>{if(error)console.error('공개 컬렉션 비공개 전환 실패',error.message);});
   }
