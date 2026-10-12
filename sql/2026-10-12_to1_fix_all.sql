@@ -1,6 +1,7 @@
 -- 2026-10-12 티오원 오태깅 정리 (TOO 별칭이 영어 'too'·니쥬/위아이 'Too Bad'에 걸림 + 멤버 별칭 '여정' 등)
--- 전부 tags_manual=false 행만. 사람이 고친 행은 건드리지 않는다. 실행 전 BEGIN; … 확인 후 COMMIT;
-BEGIN;
+-- 전부 tags_manual=false 행만. 사람이 고친 행은 건드리지 않는다.
+-- ⚠️ BEGIN/COMMIT 없이 바로 적용되는 파일이다 — Supabase SQL 편집기는 한 번 실행이 한 트랜잭션이라 중간에 에러가 나면 전체가 취소된다.
+--    (첫 버전은 BEGIN만 있고 COMMIT이 주석이라 실행해도 전부 취소됐다 — 2026-10-12)
 
 -- ① 그룹이 티오원으로 잘못 붙은 영상: 새 매처가 다른 그룹을 찾으면 그쪽으로 (8건)
 UPDATE yt_channel_videos SET group_ko='빅뱅', members=ARRAY['지디']::text[] WHERE id='T7lOCqvw6-A' AND group_ko='티오원' AND tags_manual=false;
@@ -35,6 +36,19 @@ UPDATE yt_channel_videos SET with_members=array_remove(with_members,'마야(니�
 UPDATE yt_channel_videos SET with_members=array_remove(with_members,'마야(니쥬)') WHERE id='bzTZ2SAGaPU' AND tags_manual=false; -- 𝙔𝙤𝙪 𝙠𝙣𝙤𝙬 𝙄’𝙢 𝙖 𝙠𝙞𝙡𝙡𝙖 W/ #ODDYOUTH #마야
 UPDATE yt_channel_videos SET with_members=array_remove(with_members,'마야(니쥬)') WHERE id='vUriBgAa7KA' AND tags_manual=false; -- I like you 💓 and #Pookie 🌟 #ODDYOUTH #마야 님과 함께한 #Pookie_Ch
 
--- 확인용: 남은 티오원 건수(자체 채널 388 + 근거 있는 외부 영상)
-SELECT count(*) FROM yt_channel_videos WHERE group_ko='티오원' AND content_flag IS NULL;
--- 문제없으면 COMMIT; 이상하면 ROLLBACK;
+
+-- ⑥ 티오원 시절 '제롬' 영상에 성민 태그 추가 (members는 식별자 name.ko='성민'을 쓴다 — 화면에선 티오원 문맥이라 '제롬'으로 표시)
+-- 매처가 groups[].name(제롬/JEROME)을 몰라 티오원 시절 영상 48건 중 1건만 태깅돼 있었다. tags_manual=false·숨김/보류 제외.
+UPDATE yt_channel_videos SET members=array_append(members,'성민')
+WHERE group_ko='티오원' AND tags_manual=false AND content_flag IS NULL AND NOT ('성민'=ANY(members))
+  AND id IN ('ybyEqecr9TU','W2Cdk1a8l6o','WcwXZXO04WU','mpys5Kqqiic','C0QofiLiVlY','gDNzDVOUo5Q','l4lE1OMbyho','9p8KFd3zhLE','6I6ScOy3AGo','7iaquNeek_s','__qABof91hI','qUt7nLfR60w','KNt7Q-j3eOw','6YeYXN75rNk','v53Bp2KMtqs','blrN83ka_Xo','HhXWy4-nLVI','Ry4WeoRZfMY','R5LrQFC3NQU','1_ItV09TJ6w','Co2KE6QAQKQ','Lm6HwB_6kgM','fhpje45nASI','_UqXwDfItEs','BwcQuiTvHiU','5beRkpE-KyI','y8CvvZuwkcs','JbHgss76Tyo','5GlGBneCeGE','UOSOb8x5MHg','VATnXrAOikk','6Va7yci9cOI','wYF3sLUIAqQ','wapWXPFeXag','2RUIZiQO7aM','7pYZDPD0i74','BXc3Nvf7bKY','euxl5ZOCRNQ','3dcu7Ldhc08','FxfW6UCPwo0','nbQlq1MaO4g');
+
+
+-- ⑦ 차웅기(웅기) 탈퇴(2022.06.17) 뒤 보이즈플래닛(2023) 영상이 티오원으로 붙은 것 → 보류 (3건, '②-B 탈퇴 후 솔로 귀속'의 몫)
+UPDATE yt_channel_videos SET content_flag='보류', flag_source='auto', flagged_at=now() WHERE group_ko='티오원' AND tags_manual=false AND content_flag IS NULL AND id IN ('htyHC_Rzww8','CL9WpJ6bpBI','69_M-zfrorM');
+
+-- 확인용(실행 후 숫자가 바뀌었는지):
+SELECT
+  (SELECT count(*) FROM yt_channel_videos WHERE '티오원'=ANY(with_groups)) AS with_groups_to1,      -- 509 → 약 64
+  (SELECT count(*) FROM yt_channel_videos WHERE group_ko='티오원' AND content_flag='보류') AS to1_held,
+  (SELECT count(*) FROM yt_channel_videos WHERE group_ko='티오원' AND '성민'=ANY(members)) AS jerome_tagged; -- 1 → 42

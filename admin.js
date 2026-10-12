@@ -7144,7 +7144,11 @@ function _atmNameTakenByGroupmate(nm,gko,isEn){
 function _atmRosterFor(gko){
   return ARTISTS.filter(a=>_artistGroups(a).some(g=>g.ko===gko)).map(a=>{
     const e=_artistGroups(a).find(g=>g.ko===gko)||{};
-    return{ko:a.name.ko,en:a.name.en,left:(e.left!==undefined?e.left:a.left),aliases:a.matchAliases};
+    // 그 그룹 시절 활동명(groups[].name/nameEn — 성민의 티오원 시절 "제롬/JEROME")도 별칭으로(2026-10-12, 사용자: "티오원 시절
+    // 영상에 제롬 태깅 안 됨"). **이 그룹 로스터에만** 넣는다 — 디모렉스의 트레저 시절 "예담"은 원팩트 예담과 같은 이름이라
+    // 전역 변형(_m2NameVariants)에 넣으면 원팩트 영상까지 끌어온다.
+    const _stage=[e.name,e.nameEn].filter(Boolean);
+    return{ko:a.name.ko,en:a.name.en,left:(e.left!==undefined?e.left:a.left),aliases:_stage.length?[...(a.matchAliases||[]),..._stage]:a.matchAliases};
   });
 }
 // "가인"(브라운아이드걸스)의 "성+이름" 매칭에서 흔한 성씨 "송"이 우연히 걸려 무관한 트롯 가수 "송가인"이
@@ -7973,6 +7977,8 @@ function _atmLeftBefore(a,gko,publishedAt){
   if(!publishedAt)return false;
   const g=_artistGroups(a).find(x=>x.ko===gko);
   if(!g)return false;
+  // 합류 전 영상도 같은 취급(2026-10-12) — 티오원 여정(2022.06.17 합류)이 TOO 시절 영상에 붙지 않게. joined가 있는 항목만.
+  if(g.joined&&String(publishedAt).slice(0,10)<String(g.joined).replace(/\./g,'-').slice(0,10))return true;
   const activeHere=g.active!==undefined?g.active:a.active;
   if(activeHere!==false)return false;
   const left=(g.left!==undefined?g.left:a.left);
@@ -8865,7 +8871,9 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
     // 이미 확정된 맥락이라 hit()의 length<2 컷 없이 단어경계로 인정(진심·진짜는 단어경계라 안 걸림).
     const _aliasHit=al=>{const n=(al||'').toUpperCase().replace(/[^가-힣a-zA-Z0-9]/g,' ').replace(/\s+/g,' ').trim();return !!n&&normMinusUnits.includes(' '+n+' ');};
     // 탈퇴 게이트(위 _atmLeftBefore 주석 참고) — 이 영상이 올라온 시점에 이미 그 그룹을 떠난 사람은 제외.
-    const matched=ARTISTS.filter(a=>_artistGroups(a).some(g=>g.ko===gko)&&!_atmLeftBefore(a,gko,publishedAt)&&(_m2NameVariants(a).some(t=>hit(t,normMinusUnits)||hitHashtagSubstring(t))||(a.matchAliases||[]).some(_aliasHit))).map(a=>a.name.ko);
+    const matched=ARTISTS.filter(a=>_artistGroups(a).some(g=>g.ko===gko)&&!_atmLeftBefore(a,gko,publishedAt)&&(_m2NameVariants(a).some(t=>hit(t,normMinusUnits)||hitHashtagSubstring(t))||(a.matchAliases||[]).some(_aliasHit)
+      // 그 그룹 시절 활동명(제롬) — 그룹이 확정된 이 블록에서만(위 _atmRosterFor 주석과 같은 이유)
+      ||(()=>{const e=_artistGroups(a).find(g=>g&&g.ko===gko)||{};return [e.name,e.nameEn].filter(Boolean).some(_aliasHit);})())).map(a=>a.name.ko);
     const extra=unitExtraMembers[gko];
     if(extra){
       const extraArr=[...extra];
@@ -8896,7 +8904,8 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
         ARTISTS.forEach(a=>{
           if(!_artistGroups(a).some(g=>g.ko===gko)||_atmLeftBefore(a,gko,publishedAt))return;
           let best=0,bestLen=0;
-          [a.name.ko,a.name.en,...(a.matchAliases||[])].filter(Boolean).forEach(c=>{const cc=_fancamNormTok(c).replace(/\s/g,'');if(!cc)return;
+          const _ge=_artistGroups(a).find(g=>g&&g.ko===gko)||{}; // 그 그룹 시절 활동명(제롬)도 등록명으로
+          [a.name.ko,a.name.en,...(a.matchAliases||[]),_ge.name,_ge.nameEn].filter(Boolean).forEach(c=>{const cc=_fancamNormTok(c).replace(/\s/g,'');if(!cc)return;
             if(ac===cc){if(best<3){best=3;bestLen=cc.length;}}
             else if(/^[A-Z0-9]+$/.test(cc)&&cc.length>=4&&ac.endsWith(cc)&&ac.length-cc.length<=6){if(best<1||(best===1&&cc.length>bestLen)){best=1;bestLen=cc.length;}}});
           const st=_atmStripSurname([...a.name.ko]);

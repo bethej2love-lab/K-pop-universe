@@ -11432,7 +11432,16 @@ function showT(a,cx,cy,keepNavStack,urlMode,_unusedPushMobNav,noFly){
   // 폴백(buildVideoSection)은 artists.json의 songs를 쓰는데 해당 3명(비·빛새온·김민서)은 songs가 0건이라
   // 폴백으로 얻는 게 애초에 없었다 — sb만 있으면 DB 경로로 보낸다(잃는 것 없음, 확인 후 변경).
   if(sb){
-    if(_hasRealGroup)_ttChVidCtl.build(a.group.ko,a.name.ko);
+    // 지금 그룹이 있어도 **활동이 끝난 옛 그룹**이 있으면 histKos로 같이 넘긴다(2026-10-12, 사용자: "성민 카드에 제롬 시절
+    // 영상도 있어야지"). 성민(원팩트)의 티오원처럼 — 예전엔 무소속 솔로(아래 else)만 옛 그룹을 봐서, 현 그룹이 있는 멤버
+    // 카드엔 옛 그룹 시절 본인 태깅 영상이 하나도 안 떴다. histKos 절은 본인 태깅·함께한 멤버 영상만 넣고, 태그 없는 그룹
+    // 영상은 탈퇴일을 알 때 그날까지만 넣는다(_memberVideoCutoff). ⚠️ 겸임으로 **둘 다 활동 중**인 그룹(NCT 등)은 넣지
+    // 않는다 — 넣으면 그 그룹 미태깅 영상 전부가 멤버 카드로 쏟아진다(그쪽은 기존 동작 유지).
+    if(_hasRealGroup){
+      const _formerKos=[...new Set((_artistGroups(a)||[]).map(g=>g&&g.ko)
+        .filter(k=>k&&k!==a.group.ko&&GROUPS[k]&&(!_activeInGroup(a,k)||_groupIsOver(k))))];
+      _ttChVidCtl.build(a.group.ko,a.name.ko,_formerKos);
+    }
     else{
       // 솔로 분리 후속(2026-09-04, 실측 검증): group.ko='솔로'지만 groups[]에 실존 그룹 이력이 있으면
       // (권은비→아이즈원, 선미→원더걸스) 영상이 그 그룹 group_ko 밑에 있다. 그 그룹으로 멤버카드 쿼리를 태우면
@@ -22452,6 +22461,12 @@ function _makeChVidController(contId){
     if(!a)return{active:true};
     const gEntry=_artistGroups(a).find(g=>g.ko===ko)||{};
     const activeHere=gEntry.active!==undefined?gEntry.active:a.active;
+    // joined(그 그룹 합류일, 2026-10-12 — 티오원 여정·다이고·렌타 2022.06.17): 있으면 미태깅 그룹 영상을 그날 이후로만.
+    const r=_memberVideoCutoffCore(a,gEntry,activeHere,ko);
+    if(gEntry.joined)r.joined=String(gEntry.joined).replace(/\./g,'-').slice(0,10);
+    return r;
+  }
+  function _memberVideoCutoffCore(a,gEntry,activeHere,ko){
     if(activeHere!==false)return{active:true};
     const leftHere=gEntry.left!==undefined?gEntry.left:a.left;
     // ⚠️ 예전엔 `leftHere.replace(/\./g,'-')`였다 — 'YYYY.MM.DD'는 맞았지만 연도만/연·월만 적힌 탈퇴일이
@@ -22933,8 +22948,9 @@ function _makeChVidController(contId){
         // 탈퇴/비활동 멤버는 "그룹 전체" 미태깅 영상 절에 탈퇴일 컷오프를 걸거나(위 _memberVideoCutoff
         // 주석 참고), 탈퇴일을 아직 모르면 아예 뺀다.
         const _cutoff=_memberVideoCutoff(state.memberKo,ko);
-        const ownGroupWideClause=_cutoff.active?`and(group_ko.eq.${_pgFilterVal(ko)},members.eq.{}),`
-          :_cutoff.left?`and(group_ko.eq.${_pgFilterVal(ko)},members.eq.{},published_at.lte.${_cutoff.left}),`
+        const _jc=_cutoff.joined?`,published_at.gte.${_cutoff.joined}`:''; // 합류 전 미태깅 그룹 영상 제외
+        const ownGroupWideClause=_cutoff.active?`and(group_ko.eq.${_pgFilterVal(ko)},members.eq.{}${_jc}),`
+          :_cutoff.left?`and(group_ko.eq.${_pgFilterVal(ko)},members.eq.{},published_at.lte.${_cutoff.left}${_jc}),`
           :'';
         // group_ko.eq.멤버본인이름 — 개인 채널 영상이 group_ko를 그룹명이 아니라 본인 이름으로 저장하던
         // 시절(artists.json channels[] 경로)의 데이터를 위한 절. 이 절이 없으면 그 영상들이 본인 카드에도
@@ -22947,8 +22963,9 @@ function _makeChVidController(contId){
         let _extraHistOr='';
         (state.histKos||[]).forEach(g=>{
           const c=_memberVideoCutoff(state.memberKo,g);
-          const uw=c.active?`,and(group_ko.eq.${_pgFilterVal(g)},members.eq.{})`
-            :c.left?`,and(group_ko.eq.${_pgFilterVal(g)},members.eq.{},published_at.lte.${c.left})`:'';
+          const jc=c.joined?`,published_at.gte.${c.joined}`:'';
+          const uw=c.active?`,and(group_ko.eq.${_pgFilterVal(g)},members.eq.{}${jc})`
+            :c.left?`,and(group_ko.eq.${_pgFilterVal(g)},members.eq.{},published_at.lte.${c.left}${jc})`:'';
           _extraHistOr+=uw+`,and(group_ko.eq.${_pgFilterVal(g)},members.cs.{${_pgFilterVal(state.memberKo)}}),with_members.cs.{${_pgFilterVal(state.memberKo+'('+g+')')}}`;
         });
         q=q.or(`${ownGroupWideClause}and(group_ko.eq.${_pgFilterVal(ko)},members.cs.{${_pgFilterVal(state.memberKo)}}),with_members.cs.{${_pgFilterVal(state.memberKo+'('+ko+')')}},group_ko.eq.${_pgFilterVal(state.memberKo)}${_extraHistOr}`);

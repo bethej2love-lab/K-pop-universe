@@ -14,6 +14,17 @@ const cases = [];
 // publishedAt: 탈퇴 게이트(_atmLeftBefore) 검증용 4번째 인자. 안 주면 기존처럼 날짜 없이 파싱.
 function test(name, title, selfGko, check, publishedAt) { cases.push({ name, title, selfGko, check, publishedAt }); }
 
+// ── 그룹 시절 활동명 + 합류/탈퇴 게이트(2026-10-12) ─────────────────────
+// 성민(원팩트)의 티오원 시절 이름 '제롬'을 매처가 몰라 티오원 시절 영상 48건 중 1건만 태깅돼 있었다. groups[].name/nameEn은
+// **그 그룹 문맥에서만** 이름으로 쓴다(디모렉스의 트레저 시절 '예담'은 원팩트 예담과 같은 이름이라 전역이면 안 됨).
+const _mem = (r, g, m) => !!r && ((r.membersByGroup || {})[g] || []).includes(m);
+test('그룹 시절 이름 — TOO 제롬 직캠 → 티오원 성민', "[MPD직캠] TOO 제롬 직캠 4K 'Magnolia' (TOO JEROME FanCam)", undefined, r => _mem(r, '티오원', '성민'), '2020-04-30');
+test('그룹 시절 이름 — 트레저 예담 → 디모렉스(원팩트 예담 아님)', '[MPD직캠] 트레저 예담 직캠 4K', undefined, r => _mem(r, '트레저', '디모렉스') && !(r.withGroups || []).includes('원팩트'));
+test('그룹 시절 이름 — 원팩트 예담은 그대로 원팩트 예담', '원팩트 예담 직캠', undefined, r => _mem(r, '원팩트', '예담'));
+test('탈퇴 게이트 — 제롬 탈퇴(2022.06.17) 뒤 영상엔 안 붙음', 'TO1 제롬 직캠', undefined, r => !_mem(r, '티오원', '성민'), '2023-03-01');
+test('합류 게이트 — 여정 합류(2022.06.17) 전 영상엔 안 붙음', 'TO1 여정 직캠', undefined, r => !_mem(r, '티오원', '전여여정'), '2021-05-01');
+test('합류 게이트 — 합류 뒤엔 붙음', 'TO1 여정&경호님과 VAGABOND #TRENDZ', undefined, r => _mem(r, '티오원', '전여여정'), '2022-09-01');
+
 // ── TOO(티오원 옛 이름) 영어 일상어 게이트(2026-10-12) ─────────────────────
 // altNames 'TOO'가 대소문자 무시로 "too"에 걸려 티오원 키 1,337건 중 200여 건, 함께한 그룹 509건 중 446건이 오태깅
 // (니쥬·위아이 'Too Bad', G-DRAGON 'TOO BAD', 디스패치 "way too cute"…). 대문자 TOO + 멤버/곡/시절 근거가 있어야 인정.
