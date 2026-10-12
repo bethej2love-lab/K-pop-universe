@@ -727,6 +727,33 @@
   </div>
 </div>
 </template>
+<div id="mx-overlay" data-modal>
+  <div id="mx-panel">
+    <div class="mx-hd">
+      <span class="mx-title">멤버 탐색</span>
+      <button id="mx-close" type="button" aria-label="닫기">✕</button>
+    </div>
+    <div class="mx-filter-area">
+      <input id="mx-search" class="mx-search" type="search" placeholder="이름·그룹·2009년생·남돌·일본인…" autocomplete="off" autocorrect="off" spellcheck="false">
+      <div class="mx-chips">
+        <span class="mx-chip-lbl">성별</span>
+        <button class="mx-chip active" data-mx-gender="" type="button">전체</button>
+        <button class="mx-chip" data-mx-gender="m" type="button">남</button>
+        <button class="mx-chip" data-mx-gender="f" type="button">여</button>
+      </div>
+      <div class="mx-chips">
+        <span class="mx-chip-lbl">생년</span>
+        <button class="mx-chip active" data-mx-year="" type="button">전체</button>
+        <button class="mx-chip" data-mx-year="~1999" type="button">~1999</button>
+        <button class="mx-chip" data-mx-year="2000-2004" type="button">2000-04</button>
+        <button class="mx-chip" data-mx-year="2005-2009" type="button">2005-09</button>
+        <button class="mx-chip" data-mx-year="2010~" type="button">2010~</button>
+      </div>
+    </div>
+    <div class="mx-result-bar"><span id="mx-count" class="mx-count"></span></div>
+    <div id="mx-grid"></div>
+  </div>
+</div>
 <div id="kpop-links-overlay" data-modal>
   <div id="kpop-links-panel">
     <div class="klp-hd">
@@ -3716,7 +3743,7 @@ const _RENDER_INTERVAL_MS=1000/30;
 const _FULLSCREEN_OVERLAY_IDS=['feed-list-overlay','profile-overlay','col-card-overlay','feedback-overlay',
   'venue-overlay','trophy-overlay','pp-bias-emoji-overlay','gc-track-videos-overlay',
   'vid-tag-overlay','vm-overlay','adm-home-overlay','hnn-overlay','gp-overlay','fbv-overlay','ev-overlay',
-  'msheet'];
+  'mx-overlay','msheet'];
 // Tier 2(2026-08-24, 발열 저감): 사용자가 잠깐 안 만지면(패시브 감상) 렌더를 30→20fps로 낮춘다.
 // autoRotate가 아주 느려(0.25) 20fps로 떨어져도 체감이 없고, 손대면 즉시 30fps로 복귀. idle 발열 절감.
 let _lastInteractMs=performance.now();
@@ -11240,7 +11267,7 @@ function _closeTopOverlay(){
   // 2026-09-05 UX감사 #4: 바깥클릭으론 닫히는데 Esc 목록엔 빠져 있던 오버레이들을 추가(데스크톱 일관성).
   //   welcome-*(온보딩 선택 게이트)는 일부러 제외 — 아무 선택 없이 Esc로 건너뛰면 안 되므로.
   for(const id of ['feedback-overlay','feed-list-overlay','profile-overlay','vm-overlay','hnn-overlay','gp-overlay','fbv-overlay',
-    'gc-track-videos-overlay','venue-overlay','trophy-overlay','uc-card-overlay','debut-card-overlay','col-card-overlay','pp-bias-emoji-overlay','date-edit-overlay']){
+    'gc-track-videos-overlay','venue-overlay','trophy-overlay','uc-card-overlay','debut-card-overlay','col-card-overlay','pp-bias-emoji-overlay','date-edit-overlay','mx-overlay']){
     const el=document.getElementById(id);
     if(el&&el.classList.contains('open')){
       const btn=el.querySelector('[id$="-close"],[id$="-cancel"]');
@@ -14432,6 +14459,120 @@ function _openKpopLinks(){
   _bringToFront(ov);
 }
 function _closeKpopLinks(){document.getElementById('kpop-links-overlay').classList.remove('open');}
+// ── 멤버 탐색 오버레이 ──────────────────────────────────────────────────────
+const _MX_NAT_FLAG={'한국':'🇰🇷','일본':'🇯🇵','중국':'🇨🇳','태국':'🇹🇭','미국':'🇺🇸','호주':'🇦🇺','캐나다':'🇨🇦','뉴질랜드':'🇳🇿','대만':'🇹🇼','홍콩':'🇭🇰','필리핀':'🇵🇭','인도네시아':'🇮🇩','말레이시아':'🇲🇾','브라질':'🇧🇷','영국':'🇬🇧'};
+let _mxState={gender:'',year:''};
+function _openMemberExplorer(preOpts){
+  const ov=document.getElementById('mx-overlay');if(!ov)return;
+  if(preOpts){
+    if(preOpts.gender!=null)_mxState.gender=preOpts.gender;
+    if(preOpts.year!=null)_mxState.year=preOpts.year;
+    const si=document.getElementById('mx-search');
+    if(si&&preOpts.rawQ!=null)si.value=preOpts.rawQ;
+  }
+  _mxSyncChips();
+  ov.classList.add('open');
+  _mxRender();
+  setTimeout(()=>document.getElementById('mx-search')?.focus(),120);
+}
+function _closeMemberExplorer(){document.getElementById('mx-overlay')?.classList.remove('open');}
+function _mxBirthYear(a){const m=String(a.bday||'').match(/(\d{4})/);return m?+m[1]:null;}
+function _mxYearOk(yr,range){
+  if(!range)return true;
+  if(!yr)return false;
+  if(range==='~1999')return yr<=1999;
+  if(range==='2000-2004')return yr>=2000&&yr<=2004;
+  if(range==='2005-2009')return yr>=2005&&yr<=2009;
+  if(range==='2010~')return yr>=2010;
+  if(/^\d{4}$/.test(range))return yr===+range;
+  return true;
+}
+function _mxParseFreeText(q){
+  const r={year:'',gender:'',nat:'',text:''};let rem=q;
+  rem=rem.replace(/(\d{4})\s*년생?/g,(_,y)=>{r.year=y;return''});
+  if(/남돌|보이그룹|남자/.test(rem)){r.gender='m';rem=rem.replace(/남돌|보이그룹|남자/g,'');}
+  else if(/여돌|걸그룹|여자/.test(rem)){r.gender='f';rem=rem.replace(/여돌|걸그룹|여자/g,'');}
+  for(const k of['한국','일본','중국','태국','미국','호주','캐나다','뉴질랜드','대만','홍콩','필리핀','인도네시아','말레이시아']){
+    if(rem.includes(k)){r.nat=k;rem=rem.replace(k,'');break;}
+  }
+  r.text=rem.replace(/\s*멤버\s*/g,' ').replace(/\s+/g,' ').trim().toLowerCase();
+  return r;
+}
+function _mxSyncChips(){
+  document.querySelectorAll('[data-mx-gender]').forEach(b=>b.classList.toggle('active',b.dataset.mxGender===_mxState.gender));
+  document.querySelectorAll('[data-mx-year]').forEach(b=>b.classList.toggle('active',b.dataset.mxYear===_mxState.year));
+}
+function _mxRender(){
+  const grid=document.getElementById('mx-grid');
+  const countEl=document.getElementById('mx-count');
+  if(!grid)return;
+  const raw=(document.getElementById('mx-search')?.value||'').trim();
+  const p=_mxParseFreeText(raw);
+  const fG=_mxState.gender||p.gender;
+  const fY=_mxState.year||p.year;
+  const fN=p.nat;
+  const fT=p.text;
+  const MAX=300,results=[];
+  for(const a of ARTISTS){
+    if(!a.name?.ko||!a.group?.ko)continue;
+    const gd=GROUPS[a.group.ko];
+    if(fG&&(gd?.gender||'')!==fG)continue;
+    const yr=_mxBirthYear(a);
+    if(fY&&!_mxYearOk(yr,fY))continue;
+    if(fN&&(a.nat?.ko||'')!==fN)continue;
+    if(fT){
+      const t=[a.name.ko,a.name.en||'',a.group.ko,gd?.en||''].join(' ').toLowerCase();
+      if(!t.includes(fT))continue;
+    }
+    results.push(a);
+  }
+  results.sort((a,b)=>{
+    const ya=_mxBirthYear(a)||9999,yb=_mxBirthYear(b)||9999;
+    return ya!==yb?ya-yb:(a.name.ko||'').localeCompare(b.name.ko||'');
+  });
+  if(countEl)countEl.textContent=results.length>MAX?`${results.length}명 중 ${MAX}명`:`${results.length}명`;
+  const shown=results.slice(0,MAX);
+  grid.innerHTML='';
+  if(!shown.length){grid.innerHTML='<div class="mx-empty">조건에 맞는 멤버가 없어요</div>';return;}
+  const frag=document.createDocumentFragment();
+  for(const a of shown){
+    const yr=_mxBirthYear(a);
+    const flag=_MX_NAT_FLAG[a.nat?.ko||'']||'';
+    const col=a.color?`rgb(${a.color[0]},${a.color[1]},${a.color[2]})`:'rgba(120,120,180,0.6)';
+    const btn=document.createElement('button');
+    btn.className='mx-card';btn.type='button';
+    const avDiv=document.createElement('div');avDiv.className='mx-card-av';avDiv.style.background=col;
+    const letter=document.createElement('span');letter.className='mx-card-av-letter';letter.textContent=(a.name.ko||'?')[0];
+    avDiv.appendChild(letter);
+    const nmDiv=document.createElement('div');nmDiv.className='mx-card-name';nmDiv.textContent=a.name.ko;
+    const gpDiv=document.createElement('div');gpDiv.className='mx-card-group';gpDiv.textContent=a.group.ko;
+    const mtDiv=document.createElement('div');mtDiv.className='mx-card-meta';
+    mtDiv.textContent=[(yr?yr+'년생':''),flag||(a.nat?.ko||'')].filter(Boolean).join(' · ');
+    btn.appendChild(avDiv);btn.appendChild(nmDiv);btn.appendChild(gpDiv);btn.appendChild(mtDiv);
+    btn.addEventListener('click',()=>{
+      _closeMemberExplorer();
+      const gd=GROUPS[a.group.ko];
+      if(gd)openConnCard(a);
+      else{const sa=ARTISTS.find(x=>x.name.ko===a.name.ko&&!GROUPS[x.group.ko]);openConnCard(sa||a);}
+    });
+    frag.appendChild(btn);
+  }
+  grid.appendChild(frag);
+}
+document.getElementById('mx-search')?.addEventListener('input',()=>_mxRender());
+document.querySelectorAll('[data-mx-gender]').forEach(b=>b.addEventListener('click',()=>{
+  _mxState.gender=b.dataset.mxGender;
+  document.querySelectorAll('[data-mx-gender]').forEach(x=>x.classList.toggle('active',x.dataset.mxGender===_mxState.gender));
+  _mxRender();
+}));
+document.querySelectorAll('[data-mx-year]').forEach(b=>b.addEventListener('click',()=>{
+  _mxState.year=b.dataset.mxYear;
+  document.querySelectorAll('[data-mx-year]').forEach(x=>x.classList.toggle('active',x.dataset.mxYear===_mxState.year));
+  _mxRender();
+}));
+document.getElementById('mx-close')?.addEventListener('click',_closeMemberExplorer);
+document.getElementById('mx-overlay')?.addEventListener('click',e=>{if(e.target===e.currentTarget)_closeMemberExplorer();});
+document.getElementById('mx-open-btn')?.addEventListener('click',()=>_openMemberExplorer());
 document.getElementById('sp-klinks-btn').addEventListener('click',e=>{e.stopPropagation();document.getElementById('settings-panel').classList.remove('open');_openKpopLinks();});
 document.getElementById('klp-close').addEventListener('click',e=>{e.stopPropagation();_closeKpopLinks();});
 document.getElementById('kpop-links-overlay').addEventListener('click',e=>{if(e.target===e.currentTarget)_closeKpopLinks();});
@@ -25092,6 +25233,16 @@ _totopBtn.addEventListener('click',e=>{
     </div>
     <!-- Discover = "전체·탐색": 오늘의 소식 → 기념일 → 차트 → Trend → 디스커버리 (2026-09-23 오늘의 소식 추가). -->
     <div id="feed-pane-disc" class="feed-pane" hidden>
+      <div class="feed-section">
+        <button id="mx-open-btn" class="mx-feed-btn" type="button">
+          <span class="mx-feed-icon">🔍</span>
+          <span class="mx-feed-txt">
+            <span class="mx-feed-ttl">멤버 탐색</span>
+            <span class="mx-feed-sub">2009년생 · 남돌 · 일본인 멤버 등으로 필터링</span>
+          </span>
+          <span class="mx-feed-arr">›</span>
+        </button>
+      </div>
       <!-- 오늘의 케이팝 소식(2026-09-23, 사용자 제안) — 앨범 발매·음방 1위·조회수 마일스톤 세 소스를
            "오늘 일어난 일"로만 좁혀 한 선반에 합친다. 기존 New Releases(최근 최대 60일)·Charts와 달리
            "오늘"이 유일한 필터라 데이터가 얇은 날은 짧거나 빈 채로 섹션 자체가 숨는다(정상 — 억지로
