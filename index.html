@@ -6082,6 +6082,9 @@ let _lbSpeed=1; // 우측 탭존을 꾹 누르는 동안의 배속 (1 또는 2)
 let _lbMuted=localStorage.getItem('kpu_lb_muted')!=='0'; // 기본 무음
 let _lbVolume=Math.min(100,Math.max(0,parseInt(localStorage.getItem('kpu_lb_volume')||'100',10)));
 let _lbAutoUnmuteT=null; // 다음/이전(스와이프·버튼) 전환 시 무음→소리 복구 타이머
+let _lbActiveVid=null; // 현재 재생 중인 영상 ID (시청 진행 추적용)
+const _vidProg=new Map(); // videoId→{t,d} 시청 위치 in-memory 캐시
+const _progSaveT=new Map(),_progSyncT=new Map(); // localStorage·Supabase 디바운스 타이머
 let _lbNeedUnmute=false; // 소리 모드에서 isAdvance 전환 시 재생 시작 후 unMute 필요 여부
 let _lbLoadingT=null; // 영상 전환 시 로딩 스피너 표시용 폴백 타이머(재생 시작 신호가 안 올 경우 대비)
 function _lbShowLoading(){
@@ -6108,6 +6111,7 @@ function _updateLbMuteBtn(){
 let _lbIsNativeShorts=false; // 회전 버튼이 "강제 세로 전환"과 "레터박스 전환" 중 뭘 해야 할지 판단용
 function openLightbox(url,shorts,playlist,idx,ctx,isAdvance,forceBrowseMode){
   const vid=ytId(url);if(!vid)return;
+  _lbActiveVid=vid;
   // 연결 카드에서 출발해 실제 재생까지 간 경우만 계측 — 이 건의 **핵심 지표**(열고 나서 영상에
   // 도달하기까지 몇 초·몇 탭 걸렸나). isAdvance(자동 다음 영상)는 사용자의 도달이 아니라 제외.
   if(!isAdvance&&_connAnchor&&_connOpenT&&
@@ -7516,7 +7520,12 @@ document.getElementById('yt-lb-autonext-cancel')?.addEventListener('click',e=>{e
 window.addEventListener('message',e=>{
   try{
     const d=JSON.parse(e.data);
-    if(d.event!=='infoDelivery'||d.info?.playerState==null)return;
+    if(d.event!=='infoDelivery'||!d.info)return;
+    // 시청 진행 추적 — currentTime+duration이 있으면 저장 (playerState 없는 메시지도 옴)
+    if(_lbActiveVid&&d.info.currentTime!=null&&d.info.duration>0&&d.info.currentTime>=1){
+      _setVidProg(_lbActiveVid,d.info.currentTime,d.info.duration);
+    }
+    if(d.info.playerState==null)return;
     // YouTube sends {event:'infoDelivery', info:{playerState:1}} when playback starts
     if(d.info.playerState===1){
       _lbHideLoading();
@@ -7626,6 +7635,7 @@ function _closeLbHalf(){
 });
 
 function closeLightbox(){
+  _lbActiveVid=null;
   clearTimeout(_lbAutoUnmuteT);
   _closeLbHalf(); // 하프시트로 올려둔 카드 시트를 원래 층으로 되돌린다
   _resetQueueSheet();
@@ -8244,6 +8254,62 @@ function _placeDurBadge(tile,thumbH){
   if(!b||!(thumbH>0))return;
   b.style.top=thumbH+'px';b.style.display='';
 }
+// 시청 진행 바 — _attachDurBadge/_placeDurBadge와 동일한 패턴
+// (썸네일 래퍼 없는 구조라 top을 JS로 계산해 이미지 밑선에 맞춘다)
+function _attachProgBar(tile,vidId){
+  if(!tile||!vidId)return null;
+  let b=tile.querySelector(':scope > .gc-ch-prog');
+  if(!b){b=document.createElement('div');b.className='gc-ch-prog';tile.appendChild(b);}
+  b.dataset.vid=vidId;
+  const p=_vidProg.get(vidId);
+  const ratio=p&&p.d>0?p.t/p.d:0;
+  b.style.width=Math.min(ratio,1)*100+'%';
+  b.style.display=ratio>=0.01?'':'none';
+  return b;
+}
+function _placeProgBar(tile,thumbH){
+  const b=tile?.querySelector(':scope > .gc-ch-prog');
+  if(!b||!(thumbH>0))return;
+  b.style.top=(thumbH-3)+'px';
+}
+function _updateProgBars(id){
+  const p=_vidProg.get(id);
+  const ratio=p&&p.d>0?p.t/p.d:0;
+  document.querySelectorAll(`.gc-ch-prog[data-vid="${id}"]`).forEach(b=>{
+    b.style.width=Math.min(ratio,1)*100+'%';
+    b.style.display=ratio>=0.01?'':'none';
+  });
+}
+function _setVidProg(id,t,d){
+  _vidProg.set(id,{t,d});
+  _updateProgBars(id);
+  // localStorage — 2초 디바운스
+  clearTimeout(_progSaveT.get(id));
+  _progSaveT.set(id,setTimeout(()=>{
+    try{localStorage.setItem('kpu_p_'+id,JSON.stringify({t,d}));}catch(_){}
+  },2000));
+  // Supabase — 5초 디바운스, 로그인 시만
+  if(window._sbSession&&sb){
+    clearTimeout(_progSyncT.get(id));
+    _progSyncT.set(id,setTimeout(()=>{
+      sb.from('video_progress').upsert(
+        {user_id:window._sbSession.user.id,video_id:id,progress_sec:Math.round(t),duration_sec:Math.round(d),updated_at:new Date().toISOString()},
+        {onConflict:'user_id,video_id'}
+      ).then(()=>{},()=>{});
+    },5000));
+  }
+}
+// 앱 시작 시 localStorage에서 진행 이력 복원
+(function(){
+  try{
+    for(let i=0;i<localStorage.length;i++){
+      const k=localStorage.key(i);
+      if(!k?.startsWith('kpu_p_'))continue;
+      const v=JSON.parse(localStorage.getItem(k)||'null');
+      if(v?.d>0&&v?.t>=0)_vidProg.set(k.slice(6),v);
+    }
+  }catch(_){}
+})();
 function makeSmallThumb(s,allSongs,idx,ctx){
   const vid=ytId(s.u);
   const shorts=_songIsShort(s);
@@ -8273,6 +8339,9 @@ function makeSmallThumb(s,allSongs,idx,ctx){
     if(img.complete)requestAnimationFrame(_place);
     else img.addEventListener('load',_place,{once:true});
   }
+  _attachProgBar(box,vid);
+  {const _placeP=()=>_placeProgBar(box,img.getBoundingClientRect().height);
+  if(img.complete)requestAnimationFrame(_placeP);else img.addEventListener('load',_placeP,{once:true});}
   const selectable=_connApplySelectable(box,s,ctx);
   box.addEventListener('click',e=>{
     e.stopPropagation();
@@ -18393,6 +18462,18 @@ async function initSupabaseSync(){
       isBrandNewAnonymous=true;
     }
     window._sbSession=session;
+    // 로그인 직후 서버 시청 이력 불러오기 — 로컬보다 더 나아간 게 있으면 덮어씀
+    sb.from('video_progress').select('video_id,progress_sec,duration_sec').then(({data})=>{
+      if(!data)return;
+      data.forEach(row=>{
+        if(!(row.duration_sec>0))return;
+        const local=_vidProg.get(row.video_id);
+        if(!local||row.progress_sec>local.t){
+          _vidProg.set(row.video_id,{t:row.progress_sec,d:row.duration_sec});
+          try{localStorage.setItem('kpu_p_'+row.video_id,JSON.stringify({t:row.progress_sec,d:row.duration_sec}));}catch(_){}
+        }
+      });
+    },()=>{});
     _updateAdminUI();
     _loadAdminScript();
     _scrapCountsP=_warmScrapCounts(); // featured 선정 시 이 promise를 await해서 race condition 방지
@@ -19445,6 +19526,7 @@ function _openFeedListOverlay(title,sub,songs,ctx){
     addMarquee(titleEl);
     item.appendChild(img);item.appendChild(titleEl);
     _attachDurBadge(item,s.dur); // 자리 잡기는 아래 renderNextBatch의 높이 못박기 루프에서
+    _attachProgBar(item,ytId(s.u));
     if(s.vc!=null||s.pa){
       const metaEl=document.createElement('div');
       metaEl.className='gc-ch-meta';
@@ -19498,6 +19580,7 @@ function _openFeedListOverlay(title,sub,songs,ctx){
       const thumbH=it.classList.contains('is-short')?w*16/9:w*9/16;
       it.style.height=Math.ceil(thumbH+titleH+metaH+whoH)+'px';
       _placeDurBadge(it,thumbH); // 재생시간 배지를 썸네일 밑변에 맞춤
+      _placeProgBar(it,thumbH);
     });
     if(rendered<orderedSongs.length){grid.appendChild(sentinel);observer.observe(sentinel);}
     else observer.disconnect();
@@ -22744,6 +22827,7 @@ function _makeChVidController(contId){
       addMarquee(tEl);
       item.appendChild(img);item.appendChild(tEl);
       _attachDurBadge(item,v.duration_sec); // 자리 잡기는 아래 높이 못박기 루프에서(_placeDurBadge)
+      _attachProgBar(item,v.id);
       // 쇼츠는 URL 자체를 /shorts/ 형식으로 만들어야 스크랩/컬렉션으로 저장되거나 라이트박스에서 스와이프로
       // 넘어갔을 때(isShorts(url) 판별)도 세로 비율이 계속 유지됨 — watch?v= 로 통일해버리면 그 정보가 사라짐.
       const _vidUrl=vv=>_isShortV(vv)?`https://www.youtube.com/shorts/${vv.id}`:`https://www.youtube.com/watch?v=${vv.id}`;
@@ -22826,6 +22910,7 @@ function _makeChVidController(contId){
       const h=item.classList.contains('is-short')&&!item.classList.contains('featured')?w*16/9:w*9/16;
       img.style.height=h+'px';
       _placeDurBadge(item,h); // 재생시간 배지를 썸네일 밑변에 맞춤 — 이미 잰 높이를 그대로 재사용
+      _placeProgBar(item,h);
     });
     return{nodes,pendingProbe};
   }
