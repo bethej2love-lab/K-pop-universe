@@ -2951,10 +2951,25 @@
     "id": "5x9WawpXGR82PWDFk9CKYQ",
     "spotifyName": "cignature",
     "kind": "group",
-    "confidence": "low",
-    "why": "동명 후보 3명 중 앨범 대조",
+    "confidence": "high",
+    "why": "동명 후보 3명 중 앨범 대조 · 영상 제목 대조 통과(2곡)",
     "evidence": {
-      "titleOverlap": 0
+      "titleOverlap": 0,
+      "verifyOverlap": 0,
+      "verifyYears": [
+        2024,
+        2023
+      ],
+      "videoHits": [
+        {
+          "song": "﻿I like I like",
+          "video": "cignature(시그니처) - 'I like I like' Dance Practice (Close up ver.)"
+        },
+        {
+          "song": "Poongdung",
+          "video": "cignature (시그니처) - Poongdung | Show! MusicCore | MBC240622방송"
+        }
+      ]
     },
     "checkedAt": "2026-09-18"
   },
