@@ -41,7 +41,18 @@ ck(/\.eq\('seeded',false\)/.test(fn),
 // 트로피(카드 배지)와 달리 여기선 티어 하한을 걸지 않는다 — 설계 의도(수집은 넓게, 이 선반도 넓게)
 ck(!/yt_view_milestones[\s\S]{0,300}gte\('tier'/.test(fn),
   '조회수 마일스톤에 티어 하한을 걸지 않음(작은 그룹의 10만·100만도 소식으로 보여야 함 — 트로피 배지 기준(1000만)과는 다른 축)');
-ck(/albumsAll[\s\S]{0,40}filter\(a=>a\.d===todayDot\)/.test(fn), '앨범 발매도 오늘 날짜로만 필터(New Releases의 최근 60일 창과 다름)');
+// 2026-10-12 합침: 앨범은 소식 줄이 아니라 같은 섹션 안 발매 앨범 블록(#feed-newalbum)이 맡는다
+ck(!/_ensureRecentAlbums|type:'album'/.test(fn), '소식 목록에 앨범 줄을 다시 넣지 않음(아래 발매 앨범 블록과 같은 앨범이 두 번 나옴)');
+const secM = /id="feed-dailynews-section"[\s\S]*?id="feed-anniv-section"/.exec(html);
+ck(!!secM && /id="feed-newalbum-section"/.test(secM[0]) && /id="feed-newalbum"/.test(secM[0]),
+  "발매 앨범 블록이 This Week's K-pop 섹션 안에 있음");
+const albFn = extractBraces(html, /^async function _buildFeedNewAlbums\(/m, '_buildFeedNewAlbums');
+ck(/finally\{_syncDailyNewsSection\(\);\}/.test(fn) && /finally\{_syncDailyNewsSection\(\);\}/.test(albFn),
+  '두 빌더 모두 끝날 때 섹션 표시를 동기화(한쪽만 있어도 섹션이 뜸)');
+// 조회수 돌파 쇼츠: is_short를 받아와 세로 2열 카드로(2026-10-12 — 16:9 전폭+흐린 패딩으로 보이던 버그)
+ck(/yt_channel_videos!inner\([^)]*is_short/.test(fn), '조회수 마일스톤 조회에 is_short 포함');
+ck(/findIndex\(r=>r\.thumb&&!r\.isShort\)/.test(fn), '헤드라인(16:9)에 쇼츠를 올리지 않음');
+ck(/_appendNewsItems\(list,/.test(fn) && !/_appendNewsRow\(list,r\)/.test(fn), '소식 렌더가 쇼츠 2열 경로(_appendNewsItems)를 탐');
 ck(/if\(!items\.length\)return;/.test(fn), '세 소스 다 비면 섹션을 그대로 숨김(억지로 안 채움)');
 
 console.log(`\n${fail === 0 ? '✅' : '❌'} ${fail} 실패`);

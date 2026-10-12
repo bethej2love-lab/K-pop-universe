@@ -19887,33 +19887,27 @@ async function _buildFeedDailyNews(){
   const section=document.getElementById('feed-dailynews-section');
   const list=document.getElementById('feed-dailynews');
   if(!section||!list||!sb)return;
-  list.innerHTML='';section.style.display='none';
+  list.innerHTML='';_syncDailyNewsSection();
   try{
     const today=new Date().toISOString().slice(0,10);
-    const todayDot=today.replace(/-/g,'.');
     const tomorrow=new Date(Date.now()+86400000).toISOString().slice(0,10);
     const sevenDaysAgo=new Date(Date.now()-7*86400000).toISOString().slice(0,10);
-    const sevenDaysAgoDot=sevenDaysAgo.replace(/-/g,'.');
     // N일 전 라벨 — 오늘이면 빈 문자열, 아니면 " · N일 전"
     const _agoLabel=(d)=>{const diff=Math.round((new Date(today)-new Date(d))/86400000);return diff<=0?'':(currentLang==='ko'?` · ${diff}일 전`:` · ${diff}d ago`);};
-    const [albumsAll,winsRes,mvRes,milesRes]=await Promise.all([
-      _ensureRecentAlbums().catch(()=>[]),
+    // ⚠️ 앨범('💿 신보' 줄)은 2026-10-12에 뺐다 — 같은 섹션 아래 발매 앨범 블록(#feed-newalbum)이 같은 앨범을
+    //    커버 그리드로 보여준다. 여기 다시 넣으면 한 섹션 안에서 같은 앨범이 두 번 나온다.
+    const [winsRes,mvRes,milesRes]=await Promise.all([
       sb.from('music_show_wins').select('*').eq('win_date',today).order('show',{ascending:true}),
       sb.from(_YT_TABLE).select('id,title,thumb,is_short,group_ko,content_flag,published_at')
         .gte('published_at',sevenDaysAgo).lt('published_at',tomorrow)
         .order('published_at',{ascending:false}).limit(50),
-      sb.from('yt_view_milestones').select('*,yt_channel_videos!inner(title,thumb,group_ko,published_at)')
+      sb.from('yt_view_milestones').select('*,yt_channel_videos!inner(title,thumb,group_ko,published_at,is_short)')
         .eq('crossed_at',today).eq('seeded',false).limit(300)
         // ⚠️ .catch가 아니라 .then(성공,실패) — Supabase 쿼리 빌더는 thenable일 뿐 Promise가 아니라 .catch가 없다.
         //    .catch를 쓰면 여기서 TypeError가 나 선반 전체가 사라졌다(9/27 마일스톤 추가 직후부터, 2026-09-28 발견).
         .then(r=>r,()=>({data:[]}))
     ]);
     const items=[];
-    (Array.isArray(albumsAll)?albumsAll:[]).filter(a=>a.d>=sevenDaysAgoDot&&a.d<=todayDot).forEach(a=>{
-      const isoDate=a.d.replace(/\./g,'-');
-      const sub=(a.k==='g'?_gLabelKo(a.o):a.o)+_agoLabel(isoDate);
-      items.push({type:'album',title:a.t,sub,thumb:a.c,score:70-Math.round((new Date(today)-new Date(isoDate))/86400000)*2,nav:_albumCardNav(a)});
-    });
     (winsRes.data||[]).forEach(w=>{
       const sub=_gLabelKo(w.group_ko)+(w.member_ko?` · ${w.member_ko}`:'')+` · ${w.show}`;
       items.push({type:'win',title:w.song_title||'',sub,thumb:null,
@@ -19928,7 +19922,7 @@ async function _buildFeedDailyNews(){
       const vidUrl=v.is_short?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;
       const pubDate=(v.published_at||'').slice(0,10);
       const mvScore=(isTeaser?50:80)-Math.round((new Date(today)-new Date(pubDate||today))/86400000)*2;
-      items.push({type:isTeaser?'teaser':'mv',title:t,sub:(GROUPS[v.group_ko]&&!GROUPS[v.group_ko].disbanded?_gLabelKo(v.group_ko):'')+_agoLabel(pubDate),thumb:v.thumb,score:mvScore,
+      items.push({type:isTeaser?'teaser':'mv',title:t,sub:(GROUPS[v.group_ko]&&!GROUPS[v.group_ko].disbanded?_gLabelKo(v.group_ko):'')+_agoLabel(pubDate),thumb:v.thumb,score:mvScore,isShort:!!v.is_short,
         nav:()=>openLightbox(vidUrl,!!v.is_short,null,0,{groupKo:v.group_ko},false,true)});
     });
     // 조회수 돌파 — **뉴스가 되는 것만**(2026-09-28, 사용자: "N 돌파 너무 많다"). 하루 수십 건 중 대부분이 옛 영상의
@@ -19951,30 +19945,71 @@ async function _buildFeedDailyNews(){
       const lbl=_fmtViewMilestone(+best.tier);
       const sub=n>1?(currentLang==='ko'?`${_gLabelKo(gko)} · 영상 ${n}개 돌파 · 최고 ${lbl}`:`${_gLabelKo(gko)} · ${n} videos · top ${lbl}`)
                    :(currentLang==='ko'?`${_gLabelKo(gko)} · ${lbl} 돌파`:`${_gLabelKo(gko)} · passed ${lbl}`);
-      const vidUrl=`https://www.youtube.com/watch?v=${best.video_id}`;
-      items.push({type:'milestone',title:v.title||'',sub,thumb:v.thumb,score:40+Math.log10(+best.tier||1),
-        nav:()=>openLightbox(vidUrl,false,null,0,{groupKo:gko},false,true)});
+      // 쇼츠는 세로 카드 2열로 그린다(_appendNewsItems) — 예전엔 is_short를 안 받아와 16:9 전폭에 넣었고,
+      // 유튜브 쇼츠 썸네일은 양옆이 흐린 패딩이라 "가로 직사각형 + 모자이크"로 보였다(2026-10-12 사용자 제보).
+      const isShort=!!v.is_short;
+      const vidUrl=isShort?`https://youtube.com/shorts/${best.video_id}`:`https://www.youtube.com/watch?v=${best.video_id}`;
+      items.push({type:'milestone',title:v.title||'',sub,thumb:v.thumb,score:40+Math.log10(+best.tier||1),isShort,
+        nav:()=>openLightbox(vidUrl,isShort,null,0,{groupKo:gko},false,true)});
     });
     if(!items.length)return;
     // ── 1면 레이아웃(2026-09-28, 사용자: "일렬 리스트라 보기 별로") ── 신문 1면처럼 **가장 큰 소식 하나**를 크게,
-    // 그다음 4개만 한 줄씩, 나머지는 접는다. 우선순위: 음방 1위 > MV > 앨범 > 티저 > 조회수 돌파(큰 단계일수록 위).
-    const _PRI={win:100,mv:80,album:70,teaser:50};
+    // 그다음 4개만 한 줄씩, 나머지는 접는다. 우선순위: 음방 1위 > MV > 티저 > 조회수 돌파(큰 단계일수록 위).
+    const _PRI={win:100,mv:80,teaser:50};
     items.forEach((r,i)=>{r._s=(r.score!=null?r.score:(_PRI[r.type]||0))-i*0.001;});
     items.sort((a,b)=>b._s-a._s);
-    const heroIdx=items.findIndex(r=>r.thumb); // 헤드라인은 이미지가 있는 것 중 최상위
+    // 헤드라인은 이미지가 있는 것 중 최상위 — 단 쇼츠는 제외(헤드라인 틀이 16:9라 세로 썸네일이 잘린다)
+    const heroIdx=items.findIndex(r=>r.thumb&&!r.isShort);
     const rest=items.slice();
     if(heroIdx>=0)_appendNewsHero(list,rest.splice(heroIdx,1)[0]);
-    const SHOW=4;
-    rest.slice(0,SHOW).forEach(r=>_appendNewsRow(list,r));
+    _pairNewsShorts(rest);
+    let SHOW=4;
+    // 쇼츠 2열 한 쌍이 "더보기" 경계에서 갈라지지 않게
+    if(rest.length>SHOW&&_isNewsShortCard(rest[SHOW-1])&&_isNewsShortCard(rest[SHOW])&&rest[SHOW]._pair===rest[SHOW-1])SHOW++;
+    _appendNewsItems(list,rest.slice(0,SHOW));
     if(rest.length>SHOW){
       const more=document.createElement('button');more.type='button';more.className='feed-news-more';
       const extra=rest.slice(SHOW);
       more.textContent=currentLang==='ko'?`+${extra.length}개 더보기`:`+${extra.length} more`;
-      more.addEventListener('click',()=>{more.remove();extra.forEach(r=>_appendNewsRow(list,r));});
+      more.addEventListener('click',()=>{more.remove();_appendNewsItems(list,extra);});
       list.appendChild(more);
     }
-    section.style.display='';
   }catch(e){console.warn('[feed] 오늘의 소식 선반 실패 — 이 선반만 빠집니다',e);}
+  finally{_syncDailyNewsSection();}
+}
+// This Week's K-pop 섹션은 소식 목록(#feed-dailynews)과 발매 앨범 블록(#feed-newalbum-section) 두 빌더가
+// 따로 채운다(2026-10-12 합침). 어느 한쪽만 있어도 섹션은 떠야 하므로, 각 빌더가 끝날 때 이걸 부른다.
+function _syncDailyNewsSection(){
+  const sec=document.getElementById('feed-dailynews-section');if(!sec)return;
+  const news=document.getElementById('feed-dailynews');
+  const alb=document.getElementById('feed-newalbum-section');
+  const hasNews=!!(news&&news.children.length);
+  if(news)news.hidden=!hasNews;
+  sec.style.display=(hasNews||(alb&&alb.style.display!=='none'))?'':'none';
+}
+// 조회수 돌파 쇼츠 = 세로 카드(2026-10-12, 사용자: "쇼츠는 평소 쇼츠 배열처럼 1행 2열로"). 영상 그리드와
+// 같은 카드(_appendFeedCard short)를 .feed-grid 2열에 넣는다 — 썸네일도 같은 경로(oardefault 세로 원본)를 탄다.
+// MV·티저 줄은 원래 작은 썸네일 한 줄이라 그대로 둔다.
+function _isNewsShortCard(r){return !!(r&&r.type==='milestone'&&r.isShort&&r.thumb);}
+// 2열이 반쪽만 차지 않게, 쇼츠 카드 바로 뒤로 다음 쇼츠 카드를 끌어온다(나머지 순서는 유지).
+function _pairNewsShorts(arr){
+  for(let i=0;i<arr.length;i++){
+    if(!_isNewsShortCard(arr[i])||arr[i]._pair!==undefined)continue;
+    const j=arr.findIndex((r,k)=>k>i&&_isNewsShortCard(r)&&r._pair===undefined);
+    if(j<0){arr[i]._pair=null;break;}
+    const [m]=arr.splice(j,1);arr.splice(i+1,0,m);
+    m._pair=arr[i];arr[i]._pair=null;i++;
+  }
+}
+function _appendNewsItems(container,arr){
+  let grid=null;
+  arr.forEach(r=>{
+    if(!_isNewsShortCard(r)){grid=null;_appendNewsRow(container,r);return;}
+    if(!grid||grid.children.length>=2){grid=document.createElement('div');grid.className='feed-grid feed-news-shorts';container.appendChild(grid);}
+    const card=_appendFeedCard(grid,'📈',r.title,r.sub,r.nav,r.thumb,null,{short:true});
+    const cap=card.querySelector('.feed-card-cap');
+    if(cap){const b=document.createElement('span');b.className='feed-news-badge fnb-milestone';b.textContent='📈 조회수';cap.insertBefore(b,cap.firstChild);}
+  });
 }
 // 1면 헤드라인 카드(2026-09-28). 캡션은 **이미지 아래** — 앨범 커버는 그 자체가 작품이라 위에 얹지 않는다는
 // 원칙(영상도 같은 틀로 통일). 앨범은 정사각 커버를 가운데 두고 양옆을 흐린 커버로 채운다(자르지 않음).
@@ -20071,6 +20106,7 @@ async function _buildFeedNewAlbums(){
     });
     section.style.display='';
   }catch(e){console.warn('[feed] 이번 주 발매 선반 실패 — 이 선반만 빠집니다',e);}
+  finally{_syncDailyNewsSection();} // 2026-10-12부터 This Week's K-pop 섹션의 하위 블록
 }
 // ── 오리지널 콘텐츠 선반에서 뺄 것들(2026-09-16 사용자 요청) ─────────────────────────
 // ① 뮤직비디오·리릭비디오: 개인 채널에 올라와도 "오리지널 콘텐츠"가 아니라 음원 홍보물이다.
@@ -24680,17 +24716,20 @@ _totopBtn.addEventListener('click',e=>{
       <div class="feed-section" id="feed-dailynews-section" style="display:none">
         <div class="feed-section-ttl">📰 This Week's K-pop</div>
         <div id="feed-dailynews" class="feed-news-list"></div>
+        <!-- 발매 앨범(2026-10-12, 사용자: "신보랑 최근 발매가 겹친다 — 신보 줄은 빼고 최근 발매를 이리로") —
+             예전 별도 섹션(New Releases)을 이 섹션의 하위 블록으로 옮겼다. 소식 목록의 '💿 신보' 줄은 없앴다
+             (같은 앨범이 두 번, 그것도 덜 보기 좋은 모양으로 나오던 중복). 빌더(_buildFeedNewAlbums)·id는 그대로.
+             소식이 비어도 앨범만으로, 앨범이 비어도 소식만으로 섹션이 뜬다(_syncDailyNewsSection).
+             데이터는 albums_recent.json(빌드 생성물)을 lazy 로드한다 — 앱은 앨범을 안 들고 있고
+             disco/는 카드 열 때 그룹별로 받는 구조라 피드에서 쓰려면 별도 인덱스가 필요하다. -->
+        <div id="feed-newalbum-section" style="display:none">
+          <div class="feed-news-subttl" id="feed-newalbum-ttl">💿 New Releases</div>
+          <div id="feed-newalbum" class="feed-album-grid"></div>
+        </div>
       </div>
       <div class="feed-section" id="feed-anniv-section" style="display:none">
         <div class="feed-section-ttl">🎂 Today's Anniversary</div>
         <div id="feed-anniv" class="feed-strip hscroll-drag"></div>
-      </div>
-      <!-- 이번 주 발매(2026-09-15) — 앨범 커버 정사각 카드. 시간 민감이라 기념일 바로 밑, 차트 위.
-           데이터는 albums_recent.json(빌드 생성물)을 lazy 로드한다 — 앱은 앨범을 안 들고 있고
-           disco/는 카드 열 때 그룹별로 받는 구조라 피드에서 쓰려면 별도 인덱스가 필요하다. -->
-      <div class="feed-section" id="feed-newalbum-section" style="display:none">
-        <div class="feed-section-ttl" id="feed-newalbum-ttl">💿 New Releases</div>
-        <div id="feed-newalbum" class="feed-album-grid"></div>
       </div>
       <div class="feed-section">
         <div class="feed-section-ttl">📊 Charts</div>
