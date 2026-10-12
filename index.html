@@ -6159,8 +6159,11 @@ function openLightbox(url,shorts,playlist,idx,ctx,isAdvance,forceBrowseMode){
   // 어디서 열리든 몰입형 하나로 통일하기로 함 — "다음 영상" 목록은 좌상단 목록 버튼으로 언제든 그대로
   // 펼쳐볼 수 있으니 브라우즈 전용 레이아웃 자체가 필요 없어짐. 파라미터 자체는 호출부 여러 곳에 아직
   // 남아있지만(제거는 별개 정리 작업), 여기서 더 이상 안 읽으므로 무해.
-  if(!isAdvance){_resetQueueSheet();_lbSessionMode=shorts?'shorts':'browse';}
+  // 데스크톱에서 쇼츠는 browse 모드로 — 넓은 화면이라 세로 영상 + 오른쪽 정보 패널 레이아웃이 가능.
+  // 모바일은 스와이프 몰입형(shorts 모드)이 적합해서 유지.
+  if(!isAdvance){_resetQueueSheet();_lbSessionMode=(shorts&&isMob())?'shorts':'browse';}
   lb.classList.toggle('lb-browse',_lbSessionMode==='browse');
+  lb.classList.toggle('lb-shorts-desk',!!(shorts&&!isMob()));
   _gaEvent('video_play',{mode:_lbSessionMode,advance:!!isAdvance}); // 쇼츠/브라우즈·최초/넘김 구분(2026-08-29)
   // iOS Safari: display:none 상태의 iframe에서 src를 바꾸면 사용자 제스처 체인이 끊겨 autoplay가 차단됨.
   // 라이트박스를 먼저 열어 iframe이 visible한 상태로 만든 뒤 src를 설정해야 autoplay가 허용됨.

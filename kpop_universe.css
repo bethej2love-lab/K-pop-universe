@@ -949,6 +949,23 @@
     #yt-lightbox.lb-browse .lb-menu-wrap{display:block;position:absolute;top:-30px;right:34px;}
     #yt-lightbox.lb-browse #yt-lb-menu-btn{background:none;border:none;color:#fff;font-size:20px;cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><path d='M11,1 L12.3,9.7 L21,11 L12.3,12.3 L11,21 L9.7,12.3 L1,11 L9.7,9.7Z' fill='%23FFB0D0' opacity='.97'/></svg>") 11 11,pointer;padding:4px 6px;opacity:.65;line-height:1;}
     #yt-lightbox.lb-browse #yt-lb-menu-btn:hover{opacity:1;}
+
+    /* ── 데스크톱 쇼츠: 세로 영상 + 우측 정보 패널 (YouTube Shorts 데스크톱 레이아웃 참고) ── */
+    /* wrap을 컨텐츠 너비에 맞게(고정 1080px 아님), main을 auto-shrink, video를 높이 기준으로 키움 */
+    #yt-lightbox.lb-browse.lb-shorts-desk #yt-lb-wrap{width:auto;max-width:92vw;}
+    #yt-lightbox.lb-browse.lb-shorts-desk #yt-lb-main{flex:0 0 auto;}
+    #yt-lightbox.lb-browse.lb-shorts-desk #yt-lb-video-box{
+      height:min(88vh,800px);width:auto;aspect-ratio:9/16;margin:0;}
+    /* .is-shorts 기본 규칙(width:min(54vw,420px);margin:0 auto) 덮어씀 — 높이 기준이 우선 */
+    #yt-lightbox.lb-browse.lb-shorts-desk #yt-lb-video-box.is-shorts{
+      width:auto;margin:0;}
+    /* info·reactions·toolbar도 video-box 너비에 자동으로 맞춤 */
+    #yt-lightbox.lb-browse.lb-shorts-desk #yt-lb-info,
+    #yt-lightbox.lb-browse.lb-shorts-desk #yt-lb-video-box.is-shorts~#yt-lb-info{
+      width:auto;margin:0;}
+    /* 업리스트 패널: 기존 browse 320px 유지, 세로 영상 높이에 맞춰 꽉 채움 */
+    #yt-lightbox.lb-browse.lb-shorts-desk #yt-lb-uplist{
+      max-height:min(88vh,800px);align-self:flex-start;}
   }
   @media(max-width:768px){
     /* 발열 완화(2026-08-28, PERFORMANCE.md): 영상 위 backdrop-filter blur는 매 프레임 GPU 부하가 커서
