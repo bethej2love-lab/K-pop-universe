@@ -19826,12 +19826,17 @@ function _albumOwnerArt(a){
   return L.find(x=>x.name&&x.name.ko===a.o&&(!a.g||(x.group&&x.group.ko===a.g)))
        ||L.find(x=>x.name&&x.name.ko===a.o)||null;
 }
+// 앨범 커버를 누르면 **아티스트 카드 + 그 앨범 상세(gc-discog-detail)** 를 연다(2026-10-12, 사용자: "커버
+// 눌렀는데 아티스트 카드만 열리는 게 맞나"). 상세만 따로 띄우지 않는 이유: 상세의 이전/다음은 그 아티스트
+// 디스코 안에서 움직이고 트랙 클릭은 카드 영상을 거르는 등 카드 문맥에 묶여 있다. 닫으면 아래에 그 아티스트
+// 카드가 남아 "이 앨범 → 이 가수의 다른 것"으로 이어진다.
 function _albumCardNav(a){
   return ()=>_feedNav(()=>{
     if(a.k==='g'&&GROUPS[a.o]){
       const bm=bubbleMeshes.find(b=>b.ko===a.o);if(bm)flyToBubble(bm.mesh.position,bm.radius);
       if(isMob())showGC(a.o,window.innerWidth/2,window.innerHeight*0.4,false,false,null,false);
       else showGC(a.o,window.innerWidth/2,window.innerHeight/2);
+      _openAlbumDetailWhenReady(a,'gc',()=>_openGCko===a.o?(GROUPS[a.o]||{}).discography:undefined);
       return;
     }
     const art=_albumOwnerArt(a); // 동명이인 오이동 방지 — id 우선
@@ -19839,7 +19844,31 @@ function _albumCardNav(a){
     if(art._worldPos)flyTo(art._worldPos);
     if(isMob())showT(art,window.innerWidth/2,window.innerHeight*0.4,false,false,false);
     else showT(art,window.innerWidth/2,window.innerHeight/2);
+    _openAlbumDetailWhenReady(a,'tt',()=>_openTArtist===art?art.discography:undefined);
   });
+}
+// 카드가 디스코그래피를 받아 스트립을 그릴 때까지 기다렸다가(디스코는 카드 열 때 lazy 로드) 같은 앨범을 찾아
+// 상세를 연다. 스트립 항목을 직접 눌러 여는 이유: 이전/다음 순서가 스트립에 보이는 목록(필터·정렬 반영)과
+// 같아야 하는데 그 목록은 _renderDiscography 클로저 안에만 있다. 스트립에 없으면(OST·일본반 필터 등) 그 앨범
+// 하나로 연다. 끝내 못 찾으면(디스코에 아직 안 들어온 신보) 지금처럼 카드만 열린 채로 둔다.
+// getDisco는 카드가 아직 안 열렸거나 다른 카드면 undefined(=계속 대기, 8초 상한) — 엉뚱한 카드에 상세를 열 일은 없다.
+function _openAlbumDetailWhenReady(a,prefix,getDisco){
+  const norm=s=>_titleNorm(String(s||''));
+  const t0=Date.now();
+  const tick=()=>{
+    const disco=getDisco();
+    const strip=document.getElementById(prefix+'-discog-strip');
+    if(disco===undefined||!strip||!strip.children.length){if(Date.now()-t0<8000)setTimeout(tick,150);return;}
+    if(!Array.isArray(disco))return;
+    const alb=disco.find(x=>a.c&&x.cover===a.c)
+          ||disco.find(x=>norm(x.title)===norm(a.t)&&x.releaseDate===a.d)
+          ||disco.find(x=>norm(x.title)===norm(a.t));
+    if(!alb)return;
+    const item=[...strip.querySelectorAll('.gc-discog-item')].find(el=>{const im=el.querySelector('.gc-discog-cover');return im&&im.getAttribute('src')===alb.cover;});
+    if(item){item.click();return;}
+    _gcDiscogList=[alb];_openGcDiscogDetail(alb,0);
+  };
+  setTimeout(tick,0);
 }
 // ── For You: 즐겨찾기 신보(2026-09-18, 사용자 요청) ────────────────────────────────
 // "New from your fav"가 유튜브 영상만 보여주고 있었다 — 우리가 매일 모으는 디스코그래피가
