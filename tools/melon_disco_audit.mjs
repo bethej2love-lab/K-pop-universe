@@ -70,7 +70,7 @@ const dec = s => (s || '')
   .replace(/&#x([0-9a-f]+);/gi, (_, h) => String.fromCodePoint(parseInt(h, 16)))
   .replace(/&#(\d+);/g, (_, d) => String.fromCodePoint(Number(d)))
   .replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>')
-  .replace(/&quot;/g, '"').replace(/&nbsp;/g, ' ').trim();
+  .replace(/&quot;/g, '"').replace(/&nbsp;/g, ' ').replace(new RegExp(String.fromCharCode(160), 'g'), ' ').trim(); // U+00A0(줄바꿈 없는 공백)도 일반 공백으로 — 'IM HIM'이 비교·삭제에서 안 맞았다(2026-10-12)
 
 // ⚠️ 회사망에서는 node fetch 가 TLS 가로채기 때문에 전부 죽는다(메모리: 회사망 TLS).
 //    curl -k 는 멀쩡하므로 수집은 curl 로 한다 — 환경 따라 갈리는 실패를 없앤다.
@@ -549,6 +549,10 @@ for (const t of list) {
     //    다른 건 대개 우리가 이미 가진 앨범이다 — 중복 추가가 누락보다 고치기 어렵다.
     //    단, 변형판은 원판과 발매일이 같은 경우가 있어(Sped Up 동시 발매) 날짜로 지우면 안 된다.
     if (ourDates.has(a.date) && !isVariant(a.title)) { counts.dup++; continue; }
+    // 데뷔 1년보다 이른 발매는 다른 사람 — 멜론이 같은 이름 아티스트를 한 페이지에 섞는다(2026-10-12: 빅오션(2024
+    // 데뷔)에 해외 래퍼 'IM HIM (feat. Gee El…)' 2022가 들어갔다). 1년 유예는 데뷔 전 선공개·프리데뷔 싱글용.
+    const _deb = t.kind !== 'solo' && groups[t.label] && groups[t.label].debut;
+    if (_deb && a.date && Date.parse(a.date.replace(/\./g, '-')) < Date.parse(String(_deb).replace(/\./g, '-')) - 365 * 86400000) { counts.dup++; continue; }
     if (isVariant(a.title)) counts.variant++;
     // 수집은 **전부** 한다(사용자 결정 2026-09-17: "몽땅 수집하고 노출을 선별"). 리믹스·Sped Up 같은
     // 변형판은 버리지 않고 variant:true + isMain:false 로 태그해서 넣고, 화면에서 기본 숨김 처리한다.

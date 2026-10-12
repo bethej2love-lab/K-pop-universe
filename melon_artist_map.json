@@ -9519,5 +9519,167 @@
     "overlap": 0,
     "evidence": "소속그룹 aid 1910321 일치",
     "checkedAt": "2026-10-01"
+  },
+  "에이식스": {
+    "aid": "3685570",
+    "melonName": "A SIX",
+    "gubun": "대한민국/혼성/그룹",
+    "kind": "group",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-10-12"
+  },
+  "세븐어스": {
+    "aid": "3456841",
+    "melonName": "세븐어스(SEVENUS)",
+    "gubun": "남성/그룹",
+    "kind": "group",
+    "confidence": "high",
+    "overlap": 5,
+    "checkedAt": "2026-10-12"
+  },
+  "하이파이유니콘": {
+    "aid": "3467455",
+    "melonName": "Hi-Fi Un!corn",
+    "gubun": "대한민국/남성/그룹",
+    "kind": "group",
+    "confidence": "high",
+    "overlap": 25,
+    "checkedAt": "2026-10-12"
+  },
+  "캔디샵": {
+    "aid": "3748112",
+    "melonName": "Candy Shop (캔디샵)",
+    "gubun": "대한민국/여성/그룹",
+    "kind": "group",
+    "confidence": "high",
+    "overlap": 3,
+    "checkedAt": "2026-10-12"
+  },
+  "휘브": {
+    "aid": "3613486",
+    "melonName": "WHIB(휘브)",
+    "gubun": "대한민국/남성/그룹",
+    "kind": "group",
+    "confidence": "high",
+    "overlap": 6,
+    "checkedAt": "2026-10-12"
+  },
+  "어센트": {
+    "aid": "3802115",
+    "melonName": "어센트(ASC2NT)",
+    "gubun": "남성/그룹",
+    "kind": "group",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-10-12"
+  },
+  "빅오션": {
+    "aid": "3755711",
+    "melonName": "Big Ocean",
+    "gubun": "남성/그룹",
+    "kind": "group",
+    "confidence": "high",
+    "overlap": 11,
+    "checkedAt": "2026-10-12"
+  },
+  "다이몬": {
+    "aid": "3679516",
+    "melonName": "DXMON (다이몬)",
+    "gubun": "대한민국/남성/그룹",
+    "kind": "group",
+    "confidence": "high",
+    "overlap": 7,
+    "checkedAt": "2026-10-12"
+  },
+  "더블원": {
+    "aid": "4346326",
+    "melonName": "Double 0ne",
+    "gubun": "남성/그룹",
+    "kind": "group",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-10-12"
+  },
+  "비비업": {
+    "aid": "3743647",
+    "melonName": "VVUP(비비업)",
+    "gubun": "대한민국/여성/그룹",
+    "kind": "group",
+    "confidence": "high",
+    "overlap": 7,
+    "checkedAt": "2026-10-12"
+  },
+  "하츠웨이브": {
+    "aid": "4839714",
+    "melonName": "hrtz.wav (하츠웨이브)",
+    "gubun": "그룹",
+    "kind": "group",
+    "confidence": "high",
+    "overlap": 3,
+    "checkedAt": "2026-10-12"
+  },
+  "모디세이": {
+    "aid": "4922731",
+    "melonName": "MODYSSEY (모디세이)",
+    "gubun": "대한민국/남성/그룹",
+    "kind": "group",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-10-12"
+  },
+  "에이엔": {
+    "aid": "5076822",
+    "melonName": "AEN (에이엔)",
+    "gubun": "남성/그룹",
+    "kind": "group",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-10-12"
+  },
+  "a:에반|솔로": {
+    "aid": "2899081",
+    "melonName": "에반(EVAN)",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 2,
+    "checkedAt": "2026-10-12"
+  },
+  "a:디모렉스|솔로": {
+    "aid": "4359860",
+    "melonName": "DIMO REX",
+    "gubun": "대한민국/남성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 6,
+    "checkedAt": "2026-10-12"
+  },
+  "a:현아|솔로|포미닛+원더걸스": {
+    "aid": "449401",
+    "melonName": "현아",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 2,
+    "checkedAt": "2026-10-12"
+  },
+  "a:장예은|솔로": {
+    "aid": "868639",
+    "melonName": "예은",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "high",
+    "overlap": 3,
+    "checkedAt": "2026-10-12"
+  },
+  "a:가희|솔로": {
+    "aid": "520900",
+    "melonName": "가희",
+    "gubun": "대한민국/여성/솔로",
+    "kind": "solo",
+    "confidence": "medium",
+    "overlap": 1,
+    "checkedAt": "2026-10-12"
   }
 }

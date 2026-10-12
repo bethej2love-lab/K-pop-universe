@@ -51,6 +51,17 @@ jobs:
         with:
           node-version: 22
 
+      # 0) 멜론 최신 앨범 목록 — 호출 한도가 없어 **매 회차 전 대상**을 한 번에 본다(2026-10-12).
+      #    스포티파이는 하루 ~100콜이라 547팀을 매일 못 보고, 실측 21일간 49장을 놓쳤다. 멜론 아티스트 ID로
+      #    맞추므로 동명이인 오수집이 없다. 스포티파이보다 **먼저** 돌려야 스포티파이 쪽이 같은 발매를
+      #    (제목 표기만 달라도 발매일±1·트랙 수로) 알아보고 건너뛴다.
+      #    ⚠️ continue-on-error — 러너(해외 IP)에서 멜론이 막혀도 스포티파이 경로는 그대로 돈다.
+      #       차단은 HTTP 200 + 차단 페이지라 도구가 내용으로 판정해 접는다. 요약에 "차단"이 찍히면 이 경로는 러너에서 못 쓰는 것.
+      - name: 멜론 신보 수집
+        continue-on-error: true
+        timeout-minutes: 10
+        run: node tools/melon_new_releases.mjs --days 7
+
       # 수집. 레이트리밋에 걸려 회차가 접혀도 **실패가 아니다**(설계된 동작 — 커서가 남아 다음 회차가
       # 이어받는다). 진짜 실패(인증 오류 등)만 예외로 터져 나와 이 스텝을 빨갛게 만든다.
       - name: 스포티파이 신보 수집
@@ -88,13 +99,13 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           node tools/build_slim_data.mjs
-          git add groups.json artists.json spotify_artist_map.json spotify_sync_state.json
+          git add groups.json artists.json spotify_artist_map.json spotify_sync_state.json melon_artist_map.json
           git add groups.slim.json artists.slim.json tracks_index.json albums_recent.json disco/
           if git diff --cached --quiet; then
             echo "새 앨범 없음 — 커밋할 것이 없습니다"
             exit 0
           fi
-          git commit -m "data(disco): 스포티파이 신보 수집 (auto)"
+          git commit -m "data(disco): 신보 수집 — 멜론·스포티파이 (auto)"
           for i in 1 2 3; do
             git pull --rebase origin main && git push && exit 0
             echo "push 경합 — 재시도 ($i/3)"; sleep $((i * 5))

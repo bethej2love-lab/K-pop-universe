@@ -131,6 +131,7 @@ function owned(t) {
   const add = (list, countYear) => {
     for (const al of list || []) {
       const k = dedupKey(al.title); if (k) set.add(k);
+      if (al.spotifyId) set.add('sid:' + al.spotifyId); // 중복 정리 때 멜론 항목에 옮겨 둔 스포티파이 ID — 같은 앨범을 다시 넣지 않게(2026-10-12)
       if (!countYear) continue;
       const y = Number(String(al.releaseDate || '').slice(0, 4)); if (y > 1990) years.add(y);
     }
@@ -243,10 +244,16 @@ async function comebackSignals() {
   }
   return out;
 }
-const ownedDates = t => {
+const ownedDates = (t, withTracks = false) => {
   const src = t.kind === 'group' ? (groups[t.ko]?.discography || [])
     : (artists.find(a => a.name?.ko === t.ko)?.discography || []);
-  return src.map(a => Date.parse(String(a.releaseDate || '').replace(/\./g, '-'))).filter(Number.isFinite);
+  const rows = src.map(a => ({ ts: Date.parse(String(a.releaseDate || '').replace(/\./g, '-')), tc: a.trackCount || (a.tracks || []).length, src: a.src })).filter(o => Number.isFinite(o.ts));
+  return withTracks ? rows : rows.map(o => o.ts);
+};
+// 가장 최근의 K팝 발매 시각(UTC 09:00 = KST 18시, UTC 15:00 = KST 0시)
+const lastReleaseMoment = () => {
+  const now = Date.now(), d0 = Date.parse(new Date(now).toISOString().slice(0, 10) + 'T00:00:00Z');
+  return [d0 + 15 * 3600000, d0 + 9 * 3600000, d0 - 9 * 3600000].find(x => x <= now);
 };
 let signals = new Map();
 try { signals = await comebackSignals(); } catch (e) { console.log('[disco-sync] 컴백 신호 조회 실패 — 기존 순서로 진행:', e.message); }
@@ -257,9 +264,14 @@ const list = targets()
     if (!sg) return t;
     const sd = Date.parse(sg.date + 'T00:00:00Z');
     const checkedAt = state.checked[t.ko] ? Date.parse(state.checked[t.ko] + 'T00:00:00Z') : 0;
-    const hasAlbum = ownedDates(t).some(x => Math.abs(x - sd) <= 10 * 86400000);
-    // 신호 날짜 +2일까지는 다시 본다(MV 당일 오전에 확인하면 발매 전일 수 있음). 앨범이 들어오면 우선권 해제.
-    if (hasAlbum || checkedAt > sd + 2 * 86400000) return t;
+    // 신호 **이후**(−2일 여유) 발매가 들어와야 해제 — 신호 9일 전 선공개 싱글이 "이미 있음"으로 잡히면 안 된다.
+    const hasAlbum = ownedDates(t).some(x => x >= sd - 2 * 86400000 && x <= sd + 14 * 86400000);
+    // ⚠️ 예전 규칙 "신호 +2일까지만"은 티저가 발매보다 먼저 나오는 걸 못 버텼다(2026-10-12 실측:
+    //    플레이브 하이라이트 메들리 10/7 → 발매 10/12, +2일이 지나 우선권이 풀려 발매일에 안 봤다).
+    //    이제 앨범이 들어올 때까지 신호 후 14일까지 계속 본다 — 단 **발매 시각(KST 18시·0시)이 지난 뒤
+    //    아직 안 본 경우만**. 날짜 단위로 "오늘 봤음"을 쓰면 10:11 회차가 보고 나서 18시 발매를 그날 못 본다.
+    const boostAt = state.boostTs?.[t.ko] ? Date.parse(state.boostTs[t.ko]) : checkedAt;
+    if (hasAlbum || boostAt >= lastReleaseMoment() || Date.now() > sd + 14 * 86400000) return t;
     boosted.push(t.ko + '(' + sg.date + ' ' + sg.title.slice(0, 40) + ')');
     return { ...t, due: 1e9 + sd / 1e6, boost: true };
   })
@@ -298,7 +310,11 @@ for (const t of list) {
       if (BACKFILL_YEARS.includes(y)) sweptNow.push(y);
       for (const al of items) {
         const key = dedupKey(al.name);
-        if (!key || own.titles.has(key)) continue;            // 이미 있음
+        if (!key || own.titles.has(key) || own.titles.has('sid:' + al.id)) continue; // 이미 있음(제목 또는 스포티파이 ID)
+        // 제목 표기만 다른 같은 발매(2026-10-12) — 멜론 경로가 먼저 넣은 한글 제목 `GO해`를 스포티파이가
+        // `GO AHEAD`로 또 가져오는 식. 발매일 ±1일 + 트랙 수가 같으면 같은 앨범으로 본다.
+        const alTs = Date.parse(al.release_date || '');
+        if (ownedDates(t, true).some(o => Math.abs(o.ts - alTs) <= 86400000 && o.src === 'melon' && o.tc && o.tc === al.total_tracks)) continue;
         if (isVariant(al.name)) continue;                     // 리믹스·영어버전·멤버별 스페셜
         if (String(al.release_date_precision) !== 'day') { problems.push(`${t.ko} — 발매일 정밀도 ${al.release_date_precision}: ${al.name}`); continue; }
         newOnes.push(al);
@@ -474,6 +490,7 @@ for (const t of list) {
 
     netFails = 0;
     state.checked[t.ko] = new Date().toISOString().slice(0, 10);
+    if (t.boost) (state.boostTs = state.boostTs || {})[t.ko] = new Date().toISOString(); // 발매 시각 이후 재확인 판정용
     checked++;
   } catch (e) {
     if (e instanceof RateLimited) { stoppedBy = `레이트리밋 (${e.message})`; break; }
@@ -493,6 +510,8 @@ for (const t of list) {
 }
 
 // ── 저장 ─────────────────────────────────────────────────────────────────────
+// boostTs는 신호 창(14일)만 의미가 있다 — 지난 건 지워 상태 파일이 계속 불지 않게
+for (const [k, v] of Object.entries(state.boostTs || {})) if (Date.now() - Date.parse(v) > 15 * 86400000) delete state.boostTs[k];
 if (!DRY) {
   if (added) {
     writeJsonKeepingStyle('groups.json', groups);
