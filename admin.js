@@ -7952,6 +7952,9 @@ const _GROUP_TITLE_CONFLICT_EXCLUDE={
   '에이프릴':[/april\s*(fool|issue)/i],
   '다이아':[/다이아\s*버튼|diamond\s*(play\s*)?button/i],
   '아이들':[/서태지\s*와\s*아이들/],
+  // 2026-10-12: 곡·작품명 속 Beast — 티오원 'Son of Beast'(선 오브 비스트)·'Beauty and the Beast'(미녀와 야수)가 하이라이트 옛 이름
+  // 비스트로 잡혀 함께한 그룹이 됐다(티오원 쇼챔·음중 5건, 존박X벨, 스테이씨 미녀와야수 챌린지).
+  '하이라이트':[/son\s*of\s*(the\s*)?beast/i,/선\s*오브\s*비스트/,/beauty\s*(and|&)\s*the\s*beast/i,/뷰티\s*앤\s*더\s*비스트/,/미녀와\s*야수/],
 };
 // 위 정규식 목록으로도 다 못 거르는 경우(제목이 그냥 "Supernova"+다른 그룹 해시태그만 있고 곡명/원곡
 // 아티스트 언급이 없는 챌린지 영상들)를 위한 2차 방어선 — 이 그룹이 "다른 실존 그룹과 같이" 매칭됐으면
@@ -8410,10 +8413,16 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
   // 직캠 구조 선두 토큰(_fcHeadOk)은 이 게이트와 무관하게 인정된다.
   // ctx: 지금 로스터·디스코에 없는 시절 근거(TOO 시절 곡·탈퇴 멤버 제롬·출연 프로그램 로드 투 킹덤). 이게 없으면
   //      "(Full Focused) TOO '하나 둘 세고'"·"Road to Kingdom [직캠] TOO 제롬"이 같이 빠졌다(이전/새 매처 차분으로 확인).
-  const _GROUP_TOKEN_NEEDS_CORROBORATION={'TOO':{gko:'티오원',ctx:['하나 둘 세고','COUNT 1','MAGNOLIA','매그놀리아','오늘은 이만큼','TAKE IT SLOW','제롬','JEROME','웅기','WOONG','ROAD TO KINGDOM','로드 투 킹덤']}};
+  // hashtag:true — 토큰 자체는 해시태그로만 보고(기존 해시태그 전용 규칙 유지), 그 위에 근거를 더 요구한다.
+  // ctxUpper — **대문자 단어 그대로** 있어야 하는 근거(HIGHLIGHT·BEAST·B2ST는 하이라이트 공식 표기; "Highlights"·"#Highlight_shorts"는 아님).
+  // '하이라이트'(2026-10-12): 한글 해시태그 #하이라이트는 '요약 영상'이란 뜻으로 훨씬 많이 쓴다 — 골든디스크 무대 10건·아이돌라디오
+  // "#하이라이트 몰아보기"가 전부 함께한 그룹 하이라이트가 됐다. 진짜 하이라이트 콜라보는 #HIGHLIGHT·멤버명(#YANGYOSEOP)이 같이 붙는다.
+  const _GROUP_TOKEN_NEEDS_CORROBORATION={'TOO':{gko:'티오원',ctx:['하나 둘 세고','COUNT 1','MAGNOLIA','매그놀리아','오늘은 이만큼','TAKE IT SLOW','제롬','JEROME','웅기','WOONG','ROAD TO KINGDOM','로드 투 킹덤']},
+    '하이라이트':{gko:'하이라이트',hashtag:true,ctx:[],ctxUpper:['HIGHLIGHT','BEAST','B2ST']}};
   function hitCorroborated(t){
-    const {gko,ctx}=_GROUP_TOKEN_NEEDS_CORROBORATION[t];
-    if(!new RegExp('(^|[^A-Za-z])'+_atmEscRe(t)+'(?![A-Za-z])').test(title||''))return false; // 대소문자 그대로
+    const {gko,ctx,ctxUpper,hashtag}=_GROUP_TOKEN_NEEDS_CORROBORATION[t];
+    if(hashtag?!hitHashtag(t):!new RegExp('(^|[^A-Za-z])'+_atmEscRe(t)+'(?![A-Za-z])').test(title||''))return false; // 대소문자 그대로
+    if((ctxUpper||[]).some(c=>new RegExp('(^|[^A-Za-z0-9])'+_atmEscRe(c)+'(?![A-Za-z0-9_])').test(title||'')))return true;
     if((ctx||[]).some(c=>String(title||'').toUpperCase().includes(c)))return true;
     if(new RegExp('^\\s*'+_atmEscRe(t)+'\\s*[,:|\\-–]').test(title||''))return true; // 제목 맨 앞 아티스트 표기("TOO, TOO YOU [THE SHOW…]")
     const names=ARTISTS.filter(a=>_artistGroups(a).some(g=>g&&g.ko===gko))
@@ -8443,6 +8452,10 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
   // 게이트 밖에 남는 '비스트'·'B2ST'는 일반어 충돌이 없어 hit()으로 안전하게 잡힌다 — 개명 전
   // 비스트 시절 영상이 이 두 토큰으로 회수되는 게 strictSync를 푼 주된 이유다.
   const _GROUP_TOKEN_HASHTAG_ONLY=new Set(['SAY MY NAME','NATURE','STELLAR','에이스','하이라이트','Highlight','BEAST']);
+  // 2026-10-12: 'Highlight'·'BEAST'는 해시태그여도 **대문자 그대로**(#HIGHLIGHT·#BEAST)일 때만 — "#Highlight #TVXQ!"(동방신기 MV)·
+  // "#Highlight_shorts"(세븐틴 나나투어)·"#Beast"(미녀와 야수 챌린지)가 하이라이트가 됐다. 밑줄로 이어진 태그도 다른 태그다.
+  const _GROUP_TOKEN_HASHTAG_UPPER=new Set(['Highlight','BEAST']);
+  const hitHashtagUpper=t=>new RegExp('#'+_atmEscRe(t.toUpperCase())+'(?![가-힣a-zA-Z0-9_])').test(title||'');
   // 해체 후 같은 이름이 재사용된 그룹 — 재사용 시점 이후 영상엔 옛 그룹을 매칭하지 않는다(날짜가 유일한
   // 구분 단서, 제목만으론 동일). 스텔라: 그룹 Stellar(2011~2018 해체) ↔ 하츠투하츠 멤버 스텔라(2025 데뷔).
   // 실측 — 재배정 버튼이 2025년 '유하 스텔라 이안'(하츠투하츠) 영상을 그룹 스텔라로 대량 편입시킨 원인.
@@ -8494,7 +8507,7 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
     // 선두여도 우회하지 않는다 — 그 경우는 멤버 쪽이 맞을 가능성이 커서 기존 게이트/역추론에 맡긴다.
     const _fcHeadOk=t=>_fc&&_fcHead(t)&&!_fcHeadIsMemberName(t);
     if(_STRICT_SYNC_GROUPS.has(ko)){ if(tokens.some(_fcHeadOk)){matchedGroupKos.push(ko);seen.add(ko);} continue; }
-    if(tokens.some(t=>_fcHeadOk(t)||(_GROUP_TOKEN_NEEDS_CORROBORATION[t]?hitCorroborated(t):_GROUP_TOKEN_HASHTAG_ONLY.has(t)?hitHashtag(t):(_GROUP_TOKEN_LITERAL_ONLY.has(t)||_ATM_DYNAMIC_LITERAL_ONLY.has(t))?hitLiteral(t):hit(t)))){matchedGroupKos.push(ko);seen.add(ko);}
+    if(tokens.some(t=>_fcHeadOk(t)||(_GROUP_TOKEN_NEEDS_CORROBORATION[t]?hitCorroborated(t):_GROUP_TOKEN_HASHTAG_UPPER.has(t)?hitHashtagUpper(t):_GROUP_TOKEN_HASHTAG_ONLY.has(t)?hitHashtag(t):(_GROUP_TOKEN_LITERAL_ONLY.has(t)||_ATM_DYNAMIC_LITERAL_ONLY.has(t))?hitLiteral(t):hit(t)))){matchedGroupKos.push(ko);seen.add(ko);}
   }
   // 유닛명(V8, GOT the beat 등) 매칭 — 유닛 자체는 그룹이 아니라, 실제 소속 그룹/멤버로 나눠 합류시킴.
   // 제목에 유닛명만 있고 개별 멤버 이름은 없는 경우까지 커버하기 위해, 유닛 멤버를 "그 멤버 이름이

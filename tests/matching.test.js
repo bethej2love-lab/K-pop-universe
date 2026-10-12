@@ -14,6 +14,18 @@ const cases = [];
 // publishedAt: 탈퇴 게이트(_atmLeftBefore) 검증용 4번째 인자. 안 주면 기존처럼 날짜 없이 파싱.
 function test(name, title, selfGko, check, publishedAt) { cases.push({ name, title, selfGko, check, publishedAt }); }
 
+// ── 하이라이트(옛 BEAST) 일반어 게이트(2026-10-12) ─────────────────────
+// 함께한 그룹 하이라이트 34건 중 23건이 오태깅: '#하이라이트'(요약 영상)·'#Highlight_shorts'·소문자 '#Highlight'/'#Beast'·곡명 'Son of Beast'.
+const _hl = r => !!r && (r.primaryGroup === '하이라이트' || (r.withGroups || []).includes('하이라이트'));
+test("하이라이트 — 티오원 'Son of Beast'(선 오브 비스트)는 아님", '[쇼! 음악중심] 티오원 - 선 오브 비스트 (TO1 - Son of Beast), MBC 210612 방송', undefined, r => !_hl(r) && !!r && r.primaryGroup === '티오원');
+test("하이라이트 — 'Beauty and the Beast'는 아님", '존박 X 벨 - 뷰티 앤 더 비스트 (John Park X BELLE - Beauty and the Beast)', undefined, r => !_hl(r));
+test('하이라이트 — #Highlight_shorts는 다른 태그', '🚩Guide NA & SEVENTEEN in Italy #SEVENTEEN #NANA_TOUR #Highlight_shorts', undefined, r => !_hl(r));
+test('하이라이트 — 소문자 #Highlight는 아님', "TVXQ! 동방신기 'Rebel' MV #Highlight #TVXQ! #동방신기", undefined, r => !_hl(r));
+test('하이라이트 — 요약 뜻 #하이라이트는 아님', '제39회 #골든디스크어워즈 #아일릿 무대 #하이라이트', undefined, r => !_hl(r));
+test('하이라이트 — #하이라이트 + #HIGHLIGHT는 하이라이트', '하이라이트 선배님들과 함께💡 ANTIFRAGILE #LE_SSERAFIM #하이라이트 #HIGHLIGHT', undefined, r => _hl(r));
+test('하이라이트 — #HIGHLIGHT #YANGYOSEOP는 하이라이트', '원하면 #HIGHLIGHT #YANGYOSEOP 이뤄지리라 #IVE #아이브', undefined, r => _hl(r));
+test('하이라이트 — 옛 이름 비스트(2012)는 그대로', '슈퍼주니어,비스트,AOA,SuperJunior,Beast @Mcountdown backstage 2012.08.09', undefined, r => _hl(r));
+
 // ── 그룹 시절 활동명 + 합류/탈퇴 게이트(2026-10-12) ─────────────────────
 // 성민(원팩트)의 티오원 시절 이름 '제롬'을 매처가 몰라 티오원 시절 영상 48건 중 1건만 태깅돼 있었다. groups[].name/nameEn은
 // **그 그룹 문맥에서만** 이름으로 쓴다(디모렉스의 트레저 시절 '예담'은 원팩트 예담과 같은 이름이라 전역이면 안 됨).
