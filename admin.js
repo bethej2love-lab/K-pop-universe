@@ -6109,12 +6109,18 @@ function _vmRenderVideoList(){
       else if(v.flag_source==='manual')flagBtn.title='직접 지정함';
       flagBtn.addEventListener('click',e=>{e.stopPropagation();_vmCycleFlagInline(v,flagBtn,item);});
       actions.appendChild(flagBtn);
-      // 전체 출연 퀵버튼 — members가 빈 경우에만 표시
-      if(!v.members||!v.members.length){
-        const allBtn=document.createElement('button');allBtn.className='vm-flag-btn vm-all-btn';allBtn.type='button';allBtn.textContent='전체';allBtn.title='그룹 전원 출연으로 태깅';
-        allBtn.addEventListener('click',e=>{e.stopPropagation();_vmTagAllMembers(v,allBtn,item);});
+      // 전체 출연 퀵버튼 — members가 비어있거나(암묵적 전체) 이미 전원이 명시 태깅된 경우 모두 표시.
+      // 두 상태는 동일한 의미(전체 출연)이므로 같이 보여줘서 혼동을 없앤다.
+      {const _r=_atmRosterFor(v.group_ko).map(m=>m.ko);
+      const _empty=!v.members||!v.members.length;
+      const _explicitAll=_r.length>0&&!_empty&&v.members.length===_r.length&&_r.every(n=>v.members.includes(n));
+      if(_empty||_explicitAll){
+        const allBtn=document.createElement('button');allBtn.className='vm-flag-btn vm-all-btn';allBtn.type='button';
+        if(_explicitAll){allBtn.textContent='✓전체';allBtn.style.opacity='.5';allBtn.title='전원 출연 태깅됨 (비어있어도 동일)';}
+        else{allBtn.textContent='전체';allBtn.title='그룹 전원 출연으로 태깅 (지금도 전체 출연으로 인식됨)';}
+        allBtn.addEventListener('click',e=>{e.stopPropagation();if(!_explicitAll)_vmTagAllMembers(v,allBtn,item);});
         actions.appendChild(allBtn);
-      }
+      }}
     }
     // edit button
     const editBtn=document.createElement('button');editBtn.className='vid-edit-btn';editBtn.type='button';editBtn.textContent='✎';
