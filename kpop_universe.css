@@ -435,6 +435,27 @@
   .sp-legal-links a{color:rgba(120,138,182,0.5);text-decoration:none;transition:color .15s;}
   .sp-legal-links a:hover{color:rgba(170,188,232,0.8);}
   .sp-legal-sep{color:rgba(120,138,182,0.3);}
+  /* ── K-pop 링크 모음 오버레이 ──────────────────────── */
+  #kpop-links-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.52);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:65;display:none;align-items:center;justify-content:center;}
+  #kpop-links-overlay.open{display:flex;}
+  #kpop-links-panel{width:min(540px,calc(100vw - 32px));max-height:84vh;display:flex;flex-direction:column;background:rgba(13,17,34,0.97);backdrop-filter:blur(40px);-webkit-backdrop-filter:blur(40px);border-radius:18px;box-shadow:0 16px 56px rgba(0,0,0,0.72);border:0.5px solid rgba(255,255,255,0.10);}
+  .klp-hd{display:flex;align-items:center;justify-content:space-between;padding:18px 20px 14px;border-bottom:0.5px solid rgba(255,255,255,0.08);font-size:15px;font-weight:600;color:#e8eaf6;flex-shrink:0;}
+  .klp-close{background:none;border:none;color:rgba(200,210,255,0.5);font-size:22px;line-height:1;cursor:pointer;padding:0 2px;transition:color .15s;}
+  .klp-close:hover{color:#fff;}
+  .klp-body{overflow-y:auto;padding:8px 0 16px;-webkit-overflow-scrolling:touch;}
+  .klp-cat{padding:14px 20px 6px;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:rgba(130,155,220,0.6);}
+  .klp-cat:first-child{padding-top:8px;}
+  .klp-links{display:flex;flex-wrap:wrap;gap:7px;padding:0 16px 4px;}
+  .klp-link{display:inline-flex;align-items:center;gap:5px;padding:7px 12px;border-radius:20px;background:rgba(255,255,255,0.05);border:0.5px solid rgba(255,255,255,0.10);color:rgba(200,215,255,0.85);font-size:13px;text-decoration:none;cursor:pointer;transition:background .15s,border-color .15s;}
+  .klp-link:hover{background:rgba(126,156,255,0.14);border-color:rgba(126,156,255,0.3);color:#fff;}
+  .klp-link-ext{font-size:10px;opacity:.5;}
+  .co-ext-link{color:rgba(130,155,220,0.6);text-decoration:none;font-size:11px;margin-left:4px;vertical-align:middle;transition:color .15s;}
+  .co-ext-link:hover{color:rgba(180,200,255,0.9);}
+  @media(max-width:768px){
+    #kpop-links-overlay{align-items:flex-end;}
+    #kpop-links-panel{width:100%;max-width:100%;max-height:88vh;border-radius:18px 18px 0 0;position:relative;}
+    #kpop-links-panel::before{content:'';position:absolute;top:7px;left:50%;transform:translateX(-50%);width:36px;height:4px;border-radius:2px;background:rgba(255,255,255,0.2);z-index:3;pointer-events:none;}
+  }
   /* ── Toggle switch ───────────────────────────────── */
   .sw{display:inline-flex;align-items:center;cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><path d='M11,1 L12.3,9.7 L21,11 L12.3,12.3 L11,21 L9.7,12.3 L1,11 L9.7,9.7Z' fill='%23FFB0D0' opacity='.97'/></svg>") 11 11,pointer;flex-shrink:0;}
   .sw input{display:none;}
