@@ -125,6 +125,8 @@ const SNAPSHOT = {
   // 씀 — 그 함수도 몇 줄 뒤에 _bringToFront(_msEl)을 부르므로(Part1/2가 실제로 확인) 안전, 카운트만 올림.
   "_msEl.classList.add('open');_msEl.setAttribute('aria-hidden','false');": 2,
   "_profileOverlayEl.classList.add('open');": 1,
+  // 2026-10-12: 라이트박스 큐 시트(6ce6db7b8) — 라이트박스 **안의** 자식 시트라 라이트박스 스택 안에서만 겹친다(최상위 오버레이 아님).
+  "requestAnimationFrame(()=>{sheet.classList.add('open');backdrop?.classList.add('open');});": 1,
   // connPanelEl open 지점은 2026-09-07에 _bringToFront가 같은 줄에 붙어 스냅샷에서 빠짐(Part2가 대신 고정).
   "connSheetEl.classList.add('bs-open');": 1, // 애니메이션 끝의 상태 클래스 — _bringToFront는 display='block' 직전에 있음
   "cp.classList.add('open');": 1,

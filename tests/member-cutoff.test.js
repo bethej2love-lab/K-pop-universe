@@ -43,7 +43,10 @@ if (endSrc) {
 }
 
 // ── ①~④ 분기: _memberVideoCutoff 본문이 순서대로 들어갔는가 ──────
-const cutSrc = /function _memberVideoCutoff\(memberKo,ko\)\{[\s\S]*?\n  \}/.exec(html);
+// ⚠️ 2026-10-12 합류일(joined)을 붙이면서 ①~④ 본문이 _memberVideoCutoffCore로 옮겨졌다 — 바깥 함수는
+//    조회·joined 부착만 한다. 본문이 어느 쪽에 있든 찾게 Core 우선, 없으면 예전 이름.
+const cutSrc = /function _memberVideoCutoffCore\([^)]*\)\{[\s\S]*?\n  \}/.exec(html)
+  || /function _memberVideoCutoff\(memberKo,ko\)\{[\s\S]*?\n  \}/.exec(html);
 ok(!!cutSrc, '_memberVideoCutoff를 못 찾음');
 if (cutSrc) {
   const body = cutSrc[0];
