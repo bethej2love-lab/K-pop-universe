@@ -209,10 +209,65 @@ let calls = 0, checked = 0, added = 0, mapped = 0, backfilled = 0;
 const addedList = [], reviewList = [], problems = [];
 let stoppedBy = null;
 
+// ── 컴백 신호 우선(2026-10-12, 사용자: "매일 전 그룹/멤버 신보 반영") ─────────────────────────────────
+// 호출 한도 때문에 547팀을 매일 다 볼 수 없다(실측: 하루 확인 118팀, 7일 넘게 안 본 팀 327). 그 결과 B·C등급 컴백을
+// 3~4주씩 놓쳤다(영파씨 'GO해'·우아 'VOODOO DOLL'·유니스 'Milky Way'·키비츠·이프아이·티아이오티). 그런데 신보는 거의
+// 항상 공식 채널 MV·티저와 같이 나오고, 유튜브는 매시간 동기화되고 있다. 그래서 **최근 21일 안에 MV/티저가 올라왔는데
+// 그 뒤로 확인 안 했거나, 아직 그 시기(±10일) 앨범이 우리 디스코에 없는** 대상을 이번 회차 맨 앞으로 올린다.
+// 이 대상들은 과거연도 백필을 건너뛰고 올해만 본다(콜 절약). 신호 조회가 실패하면 기존 순서 그대로 돈다.
+const SIGNAL_DAYS = 21; // 앨범이 들어오면 우선권이 풀리므로 넉넉히 — 9월 말 컴백 6팀이 10일 창 밖이라 계속 밀렸다
+const SIGNAL_TITLE = /\bm\/?v\b|music\s*video|뮤직\s*비디오|official\s*video|teaser|티저|trailer|트레일러|concept\s*(film|photo)|컨셉\s*(필름|포토)|highlight\s*medley|하이라이트\s*메들리|album\s*preview|앨범\s*프리뷰/i;
+const SIGNAL_NOISE = /behind|비하인드|making|메이킹|reaction|리액션|practice|연습|mvp|cover|커버|challenge|챌린지|fancam|직캠|shorts/i;
+async function comebackSignals() {
+  if (!SB_KEY) return new Map();
+  const since = new Date(Date.now() - SIGNAL_DAYS * 86400000).toISOString().slice(0, 10);
+  // ⚠️ 제목 조건을 쿼리에 직접 건다 — 3주치 전체(5천+행)를 limit로 받으면 정렬 없는 결과가 잘려 신호가 빠졌다(실측).
+  const kw = ['MV', 'M/V', 'Music Video', '뮤직비디오', 'Official Video', 'Teaser', '티저', 'Trailer', '트레일러', 'Concept', '컨셉', 'Highlight Medley', '하이라이트 메들리', 'Album Preview', '앨범 프리뷰'];
+  const or = kw.map(k => 'title.ilike.*' + k + '*').join(',');
+  const url = 'https://dukgguehegnembimqvkm.supabase.co/rest/v1/yt_channel_videos?select=id,group_ko,members,title,published_at'
+    + '&published_at=gte.' + since + '&is_short=eq.false&content_flag=is.null&or=(' + encodeURIComponent(or) + ')';
+  const rows = new Map();
+  for (let from = 0; from < 20000; from += 1000) {
+    const r = await fetch(url, { headers: { apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY, Range: from + '-' + (from + 999) } });
+    if (!r.ok) throw new Error('comebackSignals ' + r.status);
+    const d = await r.json(); d.forEach(v => rows.set(v.id, v));
+    if (d.length < 1000) break;
+  }
+  const out = new Map();
+  const bump = (k, d, t) => { if (!k) return; const cur = out.get(k); if (!cur || cur.date < d) out.set(k, { date: d, title: t }); };
+  for (const v of rows.values()) {
+    const t = v.title || ''; if (!SIGNAL_TITLE.test(t) || SIGNAL_NOISE.test(t)) continue;
+    const d = String(v.published_at || '').slice(0, 10);
+    bump(v.group_ko, d, t);                                        // 그룹(또는 무소속 솔로 = 본인 이름 키)
+    if ((v.members || []).length === 1) bump(v.members[0], d, t);  // 그룹 채널에 올라온 멤버 솔로 MV
+  }
+  return out;
+}
+const ownedDates = t => {
+  const src = t.kind === 'group' ? (groups[t.ko]?.discography || [])
+    : (artists.find(a => a.name?.ko === t.ko)?.discography || []);
+  return src.map(a => Date.parse(String(a.releaseDate || '').replace(/\./g, '-'))).filter(Number.isFinite);
+};
+let signals = new Map();
+try { signals = await comebackSignals(); } catch (e) { console.log('[disco-sync] 컴백 신호 조회 실패 — 기존 순서로 진행:', e.message); }
+const boosted = [];
 const list = targets()
+  .map(t => {
+    const sg = signals.get(t.ko);
+    if (!sg) return t;
+    const sd = Date.parse(sg.date + 'T00:00:00Z');
+    const checkedAt = state.checked[t.ko] ? Date.parse(state.checked[t.ko] + 'T00:00:00Z') : 0;
+    const hasAlbum = ownedDates(t).some(x => Math.abs(x - sd) <= 10 * 86400000);
+    // 신호 날짜 +2일까지는 다시 본다(MV 당일 오전에 확인하면 발매 전일 수 있음). 앨범이 들어오면 우선권 해제.
+    if (hasAlbum || checkedAt > sd + 2 * 86400000) return t;
+    boosted.push(t.ko + '(' + sg.date + ' ' + sg.title.slice(0, 40) + ')');
+    return { ...t, due: 1e9 + sd / 1e6, boost: true };
+  })
+  .sort((x, y) => y.due - x.due)
   .filter(t => !ONLY || ONLY.has(t.ko))
-  .filter(t => MIN_PRI === 0 || priWeight(groups[t.ko]?.pri ?? (t.kind === 'solo' ? 1 : 0)) >= MIN_PRI);
+  .filter(t => MIN_PRI === 0 || t.boost || priWeight(groups[t.ko]?.pri ?? (t.kind === 'solo' ? 1 : 0)) >= MIN_PRI);
 console.log(`[disco-sync] 대상 ${list.length} · 예산 ${BUDGET}콜 · 연도 ${YEARS.join(',')}${DRY ? ' · DRY' : ''}`);
+if (boosted.length) console.log('[disco-sync] 컴백 신호 우선 ' + boosted.length + ': ' + boosted.join(' · '));
 
 for (const t of list) {
   if (calls >= BUDGET) { stoppedBy = '예산 소진'; break; }
@@ -234,7 +289,7 @@ for (const t of list) {
     // 2) 올해(1월이면 작년까지) 앨범을 검색해 우리에 없는 것만 고른다
     const newOnes = [];
     const sweptNow = [];
-    for (const y of [...YEARS, ...pendingBackfill(t.ko)]) {
+    for (const y of [...YEARS, ...(t.boost ? [] : pendingBackfill(t.ko))]) { // 컴백 우선 대상은 올해만(콜 절약)
       if (calls >= BUDGET) { stoppedBy = '예산 소진'; break; }
       const items = await searchAlbums(m.spotifyName || t.names[0], y, m.id);
       calls++;

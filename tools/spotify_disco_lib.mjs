@@ -267,7 +267,9 @@ export async function toEntry(album) {
 export async function getAppearsOn(artistId) {
   const VARIOUS = /various\s*artists?/i;
   const results = [];
-  let url = `/artists/${artistId}/albums?include_groups=appears_on&market=KR&limit=50`;
+  // ⚠️ limit=10 — 스포티파이가 이 엔드포인트 상한을 낮춰 50이면 400 "Invalid limit"(2026-10-12 실측: 전 대상 합작 수집 실패,
+  //    실패는 완료로 안 찍혀 회차마다 팀당 1콜씩 버리고 있었다). 페이지는 next로 이어 받는다.
+  let url = `/artists/${artistId}/albums?include_groups=appears_on&market=KR&limit=10`;
   // 페이지네이션(보통 1~2페이지)
   while (url) {
     const j = await api(url);

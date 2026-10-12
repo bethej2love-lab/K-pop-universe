@@ -106287,6 +106287,25 @@
   },
   "discography": [
    {
+    "title": "Milky Way",
+    "type": "싱글",
+    "isMain": true,
+    "cover": "https://i.scdn.co/image/ab67616d0000b2732d9a6ac1cf7598646a17cd6b",
+    "releaseDate": "2026.09.23",
+    "trackCount": 1,
+    "titleTrack": "Milky Way",
+    "tracks": [
+     {
+      "no": 1,
+      "title": "Milky Way",
+      "isTitle": true
+     }
+    ],
+    "src": "spotify",
+    "spotifyId": "4GaWYShVS4tv3ZjRiU0eBL",
+    "copyright": "2026 F&F Entertainment,under license to Kakao Entertainment"
+   },
+   {
     "title": "Sky Land, Star Land",
     "type": "싱글",
     "isMain": true,
@@ -112013,6 +112032,45 @@
    "namu": "https://namu.wiki/w/Keyveatz"
   },
   "discography": [
+   {
+    "title": "Mixtape : A1 GO",
+    "type": "미니",
+    "isMain": true,
+    "cover": "https://i.scdn.co/image/ab67616d0000b27331f295028b47d9a77982770f",
+    "releaseDate": "2026.09.30",
+    "trackCount": 5,
+    "titleTrack": null,
+    "tracks": [
+     {
+      "no": 1,
+      "title": "OKUTANI",
+      "isTitle": false
+     },
+     {
+      "no": 2,
+      "title": "CRAZY (Feat. Coogie)",
+      "isTitle": false
+     },
+     {
+      "no": 3,
+      "title": "ONLY WE",
+      "isTitle": false
+     },
+     {
+      "no": 4,
+      "title": "DOC",
+      "isTitle": false
+     },
+     {
+      "no": 5,
+      "title": "A1 GO",
+      "isTitle": false
+     }
+    ],
+    "src": "spotify",
+    "spotifyId": "4AxIouGKYNLcW7L7ADFu9B",
+    "copyright": "2026 AOMG, H1GHR MUSIC RECORDS"
+   },
    {
     "title": "OXY_GEN",
     "type": "미니 1집",
@@ -154525,6 +154583,25 @@
   },
   "discography": [
    {
+    "title": "VOODOO DOLL",
+    "type": "싱글",
+    "isMain": true,
+    "cover": "https://i.scdn.co/image/ab67616d0000b2737b268acca6274c04e153b2b2",
+    "releaseDate": "2026.09.29",
+    "trackCount": 1,
+    "titleTrack": "VOODOO DOLL",
+    "tracks": [
+     {
+      "no": 1,
+      "title": "VOODOO DOLL",
+      "isTitle": true
+     }
+    ],
+    "src": "spotify",
+    "spotifyId": "1VX9QyM1VF5Bfh7wP2ZjiG",
+    "copyright": "2026 H Music Entertainment, IRON E&M under licence to Genie Music Corporation"
+   },
+   {
     "title": "Wish With W : Vol.3",
     "type": "싱글",
     "isMain": true,
@@ -155934,6 +156011,54 @@
    "namu": "https://namu.wiki/w/YOUNG%20POSSE"
   },
   "discography": [
+   {
+    "title": "GO AHEAD",
+    "type": "싱글",
+    "isMain": true,
+    "cover": "https://i.scdn.co/image/ab67616d0000b2737b2a67254f4c6c71a68915c1",
+    "releaseDate": "2026.10.07",
+    "trackCount": 2,
+    "titleTrack": "GO AHEAD",
+    "tracks": [
+     {
+      "no": 1,
+      "title": "GO AHEAD",
+      "isTitle": true
+     },
+     {
+      "no": 2,
+      "title": "GO AHEAD (Inst.)",
+      "isTitle": false
+     }
+    ],
+    "src": "spotify",
+    "spotifyId": "7kRz62nT3c0UzU1elTvzIu",
+    "copyright": "2026 DSPmedia, BEATS ENTERTAINMENT,under license to Kakao Entertainment"
+   },
+   {
+    "title": "Haze",
+    "type": "싱글",
+    "isMain": true,
+    "cover": "https://i.scdn.co/image/ab67616d0000b273175112625a2682dccfd9cce3",
+    "releaseDate": "2026.09.22",
+    "trackCount": 2,
+    "titleTrack": "Haze",
+    "tracks": [
+     {
+      "no": 1,
+      "title": "Haze",
+      "isTitle": true
+     },
+     {
+      "no": 2,
+      "title": "Daybreak",
+      "isTitle": false
+     }
+    ],
+    "src": "spotify",
+    "spotifyId": "1bWJFxDYBN3Pc0KHw2GeSB",
+    "copyright": "2026 Feat.360"
+   },
    {
     "title": "일러스트 뮤직 콜라보 with 키크니",
     "type": "싱글",
