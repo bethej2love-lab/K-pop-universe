@@ -61,7 +61,10 @@ webpush.setVapidDetails(VAPID_SUBJECT, VAPID_PUB, VAPID_PRIV);
 const ALERT_GROUPS = ['코르티스', '크래비티', '아일릿'];
 
 // ── 메인 ──────────────────────────────────────────────────────────────────
-const sevenDaysAgo = new Date(Date.now() - 7 * 86400000).toISOString().slice(0, 10);
+// created_at은 Supabase가 행 최초 삽입 시 자동 기록 — 이미 DB에 있던 영상은 포함 안 됨.
+// published_at(유튜브 업로드 날짜) 대신 created_at을 쓰면 "새로 동기화된 것"만 잡혀
+// 오래된 미태깅 영상이 매 시간 반복 알림을 보내는 문제를 없앤다(2026-10-12).
+const threeHoursAgo = new Date(Date.now() - 3 * 3600000).toISOString();
 
 // 1) 미태깅 live 영상 조회 (members가 null이거나 빈 배열 = pg 배열 {}로 저장)
 const groupIn = `(${ALERT_GROUPS.map(g => encodeURIComponent(g)).join(',')})`;
@@ -70,7 +73,7 @@ const videosRes = await sbGet(
   `?select=id,title,group_ko,published_at` +
   `&category=eq.live` +
   `&or=(members.is.null,members.eq.%7B%7D)` +
-  `&published_at=gte.${sevenDaysAgo}` +
+  `&created_at=gte.${encodeURIComponent(threeHoursAgo)}` +
   `&content_flag=is.null` +
   `&group_ko=in.${groupIn}` +
   `&order=published_at.desc&limit=50`

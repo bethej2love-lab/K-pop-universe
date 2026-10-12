@@ -6109,6 +6109,12 @@ function _vmRenderVideoList(){
       else if(v.flag_source==='manual')flagBtn.title='직접 지정함';
       flagBtn.addEventListener('click',e=>{e.stopPropagation();_vmCycleFlagInline(v,flagBtn,item);});
       actions.appendChild(flagBtn);
+      // 전체 출연 퀵버튼 — members가 빈 경우에만 표시
+      if(!v.members||!v.members.length){
+        const allBtn=document.createElement('button');allBtn.className='vm-flag-btn vm-all-btn';allBtn.type='button';allBtn.textContent='전체';allBtn.title='그룹 전원 출연으로 태깅';
+        allBtn.addEventListener('click',e=>{e.stopPropagation();_vmTagAllMembers(v,allBtn,item);});
+        actions.appendChild(allBtn);
+      }
     }
     // edit button
     const editBtn=document.createElement('button');editBtn.className='vid-edit-btn';editBtn.type='button';editBtn.textContent='✎';
@@ -6139,6 +6145,18 @@ function _vmCycleFlagInline(v,btn,item){
   const cur=v.content_flag||null;
   const next=cur==='무관'?'hidden':(cur==='hidden'?'보류':(cur==='보류'?null:'무관')); // 무관→숨김→보류→정상 순환
   _vmSetFlag(v,next,btn,item);
+}
+async function _vmTagAllMembers(v,btn,item){
+  if(!sb)return;
+  const roster=_atmRosterFor(v.group_ko).map(m=>m.ko);
+  if(!roster.length){_showShareToast('로스터 없음: '+v.group_ko);return;}
+  btn.disabled=true;btn.textContent='…';
+  const{error}=await sb.from(_YT_TABLE).update({members:roster}).eq('id',v.id);
+  if(error){btn.disabled=false;btn.textContent='전체';_showShareToast('오류: '+error.message);return;}
+  v.members=roster;
+  btn.textContent='✓';btn.style.opacity='.5';
+  _vmCacheSync();
+  setTimeout(()=>_vmRenderVideoList(),400);
 }
 async function _vmSetFlag(v,newFlag,btn,item){
   if(!sb)return;
