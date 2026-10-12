@@ -55,5 +55,9 @@ ck(/findIndex\(r=>r\.thumb&&!r\.isShort\)/.test(fn), '헤드라인(16:9)에 쇼�
 ck(/_appendNewsItems\(list,/.test(fn) && !/_appendNewsRow\(list,r\)/.test(fn), '소식 렌더가 쇼츠 2열 경로(_appendNewsItems)를 탐');
 ck(/if\(!items\.length\)return;/.test(fn), '세 소스 다 비면 섹션을 그대로 숨김(억지로 안 채움)');
 
+// 앨범 커버 클릭 = 아티스트 카드 + 그 앨범 상세(2026-10-12). 그룹·멤버 두 경로 다.
+const navFn = extractBraces(html, /^function _albumCardNav\(/m, '_albumCardNav');
+ck((navFn.match(/_openAlbumDetailWhenReady\(a,'(gc|tt)'/g) || []).length === 2, '앨범 클릭이 그룹·멤버 두 경로 모두 앨범 상세까지 연다');
+
 console.log(`\n${fail === 0 ? '✅' : '❌'} ${fail} 실패`);
 process.exit(fail ? 1 : 0);
