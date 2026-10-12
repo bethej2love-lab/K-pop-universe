@@ -18858,7 +18858,9 @@ function _appendFeedCard(container,icon,title,sub,onClick,thumbUrl,cat,opts){
       // 오늘·어제만 한 단계 강조 — 이 선반의 목적이 "따끈한 것 먼저"라서다. 나머지는 같은 톤으로 둔다
       // (색이 세 종류가 되면 그때부턴 범례가 필요해진다).
       m.className='feed-card-meta'+(opts.metaFresh?' is-fresh':'');
-      m.textContent=opts.meta;cap.appendChild(m);
+      // NEW 칩(2026-10-12, 사용자 결정) — 신보 강조는 커버 위가 아니라 **캡션 안**에 둔다(커버 무덮개 원칙 유지).
+      if(opts.metaNew){const c=document.createElement('span');c.className='feed-card-new';c.textContent='NEW';m.appendChild(c);}
+      m.appendChild(document.createTextNode(opts.meta));cap.appendChild(m);
     }
   }
   return item;
@@ -18880,6 +18882,15 @@ function _albumDateLabel(d){
   if(!m)return'';
   const sameYear=+m[1]===today.getFullYear();
   return sameYear?`${+m[2]}.${+m[3]}`:`${m[1].slice(2)}.${+m[2]}.${+m[3]}`;
+}
+// NEW 칩 대상 — 발매 3일 이내(오늘 포함). 이번 주 전부에 붙이면 선반 대부분이 NEW라 의미가 없어서 짧게 끊는다.
+const _ALBUM_NEW_DAYS=3;
+function _albumIsNew(d){
+  const t=_albumDate(d);
+  if(!isFinite(t))return false;
+  const n=new Date(),todayUTC=Date.UTC(n.getFullYear(),n.getMonth(),n.getDate());
+  const days=Math.round((todayUTC-t)/86400000);
+  return days>=0&&days<=_ALBUM_NEW_DAYS;
 }
 // 오늘·어제 발매인지 — 캡션 메타 줄을 한 단계 강조할지 가른다(_albumDateLabel과 같은 날짜 경계 기준).
 function _albumIsFresh(d){
@@ -19870,7 +19881,7 @@ async function _buildFeedFavAlbums(){
       // 흘렀는데, 나누니 아티스트가 독립해 읽히고 발매일도 자리가 생겼다(2026-09-21).
       const ownerDisp=a.k==='g'?_gLabelKo(a.o):a.o;
       const meta=[_discogTypeLabel(a.y),_albumDateLabel(a.d)].filter(Boolean).join(' · ');
-      _appendFeedCard(list,'💿',a.t,ownerDisp,_albumCardNav(a),a.c,null,{meta,metaFresh:_albumIsFresh(a.d)});
+      _appendFeedCard(list,'💿',a.t,ownerDisp,_albumCardNav(a),a.c,null,{meta,metaFresh:_albumIsFresh(a.d),metaNew:_albumIsNew(a.d)});
     });
     section.style.display='';
   }catch(e){console.warn('[feed] 즐겨찾기 신보 선반 실패 — 이 선반만 빠집니다',e);}
@@ -20102,7 +20113,7 @@ async function _buildFeedNewAlbums(){
     picked.forEach(a=>{
       const ownerDisp=a.k==='g'?_gLabelKo(a.o):a.o;
       const meta=[_discogTypeLabel(a.y),_albumDateLabel(a.d)].filter(Boolean).join(' · ');
-      _appendFeedCard(list,'💿',a.t,ownerDisp,_albumCardNav(a),a.c,null,{meta,metaFresh:_albumIsFresh(a.d)});
+      _appendFeedCard(list,'💿',a.t,ownerDisp,_albumCardNav(a),a.c,null,{meta,metaFresh:_albumIsFresh(a.d),metaNew:_albumIsNew(a.d)});
     });
     section.style.display='';
   }catch(e){console.warn('[feed] 이번 주 발매 선반 실패 — 이 선반만 빠집니다',e);}

@@ -3747,6 +3747,8 @@
   .feed-card-meta{margin-top:2px;font-size:10.5px;font-weight:500;line-height:1.35;color:rgba(150,175,235,0.66);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   /* 오늘·어제 발매만 강조 — 선반의 목적이 "따끈한 것 먼저"라서. 세 번째 색은 만들지 않는다. */
   .feed-card-meta.is-fresh{color:rgba(150,180,255,0.95);font-weight:700;}
+  /* NEW 칩(2026-10-12) — 캡션 메타 줄 맨 앞. 강조 메타(is-fresh)와 같은 파랑 계열로, 색 종류를 늘리지 않는다. */
+  .feed-card-new{display:inline-block;margin-right:5px;padding:0 4px;border-radius:3px;font-size:8.5px;font-weight:800;letter-spacing:.06em;line-height:14px;vertical-align:1px;color:#0d1426;background:rgba(150,180,255,0.92);}
   .feed-card-thumb{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .3s ease;}
   /* 재생시간 배지(2026-09-16) — 여기는 썸네일 전용 래퍼(.feed-card-thumb-wrap)가 있어서 그냥 밑변에
      붙이면 된다. 톤은 카드 그리드의 .gc-ch-dur와 동일하게 유지할 것(같은 정보, 같은 생김새). */
