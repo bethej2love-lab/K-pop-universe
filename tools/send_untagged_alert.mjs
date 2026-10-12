@@ -56,21 +56,17 @@ if (!VAPID_PRIV) {
 webpush.setVapidDetails(VAPID_SUBJECT, VAPID_PUB, VAPID_PRIV);
 
 // ── 알림 대상 그룹 ────────────────────────────────────────────────────────
-// members={}(비어있음)는 "전체 출연"과 동의어이므로 미태깅이 아니다 — 어떤 그룹이든 마찬가지.
-// 따라서 members={} 기준의 알림은 의미가 없어 대상 그룹을 비워 둔다(2026-10-12).
-// 개별 멤버 태깅이 필요한 영상은 관리자가 VM 패널에서 직접 확인한다.
-const ALERT_GROUPS = [];
+// 제목에 멤버 힌트가 없어 자동 태깅이 잘 안 되는 그룹 — 새로 들어온 영상 중 members={}인 것은
+// "아직 검토 안 됨"으로 취급해 알림을 보낸다.
+// 관리자가 "전체" 버튼을 클릭하면 members=[전원]으로 저장돼 더 이상 알림 대상이 아님.
+// (members={}와 members=[전원]은 앱 표시상 동일하지만, 알림에서는 전자만 미검토로 본다)
+const ALERT_GROUPS = ['코르티스', '크래비티', '아일릿'];
 
 // ── 메인 ──────────────────────────────────────────────────────────────────
-if (!ALERT_GROUPS.length) {
-  console.log('[push] ALERT_GROUPS 비어있음 — 알림 전송 없음');
-  process.exit(0);
-}
-
 // created_at은 Supabase가 행 최초 삽입 시 자동 기록 — 이미 DB에 있던 영상은 포함 안 됨.
-// published_at(유튜브 업로드 날짜) 대신 created_at을 쓰면 "새로 동기화된 것"만 잡혀
-// 오래된 미태깅 영상이 매 시간 반복 알림을 보내는 문제를 없앤다(2026-10-12).
-const threeHoursAgo = new Date(Date.now() - 3 * 3600000).toISOString();
+// 3일 창(72시간): 새로 들어온 영상을 3일 이내에 검토할 수 있도록 알림을 보내되,
+// 3일이 지나면 "전체 출연으로 수락"된 것으로 보고 더 이상 알림 대상에서 제외.
+const threeDaysAgo = new Date(Date.now() - 3 * 24 * 3600000).toISOString();
 
 // 1) 미태깅 live 영상 조회 (members가 null이거나 빈 배열 = pg 배열 {}로 저장)
 const groupIn = `(${ALERT_GROUPS.map(g => encodeURIComponent(g)).join(',')})`;
@@ -79,7 +75,7 @@ const videosRes = await sbGet(
   `?select=id,title,group_ko,published_at` +
   `&category=eq.live` +
   `&or=(members.is.null,members.eq.%7B%7D)` +
-  `&created_at=gte.${encodeURIComponent(threeHoursAgo)}` +
+  `&created_at=gte.${encodeURIComponent(threeDaysAgo)}` +
   `&content_flag=is.null` +
   `&group_ko=in.${groupIn}` +
   `&order=published_at.desc&limit=50`
