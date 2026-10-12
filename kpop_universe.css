@@ -449,6 +449,7 @@
   .klp-link{display:inline-flex;align-items:center;gap:5px;padding:7px 12px;border-radius:20px;background:rgba(255,255,255,0.05);border:0.5px solid rgba(255,255,255,0.10);color:rgba(200,215,255,0.85);font-size:13px;text-decoration:none;cursor:pointer;transition:background .15s,border-color .15s;}
   .klp-link:hover{background:rgba(126,156,255,0.14);border-color:rgba(126,156,255,0.3);color:#fff;}
   .klp-link-ext{font-size:10px;opacity:.5;}
+  .klp-favicon{width:14px;height:14px;object-fit:contain;border-radius:3px;flex-shrink:0;}
   .co-ext-link{color:rgba(130,155,220,0.6);text-decoration:none;font-size:11px;margin-left:4px;vertical-align:middle;transition:color .15s;}
   .co-ext-link:hover{color:rgba(180,200,255,0.9);}
   @media(max-width:768px){

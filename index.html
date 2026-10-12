@@ -14448,7 +14448,15 @@ function _openKpopLinks(){
       const row=document.createElement('div');row.className='klp-links';
       sec.links.forEach(l=>{
         const a=document.createElement('a');a.className='klp-link';a.href=l.u;a.target='_blank';a.rel='noopener noreferrer';
-        a.textContent=l.n;
+        try{
+          const host=new URL(l.u).hostname;
+          const ico=document.createElement('img');
+          ico.className='klp-favicon';ico.width=14;ico.height=14;
+          ico.src=`https://www.google.com/s2/favicons?domain=${host}&sz=32`;
+          ico.onerror=()=>ico.remove();
+          a.appendChild(ico);
+        }catch{}
+        a.appendChild(document.createTextNode(l.n));
         const ext=document.createElement('span');ext.className='klp-link-ext';ext.textContent='↗';a.appendChild(ext);
         row.appendChild(a);
       });
