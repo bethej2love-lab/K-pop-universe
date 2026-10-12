@@ -62268,6 +62268,59 @@
     },
     "discography": [
       {
+        "title": "DEAD:ALIVE",
+        "type": "미니",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/146/32/590/14632590_20261008123206_500.jpg",
+        "releaseDate": "2026.10.12",
+        "trackCount": 8,
+        "titleTrack": "UNDEAD",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Killin' Me",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "UNDEAD",
+            "isTitle": true
+          },
+          {
+            "no": 3,
+            "title": "Insidious",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "3AM",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Bloody Gravity",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "Other Side",
+            "isTitle": false
+          },
+          {
+            "no": 7,
+            "title": "섬광",
+            "isTitle": false
+          },
+          {
+            "no": 8,
+            "title": "Steal the Thunder",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "14632590"
+      },
+      {
         "title": "스프링 피버 OST Part 5",
         "type": "OST",
         "releaseDate": "2026.01.20",

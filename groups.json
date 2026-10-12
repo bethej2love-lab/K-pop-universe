@@ -14747,6 +14747,49 @@
   },
   "discography": [
    {
+    "title": "I SPY",
+    "type": "미니 4집",
+    "isMain": true,
+    "cover": "https://cdnimg.melon.co.kr/cm2/album/images/145/82/521/14582521_20261002114945_500.jpg",
+    "releaseDate": "2026.10.12",
+    "trackCount": 6,
+    "titleTrack": "I SPY",
+    "tracks": [
+     {
+      "no": 1,
+      "title": "I SPY",
+      "isTitle": true
+     },
+     {
+      "no": 2,
+      "title": "We Own This Street",
+      "isTitle": false
+     },
+     {
+      "no": 3,
+      "title": "UPGRADE",
+      "isTitle": false
+     },
+     {
+      "no": 4,
+      "title": "Super Major",
+      "isTitle": false
+     },
+     {
+      "no": 5,
+      "title": "Hubble Time",
+      "isTitle": false
+     },
+     {
+      "no": 6,
+      "title": "꿈결 (Like A Dream)",
+      "isTitle": false
+     }
+    ],
+    "src": "melon",
+    "melonAlbumId": "14582521"
+   },
+   {
     "title": "RE:WORKS 2",
     "type": "싱글",
     "isMain": true,
@@ -41766,6 +41809,29 @@
    "namu": "https://namu.wiki/w/MEOVV"
   },
   "discography": [
+   {
+    "title": "GO HARD",
+    "type": "싱글",
+    "isMain": true,
+    "cover": "https://cdnimg.melon.co.kr/cm2/album/images/146/32/315/14632315_20261008102038_500.jpg",
+    "releaseDate": "2026.10.12",
+    "trackCount": 2,
+    "titleTrack": "GO HARD",
+    "tracks": [
+     {
+      "no": 1,
+      "title": "GO HARD",
+      "isTitle": true
+     },
+     {
+      "no": 2,
+      "title": "Indestructible",
+      "isTitle": false
+     }
+    ],
+    "src": "melon",
+    "melonAlbumId": "14632315"
+   },
    {
     "title": "BITE NOW",
     "type": "미니 2집",
@@ -111338,6 +111404,40 @@
       "isTitle": false
      }
     ]
+   },
+   {
+    "title": "RISE",
+    "type": "미니",
+    "isMain": true,
+    "cover": "https://i.scdn.co/image/ab67616d0000b273a434b473b957e9ecd846c9c4",
+    "releaseDate": "2024.09.03",
+    "trackCount": 4,
+    "titleTrack": null,
+    "tracks": [
+     {
+      "no": 1,
+      "title": "UNO",
+      "isTitle": false
+     },
+     {
+      "no": 2,
+      "title": "DADARIDA",
+      "isTitle": false
+     },
+     {
+      "no": 3,
+      "title": "DOPAMINE",
+      "isTitle": false
+     },
+     {
+      "no": 4,
+      "title": "TIMELINE",
+      "isTitle": false
+     }
+    ],
+    "src": "spotify",
+    "spotifyId": "3bVqyc7dO0azXgAuxpAWR1",
+    "copyright": "2024 143 Entertainment"
    }
   ],
   "pri": 1.5,
@@ -112579,6 +112679,25 @@
     ],
     "src": "melon",
     "melonAlbumId": "11319673"
+   },
+   {
+    "title": "LEMONADE",
+    "type": "싱글",
+    "isMain": true,
+    "cover": "https://i.scdn.co/image/ab67616d0000b273be6ec50d9f8f7038f421fcf1",
+    "releaseDate": "2023.09.05",
+    "trackCount": 1,
+    "titleTrack": "LEMONADE",
+    "tracks": [
+     {
+      "no": 1,
+      "title": "LEMONADE",
+      "isTitle": true
+     }
+    ],
+    "src": "spotify",
+    "spotifyId": "1hoTXn3AIaMB4SWG4wL0mn",
+    "copyright": "(P) 2023 Jacso Entertainment"
    },
    {
     "title": "THROW A DICE",
@@ -152295,6 +152414,54 @@
   },
   "discography": [
    {
+    "title": "IMPULSE",
+    "type": "미니",
+    "isMain": true,
+    "cover": "https://cdnimg.melon.co.kr/cm2/album/images/146/32/412/14632412_20261008104951_500.jpg",
+    "releaseDate": "2026.10.12",
+    "trackCount": 7,
+    "titleTrack": "Obsessed with Youth",
+    "tracks": [
+     {
+      "no": 1,
+      "title": "Obsessed with Youth",
+      "isTitle": true
+     },
+     {
+      "no": 2,
+      "title": "Give Up The Ghost",
+      "isTitle": false
+     },
+     {
+      "no": 3,
+      "title": "Slashhh!",
+      "isTitle": false
+     },
+     {
+      "no": 4,
+      "title": "u and me in arguments",
+      "isTitle": false
+     },
+     {
+      "no": 5,
+      "title": "You Right There",
+      "isTitle": false
+     },
+     {
+      "no": 6,
+      "title": "Love in dystopia",
+      "isTitle": false
+     },
+     {
+      "no": 7,
+      "title": "Breathe in, Breathe out",
+      "isTitle": false
+     }
+    ],
+    "src": "melon",
+    "melonAlbumId": "14632412"
+   },
+   {
     "title": "DEAD AND",
     "type": "미니 8집",
     "isMain": true,
@@ -170933,6 +171100,44 @@
    "namu": "https://namu.wiki/w/PLAVE"
   },
   "discography": [
+   {
+    "title": "HYPERDRIVE",
+    "type": "미니",
+    "isMain": true,
+    "cover": "https://cdnimg.melon.co.kr/cm2/album/images/146/29/242/14629242_20261007150642_500.jpg",
+    "releaseDate": "2026.10.12",
+    "trackCount": 5,
+    "titleTrack": "Star Trace",
+    "tracks": [
+     {
+      "no": 1,
+      "title": "꾼",
+      "isTitle": false
+     },
+     {
+      "no": 2,
+      "title": "푸른 하늘에 단비",
+      "isTitle": false
+     },
+     {
+      "no": 3,
+      "title": "Star Trace",
+      "isTitle": true
+     },
+     {
+      "no": 4,
+      "title": "The Answer Is Yes",
+      "isTitle": false
+     },
+     {
+      "no": 5,
+      "title": "Rewind",
+      "isTitle": false
+     }
+    ],
+    "src": "melon",
+    "melonAlbumId": "14629242"
+   },
    {
     "title": "Flame (feat. milet)",
     "type": "싱글",
@@ -196643,6 +196848,50 @@
   "gender": "m",
   "id": "g288",
   "discography": [
+   {
+    "title": "2.Multitude: How We Bloom",
+    "type": "미니",
+    "isMain": true,
+    "cover": "https://cdnimg.melon.co.kr/cm2/album/images/146/44/489/14644489_20261012114032_500.jpg",
+    "releaseDate": "2026.10.12",
+    "trackCount": 6,
+    "titleTrack": "타! (CAN YOU HEAR THAT)",
+    "region": "cn",
+    "tracks": [
+     {
+      "no": 1,
+      "title": "BONE SHAKER",
+      "isTitle": false
+     },
+     {
+      "no": 2,
+      "title": "SKIT",
+      "isTitle": false
+     },
+     {
+      "no": 3,
+      "title": "타! (CAN YOU HEAR THAT)",
+      "isTitle": true
+     },
+     {
+      "no": 4,
+      "title": "RIGHT NOW",
+      "isTitle": false
+     },
+     {
+      "no": 5,
+      "title": "SILLY",
+      "isTitle": false
+     },
+     {
+      "no": 6,
+      "title": "타! (CAN YOU HEAR THAT) (Chinese Ver.)",
+      "isTitle": false
+     }
+    ],
+    "src": "melon",
+    "melonAlbumId": "14644489"
+   },
    {
     "title": "1.Got Hooked: An Addictive Symphony",
     "type": "미니",
