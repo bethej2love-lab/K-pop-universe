@@ -68,6 +68,7 @@ const ALIAS = {
   'ive': '아이브', 'nmixx': '엔믹스', 'lesserafim': '르세라핌', 'newjeans': '뉴진스', 'stayc': '스테이씨',
   'fromis9': '프로미스나인', 'weeekly': '위클리', 'purplekiss': '퍼플키스', 'kep1er': '케플러', 'nixl': '엔싸인',
   'exid': '이엑스아이디', 'aoa': '에이오에이', 'idle': '아이들', 'gidle': '아이들', 'gidle2': '아이들',
+  'bss': '세븐틴',
   'txt': '투모로우바이투게더', 'tomorrowxtogether': '투모로우바이투게더', 'wannaone': '워너원',
 };
 const memberByEn = {};
@@ -126,7 +127,7 @@ const strip = s => s.replace(/<[^>]+>/g, '\t').replace(/&#(\d+);/g, (_, d) => St
 // 한 문서로 리다이렉트) URL 연도를 찍으면 안 된다. 페이지 내 연도 언급 중 URL 연도가 지배적이지
 // 않으면 통째로 버린다(연도별 페이지가 아님).
 function dominantYearOk(html, year) {
-  const yrs = (html.match(/\b20[01]\d\b/g) || []);
+  const yrs = (html.match(/\b20[0-3]\d\b/g) || []);
   if (yrs.length < 20) return false;
   const cnt = {}; yrs.forEach(y => cnt[y] = (cnt[y] || 0) + 1);
   const top = Object.entries(cnt).sort((a, b) => b[1] - a[1])[0];
@@ -138,7 +139,7 @@ function parseMaster(html) {
   const out = [];
   // 연도 헤드라인 위치 수집
   const marks = [];
-  const re = /<h[23][^>]*\bid="(20[01]\d)"[^>]*>/g; // id는 h2 태그 자체 속성(<h2 id="2014">)
+  const re = /<h[23][^>]*\bid="(20[0-3]\d)"[^>]*>/g; // id는 h2 태그 자체 속성(<h2 id="2014">)
   let m;
   while ((m = re.exec(html))) marks.push({ year: +m[1], idx: m.index });
   if (!marks.length) return out;

@@ -24406,6 +24406,45 @@ function _renderTimeline(sec,list,ev){
   });
   sec.style.display='';
 }
+// 음악방송 1위 데이터 → 타임라인 항목 배열 반환 (첫 1위·지상파 첫 1위·트리플 크라운)
+function _mswWinEntries(wins,isKo,debutStr){
+  if(!wins||!wins.length)return[];
+  const TERR=new Set(['뮤직뱅크','인기가요','쇼음악중심']);
+  const out=[];
+  const w0=wins[0];
+  const k0=_tlKey(w0.win_date);
+  if(k0){
+    let lbl=isKo?'첫 음악방송 1위':'First music-show win';
+    if(w0.song_title)lbl+=` — ${w0.song_title}`;
+    if(debutStr){const dd=new Date(String(debutStr).replace(/\./g,'-')),wd=new Date(String(w0.win_date).slice(0,10));if(!isNaN(dd)&&!isNaN(wd)){const d=Math.round((wd-dd)/864e5);if(d>0)lbl+=isKo?` · 데뷔 ${d}일 후`:` · ${d}d after debut`;}}
+    out.push({key:k0,date:_tlDate(w0.win_date),label:lbl,icon:'🏆'});
+  }
+  // 방송사별 그룹화(wins는 win_date 오름차순)
+  const byShow={};
+  for(const w of wins){if(!byShow[w.show])byShow[w.show]=[];byShow[w.show].push(w);}
+  // 트리플 크라운: 동일 방송 7일 간격 3주+ 연속 구간의 시작
+  const triples=[];
+  for(const [show,sw] of Object.entries(byShow)){
+    let runStart=0;
+    for(let i=1;i<=sw.length;i++){
+      const consec=i<sw.length&&Math.round((new Date(sw[i].win_date)-new Date(sw[i-1].win_date))/864e5)===7;
+      if(!consec){if(i-runStart>=3)triples.push({show,date:sw[runStart].win_date,song:sw[runStart].song_title});runStart=i;}
+    }
+  }
+  triples.sort((a,b)=>a.date<b.date?-1:1);
+  if(triples.length){
+    const t=triples[0];
+    const kt=_tlKey(t.date);if(kt){
+      let lbl=(isKo?'첫 음악방송 트리플 크라운':'First triple crown')+` (${t.show})`;
+      if(t.song)lbl+=` — ${t.song}`;
+      out.push({key:kt,date:_tlDate(t.date),label:lbl,icon:'👑'});
+    }
+  }else if(!TERR.has(w0.show)){
+    const terr=wins.find(w=>TERR.has(w.show));
+    if(terr){const kt=_tlKey(terr.win_date);if(kt){let lbl=isKo?'지상파 첫 1위':'First terrestrial win';if(terr.song_title)lbl+=` — ${terr.song_title}`;out.push({key:kt,date:_tlDate(terr.win_date),label:lbl,icon:'📺'});}}
+  }
+  return out;
+}
 function _buildMemberTimeline(a){
   const sec=document.getElementById('tt-timeline-section');
   const list=document.getElementById('tt-timeline');
@@ -24438,17 +24477,13 @@ function _buildMemberTimeline(a){
   // 첫 1위(비동기) — 주 그룹 music_show_wins 최소 win_date + "데뷔 N일 후"
   const primary=realGroups[0];
   if(sb&&primary){
-    sb.from('music_show_wins').select('win_date,song_title').eq('group_ko',primary.ko).order('win_date',{ascending:true}).limit(1)
+    sb.from('music_show_wins').select('win_date,song_title,show').eq('group_ko',primary.ko).order('win_date',{ascending:true})
       .then(({data})=>{
-        if(_openTArtist!==a)return; // 다른 카드로 넘어갔으면 버림
-        const w=data&&data[0]&&data[0].win_date;if(!w)return;
-        const k=_tlKey(w);if(!k||ev.some(e=>e.icon==='🏆'))return;
-        let label=isKo?'첫 음악방송 1위':'First music-show win';
-        const song=data[0].song_title;if(song)label+=` — ${song}`; // 어떤 곡으로 1위했는지(2026-09-13 사용자 요청)
-        const info=GROUPS[primary.ko];
-        if(info&&info.debut){const dd=new Date(String(info.debut).replace(/\./g,'-')),wd=new Date(String(w).slice(0,10).replace(/\./g,'-'));if(!isNaN(dd)&&!isNaN(wd)){const days=Math.round((wd-dd)/864e5);if(days>0)label+=isKo?` · 데뷔 ${days}일 후`:` · ${days}d after debut`;}}
-        ev.push({key:k,date:_tlDate(w),label,icon:'🏆'});
-        if(ev.length>=2)_renderTimeline(sec,list,ev); // 첫1위로 2개가 되면 그제서야 노출
+        if(_openTArtist!==a)return;
+        if(ev.some(e=>e.icon==='🏆'))return;
+        const pInfo=GROUPS[primary.ko];
+        for(const e of _mswWinEntries(data,isKo,pInfo&&pInfo.debut))ev.push(e);
+        if(ev.length>=2)_renderTimeline(sec,list,ev);
       }).catch(()=>{});
     // 첫 콘서트/투어(비동기) — kpop_events 최소 date_start. 활동 그룹 멤버 시간축을 데뷔·첫1위에 이어 채운다.
     sb.from('kpop_events').select('date_start').contains('groups',[primary.ko]).order('date_start',{ascending:true}).limit(1)
@@ -24484,16 +24519,12 @@ function _buildGroupTimeline(ko){
   if(info.disbanded){const k=_tlKey(info.disbanded);if(k)ev.push({key:k,date:_tlDate(info.disbanded),label:isKo?`${gname} 해체`:`${gname} disbanded`,icon:'🏁'});}
   if(ev.length>=2)_renderTimeline(sec,list,ev);
   if(!sb)return;
-  // 첫 음악방송 1위
-  sb.from('music_show_wins').select('win_date,song_title').eq('group_ko',ko).order('win_date',{ascending:true}).limit(1)
+  // 음악방송 1위 (첫 1위·지상파 첫 1위·트리플 크라운)
+  sb.from('music_show_wins').select('win_date,song_title,show').eq('group_ko',ko).order('win_date',{ascending:true})
     .then(({data})=>{
       if(_openGCko!==ko)return;
-      const w=data&&data[0]&&data[0].win_date;if(!w)return;
-      const k=_tlKey(w);if(!k||ev.some(e=>e.icon==='🏆'))return;
-      let label=isKo?'첫 음악방송 1위':'First music-show win';
-      const song=data[0].song_title;if(song)label+=` — ${song}`;
-      if(info.debut){const dd=new Date(String(info.debut).replace(/\./g,'-')),wd=new Date(String(w).slice(0,10).replace(/\./g,'-'));if(!isNaN(dd)&&!isNaN(wd)){const days=Math.round((wd-dd)/864e5);if(days>0)label+=isKo?` · 데뷔 ${days}일 후`:` · ${days}d after debut`;}}
-      ev.push({key:k,date:_tlDate(w),label,icon:'🏆'});
+      if(ev.some(e=>e.icon==='🏆'))return;
+      for(const e of _mswWinEntries(data,isKo,info&&info.debut))ev.push(e);
       if(ev.length>=2)_renderTimeline(sec,list,ev);
     }).catch(()=>{});
   // 첫 콘서트
