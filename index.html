@@ -23113,6 +23113,27 @@ const _chVidPageCache=new Map(); // key -> {data,count,featuredFromDB,ts}
 // 15분→1분(2026-08-19, 사용자 요청) — '추천순' 기본 오픈이 이제 청크 랜덤 샘플링을 타므로(위 load()
 // 참고) 캐시가 만료돼야 새로 샘플링됨. 15분은 너무 길어서 재방문해도 계속 똑같아 보였던 원인 중 하나.
 const _CH_VID_CACHE_TTL=60000;
+// ── 카드 첫 화면 대표 영상(문제2 확정안 — 2026-09-03 사용자 결정 "대표 영상 1개만 위로", 2026-10-13 시안) ──
+// 첫 방문 실측: 그룹 카드 첫 화면에 영상 0개(첫 영상이 한 화면 아래), 사진 없는 멤버는 얼굴도 없었다.
+// 대표 영상 한 칸을 헤더 바로 아래 둔다. 나머지 영상 그리드는 원래 자리 그대로.
+function _cardHeroOn(){
+  try{return /[?&]hero=1\b/.test(location.search)||localStorage.getItem('kpu_card_hero')==='1';}catch(e){return false;}
+}
+function _cardHeroSlot(contId){
+  const cardId=contId==='tv'?'tt':'gc';
+  let slot=document.getElementById(cardId+'-hero');
+  if(!slot){
+    // 그룹 카드는 헤더 밑 컬러 바(#gc-bar-mob) 다음 — 바가 대표 영상 아래로 밀리면 헤더와 끊겨 보인다
+    // 멤버 카드는 '○명이 좋아해요' 줄(#tt-status-line) 다음 — 헤더에 딸린 줄이라 대표 영상이 그 사이에 끼면 어색하다
+    const ttAnchor=()=>{const r=document.getElementById('tt-pic-info-row'),s=document.getElementById('tt-status-line');return (s&&r&&s.parentNode===r.parentNode&&(r.compareDocumentPosition(s)&Node.DOCUMENT_POSITION_FOLLOWING))?s:r;};
+    const anchor=cardId==='tt'?ttAnchor():(document.getElementById('gc-bar-mob')||document.getElementById('gc-header'));
+    if(!anchor||!anchor.parentNode)return null;
+    slot=document.createElement('div');slot.id=cardId+'-hero';slot.className='card-hero';slot.hidden=true;
+    slot.innerHTML='<div class="gc-ch-grid card-hero-grid"></div>';
+    anchor.parentNode.insertBefore(slot,anchor.nextSibling);
+  }
+  return slot.querySelector('.card-hero-grid');
+}
 function _chVidCacheKey(contId,ko,state){
   return[contId,ko,state.memberKo||'',state.filter,state.sortMode,state.viewMode,state.formatFilter||'',state.onlyMe?1:0,state.unitFilter||'',state.searchQ||''].join('|');
 }
@@ -23962,7 +23983,14 @@ function _makeChVidController(contId){
         // 후보가 하나도 없으면(신생 그룹이라 전부 개인 태깅뿐인 경우) 원래 풀로 안전하게 폴백.
         const _mainPool=vids.filter(v=>v.content_flag!=='기타');
         const _mainCandidates=state.memberKo?_mainPool:_mainPool.filter(v=>!v.members?.length);
-        const main=_featuredFromDB||_pickMainChVid(_mainCandidates.length?_mainCandidates:_mainPool);
+        let main=_featuredFromDB||_pickMainChVid(_mainCandidates.length?_mainCandidates:_mainPool);
+        // 멤버 카드 대표는 **본인 단독 직캠**을 우선(2026-10-13, 사용자 — "첫 화면에 얼굴이 나와야"). 하트 최다가
+        // 단체 무대면 첫 화면이 또 단체샷이 된다. 이 페이지 후보 중 본인만 태깅된 직캠(조회수 최고)이 있으면 그걸 쓴다.
+        if(_cardHeroOn()&&state.memberKo&&(!main||(main.members||[]).length!==1)){
+          const solo=_mainPool.filter(v=>(v.members||[]).length===1&&v.members[0]===state.memberKo&&_isFancamLike(v.title)&&!_FANCAM_PROMO_RE.test(v.title||'')&&!_isShortV(v))
+            .sort((a,b)=>(b.view_count||0)-(a.view_count||0))[0];
+          if(solo)main=solo;
+        }
         if(main){
           vids=vids.filter(v=>v.id!==main.id);
           featured={...main,_featured:true};
@@ -23972,6 +24000,18 @@ function _makeChVidController(contId){
       // 걸러 중복 카드를 막는다(위 wrapEnd=청크시작 확장이 안전하려면 필수). 순차 모드에도 무해(중복 없음).
       state.seenIds=state.seenIds||new Set();
       if(featured)state.seenIds.add(featured.id);
+      // 대표 영상 1개를 카드 헤더 바로 아래로(문제2 확정안, 2026-10-13 시안 · ?hero=1). 그리드에선 빼고 맨 위 칸에만 그린다.
+      if(reset){
+        const heroGrid=_cardHeroSlot(contId);
+        if(heroGrid){
+          heroGrid.innerHTML='';heroGrid.parentElement.hidden=true;
+          if(featured&&_cardHeroOn()){
+            renderItems([{...featured,_wide:true}],heroGrid);heroGrid.parentElement.hidden=false;
+            state.allVids=[featured].concat(state.allVids);
+            featured=null;
+          }
+        }
+      }
       vids=vids.filter(v=>{if(state.seenIds.has(v.id))return false;state.seenIds.add(v.id);return true;});
       // 이 페이지 안에서는 (셔플된) 순서를 유지하면서 같은 비율끼리만 같은 행에 짝짓는다. featured는 풀로우(2열)를
       // 실제로 차지하므로 state.pos/cat으로 그리드상 현재 위치를 정확히 추적해 페이지("더보기") 경계에서도

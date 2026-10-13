@@ -4176,3 +4176,8 @@
 .mx-feed-ttl{font-size:13px;font-weight:600;color:rgba(190,215,255,0.95);}
 .mx-feed-sub{font-size:11px;color:rgba(160,185,255,0.45);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .mx-feed-arr{font-size:18px;color:rgba(255,255,255,0.25);flex-shrink:0;}
+
+/* 카드 첫 화면 대표 영상(2026-10-13 시안, ?hero=1) — 헤더 바로 아래 한 칸, 전체폭 */
+.card-hero{margin:10px 0 4px;}
+.card-hero .card-hero-grid{display:block;}
+.card-hero .gc-ch-item{width:100%;}
