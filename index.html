@@ -4811,7 +4811,7 @@ function _logSearchClick(h){
   }catch(e){}
 }
 // 검색 결과 아바타(2026-10-13, 사용자 요청 — "미리보기가 다 텍스트만 있어 답답하다").
-// 멤버: 등록된 프로필 사진 → 없으면 투데이 애니버서리와 같은 영상 썸네일 폴백(_fetchTopVideoThumb).
+// 멤버: 등록된 프로필 사진 → 없으면 본인 단독 직캠 썸네일(_fetchSoloCamThumb) → 그래도 없으면 _fetchTopVideoThumb.
 // 그룹: 프로필(대개 로고)이 있으면 그것, 없으면 행성 색 원 — 줄 정렬을 맞추려고 자리는 항상 잡는다.
 // ⚠️ 영상 썸네일 폴백은 DB 쿼리라 **화면에 보일 때만**(IntersectionObserver) 걸고, 아티스트별로
 //    결과를 기억한다 — 글자를 칠 때마다 doSearch가 다시 돌아 같은 멤버 행이 계속 새로 만들어진다.
@@ -4825,10 +4825,34 @@ function _srAvUrl(a){
     try{_instaPicPreloadP=_instaPicPreloadP||_warmInstaPicCache();await _instaPicPreloadP;}catch(e){}
     for(const g of _artistGroups(a)){const u=_instaPicCache.get(_picKey(a.name.ko,g.ko));if(u)return u;}
     {const u=_instaPicCache.get(_picKey(a.name.ko,''));if(u)return u;}
-    return (await _fetchTopVideoThumb(_ytGroupKoFor(a),a.name.ko))||null;
+    return (await _fetchSoloCamThumb(a))||(await _fetchTopVideoThumb(_ytGroupKoFor(a),a.name.ko))||null;
   })();
   _srAvMemo.set(a,p);
   return p;
+}
+// 사진 없는 멤버의 대체 썸네일(2026-10-13, 사용자 요청) — **그 멤버만 태깅된(members={본인}) 영상**에서,
+// 직캠이 있으면 직캠 중 조회수 최고, 없으면 단독 영상 중 조회수 최고를 쓴다.
+// _fetchTopVideoThumb는 members가 빈 그룹 영상까지 받아서(members.eq.{}) 단체 사진이 아바타가 되곤 했다.
+// ⚠️ 정렬은 published_at으로 최근 60개만 받고 조회수는 클라이언트에서 고른다 — view_count 정렬+LIMIT은
+//    후보가 적을 때 인덱스를 거꾸로 훑다 타임아웃 나는 패턴이 있었다(ORDER BY+LIMIT 사고).
+async function _fetchSoloCamThumb(a){
+  if(!sb||!a||!a.name)return null;
+  const mko=a.name.ko;
+  const gkos=new Set(_artistGroups(a).map(g=>g.ko).filter(k=>GROUPS[k]));
+  if(!gkos.size||_soloKeyUsable(mko))gkos.add(mko); // 솔로 키(group_ko=본인 이름)는 동명이인 없을 때만
+  try{
+    let q=sb.from(_YT_TABLE).select('id,title,thumb,view_count')
+      .in('group_ko',[...gkos]).filter('members','eq',`{${_pgFilterVal(mko)}}`)
+      .or('content_flag.is.null,content_flag.neq.무관').or('content_flag.is.null,content_flag.neq.보류')
+      .or('content_flag.is.null,content_flag.neq.hidden').or('content_flag.is.null,content_flag.neq.개별출연');
+    const{data,error}=await q.order('published_at',{ascending:false}).limit(60);
+    if(error||!data)return null;
+    const rows=data.filter(v=>v.thumb);
+    if(!rows.length)return null;
+    const cams=rows.filter(v=>_isFancamLike(v.title)&&!_FANCAM_PROMO_RE.test(v.title||''));
+    const pool=cams.length?cams:rows;
+    return pool.reduce((b,v)=>((v.view_count||0)>(b.view_count||0)?v:b),pool[0]).thumb;
+  }catch(e){return null;}
 }
 let _srAvIO=null;
 function _srAvPaint(av,url){
