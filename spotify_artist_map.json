@@ -3082,7 +3082,12 @@
     "confidence": "medium",
     "why": "이름 유일 일치",
     "evidence": {
-      "titleOverlap": null
+      "titleOverlap": null,
+      "verifyOverlap": 0,
+      "verifyYears": [
+        2026,
+        2025
+      ]
     },
     "checkedAt": "2026-10-01"
   },
