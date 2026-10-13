@@ -6386,6 +6386,7 @@ function openLightbox(url,shorts,playlist,idx,ctx,isAdvance,forceBrowseMode){
   // 6인치 화면엔 720이면 충분히 선명하고, 데스크톱은 큰 화면이라 1080 유지. (유튜브가 이 힌트를 무시할 때도 있음)
   const _vq=isMob()?'hd720':'hd1080';
   iframe.src=`https://www.youtube.com/embed/${vid}?autoplay=1&mute=${startMuted}&controls=1&playsinline=1&modestbranding=1&iv_load_policy=3&rel=0&enablejsapi=1&vq=${_vq}`;
+  iframe.focus(); // iOS: 라이트박스 여는 제스처 컨텍스트에서 미리 focus → iframe 활성화 1번째 탭 선소비 시도
   _lbYtHandshake(iframe); // 이게 없으면 유튜브가 재생 정보를 안 보낸다 — 시청 진행 바·재생 시작 감지가 죽는다
   clearTimeout(_lbAutoUnmuteT);
   // 소리 모드에서 isAdvance(스와이프·버튼) 전환: mute=1로 시작해서 자동재생 확보 후
