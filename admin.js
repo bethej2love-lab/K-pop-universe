@@ -5686,6 +5686,7 @@ function _vmScheduleTotals(){clearTimeout(_vmTotalsTimer);_vmTotalsTimer=setTime
 //    모바일에서는 도킹이 없고 전화면 모달이라 설정 패널(_bringToFront로 z:132+)보다 앞에 띄워야 한다.
 //    adm-overlay 계열은 <template>에서 마운트돼 _initModalAutoFront 초기화 때 DOM에 없어 자동 관찰이 안 됨.
 function _admDockShow(id){
+  document.getElementById('settings-panel')?.classList.remove('open');
   ['adm-home-overlay','hnn-overlay','vm-overlay','gp-overlay'].forEach(o=>{
     document.getElementById(o)?.classList[o===id?'add':'remove']('open');
   });
