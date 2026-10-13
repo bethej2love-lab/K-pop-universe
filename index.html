@@ -4959,6 +4959,7 @@ function _makeSearchItem(h,res,mobSearch,obSearch){
     const meta=[h.sub,h.meta].filter(Boolean).join(' · ');
     div.innerHTML=`<span class="sr-vt">${h.thumb?`<img src="${esc(h.thumb)}" loading="lazy" alt="" referrerpolicy="no-referrer">`:''}<span class="sr-vp">▶</span></span>`
       +`<span class="sr-vb"><span class="sr-vtitle">${esc(h.name)}</span>${meta?`<span class="sr-vmeta">${esc(meta)}</span>`:''}</span>`;
+    _mkProgBar(div.querySelector('.sr-vt'),ytId(h.url||'')); // 시청 진행 바(유튜브 빨간 줄) — 카드 그리드와 같은 표시
   }else{
   div.innerHTML=`<span class="sr-nl"><span class="sr-item-name${h.type==='group'?' sr-group':''}">${_ico}${h.name}</span>${h.alias?`<span class="sr-alias">${h.alias}</span>`:''}</span>${h.sub?`<span class="sr-tag${h.type==='group'?' sr-group':''}${h.subFormer?' sr-tag-former':''}">${h.sub}</span>`:''}`;
   if(h.type==='member'||h.type==='group')div.insertBefore(_srAvatarEl(h),div.firstChild);
@@ -6265,6 +6266,20 @@ let _lbMuted=localStorage.getItem('kpu_lb_muted')!=='0'; // 기본 무음
 let _lbVolume=Math.min(100,Math.max(0,parseInt(localStorage.getItem('kpu_lb_volume')||'100',10)));
 let _lbAutoUnmuteT=null; // 다음/이전(스와이프·버튼) 전환 시 무음→소리 복구 타이머
 let _lbActiveVid=null; // 현재 재생 중인 영상 ID (시청 진행 추적용)
+// ── 유튜브 iframe 메시지 받기(2026-10-13, 사용자 제보 — "시청 진행 빨간 줄이 전혀 안 보임") ──────────────
+// 유튜브 플레이어는 부모 페이지가 먼저 {event:'listening'}을 보내야 재생 정보(infoDelivery)를 보내준다(IFrame API가
+// 내부에서 하는 핸드셰이크). 이걸 안 보내고 있어서 메시지가 0건 → 시청 위치가 한 번도 저장되지 않았다
+// (헤드리스 실측: 신호 전 0건 / 신호 후 10초에 76건). 재생 시작 감지(playerState)도 같은 이유로 안 오고 있었고,
+// 소리 복구는 그동안 1.2초 폴백 타이머로만 동작했다.
+// ⚠️ 길이(duration)는 첫 메시지에만 오고 이후 위치 메시지엔 없다 — 따로 기억해 둔다(_lbYtDur). 끝내 안 오면 DB 길이(_lbKnownDur).
+let _lbYtDur=0,_lbKnownDur=0,_lbYtHsT=null,_lbYtHeard=false;
+function _lbYtHandshake(iframe){
+  clearInterval(_lbYtHsT);_lbYtHeard=false;let n=0;
+  _lbYtHsT=setInterval(()=>{
+    if(_lbYtHeard||++n>40||!iframe||!iframe.contentWindow){clearInterval(_lbYtHsT);return;}
+    try{iframe.contentWindow.postMessage(JSON.stringify({event:'listening',id:1,channel:'widget'}),'*');}catch(_){}
+  },250);
+}
 const _vidProg=new Map(); // videoId→{t,d} 시청 위치 in-memory 캐시
 const _progSaveT=new Map(),_progSyncT=new Map(); // localStorage·Supabase 디바운스 타이머
 let _lbNeedUnmute=false; // 소리 모드에서 isAdvance 전환 시 재생 시작 후 unMute 필요 여부
@@ -6294,6 +6309,7 @@ let _lbIsNativeShorts=false; // 회전 버튼이 "강제 세로 전환"과 "레�
 function openLightbox(url,shorts,playlist,idx,ctx,isAdvance,forceBrowseMode){
   const vid=ytId(url);if(!vid)return;
   _lbActiveVid=vid;
+  _lbYtDur=0;_lbKnownDur=(playlist&&playlist[idx]&&+playlist[idx].dur)||0; // 시청 진행용 길이(위 _lbYtHandshake 주석)
   // 연결 카드에서 출발해 실제 재생까지 간 경우만 계측 — 이 건의 **핵심 지표**(열고 나서 영상에
   // 도달하기까지 몇 초·몇 탭 걸렸나). isAdvance(자동 다음 영상)는 사용자의 도달이 아니라 제외.
   if(!isAdvance&&_connAnchor&&_connOpenT&&
@@ -6365,6 +6381,7 @@ function openLightbox(url,shorts,playlist,idx,ctx,isAdvance,forceBrowseMode){
   // 6인치 화면엔 720이면 충분히 선명하고, 데스크톱은 큰 화면이라 1080 유지. (유튜브가 이 힌트를 무시할 때도 있음)
   const _vq=isMob()?'hd720':'hd1080';
   iframe.src=`https://www.youtube.com/embed/${vid}?autoplay=1&mute=${startMuted}&controls=1&playsinline=1&modestbranding=1&iv_load_policy=3&rel=0&enablejsapi=1&vq=${_vq}`;
+  _lbYtHandshake(iframe); // 이게 없으면 유튜브가 재생 정보를 안 보낸다 — 시청 진행 바·재생 시작 감지가 죽는다
   clearTimeout(_lbAutoUnmuteT);
   // 소리 모드에서 isAdvance(스와이프·버튼) 전환: mute=1로 시작해서 자동재생 확보 후
   // YouTube onStateChange(재생 시작) 이벤트 수신 시 즉시 unMute — 타이머보다 신뢰성 높음.
@@ -7713,10 +7730,13 @@ document.getElementById('yt-lb-autonext-cancel')?.addEventListener('click',e=>{e
 window.addEventListener('message',e=>{
   try{
     const d=JSON.parse(e.data);
-    if(d.event!=='infoDelivery'||!d.info)return;
-    // 시청 진행 추적 — currentTime+duration이 있으면 저장 (playerState 없는 메시지도 옴)
-    if(_lbActiveVid&&d.info.currentTime!=null&&d.info.duration>0&&d.info.currentTime>=1){
-      _setVidProg(_lbActiveVid,d.info.currentTime,d.info.duration);
+    if((d.event!=='infoDelivery'&&d.event!=='initialDelivery')||!d.info)return;
+    _lbYtHeard=true; // 핸드셰이크 성공 — 더 안 보내도 된다
+    if(d.info.duration>0)_lbYtDur=d.info.duration;
+    // 시청 진행 추적 — 위치 메시지엔 길이가 없으므로 기억해 둔 길이를 쓴다
+    const _dur=_lbYtDur||_lbKnownDur;
+    if(_lbActiveVid&&d.info.currentTime!=null&&_dur>0&&d.info.currentTime>=1){
+      _setVidProg(_lbActiveVid,d.info.currentTime,_dur);
     }
     if(d.info.playerState==null)return;
     // YouTube sends {event:'infoDelivery', info:{playerState:1}} when playback starts
@@ -8457,7 +8477,18 @@ function _attachProgBar(tile,vidId){
   const p=_vidProg.get(vidId);
   const ratio=p&&p.d>0?p.t/p.d:0;
   b.style.width=Math.min(ratio,1)*100+'%';
-  b.style.display=ratio>=0.01?'':'none';
+  b.style.display=ratio>=0.01?'block':'none'; // ⚠️ '' 이면 CSS 기본값 display:none이 이겨서 줄이 영영 안 보였다(2026-10-13 발견)
+  return b;
+}
+// 썸네일 래퍼가 따로 있는 곳(탐험 선반 카드 .feed-card-thumb-wrap · 검색 영상 줄 .sr-vt)용 — CSS로 밑변에 붙는다.
+// 사용자 제보(2026-10-13): "나침반 패널이나 카드 등 썸네일 노출되는 곳 모두 동일하게" — 카드 그리드 3종에만 붙어 있었다.
+function _mkProgBar(wrap,vidId){
+  if(!wrap||!vidId)return null;
+  let b=wrap.querySelector(':scope > .vid-prog');
+  if(!b){b=document.createElement('div');b.className='vid-prog';wrap.appendChild(b);}
+  b.dataset.vid=vidId;
+  const p=_vidProg.get(vidId),ratio=p&&p.d>0?p.t/p.d:0;
+  b.style.width=Math.min(ratio,1)*100+'%';b.style.display=ratio>=0.01?'block':'none'; // ⚠️ '' 이면 CSS 기본값 display:none이 이겨서 줄이 영영 안 보였다(2026-10-13 발견)
   return b;
 }
 function _placeProgBar(tile,thumbH){
@@ -8468,9 +8499,9 @@ function _placeProgBar(tile,thumbH){
 function _updateProgBars(id){
   const p=_vidProg.get(id);
   const ratio=p&&p.d>0?p.t/p.d:0;
-  document.querySelectorAll(`.gc-ch-prog[data-vid="${id}"]`).forEach(b=>{
+  document.querySelectorAll(`.gc-ch-prog[data-vid="${id}"],.vid-prog[data-vid="${id}"]`).forEach(b=>{
     b.style.width=Math.min(ratio,1)*100+'%';
-    b.style.display=ratio>=0.01?'':'none';
+    b.style.display=ratio>=0.01?'block':'none'; // ⚠️ '' 이면 CSS 기본값 display:none이 이겨서 줄이 영영 안 보였다(2026-10-13 발견)
   });
 }
 function _setVidProg(id,t,d){
@@ -19814,6 +19845,8 @@ function _watchShimmer(el){
 function _setFeedCardThumb(item,thumbUrl){
   const wrap=item.querySelector('.feed-card-thumb-wrap');
   if(!wrap)return;
+  // 시청 진행 바 — 영상 한 편을 가리키는 카드만(모아보기 카드는 대표 썸네일일 뿐이라 제외)
+  {const _pv=!item.dataset.cat&&(String(thumbUrl||'').match(/(?:ytimg\.com|img\.youtube\.com)\/vi\/([^/]+)\//)||[])[1];if(_pv)setTimeout(()=>_mkProgBar(wrap,_pv),0);}
   const isShort=item.classList.contains('is-short');
   // 쇼츠(9:16) 카드는 유튜브 **세로 원본 썸네일(oardefault.jpg)** 을 쓴다(2026-08-30 사용자 제보 — 세로 카드에
   // 16:9 mqdefault를 cover로 넣으면 가운데를 잘라 위로 늘려 흐려짐). 그룹/멤버 카드 그리드(renderItems)와 동일 로직:

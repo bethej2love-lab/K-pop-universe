@@ -4199,3 +4199,8 @@
 /* 대표 칸 제목은 마퀴(한 줄 흐름) 대신 두 줄 줄바꿈 — 안쪽 span이 nowrap이라 두 줄이 안 됐다 */
 .card-hero .tv-sm-title .tv-title-inner{white-space:normal!important;display:inline;transform:none!important;animation:none!important;}
 .card-hero .tv-sm-title{max-height:calc(1.35em * 2);}
+/* 시청 진행 바 — 썸네일 래퍼가 있는 곳(탐험 선반 카드·검색 영상 줄). 카드 그리드의 .gc-ch-prog와 같은 빨간 3px(2026-10-13) */
+.vid-prog{position:absolute;left:0;bottom:0;height:3px;background:#f00;z-index:4;pointer-events:none;border-radius:0 1px 1px 0;}
+.feed-card-thumb-wrap,.sr-vt{position:relative;}
+/* 위쪽 영상 한 줄 카드: 썸네일이 줄의 왼쪽 40%라 진행 바 폭도 그 비율로 줄인다(바 폭 %는 타일 전체 기준) */
+.card-hero .gc-ch-prog{transform:scaleX(.4);transform-origin:left center;}
