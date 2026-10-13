@@ -5400,6 +5400,8 @@ function doSearch(q){
   const ql=q.toLowerCase();
   const qln=_normEn(q); // "gd" 같은 특수문자 뺀 약어 검색용 — 최소 2자 이상일 때만 사용(빈 문자열은 모든 항목에 매치되므로 가드)
   const _hasLatin=/[a-zA-Z]/.test(q);
+  const _ns=s=>String(s||'').replace(/\s+/g,''); // 띄어쓰기 무시 비교용
+  const _qns=_ns(q),_qlns=_qns.toLowerCase();
   const hits=[];
   // ── 그룹→멤버 확장용 수집(2026-09-02) ──────────────────────────────────
   // "뉴진스"를 치면 그룹 한 줄만 나오고 민지·하니·다니엘·해린·혜인은 안 나왔다(이름에 '뉴진스'가
@@ -5418,10 +5420,16 @@ function doSearch(q){
     const altNames=info.altNames||[];
     const altScores=altNames.map(alt=>_mScore(alt,q,ql));
     const altMatch=altNames.some(alt=>alt.toLowerCase().includes(ql)||(qln.length>=2&&_normEn(alt).includes(qln)));
-    if(ko.includes(q)||enN.toLowerCase().includes(ql)||(qln.length>=2&&_normEn(enN).includes(qln))||csG<99||altMatch){
+    // 띄어쓰기 무시 매칭(2026-10-13, 사용자 제보) — "클로즈 유어 아이즈"(키는 '클로즈유어아이즈')로 치면 그룹이
+    // 아예 안 잡히고, 아래 단어별 보조 검색에서 '아이즈'가 아이즈원에 걸려 아이즈원 멤버가 섞였다.
+    // 반대 방향("엔시티위시" → 키 '엔시티 위시')도 같이 해결된다.
+    const nsKo=_ns(ko),nsEn=_ns(enN).toLowerCase(),nsAlts=altNames.map(x=>_ns(x).toLowerCase());
+    const nsMatch=_qns.length>=2&&(nsKo.includes(_qns)||nsEn.includes(_qlns)||nsAlts.some(x=>x.includes(_qlns)));
+    if(ko.includes(q)||enN.toLowerCase().includes(ql)||(qln.length>=2&&_normEn(enN).includes(qln))||csG<99||altMatch||nsMatch){
       const bm=bubbleMeshes.find(b=>b.ko===ko);
       if(bm){
-        const s=Math.min(_mScore(ko,q,ql),_mScore(enN,q,ql),csG,...(altScores.length?altScores:[99]));
+        const nsScores=nsMatch?[_mScore(nsKo,_qns,_qlns),_mScore(nsEn,_qns,_qlns),...nsAlts.map(x=>_mScore(x,_qns,_qlns))]:[];
+        const s=Math.min(_mScore(ko,q,ql),_mScore(enN,q,ql),csG,...(altScores.length?altScores:[99]),...nsScores);
         const dispName=(_hasLatin&&enN)?enN:(currentLang==='ko'?ko:(enN||ko));
         const dispSub=(enN&&enN!==dispName)?enN:'';
         // score는 **매칭 등급 그대로**다 — 타입 감점을 섞지 않는다(_TYPE_RANK 주석 참고, 2026-09-08).
@@ -5555,7 +5563,10 @@ function doSearch(q){
   // 그래서 토큰 하나하나로 그룹을 한 번 더 찾아본다. 찾으면 나머지 토큰이 멤버 이름 필터가 된다.
   {
     const _t=q.split(/\s+/).filter(Boolean);
-    if(_t.length>1){
+    // ⚠️ 검색어 전체(띄어쓰기 무시)로 이미 그룹이 정확·접두로 잡혔으면 단어별로 다시 찾지 않는다 —
+    //    "클로즈 유어 아이즈"의 '아이즈'가 아이즈원을 끌어오던 사고(2026-10-13). 단어 쪼개기는 "뉴진스 하니"처럼
+    //    전체로는 아무 그룹도 안 잡힐 때만 필요하다.
+    if(_t.length>1&&!_expandFrom.length){
       _t.forEach(tok=>{
         if(tok.length<2)return;
         const tl=tok.toLowerCase();

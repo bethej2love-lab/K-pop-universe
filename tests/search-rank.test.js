@@ -136,6 +136,22 @@ async function main() {
       else ok(`[반대방향 ${q}] ${rows.slice(0, 4).map(r => r.type + ':' + r.name).join(' > ')}`);
     }
 
+    // ── 3.2 띄어쓰기 무시 + 단어 쪼개기 오염(2026-10-13 사용자 제보) ─────────────────
+    // "클로즈 유어 아이즈"로 치면 그룹이 아예 안 잡히고(키 '클로즈유어아이즈'), 단어별 보조 검색의 '아이즈'가
+    // 아이즈원을 끌어와 아이즈원 멤버가 섞였다. 전체로 그룹이 잡히면 단어 쪼개기를 하지 않는다.
+    // [대조] "뉴진스 하니"는 전체로는 그룹이 안 잡히므로 단어 쪼개기가 계속 돌아야 한다.
+    for (const [q, gWant, gBan] of [['클로즈 유어 아이즈', '클로즈유어아이즈', '아이즈원'], ['클로즈유어 아이즈', '클로즈유어아이즈', '아이즈원'], ['엔시티위시', '엔시티 위시', null]]) {
+      const rows = await read(q);
+      const sub = JSON.parse(await ev(`JSON.stringify([...document.querySelectorAll('#search-results .sr-item')].map(e=>(e.querySelector('.sr-tag')||{}).textContent||''))`) || '[]');
+      if (!rows.length || rows[0].type !== 'group' || rows[0].name !== gWant) fail(`[띄어쓰기 ${q}] 첫 결과가 그룹 ${gWant}가 아님 — ${rows.slice(0, 3).map(r => r.type + ':' + r.name).join(' > ')}`);
+      else if (gBan && sub.some(s => s === gBan)) fail(`[띄어쓰기 ${q}] ${gBan} 소속이 섞임 — 단어 쪼개기 오염`);
+      else ok(`[띄어쓰기 ${q}] ${rows.slice(0, 3).map(r => r.type + ':' + r.name).join(' > ')}`);
+    }
+    {
+      const rows = await read('뉴진스 하니');
+      rows.some(r => r.type === 'member' && /하니/.test(r.name)) ? ok('[대조 뉴진스 하니] 단어 쪼개기 경로 유지') : fail(`[대조 뉴진스 하니] 하니가 안 나옴 — ${rows.slice(0, 3).map(r => r.type + ':' + r.name).join(' > ')}`);
+    }
+
     // ── 3.5 프로그램 컬렉션도 같은 등급 규칙을 따른다 ─────────────────────────────
     // "라디오스타"를 제대로 치면 최상단, "Star"만 치면(영문명 부분일치) 정확일치 곡보다 아래.
     {
