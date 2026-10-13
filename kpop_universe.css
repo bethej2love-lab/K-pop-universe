@@ -4190,3 +4190,9 @@
 .card-hero .gc-ch-meta{grid-column:2;grid-row:3;margin:0;}
 .card-hero .tv-with-line{grid-column:2;grid-row:4;}
 .card-hero .scrap-btn,.card-hero .col-btn,.card-hero .gc-ch-dur,.card-hero .vid-edit-btn{display:none;}
+/* 대표 칸 로딩 자리(카드 대상 전환 직후) — 실제 한 줄 카드와 같은 크기라 채워질 때 레이아웃이 안 튄다 */
+.card-hero-skel{display:grid;grid-template-columns:40% 1fr;column-gap:12px;row-gap:8px;align-items:start;}
+.card-hero-skel>div{border-radius:6px;background:linear-gradient(90deg,rgba(255,255,255,0.04) 25%,rgba(255,255,255,0.09) 50%,rgba(255,255,255,0.04) 75%);background-size:200% 100%;animation:gc-shimmer 1.4s ease infinite;}
+.card-hero-skel .chs-thumb{grid-row:1/span 3;aspect-ratio:16/9;border-radius:8px;}
+.card-hero-skel .chs-l{height:12px;margin-top:6px;}
+.card-hero-skel .chs-s{width:55%;}

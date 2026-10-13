@@ -23654,6 +23654,12 @@ function _makeChVidController(contId){
     if(reset){
       state.gen++;
       state.hasMore=false;
+      // 대표 칸도 **카드 대상이 바뀌는 즉시** 비운다(2026-10-13, 사용자 제보 — 멤버를 바꾸면 이전 멤버의 대표 영상이
+      // 1초쯤 남아 카드 주인과 영상 주인이 어긋났다). 그냥 숨기면 아래 내용이 위로 튀었다 내려오니 스켈레톤으로 자리를 지킨다.
+      if(_cardHeroOn()){
+        const _hg=_cardHeroSlot(contId);
+        if(_hg){_hg.innerHTML='<div class="card-hero-skel"><div class="chs-thumb"></div><div class="chs-l"></div><div class="chs-l chs-s"></div></div>';_hg.parentElement.hidden=false;}
+      }
       grid.innerHTML='<div class="gc-ch-skeleton featured"><div class="gc-ch-skeleton-thumb"></div><div class="gc-ch-skeleton-title"></div><div class="gc-ch-skeleton-title short"></div></div>'
         +Array(6).fill('<div class="gc-ch-skeleton"><div class="gc-ch-skeleton-thumb"></div><div class="gc-ch-skeleton-title"></div><div class="gc-ch-skeleton-title short"></div></div>').join('');
       if(moreWrap)moreWrap.innerHTML='';
@@ -23942,6 +23948,7 @@ function _makeChVidController(contId){
       // featuredP는 자체 타임아웃+null 폴백이 있어 별도로 감쌀 필요 없는 것도 기존과 동일.
       const[{data,error,count},_featuredFromDB]=await Promise.all([mainP,featuredP]);
       if(myGen!==state.gen)return; // 대기 중 다른 그룹/새로고침으로 전환됨: 그쪽이 이미 자신의 잠금을 걸어놨으므로 여기선 해제하지 않는다
+      if(reset&&(error||!data?.length)){const _hg=_cardHeroSlot(contId);if(_hg){_hg.innerHTML='';_hg.parentElement.hidden=true;}} // 스켈레톤이 남지 않게
       if(error)throw new Error(error.message);
       if(reset)grid.innerHTML='';
       if(!data?.length&&offset===0){
