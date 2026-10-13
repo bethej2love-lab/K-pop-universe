@@ -23426,8 +23426,16 @@ function _makeChVidController(contId){
   function _gridOwnerLine(v){
     let chip=null;
     if(state.memberKo){
+      // 멤버 카드에선 본인 칩을 달지 않는다(2026-10-13, 사용자 — "본인 카드인데 영상마다 본인 이름이 왜 들어가나").
+      // 다른 그룹 채널에 게스트로 나온 영상만 그 그룹 칩을 남긴다(어느 채널 영상인지는 정보다).
       const me=ARTISTS.find(a=>a.name.ko===state.memberKo&&(_ytGroupKoFor(a)===state.ko||a.group.ko===state.ko||_artistGroups(a).some(g=>g.ko===state.ko)));
-      if(me&&((v.members||[]).includes(state.memberKo)||!GROUPS[v.group_ko]))chip=_makeMemberChip(me,v.group_ko);
+      const ownGroups=new Set([state.ko,...(me?_artistGroups(me).map(g=>g.ko):[])]);
+      if(v.group_ko&&GROUPS[v.group_ko]&&!ownGroups.has(v.group_ko)){
+        const line=document.createElement('div');line.className='tv-with-line';
+        line.appendChild(_makeGCChip(v.group_ko,currentLang==='ko'?v.group_ko:(GROUPS[v.group_ko].en||v.group_ko)));
+        return line;
+      }
+      return null;
     }
     if(!chip&&v.group_ko&&GROUPS[v.group_ko])chip=_makeGCChip(v.group_ko,currentLang==='ko'?v.group_ko:(GROUPS[v.group_ko].en||v.group_ko));
     if(!chip)return null;
