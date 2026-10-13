@@ -20205,6 +20205,7 @@ function _openFeedListOverlay(title,sub,songs,ctx){
     _renderCveList(songs||[],grid,ctx.colId);
     return;
   }
+  const _ranked=_feedListRankedNext; _feedListRankedNext=false;
   grid.classList.add('gc-ch-grid');
   grid.classList.remove('cve-list');
   grid.classList.toggle('gc-ch-grid-ranked',_ranked);
@@ -20232,7 +20233,7 @@ function _openFeedListOverlay(title,sub,songs,ctx){
   //    쓰고 있었는데 열어보면 딴 영상이 맨 앞이라 "썸네일이 1위가 아니다"로 보였던 것.
   //    부수 효과로 순위 배지도 정상화된다 — 배지 숫자는 렌더 인덱스(idx+1)로 붙는데 변동값(rankDelta)은
   //    원래 순위로 계산돼서, 재정렬되면 둘이 다른 영상을 가리켰다(지금은 스냅샷이 비어 안 보였을 뿐).
-  const _ranked=_feedListRankedNext; _feedListRankedNext=false; // 클릭 한 번에 한 번만 소비
+  // _ranked: 위에서 이미 소비 (grid.classList.toggle 전으로 이동)
   // 순위 목록(차트)은 **전부 가로 격자**로 그린다(2026-09-04, 사용자 제안 "TOP 모음은 순서가
   // 중요하니까 일괄 가로로"). 순위 순서를 지키면 가로/쇼츠가 번갈아 나와 비율 경계가 계속 생기고,
   // 그 경계에서 앞 카드를 넓히는 기존 규칙 때문에 쇼츠가 자꾸 전체폭(360×685)으로 튀어나왔다.
