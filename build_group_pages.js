@@ -192,6 +192,79 @@ function ogImageFor(info) {
   return m ? `https://img.youtube.com/vi/${m[1]}/hqdefault.jpg` : `${SITE}/og-image.png`;
 }
 
+// ── 소개 문단 생성 (2026-10-13) ─────────────────────────────────────────────
+// 기존 SEO 페이지는 메타데이터+목록만 있어 Google이 "텍스트 없는 페이지"로 판정 — 자연스러운 문장을
+// 한 단락 넣어 색인 품질을 높인다.
+function groupIntroHtml(ko, info, members, discogItems, lang) {
+  const isEn = lang === 'en';
+  const name = isEn ? (info.en || ko) : ko;
+  const memCount = members.length;
+  const gender = info.gender === 'f' ? (isEn ? 'girl group' : '걸그룹') : info.gender === 'm' ? (isEn ? 'boy group' : '보이그룹') : (isEn ? 'K-pop group' : '케이팝 그룹');
+  const agency = isEn ? agencyEn(info.co) : info.co;
+  const debutYear = String(info.debut || '').slice(0, 4);
+  const recent = discogItems.slice(0, 3);
+  const disbanded = !!info.disbanded;
+  let text;
+  if (isEn) {
+    let s = `${name} is`;
+    if (disbanded) s = `${name} was`;
+    if (memCount) s += ` a ${memCount}-member`;
+    s += ` K-pop ${gender}`;
+    if (agency) s += ` under ${agency}`;
+    if (debutYear) s += `, debuting in ${debutYear}`;
+    s += '.';
+    if (!disbanded && info.fandom && (info.fandom.en || info.fandom.ko)) s += ` Fan club: ${info.fandom.en || info.fandom.ko}.`;
+    if (recent.length) s += ` Recent releases: ${recent.map(a => `${a.title} (${String(a.releaseDate||'').slice(0,4)})`).join(', ')}.`;
+    text = s;
+  } else {
+    const cop = disbanded ? '였습니다' : '입니다';
+    let s = `${name}${josa(name, '은/는')} `;
+    if (agency) s += `${agency} 소속 `;
+    if (memCount) s += `${memCount}인조 `;
+    s += gender + `${cop}.`;
+    if (debutYear) s += ` ${debutYear}년 데뷔`;
+    if (debutYear && !disbanded && info.fandom && info.fandom.ko) s += `했으며, 팬덤명은 ${info.fandom.ko}입니다.`;
+    else if (debutYear) s += '했습니다.';
+    else if (!disbanded && info.fandom && info.fandom.ko) s += ` 팬덤명은 ${info.fandom.ko}입니다.`;
+    if (recent.length) s += ` 대표 앨범: ${recent.map(a => `${a.title}(${String(a.releaseDate||'').slice(0,4)})`).join(', ')}.`;
+    text = s;
+  }
+  return `<p class="intro">${escHtml(text)}</p>`;
+}
+
+const ISO_COUNTRY = { KR:'South Korean', JP:'Japanese', CN:'Chinese', TH:'Thai', TW:'Taiwanese',
+  US:'American', AU:'Australian', HK:'Hong Kong', CA:'Canadian', MY:'Malaysian', PH:'Philippine',
+  VN:'Vietnamese', ID:'Indonesian', NZ:'New Zealand', GB:'British', SG:'Singaporean', MX:'Mexican' };
+function memberIntroHtml(a, affiliations, lang) {
+  const isEn = lang === 'en';
+  const name = isEn ? (a.name.en || a.name.ko) : a.name.ko;
+  const natRaw = a.nat ? (isEn ? (a.nat.en || a.nat.ko) : a.nat.ko) : null;
+  const nat = (isEn && natRaw) ? (ISO_COUNTRY[natRaw] || natRaw) : natRaw;
+  const bdayYear = String(a.bday || '').slice(0, 4);
+  const grpNames = affiliations.map(g => isEn ? (groups[g.ko] && (groups[g.ko].en || g.ko)) : g.ko).filter(Boolean);
+  const active = a.active !== false;
+  let text;
+  if (isEn) {
+    let s = `${name} is a${active ? '' : ' former'} K-pop idol`;
+    if (nat) s += ` of ${nat} nationality`;
+    if (bdayYear) s += `, born in ${bdayYear}`;
+    s += '.';
+    if (grpNames.length) s += ` Member of ${grpNames.join(', ')}.`;
+    text = s;
+  } else {
+    let s = `${name}${josa(name, '은/는')} `;
+    if (nat) s += `${nat} 출신 `;
+    s += `케이팝 아이돌${active ? '' : '(활동 종료)'}`;
+    if (bdayYear) s += `로, ${bdayYear}년생`;
+    if (grpNames.length) s += `입니다. ${grpNames.join(', ')} 멤버입니다.`;
+    else s += '입니다.';
+    text = s;
+  }
+  return `<p class="intro">${escHtml(text)}</p>`;
+}
+
+const TODAY_ISO = new Date().toISOString().slice(0, 10);
+
 const pages = []; // {loc, alt: {ko,en}} for sitemap + hreflang bookkeeping
 
 const groupKos = Object.keys(groups);
@@ -337,6 +410,7 @@ groupKos.forEach(ko => {
   .cta{display:block;text-align:center;padding:13px 22px;border-radius:24px;background:rgba(140,165,255,0.2);border:0.5px solid rgba(150,175,255,0.42);color:#fff;text-decoration:none;font-size:14.5px;font-weight:600;}
   .lang-switch{margin-top:40px;font-size:12px;}
   .lang-switch a{color:rgba(150,175,255,0.7);}
+  .intro{font-size:14px;line-height:1.75;color:rgba(200,215,255,0.78);margin:0 0 22px;}
 </style>
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-Z5NTV6X3YF"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-Z5NTV6X3YF');document.addEventListener('DOMContentLoaded',function(){var s=location.pathname.replace(/\/$/,'').split('/').filter(Boolean),i=s[0]==='en'?1:0,type=s.length-i>=3?'member':s.length-i===2&&s[i]==='g'?'group':s.length-i===2?'explore':'group_list',entity=(document.querySelector('h1')||{}).textContent||'';gtag('event','seo_land',{entity_name:entity.trim(),page_type:type});var c=document.querySelector('.cta');c&&c.addEventListener('click',function(){gtag('event','seo_cta_click',{entity_name:entity.trim(),page_type:type});});});</script>
@@ -353,6 +427,7 @@ groupKos.forEach(ko => {
     ${agency ? `<span><b>${agencyLabel}</b> ${escHtml(agency)}</span>` : ''}
     ${info.fandom && info.fandom.ko ? `<span><b>${fandomLabel}</b> ${escHtml(isEn ? (info.fandom.en || info.fandom.ko) : info.fandom.ko)}</span>` : ''}
   </div>
+  ${groupIntroHtml(ko, info, members, discogItems, lang)}
   ${memberListHtml(lang)}
   ${discogHtml(lang)}
   <div class="lang-switch"><a href="${altUrl}">${isEn ? '한국어로 보기' : 'View in English'}</a></div>
@@ -542,6 +617,7 @@ artists.forEach(a => {
   .cta{display:block;text-align:center;padding:13px 22px;border-radius:24px;background:rgba(140,165,255,0.2);border:0.5px solid rgba(150,175,255,0.42);color:#fff;text-decoration:none;font-size:14.5px;font-weight:600;}
   .lang-switch{margin-top:40px;font-size:12px;}
   .lang-switch a{color:rgba(150,175,255,0.7);}
+  .intro{font-size:14px;line-height:1.75;color:rgba(200,215,255,0.78);margin:0 0 22px;}
 </style>
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-Z5NTV6X3YF"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-Z5NTV6X3YF');document.addEventListener('DOMContentLoaded',function(){var s=location.pathname.replace(/\/$/,'').split('/').filter(Boolean),i=s[0]==='en'?1:0,type=s.length-i>=3?'member':s.length-i===2&&s[i]==='g'?'group':s.length-i===2?'explore':'group_list',entity=(document.querySelector('h1')||{}).textContent||'';gtag('event','seo_land',{entity_name:entity.trim(),page_type:type});var c=document.querySelector('.cta');c&&c.addEventListener('click',function(){gtag('event','seo_cta_click',{entity_name:entity.trim(),page_type:type});});});</script>
@@ -559,6 +635,7 @@ artists.forEach(a => {
     ${agency ? `<span><b>${agencyLabel}</b> ${escHtml(agency)}</span>` : ''}
     <span><b>${statusLbl}</b> ${escHtml(statusLabel)}</span>
   </div>
+  ${memberIntroHtml(a, affiliations, lang)}
   ${affiliationHtml(lang)}
   ${songsHtml(lang)}
   ${memberDiscogHtml(lang)}
@@ -591,10 +668,10 @@ function hubPageHtml(lang, relLinks) {
   const isEn = lang === 'en';
   const selfUrl = `${SITE}/${isEn ? 'en/g/' : 'g/'}`;
   const altUrl = `${SITE}/${isEn ? 'g/' : 'en/g/'}`;
-  const title = isEn ? 'All K-pop Groups | K-POP UNIVERSE' : '케이팝 그룹 전체 목록 | K-POP UNIVERSE';
+  const title = isEn ? 'All K-pop Groups — Profiles, Members & Videos | K-POP UNIVERSE' : '케이팝 그룹 전체 목록 — 멤버·데뷔일·직캠 | K-POP UNIVERSE';
   const desc = isEn
-    ? `Browse all ${groupKos.length} K-pop groups with debut dates, members, and videos.`
-    : `케이팝 그룹 ${groupKos.length}팀의 데뷔일·멤버·영상을 한눈에.`;
+    ? `Browse all ${groupKos.length} K-pop groups on K-POP UNIVERSE. Each group page includes debut date, member profiles, discography, and fancam archive.`
+    : `K-POP UNIVERSE에서 케이팝 그룹 ${groupKos.length}팀의 데뷔일·멤버 프로필·디스코그래피·직캠을 한눈에 탐험하세요.`;
   const sorted = [...groupKos].sort((a, b) => String(groups[a].debut || '').localeCompare(String(groups[b].debut || '')));
   const items = sorted.map(gko => {
     const info = groups[gko];
@@ -946,7 +1023,7 @@ function existingRelPages() {
     ...relPages];
   const sitemapXml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${sitemapUrls.map(u => `  <url>\n    <loc>${u.loc}</loc>\n    <changefreq>weekly</changefreq>\n    <priority>${u.priority}</priority>\n  </url>`).join('\n')}
+${sitemapUrls.map(u => `  <url>\n    <loc>${u.loc}</loc>\n    <lastmod>${TODAY_ISO}</lastmod>\n    <changefreq>weekly</changefreq>\n    <priority>${u.priority}</priority>\n  </url>`).join('\n')}
 </urlset>
 `;
   fs.writeFileSync(path.join(ROOT, 'sitemap.xml'), sitemapXml);
