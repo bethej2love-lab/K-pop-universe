@@ -24731,7 +24731,7 @@
     "discography": [
       {
         "title": "DEATH OF ME",
-        "type": "정규",
+        "type": "미니 1집",
         "isMain": true,
         "cover": "https://i.scdn.co/image/ab67616d0000b27374d28174d1da1e29394b85a1",
         "releaseDate": "2026.09.07",
@@ -24781,7 +24781,8 @@
         ],
         "src": "spotify",
         "spotifyId": "5hYH4zxmh1ePXZaxFyj9wB",
-        "copyright": "© 2026 BELIFT LAB"
+        "copyright": "© 2026 BELIFT LAB",
+        "melonAlbumId": "14522361"
       },
       {
         "title": "RIDE OR DIE",
@@ -53004,17 +53005,17 @@
     "discography": [
       {
         "title": "METAMORPHOSIS",
-        "type": "정규",
+        "type": "미니",
         "isMain": true,
         "cover": "https://i.scdn.co/image/ab67616d0000b273d5fd6e65b833b365c75d3822",
         "releaseDate": "2026.09.04",
         "trackCount": 8,
-        "titleTrack": null,
+        "titleTrack": "GIRLFRIEND (feat. CAMO)",
         "tracks": [
           {
             "no": 1,
             "title": "GIRLFRIEND (feat. CAMO)",
-            "isTitle": false
+            "isTitle": true
           },
           {
             "no": 2,
@@ -53053,16 +53054,17 @@
           }
         ],
         "src": "spotify",
-        "spotifyId": "7L1vFE7gqED2lVNZaCPgW4"
+        "spotifyId": "7L1vFE7gqED2lVNZaCPgW4",
+        "melonAlbumId": "14517652"
       },
       {
         "title": "ANTIDOTE",
-        "type": "정규",
+        "type": "미니",
         "isMain": true,
         "cover": "https://i.scdn.co/image/ab67616d0000b2739eec196e7ea4b2402ee9b417",
         "releaseDate": "2026.04.10",
         "trackCount": 8,
-        "titleTrack": null,
+        "titleTrack": "SAY MY NAME",
         "tracks": [
           {
             "no": 1,
@@ -53077,7 +53079,7 @@
           {
             "no": 3,
             "title": "SAY MY NAME",
-            "isTitle": false
+            "isTitle": true
           },
           {
             "no": 4,
@@ -53106,21 +53108,22 @@
           }
         ],
         "src": "spotify",
-        "spotifyId": "1lNfCl6zXEhb84RSOGTzGu"
+        "spotifyId": "1lNfCl6zXEhb84RSOGTzGu",
+        "melonAlbumId": "13318247"
       },
       {
         "title": "INTOXICATED",
-        "type": "정규",
+        "type": "미니",
         "isMain": true,
         "cover": "https://i.scdn.co/image/ab67616d0000b27362c933a8531d16d8273f1791",
         "releaseDate": "2026.01.30",
         "trackCount": 7,
-        "titleTrack": null,
+        "titleTrack": "T.T.T (TATTOO TOGETHER)",
         "tracks": [
           {
             "no": 1,
             "title": "T.T.T (TATTOO TOGETHER)",
-            "isTitle": false
+            "isTitle": true
           },
           {
             "no": 2,
@@ -53154,7 +53157,8 @@
           }
         ],
         "src": "spotify",
-        "spotifyId": "7CRoouenkq1sJfYwVxCvVG"
+        "spotifyId": "7CRoouenkq1sJfYwVxCvVG",
+        "melonAlbumId": "12824316"
       },
       {
         "title": "ACCEPTANCE",
@@ -114440,29 +114444,7 @@
             "title": "I Feel You (Inst.)",
             "isTitle": false
           }
-        ]
-      },
-      {
-        "title": "〈Webtoonsinger〉 I Feel You (The Girl Downstairs x YERIN)",
-        "type": "싱글",
-        "isMain": true,
-        "cover": "https://i.scdn.co/image/ab67616d0000b2732d076282749f985f483be89f",
-        "releaseDate": "2023.04.01",
-        "trackCount": 2,
-        "titleTrack": null,
-        "tracks": [
-          {
-            "no": 1,
-            "title": "I Feel You",
-            "isTitle": false
-          },
-          {
-            "no": 2,
-            "title": "I Feel You - Instrumental",
-            "isTitle": false
-          }
         ],
-        "src": "spotify",
         "spotifyId": "2NXr8RG1WFEGzow5oMS1yI"
       },
       {
@@ -114655,29 +114637,7 @@
             "title": "What If (Inst.)",
             "isTitle": false
           }
-        ]
-      },
-      {
-        "title": "Introverted Us X YUJU (Original Soundtrack)",
-        "type": "싱글",
-        "isMain": true,
-        "cover": "https://i.scdn.co/image/ab67616d0000b273c2c53ef2573223d7f3cb82e1",
-        "releaseDate": "2025.10.23",
-        "trackCount": 2,
-        "titleTrack": null,
-        "tracks": [
-          {
-            "no": 1,
-            "title": "What If",
-            "isTitle": false
-          },
-          {
-            "no": 2,
-            "title": "What If - Inst.",
-            "isTitle": false
-          }
         ],
-        "src": "spotify",
         "spotifyId": "30n4LCJwRTYri06EXSQNIb"
       },
       {
@@ -130187,29 +130147,7 @@
             "title": "memory (inst.)",
             "isTitle": false
           }
-        ]
-      },
-      {
-        "title": "memory",
-        "type": "싱글",
-        "isMain": true,
-        "cover": "https://i.scdn.co/image/ab67616d0000b273db567197e0d41f6bd5771b82",
-        "releaseDate": "2026.05.07",
-        "trackCount": 2,
-        "titleTrack": "memory",
-        "tracks": [
-          {
-            "no": 1,
-            "title": "memory",
-            "isTitle": true
-          },
-          {
-            "no": 2,
-            "title": "memory - Instrumental",
-            "isTitle": false
-          }
         ],
-        "src": "spotify",
         "spotifyId": "2XbND9n2T8jWYtKoUEGXxh"
       },
       {
@@ -130284,29 +130222,7 @@
             "isTitle": false
           }
         ],
-        "feat": true
-      },
-      {
-        "title": "신데렐라 게임 (Original Television Soundtrack), Pt. 5",
-        "type": "싱글",
-        "isMain": true,
-        "cover": "https://i.scdn.co/image/ab67616d0000b2736487af75ada45fd012fca0bd",
-        "releaseDate": "2025.03.28",
-        "trackCount": 2,
-        "titleTrack": null,
-        "tracks": [
-          {
-            "no": 1,
-            "title": "마음이 마음에 닿아",
-            "isTitle": false
-          },
-          {
-            "no": 2,
-            "title": "마음이 마음에 닿아 - Instrumental",
-            "isTitle": false
-          }
-        ],
-        "src": "spotify",
+        "feat": true,
         "spotifyId": "78O90bd6PhmvN3lQiqbfzY"
       },
       {
@@ -159352,24 +159268,7 @@
             "title": "Nutty Nutty (Feat. 제시)",
             "isTitle": true
           }
-        ]
-      },
-      {
-        "title": "Nutty Nutty (feat. Jessi)",
-        "type": "싱글",
-        "isMain": true,
-        "cover": "https://i.scdn.co/image/ab67616d0000b273b28bf1a715738b081a534f26",
-        "releaseDate": "2024.09.04",
-        "trackCount": 1,
-        "titleTrack": "Nutty Nutty (feat. Jessi)",
-        "tracks": [
-          {
-            "no": 1,
-            "title": "Nutty Nutty (feat. Jessi)",
-            "isTitle": true
-          }
         ],
-        "src": "spotify",
         "spotifyId": "43zlvshjmVjXyUsKFgWocq"
       },
       {
@@ -159386,24 +159285,7 @@
             "title": "Wet & Wild",
             "isTitle": true
           }
-        ]
-      },
-      {
-        "title": "Wet & Wild",
-        "type": "싱글",
-        "isMain": true,
-        "cover": "https://i.scdn.co/image/ab67616d0000b273fbc21da85eb38f5187298262",
-        "releaseDate": "2024.06.01",
-        "trackCount": 1,
-        "titleTrack": "Wet & Wild",
-        "tracks": [
-          {
-            "no": 1,
-            "title": "Wet & Wild",
-            "isTitle": true
-          }
         ],
-        "src": "spotify",
         "spotifyId": "5b7cDzKMCb5lBcNQYrs90r"
       },
       {
@@ -159456,24 +159338,7 @@
             "title": "What are we (Feat. 박지원 of 프로미스나인)",
             "isTitle": true
           }
-        ]
-      },
-      {
-        "title": "What are we (Feat. PARK JIWON of fromis_9)",
-        "type": "싱글",
-        "isMain": true,
-        "cover": "https://i.scdn.co/image/ab67616d0000b273182761cd89fd985c68d71f24",
-        "releaseDate": "2023.12.07",
-        "trackCount": 1,
-        "titleTrack": "What are we (Feat. PARK JIWON of fromis_9)",
-        "tracks": [
-          {
-            "no": 1,
-            "title": "What are we (Feat. PARK JIWON of fromis_9)",
-            "isTitle": true
-          }
         ],
-        "src": "spotify",
         "spotifyId": "6FhNOEipXqOY1vjsPTHVAa"
       },
       {
@@ -217292,46 +217157,8 @@
             "title": "Dear. Tomorrow",
             "isTitle": false
           }
-        ]
-      },
-      {
-        "title": "The Season of Us",
-        "type": "미니",
-        "isMain": true,
-        "cover": "https://i.scdn.co/image/ab67616d0000b27388cf0bef8a04f2cb558d4a44",
-        "releaseDate": "2026.07.15",
-        "trackCount": 5,
-        "titleTrack": "The Season of Us",
-        "tracks": [
-          {
-            "no": 1,
-            "title": "Shooting Star",
-            "isTitle": false
-          },
-          {
-            "no": 2,
-            "title": "afterimage",
-            "isTitle": false
-          },
-          {
-            "no": 3,
-            "title": "Perfectly Imperfect",
-            "isTitle": false
-          },
-          {
-            "no": 4,
-            "title": "The Season of Us",
-            "isTitle": true
-          },
-          {
-            "no": 5,
-            "title": "Dear. Tomorrow",
-            "isTitle": false
-          }
         ],
-        "src": "spotify",
-        "spotifyId": "6wQg2nU5BVszEtguptNdm9",
-        "copyright": "2026 MUMW"
+        "spotifyId": "6wQg2nU5BVszEtguptNdm9"
       },
       {
         "title": "Sur(fp)hase",
@@ -224887,31 +224714,8 @@
             "isTitle": false
           }
         ],
-        "feat": true
-      },
-      {
-        "title": "결혼하자 맹꽁아! (Original Television Soundtrack) Pt.5",
-        "type": "싱글",
-        "isMain": true,
-        "cover": "https://i.scdn.co/image/ab67616d0000b27318dd8f37eeaf01d1587b967c",
-        "releaseDate": "2024.11.14",
-        "trackCount": 2,
-        "titleTrack": null,
-        "tracks": [
-          {
-            "no": 1,
-            "title": "사진 속 우리",
-            "isTitle": false
-          },
-          {
-            "no": 2,
-            "title": "사진 속 우리 - Instrumental",
-            "isTitle": false
-          }
-        ],
-        "src": "spotify",
-        "spotifyId": "6BNoaq9CdyubdAIwDwcged",
-        "copyright": "2024 나인원나인뮤직"
+        "feat": true,
+        "spotifyId": "6BNoaq9CdyubdAIwDwcged"
       },
       {
         "title": "꽃이 피면 다시 찾아올까 봐",

@@ -70,7 +70,7 @@
   "discography": [
    {
     "title": "GREENGREEN_playextended",
-    "type": "정규",
+    "type": "미니",
     "isMain": true,
     "cover": "https://i.scdn.co/image/ab67616d0000b273da2a04ef57dfebfb8946fd49",
     "releaseDate": "2026.08.23",
@@ -119,7 +119,8 @@
      }
     ],
     "src": "spotify",
-    "spotifyId": "26w4RoexAyiXRogASNJDZj"
+    "spotifyId": "26w4RoexAyiXRogASNJDZj",
+    "melonAlbumId": "14469050"
    },
    {
     "title": "MOTION (feat. Juicy J)",
@@ -2904,7 +2905,7 @@
   "discography": [
    {
     "title": "Motto",
-    "type": "정규",
+    "type": "미니",
     "isMain": true,
     "cover": "https://i.scdn.co/image/ab67616d0000b273959e27c83f78e9bf5c44caa0",
     "releaseDate": "2026.05.18",
@@ -2953,7 +2954,8 @@
      }
     ],
     "src": "spotify",
-    "spotifyId": "2I5aOoyW9gzkOrWOuElNdj"
+    "spotifyId": "2I5aOoyW9gzkOrWOuElNdj",
+    "melonAlbumId": "13395634"
    },
    {
     "title": "TUNNEL VISION",
@@ -3005,12 +3007,12 @@
     "cover": "https://i.scdn.co/image/ab67616d0000b2736758dbda8b4d2d817cf282bd",
     "releaseDate": "2025.10.08",
     "trackCount": 10,
-    "titleTrack": null,
+    "titleTrack": "ROCK & ROLL",
     "tracks": [
      {
       "no": 1,
       "title": "ROCK & ROLL",
-      "isTitle": false
+      "isTitle": true
      },
      {
       "no": 2,
@@ -3059,7 +3061,8 @@
      }
     ],
     "src": "spotify",
-    "spotifyId": "5CNiFB9vcEJQuosJPZqyJ1"
+    "spotifyId": "5CNiFB9vcEJQuosJPZqyJ1",
+    "melonAlbumId": "12147650"
    },
    {
     "title": "Girls Will Be Girls",
@@ -4275,51 +4278,8 @@
       "title": "ASAP",
       "isTitle": false
      }
-    ]
-   },
-   {
-    "title": "NewJeans 2nd EP 'Get Up'",
-    "type": "미니",
-    "isMain": true,
-    "cover": "https://i.scdn.co/image/ab67616d0000b2730744690248ef3ba7b776ea7b",
-    "releaseDate": "2023.07.21",
-    "trackCount": 6,
-    "titleTrack": null,
-    "tracks": [
-     {
-      "no": 1,
-      "title": "New Jeans",
-      "isTitle": false
-     },
-     {
-      "no": 2,
-      "title": "Super Shy",
-      "isTitle": false
-     },
-     {
-      "no": 3,
-      "title": "ETA",
-      "isTitle": false
-     },
-     {
-      "no": 4,
-      "title": "Cool With You",
-      "isTitle": false
-     },
-     {
-      "no": 5,
-      "title": "Get Up",
-      "isTitle": false
-     },
-     {
-      "no": 6,
-      "title": "ASAP",
-      "isTitle": false
-     }
     ],
-    "src": "spotify",
-    "spotifyId": "4N1fROq2oeyLGAlQ1C1j18",
-    "copyright": "© 2023 ADOR Co., Ltd."
+    "spotifyId": "4N1fROq2oeyLGAlQ1C1j18"
    },
    {
     "title": "NewJeans 'Super Shy'",
@@ -4401,31 +4361,8 @@
       "title": "Ditto",
       "isTitle": true
      }
-    ]
-   },
-   {
-    "title": "NewJeans 'OMG'",
-    "type": "싱글",
-    "isMain": true,
-    "cover": "https://i.scdn.co/image/ab67616d0000b273d70036292d54f29e8b68ec01",
-    "releaseDate": "2023.01.02",
-    "trackCount": 2,
-    "titleTrack": null,
-    "tracks": [
-     {
-      "no": 1,
-      "title": "OMG",
-      "isTitle": false
-     },
-     {
-      "no": 2,
-      "title": "Ditto",
-      "isTitle": false
-     }
     ],
-    "src": "spotify",
-    "spotifyId": "45ozep8uHHnj5CCittuyXj",
-    "copyright": "© 2023 ADOR Co., Ltd."
+    "spotifyId": "45ozep8uHHnj5CCittuyXj"
    },
    {
     "title": "New Jeans",
@@ -7783,7 +7720,7 @@
    },
    {
     "title": "THIS & THAT",
-    "type": "정규",
+    "type": "미니",
     "isMain": true,
     "cover": "https://i.scdn.co/image/ab67616d0000b273046b2285985d6ae659d61770",
     "releaseDate": "2026.08.07",
@@ -7832,11 +7769,12 @@
      }
     ],
     "src": "spotify",
-    "spotifyId": "1iiy1LLzQC0HPFmhWyWyhl"
+    "spotifyId": "1iiy1LLzQC0HPFmhWyWyhl",
+    "melonAlbumId": "14428706"
    },
    {
     "title": "SKZ-REPLAY 2026 Pt.1",
-    "type": "정규",
+    "type": "컴필레이션",
     "isMain": true,
     "cover": "https://i.scdn.co/image/ab67616d0000b273a3c5486703064b7b041a5029",
     "releaseDate": "2026.08.01",
@@ -7930,7 +7868,8 @@
      }
     ],
     "src": "spotify",
-    "spotifyId": "4OKpRrEJYnfDYQ03QDHuU3"
+    "spotifyId": "4OKpRrEJYnfDYQ03QDHuU3",
+    "melonAlbumId": "14329242"
    },
    {
     "title": "RUN IT",
@@ -8327,17 +8266,17 @@
    },
    {
     "title": "HOP",
-    "type": "정규",
+    "type": "미니",
     "isMain": true,
     "cover": "https://i.scdn.co/image/ab67616d0000b27318dcf7871c4c0a16c56cbe3b",
     "releaseDate": "2024.12.13",
     "trackCount": 12,
-    "titleTrack": null,
+    "titleTrack": "Walkin On Water",
     "tracks": [
      {
       "no": 1,
       "title": "Walkin On Water",
-      "isTitle": false
+      "isTitle": true
      },
      {
       "no": 2,
@@ -8397,7 +8336,8 @@
     ],
     "src": "spotify",
     "spotifyId": "5Xbf2qpOjnQmRkDyVGq4O8",
-    "copyright": "2024 JYP Entertainment"
+    "copyright": "2024 JYP Entertainment",
+    "melonAlbumId": "11665096"
    },
    {
     "title": "GIANT",
@@ -8911,81 +8851,8 @@
       "title": "Time Out",
       "isTitle": false
      }
-    ]
-   },
-   {
-    "title": "5-STAR",
-    "type": "정규",
-    "isMain": true,
-    "cover": "https://i.scdn.co/image/ab67616d0000b273f50dce3e166b3b248e1ba983",
-    "releaseDate": "2023.06.02",
-    "trackCount": 12,
-    "titleTrack": null,
-    "tracks": [
-     {
-      "no": 1,
-      "title": "위인전 Hall of Fame",
-      "isTitle": false
-     },
-     {
-      "no": 2,
-      "title": "특 S-Class",
-      "isTitle": false
-     },
-     {
-      "no": 3,
-      "title": "ITEM",
-      "isTitle": false
-     },
-     {
-      "no": 4,
-      "title": "Super Bowl",
-      "isTitle": false
-     },
-     {
-      "no": 5,
-      "title": "TOPLINE",
-      "isTitle": false
-     },
-     {
-      "no": 6,
-      "title": "DLC",
-      "isTitle": false
-     },
-     {
-      "no": 7,
-      "title": "죽어보자 GET LIT",
-      "isTitle": false
-     },
-     {
-      "no": 8,
-      "title": "충돌 Collision",
-      "isTitle": false
-     },
-     {
-      "no": 9,
-      "title": "FNF",
-      "isTitle": false
-     },
-     {
-      "no": 10,
-      "title": "Youtiful",
-      "isTitle": false
-     },
-     {
-      "no": 11,
-      "title": "THE SOUND - Korean",
-      "isTitle": false
-     },
-     {
-      "no": 12,
-      "title": "Time Out Mixtape : Time Out",
-      "isTitle": false
-     }
     ],
-    "src": "spotify",
-    "spotifyId": "4lbEN1l4OJOm7iWlqevb67",
-    "copyright": "2023 JYP Entertainment"
+    "spotifyId": "4lbEN1l4OJOm7iWlqevb67"
    },
    {
     "title": "THE SOUND",
@@ -14936,17 +14803,17 @@
    },
    {
     "title": "WISHLIST",
-    "type": "정규",
+    "type": "미니",
     "isMain": true,
     "cover": "https://i.scdn.co/image/ab67616d0000b2736e1348593758bc1f7383f9f4",
     "releaseDate": "2026.01.14",
     "trackCount": 7,
-    "titleTrack": null,
+    "titleTrack": "Hello Mellow",
     "tracks": [
      {
       "no": 1,
       "title": "Hello Mellow",
-      "isTitle": false
+      "isTitle": true
      },
      {
       "no": 2,
@@ -14980,7 +14847,8 @@
      }
     ],
     "src": "spotify",
-    "spotifyId": "4hJsnDLEtgO16JsHEsdjj4"
+    "spotifyId": "4hJsnDLEtgO16JsHEsdjj4",
+    "melonAlbumId": "12571152"
    },
    {
     "title": "Wishcat Magic Card - Wishing Star (Original Soundtrack)",
@@ -16918,12 +16786,12 @@
    },
    {
     "title": "THE SIN : VANISH",
-    "type": "정규",
+    "type": "미니 7집",
     "isMain": true,
     "cover": "https://i.scdn.co/image/ab67616d0000b27392beb54472282ca313f34055",
     "releaseDate": "2026.01.16",
     "trackCount": 11,
-    "titleTrack": null,
+    "titleTrack": "Knife",
     "tracks": [
      {
       "no": 1,
@@ -16943,7 +16811,7 @@
      {
       "no": 4,
       "title": "Knife",
-      "isTitle": false
+      "isTitle": true
      },
      {
       "no": 5,
@@ -16982,7 +16850,8 @@
      }
     ],
     "src": "spotify",
-    "spotifyId": "62K0QHi2SjuhMe94kfYxq3"
+    "spotifyId": "62K0QHi2SjuhMe94kfYxq3",
+    "melonAlbumId": "12719962"
    },
    {
     "title": "DARK MOON: 달의 제단 Soundtrack Compilation",
@@ -19168,59 +19037,7 @@
       "title": "별의 노래",
       "isTitle": false
      }
-    ]
-   },
-   {
-    "title": "The Star Chapter: TOGETHER",
-    "type": "정규",
-    "isMain": true,
-    "cover": "https://i.scdn.co/image/ab67616d0000b2735e3b76cd24496147ec236b6a",
-    "releaseDate": "2025.07.21",
-    "trackCount": 8,
-    "titleTrack": null,
-    "tracks": [
-     {
-      "no": 1,
-      "title": "Upside Down Kiss",
-      "isTitle": false
-     },
-     {
-      "no": 2,
-      "title": "Beautiful Strangers",
-      "isTitle": false
-     },
-     {
-      "no": 3,
-      "title": "Ghost Girl",
-      "isTitle": false
-     },
-     {
-      "no": 4,
-      "title": "Sunday Driver",
-      "isTitle": false
-     },
-     {
-      "no": 5,
-      "title": "Dance With You",
-      "isTitle": false
-     },
-     {
-      "no": 6,
-      "title": "Take My Half",
-      "isTitle": false
-     },
-     {
-      "no": 7,
-      "title": "Bird of Night",
-      "isTitle": false
-     },
-     {
-      "no": 8,
-      "title": "Song of the Stars",
-      "isTitle": false
-     }
     ],
-    "src": "spotify",
     "spotifyId": "1FwFdMp4ewxTlLSudNzlyG"
    },
    {
@@ -19349,7 +19166,7 @@
    },
    {
     "title": "The Star Chapter: SANCTUARY (Expanded Edition)",
-    "type": "정규",
+    "type": "미니",
     "isMain": true,
     "cover": "https://i.scdn.co/image/ab67616d0000b27396540ba5f88727371f0fa71b",
     "releaseDate": "2024.11.08",
@@ -19450,51 +19267,8 @@
       "title": "Higher Than Heaven",
       "isTitle": false
      }
-    ]
-   },
-   {
-    "title": "The Star Chapter: SANCTUARY",
-    "type": "미니",
-    "isMain": true,
-    "cover": "https://i.scdn.co/image/ab67616d0000b273b612b8d797e8e3ec375ca60d",
-    "releaseDate": "2024.11.04",
-    "trackCount": 6,
-    "titleTrack": null,
-    "tracks": [
-     {
-      "no": 1,
-      "title": "Heaven",
-      "isTitle": false
-     },
-     {
-      "no": 2,
-      "title": "Over The Moon",
-      "isTitle": false
-     },
-     {
-      "no": 3,
-      "title": "Danger",
-      "isTitle": false
-     },
-     {
-      "no": 4,
-      "title": "Resist (Not Gonna Run Away)",
-      "isTitle": false
-     },
-     {
-      "no": 5,
-      "title": "Forty One Winks",
-      "isTitle": false
-     },
-     {
-      "no": 6,
-      "title": "Higher Than Heaven",
-      "isTitle": false
-     }
     ],
-    "src": "spotify",
-    "spotifyId": "72JboNccBYyXR676YNfcYE",
-    "copyright": "© 2024 BIGHIT MUSIC"
+    "spotifyId": "72JboNccBYyXR676YNfcYE"
    },
    {
     "title": "Open Always Wins",
@@ -19707,71 +19481,8 @@
       "title": "Chasing That Feeling (English Ver.)",
       "isTitle": false
      }
-    ]
-   },
-   {
-    "title": "The Name Chapter: FREEFALL",
-    "type": "정규",
-    "isMain": true,
-    "cover": "https://i.scdn.co/image/ab67616d0000b2736067880e6c410727ac5a5f8b",
-    "releaseDate": "2023.10.13",
-    "trackCount": 10,
-    "titleTrack": null,
-    "tracks": [
-     {
-      "no": 1,
-      "title": "Growing Pain",
-      "isTitle": false
-     },
-     {
-      "no": 2,
-      "title": "Chasing That Feeling",
-      "isTitle": false
-     },
-     {
-      "no": 3,
-      "title": "Back for More (TXT Ver.)",
-      "isTitle": false
-     },
-     {
-      "no": 4,
-      "title": "Dreamer",
-      "isTitle": false
-     },
-     {
-      "no": 5,
-      "title": "Deep Down",
-      "isTitle": false
-     },
-     {
-      "no": 6,
-      "title": "Happily Ever After",
-      "isTitle": false
-     },
-     {
-      "no": 7,
-      "title": "Skipping Stones",
-      "isTitle": false
-     },
-     {
-      "no": 8,
-      "title": "Blue Spring",
-      "isTitle": false
-     },
-     {
-      "no": 9,
-      "title": "Do It Like That",
-      "isTitle": false
-     },
-     {
-      "no": 10,
-      "title": "Chasing That Feeling (English Ver. – Digital Only)",
-      "isTitle": false
-     }
     ],
-    "src": "spotify",
-    "spotifyId": "63fWdGyeBj8VDjvHSUROx3",
-    "copyright": "© 2023 BIGHIT MUSIC"
+    "spotifyId": "63fWdGyeBj8VDjvHSUROx3"
    },
    {
     "title": "Back for More (More Edition)",
@@ -20098,46 +19809,8 @@
       "title": "네버랜드를 떠나며",
       "isTitle": false
      }
-    ]
-   },
-   {
-    "title": "The Name Chapter: TEMPTATION",
-    "type": "미니",
-    "isMain": true,
-    "cover": "https://i.scdn.co/image/ab67616d0000b2733bb056e3160b85ee86c1194d",
-    "releaseDate": "2023.01.27",
-    "trackCount": 5,
-    "titleTrack": null,
-    "tracks": [
-     {
-      "no": 1,
-      "title": "Devil by the Window",
-      "isTitle": false
-     },
-     {
-      "no": 2,
-      "title": "Sugar Rush Ride",
-      "isTitle": false
-     },
-     {
-      "no": 3,
-      "title": "Happy Fools (feat. Coi Leray)",
-      "isTitle": false
-     },
-     {
-      "no": 4,
-      "title": "Tinnitus (Wanna be a rock)",
-      "isTitle": false
-     },
-     {
-      "no": 5,
-      "title": "Farewell, Neverland",
-      "isTitle": false
-     }
     ],
-    "src": "spotify",
-    "spotifyId": "7gkb4MxKe9rnoR3wxbJXJg",
-    "copyright": "© 2023 BIGHIT MUSIC"
+    "spotifyId": "7gkb4MxKe9rnoR3wxbJXJg"
    },
    {
     "title": "Free Falling",
@@ -20988,7 +20661,7 @@
    },
    {
     "title": "KEEP SWIMMING",
-    "type": "정규",
+    "type": "싱글",
     "isMain": true,
     "cover": "https://i.scdn.co/image/ab67616d0000b273dd898ec5b8a2107a1ab9f47b",
     "releaseDate": "2026.03.27",
@@ -21042,7 +20715,8 @@
      }
     ],
     "src": "spotify",
-    "spotifyId": "6iPjmGZeonxBZ9r7Cjkezq"
+    "spotifyId": "6iPjmGZeonxBZ9r7Cjkezq",
+    "melonAlbumId": "13112672"
    },
    {
     "title": "SWIM (Instrumental)",
@@ -21151,7 +20825,7 @@
    },
    {
     "title": "PERMISSION TO DANCE ON STAGE - LIVE",
-    "type": "정규",
+    "type": "라이브",
     "isMain": true,
     "cover": "https://i.scdn.co/image/ab67616d0000b273b79d4683964a0100d69e21ae",
     "releaseDate": "2025.07.18",
@@ -21270,7 +20944,8 @@
      }
     ],
     "src": "spotify",
-    "spotifyId": "7xLhqoM0ilHRKUg2irVSDI"
+    "spotifyId": "7xLhqoM0ilHRKUg2irVSDI",
+    "melonAlbumId": "11905250"
    },
    {
     "title": "Take Two",
@@ -23957,17 +23632,17 @@
    },
    {
     "title": "TEN: The Story Goes On",
-    "type": "정규",
+    "type": "정규 4집",
     "isMain": true,
     "cover": "https://i.scdn.co/image/ab67616d0000b273353bdc08199bc20302467613",
     "releaseDate": "2025.10.10",
     "trackCount": 10,
-    "titleTrack": null,
+    "titleTrack": "ME+YOU",
     "tracks": [
      {
       "no": 1,
       "title": "ME+YOU",
-      "isTitle": false
+      "isTitle": true
      },
      {
       "no": 2,
@@ -24016,7 +23691,8 @@
      }
     ],
     "src": "spotify",
-    "spotifyId": "2NA1G69ECab1h0b5aKjhmI"
+    "spotifyId": "2NA1G69ECab1h0b5aKjhmI",
+    "melonAlbumId": "12149046"
    },
    {
     "title": "ENEMY",
@@ -37510,12 +37186,12 @@
     "cover": "https://i.scdn.co/image/ab67616d0000b273b601c229c48d81a2f26d6b8b",
     "releaseDate": "2025.09.16",
     "trackCount": 9,
-    "titleTrack": null,
+    "titleTrack": "Ash",
     "tracks": [
      {
       "no": 1,
       "title": "Ash",
-      "isTitle": false
+      "isTitle": true
      },
      {
       "no": 2,
@@ -37559,7 +37235,8 @@
      }
     ],
     "src": "spotify",
-    "spotifyId": "0N3IF32AyRsrhGO8YIl4qF"
+    "spotifyId": "0N3IF32AyRsrhGO8YIl4qF",
+    "melonAlbumId": "12115669"
    },
    {
     "title": "In Your Fantasy (Remix)",
@@ -37592,12 +37269,12 @@
    },
    {
     "title": "GOLDEN HOUR : Part.3 'In Your Fantasy Edition'",
-    "type": "정규",
+    "type": "미니",
     "isMain": true,
     "cover": "https://i.scdn.co/image/ab67616d0000b2733ffbde24ff08907da69adbc3",
     "releaseDate": "2025.07.11",
     "trackCount": 15,
-    "titleTrack": null,
+    "titleTrack": "In Your Fantasy",
     "tracks": [
      {
       "no": 1,
@@ -37627,7 +37304,7 @@
      {
       "no": 6,
       "title": "In Your Fantasy",
-      "isTitle": false
+      "isTitle": true
      },
      {
       "no": 7,
@@ -37676,7 +37353,8 @@
      }
     ],
     "src": "spotify",
-    "spotifyId": "2rBtlOpNMuE4u9imyZz0YL"
+    "spotifyId": "2rBtlOpNMuE4u9imyZz0YL",
+    "melonAlbumId": "11873667"
    },
    {
     "title": "Lemon Drop (Remix)",
@@ -39299,7 +38977,7 @@
    },
    {
     "title": "We are i-dle",
-    "type": "정규",
+    "type": "스페셜",
     "isMain": true,
     "cover": "https://i.scdn.co/image/ab67616d0000b273a79f5306496209126c084c2b",
     "releaseDate": "2025.05.02",
@@ -39353,7 +39031,8 @@
      }
     ],
     "src": "spotify",
-    "spotifyId": "0RLD2C0JmAdLckw2stMws7"
+    "spotifyId": "0RLD2C0JmAdLckw2stMws7",
+    "melonAlbumId": "11794361"
    },
    {
     "title": "I SWAY",
@@ -41498,7 +41177,7 @@
    },
    {
     "title": "2025 BABYMONSTER 1st WORLD TOUR <HELLO MONSTERS> IN JAPAN ～2025.04.13 K-ARENA YOKOHAMA～",
-    "type": "정규",
+    "type": "라이브",
     "isMain": true,
     "cover": "https://i.scdn.co/image/ab67616d0000b27307403808f4f3ad27598681f0",
     "releaseDate": "2025.09.14",
@@ -41572,7 +41251,8 @@
      }
     ],
     "src": "spotify",
-    "spotifyId": "1HpYnZeul7WTVb7nl20pET"
+    "spotifyId": "1HpYnZeul7WTVb7nl20pET",
+    "melonAlbumId": "12109200"
    },
    {
     "title": "HOT SAUCE",
@@ -43280,13 +42960,13 @@
     "cover": "https://i.scdn.co/image/ab67616d0000b2736ad35cc6dd82f932f9da2243",
     "releaseDate": "2026.02.10",
     "trackCount": 17,
-    "titleTrack": null,
+    "titleTrack": "MWUAH",
     "region": "jp",
     "tracks": [
      {
       "no": 1,
       "title": "MWUAH",
-      "isTitle": false
+      "isTitle": true
      },
      {
       "no": 2,
@@ -43370,7 +43050,8 @@
      }
     ],
     "src": "spotify",
-    "spotifyId": "6KjZQ12xWAUXGNnjNWAMZh"
+    "spotifyId": "6KjZQ12xWAUXGNnjNWAMZh",
+    "melonAlbumId": "12848422"
    },
    {
     "title": "Teddy Bear (Chinese Ver.)",
@@ -44045,44 +43726,7 @@
       "title": "AURA",
       "isTitle": false
      }
-    ]
-   },
-   {
-    "title": "THE BOYZ The 10th Mini Album [a;eﬀect]",
-    "type": "미니",
-    "isMain": true,
-    "cover": "https://i.scdn.co/image/ab67616d0000b2732c6edf38bf0aec2fe6b251a2",
-    "releaseDate": "2025.07.28",
-    "trackCount": 5,
-    "titleTrack": null,
-    "tracks": [
-     {
-      "no": 1,
-      "title": "Stylish",
-      "isTitle": false
-     },
-     {
-      "no": 2,
-      "title": "Talk",
-      "isTitle": false
-     },
-     {
-      "no": 3,
-      "title": "You and I",
-      "isTitle": false
-     },
-     {
-      "no": 4,
-      "title": "Constellation",
-      "isTitle": false
-     },
-     {
-      "no": 5,
-      "title": "AURA",
-      "isTitle": false
-     }
     ],
-    "src": "spotify",
     "spotifyId": "3NLbROSjvh9Qo0Esb3aTX0"
    },
    {
@@ -44185,51 +43829,8 @@
       "title": "They See Me Dream",
       "isTitle": false
      }
-    ]
-   },
-   {
-    "title": "THE BOYZ 9th MINI ALBUM [導火線 (TRIGGER)]",
-    "type": "미니",
-    "isMain": true,
-    "cover": "https://i.scdn.co/image/ab67616d0000b27302411672db569ef86a3fdb99",
-    "releaseDate": "2024.10.28",
-    "trackCount": 6,
-    "titleTrack": null,
-    "tracks": [
-     {
-      "no": 1,
-      "title": "Bite Back",
-      "isTitle": false
-     },
-     {
-      "no": 2,
-      "title": "TRIGGER",
-      "isTitle": false
-     },
-     {
-      "no": 3,
-      "title": "bAd",
-      "isTitle": false
-     },
-     {
-      "no": 4,
-      "title": "Slip Away",
-      "isTitle": false
-     },
-     {
-      "no": 5,
-      "title": "Re-Wind",
-      "isTitle": false
-     },
-     {
-      "no": 6,
-      "title": "They See Me Dream",
-      "isTitle": false
-     }
     ],
-    "src": "spotify",
-    "spotifyId": "2UsJY5vQEYesJJ9iTnm9UW",
-    "copyright": "2024 IST Entertainment,under license to Kakao Entertainment"
+    "spotifyId": "2UsJY5vQEYesJJ9iTnm9UW"
    },
    {
     "title": "가족X멜로 OST Part.1",
@@ -44378,36 +43979,8 @@
       "title": "Dear.",
       "isTitle": false
      }
-    ]
-   },
-   {
-    "title": "THE BOYZ 2ND ALBUM [PHANTASY] Pt.3 Love Letter",
-    "type": "싱글",
-    "isMain": true,
-    "cover": "https://i.scdn.co/image/ab67616d0000b273d8ca5f598cdd17e83bbd3c3b",
-    "releaseDate": "2024.03.18",
-    "trackCount": 3,
-    "titleTrack": null,
-    "tracks": [
-     {
-      "no": 1,
-      "title": "Nectar",
-      "isTitle": false
-     },
-     {
-      "no": 2,
-      "title": "Hurt Me Less",
-      "isTitle": false
-     },
-     {
-      "no": 3,
-      "title": "Dear.",
-      "isTitle": false
-     }
     ],
-    "src": "spotify",
-    "spotifyId": "2DcHBijnoFP2tjuRGJ1L6F",
-    "copyright": "2024 Above Music,under license to Kakao Entertainment"
+    "spotifyId": "2DcHBijnoFP2tjuRGJ1L6F"
    },
    {
     "title": "PHANTASY Pt.2 Sixth Sense",
@@ -44448,51 +44021,8 @@
       "title": "Escape",
       "isTitle": false
      }
-    ]
-   },
-   {
-    "title": "THE BOYZ 2ND ALBUM [PHANTASY] Pt.2 Sixth Sense",
-    "type": "미니",
-    "isMain": true,
-    "cover": "https://i.scdn.co/image/ab67616d0000b27366c8e4a0da651253f0a9dcd5",
-    "releaseDate": "2023.11.20",
-    "trackCount": 6,
-    "titleTrack": null,
-    "tracks": [
-     {
-      "no": 1,
-      "title": "WATCH IT",
-      "isTitle": false
-     },
-     {
-      "no": 2,
-      "title": "Rat In The Trap",
-      "isTitle": false
-     },
-     {
-      "no": 3,
-      "title": "Honey",
-      "isTitle": false
-     },
-     {
-      "no": 4,
-      "title": "Bad Luck",
-      "isTitle": false
-     },
-     {
-      "no": 5,
-      "title": "CRYING&LAUGHTER",
-      "isTitle": false
-     },
-     {
-      "no": 6,
-      "title": "Escape",
-      "isTitle": false
-     }
     ],
-    "src": "spotify",
-    "spotifyId": "7LmTay8KeH1nl0Kt1BlhMX",
-    "copyright": "2023 Above Music,under license to Kakao Entertainment"
+    "spotifyId": "7LmTay8KeH1nl0Kt1BlhMX"
    },
    {
     "title": "무인도의 디바 OST Part.5",
@@ -44557,51 +44087,8 @@
       "title": "나만 아는 이야기 (Fairy Tale)",
       "isTitle": false
      }
-    ]
-   },
-   {
-    "title": "THE BOYZ 2ND ALBUM [PHANTASY] Pt.1 Christmas In August",
-    "type": "미니",
-    "isMain": true,
-    "cover": "https://i.scdn.co/image/ab67616d0000b273dff665230ac08de979d3bd0e",
-    "releaseDate": "2023.08.07",
-    "trackCount": 6,
-    "titleTrack": null,
-    "tracks": [
-     {
-      "no": 1,
-      "title": "LIP GLOSS",
-      "isTitle": false
-     },
-     {
-      "no": 2,
-      "title": "Passion Fruit",
-      "isTitle": false
-     },
-     {
-      "no": 3,
-      "title": "Lighthouse",
-      "isTitle": false
-     },
-     {
-      "no": 4,
-      "title": "Fantasize",
-      "isTitle": false
-     },
-     {
-      "no": 5,
-      "title": "Fire Eyes",
-      "isTitle": false
-     },
-     {
-      "no": 6,
-      "title": "Fairy Tale",
-      "isTitle": false
-     }
     ],
-    "src": "spotify",
-    "spotifyId": "6j0bF8s6Kptbr4y8tuIhOY",
-    "copyright": "2023 Above Music,under license to Kakao Entertainment"
+    "spotifyId": "6j0bF8s6Kptbr4y8tuIhOY"
    },
    {
     "title": "Delicious",
@@ -44768,51 +44255,8 @@
       "title": "Diamond Life",
       "isTitle": false
      }
-    ]
-   },
-   {
-    "title": "THE BOYZ 8th MINI ALBUM [BE AWAKE]",
-    "type": "미니",
-    "isMain": true,
-    "cover": "https://i.scdn.co/image/ab67616d0000b273890a8271745a38ae35f1ad37",
-    "releaseDate": "2023.02.20",
-    "trackCount": 6,
-    "titleTrack": null,
-    "tracks": [
-     {
-      "no": 1,
-      "title": "Awake",
-      "isTitle": false
-     },
-     {
-      "no": 2,
-      "title": "ROAR",
-      "isTitle": false
-     },
-     {
-      "no": 3,
-      "title": "Blah Blah",
-      "isTitle": false
-     },
-     {
-      "no": 4,
-      "title": "Savior",
-      "isTitle": false
-     },
-     {
-      "no": 5,
-      "title": "Horizon",
-      "isTitle": false
-     },
-     {
-      "no": 6,
-      "title": "Diamond Life",
-      "isTitle": false
-     }
     ],
-    "src": "spotify",
-    "spotifyId": "1rxSHvDHLjLdz7x8G4Ssy5",
-    "copyright": "2023 Above Music,under license to Kakao Entertainment"
+    "spotifyId": "1rxSHvDHLjLdz7x8G4Ssy5"
    },
    {
     "title": "Here is",
@@ -46696,12 +46140,12 @@
    },
    {
     "title": "<LOVE&POP> pt.1",
-    "type": "정규",
+    "type": "미니",
     "isMain": true,
     "cover": "https://i.scdn.co/image/ab67616d0000b273506d39b3511775087f8813e6",
     "releaseDate": "2026.06.01",
     "trackCount": 7,
-    "titleTrack": null,
+    "titleTrack": "Baby Flower",
     "tracks": [
      {
       "no": 1,
@@ -46716,7 +46160,7 @@
      {
       "no": 3,
       "title": "Baby Flower",
-      "isTitle": false
+      "isTitle": true
      },
      {
       "no": 4,
@@ -46740,7 +46184,8 @@
      }
     ],
     "src": "spotify",
-    "spotifyId": "55WiQx2kfXhAQDY5RgcZIE"
+    "spotifyId": "55WiQx2kfXhAQDY5RgcZIE",
+    "melonAlbumId": "13693526"
    },
    {
     "title": "Tokimetique",
@@ -46904,12 +46349,12 @@
     "cover": "https://i.scdn.co/image/ab67616d0000b273ef88c8625bfc9c6619d0c987",
     "releaseDate": "2025.10.01",
     "trackCount": 7,
-    "titleTrack": null,
+    "titleTrack": "Password",
     "tracks": [
      {
       "no": 1,
       "title": "Password",
-      "isTitle": false
+      "isTitle": true
      },
      {
       "no": 2,
@@ -46943,7 +46388,8 @@
      }
     ],
     "src": "spotify",
-    "spotifyId": "68PVcduJ9slzf5mvgDNemZ"
+    "spotifyId": "68PVcduJ9slzf5mvgDNemZ",
+    "melonAlbumId": "12128958"
    },
    {
     "title": "tripleS ∞! ＜Password＞",
@@ -48056,8 +47502,8 @@
    },
    {
     "title": "Boyfriend on Demand Part 2 (Soundtrack from the Netflix Series)",
-    "type": "정규",
-    "isMain": true,
+    "type": "OST",
+    "isMain": false,
     "cover": "https://i.scdn.co/image/ab67616d0000b27360cd7cf8fedb975abd04e2c4",
     "releaseDate": "2026.03.17",
     "trackCount": 18,
@@ -48155,7 +47601,8 @@
      }
     ],
     "src": "spotify",
-    "spotifyId": "6mCYF2uLo54ItZStvpX01y"
+    "spotifyId": "6mCYF2uLo54ItZStvpX01y",
+    "melonAlbumId": "12924401"
    },
    {
     "title": "하얀 그리움",
@@ -50395,71 +49842,8 @@
       "title": "TREASURE",
       "isTitle": false
      }
-    ]
-   },
-   {
-    "title": "2ND FULL ALBUM 'REBOOT'",
-    "type": "정규",
-    "isMain": true,
-    "cover": "https://i.scdn.co/image/ab67616d0000b273a2dfd169018506388953b0d5",
-    "releaseDate": "2023.07.28",
-    "trackCount": 10,
-    "titleTrack": null,
-    "tracks": [
-     {
-      "no": 1,
-      "title": "BONA BONA",
-      "isTitle": false
-     },
-     {
-      "no": 2,
-      "title": "I WANT YOUR LOVE",
-      "isTitle": false
-     },
-     {
-      "no": 3,
-      "title": "RUN",
-      "isTitle": false
-     },
-     {
-      "no": 4,
-      "title": "MOVE (T5)",
-      "isTitle": false
-     },
-     {
-      "no": 5,
-      "title": "G.O.A.T (RAP Unit) feat. LEE YOUNG HYUN",
-      "isTitle": false
-     },
-     {
-      "no": 6,
-      "title": "STUPID",
-      "isTitle": false
-     },
-     {
-      "no": 7,
-      "title": "THE WAY TO (VOCAL Unit)",
-      "isTitle": false
-     },
-     {
-      "no": 8,
-      "title": "WONDERLAND",
-      "isTitle": false
-     },
-     {
-      "no": 9,
-      "title": "B.O.M.B",
-      "isTitle": false
-     },
-     {
-      "no": 10,
-      "title": "LOVESICK",
-      "isTitle": false
-     }
     ],
-    "src": "spotify",
-    "spotifyId": "2Dk2Cj8BBnJngSoOfWjyL9",
-    "copyright": "YG Entertainment"
+    "spotifyId": "2Dk2Cj8BBnJngSoOfWjyL9"
    },
    {
     "title": "MOVE (T5)",
@@ -50714,12 +50098,12 @@
   "discography": [
    {
     "title": "sonorous",
-    "type": "정규",
+    "type": "미니",
     "isMain": true,
     "cover": "https://i.scdn.co/image/ab67616d0000b2739a0663974e8c748cd88f6a9d",
     "releaseDate": "2026.09.30",
     "trackCount": 7,
-    "titleTrack": null,
+    "titleTrack": "LOUDER",
     "tracks": [
      {
       "no": 1,
@@ -50729,7 +50113,7 @@
      {
       "no": 2,
       "title": "LOUDER",
-      "isTitle": false
+      "isTitle": true
      },
      {
       "no": 3,
@@ -50759,7 +50143,8 @@
     ],
     "src": "spotify",
     "spotifyId": "4FF6ssmhf4WRAG38M3Qyds",
-    "copyright": "2026 STARSHIP Entertainment,under license to Kakao Entertainment"
+    "copyright": "2026 STARSHIP Entertainment,under license to Kakao Entertainment",
+    "melonAlbumId": "14599499"
    },
    {
     "title": "ReDeFINE",
@@ -52207,49 +51592,7 @@
       "title": "Into The Night",
       "isTitle": false
      }
-    ]
-   },
-   {
-    "title": "I.O.I 3rd MINI ALBUM [I.O.I : LOOP]",
-    "type": "미니",
-    "isMain": true,
-    "cover": "https://i.scdn.co/image/ab67616d0000b273244aed7ce852aedf2097fed9",
-    "releaseDate": "2026.05.19",
-    "trackCount": 6,
-    "titleTrack": null,
-    "tracks": [
-     {
-      "no": 1,
-      "title": "IOI (Where My Girls At)",
-      "isTitle": false
-     },
-     {
-      "no": 2,
-      "title": "Suddenly",
-      "isTitle": false
-     },
-     {
-      "no": 3,
-      "title": "SPF 100+ (Summer Pop Fantasy)",
-      "isTitle": false
-     },
-     {
-      "no": 4,
-      "title": "IF I",
-      "isTitle": false
-     },
-     {
-      "no": 5,
-      "title": "Then, Now and Forever",
-      "isTitle": false
-     },
-     {
-      "no": 6,
-      "title": "Goodbye With A Smile (Recorded in 2016) (Prod.Jinyoung)",
-      "isTitle": false
-     }
     ],
-    "src": "spotify",
     "spotifyId": "09oicnXd9BtWOqgzgCi6gp"
    },
    {
@@ -53640,7 +52983,7 @@
   "discography": [
    {
     "title": "KAIKILOVE",
-    "type": "정규",
+    "type": "싱글",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm2/album/images/144/15/288/14415288_20260803141421_500.jpg",
     "releaseDate": "2026.08.19",
@@ -53663,35 +53006,7 @@
       "isTitle": false
      }
     ],
-    "region": "jp"
-   },
-   {
-    "title": "回帰LOVE",
-    "type": "싱글",
-    "isMain": true,
-    "cover": "https://i.scdn.co/image/ab67616d0000b27352ef5c6a7069e81cb4621748",
-    "releaseDate": "2026.08.19",
-    "trackCount": 3,
-    "titleTrack": null,
     "region": "jp",
-    "tracks": [
-     {
-      "no": 1,
-      "title": "イグジステンス",
-      "isTitle": false
-     },
-     {
-      "no": 2,
-      "title": "Aphrodite",
-      "isTitle": false
-     },
-     {
-      "no": 3,
-      "title": "TOP 5 - Japanese ver.",
-      "isTitle": false
-     }
-    ],
-    "src": "spotify",
     "spotifyId": "19E8K5raOkxy6HNvntZwJv"
    },
    {
@@ -54230,17 +53545,17 @@
    },
    {
     "title": "CINEMA PARADISE",
-    "type": "정규",
+    "type": "미니",
     "isMain": true,
     "cover": "https://i.scdn.co/image/ab67616d0000b273744b8592af2e93eb47fdcdd6",
     "releaseDate": "2024.08.26",
     "trackCount": 7,
-    "titleTrack": null,
+    "titleTrack": "GOOD SO BAD",
     "tracks": [
      {
       "no": 1,
       "title": "GOOD SO BAD",
-      "isTitle": false
+      "isTitle": true
      },
      {
       "no": 2,
@@ -54275,7 +53590,8 @@
     ],
     "src": "spotify",
     "spotifyId": "4sJqg93IDEPUQlj4CwQacF",
-    "copyright": "2024 WAKEONE"
+    "copyright": "2024 WAKEONE",
+    "melonAlbumId": "11574289"
    },
    {
     "title": "Feel the POP (Japanese version)",
@@ -54559,17 +53875,17 @@
    },
    {
     "title": "UNBREAKABLE : 少年BEAST",
-    "type": "정규",
+    "type": "미니 2집",
     "isMain": true,
     "cover": "https://i.scdn.co/image/ab67616d0000b2733a2f8d15e54eca39bb80a51b",
     "releaseDate": "2026.08.24",
     "trackCount": 7,
-    "titleTrack": null,
+    "titleTrack": "BORN DIRE",
     "tracks": [
      {
       "no": 1,
       "title": "BORN DIRE",
-      "isTitle": false
+      "isTitle": true
      },
      {
       "no": 2,
@@ -54603,7 +53919,8 @@
      }
     ],
     "src": "spotify",
-    "spotifyId": "0OSPd91szcWQ2FaQspx7T7"
+    "spotifyId": "0OSPd91szcWQ2FaQspx7T7",
+    "melonAlbumId": "13624538"
    },
    {
     "title": "Agent Kim Reactivated, Pt. 1 (Original Soundtrack)",
@@ -55012,12 +54329,12 @@
   "discography": [
    {
     "title": "256th Note",
-    "type": "정규",
+    "type": "미니 4집",
     "isMain": true,
     "cover": "https://i.scdn.co/image/ab67616d0000b273ea45a00c977caba184cc0b2d",
     "releaseDate": "2026.09.30",
     "trackCount": 7,
-    "titleTrack": null,
+    "titleTrack": "Drop That!",
     "tracks": [
      {
       "no": 1,
@@ -55027,7 +54344,7 @@
      {
       "no": 2,
       "title": "Drop That!",
-      "isTitle": false
+      "isTitle": true
      },
      {
       "no": 3,
@@ -55057,7 +54374,8 @@
     ],
     "src": "spotify",
     "spotifyId": "4gn5qA9UixpTwnP9Q0XKLW",
-    "copyright": "© 2026 UNCORE"
+    "copyright": "© 2026 UNCORE",
+    "melonAlbumId": "14594067"
    },
    {
     "title": "Open Your Eyes",
@@ -57884,12 +57202,12 @@
     "cover": "https://i.scdn.co/image/ab67616d0000b273bd4bd1209b01411b810e6e5f",
     "releaseDate": "2025.07.08",
     "trackCount": 9,
-    "titleTrack": null,
+    "titleTrack": "Express Mode",
     "tracks": [
      {
       "no": 1,
       "title": "Express Mode",
-      "isTitle": false
+      "isTitle": true
      },
      {
       "no": 2,
@@ -57933,7 +57251,8 @@
      }
     ],
     "src": "spotify",
-    "spotifyId": "5tEaAx0Cb3PEOrErWE503a"
+    "spotifyId": "5tEaAx0Cb3PEOrErWE503a",
+    "melonAlbumId": "11882961"
    },
    {
     "title": "Show Time",
@@ -62332,7 +61651,7 @@
   "discography": [
    {
     "title": "NOW PROJECT vol.2",
-    "type": "정규",
+    "type": "미니",
     "isMain": true,
     "cover": "https://i.scdn.co/image/ab67616d0000b27384571c3df551665a3bd37d37",
     "releaseDate": "2026.09.26",
@@ -62382,7 +61701,8 @@
     ],
     "src": "spotify",
     "spotifyId": "4L6kOVhcNA3fvF89dIF073",
-    "copyright": "2026 STARSHIP Entertainment,under license to Kakao Entertainment"
+    "copyright": "2026 STARSHIP Entertainment,under license to Kakao Entertainment",
+    "melonAlbumId": "14575401"
    },
    {
     "title": "MAGIC (H.ONE Remix)",
@@ -62453,12 +61773,12 @@
     "cover": "https://i.scdn.co/image/ab67616d0000b2732aa679b24f76ab1434ba6bde",
     "releaseDate": "2026.04.03",
     "trackCount": 10,
-    "titleTrack": null,
+    "titleTrack": "heal",
     "tracks": [
      {
       "no": 1,
       "title": "heal",
-      "isTitle": false
+      "isTitle": true
      },
      {
       "no": 2,
@@ -62507,7 +61827,8 @@
      }
     ],
     "src": "spotify",
-    "spotifyId": "1kQVnTWbUXu9xQ1zqczj06"
+    "spotifyId": "1kQVnTWbUXu9xQ1zqczj06",
+    "melonAlbumId": "13308339"
    },
    {
     "title": "growing pains",
@@ -62661,17 +61982,17 @@
    },
    {
     "title": "NOW PROJECT vol.1",
-    "type": "정규",
+    "type": "미니",
     "isMain": true,
     "cover": "https://i.scdn.co/image/ab67616d0000b2730ead0ed030ccb89d2ee71e84",
     "releaseDate": "2025.05.14",
     "trackCount": 10,
-    "titleTrack": null,
+    "titleTrack": "Rush Hour (Rerecorded)",
     "tracks": [
      {
       "no": 1,
       "title": "Rush Hour (Rerecorded)",
-      "isTitle": false
+      "isTitle": true
      },
      {
       "no": 2,
@@ -62720,7 +62041,8 @@
      }
     ],
     "src": "spotify",
-    "spotifyId": "3KSRwRl89YS1Pas2VkRo7P"
+    "spotifyId": "3KSRwRl89YS1Pas2VkRo7P",
+    "melonAlbumId": "11805889"
    },
    {
     "title": "REASON",
@@ -64709,17 +64031,17 @@
   "discography": [
    {
     "title": "TENACITY",
-    "type": "정규",
+    "type": "정규 2집",
     "isMain": true,
     "cover": "https://i.scdn.co/image/ab67616d0000b273f275893fe11d76fda697eff4",
     "releaseDate": "2026.08.26",
     "trackCount": 10,
-    "titleTrack": null,
+    "titleTrack": "Without Wings",
     "tracks": [
      {
       "no": 1,
       "title": "Without Wings",
-      "isTitle": false
+      "isTitle": true
      },
      {
       "no": 2,
@@ -64768,7 +64090,8 @@
      }
     ],
     "src": "spotify",
-    "spotifyId": "2KcgymTAsVC3HvbiKd8OyF"
+    "spotifyId": "2KcgymTAsVC3HvbiKd8OyF",
+    "melonAlbumId": "14480665"
    },
    {
     "title": "Special Album \"About Love\" Japan Edition (Selected Version)",
@@ -64797,17 +64120,17 @@
    },
    {
     "title": "About Love",
-    "type": "정규",
+    "type": "미니",
     "isMain": true,
     "cover": "https://i.scdn.co/image/ab67616d0000b2737092b78a8f8f2437d0cb86c3",
     "releaseDate": "2026.03.25",
     "trackCount": 7,
-    "titleTrack": null,
+    "titleTrack": "Love Comes Slowly",
     "tracks": [
      {
       "no": 1,
       "title": "Love Comes Slowly",
-      "isTitle": false
+      "isTitle": true
      },
      {
       "no": 2,
@@ -64841,7 +64164,8 @@
      }
     ],
     "src": "spotify",
-    "spotifyId": "7MRt4WWGiTXTquxQPOXpY9"
+    "spotifyId": "7MRt4WWGiTXTquxQPOXpY9",
+    "melonAlbumId": "12958825"
    },
    {
     "title": "LOVE RACE",
@@ -67022,41 +66346,8 @@
       "title": "Call it love",
       "isTitle": false
      }
-    ]
-   },
-   {
-    "title": "EPEX 7th EP Album Youth : Epilogue",
-    "type": "미니",
-    "isMain": true,
-    "cover": "https://i.scdn.co/image/ab67616d0000b2735f8a773353e62378677b13d3",
-    "releaseDate": "2026.06.09",
-    "trackCount": 4,
-    "titleTrack": null,
-    "tracks": [
-     {
-      "no": 1,
-      "title": "ECHO",
-      "isTitle": false
-     },
-     {
-      "no": 2,
-      "title": "BETTER DAYS",
-      "isTitle": false
-     },
-     {
-      "no": 3,
-      "title": "BOYS IN THE BAND",
-      "isTitle": false
-     },
-     {
-      "no": 4,
-      "title": "Call it love",
-      "isTitle": false
-     }
     ],
-    "src": "spotify",
-    "spotifyId": "7vnS7hGtUEAMBVFcnOFN8k",
-    "copyright": "2026 C9 Entertainment,under license to Kakao Entertainment"
+    "spotifyId": "7vnS7hGtUEAMBVFcnOFN8k"
    },
    {
     "title": "FOOL (눈물나게 고마워) [Eng Ver.]",
@@ -67125,61 +66416,8 @@
       "title": "플루토",
       "isTitle": false
      }
-    ]
-   },
-   {
-    "title": "EPEX 3rd Album Youth Chapter 3 : ROMANTIC YOUTH",
-    "type": "정규",
-    "isMain": true,
-    "cover": "https://i.scdn.co/image/ab67616d0000b273f62fefa92c8c2a0f773f6aba",
-    "releaseDate": "2025.07.28",
-    "trackCount": 8,
-    "titleTrack": null,
-    "tracks": [
-     {
-      "no": 1,
-      "title": "Waffle",
-      "isTitle": false
-     },
-     {
-      "no": 2,
-      "title": "Bang",
-      "isTitle": false
-     },
-     {
-      "no": 3,
-      "title": "Picasso",
-      "isTitle": false
-     },
-     {
-      "no": 4,
-      "title": "Grateful to Tears",
-      "isTitle": false
-     },
-     {
-      "no": 5,
-      "title": "Dances with Wolves",
-      "isTitle": false
-     },
-     {
-      "no": 6,
-      "title": "Morning to midnight",
-      "isTitle": false
-     },
-     {
-      "no": 7,
-      "title": "Whale fall",
-      "isTitle": false
-     },
-     {
-      "no": 8,
-      "title": "Pluto",
-      "isTitle": false
-     }
     ],
-    "src": "spotify",
-    "spotifyId": "4ifOrn2Qb0xwCTY44o7XCQ",
-    "copyright": "2025 C9 Entertainment,under license to Kakao Entertainment"
+    "spotifyId": "4ifOrn2Qb0xwCTY44o7XCQ"
    },
    {
     "title": "Picasso",
@@ -67267,61 +66505,8 @@
       "title": "Loner",
       "isTitle": false
      }
-    ]
-   },
-   {
-    "title": "EPEX 2nd Album Youth Chapter 2 : YOUTH DEFICIENCY",
-    "type": "정규",
-    "isMain": true,
-    "cover": "https://i.scdn.co/image/ab67616d0000b273dacf23e3f2d4cd31df80b41c",
-    "releaseDate": "2024.11.05",
-    "trackCount": 8,
-    "titleTrack": null,
-    "tracks": [
-     {
-      "no": 1,
-      "title": "UNIVERSE",
-      "isTitle": false
-     },
-     {
-      "no": 2,
-      "title": "My Girl",
-      "isTitle": false
-     },
-     {
-      "no": 3,
-      "title": "1997",
-      "isTitle": false
-     },
-     {
-      "no": 4,
-      "title": "It is what it is",
-      "isTitle": false
-     },
-     {
-      "no": 5,
-      "title": "Attosecond",
-      "isTitle": false
-     },
-     {
-      "no": 6,
-      "title": "Wonderful",
-      "isTitle": false
-     },
-     {
-      "no": 7,
-      "title": "Closer",
-      "isTitle": false
-     },
-     {
-      "no": 8,
-      "title": "Loner",
-      "isTitle": false
-     }
     ],
-    "src": "spotify",
-    "spotifyId": "2CLS39zL1TKdUp6XS3kd7V",
-    "copyright": "2024 C9 Entertainment,under license to Kakao Entertainment"
+    "spotifyId": "2CLS39zL1TKdUp6XS3kd7V"
    },
    {
     "title": "My Girl",
@@ -67391,61 +66576,8 @@
       "title": "졸업식",
       "isTitle": false
      }
-    ]
-   },
-   {
-    "title": "EPEX 1st Album Youth Chapter 1 : YOUTH DAYS",
-    "type": "정규",
-    "isMain": true,
-    "cover": "https://i.scdn.co/image/ab67616d0000b2739e7919d20603d130f0331d0a",
-    "releaseDate": "2024.04.09",
-    "trackCount": 8,
-    "titleTrack": null,
-    "tracks": [
-     {
-      "no": 1,
-      "title": "KILLSHOT",
-      "isTitle": false
-     },
-     {
-      "no": 2,
-      "title": "Breathe in Love",
-      "isTitle": false
-     },
-     {
-      "no": 3,
-      "title": "Painkiller",
-      "isTitle": false
-     },
-     {
-      "no": 4,
-      "title": "Youth2Youth",
-      "isTitle": false
-     },
-     {
-      "no": 5,
-      "title": "Dominate",
-      "isTitle": false
-     },
-     {
-      "no": 6,
-      "title": "Lay Up",
-      "isTitle": false
-     },
-     {
-      "no": 7,
-      "title": "My Secret",
-      "isTitle": false
-     },
-     {
-      "no": 8,
-      "title": "Graduation Day",
-      "isTitle": false
-     }
     ],
-    "src": "spotify",
-    "spotifyId": "3xZNZfIXPxCwTCaNSXjYKi",
-    "copyright": "2024 C9 Entertainment,under license to Kakao Entertainment"
+    "spotifyId": "3xZNZfIXPxCwTCaNSXjYKi"
    },
    {
     "title": "Graduation Day",
@@ -67495,41 +66627,8 @@
       "title": "No Roof",
       "isTitle": false
      }
-    ]
-   },
-   {
-    "title": "EPEX 6th EP Album Prelude of Anxiety Chapter 2. ‘Can We Surrender?’",
-    "type": "미니",
-    "isMain": true,
-    "cover": "https://i.scdn.co/image/ab67616d0000b2735b39563128f906fb08546bb1",
-    "releaseDate": "2023.10.04",
-    "trackCount": 4,
-    "titleTrack": null,
-    "tracks": [
-     {
-      "no": 1,
-      "title": "Surrender",
-      "isTitle": false
-     },
-     {
-      "no": 2,
-      "title": "FULL METAL JACKET",
-      "isTitle": false
-     },
-     {
-      "no": 3,
-      "title": "Hit The Wall",
-      "isTitle": false
-     },
-     {
-      "no": 4,
-      "title": "No Roof",
-      "isTitle": false
-     }
     ],
-    "src": "spotify",
-    "spotifyId": "5D8L3qM4Q9GA1bPDqtS4oK",
-    "copyright": "2023 C9 Entertainment,under license to Kakao Entertainment"
+    "spotifyId": "5D8L3qM4Q9GA1bPDqtS4oK"
    },
    {
     "title": "K-909 : 잘자요 굿나잇",
@@ -75945,12 +75044,12 @@
   "discography": [
    {
     "title": "SEVEN : CRIMSON HORIZON",
-    "type": "정규",
+    "type": "정규 3집",
     "isMain": true,
     "cover": "https://i.scdn.co/image/ab67616d0000b27325c06ce96dc56010251b7d10",
     "releaseDate": "2026.03.16",
     "trackCount": 11,
-    "titleTrack": null,
+    "titleTrack": "BOTTOMS UP",
     "tracks": [
      {
       "no": 1,
@@ -75960,7 +75059,7 @@
      {
       "no": 2,
       "title": "BOTTOMS UP",
-      "isTitle": false
+      "isTitle": true
      },
      {
       "no": 3,
@@ -76009,7 +75108,8 @@
      }
     ],
     "src": "spotify",
-    "spotifyId": "6WNkHW85pgRwezQlFtcnik"
+    "spotifyId": "6WNkHW85pgRwezQlFtcnik",
+    "melonAlbumId": "12919409"
    },
    {
     "title": "So Sweet (0522)",
@@ -77223,7 +76323,7 @@
   "discography": [
    {
     "title": "HIGHLIGHT LIVE 2025 〈RIDE OR DIE〉",
-    "type": "정규",
+    "type": "라이브",
     "isMain": true,
     "cover": "https://i.scdn.co/image/ab67616d0000b273993ddc2947e7fc66ccec7ab9",
     "releaseDate": "2025.12.18",
@@ -77357,7 +76457,8 @@
      }
     ],
     "src": "spotify",
-    "spotifyId": "5qkXzRfLkQiGNDzUA6PFtE"
+    "spotifyId": "5qkXzRfLkQiGNDzUA6PFtE",
+    "melonAlbumId": "12444574"
    },
    {
     "title": "RAINBOW",
@@ -85391,7 +84492,7 @@
    },
    {
     "title": "Portfolio",
-    "type": "정규",
+    "type": "컴필레이션",
     "isMain": true,
     "cover": "https://i.scdn.co/image/ab67616d0000b273b062cb0f11060feec026a608",
     "releaseDate": "2026.07.01",
@@ -85545,7 +84646,8 @@
      }
     ],
     "src": "spotify",
-    "spotifyId": "6oAa6fMULBusB5R6gW7RZv"
+    "spotifyId": "6oAa6fMULBusB5R6gW7RZv",
+    "melonAlbumId": "13771952"
    },
    {
     "title": "GOOD GIRL BUT NOT FOR YOU",
@@ -85595,17 +84697,17 @@
    },
    {
     "title": "New Emotion",
-    "type": "정규",
+    "type": "정규 3집",
     "isMain": true,
     "cover": "https://i.scdn.co/image/ab67616d0000b2732f709877c107d3ff778098d3",
     "releaseDate": "2025.11.19",
     "trackCount": 14,
-    "titleTrack": null,
+    "titleTrack": "♡Emotion",
     "tracks": [
      {
       "no": 1,
       "title": "♡Emotion",
-      "isTitle": false
+      "isTitle": true
      },
      {
       "no": 2,
@@ -85674,7 +84776,8 @@
      }
     ],
     "src": "spotify",
-    "spotifyId": "5IUElhtX7nNp0xz1srjpUd"
+    "spotifyId": "5IUElhtX7nNp0xz1srjpUd",
+    "melonAlbumId": "12164316"
    },
    {
     "title": "♡Emotion",
@@ -105914,44 +105017,7 @@
       "title": "Spring rain",
       "isTitle": false
      }
-    ]
-   },
-   {
-    "title": "The 2nd Mini Album 'SWICY'",
-    "type": "미니",
-    "isMain": true,
-    "cover": "https://i.scdn.co/image/ab67616d0000b273d7daad6aaf51d88d4b7cac2f",
-    "releaseDate": "2025.04.15",
-    "trackCount": 5,
-    "titleTrack": null,
-    "tracks": [
-     {
-      "no": 1,
-      "title": "From a seed called ‘Hey, what’s up?’",
-      "isTitle": false
-     },
-     {
-      "no": 2,
-      "title": "SWICY",
-      "isTitle": false
-     },
-     {
-      "no": 3,
-      "title": "DDANG!",
-      "isTitle": false
-     },
-     {
-      "no": 4,
-      "title": "Good Feeling",
-      "isTitle": false
-     },
-     {
-      "no": 5,
-      "title": "Spring rain",
-      "isTitle": false
-     }
     ],
-    "src": "spotify",
     "spotifyId": "3S4N457QDAQonUfQU2ACj9"
    },
    {
@@ -106470,44 +105536,7 @@
       "title": "Summer Was You (Instrumental)",
       "isTitle": false
      }
-    ]
-   },
-   {
-    "title": "H1-KEY 4th Mini Album [Lovestruck]",
-    "type": "미니",
-    "isMain": true,
-    "cover": "https://i.scdn.co/image/ab67616d0000b273d67ebca6e3da94a6a3f4c0d3",
-    "releaseDate": "2025.06.26",
-    "trackCount": 5,
-    "titleTrack": null,
-    "tracks": [
-     {
-      "no": 1,
-      "title": "Good for U",
-      "isTitle": false
-     },
-     {
-      "no": 2,
-      "title": "Summer Was You",
-      "isTitle": false
-     },
-     {
-      "no": 3,
-      "title": "One, Two, Three, Four",
-      "isTitle": false
-     },
-     {
-      "no": 4,
-      "title": "Let Me Be Your Sea",
-      "isTitle": false
-     },
-     {
-      "no": 5,
-      "title": "Summer Was You - Instrumental",
-      "isTitle": false
-     }
     ],
-    "src": "spotify",
     "spotifyId": "21oMWx3BnmfTOy2zqzxJwt"
    },
    {
@@ -106557,41 +105586,8 @@
       "title": "Rainfalls",
       "isTitle": false
      }
-    ]
-   },
-   {
-    "title": "H1-KEY 3rd Mini Album [LOVE or HATE]",
-    "type": "미니",
-    "isMain": true,
-    "cover": "https://i.scdn.co/image/ab67616d0000b2732eae1ee8ebed17bbc7029df7",
-    "releaseDate": "2024.06.19",
-    "trackCount": 4,
-    "titleTrack": null,
-    "tracks": [
-     {
-      "no": 1,
-      "title": "Let It Burn",
-      "isTitle": false
-     },
-     {
-      "no": 2,
-      "title": "♥ Letter",
-      "isTitle": false
-     },
-     {
-      "no": 3,
-      "title": "Iconic",
-      "isTitle": false
-     },
-     {
-      "no": 4,
-      "title": "Rainfalls",
-      "isTitle": false
-     }
     ],
-    "src": "spotify",
-    "spotifyId": "6SCL9tVHIBgOyr4GIRPFfN",
-    "copyright": "(P) 2024 GLG"
+    "spotifyId": "6SCL9tVHIBgOyr4GIRPFfN"
    },
    {
     "title": "H1-KEYnote #2 [기뻐] (Deeper)",
@@ -106683,56 +105679,8 @@
       "title": "Time to Shine (Instrumental)",
       "isTitle": false
      }
-    ]
-   },
-   {
-    "title": "H1-KEY 2nd Mini Album [Seoul Dreaming]",
-    "type": "정규",
-    "isMain": true,
-    "cover": "https://i.scdn.co/image/ab67616d0000b2735d7a6b4c5cc648ba4423dd8e",
-    "releaseDate": "2023.08.30",
-    "trackCount": 7,
-    "titleTrack": null,
-    "tracks": [
-     {
-      "no": 1,
-      "title": "Intro : Seoul Dreaming",
-      "isTitle": false
-     },
-     {
-      "no": 2,
-      "title": "SEOUL (Such a Beautiful City)",
-      "isTitle": false
-     },
-     {
-      "no": 3,
-      "title": "Time to Shine",
-      "isTitle": false
-     },
-     {
-      "no": 4,
-      "title": "Low-key Scared But H1-KEY Ready",
-      "isTitle": false
-     },
-     {
-      "no": 5,
-      "title": "Magical Dream",
-      "isTitle": false
-     },
-     {
-      "no": 6,
-      "title": "SEOUL (Such a Beautiful City) - Instrumental",
-      "isTitle": false
-     },
-     {
-      "no": 7,
-      "title": "Time to Shine - Instrumental",
-      "isTitle": false
-     }
     ],
-    "src": "spotify",
-    "spotifyId": "1J2t0ySjwCZNGelpARbw3d",
-    "copyright": "(P) 2023 GLG"
+    "spotifyId": "1J2t0ySjwCZNGelpARbw3d"
    },
    {
     "title": "Time to Shine",
@@ -106821,56 +105769,8 @@
       "title": "ATHLETIC GIRL (2023 Remaster)",
       "isTitle": false
      }
-    ]
-   },
-   {
-    "title": "H1-KEY 1st Mini Album [Rose Blossom]",
-    "type": "정규",
-    "isMain": true,
-    "cover": "https://i.scdn.co/image/ab67616d0000b27396ee3a02b72db60d065f1dd4",
-    "releaseDate": "2023.01.05",
-    "trackCount": 7,
-    "titleTrack": null,
-    "tracks": [
-     {
-      "no": 1,
-      "title": "Ring the Alarm",
-      "isTitle": false
-     },
-     {
-      "no": 2,
-      "title": "Rose Blossom",
-      "isTitle": false
-     },
-     {
-      "no": 3,
-      "title": "Crown Jewel (feat. Tachaya)",
-      "isTitle": false
-     },
-     {
-      "no": 4,
-      "title": "You Are My Key (for M1-KEY)",
-      "isTitle": false
-     },
-     {
-      "no": 5,
-      "title": "Dream Trip",
-      "isTitle": false
-     },
-     {
-      "no": 6,
-      "title": "Rose Blossom - Instrumental",
-      "isTitle": false
-     },
-     {
-      "no": 7,
-      "title": "ATHLETIC GIRL (2023 Remaster)",
-      "isTitle": false
-     }
     ],
-    "src": "spotify",
-    "spotifyId": "6SiQfUj2qhO7kg66BwvY9L",
-    "copyright": "(P) 2022 GLG"
+    "spotifyId": "6SiQfUj2qhO7kg66BwvY9L"
    },
    {
     "title": "RUN",
@@ -106987,8 +105887,8 @@
    },
    {
     "title": "See You At Work Tomorrow! (Original Television Soundtrack), Pt. 1",
-    "type": "정규",
-    "isMain": true,
+    "type": "OST",
+    "isMain": false,
     "cover": "https://i.scdn.co/image/ab67616d0000b2738ae04443ffefd2a0176101bc",
     "releaseDate": "2026.06.23",
     "trackCount": 7,
@@ -107031,7 +105931,8 @@
      }
     ],
     "src": "spotify",
-    "spotifyId": "1mGVStAdoiU1YEEF2WU43Z"
+    "spotifyId": "1mGVStAdoiU1YEEF2WU43Z",
+    "melonAlbumId": "13753130"
    },
    {
     "title": "Like a Bubble (Alawn Remix)",
@@ -107322,7 +106223,7 @@
    },
    {
     "title": "Love Tune: Rewired",
-    "type": "정규",
+    "type": "리믹스",
     "isMain": true,
     "cover": "https://i.scdn.co/image/ab67616d0000b273a01c013cd8ba8ff234af0bfa",
     "releaseDate": "2025.01.24",
@@ -107381,7 +106282,8 @@
      }
     ],
     "src": "spotify",
-    "spotifyId": "5ZY7p28JBut9fdAOo8ge9B"
+    "spotifyId": "5ZY7p28JBut9fdAOo8ge9B",
+    "melonAlbumId": "11699720"
    },
    {
     "title": "Winter Glow",
@@ -107544,26 +106446,8 @@
       "title": "Cupid – Twin Ver. (ft. Sabrina Carpenter)",
       "isTitle": true
      }
-    ]
-   },
-   {
-    "title": "Cupid – Twin Ver. (feat. Sabrina Carpenter)",
-    "type": "싱글",
-    "isMain": true,
-    "cover": "https://i.scdn.co/image/ab67616d0000b273835d9603d8b4feffae5f1d68",
-    "releaseDate": "2023.08.18",
-    "trackCount": 1,
-    "titleTrack": "Cupid – Twin Ver. (feat. Sabrina Carpenter)",
-    "tracks": [
-     {
-      "no": 1,
-      "title": "Cupid – Twin Ver. (feat. Sabrina Carpenter)",
-      "isTitle": true
-     }
     ],
-    "src": "spotify",
-    "spotifyId": "78cUZ3f7KXyEIPVTD3WsDp",
-    "copyright": "© 2023 ATTRAKT under exclusive license to Warner Music Korea"
+    "spotifyId": "78cUZ3f7KXyEIPVTD3WsDp"
    },
    {
     "title": "Barbie Dreams (feat. Kaliii) [From Barbie The Album]",
@@ -111406,41 +110290,8 @@
       "title": "TIMELINE",
       "isTitle": false
      }
-    ]
-   },
-   {
-    "title": "RISE",
-    "type": "미니",
-    "isMain": true,
-    "cover": "https://i.scdn.co/image/ab67616d0000b273a434b473b957e9ecd846c9c4",
-    "releaseDate": "2024.09.03",
-    "trackCount": 4,
-    "titleTrack": null,
-    "tracks": [
-     {
-      "no": 1,
-      "title": "UNO",
-      "isTitle": false
-     },
-     {
-      "no": 2,
-      "title": "DADARIDA",
-      "isTitle": false
-     },
-     {
-      "no": 3,
-      "title": "DOPAMINE",
-      "isTitle": false
-     },
-     {
-      "no": 4,
-      "title": "TIMELINE",
-      "isTitle": false
-     }
     ],
-    "src": "spotify",
-    "spotifyId": "3bVqyc7dO0azXgAuxpAWR1",
-    "copyright": "2024 143 Entertainment"
+    "spotifyId": "3bVqyc7dO0azXgAuxpAWR1"
    }
   ],
   "pri": 1.5,
@@ -130922,7 +129773,7 @@
    },
    {
     "title": "4SHOBOIZ MIXTAPE",
-    "type": "정규",
+    "type": "스페셜",
     "isMain": true,
     "cover": "https://i.scdn.co/image/ab67616d0000b2735939de3b4b0d974c3bc791ff",
     "releaseDate": "2026.01.16",
@@ -130981,7 +129832,8 @@
      }
     ],
     "src": "spotify",
-    "spotifyId": "3XzKcbKfLPWSOG7BJbC98O"
+    "spotifyId": "3XzKcbKfLPWSOG7BJbC98O",
+    "melonAlbumId": "12672934"
    },
    {
     "title": "SHOT CALLERS",
@@ -144343,7 +143195,7 @@
   "discography": [
    {
     "title": "Secret Flavor",
-    "type": "정규",
+    "type": "미니",
     "isMain": true,
     "cover": "https://i.scdn.co/image/ab67616d0000b2737d8878b745219135d40fda22",
     "releaseDate": "2026.06.18",
@@ -144392,7 +143244,8 @@
      }
     ],
     "src": "spotify",
-    "spotifyId": "6g3FgDbjnoVTKlYaPKI73t"
+    "spotifyId": "6g3FgDbjnoVTKlYaPKI73t",
+    "melonAlbumId": "13745048"
    },
    {
     "title": "SECRET SUMMER",
@@ -151225,46 +150078,8 @@
       "title": "PIONEER",
       "isTitle": false
      }
-    ]
-   },
-   {
-    "title": "4th Mini Album 'CEREMONY'",
-    "type": "미니",
-    "isMain": true,
-    "cover": "https://i.scdn.co/image/ab67616d0000b2738d8a63df6d9b1ae3ed682887",
-    "releaseDate": "2026.04.27",
-    "trackCount": 5,
-    "titleTrack": null,
-    "tracks": [
-     {
-      "no": 1,
-      "title": "CEREMONY",
-      "isTitle": false
-     },
-     {
-      "no": 2,
-      "title": "BAD HABIT",
-      "isTitle": false
-     },
-     {
-      "no": 3,
-      "title": "BANI BANI",
-      "isTitle": false
-     },
-     {
-      "no": 4,
-      "title": "Our Voyage",
-      "isTitle": false
-     },
-     {
-      "no": 5,
-      "title": "PIONEER",
-      "isTitle": false
-     }
     ],
-    "src": "spotify",
-    "spotifyId": "22TsuaiFzj7i9cIKFwKdyI",
-    "copyright": "2026 3Y CORPORATION,under license to Kakao Entertainment"
+    "spotifyId": "22TsuaiFzj7i9cIKFwKdyI"
    },
    {
     "title": "Special Single '흰수염고래'",
@@ -155303,39 +154118,7 @@
       "title": "Umbrella",
       "isTitle": false
      }
-    ]
-   },
-   {
-    "title": "ATE THAT EP",
-    "type": "미니",
-    "isMain": true,
-    "cover": "https://i.scdn.co/image/ab67616d0000b2734366c86d67db4419c7697457",
-    "releaseDate": "2024.08.21",
-    "trackCount": 4,
-    "titleTrack": null,
-    "tracks": [
-     {
-      "no": 1,
-      "title": "Loading…",
-      "isTitle": false
-     },
-     {
-      "no": 2,
-      "title": "ATE THAT",
-      "isTitle": false
-     },
-     {
-      "no": 3,
-      "title": "Bananas",
-      "isTitle": false
-     },
-     {
-      "no": 4,
-      "title": "Umbrella",
-      "isTitle": false
-     }
     ],
-    "src": "spotify",
     "spotifyId": "0SUJCQGGE2SMg1ziHwGFHK"
    },
    {
@@ -155390,44 +154173,7 @@
       "title": "Skyline",
       "isTitle": false
      }
-    ]
-   },
-   {
-    "title": "XXL EP",
-    "type": "미니",
-    "isMain": true,
-    "cover": "https://i.scdn.co/image/ab67616d0000b27340fe7489b59d691dea8c016b",
-    "releaseDate": "2024.03.20",
-    "trackCount": 5,
-    "titleTrack": null,
-    "tracks": [
-     {
-      "no": 1,
-      "title": "Scars",
-      "isTitle": false
-     },
-     {
-      "no": 2,
-      "title": "XXL",
-      "isTitle": false
-     },
-     {
-      "no": 3,
-      "title": "DND (feat.BM of KARD)",
-      "isTitle": false
-     },
-     {
-      "no": 4,
-      "title": "ROTY",
-      "isTitle": false
-     },
-     {
-      "no": 5,
-      "title": "Skyline",
-      "isTitle": false
-     }
     ],
-    "src": "spotify",
     "spotifyId": "0EbH9upNSg6zsdFZ8g11Yl"
    },
    {
@@ -155483,39 +154229,7 @@
       "title": "Cooing",
       "isTitle": false
      }
-    ]
-   },
-   {
-    "title": "MACARONI CHEESE EP",
-    "type": "미니",
-    "isMain": true,
-    "cover": "https://i.scdn.co/image/ab67616d0000b2732fbdd152d4c3fb131b704f70",
-    "releaseDate": "2023.10.18",
-    "trackCount": 4,
-    "titleTrack": null,
-    "tracks": [
-     {
-      "no": 1,
-      "title": "POSSE UP!",
-      "isTitle": false
-     },
-     {
-      "no": 2,
-      "title": "MACARONI CHEESE",
-      "isTitle": false
-     },
-     {
-      "no": 3,
-      "title": "OTB",
-      "isTitle": false
-     },
-     {
-      "no": 4,
-      "title": "Cooing",
-      "isTitle": false
-     }
     ],
-    "src": "spotify",
     "spotifyId": "3maKjITApQfhgJ13DflK8e"
    }
   ],
@@ -156618,7 +155332,7 @@
     "cover": "https://i.scdn.co/image/ab67616d0000b27335ebb787a4076be3a0fb7150",
     "releaseDate": "2023.10.25",
     "trackCount": 10,
-    "titleTrack": null,
+    "titleTrack": "Synchronize",
     "tracks": [
      {
       "no": 1,
@@ -156628,7 +155342,7 @@
      {
       "no": 2,
       "title": "Synchronize",
-      "isTitle": false
+      "isTitle": true
      },
      {
       "no": 3,
@@ -156672,7 +155386,8 @@
      }
     ],
     "src": "spotify",
-    "spotifyId": "6Dwg6xCdKavhIjPvysOiGA"
+    "spotifyId": "6Dwg6xCdKavhIjPvysOiGA",
+    "melonAlbumId": "11349066"
    },
    {
     "title": "Synchronize",
@@ -161644,8 +160359,8 @@
    },
    {
     "title": "Bump Up Business (Original Television Soundtrack)",
-    "type": "정규",
-    "isMain": true,
+    "type": "OST",
+    "isMain": false,
     "cover": "https://i.scdn.co/image/ab67616d0000b2733f8307f1a6ff73696f782965",
     "releaseDate": "2023.11.10",
     "trackCount": 18,
@@ -161744,7 +160459,8 @@
     ],
     "src": "spotify",
     "spotifyId": "51nYB0O1XY5gOgq5cHVgS0",
-    "copyright": "2023 Studio MO, Ponycanyon Korea"
+    "copyright": "2023 Studio MO, Ponycanyon Korea",
+    "melonAlbumId": "11362215"
    },
    {
     "title": "범프 업 비즈니스 OST part.2",
@@ -163067,39 +161783,7 @@
       "title": "MANIAC (Inst.)",
       "isTitle": false
      }
-    ]
-   },
-   {
-    "title": "ROAD TO KINGDOM : ACE OF ACE 〈VS〉, Pt. 1",
-    "type": "미니",
-    "isMain": true,
-    "cover": "https://i.scdn.co/image/ab67616d0000b2731bb4129118638d3dda763581",
-    "releaseDate": "2024.09.27",
-    "trackCount": 4,
-    "titleTrack": null,
-    "tracks": [
-     {
-      "no": 1,
-      "title": "Phobia",
-      "isTitle": false
-     },
-     {
-      "no": 2,
-      "title": "MANIAC",
-      "isTitle": false
-     },
-     {
-      "no": 3,
-      "title": "Phobia - Instrumental",
-      "isTitle": false
-     },
-     {
-      "no": 4,
-      "title": "MANIAC - Instrumental",
-      "isTitle": false
-     }
     ],
-    "src": "spotify",
     "spotifyId": "6W0s29sQ6fxisO5BGnuP3f"
    },
    {
@@ -164126,39 +162810,7 @@
       "title": "I’ll Be There",
       "isTitle": false
      }
-    ]
-   },
-   {
-    "title": "THE CALM BEFORE THE STORM",
-    "type": "미니",
-    "isMain": true,
-    "cover": "https://i.scdn.co/image/ab67616d0000b2733d9ef1baf0af948828f5c8ff",
-    "releaseDate": "2023.04.17",
-    "trackCount": 4,
-    "titleTrack": null,
-    "tracks": [
-     {
-      "no": 1,
-      "title": "EYE OF THE STORM",
-      "isTitle": false
-     },
-     {
-      "no": 2,
-      "title": "Dangerous",
-      "isTitle": false
-     },
-     {
-      "no": 3,
-      "title": "Freak Show",
-      "isTitle": false
-     },
-     {
-      "no": 4,
-      "title": "I’ll Be There",
-      "isTitle": false
-     }
     ],
-    "src": "spotify",
     "spotifyId": "78bGw78N3igo4TrUVfv9Db"
    },
    {
@@ -166611,44 +165263,7 @@
       "title": "So Alive",
       "isTitle": false
      }
-    ]
-   },
-   {
-    "title": "INYUN Part.1",
-    "type": "미니",
-    "isMain": true,
-    "cover": "https://i.scdn.co/image/ab67616d0000b273e481d408cd55ca59befbb885",
-    "releaseDate": "2026.05.12",
-    "trackCount": 5,
-    "titleTrack": null,
-    "tracks": [
-     {
-      "no": 1,
-      "title": "PARALLEL",
-      "isTitle": false
-     },
-     {
-      "no": 2,
-      "title": "POSE! (姿態)",
-      "isTitle": false
-     },
-     {
-      "no": 3,
-      "title": "Savior",
-      "isTitle": false
-     },
-     {
-      "no": 4,
-      "title": "Nothing",
-      "isTitle": false
-     },
-     {
-      "no": 5,
-      "title": "So Alive",
-      "isTitle": false
-     }
     ],
-    "src": "spotify",
     "spotifyId": "5LgCRrc9Ew4Vz1tgCr1QMM"
    },
    {
@@ -166861,44 +165476,7 @@
       "title": "너라는 별",
       "isTitle": false
      }
-    ]
-   },
-   {
-    "title": "BIT Part.2",
-    "type": "미니",
-    "isMain": true,
-    "cover": "https://i.scdn.co/image/ab67616d0000b273836c5efbbdce76877bf26cb2",
-    "releaseDate": "2023.10.17",
-    "trackCount": 5,
-    "titleTrack": null,
-    "tracks": [
-     {
-      "no": 1,
-      "title": "Chili Pop",
-      "isTitle": false
-     },
-     {
-      "no": 2,
-      "title": "Love it",
-      "isTitle": false
-     },
-     {
-      "no": 3,
-      "title": "F!zzy Soda Love",
-      "isTitle": false
-     },
-     {
-      "no": 4,
-      "title": "Cupcake",
-      "isTitle": false
-     },
-     {
-      "no": 5,
-      "title": "A star called you",
-      "isTitle": false
-     }
     ],
-    "src": "spotify",
     "spotifyId": "3nnadaRtvxQl3Rchqp672S"
    },
    {
@@ -166935,44 +165513,7 @@
       "title": "SLOGAN",
       "isTitle": false
      }
-    ]
-   },
-   {
-    "title": "BIT Part.1",
-    "type": "미니",
-    "isMain": true,
-    "cover": "https://i.scdn.co/image/ab67616d0000b273d57b60dda749c14374d6fb5e",
-    "releaseDate": "2023.05.17",
-    "trackCount": 5,
-    "titleTrack": null,
-    "tracks": [
-     {
-      "no": 1,
-      "title": "ICY",
-      "isTitle": false
-     },
-     {
-      "no": 2,
-      "title": "WATERFALL",
-      "isTitle": false
-     },
-     {
-      "no": 3,
-      "title": "LOOK AT THE TV",
-      "isTitle": false
-     },
-     {
-      "no": 4,
-      "title": "TRIP",
-      "isTitle": false
-     },
-     {
-      "no": 5,
-      "title": "SLOGAN",
-      "isTitle": false
-     }
     ],
-    "src": "spotify",
     "spotifyId": "1JIBD2xuWX2cdGLoHvBdoc"
    },
    {
@@ -168776,64 +167317,7 @@
       "title": "Crystal (Acapella)",
       "isTitle": false
      }
-    ]
-   },
-   {
-    "title": "LIMELIGHT DEBUT EP 'LOVE & HAPPINESS'",
-    "type": "정규",
-    "isMain": true,
-    "cover": "https://i.scdn.co/image/ab67616d0000b273b1dfa7d187cb7c67dd2e6d1c",
-    "releaseDate": "2023.02.17",
-    "trackCount": 9,
-    "titleTrack": null,
-    "tracks": [
-     {
-      "no": 1,
-      "title": "Honestly",
-      "isTitle": false
-     },
-     {
-      "no": 2,
-      "title": "Blanc Noir",
-      "isTitle": false
-     },
-     {
-      "no": 3,
-      "title": "Crystal",
-      "isTitle": false
-     },
-     {
-      "no": 4,
-      "title": "Honestly - Instrumental",
-      "isTitle": false
-     },
-     {
-      "no": 5,
-      "title": "Blanc Noir - Instrumental",
-      "isTitle": false
-     },
-     {
-      "no": 6,
-      "title": "Crystal - Instrumental",
-      "isTitle": false
-     },
-     {
-      "no": 7,
-      "title": "Honestly - Acapella",
-      "isTitle": false
-     },
-     {
-      "no": 8,
-      "title": "Blanc Noir - Acapella",
-      "isTitle": false
-     },
-     {
-      "no": 9,
-      "title": "Crystal - Acapella",
-      "isTitle": false
-     }
     ],
-    "src": "spotify",
     "spotifyId": "6bGjdmkGl8QqTa1ElccP3C"
    },
    {
@@ -170198,24 +168682,7 @@
       "title": "Cherry Blossom",
       "isTitle": true
      }
-    ]
-   },
-   {
-    "title": "Things We Dream: Vol.1",
-    "type": "싱글",
-    "isMain": true,
-    "cover": "https://i.scdn.co/image/ab67616d0000b27372fc0dacc1c17f1ac234958e",
-    "releaseDate": "2026.04.15",
-    "trackCount": 1,
-    "titleTrack": "Cherry Blossom",
-    "tracks": [
-     {
-      "no": 1,
-      "title": "Cherry Blossom",
-      "isTitle": true
-     }
     ],
-    "src": "spotify",
     "spotifyId": "3Vd8dh7UmmMnu48AM5f7YP"
    },
    {
@@ -170305,29 +168772,7 @@
       "title": "Never Be Me",
       "isTitle": false
      }
-    ]
-   },
-   {
-    "title": "The 1st Single Album - Things we love : H",
-    "type": "싱글",
-    "isMain": true,
-    "cover": "https://i.scdn.co/image/ab67616d0000b2737edddeef8114cd8823ca3bf4",
-    "releaseDate": "2025.04.28",
-    "trackCount": 2,
-    "titleTrack": null,
-    "tracks": [
-     {
-      "no": 1,
-      "title": "SOURPATCH",
-      "isTitle": false
-     },
-     {
-      "no": 2,
-      "title": "Never Be Me",
-      "isTitle": false
-     }
     ],
-    "src": "spotify",
     "spotifyId": "3ioR7gHeadrflzwM5oGqu4"
    }
   ],
@@ -170884,41 +169329,8 @@
       "title": "I like I like (Eng ver.)",
       "isTitle": false
      }
-    ]
-   },
-   {
-    "title": "cignature 5th EP Album 'Sweetie but Saltie'",
-    "type": "미니",
-    "isMain": true,
-    "cover": "https://i.scdn.co/image/ab67616d0000b273aaed5108f3a737c2d2c78651",
-    "releaseDate": "2024.06.10",
-    "trackCount": 4,
-    "titleTrack": null,
-    "tracks": [
-     {
-      "no": 1,
-      "title": "﻿I like I like",
-      "isTitle": false
-     },
-     {
-      "no": 2,
-      "title": "Poongdung",
-      "isTitle": false
-     },
-     {
-      "no": 3,
-      "title": "﻿Melody",
-      "isTitle": false
-     },
-     {
-      "no": 4,
-      "title": "﻿I like I like (Eng ver.)",
-      "isTitle": false
-     }
     ],
-    "src": "spotify",
-    "spotifyId": "2b1k5XuKhLK0zkCS7B85pY",
-    "copyright": "2024 C9 Entertainment,under license to Kakao Entertainment"
+    "spotifyId": "2b1k5XuKhLK0zkCS7B85pY"
    },
    {
     "title": "4th EP Album ‘그해 여름의 우리(Us in the Summer)’",
@@ -173564,44 +171976,7 @@
       "title": "Tears On My Pillow",
       "isTitle": false
      }
-    ]
-   },
-   {
-    "title": "The 1st Mini Album [AFTER CRY]",
-    "type": "미니",
-    "isMain": true,
-    "cover": "https://i.scdn.co/image/ab67616d0000b2730514f336ffedc1c2cf62938a",
-    "releaseDate": "2026.03.24",
-    "trackCount": 5,
-    "titleTrack": null,
-    "tracks": [
-     {
-      "no": 1,
-      "title": "Mama I’m Alright",
-      "isTitle": false
-     },
-     {
-      "no": 2,
-      "title": "Bittersweet",
-      "isTitle": false
-     },
-     {
-      "no": 3,
-      "title": "Shapeshifter",
-      "isTitle": false
-     },
-     {
-      "no": 4,
-      "title": "Moves Like Ciara",
-      "isTitle": false
-     },
-     {
-      "no": 5,
-      "title": "Tears On My Pillow",
-      "isTitle": false
-     }
     ],
-    "src": "spotify",
     "spotifyId": "4NZUty5ldXEcivYcDz1zaF"
    },
    {
@@ -179182,29 +177557,7 @@
       "title": "Beautiful One",
       "isTitle": false
      }
-    ]
-   },
-   {
-    "title": "DOXA",
-    "type": "싱글",
-    "isMain": true,
-    "cover": "https://i.scdn.co/image/ab67616d0000b27376f0f8f29bc3bfdb62738ebb",
-    "releaseDate": "2023.05.24",
-    "trackCount": 2,
-    "titleTrack": "DOXA",
-    "tracks": [
-     {
-      "no": 1,
-      "title": "DOXA",
-      "isTitle": true
-     },
-     {
-      "no": 2,
-      "title": "Beautiful One",
-      "isTitle": false
-     }
     ],
-    "src": "spotify",
     "spotifyId": "3KSJT0Iq93X4kpauHRx3Ml"
    },
    {
@@ -179865,74 +178218,7 @@
       "title": "얼룩",
       "isTitle": false
      }
-    ]
-   },
-   {
-    "title": "FLOWERING",
-    "type": "정규",
-    "isMain": true,
-    "cover": "https://i.scdn.co/image/ab67616d0000b273bd15713cf9824b7842bcd290",
-    "releaseDate": "2026.04.07",
-    "trackCount": 11,
-    "titleTrack": null,
-    "tracks": [
-     {
-      "no": 1,
-      "title": "Paradise of Rumors",
-      "isTitle": false
-     },
-     {
-      "no": 2,
-      "title": "Spring Colors",
-      "isTitle": false
-     },
-     {
-      "no": 3,
-      "title": "Paid with Bugs",
-      "isTitle": false
-     },
-     {
-      "no": 4,
-      "title": "Joy, Sorrow, A Beautiful Heart",
-      "isTitle": false
-     },
-     {
-      "no": 5,
-      "title": "Sunshine Bless You",
-      "isTitle": false
-     },
-     {
-      "no": 6,
-      "title": "Tent",
-      "isTitle": false
-     },
-     {
-      "no": 7,
-      "title": "Young and Married",
-      "isTitle": false
-     },
-     {
-      "no": 8,
-      "title": "The Right Person",
-      "isTitle": false
-     },
-     {
-      "no": 9,
-      "title": "Graceful Breakfast",
-      "isTitle": false
-     },
-     {
-      "no": 10,
-      "title": "Festival of Refugees",
-      "isTitle": false
-     },
-     {
-      "no": 11,
-      "title": "Stains",
-      "isTitle": false
-     }
     ],
-    "src": "spotify",
     "spotifyId": "0e4X6KNw1He0mlZ2BK9Loz"
    },
    {
@@ -188384,31 +186670,8 @@
       "title": "MBTI (Inst.)",
       "isTitle": false
      }
-    ]
-   },
-   {
-    "title": "JUST Be with you Pt. 1",
-    "type": "싱글",
-    "isMain": true,
-    "cover": "https://i.scdn.co/image/ab67616d0000b27357a3b9b23a49ace7264b348a",
-    "releaseDate": "2023.02.14",
-    "trackCount": 2,
-    "titleTrack": null,
-    "tracks": [
-     {
-      "no": 1,
-      "title": "MBTI",
-      "isTitle": false
-     },
-     {
-      "no": 2,
-      "title": "MBTI - Instrumental",
-      "isTitle": false
-     }
     ],
-    "src": "spotify",
-    "spotifyId": "6h6BESB2BPRq59Q6YN4qlB",
-    "copyright": "2023 블루닷엔터테인먼트"
+    "spotifyId": "6h6BESB2BPRq59Q6YN4qlB"
    },
    {
     "title": "= (NEUN)",
@@ -195172,12 +193435,12 @@
     "cover": "https://i.scdn.co/image/ab67616d0000b2732c932a0170aae91cc2c1f272",
     "releaseDate": "2026.03.25",
     "trackCount": 10,
-    "titleTrack": null,
+    "titleTrack": "COMPASS",
     "tracks": [
      {
       "no": 1,
       "title": "COMPASS",
-      "isTitle": false
+      "isTitle": true
      },
      {
       "no": 2,
@@ -195226,7 +193489,8 @@
      }
     ],
     "src": "spotify",
-    "spotifyId": "5O8mj0lU5nIEbhhORk3obQ"
+    "spotifyId": "5O8mj0lU5nIEbhhORk3obQ",
+    "melonAlbumId": "12914687"
    },
    {
     "title": "HUNGRY HEART",
@@ -195438,12 +193702,12 @@
    },
    {
     "title": "FANTASIA",
-    "type": "정규",
+    "type": "정규 1집",
     "isMain": true,
     "cover": "https://i.scdn.co/image/ab67616d0000b273af318be7fff34e47523a176c",
     "releaseDate": "2024.08.28",
     "trackCount": 10,
-    "titleTrack": null,
+    "titleTrack": "Left or Right",
     "tracks": [
      {
       "no": 1,
@@ -195458,7 +193722,7 @@
      {
       "no": 3,
       "title": "Left or Right",
-      "isTitle": false
+      "isTitle": true
      },
      {
       "no": 4,
@@ -195497,7 +193761,8 @@
      }
     ],
     "src": "spotify",
-    "spotifyId": "0yxzxnFO0cbLg86pqdJJ4a"
+    "spotifyId": "0yxzxnFO0cbLg86pqdJJ4a",
+    "melonAlbumId": "11576698"
    },
    {
     "title": "Left or Right",
@@ -196175,12 +194440,12 @@
    },
    {
     "title": "THE GREATEST BATTLE",
-    "type": "정규",
+    "type": "미니",
     "isMain": true,
     "cover": "https://i.scdn.co/image/ab67616d0000b27383c571ca1963fd81a7bb04fd",
     "releaseDate": "2026.03.03",
     "trackCount": 8,
-    "titleTrack": null,
+    "titleTrack": "One Man Army",
     "tracks": [
      {
       "no": 1,
@@ -196190,7 +194455,7 @@
      {
       "no": 2,
       "title": "One Man Army",
-      "isTitle": false
+      "isTitle": true
      },
      {
       "no": 3,
@@ -196224,7 +194489,8 @@
      }
     ],
     "src": "spotify",
-    "spotifyId": "3i7eiszamKu66caVqosS0j"
+    "spotifyId": "3i7eiszamKu66caVqosS0j",
+    "melonAlbumId": "12886832"
    },
    {
     "title": "RED-DY SET GO",
@@ -196669,12 +194935,12 @@
   "discography": [
    {
     "title": "VVON",
-    "type": "정규",
+    "type": "미니 1집",
     "isMain": true,
     "cover": "https://i.scdn.co/image/ab67616d0000b273b01247c15c9228a7753f5aea",
     "releaseDate": "2025.11.20",
     "trackCount": 10,
-    "titleTrack": null,
+    "titleTrack": "Super Model",
     "tracks": [
      {
       "no": 1,
@@ -196684,7 +194950,7 @@
      {
       "no": 2,
       "title": "Super Model",
-      "isTitle": false
+      "isTitle": true
      },
      {
       "no": 3,
@@ -196728,7 +194994,8 @@
      }
     ],
     "src": "spotify",
-    "spotifyId": "0lJ71UcwMYWJKeulIvyXmn"
+    "spotifyId": "0lJ71UcwMYWJKeulIvyXmn",
+    "melonAlbumId": "12396944"
    },
    {
     "title": "House Party",
@@ -197276,12 +195543,12 @@
   "discography": [
    {
     "title": "A NEW ERA OF NOW",
-    "type": "정규",
+    "type": "미니",
     "isMain": true,
     "cover": "https://i.scdn.co/image/ab67616d0000b273bdcfd0320dd1bbecc60af2c8",
     "releaseDate": "2026.08.05",
     "trackCount": 10,
-    "titleTrack": null,
+    "titleTrack": "X to Z (Next to me) (Korean ver.)",
     "region": "jp",
     "tracks": [
      {
@@ -197292,7 +195559,7 @@
      {
       "no": 2,
       "title": "X to Z (Next to me) (Korean ver.)",
-      "isTitle": false
+      "isTitle": true
      },
      {
       "no": 3,
@@ -197336,7 +195603,8 @@
      }
     ],
     "src": "spotify",
-    "spotifyId": "5Ibcfw3ck62eG3JQBoFQWs"
+    "spotifyId": "5Ibcfw3ck62eG3JQBoFQWs",
+    "melonAlbumId": "14418890"
    }
   ]
  },

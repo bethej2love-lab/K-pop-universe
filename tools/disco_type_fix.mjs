@@ -1,6 +1,10 @@
 #!/usr/bin/env node
 // 앨범 타입 오분류 수정 (2026-10-09)
 //
+// ⚠️⚠️ 2026-10-13: 이 스크립트는 **파생물(disco/)만** 고친다 — 다음 build_slim_data가 원본(groups.json·artists.json)으로
+//    도로 덮어써서 효과가 사라졌다(클로즈유어아이즈 256th Note가 계속 '정규'로 남은 원인). 쓰지 말 것.
+//    원본을 멜론 표기로 고치는 tools/disco_type_melon_verify.mjs를 쓸 것.
+//
 // 문제: parseTypeFromTitle의 fallback 로직이 albumType==='album'이면 트랙 수 무관 '정규'를 반환했다.
 //       suffix("- The 2nd Mini Album" 등)가 없는 영문 앨범 이름은 전부 이 경로로 빠졌다.
 //       수정 후 기준: 1~3=싱글, 4~9=미니, 10+=정규.

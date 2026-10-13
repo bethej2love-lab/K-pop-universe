@@ -49,11 +49,30 @@ function scan(owner, list) {
     }
   }
 }
-for (const [k, g] of Object.entries(groups)) scan(k, g.discography);
+// 스포티파이 ↔ 레거시(출처 없음) 쌍(2026-10-13) — 위 검사는 멜론 항목 기준이라 이 쌍을 못 봤다.
+// 레거시는 한글 제목(`이름의 장: FREEFALL`), 스포티파이는 영문 제목(`The Name Chapter: FREEFALL`)이라 수집 dedup을
+// 뚫고 54쌍이 두 장씩 들어가 있었다. 트랙 수는 판정에 안 쓴다 — 같은 앨범도 출처별로 보너스 트랙 수가 다르다
+// (트레저 REBOOT 12 vs 10). 정리 도구: tools/disco_spotify_legacy_dedupe.mjs
+function scanLegacy(owner, list) {
+  for (const s of list || []) {
+    if (s.src !== 'spotify') continue;
+    const st = new Set((s.tracks || []).map(t => nt(t.title)).filter(Boolean));
+    for (const m of list) {
+      if (m === s || m.src) continue;
+      if (Math.abs(ts(m.releaseDate) - ts(s.releaseDate)) > 86400000) continue;
+      if (!(m.tracks || []).some(t => st.has(nt(t.title)))) continue;
+      const fm = feat(m.title), fs_ = feat(s.title);
+      if (fm && fs_ && fm !== fs_ && latin(fm) && latin(fs_)) continue;
+      if (ALLOW.has(`${owner}|${m.title}|${s.title}`)) continue;
+      bad.push(`${owner} — ${m.releaseDate} [레거시] ${m.title}  ↔  ${s.releaseDate} [spotify] ${s.title}`);
+    }
+  }
+}
+for (const [k, g] of Object.entries(groups)) { scan(k, g.discography); scanLegacy(k, g.discography); }
 for (const a of artists) {
   const o = `${a.name?.ko}|${a.group?.ko || ''}`;
-  scan(o, a.discography);
-  for (const u of a.unitDiscography || []) scan(o + '/unit', u?.albums);
+  scan(o, a.discography); scanLegacy(o, a.discography);
+  for (const u of a.unitDiscography || []) { scan(o + '/unit', u?.albums); scanLegacy(o + '/unit', u?.albums); }
 }
 
 if (bad.length) {
