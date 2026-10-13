@@ -6760,9 +6760,9 @@ function _closeQueueSheet(){
 // ── 영상 카테고리 이름 — 유일한 정의 자리(2026-10-13, 사용자 — "관리자 포맷 옵션과 카드 탭 이름을 다 통일") ──
 // 같은 category 값을 화면마다 다르게 불렀다: live=무대/퍼포먼스/라이브, mv=MV/뮤직비디오/뮤비, show=드라마/드라마·영화.
 // 카드 탭·포맷 필터·관리자 옵션(index.html·admin.js)은 전부 여기서 읽는다. 값(DB category)은 그대로.
-// ⚠️ 차트의 "무대 TOP"은 예외 — 방송 무대만 세는 다른 개념이라(_applyLiveExclude) 일부러 '무대'로 둔다.
+// 차트 이름도 '퍼포먼스 TOP'으로 통일(2026-10-13 사용자 결정 — 집계는 여전히 방송 무대 위주, _applyLiveExclude).
 // ⚠️ 카드의 팬 영상 탭은 팬덤명으로 바뀌는 라벨("by MY")이라 예외(그 자리에서 따로 만든다).
-const _CAT_LABEL={mv:['MV','MV'],live:['퍼포먼스','Performance'],cover:['커버','Cover'],short:['쇼츠','Shorts'],
+const _CAT_LABEL={all:['전체','All'],mv:['MV','MV'],live:['퍼포먼스','Performance'],cover:['커버','Cover'],short:['쇼츠','Shorts'],
   challenge:['챌린지','Challenge'],variety:['예능','Variety'],show:['드라마·영화','Show'],fan:['팬 영상','Fan-made'],other:['기타','Other']};
 function _catLabel(v){const l=_CAT_LABEL[v];return l?(currentLang==='ko'?l[0]:l[1]):v;}
 const _SURF_LENSES=[['live',_CAT_LABEL.live[0],_CAT_LABEL.live[1]],['cam','직캠','Fancam'],['mv','MV','MV'],['variety','예능','Variety'],['all','전체','All']];
@@ -12328,7 +12328,7 @@ const _DISCOG_BUCKETS=['정규','미니(EP)','싱글']; // 탭 노출 순서: Al
 // "정규" 그대로, 영어 모드에선 "Full"로 번역(2026-08-18, 사용자 요청 — 처음엔 "미니"→"EP"로 통일했다가
 // 번복, "미니"→"Mini"가 맞다고 정정 + "정규"↔"Full" 언어별 전환 추가).
 function _discogBucketLabel(val){
-  if(val==='all')return'All';
+  if(val==='all')return _catLabel('all'); // '전체'·'All' — 영상 탭과 같은 이름(2026-10-13 통일)
   if(val==='싱글')return currentLang==='en'?'Single':'싱글';
   if(val==='미니(EP)')return currentLang==='en'?'Mini':'미니';
   if(val==='정규')return currentLang==='en'?'Full':'정규';
@@ -21513,7 +21513,7 @@ async function _buildFeedWeeklyTopCams(list,discList){
         const allVids30=_filterBannedVideos(data).filter(v=>!_isShortClip(v));
         const stageVids=_capByGroup(allVids30,v=>v.group_ko,3).slice(0,30);
         if(stageVids.length>=3){
-          const label=currentLang==='ko'?'월간 무대 TOP 30':'Monthly Stage TOP 30',sub=_cleanTitle(stageVids[0].title);
+          const label=currentLang==='ko'?'월간 퍼포먼스 TOP 30':'Monthly Performance TOP 30',sub=_cleanTitle(stageVids[0].title);
           // 카드1과 동일 — 순위 배지 조회는 클릭 시점에만 필요하므로 콘텐츠 렌더를 막지 않게 백그라운드로 뺀다.
           let _prevStage;
           _fetchPrevRanks('monthly_stage').then(r=>{_prevStage=r;});
@@ -21541,7 +21541,7 @@ const _FEED_THIS_YEAR_POOL=[
    subKo:'올해 올라온 직캠 조회수 기준',subEn:'Top viewed fancams this year',
    pick:vids=>_capByGroup(vids.filter(_isSoloCam),v=>v.group_ko,3).slice(0,100),
    cat:'live',titleOr:true,fetch:1000},
-  {key:'stage',icon:'🎤',ko:y=>`${y}년 무대 TOP 30`,en:y=>`${y} Stage TOP 30`,
+  {key:'stage',icon:'🎤',ko:y=>`${y}년 퍼포먼스 TOP 30`,en:y=>`${y} Performance TOP 30`,
    subKo:'올해 음악방송·무대 조회수 기준',subEn:'Top viewed stages this year',
    // 개인 직캠 카드(위)의 정확한 여집합 — 같은 판정식을 쓴다. 그래야 직캠에서 빠진 **솔로 무대**가
    // (태민 'FLOAT' @음악중심 등) 여기로 흘러오고, 어느 쪽에도 안 뜨는 사각지대가 안 생긴다.
@@ -21737,7 +21737,7 @@ const _CHART_DEFS={
   soloCam:{icon:'🎬',nameKo:'개인 직캠 TOP 100',nameEn:'Solo Fancam TOP 100',
     axes:['gender','gen','era'],ranked:true,cap:100,
     pool:sel=>_fetchSoloFancamPool(_chartGkos(sel),1000,_chartSince(sel.era))},
-  stage:{icon:'🎤',nameKo:'무대 TOP 100',nameEn:'Stage TOP 100',
+  stage:{icon:'🎤',nameKo:'퍼포먼스 TOP 100',nameEn:'Performance TOP 100',
     axes:['gender','gen','era'],ranked:true,cap:100,
     pool:sel=>_fetchStagePool(_chartGkos(sel),1000,15,_chartSince(sel.era))},
   festYE:{icon:'🎄',nameKo:'연말 무대 모음 TOP 100',nameEn:'Year-End Stage TOP 100',
@@ -23157,7 +23157,8 @@ const _CH_VID_CACHE_TTL=60000;
 // 첫 방문 실측: 그룹 카드 첫 화면에 영상 0개(첫 영상이 한 화면 아래), 사진 없는 멤버는 얼굴도 없었다.
 // 대표 영상 한 칸을 헤더 바로 아래 둔다. 나머지 영상 그리드는 원래 자리 그대로.
 function _cardHeroOn(){
-  try{return /[?&]hero=1\b/.test(location.search)||localStorage.getItem('kpu_card_hero')==='1';}catch(e){return false;}
+  // 2026-10-13 기본 켬(사용자 승인). ?hero=0 또는 localStorage kpu_card_hero='0'이면 예전 배치.
+  try{return !(/[?&]hero=0\b/.test(location.search)||localStorage.getItem('kpu_card_hero')==='0');}catch(e){return true;}
 }
 function _cardHeroSlot(contId){
   const cardId=contId==='tv'?'tt':'gc';
@@ -24023,7 +24024,7 @@ function _makeChVidController(contId){
         // 멤버 카드 기본 탭(라이브)에 아직 태깅/분류된 영상이 없으면 "전체"로 자동 폴백(한 번만)
         if(state.memberKo&&state.filter==='live'&&!state._liveFallbackDone){
           state._liveFallbackDone=true;state.filter='all';state.offset=0;
-          cont.querySelectorAll('.gc-ch-filter').forEach(b=>b.classList.toggle('active',b.textContent==='All'));
+          cont.querySelectorAll('.gc-ch-filter').forEach(b=>b.classList.toggle('active',b.dataset.val==='all'));
           releaseLock();
           load(ko,true);
           return;
@@ -24222,7 +24223,7 @@ function _makeChVidController(contId){
     // ⚠️ 차트(무대 TOP 등)는 여전히 방송 무대만 본다 — _applyLiveExclude 주석 참고.
     const _ko=currentLang==='ko';
     // 라벨은 _CAT_LABEL(유일한 정의 자리)에서 — 관리자 포맷 옵션과 같은 이름(2026-10-13 통일)
-    let catTabs=[['all','All'],...(memberKo?['live','cover','short','variety','show']:['mv','live','cover','short','variety','show']).map(k=>[k,_catLabel(k)])];
+    let catTabs=[['all',_catLabel('all')],...(memberKo?['live','cover','short','variety','show']:['mv','live','cover','short','variety','show']).map(k=>[k,_catLabel(k)])];
     // "by Fan" 탭(2026-08-10, 사용자 요청) — 팬이 직접 찍거나 만든 영상 전용. 아직은 어떤 그룹도 팬채널을
     // 등록 안 해서 category='fan'인 행이 하나도 없지만(추후 사용자가 그룹별로 팬채널 링크를 주면 그
     // 채널 동기화 시 category='fan'으로 저장할 예정), 미리 이 자리를 만들어둠. 팬덤명을 알면 "by {영문
@@ -24248,7 +24249,7 @@ function _makeChVidController(contId){
       tabs.forEach(([val,lbl],i)=>{
         const b=document.createElement('button');
         b.className='gc-ch-filter'+(val===activeVal||(isFormat&&!activeVal&&i===0)?' active':'');
-        b.textContent=lbl;
+        b.textContent=lbl;b.dataset.val=val; // 글자 대신 값으로 찾는다(라벨 '전체'/'All'이 언어별로 달라서)
         b.addEventListener('click',()=>{
           if(isFormat)state.formatFilter=val;else state.filter=val;
           state.offset=0;
