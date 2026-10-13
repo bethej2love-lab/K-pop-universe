@@ -4078,13 +4078,15 @@ function animate(){
     // 따라서 이 오프셋은 "단위구체 기준 배수"여야 함(1.0=표면, 1.05=표면 위 5%). radius를 곱하면
     // radius²가 돼서 큰 행성일수록 라벨이 붕 뜬다(2026-08-22 실제 버그). 숫자만 조정할 것.
     if(bm&&bm.labelObj)bm.labelObj.position.copy(_camUp).multiplyScalar(1.05);
+    // 포커스 모드에서 비포커스 그룹 라벨 완전히 숨김 — 행성 shader는 fa=0.18에서 거의 안 보이지만
+    // CSS opacity:0.14(0.8×0.18)는 텍스트가 눈에 띄므로 명시적으로 0으로 처리(2026-10-13)
+    if(fa<=0.02||(focusGroupKo&&!isFocusedLbl)){el.style.opacity='0';el.style.pointerEvents='none';return;}
     if(distFade>0.001){ // 근거리는 기존 동작 그대로(전부 표시 + 클릭 가능)
       const op=distFade*fa;
       el.style.opacity=op.toFixed(3);
       el.style.pointerEvents=op>0.15?'auto':'none';
       return;
     }
-    if(fa<=0.02){el.style.opacity='0';el.style.pointerEvents='none';return;} // 필터/포커스로 꺼진 그룹
     _lblProj.copy(bm?bm.mesh.position:worldPos).project(camera);
     if(_lblProj.z>1){el.style.opacity='0';el.style.pointerEvents='none';return;} // 카메라 뒤
     const sx=(_lblProj.x*0.5+0.5)*_lblVW,sy=(-_lblProj.y*0.5+0.5)*_lblVH;
