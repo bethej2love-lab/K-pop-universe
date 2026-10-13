@@ -67316,7 +67316,8 @@
     ],
     "src": "spotify",
     "spotifyId": "0JFjl4i0dPQOkYnMDYZ6EP",
-    "copyright": "© 2023 KISS Entertainment Inc."
+    "copyright": "© 2023 KISS Entertainment Inc.",
+    "region": "jp"
    },
    {
     "title": "PYGMALION",
@@ -189465,8 +189466,8 @@
   "discography": [
    {
     "title": "TRI.BE K-Pop Bops",
-    "type": "정규",
-    "isMain": true,
+    "type": "컴필레이션",
+    "isMain": false,
     "cover": "https://i.scdn.co/image/ab67616d0000b27364e0ba5ac8c9601b02c1fc49",
     "releaseDate": "2024.03.26",
     "trackCount": 12,
@@ -193275,7 +193276,7 @@
     "type": "정규",
     "isMain": true,
     "cover": "https://i.scdn.co/image/ab67616d0000b27331ae26fe05dc7ae6717c3caa",
-    "releaseDate": "2026.08.17",
+    "releaseDate": "2026.06.26",
     "trackCount": 11,
     "titleTrack": null,
     "tracks": [
@@ -193336,7 +193337,8 @@
      }
     ],
     "src": "spotify",
-    "spotifyId": "73DIxIXlaOnmZLjHAzLVUW"
+    "spotifyId": "73DIxIXlaOnmZLjHAzLVUW",
+    "melonAlbumId": "13763479"
    },
    {
     "title": "Airplane",
