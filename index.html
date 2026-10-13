@@ -21034,8 +21034,8 @@ function _appendNewsItems(container,arr){
     if(!_isNewsShortCard(r)){grid=null;_appendNewsRow(container,r);return;}
     if(!grid||grid.children.length>=2){grid=document.createElement('div');grid.className='feed-grid feed-news-shorts';container.appendChild(grid);}
     const card=_appendFeedCard(grid,'📈',r.title,r.sub,r.nav,r.thumb,null,{short:true});
-    const cap=card.querySelector('.feed-card-cap');
-    if(cap){const b=document.createElement('span');b.className='feed-news-badge fnb-milestone';b.textContent='📈 조회수';cap.insertBefore(b,cap.firstChild);}
+    const tw=card.querySelector('.feed-card-thumb-wrap');
+    if(tw){const b=document.createElement('span');b.className='feed-news-badge fnb-milestone';b.textContent='📈 조회수';tw.appendChild(b);}
   });
 }
 // 1면 헤드라인 카드(2026-09-28). 캡션은 **이미지 아래** — 앨범 커버는 그 자체가 작품이라 위에 얹지 않는다는
@@ -21048,10 +21048,11 @@ function _appendNewsHero(container,{type,title,sub,thumb,nav}){
   if(type==='album'){const bg=document.createElement('div');bg.className='fnh-bg';bg.style.backgroundImage=`url(${thumb})`;media.appendChild(bg);}
   const img=document.createElement('img');img.alt='';img.loading='lazy';img.className='fnh-img';
   img.addEventListener('load',()=>img.classList.add('loaded'));img.src=thumb;media.appendChild(img);
-  const cap=document.createElement('div');cap.className='fnh-cap';
   const badge=document.createElement('span');badge.className='feed-news-badge '+(CLS[type]||'');badge.textContent=LABELS[type]||type;
+  media.appendChild(badge); // 썸네일 위 오버레이
+  const cap=document.createElement('div');cap.className='fnh-cap';
   const t=document.createElement('div');t.className='fnh-title';t.textContent=_cleanTitle(title);
-  cap.appendChild(badge);cap.appendChild(t);
+  cap.appendChild(t);
   if(sub){const s=document.createElement('div');s.className='fnh-sub';s.textContent=sub;cap.appendChild(s);}
   card.appendChild(media);card.appendChild(cap);
   card.addEventListener('click',nav);
@@ -21075,15 +21076,17 @@ function _appendNewsRow(container,{type,title,sub,thumb,nav}){
   body.appendChild(titleEl);
   if(sub){const subEl=document.createElement('div');subEl.className='feed-news-sub';subEl.textContent=sub;body.appendChild(subEl);}
   if(type==='milestone'&&thumb){
-    // 조회수 돌파는 썸네일이 주인공 — 이미지를 맨 위 전폭으로, 뱃지+텍스트는 아래에
+    // 조회수 돌파는 썸네일이 주인공 — 이미지를 맨 위 전폭으로, 배지는 썸네일 위 오버레이
+    const imgWrap=document.createElement('div');imgWrap.className='fnr-media';
     const img=document.createElement('img');
     img.className='feed-news-thumb feed-news-thumb--milestone';
     img.loading='lazy';img.alt='';
     img.addEventListener('load',()=>img.classList.add('loaded'));
     img.src=thumb;
+    imgWrap.appendChild(img);imgWrap.appendChild(badge);
     const cap=document.createElement('div');cap.className='fnr-cap';
-    cap.appendChild(badge);cap.appendChild(body);
-    row.appendChild(img);row.appendChild(cap);
+    cap.appendChild(body);
+    row.appendChild(imgWrap);row.appendChild(cap);
   }else{
     row.appendChild(badge);row.appendChild(body);
     if(thumb){
