@@ -12341,6 +12341,7 @@ function _renderDiscography(prefix,albums){
   function renderItems(){
     strip.innerHTML='';
     const list=currentList();
+    if(_discogStackOn()){_renderDiscogStacks(strip,list,prefix);return;}
     list.forEach((a,idx)=>{
       const item=document.createElement('div');
       item.className='gc-discog-item'+(a.isMain?'':' gc-discog-extra');
@@ -12512,6 +12513,89 @@ function _renderDiscography(prefix,albums){
     };
   }
   updateMoreVisibility();
+}
+// ── 시리즈 스택 시안(2026-10-13, 사용자 요청 — 아직 기본 꺼짐, ?stack=1 로만 켬) ─────────────
+// "GREENGREEN_playextended" "THIS IS FOR DELUXE" 같은 판·시리즈를 정규/미니로 억지 분류하지 않고, 같은 테마로
+// 이어진 발매를 커버가 겹친 한 장으로 접어 보여준다. 누르면 그 자리에서 펼쳐진다.
+// 묶는 규칙(시안): ① 콜론 앞 머리말이 같음(별의 장 · THE SIN · BORDER · minisode N) — 단 머리말이 그룹명이면 제외
+//                  ② 판 표시를 뗀 제목이 같음(_playextended · Expanded/More Edition · DELUXE · 2.0 · -Repackage- · feat.)
+// ⚠️ 커버 위엔 아무것도 얹지 않는다(앨범 커버 원칙) — 뒤 커버는 **오른쪽 바깥으로만** 비치고, 장수는 캡션에 쓴다.
+function _discogStackOn(){
+  try{return /[?&]stack=1\b/.test(location.search)||localStorage.getItem('kpu_discog_stack')==='1';}catch(e){return false;}
+}
+const _discogStackOpen=new Set();
+function _discogSeriesKey(title,ownerNames){
+  let t=String(title||'').trim();
+  t=t.replace(/\s*[(\[]?\s*(?:feat\.?|ft\.|with)\s[^)\]]*[)\]]?\s*$/i,'');            // feat./with 버전
+  t=t.replace(/_play\w+$/i,'').replace(/\s*-\s*repackage\s*-\s*$/i,'')
+     .replace(/\s*\((?:[^)]*\s)?edition\)\s*$/i,'').replace(/\s+deluxe$/i,'').replace(/\s+2\.0$/,'');
+  let k=t;
+  const c=/^(.+?)\s*[:：]\s*\S/.exec(t);
+  if(c)k=c[1];
+  k=k.replace(/\s*\d+$/,'').trim();                                                   // minisode1 → minisode, #TWICE4 → #TWICE
+  const n=k.toLowerCase().replace(/\s+/g,'');
+  if(n.length<2||ownerNames.some(o=>o&&o.toLowerCase().replace(/\s+/g,'')===n))return{key:t.toLowerCase().replace(/\s+/g,''),label:t};
+  return{key:n,label:k};
+}
+function _renderDiscogStacks(strip,list,prefix){
+  const own=prefix==='gc'?[_openGCko,(GROUPS[_openGCko]||{}).en]:[(_openTArtist&&_openTArtist.name.ko),(_openTArtist&&_openTArtist.name.en)];
+  const buckets=new Map();
+  list.forEach(a=>{const s=_discogSeriesKey(a.title,own);if(!buckets.has(s.key))buckets.set(s.key,{label:s.label,items:[]});buckets.get(s.key).items.push(a);});
+  // 한/영 표기가 갈린 같은 시리즈(TXT `별의 장: SANCTUARY` ↔ `The Star Chapter: SANCTUARY (Expanded Edition)`) —
+  // 콜론 뒤 꼬리가 같으면 혼자 남은 쪽을 상대 시리즈로 합친다. 머리말은 먼저 생긴(이미 2장 이상인) 쪽을 쓴다.
+  const tail=t=>{const m=/[:：]\s*(.+)$/.exec(String(t||'').replace(/\s*\([^)]*edition\)\s*$/i,''));return m?m[1].toLowerCase().replace(/\s+/g,''):'';};
+  const keyOf=new Map();list.forEach(a=>keyOf.set(a,_discogSeriesKey(a.title,own).key));
+  for(const [k,b] of [...buckets]){
+    if(b.items.length!==1)continue;
+    const tl=tail(b.items[0].title);if(!tl)continue;
+    const mate=list.find(x=>x!==b.items[0]&&tail(x.title)===tl);if(!mate)continue;
+    const mk=keyOf.get(mate);if(mk===k)continue;
+    buckets.get(mk).items.push(b.items[0]);keyOf.set(b.items[0],mk);buckets.delete(k);
+  }
+  const _sk=new Map();list.forEach(a=>_sk.set(a,keyOf.get(a)));
+  const ownerKey=(prefix==='gc'?_openGCko:(_openTArtist&&_openTArtist.name.ko))||'';
+  const seen=new Set();
+  const mkItem=(a,idx)=>{
+    const item=document.createElement('div');
+    item.className='gc-discog-item'+(a.isMain?'':' gc-discog-extra');
+    const img=document.createElement('img');img.className='gc-discog-cover';img.loading='lazy';img.decoding='async';img.src=a.cover;img.alt=a.title;
+    const typeEl=document.createElement('div');typeEl.className='gc-discog-type';
+    const yr=a.releaseDate?a.releaseDate.slice(0,4):'';
+    typeEl.textContent=yr?`${_discogTypeLabel(a.type)} · ${yr}`:_discogTypeLabel(a.type);
+    const titleEl=document.createElement('div');titleEl.className='gc-discog-item-title';titleEl.textContent=a.title;
+    item.append(img,typeEl,titleEl);
+    item.addEventListener('click',e=>{e.stopPropagation();_gcDiscogList=list;_openGcDiscogDetail(a,idx);});
+    return item;
+  };
+  list.forEach((a,idx)=>{
+    const s={key:_sk.get(a)};const b=buckets.get(s.key);
+    if(b.items.length<2){strip.appendChild(mkItem(a,idx));return;}
+    if(seen.has(s.key))return;seen.add(s.key);
+    const openKey=ownerKey+'|'+s.key;
+    const yrs=b.items.map(x=>+String(x.releaseDate||'').slice(0,4)).filter(Boolean);
+    const span=yrs.length?(Math.min(...yrs)===Math.max(...yrs)?`${Math.min(...yrs)}`:`${Math.min(...yrs)}–${String(Math.max(...yrs)).slice(2)}`):'';
+    if(_discogStackOpen.has(openKey)){
+      const wrap=document.createElement('div');wrap.className='gc-discog-series';
+      const fold=document.createElement('button');fold.type='button';fold.className='gc-discog-series-fold';
+      fold.innerHTML=`<span class="gds-chev">‹</span><span class="gds-name"></span>`;fold.querySelector('.gds-name').textContent=b.label;
+      fold.title=currentLang==='ko'?'접기':'Collapse';
+      fold.addEventListener('click',e=>{e.stopPropagation();_discogStackOpen.delete(openKey);strip.innerHTML='';_renderDiscogStacks(strip,list,prefix);});
+      wrap.appendChild(fold);
+      b.items.forEach(x=>wrap.appendChild(mkItem(x,list.indexOf(x))));
+      strip.appendChild(wrap);return;
+    }
+    const item=document.createElement('div');item.className='gc-discog-item gc-discog-stack';
+    const deck=document.createElement('div');deck.className='gc-discog-deck';
+    b.items.slice(1,3).reverse().forEach((x,i,arr)=>{const bk=document.createElement('img');bk.className='gc-discog-deck-back d'+(arr.length-i);bk.src=x.cover;bk.alt='';bk.loading='lazy';deck.appendChild(bk);});
+    const front=document.createElement('img');front.className='gc-discog-cover';front.src=b.items[0].cover;front.alt=b.label;front.loading='lazy';deck.appendChild(front);
+    const typeEl=document.createElement('div');typeEl.className='gc-discog-type';
+    typeEl.textContent=`${b.items.length}${currentLang==='ko'?'장':' releases'} · ${span}`;
+    const titleEl=document.createElement('div');titleEl.className='gc-discog-item-title';titleEl.textContent=b.label;
+    item.append(deck,typeEl,titleEl);
+    item.addEventListener('click',e=>{e.stopPropagation();_discogStackOpen.add(openKey);strip.innerHTML='';_renderDiscogStacks(strip,list,prefix);});
+    strip.appendChild(item);
+  });
+  _enableDragScroll(strip);
 }
 function _renderGcDiscography(ko){
   const g=GROUPS[ko]||{};
