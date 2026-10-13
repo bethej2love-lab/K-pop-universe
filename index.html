@@ -14828,18 +14828,29 @@ document.getElementById('sp-feedback-btn').addEventListener('click',e=>{
 });
 // ── K-pop 링크 모음 ──────────────────────────────────────────────────────────
 const _KPOP_LINKS=[
+  // 순서 = 팬이 찾는 빈도 + 서비스 핵심(영상·퍼포먼스 탐색)과의 연결(2026-10-13): 매일(스트리밍·팬 플랫폼) → 매주(음악방송·차트)
+  // → 시기별(티켓·음반·매장) → 가끔(미디어·소속사 — 카드에서 이미 소속사로 연결됨)
   {cat:'스트리밍',links:[
     {n:'멜론',u:'https://www.melon.com'},{n:'지니뮤직',u:'https://www.genie.co.kr'},
     {n:'벅스',u:'https://music.bugs.co.kr'},{n:'플로',u:'https://www.music-flo.com'},
     {n:'스포티파이',u:'https://open.spotify.com'},{n:'Apple Music',u:'https://music.apple.com'},
     {n:'YouTube Music',u:'https://music.youtube.com'},
   ]},
+  {cat:'팬 플랫폼',links:[
+    {n:'위버스',u:'https://weverse.io'},{n:'블립',u:'https://blip.kr'},
+  ]},
+  {cat:'음악방송',links:[
+    {n:'뮤직뱅크 (KBS)',u:'https://www.kbs.co.kr/2tv/enter/musikbank/'},{n:'쇼음악중심 (MBC)',u:'https://www.imbc.com/broad/tv/ent/musiccore/'},
+    {n:'인기가요 (SBS)',u:'https://programs.sbs.co.kr/enter/inkigayo/'},{n:'엠카운트다운 (Mnet)',u:'https://www.mnet.com/program/m-countdown'},
+    {n:'쇼챔피언 (MBC M)',u:'https://www.imbc.com/broad/tv/ent/showchampion/'},{n:'더쇼 (SBS MTV)',u:'https://programs.sbs.co.kr/sbsmtv/theshow/'},
+  ]},
   {cat:'차트',links:[
     {n:'써클차트(가온)',u:'https://circlechart.kr'},{n:'빌보드 K-pop',u:'https://www.billboard.com/charts/k-pop-hot-100'},
     {n:'한터차트',u:'https://www.hanteochart.com'},{n:'멜론 TOP100',u:'https://www.melon.com/chart/index.htm'} /* 멜론 실시간 차트는 2021년 폐지 → 지금 이 주소는 TOP100 */,
   ]},
-  {cat:'팬 플랫폼',links:[
-    {n:'위버스',u:'https://weverse.io'},{n:'블립',u:'https://blip.kr'},
+  {cat:'티켓',links:[
+    {n:'멜론티켓',u:'https://ticket.melon.com'},{n:'NOL 티켓',u:'https://nol.interpark.com/ticket'} /* 인터파크 티켓 → NOL 티켓 리브랜딩(2026-10-13 확인) */,
+    {n:'YES24 티켓',u:'https://ticket.yes24.com'},
   ]},
   // 음반 구매(2026-10-13, 사용자 요청) — 한터·써클 판매량 집계에 잡히는 대표 온라인 음반몰 위주. 팬사인회 응모는
   // 그 이벤트를 연 몰에서 사야 하므로 이벤트형 몰(위드뮤·사운드웨이브·애플뮤직·메이크스타)을 같이 둔다.
@@ -14855,14 +14866,9 @@ const _KPOP_LINKS=[
     {n:'케이타운포유 매장',u:'https://www.ktown4u.com/stores'},{n:'핫트랙스 (교보문고) 매장',u:'https://store.kyobobook.co.kr/store-info'},
     {n:'위드뮤 매장',u:'https://www.withmuu.com/main/html.php?htmid=service/store.html'},
   ]},
-  {cat:'티켓',links:[
-    {n:'멜론티켓',u:'https://ticket.melon.com'},{n:'NOL 티켓',u:'https://nol.interpark.com/ticket'} /* 인터파크 티켓 → NOL 티켓 리브랜딩(2026-10-13 확인) */,
-    {n:'YES24 티켓',u:'https://ticket.yes24.com'},
-  ]},
-  {cat:'음악방송',links:[
-    {n:'뮤직뱅크 (KBS)',u:'https://www.kbs.co.kr/2tv/enter/musikbank/'},{n:'쇼음악중심 (MBC)',u:'https://www.imbc.com/broad/tv/ent/musiccore/'},
-    {n:'인기가요 (SBS)',u:'https://programs.sbs.co.kr/enter/inkigayo/'},{n:'엠카운트다운 (Mnet)',u:'https://www.mnet.com/program/m-countdown'},
-    {n:'쇼챔피언 (MBC M)',u:'https://www.imbc.com/broad/tv/ent/showchampion/'},{n:'더쇼 (SBS MTV)',u:'https://programs.sbs.co.kr/sbsmtv/theshow/'},
+  {cat:'미디어·뉴스',links:[
+    {n:'나무위키 케이팝',u:'https://namu.wiki/w/%EC%BC%80%EC%9D%B4%ED%8C%9D'},
+    {n:'Soompi',u:'https://www.soompi.com'},{n:'Allkpop',u:'https://www.allkpop.com'},
   ]},
   {cat:'엔터테인먼트',links:[
     {n:'HYBE',u:'https://hybecorp.com'},{n:'SM엔터테인먼트',u:'https://www.smtown.com'},
@@ -14872,10 +14878,6 @@ const _KPOP_LINKS=[
     {n:'카카오엔터테인먼트',u:'https://kakaoent.com'},{n:'젤리피쉬엔터테인먼트',u:'https://www.jellyfishent.com'},
     {n:'DSP미디어',u:'https://www.dspmedia.co.kr'},{n:'KQ엔터테인먼트',u:'https://kqent.com'},
     {n:'웨이크원',u:'https://www.wake-one.com'},{n:'울림엔터테인먼트',u:'https://www.woolliment.com'},
-  ]},
-  {cat:'미디어·뉴스',links:[
-    {n:'나무위키 케이팝',u:'https://namu.wiki/w/%EC%BC%80%EC%9D%B4%ED%8C%9D'},
-    {n:'Soompi',u:'https://www.soompi.com'},{n:'Allkpop',u:'https://www.allkpop.com'},
   ]},
 ];
 const _CO_URL={
