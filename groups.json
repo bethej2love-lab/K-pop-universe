@@ -23632,7 +23632,7 @@
    },
    {
     "title": "TEN: The Story Goes On",
-    "type": "정규 4집",
+    "type": "스페셜",
     "isMain": true,
     "cover": "https://i.scdn.co/image/ab67616d0000b273353bdc08199bc20302467613",
     "releaseDate": "2025.10.10",
@@ -23750,7 +23750,8 @@
      }
     ],
     "src": "spotify",
-    "spotifyId": "7sBTuBFE5HseHuGgZVI4Bv"
+    "spotifyId": "7sBTuBFE5HseHuGgZVI4Bv",
+    "region": "jp"
    },
    {
     "title": "Like 1",
@@ -23768,7 +23769,8 @@
      }
     ],
     "src": "spotify",
-    "spotifyId": "5KsZEty4oG8P66x67IOrcq"
+    "spotifyId": "5KsZEty4oG8P66x67IOrcq",
+    "region": "jp"
    },
    {
     "title": "ENEMY",
@@ -23786,16 +23788,17 @@
      }
     ],
     "src": "spotify",
-    "spotifyId": "47izqvoaTPoXfcYe8sgwo3"
+    "spotifyId": "47izqvoaTPoXfcYe8sgwo3",
+    "region": "jp"
    },
    {
-    "title": "THIS IS FOR DELUXE",
-    "type": "정규",
+    "title": "THIS IS FOR",
+    "type": "정규 4집",
     "isMain": true,
     "cover": "https://i.scdn.co/image/ab67616d0000b273debed127294db62c16d5b292",
-    "releaseDate": "2025.07.14",
+    "releaseDate": "2025.07.11",
     "trackCount": 16,
-    "titleTrack": null,
+    "titleTrack": "THIS IS FOR",
     "tracks": [
      {
       "no": 1,
@@ -23805,7 +23808,7 @@
      {
       "no": 2,
       "title": "THIS IS FOR",
-      "isTitle": false
+      "isTitle": true
      },
      {
       "no": 3,
@@ -84698,7 +84701,7 @@
    },
    {
     "title": "New Emotion",
-    "type": "정규 3집",
+    "type": "정규",
     "isMain": true,
     "cover": "https://i.scdn.co/image/ab67616d0000b2732f709877c107d3ff778098d3",
     "releaseDate": "2025.11.19",

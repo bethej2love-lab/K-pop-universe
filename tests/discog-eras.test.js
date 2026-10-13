@@ -24,7 +24,7 @@ function slice(name) {
 }
 const ctx = {};
 vm.createContext(ctx);
-vm.runInContext(['_discogEditionKey', '_discogAlbumId', '_discogEras'].map(slice).join('\n') + '\nthis.E=_discogEras;this.ID=_discogAlbumId;', ctx);
+vm.runInContext(['_discogPhonKey', '_discogEditionKey', '_discogAlbumId', '_discogEras'].map(slice).join('\n') + '\nthis.E=_discogEras;this.ID=_discogAlbumId;', ctx);
 
 let pass = 0, fail = 0;
 const ok = m => { pass++; console.log(`✅ ${m}`); };
@@ -61,6 +61,9 @@ together('아이브', ['CRUSH', 'ALIVE'], '선공개 싱글');
 together('에스파', ['Supernova', 'Armageddon'], '선공개 싱글');
 // 괄호 안 표기로 한/영이 갈린 트랙
 together('원위', ['線 : The Wake', '面 : Unknown Atlas'], "싱글 'Neverland' ↔ 앨범 '우리들은 행방불명 (Neverland)'");
+// 영문 싱글 ↔ 한글 음차 트랙(발음 뼈대) — 수동 지정 없이 자동으로 잡혀야 한다(사용자: "왜 수동 지정해야 해?")
+together('이펙스', ['Picasso', 'EPEX 3rd Album 소화(韶華) 3장 : 낭만 청춘'], "싱글 'Picasso' ↔ 앨범 트랙 '피카소'");
+together('보이넥스트도어', ['ddok ddok ddok', 'HOME'], "싱글 'ddok ddok ddok' ↔ 앨범 트랙 '똑똑똑'");
 // ── 판 ──
 together('트와이스', ['STRATEGY', 'Strategy 2.0'], "'2.0' 판");
 together('제이홉|방탄소년단', ['Jack In The Box', 'Jack In The Box (HOPE Edition)'], '판 표시가 있으면 1년 뒤라도 같은 앨범');

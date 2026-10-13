@@ -12538,6 +12538,22 @@ function _discogEditionKey(title){
      .replace(/\s*\((?:[^)]*\s)?edition\)\s*$/i,'').replace(/\s+deluxe$/i,'').replace(/\s+2\.0$/,'');
   return{key:t.toLowerCase().replace(/\s+/g,''),label:t};
 }
+// 발음 뼈대 — 한글은 개정 로마자로 풀고, 라틴은 그대로 둔 뒤 c/k/q·g→k, d→t, b/f/ph/v→p, j/z→ch, r→l,
+// 겹자음 하나로, 모음 덩어리는 'a' 하나로. "picasso"와 "피카소"가 둘 다 'paka sa'→"pakasa"가 된다.
+function _discogPhonKey(s){
+  const L=['g','kk','n','d','tt','r','m','b','pp','s','ss','','j','jj','ch','k','t','p','h'];
+  const V=['a','ae','ya','yae','eo','e','yeo','ye','o','wa','wae','oe','yo','u','wo','we','wi','yu','eu','ui','i'];
+  const T=['','k','k','k','n','n','n','t','l','k','m','l','l','l','p','l','m','p','p','t','t','ng','t','t','k','t','p','t'];
+  let r='';
+  for(const ch of String(s||'').toLowerCase()){
+    const c=ch.charCodeAt(0)-0xAC00;
+    if(c>=0&&c<11172){r+=L[Math.floor(c/588)]+V[Math.floor((c%588)/28)]+T[c%28];}
+    else if(/[a-z]/.test(ch))r+=ch;
+    else if(/[0-9]/.test(ch))return ''; // 숫자가 섞이면 발음 비교를 하지 않는다(19.99 같은 제목 오매칭 방지)
+  }
+  return r.replace(/ph/g,'p').replace(/ch|j|z/g,'C').replace(/[cqgk]/g,'k').replace(/x/g,'ks').replace(/d/g,'t').replace(/[bfv]/g,'p').replace(/r/g,'l')
+    .replace(/[aeiouyw]+/g,'a').replace(/(.)\1+/g,'$1').replace(/h/g,'');
+}
 // 앨범 식별자 — 수동 지정(disco_era_overrides)이 가리키는 키. 같은 날 같은 제목은 같은 발매다.
 function _discogAlbumId(a){return `${a.releaseDate||''}|${String(a.title||'').trim()}`;}
 // ov: Map(albumId → 대상 albumId | '') — ''면 강제로 단독, 값이 있으면 그 앨범의 활동기로 붙인다.
@@ -12550,7 +12566,13 @@ function _discogEras(list,ov){
     const raw=String(t||'').replace(/\s+-\s+[^-]*\b(?:ver\.?|version|inst\.?|instrumental|remix)\s*$/i,'');
     const ks=[nt(raw.replace(/\([^)]*\)|\[[^\]]*\]/g,''))];
     for(const m of raw.matchAll(/[(\[]([^)\]]+)[)\]]/g)){const k=nt(m[1]);if(k.length>=3&&!/^(?:inst|instrumental|feat|prod|ver|version|english|korean|japanese|chinese|remix|sped|live)/.test(k))ks.push(k);}
-    return ks.filter((k,i)=>i===0?k.length>=1:k.length>=3); // 본문 키는 한 글자도 인정(찬열 '척')
+    const out=ks.filter((k,i)=>i===0?k.length>=1:k.length>=3); // 본문 키는 한 글자도 인정(찬열 '척')
+    // 발음 뼈대 키 — 영문 싱글 ↔ 한글 음차 트랙(이펙스 `Picasso`↔`피카소`, 보넥도 `ddok ddok ddok`↔`똑똑똑`).
+    // 한글은 로마자로 풀고, 둘 다 유/무성·겹자음·모음 차이를 지운 자음 골격(모음은 자리만 'a')으로 맞춘다.
+    // ⚠️ 짧으면 우연히 겹치므로 골격 5자 이상만 쓴다.
+    const ph=_discogPhonKey(raw.replace(/\([^)]*\)|\[[^\]]*\]/g,''));
+    if(ph.length>=5)out.push('~'+ph);
+    return out;
   };
   const day=d=>Date.parse(String(d||'').replace(/\./g,'-'))/864e5;
   const isSingle=a=>/싱글/.test(a.type||'');

@@ -73,14 +73,21 @@ async function melonAlbums(aid, oldest) {
   return out;
 }
 
-async function melonDetail(id) {
+// ⚠️ 집 번호는 **바로 뒤 40자 안에 이 앨범 제목이 나올 때만** 인정한다(2026-10-13). 소개글은 이전 앨범도
+//    언급한다 — 트와이스 스페셜 앨범 `TEN`의 소개글 속 "정규 4집 'THIS IS FOR'"를 TEN의 번호로 읽어 '정규 4집'을 붙였다.
+//    또 소개글이 "스페셜 앨범"이라고 하면 번호를 붙이지 않는다.
+async function melonDetail(id, albumTitle) {
   const html = await get(`https://www.melon.com/album/detail.htm?albumId=${id}`);
   await sleep(400);
   if (!html) return {};
-  const flat = html.replace(/[\r\n\t]+/g, ' ');
+  const flat = unesc(unesc(html.replace(/[\r\n\t]+/g, ' ')));
+  const nt = norm(albumTitle);
+  const near = idx => nt.length >= 2 && norm(flat.slice(idx, idx + 60)).includes(nt);
   const ords = {};
-  for (const m of flat.matchAll(/(\d+)(?:st|nd|rd|th) (Mini )?Album/gi)) { const k = (m[2] ? '미니 ' : '정규 ') + Number(m[1]) + '집'; ords[k] = (ords[k] || 0) + 1; }
-  for (const m of flat.matchAll(/(미니|정규) ?(\d+)집/g)) { const k = `${m[1]} ${Number(m[2])}집`; ords[k] = (ords[k] || 0) + 1; }
+  if (!/스페셜 앨범|special album/i.test(flat.slice(0, 20000)) || !nt) {
+    for (const m of flat.matchAll(/(\d+)(?:st|nd|rd|th) (Mini )?Album/gi)) { if (!near(m.index)) continue; const k = (m[2] ? '미니 ' : '정규 ') + Number(m[1]) + '집'; ords[k] = (ords[k] || 0) + 1; }
+    for (const m of flat.matchAll(/(미니|정규) ?(\d+)집/g)) { if (!near(m.index)) continue; const k = `${m[1]} ${Number(m[2])}집`; ords[k] = (ords[k] || 0) + 1; }
+  }
   const ordKeys = Object.keys(ords);
   const titleM = /bullet_icons title[^>]*>.*?<\/span>.*?<a[^>]*>([^<]+)<\/a>/.exec(flat);
   return { ordinals: ordKeys, titleTrack: titleM ? unesc(titleM[1].trim()) : null };
@@ -129,7 +136,7 @@ for (const t of targets) {
   let next = base;
   let tt = null;
   if (base === '미니' || base === '정규') {
-    const det = await melonDetail(best.id);
+    const det = await melonDetail(best.id, best.title);
     const fam = det.ordinals ? det.ordinals.filter(k => k.startsWith(base)) : [];
     if (fam.length === 1) next = fam[0];
     // 이미 같은 계열 번호가 붙어 있으면(슈퍼주니어 '정규 12집') 근거 부족으로 번호를 깎지 않는다
