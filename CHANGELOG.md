@@ -61,6 +61,9 @@
 - ~~**`active:false`인데 탈퇴일(`left`)이 없는 멤버 104명 — 그룹 미태깅 영상이 그 멤버 카드에 하나도 안 뜸(2026-08-27 발견)**~~ → **같은 날 처리 완료** — 폴백 4단계 재설계로 차단 110명→11명, 99명 복구. 아래 2026-08-27 항목 참고. ⚠️ 원 진단("탈퇴일 미기입이 원인")은 **틀렸었다** — 실제 원인은 `active` 필드가 "이 그룹 멤버인가"와 "개인이 아직 활동하는가" 두 뜻으로 섞여 쓰인 것이었고, 쥬얼리·걸스데이·스텔라에서 같은 시기 멤버가 은퇴 여부에 따라 갈리고 있었다.
 ---
 
+## 2026-10-14 (세션 — 신규 그룹 멤버 별 소실)
+- [완료] 09-27 일괄 등록 19개 그룹 멤버 102명이 `active` 필드 없이 들어가 3D 배치의 탈퇴자 분기(`!m.active`)에 걸려 전원 행성 밖(+70~120)으로 날아가 있었음 — "행성은 있는데 멤버 별이 안 보임". 헤드리스 실측: 수정 전 13개 행성 멤버 전원 밖 → 수정 후 0. 코드 3곳 `active===false`로 통일 + 102명 `active:true` + validate-data에 active 필수 검사 [index.html][artists.json][tests/validate-data.js]
+
 ## 2026-10-13 (세션 — UX 감사·라이브 제외·더쇼·플러스버튼·전체화면·크레딧 오매칭)
 - [완료][index.html] UX 감사: 피드 오버레이 유지(_feedEngaged 수동 열기에도 세팅), 설정→피드백/링크 열 때 피드 안 닫힘·설정 버튼 active 해제, Esc 닫기 목록에 kpop-links-overlay 추가
 - [완료][index.html·admin.js] UX 감사: _admDockShow 모바일 _bringToFront 추가, fbv-overlay·vm-coverset-overlay _bringToFront, _initModalAutoFront 중복 옵저버 방지

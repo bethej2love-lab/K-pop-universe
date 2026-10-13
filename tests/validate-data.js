@@ -61,6 +61,13 @@ ARTISTS.forEach(a => (a.groups || []).forEach(g => {
   if (!g || typeof g !== 'object' || !g.ko) add('error', 'groups[] 항목 형식', `${a.name && a.name.ko}(${a.id}) — ${JSON.stringify(g)} (객체 {ko,en}이어야 함)`);
 }));
 
+// ── 1-d. active는 boolean 필수 ──────────────────────
+// 누락되면 앱 곳곳의 활동/탈퇴 판정이 갈린다 — 2026-10-14 실측: 09-27 일괄 등록분 102명(19개 그룹)이 active 없이
+// 들어가 3D 배치의 탈퇴자 분기(!m.active)에 걸려 전원 행성 밖으로 날아갔다("행성은 있는데 멤버 별이 안 보임").
+ARTISTS.forEach(a => {
+  if (typeof a.active !== 'boolean') add('error', 'active 누락/형식', `${a.name && a.name.ko}(${a.group && a.group.ko}, ${a.id}) — true/false 필요`);
+});
+
 // ── 2. group.ko / groups[].ko 유령 참조 ──────────────────────
 // "솔로"는 GROUPS에 없는 게 정상인 공유 placeholder(그 자체가 이미 확립된 관례) — 유일한 예외.
 {

@@ -3027,7 +3027,8 @@ async function buildUniverse(){
       // 있었음(사용자 제보). 해체 그룹은 날려보내지 않고 제자리에 두고, 아래 애니메이션 루프의
       // inactiveDim(0.22)만으로 다른 별보다 어둡게 보이게 한다.
       let _flyInside=null,_flyOutside=null;
-      if(!m.active&&!m.memorial&&ko===m.group.ko&&!(GROUPS[ko]||{}).disbanded){
+      // ⚠️ !m.active가 아니라 ===false — 09-27 일괄 등록분 102명은 active 필드 자체가 없어 탈퇴자로 오판, 전원 행성 밖으로 날아가 "행성은 있는데 별이 없음"(2026-10-14)
+      if(m.active===false&&!m.memorial&&ko===m.group.ko&&!(GROUPS[ko]||{}).disbanded){
         _flyInside=mPos.clone(); // 원래라면 여기 있었을 자리(토글 켜면 여기로 날아들어옴)
         const outDir=new THREE.Vector3(Math.random()-0.5,Math.random()*0.6+0.2,Math.random()-0.5).normalize();
         // 행성 바로 앞(radius+5)이 아니라 우주에 멀찍이 떠다니는 느낌이 나도록 훨씬 멀리 배치
@@ -3156,7 +3157,7 @@ async function buildUniverse(){
     // 그 groupKo가 없어서 아래 폴백(_worldPos = 주 소속 위치)이 잡히고, 결국 **엉뚱한 자리에**
     // 선이 그어진다. 그리는 것보다 안 그리는 게 맞다.
     if(!grpData[shareKo])return;
-    if(!artA.active||!artB.active)return; // 비활동/탈퇴 멤버는 행성 밖에 떠 있으므로 그룹 내 관계선을 아예 안 그림(토글로 안에 들어와도 마찬가지)
+    if(artA.active===false||artB.active===false)return; // 비활동/탈퇴 멤버는 행성 밖에 떠 있으므로 그룹 내 관계선을 아예 안 그림(토글로 안에 들어와도 마찬가지)
     const wpA=(artA._worldPositions||[]).find(wp=>wp.groupKo===shareKo);
     const wpB=(artB._worldPositions||[]).find(wp=>wp.groupKo===shareKo);
     const posA=wpA?wpA.pos:artA._worldPos,posB=wpB?wpB.pos:artB._worldPos;
@@ -14639,7 +14640,7 @@ document.getElementById('tab-lang').addEventListener('click',e=>{
 const _recentExploreKos=[];
 function _pickExploreTarget(){
   const groups=bubbleMeshes.map(bm=>({type:'group',key:'g:'+bm.ko,bm}));
-  const members=ARTISTS.filter(a=>a._worldPos&&a.active).map(a=>{
+  const members=ARTISTS.filter(a=>a._worldPos&&a.active!==false).map(a=>{
     const bm=bubbleMeshes.find(b=>b.ko===a.group.ko);
     return bm?{type:'member',key:'m:'+a.name.ko+':'+a.group.ko,artist:a,bm}:null;
   }).filter(Boolean);
