@@ -61,6 +61,15 @@
 - ~~**`active:false`인데 탈퇴일(`left`)이 없는 멤버 104명 — 그룹 미태깅 영상이 그 멤버 카드에 하나도 안 뜸(2026-08-27 발견)**~~ → **같은 날 처리 완료** — 폴백 4단계 재설계로 차단 110명→11명, 99명 복구. 아래 2026-08-27 항목 참고. ⚠️ 원 진단("탈퇴일 미기입이 원인")은 **틀렸었다** — 실제 원인은 `active` 필드가 "이 그룹 멤버인가"와 "개인이 아직 활동하는가" 두 뜻으로 섞여 쓰인 것이었고, 쥬얼리·걸스데이·스텔라에서 같은 시기 멤버가 은퇴 여부에 따라 갈리고 있었다.
 ---
 
+## 2026-10-13 (세션 — UX 감사·라이브 제외·더쇼·플러스버튼·전체화면·크레딧 오매칭)
+- [완료][index.html] UX 감사: 피드 오버레이 유지(_feedEngaged 수동 열기에도 세팅), 설정→피드백/링크 열 때 피드 안 닫힘·설정 버튼 active 해제, Esc 닫기 목록에 kpop-links-overlay 추가
+- [완료][index.html·admin.js] UX 감사: _admDockShow 모바일 _bringToFront 추가, fbv-overlay·vm-coverset-overlay _bringToFront, _initModalAutoFront 중복 옵저버 방지
+- [완료][index.html] 퍼포먼스 TOP 라이브 제외: _LIVE_EXCLUDE에 생일 라이브·생일라이브·birthday live·실시간 라이브 추가 + 차트 모드에 was_live=false 필터(_applyLiveExclude) + _buildFeedWeeklyTopCams await _optColsReady
+- [완료][index.html] 더쇼 (SBS MTV) 케이팝 링크 모음에서 제거(폐지)
+- [완료][index.html] 카드 상단 케밥(⋮) → 플러스(+) 버튼(#gc-card-menu·#tt-card-menu)
+- [완료][index.html·kpop_universe.css] 라이트박스 전체화면 버튼 추가(모바일 browse 모드, iframe.requestFullscreen 직접 호출 — 3번 클릭 문제 우회)
+- [완료][index.html] 크레딧 오매칭 수정: 그룹 카드 앨범에 ownerName=그룹명 전달, ownerName 있는데 ID 못 찾으면 제목만 매칭 안 함(2PM Heartbeat에 RM·제이홉 뜨던 원인)
+
 ## 2026-10-13 (세션 — 검색·디스코 활동기 스택·카드 첫 화면·지표·히스토리)
 - [완료][index.html] 검색: '클유아' 별칭, 띄어쓰기 무시 그룹 매칭(+단어 쪼개기 오염 수정, search-rank 회귀), 멤버 아바타(사진→본인 직캠 얼굴, 같은 그룹 중복 금지)
 - [완료][groups.json·artists.json·tools/] 디스코: 스포티파이 '정규' 오분류 멜론 기준 재판정(disco_type_melon_verify), 레거시↔스포티파이 중복 54쌍 정리(disco_spotify_legacy_dedupe, dupes 테스트 확장), 트와이스 THIS IS FOR 정규 4집·TEN 스페셜

@@ -5682,11 +5682,14 @@ async function _vmFetchTotals(){
 function _vmScheduleTotals(){clearTimeout(_vmTotalsTimer);_vmTotalsTimer=setTimeout(_vmFetchTotals,800);}
 // 좌측 도킹 슬롯(z58)을 관리 패널 4개(홈·hnn·vm·gp)가 공유하는데 서로 안 닫아 겹쳐 보이던 버그
 // (2026-09-01 사용자 제보 — hnn 열린 채 vm 열면 vm이 밑에 깔림). 하나 열 때 나머지는 반드시 닫는다.
-// ⚠️ _bringToFront는 안 씀 — 카드 위로 올라가 도킹 목적이 뒤집힘(CSS 1584 주석).
+// ⚠️ 데스크톱 도킹 모드에서는 _bringToFront를 쓰면 안 됨 — 카드 위로 올라가 도킹 목적이 뒤집힘(CSS 1584 주석).
+//    모바일에서는 도킹이 없고 전화면 모달이라 설정 패널(_bringToFront로 z:132+)보다 앞에 띄워야 한다.
+//    adm-overlay 계열은 <template>에서 마운트돼 _initModalAutoFront 초기화 때 DOM에 없어 자동 관찰이 안 됨.
 function _admDockShow(id){
   ['adm-home-overlay','hnn-overlay','vm-overlay','gp-overlay'].forEach(o=>{
     document.getElementById(o)?.classList[o===id?'add':'remove']('open');
   });
+  if(window.innerWidth<=768){const el=document.getElementById(id);if(el&&typeof _bringToFront==='function')_bringToFront(el);}
 }
 function _vmOpen(tab){
   // vm개선 3(c): tab 인자 없이(설정 버튼으로) 열면 마지막 탭·검색어·스크롤 복원. 홈 카드처럼 tab을
@@ -6720,7 +6723,9 @@ async function _fbvDelete(id){
   _fbvRenderList();
 }
 document.getElementById('sp-fb-btn')?.addEventListener('click',async()=>{
-  document.getElementById('fbv-overlay').classList.add('open');
+  const _fbvOv=document.getElementById('fbv-overlay');
+  _fbvOv.classList.add('open');
+  if(typeof _bringToFront==='function')_bringToFront(_fbvOv);
   _fbvTab='all';
   document.querySelectorAll('.fbv-tab').forEach(t=>t.classList.toggle('active',t.dataset.cat==='all'));
   document.getElementById('fbv-list').innerHTML='<div id="fbv-empty">불러오는 중…</div>';
@@ -10236,7 +10241,9 @@ function _openVmCoverSet(){
   document.getElementById('vm-cs-results').innerHTML='';
   document.getElementById('vm-cs-status').textContent='';
   _vmCsRenderChips();
-  document.getElementById('vm-coverset-overlay').style.display='flex';
+  const _csOv=document.getElementById('vm-coverset-overlay');
+  _csOv.style.display='flex';
+  if(typeof _bringToFront==='function')_bringToFront(_csOv);
   setTimeout(()=>document.getElementById('vm-cs-search').focus(),50);
 }
 function _closeVmCoverSet(){document.getElementById('vm-coverset-overlay').style.display='none';}
