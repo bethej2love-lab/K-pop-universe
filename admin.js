@@ -6299,7 +6299,7 @@ function _vmUpdateCount(){
 // "그외"(ext) 채널은 이제 DB(ext_channels) 기반이라 여기서 유형 변경(select)/삭제 버튼을 바로 붙여
 // 코드 배포 없이 관리 가능하게 함 — "공식"(그룹/멤버 자체 채널, _officialChannels)은 GROUPS 데이터에서
 // 자동 생성되는 목록이라 여기서 개별 편집 대상이 아님(2026-08-12, 사용자 요청).
-const _EXT_TIER_OPTIONS=[['music','음악'],['variety','예능'],['magazine','잡지'],['idol','아이돌개인'],['grpsub','그룹 공식(서브)'],['show','드라마/영화'],['fans','팬']];
+const _EXT_TIER_OPTIONS=[['music','음악'],['variety','예능'],['magazine','잡지'],['idol','아이돌개인'],['grpsub','그룹 공식(서브)'],['show',_CAT_LABEL.show[0]],['fans','팬']];
 // "그외" 탭에서 유형별로 걸러보는 칩 — official 탭에선 숨김(2026-08-21, 사용자 요청 — 5종이 한 리스트에
 // 섞여 있어 특정 유형만 확인하기 번거로움).
 function _vmRenderChTierChips(){
@@ -6377,7 +6377,7 @@ function _vmRenderChannels(term){
       item.appendChild(tierSel);
       // 기본 카테고리(제목으로 분류 안 된 영상의 행선지) — 채널마다 성격이 달라 유형으로 강제하지 않음
       const catSel=document.createElement('select');catSel.className='ec-tier-sel';catSel.title='분류 안 된 영상 기본 탭';
-      [['','기본'],['none','전체탭만'],['variety','예능'],['show','드라마/영화'],['live','퍼포먼스'],['mv','뮤비']].forEach(([v,label])=>{
+      [['','기본'],['none','전체탭만'],...['variety','show','live','mv'].map(k=>[k,_CAT_LABEL[k][0]])] /* 이름은 index.html _CAT_LABEL에서(2026-10-13 통일) */.forEach(([v,label])=>{
         const o=document.createElement('option');o.value=v;o.textContent=label;
         if((ch.defaultCategory||'')===v)o.selected=true;
         catSel.appendChild(o);

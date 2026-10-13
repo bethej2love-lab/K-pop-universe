@@ -533,7 +533,7 @@
           <option value="magazine">잡지</option>
           <option value="idol">아이돌개인</option>
           <option value="grpsub">그룹 공식(서브)</option>
-          <option value="show">드라마/영화</option>
+          <option value="show">드라마·영화</option>
           <option value="fans">팬</option>
         </select>
         <input type="text" id="vm-ch-add-owner" placeholder="소유자/전용멤버 실명 · 공동운영이면 쉼표로 (아이돌개인·팬)" autocomplete="off" spellcheck="false" style="display:none">
@@ -545,10 +545,10 @@
           <option value="">기본(유형 따름)</option>
           <option value="none">분류 안 함(전체 탭만)</option>
           <option value="variety">예능</option>
-          <option value="show">드라마/영화</option>
+          <option value="show">드라마·영화</option>
           <!-- 값은 'live' 그대로, 라벨만 '퍼포먼스'(2026-09-14) — 카드 탭 'Performance'와 같은 것을 가리킨다 -->
-          <option value="live">퍼포먼스 (무대·직캠·안무영상)</option>
-          <option value="mv">뮤직비디오</option>
+          <option value="live" title="무대·직캠·안무영상">퍼포먼스</option>
+          <option value="mv">MV</option>
         </select>
         <label id="vm-ch-add-primary-wrap" style="display:none;align-items:center;gap:4px;font-size:11px;color:rgba(175,196,240,0.75);white-space:nowrap;">
           <input type="checkbox" id="vm-ch-add-primary">대표
@@ -1137,10 +1137,10 @@
           <option value="">기본</option>
           <option value="mv">MV</option>
           <!-- 값은 'live' 그대로, 라벨만 '퍼포먼스'(2026-09-14) — 카드 탭 'Performance'와 같은 것을 가리킨다 -->
-          <option value="live">퍼포먼스 (무대·직캠·안무영상)</option>
+          <option value="live" title="무대·직캠·안무영상">퍼포먼스</option>
           <option value="challenge">챌린지</option>
           <option value="variety">예능</option>
-          <option value="show">드라마/영화</option>
+          <option value="show">드라마·영화</option>
           <!-- ⚠️ other/fan은 "관리자가 고르라고" 넣은 게 아니라 **왕복 손실을 막으려고** 넣었다(2026-09-07).
                DB의 251,247건이 category='other', 82건이 'fan'인데 여기 옵션이 없어서, 그 행을 모달로 열면
                select.value가 ''로 떨어지고 저장 시 category=null로 조용히 지워졌다(실측 854건, 그중 853건이
@@ -6757,7 +6757,15 @@ function _closeQueueSheet(){
 //    GIN이 있는 cover_of_members/cover_of_groups로 받아 온 뒤 같은 곡은 클라이언트에서 추린다(0.3초).
 // ⚠️ 제목 feat./X 인물은 유니버스 밖 이름이어도 칩으로 쓴다(2026-09-28 사용자 결정 — 크러쉬·이무진·권진아처럼
 //    반복 등장하는 사람이 많다). 칩은 거르기만 하고 그 사람으로 넘어가진 않는다(넘어갈 카드가 없으므로).
-const _SURF_LENSES=[['live','라이브','Live'],['cam','직캠','Fancam'],['mv','MV','MV'],['variety','예능','Variety'],['all','전체','All']];
+// ── 영상 카테고리 이름 — 유일한 정의 자리(2026-10-13, 사용자 — "관리자 포맷 옵션과 카드 탭 이름을 다 통일") ──
+// 같은 category 값을 화면마다 다르게 불렀다: live=무대/퍼포먼스/라이브, mv=MV/뮤직비디오/뮤비, show=드라마/드라마·영화.
+// 카드 탭·포맷 필터·관리자 옵션(index.html·admin.js)은 전부 여기서 읽는다. 값(DB category)은 그대로.
+// ⚠️ 차트의 "무대 TOP"은 예외 — 방송 무대만 세는 다른 개념이라(_applyLiveExclude) 일부러 '무대'로 둔다.
+// ⚠️ 카드의 팬 영상 탭은 팬덤명으로 바뀌는 라벨("by MY")이라 예외(그 자리에서 따로 만든다).
+const _CAT_LABEL={mv:['MV','MV'],live:['퍼포먼스','Performance'],cover:['커버','Cover'],short:['쇼츠','Shorts'],
+  challenge:['챌린지','Challenge'],variety:['예능','Variety'],show:['드라마·영화','Show'],fan:['팬 영상','Fan-made'],other:['기타','Other']};
+function _catLabel(v){const l=_CAT_LABEL[v];return l?(currentLang==='ko'?l[0]:l[1]):v;}
+const _SURF_LENSES=[['live',_CAT_LABEL.live[0],_CAT_LABEL.live[1]],['cam','직캠','Fancam'],['mv','MV','MV'],['variety','예능','Variety'],['all','전체','All']];
 const _SURF_SHOW=4; // 묶음 펼침 시 처음 보이는 타일 수(나머지는 "N개 더 보기")
 // 이름 줄·그룹 줄 조회 범위(2026-10-01, 90→300 · 60→200) + 직캠 보강 60개(조회수 상위에 밀려 직캠 필터가 비던 것)
 const _SURF_SELF_LIM=300,_SURF_GROUP_LIM=200,_SURF_CAM_LIM=60;
@@ -13093,7 +13101,7 @@ async function _openSongVideos(title,owner,songMeta){
 // 형식 칩(2026-09-21) — 값은 그룹/멤버 카드 영상 탭과 같은 DB category 그대로 쓴다.
 // ⚠️ 'cover'는 칩에 넣지 않는다 — 이 시트엔 이미 "원곡/커버"(cover_of 태깅 기준) 탭이 있어서 같은
 //    낱말이 두 가지를 뜻하게 된다. 칩은 좁히기용일 뿐이라, 칩에 없는 형식도 '전체'에선 그대로 보인다.
-const _TVF_FMTS=[['mv','MV','MV'],['live','무대','Performance'],['short','쇼츠','Shorts'],['challenge','챌린지','Challenge'],['variety','예능','Variety'],['show','드라마','Show']];
+const _TVF_FMTS=['mv','live','short','challenge','variety','show'].map(k=>[k,_CAT_LABEL[k][0],_CAT_LABEL[k][1]]);
 function _tvfFmt(v){
   if(_isShortV(v)){
     if(/챌린지|challenge/i.test(v.title||''))return 'challenge';
@@ -24213,7 +24221,8 @@ function _makeChVidController(contId){
     //    바뀐 건 화면에 찍히는 라벨뿐이고, 이 줄이 그 **유일한 정의 자리**다(i18n 테이블에도 없음).
     // ⚠️ 차트(무대 TOP 등)는 여전히 방송 무대만 본다 — _applyLiveExclude 주석 참고.
     const _ko=currentLang==='ko';
-    let catTabs=memberKo?[['all','All'],['live',_ko?'무대':'Performance'],['cover',_ko?'커버':'Cover'],['short',_ko?'쇼츠':'Shorts'],['variety',_ko?'예능':'Variety'],['show',_ko?'드라마':'Show']]:[['all','All'],['mv','MV'],['live',_ko?'무대':'Performance'],['cover',_ko?'커버':'Cover'],['short',_ko?'쇼츠':'Shorts'],['variety',_ko?'예능':'Variety'],['show',_ko?'드라마':'Show']];
+    // 라벨은 _CAT_LABEL(유일한 정의 자리)에서 — 관리자 포맷 옵션과 같은 이름(2026-10-13 통일)
+    let catTabs=[['all','All'],...(memberKo?['live','cover','short','variety','show']:['mv','live','cover','short','variety','show']).map(k=>[k,_catLabel(k)])];
     // "by Fan" 탭(2026-08-10, 사용자 요청) — 팬이 직접 찍거나 만든 영상 전용. 아직은 어떤 그룹도 팬채널을
     // 등록 안 해서 category='fan'인 행이 하나도 없지만(추후 사용자가 그룹별로 팬채널 링크를 주면 그
     // 채널 동기화 시 category='fan'으로 저장할 예정), 미리 이 자리를 만들어둠. 팬덤명을 알면 "by {영문
