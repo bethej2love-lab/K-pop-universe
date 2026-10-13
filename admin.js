@@ -11044,6 +11044,40 @@ async function _admErrorRate(){
   }
   return{...cur,prev};
 }
+// ── 사용자 지표 카드(2026-10-13) — 진단 보고서 7번 지표 실측값. app_events(index.html _appEvent) → get_app_metrics RPC.
+// 지난 7일 "이 기기 첫 방문자" 기준. 표본이 작을 땐(첫 방문 20명 미만) 비율 옆에 n을 같이 적어 과신하지 않게 한다.
+// 테이블/RPC가 없으면(SQL 미실행) 카드에 그 사실을 적는다.
+async function _admLoadUserMetrics(wrap){
+  const hd=document.createElement('div');hd.className='adm-metrics-hd';hd.textContent='사용자 지표 · 최근 7일 (어드민 제외)';
+  hd.style.cssText='grid-column:1/-1;font-size:11px;font-weight:700;letter-spacing:.04em;color:rgba(150,175,225,0.75);margin-top:8px;';
+  wrap.appendChild(hd);
+  const defs=[
+    ['visitors','방문자','최근 7일 방문한 사람(기기)'],
+    ['first_action_rate','첫 행동 완료율','첫 방문자 중 첫날 카드·영상·검색·최애를 한 비율'],
+    ['depth_median','탐색 깊이','방문일당 카드·영상 연 수(중앙값)'],
+    ['save_rate','저장 전환율','첫 방문자 중 첫날 최애·컬렉션·스크랩한 비율'],
+    ['retention7_rate','7일 재방문율','8~14일 전 첫 방문자 중 7일 안에 다시 온 비율'],
+    ['link_new_visitors','공유 링크 신규 유입','공유·딥링크로 들어온 첫 방문자 수'],
+  ];
+  const cards={};
+  defs.forEach(([k,lbl,sub])=>{const c=_admCard({lbl,num:'…',sub:'불러오는 중',tone:'adm-zero'});c.title=sub;wrap.appendChild(c);cards[k]=c;});
+  const put=(k,num,sub)=>{const c=cards[k];if(!c)return;c.querySelector('.adm-card-num').textContent=num;const s=c.querySelector('.adm-card-sub');if(s)s.textContent=sub;};
+  try{
+    const{data,error}=await sb.rpc('get_app_metrics',{p_days:7});
+    if(error)throw error;
+    const m=typeof data==='string'?JSON.parse(data):data;
+    const n=m.new_visitors||0,small=n<20?` · 첫 방문 n=${n}`:` · 첫 방문 ${n}명`;
+    put('visitors',String(m.visitors??0),`신규 ${n}명`);
+    put('first_action_rate',m.first_action_rate==null?'—':m.first_action_rate+'%',(m.first_action_rate==null?'아직 데이터 없음':'첫날 기준')+small);
+    put('depth_median',m.depth_median==null?'—':String(Math.round(m.depth_median*10)/10),'방문일당 카드·영상');
+    put('save_rate',m.save_rate==null?'—':m.save_rate+'%',(m.save_rate==null?'아직 데이터 없음':'첫날 기준')+small);
+    put('retention7_rate',m.retention7_rate==null?'—':m.retention7_rate+'%',m.retention7_cohort?`대상 ${m.retention7_cohort}명`:'수집 8일째부터 나옴');
+    put('link_new_visitors',String(m.link_new_visitors??0),`공유 ${m.shares??0}회 보냄`);
+  }catch(e){
+    const why=/function|PGRST202|42883|42P01|does not exist/i.test(String(e.message||e.code||''))?'SQL 미실행(sql/2026-10-13_app_events_metrics.sql)':'조회 실패';
+    Object.keys(cards).forEach(k=>put(k,'—',why));
+  }
+}
 async function _admLoadCards(){
   const wrap=document.getElementById('adm-cards');
   if(!wrap)return;
@@ -11110,6 +11144,7 @@ async function _admLoadCards(){
     return;
   }
   _tagReviewCount().then(n=>set(cTagq,n,'없어요 🎉')); // 검수 대기열 건수(테이블 없으면 null→"?")
+  _admLoadUserMetrics(wrap);
   // 공용 DB의 마지막 실행 시각으로 카드 갱신(기기 간 공유). 로컬보다 최신이면 로컬도 맞춰둔다.
   _admReadLastRunDB().then(dbTs=>{
     const t=Math.max(dbTs,_admLastRunLocal());
