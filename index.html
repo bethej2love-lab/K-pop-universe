@@ -20701,7 +20701,12 @@ function _buildFeedForYouAnniv(){
     hits.push({d,icon:'🎂',type:isKo?'생일':'Birthday',name:_dispName(a),
       onClick:()=>_feedNav(()=>{if(a._worldPos)flyTo(a._worldPos);
         if(isMob())showT(a,window.innerWidth/2,window.innerHeight*0.4,false,false,false);else showT(a,window.innerWidth/2,window.innerHeight/2);}),
-      thumb:()=>Promise.resolve(_fetchArtistPicAnyGroup(a)).then(pic=>pic||_fetchTopVideoThumb(_ytGroupKoFor(a),a.name.ko))});
+      thumb:()=>Promise.resolve(_fetchArtistPicAnyGroup(a)).then(async pic=>{
+        if(pic)return pic;
+        const gko=_ytGroupKoFor(a);const mko=a.name.ko;
+        try{if(sb&&gko&&mko){const{data}=await sb.from(_YT_TABLE).select('id,thumb,is_short').eq('category','live').eq('group_ko',gko).eq('members',`{${_pgFilterVal(mko)}}`).or('content_flag.is.null,content_flag.neq.보류').or('content_flag.is.null,content_flag.neq.hidden').order('view_count',{ascending:false}).limit(6);const pick=data?.find(v=>v.thumb);if(pick)return pick.thumb;}}catch(_){}
+        return _fetchTopVideoThumb(gko,mko);
+      })});
   });
   if(!hits.length){section.style.display='none';return;}
   section.style.display='';
