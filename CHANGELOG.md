@@ -61,6 +61,20 @@
 - ~~**`active:false`인데 탈퇴일(`left`)이 없는 멤버 104명 — 그룹 미태깅 영상이 그 멤버 카드에 하나도 안 뜸(2026-08-27 발견)**~~ → **같은 날 처리 완료** — 폴백 4단계 재설계로 차단 110명→11명, 99명 복구. 아래 2026-08-27 항목 참고. ⚠️ 원 진단("탈퇴일 미기입이 원인")은 **틀렸었다** — 실제 원인은 `active` 필드가 "이 그룹 멤버인가"와 "개인이 아직 활동하는가" 두 뜻으로 섞여 쓰인 것이었고, 쥬얼리·걸스데이·스텔라에서 같은 시기 멤버가 은퇴 여부에 따라 갈리고 있었다.
 ---
 
+## 2026-10-13 (세션 — 검색·디스코 활동기 스택·카드 첫 화면·지표·히스토리)
+- [완료][index.html] 검색: '클유아' 별칭, 띄어쓰기 무시 그룹 매칭(+단어 쪼개기 오염 수정, search-rank 회귀), 멤버 아바타(사진→본인 직캠 얼굴, 같은 그룹 중복 금지)
+- [완료][groups.json·artists.json·tools/] 디스코: 스포티파이 '정규' 오분류 멜론 기준 재판정(disco_type_melon_verify), 레거시↔스포티파이 중복 54쌍 정리(disco_spotify_legacy_dedupe, dupes 테스트 확장), 트와이스 THIS IS FOR 정규 4집·TEN 스페셜
+- [완료][index.html] 디스코 활동기 스택 기본 적용(앨범+판+선공개, 발음 뼈대 대조) + 어드민 수동 지정(disco_era_overrides, SQL 실행됨), tests/discog-eras
+- [완료][index.html·admin.js] 사용자 지표: _gaEvent→app_events 거울 복사 + 관리자 홈 지표 카드(get_app_metrics, SQL 실행됨). 7일 재방문율은 10-21쯤부터
+- [완료][index.html] 카드 첫 화면: 사진 미등록 멤버 프로필=본인 직캠 얼굴, 헤더 아래 영상 한 줄(그리드와 분리된 전용 쿼리·퍼포먼스 우선, ?hero=0으로 끔), 멤버 영상 셋째 줄 본인 칩 제거
+- [완료][index.html·admin.js] 카테고리 이름 단일 정의 _CAT_LABEL(퍼포먼스·전체 등), 차트 '퍼포먼스 TOP'
+- [완료][index.html] 시청 진행 빨간 줄 실제 작동(유튜브 listening 핸드셰이크·duration 기억·display 버그·간격 저장) + 탐험 선반·검색 영상 적용
+- [완료][index.html] 히스토리: ‘제목’·흐린 보조, 첫 콘서트 규칙(쇼케이스 등 제외), 항목 클릭 연결, 1억 뷰 MV·첫 멜론 연간·일본 데뷔
+- [완료][index.html] 케이팝 링크: NOL·네이버 연예 제거, 블립·음반 구매·오프라인 매장 추가, 깨진 주소 수정, 카테고리 순서 재배치
+- [보류] 빌보드 K-pop(404)·엠카운트다운(404) 링크 교체/제거 — 사용자 판단 대기
+- [이슈] kpop_events 'Set lists' 찌꺼기 56행(비투비·트와이스·레드벨벳), 트와이스 TWICELAND(2017) 등 초기 공연 누락 — DB 정리는 관리자 판단
+- 참고: DESIGN_REVIEW.md 맨 위에 첫 방문 실측(10-13) 기록
+
 ## 2026-10-12 (세션 — 시청 진행 바·CI 수정)
 - [완료][index.html][kpop_universe.css] **시청 진행 바** — YouTube 빨간 줄처럼 썸네일 하단에 빨간 진행 바. infoDelivery postMessage로 currentTime/duration 캡처 → localStorage 저장(기기 로컬), 로그인 시 Supabase `video_progress` 테이블 동기화(기기 간). `.gc-ch-item`·`.tv-sm`·feed-list 오버레이 3종 모두 적용. Supabase 테이블/RLS 생성 SQL 사용자 실행 완료.
 - [완료][tests/] **CI 빨간불 수정** — program-collection(gc-program-row→gc-collection-row), shorts-promote(_ytClassify 시그니처 변경), vid-ago('어제'→'1일 전' 의도적 변경 테스트 반영).
