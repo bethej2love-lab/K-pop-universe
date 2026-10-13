@@ -1176,6 +1176,16 @@
     #yt-lightbox.lb-browse #yt-lb-uplist:not(.qs-in){display:none!important;}
     #yt-lightbox.lb-browse #yt-lb-uplist.qs-in{margin-top:0!important;border-top:none!important;
       padding-bottom:calc(env(safe-area-inset-bottom,0px) + 20px)!important;}
+    /* landscape 모바일(높이 ≤ 500px): wrap padding-top(78px) + 영상 높이(width 기준 16:9)가 화면을 넘어
+       상단이 잘리는 버그(2026-10-13). 높이 기준으로 영상 크기를 결정해 잘림 방지 */
+    @media (max-height:500px) {
+      #yt-lightbox.lb-browse #yt-lb-video-box:not(.is-shorts){
+        height:calc(100vh - 90px);
+        height:calc(100svh - 90px);
+        width:auto;
+        aspect-ratio:16/9;
+      }
+    }
   }
   #mob-sheet-handle{width:36px;height:4px;background:rgba(255,255,255,0.14);border-radius:2px;margin:10px auto 6px;display:block;}
   /* 카드 뒤로가기 — 시트 손잡이 줄 왼쪽 끝에 고정(2026-08-26).
