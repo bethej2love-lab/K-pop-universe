@@ -25761,6 +25761,7 @@ function _mountAdminMarkup(){
     const host=sel==='body'?document.body:document.querySelector(sel);
     if(host)host.appendChild(tpl.content.cloneNode(true));
   });
+}
 // 유튜브 채널 동기화/Shorts 재분류 버튼은 관리자만 — 아무나 API 키만 있으면 실행 가능한 구조라 UI에서부터 숨김
 function _updateAdminUI(){
   if(_isAdmin())_mountAdminMarkup(); // 마크업이 template 안에 있으므로 먼저 꺼내야 아래 조회가 성립
