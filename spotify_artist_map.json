@@ -775,7 +775,12 @@
     "confidence": "low",
     "why": "이름 불일치 — 앨범 대조",
     "evidence": {
-      "titleOverlap": 0
+      "titleOverlap": 0,
+      "verifyOverlap": 0,
+      "verifyYears": [
+        2023,
+        2021
+      ]
     },
     "checkedAt": "2026-09-29"
   },
@@ -2527,6 +2532,17 @@
       "titleOverlap": 0
     },
     "checkedAt": "2026-10-10"
+  },
+  "서윤경": {
+    "id": "5Thqo7OXD8aLIGAn9KLCsl",
+    "spotifyName": "HYUN SEO",
+    "kind": "solo",
+    "confidence": "low",
+    "why": "이름 불일치 — 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-10-13"
   },
   "서인영": {
     "id": "6UaKk8mT8NH0BuUTFIhxN7",
