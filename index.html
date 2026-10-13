@@ -12554,6 +12554,9 @@ function _renderDiscogStacks(strip,list,prefix){
   }
   const _sk=new Map();list.forEach(a=>_sk.set(a,keyOf.get(a)));
   const ownerKey=(prefix==='gc'?_openGCko:(_openTArtist&&_openTArtist.name.ko))||'';
+  // 스택이 하나라도 있으면 위 여백을 둔다 — 부채꼴 뒤 커버·펼친 묶음 라벨이 위로 살짝 올라온다(strip이
+  // overflow-x:auto라 위로 넘치면 잘린다).
+  strip.classList.toggle('has-stacks',[...buckets.values()].some(b=>b.items.length>1));
   const seen=new Set();
   const mkItem=(a,idx)=>{
     const item=document.createElement('div');
@@ -12575,9 +12578,13 @@ function _renderDiscogStacks(strip,list,prefix){
     const yrs=b.items.map(x=>+String(x.releaseDate||'').slice(0,4)).filter(Boolean);
     const span=yrs.length?(Math.min(...yrs)===Math.max(...yrs)?`${Math.min(...yrs)}`:`${Math.min(...yrs)}–${String(Math.max(...yrs)).slice(2)}`):'';
     if(_discogStackOpen.has(openKey)){
+      // 펼친 묶음 — 박스 윗선에 걸친 가로 라벨(fieldset legend처럼)이 이름+접기 버튼이다. 세로 글씨 탭은
+      // 어색하다는 피드백(2026-10-13)으로 뺐다. 라벨은 strip의 위 여백에 걸리므로 펼쳐도 높이가 안 변한다.
       const wrap=document.createElement('div');wrap.className='gc-discog-series';
       const fold=document.createElement('button');fold.type='button';fold.className='gc-discog-series-fold';
-      fold.innerHTML=`<span class="gds-chev">‹</span><span class="gds-name"></span>`;fold.querySelector('.gds-name').textContent=b.label;
+      fold.innerHTML=`<span class="gds-name"></span><span class="gds-cnt"></span><span class="gds-x" aria-hidden="true">✕</span>`;
+      fold.querySelector('.gds-name').textContent=b.label;
+      fold.querySelector('.gds-cnt').textContent=`${b.items.length}${currentLang==='ko'?'장':''}`;
       fold.title=currentLang==='ko'?'접기':'Collapse';
       fold.addEventListener('click',e=>{e.stopPropagation();_discogStackOpen.delete(openKey);strip.innerHTML='';_renderDiscogStacks(strip,list,prefix);});
       wrap.appendChild(fold);
