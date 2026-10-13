@@ -12802,7 +12802,7 @@ function _discogEras(list,ov){
     if(orig.length)al=orig;
     e.lead=(al.length?al:e.items).slice().sort((x,y)=>((y.trackCount||0)-(x.trackCount||0))||(day(y.releaseDate)-day(x.releaseDate)))[0];
     e.label=_discogEditionKey(e.lead.title).label;
-    e.items.sort((x,y)=>day(x.releaseDate)-day(y.releaseDate)); // 펼치면 발매순
+    e.items.sort((x,y)=>day(y.releaseDate)-day(x.releaseDate)); // 펼치면 최신순(디스코그라피 방향 통일)
   }
   return{eraOf,eras};
 }
