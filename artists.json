@@ -61641,6 +61641,39 @@
     },
     "discography": [
       {
+        "title": "SOLSTICE",
+        "type": "미니",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/146/45/137/14645137_20261012153114_500.jpg",
+        "releaseDate": "2026.10.13",
+        "trackCount": 4,
+        "titleTrack": "STAMINA",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "STAMINA",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "SYNCOPATION",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "돌아와",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "C-119 (feat. TWLV)",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "14645137"
+      },
+      {
         "title": "Cool & Hot",
         "type": "싱글",
         "releaseDate": "2025.04.30",
@@ -191871,6 +191904,25 @@
     "sparkle": false,
     "songs": [],
     "discography": [
+      {
+        "title": "7",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://i.scdn.co/image/ab67616d0000b273c3e95534ade044dfa41ee85f",
+        "releaseDate": "2026.09.30",
+        "trackCount": 1,
+        "titleTrack": "7",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "7",
+            "isTitle": true
+          }
+        ],
+        "src": "spotify",
+        "spotifyId": "757uzx7rSRTQiznvIH46Bw",
+        "copyright": "2026 TOKUMA JAPAN COMMUNICATIONS"
+      },
       {
         "title": "AFTER THE LIGHTS",
         "type": "싱글",
