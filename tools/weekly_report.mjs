@@ -69,6 +69,11 @@ function dataHealthMd() {
     stale.sort((a, b) => b.mo - a.mo);
     const staleTop = stale.slice(0, 5).map(x => `${x.k}(${x.mo}개월)`).join(' · ');
 
+    // 3인이상 동명이인 (그룹 구분 없이 전체 기준)
+    const byKo = {};
+    for (const a of arts) { const k = a.name?.ko; if (k) (byKo[k] = byKo[k]||0)++; }
+    const tripleNames = Object.values(byKo).filter(c => c >= 3).length;
+
     // 로스터 이상: 멤버 이름이 자기 그룹 트랙 제목과 정확히 일치
     const rosterBugs = [];
     const trackTitlesOf = {};
@@ -93,7 +98,8 @@ function dataHealthMd() {
 | 활동 멤버 국적 없음 | ${noNat}명 |
 | 미해산 그룹 팬덤명 없음 | ${noFandom}개 |
 | 미해산 그룹 인스타 없음 | ${noInsta}개 |
-| 신보 14개월+ 의심 | ${stale.length}개 |`;
+| 신보 14개월+ 의심 | ${stale.length}개 |
+| 3인이상 동명이인 | ${tripleNames}건 |`;
     if (stale.length) lines += `\n\n상위: ${staleTop}`;
     if (rosterBugs.length) lines += `\n\n> ⚠️ 로스터 이상(멤버명=트랙명): ${rosterBugs.join(' · ')}`;
     return lines;
