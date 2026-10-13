@@ -799,6 +799,7 @@
       </div>
     </div>
     <div id="feed-list-grid" class="gc-ch-grid"></div>
+    <button id="feed-list-top-btn" aria-label="맨 위로"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M18 15l-6-6-6 6"/></svg></button>
   </div>
 </div>
 <div id="mob-sheet">
@@ -20199,6 +20200,7 @@ function _openFeedListOverlay(title,sub,songs,ctx){
   }
   grid.classList.add('gc-ch-grid');
   grid.classList.remove('cve-list');
+  grid.classList.toggle('gc-ch-grid-ranked',_ranked);
   // "(원곡: X)" 스캔이랑 같은 계열의 실측 문제 — 이 목록은 최대 500개(_buildFeedFormatPick/
   // _buildFeedGenCamPick의 limit)까지 있을 수 있는데, loading="lazy" <img> 수백 개를 한 번에 DOM에
   // 다 꽂아넣으면(오버레이를 먼저 열어도 마찬가지) 실제 화면 하나에 들어오는 근처 이미지 수십~수백 개가
@@ -20244,7 +20246,7 @@ function _openFeedListOverlay(title,sub,songs,ctx){
     // 기본 가로 썸네일을 쓰므로 가운데가 잘리지 않고, 격자가 균일해 순위가 그대로 읽힌다.
     const shortFlag=_ranked?false:_songIsShort(s);
     const item=document.createElement('div');
-    item.className='gc-ch-item'+(shortFlag?' is-short':'')+(_wideFlags&&_wideFlags[idx]?' gc-ch-wide':'');
+    item.className='gc-ch-item'+(shortFlag?' is-short':'')+(_wideFlags&&_wideFlags[idx]?' gc-ch-wide':'')+(_ranked&&idx===0?' featured':'');
     const baseThumb=s.thumb||`https://img.youtube.com/vi/${ytId(s.u)}/mqdefault.jpg`;
     const img=document.createElement('img');
     img.className='gc-ch-thumb';img.loading='lazy';img.decoding='async';img.alt=_cleanTitle(s.t);
@@ -20399,6 +20401,14 @@ function _wireFeedListSwipe(){
   },{passive:true});
 }
 _wireFeedListSwipe();
+{
+  const _flGrid=document.getElementById('feed-list-grid');
+  const _flTopBtn=document.getElementById('feed-list-top-btn');
+  if(_flGrid&&_flTopBtn){
+    _flGrid.addEventListener('scroll',()=>{_flTopBtn.classList.toggle('visible',_flGrid.scrollTop>260);},{passive:true});
+    _flTopBtn.addEventListener('click',e=>{e.stopPropagation();_flGrid.scrollTo({top:0,behavior:'smooth'});});
+  }
+}
 document.getElementById('feed-list-close')?.addEventListener('click',e=>{e.stopPropagation();_closeFeedListOverlay();});
 document.getElementById('feed-list-overlay')?.addEventListener('click',e=>{if(e.target===e.currentTarget)_closeFeedListOverlay();});
 document.getElementById('feed-list-overlay')?.addEventListener('pointerdown',e=>e.stopPropagation());
