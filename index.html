@@ -13456,9 +13456,13 @@ function _comboFromHash(param){
 }
 function _appendComboEntry(res){
   const b=document.createElement('button');b.type='button';b.className='combo-entry';
-  const t=document.createElement('span');t.className='combo-entry-t';t.textContent=currentLang==='ko'?'🔗 멤버 조합 찾기':'🔗 Find a member combo';
+  const ico=document.createElement('span');ico.className='combo-entry-ico';ico.textContent='🔗';
+  const txt=document.createElement('span');txt.className='combo-entry-txt';
+  const t=document.createElement('span');t.className='combo-entry-t';t.textContent=currentLang==='ko'?'멤버 조합 찾기':'Find a member combo';
   const s=document.createElement('span');s.className='combo-entry-s';s.textContent=currentLang==='ko'?'여러 멤버가 함께 나온 영상 모아보고 공유':'Videos where members appear together — share it';
-  b.appendChild(t);b.appendChild(s);
+  txt.appendChild(t);txt.appendChild(s);
+  const arr=document.createElement('span');arr.className='combo-entry-arr';arr.textContent='›';
+  b.appendChild(ico);b.appendChild(txt);b.appendChild(arr);
   b.addEventListener('click',e=>{
     e.stopPropagation();
     try{
@@ -25944,16 +25948,14 @@ _totopBtn.addEventListener('click',e=>{
     </div>
     <!-- Discover = "전체·탐색": 오늘의 소식 → 기념일 → 차트 → Trend → 디스커버리 (2026-09-23 오늘의 소식 추가). -->
     <div id="feed-pane-disc" class="feed-pane" hidden>
-      <div class="feed-section">
-        <button id="mx-open-btn" class="mx-feed-btn" type="button">
-          <span class="mx-feed-icon">🔍</span>
-          <span class="mx-feed-txt">
-            <span class="mx-feed-ttl">멤버 탐색</span>
-            <span class="mx-feed-sub">2009년생 · 남돌 · 일본인 멤버 등으로 필터링</span>
-          </span>
-          <span class="mx-feed-arr">›</span>
-        </button>
-      </div>
+      <button id="mx-open-btn" class="mx-feed-btn" type="button">
+        <span class="mx-feed-icon">🔍</span>
+        <span class="mx-feed-txt">
+          <span class="mx-feed-ttl">멤버 탐색</span>
+          <span class="mx-feed-sub">2009년생 · 남돌 · 일본인 멤버 등으로 필터링</span>
+        </span>
+        <span class="mx-feed-arr">›</span>
+      </button>
       <!-- 오늘의 케이팝 소식(2026-09-23, 사용자 제안) — 앨범 발매·음방 1위·조회수 마일스톤 세 소스를
            "오늘 일어난 일"로만 좁혀 한 선반에 합친다. 기존 New Releases(최근 최대 60일)·Charts와 달리
            "오늘"이 유일한 필터라 데이터가 얇은 날은 짧거나 빈 채로 섹션 자체가 숨는다(정상 — 억지로

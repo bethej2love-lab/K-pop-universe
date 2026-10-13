@@ -2882,9 +2882,13 @@
   #combo-share{background:rgba(255,255,255,0.08);color:#c8d8f0;border:none;border-radius:12px;padding:10px 14px;font-size:13px;font-weight:600;cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><path d='M11,1 L12.3,9.7 L21,11 L12.3,12.3 L11,21 L9.7,12.3 L1,11 L9.7,9.7Z' fill='%23FFB0D0' opacity='.97'/></svg>") 11 11,pointer;white-space:nowrap;font-family:inherit;}
   #combo-results{margin-top:14px;overflow-y:auto;display:block;min-height:0;flex:1;} /* buildVideoSection이 자체 레이아웃(대표영상+행패커 그리드)을 붙이므로 일반 블록 */
   .combo-who{font-size:11px;color:rgba(150,175,235,0.62);margin-top:2px;} /* 이 영상에 나온 선택 멤버들 */
-  .combo-entry{display:flex;flex-direction:column;gap:2px;width:calc(100% - 26px);margin:8px 13px 4px;padding:11px 14px;background:linear-gradient(100deg,rgba(120,150,255,0.16),rgba(84,224,198,0.10));border:0.5px solid rgba(120,150,255,0.25);border-radius:13px;cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><path d='M11,1 L12.3,9.7 L21,11 L12.3,12.3 L11,21 L9.7,12.3 L1,11 L9.7,9.7Z' fill='%23FFB0D0' opacity='.97'/></svg>") 11 11,pointer;text-align:left;}
-  .combo-entry-t{font-size:13px;font-weight:700;color:#e9eeff;}
-  .combo-entry-s{font-size:11px;color:rgba(175,195,240,0.7);}
+  .combo-entry{display:flex;align-items:center;gap:13px;margin:8px 16px 4px;padding:15px 18px;background:linear-gradient(130deg,rgba(55,85,220,0.13) 0%,rgba(100,55,220,0.09) 100%);border:0.5px solid rgba(120,148,255,0.2);border-radius:14px;cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><path d='M11,1 L12.3,9.7 L21,11 L12.3,12.3 L11,21 L9.7,12.3 L1,11 L9.7,9.7Z' fill='%23FFB0D0' opacity='.97'/></svg>") 11 11,pointer;text-align:left;-webkit-tap-highlight-color:transparent;transition:opacity .13s;}
+  .combo-entry:active{opacity:.72;}
+  .combo-entry-ico{font-size:22px;flex-shrink:0;}
+  .combo-entry-txt{flex:1;display:flex;flex-direction:column;gap:2px;min-width:0;}
+  .combo-entry-t{font-size:13.5px;font-weight:700;color:rgba(210,225,255,0.97);letter-spacing:-.01em;}
+  .combo-entry-s{font-size:11px;color:rgba(160,185,255,0.5);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .combo-entry-arr{font-size:20px;color:rgba(160,190,255,0.38);flex-shrink:0;}
   /* ── 발자국(2026-09-02) — 방금 본 카드로 되돌아가기. 카드 닫혀 우주로 돌아왔을 때만 좌하단에 뜬다(클린 유지).
      기본은 🐾 토글만, 누르면 최근 카드 칩 트레일. localStorage라 닫혀도·재방문에도 남는다. ── */
   #footprint-bar{position:fixed;left:12px;bottom:calc(74px + env(safe-area-inset-bottom,0px));z-index:41;display:none;align-items:center;gap:8px;max-width:calc(100vw - 24px);}
@@ -4178,13 +4182,14 @@
 .mx-card-group{font-size:10px;color:rgba(255,255,255,0.45);word-break:keep-all;}
 .mx-card-meta{font-size:10px;color:rgba(255,255,255,0.35);}
 .mx-empty{grid-column:1/-1;text-align:center;color:rgba(255,255,255,0.3);padding:48px 20px;font-size:14px;}
-.mx-feed-btn{width:100%;display:flex;align-items:center;gap:14px;padding:13px 16px;background:rgba(100,150,255,0.07);border:1px solid rgba(100,150,255,0.18);border-radius:14px;cursor:pointer;text-align:left;transition:background 0.14s;}
-.mx-feed-btn:hover{background:rgba(100,150,255,0.13);}
-.mx-feed-icon{font-size:20px;flex-shrink:0;}
+.mx-feed-btn{display:flex;align-items:center;gap:13px;margin:6px 16px 10px;padding:15px 18px;background:linear-gradient(130deg,rgba(55,85,220,0.13) 0%,rgba(100,55,220,0.09) 100%);border:0.5px solid rgba(120,148,255,0.2);border-radius:14px;cursor:pointer;text-align:left;-webkit-tap-highlight-color:transparent;transition:opacity .13s;}
+.mx-feed-btn:hover{opacity:.82;}
+.mx-feed-btn:active{opacity:.65;}
+.mx-feed-icon{font-size:22px;flex-shrink:0;}
 .mx-feed-txt{flex:1;display:flex;flex-direction:column;gap:2px;min-width:0;}
-.mx-feed-ttl{font-size:13px;font-weight:600;color:rgba(190,215,255,0.95);}
-.mx-feed-sub{font-size:11px;color:rgba(160,185,255,0.45);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.mx-feed-arr{font-size:18px;color:rgba(255,255,255,0.25);flex-shrink:0;}
+.mx-feed-ttl{font-size:13.5px;font-weight:700;color:rgba(210,225,255,0.97);letter-spacing:-.01em;}
+.mx-feed-sub{font-size:11px;color:rgba(160,185,255,0.5);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.mx-feed-arr{font-size:20px;color:rgba(160,190,255,0.38);flex-shrink:0;}
 
 /* 카드 첫 화면 대표 영상(2026-10-13 시안, ?hero=1) — 가로 한 줄짜리 작은 카드.
    1차 시안(전체폭 큰 썸네일)은 프로필 사진과 큰 이미지 두 개가 위아래로 붙어 번잡하다는 피드백 → 썸네일을 왼쪽 작게,
