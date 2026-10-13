@@ -11946,6 +11946,14 @@ async function _loadProfilePic(cfg){
     if(picUrl)_instaPicCache.set(cacheKey,picUrl);
     if(sourceUrl)_instaPicSourceCache.set(cacheKey,sourceUrl);
   }
+  // 사진이 없는 멤버는 본인 단독 직캠 썸네일(얼굴 쪽 확대)로 자리를 채운다(2026-10-13, 사용자 제보 — "멤버 카드
+  // 첫 화면에 얼굴이 안 나오는 건 치명적"). 검색 아바타와 **같은 소스**(_srAvUrl: 가로 직캠 우선·같은 그룹 중복 금지)라
+  // 검색에서 본 얼굴과 카드 얼굴이 같다. 누르면 그 영상이 열린다. 등록 사진이 생기면 그게 항상 우선이다.
+  let fromVid=false;
+  wrap.classList.remove('tt-pic-fromvid','tt-pic-fromshort');
+  if(!picUrl&&cfg.artist&&typeof _srAvUrl==='function'){
+    try{const u=await _srAvUrl(cfg.artist);if(u&&/ytimg\.com/.test(u)&&cfg.stillCurrent()){picUrl=u;fromVid=true;}}catch(e){}
+  }
   if(!picUrl){
     // 사진이 없으면 **이전 대상의 이미지를 확실히 비운다**. 안 비우면 img에 남은 옛 사진 때문에
     // _syncCamBtn이 "사진 있음"으로 오판해서, 어드민 업로드 버튼이 큰 점선 원이 아니라 작은 코너
@@ -11958,10 +11966,15 @@ async function _loadProfilePic(cfg){
   if(!cfg.stillCurrent())return;
   // 클릭 타겟: 인스타 있으면 그쪽 우선, 없으면 사진 출처(위버스/멜론 등)로 — 둘 다 없으면 사진은
   // 보여주되 클릭은 안 되게(이전 카드의 href가 남아있지 않도록 명시적으로 지움).
-  const linkTarget=cfg.instaUrl||sourceUrl||null;
-  if(linkTarget){wrap.href=linkTarget;wrap.setAttribute('aria-label',cfg.instaUrl?'Instagram 프로필':'프로필 페이지');}
+  const linkTarget=fromVid?null:(cfg.instaUrl||sourceUrl||null);
+  if(fromVid){
+    const vid=(picUrl.split('/vi/')[1]||'').split('/')[0],isShort=typeof _srAvShort!=='undefined'&&_srAvShort.has(picUrl);
+    wrap.removeAttribute('href');wrap.setAttribute('aria-label','대표 직캠 보기');
+    wrap.classList.add(isShort?'tt-pic-fromshort':'tt-pic-fromvid');
+    wrap.onclick=e=>{e.preventDefault();e.stopPropagation();if(vid)openLightbox(isShort?`https://youtube.com/shorts/${vid}`:`https://www.youtube.com/watch?v=${vid}`,isShort,null,0,{groupKo:cfg.groupKo||''});};
+  }else if(linkTarget){wrap.href=linkTarget;wrap.setAttribute('aria-label',cfg.instaUrl?'Instagram 프로필':'프로필 페이지');}
   else{wrap.removeAttribute('href');wrap.setAttribute('aria-label','프로필 사진');}
-  wrap.onclick=e=>e.stopPropagation();
+  if(!fromVid)wrap.onclick=e=>e.stopPropagation();
   // URL이 확정된 시점(캐시 히트든 방금 조회든)에 바로 자리를 차지하고 셰머를 보여준다 — 실제 이미지
   // 바이트 다운로드가 끝나기 전까지는 셰머만 돌고, onload에서 사진으로 크로스페이드(2026-08-11).
   // 어드민 카메라 버튼도 이 시점부터 코너 오버레이로 미리 줄여둬야 셰머 원과 겹쳐 두 개로 보이지 않음
@@ -11982,7 +11995,7 @@ function _ttPicCfg(a){
   const groupKo=a?.group?.ko||'';
   return{wrapId:'tt-insta-pic-wrap',imgId:'tt-insta-pic',cardId:'tt',camBtnId:'tt-insta-cam-admin',
     inputId:'tt-insta-cam-input',hostId:'tt-pic-info-row',label:koName,
-    hasPicClass:'has-insta-pic',koName,groupKo,instaUrl:a?.links?.instagram||null,
+    hasPicClass:'has-insta-pic',koName,groupKo,instaUrl:a?.links?.instagram||null,artist:a,
     stillCurrent:()=>_openTArtist?.name?.ko===koName&&(_openTArtist?.group?.ko||'')===groupKo};
 }
 function _loadInstaPic(a){return a?_loadProfilePic(_ttPicCfg(a)):Promise.resolve();}
