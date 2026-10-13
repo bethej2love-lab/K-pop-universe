@@ -19758,8 +19758,9 @@ function _appendFeedCard(container,icon,title,sub,onClick,thumbUrl,cat,opts){
   if(opts&&opts.fav){item.classList.add('feed-fav');item.style.setProperty('--fav-rgb',opts.fav);}
   if(cat)item.dataset.cat=cat; // '모아보기'류 카드 표시용(연속 노출 방지 재배치에 사용, 2026-08-21)
   item.innerHTML='<div class="feed-card-thumb-wrap"><div class="feed-card-shimmer" data-icon="'+icon+'"></div></div>'
-    +'<div class="feed-card-cap"><div class="feed-card-title">'+_cleanTitle(title)+'</div>'
+    +'<div class="feed-card-cap"><div class="feed-card-title"></div>'
     +(sub?'<div class="feed-card-sub">'+sub+'</div>':'')+'</div>';
+  item.querySelector('.feed-card-title').textContent=_cleanTitle(title);
   // 이 카드가 Charts 섹션(#feed-chart)에 담기면 그건 **순위 목록**이다 — 열었을 때 순서를 비율끼리
   // 묶느라 갈아엎으면 안 된다(아래 _openFeedListOverlay 참고). 어느 컨테이너에 담기는지는 여기밖에
   // 모르므로 판정도 여기서 한 번만 한다 — 차트 빌더 12개에 플래그를 손으로 달면 하나 빠뜨렸을 때
