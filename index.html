@@ -81,6 +81,7 @@
      1행짜리 워밍업 쿼리 하나가 713ms였고(웜 상태 137ms), 그 차이의 대부분이 연결 수립 비용이다.
      ⚠️ crossorigin 필수 — REST 호출이 CORS라, 없으면 연결이 재사용되지 않아 효과가 사라진다. -->
 <link rel="preconnect" href="https://dukgguehegnembimqvkm.supabase.co" crossorigin>
+<link rel="preconnect" href="https://i.ytimg.com"><!-- 영상 썸네일 서버 — 카드 위쪽 영상이 첫 화면이라 연결을 미리 연다(2026-10-13) -->
 <link rel="stylesheet" as="style" crossorigin
   href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@1.3.9/dist/web/static/pretendard-dynamic-subset.css">
 <!-- 이 `?v=` 값들과 아래 _ADMIN_JS_VER, sw.js의 CACHE_VERSION은 **손으로 고치지 않는다** —
@@ -4843,21 +4844,52 @@ function _srAvUrl(a){
 // _fetchTopVideoThumb는 members가 빈 그룹 영상까지 받아서(members.eq.{}) 단체 사진이 아바타가 되곤 했다.
 // ⚠️ 정렬은 published_at으로 최근 60개만 받고 조회수는 클라이언트에서 고른다 — view_count 정렬+LIMIT은
 //    후보가 적을 때 인덱스를 거꾸로 훑다 타임아웃 나는 패턴이 있었다(ORDER BY+LIMIT 사고).
-async function _fetchSoloCamThumbs(a){
-  if(!sb||!a||!a.name)return [];
-  const mko=a.name.ko;
-  const gkos=new Set(_artistGroups(a).map(g=>g.ko).filter(k=>GROUPS[k]));
-  if(!gkos.size||_soloKeyUsable(mko))gkos.add(mko); // 솔로 키(group_ko=본인 이름)는 동명이인 없을 때만
-  try{
-    let q=sb.from(_YT_TABLE).select('id,title,thumb,view_count,is_short')
-      .in('group_ko',[...gkos]).filter('members','eq',`{${_pgFilterVal(mko)}}`)
-      .or('content_flag.is.null,content_flag.neq.무관').or('content_flag.is.null,content_flag.neq.보류')
-      .or('content_flag.is.null,content_flag.neq.hidden').or('content_flag.is.null,content_flag.neq.개별출연');
-    const{data,error}=await q.order('published_at',{ascending:false}).limit(60);
-    if(error||!data)return [];
-    const isCam=v=>_isFancamLike(v.title)&&!_FANCAM_PROMO_RE.test(v.title||'');
-    return data.filter(v=>v.thumb).sort((x,y)=>(isCam(y)-isCam(x))||(!!x.is_short-!!y.is_short)||((y.view_count||0)-(x.view_count||0)));
-  }catch(e){return [];}
+// ⚠️ 아티스트별로 결과(Promise)를 기억한다 — 검색 아바타와 카드 위쪽 영상(_cardHeroCands)이 같은 목록을 쓴다.
+//    검색에서 넘어온 카드는 추가 조회 없이 위쪽 영상이 바로 뜬다(2026-10-13, 사용자 — "썸네일 뜨는 속도가 너무 느림").
+//    정렬: 직캠 → 퍼포먼스(category='live') → 가로 → 조회수. 카드 렌더에 필요한 열까지 같이 받는다.
+const _soloCamMemo=new WeakMap();
+function _fetchSoloCamThumbs(a){
+  if(!sb||!a||!a.name)return Promise.resolve([]);
+  if(_soloCamMemo.has(a))return _soloCamMemo.get(a);
+  const p=(async()=>{
+    const mko=a.name.ko;
+    const gkos=new Set(_artistGroups(a).map(g=>g.ko).filter(k=>GROUPS[k]));
+    if(!gkos.size||_soloKeyUsable(mko))gkos.add(mko); // 솔로 키(group_ko=본인 이름)는 동명이인 없을 때만
+    try{
+      let q=sb.from(_YT_TABLE).select('id,title,thumb,view_count,is_short,published_at,group_ko,members,category,content_flag'+_durCol())
+        .in('group_ko',[...gkos]).filter('members','eq',`{${_pgFilterVal(mko)}}`)
+        .or('content_flag.is.null,content_flag.neq.무관').or('content_flag.is.null,content_flag.neq.보류')
+        .or('content_flag.is.null,content_flag.neq.hidden').or('content_flag.is.null,content_flag.neq.개별출연');
+      const{data,error}=await q.order('published_at',{ascending:false}).limit(60);
+      if(error||!data)return [];
+      const isCam=v=>_isFancamLike(v.title)&&!_FANCAM_PROMO_RE.test(v.title||'');
+      return data.filter(v=>v.thumb).sort((x,y)=>(isCam(y)-isCam(x))||((y.category==='live')-(x.category==='live'))||(!!x.is_short-!!y.is_short)||((y.view_count||0)-(x.view_count||0)));
+    }catch(e){return [];}
+  })();
+  _soloCamMemo.set(a,p);
+  return p;
+}
+// 그룹 카드 위쪽 영상 후보 — 그룹 전체가 나온(members 비어 있음) 퍼포먼스(category='live') 가로 영상, 조회수 순.
+// 퍼포먼스가 하나도 없으면 카테고리 제한을 풀어 한 번 더 본다. 그룹별 한 번만 조회.
+const _groupHeroCandP=new Map();
+function _fetchGroupHeroCands(gko){
+  if(!sb||!gko)return Promise.resolve([]);
+  if(_groupHeroCandP.has(gko))return _groupHeroCandP.get(gko);
+  const p=(async()=>{
+    const run=async live=>{
+      let q=sb.from(_YT_TABLE).select('id,title,thumb,view_count,is_short,published_at,group_ko,members,category,content_flag'+_durCol())
+        .eq('group_ko',gko).filter('members','eq','{}').eq('is_short',false)
+        .or('content_flag.is.null,content_flag.neq.무관').or('content_flag.is.null,content_flag.neq.보류')
+        .or('content_flag.is.null,content_flag.neq.hidden').or('content_flag.is.null,content_flag.neq.개별출연')
+        .or('content_flag.is.null,content_flag.neq.기타');
+      if(live)q=q.eq('category','live');
+      const{data,error}=await q.order('published_at',{ascending:false}).limit(60);
+      return (error||!data)?[]:data.filter(v=>v.thumb).sort((x,y)=>(y.view_count||0)-(x.view_count||0));
+    };
+    try{const a=await run(true);return a.length?a:await run(false);}catch(e){return [];}
+  })();
+  _groupHeroCandP.set(gko,p);
+  return p;
 }
 // 마지막 폴백 — 그룹 영상 후보(그룹별 한 번만 조회). 멤버 태깅이 비었거나 본인이 들어간 영상, 조회수 순.
 const _srGroupThumbsP=new Map();
@@ -23134,6 +23166,38 @@ function _cardHeroSlot(contId){
   }
   return slot.querySelector('.card-hero-grid');
 }
+// 위쪽 영상은 **그리드와 따로, 먼저** 뜬다(2026-10-13, 사용자 — "첫인상용인데 썸네일·정보가 너무 늦게 뜬다").
+// 예전엔 아래 그리드(목록 + 하트 집계, 최대 6초 대기)가 다 끝난 뒤에 골라서 제일 늦게 떴다.
+// 멤버: 본인 단독 직캠 목록(_fetchSoloCamThumbs — 검색 아바타와 공유 캐시) · 그룹: 그룹 전체 퍼포먼스(_fetchGroupHeroCands).
+// 같은 카드에서 탭만 바꿀 땐 다시 부르지 않는다(state.heroFor). 그리드는 state.heroId를 빼고 그린다.
+function _cardHeroCands(ko,memberKo){
+  if(memberKo){
+    const a=(typeof _openTArtist!=='undefined'&&_openTArtist&&_openTArtist.name.ko===memberKo)?_openTArtist
+      :ARTISTS.find(x=>x.name.ko===memberKo&&(_ytGroupKoFor(x)===ko||_artistGroups(x).some(g=>g.ko===ko)));
+    return (a?_fetchSoloCamThumbs(a):Promise.resolve([])).then(l=>(l||[]).filter(v=>!v.is_short));
+  }
+  return _fetchGroupHeroCands(ko);
+}
+async function _cardHeroLoad(contId,ko,state,renderItems){
+  const grid=_cardHeroSlot(contId);if(!grid)return;
+  const key=ko+'␟'+(state.memberKo||'');
+  if(state.heroFor===key&&state.heroId&&grid.querySelector('.gc-ch-item'))return; // 같은 카드에서 탭만 바뀜
+  state.heroFor=key;state.heroId=null;
+  // 카드 대상이 바뀌는 즉시 이전 영상을 치운다 — 남아 있으면 카드 주인과 영상 주인이 어긋난다(같은 날 사용자 제보).
+  grid.innerHTML='<div class="card-hero-skel"><div class="chs-thumb"></div><div class="chs-l"></div><div class="chs-l chs-s"></div></div>';
+  grid.parentElement.hidden=false;
+  let list=[];try{list=await _cardHeroCands(ko,state.memberKo);}catch(e){}
+  if(state.heroFor!==key)return; // 기다리는 사이 다른 카드로 넘어감
+  const v=list.find(x=>!(state.seenIds&&state.seenIds.has(x.id)))||null; // 그리드가 먼저 그린 건 피한다
+  grid.innerHTML='';
+  if(!v){grid.parentElement.hidden=true;return;}
+  state.heroId=v.id;
+  // 썸네일을 최우선으로 받는다 — 그리드 이미지 수십 장과 같이 받으면 순서가 밀려 1~4초 늦게 떴다(실측).
+  try{const pre=new Image();pre.fetchPriority='high';pre.src=v.thumb;}catch(e){}
+  renderItems([{...v,_wide:true}],grid);
+  {const im=grid.querySelector('img.gc-ch-thumb');if(im){im.loading='eager';try{im.fetchPriority='high';}catch(e){}}}
+  state.allVids=[v].concat((state.allVids||[]).filter(x=>x.id!==v.id));
+}
 function _chVidCacheKey(contId,ko,state){
   return[contId,ko,state.memberKo||'',state.filter,state.sortMode,state.viewMode,state.formatFilter||'',state.onlyMe?1:0,state.unitFilter||'',state.searchQ||''].join('|');
 }
@@ -23656,10 +23720,7 @@ function _makeChVidController(contId){
       state.hasMore=false;
       // 대표 칸도 **카드 대상이 바뀌는 즉시** 비운다(2026-10-13, 사용자 제보 — 멤버를 바꾸면 이전 멤버의 대표 영상이
       // 1초쯤 남아 카드 주인과 영상 주인이 어긋났다). 그냥 숨기면 아래 내용이 위로 튀었다 내려오니 스켈레톤으로 자리를 지킨다.
-      if(_cardHeroOn()){
-        const _hg=_cardHeroSlot(contId);
-        if(_hg){_hg.innerHTML='<div class="card-hero-skel"><div class="chs-thumb"></div><div class="chs-l"></div><div class="chs-l chs-s"></div></div>';_hg.parentElement.hidden=false;}
-      }
+      if(_cardHeroOn())_cardHeroLoad(contId,ko,state,renderItems); // 그리드를 기다리지 않고 먼저(위 _cardHeroLoad 주석)
       grid.innerHTML='<div class="gc-ch-skeleton featured"><div class="gc-ch-skeleton-thumb"></div><div class="gc-ch-skeleton-title"></div><div class="gc-ch-skeleton-title short"></div></div>'
         +Array(6).fill('<div class="gc-ch-skeleton"><div class="gc-ch-skeleton-thumb"></div><div class="gc-ch-skeleton-title"></div><div class="gc-ch-skeleton-title short"></div></div>').join('');
       if(moreWrap)moreWrap.innerHTML='';
@@ -23948,7 +24009,6 @@ function _makeChVidController(contId){
       // featuredP는 자체 타임아웃+null 폴백이 있어 별도로 감쌀 필요 없는 것도 기존과 동일.
       const[{data,error,count},_featuredFromDB]=await Promise.all([mainP,featuredP]);
       if(myGen!==state.gen)return; // 대기 중 다른 그룹/새로고침으로 전환됨: 그쪽이 이미 자신의 잠금을 걸어놨으므로 여기선 해제하지 않는다
-      if(reset&&(error||!data?.length)){const _hg=_cardHeroSlot(contId);if(_hg){_hg.innerHTML='';_hg.parentElement.hidden=true;}} // 스켈레톤이 남지 않게
       if(error)throw new Error(error.message);
       if(reset)grid.innerHTML='';
       if(!data?.length&&offset===0){
@@ -23999,13 +24059,6 @@ function _makeChVidController(contId){
         const _mainPool=vids.filter(v=>v.content_flag!=='기타');
         const _mainCandidates=state.memberKo?_mainPool:_mainPool.filter(v=>!v.members?.length);
         let main=_featuredFromDB||_pickMainChVid(_mainCandidates.length?_mainCandidates:_mainPool);
-        // 멤버 카드 대표는 **본인 단독 직캠**을 우선(2026-10-13, 사용자 — "첫 화면에 얼굴이 나와야"). 하트 최다가
-        // 단체 무대면 첫 화면이 또 단체샷이 된다. 이 페이지 후보 중 본인만 태깅된 직캠(조회수 최고)이 있으면 그걸 쓴다.
-        if(_cardHeroOn()&&state.memberKo&&(!main||(main.members||[]).length!==1)){
-          const solo=_mainPool.filter(v=>(v.members||[]).length===1&&v.members[0]===state.memberKo&&_isFancamLike(v.title)&&!_FANCAM_PROMO_RE.test(v.title||'')&&!_isShortV(v))
-            .sort((a,b)=>(b.view_count||0)-(a.view_count||0))[0];
-          if(solo)main=solo;
-        }
         if(main){
           vids=vids.filter(v=>v.id!==main.id);
           featured={...main,_featured:true};
@@ -24015,28 +24068,8 @@ function _makeChVidController(contId){
       // 걸러 중복 카드를 막는다(위 wrapEnd=청크시작 확장이 안전하려면 필수). 순차 모드에도 무해(중복 없음).
       state.seenIds=state.seenIds||new Set();
       if(featured)state.seenIds.add(featured.id);
-      // 대표 영상 1개를 카드 헤더 바로 아래로(문제2 확정안, 2026-10-13 시안 · ?hero=1). 그리드에선 빼고 맨 위 칸에만 그린다.
-      if(reset){
-        const heroGrid=_cardHeroSlot(contId);
-        if(heroGrid){
-          heroGrid.innerHTML='';heroGrid.parentElement.hidden=true;
-          // 대표 칸은 가로 영상만 — 쇼츠는 작은 16:9 칸에서 썸네일이 비고 흐린 배경이 줄 전체로 번졌다(카리나 실측).
-          // 대표가 쇼츠면 그건 그리드 맨 앞에 그대로 두고, 대표 칸엔 가로 후보(멤버면 본인 단독 직캠 우선)를 따로 고른다.
-          let heroV=featured&&!_isShortV(featured)?featured:null;
-          if(!heroV&&featured&&_cardHeroOn()){
-            const pool=vids.filter(v=>!_isShortV(v)&&v.content_flag!=='기타');
-            const solo=state.memberKo?pool.filter(v=>(v.members||[]).length===1&&v.members[0]===state.memberKo&&_isFancamLike(v.title)):[];
-            heroV=(solo.length?solo:pool).slice().sort((a,b)=>(b.view_count||0)-(a.view_count||0))[0]||null;
-            if(heroV){vids=vids.filter(v=>v.id!==heroV.id);state.seenIds.add(heroV.id);}
-          }
-          if(heroV&&_cardHeroOn()){
-            const _wasFeatured=heroV===featured;
-            renderItems([{...heroV,_featured:false,_wide:true}],heroGrid);heroGrid.parentElement.hidden=false;
-            state.allVids=[heroV].concat(state.allVids);
-            if(_wasFeatured)featured=null; // 대표가 그대로 올라갔으면 그리드에선 뺀다(쇼츠 대표는 그리드 맨 앞에 남음)
-          }
-        }
-      }
+      // 위쪽 영상(대표 칸)은 그리드와 따로 먼저 뜬다(_cardHeroLoad). 이미 거기 나온 영상은 그리드에서 뺀다.
+      if(state.heroId){vids=vids.filter(v=>v.id!==state.heroId);if(featured&&featured.id===state.heroId)featured=null;}
       vids=vids.filter(v=>{if(state.seenIds.has(v.id))return false;state.seenIds.add(v.id);return true;});
       // 이 페이지 안에서는 (셔플된) 순서를 유지하면서 같은 비율끼리만 같은 행에 짝짓는다. featured는 풀로우(2열)를
       // 실제로 차지하므로 state.pos/cat으로 그리드상 현재 위치를 정확히 추적해 페이지("더보기") 경계에서도
