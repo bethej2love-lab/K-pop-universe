@@ -3862,7 +3862,7 @@
   .feed-strip-name,.feed-strip-sub{opacity:0;transition:opacity .22s ease;}
   .feed-strip-item.cap-revealed .feed-strip-name,
   .feed-strip-item.cap-revealed .feed-strip-sub{opacity:1;}
-  .feed-strip-item.anniv-inactive{opacity:0.42;filter:grayscale(0.3);}
+  .feed-strip-item.anniv-inactive{opacity:0.62;filter:grayscale(0.2);}
   /* 최근 본 가로 행 — 원형 아바타(feed-strip-item)와 달리 영상 썸네일이라 16:9 사각 카드로 별도 마크업 */
   /* 썸네일 크기를 차트 카드(#feed-chart>.feed-card, 158px)와 동일하게(2026-09-13 사용자 요청 — "너무 작음"). */
   .feed-recent-item{display:flex;flex-direction:column;gap:5px;flex-shrink:0;width:158px;cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><path d='M11,1 L12.3,9.7 L21,11 L12.3,12.3 L11,21 L9.7,12.3 L1,11 L9.7,9.7Z' fill='%23FFB0D0' opacity='.97'/></svg>") 11 11,pointer;-webkit-tap-highlight-color:transparent;position:relative;}
