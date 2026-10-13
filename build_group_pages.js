@@ -217,17 +217,14 @@ function groupIntroHtml(ko, info, members, discogItems, lang) {
     if (recent.length) s += ` Recent releases: ${recent.map(a => `${a.title} (${String(a.releaseDate||'').slice(0,4)})`).join(', ')}.`;
     text = s;
   } else {
-    const cop = disbanded ? '였습니다' : '입니다';
-    let s = `${name}${josa(name, '은/는')} `;
-    if (agency) s += `${agency} 소속 `;
-    if (memCount) s += `${memCount}인조 `;
-    s += gender + `${cop}.`;
-    if (debutYear) s += ` ${debutYear}년 데뷔`;
-    if (debutYear && !disbanded && info.fandom && info.fandom.ko) s += `했으며, 팬덤명은 ${info.fandom.ko}입니다.`;
-    else if (debutYear) s += '했습니다.';
-    else if (!disbanded && info.fandom && info.fandom.ko) s += ` 팬덤명은 ${info.fandom.ko}입니다.`;
-    if (recent.length) s += ` 대표 앨범: ${recent.map(a => `${a.title}(${String(a.releaseDate||'').slice(0,4)})`).join(', ')}.`;
-    text = s;
+    const parts = [];
+    if (memCount) parts.push(`${memCount}인조 ${gender}`); else parts.push(gender);
+    if (agency) parts.push(agency);
+    if (debutYear) parts.push(`${debutYear}년 데뷔`);
+    if (disbanded) parts.push('해체');
+    if (!disbanded && info.fandom && info.fandom.ko) parts.push(`팬덤명 ${info.fandom.ko}`);
+    if (recent.length) parts.push(`대표 앨범 ${recent.map(a => `${a.title}(${String(a.releaseDate||'').slice(0,4)})`).join(', ')}`);
+    text = parts.join('. ') + '.';
   }
   return `<p class="intro">${escHtml(text)}</p>`;
 }
@@ -252,13 +249,12 @@ function memberIntroHtml(a, affiliations, lang) {
     if (grpNames.length) s += ` Member of ${grpNames.join(', ')}.`;
     text = s;
   } else {
-    let s = `${name}${josa(name, '은/는')} `;
-    if (nat) s += `${nat} 출신 `;
-    s += `케이팝 아이돌${active ? '' : '(활동 종료)'}`;
-    if (bdayYear) s += `로, ${bdayYear}년생`;
-    if (grpNames.length) s += `입니다. ${grpNames.join(', ')} 멤버입니다.`;
-    else s += '입니다.';
-    text = s;
+    const parts = [];
+    if (grpNames.length) parts.push(grpNames.join(', ') + ' 멤버');
+    if (nat) parts.push(`${nat} 출신`);
+    if (bdayYear) parts.push(`${bdayYear}년생`);
+    if (!active) parts.push('활동 종료');
+    text = parts.join('. ') + '.';
   }
   return `<p class="intro">${escHtml(text)}</p>`;
 }
