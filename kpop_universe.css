@@ -2742,10 +2742,10 @@
   .gc-discog-deck .gc-discog-cover{position:relative;z-index:3;}
   .gc-discog-deck-back{position:absolute;top:0;left:0;width:80px;height:80px;border-radius:8px;object-fit:cover;
     box-shadow:0 2px 8px rgba(0,0,0,0.5),0 0 0 1px rgba(255,255,255,0.22);transform-origin:bottom left;transition:transform .2s ease;}
-  .gc-discog-deck-back.d1{transform:translate(12px,-3px) rotate(6deg);z-index:2;filter:brightness(.78);}
-  .gc-discog-deck-back.d2{transform:translate(22px,-6px) rotate(12deg);z-index:1;filter:brightness(.58);}
-  .gc-discog-stack:hover .gc-discog-deck-back.d1{transform:translate(14px,-4px) rotate(8deg);}
-  .gc-discog-stack:hover .gc-discog-deck-back.d2{transform:translate(26px,-7px) rotate(15deg);}
+  .gc-discog-deck-back.d1{transform:translate(11px,-3px) rotate(4deg);z-index:2;filter:brightness(.78);}
+  .gc-discog-deck-back.d2{transform:translate(20px,-5px) rotate(8deg);z-index:1;filter:brightness(.58);}
+  .gc-discog-stack:hover .gc-discog-deck-back.d1{transform:translate(13px,-4px) rotate(6deg);}
+  .gc-discog-stack:hover .gc-discog-deck-back.d2{transform:translate(23px,-6px) rotate(10deg);}
   .gc-discog-series{position:relative;flex-shrink:0;display:flex;gap:9px;padding-top:20px;margin-top:-20px;}
   /* 펼친 묶음 머리줄 — 얇은 괄호선 하나에 이름과 '접기'만(알약·✕ 없음) */
   .gc-discog-series-head{position:absolute;top:2px;left:0;right:0;height:14px;display:flex;align-items:center;gap:6px;padding:0;border:none;background:none;cursor:pointer;
