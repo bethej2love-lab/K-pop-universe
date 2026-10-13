@@ -12514,50 +12514,66 @@ function _renderDiscography(prefix,albums){
   }
   updateMoreVisibility();
 }
-// ── 시리즈 스택 시안(2026-10-13, 사용자 요청 — 아직 기본 꺼짐, ?stack=1 로만 켬) ─────────────
-// "GREENGREEN_playextended" "THIS IS FOR DELUXE" 같은 판·시리즈를 정규/미니로 억지 분류하지 않고, 같은 테마로
-// 이어진 발매를 커버가 겹친 한 장으로 접어 보여준다. 누르면 그 자리에서 펼쳐진다.
-// 묶는 규칙(시안): ① 콜론 앞 머리말이 같음(별의 장 · THE SIN · BORDER · minisode N) — 단 머리말이 그룹명이면 제외
-//                  ② 판 표시를 뗀 제목이 같음(_playextended · Expanded/More Edition · DELUXE · 2.0 · -Repackage- · feat.)
-// ⚠️ 커버 위엔 아무것도 얹지 않는다(앨범 커버 원칙) — 뒤 커버는 **오른쪽 바깥으로만** 비치고, 장수는 캡션에 쓴다.
+// ── 활동기 스택 시안(2026-10-13, 사용자 요청 — 아직 기본 꺼짐, ?stack=1 로만 켬) ─────────────
+// "GREENGREEN_playextended" "THIS IS FOR DELUXE" 같은 판을 정규/미니로 억지 분류하지 않고, **한 활동기**의 발매를
+// 커버가 겹친 한 장으로 접어 보여준다. 누르면 그 자리에서 펼쳐진다.
+// 활동기 = 앨범 + ① 그 앨범의 판(_playextended · Edition · DELUXE · 2.0 · -Repackage-)
+//                + ② 선공개 싱글 — 싱글 곡이 **발매 후 120일 안에 나온 앨범의 트랙리스트에 들어 있으면** 그 앨범 것.
+//   실측: 코르티스 REDRED→GREENGREEN · 클유아 Open Your Eyes→256th Note · 에스파 Supernova→Armageddon ·
+//   아이브 CRUSH→ALIVE. 제목만 보면 REDRED처럼 이름이 다른 선공개를 못 묶는다(사용자 지적).
+// ⚠️ 콜론 시리즈(별의 장 · THE SIN · minisode)는 묶지 않는다 — 앨범마다 활동기가 따로라 한 장으로 접으면
+//    오히려 대표작이 숨는다(1차 시안에서 그렇게 했다가 바꿈).
+// ⚠️ 커버 위엔 아무것도 얹지 않는다(앨범 커버 원칙) — 뒤 커버는 바깥으로만 비치고, 장수는 캡션에 쓴다.
 function _discogStackOn(){
   try{return /[?&]stack=1\b/.test(location.search)||localStorage.getItem('kpu_discog_stack')==='1';}catch(e){return false;}
 }
 const _discogStackOpen=new Set();
-function _discogSeriesKey(title,ownerNames){
+// 판 표시·피처링을 뗀 제목 키 — 같은 키면 같은 앨범의 다른 판
+function _discogEditionKey(title){
   let t=String(title||'').trim();
-  t=t.replace(/\s*[(\[]?\s*(?:feat\.?|ft\.|with)\s[^)\]]*[)\]]?\s*$/i,'');            // feat./with 버전
+  // ⚠️ 앞에 공백·괄호가 있어야 feat 표기로 본다 — 트와이스 'With YOU-th'가 통째로 지워졌다
+  t=t.replace(/(?:\s*[(\[]\s*|\s+)(?:feat\.?|ft\.|with)\s[^)\]]*[)\]]?\s*$/i,'');
   t=t.replace(/_play\w+$/i,'').replace(/\s*-\s*repackage\s*-\s*$/i,'')
      .replace(/\s*\((?:[^)]*\s)?edition\)\s*$/i,'').replace(/\s+deluxe$/i,'').replace(/\s+2\.0$/,'');
-  let k=t;
-  const c=/^(.+?)\s*[:：]\s*\S/.exec(t);
-  if(c)k=c[1];
-  k=k.replace(/\s*\d+$/,'').trim();                                                   // minisode1 → minisode, #TWICE4 → #TWICE
-  const n=k.toLowerCase().replace(/\s+/g,'');
-  if(n.length<2||ownerNames.some(o=>o&&o.toLowerCase().replace(/\s+/g,'')===n))return{key:t.toLowerCase().replace(/\s+/g,''),label:t};
-  return{key:n,label:k};
+  return{key:t.toLowerCase().replace(/\s+/g,''),label:t};
+}
+function _discogEras(list){
+  const nt=s=>String(s||'').toLowerCase().replace(/\([^)]*\)|\[[^\]]*\]/g,'').replace(/[^a-z0-9가-힣]/g,'');
+  const day=d=>Date.parse(String(d||'').replace(/\./g,'-'))/864e5;
+  const isSingle=a=>/싱글/.test(a.type||'');
+  const eraOf=new Map(),eras=new Map();
+  // ① 판끼리
+  list.forEach(a=>{const k=_discogEditionKey(a.title);if(!eras.has(k.key))eras.set(k.key,{label:k.label,items:[]});eras.get(k.key).items.push(a);eraOf.set(a,k.key);});
+  // ② 선공개 싱글 → 120일 안의 가장 가까운 앨범
+  list.forEach(s=>{
+    if(!isSingle(s))return;
+    const st=new Set((s.tracks||[]).map(t=>nt(t.title)).filter(Boolean));if(!st.size)return;
+    const ds=day(s.releaseDate);
+    const host=list.filter(a=>a!==s&&!isSingle(a)&&day(a.releaseDate)>=ds-3&&day(a.releaseDate)-ds<=120&&(a.tracks||[]).some(t=>st.has(nt(t.title))))
+      .sort((x,y)=>day(x.releaseDate)-day(y.releaseDate))[0];
+    if(!host)return;
+    const from=eraOf.get(s),to=eraOf.get(host);if(from===to)return;
+    const fe=eras.get(from);fe.items.forEach(x=>{eras.get(to).items.push(x);eraOf.set(x,to);});eras.delete(from);
+  });
+  // 대표 = 싱글이 아닌 것 중 트랙이 가장 많은 것(없으면 최신) — 이름·앞 커버·자리가 이걸 따른다
+  for(const e of eras.values()){
+    // 원본 판(판 표시가 없는 제목)을 우선 — 코르티스 GREENGREEN_playextended(8곡)가 원본(6곡)을 이기던 것
+    let al=e.items.filter(a=>!isSingle(a));
+    const orig=al.filter(a=>_discogEditionKey(a.title).label===String(a.title||'').trim());
+    if(orig.length)al=orig;
+    e.lead=(al.length?al:e.items).slice().sort((x,y)=>((y.trackCount||0)-(x.trackCount||0))||(day(y.releaseDate)-day(x.releaseDate)))[0];
+    e.label=_discogEditionKey(e.lead.title).label;
+    e.items.sort((x,y)=>day(x.releaseDate)-day(y.releaseDate)); // 펼치면 발매순
+  }
+  return{eraOf,eras};
 }
 function _renderDiscogStacks(strip,list,prefix){
-  const own=prefix==='gc'?[_openGCko,(GROUPS[_openGCko]||{}).en]:[(_openTArtist&&_openTArtist.name.ko),(_openTArtist&&_openTArtist.name.en)];
-  const buckets=new Map();
-  list.forEach(a=>{const s=_discogSeriesKey(a.title,own);if(!buckets.has(s.key))buckets.set(s.key,{label:s.label,items:[]});buckets.get(s.key).items.push(a);});
-  // 한/영 표기가 갈린 같은 시리즈(TXT `별의 장: SANCTUARY` ↔ `The Star Chapter: SANCTUARY (Expanded Edition)`) —
-  // 콜론 뒤 꼬리가 같으면 혼자 남은 쪽을 상대 시리즈로 합친다. 머리말은 먼저 생긴(이미 2장 이상인) 쪽을 쓴다.
-  const tail=t=>{const m=/[:：]\s*(.+)$/.exec(String(t||'').replace(/\s*\([^)]*edition\)\s*$/i,''));return m?m[1].toLowerCase().replace(/\s+/g,''):'';};
-  const keyOf=new Map();list.forEach(a=>keyOf.set(a,_discogSeriesKey(a.title,own).key));
-  for(const [k,b] of [...buckets]){
-    if(b.items.length!==1)continue;
-    const tl=tail(b.items[0].title);if(!tl)continue;
-    const mate=list.find(x=>x!==b.items[0]&&tail(x.title)===tl);if(!mate)continue;
-    const mk=keyOf.get(mate);if(mk===k)continue;
-    buckets.get(mk).items.push(b.items[0]);keyOf.set(b.items[0],mk);buckets.delete(k);
-  }
-  const _sk=new Map();list.forEach(a=>_sk.set(a,keyOf.get(a)));
+  const {eraOf,eras}=_discogEras(list);
   const ownerKey=(prefix==='gc'?_openGCko:(_openTArtist&&_openTArtist.name.ko))||'';
-  // 스택이 하나라도 있으면 위 여백을 둔다 — 부채꼴 뒤 커버·펼친 묶음 라벨이 위로 살짝 올라온다(strip이
+  // 스택이 하나라도 있으면 위 여백을 둔다 — 부채꼴 뒤 커버·펼친 묶음 머리줄이 위로 올라온다(strip이
   // overflow-x:auto라 위로 넘치면 잘린다).
-  strip.classList.toggle('has-stacks',[...buckets.values()].some(b=>b.items.length>1));
-  const seen=new Set();
+  strip.classList.toggle('has-stacks',[...eras.values()].some(e=>e.items.length>1));
+  const rerender=()=>{strip.innerHTML='';_renderDiscogStacks(strip,list,prefix);};
   const mkItem=(a,idx)=>{
     const item=document.createElement('div');
     item.className='gc-discog-item'+(a.isMain?'':' gc-discog-extra');
@@ -12571,35 +12587,33 @@ function _renderDiscogStacks(strip,list,prefix){
     return item;
   };
   list.forEach((a,idx)=>{
-    const s={key:_sk.get(a)};const b=buckets.get(s.key);
-    if(b.items.length<2){strip.appendChild(mkItem(a,idx));return;}
-    if(seen.has(s.key))return;seen.add(s.key);
-    const openKey=ownerKey+'|'+s.key;
-    const yrs=b.items.map(x=>+String(x.releaseDate||'').slice(0,4)).filter(Boolean);
-    const span=yrs.length?(Math.min(...yrs)===Math.max(...yrs)?`${Math.min(...yrs)}`:`${Math.min(...yrs)}–${String(Math.max(...yrs)).slice(2)}`):'';
+    const k=eraOf.get(a),e=eras.get(k);
+    if(e.items.length<2){strip.appendChild(mkItem(a,idx));return;}
+    if(a!==e.lead)return; // 묶음은 대표 앨범 자리에 한 번만
+    const openKey=ownerKey+'|'+k;
     if(_discogStackOpen.has(openKey)){
-      // 펼친 묶음 — 박스 윗선에 걸친 가로 라벨(fieldset legend처럼)이 이름+접기 버튼이다. 세로 글씨 탭은
-      // 어색하다는 피드백(2026-10-13)으로 뺐다. 라벨은 strip의 위 여백에 걸리므로 펼쳐도 높이가 안 변한다.
+      // 펼친 묶음 — 위에 얇은 괄호선 하나: "이름 · N장 ───── 접기". 동그란 알약·✕는 짜친다는 피드백(2026-10-13)으로 뺐다.
       const wrap=document.createElement('div');wrap.className='gc-discog-series';
-      const fold=document.createElement('button');fold.type='button';fold.className='gc-discog-series-fold';
-      fold.innerHTML=`<span class="gds-name"></span><span class="gds-cnt"></span><span class="gds-x" aria-hidden="true">✕</span>`;
-      fold.querySelector('.gds-name').textContent=b.label;
-      fold.querySelector('.gds-cnt').textContent=`${b.items.length}${currentLang==='ko'?'장':''}`;
-      fold.title=currentLang==='ko'?'접기':'Collapse';
-      fold.addEventListener('click',e=>{e.stopPropagation();_discogStackOpen.delete(openKey);strip.innerHTML='';_renderDiscogStacks(strip,list,prefix);});
-      wrap.appendChild(fold);
-      b.items.forEach(x=>wrap.appendChild(mkItem(x,list.indexOf(x))));
+      const head=document.createElement('button');head.type='button';head.className='gc-discog-series-head';
+      head.innerHTML='<span class="gds-name"></span><span class="gds-line"></span><span class="gds-fold"></span>';
+      head.querySelector('.gds-name').textContent=`${e.label} · ${e.items.length}${currentLang==='ko'?'장':''}`;
+      head.querySelector('.gds-fold').textContent=currentLang==='ko'?'접기':'Collapse';
+      head.addEventListener('click',ev=>{ev.stopPropagation();_discogStackOpen.delete(openKey);rerender();});
+      wrap.appendChild(head);
+      e.items.forEach(x=>wrap.appendChild(mkItem(x,list.indexOf(x))));
       strip.appendChild(wrap);return;
     }
     const item=document.createElement('div');item.className='gc-discog-item gc-discog-stack';
     const deck=document.createElement('div');deck.className='gc-discog-deck';
-    b.items.slice(1,3).reverse().forEach((x,i,arr)=>{const bk=document.createElement('img');bk.className='gc-discog-deck-back d'+(arr.length-i);bk.src=x.cover;bk.alt='';bk.loading='lazy';deck.appendChild(bk);});
-    const front=document.createElement('img');front.className='gc-discog-cover';front.src=b.items[0].cover;front.alt=b.label;front.loading='lazy';deck.appendChild(front);
+    const backs=e.items.filter(x=>x!==e.lead).slice(-2);
+    backs.reverse().forEach((x,i,arr)=>{const bk=document.createElement('img');bk.className='gc-discog-deck-back d'+(arr.length-i);bk.src=x.cover;bk.alt='';bk.loading='lazy';deck.appendChild(bk);});
+    const front=document.createElement('img');front.className='gc-discog-cover';front.src=e.lead.cover;front.alt=e.label;front.loading='lazy';deck.appendChild(front);
     const typeEl=document.createElement('div');typeEl.className='gc-discog-type';
-    typeEl.textContent=`${b.items.length}${currentLang==='ko'?'장':' releases'} · ${span}`;
-    const titleEl=document.createElement('div');titleEl.className='gc-discog-item-title';titleEl.textContent=b.label;
+    const yr=e.lead.releaseDate?e.lead.releaseDate.slice(0,4):'';
+    typeEl.textContent=`${_discogTypeLabel(e.lead.type)} · ${yr} · ${e.items.length}${currentLang==='ko'?'장':''}`;
+    const titleEl=document.createElement('div');titleEl.className='gc-discog-item-title';titleEl.textContent=e.label;
     item.append(deck,typeEl,titleEl);
-    item.addEventListener('click',e=>{e.stopPropagation();_discogStackOpen.add(openKey);strip.innerHTML='';_renderDiscogStacks(strip,list,prefix);});
+    item.addEventListener('click',ev=>{ev.stopPropagation();_discogStackOpen.add(openKey);rerender();});
     strip.appendChild(item);
   });
   _enableDragScroll(strip);
