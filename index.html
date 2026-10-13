@@ -6281,7 +6281,7 @@ function _lbYtHandshake(iframe){
   },250);
 }
 const _vidProg=new Map(); // videoId→{t,d} 시청 위치 in-memory 캐시
-const _progSaveT=new Map(),_progSyncT=new Map(); // localStorage·Supabase 디바운스 타이머
+// (시청 위치 저장 타이머는 _setVidProg 쪽 throttle로 대체 — 2026-10-13)
 let _lbNeedUnmute=false; // 소리 모드에서 isAdvance 전환 시 재생 시작 후 unMute 필요 여부
 let _lbLoadingT=null; // 영상 전환 시 로딩 스피너 표시용 폴백 타이머(재생 시작 신호가 안 올 경우 대비)
 function _lbShowLoading(){
@@ -7848,6 +7848,7 @@ function _closeLbHalf(){
 });
 
 function closeLightbox(){
+  try{_flushVidProg();}catch(_){} // 닫는 순간 시청 위치를 바로 저장(기기·서버)
   _lbActiveVid=null;
   clearTimeout(_lbAutoUnmuteT);
   _closeLbHalf(); // 하프시트로 올려둔 카드 시트를 원래 층으로 되돌린다
@@ -8504,25 +8505,30 @@ function _updateProgBars(id){
     b.style.display=ratio>=0.01?'block':'none'; // ⚠️ '' 이면 CSS 기본값 display:none이 이겨서 줄이 영영 안 보였다(2026-10-13 발견)
   });
 }
+// 저장은 **간격 저장(throttle)** — 예전엔 '마지막 메시지 후 N초 조용하면 저장'(debounce)이었는데, 재생 중엔 유튜브가
+// 0.25초마다 위치를 보내 타이머가 계속 리셋돼 **재생하는 동안 한 번도 저장이 안 됐다**(2026-10-13 실측: 18초 재생에
+// video_progress 쓰기 0회). 기기 저장 3초·서버 15초마다, 그리고 영상을 닫거나 앱이 가려질 때 즉시 비운다(_flushVidProg).
+const _progLastLocal=new Map(),_progLastSync=new Map(),_progDirty=new Set();
+function _saveVidProgLocal(id){const p=_vidProg.get(id);if(!p)return;try{localStorage.setItem('kpu_p_'+id,JSON.stringify({t:p.t,d:p.d}));}catch(_){}_progLastLocal.set(id,Date.now());}
+function _syncVidProg(id){
+  const p=_vidProg.get(id);if(!p||!window._sbSession||typeof sb==='undefined'||!sb)return;
+  _progLastSync.set(id,Date.now());_progDirty.delete(id);
+  sb.from('video_progress').upsert(
+    {user_id:window._sbSession.user.id,video_id:id,progress_sec:Math.round(p.t),duration_sec:Math.round(p.d),updated_at:new Date().toISOString()},
+    {onConflict:'user_id,video_id'}
+  ).then(()=>{},()=>{});
+}
 function _setVidProg(id,t,d){
   _vidProg.set(id,{t,d});
   _updateProgBars(id);
-  // localStorage — 2초 디바운스
-  clearTimeout(_progSaveT.get(id));
-  _progSaveT.set(id,setTimeout(()=>{
-    try{localStorage.setItem('kpu_p_'+id,JSON.stringify({t,d}));}catch(_){}
-  },2000));
-  // Supabase — 5초 디바운스, 로그인 시만
-  if(window._sbSession&&sb){
-    clearTimeout(_progSyncT.get(id));
-    _progSyncT.set(id,setTimeout(()=>{
-      sb.from('video_progress').upsert(
-        {user_id:window._sbSession.user.id,video_id:id,progress_sec:Math.round(t),duration_sec:Math.round(d),updated_at:new Date().toISOString()},
-        {onConflict:'user_id,video_id'}
-      ).then(()=>{},()=>{});
-    },5000));
-  }
+  const now=Date.now();
+  if(now-(_progLastLocal.get(id)||0)>=3000)_saveVidProgLocal(id);
+  _progDirty.add(id);
+  if(now-(_progLastSync.get(id)||0)>=15000)_syncVidProg(id);
 }
+function _flushVidProg(){_progDirty.forEach(id=>{_saveVidProgLocal(id);_syncVidProg(id);});}
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')_flushVidProg();});
+window.addEventListener('pagehide',_flushVidProg);
 // 앱 시작 시 localStorage에서 진행 이력 복원
 (function(){
   try{
@@ -19204,6 +19210,7 @@ async function initSupabaseSync(){
         if(!local||row.progress_sec>local.t){
           _vidProg.set(row.video_id,{t:row.progress_sec,d:row.duration_sec});
           try{localStorage.setItem('kpu_p_'+row.video_id,JSON.stringify({t:row.progress_sec,d:row.duration_sec}));}catch(_){}
+          _updateProgBars(row.video_id); // 이미 그려진 썸네일에도 바로 반영(다른 기기에서 본 것)
         }
       });
     },()=>{});
