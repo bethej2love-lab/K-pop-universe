@@ -4204,3 +4204,6 @@
 .feed-card-thumb-wrap,.sr-vt{position:relative;}
 /* 위쪽 영상 한 줄 카드: 썸네일이 줄의 왼쪽 40%라 진행 바 폭도 그 비율로 줄인다(바 폭 %는 타일 전체 기준) */
 .card-hero .gc-ch-prog{transform:scaleX(.4);transform-origin:left center;}
+/* 히스토리 항목 — ‘제목’은 라벨보다 살짝 밝게, 보조(데뷔 N일 후·방송사)는 흐리게(2026-10-13) */
+.tt-tl-title{color:rgba(225,235,255,0.92);}
+.tt-tl-sub{color:rgba(150,175,225,0.5);font-size:.92em;}
