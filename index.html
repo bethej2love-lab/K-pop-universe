@@ -25213,11 +25213,18 @@ function _renderTimeline(sec,list,ev){
     if(e.title){const t=document.createElement('span');t.className='tt-tl-title';t.textContent=` ‘${e.title}’`;lb.appendChild(t);}
     if(e.sub){const t=document.createElement('span');t.className='tt-tl-sub';t.textContent=` · ${e.sub}`;lb.appendChild(t);}
     row.appendChild(dot);row.appendChild(dt);row.appendChild(lb);
+    // 누르면 이어지는 항목(2026-10-13) — 앨범 상세·트로피 목록·공연 목록. 읽기만 되던 히스토리를 '발견→연결'로.
+    if(e.onClick){row.classList.add('is-link');row.setAttribute('role','button');row.tabIndex=0;
+      const go=document.createElement('span');go.className='tt-tl-go';go.textContent='›';row.appendChild(go); // 제목이 말줄임돼도 › 는 보이게 따로
+      row.addEventListener('click',ev2=>{ev2.stopPropagation();e.onClick();});
+      row.addEventListener('keydown',ev2=>{if(ev2.key==='Enter'){ev2.preventDefault();e.onClick();}});}
     list.appendChild(row);
   });
   sec.style.display='';
 }
 // 음악방송 1위 데이터 → 타임라인 항목 배열 반환 (첫 1위·지상파 첫 1위·트리플 크라운)
+// 히스토리의 1위 항목을 누르면 — 지금 열린 카드의 트로피 버튼을 그대로 누른다(같은 목록·같은 탭)
+function _tlOpenTrophy(){const b=['tt-trophy','gc-trophy'].map(id=>document.getElementById(id)).find(x=>x&&x.offsetParent&&x.style.display!=='none');if(b)b.click();}
 function _mswWinEntries(wins,isKo,debutStr){
   if(!wins||!wins.length)return[];
   const TERR=new Set(['뮤직뱅크','인기가요','쇼음악중심']);
@@ -25228,7 +25235,7 @@ function _mswWinEntries(wins,isKo,debutStr){
     const lbl=isKo?'첫 음악방송 1위':'First music-show win';
     let sub='';
     if(debutStr){const dd=new Date(String(debutStr).replace(/\./g,'-')),wd=new Date(String(w0.win_date).slice(0,10));if(!isNaN(dd)&&!isNaN(wd)){const d=Math.round((wd-dd)/864e5);if(d>0)sub=isKo?`데뷔 ${d}일 후`:`${d}d after debut`;}}
-    out.push({key:k0,date:_tlDate(w0.win_date),label:lbl,title:w0.song_title||'',sub,icon:'🏆'});
+    out.push({key:k0,date:_tlDate(w0.win_date),label:lbl,title:w0.song_title||'',sub,icon:'🏆',onClick:_tlOpenTrophy});
   }
   // 방송사별 그룹화(wins는 win_date 오름차순)
   const byShow={};
@@ -25246,13 +25253,42 @@ function _mswWinEntries(wins,isKo,debutStr){
   if(triples.length){
     const t=triples[0];
     const kt=_tlKey(t.date);if(kt){
-      out.push({key:kt,date:_tlDate(t.date),label:isKo?'첫 음악방송 트리플 크라운':'First triple crown',title:t.song||'',sub:t.show,icon:'👑'});
+      out.push({key:kt,date:_tlDate(t.date),label:isKo?'첫 음악방송 트리플 크라운':'First triple crown',title:t.song||'',sub:t.show,icon:'👑',onClick:_tlOpenTrophy});
     }
   }else if(!TERR.has(w0.show)){
     const terr=wins.find(w=>TERR.has(w.show));
-    if(terr){const kt=_tlKey(terr.win_date);if(kt)out.push({key:kt,date:_tlDate(terr.win_date),label:isKo?'지상파 첫 1위':'First terrestrial win',title:terr.song_title||'',sub:terr.show,icon:'📺'});}
+    if(terr){const kt=_tlKey(terr.win_date);if(kt)out.push({key:kt,date:_tlDate(terr.win_date),label:isKo?'지상파 첫 1위':'First terrestrial win',title:terr.song_title||'',sub:terr.show,icon:'📺',onClick:_tlOpenTrophy});}
   }
   return out;
+}
+// ── 히스토리 '첫 콘서트/투어' 고르기(2026-10-13, 사용자 요청) ─────────────────────────────
+// 예전엔 kpop_events에서 가장 이른 행을 그대로 썼다 → 트와이스 '일본 데뷔 쇼케이스', 에이티즈 'Debut Showcase',
+// ITZY 'Premiere Showcase', 레드벨벳 'Set lists'(수집 찌꺼기)가 '첫 콘서트'로 떴다. 두 겹으로 거른다:
+//  ① 콘서트가 아닌 행 제외 — 쇼케이스·팬콘·팬미팅·팬 콘서트·시상식·페스티벌·앵콜, 제목이 'Set lists'인 찌꺼기
+//  ② 남은 첫 공연 제목이 **스스로 첫 공연이 아니라고 말하면**(2nd·3rd·Zone 2·15th Anniversary…) 표시하지 않는다 —
+//     공연 DB에 초기 공연이 빠진 그룹(트와이스 TWICELAND 2017 없음, 2PM 초기 공연 없음)에서 틀린 '첫'을 말하느니 뺀다.
+// 전수 시뮬레이션: 66개 그룹의 '첫 콘서트'가 바뀌었고 대부분 실제 첫 단독 공연·투어로 바로잡혔다.
+const _CONCERT_EXCLUDE_RE=/showcase|쇼케이스|fan[- ]?con|팬콘|fan[- ]?meeting|팬미팅|fan concert|팬 ?콘서트|awards?\b|시상식|festival|페스티벌|앵콜|encore|^\s*set ?lists?\s*$/i;
+const _CONCERT_NOT_FIRST_RE=/\b(2nd|3rd|[4-9]th|1\dth|2\dth|second|third|fourth|fifth)\b|zone ?2|\b[2-9]\s*(차|번째)|anniversary/i;
+const _tlFirstConcertP=new Map();
+function _tlFirstConcert(gko){
+  if(!sb||!gko)return Promise.resolve(null);
+  if(_tlFirstConcertP.has(gko))return _tlFirstConcertP.get(gko);
+  const p=Promise.resolve(sb.from('kpop_events').select('id,date_start,title,type,venue').contains('groups',[gko]).order('date_start',{ascending:true}).limit(40))
+    .then(({data})=>{
+      const fc=(data||[]).find(r=>r&&r.date_start&&!_CONCERT_EXCLUDE_RE.test(r.title||'')&&(!r.type||r.type==='콘서트'));
+      if(!fc||_CONCERT_NOT_FIRST_RE.test(fc.title||''))return null;
+      return fc;
+    }).catch(()=>null);
+  _tlFirstConcertP.set(gko,p);
+  return p;
+}
+// 히스토리의 첫 콘서트를 누르면 — 카드 안 공연 줄로 내려가고, 그 줄이 없으면 그 공연장의 공연 목록을 연다
+function _tlOpenConcert(fc){
+  const row=[document.getElementById('tt-concert-row'),document.getElementById('gc-concert-row')]
+    .find(el=>el&&el.offsetParent&&el.childElementCount);
+  if(row){row.scrollIntoView({behavior:'smooth',block:'center'});return;}
+  if(fc&&fc.venue)_openVenueEvents(fc.venue);
 }
 function _buildMemberTimeline(a){
   const sec=document.getElementById('tt-timeline-section');
@@ -25295,12 +25331,11 @@ function _buildMemberTimeline(a){
         if(ev.length>=2)_renderTimeline(sec,list,ev);
       }).catch(()=>{});
     // 첫 콘서트/투어(비동기) — kpop_events 최소 date_start. 활동 그룹 멤버 시간축을 데뷔·첫1위에 이어 채운다.
-    sb.from('kpop_events').select('date_start,title').contains('groups',[primary.ko]).order('date_start',{ascending:true}).limit(1)
-      .then(({data})=>{
-        if(_openTArtist!==a)return;
-        const d=data&&data[0]&&data[0].date_start;if(!d)return;
-        const k=_tlKey(d);if(!k||ev.some(e=>e.icon==='🎫'))return;
-        ev.push({key:k,date:_tlDate(d),label:isKo?'첫 콘서트/투어':'First concert/tour',title:String(data[0].title||'').trim(),icon:'🎫'});
+    _tlFirstConcert(primary.ko)
+      .then(fc=>{
+        if(_openTArtist!==a||!fc)return;
+        const k=_tlKey(fc.date_start);if(!k||ev.some(e=>e.icon==='🎫'))return;
+        ev.push({key:k,date:_tlDate(fc.date_start),label:isKo?'첫 콘서트/투어':'First concert/tour',title:String(fc.title||'').trim(),icon:'🎫',onClick:()=>_tlOpenConcert(fc)});
         if(ev.length>=2)_renderTimeline(sec,list,ev);
       }).catch(()=>{});
     // 정규 1집(비동기) — 그룹 디스코 로드 후 type이 "정규…"인 것 중 최소 releaseDate(첫 정규앨범).
@@ -25310,7 +25345,7 @@ function _buildMemberTimeline(a){
       if(!full.length||ev.some(e=>e.icon==='💿'))return;
       full.sort((x,y)=>String(x.releaseDate).localeCompare(String(y.releaseDate)));
       const k2=_tlKey(full[0].releaseDate);if(!k2)return;
-      ev.push({key:k2,date:_tlDate(full[0].releaseDate),label:isKo?'정규 1집':'1st full album',title:full[0].title||'',icon:'💿'});
+      ev.push({key:k2,date:_tlDate(full[0].releaseDate),label:isKo?'정규 1집':'1st full album',title:full[0].title||'',icon:'💿',onClick:()=>{_gcDiscogList=[full[0]];_openGcDiscogDetail(full[0],0);}});
       if(ev.length>=2)_renderTimeline(sec,list,ev);
     }).catch(()=>{});
   }
@@ -25337,12 +25372,11 @@ function _buildGroupTimeline(ko){
       if(ev.length>=2)_renderTimeline(sec,list,ev);
     }).catch(()=>{});
   // 첫 콘서트
-  sb.from('kpop_events').select('date_start,title').contains('groups',[ko]).order('date_start',{ascending:true}).limit(1)
-    .then(({data})=>{
-      if(_openGCko!==ko)return;
-      const d=data&&data[0]&&data[0].date_start;if(!d)return;
-      const k=_tlKey(d);if(!k||ev.some(e=>e.icon==='🎫'))return;
-      ev.push({key:k,date:_tlDate(d),label:isKo?'첫 콘서트/투어':'First concert/tour',title:String(data[0].title||'').trim(),icon:'🎫'});
+  _tlFirstConcert(ko)
+    .then(fc=>{
+      if(_openGCko!==ko||!fc)return;
+      const k=_tlKey(fc.date_start);if(!k||ev.some(e=>e.icon==='🎫'))return;
+      ev.push({key:k,date:_tlDate(fc.date_start),label:isKo?'첫 콘서트/투어':'First concert/tour',title:String(fc.title||'').trim(),icon:'🎫',onClick:()=>_tlOpenConcert(fc)});
       if(ev.length>=2)_renderTimeline(sec,list,ev);
     }).catch(()=>{});
   // 첫 정규앨범
@@ -25352,7 +25386,7 @@ function _buildGroupTimeline(ko){
     if(!full.length||ev.some(e=>e.icon==='💿'))return;
     full.sort((x,y)=>String(x.releaseDate).localeCompare(String(y.releaseDate)));
     const k2=_tlKey(full[0].releaseDate);if(!k2)return;
-    ev.push({key:k2,date:_tlDate(full[0].releaseDate),label:isKo?'정규 1집':'1st full album',title:full[0].title||'',icon:'💿'});
+    ev.push({key:k2,date:_tlDate(full[0].releaseDate),label:isKo?'정규 1집':'1st full album',title:full[0].title||'',icon:'💿',onClick:()=>{_gcDiscogList=[full[0]];_openGcDiscogDetail(full[0],0);}});
     if(ev.length>=2)_renderTimeline(sec,list,ev);
   }).catch(()=>{});
 }

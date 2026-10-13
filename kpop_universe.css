@@ -4207,3 +4207,7 @@
 /* 히스토리 항목 — ‘제목’은 라벨보다 살짝 밝게, 보조(데뷔 N일 후·방송사)는 흐리게(2026-10-13) */
 .tt-tl-title{color:rgba(225,235,255,0.92);}
 .tt-tl-sub{color:rgba(150,175,225,0.5);font-size:.92em;}
+/* 누르면 이어지는 히스토리 항목 — 평소엔 그대로, 손가락/마우스를 올리면 살짝 밝게 + 끝에 › */
+.tt-tl-row.is-link{cursor:pointer;border-radius:6px;margin:0 -6px;padding:2px 6px;}
+.tt-tl-row.is-link:hover,.tt-tl-row.is-link:active{background:rgba(150,175,225,0.08);}
+.tt-tl-go{flex:none;margin-left:auto;padding-left:6px;color:rgba(150,175,225,0.45);}
