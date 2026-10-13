@@ -4177,7 +4177,16 @@
 .mx-feed-sub{font-size:11px;color:rgba(160,185,255,0.45);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .mx-feed-arr{font-size:18px;color:rgba(255,255,255,0.25);flex-shrink:0;}
 
-/* 카드 첫 화면 대표 영상(2026-10-13 시안, ?hero=1) — 헤더 바로 아래 한 칸, 전체폭 */
-.card-hero{margin:10px 0 4px;}
+/* 카드 첫 화면 대표 영상(2026-10-13 시안, ?hero=1) — 가로 한 줄짜리 작은 카드.
+   1차 시안(전체폭 큰 썸네일)은 프로필 사진과 큰 이미지 두 개가 위아래로 붙어 번잡하다는 피드백 → 썸네일을 왼쪽 작게,
+   오른쪽에 '대표 영상' 라벨+제목. 첫 화면에 영상은 있되 프로필보다 튀지 않게. */
+.card-hero{margin:10px 0 12px;}
 .card-hero .card-hero-grid{display:block;}
-.card-hero .gc-ch-item{width:100%;}
+.card-hero .gc-ch-item{display:grid;grid-template-columns:40% 1fr;column-gap:12px;row-gap:3px;align-items:start;width:100%;background:none;box-shadow:none;padding:0;}
+.card-hero .gc-ch-item::before{content:attr(data-hero-label);grid-column:2;grid-row:1;font-size:var(--fz-meta,11px);font-weight:700;letter-spacing:.04em;color:rgba(150,175,225,0.75);}
+.card-hero .gc-ch-thumb,.card-hero .gc-ch-thumb-bg{grid-column:1;grid-row:1/span 4;width:100%;height:auto;aspect-ratio:16/9;border-radius:8px;object-fit:cover;position:relative;}
+.card-hero .is-short .gc-ch-thumb{object-fit:contain;background:#000;}
+.card-hero .tv-sm-title{grid-column:2;grid-row:2;margin:0;white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+.card-hero .gc-ch-meta{grid-column:2;grid-row:3;margin:0;}
+.card-hero .tv-with-line{grid-column:2;grid-row:4;}
+.card-hero .scrap-btn,.card-hero .col-btn,.card-hero .gc-ch-dur,.card-hero .vid-edit-btn{display:none;}

@@ -24013,10 +24013,21 @@ function _makeChVidController(contId){
         const heroGrid=_cardHeroSlot(contId);
         if(heroGrid){
           heroGrid.innerHTML='';heroGrid.parentElement.hidden=true;
-          if(featured&&_cardHeroOn()){
-            renderItems([{...featured,_wide:true}],heroGrid);heroGrid.parentElement.hidden=false;
-            state.allVids=[featured].concat(state.allVids);
-            featured=null;
+          // 대표 칸은 가로 영상만 — 쇼츠는 작은 16:9 칸에서 썸네일이 비고 흐린 배경이 줄 전체로 번졌다(카리나 실측).
+          // 대표가 쇼츠면 그건 그리드 맨 앞에 그대로 두고, 대표 칸엔 가로 후보(멤버면 본인 단독 직캠 우선)를 따로 고른다.
+          let heroV=featured&&!_isShortV(featured)?featured:null;
+          if(!heroV&&featured&&_cardHeroOn()){
+            const pool=vids.filter(v=>!_isShortV(v)&&v.content_flag!=='기타');
+            const solo=state.memberKo?pool.filter(v=>(v.members||[]).length===1&&v.members[0]===state.memberKo&&_isFancamLike(v.title)):[];
+            heroV=(solo.length?solo:pool).slice().sort((a,b)=>(b.view_count||0)-(a.view_count||0))[0]||null;
+            if(heroV){vids=vids.filter(v=>v.id!==heroV.id);state.seenIds.add(heroV.id);}
+          }
+          if(heroV&&_cardHeroOn()){
+            const _wasFeatured=heroV===featured;
+            renderItems([{...heroV,_featured:false,_wide:true}],heroGrid);heroGrid.parentElement.hidden=false;
+            const _hi=heroGrid.querySelector('.gc-ch-item');if(_hi)_hi.dataset.heroLabel=currentLang==='ko'?'대표 영상':'Featured';
+            state.allVids=[heroV].concat(state.allVids);
+            if(_wasFeatured)featured=null; // 대표가 그대로 올라갔으면 그리드에선 뺀다(쇼츠 대표는 그리드 맨 앞에 남음)
           }
         }
       }
