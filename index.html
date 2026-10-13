@@ -20632,7 +20632,21 @@ function _buildFeedAnniversaries(){
     if(a.active===false)item.classList.add('anniv-inactive');
     // 소속 그룹이 전부 끝난 사람만 실제 영상 활동으로 한 번 더 본다(위 _annivIsDormant 주석 참고).
     else _annivIsDormant(a).then(d=>{if(d)item.classList.add('anniv-inactive');}).catch(()=>{});
-    const _fallbackThumb=()=>_fetchTopVideoThumb(_ytGroupKoFor(a),a.name.ko).then(t=>_setAnnivStripThumb(item,t||null));
+    // 사진 없을 때 영상 폴백: 퍼포먼스(live) 단독 태깅 → 없으면 일반 top 영상 순
+    const _fallbackThumb=async()=>{
+      const gko=_ytGroupKoFor(a);const mko=a.name.ko;
+      try{
+        if(sb&&gko&&mko){
+          const{data}=await sb.from(_YT_TABLE).select('id,thumb,is_short').eq('category','live')
+            .eq('group_ko',gko).eq('members',`{${_pgFilterVal(mko)}}`)
+            .or('content_flag.is.null,content_flag.neq.보류').or('content_flag.is.null,content_flag.neq.hidden')
+            .order('view_count',{ascending:false}).limit(6);
+          const pick=data?.find(v=>v.thumb);
+          if(pick){_setAnnivStripThumb(item,pick.thumb);return;}
+        }
+      }catch(_){}
+      _fetchTopVideoThumb(gko,mko).then(t=>_setAnnivStripThumb(item,t||null));
+    };
     // ⚠️ 예전엔 `if(a.links?.instagram)`으로 감싸서 **인스타가 있는 멤버만** 사진을 조회했다. 2026-08-14에
     // "인스타 없는 멤버도 위버스 등 출처로 사진 등록 가능"으로 확대됐는데 이 조건이 같이 안 고쳐져서,
     // 인스타 없는 **541명**은 사진을 등록해도 여기서 영영 안 떴다(2026-08-27 사용자 제보 — 오늘 생일 4명 중
