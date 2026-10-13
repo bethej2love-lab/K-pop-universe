@@ -25290,6 +25290,49 @@ function _tlOpenConcert(fc){
   if(row){row.scrollIntoView({behavior:'smooth',block:'center'});return;}
   if(fc&&fc.venue)_openVenueEvents(fc.venue);
 }
+// ── 히스토리 이정표 추가(2026-10-13, 사용자 요청) — 이미 있는 데이터로 ──────────────────────────
+//  · 1억 뷰 MV: yt_view_milestones(tier≥1억) 중 **가장 먼저 발매된 MV**를 그 발매일에. ⚠️ crossed_at은 우리
+//    수집기가 처음 본 날이라(대부분 seeded, 2026-09-23) 달성일로 쓰면 몇 년 전 MV가 2026년 달성으로 찍힌다 — 쓰지 않는다.
+//  · 첫 멜론 연간 TOP100: melon_yearly_top100 최소 연도(같은 해면 최고 순위) — 날짜는 연도만.
+// 그룹 단위 기록이라 멤버 카드는 주 소속 그룹 것을 보여준다(첫 1위·첫 콘서트와 같은 기준).
+const _tlMilestoneP=new Map();
+function _tlMilestones(gko,isKo){
+  if(!sb||!gko)return Promise.resolve([]);
+  const key=gko+'␟'+(isKo?1:0);
+  if(_tlMilestoneP.has(key))return _tlMilestoneP.get(key);
+  const p=Promise.all([
+    Promise.resolve(sb.from('yt_view_milestones').select('video_id,tier,yt_channel_videos(title,published_at,is_short,category)').eq('group_ko',gko).gte('tier',100000000)).catch(()=>({data:null})),
+    Promise.resolve(sb.from('melon_yearly_top100').select('song_title,year,rank').eq('group_ko',gko).is('member_ko',null).order('year',{ascending:true}).order('rank',{ascending:true}).limit(1)).catch(()=>({data:null})),
+  ]).then(([vm,mt])=>{
+    const out=[];
+    // 쇼츠는 빼고 MV를 우선한다 — 에스파는 해시태그 범벅 쇼츠가 '첫 1억 뷰'로 잡혔다
+    const vs=((vm&&vm.data)||[]).filter(r=>r.yt_channel_videos&&r.yt_channel_videos.published_at&&!r.yt_channel_videos.is_short)
+      .sort((a,b)=>String(a.yt_channel_videos.published_at).localeCompare(String(b.yt_channel_videos.published_at)));
+    const v=vs.find(r=>r.yt_channel_videos.category==='mv'||/M\/?V\b/i.test(r.yt_channel_videos.title||''));
+    // ⚠️ MV만, '첫'이라고 하지 않는다 — 조회수 기록 표가 모든 영상을 담지 않아(트와이스 Like OOH-AHH 없음) '첫'은 거짓이 될 수 있다
+    if(v){
+      const d=String(v.yt_channel_videos.published_at).slice(0,10),k=_tlKey(d);
+      if(k)out.push({key:k,date:_tlDate(d),label:isKo?'1억 뷰 MV':'100M-view MV',title:_cleanTitle(v.yt_channel_videos.title||'').replace(/^.*?\s[-–]\s/,'').replace(/\s*M\/?V\s*$/i,'').replace(/^['‘"](.*)['’"]$/,'$1'), // 'BLACKPINK - '붐바야' M/V' → 붐바야
+        sub:isKo?'1억 뷰+':'100M+',icon:'▶️',onClick:()=>openLightbox(`https://www.youtube.com/watch?v=${v.video_id}`,false,null,0,{groupKo:gko})});
+    }
+    const m=mt&&mt.data&&mt.data[0];
+    // 연말 차트 — 그해 12월 자리에 정렬(데뷔보다 앞에 오지 않게)
+    if(m&&m.year){const k=_tlKey(String(m.year))+1231;if(k)out.push({key:k,date:String(m.year),label:isKo?'첫 멜론 연간 TOP100':'First Melon year-end TOP100',
+      title:m.song_title||'',sub:isKo?`연간 ${m.rank}위`:`#${m.rank}`,icon:'🍈',onClick:_tlOpenTrophy});}
+    return out;
+  }).catch(()=>[]);
+  _tlMilestoneP.set(key,p);
+  return p;
+}
+// 일본 데뷔 — 한국 기반 그룹의 첫 일본 발매반(_isJpRelease). 디스코가 로드된 뒤 부른다.
+function _tlJpDebut(gko,isKo){
+  if(!gko||!_groupIsKoBased(gko))return null;
+  const jp=((GROUPS[gko]||{}).discography||[]).filter(x=>x&&x.releaseDate&&!x.variant&&_isJpRelease(x,gko))
+    .sort((x,y)=>String(x.releaseDate).localeCompare(String(y.releaseDate)));
+  if(!jp.length)return null;
+  const a=jp[0],k=_tlKey(a.releaseDate);if(!k)return null;
+  return {key:k,date:_tlDate(a.releaseDate),label:isKo?'일본 데뷔':'Japan debut',title:a.title||'',icon:'🗾',onClick:()=>{_gcDiscogList=[a];_openGcDiscogDetail(a,0);}};
+}
 function _buildMemberTimeline(a){
   const sec=document.getElementById('tt-timeline-section');
   const list=document.getElementById('tt-timeline');
@@ -25338,9 +25381,12 @@ function _buildMemberTimeline(a){
         ev.push({key:k,date:_tlDate(fc.date_start),label:isKo?'첫 콘서트/투어':'First concert/tour',title:String(fc.title||'').trim(),icon:'🎫',onClick:()=>_tlOpenConcert(fc)});
         if(ev.length>=2)_renderTimeline(sec,list,ev);
       }).catch(()=>{});
+    // 이정표(첫 1억 뷰 영상·첫 멜론 연간 TOP100) — 주 소속 그룹 기준
+    _tlMilestones(primary.ko,isKo).then(ms=>{if(_openTArtist!==a)return;ms.forEach(m=>{if(!ev.some(e=>e.icon===m.icon))ev.push(m);});if(ev.length>=2)_renderTimeline(sec,list,ev);});
     // 정규 1집(비동기) — 그룹 디스코 로드 후 type이 "정규…"인 것 중 최소 releaseDate(첫 정규앨범).
     _ensureGroupDisco(primary.ko).then(()=>{
       if(_openTArtist!==a)return;
+      {const jd=_tlJpDebut(primary.ko,isKo);if(jd&&!ev.some(e=>e.icon==='🗾')){ev.push(jd);if(ev.length>=2)_renderTimeline(sec,list,ev);}}
       const full=((GROUPS[primary.ko]||{}).discography||[]).filter(x=>x&&x.releaseDate&&/^정규/.test(String(x.type||''))&&!x.variant&&!_isJpRelease(x,primary.ko)); // 일본 정규·변형판 제외
       if(!full.length||ev.some(e=>e.icon==='💿'))return;
       full.sort((x,y)=>String(x.releaseDate).localeCompare(String(y.releaseDate)));
@@ -25379,9 +25425,12 @@ function _buildGroupTimeline(ko){
       ev.push({key:k,date:_tlDate(fc.date_start),label:isKo?'첫 콘서트/투어':'First concert/tour',title:String(fc.title||'').trim(),icon:'🎫',onClick:()=>_tlOpenConcert(fc)});
       if(ev.length>=2)_renderTimeline(sec,list,ev);
     }).catch(()=>{});
-  // 첫 정규앨범
+  // 이정표(첫 1억 뷰 영상·첫 멜론 연간 TOP100)
+  _tlMilestones(ko,isKo).then(ms=>{if(_openGCko!==ko)return;ms.forEach(m=>{if(!ev.some(e=>e.icon===m.icon))ev.push(m);});if(ev.length>=2)_renderTimeline(sec,list,ev);});
+  // 첫 정규앨범 + 일본 데뷔
   _ensureGroupDisco(ko).then(()=>{
     if(_openGCko!==ko)return;
+    {const jd=_tlJpDebut(ko,isKo);if(jd&&!ev.some(e=>e.icon==='🗾')){ev.push(jd);if(ev.length>=2)_renderTimeline(sec,list,ev);}}
     const full=((GROUPS[ko]||{}).discography||[]).filter(x=>x&&x.releaseDate&&/^정규/.test(String(x.type||''))&&!x.variant&&!_isJpRelease(x,ko)); // 일본 정규·변형판 제외
     if(!full.length||ev.some(e=>e.icon==='💿'))return;
     full.sort((x,y)=>String(x.releaseDate).localeCompare(String(y.releaseDate)));
