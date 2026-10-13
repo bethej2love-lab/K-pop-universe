@@ -4810,6 +4810,54 @@ function _logSearchClick(h){
     })).catch(()=>{});
   }catch(e){}
 }
+// 검색 결과 아바타(2026-10-13, 사용자 요청 — "미리보기가 다 텍스트만 있어 답답하다").
+// 멤버: 등록된 프로필 사진 → 없으면 투데이 애니버서리와 같은 영상 썸네일 폴백(_fetchTopVideoThumb).
+// 그룹: 프로필(대개 로고)이 있으면 그것, 없으면 행성 색 원 — 줄 정렬을 맞추려고 자리는 항상 잡는다.
+// ⚠️ 영상 썸네일 폴백은 DB 쿼리라 **화면에 보일 때만**(IntersectionObserver) 걸고, 아티스트별로
+//    결과를 기억한다 — 글자를 칠 때마다 doSearch가 다시 돌아 같은 멤버 행이 계속 새로 만들어진다.
+// ⚠️ artist_pics 미스 때 _fetchInstaPicUrl처럼 행마다 DB를 다시 묻지 않는다 — 프리워밍이 테이블
+//    전체를 받아두므로 캐시에 없으면 사진이 없는 것이다.
+const _srAvMemo=new WeakMap();
+function _srAvUrl(a){
+  let p=_srAvMemo.get(a);
+  if(p)return p;
+  p=(async()=>{
+    try{_instaPicPreloadP=_instaPicPreloadP||_warmInstaPicCache();await _instaPicPreloadP;}catch(e){}
+    for(const g of _artistGroups(a)){const u=_instaPicCache.get(_picKey(a.name.ko,g.ko));if(u)return u;}
+    {const u=_instaPicCache.get(_picKey(a.name.ko,''));if(u)return u;}
+    return (await _fetchTopVideoThumb(_ytGroupKoFor(a),a.name.ko))||null;
+  })();
+  _srAvMemo.set(a,p);
+  return p;
+}
+let _srAvIO=null;
+function _srAvPaint(av,url){
+  if(!url)return;
+  const img=new Image();img.alt='';img.referrerPolicy='no-referrer';
+  img.onload=()=>{av.appendChild(img);av.classList.add('has-img');};
+  img.src=url;
+}
+function _srAvatarEl(h){
+  const av=document.createElement('span');av.className='sr-av';
+  const c=h.type==='group'?(GROUPS[h.data]&&GROUPS[h.data].color):(h.data&&h.data.color);
+  if(Array.isArray(c))av.style.background=`radial-gradient(circle at 34% 28%, rgb(${c[0]},${c[1]},${c[2]}), rgba(6,9,20,0.6))`;
+  if(h.type==='group'){
+    const sync=_instaPicCache.get(_groupPicKey(h.data))||(GROUPS[h.data]&&GROUPS[h.data].img)||'';
+    if(sync)_srAvPaint(av,sync);
+    else if(_instaPicPreloadP)_instaPicPreloadP.then(()=>_srAvPaint(av,_instaPicCache.get(_groupPicKey(h.data))||'')).catch(()=>{});
+    return av;
+  }
+  const a=h.data;if(!a||!a.name)return av;
+  const run=()=>_srAvUrl(a).then(u=>_srAvPaint(av,u)).catch(()=>{});
+  if(typeof IntersectionObserver!=='function'){run();return av;}
+  if(!_srAvIO)_srAvIO=new IntersectionObserver(es=>es.forEach(e=>{
+    if(!e.isIntersecting)return;
+    _srAvIO.unobserve(e.target);
+    const fn=e.target._srAvRun;e.target._srAvRun=null;if(fn)fn();
+  }));
+  av._srAvRun=run;_srAvIO.observe(av);
+  return av;
+}
 function _makeSearchItem(h,res,mobSearch,obSearch){
   const div=document.createElement('div');
   div.className='sr-item';
@@ -4830,6 +4878,7 @@ function _makeSearchItem(h,res,mobSearch,obSearch){
       +`<span class="sr-vb"><span class="sr-vtitle">${esc(h.name)}</span>${meta?`<span class="sr-vmeta">${esc(meta)}</span>`:''}</span>`;
   }else{
   div.innerHTML=`<span class="sr-nl"><span class="sr-item-name${h.type==='group'?' sr-group':''}">${_ico}${h.name}</span>${h.alias?`<span class="sr-alias">${h.alias}</span>`:''}</span>${h.sub?`<span class="sr-tag${h.type==='group'?' sr-group':''}${h.subFormer?' sr-tag-former':''}">${h.sub}</span>`:''}`;
+  if(h.type==='member'||h.type==='group')div.insertBefore(_srAvatarEl(h),div.firstChild);
   }
   div.addEventListener('click',e=>{
     e.stopPropagation();

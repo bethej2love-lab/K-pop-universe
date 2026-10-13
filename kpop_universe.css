@@ -2407,6 +2407,12 @@
     transition:background .1s;
   }
   .sr-item:last-child{border-bottom:none;}
+  /* 멤버·그룹 아바타(2026-10-13) — 멤버는 프로필 사진/영상 썸네일, 그룹은 로고 또는 행성 색 원 */
+  .sr-av{flex:none;position:relative;width:26px;height:26px;border-radius:50%;overflow:hidden;
+    background:rgba(120,150,255,0.22);box-shadow:0 0 0 0.5px rgba(255,255,255,0.12);}
+  .sr-av img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;animation:srAvIn .25s ease;}
+  @keyframes srAvIn{from{opacity:0}to{opacity:1}}
+  #msheet-body .sr-av{width:32px;height:32px;}
   .sr-item:hover,.sr-item:active,.sr-item.kbd-active{background:rgba(255,255,255,0.09);}
   .sr-item-name{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
   .sr-item-name.sr-group{color:#9ab8dc;}
