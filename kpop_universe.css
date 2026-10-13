@@ -2730,7 +2730,7 @@
   .gc-discog-type{font-size:8px;font-weight:700;letter-spacing:.03em;color:rgba(150,175,225,0.66);margin-top:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   .gc-discog-item-title{font-size:10px;color:rgba(215,228,255,0.85);line-height:1.28;margin-top:1px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
   .gc-discog-extra .gc-discog-cover{opacity:.55;}
-  /* 시리즈 스택 시안(2026-10-13, ?stack=1) — 뒤 커버는 오른쪽 위로 부채꼴로만 비친다(커버 위엔 아무것도 안 얹음) */
+  /* 활동기 스택(2026-10-13, 기본 켬 · ?stack=0으로 끔) — 뒤 커버는 오른쪽 위로 부채꼴로만 비친다(커버 위엔 아무것도 안 얹음) */
   .gc-discog-strip.has-stacks{padding-top:22px;}
   .gc-discog-stack{width:104px;}
   .gc-discog-deck{position:relative;width:104px;height:80px;}
@@ -2749,6 +2749,14 @@
   .gc-discog-series-head .gds-line{flex:1;min-width:12px;height:6px;margin-top:6px;border-top:1px solid rgba(150,175,225,0.35);border-right:1px solid rgba(150,175,225,0.35);border-top-right-radius:3px;}
   .gc-discog-series-head .gds-fold{flex:none;font-weight:600;color:rgba(150,175,225,0.7);}
   .gc-discog-series-head:hover .gds-fold{color:#fff;}
+  /* 어드민 활동기 지정 버튼 — 캡션 줄 끝 작은 고리 아이콘(커버 위엔 안 얹음) */
+  .gc-discog-type{position:relative;}
+  .gc-era-adm{position:absolute;right:0;top:-2px;width:16px;height:14px;padding:0;border:none;background:none;color:rgba(150,175,225,0.45);cursor:pointer;display:flex;align-items:center;justify-content:center;}
+  .gc-era-adm:hover{color:#fff;}
+  .gc-era-adm.on{color:#ffb0d0;}
+  .gc-era-pick{max-width:min(320px,calc(100vw - 16px));max-height:60vh;overflow-y:auto;}
+  .gc-era-pick .fav-kebab-item{display:block;width:100%;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .gc-era-pick-hd{font-size:10px;font-weight:700;color:rgba(150,175,225,0.75);padding:5px 9px 6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   /* ── 앨범 상세 팝업 ── */
   #gc-discog-detail{position:fixed;inset:0;z-index:102;display:none;align-items:flex-end;justify-content:center;}
   #gc-discog-detail.open{display:flex;}

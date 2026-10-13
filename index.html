@@ -12514,7 +12514,7 @@ function _renderDiscography(prefix,albums){
   }
   updateMoreVisibility();
 }
-// ── 활동기 스택 시안(2026-10-13, 사용자 요청 — 아직 기본 꺼짐, ?stack=1 로만 켬) ─────────────
+// ── 활동기 스택(2026-10-13, 사용자 요청 — 기본 켬, ?stack=0 으로 끔) ─────────────
 // "GREENGREEN_playextended" "THIS IS FOR DELUXE" 같은 판을 정규/미니로 억지 분류하지 않고, **한 활동기**의 발매를
 // 커버가 겹친 한 장으로 접어 보여준다. 누르면 그 자리에서 펼쳐진다.
 // 활동기 = 앨범 + ① 그 앨범의 판(_playextended · Edition · DELUXE · 2.0 · -Repackage-)
@@ -12525,7 +12525,8 @@ function _renderDiscography(prefix,albums){
 //    오히려 대표작이 숨는다(1차 시안에서 그렇게 했다가 바꿈).
 // ⚠️ 커버 위엔 아무것도 얹지 않는다(앨범 커버 원칙) — 뒤 커버는 바깥으로만 비치고, 장수는 캡션에 쓴다.
 function _discogStackOn(){
-  try{return /[?&]stack=1\b/.test(location.search)||localStorage.getItem('kpu_discog_stack')==='1';}catch(e){return false;}
+  // 2026-10-13 기본 켬(사용자 승인). ?stack=0 또는 localStorage kpu_discog_stack='0'이면 예전 한 줄 나열.
+  try{return !(/[?&]stack=0\b/.test(location.search)||localStorage.getItem('kpu_discog_stack')==='0');}catch(e){return true;}
 }
 const _discogStackOpen=new Set();
 // 판 표시·피처링을 뗀 제목 키 — 같은 키면 같은 앨범의 다른 판
@@ -12537,24 +12538,59 @@ function _discogEditionKey(title){
      .replace(/\s*\((?:[^)]*\s)?edition\)\s*$/i,'').replace(/\s+deluxe$/i,'').replace(/\s+2\.0$/,'');
   return{key:t.toLowerCase().replace(/\s+/g,''),label:t};
 }
-function _discogEras(list){
-  const nt=s=>String(s||'').toLowerCase().replace(/\([^)]*\)|\[[^\]]*\]/g,'').replace(/[^a-z0-9가-힣]/g,'');
+// 앨범 식별자 — 수동 지정(disco_era_overrides)이 가리키는 키. 같은 날 같은 제목은 같은 발매다.
+function _discogAlbumId(a){return `${a.releaseDate||''}|${String(a.title||'').trim()}`;}
+// ov: Map(albumId → 대상 albumId | '') — ''면 강제로 단독, 값이 있으면 그 앨범의 활동기로 붙인다.
+function _discogEras(list,ov){
+  // 트랙 대조 키 — 괄호 밖 본문 + **괄호 안 표기도 따로** 키로 쓴다. 싱글은 영문 `Neverland`인데 앨범 트랙은
+  // `우리들은 행방불명 (Neverland)`처럼 한/영이 괄호로 갈리는 경우가 많다(원위 실측). 언어판 꼬리
+  // (`- Japanese Version` · `(Inst.)`)는 본문에서 뗀다.
+  const nt=s=>String(s||'').toLowerCase().replace(/[^a-z0-9가-힣]/g,'');
+  const tk=t=>{
+    const raw=String(t||'').replace(/\s+-\s+[^-]*\b(?:ver\.?|version|inst\.?|instrumental|remix)\s*$/i,'');
+    const ks=[nt(raw.replace(/\([^)]*\)|\[[^\]]*\]/g,''))];
+    for(const m of raw.matchAll(/[(\[]([^)\]]+)[)\]]/g)){const k=nt(m[1]);if(k.length>=3&&!/^(?:inst|instrumental|feat|prod|ver|version|english|korean|japanese|chinese|remix|sped|live)/.test(k))ks.push(k);}
+    return ks.filter((k,i)=>i===0?k.length>=1:k.length>=3); // 본문 키는 한 글자도 인정(찬열 '척')
+  };
   const day=d=>Date.parse(String(d||'').replace(/\./g,'-'))/864e5;
   const isSingle=a=>/싱글/.test(a.type||'');
   const eraOf=new Map(),eras=new Map();
-  // ① 판끼리
-  list.forEach(a=>{const k=_discogEditionKey(a.title);if(!eras.has(k.key))eras.set(k.key,{label:k.label,items:[]});eras.get(k.key).items.push(a);eraOf.set(a,k.key);});
-  // ② 선공개 싱글 → 120일 안의 가장 가까운 앨범
+  // ① 판끼리. ⚠️ 판 표시 없이 **제목만 같은** 발매가 반년 넘게 떨어져 있으면 별개다(비원에이포 HELLO! WM
+  //    2018/2020 · 박정민 Summer Break! 2014/2023). 판 표시가 붙은 쪽(Jack In The Box (HOPE Edition), 1년 뒤)은 붙인다.
+  [...list].sort((x,y)=>day(x.releaseDate)-day(y.releaseDate)).forEach(a=>{
+    const k=_discogEditionKey(a.title);
+    const marked=k.label!==String(a.title||'').trim();
+    let key=k.key,n=1;
+    while(eras.has(key)){
+      const e=eras.get(key);
+      if(marked||e.items.some(x=>Math.abs(day(x.releaseDate)-day(a.releaseDate))<=180))break;
+      key=`${k.key}#${++n}`;
+    }
+    if(!eras.has(key))eras.set(key,{label:k.label,items:[]});
+    eras.get(key).items.push(a);eraOf.set(a,key);
+  });
+  const move=(a,to)=>{const from=eraOf.get(a);if(from===to)return;const fe=eras.get(from);fe.items.splice(fe.items.indexOf(a),1);if(!fe.items.length)eras.delete(from);eras.get(to).items.push(a);eraOf.set(a,to);};
+  // ② 선공개 싱글 → 120일 안의 가장 가까운 앨범(싱글 곡이 그 앨범 트랙리스트에 있을 때)
   list.forEach(s=>{
-    if(!isSingle(s))return;
-    const st=new Set((s.tracks||[]).map(t=>nt(t.title)).filter(Boolean));if(!st.size)return;
+    if(!isSingle(s)||(ov&&ov.has(_discogAlbumId(s))))return;
+    const st=new Set((s.tracks||[]).flatMap(t=>tk(t.title)));if(!st.size)return;
     const ds=day(s.releaseDate);
-    const host=list.filter(a=>a!==s&&!isSingle(a)&&day(a.releaseDate)>=ds-3&&day(a.releaseDate)-ds<=120&&(a.tracks||[]).some(t=>st.has(nt(t.title))))
+    const host=list.filter(a=>a!==s&&!isSingle(a)&&day(a.releaseDate)>=ds-3&&day(a.releaseDate)-ds<=120&&(a.tracks||[]).some(t=>tk(t.title).some(k=>st.has(k))))
       .sort((x,y)=>day(x.releaseDate)-day(y.releaseDate))[0];
     if(!host)return;
     const from=eraOf.get(s),to=eraOf.get(host);if(from===to)return;
-    const fe=eras.get(from);fe.items.forEach(x=>{eras.get(to).items.push(x);eraOf.set(x,to);});eras.delete(from);
+    [...eras.get(from).items].forEach(x=>move(x,to));
   });
+  // ③ 수동 지정(어드민) — 자동 결과를 덮는다
+  if(ov&&ov.size){
+    const byId=new Map(list.map(a=>[_discogAlbumId(a),a]));
+    for(const [id,target] of ov){
+      const a=byId.get(id);if(!a)continue;
+      if(!target){const solo='ov:'+id;if(!eras.has(solo))eras.set(solo,{label:a.title,items:[]});move(a,solo);continue;}
+      const t=byId.get(target);if(!t||t===a)continue;
+      move(a,eraOf.get(t));
+    }
+  }
   // 대표 = 싱글이 아닌 것 중 트랙이 가장 많은 것(없으면 최신) — 이름·앞 커버·자리가 이걸 따른다
   for(const e of eras.values()){
     // 원본 판(판 표시가 없는 제목)을 우선 — 코르티스 GREENGREEN_playextended(8곡)가 원본(6곡)을 이기던 것
@@ -12567,13 +12603,86 @@ function _discogEras(list){
   }
   return{eraOf,eras};
 }
+// ── 활동기 수동 지정(어드민) — Supabase disco_era_overrides ─────────────────────────────
+// 자동 규칙이 놓치는 드문 경우만 고친다(영문↔한글 음차라 트랙 대조가 안 되는 이펙스 Picasso↔피카소 등).
+// 행: owner('g:그룹' | 'a:이름|그룹') · album_id(_discogAlbumId) · target_id(''=강제 단독, 아니면 붙일 앨범).
+// 디스코 데이터는 정적 JSON이라 어드민이 화면에서 못 고친다 → 작은 테이블에 덮어쓰기만 저장한다.
+// ⚠️ 테이블이 아직 없으면(SQL 미실행) 조용히 빈 지정으로 돈다 — 자동 결과만 보인다.
+let _discogEraOv=null,_discogEraOvP=null;
+function _discogEraOvLoad(){
+  if(_discogEraOvP)return _discogEraOvP;
+  _discogEraOvP=(async()=>{
+    const m=new Map();
+    try{
+      if(typeof sb!=='undefined'&&sb){
+        const{data,error}=await sb.from('disco_era_overrides').select('owner,album_id,target_id');
+        if(!error)(data||[]).forEach(r=>{if(!m.has(r.owner))m.set(r.owner,new Map());m.get(r.owner).set(r.album_id,r.target_id||'');});
+      }
+    }catch(e){}
+    _discogEraOv=m;return m;
+  })();
+  return _discogEraOvP;
+}
+function _discogOwnerKey(prefix){
+  if(prefix==='gc')return _openGCko?'g:'+_openGCko:'';
+  const a=typeof _openTArtist!=='undefined'?_openTArtist:null;
+  return a?`a:${a.name.ko}|${(a.group&&a.group.ko)||''}`:'';
+}
+async function _discogEraOvSet(owner,albumId,target){
+  if(!_isAdmin()||!owner)return false;
+  let error;
+  if(target===null)({error}=await sb.from('disco_era_overrides').delete().eq('owner',owner).eq('album_id',albumId));
+  else ({error}=await sb.from('disco_era_overrides').upsert({owner,album_id:albumId,target_id:target,updated_at:new Date().toISOString()},{onConflict:'owner,album_id'}));
+  if(error){console.error('disco_era_overrides',error);_showShareToast('저장 실패: '+(error.message||error.code));return false;}
+  if(!_discogEraOv)_discogEraOv=new Map();
+  if(!_discogEraOv.has(owner))_discogEraOv.set(owner,new Map());
+  if(target===null)_discogEraOv.get(owner).delete(albumId);else _discogEraOv.get(owner).set(albumId,target);
+  return true;
+}
+// 어드민 '묶기' 메뉴 — 이 앨범 앞뒤 1년 안의 활동기 목록에서 고른다(native prompt/confirm 금지: 뷰어에서 즉시 false).
+function _discogEraPick(btn,a,list,eras,eraOf,onPick){
+  _closeFavKebab();
+  const menu=document.createElement('div');menu.className='fav-kebab-menu gc-era-pick';
+  const day=d=>Date.parse(String(d||'').replace(/\./g,'-'))/864e5;
+  const mine=eraOf.get(a);
+  const cands=[...eras.entries()].filter(([k,e])=>k!==mine&&e.items.some(x=>Math.abs(day(x.releaseDate)-day(a.releaseDate))<=365))
+    .sort((x,y)=>Math.abs(day(x[1].lead.releaseDate)-day(a.releaseDate))-Math.abs(day(y[1].lead.releaseDate)-day(a.releaseDate))).slice(0,10);
+  const add=(label,fn,muted)=>{const b=document.createElement('button');b.type='button';b.className='fav-kebab-item';b.textContent=label;if(muted)b.style.opacity='.6';
+    b.addEventListener('click',ev=>{ev.stopPropagation();_closeFavKebab();fn();});menu.appendChild(b);};
+  const hd=document.createElement('div');hd.className='gc-era-pick-hd';hd.textContent=`'${a.title}' 활동기 지정`;menu.appendChild(hd);
+  cands.forEach(([k,e])=>add(`→ ${e.label} (${String(e.lead.releaseDate).slice(0,7)}${e.items.length>1?' · '+e.items.length+'장':''})`,()=>onPick(_discogAlbumId(e.lead))));
+  if(!cands.length)add('1년 안에 붙일 활동기 없음',()=>{},true);
+  add('단독으로 두기',()=>onPick(''));
+  add('자동으로 되돌리기',()=>onPick(null),true);
+  document.body.appendChild(menu);
+  const r=btn.getBoundingClientRect();
+  menu.style.left=Math.max(8,Math.min(r.left,window.innerWidth-menu.offsetWidth-8))+'px';
+  menu.style.top=Math.min(r.bottom+4,window.innerHeight-menu.offsetHeight-8)+'px';
+  _favKebabEl=menu;
+  _favKebabOutside=ev=>{if(_favKebabEl&&!_favKebabEl.contains(ev.target))_closeFavKebab();};
+  setTimeout(()=>document.addEventListener('click',_favKebabOutside,true),0);
+}
 function _renderDiscogStacks(strip,list,prefix){
-  const {eraOf,eras}=_discogEras(list);
-  const ownerKey=(prefix==='gc'?_openGCko:(_openTArtist&&_openTArtist.name.ko))||'';
+  const owner=_discogOwnerKey(prefix);
+  // 수동 지정 로드 전이면 자동 결과로 먼저 그리고, 도착하면 지정이 있는 주인만 다시 그린다
+  if(!_discogEraOv){_discogEraOvLoad().then(m=>{if(m.has(owner)&&strip.isConnected&&_discogOwnerKey(prefix)===owner){strip.innerHTML='';_renderDiscogStacks(strip,list,prefix);}});}
+  const ov=(_discogEraOv&&_discogEraOv.get(owner))||null;
+  const {eraOf,eras}=_discogEras(list,ov);
+  const ownerKey=owner;
+  const adm=_isAdmin();
   // 스택이 하나라도 있으면 위 여백을 둔다 — 부채꼴 뒤 커버·펼친 묶음 머리줄이 위로 올라온다(strip이
   // overflow-x:auto라 위로 넘치면 잘린다).
   strip.classList.toggle('has-stacks',[...eras.values()].some(e=>e.items.length>1));
   const rerender=()=>{strip.innerHTML='';_renderDiscogStacks(strip,list,prefix);};
+  // 어드민 전용 지정 버튼 — 캡션 줄 오른쪽 작은 아이콘(커버 위엔 안 얹는다)
+  const admBtn=(a,typeEl)=>{
+    if(!adm)return;
+    const b=document.createElement('button');b.type='button';b.className='gc-era-adm'+(ov&&ov.has(_discogAlbumId(a))?' on':'');
+    b.title='활동기 지정(어드민)';
+    b.innerHTML='<svg viewBox="0 0 16 16" width="11" height="11" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M6.5 9.5l3-3M5 7.5L3.8 8.7a2.3 2.3 0 003.3 3.3L8.3 10.8M11 8.5l1.2-1.2a2.3 2.3 0 00-3.3-3.3L7.7 5.2"/></svg>';
+    b.addEventListener('click',ev=>{ev.stopPropagation();_discogEraPick(b,a,list,eras,eraOf,async target=>{if(await _discogEraOvSet(owner,_discogAlbumId(a),target))rerender();});});
+    typeEl.appendChild(b);
+  };
   const mkItem=(a,idx)=>{
     const item=document.createElement('div');
     item.className='gc-discog-item'+(a.isMain?'':' gc-discog-extra');
@@ -12581,6 +12690,7 @@ function _renderDiscogStacks(strip,list,prefix){
     const typeEl=document.createElement('div');typeEl.className='gc-discog-type';
     const yr=a.releaseDate?a.releaseDate.slice(0,4):'';
     typeEl.textContent=yr?`${_discogTypeLabel(a.type)} · ${yr}`:_discogTypeLabel(a.type);
+    admBtn(a,typeEl);
     const titleEl=document.createElement('div');titleEl.className='gc-discog-item-title';titleEl.textContent=a.title;
     item.append(img,typeEl,titleEl);
     item.addEventListener('click',e=>{e.stopPropagation();_gcDiscogList=list;_openGcDiscogDetail(a,idx);});
