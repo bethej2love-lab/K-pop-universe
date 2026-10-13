@@ -14830,19 +14830,19 @@ document.getElementById('sp-feedback-btn').addEventListener('click',e=>{
 const _KPOP_LINKS=[
   {cat:'스트리밍',links:[
     {n:'멜론',u:'https://www.melon.com'},{n:'지니뮤직',u:'https://www.genie.co.kr'},
-    {n:'벅스',u:'https://music.bugs.co.kr'},{n:'플로',u:'https://www.floapp.co.kr'},
+    {n:'벅스',u:'https://music.bugs.co.kr'},{n:'플로',u:'https://www.music-flo.com'},
     {n:'스포티파이',u:'https://open.spotify.com'},{n:'Apple Music',u:'https://music.apple.com'},
     {n:'YouTube Music',u:'https://music.youtube.com'},
   ]},
   {cat:'차트',links:[
     {n:'써클차트(가온)',u:'https://circlechart.kr'},{n:'빌보드 K-pop',u:'https://www.billboard.com/charts/k-pop-hot-100'},
-    {n:'한터차트',u:'https://www.hanteonews.com/hanteo'},{n:'멜론 실시간',u:'https://www.melon.com/chart/index.htm'},
+    {n:'한터차트',u:'https://www.hanteochart.com'},{n:'멜론 TOP100',u:'https://www.melon.com/chart/index.htm'} /* 멜론 실시간 차트는 2021년 폐지 → 지금 이 주소는 TOP100 */,
   ]},
   {cat:'팬 플랫폼',links:[
-    {n:'위버스',u:'https://weverse.io'},{n:'NOL',u:'https://nol.plus'},
+    {n:'위버스',u:'https://weverse.io'},{n:'블립',u:'https://blip.kr'},
   ]},
   {cat:'티켓',links:[
-    {n:'멜론티켓',u:'https://ticket.melon.com'},{n:'인터파크 티켓',u:'https://tickets.interpark.com'},
+    {n:'멜론티켓',u:'https://ticket.melon.com'},{n:'NOL 티켓',u:'https://nol.interpark.com/ticket'} /* 인터파크 티켓 → NOL 티켓 리브랜딩(2026-10-13 확인) */,
     {n:'YES24 티켓',u:'https://ticket.yes24.com'},
   ]},
   {cat:'음악방송',links:[
@@ -14853,16 +14853,15 @@ const _KPOP_LINKS=[
   {cat:'엔터테인먼트',links:[
     {n:'HYBE',u:'https://hybecorp.com'},{n:'SM엔터테인먼트',u:'https://www.smtown.com'},
     {n:'JYP엔터테인먼트',u:'https://www.jype.com'},{n:'YG엔터테인먼트',u:'https://www.ygfamily.com'},
-    {n:'스타쉽엔터테인먼트',u:'https://www.starship.kr'},{n:'큐브엔터테인먼트',u:'https://www.cubeent.co.kr'},
-    {n:'FNC엔터테인먼트',u:'https://www.fncentertainment.com'},{n:'RBW',u:'https://www.rbw.kr'},
+    {n:'스타쉽엔터테인먼트',u:'https://www.starship-ent.com'},{n:'큐브엔터테인먼트',u:'https://www.cubeent.co.kr'},
+    {n:'FNC엔터테인먼트',u:'https://www.fncent.com'},{n:'RBW',u:'https://www.rbw.kr'},
     {n:'카카오엔터테인먼트',u:'https://kakaoent.com'},{n:'젤리피쉬엔터테인먼트',u:'https://www.jellyfishent.com'},
     {n:'DSP미디어',u:'https://www.dspmedia.co.kr'},{n:'KQ엔터테인먼트',u:'https://kqent.com'},
-    {n:'웨이크원',u:'https://www.wakeone.co.kr'},{n:'울림엔터테인먼트',u:'https://www.woolliment.com'},
+    {n:'웨이크원',u:'https://www.wake-one.com'},{n:'울림엔터테인먼트',u:'https://www.woolliment.com'},
   ]},
   {cat:'미디어·뉴스',links:[
     {n:'나무위키 케이팝',u:'https://namu.wiki/w/%EC%BC%80%EC%9D%B4%ED%8C%9D'},
     {n:'Soompi',u:'https://www.soompi.com'},{n:'Allkpop',u:'https://www.allkpop.com'},
-    {n:'네이버 연예',u:'https://entertain.naver.com'},
   ]},
 ];
 const _CO_URL={
@@ -14871,10 +14870,10 @@ const _CO_URL={
   '빅히트 뮤직 / HYBE':'https://hybecorp.com','플레디스 / HYBE':'https://hybecorp.com',
   '쏘스뮤직 / HYBE':'https://hybecorp.com','빌리프랩 / HYBE':'https://hybecorp.com',
   '어도어 / HYBE':'https://hybecorp.com',
-  '스타쉽엔터테인먼트':'https://www.starship.kr','Starship':'https://www.starship.kr',
-  '큐브엔터테인먼트':'https://www.cubeent.co.kr','FNC엔터테인먼트':'https://www.fncentertainment.com',
+  '스타쉽엔터테인먼트':'https://www.starship-ent.com','Starship':'https://www.starship-ent.com',
+  '큐브엔터테인먼트':'https://www.cubeent.co.kr','FNC엔터테인먼트':'https://www.fncent.com',
   'RBW':'https://www.rbw.kr','젤리피쉬엔터테인먼트':'https://www.jellyfishent.com',
-  '울림엔터테인먼트':'https://www.woolliment.com','웨이크원':'https://www.wakeone.co.kr',
+  '울림엔터테인먼트':'https://www.woolliment.com','웨이크원':'https://www.wake-one.com',
   'KQ엔터테인먼트':'https://kqent.com','DSP미디어':'https://www.dspmedia.co.kr',
   'IST엔터테인먼트':'https://www.istent.co.kr','포켓돌스튜디오':'https://www.pocketdolstudio.com',
   '판타지오':'https://www.fantazio.co.kr','C9엔터테인먼트':'https://www.c9ent.co.kr',
