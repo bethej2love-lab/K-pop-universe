@@ -6,6 +6,11 @@
 // SUPABASE_URL은 선택(기본값 내장).
 
 import { createClient } from '@supabase/supabase-js';
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 
 const SB_URL = process.env.SUPABASE_URL || 'https://dukgguehegnembimqvkm.supabase.co';
 const SB_KEY = process.env.SUPABASE_SERVICE_ROLE;
@@ -19,6 +24,83 @@ if (!GH_REPO) { console.error('GH_REPO 없음'); process.exit(1); }
 const sb = createClient(SB_URL, SB_KEY);
 
 function fmt(n) { return n == null ? '?' : n.toLocaleString(); }
+
+// ── 데이터 건강 체크 (groups.json + artists.json 기준, 외부 요청 없음) ────────
+function dataHealthMd() {
+  try {
+    const G = JSON.parse(fs.readFileSync(path.join(ROOT, 'groups.json'), 'utf8'));
+    const A = JSON.parse(fs.readFileSync(path.join(ROOT, 'artists.json'), 'utf8'));
+    const arts = Array.isArray(A) ? A : Object.values(A);
+    const gks = Object.keys(G);
+    const hasV = v => v && (typeof v === 'string' ? v.trim() : (v.ko || v.en));
+
+    // 멤버 기본정보 갭 (활동 중만)
+    let noBday = 0, noNat = 0;
+    const activeArts = arts.filter(a => a.active !== false);
+    for (const a of activeArts) {
+      if (!a.bday) noBday++;
+      if (!hasV(a.nat)) noNat++;
+    }
+
+    // 그룹 기본정보 갭 (미해산)
+    let noFandom = 0, noInsta = 0;
+    const activeGroups = gks.filter(k => !G[k].disbanded);
+    for (const k of activeGroups) {
+      const g = G[k];
+      if (!hasV(g.fandom)) noFandom++;
+      if (!g.links?.instagram) noInsta++;
+    }
+
+    // 신보 누락 의심 (미해산 + 마지막 앨범 14개월+)
+    const cutoff = new Date();
+    cutoff.setMonth(cutoff.getMonth() - 14);
+    const stale = [];
+    for (const k of activeGroups) {
+      const disco = G[k].discography;
+      if (!disco?.length) continue;
+      const dates = disco.map(d => d.releaseDate).filter(Boolean).sort().reverse();
+      if (!dates[0]) continue;
+      const last = new Date(dates[0].replace(/\./g, '-'));
+      if (last < cutoff) {
+        const mo = Math.round((Date.now() - last) / (30 * 86400000));
+        stale.push({ k, mo });
+      }
+    }
+    stale.sort((a, b) => b.mo - a.mo);
+    const staleTop = stale.slice(0, 5).map(x => `${x.k}(${x.mo}개월)`).join(' · ');
+
+    // 로스터 이상: 멤버 이름이 자기 그룹 트랙 제목과 정확히 일치
+    const rosterBugs = [];
+    const trackTitlesOf = {};
+    for (const k of gks) {
+      const disco = G[k].discography || [];
+      const titles = new Set();
+      for (const d of disco) for (const t of (d.tracks || [])) if (t.title) titles.add(t.title.trim());
+      trackTitlesOf[k] = titles;
+    }
+    for (const a of arts) {
+      if (a.active === false) continue;
+      const ko = a.name?.ko || '';
+      const grps = a.groups ? a.groups.map(g => g.ko) : [a.group?.ko];
+      for (const g of grps) {
+        if (g && trackTitlesOf[g]?.has(ko)) rosterBugs.push(`${ko}(${g})`);
+      }
+    }
+
+    let lines = `| 항목 | 수치 |
+|---|---|
+| 활동 멤버 생일 없음 | ${noBday}명 |
+| 활동 멤버 국적 없음 | ${noNat}명 |
+| 미해산 그룹 팬덤명 없음 | ${noFandom}개 |
+| 미해산 그룹 인스타 없음 | ${noInsta}개 |
+| 신보 14개월+ 의심 | ${stale.length}개 |`;
+    if (stale.length) lines += `\n\n상위: ${staleTop}`;
+    if (rosterBugs.length) lines += `\n\n> ⚠️ 로스터 이상(멤버명=트랙명): ${rosterBugs.join(' · ')}`;
+    return lines;
+  } catch (e) {
+    return `_(데이터 건강 체크 실패: ${e.message})_`;
+  }
+}
 
 async function safeCount(query) {
   try { const { count } = await query; return count; } catch { return null; }
@@ -68,6 +150,8 @@ async function main() {
     patrolMd = patrolMarkdown(await tagPatrol({ days: 30, top: 10 }));
   } catch (e) { patrolMd = `_(순찰 실패: ${e.message})_`; }
 
+  const healthMd = dataHealthMd();
+
   const queueWarn = queueCount > 50 ? ` ⚠️ 50건 초과` : '';
   const heldWarn = heldVideos > 200 ? ` ⚠️` : '';
 
@@ -93,6 +177,9 @@ ${mistagMd}
 
 ### 🔎 태그 순찰
 ${patrolMd}
+
+### 📋 데이터 건강
+${healthMd}
 
 ### 자동화 상태
 - **마지막 일일 루틴**: ${ageStr(routineMeta)}
