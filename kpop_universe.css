@@ -2110,7 +2110,7 @@
   #feed-list-save-btn.saved:hover{transform:none;}
   #feed-list-like-btn.liked{color:rgba(255,92,125,0.92);}
   #feed-list-like-btn.liked svg{fill:currentColor;stroke-width:2.2;}
-  #feed-list-grid{overflow-y:auto;padding:0 14px 16px;}
+  #feed-list-grid{overflow-y:auto;padding:0 14px 16px;flex:1 1 0;min-height:0;}
   /* 정사각형으로 강제 크롭하면 썸네일에 박혀있는 이름/자막 정보가 잘려서(사용자 제보, 2026-08-03),
      그룹/멤버 카드의 기본 .gc-ch-item/.gc-ch-thumb 그대로(가로 16:9, 쇼츠만 9:16) 원본 비율을
      살리는 쪽으로 되돌림 — 이 기본 패턴은 다른 그리드에서 이미 겹침 버그 없이 잘 동작해왔음.
