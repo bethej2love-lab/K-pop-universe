@@ -4811,13 +4811,18 @@ function _logSearchClick(h){
   }catch(e){}
 }
 // 검색 결과 아바타(2026-10-13, 사용자 요청 — "미리보기가 다 텍스트만 있어 답답하다").
-// 멤버: 등록된 프로필 사진 → 없으면 본인 단독 직캠 썸네일(_fetchSoloCamThumb) → 그래도 없으면 _fetchTopVideoThumb.
+// 멤버: 등록된 프로필 사진 → 없으면 본인 단독 직캠 썸네일(_fetchSoloCamThumbs) → 그래도 없으면 그룹 영상(_fetchGroupThumbs).
 // 그룹: 프로필(대개 로고)이 있으면 그것, 없으면 행성 색 원 — 줄 정렬을 맞추려고 자리는 항상 잡는다.
 // ⚠️ 영상 썸네일 폴백은 DB 쿼리라 **화면에 보일 때만**(IntersectionObserver) 걸고, 아티스트별로
 //    결과를 기억한다 — 글자를 칠 때마다 doSearch가 다시 돌아 같은 멤버 행이 계속 새로 만들어진다.
 // ⚠️ artist_pics 미스 때 _fetchInstaPicUrl처럼 행마다 DB를 다시 묻지 않는다 — 프리워밍이 테이블
 //    전체를 받아두므로 캐시에 없으면 사진이 없는 것이다.
 const _srAvMemo=new WeakMap();
+// 같은 썸네일을 두 사람이 쓰지 않게(2026-10-13, 사용자 제보 — "멤버 사진이 똑같은 걸로 겹친다").
+// 실측 전수(현역 1,345명): 실제로 같은 URL이 겹친 건 퍼즐·블랭키 2팀 — 단독 영상이 없어 둘 다 같은 그룹
+// 영상으로 떨어진 경우였다. 후보를 순서대로 보고 이미 다른 사람이 차지한 URL은 건너뛴다.
+const _srAvTaken=new Map(); // url → 아티스트
+const _srAvShort=new Set(); // 쇼츠 썸네일 url — 양옆 검은 띠라 더 크게 확대해 그린다
 function _srAvUrl(a){
   let p=_srAvMemo.get(a);
   if(p)return p;
@@ -4825,39 +4830,59 @@ function _srAvUrl(a){
     try{_instaPicPreloadP=_instaPicPreloadP||_warmInstaPicCache();await _instaPicPreloadP;}catch(e){}
     for(const g of _artistGroups(a)){const u=_instaPicCache.get(_picKey(a.name.ko,g.ko));if(u)return u;}
     {const u=_instaPicCache.get(_picKey(a.name.ko,''));if(u)return u;}
-    return (await _fetchSoloCamThumb(a))||(await _fetchTopVideoThumb(_ytGroupKoFor(a),a.name.ko))||null;
+    const pickFrom=list=>{for(const v of list){const o=_srAvTaken.get(v.thumb);if(!o||o===a){_srAvTaken.set(v.thumb,a);if(v.is_short)_srAvShort.add(v.thumb);return v.thumb;}}return null;};
+    return pickFrom(await _fetchSoloCamThumbs(a))||pickFrom(await _fetchGroupThumbs(_ytGroupKoFor(a),a.name.ko))||null;
   })();
   _srAvMemo.set(a,p);
   return p;
 }
-// 사진 없는 멤버의 대체 썸네일(2026-10-13, 사용자 요청) — **그 멤버만 태깅된(members={본인}) 영상**에서,
-// 직캠이 있으면 직캠 중 조회수 최고, 없으면 단독 영상 중 조회수 최고를 쓴다.
+// 사진 없는 멤버의 대체 썸네일 후보(2026-10-13, 사용자 요청) — **그 멤버만 태깅된(members={본인}) 영상**에서,
+// 직캠 → 단독 영상 순, 각각 가로 영상 먼저(쇼츠는 양옆이 검은 띠라 작은 원에선 사람이 거의 안 보임) · 조회수 순.
 // _fetchTopVideoThumb는 members가 빈 그룹 영상까지 받아서(members.eq.{}) 단체 사진이 아바타가 되곤 했다.
 // ⚠️ 정렬은 published_at으로 최근 60개만 받고 조회수는 클라이언트에서 고른다 — view_count 정렬+LIMIT은
 //    후보가 적을 때 인덱스를 거꾸로 훑다 타임아웃 나는 패턴이 있었다(ORDER BY+LIMIT 사고).
-async function _fetchSoloCamThumb(a){
-  if(!sb||!a||!a.name)return null;
+async function _fetchSoloCamThumbs(a){
+  if(!sb||!a||!a.name)return [];
   const mko=a.name.ko;
   const gkos=new Set(_artistGroups(a).map(g=>g.ko).filter(k=>GROUPS[k]));
   if(!gkos.size||_soloKeyUsable(mko))gkos.add(mko); // 솔로 키(group_ko=본인 이름)는 동명이인 없을 때만
   try{
-    let q=sb.from(_YT_TABLE).select('id,title,thumb,view_count')
+    let q=sb.from(_YT_TABLE).select('id,title,thumb,view_count,is_short')
       .in('group_ko',[...gkos]).filter('members','eq',`{${_pgFilterVal(mko)}}`)
       .or('content_flag.is.null,content_flag.neq.무관').or('content_flag.is.null,content_flag.neq.보류')
       .or('content_flag.is.null,content_flag.neq.hidden').or('content_flag.is.null,content_flag.neq.개별출연');
     const{data,error}=await q.order('published_at',{ascending:false}).limit(60);
-    if(error||!data)return null;
-    const rows=data.filter(v=>v.thumb);
-    if(!rows.length)return null;
-    const cams=rows.filter(v=>_isFancamLike(v.title)&&!_FANCAM_PROMO_RE.test(v.title||''));
-    const pool=cams.length?cams:rows;
-    return pool.reduce((b,v)=>((v.view_count||0)>(b.view_count||0)?v:b),pool[0]).thumb;
-  }catch(e){return null;}
+    if(error||!data)return [];
+    const isCam=v=>_isFancamLike(v.title)&&!_FANCAM_PROMO_RE.test(v.title||'');
+    return data.filter(v=>v.thumb).sort((x,y)=>(isCam(y)-isCam(x))||(!!x.is_short-!!y.is_short)||((y.view_count||0)-(x.view_count||0)));
+  }catch(e){return [];}
+}
+// 마지막 폴백 — 그룹 영상 후보(그룹별 한 번만 조회). 멤버 태깅이 비었거나 본인이 들어간 영상, 조회수 순.
+const _srGroupThumbsP=new Map();
+function _fetchGroupThumbs(gko,memberKo){
+  if(!sb||!gko)return Promise.resolve([]);
+  const k=gko+'␟'+(memberKo||'');
+  if(_srGroupThumbsP.has(k))return _srGroupThumbsP.get(k);
+  const p=(async()=>{
+    try{
+      let q=sb.from(_YT_TABLE).select('id,thumb,view_count,is_short').eq('group_ko',gko);
+      if(memberKo)q=q.or(`members.eq.{},members.cs.{${_pgFilterVal(memberKo)}}`);
+      q=q.or('content_flag.is.null,content_flag.neq.무관').or('content_flag.is.null,content_flag.neq.보류')
+         .or('content_flag.is.null,content_flag.neq.hidden').or('content_flag.is.null,content_flag.neq.개별출연');
+      const{data,error}=await q.order('published_at',{ascending:false}).limit(30);
+      if(error||!data)return [];
+      return data.filter(v=>v.thumb).sort((x,y)=>(!!x.is_short-!!y.is_short)||((y.view_count||0)-(x.view_count||0)));
+    }catch(e){return [];}
+  })();
+  _srGroupThumbsP.set(k,p);return p;
 }
 let _srAvIO=null;
 function _srAvPaint(av,url){
   if(!url)return;
   const img=new Image();img.alt='';img.referrerPolicy='no-referrer';
+  // 영상 썸네일은 얼굴 쪽으로 확대 — 16:9를 원에 그대로 넣으면 자막·배경이 주로 보여 같은 방송사 직캠끼리
+  // 똑같아 보였다(클유아 김성민·전민욱 Mnet 직캠). 쇼츠는 양옆 검은 띠까지 있어 더 크게.
+  if(/ytimg\.com/.test(url))av.classList.add(_srAvShort.has(url)?'is-short':'is-thumb');
   img.onload=()=>{av.appendChild(img);av.classList.add('has-img');};
   img.src=url;
 }

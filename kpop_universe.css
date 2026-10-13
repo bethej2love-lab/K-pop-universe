@@ -2413,6 +2413,9 @@
   .sr-av img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;animation:srAvIn .25s ease;}
   @keyframes srAvIn{from{opacity:0}to{opacity:1}}
   #msheet-body .sr-av{width:32px;height:32px;}
+  /* 영상 썸네일은 얼굴 쪽으로 확대(16:9 그대로면 자막·배경만 보여 같은 방송사 직캠끼리 똑같아 보임). 쇼츠는 양옆 검은 띠까지 있어 더 크게 */
+  .sr-av.is-thumb img{transform:scale(1.45);transform-origin:50% 30%;}
+  .sr-av.is-short img{transform:scale(2.6);transform-origin:50% 32%;}
   .sr-item:hover,.sr-item:active,.sr-item.kbd-active{background:rgba(255,255,255,0.09);}
   .sr-item-name{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
   .sr-item-name.sr-group{color:#9ab8dc;}
