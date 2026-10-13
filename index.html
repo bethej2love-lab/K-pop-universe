@@ -24032,7 +24032,6 @@ function _makeChVidController(contId){
           if(heroV&&_cardHeroOn()){
             const _wasFeatured=heroV===featured;
             renderItems([{...heroV,_featured:false,_wide:true}],heroGrid);heroGrid.parentElement.hidden=false;
-            const _hi=heroGrid.querySelector('.gc-ch-item');if(_hi)_hi.dataset.heroLabel=currentLang==='ko'?'대표 영상':'Featured';
             state.allVids=[heroV].concat(state.allVids);
             if(_wasFeatured)featured=null; // 대표가 그대로 올라갔으면 그리드에선 뺀다(쇼츠 대표는 그리드 맨 앞에 남음)
           }
