@@ -2071,7 +2071,7 @@
      라이트박스가 이 오버레이 위로 열리는 구조라 67보다 낮아야 함. */
   #feed-list-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.52);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:65;display:none;align-items:center;justify-content:center;}
   #feed-list-overlay.open{display:flex;}
-  #feed-list-panel{width:min(560px,calc(100vw - 32px));max-height:82vh;min-height:min(400px,72vh);display:flex;flex-direction:column;background:rgba(13,17,34,0.97);backdrop-filter:blur(40px);-webkit-backdrop-filter:blur(40px);border-radius:18px;box-shadow:0 16px 56px rgba(0,0,0,0.72);border:0.5px solid rgba(255,255,255,0.10);}
+  #feed-list-panel{width:min(560px,calc(100vw - 32px));max-height:90vh;min-height:min(600px,84vh);display:flex;flex-direction:column;background:rgba(13,17,34,0.97);backdrop-filter:blur(40px);-webkit-backdrop-filter:blur(40px);border-radius:18px;box-shadow:0 16px 56px rgba(0,0,0,0.72);border:0.5px solid rgba(255,255,255,0.10);}
   #feed-list-hd{display:flex;align-items:flex-start;justify-content:space-between;padding:16px 18px 12px;flex-shrink:0;gap:10px;}
   #feed-list-hd-actions{display:flex;align-items:center;gap:8px;flex-shrink:0;}
   #feed-list-hd-title{font-size:var(--fz-title);font-weight:600;color:rgba(220,230,255,0.9);}
