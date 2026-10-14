@@ -2133,6 +2133,15 @@ function _activeInGroup(a,ko){
   const g=_artistGroups(a).find(x=>x.ko===ko);
   return(g&&g.active!==undefined)?g.active!==false:a.active!==false;
 }
+// 그 그룹 멤버인 채로 세상을 떠난 사람(종현·문빈·리세·은비) — 탈퇴일이 없거나 사망일과 같다. 탈퇴 후 떠난 사람(설리·구하라)과 구분.
+// 이 사람들은 그룹 카드에서 지금 멤버와 같이 보이게 한다(멤버 목록·우주 이름 라벨, 2026-10-14 사용자: "종현만 라벨이 없는 건 아닌 듯").
+// active:false는 그대로 둔다 — 영상 컷오프·기념일 흐림 등 "지금 활동 중"이 필요한 판정이 그 값을 쓴다.
+function _diedAsMember(a,ko){
+  if(!a.died)return false;
+  const g=_artistGroups(a).find(x=>x.ko===ko);
+  const left=(g&&g.left)||a.left;
+  return !left||left===a.died;
+}
 // _ytGroupKoFor는 shared.js로 이전됨(2026-08-21, 파일 분리 0단계 — admin.js도 같이 참조하는 순수
 // 헬퍼라 두 파일보다 먼저 로드되는 공용 파일로 옮김).
 let _tagFilter={type:null,value:null};
@@ -4156,7 +4165,7 @@ function animate(){
   if(!isMob()&&_openGCko){
     if(_gcLabelCacheKo!==_openGCko||_gcLabelCacheShowInactive!==_gcShowInactive){
       _gcLabelCacheKo=_openGCko;_gcLabelCacheShowInactive=_gcShowInactive;
-      const roster=ARTISTS.filter(a=>_artistGroups(a).some(g=>g.ko===_openGCko)&&(_gcShowInactive||_activeInGroup(a,_openGCko)));
+      const roster=ARTISTS.filter(a=>_artistGroups(a).some(g=>g.ko===_openGCko)&&(_gcShowInactive||_activeInGroup(a,_openGCko)||_diedAsMember(a,_openGCko)));
       _gcLabelSet=new Set(roster); // 2026-08-19: 인원수 상한(구 10명) 제거 — 사용자 요청, 별 간 최소거리를 넉넉히 키워 legibility 확보
     }
   }else if(_gcLabelCacheKo!==null){
@@ -4169,7 +4178,7 @@ function animate(){
   // "우주에서 다른 멤버 별 클릭 유도"). 그룹 카드가 열려 있으면 위 _gcLabelSet이 이미 전원을 띄우므로 그쪽이 우선.
   let _mateSet=null;
   if(!isMob()&&!_gcLabelSet&&_tOpen&&GROUPS[_tOpen.group.ko]){
-    if(_mateLabelFor!==_tOpen){_mateLabelFor=_tOpen;const g=_tOpen.group.ko;_mateLabelSet=new Set(ARTISTS.filter(a=>a!==_tOpen&&_artistGroups(a).some(x=>x.ko===g)&&_activeInGroup(a,g)));}
+    if(_mateLabelFor!==_tOpen){_mateLabelFor=_tOpen;const g=_tOpen.group.ko;_mateLabelSet=new Set(ARTISTS.filter(a=>a!==_tOpen&&_artistGroups(a).some(x=>x.ko===g)&&(_activeInGroup(a,g)||_diedAsMember(a,g))));}
     _mateSet=_mateLabelSet;
   }else if(_mateLabelFor){_mateLabelFor=null;_mateLabelSet=null;}
   if(isMob()||_gcLabelSet||_tOpen){
@@ -12361,7 +12370,7 @@ function _renderGcMemberList(ko,cx,cy){
   // 해체 그룹이면 멤버 전원 흐리게(SOLO_VIDEO_FIX.md ③, 2026-09-04) — per-member active만 보면 아이즈원
   // 멤버가 새 그룹/솔로로 현역이라 안 흐려졌음. "이 그룹에서 현역"=그룹활동 active + 그룹 미해체. _over는 렌더당 1회.
   const _over=_groupIsOver(ko);
-  const _eff=a=>_activeInGroup(a,ko)&&!_over;
+  const _eff=a=>(_activeInGroup(a,ko)||_diedAsMember(a,ko))&&!_over;
   const hasInactive=allMembers.some(a=>!_eff(a));
   // 해체 등으로 전원이 비활동 상태인 그룹은 "활동 멤버만" 필터링하면 아무도 안 남아 카드가 텅 비어
   // 보이므로, 이 경우엔 토글 없이 기본값으로 전원 노출(글자색은 기존 비활동 스타일 그대로 어둡게 유지).
