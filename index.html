@@ -3157,6 +3157,7 @@ async function buildUniverse(){
     // 그 groupKo가 없어서 아래 폴백(_worldPos = 주 소속 위치)이 잡히고, 결국 **엉뚱한 자리에**
     // 선이 그어진다. 그리는 것보다 안 그리는 게 맞다.
     if(!grpData[shareKo])return;
+    if(grpData[shareKo].disbanded)return; // 해체 그룹은 멤버 간 선 없음(사용자 결정 2026-10-14) — 데이터는 남겨두고 그리기만 안 함
     if(artA.active===false||artB.active===false)return; // 비활동/탈퇴 멤버는 행성 밖에 떠 있으므로 그룹 내 관계선을 아예 안 그림(토글로 안에 들어와도 마찬가지)
     const wpA=(artA._worldPositions||[]).find(wp=>wp.groupKo===shareKo);
     const wpB=(artB._worldPositions||[]).find(wp=>wp.groupKo===shareKo);

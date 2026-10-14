@@ -363,13 +363,14 @@ Object.entries(GROUPS).forEach(([gko, info]) => {
 }
 
 // ── 그룹 내 멤버 연결선 완전성 ──────────────────────
-// 관례: 한 그룹의 활동 멤버(active!==false)끼리는 전부 member 연결이 있다(에스파 4명→6개). 그룹을 등록하면서
+// 관례: 해체 안 한 그룹의 활동 멤버(active!==false)끼리는 전부 member 연결이 있다(에스파 4명→6개). 그룹을 등록하면서
 // connections.json을 빠뜨리면 별만 있고 선이 없다 — 2026-10-14 실측 56개 그룹 959쌍 누락(09-27 일괄 등록분 전부 0개).
 {
   const inG = (a, k) => a.group.ko === k || (a.groups || []).some(g => g && g.ko === k);
   const key = (x, y, k) => [x, y].sort().join('|') + '|' + (k || '');
   const has = new Set(CONNECTIONS.map(c => key(c.a, c.b, c.group)));
-  Object.keys(GROUPS).forEach(k => {
+  // 해체 그룹은 선을 안 그린다(index.html 연결선 루프, 사용자 결정 2026-10-14) — 검사 제외.
+  Object.keys(GROUPS).filter(k => !GROUPS[k].disbanded).forEach(k => {
     const ms = ARTISTS.filter(a => a.group && inG(a, k) && a.active !== false);
     let miss = 0;
     for (let i = 0; i < ms.length; i++) for (let j = i + 1; j < ms.length; j++) {
