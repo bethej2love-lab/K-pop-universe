@@ -1295,6 +1295,16 @@
     padding-top:44px;
   }
   #member-panel>#tt #ttx{display:none!important;}
+  /* 유닛 카드(#uc, 2026-10-14) — 멤버 카드 자리에 뜨는 #gc 복제본. 나머지 스타일은 #gc 규칙을 런타임에 복제(_ensureUcEl) */
+  #member-panel>#uc{
+    position:relative!important;display:block!important;max-width:100%!important;
+    width:100%!important;border-radius:0!important;border:none!important;
+    box-shadow:none!important;background:none!important;
+    backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
+    left:auto!important;top:auto!important;right:auto!important;bottom:auto!important;
+    padding-top:44px;
+  }
+  #member-panel>#uc #ucx{display:none!important;}
   /* 접기 탭: member-panel 왼쪽 중간. member-panel 자체와 똑같은 거리(자기 폭 380px)·같은 트랜지션
      커브로 translateX를 같이 줘서, 패널이 슬라이드될 때 탭이 따로 놀지 않고 카드에 붙어서 같이 움직임 */
   #tt-collapse{
@@ -1468,7 +1478,8 @@
   #gc-mem-label.toggleable.on{color:rgba(170,205,255,0.95);text-shadow:0 0 6px rgba(140,175,255,0.35);}
   .gc-mem-name.gc-mem-inactive{opacity:0.55;}
   /* 유닛 카드 멤버 줄의 소속 그룹 머리말(2026-10-14) — 이름보다 한 단계 흐리게 */
-  .gc-unit-grp{font-size:11px;color:rgba(150,170,210,0.6);margin-right:2px;}
+  .gc-unit-grp{font-size:11px;color:rgba(150,170,210,0.6);margin-right:2px;cursor:pointer;transition:color .15s;}
+  .gc-unit-grp:hover{color:rgba(200,220,255,0.95);}
   #gc-grid .val,#tt-info-grid .val{font-size:var(--fz-title);color:#c0d6f0;font-weight:500;line-height:20px;}
   #gc-grid #gc-fandom,#gc-grid #gc-leader,#tt-info-grid #tt-fandom{
     font-size:11px;font-weight:600;letter-spacing:.04em;

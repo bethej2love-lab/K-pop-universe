@@ -4883,8 +4883,9 @@ function _fetchGroupHeroCands(gko){
   if(_groupHeroCandP.has(gko))return _groupHeroCandP.get(gko);
   const p=(async()=>{
     const run=async live=>{
-      let q=sb.from(_YT_TABLE).select('id,title,thumb,view_count,is_short,published_at,group_ko,members,category,content_flag'+_durCol())
-        .eq('group_ko',gko).filter('members','eq','{}').eq('is_short',false)
+      // 유닛 카드(2026-10-14): 유닛 영상 범위(_applyUnitScope) 안의 퍼포먼스 — 유닛 영상은 유닛원이 태깅돼 있어 members 빈 조건을 안 건다
+      let q=sb.from(_YT_TABLE).select('id,title,thumb,view_count,is_short,published_at,group_ko,members,category,content_flag'+_durCol());
+      q=(_isUnitKey(gko)?_applyUnitScope(q,gko.slice(_UNIT_KEY.length)):q.eq('group_ko',gko).filter('members','eq','{}')).eq('is_short',false)
         .or('content_flag.is.null,content_flag.neq.무관').or('content_flag.is.null,content_flag.neq.보류')
         .or('content_flag.is.null,content_flag.neq.hidden').or('content_flag.is.null,content_flag.neq.개별출연')
         .or('content_flag.is.null,content_flag.neq.기타');
@@ -8849,9 +8850,9 @@ function _animMobViewShift(target,dur){
 }
 
 function openMemberPanel(cardEl){
-  const tt=document.getElementById('tt');
-  if(tt.parentElement===memberPanelEl)document.body.appendChild(tt);
-  tt.style.display='none';
+  // 멤버 카드(#tt)와 유닛 카드(#uc, 2026-10-14)가 이 자리를 나눠 쓴다 — 새로 여는 쪽이 아니면 치운다
+  ['tt','uc'].forEach(id=>{const x=document.getElementById(id);if(!x||x===cardEl)return;if(x.parentElement===memberPanelEl)document.body.appendChild(x);x.style.display='none';});
+  if(cardEl.id!=='uc'&&_openUnit){_openUnit=null;_clearUnitLines();}
   cardEl.style.display='block';
   memberPanelEl.scrollTop=0;
   memberPanelEl.appendChild(cardEl);
@@ -8859,6 +8860,7 @@ function openMemberPanel(cardEl){
   if(!_memberPanelShifted){_memberPanelShifted=true;_panWorld(3,400);}
 }
 function closeMemberPanel(panBack){
+  if(_openUnit)panBack=false; // 유닛 카드는 _panWorld로 민 게 아니라 _flyToUnit으로 맞춘 것 — 되밀지 말고 아래에서 그룹 행성으로 돌아간다
   _clearMemberCardLines();
   closeConnCard();
   memberPanelEl.classList.remove('open');
@@ -8869,8 +8871,11 @@ function closeMemberPanel(panBack){
     if(memberPanelEl.classList.contains('open'))return; // 그 사이 다시 열렸으면 그대로 둠
     if(tt.parentElement===memberPanelEl)document.body.appendChild(tt);
     tt.style.display='none';
+    const uc=document.getElementById('uc');if(uc&&uc.parentElement===memberPanelEl){document.body.appendChild(uc);uc.style.display='none';}
   },260);
   _openTArtist=null;
+  // 유닛 카드를 닫으면 별자리를 거두고 그룹 카드 포커스로 되돌린다
+  if(_openUnit){_openUnit=null;_clearUnitLines();if(_openGCko&&GROUPS[_openGCko]){setFocus(_openGCko);const bm=bubbleMeshes.find(b=>b.ko===_openGCko);if(bm)flyToBubble(bm.mesh.position,bm.radius);}}
   if(panBack&&_memberPanelShifted){_memberPanelShifted=false;_panWorld(-3,400);}
   else _memberPanelShifted=false;
   _syncUrl('replace');
@@ -10755,6 +10760,7 @@ function _cardHash(){
     if(top.type==='tt'&&top.data)return _memberHash(top.data);
     if(top.type==='gc'&&top.data)return'#g='+_hashEsc(top.data);
   }
+  if(_openUnit)return'#g='+_hashEsc(_UNIT_KEY+_openUnit); // 데스크톱 유닛 카드(왼쪽 패널)
   if(_openTArtist)return _memberHash(_openTArtist);
   if(_openGCko)return'#g='+_hashEsc(_openGCko);
   return'';
@@ -13742,14 +13748,29 @@ function _groupGlyphSVG(gko,size,litMemberKo){
   return `<svg viewBox="0 0 ${VB} ${VB}" width="${size}" height="${size}" aria-hidden="true" style="display:block;overflow:visible">${dots}</svg>`;
 }
 // ── 유닛 카드(2026-10-14) ─────────────────────────────────────────────
-// 유닛(_PROJECT_UNITS)은 행성이 없다("행성 승격 안 함" 원칙). 예전엔 그룹 카드 유닛 줄을 누르면 유닛원 중 한 명의
+// 유닛(_PROJECT_UNITS)은 행성이 없다("행성 승격 안 함" 원칙). 예전엔 그룹 카드 유닛 줄을 누르면 유닛원 한 명의
 // 연결 카드가 열렸다(사용자 지적: "SuperM 누르면 백현 연결카드" — 카메라까지 백현 연결선 쪽으로 날아가 엑소 카드와
-// 우주가 어긋남). 이제 **그룹 카드 틀(#gc)을 유닛 모드로** 연다 — 행성 대신 우주엔 유닛원 별만 밝히고 별자리 선으로
-// 잇는다. 별도 카드 종류를 새로 만들지 않은 이유: 모바일 카드 스택·뒤로가기·발자국·공유 주소가 전부 'gc'/'tt' 두
-// 종류 전제라, _openGCko에 'unit:이름' 키를 넣으면 그 경로들이 showGC(키)를 다시 부르며 그대로 따라온다.
+// 우주가 어긋남). 이제 유닛 카드를 연다 — 우주엔 유닛원 별만 밝히고 별자리 선으로 잇는다.
+// · 데스크톱: 그룹 카드는 그대로 두고 **왼쪽 멤버 패널 자리**에 유닛 카드(#uc)가 열린다(사용자 요청 — 멤버 카드처럼).
+//   #uc는 #gc를 복제해 id만 uc-로 바꾼 것이고, #gc에 걸린 CSS도 처음 열 때 #uc용으로 복제한다(_ensureUcEl) —
+//   그룹 카드 스타일을 고치면 유닛 카드도 자동으로 따라간다.
+// · 모바일: 카드 스택·뒤로가기가 #gc/#tt 두 종류 전제라, #gc를 유닛 모드로 쓴다(_openGCko='unit:이름' — 스택 복원이
+//   showGC(키)를 다시 부르며 그대로 따라온다).
+// 카드 내용은 두 경우 모두 _renderUnitInto(접두사)가 같은 코드로 그린다.
 var _UNIT_KEY='unit:'; // var: setFocus·clearFocus·_makeWithLine이 이 줄보다 먼저 불려도 TDZ 예외가 안 나게
+var _openUnit=null;     // 데스크톱 #uc에 열린 유닛 이름
+var _unitLines=null;
 function _isUnitKey(k){return typeof k==='string'&&k.startsWith(_UNIT_KEY)&&!!_PROJECT_UNITS[k.slice(_UNIT_KEY.length)];}
-function _openUnitCard(name){showGC(_UNIT_KEY+name,window.innerWidth/2,window.innerHeight*0.4);}
+function _openUnitCard(name){_showUnitCard(name,window.innerWidth/2,window.innerHeight*0.4);}
+// 유닛 영상 범위 — 행성이 없으니 group_ko 하나로 못 묶는다. 유닛원 소속 그룹들 안에서 제목에 유닛명이 있는 영상.
+// 매처가 유닛 영상의 group_ko를 유닛원 소속 그룹으로 두므로(A SIX→BAE173 등) 이 범위로 충분하고, group_ko 인덱스로
+// 먼저 좁혀서 title_norm 부분일치(인덱스 못 탐)가 테이블 전체를 훑지 않는다. 목록·탭 유무 확인·위쪽 영상이 같이 쓴다.
+function _applyUnitScope(q,name){
+  const u=_PROJECT_UNITS[name]||{members:[],names:[]};
+  const gs=[...new Set(u.members.map(m=>m.gko==='솔로'?m.mko:m.gko))];
+  const ns=[...new Set([name,...u.names].map(n=>_titleNorm(n).replace(/[*,()"\\]/g,' ').trim()).filter(n=>n.length>=2))];
+  return q.in('group_ko',gs).or(ns.map(n=>'title_norm.ilike.'+_pgFilterVal('*'+n+'*')).join(','));
+}
 // 유닛원 → [{a,gko}] (artists에서 그 소속의 그 이름; 무소속은 gko가 본인 이름)
 function _unitMemberArtists(name){
   const u=_PROJECT_UNITS[name];if(!u)return[];
@@ -13759,7 +13780,6 @@ function _unitMemberArtists(name){
   }).filter(Boolean);
 }
 // 별자리 선 — 유닛원 별을 최소 신장 트리로 잇는다(전부 이으면 7명이 21줄이라 그물처럼 보임). LineSegments 1개 = 드로우콜 1.
-var _unitLines=null;
 function _clearUnitLines(){
   if(!_unitLines)return;
   scene.remove(_unitLines);_unitLines.geometry.dispose();_unitLines.material.dispose();_unitLines=null;
@@ -13790,53 +13810,89 @@ function _setUnitFocus(name){
   }
   return pts;
 }
-function _showUnitCard(name,cx,cy,keepMemberPanel,urlMode){
-  const u=_PROJECT_UNITS[name];if(!u)return;
-  const key=_UNIT_KEY+name;
-  _freezeSheetBottomBeforeOverwrite('gc');
-  _dismissOnboardHint();
-  const pts=_setUnitFocus(name);
-  _openGCko=key;
-  _fpPush({type:'gc',gko:key,label:name});
-  // 카메라: 별자리 전체가 들어오게. flyToFitPositions(1.5배+30)는 이중소속 두 별용이라 여러 행성에 걸친 유닛은 끝이 카드 밑에
-  // 가려졌다(SuperM 헤드리스 실측) — 별자리 반경 기준으로 더 물러난다.
-  if(pts.length===1)flyTo(pts[0],1000);
-  else if(pts.length){const c=new THREE.Vector3();pts.forEach(p=>c.add(p));c.divideScalar(pts.length);let md=0;pts.forEach(p=>{md=Math.max(md,c.distanceTo(p));});
-    const dir=camera.position.clone().sub(controls.target).normalize();if(dir.lengthSq()<0.001)dir.set(0,0.3,1).normalize();
-    // 데스크톱은 오른쪽 카드 패널이 화면 ~30%를 덮으므로 바라보는 점을 별자리 오른쪽으로 옮겨 별자리가 왼쪽 빈 화면에 오게 한다
-    // (멀리 물러나서 맞추면 다른 별 수백 개가 같이 들어와 별자리가 묻혔다 — 2.8배 시도 후 되돌림).
-    const tgt=c.clone();if(!isMob())tgt.addScaledVector(new THREE.Vector3(1,0,0).applyQuaternion(camera.quaternion),md*0.55);
-    _startFly(tgt,tgt.clone().addScaledVector(dir,md*(isMob()?2.2:1.9)+22),1000);}
+// 카메라: 카드에 안 가린 우주 영역(데스크톱 = 화면 폭 − 그룹 패널 − 유닛 패널) 가운데에 별자리가 꽉 차게.
+// 화면 픽셀 기준으로 거리·옆 이동을 계산한다 — 배수로 맞추던 첫 버전은 여러 행성에 걸친 SuperM이 너무 멀거나(사용자: "너무 멀다")
+// 카드 밑에 가렸다.
+function _flyToUnit(pts,name){
+  if(!pts.length)return;
+  if(pts.length===1){flyTo(pts[0],1000);return;}
+  let c=new THREE.Vector3();pts.forEach(p=>c.add(p));c.divideScalar(pts.length);
+  let md=0;pts.forEach(p=>{md=Math.max(md,c.distanceTo(p));});md=Math.max(md,4);
+  // 한 그룹 안 유닛(부석순 등)은 별 셋만 맞추면 행성이 화면을 넘친다 — 행성 전체를 기준으로
+  {const gs=[...new Set(_unitMemberArtists(name).map(m=>m.gko))];const bm=gs.length===1&&bubbleMeshes.find(b=>b.ko===gs[0]);if(bm){c=bm.mesh.position.clone();md=Math.max(md,bm.radius*1.05);}}
+  const W=window.innerWidth,H=window.innerHeight;
+  const covered=isMob()?0:(document.body.classList.contains('card-wide')?640:440)*2; // 그룹 패널 + 유닛 패널
+  const visW=Math.max(260,W-covered),visH=isMob()?H*0.42:H-64;
+  const tanH=Math.tan(THREE.MathUtils.degToRad(camera.fov/2));
+  const fitPx=Math.min(visW,visH)*0.38; // 별자리 반경이 보이는 영역 짧은 변의 38% — 0.5는 끝 별이 화면 가장자리에 붙었다
+  // OrbitControls maxDistance(420)를 넘으면 카메라는 거기서 멈추는데 옆 이동은 계산 거리 기준이라 별자리가 왼쪽 밖으로 밀렸다
+  // (1440 폭 실측: 기대 x=280 → 실제 96). 거리를 한도 안으로 자르고 옆 이동도 잘린 거리로 계산한다.
+  const d=Math.min(md*H/(2*tanH*fitPx)*1.15,(controls.maxDistance||Infinity)*0.97);
+  const dir=camera.position.clone().sub(controls.target).normalize();if(dir.lengthSq()<0.001)dir.set(0,0.3,1).normalize();
+  const worldPerPx=2*d*tanH/H;
+  const tgt=c.clone().addScaledVector(new THREE.Vector3(1,0,0).applyQuaternion(camera.quaternion),(covered/2)*worldPerPx);
+  _startFly(tgt,tgt.clone().addScaledVector(dir,d),1000);
+}
+// #uc(데스크톱 유닛 카드) — #gc 마크업·CSS 복제. 처음 한 번만.
+let _ucChVidCtl=null;
+function _ensureUcEl(){
+  let el=document.getElementById('uc');
+  if(el)return el;
+  const gc=document.getElementById('gc');
+  el=gc.cloneNode(true);
+  el.querySelectorAll('[id]').forEach(n=>{n.id=n.id.replace(/^gc(?=-|x$)/,'uc');});
+  el.id='uc';el.style.display='none';
+  // 그룹 카드 동적 내용 비우기(복제 시점에 열려 있던 그룹 것)
+  ['uc-mem-list','uc-discog-strip','uc-ch-vid','uc-concert-row','uc-trophy','uc-links','uc-status-line'].forEach(id=>{const x=el.querySelector('#'+id);if(x)x.innerHTML='';});
+  {const h=el.querySelector('#uc-hero');if(h)h.remove();}
+  document.body.appendChild(el);
+  // #gc 규칙을 #uc로 복제(@media 안쪽까지). 다른 출처(외부 폰트 CSS 등)는 cssRules 접근이 막혀 건너뛴다.
+  const rx=/#gc(?![A-Za-z0-9_])|#gcx\b/g;
+  const conv=t=>t.replace(/#gcx\b/g,'#ucx').replace(/#gc(?![A-Za-z0-9_])/g,'#uc');
+  const walk=(list,host)=>{
+    const add=[];
+    for(const r of list){
+      if(r.cssRules&&r.media){walk(r.cssRules,r);continue;}
+      if(r.selectorText&&rx.test(r.selectorText)){rx.lastIndex=0;if(!/track-videos|discog-detail/.test(r.selectorText))add.push(conv(r.cssText));}
+      rx.lastIndex=0;
+    }
+    add.forEach(t=>{try{host.insertRule(t,host.cssRules.length);}catch(e){}});
+  };
+  for(const sh of document.styleSheets){let rl;try{rl=sh.cssRules;}catch(e){continue;}if(rl)walk(rl,sh);}
+  el.querySelector('#ucx')?.addEventListener('click',e=>{e.stopPropagation();_closeUnitPanel();});
+  el.addEventListener('click',e=>e.stopPropagation());
+  _ucChVidCtl=_makeChVidController('uc-ch-vid');
+  return el;
+}
+function _closeUnitPanel(){closeMemberPanel(true);_updateTtBackBtn();}
+// 카드 내용 — p: 'gc'(모바일, #gc 유닛 모드) | 'uc'(데스크톱 #uc)
+function _renderUnitInto(p,name,ctl,cx,cy){
+  const u=_PROJECT_UNITS[name];
+  const $=id=>document.getElementById(p+'-'+id);
   const mem=_unitMemberArtists(name);
   const gkos=[...new Set(mem.map(m=>m.gko))];
-  const el=document.getElementById('gc');
-  el.classList.add('gc-enter');el.style.display='block';
-  requestAnimationFrame(()=>requestAnimationFrame(()=>el.classList.remove('gc-enter')));
   const g0=GROUPS[gkos[0]];const[r,g,b]=(g0&&g0.color)||[180,180,200];
   const _bar=`linear-gradient(90deg,rgba(${r},${g},${b},0.75),rgba(${r},${g},${b},0.35))`;
-  document.getElementById('gc-bar').style.background=_bar;document.getElementById('gc-bar-mob').style.background=_bar;
-  const nameEl=document.getElementById('gc-name');nameEl.textContent=name;nameEl.style.color='';
-  {const gg=document.getElementById('gc-glyph');if(gg)gg.innerHTML='';}
-  {const alt=u.names.find(n=>n!==name&&/[가-힣]/.test(n)!==/[가-힣]/.test(name));const en=document.getElementById('gc-en');en.textContent=alt||'';en.style.display=alt?'':'none';}
-  // 그룹 전용 요소는 숨김 — showGC가 열릴 때 되살린다(아래 showGC 첫머리)
-  ['gc-fav','gc-share','gc-card-menu','gc-pic-wrap','gc-anniv-banner','gc-fandom-row','gc-leader-row','gc-unit-row','gc-timeline-section','gc-collection-row'].forEach(id=>{const x=document.getElementById(id);if(x)x.style.display='none';});
-  {const x=document.getElementById('gc-concert-row');if(x)x.innerHTML='';}
-  {const x=document.getElementById('gc-trophy');if(x)x.innerHTML='';}
-  {const x=document.getElementById('gc-status-line');if(x)x.textContent='';}
-  _renderGcLinks({});
-  // 데뷔 = 유닛 첫 앨범 발매일(디스코 로드 후 채움). 앨범 데이터가 없으면 줄을 숨긴다.
-  const debutEl=document.getElementById('gc-debut');debutEl.innerHTML='';debutEl.parentElement.style.display='none';
-  // 소속 = 유닛원 소속 그룹 칩(누르면 그 그룹 카드). 무소속 유닛원은 칩 없이 멤버 줄에서만.
-  const coEl=document.getElementById('gc-co');coEl.innerHTML='';
-  const realG=gkos.filter(k=>GROUPS[k]);
-  realG.forEach((k,i)=>{if(i)coEl.appendChild(document.createTextNode(' '));coEl.appendChild(_makeGCChip(k,currentLang==='ko'?k:(GROUPS[k].en||k)));});
-  coEl.parentElement.style.display=realG.length?'':'none';
-  // 멤버 = 그룹별로 묶어서(한 그룹 유닛이면 그룹명 생략)
-  const memEl=document.getElementById('gc-mem-list');memEl.innerHTML='';
-  const lbl=document.getElementById('gc-mem-label');lbl.classList.remove('toggleable','on');lbl.title='';
+  if($('bar'))$('bar').style.background=_bar;if($('bar-mob'))$('bar-mob').style.background=_bar;
+  const nameEl=$('name');nameEl.textContent=name;nameEl.style.color='';
+  if($('glyph'))$('glyph').innerHTML='';
+  {const alt=u.names.find(n=>n!==name&&/[가-힣]/.test(n)!==/[가-힣]/.test(name));const en=$('en');en.textContent=alt||'';en.style.display=alt?'':'none';}
+  // 그룹 전용 요소는 숨김(모바일 #gc는 showGC가 열릴 때 되살린다). 소속 줄도 뺀다 — 멤버 줄의 그룹명이 그 역할(사용자 결정).
+  ['fav','share','card-menu','pic-wrap','anniv-banner','fandom-row','leader-row','unit-row','timeline-section','collection-row'].forEach(id=>{const x=$(id);if(x)x.style.display='none';});
+  ['concert-row','trophy','status-line','links'].forEach(id=>{const x=$(id);if(x)x.innerHTML='';});
+  $('co').innerHTML='';$('co').parentElement.style.display='none';
+  const debutEl=$('debut');debutEl.innerHTML='';debutEl.parentElement.style.display='none'; // 디스코 로드 후 첫 앨범일
+  // 멤버 = 그룹별로 묶고, 그룹명은 흐리게 + 누르면 그 그룹 카드(한 그룹 유닛이면 그룹명도 하나)
+  const memEl=$('mem-list');memEl.innerHTML='';
+  const lbl=$('mem-label');lbl.classList.remove('toggleable','on');lbl.title='';
   gkos.forEach((k,gi)=>{
     if(gi)memEl.appendChild(document.createTextNode('  '));
-    if(gkos.length>1&&GROUPS[k]){const t=document.createElement('span');t.className='gc-unit-grp';t.textContent=(currentLang==='ko'?k:(GROUPS[k].en||k))+' ';memEl.appendChild(t);}
+    if(GROUPS[k]){
+      const t=document.createElement('span');t.className='gc-unit-grp';t.textContent=currentLang==='ko'?k:(GROUPS[k].en||k);
+      t.title=currentLang==='ko'?k+' 카드 열기':'Open '+(GROUPS[k].en||k);
+      t.addEventListener('click',e=>{e.stopPropagation();const bm=bubbleMeshes.find(x=>x.ko===k);if(bm)flyToBubble(bm.mesh.position,bm.radius);showGC(k,window.innerWidth/2,window.innerHeight*0.4);});
+      memEl.appendChild(t);
+    }
     mem.filter(m=>m.gko===k).forEach(({a})=>{
       const sp=document.createElement('span');sp.className='gc-mem-name';sp.textContent=_dispName(a,GROUPS[k]?k:undefined);
       sp.addEventListener('click',e=>{e.stopPropagation();if(a._worldPos)pulseMember(a);showT(a,cx,cy);});
@@ -13844,21 +13900,49 @@ function _showUnitCard(name,cx,cy,keepMemberPanel,urlMode){
     });
   });
   // 디스코그래피 = 유닛원들의 unitDiscography 중 이 유닛(제목+발매일로 중복 제거)
-  const row=document.getElementById('gc-discog-row');if(row)row.style.display='none';
+  const row=$('discog-row');if(row)row.style.display='none';
+  const key=_UNIT_KEY+name;
+  const stillOpen=()=>p==='uc'?_openUnit===name:_openGCko===key;
   Promise.all(mem.map(({a})=>_ensureMemberDisco(a))).then(()=>{
-    if(_openGCko!==key)return;
+    if(!stillOpen())return;
     const seen=new Set(),albums=[];
     mem.forEach(({a})=>(a.unitDiscography||[]).forEach(ud=>{
       if(ud.unitName!==name&&!u.names.includes(ud.unitName))return;
       (ud.albums||[]).forEach(al=>{const k=(al.title||'')+'|'+(al.releaseDate||'');if(!seen.has(k)){seen.add(k);albums.push(al);}});
     }));
-    _renderDiscography('gc',albums);
+    _renderDiscography(p,albums);
     const first=albums.map(al=>al.releaseDate).filter(Boolean).sort()[0];
     if(first){debutEl.textContent=first;debutEl.parentElement.style.display='';}
   });
-  _gcChVidCtl.build(key,null,null,{unit:name});
-  el.style.maxWidth='264px';
-  if(isMob()){if(!_navHistoryActive)openMobSheet(el);}else{if(!keepMemberPanel)closeMemberPanel(false);openSidePanel(el);}
+  ctl.build(key,null,null,{unit:name});
+}
+function _showUnitCard(name,cx,cy,keepMemberPanel,urlMode){
+  const u=_PROJECT_UNITS[name];if(!u)return;
+  const key=_UNIT_KEY+name;
+  _dismissOnboardHint();
+  _fpPush({type:'gc',gko:key,label:name}); // 발자국 재오픈은 showGC(키) → 여기로
+  if(!isMob()){
+    // 데스크톱: 그룹 카드는 그대로, 왼쪽 멤버 패널 자리에 유닛 카드
+    const el=_ensureUcEl();
+    _openTArtist=null;_openUnit=name;
+    _memberPanelShifted=true; // 멤버 패널의 기본 우주 이동(_panWorld)은 끄고 아래 _flyToUnit이 두 패널을 피해 맞춘다
+    _flyToUnit(_setUnitFocus(name),name);
+    _renderUnitInto('uc',name,_ucChVidCtl,cx,cy);
+    openMemberPanel(el);
+    _updateTtBackBtn();
+    _gaEvent('view_group',{group_name:key});
+    _syncUrl(urlMode||'push');
+    return;
+  }
+  // 모바일: #gc 유닛 모드(카드 스택에 쌓임)
+  _freezeSheetBottomBeforeOverwrite('gc');
+  _flyToUnit(_setUnitFocus(name),name);
+  _openGCko=key;
+  const el=document.getElementById('gc');
+  el.classList.add('gc-enter');el.style.display='block';
+  requestAnimationFrame(()=>requestAnimationFrame(()=>el.classList.remove('gc-enter')));
+  _renderUnitInto('gc',name,_gcChVidCtl,cx,cy);
+  if(!_navHistoryActive)openMobSheet(el);
   _updateTtBackBtn();
   _gaEvent('view_group',{group_name:key});
   _syncUrl(urlMode||'push');
@@ -23413,13 +23497,13 @@ function _cardHeroOn(){
   try{return !(/[?&]hero=0\b/.test(location.search)||localStorage.getItem('kpu_card_hero')==='0');}catch(e){return true;}
 }
 function _cardHeroSlot(contId){
-  const cardId=contId==='tv'?'tt':'gc';
+  const cardId=contId==='tv'?'tt':contId==='uc-ch-vid'?'uc':'gc';
   let slot=document.getElementById(cardId+'-hero');
   if(!slot){
     // 그룹 카드는 헤더 밑 컬러 바(#gc-bar-mob) 다음 — 바가 대표 영상 아래로 밀리면 헤더와 끊겨 보인다
     // 멤버 카드는 '○명이 좋아해요' 줄(#tt-status-line) 다음 — 헤더에 딸린 줄이라 대표 영상이 그 사이에 끼면 어색하다
     const ttAnchor=()=>{const r=document.getElementById('tt-pic-info-row'),s=document.getElementById('tt-status-line');return (s&&r&&s.parentNode===r.parentNode&&(r.compareDocumentPosition(s)&Node.DOCUMENT_POSITION_FOLLOWING))?s:r;};
-    const anchor=cardId==='tt'?ttAnchor():(document.getElementById('gc-bar-mob')||document.getElementById('gc-header'));
+    const anchor=cardId==='tt'?ttAnchor():(document.getElementById(cardId+'-bar-mob')||document.getElementById(cardId+'-header'));
     if(!anchor||!anchor.parentNode)return null;
     slot=document.createElement('div');slot.id=cardId+'-hero';slot.className='card-hero';slot.hidden=true;
     slot.innerHTML='<div class="gc-ch-grid card-hero-grid"></div>';
@@ -24038,13 +24122,7 @@ function _makeChVidController(contId){
         :(reset&&randomize)?sb.from(_YT_TABLE).select(selectCols,{count:'exact'})
         :sb.from(_YT_TABLE).select(selectCols);
       if(state.unitKey){
-        // 유닛 카드(2026-10-14) — 행성이 없으니 group_ko 하나로 못 묶는다. 유닛 멤버 소속 그룹들 안에서 제목에
-        // 유닛명이 있는 영상. 매처가 유닛 영상의 group_ko를 멤버 소속 그룹으로 두므로(A SIX→BAE173 등) 이 범위로 충분하고,
-        // group_ko 인덱스로 먼저 좁혀서 title_norm 부분일치(인덱스 못 탐)가 테이블 전체를 훑지 않는다.
-        const _u=_PROJECT_UNITS[state.unitKey]||{members:[],names:[]};
-        const _ug=[...new Set(_u.members.map(m=>m.gko==='솔로'?m.mko:m.gko))];
-        const _un=[...new Set([state.unitKey,..._u.names].map(n=>_titleNorm(n).replace(/[*,()"\\]/g,' ').trim()).filter(n=>n.length>=2))];
-        q=q.in('group_ko',_ug).or(_un.map(n=>'title_norm.ilike.'+_pgFilterVal('*'+n+'*')).join(','));
+        q=_applyUnitScope(q,state.unitKey); // 유닛 카드 — 범위 정의는 _applyUnitScope 주석
       }else if(state.unitFilter){
         // 유닛(예: V8) 태그 클릭 시: 이 멤버 채널 영상 중 같은 유닛의 다른 멤버가 같이 태깅된 것만 —
         // 같은 그룹 소속 유닛원은 members 배열, 다른 그룹 소속 유닛원은 with_members(이름(그룹) 포맷)에 있음.
@@ -24545,7 +24623,8 @@ function _makeChVidController(contId){
       const _snap=catTabs.filter(([v])=>v!=='all').map(([v])=>v);
       const _chk=async v=>{
         let q=sb.from(_YT_TABLE).select('id').limit(1);
-        if(memberKo)q=q.eq('group_ko',ko).contains('members',[memberKo]);
+        if(state.unitKey)q=_applyUnitScope(q,state.unitKey); // 유닛 카드도 그룹/멤버 카드처럼 탭이 다 뜨게(예전엔 전체만)
+        else if(memberKo)q=q.eq('group_ko',ko).contains('members',[memberKo]);
         else q=q.eq('group_ko',ko);
         if(v==='cover'){
           // 본인/그룹이 부른 커버(제목 기준)가 하나라도 있으면 탭 유지.
