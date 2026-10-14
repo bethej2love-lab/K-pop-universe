@@ -1337,6 +1337,7 @@
     <div id="gc-discog-detail-type"></div>
     <div id="gc-discog-detail-title"></div>
     <div id="gc-discog-detail-meta"></div>
+    <a id="gc-discog-detail-melon" class="melon-link-btn" target="_blank" rel="noopener noreferrer" hidden>멜론에서 보기 <span aria-hidden="true">↗</span></a>
     <div id="gc-discog-detail-track-lbl">Tracklist</div>
     <div id="gc-discog-detail-tracks"></div>
     <div id="gc-discog-detail-credits"></div>
@@ -13082,6 +13083,11 @@ function _openGcDiscogDetail(a,idx){
   document.getElementById('gc-discog-detail-type').textContent=_discogTypeLabel(a.type)+(a.trackCount?' · '+a.trackCount+'곡':'');
   document.getElementById('gc-discog-detail-title').textContent=a.title;
   document.getElementById('gc-discog-detail-meta').textContent=a.releaseDate;
+  // 멜론 앨범 페이지(번호 없으면 '주인 + 앨범명' 멜론 검색)로 — 가사·전체 크레딧을 보러 가는 길(2026-10-14)
+  {const ml=document.getElementById('gc-discog-detail-melon');if(ml){
+    const owner=(_openTArtist&&_openTArtist.name&&_openTArtist.name.ko)||(_discogDetailGko&&!String(_discogDetailGko).startsWith('unit:')?_discogDetailGko:'')||'';
+    ml.href=a.melonAlbumId?_melonAlbumUrl(a.melonAlbumId):'https://www.melon.com/search/total/index.htm?q='+encodeURIComponent((owner+' '+(a.title||'')).trim());
+    ml.hidden=false;ml.onclick=e=>e.stopPropagation();}}
   const trackLbl=document.getElementById('gc-discog-detail-track-lbl');
   const tracksEl=document.getElementById('gc-discog-detail-tracks');
   tracksEl.innerHTML='';
@@ -13095,6 +13101,12 @@ function _openGcDiscogDetail(a,idx){
       const nameEl=document.createElement('span');nameEl.className='gc-discog-track-name';nameEl.textContent=t.title;
       row.appendChild(noEl);row.appendChild(nameEl);
       _appendGcDiscogTrackBadges(row,t.title);
+      // 가사·전체 크레딧은 멜론 곡 페이지로(2026-10-14) — 가사는 저작물이라 직접 수집·제공하지 않고 링크만 건다.
+      // 곡 번호(songId)는 tools/melon_link_backfill.mjs가 멜론 앨범 상세에서 채운다. 줄의 나머지를 누르면 원래대로 그 곡 영상 목록.
+      if(t.songId){const ly=document.createElement('a');ly.className='gc-discog-track-lyric';ly.href=_melonSongUrl(t.songId);ly.target='_blank';ly.rel='noopener noreferrer';
+        ly.title=currentLang==='ko'?'멜론에서 가사·크레딧 보기':'Lyrics & credits on Melon';ly.setAttribute('aria-label',ly.title);
+        ly.innerHTML='<svg viewBox="0 0 24 24"><path d="M5 6h10M5 11h10M5 16h6"/><path d="M19 5v9.5"/><circle cx="17" cy="15.5" r="2"/></svg>';
+        ly.addEventListener('click',e=>e.stopPropagation());row.appendChild(ly);}
       row.addEventListener('click',()=>_filterGcVideosByTrack(t.title));
       tracksEl.appendChild(row);
     });
@@ -13121,6 +13133,9 @@ function _openGcDiscogDetail(a,idx){
     _renderCreditsInto(credEl,titles,true,_credOwner);
   }
 }
+// 멜론 링크 — 웹 주소 그대로 쓴다(모바일은 멜론이 알아서 모바일 페이지·앱으로 넘긴다)
+function _melonAlbumUrl(id){return 'https://www.melon.com/album/detail.htm?albumId='+encodeURIComponent(id);}
+function _melonSongUrl(id){return 'https://www.melon.com/song/detail.htm?songId='+encodeURIComponent(id);}
 function _closeGcDiscogDetail(){document.getElementById('gc-discog-detail').classList.remove('open');}
 document.getElementById('gc-discog-detail-flag').addEventListener('click',e=>{
   e.stopPropagation();

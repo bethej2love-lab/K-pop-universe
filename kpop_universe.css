@@ -2833,6 +2833,13 @@
   #gc-discog-detail-type{font-size:10px;font-weight:700;letter-spacing:.14em;color:rgba(150,175,225,0.71);text-transform:uppercase;}
   #gc-discog-detail-title{font-size:15px;font-weight:700;color:#e4ecff;margin-top:5px;line-height:1.32;}
   #gc-discog-detail-meta{font-size:var(--fz-meta);color:rgba(150,170,210,0.66);margin-top:6px;}
+  /* 멜론 링크(2026-10-14) — 가사·전체 크레딧은 멜론에서. 앨범 정보 밑 작은 알약, 곡 줄 끝엔 선 아이콘 */
+  .melon-link-btn{display:inline-flex;align-items:center;gap:4px;margin-top:9px;padding:4px 10px;border-radius:999px;font-size:11px;font-weight:600;
+    color:rgba(150,225,170,0.9);background:rgba(0,205,60,0.08);border:0.5px solid rgba(0,205,60,0.28);text-decoration:none;transition:background .15s;}
+  .melon-link-btn:hover{background:rgba(0,205,60,0.16);}
+  .gc-discog-track-lyric{flex-shrink:0;align-self:center;display:inline-flex;width:24px;height:24px;margin:-4px -2px -4px 0;border-radius:6px;align-items:center;justify-content:center;opacity:.55;transition:opacity .15s,background .15s;}
+  .gc-discog-track-lyric svg{width:15px;height:15px;fill:none;stroke:rgba(170,195,245,0.95);stroke-width:1.8;stroke-linecap:round;}
+  .gc-discog-track-lyric:hover{opacity:1;background:rgba(255,255,255,0.06);}
   #gc-discog-detail-track-lbl{font-size:var(--fz-meta);font-weight:700;letter-spacing:.14em;color:rgba(130,150,205,0.56);text-transform:uppercase;margin-top:18px;padding-top:14px;border-top:0.5px solid rgba(255,255,255,0.08);text-align:left;}
   #gc-discog-detail-tracks{margin-top:6px;max-height:200px;overflow-y:auto;text-align:left;}
   .gc-discog-track{display:flex;align-items:baseline;gap:9px;padding:6px 4px;font-size:13px;border-radius:7px;cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><path d='M11,1 L12.3,9.7 L21,11 L12.3,12.3 L11,21 L9.7,12.3 L1,11 L9.7,9.7Z' fill='%23FFB0D0' opacity='.97'/></svg>") 11 11,pointer;transition:background .13s;}
