@@ -6697,9 +6697,12 @@
     "checkedAt": "2026-09-17"
   },
   "a:세훈|엑소": {
-    "aid": null,
-    "failedWhy": "앨범 겹침 0장 (필요 2, 겹친 후보 0명, 후보 6명)",
-    "checkedAt": "2026-09-17"
+    "aid": "672858",
+    "melonName": "세훈 (SEHUN)",
+    "kind": "solo",
+    "confidence": "high",
+    "evidence": "그룹(엑소) 멜론 상세의 멤버 목록",
+    "checkedAt": "2026-10-14"
   },
   "a:강민|베리베리": {
     "aid": null,
@@ -6747,9 +6750,12 @@
     "checkedAt": "2026-09-17"
   },
   "a:티파니|소녀시대": {
-    "aid": null,
-    "failedWhy": "앨범 겹침 0장 (필요 2, 겹친 후보 0명, 후보 8명)",
-    "checkedAt": "2026-09-17"
+    "aid": "406421",
+    "melonName": "Tiffany Young",
+    "kind": "solo",
+    "confidence": "high",
+    "evidence": "그룹(소녀시대) 멜론 상세의 멤버 목록",
+    "checkedAt": "2026-10-14"
   },
   "a:주연|엑스디너리 히어로즈": {
     "aid": null,
@@ -10405,6 +10411,342 @@
     "kind": "solo",
     "confidence": "high",
     "evidence": "그룹(에프엑스) 멜론 상세의 멤버 목록",
+    "checkedAt": "2026-10-14"
+  },
+  "a:버논|세븐틴": {
+    "aid": "868679",
+    "melonName": "Vernon",
+    "kind": "solo",
+    "confidence": "high",
+    "evidence": "그룹(세븐틴) 멜론 상세의 멤버 목록",
+    "checkedAt": "2026-10-14"
+  },
+  "a:우지|세븐틴": {
+    "aid": "868677",
+    "melonName": "WOOZI",
+    "kind": "solo",
+    "confidence": "high",
+    "evidence": "그룹(세븐틴) 멜론 상세의 멤버 목록",
+    "checkedAt": "2026-10-14"
+  },
+  "a:필릭스|스트레이키즈": {
+    "aid": "2006379",
+    "melonName": "필릭스 (Stray Kids)",
+    "kind": "solo",
+    "confidence": "high",
+    "evidence": "그룹(스트레이키즈) 멜론 상세의 멤버 목록",
+    "checkedAt": "2026-10-14"
+  },
+  "a:김우진|스트레이키즈": {
+    "aid": "2006374",
+    "melonName": "김우진",
+    "kind": "solo",
+    "confidence": "high",
+    "evidence": "그룹(스트레이키즈) 멜론 상세의 멤버 목록",
+    "checkedAt": "2026-10-14"
+  },
+  "a:루카스|웨이션브이": {
+    "aid": "2111386",
+    "melonName": "루카스 (LUCAS)",
+    "kind": "solo",
+    "confidence": "high",
+    "evidence": "그룹(웨이션브이) 멜론 상세의 멤버 목록",
+    "checkedAt": "2026-10-14"
+  },
+  "a:탑|빅뱅": {
+    "aid": "152192",
+    "melonName": "T.O.P",
+    "kind": "solo",
+    "confidence": "high",
+    "evidence": "그룹(빅뱅) 멜론 상세의 멤버 목록",
+    "checkedAt": "2026-10-14"
+  },
+  "a:제시카|소녀시대": {
+    "aid": "428829",
+    "melonName": "Jessica (제시카)",
+    "kind": "solo",
+    "confidence": "high",
+    "evidence": "그룹(소녀시대) 멜론 상세의 멤버 목록",
+    "checkedAt": "2026-10-14"
+  },
+  "a:홍중|에이티즈": {
+    "aid": "2399807",
+    "melonName": "홍중(ATEEZ)",
+    "kind": "solo",
+    "confidence": "high",
+    "evidence": "그룹(에이티즈) 멜론 상세의 멤버 목록",
+    "checkedAt": "2026-10-14"
+  },
+  "a:후마|앤팀": {
+    "aid": "4088931",
+    "melonName": "FUMA",
+    "kind": "solo",
+    "confidence": "high",
+    "evidence": "그룹(앤팀) 멜론 상세의 멤버 목록",
+    "checkedAt": "2026-10-14"
+  },
+  "a:민현|뉴이스트": {
+    "aid": "672809",
+    "melonName": "황민현",
+    "kind": "solo",
+    "confidence": "high",
+    "evidence": "그룹(워너원) 멜론 상세의 멤버 목록",
+    "checkedAt": "2026-10-14"
+  },
+  "a:루한|엑소": {
+    "aid": "710011",
+    "melonName": "루한 (LUHAN)",
+    "kind": "solo",
+    "confidence": "high",
+    "evidence": "그룹(엑소) 멜론 상세의 멤버 목록",
+    "checkedAt": "2026-10-14"
+  },
+  "a:타오|엑소": {
+    "aid": "715177",
+    "melonName": "타오 (TAO)",
+    "kind": "solo",
+    "confidence": "high",
+    "evidence": "그룹(엑소) 멜론 상세의 멤버 목록",
+    "checkedAt": "2026-10-14"
+  },
+  "a:한경|슈퍼주니어": {
+    "aid": "790109",
+    "melonName": "Han Geng",
+    "kind": "solo",
+    "confidence": "high",
+    "evidence": "그룹(슈퍼주니어) 멜론 상세의 멤버 목록",
+    "checkedAt": "2026-10-14"
+  },
+  "a:라키|아스트로": {
+    "aid": "946273",
+    "melonName": "라키",
+    "kind": "solo",
+    "confidence": "high",
+    "evidence": "그룹(아스트로) 멜론 상세의 멤버 목록",
+    "checkedAt": "2026-10-14"
+  },
+  "a:아이엠|몬스타엑스": {
+    "aid": "837032",
+    "melonName": "I.M (아이엠)",
+    "kind": "solo",
+    "confidence": "high",
+    "evidence": "그룹(몬스타엑스) 멜론 상세의 멤버 목록",
+    "checkedAt": "2026-10-14"
+  },
+  "a:호야|인피니트": {
+    "aid": "672264",
+    "melonName": "HOYA(이호원)",
+    "kind": "solo",
+    "confidence": "high",
+    "evidence": "그룹(인피니트) 멜론 상세의 멤버 목록",
+    "checkedAt": "2026-10-14"
+  },
+  "a:장현승|하이라이트": {
+    "aid": "458401",
+    "melonName": "장현승",
+    "kind": "solo",
+    "confidence": "high",
+    "evidence": "그룹(하이라이트) 멜론 상세의 멤버 목록",
+    "checkedAt": "2026-10-14"
+  },
+  "a:현아|솔로": {
+    "aid": "449401",
+    "melonName": "현아",
+    "kind": "solo",
+    "confidence": "high",
+    "evidence": "그룹(포미닛) 멜론 상세의 멤버 목록",
+    "checkedAt": "2026-10-14"
+  },
+  "a:보람|티아라": {
+    "aid": "243140",
+    "melonName": "보람",
+    "kind": "solo",
+    "confidence": "high",
+    "evidence": "그룹(티아라) 멜론 상세의 멤버 목록",
+    "checkedAt": "2026-10-14"
+  },
+  "a:소연|티아라": {
+    "aid": "473461",
+    "melonName": "소연",
+    "kind": "solo",
+    "confidence": "high",
+    "evidence": "그룹(티아라) 멜론 상세의 멤버 목록",
+    "checkedAt": "2026-10-14"
+  },
+  "a:베일리|올데이프로젝트": {
+    "aid": "4346824",
+    "melonName": "BAILEY",
+    "kind": "solo",
+    "confidence": "high",
+    "evidence": "그룹(올데이프로젝트) 멜론 상세의 멤버 목록",
+    "checkedAt": "2026-10-14"
+  },
+  "a:우찬|올데이프로젝트": {
+    "aid": "1866684",
+    "melonName": "WOOCHAN",
+    "kind": "solo",
+    "confidence": "high",
+    "evidence": "그룹(올데이프로젝트) 멜론 상세의 멤버 목록",
+    "checkedAt": "2026-10-14"
+  },
+  "a:박유천|동방신기": {
+    "aid": "52611",
+    "melonName": "박유천",
+    "kind": "solo",
+    "confidence": "high",
+    "evidence": "그룹(동방신기) 멜론 상세의 멤버 목록",
+    "checkedAt": "2026-10-14"
+  },
+  "a:C.A.P|틴탑": {
+    "aid": "672542",
+    "melonName": "C.A.P",
+    "kind": "solo",
+    "confidence": "high",
+    "evidence": "그룹(틴탑) 멜론 상세의 멤버 목록",
+    "checkedAt": "2026-10-14"
+  },
+  "a:오원빈|에프티아일랜드": {
+    "aid": "437041",
+    "melonName": "오원빈",
+    "kind": "solo",
+    "confidence": "high",
+    "evidence": "그룹(에프티아일랜드) 멜론 상세의 멤버 목록",
+    "checkedAt": "2026-10-14"
+  },
+  "a:송승현|에프티아일랜드": {
+    "aid": "672436",
+    "melonName": "송승현",
+    "kind": "solo",
+    "confidence": "high",
+    "evidence": "그룹(에프티아일랜드) 멜론 상세의 멤버 목록",
+    "checkedAt": "2026-10-14"
+  },
+  "a:김진우|위너": {
+    "aid": "777287",
+    "melonName": "JINU (김진우)",
+    "kind": "solo",
+    "confidence": "high",
+    "evidence": "그룹(위너) 멜론 상세의 멤버 목록",
+    "checkedAt": "2026-10-14"
+  },
+  "a:남태현|위너": {
+    "aid": "742759",
+    "melonName": "남태현",
+    "kind": "solo",
+    "confidence": "high",
+    "evidence": "그룹(위너) 멜론 상세의 멤버 목록",
+    "checkedAt": "2026-10-14"
+  },
+  "a:김동혁|아이콘": {
+    "aid": "742771",
+    "melonName": "DK (김동혁)",
+    "kind": "solo",
+    "confidence": "high",
+    "evidence": "그룹(아이콘) 멜론 상세의 멤버 목록",
+    "checkedAt": "2026-10-14"
+  },
+  "a:방윤하|유니스": {
+    "aid": "3746551",
+    "melonName": "방윤하",
+    "kind": "solo",
+    "confidence": "high",
+    "evidence": "그룹(유니스) 멜론 상세의 멤버 목록",
+    "checkedAt": "2026-10-14"
+  },
+  "a:신우|비원에이포": {
+    "aid": "645713",
+    "melonName": "신우(C.NU)",
+    "kind": "solo",
+    "confidence": "high",
+    "evidence": "그룹(비원에이포) 멜론 상세의 멤버 목록",
+    "checkedAt": "2026-10-14"
+  },
+  "a:진영|비원에이포": {
+    "aid": "645611",
+    "melonName": "진영",
+    "kind": "solo",
+    "confidence": "high",
+    "evidence": "그룹(비원에이포) 멜론 상세의 멤버 목록",
+    "checkedAt": "2026-10-14"
+  },
+  "a:바로|비원에이포": {
+    "aid": "645632",
+    "melonName": "바로",
+    "kind": "solo",
+    "confidence": "high",
+    "evidence": "그룹(비원에이포) 멜론 상세의 멤버 목록",
+    "checkedAt": "2026-10-14"
+  },
+  "a:정일훈|솔로": {
+    "aid": "648052",
+    "melonName": "ILHOON",
+    "kind": "solo",
+    "confidence": "high",
+    "evidence": "그룹(비투비) 멜론 상세의 멤버 목록",
+    "checkedAt": "2026-10-14"
+  },
+  "a:천명훈|NRG": {
+    "aid": "1591",
+    "melonName": "천명훈",
+    "kind": "solo",
+    "confidence": "high",
+    "evidence": "그룹(NRG) 멜론 상세의 멤버 목록",
+    "checkedAt": "2026-10-14"
+  },
+  "a:노유민|NRG": {
+    "aid": "1588",
+    "melonName": "노유민",
+    "kind": "solo",
+    "confidence": "high",
+    "evidence": "그룹(NRG) 멜론 상세의 멤버 목록",
+    "checkedAt": "2026-10-14"
+  },
+  "a:유호석|클릭비": {
+    "aid": "221072",
+    "melonName": "EVAN 에반 (유호석)",
+    "kind": "solo",
+    "confidence": "high",
+    "evidence": "그룹(클릭비) 멜론 상세의 멤버 목록",
+    "checkedAt": "2026-10-14"
+  },
+  "a:케빈|더보이즈": {
+    "aid": "2020040",
+    "melonName": "Kevin Moon",
+    "kind": "solo",
+    "confidence": "high",
+    "evidence": "그룹(더보이즈) 멜론 상세의 멤버 목록",
+    "checkedAt": "2026-10-14"
+  },
+  "a:하영|프로미스나인": {
+    "aid": "2019216",
+    "melonName": "송하영 (프로미스나인)",
+    "kind": "solo",
+    "confidence": "high",
+    "evidence": "그룹(프로미스나인) 멜론 상세의 멤버 목록",
+    "checkedAt": "2026-10-14"
+  },
+  "a:지원|프로미스나인": {
+    "aid": "2019219",
+    "melonName": "박지원 (프로미스나인)",
+    "kind": "solo",
+    "confidence": "high",
+    "evidence": "그룹(프로미스나인) 멜론 상세의 멤버 목록",
+    "checkedAt": "2026-10-14"
+  },
+  "a:희철|슈퍼주니어": {
+    "aid": "439782",
+    "melonName": "김희철",
+    "kind": "solo",
+    "confidence": "high",
+    "evidence": "그룹(슈퍼주니어) 멜론 상세의 멤버 목록",
+    "checkedAt": "2026-10-14"
+  },
+  "a:시원|슈퍼주니어": {
+    "aid": "471361",
+    "melonName": "최시원",
+    "kind": "solo",
+    "confidence": "high",
+    "evidence": "그룹(슈퍼주니어) 멜론 상세의 멤버 목록",
     "checkedAt": "2026-10-14"
   }
 }
