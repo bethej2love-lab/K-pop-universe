@@ -238,10 +238,10 @@ const _PROJECT_UNITS={
   // 나인뮤지스 서브유닛
   '나인뮤지스A':{names:['나인뮤지스A','9MUSES A'],members:[{mko:'경리',gko:'나인뮤지스'},{mko:'혜미',gko:'나인뮤지스'},{mko:'소진',gko:'나인뮤지스'},{mko:'금조',gko:'나인뮤지스'}]},
   // 다이아 서브유닛
-  '빈챈현스':{names:['빈챈현스'],members:[{mko:'유니스',gko:'다이아'},{mko:'기희현',gko:'다이아'},{mko:'예빈',gko:'다이아'},{mko:'정채연',gko:'다이아'}]},
+  '빈챈현스':{names:['빈챈현스'],members:[{mko:'유니스',gko:'다이아'},{mko:'기희현',gko:'다이아'},{mko:'백예빈',gko:'다이아'},{mko:'정채연',gko:'다이아'}]},
   'L.U.B':{names:['L.U.B','엘유비'],members:[{mko:'주은',gko:'다이아'},{mko:'은채',gko:'다이아'}]},
   // 프리스틴 서브유닛
-  'PRISTIN V':{names:['PRISTIN V','프리스틴 V'],members:[{mko:'로아',gko:'프리스틴'},{mko:'은우',gko:'프리스틴'},{mko:'레나',gko:'프리스틴'},{mko:'결경',gko:'프리스틴'}]},
+  'PRISTIN V':{names:['PRISTIN V','프리스틴 V'],members:[{mko:'로아',gko:'프리스틴'},{mko:'은우',gko:'프리스틴'},{mko:'레나',gko:'프리스틴'},{mko:'주결경',gko:'프리스틴'}]},
   // 포미닛 서브유닛
   '2YOON':{names:['2YOON','투윤'],members:[{mko:'허가윤',gko:'포미닛'},{mko:'전지윤',gko:'포미닛'}]},
   // 에이핑크 서브유닛
@@ -275,7 +275,7 @@ const _PROJECT_UNITS={
   'DONGKIZ I:KAN':{names:['DONGKIZ I:KAN','동키즈 아이칸'],members:[{mko:'재찬',gko:'동키즈'}]},
   'NINE to SIX':{names:['NINE to SIX','나인 투 식스'],members:[{mko:'민규',gko:'동키즈'},{mko:'주원',gko:'동키즈'}]},
   // I.O.I 유닛
-  'I.O.I (7인 유닛)':{names:['I.O.I 7인 유닛','Whatta Man'],members:[{mko:'임나영',gko:'아이오아이'},{mko:'김청하',gko:'아이오아이'},{mko:'주결경',gko:'아이오아이'},{mko:'김소혜',gko:'아이오아이'},{mko:'최유정',gko:'아이오아이'},{mko:'김도연',gko:'아이오아이'},{mko:'전소미',gko:'아이오아이'}]},
+  'I.O.I (7인 유닛)':{names:['I.O.I 7인 유닛','Whatta Man'],members:[{mko:'임나영',gko:'아이오아이'},{mko:'청하',gko:'아이오아이'},{mko:'주결경',gko:'아이오아이'},{mko:'김소혜',gko:'아이오아이'},{mko:'최유정',gko:'아이오아이'},{mko:'김도연',gko:'아이오아이'},{mko:'전소미',gko:'아이오아이'}]},
   // 워너원 유닛
   // EXID 서브유닛
   '다소니':{names:['다소니','Dasoni'],members:[{mko:'솔지',gko:'이엑스아이디'},{mko:'하니',gko:'이엑스아이디'}]},
@@ -284,14 +284,21 @@ const _PROJECT_UNITS={
   // 구구단 서브유닛
   '구구단 오구오구':{names:['구구단 오구오구','gugudan OGUOGU'],members:[{mko:'신보라',gko:'구구단'},{mko:'장소진',gko:'구구단'},{mko:'류셰닝',gko:'구구단'},{mko:'정미미',gko:'구구단'},{mko:'김세정',gko:'구구단'},{mko:'강미나',gko:'구구단'},{mko:'김나영',gko:'구구단'}]},
   '구구단 세미나':{names:['구구단 세미나','gugudan SEMINA'],members:[{mko:'김세정',gko:'구구단'},{mko:'김나영',gko:'구구단'}]},
-  // B.D.U — 빌드업 서바이벌 프로젝트 보이그룹(2024.06~2026.03), 행성 생성 없음
-  'B.D.U':{names:['B.D.U','비디유','Boys Define Universe'],members:[{mko:'빛새온',gko:'솔로'},{mko:'승훈',gko:'씨아이엑스'},{mko:'제이 창',gko:'원팩트'},{mko:'김민서',gko:'솔로'}]},
-  'UNB':{names:['UNB','유앤비'],members:[{mko:'강유찬',gko:'에이스'},{mko:'고호정',gko:'핫샷'},{mko:'준',gko:'유키스'},{mko:'이의진',gko:'유앤비'},{mko:'오광석',gko:'유앤비'},{mko:'박대원',gko:'유앤비'},{mko:'이형근',gko:'유앤비'},{mko:'지한솔',gko:'유앤비'},{mko:'김기중',gko:'유앤비'}]},
+  // B.D.U — 빌드업 서바이벌 프로젝트 보이그룹(2024.06~2026.03). 워너원·UNB처럼 서바이벌 프로젝트 그룹이라 행성 있음(groups.json).
+  // 행성 있는 프로젝트 그룹(B.D.U·UNB)은 멤버 gko를 전원 그 그룹으로 — 원소속(씨아이엑스 등)으로 두면 B.D.U 무대에서 승훈이
+  // 게스트로 빠지고, '솔로'로 두면 "빛새온(솔로)" 같은 유령 태그가 붙었다(2026-10-14 실측 66건).
+  'B.D.U':{names:['B.D.U','비디유','Boys Define Universe'],members:[{mko:'빛새온',gko:'B.D.U'},{mko:'승훈',gko:'B.D.U'},{mko:'제이 창',gko:'B.D.U'},{mko:'김민서',gko:'B.D.U'}]},
+  'UNB':{names:['UNB','유앤비'],members:[{mko:'강유찬',gko:'유앤비'},{mko:'고호정',gko:'유앤비'},{mko:'준',gko:'유앤비'},{mko:'이의진',gko:'유앤비'},{mko:'오광석',gko:'유앤비'},{mko:'박대원',gko:'유앤비'},{mko:'이형근',gko:'유앤비'},{mko:'지한솔',gko:'유앤비'},{mko:'김기중',gko:'유앤비'}]},
   // A SIX(에이식스, 2024.01.30 데뷔) — 포켓돌스튜디오가 UNB(2018) 이후 9년 만에 다시 낸 혼성 프로젝트
   // 유닛. BAE173·FANTASY BOYS·CLASS:y 멤버들로 구성. 6명 전원 등록(2026-09-27 완성).
+  // ⚠️ 행성 없음(2026-10-14 사용자 결정) — 09-23에 groups.json 행성(projectRing)으로 등록했다가 GOT THE BEAT·SuperM과
+  //    같은 "기존 그룹 멤버로 꾸린 레이블 유닛"이라 유닛 표기로 전환. 앨범은 멤버 unitDiscography로 이관.
   'A SIX':{names:['A SIX','에이식스'],members:[{mko:'제이민',gko:'BAE173'},{mko:'영서',gko:'BAE173'},{mko:'링치',gko:'판타지보이즈'},{mko:'이한빈',gko:'판타지보이즈'},{mko:'원지민',gko:'클라씨'},{mko:'박보은',gko:'클라씨'}]},
-  // Double 0ne(더블원, 2025.06.12 데뷔) — 포켓돌스튜디오 BAE173+판타지보이즈 멤버 유닛. 현재 7명(강민서·이한빈·홍성민 2026.04 탈퇴).
-  'Double 0ne':{names:['Double 0ne','더블원'],members:[{mko:'유준',gko:'BAE173'},{mko:'무진',gko:'BAE173'},{mko:'준서',gko:'BAE173'},{mko:'영서',gko:'BAE173'},{mko:'빛',gko:'BAE173'},{mko:'히카루',gko:'판타지보이즈'},{mko:'링치',gko:'판타지보이즈'}]}
+  // Double 0ne(더블원, 2025.06.12 데뷔) — 포켓돌스튜디오 BAE173+판타지보이즈 멤버 유닛. 활동 영상이 전부 2025 원년 11인 시절이라
+  // 태깅용 명단도 11명(도하·강민서·이한빈·홍성민은 2026.04 탈퇴 — 이후 신규 활동이 생기면 그때 나눌 것).
+  // ⚠️ 행성 없음(2026-10-14, A SIX와 같은 이유) — 앨범 Xpert는 원년 11명 unitDiscography로 이관.
+  //    판타지보이즈 쪽은 히카리(a1504)다 — 09-27 등록 때 동명 히카루(a1507)로 잘못 들어가 있던 것 정정(10-14).
+  'Double 0ne':{names:['Double 0ne','더블원'],members:[{mko:'유준',gko:'BAE173'},{mko:'무진',gko:'BAE173'},{mko:'준서',gko:'BAE173'},{mko:'영서',gko:'BAE173'},{mko:'빛',gko:'BAE173'},{mko:'도하',gko:'BAE173'},{mko:'강민서',gko:'판타지보이즈'},{mko:'이한빈',gko:'판타지보이즈'},{mko:'히카리',gko:'판타지보이즈'},{mko:'링치',gko:'판타지보이즈'},{mko:'홍성민',gko:'판타지보이즈'}]}
 };
 
 // ── 조회수 마일스톤 (2026-09-23) — admin.js(수집)와 index.html(트로피 표시) 양쪽이 봐야 해서 shared로.

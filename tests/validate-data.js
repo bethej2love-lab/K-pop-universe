@@ -381,6 +381,29 @@ Object.entries(GROUPS).forEach(([gko, info]) => {
   });
 }
 
+// ── 유닛 정의(shared.js _PROJECT_UNITS) 참조 무결성 ──────────────────────
+// 멤버 병합·개명 때 유닛 쪽이 안 따라와 없는 사람을 가리키던 4건(결경→주결경, 예빈→백예빈, 김청하→청하)과
+// gko '솔로'(유령 태그 "빛새온(솔로)" 51건)가 2026-10-14 전수조사에서 나왔다. 유닛이 행성으로도 있으면 안 된다
+// (행성 승격 안 함 원칙 — 행성 있는 서바이벌 프로젝트 그룹 B.D.U·UNB는 예외 목록).
+{
+  const src = fs.readFileSync(path.join(ROOT, 'shared.js'), 'utf8');
+  const m = /const _PROJECT_UNITS=(\{[\s\S]*?\n\});/.exec(src);
+  const UNITS = m ? Function('return ' + m[1])() : {};
+  if (!m) add('error', '유닛 정의', 'shared.js에서 _PROJECT_UNITS를 못 찾음');
+  const inG = (a, k) => (a.group && a.group.ko === k) || (a.groups || []).some(g => g && g.ko === k);
+  const PLANET_OK = new Set(['B.D.U', 'UNB']);
+  const gTok = new Set(); Object.entries(GROUPS).forEach(([k, g]) => [k, g.en, ...(g.altNames || [])].filter(Boolean).forEach(t => gTok.add(String(t).toLowerCase())));
+  Object.entries(UNITS).forEach(([un, u]) => {
+    (u.members || []).forEach(({ mko, gko }) => {
+      if (gko === '솔로') { add('error', '유닛 멤버 gko', `${un}: ${mko} — '솔로' 금지(무소속은 본인 이름, 행성 그룹 소속이면 그 그룹)`); return; }
+      const ok = ARTISTS.some(a => a.name && a.name.ko === mko && (inG(a, gko) || (gko === mko && a.group && a.group.ko === '솔로')));
+      if (!ok) add('error', '유닛 멤버 유령 참조', `${un}: ${mko}(${gko}) — artists.json에 그 소속의 그 이름이 없음`);
+    });
+    if (!PLANET_OK.has(un) && [un, ...(u.names || [])].some(n => gTok.has(String(n).toLowerCase())))
+      add('error', '유닛이 행성으로도 등록됨', `${un} — groups.json에서 빼고 멤버 unitDiscography로(2026-10-14 A SIX·Double 0ne 전환 참고)`);
+  });
+}
+
 // ── 리포트 ──────────────────────
 const byCategory = new Map();
 issues.forEach(iss => {

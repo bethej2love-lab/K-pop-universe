@@ -8367,6 +8367,15 @@ function _makeWithLine(song,ctx){
   // 크로스그룹 유닛 감지: withTargets 전원이 한 유닛 소속이고, 빠진 멤버가 없거나 앵커 그룹에 속하면 유닛명 칩 하나로 표시
   const _detUnit=(()=>{
     if(!withTargets.length)return null;
+    // ① 제목에 유닛명이 있고 함께한 사람이 전원 그 유닛 멤버면 유닛 칩 — 태깅이 일부만 됐어도(동명이인이라 빠진
+    //    멤버 등) 이름 나열로 새지 않게(2026-10-14 사용자 지적: "유닛이면 함께한 멤버 줄에 유닛 이름"). 로테이션
+    //    유닛(NCT U)도 제목에 명시됐으면 유닛명이 맞다.
+    const _tn=' '+String(song.t||'').toUpperCase().replace(/[^가-힣A-Z0-9]/g,' ').replace(/\s+/g,' ')+' ';
+    for(const[un,ud]of Object.entries(_PROJECT_UNITS)){
+      if(!ud.names.some(n=>{const k=n.toUpperCase().replace(/[^가-힣A-Z0-9]/g,' ').replace(/\s+/g,' ').trim();return k.length>=2&&_tn.includes(' '+k+' ');}))continue;
+      if(withTargets.every(t=>ud.members.some(m=>m.mko===t.name.ko)))return un;
+    }
+    // ② 제목 근거가 없으면 기존 규칙 — 빠진 유닛 멤버가 없거나 전부 지금 카드 그룹 소속일 때만
     for(const[un,ud]of Object.entries(_PROJECT_UNITS)){
       const um=ud.members;
       if(!withTargets.every(t=>um.some(m=>m.mko===t.name.ko)))continue;

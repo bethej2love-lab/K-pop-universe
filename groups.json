@@ -191982,45 +191982,6 @@
   "pri": 1.5,
   "id": "g268"
  },
- "에이식스": {
-  "en": "A SIX",
-  "debut": "2024.01.30",
-  "co": "포켓돌스튜디오",
-  "projectRing": true,
-  "color": [
-   160,
-   120,
-   200
-  ],
-  "gender": "coed",
-  "pri": 1.5,
-  "id": "g269",
-  "discography": [
-   {
-    "title": "사랑 모두 거짓말",
-    "type": "싱글",
-    "isMain": true,
-    "cover": "https://i.scdn.co/image/ab67616d0000b273b6af4dd7123ebb062a22c66e",
-    "releaseDate": "2024.01.30",
-    "trackCount": 2,
-    "titleTrack": "사랑 모두 거짓말",
-    "tracks": [
-     {
-      "no": 1,
-      "title": "사랑 모두 거짓말",
-      "isTitle": true
-     },
-     {
-      "no": 2,
-      "title": "Sad Story",
-      "isTitle": false
-     }
-    ],
-    "src": "spotify",
-    "spotifyId": "5YGM2GAdkJrAJUZyeYij6H"
-   }
-  ]
- },
  "ATBO": {
   "en": "ATBO",
   "debut": "2022.07.27",
@@ -194875,59 +194836,6 @@
     ],
     "src": "spotify",
     "spotifyId": "07zQHX9EnO2n2hg3SFVF5S"
-   }
-  ]
- },
- "더블원": {
-  "en": "Double 0ne",
-  "debut": "2025.06.12",
-  "co": "포켓돌스튜디오",
-  "gender": "m",
-  "projectRing": true,
-  "id": "g283",
-  "discography": [
-   {
-    "title": "Xpert",
-    "type": "미니",
-    "isMain": true,
-    "cover": "https://i.scdn.co/image/ab67616d0000b27376e0f4008314865ea2791b34",
-    "releaseDate": "2025.06.12",
-    "trackCount": 6,
-    "titleTrack": null,
-    "tracks": [
-     {
-      "no": 1,
-      "title": "On the Rocks with Kiss",
-      "isTitle": false
-     },
-     {
-      "no": 2,
-      "title": "Reserved",
-      "isTitle": false
-     },
-     {
-      "no": 3,
-      "title": "Toxic Lips",
-      "isTitle": false
-     },
-     {
-      "no": 4,
-      "title": "To You",
-      "isTitle": false
-     },
-     {
-      "no": 5,
-      "title": "To You - BAE173 Version",
-      "isTitle": false
-     },
-     {
-      "no": 6,
-      "title": "To You - FANTASY BOYS Version",
-      "isTitle": false
-     }
-    ],
-    "src": "spotify",
-    "spotifyId": "1PaO7zyCzA3tCw0qFCUyH6"
    }
   ]
  },

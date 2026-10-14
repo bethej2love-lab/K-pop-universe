@@ -8575,9 +8575,28 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
     // 멤버만 인정하고, 그 멤버의 그룹만 matchedGroupKos에 넣는다 — 이름이 하나도 없으면 이 유닛으로
     // 인한 멤버·그룹 추가는 0건(자체 채널이면 group_ko는 채널 기준으로 따로 정해지므로 영상이
     // 유실되지는 않음).
+    // 고정 유닛도 제목에 멤버 이름이 따로 나오면 **그 멤버만** 인정한다(2026-10-14). "에이식스 보은 직캠"·
+    // "Double 0ne MUZIN 플리캠"·"A SIX '사랑 모두 거짓말' 영서 Making Film"처럼 개인 콘텐츠인데 유닛 전원이
+    // 붙어, 카드 '함께한 멤버' 줄에 이름이 줄줄이 나열됐다(실측 A SIX·Double 0ne 130건 중 다수). 이름이 하나도
+    // 없으면(유닛 단체 콘텐츠) 기존대로 전원. 유닛명이 만든 가짜 언급(제노재민→재민)은 유닛명을 지운 norm으로 피한다.
+    const _uNrm=t=>String(t).toUpperCase().replace(/[^가-힣a-zA-Z0-9]/g,' ').replace(/\s+/g,' ').trim();
+    let _uNorm=norm;unit.names.forEach(t=>{const n=_uNrm(t);if(n)_uNorm=_uNorm.replace(new RegExp(' '+_atmEscRe(n)+' ','g'),' ');});
+    const _uHit=v=>{const n=_uNrm(v);return n.length>=2&&_uNorm.includes(' '+n+' ');};
+    // 해시태그도 유닛명을 지운 원문으로 — "#아이린&슬기"가 "#아이린" 개인 언급으로 잡혀 슬기가 빠지던 것
+    let _uRaw=rawTitle||'';unit.names.forEach(t=>{_uRaw=_uRaw.replace(new RegExp(_atmEscRe(t),'gi'),' ');});
+    const _uHash=v=>new RegExp(`#${_atmEscRe(v)}(?![가-힣a-zA-Z0-9])`,'i').test(_uRaw);
+    // 행성이 따로 있는 프로젝트 그룹(B.D.U·UNB)은 그룹 경로가 소속을 정하므로 기존 동작 유지 — 여기서 좁히면
+    // "#BDU #승훈" 영상이 B.D.U가 아니라 씨아이엑스로 빠진다.
+    const _unitIsPlanet=unit.names.some(n=>_groupTokNormSet.has(_uNrm(n)));
+    const _uNamed=(unit.rotating||_unitIsPlanet)?[]:unit.members.filter(({mko,gko})=>{
+      const a=ARTISTS.find(x=>x.name.ko===mko&&_artistGroups(x).some(g=>g.ko===gko));
+      // 성 뗀 이름(원지민→지민·이한빈→한빈)은 전역에선 동명이인 때문에 빠지지만, 여긴 이 유닛 멤버로 범위가 좁혀져 있어 인정한다.
+      const _st=a&&_atmStripSurname([...a.name.ko]);
+      return !!a&&[..._m2NameVariants(a),...(_st&&_st.length>=2?[_st]:[])].some(v=>_uHash(v)||(/[가-힣]/.test(v)?_uHit(v):v.replace(/[^A-Za-z0-9]/g,'').length>=4&&_uHit(v)));
+    });
     const named=unit.rotating
       ? unit.members.filter(({mko,gko})=>_unitMemberNamedInTitle(mko,gko,hit,hitHashtag))
-      : unit.members;
+      : (_uNamed.length?_uNamed:unit.members);
     named.forEach(({mko,gko})=>{
       if(!seen.has(gko)){matchedGroupKos.push(gko);seen.add(gko);}
       if(!unitExtraMembers[gko])unitExtraMembers[gko]=new Set();
@@ -8922,7 +8941,9 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
       const extraArr=[...extra];
       const confirmed=extraArr.filter(mko=>{
         const a=ARTISTS.find(x=>x.name.ko===mko&&_artistGroups(x).some(g=>g.ko===gko));
-        return a&&_m2NameVariants(a).some(t=>hit(t,normMinusUnits));
+        // 성 뗀 이름(이한빈→한빈)도 인정 — 유닛 멤버로 범위가 좁혀진 자리라 전역 동명이인 걱정이 없다(위 유닛 루프와 동일, 2026-10-14).
+        const st=a&&_atmStripSurname([...a.name.ko]);
+        return a&&[..._m2NameVariants(a),...(st&&st.length>=2?[st]:[])].some(t=>hit(t,normMinusUnits));
       });
       // 유닛 멤버 중 아무도 유닛명 밖에서 개별적으로 안 걸리면(유닛명만 제목에 있는 경우) 기존처럼
       // 전원 추가 — 개별 이름이 정말 따로 언급된 경우만 그 멤버만 추가.
