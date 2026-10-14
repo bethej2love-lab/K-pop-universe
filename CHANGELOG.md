@@ -62,6 +62,15 @@
 ---
 
 ## 2026-10-14 (세션 — 신규 그룹 멤버 별 소실)
+- [완료] 앨범 창 멜론 링크 2차 — 멜론 앨범 번호 매칭 보강(스포티파이 feat.·한영 제목·발매일 ±1·같은 날 유일) +290장, 멜론에 따로 없는 선공개 싱글 208장은 그 곡이 든 본 앨범으로(`melonVia`). 96%(11,519/11,970)가 앨범 페이지로 직행, 나머지 451장은 멜론 검색 링크 [tools/melon_link_backfill.mjs][index.html]
+- [완료] 카드 위쪽 영상도 아래 영상 목록에서 빼지 않음(중복 허용, 사용자) · 공유 썸네일 고정 파일 `og_thumbs_pin.json`(주간 랜덤 갱신이 덮어쓰지 않음) — 설리=위쪽 영상 Red Light 직캠, 디모렉스=SAY MY NAME [index.html][og_thumbs.json][tools/build_og_thumbs.mjs]
+- [진행중·인수인계] **멜론 백그라운드 수집 3종 — 회사 PC에서 멈춘 지점(2026-10-14 오후)**. 전부 캐시·이미 채운 건 건너뛰니 같은 명령을 다시 돌리면 이어서 한다. 멜론은 수천 요청마다 IP를 수십 분 막는다(HTTP 200 + "페이지를 찾을 수 없습니다") — 막히면 기다렸다 재실행. 캐시 폴더 `~/Downloads/melon_disco_audit/cache`는 **기기마다 따로**라 집 노트북은 처음부터 받는다(시간 더 걸림).
+  1. 곡 번호(songId): 21,608곡 채움. 앨범 상세 미수집 ~6,000장 남음 → `MELON_CONC=1 MELON_SLEEP=1200 node tools/melon_link_backfill.mjs --fetch --apply` (못 찾은 아티스트 앨범 목록도 새로 받아 앨범 번호 451장 중 일부 더 채움)
+  2. 곡 전체 크레딧(tracks[].cr): **302곡**만 수집됨 → `MELON_CONC=1 MELON_SLEEP=1200 node tools/melon_song_credits.mjs --apply` (300곡마다 저장). 화면(앨범 창 '크레딧' 사람별·아이돌→멤버 카드·외부 작곡가→멜론)은 완성, 데이터 쌓이는 대로 보임. 다 모이면 다음 단계 = "이 작곡가의 다른 곡" 디깅(빌드 때 aid→곡 인덱스 생성 후 lazy 로드)
+  3. 그룹 멤버 솔로 디스코: 1,357명 확인·추가 528장(설리 고블린 등). 끝 무렵 차단 → `MELON_CONC=1 MELON_SLEEP=900 node tools/melon_member_solo_disco.mjs --apply`로 마저. 리포트의 "명단에서 못 찾은 멜론 멤버 70명"(골든차일드 등 표기 차이)은 미처리
+  각 단계 뒤 `node tools/build_slim_data.mjs` → `node tests/validate-data.js` → 커밋.
+- [미착수] 서바이벌 프로그램 앨범 못 찾은 13팀(케플러 Girls Planet 999·아일릿 R U NEXT?·니쥬·아홉·티오원·판타지보이즈·누에라 등 — 멜론 프로그램 아티스트명이 달라 tools/melon_program_disco.mjs QUERY에 멜론 표기 추가 필요). 엔싸인은 '청춘스타 하이틴'으로 잡혀 일부러 제외
+- [미착수] 모바일 멤버 카드 생년월일 줄이 생몰 기간으로 길어져 국적이 오른쪽 밖으로 밀림(가로 스크롤로는 보임) — 필요하면 국적만 줄바꿈
 - [완료] 히스토리 › 동작 — 1위·트리플 크라운·멜론 줄이 카드 트로피 버튼을 대신 누르던 방식이라 멤버 개인 트로피가 없으면(카리나) 무반응, 있으면(태연) 그룹 줄인데 솔로 목록이 열렸다 → `_queryTrophies(그룹)`로 그 그룹 트로피를 해당 탭으로 바로. 데스크톱 말줄임 줄은 호버 시 흘려 보기(addMarqueeChildren) [index.html][kpop_universe.css]
 - [완료] 카드 위쪽 영상 여백 — grid span 4 때문에 썸네일 밑 9~17px 빈 줄 → float+BFC로 재구성(위 14·아래 12). 추모 별 빛 번짐이 이름 칸(overflow:hidden)에서 잘리던 것 → `.tn:has(.deceased-star)` 안쪽 여백 [kpop_universe.css]
 - [진행중] 그룹 멤버 솔로 디스코 2차 28명 292장(박재범·라비·천둥·송지은 등, 1,357명 확인). 멜론 차단으로 끝 무렵 중단 — 같은 명령 재실행으로 마저 [artists.json][melon_artist_map.json]
