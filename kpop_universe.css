@@ -3871,11 +3871,13 @@
   .feed-album-grid>.feed-card .feed-card-sub{font-size:10.5px;}
   /* 💿 이번 주 발매 — 멜론처럼 **2줄 가로 레일**(2026-10-14, 사용자 요청: "2행 가로로 쭉, 모바일 한 화면에 커버 3개쯤").
      열 폭 = (보이는 폭 − 간격 3개) ÷ 3.3 — 4번째 커버가 살짝 걸쳐 보여 옆으로 더 있다는 게 읽힌다. 웹도 패널 폭 기준 같은 비율.
-     세로 2열 그리드(.feed-album-grid)를 덮어쓰는 수식 클래스라 For You "즐겨찾기 신보"(#feed-favalbum)는 그대로다. */
+     세로 2열 그리드(.feed-album-grid)를 덮어쓰는 수식 클래스. For You "즐겨찾기 신보"(#feed-favalbum)도 같은 레일 1줄(.feed-album-rail-1). */
   .feed-album-grid.feed-album-rail{grid-template-columns:none;grid-auto-flow:column;grid-template-rows:repeat(2,1fr); /* 두 줄 높이 같게 — 제목 줄 수가 달라 2행만 키가 컸다 */
     grid-auto-columns:calc((100% - 24px) / 3.3);overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:none;
     scroll-snap-type:x proximity;scroll-padding-left:20px;}
   .feed-album-rail::-webkit-scrollbar{display:none;}
+  /* For You "즐겨찾기 신보"는 **1줄**(사용자: "여긴 1행이면 충분") — 앨범 수가 적어 2줄이면 휑하다 */
+  .feed-album-grid.feed-album-rail.feed-album-rail-1{grid-template-rows:auto;}
   .feed-album-rail>.feed-card{scroll-snap-align:start;min-width:0;}
   .feed-album-rail>.feed-card .feed-card-cap{padding:6px 7px 9px;}
   .feed-album-rail>.feed-card .feed-card-title{font-size:11px;}
@@ -4223,14 +4225,20 @@
 .mx-card-group{font-size:10px;color:rgba(255,255,255,0.45);word-break:keep-all;}
 .mx-card-meta{font-size:10px;color:rgba(255,255,255,0.35);}
 .mx-empty{grid-column:1/-1;text-align:center;color:rgba(255,255,255,0.3);padding:48px 20px;font-size:14px;}
-.mx-feed-btn{display:flex;align-items:center;gap:13px;margin:14px 20px 10px;padding:15px 18px;background:linear-gradient(130deg,rgba(55,85,220,0.13) 0%,rgba(100,55,220,0.09) 100%);border:0.5px solid rgba(120,148,255,0.2);border-radius:14px;cursor:pointer;text-align:left;-webkit-tap-highlight-color:transparent;transition:opacity .13s;}
-.mx-feed-btn:hover{opacity:.82;}
-.mx-feed-btn:active{opacity:.65;}
-.mx-feed-icon{font-size:22px;flex-shrink:0;}
-.mx-feed-txt{flex:1;display:flex;flex-direction:column;gap:2px;min-width:0;}
-.mx-feed-ttl{font-size:13.5px;font-weight:700;color:rgba(210,225,255,0.97);letter-spacing:-.01em;}
+/* 탐색 탭 맨 위 '멤버 탐색' 진입 줄(2026-10-14 재디자인, 사용자: "배너 폭이 아래 영상보다 좁고, 왼쪽 큰 아이콘이 구리다").
+   폭 — 예전엔 margin만 주고 width를 안 줘서 버튼이 글자 길이만큼만 넓어졌다(모바일 실측 20~326 vs 아래 콘텐츠 16~372).
+   모양 — 그라데이션 배너 대신 검색창 같은 낮은 줄 + 선 아이콘. 맨 위라 콘텐츠보다 튀지 않되 "눌러서 찾는 곳"으로 읽히게. */
+.mx-feed-btn{display:flex;align-items:center;gap:11px;width:calc(100% - 32px);margin:12px 16px 6px;padding:11px 14px;box-sizing:border-box;
+  background:rgba(255,255,255,0.04);border:0.5px solid rgba(160,185,255,0.16);border-radius:12px;color:inherit;text-align:left;font:inherit;
+  cursor:pointer;transition:background .15s,border-color .15s;}
+.mx-feed-btn:hover{background:rgba(255,255,255,0.07);border-color:rgba(160,185,255,0.28);}
+.mx-feed-btn:active{background:rgba(255,255,255,0.09);}
+.mx-feed-icon{flex-shrink:0;width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;background:rgba(130,160,255,0.1);}
+.mx-feed-icon svg{width:16px;height:16px;fill:none;stroke:rgba(175,198,255,0.85);stroke-width:2;stroke-linecap:round;}
+.mx-feed-txt{flex:1;display:flex;flex-direction:column;gap:1px;min-width:0;}
+.mx-feed-ttl{font-size:13px;font-weight:700;color:rgba(215,228,255,0.95);letter-spacing:-.01em;}
 .mx-feed-sub{font-size:11px;color:rgba(160,185,255,0.5);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.mx-feed-arr{font-size:20px;color:rgba(160,190,255,0.38);flex-shrink:0;}
+.mx-feed-arr{font-size:18px;line-height:1;color:rgba(160,190,255,0.4);flex-shrink:0;}
 
 /* 카드 첫 화면 대표 영상(2026-10-13 시안, ?hero=1) — 가로 한 줄짜리 작은 카드.
    1차 시안(전체폭 큰 썸네일)은 프로필 사진과 큰 이미지 두 개가 위아래로 붙어 번잡하다는 피드백 → 썸네일을 왼쪽 작게,

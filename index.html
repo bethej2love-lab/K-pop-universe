@@ -15384,7 +15384,10 @@ document.querySelectorAll('[data-mx-year]').forEach(b=>b.addEventListener('click
 }));
 document.getElementById('mx-close')?.addEventListener('click',_closeMemberExplorer);
 document.getElementById('mx-overlay')?.addEventListener('click',e=>{if(e.target===e.currentTarget)_closeMemberExplorer();});
-document.getElementById('mx-open-btn')?.addEventListener('click',()=>_openMemberExplorer());
+// ⚠️ #mx-open-btn은 이 스크립트보다 **아래**(탐색 패널 마크업)에 있어서, 여기서 바로 찾으면 null → `?.`가 조용히 넘어가
+//    버튼이 한 번도 동작하지 않았다(2026-10-14 사용자 제보 "눌러도 아무것도 안 나옴"). 문서 파싱이 끝난 뒤 묶는다.
+{const _bindMx=()=>document.getElementById('mx-open-btn')?.addEventListener('click',e=>{e.stopPropagation();_openMemberExplorer();});
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',_bindMx);else _bindMx();}
 document.getElementById('sp-klinks-btn').addEventListener('click',e=>{e.stopPropagation();document.getElementById('settings-panel').classList.remove('open');['tab-settings','dh-settings-btn'].forEach(id=>document.getElementById(id)?.classList.remove('active'));_openKpopLinks();});
 document.getElementById('klp-close').addEventListener('click',e=>{e.stopPropagation();_closeKpopLinks();});
 document.getElementById('kpop-links-overlay').addEventListener('click',e=>{if(e.target===e.currentTarget)_closeKpopLinks();});
@@ -21194,6 +21197,7 @@ async function _buildFeedFavAlbums(){
       _appendFeedCard(list,'💿',a.t,ownerDisp,_albumCardNav(a),a.c,null,{meta,metaFresh:_albumIsFresh(a.d),metaNew:_albumIsNew(a.d)});
     });
     section.style.display='';
+    list.scrollLeft=0;_enableDragScroll(list); // 1줄 가로 레일(2026-10-14) — 탐색 탭 '이번 주 발매'와 같은 모양
   }catch(e){console.warn('[feed] 즐겨찾기 신보 선반 실패 — 이 선반만 빠집니다',e);}
 }
 // ── 오늘의 케이팝 소식(2026-09-23) ────────────────────────────────────────────
@@ -26248,7 +26252,7 @@ _totopBtn.addEventListener('click',e=>{
            섞으면 행 패커가 무너진다). 시간 민감도 순으로 기념일 바로 밑, 신작 영상 위. -->
       <div class="feed-section" id="feed-favalbum-section" style="display:none">
         <div class="feed-section-ttl" id="feed-favalbum-ttl">💿 New Releases from Your Favorites</div>
-        <div id="feed-favalbum" class="feed-album-grid"></div>
+        <div id="feed-favalbum" class="feed-album-grid feed-album-rail feed-album-rail-1 hscroll-drag"></div>
       </div>
       <div class="feed-section" id="feed-favnew-section" style="display:none">
         <div class="feed-section-ttl">💖 New from Your Favorites</div>
@@ -26263,7 +26267,7 @@ _totopBtn.addEventListener('click',e=>{
     <!-- Discover = "전체·탐색": 오늘의 소식 → 기념일 → 차트 → Trend → 디스커버리 (2026-09-23 오늘의 소식 추가). -->
     <div id="feed-pane-disc" class="feed-pane" hidden>
       <button id="mx-open-btn" class="mx-feed-btn" type="button">
-        <span class="mx-feed-icon">🔍</span>
+        <span class="mx-feed-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 6h16M7 12h10M10 18h4"/></svg></span>
         <span class="mx-feed-txt">
           <span class="mx-feed-ttl">멤버 탐색</span>
           <span class="mx-feed-sub">2009년생 · 남돌 · 일본인 멤버 등으로 필터링</span>
