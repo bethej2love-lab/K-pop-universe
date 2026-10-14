@@ -178050,6 +178050,24 @@
   "projectShow": "The Debut: Dream Academy",
   "discography": [
    {
+    "title": "Unloveu",
+    "type": "싱글",
+    "isMain": true,
+    "cover": "https://cdnimg.melon.co.kr/cm2/album/images/146/65/404/14665404_20261013114056_500.jpg",
+    "releaseDate": "2026.10.14",
+    "trackCount": 1,
+    "titleTrack": "Unloveu",
+    "tracks": [
+     {
+      "no": 1,
+      "title": "Unloveu",
+      "isTitle": true
+     }
+    ],
+    "src": "melon",
+    "melonAlbumId": "14665404"
+   },
+   {
     "title": "WILD",
     "type": "미니 3집",
     "isMain": true,

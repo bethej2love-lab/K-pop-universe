@@ -67752,6 +67752,24 @@
     },
     "discography": [
       {
+        "title": "잊지못해",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/146/70/462/14670462_20261013152047_500.jpg",
+        "releaseDate": "2026.10.14",
+        "trackCount": 1,
+        "titleTrack": "잊지못해",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "잊지못해",
+            "isTitle": true
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "14670462"
+      },
+      {
         "title": "DRIVE",
         "type": "싱글",
         "isMain": true,
