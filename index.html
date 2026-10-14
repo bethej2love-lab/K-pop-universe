@@ -13117,10 +13117,10 @@ function _openGcDiscogDetail(a,idx){
   document.getElementById('gc-discog-detail-type').textContent=_discogTypeLabel(a.type)+(a.trackCount?' · '+a.trackCount+'곡':'');
   document.getElementById('gc-discog-detail-title').textContent=a.title;
   document.getElementById('gc-discog-detail-meta').textContent=a.releaseDate;
-  // 멜론 앨범 페이지(번호 없으면 '주인 + 앨범명' 멜론 검색)로 — 가사·전체 크레딧을 보러 가는 길(2026-10-14)
+  // 멜론 앨범 페이지 — 번호 없으면 그 곡이 든 본 앨범(melonVia, 멜론엔 따로 없는 선공개 싱글), 그것도 없으면 "주인 + 앨범명" 멜론 검색 — 가사·전체 크레딧을 보러 가는 길(2026-10-14)
   {const ml=document.getElementById('gc-discog-detail-melon');if(ml){
     const owner=(_openTArtist&&_openTArtist.name&&_openTArtist.name.ko)||(_discogDetailGko&&!String(_discogDetailGko).startsWith('unit:')?_discogDetailGko:'')||'';
-    ml.href=a.melonAlbumId?_melonAlbumUrl(a.melonAlbumId):'https://www.melon.com/search/total/index.htm?q='+encodeURIComponent((owner+' '+(a.title||'')).trim());
+    ml.href=a.melonAlbumId?_melonAlbumUrl(a.melonAlbumId):a.melonVia?_melonAlbumUrl(a.melonVia):'https://www.melon.com/search/total/index.htm?q='+encodeURIComponent((owner+' '+(a.title||'')).trim());
     ml.hidden=false;ml.onclick=e=>e.stopPropagation();}}
   const trackLbl=document.getElementById('gc-discog-detail-track-lbl');
   const tracksEl=document.getElementById('gc-discog-detail-tracks');

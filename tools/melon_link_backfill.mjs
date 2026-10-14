@@ -330,6 +330,23 @@ for (const a of artists) {
   for (const u of a.unitDiscography || []) for (const al of u.albums || []) await fixAlbum(al, 'u', u.unitName);
   if (aborted) break;
 }
+// ③ 멜론에 따로 없는 앨범 — 스포티파이의 선공개 싱글(에스파 Supernova)처럼 멜론에선 본 앨범(Armageddon) 안에만 있는 경우.
+//    같은 주인의 다른 앨범 중 그 곡이 들어 있고 멜론 번호가 있는 앨범으로 **melonVia**를 건다(melonAlbumId와 구분 — 같은 앨범이 아니다).
+//    곡 번호도 그 곡에서 가져온다. 앱은 melonAlbumId → melonVia → 멜론 검색 순으로 링크한다.
+st.via = 0;
+const viaFix = list => {
+  const byTitle = new Map();
+  for (const al of list || []) if (al.melonAlbumId) for (const t of al.tracks || []) { const k = tnorm(t.title); if (k && !byTitle.has(k)) byTitle.set(k, { al, t }); }
+  for (const al of list || []) {
+    if (al.melonAlbumId || al.melonVia) continue;
+    const ks = [tnorm(al.title), ...((al.tracks || []).map(t => tnorm(t.title)))].filter(Boolean);
+    const hitK = ks.find(k => byTitle.has(k)); if (!hitK) continue;
+    al.melonVia = byTitle.get(hitK).al.melonAlbumId; st.via++;
+    for (const t of al.tracks || []) { const h = byTitle.get(tnorm(t.title)); if (h && h.t.songId && !t.songId) t.songId = h.t.songId; }
+  }
+};
+for (const g of Object.values(GROUPS)) viaFix(g.discography);
+for (const a of artists) { viaFix(a.discography); for (const u of a.unitDiscography || []) viaFix(u.albums); }
 const keep = f => { const raw = fs.readFileSync(P(f), 'utf8'); return (/^[[{]\r?\n([ \t]+)/.exec(raw) || [])[1] || 2; };
 if (APPLY) {
   fs.writeFileSync(P('groups.json'), JSON.stringify(GROUPS, null, keep('groups.json')) + '\n');
