@@ -103330,6 +103330,99 @@
     },
     "discography": [
       {
+        "title": "2X8",
+        "type": "정규",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/146/70/719/14670719_20261013153050_500.jpg",
+        "releaseDate": "2026.10.14",
+        "trackCount": 16,
+        "titleTrack": "DEVIL",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "여백 (餘白)",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "DEVIL",
+            "isTitle": true
+          },
+          {
+            "no": 3,
+            "title": "P.O.V",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "View",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Sunset Road",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "CODENAME 3,2,1",
+            "isTitle": false
+          },
+          {
+            "no": 7,
+            "title": "Better Days",
+            "isTitle": false
+          },
+          {
+            "no": 8,
+            "title": "Love Me",
+            "isTitle": false
+          },
+          {
+            "no": 9,
+            "title": "7 Days",
+            "isTitle": false
+          },
+          {
+            "no": 10,
+            "title": "열 번째 페이지",
+            "isTitle": false
+          },
+          {
+            "no": 11,
+            "title": "Color",
+            "isTitle": false
+          },
+          {
+            "no": 12,
+            "title": "Click Click Boom!",
+            "isTitle": false
+          },
+          {
+            "no": 13,
+            "title": "EVERYDAY",
+            "isTitle": false
+          },
+          {
+            "no": 14,
+            "title": "소년소녀 (Feat. 인피니트)",
+            "isTitle": false
+          },
+          {
+            "no": 15,
+            "title": "그런 시간",
+            "isTitle": false
+          },
+          {
+            "no": 16,
+            "title": "나무",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "14670719"
+      },
+      {
         "title": "소년소녀 (Feat. 인피니트)",
         "type": "싱글",
         "isMain": true,
@@ -129609,6 +129702,49 @@
     "left": "2021.05.22",
     "discography": [
       {
+        "title": "file. 07",
+        "type": "미니",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/146/64/026/14664026_20261013105005_500.jpg",
+        "releaseDate": "2026.10.14",
+        "trackCount": 6,
+        "titleTrack": "미제",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "그 뒤가 얼마나 무서울지 모른 채",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "미제",
+            "isTitle": true
+          },
+          {
+            "no": 3,
+            "title": "Love Gamer (Feat. JUNNY(주니))",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "SOS",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Rock Bottom",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "추신",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "14664026"
+      },
+      {
         "title": "Mind Games",
         "type": "싱글",
         "isMain": true,
@@ -132050,6 +132186,44 @@
     "left": "2020.01.06",
     "id": "a0612",
     "discography": [
+      {
+        "title": "NOISE",
+        "type": "미니",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/146/45/850/14645850_20261012163133_500.jpg",
+        "releaseDate": "2026.10.14",
+        "trackCount": 5,
+        "titleTrack": "BUNZI",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "BUNZI",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Yeet it x2",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "007",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Zero Point",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "SPIT IT OUT",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "14645850"
+      },
       {
         "title": "러브 인 블랙홀 OST Part.1",
         "type": "OST",
@@ -167683,6 +167857,29 @@
       }
     ],
     "discography": [
+      {
+        "title": "Go Around",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/146/33/549/14633549_20261008174934_500.jpg",
+        "releaseDate": "2026.10.14",
+        "trackCount": 2,
+        "titleTrack": "Go Around",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Go Around",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Go Around (Inst.)",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "14633549"
+      },
       {
         "title": "흘러가는 시간 속에서",
         "type": "싱글",

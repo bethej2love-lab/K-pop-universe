@@ -136134,6 +136134,49 @@
   },
   "discography": [
    {
+    "title": "WHICH WAY",
+    "type": "미니",
+    "isMain": true,
+    "cover": "https://cdnimg.melon.co.kr/cm2/album/images/146/64/579/14664579_20261013110246_500.jpg",
+    "releaseDate": "2026.10.14",
+    "trackCount": 6,
+    "titleTrack": "WHICH WAY",
+    "tracks": [
+     {
+      "no": 1,
+      "title": "WHICH WAY",
+      "isTitle": true
+     },
+     {
+      "no": 2,
+      "title": "IF YOU SAY SO",
+      "isTitle": false
+     },
+     {
+      "no": 3,
+      "title": "TRAPPED",
+      "isTitle": false
+     },
+     {
+      "no": 4,
+      "title": "DOWN WITH IT",
+      "isTitle": false
+     },
+     {
+      "no": 5,
+      "title": "WHO I AM",
+      "isTitle": false
+     },
+     {
+      "no": 6,
+      "title": "UP",
+      "isTitle": false
+     }
+    ],
+    "src": "melon",
+    "melonAlbumId": "14664579"
+   },
+   {
     "title": "DOWN WITH IT (the +82 Remix)",
     "type": "싱글",
     "isMain": false,
@@ -204862,6 +204905,49 @@
    "namu": "https://namu.wiki/w/FLARE%20U"
   },
   "discography": [
+   {
+    "title": "LOVEHOOD",
+    "type": "미니",
+    "isMain": true,
+    "cover": "https://cdnimg.melon.co.kr/cm2/album/images/146/45/816/14645816_20261012162618_500.jpg",
+    "releaseDate": "2026.10.14",
+    "trackCount": 6,
+    "titleTrack": "너의 계절이 찾아와 (Bloom)",
+    "tracks": [
+     {
+      "no": 1,
+      "title": "너의 계절이 찾아와 (Bloom)",
+      "isTitle": true
+     },
+     {
+      "no": 2,
+      "title": "백일밤 (Hundred Nights)",
+      "isTitle": false
+     },
+     {
+      "no": 3,
+      "title": "False Alarm",
+      "isTitle": false
+     },
+     {
+      "no": 4,
+      "title": "Madly in Love",
+      "isTitle": false
+     },
+     {
+      "no": 5,
+      "title": "Window View",
+      "isTitle": false
+     },
+     {
+      "no": 6,
+      "title": "잠시 너를 잊었어 (Never Ever)",
+      "isTitle": false
+     }
+    ],
+    "src": "melon",
+    "melonAlbumId": "14645816"
+   },
    {
     "title": "YOUTH ERROR Japan Edition (Selected Version)",
     "type": "미니",
