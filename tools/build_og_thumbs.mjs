@@ -350,6 +350,15 @@ if (args.includes('--keep-existing') && fs.existsSync(OUT)) {
     console.log(`[og-thumbs] --keep-existing: 기존 값 ${kept}개 유지 · 새로 채운 키 ${added}개 · 커버라서 교체 ${replaced}개`);
   } catch (e) { console.warn('[og-thumbs] 기존 파일 병합 실패 — 전체 새로 씀:', e.message); }
 }
+// 고정 썸네일(og_thumbs_pin.json, 2026-10-14) — 사람이 고른 값은 주간 랜덤 갱신이 덮어쓰지 않게 마지막에 얹는다.
+// 예: 설리는 카드 위쪽 영상(Red Light 직캠)으로(사용자 요청), 디모렉스는 개명 후 SAY MY NAME MV로.
+try {
+  const pin = JSON.parse(fs.readFileSync(path.join(ROOT, 'og_thumbs_pin.json'), 'utf8'));
+  let n = 0;
+  for (const [k, v] of Object.entries(pin.groups || {})) { groupsOut[k] = v; n++; }
+  for (const [k, v] of Object.entries(pin.members || {})) { membersOut[k] = v; n++; }
+  if (n) console.log('[og-thumbs] 고정 ' + n + '개 적용(og_thumbs_pin.json)');
+} catch (e) { if (e.code !== 'ENOENT') console.warn('[og-thumbs] og_thumbs_pin.json 읽기 실패:', e.message); }
 const out = {
   _generated: 'tools/build_og_thumbs.mjs',
   _note: '공유 미리보기용 대표 영상 썸네일(MV·라이브 인기 상위 중 랜덤 — 실행할 때마다 바뀜). build_group_pages.js가 읽는다. 주간 자동갱신: .github/workflows/rotate-og-thumbs.yml · 빠진 곳만 메우려면 --keep-existing',

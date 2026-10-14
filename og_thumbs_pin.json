@@ -1,0 +1,8 @@
+{
+  "_note": "공유 미리보기 썸네일 고정(2026-10-14). og_thumbs.json은 tools/build_og_thumbs.mjs가 매주 랜덤으로 다시 뽑는데, 여기 있는 키는 그 값을 덮어쓴다. 키 형식은 og_thumbs.json과 같다(그룹: 그룹명 / 멤버: '그룹|이름').",
+  "groups": {},
+  "members": {
+    "에프엑스|설리": "https://img.youtube.com/vi/-VGFneleMv8/maxresdefault.jpg",
+    "솔로|디모렉스": "https://img.youtube.com/vi/-XCN1YYLXss/maxresdefault.jpg"
+  }
+}
