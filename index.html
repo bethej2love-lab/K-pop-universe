@@ -1867,7 +1867,9 @@ function _ageChipText(a){
   if(!a.bday)return null;
   // 고인은 나이·사망일을 붙이지 않고 생년월일만 표기(2026-08-25, 사용자 요청) — 사망 사실은 이름 옆
   // 별(_appendDeceasedStar)로 이미 드러나고, "(nn세)"는 사망 당시 나이라 오히려 무겁게 읽힘.
-  if(a.died)return a.bday;
+  // 2026-10-14: 생몰 기간으로("1994.03.29 – 2019.10.14", 사용자 결정). 이름 옆 별만으로는 추모 표시인지 알아보기 어렵고
+  // 뜻은 툴팁에만 있었다(모바일은 볼 수도 없음) — 영화 포털·위키 관례라 설명 없이 읽히고, 나이 표기보다 담담하다.
+  if(a.died)return `${a.bday} – ${a.died}`;
   const[by,bm,bd]=a.bday.split('.').map(Number);
   const now=new Date();let age=now.getFullYear()-by;
   if(now.getMonth()+1<bm||(now.getMonth()+1===bm&&now.getDate()<bd))age--;
