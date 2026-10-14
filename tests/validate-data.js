@@ -362,6 +362,24 @@ Object.entries(GROUPS).forEach(([gko, info]) => {
   dup(aIds).forEach(d => add('error', 'id 중복(아티스트)', d));
 }
 
+// ── 그룹 내 멤버 연결선 완전성 ──────────────────────
+// 관례: 한 그룹의 활동 멤버(active!==false)끼리는 전부 member 연결이 있다(에스파 4명→6개). 그룹을 등록하면서
+// connections.json을 빠뜨리면 별만 있고 선이 없다 — 2026-10-14 실측 56개 그룹 959쌍 누락(09-27 일괄 등록분 전부 0개).
+{
+  const inG = (a, k) => a.group.ko === k || (a.groups || []).some(g => g && g.ko === k);
+  const key = (x, y, k) => [x, y].sort().join('|') + '|' + (k || '');
+  const has = new Set(CONNECTIONS.map(c => key(c.a, c.b, c.group)));
+  Object.keys(GROUPS).forEach(k => {
+    const ms = ARTISTS.filter(a => a.group && inG(a, k) && a.active !== false);
+    let miss = 0;
+    for (let i = 0; i < ms.length; i++) for (let j = i + 1; j < ms.length; j++) {
+      const x = ms[i].name.ko, y = ms[j].name.ko;
+      if (x !== y && !has.has(key(x, y)) && !has.has(key(x, y, k))) miss++;
+    }
+    if (miss) add('error', '그룹 내 멤버 연결선 누락', `${k} — ${miss}쌍 (connections.json에 {a,b,type:'member',group} 추가)`);
+  });
+}
+
 // ── 리포트 ──────────────────────
 const byCategory = new Map();
 issues.forEach(iss => {

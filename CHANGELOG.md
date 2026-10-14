@@ -63,6 +63,7 @@
 
 ## 2026-10-14 (세션 — 신규 그룹 멤버 별 소실)
 - [완료] 09-27 일괄 등록 19개 그룹 멤버 102명이 `active` 필드 없이 들어가 3D 배치의 탈퇴자 분기(`!m.active`)에 걸려 전원 행성 밖(+70~120)으로 날아가 있었음 — "행성은 있는데 멤버 별이 안 보임". 헤드리스 실측: 수정 전 13개 행성 멤버 전원 밖 → 수정 후 0. 코드 3곳 `active===false`로 통일 + 102명 `active:true` + validate-data에 active 필수 검사 [index.html][artists.json][tests/validate-data.js]
+- [완료] 멤버 연결선 누락 56개 그룹 959쌍 보충(09-27 일괄 등록분은 0개, 해체 그룹 일부도 통째로 비어 있었음) — 관례대로 활동 멤버끼리 전부 연결, 동명이인 오연결 막으려 group 필드 명시. validate-data에 "그룹 내 연결선 누락" 오류 검사 추가 [connections.json][tests/validate-data.js]
 
 ## 2026-10-13 (세션 — UX 감사·라이브 제외·더쇼·플러스버튼·전체화면·크레딧 오매칭)
 - [완료][index.html] UX 감사: 피드 오버레이 유지(_feedEngaged 수동 열기에도 세팅), 설정→피드백/링크 열 때 피드 안 닫힘·설정 버튼 active 해제, Esc 닫기 목록에 kpop-links-overlay 추가
