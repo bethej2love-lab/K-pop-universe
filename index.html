@@ -25756,6 +25756,24 @@ function _tlMilestones(gko,isKo){
   _tlMilestoneP.set(key,p);
   return p;
 }
+// 데뷔 앨범 — 데뷔 줄에 '무엇으로' 데뷔했는지(2026-10-15, 사용자 — 데뷔일은 카드 위에도 있어 히스토리엔 앨범명이
+// 있어야 의미가 있다). 데뷔일 31일 전(선공개)~1년 후 사이 첫 발매. 변형판·일본반·데뷔 전 프로그램 앨범 제외. 디스코 로드 후 부른다.
+function _tlDebutAlbum(gko){
+  const g=GROUPS[gko];if(!g||!g.debut)return null;
+  const toD=v=>{const p=String(v||'').split(/[.-/]/).map(Number);return p[0]?new Date(p[0],(p[1]||1)-1,p[2]||1).getTime():NaN;};
+  const d0=toD(g.debut);if(isNaN(d0))return null;
+  const xs=(g.discography||[]).filter(x=>x&&x.releaseDate&&!x.variant&&!x.program&&!_isJpRelease(x,gko))
+    .filter(x=>{const t=toD(x.releaseDate);return t>=d0-31*864e5&&t<=d0+365*864e5;})
+    .sort((x,y)=>String(x.releaseDate).localeCompare(String(y.releaseDate)));
+  return xs[0]||null;
+}
+function _tlOpenAlbum(alb){return()=>{_gcDiscogList=[alb];_openGcDiscogDetail(alb,0);};}
+// 히스토리 데뷔 줄(🎤, gko 표시)에 데뷔 앨범을 붙인다 — 붙였으면 true(다시 그리기)
+function _tlAttachDebutAlbum(ev,gko){
+  const e=ev.find(x=>x.icon==='🎤'&&x.gko===gko&&!x.title);if(!e)return false;
+  const alb=_tlDebutAlbum(gko);if(!alb||!alb.title)return false;
+  e.title=alb.title;e.onClick=_tlOpenAlbum(alb);return true;
+}
 // 일본 데뷔 — 한국 기반 그룹의 첫 일본 발매반(_isJpRelease). 디스코가 로드된 뒤 부른다.
 function _tlJpDebut(gko,isKo){
   if(!gko||!_groupIsKoBased(gko))return null;
@@ -25779,7 +25797,7 @@ function _buildMemberTimeline(a){
   const ev=[];
   realGroups.forEach(rg=>{
     const info=GROUPS[rg.ko];const gname=isKo?rg.ko:(info.en||rg.ko);
-    if(info.debut){const k=_tlKey(info.debut);if(k)ev.push({key:k,date:_tlDate(info.debut),label:isKo?`${gname} 데뷔`:`${gname} debut`,icon:'🎤'});}
+    if(info.debut){const k=_tlKey(info.debut);if(k)ev.push({key:k,date:_tlDate(info.debut),label:isKo?`${gname} 데뷔`:`${gname} debut`,icon:'🎤',gko:rg.ko});}
     if(rg.left){const k=_tlKey(rg.left);if(k){
       // 그룹이 해체됐고 멤버가 그 전에 미리 나간 게 아니면(연도 기준) '탈퇴'가 아니라 '해체'로 표기
       // (2026-09-13 사용자 요청 — 아이즈원처럼 해체까지 함께한 멤버는 '탈퇴'가 아니라 '해체').
@@ -25789,8 +25807,24 @@ function _buildMemberTimeline(a){
       ev.push({key:k,date:_tlDate(rg.left),label:_ended?(isKo?`${gname} 해체`:`${gname} disbanded`):(isKo?`${gname} 탈퇴`:`Left ${gname}`),icon:_ended?'🏁':'👋'});
     }}
   });
-  const solo=(a.soloDiscography||[]).concat(a.group.ko==='솔로'?(a.discography||[]):[]).filter(x=>x&&x.releaseDate);
-  if(solo.length){solo.sort((x,y)=>String(x.releaseDate).localeCompare(String(y.releaseDate)));const s0=solo[0];const k=_tlKey(s0.releaseDate);if(k)ev.push({key:k,date:_tlDate(s0.releaseDate),label:isKo?'솔로 데뷔':'Solo debut',icon:'⭐'});}
+  // 솔로 데뷔 + 각 소속 그룹 데뷔 앨범 — 디스코가 lazy라 로드 후 붙인다. ⚠️ 예전엔 없는 필드 a.soloDiscography를 읽어
+  // 그룹 멤버(백현·설리 등)는 솔로 데뷔가 한 번도 안 떴다(2026-10-15 발견). 멤버 본인 앨범은 로드 후 a.discography.
+  _ensureMemberDisco(a).then(()=>{
+    if(_openTArtist!==a)return;
+    let ch=false;
+    // 솔로 데뷔 = 본인 명의 첫 미니·정규·싱글 앨범, 없으면 첫 싱글. OST·라이브·컴필레이션·부가 발매(isMain:false)는
+    // 데뷔가 아니다(백현이 'EXO가 산다 OST'·SM STATION으로 잡혔다 → City Lights, 태연 → I).
+    const solo=(a.discography||[]).filter(x=>x&&x.releaseDate&&!x.variant&&!x.program&&x.isMain!==false&&!/OST|라이브|컴필레이션/.test(String(x.type||'')))
+      .sort((x,y)=>String(x.releaseDate).localeCompare(String(y.releaseDate)));
+    // 앨범(정규·미니·싱글 N집) 또는 Inst 뺀 곡이 2곡 이상인 싱글(지수 ME) — 노래 1곡+Inst 디지털 싱글(백현 YOUNG·SM STATION)은
+    // 콜라보·프로젝트가 많아 데뷔로 치지 않는다. 그런 게 하나도 없을 때만 첫 싱글.
+    const _songs=x=>x.tracks?x.tracks.filter(t=>!/\b(inst|instrumental|mr|remix)\b|ver\.|version/i.test(t.title||'')).length:(x.trackCount>=3?2:0);
+    const s0=solo.find(x=>/^(정규|미니|싱글 ?\d|EP)/.test(String(x.type||''))||_songs(x)>=2)||solo[0];
+    if(s0&&!ev.some(e=>e.icon==='⭐')){const k=_tlKey(s0.releaseDate);
+      if(k){ev.push({key:k,date:_tlDate(s0.releaseDate),label:isKo?'솔로 데뷔':'Solo debut',title:s0.title||'',icon:'⭐',onClick:_tlOpenAlbum(s0)});ch=true;}}
+    if(ch&&ev.length>=2)_renderTimeline(sec,list,ev);
+  }).catch(()=>{});
+  realGroups.forEach(rg=>_ensureGroupDisco(rg.ko).then(()=>{if(_openTArtist===a&&_tlAttachDebutAlbum(ev,rg.ko)&&ev.length>=2)_renderTimeline(sec,list,ev);}).catch(()=>{}));
   // 1개(데뷔만)면 "이력"이라 부르기 어색하다(2026-09-06 제보) — **2개 이상일 때만** 노출한다. 아래 첫 1위가
   // 비동기로 붙어 2개가 되면 그때 노출되므로, 활동 그룹 멤버는 데뷔+첫1위로 자연히 채워진다.
   if(ev.length>=2)_renderTimeline(sec,list,ev);else sec.style.display='none';
@@ -25837,7 +25871,7 @@ function _buildGroupTimeline(ko){
   const isKo=currentLang==='ko';
   const gname=isKo?ko:(info.en||ko);
   const ev=[];
-  if(info.debut){const k=_tlKey(info.debut);if(k)ev.push({key:k,date:_tlDate(info.debut),label:isKo?`${gname} 데뷔`:`${gname} debut`,icon:'🎤'});}
+  if(info.debut){const k=_tlKey(info.debut);if(k)ev.push({key:k,date:_tlDate(info.debut),label:isKo?`${gname} 데뷔`:`${gname} debut`,icon:'🎤',gko:ko});}
   if(info.disbanded){const k=_tlKey(info.disbanded);if(k)ev.push({key:k,date:_tlDate(info.disbanded),label:isKo?`${gname} 해체`:`${gname} disbanded`,icon:'🏁'});}
   if(ev.length>=2)_renderTimeline(sec,list,ev);
   if(!sb)return;
@@ -25862,6 +25896,7 @@ function _buildGroupTimeline(ko){
   // 첫 정규앨범 + 일본 데뷔
   _ensureGroupDisco(ko).then(()=>{
     if(_openGCko!==ko)return;
+    if(_tlAttachDebutAlbum(ev,ko)&&ev.length>=2)_renderTimeline(sec,list,ev);
     {const jd=_tlJpDebut(ko,isKo);if(jd&&!ev.some(e=>e.icon==='🗾')){ev.push(jd);if(ev.length>=2)_renderTimeline(sec,list,ev);}}
     const full=((GROUPS[ko]||{}).discography||[]).filter(x=>x&&x.releaseDate&&/^정규/.test(String(x.type||''))&&!x.variant&&!x.program&&!_isJpRelease(x,ko)); // 일본 정규·변형판·데뷔 전 프로그램 앨범 제외
     if(!full.length||ev.some(e=>e.icon==='💿'))return;
