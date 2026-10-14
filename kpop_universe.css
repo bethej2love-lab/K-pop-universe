@@ -1467,6 +1467,8 @@
   #gc-mem-label.toggleable:hover{color:#c8dcff;text-shadow:0 0 6px rgba(160,195,255,0.28),0 0 3px rgba(160,195,255,0.14);}
   #gc-mem-label.toggleable.on{color:rgba(170,205,255,0.95);text-shadow:0 0 6px rgba(140,175,255,0.35);}
   .gc-mem-name.gc-mem-inactive{opacity:0.55;}
+  /* 유닛 카드 멤버 줄의 소속 그룹 머리말(2026-10-14) — 이름보다 한 단계 흐리게 */
+  .gc-unit-grp{font-size:11px;color:rgba(150,170,210,0.6);margin-right:2px;}
   #gc-grid .val,#tt-info-grid .val{font-size:var(--fz-title);color:#c0d6f0;font-weight:500;line-height:20px;}
   #gc-grid #gc-fandom,#gc-grid #gc-leader,#tt-info-grid #tt-fandom{
     font-size:11px;font-weight:600;letter-spacing:.04em;
