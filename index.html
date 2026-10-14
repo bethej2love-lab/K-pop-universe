@@ -14048,10 +14048,12 @@ function showGC(ko,cx,cy,keepMemberPanel,skipRipple,urlMode,_unusedPushMobNav){
   // 슈퍼노바(구 초신성)처럼 데뷔 후 이름이 바뀐 그룹은 데뷔 정보 옆에 옛 이름을 괄호로 덧붙인다 — 위
   // projectShow와 같은 톤/위치(클릭 대상 아닌 별도 span), altNames는 검색 매칭용으로 이미 있던 데이터를
   // 그대로 재사용(2026-08-14, 사용자 요청).
-  if(info.altNames&&info.altNames.length){
+  // ⚠️ 2026-10-14: altNames엔 검색용 줄임말도 들어간다(클유아·스키즈·투바투·방탄 …) — 그게 데뷔 줄에 "(클유아)"로 떴다
+  //    (사용자 지적). 화면엔 **옛 이름만** 담은 formerNames를 쓴다. altNames는 검색·태깅 매처용으로 그대로 둔다.
+  if(info.formerNames&&info.formerNames.length){
     const altSuffix=document.createElement('span');
     altSuffix.className='gc-show-suffix';
-    altSuffix.textContent=` (${info.altNames.join(', ')})`;
+    altSuffix.textContent=` (${info.formerNames.join(', ')})`;
     document.getElementById('gc-debut').appendChild(altSuffix);
   }
   // 오늘이 이 그룹 데뷔 기념일이면(우주에 노바가 터지는 그 조건과 동일, _isDebutAnniversaryToday
@@ -21398,6 +21400,7 @@ async function _buildFeedNewAlbums(){
       _appendFeedCard(list,'💿',a.t,ownerDisp,_albumCardNav(a),a.c,null,{meta,metaFresh:_albumIsFresh(a.d),metaNew:_albumIsNew(a.d)});
     });
     section.style.display='';
+    list.scrollLeft=0;_enableDragScroll(list); // 2줄 가로 레일(2026-10-14) — 데스크톱은 끌어서·휠로 넘긴다
   }catch(e){console.warn('[feed] 이번 주 발매 선반 실패 — 이 선반만 빠집니다',e);}
   finally{_syncDailyNewsSection();} // 2026-10-12부터 This Week's K-pop 섹션의 하위 블록
 }
@@ -26231,7 +26234,7 @@ _totopBtn.addEventListener('click',e=>{
              disco/는 카드 열 때 그룹별로 받는 구조라 피드에서 쓰려면 별도 인덱스가 필요하다. -->
         <div id="feed-newalbum-section" style="display:none">
           <div class="feed-news-subttl" id="feed-newalbum-ttl">💿 New Releases</div>
-          <div id="feed-newalbum" class="feed-album-grid"></div>
+          <div id="feed-newalbum" class="feed-album-grid feed-album-rail hscroll-drag"></div>
         </div>
       </div>
       <div class="feed-section" id="feed-anniv-section" style="display:none">
