@@ -1419,6 +1419,9 @@
     animation:deceased-twinkle 2.8s ease-in-out infinite;}
   @keyframes deceased-twinkle{0%,100%{opacity:0.72;transform:scale(0.9);}50%{opacity:1;transform:scale(1.1);}}
   .gc-mem-name .deceased-star{width:6px;height:6px;margin-left:3px;}
+  /* 멤버 카드 이름 칸(.tn)은 말줄임 때문에 overflow:hidden이라 이름 끝에 붙은 별의 빛 번짐(box-shadow 최대 ~14px)이 오른쪽에서
+     잘렸다(2026-10-14 사용자 제보 — 설리·종현). 별 뒤에 번짐만큼 안쪽 여백을 주고, 칸 바깥 간격은 음수 margin으로 그대로 둔다. */
+  #tt-name-row .tn:has(.deceased-star){padding-right:12px;margin-right:-8px;}
   /* 영문 그룹명 + SNS 링크를 기본 한 줄에 두되, 영문이 길어 한 줄에 안 들어가면 링크만 자동으로 다음 줄로
      내린다(flex-wrap) — 글자수를 세지 않고 공간 기준 자동. 보통 3줄(이름 / 영문+링크 / 상태), 영문 긴 그룹만
      4줄(이름 / 영문 / 링크 / 상태). 사진 유무 무관 통일(2026-08-28, 사용자 요청 — 4줄 남발 방지). */
@@ -4232,15 +4235,22 @@
 /* 카드 첫 화면 대표 영상(2026-10-13 시안, ?hero=1) — 가로 한 줄짜리 작은 카드.
    1차 시안(전체폭 큰 썸네일)은 프로필 사진과 큰 이미지 두 개가 위아래로 붙어 번잡하다는 피드백 → 썸네일을 왼쪽 작게,
    오른쪽에 '대표 영상' 라벨+제목. 첫 화면에 영상은 있되 프로필보다 튀지 않게. */
-.card-hero{margin:10px 0 12px;}
+/* 위 14 · 아래 12(2026-10-14, 사용자 — "위는 너무 붙고 아래는 넓다").
+   ⚠️ 예전 grid(썸네일이 4줄 span)는 썸네일 높이를 줄마다 나눠 담느라 썸네일 밑에 9~17px 빈 줄이 생겨 아래 여백이 넓어 보였다.
+      grid를 고치려다 제목이 날짜 줄과 겹치는 회귀까지 나서(aspect-ratio 고정 높이), **float**로 바꿨다 — 썸네일은 왼쪽에 띄우고
+      글자는 그 옆 BFC로 흐른다. 카드 높이 = max(썸네일, 글자)라 빈 줄도 겹침도 구조적으로 안 생긴다.
+   쇼츠는 위쪽 영상 후보에서 빠지므로(_cardHeroCands·_fetchGroupHeroCands is_short=false) 흐림 배경(.gc-ch-thumb-bg)은 숨긴다. */
+.card-hero{margin:14px 0 12px;}
 .card-hero .card-hero-grid{display:block;}
-.card-hero .gc-ch-item{display:grid;grid-template-columns:40% 1fr;column-gap:12px;row-gap:3px;align-items:start;width:100%;background:none;box-shadow:none;padding:0;}
-.card-hero .gc-ch-thumb,.card-hero .gc-ch-thumb-bg{grid-column:1;grid-row:1/span 4;width:100%;height:auto;aspect-ratio:16/9;border-radius:8px;object-fit:cover;position:relative;}
+.card-hero .gc-ch-item{display:flow-root;width:100%;background:none;box-shadow:none;padding:0;}
+.card-hero .gc-ch-thumb{float:left;width:40%;height:auto;aspect-ratio:16/9;margin-right:12px;border-radius:8px;object-fit:cover;position:relative;}
+.card-hero .gc-ch-thumb-bg{display:none;}
 .card-hero .is-short .gc-ch-thumb{object-fit:contain;background:#000;}
-.card-hero .tv-sm-title{grid-column:2;grid-row:1;margin:2px 0 0;white-space:normal!important;display:-webkit-box!important;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;text-overflow:clip;line-height:1.35;}
+.card-hero .tv-sm-title,.card-hero .gc-ch-meta,.card-hero .tv-with-line{overflow:hidden;} /* BFC — 썸네일 밑으로 감겨 들어가지 않게 */
+.card-hero .tv-sm-title{margin:2px 0 0;white-space:normal!important;display:-webkit-box!important;-webkit-line-clamp:2;-webkit-box-orient:vertical;text-overflow:clip;line-height:1.35;}
 /* 라벨("대표 영상")은 뺐다(2026-10-13, 사용자 — 기준을 세워 뽑는 게 아니라 "대표"는 과장). 그 자리를 제목 두 줄이 채운다 */
-.card-hero .gc-ch-meta{grid-column:2;grid-row:2;margin:0;}
-.card-hero .tv-with-line{grid-column:2;grid-row:3;}
+.card-hero .gc-ch-meta{margin:3px 0 0;}
+.card-hero .tv-with-line{margin-top:3px;}
 .card-hero .scrap-btn,.card-hero .col-btn,.card-hero .gc-ch-dur,.card-hero .vid-edit-btn{display:none;}
 /* 대표 칸 로딩 자리(카드 대상 전환 직후) — 실제 한 줄 카드와 같은 크기라 채워질 때 레이아웃이 안 튄다 */
 .card-hero-skel{display:grid;grid-template-columns:40% 1fr;column-gap:12px;row-gap:8px;align-items:start;}

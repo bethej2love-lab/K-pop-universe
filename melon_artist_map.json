@@ -8262,9 +8262,12 @@
     "checkedAt": "2026-10-02"
   },
   "a:장은성|솔로": {
-    "aid": null,
-    "failedWhy": "본인확인 실패 — 후보 2명 중 소속그룹=옛 그룹 없음",
-    "checkedAt": "2026-10-02"
+    "aid": "2904136",
+    "melonName": "도시",
+    "kind": "solo",
+    "confidence": "high",
+    "evidence": "그룹(퍼플키스) 멜론 상세의 멤버 목록",
+    "checkedAt": "2026-10-14"
   },
   "a:이레|솔로": {
     "aid": "2904137",
@@ -8277,9 +8280,12 @@
     "checkedAt": "2026-10-01"
   },
   "a:모리 코유키|솔로": {
-    "aid": null,
-    "failedWhy": "이름 맞는 후보 없음(디스코 0 · 본인확인 모드)",
-    "checkedAt": "2026-10-02"
+    "aid": "2904138",
+    "melonName": "유키",
+    "kind": "solo",
+    "confidence": "high",
+    "evidence": "그룹(퍼플키스) 멜론 상세의 멤버 목록",
+    "checkedAt": "2026-10-14"
   },
   "a:박지은|솔로": {
     "aid": null,
@@ -8287,9 +8293,12 @@
     "checkedAt": "2026-10-02"
   },
   "a:소연|솔로": {
-    "aid": null,
-    "failedWhy": "본인확인 실패 — 후보 22명 중 소속그룹=옛 그룹 없음",
-    "checkedAt": "2026-10-02"
+    "aid": "784317",
+    "melonName": "정소연 (Jung Soyeon)",
+    "kind": "solo",
+    "confidence": "high",
+    "evidence": "그룹(라붐) 멜론 상세의 멤버 목록",
+    "checkedAt": "2026-10-14"
   },
   "a:진예|솔로": {
     "aid": "784318",
@@ -8587,9 +8596,12 @@
     "checkedAt": "2026-10-01"
   },
   "a:수빈|솔로": {
-    "aid": null,
-    "failedWhy": "본인확인 실패 — 후보 22명 중 소속그룹=옛 그룹 없음",
-    "checkedAt": "2026-10-02"
+    "aid": "548641",
+    "melonName": "달수빈",
+    "kind": "solo",
+    "confidence": "high",
+    "evidence": "그룹(달샤벳) 멜론 상세의 멤버 목록",
+    "checkedAt": "2026-10-14"
   },
   "a:비키|솔로": {
     "aid": "672370",
@@ -8642,9 +8654,12 @@
     "checkedAt": "2026-10-02"
   },
   "a:혜미|솔로": {
-    "aid": null,
-    "failedWhy": "본인확인 실패 — 후보 11명 중 소속그룹=옛 그룹 없음",
-    "checkedAt": "2026-10-02"
+    "aid": "673733",
+    "melonName": "표혜미",
+    "kind": "solo",
+    "confidence": "high",
+    "evidence": "그룹(나인뮤지스) 멜론 상세의 멤버 목록",
+    "checkedAt": "2026-10-14"
   },
   "a:민하|솔로": {
     "aid": "3750266",
@@ -9262,9 +9277,12 @@
     "checkedAt": "2026-10-02"
   },
   "a:의진|솔로": {
-    "aid": null,
-    "failedWhy": "본인확인 실패 — 후보 6명 중 소속그룹=옛 그룹 없음",
-    "checkedAt": "2026-10-02"
+    "aid": "792813",
+    "melonName": "Hezz (홍의진)",
+    "kind": "solo",
+    "confidence": "high",
+    "evidence": "그룹(유니티) 멜론 상세의 멤버 목록",
+    "checkedAt": "2026-10-14"
   },
   "a:하이디|솔로": {
     "aid": null,
@@ -10747,6 +10765,174 @@
     "kind": "solo",
     "confidence": "high",
     "evidence": "그룹(슈퍼주니어) 멜론 상세의 멤버 목록",
+    "checkedAt": "2026-10-14"
+  },
+  "a:우석|펜타곤": {
+    "aid": "991774",
+    "melonName": "정우석",
+    "kind": "solo",
+    "confidence": "high",
+    "evidence": "그룹(펜타곤) 멜론 상세의 멤버 목록",
+    "checkedAt": "2026-10-14"
+  },
+  "a:우영|2PM": {
+    "aid": "514760",
+    "melonName": "장우영",
+    "kind": "solo",
+    "confidence": "high",
+    "evidence": "그룹(2PM) 멜론 상세의 멤버 목록",
+    "checkedAt": "2026-10-14"
+  },
+  "a:박재범|2PM": {
+    "aid": "443420",
+    "melonName": "박재범",
+    "kind": "solo",
+    "confidence": "high",
+    "evidence": "그룹(2PM) 멜론 상세의 멤버 목록",
+    "checkedAt": "2026-10-14"
+  },
+  "a:피오|블락비": {
+    "aid": "670591",
+    "melonName": "P.O (피오)",
+    "kind": "solo",
+    "confidence": "high",
+    "evidence": "그룹(블락비) 멜론 상세의 멤버 목록",
+    "checkedAt": "2026-10-14"
+  },
+  "a:지민|에이오에이": {
+    "aid": "687001",
+    "melonName": "지민",
+    "kind": "solo",
+    "confidence": "high",
+    "evidence": "그룹(에이오에이) 멜론 상세의 멤버 목록",
+    "checkedAt": "2026-10-14"
+  },
+  "a:가은|솔로": {
+    "aid": "675611",
+    "melonName": "이가은",
+    "kind": "solo",
+    "confidence": "high",
+    "evidence": "그룹(애프터스쿨) 멜론 상세의 멤버 목록",
+    "checkedAt": "2026-10-14"
+  },
+  "a:한선화|시크릿": {
+    "aid": "672329",
+    "melonName": "한선화",
+    "kind": "solo",
+    "confidence": "high",
+    "evidence": "그룹(시크릿) 멜론 상세의 멤버 목록",
+    "checkedAt": "2026-10-14"
+  },
+  "a:송지은|시크릿": {
+    "aid": "446200",
+    "melonName": "송지은",
+    "kind": "solo",
+    "confidence": "high",
+    "evidence": "그룹(시크릿) 멜론 상세의 멤버 목록",
+    "checkedAt": "2026-10-14"
+  },
+  "a:승호|엠블랙": {
+    "aid": "56307",
+    "melonName": "Leni.M (승호)",
+    "kind": "solo",
+    "confidence": "high",
+    "evidence": "그룹(엠블랙) 멜론 상세의 멤버 목록",
+    "checkedAt": "2026-10-14"
+  },
+  "a:이준|엠블랙": {
+    "aid": "514380",
+    "melonName": "이준",
+    "kind": "solo",
+    "confidence": "high",
+    "evidence": "그룹(엠블랙) 멜론 상세의 멤버 목록",
+    "checkedAt": "2026-10-14"
+  },
+  "a:천둥|엠블랙": {
+    "aid": "560422",
+    "melonName": "천둥",
+    "kind": "solo",
+    "confidence": "high",
+    "evidence": "그룹(엠블랙) 멜론 상세의 멤버 목록",
+    "checkedAt": "2026-10-14"
+  },
+  "a:수현|유키스": {
+    "aid": "645315",
+    "melonName": "신수현",
+    "kind": "solo",
+    "confidence": "high",
+    "evidence": "그룹(유키스) 멜론 상세의 멤버 목록",
+    "checkedAt": "2026-10-14"
+  },
+  "a:혁|빅스": {
+    "aid": "673451",
+    "melonName": "HYUK(혁)",
+    "kind": "solo",
+    "confidence": "high",
+    "evidence": "그룹(빅스) 멜론 상세의 멤버 목록",
+    "checkedAt": "2026-10-14"
+  },
+  "a:홍빈|빅스": {
+    "aid": "673450",
+    "melonName": "홍빈 (HONGBIN)",
+    "kind": "solo",
+    "confidence": "high",
+    "evidence": "그룹(빅스) 멜론 상세의 멤버 목록",
+    "checkedAt": "2026-10-14"
+  },
+  "a:라비|빅스": {
+    "aid": "673448",
+    "melonName": "라비 (RAVI)",
+    "kind": "solo",
+    "confidence": "high",
+    "evidence": "그룹(빅스) 멜론 상세의 멤버 목록",
+    "checkedAt": "2026-10-14"
+  },
+  "a:밀|온리원오프": {
+    "aid": "2736615",
+    "melonName": "Mill (OnlyOneOf)",
+    "kind": "solo",
+    "confidence": "high",
+    "evidence": "그룹(온리원오프) 멜론 상세의 멤버 목록",
+    "checkedAt": "2026-10-14"
+  },
+  "a:백결|엘라스트": {
+    "aid": "2873709",
+    "melonName": "백결",
+    "kind": "solo",
+    "confidence": "high",
+    "evidence": "그룹(엘라스트) 멜론 상세의 멤버 목록",
+    "checkedAt": "2026-10-14"
+  },
+  "a:한빈|템페스트": {
+    "aid": "3068377",
+    "melonName": "한빈 (템페스트)",
+    "kind": "solo",
+    "confidence": "high",
+    "evidence": "그룹(템페스트) 멜론 상세의 멤버 목록",
+    "checkedAt": "2026-10-14"
+  },
+  "a:지원|시그니처": {
+    "aid": "1908421",
+    "melonName": "지지원",
+    "kind": "solo",
+    "confidence": "high",
+    "evidence": "그룹(시그니처) 멜론 상세의 멤버 목록",
+    "checkedAt": "2026-10-14"
+  },
+  "a:고세구|이세계아이돌": {
+    "aid": "3681990",
+    "melonName": "고세구",
+    "kind": "solo",
+    "confidence": "high",
+    "evidence": "그룹(이세계아이돌) 멜론 상세의 멤버 목록",
+    "checkedAt": "2026-10-14"
+  },
+  "a:김유진|크나큰": {
+    "aid": "946982",
+    "melonName": "김유진",
+    "kind": "solo",
+    "confidence": "high",
+    "evidence": "그룹(크나큰) 멜론 상세의 멤버 목록",
     "checkedAt": "2026-10-14"
   }
 }
