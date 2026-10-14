@@ -281,6 +281,7 @@ const RECENT_ALBUMS = 400;
   const push = (owner, ownerKind, gko, list, id) => {
     for (const al of list || []) {
       if (!al || !al.releaseDate || !al.cover) continue;   // 커버 없는 건 이 선반의 존재 이유가 없다
+      if (al.program) continue;                             // 데뷔 전 서바이벌 프로그램 앨범은 '이번 주 발매'가 아니다(2026-10-14)
       const row = { o: owner, k: ownerKind, g: gko || null, t: al.title, y: al.type || '', d: al.releaseDate, c: al.cover };
       if (id) row.i = id;
       rows.push(row);

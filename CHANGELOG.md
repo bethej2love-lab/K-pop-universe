@@ -62,6 +62,8 @@
 ---
 
 ## 2026-10-14 (세션 — 신규 그룹 멤버 별 소실)
+- [완료] 탐험 "이번 주 발매" 2줄 가로 레일(모바일 한 화면 커버 3.3개, 웹 드래그·휠) · 직캠 썸네일 프로필 크롭을 오른쪽으로(object-position 66%) · 데뷔 줄 "(클유아)" — altNames(검색·매처용)에 줄임말 11팀이 섞여 화면에 떴다 → 화면은 새 `formerNames`(옛 이름 7팀)만 [index.html][kpop_universe.css][groups.json]
+- [진행중] **서바이벌 프로그램 앨범** — 사용자 결정: 수집하되 케밥 "프로그램 앨범 보기" 토글로만 노출(일본판 보기 방식). 앨범에 `program:<프로그램명>`+`isMain:false`, 타임라인 첫 정규·albums_recent에서도 제외. 수집기 `tools/melon_program_disco.mjs`(프로그램명 멜론 아티스트의 그룹 데뷔 1년 전~1개월 후 발매) — 멜론 차단 중이라 데이터는 아직 [index.html][tools/build_slim_data.mjs][tools/melon_program_disco.mjs]
 - [진행중] **그룹 멤버 솔로 디스코 수집** — 신규 `tools/melon_member_solo_disco.mjs`. 기존 솔로 수집은 무소속 솔로만 대상이라 그룹 소속 멤버 솔로 앨범(설리 등)은 어떤 경로로도 안 들어왔다. 그룹 멜론 상세의 '그룹멤버' 목록에서 멤버 aid를 얻어(명단 안에서만 이름 대조 → 동명이인 없음) 본인 앨범만 받는다. 목록엔 현재 멤버만 나오므로 탈퇴·고인(설리)은 이름 검색 + 소속그룹 aid 또는 생년월일 일치로 확인. 1차 적용 47명 236장(설리 고블린, 루한·박유천·정일훈·황민현·제시카 등). 멜론 차단으로 중단 — 같은 명령을 다시 돌리면 이어서 채운다(중복 안 들어감). 명단 매칭 못 한 멜론 멤버 25명(골든차일드 등 표기 차이)은 리포트에 [artists.json][melon_artist_map.json][tools/melon_member_solo_disco.mjs]
 - [완료] 멤버 카드만 열렸을 때 같은 그룹 멤버 이름 라벨 흐리게 + 별 이름 라벨 클릭 → 멤버 카드 [index.html][kpop_universe.css]
 - [완료] **유닛 디스코그래피 전수 수집** — 신규 `tools/melon_unit_disco.mjs`(유닛 멜론 aid = melon_artist_map `u:<유닛>`, 본인확인 = 멜론 상세 멤버 겹침 또는 국내 아티스트+기존 앨범 겹침, 멜론에 유닛이 따로 없으면(트리플에스 유닛) 부모 그룹 앨범 중 제목에 유닛명). 75장 추가(SuperM 6·D&E 22·J-Walk 9·EXO-CBX 7·세븐틴 소유닛 6 등), 매핑 못 한 유닛 0. ⚠️동명 외국 밴드 Evolution(1999~)이 트리플에스 EVOLution으로 붙던 것 → 앨범 겹침 근거는 국내 아티스트만 + 소속 그룹 데뷔 1년 전 발매 컷. 기존 유닛 앨범 정리: 종류 EP/Single/빈값 342건 → 미니/싱글/추정, `isMain` 314건 재판정(부석순 SECOND WIND·TELEPARTY 등 본 앨범이 부가로 숨어 카드에 1장만 보이던 원인) [artists.json][melon_artist_map.json][tools/melon_unit_disco.mjs]

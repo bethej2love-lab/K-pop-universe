@@ -264,7 +264,7 @@
               <div id="gc-discog-ost-divider" class="gc-ch-sort-divider" style="display:none"></div>
               <button id="gc-discog-all-btn" class="gc-ch-sort-item" type="button" style="display:none"><span class="chk">✓</span><span>부가 앨범까지 포함</span></button>
               <button id="gc-discog-ost-btn" class="gc-ch-sort-item" type="button" style="display:none"><span class="chk">✓</span><span>OST·피처링 포함</span></button>
-              <button id="gc-discog-unit-btn" class="gc-ch-sort-item" type="button" style="display:none"><span class="chk">✓</span><span>솔로만 보기</span></button><button id="gc-discog-jp-btn" class="gc-ch-sort-item" type="button" style="display:none"><span class="chk">✓</span><span>일본판 보기</span></button><button id="gc-discog-variant-btn" class="gc-ch-sort-item" type="button" style="display:none"><span class="chk">✓</span><span>리믹스·변형판 보기</span></button>
+              <button id="gc-discog-unit-btn" class="gc-ch-sort-item" type="button" style="display:none"><span class="chk">✓</span><span>솔로만 보기</span></button><button id="gc-discog-jp-btn" class="gc-ch-sort-item" type="button" style="display:none"><span class="chk">✓</span><span>일본판 보기</span></button><button id="gc-discog-program-btn" class="gc-ch-sort-item" type="button" style="display:none"><span class="chk">✓</span><span>프로그램 앨범 보기</span></button><button id="gc-discog-variant-btn" class="gc-ch-sort-item" type="button" style="display:none"><span class="chk">✓</span><span>리믹스·변형판 보기</span></button>
               <div id="gc-discog-more-divider" class="gc-ch-sort-divider" style="display:none"></div>
               <button id="gc-discog-more-btn" class="gc-ch-view-toggle" type="button" style="display:none"><span class="chk">✓</span><span id="gc-discog-more-label"></span></button>
             </div>
@@ -12515,6 +12515,7 @@ function _renderDiscography(prefix,albums){
   const unitBtn=document.getElementById(prefix+'-discog-unit-btn');
   const allBtn=document.getElementById(prefix+'-discog-all-btn');
   const jpBtn=document.getElementById(prefix+'-discog-jp-btn');
+  const programBtn=document.getElementById(prefix+'-discog-program-btn');
   const variantBtn=document.getElementById(prefix+'-discog-variant-btn');
   if(!albums||!albums.length){row.style.display='none';return;}
   row.style.display='';
@@ -12535,6 +12536,7 @@ function _renderDiscography(prefix,albums){
   let asc=false;
   let extrasIncluded=_onlyExtras; // 디폴트 OST·피처링 제외(2026-08-21) — 단, 부가만 있으면 켜고 시작
   let soloOnly=false; // 디폴트 유닛 앨범 포함(EXO-SC 등) — 케밥 '솔로만 보기' 토글로 제외(2026-08-22, 사용자 요청)
+  let programIncluded=false; // 디폴트 서바이벌 프로그램 앨범(데뷔 전 '프로듀스 101' 명의 발매 등) 제외 — 케밥 토글로만(2026-10-14, 사용자 결정)
   let jpIncluded=false; // 디폴트 일본판 제외 — 케밥 '일본판 보기'로만 펼침(2026-09-16, 사용자 요청)
   // 디폴트 변형판(리믹스·Sped Up·Inst) 제외 — 케밥 '리믹스·변형판 보기'로만 펼침(2026-09-17).
   // 수집 정책이 "멜론에 있는 모든 발매를 태그해서 넣는다"로 바뀌면서 생긴 토글이다(수집은 전부,
@@ -12562,6 +12564,10 @@ function _renderDiscography(prefix,albums){
     }
     if(soloOnly)base=base.filter(a=>!a.unit); // '솔로만 보기': 유닛(EXO-SC 등) 앨범 제외
     if(!jpIncluded)base=base.filter(a=>!_isJp(a)); // 디폴트: 일본판 제외(_isJpRelease 주석 참고)
+    // 프로그램 앨범: isMain:false라 기본 목록엔 원래 안 들어오지만, '부가 앨범까지 포함'을 켜도 섞이지 않게 따로 거른다.
+    // 토글을 켜면 (종류 필터는 지키면서) 목록에 합친다.
+    base=base.filter(a=>!a.program);
+    if(programIncluded)base=[...base,...albums.filter(a=>a.program&&(typeFilter==='all'||_discogBucket(a.type)===typeFilter))];
     if(!variantIncluded)base=base.filter(a=>!a.variant); // 디폴트: 리믹스·변형판 제외
     return sortedList(base);
   }
@@ -12601,6 +12607,7 @@ function _renderDiscography(prefix,albums){
     ostBtn.classList.toggle('active',extrasIncluded);
     if(unitBtn)unitBtn.classList.toggle('active',soloOnly);
     if(jpBtn)jpBtn.classList.toggle('active',jpIncluded);
+    if(programBtn)programBtn.classList.toggle('active',programIncluded);
     if(variantBtn)variantBtn.classList.toggle('active',variantIncluded);
   }
   updateSortMenuUI();
@@ -12650,6 +12657,16 @@ function _renderDiscography(prefix,albums){
     jpBtn.onclick=e=>{
       e.stopPropagation();
       jpIncluded=!jpIncluded;
+      updateSortMenuUI();
+      renderItems();
+    };
+  }
+  // '프로그램 앨범 보기' 버튼 — 서바이벌 프로그램 출신 그룹에 그 앨범이 있을 때만 노출
+  if(programBtn){
+    programBtn.style.display=albums.some(a=>a.program)?'':'none';
+    programBtn.onclick=e=>{
+      e.stopPropagation();
+      programIncluded=!programIncluded;
       updateSortMenuUI();
       renderItems();
     };
@@ -25750,7 +25767,7 @@ function _buildGroupTimeline(ko){
   _ensureGroupDisco(ko).then(()=>{
     if(_openGCko!==ko)return;
     {const jd=_tlJpDebut(ko,isKo);if(jd&&!ev.some(e=>e.icon==='🗾')){ev.push(jd);if(ev.length>=2)_renderTimeline(sec,list,ev);}}
-    const full=((GROUPS[ko]||{}).discography||[]).filter(x=>x&&x.releaseDate&&/^정규/.test(String(x.type||''))&&!x.variant&&!_isJpRelease(x,ko)); // 일본 정규·변형판 제외
+    const full=((GROUPS[ko]||{}).discography||[]).filter(x=>x&&x.releaseDate&&/^정규/.test(String(x.type||''))&&!x.variant&&!x.program&&!_isJpRelease(x,ko)); // 일본 정규·변형판·데뷔 전 프로그램 앨범 제외
     if(!full.length||ev.some(e=>e.icon==='💿'))return;
     full.sort((x,y)=>String(x.releaseDate).localeCompare(String(y.releaseDate)));
     const k2=_tlKey(full[0].releaseDate);if(!k2)return;
