@@ -25549,6 +25549,9 @@ function _renderTimeline(sec,list,ev){
     if(e.title){const t=document.createElement('span');t.className='tt-tl-title';t.textContent=` ‘${e.title}’`;lb.appendChild(t);}
     if(e.sub){const t=document.createElement('span');t.className='tt-tl-sub';t.textContent=` · ${e.sub}`;lb.appendChild(t);}
     row.appendChild(dot);row.appendChild(dt);row.appendChild(lb);
+    // 말줄임된 줄은 데스크톱에서 마우스를 올리면 영상 제목처럼 흘려서 끝까지 보여준다(2026-10-14, 사용자 요청).
+    // 제목·흐린 보조정보 색을 살리려고 자식 그대로 감싸는 addMarqueeChildren. 모바일은 탭 = 트로피·앨범 열기라 겹치지 않게 뺀다.
+    if(!isMob())addMarqueeChildren(lb);
     // 누르면 이어지는 항목(2026-10-13) — 앨범 상세·트로피 목록·공연 목록. 읽기만 되던 히스토리를 '발견→연결'로.
     if(e.onClick){row.classList.add('is-link');row.setAttribute('role','button');row.tabIndex=0;
       const go=document.createElement('span');go.className='tt-tl-go';go.textContent='›';row.appendChild(go); // 제목이 말줄임돼도 › 는 보이게 따로
@@ -25560,8 +25563,13 @@ function _renderTimeline(sec,list,ev){
 }
 // 음악방송 1위 데이터 → 타임라인 항목 배열 반환 (첫 1위·지상파 첫 1위·트리플 크라운)
 // 히스토리의 1위 항목을 누르면 — 지금 열린 카드의 트로피 버튼을 그대로 누른다(같은 목록·같은 탭)
-function _tlOpenTrophy(){const b=['tt-trophy','gc-trophy'].map(id=>document.getElementById(id)).find(x=>x&&x.offsetParent&&x.style.display!=='none');if(b)b.click();}
-function _mswWinEntries(wins,isKo,debutStr){
+// ⚠️ 예전엔 지금 카드의 트로피 버튼을 대신 눌렀다 — 멤버 카드는 **개인** 트로피가 없으면 버튼이 숨겨져 있어서(카리나) 눌러도
+//    아무 일도 없었고, 있으면(태연) 줄은 소녀시대 1위인데 태연 솔로 목록이 열렸다(2026-10-14 사용자 제보·헤드리스 확인).
+//    히스토리의 1위·멜론 줄은 **그룹** 기록이므로 그 그룹 트로피를 해당 탭으로 바로 연다.
+function _tlOpenTrophy(gko,kind){
+  return()=>{_queryTrophies(gko,null).then(d=>{if(d&&Object.keys(d).length)_openTrophyPanel(d,kind);});};
+}
+function _mswWinEntries(wins,isKo,debutStr,gko){
   if(!wins||!wins.length)return[];
   const TERR=new Set(['뮤직뱅크','인기가요','쇼음악중심']);
   const out=[];
@@ -25571,7 +25579,7 @@ function _mswWinEntries(wins,isKo,debutStr){
     const lbl=isKo?'첫 음악방송 1위':'First music-show win';
     let sub='';
     if(debutStr){const dd=new Date(String(debutStr).replace(/\./g,'-')),wd=new Date(String(w0.win_date).slice(0,10));if(!isNaN(dd)&&!isNaN(wd)){const d=Math.round((wd-dd)/864e5);if(d>0)sub=isKo?`데뷔 ${d}일 후`:`${d}d after debut`;}}
-    out.push({key:k0,date:_tlDate(w0.win_date),label:lbl,title:w0.song_title||'',sub,icon:'🏆',onClick:_tlOpenTrophy});
+    out.push({key:k0,date:_tlDate(w0.win_date),label:lbl,title:w0.song_title||'',sub,icon:'🏆',onClick:_tlOpenTrophy(gko,'music_show')});
   }
   // 방송사별 그룹화(wins는 win_date 오름차순)
   const byShow={};
@@ -25589,11 +25597,11 @@ function _mswWinEntries(wins,isKo,debutStr){
   if(triples.length){
     const t=triples[0];
     const kt=_tlKey(t.date);if(kt){
-      out.push({key:kt,date:_tlDate(t.date),label:isKo?'첫 음악방송 트리플 크라운':'First triple crown',title:t.song||'',sub:t.show,icon:'👑',onClick:_tlOpenTrophy});
+      out.push({key:kt,date:_tlDate(t.date),label:isKo?'첫 음악방송 트리플 크라운':'First triple crown',title:t.song||'',sub:t.show,icon:'👑',onClick:_tlOpenTrophy(gko,'music_show')});
     }
   }else if(!TERR.has(w0.show)){
     const terr=wins.find(w=>TERR.has(w.show));
-    if(terr){const kt=_tlKey(terr.win_date);if(kt)out.push({key:kt,date:_tlDate(terr.win_date),label:isKo?'지상파 첫 1위':'First terrestrial win',title:terr.song_title||'',sub:terr.show,icon:'📺',onClick:_tlOpenTrophy});}
+    if(terr){const kt=_tlKey(terr.win_date);if(kt)out.push({key:kt,date:_tlDate(terr.win_date),label:isKo?'지상파 첫 1위':'First terrestrial win',title:terr.song_title||'',sub:terr.show,icon:'📺',onClick:_tlOpenTrophy(gko,'music_show')});}
   }
   return out;
 }
@@ -25654,7 +25662,7 @@ function _tlMilestones(gko,isKo){
     const m=mt&&mt.data&&mt.data[0];
     // 연말 차트 — 그해 12월 자리에 정렬(데뷔보다 앞에 오지 않게)
     if(m&&m.year){const k=_tlKey(String(m.year))+1231;if(k)out.push({key:k,date:String(m.year),label:isKo?'첫 멜론 연간 TOP100':'First Melon year-end TOP100',
-      title:m.song_title||'',sub:isKo?`연간 ${m.rank}위`:`#${m.rank}`,icon:'🍈',onClick:_tlOpenTrophy});}
+      title:m.song_title||'',sub:isKo?`연간 ${m.rank}위`:`#${m.rank}`,icon:'🍈',onClick:_tlOpenTrophy(gko,'melon_top100')});}
     return out;
   }).catch(()=>[]);
   _tlMilestoneP.set(key,p);
@@ -25706,7 +25714,7 @@ function _buildMemberTimeline(a){
         if(_openTArtist!==a)return;
         if(ev.some(e=>e.icon==='🏆'))return;
         const pInfo=GROUPS[primary.ko];
-        for(const e of _mswWinEntries(data,isKo,pInfo&&pInfo.debut))ev.push(e);
+        for(const e of _mswWinEntries(data,isKo,pInfo&&pInfo.debut,primary.ko))ev.push(e);
         if(ev.length>=2)_renderTimeline(sec,list,ev);
       }).catch(()=>{});
     // 첫 콘서트/투어(비동기) — kpop_events 최소 date_start. 활동 그룹 멤버 시간축을 데뷔·첫1위에 이어 채운다.
@@ -25750,7 +25758,7 @@ function _buildGroupTimeline(ko){
     .then(({data})=>{
       if(_openGCko!==ko)return;
       if(ev.some(e=>e.icon==='🏆'))return;
-      for(const e of _mswWinEntries(data,isKo,info&&info.debut))ev.push(e);
+      for(const e of _mswWinEntries(data,isKo,info&&info.debut,ko))ev.push(e);
       if(ev.length>=2)_renderTimeline(sec,list,ev);
     }).catch(()=>{});
   // 첫 콘서트
@@ -25777,12 +25785,14 @@ function _buildGroupTimeline(ko){
 }
 const _TROPHY_KIND_ORDER=['music_show','melon_top100','spotify_milestone','view_milestone'];
 const _TROPHY_TABLES={music_show:'music_show_wins',melon_top100:'melon_yearly_top100',spotify_milestone:'spotify_streaming_milestones',view_milestone:'yt_view_milestones'};
-async function _loadTrophies(gko,btnId,mko){
-  const btn=document.getElementById(btnId);
-  if(!btn)return;
-  btn.style.display='none';btn.onclick=null;
-  if(!sb)return;
-  if(!mko&&!GROUPS[gko])return;
+// 트로피 조회(카드 트로피 버튼·히스토리 줄 공용, 2026-10-14 분리). gko+mko별로 한 번만 받는다.
+const _trophyQueryP=new Map();
+function _queryTrophies(gko,mko){
+  const key=gko+'␟'+(mko||'');
+  if(_trophyQueryP.has(key))return _trophyQueryP.get(key);
+  const p=(async()=>{
+  if(!sb)return{};
+  if(!mko&&!GROUPS[gko])return{};
   const orderCol={music_show:'win_date',melon_top100:'year',spotify_milestone:'milestone',view_milestone:'crossed_at'};
   const results=await Promise.all(_TROPHY_KIND_ORDER.map(kind=>{
     // view_milestone(yt_view_milestones)은 다른 셋과 스키마가 다르다 — song_title이 없고 video_id로
@@ -25804,6 +25814,16 @@ async function _loadTrophies(gko,btnId,mko){
     const{data,error}=results[i];
     if(!error&&data&&data.length)dataByKind[kind]=data;
   });
+  return dataByKind;
+  })().catch(()=>({}));
+  _trophyQueryP.set(key,p);
+  return p;
+}
+async function _loadTrophies(gko,btnId,mko){
+  const btn=document.getElementById(btnId);
+  if(!btn)return;
+  btn.style.display='none';btn.onclick=null;
+  const dataByKind=await _queryTrophies(gko,mko);
   if(!Object.keys(dataByKind).length)return;
   btn.style.display='';
   btn.onclick=e=>{e.stopPropagation();_openTrophyPanel(dataByKind);};
@@ -25813,9 +25833,10 @@ const _TROPHY_TAB_LABELS={
   en:{music_show:'Wins',melon_top100:'Melon',spotify_milestone:'Spotify',view_milestone:'Views'}
 };
 let _trophyDataByKind=null,_trophyActiveKind=null;
-function _openTrophyPanel(dataByKind){
+function _openTrophyPanel(dataByKind,startKind){
   _trophyDataByKind=dataByKind;
   const kinds=_TROPHY_KIND_ORDER.filter(k=>dataByKind[k]);
+  const k0=(startKind&&dataByKind[startKind])?startKind:kinds[0];
   const tabsEl=document.getElementById('trophy-panel-tabs');
   if(kinds.length>1){
     tabsEl.style.display='';
@@ -25834,12 +25855,13 @@ function _openTrophyPanel(dataByKind){
       });
       tabsEl.appendChild(b);btns.push(b);
     });
-    btns[0].classList.add('active');
-    requestAnimationFrame(()=>{thumb.style.width=btns[0].offsetWidth+'px';thumb.style.transform=`translateX(${btns[0].offsetLeft-2}px)`;});
+    const b0=btns[kinds.indexOf(k0)]||btns[0];
+    b0.classList.add('active');
+    requestAnimationFrame(()=>{thumb.style.width=b0.offsetWidth+'px';thumb.style.transform=`translateX(${b0.offsetLeft-2}px)`;});
   }else{
     tabsEl.style.display='none';
   }
-  _renderTrophyKind(kinds[0]);
+  _renderTrophyKind(k0);
   {const _t=document.getElementById('trophy-overlay');_t.classList.add('open');_bringToFront(_t);} // 카드 위로(정적 z:80)
 }
 function _renderTrophyKind(kind){

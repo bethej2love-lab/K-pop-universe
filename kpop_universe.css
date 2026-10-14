@@ -4263,3 +4263,4 @@
 .tt-tl-row.is-link{cursor:pointer;border-radius:6px;margin:0 -6px;padding:2px 6px;}
 .tt-tl-row.is-link:hover,.tt-tl-row.is-link:active{background:rgba(150,175,225,0.08);}
 .tt-tl-go{flex:none;margin-left:auto;padding-left:6px;color:rgba(150,175,225,0.45);}
+.tt-tl-label.is-marquee{text-overflow:clip;} /* 흐르는 동안엔 말줄임표가 끝에 박혀 있지 않게 */
