@@ -258,26 +258,48 @@ function parseSongRows(html) {
 // 주인(그룹·솔로·유닛)의 멜론 aid
 const aidOf = (kind, key) => {
   if (kind === 'g') return map[key] && map[key].aid;
-  if (kind === 'u') return map['u:' + key] && map['u:' + key].aid;
+  if (kind === 'u') { const m = map['u:' + key]; if (m && m.aid) return m.aid; if (m && m.via === 'parent' && map[m.parent]) return map[m.parent].aid; return null; } // 멜론에 따로 없는 유닛(트리플에스 유닛)은 부모 그룹 목록에서
   const ks = Object.keys(map).filter(k => k === 'a:' + key || k.startsWith('a:' + key + '|'));
   return ks.map(k => map[k] && map[k].aid).find(Boolean) || null;
 };
-const listCache = new Map();
-async function melonAlbumsOf(aid) {
+const listCache = new Map(), refreshed = new Set();
+async function melonAlbumsOf(aid, refresh) {
+  // 캐시된 앨범 목록이 오래돼 그 뒤 발매가 없을 때(--fetch 모드) — 그 아티스트 목록만 한 번 새로 받는다
+  if (refresh && !CACHE_ONLY && !refreshed.has(aid)) {
+    refreshed.add(aid); listCache.delete(aid);
+    for (const f of fs.readdirSync(CACHE_DIR)) if (f.startsWith('alb_' + aid + '_')) { try { fs.unlinkSync(path.join(CACHE_DIR, f)); } catch {} }
+  }
   if (!listCache.has(aid)) listCache.set(aid, (await albumsOf(aid)).filter(x => x.artistAid === aid));
   return listCache.get(aid);
 }
+// 제목·발매일로 멜론 목록에서 하나 고르기 — 엄격한 것부터. 스포티파이에서 온 앨범은 "(feat. …)"가 붙거나 발매일이 시차로 하루 어긋난다.
+const dayOf = d => { const t = Date.parse(String(d || '').replace(/\./g, '-')); return isNaN(t) ? null : Math.round(t / 86400000); };
+function pickAlbum(list, al) {
+  const k = mkey(al.title), tn = tnorm(al.title), d = dayOf(al.releaseDate);
+  const near = x => d == null || dayOf(x.date) == null || Math.abs(dayOf(x.date) - d) <= 1;
+  const tries = [
+    x => mkey(x.title) === k && (!al.releaseDate || !x.date || x.date === al.releaseDate),
+    x => tn && tnorm(x.title) === tn && near(x),
+    x => tn.length >= 3 && tnorm(x.title).length >= 3 && (tnorm(x.title).includes(tn) || tn.includes(tnorm(x.title))) && near(x),
+  ];
+  for (const f of tries) { const h = list.filter(f); if (h.length === 1) return h[0]; }
+  // 같은 날(±1) 그 아티스트 발매가 딱 하나면 그것 — 변형판(리믹스 등)은 같은 날 원판과 겹치므로 제외하고 센다
+  if (d != null && !isVariant(al.title)) { const h = list.filter(x => !isVariant(x.title) && dayOf(x.date) != null && Math.abs(dayOf(x.date) - d) <= 1); if (h.length === 1) return h[0]; }
+  return null;
+}
+const usedIds = new Map(); // 주인별 이미 쓴 멜론 앨범 번호
 const st = { albums: 0, hadAid: 0, aidFilled: 0, aidMiss: 0, tracks: 0, songFilled: 0, noDetail: 0 };
 async function fixAlbum(al, kind, key) {
   st.albums++;
   if (!al.melonAlbumId) {
     const aid = aidOf(kind, key);
     if (aid) {
-      const list = await melonAlbumsOf(aid);
-      const k = mkey(al.title);
-      let hit = list.filter(x => mkey(x.title) === k && (!al.releaseDate || !x.date || x.date === al.releaseDate));
-      if (hit.length !== 1) hit = list.filter(x => x.date && x.date === al.releaseDate && tnorm(x.title) && tnorm(x.title) === tnorm(al.title));
-      if (hit.length === 1) { al.melonAlbumId = hit[0].albumId; st.aidFilled++; }
+      let hit = pickAlbum(await melonAlbumsOf(aid), al);
+      if (!hit && !CACHE_ONLY) hit = pickAlbum(await melonAlbumsOf(aid, true), al);
+      // 이미 다른 앨범이 가진 번호면 쓰지 않는다(같은 주인 디스코 안에서 두 앨범이 한 멜론 앨범을 가리키지 않게)
+      if (hit && (usedIds.get(key) || new Set()).has(hit.albumId)) hit = null;
+      if (hit && process.env.DUMP) console.log("MATCH", key, "|", al.title, al.releaseDate, "=>", hit.title, hit.date);
+      if (hit) { al.melonAlbumId = hit.albumId; st.aidFilled++; if (!usedIds.has(key)) usedIds.set(key, new Set()); usedIds.get(key).add(hit.albumId); }
       else st.aidMiss++;
     } else st.aidMiss++;
   } else st.hadAid++;
@@ -298,6 +320,9 @@ async function fixAlbum(al, kind, key) {
     if (r) { t.songId = r.songId; used.add(r.songId); st.songFilled++; }
   });
 }
+const seed = (key, list) => { for (const al of list || []) if (al.melonAlbumId) { if (!usedIds.has(key)) usedIds.set(key, new Set()); usedIds.get(key).add(al.melonAlbumId); } };
+for (const [ko, g] of Object.entries(GROUPS)) seed(ko, g.discography);
+for (const a of artists) { seed(a.name && a.name.ko + '|' + (a.group && a.group.ko), a.discography); for (const u of a.unitDiscography || []) seed(u.unitName, u.albums); }
 for (const [ko, g] of Object.entries(GROUPS)) for (const al of g.discography || []) await fixAlbum(al, 'g', ko);
 for (const a of artists) {
   const key = a.name && a.name.ko + '|' + (a.group && a.group.ko);
