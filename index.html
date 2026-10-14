@@ -3063,7 +3063,7 @@ async function buildUniverse(){
         m._bdayYear=parseInt(m.bday)||0;
         m._filterAlpha=1; m._filterTarget=1;
         // 모바일 줌인 멤버 이름 레이블 (CSS2DObject) — 항상 생성, animate 루프에서 모바일에서만 표시
-        {const _nd=document.createElement('div');_nd.className='member-name-label';_nd.textContent=_starLabelName(m,ko);const _nl=new THREE.CSS2DObject(_nd);_nl.position.copy(mPos).add(new THREE.Vector3(0,0.42,0));_nl.visible=false;scene.add(_nl);m._nameLabel=_nl;m._nameLabelEl=_nd;}
+        {const _nd=document.createElement('div');_nd.className='member-name-label';_nd.textContent=_starLabelName(m,ko);_nd.addEventListener('click',e=>{e.stopPropagation();if(m._worldPos)pulseMember(m);showT(m,window.innerWidth/2,window.innerHeight*0.4);});const _nl=new THREE.CSS2DObject(_nd);_nl.position.copy(mPos).add(new THREE.Vector3(0,0.42,0));_nl.visible=false;scene.add(_nl);m._nameLabel=_nl;m._nameLabelEl=_nd;}
       }
     });
   });
@@ -3107,7 +3107,7 @@ async function buildUniverse(){
     m._filterAlpha=1;m._filterTarget=1;
     // 이름 라벨 — 행성 소속 별과 같은 모양. 예전엔 행성 루프에서만 만들어서 우주에 따로 뜬 솔로 별엔 이름이 아예 없었다
     // (2026-10-01 사용자 제보 "별 주위에 디모렉스라고 떠 있어야 — 설명이 없어 알아보기 어렵다"). 표시 조건은 animate 루프.
-    {const _nd=document.createElement('div');_nd.className='member-name-label';_nd.textContent=_starLabelName(m,m.group.ko);const _nl=new THREE.CSS2DObject(_nd);_nl.position.copy(mPos).add(new THREE.Vector3(0,1.5,0));_nl.visible=false;scene.add(_nl);m._nameLabel=_nl;m._nameLabelEl=_nd;}
+    {const _nd=document.createElement('div');_nd.className='member-name-label';_nd.textContent=_starLabelName(m,m.group.ko);_nd.addEventListener('click',e=>{e.stopPropagation();if(m._worldPos)pulseMember(m);showT(m,window.innerWidth/2,window.innerHeight*0.4);});const _nl=new THREE.CSS2DObject(_nd);_nl.position.copy(mPos).add(new THREE.Vector3(0,1.5,0));_nl.visible=false;scene.add(_nl);m._nameLabel=_nl;m._nameLabelEl=_nd;}
   });
 
   // ── Connection lines ──────────────────────────────
@@ -4163,12 +4163,29 @@ function animate(){
   // 멤버 카드가 열려 있으면 그 사람 별 옆 이름은 **항상** 띄운다(2026-10-01) — 카드와 별을 이어 주는 유일한 단서라,
   // 줌 거리·행성 유무(우주에 따로 뜬 솔로)와 무관하게. 나머지 별은 예전 규칙(모바일 줌인·데스크톱 그룹 카드) 그대로.
   const _tOpen=(typeof _openTArtist!=='undefined')?_openTArtist:null;
+  // 그룹 카드 없이 멤버 카드만 열렸을 때(데스크톱) 같은 그룹 활동 멤버 이름도 흐리게 띄운다(2026-10-14, 사용자 요청 —
+  // "우주에서 다른 멤버 별 클릭 유도"). 그룹 카드가 열려 있으면 위 _gcLabelSet이 이미 전원을 띄우므로 그쪽이 우선.
+  let _mateSet=null;
+  if(!isMob()&&!_gcLabelSet&&_tOpen&&GROUPS[_tOpen.group.ko]){
+    if(_mateLabelFor!==_tOpen){_mateLabelFor=_tOpen;const g=_tOpen.group.ko;_mateLabelSet=new Set(ARTISTS.filter(a=>a!==_tOpen&&_artistGroups(a).some(x=>x.ko===g)&&_activeInGroup(a,g)));}
+    _mateSet=_mateLabelSet;
+  }else if(_mateLabelFor){_mateLabelFor=null;_mateLabelSet=null;}
   if(isMob()||_gcLabelSet||_tOpen){
     _gcLabelsWereShown=true;
     ARTISTS.forEach(a=>{
       if(!a._nameLabel||!a._worldPos)return;
       a._nameLabelEl.classList.toggle('is-focus',a===_tOpen); // 카드 열린 사람만 크고 밝게 — 그룹 라벨과 구분
-      if(a===_tOpen){a._nameLabel.visible=true;a._nameLabelEl.style.opacity='1';return;}
+      if(a===_tOpen){a._nameLabel.visible=true;a._nameLabelEl.style.opacity='1';a._nameLabelEl.style.pointerEvents='none';return;}
+      if(_mateSet){
+        if(!_mateSet.has(a)){a._nameLabel.visible=false;return;}
+        // 거리 페이드는 그룹 라벨과 같고, 밝기만 낮춘다(주인공 라벨과 구분). 눌러서 그 멤버로 넘어갈 수 있다.
+        const bm2=bubbleMeshes.find(b=>b.ko===_tOpen.group.ko);
+        const d2=camera.position.distanceTo(bm2?bm2.mesh.position:a._worldPos);
+        const f2=d2<STAR_LABEL_FADE_DIST?Math.max(0,Math.min(1,(STAR_LABEL_FADE_DIST-d2)/13)):0;
+        if(f2<0.01){a._nameLabel.visible=false;return;}
+        a._nameLabel.visible=true;a._nameLabelEl.style.opacity=(f2*0.9).toFixed(3); // 라벨 색 자체가 반투명(0.52)이라 0.55를 또 곱하면 안 보였다a._nameLabelEl.style.pointerEvents='auto';
+        return;
+      }
       if(!isMob()&&!_gcLabelSet){a._nameLabel.visible=false;return;}
       if(_gcLabelSet&&!_gcLabelSet.has(a)){a._nameLabel.visible=false;return;}
       const bm=bubbleMeshes.find(b=>b.ko===a.group.ko);
@@ -4179,6 +4196,7 @@ function animate(){
       if(alpha<0.01){a._nameLabel.visible=false;return;}
       a._nameLabel.visible=true;
       a._nameLabelEl.style.opacity=alpha.toFixed(3);
+      a._nameLabelEl.style.pointerEvents=isMob()?'none':'auto'; // 데스크톱 그룹 카드 라벨도 눌러서 멤버로(모바일은 별 탭이 기본)
     });
   }else if(_gcLabelsWereShown){
     _gcLabelsWereShown=false;
@@ -12332,6 +12350,7 @@ let _gcShowInactive=false;
 // 데스크톱 그룹 카드 고정 멤버 라벨용 캐시(아래 animate 루프에서 사용) — _openGCko/_gcShowInactive가
 // 바뀔 때만 로스터를 다시 계산해서 매 프레임 ARTISTS 전체를 filter하는 낭비를 피한다.
 let _gcLabelCacheKo=null,_gcLabelCacheShowInactive=null,_gcLabelSet=null,_gcLabelsWereShown=false;
+var _mateLabelFor=null,_mateLabelSet=null; // 혼자 열린 멤버 카드의 같은 그룹 멤버 라벨(var: animate 첫 호출이 이 줄보다 먼저)
 function _renderGcMemberList(ko,cx,cy){
   const memListEl=document.getElementById('gc-mem-list');
   const labelEl=document.getElementById('gc-mem-label');

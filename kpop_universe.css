@@ -3159,6 +3159,9 @@
   /* .group-label(줄 303 부근)과 거의 동일한 스타일 — currentColor 이중 글로우, 불투명도 높임(2026-08-14). */
   .member-name-label{font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;font-size:9px;font-weight:400;color:rgba(200,215,240,0.52);white-space:nowrap;pointer-events:none;user-select:none;letter-spacing:.08em;text-shadow:0 1px 3px rgba(0,0,0,0.65);transform:translate(-50%,-100%);}
   /* 멤버 카드가 열린 사람의 별 이름(2026-10-01) — 우주에 따로 뜬 솔로 별은 주변에 행성 라벨이 많아 기본 9px로는 묻힌다 */
+  /* 눌러서 그 멤버 카드로(2026-10-14) — pointer-events는 JS가 보이는 라벨에만 켠다 */
+  .member-name-label{cursor:pointer;transition:color .15s;}
+  .member-name-label:hover{color:rgba(225,236,252,0.95);}
   .member-name-label.is-focus{font-size:12px;font-weight:500;color:rgba(215,228,248,0.88);text-shadow:0 1px 2px rgba(0,0,0,0.8);}
   ::-webkit-scrollbar{-webkit-appearance:none;width:2px;height:2px;}
   ::-webkit-scrollbar-track{background:transparent;}
