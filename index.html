@@ -25626,6 +25626,18 @@ function _renderTimeline(sec,list,ev){
       row.addEventListener('keydown',ev2=>{if(ev2.key==='Enter'){ev2.preventDefault();e.onClick();}});}
     list.appendChild(row);
   });
+  // 길면 앞 4줄 + 더보기(2026-10-15, 사용자 요청 — 카드에서 히스토리가 통째로 펼쳐져 너무 길었다).
+  // 5줄 이하는 그냥 다 보인다("더보기 1"은 누르는 게 더 번거롭다). 1위·이정표가 비동기로 붙으며 다시
+  // 그려지므로 펼친 상태는 같은 카드(같은 ev 배열) 동안 유지하고, 다른 카드가 열리면 다시 접는다.
+  if(list._tlEv!==ev){list._tlEv=ev;list._tlOpen=false;}
+  const _TL_SHOW=4,rows=[...list.children];
+  if(rows.length>_TL_SHOW+1&&!list._tlOpen){
+    rows.slice(_TL_SHOW).forEach(r=>r.hidden=true);
+    const more=document.createElement('button');more.type='button';more.className='tt-tl-more';
+    more.textContent=(currentLang==='ko'?_SR_MORE_LABEL.ko:_SR_MORE_LABEL.en)+' '+(rows.length-_TL_SHOW);
+    more.addEventListener('click',e=>{e.stopPropagation();list._tlOpen=true;rows.forEach(r=>r.hidden=false);more.remove();});
+    list.appendChild(more);
+  }
   sec.style.display='';
 }
 // 음악방송 1위 데이터 → 타임라인 항목 배열 반환 (첫 1위·지상파 첫 1위·트리플 크라운)
