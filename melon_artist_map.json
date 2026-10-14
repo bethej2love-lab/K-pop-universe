@@ -7345,9 +7345,12 @@
     "checkedAt": "2026-09-17"
   },
   "a:빛새온|솔로": {
-    "aid": null,
-    "failedWhy": "앨범 겹침 0장 (필요 2, 겹친 후보 0명, 후보 1명)",
-    "checkedAt": "2026-09-17"
+    "aid": "1705072",
+    "melonName": "빛새온",
+    "kind": "solo",
+    "confidence": "high",
+    "evidence": "그룹(B.D.U) 멜론 상세의 멤버 목록",
+    "checkedAt": "2026-10-14"
   },
   "a:임지민|저스트비": {
     "aid": "2403390",
@@ -8797,9 +8800,12 @@
     "checkedAt": "2026-10-02"
   },
   "a:찬미|솔로": {
-    "aid": null,
-    "failedWhy": "본인확인 실패 — 후보 10명 중 소속그룹=옛 그룹 없음",
-    "checkedAt": "2026-10-02"
+    "aid": "672927",
+    "melonName": "허찬미",
+    "kind": "solo",
+    "confidence": "high",
+    "evidence": "그룹(남녀공학) 멜론 상세의 멤버 목록",
+    "checkedAt": "2026-10-14"
   },
   "a:효영|솔로": {
     "aid": null,
@@ -8812,9 +8818,12 @@
     "checkedAt": "2026-10-02"
   },
   "a:은교|솔로": {
-    "aid": null,
-    "failedWhy": "본인확인 실패 — 후보 3명 중 소속그룹=옛 그룹 없음",
-    "checkedAt": "2026-10-02"
+    "aid": "672928",
+    "melonName": "서은교",
+    "kind": "solo",
+    "confidence": "high",
+    "evidence": "그룹(파이브돌스) 멜론 상세의 멤버 목록",
+    "checkedAt": "2026-10-14"
   },
   "a:나연|솔로": {
     "aid": null,
@@ -9122,9 +9131,12 @@
     "checkedAt": "2026-10-01"
   },
   "a:나래|솔로": {
-    "aid": null,
-    "failedWhy": "본인확인 실패 — 후보 19명 중 소속그룹=옛 그룹 없음",
-    "checkedAt": "2026-10-02"
+    "aid": "669991",
+    "melonName": "박나래 (스피카)",
+    "kind": "solo",
+    "confidence": "high",
+    "evidence": "그룹(스피카) 멜론 상세의 멤버 목록",
+    "checkedAt": "2026-10-14"
   },
   "a:김보형|솔로": {
     "aid": null,
@@ -9192,9 +9204,12 @@
     "checkedAt": "2026-10-01"
   },
   "a:소정|솔로": {
-    "aid": null,
-    "failedWhy": "본인확인 실패 — 후보 9명 중 소속그룹=옛 그룹 없음",
-    "checkedAt": "2026-10-02"
+    "aid": "661792",
+    "melonName": "이소정",
+    "kind": "solo",
+    "confidence": "high",
+    "evidence": "그룹(레이디스 코드) 멜론 상세의 멤버 목록",
+    "checkedAt": "2026-10-14"
   },
   "a:앨리스|솔로": {
     "aid": "672256",
@@ -9227,9 +9242,12 @@
     "checkedAt": "2026-10-01"
   },
   "a:서영|솔로": {
-    "aid": null,
-    "failedWhy": "본인확인 실패 — 후보 21명 중 소속그룹=옛 그룹 없음",
-    "checkedAt": "2026-10-02"
+    "aid": "788131",
+    "melonName": "이서영",
+    "kind": "solo",
+    "confidence": "high",
+    "evidence": "그룹(헬로비너스) 멜론 상세의 멤버 목록",
+    "checkedAt": "2026-10-14"
   },
   "a:써머|솔로": {
     "aid": null,
@@ -10933,6 +10951,158 @@
     "kind": "solo",
     "confidence": "high",
     "evidence": "그룹(크나큰) 멜론 상세의 멤버 목록",
+    "checkedAt": "2026-10-14"
+  },
+  "a:신예찬|티아이오티": {
+    "aid": "3755982",
+    "melonName": "신예찬",
+    "kind": "solo",
+    "confidence": "high",
+    "evidence": "그룹(티아이오티) 멜론 상세의 멤버 목록",
+    "checkedAt": "2026-10-14"
+  },
+  "a:성제|슈퍼노바": {
+    "aid": "512343",
+    "melonName": "성제 (초신성)",
+    "kind": "solo",
+    "confidence": "high",
+    "evidence": "그룹(슈퍼노바) 멜론 상세의 멤버 목록",
+    "checkedAt": "2026-10-14"
+  },
+  "a:윤학|슈퍼노바": {
+    "aid": "672344",
+    "melonName": "윤학 (초신성)",
+    "kind": "solo",
+    "confidence": "high",
+    "evidence": "그룹(슈퍼노바) 멜론 상세의 멤버 목록",
+    "checkedAt": "2026-10-14"
+  },
+  "a:지윤|아이칠린": {
+    "aid": "3155617",
+    "melonName": "JIYOON (ICHILLIN’)",
+    "kind": "solo",
+    "confidence": "high",
+    "evidence": "그룹(아이칠린) 멜론 상세의 멤버 목록",
+    "checkedAt": "2026-10-14"
+  },
+  "a:민준|나인아이": {
+    "aid": "3085426",
+    "melonName": "민준 (MINJUN)",
+    "kind": "solo",
+    "confidence": "high",
+    "evidence": "그룹(나인아이) 멜론 상세의 멤버 목록",
+    "checkedAt": "2026-10-14"
+  },
+  "a:소희|솔로": {
+    "aid": "994122",
+    "melonName": "김소희 (KIMSOHEE)",
+    "kind": "solo",
+    "confidence": "high",
+    "evidence": "그룹(네이처) 멜론 상세의 멤버 목록",
+    "checkedAt": "2026-10-14"
+  },
+  "a:나노|히스토리": {
+    "aid": "1757441",
+    "melonName": "NANO (나노)",
+    "kind": "solo",
+    "confidence": "high",
+    "evidence": "그룹(히스토리) 멜론 상세의 멤버 목록",
+    "checkedAt": "2026-10-14"
+  },
+  "a:제이 창|원팩트": {
+    "aid": "2903420",
+    "melonName": "제이창",
+    "kind": "solo",
+    "confidence": "high",
+    "evidence": "그룹(B.D.U) 멜론 상세의 멤버 목록",
+    "checkedAt": "2026-10-14"
+  },
+  "a:김채원|크랙시": {
+    "aid": "2736449",
+    "melonName": "우아 (Woo-Ah)",
+    "kind": "solo",
+    "confidence": "high",
+    "evidence": "그룹(크랙시) 멜론 상세의 멤버 목록",
+    "checkedAt": "2026-10-14"
+  },
+  "a:카린|크랙시": {
+    "aid": "2736596",
+    "melonName": "카린 (KaRin)",
+    "kind": "solo",
+    "confidence": "high",
+    "evidence": "그룹(크랙시) 멜론 상세의 멤버 목록",
+    "checkedAt": "2026-10-14"
+  },
+  "a:혜진|크랙시": {
+    "aid": "2749244",
+    "melonName": "혜진 (HyeJin)",
+    "kind": "solo",
+    "confidence": "high",
+    "evidence": "그룹(크랙시) 멜론 상세의 멤버 목록",
+    "checkedAt": "2026-10-14"
+  },
+  "a:수안|크랙시": {
+    "aid": "2750732",
+    "melonName": "수안 (Swan)",
+    "kind": "solo",
+    "confidence": "high",
+    "evidence": "그룹(크랙시) 멜론 상세의 멤버 목록",
+    "checkedAt": "2026-10-14"
+  },
+  "a:시안|유스피어": {
+    "aid": "2970911",
+    "melonName": "시안",
+    "kind": "solo",
+    "confidence": "high",
+    "evidence": "그룹(버가부) 멜론 상세의 멤버 목록",
+    "checkedAt": "2026-10-14"
+  },
+  "a:로라|픽시": {
+    "aid": "2920029",
+    "melonName": "로라(LOLA)",
+    "kind": "solo",
+    "confidence": "high",
+    "evidence": "그룹(픽시) 멜론 상세의 멤버 목록",
+    "checkedAt": "2026-10-14"
+  },
+  "a:영빈|블랭키": {
+    "aid": "3092914",
+    "melonName": "영빈 (BLANK2Y)",
+    "kind": "solo",
+    "confidence": "high",
+    "evidence": "그룹(블랭키) 멜론 상세의 멤버 목록",
+    "checkedAt": "2026-10-14"
+  },
+  "a:태민|하이파이유니콘": {
+    "aid": "3467483",
+    "melonName": "엄태민 (Hi-Fi Un!corn)",
+    "kind": "solo",
+    "confidence": "high",
+    "evidence": "그룹(하이파이유니콘) 멜론 상세의 멤버 목록",
+    "checkedAt": "2026-10-14"
+  },
+  "a:가람|어센트": {
+    "aid": "3802185",
+    "melonName": "가람",
+    "kind": "solo",
+    "confidence": "high",
+    "evidence": "그룹(어센트) 멜론 상세의 멤버 목록",
+    "checkedAt": "2026-10-14"
+  },
+  "a:리안|하츠웨이브": {
+    "aid": "3871643",
+    "melonName": "리안 (RIAAN)",
+    "kind": "solo",
+    "confidence": "high",
+    "evidence": "그룹(하츠웨이브) 멜론 상세의 멤버 목록",
+    "checkedAt": "2026-10-14"
+  },
+  "a:데인|하츠웨이브": {
+    "aid": "3945144",
+    "melonName": "데인 (DANE)",
+    "kind": "solo",
+    "confidence": "high",
+    "evidence": "그룹(하츠웨이브) 멜론 상세의 멤버 목록",
     "checkedAt": "2026-10-14"
   }
 }
