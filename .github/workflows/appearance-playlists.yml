@@ -1,0 +1,47 @@
+name: 공식 채널 출연 재생목록 목록 갱신 (주간)
+
+# appearance_playlists.json을 주 1회 다시 만든다 — 공식 채널에 새 출연 재생목록이 생기거나(컴백마다 "ON AiR | 미니 N집"을
+# 새로 만드는 그룹이 있다) 신규 그룹이 등록되면 여기서 잡힌다. 영상 수집은 루틴 1-4(admin.js _ytSyncAppearancePlaylists)가
+# 이 파일을 읽어서 한다. 유튜브 API를 안 쓴다(페이지 파싱) — 쿼터 0. 스캔이 0개면 기존 파일을 유지한다.
+
+on:
+  schedule:
+    - cron: '41 18 * * 2'   # 매주 화요일 KST 03:41 — 라운드 분 회피
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: appearance-playlists
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: 출연 재생목록 스캔
+        run: node tools/build_appearance_playlists.mjs | tee -a "$GITHUB_STEP_SUMMARY"
+
+      - name: 커밋
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add appearance_playlists.json
+          if git diff --cached --quiet; then
+            echo "바뀐 재생목록 없음"
+            exit 0
+          fi
+          git commit -m "chore: refresh appearance playlists (auto)"
+          for i in 1 2 3; do
+            git pull --rebase origin main && git push && exit 0
+            echo "push 경합 — 재시도 ($i/3)"; sleep $((i * 5))
+          done
+          exit 1

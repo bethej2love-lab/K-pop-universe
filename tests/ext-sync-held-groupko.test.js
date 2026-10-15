@@ -26,7 +26,10 @@ ok(/held\?handle:/.test(adminJs),
 const callLines = adminJs.split('\n').filter(l => l.includes('_extBuildRows(') && !l.includes('function _extBuildRows('));
 // 2026-09-28: 외부 채널 동기화의 두 호출부(신규·이어받기)가 _saveVids 하나로 합쳐져 2곳(동기화+수동 백필).
 ok(callLines.length >= 2, `_extBuildRows 실제 호출부가 2곳 이상이어야 함(현재 ${callLines.length}) — 새 호출부가 생겼으면 handle 전달 확인 필요`);
-ok(callLines.every(l => /ch\.handle\)/.test(l)),
+// 예외: 공식 채널 출연 재생목록(_ytSyncAppearancePlaylists, 2026-10-15)은 업로더 채널 핸들이 없고(유튜브 응답엔 채널 id만)
+// 소유자(재생목록 주인 그룹)를 항상 넘긴다 — held는 `!owner&&…`라 소유자가 있으면 생길 수 없어 group_ko가 빌 위험이 없다.
+const _isAppearCall = l => /'appear',\{gko:p\.gko/.test(l);
+ok(callLines.every(l => /ch\.handle\)/.test(l) || _isAppearCall(l)),
   '_extBuildRows 호출부 중 ch.handle을 안 넘기는 곳이 있음 — held 행의 group_ko가 undefined가 될 수 있음');
 
 // ── 2차 사고(2026-09-28): 흔한단어 게이트가 후보를 전부 거르면 primaryGroup:undefined ────────────

@@ -2875,7 +2875,7 @@ async function _ytSweepDebutGate(){
       if(!_m2DebutBlocks(v.group_ko,v.published_at))continue;
       if(v.content_flag){alreadyFlagged++;continue;}       // 이미 무관/보류/숨김이면 손 안 댐
       if(v.tags_manual){manualSkipped++;continue;}          // 수동 확정 불가침
-      if(v.source_tier==='idol'||v.source_tier==='fans'||v.source_tier==='grpsub'){ownerSkipped++;continue;} // owner 채널은 group_ko 고정
+      if(v.source_tier==='idol'||v.source_tier==='fans'||v.source_tier==='grpsub'||v.source_tier==='appear'){ownerSkipped++;continue;} // owner 채널(+공식 출연 재생목록)은 group_ko 고정
       updates.push(v.id);
       (byGroup[v.group_ko]=byGroup[v.group_ko]||[]).push(v);
       if(sample.length<40)sample.push(`#${v.id} [${v.group_ko} 데뷔 ${GROUPS[v.group_ko].debut}] ${v.published_at} | ${(v.title||'').slice(0,66)}`);
@@ -3123,7 +3123,7 @@ async function _ytSweepHeldMistagReclassify(){
 //
 // '무관'이 아니라 '보류'인 이유는 기존 정책 그대로 — 매처가 못 잡는 것과 우주 밖인 것은 다르다. 미등록
 // 그룹의 영상이면 나중에 그 그룹을 등록했을 때 재판정 대상이 되어야 한다(_ytSweepHiddenRejudge 주석 참고).
-const _NOGROUND_OWNER_TIERS=new Set(['official','idol','fans']); // 자체/팬 채널은 group_ko가 채널에서 옴
+const _NOGROUND_OWNER_TIERS=new Set(['official','idol','fans','appear']); // 자체/팬 채널은 group_ko가 채널에서 옴(appear=공식 출연 재생목록, 그룹이 재생목록 주인)
 async function _ytSweepNoGroundHold(){
   if(!sb){_ytSetProg('Supabase 연결 없음');return;}
   const btn=document.getElementById('sp-noground-btn');
@@ -3529,7 +3529,7 @@ async function _ytSweepFancamMistag(){
     if(error){_ytSetProg('조회 실패: '+error.message);return;}
     if(!rows?.length){_ytSetProg('직캠 구조 제목이 없어요');return;}
     const EXCLUDE=new Set(['무관','보류','hidden','외부인']);
-    const OWNER_TIERS=new Set(['idol','fans']);
+    const OWNER_TIERS=new Set(['idol','fans','appear']);
     const same=(a,b)=>{const x=[...new Set(a||[])].sort(),y=[...new Set(b||[])].sort();return x.length===y.length&&x.every((v,i)=>v===y[i]);};
     let structured=0,manualSkipped=0,ownerSkipped=0;
     const updates=[];const sample={group:[],members:[],with:[]};
@@ -9329,6 +9329,82 @@ async function _extRescanMany(chs,label,btn){
   }finally{_extSyncing=false;if(btn){btn.disabled=false;btn.textContent=btnTxt;}}
 }
 
+// ── 공식 채널 출연 재생목록 동기화(루틴 1-4, 2026-10-15) ─────────────────────────────────────────
+// 아티스트가 공식 채널에 모아둔 외부 출연 재생목록("CORTIS On Air" 등)을 그대로 수집한다 — Vogue Singapore처럼 한 번
+// 나오는 채널을 일일이 등록하지 않아도 되고, 그 그룹이 직접 고른 목록이라 그룹 판정이 정확하다(사용자 요청).
+// 대상 목록은 appearance_playlists.json(tools/build_appearance_playlists.mjs가 만든다, 쿼터 0).
+// 쿼터: playlists.list로 재생목록 50개씩 영상 수(itemCount)만 먼저 보고(호출당 1) **수가 바뀐 재생목록만**
+// playlistItems로 받는다(50개당 1). 평소 회차는 2~3콜. 끝까지 받은 재생목록만 개수를 기록해 다음엔 건너뛴다.
+// 자기 채널 영상(공식 동기화 몫)·비공개/삭제(업로더 없음)는 뺀다. 이미 DB에 있는 영상은 손대지 않는다.
+// 저장: group_ko=재생목록 주인, 멤버는 제목에서(멤버 개인 채널이면 그 멤버 고정), source_tier='appear'(그룹 고정 보호).
+async function _ytSyncAppearancePlaylists(){
+  const key=_ytApiKey();
+  if(!key){_ytSetProg('API 키를 먼저 입력해주세요');return;}
+  if(!sb){_ytSetProg('Supabase 연결 없음');return;}
+  let list;
+  try{list=await (await fetch('appearance_playlists.json',{cache:'no-cache'})).json();}catch(e){_ytSetProg('[출연 재생목록] 목록 파일을 못 읽음: '+e.message);return;}
+  if(!Array.isArray(list)||!list.length){_ytSetProg('[출연 재생목록] 대상 없음');return;}
+  const LS='kpu_appear_cnt';
+  let prev={};try{prev=JSON.parse(localStorage.getItem(LS)||'{}');}catch(e){}
+  const counts={};
+  for(let i=0;i<list.length;i+=50){
+    if(_ytBudgetLeft()<=2)break;
+    const ids=list.slice(i,i+50).map(p=>p.pl).join(',');
+    const d=await _ytApiGet(`https://www.googleapis.com/youtube/v3/playlists?part=contentDetails&id=${ids}&maxResults=50&key=${key}`,'출연 재생목록 개수');
+    (d.items||[]).forEach(it=>{counts[it.id]=it.contentDetails?.itemCount;});
+  }
+  const todo=list.filter(p=>counts[p.pl]!=null&&counts[p.pl]!==prev[p.pl]);
+  let seen=0,added=0,skipped=0,errs=0,done=0;
+  for(const [ti,p] of todo.entries()){
+    if(_ytBudgetLeft()<=5)break;
+    _ytSetProg(`[출연 재생목록] ${ti+1}/${todo.length} ${p.gko} · ${p.title}`);
+    try{
+      const vids=[];let tok='',pages=0;
+      do{
+        const d=await _ytApiGet(`https://www.googleapis.com/youtube/v3/playlistItems?part=snippet,contentDetails&playlistId=${p.pl}&maxResults=50&key=${key}`+(tok?'&pageToken='+tok:''),'출연 재생목록 영상');
+        pages++;
+        for(const it of(d.items||[])){
+          const sn=it.snippet||{},vid=sn.resourceId?.videoId;
+          if(!vid||!sn.videoOwnerChannelId||sn.videoOwnerChannelId===sn.channelId)continue;
+          const title=_decodeHtmlEntities(sn.title||'');
+          if(_isBannedVideoTitle(title))continue;
+          const publishedTs=it.contentDetails?.videoPublishedAt||null;
+          const th=sn.thumbnails||{},hiTh=th.high||th.standard||th.maxres;
+          const isShortThumb=!!(hiTh&&hiTh.height>hiTh.width);
+          const isShort=isShortThumb||_ytIsShortTitle(title);
+          const cat=_ytClassify(title,{isShort});
+          if(cat==='skip')continue;
+          vids.push({id:vid,title,description:_decodeHtmlEntities(sn.description||''),
+            thumb:isShortThumb?(hiTh.url||th.medium?.url||''):(th.medium?.url||th.high?.url||th.default?.url||''),
+            published_at:(publishedTs||'').slice(0,10),published_ts:publishedTs,category:cat,is_short:isShort});
+        }
+        tok=d.nextPageToken||'';
+      }while(tok&&pages<10&&_ytBudgetLeft()>2);
+      seen+=vids.length;
+      const have=new Set();
+      for(let i=0;i<vids.length;i+=100){
+        const{data,error}=await sb.from(_YT_TABLE).select('id').in('id',vids.slice(i,i+100).map(v=>v.id));
+        if(error)throw new Error(error.message);
+        (data||[]).forEach(r=>have.add(r.id));
+      }
+      const fresh=vids.filter(v=>!have.has(v.id)&&v.published_at);
+      if(fresh.length){
+        await _ytProbeShortsInline(fresh,_ytSetProg);
+        const b=_extBuildRows(fresh,true,'appear',{gko:p.gko,mko:p.mko||null},'',null);
+        skipped+=b.skipped;
+        for(let i=0;i<b.rows.length;i+=200){
+          const r=await _ytUpsertVideos(b.rows.slice(i,i+200),{onConflict:'id',ignoreDuplicates:true});
+          if(r&&r.error)throw new Error(r.error.message);
+        }
+        added+=b.rows.length;
+      }
+      if(!tok){prev[p.pl]=counts[p.pl];done++;} // 끝까지 받은 것만 기록 — 예산에 걸려 끊겼으면 다음 회차에 다시
+    }catch(e){errs++;console.error('[출연 재생목록]',p.pl,e.message);}
+  }
+  try{localStorage.setItem(LS,JSON.stringify(prev));}catch(e){}
+  _ytSetProg(`[출연 재생목록] ${list.length}개 중 바뀐 ${todo.length}개 확인(완료 ${done}) — 외부 출연 영상 ${seen}개 · 새로 저장 ${added}개${skipped?' · 건너뜀 '+skipped:''}${errs?' · ⚠️오류 '+errs:''}`);
+}
+
 let _extSyncing=false;
 async function _ytSyncExtChannels(){
   if(_extSyncing)return;
@@ -10704,6 +10780,7 @@ document.getElementById('vid-tag-thumb-refresh').addEventListener('click',async 
   _admExecBind('sp-yt-sync',async()=>{
     await _ytSyncAll();
     await _ytSyncExtChannels();
+    await _ytSyncAppearancePlaylists();
     await _ytRefreshViewCounts();
   },'전체 동기화');
   // 조회수·재생시간 수동 버튼 5개 제거(2026-09-28, 사용자 요청 "일회용·안 쓰는 버튼 정리") — 전부 루틴이 같은
@@ -11619,6 +11696,8 @@ async function _admRunRoutine(withSync,opts){
   if(withSync){
     steps.push({name:'1. 전체 동기화 (공식 채널)',fn:_ytSyncAll});
     steps.push({name:'1-2. 외부 채널 동기화 (음방·예능·아이돌주도)',fn:_ytSyncExtChannels});
+    // 공식 채널 출연 재생목록 — 평소 2~3콜이라 매시간 회차에서도 돈다(새 출연이 재생목록에 붙으면 그 회차에 들어온다)
+    steps.push({name:'1-4. 공식 채널 출연 재생목록',fn:_ytSyncAppearancePlaylists});
     // ⚠️ 1-3은 **매시간 동기화(_syncOnly)에선 건너뛴다**(2026-09-15). 호출 ~70회/회차라 매시간이면
     //    하루 1,260유닛인데, 그 지갑을 백필·루틴과 같이 쓴다(하루 10,000). 백필이 403으로 떨어지던
     //    배경이 이 경합이다. 조회수는 3시간마다 도는 **전체 루틴이 계속 갱신**하므로 "이번주 직캠 TOP"의
