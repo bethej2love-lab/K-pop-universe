@@ -6411,9 +6411,20 @@ function _updateLbMuteBtn(){
 // 화면에 맞춰 작아지는 로직으로"). 영상 자체의 세로 비율 표시(isPortrait)는 그대로 유지하고, 세션
 // 모드(_lbSessionMode)만 shorts로 안 넘어가게 분리.
 let _lbIsNativeShorts=false; // 회전 버튼이 "강제 세로 전환"과 "레터박스 전환" 중 뭘 해야 할지 판단용
+let _lbShiftedCards=false; // conn-panel 열린 채 영상 열 때 side를 닫고 member/conn를 오른쪽 앵커로 이동시킨 상태
 function openLightbox(url,shorts,playlist,idx,ctx,isAdvance,forceBrowseMode){
   const vid=ytId(url);if(!vid)return;
   _lbActiveVid=vid;
+  // 데스크톱에서 카드 3개(side+member+conn)가 모두 열려 있으면 남은 영상 공간이 너무 좁아진다.
+  // side-panel만 닫고 member/conn을 오른쪽으로 당겨(right 0/440) 카드 2단 너비(880px) 안으로 압축한다.
+  if(!isMob()&&!isAdvance&&!_lbShiftedCards&&connPanelEl.classList.contains('open')){
+    closeSidePanel();
+    memberPanelEl.style.right='0px';
+    connPanelEl.style.right='440px';
+    const cc=document.getElementById('conn-collapse');
+    if(cc)cc.style.right='880px';
+    _lbShiftedCards=true;
+  }
   _lbYtDur=0;_lbKnownDur=(playlist&&playlist[idx]&&+playlist[idx].dur)||0; // 시청 진행용 길이(위 _lbYtHandshake 주석)
   // 연결 카드에서 출발해 실제 재생까지 간 경우만 계측 — 이 건의 **핵심 지표**(열고 나서 영상에
   // 도달하기까지 몇 초·몇 탭 걸렸나). isAdvance(자동 다음 영상)는 사용자의 도달이 아니라 제외.
@@ -7976,6 +7987,13 @@ function closeLightbox(){
   _lbSpeed=1;
   _lbConnCardOpenedFromLb=false; // 영상 자체를 닫아버렸으면 나중에 연결 카드를 닫아도 재생을 재개할 대상이 없음
   document.getElementById('yt-lb-speed-badge').classList.remove('is-on');
+  if(_lbShiftedCards){
+    _lbShiftedCards=false;
+    memberPanelEl.style.right='';
+    connPanelEl.style.right='';
+    const cc=document.getElementById('conn-collapse');
+    if(cc)cc.style.right='';
+  }
   // 라이트박스가 카드 위를 완전히 덮고 있는 동안 영상을 클릭할 때의 자동 스크롤(scrollIntoView)이나
   // 카드 재렌더링으로 밑에 깔린 시트의 scrollTop이 사용자 모르게 바뀌어 있을 수 있음 — 그 상태에서
   // _lastScroll이 실제 위치와 어긋나면 닫은 뒤 위로 스크롤해도 탭바가 다시 안 뜨는 경우가 있었음.
