@@ -1576,6 +1576,10 @@
   /* 축이 여럿이면 줄을 나눈다 — 한 줄에 섞으면 어느 알약이 어느 축인지 안 읽힌다. */
   #feed-list-facets{display:flex;flex-direction:column;gap:5px;margin-top:7px;}
   #feed-list-facets .fl-facet-row{display:flex;flex-wrap:wrap;gap:5px;align-items:center;}
+  /* 칩이 많은 축(행사 회차 2009~2025 등)은 줄바꿈 대신 가로 한 줄 스크롤(2026-10-15) — 세 줄을 차지해 목록이 밀렸다 */
+  #feed-list-facets .fl-facet-row.fl-facet-scroll{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;padding-bottom:2px;}
+  #feed-list-facets .fl-facet-scroll::-webkit-scrollbar{display:none;}
+  #feed-list-facets .fl-facet-scroll>.gc-ch-filter{flex-shrink:0;}
   #feed-list-facets .fl-facet-lbl{font-size:10px;color:rgba(150,175,225,0.5);margin-right:1px;min-width:22px;}
   .gc-ch-filter:hover{background:linear-gradient(160deg,rgba(255,255,255,0.16),rgba(255,255,255,0.04));border-color:rgba(255,255,255,0.24);color:rgba(220,235,255,0.95);}
   .gc-ch-filter:active{transform:scale(0.93);}

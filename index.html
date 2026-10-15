@@ -5025,7 +5025,7 @@ function _makeSearchItem(h,res,mobSearch,obSearch){
       if(obSearch)exitObSearch();else if(mobSearch)exitMobSearch();
       else if(typeof _msIsOpen==='function'&&_msIsOpen())closeMobSearchSheet();
       else{document.getElementById('search-input').value='';res.style.display='none';}
-      _openProgramCollection(h.data);
+      if(h.data&&h.data.__festival)_openEventPage(h.data.__festival);else _openProgramCollection(h.data);
       return;
     }
     _recordRecentSearch((h.type==='song'||h.type==='event')?{type:h.ownerType,data:h.data}:(h.type==='between'?{type:'member',data:h.data}:h));
@@ -5747,6 +5747,11 @@ function doSearch(q){
   //    `_matchPrograms`가 양방향 부분일치라서 "Star"만 쳐도 영문명 "Radio Star"가 걸려 **라디오스타
   //    모아보기가 정확일치 곡 "Star"보다 위**로 떴다(실측). 이제 부분일치는 등급 2라 곡(0+1) 아래다.
   //    "라디오스타"·"유퀴즈"처럼 프로그램명을 제대로 치면 등급 0으로 여전히 최상단.
+  // 행사(시상식·페스티벌·해외 특집 음방) 모아보기 — '마마'·'케이콘'·'워터밤'(2026-10-15). 같은 '컬렉션' 탭, 누르면 행사 페이지.
+  // 엑소 앨범 'Mama' 같은 곡·앨범 결과는 그대로 같이 뜬다(사용자).
+  _matchEventSeries(q).forEach(({s,grade})=>{
+    hits.push({type:'program',name:currentLang==='ko'?`${s.ko} 모아보기`:`${s.ko} Stages`,sub:currentLang==='ko'?'행사':'Event',data:{__festival:s.id},score:grade});
+  });
   _matchPrograms(q,ql,qln).forEach(p=>{
     const qns=ql.replace(/\s+/g,'');
     const forms=[p.label,...(p.kw||[])].map(s=>String(s).toLowerCase().replace(/\s+/g,''));
@@ -20555,7 +20560,7 @@ function _renderFeedListFacet(ctx){
   el.style.display='flex';
   facets.forEach(f=>{
     if(!f||!f.options||!f.options.length)return;
-    const row=document.createElement('div');row.className='fl-facet-row';
+    const row=document.createElement('div');row.className='fl-facet-row'+(f.scroll?' fl-facet-scroll hscroll-drag':'');
     const t=(currentLang==='ko'?f.labelKo:f.labelEn)||'';
     if(t){const lbl=document.createElement('span');lbl.className='fl-facet-lbl';lbl.textContent=t;row.appendChild(lbl);}
     f.options.forEach(o=>{
@@ -20566,6 +20571,7 @@ function _renderFeedListFacet(ctx){
       row.appendChild(b);
     });
     el.appendChild(row);
+    if(f.scroll){_enableDragScroll(row);const on=row.querySelector('.gc-ch-filter.active');if(on)row.scrollLeft=Math.max(0,on.offsetLeft-row.offsetLeft-40);} // f.scroll: 칩이 많은 축은 가로 한 줄
   });
 }
 function _openFeedListOverlay(title,sub,songs,ctx){
@@ -22373,6 +22379,79 @@ async function _openChartList(id,sel){
   //    쇼츠가 뒤로 밀려 순위가 뒤섞였다(2026-09-04 실측). 칩 경로에선 차트 정의가 직접 세운다.
   _feedListRankedNext=!!d.ranked;
   _openFeedListOverlay(label,sub,songs,{facets:d.axes.map(mk)});
+}
+// ── 행사 페이지(2026-10-15) — 시상식·연말 무대·페스티벌·해외 특집 음방을 회차(연도·도시)별 무대 모음으로 ──────────
+// 사용자: "마마 하면 연도별 무대 모음을 보고 싶다". 행사 정의·태그 규칙은 shared.js _EVENT_SERIES/_eventTags,
+// 영상엔 세부 포맷 스윕이 'EV:시리즈'·'EV:시리즈:회차'를 붙인다. 화면은 모아보기 오버레이(가로 1열·쇼츠 2열)를 그대로 쓰고
+// 위 칩 두 줄 = 회차 · 무대만/전체. 진입: 검색('마마'·'케이콘' → '○○ 모아보기', 컬렉션 탭).
+// 태그가 아직 과거 영상에 안 붙었을 수 있어(스윕 소급 전) 태그 결과가 적으면 제목(title_norm ilike)으로 후보를 받아 같은 규칙으로 거른다.
+// ⚠️ 정렬은 서버에 안 맡긴다(ORDER BY+LIMIT이 후보가 적을 때 타임아웃 — 메모리), 받아서 조회수순으로.
+const _evCache=new Map();
+const _EV_SEL='id,title,thumb,is_short,category,group_ko,members,with_members,with_groups,view_count,duration_sec,published_at,content_formats,content_flag';
+async function _eventRows(s){
+  if(_evCache.has(s.id))return _evCache.get(s.id);
+  const p=(async()=>{
+    const byId=new Map();
+    const tag='EV:'+s.id;
+    const r=await sb.from(_YT_TABLE).select(_EV_SEL).contains('content_formats',[tag]).limit(3000);
+    (r.data||[]).forEach(v=>byId.set(v.id,v));
+    if(byId.size<60&&s.kw){
+      const rs=await Promise.all(s.kw.map(k=>Promise.resolve(sb.from(_YT_TABLE).select(_EV_SEL).ilike('title_norm',`%${k}%`).limit(1500)).catch(()=>({data:null}))));
+      rs.forEach(r2=>(r2.data||[]).forEach(v=>{if(!byId.has(v.id)&&_eventTags(v.title,v.published_at).includes(tag))byId.set(v.id,v);}));
+    }
+    // 회차는 저장된 태그가 있으면 그걸, 없으면 같은 규칙으로 계산
+    const rows=_filterBannedVideos([...byId.values()]).filter(v=>v.content_flag!=='기타');
+    rows.forEach(v=>{
+      const cf=(v.content_formats||[]).find(x=>x.startsWith(tag+':'));
+      v._ed=cf?cf.slice(tag.length+1):((_eventTags(v.title,v.published_at).find(x=>x.startsWith(tag+':'))||'').slice(tag.length+1)||null);
+    });
+    return rows.filter(v=>v._ed);
+  })();
+  _evCache.set(s.id,p);
+  p.catch(()=>_evCache.delete(s.id));
+  return p;
+}
+const _evEdLabel=ed=>{const[y,c]=String(ed).split('-');return c?(c==='Summer'?(currentLang==='ko'?`${y} 썸머`:`${y} Summer`):`${y} ${c}`):y;};
+const _evIsStage=v=>v.category==='live'||v.category==='mv';
+async function _openEventPage(id,ed,view){
+  const s=_EVENT_SERIES.find(x=>x.id===id);if(!s)return;
+  const isKo=currentLang==='ko';
+  let rows=[];
+  try{rows=await _eventRows(s);}catch(e){console.warn('[행사] 조회 실패',e);}
+  // 회차: 최신 연도 먼저(같은 해면 이름순)
+  const counts={};rows.forEach(v=>{counts[v._ed]=(counts[v._ed]||0)+1;});
+  const eds=Object.keys(counts).sort((a,b)=>(+b.slice(0,4))-(+a.slice(0,4))||a.localeCompare(b));
+  if(!ed||!counts[ed])ed=eds[0]||null;
+  if(!view)view='stage';
+  const inEd=rows.filter(v=>v._ed===ed);
+  // '무대만'이 비면(비하인드만 있는 회차) 전체로 — 빈 화면을 만들지 않는다
+  if(view==='stage'&&!inEd.some(_evIsStage))view='all';
+  const list=(view==='stage'?inEd.filter(_evIsStage):inEd).sort((a,b)=>(b.view_count||0)-(a.view_count||0));
+  const vidUrl=x=>_isShortV(x)?`https://youtube.com/shorts/${x.id}`:`https://www.youtube.com/watch?v=${x.id}`;
+  const songs=list.slice(0,300).map(x=>({..._rowTags(x),t:x.title,u:vidUrl(x),thumb:x.thumb,vc:x.view_count,dur:x.duration_sec,pa:x.published_at?.slice(0,10),_apiId:x.id,_apiGroupKo:x.group_ko}));
+  const sub=!ed?(isKo?'아직 모인 영상이 없어요':'No videos yet')
+    :`${_evEdLabel(ed)} · ${isKo?`영상 ${list.length}개`:`${list.length} videos`}`;
+  const facets=[];
+  if(eds.length)facets.push({key:'ed',labelKo:'',labelEn:'',scroll:eds.length>6,sel:ed,options:eds.map(e=>({v:e,ko:_evEdLabel(e),en:_evEdLabel(e)})),onPick:v=>_openEventPage(id,v,view)});
+  if(ed)facets.push({key:'view',labelKo:'',labelEn:'',sel:view,options:[{v:'stage',ko:'무대',en:'Stages'},{v:'all',ko:'전체',en:'All'}],onPick:v=>_openEventPage(id,ed,v)});
+  _feedListRankedNext=false;
+  _openFeedListOverlay(s.ko,sub,songs,{facets});
+}
+// 검색어 → 행사 시리즈(별칭 q는 공백 없이 소문자). 2글자 미만은 안 본다('마' 한 글자로 MAMA가 뜨지 않게).
+function _matchEventSeries(q){
+  const qq=String(q||'').toLowerCase().normalize('NFKC').replace(/\s+/g,'');
+  if(qq.length<2)return [];
+  const out=[];
+  for(const s of _EVENT_SERIES){
+    let grade=null;
+    for(const f of [...(s.q||[]),s.ko.toLowerCase().replace(/\s+/g,'')]){
+      if(!f)continue;
+      if(f===qq||qq.includes(f))grade=0;
+      else if(grade===null&&f.startsWith(qq)&&qq.length>=2)grade=1;
+    }
+    if(grade!==null)out.push({s,grade});
+  }
+  return out;
 }
 // 차트 카드 한 장 — 직캠·무대·축제가 쓰던 빌더 3개를 합쳤다. 카드는 기본 조합을 미리 받아 썸네일과
 // 부제를 채우고, 그 결과를 캐시에 넣어 칩 첫 클릭에서 재조회가 없게 한다.
