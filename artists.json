@@ -283913,10 +283913,26 @@
       "en": "Oh Junseok"
     },
     "group": {
-      "ko": "ATBO"
+      "ko": "ATBO",
+      "en": "ATBO"
     },
     "active": true,
-    "id": "a1735"
+    "id": "a1735",
+    "co": "IST엔터테인먼트",
+    "color": [
+      166,
+      200,
+      137
+    ],
+    "bday": "2003.03.03",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/오준석(ATBO)",
+      "instagram": "https://www.instagram.com/_dolc3_"
+    }
   },
   {
     "name": {
@@ -283924,10 +283940,26 @@
       "en": "Ryu Junmin"
     },
     "group": {
-      "ko": "ATBO"
+      "ko": "ATBO",
+      "en": "ATBO"
     },
     "active": true,
-    "id": "a1736"
+    "id": "a1736",
+    "co": "IST엔터테인먼트",
+    "color": [
+      166,
+      200,
+      137
+    ],
+    "bday": "2003.04.05",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/류준민(ATBO)",
+      "instagram": "https://www.instagram.com/junminrxu"
+    }
   },
   {
     "name": {
@@ -283935,10 +283967,25 @@
       "en": "Bae Hyunjun"
     },
     "group": {
-      "ko": "ATBO"
+      "ko": "ATBO",
+      "en": "ATBO"
     },
     "active": true,
-    "id": "a1737"
+    "id": "a1737",
+    "co": "IST엔터테인먼트",
+    "color": [
+      166,
+      200,
+      137
+    ],
+    "bday": "2003.06.06",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/배현준(2003)"
+    }
   },
   {
     "name": {
@@ -283946,10 +283993,26 @@
       "en": "Seok Ragwon"
     },
     "group": {
-      "ko": "ATBO"
+      "ko": "ATBO",
+      "en": "ATBO"
     },
     "active": true,
-    "id": "a1738"
+    "id": "a1738",
+    "co": "IST엔터테인먼트",
+    "color": [
+      166,
+      200,
+      137
+    ],
+    "bday": "2003.11.14",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/석락원(ATBO)",
+      "instagram": "https://www.instagram.com/rockatonce"
+    }
   },
   {
     "name": {
@@ -283957,10 +284020,26 @@
       "en": "Jung Seunghwan"
     },
     "group": {
-      "ko": "ATBO"
+      "ko": "ATBO",
+      "en": "ATBO"
     },
     "active": true,
-    "id": "a1739"
+    "id": "a1739",
+    "co": "IST엔터테인먼트",
+    "color": [
+      166,
+      200,
+      137
+    ],
+    "bday": "2004.01.27",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/정승환(2004)",
+      "instagram": "https://www.instagram.com/winhwanii"
+    }
   },
   {
     "name": {
@@ -283968,32 +284047,80 @@
       "en": "Kim Yeongyu"
     },
     "group": {
-      "ko": "ATBO"
+      "ko": "ATBO",
+      "en": "ATBO"
     },
     "active": true,
-    "id": "a1740"
+    "id": "a1740",
+    "co": "IST엔터테인먼트",
+    "color": [
+      166,
+      200,
+      137
+    ],
+    "bday": "2004.05.03",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/김연규(ATBO)",
+      "instagram": "https://www.instagram.com/0_.nkyu"
+    }
   },
   {
     "name": {
-      "ko": "헤재",
+      "ko": "희재",
       "en": "Heejae"
     },
     "group": {
-      "ko": "세븐어스"
+      "ko": "세븐어스",
+      "en": "SEVENUS"
     },
     "active": true,
-    "id": "a1741"
+    "id": "a1741",
+    "co": "PCS엔터테인먼트",
+    "color": [
+      212,
+      221,
+      157
+    ],
+    "bday": "1994.02.22",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/희재(SEVENUS)",
+      "instagram": "https://www.instagram.com/heeeeeejae"
+    }
   },
   {
     "name": {
-      "ko": "이래",
+      "ko": "이레",
       "en": "Ireah"
     },
     "group": {
-      "ko": "세븐어스"
+      "ko": "세븐어스",
+      "en": "SEVENUS"
     },
     "active": true,
-    "id": "a1742"
+    "id": "a1742",
+    "co": "PCS엔터테인먼트",
+    "color": [
+      212,
+      221,
+      157
+    ],
+    "bday": "1994.03.25",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/이레(SEVENUS)",
+      "instagram": "https://www.instagram.com/ireahand_"
+    }
   },
   {
     "name": {
@@ -284001,10 +284128,25 @@
       "en": "Kim Junmin"
     },
     "group": {
-      "ko": "휘브"
+      "ko": "휘브",
+      "en": "WHIB"
     },
     "active": true,
-    "id": "a1743"
+    "id": "a1743",
+    "co": "씨제스스튜디오",
+    "color": [
+      165,
+      213,
+      206
+    ],
+    "bday": "2002.12.31",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/김준민(WHIB)"
+    }
   },
   {
     "name": {
@@ -284012,10 +284154,25 @@
       "en": "Haseung"
     },
     "group": {
-      "ko": "휘브"
+      "ko": "휘브",
+      "en": "WHIB"
     },
     "active": true,
-    "id": "a1744"
+    "id": "a1744",
+    "co": "씨제스스튜디오",
+    "color": [
+      165,
+      213,
+      206
+    ],
+    "bday": "1999.07.16",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/하승(WHIB)"
+    }
   },
   {
     "name": {
@@ -284023,10 +284180,25 @@
       "en": "Jinbeom"
     },
     "group": {
-      "ko": "휘브"
+      "ko": "휘브",
+      "en": "WHIB"
     },
     "active": true,
-    "id": "a1745"
+    "id": "a1745",
+    "co": "씨제스스튜디오",
+    "color": [
+      165,
+      213,
+      206
+    ],
+    "bday": "2002.04.16",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/진범(WHIB)"
+    }
   },
   {
     "name": {
@@ -284034,10 +284206,25 @@
       "en": "UGeon"
     },
     "group": {
-      "ko": "휘브"
+      "ko": "휘브",
+      "en": "WHIB"
     },
     "active": true,
-    "id": "a1746"
+    "id": "a1746",
+    "co": "씨제스스튜디오",
+    "color": [
+      165,
+      213,
+      206
+    ],
+    "bday": "2003.05.26",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/유건(WHIB)"
+    }
   },
   {
     "name": {
@@ -284045,10 +284232,25 @@
       "en": "Leejeong"
     },
     "group": {
-      "ko": "휘브"
+      "ko": "휘브",
+      "en": "WHIB"
     },
     "active": true,
-    "id": "a1747"
+    "id": "a1747",
+    "co": "씨제스스튜디오",
+    "color": [
+      165,
+      213,
+      206
+    ],
+    "bday": "2003.09.08",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/이정(WHIB)"
+    }
   },
   {
     "name": {
@@ -284056,10 +284258,25 @@
       "en": "Jaeha"
     },
     "group": {
-      "ko": "휘브"
+      "ko": "휘브",
+      "en": "WHIB"
     },
     "active": true,
-    "id": "a1748"
+    "id": "a1748",
+    "co": "씨제스스튜디오",
+    "color": [
+      165,
+      213,
+      206
+    ],
+    "bday": "2004.07.01",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/재하(WHIB)"
+    }
   },
   {
     "name": {
@@ -284067,10 +284284,25 @@
       "en": "Wonjun"
     },
     "group": {
-      "ko": "휘브"
+      "ko": "휘브",
+      "en": "WHIB"
     },
     "active": true,
-    "id": "a1749"
+    "id": "a1749",
+    "co": "씨제스스튜디오",
+    "color": [
+      165,
+      213,
+      206
+    ],
+    "bday": "2005.10.26",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/원준(WHIB)"
+    }
   },
   {
     "name": {
@@ -284078,10 +284310,25 @@
       "en": "Soram"
     },
     "group": {
-      "ko": "캔디샵"
+      "ko": "캔디샵",
+      "en": "CANDY SHOP"
     },
     "active": true,
-    "id": "a1750"
+    "id": "a1750",
+    "co": "브레이브엔터테인먼트",
+    "color": [
+      181,
+      211,
+      146
+    ],
+    "bday": "2005.09.24",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/소람(CANDY SHOP)"
+    }
   },
   {
     "name": {
@@ -284089,10 +284336,25 @@
       "en": "Yuina"
     },
     "group": {
-      "ko": "캔디샵"
+      "ko": "캔디샵",
+      "en": "CANDY SHOP"
     },
     "active": true,
-    "id": "a1751"
+    "id": "a1751",
+    "co": "브레이브엔터테인먼트",
+    "color": [
+      181,
+      211,
+      146
+    ],
+    "bday": "2007.02.27",
+    "nat": {
+      "ko": "일본",
+      "en": "JP"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/유이나(CANDY SHOP)"
+    }
   },
   {
     "name": {
@@ -284100,10 +284362,25 @@
       "en": "Sui"
     },
     "group": {
-      "ko": "캔디샵"
+      "ko": "캔디샵",
+      "en": "CANDY SHOP"
     },
     "active": true,
-    "id": "a1752"
+    "id": "a1752",
+    "co": "브레이브엔터테인먼트",
+    "color": [
+      181,
+      211,
+      146
+    ],
+    "bday": "2007.08.15",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/수이(CANDY SHOP)"
+    }
   },
   {
     "name": {
@@ -284111,10 +284388,25 @@
       "en": "Sarang"
     },
     "group": {
-      "ko": "캔디샵"
+      "ko": "캔디샵",
+      "en": "CANDY SHOP"
     },
     "active": true,
-    "id": "a1753"
+    "id": "a1753",
+    "co": "브레이브엔터테인먼트",
+    "color": [
+      181,
+      211,
+      146
+    ],
+    "bday": "2007.11.30",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/사랑(CANDY SHOP)"
+    }
   },
   {
     "name": {
@@ -284122,10 +284414,25 @@
       "en": "Julia"
     },
     "group": {
-      "ko": "캔디샵"
+      "ko": "캔디샵",
+      "en": "CANDY SHOP"
     },
     "active": true,
-    "id": "a1754"
+    "id": "a1754",
+    "co": "브레이브엔터테인먼트",
+    "color": [
+      181,
+      211,
+      146
+    ],
+    "bday": "2008.03.10",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/줄리아(CANDY SHOP)"
+    }
   },
   {
     "name": {
@@ -284133,7 +284440,8 @@
       "en": "Woo-Ah"
     },
     "group": {
-      "ko": "크랙시"
+      "ko": "크랙시",
+      "en": "CRAXY"
     },
     "active": true,
     "id": "a1755",
@@ -284165,7 +284473,22 @@
         "src": "melon",
         "melonAlbumId": "10299970"
       }
-    ]
+    ],
+    "co": "레벨엔엠",
+    "color": [
+      190,
+      213,
+      165
+    ],
+    "bday": "1997.06.20",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/김채원(CRAXY)",
+      "instagram": "https://www.instagram.com/if_wo_oah"
+    }
   },
   {
     "name": {
@@ -284173,7 +284496,8 @@
       "en": "KaRin"
     },
     "group": {
-      "ko": "크랙시"
+      "ko": "크랙시",
+      "en": "CRAXY"
     },
     "active": true,
     "id": "a1756",
@@ -284201,7 +284525,22 @@
         "src": "melon",
         "melonAlbumId": "10346110"
       }
-    ]
+    ],
+    "co": "레벨엔엠",
+    "color": [
+      190,
+      213,
+      165
+    ],
+    "bday": "2000.04.23",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/카린(CRAXY)",
+      "instagram": "https://www.instagram.com/ka___king"
+    }
   },
   {
     "name": {
@@ -284209,7 +284548,8 @@
       "en": "HyeJin"
     },
     "group": {
-      "ko": "크랙시"
+      "ko": "크랙시",
+      "en": "CRAXY"
     },
     "active": true,
     "id": "a1757",
@@ -284237,7 +284577,22 @@
         "src": "melon",
         "melonAlbumId": "10336446"
       }
-    ]
+    ],
+    "co": "레벨엔엠",
+    "color": [
+      190,
+      213,
+      165
+    ],
+    "bday": "2000.07.13",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/혜진(CRAXY)",
+      "instagram": "https://www.instagram.com/sun._.win_"
+    }
   },
   {
     "name": {
@@ -284245,7 +284600,8 @@
       "en": "Swan"
     },
     "group": {
-      "ko": "크랙시"
+      "ko": "크랙시",
+      "en": "CRAXY"
     },
     "active": true,
     "id": "a1758",
@@ -284300,7 +284656,22 @@
         "src": "melon",
         "melonAlbumId": "10340679"
       }
-    ]
+    ],
+    "co": "레벨엔엠",
+    "color": [
+      190,
+      213,
+      165
+    ],
+    "bday": "2000.12.28",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/수안(CRAXY)",
+      "instagram": "https://www.instagram.com/swansnsnsn"
+    }
   },
   {
     "name": {
@@ -284308,7 +284679,8 @@
       "en": "Garam"
     },
     "group": {
-      "ko": "어센트"
+      "ko": "어센트",
+      "en": "ASC2NT"
     },
     "active": true,
     "id": "a1759",
@@ -284359,7 +284731,22 @@
         "src": "melon",
         "melonAlbumId": "11375463"
       }
-    ]
+    ],
+    "co": "뉴웨이즈컴퍼니",
+    "color": [
+      202,
+      206,
+      151
+    ],
+    "bday": "1991.06.28",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/가람(어센트)",
+      "instagram": "https://www.instagram.com/park_628"
+    }
   },
   {
     "name": {
@@ -284367,10 +284754,27 @@
       "en": "Injun"
     },
     "group": {
-      "ko": "어센트"
+      "ko": "어센트",
+      "en": "ASC2NT"
     },
-    "active": true,
-    "id": "a1760"
+    "active": false,
+    "id": "a1760",
+    "co": "뉴웨이즈컴퍼니",
+    "color": [
+      202,
+      206,
+      151
+    ],
+    "bday": "1992.03.09",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/인준(ASC2NT)",
+      "instagram": "https://www.instagram.com/injun1992.39"
+    },
+    "left": "2025.06.24"
   },
   {
     "name": {
@@ -284378,10 +284782,26 @@
       "en": "Jay"
     },
     "group": {
-      "ko": "어센트"
+      "ko": "어센트",
+      "en": "ASC2NT"
     },
     "active": true,
-    "id": "a1761"
+    "id": "a1761",
+    "co": "뉴웨이즈컴퍼니",
+    "color": [
+      202,
+      206,
+      151
+    ],
+    "bday": "1994.03.31",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/제이(ASC2NT)",
+      "instagram": "https://www.instagram.com/jjh_0331"
+    }
   },
   {
     "name": {
@@ -284389,10 +284809,26 @@
       "en": "Leon"
     },
     "group": {
-      "ko": "어센트"
+      "ko": "어센트",
+      "en": "ASC2NT"
     },
     "active": true,
-    "id": "a1762"
+    "id": "a1762",
+    "co": "뉴웨이즈컴퍼니",
+    "color": [
+      202,
+      206,
+      151
+    ],
+    "bday": "1998.06.15",
+    "nat": {
+      "ko": "한국·미국",
+      "en": "KR·US"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/레온(어센트)",
+      "instagram": "https://www.instagram.com/zorxxn"
+    }
   },
   {
     "name": {
@@ -284400,10 +284836,26 @@
       "en": "Kyle"
     },
     "group": {
-      "ko": "어센트"
+      "ko": "어센트",
+      "en": "ASC2NT"
     },
     "active": true,
-    "id": "a1763"
+    "id": "a1763",
+    "co": "뉴웨이즈컴퍼니",
+    "color": [
+      202,
+      206,
+      151
+    ],
+    "bday": "1999.08.12",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/카일(어센트)",
+      "instagram": "https://www.instagram.com/hungrypotato57"
+    }
   },
   {
     "name": {
@@ -284488,10 +284940,26 @@
       "en": "Lee Chanyeon"
     },
     "group": {
-      "ko": "빅오션"
+      "ko": "빅오션",
+      "en": "BIG Ocean"
     },
     "active": true,
-    "id": "a1771"
+    "id": "a1771",
+    "co": "Parastar Entertainment",
+    "color": [
+      157,
+      221,
+      157
+    ],
+    "bday": "1998.03.27",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/이찬연(BIG Ocean)",
+      "instagram": "https://www.instagram.com/chanyeon_l.3"
+    }
   },
   {
     "name": {
@@ -284499,10 +284967,26 @@
       "en": "PJ"
     },
     "group": {
-      "ko": "빅오션"
+      "ko": "빅오션",
+      "en": "BIG Ocean"
     },
     "active": true,
-    "id": "a1772"
+    "id": "a1772",
+    "co": "Parastar Entertainment",
+    "color": [
+      157,
+      221,
+      157
+    ],
+    "bday": "1999.10.24",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/PJ(BIG Ocean)",
+      "instagram": "https://www.instagram.com/hyunjin_pick"
+    }
   },
   {
     "name": {
@@ -284510,10 +284994,26 @@
       "en": "Kim Jiseok"
     },
     "group": {
-      "ko": "빅오션"
+      "ko": "빅오션",
+      "en": "BIG Ocean"
     },
     "active": true,
-    "id": "a1773"
+    "id": "a1773",
+    "co": "Parastar Entertainment",
+    "color": [
+      157,
+      221,
+      157
+    ],
+    "bday": "2003.03.05",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/김지석(BIG Ocean)",
+      "instagram": "https://www.instagram.com/jiseok_1"
+    }
   },
   {
     "name": {
@@ -284521,10 +285021,26 @@
       "en": "Hyunyul"
     },
     "group": {
-      "ko": "하이파이유니콘"
+      "ko": "하이파이유니콘",
+      "en": "Hi-Fi Un!corn"
     },
     "active": true,
-    "id": "a1774"
+    "id": "a1774",
+    "co": "FNC엔터테인먼트",
+    "color": [
+      200,
+      137,
+      150
+    ],
+    "bday": "2000.01.15",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/현율(Hi-Fi Un!corn)",
+      "instagram": "https://www.instagram.com/myeo_neuli"
+    }
   },
   {
     "name": {
@@ -284532,10 +285048,26 @@
       "en": "Kiyoon"
     },
     "group": {
-      "ko": "하이파이유니콘"
+      "ko": "하이파이유니콘",
+      "en": "Hi-Fi Un!corn"
     },
     "active": true,
-    "id": "a1775"
+    "id": "a1775",
+    "co": "FNC엔터테인먼트",
+    "color": [
+      200,
+      137,
+      150
+    ],
+    "bday": "2000.03.24",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/기윤(Hi-Fi Un!corn)",
+      "instagram": "https://www.instagram.com/lydian_bass"
+    }
   },
   {
     "name": {
@@ -284543,10 +285075,26 @@
       "en": "Shuto"
     },
     "group": {
-      "ko": "하이파이유니콘"
+      "ko": "하이파이유니콘",
+      "en": "Hi-Fi Un!corn"
     },
     "active": true,
-    "id": "a1776"
+    "id": "a1776",
+    "co": "FNC엔터테인먼트",
+    "color": [
+      200,
+      137,
+      150
+    ],
+    "bday": "2003.08.14",
+    "nat": {
+      "ko": "일본",
+      "en": "JP"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/슈토(하이파이유니콘)",
+      "instagram": "https://www.instagram.com/tbxh.3"
+    }
   },
   {
     "name": {
@@ -284554,10 +285102,26 @@
       "en": "Min"
     },
     "group": {
-      "ko": "하이파이유니콘"
+      "ko": "하이파이유니콘",
+      "en": "Hi-Fi Un!corn"
     },
     "active": true,
-    "id": "a1777"
+    "id": "a1777",
+    "co": "FNC엔터테인먼트",
+    "color": [
+      200,
+      137,
+      150
+    ],
+    "bday": "2005.09.08",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/민(Hi-Fi Un!corn)",
+      "instagram": "https://www.instagram.com/heogroov_"
+    }
   },
   {
     "name": {
@@ -284565,10 +285129,26 @@
       "en": "Jiyong"
     },
     "group": {
-      "ko": "에이엔"
+      "ko": "에이엔",
+      "en": "AEN"
     },
     "active": true,
-    "id": "a1778"
+    "id": "a1778",
+    "co": "스타쉽엔터테인먼트",
+    "color": [
+      127,
+      210,
+      154
+    ],
+    "bday": "2004.05.07",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/지용(AEN)",
+      "instagram": "https://www.instagram.com/seven._.o3"
+    }
   },
   {
     "name": {
@@ -284576,10 +285156,26 @@
       "en": "Bomin"
     },
     "group": {
-      "ko": "에이엔"
+      "ko": "에이엔",
+      "en": "AEN"
     },
     "active": true,
-    "id": "a1779"
+    "id": "a1779",
+    "co": "스타쉽엔터테인먼트",
+    "color": [
+      127,
+      210,
+      154
+    ],
+    "bday": "2004.02.22",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/보민(AEN)",
+      "instagram": "https://www.instagram.com/joyful_boymin"
+    }
   },
   {
     "name": {
@@ -284587,10 +285183,26 @@
       "en": "Gyuhyun"
     },
     "group": {
-      "ko": "에이엔"
+      "ko": "에이엔",
+      "en": "AEN"
     },
     "active": true,
-    "id": "a1780"
+    "id": "a1780",
+    "co": "스타쉽엔터테인먼트",
+    "color": [
+      127,
+      210,
+      154
+    ],
+    "bday": "2005.01.07",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/규현(AEN)",
+      "instagram": "https://www.instagram.com/sokyuteboy"
+    }
   },
   {
     "name": {
@@ -284598,10 +285210,26 @@
       "en": "Haru"
     },
     "group": {
-      "ko": "에이엔"
+      "ko": "에이엔",
+      "en": "AEN"
     },
     "active": true,
-    "id": "a1781"
+    "id": "a1781",
+    "co": "스타쉽엔터테인먼트",
+    "color": [
+      127,
+      210,
+      154
+    ],
+    "bday": "2006.02.25",
+    "nat": {
+      "ko": "일본",
+      "en": "JP"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/하루(AEN)",
+      "instagram": "https://www.instagram.com/haa_.ruuu"
+    }
   },
   {
     "name": {
@@ -284609,10 +285237,26 @@
       "en": "Junseo"
     },
     "group": {
-      "ko": "에이엔"
+      "ko": "에이엔",
+      "en": "AEN"
     },
     "active": true,
-    "id": "a1782"
+    "id": "a1782",
+    "co": "스타쉽엔터테인먼트",
+    "color": [
+      127,
+      210,
+      154
+    ],
+    "bday": "2007.02.15",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/준서(AEN)",
+      "instagram": "https://www.instagram.com/b.7_7.c"
+    }
   },
   {
     "name": {
@@ -284620,10 +285264,26 @@
       "en": "Kaira"
     },
     "group": {
-      "ko": "에이엔"
+      "ko": "에이엔",
+      "en": "AEN"
     },
     "active": true,
-    "id": "a1783"
+    "id": "a1783",
+    "co": "스타쉽엔터테인먼트",
+    "color": [
+      127,
+      210,
+      154
+    ],
+    "bday": "2008.05.10",
+    "nat": {
+      "ko": "일본",
+      "en": "JP"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/카이라(AEN)",
+      "instagram": "https://www.instagram.com/eeoc0coee"
+    }
   },
   {
     "name": {
@@ -284631,10 +285291,25 @@
       "en": "Haruto"
     },
     "group": {
-      "ko": "에이엔"
+      "ko": "에이엔",
+      "en": "AEN"
     },
     "active": true,
-    "id": "a1784"
+    "id": "a1784",
+    "co": "스타쉽엔터테인먼트",
+    "color": [
+      127,
+      210,
+      154
+    ],
+    "bday": "2006.03.22",
+    "nat": {
+      "ko": "일본",
+      "en": "JP"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/하루토(AEN)"
+    }
   },
   {
     "name": {
@@ -284642,10 +285317,26 @@
       "en": "Keiten"
     },
     "group": {
-      "ko": "하츠웨이브"
+      "ko": "하츠웨이브",
+      "en": "hrtz.wav"
     },
     "active": true,
-    "id": "a1785"
+    "id": "a1785",
+    "co": "카카오엔터테인먼트",
+    "color": [
+      177,
+      210,
+      127
+    ],
+    "bday": "2006.12.04",
+    "nat": {
+      "ko": "일본",
+      "en": "JP"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/키텐(hrtz.wav)",
+      "instagram": "https://www.instagram.com/keiten.i"
+    }
   },
   {
     "name": {
@@ -284653,10 +285344,24 @@
       "en": "Hagiwa"
     },
     "group": {
-      "ko": "하츠웨이브"
+      "ko": "하츠웨이브",
+      "en": "hrtz.wav"
     },
     "active": true,
-    "id": "a1786"
+    "id": "a1786",
+    "co": "카카오엔터테인먼트",
+    "color": [
+      177,
+      210,
+      127
+    ],
+    "nat": {
+      "ko": "일본",
+      "en": "JP"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/하기와(hrtz.wav)"
+    }
   },
   {
     "name": {
@@ -284664,7 +285369,8 @@
       "en": "Dane"
     },
     "group": {
-      "ko": "하츠웨이브"
+      "ko": "하츠웨이브",
+      "en": "hrtz.wav"
     },
     "active": true,
     "id": "a1787",
@@ -284723,7 +285429,22 @@
         "src": "melon",
         "melonAlbumId": "11610593"
       }
-    ]
+    ],
+    "co": "카카오엔터테인먼트",
+    "color": [
+      177,
+      210,
+      127
+    ],
+    "bday": "2004.07.20",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/데인(hrtz.wav)",
+      "instagram": "https://www.instagram.com/dane.youneed"
+    }
   },
   {
     "name": {
@@ -284731,7 +285452,8 @@
       "en": "Riaan"
     },
     "group": {
-      "ko": "하츠웨이브"
+      "ko": "하츠웨이브",
+      "en": "hrtz.wav"
     },
     "active": true,
     "id": "a1788",
@@ -284795,7 +285517,22 @@
         "src": "melon",
         "melonAlbumId": "11552408"
       }
-    ]
+    ],
+    "co": "카카오엔터테인먼트",
+    "color": [
+      177,
+      210,
+      127
+    ],
+    "bday": "2003.01.16",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/리안(hrtz.wav)",
+      "instagram": "https://www.instagram.com/riaanyoon"
+    }
   },
   {
     "name": {
@@ -284803,10 +285540,26 @@
       "en": "Yun Youngjun"
     },
     "group": {
-      "ko": "하츠웨이브"
+      "ko": "하츠웨이브",
+      "en": "hrtz.wav"
     },
     "active": true,
-    "id": "a1789"
+    "id": "a1789",
+    "co": "카카오엔터테인먼트",
+    "color": [
+      177,
+      210,
+      127
+    ],
+    "bday": "2000.03.21",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/윤영준(hrtz.wav)",
+      "instagram": "https://www.instagram.com/youn9wns"
+    }
   },
   {
     "name": {
@@ -284814,10 +285567,25 @@
       "en": "Suyeon"
     },
     "group": {
-      "ko": "비비업"
+      "ko": "비비업",
+      "en": "VVUP"
     },
     "active": true,
-    "id": "a1790"
+    "id": "a1790",
+    "co": "EgoENT",
+    "color": [
+      191,
+      137,
+      200
+    ],
+    "bday": "2007.03.31",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/수연(VVUP)"
+    }
   },
   {
     "name": {
@@ -284825,10 +285593,25 @@
       "en": "Jiyoon"
     },
     "group": {
-      "ko": "비비업"
+      "ko": "비비업",
+      "en": "VVUP"
     },
     "active": true,
-    "id": "a1791"
+    "id": "a1791",
+    "co": "EgoENT",
+    "color": [
+      191,
+      137,
+      200
+    ],
+    "bday": "2008.07.15",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/지윤(VVUP)"
+    }
   },
   {
     "name": {
@@ -284836,10 +285619,22 @@
       "en": "Choyeon"
     },
     "group": {
-      "ko": "버가부"
+      "ko": "버가부",
+      "en": "bugAboo"
     },
     "active": true,
-    "id": "a1792"
+    "id": "a1792",
+    "co": "에이팀엔터테인먼트",
+    "color": [
+      199,
+      210,
+      127
+    ],
+    "bday": "2001.08.01",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    }
   },
   {
     "name": {
@@ -284847,10 +285642,25 @@
       "en": "Yooona"
     },
     "group": {
-      "ko": "버가부"
+      "ko": "버가부",
+      "en": "bugAboo"
     },
     "active": true,
-    "id": "a1793"
+    "id": "a1793",
+    "co": "에이팀엔터테인먼트",
+    "color": [
+      199,
+      210,
+      127
+    ],
+    "bday": "2000.10.13",
+    "nat": {
+      "ko": "일본",
+      "en": "JP"
+    },
+    "links": {
+      "instagram": "https://www.instagram.com/yuuna_angel0106"
+    }
   },
   {
     "name": {
@@ -284858,10 +285668,25 @@
       "en": "Jiin"
     },
     "group": {
-      "ko": "버가부"
+      "ko": "버가부",
+      "en": "bugAboo"
     },
     "active": true,
-    "id": "a1794"
+    "id": "a1794",
+    "co": "에이팀엔터테인먼트",
+    "color": [
+      199,
+      210,
+      127
+    ],
+    "bday": "2001.08.30",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "links": {
+      "instagram": "https://www.instagram.com/zinnia_look"
+    }
   },
   {
     "name": {
@@ -284875,7 +285700,20 @@
     "id": "a1795",
     "bday": "1998.03.26",
     "active": false,
-    "left": "2022.08.27"
+    "left": "2022.08.27",
+    "co": "Allart Entertainment",
+    "color": [
+      210,
+      127,
+      210
+    ],
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "links": {
+      "instagram": "https://www.instagram.com/k_j.bbang"
+    }
   },
   {
     "name": {
@@ -284927,7 +285765,21 @@
         "src": "melon",
         "melonAlbumId": "12735630"
       }
-    ]
+    ],
+    "co": "Allart Entertainment",
+    "color": [
+      210,
+      127,
+      210
+    ],
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/로라(PIXY)",
+      "instagram": "https://www.instagram.com/_ch0ice_uu"
+    }
   },
   {
     "name": {
@@ -284941,7 +285793,21 @@
     "id": "a1797",
     "bday": "2001.02.27",
     "active": false,
-    "left": "2022.08.27"
+    "left": "2022.08.27",
+    "co": "Allart Entertainment",
+    "color": [
+      210,
+      127,
+      210
+    ],
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/샛별(가수)",
+      "instagram": "https://www.instagram.com/ssatbbyeol"
+    }
   },
   {
     "name": {
@@ -284954,7 +285820,21 @@
     },
     "active": true,
     "id": "a1798",
-    "bday": "2001.07.16"
+    "bday": "2001.07.16",
+    "co": "Allart Entertainment",
+    "color": [
+      210,
+      127,
+      210
+    ],
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/디아(PIXY)",
+      "instagram": "https://www.instagram.com/xundorida"
+    }
   },
   {
     "name": {
@@ -284967,7 +285847,21 @@
     },
     "active": true,
     "id": "a1799",
-    "bday": "2003.02.24"
+    "bday": "2003.02.24",
+    "co": "Allart Entertainment",
+    "color": [
+      210,
+      127,
+      210
+    ],
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/수아(PIXY)",
+      "instagram": "https://www.instagram.com/chloeiohc"
+    }
   },
   {
     "name": {
@@ -284981,7 +285875,20 @@
     "id": "a1800",
     "bday": "2003.07.31",
     "active": false,
-    "left": "2024.06.20"
+    "left": "2024.06.20",
+    "co": "Allart Entertainment",
+    "color": [
+      210,
+      127,
+      210
+    ],
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "links": {
+      "instagram": "https://www.instagram.com/iamuchae_"
+    }
   },
   {
     "name": {
@@ -284989,10 +285896,25 @@
       "en": "Minjae"
     },
     "group": {
-      "ko": "다이몬"
+      "ko": "다이몬",
+      "en": "DXMON"
     },
     "active": true,
-    "id": "a1801"
+    "id": "a1801",
+    "co": "SSQ엔터테인먼트",
+    "color": [
+      200,
+      158,
+      137
+    ],
+    "bday": "2003.07.09",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/민재(DXMON)"
+    }
   },
   {
     "name": {
@@ -285000,10 +285922,25 @@
       "en": "Seita"
     },
     "group": {
-      "ko": "다이몬"
+      "ko": "다이몬",
+      "en": "DXMON"
     },
     "active": true,
-    "id": "a1802"
+    "id": "a1802",
+    "co": "SSQ엔터테인먼트",
+    "color": [
+      200,
+      158,
+      137
+    ],
+    "bday": "2003.02.21",
+    "nat": {
+      "ko": "일본",
+      "en": "JP"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/세이타(DXMON)"
+    }
   },
   {
     "name": {
@@ -285011,10 +285948,25 @@
       "en": "Hee"
     },
     "group": {
-      "ko": "다이몬"
+      "ko": "다이몬",
+      "en": "DXMON"
     },
     "active": true,
-    "id": "a1803"
+    "id": "a1803",
+    "co": "SSQ엔터테인먼트",
+    "color": [
+      200,
+      158,
+      137
+    ],
+    "bday": "2005.12.28",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/희(DXMON)"
+    }
   },
   {
     "name": {
@@ -285022,13 +285974,28 @@
       "en": "TK"
     },
     "group": {
-      "ko": "다이몬"
+      "ko": "다이몬",
+      "en": "DXMON"
     },
     "active": true,
     "id": "a1804",
     "matchAliases": [
       "TK"
-    ]
+    ],
+    "co": "SSQ엔터테인먼트",
+    "color": [
+      200,
+      158,
+      137
+    ],
+    "bday": "2006.01.09",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/태극(DXMON)"
+    }
   },
   {
     "name": {
@@ -285036,14 +286003,29 @@
       "en": "Rex"
     },
     "group": {
-      "ko": "다이몬"
+      "ko": "다이몬",
+      "en": "DXMON"
     },
     "active": true,
     "id": "a1805",
     "matchAliases": [
       "렉스",
       "Rex"
-    ]
+    ],
+    "co": "SSQ엔터테인먼트",
+    "color": [
+      200,
+      158,
+      137
+    ],
+    "bday": "2007.07.27",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/김민준(DXMON)"
+    }
   },
   {
     "name": {
@@ -285051,10 +286033,25 @@
       "en": "Jo"
     },
     "group": {
-      "ko": "다이몬"
+      "ko": "다이몬",
+      "en": "DXMON"
     },
     "active": true,
-    "id": "a1806"
+    "id": "a1806",
+    "co": "SSQ엔터테인먼트",
+    "color": [
+      200,
+      158,
+      137
+    ],
+    "bday": "2008.02.04",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/조(다이몬)"
+    }
   },
   {
     "name": {
@@ -285062,10 +286059,25 @@
       "en": "Hyunmin"
     },
     "group": {
-      "ko": "아크"
+      "ko": "아크",
+      "en": "ARrC"
     },
     "active": true,
-    "id": "a1807"
+    "id": "a1807",
+    "co": "미스틱스토리",
+    "color": [
+      138,
+      210,
+      127
+    ],
+    "bday": "2005.04.11",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "links": {
+      "instagram": "https://www.instagram.com/gwangjincityboy"
+    }
   },
   {
     "name": {
@@ -285073,10 +286085,26 @@
       "en": "Kien"
     },
     "group": {
-      "ko": "아크"
+      "ko": "아크",
+      "en": "ARrC"
     },
     "active": true,
-    "id": "a1808"
+    "id": "a1808",
+    "co": "미스틱스토리",
+    "color": [
+      138,
+      210,
+      127
+    ],
+    "bday": "2004.12.19",
+    "nat": {
+      "ko": "베트남",
+      "en": "VN"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/끼엔(ARrC)",
+      "instagram": "https://www.instagram.com/nguyen_jungkien"
+    }
   },
   {
     "name": {
@@ -285084,10 +286112,26 @@
       "en": "Choi Han"
     },
     "group": {
-      "ko": "아크"
+      "ko": "아크",
+      "en": "ARrC"
     },
     "active": true,
-    "id": "a1809"
+    "id": "a1809",
+    "co": "미스틱스토리",
+    "color": [
+      138,
+      210,
+      127
+    ],
+    "bday": "2007.04.10",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/한(ARrC)",
+      "instagram": "https://www.instagram.com/han_s.theme"
+    }
   },
   {
     "name": {
@@ -285095,10 +286139,26 @@
       "en": "Andy"
     },
     "group": {
-      "ko": "아크"
+      "ko": "아크",
+      "en": "ARrC"
     },
     "active": true,
-    "id": "a1810"
+    "id": "a1810",
+    "co": "미스틱스토리",
+    "color": [
+      138,
+      210,
+      127
+    ],
+    "bday": "2007.04.19",
+    "nat": {
+      "ko": "일본·미국",
+      "en": "JP·US"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/앤디(2007)",
+      "instagram": "https://www.instagram.com/andy.y_o"
+    }
   },
   {
     "name": {
@@ -285106,10 +286166,22 @@
       "en": "Rioto"
     },
     "group": {
-      "ko": "아크"
+      "ko": "아크",
+      "en": "ARrC"
     },
     "active": true,
-    "id": "a1811"
+    "id": "a1811",
+    "co": "미스틱스토리",
+    "color": [
+      138,
+      210,
+      127
+    ],
+    "bday": "2007.08.25",
+    "nat": {
+      "ko": "일본",
+      "en": "JP"
+    }
   },
   {
     "name": {
@@ -285117,10 +286189,25 @@
       "en": "Doha"
     },
     "group": {
-      "ko": "아크"
+      "ko": "아크",
+      "en": "ARrC"
     },
     "active": true,
-    "id": "a1812"
+    "id": "a1812",
+    "co": "미스틱스토리",
+    "color": [
+      138,
+      210,
+      127
+    ],
+    "bday": "2008.02.10",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "links": {
+      "instagram": "https://www.instagram.com/d._.0hha"
+    }
   },
   {
     "name": {
@@ -285128,10 +286215,26 @@
       "en": "Jibeen"
     },
     "group": {
-      "ko": "아크"
+      "ko": "아크",
+      "en": "ARrC"
     },
     "active": true,
-    "id": "a1813"
+    "id": "a1813",
+    "co": "미스틱스토리",
+    "color": [
+      138,
+      210,
+      127
+    ],
+    "bday": "2008.08.08",
+    "nat": {
+      "ko": "한국·브라질",
+      "en": "KR·BR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/지빈(ARrC)",
+      "instagram": "https://www.instagram.com/jibeenisak"
+    }
   },
   {
     "name": {
@@ -285139,10 +286242,25 @@
       "en": "Ziwoo"
     },
     "group": {
-      "ko": "아크"
+      "ko": "아크",
+      "en": "ARrC"
     },
     "active": true,
-    "id": "a1814"
+    "id": "a1814",
+    "co": "미스틱스토리",
+    "color": [
+      138,
+      210,
+      127
+    ],
+    "bday": "2006.11.16",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "links": {
+      "instagram": "https://www.instagram.com/jiwoonav"
+    }
   },
   {
     "name": {
@@ -285150,13 +286268,28 @@
       "en": "DK"
     },
     "group": {
-      "ko": "블랭키"
+      "ko": "블랭키",
+      "en": "BLANK2Y"
     },
     "active": true,
     "id": "a1815",
     "matchAliases": [
       "DK"
-    ]
+    ],
+    "co": "키스톤엔터테인먼트",
+    "color": [
+      147,
+      215,
+      142
+    ],
+    "bday": "1998.02.16",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/도균(BLANK2Y)"
+    }
   },
   {
     "name": {
@@ -285164,10 +286297,26 @@
       "en": "Louis"
     },
     "group": {
-      "ko": "블랭키"
+      "ko": "블랭키",
+      "en": "BLANK2Y"
     },
     "active": true,
-    "id": "a1816"
+    "id": "a1816",
+    "co": "키스톤엔터테인먼트",
+    "color": [
+      147,
+      215,
+      142
+    ],
+    "bday": "1999.04.23",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/루이(DV.OL)",
+      "instagram": "https://www.instagram.com/lxuisss_lxlx"
+    }
   },
   {
     "name": {
@@ -285175,10 +286324,26 @@
       "en": "Donghyuk"
     },
     "group": {
-      "ko": "블랭키"
+      "ko": "블랭키",
+      "en": "BLANK2Y"
     },
     "active": true,
-    "id": "a1817"
+    "id": "a1817",
+    "co": "키스톤엔터테인먼트",
+    "color": [
+      147,
+      215,
+      142
+    ],
+    "bday": "1999.12.18",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/동혁(블랭키)",
+      "instagram": "https://www.instagram.com/6uopark"
+    }
   },
   {
     "name": {
@@ -285186,10 +286351,26 @@
       "en": "Siwoo"
     },
     "group": {
-      "ko": "블랭키"
+      "ko": "블랭키",
+      "en": "BLANK2Y"
     },
     "active": true,
-    "id": "a1818"
+    "id": "a1818",
+    "co": "키스톤엔터테인먼트",
+    "color": [
+      147,
+      215,
+      142
+    ],
+    "bday": "2001.02.05",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/시우(블랭키)",
+      "instagram": "https://www.instagram.com/starlightboys_siwoo"
+    }
   },
   {
     "name": {
@@ -285197,10 +286378,25 @@
       "en": "Mikey"
     },
     "group": {
-      "ko": "블랭키"
+      "ko": "블랭키",
+      "en": "BLANK2Y"
     },
     "active": true,
-    "id": "a1819"
+    "id": "a1819",
+    "co": "키스톤엔터테인먼트",
+    "color": [
+      147,
+      215,
+      142
+    ],
+    "bday": "2001.05.05",
+    "nat": {
+      "ko": "일본",
+      "en": "JP"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/마이키(BLANK2Y)"
+    }
   },
   {
     "name": {
@@ -285208,10 +286404,26 @@
       "en": "U"
     },
     "group": {
-      "ko": "블랭키"
+      "ko": "블랭키",
+      "en": "BLANK2Y"
     },
     "active": true,
-    "id": "a1820"
+    "id": "a1820",
+    "co": "키스톤엔터테인먼트",
+    "color": [
+      147,
+      215,
+      142
+    ],
+    "bday": "2001.06.22",
+    "nat": {
+      "ko": "중국",
+      "en": "CN"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/유(BLANK2Y)",
+      "instagram": "https://www.instagram.com/smlt_1o5shy"
+    }
   },
   {
     "name": {
@@ -285219,7 +286431,8 @@
       "en": "Youngbin"
     },
     "group": {
-      "ko": "블랭키"
+      "ko": "블랭키",
+      "en": "BLANK2Y"
     },
     "active": true,
     "id": "a1821",
@@ -285247,7 +286460,21 @@
         "src": "melon",
         "melonAlbumId": "10754620"
       }
-    ]
+    ],
+    "co": "키스톤엔터테인먼트",
+    "color": [
+      147,
+      215,
+      142
+    ],
+    "bday": "2001.11.23",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "links": {
+      "instagram": "https://www.instagram.com/young11_bin23"
+    }
   },
   {
     "name": {
@@ -285255,10 +286482,26 @@
       "en": "Sungjun"
     },
     "group": {
-      "ko": "블랭키"
+      "ko": "블랭키",
+      "en": "BLANK2Y"
     },
     "active": true,
-    "id": "a1822"
+    "id": "a1822",
+    "co": "키스톤엔터테인먼트",
+    "color": [
+      147,
+      215,
+      142
+    ],
+    "bday": "2002.06.15",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/성준(블랭키)",
+      "instagram": "https://www.instagram.com/jxncokr"
+    }
   },
   {
     "name": {
@@ -285266,10 +286509,26 @@
       "en": "Sodam"
     },
     "group": {
-      "ko": "블랭키"
+      "ko": "블랭키",
+      "en": "BLANK2Y"
     },
     "active": true,
-    "id": "a1823"
+    "id": "a1823",
+    "co": "키스톤엔터테인먼트",
+    "color": [
+      147,
+      215,
+      142
+    ],
+    "bday": "2004.11.26",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/소담(BLANK2Y)",
+      "instagram": "https://www.instagram.com/dam_p.s"
+    }
   },
   {
     "name": {
@@ -285277,10 +286536,26 @@
       "en": "Sulhee"
     },
     "group": {
-      "ko": "퍼즐"
+      "ko": "퍼즐",
+      "en": "PUZZLE"
     },
     "active": true,
-    "id": "a1824"
+    "id": "a1824",
+    "co": "Good Choice Entertainment",
+    "color": [
+      137,
+      132,
+      205
+    ],
+    "bday": "1998.03.08",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/설희(PUZZLE)",
+      "instagram": "https://www.instagram.com/l0ve_blo0m_4"
+    }
   },
   {
     "name": {
@@ -285288,10 +286563,26 @@
       "en": "Chaerin"
     },
     "group": {
-      "ko": "퍼즐"
+      "ko": "퍼즐",
+      "en": "PUZZLE"
     },
     "active": true,
-    "id": "a1825"
+    "id": "a1825",
+    "co": "Good Choice Entertainment",
+    "color": [
+      137,
+      132,
+      205
+    ],
+    "bday": "2003.06.26",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/채린(PUZZLE)",
+      "instagram": "https://www.instagram.com/_judy_626_"
+    }
   },
   {
     "name": {
@@ -285299,10 +286590,26 @@
       "en": "Honoka"
     },
     "group": {
-      "ko": "퍼즐"
+      "ko": "퍼즐",
+      "en": "PUZZLE"
     },
     "active": true,
-    "id": "a1826"
+    "id": "a1826",
+    "co": "Good Choice Entertainment",
+    "color": [
+      137,
+      132,
+      205
+    ],
+    "bday": "2003.12.19",
+    "nat": {
+      "ko": "일본",
+      "en": "JP"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/호노카(PUZZLE)",
+      "instagram": "https://www.instagram.com/ss___honoka"
+    }
   },
   {
     "name": {
@@ -285310,10 +286617,26 @@
       "en": "Mizuki"
     },
     "group": {
-      "ko": "퍼즐"
+      "ko": "퍼즐",
+      "en": "PUZZLE"
     },
     "active": true,
-    "id": "a1827"
+    "id": "a1827",
+    "co": "Good Choice Entertainment",
+    "color": [
+      137,
+      132,
+      205
+    ],
+    "bday": "2004.08.09",
+    "nat": {
+      "ko": "일본",
+      "en": "JP"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/미즈키(PUZZLE)",
+      "instagram": "https://www.instagram.com/ss___mizuki"
+    }
   },
   {
     "name": {
@@ -285321,10 +286644,25 @@
       "en": "Yeonseo"
     },
     "group": {
-      "ko": "퍼즐"
+      "ko": "퍼즐",
+      "en": "PUZZLE"
     },
     "active": true,
-    "id": "a1828"
+    "id": "a1828",
+    "co": "Good Choice Entertainment",
+    "color": [
+      137,
+      132,
+      205
+    ],
+    "bday": "2004.09.26",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/연서(PUZZLE)"
+    }
   },
   {
     "name": {
@@ -285332,10 +286670,25 @@
       "en": "Wony"
     },
     "group": {
-      "ko": "퍼즐"
+      "ko": "퍼즐",
+      "en": "PUZZLE"
     },
     "active": true,
-    "id": "a1829"
+    "id": "a1829",
+    "co": "Good Choice Entertainment",
+    "color": [
+      137,
+      132,
+      205
+    ],
+    "bday": "2004.10.04",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/워니(PUZZLE)"
+    }
   },
   {
     "name": {
@@ -285343,10 +286696,26 @@
       "en": "Roko"
     },
     "group": {
-      "ko": "퍼즐"
+      "ko": "퍼즐",
+      "en": "PUZZLE"
     },
     "active": true,
-    "id": "a1830"
+    "id": "a1830",
+    "co": "Good Choice Entertainment",
+    "color": [
+      137,
+      132,
+      205
+    ],
+    "bday": "2005.10.08",
+    "nat": {
+      "ko": "일본",
+      "en": "JP"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/로코(PUZZLE)",
+      "instagram": "https://www.instagram.com/ss___roko"
+    }
   },
   {
     "name": {
@@ -285354,10 +286723,25 @@
       "en": "Yichen"
     },
     "group": {
-      "ko": "모디세이"
+      "ko": "모디세이",
+      "en": "MODYSSEY"
     },
     "active": true,
-    "id": "a1831"
+    "id": "a1831",
+    "co": "ONECEAD",
+    "color": [
+      205,
+      180,
+      132
+    ],
+    "bday": "1998.09.24",
+    "nat": {
+      "ko": "중국",
+      "en": "CN"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/이첸(MODYSSEY)"
+    }
   },
   {
     "name": {
@@ -285365,10 +286749,25 @@
       "en": "Hengyu"
     },
     "group": {
-      "ko": "모디세이"
+      "ko": "모디세이",
+      "en": "MODYSSEY"
     },
     "active": true,
-    "id": "a1832"
+    "id": "a1832",
+    "co": "ONECEAD",
+    "color": [
+      205,
+      180,
+      132
+    ],
+    "bday": "2001.06.22",
+    "nat": {
+      "ko": "중국",
+      "en": "CN"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/헝위(MODYSSEY)"
+    }
   },
   {
     "name": {
@@ -285376,10 +286775,25 @@
       "en": "Rowan"
     },
     "group": {
-      "ko": "모디세이"
+      "ko": "모디세이",
+      "en": "MODYSSEY"
     },
     "active": true,
-    "id": "a1833"
+    "id": "a1833",
+    "co": "ONECEAD",
+    "color": [
+      205,
+      180,
+      132
+    ],
+    "bday": "2002.10.13",
+    "nat": {
+      "ko": "홍콩",
+      "en": "HK"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/로완(MODYSSEY)"
+    }
   },
   {
     "name": {
@@ -285387,10 +286801,25 @@
       "en": "Lynnlynn"
     },
     "group": {
-      "ko": "모디세이"
+      "ko": "모디세이",
+      "en": "MODYSSEY"
     },
     "active": true,
-    "id": "a1834"
+    "id": "a1834",
+    "co": "ONECEAD",
+    "color": [
+      205,
+      180,
+      132
+    ],
+    "bday": "2003.11.03",
+    "nat": {
+      "ko": "중국",
+      "en": "CN"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/린린(MODYSSEY)"
+    }
   },
   {
     "name": {
@@ -285398,10 +286827,25 @@
       "en": "Li Zihao"
     },
     "group": {
-      "ko": "모디세이"
+      "ko": "모디세이",
+      "en": "MODYSSEY"
     },
     "active": true,
-    "id": "a1835"
+    "id": "a1835",
+    "co": "ONECEAD",
+    "color": [
+      205,
+      180,
+      132
+    ],
+    "bday": "2004.10.22",
+    "nat": {
+      "ko": "중국",
+      "en": "CN"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/리즈하오(MODYSSEY)"
+    }
   },
   {
     "name": {
@@ -285409,10 +286853,25 @@
       "en": "Suren"
     },
     "group": {
-      "ko": "모디세이"
+      "ko": "모디세이",
+      "en": "MODYSSEY"
     },
     "active": true,
-    "id": "a1836"
+    "id": "a1836",
+    "co": "ONECEAD",
+    "color": [
+      205,
+      180,
+      132
+    ],
+    "bday": "2004.11.09",
+    "nat": {
+      "ko": "홍콩",
+      "en": "HK"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/수런(MODYSSEY)"
+    }
   },
   {
     "name": {
@@ -285420,10 +286879,25 @@
       "en": "Fan Zheyi"
     },
     "group": {
-      "ko": "모디세이"
+      "ko": "모디세이",
+      "en": "MODYSSEY"
     },
     "active": true,
-    "id": "a1837"
+    "id": "a1837",
+    "co": "ONECEAD",
+    "color": [
+      205,
+      180,
+      132
+    ],
+    "bday": "2006.01.22",
+    "nat": {
+      "ko": "중국",
+      "en": "CN"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/판저이(MODYSSEY)"
+    }
   },
   {
     "name": {
@@ -285436,7 +286910,20 @@
     },
     "active": true,
     "id": "a1838",
-    "bday": "2006.05.05"
+    "bday": "2006.05.05",
+    "co": "Allart Entertainment",
+    "color": [
+      210,
+      127,
+      210
+    ],
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/린지(PIXY)"
+    }
   },
   {
     "name": {
@@ -285444,13 +286931,29 @@
       "en": "Wonbin"
     },
     "group": {
-      "ko": "ATBO"
+      "ko": "ATBO",
+      "en": "ATBO"
     },
     "active": true,
     "matchAliases": [
       "박원빈"
     ],
-    "id": "a1839"
+    "id": "a1839",
+    "co": "IST엔터테인먼트",
+    "color": [
+      166,
+      200,
+      137
+    ],
+    "bday": "2004.07.01",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/원빈(2004)",
+      "instagram": "https://www.instagram.com/_binwon"
+    }
   },
   {
     "name": {
@@ -285458,7 +286961,8 @@
       "en": "Taemin"
     },
     "group": {
-      "ko": "하이파이유니콘"
+      "ko": "하이파이유니콘",
+      "en": "Hi-Fi Un!corn"
     },
     "active": true,
     "id": "a1840",
@@ -285486,6 +286990,49 @@
         "src": "melon",
         "melonAlbumId": "11363302"
       }
-    ]
+    ],
+    "co": "FNC엔터테인먼트",
+    "color": [
+      200,
+      137,
+      150
+    ],
+    "bday": "2001.07.14",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/태민(Hi-Fi Un!corn)",
+      "instagram": "https://www.instagram.com/tae_miinnn"
+    }
+  },
+  {
+    "name": {
+      "ko": "효원",
+      "en": "Hyowon"
+    },
+    "group": {
+      "ko": "어센트",
+      "en": "ASC2NT"
+    },
+    "co": "뉴웨이즈컴퍼니",
+    "active": true,
+    "color": [
+      202,
+      206,
+      151
+    ],
+    "bday": "2002.11.22",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "sparkle": false,
+    "links": {
+      "namu": "https://namu.wiki/w/효원(ASC2NT)",
+      "instagram": "https://www.instagram.com/imhyowonn"
+    },
+    "id": "a1841"
   }
 ]
