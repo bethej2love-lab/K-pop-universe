@@ -13474,6 +13474,7 @@ function _comboRenderSuggest(q){
 async function _comboSearch(){
   if(_comboSel.length<2||!sb)return;
   const myReq=++_comboReq;
+  _comboViz={pair:null,year:null}; // 새 조합이면 그림 선택 해제
   _fpPush({type:'combo',members:_comboSel.map(m=>({name:m.name,group:m.group})),label:_comboSel.map(m=>m.name).join('·')}); // 발자국 기록
   _comboRenderResults('loading');
   const esc=s=>String(s).replace(/["\\]/g,'');
@@ -13481,12 +13482,21 @@ async function _comboSearch(){
   const _excl=q=>q.or('content_flag.is.null,content_flag.neq.무관').or('content_flag.is.null,content_flag.neq.보류').or('content_flag.is.null,content_flag.neq.hidden');
   // "전원이 함께"(교집합)만 보면 3명 이상에선 거의 안 나옴 → 선택 멤버가 엮인 영상을 싹(2명 이상) 가져온다:
   // 같은그룹=members[], 타그룹 게스트=with_members["이름(그룹)"], 커버=cover_of_members["이름(그룹)"]. OR로 한 번에.
+  // ⚠️ 멤버 **한 명씩** OR로 걸면(예전) 영상 많은 멤버 한 명의 단독 직캠이 최신순 600칸을 다 채워 정작 함께 나온 영상이
+  //    잘렸다(2026-10-15 실측: 민지·하니·해린·카리나 → 민지+하니 실제 12개 중 1개만). **두 명씩 짝지은 조건**으로 걸어
+  //    처음부터 함께 나온 영상만 받는다. 커버(cover_of_members)만 한 명 단위로 남긴다(커버 영상은 수가 적다).
   const ors=[];
-  _comboSel.forEach(m=>{
-    ors.push('and(members.cs.{"'+esc(m.name)+'"},group_ko.eq.'+_pgFilterVal(m.group)+')');
-    ors.push('with_members.cs.{"'+esc(m.name)+'('+esc(m.group)+')"}');
-    ors.push('cover_of_members.cs.{"'+esc(m.name)+'('+esc(m.group)+')"}');
-  });
+  const wk=m=>'"'+esc(m.name)+'('+esc(m.group)+')"';
+  for(let i=0;i<_comboSel.length;i++)for(let j=i+1;j<_comboSel.length;j++){
+    const a=_comboSel[i],b=_comboSel[j];
+    if(a.group===b.group)ors.push('and(group_ko.eq.'+_pgFilterVal(a.group)+',members.cs.{"'+esc(a.name)+'","'+esc(b.name)+'"})');
+    else{
+      ors.push('and(group_ko.eq.'+_pgFilterVal(a.group)+',members.cs.{"'+esc(a.name)+'"},with_members.cs.{'+wk(b)+'})');
+      ors.push('and(group_ko.eq.'+_pgFilterVal(b.group)+',members.cs.{"'+esc(b.name)+'"},with_members.cs.{'+wk(a)+'})');
+    }
+    ors.push('with_members.cs.{'+wk(a)+','+wk(b)+'}');
+  }
+  _comboSel.forEach(m=>ors.push('cover_of_members.cs.{'+wk(m)+'}'));
   let data=null;
   try{
     const r=await _excl(sb.from(_YT_TABLE).select(COLS).or(ors.join(',')))
@@ -13533,6 +13543,145 @@ function _comboApplyAndRender(){
   }else if(onlyBtn){onlyBtn.style.display='none';}
   _comboRenderResults(rows);
 }
+// ── 조합 그림(2026-10-15, 사용자 "the pudding처럼 데이터 시각화로") ──
+// 고른 멤버들 = 원 위의 노드(멤버 색, 크기 ∝ 엮인 영상 수), 두 사람 사이 선 = 함께 나온 영상 수(굵기·숫자),
+// 한 번도 안 엮인 쌍은 점선 — "아직 없음"도 이야기다. 아래 막대 = 연도별로 함께 나온 영상 수.
+// 선·막대를 누르면 목록이 그 쌍/그 해로 좁혀진다(다시 누르면 해제). 재요청 없음(_comboAllRows 재필터).
+let _comboViz={pair:null,year:null};
+function _comboMemColor(m){
+  const a=ARTISTS.find(x=>x.name.ko===m.name&&x.group?.ko===m.group);
+  const c=(a&&a.color)||(GROUPS[m.group]&&GROUPS[m.group].color)||[180,180,230];
+  return`rgb(${c[0]},${c[1]},${c[2]})`;
+}
+function _comboKey(m){return m.name+'|'+m.group;}
+function _comboVizRows(rows){
+  const {pair,year}=_comboViz;
+  return rows.filter(r=>{
+    if(pair){const ks=new Set(r.who.map(_comboKey));if(!pair.every(k=>ks.has(k)))return false;}
+    if(year&&String(r.v.published_at||'').slice(0,4)!==String(year))return false;
+    return true;
+  });
+}
+function _comboBuildFig(rows,onChange){
+  const isKo=currentLang==='ko';
+  const NS='http://www.w3.org/2000/svg';
+  const mk=(t,a)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);return e;};
+  const sel=_comboSel,n=sel.length;
+  const wrap=document.createElement('div');wrap.className='cb-fig';
+  // 집계
+  const nodeCnt={},pairCnt={},pairFirst={};
+  rows.forEach(r=>{
+    const ks=r.who.map(_comboKey);
+    ks.forEach(k=>{nodeCnt[k]=(nodeCnt[k]||0)+1;});
+    for(let i=0;i<ks.length;i++)for(let j=i+1;j<ks.length;j++){
+      const pk=[ks[i],ks[j]].sort().join('~');pairCnt[pk]=(pairCnt[pk]||0)+1;
+      const d=String(r.v.published_at||'').slice(0,10);if(d&&(!pairFirst[pk]||d<pairFirst[pk]))pairFirst[pk]=d;
+    }
+  });
+  const maxPair=Math.max(1,...Object.values(pairCnt)),maxNode=Math.max(1,...Object.values(nodeCnt));
+  // ── 연결 그림 ──
+  const W=Math.max(300,Math.min(560,(document.getElementById('combo-results')?.clientWidth||340))),H=n<=2?150:Math.min(250,W*0.62);
+  const cx=W/2,cy=H/2,rad=n<=2?W*0.3:Math.min(W*0.34,H*0.36);
+  const pos=sel.map((m,i)=>{
+    const ang=n===2?(i?0:Math.PI):(-Math.PI/2+i*2*Math.PI/n);
+    return{m,k:_comboKey(m),x:cx+rad*Math.cos(ang),y:cy+rad*Math.sin(ang)*(n===2?0:1),col:_comboMemColor(m),ang};
+  });
+  const svg=mk('svg',{viewBox:`0 0 ${W} ${H}`,width:W,height:H,class:'cb-svg',role:'img','aria-label':isKo?'멤버 사이 함께 나온 영상 수':'Videos together, per pair'});
+  const defs=mk('defs',{});svg.appendChild(defs);
+  const edges=mk('g',{class:'cb-edges'}),lbls=mk('g',{class:'cb-elbls'}),nodes=mk('g',{class:'cb-nodes'});
+  for(let i=0;i<n;i++)for(let j=i+1;j<n;j++){
+    const a=pos[i],b=pos[j],pk=[a.k,b.k].sort().join('~'),c=pairCnt[pk]||0;
+    // 살짝 바깥으로 휜 곡선 — 직선 다발보다 덜 딱딱하다
+    const mx=(a.x+b.x)/2,my=(a.y+b.y)/2,dx=mx-cx,dy=my-cy,dl=Math.hypot(dx,dy)||1,bend=n<=2?-18:8;
+    let qx=mx+dx/dl*bend,qy=my+dy/dl*bend+(n<=2?bend:0);
+    // 중점이 원 중심에 걸리는 대각선(짝수 명)은 바깥 방향이 없다 — 숫자끼리 겹치지 않게 서로 반대로 휜다
+    if(n>2&&Math.hypot(dx,dy)<rad*0.2){const ex=b.x-a.x,ey=b.y-a.y,el=Math.hypot(ex,ey)||1,sg=(i%2?1:-1)*rad*0.55;qx=mx-ey/el*sg;qy=my+ex/el*sg;}
+    const gid='cbg'+i+'_'+j;
+    const gr=mk('linearGradient',{id:gid,gradientUnits:'userSpaceOnUse',x1:a.x,y1:a.y,x2:b.x,y2:b.y});
+    gr.appendChild(mk('stop',{offset:'0','stop-color':a.col}));gr.appendChild(mk('stop',{offset:'1','stop-color':b.col}));defs.appendChild(gr);
+    const g=mk('g',{class:'cb-edge'+(c?'':' is-zero')+(_comboViz.pair&&_comboViz.pair.slice().sort().join('~')===pk?' is-on':'')});
+    const d=`M${a.x.toFixed(1)},${a.y.toFixed(1)} Q${qx.toFixed(1)},${qy.toFixed(1)} ${b.x.toFixed(1)},${b.y.toFixed(1)}`;
+    g.appendChild(mk('path',{d,class:'cb-ln',stroke:c?`url(#${gid})`:'rgba(255,255,255,0.25)','stroke-width':c?(1.2+7*Math.sqrt(c/maxPair)).toFixed(2):1}));
+    g.appendChild(mk('path',{d,class:'cb-hit'}));
+    if(c){
+      // 숫자는 곡선의 한가운데(t=.5) — 2차 베지어 중점
+      const tx=.25*a.x+.5*qx+.25*b.x,ty=.25*a.y+.5*qy+.25*b.y;
+      const tg=mk('g',{class:'cb-elbl'+(g.classList.contains('is-on')?' is-on':'')});
+      const t=mk('text',{x:tx.toFixed(1),y:(ty+3.5).toFixed(1),'text-anchor':'middle'});t.textContent=c;
+      tg.appendChild(t);lbls.appendChild(tg);
+      g.addEventListener('click',e=>{e.stopPropagation();const same=_comboViz.pair&&_comboViz.pair.slice().sort().join('~')===pk;_comboViz.pair=same?null:[a.k,b.k];onChange();});
+    }
+    edges.appendChild(g);
+  }
+  pos.forEach(p=>{
+    const c=nodeCnt[p.k]||0,r=7+9*Math.sqrt(c/maxNode);
+    const g=mk('g',{class:'cb-node'+(_comboViz.pair&&!_comboViz.pair.includes(p.k)?' is-dim':''),style:`--c:${p.col}`});
+    g.appendChild(mk('circle',{cx:p.x,cy:p.y,r:r+5,class:'cb-halo'}));
+    g.appendChild(mk('circle',{cx:p.x,cy:p.y,r,class:'cb-dot'}));
+    // 이름은 원 바깥쪽으로
+    const out=n===2?(p.ang===0?1:-1):0;
+    const lx=n===2?p.x+out*(r+8):p.x+Math.cos(p.ang)*(r+10),ly=n===2?p.y+4:p.y+Math.sin(p.ang)*(r+10)+4;
+    const anchor=n===2?(out>0?'start':'end'):Math.abs(Math.cos(p.ang))<.3?'middle':Math.cos(p.ang)>0?'start':'end';
+    const t=mk('text',{x:lx.toFixed(1),y:(ly+(n>2&&Math.sin(p.ang)>.7?6:n>2&&Math.sin(p.ang)<-.7?-2:0)).toFixed(1),'text-anchor':anchor,class:'cb-name'});
+    const a=ARTISTS.find(x=>x.name.ko===p.m.name&&x.group?.ko===p.m.group);
+    t.textContent=a?_dispName(a):p.m.name;
+    const sub=mk('tspan',{class:'cb-cnt',dx:'4'});sub.textContent=c;t.appendChild(sub);
+    g.appendChild(t);nodes.appendChild(g);
+  });
+  svg.appendChild(edges);svg.appendChild(lbls);svg.appendChild(nodes);
+  svg.classList.toggle('has-on',!!_comboViz.pair);
+  const netWrap=document.createElement('div');netWrap.className='cb-net';netWrap.appendChild(svg);wrap.appendChild(netWrap);
+  // ── 연도별 막대 ──
+  const yc={};const yAll={};
+  const pairRows=_comboViz.pair?rows.filter(r=>{const ks=new Set(r.who.map(_comboKey));return _comboViz.pair.every(k=>ks.has(k));}):rows;
+  rows.forEach(r=>{const y=+String(r.v.published_at||'').slice(0,4);if(y)yAll[y]=(yAll[y]||0)+1;});
+  pairRows.forEach(r=>{const y=+String(r.v.published_at||'').slice(0,4);if(y)yc[y]=(yc[y]||0)+1;});
+  const ys=Object.keys(yAll).map(Number);
+  if(ys.length){
+    const y0=Math.min(...ys),y1=Math.max(new Date().getFullYear(),...ys),nY=y1-y0+1,maxY=Math.max(...Object.values(yAll));
+    const BW=W,BH=78,bw=Math.min(28,(BW-8)/nY-3),gap=Math.min(10,((BW-8)-bw*nY)/Math.max(1,nY-1)),off=(BW-(bw*nY+gap*(nY-1)))/2; // 해가 적으면 가운데로 모은다
+    const bs=mk('svg',{viewBox:`0 0 ${BW} ${BH}`,width:BW,height:BH,class:'cb-bars'});
+    for(let i=0;i<nY;i++){
+      const yr=y0+i,all=yAll[yr]||0,cur=yc[yr]||0,x=off+i*(bw+gap);
+      const hA=all?Math.max(2,(BH-26)*all/maxY):0,hC=cur?Math.max(2,(BH-26)*cur/maxY):0;
+      const g=mk('g',{class:'cb-bar'+(_comboViz.year===yr?' is-on':'')+(_comboViz.year&&_comboViz.year!==yr?' is-dim':'')});
+      g.appendChild(mk('rect',{x,y:BH-14-hA,width:bw,height:hA||0,rx:2,class:'cb-bar-bg'}));
+      if(cur)g.appendChild(mk('rect',{x,y:BH-14-hC,width:bw,height:hC,rx:2,class:'cb-bar-fg'}));
+      if(cur){const t=mk('text',{x:x+bw/2,y:BH-17-Math.max(hA,hC),'text-anchor':'middle',class:'cb-bar-n'});t.textContent=cur;g.appendChild(t);}
+      if(i===0||i===nY-1||yr%5===0||nY<=8){const t=mk('text',{x:x+bw/2,y:BH-3,'text-anchor':'middle',class:'cb-bar-y'});t.textContent=nY>8?"'"+String(yr).slice(2):yr;g.appendChild(t);}
+      g.appendChild(mk('rect',{x:x-gap/2,y:0,width:bw+gap,height:BH,class:'cb-hit'}));
+      if(all)g.addEventListener('click',()=>{_comboViz.year=_comboViz.year===yr?null:yr;onChange();});
+      bs.appendChild(g);
+    }
+    const bw2=document.createElement('div');bw2.className='cb-barwrap';bw2.appendChild(bs);wrap.appendChild(bw2);
+  }
+  // ── 한 줄 요약 + 지금 거른 것 ──
+  const cap=document.createElement('div');cap.className='cb-cap';
+  const best=Object.entries(pairCnt).sort((a,b)=>b[1]-a[1])[0];
+  const nm=k=>{const m=sel.find(x=>_comboKey(x)===k);const a=m&&ARTISTS.find(x=>x.name.ko===m.name&&x.group?.ko===m.group);return a?_dispName(a):(m?m.name:k);};
+  const fmtD=d=>d?d.slice(0,4)+'.'+d.slice(5,7):'';
+  let txt='';
+  if(_comboViz.pair||_comboViz.year){
+    const parts=[];if(_comboViz.pair)parts.push(_comboViz.pair.map(nm).join(' · '));if(_comboViz.year)parts.push(_comboViz.year+(isKo?'년':''));
+    const cnt=_comboVizRows(rows).length;
+    txt=parts.join(' / ')+(isKo?` — ${cnt}개`:` — ${cnt}`);
+    if(_comboViz.pair){const f=pairFirst[_comboViz.pair.slice().sort().join('~')];if(f)txt+=(isKo?` · 첫 만남 ${fmtD(f)}`:` · first ${fmtD(f)}`);}
+  }else if(best&&n>2){
+    const [a,b]=best[0].split('~');
+    txt=isKo?`가장 자주 함께: ${nm(a)} · ${nm(b)} ${best[1]}개 · 첫 만남 ${fmtD(pairFirst[best[0]])}`:`Most together: ${nm(a)} · ${nm(b)} (${best[1]}) · first ${fmtD(pairFirst[best[0]])}`;
+  }else if(best){
+    txt=isKo?`함께 ${best[1]}개 · 첫 만남 ${fmtD(pairFirst[best[0]])}`:`${best[1]} together · first ${fmtD(pairFirst[best[0]])}`;
+  }
+  const ct=document.createElement('span');ct.textContent=txt;cap.appendChild(ct);
+  if(_comboViz.pair||_comboViz.year){
+    const x=document.createElement('button');x.type='button';x.className='cb-clear';x.textContent=isKo?'전체':'All';
+    x.addEventListener('click',()=>{_comboViz={pair:null,year:null};onChange();});cap.appendChild(x);
+  }else if(!_comboViz.pair){
+    const h=document.createElement('span');h.className='cb-hint';h.textContent=isKo?'선·막대를 누르면 거기만':'tap a line or bar';cap.appendChild(h);
+  }
+  wrap.appendChild(cap);
+  return wrap;
+}
 function _comboRenderResults(rows){
   const el=document.getElementById('combo-results');if(!el)return;
   el.innerHTML='';
@@ -13543,6 +13692,17 @@ function _comboRenderResults(rows){
   // 카드 안 영상 그리드와 동일하게(제각각 크기+쇼츠 비율+제목/with·원곡 2줄) — buildVideoSection 재사용(2026-09-02 제보).
   // 자체그룹 멤버=members[]→"이름(그룹)", with_members는 그대로. 개별출연은 함께한 멤버 줄 생략.
   const _cw=v=>{ if(v.content_flag==='개별출연')return[]; const o=[]; (v.members||[]).forEach(n=>o.push(v.group_ko?(n+'('+v.group_ko+')'):n)); (v.with_members||[]).forEach(n=>o.push(n)); return o; };
+  // 그림(연결·연도) → 그 아래 목록. 선·막대 선택은 목록만 다시 거른다(재요청 없음).
+  const allRows=rows;
+  const draw=()=>{
+    el.innerHTML='';
+    try{el.appendChild(_comboBuildFig(allRows,draw));}catch(e){console.warn('[combo] 그림 실패 — 목록만',e);}
+    const list=document.createElement('div');list.className='cb-list';el.appendChild(list);
+    _comboRenderList(_comboVizRows(allRows),list,_cw);
+  };
+  draw();
+}
+function _comboRenderList(rows,el,_cw){
   const songs=rows.map(r=>{const v=r.v;return{
     t:v.title,u:(_isShortV(v)?'https://www.youtube.com/shorts/':'https://www.youtube.com/watch?v=')+v.id,
     thumb:v.thumb||'',category:v.category,type:v.category,is_short:v.is_short,content_flag:v.content_flag,

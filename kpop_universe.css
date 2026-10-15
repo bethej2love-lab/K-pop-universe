@@ -4406,3 +4406,36 @@
 .mx-fig-leg i.ln{width:12px;height:1.6px;border-radius:1px;background:rgba(255,255,255,0.85);}
 @media (prefers-reduced-motion: reduce){.mx-dot,.mx-med{transition:none;}}
 .mx-tip[hidden]{display:none;}
+
+/* ── 멤버 조합 그림(2026-10-15) — 원 위 멤버(멤버 색 + 은은한 후광), 쌍마다 두 멤버 색 그라데이션 곡선, 0회 쌍은 점선.
+   아래 연도 막대(배경=전체, 앞=선택한 쌍). .cs-*·.mx-*와 같은 문법(얇은 격자·작은 숫자·장식 없음). */
+.cb-fig{margin:2px 0 12px;padding-bottom:10px;border-bottom:1px solid rgba(255,255,255,0.07);}
+.cb-net,.cb-barwrap{display:flex;justify-content:center;}
+.cb-svg,.cb-bars{display:block;max-width:100%;height:auto;overflow:visible;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
+.cb-ln{fill:none;stroke-linecap:round;opacity:.8;transition:opacity .2s,stroke-width .2s;}
+.cb-edge.is-zero .cb-ln{stroke-dasharray:2 4;opacity:1;}
+.cb-hit{fill:none;stroke:transparent;stroke-width:16;cursor:pointer;}
+.cb-bars .cb-hit{fill:transparent;stroke:none;}
+.cb-edge:not(.is-zero):hover .cb-ln{opacity:1;}
+.cb-svg.has-on .cb-edge:not(.is-on) .cb-ln{opacity:.15;}
+.cb-edge.is-on .cb-ln{opacity:1;filter:drop-shadow(0 0 5px rgba(255,255,255,.35));}
+.cb-elbl text{fill:#fff;font-size:10.5px;font-weight:600;font-variant-numeric:tabular-nums;paint-order:stroke;stroke:#0e0e12;stroke-width:3.5px;stroke-linejoin:round;pointer-events:none;}
+.cb-svg.has-on .cb-elbl:not(.is-on) text{opacity:.25;}
+.cb-halo{fill:var(--c);opacity:.16;}
+.cb-dot{fill:var(--c);stroke:rgba(255,255,255,.55);stroke-width:1;}
+.cb-name{fill:rgba(255,255,255,.92);font-size:12px;font-weight:600;letter-spacing:-0.01em;paint-order:stroke;stroke:#0e0e12;stroke-width:3px;}
+.cb-cnt{fill:rgba(255,255,255,.45);font-size:10px;font-weight:400;font-variant-numeric:tabular-nums;}
+.cb-node{transition:opacity .2s;}
+.cb-node.is-dim{opacity:.35;}
+.cb-barwrap{margin-top:22px;}
+.cb-bar-bg{fill:rgba(255,255,255,0.1);}
+.cb-bar-fg{fill:rgba(190,200,255,0.75);}
+.cb-svg.has-on~* .cb-bar-fg{fill:rgba(255,255,255,0.85);}
+.cb-bar.is-on .cb-bar-fg,.cb-bar.is-on .cb-bar-bg{fill:#fff;}
+.cb-bar.is-dim{opacity:.35;}
+.cb-bar-n{fill:rgba(255,255,255,0.6);font-size:9px;font-variant-numeric:tabular-nums;}
+.cb-bar-y{fill:rgba(255,255,255,0.35);font-size:9px;font-variant-numeric:tabular-nums;}
+.cb-cap{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:4px 10px;margin-top:8px;font-size:11.5px;color:rgba(255,255,255,0.72);text-align:center;}
+.cb-hint{color:rgba(255,255,255,0.35);font-size:10.5px;}
+.cb-clear{all:unset;cursor:pointer;font-size:11px;padding:2px 9px;border-radius:999px;border:1px solid rgba(255,255,255,0.22);color:rgba(255,255,255,0.8);}
+.cb-clear:hover{background:rgba(255,255,255,0.08);}
