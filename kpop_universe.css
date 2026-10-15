@@ -1355,6 +1355,8 @@
   }
   #member-panel.open~#tt-collapse{opacity:1;pointer-events:all;transform:translateY(-50%) translateX(0);}
   #tt-collapse:hover{background:rgba(40,50,80,0.96);color:rgba(200,220,255,0.95);}
+  /* 라이트박스 열리면 버튼이 라이트박스에 가려지므로 멤버 카드 영역 안쪽으로 22px 이동 */
+  body:has(#yt-lightbox.open) #tt-collapse{right:858px;}
   /* 접기 탭: conn-panel 왼쪽 중간 (동일 패턴, conn-panel 자기 이동거리(280+640px)만큼 같이 슬라이드) */
   #conn-collapse{
     position:fixed;right:1320px;top:50%;
@@ -1693,7 +1695,7 @@
     position:absolute;left:0;height:3px;z-index:3;
     background:#f00;pointer-events:none;display:none;border-radius:0 1px 1px 0;
   }
-  .gc-ch-item.is-short .gc-ch-thumb{aspect-ratio:9/16;object-fit:contain;position:relative;z-index:1;}
+  .gc-ch-item.is-short .gc-ch-thumb{aspect-ratio:1;object-fit:cover;position:relative;z-index:1;}
   /* 세로 원본이 없어 가로 썸네일(좌우 검은 띠 포함)로 폴백한 쇼츠 — cover로 가운데 세로 화면만 남긴다(_shortThumbFallback) */
   .gc-ch-item.is-short .gc-ch-thumb.is-fallback{object-fit:cover;}
   .gc-ch-item.is-short .gc-ch-thumb-bg{position:absolute;inset:0;background-size:cover;background-position:center;filter:blur(18px) brightness(0.45);transform:scale(1.08);z-index:0;}
