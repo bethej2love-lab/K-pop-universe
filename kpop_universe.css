@@ -972,9 +972,12 @@
     #yt-lightbox.lb-browse #yt-lb-main{flex:1;min-width:0;}
     #yt-lightbox.lb-browse #yt-lb-uplist{width:320px;flex-shrink:0;max-height:min(80vh,720px);overflow-y:auto;padding-left:2px;overscroll-behavior:contain;will-change:transform;}
     #yt-lightbox.lb-browse #yt-lb-uplist-scroll{padding-bottom:8px;}
+    /* 카드 1개(side-panel)만 열렸을 때: wrap을 카드 방향(오른쪽)으로 붙임 — 중앙 정렬이면 카드와 uplist 사이 여백이 생김 */
+    body:has(#side-panel.open) #yt-lightbox.lb-browse{justify-content:flex-end;}
+    body:has(#side-panel.open) #yt-lightbox.lb-browse #yt-lb-wrap{max-width:100%;}
     /* 카드 2개 이상 열려 공간이 좁을 때: Up Next를 오른쪽 대신 영상 아래로 */
     body:has(#member-panel.open) #yt-lightbox.lb-browse,
-    body:has(#conn-panel.open) #yt-lightbox.lb-browse{align-items:flex-start;overflow-y:auto;padding:20px 0 32px;}
+    body:has(#conn-panel.open) #yt-lightbox.lb-browse{align-items:flex-start;overflow-y:auto;padding:20px 0 32px;justify-content:center;}
     body:has(#member-panel.open) #yt-lightbox.lb-browse #yt-lb-wrap,
     body:has(#conn-panel.open) #yt-lightbox.lb-browse #yt-lb-wrap{flex-direction:column;width:min(94%,640px);gap:16px;}
     body:has(#member-panel.open) #yt-lightbox.lb-browse #yt-lb-uplist,
