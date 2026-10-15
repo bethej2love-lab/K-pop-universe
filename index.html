@@ -4924,7 +4924,10 @@ function _fetchSoloCamThumbs(a){
       const{data,error}=await q.order('published_at',{ascending:false}).limit(60);
       if(error||!data)return [];
       const isCam=v=>_isFancamLike(v.title)&&!_FANCAM_PROMO_RE.test(v.title||'');
-      return data.filter(v=>v.thumb).sort((x,y)=>(isCam(y)-isCam(x))||((y.category==='live')-(x.category==='live'))||(!!x.is_short-!!y.is_short)||((y.view_count||0)-(x.view_count||0)));
+      // 가로 우선 정렬: is_short=false가 앞에, 같은 조건이면 직캠>라이브>조회수 순
+      const horiz=data.filter(v=>v.thumb&&!v.is_short);
+      const pool=(horiz.length?horiz:data.filter(v=>v.thumb));
+      return pool.sort((x,y)=>(isCam(y)-isCam(x))||((y.category==='live')-(x.category==='live'))||((y.view_count||0)-(x.view_count||0)));
     }catch(e){return [];}
   })();
   _soloCamMemo.set(a,p);
@@ -21652,7 +21655,7 @@ function _buildFeedForYouAnniv(){
       thumb:()=>Promise.resolve(_fetchArtistPicAnyGroup(a)).then(async pic=>{
         if(pic)return pic;
         const gko=_ytGroupKoFor(a);const mko=a.name.ko;
-        try{if(sb&&gko&&mko){const{data}=await sb.from(_YT_TABLE).select('id,thumb,is_short').eq('category','live').eq('group_ko',gko).eq('members',`{${_pgFilterVal(mko)}}`).or('content_flag.is.null,content_flag.neq.보류').or('content_flag.is.null,content_flag.neq.hidden').order('view_count',{ascending:false}).limit(6);const pick=data?.find(v=>v.thumb);if(pick)return pick.thumb;}}catch(_){}
+        try{if(sb&&gko&&mko){const{data}=await sb.from(_YT_TABLE).select('id,thumb,is_short').eq('category','live').eq('group_ko',gko).eq('members',`{${_pgFilterVal(mko)}}`).or('content_flag.is.null,content_flag.neq.보류').or('content_flag.is.null,content_flag.neq.hidden').order('view_count',{ascending:false}).limit(10);const pick=data?.find(v=>v.thumb&&!v.is_short)||data?.find(v=>v.thumb);if(pick)return pick.thumb;}}catch(_){}
         return _fetchTopVideoThumb(gko,mko);
       })});
   });
@@ -21871,8 +21874,9 @@ async function _buildFeedDailyNews(){
     const _agoLabel=(d)=>{const diff=Math.round((new Date(today)-new Date(d))/86400000);return diff<=0?'':(currentLang==='ko'?` · ${diff}일 전`:` · ${diff}d ago`);};
     // ⚠️ 앨범('💿 신보' 줄)은 2026-10-12에 뺐다 — 같은 섹션 아래 발매 앨범 블록(#feed-newalbum)이 같은 앨범을
     //    커버 그리드로 보여준다. 여기 다시 넣으면 한 섹션 안에서 같은 앨범이 두 번 나온다.
-    const [winsRes,mvRes,milesRes]=await Promise.all([
-      sb.from('music_show_wins').select('*').gte('win_date',sevenDaysAgo).lte('win_date',today).order('win_date',{ascending:false}).order('show',{ascending:true}),
+    const winsRes=await sb.from('music_show_wins').select('*').gte('win_date',sevenDaysAgo).lte('win_date',today).order('win_date',{ascending:false}).order('show',{ascending:true}).then(r=>r,()=>({data:[]}));
+    const _winGkos=[...new Set((winsRes.data||[]).map(w=>w.group_ko))].filter(Boolean);
+    const [mvRes,milesRes,winThumbRes]=await Promise.all([
       sb.from(_YT_TABLE).select('id,title,thumb,is_short,group_ko,content_flag,published_at')
         .gte('published_at',sevenDaysAgo).lt('published_at',tomorrow)
         .or('title.ilike.%m/v%,title.ilike.%[mv]%,title.ilike.% mv%,title.ilike.%mv %,title.ilike.%music video%,title.ilike.%뮤직비디오%,title.ilike.%뮤비%,title.ilike.%리릭%,title.ilike.%lyric%,title.ilike.%티저%,title.ilike.%teaser%,title.ilike.%예고편%')
@@ -21882,13 +21886,17 @@ async function _buildFeedDailyNews(){
       sb.from('yt_view_milestones').select('*,yt_channel_videos!inner(title,thumb,group_ko,published_at,is_short)')
         .eq('crossed_at',today).eq('seeded',false).limit(300)
         // ⚠️ .catch가 아니라 .then(성공,실패) — Supabase 쿼리 빌더는 thenable일 뿐 Promise가 아니라 .catch가 없다.
-        //    .catch를 쓰면 여기서 TypeError가 나 선반 전체가 사라졌다(9/27 마일스톤 추가 직후부터, 2026-09-28 발견).
-        .then(r=>r,()=>({data:[]}))
+        .then(r=>r,()=>({data:[]})),
+      _winGkos.length
+        ? sb.from(_YT_TABLE).select('id,thumb,group_ko').in('group_ko',_winGkos).eq('is_short',false).order('view_count',{ascending:false}).limit(_winGkos.length*5).then(r=>r,()=>({data:[]}))
+        : Promise.resolve({data:[]})
     ]);
+    const _winThumbMap=new Map();
+    (winThumbRes.data||[]).forEach(v=>{if(!_winThumbMap.has(v.group_ko))_winThumbMap.set(v.group_ko,v.thumb);});
     const items=[];
     (winsRes.data||[]).forEach(w=>{
       const sub=_gLabelKo(w.group_ko)+(w.member_ko?` · ${w.member_ko}`:'')+` · ${w.show}`+_agoLabel(w.win_date);
-      items.push({type:'win',title:w.song_title||'',sub,thumb:null,
+      items.push({type:'win',title:w.song_title||'',sub,thumb:_winThumbMap.get(w.group_ko)||null,
         nav:()=>_feedNav(()=>{if(GROUPS[w.group_ko]){if(isMob())showGC(w.group_ko,window.innerWidth/2,window.innerHeight*0.4,false,false,null,false);else showGC(w.group_ko,window.innerWidth/2,window.innerHeight/2);}})});
     });
     (mvRes.data||[]).forEach(v=>{
@@ -27054,7 +27062,9 @@ function _pickMainChVid(videos){
   if(!videos.length)return null;
   // 뮤비·예능/연기(other)는 대표영상 후보에서 제외 — 라이브(직캠)가 대표 위주가 되도록.
   const pool=videos.filter(v=>v.category!=='mv'&&v.category!=='other');
-  const base=pool.length?pool:videos;
+  const base0=pool.length?pool:videos;
+  // 가로 영상 우선 — 세로 직캠이 프로필 원에 들어가면 비율 엉망(사용자 제보 2026-10-15)
+  const base=base0.filter(v=>!v.is_short).length?base0.filter(v=>!v.is_short):base0;
   // 쇼츠는 스크랩 URL이 watch?v=가 아니라 youtube.com/shorts/ 형식이라 조회 키를 category에 맞게 만들어야 함
   const vidUrl=v=>_isShortV(v)?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;
   const maxC=Math.max(0,...base.map(v=>_scrapCounts.get(vidUrl(v))||0));

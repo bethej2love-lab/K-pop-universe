@@ -3777,7 +3777,7 @@
   /* 둘째 서브줄(생년월일)은 윗줄(그룹명)에 더 붙여서 한 덩어리로 읽히게 — item gap 7px를 상쇄 */
   .feed-strip-sub+.feed-strip-sub{margin-top:-7px;}
   .feed-strip-sub{font-size:var(--fz-meta);color:rgba(120,148,200,0.61);text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:78px;margin-top:-4px;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
-  .feed-strip-date{font-size:9px;color:rgba(120,148,200,0.35);text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:78px;margin-top:-5px;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
+  .feed-strip-date{font-size:9px;color:rgba(180,205,240,0.72);text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:78px;margin-top:-5px;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
   /* Discovery 피드(인스타 피드 스타일 세로 스크롤 큰 카드) */
   .feed-card{cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><path d='M11,1 L12.3,9.7 L21,11 L12.3,12.3 L11,21 L9.7,12.3 L1,11 L9.7,9.7Z' fill='%23FFB0D0' opacity='.97'/></svg>") 11 11,pointer;position:relative;overflow:hidden;-webkit-tap-highlight-color:transparent;border-bottom:0.5px solid rgba(255,255,255,0.06);transition:background .13s;animation:feed-card-appear .28s ease both;}
   /* 2열 그리드(2026-08-21, Fable UX 감사 반영 — "화면당 1장은 발견량이 너무 적다") — 풀블리드 1열 목록에서
