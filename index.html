@@ -19780,14 +19780,15 @@ function _joinPresence(kind,roomKey){
 }
 
 // ── 즐겨찾기 인기 지표 — 순위/비교 없이, 지금 열린 카드 하나에만 조용히 숫자만 ──────
-let _favCountReqId=0;
+// 요청 번호는 카드 종류별로(2026-10-15) — 하나를 같이 쓰면 그룹 카드가 나중에 요청할 때 멤버 응답이 버려져 줄이 안 떴다
+const _favCountReqId={group:0,member:0};
 async function _showFavCount(kind,key,rpcFn){
   _gcStatusState[kind].favcount='';
   _renderGcStatusLine(kind);
   if(!sb)return;
-  const reqId=++_favCountReqId;
+  const reqId=++_favCountReqId[kind];
   const{data,error}=await sb.rpc(rpcFn,kind==='group'?{p_group_ko:key}:{p_member_key:key});
-  if(reqId!==_favCountReqId)return; // 그 사이 다른 카드로 넘어감 — 오래된 응답은 무시
+  if(reqId!==_favCountReqId[kind])return; // 그 사이 다른 카드로 넘어감 — 오래된 응답은 무시
   if(error){console.error('fav count fetch failed',error);return;}
   if(data>0){
     _gcStatusState[kind].favcount='<span class="favcount-dot"></span>'+(currentLang==='ko'?`${data}명이 좋아해요`:`${data} like this`);
@@ -26354,7 +26355,7 @@ _totopBtn.addEventListener('click',e=>{
       <!-- 라벨을 span으로 감싸는 이유: 밑줄(활성 표시)이 **버튼 폭이 아니라 글자 폭**에 맞아야 X처럼
            보인다. 버튼은 반반을 차지하고, 밑줄은 그 안의 글자 밑에만 깔린다(2026-08-31 사용자 요청). -->
       <button id="feed-tab-rec" class="feed-tab active" type="button"><span>For You</span></button>
-      <button id="feed-tab-disc" class="feed-tab" type="button"><span>탐색</span></button>
+      <button id="feed-tab-disc" class="feed-tab" type="button"><span>발견</span></button>
     </div>
     <!-- For You = "나": 즐겨찾기 신작 → 이어보기 (2026-08-30 재배치. Trend는 "전체·탐색"이라 Discover로 이동). -->
     <div id="feed-pane-rec" class="feed-pane">
