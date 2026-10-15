@@ -749,11 +749,8 @@
       </div>
       <div class="mx-chips">
         <span class="mx-chip-lbl">생년</span>
-        <button class="mx-chip active" data-mx-year="" type="button">전체</button>
-        <button class="mx-chip" data-mx-year="~1999" type="button">~1999</button>
-        <button class="mx-chip" data-mx-year="2000-2004" type="button">2000-04</button>
-        <button class="mx-chip" data-mx-year="2005-2009" type="button">2005-09</button>
-        <button class="mx-chip" data-mx-year="2010~" type="button">2010~</button>
+        <input id="mx-year-input" class="mx-year-input" type="number" min="1985" max="2012" placeholder="예: 1995">
+        <button id="mx-year-clear" class="mx-year-clear" type="button" style="display:none" aria-label="생년 초기화">✕</button>
       </div>
     </div>
     <div class="mx-result-bar"><span id="mx-count" class="mx-count"></span></div>
@@ -15596,7 +15593,7 @@ function _mxParseFreeText(q){
 }
 function _mxSyncChips(){
   document.querySelectorAll('[data-mx-gender]').forEach(b=>b.classList.toggle('active',b.dataset.mxGender===_mxState.gender));
-  document.querySelectorAll('[data-mx-year]').forEach(b=>b.classList.toggle('active',b.dataset.mxYear===_mxState.year));
+  const yi=document.getElementById('mx-year-input');if(yi){yi.value=_mxState.year||'';document.getElementById('mx-year-clear').style.display=_mxState.year?'':'none';}
 }
 // ── 멤버 탐색 그림(2026-10-15, 사용자 "the pudding처럼 — 읽을거리보다 데이터 시각화, 심미적으로도 아름답게") ──
 // 데뷔 연도 × 데뷔 나이 산점도. 점 하나 = 멤버 한 명(생일·그룹 데뷔일이 있는 사람, 약 1,500명).
@@ -15780,6 +15777,9 @@ function _mxRender(){
     const avDiv=document.createElement('div');avDiv.className='mx-card-av';avDiv.style.background=col;
     const letter=document.createElement('span');letter.className='mx-card-av-letter';letter.textContent=(a.name.ko||'?')[0];
     avDiv.appendChild(letter);
+    {const _loadMxPic=u=>{if(!u)return;const img=new Image();img.alt='';img.referrerPolicy='no-referrer';img.style.cssText='width:100%;height:100%;object-fit:cover;';img.onload=()=>avDiv.replaceChildren(img);img.src=u;};
+     const sync=_instaPicCache.get(_picKey(a.name.ko,a.group.ko))||_instaPicCache.get(_picKey(a.name.ko,''));
+     if(sync)_loadMxPic(sync);else _srAvUrl(a).then(_loadMxPic).catch(()=>{});}
     const nmDiv=document.createElement('div');nmDiv.className='mx-card-name';nmDiv.textContent=a.name.ko;
     const gpDiv=document.createElement('div');gpDiv.className='mx-card-group';gpDiv.textContent=a.group.ko;
     const mtDiv=document.createElement('div');mtDiv.className='mx-card-meta';
@@ -15801,11 +15801,17 @@ document.querySelectorAll('[data-mx-gender]').forEach(b=>b.addEventListener('cli
   document.querySelectorAll('[data-mx-gender]').forEach(x=>x.classList.toggle('active',x.dataset.mxGender===_mxState.gender));
   _mxRender();
 }));
-document.querySelectorAll('[data-mx-year]').forEach(b=>b.addEventListener('click',()=>{
-  _mxState.year=b.dataset.mxYear;
-  document.querySelectorAll('[data-mx-year]').forEach(x=>x.classList.toggle('active',x.dataset.mxYear===_mxState.year));
+document.getElementById('mx-year-input')?.addEventListener('input',e=>{
+  const v=e.target.value.trim();
+  _mxState.year=(/^\d{4}$/.test(v))?v:'';
+  document.getElementById('mx-year-clear').style.display=_mxState.year?'':'none';
   _mxRender();
-}));
+});
+document.getElementById('mx-year-clear')?.addEventListener('click',()=>{
+  const yi=document.getElementById('mx-year-input');if(yi)yi.value='';
+  _mxState.year='';document.getElementById('mx-year-clear').style.display='none';
+  _mxRender();
+});
 document.getElementById('mx-close')?.addEventListener('click',_closeMemberExplorer);
 document.getElementById('mx-overlay')?.addEventListener('click',e=>{if(e.target===e.currentTarget)_closeMemberExplorer();});
 // ⚠️ #mx-open-btn은 이 스크립트보다 **아래**(탐색 패널 마크업)에 있어서, 여기서 바로 찾으면 null → `?.`가 조용히 넘어가
