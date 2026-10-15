@@ -366,6 +366,9 @@
     <div class="sp-sec-lbl">YouTube 영상 관리</div>
     <!-- 패널 열기 6개 — 흩어져 있던 걸 최상단 2열 그리드로 모음(설정패널 개선 6). DB에 쓰는 실행
          버튼(.sp-yt-sync)과 달리 이건 '패널만 여는' 버튼이라 .sp-open-btn로 모양을 분리한다. -->
+    <div class="sp-memo-wrap">
+      <textarea id="sp-memo" class="sp-yt-key" rows="4" placeholder="메모" style="resize:vertical;font-family:inherit;margin-bottom:8px;"></textarea>
+    </div>
     <div class="sp-open-grid">
       <button class="sp-open-btn sp-open-primary" id="sp-adm-home-btn">🏠 관리자 홈</button>
       <button class="sp-open-btn" id="sp-vm-btn">🎬 영상 관리</button>
@@ -27063,6 +27066,8 @@ function _updateAdminUI(){
   // 어드민이면 body에 표식 — 데스크톱에서 설정 패널(33버튼)이 오른쪽 카드를 통째로 가리던 문제 스톱갭:
   // CSS(body.is-admin #settings-panel)로 설정 패널을 왼쪽에 도킹해 카드는 오른쪽에 그대로 보이게 한다(2026-08-30).
   document.body.classList.toggle('is-admin',_isAdmin());
+  const memo=document.getElementById('sp-memo');
+  if(memo&&!memo._bound){memo._bound=true;memo.value=localStorage.getItem('adm_memo')||'';memo.addEventListener('input',()=>localStorage.setItem('adm_memo',memo.value));}
 }
 // 관리자 전용 도구(동기화/스윕/태깅 모달 등)는 admin.js에 분리해뒀다가, 관리자로 확인될 때만 불러온다 —
 // 일반 방문자는 이 코드를 아예 다운로드하지 않음. 같은 전역 스코프를 쓰는 일반 스크립트라 로드가 끝나야
