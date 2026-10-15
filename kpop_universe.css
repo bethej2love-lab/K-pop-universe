@@ -3855,6 +3855,9 @@
   .feed-news-hero .fnh-cap{padding:10px 14px 12px;}
   /* 배지 썸네일 오버레이 — hero .fnh-media, row .fnr-media, shorts .feed-card-thumb-wrap 공용 */
   .fnh-media .feed-news-badge,.fnr-media .feed-news-badge,.feed-card-thumb-wrap .feed-news-badge{position:absolute;top:8px;left:8px;z-index:2;min-width:0;}
+  /* 썸네일 위 뱃지는 배경을 어둡게(2026-10-15, 사용자: 조회수 뱃지 글자가 안 보임) — 색 배경 0.13은 사진이 그대로 비쳐 글자가 묻혔다.
+     종류 구분은 글자색으로 그대로 둔다. 목록 줄 안 뱃지(.fnr-row 등)는 바탕이 어두워 원래 값 유지. */
+  .fnh-media .feed-news-badge,.fnr-media .feed-news-badge,.feed-card-thumb-wrap .feed-news-badge{background:rgba(10,14,28,0.72);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);}
   .feed-news-hero .fnh-title{margin-top:7px;font-size:15px;font-weight:700;line-height:1.35;color:rgba(232,240,255,0.95);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
   .feed-news-hero .fnh-sub{margin-top:3px;font-size:11.5px;color:rgba(150,175,222,0.75);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
   .feed-news-more{display:block;margin:4px 20px 2px;padding:8px 0;width:calc(100% - 40px);background:none;border:0;border-top:0.5px solid rgba(255,255,255,0.06);color:rgba(150,175,222,0.8);font-size:12px;font-weight:600;cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><path d='M11,1 L12.3,9.7 L21,11 L12.3,12.3 L11,21 L9.7,12.3 L1,11 L9.7,9.7Z' fill='%23FFB0D0' opacity='.97'/></svg>") 11 11,pointer;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
