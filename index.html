@@ -10492,8 +10492,9 @@ function openConnCard(artist){
     // ⚠️ 숫자 대신 실제 폭(일반 440 · 넓게 보기 640) — 09-27 카드 380→440 때 여기가 380으로 남아 연결 카드가
     //    카드와 60px 겹쳐 열렸다(2026-10-02 수정).
     const sideW=sidePanelEl.getBoundingClientRect().width||(document.body.classList.contains('card-wide')?640:440);
-    const memberRight=memberPanelEl.classList.contains('open')?sideW+380:sideW;
-    const connW=380; // conn-panel 너비 — CSS(#conn-panel{width:380px})와 일치해야 함(2026-09-07 320→380)
+    const memberW=memberPanelEl.getBoundingClientRect().width||440; // CSS #member-panel{width:440px}
+    const connW=connPanelEl.getBoundingClientRect().width||440;     // CSS #conn-panel{width:440px}
+    const memberRight=memberPanelEl.classList.contains('open')?sideW+memberW:sideW;
     connPanelEl.style.right=memberRight+'px';
     // conn-collapse 버튼도 conn-panel 왼쪽 끝에 맞춰 동적으로 이동(정적 CSS는 멤버 패널 열림 기준 값만 있어서)
     const collapseEl=document.getElementById('conn-collapse');
