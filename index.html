@@ -747,6 +747,15 @@
         <button class="mx-chip" data-mx-gender="m" type="button">남</button>
         <button class="mx-chip" data-mx-gender="f" type="button">여</button>
       </div>
+      <div class="mx-chips">
+        <span class="mx-chip-lbl">세대</span>
+        <button class="mx-chip active" data-mx-gen="" type="button">전체</button>
+        <button class="mx-chip" data-mx-gen="1" type="button">1세대</button>
+        <button class="mx-chip" data-mx-gen="2" type="button">2세대</button>
+        <button class="mx-chip" data-mx-gen="3" type="button">3세대</button>
+        <button class="mx-chip" data-mx-gen="4" type="button">4세대</button>
+        <button class="mx-chip" data-mx-gen="5" type="button">5세대</button>
+      </div>
       <div class="mx-chips mx-year-row">
         <span class="mx-chip-lbl">생년</span>
         <div class="mx-year-range-wrap">
@@ -758,7 +767,16 @@
         </div>
       </div>
     </div>
-    <div class="mx-result-bar"><span id="mx-count" class="mx-count"></span></div>
+    <div class="mx-result-bar">
+      <span id="mx-count" class="mx-count"></span>
+      <div class="mx-chart-tabs">
+        <button class="mx-chart-tab active" data-mx-chart="birth" type="button">생년</button>
+        <button class="mx-chart-tab" data-mx-chart="nat" type="button">국적</button>
+        <button class="mx-chart-tab" data-mx-chart="agency" type="button">소속사</button>
+        <button class="mx-chart-tab" data-mx-chart="fig" type="button">통계</button>
+      </div>
+    </div>
+    <div id="mx-chart-wrap"></div>
     <div id="mx-grid"></div>
   </div>
 </div>
@@ -15560,7 +15578,8 @@ function _closeKpopLinks(){document.getElementById('kpop-links-overlay').classLi
 // ── 멤버 탐색 오버레이 ──────────────────────────────────────────────────────
 const _MX_NAT_FLAG={'한국':'🇰🇷','대한민국':'🇰🇷','일본':'🇯🇵','중국':'🇨🇳','태국':'🇹🇭','미국':'🇺🇸','호주':'🇦🇺','캐나다':'🇨🇦','뉴질랜드':'🇳🇿','NZ':'🇳🇿','대만':'🇹🇼','홍콩':'🇭🇰','필리핀':'🇵🇭','인도네시아':'🇮🇩','말레이시아':'🇲🇾','브라질':'🇧🇷','영국':'🇬🇧','베트남':'🇻🇳','프랑스':'🇫🇷','독일':'🇩🇪','이탈리아':'🇮🇹','스위스':'🇨🇭','스웨덴':'🇸🇪'};
 const _mxFlagsFor=nat=>{if(!nat)return'';const flags=nat.split(/[·,\/]\s*/).map(k=>_MX_NAT_FLAG[k.trim()]||'').filter(Boolean).join('');return flags||nat;};
-let _mxState={gender:'',yearLo:1985,yearHi:2012};
+let _mxState={gender:'',gen:'',yearLo:1985,yearHi:2012};
+let _mxChartType='birth';
 function _openMemberExplorer(preOpts){
   const ov=document.getElementById('mx-overlay');if(!ov)return;
   if(preOpts){
@@ -15590,6 +15609,7 @@ function _mxParseFreeText(q){
 }
 function _mxSyncChips(){
   document.querySelectorAll('[data-mx-gender]').forEach(b=>b.classList.toggle('active',b.dataset.mxGender===_mxState.gender));
+  document.querySelectorAll('[data-mx-gen]').forEach(b=>b.classList.toggle('active',b.dataset.mxGen===_mxState.gen));
   const lo=document.getElementById('mx-year-lo'),hi=document.getElementById('mx-year-hi');
   if(lo){lo.value=_mxState.yearLo;document.getElementById('mx-year-lo-v').textContent=_mxState.yearLo;}
   if(hi){hi.value=_mxState.yearHi;document.getElementById('mx-year-hi-v').textContent=_mxState.yearHi;}
@@ -15734,6 +15754,70 @@ function _mxFigMount(grid,results,filtered){
   grid.insertBefore(_mxFig.wrap,grid.firstChild);
   _mxFigUpdate(_mxFig,new Set(results),filtered);
 }
+// ── 차트 토글 시스템(생년·국적·소속사·통계) ────────────────────────────────
+function _mxChartMount(results,fYlo,fYhi){
+  const wrap=document.getElementById('mx-chart-wrap');if(!wrap)return;
+  wrap.innerHTML='';
+  document.querySelectorAll('.mx-chart-tab').forEach(b=>b.classList.toggle('active',b.dataset.mxChart===_mxChartType));
+  if(_mxChartType==='birth'){const svg=_mxChartBirth(results,fYlo,fYhi);if(svg)wrap.appendChild(svg);}
+  else if(_mxChartType==='nat'){const svg=_mxChartNat(results);if(svg)wrap.appendChild(svg);}
+  else if(_mxChartType==='agency'){const svg=_mxChartAgency(results);if(svg)wrap.appendChild(svg);}
+  else if(_mxChartType==='fig'){_mxFigMount(wrap,results,!!(document.getElementById('mx-search')?.value?.trim()||_mxState.gender||_mxState.gen||_mxState.yearLo>1985||_mxState.yearHi<2012));}
+}
+function _mxSvg(W,H){const NS='http://www.w3.org/2000/svg';const s=document.createElementNS(NS,'svg');s.setAttribute('viewBox',`0 0 ${W} ${H}`);s.setAttribute('width','100%');s.setAttribute('height',H);s.setAttribute('class','mx-chart-svg');s._NS=NS;return s;}
+function _mxChartBirth(results,fYlo,fYhi){
+  const counts={};for(const a of results){const yr=_mxBirthYear(a);if(yr)counts[yr]=(counts[yr]||0)+1;}
+  const yrs=Object.keys(counts).map(Number).sort((a,b)=>a-b);if(!yrs.length)return null;
+  const lo=Math.min(yrs[0],fYlo),hi=Math.max(yrs[yrs.length-1],fYhi);
+  const max=Math.max(1,...Object.values(counts));
+  const W=360,H=68,padL=4,padR=4,padB=14,bW=Math.max(2,(W-padL-padR)/(hi-lo+1)-1);
+  const s=_mxSvg(W,H);const NS=s._NS;
+  for(let yr=lo;yr<=hi;yr++){
+    const cnt=counts[yr]||0;const h=cnt?(cnt/max)*(H-padB-4):0;
+    const x=padL+(yr-lo)*(W-padL-padR)/(hi-lo+1);
+    const inRange=yr>=fYlo&&yr<=fYhi;
+    if(cnt){const r=document.createElementNS(NS,'rect');r.setAttribute('x',x.toFixed(1));r.setAttribute('y',(H-padB-h).toFixed(1));r.setAttribute('width',Math.max(1.5,bW).toFixed(1));r.setAttribute('height',h.toFixed(1));r.setAttribute('rx',1);r.setAttribute('class','mx-bar'+(inRange?' on':' off'));s.appendChild(r);}
+  }
+  // 5년 단위 라벨
+  for(let yr=Math.ceil(lo/5)*5;yr<=hi;yr+=5){
+    const x=padL+(yr-lo)*(W-padL-padR)/(hi-lo+1);
+    const t=document.createElementNS(NS,'text');t.setAttribute('x',x.toFixed(1));t.setAttribute('y',H-2);t.setAttribute('class','mx-bar-lbl');t.textContent=yr;s.appendChild(t);
+  }
+  return s;
+}
+function _mxChartNat(results){
+  const counts={};
+  for(const a of results){const nat=a.nat?.ko||'';if(!nat)continue;nat.split(/[·,\/]\s*/).forEach(k=>{const n=k.trim();if(n)counts[n]=(counts[n]||0)+1;});}
+  const sorted=Object.entries(counts).sort((a,b)=>b[1]-a[1]).slice(0,12);if(!sorted.length)return null;
+  const max=sorted[0][1];const W=360,barH=13,gap=2,padL=54,padR=30,H=sorted.length*(barH+gap)+4;
+  const s=_mxSvg(W,H);const NS=s._NS;
+  sorted.forEach(([nat,cnt],i)=>{
+    const y=i*(barH+gap)+2;const flag=_MX_NAT_FLAG[nat]||'';
+    const tl=document.createElementNS(NS,'text');tl.setAttribute('x',padL-4);tl.setAttribute('y',y+barH-1);tl.setAttribute('text-anchor','end');tl.setAttribute('class','mx-bar-lbl');tl.textContent=flag||nat;s.appendChild(tl);
+    const bw=Math.max(2,(cnt/max)*(W-padL-padR));
+    const r=document.createElementNS(NS,'rect');r.setAttribute('x',padL);r.setAttribute('y',y);r.setAttribute('width',bw.toFixed(1));r.setAttribute('height',barH);r.setAttribute('rx',2);r.setAttribute('class','mx-bar on');s.appendChild(r);
+    const tv=document.createElementNS(NS,'text');tv.setAttribute('x',(padL+bw+3).toFixed(1));tv.setAttribute('y',y+barH-1);tv.setAttribute('class','mx-bar-val');tv.textContent=cnt;s.appendChild(tv);
+    // 클릭: 해당 국적 텍스트 검색
+    const hit=document.createElementNS(NS,'rect');hit.setAttribute('x',0);hit.setAttribute('y',y);hit.setAttribute('width',W);hit.setAttribute('height',barH);hit.setAttribute('fill','transparent');hit.style.cursor='pointer';
+    hit.addEventListener('click',()=>{const si=document.getElementById('mx-search');if(!si)return;si.value=nat;si.dispatchEvent(new Event('input'));});s.appendChild(hit);
+  });
+  return s;
+}
+function _mxChartAgency(results){
+  const counts={};
+  for(const a of results){const gd=GROUPS[a.group.ko];if(!gd?.co)continue;const co=gd.co.split(/\s*\/\s*/).pop().trim()||gd.co;counts[co]=(counts[co]||0)+1;}
+  const sorted=Object.entries(counts).sort((a,b)=>b[1]-a[1]).slice(0,12);if(!sorted.length)return null;
+  const max=sorted[0][1];const W=360,barH=13,gap=2,padL=90,padR=30,H=sorted.length*(barH+gap)+4;
+  const s=_mxSvg(W,H);const NS=s._NS;
+  sorted.forEach(([co,cnt],i)=>{
+    const y=i*(barH+gap)+2;
+    const tl=document.createElementNS(NS,'text');tl.setAttribute('x',padL-4);tl.setAttribute('y',y+barH-1);tl.setAttribute('text-anchor','end');tl.setAttribute('class','mx-bar-lbl');tl.textContent=co.length>10?co.slice(0,9)+'…':co;s.appendChild(tl);
+    const bw=Math.max(2,(cnt/max)*(W-padL-padR));
+    const r=document.createElementNS(NS,'rect');r.setAttribute('x',padL);r.setAttribute('y',y);r.setAttribute('width',bw.toFixed(1));r.setAttribute('height',barH);r.setAttribute('rx',2);r.setAttribute('class','mx-bar on');s.appendChild(r);
+    const tv=document.createElementNS(NS,'text');tv.setAttribute('x',(padL+bw+3).toFixed(1));tv.setAttribute('y',y+barH-1);tv.setAttribute('class','mx-bar-val');tv.textContent=cnt;s.appendChild(tv);
+  });
+  return s;
+}
 function _mxRender(){
   const grid=document.getElementById('mx-grid');
   const countEl=document.getElementById('mx-count');
@@ -15741,17 +15825,19 @@ function _mxRender(){
   const raw=(document.getElementById('mx-search')?.value||'').trim();
   const p=_mxParseFreeText(raw);
   const fG=_mxState.gender||p.gender;
+  const fGEN=_mxState.gen;
   const fYlo=_mxState.yearLo,fYhi=_mxState.yearHi;
   const fYslide=fYlo>1985||fYhi<2012;
-  const fYtext=p.year; // 텍스트로 입력한 단일 연도
+  const fYtext=p.year;
   const fN=p.nat;
   const fT=p.text;
-  const hasFilter=!!(fG||fYslide||fYtext||fN||fT);
+  const hasFilter=!!(fG||fGEN||fYslide||fYtext||fN||fT);
   const MAX=300,results=[];
   for(const a of ARTISTS){
     if(!a.name?.ko||!a.group?.ko)continue;
     const gd=GROUPS[a.group.ko];
     if(fG&&(gd?.gender||'')!==fG)continue;
+    if(fGEN&&_groupGeneration(gd?.debut,a.group.ko)!==+fGEN)continue;
     const yr=_mxBirthYear(a);
     if(fYtext){if(!yr||yr!==+fYtext)continue;}
     else if(fYslide&&!_mxYearOk(yr,fYlo,fYhi))continue;
@@ -15770,7 +15856,7 @@ function _mxRender(){
   if(countEl)countEl.textContent=results.length>MAX?`${results.length}명 중 ${MAX}명`:`${results.length}명`;
   const shown=results.slice(0,MAX);
   grid.innerHTML='';
-  try{_mxFigMount(grid,results,hasFilter);}catch(e){console.warn('[mx] 그림 실패 — 목록만',e);}
+  try{_mxChartMount(results,fYlo,fYhi);}catch(e){console.warn('[mx] 차트 실패',e);}
   if(!shown.length){grid.insertAdjacentHTML('beforeend','<div class="mx-empty">조건에 맞는 멤버가 없어요</div>');return;}
   const frag=document.createDocumentFragment();
   for(const a of shown){
@@ -15803,6 +15889,15 @@ document.getElementById('mx-search')?.addEventListener('input',()=>_mxRender());
 document.querySelectorAll('[data-mx-gender]').forEach(b=>b.addEventListener('click',()=>{
   _mxState.gender=b.dataset.mxGender;
   document.querySelectorAll('[data-mx-gender]').forEach(x=>x.classList.toggle('active',x.dataset.mxGender===_mxState.gender));
+  _mxRender();
+}));
+document.querySelectorAll('[data-mx-gen]').forEach(b=>b.addEventListener('click',()=>{
+  _mxState.gen=b.dataset.mxGen;
+  document.querySelectorAll('[data-mx-gen]').forEach(x=>x.classList.toggle('active',x.dataset.mxGen===_mxState.gen));
+  _mxRender();
+}));
+document.querySelectorAll('.mx-chart-tab').forEach(b=>b.addEventListener('click',()=>{
+  _mxChartType=b.dataset.mxChart;
   _mxRender();
 }));
 ['mx-year-lo','mx-year-hi'].forEach(id=>document.getElementById(id)?.addEventListener('input',()=>{
