@@ -21911,18 +21911,21 @@ async function _buildFeedDailyNews(){
         : Promise.resolve({data:[]})
     ]);
     // 음방 이름 → 영상 제목 검색 키워드 (wiki_music_wins.mjs의 db 값 그대로 사용)
-    const _WIN_SHOW_KW={'쇼챔피언':['쇼챔'],'엠카운트다운':['엠카','엠카운트'],'뮤직뱅크':['뮤직뱅크','musicbank'],'인기가요':['인기가요','inkigayo'],'쇼음악중심':['쇼음악중심','음악중심'],'더쇼':['더쇼','the show']};
-    // 매칭 점수: 2=show+song 모두, 1=show만(song이 영어 저장 등), 0.5=song만, 0=불일치
+    const _WIN_SHOW_KW={'쇼챔피언':['쇼챔','챔피언송'],'엠카운트다운':['엠카','엠카운트'],'뮤직뱅크':['뮤직뱅크','musicbank'],'인기가요':['인기가요','inkigayo'],'쇼음악중심':['쇼음악중심','음악중심'],'더쇼':['더쇼','the show']};
+    // 음방 1위 무대 공통 키워드 — show 이름 없어도 앵콜/1위면 1위 무대 영상
+    const _WIN_1ST_KW=['앵콜','1위','encore'];
+    // 매칭 점수: 2=(show/1위키워드)+song 모두, 1=show/1위키워드만, 0.5=song만, 0=불일치
     const _winScore=(vtitle,song,show)=>{
       if(!vtitle)return 0;
       const n=s=>s.toLowerCase().replace(/[^a-z0-9가-힣]/g,'');
       const nt=n(vtitle);
       const ns=n(song||'');
-      const kws=(_WIN_SHOW_KW[show]||[]).map(k=>n(k));
-      const hasShow=kws.some(k=>nt.includes(k));
+      const showKws=(_WIN_SHOW_KW[show]||[]).map(k=>n(k));
+      const hasShow=showKws.some(k=>nt.includes(k));
+      const has1st=_WIN_1ST_KW.some(k=>nt.includes(n(k)));
       const hasSong=ns.length>=2&&nt.includes(ns);
-      if(hasShow&&hasSong)return 2;
-      if(hasShow)return 1;
+      if((hasShow||has1st)&&hasSong)return 2;
+      if(hasShow||has1st)return 1;
       if(hasSong)return 0.5;
       return 0;
     };
