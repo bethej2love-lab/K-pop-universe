@@ -21875,7 +21875,10 @@ async function _buildFeedDailyNews(){
       sb.from('music_show_wins').select('*').gte('win_date',sevenDaysAgo).lte('win_date',today).order('win_date',{ascending:false}).order('show',{ascending:true}),
       sb.from(_YT_TABLE).select('id,title,thumb,is_short,group_ko,content_flag,published_at')
         .gte('published_at',sevenDaysAgo).lt('published_at',tomorrow)
-        .order('published_at',{ascending:false}).limit(50),
+        .or('title.ilike.%m/v%,title.ilike.%[mv]%,title.ilike.% mv%,title.ilike.%mv %,title.ilike.%music video%,title.ilike.%뮤직비디오%,title.ilike.%뮤비%,title.ilike.%리릭%,title.ilike.%lyric%,title.ilike.%티저%,title.ilike.%teaser%,title.ilike.%예고편%')
+        .not('content_flag','in','("보류","hidden")')
+        .order('published_at',{ascending:false}).limit(50)
+        .then(r=>r,()=>({data:[]})),
       sb.from('yt_view_milestones').select('*,yt_channel_videos!inner(title,thumb,group_ko,published_at,is_short)')
         .eq('crossed_at',today).eq('seeded',false).limit(300)
         // ⚠️ .catch가 아니라 .then(성공,실패) — Supabase 쿼리 빌더는 thenable일 뿐 Promise가 아니라 .catch가 없다.
@@ -21927,7 +21930,6 @@ async function _buildFeedDailyNews(){
       items.push({type:'milestone',title:v.title||'',sub,thumb:v.thumb,score:40+Math.log10(+best.tier||1),isShort,
         nav:()=>openLightbox(vidUrl,isShort,null,0,{groupKo:gko},false,true)});
     });
-    console.log('[news] items',items.map(r=>({type:r.type,title:r.title?.slice(0,30),score:r.score,thumb:!!r.thumb,isShort:r.isShort})));
     if(!items.length)return;
     // ── 1면 레이아웃(2026-09-28, 사용자: "일렬 리스트라 보기 별로") ── 신문 1면처럼 **가장 큰 소식 하나**를 크게,
     // 그다음 4개만 한 줄씩, 나머지는 접는다. 우선순위: 음방 1위 > MV > 티저 > 조회수 돌파(큰 단계일수록 위).
