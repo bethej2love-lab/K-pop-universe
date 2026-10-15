@@ -977,9 +977,12 @@
     body:has(#side-panel.open) #yt-lightbox.lb-browse #yt-lb-wrap{max-width:100%;}
     /* 카드 2개 이상 열려 공간이 좁을 때: Up Next를 오른쪽 대신 영상 아래로 */
     body:has(#member-panel.open) #yt-lightbox.lb-browse,
-    body:has(#conn-panel.open) #yt-lightbox.lb-browse{align-items:flex-start;overflow-y:auto;padding:20px 0 32px;justify-content:center;}
+    body:has(#conn-panel.open) #yt-lightbox.lb-browse{align-items:flex-start;overflow-y:auto;padding:20px 28px 32px;justify-content:flex-end;}
+    /* 영상은 남는 폭을 꽉 채운다(2026-10-16 제보 "카드와 재생모드 사이 여백 불필요" — 640px 고정이라 넓은 화면일수록
+       카드 옆이 휑했다). 좌우 28px는 카드 접기 탭(#tt-collapse, 22px)이 영상을 안 가리고 걸칠 자리.
+       아주 넓은 화면에선 높이 기준으로 상한 → 남는 공간은 왼쪽으로(카드 쪽에 붙임, 카드 1개 모드와 같은 원칙) */
     body:has(#member-panel.open) #yt-lightbox.lb-browse #yt-lb-wrap,
-    body:has(#conn-panel.open) #yt-lightbox.lb-browse #yt-lb-wrap{flex-direction:column;width:min(94%,640px);gap:16px;}
+    body:has(#conn-panel.open) #yt-lightbox.lb-browse #yt-lb-wrap{flex-direction:column;align-items:stretch;width:100%;max-width:calc((100vh - 200px) * 16 / 9);gap:16px;}
     body:has(#member-panel.open) #yt-lightbox.lb-browse #yt-lb-uplist,
     body:has(#conn-panel.open) #yt-lightbox.lb-browse #yt-lb-uplist{width:auto;max-height:none;overflow-y:visible;padding-left:0;}
     body:has(#member-panel.open) #yt-lightbox.lb-browse #yt-lb-uplist-scroll,
@@ -1355,8 +1358,6 @@
   }
   #member-panel.open~#tt-collapse{opacity:1;pointer-events:all;transform:translateY(-50%) translateX(0);}
   #tt-collapse:hover{background:rgba(40,50,80,0.96);color:rgba(200,220,255,0.95);}
-  /* 라이트박스 열리면 버튼이 라이트박스에 가려지므로 멤버 카드 영역 안쪽으로 22px 이동 */
-  body:has(#yt-lightbox.open) #tt-collapse{right:858px;}
   /* 접기 탭: conn-panel 왼쪽 중간 (동일 패턴, conn-panel 자기 이동거리(280+640px)만큼 같이 슬라이드) */
   #conn-collapse{
     position:fixed;right:1320px;top:50%;

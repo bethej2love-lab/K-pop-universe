@@ -6485,6 +6485,9 @@ function openLightbox(url,shorts,playlist,idx,ctx,isAdvance,forceBrowseMode){
   // iOS Safari: display:none 상태의 iframe에서 src를 바꾸면 사용자 제스처 체인이 끊겨 autoplay가 차단됨.
   // 라이트박스를 먼저 열어 iframe이 visible한 상태로 만든 뒤 src를 설정해야 autoplay가 허용됨.
   lb.classList.add('open');_bringToFront(lb); // 재생 플레이어는 열릴 때 항상 최상단(곡영상·조합 위, 그 위 어드민 편집은 또 위로)
+  // 멤버 카드 접기 탭(›)은 카드 왼쪽 바깥(=라이트박스 오른쪽 끝)에 걸려 있어 라이트박스에 덮였다 — 재생 중 멤버 카드만
+  // 닫을 길이 없었음(2026-10-16 제보). 탭만 라이트박스 바로 위 층으로 올린다(자리는 그대로, 새 버튼 없음).
+  if(!isMob())_bringToFront(document.getElementById('tt-collapse'));
   // 탐험 패널에서 열릴 때: 오른쪽에서 슬라이드 인 (isAdvance = 자동 다음 영상은 제외)
   if(_lbFeedSlide&&!isAdvance){
     _lbFeedSlide=false;
