@@ -3726,7 +3726,7 @@
   .feed-empty-retry:active{background:rgba(140,175,255,0.22);}
   .feed-onboard-emoji{font-size:26px;line-height:1;flex-shrink:0;}
   .feed-onboard-txt{font-size:12px;line-height:1.5;color:rgba(210,222,250,0.82);font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
-  .feed-section-ttl{font-size:10px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:rgba(120,148,205,0.51);padding:14px 20px 8px;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
+  .feed-section-ttl{font-size:10px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:rgba(150,174,225,0.8); /* 0.51→0.8(2026-10-15, 사용자: 섹션 제목이 너무 흐려 안 보임) */padding:14px 20px 8px;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
   /* 기념일 스트립(인스타 스토리 스타일 가로 스크롤) */
   .feed-strip{display:flex;gap:10px;overflow-x:auto;padding:2px 20px 18px;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
   .feed-strip::-webkit-scrollbar{display:none;}
@@ -3862,7 +3862,7 @@
   .feed-news-shorts{padding:6px 20px 4px;}
   .feed-news-shorts .feed-card-cap .feed-news-badge{display:inline-block;min-width:0;margin-bottom:5px;}
   /* This Week's K-pop 안의 발매 앨범 블록 소제목(2026-10-12 합침) — 섹션 제목보다 한 단계 낮게, 같은 대문자 톤 */
-  .feed-news-subttl{font-size:10px;font-weight:700;letter-spacing:.12em;color:rgba(120,148,205,0.45);padding:14px 20px 8px;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
+  .feed-news-subttl{font-size:10px;font-weight:700;letter-spacing:.12em;color:rgba(150,174,225,0.8);padding:14px 20px 8px;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
   #feed-dailynews[hidden]+#feed-newalbum-section .feed-news-subttl{padding-top:2px;}
   /* 아이콘 전용 셰브런(2026-08-21, 사용자 요청 — 텍스트바가 너무 투박하고 큼) — 작은 원형 버튼, 접힘/펼침은
      회전으로만 표현. 터치 타겟은 실제 시각 크기(28px)보다 무형으로 넉넉히 키움(padding, 기존 소셜아이콘
@@ -3905,14 +3905,16 @@
   .feed-album-rail>.feed-card .feed-card-cap{padding:6px 7px 9px;}
   .feed-album-rail>.feed-card .feed-card-title{font-size:11px;}
   .feed-album-rail>.feed-card .feed-card-sub,.feed-album-rail>.feed-card .feed-card-meta{font-size:10px;}
+  /* 앨범 카드 아티스트 — 메타 줄보다 위계가 위(2026-10-15, 사용자: "new 미니 1일전이 아티스트보다 훨씬 눈에 띈다") */
+  .feed-album-grid>.feed-card .feed-card-sub{color:rgba(185,205,245,0.9);font-weight:500;}
   /* 캡션 셋째 줄 — "싱글 · 9.14"(2026-09-21). 앨범 커버 위에는 아무것도 얹지 않는다(커버는 그 자체가
      작품이라 영상 썸네일과 다르게 다룬다, 사용자 결정) — 대신 캡션에 위계를 한 단계 더 준다.
      한 줄 고정(줄바꿈 금지)이라 카드 높이는 딱 이 줄만큼만 늘어난다. */
   .feed-card-meta{margin-top:2px;font-size:10.5px;font-weight:500;line-height:1.35;color:rgba(150,175,235,0.66);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   /* 오늘·어제 발매만 강조 — 선반의 목적이 "따끈한 것 먼저"라서. 세 번째 색은 만들지 않는다. */
-  .feed-card-meta.is-fresh{color:rgba(150,180,255,0.95);font-weight:700;}
+  .feed-card-meta.is-fresh{color:rgba(150,180,255,0.8);font-weight:500;} /* 2026-10-15: 0.95·700이 아티스트 이름보다 먼저 눈에 띄었다(사용자) — 색만 남기고 굵기는 뺀다 */
   /* NEW 칩(2026-10-12) — 캡션 메타 줄 맨 앞. 강조 메타(is-fresh)와 같은 파랑 계열로, 색 종류를 늘리지 않는다. */
-  .feed-card-new{display:inline-block;margin-right:5px;padding:0 4px;border-radius:3px;font-size:8.5px;font-weight:800;letter-spacing:.06em;line-height:14px;vertical-align:1px;color:#0d1426;background:rgba(150,180,255,0.92);}
+  .feed-card-new{display:inline-block;margin-right:5px;padding:0 3px;border-radius:3px;font-size:8px;font-weight:700;letter-spacing:.06em;line-height:12px;vertical-align:1px;color:rgba(160,188,255,0.85);background:none;box-shadow:inset 0 0 0 1px rgba(150,180,255,0.45);} /* 꽉 찬 칩 → 테두리만(2026-10-15) — 이번 주 선반은 거의 전부 NEW라 칩이 줄줄이 가장 튀었다 */
   .feed-card-thumb{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .3s ease;}
   /* 재생시간 배지(2026-09-16) — 여기는 썸네일 전용 래퍼(.feed-card-thumb-wrap)가 있어서 그냥 밑변에
      붙이면 된다. 톤은 카드 그리드의 .gc-ch-dur와 동일하게 유지할 것(같은 정보, 같은 생김새). */
