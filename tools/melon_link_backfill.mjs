@@ -309,6 +309,8 @@ async function fixAlbum(al, kind, key) {
   if (!html) { st.noDetail++; return; }
   const rows = parseSongRows(html);
   if (!rows.length) { st.noDetail++; return; }
+  // 옛 데이터 일부는 곡이 문자열 목록이다(인피니트H FLY HIGH 등 49장) — 객체로 바꿔야 songId를 단다(2026-10-15 크래시)
+  al.tracks = al.tracks.map((t, i) => typeof t === 'string' ? { no: i + 1, title: t } : t);
   const used = new Set();
   al.tracks.forEach((t, i) => {
     st.tracks++;

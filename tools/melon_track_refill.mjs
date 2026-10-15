@@ -75,7 +75,8 @@ const st = { short: 0, filled: 0, noId: 0, noCache: 0, nameMiss: 0, notLonger: 0
 const log = [];
 async function fix(al, who) {
   if (!al || typeof al !== 'object') return;
-  const cur = Array.isArray(al.tracks) ? al.tracks : [];
+  // 옛 데이터 일부는 곡이 문자열 목록 — 객체로 다뤄야 병합 때 글자가 키로 쪼개지지 않는다
+  const cur = (Array.isArray(al.tracks) ? al.tracks : []).map((t, i) => typeof t === 'string' ? { no: i + 1, title: t } : t);
   if (cur.length && !(al.trackCount && cur.length < al.trackCount)) return;
   st.short++;
   const id = al.melonAlbumId || coverId(al);

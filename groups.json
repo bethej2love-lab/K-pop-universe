@@ -77962,9 +77962,47 @@
     "cover": "https://cdnimg.melon.co.kr/cm/album/images/021/08/026/2108026_500.jpg",
     "releaseDate": "2012.04.09",
     "trackCount": 6,
-    "titleTrack": "",
-    "tracks": [],
-    "melonVia": "10105654"
+    "titleTrack": "MAMA",
+    "tracks": [
+     {
+      "no": 1,
+      "title": "MAMA",
+      "isTitle": true,
+      "songId": "3764993"
+     },
+     {
+      "no": 2,
+      "title": "What Is Love",
+      "isTitle": false,
+      "songId": "3765073"
+     },
+     {
+      "no": 3,
+      "title": "History",
+      "isTitle": false,
+      "songId": "3765074"
+     },
+     {
+      "no": 4,
+      "title": "너의 세상으로 (Angel)",
+      "isTitle": false,
+      "songId": "3765075"
+     },
+     {
+      "no": 5,
+      "title": "두 개의 달이 뜨는 밤 (Two Moons) (Feat. Key Of SHINee)",
+      "isTitle": false,
+      "songId": "3765076"
+     },
+     {
+      "no": 6,
+      "title": "Machine",
+      "isTitle": false,
+      "songId": "3765077"
+     }
+    ],
+    "melonVia": "10105654",
+    "melonAlbumId": "2108026"
    }
   ],
   "pri": 4,
@@ -123317,27 +123355,8 @@
       "songId": "38887903"
      }
     ],
-    "melonAlbumId": "11795156"
-   },
-   {
-    "title": "Theory of Happiness",
-    "type": "싱글",
-    "isMain": true,
-    "cover": "https://i.scdn.co/image/ab67616d0000b27330b38220420475cee2b5858c",
-    "releaseDate": "2025.05.05",
-    "trackCount": 1,
-    "titleTrack": "Theory of Happiness",
-    "tracks": [
-     {
-      "no": 1,
-      "title": "Theory of Happiness",
-      "isTitle": true,
-      "songId": "33015320"
-     }
-    ],
-    "src": "spotify",
-    "spotifyId": "67wjLxTpwPDc30xl3btNvc",
-    "melonVia": "10508567"
+    "melonAlbumId": "11795156",
+    "spotifyId": "67wjLxTpwPDc30xl3btNvc"
    },
    {
     "title": "Serious",
@@ -132716,52 +132735,8 @@
       "songId": "37352878"
      }
     ],
-    "melonAlbumId": "11451223"
-   },
-   {
-    "title": "The 1st Mini Album 'WE UNIS'",
-    "type": "미니",
-    "isMain": true,
-    "cover": "https://i.scdn.co/image/ab67616d0000b273529261269a72cc14a9691471",
-    "releaseDate": "2024.03.27",
-    "trackCount": 5,
-    "titleTrack": null,
-    "tracks": [
-     {
-      "no": 1,
-      "title": "SUPERWOMAN",
-      "isTitle": false,
-      "songId": "37352874"
-     },
-     {
-      "no": 2,
-      "title": "Butterfly's Dream",
-      "isTitle": false,
-      "songId": "37352875"
-     },
-     {
-      "no": 3,
-      "title": "Whatchu Need",
-      "isTitle": false,
-      "songId": "37352876"
-     },
-     {
-      "no": 4,
-      "title": "Dopamine(UNIS Ver.)",
-      "isTitle": false,
-      "songId": "37352877"
-     },
-     {
-      "no": 5,
-      "title": "Dream of girls(UNIS Ver.)",
-      "isTitle": false,
-      "songId": "37352878"
-     }
-    ],
-    "src": "spotify",
-    "spotifyId": "3pix2U5QbFUSwOeF1M9Eim",
-    "copyright": "2024 F&F Entertainment,under license to Kakao Entertainment",
-    "melonVia": "11451223"
+    "melonAlbumId": "11451223",
+    "spotifyId": "3pix2U5QbFUSwOeF1M9Eim"
    },
    {
     "title": "UNIVERSE TICKET - FINAL STATION",
@@ -139043,24 +139018,7 @@
       "songId": "602267642"
      }
     ],
-    "melonAlbumId": "13738873"
-   },
-   {
-    "title": "라일락 LILAC",
-    "type": "싱글",
-    "isMain": true,
-    "cover": "https://i.scdn.co/image/ab67616d0000b2736b7f9029d1ad058b644dfa86",
-    "releaseDate": "2026.06.17",
-    "trackCount": 1,
-    "titleTrack": "라일락 LILAC",
-    "tracks": [
-     {
-      "no": 1,
-      "title": "라일락 LILAC",
-      "isTitle": true
-     }
-    ],
-    "src": "spotify",
+    "melonAlbumId": "13738873",
     "spotifyId": "7ciImDh2qAtpMYA0X63LHu"
    },
    {
@@ -139085,29 +139043,7 @@
       "songId": "600966702"
      }
     ],
-    "melonAlbumId": "12797937"
-   },
-   {
-    "title": "꿈만 같았다 Just Like a Dream",
-    "type": "싱글",
-    "isMain": true,
-    "cover": "https://i.scdn.co/image/ab67616d0000b27307f72b777146bf8162940894",
-    "releaseDate": "2026.01.21",
-    "trackCount": 2,
-    "titleTrack": "꿈만 같았다 Just Like a Dream",
-    "tracks": [
-     {
-      "no": 1,
-      "title": "꿈만 같았다 Just Like a Dream",
-      "isTitle": true
-     },
-     {
-      "no": 2,
-      "title": "본 Born (本)",
-      "isTitle": false
-     }
-    ],
-    "src": "spotify",
+    "melonAlbumId": "12797937",
     "spotifyId": "5bELoqXGXLi95PVZ6uZ8nm"
    }
   ],
@@ -151166,90 +151102,8 @@
     "melonAlbumId": "309206"
    },
    {
-    "title": "An Ordinary Day (보통날)",
-    "type": "정규 6집",
-    "isMain": true,
-    "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/ac/05/79/ac0579fd-7900-aac4-8e3e-52910022a4b4/cover.jpg/600x600bb.jpg",
-    "releaseDate": "2004.12.09",
-    "trackCount": 15,
-    "titleTrack": "보통날",
-    "tracks": [
-     {
-      "no": 1,
-      "title": "Intro",
-      "isTitle": false
-     },
-     {
-      "no": 2,
-      "title": "보통날",
-      "isTitle": true
-     },
-     {
-      "no": 3,
-      "title": "자유",
-      "isTitle": false,
-      "songId": "623239"
-     },
-     {
-      "no": 4,
-      "title": "Loving You",
-      "isTitle": false,
-      "songId": "623243"
-     },
-     {
-      "no": 5,
-      "title": "Tonight",
-      "isTitle": false,
-      "songId": "623244"
-     },
-     {
-      "no": 6,
-      "title": "반대가 끌리는 이유",
-      "isTitle": false,
-      "songId": "623241"
-     },
-     {
-      "no": 7,
-      "title": "익숙한 낯선 사람",
-      "isTitle": false,
-      "songId": "623242"
-     },
-     {
-      "no": 8,
-      "title": "헤어지지 말자",
-      "isTitle": false,
-      "songId": "623246"
-     },
-     {
-      "no": 9,
-      "title": "사랑이 힘들 때",
-      "isTitle": false,
-      "songId": "623247"
-     },
-     {
-      "no": 10,
-      "title": "헤어짐보다 아픈 그리움",
-      "isTitle": false,
-      "songId": "623248"
-     },
-     {
-      "no": 11,
-      "title": "한구석에",
-      "isTitle": false,
-      "songId": "623249"
-     },
-     {
-      "no": 12,
-      "title": "약속 (Narration 강경헌)",
-      "isTitle": false,
-      "songId": "623251"
-     }
-    ],
-    "melonVia": "309206"
-   },
-   {
     "title": "보통날",
-    "type": "정규",
+    "type": "정규 6집",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm/album/images/000/43/691/43691_500.jpg",
     "releaseDate": "2004.12.08",
@@ -153011,59 +152865,6 @@
     "melonAlbumId": "42728"
    },
    {
-    "title": "LOVE - 3집",
-    "type": "정규",
-    "isMain": true,
-    "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music69/v4/a5/6a/00/a56a00bd-a632-4958-817a-fe6b125bc458/ses_3th.jpg/600x600bb.jpg",
-    "releaseDate": "1999.10.29",
-    "trackCount": 27,
-    "titleTrack": "Love",
-    "tracks": [
-     {
-      "no": 1,
-      "title": "Twilight Zone",
-      "isTitle": false,
-      "songId": "620255"
-     },
-     {
-      "no": 2,
-      "title": "Love",
-      "isTitle": true
-     },
-     {
-      "no": 3,
-      "title": "Tell Me",
-      "isTitle": false
-     },
-     {
-      "no": 4,
-      "title": "샤랄라",
-      "isTitle": false
-     },
-     {
-      "no": 5,
-      "title": "기억",
-      "isTitle": false
-     },
-     {
-      "no": 6,
-      "title": "너를 사랑해",
-      "isTitle": false
-     },
-     {
-      "no": 7,
-      "title": "Goodbye",
-      "isTitle": false
-     },
-     {
-      "no": 8,
-      "title": "사랑의 시",
-      "isTitle": false
-     }
-    ],
-    "melonVia": "42728"
-   },
-   {
     "title": "Love",
     "type": "정규 3집",
     "isMain": true,
@@ -153828,53 +153629,6 @@
      }
     ],
     "melonAlbumId": "2102"
-   },
-   {
-    "title": "Now - 3집",
-    "type": "정규",
-    "isMain": true,
-    "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music113/v4/08/cd/9e/08cd9ebf-e7ea-ec0e-9e4f-c374b3bc6dbd/cover-_Now.jpg/600x600bb.jpg",
-    "releaseDate": "2000.10.16",
-    "trackCount": 13,
-    "titleTrack": "그 여자",
-    "tracks": [
-     {
-      "no": 1,
-      "title": "Now",
-      "isTitle": false
-     },
-     {
-      "no": 2,
-      "title": "Feel Your Love",
-      "isTitle": false
-     },
-     {
-      "no": 3,
-      "title": "그 여자",
-      "isTitle": true
-     },
-     {
-      "no": 4,
-      "title": "나의 맘",
-      "isTitle": false
-     },
-     {
-      "no": 5,
-      "title": "자유롭게",
-      "isTitle": false
-     },
-     {
-      "no": 6,
-      "title": "Just That Little Thing",
-      "isTitle": false
-     },
-     {
-      "no": 7,
-      "title": "처음 사랑",
-      "isTitle": false
-     }
-    ],
-    "melonVia": "10318620"
    },
    {
     "title": "Now",
@@ -158145,78 +157899,6 @@
      }
     ],
     "melonAlbumId": "16756"
-   },
-   {
-    "title": "Chakra'Ca - 2집",
-    "type": "정규",
-    "isMain": true,
-    "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/b8/8c/d7/b88cd735-6c30-aa02-bfd8-45d9b1db361d/cover_KM0017928_1.jpg/600x600bb.jpg",
-    "releaseDate": "2001.03.08",
-    "trackCount": 12,
-    "titleTrack": "한 번만 더",
-    "tracks": [
-     {
-      "no": 1,
-      "title": "Chakra'Ca (Intro)",
-      "isTitle": false
-     },
-     {
-      "no": 2,
-      "title": "아니야",
-      "isTitle": false
-     },
-     {
-      "no": 3,
-      "title": "용기",
-      "isTitle": false
-     },
-     {
-      "no": 4,
-      "title": "사랑이여 (베사메무초)",
-      "isTitle": false
-     },
-     {
-      "no": 5,
-      "title": "Dance Queen",
-      "isTitle": false
-     },
-     {
-      "no": 6,
-      "title": "한 번만 더",
-      "isTitle": true
-     },
-     {
-      "no": 7,
-      "title": "내 느낌",
-      "isTitle": false
-     },
-     {
-      "no": 8,
-      "title": "Oh! My Boy",
-      "isTitle": false
-     },
-     {
-      "no": 9,
-      "title": "우리들의 이야기",
-      "isTitle": false
-     },
-     {
-      "no": 10,
-      "title": "그대라면 (빌어요)",
-      "isTitle": false
-     },
-     {
-      "no": 11,
-      "title": "주연은 너와 나",
-      "isTitle": false
-     },
-     {
-      "no": 12,
-      "title": "Chakra'Ca (Ending)",
-      "isTitle": false
-     }
-    ],
-    "melonVia": "1923"
    },
    {
     "title": "Chakra‘Ca 2집",
@@ -163994,24 +163676,7 @@
       "songId": "36429543"
      }
     ],
-    "melonAlbumId": "11239876"
-   },
-   {
-    "title": "Shh",
-    "type": "싱글",
-    "isMain": true,
-    "cover": "https://i.scdn.co/image/ab67616d0000b273fb6e03486aff4489ae98af7b",
-    "releaseDate": "2023.05.10",
-    "trackCount": 1,
-    "titleTrack": "Shh",
-    "tracks": [
-     {
-      "no": 1,
-      "title": "Shh",
-      "isTitle": true
-     }
-    ],
-    "src": "spotify",
+    "melonAlbumId": "11239876",
     "spotifyId": "2IFIiCZ8FgprUn7yhqYG49"
    },
    {
@@ -179588,29 +179253,7 @@
       "songId": "37584647"
      }
     ],
-    "melonAlbumId": "11500796"
-   },
-   {
-    "title": "Beautiful you are",
-    "type": "싱글",
-    "isMain": true,
-    "cover": "https://i.scdn.co/image/ab67616d0000b273278a3ed1ed0c6376aa1ea698",
-    "releaseDate": "2024.05.30",
-    "trackCount": 2,
-    "titleTrack": "Beautiful you are",
-    "tracks": [
-     {
-      "no": 1,
-      "title": "Beautiful you are",
-      "isTitle": true
-     },
-     {
-      "no": 2,
-      "title": "Beautiful you are - Instrumental",
-      "isTitle": false
-     }
-    ],
-    "src": "spotify",
+    "melonAlbumId": "11500796",
     "spotifyId": "76x1LybBOR3i4rjXpsgyoO"
    },
    {
@@ -179635,31 +179278,8 @@
       "songId": "37464351"
      }
     ],
-    "melonAlbumId": "11475696"
-   },
-   {
-    "title": "Morse code",
-    "type": "싱글",
-    "isMain": true,
-    "cover": "https://i.scdn.co/image/ab67616d0000b273125295d5c51f5aef8fac2b00",
-    "releaseDate": "2024.04.29",
-    "trackCount": 2,
-    "titleTrack": "Morse code",
-    "tracks": [
-     {
-      "no": 1,
-      "title": "Morse code",
-      "isTitle": true
-     },
-     {
-      "no": 2,
-      "title": "Morse code - Instrumental",
-      "isTitle": false
-     }
-    ],
-    "src": "spotify",
-    "spotifyId": "1JSzPxtFcgaZ2fQ2awZ8gj",
-    "melonVia": "11654194"
+    "melonAlbumId": "11475696",
+    "spotifyId": "1JSzPxtFcgaZ2fQ2awZ8gj"
    },
    {
     "title": "갈래! (The Wonderful Escape) Rock Ver.",
@@ -197867,33 +197487,6 @@
      }
     ],
     "melonAlbumId": "10291267"
-   },
-   {
-    "title": "dot point jump, Vol. 1",
-    "type": "싱글",
-    "isMain": true,
-    "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/13/68/ba/1368bab7-e560-d596-d619-b3037cfee277/cover-OnlyOneOf.jpg/600x600bb.jpg",
-    "releaseDate": "2019.05.28",
-    "trackCount": 3,
-    "titleTrack": "time leap",
-    "tracks": [
-     {
-      "no": 1,
-      "title": "time leap",
-      "isTitle": true
-     },
-     {
-      "no": 2,
-      "title": "savanna",
-      "isTitle": false
-     },
-     {
-      "no": 3,
-      "title": "blOssOm",
-      "isTitle": false
-     }
-    ],
-    "melonVia": "10291267"
    }
   ],
   "pri": 1.5,
@@ -212625,78 +212218,6 @@
     "melonAlbumId": "2166203"
    },
    {
-    "title": "야누스 (Janus)",
-    "type": "미니",
-    "isMain": true,
-    "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music/v4/d5/1c/58/d51c581d-2b73-c6c3-8f81-5fdcb86882d5/KM0001829-_Boyfriend_1.jpg/600x600bb.jpg",
-    "releaseDate": "2012.11.08",
-    "trackCount": 10,
-    "titleTrack": "야누스 (Janus)",
-    "tracks": [
-     {
-      "no": 1,
-      "title": "야누스 (Janus)",
-      "isTitle": true,
-      "songId": "3955125"
-     },
-     {
-      "no": 2,
-      "title": "Good Nigh",
-      "isTitle": false,
-      "songId": "3955126"
-     },
-     {
-      "no": 3,
-      "title": "Excuse Me",
-      "isTitle": false,
-      "songId": "3955127"
-     },
-     {
-      "no": 4,
-      "title": "Trippin' (feat. 현성)",
-      "isTitle": false,
-      "songId": "3955128"
-     },
-     {
-      "no": 5,
-      "title": "Mystery",
-      "isTitle": false,
-      "songId": "3955129"
-     },
-     {
-      "no": 6,
-      "title": "Go Back",
-      "isTitle": false,
-      "songId": "3955130"
-     },
-     {
-      "no": 7,
-      "title": "Stop It",
-      "isTitle": false,
-      "songId": "3955131"
-     },
-     {
-      "no": 8,
-      "title": "Listen (feat. 동현)",
-      "isTitle": false,
-      "songId": "3955132"
-     },
-     {
-      "no": 9,
-      "title": "My Dear (feat. 정민)",
-      "isTitle": false,
-      "songId": "3955133"
-     },
-     {
-      "no": 10,
-      "title": "Soulmate",
-      "isTitle": false,
-      "songId": "3955134"
-     }
-    ],
-    "melonAlbumId": "2166203"
-   },
-   {
     "title": "Love Style",
     "type": "미니 1집",
     "isMain": true,
@@ -227301,24 +226822,7 @@
       "songId": "38225902"
      }
     ],
-    "melonAlbumId": "11644122"
-   },
-   {
-    "title": "ZOOM",
-    "type": "싱글",
-    "isMain": true,
-    "cover": "https://i.scdn.co/image/ab67616d0000b273c862dd954372889dceb688a4",
-    "releaseDate": "2024.11.19",
-    "trackCount": 1,
-    "titleTrack": "ZOOM",
-    "tracks": [
-     {
-      "no": 1,
-      "title": "ZOOM",
-      "isTitle": true
-     }
-    ],
-    "src": "spotify",
+    "melonAlbumId": "11644122",
     "spotifyId": "3sBVNx0uoo6vAzlosi8RhM"
    },
    {
@@ -231885,26 +231389,8 @@
       "songId": "38385994"
      }
     ],
-    "melonAlbumId": "11676361"
-   },
-   {
-    "title": "Down for you",
-    "type": "싱글",
-    "isMain": true,
-    "cover": "https://i.scdn.co/image/ab67616d0000b273c80d25d7bfa874402711a6bc",
-    "releaseDate": "2024.12.23",
-    "trackCount": 1,
-    "titleTrack": "Down for you",
-    "tracks": [
-     {
-      "no": 1,
-      "title": "Down for you",
-      "isTitle": true
-     }
-    ],
-    "src": "spotify",
-    "spotifyId": "4GQkIyzKxvXwJLtU91Vd2t",
-    "copyright": "2024 마루기획㈜, under license to NHN Bugs Corp"
+    "melonAlbumId": "11676361",
+    "spotifyId": "4GQkIyzKxvXwJLtU91Vd2t"
    },
    {
     "title": "Awesome day",
