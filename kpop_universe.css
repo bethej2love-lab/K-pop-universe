@@ -3227,6 +3227,7 @@
   .share-btn svg{width:13px;height:13px;display:block;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;}
   .share-btn:hover{color:rgba(210,222,255,0.95);transform:scale(1.18);}
   .share-btn:active{transform:scale(0.9);}
+  #feed-list-edit-btn.active{color:rgba(130,185,255,0.95);background:rgba(130,185,255,0.12);border-radius:50%;}
   .trophy-btn+.share-btn{margin-left:-6px;position:relative;top:-0.25px;}
   /* 카드 단위 ⋮ 메뉴 버튼(2026-08-30) — 공유 아이콘 옆. 텍스트 글리프라 크기/정렬만 별도로. */
   .card-menu-btn{font-size:17px;line-height:1;letter-spacing:0;color:rgba(190,205,240,0.5);}
