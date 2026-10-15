@@ -145220,6 +145220,44 @@
   },
   "discography": [
    {
+    "title": "DON'T STOP",
+    "type": "미니",
+    "isMain": true,
+    "cover": "https://cdnimg.melon.co.kr/cm2/album/images/147/12/842/14712842_20261014152539_500.jpg",
+    "releaseDate": "2026.10.15",
+    "trackCount": 5,
+    "titleTrack": "DON'T STOP",
+    "tracks": [
+     {
+      "no": 1,
+      "title": "DON'T STOP",
+      "isTitle": true
+     },
+     {
+      "no": 2,
+      "title": "Everglow",
+      "isTitle": false
+     },
+     {
+      "no": 3,
+      "title": "Come Over",
+      "isTitle": false
+     },
+     {
+      "no": 4,
+      "title": "See My Angel",
+      "isTitle": false
+     },
+     {
+      "no": 5,
+      "title": "긴 생머리 그녀 (Miss Right) (DJ Remix)",
+      "isTitle": false
+     }
+    ],
+    "src": "melon",
+    "melonAlbumId": "14712842"
+   },
+   {
     "title": "Just 15, Just Teen Top",
     "type": "미니",
     "isMain": true,

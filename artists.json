@@ -79411,6 +79411,29 @@
     ],
     "discography": [
       {
+        "title": "너의 모든 순간 [THE 시즌즈: 성시경의 고막남친]",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/147/07/207/14707207_20261014112003_500.jpg",
+        "releaseDate": "2026.10.15",
+        "trackCount": 2,
+        "titleTrack": "너의 모든 순간",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "너의 모든 순간",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "너의 모든 순간 (Inst.)",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "14707207"
+      },
+      {
         "title": "DOPAMINE",
         "type": "미니 4집",
         "isMain": true,
@@ -103838,6 +103861,49 @@
       }
     ],
     "discography": [
+      {
+        "title": "Lost&Found",
+        "type": "미니",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/147/12/622/14712622_20261014151653_500.jpg",
+        "releaseDate": "2026.10.15",
+        "trackCount": 6,
+        "titleTrack": "미완성일지도",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "미완성일지도",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "후회하는 것보다 상처인 게 더 나을지 몰라",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "8 (if)",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "미완성일지도 (Inst.)",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "후회하는 것보다 상처인 게 더 나을지 몰라 (Inst.)",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "8 (if) (Inst.)",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "14712622"
+      },
       {
         "title": "Purple Note",
         "type": "싱글",
@@ -296018,6 +296084,29 @@
       "instagram": "https://www.instagram.com/heeeeeejae"
     },
     "discography": [
+      {
+        "title": "Beyond the Wind",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/146/69/228/14669228_20261013143752_500.jpg",
+        "releaseDate": "2026.10.15",
+        "trackCount": 2,
+        "titleTrack": "이상기류",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "이상기류",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Happy Ending",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "14669228"
+      },
       {
         "title": "너의 내일로",
         "type": "싱글",
