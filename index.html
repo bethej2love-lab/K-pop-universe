@@ -7928,7 +7928,13 @@ document.getElementById('yt-lb-rotate').addEventListener('click',e=>{
 //     뒤에 깔려 있던 카드가 비어버리는 상태 충돌이 생긴다. 정상 경로를 타므로 카드 스택·URL·뒤로가기가
 //     전부 평소대로 동작하고, 나중에 "위로 끌어 풀카드 승격"도 기존 시트 제스처에 그대로 얹힌다.
 let _lbHalfEls=[];
+function _flashPanel(el){el.classList.remove('panel-flash');void el.offsetWidth;el.classList.add('panel-flash');setTimeout(()=>el.classList.remove('panel-flash'),400);}
 function _openLbHalf(kind,data){
+  // 데스크톱: 해당 카드가 이미 열려있으면 번쩍만 하고 다시 열지 않는다
+  if(!isMob()){
+    if(kind==='member'&&memberPanelEl.classList.contains('open')&&_openTArtist?.name?.ko===data?.name?.ko){_flashPanel(memberPanelEl);return;}
+    if(kind==='group'&&sidePanelEl.classList.contains('open')&&_openGCko===data){_flashPanel(sidePanelEl);return;}
+  }
   if(kind==='member')showT(data,innerWidth/2,innerHeight*0.4);
   else showGC(data,innerWidth/2,innerHeight*0.4);
   // 카드가 실제로 들어간 컨테이너를 찾아 라이트박스(z 67) 위로 올린다.

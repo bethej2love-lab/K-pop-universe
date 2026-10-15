@@ -1288,6 +1288,9 @@
   #side-panel>#gc{padding-top:44px;}
   #side-panel>#tt{padding-top:40px;}
   @media(max-width:768px){#side-panel{display:none;}}
+  /* 라이트박스 칩 클릭 시 이미 열린 카드 번쩍 */
+  @keyframes panel-flash{0%,100%{box-shadow:-6px 0 32px rgba(0,0,0,0.45);}50%{box-shadow:-6px 0 0 0 rgba(200,218,255,0.35),0 0 28px 4px rgba(200,218,255,0.18);}}
+  .panel-flash{animation:panel-flash .4s ease;}
   /* ── Member panel (그룹 카드 왼쪽 확장) ───────────── */
   #member-panel{
     position:fixed;right:440px;top:64px;bottom:0;width:440px;
