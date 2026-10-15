@@ -21907,16 +21907,38 @@ async function _buildFeedDailyNews(){
         // ⚠️ .catch가 아니라 .then(성공,실패) — Supabase 쿼리 빌더는 thenable일 뿐 Promise가 아니라 .catch가 없다.
         .then(r=>r,()=>({data:[]})),
       _winGkos.length
-        ? sb.from(_YT_TABLE).select('id,thumb,group_ko').in('group_ko',_winGkos).eq('is_short',false).order('view_count',{ascending:false}).limit(_winGkos.length*5).then(r=>r,()=>({data:[]}))
+        ? sb.from(_YT_TABLE).select('id,title,thumb,group_ko,is_short,view_count').in('group_ko',_winGkos).eq('category','live').eq('is_short',false).or('content_flag.is.null,content_flag.neq.보류').order('view_count',{ascending:false}).limit(_winGkos.length*20).then(r=>r,()=>({data:[]}))
         : Promise.resolve({data:[]})
     ]);
+    // 제목 정규화 매칭 — 특수문자·공백 제거 후 song_title이 v.title에 포함되는지
+    const _winTitleMatch=(vtitle,song)=>{
+      if(!song||!vtitle)return false;
+      const n=s=>s.toLowerCase().replace(/[^a-z0-9가-힣]/g,'');
+      const ns=n(song);const nt=n(vtitle);
+      return ns.length>=2&&nt.includes(ns);
+    };
     const _winThumbMap=new Map();
-    (winThumbRes.data||[]).forEach(v=>{if(!_winThumbMap.has(v.group_ko))_winThumbMap.set(v.group_ko,v.thumb);});
+    const _winVidMap=new Map(); // group_ko → 관련 live 영상 {id,thumb,is_short}
+    (winThumbRes.data||[]).forEach(v=>{
+      if(!_winThumbMap.has(v.group_ko))_winThumbMap.set(v.group_ko,v.thumb);
+    });
+    // song_title 매칭: 그룹별로 가장 조회수 높은 관련 영상
+    const _winSongMap=new Map(); // group_ko → song_title (1위 곡)
+    (winsRes.data||[]).forEach(w=>{if(!_winSongMap.has(w.group_ko)&&w.song_title)_winSongMap.set(w.group_ko,w.song_title);});
+    (winThumbRes.data||[]).forEach(v=>{
+      if(_winVidMap.has(v.group_ko))return; // 이미 찾음(view_count 내림차순이라 첫 번째가 최고)
+      const song=_winSongMap.get(v.group_ko);
+      if(song&&_winTitleMatch(v.title,song))_winVidMap.set(v.group_ko,v);
+    });
     const items=[];
     (winsRes.data||[]).forEach(w=>{
       const sub=_gLabelKo(w.group_ko)+(w.member_ko?` · ${w.member_ko}`:'')+` · ${w.show}`+_agoLabel(w.win_date);
-      items.push({type:'win',title:w.song_title||'',sub,thumb:_winThumbMap.get(w.group_ko)||null,
-        nav:()=>_feedNav(()=>{if(GROUPS[w.group_ko]){if(isMob())showGC(w.group_ko,window.innerWidth/2,window.innerHeight*0.4,false,false,null,false);else showGC(w.group_ko,window.innerWidth/2,window.innerHeight/2);}})});
+      const relVid=_winVidMap.get(w.group_ko);
+      const thumb=relVid?relVid.thumb:(_winThumbMap.get(w.group_ko)||null);
+      const nav=relVid
+        ?()=>_feedNav(()=>openLightbox(`https://www.youtube.com/watch?v=${relVid.id}`,false,null,0,{groupKo:w.group_ko},false,true))
+        :()=>_feedNav(()=>{if(GROUPS[w.group_ko]){if(isMob())showGC(w.group_ko,window.innerWidth/2,window.innerHeight*0.4,false,false,null,false);else showGC(w.group_ko,window.innerWidth/2,window.innerHeight/2);}});
+      items.push({type:'win',title:w.song_title||'',sub,thumb,nav});
     });
     (mvRes.data||[]).forEach(v=>{
       if(v.content_flag==='보류'||v.content_flag==='hidden')return;
