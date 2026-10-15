@@ -15435,6 +15435,145 @@ function _mxSyncChips(){
   document.querySelectorAll('[data-mx-gender]').forEach(b=>b.classList.toggle('active',b.dataset.mxGender===_mxState.gender));
   document.querySelectorAll('[data-mx-year]').forEach(b=>b.classList.toggle('active',b.dataset.mxYear===_mxState.year));
 }
+// ── 멤버 탐색 그림(2026-10-15, 사용자 "the pudding처럼 — 읽을거리보다 데이터 시각화, 심미적으로도 아름답게") ──
+// 데뷔 연도 × 데뷔 나이 산점도. 점 하나 = 멤버 한 명(생일·그룹 데뷔일이 있는 사람, 약 1,500명).
+// 검색·칩 조건에 맞는 점만 밝히고 나머지는 먼지처럼 남긴다 — 조건을 바꿀 때마다 "그 사람들이 지도 어디쯤인지"가 보인다.
+// 흰 선 = 데뷔 연도별 데뷔 나이 중앙값. 점을 누르면 말풍선, 말풍선을 누르면 멤버 카드.
+// ⚠️ 데뷔 나이는 **그룹 데뷔일** 기준이다(나중에 합류한 멤버는 실제보다 어리게 찍힌다) — 그래서 12~32세 밖은 뺀다.
+let _mxFig=null;
+// 나중에 합류한 멤버의 합류(첫 활동)일 — 그룹 데뷔일로 재면 실제보다 몇 년 어리게 찍혀 "최연소" 주석을 차지했다(첫 구현 실측:
+// 허영지 12세·강지영 13세·준 11세). 확인된 것만 적는다(카라 프로젝트 우승 후 첫 앨범 2014.08.18 등).
+const _MX_JOINED={'허영지|카라':'2014.08.18','강지영|카라':'2008.02.01','준|유키스':'2014.06.02','윤은혜|베이비복스':'1999.01.01','서아|트리플에스':'2024.05.08','주빈|트리플에스':'2023.12.23'};
+function _mxAgeAt(bday,debut){
+  const re=/(\d{4})\D?(\d{1,2})?\D?(\d{1,2})?/;
+  const b=String(bday||'').match(re),d=String(debut||'').match(re);
+  if(!b||!d)return null;
+  const tb=Date.UTC(+b[1],(+b[2]||7)-1,+b[3]||1),td=Date.UTC(+d[1],(+d[2]||7)-1,+d[3]||1);
+  return{age:(td-tb)/(365.2425*864e5),year:+d[1]+((+d[2]||7)-1)/12+((+d[3]||1)-1)/365};
+}
+function _mxFigBuild(){
+  const NS='http://www.w3.org/2000/svg';
+  const mk=(t,a)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);return e;};
+  const seen=new Set(),pts=[];
+  for(const a of ARTISTS){
+    if(!a.name?.ko||!a.group?.ko)continue;
+    const g=GROUPS[a.group.ko];if(!g)continue;
+    const key=a.name.ko+'|'+(a.bday||'');if(seen.has(key))continue;
+    const r=_mxAgeAt(a.bday,_MX_JOINED[a.name.ko+'|'+a.group.ko]||g.debut);if(!r||r.age<12||r.age>32)continue;
+    seen.add(key);pts.push({a,age:r.age,year:r.year,gender:g.gender||''});
+  }
+  const wrap=document.createElement('div');wrap.className='mx-fig';
+  const W=Math.max(320,Math.min(900,(document.getElementById('mx-grid')?.clientWidth||360)-20)),H=W>600?280:236;
+  const L=30,Rm=56,T=16,B=24;
+  const yrs=pts.map(p=>p.year),x0=Math.floor(Math.min(...yrs)),x1=new Date().getFullYear()+1;
+  const x=v=>L+(v-x0)*(W-L-Rm)/(x1-x0),y=v=>T+(v-12)*(H-T-B)/(32-12);
+  const svg=mk('svg',{viewBox:`0 0 ${W} ${H}`,width:W,height:H,class:'mx-svg',role:'img','aria-label':'데뷔 연도별 데뷔 나이'});
+  const ax=mk('g',{class:'mx-ax'});
+  [15,20,25,30].forEach(v=>{ax.appendChild(mk('line',{x1:L,x2:W-Rm,y1:y(v),y2:y(v)}));const t=mk('text',{x:L-6,y:y(v)+3.5,'text-anchor':'end'});t.textContent=v;ax.appendChild(t);});
+  for(let v=Math.ceil(x0/5)*5;v<x1;v+=5){const t=mk('text',{x:x(v),y:H-7,'text-anchor':'middle'});t.textContent=v;ax.appendChild(t);}
+  const yl=mk('text',{x:2,y:T-5,'text-anchor':'start',class:'mx-ax-ttl'});yl.textContent=currentLang==='ko'?'데뷔 나이':'Age at debut';ax.appendChild(yl);
+  svg.appendChild(ax);
+  // 같은 그룹은 데뷔일이 같아 세로 한 줄로 겹친다 — 이름 해시로 살짝 흩는다(매번 같은 자리)
+  const jit=str=>{let h=0;for(const c of str)h=(h*31+c.charCodeAt(0))|0;return((h>>>0)%1000/1000-.5)*.5;};
+  const dots=mk('g',{class:'mx-dots'});
+  pts.forEach(p=>{
+    p.cx=x(p.year+jit(p.a.name.ko+p.a.group.ko));p.cy=y(p.age);
+    p.el=mk('circle',{cx:p.cx.toFixed(1),cy:p.cy.toFixed(1),r:2,class:'mx-dot '+(p.gender==='m'?'is-m':p.gender==='f'?'is-f':'')});
+    p.el.style.setProperty('--d',((p.year-x0)/(x1-x0)*900|0)+'ms');
+    dots.appendChild(p.el);
+  });
+  svg.appendChild(dots);
+  const med=mk('path',{class:'mx-med'});svg.appendChild(med);
+  const medLbl=mk('text',{class:'mx-med-lbl'});svg.appendChild(medLbl);
+  const young=mk('g',{class:'mx-young'});svg.appendChild(young);
+  const svgWrap=document.createElement('div');svgWrap.className='mx-svg-wrap';svgWrap.appendChild(svg);
+  wrap.appendChild(svgWrap);
+  const tip=document.createElement('button');tip.type='button';tip.className='mx-tip';tip.hidden=true;svgWrap.appendChild(tip);
+  const foot=document.createElement('div');foot.className='mx-fig-foot';
+  const cap=document.createElement('div');cap.className='mx-fig-cap';foot.appendChild(cap);
+  const leg=document.createElement('div');leg.className='mx-fig-leg';
+  leg.innerHTML='<i class="is-f"></i>'+(currentLang==='ko'?'여':'F')+'<i class="is-m"></i>'+(currentLang==='ko'?'남':'M')+'<i class="ln"></i>'+(currentLang==='ko'?'중앙값':'median');
+  foot.appendChild(leg);
+  wrap.appendChild(foot);
+  const st={wrap,svg,pts,med,medLbl,young,tip,cap,x,y,W,H,active:pts,tipP:null};
+  // 점 고르기 — 2px 점은 손가락으로 못 누른다. 누른 자리에서 가장 가까운(지금 밝은) 점을 찾는다.
+  svg.addEventListener('click',e=>{
+    const r=svg.getBoundingClientRect(),sx=(e.clientX-r.left)*W/r.width,sy=(e.clientY-r.top)*H/r.height;
+    let best=null,bd=18*18;
+    for(const p of st.active){const d=(p.cx-sx)**2+(p.cy-sy)**2;if(d<bd){bd=d;best=p;}}
+    _mxFigTip(st,best===st.tipP?null:best);
+  });
+  tip.addEventListener('click',e=>{
+    e.stopPropagation();const a=st.tipP&&st.tipP.a;if(!a)return;
+    _closeMemberExplorer();
+    if(GROUPS[a.group.ko])openConnCard(a);else{const sa=ARTISTS.find(x=>x.name.ko===a.name.ko&&!GROUPS[x.group.ko]);openConnCard(sa||a);}
+  });
+  return st;
+}
+function _mxFigTip(st,p){
+  st.svg.querySelectorAll('.mx-dot.is-pick').forEach(n=>n.classList.remove('is-pick'));
+  st.tipP=p;
+  if(!p){st.tip.hidden=true;return;}
+  p.el.classList.add('is-pick');p.el.parentNode.appendChild(p.el);
+  const isKo=currentLang==='ko',yr=Math.floor(p.age),mo=Math.floor((p.age-yr)*12);
+  st.tip.innerHTML='<b></b><span></span><em></em>';
+  st.tip.querySelector('b').textContent=_dispName(p.a);
+  st.tip.querySelector('span').textContent=_gLabelKo(p.a.group.ko);
+  st.tip.querySelector('em').textContent=isKo?`${Math.floor(p.year)} 데뷔 · ${yr}세 ${mo}개월`:`debut ${Math.floor(p.year)} · ${yr}y ${mo}m`;
+  st.tip.hidden=false;
+  const fx=p.cx/st.W*100,fy=p.cy/st.H*100;
+  st.tip.style.left=Math.min(Math.max(fx,20),80)+'%';
+  st.tip.style.top=fy+'%';
+  st.tip.classList.toggle('below',fy<40);
+}
+function _mxFigUpdate(st,matchSet,filtered){
+  const isKo=currentLang==='ko';
+  st.svg.classList.toggle('is-filtered',filtered);
+  const act=[];
+  st.pts.forEach(p=>{const on=!filtered||matchSet.has(p.a);p.el.classList.toggle('on',on);if(on)act.push(p);});
+  st.active=act;
+  if(st.tipP&&!act.includes(st.tipP))_mxFigTip(st,null);
+  // 중앙값 선 — 지금 밝은 점들 기준(조건을 걸면 그 조건의 흐름). 해마다 5명 미만이면 그 해는 건너뛴다.
+  const by={};act.forEach(p=>{(by[Math.floor(p.year)]??=[]).push(p.age);});
+  const md=Object.keys(by).map(Number).sort((a,b)=>a-b).filter(k=>by[k].length>=5).map(k=>{const v=by[k].sort((a,b)=>a-b);return[k+.5,v[v.length>>1]];});
+  // 3년 이동 평균으로 매끈하게(중앙값이 해마다 출렁여 선이 톱니가 된다)
+  const sm=md.map((m,i)=>{const w=md.slice(Math.max(0,i-1),i+2);return[m[0],w.reduce((s,q)=>s+q[1],0)/w.length];});
+  let d='';
+  sm.forEach((m,i)=>{
+    const px=st.x(m[0]),py=st.y(m[1]);
+    if(!i){d+=`M${px.toFixed(1)},${py.toFixed(1)}`;return;}
+    const pv=sm[i-1],qx=st.x(pv[0]),qy=st.y(pv[1]),mx=(qx+px)/2;
+    d+=`C${mx.toFixed(1)},${qy.toFixed(1)} ${mx.toFixed(1)},${py.toFixed(1)} ${px.toFixed(1)},${py.toFixed(1)}`;
+  });
+  st.med.setAttribute('d',d);
+  const lastM=sm[sm.length-1];
+  if(lastM){st.medLbl.setAttribute('x',(st.x(lastM[0])+6).toFixed(1));st.medLbl.setAttribute('y',(st.y(lastM[1])+3.5).toFixed(1));st.medLbl.textContent=isKo?`${lastM[1].toFixed(1)}세`:lastM[1].toFixed(1);}
+  else st.medLbl.textContent='';
+  // 최연소 주석
+  st.young.innerHTML='';
+  const yo=act.reduce((m,p)=>!m||p.age<m.age?p:m,null);
+  if(yo){
+    const NS='http://www.w3.org/2000/svg';
+    const ring=document.createElementNS(NS,'circle');ring.setAttribute('cx',yo.cx);ring.setAttribute('cy',yo.cy);ring.setAttribute('r',5.5);ring.setAttribute('class','mx-young-ring');
+    const t=document.createElementNS(NS,'text');const right=yo.cx>st.W*.6;
+    t.setAttribute('x',right?yo.cx-9:yo.cx+9);t.setAttribute('y',yo.cy+3.5);t.setAttribute('text-anchor',right?'end':'start');t.setAttribute('class','mx-young-lbl');
+    t.textContent=(isKo?'최연소 ':'youngest ')+_dispName(yo.a)+' '+(isKo?Math.floor(yo.age)+'세':Math.floor(yo.age));
+    st.young.appendChild(ring);st.young.appendChild(t);
+  }
+  const all=act.map(p=>p.age).sort((a,b)=>a-b);
+  const m=all.length?all[all.length>>1]:null;
+  st.cap.textContent=!all.length?(isKo?'그림에 찍을 생일·데뷔일 정보가 없어요':'No birthday/debut data for this filter')
+    :isKo?`${filtered?'이 조건 ':''}${all.length.toLocaleString()}명 · 데뷔 나이 중앙값 ${Math.floor(m)}세 ${Math.floor((m%1)*12)}개월`
+    :`${all.length.toLocaleString()} members · median debut age ${m.toFixed(1)}`;
+}
+function _mxFigMount(grid,results,filtered){
+  if(!_mxFig){
+    _mxFig=_mxFigBuild();
+    if(!(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches)){_mxFig.wrap.classList.add('intro');setTimeout(()=>_mxFig&&_mxFig.wrap.classList.remove('intro'),2000);}
+  }
+  grid.insertBefore(_mxFig.wrap,grid.firstChild);
+  _mxFigUpdate(_mxFig,new Set(results),filtered);
+}
 function _mxRender(){
   const grid=document.getElementById('mx-grid');
   const countEl=document.getElementById('mx-count');
@@ -15466,7 +15605,8 @@ function _mxRender(){
   if(countEl)countEl.textContent=results.length>MAX?`${results.length}명 중 ${MAX}명`:`${results.length}명`;
   const shown=results.slice(0,MAX);
   grid.innerHTML='';
-  if(!shown.length){grid.innerHTML='<div class="mx-empty">조건에 맞는 멤버가 없어요</div>';return;}
+  try{_mxFigMount(grid,results,!!(fG||fY||fN||fT));}catch(e){console.warn('[mx] 그림 실패 — 목록만',e);}
+  if(!shown.length){grid.insertAdjacentHTML('beforeend','<div class="mx-empty">조건에 맞는 멤버가 없어요</div>');return;}
   const frag=document.createDocumentFragment();
   for(const a of shown){
     const yr=_mxBirthYear(a);

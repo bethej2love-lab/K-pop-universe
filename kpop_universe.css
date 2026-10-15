@@ -4368,3 +4368,41 @@
 #feed-list-grid>.cs-empty{grid-column:1/-1;padding:28px 0;text-align:center;font-size:12px;color:rgba(255,255,255,0.4);}
 .cs-ann{fill:var(--c);font-size:9.5px;font-style:italic;opacity:.85;pointer-events:none;}
 .cs-svg.has-on .cs-line:not(.is-on) .cs-ann{opacity:.15;}
+
+/* ── 멤버 탐색 그림(2026-10-15) — 데뷔 연도 × 데뷔 나이. 점 1,500개가 은하처럼 깔리고 조건에 맞는 것만 밝아진다.
+   여=분홍·남=하늘, 중앙값은 흰 실선, 주석은 기울임 — 차트 스토리(.cs-*)와 같은 문법. */
+#mx-grid>.mx-fig{grid-column:1/-1;margin:0 0 8px;}
+.mx-svg-wrap{position:relative;width:fit-content;max-width:100%;margin:0 auto;}
+.mx-svg{display:block;max-width:100%;height:auto;overflow:visible;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;cursor:crosshair;}
+.mx-ax line{stroke:rgba(255,255,255,0.07);stroke-dasharray:1 3;}
+.mx-ax text{fill:rgba(255,255,255,0.34);font-size:9.5px;font-variant-numeric:tabular-nums;}
+.mx-ax .mx-ax-ttl{fill:rgba(255,255,255,0.45);font-size:9.5px;}
+.mx-dot{fill:#9aa;opacity:.5;transition:opacity .35s,fill .35s,r .2s;}
+.mx-dot.is-f{fill:#f6a3c8;}
+.mx-dot.is-m{fill:#8fbaff;}
+.mx-svg.is-filtered .mx-dot{opacity:.07;}
+.mx-svg.is-filtered .mx-dot.on{opacity:.95;r:2.6px;}
+.mx-dot.is-pick{opacity:1!important;r:4.5px;stroke:#fff;stroke-width:1.4;}
+.mx-med{fill:none;stroke:rgba(255,255,255,0.85);stroke-width:1.6;stroke-linecap:round;filter:drop-shadow(0 0 3px rgba(0,0,0,.8));transition:d .5s;}
+.mx-med-lbl{fill:rgba(255,255,255,0.85);font-size:10px;font-weight:600;font-variant-numeric:tabular-nums;}
+.mx-young-ring{fill:none;stroke:#fff;stroke-width:1;opacity:.75;}
+.mx-young-lbl{fill:rgba(255,255,255,0.8);font-size:9.5px;font-style:italic;paint-order:stroke;stroke:#0e0e12;stroke-width:3px;}
+.mx-fig.intro .mx-dot{animation:mxIn .7s cubic-bezier(.3,.7,.2,1) both;animation-delay:var(--d);}
+.mx-fig.intro .mx-med,.mx-fig.intro .mx-med-lbl,.mx-fig.intro .mx-young{animation:mxFade .6s ease-out 1s both;}
+@keyframes mxIn{from{opacity:0;transform:translateY(6px);}}
+@keyframes mxFade{from{opacity:0;}}
+.mx-tip{all:unset;box-sizing:border-box;position:absolute;transform:translate(-50%,calc(-100% - 12px));display:flex;flex-direction:column;gap:1px;padding:7px 10px 8px;border-radius:10px;background:rgba(22,22,30,0.94);border:1px solid rgba(255,255,255,0.14);box-shadow:0 6px 20px rgba(0,0,0,.45);backdrop-filter:blur(6px);cursor:pointer;white-space:nowrap;z-index:2;}
+.mx-tip.below{transform:translate(-50%,12px);}
+.mx-tip b{font-size:13px;font-weight:600;color:#fff;}
+.mx-tip span{font-size:11px;color:rgba(255,255,255,0.55);}
+.mx-tip em{font-style:normal;font-size:11px;color:rgba(255,255,255,0.8);margin-top:2px;}
+.mx-tip em::after{content:' ›';color:rgba(255,255,255,0.45);}
+.mx-fig-foot{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:4px 12px;margin:6px 4px 0;padding-bottom:10px;border-bottom:1px solid rgba(255,255,255,0.07);}
+.mx-fig-cap{font-size:11.5px;color:rgba(255,255,255,0.72);font-variant-numeric:tabular-nums;}
+.mx-fig-leg{display:flex;align-items:center;gap:4px;font-size:10.5px;color:rgba(255,255,255,0.45);}
+.mx-fig-leg i{display:inline-block;width:6px;height:6px;border-radius:50%;margin-left:6px;}
+.mx-fig-leg i.is-f{background:#f6a3c8;}
+.mx-fig-leg i.is-m{background:#8fbaff;}
+.mx-fig-leg i.ln{width:12px;height:1.6px;border-radius:1px;background:rgba(255,255,255,0.85);}
+@media (prefers-reduced-motion: reduce){.mx-dot,.mx-med{transition:none;}}
+.mx-tip[hidden]{display:none;}
