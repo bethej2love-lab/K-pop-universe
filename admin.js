@@ -6349,7 +6349,7 @@ function _vmRenderChannels(term){
     const bulk=document.createElement('button');bulk.type='button';bulk.className='ec-del-btn';bulk.style.cssText='display:block;margin:4px 0 8px;';
     bulk.textContent=`↻ ${q?`'${term.trim()}'`:'이 유형'} 채널 ${_rescanRows.length}개 다시 훑기`;
     bulk.title='업로드 목록을 처음부터 받아 빠진 영상 저장 + 출처 없이 먼저 들어온 영상을 이 채널로 연결(채널당 최대 2,000개, 50개당 1유닛)';
-    bulk.addEventListener('click',e=>{e.stopPropagation();_extRescanMany(_rescanRows,q?term.trim():(_EXT_TIER_OPTIONS.find(o=>o[0]===_vmChTierFilter)?.[1]||''));});
+    bulk.addEventListener('click',e=>{e.stopPropagation();_extRescanMany(_rescanRows,q?term.trim():(_EXT_TIER_OPTIONS.find(o=>o[0]===_vmChTierFilter)?.[1]||''),bulk);});
     listEl.appendChild(bulk);
   }
   rows.forEach(ch=>{
@@ -6412,7 +6412,7 @@ function _vmRenderChannels(term){
       if(_EXT_RESCAN_TIERS.has(ch.tier)){
         const rb=document.createElement('button');rb.className='ec-del-btn';rb.type='button';rb.textContent='↻';
         rb.title='이 채널 영상 처음부터 다시 훑기(빠진 영상 저장 + 출처 연결)';
-        rb.addEventListener('click',e=>{e.stopPropagation();_extRescanMany([ch],ch.name);});
+        rb.addEventListener('click',e=>{e.stopPropagation();_extRescanMany([ch],ch.name,rb);});
         item.appendChild(rb);
       }
       const delBtn=document.createElement('button');delBtn.className='ec-del-btn';delBtn.type='button';delBtn.textContent='삭제';
@@ -9307,20 +9307,26 @@ async function _extRescanChannel(ch,maxPages,onProg){
   return{seen:vids.length,added,claimed,skipped};
 }
 const _EXT_RESCAN_TIERS=new Set(['fans','idol','grpsub']); // 다시 훑기 대상 — 채널 전체가 한 그룹/멤버 것인 소유 채널
-async function _extRescanMany(chs,label){
-  if(_extSyncing||_backfilling){_ytSetProg('다른 동기화가 도는 중이에요 — 끝난 뒤 다시 눌러주세요');return;}
+// btn: 누른 버튼 — 진행·결과를 그 자리에 보여준다(2026-10-15, 사용자 — 진행이 동기화 패널 진행 줄(#sp-yt-prog)에만 찍혀
+// 채널 목록에선 눌러도 아무 반응이 없어 보였다). 끝나면 토스트로 결과 요약.
+async function _extRescanMany(chs,label,btn){
+  if(_extSyncing||_backfilling){_showShareToast('다른 동기화가 도는 중이에요 — 끝난 뒤 다시 눌러주세요');return;}
   if(!sb){_ytSetProg('Supabase 연결 없음');return;}
   _extSyncing=true;
+  const btnTxt=btn&&btn.textContent;
+  if(btn){btn.disabled=true;btn.textContent='훑는 중…';}
+  _showShareToast(`${label} 다시 훑기 시작 — 채널 ${chs.length}개`);
   const tot={seen:0,added:0,claimed:0,skipped:0};let errs=0;
   try{
     for(const[i,ch] of chs.entries()){
       try{
-        const r=await _extRescanChannel(ch,40,m=>_ytSetProg(`(${i+1}/${chs.length}) ${m}`));
+        const r=await _extRescanChannel(ch,40,m=>{_ytSetProg(`(${i+1}/${chs.length}) ${m}`);if(btn)btn.textContent=chs.length>1?`훑는 중 ${i+1}/${chs.length}…`:'훑는 중…';});
         for(const k in tot)tot[k]+=r[k];
       }catch(e){errs++;console.error('[다시 훑기]',ch.handle,e.message);}
     }
-    _ytSetProg(`[다시 훑기] ${label} 완료 — 확인 ${tot.seen}개 · 새로 저장 ${tot.added}개 · 출처 연결 ${tot.claimed}개${tot.skipped?' · 건너뜀 '+tot.skipped:''}${errs?' · ⚠️오류 '+errs+'곳(콘솔)':''}`);
-  }finally{_extSyncing=false;}
+    const msg=`${label} 다시 훑기 완료 — 영상 ${tot.seen}개 확인 · 새로 저장 ${tot.added}개 · 채널 연결 ${tot.claimed}개${tot.skipped?' · 건너뜀 '+tot.skipped:''}${errs?' · ⚠️오류 '+errs+'곳(콘솔)':''}`;
+    _ytSetProg('[다시 훑기] '+msg);_showShareToast(msg);
+  }finally{_extSyncing=false;if(btn){btn.disabled=false;btn.textContent=btnTxt;}}
 }
 
 let _extSyncing=false;
