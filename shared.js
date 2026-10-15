@@ -329,3 +329,66 @@ function _fmtViewMilestone(n){
   if(n>=1e6)return`${n/1e6}M+`;
   return`${n/1e3}K+`;
 }
+
+// ── 행사(시상식·연말 무대·페스티벌·해외 특집 음방) 시리즈 정의 (2026-10-15) ─────────────────────────
+// 영상 제목에서 행사를 찾아 content_formats에 'EV:<시리즈>'와 'EV:<시리즈>:<회차>' 두 태그를 붙인다(admin.js 세부 포맷 스윕).
+// 회차 = 연도(+도시). 태그는 포맷 알약 목록(_CONTENT_FORMAT_ORDER)에 없는 이름이라 카드에 텍스트로 안 뜨고,
+// 행사 페이지(검색·발견 선반)만 이걸로 조회한다(사용자: "카드에 행사 칩까지는 과하다").
+// re: 행사 표기(대소문자 무시). city: 도시가 회차를 가르는 시리즈(KCON·해외 특집 음방)는 도시 캡처 정규식.
+// late: 연말(11~12월) 행사 — 제목에 연도가 없으면 11월 전 업로드는 직전 해 회차로 본다(그해 회차는 아직 안 열렸다).
+//       연초 행사(골든디스크·서울가요대상·한터)는 업로드 연도 그대로.
+const _EV_CITY={바르셀로나:'Barcelona',BARCELONA:'Barcelona',리스본:'Lisbon',LISBON:'Lisbon',후쿠오카:'Fukuoka',FUKUOKA:'Fukuoka',이스탄불:'Istanbul',ISTANBUL:'Istanbul',
+  파리:'Paris',PARIS:'Paris',마드리드:'Madrid',MADRID:'Madrid',칠레:'Chile',CHILE:'Chile',멕시코:'Mexico',MEXICO:'Mexico',자카르타:'Jakarta',JAKARTA:'Jakarta',
+  싱가포르:'Singapore',SINGAPORE:'Singapore',홍콩:'Hong Kong',HONGKONG:'Hong Kong','HONG KONG':'Hong Kong',도쿄:'Tokyo',TOKYO:'Tokyo',베를린:'Berlin',BERLIN:'Berlin',
+  하노이:'Hanoi',HANOI:'Hanoi',브라질:'Brazil',BRAZIL:'Brazil',벨기에:'Belgium',BELGIUM:'Belgium',프랑스:'France',FRANCE:'France',
+  일본:'Japan',재팬:'Japan',JAPAN:'Japan',LA:'LA',미국:'USA',USA:'USA',NY:'NY',태국:'Thailand',THAILAND:'Thailand','사우디아라비아':'Saudi Arabia','SAUDI ARABIA':'Saudi Arabia',
+  독일:'Germany',GERMANY:'Germany',호주:'Australia',AUSTRALIA:'Australia',대만:'Taiwan',TAIWAN:'Taiwan',중국:'China',CHINA:'China',홍콩특별:'Hong Kong',
+  인도네시아:'Indonesia',INDONESIA:'Indonesia',베트남:'Vietnam',VIETNAM:'Vietnam',튀르키예:'Turkey',TURKEY:'Turkey',영국:'UK',UK:'UK',LONDON:'London',런던:'London',
+  'ABU DHABI':'Abu Dhabi',아부다비:'Abu Dhabi',SAITAMA:'Saitama',사이타마:'Saitama',OSAKA:'Osaka',오사카:'Osaka',MANILA:'Manila',마닐라:'Manila',BANGKOK:'Bangkok',방콕:'Bangkok'};
+const _EVENT_SERIES=[
+  // 시상식
+  {id:'mama',ko:'MAMA AWARDS',kind:'award',late:true,re:/(?:19|20)\d\d\s*MAMA\b|\bMAMA\s*(?:AWARDS|(?:19|20)\d\d)|MNET\s*ASIAN\s*MUSIC\s*AWARDS|마마\s*어워즈|엠넷\s*아시안\s*뮤직\s*어워즈/i},
+  {id:'aaa',ko:'AAA (Asia Artist Awards)',kind:'award',late:true,re:/ASIA\s*ARTIST\s*AWARDS?|아시아\s*아티스트\s*어워즈|#?AAA\s*(?:19|20)\d\d|(?:19|20)\d\d\s*AAA\b|#AAA20\d\d/i},
+  {id:'gda',ko:'골든디스크 어워즈',kind:'award',re:/골든\s*디스크|GOLDEN\s*DISC/i},
+  {id:'mma',ko:'MMA (멜론뮤직어워드)',kind:'award',late:true,re:/MELON\s*MUSIC\s*AWARDS?|멜론\s*뮤직\s*어워드|#?MMA\s*(?:19|20)\d\d|(?:19|20)\d\d\s*MMA\b/i},
+  {id:'sma',ko:'서울가요대상',kind:'award',re:/서울\s*가요\s*대상|SEOUL\s*MUSIC\s*AWARDS/i},
+  {id:'hma',ko:'한터뮤직어워즈',kind:'award',re:/한터\s*뮤직\s*어워즈|HANTEO\s*MUSIC\s*AWARDS/i},
+  {id:'kgma',ko:'KGMA (코리아그랜드뮤직어워즈)',kind:'award',late:true,re:/\bKGMA\b|KOREA\s*GRAND\s*MUSIC\s*AWARDS|코리아\s*그랜드\s*뮤직\s*어워즈/i},
+  {id:'tma',ko:'더팩트 뮤직 어워즈',kind:'award',late:true,re:/THE\s*FACT\s*MUSIC\s*AWARDS|더팩트\s*뮤직\s*어워즈|\bTMA\s*(?:19|20)\d\d/i},
+  // 연말 무대
+  {id:'sbs-gayo',ko:'SBS 가요대전',kind:'yearend',late:true,re:/가요\s*대전|SBS\s*GAYO\s*DAEJEON/i},
+  {id:'mbc-gayo',ko:'MBC 가요대제전',kind:'yearend',late:true,re:/가요\s*대제전|MBC\s*GAYO\s*DAEJEJEON|MBC\s*MUSIC\s*FESTIVAL/i},
+  {id:'kbs-gayo',ko:'KBS 가요대축제',kind:'yearend',late:true,re:/가요\s*대축제|KBS\s*SONG\s*FESTIVAL/i},
+  // 페스티벌·콘서트
+  {id:'kcon',ko:'KCON',kind:'festival',re:/\bKCON\b|케이콘/i,city:/\bKCON\s*(?:(?:19|20)\d\d\s*)?(JAPAN|LA|USA|NY|THAILAND|SAUDI ARABIA|GERMANY|FRANCE|MEXICO|AUSTRALIA|CHINA|TAIWAN|HONG ?KONG|ABU DHABI|INDONESIA|VIETNAM|UK|LONDON|SAITAMA|OSAKA)|\bKCON\s*(?:19|20)\d\d\s*(JAPAN|LA|USA|NY|THAILAND|SAUDI ARABIA|GERMANY|FRANCE|MEXICO|AUSTRALIA|CHINA|TAIWAN|HONG ?KONG)|케이콘\s*(재팬|일본|LA|미국|태국|사우디)/i},
+  {id:'waterbomb',ko:'워터밤',kind:'festival',re:/워터밤|WATERBOMB/i},
+  {id:'dream',ko:'드림콘서트',kind:'festival',re:/드림\s*콘서트|DREAM\s*CONCERT/i},
+  {id:'lolla',ko:'롤라팔루자',kind:'festival',re:/롤라팔루자|LOLLAPALOOZA/i},
+  {id:'coachella',ko:'코첼라',kind:'festival',re:/코첼라|COACHELLA/i},
+  {id:'summersonic',ko:'서머소닉',kind:'festival',re:/서머\s*소닉|섬머\s*소닉|SUMMER\s*SONIC/i},
+  // 해외 특집 음방
+  {id:'mb-in',ko:'뮤직뱅크 월드투어',kind:'overseas',re:/뮤직\s*뱅크\s*인\s*[가-힣]|MUSIC\s*BANK\s*IN\s+[A-Z]|MUSIC\s*BANK\s*WORLD\s*TOUR|뮤직뱅크\s*월드투어/i,city:/뮤직\s*뱅크\s*인\s*([가-힣]+)|MUSIC\s*BANK\s*IN\s+([A-Z]+(?:\s[A-Z]+)?)/i},
+  {id:'ink-in',ko:'인기가요 해외 특집',kind:'overseas',re:/인기가요\s*인\s*[가-힣]|INKIGAYO\s*IN\s+[A-Z]/i,city:/인기가요\s*인\s*([가-힣]+)|INKIGAYO\s*IN\s+([A-Z]+)/i},
+  {id:'mcd-in',ko:'엠카운트다운 해외 특집',kind:'overseas',re:/M\s*COUNTDOWN\s*IN\s+[A-Z]|엠카운트다운\s*인\s*[가-힣]/i,city:/M\s*COUNTDOWN\s*IN\s+([A-Z]+)|엠카운트다운\s*인\s*([가-힣]+)/i},
+];
+// 도시 정규식은 대안이 여럿이라 처음 채워진 캡처를 쓴다("케이콘 재팬"은 3번째 그룹 — 1·2번만 보다가 도시가 빠졌다).
+// 제목(+업로드 날짜)에서 행사 태그 — [] 또는 ['EV:mama','EV:mama:2025'] (도시가 있으면 'EV:kcon:2026-Japan')
+function _eventTags(title,publishedAt){
+  const t=String(title||'');if(!t)return [];
+  const out=[];
+  for(const s of _EVENT_SERIES){
+    const m=s.re.exec(t);if(!m)continue;
+    // 연도: 행사 표기 근처(앞뒤 24자)의 연도 → 제목 어디든 연도 → 업로드 연도(연말 행사는 1~2월이면 전년도)
+    const near=t.slice(Math.max(0,m.index-24),m.index+m[0].length+24);
+    let y=(near.match(/(?:19|20)\d\d/)||t.match(/(?:19|20)\d\d/)||[])[0];
+    // '251010 방송' 같은 6자리 날짜는 연도로 안 본다 — 위 정규식은 4자리만이라 '2510'을 잡을 수 있어 범위 확인
+    if(y&&(+y<1995||+y>2035))y=null;
+    if(!y&&publishedAt){const p=String(publishedAt);y=p.slice(0,4);if(s.late&&+p.slice(5,7)<11)y=String(+y-1);}
+    if(!y)continue;
+    let ed=y;
+    if(s.id==='sbs-gayo'&&/썸머|SUMMER/i.test(near))ed=y+'-Summer'; // 2026 가요대전 썸머(8월) — 연말 가요대전과 별개 회차
+    if(s.city){const c=s.city.exec(t);const raw=c&&(c.slice(1).find(Boolean)||'').trim().toUpperCase();const city=raw&&(_EV_CITY[raw]||_EV_CITY[raw.replace(/\s+/g,'')]||(/^[A-Z ]+$/.test(raw)?raw[0]+raw.slice(1).toLowerCase():raw));if(city)ed=y+'-'+city;}
+    out.push('EV:'+s.id,'EV:'+s.id+':'+ed);
+  }
+  return out;
+}

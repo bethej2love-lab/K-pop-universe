@@ -4721,11 +4721,15 @@ async function _ytSweepContentFormats(){
   try{
     // 루틴에서는 증분(마지막 실행 이후 유입분), 7일에 한 번은 전량. 패널 버튼으로 직접 누르면 항상 전량.
     // 규칙(_YT_FORMAT_RULES)에 낱말을 추가했을 땐 **버튼으로 한 번** 돌려야 과거 영상까지 소급된다.
-    const _fmtSince=_admRoutineScopeSince('format');
+    // 규칙 버전이 바뀌면 다음 한 번은 전량 — 행사 태그(2026-10-15, shared.js _EVENT_SERIES)처럼 새 규칙을 과거 영상에 소급한다.
+    // 규칙(_YT_FORMAT_RULES·_EVENT_SERIES)을 바꿀 땐 이 문자열도 바꿀 것.
+    const _FMT_RULES_VER='2026-10-15-events';
+    let _fmtSince=_admRoutineScopeSince('format');
+    try{if(localStorage.getItem('kpu_fmt_rules_ver')!==_FMT_RULES_VER){_fmtSince=null;localStorage.setItem('kpu_fmt_rules_ver',_FMT_RULES_VER);}}catch(e){}
     _ytSetProg('[세부 포맷 태깅] 조회 중…'+(_fmtSince?' (증분)':''));
     const{data:rows,error}=await _sbFetchAll(()=>{
       let q=sb.from(_YT_TABLE)
-        .select('id,title,content_formats')
+        .select('id,title,content_formats,published_at')
         .eq('tags_manual',false);
       if(_fmtSince)q=q.gt('created_at',_fmtSince);
       return q.order('id');
@@ -4736,7 +4740,8 @@ async function _ytSweepContentFormats(){
     const tally={};
     rows.forEach(v=>{
       const cur=Array.isArray(v.content_formats)?v.content_formats:[];
-      const add=_ytDeriveFormats(v.title||'').filter(f=>!cur.includes(f));
+      // 행사 태그(EV:시리즈·EV:시리즈:회차)도 같이 — 포맷 알약 목록에 없는 이름이라 카드엔 안 뜨고 행사 페이지만 쓴다
+      const add=[..._ytDeriveFormats(v.title||''),..._eventTags(v.title||'',v.published_at)].filter((f,i,arr)=>!cur.includes(f)&&arr.indexOf(f)===i);
       if(!add.length)return;
       add.forEach(f=>tally[f]=(tally[f]||0)+1);
       updates.push({id:v.id,patch:{content_formats:cur.concat(add)}});
