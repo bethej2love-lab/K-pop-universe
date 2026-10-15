@@ -38,6 +38,50 @@ const G = JSON.parse(fs.readFileSync(path.join(ROOT, 'groups.json'), 'utf8'));
 const A = JSON.parse(fs.readFileSync(path.join(ROOT, 'artists.json'), 'utf8'));
 const arts = Array.isArray(A) ? A : Object.values(A);
 
+// ── 멜론 기준 곡 제목 보정 ──────────────────────────────────────────────────
+// wiki song_title이 영어인 경우 win_date 전후 60일 발매 앨범에서 타이틀 곡을 찾아 대체.
+// 한국어 제목("퇴사할게여")이 있으면 영어 위키 표기("I'm Gonna Toesa") 대신 멜론 제목 우선.
+// 찾지 못하면 위키 제목 그대로(영어 자체가 곡명인 경우: Kick Off The Wall 등).
+function _isHangul(s) { return /[가-힣]/.test(s || ''); }
+function _getMelonTitle(groupKo, memberKo, winDate) {
+  const winTs = new Date(winDate).getTime();
+  const WINDOW = 60 * 86400 * 1000; // 60일
+  // 그룹 또는 솔로 아티스트의 discography 가져오기
+  let discos = [];
+  if (memberKo) {
+    const art = arts.find(a => a.name && a.name.ko === memberKo);
+    if (art && art.discography) discos = art.discography;
+  }
+  if (!discos.length && G[groupKo] && G[groupKo].discography) {
+    discos = G[groupKo].discography;
+  }
+  // win_date ± 60일 이내 발매된 앨범 후보 (발매일 근접순)
+  const candidates = discos
+    .filter(d => {
+      if (!d.releaseDate) return false;
+      const relTs = new Date(d.releaseDate.replace(/\./g, '-')).getTime();
+      return Math.abs(relTs - winTs) <= WINDOW;
+    })
+    .sort((a, b) => {
+      const ta = new Date(a.releaseDate.replace(/\./g, '-')).getTime();
+      const tb = new Date(b.releaseDate.replace(/\./g, '-')).getTime();
+      return Math.abs(ta - winTs) - Math.abs(tb - winTs);
+    });
+  for (const d of candidates) {
+    // titleTrack 필드가 있으면 바로 사용
+    if (d.titleTrack && _isHangul(d.titleTrack)) return d.titleTrack;
+    // tracks에서 isTitle=true인 것
+    const tTrack = (d.tracks || []).find(t => t.isTitle);
+    if (tTrack) {
+      // "퇴사할게여 (Narr. 기안84)" 같은 경우 괄호 제거 후 반환
+      const clean = tTrack.title.replace(/\s*\([^)]*\)\s*$/, '').trim();
+      if (_isHangul(clean)) return clean;
+      if (clean) return clean; // 영어 타이틀도 반환(멜론 기준이 이미 영어인 경우)
+    }
+  }
+  return null;
+}
+
 // ── 방송명 매핑(위키 아티클명 ↔ DB show) ──
 const SHOWS = [
   { wiki: 'Music Bank', db: '뮤직뱅크' },
@@ -237,7 +281,12 @@ function parseYear(html, year) {
         const dkey = `${res.group_ko}|${res.member_ko || ''}|${w.date}|${show.db}`;
         if (existing.has(dkey)) continue;
         existing.add(dkey);
-        const song = (w.song || '').replace(/[\t†‡*]/g, ' ').replace(/\s+/g, ' ').trim() || null; // 각주(†‡)·탭 제거
+        let song = (w.song || '').replace(/[\t†‡*]/g, ' ').replace(/\s+/g, ' ').trim() || null; // 각주(†‡)·탭 제거
+        // 위키 제목이 영어면 멜론 디스코그래피에서 발매일 근접 타이틀 곡으로 대체 시도
+        if (song && !_isHangul(song)) {
+          const melonTitle = _getMelonTitle(res.group_ko, res.member_ko, w.date);
+          if (melonTitle) song = melonTitle;
+        }
         rows.push({ show: show.db, win_date: w.date, song_title: song, group_ko: res.group_ko, member_ko: res.member_ko });
       }
     }
