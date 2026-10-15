@@ -62,6 +62,18 @@ webpush.setVapidDetails(VAPID_SUBJECT, VAPID_PUB, VAPID_PRIV);
 // (members={}와 members=[전원]은 앱 표시상 동일하지만, 알림에서는 전자만 미검토로 본다)
 const ALERT_GROUPS = ['코르티스', '크래비티', '아일릿'];
 
+// ── 하루 2회 throttle ─────────────────────────────────────────────────────
+// sync-hourly가 최대 18회/일 실행되므로 매번 알림이 가면 너무 잦다.
+// Supabase 알림 로그 테이블(app_meta) 없이 간단히 UTC hour 기반으로:
+//   UTC 1시대(KST 10시) + UTC 12시대(KST 21시) — 하루 2번만 발송.
+// DRY 모드나 직접 실행 시엔 throttle 무시.
+const utcHour = new Date().getUTCHours();
+const ALLOWED_HOURS = [1, 12]; // UTC 기준
+if (!DRY && !ALLOWED_HOURS.includes(utcHour)) {
+  console.log(`[push] throttle — 현재 UTC ${utcHour}시는 발송 시간대 아님 (허용: UTC ${ALLOWED_HOURS.join('시, ')}시)`);
+  process.exit(0);
+}
+
 // ── 메인 ──────────────────────────────────────────────────────────────────
 // created_at은 Supabase가 행 최초 삽입 시 자동 기록 — 이미 DB에 있던 영상은 포함 안 됨.
 // 3일 창(72시간): 새로 들어온 영상을 3일 이내에 검토할 수 있도록 알림을 보내되,
