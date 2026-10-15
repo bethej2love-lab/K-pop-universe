@@ -4327,3 +4327,44 @@
 .tt-tl-row.is-link:hover,.tt-tl-row.is-link:active{background:rgba(150,175,225,0.08);}
 .tt-tl-go{flex:none;margin-left:auto;padding-left:6px;color:rgba(150,175,225,0.45);}
 .tt-tl-label.is-marquee{text-overflow:clip;} /* 흐르는 동안엔 말줄임표가 끝에 박혀 있지 않게 */
+
+/* ── 차트 스토리(2026-10-15, Charts ②) — 목록 맨 위 14일 순위 궤적 + 숫자 3칸. 그리드 첫 칸 전체 폭.
+   톤: 장식 없이 데이터가 주인공 — 얇은 점선 격자, 회색 배경선 위에 상위 5개만 그룹 색, 숫자는 가볍고 크게. */
+#feed-list-grid>.cs-story{grid-column:1/-1;margin:2px 0 10px;}
+#feed-list-grid>.cs-story.is-loading{height:318px;}
+.cs-fig{position:relative;}
+.cs-svg-wrap{overflow-x:auto;scrollbar-width:none;}
+.cs-svg-wrap::-webkit-scrollbar{display:none;}
+.cs-svg{display:block;margin:0 auto;overflow:visible;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
+.cs-grid line{stroke:rgba(255,255,255,0.07);stroke-width:1;stroke-dasharray:1 3;}
+.cs-grid text{fill:rgba(255,255,255,0.32);font-size:9px;font-variant-numeric:tabular-nums;}
+.cs-grid .cs-xlbl{fill:rgba(255,255,255,0.4);font-size:9.5px;}
+.cs-line{cursor:pointer;}
+.cs-path{fill:none;stroke:rgba(255,255,255,0.13);stroke-width:1.3;stroke-linecap:round;stroke-linejoin:round;transition:stroke .2s,stroke-width .2s,opacity .2s;}
+.cs-hit{fill:none;stroke:transparent;stroke-width:12;}
+.cs-dot{fill:rgba(255,255,255,0.25);transition:fill .2s;}
+.cs-entry{fill:none;stroke:rgba(255,255,255,0.2);stroke-width:1;}
+.cs-lbl{fill:rgba(255,255,255,0);font-size:10.5px;font-weight:500;letter-spacing:-0.01em;pointer-events:none;transition:fill .2s;}
+.cs-line.is-top .cs-path{stroke:var(--c);stroke-width:2.2;opacity:.92;}
+.cs-line.is-top .cs-dot{fill:var(--c);}
+.cs-line.is-top .cs-entry{stroke:var(--c);}
+.cs-line.is-top .cs-lbl{fill:var(--c);}
+.cs-line.is-hover .cs-path,.cs-line.is-on .cs-path{stroke:var(--c);stroke-width:2.6;opacity:1;}
+.cs-line.is-hover .cs-dot,.cs-line.is-on .cs-dot{fill:var(--c);}
+.cs-line.is-hover .cs-lbl,.cs-line.is-on .cs-lbl{fill:var(--c);}
+.cs-svg.has-on .cs-line:not(.is-on) .cs-path{opacity:.18;}
+.cs-svg.has-on .cs-line:not(.is-on) .cs-lbl,.cs-svg.has-on .cs-line:not(.is-on) .cs-dot{opacity:.2;}
+.cs-line.is-on .cs-path{filter:drop-shadow(0 0 4px var(--c));}
+.cs-cap{margin:4px 2px 0;font-size:10.5px;color:rgba(255,255,255,0.38);text-align:center;}
+.cs-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:0;margin-top:12px;border-top:1px solid rgba(255,255,255,0.08);border-bottom:1px solid rgba(255,255,255,0.08);}
+.cs-stat{all:unset;box-sizing:border-box;display:flex;flex-direction:column;gap:2px;padding:11px 10px 12px;cursor:pointer;min-width:0;transition:background .15s;}
+.cs-stat+.cs-stat{border-left:1px solid rgba(255,255,255,0.08);}
+.cs-stat:hover{background:rgba(255,255,255,0.03);}
+.cs-stat.active{background:rgba(255,255,255,0.06);}
+.cs-num{font-size:24px;font-weight:300;line-height:1.05;color:#fff;font-variant-numeric:tabular-nums;letter-spacing:-0.02em;}
+.cs-num small{font-size:12px;font-weight:400;margin-left:2px;color:rgba(255,255,255,0.6);}
+.cs-lbl2{font-size:10.5px;color:rgba(255,255,255,0.5);}
+.cs-who{font-size:11.5px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+#feed-list-grid>.cs-empty{grid-column:1/-1;padding:28px 0;text-align:center;font-size:12px;color:rgba(255,255,255,0.4);}
+.cs-ann{fill:var(--c);font-size:9.5px;font-style:italic;opacity:.85;pointer-events:none;}
+.cs-svg.has-on .cs-line:not(.is-on) .cs-ann{opacity:.15;}

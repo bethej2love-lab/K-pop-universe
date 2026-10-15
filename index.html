@@ -22057,6 +22057,192 @@ async function _fetchPrevRanks(chartType,daysBack=1){
     return{date:prevDate,ranks:m};
   }catch(e){return undefined;}
 }
+// ── 차트 스토리(2026-10-15, Charts ② — 사용자 "the pudding처럼 씹고 뜯고 맛보게, 시각 데이터는 심미적으로도 아름답게") ──
+// 순위 스냅샷(rank_snapshots, 매일 자정)으로 차트 목록 맨 위에 ① 14일 순위 궤적(bump chart) ② 숫자 3칸(신규·최대 상승·
+// 최장 체류) ③ 탭(전체/급상승/신규/롱런)을 얹는다. 그림은 목록과 함께 스크롤된다(그리드 첫 칸, 전체 폭).
+// ⚠️ 오늘 점은 스냅샷이 아니라 **지금 목록 순위**를 쓴다 — 목록 배지와 그림이 다른 숫자를 말하면 안 된다.
+const _rankHistCache={};
+async function _fetchRankHistory(chartType,size){
+  const c=_rankHistCache[chartType];
+  if(c&&Date.now()-c.at<180000)return c.p;
+  const cut=new Date(Date.now()+9*3600e3-35*864e5).toISOString().slice(0,10);
+  const p=(async()=>{
+    try{
+      const{data:rows}=await _sbSelectAll(()=>sb.from('rank_snapshots').select('video_id,rank,snapshot_date')
+        .eq('chart_type',chartType).gte('snapshot_date',cut).lte('rank',size).order('snapshot_date').order('rank'));
+      const dates=[...new Set((rows||[]).map(r=>r.snapshot_date))].sort();
+      const by={};(rows||[]).forEach(r=>{(by[r.video_id]??={})[r.snapshot_date]=r.rank;});
+      return{dates,by};
+    }catch(e){return null;}
+  })();
+  _rankHistCache[chartType]={at:Date.now(),p};
+  return p;
+}
+// 차트 항목별 이야기 — 진입 후 상승폭(climb)·연속 체류일(streak)·어제 이후 신규(isNew)
+// ⚠️ "7일 전 대비"로 재면 안 된다 — 주간 직캠은 **최근 7일 업로드만** 들어가는 차트라 7일 전엔 전원이 없었다
+//    (첫 구현 실측: 20개 전부 신규·급상승 0·최장 체류 7일). 차트 성격과 무관하게 말이 되는 기준만 쓴다:
+//    · climb = 이번 연속 체류에서 처음 잡힌 순위 − 지금 순위("17위로 들어와 2위")
+//    · isNew = 어제(가장 최근 지난 스냅샷)엔 없었다
+function _chartStoryStats(songs,hist){
+  const today=new Date(Date.now()+9*3600e3).toISOString().slice(0,10);
+  const past=hist?hist.dates.filter(d=>d<today):[];
+  const last=past[past.length-1];
+  return songs.map(s=>{
+    const id=ytId(s.u),h=(hist&&hist.by[id])||{};
+    let streak=1,entry=null;for(let i=past.length-1;i>=0;i--){if(h[past[i]]!=null){streak++;entry=h[past[i]];}else break;}
+    const climb=entry!=null?entry-s.rank:null;
+    const isNew=!!last&&h[last]==null;
+    return{s,id,h,streak,climb,isNew};
+  });
+}
+function _openChartStory(chartType,label,sub,songs,tab){
+  tab=tab||'all';
+  const isKo=currentLang==='ko';
+  const size=chartType==='monthly_stage'?30:20;
+  const render=(hist)=>{
+    const st=_chartStoryStats(songs,hist);
+    let list=songs;
+    if(tab==='rise')list=st.filter(x=>x.climb>0).sort((a,b)=>b.climb-a.climb).map(x=>({...x.s,rankDelta:x.climb}));
+    else if(tab==='new')list=st.filter(x=>x.isNew).map(x=>({...x.s,rankDelta:null}));
+    else if(tab==='long')list=st.filter(x=>x.streak>=3).sort((a,b)=>b.streak-a.streak||a.s.rank-b.s.rank).map(x=>x.s);
+    const opts=[{v:'all',ko:'전체',en:'All'},{v:'rise',ko:'급상승',en:'Rising'},{v:'new',ko:'신규',en:'New'},{v:'long',ko:'롱런',en:'Long-run'}];
+    _feedListRankedNext=true;
+    _openFeedListOverlay(label,sub,list,{facet:{key:'cs',options:opts,sel:tab,onPick:v=>_openChartStory(chartType,label,sub,songs,v)}});
+    const grid=document.getElementById('feed-list-grid');if(!grid)return;
+    const box=document.createElement('div');box.className='cs-story';
+    grid.insertBefore(box,grid.firstChild);
+    if(hist===undefined){box.classList.add('is-loading');return box;}
+    _renderChartStory(box,st,hist,size,tab,v=>_openChartStory(chartType,label,sub,songs,v));
+    if(tab!=='all'&&!list.length){
+      const e=document.createElement('div');e.className='cs-empty';
+      e.textContent=isKo?({rise:'들어온 뒤 오른 무대가 없어요',new:'어제 이후 새로 들어온 무대가 없어요',long:'3일 넘게 머문 무대가 없어요'})[tab]:'Nothing here yet';
+      grid.insertBefore(e,box.nextSibling);
+    }
+    return box;
+  };
+  const c=_rankHistCache[chartType];
+  if(c&&Date.now()-c.at<180000){c.p.then(h=>render(h));return;}
+  const box=render(undefined); // 자리부터 잡는다(그림이 늦게 들어와 목록이 아래로 밀리면 초반 스크롤이 튄다)
+  _fetchRankHistory(chartType,size).then(h=>{
+    if(!box||!box.isConnected)return;
+    const tmp=document.createElement('div');tmp.className='cs-story';
+    box.replaceWith(tmp);
+    const st=_chartStoryStats(songs,h);
+    _renderChartStory(tmp,st,h,size,tab,v=>_openChartStory(chartType,label,sub,songs,v));
+  });
+}
+function _renderChartStory(box,st,hist,size,tab,onTab){
+  const isKo=currentLang==='ko';
+  const NS='http://www.w3.org/2000/svg';
+  const mk=(t,a)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);return e;};
+  const today=new Date(Date.now()+9*3600e3).toISOString().slice(0,10);
+  const span=size===30?14:7; // 주간 차트는 7일 업로드 창이라 그보다 길게 그리면 왼쪽이 빈다
+  const days=[...((hist&&hist.dates)||[]).filter(d=>d<today).slice(-span),today];
+  const W=Math.max(300,Math.min(640,(box.parentElement?.clientWidth||360)-28)),H=size===30?250:220;
+  const L=22,R=96,T=12,B=22;
+  const x=i=>L+(days.length<2?0:i*(W-L-R)/(days.length-1));
+  const y=r=>T+(r-1)*(H-T-B)/(size-1);
+  const gcol=s=>{const c=GROUPS[s.groupKo]&&GROUPS[s.groupKo].color;return c?`rgb(${c[0]},${c[1]},${c[2]})`:'#b9b4e6';};
+  // ── 그림 ──
+  const fig=document.createElement('div');fig.className='cs-fig';
+  const svg=mk('svg',{viewBox:`0 0 ${W} ${H}`,width:W,height:H,class:'cs-svg',role:'img','aria-label':isKo?'순위 궤적':'Rank paths'});
+  const grid=mk('g',{class:'cs-grid'});
+  [1,5,10,15,20,25,30].filter(r=>r<=size).forEach(r=>{
+    grid.appendChild(mk('line',{x1:L,x2:W-R+6,y1:y(r),y2:y(r)}));
+    const t=mk('text',{x:L-6,y:y(r)+3.5,'text-anchor':'end'});t.textContent=r;grid.appendChild(t);
+  });
+  const fmt=d=>d===today?(isKo?'오늘':'Today'):(+d.slice(5,7))+'.'+(+d.slice(8,10));
+  [0,Math.floor((days.length-1)/2),days.length-1].filter((v,i,a)=>a.indexOf(v)===i).forEach(i=>{
+    const t=mk('text',{x:x(i),y:H-6,'text-anchor':i===0?'start':i===days.length-1?'middle':'middle',class:'cs-xlbl'});t.textContent=fmt(days[i]);grid.appendChild(t);
+  });
+  svg.appendChild(grid);
+  // 선 — 나머지(회색) 먼저, 상위 5개(그룹 색)를 위에. 점 사이 끊기면 선도 끊는다(그날 차트 밖).
+  const order=[...st].sort((a,b)=>b.s.rank-a.s.rank);
+  const lines=[];
+  // 주석(annotation) — 가장 크게 오른 무대는 순위가 낮아도 색을 입히고 "N위 진입"을 단다. 그림이 무슨 얘기인지 한 줄로.
+  const riseO=st.filter(o=>o.climb>0).sort((a,b)=>b.climb-a.climb)[0];
+  order.forEach(o=>{
+    const pts=days.map((d,i)=>{const r=d===today?o.s.rank:o.h[d];return r!=null&&r<=size?[x(i),y(r)]:null;});
+    let dstr='';let prev=null;
+    pts.forEach(p=>{
+      if(!p){prev=null;return;}
+      if(!prev)dstr+=`M${p[0].toFixed(1)},${p[1].toFixed(1)}`;
+      else{const mx=(prev[0]+p[0])/2;dstr+=`C${mx.toFixed(1)},${prev[1].toFixed(1)} ${mx.toFixed(1)},${p[1].toFixed(1)} ${p[0].toFixed(1)},${p[1].toFixed(1)}`;}
+      prev=p;
+    });
+    const star=o===riseO;
+    const top=o.s.rank<=5||star;
+    const g=mk('g',{class:'cs-line'+(top?' is-top':'')+(star?' is-star':''),style:`--c:${gcol(o.s)}`});
+    const path=mk('path',{d:dstr,class:'cs-path'});
+    const hit=mk('path',{d:dstr,class:'cs-hit'});
+    g.appendChild(path);g.appendChild(hit);
+    // 진입점(처음 나타난 점)은 작은 고리 — "여기서 들어왔다"
+    const fi=pts.findIndex(Boolean);
+    if(fi>0)g.appendChild(mk('circle',{cx:pts[fi][0],cy:pts[fi][1],r:2.4,class:'cs-entry'}));
+    if(star&&fi>=0){
+      const ex=pts[fi][0],ey=pts[fi][1],right=ex>W-R-70;
+      const a=mk('text',{x:right?ex-7:ex+7,y:Math.min(ey+13,H-B-2),'text-anchor':right?'end':'start',class:'cs-ann'});
+      a.textContent=isKo?`${o.climb+o.s.rank}위로 진입 → ${o.s.rank}위`:`entered #${o.climb+o.s.rank} → #${o.s.rank}`;
+      g.appendChild(a);
+    }
+    const end=pts[pts.length-1];
+    if(end){
+      g.appendChild(mk('circle',{cx:end[0],cy:end[1],r:top?3.6:2.4,class:'cs-dot'}));
+      const who=_feedWho(o.s)||_cleanTitle(o.s.t);
+      const t=mk('text',{x:end[0]+8,y:end[1]+3.8,class:'cs-lbl'});
+      t.textContent=who.length>10?who.slice(0,10)+'…':who;
+      g.appendChild(t);
+    }
+    g.addEventListener('click',e=>{e.stopPropagation();const on=g.classList.contains('is-on');svg.querySelectorAll('.cs-line.is-on').forEach(n=>n.classList.remove('is-on'));svg.classList.toggle('has-on',!on);if(!on){g.classList.add('is-on');g.parentNode.appendChild(g);}});
+    g.addEventListener('mouseenter',()=>{if(!svg.classList.contains('has-on'))g.classList.add('is-hover');});
+    g.addEventListener('mouseleave',()=>g.classList.remove('is-hover'));
+    svg.appendChild(g);lines.push(path);
+  });
+  // 상위 5개 라벨은 순위가 붙어 있으면 겹친다 — 위에서부터 최소 간격만큼 밀어 내린다(점은 제자리, 글자만)
+  {let prevY=-1e9;[...svg.querySelectorAll('.cs-line.is-top .cs-lbl')].sort((a,b)=>a.getAttribute('y')-b.getAttribute('y')).forEach(t=>{
+    const yy=Math.max(+t.getAttribute('y'),prevY+11.5);t.setAttribute('y',yy.toFixed(1));prevY=yy;});}
+  svg.addEventListener('click',()=>{svg.classList.remove('has-on');svg.querySelectorAll('.cs-line.is-on').forEach(n=>n.classList.remove('is-on'));});
+  const scroller=document.createElement('div');scroller.className='cs-svg-wrap';scroller.appendChild(svg);
+  fig.appendChild(scroller);
+  const cap=document.createElement('div');cap.className='cs-cap';
+  cap.textContent=isKo?`최근 ${days.length}일 순위 궤적 · 선을 누르면 그 무대만`:`Rank paths, last ${days.length} days · tap a line`;
+  fig.appendChild(cap);
+  // 그려지는 연출 — 첫 열람 때만(탭 전환마다 다시 그리면 산만하다)
+  if(!_renderChartStory._drawn&&!(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches)){
+    _renderChartStory._drawn=true;
+    requestAnimationFrame(()=>lines.forEach((p,i)=>{
+      let len=0;try{len=p.getTotalLength();}catch(e){}
+      if(!len)return;
+      p.style.strokeDasharray=len;p.style.strokeDashoffset=len;
+      p.getBoundingClientRect();
+      p.style.transition=`stroke-dashoffset 1.1s cubic-bezier(.3,.7,.2,1) ${(lines.length-i)*35}ms`;
+      p.style.strokeDashoffset='0';
+      setTimeout(()=>{p.style.strokeDasharray='';p.style.transition='';},1300+(lines.length-i)*35);
+    }));
+  }
+  // ── 숫자 3칸 — 누르면 그 탭 ──
+  const nNew=st.filter(o=>o.isNew).length;
+  const rise=st.filter(o=>o.climb>0).sort((a,b)=>b.climb-a.climb)[0];
+  const long=[...st].sort((a,b)=>b.streak-a.streak||a.s.rank-b.s.rank)[0];
+  const nameOf=o=>o?(_feedWho(o.s)||''):'';
+  const cells=[
+    {tab:'new',num:String(nNew),lbl:isKo?'어제 이후 새 진입':'new since yesterday',who:''},
+    {tab:'rise',num:rise?'↑'+rise.climb:'–',lbl:isKo?'진입 후 최대 상승':'biggest climb',who:nameOf(rise),c:rise&&gcol(rise.s)},
+    {tab:'long',num:long?(long.streak>=hist?.dates?.length?long.streak+'+':String(long.streak)):'–',unit:isKo?'일':'d',lbl:isKo?'최장 체류':'longest run',who:nameOf(long),c:long&&gcol(long.s)},
+  ];
+  const stats=document.createElement('div');stats.className='cs-stats';
+  cells.forEach(c=>{
+    const b=document.createElement('button');b.type='button';b.className='cs-stat'+(tab===c.tab?' active':'');
+    b.innerHTML='<span class="cs-num"></span><span class="cs-lbl2"></span>';
+    b.querySelector('.cs-num').textContent=c.num;
+    if(c.unit&&c.num!=='–'){const u=document.createElement('small');u.textContent=c.unit;b.querySelector('.cs-num').appendChild(u);}
+    const l=b.querySelector('.cs-lbl2');l.textContent=c.lbl;
+    if(c.who){const w=document.createElement('span');w.className='cs-who';w.textContent=c.who;if(c.c)w.style.color=c.c;b.appendChild(w);}
+    b.addEventListener('click',()=>onTab(tab===c.tab?'all':c.tab));
+    stats.appendChild(b);
+  });
+  box.appendChild(fig);box.appendChild(stats);
+}
 // 주간(7일)·월간(30일) 퍼포먼스 조회 — 발견 탭 Charts(주간 직캠 TOP 20·월간 퍼포먼스 TOP 30)와 For You "내 최애 차트"가
 // **같은 결과**를 쓰도록 한 곳에서(2026-10-15). 둘이 따로 계산하면 순위가 어긋난다(순위 스냅샷 크론에서 이미 겪은 사고).
 // 3분 캐시 — 탐험 피드 TTL과 같다.
@@ -22125,7 +22311,7 @@ async function _buildFeedWeeklyTopCams(list,discList){
             // 콘텐츠 등장이 통째로 밀렸다(2026-08-27, 1000행 잘림 방지로 이 조회가 페이지네이션되며 무거워진 뒤 체감
             // 저하). 클릭 시점엔 대개 이미 채워져 있고, 혹시 아직이면 _withRankDelta가 undefined→배지 숨김으로 안전 폴백.
             let _prevSolo;
-            const _openSolo=()=>_openFeedListOverlay(label,sub,_withRankDelta(camVids,_prevSolo));
+            const _openSolo=()=>_openChartStory('solo_cam',label,sub,_withRankDelta(camVids,_prevSolo));
             const _card1=_appendFeedCard(list,'🏆',label,sub,_openSolo,camVids[0].thumb,undefined,{preview:_withRankDelta(camVids.slice(0,3),undefined),prio:1});
             _fetchPrevRanks('solo_cam').then(r=>{
               _prevSolo=r;if(!r)return;
@@ -22179,7 +22365,7 @@ async function _buildFeedWeeklyTopCams(list,discList){
           const label=currentLang==='ko'?'월간 퍼포먼스 TOP 30':'Monthly Performance TOP 30',sub=_cleanTitle(stageVids[0].title);
           // 카드1과 동일 — 순위 배지 조회는 클릭 시점에만 필요하므로 콘텐츠 렌더를 막지 않게 백그라운드로 뺀다.
           let _prevStage;
-          const _card3=_appendFeedCard(list,'🎤',label,sub,()=>_openFeedListOverlay(label,sub,_withRankDelta(stageVids,_prevStage)),stageVids[0].thumb,undefined,{preview:_withRankDelta(stageVids.slice(0,3),undefined),prio:2});
+          const _card3=_appendFeedCard(list,'🎤',label,sub,()=>_openChartStory('monthly_stage',label,sub,_withRankDelta(stageVids,_prevStage)),stageVids[0].thumb,undefined,{preview:_withRankDelta(stageVids.slice(0,3),undefined),prio:2});
           _fetchPrevRanks('monthly_stage').then(r=>{_prevStage=r;if(r&&_card3&&_card3._setPreview)_card3._setPreview(_withRankDelta(stageVids,r));});
         }
       }
@@ -23567,7 +23753,7 @@ async function _buildFeedFavCharts(){
       const sub=`${c.label} ${rank}${isKo?'위':''}${d}`;
       const open=()=>{
         const list=c.vids.map((x,i)=>({..._rowTags(x),t:x.title,u:vidUrl(x),thumb:x.thumb,vc:x.view_count,dur:x.duration_sec,pa:x.published_at?.slice(0,10),rank:i+1}));
-        _feedListRankedNext=true;_openFeedListOverlay(c.full,'',list);
+        _openChartStory(c.key,c.full,'',list);
       };
       _appendFeedCard(strip,'📈',who?(tune?who+' · '+tune:who):_cleanTitle(v.title),sub,open,v.thumb);
     });
