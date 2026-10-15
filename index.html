@@ -12025,6 +12025,7 @@ function showT(a,cx,cy,keepNavStack,urlMode,_unusedPushMobNav,noFly){
   _joinPresence('member',a.group.ko+':'+a.name.ko);
   _showFavCount('member',a.group.ko+':'+a.name.ko,'get_member_fav_count');
   _showTraceCount('member',a.group.ko+':'+a.name.ko,'get_member_trace_week');
+  _showMemberFallback(a);
   _syncUrl(urlMode||'push');
 }
 
@@ -19698,7 +19699,7 @@ async function _handleLogout(){
 document.getElementById('pp-logout-btn').addEventListener('click',e=>{e.stopPropagation();_handleLogout();});
 
 // ── 그룹/멤버 카드 상태 한 줄: 실시간 시청자 수 + 즐겨찾기 인기 지표를 한 자리에서 번갈아 표시 ──
-const _gcStatusState={group:{presence:'',favcount:'',traces:''},member:{presence:'',favcount:'',traces:''}};
+const _gcStatusState={group:{presence:'',favcount:'',traces:'',fallback:''},member:{presence:'',favcount:'',traces:'',fallback:''}};
 const _gcStatusTimers={group:null,member:null};
 const _gcStatusAnimTimers={group:null,member:null}; // 교차 애니 setTimeout — 재렌더 시 취소해 조각 겹침 방지
 const _gcStatusIdx={group:0,member:0};
@@ -19712,6 +19713,8 @@ function _renderGcStatusLine(kind){
   if(_gcStatusState[kind].presence)entries.push({type:'presence',html:_gcStatusState[kind].presence});
   if(_gcStatusState[kind].favcount)entries.push({type:'favcount',html:_gcStatusState[kind].favcount});
   if(_gcStatusState[kind].traces)entries.push({type:'traces',html:_gcStatusState[kind].traces});
+  // 위 셋이 다 없을 때만 — 사실 정보 한 줄(멤버 카드, _showMemberFallback)
+  if(!entries.length&&_gcStatusState[kind].fallback)entries.push({type:'info',html:_gcStatusState[kind].fallback});
   if(!entries.length){el.classList.remove('show');el.innerHTML='';return;}
   const paint=(i,animate)=>{
     const entry=entries[i];
@@ -19794,6 +19797,44 @@ async function _showFavCount(kind,key,rpcFn){
     _gcStatusState[kind].favcount='<span class="favcount-dot"></span>'+(currentLang==='ko'?`${data}명이 좋아해요`:`${data} like this`);
     _renderGcStatusLine(kind);
   }
+}
+
+// ── 멤버 카드 빈 상태 줄 채우기(2026-10-15, 사용자) — 보는 사람·하트·흔적이 다 없으면 줄이 비어 어색했다.
+// 순서: 이번 주(7일) 새 영상 N개 → 생일 100일 이내면 D-N(당일 '오늘 생일') → 데뷔 N년차. 고인은 생일·년차 생략.
+// 새 영상은 카드 영상 목록과 같은 범위(소속 그룹 키 전체 + 이 멤버 태깅 또는 멤버 태깅 없는 그룹 영상, '기타' 제외).
+let _memberFallbackReq=0;
+async function _showMemberFallback(a){
+  _gcStatusState.member.fallback='';
+  const req=++_memberFallbackReq,ko=currentLang==='ko',dot='<span class="info-dot"></span>';
+  let html='';
+  if(sb){
+    try{
+      const mk=a.name.ko,keys=[...new Set([_ytGroupKoFor(a),...(_artistGroups(a)||[]).map(g=>(g&&g.ko&&GROUPS[g.ko])?g.ko:mk)])];
+      const since=new Date(Date.now()-7*864e5).toISOString().slice(0,10);
+      const {data}=await sb.from(_YT_TABLE).select('id,title,group_ko,members,content_flag').in('group_ko',keys).gte('published_at',since).limit(300);
+      if(req!==_memberFallbackReq||_openTArtist!==a)return;
+      const n=_filterBannedVideos(data||[]).filter(v=>v.content_flag!=='기타'&&(!(v.members||[]).length||v.members.includes(mk))).length;
+      if(n>0)html=dot+(ko?`이번 주 새 영상 ${n}개`:`${n} new video${n>1?'s':''} this week`);
+    }catch(e){}
+  }
+  if(req!==_memberFallbackReq||_openTArtist!==a)return;
+  if(!html&&!a.died&&a.bday){
+    const [,bm,bd]=a.bday.split('.').map(Number);
+    if(bm&&bd){
+      const t=new Date();t.setHours(0,0,0,0);
+      let nx=new Date(t.getFullYear(),bm-1,bd);if(nx<t)nx=new Date(t.getFullYear()+1,bm-1,bd);
+      const dd=Math.round((nx-t)/864e5);
+      if(dd===0)html=dot+(ko?'오늘 생일':'Birthday today');
+      else if(dd<=100)html=dot+(ko?`생일 D-${dd}`:`Birthday in ${dd} days`);
+    }
+  }
+  if(!html&&!a.died){
+    // 데뷔 = 소속 그룹(이력 포함) 데뷔·본인 debut 중 가장 이른 해
+    const ys=[a.debut,...(_artistGroups(a)||[]).map(g=>g&&GROUPS[g.ko]&&GROUPS[g.ko].debut)].map(v=>+String(v||'').slice(0,4)).filter(y=>y>1900);
+    if(ys.length){const n=new Date().getFullYear()-Math.min(...ys)+1;if(n>=1)html=dot+(ko?`데뷔 ${n}년차`:`Year ${n} since debut`);}
+  }
+  _gcStatusState.member.fallback=html;
+  _renderGcStatusLine('member');
 }
 
 // ── 흔적(이번 주 하트+리액션) 익명 합산 — 순위·개인귀속 없이 총량만(favcount와 같은 톤/로테이션). ──────

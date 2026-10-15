@@ -569,6 +569,9 @@
      presence(코랄 255,140,120)·favcount(핑크 255,110,165)가 둘 다 따뜻한 쪽이라, 흔적만 차가운 쪽으로
      뺀다 — 텍스트도 이미 차가운 본문톤(#ccd8ee)이라 점과 글자가 한 덩어리로 읽힌다. */
   .trace-dot{width:6px;height:6px;border-radius:50%;background:rgb(110,225,195);box-shadow:0 0 5px rgba(110,225,195,0.75);animation:presence-pulse 1.6s ease-in-out infinite;flex:none;}
+  /* 빈 줄 대체 사실 정보(새 영상·생일·데뷔 년차) — 지표가 아니라 안내라 맥박 없이 조용한 점, 글자도 한 단계 흐리게 */
+  .info-dot{width:5px;height:5px;border-radius:50%;background:rgba(150,175,225,0.6);flex:none;}
+  .gc-status-inner.type-info{color:rgba(190,205,235,0.72);}
   @keyframes presence-pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:0.45;transform:scale(0.72);}}
   .tm{display:none;}
   #tv-big-wrap{cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><path d='M11,1 L12.3,9.7 L21,11 L12.3,12.3 L11,21 L9.7,12.3 L1,11 L9.7,9.7Z' fill='%23FFB0D0' opacity='.97'/></svg>") 11 11,pointer;border-radius:8px;overflow:hidden;background:rgba(255,255,255,0.04);}
