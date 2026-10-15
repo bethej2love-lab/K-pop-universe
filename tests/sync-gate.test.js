@@ -81,8 +81,11 @@ maxRunsPerDay = Math.ceil(maxRunsPerDay);
 //    매시간 동기화 한 회차를 대체**한다(합산이 아니라 같은 18칸을 나눠 씀). 루틴이 따로 쓰는 건 조회수 계열뿐.
 const G = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'groups.json'), 'utf8'));
 const OFFICIAL_CH = Object.values(G).filter(g => g && g.links && g.links.youtube && !g.disbanded).length + 10; // +솔로 공식 ~7
-const EXT_CH = 135;              // ext_channels 126곳(2026-09-28) + 증가 여유
-const UNITS_PER_SYNC = OFFICIAL_CH + EXT_CH;  // 채널당 playlistItems 1콜(신규 없을 때). 신규분 추가 페이지는 아래 여유로
+// 2026-10-15: ext 175곳(음방 55·아이돌개인 41·팬 5·그룹서브 1 = 매 회차 102 / 예능 48·매거진 24·쇼 1 = 73은 3회차에 한 번, admin.js _EXT_COLD_TIERS)
+const EXT_HOT = 110, EXT_COLD = 80;  // 증가 여유 포함
+const EXT_CH = EXT_HOT + Math.ceil(EXT_COLD / 3);
+const APPEAR_PER_SYNC = 3;       // 공식 채널 출연 재생목록 — 평소 개수 확인 2~3콜(첫 회차 상한 40은 하루 한 번뿐)
+const UNITS_PER_SYNC = OFFICIAL_CH + EXT_CH + APPEAR_PER_SYNC;  // 채널당 playlistItems 1콜(신규 없을 때). 신규분 추가 페이지는 아래 여유로
 const EXT_BACKFILL_PER_SYNC = Number(/const _EXT_BACKFILL_CALLS=(\d+)/.exec(fs.readFileSync(path.join(__dirname, '..', 'admin.js'), 'utf8'))?.[1] || 999);
 const ROUTINE_VIEWS = 6 * 70 + 8 * 60 + 400;  // full 루틴 조회수 갱신 6회 + 핫 순환 8회 + 일일 순환 1배치
 const DISBANDED_ONCE = 45;       // 해체 그룹 채널 하루 1회

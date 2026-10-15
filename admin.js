@@ -9344,6 +9344,9 @@ async function _ytSyncAppearancePlaylists(){
   let list;
   try{list=await (await fetch('appearance_playlists.json',{cache:'no-cache'})).json();}catch(e){_ytSetProg('[출연 재생목록] 목록 파일을 못 읽음: '+e.message);return;}
   if(!Array.isArray(list)||!list.length){_ytSetProg('[출연 재생목록] 대상 없음');return;}
+  // 회차당 상한 40콜(2026-10-15) — 첫 회차는 89개 재생목록을 다 받느라 ~200콜이 드는데, 그걸 한 번에 쓰면 뒤 단계(외부 채널)가
+  // 굶는다. 못 받은 재생목록은 개수를 기록하지 않으니 다음 회차가 이어 받는다. 평소엔 개수 확인 2~3콜뿐이라 상한에 안 닿는다.
+  const _cap=_ytBudgetSpent()+40;
   const LS='kpu_appear_cnt';
   let prev={};try{prev=JSON.parse(localStorage.getItem(LS)||'{}');}catch(e){}
   const counts={};
@@ -9356,7 +9359,7 @@ async function _ytSyncAppearancePlaylists(){
   const todo=list.filter(p=>counts[p.pl]!=null&&counts[p.pl]!==prev[p.pl]);
   let seen=0,added=0,skipped=0,errs=0,done=0;
   for(const [ti,p] of todo.entries()){
-    if(_ytBudgetLeft()<=5)break;
+    if(_ytBudgetLeft()<=5||_ytBudgetSpent()>=_cap)break;
     _ytSetProg(`[출연 재생목록] ${ti+1}/${todo.length} ${p.gko} · ${p.title}`);
     try{
       const vids=[];let tok='',pages=0;
@@ -9379,7 +9382,7 @@ async function _ytSyncAppearancePlaylists(){
             published_at:(publishedTs||'').slice(0,10),published_ts:publishedTs,category:cat,is_short:isShort});
         }
         tok=d.nextPageToken||'';
-      }while(tok&&pages<10&&_ytBudgetLeft()>2);
+      }while(tok&&pages<10&&_ytBudgetLeft()>2&&_ytBudgetSpent()<_cap);
       seen+=vids.length;
       const have=new Set();
       for(let i=0;i<vids.length;i+=100){
@@ -9428,6 +9431,12 @@ async function _ytSyncExtChannels(){
   const _n=_EXT_CHANNELS.length;
   let _rr=+(localStorage.getItem('kpu_ext_rr')||0);if(!(_rr>=0&&_rr<_n))_rr=0;
   const _pass1=_EXT_CHANNELS.map((_,i)=>_EXT_CHANNELS[(i+_rr)%_n]);
+  // 예능·매거진·쇼 채널은 3회차에 한 번만 신규 확인(2026-10-15) — 채널 37곳·공식 링크 17곳이 늘며 하루 쿼터 추정이 97%까지 올라갔다
+  // (tests/sync-gate.test.js). 인터뷰·화보류는 시간을 다투지 않고, 북마크(sinceId)가 남아 있어 놓치는 영상 없이 최대 3시간 늦을 뿐이다.
+  // 채널마다 핸들 해시로 차례를 나눠 회차당 1/3씩 고르게 돈다. 음방·아이돌개인·팬·그룹서브는 그대로 매 회차.
+  const _EXT_COLD_TIERS=new Set(['variety','magazine','show']);
+  let _extRound=+(localStorage.getItem('kpu_ext_round')||0);try{localStorage.setItem('kpu_ext_round',String(_extRound+1));}catch(e){}
+  const _coldDue=ch=>{let h=0;for(const c of ch.handle)h=(h*31+c.charCodeAt(0))>>>0;return h%3===_extRound%3;};
   const _pass2=[]; // 1단계가 끝난 뒤 이어받기가 남아 있는 채널
   const _extErrs=[];let _p1Reached=0;
   const _saveVids=async(ch,vids,prefix)=>{
@@ -9462,6 +9471,7 @@ async function _ytSyncExtChannels(){
   // 삭제돼 영영 못 만남). 이때 북마크는 최신으로 옮기고, 옛 북마크를 "바닥"(floor)으로 남겨 2단계가
   // 공백만 메우고 거기서 멈추게 한다. 바닥 날짜도 같이 둔다 — 바닥 영상이 삭제됐어도 날짜로 멈춘다.
   async function _extNew(ch,prefix){
+    if(_EXT_COLD_TIERS.has(ch.tier)&&!_coldDue(ch))return; // 이번 회차 차례 아님(위 주석)
     setProg(`${prefix} 채널 정보 가져오는 중…`);
     const uploadsId=await _ytGetUploadsId(ch.url,key);
     const lsKey=`kpu_ext_last_${ch.handle}`;
@@ -10779,8 +10789,8 @@ document.getElementById('vid-tag-thumb-refresh').addEventListener('click',async 
   keyEl?.addEventListener('blur',e=>localStorage.setItem('kpu_yt_key',e.target.value.trim()));
   _admExecBind('sp-yt-sync',async()=>{
     await _ytSyncAll();
-    await _ytSyncExtChannels();
     await _ytSyncAppearancePlaylists();
+    await _ytSyncExtChannels();
     await _ytRefreshViewCounts();
   },'전체 동기화');
   // 조회수·재생시간 수동 버튼 5개 제거(2026-09-28, 사용자 요청 "일회용·안 쓰는 버튼 정리") — 전부 루틴이 같은
@@ -11695,9 +11705,10 @@ async function _admRunRoutine(withSync,opts){
   //    조회수는 videos.list(쿼터 1/콜, 최근 14일분만이라 ~70콜). 비싼 search.list는 과거 백필 전용.
   if(withSync){
     steps.push({name:'1. 전체 동기화 (공식 채널)',fn:_ytSyncAll});
-    steps.push({name:'1-2. 외부 채널 동기화 (음방·예능·아이돌주도)',fn:_ytSyncExtChannels});
-    // 공식 채널 출연 재생목록 — 평소 2~3콜이라 매시간 회차에서도 돈다(새 출연이 재생목록에 붙으면 그 회차에 들어온다)
-    steps.push({name:'1-4. 공식 채널 출연 재생목록',fn:_ytSyncAppearancePlaylists});
+    // 공식 채널 출연 재생목록 — 평소 2~3콜이라 매시간 회차에서도 돈다. ⚠️ 외부 채널 **앞**에 둔다(2026-10-15): 맨 뒤에 뒀더니
+    // 새 외부 채널 37곳 첫 훑기가 회차 예산을 다 써서 이 단계가 조용히 0건으로 끝났다. 상한 40콜이라 외부 채널 몫을 크게 안 먹는다.
+    steps.push({name:'1-2. 공식 채널 출연 재생목록',fn:_ytSyncAppearancePlaylists});
+    steps.push({name:'1-2b. 외부 채널 동기화 (음방·예능·아이돌주도)',fn:_ytSyncExtChannels});
     // ⚠️ 1-3은 **매시간 동기화(_syncOnly)에선 건너뛴다**(2026-09-15). 호출 ~70회/회차라 매시간이면
     //    하루 1,260유닛인데, 그 지갑을 백필·루틴과 같이 쓴다(하루 10,000). 백필이 403으로 떨어지던
     //    배경이 이 경합이다. 조회수는 3시간마다 도는 **전체 루틴이 계속 갱신**하므로 "이번주 직캠 TOP"의
