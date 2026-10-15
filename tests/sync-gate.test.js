@@ -91,7 +91,7 @@ const ROUTINE_VIEWS = 6 * 70 + 8 * 60 + 400;  // full 루틴 조회수 갱신 6�
 const DISBANDED_ONCE = 45;       // 해체 그룹 채널 하루 1회
 const WATCHDOG = 300;            // tools/sync_watchdog.mjs 유튜브 실물 대조(하루 1회, 채널당 1유닛)
 const ROSTER_RESCAN = 90;        // 로스터 변경 시 수집 채널 1페이지 재훑기(≈87곳) — 하루 1번 바뀐다고 가정
-const BACKFILL_RESERVE = 1500;   // admin.js _ytBackfillPriorityChannels의 TOTAL_BUDGET 15회 × 100유닛
+const BACKFILL_RESERVE = 1000;   // admin.js _ytBackfillPriorityChannels의 TOTAL_BUDGET 10회 × 100유닛(2026-10-15 15→10)
 const QUOTA = 10000;             // YouTube Data API 일일 한도
 const used = maxRunsPerDay * (UNITS_PER_SYNC + EXT_BACKFILL_PER_SYNC) + ROUTINE_VIEWS + DISBANDED_ONCE + WATCHDOG + ROSTER_RESCAN + BACKFILL_RESERVE;
 

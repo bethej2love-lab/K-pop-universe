@@ -9769,7 +9769,7 @@ async function _ytBackfillPriorityChannels(fromYear,toYear,query){
     //    15회 × 50건 = 한 회차에 최대 750개까지 훑으므로 진행 속도는 충분하다(백필은 어차피
     //    여러 날에 걸쳐 도는 작업이고, 중단 지점은 채널별로 저장돼 다음에 이어받는다).
     //    tests/sync-gate.test.js가 이 값과 동기화 예산의 합이 한도의 95% 이내인지 확인한다.
-    const TOTAL_BUDGET=15;
+    const TOTAL_BUDGET=10; // 2026-10-15 15→10: 공식 링크 17·외부 채널 37 증가로 하루 쿼터 추정 98% — 수동 버튼이라 거의 안 씀(사용자), 한 번에 500개씩 이어받는다
     let remaining=TOTAL_BUDGET;
     const summary=[];
     for(const[idx,ch] of channels.entries()){
