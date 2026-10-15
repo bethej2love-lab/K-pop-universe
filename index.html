@@ -6349,6 +6349,7 @@ function _applyGenreTabQuery(q,filter){ // filter: 'variety' | 'show'
 }
 
 let _lbPlaylist=null,_lbIdx=-1,_lbCtx=null;
+let _lbFeedSlide=false; // 탐험 패널에서 열릴 때 오른쪽 슬라이드 인 트리거
 // 영상 id→업로드날짜(원본 YYYY-MM-DD) 캐시. 재생목록에 pa를 안 실은 경로(최근 본 등)에서도 재생모드
 // 메타에 날짜가 항상 뜨도록 통일(2026-09-04 사용자 요청 — 날짜는 DB에 100% 있는데 표기가 경로마다 들쭉).
 const _pubById=new Map();
@@ -6484,6 +6485,20 @@ function openLightbox(url,shorts,playlist,idx,ctx,isAdvance,forceBrowseMode){
   // iOS Safari: display:none 상태의 iframe에서 src를 바꾸면 사용자 제스처 체인이 끊겨 autoplay가 차단됨.
   // 라이트박스를 먼저 열어 iframe이 visible한 상태로 만든 뒤 src를 설정해야 autoplay가 허용됨.
   lb.classList.add('open');_bringToFront(lb); // 재생 플레이어는 열릴 때 항상 최상단(곡영상·조합 위, 그 위 어드민 편집은 또 위로)
+  // 탐험 패널에서 열릴 때: 오른쪽에서 슬라이드 인 (isAdvance = 자동 다음 영상은 제외)
+  if(_lbFeedSlide&&!isAdvance){
+    _lbFeedSlide=false;
+    const _wrap=document.getElementById('yt-lb-wrap');
+    _wrap.style.transition='none';
+    _wrap.style.transform='translateX(100vw)';
+    _wrap.style.opacity='0';
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{
+      _wrap.style.transition='transform .34s cubic-bezier(0.22,1,0.36,1),opacity .22s ease';
+      _wrap.style.transform='';
+      _wrap.style.opacity='';
+      setTimeout(()=>{_wrap.style.transition='';},400);
+    }));
+  }else if(_lbFeedSlide){_lbFeedSlide=false;}
   // UI 기본 숨김(탭하면 토글)은 몰입형 쇼츠 스와이프 전용 — 브라우즈 모드는 유튜브 자체 컨트롤을 그대로
   // 쓰는 일반 페이지형 레이아웃이라 항상 UI를 보여준다.
   document.getElementById('yt-lb-wrap').classList.remove('lb-ui-hidden');
@@ -21485,6 +21500,7 @@ function _feedNav(cb){
   // 둔다. mob-sheet/mob-card-stack의 z-index(63/64)가 feed-overlay(39)보다 항상 높아서 카드가 자연히
   // 위를 덮고, 카드를 치우면(스와이프로 끌어내리는 중간 상태 포함) 그 밑에 있던 탐험 패널이 그대로
   // 보이는 게 오히려 "카드가 탐험 위에 얹혀있다"는 느낌에 더 맞음. 데스크톱은 원래도 옆 패널이라 그대로.
+  _lbFeedSlide=true; // 탐험 패널 진입 — 라이트박스를 오른쪽에서 슬라이드 인
   cb();
 }
 
