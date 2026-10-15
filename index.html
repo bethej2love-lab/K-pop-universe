@@ -7903,7 +7903,9 @@ document.getElementById('yt-lb-rotate').addEventListener('click',e=>{
     box.classList.remove('is-letterbox');
     lb.classList.add('lb-shorts');
     rotateBtn.classList.add('is-portrait');
-    _lbSwitchToShorts();
+    // 데스크톱: browse+shorts-desk 레이아웃(영상+우측 정보 패널)으로 — 쇼츠를 원래 열 때와 같은 모드
+    if(!isMob()){lb.classList.add('lb-shorts-desk');_lbSwitchToBrowse();}
+    else{_lbSwitchToShorts();}
     if(!_lbIsNativeShorts){
       const vid=ytId(document.getElementById('yt-lb-iframe').src||'');
       if(vid){_lbPortraitVids.add(vid);_lbSavePortrait();}
@@ -7912,6 +7914,7 @@ document.getElementById('yt-lb-rotate').addEventListener('click',e=>{
     // → 가로(browse) 모드
     box.classList.remove('is-shorts');
     lb.classList.remove('lb-shorts');
+    lb.classList.remove('lb-shorts-desk'); // 세로 전환 시 추가한 shorts-desk도 제거
     if(_lbIsNativeShorts)box.classList.add('is-letterbox'); // 쇼츠 원본은 iframe이 9:16 비율이라 letterbox로
     rotateBtn.classList.remove('is-portrait');
     _lbSwitchToBrowse();
@@ -27118,15 +27121,6 @@ function _groupGcVids(items,featured,startPos,startCat,avoidWiden,widenSomeShort
     // 너무 드물다는 재피드백(2026-08-22)으로 0.24로 상향 — .gc-ch-grid에 grid-auto-flow:dense가 적용된
     // 뒤라 넓힘으로 생기던 빈칸(0.28을 낮췄던 원래 이유) 우려도 줄었음.
     if(!avoidWiden&&pos===0&&c==='norm'&&Math.random()<wideProb){
-      v._wide=true;
-      renderList.push(v);
-      lastItem=v;
-      pos=0;cat=null;
-      continue;
-    }
-    // Shorts 탭처럼 Shorts끼리만 이어질 땐 비율 경계가 없어 widening이 발생 안 함 —
-    // widenSomeShorts(=Shorts 탭)일 때 가끔 단독 2열 폭 카드로 섞어 시각적 변화를 준다.
-    if(widenSomeShorts&&pos===0&&c==='short'&&Math.random()<0.05){
       v._wide=true;
       renderList.push(v);
       lastItem=v;
