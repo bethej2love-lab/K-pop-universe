@@ -1009,6 +1009,13 @@
     /* 업리스트 패널: 기존 browse 320px 유지, 세로 영상 높이에 맞춰 꽉 채움 */
     #yt-lightbox.lb-browse.lb-shorts-desk #yt-lb-uplist{
       max-height:min(88vh,800px);align-self:flex-start;}
+    /* 카드 열려 top:64px로 밀린 경우 — 쇼츠 영상·uplist 높이 보정 */
+    body:has(#side-panel.open) #yt-lightbox.lb-browse.lb-shorts-desk #yt-lb-video-box,
+    body:has(#member-panel.open) #yt-lightbox.lb-browse.lb-shorts-desk #yt-lb-video-box,
+    body:has(#conn-panel.open) #yt-lightbox.lb-browse.lb-shorts-desk #yt-lb-video-box{height:min(calc(88vh - 64px),736px);}
+    body:has(#side-panel.open) #yt-lightbox.lb-browse.lb-shorts-desk #yt-lb-uplist,
+    body:has(#member-panel.open) #yt-lightbox.lb-browse.lb-shorts-desk #yt-lb-uplist,
+    body:has(#conn-panel.open) #yt-lightbox.lb-browse.lb-shorts-desk #yt-lb-uplist{max-height:min(calc(88vh - 64px),736px);}
   }
   @media(max-width:768px){
     /* 발열 완화(2026-08-28, PERFORMANCE.md): 영상 위 backdrop-filter blur는 매 프레임 GPU 부하가 커서

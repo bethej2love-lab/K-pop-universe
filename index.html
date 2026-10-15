@@ -6717,7 +6717,9 @@ function _lbUpdateMemberInfo(){
     withEl.appendChild(c);
   });
   // 콜라보: 카드 그리드 곡은 앵커 기준으로 정리된 s.with, 차트·선반 곡은 DB 원본 "이름(그룹)"(s.withMembers)
-  const _wPairs=(s?.with||s?.withMembers||[]).map(n=>({n,t:_findArtistByConnName(n,_anchorG)}));
+  const _anchorKo=artist?.name?.ko;
+  const _wPairs=(s?.with||s?.withMembers||[]).map(n=>({n,t:_findArtistByConnName(n,_anchorG)}))
+    .filter(p=>!_anchorKo||p.t?.name?.ko!==_anchorKo); // anchor가 with 목록에도 들어가는 중복 제거
   const _wBy=new Map();
   _wPairs.forEach(p=>{if(!p.t)return;const g=_withGroupOf(p.n,p.t,_anchorG);if(!_wBy.has(g))_wBy.set(g,[]);_wBy.get(g).push(p.t);});
   const _wFull=new Set([..._wBy.entries()].filter(([g,ms])=>g!==groupKo&&_withIsFullGroup(g,ms)).map(([g])=>g));
