@@ -21872,7 +21872,7 @@ async function _buildFeedDailyNews(){
     // ⚠️ 앨범('💿 신보' 줄)은 2026-10-12에 뺐다 — 같은 섹션 아래 발매 앨범 블록(#feed-newalbum)이 같은 앨범을
     //    커버 그리드로 보여준다. 여기 다시 넣으면 한 섹션 안에서 같은 앨범이 두 번 나온다.
     const [winsRes,mvRes,milesRes]=await Promise.all([
-      sb.from('music_show_wins').select('*').eq('win_date',today).order('show',{ascending:true}),
+      sb.from('music_show_wins').select('*').gte('win_date',sevenDaysAgo).lte('win_date',today).order('win_date',{ascending:false}).order('show',{ascending:true}),
       sb.from(_YT_TABLE).select('id,title,thumb,is_short,group_ko,content_flag,published_at')
         .gte('published_at',sevenDaysAgo).lt('published_at',tomorrow)
         .order('published_at',{ascending:false}).limit(50),
@@ -21884,7 +21884,7 @@ async function _buildFeedDailyNews(){
     ]);
     const items=[];
     (winsRes.data||[]).forEach(w=>{
-      const sub=_gLabelKo(w.group_ko)+(w.member_ko?` · ${w.member_ko}`:'')+` · ${w.show}`;
+      const sub=_gLabelKo(w.group_ko)+(w.member_ko?` · ${w.member_ko}`:'')+` · ${w.show}`+_agoLabel(w.win_date);
       items.push({type:'win',title:w.song_title||'',sub,thumb:null,
         nav:()=>_feedNav(()=>{if(GROUPS[w.group_ko]){if(isMob())showGC(w.group_ko,window.innerWidth/2,window.innerHeight*0.4,false,false,null,false);else showGC(w.group_ko,window.innerWidth/2,window.innerHeight/2);}})});
     });
