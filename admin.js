@@ -6332,7 +6332,8 @@ function _vmRenderChannels(term){
   const isOfficial=_vmChTab==='official';
   let all=isOfficial?_officialChannels():_EXT_CHANNELS;
   if(!isOfficial&&_vmChTierFilter!=='all')all=all.filter(ch=>ch.tier===_vmChTierFilter);
-  const rows=q?all.filter(ch=>ch.name.toLowerCase().includes(q)||(ch.handle||'').toLowerCase().includes(q)):all;
+  // 소유 멤버·그룹 이름으로도 찾는다("성현" → 성현 팬채널들, 2026-10-15)
+  const rows=q?all.filter(ch=>ch.name.toLowerCase().includes(q)||(ch.handle||'').toLowerCase().includes(q)||((ch.owner&&[ch.owner.mko,ch.owner.gko].filter(Boolean).join(','))||'').toLowerCase().includes(q)):all;
   document.getElementById('vm-ch-count').textContent=`총 ${all.length}개 중 ${rows.length}개 표시`;
   const addRow=document.getElementById('vm-ch-add-row');
   if(addRow)addRow.style.display=isOfficial?'none':'flex';
@@ -6341,6 +6342,16 @@ function _vmRenderChannels(term){
     return;
   }
   listEl.innerHTML='';
+  // 소유 채널 유형(팬·아이돌개인·그룹 서브)을 보고 있으면 그 유형 전체 다시 훑기(2026-10-15, 사용자 요청)
+  // 검색 중이면(멤버·그룹 이름) 걸린 소유 채널만 — "멤버별 팬채널 동기화"
+  const _rescanRows=rows.filter(ch=>_EXT_RESCAN_TIERS.has(ch.tier));
+  if(!isOfficial&&_rescanRows.length&&(q||_EXT_RESCAN_TIERS.has(_vmChTierFilter))){
+    const bulk=document.createElement('button');bulk.type='button';bulk.className='ec-del-btn';bulk.style.cssText='display:block;margin:4px 0 8px;';
+    bulk.textContent=`↻ ${q?`'${term.trim()}'`:'이 유형'} 채널 ${_rescanRows.length}개 다시 훑기`;
+    bulk.title='업로드 목록을 처음부터 받아 빠진 영상 저장 + 출처 없이 먼저 들어온 영상을 이 채널로 연결(채널당 최대 2,000개, 50개당 1유닛)';
+    bulk.addEventListener('click',e=>{e.stopPropagation();_extRescanMany(_rescanRows,q?term.trim():(_EXT_TIER_OPTIONS.find(o=>o[0]===_vmChTierFilter)?.[1]||''));});
+    listEl.appendChild(bulk);
+  }
   rows.forEach(ch=>{
     const item=document.createElement('div');item.className='ec-item';
     const info=document.createElement('div');info.className='ec-info';
@@ -6397,6 +6408,12 @@ function _vmRenderChannels(term){
         pc.addEventListener('change',()=>_ecUpdateField(ch.handle,{is_primary:pc.checked},'isPrimary',pc.checked,'대표 채널 변경됨'));
         pw.appendChild(pc);pw.appendChild(document.createTextNode('대표'));
         item.appendChild(pw);
+      }
+      if(_EXT_RESCAN_TIERS.has(ch.tier)){
+        const rb=document.createElement('button');rb.className='ec-del-btn';rb.type='button';rb.textContent='↻';
+        rb.title='이 채널 영상 처음부터 다시 훑기(빠진 영상 저장 + 출처 연결)';
+        rb.addEventListener('click',e=>{e.stopPropagation();_extRescanMany([ch],ch.name);});
+        item.appendChild(rb);
       }
       const delBtn=document.createElement('button');delBtn.className='ec-del-btn';delBtn.type='button';delBtn.textContent='삭제';
       delBtn.addEventListener('click',e=>{e.stopPropagation();_ecDeleteChannel(ch.handle,ch.name);});
@@ -6522,6 +6539,9 @@ async function _ecAddChannel(){
   const primWrap=document.getElementById('vm-ch-add-primary-wrap');if(primWrap)primWrap.style.display='none';
   _vmRenderChannels(document.getElementById('vm-search')?.value||'');
   _showShareToast('채널 추가됨');
+  // 소유 채널(팬·아이돌개인·그룹 서브)은 등록하자마자 전체를 한 번 훑는다 — 먼저 들어와 있던 영상도 이 채널로(2026-10-15)
+  const _newCh=_EXT_CHANNELS.find(c=>c.handle===row.handle);
+  if(_newCh&&_EXT_RESCAN_TIERS.has(_newCh.tier))_extRescanMany([_newCh],_newCh.name);
 }
 document.getElementById('vm-ch-add-btn')?.addEventListener('click',_ecAddChannel);
 document.getElementById('vm-ch-add-tier')?.addEventListener('change',e=>{
@@ -9240,6 +9260,69 @@ function _extBuildRows(vids,strict,tier,owner,defaultCat,handle){
   return{rows,skipped};
 }
 
+// ── 이미 있는 영상을 이 채널 것으로(2026-10-15) ──────────────────────────────────────────
+// 채널을 등록하기 전에 다른 경로로 먼저 들어온 영상은 source_handle이 비어 있다. 동기화는 "이미 DB에 있으면 건너뜀"이라
+// 등록 뒤에도 영영 이 채널 영상이 되지 못했다 — 성현 팬채널 2곳(Noris·verse.) 영상 42개가 전부 출처 없이 '퍼포먼스'로
+// 있었고 by Fan 탭엔 등록 후 올라온 1개만 떴다(사용자 제보). 영상 ID가 이 채널 업로드 목록에서 나왔으니 오배정은 없다.
+// 출처(source_handle/tier)만 채우고, 팬 채널이면 분류를 'fan'으로(출처 기준 탭). 멤버·그룹 태그는 건드리지 않는다.
+async function _extClaimExisting(ch,ids){
+  let n=0;
+  for(let i=0;i<ids.length;i+=100){
+    const patch={source_handle:ch.handle,source_tier:ch.tier};
+    if(ch.tier==='fans')patch.category='fan';
+    const{data,error}=await sb.from(_YT_TABLE).update(patch).in('id',ids.slice(i,i+100)).is('source_handle',null).select('id');
+    if(error)throw new Error(error.message);
+    n+=(data||[]).length;
+  }
+  return n;
+}
+// 채널 하나 처음부터 다시 훑기 — 체크포인트와 무관하게 업로드 목록을 최대 maxPages(50개/쪽, 쪽당 1유닛)까지 받아
+// 없는 영상은 저장하고 출처 없는 기존 영상은 이 채널로 가져온다. 어드민 채널 목록 '↻'·유형 전체 버튼·신규 등록 직후.
+async function _extRescanChannel(ch,maxPages,onProg){
+  const key=_ytApiKey();
+  if(!key)throw new Error('API 키를 먼저 입력해주세요');
+  const prog=onProg||_ytSetProg;
+  prog(`[다시 훑기] ${ch.name} 채널 정보 확인 중…`);
+  const uploadsId=await _ytGetUploadsId(ch.url,key);
+  const{vids}=await _ytFetchNewVideos(uploadsId,key,null,(f,t)=>prog(`[다시 훑기] ${ch.name} ${f}${t?'/'+t:''}개 확인 중…`),'',null,maxPages||40);
+  const have=new Set(),orphan=[];
+  for(let i=0;i<vids.length;i+=100){
+    const{data,error}=await sb.from(_YT_TABLE).select('id,source_handle').in('id',vids.slice(i,i+100).map(v=>v.id));
+    if(error)throw new Error(error.message);
+    (data||[]).forEach(r=>{have.add(r.id);if(!r.source_handle)orphan.push(r.id);});
+  }
+  const claimed=orphan.length?await _extClaimExisting(ch,orphan):0;
+  const fresh=vids.filter(v=>!have.has(v.id));
+  let added=0,skipped=0;
+  if(fresh.length){
+    await _ytProbeShortsInline(fresh,prog);
+    const built=_extBuildRows(fresh,_EXT_STRICT_TIERS.has(ch.tier),ch.tier,ch.owner,ch.defaultCategory,ch.handle);
+    skipped=built.skipped;
+    for(let i=0;i<built.rows.length;i+=200){
+      const r=await _ytUpsertVideos(built.rows.slice(i,i+200),{onConflict:'id',ignoreDuplicates:true});
+      if(r&&r.error)throw new Error(r.error.message);
+    }
+    added=built.rows.length;
+  }
+  return{seen:vids.length,added,claimed,skipped};
+}
+const _EXT_RESCAN_TIERS=new Set(['fans','idol','grpsub']); // 다시 훑기 대상 — 채널 전체가 한 그룹/멤버 것인 소유 채널
+async function _extRescanMany(chs,label){
+  if(_extSyncing||_backfilling){_ytSetProg('다른 동기화가 도는 중이에요 — 끝난 뒤 다시 눌러주세요');return;}
+  if(!sb){_ytSetProg('Supabase 연결 없음');return;}
+  _extSyncing=true;
+  const tot={seen:0,added:0,claimed:0,skipped:0};let errs=0;
+  try{
+    for(const[i,ch] of chs.entries()){
+      try{
+        const r=await _extRescanChannel(ch,40,m=>_ytSetProg(`(${i+1}/${chs.length}) ${m}`));
+        for(const k in tot)tot[k]+=r[k];
+      }catch(e){errs++;console.error('[다시 훑기]',ch.handle,e.message);}
+    }
+    _ytSetProg(`[다시 훑기] ${label} 완료 — 확인 ${tot.seen}개 · 새로 저장 ${tot.added}개 · 출처 연결 ${tot.claimed}개${tot.skipped?' · 건너뜀 '+tot.skipped:''}${errs?' · ⚠️오류 '+errs+'곳(콘솔)':''}`);
+  }finally{_extSyncing=false;}
+}
+
 let _extSyncing=false;
 async function _ytSyncExtChannels(){
   if(_extSyncing)return;
@@ -9271,13 +9354,15 @@ async function _ytSyncExtChannels(){
     // (썸네일 요청)과 매칭을 다 치르고 있었다. 로스터 재훑기(아래 3단계)처럼 아는 구간을 다시 볼 때 특히 크다.
     // 조회 실패 시엔 거르지 않고 그대로 진행(예전 동작) — 이 최적화 때문에 저장이 막히면 안 된다.
     try{
-      const _have=new Set();
+      const _have=new Set(),_orphan=[];
       for(let i=0;i<vids.length;i+=100){
-        const{data,error}=await sb.from(_YT_TABLE).select('id').in('id',vids.slice(i,i+100).map(v=>v.id));
+        const{data,error}=await sb.from(_YT_TABLE).select('id,source_handle').in('id',vids.slice(i,i+100).map(v=>v.id));
         if(error)throw error;
-        (data||[]).forEach(r=>_have.add(r.id));
+        (data||[]).forEach(r=>{_have.add(r.id);if(!r.source_handle)_orphan.push(r.id);});
       }
       vids=vids.filter(v=>!_have.has(v.id));
+      // 출처 없이 먼저 들어와 있던 영상은 이 채널 것으로(_extClaimExisting 주석) — 실패해도 저장은 계속
+      if(_orphan.length)try{await _extClaimExisting(ch,_orphan);}catch(e){console.error('[출처 연결]',ch.handle,e.message);}
     }catch(e){}
     if(!vids.length)return;
     await _ytProbeShortsInline(vids,setProg); // 동기화 시점 세로 실측(개인/외부 채널도, 승격 버튼 불필요) — 2026-09-04
