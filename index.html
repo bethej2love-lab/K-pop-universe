@@ -15558,7 +15558,8 @@ function _openKpopLinks(){
 }
 function _closeKpopLinks(){document.getElementById('kpop-links-overlay').classList.remove('open');}
 // ── 멤버 탐색 오버레이 ──────────────────────────────────────────────────────
-const _MX_NAT_FLAG={'한국':'🇰🇷','일본':'🇯🇵','중국':'🇨🇳','태국':'🇹🇭','미국':'🇺🇸','호주':'🇦🇺','캐나다':'🇨🇦','뉴질랜드':'🇳🇿','대만':'🇹🇼','홍콩':'🇭🇰','필리핀':'🇵🇭','인도네시아':'🇮🇩','말레이시아':'🇲🇾','브라질':'🇧🇷','영국':'🇬🇧'};
+const _MX_NAT_FLAG={'한국':'🇰🇷','대한민국':'🇰🇷','일본':'🇯🇵','중국':'🇨🇳','태국':'🇹🇭','미국':'🇺🇸','호주':'🇦🇺','캐나다':'🇨🇦','뉴질랜드':'🇳🇿','NZ':'🇳🇿','대만':'🇹🇼','홍콩':'🇭🇰','필리핀':'🇵🇭','인도네시아':'🇮🇩','말레이시아':'🇲🇾','브라질':'🇧🇷','영국':'🇬🇧','베트남':'🇻🇳','프랑스':'🇫🇷','독일':'🇩🇪','이탈리아':'🇮🇹','스위스':'🇨🇭','스웨덴':'🇸🇪'};
+const _mxFlagsFor=nat=>{if(!nat)return'';const flags=nat.split(/[·,\/]\s*/).map(k=>_MX_NAT_FLAG[k.trim()]||'').filter(Boolean).join('');return flags||nat;};
 let _mxState={gender:'',yearLo:1985,yearHi:2012};
 function _openMemberExplorer(preOpts){
   const ov=document.getElementById('mx-overlay');if(!ov)return;
@@ -15664,7 +15665,8 @@ function _mxFigBuild(){
   tip.addEventListener('click',e=>{
     e.stopPropagation();const a=st.tipP&&st.tipP.a;if(!a)return;
     _closeMemberExplorer();
-    if(GROUPS[a.group.ko])openConnCard(a);else{const sa=ARTISTS.find(x=>x.name.ko===a.name.ko&&!GROUPS[x.group.ko]);openConnCard(sa||a);}
+    const _t=(()=>{const gd=GROUPS[a.group.ko];if(gd)return a;return ARTISTS.find(x=>x.name.ko===a.name.ko&&!GROUPS[x.group.ko])||a;})();
+    if(isMob())showT(_t,window.innerWidth/2,window.innerHeight*0.4,false,false,false);else showT(_t,window.innerWidth/2,window.innerHeight/2);
   });
   return st;
 }
@@ -15773,7 +15775,6 @@ function _mxRender(){
   const frag=document.createDocumentFragment();
   for(const a of shown){
     const yr=_mxBirthYear(a);
-    const flag=_MX_NAT_FLAG[a.nat?.ko||'']||'';
     const col=a.color?`rgb(${a.color[0]},${a.color[1]},${a.color[2]})`:'rgba(120,120,180,0.6)';
     const btn=document.createElement('button');
     btn.className='mx-card';btn.type='button';
@@ -15786,13 +15787,13 @@ function _mxRender(){
     const nmDiv=document.createElement('div');nmDiv.className='mx-card-name';nmDiv.textContent=a.name.ko;
     const gpDiv=document.createElement('div');gpDiv.className='mx-card-group';gpDiv.textContent=a.group.ko;
     const mtDiv=document.createElement('div');mtDiv.className='mx-card-meta';
-    mtDiv.textContent=[(yr?yr+'년생':''),flag||(a.nat?.ko||'')].filter(Boolean).join(' · ');
+    mtDiv.textContent=[(yr?yr+'년생':''),_mxFlagsFor(a.nat?.ko||'')].filter(Boolean).join(' · ');
     btn.appendChild(avDiv);btn.appendChild(nmDiv);btn.appendChild(gpDiv);btn.appendChild(mtDiv);
     btn.addEventListener('click',()=>{
       _closeMemberExplorer();
-      const gd=GROUPS[a.group.ko];
-      if(gd)openConnCard(a);
-      else{const sa=ARTISTS.find(x=>x.name.ko===a.name.ko&&!GROUPS[x.group.ko]);openConnCard(sa||a);}
+      const target=(()=>{const gd=GROUPS[a.group.ko];if(gd)return a;return ARTISTS.find(x=>x.name.ko===a.name.ko&&!GROUPS[x.group.ko])||a;})();
+      if(isMob())showT(target,window.innerWidth/2,window.innerHeight*0.4,false,false,false);
+      else showT(target,window.innerWidth/2,window.innerHeight/2);
     });
     frag.appendChild(btn);
   }
