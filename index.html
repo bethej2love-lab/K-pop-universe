@@ -25614,7 +25614,9 @@ function _renderTimeline(sec,list,ev){
     // 라벨 뒤에 ‘제목’(앨범·공연·곡)과 흐린 보조 정보(데뷔 N일 후·방송사)를 따로 붙인다(2026-10-13, 사용자 —
     // '정규 1집'만 있고 무슨 앨범인지 없었고, '데뷔 N일 후'는 덜 중요한데 같은 무게로 보였다).
     const lb=document.createElement('span');lb.className='tt-tl-label';lb.textContent=e.label;
-    if(e.title){const t=document.createElement('span');t.className='tt-tl-title';t.textContent=` ‘${e.title}’`;lb.appendChild(t);}
+    // 앨범은 [앨범명], 곡은 ‘곡명’, 공연은 그대로(2026-10-15, 사용자 — 따옴표 하나로 다 감싸 앨범인지 곡인지 몰랐다)
+    if(e.title){const t=document.createElement('span');t.className='tt-tl-title';
+      t.textContent=' '+(_TL_ALBUM_ICONS.has(e.icon)?`[${e.title}]`:_TL_SONG_ICONS.has(e.icon)?`‘${e.title}’`:e.title);lb.appendChild(t);}
     if(e.sub){const t=document.createElement('span');t.className='tt-tl-sub';t.textContent=` · ${e.sub}`;lb.appendChild(t);}
     row.appendChild(dot);row.appendChild(dt);row.appendChild(lb);
     // 말줄임된 줄은 데스크톱에서 마우스를 올리면 영상 제목처럼 흘려서 끝까지 보여준다(2026-10-14, 사용자 요청).
@@ -25648,6 +25650,7 @@ function _renderTimeline(sec,list,ev){
 }
 // 히스토리 부가 기록 — 기본으로 접어두는 것. 데뷔·첫 1위·정규 1집·솔로 데뷔·탈퇴·해체는 항상 보인다.
 const _TL_MINOR_ICONS=new Set(['👑','📺','🗾','🎫','▶️','🍈']);
+const _TL_ALBUM_ICONS=new Set(['🎤','💿','⭐','🗾']),_TL_SONG_ICONS=new Set(['🏆','👑','📺','🍈','▶️']);
 function _tlIsMinor(e){return _TL_MINOR_ICONS.has(e.icon);}
 // 음악방송 1위 데이터 → 타임라인 항목 배열 반환 (첫 1위·지상파 첫 1위·트리플 크라운)
 // 히스토리의 1위 항목을 누르면 — 지금 열린 카드의 트로피 버튼을 그대로 누른다(같은 목록·같은 탭)
@@ -25728,6 +25731,14 @@ function _tlOpenConcert(fc){
 //  · 첫 멜론 연간 TOP100: melon_yearly_top100 최소 연도(같은 해면 최고 순위) — 날짜는 연도만.
 // 그룹 단위 기록이라 멤버 카드는 주 소속 그룹 것을 보여준다(첫 1위·첫 콘서트와 같은 기준).
 const _tlMilestoneP=new Map();
+// MV 영상 제목 → 곡명. 따옴표로 감싼 부분이 있으면 그것("EXO-K 엑소케이 'MAMA' MV (Korean ver.)" → MAMA), 없으면 "가수 - 곡 M/V" 정리
+function _tlMvSong(raw){
+  const t=_cleanTitle(raw||'');
+  // 앞이 공백인 여는 따옴표 ~ 뒤가 공백·끝인 같은 짝 닫는 따옴표(Don't·What's 같은 아포스트로피에서 안 끊기게)
+  const q=/(?:^|\s)(?:'(.{1,60}?)'|‘(.{1,60}?)’|"(.{1,60}?)"|“(.{1,60}?)”)(?=\s|$|[)\]])/.exec(t);
+  if(q)return(q[1]||q[2]||q[3]||q[4]).trim();
+  return t.replace(/^.*?\s[-–]\s/,'').replace(/\s*[(\[]?(official\s*)?M\/?V[)\]]?.*$/i,'').trim();
+}
 function _tlMilestones(gko,isKo){
   if(!sb||!gko)return Promise.resolve([]);
   const key=gko+'␟'+(isKo?1:0);
@@ -25744,7 +25755,7 @@ function _tlMilestones(gko,isKo){
     // ⚠️ MV만, '첫'이라고 하지 않는다 — 조회수 기록 표가 모든 영상을 담지 않아(트와이스 Like OOH-AHH 없음) '첫'은 거짓이 될 수 있다
     if(v){
       const d=String(v.yt_channel_videos.published_at).slice(0,10),k=_tlKey(d);
-      if(k)out.push({key:k,date:_tlDate(d),label:isKo?'MV 공개':'MV release',title:_cleanTitle(v.yt_channel_videos.title||'').replace(/^.*?\s[-–]\s/,'').replace(/\s*M\/?V\s*$/i,'').replace(/^['‘"](.*)['’"]$/,'$1'), // 'BLACKPINK - '붐바야' M/V' → 붐바야
+      if(k)out.push({key:k,date:_tlDate(d),label:isKo?'MV 공개':'MV release',title:_tlMvSong(v.yt_channel_videos.title), // 'BLACKPINK - '붐바야' M/V' → 붐바야
         sub:isKo?'누적 1억 뷰':'100M+ views',icon:'▶️',onClick:()=>openLightbox(`https://www.youtube.com/watch?v=${v.video_id}`,false,null,0,{groupKo:gko})});
     }
     const m=mt&&mt.data&&mt.data[0];
