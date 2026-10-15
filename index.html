@@ -8766,7 +8766,13 @@ function _renderMixedVidGrid(items,containerEl,all,ctx){
   });
   containerEl.appendChild(grid);
 }
+// 비우고 다시 그리는 컨테이너의 높이를 두 프레임 붙잡는다 — 비우는 순간 높이가 0이 되면 바깥 카드 스크롤이 깎여 막 스크롤하던
+// 사용자가 맨 위로 끌려간다(2026-10-15 실측: 카드 열고 ~2.3초, 채널 영상 그리드 load의 grid.innerHTML=''). 다 채운 뒤엔 풀어 원래 높이로.
+function _holdHeight(el){const h=el&&el.offsetHeight;if(!h)return;el.style.minHeight=h+'px';requestAnimationFrame(()=>requestAnimationFrame(()=>{el.style.minHeight='';}));}
 function buildVideoSection(songs,containerEl,ctx,mainCandidates){
+  // 다시 그릴 때(카드 열고 ~2.7초, API 영상이 붙으며 재호출) 비우는 순간 높이가 0이 되면 브라우저가 카드 스크롤을 0으로
+  // 깎았다 — 막 스크롤하던 사용자가 맨 위로 끌려감(2026-10-15 실측). 이전 높이를 두 프레임만 붙잡아 둔다.
+  _holdHeight(containerEl);
   containerEl.innerHTML='';
   // 그리드 배치와 라이트박스 스와이프가 같은 순서를 보도록, 한 번만 섞어서 이후 전부(대표영상 선정 제외) 이 순서를 그대로 씀
   // 연결 카드에서 "Only"를 켜서 정확히 그 조합만 보는 중이면(ctx.pushExtDown), content_flag='외부인'
@@ -14911,6 +14917,63 @@ function _wireSheetTabbarHide(scrollEl){
   },{passive:true});
 }
 _sheetScrollers.forEach(_wireSheetTabbarHide);
+// ── 카드·패널 스크롤 안정화(2026-10-15, 사용자 4번째 제보 "카드·나침반 열고 초반 스크롤이 너무 빠르고 민감") ──
+// 그동안은 시트 끌기 데드존(10→24→30→44px)만 키웠는데 원인이 아니었다. 헤드리스로 "열자마자 120px 스크롤" 상태를
+// 재 보니(사파리처럼 스크롤 앵커링 끔) 화면 속 같은 요소가 **0.75초에 +112px**(위쪽에 비동기 블록이 끼어듦), **2.8초에
+// 스크롤이 0으로 잘림**(영상 목록을 비웠다 다시 그리는 순간 높이가 줄어 브라우저가 scrollTop을 깎음)으로 튀었다.
+// 카드는 열린 뒤 히스토리·상태 줄·대표 영상·영상 목록·디스코를 차례로 채우므로 "처음 몇 초"에만 일어난다.
+//  ① 앵커링: 사용자가 내려본 상태에서 위쪽 높이가 바뀌면 보던 요소가 제자리에 있도록 scrollTop을 보정한다.
+//     크롬은 브라우저가 이미 한다(overflow-anchor) — 지원 안 하는 브라우저(iOS 사파리)에서만 켠다.
+//  ② 잘림 복구: 내용이 잠깐 비워져 scrollTop이 깎였다가 다시 채워지면 사용자가 보던 위치로 되돌린다(모든 브라우저).
+//  ③ 코드가 scrollTop을 일부러 바꾸면(새 카드 열기=0 등) 기준점을 버린다 — 보정이 의도된 이동과 싸우지 않게.
+function _wireScrollStabilizer(sc){
+  if(!sc||sc._stabWired)return;sc._stabWired=true;
+  // 브라우저 앵커링(크롬 overflow-anchor)은 화면 **위쪽** 요소 하나를 기준으로 삼아 화면 가운데에 끼어드는 블록은 못 막고(크롬 실측 +112px),
+  // 사파리엔 아예 없다. 이 컨테이너에선 브라우저 것을 끄고 아래 JS 앵커링 하나로 통일한다(둘이 같이 돌면 이중 보정).
+  sc.style.overflowAnchor='none';
+  const desc=Object.getOwnPropertyDescriptor(Element.prototype,'scrollTop');
+  let lastTop=0,ancs=[],adjusting=false,raf=0;
+  // 기준 요소 위치는 **스크롤 컨테이너 기준**으로 잰다 — 화면 좌표로 재면 시트가 올라오는 애니메이션(시트 전체 transform)까지
+  // "내용이 밀렸다"로 읽어 엉뚱하게 보정했다(헤드리스 실측: 열리는 0.15초 동안 120→95px로 깎임).
+  const relTop=el=>el.getBoundingClientRect().top-sc.getBoundingClientRect().top;
+  const setTop=v=>{adjusting=true;desc.set.call(sc,v);adjusting=false;};
+  // 코드가 scrollTop을 일부러 바꾸면(새 카드 열기=0 등) 기준을 버린다 — 보정이 의도된 이동과 싸우지 않게
+  try{Object.defineProperty(sc,'scrollTop',{configurable:true,get(){return desc.get.call(this);},
+    set(v){desc.set.call(this,v);if(!adjusting){lastTop=desc.get.call(this);ancs=[];}}});}catch(e){}
+  // 기준은 화면 가운데·위·아래 **세 개** — 하나(가운데)만 잡으면 그게 로딩 자리표시(스켈레톤)라 진짜 영상으로 교체되며 기준을 잃거나
+  // (크롬 실측), 카드 사이 틈에 걸려 영상 목록 전체 같은 큰 상자가 잡혀 보정이 빗나갔다. 큰 상자는 고르지 않고, 스켈레톤은 다른 게 없을 때만 쓴다.
+  const pick=()=>{
+    ancs=[];
+    if(desc.get.call(sc)<=0)return;
+    const r=sc.getBoundingClientRect();
+    for(const f of [0.5,0.3,0.7]){
+      for(const dx of [0.5,0.25,0.75]){
+        const c=document.elementFromPoint(r.left+r.width*dx,r.top+r.height*f);
+        if(c&&c!==sc&&sc.contains(c)&&c.offsetHeight<sc.clientHeight*0.8){ancs.push({el:c,top:relTop(c),sk:!!c.closest('[class*="skeleton"]')});break;}
+      }
+    }
+  };
+  sc.addEventListener('scroll',()=>{if(adjusting)return;lastTop=desc.get.call(sc);pick();},{passive:true});
+  const settle=()=>{
+    raf=0;
+    if(lastTop<=0)return;
+    const cur=desc.get.call(sc),max=sc.scrollHeight-sc.clientHeight;
+    // 스켈레톤이 아닌 기준을 먼저(진짜 영상으로 교체되며 사라지니까), 그것뿐이면 스켈레톤이라도 — 열린 직후엔 화면이 전부 스켈레톤이다
+    const live=ancs.filter(x=>x.el.isConnected&&x.el.offsetHeight>0);const a=live.find(x=>!x.sk)||live[0];
+    if(a){
+      // 화면 가운데(기준 요소) 위쪽 높이가 바뀐 만큼 올리고 내려 보던 내용을 제자리에(맨 위에서는 보정 안 함 — 새 줄이 자연스럽게 보이게)
+      const d=relTop(a.el)-a.top;
+      if(Math.abs(d)>=1){setTop(cur+d);lastTop=desc.get.call(sc);ancs.forEach(x=>{if(x.el.isConnected)x.top=relTop(x.el);});}
+      return;
+    }
+    // 기준이 전부 다시 그려져 사라졌는데 높이가 줄어 깎였으면 숫자로 되돌린다
+    if(cur<lastTop-2&&max>=lastTop){setTop(lastTop);pick();}
+  };
+  const kick=()=>{if(!raf)raf=requestAnimationFrame(settle);};
+  new MutationObserver(kick).observe(sc,{childList:true,subtree:true,attributes:true,attributeFilter:['style','class','hidden']});
+  if(window.ResizeObserver){const ro=new ResizeObserver(kick);const obs=()=>[...sc.children].forEach(c=>ro.observe(c));obs();new MutationObserver(obs).observe(sc,{childList:true});}
+}
+_sheetScrollers.forEach(_wireScrollStabilizer);
 // ── 카드를 "열 때"의 불변식: 새 카드는 scrollTop=0에서 시작하므로 탭바는 반드시 보이는 상태여야 한다.
 // 원래 tab-hidden을 떼는 코드는 **닫기 경로 4곳**(closeMobSheet / 스택 pop / 연결카드 닫기 / 라이트박스
 // 닫기)에만 있었고, 여는 쪽엔 _lastScroll·_tbAccum 리셋만 있었다. 추적값을 0으로 되돌려도 클래스는 그대로
@@ -19986,7 +20049,7 @@ function _openFeedOverlay(){
     // ⚠️ 여기서 바인딩하는 이유는 위 el._bound 블록과 같다(#feed-body는 스크립트보다 나중에 파싱됨).
     //    _sheetScrollers에도 넣어야 _rebaseSheetScroll(탭바 토글 직후 기준선 재설정)이 이 컨테이너도 챙긴다.
     const _fb=document.getElementById('feed-body');
-    if(_fb&&!_sheetScrollers.includes(_fb)){_sheetScrollers.push(_fb);_wireSheetTabbarHide(_fb);}
+    if(_fb&&!_sheetScrollers.includes(_fb)){_sheetScrollers.push(_fb);_wireSheetTabbarHide(_fb);_wireScrollStabilizer(_fb);}
     // 카드와 똑같은 "맨 위로" 버튼을 탐험 패널에도(2026-08-27 사용자 요청). 카드용으로 이미 있던
     // _wireTotop을 그대로 재사용 — 스크롤 컨테이너만 넘기면 되고, 버튼(z-index 66)이 이 오버레이
     // (z-index 39)보다 위라 그대로 뜬다. 여기서 바인딩하는 이유는 위 el._bound 블록과 같다:
@@ -20053,7 +20116,7 @@ function _slideDownCloseFeed(){
 // 위로 끄는 건 peek 상태일 때만 의미가 있음 — 전체 펼침(하단 탭바 "탐험"과 완전히 같은 화면)으로
 // 전환, 임계값 넘기면 .peek 제거 → top/height CSS 트랜지션으로 부드럽게 커짐(2026-08-13, 사용자 요청).
 function _wireFeedSwipeDismiss(el,body){
-  let dragY=0,dragging=false,dragActive=false,_rafId=0,_applyFn=null;
+  let dragY=0,dragging=false,dragActive=false,_rafId=0,_applyFn=null,_armed=false;
   el.addEventListener('touchstart',e=>{
     if(!isMob())return;
     // 자체적으로 가로 스크롤되는 영역(.hscroll-drag — 기념일 스트립 등)은 여기서 추적 안 함(_wireSheetSwipe와
@@ -20062,6 +20125,7 @@ function _wireFeedSwipeDismiss(el,body){
     dragY=e.touches[0].clientY;
     dragging=true;
     dragActive=body.scrollTop<=0;
+    _armed=false;
   },{passive:true});
   el.addEventListener('touchmove',e=>{
     if(!dragging)return;
@@ -20069,6 +20133,12 @@ function _wireFeedSwipeDismiss(el,body){
     if(!dragActive){
       if(body.scrollTop<=0){dragActive=true;dragY=curY;}
       else return;
+    }
+    // 첫 움직임 문턱(2026-10-15, 사용자 "나침반 패널도 처음 터치가 민감") — 카드 시트(_wireSheetSwipe)엔 10→44px 문턱이 있었는데
+    // 여기엔 없어서 맨 위에서 1px만 움직여도 곧바로 패널 끌기로 넘어가고 본문 스크롤을 막았다. 넘는 순간 그 지점을 새 기준으로(점프 없음).
+    if(!_armed){
+      if(Math.abs(curY-dragY)<_SHEET_DRAG_SLOP)return;
+      dragY=curY;_armed=true;
     }
     const dy=curY-dragY;
     if(dy<0&&!el.classList.contains('peek'))return; // 이미 전체 펼침 — 더 올라갈 데 없음
@@ -20081,6 +20151,7 @@ function _wireFeedSwipeDismiss(el,body){
     if(_rafId){cancelAnimationFrame(_rafId);_rafId=0;}_applyFn=null;
     if(!dragActive)return;
     dragActive=false;
+    if(!_armed){el.style.transform='';return;} // 문턱을 못 넘은 터치 — 패널은 그대로
     const dy=e.changedTouches[0].clientY-dragY;
     if(dy>80){
       _slideDownCloseFeed();
@@ -24533,7 +24604,7 @@ function _makeChVidController(contId){
       const[{data,error,count},_featuredFromDB]=await Promise.all([mainP,featuredP]);
       if(myGen!==state.gen)return; // 대기 중 다른 그룹/새로고침으로 전환됨: 그쪽이 이미 자신의 잠금을 걸어놨으므로 여기선 해제하지 않는다
       if(error)throw new Error(error.message);
-      if(reset)grid.innerHTML='';
+      if(reset){_holdHeight(grid);grid.innerHTML='';}
       if(!data?.length&&offset===0){
         // 멤버 카드 기본 탭(라이브)에 아직 태깅/분류된 영상이 없으면 "전체"로 자동 폴백(한 번만)
         if(state.memberKo&&state.filter==='live'&&!state._liveFallbackDone){
