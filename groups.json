@@ -260518,7 +260518,28 @@
    "tiktok": "https://tiktok.com/@a2o.lite",
    "namu": "https://namu.wiki/w/A2O LITE"
   },
-  "id": "g291"
+  "id": "g291",
+  "discography": [
+   {
+    "title": "NEON",
+    "type": "싱글",
+    "isMain": true,
+    "cover": "https://i.scdn.co/image/ab67616d0000b273b530cdeee0fc5d2d2888e3c2",
+    "releaseDate": "2026.10.13",
+    "trackCount": 1,
+    "titleTrack": "NEON",
+    "tracks": [
+     {
+      "no": 1,
+      "title": "NEON",
+      "isTitle": true
+     }
+    ],
+    "src": "spotify",
+    "spotifyId": "4LcuVwt8mIj0SIoWQqnDkd",
+    "copyright": "2026 A2O Entertainment"
+   }
+  ]
  },
  "A2O SOUL": {
   "en": "A2O SOUL",
@@ -260541,6 +260562,27 @@
    "tiktok": "https://tiktok.com/@a2o.soul",
    "namu": "https://namu.wiki/w/A2O SOUL"
   },
-  "id": "g292"
+  "id": "g292",
+  "discography": [
+   {
+    "title": "SUPERSTAR",
+    "type": "싱글",
+    "isMain": true,
+    "cover": "https://i.scdn.co/image/ab67616d0000b273150f63cad93b79dc46dc339c",
+    "releaseDate": "2026.10.13",
+    "trackCount": 1,
+    "titleTrack": "SUPERSTAR",
+    "tracks": [
+     {
+      "no": 1,
+      "title": "SUPERSTAR",
+      "isTitle": true
+     }
+    ],
+    "src": "spotify",
+    "spotifyId": "1DzXeVnrXrHT6hciDfbGLf",
+    "copyright": "2026 A2O Entertainment"
+   }
+  ]
  }
 }

@@ -37,6 +37,17 @@
     },
     "checkedAt": "2026-09-17"
   },
+  "A2O LITE": {
+    "id": "0Vkn28k7P4K95Ce3knN0hQ",
+    "spotifyName": "A2O LITE",
+    "kind": "group",
+    "confidence": "medium",
+    "why": "이름 유일 일치",
+    "evidence": {
+      "titleOverlap": null
+    },
+    "checkedAt": "2026-10-15"
+  },
   "A2O MAY": {
     "id": "6MHvscbuui67TvYTr3ZpV4",
     "spotifyName": "A2O MAY",
@@ -52,6 +63,17 @@
       ]
     },
     "checkedAt": "2026-09-20"
+  },
+  "A2O SOUL": {
+    "id": "1sqWFSwBcJ6eunJRrCsmYb",
+    "spotifyName": "A2O SOUL",
+    "kind": "group",
+    "confidence": "medium",
+    "why": "이름 유일 일치",
+    "evidence": {
+      "titleOverlap": null
+    },
+    "checkedAt": "2026-10-15"
   },
   "B.D.U": {
     "id": "1SRmmtrnAo0UK0NUROJRjz",

@@ -261207,6 +261207,24 @@
     },
     "discography": [
       {
+        "title": "Wonderful Ending",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/146/69/177/14669177_20261013143557_500.jpg",
+        "releaseDate": "2026.10.15",
+        "trackCount": 1,
+        "titleTrack": "Wonderful Ending",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Wonderful Ending",
+            "isTitle": true
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "14669177"
+      },
+      {
         "title": "ELEEMENTAL",
         "type": "미니",
         "releaseDate": "2026.05.27",
