@@ -6417,13 +6417,12 @@ function openLightbox(url,shorts,playlist,idx,ctx,isAdvance,forceBrowseMode){
   _lbActiveVid=vid;
   // 데스크톱에서 카드 3개(side+member+conn)가 모두 열려 있으면 남은 영상 공간이 너무 좁아진다.
   // side-panel만 닫고 member/conn을 오른쪽으로 당겨(right 0/440) 카드 2단 너비(880px) 안으로 압축한다.
-  if(!isMob()&&!isAdvance&&!_lbShiftedCards&&connPanelEl.classList.contains('open')){
+  if(!isMob()&&!isAdvance&&connPanelEl.classList.contains('open')&&sidePanelEl.classList.contains('open')){
     closeSidePanel();
     memberPanelEl.style.right='0px';
     connPanelEl.style.right='440px';
     const cc=document.getElementById('conn-collapse');
     if(cc)cc.style.right='880px';
-    _lbShiftedCards=true;
   }
   _lbYtDur=0;_lbKnownDur=(playlist&&playlist[idx]&&+playlist[idx].dur)||0; // 시청 진행용 길이(위 _lbYtHandshake 주석)
   // 연결 카드에서 출발해 실제 재생까지 간 경우만 계측 — 이 건의 **핵심 지표**(열고 나서 영상에
@@ -7980,20 +7979,14 @@ function closeLightbox(){
   _lbHideLoading();
   _surfHideRecap();
   const lb=document.getElementById('yt-lightbox');
-  lb.classList.remove('open');
-  document.getElementById('yt-lb-iframe').src='';
+  document.getElementById('yt-lb-iframe').src=''; // 소리는 즉시 끊기
   document.querySelector('.lb-menu-wrap')?.classList.remove('open');
+  lb.classList.add('lb-closing');
+  setTimeout(()=>{lb.classList.remove('open','lb-closing');},200);
   _lbCurVideoUrl='';
   _lbSpeed=1;
   _lbConnCardOpenedFromLb=false; // 영상 자체를 닫아버렸으면 나중에 연결 카드를 닫아도 재생을 재개할 대상이 없음
   document.getElementById('yt-lb-speed-badge').classList.remove('is-on');
-  if(_lbShiftedCards){
-    _lbShiftedCards=false;
-    memberPanelEl.style.right='';
-    connPanelEl.style.right='';
-    const cc=document.getElementById('conn-collapse');
-    if(cc)cc.style.right='';
-  }
   // 라이트박스가 카드 위를 완전히 덮고 있는 동안 영상을 클릭할 때의 자동 스크롤(scrollIntoView)이나
   // 카드 재렌더링으로 밑에 깔린 시트의 scrollTop이 사용자 모르게 바뀌어 있을 수 있음 — 그 상태에서
   // _lastScroll이 실제 위치와 어긋나면 닫은 뒤 위로 스크롤해도 탭바가 다시 안 뜨는 경우가 있었음.
