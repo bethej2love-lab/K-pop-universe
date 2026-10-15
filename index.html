@@ -20585,7 +20585,7 @@ function _appendAnnivStripItem(container,icon,name,sub,onClick,thumbUrl,sub2){
   item.innerHTML='<div class="feed-strip-thumb-wrap"><div class="feed-strip-shimmer" data-icon="'+icon+'"></div></div>'
     +'<div class="feed-strip-name">'+_cleanTitle(name)+'</div>'
     +(sub?'<div class="feed-strip-sub">'+sub+'</div>':'')
-    +(sub2?'<div class="feed-strip-sub">'+sub2+'</div>':'');
+    +(sub2?'<div class="feed-strip-date">'+sub2+'</div>':'');
   item.addEventListener('click',onClick);
   item.addEventListener('touchstart',e=>_lbRipple(item,e),{passive:true});
   item.addEventListener('mousedown',e=>_lbRipple(item,e));
@@ -21550,13 +21550,13 @@ function _buildFeedAnniversaries(){
   bdayHits.forEach(a=>{
     const mName=_dispName(a);
     const gName=_dispGroupName(a); // 솔로 취급 멤버는 전 소속 대신 "솔로"
-    const bdYr=a.bday?a.bday.split('.')[0]:'';
-    const sub=bdYr?gName+' · '+bdYr:gName;
+    const sub=gName;
+    const sub2=a.bday||null;
     const item=_appendAnnivStripItem(list,'🎂',mName,sub,()=>_feedNav(()=>{
       if(a._worldPos)flyTo(a._worldPos);
       if(isMob()){showT(a,window.innerWidth/2,window.innerHeight*0.4,false,false,false);}
       else showT(a,window.innerWidth/2,window.innerHeight/2);
-    }));
+    }),undefined,sub2);
     if(a.active===false)item.classList.add('anniv-inactive');
     // 소속 그룹이 전부 끝난 사람만 실제 영상 활동으로 한 번 더 본다(위 _annivIsDormant 주석 참고).
     else _annivIsDormant(a).then(d=>{if(d)item.classList.add('anniv-inactive');}).catch(()=>{});
