@@ -3918,7 +3918,7 @@
      작품이라 영상 썸네일과 다르게 다룬다, 사용자 결정) — 대신 캡션에 위계를 한 단계 더 준다.
      한 줄 고정(줄바꿈 금지)이라 카드 높이는 딱 이 줄만큼만 늘어난다. */
   /* 차트 카드 Top 3 미리보기(2026-10-15) — 부제 자리. 순위 숫자·이름·변동(색은 목록 순위 배지와 같게: 상승 초록·하락 분홍·NEW 노랑) */
-  .feed-card-rank{margin-top:4px;display:flex;flex-direction:column;gap:2px;}
+  .feed-card-rank{margin-top:6px;display:flex;flex-direction:column;gap:2px;background:rgba(255,255,255,0.055);border-radius:5px;padding:5px 7px;}
   .fcr-row{display:flex;align-items:baseline;gap:6px;font-size:10.5px;line-height:1.35;min-width:0;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
   .fcr-no{flex:none;width:12px;text-align:right;font-weight:800;color:rgba(170,192,240,0.75);font-variant-numeric:tabular-nums;}
   .fcr-who{flex:1;min-width:0;color:rgba(200,215,245,0.88);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
