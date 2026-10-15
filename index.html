@@ -747,10 +747,15 @@
         <button class="mx-chip" data-mx-gender="m" type="button">남</button>
         <button class="mx-chip" data-mx-gender="f" type="button">여</button>
       </div>
-      <div class="mx-chips">
+      <div class="mx-chips mx-year-row">
         <span class="mx-chip-lbl">생년</span>
-        <input id="mx-year-input" class="mx-year-input" type="number" min="1985" max="2012" placeholder="예: 1995">
-        <button id="mx-year-clear" class="mx-year-clear" type="button" style="display:none" aria-label="생년 초기화">✕</button>
+        <div class="mx-year-range-wrap">
+          <div class="sp-dual">
+            <input type="range" id="mx-year-lo" min="1985" max="2012" value="1985">
+            <input type="range" id="mx-year-hi" min="1985" max="2012" value="2012">
+          </div>
+          <div class="sp-rng-vals mx-year-vals"><span id="mx-year-lo-v">1985</span><span id="mx-year-hi-v">2012</span></div>
+        </div>
       </div>
     </div>
     <div class="mx-result-bar"><span id="mx-count" class="mx-count"></span></div>
@@ -15554,12 +15559,12 @@ function _openKpopLinks(){
 function _closeKpopLinks(){document.getElementById('kpop-links-overlay').classList.remove('open');}
 // ── 멤버 탐색 오버레이 ──────────────────────────────────────────────────────
 const _MX_NAT_FLAG={'한국':'🇰🇷','일본':'🇯🇵','중국':'🇨🇳','태국':'🇹🇭','미국':'🇺🇸','호주':'🇦🇺','캐나다':'🇨🇦','뉴질랜드':'🇳🇿','대만':'🇹🇼','홍콩':'🇭🇰','필리핀':'🇵🇭','인도네시아':'🇮🇩','말레이시아':'🇲🇾','브라질':'🇧🇷','영국':'🇬🇧'};
-let _mxState={gender:'',year:''};
+let _mxState={gender:'',yearLo:1985,yearHi:2012};
 function _openMemberExplorer(preOpts){
   const ov=document.getElementById('mx-overlay');if(!ov)return;
   if(preOpts){
     if(preOpts.gender!=null)_mxState.gender=preOpts.gender;
-    if(preOpts.year!=null)_mxState.year=preOpts.year;
+    if(preOpts.year!=null){const y=+preOpts.year;_mxState.yearLo=y;_mxState.yearHi=y;}
     const si=document.getElementById('mx-search');
     if(si&&preOpts.rawQ!=null)si.value=preOpts.rawQ;
   }
@@ -15570,16 +15575,7 @@ function _openMemberExplorer(preOpts){
 }
 function _closeMemberExplorer(){document.getElementById('mx-overlay')?.classList.remove('open');}
 function _mxBirthYear(a){const m=String(a.bday||'').match(/(\d{4})/);return m?+m[1]:null;}
-function _mxYearOk(yr,range){
-  if(!range)return true;
-  if(!yr)return false;
-  if(range==='~1999')return yr<=1999;
-  if(range==='2000-2004')return yr>=2000&&yr<=2004;
-  if(range==='2005-2009')return yr>=2005&&yr<=2009;
-  if(range==='2010~')return yr>=2010;
-  if(/^\d{4}$/.test(range))return yr===+range;
-  return true;
-}
+function _mxYearOk(yr,lo,hi){return!!(yr&&yr>=lo&&yr<=hi);}
 function _mxParseFreeText(q){
   const r={year:'',gender:'',nat:'',text:''};let rem=q;
   rem=rem.replace(/(\d{4})\s*년생?/g,(_,y)=>{r.year=y;return''});
@@ -15593,7 +15589,9 @@ function _mxParseFreeText(q){
 }
 function _mxSyncChips(){
   document.querySelectorAll('[data-mx-gender]').forEach(b=>b.classList.toggle('active',b.dataset.mxGender===_mxState.gender));
-  const yi=document.getElementById('mx-year-input');if(yi){yi.value=_mxState.year||'';document.getElementById('mx-year-clear').style.display=_mxState.year?'':'none';}
+  const lo=document.getElementById('mx-year-lo'),hi=document.getElementById('mx-year-hi');
+  if(lo){lo.value=_mxState.yearLo;document.getElementById('mx-year-lo-v').textContent=_mxState.yearLo;}
+  if(hi){hi.value=_mxState.yearHi;document.getElementById('mx-year-hi-v').textContent=_mxState.yearHi;}
 }
 // ── 멤버 탐색 그림(2026-10-15, 사용자 "the pudding처럼 — 읽을거리보다 데이터 시각화, 심미적으로도 아름답게") ──
 // 데뷔 연도 × 데뷔 나이 산점도. 점 하나 = 멤버 한 명(생일·그룹 데뷔일이 있는 사람, 약 1,500명).
@@ -15741,16 +15739,20 @@ function _mxRender(){
   const raw=(document.getElementById('mx-search')?.value||'').trim();
   const p=_mxParseFreeText(raw);
   const fG=_mxState.gender||p.gender;
-  const fY=_mxState.year||p.year;
+  const fYlo=_mxState.yearLo,fYhi=_mxState.yearHi;
+  const fYslide=fYlo>1985||fYhi<2012;
+  const fYtext=p.year; // 텍스트로 입력한 단일 연도
   const fN=p.nat;
   const fT=p.text;
+  const hasFilter=!!(fG||fYslide||fYtext||fN||fT);
   const MAX=300,results=[];
   for(const a of ARTISTS){
     if(!a.name?.ko||!a.group?.ko)continue;
     const gd=GROUPS[a.group.ko];
     if(fG&&(gd?.gender||'')!==fG)continue;
     const yr=_mxBirthYear(a);
-    if(fY&&!_mxYearOk(yr,fY))continue;
+    if(fYtext){if(!yr||yr!==+fYtext)continue;}
+    else if(fYslide&&!_mxYearOk(yr,fYlo,fYhi))continue;
     if(fN&&(a.nat?.ko||'')!==fN)continue;
     if(fT){
       const t=[a.name.ko,a.name.en||'',a.group.ko,gd?.en||''].join(' ').toLowerCase();
@@ -15758,14 +15760,15 @@ function _mxRender(){
     }
     results.push(a);
   }
-  results.sort((a,b)=>{
-    const ya=_mxBirthYear(a)||9999,yb=_mxBirthYear(b)||9999;
-    return ya!==yb?ya-yb:(a.name.ko||'').localeCompare(b.name.ko||'');
-  });
+  if(hasFilter){
+    results.sort((a,b)=>{const ya=_mxBirthYear(a)||9999,yb=_mxBirthYear(b)||9999;return ya!==yb?ya-yb:(a.name.ko||'').localeCompare(b.name.ko||'');});
+  } else {
+    for(let i=results.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[results[i],results[j]]=[results[j],results[i]];}
+  }
   if(countEl)countEl.textContent=results.length>MAX?`${results.length}명 중 ${MAX}명`:`${results.length}명`;
   const shown=results.slice(0,MAX);
   grid.innerHTML='';
-  try{_mxFigMount(grid,results,!!(fG||fY||fN||fT));}catch(e){console.warn('[mx] 그림 실패 — 목록만',e);}
+  try{_mxFigMount(grid,results,hasFilter);}catch(e){console.warn('[mx] 그림 실패 — 목록만',e);}
   if(!shown.length){grid.insertAdjacentHTML('beforeend','<div class="mx-empty">조건에 맞는 멤버가 없어요</div>');return;}
   const frag=document.createDocumentFragment();
   for(const a of shown){
@@ -15801,17 +15804,14 @@ document.querySelectorAll('[data-mx-gender]').forEach(b=>b.addEventListener('cli
   document.querySelectorAll('[data-mx-gender]').forEach(x=>x.classList.toggle('active',x.dataset.mxGender===_mxState.gender));
   _mxRender();
 }));
-document.getElementById('mx-year-input')?.addEventListener('input',e=>{
-  const v=e.target.value.trim();
-  _mxState.year=(/^\d{4}$/.test(v))?v:'';
-  document.getElementById('mx-year-clear').style.display=_mxState.year?'':'none';
+['mx-year-lo','mx-year-hi'].forEach(id=>document.getElementById(id)?.addEventListener('input',()=>{
+  let lo=+document.getElementById('mx-year-lo').value,hi=+document.getElementById('mx-year-hi').value;
+  if(lo>hi){if(id==='mx-year-lo'){lo=hi;document.getElementById('mx-year-lo').value=lo;}else{hi=lo;document.getElementById('mx-year-hi').value=hi;}}
+  _mxState.yearLo=lo;_mxState.yearHi=hi;
+  document.getElementById('mx-year-lo-v').textContent=lo;
+  document.getElementById('mx-year-hi-v').textContent=hi;
   _mxRender();
-});
-document.getElementById('mx-year-clear')?.addEventListener('click',()=>{
-  const yi=document.getElementById('mx-year-input');if(yi)yi.value='';
-  _mxState.year='';document.getElementById('mx-year-clear').style.display='none';
-  _mxRender();
-});
+}));
 document.getElementById('mx-close')?.addEventListener('click',_closeMemberExplorer);
 document.getElementById('mx-overlay')?.addEventListener('click',e=>{if(e.target===e.currentTarget)_closeMemberExplorer();});
 // ⚠️ #mx-open-btn은 이 스크립트보다 **아래**(탐색 패널 마크업)에 있어서, 여기서 바로 찾으면 null → `?.`가 조용히 넘어가
