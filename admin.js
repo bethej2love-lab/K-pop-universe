@@ -8395,7 +8395,13 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
   // 2026-10-01: 데일리디렉션 E-VAN(이반)은 하이픈을 떼면 'EVAN'이 돼 솔로 에반(전 엔하이픈 희승)의 영상 ~50건을 가져갔다
   //   ("[쇼챔1분직캠] 에반 (EVAN)의 Death of Me" → 데일리디렉션). 이름만으로는 역추론하지 않고, 데일리디렉션이 제목에 있을 때만.
   const _ATM_INFER_EXCLUDE_NAMES=new Set(['Love','나인','Nine','Fan','On','E-VAN']);
-  const _atmInferExcluded=a=>_ATM_INFER_EXCLUDE_NAMES.has(a.name.ko)||_ATM_INFER_EXCLUDE_NAMES.has(a.name.en);
+  // **그룹 단위** 역추론 금지(2026-10-15, 사용자 "신인이라 관련 영상도 많지 않으니 보수적으로") — A2O LITE·A2O SOUL은 24명 중
+  // Young·Moon·June·Sora(소라)·Tai(타이)·Zet(제트)·Merci 등 흔한 낱말과 보라(씨스타)·시원(슈퍼주니어) 같은 동명이인이 대부분이다.
+  // 이름 목록(위·_ATM_HASHTAG_ONLY_NAMES)에 넣으면 같은 이름의 다른 아티스트까지 막히므로 그룹으로 건다:
+  // 이름만으로 이 그룹을 추측하지 않고, 제목에 그룹명(A2O LITE/#A2OLITE 등)이 있거나 자체 채널일 때만 멤버를 붙인다.
+  // 활동이 쌓여 영상이 늘면 여기서 빼고 이름별로 다시 판단할 것.
+  const _ATM_INFER_EXCLUDE_GROUPS=new Set(['A2O LITE','A2O SOUL']);
+  const _atmInferExcluded=a=>_ATM_INFER_EXCLUDE_NAMES.has(a.name.ko)||_ATM_INFER_EXCLUDE_NAMES.has(a.name.en)||_artistGroups(a).some(g=>g&&_ATM_INFER_EXCLUDE_GROUPS.has(g.ko));
   // 데뷔보다 1년 이상 전에 나온 영상을 순전히 멤버 이름만으로 이 그룹으로 역추론하는 건 근거가 없다 — 그
   // 그룹이 존재하기도 전이라 대개 동명이인(옛 가수·배우가 이름만 겹침)이다(2026-09-01 실측: 올아워즈←현빈
   // 배우, 트리플에스←옛 가수 채연, 유니스←윤하). _atmLeftBefore(탈퇴 후 상한)의 데뷔 하한 대칭 짝.

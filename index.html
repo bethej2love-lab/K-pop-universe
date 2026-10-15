@@ -2321,7 +2321,7 @@ function _refreshOpenCardText(){
     if(info){
       document.getElementById('gc-name').textContent=currentLang==='ko'?_openGCko:(info.en||_openGCko);
       {
-        const _enShow=currentLang==='ko'&&info.en;
+        const _enShow=currentLang==='ko'&&info.en&&info.en!==_openGCko; // 키가 영문인 그룹(A2O MAY·SOUL)은 제목과 같은 글자가 두 번 보였다
         const _enEl=document.getElementById('gc-en');
         _enEl.textContent=_enShow?info.en:'';
         _enEl.style.display=_enShow?'':'none'; // 비어있으면 flex 흐름에서 완전히 빼서 뒤 아이콘 앞에 gap이 안 붙게
@@ -14092,7 +14092,7 @@ function showGC(ko,cx,cy,keepMemberPanel,skipRipple,urlMode,_unusedPushMobNav){
   {const _gg=document.getElementById('gc-glyph');if(_gg)_gg.innerHTML=_groupGlyphSVG(ko,18);} // 별자리 글리프(Q2)
   nameEl.style.color='';
   {
-    const _enShow=currentLang==='ko'&&info.en;
+    const _enShow=currentLang==='ko'&&info.en&&info.en!==ko; // 키가 영문인 그룹(A2O MAY·SOUL 등)은 제목과 같은 글자가 두 번 보였다(2026-10-15)
     const _enEl=document.getElementById('gc-en');
     _enEl.textContent=_enShow?info.en:'';
     _enEl.style.display=_enShow?'':'none';
