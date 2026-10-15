@@ -10722,7 +10722,7 @@ function _wireSheetSwipe(sheetEl,innerEl,onDismiss,syncEl,sensFn){
       // 위로 충분히 → 꽉 참 (핸들 영역 제한 제거: 콘텐츠 맨 위에서 어디서든)
       _sheetFull=true;
       sheetEl.style.transform='';
-      sheetEl.classList.add('bs-full');
+      sheetEl.classList.add('bs-full');try{_tlog('끌어서펼침',1);}catch(e){}
     }else if(_sheetFull&&dy>0&&innerEl.scrollTop<=0){
       if(dy>150*_sens){
         onDismiss();
@@ -15085,7 +15085,7 @@ function _rebaseSheetScroll(){
     el._lastMax=Math.max(0,el.scrollHeight-el.clientHeight);
   });
 }
-function _extendSheets(){_tabbarOff=true;_applySheetMetrics();_rebaseSheetScroll();}
+function _extendSheets(){_tabbarOff=true;_applySheetMetrics();_rebaseSheetScroll();try{_tlog('탭바숨김',1);}catch(e){}}
 function _retractSheets(){_tabbarOff=false;_applySheetMetrics();_rebaseSheetScroll();}
 // 그룹/멤버/연결 카드 시트 전부 같은 방식으로: 아래로 스크롤하면 탭바 숨김+시트 확장, 위로 스크롤(또는 맨 위)하면 원복
 const _TB_HIDE_DELTA=28;  // 이만큼 연속으로 내려야 숨김(네이티브 앱 감각 — 손가락 미세 흔들림/클램프 무시)
@@ -15168,7 +15168,7 @@ function _wireScrollStabilizer(sc){
   // 기준 요소 위치는 **스크롤 컨테이너 기준**으로 잰다 — 화면 좌표로 재면 시트가 올라오는 애니메이션(시트 전체 transform)까지
   // "내용이 밀렸다"로 읽어 엉뚱하게 보정했다(헤드리스 실측: 열리는 0.15초 동안 120→95px로 깎임).
   const relTop=el=>el.getBoundingClientRect().top-sc.getBoundingClientRect().top;
-  const setTop=v=>{adjusting=true;desc.set.call(sc,v);adjusting=false;};
+  const setTop=v=>{const b=desc.get.call(sc);adjusting=true;desc.set.call(sc,v);adjusting=false;try{_tlog('보정',Math.round(desc.get.call(sc)-b));}catch(e){}};
   // 코드가 scrollTop을 일부러 바꾸면(새 카드 열기=0 등) 기준을 버린다 — 보정이 의도된 이동과 싸우지 않게
   try{Object.defineProperty(sc,'scrollTop',{configurable:true,get(){return desc.get.call(this);},
     set(v){desc.set.call(this,v);if(!adjusting){lastTop=desc.get.call(this);ancs=[];}}});}catch(e){}
@@ -15206,6 +15206,46 @@ function _wireScrollStabilizer(sc){
   if(window.ResizeObserver){const ro=new ResizeObserver(kick);const obs=()=>[...sc.children].forEach(c=>ro.observe(c));obs();new MutationObserver(obs).observe(sc,{childList:true});}
 }
 _sheetScrollers.forEach(_wireScrollStabilizer);
+// ── 터치 기록기(2026-10-16, "첫 터치 민감" 5번째 제보) — 앞의 네 번은 헤드리스에서 추측해 고쳤는데 아이폰 관성 스크롤은 헤드리스로
+// 재현이 안 된다. 주소에 ?touchlog=1을 붙여 한 번 열면 켜지고(이 기기에 기억, ?touchlog=0으로 끔), 손가락을 뗄 때마다 화면 위에
+// "손가락이 얼마 움직였나 vs 내용이 얼마 움직였나 vs 그 사이 코드가 한 일"을 띄운다. 사용자는 한 번 쓸고 캡처만 보내면 된다.
+var _tlogOn=false,_tlogEv=null;
+try{const q=new URLSearchParams(location.search).get('touchlog');if(q==='1')localStorage.setItem('kpu_touchlog','1');if(q==='0')localStorage.removeItem('kpu_touchlog');_tlogOn=localStorage.getItem('kpu_touchlog')==='1';}catch(e){}
+function _tlog(kind,v){if(_tlogEv&&_tlogEv.t0)_tlogEv.ev.push([Math.round(performance.now()-_tlogEv.t0),kind,v]);}
+if(_tlogOn&&isMob()){
+  const box=document.createElement('div');
+  box.style.cssText='position:fixed;left:6px;top:calc(env(safe-area-inset-top,0px) + 6px);z-index:99999;max-width:calc(100vw - 12px);padding:6px 8px;border-radius:8px;background:rgba(0,0,0,0.82);color:#9fe;font:11px/1.35 ui-monospace,Menlo,monospace;white-space:pre-wrap;pointer-events:none;';
+  box.textContent='터치 기록 켜짐 — 카드/탐험 열고 한 번 쓸어보세요';document.body.appendChild(box);
+  const scroller=()=>_activeSheetScroller();
+  const sheetOf=sc=>sc&&sc.closest('#mob-sheet,#mob-card-stack,#conn-sheet,#feed-overlay');
+  const st=()=>{const sc=scroller(),sh=sheetOf(sc);return {sc,top:sc?Math.round(sc.scrollTop):0,sh:sh?Math.round(sh.getBoundingClientRect().top):0,
+    cls:sh?(sh.classList.contains('bs-full')?'full':sh.classList.contains('peek')?'peek':'half'):'-',tb:document.getElementById('tabbar')?.classList.contains('tab-hidden')?'숨김':'보임'};};
+  document.addEventListener('touchstart',e=>{
+    const s=st();if(!s.sc)return;
+    _tlogEv={t0:performance.now(),y0:e.touches[0].clientY,y1:e.touches[0].clientY,s0:s,moves:0,firstMoveTop:null,ev:[],tEnd:0,sEnd:null};
+  },{capture:true,passive:true});
+  document.addEventListener('touchmove',e=>{
+    if(!_tlogEv||_tlogEv.tEnd)return;_tlogEv.y1=e.touches[0].clientY;_tlogEv.moves++;
+    if(_tlogEv.moves===1)_tlogEv.firstMoveTop=st().top;
+    if(e.defaultPrevented)_tlog('막음',1);
+  },{capture:false,passive:true});
+  document.addEventListener('touchend',()=>{
+    const E=_tlogEv;if(!E||E.tEnd)return;E.tEnd=performance.now();E.sEnd=st();
+    let maxTop=E.sEnd.top,last=E.sEnd.top,stillT=performance.now();
+    const loop=()=>{const s=st();if(s.top!==last){last=s.top;stillT=performance.now();}maxTop=Math.max(maxTop,s.top);
+      if(performance.now()-stillT<400&&performance.now()-E.tEnd<4000){requestAnimationFrame(loop);return;}
+      const fin=st(),dur=Math.round(E.tEnd-E.t0);
+      const lines=[
+        '손가락: '+Math.round(E.y1-E.y0)+'px / '+dur+'ms (move '+E.moves+'회)',
+        '내용 스크롤: 시작 '+E.s0.top+' → 뗄 때 '+E.sEnd.top+' → 멈춤 '+fin.top+' (관성 +'+(fin.top-E.sEnd.top)+')',
+        '시트 위치(top): '+E.s0.sh+' → '+E.sEnd.sh+' → '+fin.sh+'  상태 '+E.s0.cls+'→'+fin.cls,
+        '탭바: '+E.s0.tb+' → '+fin.tb,
+        '코드 개입: '+(E.ev.length?E.ev.slice(0,8).map(x=>x[0]+'ms '+x[1]+(x[2]!==1?' '+x[2]:'')).join(', '):'없음')
+      ];
+      box.textContent=lines.join(String.fromCharCode(10));_tlogEv=null;};
+    requestAnimationFrame(loop);
+  },{capture:true,passive:true});
+}
 // ── 카드를 "열 때"의 불변식: 새 카드는 scrollTop=0에서 시작하므로 탭바는 반드시 보이는 상태여야 한다.
 // 원래 tab-hidden을 떼는 코드는 **닫기 경로 4곳**(closeMobSheet / 스택 pop / 연결카드 닫기 / 라이트박스
 // 닫기)에만 있었고, 여는 쪽엔 _lastScroll·_tbAccum 리셋만 있었다. 추적값을 0으로 되돌려도 클래스는 그대로
@@ -17544,7 +17584,8 @@ function _reopenPreHeartCard(){
 // 피드 탭에 "새 게 있다" 점 배지 + 짧은 글로우 펄스. 탭이 가려져 있어도 배지는 남아 가림이 풀리면 보인다.
 function _pulseFeedTab(){
   const tab=document.getElementById('tab-feed');if(!tab)return;
-  tab.classList.add('show-badge'); // 피드를 열면 제거됨(기존 로직)
+  tab.classList.add('show-badge'); // 탐험 패널을 열면 제거(_openFeedOverlay — 어느 경로로 열든)
+  _feedRecBuiltAt=0; // 즐겨찾기가 바뀌었으니 다음에 열 때 For You를 새로 짠다(3분 캐시에 막혀 방금 하트 누른 게 안 보이면 점이 거짓말이 됨)
   tab.classList.remove('fav-tab-pulse');void tab.offsetWidth;tab.classList.add('fav-tab-pulse');
   setTimeout(()=>tab.classList.remove('fav-tab-pulse'),650);
 }
@@ -20466,6 +20507,10 @@ function _openFeedOverlay(){
   _feedEngaged=true; // 수동/자동 불문 열린 순간 engaged — closePanels({keepFeed})가 배경탭으로 닫지 않도록(2026-10-12)
   document.body.classList.add('feed-open');
   document.getElementById('tab-feed').classList.add('feed-open');
+  // 파란 점은 여기서 끈다(2026-10-16 제보 "탐험 눌러도 안 사라짐"). 점은 두 곳에서 켜진다 — 첫 방문 안내 + 하트 누를 때(_pulseFeedTab).
+  // 예전엔 tab-feed 클릭 핸들러가 "첫 방문 안내를 아직 안 봤으면"일 때만 껐어서, 그 뒤 하트로 켜진 점은 영영 안 꺼졌다.
+  document.getElementById('tab-feed').classList.remove('show-badge');
+  try{localStorage.setItem(_FEED_BADGE_SEEN_KEY,'1');}catch(e){}
   // ⚠️ 진입 시점에 탭바 상태를 **못박는다**. 직전 카드에서 스크롤을 내려 탭바가 숨은 채로 여기 들어오면
   //    탐험 패널은 scrollTop=0에서 시작하는데 탭바만 사라진 채로 열린다. 추적값 리셋으로는 클래스가 안
   //    떨어진다. 스크롤 핸들러의 "최상단 40px 안전망"에 기대면 안 되는 이유 — **목록이 짧아 스크롤이
@@ -20612,7 +20657,7 @@ function _wireFeedSwipeDismiss(el,body){
     }else if(dy<-60&&el.classList.contains('peek')){
       el.style.transition='transform 0.22s cubic-bezier(0.32,0.72,0,1)';
       el.style.transform='';
-      el.classList.remove('peek'); // top/height는 위 CSS 트랜지션이 알아서 부드럽게 넘겨줌
+      el.classList.remove('peek');try{_tlog('끌어서펼침',1);}catch(e){} // top/height는 위 CSS 트랜지션이 알아서 부드럽게 넘겨줌
       setTimeout(()=>{el.style.transition='';},220);
     }else{
       el.style.transition='transform 0.22s cubic-bezier(0.32,0.72,0,1)';
