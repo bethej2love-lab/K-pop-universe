@@ -719,10 +719,12 @@
     body:has(#side-panel.open) #yt-lb-wrap,
     body:has(#member-panel.open) #yt-lb-wrap,
     body:has(#conn-panel.open) #yt-lb-wrap{max-width:88%;}
-    /* 탐험 패널이 열리면 라이트박스 왼쪽도 탐험 패널 폭만큼 비움 */
-    body:has(#feed-overlay.open) #yt-lightbox{left:440px;}
+    /* 탐험 패널이 열리면 라이트박스 오른쪽도 탐험 패널 폭만큼 비움 (탐험 패널은 right:0에 위치) */
+    body:has(#feed-overlay.open) #yt-lightbox{right:440px;top:64px;}
+    body:has(#feed-overlay.open):has(#side-panel.open) #yt-lightbox{right:880px;top:64px;}
+    body:has(#feed-overlay.open):has(#side-panel.open):has(#member-panel.open) #yt-lightbox{right:1320px;top:64px;}
     /* 카드 열림/닫힘 시 라이트박스 위치 부드럽게 전환 */
-    #yt-lightbox.open{transition:right 0.26s cubic-bezier(0.32,0,0.15,1),left 0.26s cubic-bezier(0.32,0,0.15,1);}
+    #yt-lightbox.open{transition:right 0.26s cubic-bezier(0.32,0,0.15,1),left 0.26s cubic-bezier(0.32,0,0.15,1),top 0.26s cubic-bezier(0.32,0,0.15,1);}
     /* side-panel 없을 때 member-panel을 맨 오른쪽으로 당김 */
     body:not(:has(#side-panel.open)):has(#member-panel.open) #member-panel{right:0;}
   }
@@ -814,11 +816,9 @@
   .lb-react-btn.reacted{background:rgba(255,255,255,0.20);}
   .lb-react-cnt{font-size:11px;color:rgba(220,235,255,0.75);font-family:'Pretendard',sans-serif;font-weight:600;line-height:1;}
   .lb-react-cnt:empty{display:none;}
-  /* 리액션 3+펼침(디자인리뷰 Q5, 2026-09-07) — 기본 3개+더보기(···), 탭하면 나머지 3개. 플레이어 조작 절제. */
-  #yt-lb-react-more{background:rgba(255,255,255,0.07);border:none;border-radius:18px;padding:5px 11px;cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><path d='M11,1 L12.3,9.7 L21,11 L12.3,12.3 L11,21 L9.7,12.3 L1,11 L9.7,9.7Z' fill='%23FFB0D0' opacity='.97'/></svg>") 11 11,pointer;color:rgba(220,235,255,0.68);font-size:15px;line-height:1;transition:background .15s,transform .12s;}
-  #yt-lb-react-more:active{transform:scale(0.86);}
-  #yt-lb-reactions:not(.expanded) .lb-react-hidden{display:none;}
-  #yt-lb-reactions.expanded #yt-lb-react-more{display:none;}
+  /* 리액션 6개 기본 전체 표시 (2026-10-16, 이전엔 3+더보기) */
+  #yt-lb-react-more{display:none;}
+  .lb-react-hidden{}
   @keyframes _lbRipple{0%{transform:scale(0);opacity:.55;}100%{transform:scale(3.5);opacity:0;}}
   .lb-ripple{position:absolute;border-radius:50%;width:44px;height:44px;margin:-22px 0 0 -22px;background:rgba(255,255,255,0.42);pointer-events:none;animation:_lbRipple .48s ease-out forwards;}
   /* [삭제됨 2026-09-04] #lb-react-extended / #lb-emoji-picker-* — 라이트박스 반응의 확장 행과 전체 피커.
@@ -1017,7 +1017,7 @@
     /* ── 데스크톱 쇼츠: 세로 영상 + 우측 정보 패널 (YouTube Shorts 데스크톱 레이아웃 참고) ── */
     /* wrap을 컨텐츠 너비에 맞게(고정 1080px 아님), main을 auto-shrink, video를 높이 기준으로 키움 */
     #yt-lightbox.lb-browse.lb-shorts-desk #yt-lb-wrap{width:auto;max-width:92vw;}
-    #yt-lightbox.lb-browse.lb-shorts-desk #yt-lb-main{flex:0 0 auto;}
+    #yt-lightbox.lb-browse.lb-shorts-desk #yt-lb-main{flex:0 0 auto;width:calc(min(82vh,680px) * 9/16);}/* 제목 길이 무관 너비 고정 */
     #yt-lightbox.lb-browse.lb-shorts-desk #yt-lb-video-box{
       height:min(82vh,680px);width:auto;aspect-ratio:9/16;margin:0;}
     /* .is-shorts 기본 규칙(width:min(54vw,420px);margin:0 auto) 덮어씀 — 높이 기준이 우선 */
@@ -1040,6 +1040,10 @@
     body:has(#side-panel.open) #yt-lightbox.lb-browse.lb-shorts-desk #yt-lb-uplist,
     body:has(#member-panel.open) #yt-lightbox.lb-browse.lb-shorts-desk #yt-lb-uplist,
     body:has(#conn-panel.open) #yt-lightbox.lb-browse.lb-shorts-desk #yt-lb-uplist{max-height:min(calc(100vh - 72px),660px);}
+    /* 탐험 패널 열릴 때도 카드와 동일하게 높이 보정 */
+    body:has(#feed-overlay.open) #yt-lightbox.lb-browse.lb-shorts-desk{align-items:flex-start;}
+    body:has(#feed-overlay.open) #yt-lightbox.lb-browse.lb-shorts-desk #yt-lb-video-box{height:min(calc(100vh - 72px),660px);}
+    body:has(#feed-overlay.open) #yt-lightbox.lb-browse.lb-shorts-desk #yt-lb-uplist{max-height:min(calc(100vh - 72px),660px);}
   }
   @media(max-width:768px){
     /* 발열 완화(2026-08-28, PERFORMANCE.md): 영상 위 backdrop-filter blur는 매 프레임 GPU 부하가 커서
@@ -3155,7 +3159,7 @@
   /* ── Zoom slider ────────────────────────────────── */
   #zoom-ctrl{position:fixed;left:18px;bottom:24px;display:flex;flex-direction:column;align-items:center;gap:0;z-index:50;user-select:none;width:30px;background:rgba(12,16,36,0.60);border:1px solid rgba(140,165,220,0.16);border-radius:14px;padding:10px 0;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);box-shadow:0 2px 14px rgba(0,0,0,0.22);transition:left 0.32s cubic-bezier(0.4,0,0.2,1);}
   #journal-sidebar.open~#zoom-ctrl{left:318px;} /* 저널 사이드바는 300px 그대로 */
-  #zoom-ctrl.zoom-feed-open{left:438px;} /* 탐험 레일 폭 - 2px(380→440, 2026-10-02) */
+  /* #zoom-ctrl.zoom-feed-open — 탐험 패널이 right:0으로 이동해 좌측 밀기 불필요(2026-10-16) */
   /* 모바일 줌 컨트롤(2026-08-31, 사용자 요청) — 예전엔 모바일에서 통째로 숨겼는데(핀치 줌이 있으니),
      "우주만 보이는 상태"에선 줌 레벨을 눈으로 보고 조절할 수 있는 게 낫다는 요청. 카드·탐험 패널·
      라이트박스·검색 등 **뭐라도 열려 있으면 숨긴다** — 우주가 실제로 보일 때만 뜨는 게 핵심이라
@@ -3710,13 +3714,13 @@
       /* 오른쪽 카드 레일(#side-panel)과 좌우 짝이라 폭을 맞춘다: 320→380(2026-09-09) → 440(2026-10-02).
          ⚠️ 09-27에 카드만 440으로 늘고 여기는 380으로 남아 있었다 — 카드 폭을 바꾸면 여기·아래 translateX·
          #zoom-ctrl.zoom-feed-open도 같이 바꿀 것. */
-      display:flex;inset:auto;top:0;left:0;height:100%;width:440px;
+      display:flex;inset:auto;top:0;left:auto;right:0;height:100%;width:440px;
       background:rgba(14,18,34,0.92);
       backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);
-      border-right:0.5px solid rgba(255,255,255,0.10);
-      box-shadow:4px 0 24px rgba(0,0,0,0.35);
+      border-left:0.5px solid rgba(255,255,255,0.10);
+      box-shadow:-4px 0 24px rgba(0,0,0,0.35);
       z-index:66;
-      transform:translateX(-440px);
+      transform:translateX(440px);
       transition:transform 0.32s cubic-bezier(0.4,0,0.2,1);
     }
     #feed-overlay.open{transform:translateX(0);}
@@ -4546,7 +4550,7 @@
 #yt-lightbox.lb-browse #yt-lb-more-wrap{display:block;grid-column:4;grid-row:3;margin-top:10px;position:relative;justify-self:center;}
 #yt-lb-more svg{width:20px;height:20px;fill:currentColor;}
 #yt-lightbox.lb-browse #yt-lb-scrap:hover,#yt-lightbox.lb-browse #yt-lb-rotate:hover,#yt-lightbox.lb-browse #yt-lb-col:hover,#yt-lightbox.lb-browse #yt-lb-more:hover{background:rgba(255,255,255,0.08);}
-#yt-lb-more-panel{position:absolute;top:calc(100% + 4px);right:0;z-index:6;min-width:196px;padding:6px;border-radius:14px;background:#171a30;border:1px solid rgba(255,255,255,0.1);box-shadow:0 14px 34px rgba(0,0,0,0.55);display:flex;flex-direction:column;}
+#yt-lb-more-panel{position:absolute;top:calc(100% + 4px);right:0;z-index:6;min-width:196px;padding:6px;border-radius:14px;background:#171a30;border:1px solid rgba(255,255,255,0.1);box-shadow:0 14px 34px rgba(0,0,0,0.55);display:flex;flex-direction:column;max-height:min(280px,60vh);overflow-y:auto;}
 #yt-lb-more-panel[hidden]{display:none;}
 .lb-more-item{all:unset;box-sizing:border-box;display:flex;align-items:center;min-height:44px;padding:0 12px;border-radius:9px;font-size:14px;color:rgba(228,236,255,0.92);cursor:pointer;white-space:nowrap;}
 .lb-more-item:hover{background:rgba(255,255,255,0.07);}

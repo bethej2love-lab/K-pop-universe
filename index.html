@@ -6757,7 +6757,7 @@ function _lbMoreOpen(){
     {el:$('yt-lb-fs'),t:isKo?'전체 화면':'Full screen'},
     mute?{el:mute,t:mute.getAttribute('aria-label')||(isKo?'소리':'Sound')}:null,
     conn&&conn.style.display!=='none'?{el:conn,t:isKo?'연결 보기':'Connections'}:null,
-    edit&&vis(edit)?{el:edit,t:isKo?'출연 멤버 지정(관리자)':'Tag members (admin)'}:null,
+    edit&&_isAdmin()&&_lbApiId((_lbPlaylist&&_lbIdx>=0)?_lbPlaylist[_lbIdx]:null)?{el:edit,t:isKo?'출연 멤버 지정(관리자)':'Tag members (admin)'}:null,
   ].filter(r=>r&&r.el);
   p.replaceChildren();
   rows.forEach(r=>{
