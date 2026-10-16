@@ -7907,7 +7907,7 @@ function _lbShowAutoNextPrompt(){
   const el=document.getElementById('yt-lb-autonext');
   const textEl=document.getElementById('yt-lb-autonext-text');
   if(!el||!textEl)return;
-  let sec=5;
+  let sec=3;
   const update=()=>{textEl.textContent=currentLang==='ko'?`다음 영상 ${sec}초 후 재생`:`Next in ${sec}s`;};
   update();
   el.style.display='flex';
