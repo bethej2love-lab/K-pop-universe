@@ -15171,7 +15171,7 @@ function _wireScrollStabilizer(sc){
   const setTop=v=>{const b=desc.get.call(sc);adjusting=true;desc.set.call(sc,v);adjusting=false;try{_tlog('보정',Math.round(desc.get.call(sc)-b));}catch(e){}};
   // 코드가 scrollTop을 일부러 바꾸면(새 카드 열기=0 등) 기준을 버린다 — 보정이 의도된 이동과 싸우지 않게
   try{Object.defineProperty(sc,'scrollTop',{configurable:true,get(){return desc.get.call(this);},
-    set(v){desc.set.call(this,v);if(!adjusting){lastTop=desc.get.call(this);ancs=[];}}});}catch(e){}
+    set(v){desc.set.call(this,v);if(!adjusting){lastTop=desc.get.call(this);ancs=[];try{_tlog('코드set',Math.round(v));}catch(e){}}}});}catch(e){}
   // 기준은 화면 가운데·위·아래 **세 개** — 하나(가운데)만 잡으면 그게 로딩 자리표시(스켈레톤)라 진짜 영상으로 교체되며 기준을 잃거나
   // (크롬 실측), 카드 사이 틈에 걸려 영상 목록 전체 같은 큰 상자가 잡혀 보정이 빗나갔다. 큰 상자는 고르지 않고, 스켈레톤은 다른 게 없을 때만 쓴다.
   const pick=()=>{
@@ -15217,12 +15217,19 @@ if(_tlogOn&&isMob()){
   box.style.cssText='position:fixed;left:6px;top:calc(env(safe-area-inset-top,0px) + 6px);z-index:99999;max-width:calc(100vw - 12px);padding:6px 8px;border-radius:8px;background:rgba(0,0,0,0.82);color:#9fe;font:11px/1.35 ui-monospace,Menlo,monospace;white-space:pre-wrap;pointer-events:none;';
   box.textContent='터치 기록 켜짐 — 카드/탐험 열고 한 번 쓸어보세요';document.body.appendChild(box);
   const scroller=()=>_activeSheetScroller();
+  // 카드/탐험이 "열린 지 몇 초 뒤" 터치인지 — 제보는 "처음"에만 민감하다는 것이라 이게 핵심 단서
+  let openedAt=0;
+  const mo=new MutationObserver(ms=>{ms.forEach(m=>{const el=m.target,was=(m.oldValue||'');
+    const on=el.classList.contains('bs-open')||el.classList.contains('open');if(on&&!/(bs-open|open)/.test(was))openedAt=performance.now();});});
+  ['mob-sheet','mob-card-stack','conn-sheet','feed-overlay'].forEach(id=>{const el=document.getElementById(id);if(el)mo.observe(el,{attributes:true,attributeFilter:['class'],attributeOldValue:true});});
+  document.addEventListener('scroll',e=>{const E=_tlogEv;if(!E||!E.t0)return;const sc=scroller();if(e.target!==sc)return;
+    if(E.tl.length<10)E.tl.push(Math.round(performance.now()-E.t0)+':'+Math.round(sc.scrollTop));},{capture:true,passive:true});
   const sheetOf=sc=>sc&&sc.closest('#mob-sheet,#mob-card-stack,#conn-sheet,#feed-overlay');
   const st=()=>{const sc=scroller(),sh=sheetOf(sc);return {sc,top:sc?Math.round(sc.scrollTop):0,sh:sh?Math.round(sh.getBoundingClientRect().top):0,
     cls:sh?(sh.classList.contains('bs-full')?'full':sh.classList.contains('peek')?'peek':'half'):'-',tb:document.getElementById('tabbar')?.classList.contains('tab-hidden')?'숨김':'보임'};};
   document.addEventListener('touchstart',e=>{
     const s=st();if(!s.sc)return;
-    _tlogEv={t0:performance.now(),y0:e.touches[0].clientY,y1:e.touches[0].clientY,s0:s,moves:0,firstMoveTop:null,ev:[],tEnd:0,sEnd:null};
+    _tlogEv={t0:performance.now(),y0:e.touches[0].clientY,y1:e.touches[0].clientY,s0:s,moves:0,firstMoveTop:null,ev:[],tl:[],tEnd:0,sEnd:null,since:openedAt?((performance.now()-openedAt)/1000).toFixed(1):'?'};
   },{capture:true,passive:true});
   document.addEventListener('touchmove',e=>{
     if(!_tlogEv||_tlogEv.tEnd)return;_tlogEv.y1=e.touches[0].clientY;_tlogEv.moves++;
@@ -15236,10 +15243,11 @@ if(_tlogOn&&isMob()){
       if(performance.now()-stillT<400&&performance.now()-E.tEnd<4000){requestAnimationFrame(loop);return;}
       const fin=st(),dur=Math.round(E.tEnd-E.t0);
       const lines=[
-        '손가락: '+Math.round(E.y1-E.y0)+'px / '+dur+'ms (move '+E.moves+'회)',
+        '열린 지 '+E.since+'초 · 손가락: '+Math.round(E.y1-E.y0)+'px / '+dur+'ms (move '+E.moves+'회)',
         '내용 스크롤: 시작 '+E.s0.top+' → 뗄 때 '+E.sEnd.top+' → 멈춤 '+fin.top+' (관성 +'+(fin.top-E.sEnd.top)+')',
         '시트 위치(top): '+E.s0.sh+' → '+E.sEnd.sh+' → '+fin.sh+'  상태 '+E.s0.cls+'→'+fin.cls,
         '탭바: '+E.s0.tb+' → '+fin.tb,
+        '스크롤 흐름: '+(E.tl.join(' ')||'-'),
         '코드 개입: '+(E.ev.length?E.ev.slice(0,8).map(x=>x[0]+'ms '+x[1]+(x[2]!==1?' '+x[2]:'')).join(', '):'없음')
       ];
       box.textContent=lines.join(String.fromCharCode(10));_tlogEv=null;};
