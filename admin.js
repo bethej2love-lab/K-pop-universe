@@ -4761,6 +4761,70 @@ async function _ytSweepContentFormats(){
   }
 }
 
+// ── 영상 ↔ 곡 연결 스윕(2026-10-16) ─────────────────────────────────────────────────────────────
+// 영상 제목에서 그 주인(group_ko)의 곡을 찾아 song_keys(['아이브:lovedive', …])에 박는다. 규칙은 shared.js _songLinkBases
+// (따옴표 곡명 우선 · 곡명=그룹명 막기 · 해시태그 나열 무시 · 메들리 여러 곡 · 영어 곡명 단어 경계 — tests/song-link.test.js).
+// 앱의 "곡 → 영상"(_openSongVideos)이 이 칸으로 먼저 찾고, 비어 있으면 예전처럼 제목 글자 검색으로 돌아간다.
+// 태그가 아니라 규칙이 만드는 값이라 **덮어쓴다**(규칙을 고치면 다음 전량 때 새 규칙대로 다시 계산). 손으로 넣는 경로는 없다.
+// 칸이 없으면(SQL 실행 전) 조용히 건너뛴다 — sql/song_keys_2026-10-16.sql.
+async function _ytSweepSongLinks(){
+  if(!sb){_ytSetProg('Supabase 연결 없음');return;}
+  try{
+    const probe=await sb.from(_YT_TABLE).select('song_keys').limit(1);
+    if(probe.error){_ytSetProg('[곡 연결] song_keys 칸이 아직 없어요 — sql/song_keys_2026-10-16.sql 실행 후 동작');return;}
+    // 규칙(shared.js _songLinkBases·_SONG_COMMON)이나 곡 목록 해석을 바꾸면 이 문자열도 바꿀 것 → 다음 한 번 전량
+    const _SONG_RULES_VER='2026-10-16-v1';
+    let since=_admRoutineScopeSince('song');
+    try{if(localStorage.getItem('kpu_song_rules_ver')!==_SONG_RULES_VER){since=null;localStorage.setItem('kpu_song_rules_ver',_SONG_RULES_VER);}}catch(e){}
+    _ytSetProg('[곡 연결] 조회 중…'+(since?' (증분)':' (전량)'));
+    const{data:rows,error}=await _sbFetchAll(()=>{
+      let q=sb.from(_YT_TABLE).select('id,title,group_ko,song_keys');
+      if(since)q=q.gt('created_at',since);
+      return q.order('id');
+    });
+    if(error){_ytSetProg('[곡 연결] 조회 실패: '+error.message);throw new Error(error.message);}
+    if(!rows?.length){_ytSetProg('[곡 연결] 검사할 영상이 없어요');return;}
+    // 주인별 곡 목록 — 그룹이면 그룹 디스코 파일(그룹 앨범 + 멤버 솔로), 솔로 키면 그 사람 디스코
+    const songCache=new Map();
+    const songsFor=async gko=>{
+      if(songCache.has(gko))return songCache.get(gko);
+      let albums=[],names=[gko];
+      try{
+        if(GROUPS[gko]){
+          await _ensureGroupDisco(gko);
+          albums=[...(GROUPS[gko].discography||[])];
+          ARTISTS.forEach(a=>{if(a.group&&a.group.ko===gko&&Array.isArray(a.discography))albums.push(...a.discography);});
+          if(GROUPS[gko].en)names.push(GROUPS[gko].en);
+        }else{
+          const a=ARTISTS.find(x=>_ytGroupKoFor(x)===gko);
+          if(a){await _ensureMemberDisco(a);albums=a.discography||[];if(a.name?.en)names.push(a.name.en);if(a.name?.ko)names.push(a.name.ko);}
+        }
+      }catch(e){}
+      const v={songs:_songListFromDisco(albums),names};
+      songCache.set(gko,v);return v;
+    };
+    const updates=[];let linked=0;
+    for(let i=0;i<rows.length;i++){
+      const v=rows[i];
+      if(!v.group_ko)continue;
+      const{songs,names}=await songsFor(v.group_ko);
+      const keys=songs.length?_songLinkBases(v.title||'',songs,names).map(b=>v.group_ko+':'+b):[];
+      if(keys.length)linked++;
+      const cur=Array.isArray(v.song_keys)?v.song_keys:[];
+      if(cur.join('|')!==keys.join('|'))updates.push({id:v.id,patch:{song_keys:keys.length?keys:null}});
+      if(i%5000===0)_ytSetProg(`[곡 연결] 계산 중… ${i}/${rows.length}`);
+    }
+    if(!updates.length){_ytSetProg(`[곡 연결] 완료 — ${rows.length}개 중 연결 ${linked}개, 바뀐 것 없음`);return;}
+    const _ub=await _sbUpdateBatch(updates,u=>sb.from(_YT_TABLE).update(u.patch).eq('id',u.id),
+      {conc:20,retries:2,onProgress:(done,total)=>_ytSetProg(`[곡 연결] ${done}/${total}개 저장 중…`)});
+    if(_ub.failed)console.error('[곡 연결] 재시도 후에도 실패:',_ub.failed,'건 —',_ub.firstErr);
+    _ytSetProg(`[곡 연결] 완료 — ${rows.length}개 중 ${linked}개 연결, ${updates.length}개 갱신`+(_ub.failed?` (실패 ${_ub.failed})`:''));
+  }catch(e){
+    _ytSetProg('[곡 연결] 오류: '+e.message);
+    throw e;
+  }
+}
+
 // ── 가로→쇼츠 일괄 승격 스윕 ────────────────────────────────────────────────────
 // 동기화 시점 세로 판별이 원리적으로 불가능하다(2026-08-26 조사): 쇼츠 썸네일도 high/standard/maxres가
 // 전부 가로(480x360·640x480·1280x720)라 hiTh.height>hiTh.width가 참이 될 수 없고, 원본 세로 비율을
@@ -11121,7 +11185,7 @@ document.getElementById('admin-bulk-clear-collab-btn')?.addEventListener('click'
 const _ADM_LS={fbSeen:'kpu_adm_fb_seen',lastRun:'kpu_adm_last_routine',stepMs:'kpu_adm_routine_step_ms',
   // 루틴이 "전량"으로 돈 마지막 시각(단계별). 평소엔 증분으로 돌고 7일마다 한 번 전량 — 아래
   // _admRoutineScopeSince 주석 참고.
-  fullAutotag:'kpu_adm_full_autotag',fullCover:'kpu_adm_full_cover',fullFormat:'kpu_adm_full_format'};
+  fullAutotag:'kpu_adm_full_autotag',fullCover:'kpu_adm_full_cover',fullFormat:'kpu_adm_full_format',fullSong:'kpu_adm_full_song'};
 // 루틴(무인 매일 실행)에서 이 스윕이 볼 범위 — null이면 전량, ISO 문자열이면 그 시각 이후 유입분만.
 // 왜: 매일 루틴의 2단계가 **매번 378,604행**(전체 394,351행의 96%)을 받아서 매처를 돌리고, 그중
 // members가 빈 180,632행은 설명란까지 따로 받아온다. 어제 이미 판정한 행을 오늘 똑같이 다시 판정하는
@@ -11131,7 +11195,7 @@ const _ADM_LS={fbSeen:'kpu_adm_fb_seen',lastRun:'kpu_adm_last_routine',stepMs:'k
 const _ADM_FULL_EVERY_MS=7*24*3600*1000;
 function _admRoutineScopeSince(kind){
   if(!_admRoutineRunning)return null; // 사람이 버튼으로 부른 것 = 전량
-  const key=kind==='cover'?_ADM_LS.fullCover:kind==='format'?_ADM_LS.fullFormat:_ADM_LS.fullAutotag;
+  const key=kind==='cover'?_ADM_LS.fullCover:kind==='format'?_ADM_LS.fullFormat:kind==='song'?_ADM_LS.fullSong:_ADM_LS.fullAutotag;
   let lastFull=0,lastRun=0;
   try{lastFull=+(localStorage.getItem(key)||0);lastRun=+(localStorage.getItem(_ADM_LS.lastRun)||0);}catch(e){}
   if(!lastFull||Date.now()-lastFull>=_ADM_FULL_EVERY_MS){
@@ -11770,6 +11834,9 @@ async function _admRunRoutine(withSync,opts){
   //    돌려서 당일 크로싱을 잡는다. 게이트 없음(하루 1회 제한 없이 루틴마다 실행), 실패해도 조용히
   //    스킵(마이그레이션 전이거나 API 키 없으면 즉시 return).
   steps.push({name:'9. 조회수 마일스톤 (최근 90일 · 3시간마다)',fn:_ytRotateViewCountHot});
+  // 10. 영상 ↔ 곡 연결(2026-10-16) — 새 영상에 곡 키(song_keys)를 박는다. 평소 증분, 7일마다·규칙 바뀌면 전량.
+  //     song_keys 칸이 없으면(SQL 실행 전) 조용히 건너뜀.
+  steps.push({name:'10. 영상 ↔ 곡 연결',fn:_ytSweepSongLinks});
   }
   const t0=Date.now();
   // 단계가 조용히 실패했는지 진행 문구로 가르는 규칙 — 바로 아래 루프 주석에 근거가 있다.

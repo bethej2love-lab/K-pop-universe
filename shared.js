@@ -405,3 +405,75 @@ function _eventTags(title,publishedAt){
   }
   return out;
 }
+
+// ── 영상 ↔ 곡 연결(2026-10-16) ──────────────────────────────────────────────────────────────
+// 왜: "곡 → 영상"이 제목에 곡명 글자가 있나(title_norm ilike)로만 찾아서, 'ON'·'Hot' 같은 짧은 곡명엔 남의 영상이 섞이고
+// 한영 표기가 다르면 빠지고 50개에서 잘렸다. 영상마다 "어느 곡인지"를 키로 박아 두면 곡 단위로 정확히 모을 수 있다
+// (사용자 자문 메모 — Luminate의 "곡·녹음·앨범을 식별자로 연결하는 구조", 2026-10-16).
+// 키 = '<영상 주인 group_ko>:<곡 기본형>'. 기본형은 (feat.)·(Remix)·(… Ver.) 꼬리를 뗀 정규형이라 리믹스·버전이 한 곡으로 묶인다.
+// 멜론 곡 번호 대신 이름 키를 쓰는 이유: 번호는 수록곡의 85%에만 있고, 같은 곡의 버전마다 번호가 달라 묶기가 어렵다.
+// 실측(아이브·에스파·뉴진스 각 1,000개, 2026-10-16): 음방·직캠 82~99% 연결. 함정 3개를 아래 규칙으로 막았다 —
+//   ① 곡명=그룹명(뉴진스 'New Jeans')은 뉴진스 영상 전부에 걸린다 → 따옴표로 감쌌을 때만
+//   ② 쇼츠 해시태그 나열(#ATTITUDE #REBELHEART)은 아무 곡이나 걸린다 → 해시태그는 딱 한 곡만 나올 때만
+//   ③ 메들리('LOVE DIVE + 해야')는 곡이 여럿 → 키를 여러 개(최대 5)
+const _SONG_TAIL_RE=/\s*[\(\[][^)\]]*(?:feat|with|remix|ver\b|version|inst|mix\b|edit\b|prod\b|english|japanese|korean|acoustic|live\b|sped|slowed|demo|op\.)[^)\]]*[\)\]]/gi;
+function _songNorm(s){return String(s||'').toLowerCase().normalize('NFKC').replace(/[^a-z0-9가-힣ぁ-んァ-ヶ一-龥]/g,'');}
+function _songBase(title){
+  let t=String(title||'').replace(_SONG_TAIL_RE,'');
+  const stripped=t.replace(/\s*[\(\[][^)\]]*[\)\]]\s*$/,''); // 남은 끝 괄호(한글 병기 등)도 떼되, 다 지워지면 원래 것
+  return _songNorm(stripped)||_songNorm(t);
+}
+// 따옴표 없이 제목에 들어 있는 것만으로는 안 믿는 흔한 낱말 곡명(4글자 이상이어도)
+const _SONG_COMMON=new Set(['love','baby','girls','girl','boys','dream','dreams','star','stars','magic','fire','light','heart','money','party','world','summer','winter','spring','happy','sorry','hello','smile','queen','king','game','time','life','home','night','dance','music','angel','crown','rain','snow','blue','gold','free','alone','again','forever','beautiful','intro','outro','interlude','shorts','live','stage','special','teaser','focus','close','with','only','more','what','this','that','yours','mine','good','bad','real','next','last','first','young','wild','sweet','pink','black','white','highlight','behind','vlog','episode']);
+// songs: [{b:기본형}] (한 주인의 곡 목록, 중복 기본형 제거된 것) · blockNames: 주인 이름 정규형(그룹 ko/en 등)
+// 반환: 기본형 배열(최대 5) — 키로 쓸 땐 주인 키를 앞에 붙인다
+function _songLinkBases(title,songs,blockNames){
+  const t=String(title||'');if(!t||!songs||!songs.length)return [];
+  const bset=new Map(songs.map(s=>[s.b,s]));
+  const out=[];const add=b=>{if(b&&!out.includes(b)&&out.length<5)out.push(b);};
+  const blocked=new Set((blockNames||[]).map(_songNorm).filter(Boolean));
+  // ① 따옴표·꺾쇠 안 = 곡명(직캠·음방 제목 관례). 이름 막기(blocked)도 여기선 통과 — 'New Jeans'라고 감싸면 곡이다
+  const Q=/['‘’"“”「」『』<>＜＞《》〈〉]([^'‘’"“”「」『』<>＜＞《》〈〉\n]{1,60})['‘’"“”「」『』<>＜＞《》〈〉]/g;
+  for(const m of t.matchAll(Q)){
+    // 메들리를 한 따옴표에 넣은 것('LOVE DIVE + 해야')도 나눠 본다
+    for(const part of m[1].split(/\s*(?:\+|&|,|\/|×|x\s)\s*/)){const b=_songBase(part);if(bset.has(b))add(b);}
+    const whole=_songBase(m[1]);if(bset.has(whole))add(whole);
+  }
+  // ② 해시태그를 뺀 본문에서 곡명 포함 — 4글자 이상·흔한 낱말 아님·주인 이름 아님. 긴 곡명 안에 든 짧은 곡명은 버린다
+  const noTags=t.replace(/#[^\s#]+/g,' ');
+  const body=_songNorm(noTags);
+  const tl=noTags.toLowerCase().normalize('NFKC'); // 단어 경계 검사용(공백·기호 살아 있는 소문자)
+  const hits=[];
+  for(const s of songs){
+    if(s.b.length<4||_SONG_COMMON.has(s.b)||blocked.has(s.b))continue;
+    if(!body.includes(s.b))continue;
+    // 영어 곡명은 단어 단위로만 — 'ICON'이 '[Dicon]' 안에 걸리던 오탐(2026-10-16 표본). 원제목 낱말을 공백·기호 무관하게 이어 붙인 정규식
+    if(/^[a-z0-9]+$/.test(s.b)&&s.title){
+      if(s.re===undefined){
+        const core=String(s.title).replace(_SONG_TAIL_RE,'').replace(/\s*[\(\[][^)\]]*[\)\]]\s*$/,'')||s.title;
+        const w=String(core).toLowerCase().normalize('NFKC').match(/[a-z0-9]+/g);
+        s.re=w?new RegExp('(^|[^a-z0-9])'+w.join('[^a-z0-9]*')+'(?![a-z0-9])'):null;
+      }
+      if(s.re&&!s.re.test(tl))continue;
+    }
+    hits.push(s.b);
+  }
+  hits.sort((a,b)=>b.length-a.length).forEach(b=>{if(!out.some(o=>o.includes(b)))add(b);});
+  // ③ 아무것도 못 찾았을 때만 해시태그 — 곡과 정확히 같은 태그가 딱 한 곡일 때만(나열형 쇼츠 오탐 방지)
+  if(!out.length){
+    const tags=[...t.matchAll(/#([^\s#]+)/g)].map(m=>_songNorm(m[1])).filter(b=>bset.has(b)&&!blocked.has(b));
+    const uniq=[...new Set(tags)];
+    if(uniq.length===1)add(uniq[0]);
+  }
+  return out;
+}
+// 디스코(앨범 배열) → 곡 목록(기본형 중복 제거). 반주(Inst./MR)는 뺀다
+function _songListFromDisco(albums){
+  const seen=new Map();
+  (albums||[]).forEach(a=>(a&&a.tracks||[]).forEach(tr=>{
+    if(!tr||!tr.title||/\((?:inst\.?|instrumental|mr)\)\s*$/i.test(tr.title))return;
+    const b=_songBase(tr.title);if(b.length<2||seen.has(b))return;
+    seen.set(b,{b,title:tr.title});
+  }));
+  return [...seen.values()];
+}

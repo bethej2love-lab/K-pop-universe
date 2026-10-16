@@ -13368,6 +13368,7 @@ function _filterGcVideosByTrack(title){
 //    (원곡 태깅 스윕이 채우는 중). 커버가 하나도 없으면 토글을 숨겨 기존 단순 목록과 똑같이 보인다.
 // owner: {gko, memberKo}. 그룹 곡이면 memberKo 없음, 솔로/멤버 곡이면 gko=_ytGroupKoFor 키.
 let _songVidReq=0,_songVid=null;
+let _songKeysCol=null; // song_keys 칸 존재 여부(null=아직 모름) — _openSongVideos가 처음 한 번 확인
 // 곡 상세 헤더용 앨범 메타(커버·연도) 해석 — 소유자 disco를 로드해 곡이 속한 앨범을 찾는다(2026-09-02).
 // album 힌트가 있으면 앨범명으로, 없으면 트랙 제목으로 역탐색. 못 찾으면 null(아티스트명만 표기).
 async function _resolveSongMeta(title,o){
@@ -13414,13 +13415,19 @@ async function _openSongVideos(title,owner,songMeta){
   const like=`%${_titleNorm(title)}%`;
   // view_count·duration_sec 추가(2026-09-21) — 이 목록만 썸네일+제목뿐이라 같은 영상인데도 검색 결과
   // (_fmtVidMeta로 "날짜 · 조회수"를 찍는다)와 표기가 갈렸다. 컬럼 2개라 조회 비용은 사실상 그대로.
-  const COLS='id,title,thumb,category,is_short,group_ko,cover_of_members,cover_of_groups,content_flag,published_at,view_count,duration_sec';
+  // 곡 키(song_keys, 2026-10-16 — 루틴 10단계가 박는다) 칸이 있는지 한 번만 확인. SQL 실행 전이면 예전 방식 그대로.
+  if(_songKeysCol===null){try{const pr=await sb.from(_YT_TABLE).select('song_keys').limit(1);_songKeysCol=!pr.error;}catch(e){_songKeysCol=false;}}
+  if(myReq!==_songVidReq)return;
+  const songKey=gko+':'+_songBase(title);
+  const COLS='id,title,thumb,category,is_short,group_ko,cover_of_members,cover_of_groups,content_flag,published_at,view_count,duration_sec'+(_songKeysCol?',song_keys':'');
   // 그룹/멤버 카드 영상 그리드와 동일한 노출 조건(무관/보류/숨김 제외)
   const _excl=q=>q.or('content_flag.is.null,content_flag.neq.무관').or('content_flag.is.null,content_flag.neq.보류').or('content_flag.is.null,content_flag.neq.hidden');
   // 원곡: 주인 채널 영상 + 주인이 게스트(with_groups)로 나온 영상
   const origP=_excl(sb.from(_YT_TABLE).select(COLS)
     .or(`group_ko.eq.${_pgFilterVal(gko)},with_groups.cs.{${_pgFilterVal(gko)}}`))
     .ilike('title_norm',like).order('published_at',{ascending:false}).limit(50);
+  // 곡 키로 연결된 영상 — 제목 글자 검색의 50개 상한·짧은 곡명 오탐 없이 그 곡 영상을 모은다
+  const keyP=_songKeysCol?_excl(sb.from(_YT_TABLE).select(COLS).contains('song_keys',[songKey])).order('published_at',{ascending:false}).limit(300):Promise.resolve({data:[]});
   // 커버: 이 주인이 "원곡자"로 태깅된 다른 아티스트 영상 — 커버 조회 키는 _coverOfQueryKeys 한 곳에서만 만든다
   const{personKeys,groupKey}=_coverOfQueryKeys(gko,memberKo);
   const coverQs=[];
@@ -13429,13 +13436,18 @@ async function _openSongVideos(title,owner,songMeta){
   personKeys.forEach(k=>coverQs.push(_excl(sb.from(_YT_TABLE).select(COLS).contains('cover_of_members',[k])).ilike('title_norm',like).order('published_at',{ascending:false}).limit(50)));
   if(groupKey)coverQs.push(_excl(sb.from(_YT_TABLE).select(COLS).contains('cover_of_groups',[groupKey])).ilike('title_norm',like).order('published_at',{ascending:false}).limit(50));
   let settled;
-  try{settled=await Promise.all([origP,...coverQs].map(q=>q.then(r=>r,()=>({data:null}))));}
+  try{settled=await Promise.all([keyP,origP,...coverQs].map(q=>q.then(r=>r,()=>({data:null}))));}
   catch(e){settled=null;}
   if(!overlay.classList.contains('open')||myReq!==_songVidReq)return; // 그 사이 닫힘/다른 곡 클릭
   if(!settled){listEl.innerHTML=`<div class="tvf-empty">${currentLang==='ko'?'불러오기 실패':'Failed to load'}</div>`;return;}
-  const[origR,...coverRs]=settled;
+  const[keyR,origR,...coverRs]=settled;
   const origSeen=new Set();
-  const orig=_filterBannedVideos((origR&&origR.data)||[]).filter(v=>!origSeen.has(v.id)&&origSeen.add(v.id));
+  // 곡 키 연결분 + 제목 검색분. 제목 검색분 중 **다른 곡으로 연결된 영상은 뺀다** — 'ON'을 눌렀는데 'ON' 글자가 든 다른 곡 영상이
+  // 섞이던 것. 아직 아무 곡에도 연결 안 된 영상(song_keys 비어 있음)은 예전처럼 남겨 둔다(한글 곡명 표기 등 규칙이 못 잡은 것).
+  const _okTitleHit=v=>!_songKeysCol||!Array.isArray(v.song_keys)||!v.song_keys.length||v.song_keys.includes(songKey);
+  const orig=_filterBannedVideos([...((keyR&&keyR.data)||[]),...((origR&&origR.data)||[]).filter(_okTitleHit)])
+    .filter(v=>!origSeen.has(v.id)&&origSeen.add(v.id))
+    .sort((a,b)=>String(b.published_at||'').localeCompare(String(a.published_at||'')));
   const coverSeen=new Set();
   // 원곡 목록에 이미 있는 영상은 커버서 제외(주인 채널 자체 커버 영상 등이 양쪽에 걸릴 때 중복 방지)
   const cover=_filterBannedVideos(coverRs.flatMap(r=>(r&&r.data)||[])).filter(v=>!origSeen.has(v.id)&&!coverSeen.has(v.id)&&coverSeen.add(v.id));
