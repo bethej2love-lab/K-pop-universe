@@ -862,6 +862,7 @@
       <div id="yt-lb-speed-badge">2×</div>
       <div id="yt-lb-tap-cap" aria-hidden="true"></div>
       <div id="yt-lb-drag-cap" aria-hidden="true"></div>
+      <div id="yt-lb-fs-cap" aria-hidden="true"></div>
       <div id="yt-lb-autonext" style="display:none">
         <span id="yt-lb-autonext-text"></span>
         <button id="yt-lb-autonext-cancel" type="button">취소</button>
@@ -7990,13 +7991,14 @@ let _lbPortraitVids=new Set(JSON.parse(localStorage.getItem(_LB_PORTRAIT_KEY)||'
 function _lbSavePortrait(){
   try{localStorage.setItem(_LB_PORTRAIT_KEY,JSON.stringify([..._lbPortraitVids]));}catch(_){}
 }
-document.getElementById('yt-lb-fs')?.addEventListener('click',e=>{
-  e.stopPropagation();
+function _lbRequestFs(){
   const iframe=document.getElementById('yt-lb-iframe');
   if(!iframe)return;
   const fn=iframe.requestFullscreen||iframe.webkitRequestFullscreen||iframe.mozRequestFullScreen||iframe.msRequestFullscreen;
   if(fn)fn.call(iframe).catch(()=>{});
-});
+}
+document.getElementById('yt-lb-fs')?.addEventListener('click',e=>{e.stopPropagation();_lbRequestFs();});
+document.getElementById('yt-lb-fs-cap')?.addEventListener('click',e=>{e.stopPropagation();_lbRequestFs();});
 document.getElementById('yt-lb-rotate').addEventListener('click',e=>{
   e.stopPropagation();
   const box=document.getElementById('yt-lb-video-box');

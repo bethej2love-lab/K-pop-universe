@@ -773,6 +773,9 @@
   #yt-lb-tap-cap{display:none;}
   /* 모바일 브라우즈: 영상 상단 드래그 캡 — iframe이 터치를 흡수하므로 위에 얇은 레이어로 아래 스와이프→닫기 제공 */
   #yt-lb-drag-cap{display:none;}
+  /* YouTube 전체화면 버튼 위치(우하단)에 투명 캡처 영역 — cross-origin iframe 내 버튼이 position:fixed
+     컨테이너 안에서 Chrome에서 requestFullscreen을 못 실행하는 문제 해결. 상위 페이지에서 대신 호출. */
+  #yt-lb-fs-cap{position:absolute;bottom:0;right:0;width:56px;height:56px;z-index:2;cursor:pointer;}
   /* 모바일 첫 진입 시 1회: 상하로 스와이프해서 영상 넘길 수 있다는 걸 살짝 들썩임으로 암시 */
   @keyframes lb-swipe-hint{0%,100%{transform:translateY(0);}25%{transform:translateY(-16px);}60%{transform:translateY(0);}80%{transform:translateY(10px);}}
   #yt-lb-wrap.swipe-hint{animation:lb-swipe-hint 1s ease-in-out 2;}
