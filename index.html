@@ -7700,7 +7700,13 @@ function _surfGoBack(i){
 }
 // openLightbox(브라우즈 세션)마다 호출 — 새 세션이면 길을 새로 시작한다.
 function _surfOnOpen(isAdvance){
-  if(!isAdvance&&!_surfHopping){_surfPath=[];_surfLens=null;_surfOpen=null;_surfPick=null;_surfRecapShown=false;_surfSavedColId=null;_surfHideRecap();}
+  if(!isAdvance&&!_surfHopping){
+    _surfPath=[];
+    const cur=(_lbPlaylist&&_lbIdx>=0)?_lbPlaylist[_lbIdx]:null;
+    const k=cur?_surfKind(cur):null;
+    _surfLens=(k&&k!=='other')?k:'all'; // 클릭한 영상 종류를 디폴트 탭으로, 분류 불가는 전체
+    _surfOpen=null;_surfPick=null;_surfRecapShown=false;_surfSavedColId=null;_surfHideRecap();
+  }
 }
 async function _surfUpdate(){
   const box=document.getElementById('yt-lb-surf');
