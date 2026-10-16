@@ -15212,10 +15212,14 @@ _sheetScrollers.forEach(_wireScrollStabilizer);
 var _tlogOn=false,_tlogEv=null;
 try{const q=new URLSearchParams(location.search).get('touchlog');if(q==='1')localStorage.setItem('kpu_touchlog','1');if(q==='0')localStorage.removeItem('kpu_touchlog');_tlogOn=localStorage.getItem('kpu_touchlog')==='1';}catch(e){}
 function _tlog(kind,v){if(_tlogEv&&_tlogEv.t0)_tlogEv.ev.push([Math.round(performance.now()-_tlogEv.t0),kind,v]);}
-if(_tlogOn&&isMob()){
+// 홈 화면 웹앱(PWA)은 주소창이 없고 저장소도 사파리와 따로라 ?touchlog=1로 켤 수 없다 → 관리자 계정이면 웹앱에서 자동으로 켠다(진단 끝나면 이 블록째 삭제)
+const _tlogPwa=()=>{try{return (navigator.standalone||matchMedia('(display-mode: standalone)').matches)&&_isAdmin();}catch(e){return false;}};
+if(isMob()){
   const box=document.createElement('div');
   box.style.cssText='position:fixed;left:6px;top:calc(env(safe-area-inset-top,0px) + 6px);z-index:99999;max-width:calc(100vw - 12px);padding:6px 8px;border-radius:8px;background:rgba(0,0,0,0.82);color:#9fe;font:11px/1.35 ui-monospace,Menlo,monospace;white-space:pre-wrap;pointer-events:none;';
-  box.textContent='터치 기록 켜짐 — 카드/탐험 열고 한 번 쓸어보세요';document.body.appendChild(box);
+  box.textContent='터치 기록 켜짐 — 카드/탐험 열고 한 번 쓸어보세요';box.style.display='none';document.body.appendChild(box);
+  const active=()=>{const on=_tlogOn||_tlogPwa();box.style.display=on?'':'none';return on;};
+  setTimeout(active,4000);
   const scroller=()=>_activeSheetScroller();
   // 카드/탐험이 "열린 지 몇 초 뒤" 터치인지 — 제보는 "처음"에만 민감하다는 것이라 이게 핵심 단서
   let openedAt=0;
@@ -15228,6 +15232,7 @@ if(_tlogOn&&isMob()){
   const st=()=>{const sc=scroller(),sh=sheetOf(sc);return {sc,top:sc?Math.round(sc.scrollTop):0,sh:sh?Math.round(sh.getBoundingClientRect().top):0,
     cls:sh?(sh.classList.contains('bs-full')?'full':sh.classList.contains('peek')?'peek':'half'):'-',tb:document.getElementById('tabbar')?.classList.contains('tab-hidden')?'숨김':'보임'};};
   document.addEventListener('touchstart',e=>{
+    if(!active())return;
     const s=st();if(!s.sc)return;
     _tlogEv={t0:performance.now(),y0:e.touches[0].clientY,y1:e.touches[0].clientY,s0:s,moves:0,firstMoveTop:null,ev:[],tl:[],tEnd:0,sEnd:null,since:openedAt?((performance.now()-openedAt)/1000).toFixed(1):'?'};
   },{capture:true,passive:true});
