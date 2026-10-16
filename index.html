@@ -3535,6 +3535,9 @@ async function buildUniverse(){
   // Trend 프리페치는 이제 sb 생성 직후(위쪽)에서 이미 시작됐다 — 이 호출은 그때 실패했거나 sb가
   // 늦게 살아난 경우의 보험이다. 진행 중이면 같은 promise를 돌려주므로 중복 쿼리가 되지 않는다.
   try{_prefetchFeedTrend();}catch(e){}
+  // 이번 주 소식(음방 1위·MV)도 미리 — 발견 탭을 열면 앨범(로컬 파일)이 먼저 뜨고 1위 소식이 DB 응답을 기다렸다가
+  // 그 위로 끼어들어 화면이 밀렸다(2026-10-16 사용자 제보). 그룹 데이터가 다 올라온 이 시점이라 라벨도 맞게 만들어진다.
+  setTimeout(()=>{try{_collectWeekNews();}catch(e){}},800);
   // 연도 링은 리빌(아이맥스 클립) 모션이 끝난 뒤에 만든다 — 리빌 중 큰 링 라인이 클립 가장자리에 걸쳐
   // "화면 오류"처럼 보인다는 제보(2026-09-02). 생성 시점부터 600ms 페이드인(_yearRingsBornAt).
   setTimeout(_buildYearRings,REVEAL.clip+500);
@@ -21634,6 +21637,14 @@ document.getElementById('feed-list-overlay')?.addEventListener('click',e=>{if(e.
 document.getElementById('feed-list-overlay')?.addEventListener('pointerdown',e=>e.stopPropagation());
 // 그룹/멤버를 대표하는 영상 썸네일 하나(스크랩 최다, 없으면 랜덤)를 비동기로 가져온다 —
 // _fetchDiscoverThumb·그룹/멤버 카드 대표영상 선정과 동일한 규칙 재사용.
+// 그룹 대표 이미지 — 등록된 그룹 프로필 사진(artist_pics, ko_name='') > groups.json img > 최근 영상 썸네일.
+// 데뷔 기념일 카드가 영상 썸네일만 써서, 사진을 등록해둔 하이라이트가 최신 영상(공개 전 예약 영상이라 회색 자리표시
+// 이미지)으로 떴다(2026-10-16 사용자 제보). 검색 아바타(_groupPicKey)와 같은 규칙으로 맞춘다.
+async function _fetchGroupPicOrThumb(ko){
+  try{_instaPicPreloadP=_instaPicPreloadP||_warmInstaPicCache();await _instaPicPreloadP;}catch(e){}
+  const pic=_instaPicCache.get(_groupPicKey(ko))||(GROUPS[ko]&&GROUPS[ko].img)||'';
+  return pic||_fetchTopVideoThumb(ko,null);
+}
 async function _fetchTopVideoThumb(gko,memberKo){
   if(!sb||!gko)return null;
   try{
@@ -21836,7 +21847,7 @@ function _buildFeedAnniversaries(){
       else showGC(ko,window.innerWidth/2,window.innerHeight/2);
     }));
     if(_isGrpDisbanded(ko))item.classList.add('anniv-inactive');
-    _fetchTopVideoThumb(ko,null).then(t=>_setAnnivStripThumb(item,t));
+    _fetchGroupPicOrThumb(ko).then(t=>_setAnnivStripThumb(item,t)); // 등록된 그룹 사진 먼저
   });
   bdayHits.forEach(a=>{
     const mName=_dispName(a);
@@ -21907,7 +21918,7 @@ function _buildFeedForYouAnniv(){
     hits.push({d,icon:'🎉',type:isKo?`데뷔 ${n}주년`:`${_ordEn(n)} debut anniv.`,name:isKo?ko:(info.en||ko),
       onClick:()=>_feedNav(()=>{const bm=bubbleMeshes.find(b=>b.ko===ko);if(bm)flyToBubble(bm.mesh.position,bm.radius);
         if(isMob())showGC(ko,window.innerWidth/2,window.innerHeight*0.4,false,false,null,false);else showGC(ko,window.innerWidth/2,window.innerHeight/2);}),
-      thumb:()=>_fetchTopVideoThumb(ko,null)});
+      thumb:()=>_fetchGroupPicOrThumb(ko)});
   });
   // 즐겨찾기 멤버 생일 + 즐겨찾기 그룹의 현역 멤버 생일(위 주석 참고)
   (ARTISTS||[]).forEach(a=>{
@@ -22131,7 +22142,7 @@ async function _buildFeedFavAlbums(){
 // 반드시 제외.
 // 이번 주 소식 데이터(음방 1위·MV/티저·조회수 돌파) — 발견 탭 This Week's K-pop과 For You '내 최애 소식'이 같이 쓴다(2026-10-16).
 // 두 탭이 거의 동시에 빌드되므로 3분 동안은 같은 조회 결과(Promise)를 나눠 쓴다. 항목엔 gko/mko(누구 소식인지)가 붙는다.
-let _weekNewsP=null,_weekNewsAt=0;
+let _weekNewsP=null,_weekNewsAt=0,_feedDailyNewsP=null;
 function _collectWeekNews(){
   if(_weekNewsP&&Date.now()-_weekNewsAt<180000)return _weekNewsP;
   _weekNewsAt=Date.now();
@@ -22145,34 +22156,37 @@ function _collectWeekNews(){
     const _agoLabel=(d)=>{const diff=Math.round((new Date(today)-new Date(d))/86400000);return diff<=0?'':(currentLang==='ko'?` · ${diff}일 전`:` · ${diff}d ago`);};
     // ⚠️ 앨범('💿 신보' 줄)은 2026-10-12에 뺐다 — 같은 섹션 아래 발매 앨범 블록(#feed-newalbum)이 같은 앨범을
     //    커버 그리드로 보여준다. 여기 다시 넣으면 한 섹션 안에서 같은 앨범이 두 번 나온다.
-    const winsRes=await sb.from('music_show_wins').select('*').gte('win_date',sevenDaysAgo).lte('win_date',today).order('win_date',{ascending:false}).order('show',{ascending:true}).then(r=>r,()=>({data:[]}));
-    const _winGkos=[...new Set((winsRes.data||[]).map(w=>w.group_ko))].filter(Boolean);
-    const [mvRes,milesRes,winThumbRes,winVidRes]=await Promise.all([
+    // 1위 기록과 나머지 조회를 **동시에** 보낸다(2026-10-16) — 예전엔 1위를 받은 뒤에야 나머지를 보내 왕복이 두 번이었다.
+    // 1위 영상 후보(winVid)는 1위가 없어도 그냥 받는다(가벼운 1주 창 조회) — 기다리는 것보다 싸다.
+    const [winsRes,mvRes,milesRes,winVidRes]=await Promise.all([
+      sb.from('music_show_wins').select('*').gte('win_date',sevenDaysAgo).lte('win_date',today).order('win_date',{ascending:false}).order('show',{ascending:true}).then(r=>r,()=>({data:[]})),
       sb.from(_YT_TABLE).select('id,title,thumb,is_short,group_ko,content_flag,published_at')
         .gte('published_at',sevenDaysAgo).lt('published_at',tomorrow)
         .or('title.ilike.%m/v%,title.ilike.%[mv]%,title.ilike.% mv%,title.ilike.%mv %,title.ilike.%music video%,title.ilike.%뮤직비디오%,title.ilike.%뮤비%,title.ilike.%리릭%,title.ilike.%lyric%,title.ilike.%티저%,title.ilike.%teaser%,title.ilike.%예고편%')
-        .not('content_flag','in','("보류","hidden")')
+        // ⚠️ .not(in)만 쓰면 content_flag가 비어 있는(NULL) 행 — 즉 거의 전부 — 이 같이 빠진다(SQL NULL NOT IN = 거짓).
+        //    그래서 이번 주 MV·티저 소식이 줄곧 0개였다(2026-10-16 실측 44→0). NULL을 명시적으로 살린다.
+        .or('content_flag.is.null,content_flag.not.in.("보류","hidden")')
         .order('published_at',{ascending:false}).limit(50)
         .then(r=>r,()=>({data:[]})),
       sb.from('yt_view_milestones').select('*,yt_channel_videos!inner(title,thumb,group_ko,published_at,is_short)')
         .eq('crossed_at',today).eq('seeded',false).limit(300)
         // ⚠️ .catch가 아니라 .then(성공,실패) — Supabase 쿼리 빌더는 thenable일 뿐 Promise가 아니라 .catch가 없다.
         .then(r=>r,()=>({data:[]})),
-      _winGkos.length
-        ? _applyLiveExclude(sb.from(_YT_TABLE).select('id,title,thumb,group_ko,is_short,view_count').in('group_ko',_winGkos).eq('category','live')).eq('is_short',false).or('content_flag.is.null,content_flag.neq.보류').order('view_count',{ascending:false}).limit(_winGkos.length*20).then(r=>r,()=>({data:[]}))
-        : Promise.resolve({data:[]}),
       // 1위 무대 영상 후보(2026-10-16 재작성) — 음방들은 1위 당일·다음날 "1위 앵콜 직캠/챔피언송 Full ver."를 올린다.
       // 예전엔 위 '그룹 live 영상 조회수 상위 20개'에서만 골라서 이번 주에 올라온(조회수 낮은) 앵콜 영상은 후보에도 못 들었고,
       // 쇼챔(ALLTHEKPOP) 영상은 category가 other라 아예 빠졌다. 그리고 곡명이 안 맞아도 '1위'·'앵콜'만 있으면 통과시켜
       // 무관한 옛 영상이 딸려왔다. 이제 **1위 기간 안에 올라온, 제목에 1위류 단어가 있는 영상**만 후보로 받는다(그룹·분류 무관).
-      winsRes.data&&winsRes.data.length
-        ? sb.from(_YT_TABLE).select('id,title,thumb,group_ko,is_short,published_at')
+        sb.from(_YT_TABLE).select('id,title,thumb,group_ko,is_short,published_at')
             .gte('published_at',new Date(new Date(sevenDaysAgo).getTime()-86400000).toISOString().slice(0,10)).lt('published_at',tomorrow)
             .or('title.ilike.%앵콜%,title.ilike.%encore%,title.ilike.%1위%,title.ilike.%챔피언송%,title.ilike.%no.1%')
             .or('content_flag.is.null,content_flag.not.in.("보류","hidden")')
             .limit(400).then(r=>r,()=>({data:[]}))
-        : Promise.resolve({data:[]})
     ]);
+    const _winGkos=[...new Set((winsRes.data||[]).map(w=>w.group_ko))].filter(Boolean);
+    // 영상 못 찾은 1위의 대체 썸네일(그룹 인기 무대) — 1위가 있을 때만 한 번 더
+    const winThumbRes=_winGkos.length
+      ? await _applyLiveExclude(sb.from(_YT_TABLE).select('id,title,thumb,group_ko,is_short,view_count').in('group_ko',_winGkos).eq('category','live')).eq('is_short',false).or('content_flag.is.null,content_flag.neq.보류').order('view_count',{ascending:false}).limit(_winGkos.length*20).then(r=>r,()=>({data:[]}))
+      : {data:[]};
     // 음방 이름 → 영상 제목 검색 키워드 (wiki_music_wins.mjs의 db 값 그대로 사용)
     const _WIN_SHOW_KW={'쇼챔피언':['쇼챔','챔피언송','showchampion'],'엠카운트다운':['엠카','mcountdown'],'뮤직뱅크':['뮤직뱅크','musicbank'],'인기가요':['인기가요','inkigayo'],'쇼음악중심':['음악중심','musiccore'],'더쇼':['더쇼','theshow']};
     const _n=s=>String(s||'').toLowerCase().replace(/[^a-z0-9가-힣]/g,'');
@@ -22202,7 +22216,8 @@ function _collectWeekNews(){
     });
     const items=[];
     (winsRes.data||[]).forEach(w=>{
-      const sub=_gLabelKo(w.group_ko)+(w.member_ko?` · ${w.member_ko}`:'')+` · ${w.show}`+_agoLabel(w.win_date);
+      // 솔로 1위는 그룹 라벨이 비어 '· 소연 · 쇼음악중심'처럼 가운뎃점으로 시작했다 — 빈 칸은 빼고 잇는다
+      const sub=[_gLabelKo(w.group_ko),w.member_ko,w.show].filter(Boolean).join(' · ')+_agoLabel(w.win_date);
       const relVid=_winVidFor(w);
       const thumb=relVid?relVid.thumb:(_winThumbMap.get(w.group_ko)||null);
       const nav=relVid
@@ -22431,6 +22446,10 @@ async function _buildFeedNewAlbums(){
     const ttl=document.getElementById('feed-newalbum-ttl');
     if(ttl)ttl.textContent=days<=7?(isKo?'💿 이번 주 발매':'💿 Released This Week')
                                   :(isKo?'💿 최근 발매':'💿 Recent Releases');
+    // 같은 섹션 위쪽 소식(1위·MV)이 그려질 때까지 기다렸다가 같이 띄운다 — 앨범이 먼저 뜨면 소식이 그 위로 끼어들며
+    // 화면이 아래로 밀린다(2026-10-16 사용자 제보). 소식이 늦어도 2.5초 뒤엔 앨범만이라도 띄운다.
+    try{await Promise.race([_feedDailyNewsP,new Promise(r=>setTimeout(r,2500))]);}catch(e){}
+    if(list.children.length)return; // 기다리는 사이 다시 그려졌으면(패널 재오픈) 이번 건 버림
     picked.forEach(a=>{
       const ownerDisp=a.k==='g'?_gLabelKo(a.o):a.o;
       const meta=[_discogTypeLabel(a.y),_albumDateLabel(a.d)].filter(Boolean).join(' · ');
@@ -24714,7 +24733,7 @@ function _feedBuildPump(){
 }
 function _buildFeedDisc(){
   _feedBuildQ=[]; // 패널을 다시 열면 이전 대기분은 버린다(중복 그리기·유령 요청 방지)
-  _buildFeedDailyNews(); // 오늘의 소식이 Discover 맨 첫 섹션(2026-09-23) — 기념일보다도 먼저
+  _feedDailyNewsP=_buildFeedDailyNews(); // 오늘의 소식이 Discover 맨 첫 섹션(2026-09-23) — 기념일보다도 먼저. 앨범 블록이 이걸 기다린다
   _buildFeedAnniversaries(); // 기념일 선반은 그 다음(2026-08-30 이동)
   _buildFeedEvents(); // Events — 다가오는 행사 D-day + 최근 행사 회차(2026-10-16)
   document.getElementById('feed-empty-disc').hidden=true;
