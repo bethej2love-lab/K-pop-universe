@@ -17,6 +17,16 @@
         # 출처인데 트리거에 빠져 있어서, 썸네일 캐시를 갱신해도 **정적 페이지가 안 바뀌었다** —
         # 즉 링크를 공유하면 계속 옛 이미지(또는 기본 이미지)가 떴다.
         - 'og_thumbs.json'
+        # 페이지 보강(2026-10-16) — 투어·대상·밀리언·작사작곡 파일과 보강 모듈이 바뀌어도 다시 만든다
+        - 'tools/seo_extra.js'
+        - 'tours_boxscore.json'
+        - 'group_awards.json'
+        - 'group_certifications.json'
+        - 'artist_credits.json'
+    # 음방 1위·조회수(DB)는 파일 변화 없이 매일 바뀐다 → 하루 한 번 새로(KST 06:30). 바뀐 페이지만 커밋된다.
+    schedule:
+      - cron: '30 21 * * *'
+    workflow_dispatch:
 
   permissions:
     contents: write

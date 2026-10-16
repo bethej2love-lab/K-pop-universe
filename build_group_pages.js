@@ -44,6 +44,18 @@ const artists = JSON.parse(fs.readFileSync(path.join(ROOT, 'artists.json'), 'utf
 const indexSrc = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
 const agencyMatch = indexSrc.match(/const _AGENCY_EN=\{[\s\S]*?\n\};/);
 const AGENCY_EN = agencyMatch ? new Function('return ' + agencyMatch[0].replace(/^const _AGENCY_EN=/, ''))() : {};
+// 페이지 보강(2026-10-16) — 음방 1위·인기 직캠(DB)과 투어·대상·밀리언·작사작곡(정적 파일). tools/seo_extra.js 주석 참고.
+const SEO = require('./tools/seo_extra.js');
+const ST = SEO.loadStatic(ROOT);
+let EX = { wins: {}, memberWins: {}, top: {} }; // DB 보강분 — 메인에서 prefetch로 채운 뒤 페이지를 만든다
+// 같은 소속사·같은 해 데뷔 그룹(내부 링크 — 검색엔진이 페이지 사이를 돌고, 사람도 "비슷한 그룹"으로 이어 본다)
+function relatedGroups(ko) {
+  const me = groups[ko]; if (!me) return [];
+  const coKey = c => String(c || '').split('/').pop().trim();
+  const y = String(me.debut || '').slice(0, 4);
+  const pick = Object.keys(groups).filter(k => k !== ko && !groups[k].disbanded && ((me.co && coKey(groups[k].co) === coKey(me.co)) || (y && String(groups[k].debut || '').slice(0, 4) === y)));
+  return pick.sort((a, b) => (+(groups[b].pri || 0)) - (+(groups[a].pri || 0))).slice(0, 8);
+}
 function agencyEn(co) {
   if (!co) return co;
   if (AGENCY_EN[co]) return AGENCY_EN[co];
@@ -264,6 +276,8 @@ const TODAY_ISO = new Date().toISOString().slice(0, 10);
 const pages = []; // {loc, alt: {ko,en}} for sitemap + hreflang bookkeeping
 
 const groupKos = Object.keys(groups);
+// DB 보강 데이터를 받은 뒤에 만들도록 함수로 감쌌다(2026-10-16) — 메인(파일 끝)에서 prefetch 후 호출
+function buildGroupPages() {
 groupKos.forEach(ko => {
   const info = groups[ko];
   const en = info.en || ko;
@@ -335,12 +349,16 @@ groupKos.forEach(ko => {
     const debutLabel = isEn ? 'Debut' : '데뷔';
     const agencyLabel = isEn ? 'Agency' : '소속사';
     const fandomLabel = isEn ? 'Fandom' : '팬덤명';
+    // 제목·설명은 실제 검색어에 맞춘다(2026-10-16) — '아이브(IVE) 멤버·음방 1위·직캠·투어 기록'. 설명엔 이 그룹만의 숫자(1위 N회·대상·최대 투어)
+    const xg = SEO.groupExtra(ko, lang, EX, ST);
+    const bits = isEn ? ['Members', ...xg.titleBits] : ['멤버', ...xg.titleBits];
     const title = isEn
-      ? `${en}${ko !== en ? ` (${ko})` : ''} Members, Profile, Debut Date | K-POP UNIVERSE`
-      : `${ko} 멤버 프로필·데뷔일·소속사 | K-POP UNIVERSE`;
+      ? `${en}${ko !== en ? ` (${ko})` : ''} ${bits.join(', ')} | K-POP UNIVERSE`
+      : `${ko}${info.en && info.en !== ko ? `(${info.en})` : ''} ${bits.join('·')} 기록 | K-POP UNIVERSE`;
+    const factLine = xg.facts.length ? (isEn ? ' ' + xg.facts.join(', ') + '.' : ' ' + xg.facts.join(', ') + '.') : '';
     const desc = isEn
-      ? `${en} member profiles, debut date, agency, and discography. Explore how ${en} connects with other K-pop idols on K-POP UNIVERSE.`
-      : `${ko} 멤버 프로필, 데뷔일, 소속사, 디스코그래피 정보. ${ko}${josa(ko, '이/가')} 다른 케이팝 아이돌들과 어떻게 연결되는지 K-POP UNIVERSE에서 탐험해보세요.`;
+      ? `${en}: members, debut ${info.debut || ''}, ${agencyEn(info.co) || ''}.${factLine} Fancams, stages and discography on K-POP UNIVERSE.`
+      : `${ko} 멤버·데뷔일(${info.debut || '-'})·소속사(${info.co || '-'}).${factLine} 직캠·무대 영상과 디스코그래피를 K-POP UNIVERSE에서.`;
     const selfUrl = isEn ? enUrl : koUrl;
     const altUrl = isEn ? koUrl : enUrl;
     const jsonLd = {
@@ -407,6 +425,7 @@ groupKos.forEach(ko => {
   .lang-switch{margin-top:40px;font-size:12px;}
   .lang-switch a{color:rgba(150,175,255,0.7);}
   .intro{font-size:14px;line-height:1.75;color:rgba(200,215,255,0.78);margin:0 0 22px;}
+  ${SEO.EXTRA_CSS}
 </style>
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-Z5NTV6X3YF"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-Z5NTV6X3YF');document.addEventListener('DOMContentLoaded',function(){var s=location.pathname.replace(/\/$/,'').split('/').filter(Boolean),i=s[0]==='en'?1:0,type=s.length-i>=3?'member':s.length-i===2&&s[i]==='g'?'group':s.length-i===2?'explore':'group_list',entity=(document.querySelector('h1')||{}).textContent||'';gtag('event','seo_land',{entity_name:entity.trim(),page_type:type});var c=document.querySelector('.cta');c&&c.addEventListener('click',function(){gtag('event','seo_cta_click',{entity_name:entity.trim(),page_type:type});});});</script>
@@ -425,7 +444,13 @@ groupKos.forEach(ko => {
   </div>
   ${groupIntroHtml(ko, info, members, discogItems, lang)}
   ${memberListHtml(lang)}
+  ${xg.html}
   ${discogHtml(lang)}
+  ${(() => { const rel = relatedGroups(ko); return rel.length ? `
+    <h2>${isEn ? 'Related groups' : '함께 보면 좋은 그룹'}</h2>
+    <ul class="member-list rel">
+      ${rel.map(k => `<li><a href="${SITE}/${groupPagePath(k, lang)}">${escHtml(isEn ? (groups[k].en || k) : k)}</a></li>`).join('\n      ')}
+    </ul>` : ''; })()}
   <div class="lang-switch"><a href="${altUrl}">${isEn ? '한국어로 보기' : 'View in English'}</a></div>
   <div class="cta-dock"><a class="cta" href="${SITE}/${deepLinkHash}">${isEn ? 'View videos in the Universe →' : '직캠·영상 아카이브 보기 →'}</a></div>
 </div>
@@ -443,6 +468,7 @@ groupKos.forEach(ko => {
 
   pages.push({ loc: koUrl, priority: '0.7' }, { loc: enUrl, priority: '0.7' });
 });
+}
 
 // ── 멤버별 정적 SEO 페이지 (2026-08-21, 사용자 요청 — Fable 자문 세션에서 확인: 그룹 249개보다 멤버
 // 1,649명 개별 진입점이 롱테일 검색("OO 직캠", "OO 몇 년 데뷔")에서 훨씬 유리하고, 검색 결과 미리보기
@@ -452,6 +478,10 @@ groupKos.forEach(ko => {
 // GROUPS에 없는 솔로 아티스트(보아·이영지 등, group.ko="솔로"는 서로 무관한 사람들이 공유하는
 // placeholder)는 member/{이름}/ 최상위에 둔다.
 let memberPageCount = 0;
+// 같은 해 태어난 현역 아이돌(멤버 페이지 내부 링크용) — 연도별 목록을 한 번만 만든다
+const byBirthYear = {};
+artists.forEach(x => { const y = String(x.bday || '').slice(0, 4); if (/^\d{4}$/.test(y) && x.active !== false) (byBirthYear[y] = byBirthYear[y] || []).push(x); });
+function buildMemberPages() {
 artists.forEach(a => {
   const ko = a.name.ko;
   const en = a.name.en || ko;
@@ -545,12 +575,19 @@ artists.forEach(a => {
     const groupLabel = isEn ? 'Group' : '소속';
     const agencyLabel = isEn ? 'Agency' : '소속사';
     const statusLbl = isEn ? 'Status' : '상태';
+    // 제목·설명(2026-10-16) — '장원영(아이브) 프로필·나이·직캠'. 설명엔 생년·데뷔 나이·작사작곡·솔로 1위 같은 이 사람만의 숫자
+    const xm = SEO.memberExtra(a, isSolo ? ko : primaryGko, lang, EX, ST);
+    const ag = SEO.ages(a, (a.groups && a.groups.length ? a.groups : [a.group]).map(g => groups[g.ko]));
+    const who = isEn ? `${en}${groupDisplay ? ` (${groupDisplay})` : ''}` : `${ko}${groupDisplay ? `(${groupDisplay})` : ''}`;
     const title = isEn
-      ? `${en}${ko !== en ? ` (${ko})` : ''} Profile, Birthday, Group | K-POP UNIVERSE`
-      : `${ko} 프로필, 생일, 소속 정보 | K-POP UNIVERSE`;
+      ? `${who} Profile, Age, ${xm.titleBits.length ? 'Fancams, ' : ''}Birthday | K-POP UNIVERSE`
+      : `${who} 프로필·나이·${xm.titleBits.length ? '직캠·' : ''}생일 | K-POP UNIVERSE`;
+    const ageBits = isEn
+      ? [bdayIso ? `born ${a.bday}` : '', ag.debutAge ? `debuted at ${ag.debutAge}` : '', ...xm.facts].filter(Boolean).join(', ')
+      : [bdayIso ? `${a.bday} 생` : '', ag.debutAge ? `${ag.debutAge}세 데뷔` : '', ...xm.facts].filter(Boolean).join(', ');
     const desc = isEn
-      ? `${en}'s profile, birthday, group, and featured videos. Explore how ${en} connects with other K-pop idols on K-POP UNIVERSE.`
-      : `${ko}의 프로필, 생일, 소속, 대표 영상 정보. ${ko}${josa(ko, '이/가')} 다른 케이팝 아이돌들과 어떻게 연결되는지 K-POP UNIVERSE에서 탐험해보세요.`;
+      ? `${en}${groupDisplay ? ` of ${groupDisplay}` : ''}: ${ageBits || 'profile'}. Fancams, stages and connections on K-POP UNIVERSE.`
+      : `${ko}${groupDisplay ? `(${groupDisplay})` : ''}: ${ageBits || '프로필'}. 직캠·무대 영상과 함께한 아이돌을 K-POP UNIVERSE에서.`;
     const selfUrl = isEn ? enUrl : koUrl;
     const altUrl = isEn ? koUrl : enUrl;
     const jsonLd = {
@@ -614,6 +651,7 @@ artists.forEach(a => {
   .lang-switch{margin-top:40px;font-size:12px;}
   .lang-switch a{color:rgba(150,175,255,0.7);}
   .intro{font-size:14px;line-height:1.75;color:rgba(200,215,255,0.78);margin:0 0 22px;}
+  ${SEO.EXTRA_CSS}
 </style>
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-Z5NTV6X3YF"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-Z5NTV6X3YF');document.addEventListener('DOMContentLoaded',function(){var s=location.pathname.replace(/\/$/,'').split('/').filter(Boolean),i=s[0]==='en'?1:0,type=s.length-i>=3?'member':s.length-i===2&&s[i]==='g'?'group':s.length-i===2?'explore':'group_list',entity=(document.querySelector('h1')||{}).textContent||'';gtag('event','seo_land',{entity_name:entity.trim(),page_type:type});var c=document.querySelector('.cta');c&&c.addEventListener('click',function(){gtag('event','seo_cta_click',{entity_name:entity.trim(),page_type:type});});});</script>
@@ -627,15 +665,22 @@ artists.forEach(a => {
   <img class="cover" src="${ogImage}" alt="${escHtml(displayName)}" loading="lazy">
   <div class="meta">
     ${groupDisplay ? `<span><b>${groupLabel}</b> ${escHtml(groupDisplay)}</span>` : ''}
-    ${bdayIso ? `<span><b>${debutLabel}</b> ${escHtml(a.bday)}</span>` : ''}
+    ${bdayIso ? `<span><b>${debutLabel}</b> ${escHtml(a.bday)}${ag.age && a.active !== false ? (isEn ? ` (age ${ag.age})` : ` (만 ${ag.age}세)`) : ''}</span>` : ''}
+    ${ag.debutAge ? `<span><b>${isEn ? 'Debut age' : '데뷔 나이'}</b> ${isEn ? ag.debutAge : ag.debutAge + '세'}</span>` : ''}
     ${agency ? `<span><b>${agencyLabel}</b> ${escHtml(agency)}</span>` : ''}
     <span><b>${statusLbl}</b> ${escHtml(statusLabel)}</span>
   </div>
   ${memberIntroHtml(a, affiliations, lang)}
   ${affiliationHtml(lang)}
+  ${xm.html}
   ${songsHtml(lang)}
   ${memberDiscogHtml(lang)}
   ${linksHtml(lang)}
+  ${(() => { const y = String(a.bday || '').slice(0, 4); const peers = (byBirthYear[y] || []).filter(x => x !== a && x.name.ko !== ko).sort((p, q) => (+(groups[q.group.ko]?.pri || 0)) - (+(groups[p.group.ko]?.pri || 0))).slice(0, 10); return peers.length ? `
+    <h2>${isEn ? `Other idols born in ${y}` : `${y}년생 아이돌`}</h2>
+    <ul class="member-list rel">
+      ${peers.map(p => `<li><a href="${SITE}/${memberPagePath(p, lang)}">${escHtml(isEn ? (p.name.en || p.name.ko) : p.name.ko)}</a>${groups[p.group.ko] ? ` <span class="tag">${escHtml(isEn ? (groups[p.group.ko].en || p.group.ko) : p.group.ko)}</span>` : ''}</li>`).join('\n      ')}
+    </ul>` : ''; })()}
   <div class="lang-switch"><a href="${altUrl}">${isEn ? '한국어로 보기' : 'View in English'}</a></div>
   <div class="cta-dock"><a class="cta" href="${SITE}/${deepLinkHash}">${isEn ? 'View fancams & videos →' : '직캠·무대 영상 보기 →'}</a></div>
 </div>
@@ -654,6 +699,7 @@ artists.forEach(a => {
   pages.push({ loc: koUrl, priority: '0.6' }, { loc: enUrl, priority: '0.6' });
   memberPageCount++;
 });
+}
 
 // ── 그룹 색인 허브(2026-08-31) ────────────────────────────────────────────────
 // 그룹 페이지가 위로 거는 링크는 `SITE/`(3D 앱) 하나뿐인데 그 홈은 SPA라 크롤러가 읽을 링크가 없다.
@@ -995,6 +1041,13 @@ function existingRelPages() {
 }
 
 (async () => {
+  // 1) DB 보강(음방 1위·인기 직캠) → 2) 그룹·멤버 페이지. DB가 안 되면(회사망 등) 정적 정보만으로 만든다.
+  try {
+    EX = await SEO.prefetch({ SB_URL, SB_KEY, groupKos });
+    console.log(`보강 데이터: 1위 기록 ${Object.keys(EX.wins).length}그룹 · 인기 영상 ${Object.keys(EX.top).length}그룹`);
+  } catch (e) { console.warn('⚠️ DB 보강 건너뜀:', e.message); }
+  buildGroupPages();
+  buildMemberPages();
   let relPages = [], hubLinks = { ko: [], en: [] };
   try {
     const r = await buildRelationPages();
