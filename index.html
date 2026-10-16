@@ -21943,7 +21943,7 @@ async function _buildFeedDailyNews(){
     //    커버 그리드로 보여준다. 여기 다시 넣으면 한 섹션 안에서 같은 앨범이 두 번 나온다.
     const winsRes=await sb.from('music_show_wins').select('*').gte('win_date',sevenDaysAgo).lte('win_date',today).order('win_date',{ascending:false}).order('show',{ascending:true}).then(r=>r,()=>({data:[]}));
     const _winGkos=[...new Set((winsRes.data||[]).map(w=>w.group_ko))].filter(Boolean);
-    const [mvRes,milesRes,winThumbRes]=await Promise.all([
+    const [mvRes,milesRes,winThumbRes,winVidRes]=await Promise.all([
       sb.from(_YT_TABLE).select('id,title,thumb,is_short,group_ko,content_flag,published_at')
         .gte('published_at',sevenDaysAgo).lt('published_at',tomorrow)
         .or('title.ilike.%m/v%,title.ilike.%[mv]%,title.ilike.% mv%,title.ilike.%mv %,title.ilike.%music video%,title.ilike.%뮤직비디오%,title.ilike.%뮤비%,title.ilike.%리릭%,title.ilike.%lyric%,title.ilike.%티저%,title.ilike.%teaser%,title.ilike.%예고편%')
@@ -21956,56 +21956,53 @@ async function _buildFeedDailyNews(){
         .then(r=>r,()=>({data:[]})),
       _winGkos.length
         ? sb.from(_YT_TABLE).select('id,title,thumb,group_ko,is_short,view_count').in('group_ko',_winGkos).eq('category','live').eq('is_short',false).or('content_flag.is.null,content_flag.neq.보류').order('view_count',{ascending:false}).limit(_winGkos.length*20).then(r=>r,()=>({data:[]}))
+        : Promise.resolve({data:[]}),
+      // 1위 무대 영상 후보(2026-10-16 재작성) — 음방들은 1위 당일·다음날 "1위 앵콜 직캠/챔피언송 Full ver."를 올린다.
+      // 예전엔 위 '그룹 live 영상 조회수 상위 20개'에서만 골라서 이번 주에 올라온(조회수 낮은) 앵콜 영상은 후보에도 못 들었고,
+      // 쇼챔(ALLTHEKPOP) 영상은 category가 other라 아예 빠졌다. 그리고 곡명이 안 맞아도 '1위'·'앵콜'만 있으면 통과시켜
+      // 무관한 옛 영상이 딸려왔다. 이제 **1위 기간 안에 올라온, 제목에 1위류 단어가 있는 영상**만 후보로 받는다(그룹·분류 무관).
+      winsRes.data&&winsRes.data.length
+        ? sb.from(_YT_TABLE).select('id,title,thumb,group_ko,is_short,published_at')
+            .gte('published_at',new Date(new Date(sevenDaysAgo).getTime()-86400000).toISOString().slice(0,10)).lt('published_at',tomorrow)
+            .or('title.ilike.%앵콜%,title.ilike.%encore%,title.ilike.%1위%,title.ilike.%챔피언송%,title.ilike.%no.1%')
+            .or('content_flag.is.null,content_flag.not.in.("보류","hidden")')
+            .limit(400).then(r=>r,()=>({data:[]}))
         : Promise.resolve({data:[]})
     ]);
     // 음방 이름 → 영상 제목 검색 키워드 (wiki_music_wins.mjs의 db 값 그대로 사용)
-    const _WIN_SHOW_KW={'쇼챔피언':['쇼챔','챔피언송'],'엠카운트다운':['엠카','엠카운트'],'뮤직뱅크':['뮤직뱅크','musicbank'],'인기가요':['인기가요','inkigayo'],'쇼음악중심':['쇼음악중심','음악중심'],'더쇼':['더쇼','the show']};
-    // 음방 1위 무대 공통 키워드 — show 이름 없어도 앵콜/1위면 1위 무대 영상
-    const _WIN_1ST_KW=['앵콜','1위','encore'];
-    // 매칭 점수: 2=(show/1위키워드)+song 모두, 1=show/1위키워드만, 0.5=song만, 0=불일치
-    const _winScore=(vtitle,song,show)=>{
-      if(!vtitle)return 0;
-      const n=s=>s.toLowerCase().replace(/[^a-z0-9가-힣]/g,'');
-      const nt=n(vtitle);
-      const ns=n(song||'');
-      const showKws=(_WIN_SHOW_KW[show]||[]).map(k=>n(k));
-      const hasShow=showKws.some(k=>nt.includes(k));
-      const has1st=_WIN_1ST_KW.some(k=>nt.includes(n(k)));
-      const hasSong=ns.length>=2&&nt.includes(ns);
-      if((hasShow||has1st)&&hasSong)return 2;
-      if(hasShow||has1st)return 1;
-      if(hasSong)return 0.5;
-      return 0;
+    const _WIN_SHOW_KW={'쇼챔피언':['쇼챔','챔피언송','showchampion'],'엠카운트다운':['엠카','mcountdown'],'뮤직뱅크':['뮤직뱅크','musicbank'],'인기가요':['인기가요','inkigayo'],'쇼음악중심':['음악중심','musiccore'],'더쇼':['더쇼','theshow']};
+    const _n=s=>String(s||'').toLowerCase().replace(/[^a-z0-9가-힣]/g,'');
+    const _WIN_KW=['앵콜','encore','1위','챔피언송','no1'].map(_n);
+    // 한 1위 기록(w)에 딱 맞는 영상: ①제목에 **곡명 필수** ②1위류 단어 필수 ③1위 전날~4일 뒤에 올라온 것.
+    // 같은 조건이면 그 음방 이름이 제목에 있는 것 > 앵콜/챔피언송 > 가로 영상 순. 하나도 없으면 영상을 붙이지 않는다(그룹 카드로).
+    const _winVidFor=w=>{
+      const ns=_n(w.song_title);if(ns.length<2)return null;
+      const showKws=(_WIN_SHOW_KW[w.show]||[]).map(_n);
+      const t0=new Date(w.win_date).getTime()-86400000,t1=new Date(w.win_date).getTime()+5*86400000;
+      let best=null,bestSc=-1;
+      (winVidRes.data||[]).forEach(v=>{
+        const nt=_n(v.title);
+        if(!nt.includes(ns)||!_WIN_KW.some(k=>nt.includes(k)))return;
+        const pt=new Date(v.published_at).getTime();if(!(pt>=t0&&pt<t1))return;
+        // 곡명이 짧거나 흔하면 다른 가수 1위 영상에 걸릴 수 있어 가수 확인: 그룹 키가 같거나 제목에 그룹/멤버 이름이 있어야
+        const who=[w.group_ko,w.member_ko,GROUPS[w.group_ko]?.en,_gLabelKo(w.group_ko)].filter(x=>x&&x!=='솔로').map(_n).filter(x=>x.length>=2);
+        if(v.group_ko!==w.group_ko&&!who.some(x=>nt.includes(x)))return;
+        const sc=(showKws.some(k=>nt.includes(k))?4:0)+(/앵콜|encore|챔피언송/i.test(v.title)?2:0)+(v.is_short?0:1);
+        if(sc>bestSc){bestSc=sc;best=v;}
+      });
+      return best;
     };
     const _winThumbMap=new Map();
-    const _winVidMap=new Map(); // group_ko → {vid, score}
     (winThumbRes.data||[]).forEach(v=>{
       if(!_winThumbMap.has(v.group_ko))_winThumbMap.set(v.group_ko,v.thumb);
-    });
-    // show/song 기반 매칭: 점수 높은 영상 우선 (같은 점수면 view_count 높은 것, 정렬이 이미 desc라 첫 번째)
-    const _winSongMap=new Map();
-    const _winShowMap=new Map();
-    (winsRes.data||[]).forEach(w=>{
-      if(!_winSongMap.has(w.group_ko)&&w.song_title)_winSongMap.set(w.group_ko,w.song_title);
-      if(!_winShowMap.has(w.group_ko)&&w.show)_winShowMap.set(w.group_ko,w.show);
-    });
-    (winThumbRes.data||[]).forEach(v=>{
-      const song=_winSongMap.get(v.group_ko);
-      const show=_winShowMap.get(v.group_ko);
-      const sc=_winScore(v.title,song,show);
-      if(sc>0){
-        const cur=_winVidMap.get(v.group_ko);
-        if(!cur||sc>cur.score)_winVidMap.set(v.group_ko,{vid:v,score:sc});
-      }
     });
     const items=[];
     (winsRes.data||[]).forEach(w=>{
       const sub=_gLabelKo(w.group_ko)+(w.member_ko?` · ${w.member_ko}`:'')+` · ${w.show}`+_agoLabel(w.win_date);
-      const _wm=_winVidMap.get(w.group_ko);
-      const relVid=_wm?_wm.vid:null;
+      const relVid=_winVidFor(w);
       const thumb=relVid?relVid.thumb:(_winThumbMap.get(w.group_ko)||null);
       const nav=relVid
-        ?()=>_feedNav(()=>openLightbox(`https://www.youtube.com/watch?v=${relVid.id}`,false,null,0,{groupKo:w.group_ko},false,true))
+        ?()=>_feedNav(()=>openLightbox(relVid.is_short?`https://youtube.com/shorts/${relVid.id}`:`https://www.youtube.com/watch?v=${relVid.id}`,!!relVid.is_short,null,0,{groupKo:w.group_ko},false,true))
         :()=>_feedNav(()=>{if(GROUPS[w.group_ko]){if(isMob())showGC(w.group_ko,window.innerWidth/2,window.innerHeight*0.4,false,false,null,false);else showGC(w.group_ko,window.innerWidth/2,window.innerHeight/2);}});
       items.push({type:'win',title:w.song_title||'',sub,thumb,nav});
     });
