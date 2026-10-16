@@ -719,8 +719,11 @@
     body:has(#side-panel.open) #yt-lb-wrap,
     body:has(#member-panel.open) #yt-lb-wrap,
     body:has(#conn-panel.open) #yt-lb-wrap{max-width:88%;}
-    /* 탐험 패널이 열리면 라이트박스 왼쪽을 탐험 패널 폭만큼 비우고, 탭 밑줄에 맞춰 top:64px */
-    body:has(#feed-overlay.open) #yt-lightbox{left:440px;top:64px;}
+    /* 탐험 패널이 열리면: 왼쪽 440px 비우고 top:64px, 오른쪽 80px 여백으로 우주가 보이게 */
+    body:has(#feed-overlay.open) #yt-lightbox{left:440px;right:80px;top:64px;}
+    /* 탐험+카드 동시: 카드 폭만큼 right 비움 (specificity 높아 위 규칙 override) */
+    body:has(#feed-overlay.open):has(#side-panel.open) #yt-lightbox{right:440px;}
+    body:has(#feed-overlay.open):has(#side-panel.open):has(#member-panel.open) #yt-lightbox{right:880px;}
     /* 카드 열림/닫힘 시 라이트박스 위치 부드럽게 전환 */
     #yt-lightbox.open{transition:right 0.26s cubic-bezier(0.32,0,0.15,1),left 0.26s cubic-bezier(0.32,0,0.15,1),top 0.26s cubic-bezier(0.32,0,0.15,1);}
     /* side-panel 없을 때 member-panel을 맨 오른쪽으로 당김 */
@@ -3157,7 +3160,7 @@
   /* ── Zoom slider ────────────────────────────────── */
   #zoom-ctrl{position:fixed;left:18px;bottom:24px;display:flex;flex-direction:column;align-items:center;gap:0;z-index:50;user-select:none;width:30px;background:rgba(12,16,36,0.60);border:1px solid rgba(140,165,220,0.16);border-radius:14px;padding:10px 0;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);box-shadow:0 2px 14px rgba(0,0,0,0.22);transition:left 0.32s cubic-bezier(0.4,0,0.2,1);}
   #journal-sidebar.open~#zoom-ctrl{left:318px;} /* 저널 사이드바는 300px 그대로 */
-  #zoom-ctrl.zoom-feed-open{left:358px;} /* 탐험 패널 폭(360px) - 2px */
+  #zoom-ctrl.zoom-feed-open{left:438px;} /* 탐험 레일 폭 - 2px */
   /* 모바일 줌 컨트롤(2026-08-31, 사용자 요청) — 예전엔 모바일에서 통째로 숨겼는데(핀치 줌이 있으니),
      "우주만 보이는 상태"에선 줌 레벨을 눈으로 보고 조절할 수 있는 게 낫다는 요청. 카드·탐험 패널·
      라이트박스·검색 등 **뭐라도 열려 있으면 숨긴다** — 우주가 실제로 보일 때만 뜨는 게 핵심이라
@@ -3709,15 +3712,15 @@
   /* 데스크톱은 전체화면 오버레이 대신 저널 사이드바와 같은 방식의 왼쪽 슬라이드 패널로 표시 */
   @media(min-width:769px){
     #feed-overlay{
-      /* 너비를 줄여(440→360px) 패널 오른쪽~라이트박스 left:440 사이(80px)에 우주가 보이게(2026-10-16).
+      /* 오른쪽 카드 레일(#side-panel)과 좌우 짝이라 폭을 맞춘다: 320→380(2026-09-09) → 440(2026-10-02).
          ⚠️ 카드 폭을 바꾸면 여기·아래 translateX·#zoom-ctrl.zoom-feed-open도 같이 바꿀 것. */
-      display:flex;inset:auto;top:0;left:0;height:100%;width:360px;
+      display:flex;inset:auto;top:0;left:0;height:100%;width:440px;
       background:rgba(14,18,34,0.92);
       backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);
       border-right:0.5px solid rgba(255,255,255,0.10);
       box-shadow:4px 0 24px rgba(0,0,0,0.35);
       z-index:66;
-      transform:translateX(-360px);
+      transform:translateX(-440px);
       transition:transform 0.32s cubic-bezier(0.4,0,0.2,1);
     }
     #feed-overlay.open{transform:translateX(0);}
