@@ -62,6 +62,16 @@
 ---
 
 ## 2026-10-16 (세션 — 카드 2개+재생모드 레이아웃)
+### ⏳ 덜 된 일 (10-16 회사 PC 세션 마감 시점)
+- [진행중] **투어 흥행 전체 재수집** — 회사 PC에서 `node tools/wiki_boxscore.mjs --all --refresh` 215/289까지 돌다 퇴근으로 중단 예정. tours_boxscore.json 로컬 변경은 **미커밋**(부분 결과라 커밋 금지). 다음에 다시 돌려 끝까지 → 결과 표본 확인 → 커밋
+- [확인 대기] **곡 페이지 첫 생성** — Rebuild static SEO pages 워크플로가 g/{그룹}/s/{곡}/ 약 9,800장 만드는지(로컬 실측 4,878곡). 사이트에서 g/아이브/s/lovedive/ 열어 확인, 사이트맵 URL 수 확인
+- [확인 대기] **영상↔곡 연결 이어달리기** — 다음 정기 루틴 결과 10번 줄 "전량 N개째"가 회차마다 늘어나는지, DB song_keys 채워진 수. 5번 원곡 v2 ❌ 사라졌는지
+- [사용자 대기] 첫 터치 민감 — PWA에서 `?touchlog=1` 캡처 받으면 분석, 진단 끝나면 기록기(_tlog*) 제거
+- [사용자 대기] 네이버 서치어드바이저 '사이트 진단' 색인 수(10-16 기준 1,800) — 1~2주 뒤 증가 확인
+- [다음] 검색노출 3단계 **행사 페이지**("2025 MAMA 무대" — EV 태그 회차별 영상 모음)
+- [미처리] 스트레이키즈 group_ko에 남의 영상(한가빈·김요한·한유진 등) 섞임 — 멤버 '한' 이름 충돌 의심, tag_patrol로 원인 확인 후 정리
+- [미처리] 아이브 2024.4~6 음방 1위가 DB에 0건(해야) — 수집 누락 원인 확인·백필
+- [보류·아이디어] 업계용 발견 기능(멤버 탐색에 예능 이력·화제성 필터), 공유용 소식 카드, 인스타 Business Discovery(사용자 메타 개발자 계정 대기), X 페이퍼유즈 API, 경연 프로그램 추가(보이즈24·스테이지K 등 — CONTEST_SHOWS 한 줄)
 - [완료] **CI "Data validation & tests" 일주일+ 빨간불 해소**(로컬 CI 동일 루프 전부 PASS) — 낡은 테스트 갱신(feed-dailynews·admin-dock-close·motion 블록별 검사·member-timeline 헬퍼 포함·live-tab) + 실제 수정: 라이브 제외 규칙 빠진 category='live' 조회 4곳 `_applyLiveExclude`, 멤버 탐색·링크 오버레이 `_bringToFront`, 원곡 판정 띄어쓰기 무시·동명곡은 1년+ 앞선 원곡(admin.js `_coverSelfEclipses`), 상한 없는 select 4종 ALLOW 근거 [tests/* index.html admin.js]
 - [완료] **경연형 서바이벌 앨범 수집**(사용자 요청) — `tools/melon_program_disco.mjs --contest`: 퀸덤·로드 투 킹덤·킹덤·퀸덤2·피크타임·로드 투 킹덤 ACE OF ACE, 앨범 검색+제목 앞머리 정규식(아티스트명 검색은 외국 'Kingdom' 10명에 막힘), 곡별 부른 아티스트로 참가 그룹마다 그 그룹 곡만 담아 98장(program·contest:true·isMain:false → 기존 '프로그램 앨범 보기' 토글에만). 솔로 참가(퀸덤 박봄·퀸덤2 효린)는 본인 디스코로, 반주 트랙 제외. 프로그램 추가는 CONTEST_SHOWS에 한 줄 [tools/melon_program_disco.mjs groups.json artists.json disco/]
 - [완료] 정기 루틴 실패 2건 수리(run 38841010594): ①10단계 곡 연결 — 50만 행 전량을 다 읽고 한꺼번에 쓰는 구조라 135분 제한에 잘려 0건 → 1000개씩 읽고·저장·커서(localStorage kpu_song_pass) 이어달리기, 루틴 시작 125분·회차 40분에서 스스로 접음 ②5단계 원곡 v2 7일 전량 회차 statement timeout → `_sbFetchAllWindowed`(id 5000개 구간 안에서만 조건 조회, 실측 구간당 ~0.5초) [admin.js]
