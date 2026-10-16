@@ -30,5 +30,11 @@ eq('남자 없이 잘 살아 - miss A | MUSIC BANK IN ISTANBUL 2012 | KBS 121117
 eq('앤팀(&TEAM), 케이콘 재팬 레드카펫 | &TEAM KCON JAPAN 2026', '2026-05-10', ['EV:kcon', 'EV:kcon:2026-Japan'], 'KCON 도시');
 // 6자리 방송일(261007)을 연도로 오인하지 않는다
 eq('워터밤 무대 | 250712', '2025-07-13', ['EV:waterbomb', 'EV:waterbomb:2025'], '6자리 날짜는 연도 아님');
+// 해외 시상식·무대(2026-10-16)
+eq('BTS Butter AMAs 2021 Performance', '2021-11-22', ['EV:ama', 'EV:ama:2021'], 'AMAs 약칭');
+eq('K-drama OST pajamas dramas 모음', '2024-05-01', [], 'dramas·pajamas 안의 amas는 AMA 아님(낱말 경계)');
+eq('BLACKPINK 2023 MTV VMAs Pink Venom', '2022-08-29', ['EV:vma', 'EV:vma:2023'], 'VMA');
+eq('TWICE 紅白歌合戦 2023 무대', '2024-01-01', ['EV:kohaku', 'EV:kohaku:2023'], '홍백가합전');
+eq('SEVENTEEN Weverse Con Festival 2024', '2024-06-16', ['EV:weversecon', 'EV:weversecon:2024'], '위버스콘');
 console.log(fail ? `💥 행사 태그 테스트 실패 ${fail}건 (통과 ${pass})` : `✅ 행사 태그 테스트 통과 ${pass}건`);
 process.exit(fail ? 1 : 0);

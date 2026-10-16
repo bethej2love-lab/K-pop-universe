@@ -367,6 +367,18 @@ const _EVENT_SERIES=[
   {id:'lolla',q:['롤라팔루자','롤라','lollapalooza'],kw:['lollapalooza','롤라팔루자'],ko:'롤라팔루자',kind:'festival',re:/롤라팔루자|LOLLAPALOOZA/i},
   {id:'coachella',q:['코첼라','coachella'],kw:['coachella','코첼라'],ko:'코첼라',kind:'festival',re:/코첼라|COACHELLA/i},
   {id:'summersonic',q:['서머소닉','섬머소닉','summersonic'],kw:['summer sonic','서머소닉','섬머소닉'],ko:'서머소닉',kind:'festival',re:/서머\s*소닉|섬머\s*소닉|SUMMER\s*SONIC/i},
+  // 해외 시상식·무대(2026-10-16, 사용자 "해외 페스티벌·시상식도 — 코첼라나 AMA"). DB 제목 실측 후 영상이 있는 것만:
+  // AMA·그래미·징글볼·위버스콘·SMTOWN LIVE 등. 'AMAs'는 낱말 경계로만(dramas·pajamas 안의 amas 오탐 방지).
+  {id:'ama',q:['ama','아메리칸뮤직어워즈','americanmusicawards'],kw:['american music award','amas'],ko:'AMA (아메리칸 뮤직 어워즈)',kind:'award',abroad:true,late:true,re:/AMERICAN\s*MUSIC\s*AWARDS?|\bAMAs\b|아메리칸\s*뮤직\s*어워즈/i},
+  {id:'bbma',q:['빌보드뮤직어워드','bbma','billboardmusicawards'],kw:['billboard music award','bbmas'],ko:'빌보드 뮤직 어워드',kind:'award',abroad:true,re:/BILLBOARD\s*MUSIC\s*AWARDS?|\bBBMAs?\b|빌보드\s*뮤직\s*어워(?:드|즈)/i},
+  {id:'vma',q:['vma','mtvvma','비디오뮤직어워드'],kw:['vmas','video music award'],ko:'MTV VMA',kind:'award',abroad:true,re:/\bVMAs?\b|VIDEO\s*MUSIC\s*AWARDS?/i},
+  {id:'ema',q:['mtvema','엠티비ema','유럽뮤직어워드'],kw:['mtv ema','europe music award'],ko:'MTV EMA',kind:'award',abroad:true,re:/MTV\s*EMAs?\b|EUROPE\s*MUSIC\s*AWARDS?/i},
+  {id:'grammy',q:['그래미','grammy','grammys'],kw:['grammy','그래미'],ko:'그래미 어워즈',kind:'award',abroad:true,re:/GRAMMYS?|그래미/i},
+  {id:'jingle',q:['징글볼','jingleball'],kw:['jingle ball','징글볼'],ko:'징글볼 (iHeartRadio)',kind:'festival',abroad:true,re:/JINGLE\s*BALL|징글\s*볼/i},
+  {id:'gcf',q:['글로벌시티즌','globalcitizen'],kw:['global citizen'],ko:'글로벌 시티즌 페스티벌',kind:'festival',abroad:true,re:/GLOBAL\s*CITIZEN|글로벌\s*시티즌/i},
+  {id:'kohaku',q:['홍백','홍백가합전','kohaku'],kw:['紅白','홍백'],ko:'NHK 홍백가합전',kind:'yearend',abroad:true,late:true,re:/紅白|홍백\s*가합전|KOHAKU/i},
+  {id:'weversecon',q:['위버스콘','weversecon'],kw:['weverse con','위버스콘'],ko:'위버스콘 페스티벌',kind:'festival',re:/WEVERSE\s*CON|위버스\s*콘/i},
+  {id:'smtown',q:['smtownlive','에스엠타운','슴콘'],kw:['smtown live','에스엠타운 라이브'],ko:'SMTOWN LIVE',kind:'festival',re:/SMTOWN\s*LIVE|에스엠타운\s*라이브/i},
   // 해외 특집 음방
   {id:'mb-in',q:['뮤직뱅크월드투어','뮤뱅월투','뮤직뱅크인','musicbankworldtour','뮤직뱅크해외'],kw:['뮤직뱅크 인','music bank in','뮤직뱅크 월드투어','music bank world tour'],ko:'뮤직뱅크 월드투어',kind:'overseas',re:/뮤직\s*뱅크\s*인\s*[가-힣]|MUSIC\s*BANK\s*IN\s+[A-Z]|MUSIC\s*BANK\s*WORLD\s*TOUR|뮤직뱅크\s*월드투어/i,city:/뮤직\s*뱅크\s*인\s*([가-힣]+)|MUSIC\s*BANK\s*IN\s+([A-Z]+)/i},
   {id:'ink-in',q:['인기가요해외','인기가요인'],kw:['인기가요 인','inkigayo in'],ko:'인기가요 해외 특집',kind:'overseas',re:/인기가요\s*인\s*[가-힣]|INKIGAYO\s*IN\s+[A-Z]/i,city:/인기가요\s*인\s*([가-힣]+)|INKIGAYO\s*IN\s+([A-Z]+)/i},

@@ -4723,7 +4723,7 @@ async function _ytSweepContentFormats(){
     // 규칙(_YT_FORMAT_RULES)에 낱말을 추가했을 땐 **버튼으로 한 번** 돌려야 과거 영상까지 소급된다.
     // 규칙 버전이 바뀌면 다음 한 번은 전량 — 행사 태그(2026-10-15, shared.js _EVENT_SERIES)처럼 새 규칙을 과거 영상에 소급한다.
     // 규칙(_YT_FORMAT_RULES·_EVENT_SERIES)을 바꿀 땐 이 문자열도 바꿀 것.
-    const _FMT_RULES_VER='2026-10-15-events';
+    const _FMT_RULES_VER='2026-10-16-overseas-events'; // 해외 시상식·위버스콘·SMTOWN 추가 → 다음 한 번 전량 소급
     let _fmtSince=_admRoutineScopeSince('format');
     try{if(localStorage.getItem('kpu_fmt_rules_ver')!==_FMT_RULES_VER){_fmtSince=null;localStorage.setItem('kpu_fmt_rules_ver',_FMT_RULES_VER);}}catch(e){}
     _ytSetProg('[세부 포맷 태깅] 조회 중…'+(_fmtSince?' (증분)':''));
