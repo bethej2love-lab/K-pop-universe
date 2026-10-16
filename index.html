@@ -8138,15 +8138,7 @@ function _lbSwitchToShorts(){
   _lbUpdateMemberInfo();
 }
 document.getElementById('yt-lightbox').addEventListener('pointerdown',e=>e.stopPropagation());
-document.getElementById('yt-lightbox').addEventListener('click',e=>{e.stopPropagation();if(!document.getElementById('yt-lb-wrap').contains(e.target))closeLightbox();});
-// 쇼츠 모드에서 리액션·툴바 줄 옆의 빈 여백도 버튼이 아닌 컨테이너 자체를 눌렀을 때는 닫히도록 허용
-// (그 줄들이 wrap 전체 너비를 차지해 배경 오버레이 클릭으로 인식되지 않던 문제 보완)
-['yt-lb-reactions','yt-lb-toolbar'].forEach(id=>{
-  document.getElementById(id).addEventListener('click',e=>{
-    if(e.target!==e.currentTarget)return;
-    e.stopPropagation();closeLightbox();
-  });
-});
+document.getElementById('yt-lightbox').addEventListener('click',e=>{e.stopPropagation();});
 // 모바일: 라이트박스 상하 스와이프로 이전/다음 영상 이동 (릴스/쇼츠 방식)
 {
   const _lbEl=document.getElementById('yt-lightbox');
