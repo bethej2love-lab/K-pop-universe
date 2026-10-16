@@ -34,7 +34,9 @@ const getJSON = url => {
   }
   return null;
 };
-const wikitext = title => getJSON(`${API}?action=parse&page=${encodeURIComponent(title)}&prop=wikitext&format=json&formatversion=2&redirects=1`)?.parse?.wikitext || '';
+// 넘겨주기를 따라간 실제 문서명까지 같이 — 중복 판정에 쓴다
+const parsePage = title => { const p = getJSON(`${API}?action=parse&page=${encodeURIComponent(title)}&prop=wikitext&format=json&formatversion=2&redirects=1`)?.parse; return { title: p?.title || title, wt: p?.wikitext || '' }; };
+const wikitext = title => parsePage(title).wt;
 const catMembers = cat => (getJSON(`${API}?action=query&list=categorymembers&cmtitle=${encodeURIComponent('Category:' + cat)}&cmlimit=100&format=json&formatversion=2`)?.query?.categorymembers || []).map(m => m.title);
 const resolveTitle = name => { const p = getJSON(`${API}?action=query&titles=${encodeURIComponent(name)}&redirects=1&format=json&formatversion=2`)?.query?.pages?.[0]; return (p && !p.missing) ? p.title : name; };
 
@@ -69,6 +71,8 @@ function cleanVal(raw) {
   s = s.replace(/\{\{\s*(?:JP¥|JPY|¥)\s*\|\s*([^{}|]+)[^{}]*\}\}/gi, '¥$1');
   s = s.replace(/\{\{\s*(?:KRW|₩)\s*\|\s*([^{}|]+)[^{}]*\}\}/gi, '₩$1');
   s = s.replace(/\{\{\s*(?:nowrap|small|nobr)\s*\|\s*([^{}]+)\}\}/gi, '$1');
+  // 목록 템플릿은 항목을 살린다 — {{unbulleted list|23 in Asia|…|51 in total}}를 통째로 지워 공연 횟수가 비던 것(트와이스)
+  s = s.replace(/\{\{\s*(?:unbulleted list|ubl|bulleted list|hlist|plainlist|flatlist)\s*\|([^{}]*)\}\}/gi, (_, x) => x.split('|').join('; '));
   s = s.replace(/\{\{\s*(?:start|end) date\s*\|\s*(\d{4})\s*\|\s*(\d{1,2})\s*\|\s*(\d{1,2})[^{}]*\}\}/gi, (_, y, m, d) => `${y}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`);
   s = s.replace(/\{\{[^{}]*\}\}/g, '');
   s = s.replace(/\[\[[^\]|]*\|([^\]]+)\]\]/g, '$1').replace(/\[\[([^\]]+)\]\]/g, '$1');
@@ -94,15 +98,24 @@ function dateOf(s) {
 function tourFromWt(title, wt) {
   const f = infobox(wt); if (!f) return null;
   const att = cleanVal(f.attendance || ''), gross = cleanVal(f.box_office || f.gross || f.revenue || '');
-  const shows = num(cleanVal(f.number_of_shows || f.shows || ''));
+  // 공연 횟수가 지역별 목록이면 'N in total'/'Total: N'을 우선(첫 숫자는 '23 in Asia' 같은 일부다)
+  const showsTxt = cleanVal(f.number_of_shows || f.shows || '');
+  const tot = showsTxt.replace(/,/g, '').match(/(\d+)\s*(?:in\s+)?total|total\D{0,3}(\d+)/i);
+  const shows = tot ? +(tot[1] || tot[2]) : num(showsTxt);
   const rec = {
-    tour: cleanVal(f.name || '') || title, wiki: title,
+    tour: cleanVal(f.name || f.concert_tour_name || f.tour_name || '').replace(/;\s*/g, ' · ') || title, wiki: title, // 이름 속 줄바꿈(<br>)은 ' · '
     artist: cleanVal(f.artist || ''),
     start: dateOf(cleanVal(f.start_date || f.date || '')), end: dateOf(cleanVal(f.end_date || '')),
     shows: shows || null,
     attendance: num(att), attendance_raw: att || null,
     gross_usd: usd(gross), gross_raw: gross || null,
   };
+  // 앞뒤 투어 링크(last_tour·next_tour) — 분류·검색에 안 걸리는 투어를 사슬로 찾는 데 쓴다(_links, 저장 안 함)
+  const links = [];
+  for (const k of ['last_tour', 'next_tour', 'prev_tour', 'previous_tour']) {
+    const m = String(f[k] || '').match(/\[\[([^\]|#]+)/); if (m) links.push(m[1].trim());
+  }
+  Object.defineProperty(rec, '_links', { value: links, enumerable: false });
   if (!rec.attendance && !rec.gross_raw && !rec.shows) return null; // 흥행 정보가 하나도 없으면 버림
   return rec;
 }
@@ -121,19 +134,33 @@ function artistOk(rec, canon) {
 }
 function groupTours(en) {
   const canon = resolveTitle(en);
+  // ⚠️ 위키 문서명이 'Twice (group)'처럼 괄호가 붙으면 분류는 'Twice concert tours'다 — 괄호 뗀 이름도 시도(트와이스 투어가 거의 다 빠졌던 원인)
+  const bare = canon.replace(/\s*\(.*\)$/, '');
   const titles = new Set();
-  for (const v of [`${canon} concert tours`, `${canon} (band) concert tours`, `${canon} (group) concert tours`]) {
+  for (const v of [`${canon} concert tours`, `${bare} concert tours`, `${bare} (band) concert tours`, `${bare} (group) concert tours`]) {
     const m = catMembers(v).filter(t => !/^List of|discography/i.test(t));
     if (m.length) { m.forEach(t => titles.add(t)); break; }
   }
-  searchTours(canon).slice(0, 16).forEach(t => titles.add(t));
+  searchTours(bare).slice(0, 16).forEach(t => titles.add(t));
   const out = [], seen = new Set();
   for (const t of titles) {
     if (NOT_TOUR.test(t)) continue;
-    const wt = wikitext(t); if (!wt) continue;
-    const rec = tourFromWt(t, wt);
+    const pg = parsePage(t); if (!pg.wt) continue;
+    // ⚠️ 넘겨주기(리다이렉트)는 실제 문서명으로 중복 판정 — 'BTS World Tour Love Yourself: Speak Yourself'가
+    //    'Love Yourself World Tour'로 넘어가 같은 투어가 두 번 들어갔던 것. 같은 일정·관객 수도 같은 투어로 본다.
+    if (seen.has('p:' + pg.title)) continue; seen.add('p:' + pg.title);
+    // 이 그룹 투어면 앞뒤 투어 링크를 찾을 목록에 더한다(Set은 순회 중 추가분도 돈다) — 흥행 수치가 없는 투어도 사슬은 잇는다
+    const fb = infobox(pg.wt);
+    if (fb && artistOk({ artist: cleanVal(fb.artist || '') }, canon)) {
+      for (const k of ['last_tour', 'next_tour', 'prev_tour', 'previous_tour']) {
+        const m = String(fb[k] || '').match(/\[\[([^\]|#]+)/);
+        if (m && titles.size < 60) titles.add(m[1].trim());
+      }
+    }
+    const rec = tourFromWt(pg.title, pg.wt);
     if (!rec || !artistOk(rec, canon)) continue; // 인포박스 artist가 이 그룹이어야(오귀속 방지)
-    const k = rec.tour.toLowerCase(); if (seen.has(k)) continue; seen.add(k);
+    const k = rec.tour.toLowerCase(), k2 = `${rec.start}|${rec.end}|${rec.attendance}|${rec.shows}`;
+    if (seen.has(k) || (rec.start && seen.has(k2))) continue; seen.add(k); seen.add(k2);
     out.push(rec);
   }
   return out.sort((a, b) => String(a.start || '').localeCompare(String(b.start || '')));
