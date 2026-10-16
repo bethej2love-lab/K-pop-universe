@@ -4314,7 +4314,8 @@
 .mx-card:hover{background:rgba(255,255,255,0.09);transform:translateY(-2px);}
 .mx-card:active{transform:scale(0.96);}
 .mx-card-av{width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden;}
-.mx-card-av-letter{font-size:20px;font-weight:700;color:rgba(0,0,0,0.45);}
+/* 사진 없는 멤버 = 멤버 색 구슬. 왼쪽 위 하이라이트 + 오른쪽 아래 그늘로 우주의 행성처럼 입체감만, 글자 없음 */
+.mx-card-av.is-orb{background:radial-gradient(circle at 34% 30%,rgba(255,255,255,0.5),rgba(255,255,255,0) 40%),radial-gradient(circle at 50% 50%,var(--orb) 0 55%,color-mix(in srgb,var(--orb) 50%,#0a0b16) 100%);box-shadow:inset -6px -8px 14px rgba(0,0,0,0.32),0 0 14px color-mix(in srgb,var(--orb) 30%,transparent);}
 .mx-card-av img{width:100%;height:100%;object-fit:cover;}
 .mx-card-name{font-size:12px;font-weight:600;color:#fff;line-height:1.3;word-break:keep-all;}
 .mx-card-group{font-size:10px;color:rgba(255,255,255,0.45);word-break:keep-all;}
@@ -4489,3 +4490,22 @@
 .cb-hint{color:rgba(255,255,255,0.35);font-size:10.5px;}
 .cb-clear{all:unset;cursor:pointer;font-size:11px;padding:2px 9px;border-radius:999px;border:1px solid rgba(255,255,255,0.22);color:rgba(255,255,255,0.8);}
 .cb-clear:hover{background:rgba(255,255,255,0.08);}
+
+/* ── 멤버 탐색 그림 탭 2026-10-16: 생년 점 그림 · 국적/소속사 비율 막대 · 소속사 필터 칩 ── */
+#mx-chart-wrap{padding:4px 14px 6px;}
+.mx-unit-svg{cursor:pointer;}
+.mx-unit-tick{stroke:rgba(255,255,255,0.6);stroke-width:1;}
+.mx-leg-note{margin-left:6px;color:rgba(255,255,255,0.35);}
+.mx-share{display:flex;flex-direction:column;gap:2px;padding:2px 0 10px;border-bottom:1px solid rgba(255,255,255,0.07);max-width:640px;margin:0 auto;}
+.mx-share-row{all:unset;box-sizing:border-box;display:grid;grid-template-columns:minmax(64px,30%) 1fr auto;align-items:center;gap:10px;padding:5px 6px;border-radius:8px;cursor:pointer;}
+.mx-share-row:hover{background:rgba(255,255,255,0.04);}
+.mx-share-row.is-on{background:rgba(120,165,255,0.12);}
+.mx-share-lbl{font-size:12px;color:rgba(255,255,255,0.78);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;}
+.mx-share-track{height:6px;border-radius:3px;background:rgba(255,255,255,0.05);overflow:hidden;}
+.mx-share-track i{display:block;height:100%;border-radius:3px;background:linear-gradient(90deg,rgba(143,186,255,0.55),rgba(246,163,200,0.55));transition:width .4s cubic-bezier(.3,.7,.2,1);}
+.mx-share-row.is-on .mx-share-track i{background:linear-gradient(90deg,#8fbaff,#f6a3c8);}
+.mx-share-val{font-size:11.5px;color:rgba(255,255,255,0.7);font-variant-numeric:tabular-nums;min-width:62px;text-align:right;}
+.mx-share-val em{font-style:normal;color:rgba(255,255,255,0.38);margin-left:6px;}
+.mx-share-cap{margin:6px 6px 0;color:rgba(255,255,255,0.4);font-size:10.5px;}
+.mx-co-chip{all:unset;cursor:pointer;margin-left:8px;padding:2px 8px;border-radius:10px;background:rgba(120,165,255,0.15);border:1px solid rgba(120,165,255,0.4);color:rgba(190,215,255,0.95);font-size:10.5px;}
+.mx-fig-leg i.is-x{background:#9aa;}

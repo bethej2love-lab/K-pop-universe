@@ -770,10 +770,10 @@
     <div class="mx-result-bar">
       <span id="mx-count" class="mx-count"></span>
       <div class="mx-chart-tabs">
-        <button class="mx-chart-tab active" data-mx-chart="birth" type="button">생년</button>
+        <button class="mx-chart-tab active" data-mx-chart="fig" type="button">데뷔 나이</button>
+        <button class="mx-chart-tab" data-mx-chart="birth" type="button">생년</button>
         <button class="mx-chart-tab" data-mx-chart="nat" type="button">국적</button>
         <button class="mx-chart-tab" data-mx-chart="agency" type="button">소속사</button>
-        <button class="mx-chart-tab" data-mx-chart="fig" type="button">통계</button>
       </div>
     </div>
     <div id="mx-chart-wrap"></div>
@@ -15687,8 +15687,9 @@ function _closeKpopLinks(){document.getElementById('kpop-links-overlay').classLi
 // ── 멤버 탐색 오버레이 ──────────────────────────────────────────────────────
 const _MX_NAT_FLAG={'한국':'🇰🇷','대한민국':'🇰🇷','일본':'🇯🇵','중국':'🇨🇳','태국':'🇹🇭','미국':'🇺🇸','호주':'🇦🇺','캐나다':'🇨🇦','뉴질랜드':'🇳🇿','NZ':'🇳🇿','대만':'🇹🇼','홍콩':'🇭🇰','필리핀':'🇵🇭','인도네시아':'🇮🇩','말레이시아':'🇲🇾','브라질':'🇧🇷','영국':'🇬🇧','베트남':'🇻🇳','프랑스':'🇫🇷','독일':'🇩🇪','이탈리아':'🇮🇹','스위스':'🇨🇭','스웨덴':'🇸🇪'};
 const _mxFlagsFor=nat=>{if(!nat)return'';const flags=nat.split(/[·,\/]\s*/).map(k=>_MX_NAT_FLAG[k.trim()]||'').filter(Boolean).join('');return flags||nat;};
-let _mxState={gender:'',gen:'',yearLo:1985,yearHi:2012};
-let _mxChartType='birth';
+let _mxState={gender:'',gen:'',yearLo:1985,yearHi:2012,co:''};
+let _mxChartType='fig'; // 기본 = 데뷔 나이 산점도(2026-10-16 — 가장 많은 걸 한눈에 보여주는 그림을 첫 화면으로)
+const _mxCoOf=gd=>{if(!gd?.co)return'';return gd.co.split(/\s*\/\s*/).pop().trim()||gd.co;};
 function _openMemberExplorer(preOpts){
   const ov=document.getElementById('mx-overlay');if(!ov)return;
   if(preOpts){
@@ -15863,69 +15864,154 @@ function _mxFigMount(grid,results,filtered){
   grid.insertBefore(_mxFig.wrap,grid.firstChild);
   _mxFigUpdate(_mxFig,new Set(results),filtered);
 }
-// ── 차트 토글 시스템(생년·국적·소속사·통계) ────────────────────────────────
+// ── 그림 탭(2026-10-16 재작성): 데뷔 나이(산점도) · 생년(점 하나=멤버 한 명) · 국적 · 소속사 ──────────────
+// 예전 생년 막대는 막대를 svg에 붙이는 줄이 빠져 축 글자만 남은 채 기본 화면에 떠 있었다(사용자: "덩그러니"). 이제 생년도
+// 산점도와 같은 문법 — 점 1,500여 개가 출생 연도별로 쌓이고, 조건에 맞는 점만 밝아진다. 국적·소속사는 비율 막대, 누르면 그 조건으로.
+const _mxFiltered=()=>!!(document.getElementById('mx-search')?.value?.trim()||_mxState.gender||_mxState.gen||_mxState.co||_mxState.yearLo>1985||_mxState.yearHi<2012);
 function _mxChartMount(results,fYlo,fYhi){
   const wrap=document.getElementById('mx-chart-wrap');if(!wrap)return;
-  wrap.innerHTML='';
+  wrap.replaceChildren();
   document.querySelectorAll('.mx-chart-tab').forEach(b=>b.classList.toggle('active',b.dataset.mxChart===_mxChartType));
-  if(_mxChartType==='birth'){const svg=_mxChartBirth(results,fYlo,fYhi);if(svg)wrap.appendChild(svg);}
-  else if(_mxChartType==='nat'){const svg=_mxChartNat(results);if(svg)wrap.appendChild(svg);}
-  else if(_mxChartType==='agency'){const svg=_mxChartAgency(results);if(svg)wrap.appendChild(svg);}
-  else if(_mxChartType==='fig'){_mxFigMount(wrap,results,!!(document.getElementById('mx-search')?.value?.trim()||_mxState.gender||_mxState.gen||_mxState.yearLo>1985||_mxState.yearHi<2012));}
+  const f=_mxFiltered();
+  if(_mxChartType==='fig')_mxFigMount(wrap,results,f);
+  else if(_mxChartType==='birth')_mxUnitMount(wrap,results,f);
+  else if(_mxChartType==='nat')wrap.appendChild(_mxShareBars(results,'nat'));
+  else if(_mxChartType==='agency')wrap.appendChild(_mxShareBars(results,'agency'));
 }
-function _mxSvg(W,H){const NS='http://www.w3.org/2000/svg';const s=document.createElementNS(NS,'svg');s.setAttribute('viewBox',`0 0 ${W} ${H}`);s.setAttribute('width','100%');s.setAttribute('height',H);s.setAttribute('class','mx-chart-svg');s._NS=NS;return s;}
-function _mxChartBirth(results,fYlo,fYhi){
-  const counts={};for(const a of results){const yr=_mxBirthYear(a);if(yr)counts[yr]=(counts[yr]||0)+1;}
-  const yrs=Object.keys(counts).map(Number).sort((a,b)=>a-b);if(!yrs.length)return null;
-  const lo=Math.min(yrs[0],fYlo),hi=Math.max(yrs[yrs.length-1],fYhi);
-  const max=Math.max(1,...Object.values(counts));
-  const W=360,H=68,padL=4,padR=4,padB=14,bW=Math.max(2,(W-padL-padR)/(hi-lo+1)-1);
-  const s=_mxSvg(W,H);const NS=s._NS;
-  for(let yr=lo;yr<=hi;yr++){
-    const cnt=counts[yr]||0;const h=cnt?(cnt/max)*(H-padB-4):0;
-    const x=padL+(yr-lo)*(W-padL-padR)/(hi-lo+1);
-    const inRange=yr>=fYlo&&yr<=fYhi;
-    if(cnt){const r=document.createElementNS(NS,'rect');r.setAttribute('x',x.toFixed(1));r.setAttribute('y',(H-padB-h).toFixed(1));r.setAttribute('width',Math.max(1.5,bW).toFixed(1));r.setAttribute('height',h.toFixed(1));r.setAttribute('rx',1);r.setAttribute('class','mx-bar'+(inRange?' on':' off'));s.appendChild(r);}
+// 생년 — 점 하나 = 멤버 한 명. 출생 연도마다 기둥으로 쌓는다(여 아래·남 위로 정렬해 기둥 안에서 성비가 보이게).
+let _mxUnit=null;
+function _mxUnitBuild(){
+  const NS='http://www.w3.org/2000/svg';
+  const mk=(t,a)=>{const el=document.createElementNS(NS,t);for(const k in a)el.setAttribute(k,a[k]);return el;};
+  const seen=new Set(),pts=[];
+  for(const a of ARTISTS){
+    if(!a.name?.ko||!a.group?.ko)continue;
+    const yr=_mxBirthYear(a);if(!yr||yr<1970||yr>new Date().getFullYear()-10)continue;
+    const key=a.name.ko+'|'+(a.bday||'');if(seen.has(key))continue;seen.add(key);
+    pts.push({a,yr,gender:GROUPS[a.group.ko]?.gender||''});
   }
-  // 5년 단위 라벨
-  for(let yr=Math.ceil(lo/5)*5;yr<=hi;yr+=5){
-    const x=padL+(yr-lo)*(W-padL-padR)/(hi-lo+1);
-    const t=document.createElementNS(NS,'text');t.setAttribute('x',x.toFixed(1));t.setAttribute('y',H-2);t.setAttribute('class','mx-bar-lbl');t.textContent=yr;s.appendChild(t);
+  const by={};pts.forEach(p=>(by[p.yr]??=[]).push(p));
+  const yrs=Object.keys(by).map(Number);const y0=Math.min(...yrs),y1=Math.max(...yrs),cols=y1-y0+1;
+  const maxN=Math.max(...Object.values(by).map(v=>v.length));
+  const W=Math.max(320,Math.min(900,(document.getElementById('mx-grid')?.clientWidth||360)-20));
+  const L=6,Rm=6,T=26,B=20,cw=(W-L-Rm)/cols;
+  // 기둥 하나에 가로로 몇 개 — 그림 높이가 220px 안팎이 되게 고른다(폰은 좁아 2~3개, 데스크톱은 4~5개)
+  const k=Math.max(1,Math.ceil(Math.sqrt(maxN*cw/220))),pitch=cw/k,rad=Math.max(1,Math.min(2.6,pitch*0.4));
+  const H=Math.ceil(T+B+Math.ceil(maxN/k)*pitch);
+  const svg=mk('svg',{viewBox:`0 0 ${W} ${H}`,width:W,height:H,class:'mx-svg mx-unit-svg',role:'img','aria-label':'출생 연도별 멤버 수'});
+  const ax=mk('g',{class:'mx-ax'});
+  for(let v=Math.ceil(y0/5)*5;v<=y1;v+=5){const t=mk('text',{x:(L+(v-y0+.5)*cw).toFixed(1),y:H-6,'text-anchor':'middle'});t.textContent=v;ax.appendChild(t);}
+  svg.appendChild(ax);
+  const dots=mk('g',{class:'mx-dots'});
+  const ord=g=>g==='f'?0:g==='m'?1:2; // 여 → 남 → 솔로(데이터에 성별이 없는 솔로 340명, 추측하지 않고 따로) 순으로 쌓는다
+  Object.keys(by).forEach(yk=>{
+    const arr=by[yk].sort((p,q)=>ord(p.gender)-ord(q.gender)||(p.a.name.ko<q.a.name.ko?-1:1));
+    const cx0=L+(+yk-y0)*cw;
+    arr.forEach((p,i)=>{
+      p.cx=cx0+(i%k+.5)*pitch;p.cy=H-B-(Math.floor(i/k)+.5)*pitch;
+      p.el=mk('circle',{cx:p.cx.toFixed(1),cy:p.cy.toFixed(1),r:rad.toFixed(2),class:'mx-dot '+(p.gender==='m'?'is-m':p.gender==='f'?'is-f':'')});
+      p.el.style.setProperty('--d',(((+yk-y0)/cols)*700+i*4|0)+'ms');
+      dots.appendChild(p.el);
+    });
+  });
+  svg.appendChild(dots);
+  const ann=mk('g',{class:'mx-unit-ann'});svg.appendChild(ann);
+  const wrap=document.createElement('div');wrap.className='mx-fig';
+  const svgWrap=document.createElement('div');svgWrap.className='mx-svg-wrap';svgWrap.appendChild(svg);wrap.appendChild(svgWrap);
+  const tip=document.createElement('button');tip.type='button';tip.className='mx-tip';tip.hidden=true;svgWrap.appendChild(tip);
+  const foot=document.createElement('div');foot.className='mx-fig-foot';
+  const cap=document.createElement('div');cap.className='mx-fig-cap';foot.appendChild(cap);
+  const leg=document.createElement('div');leg.className='mx-fig-leg';
+  leg.innerHTML='<i class="is-f"></i>'+(currentLang==='ko'?'여':'F')+'<i class="is-m"></i>'+(currentLang==='ko'?'남':'M')+'<i class="is-x"></i>'+(currentLang==='ko'?'솔로':'Solo')+'<span class="mx-leg-note">'+(currentLang==='ko'?'· 점 하나 = 1명':'· 1 dot = 1 member')+'</span>';
+  foot.appendChild(leg);wrap.appendChild(foot);
+  const st={wrap,svg,pts,by,ann,tip,cap,W,H,T,L,cw,pitch,y0,active:pts,tipP:null};
+  svg.addEventListener('click',ev=>{
+    const r=svg.getBoundingClientRect(),sx=(ev.clientX-r.left)*W/r.width,sy=(ev.clientY-r.top)*H/r.height;
+    let best=null,bd=14*14;for(const p of st.active){const d=(p.cx-sx)**2+(p.cy-sy)**2;if(d<bd){bd=d;best=p;}}
+    _mxUnitTip(st,best===st.tipP?null:best);
+  });
+  tip.addEventListener('click',ev=>{
+    ev.stopPropagation();const a=st.tipP&&st.tipP.a;if(!a)return;_closeMemberExplorer();
+    const _t=GROUPS[a.group.ko]?a:(ARTISTS.find(x=>x.name.ko===a.name.ko&&!GROUPS[x.group.ko])||a);
+    if(isMob())showT(_t,window.innerWidth/2,window.innerHeight*0.4,false,false,false);else showT(_t,window.innerWidth/2,window.innerHeight/2);
+  });
+  return st;
+}
+function _mxUnitTip(st,p){
+  st.svg.querySelectorAll('.mx-dot.is-pick').forEach(n=>n.classList.remove('is-pick'));
+  st.tipP=p;if(!p){st.tip.hidden=true;return;}
+  p.el.classList.add('is-pick');
+  st.tip.innerHTML='<b></b><span></span><em></em>';
+  st.tip.querySelector('b').textContent=_dispName(p.a);
+  st.tip.querySelector('span').textContent=_gLabelKo(p.a.group.ko);
+  st.tip.querySelector('em').textContent=currentLang==='ko'?`${p.yr}년생`:`born ${p.yr}`;
+  st.tip.hidden=false;
+  const fx=p.cx/st.W*100,fy=p.cy/st.H*100;
+  st.tip.style.left=Math.min(Math.max(fx,20),80)+'%';st.tip.style.top=fy+'%';st.tip.classList.toggle('below',fy<40);
+}
+function _mxUnitUpdate(st,matchSet,filtered){
+  const isKo=currentLang==='ko';
+  st.svg.classList.toggle('is-filtered',filtered);
+  const act=[];st.pts.forEach(p=>{const on=!filtered||matchSet.has(p.a);p.el.classList.toggle('on',on);if(on)act.push(p);});
+  st.active=act;if(st.tipP&&!act.includes(st.tipP))_mxUnitTip(st,null);
+  // 주석: 지금 밝은 점이 가장 많은 해(기둥 위에 숫자)
+  st.ann.replaceChildren();
+  const cnt={};act.forEach(p=>cnt[p.yr]=(cnt[p.yr]||0)+1);
+  const peak=Object.entries(cnt).sort((a,b)=>b[1]-a[1])[0];
+  if(peak){
+    const NS='http://www.w3.org/2000/svg',py=+peak[0];
+    const actSet=new Set(act);
+    const top=Math.min(...st.by[py].filter(p=>actSet.has(p)).map(p=>p.cy));
+    const cx=st.L+(py-st.y0+.5)*st.cw,right=cx>st.W*.7;
+    const ln=document.createElementNS(NS,'line');ln.setAttribute('x1',cx);ln.setAttribute('x2',cx);ln.setAttribute('y1',top-4);ln.setAttribute('y2',top-12);ln.setAttribute('class','mx-unit-tick');
+    const t=document.createElementNS(NS,'text');t.setAttribute('x',right?cx-3:cx+3);t.setAttribute('y',Math.max(10,top-14));t.setAttribute('text-anchor',right?'end':'start');t.setAttribute('class','mx-young-lbl');
+    t.textContent=isKo?`${py}년생 ${peak[1]}명`:`${py}: ${peak[1]}`;
+    st.ann.appendChild(ln);st.ann.appendChild(t);
   }
-  return s;
+  const f=act.filter(p=>p.gender==='f').length,m=act.filter(p=>p.gender==='m').length,x=act.length-f-m;
+  st.cap.textContent=!act.length?(isKo?'이 조건엔 생년 정보가 있는 멤버가 없어요':'No members with birth year')
+    :isKo?`${filtered?'이 조건 ':''}${act.length.toLocaleString()}명 · 여 ${f.toLocaleString()} · 남 ${m.toLocaleString()}${x?` · 솔로 ${x.toLocaleString()}`:''}${peak?` · 가장 많은 해 ${peak[0]}년생`:''}`
+    :`${act.length.toLocaleString()} members · F ${f} · M ${m}`;
 }
-function _mxChartNat(results){
-  const counts={};
-  for(const a of results){const nat=a.nat?.ko||'';if(!nat)continue;nat.split(/[·,\/]\s*/).forEach(k=>{const n=k.trim();if(n)counts[n]=(counts[n]||0)+1;});}
-  const sorted=Object.entries(counts).sort((a,b)=>b[1]-a[1]).slice(0,12);if(!sorted.length)return null;
-  const max=sorted[0][1];const W=360,barH=13,gap=2,padL=54,padR=30,H=sorted.length*(barH+gap)+4;
-  const s=_mxSvg(W,H);const NS=s._NS;
-  sorted.forEach(([nat,cnt],i)=>{
-    const y=i*(barH+gap)+2;const flag=_MX_NAT_FLAG[nat]||'';
-    const tl=document.createElementNS(NS,'text');tl.setAttribute('x',padL-4);tl.setAttribute('y',y+barH-1);tl.setAttribute('text-anchor','end');tl.setAttribute('class','mx-bar-lbl');tl.textContent=flag||nat;s.appendChild(tl);
-    const bw=Math.max(2,(cnt/max)*(W-padL-padR));
-    const r=document.createElementNS(NS,'rect');r.setAttribute('x',padL);r.setAttribute('y',y);r.setAttribute('width',bw.toFixed(1));r.setAttribute('height',barH);r.setAttribute('rx',2);r.setAttribute('class','mx-bar on');s.appendChild(r);
-    const tv=document.createElementNS(NS,'text');tv.setAttribute('x',(padL+bw+3).toFixed(1));tv.setAttribute('y',y+barH-1);tv.setAttribute('class','mx-bar-val');tv.textContent=cnt;s.appendChild(tv);
-    // 클릭: 해당 국적 텍스트 검색
-    const hit=document.createElementNS(NS,'rect');hit.setAttribute('x',0);hit.setAttribute('y',y);hit.setAttribute('width',W);hit.setAttribute('height',barH);hit.setAttribute('fill','transparent');hit.style.cursor='pointer';
-    hit.addEventListener('click',()=>{const si=document.getElementById('mx-search');if(!si)return;si.value=nat;si.dispatchEvent(new Event('input'));});s.appendChild(hit);
-  });
-  return s;
+function _mxUnitMount(wrap,results,filtered){
+  if(!_mxUnit){
+    _mxUnit=_mxUnitBuild();
+    if(!(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches)){_mxUnit.wrap.classList.add('intro');setTimeout(()=>_mxUnit&&_mxUnit.wrap.classList.remove('intro'),1800);}
+  }
+  wrap.appendChild(_mxUnit.wrap);
+  _mxUnitUpdate(_mxUnit,new Set(results),filtered);
 }
-function _mxChartAgency(results){
-  const counts={};
-  for(const a of results){const gd=GROUPS[a.group.ko];if(!gd?.co)continue;const co=gd.co.split(/\s*\/\s*/).pop().trim()||gd.co;counts[co]=(counts[co]||0)+1;}
-  const sorted=Object.entries(counts).sort((a,b)=>b[1]-a[1]).slice(0,12);if(!sorted.length)return null;
-  const max=sorted[0][1];const W=360,barH=13,gap=2,padL=90,padR=30,H=sorted.length*(barH+gap)+4;
-  const s=_mxSvg(W,H);const NS=s._NS;
-  sorted.forEach(([co,cnt],i)=>{
-    const y=i*(barH+gap)+2;
-    const tl=document.createElementNS(NS,'text');tl.setAttribute('x',padL-4);tl.setAttribute('y',y+barH-1);tl.setAttribute('text-anchor','end');tl.setAttribute('class','mx-bar-lbl');tl.textContent=co.length>10?co.slice(0,9)+'…':co;s.appendChild(tl);
-    const bw=Math.max(2,(cnt/max)*(W-padL-padR));
-    const r=document.createElementNS(NS,'rect');r.setAttribute('x',padL);r.setAttribute('y',y);r.setAttribute('width',bw.toFixed(1));r.setAttribute('height',barH);r.setAttribute('rx',2);r.setAttribute('class','mx-bar on');s.appendChild(r);
-    const tv=document.createElementNS(NS,'text');tv.setAttribute('x',(padL+bw+3).toFixed(1));tv.setAttribute('y',y+barH-1);tv.setAttribute('class','mx-bar-val');tv.textContent=cnt;s.appendChild(tv);
+// 국적·소속사 — 비율 막대(이름 · 막대 · 명수 · %). 누르면 그 조건으로 거른다(다시 누르면 해제).
+function _mxShareBars(results,kind){
+  const isKo=currentLang==='ko',counts={};let total=0;
+  const seen=new Set();
+  for(const a of results){
+    const key=a.name.ko+'|'+(a.bday||'');if(seen.has(key))continue;seen.add(key);
+    if(kind==='nat'){const nat=a.nat?.ko||'';if(!nat)continue;total++;new Set(nat.split(/[·,\/]\s*/).map(k=>k.trim()==='대한민국'?'한국':k.trim()).filter(Boolean)).forEach(n=>counts[n]=(counts[n]||0)+1);}
+    else{const co=_mxCoOf(GROUPS[a.group.ko]);if(!co)continue;total++;counts[co]=(counts[co]||0)+1;}
+  }
+  const box=document.createElement('div');box.className='mx-share';
+  const sorted=Object.entries(counts).sort((a,b)=>b[1]-a[1]).slice(0,10);
+  if(!sorted.length){const em=document.createElement('div');em.className='mx-fig-cap';em.textContent=isKo?'정보가 없어요':'No data';box.appendChild(em);return box;}
+  const max=sorted[0][1];
+  const cur=kind==='nat'?_mxParseFreeText(document.getElementById('mx-search')?.value||'').nat:_mxState.co;
+  sorted.forEach(([k,c])=>{
+    const row=document.createElement('button');row.type='button';row.className='mx-share-row'+(cur===k?' is-on':'');
+    const lb=document.createElement('span');lb.className='mx-share-lbl';lb.textContent=(kind==='nat'&&_MX_NAT_FLAG[k]?_MX_NAT_FLAG[k]+' ':'')+k;
+    const tr=document.createElement('span');tr.className='mx-share-track';const fill=document.createElement('i');fill.style.width=(c/max*100).toFixed(1)+'%';tr.appendChild(fill);
+    const v=document.createElement('span');v.className='mx-share-val';v.textContent=c.toLocaleString();
+    const pc=document.createElement('em');pc.textContent=(c/total*100).toFixed(c/total<.01?1:0)+'%';v.appendChild(pc);
+    row.append(lb,tr,v);
+    row.addEventListener('click',()=>{
+      if(kind==='nat'){const si=document.getElementById('mx-search');if(!si)return;si.value=cur===k?'':k;si.dispatchEvent(new Event('input'));}
+      else{_mxState.co=cur===k?'':k;_mxRender();}
+    });
+    box.appendChild(row);
   });
-  return s;
+  const cap=document.createElement('div');cap.className='mx-fig-cap mx-share-cap';
+  cap.textContent=isKo?`${total.toLocaleString()}명 기준 · 누르면 그 조건으로 걸러요`:`of ${total.toLocaleString()} · tap to filter`;
+  box.appendChild(cap);
+  return box;
 }
 function _mxRender(){
   const grid=document.getElementById('mx-grid');
@@ -15940,7 +16026,7 @@ function _mxRender(){
   const fYtext=p.year;
   const fN=p.nat;
   const fT=p.text;
-  const hasFilter=!!(fG||fGEN||fYslide||fYtext||fN||fT);
+  const hasFilter=!!(fG||fGEN||fYslide||fYtext||fN||fT||_mxState.co);
   const MAX=300,results=[];
   for(const a of ARTISTS){
     if(!a.name?.ko||!a.group?.ko)continue;
@@ -15950,7 +16036,8 @@ function _mxRender(){
     const yr=_mxBirthYear(a);
     if(fYtext){if(!yr||yr!==+fYtext)continue;}
     else if(fYslide&&!_mxYearOk(yr,fYlo,fYhi))continue;
-    if(fN&&(a.nat?.ko||'')!==fN)continue;
+    if(fN&&!(a.nat?.ko||'').split(/[·,\/]\s*/).map(k=>k.trim()==='대한민국'?'한국':k.trim()).includes(fN))continue;
+    if(_mxState.co&&_mxCoOf(gd)!==_mxState.co)continue;
     if(fT){
       const t=[a.name.ko,a.name.en||'',a.group.ko,gd?.en||''].join(' ').toLowerCase();
       if(!t.includes(fT))continue;
@@ -15962,7 +16049,10 @@ function _mxRender(){
   } else {
     for(let i=results.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[results[i],results[j]]=[results[j],results[i]];}
   }
-  if(countEl)countEl.textContent=results.length>MAX?`${results.length}명 중 ${MAX}명`:`${results.length}명`;
+  if(countEl){
+    countEl.textContent=results.length>MAX?`${results.length}명 중 ${MAX}명`:`${results.length}명`;
+    if(_mxState.co){const c=document.createElement('button');c.type='button';c.className='mx-co-chip';c.textContent=_mxState.co+' ✕';c.addEventListener('click',()=>{_mxState.co='';_mxRender();});countEl.appendChild(c);}
+  }
   const shown=results.slice(0,MAX);
   grid.innerHTML='';
   try{_mxChartMount(results,fYlo,fYhi);}catch(e){console.warn('[mx] 차트 실패',e);}
@@ -15973,9 +16063,8 @@ function _mxRender(){
     const col=a.color?`rgb(${a.color[0]},${a.color[1]},${a.color[2]})`:'rgba(120,120,180,0.6)';
     const btn=document.createElement('button');
     btn.className='mx-card';btn.type='button';
-    const avDiv=document.createElement('div');avDiv.className='mx-card-av';avDiv.style.background=col;
-    const letter=document.createElement('span');letter.className='mx-card-av-letter';letter.textContent=(a.name.ko||'?')[0];
-    avDiv.appendChild(letter);
+    // 사진이 없으면 이름 첫 글자 대신 멤버 색의 민무늬 구슬(우주의 행성처럼) — 사용자: "한 글자 표기보다 민무늬 행성이 낫다"(2026-10-16)
+    const avDiv=document.createElement('div');avDiv.className='mx-card-av is-orb';avDiv.style.setProperty('--orb',col);
     {const _loadMxPic=u=>{if(!u)return;const img=new Image();img.alt='';img.referrerPolicy='no-referrer';img.style.cssText='width:100%;height:100%;object-fit:cover;';img.onload=()=>avDiv.replaceChildren(img);img.src=u;};
      const sync=_instaPicCache.get(_picKey(a.name.ko,a.group.ko))||_instaPicCache.get(_picKey(a.name.ko,''));
      if(sync)_loadMxPic(sync);else _srAvUrl(a).then(_loadMxPic).catch(()=>{});}
