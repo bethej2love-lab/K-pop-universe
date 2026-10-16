@@ -163,7 +163,9 @@ function parseAlbumDetail(html) {
       const t = (row.match(/title="[^"]*재생">([^<]*)</) || [])[1] || (row.match(/title="(.*?) 곡정보"/) || [])[1] || '';
       if (!t) return;
       const no = Number((row.match(/<span class="rank\s*">(\d+)<\/span>/) || [])[1] || 0) || i + 1;
-      tracks.push({ no, title: dec(t), isTitle: /bullet_icons title/.test(row) });
+      // 곡별 부른 아티스트 aid — 경연형 컴필레이션(킹덤·퀸덤)은 곡마다 그룹이 달라 이걸로 나눈다(--contest)
+      const aids = [...new Set([...row.matchAll(/goArtistDetail\('(\d+)'\)/g)].map(m => m[1]))];
+      tracks.push({ no, title: dec(t), isTitle: /bullet_icons title/.test(row), aids });
     });
   }
   return { albumName, releaseDate: rel, genre, agency, tracks };
@@ -251,6 +253,132 @@ const QUERY = {
   '청춘스타': ['청춘스타'], 'MAKE MATE 1': ['MAKEMATE1', '메이크메이트원'], 'K팝스타 시즌2': ['K팝스타'], '극한데뷔 야생돌': ['야생돌'],
 };
 const ONLY_G = argOf('--groups') ? new Set(argOf('--groups').split(',')) : null;
+
+/* ===================== 경연형 서바이벌(킹덤·퀸덤 등) — --contest (2026-10-16) =====================
+ * 위의 데뷔형(프로듀스·아이랜드)은 "프로그램 앨범 = 그 프로그램 출신 그룹 하나"라 그룹 데뷔일로 잘랐다.
+ * 경연형은 **이미 데뷔한 그룹 여럿이 한 앨범에 곡을 나눠 싣는다**(킹덤 FINAL에 스키즈·에이티즈·더보이즈…).
+ * 그래서 곡마다 부른 아티스트(aid)를 읽어 우리 그룹(melon_artist_map)에 맞추고, 참가 그룹마다
+ * "그 그룹 곡만 담은" 프로그램 앨범으로 넣는다(program:<프로그램>, isMain:false — 기존 '프로그램 앨범 보기' 토글).
+ * 실행: node tools/melon_program_disco.mjs --contest [--shows 킹덤,퀸덤] [--apply]  → melon_contest_report.txt */
+// ⚠️ 아티스트 이름으로 찾으면 안 된다 — 멜론에 'Kingdom'이란 외국 가수가 열 명 넘게 있고, 경연 앨범은 프로그램 명의
+//    아티스트가 아니라 참가 그룹 명의로 올라 있다(2026-10-16 실측). **앨범 검색 + 제목 앞머리 정규식**으로 고른다.
+const CONTEST_SHOWS = {
+  '퀸덤': { q: ['퀸덤'], re: /^(컴백전쟁\s*:?\s*)?퀸덤(?!\s*(2|퍼즐|puzzle))/i },
+  '로드 투 킹덤': { q: ['로드 투 킹덤'], re: /^로드\s*투\s*킹덤(?!\s*:?\s*ACE)/i },
+  '킹덤: 레전더리 워': { q: ['킹덤'], re: /^킹덤\s*[<〈:：]/ },
+  '퀸덤2': { q: ['퀸덤2', '퀸덤 2'], re: /^<?퀸덤\s*2/ }, // 제목이 '<퀸덤2> FINAL 신곡대결' 꼴
+  '피크타임': { q: ['피크타임', 'PEAK TIME'], re: /^(피크타임|PEAK\s*TIME)\s*[-–]/i }, // 'PEAK TIME - 1 Round …' — 외국 클럽음악 'Peak Time …' 제외
+  '로드 투 킹덤: ACE OF ACE': { q: ['로드 투 킹덤 ACE OF ACE'], re: /^로드\s*투\s*킹덤\s*:?\s*ACE/i },
+};
+// 멜론 앨범 검색 결과 → [{albumId,title}] (같은 앨범이 썸네일·제목 두 번 나오므로 id로 한 번만)
+function parseAlbumSearch(html) {
+  const out = new Map();
+  for (const m of String(html || '').matchAll(/goAlbumDetail\('(\d+)'\);" class="ellipsis" title="([^"]*?) - 페이지 이동"/g)) if (!out.has(m[1])) out.set(m[1], { albumId: m[1], title: dec(m[2]) });
+  return [...out.values()];
+}
+if (process.argv.includes('--contest')) {
+  const onlyS = argOf('--shows') ? new Set(argOf('--shows').split(',')) : null;
+  const aid2g = new Map(Object.entries(map).filter(([, v]) => v && v.aid).map(([k, v]) => [String(v.aid), k]));
+  const lines = [], perGroup = new Map(); let addN = 0;
+  const seenAlbum = new Set(); // 시즌끼리 같은 멜론 아티스트에 묶여 있으면 한 번만
+  for (const [show, cfg] of Object.entries(CONTEST_SHOWS)) {
+    if (onlyS && !onlyS.has(show)) continue;
+    const found = new Map();
+    for (const q of cfg.q) {
+      for (let s = 1; s <= 201; s += 50) {
+        const h = await get(`https://www.melon.com/search/album/index.htm?q=${encodeURIComponent(q)}&section=album&pageSize=50&startIndex=${s}`, `asearch_${nrm(q)}_${s}`, 3000);
+        const rows = parseAlbumSearch(h);
+        const before = found.size;
+        rows.filter(r => cfg.re.test(r.title)).forEach(r => found.set(r.albumId, r));
+        if (rows.length < 20 || aborted) break;
+        if (s > 1 && found.size === before) break; // 이 쪽부턴 관련 앨범이 안 나옴
+      }
+      if (aborted) break;
+    }
+    const albums = [...found.values()];
+    lines.push(`\n■ ${show} — 앨범 ${albums.length}장`);
+    {
+      const dets = await pool(albums.filter(a => !seenAlbum.has(a.albumId)), async a => {
+        seenAlbum.add(a.albumId);
+        const html = await get(`https://www.melon.com/album/detail.htm?albumId=${a.albumId}`, `album_${a.albumId}`, 8000);
+        // 커버는 상세의 앨범 이미지에서(검색 결과엔 크기 작은 썸네일뿐)
+        return html ? { a: { ...a, cover: (html.match(/src="(https:\/\/cdnimg\.melon\.co\.kr\/cm2?\/album\/images\/[^"]+?)(?:\?|\/melon\/)/) || [])[1] || null }, d: parseAlbumDetail(html) } : null;
+      });
+      for (const r of dets) {
+        if (!r) continue;
+        const { a, d } = r;
+        const by = new Map(); // 그룹 → 곡들
+        const unk = [];
+        for (const t of d.tracks) {
+          if (/\(\s*inst\.?\s*\)|instrumental/i.test(t.title)) continue; // 반주 트랙은 곡이 아니다(ACE OF ACE 앨범마다 붙어 있음)
+          const gs = [...new Set((t.aids || []).map(x => aid2g.get(x)).filter(Boolean))];
+          if (!gs.length) { unk.push(t.title); continue; }
+          gs.forEach(g => { if (!by.has(g)) by.set(g, []); by.get(g).push(t); });
+        }
+        lines.push(`   · ${d.releaseDate} ${a.title} ${d.tracks.length}곡 → ${[...by.entries()].map(([g, ts]) => `${g} ${ts.length}`).join(', ') || '매칭 0'}${unk.length ? ` · 미매칭 ${unk.length}` : ''}`);
+        for (const [g, ts] of by) {
+          if (!perGroup.has(g)) perGroup.set(g, []);
+          perGroup.get(g).push({ show, a, d, ts });
+        }
+      }
+      if (aborted) break;
+    }
+    if (aborted) { lines.push('⚠️ 멜론 차단 — 중단'); break; }
+  }
+  // 멤버 단위 매핑('a:<이름>|<그룹>' — 멜론 맵에 멤버 솔로 aid로 들어 있는 것): 같은 프로그램에 그 그룹 곡이 있으면
+  // 그룹 대표로 나온 무대(ACE OF ACE 에이스 배틀)라 **그룹**에, 없으면 솔로로 나온 것(퀸덤 박봄)이라 **그 사람 디스코**에 넣는다.
+  const ARTISTS = JSON.parse(fs.readFileSync(P('artists.json'), 'utf8'));
+  const showsOfGroup = new Map();
+  for (const [g, items] of perGroup) if (!g.startsWith('a:')) showsOfGroup.set(g, new Set(items.map(it => it.show)));
+  const target = new Map(); // 키 → {kind,label,disco,items}
+  for (const [g, items] of perGroup) {
+    if (!g.startsWith('a:')) { const G = GROUPS[g]; if (!G) continue; const t = target.get(g) || { label: g, owner: G, items: [] }; t.items.push(...items); target.set(g, t); continue; }
+    const [name, grp] = g.slice(2).split('|');
+    for (const it of items) {
+      if (grp && GROUPS[grp] && showsOfGroup.get(grp)?.has(it.show)) {
+        const t = target.get(grp) || { label: grp, owner: GROUPS[grp], items: [] }; t.items.push(it); target.set(grp, t);
+      } else {
+        const a = ARTISTS.find(x => x.name && x.name.ko === name && ((x.group && x.group.ko === grp) || (x.groups || []).some(y => y && y.ko === grp))) || ARTISTS.find(x => x.name && x.name.ko === name);
+        if (!a) continue;
+        const k = 'a:' + name; const t = target.get(k) || { label: name + '(솔로)', owner: a, items: [], artist: true }; t.items.push(it); target.set(k, t);
+      }
+    }
+  }
+  const gl = [];
+  let touchA = false;
+  for (const t of target.values()) {
+    const disco = t.owner.discography || (t.owner.discography = []);
+    const have = new Set(disco.map(x => x.melonAlbumId).filter(Boolean));
+    // 같은 앨범이 그룹 곡·에이스 곡으로 두 번 들어오면 곡을 합친다
+    const byAlbum = new Map();
+    for (const it of t.items) { const o = byAlbum.get(it.a.albumId); if (o) { it.ts.forEach(x => { if (!o.ts.includes(x)) o.ts.push(x); }); } else byAlbum.set(it.a.albumId, { ...it, ts: [...it.ts] }); }
+    const all = [...byAlbum.values()];
+    const fresh = all.filter(it => !have.has(it.a.albumId));
+    gl.push(`${t.label}: ${all.length}장 (새로 ${fresh.length}) — ${all.map(it => `${it.show} · ${cleanTitle(it.a.title)} (${it.ts.map(x => x.title).join(' / ')})`).join(' | ')}`);
+    if (!APPLY || !fresh.length) continue;
+    for (const { show, a, d, ts } of fresh) {
+      disco.push({
+        title: cleanTitle(a.title), type: '컴필레이션', isMain: false, cover: a.cover || null,
+        releaseDate: d.releaseDate || a.date, trackCount: ts.length, titleTrack: null,
+        program: show, contest: true, tracks: ts.sort((p, q) => p.no - q.no).map(({ aids, ...x }) => x), src: 'melon', melonAlbumId: a.albumId,
+      });
+      addN++;
+    }
+    if (t.artist) touchA = true;
+    disco.sort((p, q) => String(q.releaseDate || '').localeCompare(String(p.releaseDate || '')));
+  }
+  if (APPLY && addN) {
+    for (const [file, obj] of [['groups.json', GROUPS], ...(touchA ? [['artists.json', ARTISTS]] : [])]) {
+      const raw = fs.readFileSync(P(file), 'utf8');
+      const ind = (/^[[{]\r?\n([ \t]+)/.exec(raw) || [])[1] || 1; // 원본 들여쓰기 그대로(메모리: JSON 들여쓰기 보존)
+      fs.writeFileSync(P(file), JSON.stringify(obj, null, ind) + (raw.endsWith('\n') ? '\n' : ''));
+    }
+  }
+  const out = lines.join('\n') + `\n\n[그룹별]\n` + gl.join('\n') + `\n\n${APPLY ? '추가 ' + addN : '(미리보기 — --apply로 반영)'} · 요청 ${req} 캐시 ${hit} 차단 ${blocked}${aborted ? ' · ⚠️ 차단 중단' : ''}`;
+  fs.writeFileSync(path.join(OUT_DIR, 'melon_contest_report.txt'), out);
+  console.log(out);
+  process.exit(0);
+}
 const day = 86400000, ts = d => Date.parse(String(d || '').replace(/\./g, '-'));
 const log = [], miss = [];
 let added = 0;
@@ -298,7 +426,7 @@ for (const [ko, g] of Object.entries(GROUPS)) {
       title: cleanTitle(a.title), type: typeOf(a.melonType, d.tracks.length || a.trackCount, a.title), isMain: false,
       cover: a.cover || null, releaseDate: d.releaseDate || a.date, trackCount: d.tracks.length || a.trackCount, titleTrack,
       program: ps, ...(isVariant(a.title) ? { variant: true } : {}),
-      tracks: d.tracks, src: 'melon', melonAlbumId: a.albumId,
+      tracks: d.tracks.map(({ aids, ...t }) => t), src: 'melon', melonAlbumId: a.albumId,
     });
   }
   log.push(`${ko} [${ps}] 멜론 ${cands.map(c => c.title + '/' + c.aid).join(', ')} · 기간 내 ${albums.length} · 추가 ${entries.length}` + entries.map(e => `\n     ${e.type.padEnd(6)} ${e.releaseDate} ${e.title}`).join(''));

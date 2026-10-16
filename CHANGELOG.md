@@ -63,6 +63,7 @@
 
 ## 2026-10-16 (세션 — 카드 2개+재생모드 레이아웃)
 - [완료] **CI "Data validation & tests" 일주일+ 빨간불 해소**(로컬 CI 동일 루프 전부 PASS) — 낡은 테스트 갱신(feed-dailynews·admin-dock-close·motion 블록별 검사·member-timeline 헬퍼 포함·live-tab) + 실제 수정: 라이브 제외 규칙 빠진 category='live' 조회 4곳 `_applyLiveExclude`, 멤버 탐색·링크 오버레이 `_bringToFront`, 원곡 판정 띄어쓰기 무시·동명곡은 1년+ 앞선 원곡(admin.js `_coverSelfEclipses`), 상한 없는 select 4종 ALLOW 근거 [tests/* index.html admin.js]
+- [완료] **경연형 서바이벌 앨범 수집**(사용자 요청) — `tools/melon_program_disco.mjs --contest`: 퀸덤·로드 투 킹덤·킹덤·퀸덤2·피크타임·로드 투 킹덤 ACE OF ACE, 앨범 검색+제목 앞머리 정규식(아티스트명 검색은 외국 'Kingdom' 10명에 막힘), 곡별 부른 아티스트로 참가 그룹마다 그 그룹 곡만 담아 98장(program·contest:true·isMain:false → 기존 '프로그램 앨범 보기' 토글에만). 솔로 참가(퀸덤 박봄·퀸덤2 효린)는 본인 디스코로, 반주 트랙 제외. 프로그램 추가는 CONTEST_SHOWS에 한 줄 [tools/melon_program_disco.mjs groups.json artists.json disco/]
 - [완료] 정기 루틴 실패 2건 수리(run 38841010594): ①10단계 곡 연결 — 50만 행 전량을 다 읽고 한꺼번에 쓰는 구조라 135분 제한에 잘려 0건 → 1000개씩 읽고·저장·커서(localStorage kpu_song_pass) 이어달리기, 루틴 시작 125분·회차 40분에서 스스로 접음 ②5단계 원곡 v2 7일 전량 회차 statement timeout → `_sbFetchAllWindowed`(id 5000개 구간 안에서만 조건 조회, 실측 구간당 ~0.5초) [admin.js]
 - [완료] **곡 페이지(검색노출 2단계)** — g/{그룹}/s/{곡}/ + en, 영상 4개+ 곡만(로컬 실측 285그룹·4,878곡·약 9,800장): 앨범·발매·타이틀·음방1위 횟수·작사작곡편곡·조회수 TOP30·나온 멤버·다른 곡, MusicRecording 구조화 데이터, 그룹 페이지에 "곡별 직캠·무대" 링크, 사이트맵 포함. 다음: 행사 페이지("2025 MAMA 무대") [build_group_pages.js tools/seo_extra.js]
 - [완료] SEO 페이지 재생성 매일→주 1회(월 06:30 KST) — 곡 페이지 생기면 매일 수천 파일 커밋 방지, 조회수 두 자리 반올림(roundViews) [rebuild-seo-pages.yml tools/seo_extra.js]
