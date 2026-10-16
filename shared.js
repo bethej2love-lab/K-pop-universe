@@ -416,28 +416,35 @@ function _eventTags(title,publishedAt){
 //   ① 곡명=그룹명(뉴진스 'New Jeans')은 뉴진스 영상 전부에 걸린다 → 따옴표로 감쌌을 때만
 //   ② 쇼츠 해시태그 나열(#ATTITUDE #REBELHEART)은 아무 곡이나 걸린다 → 해시태그는 딱 한 곡만 나올 때만
 //   ③ 메들리('LOVE DIVE + 해야')는 곡이 여럿 → 키를 여러 개(최대 5)
-const _SONG_TAIL_RE=/\s*[\(\[][^)\]]*(?:feat|with|remix|ver\b|version|inst|mix\b|edit\b|prod\b|english|japanese|korean|acoustic|live\b|sped|slowed|demo|op\.)[^)\]]*[\)\]]/gi;
+const _SONG_TAIL_RE=/\s*[\(\[][^)\]]*(?:feat|with|remix|ver\b|version|inst|mix\b|edit\b|prod\b|english|japanese|korean|acoustic|live\b|sped|slowed|demo|op\.|solo\b|unit\b)[^)\]]*[\)\]]/gi; // '(JUN Solo)'·'(HOSHI Solo)' 같은 멤버 솔로 표기도 꼬리
 function _songNorm(s){return String(s||'').toLowerCase().normalize('NFKC').replace(/[^a-z0-9가-힣ぁ-んァ-ヶ一-龥]/g,'');}
+// 꼬리 떼기 — 괄호 꼬리 + 일본반의 대시 표기('Chk Chk Boom -Japanese ver.-')
+function _songStripTail(title){return String(title||'').replace(_SONG_TAIL_RE,'').replace(/\s*-[^-]*\bver(?:sion)?\b\.?[^-]*-\s*$/i,'');}
+// 기본형 = 버전·피처링 꼬리를 뗀 뒤 **첫 괄호 앞까지**. 멜론은 'ULTRA (창빈) ULTRA (Changbin)'·'그렇게, 천천히, 우리 (승민) As we are (Seungmin)'처럼
+// 한글판·영어판을 한 제목에 붙여 두는데, 끝 괄호만 떼면 'ultra창빈ultra'가 됐다(2026-10-16 표본). 괄호 뒤 다른 표기는 별칭(_songListFromDisco).
 function _songBase(title){
-  let t=String(title||'').replace(_SONG_TAIL_RE,'');
-  const stripped=t.replace(/\s*[\(\[][^)\]]*[\)\]]\s*$/,''); // 남은 끝 괄호(한글 병기 등)도 떼되, 다 지워지면 원래 것
-  return _songNorm(stripped)||_songNorm(t);
+  const t=_songStripTail(title);
+  return _songNorm(t.split(/\s*[\(\[]/)[0])||_songNorm(t);
 }
 // 따옴표 없이 제목에 들어 있는 것만으로는 안 믿는 흔한 낱말 곡명(4글자 이상이어도)
-const _SONG_COMMON=new Set(['love','baby','girls','girl','boys','dream','dreams','star','stars','magic','fire','light','heart','money','party','world','summer','winter','spring','happy','sorry','hello','smile','queen','king','game','time','life','home','night','dance','music','angel','crown','rain','snow','blue','gold','free','alone','again','forever','beautiful','intro','outro','interlude','shorts','live','stage','special','teaser','focus','close','with','only','more','what','this','that','yours','mine','good','bad','real','next','last','first','young','wild','sweet','pink','black','white','highlight','behind','vlog','episode']);
+const _SONG_COMMON=new Set(['love','baby','girls','girl','boys','dream','dreams','star','stars','magic','fire','light','heart','money','party','world','summer','winter','spring','happy','sorry','hello','smile','queen','king','game','time','life','home','night','dance','music','angel','crown','rain','snow','blue','gold','free','alone','again','forever','beautiful','intro','outro','interlude','shorts','live','stage','special','teaser','focus','close','with','only','more','what','this','that','yours','mine','good','bad','real','next','last','first','young','wild','sweet','pink','black','white','highlight','behind','vlog','episode','well','habit','yawn']);
 // songs: [{b:기본형}] (한 주인의 곡 목록, 중복 기본형 제거된 것) · blockNames: 주인 이름 정규형(그룹 ko/en 등)
 // 반환: 기본형 배열(최대 5) — 키로 쓸 땐 주인 키를 앞에 붙인다
 function _songLinkBases(title,songs,blockNames){
   const t=String(title||'');if(!t||!songs||!songs.length)return [];
   const bset=new Map(songs.map(s=>[s.b,s]));
+  const amap=new Map();songs.forEach(s=>(s.alias||[]).forEach(al=>{if(!bset.has(al.n)&&!amap.has(al.n))amap.set(al.n,s.b);})); // 별칭 → 기본형
+  const look=n=>bset.has(n)?n:(amap.get(n)||null);
   const out=[];const add=b=>{if(b&&!out.includes(b)&&out.length<5)out.push(b);};
   const blocked=new Set((blockNames||[]).map(_songNorm).filter(Boolean));
   // ① 따옴표·꺾쇠 안 = 곡명(직캠·음방 제목 관례). 이름 막기(blocked)도 여기선 통과 — 'New Jeans'라고 감싸면 곡이다
   const Q=/['‘’"“”「」『』<>＜＞《》〈〉]([^'‘’"“”「」『』<>＜＞《》〈〉\n]{1,60})['‘’"“”「」『』<>＜＞《》〈〉]/g;
   for(const m of t.matchAll(Q)){
     // 메들리를 한 따옴표에 넣은 것('LOVE DIVE + 해야')도 나눠 본다
-    for(const part of m[1].split(/\s*(?:\+|&|,|\/|×|x\s)\s*/)){const b=_songBase(part);if(bset.has(b))add(b);}
-    const whole=_songBase(m[1]);if(bset.has(whole))add(whole);
+    for(const part of m[1].split(/\s*(?:\+|&|,|\/|×|x\s)\s*/)){add(look(_songBase(part)));}
+    add(look(_songBase(m[1])));
+    // 따옴표 안이 '아낀다 (Adore U)'처럼 두 표기면 괄호 안도 본다
+    const inner=/[\(\[]([^)\]]+)[\)\]]/.exec(m[1]);if(inner)add(look(_songNorm(inner[1])));
   }
   // ② 해시태그를 뺀 본문에서 곡명 포함 — 4글자 이상·흔한 낱말 아님·주인 이름 아님. 긴 곡명 안에 든 짧은 곡명은 버린다
   const noTags=t.replace(/#[^\s#]+/g,' ');
@@ -445,12 +452,13 @@ function _songLinkBases(title,songs,blockNames){
   const tl=noTags.toLowerCase().normalize('NFKC'); // 단어 경계 검사용(공백·기호 살아 있는 소문자)
   const hits=[];
   for(const s of songs){
-    if(s.b.length<4||_SONG_COMMON.has(s.b)||blocked.has(s.b))continue;
+    // 길이 문턱: 한글만으로 된 곡명은 3글자부터('아낀다'·'손오공'), 나머지는 4글자부터(영어 'ON'·'HOT' 같은 짧은 낱말 오탐)
+    if((/^[가-힣]+$/.test(s.b)?s.b.length<3:s.b.length<4)||_SONG_COMMON.has(s.b)||blocked.has(s.b))continue;
     if(!body.includes(s.b))continue;
     // 영어 곡명은 단어 단위로만 — 'ICON'이 '[Dicon]' 안에 걸리던 오탐(2026-10-16 표본). 원제목 낱말을 공백·기호 무관하게 이어 붙인 정규식
     if(/^[a-z0-9]+$/.test(s.b)&&s.title){
       if(s.re===undefined){
-        const core=String(s.title).replace(_SONG_TAIL_RE,'').replace(/\s*[\(\[][^)\]]*[\)\]]\s*$/,'')||s.title;
+        const core=_songStripTail(s.title).replace(/\s*[\(\[][^)\]]*[\)\]]\s*$/,'')||s.title;
         const w=String(core).toLowerCase().normalize('NFKC').match(/[a-z0-9]+/g);
         s.re=w?new RegExp('(^|[^a-z0-9])'+w.join('[^a-z0-9]*')+'(?![a-z0-9])'):null;
       }
@@ -458,22 +466,52 @@ function _songLinkBases(title,songs,blockNames){
     }
     hits.push(s.b);
   }
+  // ②-별칭: 디스코의 '쌍둥이자리 (Gemini)'처럼 괄호 안 다른 표기(s.alias) — 한글 3글자↑·영어 4글자↑(단어 경계)
+  for(const s of songs){
+    if(!s.alias)continue;
+    for(const al of s.alias){
+      if(blocked.has(al.n)||_SONG_COMMON.has(al.n)||!body.includes(al.n))continue;
+      const hangul=/^[가-힣]+$/.test(al.n);
+      if(hangul?al.n.length<3:al.n.length<5)continue; // 영어 별칭은 5글자부터 — '별빛 ⇐ Stay'·'엉망 ⇐ Mess' 같은 흔한 낱말은 따옴표로만
+      if(/^[a-z0-9]+$/.test(al.n)){const w=al.raw.toLowerCase().normalize('NFKC').match(/[a-z0-9]+/g);if(w&&!new RegExp('(^|[^a-z0-9])'+w.join('[^a-z0-9]*')+'(?![a-z0-9])').test(tl))continue;}
+      hits.push(s.b);break;
+    }
+  }
   hits.sort((a,b)=>b.length-a.length).forEach(b=>{if(!out.some(o=>o.includes(b)))add(b);});
   // ③ 아무것도 못 찾았을 때만 해시태그 — 곡과 정확히 같은 태그가 딱 한 곡일 때만(나열형 쇼츠 오탐 방지)
   if(!out.length){
-    const tags=[...t.matchAll(/#([^\s#]+)/g)].map(m=>_songNorm(m[1])).filter(b=>bset.has(b)&&!blocked.has(b));
+    const tags=[...t.matchAll(/#([^\s#]+)/g)].map(m=>{const n=_songNorm(m[1]);return bset.has(n)?n:(amap.get(n)||null);}).filter(b=>b&&!blocked.has(b));
     const uniq=[...new Set(tags)];
     if(uniq.length===1)add(uniq[0]);
   }
   return out;
 }
-// 디스코(앨범 배열) → 곡 목록(기본형 중복 제거). 반주(Inst./MR)는 뺀다
-function _songListFromDisco(albums){
+// 디스코(앨범 배열) → 곡 목록(기본형 중복 제거). 반주(Inst./MR)는 뺀다.
+// persons(선택): 사람 이름 정규형 Set — 괄호 속 부른 멤버('(창빈)'·'(Seungmin)')를 별칭으로 받지 않게
+function _songListFromDisco(albums,persons){
   const seen=new Map();
   (albums||[]).forEach(a=>(a&&a.tracks||[]).forEach(tr=>{
     if(!tr||!tr.title||/\((?:inst\.?|instrumental|mr)\)\s*$/i.test(tr.title))return;
-    const b=_songBase(tr.title);if(b.length<2||seen.has(b))return;
-    seen.set(b,{b,title:tr.title});
+    // 한 글자 곡('특 (S-Class)'·'락 (樂) (LALALALA)')도 남긴다 — 본문 포함으론 절대 안 잡히고(길이 문턱) 따옴표·별칭으로만 연결된다
+    const b=_songBase(tr.title);if(!b)return;
+    let s=seen.get(b);if(!s){s={b,title:tr.title};seen.set(b,s);}
+    // 별칭 후보: 괄호 안('쌍둥이자리 (Gemini)' → gemini) + 첫 괄호 뒤에 붙은 다른 표기('… (승민) As we are (Seungmin)' → asweare).
+    // ⚠️ 괄호엔 별칭 말고도 부른 멤버('CHESS (DAHYUN)'·'(창빈)')·판 표기('(CD ONLY)')·OST 설명이 들어 있다 — 그걸 별칭으로 받으면 제목에
+    //    '다현'만 있어도 CHESS가 붙었다(2026-10-16 표본). 진짜 별칭 두 경우만: ①표기 체계가 다름(한글↔영어: '선인장 (CACTUS)')
+    //    ②약자 풀이('F.I.L.A (Fall In Love Again)'). 사람 이름(persons)·여러 명(쉼표·&)·판/버전 낱말은 무조건 버린다.
+    const core=_songStripTail(tr.title);
+    const cands=[...core.matchAll(/[\(\[]([^)\]]+)[\)\]]/g)].map(x=>x[1]);
+    const after=core.replace(/^[^\(\[]*/,'').replace(/[\(\[][^)\]]*[\)\]]/g,' ').trim();
+    if(after)cands.push(after);
+    for(const raw of cands){
+      if(/[,&]/.test(raw)||/cd\s*only|digital|bonus|hidden\s*track|original|extended|\bost\b|\beng\b|\bkor\b|\bjpn\b|house|moombahton|radio|clean|explicit|piano|orchestra|chinese|from\b|\bpart\b|\bpt\.|intro|outro/i.test(raw))continue;
+      const n=_songNorm(raw);
+      if(n.length<2||n===b||(persons&&persons.has(n)))continue;
+      const hb=/[가-힣]/.test(b),hn=/[가-힣]/.test(n);
+      const initials=(raw.match(/[A-Za-z]+/g)||[]).map(w=>w[0].toLowerCase()).join('');
+      const acronym=/^[a-z]+$/.test(b)&&b.length>=2&&initials===b;
+      if(hb!==hn||acronym){s.alias=s.alias||[];if(!s.alias.some(x=>x.n===n))s.alias.push({n,raw});}
+    }
   }));
   return [...seen.values()];
 }

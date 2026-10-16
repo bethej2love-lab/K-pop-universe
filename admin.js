@@ -4773,7 +4773,7 @@ async function _ytSweepSongLinks(){
     const probe=await sb.from(_YT_TABLE).select('song_keys').limit(1);
     if(probe.error){_ytSetProg('[곡 연결] song_keys 칸이 아직 없어요 — sql/song_keys_2026-10-16.sql 실행 후 동작');return;}
     // 규칙(shared.js _songLinkBases·_SONG_COMMON)이나 곡 목록 해석을 바꾸면 이 문자열도 바꿀 것 → 다음 한 번 전량
-    const _SONG_RULES_VER='2026-10-16-v1';
+    const _SONG_RULES_VER='2026-10-16-v2'; // v2: 유닛 곡·별칭(한영 표기·약자)·한글 3글자·기본형=첫 괄호 앞
     let since=_admRoutineScopeSince('song');
     try{if(localStorage.getItem('kpu_song_rules_ver')!==_SONG_RULES_VER){since=null;localStorage.setItem('kpu_song_rules_ver',_SONG_RULES_VER);}}catch(e){}
     _ytSetProg('[곡 연결] 조회 중…'+(since?' (증분)':' (전량)'));
@@ -4784,7 +4784,10 @@ async function _ytSweepSongLinks(){
     });
     if(error){_ytSetProg('[곡 연결] 조회 실패: '+error.message);throw new Error(error.message);}
     if(!rows?.length){_ytSetProg('[곡 연결] 검사할 영상이 없어요');return;}
-    // 주인별 곡 목록 — 그룹이면 그룹 디스코 파일(그룹 앨범 + 멤버 솔로), 솔로 키면 그 사람 디스코
+    // 주인별 곡 목록 — 그룹이면 그룹 디스코 파일(그룹 앨범 + 멤버 솔로 + 유닛 앨범), 솔로 키면 그 사람 디스코
+    // 사람 이름 목록은 괄호 속 부른 멤버('(창빈)')를 곡 별칭으로 오인하지 않게 넘긴다(_songListFromDisco)
+    const persons=new Set();
+    ARTISTS.forEach(a=>[a.name?.ko,a.name?.en].forEach(x=>{const n=_songNorm(x);if(n.length>=2)persons.add(n);}));
     const songCache=new Map();
     const songsFor=async gko=>{
       if(songCache.has(gko))return songCache.get(gko);
@@ -4793,14 +4796,15 @@ async function _ytSweepSongLinks(){
         if(GROUPS[gko]){
           await _ensureGroupDisco(gko);
           albums=[...(GROUPS[gko].discography||[])];
-          ARTISTS.forEach(a=>{if(a.group&&a.group.ko===gko&&Array.isArray(a.discography))albums.push(...a.discography);});
+          // 유닛 앨범(a.unitDiscography)까지 — 세븐틴 채널의 부석순·에스쿱스X민규 무대가 곡 목록에 없어 연결이 안 되던 것
+          ARTISTS.forEach(a=>{if(a.group&&a.group.ko===gko){if(Array.isArray(a.discography))albums.push(...a.discography);if(Array.isArray(a.unitDiscography))a.unitDiscography.forEach(u=>albums.push(...(u&&u.albums||[])));}}); // u = [{unitName, albums}]
           if(GROUPS[gko].en)names.push(GROUPS[gko].en);
         }else{
           const a=ARTISTS.find(x=>_ytGroupKoFor(x)===gko);
           if(a){await _ensureMemberDisco(a);albums=a.discography||[];if(a.name?.en)names.push(a.name.en);if(a.name?.ko)names.push(a.name.ko);}
         }
       }catch(e){}
-      const v={songs:_songListFromDisco(albums),names};
+      const v={songs:_songListFromDisco(albums,persons),names};
       songCache.set(gko,v);return v;
     };
     const updates=[];let linked=0;
