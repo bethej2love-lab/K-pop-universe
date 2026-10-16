@@ -63,6 +63,7 @@
 
 ## 2026-10-16 (세션 — 카드 2개+재생모드 레이아웃)
 - [완료] **CI "Data validation & tests" 일주일+ 빨간불 해소**(로컬 CI 동일 루프 전부 PASS) — 낡은 테스트 갱신(feed-dailynews·admin-dock-close·motion 블록별 검사·member-timeline 헬퍼 포함·live-tab) + 실제 수정: 라이브 제외 규칙 빠진 category='live' 조회 4곳 `_applyLiveExclude`, 멤버 탐색·링크 오버레이 `_bringToFront`, 원곡 판정 띄어쓰기 무시·동명곡은 1년+ 앞선 원곡(admin.js `_coverSelfEclipses`), 상한 없는 select 4종 ALLOW 근거 [tests/* index.html admin.js]
+- [완료] 정기 루틴 실패 2건 수리(run 38841010594): ①10단계 곡 연결 — 50만 행 전량을 다 읽고 한꺼번에 쓰는 구조라 135분 제한에 잘려 0건 → 1000개씩 읽고·저장·커서(localStorage kpu_song_pass) 이어달리기, 루틴 시작 125분·회차 40분에서 스스로 접음 ②5단계 원곡 v2 7일 전량 회차 statement timeout → `_sbFetchAllWindowed`(id 5000개 구간 안에서만 조건 조회, 실측 구간당 ~0.5초) [admin.js]
 - [완료] **곡 페이지(검색노출 2단계)** — g/{그룹}/s/{곡}/ + en, 영상 4개+ 곡만(로컬 실측 285그룹·4,878곡·약 9,800장): 앨범·발매·타이틀·음방1위 횟수·작사작곡편곡·조회수 TOP30·나온 멤버·다른 곡, MusicRecording 구조화 데이터, 그룹 페이지에 "곡별 직캠·무대" 링크, 사이트맵 포함. 다음: 행사 페이지("2025 MAMA 무대") [build_group_pages.js tools/seo_extra.js]
 - [완료] SEO 페이지 재생성 매일→주 1회(월 06:30 KST) — 곡 페이지 생기면 매일 수천 파일 커밋 방지, 조회수 두 자리 반올림(roundViews) [rebuild-seo-pages.yml tools/seo_extra.js]
 - [완료] 웹: 카드 2개 열린 채 영상 재생 시 멤버 카드 접기 탭(›)이 라이트박스에 덮여 멤버 카드만 닫을 수 없던 것 — 탭을 원래 자리 그대로 라이트박스 위 층으로(_bringToFront). 10-15의 right:858px 이동은 카드 밑에 깔려 효과 없어 되돌림 [index.html][kpop_universe.css]

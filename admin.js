@@ -1330,6 +1330,30 @@ async function _sbFetchAll(buildQuery,pageSize=1000,onPage){
   }
   return{data:rows,error:null};
 }
+// 드문 조건(제목 ILIKE 여러 개 OR 등) 전량 조회용 — 위 키셋은 "조건 맞는 1000개"를 모을 때까지 PK를 따라 훑어서,
+// 조건이 드물면 한 요청이 수만 행을 스캔하다 statement_timeout에 걸린다(2026-10-16 원곡 v2 7일 전량 회차 실패,
+// 메모리 "ORDER BY+LIMIT이 후보가 적을 때만 타임아웃"과 같은 함정). 그래서 먼저 조건 없이 id만 window개
+// 넘겨 구간 끝을 잡고(PK만 읽어 가벼움), 그 구간 안에서만 조건 조회한다 — 한 요청이 훑는 행이 window개로 묶인다.
+async function _sbFetchAllWindowed(buildQuery,window=5000,onWindow){
+  const rows=[];let cursor=null;
+  while(true){
+    let iq=sb.from(_YT_TABLE).select('id').order('id').range(window-1,window-1);
+    if(cursor!==null)iq=iq.gt('id',cursor);
+    const{data:edge,error:e1}=await iq;
+    if(e1)return{data:null,error:e1};
+    const end=edge&&edge[0]?edge[0].id:null; // null = 남은 행이 window개 미만 → 끝까지
+    const c0=cursor;
+    // 쿼리 빌더는 체이닝이 원본을 바꾸므로 페이지마다 새로 만든다
+    const mk=()=>{let q=buildQuery();if(c0!==null)q=q.gt('id',c0);if(end!==null)q=q.lte('id',end);return q;};
+    const r=await _sbFetchAll(mk,1000); // 구간 안 결과가 1000개를 넘을 때만 두 번째 요청
+    if(r.error)return{data:null,error:r.error};
+    rows.push(...(r.data||[]));
+    if(onWindow)try{onWindow(rows.length,end);}catch(e){}
+    if(end===null)break;
+    cursor=end;
+  }
+  return{data:rows,error:null};
+}
 
 // 밴 인물(성범죄 등) 언급 영상은 동기화 시점부터 걸러지지만(sync-time skip), 그 밴 목록이 생기기 전에
 // 이미 들어가 있던 기존 행은 그대로 남아있을 수 있음 — 카드 열 때마다 매번 title ILIKE로 재검사하면
@@ -2217,8 +2241,10 @@ async function _ytSweepCoverV2(){
     // 전량이면 3만 행을 매번 다시 훑는다. 7일마다 한 번은 루틴에서도 전량(_admRoutineScopeSince).
     const _covSince=_admRoutineScopeSince('cover');
     const _q=()=>{let q=sb.from(_YT_TABLE).select(_sel()).or(orExpr);if(_covSince)q=q.gt('created_at',_covSince);return q.order('id');};
-    let{data:rows,error}=await _sbFetchAll(_q);
-    if(error&&_coverManualColMissing(error))({data:rows,error}=await _sbFetchAll(_q));
+    // 전량(7일마다)은 구간별로 — 제목 ILIKE 8개 OR가 드물어 키셋 한 요청이 수만 행을 훑다 타임아웃(2026-10-16 루틴 ❌)
+    const _fetch=()=>_covSince?_sbFetchAll(_q):_sbFetchAllWindowed(_q,5000,(n)=>_ytSetProg(`[원곡 v2] 대상 조회 중… ${n}개`));
+    let{data:rows,error}=await _fetch();
+    if(error&&_coverManualColMissing(error))({data:rows,error}=await _fetch());
     if(error){_ytSetProg('조회 실패: '+error.message);return;}
     if(!rows?.length){_ytSetProg('대상 행이 없어요'+(_covSince?' (증분 — 신규 유입 없음)':''));return;}
     const EXCLUDE=new Set(['무관','보류','hidden','외부인']);
@@ -4790,16 +4816,29 @@ async function _ytSweepSongLinks(){
     if(probe.error){_ytSetProg('[곡 연결] song_keys 칸이 아직 없어요 — sql/song_keys_2026-10-16.sql 실행 후 동작');return;}
     // 규칙(shared.js _songLinkBases·_SONG_COMMON)이나 곡 목록 해석을 바꾸면 이 문자열도 바꿀 것 → 다음 한 번 전량
     const _SONG_RULES_VER='2026-10-16-v2'; // v2: 유닛 곡·별칭(한영 표기·약자)·한글 3글자·기본형=첫 괄호 앞
-    let since=_admRoutineScopeSince('song');
-    try{if(localStorage.getItem('kpu_song_rules_ver')!==_SONG_RULES_VER){since=null;localStorage.setItem('kpu_song_rules_ver',_SONG_RULES_VER);}}catch(e){}
-    _ytSetProg('[곡 연결] 조회 중…'+(since?' (증분)':' (전량)'));
-    const{data:rows,error}=await _sbFetchAll(()=>{
-      let q=sb.from(_YT_TABLE).select('id,title,group_ko,song_keys');
-      if(since)q=q.gt('created_at',since);
-      return q.order('id');
-    });
-    if(error){_ytSetProg('[곡 연결] 조회 실패: '+error.message);throw new Error(error.message);}
-    if(!rows?.length){_ytSetProg('[곡 연결] 검사할 영상이 없어요');return;}
+    // ⚠️ 전량은 50만 행이라 한 회차에 안 끝난다(2026-10-16 첫 실행: 루틴 끝자락에 시작 → 135분 제한에 잘려 0건 저장 —
+    //    다 읽은 뒤 한꺼번에 쓰는 구조라 잘리면 아무것도 안 남았다). 그래서 전량은 **1000개씩 읽고→계산→저장하고 커서를 남기는**
+    //    이어달리기로 돈다. 커서는 localStorage(러너 프로필은 매 회차 캐시로 이어짐 — daily-routine.yml always() 저장).
+    //    전량 한 바퀴가 끝나면 평소엔 증분(새 영상만), 7일마다·규칙 바뀌면 새 바퀴.
+    const PASS_KEY='kpu_song_pass';
+    let pass=null;try{pass=JSON.parse(localStorage.getItem(PASS_KEY)||'null');}catch(e){}
+    if(!pass||pass.ver!==_SONG_RULES_VER)pass={ver:_SONG_RULES_VER,cursor:'',done:false};
+    const savePass=()=>{try{localStorage.setItem(PASS_KEY,JSON.stringify(pass));}catch(e){}};
+    let since=null;
+    if(pass.done){
+      since=_admRoutineScopeSince('song');
+      if(!since){pass={ver:_SONG_RULES_VER,cursor:'',done:false};} // 7일 주기·사람이 버튼으로 부름 → 새 바퀴
+    }
+    // 루틴 안에선 러너 제한(135분) 전에 접는다 — 루틴 시작 후 125분까지, 한 회차 최대 40분
+    const deadline=_admRoutineRunning?Math.min((_admRoutineT0||Date.now())+125*60e3,Date.now()+40*60e3):Infinity;
+    _ytSetProg('[곡 연결] 조회 중…'+(since?' (증분)':pass.cursor?' (전량 이어서)':' (전량)'));
+    let rows=[];
+    if(since){
+      const r=await _sbFetchAll(()=>sb.from(_YT_TABLE).select('id,title,group_ko,song_keys').gt('created_at',since).order('id'));
+      if(r.error){_ytSetProg('[곡 연결] 조회 실패: '+r.error.message);throw new Error(r.error.message);}
+      rows=r.data||[];
+      if(!rows.length){_ytSetProg('[곡 연결] 검사할 영상이 없어요');return;}
+    }
     // 주인별 곡 목록 — 그룹이면 그룹 디스코 파일(그룹 앨범 + 멤버 솔로 + 유닛 앨범), 솔로 키면 그 사람 디스코
     // 사람 이름 목록은 괄호 속 부른 멤버('(창빈)')를 곡 별칭으로 오인하지 않게 넘긴다(_songListFromDisco)
     const persons=new Set();
@@ -4823,22 +4862,45 @@ async function _ytSweepSongLinks(){
       const v={songs:_songListFromDisco(albums,persons),names};
       songCache.set(gko,v);return v;
     };
-    const updates=[];let linked=0;
-    for(let i=0;i<rows.length;i++){
-      const v=rows[i];
-      if(!v.group_ko)continue;
-      const{songs,names}=await songsFor(v.group_ko);
-      const keys=songs.length?_songLinkBases(v.title||'',songs,names).map(b=>v.group_ko+':'+b):[];
-      if(keys.length)linked++;
-      const cur=Array.isArray(v.song_keys)?v.song_keys:[];
-      if(cur.join('|')!==keys.join('|'))updates.push({id:v.id,patch:{song_keys:keys.length?keys:null}});
-      if(i%5000===0)_ytSetProg(`[곡 연결] 계산 중… ${i}/${rows.length}`);
+    let linked=0,seen=0,changed=0,failed=0;
+    // 한 묶음 계산 + 저장
+    const processRows=async(list)=>{
+      const updates=[];
+      for(const v of list){
+        seen++;
+        if(!v.group_ko)continue;
+        const{songs,names}=await songsFor(v.group_ko);
+        const keys=songs.length?_songLinkBases(v.title||'',songs,names).map(b=>v.group_ko+':'+b):[];
+        if(keys.length)linked++;
+        const cur=Array.isArray(v.song_keys)?v.song_keys:[];
+        if(cur.join('|')!==keys.join('|'))updates.push({id:v.id,patch:{song_keys:keys.length?keys:null}});
+      }
+      if(!updates.length)return;
+      const _ub=await _sbUpdateBatch(updates,u=>sb.from(_YT_TABLE).update(u.patch).eq('id',u.id),{conc:20,retries:2});
+      changed+=updates.length-(_ub.failed||0);
+      if(_ub.failed){failed+=_ub.failed;console.error('[곡 연결] 재시도 후에도 실패:',_ub.failed,'건 —',_ub.firstErr);}
+    };
+    if(since){
+      for(let i=0;i<rows.length;i+=1000){await processRows(rows.slice(i,i+1000));_ytSetProg(`[곡 연결] ${Math.min(i+1000,rows.length)}/${rows.length}개 처리 중…`);}
+      _ytSetProg(`[곡 연결] 완료(증분) — ${rows.length}개 중 ${linked}개 연결, ${changed}개 갱신`+(failed?` (일시 실패 ${failed}개)`:''));
+      return;
     }
-    if(!updates.length){_ytSetProg(`[곡 연결] 완료 — ${rows.length}개 중 연결 ${linked}개, 바뀐 것 없음`);return;}
-    const _ub=await _sbUpdateBatch(updates,u=>sb.from(_YT_TABLE).update(u.patch).eq('id',u.id),
-      {conc:20,retries:2,onProgress:(done,total)=>_ytSetProg(`[곡 연결] ${done}/${total}개 저장 중…`)});
-    if(_ub.failed)console.error('[곡 연결] 재시도 후에도 실패:',_ub.failed,'건 —',_ub.firstErr);
-    _ytSetProg(`[곡 연결] 완료 — ${rows.length}개 중 ${linked}개 연결, ${updates.length}개 갱신`+(_ub.failed?` (실패 ${_ub.failed})`:''));
+    // 전량 이어달리기
+    while(Date.now()<deadline&&!_admRoutineStop){
+      let q=sb.from(_YT_TABLE).select('id,title,group_ko,song_keys').order('id').limit(1000);
+      if(pass.cursor)q=q.gt('id',pass.cursor);
+      const{data,error}=await q;
+      if(error){savePass();_ytSetProg('[곡 연결] 조회 실패: '+error.message);throw new Error(error.message);}
+      if(!data?.length){pass.done=true;break;}
+      await processRows(data);
+      pass.cursor=data[data.length-1].id;pass.n=(pass.n||0)+data.length;savePass();
+      _ytSetProg(`[곡 연결] 전량 ${pass.n.toLocaleString()}개째 (이번 회차 ${seen.toLocaleString()}개 · 연결 ${linked.toLocaleString()})`);
+      if(data.length<1000){pass.done=true;break;}
+    }
+    savePass();
+    _ytSetProg(pass.done
+      ? `[곡 연결] 완료 — 전량 ${(pass.n||seen).toLocaleString()}개 한 바퀴 끝 · 이번 회차 연결 ${linked.toLocaleString()}개, ${changed.toLocaleString()}개 갱신`+(failed?` (일시 실패 ${failed}개)`:'')
+      : `[곡 연결] 이번 회차 ${seen.toLocaleString()}개 처리(${changed.toLocaleString()}개 갱신) — 시간 제한으로 여기서 멈춤, 다음 회차가 이어서`+(failed?` (일시 실패 ${failed}개)`:''));
   }catch(e){
     _ytSetProg('[곡 연결] 오류: '+e.message);
     throw e;
@@ -11710,6 +11772,7 @@ document.getElementById('sp-fb-btn')?.addEventListener('click',function(){
 // ⚠️ 동기화(1번)는 YouTube API 쿼터에 걸려 수십 분씩 걸리거나 중간에 끊긴다 — 그래서 "동기화 빼고
 //    실행"을 따로 뒀다. 쿼터를 아껴야 하거나 시간이 없을 때 2~4번만 돌리는 용도.
 let _admRoutineRunning=false,_admRoutineStop=false,_admCleanupRunning=false;
+let _admRoutineT0=0; // 루틴 시작 시각 — 긴 스윕이 러너 제한(135분) 전에 스스로 접는 기준(_ytSweepSongLinks)
 
 // ── 데이터 정합성 청소 루틴 (2026-09-27 신설) ─────────────────────────────────
 // 기존 _admRunRoutine(동기화·태깅 파이프라인)과 **완전히 별개**로 도는 청소 전용 함수.
@@ -11777,7 +11840,7 @@ async function _admRunRoutine(withSync,opts){
   const _syncOnly=!!(opts&&opts.only==='sync');
   if(_admRoutineRunning)return;
   if(_admBusy){alert('다른 작업이 실행 중이에요: '+_admBusyLabel+'\n끝난 뒤에 다시 눌러주세요.');return;}
-  _admRoutineRunning=true;_admRoutineStop=false;
+  _admRoutineRunning=true;_admRoutineStop=false;_admRoutineT0=Date.now();
   const runBtn=document.getElementById('adm-run-routine');
   const noSyncBtn=document.getElementById('adm-run-routine-nosync');
   const stopBtn=document.getElementById('adm-stop-routine');
