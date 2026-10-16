@@ -21941,11 +21941,14 @@ async function _buildFeedFavAlbums(){
 // 전부** 보여준다("콘텐츠는 넓게, 노출은 좁게" 설계 — 작은 그룹 팬에게 10만·100만도 의미 있는
 // 소식이라는 게 이 선반을 만든 이유 그 자체). seeded=true(최초 시딩분)는 "오늘 일어난 일"이 아니므로
 // 반드시 제외.
-async function _buildFeedDailyNews(){
-  const section=document.getElementById('feed-dailynews-section');
-  const list=document.getElementById('feed-dailynews');
-  if(!section||!list||!sb)return;
-  list.innerHTML='';_syncDailyNewsSection();
+// 이번 주 소식 데이터(음방 1위·MV/티저·조회수 돌파) — 발견 탭 This Week's K-pop과 For You '내 최애 소식'이 같이 쓴다(2026-10-16).
+// 두 탭이 거의 동시에 빌드되므로 3분 동안은 같은 조회 결과(Promise)를 나눠 쓴다. 항목엔 gko/mko(누구 소식인지)가 붙는다.
+let _weekNewsP=null,_weekNewsAt=0;
+function _collectWeekNews(){
+  if(_weekNewsP&&Date.now()-_weekNewsAt<180000)return _weekNewsP;
+  _weekNewsAt=Date.now();
+  _weekNewsP=(async()=>{
+  if(!sb)return [];
   try{
     const today=new Date().toISOString().slice(0,10);
     const tomorrow=new Date(Date.now()+86400000).toISOString().slice(0,10);
@@ -22017,7 +22020,7 @@ async function _buildFeedDailyNews(){
       const nav=relVid
         ?()=>_feedNav(()=>openLightbox(relVid.is_short?`https://youtube.com/shorts/${relVid.id}`:`https://www.youtube.com/watch?v=${relVid.id}`,!!relVid.is_short,null,0,{groupKo:w.group_ko},false,true))
         :()=>_feedNav(()=>{if(GROUPS[w.group_ko]){if(isMob())showGC(w.group_ko,window.innerWidth/2,window.innerHeight*0.4,false,false,null,false);else showGC(w.group_ko,window.innerWidth/2,window.innerHeight/2);}});
-      items.push({type:'win',title:w.song_title||'',sub,thumb,nav});
+      items.push({type:'win',title:w.song_title||'',sub,thumb,nav,gko:w.group_ko,mko:w.member_ko||null});
     });
     (mvRes.data||[]).forEach(v=>{
       if(v.content_flag==='보류'||v.content_flag==='hidden')return;
@@ -22028,7 +22031,7 @@ async function _buildFeedDailyNews(){
       const vidUrl=v.is_short?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;
       const pubDate=(v.published_at||'').slice(0,10);
       const mvScore=(isTeaser?50:80)-Math.round((new Date(today)-new Date(pubDate||today))/86400000)*2;
-      items.push({type:isTeaser?'teaser':'mv',title:t,sub:(GROUPS[v.group_ko]&&!GROUPS[v.group_ko].disbanded?_gLabelKo(v.group_ko):'')+_agoLabel(pubDate),thumb:v.thumb,score:mvScore,isShort:!!v.is_short,
+      items.push({type:isTeaser?'teaser':'mv',gko:v.group_ko,title:t,sub:(GROUPS[v.group_ko]&&!GROUPS[v.group_ko].disbanded?_gLabelKo(v.group_ko):'')+_agoLabel(pubDate),thumb:v.thumb,score:mvScore,isShort:!!v.is_short,
         nav:()=>openLightbox(vidUrl,!!v.is_short,null,0,{groupKo:v.group_ko},false,true)});
     });
     // 조회수 돌파 — **뉴스가 되는 것만**(2026-09-28, 사용자: "N 돌파 너무 많다"). 하루 수십 건 중 대부분이 옛 영상의
@@ -22055,33 +22058,65 @@ async function _buildFeedDailyNews(){
       // 유튜브 쇼츠 썸네일은 양옆이 흐린 패딩이라 "가로 직사각형 + 모자이크"로 보였다(2026-10-12 사용자 제보).
       const isShort=!!v.is_short;
       const vidUrl=isShort?`https://youtube.com/shorts/${best.video_id}`:`https://www.youtube.com/watch?v=${best.video_id}`;
-      items.push({type:'milestone',title:v.title||'',sub,thumb:v.thumb,score:40+Math.log10(+best.tier||1),isShort,
+      items.push({type:'milestone',gko,title:v.title||'',sub,thumb:v.thumb,score:40+Math.log10(+best.tier||1),isShort,
         nav:()=>openLightbox(vidUrl,isShort,null,0,{groupKo:gko},false,true)});
     });
-    if(!items.length)return;
-    // ── 1면 레이아웃(2026-09-28, 사용자: "일렬 리스트라 보기 별로") ── 신문 1면처럼 **가장 큰 소식 하나**를 크게,
-    // 그다음 4개만 한 줄씩, 나머지는 접는다. 우선순위: 음방 1위 > MV > 티저 > 조회수 돌파(큰 단계일수록 위).
-    const _PRI={win:100,mv:80,teaser:50};
-    items.forEach((r,i)=>{r._s=(r.score!=null?r.score:(_PRI[r.type]||0))-i*0.001;});
-    items.sort((a,b)=>b._s-a._s);
-    // 헤드라인은 이미지가 있는 것 중 최상위 — 단 쇼츠는 제외(헤드라인 틀이 16:9라 세로 썸네일이 잘린다)
-    const heroIdx=items.findIndex(r=>r.thumb&&!r.isShort);
-    const rest=items.slice();
-    if(heroIdx>=0)_appendNewsHero(list,rest.splice(heroIdx,1)[0]);
-    _pairNewsShorts(rest);
-    let SHOW=4;
-    // 쇼츠 2열 한 쌍이 "더보기" 경계에서 갈라지지 않게
-    if(rest.length>SHOW&&_isNewsShortCard(rest[SHOW-1])&&_isNewsShortCard(rest[SHOW])&&rest[SHOW]._pair===rest[SHOW-1])SHOW++;
-    _appendNewsItems(list,rest.slice(0,SHOW));
-    if(rest.length>SHOW){
-      const more=document.createElement('button');more.type='button';more.className='feed-news-more';
-      const extra=rest.slice(SHOW);
-      more.textContent=currentLang==='ko'?`+${extra.length}개 더보기`:`+${extra.length} more`;
-      more.addEventListener('click',()=>{more.remove();_appendNewsItems(list,extra);});
-      list.appendChild(more);
-    }
+    return items;
+  }catch(e){console.warn('[feed] 이번 주 소식 조회 실패',e);_weekNewsP=null;return [];}
+  })();
+  return _weekNewsP;
+}
+async function _buildFeedDailyNews(){
+  const section=document.getElementById('feed-dailynews-section');
+  const list=document.getElementById('feed-dailynews');
+  if(!section||!list||!sb)return;
+  list.innerHTML='';_syncDailyNewsSection();
+  try{
+    const items=(await _collectWeekNews()).map(r=>({...r})); // 렌더가 _s/_pair를 덧붙이므로 복사본
+    _renderNewsList(list,items);
   }catch(e){console.warn('[feed] 오늘의 소식 선반 실패 — 이 선반만 빠집니다',e);}
   finally{_syncDailyNewsSection();}
+}
+// For You '내 최애 소식'(2026-10-16, 사용자: "클유아 즐겨찾기했으면 지난주 1위를 For You에서 알아야지") — 위 소식 중
+// 즐겨찾기 그룹 + 즐겨찾기 멤버의 소속 그룹 + 즐겨찾기 멤버 본인(솔로 1위·솔로 영상) 것만. 모양은 발견 탭과 같은 1면 레이아웃.
+async function _buildFeedFavNews(){
+  const section=document.getElementById('feed-favnews-section');
+  const list=document.getElementById('feed-favnews');
+  if(!section||!list)return;
+  list.innerHTML='';section.style.display='none';
+  if(!favGroups.size&&!favMembers.size)return;
+  try{
+    const gs=new Set(favGroups),names=new Set();
+    favMembers.forEach(k=>{const i=String(k).indexOf(':');if(i<0)return;const g=k.slice(0,i),n=k.slice(i+1);if(g&&g!=='솔로')gs.add(g);if(n)names.add(n);});
+    const mine=(await _collectWeekNews()).filter(r=>(r.gko&&(gs.has(r.gko)||names.has(r.gko)))||(r.mko&&names.has(r.mko))).map(r=>({...r}));
+    if(!mine.length)return;
+    _renderNewsList(list,mine);
+    section.style.display='';
+  }catch(e){console.warn('[feed] 내 최애 소식 선반 실패 — 이 선반만 빠집니다',e);}
+}
+function _renderNewsList(list,items){
+  if(!items.length)return;
+  // ── 1면 레이아웃(2026-09-28, 사용자: "일렬 리스트라 보기 별로") ── 신문 1면처럼 **가장 큰 소식 하나**를 크게,
+  // 그다음 4개만 한 줄씩, 나머지는 접는다. 우선순위: 음방 1위 > MV > 티저 > 조회수 돌파(큰 단계일수록 위).
+  const _PRI={win:100,mv:80,teaser:50};
+  items.forEach((r,i)=>{r._s=(r.score!=null?r.score:(_PRI[r.type]||0))-i*0.001;});
+  items.sort((a,b)=>b._s-a._s);
+  // 헤드라인은 이미지가 있는 것 중 최상위 — 단 쇼츠는 제외(헤드라인 틀이 16:9라 세로 썸네일이 잘린다)
+  const heroIdx=items.findIndex(r=>r.thumb&&!r.isShort);
+  const rest=items.slice();
+  if(heroIdx>=0)_appendNewsHero(list,rest.splice(heroIdx,1)[0]);
+  _pairNewsShorts(rest);
+  let SHOW=4;
+  // 쇼츠 2열 한 쌍이 "더보기" 경계에서 갈라지지 않게
+  if(rest.length>SHOW&&_isNewsShortCard(rest[SHOW-1])&&_isNewsShortCard(rest[SHOW])&&rest[SHOW]._pair===rest[SHOW-1])SHOW++;
+  _appendNewsItems(list,rest.slice(0,SHOW));
+  if(rest.length>SHOW){
+    const more=document.createElement('button');more.type='button';more.className='feed-news-more';
+    const extra=rest.slice(SHOW);
+    more.textContent=currentLang==='ko'?`+${extra.length}개 더보기`:`+${extra.length} more`;
+    more.addEventListener('click',()=>{more.remove();_appendNewsItems(list,extra);});
+    list.appendChild(more);
+  }
 }
 // This Week's K-pop 섹션은 소식 목록(#feed-dailynews)과 발매 앨범 블록(#feed-newalbum-section) 두 빌더가
 // 따로 채운다(2026-10-12 합침). 어느 한쪽만 있어도 섹션은 떠야 하므로, 각 빌더가 끝날 때 이걸 부른다.
@@ -24387,6 +24422,7 @@ function _buildFeedRec(){
   // For You 선반 순서는 **시간 민감도** 순이다 — 오늘 지나면 의미가 없어지는 것일수록 위(2026-09-18).
   //   기념일(D-DAY가 지나면 끝) → 신보(발매 주간) → 신작 영상(최근 7일) → 이어보기(언제 봐도 됨)
   _buildFeedForYouAnniv();  // 다가오는 기념일(즐겨찾기 그룹·멤버 교차 D-7~D-DAY) — 시간 민감이라 최상단
+  _buildFeedFavNews();      // 내 최애 소식(이번 주 1위·MV·티저·조회수 돌파 중 즐겨찾기 것) — 일주일짜리 소식이라 기념일 다음
   _buildFeedFavAlbums();    // 즐겨찾기 신보(최근 30일) — 유튜브 영상 말고도 우리가 모으는 걸 드러낸다
   _buildFeedFavCharts();    // 내 최애 차트(2026-10-15) — 이번 주 차트에 든 최애 무대(발견 탭 Charts와 같은 계산)
   // 즐겨찾기 신작(비동기)이 자리를 잡은 뒤에 이어보기를 그린다 — 예전엔 이어보기(로컬·즉시)가 먼저 위에
@@ -27433,6 +27469,11 @@ _totopBtn.addEventListener('click',e=>{
       <div class="feed-section" id="feed-foryou-anniv-section" style="display:none">
         <div class="feed-section-ttl">🎉 Anniversaries Coming Up</div>
         <div id="feed-foryou-anniv" class="feed-strip hscroll-drag"></div>
+      </div>
+      <!-- 내 최애 소식(2026-10-16) — 발견 탭 This Week's K-pop(음방 1위·MV·티저·조회수 돌파)을 즐겨찾기로 거른 것. 일주일이면 지나가는 소식이라 기념일 바로 밑 -->
+      <div class="feed-section" id="feed-favnews-section" style="display:none">
+        <div class="feed-section-ttl">📰 This Week for Your Favorites</div>
+        <div id="feed-favnews" class="feed-news-list"></div>
       </div>
       <!-- 즐겨찾기 신보(2026-09-18) — 영상 그리드와 섞지 않고 별도 가로 선반(비율이 1:1 vs 16:9라
            섞으면 행 패커가 무너진다). 시간 민감도 순으로 기념일 바로 밑, 신작 영상 위. -->
