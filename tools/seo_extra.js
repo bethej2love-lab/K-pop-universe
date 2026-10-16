@@ -244,8 +244,8 @@ function buildSongs({ ROOT, groups, artists, EX, vids, minVids = 4 }) {
     albums.slice().sort((x, y) => String(x.releaseDate || '').localeCompare(String(y.releaseDate || ''))).forEach(al => (al.tracks || []).forEach(tr => {
       if (!tr || !tr.title) return;
       const b = S.B(tr.title); if (!b) return;
-      // 표시 이름은 가장 먼저 나온 원곡 제목(첫 괄호 앞) — 곡 목록 순서대로 쓰면 'LOVE DIVE -Japanese version-'이 이름이 됐다
-      const m = meta[b] || (meta[b] = { name: String(tr.title).replace(/\s*-[^-]*\bver(?:sion)?\b\.?[^-]*-\s*$/i, '').split(/\s*[\(\[]/)[0].trim(), album: al.title, date: al.releaseDate || '', isTitle: false, cr: null, melonId: null });
+      // 표시 이름은 가장 먼저 나온 원곡 제목(띄어 쓴 첫 괄호 앞 — 붙은 괄호는 이름의 일부: FRI(END)S) — 곡 목록 순서대로 쓰면 'LOVE DIVE -Japanese version-'이 이름이 됐다
+      const m = meta[b] || (meta[b] = { name: String(tr.title).replace(/\s*-[^-]*\bver(?:sion)?\b\.?[^-]*-\s*$/i, '').split(/\s+[\(\[]/)[0].trim(), album: al.title, date: al.releaseDate || '', isTitle: false, cr: null, melonId: null });
       if (tr.isTitle) m.isTitle = true;
       if (!m.cr && tr.cr) m.cr = tr.cr;
       if (!m.melonId && tr.songId) m.melonId = tr.songId;
