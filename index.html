@@ -18475,6 +18475,7 @@ document.getElementById('tab-feed').addEventListener('click',e=>{
 document.getElementById('ob-top-search')?.addEventListener('pointerdown',e=>e.stopPropagation());
 document.getElementById('ob-top-search-btn')?.addEventListener('click',e=>{
   e.stopPropagation();
+  _dismissTips();
   // 타이머·_obActive 정리(tab-search는 건드리지 않음 — 탭바 검색과 완전히 독립)
   if(_obTimer){clearTimeout(_obTimer);_obTimer=null;}
   _obActive=false;
