@@ -9133,6 +9133,15 @@ function openSidePanel(cardEl){
 }
 function closeSidePanel(){
   sidePanelEl.classList.remove('open');
+  // side가 닫히면 member-panel이 CSS로 right:0으로 이동 — conn-panel도 member 기준으로 right 재계산
+  if(!isMob()&&connPanelEl.classList.contains('open')){
+    const memberOpen=memberPanelEl.classList.contains('open');
+    const memberW=memberPanelEl.getBoundingClientRect().width||440;
+    const connW=connPanelEl.getBoundingClientRect().width||440;
+    connPanelEl.style.right=(memberOpen?memberW:0)+'px';
+    const colEl=document.getElementById('conn-collapse');
+    if(colEl)colEl.style.right=((memberOpen?memberW:0)+connW)+'px';
+  }
   // closeMemberPanel과 동일한 이유로 슬라이드아웃 트랜지션이 끝난 뒤에 내용을 치움
   setTimeout(()=>{
     if(sidePanelEl.classList.contains('open'))return;
@@ -11656,6 +11665,7 @@ document.getElementById('ttx').addEventListener('click',e=>{
   e.stopPropagation();
   _maybeSuggestNext();
   if(isMob())closeMobSheet();
+  else if(connPanelEl.classList.contains('open'))closeConnCard();
   else closeCards();
 });
 document.getElementById('tt-collapse').addEventListener('click',e=>{
@@ -11810,7 +11820,7 @@ document.getElementById('tt').addEventListener('pointerup',e=>{
   const dx=e.clientX-_ttSX,dy=e.clientY-_ttSY;
   if(Math.abs(dx)>44&&Math.abs(dx)>Math.abs(dy)*1.5)navigateMember(dx<0?1:-1);
 },{passive:true});
-document.getElementById('gcx').addEventListener('click',e=>{e.stopPropagation();_maybeSuggestNext();closeCards();});
+document.getElementById('gcx').addEventListener('click',e=>{e.stopPropagation();_maybeSuggestNext();if(!isMob()&&connPanelEl.classList.contains('open'))closeConnCard();else closeCards();});
 // ttx/gcx는 <span role="button">이라 span 자체엔 키보드 활성화가 기본 제공되지 않음 — Enter/Space를 클릭으로 연결
 [document.getElementById('ttx'),document.getElementById('gcx')].forEach(el=>{
   el.addEventListener('keydown',e=>{
