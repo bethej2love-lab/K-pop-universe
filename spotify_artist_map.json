@@ -4812,7 +4812,11 @@
     "confidence": "low",
     "why": "이름 불일치 — 앨범 대조",
     "evidence": {
-      "titleOverlap": 0
+      "titleOverlap": 0,
+      "verifyOverlap": 0,
+      "verifyYears": [
+        2026
+      ]
     },
     "checkedAt": "2026-09-30"
   },

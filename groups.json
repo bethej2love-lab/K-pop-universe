@@ -83334,6 +83334,29 @@
   },
   "discography": [
    {
+    "title": "Next Chapter",
+    "type": "싱글",
+    "isMain": true,
+    "cover": "https://cdnimg.melon.co.kr/cm2/album/images/147/59/020/14759020_20261015152748_500.jpg",
+    "releaseDate": "2026.10.16",
+    "trackCount": 2,
+    "titleTrack": "Next Chapter",
+    "tracks": [
+     {
+      "no": 1,
+      "title": "Next Chapter",
+      "isTitle": true
+     },
+     {
+      "no": 2,
+      "title": "Next Chapter (Inst.)",
+      "isTitle": false
+     }
+    ],
+    "src": "melon",
+    "melonAlbumId": "14759020"
+   },
+   {
     "title": "Candy Box Lover",
     "type": "싱글",
     "isMain": true,
