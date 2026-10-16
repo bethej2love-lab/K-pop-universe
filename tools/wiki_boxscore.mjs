@@ -109,10 +109,11 @@ function tourFromWt(title, wt) {
 
 // ── 투어 문서 찾기(wiki_tours.mjs와 같은 규칙) ───────────
 const NOT_TOUR = /dream concert|music bank|kcon|\bmama\b|golden disc|gaon|melon music|festival|ticketlink|asia song|super concert|countdown|water bomb|show champion/i;
+// ⚠️ 제목에 tour/concert가 없는 투어가 많다('Synk: Parallel Line' — 에스파가 0개로 나와 발견). 제목 조건은 빼고
+//    부정 패턴(디스코·곡·앨범 등)만 거른다 — 진짜 걸러내기는 인포박스(Infobox concert + artist=이 그룹)가 한다.
 function searchTours(canon) {
-  const hits = (getJSON(`${API}?action=query&list=search&srsearch=${encodeURIComponent('"' + canon + '" concert tour')}&srlimit=30&srnamespace=0&format=json&formatversion=2`)?.query?.search || []).map(h => h.title);
-  return hits.filter(t => /tour|concert|\blive\b|fan\s?(meeting|con|meet)|in (seoul|tokyo|japan|asia|america|europe)/i.test(t) &&
-    !/discography|^List of|videography|\(song\)|\(album\)|\(EP\)|filmography|awards|members/i.test(t) && t.toLowerCase() !== canon.toLowerCase());
+  const hits = (getJSON(`${API}?action=query&list=search&srsearch=${encodeURIComponent('"' + canon + '" concert tour')}&srlimit=20&srnamespace=0&format=json&formatversion=2`)?.query?.search || []).map(h => h.title);
+  return hits.filter(t => !/discography|^List of|videography|\(song\)|\(album\)|\(EP\)|filmography|awards|members|\(band\)$|\(group\)$|\(singer\)$|\(rapper\)$/i.test(t) && t.toLowerCase() !== canon.toLowerCase());
 }
 function artistOk(rec, canon) {
   const a = (rec.artist || '').toLowerCase(), c = canon.toLowerCase().replace(/\s*\(.*\)$/, '');
@@ -125,7 +126,7 @@ function groupTours(en) {
     const m = catMembers(v).filter(t => !/^List of|discography/i.test(t));
     if (m.length) { m.forEach(t => titles.add(t)); break; }
   }
-  searchTours(canon).slice(0, 12).forEach(t => titles.add(t));
+  searchTours(canon).slice(0, 16).forEach(t => titles.add(t));
   const out = [], seen = new Set();
   for (const t of titles) {
     if (NOT_TOUR.test(t)) continue;
@@ -159,7 +160,7 @@ if (argv.includes('--all')) {
   let gi = 0;
   for (const ko of names) {
     gi++;
-    if (out[ko] && !argv.includes('--refresh')) continue; // 이어서 하기
+    if (out[ko] && out[ko].length && !argv.includes('--refresh')) continue; // 이어서 하기(빈 결과는 다시 — 찾기 규칙을 고친 뒤 회수)
     let r = []; try { r = groupTours(G[ko].en); } catch (e) {}
     if (r.length) out[ko] = r; else out[ko] = out[ko] || [];
     if (gi % 10 === 0) fs.writeFileSync(outPath, JSON.stringify(out, null, 1));

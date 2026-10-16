@@ -26614,11 +26614,42 @@ function _shortCity(c){
 // 실제로 헷갈리는 것만 최소한으로 넣을 것.
 const _VENUE_ALIAS={'인스파이어 엔터테인먼트 리조트':'인스파이어 아레나'};
 const _venueName=v=>_VENUE_ALIAS[v]||v||'';
-function _renderConcertRow(containerId,events){
+// ── 투어 성적(2026-10-16) — tours_boxscore.json(tools/wiki_boxscore.mjs: 위키 투어 인포박스의 관객·매출·회차, 출처는
+// 대부분 빌보드 Boxscore·주최사 발표). 공연 줄을 펼치면 투어마다 관객 막대 + 매출·회차. 첫 사용 때 한 번만 받는다.
+let _tourBoxP=null;
+const _loadTourBox=()=>_tourBoxP||(_tourBoxP=fetch('tours_boxscore.json',{cache:'no-cache'}).then(r=>r.ok?r.json():{}).catch(()=>({})));
+const _fmtPeople=n=>{if(!n)return'';if(currentLang!=='ko')return n>=1e6?(n/1e6).toFixed(n>=1e7?0:1)+'M':n>=1e3?Math.round(n/1e3)+'K':String(n);
+  return n>=1e4?(n>=1e5?Math.round(n/1e4):(n/1e4).toFixed(1).replace(/\.0$/,''))+'만':n.toLocaleString();};
+const _fmtUsd=n=>!n?'':n>=1e9?'$'+(n/1e9).toFixed(1)+'B':n>=1e6?'$'+(n/1e6).toFixed(n>=1e8?0:1)+'M':'$'+Math.round(n/1e3)+'K';
+function _tourBoxSection(tours){
+  const isKo=currentLang==='ko';
+  const box=document.createElement('div');box.className='tourbox';
+  const lbl=document.createElement('div');lbl.className='concert-sec-lbl';lbl.textContent=(isKo?'투어 성적 ':'Tour box score ')+tours.length;box.appendChild(lbl);
+  const max=Math.max(1,...tours.map(t=>t.attendance||0));
+  tours.slice().sort((a,b)=>String(b.start||'').localeCompare(String(a.start||''))).forEach(t=>{
+    const a=document.createElement('a');a.className='tourbox-row';a.target='_blank';a.rel='noopener noreferrer';
+    a.href='https://en.wikipedia.org/wiki/'+encodeURIComponent(String(t.wiki||t.tour).replace(/ /g,'_'));
+    const nm=document.createElement('span');nm.className='tourbox-name';nm.textContent=t.tour;
+    const yr=document.createElement('span');yr.className='tourbox-yr';yr.textContent=String(t.start||'').slice(0,4)+(t.shows?(isKo?` · ${t.shows}회`:` · ${t.shows} shows`):'');
+    const bar=document.createElement('span');bar.className='tourbox-bar'+(t.attendance?'':' is-empty'); // 관객 수 없으면 막대 자리만
+    const fill=document.createElement('i');fill.style.width=t.attendance?Math.max(2,t.attendance/max*100).toFixed(1)+'%':'0';bar.appendChild(fill);
+    const val=document.createElement('span');val.className='tourbox-val';
+    val.textContent=[t.attendance?_fmtPeople(t.attendance)+(isKo?'명':''):'',_fmtUsd(t.gross_usd)].filter(Boolean).join(' · ')||(t.gross_raw||'');
+    const head=document.createElement('span');head.className='tourbox-head';head.append(nm,yr);
+    a.append(head,bar,val);
+    box.appendChild(a);
+  });
+  const note=document.createElement('div');note.className='concert-credit';
+  note.textContent=isKo?'투어 성적 · 위키백과 투어 문서(빌보드 Boxscore 등 보고된 수치). 진행 중 투어는 중간 집계, 매출은 달러 표기만':'Tour data · Wikipedia tour articles (reported figures, e.g. Billboard Boxscore)';
+  box.appendChild(note);
+  return box;
+}
+function _renderConcertRow(containerId,events,tours){
   const row=document.getElementById(containerId);
   if(!row)return;
   row.innerHTML='';
-  if(!events.length)return;
+  tours=Array.isArray(tours)?tours.filter(t=>t.attendance||t.gross_usd||t.shows):[];
+  if(!events.length&&!tours.length)return;
   const todayStr=new Date().toISOString().slice(0,10);
   const sorted=[...events].sort((a,b)=>a.date_start.localeCompare(b.date_start));
   const upcoming=sorted.filter(e=>(e.date_end||e.date_start)>=todayStr);
@@ -26626,7 +26657,11 @@ function _renderConcertRow(containerId,events){
   const featured=upcoming[0]||past[0];
   const teaser=document.createElement('button');teaser.type='button';teaser.className='concert-teaser';
   const txt=document.createElement('span');txt.className='concert-teaser-txt';
-  if(featured===upcoming[0]){
+  if(!featured){
+    // 공연 일정은 없고 투어 성적만 있는 그룹 — 누적 관객으로 요약
+    const tot=tours.reduce((s,t)=>s+(t.attendance||0),0);
+    txt.textContent=currentLang==='ko'?`🎤 투어 ${tours.length}개${tot?` · 누적 관객 ${_fmtPeople(tot)}명`:''}`:`🎤 ${tours.length} tours${tot?` · ${_fmtPeople(tot)} attendees`:''}`;
+  }else if(featured===upcoming[0]){
     const d=_dDay(featured.date_start);
     txt.textContent=`🎤 ${d<=0?'오늘':'D-'+d} · ${featured.title}`;
   }else{
@@ -26649,6 +26684,7 @@ function _renderConcertRow(containerId,events){
     items.forEach(ev=>list.appendChild(_makeConcertItem(ev)));
   };
   addSec(currentLang==='ko'?'예정':'Upcoming',upcoming);
+  if(tours.length)list.appendChild(_tourBoxSection(tours)); // 예정 공연 다음, 지난 공연 앞
   if(past.length){
     const head=past.slice(0,PAST_HEAD),rest=past.slice(PAST_HEAD);
     addSec(currentLang==='ko'?'지난 공연':'Past',head);
@@ -26670,12 +26706,14 @@ function _renderConcertRow(containerId,events){
   // 아니라 데이터 옆에 있어야 표기 의미가 있음). 목록이 열릴 때만 보이므로 평상시 화면은 안 건드린다.
   // ⚠️ 예매/공연 **통계** API(prfsts*)를 쓰게 되면 "집계기간·집계대상·발권 분량 기준" 세 줄을 여기에
   //    추가로 명시해야 한다 — 지금은 DB검색(공연목록/상세)만 쓰므로 출처 표기로 충분하다.
-  const credit=document.createElement('div');
-  credit.className='concert-credit';
-  credit.textContent=currentLang==='ko'
-    ? '공연 정보 제공 · 공연예술통합전산망(KOPIS)'
-    : 'Performance data · KOPIS (Korea Performing Arts Box Office Information System)';
-  list.appendChild(credit);
+  if(events.length){
+    const credit=document.createElement('div');
+    credit.className='concert-credit';
+    credit.textContent=currentLang==='ko'
+      ? '공연 정보 제공 · 공연예술통합전산망(KOPIS)'
+      : 'Performance data · KOPIS (Korea Performing Arts Box Office Information System)';
+    list.appendChild(credit);
+  }
 
   teaser.addEventListener('click',e=>{
     e.stopPropagation();
@@ -26689,9 +26727,11 @@ async function _loadConcertRow(gko,containerId){
   const row=document.getElementById(containerId);
   if(row)row.innerHTML='';
   if(!sb||!GROUPS[gko])return;
-  const{data,error}=await sb.from('kpop_events').select('*').contains('groups',[gko]).order('date_start',{ascending:false});
-  if(error||!data)return;
-  _renderConcertRow(containerId,data);
+  const[ev,box]=await Promise.all([
+    sb.from('kpop_events').select('*').contains('groups',[gko]).order('date_start',{ascending:false}).then(r=>r,()=>({data:null})),
+    _loadTourBox()]);
+  if(containerId==='gc-concert-row'&&_openGCko!==gko)return; // 그새 다른 카드
+  _renderConcertRow(containerId,(ev&&!ev.error&&ev.data)||[],(box&&box[gko])||[]);
 }
 // 멤버 이름으로 직접 이벤트를 조회 — 그룹 멤버의 솔로 콘서트용.
 // groups 배열에 멤버 이름(ko)이 포함된 이벤트를 찾는다. GROUPS 체크 없이 이름으로 바로 쿼리하므로,

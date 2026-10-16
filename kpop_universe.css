@@ -4583,3 +4583,16 @@
 .feed-ev-where{font-size:10.5px;color:rgba(170,185,230,0.55);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .feed-ev-when{margin-top:auto;}
 .feed-ev-go{margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,0.07);font-size:11px;color:rgba(170,195,255,0.8);}
+
+/* ── 그룹 카드 공연 줄 안 "투어 성적"(2026-10-16) — 투어마다 이름·연도·회차 / 관객 막대 / 관객·매출. 누르면 위키 출처 ── */
+.tourbox{display:flex;flex-direction:column;gap:2px;margin:4px 0 6px;}
+.tourbox-row{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(40px,1fr) auto;align-items:center;gap:10px;padding:6px 4px;border-radius:8px;text-decoration:none;color:inherit;}
+.tourbox-row:hover{background:rgba(255,255,255,0.04);}
+.tourbox-head{display:flex;flex-direction:column;min-width:0;gap:1px;}
+.tourbox-name{font-size:12px;color:rgba(225,233,255,0.88);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.tourbox-yr{font-size:10.5px;color:rgba(160,180,225,0.6);font-variant-numeric:tabular-nums;}
+.tourbox-bar{height:6px;border-radius:3px;background:rgba(255,255,255,0.05);overflow:hidden;}
+.tourbox-bar i{display:block;height:100%;border-radius:3px;background:linear-gradient(90deg,rgba(143,186,255,0.6),rgba(246,163,200,0.6));}
+.tourbox-val{font-size:11px;color:rgba(210,222,250,0.78);font-variant-numeric:tabular-nums;white-space:nowrap;text-align:right;}
+.tourbox-bar.is-empty{visibility:hidden;}
+.tourbox-val{min-width:68px;}
