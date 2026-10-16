@@ -1466,18 +1466,13 @@
   /* 영문 그룹명 + SNS 링크를 기본 한 줄에 두되, 영문이 길어 한 줄에 안 들어가면 링크만 자동으로 다음 줄로
      내린다(flex-wrap) — 글자수를 세지 않고 공간 기준 자동. 보통 3줄(이름 / 영문+링크 / 상태), 영문 긴 그룹만
      4줄(이름 / 영문 / 링크 / 상태). 사진 유무 무관 통일(2026-08-28, 사용자 요청 — 4줄 남발 방지). */
-  /* 영문+SNS는 한 줄. 영문(gc-en)이 flex:1로 남은 공간을 채워 SNS를 오른쪽 끝으로 밀고, 영문이 길면 스스로
-     줄어(ellipsis) SNS를 다음 줄로 밀지 않는다 — flex-wrap은 짧은 영문(예: CORTIS)도 애매하게 줄바꿈시켜
-     폐기(2026-08-28). 4줄이 필요한 긴 영문 그룹은 gc-en-stack으로 명시 지정(index.html). */
+  /* 영문+SNS는 한 줄. 영문명이 내용 폭만큼만 차지하고 SNS 링크가 바로 옆에 붙어 왼쪽 정렬(2026-10-16).
+     영문이 길면 스스로 줄어(ellipsis) SNS를 밀지 않는다. 4줄이 필요한 긴 영문은 gc-en-stack으로 명시 지정(index.html). */
   #gc-en-row{display:flex;align-items:center;gap:14px;min-width:0;}
-  /* 최후의 안전장치 — #gc-links가 flex-shrink:0이라 영문명이 안 줄면 SNS 아이콘이 카드 밖으로 밀려
-     잘린다(#gc는 overflow:hidden이라 조용히 잘린다). 실제 잘림은 아래 .has-gc-pic 규칙으로 막는다. */
-  #gc-en{flex:1 1 0;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  #gc-en{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
   /* 영어 모드에선 영문 서브(gc-en)가 빈 문자열이라(index.html: _enShow=한국어일때만) 숨겨서 gap이 안 생기게 —
      그래야 영어 모드는 이름+링크 2줄 그대로 유지된다(2026-08-28, 사용자: "en 모드는 2줄, 그대로 두면 됨"). */
   #gc-en:empty{display:none;}
-  /* SNS를 영문명 반대쪽(오른쪽 끝)으로 밀어 원래 space-between 느낌 복원(2026-08-28, 사용자 요청).
-     단 강제 4줄(gc-en-stack, column)에선 오른쪽으로 튀면 어색해서 왼쪽 정렬로 되돌린다. */
   #gc-links{display:flex;align-items:center;gap:9px;flex-shrink:0;}
   #gc-en-row.gc-en-stack #gc-links{margin-left:0;}
   #tt-links{display:flex;align-items:center;gap:7px;flex-shrink:0;}
