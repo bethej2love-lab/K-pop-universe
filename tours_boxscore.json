@@ -94,7 +94,7 @@
    "artist": "Seventeen",
    "start": "2017-07-14",
    "end": "2017-10-06",
-   "shows": 12,
+   "shows": 17,
    "attendance": 200000,
    "attendance_raw": "200,000",
    "gross_usd": null,
@@ -142,7 +142,7 @@
    "artist": "Seventeen",
    "start": "2019-08-30",
    "end": "2020-02-08",
-   "shows": 16,
+   "shows": 24,
    "attendance": null,
    "attendance_raw": null,
    "gross_usd": null,
@@ -161,6 +161,18 @@
    "gross_raw": null
   },
   {
+   "tour": "In-Complete",
+   "wiki": "In-Complete",
+   "artist": "Seventeen",
+   "start": "2021-01-23",
+   "end": null,
+   "shows": 1,
+   "attendance": null,
+   "attendance_raw": null,
+   "gross_usd": null,
+   "gross_raw": null
+  },
+  {
    "tour": "Power of Love (concert)",
    "wiki": "Power of Love (concert)",
    "artist": "Seventeen",
@@ -173,12 +185,12 @@
    "gross_raw": null
   },
   {
-   "tour": "Be The Sun World Tour",
+   "tour": "Be The Sun Tour",
    "wiki": "Be The Sun World Tour",
    "artist": "Seventeen",
    "start": "2022-06-25",
    "end": "2022-12-28",
-   "shows": 17,
+   "shows": 29,
    "attendance": null,
    "attendance_raw": null,
    "gross_usd": 57087739,
@@ -202,19 +214,19 @@
    "artist": "Seventeen",
    "start": "2024-10-12",
    "end": "2025-02-16",
-   "shows": 20,
+   "shows": 30,
    "attendance": 1037000,
    "attendance_raw": "1,037,000",
    "gross_usd": null,
    "gross_raw": null
   },
   {
-   "tour": "New World Tour",
+   "tour": "New_ World Tour",
    "wiki": "New World Tour",
    "artist": "Seventeen",
    "start": "2025-09-13",
    "end": "2026-04-05",
-   "shows": 22,
+   "shows": 31,
    "attendance": 840000,
    "attendance_raw": "840,000",
    "gross_usd": null,
@@ -293,6 +305,18 @@
    "start": "2019-01-26",
    "end": "2020-02-24",
    "shows": 45,
+   "attendance": null,
+   "attendance_raw": null,
+   "gross_usd": null,
+   "gross_raw": null
+  },
+  {
+   "tour": "Neo City – The Link",
+   "wiki": "Neo City – The Link",
+   "artist": "NCT 127",
+   "start": "2021-12-17",
+   "end": "2023-01-28",
+   "shows": 28,
    "attendance": null,
    "attendance_raw": null,
    "gross_usd": null,
@@ -387,7 +411,7 @@
    "gross_raw": null
   },
   {
-   "tour": "Riizing Loud",
+   "tour": "Riize Concert Tour [Riizing Loud]",
    "wiki": "Riizing Loud",
    "artist": "Riize",
    "start": "2025-07-04",
@@ -413,8 +437,8 @@
    "gross_raw": null
   },
   {
-   "tour": "Wake Up: Open Your Eyes",
-   "wiki": "Wake Up: Open Your Eyes",
+   "tour": "BTS 1st Japan Tour 2015 \"Wake Up: Open Your Eyes\"",
+   "wiki": "Wake Up (BTS album)",
    "artist": "BTS",
    "start": "2015-02-10",
    "end": "2015-02-19",
@@ -425,7 +449,7 @@
    "gross_raw": null
   },
   {
-   "tour": "The Most Beautiful Moment in Life On Stage Tour",
+   "tour": "2015 BTS Live \"The Most Beautiful Moment in Life On Stage\"",
    "wiki": "The Most Beautiful Moment in Life On Stage Tour",
    "artist": "BTS",
    "start": "2015-11-27",
@@ -437,7 +461,7 @@
    "gross_raw": null
   },
   {
-   "tour": "The Wings Tour",
+   "tour": "2017 BTS Live Trilogy Episode III (Final Chapter): The Wings Tour",
    "wiki": "The Wings Tour",
    "artist": "BTS",
    "start": "2017-02-18",
@@ -449,19 +473,7 @@
    "gross_raw": null
   },
   {
-   "tour": "BTS World Tour Love Yourself: Speak Yourself",
-   "wiki": "BTS World Tour Love Yourself: Speak Yourself",
-   "artist": "BTS",
-   "start": "2018-08-25",
-   "end": "2019-10-29",
-   "shows": 42,
-   "attendance": 1043517,
-   "attendance_raw": "1,043,517",
-   "gross_usd": 130762633,
-   "gross_raw": "$130,762,633"
-  },
-  {
-   "tour": "Love Yourself World Tour",
+   "tour": "BTS World Tour: Love Yourself",
    "wiki": "Love Yourself World Tour",
    "artist": "BTS",
    "start": "2018-08-25",
@@ -473,7 +485,7 @@
    "gross_raw": "$130,762,633"
   },
   {
-   "tour": "Map of the Soul Tour",
+   "tour": "BTS Map of the Soul Tour",
    "wiki": "Map of the Soul Tour",
    "artist": "BTS",
    "start": "2020-04-11",
@@ -491,8 +503,8 @@
    "start": "2021-10-24",
    "end": "2022-04-16",
    "shows": 12,
-   "attendance": null,
-   "attendance_raw": null,
+   "attendance": 459000,
+   "attendance_raw": "* 459,000 (in-person) * 4,000,000 (total)",
    "gross_usd": null,
    "gross_raw": null
   },
@@ -511,24 +523,60 @@
  ],
  "트와이스": [
   {
+   "tour": "Twice 1st Tour · Twiceland – The Opening",
+   "wiki": "List of Twice concert tours",
+   "artist": "Twice",
+   "start": "2017-02-17",
+   "end": "2017-06-18",
+   "shows": 7,
+   "attendance": 36000,
+   "attendance_raw": "36,000",
+   "gross_usd": null,
+   "gross_raw": null
+  },
+  {
    "tour": "Twicelights World Tour",
    "wiki": "Twicelights World Tour",
    "artist": "Twice",
    "start": "2019-05-25",
    "end": "2020-02-23",
-   "shows": 21,
+   "shows": 25,
    "attendance": null,
    "attendance_raw": null,
    "gross_usd": null,
    "gross_raw": null
   },
   {
-   "tour": "Twice 4th World Tour III",
+   "tour": "Twice 4th World Tour \"III\"",
    "wiki": "Twice 4th World Tour III",
    "artist": "Twice",
    "start": "2021-12-25",
    "end": "2022-05-15",
    "shows": 14,
+   "attendance": null,
+   "attendance_raw": null,
+   "gross_usd": null,
+   "gross_raw": null
+  },
+  {
+   "tour": "Ready to Be World Tour",
+   "wiki": "Ready to Be World Tour",
+   "artist": "Twice",
+   "start": "2023-04-15",
+   "end": "2024-07-28",
+   "shows": 51,
+   "attendance": 1500000,
+   "attendance_raw": "1.5 million",
+   "gross_usd": 78400000,
+   "gross_raw": "$78.4 million"
+  },
+  {
+   "tour": "This Is For World Tour",
+   "wiki": "This Is For World Tour",
+   "artist": "Twice",
+   "start": "2025-07-19",
+   "end": "2026-07-12",
+   "shows": 81,
    "attendance": null,
    "attendance_raw": null,
    "gross_usd": null,
@@ -611,7 +659,7 @@
    "gross_raw": null
   },
   {
-   "tour": "The First Japan Arena Tour (Girls' Generation)",
+   "tour": "The First Japan Arena Tour",
    "wiki": "The First Japan Arena Tour (Girls' Generation)",
    "artist": "Girls' Generation",
    "start": "2011-05-31",
@@ -623,7 +671,7 @@
    "gross_raw": null
   },
   {
-   "tour": "Girls' Generation Tour",
+   "tour": "2011 Girls' Generation Tour",
    "wiki": "Girls' Generation Tour",
    "artist": "Girls' Generation",
    "start": "2011-07-23",
@@ -685,7 +733,7 @@
  ],
  "샤이니": [
   {
-   "tour": "Shinee World (concert)",
+   "tour": "Shinee World",
    "wiki": "Shinee World (concert)",
    "artist": "Shinee",
    "start": "2010-12-26",
@@ -819,19 +867,67 @@
  ],
  "레드벨벳": [
   {
-   "tour": "Red Room (tour)",
+   "tour": "Red Room Tour",
    "wiki": "Red Room (tour)",
    "artist": "Red Velvet",
    "start": null,
    "end": null,
-   "shows": null,
+   "shows": 13,
    "attendance": 52000,
    "attendance_raw": "52,000",
    "gross_usd": null,
    "gross_raw": null
   },
   {
-   "tour": "Balance (Red Velvet – Irene & Seulgi tour)",
+   "tour": "Redmare Tour",
+   "wiki": "Redmare",
+   "artist": "Red Velvet",
+   "start": "2018-08-04",
+   "end": "2019-02-21",
+   "shows": 19,
+   "attendance": null,
+   "attendance_raw": null,
+   "gross_usd": null,
+   "gross_raw": null
+  },
+  {
+   "tour": "Red Velvet 3rd Concert  · \"La Rouge\"",
+   "wiki": "List of Red Velvet live performances",
+   "artist": "Red Velvet",
+   "start": "2019-11-23",
+   "end": "2020-02-24",
+   "shows": 5,
+   "attendance": null,
+   "attendance_raw": null,
+   "gross_usd": null,
+   "gross_raw": null
+  },
+  {
+   "tour": "Red Velvet 4th Concert  · \"R to V\"",
+   "wiki": "R to V",
+   "artist": "Red Velvet",
+   "start": "2023-04-01",
+   "end": "2023-06-06",
+   "shows": 11,
+   "attendance": null,
+   "attendance_raw": null,
+   "gross_usd": null,
+   "gross_raw": null
+  },
+  {
+   "tour": "Happiness: My Dear, ReVe1uv",
+   "wiki": "Happiness: My Dear, ReVe1uv",
+   "artist": "Red Velvet",
+   "start": "2024-08-02",
+   "end": null,
+   "shows": 9,
+   "attendance": null,
+   "attendance_raw": null,
+   "gross_usd": null,
+   "gross_raw": null
+  },
+  {
+   "tour": "Irene & Seulgi Concert Tour [Balance] in Asia",
    "wiki": "Balance (Red Velvet – Irene & Seulgi tour)",
    "artist": "Red Velvet – Irene & Seulgi",
    "start": "2025-06-14",
@@ -857,14 +953,38 @@
    "gross_raw": null
   },
   {
+   "tour": "(G)I-dle World Tour · \"Just Me ( )I-dle\"",
+   "wiki": "Just Me ( )I-dle World Tour",
+   "artist": "(G)I-dle",
+   "start": "2022-06-17",
+   "end": "2022-10-01",
+   "shows": 21,
+   "attendance": null,
+   "attendance_raw": null,
+   "gross_usd": null,
+   "gross_raw": null
+  },
+  {
    "tour": "I Am Free-ty World Tour",
    "wiki": "I Am Free-ty World Tour",
    "artist": "(G)I-dle",
    "start": "2023-06-17",
    "end": "2023-10-29",
-   "shows": null,
+   "shows": 24,
    "attendance": 130000,
    "attendance_raw": "130,000",
+   "gross_usd": null,
+   "gross_raw": null
+  },
+  {
+   "tour": "i-DOL World Tour",
+   "wiki": "I-dol World Tour",
+   "artist": "(G)I-dle",
+   "start": "2024-08-03",
+   "end": "2024-11-02",
+   "shows": 22,
+   "attendance": null,
+   "attendance_raw": null,
    "gross_usd": null,
    "gross_raw": null
   },
@@ -987,7 +1107,7 @@
  ],
  "엑소": [
   {
-   "tour": "Exo from Exoplanet 1 – The Lost Planet",
+   "tour": "Exo Exoplanet #1 – The Lost Planet",
    "wiki": "Exo from Exoplanet 1 – The Lost Planet",
    "artist": "EXO",
    "start": "2014-05-23",
@@ -999,7 +1119,7 @@
    "gross_raw": null
   },
   {
-   "tour": "Exo Planet 2 – The Exo'luxion",
+   "tour": "Exo Planet #2 – The Exo'luxion",
    "wiki": "Exo Planet 2 – The Exo'luxion",
    "artist": "Exo",
    "start": "2015-03-07",
@@ -1011,7 +1131,7 @@
    "gross_raw": null
   },
   {
-   "tour": "Exo Planet 3 – The Exo'rdium",
+   "tour": "Exo Planet #3 – \"The Exo'rdium\"",
    "wiki": "Exo Planet 3 – The Exo'rdium",
    "artist": "Exo",
    "start": "2016-07-22",
@@ -1023,7 +1143,7 @@
    "gross_raw": null
   },
   {
-   "tour": "Exo Planet 4 – The Elyxion",
+   "tour": "Exo Planet #4 – \"The Elyxion\"",
    "wiki": "Exo Planet 4 – The Elyxion",
    "artist": "Exo",
    "start": "2017-11-24",
@@ -1035,7 +1155,7 @@
    "gross_raw": null
   },
   {
-   "tour": "Exo Planet 5 – Exploration",
+   "tour": "Exo Planet #5 – Exploration",
    "wiki": "Exo Planet 5 – Exploration",
    "artist": "Exo",
    "start": "2019-07-19",
@@ -1145,7 +1265,7 @@
    "gross_raw": null
   },
   {
-   "tour": "Super Junior D&E The 2nd Japan Tour",
+   "tour": "Super Junior D&E Japan Tour 2015 -Present-",
    "wiki": "Super Junior D&E The 2nd Japan Tour",
    "artist": "Super Junior-D&E",
    "start": "2015-04-03",
@@ -1169,24 +1289,24 @@
    "gross_raw": null
   },
   {
-   "tour": "Super Junior D&E The 1st Asia Tour",
+   "tour": "Super Junior D&E Asia Tour 2015 -Present-",
    "wiki": "Super Junior D&E The 1st Asia Tour",
    "artist": "Super Junior-D&E",
    "start": "2015-06-06",
    "end": "2015-08-12",
-   "shows": 2,
+   "shows": 5,
    "attendance": null,
    "attendance_raw": null,
    "gross_usd": null,
    "gross_raw": null
   },
   {
-   "tour": "Super Junior-K.R.Y. Asia Tour 2015: Phonograph",
+   "tour": "Super Junior-K.R.Y. Asia Tour: Phonograph",
    "wiki": "Super Junior-K.R.Y. Asia Tour 2015: Phonograph",
    "artist": "Super Junior-K.R.Y.",
    "start": "2015-08-22",
    "end": "2016-01-03",
-   "shows": 2,
+   "shows": 9,
    "attendance": null,
    "attendance_raw": null,
    "gross_usd": null,
@@ -1286,31 +1406,7 @@
  "원더걸스": [
   {
    "tour": "1st Wonder Tour",
-   "wiki": "1st Wonder Tour",
-   "artist": "Wonder Girls",
-   "start": "2009-02-28",
-   "end": "2010-12-17",
-   "shows": 6,
-   "attendance": null,
-   "attendance_raw": null,
-   "gross_usd": null,
-   "gross_raw": null
-  },
-  {
-   "tour": "Wonder Girls World Tour",
-   "wiki": "Wonder Girls World Tour",
-   "artist": "Wonder Girls",
-   "start": "2009-02-28",
-   "end": "2010-12-17",
-   "shows": 6,
-   "attendance": null,
-   "attendance_raw": null,
-   "gross_usd": null,
-   "gross_raw": null
-  },
-  {
-   "tour": "Wonder World Tour (Wonder Girls)",
-   "wiki": "Wonder World Tour (Wonder Girls)",
+   "wiki": "List of Wonder Girls concert tours",
    "artist": "Wonder Girls",
    "start": "2009-02-28",
    "end": "2010-12-17",
@@ -1323,7 +1419,7 @@
  ],
  "투애니원": [
   {
-   "tour": "Nolza Tour",
+   "tour": "Nolza!",
    "wiki": "Nolza Tour",
    "artist": "2NE1",
    "start": "2011-08-26",
@@ -1374,18 +1470,6 @@
  "티아라": [
   {
    "tour": "T-ara Japan Tour 2012: Jewelry Box",
-   "wiki": "T-ara Japan Tour 2012: Jewelry Box",
-   "artist": "T-ara",
-   "start": "2012-06-19",
-   "end": "2012-07-26",
-   "shows": 11,
-   "attendance": null,
-   "attendance_raw": null,
-   "gross_usd": null,
-   "gross_raw": null
-  },
-  {
-   "tour": "Jewelry Box (T-ara album)",
    "wiki": "Jewelry Box (T-ara album)",
    "artist": "T-ara",
    "start": "2012-06-19",
@@ -1397,7 +1481,7 @@
    "gross_raw": null
   },
   {
-   "tour": "Sexy Love (T-ara song)",
+   "tour": "~Sexy Love~ PREMIUM Showcase Tour",
    "wiki": "Sexy Love (T-ara song)",
    "artist": "T-ara",
    "start": "2012-11-11",
@@ -1409,7 +1493,7 @@
    "gross_raw": null
   },
   {
-   "tour": "Bunny Style!",
+   "tour": "Bunny Style! Special Showcase Tour (2013)",
    "wiki": "Bunny Style!",
    "artist": "T-ara",
    "start": "2013-02-20",
@@ -1421,7 +1505,7 @@
    "gross_raw": null
   },
   {
-   "tour": "Treasure Box (T-ara album)",
+   "tour": "T-ara Japan Tour 2013: Treasure Box",
    "wiki": "Treasure Box (T-ara album)",
    "artist": "T-ara",
    "start": "2013-09-04",
@@ -1464,7 +1548,7 @@
    "artist": "TVXQ",
    "start": "2012-11-17",
    "end": "2013-07-20",
-   "shows": 6,
+   "shows": 8,
    "attendance": null,
    "attendance_raw": null,
    "gross_usd": null,
@@ -1473,7 +1557,7 @@
  ],
  "아이콘": [
   {
-   "tour": "IKon Japan Dome Tour",
+   "tour": "2017 iKON Japan Dome Tour",
    "wiki": "IKon Japan Dome Tour",
    "artist": "iKON",
    "start": "2017-05-20",
@@ -1501,7 +1585,7 @@
  ],
  "펜타곤": [
   {
-   "tour": "Dear Cosmo Tour",
+   "tour": "1st Japan Zepp tour - \"Dear Cosmo\"",
    "wiki": "Dear Cosmo Tour",
    "artist": "Pentagon",
    "start": "2019-02-10",
@@ -1513,12 +1597,12 @@
    "gross_raw": null
   },
   {
-   "tour": "Prism World Tour",
+   "tour": "Pentagon World Tour  · \"Prism\"",
    "wiki": "Prism World Tour",
    "artist": "Pentagon",
    "start": "2019-04-27",
    "end": "2019-12-21",
-   "shows": 7,
+   "shows": 23,
    "attendance": null,
    "attendance_raw": null,
    "gross_usd": null,
@@ -1555,7 +1639,7 @@
  ],
  "신화": [
   {
-   "tour": "Grand Tour: The Return",
+   "tour": "2012 Shinhwa Grand Tour: The Return",
    "wiki": "Grand Tour: The Return",
    "artist": "Shinhwa",
    "start": "2012-03-24",
@@ -1567,7 +1651,7 @@
    "gross_raw": "(Seoul)"
   },
   {
-   "tour": "Grand Tour: The Classic",
+   "tour": "2013 Shinhwa Grand Tour: The Classic",
    "wiki": "Grand Tour: The Classic",
    "artist": "Shinhwa",
    "start": "2013-03-16",
@@ -1581,7 +1665,7 @@
  ],
  "god": [
   {
-   "tour": "Sacrament Tour",
+   "tour": "Sacrament World Tour",
    "wiki": "Sacrament Tour",
    "artist": "Lamb of God",
    "start": "2006-07-15",
@@ -1591,12 +1675,36 @@
    "attendance_raw": null,
    "gross_usd": null,
    "gross_raw": null
+  },
+  {
+   "tour": "Wrath Tour",
+   "wiki": "Wrath Tour",
+   "artist": "Lamb of God",
+   "start": "2008-11-24",
+   "end": "2010-11-21",
+   "shows": 275,
+   "attendance": null,
+   "attendance_raw": null,
+   "gross_usd": null,
+   "gross_raw": null
+  },
+  {
+   "tour": "Resolution Tour",
+   "wiki": "Resolution Tour",
+   "artist": "Lamb of God",
+   "start": "2012-01-22",
+   "end": "2014-01-25",
+   "shows": 174,
+   "attendance": null,
+   "attendance_raw": null,
+   "gross_usd": null,
+   "gross_raw": null
   }
  ],
  "드림캐쳐": [
   {
-   "tour": "Apocalypse: Save Us",
-   "wiki": "Apocalypse: Save Us",
+   "tour": "2022 Dreamcatcher World Tour [Apocalypse: Save Us]",
+   "wiki": "Apocalypse: Save Us World Tour",
    "artist": "Dreamcatcher",
    "start": "2022-06-28",
    "end": "2022-07-20",
@@ -1627,6 +1735,158 @@
    "start": "2026-09-01",
    "end": "2026-11-28",
    "shows": 31,
+   "attendance": null,
+   "attendance_raw": null,
+   "gross_usd": null,
+   "gross_raw": null
+  }
+ ],
+ "빅뱅": [
+  {
+   "tour": "Global Warning Tour",
+   "wiki": "Global Warning Tour",
+   "artist": "Big Bang",
+   "start": "2008-03-28",
+   "end": "2008-06-22",
+   "shows": 10,
+   "attendance": null,
+   "attendance_raw": null,
+   "gross_usd": null,
+   "gross_raw": null
+  },
+  {
+   "tour": "Alive Galaxy Tour",
+   "wiki": "Alive Galaxy Tour",
+   "artist": "Big Bang",
+   "start": "2012-03-02",
+   "end": "2013-01-27",
+   "shows": 48,
+   "attendance": 800000,
+   "attendance_raw": "800,000",
+   "gross_usd": 73000000,
+   "gross_raw": "US$73 million (${{formatnum:}} million in dollars)"
+  },
+  {
+   "tour": "Japan Dome Tour",
+   "wiki": "Japan Dome Tour",
+   "artist": "Big Bang",
+   "start": "2013-11-16",
+   "end": "2014-01-26",
+   "shows": 19,
+   "attendance": null,
+   "attendance_raw": null,
+   "gross_usd": 70600000,
+   "gross_raw": "$70.6 million (${{formatnum:}} million in dollars)"
+  },
+  {
+   "tour": "Japan Dome Tour “X”",
+   "wiki": "Japan Dome Tour X",
+   "artist": "Big Bang",
+   "start": "2014-11-15",
+   "end": "2015-01-18",
+   "shows": 15,
+   "attendance": null,
+   "attendance_raw": null,
+   "gross_usd": 70390000,
+   "gross_raw": "$70.39 million (${{formatnum:}} million in dollars)"
+  },
+  {
+   "tour": "Made World Tour",
+   "wiki": "Made World Tour",
+   "artist": "Big Bang",
+   "start": "2015-04-25",
+   "end": "2016-03-06",
+   "shows": 66,
+   "attendance": null,
+   "attendance_raw": null,
+   "gross_usd": null,
+   "gross_raw": null
+  },
+  {
+   "tour": "Big Bang Special Event",
+   "wiki": "Big Bang Special Event",
+   "artist": "Big Bang",
+   "start": "2016-11-06",
+   "end": "2017-12-23",
+   "shows": 15,
+   "attendance": null,
+   "attendance_raw": null,
+   "gross_usd": null,
+   "gross_raw": null
+  }
+ ],
+ "워너원": [
+  {
+   "tour": "One: The World",
+   "wiki": "One: The World",
+   "artist": "Wanna One",
+   "start": "2018-06-01",
+   "end": "2018-09-01",
+   "shows": 20,
+   "attendance": null,
+   "attendance_raw": null,
+   "gross_usd": null,
+   "gross_raw": null
+  }
+ ],
+ "이달의소녀": [
+  {
+   "tour": "Loonatheworld Tour",
+   "wiki": "Loonatheworld Tour",
+   "artist": "Loona",
+   "start": "2022-08-01",
+   "end": "2023-03-03",
+   "shows": 22,
+   "attendance": null,
+   "attendance_raw": null,
+   "gross_usd": null,
+   "gross_raw": null
+  }
+ ],
+ "앨리스": [
+  {
+   "tour": "Clash of the Titans",
+   "wiki": "Clash of the Titans (tour)",
+   "artist": "Megadeth, Slayer, Testament, Suicidal Tendencies, Anthrax, Alice in Chains",
+   "start": "1990-09-22",
+   "end": "1991-07-14",
+   "shows": 67,
+   "attendance": null,
+   "attendance_raw": null,
+   "gross_usd": null,
+   "gross_raw": null
+  },
+  {
+   "tour": "Operation Rock & Roll",
+   "wiki": "Operation Rock & Roll",
+   "artist": "Judas Priest, Alice Cooper, Motörhead, Dangerous Toys and Metal Church",
+   "start": "1991-07-09",
+   "end": "1991-08-19",
+   "shows": 31,
+   "attendance": null,
+   "attendance_raw": null,
+   "gross_usd": null,
+   "gross_raw": null
+  },
+  {
+   "tour": "Blackdiamondskye",
+   "wiki": "Blackdiamondskye",
+   "artist": "Alice in Chains, Deftones and Mastodon",
+   "start": "2010-09-16",
+   "end": "2010-10-16",
+   "shows": 19,
+   "attendance": null,
+   "attendance_raw": null,
+   "gross_usd": null,
+   "gross_raw": null
+  },
+  {
+   "tour": "Masters of Madness",
+   "wiki": "Masters of Madness Tour",
+   "artist": "Alice Cooper and Marilyn Manson",
+   "start": "2013-06-01",
+   "end": "2013-07-28",
+   "shows": 18,
    "attendance": null,
    "attendance_raw": null,
    "gross_usd": null,
