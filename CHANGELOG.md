@@ -63,6 +63,8 @@
 
 ## 2026-10-16 (세션 — 카드 2개+재생모드 레이아웃)
 - [완료] 웹: 카드 2개 열린 채 영상 재생 시 멤버 카드 접기 탭(›)이 라이트박스에 덮여 멤버 카드만 닫을 수 없던 것 — 탭을 원래 자리 그대로 라이트박스 위 층으로(_bringToFront). 10-15의 right:858px 이동은 카드 밑에 깔려 효과 없어 되돌림 [index.html][kpop_universe.css]
+- [완료] 라이트박스 영상 아래 D안(시안 https://claude.ai/artifact/SuRumtaLYzAvqeq3B5UgMN B+C 합본, 사용자 선택) — 제목 옆 하트 / [반응 칩 · 세로 보기 · 저장 · ···] / "이 영상에 나온 사람" 프로필 줄(누르면 하프카드) / 그룹색 배경. ···=입덕 영상·전체 화면·소리·연결 보기·(관리자)태그. 툴바 DOM은 안 옮기고 display:contents+그리드(쇼츠 오른쪽 세로 버튼 줄 보존), ··· 메뉴는 원래 버튼을 대신 누름 [index.html][kpop_universe.css]
+- [완료] closeLightbox 0.2초 타이머가 그 사이 새로 연 라이트박스까지 닫던 버그 — 타이머 보관·openLightbox에서 취소. 이것 때문에 lb-topbar·lb-swipe-ownership이 늘 "미오픈"으로 빨갰음. lb-topbar는 D안 기준으로 갱신, lb-swipe-ownership은 폰 너비에 인라인 목록이 없어져(시트 이동) 해당 시나리오 스킵 [index.html][tests]
 - [완료] 멤버 탐색 그림 탭 재작성 — 기본=데뷔 나이 산점도(탭 맨 앞), 생년=점 하나=1명 기둥 그림(여·남·솔로 순, 최다 연도 주석, 점 누르면 멤버), 국적·소속사=비율 막대(누르면 필터, 소속사 칩), 사진 없는 멤버=멤버 색 구슬. 옛 생년 막대는 rect를 svg에 안 붙이는 버그로 빈 축만 보였음. 솔로 340명은 성별 데이터 없음(추측 안 함) [index.html][kpop_universe.css]
 - [완료] 인트로 행성 등장 easeOutBack(디용) → 70%에서 감속, 카드 주소(#g=/#m=)로 들어오면 인트로 대신 0.6초 페이드 [index.html]
 - [완료] For You "📰 This Week for Your Favorites" — 발견 탭 This Week's K-pop(1위·MV·티저·조회수 돌파)을 즐겨찾기(그룹+즐찾 멤버의 그룹+멤버 본인)로 거른 선반, 기념일 바로 밑. 데이터(_collectWeekNews, 3분 공유)와 렌더(_renderNewsList) 분리 [index.html]

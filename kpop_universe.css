@@ -4509,3 +4509,64 @@
 .mx-share-cap{margin:6px 6px 0;color:rgba(255,255,255,0.4);font-size:10.5px;}
 .mx-co-chip{all:unset;cursor:pointer;margin-left:8px;padding:2px 8px;border-radius:10px;background:rgba(120,165,255,0.15);border:1px solid rgba(120,165,255,0.4);color:rgba(190,215,255,0.95);font-size:10.5px;}
 .mx-fig-leg i.is-x{background:#9aa;}
+
+/* ── 라이트박스 영상 아래 D안(2026-10-16, 사용자 선택 — 유튜브·스포티파이 참고 시안 B+C) ───────────────────────
+   가로 재생(.lb-browse) 화면에서만: 제목 줄 오른쪽에 하트 / [반응 칩 · 세로 보기 · 저장 · ···] 한 줄 / "이 영상에 나온 사람" 프로필 줄.
+   기존 툴바 버튼은 DOM을 옮기지 않고 #yt-lb-toolbar·#yt-lb-actions를 display:contents로 풀어 #yt-lb-main 그리드에 직접 배치한다
+   (쇼츠 화면은 같은 버튼들을 id로 오른쪽 세로 줄에 고정 배치하므로 DOM을 옮기면 그쪽이 깨진다). 가끔 쓰는 버튼(입덕·전체·소리·편집)은
+   그리드에서 빼고 ··· 메뉴가 원래 버튼을 대신 눌러 준다. 이전/다음은 아래 목록 머리의 ‹ › 로. */
+#yt-lb-people,#yt-lb-more-wrap{display:none;}
+#yt-lightbox.lb-browse.open{background:linear-gradient(180deg,rgba(var(--lb-tint,8,9,26),0.24) 0,rgba(8,9,26,1) 420px),#08091a;}
+#yt-lightbox.lb-browse #yt-lb-main{display:grid;grid-template-columns:minmax(0,1fr) 44px 44px 44px;column-gap:2px;align-items:center;}
+#yt-lightbox.lb-browse #yt-lb-video-box{grid-column:1/-1;grid-row:1;}
+#yt-lightbox.lb-browse #yt-lb-video-box.is-shorts{justify-self:center;}
+#yt-lightbox.lb-browse #yt-lb-info{grid-column:1/4;grid-row:2;align-self:start;padding-top:14px;min-width:0;}
+#yt-lightbox.lb-browse #yt-lb-title-text{font-size:16px;font-weight:700;line-height:1.36;color:#f3f6ff;}
+#yt-lightbox.lb-browse #yt-lb-toolbar,#yt-lightbox.lb-browse #yt-lb-actions{display:contents;}
+#yt-lightbox.lb-browse #yt-lb-prev,#yt-lightbox.lb-browse #yt-lb-next,#yt-lightbox.lb-browse #yt-lb-fs,
+#yt-lightbox.lb-browse #yt-lb-mute,#yt-lightbox.lb-browse #yt-lb-flag,#yt-lightbox.lb-browse #yt-lb-edit{display:none!important;}
+#yt-lightbox.lb-browse #yt-lb-scrap,#yt-lightbox.lb-browse #yt-lb-rotate,#yt-lightbox.lb-browse #yt-lb-col,#yt-lightbox.lb-browse #yt-lb-more{
+  width:44px;height:44px;border-radius:22px;background:transparent;border:none;color:rgba(225,234,255,0.82);display:flex;align-items:center;justify-content:center;padding:0;justify-self:center;}
+#yt-lightbox.lb-browse #yt-lb-scrap{grid-column:4;grid-row:2;align-self:start;margin-top:6px;flex-direction:column;gap:0;}
+#yt-lightbox.lb-browse #yt-lb-scrap svg{width:22px;height:22px;}
+#yt-lightbox.lb-browse #yt-lb-scrap .lb-action-cnt{font-size:10px;margin:1px 0 0;}
+#yt-lightbox.lb-browse #yt-lb-rotate{grid-column:2;grid-row:3;margin-top:10px;}
+#yt-lightbox.lb-browse #yt-lb-rotate.is-portrait{background:rgba(155,178,228,0.18);}
+#yt-lightbox.lb-browse #yt-lb-col{grid-column:3;grid-row:3;margin-top:10px;}
+#yt-lightbox.lb-browse #yt-lb-col svg{width:19px;height:19px;}
+#yt-lightbox.lb-browse #yt-lb-rotate svg{width:19px;height:19px;}
+#yt-lightbox.lb-browse #yt-lb-more-wrap{display:block;grid-column:4;grid-row:3;margin-top:10px;position:relative;justify-self:center;}
+#yt-lb-more svg{width:20px;height:20px;fill:currentColor;}
+#yt-lightbox.lb-browse #yt-lb-scrap:hover,#yt-lightbox.lb-browse #yt-lb-rotate:hover,#yt-lightbox.lb-browse #yt-lb-col:hover,#yt-lightbox.lb-browse #yt-lb-more:hover{background:rgba(255,255,255,0.08);}
+#yt-lb-more-panel{position:absolute;top:calc(100% + 4px);right:0;z-index:6;min-width:196px;padding:6px;border-radius:14px;background:#171a30;border:1px solid rgba(255,255,255,0.1);box-shadow:0 14px 34px rgba(0,0,0,0.55);display:flex;flex-direction:column;}
+#yt-lb-more-panel[hidden]{display:none;}
+.lb-more-item{all:unset;box-sizing:border-box;display:flex;align-items:center;min-height:44px;padding:0 12px;border-radius:9px;font-size:14px;color:rgba(228,236,255,0.92);cursor:pointer;white-space:nowrap;}
+.lb-more-item:hover{background:rgba(255,255,255,0.07);}
+.lb-more-item.is-on{color:rgba(255,195,100,0.95);}
+#yt-lightbox.lb-browse #yt-lb-reactions{grid-column:1;grid-row:3;justify-content:flex-start;flex-wrap:nowrap;padding:10px 0 0;min-width:0;overflow:hidden;}
+#yt-lightbox.lb-browse #yt-lb-reactions.expanded{flex-wrap:wrap;}
+/* 출연자 프로필 카드 — 상단 바에 떠 있던 앵커/칩을 흐름 안 카드로. 쇼츠 화면의 상단 앵커(lb-shorts:not(.lb-browse))는 그대로 */
+#yt-lightbox.lb-browse #yt-lb-member-info{grid-column:1/-1;grid-row:4;position:static;transform:none;display:block;pointer-events:auto;
+  margin:14px 0 0;padding:12px 10px 10px;border:none;border-radius:14px;background:rgba(255,255,255,0.05);text-align:left;min-height:0;max-width:none;z-index:auto;}
+#yt-lightbox.lb-browse #yt-lb-anchor-chip,#yt-lightbox.lb-browse #yt-lb-with-chips{display:none!important;}
+#yt-lightbox.lb-browse #yt-lb-people{display:block;}
+.lb-people-hd{font-size:13px;font-weight:600;color:rgba(228,236,255,0.88);padding:0 4px 10px;}
+.lb-people-row{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;overscroll-behavior-x:contain;}
+.lb-people-row::-webkit-scrollbar{display:none;}
+.lb-person{all:unset;box-sizing:border-box;flex:0 0 auto;width:62px;display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;padding:2px 0 4px;border-radius:10px;}
+.lb-person:active{background:rgba(255,255,255,0.06);}
+.lb-person:focus-visible{outline:2px solid rgba(150,180,255,0.85);outline-offset:1px;}
+.lb-person-av{width:48px;height:48px;border-radius:50%;overflow:hidden;flex-shrink:0;
+  background:radial-gradient(circle at 34% 30%,rgba(255,255,255,0.5),rgba(255,255,255,0) 40%),radial-gradient(circle at 50% 50%,var(--orb) 0 55%,color-mix(in srgb,var(--orb) 50%,#0a0b16) 100%);}
+.lb-person-av.has-pic{background:#1a1d33;}
+.lb-person-av img{width:100%;height:100%;object-fit:cover;display:block;}
+.lb-person.is-group .lb-person-av{box-shadow:0 0 0 2px #0e1024,0 0 0 3px rgba(255,255,255,0.45);}
+.lb-person-nm{max-width:100%;font-size:11px;color:rgba(220,232,255,0.82);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center;}
+#yt-lightbox.lb-browse #yt-lb-uplist-preview{grid-column:1/-1;grid-row:5;}
+#yt-lightbox.lb-browse .lb-menu-wrap{display:none!important;}
+@media(max-width:768px){
+  #yt-lightbox.lb-browse.lb-has-chips #yt-lb-wrap{padding-top:calc(64px + env(safe-area-inset-top,0px));}
+  #yt-lightbox.lb-browse #yt-lb-wrap{padding-top:calc(64px + env(safe-area-inset-top,0px));}
+  #yt-lightbox.lb-browse #yt-lb-info{padding-top:14px;}
+}
+#yt-lightbox.lb-browse #yt-lb-queue-btn{display:none!important;} /* 아래 "이어서 보기 전체 ›"와 같은 기능 — D안 제목 줄엔 하트만 */

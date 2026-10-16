@@ -116,6 +116,11 @@ async function main() {
         scrollable:Math.max(0,up.scrollHeight-up.clientHeight),items:up.querySelectorAll('.lb-up-item').length});})()`) || '{}');
     if (!pre.open) { fail('라이트박스가 안 열림 — 이후 테스트 불가'); throw new Error('라이트박스 미오픈'); }
     if (pre.mode !== 'browse') { fail(`브라우즈 모드가 아님 (mode=${pre.mode})`); throw new Error('모드 불일치'); }
+    // ⚠️ 2026-10-16: 폰 너비에선 '다음 영상' 목록이 재생 화면 안에 없다 — 아래 미리보기 2줄 + '이어서 보기 전체 ›'로 여는 별도 시트로
+    //    옮겨졌다(#yt-lb-queue-sheet). 이 테스트가 재현하던 '재생 화면 안 목록을 훑다가 닫힘'은 그 구조에선 생길 수 없다.
+    //    (이 사실은 오랫동안 가려져 있었다 — closeLightbox의 0.2초 타이머가 새로 연 라이트박스까지 닫아 테스트가 늘 '미오픈'으로 멈췄다.)
+    const inlineList = await ev("getComputedStyle(document.getElementById('yt-lb-uplist')).display!=='none'");
+    if (!inlineList) { console.log('⏭️  폰 너비 재생 화면엔 인라인 목록이 없음(시트로 이동) — 목록 스와이프 소유권 시나리오 해당 없음, 스킵'); return; }
     if (pre.scrollable < 100) fail(`"다음 영상" 목록이 충분히 안 스크롤됨 (여유 ${pre.scrollable}px, 항목 ${pre.items}개) — 재현 조건 미달`);
     else ok(`브라우즈 모드 + 스크롤 가능한 목록 준비 (여유 ${pre.scrollable}px, 항목 ${pre.items}개)`);
 

@@ -878,6 +878,7 @@
     <div id="yt-lb-member-info">
       <div id="yt-lb-anchor-chip"></div>
       <div id="yt-lb-with-chips"></div>
+      <div id="yt-lb-people"></div>
     </div>
     <div id="yt-lb-reactions">
       <button class="lb-react-btn" data-emoji="❤️‍🔥">❤️‍🔥<span class="lb-react-cnt"></span></button>
@@ -900,6 +901,10 @@
         <button id="yt-lb-edit" aria-label="출연 멤버 지정" style="display:none">✎</button>
       </div>
       <button id="yt-lb-next" aria-label="다음 영상">›</button>
+    </div>
+    <div id="yt-lb-more-wrap">
+      <button id="yt-lb-more" type="button" aria-label="더보기" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.3"/><circle cx="12" cy="12" r="1.3"/><circle cx="19" cy="12" r="1.3"/></svg></button>
+      <div id="yt-lb-more-panel" role="menu" hidden></div>
     </div>
     <div id="yt-lb-uplist-preview"></div>
     </div>
@@ -6464,6 +6469,7 @@ function openLightbox(url,shorts,playlist,idx,ctx,isAdvance,forceBrowseMode){
   _lbIdx=(idx!=null)?idx:-1;
   _lbCtx=(ctx!=null)?ctx:_lbCtx;
   document.querySelector('.lb-menu-wrap')?.classList.remove('open'); // 이전 영상에서 열어뒀던 더보기 메뉴는 다음 영상으로 안 넘어가게
+  try{_lbMoreClose();}catch(e){}
   const lb=document.getElementById('yt-lightbox');
   const iframe=document.getElementById('yt-lb-iframe');
   const forcePortrait=!shorts&&_lbPortraitVids.has(vid); // 이전에 세로로 저장된 영상
@@ -6496,6 +6502,7 @@ function openLightbox(url,shorts,playlist,idx,ctx,isAdvance,forceBrowseMode){
   _gaEvent('video_play',{mode:_lbSessionMode,advance:!!isAdvance}); // 쇼츠/브라우즈·최초/넘김 구분(2026-08-29)
   // iOS Safari: display:none 상태의 iframe에서 src를 바꾸면 사용자 제스처 체인이 끊겨 autoplay가 차단됨.
   // 라이트박스를 먼저 열어 iframe이 visible한 상태로 만든 뒤 src를 설정해야 autoplay가 허용됨.
+  clearTimeout(_lbCloseT);lb.classList.remove('lb-closing'); // 직전 닫기 애니메이션이 이 새 라이트박스를 닫지 않게(closeLightbox 주석)
   lb.classList.add('open');_bringToFront(lb); // 재생 플레이어는 열릴 때 항상 최상단(곡영상·조합 위, 그 위 어드민 편집은 또 위로)
   // 멤버 카드 접기 탭(›)은 카드 왼쪽 바깥(=라이트박스 오른쪽 끝)에 걸려 있어 라이트박스에 덮였다 — 재생 중 멤버 카드만
   // 닫을 길이 없었음(2026-10-16 제보). 탭만 라이트박스 바로 위 층으로 올린다(자리는 그대로, 새 버튼 없음).
@@ -6691,6 +6698,71 @@ function _lbUpdateToolbar(){
     _renderReactions();
   }
 }
+// ── 영상 아래 "이 영상에 나온 사람"(2026-10-16, 라이트박스 D안) ──────────────────────────────────────
+// 가로 재생(브라우즈) 화면에서 출연자를 텍스트 칩 대신 동그란 프로필 + 이름 줄로 보여준다. 누르면 예전 칩과 같은 하프카드.
+// 쇼츠(스와이프) 화면은 상단 바의 앵커 텍스트를 그대로 쓴다(그쪽은 CSS로 이 줄을 숨김). 데이터는 _lbUpdateMemberInfo가 이미 정리한 것.
+// 배경: 그룹 고유색을 화면 위쪽에 은은하게(--lb-tint) — 스포티파이가 앨범 색을 까는 것처럼 "누구 영상인지"가 색으로 먼저 읽힌다.
+function _lbRenderPeople({artist,groupKo,gName,multi,withList,anchorG}){
+  const box=document.getElementById('yt-lb-people');if(!box)return;
+  const isKo=currentLang==='ko';
+  const items=[],seen=new Set();
+  const addM=a=>{if(!a)return;const k='m:'+a.name.ko+'|'+a.group.ko;if(seen.has(k))return;seen.add(k);items.push({kind:'member',a});};
+  const addG=g=>{if(!g||!GROUPS[g])return;const k='g:'+g;if(seen.has(k))return;seen.add(k);items.push({kind:'group',g});};
+  addM(artist);if(gName)addG(groupKo);
+  (multi||[]).forEach(addM);
+  (withList||[]).forEach(it=>{if(it.group)addG(it.group);else addM(_findArtistByConnName(it.n,artist?artist.group.ko:groupKo));});
+  box.replaceChildren();
+  const lb=document.getElementById('yt-lightbox');
+  const gc=GROUPS[groupKo]?.color||(artist&&artist.color);
+  if(lb){if(Array.isArray(gc))lb.style.setProperty('--lb-tint',gc.slice(0,3).join(','));else lb.style.removeProperty('--lb-tint');}
+  if(!items.length)return;
+  const hd=document.createElement('div');hd.className='lb-people-hd';hd.textContent=isKo?'이 영상에 나온 사람':'In this video';box.appendChild(hd);
+  const row=document.createElement('div');row.className='lb-people-row hscroll-drag';
+  items.forEach(it=>{
+    const b=document.createElement('button');b.type='button';b.className='lb-person'+(it.kind==='group'?' is-group':'');
+    const av=document.createElement('span');av.className='lb-person-av';
+    const col=it.kind==='group'?GROUPS[it.g]?.color:it.a.color;
+    av.style.setProperty('--orb',Array.isArray(col)?'rgb('+col[0]+','+col[1]+','+col[2]+')':'rgb(120,130,190)');
+    if(it.kind==='member'){
+      const load=u=>{if(!u)return;const img=new Image();img.alt='';img.referrerPolicy='no-referrer';img.onload=()=>{if(av.isConnected||true)av.replaceChildren(img);av.classList.add('has-pic');};img.src=u;};
+      const sync=_instaPicCache.get(_picKey(it.a.name.ko,it.a.group.ko))||_instaPicCache.get(_picKey(it.a.name.ko,''));
+      if(sync)load(sync);else _srAvUrl(it.a).then(load).catch(()=>{});
+    }
+    const nm=document.createElement('span');nm.className='lb-person-nm';
+    nm.textContent=it.kind==='group'?(isKo?it.g:(GROUPS[it.g]?.en||it.g)):_dispName(it.a,groupKo);
+    b.append(av,nm);
+    b.addEventListener('click',e=>{e.stopPropagation();if(it.kind==='group')_openLbHalf('group',it.g);else _openLbHalf('member',it.a);});
+    row.appendChild(b);
+  });
+  box.appendChild(row);
+  try{_enableDragScroll(row);}catch(e){}
+}
+// ··· 메뉴 — 가끔 쓰는 것(입덕 영상·전체 화면·소리·연결 보기·관리자 태그 수정). 원래 버튼을 그대로 눌러 주는 방식이라
+// 상태·동작은 기존과 100% 같다(원래 버튼은 쇼츠 화면의 오른쪽 세로 버튼 줄로 계속 쓰인다).
+function _lbMoreClose(){const p=document.getElementById('yt-lb-more-panel'),b=document.getElementById('yt-lb-more');if(p)p.hidden=true;if(b)b.setAttribute('aria-expanded','false');}
+function _lbMoreOpen(){
+  const p=document.getElementById('yt-lb-more-panel'),b=document.getElementById('yt-lb-more');if(!p||!b)return;
+  const isKo=currentLang==='ko',$=id=>document.getElementById(id);
+  const vis=el=>el&&el.style.display!=='none';
+  const flag=$('yt-lb-flag'),mute=$('yt-lb-mute'),conn=$('yt-lb-conn-btn'),edit=$('yt-lb-edit');
+  const rows=[
+    flag&&vis(flag)?{el:flag,t:flag.classList.contains('flagged')?(isKo?'입덕 영상 표시 빼기':'Remove debut flag'):(isKo?'입덕 영상으로 표시':'Mark as my debut video'),on:flag.classList.contains('flagged')}:null,
+    {el:$('yt-lb-fs'),t:isKo?'전체 화면':'Full screen'},
+    mute?{el:mute,t:mute.getAttribute('aria-label')||(isKo?'소리':'Sound')}:null,
+    conn&&conn.style.display!=='none'?{el:conn,t:isKo?'연결 보기':'Connections'}:null,
+    edit&&vis(edit)?{el:edit,t:isKo?'출연 멤버 지정(관리자)':'Tag members (admin)'}:null,
+  ].filter(r=>r&&r.el);
+  p.replaceChildren();
+  rows.forEach(r=>{
+    const it=document.createElement('button');it.type='button';it.setAttribute('role','menuitem');it.className='lb-more-item'+(r.on?' is-on':'');
+    it.textContent=r.t;
+    it.addEventListener('click',e=>{e.stopPropagation();_lbMoreClose();r.el.click();});
+    p.appendChild(it);
+  });
+  p.hidden=false;b.setAttribute('aria-expanded','true');
+}
+document.getElementById('yt-lb-more')?.addEventListener('click',e=>{e.stopPropagation();const p=document.getElementById('yt-lb-more-panel');if(p&&!p.hidden)_lbMoreClose();else _lbMoreOpen();});
+document.addEventListener('pointerdown',e=>{const w=document.getElementById('yt-lb-more-wrap');if(w&&!w.contains(e.target))_lbMoreClose();},true);
 // 브라우즈 모드 전용 — 이 영상의 주 인물(그룹/멤버) 표시, 함께 출연한 멤버 칩, 연결 카드 진입 버튼.
 // 쇼츠(스와이프) 모드에선 #yt-lb-member-info 자체가 CSS로 숨겨져 있어 호출부에서부터 걸러짐.
 function _lbUpdateMemberInfo(){
@@ -6738,7 +6810,7 @@ function _lbUpdateMemberInfo(){
   if(mName&&gName){const sep=document.createElement('span');sep.className='lb-anchor-sep';sep.textContent='·';anchorEl.appendChild(sep);}
   if(gName&&GROUPS[groupKo])anchorEl.appendChild(_mkPart(gName,()=>_openLbHalf('group',groupKo)));
   else if(gName)anchorEl.appendChild(document.createTextNode(gName));
-  wrap.style.display=(mName||gName)?'':'none';
+  wrap.style.display=(mName||gName||(s&&((s.with&&s.with.length)||(s.withMembers&&s.withMembers.length))))?'':'none';
   withEl.innerHTML='';
   // 한 그룹이 전원 나온 영상은 멤버 칩 대신 그룹 칩 하나로(2026-09-29 — 빅톤 6명이 칩 6개로 늘어서던 것).
   // 묶음·전원 판정은 카드 목록 함께한 줄과 같은 헬퍼(_withGroupOf/_withIsFullGroup). 앵커 자신의 그룹은 접지 않는다.
@@ -6787,6 +6859,7 @@ function _lbUpdateMemberInfo(){
     chip.textContent=label;
     withEl.appendChild(chip);
   });
+  _lbRenderPeople({artist,groupKo,gName,multi:_multiChips?_multi:[],withList:_withList,anchorG:_anchorG});
   const hasCollab=!!(artist&&_getCollabMembers(artist).length>0);
   connBtn.style.display=hasCollab?'':'none';
   document.getElementById('yt-lightbox')?.classList.toggle('lb-has-chips',withEl.children.length>0); // 칩 줄만큼 영상 내림(CSS 주석)
@@ -8014,6 +8087,7 @@ function _closeLbHalf(){
   });
 });
 
+var _lbCloseT=0;
 function closeLightbox(){
   try{_flushVidProg();}catch(_){} // 닫는 순간 시청 위치를 바로 저장(기기·서버)
   _lbActiveVid=null;
@@ -8026,7 +8100,9 @@ function closeLightbox(){
   document.getElementById('yt-lb-iframe').src=''; // 소리는 즉시 끊기
   document.querySelector('.lb-menu-wrap')?.classList.remove('open');
   lb.classList.add('lb-closing');
-  setTimeout(()=>{lb.classList.remove('open','lb-closing');},200);
+  // ⚠️ 타이머 번호를 남긴다 — 닫는 0.2초 안에 다른 영상을 열면 이 타이머가 **새로 연 라이트박스의 open까지 지워** 화면이 그냥
+  //    사라졌다(2026-10-16 발견: 재생 테스트 2종이 '라이트박스 미오픈'으로 계속 빨갛던 원인). openLightbox가 이걸 취소한다.
+  clearTimeout(_lbCloseT);_lbCloseT=setTimeout(()=>{lb.classList.remove('open','lb-closing');},200);
   _lbCurVideoUrl='';
   _lbSpeed=1;
   _lbConnCardOpenedFromLb=false; // 영상 자체를 닫아버렸으면 나중에 연결 카드를 닫아도 재생을 재개할 대상이 없음

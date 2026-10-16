@@ -84,15 +84,18 @@ async function main() {
         return {txt:b.textContent,top:Math.round(r.top),bottom:Math.round(r.bottom),h:Math.round(r.height),pe:getComputedStyle(b).pointerEvents};});
       var chips=[...wc.children].map(function(c){var r=c.getBoundingClientRect();
         return {txt:c.textContent,tag:c.tagName,top:Math.round(r.top),h:Math.round(r.height),pe:getComputedStyle(c).pointerEvents};});
-      return JSON.stringify({parts:parts,chips:chips});})()`) || '{}');
+      var people=[...document.querySelectorAll('#yt-lb-people .lb-person')].map(function(b){var r=b.getBoundingClientRect();return {txt:b.textContent,h:Math.round(r.height),w:Math.round(r.width),pe:getComputedStyle(b).pointerEvents};});
+      return JSON.stringify({parts:parts,chips:chips,people:people});})()`) || '{}');
     console.log('  측정:', JSON.stringify(geo));
 
     if ((geo.parts || []).length === 2) ok(`앵커 줄에 멤버·그룹 두 버튼 (${geo.parts.map(p => p.txt).join(' / ')})`);
     else fail(`앵커 버튼이 2개가 아님 — ${JSON.stringify(geo.parts)}`);
     if ((geo.parts || []).every(p => p.pe === 'auto')) ok('앵커 버튼 둘 다 클릭 가능(부모 pointer-events:none에서 복구됨)');
     else fail(`앵커 버튼에 pointer-events:none이 남음 — ${JSON.stringify(geo.parts)}`);
-    if ((geo.parts || []).every(p => p.h >= 32)) ok(`앵커 버튼 세로 탭 영역 ${geo.parts[0].h}px (예전 17px)`);
-    else fail(`앵커 버튼 탭 영역이 좁음 — ${JSON.stringify(geo.parts.map(p => p.h))}`);
+    // ④ 2026-10-16 D안: 가로 재생 화면에선 상단 앵커 글자 대신 영상 아래 '이 영상에 나온 사람' 프로필 줄이 눌리는 곳이다
+    //    (앵커/칩은 쇼츠 화면용으로 DOM에 남아 있지만 가로 화면에선 숨김). 프로필 버튼이 다 있고 손가락 크기(44px+)인지 본다.
+    if ((geo.people || []).length >= 2 && geo.people.every(p => p.h >= 44 && p.pe !== 'none')) ok(`출연자 프로필 버튼 ${geo.people.length}개 · 높이 ${geo.people[0].h}px (${geo.people.map(p => p.txt).join(', ')})`);
+    else fail(`출연자 프로필 줄이 없거나 작음 — ${JSON.stringify(geo.people)}`);
 
     if ((geo.chips || []).length && geo.chips.every(c => c.tag === 'BUTTON' && c.pe === 'auto'))
       ok(`"함께한 멤버" 칩이 버튼이고 클릭 가능 (${geo.chips.map(c => c.txt).join(', ')})`);
@@ -147,28 +150,23 @@ async function main() {
           with:${JSON.stringify(names.map(n => `${n}(세이마이네임)`))}}];
         openLightbox(pl[0].u,false,pl,0,{groupKo:'세이마이네임'},false,true); return 1;})()`);
       await sleep(2200);
+      // 2026-10-16 D안: 가로 재생 화면의 출연자는 상단바 칩이 아니라 영상 아래 "이 영상에 나온 사람" 프로필 줄이다.
+      // 같은 사고(줄바꿈 → 세로로 자라 영상 침범)를 새 자리에서 지킨다: 프로필은 한 줄 · 넘치면 가로 스크롤 · 카드가 영상과 안 겹침.
       const m = JSON.parse(await ev(`(function(){
-        const wc=document.getElementById('yt-lb-with-chips'), ac=document.getElementById('yt-lb-anchor-chip');
+        const row=document.querySelector('#yt-lb-people .lb-people-row');
         const mi=document.getElementById('yt-lb-member-info');
-        const chips=[...wc.children].map(c=>c.getBoundingClientRect());
-        const rows=[...new Set(chips.map(r=>Math.round(r.top)))].length;
-        const cs=getComputedStyle(wc);
-        // 상단바가 영상 위를 덮는지 — 영상(iframe/썸네일) 상단과 비교
-        const vid=document.getElementById('yt-lb-iframe')||document.getElementById('yt-lb-media')||document.getElementById('yt-lb-frame');
-        const vTop=vid?Math.round(vid.getBoundingClientRect().top):null;
-        const close=document.getElementById('yt-lb-close'), menu=document.getElementById('yt-lb-menu-btn');
-        const ar=ac.getBoundingClientRect();
-        return JSON.stringify({rows:rows,infoBottom:Math.round(mi.getBoundingClientRect().bottom),vTop:vTop,
-          overflowX:cs.overflowX,wrap:cs.flexWrap,mt:cs.marginTop,scrollable:wc.scrollWidth>wc.clientWidth+1,
-          anchorL:Math.round(ar.left),anchorR:Math.round(ar.right),
-          closeR:close?Math.round(close.getBoundingClientRect().right):null,
-          menuL:menu?Math.round(menu.getBoundingClientRect().left):null});})()`) || '{}');
-      if (m.rows !== 1) fail(`[칩 넘침/${label}] 칩이 ${m.rows}줄 — 줄바꿈되면 컨테이너가 세로로 자라 영상 위를 덮는다 (wrap=${m.wrap})`);
-      else if (m.overflowX !== 'auto' && m.overflowX !== 'scroll') fail(`[칩 넘침/${label}] overflow-x가 ${m.overflowX} — 넘칠 때 잘려 나간다`);
-      else if (m.vTop != null && m.infoBottom > m.vTop) fail(`[칩 넘침/${label}] 상단바 바닥(${m.infoBottom})이 영상 상단(${m.vTop})을 넘어 겹친다`);
-      else if (m.closeR != null && m.anchorL < m.closeR) fail(`[버튼 충돌/${label}] 그룹명 왼쪽(${m.anchorL})이 닫기 버튼 오른쪽(${m.closeR})과 겹친다`);
-      else if (m.menuL != null && m.anchorR > m.menuL) fail(`[버튼 충돌/${label}] 그룹명 오른쪽(${m.anchorR})이 메뉴 버튼 왼쪽(${m.menuL})과 겹친다`);
-      else ok(`[칩 ${label}] 1줄 유지 · 상단바 바닥 ${m.infoBottom}${m.vTop != null ? ` ≤ 영상 ${m.vTop}` : ''} · ${m.scrollable ? '가로 스크롤 동작' : '스크롤 불필요(다 들어감)'} · 간격 ${m.mt}`);
+        const vb=document.getElementById('yt-lb-video-box');
+        if(!row)return JSON.stringify({none:true});
+        const ps=[...row.children].map(c=>c.getBoundingClientRect());
+        const rows=[...new Set(ps.map(r=>Math.round(r.top)))].length;
+        const cs=getComputedStyle(row);
+        return JSON.stringify({n:ps.length,rows:rows,overflowX:cs.overflowX,scrollable:row.scrollWidth>row.clientWidth+1,
+          miTop:Math.round(mi.getBoundingClientRect().top),vBottom:Math.round(vb.getBoundingClientRect().bottom)});})()`) || '{}');
+      if (m.none) fail(`[출연자 ${label}] 프로필 줄이 없음`);
+      else if (m.rows !== 1) fail(`[출연자 넘침/${label}] 프로필이 ${m.rows}줄 — 줄바꿈되면 카드가 세로로 자란다`);
+      else if (m.overflowX !== 'auto' && m.overflowX !== 'scroll') fail(`[출연자 넘침/${label}] overflow-x가 ${m.overflowX} — 넘칠 때 잘려 나간다`);
+      else if (m.miTop < m.vBottom) fail(`[출연자 겹침/${label}] 출연자 카드 위(${m.miTop})가 영상 아래(${m.vBottom})보다 위 — 영상을 덮는다`);
+      else ok(`[출연자 ${label}] 프로필 ${m.n}개 1줄 · ${m.scrollable ? '가로 스크롤 동작' : '스크롤 불필요(다 들어감)'} · 영상 아래 ${m.miTop - m.vBottom}px`);
     }
   } finally {
     server.close();
