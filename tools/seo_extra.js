@@ -219,11 +219,11 @@ async function prefetchGroupVideos({ SB_URL, SB_KEY, groupKos }) {
           rows.push(...page); last = page[page.length - 1].id;
           if (page.length < 1000) break;
         }
-      } catch (e) { /* 이 그룹만 빠짐 */ }
+      } catch (e) { console.warn(`[prefetchGroupVideos] ${g}: ${e.message}`); }
       out[g] = rows;
     }
   };
-  await Promise.all(Array.from({ length: 6 }, worker));
+  await Promise.all(Array.from({ length: 3 }, worker));
   return out;
 }
 // 곡 목록 + 영상 묶기. 반환: { [gko]: [{b, title, album, date, isTitle, cr, vids:[…], wins}] } — 영상 minVids개 이상인 곡만

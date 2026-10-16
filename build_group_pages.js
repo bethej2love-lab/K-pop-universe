@@ -1207,6 +1207,8 @@ function buildSongPages() {
   // 곡 페이지용 영상 — 그룹 페이지에 곡 링크를 실어야 하므로 그룹 페이지보다 먼저
   try {
     const vids = await SEO.prefetchGroupVideos({ SB_URL, SB_KEY, groupKos });
+    const emptyVidGroups = groupKos.filter(g => !vids[g] || !vids[g].length);
+    if (emptyVidGroups.length) console.warn(`⚠️ 영상 0개 그룹 ${emptyVidGroups.length}개: ${emptyVidGroups.slice(0, 10).join(', ')}${emptyVidGroups.length > 10 ? ' ...' : ''}`);
     SONGS = SEO.buildSongs({ ROOT, groups, artists, EX, vids });
     console.log(`곡 데이터: ${Object.keys(SONGS).length}그룹 · ${Object.values(SONGS).reduce((n, l) => n + l.length, 0)}곡`);
   } catch (e) { console.warn('⚠️ 곡 페이지 건너뜀:', e.message); }
