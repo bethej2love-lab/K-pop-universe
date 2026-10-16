@@ -4964,7 +4964,7 @@ function _fetchGroupHeroCands(gko){
         .or('content_flag.is.null,content_flag.neq.무관').or('content_flag.is.null,content_flag.neq.보류')
         .or('content_flag.is.null,content_flag.neq.hidden').or('content_flag.is.null,content_flag.neq.개별출연')
         .or('content_flag.is.null,content_flag.neq.기타');
-      if(live)q=q.eq('category','live');
+      if(live)q=_applyLiveExclude(q.eq('category','live')); // 라이브 제외 규칙은 category='live' 조회 전부에(tests/live-tab)
       const{data,error}=await q.order('published_at',{ascending:false}).limit(60);
       return (error||!data)?[]:data.filter(v=>v.thumb).sort((x,y)=>(y.view_count||0)-(x.view_count||0));
     };
@@ -15768,8 +15768,7 @@ function _openKpopLinks(){
       body.appendChild(row);
     });
   }
-  ov.classList.add('open');
-  _bringToFront(ov);
+  ov.classList.add('open');_bringToFront(ov);
 }
 function _closeKpopLinks(){document.getElementById('kpop-links-overlay').classList.remove('open');}
 // ── 멤버 탐색 오버레이 ──────────────────────────────────────────────────────
@@ -15787,7 +15786,7 @@ function _openMemberExplorer(preOpts){
     if(si&&preOpts.rawQ!=null)si.value=preOpts.rawQ;
   }
   _mxSyncChips();
-  ov.classList.add('open');
+  ov.classList.add('open');_bringToFront(ov); // 멤버 탐색 — 카드·라이트박스 위로
   _mxRender();
   setTimeout(()=>document.getElementById('mx-search')?.focus(),120);
 }
@@ -21857,7 +21856,7 @@ function _buildFeedAnniversaries(){
       const gko=_ytGroupKoFor(a);const mko=a.name.ko;
       try{
         if(sb&&gko&&mko){
-          const{data}=await sb.from(_YT_TABLE).select('id,thumb,is_short').eq('category','live')
+          const{data}=await _applyLiveExclude(sb.from(_YT_TABLE).select('id,thumb,is_short').eq('category','live'))
             .eq('group_ko',gko).eq('members',`{${_pgFilterVal(mko)}}`)
             .or('content_flag.is.null,content_flag.neq.보류').or('content_flag.is.null,content_flag.neq.hidden')
             .order('view_count',{ascending:false}).limit(6);
@@ -21924,7 +21923,7 @@ function _buildFeedForYouAnniv(){
       thumb:()=>Promise.resolve(_fetchArtistPicAnyGroup(a)).then(async pic=>{
         if(pic)return pic;
         const gko=_ytGroupKoFor(a);const mko=a.name.ko;
-        try{if(sb&&gko&&mko){const{data}=await sb.from(_YT_TABLE).select('id,thumb,is_short').eq('category','live').eq('group_ko',gko).eq('members',`{${_pgFilterVal(mko)}}`).or('content_flag.is.null,content_flag.neq.보류').or('content_flag.is.null,content_flag.neq.hidden').order('view_count',{ascending:false}).limit(10);const pick=data?.find(v=>v.thumb&&!v.is_short)||data?.find(v=>v.thumb);if(pick)return pick.thumb;}}catch(_){}
+        try{if(sb&&gko&&mko){const{data}=await _applyLiveExclude(sb.from(_YT_TABLE).select('id,thumb,is_short').eq('category','live')).eq('group_ko',gko).eq('members',`{${_pgFilterVal(mko)}}`).or('content_flag.is.null,content_flag.neq.보류').or('content_flag.is.null,content_flag.neq.hidden').order('view_count',{ascending:false}).limit(10);const pick=data?.find(v=>v.thumb&&!v.is_short)||data?.find(v=>v.thumb);if(pick)return pick.thumb;}}catch(_){}
         return _fetchTopVideoThumb(gko,mko);
       })});
   });
@@ -22160,7 +22159,7 @@ function _collectWeekNews(){
         // ⚠️ .catch가 아니라 .then(성공,실패) — Supabase 쿼리 빌더는 thenable일 뿐 Promise가 아니라 .catch가 없다.
         .then(r=>r,()=>({data:[]})),
       _winGkos.length
-        ? sb.from(_YT_TABLE).select('id,title,thumb,group_ko,is_short,view_count').in('group_ko',_winGkos).eq('category','live').eq('is_short',false).or('content_flag.is.null,content_flag.neq.보류').order('view_count',{ascending:false}).limit(_winGkos.length*20).then(r=>r,()=>({data:[]}))
+        ? _applyLiveExclude(sb.from(_YT_TABLE).select('id,title,thumb,group_ko,is_short,view_count').in('group_ko',_winGkos).eq('category','live')).eq('is_short',false).or('content_flag.is.null,content_flag.neq.보류').order('view_count',{ascending:false}).limit(_winGkos.length*20).then(r=>r,()=>({data:[]}))
         : Promise.resolve({data:[]}),
       // 1위 무대 영상 후보(2026-10-16 재작성) — 음방들은 1위 당일·다음날 "1위 앵콜 직캠/챔피언송 Full ver."를 올린다.
       // 예전엔 위 '그룹 live 영상 조회수 상위 20개'에서만 골라서 이번 주에 올라온(조회수 낮은) 앵콜 영상은 후보에도 못 들었고,

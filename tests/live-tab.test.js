@@ -79,7 +79,8 @@ html.split('\n').forEach((l, i) => {
   if (!/\.eq\('category','live'\)/.test(l)) return;
   // 체인 시작이 _applyLiveExclude(로 감싸져 있는지 — 같은 줄 또는 위 3줄 안에서 확인
   const near = html.split('\n').slice(Math.max(0, i - 3), i + 1).join('\n');
-  if (!/_applyLiveExclude\(sb\.from/.test(near)) bareLive.push(`${i + 1}: ${l.trim().slice(0, 60)}`);
+  // 이미 만든 빌더(q)를 감싸는 형태(_applyLiveExclude(q.eq('category','live')))도 인정
+  if (!/_applyLiveExclude\((sb\.from|q\.eq\('category','live'\))/.test(near)) bareLive.push(`${i + 1}: ${l.trim().slice(0, 60)}`);
 });
 need(bareLive.length === 0,
   `category='live' 직접 조회가 전부 _applyLiveExclude로 감싸짐 — 누락 ${bareLive.length}건${bareLive.length ? '\n     ' + bareLive.join('\n     ') : ''}`);

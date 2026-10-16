@@ -23,9 +23,11 @@
         - 'group_awards.json'
         - 'group_certifications.json'
         - 'artist_credits.json'
-    # 음방 1위·조회수(DB)는 파일 변화 없이 매일 바뀐다 → 하루 한 번 새로(KST 06:30). 바뀐 페이지만 커밋된다.
+    # 음방 1위·조회수(DB)는 파일 변화 없이 바뀐다 → 주 1회 새로(월 KST 06:30). 바뀐 페이지만 커밋된다.
+    # 매일이던 걸 주 1회로(2026-10-16) — 곡 페이지까지 생기면 매일 수천 파일이 커밋돼 저장소가 불어난다.
+    # 조회수는 두 자리로 반올림해 써서(roundViews) 작은 변동엔 파일이 안 바뀐다.
     schedule:
-      - cron: '30 21 * * *'
+      - cron: '30 21 * * 0'
     workflow_dispatch:
 
   permissions:

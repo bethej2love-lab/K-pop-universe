@@ -1755,11 +1755,16 @@ function _coverSelfKeys(performerGko,performerMembers){
 //    안 걸리고, 제목 안의 조각 한 단어가 남의 곡으로 잡힌다. 실제로 '아이브 BANG BANG'이 애프터스쿨
 //    커버로, '엔싸인 Love, Love, Love Love Love!'가 애프터스쿨 커버로 붙어 있었다(2026-09-04 실측).
 //    제목에서 **자기 곡 키가 더 길게 일치하면** 짧은 남의 키는 그 곡의 조각일 뿐이므로 버린다.
-function _coverSelfEclipses(k,titleNorm,selfKeys){
+function _coverSelfEclipses(k,titleNorm,selfKeys,rawTitle){
   if(!selfKeys||!selfKeys.size)return false;
+  // 띄어쓰기 무시 비교도 — 곡명은 '첫 만남은 계획대로 되지 않아'인데 해시태그는 '#첫만남은계획대로되지않아'라 자기 곡 차단이 안 걸리고
+  // '#첫만남챌린지'의 '첫만남'이 수지 곡으로 잡혔다(2026-10-16, tests/cover-resolve가 일주일 넘게 빨갛던 원인 중 하나)
+  // 붙여 쓴 비교는 원제목에서 — titleNorm은 해시태그(#…)를 통째로 지운 것이라 '#첫만남은계획대로되지않아'가 사라져 있다
+  const tc=String(rawTitle||titleNorm).normalize('NFKC').toLowerCase().replace(/[^\p{L}\p{N}]+/gu,''),kc=k.replace(/\s+/g,'');
   for(const sk of selfKeys){
-    if(sk.length<=k.length||!sk.includes(k))continue;
-    if(titleNorm.includes(' '+sk+' '))return true;
+    const skc=sk.replace(/\s+/g,'');
+    if(skc.length<=kc.length||!skc.includes(kc))continue;
+    if(titleNorm.includes(' '+sk+' ')||tc.includes(skc))return true;
   }
   return false;
 }
@@ -1997,7 +2002,7 @@ function _coverResolve(row,opts){
       const hits=idx.get(k)||[];
       if(hits.some(e=>_coverIsSelf(e.origin,performer,members))){if(strength!=='bare')selfHit=true;return;} // 같은 제목의 자기 곡이 있으면 그 곡
       // 자기 곡이 제목에서 더 길게 일치하면 이 키는 그 곡의 조각(위 _coverSelfEclipses 주석)
-      if(_coverSelfEclipses(k,titleNorm,selfKeys))return;
+      if(_coverSelfEclipses(k,titleNorm,selfKeys,title))return;
       hits.forEach(e=>{
         if(lockOrigin&&_coverOriginId(e.origin)!==_coverOriginId(lockOrigin))return; // "BIGBANG '곡'"처럼 아티스트가 명시된 후보는 그 원곡자 항목만
         if(strength==='bare'&&(_COVER_COMMON_KEYS.has(k)||k.replace(/\s/g,'').length<4))return;
@@ -2087,7 +2092,18 @@ function _coverResolve(row,opts){
         origin=w.e.origin;song=w.e.title;reason=w.strength;
         // 아래 topNamed/secondNamed가 "이긴 쪽"을 기준으로 계산되도록 순서를 맞춘다(확신 등급의 근거).
         ranked.splice(ranked.indexOf(w),1);ranked.unshift(w);
-      }else{ambiguous=true;reason='ambiguous';}
+      }else{
+        // 같은 이름 곡끼리 동점이면 **먼저 나온 곡이 원곡**(뒤의 것은 리메이크·커버 앨범) — f(x) 'Hot Summer'(2011) vs
+        // 제로베이스원 'Hot Summer'(리메이크)가 동점으로 ambiguous가 되던 것(2026-10-16, tests/cover-resolve 빨간불 원인).
+        // 발매일이 1년 이상 앞선 곡이 딱 하나일 때만 — 같은 해 동명곡은 여전히 모름으로 둔다.
+        const sameName=tied.every(x=>_coverSongKeys(x.e.title)[0]===_coverSongKeys(tied[0].e.title)[0]);
+        const dated=tied.filter(x=>x.e.date).sort((a,b)=>a.e.date.localeCompare(b.e.date));
+        const oldest=dated[0],next=dated[1];
+        if(sameName&&oldest&&next&&dated.length===tied.length&&(+next.e.date.slice(0,4))-(+oldest.e.date.slice(0,4))>=1){
+          origin=oldest.e.origin;song=oldest.e.title;reason=oldest.strength;
+          ranked.splice(ranked.indexOf(oldest),1);ranked.unshift(oldest);
+        }else{ambiguous=true;reason='ambiguous';}
+      }
     }
     else{origin=top.e.origin;song=top.e.title;reason=top.strength;}
   }

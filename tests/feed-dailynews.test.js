@@ -32,9 +32,13 @@ const annivIdx = disc.indexOf('_buildFeedAnniversaries()');
 ck(dnIdx >= 0 && annivIdx >= 0 && dnIdx < annivIdx, '오늘의 소식이 기념일 선반보다 먼저 호출됨(맨 첫 섹션)');
 
 // 빌더 불변식
-const fn = extractBraces(html, /^async function _buildFeedDailyNews\(/m, '_buildFeedDailyNews');
+// 2026-10-16: 조회(_collectWeekNews — For You '내 최애 소식'과 공유)·빌더·렌더(_renderNewsList)로 나뉘었다 — 세 덩어리를 합쳐 검사
+const fn = extractBraces(html, /^function _collectWeekNews\(/m, '_collectWeekNews')
+  + extractBraces(html, /^async function _buildFeedDailyNews\(/m, '_buildFeedDailyNews')
+  + extractBraces(html, /^function _renderNewsList\(/m, '_renderNewsList');
 ck(/const today=new Date\(\)\.toISOString\(\)\.slice\(0,10\)/.test(fn), '오늘 날짜를 계산함(하드코딩 아님)');
-ck(/\.eq\('win_date',today\)/.test(fn), '음방 1위를 오늘 날짜로만 필터');
+// 음방 1위는 "이번 주"(최근 7일) — 2026-10-15 오늘→7일로 확대(오늘만이면 대부분의 날 비었다)
+ck(/\.gte\('win_date',sevenDaysAgo\)\.lte\('win_date',today\)/.test(fn), '음방 1위를 최근 7일로 필터');
 ck(/\.eq\('crossed_at',today\)/.test(fn), '조회수 마일스톤을 오늘 날짜로만 필터');
 ck(/\.eq\('seeded',false\)/.test(fn),
   '최초 시딩분(seeded=true)을 제외함 — 안 걸리면 기존 데이터 전부가 "오늘 크로싱"으로 오인됨');

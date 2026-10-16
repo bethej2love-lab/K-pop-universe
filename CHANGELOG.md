@@ -62,6 +62,8 @@
 ---
 
 ## 2026-10-16 (세션 — 카드 2개+재생모드 레이아웃)
+- [완료] **CI "Data validation & tests" 일주일+ 빨간불 해소**(로컬 CI 동일 루프 전부 PASS) — 낡은 테스트 갱신(feed-dailynews·admin-dock-close·motion 블록별 검사·member-timeline 헬퍼 포함·live-tab) + 실제 수정: 라이브 제외 규칙 빠진 category='live' 조회 4곳 `_applyLiveExclude`, 멤버 탐색·링크 오버레이 `_bringToFront`, 원곡 판정 띄어쓰기 무시·동명곡은 1년+ 앞선 원곡(admin.js `_coverSelfEclipses`), 상한 없는 select 4종 ALLOW 근거 [tests/* index.html admin.js]
+- [완료] SEO 페이지 재생성 매일→주 1회(월 06:30 KST) — 곡 페이지 생기면 매일 수천 파일 커밋 방지, 조회수 두 자리 반올림(roundViews) [rebuild-seo-pages.yml tools/seo_extra.js]
 - [완료] 웹: 카드 2개 열린 채 영상 재생 시 멤버 카드 접기 탭(›)이 라이트박스에 덮여 멤버 카드만 닫을 수 없던 것 — 탭을 원래 자리 그대로 라이트박스 위 층으로(_bringToFront). 10-15의 right:858px 이동은 카드 밑에 깔려 효과 없어 되돌림 [index.html][kpop_universe.css]
 - [진행중·SQL 실행 대기] **영상 ↔ 곡 연결(song_keys)** — 규칙 shared.js `_songLinkBases`(따옴표 곡명 우선·곡명=그룹명 막기·해시태그 나열 무시·메들리 여러 곡·영어 곡명 단어 경계·흔한 낱말/2~3글자 곡명은 따옴표만), 키='group_ko:곡기본형'(리믹스·버전 하나로). 실측 6그룹 각 1,000개: 직캠·음방 58~91%(세븐틴 58% — 손오공/Super 같은 한영 별칭은 다음 개선), MV 56~100%. 루틴 10단계 `_ytSweepSongLinks`(증분·7일 전량·규칙 버전), 앱 곡→영상은 키 우선+제목검색 중 다른 곡에 연결된 영상 제외. ⚠️`sql/song_keys_2026-10-16.sql` 실행해야 동작(전엔 예전 방식 그대로) [shared.js][admin.js][index.html][tests/song-link]
 - [완료] **검색 노출 강화 1단계 — 정적 SEO 페이지 보강** (사용자: "유입은 검색 노출이 핵심") — 그룹 페이지: 음방 1위 기록(곡별·첫 1위)·인기 무대·직캠 TOP 10(조회수, 유튜브 링크)·콘서트 투어(관객·매출)·대상·밀리언셀러·함께 보면 좋은 그룹(같은 소속사/같은 해 데뷔). 멤버 페이지: 나이·데뷔 나이(소속했던 그룹 중 가장 이른 데뷔 — 장원영 아이즈원 14세)·인기 직캠 TOP 5·작사작곡 곡 수·솔로 1위·같은 해 태어난 아이돌. 제목을 검색어형으로('아이브(IVE) 멤버·음방 1위·직캠·투어 기록', '장원영(아이브) 프로필·나이·직캠·생일'), 설명문에 실제 숫자. 보강 모듈 `tools/seo_extra.js`, DB 조회 후 페이지 생성으로 순서 변경, 워크플로 매일 KST 06:30 재생성+데이터 파일 트리거. [미확인] 구글 서치콘솔·네이버 서치어드바이저 등록·사이트맵 제출 여부(사용자 확인 필요) [build_group_pages.js][tools/seo_extra.js][.github/workflows/rebuild-seo-pages.yml]

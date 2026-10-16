@@ -10,6 +10,8 @@ const IDS = ['adm-home-overlay', 'hnn-overlay', 'vm-overlay', 'gp-overlay'];
 const els = {};
 IDS.forEach(id => { const set = new Set(); els[id] = { classList: { add: c => set.add(c), remove: c => set.delete(c), contains: c => set.has(c) } }; });
 global.document = { getElementById: id => els[id] || null };
+// _admDockShow가 모바일 폭이면 맨 위로 올리는 분기(window.innerWidth)를 얻은 뒤로 하네스에 window가 없어 예외로 죽었다 — 데스크톱 폭으로 흉내
+global.window = { innerWidth: 1440 };
 eval(m[0]);
 const open = id => els[id].classList.contains('open');
 

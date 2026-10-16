@@ -23,6 +23,10 @@ const ALLOW = {
   'melon_yearly_top100': '그룹 1팀의 연도별 차트 진입분 (전체 799행, 그룹당 수십)',
   'spotify_streaming_milestones': '그룹 1팀의 마일스톤 (전체 455행, 그룹당 수십)',
   'kpop_events': '그룹/장소/id목록 1건 기준 (전체 11행)',
+  'disco_era_overrides': '활동기 수동 지정 — 자동 묶기 예외만 넣는 표라 수십 행',
+  'video_progress': 'RLS로 본인 행만 — 1000개 넘게 본 사람은 일부 빠지지만 로컬 기록이 우선이라 이어보기 영향 없음',
+  'music_show_wins': '7일 창 또는 그룹 1팀 기준 (최다 그룹도 수백 건 이하)',
+  'yt_view_milestones': '그룹 1팀의 1억 이상 영상만 (수십 건)',
 };
 
 let pass = 0, fail = 0;

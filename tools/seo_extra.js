@@ -65,6 +65,7 @@ async function prefetch({ SB_URL, SB_KEY, groupKos }) {
 // ── 숫자 표기 ──
 const fmtViews = (n, en) => {
   if (!n) return '';
+  n = roundViews(n);
   if (en) return n >= 1e9 ? (n / 1e9).toFixed(1) + 'B' : n >= 1e6 ? (n / 1e6).toFixed(n >= 1e7 ? 0 : 1) + 'M' : n >= 1e3 ? Math.round(n / 1e3) + 'K' : String(n);
   return n >= 1e8 ? (n / 1e8).toFixed(1).replace(/\.0$/, '') + '억회' : n >= 1e4 ? Math.round(n / 1e4).toLocaleString() + '만회' : n.toLocaleString() + '회';
 };
@@ -193,6 +194,78 @@ function ages(a, groupInfos) {
   return { age: age > 8 && age < 90 ? age : null, debutAge };
 }
 
-const EXTRA_CSS = `.vid-list{padding-left:20px;margin:0;}.vid-list li{font-size:13.5px;margin-bottom:7px;}.vid-list a{color:rgba(210,225,255,0.95);text-decoration:none;}.note{font-size:11px;color:rgba(150,170,210,0.55);margin:6px 0 0;}.rel a{color:rgba(210,225,255,0.95);text-decoration:none;}`;
+// ── 곡 페이지 데이터(2026-10-16, 검색 노출 2단계) ─────────────────────────────────────────────
+// "LOVE DIVE 직캠", "Supernova 무대" 같은 곡 단위 검색을 노린다. 영상↔곡 연결은 앱·루틴과 **같은 규칙**(shared.js _songLinkBases)을
+// 여기서 직접 돌린다 — DB의 song_keys(루틴 10단계)가 아직 비어 있어도, 루틴이 실패해도 페이지는 만들어진다.
+const vm = require('vm');
+let _SL = null;
+function songLib(ROOT) {
+  if (_SL) return _SL;
+  const ctx = {}; vm.createContext(ctx);
+  vm.runInContext(fs.readFileSync(path.join(ROOT, 'shared.js'), 'utf8') + ';this.f=_songLinkBases;this.L=_songListFromDisco;this.B=_songBase;this.N=_songNorm;', ctx);
+  return (_SL = ctx);
+}
+// 그룹별 영상 전부(가로 영상, 노출 가능한 것만) — id 순 페이지 넘김(정렬 없는 페이지 나눔은 중복·누락 — 메모리)
+async function prefetchGroupVideos({ SB_URL, SB_KEY, groupKos }) {
+  const out = {};
+  const queue = groupKos.slice();
+  const worker = async () => {
+    while (queue.length) {
+      const g = queue.shift(); const rows = []; let last = '';
+      try {
+        for (let i = 0; i < 40; i++) {
+          const page = await sbGet(SB_URL, SB_KEY, `yt_channel_videos?select=id,title,view_count,members,category,published_at&group_ko=eq.${encodeURIComponent(g)}&content_flag=is.null&is_short=eq.false&order=id&limit=1000${last ? `&id=gt.${encodeURIComponent(last)}` : ''}`);
+          if (!Array.isArray(page) || !page.length) break;
+          rows.push(...page); last = page[page.length - 1].id;
+          if (page.length < 1000) break;
+        }
+      } catch (e) { /* 이 그룹만 빠짐 */ }
+      out[g] = rows;
+    }
+  };
+  await Promise.all(Array.from({ length: 6 }, worker));
+  return out;
+}
+// 곡 목록 + 영상 묶기. 반환: { [gko]: [{b, title, album, date, isTitle, cr, vids:[…], wins}] } — 영상 minVids개 이상인 곡만
+function buildSongs({ ROOT, groups, artists, EX, vids, minVids = 4 }) {
+  const S = songLib(ROOT);
+  const persons = new Set();
+  artists.forEach(a => [a.name && a.name.ko, a.name && a.name.en].forEach(x => { const n = S.N(x); if (n.length >= 2) persons.add(n); }));
+  const fileKey = s => String(s).replace(/[\/\\]/g, '_').replace(/[.\s]+$/, '');
+  const out = {};
+  for (const g of Object.keys(groups)) {
+    const d = readJson(path.join(ROOT, 'disco/g', fileKey(g) + '.json'));
+    if (!d || !vids[g] || !vids[g].length) continue;
+    const albums = [...Object.values(d.g || {}), ...Object.values(d.m || {}).flatMap(x => [...(x.d || []), ...(x.u || []).flatMap(u => (u && u.albums) || [])])];
+    const songs = S.L(albums, persons);
+    if (!songs.length) continue;
+    // 곡 → 처음 실린 앨범(가장 이른 발매)·타이틀곡 여부·크레딧
+    const meta = {};
+    albums.slice().sort((x, y) => String(x.releaseDate || '').localeCompare(String(y.releaseDate || ''))).forEach(al => (al.tracks || []).forEach(tr => {
+      if (!tr || !tr.title) return;
+      const b = S.B(tr.title); if (!b) return;
+      // 표시 이름은 가장 먼저 나온 원곡 제목(첫 괄호 앞) — 곡 목록 순서대로 쓰면 'LOVE DIVE -Japanese version-'이 이름이 됐다
+      const m = meta[b] || (meta[b] = { name: String(tr.title).replace(/\s*-[^-]*\bver(?:sion)?\b\.?[^-]*-\s*$/i, '').split(/\s*[\(\[]/)[0].trim(), album: al.title, date: al.releaseDate || '', isTitle: false, cr: null, melonId: null });
+      if (tr.isTitle) m.isTitle = true;
+      if (!m.cr && tr.cr) m.cr = tr.cr;
+      if (!m.melonId && tr.songId) m.melonId = tr.songId;
+    }));
+    const bucket = new Map(songs.map(s => [s.b, { b: s.b, title: s.title.replace(/\s*[\(\[].*$/, '') || s.title, vids: [] }]));
+    const names = [g, groups[g].en || ''];
+    for (const v of vids[g]) for (const b of S.f(v.title || '', songs, names)) { const s = bucket.get(b); if (s) s.vids.push(v); }
+    // 1위 기록은 곡 제목이 영어로 저장된 경우가 있다('HEYA'·'God of Music') — 별칭으로도 기본형을 찾는다
+    const toBase = new Map(); songs.forEach(s => { toBase.set(s.b, s.b); (s.alias || []).forEach(al => { if (!toBase.has(al.n)) toBase.set(al.n, s.b); }); });
+    const winBy = {};
+    (EX.wins[g] || []).forEach(w => { const b = toBase.get(S.B(w.song_title || '')) || toBase.get(S.N(w.song_title || '')); if (b) winBy[b] = (winBy[b] || 0) + 1; });
+    const list = [...bucket.values()].filter(s => s.vids.length >= minVids).map(s => { const m = meta[s.b] || {}; return Object.assign(s, m, { title: m.name || s.title, wins: winBy[s.b] || 0 }); });
+    list.forEach(s => s.vids.sort((a, b) => (b.view_count || 0) - (a.view_count || 0)));
+    if (list.length) out[g] = list.sort((a, b) => b.vids.length - a.vids.length);
+  }
+  return out;
+}
+// 조회수는 두 자리 유효숫자로 — 페이지가 매번 바뀌면 재생성마다 수천 파일이 커밋돼 저장소가 불어난다(2026-10-16)
+const roundViews = n => { if (!n) return 0; const p = Math.pow(10, Math.max(0, Math.floor(Math.log10(n)) - 1)); return Math.round(n / p) * p; };
 
-module.exports = { loadStatic, prefetch, groupExtra, memberExtra, ages, EXTRA_CSS, fmtViews };
+const EXTRA_CSS =`.vid-list{padding-left:20px;margin:0;}.vid-list li{font-size:13.5px;margin-bottom:7px;}.vid-list a{color:rgba(210,225,255,0.95);text-decoration:none;}.note{font-size:11px;color:rgba(150,170,210,0.55);margin:6px 0 0;}.rel a{color:rgba(210,225,255,0.95);text-decoration:none;}`;
+
+module.exports = { loadStatic, prefetch, groupExtra, memberExtra, ages, EXTRA_CSS, fmtViews, prefetchGroupVideos, buildSongs, roundViews, esc };

@@ -37,9 +37,16 @@ guards.forEach(fn => {
 
 need(/@media \(prefers-reduced-motion: reduce\)/.test(css), 'CSS에 prefers-reduced-motion 블록');
 // 일부러 남긴 것들 — 이게 꺼지면 "로딩 중인데 멈춘 것처럼" 보이거나 카드가 중간 상태로 고착된다
-const rmBlock = css.slice(css.indexOf('@media (prefers-reduced-motion: reduce)'));
-need(!/transition\s*:\s*none/.test(rmBlock), '전역 transition 무력화를 하지 않음(시트 고착 방지)');
-need(!/\.yt-lb-spinner|loading-shimmer/.test(rmBlock), '로딩 표시는 유지');
+// 금지하는 건 **전역**(* 선택자) 무력화다. 예전엔 첫 블록부터 파일 끝까지 통째로 잘라 봐서, 다른 reduced-motion 블록의
+// 개별 요소 규칙(.mx-dot 그림 점 등 — 고착될 일 없는 것)까지 걸려 일주일 넘게 빨갰다(2026-10-16). 블록마다 정확히 잘라 * 규칙만 본다.
+const rmBlocks = [];
+for (let i = css.indexOf('@media (prefers-reduced-motion: reduce)'); i >= 0; i = css.indexOf('@media (prefers-reduced-motion: reduce)', i + 1)) {
+  let j = css.indexOf('{', i), d = 0;
+  for (; j < css.length; j++) { if (css[j] === '{') d++; else if (css[j] === '}') { d--; if (d === 0) break; } }
+  rmBlocks.push(css.slice(i, j + 1));
+}
+need(!rmBlocks.some(b => /(^|[{},\s])\*[^{]*\{[^}]*transition\s*:\s*none/.test(b)), '전역 transition 무력화를 하지 않음(시트 고착 방지)');
+need(!rmBlocks.some(b => /\.yt-lb-spinner|loading-shimmer/.test(b)), '로딩 표시는 유지');
 
 console.log(pass ? '\n✅ 모션 줄이기 배선 테스트 통과' : '\n❌ 모션 줄이기 배선 테스트 실패');
 process.exit(pass ? 0 : 1);
