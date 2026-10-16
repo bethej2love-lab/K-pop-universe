@@ -3622,6 +3622,15 @@ function _revealUniverse(){
 
   // 동작 줄이기: 클립·블룸을 건너뛰고 텍스트만 사라지게 한다(예전 리빌엔 이 가드가 아예 없었다).
   if(_reduceMotion){ if(_ring)_ring.remove(); _revealSettle(); _endBooting(); _revealChrome(false); return; }
+  // 카드가 열린 주소(#g=/#m=)로 들어오면 — 새로고침이나 공유 링크 — 보러 온 건 카드다. 조리개가 열리며 행성이
+  // 차례로 피어나는 인트로는 "처음 우주에 들어올 때"의 연출이라, 여기선 우주를 조용히 페이드로만 깐다(2026-10-16 요청).
+  if(_rc&&/(^|[#&])(g|m)=/.test(location.hash)){
+    if(_ring)_ring.remove(); _revealSettle(); _endBooting(); _revealChrome(true);
+    _rc.style.transition='none';_rc.style.opacity='0';void _rc.offsetHeight;
+    requestAnimationFrame(function(){_rc.style.transition='opacity 600ms ease';_rc.style.opacity='1';
+      setTimeout(function(){_rc.style.transition='';_rc.style.opacity='';},700);});
+    return;
+  }
 
   _endBooting(); // 크롬 페이드인을 클립과 동시에 시작
   // 탭바·줌 컨트롤은 클립이 80%쯤 퍼진 시점(≈560ms)에 페이드인 시작 → 아이리스가 화면 아래까지
@@ -3659,10 +3668,13 @@ function _revealUniverse(){
   var dists=bubbleMeshes.map(function(bm){return bm.mesh.position.length();});
   var maxD=Math.max(1,Math.max.apply(null,dists));
   bubbleMeshes.forEach(function(bm){
-    bm.mesh.scale.setScalar(0.001);
+    bm.mesh.scale.setScalar(0.7*bm.radius);
     bm.mesh._revealFrac=bm.mesh.position.length()/maxD;
   });
-  function easeOutBack(t){var c1=1.70158,c3=c1+1;return 1+c3*Math.pow(t-1,3)+c1*Math.pow(t-1,2);}
+  // 행성이 점에서 "디용" 하고 튀어나오던 easeOutBack(목표를 10% 넘었다 돌아옴)을 걷었다(2026-10-16, 사용자: "촌스럽다,
+  // 우아하고 자연스럽게"). 이제 70% 크기에서 시작해 감속 곡선으로 그대로 자리잡는다 — 클립 원이 열리며 드러나는 순간
+  // 이미 형태가 있고, 남은 30%만 숨 쉬듯 커진다. 넘침(오버슈트) 없음.
+  function easeOutQuart(t){return 1-Math.pow(1-t,4);}
   {
     var _pn=performance.now(), _acc=0; // 프레임당 상한 — 프리즈로 t가 0→1 점프하는 것 방지
     (function tick(){
@@ -3676,9 +3688,9 @@ function _revealUniverse(){
       // r=e*112로 두면 clip 가장자리(75%)에 대략 얹힌다(살짝 앞서 어둠 속으로 열리는 인상). glow는 sin으로
       // 중간이 가장 밝고 양끝 0. veil의 backdrop-filter가 아니라 단순 그라디언트+screen이라 프리즈 무관.
       bubbleMeshes.forEach(function(bm){
-        var start=bm.mesh._revealFrac*0.55;
-        var local=Math.max(0,Math.min(1,(e-start)/0.45));
-        var s=local<=0?0.001:Math.max(0.001,easeOutBack(local));
+        var start=bm.mesh._revealFrac*0.5;
+        var local=Math.max(0,Math.min(1,(e-start)/0.5));
+        var s=0.7+0.3*easeOutQuart(local);
         // 행성 지오메트리 공유(2026-08-21)로 반지름이 scale에 실리므로 bm.radius를 곱해 본연의 크기로 정착
         bm.mesh.scale.setScalar(s*bm.radius);
         var rg=_nctRingGroups.find(function(x){return x.ko===bm.ko;});
