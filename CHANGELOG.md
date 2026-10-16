@@ -63,6 +63,7 @@
 
 ## 2026-10-16 (세션 — 카드 2개+재생모드 레이아웃)
 - [완료] 웹: 카드 2개 열린 채 영상 재생 시 멤버 카드 접기 탭(›)이 라이트박스에 덮여 멤버 카드만 닫을 수 없던 것 — 탭을 원래 자리 그대로 라이트박스 위 층으로(_bringToFront). 10-15의 right:858px 이동은 카드 밑에 깔려 효과 없어 되돌림 [index.html][kpop_universe.css]
+- [완료] **행사 3단계 — 발견 탭 🎤 Events 선반**: ①다가오는 행사 D-day 카드(공식 발표 확인된 것만 _EVENT_UPCOMING: KGMA 11/7·MMA 11/14·MAMA 11/20 오사카·AAA 12/5 가오슝·SBS 가요대전 12/24, 출처 src 필드. KBS·MBC는 발표 전이라 제외 — ⚠️새 시즌 일정 나오면 줄 추가) 누르면 지난 회차 무대 ②최근 120일 행사 회차 카드(영상 5개+, 아직 안 열린 회차 제외, 누르면 그 회차 모음) [index.html][kpop_universe.css]
 - [완료] 행사 태그 소급 확인(10-15 [확인 대기] 해소) — 20개 행사 약 14,600개(KCON 3,956·가요대전 2,858·MAMA 2,046·골디 957·코첼라 121·롤라 187 등)
 - [완료] 해외 시상식·무대 10종 추가 — AMA·빌보드 뮤직 어워드·MTV VMA·MTV EMA·그래미·징글볼·글로벌 시티즌·NHK 홍백가합전·위버스콘·SMTOWN LIVE(DB 제목 실측 후 영상 있는 것만, abroad:true). AMAs는 낱말 경계(dramas 오탐 방지). _FMT_RULES_VER 올려 다음 루틴 전량 소급 [shared.js][admin.js][tests/event-tags]
 - [완료] 라이트박스 영상 아래 D안(시안 https://claude.ai/artifact/SuRumtaLYzAvqeq3B5UgMN B+C 합본, 사용자 선택) — 제목 옆 하트 / [반응 칩 · 세로 보기 · 저장 · ···] / "이 영상에 나온 사람" 프로필 줄(누르면 하프카드) / 그룹색 배경. ···=입덕 영상·전체 화면·소리·연결 보기·(관리자)태그. 툴바 DOM은 안 옮기고 display:contents+그리드(쇼츠 오른쪽 세로 버튼 줄 보존), ··· 메뉴는 원래 버튼을 대신 누름 [index.html][kpop_universe.css]

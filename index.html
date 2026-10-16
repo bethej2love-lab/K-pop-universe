@@ -23461,6 +23461,78 @@ async function _openEventPage(id,ed,view){
   _feedListRankedNext=false;
   _openFeedListOverlay(s.ko,sub,songs,{facets});
 }
+// ── Events 선반(2026-10-16, 행사 3단계) ─────────────────────────────────────────────────────────────
+// ① 다가오는 행사: **공식 발표로 확인된 일정만** 손으로 적는다(추측 날짜 금지 — 2026-10-16 웹 확인, 출처는 src).
+//    KBS 가요대축제·MBC 가요대제전은 아직 발표 전이라 뺐다. 끝난 행사는 날짜가 지나면 저절로 빠지고, 그 무대는 ②에 나온다.
+//    ⚠️ 새 시즌 일정이 발표되면 여기에 줄을 추가할 것(연 1회 정도 — 연말 시상식은 보통 8~10월 발표).
+// ② 최근 행사 회차: 최근 120일 업로드 중 행사 태그(EV:시리즈:회차)가 붙은 영상을 회차별로 묶어, 가장 최근에 영상이 올라온 순.
+const _EVENT_UPCOMING=[
+  {id:'kgma',ed:'2026',start:'2026-11-07',end:'2026-11-08',place:'고척스카이돔',src:'https://www.soompi.com/article/1846650wpp/nam-ji-hyun-and-rescenes-woni-to-host-2026-korea-grand-music-awards'},
+  {id:'mma',ed:'2026',start:'2026-11-14',end:'2026-11-15',place:'고척스카이돔',src:'https://www.dailian.co.kr/news/view/1698649'},
+  {id:'mama',ed:'2026',start:'2026-11-20',end:'2026-11-21',place:'교세라 돔 오사카',src:'https://www.koreajoongangdaily.com/entertainment/2026-mama-awards-to-take-place-in-osaka-in-november/12576374'},
+  {id:'aaa',ed:'2026',start:'2026-12-05',end:'2026-12-06',place:'대만 가오슝 국립경기장',src:'https://www.dailian.co.kr/news/view/1674145'},
+  {id:'sbs-gayo',ed:'2026',start:'2026-12-24',end:'2026-12-25',place:'일산 킨텍스',src:'https://isplus.com/article/view/isp202610010202'},
+];
+function _evUpcomingCard(list,u,s){
+  const isKo=currentLang==='ko';
+  const today=new Date(new Date().toISOString().slice(0,10)),st=new Date(u.start),en=new Date(u.end||u.start);
+  const dd=Math.round((st-today)/864e5);
+  const live=dd<=0&&today<=en;
+  const md=d=>(d.getUTCMonth()+1)+'.'+d.getUTCDate();
+  const card=document.createElement('button');card.type='button';card.className='feed-ev-up'+(live?' is-live':'');
+  const mk=(cls,txt)=>{const sp=document.createElement('span');sp.className=cls;sp.textContent=txt;card.appendChild(sp);};
+  mk('feed-ev-dd',live?(isKo?'진행 중':'LIVE'):'D-'+dd);
+  mk('feed-ev-name',s.ko.replace(/\s*\(.*\)$/,'')+(u.ed?' '+u.ed:''));
+  mk('feed-ev-when',md(st)+(u.end&&u.end!==u.start?'–'+md(en):''));
+  mk('feed-ev-where',u.place||'');
+  mk('feed-ev-go',isKo?'지난 무대 보기 ›':'Past stages ›');
+  card.title=isKo?'지난 회차 무대 보기':'See past stages';
+  card.addEventListener('click',e=>{e.stopPropagation();_feedNav(()=>_openEventPage(s.id));});
+  list.appendChild(card);
+}
+async function _buildFeedEvents(){
+  const section=document.getElementById('feed-events-section'),list=document.getElementById('feed-events');
+  if(!section||!list)return;
+  list.replaceChildren();section.style.display='none';
+  const isKo=currentLang==='ko';
+  const today=new Date().toISOString().slice(0,10);
+  // ① 다가오는(또는 진행 중) — 끝나는 날이 오늘 이후인 것, 가까운 순
+  _EVENT_UPCOMING.filter(u=>(u.end||u.start)>=today).sort((a,b)=>a.start.localeCompare(b.start)).slice(0,6).forEach(u=>{
+    const s=_EVENT_SERIES.find(x=>x.id===u.id);if(s)_evUpcomingCard(list,u,s);
+  });
+  if(list.children.length){section.style.display='';_enableDragScroll(list);}
+  // ② 최근 행사 회차
+  if(!sb)return;
+  try{
+    const since=new Date(Date.now()-120*864e5).toISOString().slice(0,10);
+    const tags=_EVENT_SERIES.map(s=>'EV:'+s.id);
+    const r=await sb.from(_YT_TABLE).select('id,title,thumb,is_short,category,view_count,published_at,content_formats,content_flag')
+      .overlaps('content_formats',tags).gte('published_at',since).limit(2000).then(x=>x,()=>({data:[]}));
+    const rows=_filterBannedVideos(r.data||[]).filter(v=>v.content_flag!=='기타'&&v.content_flag!=='보류'&&v.content_flag!=='hidden');
+    const eds=new Map(); // 'id:ed' → {id,ed,n,stage,last,top}
+    rows.forEach(v=>{
+      (v.content_formats||[]).forEach(f=>{
+        const m=/^EV:([^:]+):(.+)$/.exec(f);if(!m)return;
+        const k=m[1]+':'+m[2];let e=eds.get(k);
+        if(!e){e={id:m[1],ed:m[2],n:0,stage:0,last:'',top:null};eds.set(k,e);}
+        e.n++;if(_evIsStage(v))e.stage++;
+        if((v.published_at||'')>e.last)e.last=v.published_at||'';
+        if(!v.is_short&&v.thumb&&(!e.top||(v.view_count||0)>(e.top.view_count||0)))e.top=v;
+      });
+    });
+    // 영상이 5개 이상인 회차만(우연히 한두 개 걸린 회차는 소식이 아니다), 최근 업로드 순
+    // 아직 안 열린 회차(다가오는 일정에 있는 것 — 라인업 발표·예고 영상만 걸린 상태)는 '최근 행사'가 아니다
+    const notYet=new Set(_EVENT_UPCOMING.filter(u=>u.start>today).map(u=>u.id+':'+u.ed));
+    const picks=[...eds.values()].filter(e=>e.n>=5&&e.top&&!notYet.has(e.id+':'+e.ed)).sort((a,b)=>b.last.localeCompare(a.last)).slice(0,10);
+    picks.forEach(e=>{
+      const s=_EVENT_SERIES.find(x=>x.id===e.id);if(!s)return;
+      const name=s.ko.replace(/\s*\(.*\)$/,'')+' '+_evEdLabel(e.ed); // 'KCON 2026 LA' — 행사 이름 먼저
+      const sub=isKo?(e.stage?'무대 '+e.stage+'개':'영상 '+e.n+'개'):((e.stage||e.n)+(e.stage?' stages':' videos'));
+      _appendFeedCard(list,'🎤',name,sub,()=>_openEventPage(e.id,e.ed),e.top.thumb,'collection');
+    });
+    if(list.children.length){section.style.display='';_enableDragScroll(list);}
+  }catch(e){console.warn('[feed] Events 선반(최근 회차) 실패 — 이 부분만 빠집니다',e);}
+}
 // 검색어 → 행사 시리즈(별칭 q는 공백 없이 소문자). 2글자 미만은 안 본다('마' 한 글자로 MAMA가 뜨지 않게).
 function _matchEventSeries(q){
   const qq=String(q||'').toLowerCase().normalize('NFKC').replace(/\s+/g,'');
@@ -24633,6 +24705,7 @@ function _buildFeedDisc(){
   _feedBuildQ=[]; // 패널을 다시 열면 이전 대기분은 버린다(중복 그리기·유령 요청 방지)
   _buildFeedDailyNews(); // 오늘의 소식이 Discover 맨 첫 섹션(2026-09-23) — 기념일보다도 먼저
   _buildFeedAnniversaries(); // 기념일 선반은 그 다음(2026-08-30 이동)
+  _buildFeedEvents(); // Events — 다가오는 행사 D-day + 최근 행사 회차(2026-10-16)
   document.getElementById('feed-empty-disc').hidden=true;
   const list=document.getElementById('feed-discovery');
   const chartList=document.getElementById('feed-chart');
@@ -27704,6 +27777,11 @@ _totopBtn.addEventListener('click',e=>{
       <div class="feed-section" id="feed-anniv-section" style="display:none">
         <div class="feed-section-ttl">🎂 Today's Anniversary</div>
         <div id="feed-anniv" class="feed-strip hscroll-drag"></div>
+      </div>
+      <!-- Events(2026-10-16, 행사 3단계) — 다가오는 시상식·연말 무대(확정 일정만, D-day) + 최근 열린 행사 회차(누르면 그 회차 무대 모음). -->
+      <div class="feed-section" id="feed-events-section" style="display:none">
+        <div class="feed-section-ttl">🎤 Events</div>
+        <div id="feed-events" class="feed-strip hscroll-drag"></div>
       </div>
       <div class="feed-section">
         <div class="feed-section-ttl">📊 Charts</div>
