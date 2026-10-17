@@ -1372,6 +1372,10 @@
     <div id="gc-discog-detail-tracks"></div>
     <div id="gc-discog-detail-credits"></div>
   </div>
+  <div id="gc-discog-video-panel" hidden>
+    <div class="adv-hdr">Videos</div>
+    <div id="gc-discog-video-list"></div>
+  </div>
 </div>
 <div id="gc-track-videos-overlay" data-modal>
   <div id="gc-track-videos-bg"></div>
@@ -13342,6 +13346,9 @@ function _openGcDiscogDetail(a,idx){
   }
   {const _d=document.getElementById('gc-discog-detail');_d.classList.add('open');_bringToFront(_d);}
   _updateDiscogFlagBtn();
+  // 영상 패널 — 데스크탑 전용, 앨범명+타이틀곡으로 관련 영상 로드
+  {const _vp=document.getElementById('gc-discog-video-panel');if(_vp)_vp.hidden=true;}
+  if(!isMob())_loadAlbumVideos(a.title,a.titleTrack||(a.tracks||[]).find(t=>t.isTitle)?.title,_discogDetailGko);
   const credEl=document.getElementById('gc-discog-detail-credits');
   if(credEl){
     const titles=(a.tracks||[]).map(t=>t.title).filter(Boolean);
@@ -13356,7 +13363,45 @@ function _openGcDiscogDetail(a,idx){
 // 멜론 링크 — 웹 주소 그대로 쓴다(모바일은 멜론이 알아서 모바일 페이지·앱으로 넘긴다)
 function _melonAlbumUrl(id){return 'https://www.melon.com/album/detail.htm?albumId='+encodeURIComponent(id);}
 function _melonSongUrl(id){return 'https://www.melon.com/song/detail.htm?songId='+encodeURIComponent(id);}
-function _closeGcDiscogDetail(){document.getElementById('gc-discog-detail').classList.remove('open');}
+function _closeGcDiscogDetail(){
+  document.getElementById('gc-discog-detail').classList.remove('open');
+  const _vp=document.getElementById('gc-discog-video-panel');if(_vp)_vp.hidden=true;
+}
+async function _loadAlbumVideos(albumTitle,titleTrack,gko){
+  const panel=document.getElementById('gc-discog-video-panel');
+  const listEl=document.getElementById('gc-discog-video-list');
+  if(!panel||!listEl||!sb||!gko){if(panel)panel.hidden=true;return;}
+  // 1024px 미만 또는 탐험 패널 열림: 패널 표시 불필요
+  if(window.innerWidth<1024||document.getElementById('feed-overlay')?.classList.contains('open')){panel.hidden=true;return;}
+  panel.hidden=false;
+  listEl.innerHTML='<div class="adv-loading">불러오는 중…</div>';
+  const COLS='id,title,thumb,category,is_short,published_at,view_count,duration_sec';
+  const _excl=q=>q.or('content_flag.is.null,content_flag.neq.무관').or('content_flag.is.null,content_flag.neq.보류').or('content_flag.is.null,content_flag.neq.hidden');
+  const run=q=>_excl(q.or(`group_ko.eq.${_pgFilterVal(gko)},with_groups.cs.{${_pgFilterVal(gko)}}`)).order('published_at',{ascending:false}).limit(30).then(r=>r,()=>({data:[]}));
+  const qs=[run(sb.from(_YT_TABLE).select(COLS).ilike('title_norm',`%${_titleNorm(albumTitle)}%`))];
+  if(titleTrack&&_titleNorm(titleTrack)!==_titleNorm(albumTitle))
+    qs.push(run(sb.from(_YT_TABLE).select(COLS).ilike('title_norm',`%${_titleNorm(titleTrack)}%`)));
+  const results=await Promise.all(qs);
+  if(!document.getElementById('gc-discog-detail')?.classList.contains('open')){panel.hidden=true;return;}
+  const seen=new Set();
+  const videos=_filterBannedVideos(results.flatMap(r=>(r.data||[]))).filter(v=>!seen.has(v.id)&&seen.add(v.id));
+  if(!videos.length){panel.hidden=true;return;}
+  const playlist=videos.map(v=>({t:v.title,u:_tvfVidUrl(v),thumb:v.thumb,pa:(v.published_at||'').slice(0,10)}));
+  listEl.innerHTML='';
+  videos.forEach((v,i)=>{
+    const item=document.createElement('div');item.className='adv-item';
+    const thumb=document.createElement('img');thumb.className='adv-thumb';thumb.src=v.thumb||'';thumb.alt='';thumb.loading='lazy';
+    const txt=document.createElement('div');txt.className='adv-txt';txt.textContent=v.title;
+    const meta=document.createElement('div');meta.className='adv-meta';
+    const parts=[];
+    if(v.published_at)parts.push((v.published_at||'').slice(0,10));
+    if(v.view_count)parts.push(_fmtViewCount(v.view_count));
+    meta.textContent=parts.join(' · ');
+    item.appendChild(thumb);item.appendChild(txt);item.appendChild(meta);
+    item.addEventListener('click',()=>openLightbox(_tvfVidUrl(v),_isShortV(v),playlist,i,{groupKo:gko}));
+    listEl.appendChild(item);
+  });
+}
 document.getElementById('gc-discog-detail-flag').addEventListener('click',e=>{
   e.stopPropagation();
   const a=_gcDiscogList[_gcDiscogIdx];if(!a||!_discogDetailGko)return;
