@@ -436,7 +436,7 @@
   .sp-legal-links a:hover{color:rgba(170,188,232,0.8);}
   .sp-legal-sep{color:rgba(120,138,182,0.3);}
   /* ── K-pop 링크 모음 오버레이 ──────────────────────── */
-  #kpop-links-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.52);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:65;display:none;align-items:center;justify-content:center;}
+  #kpop-links-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.52);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:68;display:none;align-items:center;justify-content:center;}
   #kpop-links-overlay.open{display:flex;}
   #kpop-links-panel{width:min(540px,calc(100vw - 32px));max-height:84vh;display:flex;flex-direction:column;background:rgba(13,17,34,0.97);backdrop-filter:blur(40px);-webkit-backdrop-filter:blur(40px);border-radius:18px;box-shadow:0 16px 56px rgba(0,0,0,0.72);border:0.5px solid rgba(255,255,255,0.10);}
   .klp-hd{display:flex;align-items:center;justify-content:space-between;padding:18px 20px 14px;border-bottom:0.5px solid rgba(255,255,255,0.08);font-size:15px;font-weight:600;color:#e8eaf6;flex-shrink:0;}
@@ -724,6 +724,9 @@
     /* 탐험+카드 동시: 카드 폭만큼 right 비움 (specificity 높아 위 규칙 override) */
     body:has(#feed-overlay.open):has(#side-panel.open) #yt-lightbox{right:440px;}
     body:has(#feed-overlay.open):has(#side-panel.open):has(#member-panel.open) #yt-lightbox{right:880px;}
+    /* card-wide일 때 카드 640px이므로 right도 맞춰야 겹치지 않음 */
+    body:has(#feed-overlay.open).card-wide:has(#side-panel.open) #yt-lightbox{right:min(640px,calc(100vw - 480px));}
+    body:has(#feed-overlay.open).card-wide:has(#side-panel.open):has(#member-panel.open) #yt-lightbox{right:min(1080px,calc(100vw - 480px));}
     /* 카드 열림/닫힘 시 라이트박스 위치 부드럽게 전환 */
     #yt-lightbox.open{transition:right 0.26s cubic-bezier(0.32,0,0.15,1),left 0.26s cubic-bezier(0.32,0,0.15,1),top 0.26s cubic-bezier(0.32,0,0.15,1);}
     /* side-panel 없을 때 member-panel을 맨 오른쪽으로 당김 */
@@ -2142,7 +2145,7 @@
   /* z-index:65 — 카드시트(#mob-sheet:63, #mob-card-stack:64, #gc:61)보다 위에 있어야 카드에서 컬렉션을
      탭했을 때 오버레이가 카드 앞으로 뜸. #yt-lightbox(67)보다는 아래 유지 — 이 목록 안 영상을 탭하면
      라이트박스가 이 오버레이 위로 열리는 구조라 67보다 낮아야 함. */
-  #feed-list-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.52);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:65;display:none;align-items:center;justify-content:center;}
+  #feed-list-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.52);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:68;display:none;align-items:center;justify-content:center;}
   #feed-list-overlay.open{display:flex;}
   #feed-list-panel{width:min(560px,calc(100vw - 32px));max-height:90vh;min-height:min(600px,84vh);display:flex;flex-direction:column;background:rgba(13,17,34,0.97);backdrop-filter:blur(40px);-webkit-backdrop-filter:blur(40px);border-radius:18px;box-shadow:0 16px 56px rgba(0,0,0,0.72);border:0.5px solid rgba(255,255,255,0.10);}
   #feed-list-hd{display:flex;align-items:flex-start;justify-content:space-between;padding:16px 18px 12px;flex-shrink:0;gap:10px;}
