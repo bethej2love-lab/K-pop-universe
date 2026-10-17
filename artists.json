@@ -193534,6 +193534,24 @@
     },
     "discography": [
       {
+        "title": "새벽의 문턱",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/147/07/798/14707798_20261014120314_500.jpg",
+        "releaseDate": "2026.10.17",
+        "trackCount": 1,
+        "titleTrack": "새벽의 문턱",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "새벽의 문턱",
+            "isTitle": true
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "14707798"
+      },
+      {
         "title": "영화 구라, 베토벤 OST",
         "type": "OST",
         "releaseDate": "2020.12.02",

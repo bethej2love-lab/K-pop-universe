@@ -2561,7 +2561,11 @@
     "confidence": "low",
     "why": "동명 후보 3명 중 앨범 대조",
     "evidence": {
-      "titleOverlap": 0
+      "titleOverlap": 0,
+      "verifyOverlap": 0,
+      "verifyYears": [
+        2018
+      ]
     },
     "checkedAt": "2026-10-10"
   },
