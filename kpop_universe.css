@@ -2881,7 +2881,9 @@
   @media(max-width:1023px){#gc-discog-video-panel{display:none!important;}}
   @media(min-width:1024px){
     body:has(#feed-overlay.open) #gc-discog-video-panel{display:none!important;}
-    #gc-discog-detail.open{gap:12px;}
+    #gc-discog-detail.open{gap:0;}
+    /* 영상 패널 있을 때 앨범 시트 오른쪽 radius 제거 */
+    #gc-discog-detail:has(#gc-discog-video-panel:not([hidden])) #gc-discog-detail-sheet{border-radius:18px 0 0 18px;}
     #gc-discog-video-panel{
       flex-shrink:0;width:320px;
       margin-top:clamp(56px,12vh,120px);
@@ -2889,7 +2891,8 @@
       overflow-y:auto;
       background:rgba(14,18,38,0.98);
       backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);
-      border-radius:18px;
+      border-radius:0 18px 18px 0;
+      border-left:0.5px solid rgba(255,255,255,0.07);
       display:flex;flex-direction:column;
       box-sizing:border-box;
     }
