@@ -157294,6 +157294,34 @@
     },
     "discography": [
       {
+        "title": "I'm Alive (잘모르겠지만일단해보는현식 OST Part.2)",
+        "type": "OST",
+        "isMain": false,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/148/13/385/14813385_20261016164515_500.jpg",
+        "releaseDate": "2026.10.18",
+        "trackCount": 3,
+        "titleTrack": "I'm Alive",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "I'm Alive",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Carry Me Away",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "Somewhere New",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "14813385"
+      },
+      {
         "title": "After School (잘모르겠지만일단해보는현식 OST Part.1)",
         "type": "싱글",
         "releaseDate": "2026.08.17",
@@ -250549,6 +250577,29 @@
       "namu": "https://namu.wiki/w/수안(2003)"
     },
     "discography": [
+      {
+        "title": "20세기 소년소녀 Special Track. 3",
+        "type": "OST",
+        "isMain": false,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/148/11/762/14811762_20261016160759_500.jpg",
+        "releaseDate": "2026.10.18",
+        "trackCount": 2,
+        "titleTrack": "Only U",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Only U",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Only U (Inst.)",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "14811762"
+      },
       {
         "title": "영화 '즐거운 나의 집' Special Track. 5",
         "type": "OST",
