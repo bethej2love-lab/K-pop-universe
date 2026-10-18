@@ -62,7 +62,7 @@
 ---
 
 ## 2026-10-19 (세션 — 앨범 영상 패널 연결)
-- [완료] 앨범 카드 영상 패널을 **미리 계산 파일**로 전환 — `tools/build_album_videos.mjs`가 매일(KST 04:37, `album-videos-daily.yml`) DB 53만 개를 훑어 주인별 `album_videos/*.json`(곡 기본형→영상·앨범명→영상, 356개·25MB, 최대 500KB)을 만들고, 앱은 파일 + `_meta.json` 시각 이후 신규 영상만 조회해 같은 규칙으로 덧붙인다. 예전 실측: 곡 키 조회가 곡 오버레이를 한 번 열어야 켜졌고(_songKeysCol=null) 키도 `_songKey`≠루틴의 `_songBase`라 아이브 LUCID DREAM 미니 7개(실제 315)·REVIVE+ 11개(359)·스키즈 CEREMONY 리믹스 0개(196). 앨범명 규칙은 shared.js `_albumNormFor`·`_albumTitleHit`(곡명=앨범명·그룹명·흔한 낱말 막기, 영어는 단어 경계 — tests/song-link.test.js). 패널: 개수·형식 칩·60개씩 더 보기·늦은 응답 가드·뮤비 본편 우선(비하인드·리액션은 뒤) [index.html][shared.js][kpop_universe.css]
+- [완료] 앨범 카드 영상 패널을 **미리 계산 파일**로 전환 — `tools/build_album_videos.mjs`가 주 1회(월 KST 04:37, `album-videos-weekly.yml` — 신규 7일치도 큰 그룹 600개·1.3초라 매일 불필요) DB 53만 개를 훑어 주인별 `album_videos/*.json`(곡 기본형→영상·앨범명→영상, 356개·25MB, 최대 500KB)을 만들고, 앱은 파일 + `_meta.json` 시각 이후 신규 영상만 조회해 같은 규칙으로 덧붙인다. 예전 실측: 곡 키 조회가 곡 오버레이를 한 번 열어야 켜졌고(_songKeysCol=null) 키도 `_songKey`≠루틴의 `_songBase`라 아이브 LUCID DREAM 미니 7개(실제 315)·REVIVE+ 11개(359)·스키즈 CEREMONY 리믹스 0개(196). 앨범명 규칙은 shared.js `_albumNormFor`·`_albumTitleHit`(곡명=앨범명·그룹명·흔한 낱말 막기, 영어는 단어 경계 — tests/song-link.test.js). 패널: 개수·형식 칩·60개씩 더 보기·늦은 응답 가드·뮤비 본편 우선(비하인드·리액션은 뒤) [index.html][shared.js][kpop_universe.css]
 - [이슈] 아이브 'BANG BANG'·'BLACKHOLE' **뮤비 본편이 DB에 없음**(리액션·비하인드만 수집됨) — 연결 문제가 아니라 수집 사각지대. 미조사
 
 ## 2026-10-16 (세션 — 카드 2개+재생모드 레이아웃)
