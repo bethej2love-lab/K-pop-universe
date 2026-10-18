@@ -486,6 +486,26 @@ function _songLinkBases(title,songs,blockNames){
   }
   return out;
 }
+// ── 앨범 ↔ 영상(2026-10-19) ─────────────────────────────────────────────────────────────────
+// 앨범 카드 영상 패널은 "수록곡 song_keys" + "제목에 앨범명이 든 영상(하이라이트 메들리·트레일러·쇼케이스)"을 합친다.
+// 앨범명 쪽 판정 규칙 — tools/build_album_videos.mjs(매일 미리 계산)와 앱(그 뒤 들어온 신규 영상)이 같이 쓴다.
+// 앨범명 정규형. 곡명과 같으면(싱글 등) 곡 키가 이미 모으니 앨범명으로는 안 찾는다 → null.
+// 주인 이름과 같은 앨범명(뉴진스 'New Jeans' EP)은 그 주인 영상 전부에 걸리니 막는다(blockNames, 곡 규칙 함정 ①과 같음)
+function _albumNormFor(albumTitle,songBases,blockNames){
+  const n=_songNorm(albumTitle);
+  if(!n||(songBases&&songBases.has(n)))return null;
+  if((blockNames||[]).some(x=>_songNorm(x)===n))return null;
+  if((/^[가-힣]+$/.test(n)?n.length<3:n.length<4)||_SONG_COMMON.has(n))return null;
+  return n;
+}
+// 영상 제목에 앨범명이 들어 있나 — 영어는 단어 경계('ICON'이 'Dicon'에 걸리던 곡 규칙과 같은 함정)
+function _albumTitleHit(videoTitle,albumTitle,albumNorm){
+  if(!albumNorm)return false;
+  if(!_songNorm(videoTitle).includes(albumNorm))return false;
+  const w=String(albumTitle).toLowerCase().normalize('NFKC').match(/[a-z0-9]+/g);
+  if(!w||!/^[a-z0-9]+$/.test(albumNorm))return true;
+  return new RegExp('(^|[^a-z0-9])'+w.join('[^a-z0-9]*')+'(?![a-z0-9])').test(String(videoTitle).toLowerCase().normalize('NFKC'));
+}
 // 디스코(앨범 배열) → 곡 목록(기본형 중복 제거). 반주(Inst./MR)는 뺀다.
 // persons(선택): 사람 이름 정규형 Set — 괄호 속 부른 멤버('(창빈)'·'(Seungmin)')를 별칭으로 받지 않게
 function _songListFromDisco(albums,persons){

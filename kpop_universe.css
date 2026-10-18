@@ -2904,6 +2904,12 @@
     .adv-txt{font-size:12px;color:#c0d0f0;margin-top:7px;line-height:1.45;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;}
     .adv-meta{font-size:10px;color:rgba(130,150,200,0.45);margin-top:3px;}
     .adv-empty,.adv-loading{padding:24px 16px;text-align:center;font-size:12px;color:rgba(130,150,200,0.4);}
+    #gc-discog-video-count{margin-left:4px;font-weight:600;letter-spacing:0;color:rgba(130,150,205,0.42);}
+    .adv-chips{display:flex;flex-wrap:wrap;gap:6px;padding:0 12px 8px;}
+    .adv-chips[hidden]{display:none;}
+    .adv-chips .tvf-tab{font-size:11px;padding:4px 11px;}
+    .adv-more{display:block;margin:6px 12px 14px;width:calc(100% - 24px);padding:9px 0;border:none;border-radius:10px;background:rgba(255,255,255,0.06);color:rgba(190,205,240,0.78);font:600 12px/1 inherit;font-family:inherit;cursor:pointer;}
+    .adv-more:hover{background:rgba(255,255,255,0.1);}
   }
   #gc-discog-detail-close{position:absolute;top:10px;right:12px;background:none;border:none;color:rgba(190,205,240,0.4);cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><path d='M11,1 L12.3,9.7 L21,11 L12.3,12.3 L11,21 L9.7,12.3 L1,11 L9.7,9.7Z' fill='%23FFB0D0' opacity='.97'/></svg>") 11 11,pointer;padding:4px;line-height:1;z-index:2;display:inline-flex;} /* ×텍스트(밝음)→얇은 SVG, 대비 낮춤(2026-08-22 사용자 요청 — 닫기는 은은하게) */
   #gc-discog-detail-close svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;}

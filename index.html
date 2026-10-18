@@ -1373,7 +1373,8 @@
     <div id="gc-discog-detail-credits"></div>
   </div>
   <div id="gc-discog-video-panel" hidden>
-    <div class="adv-hdr">Videos</div>
+    <div class="adv-hdr">Videos <span id="gc-discog-video-count"></span></div>
+    <div id="gc-discog-video-chips" class="adv-chips" hidden></div>
     <div id="gc-discog-video-list"></div>
   </div>
 </div>
@@ -13348,7 +13349,7 @@ function _openGcDiscogDetail(a,idx){
   _updateDiscogFlagBtn();
   // 영상 패널 — 데스크탑 전용
   {const _vp=document.getElementById('gc-discog-video-panel');if(_vp)_vp.hidden=true;}
-  if(!isMob())_loadAlbumVideos(a.title,a.tracks||[],_discogDetailGko);
+  if(!isMob())_loadAlbumVideos(a,_discogDetailGko);
   const credEl=document.getElementById('gc-discog-detail-credits');
   if(credEl){
     const titles=(a.tracks||[]).map(t=>t.title).filter(Boolean);
@@ -13366,52 +13367,128 @@ function _melonSongUrl(id){return 'https://www.melon.com/song/detail.htm?songId=
 function _closeGcDiscogDetail(){
   document.getElementById('gc-discog-detail').classList.remove('open');
   const _vp=document.getElementById('gc-discog-video-panel');if(_vp)_vp.hidden=true;
+  _albVidReq++; // 늦게 온 결과가 닫힌 패널을 다시 열지 않게
 }
-async function _loadAlbumVideos(albumTitle,tracks,gko){
+// 앨범 ↔ 영상(2026-10-19) — 연결은 거의 안 바뀌는 정보라 매번 DB를 검색하지 않는다. tools/build_album_videos.mjs가 매일
+// 주인(영상 group_ko)별로 "곡 기본형 → 영상"·"앨범명 → 영상"을 미리 계산해 album_videos/에 두고, 여기선 그 파일을 읽은 뒤
+// **파일을 만든 뒤 들어온 신규 영상만** 조회해 같은 규칙(shared.js _songLinkBases·_albumTitleHit)으로 덧붙인다.
+// ⚠️ 예전엔 열 때마다 앨범명 ilike + 수록곡 키를 검색했는데, 곡 키 조회는 곡 오버레이를 한 번 열어야 켜졌고(_songKeysCol=null)
+//    키도 루틴과 다른 함수(_songKey ≠ _songBase)로 만들어 리믹스·일본반·'숨바꼭질 (Hush)' 같은 곡이 빠졌다 — 아이브
+//    LUCID DREAM 미니가 7개만 보이던 원인(실제 연결 306개).
+const _albVidFiles={};let _albVidMetaP=null,_albVidReq=0,_albVid=null;
+function _albVidFile(owner){
+  return _albVidFiles[owner]||(_albVidFiles[owner]=fetch('album_videos/'+encodeURIComponent(_discoFileKey(owner))+'.json',{cache:'no-cache'})
+    .then(r=>r.ok?r.json():null).catch(()=>null));
+}
+function _albVidMeta(){
+  return _albVidMetaP||(_albVidMetaP=fetch('album_videos/_meta.json',{cache:'no-cache'}).then(r=>r.ok?r.json():null).catch(()=>null));
+}
+// 앨범 주인의 영상 키 — 그룹 카드면 그룹, 무소속 솔로 카드면 본인 이름(_ytGroupKoFor), 유닛이면 유닛원 소속들(_applyUnitScope와 같음)
+function _albumVideoOwners(gko){
+  if(_isUnitKey(gko)){const u=_PROJECT_UNITS[gko.slice(_UNIT_KEY.length)];return [...new Set((u?.members||[]).map(m=>m.gko==='솔로'?m.mko:m.gko))];}
+  if(GROUPS[gko])return [gko];
+  return [_openTArtist?_ytGroupKoFor(_openTArtist):gko];
+}
+async function _loadAlbumVideos(album,gko){
   const panel=document.getElementById('gc-discog-video-panel');
   const listEl=document.getElementById('gc-discog-video-list');
-  if(!panel||!listEl||!sb||!gko){if(panel)panel.hidden=true;return;}
+  const myReq=++_albVidReq;
+  if(!panel||!listEl||!album||!gko){if(panel)panel.hidden=true;return;}
   if(window.innerWidth<1024||document.getElementById('feed-overlay')?.classList.contains('open')){panel.hidden=true;return;}
-  panel.hidden=false;
-  listEl.innerHTML='<div class="adv-loading">불러오는 중…</div>';
-  const COLS='id,title,thumb,category,is_short,published_at,view_count,duration_sec';
+  const owners=_albumVideoOwners(gko);
+  const tracks=(album.tracks||[]).map(t=>t&&t.title).filter(t=>t&&!/\((?:inst\.?|instrumental|mr)\)\s*$/i.test(t));
+  if(!tracks.length&&album.titleTrack)tracks.push(album.titleTrack);
+  const bases=[...new Set(tracks.map(_songBase).filter(Boolean))];
+  const names=owners.flatMap(o=>[o,GROUPS[o]?.en]).filter(Boolean);
+  const albumN=_albumNormFor(album.title,new Set(bases),names);
+  const [files,meta]=await Promise.all([Promise.all(owners.map(_albVidFile)),_albVidMeta()]);
+  if(myReq!==_albVidReq)return;
+  const seen=new Set(),all=[];
+  const push=(v,albumHit)=>{if(seen.has(v.id))return;seen.add(v.id);v._albHit=albumHit;all.push(v);};
+  files.forEach((f,fi)=>{
+    if(!f)return;
+    const rowOf=i=>{const r=f.v[i];return r&&{id:r[0],title:r[1],published_at:r[2],category:r[3],is_short:!!r[4],duration_sec:r[5]||null,
+      thumb:r[6]||`https://i.ytimg.com/vi/${r[0]}/mqdefault.jpg`,group_ko:owners[fi]};};
+    if(albumN)(f.a[albumN]||[]).forEach(i=>{const v=rowOf(i);if(v)push(v,true);});
+    bases.forEach(b=>(f.s[b]||[]).forEach(i=>{const v=rowOf(i);if(v)push(v,false);}));
+  });
+  // 미리 계산분을 먼저 바로 그리고, 신규 영상은 도착하면 덧붙인다(카드가 막 열려 요청이 몰릴 땐 조회가 몇 초 밀린다 — 2026-10-19 실측)
+  // 순서: 뮤비 본편 > 앨범 자체 영상(하이라이트 메들리·트레일러) > 뮤비 비하인드·리액션 등 > 무대 > 나머지 > 쇼츠, 같은 칸 안은 최신순
+  // (category 'mv'엔 비하인드·리액션·티저도 들어 있어서 그대로 앞에 두면 본편이 묻혔다)
+  const _mvSide=/behind|reaction|making|teaser|trailer|preview|sketch|비하인드|리액션|메이킹|티저|촬영|현장/i;
+  const pri=v=>_isShortV(v)?5:v.category==='mv'&&!_mvSide.test(v.title||'')?0:v._albHit?1:v.category==='mv'?2:v.category==='live'?3:4;
+  const show=keep=>{
+    if(!document.getElementById('gc-discog-detail')?.classList.contains('open')){panel.hidden=true;return;}
+    const list=_filterBannedVideos(all,gko);
+    if(!list.length){panel.hidden=true;return;}
+    list.sort((a,b)=>pri(a)-pri(b)||String(b.published_at||'').localeCompare(String(a.published_at||'')));
+    _albVid={list,fmt:keep&&_albVid?_albVid.fmt:'all',shown:0,gko};
+    panel.hidden=false;
+    _renderAlbumVideos();
+  };
+  show(false);
+  // 파일을 만든 뒤 들어온 신규 영상 — 만든 시각보다 1시간 앞부터(경계 누락 방지). 곡 키가 아직 없으면(루틴 10단계 전) 여기서 판정
+  if(!sb||!meta||!meta.at)return;
+  const since=new Date(Date.parse(meta.at)-3600e3).toISOString();
+  const COLS='id,title,thumb,category,is_short,group_ko,content_flag,published_at,view_count,duration_sec'+(_songKeysCol===false?'':',song_keys');
   const _excl=q=>q.or('content_flag.is.null,content_flag.neq.무관').or('content_flag.is.null,content_flag.neq.보류').or('content_flag.is.null,content_flag.neq.hidden');
-  const byGroup=q=>_excl(q.or(`group_ko.eq.${_pgFilterVal(gko)},with_groups.cs.{${_pgFilterVal(gko)}}`));
-  // ① 앨범명 포함 영상 — limit 크게, Highlight Medley·MV 등이 뒤에 있어도 수거
-  const albumQ=byGroup(sb.from(_YT_TABLE).select(COLS).ilike('title_norm',`%${_titleNorm(albumTitle)}%`))
-    .order('published_at',{ascending:false}).limit(200);
-  // ② 수록곡 song_keys 연결 영상 — 곡명 검색 없이 정확한 연결
-  const songKeys=(tracks||[]).map(t=>gko+':'+_songKey(t.title)).filter(Boolean);
-  const songQ=(_songKeysCol&&songKeys.length)
-    ?_excl(sb.from(_YT_TABLE).select(COLS).overlaps('song_keys',songKeys)).order('published_at',{ascending:false}).limit(300)
-    :Promise.resolve({data:[]});
-  const [albumR,songR]=await Promise.all([albumQ,songQ].map(q=>q.then(r=>r,()=>({data:[]}))));
-  if(!document.getElementById('gc-discog-detail')?.classList.contains('open')){panel.hidden=true;return;}
-  const seen=new Set();
-  const all=_filterBannedVideos([...(albumR.data||[]),...(songR.data||[])]).filter(v=>!seen.has(v.id)&&seen.add(v.id));
-  if(!all.length){panel.hidden=true;return;}
-  // 우선순위: 앨범 직접 영상(Medley·MV) > 공식 오디오·퍼포먼스 > 나머지
-  const _advPri=v=>{const t=(v.title||'').toLowerCase();
-    if(/highlight medley|official mv|\bmv\b/.test(t))return 0;
-    if(/official audio|performance video|showcase/.test(t))return 1;
-    if(/dance practice/.test(t))return 2;
-    return 3;};
-  all.sort((a,b)=>_advPri(a)-_advPri(b)||String(b.published_at||'').localeCompare(String(a.published_at||'')));
-  const playlist=all.map(v=>({t:v.title,u:_tvfVidUrl(v),thumb:v.thumb,pa:(v.published_at||'').slice(0,10)}));
-  listEl.innerHTML='';
-  all.forEach((v,i)=>{
+  const r=await _excl(sb.from(_YT_TABLE).select(COLS).in('group_ko',owners).gt('created_at',since)).limit(1000).then(x=>x,()=>({data:[]}));
+  if(myReq!==_albVidReq)return;
+  const songs=_songListFromDisco([album]),bset=new Set(bases),n0=all.length;
+  (r.data||[]).forEach(v=>{
+    const pre=v.group_ko+':';
+    let vb=(Array.isArray(v.song_keys)?v.song_keys:[]).filter(k=>k.startsWith(pre)).map(k=>k.slice(pre.length));
+    if(!vb.length)vb=_songLinkBases(v.title||'',songs,names);
+    const hit=_albumTitleHit(v.title||'',album.title,albumN);
+    if(hit||vb.some(b=>bset.has(b)))push(v,hit);
+  });
+  if(all.length>n0)show(true);
+}
+const _ADV_PAGE=60;
+function _renderAlbumVideos(more){
+  const st=_albVid;if(!st)return;
+  const listEl=document.getElementById('gc-discog-video-list');
+  const chipsEl=document.getElementById('gc-discog-video-chips');
+  const cntEl=document.getElementById('gc-discog-video-count');
+  const _ko=currentLang==='ko';
+  // 형식 칩 — 곡 오버레이와 같은 분류(_tvfFmt·_TVF_FMTS). 두 종류 이상일 때만
+  const cnt={};st.list.forEach(v=>{const f=_tvfFmt(v);cnt[f]=(cnt[f]||0)+1;});
+  const fmts=_TVF_FMTS.filter(([k])=>cnt[k]);
+  if(st.fmt!=='all'&&!cnt[st.fmt])st.fmt='all';
+  const rows=st.fmt==='all'?st.list:st.list.filter(v=>_tvfFmt(v)===st.fmt);
+  if(cntEl)cntEl.textContent=rows.length.toLocaleString();
+  if(!more){
+    chipsEl.innerHTML='';
+    chipsEl.hidden=fmts.length<2;
+    if(fmts.length>=2)[['all','전체','All'],...fmts].forEach(([k,ko,en])=>{
+      const b=document.createElement('button');b.type='button';b.className='tvf-tab'+(st.fmt===k?' active':'');b.textContent=_ko?ko:en;
+      b.addEventListener('click',e=>{e.stopPropagation();st.fmt=k;_renderAlbumVideos();});
+      chipsEl.appendChild(b);
+    });
+    listEl.innerHTML='';st.shown=0;listEl.scrollTop=0;
+    document.getElementById('gc-discog-video-panel').scrollTop=0;
+  }
+  listEl.querySelector('.adv-more')?.remove();
+  const playlist=rows.map(_tvfPlaylistItem);
+  const end=Math.min(rows.length,st.shown+_ADV_PAGE);
+  for(let i=st.shown;i<end;i++){
+    const v=rows[i];
     const item=document.createElement('div');item.className='adv-item';
-    const thumb=document.createElement('img');thumb.className='adv-thumb';thumb.src=v.thumb||'';thumb.alt='';thumb.loading='lazy';
+    const thumb=document.createElement('img');thumb.className='adv-thumb'+(_isShortV(v)?' is-short':'');thumb.src=v.thumb||'';thumb.alt='';thumb.loading='lazy';
     const txt=document.createElement('div');txt.className='adv-txt';txt.textContent=v.title;
     const meta=document.createElement('div');meta.className='adv-meta';
-    const parts=[];
-    if(v.published_at)parts.push((v.published_at||'').slice(0,10));
-    if(v.view_count)parts.push(_fmtViewCount(v.view_count));
-    meta.textContent=parts.join(' · ');
+    meta.textContent=[v.published_at?String(v.published_at).slice(0,10):'',v.view_count?_fmtViewCount(v.view_count):''].filter(Boolean).join(' · ');
     item.appendChild(thumb);item.appendChild(txt);item.appendChild(meta);
-    item.addEventListener('click',()=>openLightbox(_tvfVidUrl(v),_isShortV(v),playlist,i,{groupKo:gko}));
+    item.addEventListener('click',()=>openLightbox(_tvfVidUrl(v),_isShortV(v),playlist,i,{groupKo:st.gko}));
     listEl.appendChild(item);
-  });
+  }
+  st.shown=end;
+  if(end<rows.length){
+    const b=document.createElement('button');b.type='button';b.className='adv-more';
+    b.textContent=(_ko?'더 보기':'More')+` (${(rows.length-end).toLocaleString()})`;
+    b.addEventListener('click',e=>{e.stopPropagation();_renderAlbumVideos(true);});
+    listEl.appendChild(b);
+  }
 }
 document.getElementById('gc-discog-detail-flag').addEventListener('click',e=>{
   e.stopPropagation();

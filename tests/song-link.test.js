@@ -42,5 +42,13 @@ eq(ctx.f("[MPD직캠] 스트레이 키즈 승민 직캠 4K 'As we are' (Stray Ki
 eq(ctx.f('[SKZ VLOG] Changbin : 돼끼의 꿀로그 6', SKZ, ['스트레이키즈', 'Stray Kids']), [], '멤버 이름만 있는 브이로그는 곡 아님');
 // 짧은 곡명은 따옴표 없이 안 믿는다
 eq(ive('아이브 해야 할 일 브이로그'), [], "2글자 곡명('해야')은 따옴표 없이는 안 잡는다");
+// 앨범 ↔ 영상 — 앨범명 판정(shared.js _albumNormFor·_albumTitleHit, 2026-10-19)
+vm.runInContext('this.AN=_albumNormFor;this.AH=_albumTitleHit;', ctx);
+eq(ctx.AN('REVIVE+', new Set(['attitude']), ['아이브', 'IVE']), 'revive', '앨범명 정규형');
+eq(ctx.AN('BANG BANG', new Set(['bangbang']), ['아이브', 'IVE']), null, '앨범명=곡명(싱글)이면 곡 키가 모으니 앨범명으로 안 찾음');
+eq(ctx.AN('New Jeans', new Set(['attention']), ['뉴진스', 'NewJeans']), null, '앨범명=그룹명이면 그룹 영상 전부에 걸려서 막음');
+eq(ctx.AN('LOVE', new Set(), []), null, '흔한 낱말 앨범명은 안 찾음');
+eq(ctx.AH("IVE 'REVIVE+' Highlight Medley", 'REVIVE+', 'revive'), true, '하이라이트 메들리는 앨범 영상');
+eq(ctx.AH('IVE ICONIC REVIVEplus? no — DREVIVED', 'REVIVE+', 'revive'), false, '영어 앨범명은 단어 단위로만');
 console.log(fail ? `💥 곡 연결 테스트 실패 ${fail}건 (통과 ${pass})` : `✅ 곡 연결 테스트 통과 ${pass}건`);
 process.exit(fail ? 1 : 0);
