@@ -251316,6 +251316,40 @@
   },
   "discography": [
    {
+    "title": "BAD HABITS TONITE",
+    "type": "싱글",
+    "isMain": true,
+    "cover": "https://cdnimg.melon.co.kr/cm2/album/images/148/01/672/14801672_20261016112740_500.jpg",
+    "releaseDate": "2026.10.18",
+    "trackCount": 4,
+    "titleTrack": "BAD HABITS TONITE",
+    "region": "cn",
+    "tracks": [
+     {
+      "no": 1,
+      "title": "BAD HABITS TONITE",
+      "isTitle": true
+     },
+     {
+      "no": 2,
+      "title": "I Follow",
+      "isTitle": false
+     },
+     {
+      "no": 3,
+      "title": "BAD HABITS TONITE (Chinese Ver.)",
+      "isTitle": false
+     },
+     {
+      "no": 4,
+      "title": "I Follow (Chinese Ver.)",
+      "isTitle": false
+     }
+    ],
+    "src": "melon",
+    "melonAlbumId": "14801672"
+   },
+   {
     "title": "Love Got Me Ooh",
     "type": "싱글",
     "isMain": true,
