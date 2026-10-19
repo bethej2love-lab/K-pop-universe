@@ -12,6 +12,10 @@
 - **Claude Code·Codex 공동 작업(2026-10-19~)**: 세션 제목에 도구를 적는다 — `## 날짜 (Claude Code — 주제)` / `## 날짜 (Codex — 주제)`. 큰 작업은 **시작할 때** `[진행중]` 한 줄을 먼저 적고 push해서 다른 도구가 같은 파일을 동시에 건드리지 않게 한다. 끝날 때 "⏳ 덜 된 일"에 다음 사람이 바로 이어받을 수 있게 **명령·파일·판단 기준**까지 적는다(Codex 진입 안내는 AGENTS.md)
 - **⚠️ git 상태 확인은 `git status`/`git log`만으로 하지 말 것 — 반드시 `git fetch origin`부터 먼저 실행.** 이 둘은 로컬에 캐시된 마지막 fetch 시점 기준으로만 판단해서, 그 사이 다른 기기/세션이 이미 push해둔 걸 놓치고 "최신"이라고 잘못 보고하는 사고가 실제로 있었음(2026-08-20 항목 참고). "다른 데서 작업한 거 반영됐는지 확인해줘" 같은 요청은 물론이고, **커밋하기 전·push하기 직전에도 항상 다시 fetch할 것.**
 
+## 2026-10-20 (Claude Code — 가로 영상이 세로 틀에 확대돼 보이던 것)
+- **[완료] [index.html] [tests/lb-rotate-no-persist.test.js]** 사용자 캡처: 코르티스 성현 가요대제전 직캠(4Hyx7TZ2cXg, DB상 is_short=false·/shorts/ 303·oardefault 404 = 정상 가로)이 모바일 재생창에서 9:16 틀에 크게 잘려 보임. 원인: 회전 버튼이 영상 ID를 localStorage `kpu_lb_portrait_vids`에 **영구 저장**해 한 번 잘못 눌린 가로 영상은 이후 매번 세로 틀로 열림(브라우즈 모드+is-shorts 조합 = 캡처와 일치). 회전은 지금 영상에만 적용하고 저장 제거, 남은 저장분은 로드 시 삭제. 세로/가로 판정 정본은 서버(shorts_promote) 그대로.
+- **[검증]** 새 테스트 390px 헤드리스 7/7(옛 저장분 무시·회전 즉시 적용·재오픈 가로·쇼츠 세로), 옛 코드로 되돌리면 4개 실패해 캡처 상태 재현 확인. `node tests/syntax.test.js`·`node tests/lb-every-entry.test.js` 8/8 통과. 아이폰 실기기 확인은 사용자.
+
 ## 2026-10-19 (Codex — 모바일 사용성 자동 점검·수정 인수인계)
 - **[완료·점검만] [CHANGELOG.md]** 사용자 요청으로 배포 사이트 `https://kpop-universe.kr/`의 검색→카드→영상→복귀·스크롤·탐험·멤버 조합 동선을 점검. 앱 코드·DB·좋아요/최애/반응 저장·배포 변경 없음. 아래는 **재현한 오류 / 측정 기반 위험 / 개선 후보**를 구분한 인수인계이며, 수정 완료나 배포 통과 기록이 아님.
 - **[검증 방법·한계]** 직접 Playwright Chromium 헤드리스 실행은 macOS sandbox의 `MachPortRendezvous ... Permission denied`로 브라우저 시작 전 차단 → **관리형 브라우저 자동화**로 대체. viewport `390×844` 중심, `360×780`·`412×915` 일부 화면과 PC `1280×900` 비교. 브라우저 UI 클릭·스크롤·뒤로가기 후 DOM 클래스/URL/scrollTop/요소 박스 측정 + 스크린샷 확인. **터치 에뮬레이션·iOS Safari/WebKit·Android Chrome 실기기 테스트는 아님.** 익명 방문 이력 있는 브라우저라 빈 localStorage의 완전 신규 사용자 검증도 아님. `tests/smoke.test.js`·`tests/interaction.test.js`를 실행/통과했다고 간주하지 말 것. 관측 CSS `kpop_universe.css?v=20261019-f00e73b5`, 커밋 고정 없는 배포 사이트 점검이므로 다음 작업 때 최신 코드로 재현 필요.

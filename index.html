@@ -6494,8 +6494,7 @@ function openLightbox(url,shorts,playlist,idx,ctx,isAdvance,forceBrowseMode){
   try{_lbMoreClose();}catch(e){}
   const lb=document.getElementById('yt-lightbox');
   const iframe=document.getElementById('yt-lb-iframe');
-  const forcePortrait=!shorts&&_lbPortraitVids.has(vid); // 이전에 세로로 저장된 영상
-  const isPortrait=!!shorts||forcePortrait;
+  const isPortrait=!!shorts; // 회전 버튼 선택은 기억하지 않는다(yt-lb-rotate 핸들러 위 주석)
   const _lbVideoBoxEl=document.getElementById('yt-lb-video-box');
   _lbVideoBoxEl.className=isPortrait?'is-shorts':'';
   // 쇼츠 스와이프로 다음 영상 넘어갈 때, aspect-ratio 기반 크기(9:16)가 클래스 변경 직후 곧바로 반영
@@ -8012,12 +8011,10 @@ window.addEventListener('message',e=>{
     }
   }catch(_){}
 });
-// 세로 영상으로 수동 전환된 video ID 기억 — 다음 열 때 자동 적용
-const _LB_PORTRAIT_KEY='kpu_lb_portrait_vids';
-let _lbPortraitVids=new Set(JSON.parse(localStorage.getItem(_LB_PORTRAIT_KEY)||'[]'));
-function _lbSavePortrait(){
-  try{localStorage.setItem(_LB_PORTRAIT_KEY,JSON.stringify([..._lbPortraitVids]));}catch(_){}
-}
+// 회전 버튼(세로/가로 전환)은 지금 보는 영상에만 적용한다 — 예전엔 영상 ID를 폰에 영구 저장해서, 가로 영상에서
+// 한 번 잘못 눌리면 그 뒤로 열 때마다 세로 틀(9:16)에 갇혀 크게 잘려 보였고 되돌릴 단서도 없었다(2026-10-20 사용자 제보,
+// 코르티스 성현 가요대제전 직캠). 세로/가로 판정은 서버(tools/shorts_promote.mjs)가 정본. 남아 있던 저장분은 지운다.
+try{localStorage.removeItem('kpu_lb_portrait_vids');}catch(_){}
 function _lbRequestFs(){
   const iframe=document.getElementById('yt-lb-iframe');
   if(!iframe)return;
@@ -8041,10 +8038,6 @@ document.getElementById('yt-lb-rotate').addEventListener('click',e=>{
     // 데스크톱: browse+shorts-desk 레이아웃(영상+우측 정보 패널)으로 — 쇼츠를 원래 열 때와 같은 모드
     if(!isMob()){lb.classList.add('lb-shorts-desk');_lbSwitchToBrowse();}
     else{_lbSwitchToShorts();}
-    if(!_lbIsNativeShorts){
-      const vid=ytId(document.getElementById('yt-lb-iframe').src||'');
-      if(vid){_lbPortraitVids.add(vid);_lbSavePortrait();}
-    }
   }else{
     // → 가로(browse) 모드
     box.classList.remove('is-shorts');
@@ -8053,10 +8046,6 @@ document.getElementById('yt-lb-rotate').addEventListener('click',e=>{
     if(_lbIsNativeShorts)box.classList.add('is-letterbox'); // 쇼츠 원본은 iframe이 9:16 비율이라 letterbox로
     rotateBtn.classList.remove('is-portrait');
     _lbSwitchToBrowse();
-    if(!_lbIsNativeShorts){
-      const vid=ytId(document.getElementById('yt-lb-iframe').src||'');
-      if(vid){_lbPortraitVids.delete(vid);_lbSavePortrait();}
-    }
   }
 });
 
