@@ -126,7 +126,18 @@ for (const name of ['아이유', '청하', '태연']) {
     `영상 조회 select ${vidSelects.length}곳 모두 with_members·with_groups를 가져옴`);
   need2(/badForGroup\(v, memberCountOf/.test(og), '기존 캐시 감사도 대표성 규칙 위반을 오염으로 처리(--keep-existing이 옛 픽을 지키지 못하게)');
   // 필터가 하드 조건이면 후보가 적은 그룹이 썸네일을 통째로 잃는다 — 마지막엔 원래 풀로 떨어져야 한다.
-  need2(/for \(const f of \[\.\.\.\(filters \|\| \[\]\), null\]\)/.test(og), '필터를 다 통과 못 하면 느슨한 풀로 폴백(썸네일 유실 방지)');
+  // 루프의 문법 대신 실제 후보 선택을 실행한다. 가로 우선 탐색이 추가돼도 보호할 동작은 같다.
+  const start = og.indexOf('function randomEligible(');
+  const end = og.indexOf('\nasync function fetchJson', start);
+  const pick = require('vm').runInNewContext(og.slice(start, end) + '\nrandomEligible;', { TOPN: 20 });
+  const horizontal = { id: 'horizontal', is_short: false, view_count: 1 };
+  const short = { id: 'short', is_short: true, view_count: 100 };
+  need2(pick([horizontal], null, [() => false])?.id === 'horizontal',
+    '필터를 다 통과 못 하면 느슨한 풀로 폴백(썸네일 유실 방지)');
+  need2(pick([short, horizontal], null, [])?.id === 'horizontal', '조회수가 높아도 쇼츠보다 가로 영상 우선');
+  need2(pick([short], null, [])?.id === 'short', '가로 영상이 없으면 쇼츠 유지');
+  need2(pick([], horizontal, [])?.id === 'horizontal' && pick([], null, []) === null,
+    '후보가 없으면 기존 대체 영상 또는 null 반환');
 }
 
 console.log(pass ? '\n✅ og:image 커버리지 테스트 통과' : '\n❌ 실패 있음');

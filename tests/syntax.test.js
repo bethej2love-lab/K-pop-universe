@@ -69,6 +69,14 @@ for (const rel of ['admin.js', 'shared.js', 'sw.js']) {
   }
 }
 
+// 주간 보고는 모듈이므로 node의 모듈 파서로 검사(실행·DB 조회·Issue 발행은 하지 않음).
+try {
+  require('child_process').execFileSync(process.execPath, ['--check', path.join(root, 'tools', 'weekly_report.mjs')], { stdio: 'pipe' });
+  ok('tools/weekly_report.mjs — 모듈 파싱 성공');
+} catch (e) {
+  bad('tools/weekly_report.mjs 문법오류 — ' + String(e.stderr || e.message).trim());
+}
+
 // ── 3. 같은 스코프 안 중복 선언(이번 사고의 정확한 모양) ────────────────────
 // 위 1번이 이미 잡지만, 잡혔을 때 **무엇이 중복인지**를 바로 말해주려고 따로 센다.
 // index.html의 큰 인라인 블록은 전역 스코프라, 최상위 `const _X=` / `let _X=`가 두 번 나오면 곧 죽음이다.

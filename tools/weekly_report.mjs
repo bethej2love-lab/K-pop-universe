@@ -71,7 +71,7 @@ function dataHealthMd() {
 
     // 3인이상 동명이인 (그룹 구분 없이 전체 기준)
     const byKo = {};
-    for (const a of arts) { const k = a.name?.ko; if (k) (byKo[k] = byKo[k]||0)++; }
+    for (const a of arts) { const k = a.name?.ko; if (k) byKo[k] = (byKo[k] || 0) + 1; }
     const tripleNames = Object.values(byKo).filter(c => c >= 3).length;
 
     // 로스터 이상: 멤버 이름이 자기 그룹 트랙 제목과 정확히 일치

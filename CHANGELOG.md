@@ -12,6 +12,13 @@
 - **Claude Code·Codex 공동 작업(2026-10-19~)**: 세션 제목에 도구를 적는다 — `## 날짜 (Claude Code — 주제)` / `## 날짜 (Codex — 주제)`. 큰 작업은 **시작할 때** `[진행중]` 한 줄을 먼저 적고 push해서 다른 도구가 같은 파일을 동시에 건드리지 않게 한다. 끝날 때 "⏳ 덜 된 일"에 다음 사람이 바로 이어받을 수 있게 **명령·파일·판단 기준**까지 적는다(Codex 진입 안내는 AGENTS.md)
 - **⚠️ git 상태 확인은 `git status`/`git log`만으로 하지 말 것 — 반드시 `git fetch origin`부터 먼저 실행.** 이 둘은 로컬에 캐시된 마지막 fetch 시점 기준으로만 판단해서, 그 사이 다른 기기/세션이 이미 push해둔 걸 놓치고 "최신"이라고 잘못 보고하는 사고가 실제로 있었음(2026-08-20 항목 참고). "다른 데서 작업한 거 반영됐는지 확인해줘" 같은 요청은 물론이고, **커밋하기 전·push하기 직전에도 항상 다시 fetch할 것.**
 
+## 2026-10-19 (Codex — Gmail 실패 알림 원인 점검)
+- **[완료] [tests/og-thumb-solo.test.js]** 반복된 Data validation & tests 실패 원인은 가로 영상 우선 로직 변경 후 남은 구현 문자열 검사. 함수 실행 기반으로 폴백·가로 우선·쇼츠 폴백·빈 후보 4가지 회귀 검증으로 교체(검사 우회 아님). 실제 썸네일 선택 로직은 변경하지 않음.
+- **[완료] [tools/weekly_report.mjs] [tests/syntax.test.js]** Weekly report 실패의 `(byKo[k] = byKo[k]||0)++`는 잘못된 대입 대상 SyntaxError. 명시적 카운터 대입으로 수정하고 필수 syntax 가드에 해당 모듈 `node --check` 추가. 운영 토큰 없이 문법 검증; 실제 보고서 발행 재실행은 하지 않음.
+- **[확인]** Instagram run 39194417944(attempt 2)의 `PGRST102 All object keys must match`는 후속 run 39195090970 성공 확인(기존 Claude Code 수정으로 정상화, 중복 수정 안 함). SEO run 39184954279는 동시 push로 fetch-first 거절; 후속 39204838499·39206721042 성공 확인.
+- **[검증]** `node tests/syntax.test.js`, `node tests/og-thumb-solo.test.js`, `node tests/validate-data.js` 통과(데이터 0 errors/142 warnings). CI 범위 로컬 102개 실행에서 브라우저 CDP 환경 실패 1개·정적 링크 검사 60초 제한 초과 1개 외 통과; 이 둘은 별도 재검증 중이며 통과로 간주하지 않음.
+- **[진행중]** IVE BANG BANG/BLACKHOLE 곡·REVIVE+ 앨범 화면 연결 확인. DB 두 본편 존재·song_keys=null·created_at=2026-10-19T02:20:13Z 확인. 정적 album_videos 생성 시각보다 늦게 수집됐으므로 라이브 보충 경로까지 실제 브라우저 검증 필요(검증용 스크립트는 저장소 밖 로컬).
+
 ## DECISIONS (결정 대기 — 주간 자문 세션에서 처리)
 - **[C안으로 방향 정함 · 세부 결정 2개 남음] 솔로 규약 재설계 — `group_ko`를 "조회 키"이자 "솔로 여부"로 겸용하는 문제(2026-09-10)**
   - **한 줄 요약**: 지금은 "이 영상이 솔로 활동이다"를 표시하는 방법이 **`group_ko`를 그룹명 대신 본인 이름으로 바꾸는 것**뿐이다. 표시가 곧 이사(移徙)라서 원래 소속 정보가 지워진다. 그래서 **소속은 그대로 두고 "솔로 활동" 표시만 따로 붙이자**는 게 C안이다.
