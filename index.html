@@ -1366,6 +1366,7 @@
     </div>
     <div id="gc-discog-detail-type"></div>
     <div id="gc-discog-detail-title"></div>
+    <div id="gc-discog-detail-artists" hidden></div>
     <div id="gc-discog-detail-meta"></div>
     <a id="gc-discog-detail-melon" class="melon-link-btn" target="_blank" rel="noopener noreferrer" hidden>멜론에서 보기 <span aria-hidden="true">↗</span></a>
     <div id="gc-discog-detail-track-lbl">Tracklist</div>
@@ -12825,6 +12826,7 @@ function _renderDiscography(prefix,albums){
       typeEl.textContent=yr?`${typeLabel} · ${yr}${jp?' · JP':''}`:typeLabel+(jp?' · JP':'');
       const titleEl=document.createElement('div');titleEl.className='gc-discog-item-title';titleEl.textContent=a.title;
       item.appendChild(img);item.appendChild(typeEl);item.appendChild(titleEl);
+      _appendDiscogArtists(item,a);
       item.addEventListener('click',e=>{e.stopPropagation();_gcDiscogList=list;_openGcDiscogDetail(a,idx);});
       strip.appendChild(item);
     });
@@ -13196,6 +13198,7 @@ function _renderDiscogStacks(strip,list,prefix){
     admBtn(a,typeEl);
     const titleEl=document.createElement('div');titleEl.className='gc-discog-item-title';titleEl.textContent=a.title;
     item.append(img,typeEl,titleEl);
+    _appendDiscogArtists(item,a);
     item.addEventListener('click',e=>{e.stopPropagation();_gcDiscogList=list;_openGcDiscogDetail(a,idx);});
     return item;
   };
@@ -13306,6 +13309,7 @@ function _openGcDiscogDetail(a,idx){
   document.getElementById('gc-discog-detail-cover').src=a.cover;
   document.getElementById('gc-discog-detail-type').textContent=_discogTypeLabel(a.type)+(a.trackCount?' · '+a.trackCount+'곡':'');
   document.getElementById('gc-discog-detail-title').textContent=a.title;
+  _renderDiscogDetailArtists(a);
   document.getElementById('gc-discog-detail-meta').textContent=a.releaseDate;
   // 멜론 앨범 페이지 — 번호 없으면 그 곡이 든 본 앨범(melonVia, 멜론엔 따로 없는 선공개 싱글), 그것도 없으면 "주인 + 앨범명" 멜론 검색 — 가사·전체 크레딧을 보러 가는 길(2026-10-14)
   {const ml=document.getElementById('gc-discog-detail-melon');if(ml){
@@ -13362,6 +13366,42 @@ function _openGcDiscogDetail(a,idx){
     else _renderCreditsInto(credEl,titles,true,_credOwner);
   }
 }
+// ── 공동 앨범(합작) 아티스트 표기(2026-10-19) ─────────────────────────────────────────────
+// al.byline = 멜론 앨범 아티스트 표기 그대로(순서 포함), tools/melon_album_artists.mjs가 박는다. 2명 이상일 때만 있다.
+// 표기는 쉼표 — 'x'는 유닛에 쓰는 기호라 단발성 공동 작업엔 안 쓴다(사용자 결정). 피처링(feat)과는 다른 개념.
+function _albumArtistNames(al){
+  if(!al||!Array.isArray(al.byline)||al.byline.length<2)return [];
+  return al.byline.map(x=>currentLang==='ko'?x.n:(x.en||x.n));
+}
+function _albumArtistsLabel(al){return _albumArtistNames(al).join(', ');}
+// 디스코 목록 칸 — 제목 아래 한 줄
+function _appendDiscogArtists(item,al){
+  const t=_albumArtistsLabel(al);if(!t)return;
+  const el=document.createElement('div');el.className='gc-discog-item-artists';el.textContent=t;item.appendChild(el);
+}
+// 상세 — 이름을 누르면 그 사람(그룹) 카드로
+function _renderDiscogDetailArtists(al){
+  const box=document.getElementById('gc-discog-detail-artists');if(!box)return;
+  box.innerHTML='';
+  const names=_albumArtistNames(al);
+  box.hidden=!names.length;
+  if(!names.length)return;
+  al.byline.forEach((x,i)=>{
+    if(i)box.appendChild(document.createTextNode(', '));
+    const art=x.ako?ARTISTS.find(a=>a.name&&a.name.ko===x.ako&&(a.group?.ko===x.ag||(a.groups||[]).some(g=>g&&g.ko===x.ag))):null;
+    const gk=!art&&x.gko&&GROUPS[x.gko]?x.gko:null;
+    if(!art&&!gk){const sp=document.createElement('span');sp.textContent=names[i];box.appendChild(sp);return;}
+    const b=document.createElement('button');b.type='button';b.className='gc-discog-artist-link';b.textContent=names[i];
+    b.addEventListener('click',e=>{
+      e.stopPropagation();
+      _closeGcDiscogDetail();
+      const cx=window.innerWidth/2,cy=isMob()?window.innerHeight*0.4:window.innerHeight/2;
+      if(art){if(isMob())showT(art,cx,cy,false,false,false);else showT(art,cx,cy);}
+      else{if(isMob())showGC(gk,cx,cy,false,false,null,false);else showGC(gk,cx,cy);}
+    });
+    box.appendChild(b);
+  });
+}
 // 멜론 링크 — 웹 주소 그대로 쓴다(모바일은 멜론이 알아서 모바일 페이지·앱으로 넘긴다)
 function _melonAlbumUrl(id){return 'https://www.melon.com/album/detail.htm?albumId='+encodeURIComponent(id);}
 function _melonSongUrl(id){return 'https://www.melon.com/song/detail.htm?songId='+encodeURIComponent(id);}
@@ -13397,6 +13437,12 @@ async function _loadAlbumVideos(album,gko){
   if(!panel||!listEl||!album||!gko){if(panel)panel.hidden=true;return;}
   if(window.innerWidth<1024||document.getElementById('feed-overlay')?.classList.contains('open')){panel.hidden=true;return;}
   const owners=_albumVideoOwners(gko);
+  // 공동 앨범이면 함께 낸 사람 쪽 영상도(온유 카드에서 연 'Tic Tac Toe'에 지코 쪽 무대가 빠지던 것, 2026-10-19)
+  (album.byline||[]).forEach(x=>{
+    const a=x.ako?ARTISTS.find(y=>y.name&&y.name.ko===x.ako&&(y.group?.ko===x.ag||(y.groups||[]).some(g=>g&&g.ko===x.ag))):null;
+    const k=a?_ytGroupKoFor(a):x.gko&&GROUPS[x.gko]?x.gko:null;
+    if(k&&!owners.includes(k))owners.push(k);
+  });
   const tracks=(album.tracks||[]).map(t=>t&&t.title).filter(t=>t&&!/\((?:inst\.?|instrumental|mr)\)\s*$/i.test(t));
   if(!tracks.length&&album.titleTrack)tracks.push(album.titleTrack);
   const bases=[...new Set(tracks.map(_songBase).filter(Boolean))];
@@ -22265,7 +22311,7 @@ async function _buildFeedFavAlbums(){
     picked.forEach(a=>{
       // 캡션 3줄: 앨범명 / 아티스트 / 타입 · 발매일. 예전엔 아티스트와 타입이 한 줄로 붙어 마퀴로
       // 흘렀는데, 나누니 아티스트가 독립해 읽히고 발매일도 자리가 생겼다(2026-09-21).
-      const ownerDisp=a.k==='g'?_gLabelKo(a.o):a.o;
+      const ownerDisp=Array.isArray(a.w)&&a.w.length>1?a.w.join(', '):a.k==='g'?_gLabelKo(a.o):a.o; // 공동 앨범은 멜론 표기 순서대로 쉼표(2026-10-19)
       const meta=[_discogTypeLabel(a.y),_albumDateLabel(a.d)].filter(Boolean).join(' · ');
       _appendFeedCard(list,'💿',a.t,ownerDisp,_albumCardNav(a),a.c,null,{meta,metaFresh:_albumIsFresh(a.d),metaNew:_albumIsNew(a.d)});
     });
@@ -22382,9 +22428,13 @@ function _collectWeekNews(){
     const _winItems=await Promise.all([..._winGroups.values()].map(async ws=>{
       const w=ws[0];
       const names=[...new Set(ws.flatMap(x=>[_gLabelKo(x.group_ko),x.member_ko]).filter(Boolean))];
-      const sub=[...names,w.show].join(' · ')+_agoLabel(w.win_date);
+      let sub=[...names,w.show].join(' · ')+_agoLabel(w.win_date);
       let relVid=null;for(const x of ws){relVid=_winVidFor(x);if(relVid)break;}
       let thumb=null,square=false,nav;
+      // 공동 곡이면 이름 순서를 그 앨범의 멜론 표기대로(온유 · 지코) — 기록 순서는 DB에 들어간 순서일 뿐이다
+      if(ws.length>1){const h0=await _winAlbumFor(w);const order=_albumArtistNames(h0&&h0.al);
+        if(order.length){const by=new Map(order.map((n,i)=>[n,i]));names.sort((a,b)=>(by.has(a)?by.get(a):99)-(by.has(b)?by.get(b):99));
+          sub=[...names,w.show].join(' · ')+_agoLabel(w.win_date);}}
       if(relVid){
         thumb=relVid.thumb;
         nav=()=>_feedNav(()=>openLightbox(relVid.is_short?`https://youtube.com/shorts/${relVid.id}`:`https://www.youtube.com/watch?v=${relVid.id}`,!!relVid.is_short,null,0,{groupKo:relVid.group_ko||w.group_ko},false,true));
@@ -22628,7 +22678,7 @@ async function _buildFeedNewAlbums(){
     try{await Promise.race([_feedDailyNewsP,new Promise(r=>setTimeout(r,2500))]);}catch(e){}
     if(list.children.length)return; // 기다리는 사이 다시 그려졌으면(패널 재오픈) 이번 건 버림
     picked.forEach(a=>{
-      const ownerDisp=a.k==='g'?_gLabelKo(a.o):a.o;
+      const ownerDisp=Array.isArray(a.w)&&a.w.length>1?a.w.join(', '):a.k==='g'?_gLabelKo(a.o):a.o; // 공동 앨범은 멜론 표기 순서대로 쉼표(2026-10-19)
       const meta=[_discogTypeLabel(a.y),_albumDateLabel(a.d)].filter(Boolean).join(' · ');
       _appendFeedCard(list,'💿',a.t,ownerDisp,_albumCardNav(a),a.c,null,{meta,metaFresh:_albumIsFresh(a.d),metaNew:_albumIsNew(a.d)});
     });

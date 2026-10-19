@@ -284,6 +284,7 @@ const RECENT_ALBUMS = 400;
       if (al.program) continue;                             // 데뷔 전 서바이벌 프로그램 앨범은 '이번 주 발매'가 아니다(2026-10-14)
       const row = { o: owner, k: ownerKind, g: gko || null, t: al.title, y: al.type || '', d: al.releaseDate, c: al.cover };
       if (id) row.i = id;
+      if (Array.isArray(al.byline) && al.byline.length >= 2) row.w = al.byline.map(x => x.n); // 공동 앨범 표기(멜론 순서, 2026-10-19)
       rows.push(row);
     }
   };
