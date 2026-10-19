@@ -1,0 +1,41 @@
+name: 음방 결방 목록 갱신 (하루 3번)
+
+# tools/music_show_breaks.mjs — 위키 "No show" 표기 + 날짜가 적힌 결방 기사로 music_show_breaks.json을 갱신한다(2026-10-19).
+# 결방 기사는 보통 며칠 전·당일에 나오므로 하루 3번(KST 09:07·15:07·21:07) 본다. 사람이 확인한 결방은 파일의 manual에 넣으면 유지된다.
+
+on:
+  schedule:
+    - cron: '7 0,6,12 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: music-show-breaks
+  cancel-in-progress: true
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: 갱신 + 커밋
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          for i in 1 2 3; do
+            git fetch origin main
+            git reset --hard origin/main
+            node tools/music_show_breaks.mjs | tee -a "$GITHUB_STEP_SUMMARY" || exit 1
+            git add music_show_breaks.json
+            if git diff --cached --quiet; then echo "변경 없음"; exit 0; fi
+            git commit -m "data(music-breaks): 음방 결방 목록 갱신 (auto)"
+            if git push; then exit 0; fi
+            sleep $((i * 5))
+          done
+          exit 1

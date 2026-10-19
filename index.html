@@ -22778,7 +22778,7 @@ function _collectWeekNews(){
           else if(art){if(isMob())showT(art,cx,cy,false,false,false);else showT(art,cx,cy);}
         });
       }
-      return {type:'win',title:w.song_title||'',sub,thumb,square,nav,gko:w.group_ko,mko:w.member_ko||null};
+      return {type:'win',title:w.song_title||'',sub,thumb,square,nav,gko:w.group_ko,mko:w.member_ko||null,show:w.show,date:w.win_date};
     }));
     items.push(..._winItems);
     (mvRes.data||[]).forEach(v=>{
@@ -22825,6 +22825,8 @@ function _collectWeekNews(){
   })();
   return _weekNewsP;
 }
+let _showBreaksP=null;
+function _ensureShowBreaks(){return _showBreaksP||(_showBreaksP=fetch('music_show_breaks.json',{cache:'no-cache'}).then(r=>r.ok?r.json():{}).catch(()=>({})));}
 async function _buildFeedDailyNews(){
   const section=document.getElementById('feed-dailynews-section');
   const list=document.getElementById('feed-dailynews');
@@ -22832,6 +22834,21 @@ async function _buildFeedDailyNews(){
   list.innerHTML='';_syncDailyNewsSection();
   try{
     const items=(await _collectWeekNews()).map(r=>({...r})); // 렌더가 _s/_pair를 덧붙이므로 복사본
+    // 음방 결방(2026-10-19, 사용자: "월요일에 어제 인기가요 1위가 없으면 수집 안 된 건가 싶다") — 지난 7일 결방은 "결방",
+    // 다음 7일 안 예정은 "결방 예정"으로 작고 흐리게. 1위 기록이 있는 날은 뺀다. 목록은 tools/music_show_breaks.mjs(하루 3번)
+    try{
+      const br=await _ensureShowBreaks();
+      const won=new Set(items.filter(r=>r.type==='win').map(r=>r.show+'|'+r.date));
+      const todayK=new Date(Date.now()+9*3600e3).toISOString().slice(0,10),ko=currentLang==='ko';
+      const dw=ko?['일','월','화','수','목','금','토']:['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+      (br.breaks||[]).forEach(b=>{
+        if(!b||!b.show||!b.date||won.has(b.show+'|'+b.date))return;
+        const dd=Math.round((Date.parse(todayK)-Date.parse(b.date))/86400000);
+        if(dd>7||dd<-7)return;
+        const d=new Date(b.date+'T00:00:00Z'),lbl=`${d.getUTCMonth()+1}/${d.getUTCDate()}(${dw[d.getUTCDay()]})`;
+        items.push({type:'break',title:b.show,sub:dd<0?(ko?lbl+' 결방 예정':lbl+' · not airing'):(ko?lbl+' 결방':lbl+' · not aired'),thumb:null,nav:()=>{},score:dd<0?46:99});
+      });
+    }catch(e){}
     _renderNewsList(list,items);
   }catch(e){console.warn('[feed] 오늘의 소식 선반 실패 — 이 선반만 빠집니다',e);}
   finally{_syncDailyNewsSection();}
@@ -22914,8 +22931,8 @@ function _appendNewsItems(container,arr){
 // 1면 헤드라인 카드(2026-09-28). 캡션은 **이미지 아래** — 앨범 커버는 그 자체가 작품이라 위에 얹지 않는다는
 // 원칙(영상도 같은 틀로 통일). 앨범은 정사각 커버를 가운데 두고 양옆을 흐린 커버로 채운다(자르지 않음).
 function _appendNewsHero(container,{type,title,sub,thumb,nav,square}){
-  const LABELS={album:'💿 신보',win:'🏆 1위',mv:'🎬 MV',teaser:'🎬 티저',milestone:'📈 조회수'};
-  const CLS={album:'fnb-album',win:'fnb-win',mv:'fnb-mv',teaser:'fnb-teaser',milestone:'fnb-milestone'};
+  const LABELS={album:'💿 신보',win:'🏆 1위',mv:'🎬 MV',teaser:'🎬 티저',milestone:'📈 조회수',break:'결방'};
+  const CLS={album:'fnb-album',win:'fnb-win',mv:'fnb-mv',teaser:'fnb-teaser',milestone:'fnb-milestone',break:'fnb-break'};
   const card=document.createElement('div');card.className='feed-news-hero'+(type==='album'||square?' is-album':'');
   const media=document.createElement('div');media.className='fnh-media';
   if(type==='album'||square){const bg=document.createElement('div');bg.className='fnh-bg';bg.style.backgroundImage=`url(${thumb})`;media.appendChild(bg);}
@@ -22934,10 +22951,10 @@ function _appendNewsHero(container,{type,title,sub,thumb,nav,square}){
   container.appendChild(card);
 }
 function _appendNewsRow(container,{type,title,sub,thumb,nav,square}){
-  const LABELS={album:'💿 신보',win:'🏆 1위',mv:'🎬 MV',teaser:'🎬 티저',milestone:'📈 조회수'};
-  const CLS={album:'fnb-album',win:'fnb-win',mv:'fnb-mv',teaser:'fnb-teaser',milestone:'fnb-milestone'};
+  const LABELS={album:'💿 신보',win:'🏆 1위',mv:'🎬 MV',teaser:'🎬 티저',milestone:'📈 조회수',break:'결방'};
+  const CLS={album:'fnb-album',win:'fnb-win',mv:'fnb-mv',teaser:'fnb-teaser',milestone:'fnb-milestone',break:'fnb-break'};
   const row=document.createElement('div');
-  row.className='feed-news-row'+(type==='milestone'?' is-milestone':'');
+  row.className='feed-news-row'+(type==='milestone'?' is-milestone':'')+(type==='break'?' is-break':'');
   const badge=document.createElement('div');
   badge.className='feed-news-badge '+(CLS[type]||'');
   badge.textContent=LABELS[type]||type;

@@ -88,6 +88,8 @@
 
 - [완료] 인스타 사진 사이트 안 뷰어 — 카드 인스타 줄·탐험 패널 인스타 선반의 사진을 누르면 인스타로 나가지 않고 뷰어(웹: 사진|계정·본문, 모바일: 위 사진·아래 본문). 여러 장은 ‹ ›·스와이프·←→, Esc는 _closeTopOverlay 맨 앞(안 넣으면 Esc가 뷰어 밑 카드를 닫았음). 출처 계정+"Instagram에서 보기" 항상, 다운로드 없음. 영상 게시물은 재생 파일이 없어 인스타로. 수집 도구가 본문(cap, 600자)·좋아요(lk)·댓글(cm)도 받음, 탐험 패널 카드엔 본문 첫 줄. ⚠️ 메타 공식 사이트 내 표시(oEmbed)는 앱 심사 필요 — 보류 [index.html][kpop_universe.css][tools/ig_business_discovery.mjs]
 
+- [완료] 음방 결방 표시 — `tools/music_show_breaks.mjs`(music-show-breaks.yml 하루 3번 KST 09·15·21시)가 ①영문 위키 표 "No show" ②구글 뉴스 RSS "{방송} 결방" 중 **제목·요약에 날짜가 있고 그 방송 요일과 맞는 기사**("결방 아닌 시간 변경" 등 부정 기사 제외) ③파일의 manual(사람 확인)을 합쳐 `music_show_breaks.json` 갱신. This Week 소식에 지난 7일 "결방"(1위 소식 바로 다음)·다음 7일 "결방 예정"을 작고 흐리게, 1위 기록 있는 날은 제외. 우리 영상 DB의 음방 업로드 수로는 판정 불가(SBS 등 채널을 다 안 모아 정상 방송일도 0건) — 실측. ⚠️ 위키는 하루 이상 늦을 때가 있고 날짜 없는 기사는 못 씀 → 10/18 인기가요는 사용자 확인으로 manual에 넣음 [tools/][music_show_breaks.json][index.html][kpop_universe.css]
+
 ### ⏳ 덜 된 일 (10-19 Claude Code 세션 마감 시점)
 - [사용자 결정·미착수] **방송 음원도 공동 앨범으로 수집** — 쇼미더머니뿐 아니라 **복면가왕·불후의 명곡 등 방송·경연 음원도 합작으로 본다**(사용자 10-19). 지금은 `tools/melon_album_artists.mjs` 반영 단계의 `SKIP_TITLE` 정규식이 `복면가왕|불후의|가요제|경연|프로듀서 -|로드 투 킹덤|\d+회`를 빼고 있음 → 이 부분을 지우고, 같은 줄 `ok` 조건의 `!al.program && !al.contest`(프로그램·경연 앨범 표식)도 뺄지 판단할 것. 유지할 제외: 피처링(feat/ft.)·리믹스·OST·유닛 앨범. 순서: 정규식 수정 → `node tools/melon_album_artists.mjs --apply`(수집 캐시 `melon_album_artists.json` 그대로 씀, 재수집 불필요) → `git diff artists.json groups.json | grep "^-"`로 지워진 줄 없는지 확인 → `node tools/build_slim_data.mjs` → `node tests/album-byline.test.js`(복면가왕 제외를 전제한 검사는 없음). 표기는 지금처럼 멜론 순서·쉼표
 - [확인 대기·실기기] 모바일 탐험 패널 끌어 닫기 — 튕김 기준(24px↑ & 0.6px/ms↑) 손맛. 너무 쉽게/둔하게 닫히면 `_wireFeedSwipeDismiss`의 그 두 숫자만 조정
