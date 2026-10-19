@@ -8143,6 +8143,9 @@ function closeLightbox(){
   _lbSpeed=1;
   _lbConnCardOpenedFromLb=false; // 영상 자체를 닫아버렸으면 나중에 연결 카드를 닫아도 재생을 재개할 대상이 없음
   document.getElementById('yt-lb-speed-badge').classList.remove('is-on');
+  // 데스크톱: 라이트박스가 닫히면 Up Next side-panel도 같이 닫는다.
+  // 모바일은 side-panel이 라이트박스와 다른 레이어(카드 시트)라 건드리지 않음.
+  if(!isMob()&&typeof closeSidePanel==='function')closeSidePanel();
   // 라이트박스가 카드 위를 완전히 덮고 있는 동안 영상을 클릭할 때의 자동 스크롤(scrollIntoView)이나
   // 카드 재렌더링으로 밑에 깔린 시트의 scrollTop이 사용자 모르게 바뀌어 있을 수 있음 — 그 상태에서
   // _lastScroll이 실제 위치와 어긋나면 닫은 뒤 위로 스크롤해도 탭바가 다시 안 뜨는 경우가 있었음.
