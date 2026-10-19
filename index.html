@@ -16548,11 +16548,6 @@ document.getElementById('mx-overlay')?.addEventListener('click',e=>{if(e.target=
 //    버튼이 한 번도 동작하지 않았다(2026-10-14 사용자 제보 "눌러도 아무것도 안 나옴"). 문서 파싱이 끝난 뒤 묶는다.
 {const _bindMx=()=>{
   document.getElementById('mx-open-btn')?.addEventListener('click',e=>{e.stopPropagation();_openMemberExplorer();});
-  document.getElementById('feed-wgt-win')?.addEventListener('click',e=>{e.stopPropagation();_openNewsDrawer('win');});
-  document.getElementById('feed-wgt-album')?.addEventListener('click',e=>{e.stopPropagation();_openNewsDrawer('album');});
-  document.getElementById('feed-wgt-news')?.addEventListener('click',e=>{e.stopPropagation();_openNewsDrawer('news');});
-  document.getElementById('fnd-close')?.addEventListener('click',e=>{e.stopPropagation();document.getElementById('feed-news-drawer')?.classList.remove('open');});
-  document.getElementById('fnd-bg')?.addEventListener('click',()=>document.getElementById('feed-news-drawer')?.classList.remove('open'));
 };
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',_bindMx);else _bindMx();}
 document.getElementById('sp-klinks-btn').addEventListener('click',e=>{e.stopPropagation();document.getElementById('settings-panel').classList.remove('open');['tab-settings','dh-settings-btn'].forEach(id=>document.getElementById(id)?.classList.remove('active'));_openKpopLinks();});
@@ -22901,58 +22896,16 @@ function _renderNewsList(list,items){
 }
 // This Week's K-pop 섹션은 소식 목록(#feed-dailynews)과 발매 앨범 블록(#feed-newalbum-section) 두 빌더가
 // 따로 채운다(2026-10-12 합침). 어느 한쪽만 있어도 섹션은 떠야 하므로, 각 빌더가 끝날 때 이걸 부른다.
-function _syncDailyNewsSection(){} // 위젯이 각자 visible 상태 관리(2026-10-19)
-function _updateNewsWidgets(items){
-  const ko=currentLang==='ko';
-  const wins=items.filter(r=>r.type==='win');
-  const wWin=document.getElementById('feed-wgt-win');
-  if(wWin){
-    const w0=wins[0];
-    const img=wWin.querySelector('.fwb-img');if(img)img.src=w0&&w0.thumb?w0.thumb:'';
-    const sub=wWin.querySelector('.fwb-sub');if(sub&&w0)sub.textContent=[w0.title,...(w0.sub||'').split(' · ').slice(0,2)].filter(Boolean).join(' · ');
-    const ttl=wWin.querySelector('.mx-feed-ttl');if(ttl)ttl.textContent=ko?'🏆 음방 1위':'🏆 Chart Wins';
-    wWin.hidden=!wins.length;
-  }
-  const news=items.filter(r=>r.type!=='win'&&r.type!=='break');
-  const wNews=document.getElementById('feed-wgt-news');
-  if(wNews){
-    const w1=news.find(r=>r.thumb&&!r.isShort)||news[0];
-    const img=wNews.querySelector('.fwb-img');if(img)img.src=w1&&w1.thumb?w1.thumb:'';
-    const sub=wNews.querySelector('.fwb-sub');if(sub&&w1)sub.textContent=w1.sub||w1.title||'';
-    const ttl=wNews.querySelector('.mx-feed-ttl');if(ttl)ttl.textContent=ko?'📰 이번 주 소식':'📰 This Week';
-    wNews.hidden=!news.length;
-  }
-}
-function _updateAlbumWidget(albums){
-  const wAlb=document.getElementById('feed-wgt-album');
-  if(!wAlb||!albums||!albums.length)return;
-  const top=albums[0];
-  const img=wAlb.querySelector('.fwb-img');if(img&&top.c)img.src=top.c;
-  const sub=wAlb.querySelector('.fwb-sub');
-  if(sub){const owner=top.k==='g'?_gLabelKo(top.o):top.o;sub.textContent=(top.t||'')+(owner?' · '+owner:'');}
-  const ko=currentLang==='ko';
-  const ttl=wAlb.querySelector('.mx-feed-ttl');if(ttl)ttl.textContent=ko?'💿 신보':'💿 New Releases';
-  wAlb.hidden=false;
-}
-function _openNewsDrawer(type){
-  const drawer=document.getElementById('feed-news-drawer');if(!drawer)return;
-  const ko=currentLang==='ko';
-  const ttlEl=document.getElementById('fnd-ttl');
-  if(ttlEl)ttlEl.textContent=type==='win'?(ko?'🏆 음방 1위':'🏆 Chart Wins'):type==='album'?(ko?'💿 신보':'💿 New Releases'):(ko?'📰 이번 주 소식':'📰 This Week');
+function _syncDailyNewsSection(){
+  const sec=document.getElementById('feed-dailynews-section');if(!sec)return;
   const list=document.getElementById('feed-dailynews');
-  const albSec=document.getElementById('feed-newalbum-section');
-  if(type!=='album'&&list){
-    const all=window._discoverNewsItems||[];
-    const filt=type==='win'?all.filter(r=>r.type==='win'):all.filter(r=>r.type!=='win');
-    list.innerHTML='';if(filt.length)_renderNewsList(list,filt.map(r=>({...r})));
-    list.hidden=false;if(albSec)albSec.style.display='none';
-  }else{
-    if(list){list.innerHTML='';list.hidden=true;}
-    if(albSec)albSec.style.display='';
-  }
-  const body=document.getElementById('fnd-body');if(body)body.scrollTop=0;
-  drawer.classList.add('open');_bringToFront(drawer);
+  const alb=document.getElementById('feed-newalbum-section');
+  const hasContent=(list&&list.children.length>0)||(alb&&alb.style.display!=='none');
+  sec.style.display=hasContent?'':'none';
 }
+function _updateNewsWidgets(){}
+function _updateAlbumWidget(){}
+function _openNewsDrawer(){}
 // 조회수 돌파 쇼츠 = 세로 카드(2026-10-12, 사용자: "쇼츠는 평소 쇼츠 배열처럼 1행 2열로"). 영상 그리드와
 // 같은 카드(_appendFeedCard short)를 .feed-grid 2열에 넣는다 — 썸네일도 같은 경로(oardefault 세로 원본)를 탄다.
 // MV·티저 줄은 원래 작은 썸네일 한 줄이라 그대로 둔다.
@@ -28395,20 +28348,6 @@ _totopBtn.addEventListener('click',e=>{
 
 </script>
 
-<!-- 소식 드로어 (2026-10-19) — 발견 탭 위젯 클릭 시 열리는 바텀시트 -->
-<div id="feed-news-drawer" data-modal>
-  <div id="fnd-bg"></div>
-  <div id="fnd-sheet">
-    <div class="fnd-hdr"><span id="fnd-ttl"></span><button id="fnd-close" type="button">✕</button></div>
-    <div id="fnd-body">
-      <div id="feed-dailynews" class="feed-news-list"></div>
-      <div id="feed-newalbum-section" style="display:none">
-        <div class="feed-news-subttl" id="feed-newalbum-ttl">💿 New Releases</div>
-        <div id="feed-newalbum" class="feed-album-grid feed-album-rail hscroll-drag"></div>
-      </div>
-    </div>
-  </div>
-</div>
 <div id="feed-overlay" data-modal>
   <div id="feed-peek-handle"></div>
   <div id="feed-hd">
@@ -28480,23 +28419,14 @@ _totopBtn.addEventListener('click',e=>{
            "오늘 일어난 일"로만 좁혀 한 선반에 합친다. 기존 New Releases(최근 최대 60일)·Charts와 달리
            "오늘"이 유일한 필터라 데이터가 얇은 날은 짧거나 빈 채로 섹션 자체가 숨는다(정상 — 억지로
            채우지 않는다). 세 소스 다 "시간이 지나면 의미가 옅어지는" 성격이라 맨 위(기념일보다 먼저). -->
-      <!-- 발견 위젯 (2026-10-19) — 소식/신보/1위 요약 버튼. 각 클릭 시 #feed-news-drawer 열림. -->
-      <div id="feed-widgets">
-        <button id="feed-wgt-win" class="feed-widget-btn" hidden type="button">
-          <div class="fwb-thumb"><img class="fwb-img" alt="" loading="lazy"></div>
-          <div class="mx-feed-txt"><span class="mx-feed-ttl">🏆 음방 1위</span><span class="fwb-sub mx-feed-sub"></span></div>
-          <span class="mx-feed-arr">›</span>
-        </button>
-        <button id="feed-wgt-album" class="feed-widget-btn" hidden type="button">
-          <div class="fwb-thumb fwb-square"><img class="fwb-img" alt="" loading="lazy"></div>
-          <div class="mx-feed-txt"><span class="mx-feed-ttl">💿 신보</span><span class="fwb-sub mx-feed-sub"></span></div>
-          <span class="mx-feed-arr">›</span>
-        </button>
-        <button id="feed-wgt-news" class="feed-widget-btn" hidden type="button">
-          <div class="fwb-icon">📰</div>
-          <div class="mx-feed-txt"><span class="mx-feed-ttl">📰 이번 주 소식</span><span class="fwb-sub mx-feed-sub"></span></div>
-          <span class="mx-feed-arr">›</span>
-        </button>
+      <!-- This Week's K-pop: 소식 목록 + 발매 앨범 (2026-09-23, 섹션 통합 2026-10-12) -->
+      <div class="feed-section" id="feed-dailynews-section" style="display:none">
+        <div class="feed-section-ttl">📰 This Week's K-pop</div>
+        <div id="feed-dailynews" class="feed-news-list"></div>
+        <div id="feed-newalbum-section" style="display:none">
+          <div class="feed-news-subttl" id="feed-newalbum-ttl">💿 New Releases</div>
+          <div id="feed-newalbum" class="feed-album-grid feed-album-rail hscroll-drag"></div>
+        </div>
       </div>
       <!-- 인스타 사진(2026-10-19) — 팔로워 많은 계정들의 최근 사진 게시물(영상 제외) -->
       <div class="feed-section" id="feed-ig-section" style="display:none">

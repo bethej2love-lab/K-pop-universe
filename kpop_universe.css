@@ -4504,27 +4504,6 @@
 .mx-feed-ttl{font-size:13px;font-weight:700;color:rgba(215,228,255,0.95);letter-spacing:-.01em;}
 .mx-feed-sub{font-size:11px;color:rgba(160,185,255,0.5);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .mx-feed-arr{font-size:18px;line-height:1;color:rgba(160,190,255,0.4);flex-shrink:0;}
-/* ── 발견 탭 위젯 (2026-10-19) ── */
-#feed-widgets{padding:4px 0 2px;}
-.feed-widget-btn{display:flex;align-items:center;gap:12px;width:calc(100% - 32px);margin:5px 16px;padding:10px 13px;box-sizing:border-box;background:rgba(255,255,255,0.04);border:0.5px solid rgba(160,185,255,0.16);border-radius:12px;color:inherit;text-align:left;font:inherit;cursor:pointer;transition:background .15s,border-color .15s;}
-.feed-widget-btn:hover{background:rgba(255,255,255,0.07);border-color:rgba(160,185,255,0.28);}
-.feed-widget-btn:active{background:rgba(255,255,255,0.09);}
-.feed-widget-btn[hidden]{display:none;}
-.fwb-thumb{flex-shrink:0;width:58px;height:36px;border-radius:8px;overflow:hidden;background:rgba(255,255,255,0.07);}
-.fwb-square{height:58px;width:58px;}
-.fwb-img{width:100%;height:100%;object-fit:cover;display:block;}
-.fwb-icon{flex-shrink:0;width:58px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:20px;background:rgba(130,160,255,0.1);}
-/* ── 소식 드로어 (2026-10-19) ── */
-#feed-news-drawer{position:fixed;inset:0;z-index:115;display:none;align-items:flex-end;justify-content:center;}
-#feed-news-drawer.open{display:flex;}
-#fnd-bg{position:absolute;inset:0;background:rgba(0,0,0,0.55);}
-#fnd-sheet{position:relative;width:100%;max-width:520px;max-height:82dvh;background:rgba(14,18,38,0.98);backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);border-radius:20px 20px 0 0;box-sizing:border-box;z-index:1;display:flex;flex-direction:column;overflow:hidden;}
-.fnd-hdr{display:flex;align-items:center;justify-content:space-between;padding:16px 18px 12px;flex-shrink:0;border-bottom:0.5px solid rgba(255,255,255,0.08);}
-#fnd-ttl{font-size:15px;font-weight:700;color:#e4ecff;}
-#fnd-close{background:none;border:none;color:rgba(190,205,240,0.4);cursor:pointer;padding:2px 4px;line-height:1;font-size:18px;font-family:inherit;}
-#fnd-body{overflow-y:auto;flex:1;padding-bottom:env(safe-area-inset-bottom,0px);}
-#fnd-body .feed-news-hero{margin:8px 14px 4px;}
-#fnd-body .feed-album-rail{padding:10px 14px 20px;}
 
 /* 카드 첫 화면 대표 영상(2026-10-13 시안, ?hero=1) — 가로 한 줄짜리 작은 카드.
    1차 시안(전체폭 큰 썸네일)은 프로필 사진과 큰 이미지 두 개가 위아래로 붙어 번잡하다는 피드백 → 썸네일을 왼쪽 작게,
