@@ -7680,6 +7680,24 @@
   },
   "discography": [
    {
+    "title": "Looks Can Kill",
+    "type": "싱글",
+    "isMain": true,
+    "cover": "https://cdnimg.melon.co.kr/cm2/album/images/148/09/931/14809931_20261016152744_500.jpg",
+    "releaseDate": "2026.10.19",
+    "trackCount": 1,
+    "titleTrack": "Looks Can Kill",
+    "tracks": [
+     {
+      "no": 1,
+      "title": "Looks Can Kill",
+      "isTitle": true
+     }
+    ],
+    "src": "melon",
+    "melonAlbumId": "14809931"
+   },
+   {
     "title": "LUCID DREAM (Shin Sakiura Remix)",
     "type": "싱글",
     "isMain": false,
@@ -38116,6 +38134,49 @@
    "namu": "https://namu.wiki/w/NMIXX"
   },
   "discography": [
+   {
+    "title": "Strange Muse",
+    "type": "미니",
+    "isMain": true,
+    "cover": "https://cdnimg.melon.co.kr/cm2/album/images/148/01/628/14801628_20261016112418_500.jpg",
+    "releaseDate": "2026.10.19",
+    "trackCount": 6,
+    "titleTrack": "긴 소원 (Birthday Wish)",
+    "tracks": [
+     {
+      "no": 1,
+      "title": "긴 소원 (Birthday Wish)",
+      "isTitle": true
+     },
+     {
+      "no": 2,
+      "title": "Kerosene",
+      "isTitle": false
+     },
+     {
+      "no": 3,
+      "title": "RudE TaLK",
+      "isTitle": false
+     },
+     {
+      "no": 4,
+      "title": "너는 달 (Sing to the Moon) (LILY, HAEWON)",
+      "isTitle": false
+     },
+     {
+      "no": 5,
+      "title": "Hot 'n Unbothered (SULLYOON, BAE)",
+      "isTitle": false
+     },
+     {
+      "no": 6,
+      "title": "휙 (WHIP) (JIWOO, KYUJIN)",
+      "isTitle": false
+     }
+    ],
+    "src": "melon",
+    "melonAlbumId": "14801628"
+   },
    {
     "title": "Heavy Serenade",
     "type": "미니 5집",
@@ -227765,6 +227826,44 @@
    "namu": "https://namu.wiki/w/EVNNE"
   },
   "discography": [
+   {
+    "title": "on: our noise",
+    "type": "미니",
+    "isMain": true,
+    "cover": "https://cdnimg.melon.co.kr/cm2/album/images/148/11/232/14811232_20261016155651_500.jpg",
+    "releaseDate": "2026.10.19",
+    "trackCount": 5,
+    "titleTrack": "LOOK AT MA",
+    "tracks": [
+     {
+      "no": 1,
+      "title": "BLESS",
+      "isTitle": false
+     },
+     {
+      "no": 2,
+      "title": "LOOK AT MA",
+      "isTitle": true
+     },
+     {
+      "no": 3,
+      "title": "kNOW WASSUP",
+      "isTitle": false
+     },
+     {
+      "no": 4,
+      "title": "A-ok",
+      "isTitle": false
+     },
+     {
+      "no": 5,
+      "title": "That’s OMG",
+      "isTitle": false
+     }
+    ],
+    "src": "melon",
+    "melonAlbumId": "14811232"
+   },
    {
     "title": "뱉어 (Backtalk)",
     "type": "싱글",

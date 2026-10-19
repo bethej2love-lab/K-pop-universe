@@ -132542,6 +132542,49 @@
     ],
     "discography": [
       {
+        "title": "All Of My Life",
+        "type": "미니 3집",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/148/15/354/14815354_20261016175322_500.jpg",
+        "releaseDate": "2026.10.19",
+        "trackCount": 6,
+        "titleTrack": "All Of My Life",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "All Of My Life",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Hot Blood",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "The Low",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Yeah We Go",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Sleeping By The Phone",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "99 (Boiling Point)",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "14815354"
+      },
+      {
         "title": "My Bad",
         "type": "싱글",
         "releaseDate": "2025.08.27",
@@ -228631,6 +228674,25 @@
     },
     "id": "a1024",
     "discography": [
+      {
+        "title": "Us (Korean Ver.)",
+        "type": "싱글",
+        "isMain": false,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/147/57/682/14757682_20261015145333_500.jpg",
+        "releaseDate": "2026.10.19",
+        "trackCount": 1,
+        "titleTrack": "Us (Korean Ver.)",
+        "variant": true,
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Us (Korean Ver.)",
+            "isTitle": true
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "14757682"
+      },
       {
         "title": "Us",
         "type": "싱글",
