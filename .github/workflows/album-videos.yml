@@ -1,0 +1,62 @@
+name: 앨범 ↔ 영상 목록 갱신 (매일 신규 · 주 1회 전량)
+
+# tools/build_album_videos.mjs — 앨범 카드 영상 패널이 읽는 album_videos/*.json(2026-10-19).
+# 연결은 신규 영상 말고는 거의 안 바뀌는 정보라(사용자 판단) 두 단계로 나눈다:
+#   · 매일 — 지난번 이후 신규 영상만 기존 파일에 덧붙인다(하루 6천 개 안팎, 30초 — 실측). 앱의 추가 조회가 하루치 이하로 유지됨
+#   · 월요일 — 53만 개 전량 재계산(3~4분). 숨김·오태깅 정정·곡 연결 규칙 변경·새 앨범의 앨범명 매칭이 여기서 반영
+# 증분 기준 시각이 8일 넘게 묵으면(전량이 실패한 주) 도구가 알아서 전량으로 돈다.
+
+on:
+  schedule:
+    - cron: '37 19 * * *'   # 매일 KST 04:37 — 라운드 분 회피. 월요일(KST)은 전량
+  workflow_dispatch:
+    inputs:
+      full:
+        description: "전량 재계산"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: album-videos
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: 빌드 + 커밋 (경합 시 최신 main 위에서 재빌드)
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          ARGS=""
+          # 실행 시각 UTC 19:37 = KST 다음날 04:37 → UTC 일요일(7)이 KST 월요일
+          if [ "$(date -u +%u)" = "7" ] || [ "${{ github.event.inputs.full }}" = "true" ]; then ARGS="--full"; fi
+          for i in 1 2 3; do
+            git fetch origin main
+            git reset --hard origin/main
+            node tools/build_album_videos.mjs $ARGS | tee -a "$GITHUB_STEP_SUMMARY" || exit 1
+            git add -A album_videos/
+            # _meta.json(기준 시각)만 바뀐 날도 커밋한다 — 앱이 "이 시각 이후 신규"만 조회하므로 시각이 묵으면 조회가 커진다
+            if git diff --cached --quiet; then
+              echo "변경 없음"
+              exit 0
+            fi
+            git commit -m "data(album-videos): 앨범 ↔ 영상 목록 ${ARGS:+전량 }갱신 (auto)"
+            if git push; then
+              echo "push 성공 (시도 $i)"
+              exit 0
+            fi
+            echo "push 경합 — 재시도 ($i/3)"
+            sleep $((i * 5))
+          done
+          exit 1

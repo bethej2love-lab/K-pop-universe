@@ -13369,7 +13369,7 @@ function _closeGcDiscogDetail(){
   const _vp=document.getElementById('gc-discog-video-panel');if(_vp)_vp.hidden=true;
   _albVidReq++; // 늦게 온 결과가 닫힌 패널을 다시 열지 않게
 }
-// 앨범 ↔ 영상(2026-10-19) — 연결은 거의 안 바뀌는 정보라 매번 DB를 검색하지 않는다. tools/build_album_videos.mjs가 주 1회
+// 앨범 ↔ 영상(2026-10-19) — 연결은 거의 안 바뀌는 정보라 매번 DB를 검색하지 않는다. tools/build_album_videos.mjs가 매일(신규분)·주 1회(전량)
 // 주인(영상 group_ko)별로 "곡 기본형 → 영상"·"앨범명 → 영상"을 미리 계산해 album_videos/에 두고, 여기선 그 파일을 읽은 뒤
 // **파일을 만든 뒤 들어온 신규 영상만** 조회해 같은 규칙(shared.js _songLinkBases·_albumTitleHit)으로 덧붙인다.
 // ⚠️ 예전엔 열 때마다 앨범명 ilike + 수록곡 키를 검색했는데, 곡 키 조회는 곡 오버레이를 한 번 열어야 켜졌고(_songKeysCol=null)
