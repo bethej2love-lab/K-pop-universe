@@ -1514,13 +1514,14 @@
   .ig-section[hidden]{display:none;}
   .ig-strip{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding:6px 0 2px;}
   .ig-strip::-webkit-scrollbar{display:none;}
-  .ig-item{position:relative;flex:0 0 auto;width:var(--card-thumb);height:calc(var(--card-thumb) * 1.25);border-radius:8px;overflow:hidden;background:rgba(255,255,255,0.05);display:block;}
+  :root{--ig-thumb:126px;}
+  .ig-item{position:relative;flex:0 0 auto;width:var(--ig-thumb);height:calc(var(--ig-thumb) * 1.25);border-radius:8px;overflow:hidden;background:rgba(255,255,255,0.05);display:block;}
   .ig-item img{width:100%;height:100%;object-fit:cover;display:block;}
   .ig-play{position:absolute;top:4px;right:5px;z-index:4;font-size:10px;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,0.7);pointer-events:none;}
   /* 인스타 사진은 세로 4:5가 표준이라 칸도 4:5(2026-10-19, 사용자: "정사각이 최선일까?") — 세로 사진은 거의 안 잘리고, 정사각·가로만 양옆이 조금 잘린다 */
   /* 여러 장 게시물 묶음 — 디스코 활동기 묶음(.gc-discog-deck)과 같은 겹침 */
-  .ig-deck{width:calc(var(--card-thumb) + 20px);background:none;overflow:visible;cursor:pointer;}
-  .ig-deck img{position:absolute;top:0;left:0;width:var(--card-thumb);height:100%;object-fit:cover;border-radius:8px;transition:transform .2s ease;}
+  .ig-deck{width:calc(var(--ig-thumb) + 20px);background:none;overflow:visible;cursor:pointer;}
+  .ig-deck img{position:absolute;top:0;left:0;width:var(--ig-thumb);height:100%;object-fit:cover;border-radius:8px;transition:transform .2s ease;}
   .ig-deck-front{z-index:3;box-shadow:0 3px 10px rgba(0,0,0,0.35);}
   .ig-deck-back.d1{transform:translate(9px,-3px) rotate(4deg);z-index:2;filter:brightness(.78);}
   .ig-deck-back.d2{transform:translate(17px,-5px) rotate(8deg);z-index:1;filter:brightness(.58);}
