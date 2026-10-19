@@ -12,6 +12,22 @@
 - **Claude Code·Codex 공동 작업(2026-10-19~)**: 세션 제목에 도구를 적는다 — `## 날짜 (Claude Code — 주제)` / `## 날짜 (Codex — 주제)`. 큰 작업은 **시작할 때** `[진행중]` 한 줄을 먼저 적고 push해서 다른 도구가 같은 파일을 동시에 건드리지 않게 한다. 끝날 때 "⏳ 덜 된 일"에 다음 사람이 바로 이어받을 수 있게 **명령·파일·판단 기준**까지 적는다(Codex 진입 안내는 AGENTS.md)
 - **⚠️ git 상태 확인은 `git status`/`git log`만으로 하지 말 것 — 반드시 `git fetch origin`부터 먼저 실행.** 이 둘은 로컬에 캐시된 마지막 fetch 시점 기준으로만 판단해서, 그 사이 다른 기기/세션이 이미 push해둔 걸 놓치고 "최신"이라고 잘못 보고하는 사고가 실제로 있었음(2026-08-20 항목 참고). "다른 데서 작업한 거 반영됐는지 확인해줘" 같은 요청은 물론이고, **커밋하기 전·push하기 직전에도 항상 다시 fetch할 것.**
 
+## 2026-10-19 (Codex — 팬 채널 1차 후보 조사·팬 탭 순서)
+- **[완료·사용자 등록 대기]** 투어스·코르티스 신규 팬 채널 후보를 YouTube 실제 채널 동영상 탭·소개·최근/이전 활동기 제목 표본으로 조사. 자동 등록·DB 쓰기 없음. 기존 영재 3곳(Myyoung531/oun-cyj/enJoYevMo)·성현 2곳(Noris-cortis/0113verse) 제외. 아래 수치는 **제목 표본 일치 수**이지 전편 시청·원촬영 권리/운영자 신원 보증 아님. 확정 등록은 사용자만.
+- **[후보·투어스 신유]** [OHMYYU](https://www.youtube.com/@OHMYYU): 30/30 제목에 신유, 2025-02~2026-08 활동기 확인. 대표 `-hHaGBwTAlE`(260814 SODA SODA)·`uPELGDFL4GQ`(250202 첫 만남). [snowfall](https://www.youtube.com/@snowfall1107sy): 18/18 신유, 2025-06~2026-09. 대표 `LYzIhVViVg8`·`5hD3dJQ4dao`.
+- **[후보·투어스 도훈]** [dotz](https://www.youtube.com/@dotz_dh): 29/30 도훈, 나머지 Paris 영상은 제목만으로 인물 미확정(소개 for TWS DOHOON). 대표 `arSphKapYKA`(260814)·`ZKU4_ZOIeGk`(251231). 최근 Paris 영상 포함, 멤버 고정 등록 전 해당 1개 확인 권장.
+- **[후보·투어스 한진]** [HANlight_isU](https://www.youtube.com/@HANlight_isU): 30/30 한진, 소개 ALL FOR TWS HANJIN. 대표 `2zF6kBD_1-E`·`RliXsfGlv2o`. 최신 동영상 260427로 업로드 공백 있음, 공항 영상도 포함(아카이브형 후보).
+- **[후보·투어스 지훈]** [blxnk](https://www.youtube.com/@blxnk_jh): 30/30 지훈, 2024-12~2026-06. 대표 `G7YXc1ETaBY`·`0tH7SQG3EPQ`. 최신 동영상 260607, 최근 업데이트 공백 표시.
+- **[후보·투어스 경민]** [chrono](https://www.youtube.com/@chrono1002): 30/30 경민, 2026-01~10, 소개 경민 전담. 대표 `W4D91GAlpVM`(생일 커버)·`9QFwSOYIygg`(골든디스크 봄날). 패션 일정 영상도 포함.
+- **[후보·코르티스 마틴]** [OFFLINE COLOR](https://www.youtube.com/@OFFLINEXCOLOR): 20/21 마틴, 나머지 1개는 코르티스 단체 GO!; 다른 그룹 확인 안 됨. 대표 `o5jl_V_PKHw`(260822)·`lz_7Iqcceas`(251225). 멤버 전담+동일 그룹 단체 예외로 분류.
+- **[후보·코르티스 제임스]** [Beatit](https://www.youtube.com/@Beat_it_1014): 14/14 제임스, 2025-10~2026-09. 대표 `BKIwd0dtejY`·`gypfO30D8sQ`.
+- **[후보·코르티스 건호]** [VLT](https://www.youtube.com/@VLT_AKH214): 30/30 건호, 2026-06~09 여러 공연 확인. 대표 `3zbH8qX5neM`·`0DdmludoKq0`.
+- **[후보·코르티스 주훈]** [Thursday_jh](https://www.youtube.com/@Thursday_jh): 동영상 탭 9/9 주훈(채널 총 10개에는 Shorts 포함 가능), 소개 CORTIS JUHOON Fan Account, 2025-09~2026-06. 대표 `eNszwDpf1MQ`·`V-gjjmZs2Ls`. 표본 적음·최근 공백 조건부.
+- **[보류·표본 적음]** [H2O_0130](https://www.youtube.com/@H2O_0130): 도훈 7/7, 대표 `XMkzanrR3nc`·`J0dI89eKyr4`, 2026-08~10만 확인. [duboogi](https://www.youtube.com/@duboogi): 주훈 동영상 2/2, 같은 260823 공연뿐(`rVmXog2hpws`·`2sGrKZwPIFc`), 과거 활동기 지속성 미검증. **[제외]** ZCAM(@zcam4885): 최근 표본에 미야오·트리플에스·하츠투하츠·라이즈 등 혼재 → 특정 그룹/멤버 전담 조건 불충족(채널 품질 평가 아님).
+- **[완료] [index.html] [tests/fan-tab-order.test.js]** 사용자 추가 요청: 그룹·멤버 공통 컨트롤러의 by 팬덤/Fans 탭을 끝에서 퍼포먼스(live) 바로 뒤로 이동. 기존 Original/MV 등 다른 탭 순서·존재 조건·필터 내용 유지. 비동기 팬 조회에 카드 변경·중복 삽입 가드 추가. 그룹/멤버×Original 응답 선후·퍼포먼스 없음 폴백 5개 회귀 통과.
+- **[검증]** Chrome 헤드리스 PC 1280px·모바일 390px 각각 실제 Supabase 응답을 받아 코르티스 그룹(gc-ch-vid)·성현 멤버(tv) 팬 탭이 live 바로 다음인지 확인(4/4), 초기 로드·Charts·모바일 재로드 콘솔 오류 0. `node tests/syntax.test.js`, `node tests/fan-tab-order.test.js`, 데이터 검사 0 errors/142 warnings 통과. UI/필터 순서만 변경하므로 신규 셰이더/시각효과 iPhone 게이트 대상 아님.
+- **⏳ 다음 조사:** 라이즈·보이넥스트도어·제로베이스원·NCT WISH로 확대. 사용자 등록 후 `ext_channels?tier=eq.fans&select=handle,owner_gko,owner_mko` 최신 조회로 중복 제외. 특정 이름 검색만 믿지 말고 채널 전체 동영상 탭 표본 확인. 운영/DB에 후보 자동 반영 금지.
+
 ## 2026-10-19 (Codex — Instagram 여러 장·본문·영상 표시 점검)
 - **[점검·수정 미착수]** 공개 DB 실측: status=ok 1계정(cortis), media 6개(캐러셀 2·VIDEO 4), cap 보유 0·c 보유 0. 마지막 성공 수집 run 39195090970은 commit 8784a5c5(03:31 UTC), 로그 `이번 1개 — 성공 1 · 중단: 사용량 90%`. children 추가 cfac58f6·caption 추가 305734cf 이전 코드이므로 현재 데이터로는 여러 장/본문 기능 검증 불가. 최신 수집기로 1계정 재조회 후 API 실제 응답 확인 우선(토큰 노출·전체 1,498계정 강제 재수집 불필요).
 - **[확인] [index.html]** 실제 코르티스 카드 캐러셀 클릭 시 첫 장만·본문 옆 패널 빈 상태 재현. `_openIgViewer`는 cap 없으면 본문을 숨김. `_igRenderRail`은 cap가 있으면 첫 줄을 이미 표시하지만, 그룹/멤버 `_renderIgStrip`에는 본문 미리보기 자체가 없음. 개선 후보: 카드/탐험 공통 2줄 미리보기, PC 확대 우측·모바일 하단 본문 유지.

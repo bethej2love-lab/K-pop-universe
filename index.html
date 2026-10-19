@@ -26677,9 +26677,11 @@ function _makeChVidController(contId){
     // category='fan'에도 그대로 재사용하므로(else if(filter!=='all')q=q.eq('category',filter);) 결과는 정확함.
     sb.from(_YT_TABLE).select('id').eq('group_ko',ko).eq('category','fan').limit(1).then(({data})=>{
       if(!data?.length)return;
+      if(state.ko!==ko||state.memberKo!==(memberKo||null)||catTabs.some(([v])=>v==='fan'))return;
       const fandomEn=GROUPS[ko]?.fandom?.en;
       const fanLbl=fandomEn?`by ${fandomEn}`:'by Fans';
-      catTabs=[...catTabs,['fan',fanLbl]];
+      const liveAt=catTabs.findIndex(([v])=>v==='live');
+      catTabs.splice(liveAt<0?1:liveAt+1,0,['fan',fanLbl]); // 그룹·멤버 공통: 퍼포먼스 바로 다음
       renderFilterTabs();
     });
     // 카테고리(전체/MV/라이브/Shorts) ↔ 콘텐츠 포맷(킬링보이스 등) 알약을 같은 자리에 그린다.
