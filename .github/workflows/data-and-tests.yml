@@ -18,7 +18,12 @@
     verify:
       runs-on: ubuntu-latest
       steps:
+        # name_collision_audit.mjs가 새 그룹을 최근 25개 커밋과 비교한다.
+        # checkout 기본값(depth 1)이면 HEAD~25가 없어 비교가 조용히 생략되므로,
+        # 기준 커밋까지 포함하도록 최소 26개를 받는다.
         - uses: actions/checkout@v4
+          with:
+            fetch-depth: 26
         - uses: actions/setup-node@v4
           with:
             node-version: 22

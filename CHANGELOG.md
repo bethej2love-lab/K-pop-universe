@@ -63,7 +63,7 @@
 ---
 
 ## 2026-10-19 (Codex — CI 히스토리 기반 이름 충돌 검사)
-- [진행중] [`.github/workflows/data-and-tests.yml`] `tools/name_collision_audit.mjs --new`가 `HEAD~25`와 비교하도록 설계됐지만 Actions checkout 기본 shallow clone에서는 비교 대상이 없어 검사 범위가 조용히 축소됨. checkout history depth를 최소 26으로 고치고, 검증 결과와 headless smoke 실행 조건을 기록할 예정.
+- [완료] [`.github/workflows/data-and-tests.yml`] `tools/name_collision_audit.mjs --new`가 `HEAD~25`와 비교하도록 설계됐지만 Actions checkout 기본 shallow clone에서는 비교 대상이 없어 검사 범위가 조용히 축소됐음. `actions/checkout`에 `fetch-depth: 26`을 명시해 기준 커밋까지 받도록 고침. 임시 clone도 depth 26으로 확장해 `node tests/validate-data.js` 실행 시 `HEAD~25` 오류 없이 0 error / 142 warn 확인. 경고는 기존 데이터 정밀도·동명이인 후보이며 이번 설정 변경으로 새로 생긴 것은 아님.
 
 ## 2026-10-19 (Claude Code — 앨범 영상 패널·어드민 겹침·음방 커버·공동 앨범)
 - [완료] 유니버스 밖 아티스트 "함께한 앨범" — 외부 사람은 이름 텍스트로 두고, **2장 이상** 함께한 55명은 이름(점선 밑줄)을 누르면 그 사람과 우리 아티스트들이 낸 앨범 모음 시트(누르면 그 카드+앨범 상세). build_slim_data가 `collab_ext.json`(30KB, lazy) 생성 — rebuild-disco-artifacts.yml 커밋 목록에 추가. 연결표에 없는 사람은 이름으로 한 번 더 잇되 **괄호 속 소속 그룹이 확인될 때만**(옐 (하이키)·원준(WHIB))·괄호 없으면 옛 이름 별칭만(방예담→디모렉스) — 처음엔 이름만 같아도 이어서 MJ (써니사이드)→아스트로 MJ·여름 (헬로비너스)→우주소녀·INI→샤크라 이니 등이 붙었다(테스트로 고정) [index.html][kpop_universe.css][tools/][artists.json][groups.json]
