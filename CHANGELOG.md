@@ -12,6 +12,12 @@
 - **Claude Code·Codex 공동 작업(2026-10-19~)**: 세션 제목에 도구를 적는다 — `## 날짜 (Claude Code — 주제)` / `## 날짜 (Codex — 주제)`. 큰 작업은 **시작할 때** `[진행중]` 한 줄을 먼저 적고 push해서 다른 도구가 같은 파일을 동시에 건드리지 않게 한다. 끝날 때 "⏳ 덜 된 일"에 다음 사람이 바로 이어받을 수 있게 **명령·파일·판단 기준**까지 적는다(Codex 진입 안내는 AGENTS.md)
 - **⚠️ git 상태 확인은 `git status`/`git log`만으로 하지 말 것 — 반드시 `git fetch origin`부터 먼저 실행.** 이 둘은 로컬에 캐시된 마지막 fetch 시점 기준으로만 판단해서, 그 사이 다른 기기/세션이 이미 push해둔 걸 놓치고 "최신"이라고 잘못 보고하는 사고가 실제로 있었음(2026-08-20 항목 참고). "다른 데서 작업한 거 반영됐는지 확인해줘" 같은 요청은 물론이고, **커밋하기 전·push하기 직전에도 항상 다시 fetch할 것.**
 
+## 2026-10-19 (Codex — 행성 차폐막 검은 테두리)
+- **[완료] [index.html] [tests/universe-render-parity.test.js]** 포커스 차폐막의 1.01배 확대가 실루엣 밖 배경 광원도 잘라 검은 띠 생성. 확대 제거(공유 geometry 그대로) + polygonOffset factor/units=1로 depth만 뒤로 밀어 자기 뒷면 z-fighting 방지. BackSide·colorWrite:false·그룹 포커스 전용·raycast 제외 유지. 재질·색감·빛 세기 등 나머지 우주 디자인은 변경 안 함.
+- **[검증]** 실제 앱 구체/재질을 복제한 GPU 비교(512px): 밝은 배경 광원을 행성 뒤에 놓고 동일 geometry 실루엣 밖 어두운 픽셀 **기존 2,588→수정 0**. 뒤 빨간 물체는 차폐 유지, 내부 녹색 별은 보임. PC·390px 모바일 모두 동일 결과. 기존 방식으로 되돌린 비교에서 결함 재현 확인. 재현 스크립트(로컬): `C:\Users\user\Downloads\kpu-occlusion-check.cjs`, 앱의 smoke harness/CDP 재사용, 별도 렌더 타깃이라 사용자 세션·DB 변경 없음.
+- **[검증]** `node tests/universe-render-parity.test.js` 16 checks, `node tests/syntax.test.js`, `node tests/validate-data.js`(0 errors/142 warnings), Chrome PC 1280px·모바일 390px smoke 통과(콘솔 오류 0). 첫 재실행의 Charts 8초 응답 지연은 다음 재실행에서 정상화; 검사 우회 없음.
+- **[사용자 승인]** iPhone 실기기 사전 확인 불가 → 이번 수정은 자동 검증 후 배포하고 사용자가 아이폰에서 확인하는 예외를 2026-10-19 대화로 명시 승인. **⏳ 덜 된 일:** 아이폰에서 그룹 행성 열기→줌 확대/축소, 검은 외곽 띠·표면 얼룩 없음/내부 멤버 보임/뒤 행성 비침 없음 확인. 이상 시 `index.html`의 `_bubbleOccluderMat` polygonOffset·scale만 재검토(차폐막 자체 제거 금지).
+
 ## 2026-10-19 (Codex — Gmail 실패 알림 원인 점검)
 - **[완료] [tests/og-thumb-solo.test.js]** 반복된 Data validation & tests 실패 원인은 가로 영상 우선 로직 변경 후 남은 구현 문자열 검사. 함수 실행 기반으로 폴백·가로 우선·쇼츠 폴백·빈 후보 4가지 회귀 검증으로 교체(검사 우회 아님). 실제 썸네일 선택 로직은 변경하지 않음.
 - **[완료] [tools/weekly_report.mjs] [tests/syntax.test.js]** Weekly report 실패의 `(byKo[k] = byKo[k]||0)++`는 잘못된 대입 대상 SyntaxError. 명시적 카운터 대입으로 수정하고 필수 syntax 가드에 해당 모듈 `node --check` 추가. 운영 토큰 없이 문법 검증; 실제 보고서 발행 재실행은 하지 않음.

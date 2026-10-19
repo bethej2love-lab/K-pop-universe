@@ -38,7 +38,10 @@ ck(/size:sizeW\*\(isMob\(\)\?Math\.min\(window\.devicePixelRatio,2\):1\)/.test(h
   '데스크톱 점 크기에 DPR을 또 곱하지 않음(어느 화면이든 같은 CSS 크기)');
 // ⑥ 포커스 행성 차폐막
 ck(/colorWrite:false,depthWrite:true,side:THREE\.BackSide/.test(html), '행성 뒷면만 depth에 쓰는 차폐 재질 존재');
-ck(/occ\.scale\.setScalar\(1\.01\)/.test(html), '차폐막이 행성보다 살짝 큼(같은 깊이면 z-fighting 얼룩)');
+ck(/new THREE\.Mesh\(_sharedBubbleGeo,_bubbleOccluderMat\)/.test(html) && !/occ\.scale\.setScalar/.test(html),
+  '차폐막은 행성과 동일 실루엣(확대로 배경 빛을 잘라 검은 고리 만들지 않음)');
+ck(/polygonOffset:true,polygonOffsetFactor:1,polygonOffsetUnits:1/.test(html),
+  '차폐 깊이만 뒤로 미뤄 자기 뒷면 z-fighting 방지(화면상 크기 유지)');
 ck(/occ\.raycast=\(\)=>\{\}/.test(html), '차폐막은 클릭 판정 제외');
 ck(/occ\.visible=!!\(focusGroupKo&&GROUPS\[focusGroupKo\]\)&&mesh\._focusTarget>0\.8/.test(html),
   '차폐막은 실제 그룹 포커스일 때만(솔로 카드에서 전 행성 차폐 방지)');
