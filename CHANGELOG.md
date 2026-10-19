@@ -64,7 +64,8 @@
 
 ## 2026-10-19 (Codex — CI 히스토리 기반 이름 충돌 검사)
 - [완료] [`.github/workflows/data-and-tests.yml`] `tools/name_collision_audit.mjs --new`가 `HEAD~25`와 비교하도록 설계됐지만 Actions checkout 기본 shallow clone에서는 비교 대상이 없어 검사 범위가 조용히 축소됐음. `actions/checkout`에 `fetch-depth: 26`을 명시해 기준 커밋까지 받도록 고침. 임시 clone도 depth 26으로 확장해 `node tests/validate-data.js` 실행 시 `HEAD~25` 오류 없이 0 error / 142 warn 확인. 경고는 기존 데이터 정밀도·동명이인 후보이며 이번 설정 변경으로 새로 생긴 것은 아님.
-- [진행중] [`tests/rls.test.js`][`.github/workflows/rls-audit.yml`] 익명 사용자의 Supabase RLS 읽기·빈 INSERT 차단 검사는 존재하지만 배포 CI에서 제외돼 있음. 배포를 네트워크 상태에 묶지 않는 별도 정기/수동 Actions 워크플로를 추가하고, 실제 실행 결과를 기록할 예정. 로그인 사용자 간 격리는 테스트 계정 토큰이 없으므로 이번 범위에서는 자동화하지 않음.
+- [완료] [`tests/rls.test.js`][`.github/workflows/rls-audit.yml`] 익명 사용자의 Supabase RLS 읽기·빈 INSERT 차단 검사를 배포 CI와 분리한 매일 03:17 UTC/수동 Actions 워크플로로 추가. 코드에서 발견한 신규 테이블 5개(`app_events`, `disco_era_overrides`, `surf_hops`, `video_progress`, `yt_view_milestones`)와 `rank_snapshots`의 실제 용도(공개 차트 읽기)를 EXPECT에 명시해 이후 새 테이블 누락을 실패로 감지한다. 로그인 사용자 간 격리는 테스트 계정 토큰이 없으므로 이번 범위에서는 자동화하지 않음.
+- [이슈] [`sql/2026-10-19_group_priority_rls_lockdown.sql`][`tests/rls.test.js`] 실측: `group_priority`는 설계·코드 주석과 달리 공개 anon 키로 269행 읽기 및 빈 INSERT RLS 통과 상태. restrictive admin-only 정책을 추가하는 SQL을 준비했으나, Supabase SQL Editor에서 적용해야 실제 DB가 잠긴다. 적용 전까지 새 RLS audit은 의도적으로 실패해야 하며, 적용 후 `group_priority: 읽기 0행 / 쓰기 RLS 차단`이 통과 기준.
 
 ## 2026-10-19 (Claude Code — 앨범 영상 패널·어드민 겹침·음방 커버·공동 앨범)
 - [완료] 유니버스 밖 아티스트 "함께한 앨범" — 외부 사람은 이름 텍스트로 두고, **2장 이상** 함께한 55명은 이름(점선 밑줄)을 누르면 그 사람과 우리 아티스트들이 낸 앨범 모음 시트(누르면 그 카드+앨범 상세). build_slim_data가 `collab_ext.json`(30KB, lazy) 생성 — rebuild-disco-artifacts.yml 커밋 목록에 추가. 연결표에 없는 사람은 이름으로 한 번 더 잇되 **괄호 속 소속 그룹이 확인될 때만**(옐 (하이키)·원준(WHIB))·괄호 없으면 옛 이름 별칭만(방예담→디모렉스) — 처음엔 이름만 같아도 이어서 MJ (써니사이드)→아스트로 MJ·여름 (헬로비너스)→우주소녀·INI→샤크라 이니 등이 붙었다(테스트로 고정) [index.html][kpop_universe.css][tools/][artists.json][groups.json]

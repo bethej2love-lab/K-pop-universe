@@ -47,6 +47,9 @@ const EXPECT = {
   kpop_events:                  { read: 'public', write: 'locked' },
   melon_yearly_top100:          { read: 'public', write: 'locked' },
   spotify_streaming_milestones: { read: 'public', write: 'locked' },
+  yt_view_milestones:          { read: 'public', write: 'locked' },
+  // 탐험 화면의 순위 변화·차트 기록에 쓰이므로 읽기는 공개, 작성은 Vercel Cron만 한다.
+  rank_snapshots:               { read: 'public', write: 'locked' },
   // 트로피 3종의 나머지 하나. 2026-09-11에 admin.js가 처음 쓰기 시작해(음악방송 1위 자동 수집)
   // 여기 검사 대상으로 들어왔다 — 그전까지는 SQL 에디터 전용이라 코드에 .from()이 없었다.
   // 읽기는 공개(로그아웃 방문자도 그룹 카드에서 트로피를 본다), 쓰기는 관리자만.
@@ -57,10 +60,14 @@ const EXPECT = {
   video_scraps:                 { read: 'public', write: 'locked' },
   // 어드민 전용 — 익명은 읽지도 못해야 함
   group_priority:               { read: 'locked', write: 'locked' },
-  rank_snapshots:               { read: 'locked', write: 'locked' },
   collection_likes:             { read: 'locked', write: 'locked' },
   // 유저 데이터(즐겨찾기·프로필 등) — 절대 익명에게 열리면 안 됨
   user_data:                    { read: 'locked', write: 'locked' },
+  video_progress:               { read: 'locked', write: 'locked' },
+  // 개인 이동 기록·앱 사용 지표는 로그인/익명 로그인 세션의 자기 행만 기록한다.
+  // 공개 anon 키만 든 요청은 auth.uid()가 없으므로 읽기·쓰기가 모두 막혀야 한다.
+  app_events:                   { read: 'locked', write: 'locked' },
+  surf_hops:                    { read: 'locked', write: 'locked' },
   // 의도적으로 익명 쓰기 허용
   feedback:                     { read: 'locked', write: 'open',
                                   why: '로그인 안 한 방문자도 피드백을 보낼 수 있어야 함. 읽기는 막혀 있음.' },
@@ -77,6 +84,8 @@ const EXPECT = {
   collection_like_counts:       { read: 'locked', write: 'view' },
   video_reaction_counts:        { read: 'public', write: 'view' },
   video_scrap_counts:           { read: 'public', write: 'view' },
+  // 화면이 모든 방문자에게 수동 활동기 묶음을 적용하므로 읽기만 공개한다.
+  disco_era_overrides:          { read: 'public', write: 'locked' },
   // 2026-08-26: 익명 INSERT가 열려 있던 걸 발견해 조임. 원인은 이 테이블에만 있던 'public write'
   //   (PERMISSIVE, cmd=ALL) 정책. 지우지 않고 RESTRICTIVE 정책 3개(INSERT/UPDATE/DELETE)를 AND로
   //   얹어서 관리자 이메일을 요구하게 했다 — 기존 정책을 드롭하면 관리자 권한이 같이 날아갈 수 있어서.

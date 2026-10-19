@@ -1,0 +1,26 @@
+name: Supabase RLS audit
+
+# RLS is the server-side protection for browser-accessible Supabase data.
+# Keep this separate from deployment CI: a temporary Supabase outage must not
+# turn a static-site deployment red, while a scheduled/manual audit still makes
+# permission regressions visible quickly.
+on:
+  schedule:
+    - cron: '17 3 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      # The probe reads as the public anon role and sends only invalid empty
+      # inserts. PostgreSQL rejects them, so no application row is persisted.
+      - name: Verify public Supabase access policies
+        run: node tests/rls.test.js
