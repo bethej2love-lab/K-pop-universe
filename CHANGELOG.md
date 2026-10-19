@@ -90,7 +90,7 @@
 - [완료] 어드민 창 겹침 정리(사용자 제보 "설정→영상 관리 창이 나침반 패널과 겹침") — 헤드리스로 6개 창 × 6상황(없음·탐험·카드·멤버·탐험+카드·라이트박스) × 3화면(1440·1280·390) 전수 측정. ①도킹 중 탐험 패널을 -300px로만 접어 440px 패널이 140px 남아 도킹 왼쪽을 덮음 → -100% ②영상 재생 중 도킹을 열면 패널이 라이트박스 뒤에 통째로 깔림 → 도킹 폭만큼 라이트박스 왼쪽 비움 ③영상 관리 탭 10개가 균등 분할로 두세 줄 접힘 → 한 줄 가로 스크롤(+드래그) ④모바일 영상 관리: 단축키 안내 숨김·일괄 버튼 한 줄 스크롤·높이 고정. tests/admin-dock.test.js에 라이트박스 항목 추가 [kpop_universe.css][index.html]
 - [완료] 앨범 카드 영상 패널을 **미리 계산 파일**로 전환 — `tools/build_album_videos.mjs`가 매일 신규분 덧붙이기(30초)·월요일 전량(3.5분)으로(`album-videos.yml`) DB를 훑어 주인별 `album_videos/*.json`(곡 기본형→영상·앨범명→영상, 359개·30MB — 루틴이 아직 곡 키를 안 박은 3.6만 개도 같은 규칙으로 계산해 연결)을 만들고, 앱은 파일 + `_meta.json` 시각 이후 신규 영상만 조회해 같은 규칙으로 덧붙인다. 예전 실측: 곡 키 조회가 곡 오버레이를 한 번 열어야 켜졌고(_songKeysCol=null) 키도 `_songKey`≠루틴의 `_songBase`라 아이브 LUCID DREAM 미니 7개(실제 315)·REVIVE+ 11개(359)·스키즈 CEREMONY 리믹스 0개(196). 앨범명 규칙은 shared.js `_albumNormFor`·`_albumTitleHit`(곡명=앨범명·그룹명·흔한 낱말 막기, 영어는 단어 경계 — tests/song-link.test.js). 패널: 개수·형식 칩·60개씩 더 보기·늦은 응답 가드·뮤비 본편 우선(비하인드·리액션은 뒤) [index.html][shared.js][kpop_universe.css]
 - [이슈] 루틴 10단계 곡 연결 전량이 덜 돈 듯 — 아이브 영상 2,878개 중 480개가 DB song_keys 없이 이 도구 계산으로만 연결됨(표본 15개 전부 정상 무대·직캠). 커서(kpu_song_pass) 확인 필요
-- [이슈] 아이브 'BANG BANG'·'BLACKHOLE' **뮤비 본편이 DB에 없음**(리액션·비하인드만 수집됨) — 연결 문제가 아니라 수집 사각지대. 미조사
+- [완료·Codex 실측 10-19] 아이브 'BANG BANG'·'BLACKHOLE' 뮤비 본편 누락 해소 — 사용자가 STARSHIP_official을 10:33 KST에 추가한 뒤 해당 출처 261건 수집 확인. 본편 `9qkpcLK422o`·`1Lmy7qwmSMc` 모두 `group_ko=아이브`, `category=mv`, `content_flag=null`로 저장됨. 이전 ‘본편 없음’ 기록은 더 이상 유효하지 않음. 새 데이터 수정 없이 읽기 전용 확인.
 
 - [완료·운영중] **인스타 공식 계정 수집(Business Discovery)** — 메타 앱 K-POP UNIVERSE(개발 모드, 게시 불필요)·우리 IG 비즈니스 계정 17841420475472395(페이지 Kpop-universe.kr). 필수 권한: instagram_basic·**instagram_manage_insights**·pages_read_engagement·pages_show_list·**ads_read**(비즈니스 포트폴리오 페이지) — 하나라도 빠지면 (#10). 토큰은 Secret `META_IG_TOKEN`(60일짜리, **2026-12 중순 만료 → 액세스 토큰 디버거 "연장"으로 재발급**, 만료 시 ig-stats.yml 빨간불). `tools/ig_business_discovery.mjs` + `ig-stats.yml`(2시간마다 180개, 하루 한 바퀴) → DB `ig_accounts`·`ig_follower_daily`(`sql/2026-10-19_ig_stats.sql` 사용자 실행 완료 10-19). 첫 실행 2번은 PGRST102(칸 구성 다른 줄 일괄 저장)로 실패 → 칸 구성별 분리 저장으로 수정. 화면은 아래 항목들 [tools/][sql/][.github/workflows/ig-stats.yml]
 
@@ -115,7 +115,7 @@
 - [확인 대기·실기기] 모바일 탐험 패널 끌어 닫기 — 튕김 기준(24px↑ & 0.6px/ms↑) 손맛. 너무 쉽게/둔하게 닫히면 `_wireFeedSwipeDismiss`의 그 두 숫자만 조정
 - [확인 대기·실기기] 어드민 창 배치(설정→영상 관리 등) 맥북·폰 실사용 확인 — 헤드리스 전수 측정은 통과
 - [확인 대기] `album-videos.yml` 첫 자동 실행(매일 KST 04:37 신규분, 월요일 전량) 초록불·`album_videos/_meta.json` 시각 갱신 확인
-- 위 [이슈] 2건(루틴 10단계 곡 연결 전량 미완·아이브 뮤비 본편 미수집)은 미조사
+- [확인 대기] 루틴 10단계 곡 연결 전량 미완은 남아 있음. 아이브 뮤비 본편 미수집은 STARSHIP 채널 추가 후 해소 확인(위 Codex 실측 참고).
 - [확인 대기] **인스타 수집 첫 바퀴** — ig-stats.yml 2시간마다 180개, 하루면 1,500개 한 바퀴. 확인: DB ig_accounts 행 수·status 분포, 여러 장 게시물에 c(안 사진)·본문 cap이 들어오는지(메타가 children 필드를 거부하면 로그에 "children 필드 거부"). 카드 프로필 사진·팔로워·Instagram 줄·사진 뷰어·탐험 패널 인스타 선반은 데이터가 차는 대로 보인다(현재 코르티스만)
 - [확인 대기·실기기] 인스타 뷰어·카드 썸네일 크기(웹 111/모바일 98px)·여러 장 묶음 펼치기를 폰에서 — 헤드리스로만 확인
 - [만료 주의] META_IG_TOKEN 60일 — 2026-12 중순. 액세스 토큰 디버거 → 연장 → Secrets 교체. 필요하면 비즈니스 관리자 시스템 사용자 토큰(만료 없음)으로 바꾸기
