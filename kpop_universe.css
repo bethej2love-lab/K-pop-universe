@@ -1237,7 +1237,17 @@
       padding-top:10px;border-top:0.5px solid rgba(255,255,255,0.07);}
     #yt-lightbox.lb-browse #yt-lb-uplist:not(.qs-in){display:none!important;}
     #yt-lightbox.lb-browse #yt-lb-uplist.qs-in{margin-top:0!important;border-top:none!important;
-      padding-bottom:calc(env(safe-area-inset-bottom,0px) + 20px)!important;}
+      padding-bottom:calc(env(safe-area-inset-bottom,0px) + 20px)!important;
+      padding-left:16px!important;padding-right:16px!important;}
+    /* 이어서 보기 시트(모바일) — 썸네일이 주인공(2026-10-20 사용자 — "썸네일이 제일 중요, 제목은 덜 보여도 됨,
+       양옆 여백이 없어 부담"). 썸네일 78px → 시트 폭의 약 44%, 제목은 한 단계 작고 흐리게. 데스크톱 목록은 그대로. */
+    #yt-lb-uplist.qs-in .lb-uplist-item{gap:12px;padding:7px 6px;align-items:flex-start;}
+    #yt-lb-uplist.qs-in .lb-uplist-thumb{width:44%;height:auto;aspect-ratio:16/9;border-radius:8px;}
+    #yt-lb-uplist.qs-in .lb-uplist-thumb.is-shorts{width:24%;aspect-ratio:9/16;}
+    #yt-lb-uplist.qs-in .lb-uplist-info{padding-top:1px;}
+    #yt-lb-uplist.qs-in .lb-uplist-title{font-size:12px;line-height:1.35;color:rgba(220,230,255,0.66);}
+    #yt-lb-uplist.qs-in .lb-uplist-item.is-current .lb-uplist-title{color:rgba(220,230,255,0.92);}
+    #yt-lb-uplist.qs-in .lb-uplist-meta{font-size:10.5px;margin-top:4px;}
     /* landscape 모바일(높이 ≤ 500px): wrap padding-top(78px) + 영상 높이(width 기준 16:9)가 화면을 넘어
        상단이 잘리는 버그(2026-10-13). 높이 기준으로 영상 크기를 결정해 잘림 방지 */
     @media (max-height:500px) {
