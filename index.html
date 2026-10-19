@@ -13479,9 +13479,8 @@ function _openGcDiscogDetail(a,idx){
   }
   {const _d=document.getElementById('gc-discog-detail');_d.classList.add('open');_bringToFront(_d);}
   _updateDiscogFlagBtn();
-  // 영상 패널 — 데스크탑 전용
   {const _vp=document.getElementById('gc-discog-video-panel');if(_vp)_vp.hidden=true;}
-  if(!isMob())_loadAlbumVideos(a,_discogDetailGko);
+  _loadAlbumVideos(a,_discogDetailGko);
   const credEl=document.getElementById('gc-discog-detail-credits');
   if(credEl){
     const titles=(a.tracks||[]).map(t=>t.title).filter(Boolean);
@@ -13598,7 +13597,13 @@ function _melonAlbumUrl(id){return 'https://www.melon.com/album/detail.htm?album
 function _melonSongUrl(id){return 'https://www.melon.com/song/detail.htm?songId='+encodeURIComponent(id);}
 function _closeGcDiscogDetail(){
   document.getElementById('gc-discog-detail').classList.remove('open');
-  const _vp=document.getElementById('gc-discog-video-panel');if(_vp)_vp.hidden=true;
+  const _vp=document.getElementById('gc-discog-video-panel');
+  if(_vp){
+    _vp.hidden=true;
+    // 모바일에서 sheet 안으로 옮긴 패널을 원위치 복원
+    const _det=document.getElementById('gc-discog-detail');
+    if(_vp.parentElement!==_det)_det.appendChild(_vp);
+  }
   _albVidReq++; // 늦게 온 결과가 닫힌 패널을 다시 열지 않게
 }
 // 앨범 ↔ 영상(2026-10-19) — 연결은 거의 안 바뀌는 정보라 매번 DB를 검색하지 않는다. tools/build_album_videos.mjs가 매일(신규분)·주 1회(전량)
@@ -13626,7 +13631,11 @@ async function _loadAlbumVideos(album,gko){
   const listEl=document.getElementById('gc-discog-video-list');
   const myReq=++_albVidReq;
   if(!panel||!listEl||!album||!gko){if(panel)panel.hidden=true;return;}
-  if(window.innerWidth<1024||document.getElementById('feed-overlay')?.classList.contains('open')){panel.hidden=true;return;}
+  if(!isMob()&&document.getElementById('feed-overlay')?.classList.contains('open')){panel.hidden=true;return;}
+  if(isMob()){
+    const sheet=document.getElementById('gc-discog-detail-sheet');
+    if(sheet&&panel.parentElement!==sheet)sheet.appendChild(panel);
+  }
   const owners=_albumVideoOwners(gko);
   // 공동 앨범이면 함께 낸 사람 쪽 영상도(온유 카드에서 연 'Tic Tac Toe'에 지코 쪽 무대가 빠지던 것, 2026-10-19)
   (album.byline||[]).forEach(x=>{
