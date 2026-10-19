@@ -103,6 +103,8 @@ async function main() {
     await cdp.send('Runtime.enable');
     await cdp.send('Console.enable');
     await cdp.send('Log.enable');
+    // Headless Chromium defaults to a narrow window; explicitly test desktop-only panels first.
+    await cdp.send('Emulation.setDeviceMetricsOverride', { width: 1280, height: 900, deviceScaleFactor: 1, mobile: false });
     // 리소스 404는 대개 이쪽(Log)으로 온다 — url까지 붙여야 위 BENIGN 판정이 먹는다
     cdp.on('Log.entryAdded', p => { if (p.entry.level === 'error') note(p.entry.text + ' ' + (p.entry.url || '')); });
 

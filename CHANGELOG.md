@@ -16,8 +16,11 @@
 - **[완료] [tests/og-thumb-solo.test.js]** 반복된 Data validation & tests 실패 원인은 가로 영상 우선 로직 변경 후 남은 구현 문자열 검사. 함수 실행 기반으로 폴백·가로 우선·쇼츠 폴백·빈 후보 4가지 회귀 검증으로 교체(검사 우회 아님). 실제 썸네일 선택 로직은 변경하지 않음.
 - **[완료] [tools/weekly_report.mjs] [tests/syntax.test.js]** Weekly report 실패의 `(byKo[k] = byKo[k]||0)++`는 잘못된 대입 대상 SyntaxError. 명시적 카운터 대입으로 수정하고 필수 syntax 가드에 해당 모듈 `node --check` 추가. 운영 토큰 없이 문법 검증; 실제 보고서 발행 재실행은 하지 않음.
 - **[확인]** Instagram run 39194417944(attempt 2)의 `PGRST102 All object keys must match`는 후속 run 39195090970 성공 확인(기존 Claude Code 수정으로 정상화, 중복 수정 안 함). SEO run 39184954279는 동시 push로 fetch-first 거절; 후속 39204838499·39206721042 성공 확인.
-- **[검증]** `node tests/syntax.test.js`, `node tests/og-thumb-solo.test.js`, `node tests/validate-data.js` 통과(데이터 0 errors/142 warnings). CI 범위 로컬 102개 실행에서 브라우저 CDP 환경 실패 1개·정적 링크 검사 60초 제한 초과 1개 외 통과; 이 둘은 별도 재검증 중이며 통과로 간주하지 않음.
-- **[진행중]** IVE BANG BANG/BLACKHOLE 곡·REVIVE+ 앨범 화면 연결 확인. DB 두 본편 존재·song_keys=null·created_at=2026-10-19T02:20:13Z 확인. 정적 album_videos 생성 시각보다 늦게 수집됐으므로 라이브 보충 경로까지 실제 브라우저 검증 필요(검증용 스크립트는 저장소 밖 로컬).
+- **[검증]** `node tests/syntax.test.js`, `node tests/og-thumb-solo.test.js`, `node tests/validate-data.js` 통과(데이터 0 errors/142 warnings). 수정 commit dff5132d의 GitHub Actions Data validation & tests run 39211350536 **success**. 로컬 102개 검사 중 브라우저 CDP 환경 실패 1개·정적 링크 검사 60초 제한 초과 1개 외 통과; 정적 링크는 제한 없이 재실행해 327,505 links/8 checks 통과.
+- **[완료] [index.html] [tests/song-video-mv-fallback.test.js]** IVE 두 본편은 song_keys=null인 신규 채널 과거 영상이라 최신 제목 검색 50개에서 탈락. 동일 소유자·노출 조건의 MV 전용 보충 쿼리 추가, 곡 키 불일치 제외·중복 제거 유지. 실제 브라우저에서 BANG BANG/BLACKHOLE 두 곡에 본편 포함 확인; 회귀 5 checks·기존 곡 연결 25 checks 통과. REVIVE+ 앨범은 기존 신규분 보충 경로로 정상 포함(428개 연결), 앨범 구현 수정 불필요.
+- **[완료] [tests/smoke.test.js]** 헤드리스 기본 폭이 1024px 미만이라 데스크톱 전용 패널이 검사되지 않던 환경 구멍 수정: 첫 로드 1280×900 명시, 기존 모바일 390×844 재로드 유지.
+- **[검증]** 수정 후 격리 Chrome 헤드리스 실제 실행: PC 1280px 초기 로드·탐험 Charts·두 곡 본편·앨범 두 본편 포함, 모바일 390px 재로드·3D canvas 통과, 콘솔 오류 0건. 테스트 중 인증서 처리 설정은 로컬 검증 스크립트에만 적용(앱 보안 설정 변경 없음).
+- **[이슈]** 브라우저 반복 점검 중 일부 탐험 선반 쿼리가 Supabase HTTP 500 응답(Charts live/fancam, 연말 가요제). 초기 JS 예외는 없고 개별 선반 조회에서 간헐 발생; MV 쿼리와 별개. 다음 점검: 실패 응답 본문의 DB 오류 코드 확인 후 쿼리 비용/인덱스 검토. 원인 확정 전 임의 SQL·DB 변경 금지.
 
 ## DECISIONS (결정 대기 — 주간 자문 세션에서 처리)
 - **[C안으로 방향 정함 · 세부 결정 2개 남음] 솔로 규약 재설계 — `group_ko`를 "조회 키"이자 "솔로 여부"로 겸용하는 문제(2026-09-10)**

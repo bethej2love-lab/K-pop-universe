@@ -13795,6 +13795,11 @@ async function _openSongVideos(title,owner,songMeta){
   const origP=_excl(sb.from(_YT_TABLE).select(COLS)
     .or(`group_ko.eq.${_pgFilterVal(gko)},with_groups.cs.{${_pgFilterVal(gko)}}`))
     .ilike('title_norm',like).order('published_at',{ascending:false}).limit(50);
+  // 신규 채널의 옛 본편은 song_keys 생성 전이면 최신 무대 50개 뒤에 묻힌다.
+  // MV 후보를 별도로 보충하되, 동일한 소유자·제목·노출 조건과 아래 곡 키 검증을 적용한다.
+  const mvP=_excl(sb.from(_YT_TABLE).select(COLS)
+    .or(`group_ko.eq.${_pgFilterVal(gko)},with_groups.cs.{${_pgFilterVal(gko)}}`))
+    .eq('category','mv').ilike('title_norm',like).order('published_at',{ascending:false}).limit(100);
   // 곡 키로 연결된 영상 — 제목 글자 검색의 50개 상한·짧은 곡명 오탐 없이 그 곡 영상을 모은다
   const keyP=_songKeysCol?_excl(sb.from(_YT_TABLE).select(COLS).contains('song_keys',[songKey])).order('published_at',{ascending:false}).limit(300):Promise.resolve({data:[]});
   // 커버: 이 주인이 "원곡자"로 태깅된 다른 아티스트 영상 — 커버 조회 키는 _coverOfQueryKeys 한 곳에서만 만든다
@@ -13805,16 +13810,16 @@ async function _openSongVideos(title,owner,songMeta){
   personKeys.forEach(k=>coverQs.push(_excl(sb.from(_YT_TABLE).select(COLS).contains('cover_of_members',[k])).ilike('title_norm',like).order('published_at',{ascending:false}).limit(50)));
   if(groupKey)coverQs.push(_excl(sb.from(_YT_TABLE).select(COLS).contains('cover_of_groups',[groupKey])).ilike('title_norm',like).order('published_at',{ascending:false}).limit(50));
   let settled;
-  try{settled=await Promise.all([keyP,origP,...coverQs].map(q=>q.then(r=>r,()=>({data:null}))));}
+  try{settled=await Promise.all([keyP,origP,mvP,...coverQs].map(q=>q.then(r=>r,()=>({data:null}))));}
   catch(e){settled=null;}
   if(!overlay.classList.contains('open')||myReq!==_songVidReq)return; // 그 사이 닫힘/다른 곡 클릭
   if(!settled){listEl.innerHTML=`<div class="tvf-empty">${currentLang==='ko'?'불러오기 실패':'Failed to load'}</div>`;return;}
-  const[keyR,origR,...coverRs]=settled;
+  const[keyR,origR,mvR,...coverRs]=settled;
   const origSeen=new Set();
   // 곡 키 연결분 + 제목 검색분. 제목 검색분 중 **다른 곡으로 연결된 영상은 뺀다** — 'ON'을 눌렀는데 'ON' 글자가 든 다른 곡 영상이
   // 섞이던 것. 아직 아무 곡에도 연결 안 된 영상(song_keys 비어 있음)은 예전처럼 남겨 둔다(한글 곡명 표기 등 규칙이 못 잡은 것).
   const _okTitleHit=v=>!_songKeysCol||!Array.isArray(v.song_keys)||!v.song_keys.length||v.song_keys.includes(songKey);
-  const orig=_filterBannedVideos([...((keyR&&keyR.data)||[]),...((origR&&origR.data)||[]).filter(_okTitleHit)])
+  const orig=_filterBannedVideos([...((keyR&&keyR.data)||[]),...[...((origR&&origR.data)||[]),...((mvR&&mvR.data)||[])].filter(_okTitleHit)])
     .filter(v=>!origSeen.has(v.id)&&origSeen.add(v.id))
     .sort((a,b)=>String(b.published_at||'').localeCompare(String(a.published_at||'')));
   const coverSeen=new Set();
