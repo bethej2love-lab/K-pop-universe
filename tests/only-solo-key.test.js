@@ -26,31 +26,46 @@ function extractByBraces(re, label) {
   }
   return src.slice(m.index, i);
 }
-const _soloKeyUsable = new Function('ARTISTS',
-  extractByBraces(/^function _soloKeyUsable\(/m, '_soloKeyUsable') + '\nreturn _soloKeyUsable;')(ARTISTS);
+// 2026-10-19: 규칙이 "이름이 유일한가(참/거짓)"에서 "카드 문맥(이름+그룹)으로 사람을 정해 그 사람의 이름 키(없으면 null)"로 바뀌었다.
+//   동명이인이라도 이름 키의 주인(artists.json nameKeyOwner — tools/name_key_owner.mjs)이면 이름, 주인 아닌 솔로는 '이름#id', 나머지는 null.
+//   shared.js(_ytGroupKoFor·_nameKeyOk·_artistGroups)를 같이 싣는다.
+const vm = require('vm');
+const GROUPS = JSON.parse(fs.readFileSync(path.join(ROOT, 'groups.json'), 'utf8'));
+const ctx = { ARTISTS, GROUPS }; vm.createContext(ctx);
+vm.runInContext(fs.readFileSync(path.join(ROOT, 'shared.js'), 'utf8'), ctx);
+vm.runInContext(extractByBraces(/^function _soloNameKeyOf\(/m, '_soloNameKeyOf') + '\n' + extractByBraces(/^function _soloKeyUsable\(/m, '_soloKeyUsable') + '\nthis.f=_soloKeyUsable;', ctx);
+const _soloKeyUsable = ctx.f;
 
 let fail = 0;
 const check = (label, got, want) => { if (got !== want) { fail++; console.log(`  ✗ ${label}: 기대 ${want} / 실제 ${got}`); } };
 
-console.log('1) 이름이 유일하면 솔로 키를 끌어온다 — 실제로 group_ko=본인이름 행이 있는 사람들');
+console.log('1) 이름이 유일하면 그 이름이 키 — 실제로 group_ko=본인이름 행이 있는 사람들');
 ['우즈', '청하', '마시로', '원호', '태연', '전소미', '승한', '아이유', '유진', '하늘']
-  .forEach(n => check(`${n} 솔로 키 허용`, _soloKeyUsable(n), true));
+  .forEach(n => check(`${n} 솔로 키`, _soloKeyUsable(n), n));
 
-console.log('2) 동명이인이면 끌어오지 않는다 — group_ko가 이름만 들고 있어 구분 불가');
+console.log('2) 동명이인인데 카드 문맥이 없으면 끌어오지 않는다');
 ['현진', '지수', '수빈', '마크', '재현', '리노']
-  .forEach(n => check(`${n} 솔로 키 차단`, _soloKeyUsable(n), false));
+  .forEach(n => check(`${n} 솔로 키 차단`, _soloKeyUsable(n), null));
 
-console.log('3) 빈 입력 방어');
-check('null', _soloKeyUsable(null), false);
-check('빈 문자열', _soloKeyUsable(''), false);
-check('미등록 이름', _soloKeyUsable('존재하지않는이름'), false);
+console.log('3) 동명이인 — 이름 키 주인만 이름, 주인 아닌 솔로는 이름#id, 주인 아닌 그룹 멤버는 없음(2026-10-19)');
+check('샤이니 태민(주인)', _soloKeyUsable('태민', '샤이니'), '태민');
+check('하이파이유니콘 태민', _soloKeyUsable('태민', '하이파이유니콘'), null);
+check('포미닛 현아(주인)', _soloKeyUsable('현아', '포미닛'), '현아');
+check('나인뮤지스 현아', _soloKeyUsable('현아', '나인뮤지스'), '현아#a1401');
+check('여자친구 유주(주인)', _soloKeyUsable('유주', '여자친구'), '유주');
+check('체리블렛 유주', _soloKeyUsable('유주', '체리블렛'), '유주#a1475');
+
+console.log('4) 빈 입력 방어');
+check('null', _soloKeyUsable(null), null);
+check('빈 문자열', _soloKeyUsable(''), null);
+check('미등록 이름', _soloKeyUsable('존재하지않는이름'), null);
 
 // 가드가 실제로 일하는지 — 등록 이름 중 중복이 충분히 있어야 이 테스트가 의미를 가진다.
 const cnt = {};
 ARTISTS.forEach(a => { const n = a && a.name && a.name.ko; if (n) cnt[n] = (cnt[n] || 0) + 1; });
 const dup = Object.values(cnt).filter(n => n > 1).length;
-console.log(`4) 가드가 실제로 일하는가 — 중복 이름 ${dup}개`);
+console.log(`5) 가드가 실제로 일하는가 — 중복 이름 ${dup}개`);
 if (dup < 10) { fail++; console.log('  ✗ 중복 이름이 너무 적어 이 가드가 무의미해 보임(데이터 확인 필요)'); }
 
-console.log(fail ? `\n❌ 실패 ${fail}건` : '\n✅ 전부 통과 (20건)');
+console.log(fail ? `\n❌ 실패 ${fail}건` : '\n✅ 전부 통과');
 process.exit(fail ? 1 : 0);

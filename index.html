@@ -4945,7 +4945,7 @@ function _fetchSoloCamThumbs(a){
   const p=(async()=>{
     const mko=a.name.ko;
     const gkos=new Set(_artistGroups(a).map(g=>g.ko).filter(k=>GROUPS[k]));
-    if(!gkos.size||_soloKeyUsable(mko))gkos.add(mko); // 솔로 키(group_ko=본인 이름)는 동명이인 없을 때만
+    {const sk=_soloNameKeyOf(a);if(sk)gkos.add(sk);} // 이름 키는 유일하거나 주인일 때만, 동명이인 솔로는 이름#id(2026-10-19)
     try{
       let q=sb.from(_YT_TABLE).select('id,title,thumb,view_count,is_short,published_at,group_ko,members,category,content_flag'+_durCol())
         .in('group_ko',[...gkos]).filter('members','eq',`{${_pgFilterVal(mko)}}`)
@@ -7174,7 +7174,7 @@ async function _surfFetch(vid,ctx){
     const own=_surfOwnKeys(a),pk=_surfPersonKeys(a);
     // 줄 이름은 관계어("같은 사람") 대신 그 사람 이름 그대로(2026-10-01 사용자 결정 — "코르티스", "원빈")
     label=_dispName(a);selfLabel=label;
-    const soloKey=!GROUPS[_ytGroupKoFor(a)]?`,group_ko.eq.${f(a.name.ko)}`:'';
+    const soloKey=!GROUPS[_ytGroupKoFor(a)]?`,group_ko.eq.${f(_ytGroupKoFor(a))}`:''; // 동명이인 솔로 비주인은 이름#id(남의 이름 키 영상 제외)
     const selfCond=`and(group_ko.in.(${own.map(f).join(',')}),members.cs.{${f(a.name.ko)}})${soloKey}`;
     // 조회수 상위 300개(예전 90개 — 활동 긴 사람은 직캠·예능이 MV·무대에 밀려 거의 안 보였다) + 직캠만 따로 60개 더
     jobs.self=run(Q(_SURF_SELF_LIM).or(selfCond));
@@ -22070,9 +22070,20 @@ async function _fetchTopVideoThumb(gko,memberKo){
 //    것인지 구분이 안 된다. 실측(2026-09-10)으로 확인된 위험: group_ko='현진'(다른 현진의 솔로 싱글),
 //    '지수', '수빈'. 반대로 group_ko='유진'은 S.E.S. 유진, '하늘'은 키스오브라이프 하늘로 본인 것이 맞다.
 //    artists.json에 147개 이름이 중복이라 이 게이트가 실제로 일한다.
-function _soloKeyUsable(memberKo){
-  if(!memberKo)return false;
-  return (ARTISTS||[]).filter(a=>a&&a.name&&a.name.ko===memberKo).length===1;
+// 카드 문맥(이름 + 카드 그룹 키)으로 사람을 정한 뒤 그 사람의 이름 키를 돌려준다(2026-10-19) — 없으면 null.
+// 솔로면 _ytGroupKoFor(동명이인 비주인은 '이름#id'), 그룹 멤버면 이름이 유일하거나 이름 키 주인(nameKeyOwner)일 때만 이름.
+// 예전엔 "이름이 하나뿐일 때만"(대표 영상)·"무조건"(카드 목록)으로 갈려 있어서, 카드 목록에 동명이인 영상이 섞였다.
+function _soloNameKeyOf(a){
+  if(!a||!a.name)return null;
+  if(!GROUPS[a.group.ko])return _ytGroupKoFor(a);
+  return _nameKeyOk(a)?a.name.ko:null;
+}
+function _soloKeyUsable(memberKo,ko){
+  if(!memberKo)return null;
+  const cs=(ARTISTS||[]).filter(a=>a&&a.name&&a.name.ko===memberKo);
+  if(cs.length===1)return _soloNameKeyOf(cs[0]);
+  const me=cs.find(a=>a.group.ko===ko||_ytGroupKoFor(a)===ko||_artistGroups(a).some(g=>g&&g.ko===ko));
+  return me?_soloNameKeyOf(me):null;
 }
 async function _pickFeaturedVidFromDB(ko,memberKo,onlyMe,filter,viewMode,formatFilter,searchQ){
   if(!sb||!window._sbSession)return null;
@@ -22130,7 +22141,7 @@ async function _pickFeaturedVidFromDB(ko,memberKo,onlyMe,filter,viewMode,formatF
       // 안 그러면 게스트가 있는 콜라보 영상이 대표 썸네일로 뽑힐 수 있음(2026-08-04).
       // group_ko는 소속 그룹 + 솔로 키(본인 이름)까지 — load()의 Only 필터와 같은 이유(2026-09-10).
       // 대표 영상만 여기서 다른 기준을 쓰면 "목록엔 있는데 대표 썸네일은 딴 영상"이 된다.
-      q=q.or([ko,_soloKeyUsable(memberKo)?memberKo:null].filter((g,i,a)=>g&&a.indexOf(g)===i).map(g=>`group_ko.eq.${_pgFilterVal(g)}`).join(','))
+      q=q.or([ko,_soloKeyUsable(memberKo,ko)].filter((g,i,a)=>g&&a.indexOf(g)===i).map(g=>`group_ko.eq.${_pgFilterVal(g)}`).join(','))
          .contains('members',[memberKo]).containedBy('members',[memberKo])
          .or('with_members.eq.{},with_members.is.null')
          .or('with_groups.eq.{},with_groups.is.null')
@@ -26225,7 +26236,7 @@ function _makeChVidController(contId){
         // ⚠️ members가 **빈 배열**인 솔로 키 행은 일부러 안 넣는다. 이영지 채널(더 시즌즈)처럼 남의 무대를
         //    올리는 경우가 섞여 있어서다 — `[] 청하 - Leap Of Faith`, `[] 존박 - 꿈처럼`이 실제로 그렇게
         //    저장돼 있고, 그걸 "이영지 단독 출연"으로 셀 순 없다. 본인이 명시적으로 태깅된 행만 인정한다.
-        const _onlyGkos=[ko,_soloKeyUsable(state.memberKo)?state.memberKo:null,...(state.histKos||[])].filter((g,i,a)=>g&&a.indexOf(g)===i);
+        const _onlyGkos=[ko,_soloKeyUsable(state.memberKo,ko),...(state.histKos||[])].filter((g,i,a)=>g&&a.indexOf(g)===i);
         q=q.or(_onlyGkos.map(g=>`group_ko.eq.${_pgFilterVal(g)}`).join(','))
           .contains('members',[state.memberKo]).containedBy('members',[state.memberKo])
           .or('with_members.eq.{},with_members.is.null')
@@ -26259,7 +26270,9 @@ function _makeChVidController(contId){
             :c.left?`,and(group_ko.eq.${_pgFilterVal(g)},members.eq.{},published_at.lte.${c.left}${jc})`:'';
           _extraHistOr+=uw+`,and(group_ko.eq.${_pgFilterVal(g)},members.cs.{${_pgFilterVal(state.memberKo)}}),with_members.cs.{${_pgFilterVal(state.memberKo+'('+g+')')}}`;
         });
-        q=q.or(`${ownGroupWideClause}and(group_ko.eq.${_pgFilterVal(ko)},members.cs.{${_pgFilterVal(state.memberKo)}}),with_members.cs.{${_pgFilterVal(state.memberKo+'('+ko+')')}},group_ko.eq.${_pgFilterVal(state.memberKo)}${_extraHistOr}`);
+        // 이름 키(솔로 영상)는 그 사람의 것일 때만(2026-10-19 — 예전엔 무조건 group_ko=이름이라 동명이인 영상이 섞였다: 나인뮤지스 현아 카드에 포미닛 현아 직캠)
+        const _sk=_soloKeyUsable(state.memberKo,ko);
+        q=q.or(`${ownGroupWideClause}and(group_ko.eq.${_pgFilterVal(ko)},members.cs.{${_pgFilterVal(state.memberKo)}}),with_members.cs.{${_pgFilterVal(state.memberKo+'('+ko+')')}}${_sk?`,group_ko.eq.${_pgFilterVal(_sk)}`:''}${_extraHistOr}`);
       }else{
         // 그룹 카드: 내 채널 영상은 멤버 태깅 여부와 무관하게 전부 노출(그룹 전체가 나오는 영상이든
         // 특정 멤버 몇 명만 나오는 영상이든 다 그룹 콘텐츠) + 다른 채널 영상인데 아이유 팔레트처럼

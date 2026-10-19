@@ -36,7 +36,20 @@ function _leftCutoffDate(left){
 }
 // 유튜브 채널 동기화 조회에 쓰는 키: 실존하는 그룹 소속이면 그 그룹 키를, 아이유처럼 소속 그룹이 없는
 // 솔로 아티스트면 본인 이름을 키로 써서 본인 채널을 동기화/조회한다(그룹별 group_ko 컬럼 재사용).
-function _ytGroupKoFor(a){return GROUPS[a.group.ko]?a.group.ko:a.name.ko;}
+// ⚠️ 동명이인(2026-10-19): 이름 키(group_ko=사람 이름) 영상은 이름이 같은 사람끼리 구분이 안 된다(포미닛·나인뮤지스 현아 등).
+//    이름이 유일하거나 그 이름 키의 주인(artists.json nameKeyOwner — tools/name_key_owner.mjs가 영상 제목 단서로 정함)만 이름을 키로 쓰고,
+//    나머지 동명이인 솔로는 '이름#id'(DB에 없는 고유 키)를 쓴다 — 남의 이름 키 영상이 카드·아바타·대표 영상에 섞이지 않게.
+function _ytGroupKoFor(a){
+  if(GROUPS[a.group.ko])return a.group.ko;
+  return _nameKeyOk(a)?a.name.ko:a.name.ko+'#'+(a.id||'');
+}
+let _nameKeyCnt=null;
+function _nameKeyOk(a){
+  if(!a||!a.name)return false;
+  if(typeof ARTISTS==='undefined'||!ARTISTS||!ARTISTS.length)return true; // 목록이 없는 곳(일부 도구)은 예전처럼
+  if(!_nameKeyCnt||_nameKeyCnt._n!==ARTISTS.length){_nameKeyCnt=new Map();_nameKeyCnt._n=ARTISTS.length;ARTISTS.forEach(x=>{if(x&&x.name)_nameKeyCnt.set(x.name.ko,(_nameKeyCnt.get(x.name.ko)||0)+1);});}
+  return (_nameKeyCnt.get(a.name.ko)||0)<=1||!!a.nameKeyOwner;
+}
 
 // ── 탈퇴 후 솔로 재귀속 (2026-09-03) ─────────────────────────────────────────────
 // 그룹을 떠난 뒤의 솔로 활동 영상이 **옛 그룹에 붙어 있는** 문제를 푼다(우즈·원호·에반).
