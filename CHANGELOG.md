@@ -68,6 +68,7 @@
 - [완료] [`tests/rls.test.js`] `group_priority` RLS 잠금 SQL을 운영자가 Supabase SQL Editor에서 적용. 직후 공개 anon 키 실측에서 269행 공개 읽기·빈 INSERT 통과가 모두 `읽기 0행 / 쓰기 RLS 차단`으로 해결됐고, 29개 테이블 RLS audit 전체 통과. 실행용 SQL은 사용자 요청에 따라 GitHub에서 제외하고 로컬 `Documents/GitHub/kpopuniverse/SUPABASE_GROUP_PRIORITY_LOCKDOWN.sql`에 보관한다.
 - [완료] [`tests/smoke.test.js`] `KPU_BROWSER_PATH`로 Chromium 실행 파일을 명시할 수 있게 해 Windows CI/로컬에서 Edge 선호 탐색을 우회할 수 있도록 했다. 이번 호스트에서는 Edge와 Chrome 모두 Windows 인증 오류로 CDP가 열리지 않아, 앱 오류로 판정하지 않고 실제 배포 사이트 IAB에서 확인했다: 데스크톱 첫 안내와 지도, 390px 모바일 지도, 모바일 검색 시트·추천 아티스트가 정상 표시되고 console error/warning 0건.
 - [완료] [온보딩·모바일 첫 화면] 기존 첫 툴팁은 행성을 누르라고 안내하지만 시작할 행성을 특정해 주지 않는다. 첫 툴팁 문구를 구체화하고 `아티스트 찾아보기` CTA를 추가했다. CTA는 모바일에서 전체 검색 시트, 데스크톱에서 헤더 검색을 열어 기존 빈 프로필 CTA와 같은 안전한 동선으로 연결한다. `node tests/syntax.test.js` 통과. 배포 반영은 GitHub Pages 캐시 전파 뒤 새 방문 상태에서 확인하면 된다.
+- [진행중] [`index.html`][`tests/feed-tab-swipe.test.js`] 모바일 나침반 패널의 `For You`·`발견` 탭을 좌우 스와이프로 전환한다. 세로 스크롤·아래로 닫기 제스처와 가로 카드 선반(`.hscroll-drag`)은 기존 동작을 유지하고, 현재 탭의 바깥 방향 스와이프는 무시해야 한다.
 
 ## 2026-10-19 (Claude Code — 앨범 영상 패널·어드민 겹침·음방 커버·공동 앨범)
 - [완료] 유니버스 밖 아티스트 "함께한 앨범" — 외부 사람은 이름 텍스트로 두고, **2장 이상** 함께한 55명은 이름(점선 밑줄)을 누르면 그 사람과 우리 아티스트들이 낸 앨범 모음 시트(누르면 그 카드+앨범 상세). build_slim_data가 `collab_ext.json`(30KB, lazy) 생성 — rebuild-disco-artifacts.yml 커밋 목록에 추가. 연결표에 없는 사람은 이름으로 한 번 더 잇되 **괄호 속 소속 그룹이 확인될 때만**(옐 (하이키)·원준(WHIB))·괄호 없으면 옛 이름 별칭만(방예담→디모렉스) — 처음엔 이름만 같아도 이어서 MJ (써니사이드)→아스트로 MJ·여름 (헬로비너스)→우주소녀·INI→샤크라 이니 등이 붙었다(테스트로 고정) [index.html][kpop_universe.css][tools/][artists.json][groups.json]
