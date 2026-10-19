@@ -884,13 +884,9 @@
       <div id="yt-lb-people"></div>
     </div>
     <div id="yt-lb-reactions">
-      <button class="lb-react-btn" data-emoji="❤️‍🔥">❤️‍🔥<span class="lb-react-cnt"></span></button>
+      <button class="lb-react-btn" data-emoji="🥹">🥹<span class="lb-react-cnt"></span></button>
       <button class="lb-react-btn" data-emoji="🫠">🫠<span class="lb-react-cnt"></span></button>
-      <button class="lb-react-btn" data-emoji="😭">😭<span class="lb-react-cnt"></span></button>
-      <button id="yt-lb-react-more" type="button" aria-label="반응 더보기">···</button>
-      <button class="lb-react-btn lb-react-hidden" data-emoji="✨">✨<span class="lb-react-cnt"></span></button>
-      <button class="lb-react-btn lb-react-hidden" data-emoji="🥹">🥹<span class="lb-react-cnt"></span></button>
-      <button class="lb-react-btn lb-react-hidden" data-emoji="💀">💀<span class="lb-react-cnt"></span></button>
+      <button class="lb-react-btn" data-emoji="🤣">🤣<span class="lb-react-cnt"></span></button>
     </div>
     <div id="yt-lb-toolbar">
       <button id="yt-lb-prev" aria-label="이전 영상">‹</button>
@@ -7821,7 +7817,7 @@ function _surfSavePath(){
 // 누적 185건이 22종에 흩뿌려졌고 그중 9종은 평생 1회였다(=어느 이모지를 봐도 카운트가 0이나 1).
 // 6종으로 모으면 같은 반응 수가 3배 밀도로 보인다. 나중에 사람이 늘어 다시 넓히고 싶으면 이 배열에
 // 더하는 것부터 시작하면 되고, 전체 피커는 그때 다시 붙이면 된다(CDN 의존도 그때 다시 지면 된다).
-const LB_REACT_DEFAULT=['❤️‍🔥','🫠','😭','✨','🥹','💀'];
+const LB_REACT_DEFAULT=['🥹','🫠','🤣'];
 let _rawConnData=[]; // connections.json raw array
 let _myReactions=new Set(); // "videoUrl\x00emoji"
 let _reactionCounts=new Map(); // "videoUrl\x00emoji" → count
@@ -15606,7 +15602,10 @@ function _activeSheetScroller(){
   //    거기선 탭바가 화면의 유일한 기준선이라 같이 사라지면 "닫혔나?"로 읽힌다(사용자 확인, 2026-09-18).
   if(isMob()){
     const fo=document.getElementById('feed-overlay');
-    if(fo&&fo.classList.contains('open')&&!fo.classList.contains('peek'))return document.getElementById('feed-body');
+    if(fo&&fo.classList.contains('open')&&!fo.classList.contains('peek')){
+      const _t=document.getElementById('feed-panes-track');
+      return document.getElementById(_t&&_t.classList.contains('at-disc')?'feed-pane-disc':'feed-pane-rec');
+    }
   }
   return null;
 }
@@ -16547,7 +16546,14 @@ document.getElementById('mx-close')?.addEventListener('click',_closeMemberExplor
 document.getElementById('mx-overlay')?.addEventListener('click',e=>{if(e.target===e.currentTarget)_closeMemberExplorer();});
 // ⚠️ #mx-open-btn은 이 스크립트보다 **아래**(탐색 패널 마크업)에 있어서, 여기서 바로 찾으면 null → `?.`가 조용히 넘어가
 //    버튼이 한 번도 동작하지 않았다(2026-10-14 사용자 제보 "눌러도 아무것도 안 나옴"). 문서 파싱이 끝난 뒤 묶는다.
-{const _bindMx=()=>document.getElementById('mx-open-btn')?.addEventListener('click',e=>{e.stopPropagation();_openMemberExplorer();});
+{const _bindMx=()=>{
+  document.getElementById('mx-open-btn')?.addEventListener('click',e=>{e.stopPropagation();_openMemberExplorer();});
+  document.getElementById('feed-wgt-win')?.addEventListener('click',e=>{e.stopPropagation();_openNewsDrawer('win');});
+  document.getElementById('feed-wgt-album')?.addEventListener('click',e=>{e.stopPropagation();_openNewsDrawer('album');});
+  document.getElementById('feed-wgt-news')?.addEventListener('click',e=>{e.stopPropagation();_openNewsDrawer('news');});
+  document.getElementById('fnd-close')?.addEventListener('click',e=>{e.stopPropagation();document.getElementById('feed-news-drawer')?.classList.remove('open');});
+  document.getElementById('fnd-bg')?.addEventListener('click',()=>document.getElementById('feed-news-drawer')?.classList.remove('open'));
+};
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',_bindMx);else _bindMx();}
 document.getElementById('sp-klinks-btn').addEventListener('click',e=>{e.stopPropagation();document.getElementById('settings-panel').classList.remove('open');['tab-settings','dh-settings-btn'].forEach(id=>document.getElementById(id)?.classList.remove('active'));_openKpopLinks();});
 document.getElementById('klp-close').addEventListener('click',e=>{e.stopPropagation();_closeKpopLinks();});
@@ -21011,9 +21017,10 @@ function _feedSwitchTab(tab,silent){
   const rec=tab!=='disc';
   document.getElementById('feed-tab-rec').classList.toggle('active',rec);
   document.getElementById('feed-tab-disc').classList.toggle('active',!rec);
-  document.getElementById('feed-pane-rec').hidden=!rec;
-  document.getElementById('feed-pane-disc').hidden=rec;
-  const body=document.getElementById('feed-body');if(body)body.scrollTop=0;
+  const track=document.getElementById('feed-panes-track');
+  if(track)track.classList.toggle('at-disc',!rec);
+  const inPane=document.getElementById(rec?'feed-pane-rec':'feed-pane-disc');
+  if(inPane)inPane.scrollTop=0;
   if(!rec){
     const now=Date.now();
     if(now-_feedDiscoveryBuiltAt>_FEED_DISCOVERY_TTL){_buildFeedDisc();_feedDiscoveryBuiltAt=now;}
@@ -21086,7 +21093,7 @@ function _openFeedOverlay(){
   // 첫 열기는 _wireSheetTabbarHide가 0으로 초기화하지만 이후엔 그대로 남아서, 직전에 스크롤을
   // 내려둔 상태로 닫고 다시 열면 _lastScroll이 옛 위치(예:500px)인 채로 새 scrollTop=0에서
   // 시작 → 첫 몇 틱이 "위로 스크롤"로 오독돼 탭바가 안 숨는다(2026-09-20).
-  {const _fb=document.getElementById('feed-body');if(_fb){_fb._lastScroll=0;_fb._tbAccum=0;}}
+  [document.getElementById('feed-pane-rec'),document.getElementById('feed-pane-disc')].forEach(fp=>{if(fp){fp._lastScroll=0;fp._tbAccum=0;}});
   const now=Date.now();
   if(now-_feedRecBuiltAt>_FEED_DISCOVERY_TTL){
     _buildFeedRec();
@@ -21106,20 +21113,23 @@ function _openFeedOverlay(){
     el.addEventListener('click',e=>e.stopPropagation());
     document.getElementById('feed-tab-rec').addEventListener('click',()=>_feedSwitchTab('rec'));
     document.getElementById('feed-tab-disc').addEventListener('click',()=>_feedSwitchTab('disc'));
-    _wireFeedSwipeDismiss(el,document.getElementById('feed-body'));
+    const _feedScrollProxy={get scrollTop(){const _t=document.getElementById('feed-panes-track');return(document.getElementById(_t&&_t.classList.contains('at-disc')?'feed-pane-disc':'feed-pane-rec')||{scrollTop:0}).scrollTop;}};
+    _wireFeedSwipeDismiss(el,_feedScrollProxy);
     _wireFeedTabSwipe(document.getElementById('feed-body'));
     // 카드 시트와 **같은** 스크롤 자동숨김을 재사용한다(2026-09-18). 새로 구현하지 않는 이유: 이 함수엔
     // iOS 고무줄 구간 방향 반전, 탭바가 숨을 때 브라우저가 스크롤을 당기는 양 상쇄(clampShift),
     // 방향 전환 시 누적 리셋, 최상단 40px 안전망 — 네 번의 버그 수정이 이미 녹아 있다.
-    // ⚠️ 여기서 바인딩하는 이유는 위 el._bound 블록과 같다(#feed-body는 스크립트보다 나중에 파싱됨).
+    // ⚠️ 여기서 바인딩하는 이유는 위 el._bound 블록과 같다(#feed-pane-*는 스크립트보다 나중에 파싱됨).
     //    _sheetScrollers에도 넣어야 _rebaseSheetScroll(탭바 토글 직후 기준선 재설정)이 이 컨테이너도 챙긴다.
-    const _fb=document.getElementById('feed-body');
-    if(_fb&&!_sheetScrollers.includes(_fb)){_sheetScrollers.push(_fb);_wireSheetTabbarHide(_fb);_wireScrollStabilizer(_fb);}
+    [document.getElementById('feed-pane-rec'),document.getElementById('feed-pane-disc')].forEach(fp=>{
+      if(fp&&!_sheetScrollers.includes(fp)){_sheetScrollers.push(fp);_wireSheetTabbarHide(fp);_wireScrollStabilizer(fp);}
+    });
     // 카드와 똑같은 "맨 위로" 버튼을 탐험 패널에도(2026-08-27 사용자 요청). 카드용으로 이미 있던
     // _wireTotop을 그대로 재사용 — 스크롤 컨테이너만 넘기면 되고, 버튼(z-index 66)이 이 오버레이
     // (z-index 39)보다 위라 그대로 뜬다. 여기서 바인딩하는 이유는 위 el._bound 블록과 같다:
-    // #feed-body는 본문 스크립트보다 나중에 파싱돼서 스크립트 최상단에선 아직 DOM에 없다.
-    _wireTotop(document.getElementById('feed-body'));
+    // #feed-pane-*는 본문 스크립트보다 나중에 파싱돼서 스크립트 최상단에선 아직 DOM에 없다.
+    _wireTotop(document.getElementById('feed-pane-rec'));
+    _wireTotop(document.getElementById('feed-pane-disc'));
   }
   const cb=document.getElementById('feed-close');
   if(!cb._bound){cb._bound=true;
@@ -21141,7 +21151,7 @@ function _closeFeedOverlay(returning){
   _feedEngaged=false;
   // 스크롤을 내려둔 채로 닫으면 "맨 위로" 버튼이 화면에 그대로 떠 있게 된다(연결 패널에서 이미 겪은
   // 문제와 같음) — 이 패널이 대상일 때만 숨긴다. 다른 컨테이너가 대상이면 건드리지 않는다.
-  if(_totopScrollTarget===document.getElementById('feed-body'))_hideTotop();
+  {const _fp0=document.getElementById('feed-pane-rec'),_fp1=document.getElementById('feed-pane-disc');if(_totopScrollTarget===_fp0||_totopScrollTarget===_fp1)_hideTotop();}
   document.getElementById('feed-overlay').classList.remove('open','peek');
   _showTabbar(); // 나갈 때도 못박는다 — 스크롤을 내려둔 채 닫으면 탭바가 숨은 채로 우주에 남는다
   document.getElementById('zoom-ctrl').classList.remove('zoom-feed-open');
@@ -22823,10 +22833,9 @@ function _collectWeekNews(){
 let _showBreaksP=null;
 function _ensureShowBreaks(){return _showBreaksP||(_showBreaksP=fetch('music_show_breaks.json',{cache:'no-cache'}).then(r=>r.ok?r.json():{}).catch(()=>({})));}
 async function _buildFeedDailyNews(){
-  const section=document.getElementById('feed-dailynews-section');
   const list=document.getElementById('feed-dailynews');
-  if(!section||!list||!sb)return;
-  list.innerHTML='';_syncDailyNewsSection();
+  if(!list||!sb)return;
+  list.innerHTML='';
   try{
     const items=(await _collectWeekNews()).map(r=>({...r})); // 렌더가 _s/_pair를 덧붙이므로 복사본
     // 음방 결방(2026-10-19, 사용자: "월요일에 어제 인기가요 1위가 없으면 수집 안 된 건가 싶다") — 지난 7일 결방은 "결방",
@@ -22845,8 +22854,9 @@ async function _buildFeedDailyNews(){
       });
     }catch(e){}
     _renderNewsList(list,items);
+    window._discoverNewsItems=items;
+    _updateNewsWidgets(items);
   }catch(e){console.warn('[feed] 오늘의 소식 선반 실패 — 이 선반만 빠집니다',e);}
-  finally{_syncDailyNewsSection();}
 }
 // For You '내 최애 소식'(2026-10-16, 사용자: "클유아 즐겨찾기했으면 지난주 1위를 For You에서 알아야지") — 위 소식 중
 // 즐겨찾기 그룹 + 즐겨찾기 멤버의 소속 그룹 + 즐겨찾기 멤버 본인(솔로 1위·솔로 영상) 것만. 모양은 발견 탭과 같은 1면 레이아웃.
@@ -22891,13 +22901,57 @@ function _renderNewsList(list,items){
 }
 // This Week's K-pop 섹션은 소식 목록(#feed-dailynews)과 발매 앨범 블록(#feed-newalbum-section) 두 빌더가
 // 따로 채운다(2026-10-12 합침). 어느 한쪽만 있어도 섹션은 떠야 하므로, 각 빌더가 끝날 때 이걸 부른다.
-function _syncDailyNewsSection(){
-  const sec=document.getElementById('feed-dailynews-section');if(!sec)return;
-  const news=document.getElementById('feed-dailynews');
-  const alb=document.getElementById('feed-newalbum-section');
-  const hasNews=!!(news&&news.children.length);
-  if(news)news.hidden=!hasNews;
-  sec.style.display=(hasNews||(alb&&alb.style.display!=='none'))?'':'none';
+function _syncDailyNewsSection(){} // 위젯이 각자 visible 상태 관리(2026-10-19)
+function _updateNewsWidgets(items){
+  const ko=currentLang==='ko';
+  const wins=items.filter(r=>r.type==='win');
+  const wWin=document.getElementById('feed-wgt-win');
+  if(wWin){
+    const w0=wins[0];
+    const img=wWin.querySelector('.fwb-img');if(img)img.src=w0&&w0.thumb?w0.thumb:'';
+    const sub=wWin.querySelector('.fwb-sub');if(sub&&w0)sub.textContent=[w0.title,...(w0.sub||'').split(' · ').slice(0,2)].filter(Boolean).join(' · ');
+    const ttl=wWin.querySelector('.mx-feed-ttl');if(ttl)ttl.textContent=ko?'🏆 음방 1위':'🏆 Chart Wins';
+    wWin.hidden=!wins.length;
+  }
+  const news=items.filter(r=>r.type!=='win'&&r.type!=='break');
+  const wNews=document.getElementById('feed-wgt-news');
+  if(wNews){
+    const w1=news.find(r=>r.thumb&&!r.isShort)||news[0];
+    const img=wNews.querySelector('.fwb-img');if(img)img.src=w1&&w1.thumb?w1.thumb:'';
+    const sub=wNews.querySelector('.fwb-sub');if(sub&&w1)sub.textContent=w1.sub||w1.title||'';
+    const ttl=wNews.querySelector('.mx-feed-ttl');if(ttl)ttl.textContent=ko?'📰 이번 주 소식':'📰 This Week';
+    wNews.hidden=!news.length;
+  }
+}
+function _updateAlbumWidget(albums){
+  const wAlb=document.getElementById('feed-wgt-album');
+  if(!wAlb||!albums||!albums.length)return;
+  const top=albums[0];
+  const img=wAlb.querySelector('.fwb-img');if(img&&top.c)img.src=top.c;
+  const sub=wAlb.querySelector('.fwb-sub');
+  if(sub){const owner=top.k==='g'?_gLabelKo(top.o):top.o;sub.textContent=(top.t||'')+(owner?' · '+owner:'');}
+  const ko=currentLang==='ko';
+  const ttl=wAlb.querySelector('.mx-feed-ttl');if(ttl)ttl.textContent=ko?'💿 신보':'💿 New Releases';
+  wAlb.hidden=false;
+}
+function _openNewsDrawer(type){
+  const drawer=document.getElementById('feed-news-drawer');if(!drawer)return;
+  const ko=currentLang==='ko';
+  const ttlEl=document.getElementById('fnd-ttl');
+  if(ttlEl)ttlEl.textContent=type==='win'?(ko?'🏆 음방 1위':'🏆 Chart Wins'):type==='album'?(ko?'💿 신보':'💿 New Releases'):(ko?'📰 이번 주 소식':'📰 This Week');
+  const list=document.getElementById('feed-dailynews');
+  const albSec=document.getElementById('feed-newalbum-section');
+  if(type!=='album'&&list){
+    const all=window._discoverNewsItems||[];
+    const filt=type==='win'?all.filter(r=>r.type==='win'):all.filter(r=>r.type!=='win');
+    list.innerHTML='';if(filt.length)_renderNewsList(list,filt.map(r=>({...r})));
+    list.hidden=false;if(albSec)albSec.style.display='none';
+  }else{
+    if(list){list.innerHTML='';list.hidden=true;}
+    if(albSec)albSec.style.display='';
+  }
+  const body=document.getElementById('fnd-body');if(body)body.scrollTop=0;
+  drawer.classList.add('open');_bringToFront(drawer);
 }
 // 조회수 돌파 쇼츠 = 세로 카드(2026-10-12, 사용자: "쇼츠는 평소 쇼츠 배열처럼 1행 2열로"). 영상 그리드와
 // 같은 카드(_appendFeedCard short)를 .feed-grid 2열에 넣는다 — 썸네일도 같은 경로(oardefault 세로 원본)를 탄다.
@@ -23023,6 +23077,7 @@ async function _buildFeedNewAlbums(){
       const meta=[_discogTypeLabel(a.y),_albumDateLabel(a.d)].filter(Boolean).join(' · ');
       _appendFeedCard(list,'💿',a.t,ownerDisp,_albumCardNav(a),a.c,null,{meta,metaFresh:_albumIsFresh(a.d),metaNew:_albumIsNew(a.d)});
     });
+    _updateAlbumWidget(picked);
     section.style.display='';
     list.scrollLeft=0;_enableDragScroll(list); // 2줄 가로 레일(2026-10-14) — 데스크톱은 끌어서·휠로 넘긴다
   }catch(e){console.warn('[feed] 이번 주 발매 선반 실패 — 이 선반만 빠집니다',e);}
@@ -28340,6 +28395,20 @@ _totopBtn.addEventListener('click',e=>{
 
 </script>
 
+<!-- 소식 드로어 (2026-10-19) — 발견 탭 위젯 클릭 시 열리는 바텀시트 -->
+<div id="feed-news-drawer" data-modal>
+  <div id="fnd-bg"></div>
+  <div id="fnd-sheet">
+    <div class="fnd-hdr"><span id="fnd-ttl"></span><button id="fnd-close" type="button">✕</button></div>
+    <div id="fnd-body">
+      <div id="feed-dailynews" class="feed-news-list"></div>
+      <div id="feed-newalbum-section" style="display:none">
+        <div class="feed-news-subttl" id="feed-newalbum-ttl">💿 New Releases</div>
+        <div id="feed-newalbum" class="feed-album-grid feed-album-rail hscroll-drag"></div>
+      </div>
+    </div>
+  </div>
+</div>
 <div id="feed-overlay" data-modal>
   <div id="feed-peek-handle"></div>
   <div id="feed-hd">
@@ -28356,6 +28425,7 @@ _totopBtn.addEventListener('click',e=>{
       <button id="feed-tab-disc" class="feed-tab" type="button"><span>발견</span></button>
     </div>
     <!-- For You = "나": 즐겨찾기 신작 → 이어보기 (2026-08-30 재배치. Trend는 "전체·탐색"이라 Discover로 이동). -->
+    <div id="feed-panes-track">
     <div id="feed-pane-rec" class="feed-pane">
       <!-- 즐겨찾기 신작: 하트 누른 그룹 + 하트 누른 멤버(그 멤버 있는 영상만)의 최근 7일 업로드를 최신순으로 싹.
            For You의 메인 — 세로 2단 그리드 + 행 패커(여백0). 즐겨찾기 없으면 온보딩 카드로 채워 안 비게 한다. -->
@@ -28397,7 +28467,7 @@ _totopBtn.addEventListener('click',e=>{
       <div id="feed-empty-rec" class="feed-empty" hidden><div class="feed-empty-txt"></div><button class="feed-empty-retry" type="button"></button></div>
     </div>
     <!-- Discover = "전체·탐색": 오늘의 소식 → 기념일 → 차트 → Trend → 디스커버리 (2026-09-23 오늘의 소식 추가). -->
-    <div id="feed-pane-disc" class="feed-pane" hidden>
+    <div id="feed-pane-disc" class="feed-pane">
       <button id="mx-open-btn" class="mx-feed-btn" type="button">
         <span class="mx-feed-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 6h16M7 12h10M10 18h4"/></svg></span>
         <span class="mx-feed-txt">
@@ -28410,19 +28480,23 @@ _totopBtn.addEventListener('click',e=>{
            "오늘 일어난 일"로만 좁혀 한 선반에 합친다. 기존 New Releases(최근 최대 60일)·Charts와 달리
            "오늘"이 유일한 필터라 데이터가 얇은 날은 짧거나 빈 채로 섹션 자체가 숨는다(정상 — 억지로
            채우지 않는다). 세 소스 다 "시간이 지나면 의미가 옅어지는" 성격이라 맨 위(기념일보다 먼저). -->
-      <div class="feed-section" id="feed-dailynews-section" style="display:none">
-        <div class="feed-section-ttl">📰 This Week's K-pop</div>
-        <div id="feed-dailynews" class="feed-news-list"></div>
-        <!-- 발매 앨범(2026-10-12, 사용자: "신보랑 최근 발매가 겹친다 — 신보 줄은 빼고 최근 발매를 이리로") —
-             예전 별도 섹션(New Releases)을 이 섹션의 하위 블록으로 옮겼다. 소식 목록의 '💿 신보' 줄은 없앴다
-             (같은 앨범이 두 번, 그것도 덜 보기 좋은 모양으로 나오던 중복). 빌더(_buildFeedNewAlbums)·id는 그대로.
-             소식이 비어도 앨범만으로, 앨범이 비어도 소식만으로 섹션이 뜬다(_syncDailyNewsSection).
-             데이터는 albums_recent.json(빌드 생성물)을 lazy 로드한다 — 앱은 앨범을 안 들고 있고
-             disco/는 카드 열 때 그룹별로 받는 구조라 피드에서 쓰려면 별도 인덱스가 필요하다. -->
-        <div id="feed-newalbum-section" style="display:none">
-          <div class="feed-news-subttl" id="feed-newalbum-ttl">💿 New Releases</div>
-          <div id="feed-newalbum" class="feed-album-grid feed-album-rail hscroll-drag"></div>
-        </div>
+      <!-- 발견 위젯 (2026-10-19) — 소식/신보/1위 요약 버튼. 각 클릭 시 #feed-news-drawer 열림. -->
+      <div id="feed-widgets">
+        <button id="feed-wgt-win" class="feed-widget-btn" hidden type="button">
+          <div class="fwb-thumb"><img class="fwb-img" alt="" loading="lazy"></div>
+          <div class="mx-feed-txt"><span class="mx-feed-ttl">🏆 음방 1위</span><span class="fwb-sub mx-feed-sub"></span></div>
+          <span class="mx-feed-arr">›</span>
+        </button>
+        <button id="feed-wgt-album" class="feed-widget-btn" hidden type="button">
+          <div class="fwb-thumb fwb-square"><img class="fwb-img" alt="" loading="lazy"></div>
+          <div class="mx-feed-txt"><span class="mx-feed-ttl">💿 신보</span><span class="fwb-sub mx-feed-sub"></span></div>
+          <span class="mx-feed-arr">›</span>
+        </button>
+        <button id="feed-wgt-news" class="feed-widget-btn" hidden type="button">
+          <div class="fwb-icon">📰</div>
+          <div class="mx-feed-txt"><span class="mx-feed-ttl">📰 이번 주 소식</span><span class="fwb-sub mx-feed-sub"></span></div>
+          <span class="mx-feed-arr">›</span>
+        </button>
       </div>
       <!-- 인스타 사진(2026-10-19) — 팔로워 많은 계정들의 최근 사진 게시물(영상 제외) -->
       <div class="feed-section" id="feed-ig-section" style="display:none">
@@ -28458,6 +28532,7 @@ _totopBtn.addEventListener('click',e=>{
         <div id="feed-discovery" class="feed-grid"></div>
       </div>
       <div id="feed-empty-disc" class="feed-empty" hidden><div class="feed-empty-txt"></div><button class="feed-empty-retry" type="button"></button></div>
+    </div>
     </div>
   </div>
 </div>

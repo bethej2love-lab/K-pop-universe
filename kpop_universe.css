@@ -3882,11 +3882,11 @@
        #fav-list 등 다른 패널이 쓰는 손잡이 패턴(rgba(140,165,220,...))을 따르되, 선반 사이 틈을 정확히
        노리지 않고도 드래그로 내릴 수 있게 폭만 살짝 더 넓힌다(3px→6px, 목록 하나보다 패널 전체 스크롤이라
        그랩 타겟이 더 커야 함). 트랙도 옅게 남겨 "더 있다"는 게 호버 없이도 보이게 한다. */
-    #feed-body{padding-bottom:20px;scrollbar-width:thin;scrollbar-color:rgba(140,165,220,0.28) rgba(10,13,28,0.70);}
-    #feed-body::-webkit-scrollbar{-webkit-appearance:none;width:6px;}
-    #feed-body::-webkit-scrollbar-track{-webkit-appearance:none;background:rgba(10,13,28,0.70);border-radius:3px;}
-    #feed-body::-webkit-scrollbar-thumb{-webkit-appearance:none;background:rgba(140,165,220,0.28);border-radius:3px;}
-    #feed-body::-webkit-scrollbar-thumb:hover{background:rgba(155,180,240,0.48);}
+    .feed-pane{padding-bottom:20px;scrollbar-width:thin;scrollbar-color:rgba(140,165,220,0.28) rgba(10,13,28,0.70);}
+    .feed-pane::-webkit-scrollbar{-webkit-appearance:none;width:6px;}
+    .feed-pane::-webkit-scrollbar-track{-webkit-appearance:none;background:rgba(10,13,28,0.70);border-radius:3px;}
+    .feed-pane::-webkit-scrollbar-thumb{-webkit-appearance:none;background:rgba(140,165,220,0.28);border-radius:3px;}
+    .feed-pane::-webkit-scrollbar-thumb:hover{background:rgba(155,180,240,0.48);}
   }
   /* 탐험 패널이 살짝 열린(peek, 화면 절반) 상태에선 위쪽 절반이 그대로 보이므로 상단바를 가릴 필요가
      없음 — 전체로 펼쳐졌을 때만 숨긴다(2026-08-13, 사용자 제보 — peek 상태에서도 상단바가 사라짐). */
@@ -3901,7 +3901,7 @@
      여백이 80px로 박혀 있으면 탭바가 사라져도 빈칸이 그대로 남아 "숨은 의미"가 없다.
      ⚠️ env(safe-area-inset-bottom)을 따로 더하지 않는다 — --sheet-bottom은 탭바의 offsetHeight
      실측값이고 탭바 자신의 padding-bottom이 이미 safe-area를 품고 있어서, 더하면 이중 계산이 된다. */
-  #feed-body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;background:rgba(8,11,24,0.88);padding-bottom:calc(var(--sheet-bottom,73px) + 8px);transition:padding-bottom .32s cubic-bezier(0.32,0.72,0,1);}
+  #feed-body{flex:1;overflow:hidden;background:rgba(8,11,24,0.88);display:flex;flex-direction:column;}
   /* 2탭(For You / Discover) — 스크롤해도 위에 붙어있게 sticky. 배경은 #feed-body와 맞춰 콘텐츠가 비쳐도 안 지저분하게. */
   /* 탐험 패널 탭 — X(트위터)식 언더라인 방식(2026-08-31 사용자 요청). 예전엔 알약 버튼(배경+테두리)이라
      존재감이 컸는데, 배경을 거의 없애고 **탭이 폭을 정확히 반씩 나눠 갖고 활성 탭 글자 밑에만 밑줄**이
@@ -3918,6 +3918,9 @@
   .feed-tab:hover:not(.active){color:rgba(220,232,255,0.78);background:rgba(255,255,255,0.03);}
   .feed-tab:active{background:rgba(255,255,255,0.06);}
   .feed-pane[hidden]{display:none;}
+  #feed-panes-track{flex:1;min-height:0;display:flex;flex-direction:row;transition:transform .28s cubic-bezier(.4,0,.2,1);}
+  #feed-panes-track.at-disc{transform:translateX(-50%);}
+  .feed-pane{min-width:50%;width:50%;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;padding-bottom:calc(var(--sheet-bottom,73px) + 8px);transition:padding-bottom .32s cubic-bezier(0.32,0.72,0,1);}
   /* 즐겨찾기 신작 온보딩 — 아직 하트 누른 게 없을 때 이 선반이 비지 않게 안내 카드로 채운다. */
   .feed-onboard-card{flex:0 0 auto;max-width:min(300px,78vw);display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:14px;background:rgba(255,255,255,0.05);border:0.5px solid rgba(255,255,255,0.10);}
   /* 빈/오류 상태 — Supabase 실패로 선반이 하나도 안 뜰 때(예전엔 제목만 남고 빈 화면). 다시 시도 버튼. */
@@ -4501,6 +4504,27 @@
 .mx-feed-ttl{font-size:13px;font-weight:700;color:rgba(215,228,255,0.95);letter-spacing:-.01em;}
 .mx-feed-sub{font-size:11px;color:rgba(160,185,255,0.5);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .mx-feed-arr{font-size:18px;line-height:1;color:rgba(160,190,255,0.4);flex-shrink:0;}
+/* ── 발견 탭 위젯 (2026-10-19) ── */
+#feed-widgets{padding:4px 0 2px;}
+.feed-widget-btn{display:flex;align-items:center;gap:12px;width:calc(100% - 32px);margin:5px 16px;padding:10px 13px;box-sizing:border-box;background:rgba(255,255,255,0.04);border:0.5px solid rgba(160,185,255,0.16);border-radius:12px;color:inherit;text-align:left;font:inherit;cursor:pointer;transition:background .15s,border-color .15s;}
+.feed-widget-btn:hover{background:rgba(255,255,255,0.07);border-color:rgba(160,185,255,0.28);}
+.feed-widget-btn:active{background:rgba(255,255,255,0.09);}
+.feed-widget-btn[hidden]{display:none;}
+.fwb-thumb{flex-shrink:0;width:58px;height:36px;border-radius:8px;overflow:hidden;background:rgba(255,255,255,0.07);}
+.fwb-square{height:58px;width:58px;}
+.fwb-img{width:100%;height:100%;object-fit:cover;display:block;}
+.fwb-icon{flex-shrink:0;width:58px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:20px;background:rgba(130,160,255,0.1);}
+/* ── 소식 드로어 (2026-10-19) ── */
+#feed-news-drawer{position:fixed;inset:0;z-index:115;display:none;align-items:flex-end;justify-content:center;}
+#feed-news-drawer.open{display:flex;}
+#fnd-bg{position:absolute;inset:0;background:rgba(0,0,0,0.55);}
+#fnd-sheet{position:relative;width:100%;max-width:520px;max-height:82dvh;background:rgba(14,18,38,0.98);backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);border-radius:20px 20px 0 0;box-sizing:border-box;z-index:1;display:flex;flex-direction:column;overflow:hidden;}
+.fnd-hdr{display:flex;align-items:center;justify-content:space-between;padding:16px 18px 12px;flex-shrink:0;border-bottom:0.5px solid rgba(255,255,255,0.08);}
+#fnd-ttl{font-size:15px;font-weight:700;color:#e4ecff;}
+#fnd-close{background:none;border:none;color:rgba(190,205,240,0.4);cursor:pointer;padding:2px 4px;line-height:1;font-size:18px;font-family:inherit;}
+#fnd-body{overflow-y:auto;flex:1;padding-bottom:env(safe-area-inset-bottom,0px);}
+#fnd-body .feed-news-hero{margin:8px 14px 4px;}
+#fnd-body .feed-album-rail{padding:10px 14px 20px;}
 
 /* 카드 첫 화면 대표 영상(2026-10-13 시안, ?hero=1) — 가로 한 줄짜리 작은 카드.
    1차 시안(전체폭 큰 썸네일)은 프로필 사진과 큰 이미지 두 개가 위아래로 붙어 번잡하다는 피드백 → 썸네일을 왼쪽 작게,
