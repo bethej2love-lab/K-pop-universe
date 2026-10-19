@@ -1505,14 +1505,31 @@
   /* 인스타 팔로워 수(2026-10-19) — 아이콘 바로 뒤에 붙여서(간격 줄임) 아이콘 줄 리듬을 덜 깨게, 작고 흐리게 */
   .gc-link-count{font-size:10.5px;font-weight:600;color:rgba(170,190,230,0.62);margin-left:-4px;line-height:1;white-space:nowrap;font-variant-numeric:tabular-nums;}
   .gc-link-count[hidden]{display:none;}
+  /* 카드 안 정사각 썸네일(디스코그래피·인스타·컬렉션) 공통 크기(2026-10-19, 사용자: "나침반 패널 앨범 커버 크기로 통일") —
+     탐험 패널 이번 주 발매 커버 실측과 같게: 웹 111px · 모바일 98px(예전 80~84px). 크기를 바꿀 땐 여기 한 곳만. */
+  :root{--card-thumb:98px;}
+  @media(min-width:769px){:root{--card-thumb:111px;}}
   /* 카드 "Instagram" 줄 — 최근 게시물 썸네일 가로 스크롤 */
   .ig-section{margin-top:14px;}
   .ig-section[hidden]{display:none;}
-  .ig-strip{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px;}
+  .ig-strip{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding:6px 0 2px;}
   .ig-strip::-webkit-scrollbar{display:none;}
-  .ig-item{position:relative;flex:0 0 auto;width:84px;height:84px;border-radius:8px;overflow:hidden;background:rgba(255,255,255,0.05);display:block;}
+  .ig-item{position:relative;flex:0 0 auto;width:var(--card-thumb);height:calc(var(--card-thumb) * 1.25);border-radius:8px;overflow:hidden;background:rgba(255,255,255,0.05);display:block;}
   .ig-item img{width:100%;height:100%;object-fit:cover;display:block;}
-  .ig-play{position:absolute;top:4px;right:5px;font-size:10px;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,0.7);}
+  .ig-play{position:absolute;top:4px;right:5px;z-index:4;font-size:10px;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,0.7);pointer-events:none;}
+  /* 인스타 사진은 세로 4:5가 표준이라 칸도 4:5(2026-10-19, 사용자: "정사각이 최선일까?") — 세로 사진은 거의 안 잘리고, 정사각·가로만 양옆이 조금 잘린다 */
+  /* 여러 장 게시물 묶음 — 디스코 활동기 묶음(.gc-discog-deck)과 같은 겹침 */
+  .ig-deck{width:calc(var(--card-thumb) + 20px);background:none;overflow:visible;cursor:pointer;}
+  .ig-deck img{position:absolute;top:0;left:0;width:var(--card-thumb);height:100%;object-fit:cover;border-radius:8px;transition:transform .2s ease;}
+  .ig-deck-front{z-index:3;box-shadow:0 3px 10px rgba(0,0,0,0.35);}
+  .ig-deck-back.d1{transform:translate(9px,-3px) rotate(4deg);z-index:2;filter:brightness(.78);}
+  .ig-deck-back.d2{transform:translate(17px,-5px) rotate(8deg);z-index:1;filter:brightness(.58);}
+  .ig-deck:hover .ig-deck-back.d1{transform:translate(11px,-4px) rotate(6deg);}
+  .ig-deck:hover .ig-deck-back.d2{transform:translate(20px,-6px) rotate(10deg);}
+  .ig-item.ig-pop{animation:igPop .34s cubic-bezier(.2,.8,.2,1) both;}
+  @keyframes igPop{from{opacity:0;transform:translateX(-18px) scale(.92) rotate(-3deg);}to{opacity:1;transform:none;}}
+  /* 탐험 패널 인스타 레일도 4:5 */
+  #feed-ig.feed-album-grid>.feed-card .feed-card-thumb-wrap,#feed-favig.feed-album-grid>.feed-card .feed-card-thumb-wrap{aspect-ratio:4/5;position:relative;}
   /* 틱톡 아이콘의 원형 콘텐츠가 x=5~15(24단위 기준) 좌측에 치우쳐 있어 우측 여백이 크고(16px 아이콘
      기준 ≈6px), 바로 뒤 나무위키 아이콘과의 시각적 gap이 다른 쌍보다 넓어 보임(2026-08-14, 사용자 제보).
      margin:-7px 기본값보다 더 음수로 설정해 나무위키 아이콘을 왼쪽으로 당겨야 gap이 줄어든다
@@ -2852,18 +2869,18 @@
   .gc-discog-hd-right .gc-ch-sort-btn{font-size:12px;padding:2px 3px;}
   .gc-discog-strip{display:flex;gap:9px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none;cursor:grab;}
   .gc-discog-strip::-webkit-scrollbar{display:none;}
-  .gc-discog-item{flex-shrink:0;width:80px;cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><path d='M11,1 L12.3,9.7 L21,11 L12.3,12.3 L11,21 L9.7,12.3 L1,11 L9.7,9.7Z' fill='%23FFB0D0' opacity='.97'/></svg>") 11 11,pointer;}
-  .gc-discog-cover{width:80px;height:80px;border-radius:8px;object-fit:cover;background:rgba(255,255,255,0.06);display:block;box-shadow:0 3px 10px rgba(0,0,0,0.35);}
+  .gc-discog-item{flex-shrink:0;width:var(--card-thumb);cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><path d='M11,1 L12.3,9.7 L21,11 L12.3,12.3 L11,21 L9.7,12.3 L1,11 L9.7,9.7Z' fill='%23FFB0D0' opacity='.97'/></svg>") 11 11,pointer;}
+  .gc-discog-cover{width:var(--card-thumb);height:var(--card-thumb);border-radius:8px;object-fit:cover;background:rgba(255,255,255,0.06);display:block;box-shadow:0 3px 10px rgba(0,0,0,0.35);}
   .gc-discog-type{font-size:8px;font-weight:700;letter-spacing:.03em;color:rgba(150,175,225,0.66);margin-top:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-  .gc-discog-item-title{font-size:10px;color:rgba(215,228,255,0.85);line-height:1.28;margin-top:1px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+  .gc-discog-item-title{font-size:11px;color:rgba(215,228,255,0.85);line-height:1.28;margin-top:1px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
   .gc-discog-item-artists{font-size:9.5px;color:rgba(160,180,220,0.62);line-height:1.25;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   .gc-discog-extra .gc-discog-cover{opacity:.55;}
   /* 활동기 스택(2026-10-13, 기본 켬 · ?stack=0으로 끔) — 뒤 커버는 오른쪽 위로 부채꼴로만 비친다(커버 위엔 아무것도 안 얹음) */
   .gc-discog-strip.has-stacks{padding-top:22px;}
-  .gc-discog-stack{width:104px;}
-  .gc-discog-deck{position:relative;width:104px;height:80px;}
+  .gc-discog-stack{width:calc(var(--card-thumb) + 24px);} /* 묶음 폭 = 커버 + 겹친 뒷장 몫(커버 크기 변수와 같이 움직인다) */
+  .gc-discog-deck{position:relative;width:calc(var(--card-thumb) + 24px);height:var(--card-thumb);}
   .gc-discog-deck .gc-discog-cover{position:relative;z-index:3;}
-  .gc-discog-deck-back{position:absolute;top:0;left:0;width:80px;height:80px;border-radius:8px;object-fit:cover;
+  .gc-discog-deck-back{position:absolute;top:0;left:0;width:var(--card-thumb);height:var(--card-thumb);border-radius:8px;object-fit:cover;
     box-shadow:0 2px 8px rgba(0,0,0,0.5),0 0 0 1px rgba(255,255,255,0.22);transform-origin:bottom left;transition:transform .2s ease;}
   .gc-discog-deck-back.d1{transform:translate(11px,-3px) rotate(4deg);z-index:2;filter:brightness(.78);}
   .gc-discog-deck-back.d2{transform:translate(20px,-5px) rotate(8deg);z-index:1;filter:brightness(.58);}
@@ -3127,7 +3144,7 @@
   .gc-collection-hd{font-size:10px;font-weight:700;letter-spacing:.16em;color:rgba(130,150,205,0.56);text-transform:uppercase;margin-bottom:7px;}
   .gc-collection-list{display:flex;gap:8px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none;}
   .gc-collection-list::-webkit-scrollbar{display:none;}
-  .gc-collection-chip{flex-shrink:0;width:80px;cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><path d='M11,1 L12.3,9.7 L21,11 L12.3,12.3 L11,21 L9.7,12.3 L1,11 L9.7,9.7Z' fill='%23FFB0D0' opacity='.97'/></svg>") 11 11,pointer;}
+  .gc-collection-chip{flex-shrink:0;width:var(--card-thumb);cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><path d='M11,1 L12.3,9.7 L21,11 L12.3,12.3 L11,21 L9.7,12.3 L1,11 L9.7,9.7Z' fill='%23FFB0D0' opacity='.97'/></svg>") 11 11,pointer;}
   /* 영상 0개 컬렉션 칩은 눌러도 아무 일 없어 "죽은 클릭"처럼 보였다(2026-09-05 UX감사 #5) — 흐리게+기본
      커서로 "아직 빔"을 명확히 해 오해를 없앤다. */
   .gc-collection-chip-empty{opacity:0.45;cursor:default;}
@@ -3151,7 +3168,7 @@
   .card-glyph:empty{display:none;margin:0;}
   /* 이름 행 안에서는 gap이 이미 여백을 만들므로 glyph의 margin-right를 제거해 이중여백 방지 */
   #tt-name-row .card-glyph,#gc-name-row .card-glyph{margin-right:0;}
-  .gc-collection-chip-thumb-wrap{position:relative;width:80px;height:80px;border-radius:8px;overflow:hidden;background:rgba(255,255,255,0.06);}
+  .gc-collection-chip-thumb-wrap{position:relative;width:var(--card-thumb);height:var(--card-thumb);border-radius:8px;overflow:hidden;background:rgba(255,255,255,0.06);}
   .gc-collection-chip-thumb{width:100%;height:100%;object-fit:cover;display:block;}
   .gc-collection-quad{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:1.5px;width:100%;height:100%;}
   .gc-collection-quad img{width:100%;height:100%;object-fit:cover;display:block;}

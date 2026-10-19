@@ -12569,15 +12569,40 @@ async function _renderIgStrip(prefix,url){
   let media=null;
   try{const{data}=await sb.from('ig_accounts').select('media').eq('handle',h).maybeSingle();media=data&&data.media;}catch(e){}
   if(strip.dataset.h!==h||!Array.isArray(media)||!media.length)return; // 그새 다른 카드로 넘어갔으면 버린다
-  media.forEach(m=>{
-    const a=document.createElement('a');a.className='ig-item';a.href=m.p;a.target='_blank';a.rel='noopener noreferrer';
+  const ko=currentLang==='ko';
+  // 사진 한 칸 = 원본 게시물 링크
+  const mk=(src,href,ty)=>{
+    const a=document.createElement('a');a.className='ig-item';a.href=href;a.target='_blank';a.rel='noopener noreferrer';
     a.addEventListener('click',e=>e.stopPropagation());
-    const img=document.createElement('img');img.loading='lazy';img.alt='';img.referrerPolicy='no-referrer';img.src=m.u;
+    const img=document.createElement('img');img.loading='lazy';img.alt='';img.src=src;
     img.addEventListener('error',()=>{a.remove();if(!strip.children.length)sec.hidden=true;});
     a.appendChild(img);
-    if(m.ty==='VIDEO'){const b=document.createElement('span');b.className='ig-play';b.textContent='▶';a.appendChild(b);}
-    else if(m.ty==='CAROUSEL_ALBUM'){const b=document.createElement('span');b.className='ig-play';b.textContent='❐';a.appendChild(b);}
-    strip.appendChild(a);
+    if(ty==='VIDEO'){const b=document.createElement('span');b.className='ig-play';b.textContent='▶';a.appendChild(b);}
+    return a;
+  };
+  media.forEach(m=>{
+    // 여러 장 게시물(캐러셀, 2026-10-19 사용자 제안) — 앨범 활동기 묶음처럼 첫 장 뒤로 두 장을 비스듬히 겹쳐 두고,
+    // 누르면 그 자리에서 안의 사진이 전부 펼쳐진다(펼친 사진을 누르면 원본 게시물). 안 사진 목록(m.c)이 없으면 한 장 + ❐ 표시
+    if(Array.isArray(m.c)&&m.c.length>1){
+      const d=document.createElement('div');d.className='ig-item ig-deck';d.setAttribute('role','button');
+      d.title=ko?`사진 ${m.c.length}장 — 눌러서 펼치기`:`${m.c.length} photos — tap to expand`;
+      m.c.slice(1,3).reverse().forEach((src,i,arr)=>{const b=document.createElement('img');b.className='ig-deck-back d'+(arr.length-i);b.src=src;b.alt='';b.loading='lazy';b.addEventListener('error',()=>b.remove());d.appendChild(b);});
+      const f=document.createElement('img');f.className='ig-deck-front';f.src=m.c[0]||m.u;f.alt='';f.loading='lazy';
+      f.addEventListener('error',()=>{d.remove();if(!strip.children.length)sec.hidden=true;});
+      d.appendChild(f);
+      const n=document.createElement('span');n.className='ig-play';n.textContent='❐ '+m.c.length;d.appendChild(n);
+      d.addEventListener('click',e=>{
+        e.stopPropagation();
+        const frag=document.createDocumentFragment();
+        m.c.forEach((src,i)=>{const it=mk(src,m.p,'IMAGE');it.classList.add('ig-pop');it.style.animationDelay=(i*45)+'ms';frag.appendChild(it);});
+        d.replaceWith(frag);
+      });
+      strip.appendChild(d);
+    }else{
+      const a=mk(m.u,m.p,m.ty);
+      if(m.ty==='CAROUSEL_ALBUM'){const b=document.createElement('span');b.className='ig-play';b.textContent='❐';a.appendChild(b);}
+      strip.appendChild(a);
+    }
   });
   sec.hidden=false;
   _enableDragScroll(strip);
@@ -22462,6 +22487,76 @@ function _openAlbumDetailWhenReady(a,prefix,getDisco){
 // 창(30일)은 Discover 선반(_FEED_ALBUM_WINDOWS 7→60 단계 확장)보다 고정적으로 넓게 잡는다 —
 // 대상이 내 즐겨찾기로 좁혀져 있어 7일이면 거의 항상 빈 선반이 된다.
 const _FAV_ALBUM_DAYS=30;
+// ── 탐험 패널 인스타 사진 선반(2026-10-19) ─────────────────────────────────────────────────
+// 데이터는 DB ig_accounts.media(ig-stats.yml이 계정마다 최근 게시물 6개). **사진(IMAGE)·여러 장(CAROUSEL)만** — 영상은 같은 걸
+// 유튜브에도 올리니 거기서 모은다(사용자 결정). 이미지는 인스타 주소 그대로, 누르면 원본 게시물(새 창).
+// 핸들 → 주인 이름(그룹/멤버) — 캡션용. 링크는 artists/groups의 links.instagram
+let _igOwnerMap=null;
+function _igOwners(){
+  if(_igOwnerMap)return _igOwnerMap;
+  _igOwnerMap=new Map();
+  Object.entries(GROUPS).forEach(([k,g])=>{const h=_igHandle(g.links?.instagram);if(h&&!_igOwnerMap.has(h))_igOwnerMap.set(h,{name:_gLabelKo(k)||k,gko:k});});
+  ARTISTS.forEach(a=>{const h=_igHandle(a.links?.instagram);if(h&&!_igOwnerMap.has(h))_igOwnerMap.set(h,{name:currentLang==='ko'?_dispKo(a):(a.name.en||a.name.ko),art:a});});
+  return _igOwnerMap;
+}
+function _igAgo(iso){
+  const d=(Date.now()-Date.parse(iso))/3600000;if(!isFinite(d))return '';
+  const ko=currentLang==='ko';
+  if(d<1)return ko?'방금':'just now';
+  if(d<24)return ko?Math.floor(d)+'시간 전':Math.floor(d)+'h ago';
+  return ko?Math.floor(d/24)+'일 전':Math.floor(d/24)+'d ago';
+}
+// rows: [{handle, media}] → 최근 사진들(기간 안) 최신순
+function _igPhotos(rows,days,max){
+  const lim=Date.now()-days*86400000,own=_igOwners(),out=[];
+  (rows||[]).forEach(r=>(r.media||[]).forEach(m=>{
+    if(!m||!m.u||!m.p||(m.ty!=='IMAGE'&&m.ty!=='CAROUSEL_ALBUM'))return;
+    const t=Date.parse(m.t);if(!isFinite(t)||t<lim)return;
+    out.push({...m,ts:t,owner:own.get(r.handle)});
+  }));
+  return out.filter(m=>m.owner).sort((a,b)=>b.ts-a.ts).slice(0,max);
+}
+function _igRenderRail(list,photos){
+  photos.forEach(m=>{
+    const card=_appendFeedCard(list,'📷',m.owner.name,'',()=>window.open(m.p,'_blank','noopener'),m.u,null,{meta:_igAgo(m.t)});
+    const img=card&&card.querySelector('img');
+    if(img)img.addEventListener('error',()=>card.remove()); // 만료된 인스타 주소면 그 카드만 뺀다
+    const tw=card&&card.querySelector('.feed-card-thumb-wrap');
+    if(tw&&Array.isArray(m.c)&&m.c.length>1){const b=document.createElement('span');b.className='ig-play';b.textContent='❐ '+m.c.length;tw.appendChild(b);}
+  });
+  list.scrollLeft=0;_enableDragScroll(list);
+}
+// For You — 즐겨찾기 그룹·멤버의 최근 2주 사진
+async function _buildFeedFavIg(){
+  const section=document.getElementById('feed-favig-section'),list=document.getElementById('feed-favig');
+  if(!section||!list)return;
+  list.innerHTML='';section.style.display='none';
+  if(!sb||(!favGroups.size&&!favMembers.size))return;
+  try{
+    const hs=new Set();
+    favGroups.forEach(k=>{const h=_igHandle(GROUPS[k]?.links?.instagram);if(h)hs.add(h);});
+    ARTISTS.forEach(a=>{if(a.group&&favMembers.has(_mFavKey(a))){const h=_igHandle(a.links?.instagram);if(h)hs.add(h);}});
+    if(!hs.size)return;
+    const{data,error}=await sb.from('ig_accounts').select('handle,media').in('handle',[...hs].slice(0,300)).eq('status','ok').limit(300);
+    if(error)return;
+    const photos=_igPhotos(data,14,15);if(!photos.length)return;
+    const ttl=document.getElementById('feed-favig-ttl');if(ttl)ttl.textContent=currentLang==='ko'?'📷 즐겨찾기 인스타':'📷 Instagram from Your Favorites';
+    _igRenderRail(list,photos);section.style.display='';
+  }catch(e){console.warn('[feed] 즐겨찾기 인스타 선반 실패 — 이 선반만 빠집니다',e);}
+}
+// Discover — 팔로워 많은 계정 60곳의 최근 3일 사진
+async function _buildFeedIg(){
+  const section=document.getElementById('feed-ig-section'),list=document.getElementById('feed-ig');
+  if(!section||!list)return;
+  list.innerHTML='';section.style.display='none';
+  if(!sb)return;
+  try{
+    const{data,error}=await sb.from('ig_accounts').select('handle,media').eq('status','ok').order('followers',{ascending:false,nullsFirst:false}).limit(60);
+    if(error)return;
+    const photos=_igPhotos(data,3,15);if(!photos.length)return;
+    _igRenderRail(list,photos);section.style.display='';
+  }catch(e){console.warn('[feed] 인스타 선반 실패 — 이 선반만 빠집니다',e);}
+}
 async function _buildFeedFavAlbums(){
   const section=document.getElementById('feed-favalbum-section');
   const list=document.getElementById('feed-favalbum');
@@ -25110,6 +25205,7 @@ function _buildFeedRec(){
   _buildFeedForYouAnniv();  // 다가오는 기념일(즐겨찾기 그룹·멤버 교차 D-7~D-DAY) — 시간 민감이라 최상단
   _buildFeedFavNews();      // 내 최애 소식(이번 주 1위·MV·티저·조회수 돌파 중 즐겨찾기 것) — 일주일짜리 소식이라 기념일 다음
   _buildFeedFavAlbums();    // 즐겨찾기 신보(최근 30일) — 유튜브 영상 말고도 우리가 모으는 걸 드러낸다
+  _buildFeedFavIg();        // 즐겨찾기 인스타 사진(최근 2주, 영상 제외) — 2026-10-19
   _buildFeedFavCharts();    // 내 최애 차트(2026-10-15) — 이번 주 차트에 든 최애 무대(발견 탭 Charts와 같은 계산)
   // 즐겨찾기 신작(비동기)이 자리를 잡은 뒤에 이어보기를 그린다 — 예전엔 이어보기(로컬·즉시)가 먼저 위에
   // 떴다가 favnew가 나중에 그 위로 끼어들며 이어보기를 아래로 밀어 덜컹거렸다(2026-09-13 사용자 제보).
@@ -25141,6 +25237,7 @@ function _feedBuildPump(){
 function _buildFeedDisc(){
   _feedBuildQ=[]; // 패널을 다시 열면 이전 대기분은 버린다(중복 그리기·유령 요청 방지)
   _feedDailyNewsP=_buildFeedDailyNews(); // 오늘의 소식이 Discover 맨 첫 섹션(2026-09-23) — 기념일보다도 먼저. 앨범 블록이 이걸 기다린다
+  _buildFeedIg(); // 인스타 사진(팔로워 많은 계정 최근 3일, 영상 제외) — 2026-10-19
   _buildFeedAnniversaries(); // 기념일 선반은 그 다음(2026-08-30 이동)
   _buildFeedEvents(); // Events — 다가오는 행사 D-day + 최근 행사 회차(2026-10-16)
   document.getElementById('feed-empty-disc').hidden=true;
@@ -28209,6 +28306,11 @@ _totopBtn.addEventListener('click',e=>{
         <div class="feed-section-ttl" id="feed-favalbum-ttl">💿 New Releases from Your Favorites</div>
         <div id="feed-favalbum" class="feed-album-grid feed-album-rail feed-album-rail-1 hscroll-drag"></div>
       </div>
+      <!-- 즐겨찾기 인스타 사진(2026-10-19) — 영상은 유튜브에서 이미 모으니 **사진 게시물만**(사용자 결정). 신보 레일과 같은 정사각 카드 -->
+      <div class="feed-section" id="feed-favig-section" style="display:none">
+        <div class="feed-section-ttl" id="feed-favig-ttl">📷 Instagram from Your Favorites</div>
+        <div id="feed-favig" class="feed-album-grid feed-album-rail feed-album-rail-1 hscroll-drag"></div>
+      </div>
       <!-- 내 최애 차트(2026-10-15) — 이번 주 차트(주간 직캠 TOP 20·월간 퍼포먼스 TOP 30)에 든 최애 무대. 누르면 그 차트 목록 -->
       <div class="feed-section" id="feed-favchart-section" style="display:none">
         <div class="feed-section-ttl" id="feed-favchart-ttl">📈 Your Favorites on the Charts</div>
@@ -28251,6 +28353,11 @@ _totopBtn.addEventListener('click',e=>{
           <div class="feed-news-subttl" id="feed-newalbum-ttl">💿 New Releases</div>
           <div id="feed-newalbum" class="feed-album-grid feed-album-rail hscroll-drag"></div>
         </div>
+      </div>
+      <!-- 인스타 사진(2026-10-19) — 팔로워 많은 계정들의 최근 사진 게시물(영상 제외) -->
+      <div class="feed-section" id="feed-ig-section" style="display:none">
+        <div class="feed-section-ttl" id="feed-ig-ttl">📷 Instagram</div>
+        <div id="feed-ig" class="feed-album-grid feed-album-rail feed-album-rail-1 hscroll-drag"></div>
       </div>
       <div class="feed-section" id="feed-anniv-section" style="display:none">
         <div class="feed-section-ttl">🎂 Today's Anniversary</div>

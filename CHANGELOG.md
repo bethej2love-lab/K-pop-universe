@@ -84,6 +84,8 @@
 
 - [완료·SQL 대기] 인스타 화면 반영 — ①프로필 사진: **공식 인스타가 먼저**(사용자: 프로필 바꾸면 따라가야), 등록 사진(artist_pics)은 인스타 없음·못 받음·주소 만료(onerror) 때 대체, 직캠 썸네일은 그다음. 검색·기념일 아바타(_fetchInstaPicUrl)도 같은 순서 ②인스타 아이콘 옆 팔로워 수(작게) ③카드 디스코 아래 "Instagram" 줄 — 최근 게시물 6개 썸네일→원본 게시물(이미지 저장 안 함). 수집 도구가 media(jsonb)도 받음 — SQL에 칸 추가됨. ⚠️ SQL 실행 전엔 ig_accounts 404가 콘솔에 1건(화면 영향 없음, 스모크는 실패로 셈) [index.html][kpop_universe.css][tools/ig_business_discovery.mjs][sql/]
 
+- [완료] 인스타 2차 — ①탐험 패널: For You "즐겨찾기 인스타"(최근 2주)·Discover "Instagram"(팔로워 상위 60계정 최근 3일), **사진·여러 장만**(영상은 유튜브에서 모음, 사용자 결정) ②인스타 칸은 **4:5 세로**(인스타 표준, 정사각보다 덜 잘림) ③여러 장 게시물: 수집 도구가 children(안 사진 최대 10)도 받음(거부되면 그 회차는 없이) → 카드에서 앨범 묶음처럼 겹친 뒤 누르면 펼침, 탐험 패널은 ❐ 장수 배지 ④카드 정사각 썸네일(디스코·인스타·컬렉션) 크기 통일 `--card-thumb` 웹 111px·모바일 98px(탐험 패널 이번 주 발매 커버 실측과 같게, 예전 80~84px) — 디스코 활동기 묶음 폭도 변수 따라가게(커지면서 옆 커버를 덮던 것) [index.html][kpop_universe.css][tools/ig_business_discovery.mjs]
+
 ### ⏳ 덜 된 일 (10-19 Claude Code 세션 마감 시점)
 - [사용자 결정·미착수] **방송 음원도 공동 앨범으로 수집** — 쇼미더머니뿐 아니라 **복면가왕·불후의 명곡 등 방송·경연 음원도 합작으로 본다**(사용자 10-19). 지금은 `tools/melon_album_artists.mjs` 반영 단계의 `SKIP_TITLE` 정규식이 `복면가왕|불후의|가요제|경연|프로듀서 -|로드 투 킹덤|\d+회`를 빼고 있음 → 이 부분을 지우고, 같은 줄 `ok` 조건의 `!al.program && !al.contest`(프로그램·경연 앨범 표식)도 뺄지 판단할 것. 유지할 제외: 피처링(feat/ft.)·리믹스·OST·유닛 앨범. 순서: 정규식 수정 → `node tools/melon_album_artists.mjs --apply`(수집 캐시 `melon_album_artists.json` 그대로 씀, 재수집 불필요) → `git diff artists.json groups.json | grep "^-"`로 지워진 줄 없는지 확인 → `node tools/build_slim_data.mjs` → `node tests/album-byline.test.js`(복면가왕 제외를 전제한 검사는 없음). 표기는 지금처럼 멜론 순서·쉼표
 - [확인 대기·실기기] 모바일 탐험 패널 끌어 닫기 — 튕김 기준(24px↑ & 0.6px/ms↑) 손맛. 너무 쉽게/둔하게 닫히면 `_wireFeedSwipeDismiss`의 그 두 숫자만 조정

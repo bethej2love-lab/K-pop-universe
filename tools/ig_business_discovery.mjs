@@ -64,10 +64,18 @@ const day = new Date(Date.now() + 9 * 3600e3).toISOString().slice(0, 10); // KST
 const usagePct = h => { let m = 0; for (const k of ['x-app-usage', 'x-business-use-case-usage']) { const v = h.get(k); if (!v) continue; try { JSON.stringify(JSON.parse(v)).replace(/"(call_count|total_time|total_cputime)":(\d+)/g, (_, __, n) => { m = Math.max(m, +n); }); } catch { } } return m; };
 const acc = [], daily = [];
 let ok = 0, nf = 0, stoppedBy = '';
+// 여러 장 게시물(캐러셀)은 안의 사진까지(children) 받는다(2026-10-19, 카드에서 겹친 묶음→펼치기). children 중첩이 막혀 있으면
+// (오류 100) 그 회차는 children 없이 다시 시도한다 — 한 필드 때문에 전체가 실패하지 않게.
+let withChildren = true;
+const fieldsFor = h => `business_discovery.username(${encodeURIComponent(h)}){username,name,followers_count,media_count,profile_picture_url,media.limit(9){media_type,media_url,thumbnail_url,permalink,timestamp${withChildren ? ',children{media_type,media_url,thumbnail_url}' : ''}}}`;
 for (const h of queue) {
-  const url = `${GRAPH}/${IG_USER}?fields=business_discovery.username(${encodeURIComponent(h)}){username,name,followers_count,media_count,profile_picture_url,media.limit(9){media_type,media_url,thumbnail_url,permalink,timestamp}}&access_token=${encodeURIComponent(TOKEN)}`;
+  const url = `${GRAPH}/${IG_USER}?fields=${fieldsFor(h)}&access_token=${encodeURIComponent(TOKEN)}`;
   let r, j;
   try { r = await fetch(url); j = await r.json(); } catch (e) { stoppedBy = '네트워크 ' + e.message; break; }
+  if (j.error && j.error.code === 100 && withChildren && /children/i.test(j.error.message || '')) {
+    withChildren = false; console.error('children 필드 거부 — 이번 회차는 캐러셀 안 사진 없이:', j.error.message);
+    try { r = await fetch(`${GRAPH}/${IG_USER}?fields=${fieldsFor(h)}&access_token=${encodeURIComponent(TOKEN)}`); j = await r.json(); } catch (e) { stoppedBy = '네트워크 ' + e.message; break; }
+  }
   if (j.error) {
     const c = j.error.code, sc = j.error.error_subcode;
     if (c === 190) { console.error('❌ 토큰 만료/무효 — META_IG_TOKEN을 새로 발급해 Secrets에 넣어야 한다:', j.error.message); process.exitCode = 2; break; }
@@ -79,7 +87,13 @@ for (const h of queue) {
   } else {
     const b = j.business_discovery || {};
     // 최근 게시물(카드 Instagram 줄) — 영상은 thumbnail_url, 사진·캐러셀은 media_url. 저작권 음원 등으로 주소가 비어 오는 건 뺀다. 최대 6개
-    const media = ((b.media && b.media.data) || []).map(m => ({ u: m.thumbnail_url || (m.media_type !== 'VIDEO' ? m.media_url : null), p: m.permalink, t: m.timestamp, ty: m.media_type })).filter(m => m.u && m.p).slice(0, 6);
+    const img = m => m.thumbnail_url || (m.media_type !== 'VIDEO' ? m.media_url : null);
+    const media = ((b.media && b.media.data) || []).map(m => {
+      const o = { u: img(m), p: m.permalink, t: m.timestamp, ty: m.media_type };
+      const cs = ((m.children && m.children.data) || []).map(img).filter(Boolean);
+      if (cs.length > 1) o.c = cs.slice(0, 10); // 캐러셀 안 사진들(첫 장 포함, 최대 10)
+      return o;
+    }).filter(m => m.u && m.p).slice(0, 6);
     acc.push({ handle: h, ig_id: b.id || null, name: b.name || null, followers: b.followers_count ?? null, media_count: b.media_count ?? null, pic_url: b.profile_picture_url || null, media, status: 'ok', note: null, fetched_at: new Date().toISOString() });
     if (b.followers_count != null) daily.push({ handle: h, day, followers: b.followers_count });
     ok++;
