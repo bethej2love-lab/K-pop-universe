@@ -1507,7 +1507,7 @@
   .gc-link-count[hidden]{display:none;}
   /* 카드 안 정사각 썸네일(디스코그래피·인스타·컬렉션) 공통 크기(2026-10-19, 사용자: "나침반 패널 앨범 커버 크기로 통일") —
      탐험 패널 이번 주 발매 커버 실측과 같게: 웹 111px · 모바일 98px(예전 80~84px). 크기를 바꿀 땐 여기 한 곳만. */
-  :root{--card-thumb:98px;}
+  :root{--card-thumb:110px;}
   @media(min-width:769px){:root{--card-thumb:111px;}}
   /* 카드 "Instagram" 줄 — 최근 게시물 썸네일 가로 스크롤 */
   .ig-section{margin-top:14px;}
