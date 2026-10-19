@@ -3746,9 +3746,10 @@ function _showOnboardHint(){
   _obActive=true;
   if(isMob()){
     exitObSearch(); // 탭바 탐험 버튼 수동 클릭(8801번줄)과 동일하게, 자동으로 뜰 때도 검색바를 먼저 닫아 겹쳐 보이지 않게 함
+    // 반열림(peek) 없이 바로 전체로(2026-10-19, 사용자 결정 — "여러 번 온 유저는 전체로 열자, 반은 없애자").
+    //    반↔전체 크기 조절 끌기가 매끄럽지 않았고, 반 화면은 내용도 우주도 애매하게 보였다. 그 끌기 동작도 같이 뺐다.
     _openFeedOverlay();
-    document.getElementById('feed-overlay')?.classList.add('peek');
-    _showTabbar(); // peek는 자동숨김 대상이 아니다(_activeSheetScroller) — 들어올 때 숨어 있었다면 되돌린다
+    _showTabbar(); // 들어올 때 탭바가 숨어 있었다면 되돌린다
   }else{
     _openFeedOverlay();
   }
@@ -20912,15 +20913,6 @@ function _openFeedOverlay(){
     cb.addEventListener('touchstart',e=>_lbRipple(cb,e),{passive:true});
     cb.addEventListener('mousedown',e=>_lbRipple(cb,e));
   }
-  // 탐험 패널이 "살짝 열기(peek)" 상태일 때 헤더를 누르면 전체 화면으로 펼쳐짐 — 지도앱 바텀시트 방식
-  // (여기 el._bound 블록과 같은 이유로 lazy-bind: #feed-hd도 본문 스크립트보다 나중에 파싱됨).
-  const hd=document.getElementById('feed-hd');
-  if(hd&&!hd._obBound){hd._obBound=true;
-    hd.addEventListener('click',e=>{
-      if(e.target.closest('#feed-close'))return;
-      if(el.classList.contains('peek')){e.stopPropagation();el.classList.remove('peek');}
-    });
-  }
 }
 // 나침반 열기 직전 카드로 복원(모바일). 피드-내비와 동일 진입점(showGC/showT)을 쓰되, 카메라는 카드가
 // 열려 있던 자리 그대로라 별도 비행은 하지 않는다. 데이터는 스택 엔트리의 data(gc=ko문자열/tt=아티스트).
@@ -20966,7 +20958,7 @@ function _slideDownCloseFeed(){
 // 위로 끄는 건 peek 상태일 때만 의미가 있음 — 전체 펼침(하단 탭바 "탐험"과 완전히 같은 화면)으로
 // 전환, 임계값 넘기면 .peek 제거 → top/height CSS 트랜지션으로 부드럽게 커짐(2026-08-13, 사용자 요청).
 function _wireFeedSwipeDismiss(el,body){
-  let dragY=0,dragging=false,dragActive=false,_rafId=0,_applyFn=null,_armed=false;
+  let dragY=0,dragging=false,dragActive=false,_rafId=0,_applyFn=null,_armed=false,_lastDy=0,_vY=0,_vT=0,_vel=0;
   el.addEventListener('touchstart',e=>{
     if(!isMob())return;
     // 자체적으로 가로 스크롤되는 영역(.hscroll-drag — 기념일 스트립 등)은 여기서 추적 안 함(_wireSheetSwipe와
@@ -20975,7 +20967,7 @@ function _wireFeedSwipeDismiss(el,body){
     dragY=e.touches[0].clientY;
     dragging=true;
     dragActive=body.scrollTop<=0;
-    _armed=false;
+    _armed=false;_lastDy=0;_vT=0;_vel=0;
   },{passive:true});
   el.addEventListener('touchmove',e=>{
     if(!dragging)return;
@@ -20990,10 +20982,15 @@ function _wireFeedSwipeDismiss(el,body){
       if(Math.abs(curY-dragY)<_SHEET_DRAG_SLOP)return;
       dragY=curY;_armed=true;
     }
-    const dy=curY-dragY;
-    if(dy<0&&!el.classList.contains('peek'))return; // 이미 전체 펼침 — 더 올라갈 데 없음
+    let dy=curY-dragY;
+    // 항상 전체 펼침이라 위로는 갈 데가 없다(반열림 폐지, 2026-10-19). 처음부터 위로면 본문 스크롤에 양보,
+    // 내렸다가 다시 올리는 중이면 0에 붙여 둔다(예전엔 그냥 return해서 패널이 내려간 자리에 멈춰 있었다).
+    if(dy<0){if(_lastDy<=0)return;dy=0;}
     if(e.cancelable)e.preventDefault();
-    _applyFn=()=>{el.style.transition='none';el.style.transform=`translateY(${dy<0?dy*0.35:dy}px)`;};
+    // 튕겨 내리기 속도(px/ms) — 최근 움직임 기준. 짧게 빨리 내려도 닫히게(끌기 80px를 다 안 채워도)
+    const now=performance.now();if(_vT){const dt=now-_vT;if(dt>0)_vel=_vel*0.4+((curY-_vY)/dt)*0.6;}_vY=curY;_vT=now;
+    _lastDy=dy;
+    _applyFn=()=>{el.style.transition='none';el.style.transform=`translateY(${dy}px)`;};
     if(!_rafId)_rafId=requestAnimationFrame(()=>{_rafId=0;_applyFn&&_applyFn();});
   },{passive:false});
   el.addEventListener('touchend',e=>{
@@ -21003,13 +21000,10 @@ function _wireFeedSwipeDismiss(el,body){
     dragActive=false;
     if(!_armed){el.style.transform='';return;} // 문턱을 못 넘은 터치 — 패널은 그대로
     const dy=e.changedTouches[0].clientY-dragY;
-    if(dy>80){
+    const vel=performance.now()-_vT<80?_vel:0; // 손을 멈췄다 떼면 튕김 아님
+    _lastDy=0;_vT=0;_vel=0;
+    if(dy>80||(dy>24&&vel>0.6)){
       _slideDownCloseFeed();
-    }else if(dy<-60&&el.classList.contains('peek')){
-      el.style.transition='transform 0.22s cubic-bezier(0.32,0.72,0,1)';
-      el.style.transform='';
-      el.classList.remove('peek');try{_tlog('끌어서펼침',1);}catch(e){} // top/height는 위 CSS 트랜지션이 알아서 부드럽게 넘겨줌
-      setTimeout(()=>{el.style.transition='';},220);
     }else{
       el.style.transition='transform 0.22s cubic-bezier(0.32,0.72,0,1)';
       el.style.transform='';
