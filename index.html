@@ -13390,7 +13390,13 @@ function _renderDiscogDetailArtists(al){
     if(i)box.appendChild(document.createTextNode(', '));
     const art=x.ako?ARTISTS.find(a=>a.name&&a.name.ko===x.ako&&(a.group?.ko===x.ag||(a.groups||[]).some(g=>g&&g.ko===x.ag))):null;
     const gk=!art&&x.gko&&GROUPS[x.gko]?x.gko:null;
-    if(!art&&!gk){const sp=document.createElement('span');sp.textContent=names[i];box.appendChild(sp);return;}
+    if(!art&&!gk){
+      // 유니버스 밖 아티스트 — 2장 이상 함께한 사람이면 "함께한 앨범" 시트로, 아니면 이름 텍스트만
+      const ext=_collabExt&&_collabExt[x.aid];
+      if(ext){const b=document.createElement('button');b.type='button';b.className='gc-discog-artist-link is-ext';b.textContent=names[i];
+        b.addEventListener('click',e=>{e.stopPropagation();_openCollabExt(x.aid);});box.appendChild(b);return;}
+      const sp=document.createElement('span');sp.textContent=names[i];box.appendChild(sp);return;
+    }
     const b=document.createElement('button');b.type='button';b.className='gc-discog-artist-link';b.textContent=names[i];
     b.addEventListener('click',e=>{
       e.stopPropagation();
@@ -13401,6 +13407,64 @@ function _renderDiscogDetailArtists(al){
     });
     box.appendChild(b);
   });
+  // 외부 아티스트 모음은 처음 한 번만 받는다 — 받은 뒤 같은 앨범이 아직 열려 있으면 링크로 다시 그린다
+  if(_collabExt===null&&al.byline.some(x=>!x.ako&&!x.gko)){
+    _ensureCollabExt().then(()=>{if(_collabExt&&document.getElementById('gc-discog-detail').classList.contains('open')&&_gcDiscogList[_gcDiscogIdx]===al)_renderDiscogDetailArtists(al);});
+  }
+}
+// ── 유니버스 밖 아티스트와의 공동 앨범 모음(2026-10-19) ───────────────────────────────────────
+// collab_ext.json(build_slim_data가 byline에서 만든다): 우리 쪽에 없는 사람 중 2장 이상 함께한 사람 → 그 앨범들.
+// 사용자: "그 사람 정보는 거의 없지만, 반복되는 아티스트는 그 사람과 작업한 우리 아티스트 작업물이 모여 보이면 좋겠다".
+let _collabExt=null,_collabExtP=null;
+function _ensureCollabExt(){
+  if(_collabExt)return Promise.resolve(_collabExt);
+  return _collabExtP||(_collabExtP=fetch('collab_ext.json',{cache:'no-cache'}).then(r=>r.ok?r.json():{}).catch(()=>({})).then(d=>(_collabExt=d||{})));
+}
+function _closeCollabExt(){document.getElementById('ecx-overlay')?.classList.remove('open');}
+function _openCollabExt(aid){
+  const e=_collabExt&&_collabExt[aid];if(!e)return;
+  let ov=document.getElementById('ecx-overlay');
+  if(!ov){
+    ov=document.createElement('div');ov.id='ecx-overlay';ov.setAttribute('data-modal','');
+    ov.innerHTML='<div id="ecx-panel"><div id="ecx-hd"><div id="ecx-title"></div><div id="ecx-sub"></div><button id="ecx-close" type="button" aria-label="닫기">✕</button></div><div id="ecx-grid"></div></div>';
+    document.body.appendChild(ov);
+    ov.addEventListener('click',ev=>{if(ev.target===ov)_closeCollabExt();});
+    ov.querySelector('#ecx-close').addEventListener('click',ev=>{ev.stopPropagation();_closeCollabExt();});
+  }
+  const ko=currentLang==='ko';
+  ov.querySelector('#ecx-title').textContent=ko?e.n:(e.en||e.n);
+  ov.querySelector('#ecx-sub').textContent=(ko?'함께한 앨범 ':'Albums together · ')+e.w.length;
+  const grid=ov.querySelector('#ecx-grid');grid.innerHTML='';
+  e.w.forEach(w=>{
+    const it=document.createElement('div');it.className='ecx-item';
+    const img=document.createElement('img');img.className='ecx-cover';img.loading='lazy';img.alt='';img.src=w.c||'';
+    const t=document.createElement('div');t.className='ecx-t';t.textContent=w.t;
+    const b=document.createElement('div');b.className='ecx-b';b.textContent=(w.b||[]).join(', ');
+    const m=document.createElement('div');m.className='ecx-m';m.textContent=[_discogTypeLabel(w.y),String(w.d||'').slice(0,4)].filter(Boolean).join(' · ');
+    it.append(img,t,b,m);
+    it.addEventListener('click',ev=>{ev.stopPropagation();_openCollabExtAlbum(w);});
+    grid.appendChild(it);
+  });
+  ov.classList.add('open');_bringToFront(ov);
+}
+// 모음에서 앨범을 누르면 그 우리 아티스트(그룹) 카드를 열고 그 앨범 상세를 띄운다
+async function _openCollabExtAlbum(w){
+  const own=(w.o||[])[0];if(!own)return;
+  _closeCollabExt();_closeGcDiscogDetail();
+  const cx=window.innerWidth/2,cy=isMob()?window.innerHeight*0.4:window.innerHeight/2;
+  let list=[];
+  if(own.k==='g'&&GROUPS[own.o]){
+    if(isMob())showGC(own.o,cx,cy,false,false,null,false);else showGC(own.o,cx,cy);
+    await _ensureGroupDisco(own.o);list=GROUPS[own.o].discography||[];
+  }else{
+    const a=(own.i&&ARTISTS.find(x=>x.id===own.i))||ARTISTS.find(x=>x.name&&x.name.ko===own.o&&(x.group?.ko||null)===own.g);
+    if(!a)return;
+    if(isMob())showT(a,cx,cy,false,false,false);else showT(a,cx,cy);
+    await _ensureMemberDisco(a);list=a.discography||[];
+  }
+  const al=list.find(x=>(w.m&&x.melonAlbumId===w.m)||(x.title===w.t&&x.releaseDate===w.d));
+  if(!al)return;
+  setTimeout(()=>{_gcDiscogList=list;_openGcDiscogDetail(al,list.indexOf(al));},450); // 카드가 열린 뒤(앨범 상세가 카드 맥락을 쓴다)
 }
 // 멜론 링크 — 웹 주소 그대로 쓴다(모바일은 멜론이 알아서 모바일 페이지·앱으로 넘긴다)
 function _melonAlbumUrl(id){return 'https://www.melon.com/album/detail.htm?albumId='+encodeURIComponent(id);}

@@ -102,6 +102,29 @@ if (!process.argv.includes('--apply')) {
   //   피처링('3D (feat. Jack Harlow)')은 합작이 아니고(사용자: feat와 공동 앨범은 다르다), 리믹스는 리믹서가 붙은 것뿐이며,
   //   방송 음원(복면가왕·개가수·OST가 '싱글'로 들어온 것)은 출연 기록이지 공동 앨범이 아니다.
   const SKIP_TITLE = /feat\.?|\bft\.|remix|\bOST\b|O\.S\.T|복면가왕|불후의|가요제|경연|프로듀서 -|로드 투 킹덤|\d+회\b/i;
+  // 멜론 번호 연결표에 없는 사람은 이름으로 한 번 더(2026-10-19) — 방예담(→디모렉스, matchAliases)처럼 우리 유니버스에 있는데
+  // 외부 아티스트로 잡히던 것. **딱 한 명(한 그룹)과만 맞을 때만** 잇는다(동명이인이면 텍스트로 둔다).
+  const norm = s => String(s || '').toLowerCase().replace(/[^a-z0-9가-힣]/g, '');
+  // 멜론 표기는 'ㅇㅇ (EN)'도 있지만 '옐 (하이키)'·'씽 (XODIAC)'처럼 **괄호에 소속 그룹**을 쓰기도 한다 — 괄호를 영문명으로 읽으면
+  // 그룹 쪽에 잘못 붙는다(처음 구현에서 옐→하이키). 그래서 본 이름(괄호 앞)으로 찾고, 괄호는 동명이인을 가를 때만 쓴다.
+  // 엄격 규칙(2026-10-19 표본 검수) — 이름만 같으면 남이 붙는다('MJ (써니사이드)'→아스트로 MJ, '여름 (헬로비너스)'→우주소녀 여름,
+  // '민서'·'정승환' 같은 솔로 가수 → 아이돌 동명이인, 'INI'(일본 그룹)→샤크라 이니). 잘못 잇느니 텍스트로 둔다:
+  //   · 괄호가 있으면 괄호가 그 사람 **소속 그룹**(ko/en)과 맞을 때만('옐 (하이키)'·'원준(WHIB)')
+  //   · 괄호가 없으면 우리 데이터의 **옛 이름·별칭**(matchAliases·displayName)과 맞을 때만('방예담'→디모렉스)
+  const byName = raw => {
+    const m = String(raw).match(/^(.*?)\s*\((.+)\)\s*$/);
+    const nm = norm(m ? m[1] : raw), np = norm(m ? m[2] : '');
+    if (!nm) return null;
+    const gEn = k => groups[k] && groups[k].en;
+    const groupKeys = a => [a.group && a.group.ko, gEn(a.group && a.group.ko), ...(a.groups || []).flatMap(g => [g && g.ko, gEn(g && g.ko)])].map(norm).filter(Boolean);
+    let hitA;
+    if (np) hitA = artists.filter(a => a.name && [a.name.ko, a.name.en, a.displayName].some(x => norm(x) === nm) && groupKeys(a).includes(np));
+    else hitA = artists.filter(a => a.name && [a.displayName, ...(a.matchAliases || [])].some(x => norm(x) === nm) && nm.length >= 3);
+    const hitG = np ? [] : Object.entries(groups).filter(([k, g]) => [k, g.en].some(x => norm(x) === nm));
+    if (hitA.length + hitG.length !== 1) return null;
+    if (hitG.length) return { ko: hitG[0][0], en: hitG[0][1].en || '', gko: hitG[0][0] };
+    const x = hitA[0]; return { ko: x.name.ko, en: x.name.en || '', ako: x.name.ko, ag: x.group && x.group.ko };
+  };
   let set = 0, cleared = 0;
   const visit = (al, unit) => {
     if (!al || !al.melonAlbumId) return;
@@ -109,7 +132,8 @@ if (!process.argv.includes('--apply')) {
     const ok = hit && !unit && !al.feat && !al.unit && !al.program && !al.contest && !SKIP_TYPE.test(al.type || '') && !SKIP_TITLE.test(al.title || '') && !SKIP_TITLE.test(hit.t || '') && hit.a.length >= 2 && hit.a.length <= 6;
     if (!ok) { if (al.byline) { delete al.byline; cleared++; } return; }
     al.byline = hit.a.map(([aid, name]) => {
-      const our = byAid.get(aid); const sp = split(name);
+      const sp = split(name);
+      const our = byAid.get(aid) || byName(name);
       const o = { n: our ? our.ko : sp.ko, aid };
       const en = our ? our.en : sp.en; if (en) o.en = en;
       if (our && our.gko) o.gko = our.gko;

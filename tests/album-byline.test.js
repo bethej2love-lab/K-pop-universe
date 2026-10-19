@@ -27,5 +27,21 @@ const legacy = albums.filter(([, al]) => al && Array.isArray(al.artists));
 need(legacy.length >= 7, `기존 artists 칸 보존(${legacy.length}곳 ≥ 7)`);
 const tt = albums.filter(([o, al]) => al && al.melonAlbumId === '14613791');
 need(tt.length >= 2 && tt.every(([, al]) => (al.byline || []).map(x => x.n).join(', ') === '온유, 지코'), "Tic Tac Toe = '온유, 지코'(멜론 순서) 양쪽 디스코 모두");
+// 이름으로 잇기는 소속 그룹이 확인될 때만 — 동명이인 오연결 사례(2026-10-19 표본)
+const cache = JSON.parse(fs.readFileSync(path.join(ROOT, 'melon_album_artists.json'), 'utf8'));
+const rawOf = (al, aid) => ((cache[al.melonAlbumId] || {}).a || []).find(r => r[0] === aid)?.[1] || '';
+const wrong = [];
+for (const [, al] of withB) for (const x of al.byline) {
+  const raw = rawOf(al, x.aid);
+  if (/^MJ \(써니사이드\)|^여름 \(헬로비너스\)|^INI$|^민서 \(MINSEO\)|^정승환$/.test(raw) && (x.ako || x.gko)) wrong.push(raw + '→' + x.ako);
+}
+need(!wrong.length, '동명이인을 우리 아티스트로 잇지 않음(MJ·여름·INI·민서·정승환)', wrong.slice(0, 5).join(', '));
+// 외부 아티스트 모음(collab_ext.json) — 2장 이상·우리 쪽 사람 아님
+const extPath = path.join(ROOT, 'collab_ext.json');
+if (fs.existsSync(extPath)) {
+  const ext = JSON.parse(fs.readFileSync(extPath, 'utf8'));
+  const badExt = Object.entries(ext).filter(([, e]) => !e.w || e.w.length < 2 || e.w.some(w => !w.o || !w.o.length));
+  need(!badExt.length, `collab_ext — ${Object.keys(ext).length}명 모두 2장 이상·주인 있음`, badExt.slice(0, 3).map(([k, e]) => e.n).join(', '));
+}
 console.log(fail ? `💥 공동 앨범 표기 테스트 실패 ${fail}건` : `✅ 공동 앨범 표기 테스트 통과 ${pass}건`);
 process.exit(fail ? 1 : 0);

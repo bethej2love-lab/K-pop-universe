@@ -307,6 +307,34 @@ const RECENT_ALBUMS = 400;
   emit(path.join(ROOT, 'albums_recent.json'), JSON.stringify(out));
   console.log(`albums_recent.json  ${out.length}장 (최신 ${out[0] ? out[0].d : '-'} ~ ${out[out.length - 1] ? out[out.length - 1].d : '-'})`);
 }
+// ── collab_ext.json — 유니버스 밖 아티스트와의 공동 앨범 모음 (2026-10-19) ─────────────────────────────
+// 앨범 byline(멜론 아티스트 표기, tools/melon_album_artists.mjs)에서 우리 쪽에 연결 안 된 사람(ako·gko 없음) 중 **2장 이상**
+// 함께한 사람만 담는다(사용자: "반복되는 아티스트는 그 사람과 작업한 우리 아티스트 작업물이 모여 보이면 좋겠다").
+// 앱은 앨범 상세에서 그 이름을 누를 때만 lazy 로드한다. 한 장뿐인 사람은 이름 텍스트로만 둔다.
+{
+  const ext = new Map(); // aid → {n,en,w:Map(mid→album)}
+  const add = (al, own) => {
+    if (!Array.isArray(al && al.byline) || al.byline.length < 2) return;
+    const key = al.melonAlbumId || (al.releaseDate + '|' + al.title);
+    for (const x of al.byline) {
+      if (!x || x.ako || x.gko || !x.aid) continue;
+      let e = ext.get(x.aid); if (!e) ext.set(x.aid, e = { n: x.n, en: x.en || '', w: new Map() });
+      let w = e.w.get(key);
+      if (!w) e.w.set(key, w = { t: al.title, c: al.cover || '', d: al.releaseDate || '', y: al.type || '', m: al.melonAlbumId || '', b: al.byline.map(z => z.n), o: [] });
+      if (!w.o.some(z => z.k === own.k && z.o === own.o)) w.o.push(own);
+    }
+  };
+  for (const [gko, g] of Object.entries(groups)) (g.discography || []).forEach(al => add(al, { k: 'g', o: gko }));
+  for (const a of artists) {
+    const nm = a.name && a.name.ko; if (!nm) continue;
+    const own = { k: 'm', o: nm, g: a.group && a.group.ko || null }; if (a.id) own.i = a.id;
+    (a.discography || []).forEach(al => add(al, own));
+  }
+  const out = {};
+  for (const [aid, e] of ext) if (e.w.size >= 2) out[aid] = { n: e.n, en: e.en, w: [...e.w.values()].sort((p, q) => String(q.d).localeCompare(String(p.d))) };
+  emit(path.join(ROOT, 'collab_ext.json'), JSON.stringify(out));
+  console.log(`collab_ext.json  외부 아티스트 ${Object.keys(out).length}명(2장 이상)`);
+}
 // 원본에서 사라진 그룹·솔로의 disco 파일이 남아 있으면(고아) 실제 빌드는 rm으로 지우지만 --check는
 // 못 지운다 — 그래서 여기서 직접 훑어 어긋남으로 보고한다. 이게 없으면 "그룹 이름이 바뀐 날"
 // 옛 파일이 계속 서빙되는 걸 CI가 못 잡는다.

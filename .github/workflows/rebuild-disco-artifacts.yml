@@ -53,7 +53,7 @@ jobs:
             #    이 목록에 없어서, 재빌드가 돌아도 이 파일만 영영 커밋되지 않았다. disco-artifacts
             #    테스트가 "albums_recent.json (내용 다름)"으로 **구조적으로 절대 안 풀리는** 빨간불을
             #    내고 있던 원인. 빌더에 새 산출물을 추가하면 여기도 같이 고칠 것.
-            git add groups.slim.json artists.slim.json tracks_index.json albums_recent.json disco/
+            git add groups.slim.json artists.slim.json tracks_index.json albums_recent.json collab_ext.json disco/
             if git diff --cached --quiet; then
               echo "변경된 파생물 없음"
               exit 0
