@@ -21017,6 +21017,7 @@ function _openFeedOverlay(){
     document.getElementById('feed-tab-rec').addEventListener('click',()=>_feedSwitchTab('rec'));
     document.getElementById('feed-tab-disc').addEventListener('click',()=>_feedSwitchTab('disc'));
     _wireFeedSwipeDismiss(el,document.getElementById('feed-body'));
+    _wireFeedTabSwipe(document.getElementById('feed-body'));
     // 카드 시트와 **같은** 스크롤 자동숨김을 재사용한다(2026-09-18). 새로 구현하지 않는 이유: 이 함수엔
     // iOS 고무줄 구간 방향 반전, 탭바가 숨을 때 브라우저가 스크롤을 당기는 양 상쇄(clampShift),
     // 방향 전환 시 누적 리셋, 최상단 40px 안전망 — 네 번의 버그 수정이 이미 녹아 있다.
@@ -21073,6 +21074,29 @@ function _slideDownCloseFeed(){
     _closeFeedOverlay(true); // 아래로 스와이프해 닫기 = "돌아가기"(피크 자동해제는 카드가 없어 no-op)
     el.style.transition='';el.style.transform='';
   },220);
+}
+// 모바일 나침반 안의 최상위 2탭은, 탭 버튼을 정확히 누르지 않아도 좌우로 넘길 수 있다.
+// 가로 선반은 원래 자기 안에서 스크롤돼야 하고, 세로 움직임은 본문 스크롤/아래로 닫기에 양보한다.
+function _wireFeedTabSwipe(body){
+  let startX=0,startY=0,tracking=false;
+  body.addEventListener('touchstart',e=>{
+    if(!isMob()||e.touches.length!==1||e.target.closest?.('.hscroll-drag,input,textarea,select,[contenteditable="true"]')){
+      tracking=false;return;
+    }
+    startX=e.touches[0].clientX;startY=e.touches[0].clientY;tracking=true;
+  },{passive:true});
+  body.addEventListener('touchend',e=>{
+    if(!tracking)return;
+    tracking=false;
+    const touch=e.changedTouches[0];if(!touch)return;
+    const dx=touch.clientX-startX,dy=touch.clientY-startY;
+    // 짧은 손떨림·대각/세로 스와이프는 탭 전환으로 오해하지 않는다.
+    if(Math.abs(dx)<56||Math.abs(dx)<=Math.abs(dy)*1.25)return;
+    const isRec=document.getElementById('feed-tab-rec').classList.contains('active');
+    if(dx<0&&isRec)_feedSwitchTab('disc');       // For You → 발견: 손가락을 왼쪽으로
+    else if(dx>0&&!isRec)_feedSwitchTab('rec');  // 발견 → For You: 손가락을 오른쪽으로
+  },{passive:true});
+  body.addEventListener('touchcancel',()=>{tracking=false;},{passive:true});
 }
 // 모바일: 카드(mob-sheet 등)처럼 콘텐츠 맨 위에서 아래로 쭉 내리면 어디서 시작했든 닫힘(2026-08-12,
 // 사용자 요청 — "카드처럼 어느 위치에서든 위→아래로 내리면 꺼지면 좋겠다"). peek(50%)든 전체 펼침이든
