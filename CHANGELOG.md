@@ -89,9 +89,9 @@
 - [이슈] 루틴 10단계 곡 연결 전량이 덜 돈 듯 — 아이브 영상 2,878개 중 480개가 DB song_keys 없이 이 도구 계산으로만 연결됨(표본 15개 전부 정상 무대·직캠). 커서(kpu_song_pass) 확인 필요
 - [이슈] 아이브 'BANG BANG'·'BLACKHOLE' **뮤비 본편이 DB에 없음**(리액션·비하인드만 수집됨) — 연결 문제가 아니라 수집 사각지대. 미조사
 
-- [진행중] **인스타 공식 계정 수집(Business Discovery)** — 메타 앱 K-POP UNIVERSE(개발 모드, 게시 불필요)·우리 IG 비즈니스 계정 17841420475472395(페이지 Kpop-universe.kr). 필수 권한: instagram_basic·**instagram_manage_insights**·pages_read_engagement·pages_show_list·**ads_read**(비즈니스 포트폴리오 페이지) — 하나라도 빠지면 (#10). 토큰은 Secret `META_IG_TOKEN`(60일짜리, **2026-12 중순 만료 → 액세스 토큰 디버거 "연장"으로 재발급**, 만료 시 ig-stats.yml 빨간불). `tools/ig_business_discovery.mjs` + `ig-stats.yml`(2시간마다 180개, 하루 한 바퀴) → DB `ig_accounts`·`ig_follower_daily`(`sql/2026-10-19_ig_stats.sql` 사용자 실행 필요). 화면 노출 방식은 사용자와 결정 대기 [tools/][sql/][.github/workflows/ig-stats.yml]
+- [완료·운영중] **인스타 공식 계정 수집(Business Discovery)** — 메타 앱 K-POP UNIVERSE(개발 모드, 게시 불필요)·우리 IG 비즈니스 계정 17841420475472395(페이지 Kpop-universe.kr). 필수 권한: instagram_basic·**instagram_manage_insights**·pages_read_engagement·pages_show_list·**ads_read**(비즈니스 포트폴리오 페이지) — 하나라도 빠지면 (#10). 토큰은 Secret `META_IG_TOKEN`(60일짜리, **2026-12 중순 만료 → 액세스 토큰 디버거 "연장"으로 재발급**, 만료 시 ig-stats.yml 빨간불). `tools/ig_business_discovery.mjs` + `ig-stats.yml`(2시간마다 180개, 하루 한 바퀴) → DB `ig_accounts`·`ig_follower_daily`(`sql/2026-10-19_ig_stats.sql` 사용자 실행 완료 10-19). 첫 실행 2번은 PGRST102(칸 구성 다른 줄 일괄 저장)로 실패 → 칸 구성별 분리 저장으로 수정. 화면은 아래 항목들 [tools/][sql/][.github/workflows/ig-stats.yml]
 
-- [완료·SQL 대기] 인스타 화면 반영 — ①프로필 사진: **공식 인스타가 먼저**(사용자: 프로필 바꾸면 따라가야), 등록 사진(artist_pics)은 인스타 없음·못 받음·주소 만료(onerror) 때 대체, 직캠 썸네일은 그다음. 검색·기념일 아바타(_fetchInstaPicUrl)도 같은 순서 ②인스타 아이콘 옆 팔로워 수(작게) ③카드 디스코 아래 "Instagram" 줄 — 최근 게시물 6개 썸네일→원본 게시물(이미지 저장 안 함). 수집 도구가 media(jsonb)도 받음 — SQL에 칸 추가됨. ⚠️ SQL 실행 전엔 ig_accounts 404가 콘솔에 1건(화면 영향 없음, 스모크는 실패로 셈) [index.html][kpop_universe.css][tools/ig_business_discovery.mjs][sql/]
+- [완료] 인스타 화면 반영 — ①프로필 사진: **공식 인스타가 먼저**(사용자: 프로필 바꾸면 따라가야), 등록 사진(artist_pics)은 인스타 없음·못 받음·주소 만료(onerror) 때 대체, 직캠 썸네일은 그다음. 검색·기념일 아바타(_fetchInstaPicUrl)도 같은 순서 ②인스타 아이콘 옆 팔로워 수(작게) ③카드 디스코 아래 "Instagram" 줄 — 최근 게시물 6개 썸네일→원본 게시물(이미지 저장 안 함). 수집 도구가 media(jsonb)도 받음 — SQL에 칸 추가됨. ⚠️ SQL 실행 전엔 ig_accounts 404가 콘솔에 1건(화면 영향 없음, 스모크는 실패로 셈) [index.html][kpop_universe.css][tools/ig_business_discovery.mjs][sql/]
 
 - [완료] 인스타 2차 — ①탐험 패널: For You "즐겨찾기 인스타"(최근 2주)·Discover "Instagram"(팔로워 상위 60계정 최근 3일), **사진·여러 장만**(영상은 유튜브에서 모음, 사용자 결정) ②인스타 칸은 **4:5 세로**(인스타 표준, 정사각보다 덜 잘림) ③여러 장 게시물: 수집 도구가 children(안 사진 최대 10)도 받음(거부되면 그 회차는 없이) → 카드에서 앨범 묶음처럼 겹친 뒤 누르면 펼침, 탐험 패널은 ❐ 장수 배지 ④카드 정사각 썸네일(디스코·인스타·컬렉션) 크기 통일 `--card-thumb` 웹 111px·모바일 98px(탐험 패널 이번 주 발매 커버 실측과 같게, 예전 80~84px) — 디스코 활동기 묶음 폭도 변수 따라가게(커지면서 옆 커버를 덮던 것) [index.html][kpop_universe.css][tools/ig_business_discovery.mjs]
 
@@ -105,12 +105,18 @@
 - [완료] **동명이인 카드에 남의 영상이 섞이던 것**(사용자: "심각한 오류") — 멤버 카드 목록이 group_ko=이름(솔로 영상)을 **무조건** 끌어와서 나인뮤지스 현아 카드에 포미닛 현아 직캠, 하이파이유니콘 태민 카드에 샤이니 태민 솔로 등이 섞였다(대표 영상만 "이름 유일할 때" 가드가 있었음). ①`tools/name_key_owner.mjs`: 동명이인 177개 중 이름 키 영상이 있는 52개를 영상 제목 단서(그 후보에게만 있는 그룹명·곡명·영문명)로 판정 → 확실한 16개만 artists.json `nameKeyOwner:true`(태민→샤이니, 현아→포미닛, 유주→여자친구 등; BIBI처럼 영문 이름 하나뿐인 건 안 줌) ②shared.js `_nameKeyOk`: 이름 유일 or 주인만 이름 키, `_ytGroupKoFor`는 비주인 동명이인 솔로에 `이름#id`(DB에 없는 고유 키 — 아바타·대표 영상·컬렉션·앨범 영상·채널 동기화 키까지 자동으로 분리) ③index.html `_soloKeyUsable(이름, 카드 그룹)`으로 사람을 정해 그 키만 — 카드 목록·Only·대표 영상·아바타·표면 조회 전부. 헤드리스 확인: 나인뮤지스 현아·하이파이유니콘 태민·체리블렛 유주 카드에 남의 곡 0, 주인 카드는 그대로. tests/only-solo-key.test.js 갱신 [shared.js][index.html][artists.json][tools/name_key_owner.mjs]
 - [이슈] 주인 못 정한 동명이인 이름 키 영상(예: 소희 16·수안 35·예지 14·제이 59 등 36개 이름)은 **아무 카드에도 안 뜬다**(섞이는 것보다 빠지는 쪽). 손으로 주인을 정하려면 artists.json 해당 사람에 nameKeyOwner:true, 다시 판정은 `NODE_TLS_REJECT_UNAUTHORIZED=0 node tools/name_key_owner.mjs`(목록) → `--apply`(⚠️ 손으로 넣은 값도 다시 계산해 덮어씀)
 
-### ⏳ 덜 된 일 (10-19 Claude Code 세션 마감 시점)
+- [완료] 공유 썸네일 **가로 영상 우선** — build_og_thumbs가 쇼츠(세로)를 거르지 않아 A2O LITE가 세로 쇼츠('NEON' 릴댄 킬링파트)였다(사용자 제보). 후보 고를 때 모든 조건을 "쇼츠 아님"과 먼저 시도·better()도 가로 우선, 기존 캐시의 쇼츠는 --keep-existing이어도 다시 뽑음(가로가 없으면 다시 쇼츠). 이번 실행: 260개 교체, A2O LITE → '[릴레이댄스] NEON (4K)' 가로. 페이지는 og_thumbs.json push로 rebuild-seo-pages가 다시 만든다(⚠️ 로컬에서 build_group_pages.js를 NODE_TLS 없이 돌리면 DB 의존 내용이 덜 채워진 채 수천 파일이 바뀐다 — 커밋하지 말 것) [tools/build_og_thumbs.mjs][og_thumbs.json]
+
+### ⏳ 덜 된 일 (10-19 Claude Code 세션 마감 시점 — 사용자 사용량 한도로 여기서 종료)
 - [사용자 결정·미착수] **방송 음원도 공동 앨범으로 수집** — 쇼미더머니뿐 아니라 **복면가왕·불후의 명곡 등 방송·경연 음원도 합작으로 본다**(사용자 10-19). 지금은 `tools/melon_album_artists.mjs` 반영 단계의 `SKIP_TITLE` 정규식이 `복면가왕|불후의|가요제|경연|프로듀서 -|로드 투 킹덤|\d+회`를 빼고 있음 → 이 부분을 지우고, 같은 줄 `ok` 조건의 `!al.program && !al.contest`(프로그램·경연 앨범 표식)도 뺄지 판단할 것. 유지할 제외: 피처링(feat/ft.)·리믹스·OST·유닛 앨범. 순서: 정규식 수정 → `node tools/melon_album_artists.mjs --apply`(수집 캐시 `melon_album_artists.json` 그대로 씀, 재수집 불필요) → `git diff artists.json groups.json | grep "^-"`로 지워진 줄 없는지 확인 → `node tools/build_slim_data.mjs` → `node tests/album-byline.test.js`(복면가왕 제외를 전제한 검사는 없음). 표기는 지금처럼 멜론 순서·쉼표
 - [확인 대기·실기기] 모바일 탐험 패널 끌어 닫기 — 튕김 기준(24px↑ & 0.6px/ms↑) 손맛. 너무 쉽게/둔하게 닫히면 `_wireFeedSwipeDismiss`의 그 두 숫자만 조정
 - [확인 대기·실기기] 어드민 창 배치(설정→영상 관리 등) 맥북·폰 실사용 확인 — 헤드리스 전수 측정은 통과
 - [확인 대기] `album-videos.yml` 첫 자동 실행(매일 KST 04:37 신규분, 월요일 전량) 초록불·`album_videos/_meta.json` 시각 갱신 확인
 - 위 [이슈] 2건(루틴 10단계 곡 연결 전량 미완·아이브 뮤비 본편 미수집)은 미조사
+- [확인 대기] **인스타 수집 첫 바퀴** — ig-stats.yml 2시간마다 180개, 하루면 1,500개 한 바퀴. 확인: DB ig_accounts 행 수·status 분포, 여러 장 게시물에 c(안 사진)·본문 cap이 들어오는지(메타가 children 필드를 거부하면 로그에 "children 필드 거부"). 카드 프로필 사진·팔로워·Instagram 줄·사진 뷰어·탐험 패널 인스타 선반은 데이터가 차는 대로 보인다(현재 코르티스만)
+- [확인 대기·실기기] 인스타 뷰어·카드 썸네일 크기(웹 111/모바일 98px)·여러 장 묶음 펼치기를 폰에서 — 헤드리스로만 확인
+- [만료 주의] META_IG_TOKEN 60일 — 2026-12 중순. 액세스 토큰 디버거 → 연장 → Secrets 교체. 필요하면 비즈니스 관리자 시스템 사용자 토큰(만료 없음)으로 바꾸기
+- [보류·아이디어] 인스타 팔로워 돌파 소식(This Week), 팔로워 성장 그림 — ig_follower_daily가 몇 주 쌓인 뒤
 - [다음] **빈 인스타 링크 정리** — 첫 수집 한 바퀴(하루) 뒤 `NODE_TLS_REJECT_UNAUTHORIZED=0 node tools/ig_prune_empty.mjs`로 게시물 0개 계정 목록 확인 → 사용자 확인 후 `--apply`(links.instagram 삭제, 사용자 결정: 연습생 때 계정 등은 지운다). 조회 불가(개인 계정 등)는 판단 보류 목록만
 
 ## 2026-10-16 (세션 — 카드 2개+재생모드 레이아웃)

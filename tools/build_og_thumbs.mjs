@@ -34,6 +34,7 @@ const rank = v => (CAT_RANK[v.category] ?? 5);
 function better(a, b) {
   if (!a) return b;
   if (!b) return a;
+  if (!!a.is_short !== !!b.is_short) return a.is_short ? b : a; // 가로 영상 우선(2026-10-19)
   if (rank(a) !== rank(b)) return rank(a) < rank(b) ? a : b;
   const av = a.view_count || 0, bv = b.view_count || 0;
   if (av !== bv) return av > bv ? a : b;
@@ -66,8 +67,10 @@ for (const a of artists) { const g = a.group && a.group.ko; if (g) memberCountOf
 // 첫 조건으로 걸러 남는 게 있으면 그걸 쓰고, 다 걸러져 비면 다음(더 느슨한) 조건으로 내려간다.
 // ⚠️ 필터를 하드 조건으로 걸면 후보가 적은 그룹·멤버가 통째로 썸네일을 잃는다. 품질은 올리되
 //    "없느니만 못한" 상태로는 절대 안 가게, 마지막엔 항상 원래 풀로 떨어진다.
+// 가로 영상 우선(2026-10-19) — 공유 미리보기 틀이 가로라 세로 쇼츠는 잘리고 흐리다. 모든 조건을 먼저 "쇼츠 아님"과 함께 시도하고, 안 되면 쇼츠 포함으로.
 function randomEligible(cands, fallbackRow, filters) {
-  for (const f of [...(filters || []), null]) {
+  const fs0 = [...(filters || []), null];
+  for (const f of [...fs0.map(g => (v => !v.is_short && (!g || g(v)))), ...fs0]) {
     const pool = f ? (cands || []).filter(f) : (cands || []);
     if (pool.length) {
       const top = pool.slice().sort((a, b) => (b.view_count || 0) - (a.view_count || 0)).slice(0, TOPN);
@@ -124,7 +127,7 @@ console.log(`[og-thumbs] 그룹 ${gkos.length}개 + 솔로 ${soloKeys.length}명
 let done = 0;
 for (const { key: gko, solo } of queryKeys) {
   const q = new URLSearchParams({
-    select: 'id,title,category,members,view_count,published_at,content_flag,cover_of_members,cover_of_groups,with_members,with_groups',
+    select: 'id,title,category,members,view_count,published_at,content_flag,cover_of_members,cover_of_groups,with_members,with_groups,is_short',
     group_ko: 'eq.' + gko,
     order: 'published_at.desc',
     limit: String(PER_GROUP),
@@ -185,7 +188,7 @@ if (prevForAudit) {
   for (let i = 0; i < ids.length; i += 100) {
     const batch = ids.slice(i, i + 100);
     let rows = [];
-    try { rows = await fetchJson(SB + '?' + new URLSearchParams({ select: 'id,title,cover_of_members,cover_of_groups,with_members,with_groups,members,group_ko', id: 'in.(' + batch.join(',') + ')', limit: '200' })); }
+    try { rows = await fetchJson(SB + '?' + new URLSearchParams({ select: 'id,title,cover_of_members,cover_of_groups,with_members,with_groups,members,group_ko,is_short', id: 'in.(' + batch.join(',') + ')', limit: '200' })); }
     catch (e) { console.warn(`  ! 캐시 검증 배치 실패: ${e.message}`); continue; }
     for (const v of rows) {
       // 커버뿐 아니라 **대표성 규칙 위반**도 오염으로 본다(2026-09-15). 규칙을 새로 넣었는데
@@ -194,7 +197,8 @@ if (prevForAudit) {
       const usedAsGroup = (idToKeys.get(v.id) || []).some(k => k.startsWith('groups|'));
       const gko = usedAsGroup ? (idToKeys.get(v.id).find(k => k.startsWith('groups|')) || '').split('|')[1] : null;
       const violates = usedAsGroup && badForGroup(v, memberCountOf[gko] || 0);
-      if (!isCoverish(v) && !violates) continue;
+      // 쇼츠(세로)도 다시 뽑는다(2026-10-19, 사용자: "공유 썸네일은 가로 영상 위주" — A2O LITE가 세로 쇼츠였다). 가로가 없으면 다시 쇼츠가 뽑힐 뿐
+      if (!isCoverish(v) && !violates && !v.is_short) continue;
       dirtyIds.add(v.id);
       for (const key of (idToKeys.get(v.id) || [])) {
         const name = key.startsWith('members|') ? key.split('|').pop() : null; // "members|소녀시대|태연" → 태연
@@ -207,7 +211,7 @@ if (prevForAudit) {
   let rq = 0;
   for (const name of reQuery) {
     const q = new URLSearchParams({
-      select: 'id,title,category,members,view_count,published_at,content_flag,cover_of_members,cover_of_groups,with_members,with_groups',
+      select: 'id,title,category,members,view_count,published_at,content_flag,cover_of_members,cover_of_groups,with_members,with_groups,is_short',
       group_ko: 'eq.' + name, order: 'published_at.desc', limit: String(PER_GROUP),
     });
     let rows = [];
@@ -262,7 +266,7 @@ if (misses.length) {
   for (const a of misses) {
     const key = a.group.ko + '|' + a.name.ko;
     const q = new URLSearchParams({
-      select: 'id,title,category,members,view_count,published_at,content_flag,cover_of_members,cover_of_groups,with_members,with_groups',
+      select: 'id,title,category,members,view_count,published_at,content_flag,cover_of_members,cover_of_groups,with_members,with_groups,is_short',
       members: `cs.{"${a.name.ko}"}`,
       order: 'view_count.desc.nullslast',   // 창을 안 쓰므로 처음부터 대표성 높은 순서로 받는다
       limit: '40',
