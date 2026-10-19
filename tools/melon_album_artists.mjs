@@ -8,7 +8,7 @@
 // 1단계(수집, 기본): melon_artist_map.json의 아티스트 번호마다 멜론 앨범 목록(albumPaging)을 훑어 **아티스트가 2명 이상인 앨범**만
 //   melon_album_artists.json { albumId: {t:제목, a:[[aid,멜론표기],…]} }에 모은다. 중간 저장·재개(_done 목록).
 // 2단계(--apply): 우리 디스코(groups.json·artists.json)에서 melonAlbumId가 그 목록에 있는 앨범에 byline:[{n,en,aid,ako?,ag?,gko?}]를 박는다.
-//   제외: 피처링·OST·옴니버스/컴필레이션·프로그램/경연 음원(여러 명이 참여한 모음이지 공동 앨범이 아님), 유닛 앨범(유닛명이 따로 있음).
+//   방송·경연 음원도 포함(사용자 2026-10-19 결정). 제외: 피처링·OST·옴니버스/컴필레이션·유닛 앨범.
 //   원본 들여쓰기는 파일에서 읽어 보존한다([[JSON 저장 시 원본 들여쓰기 보존]]).
 //
 // ⚠️ 칸 이름이 artists가 아닌 이유: SM 프로젝트 앨범 등 7곳에 이미 `artists`(참여자 문자열 목록)가 있었다 — 처음에 그 이름으로 반영했다가
@@ -100,8 +100,8 @@ if (!process.argv.includes('--apply')) {
   const SKIP_TYPE = /OST|옴니버스|컴필레이션|compilation|various/i;
   // 제목으로 거르는 것(2026-10-19 표본 검수) — 멜론은 피처링 가수·리믹서·방송 출연자까지 앨범 아티스트로 올린다.
   //   피처링('3D (feat. Jack Harlow)')은 합작이 아니고(사용자: feat와 공동 앨범은 다르다), 리믹스는 리믹서가 붙은 것뿐이며,
-  //   방송 음원(복면가왕·개가수·OST가 '싱글'로 들어온 것)은 출연 기록이지 공동 앨범이 아니다.
-  const SKIP_TITLE = /feat\.?|\bft\.|remix|\bOST\b|O\.S\.T|복면가왕|불후의|가요제|경연|프로듀서 -|로드 투 킹덤|\d+회\b/i;
+  //   방송·경연이라는 이유만으로 제외하지 않는다. 방송 음원도 멜론의 공동 참여자 표기를 사용한다.
+  const SKIP_TITLE = /feat\.?|\bft\.|remix|\bOST\b|O\.S\.T/i;
   // 멜론 번호 연결표에 없는 사람은 이름으로 한 번 더(2026-10-19) — 방예담(→디모렉스, matchAliases)처럼 우리 유니버스에 있는데
   // 외부 아티스트로 잡히던 것. **딱 한 명(한 그룹)과만 맞을 때만** 잇는다(동명이인이면 텍스트로 둔다).
   const norm = s => String(s || '').toLowerCase().replace(/[^a-z0-9가-힣]/g, '');
@@ -129,7 +129,7 @@ if (!process.argv.includes('--apply')) {
   const visit = (al, unit) => {
     if (!al || !al.melonAlbumId) return;
     const hit = store[al.melonAlbumId];
-    const ok = hit && !unit && !al.feat && !al.unit && !al.program && !al.contest && !SKIP_TYPE.test(al.type || '') && !SKIP_TITLE.test(al.title || '') && !SKIP_TITLE.test(hit.t || '') && hit.a.length >= 2 && hit.a.length <= 6;
+    const ok = hit && !unit && !al.feat && !al.unit && !SKIP_TYPE.test(al.type || '') && !SKIP_TITLE.test(al.title || '') && !SKIP_TITLE.test(hit.t || '') && hit.a.length >= 2 && hit.a.length <= 6;
     if (!ok) { if (al.byline) { delete al.byline; cleared++; } return; }
     al.byline = hit.a.map(([aid, name]) => {
       const sp = split(name);

@@ -29,6 +29,14 @@ const tt = albums.filter(([o, al]) => al && al.melonAlbumId === '14613791');
 need(tt.length >= 2 && tt.every(([, al]) => (al.byline || []).map(x => x.n).join(', ') === '온유, 지코'), "Tic Tac Toe = '온유, 지코'(멜론 순서) 양쪽 디스코 모두");
 // 이름으로 잇기는 소속 그룹이 확인될 때만 — 동명이인 오연결 사례(2026-10-19 표본)
 const cache = JSON.parse(fs.readFileSync(path.join(ROOT, 'melon_album_artists.json'), 'utf8'));
+// 방송 제목과 program/contest 표식 양쪽 경로를 실제 데이터로 고정한다.
+for (const [id, title] of [['10040059', '복면가왕 99회'], ['11606969', '로드 투 킹덤 공동 음원']]) {
+  const matches = albums.filter(([, al]) => al && al.melonAlbumId === id);
+  const expected = (cache[id]?.a || []).map(([aid]) => aid);
+  need(matches.length > 0 && expected.length >= 2 && matches.every(([, al]) =>
+    JSON.stringify((al.byline || []).map(x => x.aid)) === JSON.stringify(expected)),
+    title + ' 공동 참여자 포함·멜론 순서 보존');
+}
 const rawOf = (al, aid) => ((cache[al.melonAlbumId] || {}).a || []).find(r => r[0] === aid)?.[1] || '';
 const wrong = [];
 for (const [, al] of withB) for (const x of al.byline) {

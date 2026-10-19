@@ -63,7 +63,7 @@
 ---
 
 ## 2026-10-19 (Codex — 방송·경연 음원 공동 참여자 표시)
-- [진행중] [tools/melon_album_artists.mjs][artists.json][groups.json][disco/][tests/album-byline.test.js] 이전 사용자 결정에 따라 방송·경연 음원도 멜론 공동 아티스트 표기 대상에 포함. 프로그램·경연 플래그와 제목 기반 제외를 해제하되 피처링·리믹스·OST·유닛 제외는 유지하고, 기존 데이터 삭제 없는지 확인 후 slim/disco 파생물을 재생성한다.
+- [완료] [tools/melon_album_artists.mjs][artists.json][groups.json][disco/][collab_ext.json][tests/album-byline.test.js] 방송·경연 음원 공동 참여자 표시: 제목 및 program/contest 제외를 해제해 543→555곳(복면가왕 5곳·가요제/프로듀서 2곳·로드 투 킹덤 5곳). 피처링·리믹스·OST·유닛·컴필레이션 제외와 2~6인 기준은 유지. byline 이외 원본 데이터 완전 동일 확인, slim/disco 재생성(43,687곡 보존), byline 회귀 9건·문법·데이터 검증(0 error/142 warn)·실제 Chrome PC/390px 신규 모바일 스모크 모두 통과. Windows Chrome 실행은 sandbox 밖 실행으로 해결됐으며 실행 파일은 KPU_BROWSER_PATH로 지정.
 
 ## 2026-10-19 (Codex — 제품 우선순위·아이디어 협업 합의)
 - [완료] [AGENTS.md][docs/product-backlog-2026-10-19.md] 사용자 작업 방식과 우선순위 기록: 콘텐츠 충실도와 기존 기능(특히 멤버 조합 찾기) 고도화가 우선이며 다양한 공유를 확장할 방향. 홍보·공모전은 후속 보류 과제. 구체적인 작업 지시가 없어도 아이디어를 함께 구체화하되 구현 범위를 일방적으로 확정하지 않는다.
@@ -111,7 +111,7 @@
 - [완료] 공유 썸네일 **가로 영상 우선** — build_og_thumbs가 쇼츠(세로)를 거르지 않아 A2O LITE가 세로 쇼츠('NEON' 릴댄 킬링파트)였다(사용자 제보). 후보 고를 때 모든 조건을 "쇼츠 아님"과 먼저 시도·better()도 가로 우선, 기존 캐시의 쇼츠는 --keep-existing이어도 다시 뽑음(가로가 없으면 다시 쇼츠). 이번 실행: 260개 교체, A2O LITE → '[릴레이댄스] NEON (4K)' 가로. 페이지는 og_thumbs.json push로 rebuild-seo-pages가 다시 만든다(⚠️ 로컬에서 build_group_pages.js를 NODE_TLS 없이 돌리면 DB 의존 내용이 덜 채워진 채 수천 파일이 바뀐다 — 커밋하지 말 것) [tools/build_og_thumbs.mjs][og_thumbs.json]
 
 ### ⏳ 덜 된 일 (10-19 Claude Code 세션 마감 시점 — 사용자 사용량 한도로 여기서 종료)
-- [사용자 결정·미착수] **방송 음원도 공동 앨범으로 수집** — 쇼미더머니뿐 아니라 **복면가왕·불후의 명곡 등 방송·경연 음원도 합작으로 본다**(사용자 10-19). 지금은 `tools/melon_album_artists.mjs` 반영 단계의 `SKIP_TITLE` 정규식이 `복면가왕|불후의|가요제|경연|프로듀서 -|로드 투 킹덤|\d+회`를 빼고 있음 → 이 부분을 지우고, 같은 줄 `ok` 조건의 `!al.program && !al.contest`(프로그램·경연 앨범 표식)도 뺄지 판단할 것. 유지할 제외: 피처링(feat/ft.)·리믹스·OST·유닛 앨범. 순서: 정규식 수정 → `node tools/melon_album_artists.mjs --apply`(수집 캐시 `melon_album_artists.json` 그대로 씀, 재수집 불필요) → `git diff artists.json groups.json | grep "^-"`로 지워진 줄 없는지 확인 → `node tools/build_slim_data.mjs` → `node tests/album-byline.test.js`(복면가왕 제외를 전제한 검사는 없음). 표기는 지금처럼 멜론 순서·쉼표
+- [완료·Codex 10-19] **방송 음원도 공동 앨범으로 수집** — 위 Codex ‘방송·경연 음원 공동 참여자 표시’ 항목 참고. 기존 멜론 수집 캐시에서 12곳 추가 반영. 이후 신규 방송 음원도 같은 규칙 적용.
 - [확인 대기·실기기] 모바일 탐험 패널 끌어 닫기 — 튕김 기준(24px↑ & 0.6px/ms↑) 손맛. 너무 쉽게/둔하게 닫히면 `_wireFeedSwipeDismiss`의 그 두 숫자만 조정
 - [확인 대기·실기기] 어드민 창 배치(설정→영상 관리 등) 맥북·폰 실사용 확인 — 헤드리스 전수 측정은 통과
 - [확인 대기] `album-videos.yml` 첫 자동 실행(매일 KST 04:37 신규분, 월요일 전량) 초록불·`album_videos/_meta.json` 시각 갱신 확인

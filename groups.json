@@ -114044,7 +114044,20 @@
     ],
     "src": "melon",
     "melonAlbumId": "11606969",
-    "spotifyId": "4NjuSZlh8yEPmUG7fWAsn9"
+    "spotifyId": "4NjuSZlh8yEPmUG7fWAsn9",
+    "byline": [
+     {
+      "n": "원어스",
+      "aid": "2298864",
+      "en": "ONEUS",
+      "gko": "원어스"
+     },
+     {
+      "n": "더크루원",
+      "aid": "3945320",
+      "en": "The CrewOne"
+     }
+    ]
    },
    {
     "title": "Now (Original by Fin.K.L)",
@@ -224065,7 +224078,21 @@
      }
     ],
     "spotifyId": "6W0s29sQ6fxisO5BGnuP3f",
-    "melonAlbumId": "11602517"
+    "melonAlbumId": "11602517",
+    "byline": [
+     {
+      "n": "티엔엑스",
+      "aid": "3093973",
+      "en": "TNX",
+      "gko": "티엔엑스"
+     },
+     {
+      "n": "템페스트",
+      "aid": "3068107",
+      "en": "TEMPEST",
+      "gko": "템페스트"
+     }
+    ]
    },
    {
     "title": "FUEGO",
@@ -228355,7 +228382,27 @@
      }
     ],
     "src": "melon",
-    "melonAlbumId": "11629804"
+    "melonAlbumId": "11629804",
+    "byline": [
+     {
+      "n": "유나이트",
+      "aid": "3083356",
+      "en": "YOUNITE",
+      "gko": "유나이트"
+     },
+     {
+      "n": "에잇턴",
+      "aid": "3192307",
+      "en": "8TURN",
+      "gko": "에잇턴"
+     },
+     {
+      "n": "원어스",
+      "aid": "2298864",
+      "en": "ONEUS",
+      "gko": "원어스"
+     }
+    ]
    },
    {
     "title": "로드 투 킹덤 : ACE OF ACE 〈IDENTITY〉 Part. 1",
@@ -228938,7 +228985,33 @@
     ],
     "src": "melon",
     "melonAlbumId": "11611292",
-    "spotifyId": "5EYG31iiPr1ooTg8RWHm0F"
+    "spotifyId": "5EYG31iiPr1ooTg8RWHm0F",
+    "byline": [
+     {
+      "n": "에잇턴",
+      "aid": "3192307",
+      "en": "8TURN",
+      "gko": "에잇턴"
+     },
+     {
+      "n": "티엔엑스",
+      "aid": "3093973",
+      "en": "TNX",
+      "gko": "티엔엑스"
+     },
+     {
+      "n": "크래비티",
+      "aid": "2863902",
+      "en": "CRAVITY",
+      "gko": "크래비티"
+     },
+     {
+      "n": "유나이트",
+      "aid": "3083356",
+      "en": "YOUNITE",
+      "gko": "유나이트"
+     }
+    ]
    },
    {
     "title": "RU-PUM PUM (Japanese version)",
