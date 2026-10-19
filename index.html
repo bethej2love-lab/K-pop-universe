@@ -22323,11 +22323,6 @@ function _collectWeekNews(){
             .or('content_flag.is.null,content_flag.not.in.("보류","hidden")')
             .limit(400).then(r=>r,()=>({data:[]}))
     ]);
-    const _winGkos=[...new Set((winsRes.data||[]).map(w=>w.group_ko))].filter(Boolean);
-    // 영상 못 찾은 1위의 대체 썸네일(그룹 인기 무대) — 1위가 있을 때만 한 번 더
-    const winThumbRes=_winGkos.length
-      ? await _applyLiveExclude(sb.from(_YT_TABLE).select('id,title,thumb,group_ko,is_short,view_count').in('group_ko',_winGkos).eq('category','live')).eq('is_short',false).or('content_flag.is.null,content_flag.neq.보류').order('view_count',{ascending:false}).limit(_winGkos.length*20).then(r=>r,()=>({data:[]}))
-      : {data:[]};
     // 음방 이름 → 영상 제목 검색 키워드 (wiki_music_wins.mjs의 db 값 그대로 사용)
     const _WIN_SHOW_KW={'쇼챔피언':['쇼챔','챔피언송','showchampion'],'엠카운트다운':['엠카','mcountdown'],'뮤직뱅크':['뮤직뱅크','musicbank'],'인기가요':['인기가요','inkigayo'],'쇼음악중심':['음악중심','musiccore'],'더쇼':['더쇼','theshow']};
     const _n=s=>String(s||'').toLowerCase().replace(/[^a-z0-9가-힣]/g,'');
@@ -22351,21 +22346,62 @@ function _collectWeekNews(){
       });
       return best;
     };
-    const _winThumbMap=new Map();
-    (winThumbRes.data||[]).forEach(v=>{
-      if(!_winThumbMap.has(v.group_ko))_winThumbMap.set(v.group_ko,v.thumb);
-    });
+    // 1위 무대 영상이 없으면 **그 곡이 실린 앨범 커버**(2026-10-19, 사용자: "영상이 없는데 억지로 잘못된 영상 끌고 오면 안 됨").
+    // 예전엔 "그 그룹 조회수 1위 무대" 썸네일을 대신 붙였는데, 1위 곡과 무관한 영상이었고 솔로 1위(group_ko='솔로')는
+    // 그 키로 아무 영상이나 걸릴 수 있었다(온유·지코 'Tic Tac Toe' — 직캠이 없는 쇼음악중심 1위). 앨범도 못 찾으면 이미지 없이 둔다.
+    // 앨범은 1위한 사람의 디스코에서 곡 기본형(_songBase)이 같은 것 중 1위 날짜에 가장 가까운 이전 발매(활동 중인 판).
+    const _winAlbumFor=async w=>{
+      const base=_songBase(w.song_title||'');if(!base)return null;
+      const owners=[];
+      try{
+        if(GROUPS[w.group_ko]){await _ensureGroupDisco(w.group_ko);owners.push({albums:GROUPS[w.group_ko].discography||[],gko:w.group_ko});}
+        if(w.member_ko){
+          for(const a of ARTISTS.filter(x=>x.name&&x.name.ko===w.member_ko&&(!GROUPS[w.group_ko]||x.group?.ko===w.group_ko))){
+            await _ensureMemberDisco(a);
+            owners.push({albums:[...(a.discography||[]),...(a.unitDiscography||[]).flatMap(x=>(x&&x.albums)||[])],artist:a});
+          }
+        }
+      }catch(e){}
+      const wd=Date.parse(w.win_date);let best=null,bd=Infinity;
+      for(const o of owners)for(const al of o.albums){
+        if(!al||!al.cover)continue;
+        if(!(al.tracks||[]).some(t=>t&&_songBase(t.title)===base)&&_songBase(al.titleTrack||'')!==base)continue;
+        const rd=Date.parse(String(al.releaseDate||'').replace(/\./g,'-'));
+        const d=isNaN(rd)?1e15:rd<=wd+86400000?wd-rd:1e14+(rd-wd); // 1위 이전 발매 우선, 가까울수록
+        if(d<bd){bd=d;best={al,o};}
+      }
+      return best;
+    };
     const items=[];
+    // 같은 날 같은 음방 같은 곡 1위는 한 줄로 — 공동 곡은 사람마다 기록이 따로라(온유·지코) 같은 1위가 두 번 떴다
+    const _winGroups=new Map();
     (winsRes.data||[]).forEach(w=>{
-      // 솔로 1위는 그룹 라벨이 비어 '· 소연 · 쇼음악중심'처럼 가운뎃점으로 시작했다 — 빈 칸은 빼고 잇는다
-      const sub=[_gLabelKo(w.group_ko),w.member_ko,w.show].filter(Boolean).join(' · ')+_agoLabel(w.win_date);
-      const relVid=_winVidFor(w);
-      const thumb=relVid?relVid.thumb:(_winThumbMap.get(w.group_ko)||null);
-      const nav=relVid
-        ?()=>_feedNav(()=>openLightbox(relVid.is_short?`https://youtube.com/shorts/${relVid.id}`:`https://www.youtube.com/watch?v=${relVid.id}`,!!relVid.is_short,null,0,{groupKo:w.group_ko},false,true))
-        :()=>_feedNav(()=>{if(GROUPS[w.group_ko]){if(isMob())showGC(w.group_ko,window.innerWidth/2,window.innerHeight*0.4,false,false,null,false);else showGC(w.group_ko,window.innerWidth/2,window.innerHeight/2);}});
-      items.push({type:'win',title:w.song_title||'',sub,thumb,nav,gko:w.group_ko,mko:w.member_ko||null});
+      const k=w.show+'|'+w.win_date+'|'+(_songBase(w.song_title||'')||w.song_title);
+      (_winGroups.get(k)||_winGroups.set(k,[]).get(k)).push(w);
     });
+    const _winItems=await Promise.all([..._winGroups.values()].map(async ws=>{
+      const w=ws[0];
+      const names=[...new Set(ws.flatMap(x=>[_gLabelKo(x.group_ko),x.member_ko]).filter(Boolean))];
+      const sub=[...names,w.show].join(' · ')+_agoLabel(w.win_date);
+      let relVid=null;for(const x of ws){relVid=_winVidFor(x);if(relVid)break;}
+      let thumb=null,square=false,nav;
+      if(relVid){
+        thumb=relVid.thumb;
+        nav=()=>_feedNav(()=>openLightbox(relVid.is_short?`https://youtube.com/shorts/${relVid.id}`:`https://www.youtube.com/watch?v=${relVid.id}`,!!relVid.is_short,null,0,{groupKo:relVid.group_ko||w.group_ko},false,true));
+      }else{
+        let hit=null;for(const x of ws){hit=await _winAlbumFor(x);if(hit)break;}
+        if(hit){thumb=hit.al.cover;square=true;}
+        // 영상이 없으면 그 사람(그룹) 카드로 — 솔로 1위는 그룹 카드가 없어 예전엔 눌러도 아무 일도 없었다
+        const art=hit&&hit.o.artist||(w.member_ko&&!GROUPS[w.group_ko]?ARTISTS.find(x=>x.name&&x.name.ko===w.member_ko):null);
+        nav=()=>_feedNav(()=>{
+          const cx=window.innerWidth/2,cy=isMob()?window.innerHeight*0.4:window.innerHeight/2;
+          if(GROUPS[w.group_ko]){if(isMob())showGC(w.group_ko,cx,cy,false,false,null,false);else showGC(w.group_ko,cx,cy);}
+          else if(art){if(isMob())showT(art,cx,cy,false,false,false);else showT(art,cx,cy);}
+        });
+      }
+      return {type:'win',title:w.song_title||'',sub,thumb,square,nav,gko:w.group_ko,mko:w.member_ko||null};
+    }));
+    items.push(..._winItems);
     (mvRes.data||[]).forEach(v=>{
       if(v.content_flag==='보류'||v.content_flag==='hidden')return;
       const t=v.title||'';
@@ -22498,12 +22534,12 @@ function _appendNewsItems(container,arr){
 }
 // 1면 헤드라인 카드(2026-09-28). 캡션은 **이미지 아래** — 앨범 커버는 그 자체가 작품이라 위에 얹지 않는다는
 // 원칙(영상도 같은 틀로 통일). 앨범은 정사각 커버를 가운데 두고 양옆을 흐린 커버로 채운다(자르지 않음).
-function _appendNewsHero(container,{type,title,sub,thumb,nav}){
+function _appendNewsHero(container,{type,title,sub,thumb,nav,square}){
   const LABELS={album:'💿 신보',win:'🏆 1위',mv:'🎬 MV',teaser:'🎬 티저',milestone:'📈 조회수'};
   const CLS={album:'fnb-album',win:'fnb-win',mv:'fnb-mv',teaser:'fnb-teaser',milestone:'fnb-milestone'};
-  const card=document.createElement('div');card.className='feed-news-hero'+(type==='album'?' is-album':'');
+  const card=document.createElement('div');card.className='feed-news-hero'+(type==='album'||square?' is-album':'');
   const media=document.createElement('div');media.className='fnh-media';
-  if(type==='album'){const bg=document.createElement('div');bg.className='fnh-bg';bg.style.backgroundImage=`url(${thumb})`;media.appendChild(bg);}
+  if(type==='album'||square){const bg=document.createElement('div');bg.className='fnh-bg';bg.style.backgroundImage=`url(${thumb})`;media.appendChild(bg);}
   const img=document.createElement('img');img.alt='';img.loading='lazy';img.className='fnh-img';
   img.addEventListener('load',()=>img.classList.add('loaded'));img.src=thumb;media.appendChild(img);
   const badge=document.createElement('span');badge.className='feed-news-badge '+(CLS[type]||'');badge.textContent=LABELS[type]||type;
@@ -22518,7 +22554,7 @@ function _appendNewsHero(container,{type,title,sub,thumb,nav}){
   card.addEventListener('mousedown',e=>_lbRipple(card,e));
   container.appendChild(card);
 }
-function _appendNewsRow(container,{type,title,sub,thumb,nav}){
+function _appendNewsRow(container,{type,title,sub,thumb,nav,square}){
   const LABELS={album:'💿 신보',win:'🏆 1위',mv:'🎬 MV',teaser:'🎬 티저',milestone:'📈 조회수'};
   const CLS={album:'fnb-album',win:'fnb-win',mv:'fnb-mv',teaser:'fnb-teaser',milestone:'fnb-milestone'};
   const row=document.createElement('div');
@@ -22549,7 +22585,7 @@ function _appendNewsRow(container,{type,title,sub,thumb,nav}){
     row.appendChild(badge);row.appendChild(body);
     if(thumb){
       const img=document.createElement('img');
-      img.className='feed-news-thumb'+(type==='album'?' is-square':'');
+      img.className='feed-news-thumb'+(type==='album'||square?' is-square':'');
       img.loading='lazy';img.alt='';
       img.addEventListener('load',()=>img.classList.add('loaded'));
       img.src=thumb;
