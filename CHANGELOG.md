@@ -80,6 +80,8 @@
 - [이슈] 루틴 10단계 곡 연결 전량이 덜 돈 듯 — 아이브 영상 2,878개 중 480개가 DB song_keys 없이 이 도구 계산으로만 연결됨(표본 15개 전부 정상 무대·직캠). 커서(kpu_song_pass) 확인 필요
 - [이슈] 아이브 'BANG BANG'·'BLACKHOLE' **뮤비 본편이 DB에 없음**(리액션·비하인드만 수집됨) — 연결 문제가 아니라 수집 사각지대. 미조사
 
+- [진행중] **인스타 공식 계정 수집(Business Discovery)** — 메타 앱 K-POP UNIVERSE(개발 모드, 게시 불필요)·우리 IG 비즈니스 계정 17841420475472395(페이지 Kpop-universe.kr). 필수 권한: instagram_basic·**instagram_manage_insights**·pages_read_engagement·pages_show_list·**ads_read**(비즈니스 포트폴리오 페이지) — 하나라도 빠지면 (#10). 토큰은 Secret `META_IG_TOKEN`(60일짜리, **2026-12 중순 만료 → 액세스 토큰 디버거 "연장"으로 재발급**, 만료 시 ig-stats.yml 빨간불). `tools/ig_business_discovery.mjs` + `ig-stats.yml`(2시간마다 180개, 하루 한 바퀴) → DB `ig_accounts`·`ig_follower_daily`(`sql/2026-10-19_ig_stats.sql` 사용자 실행 필요). 화면 노출 방식은 사용자와 결정 대기 [tools/][sql/][.github/workflows/ig-stats.yml]
+
 ### ⏳ 덜 된 일 (10-19 Claude Code 세션 마감 시점)
 - [사용자 결정·미착수] **방송 음원도 공동 앨범으로 수집** — 쇼미더머니뿐 아니라 **복면가왕·불후의 명곡 등 방송·경연 음원도 합작으로 본다**(사용자 10-19). 지금은 `tools/melon_album_artists.mjs` 반영 단계의 `SKIP_TITLE` 정규식이 `복면가왕|불후의|가요제|경연|프로듀서 -|로드 투 킹덤|\d+회`를 빼고 있음 → 이 부분을 지우고, 같은 줄 `ok` 조건의 `!al.program && !al.contest`(프로그램·경연 앨범 표식)도 뺄지 판단할 것. 유지할 제외: 피처링(feat/ft.)·리믹스·OST·유닛 앨범. 순서: 정규식 수정 → `node tools/melon_album_artists.mjs --apply`(수집 캐시 `melon_album_artists.json` 그대로 씀, 재수집 불필요) → `git diff artists.json groups.json | grep "^-"`로 지워진 줄 없는지 확인 → `node tools/build_slim_data.mjs` → `node tests/album-byline.test.js`(복면가왕 제외를 전제한 검사는 없음). 표기는 지금처럼 멜론 순서·쉼표
 - [확인 대기·실기기] 모바일 탐험 패널 끌어 닫기 — 튕김 기준(24px↑ & 0.6px/ms↑) 손맛. 너무 쉽게/둔하게 닫히면 `_wireFeedSwipeDismiss`의 그 두 숫자만 조정

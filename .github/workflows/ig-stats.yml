@@ -1,0 +1,43 @@
+name: 인스타 공식 계정 정보 수집 (2시간마다)
+
+# tools/ig_business_discovery.mjs — Business Discovery API로 아이돌 인스타 프로필 사진·팔로워·게시물 수를 DB(ig_accounts·
+# ig_follower_daily)에 쌓는다(2026-10-19). 앱 기준 시간당 약 200회라 회당 180개, 하루 12회면 1,500개가 하루에 한 바퀴.
+# 실패(빨간불)는 대개 토큰 만료(60일) — Secrets의 META_IG_TOKEN을 새로 발급해 넣을 것(방법은 CHANGELOG 10-19).
+
+on:
+  schedule:
+    - cron: '23 */2 * * *'   # 2시간마다 :23 — 라운드 분 회피
+  workflow_dispatch:
+    inputs:
+      max:
+        description: "이번 회차 최대 계정 수"
+        required: false
+        default: '180'
+      only:
+        description: "이 핸들 하나만(시험용)"
+        required: false
+        default: ''
+
+concurrency:
+  group: ig-stats
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: 수집
+        shell: bash
+        env:
+          META_IG_TOKEN: ${{ secrets.META_IG_TOKEN }}
+          SUPABASE_SERVICE_ROLE: ${{ secrets.SUPABASE_SERVICE_ROLE }}
+          IG_MAX: ${{ github.event.inputs.max || '180' }}
+        run: |
+          set -o pipefail
+          if [ -n "${{ github.event.inputs.only }}" ]; then ARG="--only=${{ github.event.inputs.only }}"; fi
+          node tools/ig_business_discovery.mjs $ARG | tee -a "$GITHUB_STEP_SUMMARY"
