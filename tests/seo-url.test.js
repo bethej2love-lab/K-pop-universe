@@ -31,8 +31,10 @@ function extract(name) {
 const src = ['_seoUrlSafeKo', '_seoSlugify', '_seoUrlForGroup', '_seoUrlForMember'].map(extract).join('\n');
 
 const ORIGIN = 'https://kpop-universe.kr';
-const sandbox = { GROUPS: groups, location: { origin: ORIGIN }, currentLang: 'ko' };
+const sandbox = { GROUPS: groups, ARTISTS: artists, location: { origin: ORIGIN }, currentLang: 'ko' };
 vm.createContext(sandbox);
+// 동명이인 솔로 주소 꼬리(2026-10-19)는 shared.js _soloPageSuffix — 앱과 빌더가 같이 쓰는 그 파일을 그대로 싣는다
+vm.runInContext(fs.readFileSync(path.join(ROOT, 'shared.js'), 'utf8'), sandbox);
 vm.runInContext(src, sandbox);
 
 let fail = 0, checked = 0;

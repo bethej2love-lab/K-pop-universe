@@ -46,6 +46,10 @@ const agencyMatch = indexSrc.match(/const _AGENCY_EN=\{[\s\S]*?\n\};/);
 const AGENCY_EN = agencyMatch ? new Function('return ' + agencyMatch[0].replace(/^const _AGENCY_EN=/, ''))() : {};
 // 페이지 보강(2026-10-16) — 음방 1위·인기 직캠(DB)과 투어·대상·밀리언·작사작곡(정적 파일). tools/seo_extra.js 주석 참고.
 const SEO = require('./tools/seo_extra.js');
+// 동명이인 솔로 주소 규칙은 앱과 같은 함수(shared.js _soloPageSuffix)를 쓴다(2026-10-19)
+const _soloPageSuffix = (() => { const vm = require('vm'); const ctx = {}; vm.createContext(ctx); vm.runInContext(fs.readFileSync(path.join(ROOT, 'shared.js'), 'utf8') + '\nthis.f=_soloPageSuffix;', ctx); return ctx.f; })();
+const _suffixCache = new Map();
+const soloSuffix = a => { if (!_suffixCache.has(a)) _suffixCache.set(a, _soloPageSuffix(a, artists, groups)); return _suffixCache.get(a); };
 const ST = SEO.loadStatic(ROOT);
 let EX = { wins: {}, memberWins: {}, top: {} }; // DB 보강분 — 메인에서 prefetch로 채운 뒤 페이지를 만든다
 // 같은 소속사·같은 해 데뷔 그룹(내부 링크 — 검색엔진이 페이지 사이를 돌고, 사람도 "비슷한 그룹"으로 이어 본다)
@@ -169,10 +173,10 @@ function memberPagePath(a, lang) {
   const isSolo = !groups[primaryGko];
   if (lang === 'en') {
     const slug = slugify(a.name.en || ko, ko);
-    if (isSolo) return `en/member/${slug}/`;
+    if (isSolo) return `en/member/${slug}${soloSuffix(a).en}/`;
     return `en/g/${slugify(groups[primaryGko].en || primaryGko, primaryGko)}/${slug}/`;
   }
-  return isSolo ? `member/${urlSafeKo(ko)}/` : `g/${urlSafeKo(primaryGko)}/${urlSafeKo(ko)}/`;
+  return isSolo ? `member/${urlSafeKo(ko)}${soloSuffix(a).ko}/` : `g/${urlSafeKo(primaryGko)}/${urlSafeKo(ko)}/`;
 }
 // 공유 미리보기용 대표 영상 썸네일 캐시(2026-08-26, tools/build_og_thumbs.mjs가 생성).
 // 왜: 아래 ogImageFor()는 groups.json/artists.json의 songs[0]에서만 썸네일을 뽑는데 그 필드가
@@ -199,6 +203,8 @@ function ogImageForMember(a) {
   // 멤버 영상·프로필 사진이 다 없으면 그룹 대표 썸네일(2026-10-19) — 기본 이미지보다 그 그룹이 보이는 게 낫다
   // 솔로 키(group='솔로')인 예전 멤버는 소속 이력(groups) 중 썸네일 있는 첫 그룹(스피드 김유환 → 스피드)
   const gk = [a.group, ...(a.groups || [])].map(g => g && g.ko).find(x => x && OG_THUMBS.groups && OG_THUMBS.groups[x]);
+  // 동명이인 솔로(레나·현아 등)는 영상·사진 키가 이름뿐이라 둘이 같은 값을 나눠 갖는다 → 각자 예전 그룹 썸네일로(2026-10-19)
+  if (!groups[a.group.ko] && (soloSuffix(a).ko || soloSuffix(a).en) && gk) return OG_THUMBS.groups[gk];
   return (OG_THUMBS.members && OG_THUMBS.members[k]) || (gk && OG_THUMBS.groups[gk]) || ogImageFor(a);
 }
 function ogImageFor(info) {
@@ -497,9 +503,9 @@ artists.forEach(a => {
   const affiliations = (a.groups && a.groups.length ? a.groups : [a.group]).filter(g => groups[g.ko]);
   const slug = slugify(en, ko);
 
-  const koPath = isSolo ? `member/${urlSafeKo(ko)}/` : `g/${urlSafeKo(primaryGko)}/${urlSafeKo(ko)}/`;
+  const koPath = memberPagePath(a, 'ko'); // 동명이인 솔로 꼬리 포함(같은 함수로 — 링크·정리 코드와 주소가 갈리지 않게)
   const enGroupSlug = isSolo ? null : slugify(groupInfo.en || primaryGko, primaryGko);
-  const enPath = isSolo ? `en/member/${slug}/` : `en/g/${enGroupSlug}/${slug}/`;
+  const enPath = memberPagePath(a, 'en');
   const koUrl = `${SITE}/${koPath}`;
   const enUrl = `${SITE}/${enPath}`;
   const ogImage = ogImageForMember(a);
@@ -713,6 +719,42 @@ artists.forEach(a => {
 // 이번에 안 만든 멤버 폴더는 **그 사람의 지금 주소로 넘겨주는 안내 페이지**로 바꾼다(같은 썸네일·canonical·즉시 이동).
 // 그룹 index.html·곡 폴더(s/)는 건드리지 않는다.
 const memberPagesMade = new Set();
+// 동명이인 솔로가 같이 쓰던 옛 주소(member/레나/)는 "누구의 페이지인지 고르는" 안내 페이지로(2026-10-19) — 옛 링크가 길을 잃지 않게
+function writeSoloDisambigPages() {
+  const by = new Map(); // 옛 경로 → [{a, now}]
+  for (const a of artists) {
+    if (!a || !a.name || !a.group || groups[a.group.ko]) continue;
+    const s = soloSuffix(a);
+    if (s.ko) { const k = `member/${urlSafeKo(a.name.ko)}/`; (by.get(k) || by.set(k, []).get(k)).push({ a, now: memberPagePath(a, 'ko'), lang: 'ko' }); }
+    if (s.en) { const k = `en/member/${slugify(a.name.en || a.name.ko, a.name.ko)}/`; (by.get(k) || by.set(k, []).get(k)).push({ a, now: memberPagePath(a, 'en'), lang: 'en' }); }
+  }
+  let n = 0;
+  for (const [rel, list] of by) {
+    if (memberPagesMade.has(rel)) continue; // 꼬리 없는 진짜 페이지가 있는 주소는 건드리지 않는다
+    const en = list[0].lang === 'en';
+    const name = en ? (list[0].a.name.en || list[0].a.name.ko) : list[0].a.name.ko;
+    const items = list.map(({ a, now }) => {
+      const g = (a.groups || []).map(y => y && y.ko).find(k => k && groups[k]);
+      const gl = g ? (en ? (groups[g].en || g) : g) : '';
+      return `<li><a href="${SITE}/${now}">${escHtml(en ? (a.name.en || a.name.ko) : a.name.ko)}${gl ? ' — ' + escHtml(gl) : ''}</a></li>`;
+    }).join('\n');
+    const dir = path.join(ROOT, rel);
+    fs.mkdirSync(dir, { recursive: true });
+    fs.writeFileSync(path.join(dir, 'index.html'), `<!doctype html>
+<html lang="${en ? 'en' : 'ko'}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>${escHtml(name)} — K-POP UNIVERSE</title>
+<meta name="robots" content="noindex,follow">
+<meta property="og:title" content="${escHtml(name)} — K-POP UNIVERSE">
+<meta property="og:image" content="${ogImageForMember(list[0].a)}">
+<style>body{font-family:system-ui,sans-serif;background:#0b0f20;color:#dfe7ff;padding:40px 20px;max-width:560px;margin:auto}a{color:#9fb8ff}li{margin:10px 0}</style>
+</head><body><h1>${escHtml(name)}</h1><p>${en ? 'Several artists share this name:' : '같은 이름의 아티스트가 여러 명이에요:'}</p><ul>
+${items}
+</ul></body></html>
+`);
+    n++;
+  }
+  if (n) console.log(`동명이인 솔로 안내 페이지 ${n}개`);
+}
 function redirectStaleMemberPages() {
   const target = new Map(); // 옛 경로 → {a, lang}
   for (const a of artists) {
@@ -1278,6 +1320,7 @@ function buildSongPages() {
   buildGroupPages();
   buildMemberPages();
   redirectStaleMemberPages();
+  writeSoloDisambigPages();
   buildSongPages();
   console.log(`곡 페이지 ${songPageCount}곡 × 2개 언어`);
   let relPages = [], hubLinks = { ko: [], en: [] };

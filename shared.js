@@ -535,3 +535,24 @@ function _songListFromDisco(albums,persons){
   }));
   return [...seen.values()];
 }
+
+// ── 동명이인 솔로 정적 페이지 주소 구분(2026-10-19) ─────────────────────────────────────────────
+// 솔로(소속 그룹이 GROUPS에 없음) 페이지는 member/<이름>/ · en/member/<영문 slug>/인데, 이름이 같은 솔로가 둘 이상이면
+// (프리스틴·공원소녀 레나, 포미닛·나인뮤지스 현아 등 8쌍 + 영문만 겹치는 예나·민주 등) **한 주소를 나눠 써서 나중 것이 덮어썼다**.
+// 겹치는 경우에만 예전 그룹을 붙인다: member/레나-프리스틴/ · en/member/lena-gwsn/. 예전 그룹까지 같으면 고유번호(id).
+// ⚠️ 페이지 빌더(build_group_pages.js)와 앱 공유 링크(_seoUrlForMember)가 **이 함수 하나**를 쓴다 — 따로 만들면 주소가 갈린다.
+// 반환: 붙일 꼬리 {ko:'-프리스틴'|'', en:'-pristin'|''}
+function _soloPageSuffix(a,artists,groups){
+  const res={ko:'',en:''};
+  const isSolo=x=>!!(x&&x.name&&x.group&&!groups[x.group.ko]);
+  if(!isSolo(a))return res;
+  const slug=s=>String(s||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');
+  const koKey=x=>String(x.name.ko).replace(/[.\s]+$/,'');
+  const enKey=x=>slug(x.name.en||x.name.ko)||'group';
+  const hint=x=>((x.groups||[]).map(y=>y&&y.ko).find(k=>k&&groups[k]))||'';
+  const koDup=artists.filter(x=>isSolo(x)&&koKey(x)===koKey(a));
+  if(koDup.length>1){const h=hint(a);res.ko='-'+(h&&koDup.filter(x=>hint(x)===h).length===1?h.replace(/[.\s]+$/,''):(a.id||h||'x'));}
+  const enDup=artists.filter(x=>isSolo(x)&&enKey(x)===enKey(a));
+  if(enDup.length>1){const h=hint(a),hs=h?(slug(groups[h].en||h)||h):'';res.en='-'+(hs&&enDup.filter(x=>hint(x)===h).length===1?hs:(a.id||hs||'x'));}
+  return res;
+}

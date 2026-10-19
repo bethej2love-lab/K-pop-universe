@@ -11270,13 +11270,14 @@ function _seoUrlForMember(a){
   const gko=a.group.ko,gInfo=GROUPS[gko],isSolo=!gInfo;
   const nameKo=a.name.ko,nameEn=a.name.en||nameKo;
   let path;
+  const sfx=isSolo?_soloPageSuffix(a,ARTISTS,GROUPS):{ko:'',en:''}; // 동명이인 솔로 꼬리 — 정적 페이지 빌더와 같은 함수(shared.js)
   if(currentLang==='en'){
     path=isSolo
-      ? 'en/member/'+_seoSlugify(nameEn,nameKo)+'/'
+      ? 'en/member/'+_seoSlugify(nameEn,nameKo)+sfx.en+'/'
       : 'en/g/'+_seoSlugify(gInfo.en||gko,gko)+'/'+_seoSlugify(nameEn,nameKo)+'/';
   }else{
     path=isSolo
-      ? 'member/'+encodeURIComponent(_seoUrlSafeKo(nameKo))+'/'
+      ? 'member/'+encodeURIComponent(_seoUrlSafeKo(nameKo)+sfx.ko)+'/'
       : 'g/'+encodeURIComponent(_seoUrlSafeKo(gko))+'/'+encodeURIComponent(_seoUrlSafeKo(nameKo))+'/';
   }
   return location.origin+'/'+path;
