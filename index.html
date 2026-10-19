@@ -22772,7 +22772,8 @@ function _collectWeekNews(){
           else if(art){if(isMob())showT(art,cx,cy,false,false,false);else showT(art,cx,cy);}
         });
       }
-      return {type:'win',title:w.song_title||'',sub,thumb,square,nav,gko:w.group_ko,mko:w.member_ko||null,show:w.show,date:w.win_date};
+      const daysOld=Math.max(0,Math.round((Date.now()-Date.parse(w.win_date))/86400000));
+      return {type:'win',title:w.song_title||'',sub,thumb,square,nav,gko:w.group_ko,mko:w.member_ko||null,show:w.show,date:w.win_date,score:Math.max(0,100-daysOld*20)};
     }));
     items.push(..._winItems);
     (mvRes.data||[]).forEach(v=>{
