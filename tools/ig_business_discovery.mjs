@@ -88,6 +88,10 @@ for (const h of queue) {
   await sleep(300);
 }
 function sleep(ms) { return new Promise(res => setTimeout(res, ms)); }
-await sbUpsert('ig_accounts', acc, 'handle');
+// PostgREST 일괄 저장은 모든 줄의 칸 구성이 같아야 한다(PGRST102 "All object keys must match" — 첫 실행 실패, 2026-10-19).
+// 성공 줄과 조회 불가 줄을 칸 구성별로 나눠 저장한다 — 조회 불가 줄은 상태·메모만 바꿔서, 예전에 받은 팔로워·사진을 지우지 않는다.
+const byShape = new Map();
+for (const row of acc) { const k = Object.keys(row).sort().join(','); (byShape.get(k) || byShape.set(k, []).get(k)).push(row); }
+for (const rows of byShape.values()) await sbUpsert('ig_accounts', rows, 'handle');
 await sbUpsert('ig_follower_daily', daily, 'handle,day');
 console.log(`인스타 계정 ${handles.size}개 중 이번 ${acc.length}개 — 성공 ${ok} · 조회 불가 ${nf}${stoppedBy ? ' · 중단: ' + stoppedBy : ''}`);
