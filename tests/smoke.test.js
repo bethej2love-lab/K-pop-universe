@@ -35,7 +35,10 @@ const EDGE_CANDIDATES = [
   '/Applications/Chromium.app/Contents/MacOS/Chromium',
   '/usr/bin/google-chrome', '/usr/bin/chromium-browser', '/usr/bin/chromium',
 ];
-const BROWSER_PATH = EDGE_CANDIDATES.find(p => fs.existsSync(p));
+// Some Windows environments can have Edge installed but unavailable to a
+// non-interactive runner.  Let a reviewer choose a known-good Chromium binary
+// without changing the test or its normal automatic detection.
+const BROWSER_PATH = process.env.KPU_BROWSER_PATH || EDGE_CANDIDATES.find(p => fs.existsSync(p));
 
 const MIME = { '.html': 'text/html', '.js': 'text/javascript', '.json': 'application/json', '.css': 'text/css', '.png': 'image/png', '.svg': 'image/svg+xml', '.ico': 'image/x-icon' };
 
