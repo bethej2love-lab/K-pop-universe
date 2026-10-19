@@ -7,10 +7,12 @@ create table if not exists public.ig_accounts (
   followers   bigint,
   media_count integer,
   pic_url     text,                      -- fbcdn 주소, 며칠 뒤 만료(매일 새로 받음)
+  media       jsonb,                     -- 최근 게시물 최대 6개 [{u 썸네일, p 원본 링크, t 시각, ty 종류}]
   status      text,                      -- ok | not_found(개인 계정·없는 계정·연령 제한)
   note        text,
   fetched_at  timestamptz default now()
 );
+alter table public.ig_accounts add column if not exists media jsonb;
 create table if not exists public.ig_follower_daily (
   handle    text not null,
   day       date not null,               -- KST 날짜

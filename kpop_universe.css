@@ -1502,6 +1502,17 @@
   #tt-links{display:flex;align-items:center;gap:7px;flex-shrink:0;}
   #tt-links:not(:empty)::after{content:'·';color:rgba(120,145,195,0.46);font-size:10px;}
   #tt-links .gc-link-icon{width:14px;height:14px;}
+  /* 인스타 팔로워 수(2026-10-19) — 아이콘 바로 뒤에 붙여서(간격 줄임) 아이콘 줄 리듬을 덜 깨게, 작고 흐리게 */
+  .gc-link-count{font-size:10.5px;font-weight:600;color:rgba(170,190,230,0.62);margin-left:-4px;line-height:1;white-space:nowrap;font-variant-numeric:tabular-nums;}
+  .gc-link-count[hidden]{display:none;}
+  /* 카드 "Instagram" 줄 — 최근 게시물 썸네일 가로 스크롤 */
+  .ig-section{margin-top:14px;}
+  .ig-section[hidden]{display:none;}
+  .ig-strip{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px;}
+  .ig-strip::-webkit-scrollbar{display:none;}
+  .ig-item{position:relative;flex:0 0 auto;width:84px;height:84px;border-radius:8px;overflow:hidden;background:rgba(255,255,255,0.05);display:block;}
+  .ig-item img{width:100%;height:100%;object-fit:cover;display:block;}
+  .ig-play{position:absolute;top:4px;right:5px;font-size:10px;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,0.7);}
   /* 틱톡 아이콘의 원형 콘텐츠가 x=5~15(24단위 기준) 좌측에 치우쳐 있어 우측 여백이 크고(16px 아이콘
      기준 ≈6px), 바로 뒤 나무위키 아이콘과의 시각적 gap이 다른 쌍보다 넓어 보임(2026-08-14, 사용자 제보).
      margin:-7px 기본값보다 더 음수로 설정해 나무위키 아이콘을 왼쪽으로 당겨야 gap이 줄어든다

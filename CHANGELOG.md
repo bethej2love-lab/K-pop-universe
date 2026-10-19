@@ -82,12 +82,15 @@
 
 - [진행중] **인스타 공식 계정 수집(Business Discovery)** — 메타 앱 K-POP UNIVERSE(개발 모드, 게시 불필요)·우리 IG 비즈니스 계정 17841420475472395(페이지 Kpop-universe.kr). 필수 권한: instagram_basic·**instagram_manage_insights**·pages_read_engagement·pages_show_list·**ads_read**(비즈니스 포트폴리오 페이지) — 하나라도 빠지면 (#10). 토큰은 Secret `META_IG_TOKEN`(60일짜리, **2026-12 중순 만료 → 액세스 토큰 디버거 "연장"으로 재발급**, 만료 시 ig-stats.yml 빨간불). `tools/ig_business_discovery.mjs` + `ig-stats.yml`(2시간마다 180개, 하루 한 바퀴) → DB `ig_accounts`·`ig_follower_daily`(`sql/2026-10-19_ig_stats.sql` 사용자 실행 필요). 화면 노출 방식은 사용자와 결정 대기 [tools/][sql/][.github/workflows/ig-stats.yml]
 
+- [완료·SQL 대기] 인스타 화면 반영 — ①프로필 사진: **공식 인스타가 먼저**(사용자: 프로필 바꾸면 따라가야), 등록 사진(artist_pics)은 인스타 없음·못 받음·주소 만료(onerror) 때 대체, 직캠 썸네일은 그다음. 검색·기념일 아바타(_fetchInstaPicUrl)도 같은 순서 ②인스타 아이콘 옆 팔로워 수(작게) ③카드 디스코 아래 "Instagram" 줄 — 최근 게시물 6개 썸네일→원본 게시물(이미지 저장 안 함). 수집 도구가 media(jsonb)도 받음 — SQL에 칸 추가됨. ⚠️ SQL 실행 전엔 ig_accounts 404가 콘솔에 1건(화면 영향 없음, 스모크는 실패로 셈) [index.html][kpop_universe.css][tools/ig_business_discovery.mjs][sql/]
+
 ### ⏳ 덜 된 일 (10-19 Claude Code 세션 마감 시점)
 - [사용자 결정·미착수] **방송 음원도 공동 앨범으로 수집** — 쇼미더머니뿐 아니라 **복면가왕·불후의 명곡 등 방송·경연 음원도 합작으로 본다**(사용자 10-19). 지금은 `tools/melon_album_artists.mjs` 반영 단계의 `SKIP_TITLE` 정규식이 `복면가왕|불후의|가요제|경연|프로듀서 -|로드 투 킹덤|\d+회`를 빼고 있음 → 이 부분을 지우고, 같은 줄 `ok` 조건의 `!al.program && !al.contest`(프로그램·경연 앨범 표식)도 뺄지 판단할 것. 유지할 제외: 피처링(feat/ft.)·리믹스·OST·유닛 앨범. 순서: 정규식 수정 → `node tools/melon_album_artists.mjs --apply`(수집 캐시 `melon_album_artists.json` 그대로 씀, 재수집 불필요) → `git diff artists.json groups.json | grep "^-"`로 지워진 줄 없는지 확인 → `node tools/build_slim_data.mjs` → `node tests/album-byline.test.js`(복면가왕 제외를 전제한 검사는 없음). 표기는 지금처럼 멜론 순서·쉼표
 - [확인 대기·실기기] 모바일 탐험 패널 끌어 닫기 — 튕김 기준(24px↑ & 0.6px/ms↑) 손맛. 너무 쉽게/둔하게 닫히면 `_wireFeedSwipeDismiss`의 그 두 숫자만 조정
 - [확인 대기·실기기] 어드민 창 배치(설정→영상 관리 등) 맥북·폰 실사용 확인 — 헤드리스 전수 측정은 통과
 - [확인 대기] `album-videos.yml` 첫 자동 실행(매일 KST 04:37 신규분, 월요일 전량) 초록불·`album_videos/_meta.json` 시각 갱신 확인
 - 위 [이슈] 2건(루틴 10단계 곡 연결 전량 미완·아이브 뮤비 본편 미수집)은 미조사
+- [다음] **빈 인스타 링크 정리** — 첫 수집 한 바퀴(하루) 뒤 `NODE_TLS_REJECT_UNAUTHORIZED=0 node tools/ig_prune_empty.mjs`로 게시물 0개 계정 목록 확인 → 사용자 확인 후 `--apply`(links.instagram 삭제, 사용자 결정: 연습생 때 계정 등은 지운다). 조회 불가(개인 계정 등)는 판단 보류 목록만
 
 ## 2026-10-16 (세션 — 카드 2개+재생모드 레이아웃)
 - [완료] 발견 This Week: 앨범이 먼저 뜨고 1위 소식이 위로 끼어들던 것 — 소식 조회 병렬화(왕복 2→1) + 우주 뜬 직후 미리 불러오기 + 앨범 블록이 소식을 기다렸다 같이(최대 2.5초). 헤드리스 실측: 우주 직후 열어도 1.4~1.8초에 둘이 동시. 덤으로 **MV·티저 소식이 줄곧 0개**였던 버그(.not(in)이 content_flag NULL 행까지 제외, 실측 44→0) 수정, 솔로 1위 부제 '· 소연' 앞 가운뎃점 [index.html]

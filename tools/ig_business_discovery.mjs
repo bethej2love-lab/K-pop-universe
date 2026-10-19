@@ -7,7 +7,8 @@
 // 한 회차가 한 시간 몫을 넘지 않게 한다(응답 헤더 x-app-usage / x-business-use-case-usage가 90%를 넘으면 그 자리에서 멈춤).
 // 하루 12회 × 180 = 2,160 > 1,500이라 하루에 한 바퀴 돈다 — 프로필 사진 주소(fbcdn, oe= 만료)가 상하기 전에 새로 받는 주기.
 //
-// 저장: Supabase ig_accounts(핸들별 최신) + ig_follower_daily(핸들·날짜별 팔로워) — sql/2026-10-19_ig_stats.sql.
+// 최근 게시물 6개(썸네일·원본 링크)도 같이 받는다(사용자: "게시물 몇 개라도 미리보기로") — 이미지는 저장하지 않고 인스타 주소 그대로.
+// 저장: Supabase ig_accounts(핸들별 최신, media jsonb 포함) + ig_follower_daily(핸들·날짜별 팔로워) — sql/2026-10-19_ig_stats.sql.
 //   핸들이 키라 동명이인 문제 없음(앱은 artists/groups의 links.instagram에서 핸들을 뽑아 조인한다).
 // 설정값(계정 번호·필수 권한)은 메모리/CHANGELOG 참고 — 권한에 instagram_manage_insights·ads_read가 빠지면 (#10) 오류.
 //
@@ -64,7 +65,7 @@ const usagePct = h => { let m = 0; for (const k of ['x-app-usage', 'x-business-u
 const acc = [], daily = [];
 let ok = 0, nf = 0, stoppedBy = '';
 for (const h of queue) {
-  const url = `${GRAPH}/${IG_USER}?fields=business_discovery.username(${encodeURIComponent(h)}){username,name,followers_count,media_count,profile_picture_url}&access_token=${encodeURIComponent(TOKEN)}`;
+  const url = `${GRAPH}/${IG_USER}?fields=business_discovery.username(${encodeURIComponent(h)}){username,name,followers_count,media_count,profile_picture_url,media.limit(9){media_type,media_url,thumbnail_url,permalink,timestamp}}&access_token=${encodeURIComponent(TOKEN)}`;
   let r, j;
   try { r = await fetch(url); j = await r.json(); } catch (e) { stoppedBy = '네트워크 ' + e.message; break; }
   if (j.error) {
@@ -77,7 +78,9 @@ for (const h of queue) {
     nf++;
   } else {
     const b = j.business_discovery || {};
-    acc.push({ handle: h, ig_id: b.id || null, name: b.name || null, followers: b.followers_count ?? null, media_count: b.media_count ?? null, pic_url: b.profile_picture_url || null, status: 'ok', note: null, fetched_at: new Date().toISOString() });
+    // 최근 게시물(카드 Instagram 줄) — 영상은 thumbnail_url, 사진·캐러셀은 media_url. 저작권 음원 등으로 주소가 비어 오는 건 뺀다. 최대 6개
+    const media = ((b.media && b.media.data) || []).map(m => ({ u: m.thumbnail_url || (m.media_type !== 'VIDEO' ? m.media_url : null), p: m.permalink, t: m.timestamp, ty: m.media_type })).filter(m => m.u && m.p).slice(0, 6);
+    acc.push({ handle: h, ig_id: b.id || null, name: b.name || null, followers: b.followers_count ?? null, media_count: b.media_count ?? null, pic_url: b.profile_picture_url || null, media, status: 'ok', note: null, fetched_at: new Date().toISOString() });
     if (b.followers_count != null) daily.push({ handle: h, day, followers: b.followers_count });
     ok++;
   }
