@@ -27804,6 +27804,7 @@ function _mountAdminMarkup(){
     const host=sel==='body'?document.body:document.querySelector(sel);
     if(host)host.appendChild(tpl.content.cloneNode(true));
   });
+  _enableDragScroll(document.getElementById('vm-tabs')); // 탭 줄이 가로 스크롤이 됐으니 마우스로도 끌어 넘기게(2026-10-19)
 }
 // 유튜브 채널 동기화/Shorts 재분류 버튼은 관리자만 — 아무나 API 키만 있으면 실행 가능한 구조라 UI에서부터 숨김
 function _updateAdminUI(){

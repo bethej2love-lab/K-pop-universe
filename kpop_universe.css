@@ -727,6 +727,10 @@
     /* card-wide일 때 카드 640px이므로 right도 맞춰야 겹치지 않음 */
     body:has(#feed-overlay.open).card-wide:has(#side-panel.open) #yt-lightbox{right:min(640px,calc(100vw - 480px));}
     body:has(#feed-overlay.open).card-wide:has(#side-panel.open):has(#member-panel.open) #yt-lightbox{right:min(1080px,calc(100vw - 480px));}
+    /* 어드민 도킹(관리자 홈·영상 관리·태깅 규칙·그룹 우선순위)이 열리면 그 폭만큼 왼쪽을 비운다(2026-10-19) —
+       라이트박스는 열 때 최상단으로 올라가고 도킹은 일부러 z58(카드 밑)이라, 영상을 보다 설정→영상 관리를 누르면
+       도킹 패널이 플레이어 뒤에 통째로 깔려 "안 열리는 것"처럼 보였다. 탐험 패널은 도킹 중 접히므로 이 규칙이 그 자리를 대신한다. */
+    body:has(#adm-home-overlay.open,#hnn-overlay.open,#vm-overlay.open,#gp-overlay.open) #yt-lightbox{left:calc(min(520px,44vw) + 24px);top:64px;}
     /* 카드 열림/닫힘 시 라이트박스 위치 부드럽게 전환 */
     #yt-lightbox.open{transition:right 0.26s cubic-bezier(0.32,0,0.15,1),left 0.26s cubic-bezier(0.32,0,0.15,1),top 0.26s cubic-bezier(0.32,0,0.15,1);}
     /* side-panel 없을 때 member-panel을 맨 오른쪽으로 당김 */
@@ -1800,6 +1804,19 @@
   .vm-tab{flex:1;padding:5px 0;border-radius:8px;border:none;background:none;color:rgba(155,178,228,0.61);font-size:11px;font-weight:600;font-family:inherit;cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><path d='M11,1 L12.3,9.7 L21,11 L12.3,12.3 L11,21 L9.7,12.3 L1,11 L9.7,9.7Z' fill='%23FFB0D0' opacity='.97'/></svg>") 11 11,pointer;transition:background .13s,color .13s;}
   .vm-tab:hover{color:rgba(210,225,255,0.85);}
   .vm-tab.active{background:rgba(255,255,255,0.12);color:rgba(220,230,255,0.95);}
+  /* 탭 10개를 한 줄에 균등 분할(flex:1)하던 것 → 글자 폭대로 한 줄 + 가로 스크롤(2026-10-19, 사용자 제보 "창이 제대로 안 보임").
+     도킹 폭 520px·모바일 358px에 10개를 욱여넣어 '그룹배정 검수'가 세 줄로 접히고 탭 줄이 3배로 커졌다. */
+  #vm-tabs{overflow-x:auto;scrollbar-width:none;}
+  #vm-tabs::-webkit-scrollbar{display:none;}
+  .vm-tab{flex:0 0 auto;padding:5px 10px;white-space:nowrap;}
+  /* 모바일: 키보드 단축키 안내는 의미 없고, 일괄 버튼 7개가 세 줄을 차지해 목록이 화면 절반도 안 됐다 → 한 줄 가로 스크롤 */
+  @media(max-width:768px){
+    #vm-panel{height:calc(100dvh - 24px);max-height:calc(100dvh - 24px);} /* 검색 전엔 작았다가 결과가 오면 커지던 것 — 높이 고정 */
+    #vm-kbd-hint{display:none!important;}
+    #vm-toolbar{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;}
+    #vm-toolbar::-webkit-scrollbar{display:none;}
+    #vm-toolbar>*{flex-shrink:0;white-space:nowrap;}
+  }
   /* .vm-tab과 같은 톤이지만 별도 클래스 — .vm-tab은 스크립트가 로드 시점에 querySelectorAll로 한 번만
      훑어서 탭 전환 클릭을 바인딩하므로, 그냥 시각적 재사용 목적으로 같은 클래스를 붙이면 "정상만" 버튼도
      탭으로 오인돼 클릭 시 탭이 깨지는 사고가 남(2026-08-14, 구현 중 자체 검토로 발견). */
@@ -2104,9 +2121,11 @@
        원래 transition을 타고 다시 미끄러져 나온다 — 상태를 따로 저장·복원할 필요가 없다.
        줌 컨트롤(#zoom-ctrl, z50)도 도킹 밑에 깔리므로 폭만큼 옆으로 민다
        (기존 `#journal-sidebar.open~#zoom-ctrl{left:318px}`와 같은 대응). */
+    /* ⚠️ 폭 대신 -100%로 접는다(2026-10-19) — 탐험 패널이 300→440px로 넓어진 뒤에도 -300px로 남아 있어 140px가
+       도킹 패널 왼쪽(영상 관리 탭 줄)을 계속 덮었다(사용자 제보). 그림자까지 안 비치게 조금 더 민다. */
     body:has(#adm-home-overlay.open,#hnn-overlay.open,#vm-overlay.open,#gp-overlay.open) #feed-overlay,
     body:has(#adm-home-overlay.open,#hnn-overlay.open,#vm-overlay.open,#gp-overlay.open) #journal-sidebar{
-      transform:translateX(-300px);
+      transform:translateX(calc(-100% - 32px));
     }
     body:has(#adm-home-overlay.open,#hnn-overlay.open,#vm-overlay.open,#gp-overlay.open) #zoom-ctrl{
       left:calc(min(520px,44vw) + 24px);

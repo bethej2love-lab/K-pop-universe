@@ -231,6 +231,19 @@ async function main() {
       else ok(`도킹 + 카드 동시 표시 — dock ${co.dock.left}~${co.dock.right}, ${co.cards.map(c => `${c.id} ${c.left}~${c.right}(z${co.cz})`).join(' / ')}, 탐험 패널 접힘(right=${co.feedRight})`);
     }
     await ev(cdp, `(function(){try{closeCards()}catch(e){}document.getElementById('feed-overlay').classList.remove('open');return 1;})()`);
+
+    // 라이트박스 재생 중 도킹 — 라이트박스는 열 때 최상단(_bringToFront)이고 도킹은 z58이라, 겹치면 도킹이 통째로
+    // 뒤에 깔린다(2026-10-19 사용자 제보 "새 창이 뒤로 떠서 안 보임"). 라이트박스가 도킹 폭만큼 왼쪽을 비우는지 본다.
+    const lb = await ev(cdp, `(function(){
+      const L=document.getElementById('yt-lightbox');if(!L)return JSON.stringify({none:true});
+      L.classList.add('open');document.getElementById('vm-overlay').classList.add('open');
+      const d=document.getElementById('vm-panel').getBoundingClientRect(),r=L.getBoundingClientRect();
+      const res={dockRight:Math.round(d.right),lbLeft:Math.round(r.left)};
+      L.classList.remove('open');document.getElementById('vm-overlay').classList.remove('open');
+      return JSON.stringify(res);})()`).then(JSON.parse);
+    if (lb.none) fail('#yt-lightbox 없음');
+    else if (lb.lbLeft < lb.dockRight) fail(`라이트박스가 도킹 패널을 덮음 (lightbox.left=${lb.lbLeft} < dock.right=${lb.dockRight})`);
+    else ok(`라이트박스 재생 중 도킹 — 라이트박스가 도킹 오른쪽(${lb.lbLeft} ≥ ${lb.dockRight})으로 비켜남`);
     await sleep(400);
 
     // ── 7. 홈 복귀 버튼이 3개 도킹 패널 헤더에 모두 있는가 ────────────────────────
