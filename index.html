@@ -11784,6 +11784,10 @@ function _psBuildSeg(){
 }
 
 function _closeTopOverlay(){
+  // 인스타 사진 뷰어·외부 아티스트 '함께한 앨범' 창(2026-10-19)은 카드·라이트박스 위에 뜨는 맨 위 층 — 먼저 벗긴다
+  // (안 넣으면 Esc가 뷰어는 둔 채 그 밑의 카드를 닫았다)
+  if(document.getElementById('igv-overlay')?.classList.contains('open')){_closeIgViewer();return true;}
+  if(document.getElementById('ecx-overlay')?.classList.contains('open')){_closeCollabExt();return true;}
   const lb=document.getElementById('yt-lightbox');
   // 하프시트(라이트박스 위로 올라온 카드)가 가장 위 층이다 — ESC/뒤로 한 번은 여기부터 벗긴다.
   // 이게 없으면 데스크톱에서 카드만 내릴 방법이 없어 영상을 통째로 닫아야 했다(2026-08-26 P1-2).
@@ -12570,10 +12574,11 @@ async function _renderIgStrip(prefix,url){
   try{const{data}=await sb.from('ig_accounts').select('media').eq('handle',h).maybeSingle();media=data&&data.media;}catch(e){}
   if(strip.dataset.h!==h||!Array.isArray(media)||!media.length)return; // 그새 다른 카드로 넘어갔으면 버린다
   const ko=currentLang==='ko';
-  // 사진 한 칸 = 원본 게시물 링크
-  const mk=(src,href,ty)=>{
+  // 사진 한 칸 — 사진은 사이트 안 뷰어(_openIgViewer, 2026-10-19), 영상은 재생 파일이 없어 인스타 원본으로
+  const mk=(src,m,i)=>{
+    const href=m.p,ty=i?'IMAGE':m.ty;
     const a=document.createElement('a');a.className='ig-item';a.href=href;a.target='_blank';a.rel='noopener noreferrer';
-    a.addEventListener('click',e=>e.stopPropagation());
+    a.addEventListener('click',e=>{e.stopPropagation();if(ty==='VIDEO')return;e.preventDefault();_openIgViewer(m,h,i||0);});
     const img=document.createElement('img');img.loading='lazy';img.alt='';img.src=src;
     img.addEventListener('error',()=>{a.remove();if(!strip.children.length)sec.hidden=true;});
     a.appendChild(img);
@@ -12594,12 +12599,12 @@ async function _renderIgStrip(prefix,url){
       d.addEventListener('click',e=>{
         e.stopPropagation();
         const frag=document.createDocumentFragment();
-        m.c.forEach((src,i)=>{const it=mk(src,m.p,'IMAGE');it.classList.add('ig-pop');it.style.animationDelay=(i*45)+'ms';frag.appendChild(it);});
+        m.c.forEach((src,i)=>{const it=mk(src,m,i);it.classList.add('ig-pop');it.style.animationDelay=(i*45)+'ms';frag.appendChild(it);});
         d.replaceWith(frag);
       });
       strip.appendChild(d);
     }else{
-      const a=mk(m.u,m.p,m.ty);
+      const a=mk(m.u,m,0);
       if(m.ty==='CAROUSEL_ALBUM'){const b=document.createElement('span');b.className='ig-play';b.textContent='❐';a.appendChild(b);}
       strip.appendChild(a);
     }
@@ -22490,6 +22495,53 @@ const _FAV_ALBUM_DAYS=30;
 // ── 탐험 패널 인스타 사진 선반(2026-10-19) ─────────────────────────────────────────────────
 // 데이터는 DB ig_accounts.media(ig-stats.yml이 계정마다 최근 게시물 6개). **사진(IMAGE)·여러 장(CAROUSEL)만** — 영상은 같은 걸
 // 유튜브에도 올리니 거기서 모은다(사용자 결정). 이미지는 인스타 주소 그대로, 누르면 원본 게시물(새 창).
+// ── 사이트 안 인스타 사진 뷰어(2026-10-19, 사용자: "인스타 창으로 나가지 않고 라이트박스처럼") ─────────────
+// 데이터는 이미 받아둔 것(ig_accounts.media: 사진 주소·여러 장 c·본문 cap·좋아요 lk·댓글 cm). 출처 계정과 원본 링크를 항상 같이 보여주고
+// 다운로드 기능은 두지 않는다. 메타 공식 표시 방식(oEmbed)은 앱 심사가 필요해서 보류. 영상은 재생 파일이 없어 여기 안 온다.
+let _igv=null;
+function _openIgViewer(m,handle,idx){
+  const pics=Array.isArray(m.c)&&m.c.length?m.c:[m.u];
+  let ov=document.getElementById('igv-overlay');
+  if(!ov){
+    ov=document.createElement('div');ov.id='igv-overlay';ov.setAttribute('data-modal','');
+    ov.innerHTML='<div id="igv-panel"><button id="igv-close" type="button" aria-label="닫기">✕</button>'
+      +'<div id="igv-media"><img id="igv-img" alt=""><button id="igv-prev" type="button" aria-label="이전 사진">‹</button><button id="igv-next" type="button" aria-label="다음 사진">›</button><div id="igv-dots"></div></div>'
+      +'<div id="igv-side"><div id="igv-hd"><img id="igv-av" alt=""><div class="igv-hd-txt"><div id="igv-name"></div><div id="igv-meta"></div></div></div>'
+      +'<div id="igv-cap"></div><a id="igv-open" target="_blank" rel="noopener noreferrer"></a></div></div>';
+    document.body.appendChild(ov);
+    ov.addEventListener('click',e=>{if(e.target===ov)_closeIgViewer();});
+    ov.querySelector('#igv-close').addEventListener('click',e=>{e.stopPropagation();_closeIgViewer();});
+    ov.querySelector('#igv-prev').addEventListener('click',e=>{e.stopPropagation();_igvGo(-1);});
+    ov.querySelector('#igv-next').addEventListener('click',e=>{e.stopPropagation();_igvGo(1);});
+    const md=ov.querySelector('#igv-media');let sx=null;
+    md.addEventListener('touchstart',e=>{sx=e.touches[0].clientX;},{passive:true});
+    md.addEventListener('touchend',e=>{if(sx==null)return;const dx=e.changedTouches[0].clientX-sx;sx=null;if(Math.abs(dx)>40)_igvGo(dx<0?1:-1);},{passive:true});
+    document.addEventListener('keydown',e=>{
+      if(!ov.classList.contains('open'))return;
+      if(e.key==='ArrowLeft')_igvGo(-1); // Esc는 _closeTopOverlay가 맡는다else if(e.key==='ArrowRight')_igvGo(1);
+    },true);
+  }
+  _igv={m,pics,i:Math.max(0,Math.min(idx||0,pics.length-1))};
+  const ko=currentLang==='ko',own=_igOwners().get(handle),ig=_igMap.get(handle);
+  ov.querySelector('#igv-name').textContent=own?own.name:('@'+handle);
+  ov.querySelector('#igv-meta').textContent=['@'+handle,_igAgo(m.t),m.lk!=null?(ko?'좋아요 ':'♥ ')+_fmtFollowers(m.lk):'',m.cm!=null?(ko?'댓글 ':'💬 ')+_fmtFollowers(m.cm):''].filter(Boolean).join(' · ');
+  const av=ov.querySelector('#igv-av');if(ig&&ig.pic){av.src=ig.pic;av.hidden=false;}else av.hidden=true;
+  const cap=ov.querySelector('#igv-cap');cap.textContent=m.cap||'';cap.hidden=!m.cap;
+  const op=ov.querySelector('#igv-open');op.href=m.p;op.textContent=ko?'Instagram에서 보기 ↗':'View on Instagram ↗';
+  _igvShow();
+  ov.classList.add('open');_bringToFront(ov);
+}
+function _igvShow(){
+  const ov=document.getElementById('igv-overlay');if(!ov||!_igv)return;
+  const {pics,i}=_igv;
+  ov.querySelector('#igv-img').src=pics[i];
+  ov.querySelector('#igv-prev').hidden=i<=0;ov.querySelector('#igv-next').hidden=i>=pics.length-1;
+  const dots=ov.querySelector('#igv-dots');dots.innerHTML='';dots.hidden=pics.length<2;
+  pics.forEach((_,k)=>{const d=document.createElement('span');if(k===i)d.className='on';dots.appendChild(d);});
+  if(pics[i+1]){const pre=new Image();pre.src=pics[i+1];} // 다음 장 미리 받기
+}
+function _igvGo(d){if(!_igv)return;const n=_igv.i+d;if(n<0||n>=_igv.pics.length)return;_igv.i=n;_igvShow();}
+function _closeIgViewer(){document.getElementById('igv-overlay')?.classList.remove('open');_igv=null;}
 // 핸들 → 주인 이름(그룹/멤버) — 캡션용. 링크는 artists/groups의 links.instagram
 let _igOwnerMap=null;
 function _igOwners(){
@@ -22512,13 +22564,15 @@ function _igPhotos(rows,days,max){
   (rows||[]).forEach(r=>(r.media||[]).forEach(m=>{
     if(!m||!m.u||!m.p||(m.ty!=='IMAGE'&&m.ty!=='CAROUSEL_ALBUM'))return;
     const t=Date.parse(m.t);if(!isFinite(t)||t<lim)return;
-    out.push({...m,ts:t,owner:own.get(r.handle)});
+    out.push({...m,ts:t,owner:own.get(r.handle),h:r.handle});
   }));
   return out.filter(m=>m.owner).sort((a,b)=>b.ts-a.ts).slice(0,max);
 }
 function _igRenderRail(list,photos){
   photos.forEach(m=>{
-    const card=_appendFeedCard(list,'📷',m.owner.name,'',()=>window.open(m.p,'_blank','noopener'),m.u,null,{meta:_igAgo(m.t)});
+    const cap1=String(m.cap||'').split('\n').map(x=>x.trim()).find(Boolean)||''; // 본문 첫 줄
+    const card=_appendFeedCard(list,'📷',m.owner.name,'',()=>_openIgViewer(m,m.h,0),m.u,null,{meta:_igAgo(m.t)});
+    if(cap1&&card){const c=document.createElement('div');c.className='feed-card-sub ig-cap1';c.textContent=cap1;card.querySelector('.feed-card-title')?.after(c);}
     const img=card&&card.querySelector('img');
     if(img)img.addEventListener('error',()=>card.remove()); // 만료된 인스타 주소면 그 카드만 뺀다
     const tw=card&&card.querySelector('.feed-card-thumb-wrap');

@@ -67,7 +67,7 @@ let ok = 0, nf = 0, stoppedBy = '';
 // 여러 장 게시물(캐러셀)은 안의 사진까지(children) 받는다(2026-10-19, 카드에서 겹친 묶음→펼치기). children 중첩이 막혀 있으면
 // (오류 100) 그 회차는 children 없이 다시 시도한다 — 한 필드 때문에 전체가 실패하지 않게.
 let withChildren = true;
-const fieldsFor = h => `business_discovery.username(${encodeURIComponent(h)}){username,name,followers_count,media_count,profile_picture_url,media.limit(9){media_type,media_url,thumbnail_url,permalink,timestamp${withChildren ? ',children{media_type,media_url,thumbnail_url}' : ''}}}`;
+const fieldsFor = h => `business_discovery.username(${encodeURIComponent(h)}){username,name,followers_count,media_count,profile_picture_url,media.limit(9){media_type,media_url,thumbnail_url,permalink,timestamp,caption,like_count,comments_count${withChildren ? ',children{media_type,media_url,thumbnail_url}' : ''}}}`;
 for (const h of queue) {
   const url = `${GRAPH}/${IG_USER}?fields=${fieldsFor(h)}&access_token=${encodeURIComponent(TOKEN)}`;
   let r, j;
@@ -90,6 +90,10 @@ for (const h of queue) {
     const img = m => m.thumbnail_url || (m.media_type !== 'VIDEO' ? m.media_url : null);
     const media = ((b.media && b.media.data) || []).map(m => {
       const o = { u: img(m), p: m.permalink, t: m.timestamp, ty: m.media_type };
+      // 본문·반응(2026-10-19 — 사이트 안 사진 뷰어용). 본문은 길면 600자에서 자른다(DB·전송량)
+      if (m.caption) o.cap = String(m.caption).slice(0, 600);
+      if (m.like_count != null) o.lk = m.like_count;
+      if (m.comments_count != null) o.cm = m.comments_count;
       const cs = ((m.children && m.children.data) || []).map(img).filter(Boolean);
       if (cs.length > 1) o.c = cs.slice(0, 10); // 캐러셀 안 사진들(첫 장 포함, 최대 10)
       return o;
