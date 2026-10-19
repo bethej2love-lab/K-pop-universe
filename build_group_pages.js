@@ -190,12 +190,16 @@ try {
 function ogSizeFor(url) {
   if (/maxresdefault/.test(url)) return { w: 1280, h: 720 };
   if (/hqdefault/.test(url)) return { w: 480, h: 360 };
+  if (/supabase\.co\/storage/.test(url)) return { w: 600, h: 600 }; // 등록 프로필 사진(영상이 없을 때의 대체, 대개 정사각)
   return { w: 1200, h: 630 }; // 자체 og-image.png
 }
 function ogImageForGroup(ko, info) { return (OG_THUMBS.groups && OG_THUMBS.groups[ko]) || ogImageFor(info); }
 function ogImageForMember(a) {
   const k = a.group.ko + '|' + a.name.ko;
-  return (OG_THUMBS.members && OG_THUMBS.members[k]) || ogImageFor(a);
+  // 멤버 영상·프로필 사진이 다 없으면 그룹 대표 썸네일(2026-10-19) — 기본 이미지보다 그 그룹이 보이는 게 낫다
+  // 솔로 키(group='솔로')인 예전 멤버는 소속 이력(groups) 중 썸네일 있는 첫 그룹(스피드 김유환 → 스피드)
+  const gk = [a.group, ...(a.groups || [])].map(g => g && g.ko).find(x => x && OG_THUMBS.groups && OG_THUMBS.groups[x]);
+  return (OG_THUMBS.members && OG_THUMBS.members[k]) || (gk && OG_THUMBS.groups[gk]) || ogImageFor(a);
 }
 function ogImageFor(info) {
   const song = (info.songs || [])[0];
@@ -698,8 +702,67 @@ artists.forEach(a => {
   fs.writeFileSync(path.join(enDir, 'index.html'), memberPageHtml('en'));
 
   pages.push({ loc: koUrl, priority: '0.6' }, { loc: enUrl, priority: '0.6' });
+  memberPagesMade.add(koPath); memberPagesMade.add(enPath);
   memberPageCount++;
 });
+}
+
+// ── 옛 멤버 페이지 정리(2026-10-19) ──────────────────────────────────────────────────────────
+// 멤버가 그룹 소속 → 솔로 키로 옮겨지면(스텔라 가영 → member/가영) 새 주소에 페이지를 쓰지만 **옛 g/<그룹>/<멤버>/는 그대로
+// 남았다** — 사이트맵엔 없지만 옛 링크로 공유하면 기본 이미지·옛 내용이 떴다(실측 44곳). 관계 페이지 정리와 같은 방식으로,
+// 이번에 안 만든 멤버 폴더는 **그 사람의 지금 주소로 넘겨주는 안내 페이지**로 바꾼다(같은 썸네일·canonical·즉시 이동).
+// 그룹 index.html·곡 폴더(s/)는 건드리지 않는다.
+const memberPagesMade = new Set();
+function redirectStaleMemberPages() {
+  const target = new Map(); // 옛 경로 → {a, lang}
+  for (const a of artists) {
+    if (!a || !a.name || !a.group) continue;
+    const slug = slugify(a.name.en || a.name.ko, a.name.ko);
+    for (const g of [a.group, ...(a.groups || [])]) {
+      if (!g || !g.ko || !groups[g.ko]) continue;
+      target.set(`g/${urlSafeKo(g.ko)}/${urlSafeKo(a.name.ko)}/`, { a, lang: 'ko' });
+      target.set(`en/g/${slugify(groups[g.ko].en || g.ko, g.ko)}/${slug}/`, { a, lang: 'en' });
+    }
+  }
+  // 동명이인 솔로 둘이 같은 member/<이름>/을 나눠 쓰는 경우(프리스틴·공원소녀 레나, 포미닛·나인뮤지스 현아 — 빌더의 별도 문제)는
+  // 넘기면 남의 페이지로 갈 수 있어 그대로 둔다. 지금 주소를 못 찾는 옛 페이지(개명 등)도 지우지 않고 둔다(옛 링크가 404가 되지 않게).
+  const pathUsers = new Map();
+  for (const a of artists) if (a && a.name && a.group) for (const l of ['ko', 'en']) { const q = memberPagePath(a, l); pathUsers.set(q, (pathUsers.get(q) || 0) + 1); }
+  let redir = 0, removed = 0, kept = 0;
+  for (const base of ['g', 'en/g']) {
+    const root = path.join(ROOT, base);
+    if (!fs.existsSync(root)) continue;
+    for (const gd of fs.readdirSync(root, { withFileTypes: true })) {
+      if (!gd.isDirectory()) continue;
+      for (const md of fs.readdirSync(path.join(root, gd.name), { withFileTypes: true })) {
+        if (!md.isDirectory() || md.name === 's') continue;
+        const rel = `${base}/${gd.name}/${md.name}/`;
+        if (memberPagesMade.has(rel)) continue;
+        const dir = path.join(root, gd.name, md.name);
+        if (!fs.existsSync(path.join(dir, 'index.html'))) continue;
+        const t = target.get(rel);
+        const now = t && memberPagePath(t.a, t.lang);
+        if (!now || now === rel || !memberPagesMade.has(now) || pathUsers.get(now) > 1) { kept++; continue; }
+        const url = `${SITE}/${now}`, img = ogImageForMember(t.a), sz = ogSizeFor(img);
+        const nm = t.lang === 'en' ? (t.a.name.en || t.a.name.ko) : t.a.name.ko;
+        fs.writeFileSync(path.join(dir, 'index.html'), `<!doctype html>
+<html lang="${t.lang}"><head><meta charset="utf-8">
+<title>${escHtml(nm)} — K-POP UNIVERSE</title>
+<link rel="canonical" href="${url}">
+<meta name="robots" content="noindex">
+<meta property="og:title" content="${escHtml(nm)} — K-POP UNIVERSE">
+<meta property="og:url" content="${url}">
+<meta property="og:image" content="${img}">
+<meta property="og:image:width" content="${sz.w}">
+<meta property="og:image:height" content="${sz.h}">
+<meta http-equiv="refresh" content="0; url=${url}">
+</head><body><a href="${url}">${escHtml(nm)}</a></body></html>
+`);
+        redir++;
+      }
+    }
+  }
+  if (redir || kept) console.log(`옛 멤버 페이지 정리: 새 주소로 넘김 ${redir}개 · 그대로 둠(주소 못 찾음·동명이인) ${kept}개`);
 }
 
 // ── 그룹 색인 허브(2026-08-31) ────────────────────────────────────────────────
@@ -1214,6 +1277,7 @@ function buildSongPages() {
   } catch (e) { console.warn('⚠️ 곡 페이지 건너뜀:', e.message); }
   buildGroupPages();
   buildMemberPages();
+  redirectStaleMemberPages();
   buildSongPages();
   console.log(`곡 페이지 ${songPageCount}곡 × 2개 언어`);
   let relPages = [], hubLinks = { ko: [], en: [] };

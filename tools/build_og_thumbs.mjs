@@ -335,7 +335,9 @@ if (args.includes('--keep-existing') && fs.existsSync(OUT)) {
     for (const [field, next] of [['groups', groupsOut], ['members', membersOut]]) {
       for (const k of Object.keys(next)) {
         const old = prev[field] && prev[field][k];
-        if (old && !isDirty(old)) { next[k] = old; kept++; }
+        // 예전 값이 영상이 아닌 대체 사진(프로필 사진)이면 이번에 영상을 구한 경우 영상으로 바꾼다(2026-10-19)
+        if (old && !isDirty(old) && idOf(old)) { next[k] = old; kept++; }
+        else if (old && !idOf(old)) replaced++;
         else if (old) replaced++;   // 커버를 물고 있던 키 → 이번에 새로 뽑은 값으로 교체
         else added++;
       }
@@ -359,6 +361,27 @@ try {
   for (const [k, v] of Object.entries(pin.members || {})) { membersOut[k] = v; n++; }
   if (n) console.log('[og-thumbs] 고정 ' + n + '개 적용(og_thumbs_pin.json)');
 } catch (e) { if (e.code !== 'ENOENT') console.warn('[og-thumbs] og_thumbs_pin.json 읽기 실패:', e.message); }
+// 영상이 하나도 없어 못 고른 그룹·멤버는 **등록 프로필 사진**(artist_pics — 우리 저장소에 올라가 있어 안 만료)으로 대신한다
+// (2026-10-19, 사용자: "새로 추가한 그룹 공유 링크에 썸네일이 없다"). 그래도 없으면 페이지 빌더가 그룹 썸네일 → 기본 이미지 순으로 폴백.
+try {
+  const pics = [];
+  for (let from = 0; ; from += 1000) {
+    const r = await fetch('https://dukgguehegnembimqvkm.supabase.co/rest/v1/artist_pics?select=ko_name,group_ko,pic_url&order=ko_name,group_ko', { headers: { apikey: KEY, Authorization: 'Bearer ' + KEY, Range: `${from}-${from + 999}` } });
+    if (!r.ok) break;
+    const d = await r.json(); pics.push(...d); if (d.length < 1000) break;
+  }
+  const picOf = new Map(pics.filter(p => p.pic_url && /supabase\.co\/storage/.test(p.pic_url)).map(p => [(p.ko_name || '') + '|' + (p.group_ko || ''), p.pic_url]));
+  let gp = 0, mp = 0;
+  for (const gko of Object.keys(groups)) if (!groupsOut[gko]) { const u = picOf.get('|' + gko); if (u) { groupsOut[gko] = u; gp++; } }
+  for (const a of artists) {
+    if (!a || !a.name || !a.group) continue;
+    const k = a.group.ko + '|' + a.name.ko;
+    if (membersOut[k]) continue;
+    const u = picOf.get(a.name.ko + '|' + a.group.ko) || picOf.get(a.name.ko + '|');
+    if (u) { membersOut[k] = u; mp++; }
+  }
+  console.log(`[og-thumbs] 영상 없는 곳 프로필 사진으로: 그룹 ${gp} · 멤버 ${mp}`);
+} catch (e) { console.warn('[og-thumbs] 프로필 사진 대체 실패:', e.message); }
 const out = {
   _generated: 'tools/build_og_thumbs.mjs',
   _note: '공유 미리보기용 대표 영상 썸네일(MV·라이브 인기 상위 중 랜덤 — 실행할 때마다 바뀜). build_group_pages.js가 읽는다. 주간 자동갱신: .github/workflows/rotate-og-thumbs.yml · 빠진 곳만 메우려면 --keep-existing',

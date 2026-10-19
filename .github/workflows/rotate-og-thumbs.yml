@@ -1,4 +1,4 @@
-name: 공유 썸네일 갱신 (주간)
+name: 공유 썸네일 갱신 (매일 빈 곳 채우기)
 
 # 공유 미리보기(og:image)에 쓰는 대표 영상 썸네일 캐시(og_thumbs.json)를 주 1회 새로 뽑는다.
 #
@@ -17,7 +17,7 @@ name: 공유 썸네일 갱신 (주간)
 
 on:
   schedule:
-    - cron: '23 17 * * 1'   # 매주 월요일 KST 02:23 — 트래픽 적은 시간, 라운드 분 회피
+    - cron: '23 17 * * *'   # 매일 KST 02:23 — 빈 곳만 채운다(--keep-existing). 예전엔 주 1회라 새로 등록한 그룹이 며칠씩 기본 이미지였다(2026-10-19 A2O LITE·SOUL)
   workflow_dispatch:
     inputs:
       full:
