@@ -1,0 +1,55 @@
+name: 유튜브 구독자 수 (매일)
+
+# 그룹 공식·멤버 개인 유튜브 채널의 구독자 수를 하루 한 번 받아 yt_subs.json에 저장한다(2026-10-20).
+# 카드의 유튜브 아이콘 옆 숫자가 이 파일을 읽는다(index.html _ytSubEntry). 인스타 팔로워(ig-stats.yml)와 짝.
+# 쿼터: 핸들→채널 ID는 처음 한 번만(파일에 남김), 이후엔 50개당 1유닛 → 하루 약 10유닛. tools/yt_subscribers.mjs 주석 참고.
+# push 트리거는 도구를 고쳤을 때 바로 한 번 돌려 확인하기 위한 것(평소엔 매일 스케줄).
+
+on:
+  schedule:
+    - cron: '41 18 * * *'   # 매일 KST 03:41
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'tools/yt_subscribers.mjs'
+      - '.github/workflows/yt-subs.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: yt-subs
+  cancel-in-progress: false
+
+jobs:
+  subs:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: 구독자 수 받기
+        env:
+          KPU_YT_API_KEY: ${{ secrets.KPU_YT_API_KEY }}
+        run: node tools/yt_subscribers.mjs | tee -a "$GITHUB_STEP_SUMMARY"
+
+      - name: 커밋
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add yt_subs.json
+          if git diff --cached --quiet; then
+            echo "바뀐 숫자 없음"
+            exit 0
+          fi
+          git commit -m "data(yt-subs): 유튜브 구독자 수 갱신 (auto)"
+          for i in 1 2 3; do
+            git pull --rebase origin main && git push && exit 0
+            echo "push 경합 — 재시도 ($i/3)"; sleep $((i * 5))
+          done
+          exit 1
