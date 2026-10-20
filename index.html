@@ -883,6 +883,7 @@
       <div id="yt-lb-with-chips"></div>
       <div id="yt-lb-people"></div>
     </div>
+    <button id="yt-lb-song" type="button" hidden><img id="yt-lb-song-cover" alt=""><span class="lbs-txt"><span id="yt-lb-song-t"></span><span id="yt-lb-song-a"></span></span><svg class="lbs-go" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button>
     <div id="yt-lb-reactions">
       <button class="lb-react-btn" data-emoji="🥹">🥹<span class="lb-react-cnt"></span></button>
       <button class="lb-react-btn" data-emoji="🫠">🫠<span class="lb-react-cnt"></span></button>
@@ -6797,6 +6798,7 @@ function _lbUpdateMemberInfo(){
   const wrap=document.getElementById('yt-lb-member-info');
   if(!wrap)return;
   const s=(_lbPlaylist&&_lbIdx>=0)?_lbPlaylist[_lbIdx]:null;
+  _lbUpdateSong(s);
   const anchorEl=document.getElementById('yt-lb-anchor-chip');
   const withEl=document.getElementById('yt-lb-with-chips');
   const connBtn=document.getElementById('yt-lb-conn-btn');
@@ -8136,6 +8138,8 @@ function _lbPushHist(){
   try{history.pushState({kpuLb:1},'',location.href);}catch(_){}
 }
 function closeLightbox(){
+  // 영상에 붙여 연 앨범 창(곡 카드)은 영상과 함께 닫는다 — 영상 없이 남으면 어디에 붙은 창인지 모호하다
+  {const _ad=document.getElementById('gc-discog-detail');if(_ad&&_ad.classList.contains('open')&&_ad.classList.contains('lb-dock'))_closeGcDiscogDetail();}
   if(_lbHistPushed){
     _lbHistPushed=false;
     if(!_lbFromPop&&history.state&&history.state.kpuLb){_lbIgnorePop=true;try{history.back();}catch(_){_lbIgnorePop=false;}}
@@ -11348,6 +11352,9 @@ window.addEventListener('popstate',()=>{
   // 영상창 칸을 빠져나온 뒤로가기 = 영상만 닫기. 도착한 칸이 카드 주소면 아래 처리는 이미 같은 카드라 아무것도 안 함.
   {const _lb=document.getElementById('yt-lightbox');
   if(_lbHistPushed&&_lb.classList.contains('open')&&!_lb.classList.contains('lb-closing')&&!(history.state&&history.state.kpuLb)){
+    // 영상에 붙여 연 앨범 창이 있으면 뒤로가기 한 번은 앨범 창만 — 영상 칸을 다시 쌓아 다음 뒤로가기가 영상을 닫게(2026-10-20)
+    const _ad=document.getElementById('gc-discog-detail');
+    if(_ad&&_ad.classList.contains('open')&&_ad.classList.contains('lb-dock')){_closeGcDiscogDetail();try{history.pushState({kpuLb:1},'',location.href);}catch(_){}return;}
     _lbFromPop=true;try{closeLightbox();}finally{_lbFromPop=false;}
   }}
   _histSuppress=true;
@@ -11857,6 +11864,8 @@ function _closeTopOverlay(){
   // 하프시트(라이트박스 위로 올라온 카드)가 가장 위 층이다 — ESC/뒤로 한 번은 여기부터 벗긴다.
   // 이게 없으면 데스크톱에서 카드만 내릴 방법이 없어 영상을 통째로 닫아야 했다(2026-08-26 P1-2).
   if(lb&&lb.classList.contains('lb-half-open')){_closeLbHalf();return true;}
+  // 재생 화면에 붙여 연 앨범 창(곡 카드, 2026-10-20)이 영상보다 위 층
+  {const _ad=document.getElementById('gc-discog-detail');if(_ad&&_ad.classList.contains('open')&&_ad.classList.contains('lb-dock')){_closeGcDiscogDetail();return true;}}
   if(lb&&lb.classList.contains('open')){closeLightbox();return true;}
   // 2026-09-05 UX감사 #4: 바깥클릭으론 닫히는데 Esc 목록엔 빠져 있던 오버레이들을 추가(데스크톱 일관성).
   //   welcome-*(온보딩 선택 게이트)는 일부러 제외 — 아무 선택 없이 Esc로 건너뛰면 안 되므로.
@@ -13497,7 +13506,7 @@ async function _loadGcDiscogTrackTrophies(ko){
 // 있는 정보를 전부 같이 펼쳐서 보여준다(2026-08-19, 사용자 재확인 — "하나만 뜨고 클릭하면 멜론·스포티파이
 // 둘 다 표기되는 게 맞음?"). 처음엔 소스별로 아이콘 2개(모양만 같게 통일)를 따로 띄웠었는데 그게 아니었음.
 function _appendGcDiscogTrackBadges(row,title){
-  if(_gcDiscogTrackTrophiesKo!==_openGCko||!_gcDiscogTrackTrophies)return;
+  if(_gcDiscogTrackTrophiesKo!==_dGko()||!_gcDiscogTrackTrophies)return;
   const trophy=_gcDiscogTrackTrophies[_titleNorm(title)];
   if(!trophy||(!trophy.melon&&!trophy.spotify))return;
   const parts=[];
@@ -13514,8 +13523,15 @@ function _appendGcDiscogTrackBadges(row,title){
   });
   row.appendChild(icon);row.appendChild(info);
 }
-function _openGcDiscogDetail(a,idx){
-  _discogDetailGko=_openGCko||(_openTArtist?.group?.ko)||'';
+// 앨범 창의 주인 맥락(2026-10-20) — 카드에서 열면 null(열린 카드가 주인), 재생 화면 곡 카드에서 열면 {gko,artist}.
+// 앨범 창 안의 주인 판단(멜론 검색어·크레딧·영상 주인·곡 주인·뱃지)은 _dGko()/_dArtist()로만 본다.
+let _discogCtx=null;
+function _dGko(){return _discogCtx?_discogCtx.gko:_openGCko;}
+function _dArtist(){return _discogCtx?_discogCtx.artist:_openTArtist;}
+function _openGcDiscogDetail(a,idx,ctx){
+  if(ctx!==undefined)_discogCtx=ctx;
+  else if(!document.getElementById('gc-discog-detail').classList.contains('open'))_discogCtx=null; // 새로 여는 건 카드 맥락
+  _discogDetailGko=_discogCtx?(_discogCtx.gko||_discogCtx.artist?.group?.ko||''):(_openGCko||(_openTArtist?.group?.ko)||'');
   _gcDiscogIdx=idx!=null?idx:_gcDiscogList.indexOf(a);
   document.getElementById('gc-discog-detail-prev').disabled=_gcDiscogIdx<=0;
   document.getElementById('gc-discog-detail-next').disabled=_gcDiscogIdx<0||_gcDiscogIdx>=_gcDiscogList.length-1;
@@ -13526,7 +13542,7 @@ function _openGcDiscogDetail(a,idx){
   document.getElementById('gc-discog-detail-meta').textContent=a.releaseDate;
   // 멜론 앨범 페이지 — 번호 없으면 그 곡이 든 본 앨범(melonVia, 멜론엔 따로 없는 선공개 싱글), 그것도 없으면 "주인 + 앨범명" 멜론 검색 — 가사·전체 크레딧을 보러 가는 길(2026-10-14)
   {const ml=document.getElementById('gc-discog-detail-melon');if(ml){
-    const owner=(_openTArtist&&_openTArtist.name&&_openTArtist.name.ko)||(_discogDetailGko&&!String(_discogDetailGko).startsWith('unit:')?_discogDetailGko:'')||'';
+    const owner=(_dArtist()&&_dArtist().name&&_dArtist().name.ko)||(_discogDetailGko&&!String(_discogDetailGko).startsWith('unit:')?_discogDetailGko:'')||'';
     ml.href=a.melonAlbumId?_melonAlbumUrl(a.melonAlbumId):a.melonVia?_melonAlbumUrl(a.melonVia):'https://www.melon.com/search/total/index.htm?q='+encodeURIComponent((owner+' '+(a.title||'')).trim());
     ml.hidden=false;ml.onclick=e=>e.stopPropagation();}}
   const trackLbl=document.getElementById('gc-discog-detail-track-lbl');
@@ -13578,7 +13594,7 @@ function _openGcDiscogDetail(a,idx){
     const titles=(a.tracks||[]).map(t=>t.title).filter(Boolean);
     if(!titles.length&&a.titleTrack)titles.push(a.titleTrack);
     // 멤버 카드면 멤버명, 그룹 카드면 그룹명으로 songId 특정 — 같은 제목 다른 곡 오매칭 방지(2PM Heartbeat처럼)
-    const _credOwner=(_openTArtist?.name?.ko)||_discogDetailGko||null;
+    const _credOwner=(_dArtist()?.name?.ko)||_discogDetailGko||null;
     // 곡 전체 크레딧이 수집된 앨범은 그걸로(외부 작곡가까지), 아니면 기존처럼 아이돌 본인 참여분만
     if((a.tracks||[]).some(t=>t.cr))_renderFullCreditsInto(credEl,a.tracks);
     else _renderCreditsInto(credEl,titles,true,_credOwner);
@@ -13688,7 +13704,8 @@ async function _openCollabExtAlbum(w){
 function _melonAlbumUrl(id){return 'https://www.melon.com/album/detail.htm?albumId='+encodeURIComponent(id);}
 function _melonSongUrl(id){return 'https://www.melon.com/song/detail.htm?songId='+encodeURIComponent(id);}
 function _closeGcDiscogDetail(){
-  document.getElementById('gc-discog-detail').classList.remove('open');
+  document.getElementById('gc-discog-detail').classList.remove('open','lb-dock');
+  _discogCtx=null;_albScrollPending=false;
   const _vp=document.getElementById('gc-discog-video-panel');
   if(_vp){
     _vp.hidden=true;
@@ -13717,7 +13734,7 @@ function _albVidMeta(){
 function _albumVideoOwners(gko){
   if(_isUnitKey(gko)){const u=_PROJECT_UNITS[gko.slice(_UNIT_KEY.length)];return [...new Set((u?.members||[]).map(m=>m.gko==='솔로'?m.mko:m.gko))];}
   if(GROUPS[gko])return [gko];
-  return [_openTArtist?_ytGroupKoFor(_openTArtist):gko];
+  return [_dArtist()?_ytGroupKoFor(_dArtist()):gko];
 }
 async function _loadAlbumVideos(album,gko){
   const panel=document.getElementById('gc-discog-video-panel');
@@ -13824,7 +13841,7 @@ function _renderAlbumVideos(more){
     const meta=document.createElement('div');meta.className='adv-meta';
     meta.textContent=[v.published_at?String(v.published_at).slice(0,10):'',v.view_count?_fmtViewCount(v.view_count):''].filter(Boolean).join(' · ');
     item.appendChild(thumb);item.appendChild(txt);item.appendChild(meta);
-    item.addEventListener('click',()=>openLightbox(_tvfVidUrl(v),_isShortV(v),playlist,i,{groupKo:st.gko}));
+    item.addEventListener('click',()=>{openLightbox(_tvfVidUrl(v),_isShortV(v),playlist,i,{groupKo:st.gko});_albKeepDocked();});
     listEl.appendChild(item);
   }
   st.shown=end;
@@ -13879,10 +13896,10 @@ function _albSongApply(){
 }
 // 앨범 창의 곡 주인 — 그룹 카드면 그룹, 멤버(솔로) 카드면 그 멤버
 function _albSongOwner(title){
-  if(_openGCko&&_discogDetailGko===_openGCko)return{owner:{gko:_openGCko,memberKo:null},meta:{ownerType:'group',gko:_openGCko,artist:null,album:'',ownerName:_openGCko}};
-  const a=_openTArtist;
+  if(_dGko()&&_discogDetailGko===_dGko())return{owner:{gko:_dGko(),memberKo:null},meta:{ownerType:'group',gko:_dGko(),artist:null,album:'',ownerName:_dGko()}};
+  const a=_dArtist();
   if(a&&a.name)return{owner:{gko:_ytGroupKoFor(a),memberKo:a.name.ko},meta:{ownerType:'member',gko:a.group&&a.group.ko,artist:a,album:'',ownerName:_dispName?_dispName(a):a.name.ko}};
-  if(_openGCko)return{owner:{gko:_openGCko,memberKo:null},meta:{ownerType:'group',gko:_openGCko,artist:null,album:'',ownerName:_openGCko}};
+  if(_dGko())return{owner:{gko:_dGko(),memberKo:null},meta:{ownerType:'group',gko:_dGko(),artist:null,album:'',ownerName:_dGko()}};
   return null;
 }
 function _albTrackClick(title){
@@ -13892,18 +13909,29 @@ function _albTrackClick(title){
   if(_albSong===title){_albSong=null;_albSongApply();return;} // 같은 곡 다시 누름 = 앨범 전체로
   _albSong=title;_albSongFor=al||null;_albSongMount(true);_albSongApply();
   _openSongVideos(title,o.owner,o.meta,{inAlbum:true});
-  if(isMob()){ // 폰: 시트 안 아래쪽 영상 칸으로 내려 준다(scrollIntoView는 바깥까지 밀 수 있어 직접 계산)
-    const sheet=document.getElementById('gc-discog-detail-sheet'),panel=document.getElementById('gc-discog-video-panel');
-    if(sheet&&panel&&panel.parentElement===sheet)requestAnimationFrame(()=>sheet.scrollTo({top:Math.max(0,panel.offsetTop-8),behavior:'smooth'}));
-  }
+  if(isMob()){_albScrollPending=true;requestAnimationFrame(_albScrollToPanel);}
+}
+// 폰: 시트 안 아래쪽 영상 칸으로 내려 준다(scrollIntoView는 바깥까지 밀 수 있어 직접 계산).
+// ⚠️ 앨범 창을 막 연 직후엔 시트 내용이 아직 짧아 스크롤할 곳이 없다(재생 화면 곡 카드에서 열 때 0으로 끝났다) —
+//    곡 목록이 그려질 때(_renderSongVideoTabs) 한 번 더 시도하고, 실제로 내려간 뒤에야 대기 표시를 지운다.
+let _albScrollPending=false;
+function _albScrollToPanel(){
+  if(!_albScrollPending||!isMob())return;
+  const sheet=document.getElementById('gc-discog-detail-sheet'),panel=document.getElementById('gc-discog-video-panel');
+  if(!sheet||!panel||panel.parentElement!==sheet)return;
+  const top=Math.max(0,panel.offsetTop-8);
+  if(sheet.scrollHeight-sheet.clientHeight<Math.min(top,40))return; // 아직 내릴 만큼 내용이 없음 — 목록이 그려지면 다시
+  _albScrollPending=false;
+  sheet.scrollTo({top,behavior:'smooth'});
 }
 document.getElementById('gc-discog-song-back')?.addEventListener('click',e=>{e.stopPropagation();_albSong=null;_albSongApply();});
 // 곡 → 그 곡이 든 앨범 고르기. 같은 곡이 싱글·미니·정규·일본반에 다 들어 있으므로
 // ① 검색이 알려 준 앨범명 ② 일본반 아닌 것 ③ 타이틀곡으로 실린 것 ④ 가장 먼저 낸 것(곡이 처음 나온 앨범) 순.
 function _findSongAlbum(disco,title,albumHint,jpOwner){
-  const key=_songKey(title);if(!key)return null;
+  let match=title;
+  if(typeof title!=='function'){const key=_songKey(title);if(!key)return null;match=t=>_songKey(t.title)===key;}
   const cands=[];
-  (disco||[]).forEach(a=>{const t=(a&&a.tracks||[]).find(t=>t&&_songKey(t.title)===key);if(t)cands.push({a,t});});
+  (disco||[]).forEach(a=>{const t=(a&&a.tracks||[]).find(t=>t&&t.title&&match(t));if(t)cands.push({a,t});});
   if(!cands.length)return null;
   if(albumHint){const h=cands.find(c=>c.a.title===albumHint);if(h)return h;}
   const jp=c=>{try{return _isJpRelease(c.a,jpOwner)?1:0;}catch(e){return 0;}};
@@ -13925,6 +13953,70 @@ async function _openSongHub(title,owner,songMeta){
     _albTrackClick(hit.t.title);
   },450);
 }
+// ══ 재생 화면 → 곡·앨범(2026-10-20 사용자 요청) ══
+// 보던 영상의 곡 키(song_keys "주인:곡기본형", 루틴 10단계가 박는다)로 그 곡이 든 앨범을 찾아 영상 아래에 곡 카드를 띄운다.
+// 누르면 앨범 창이 재생 화면 옆(폰은 영상 아래)에 붙어 열리고 그 곡이 선택된 상태 — 같은 앨범 다른 곡 무대를 눌러 이어 본다.
+// 곡 키가 없는 영상(예능·직캠 모음 등)·디스코에 없는 곡은 카드를 안 띄운다(추측으로 엉뚱한 앨범을 걸지 않는다).
+const _lbSongCache=new Map();let _lbSongReq=0;
+function _songOwnerByKey(k){
+  if(GROUPS[k])return{gko:k,artist:null};
+  if(typeof _isUnitKey==='function'&&_isUnitKey(k))return null;
+  const a=ARTISTS.find(x=>_ytGroupKoFor(x)===k);
+  return a?{gko:null,artist:a}:null;
+}
+function _lbResolveSong(s){
+  const id=s&&(s._apiId||ytId(s.u||''));
+  if(!id||!sb)return Promise.resolve(null);
+  if(!_lbSongCache.has(id))_lbSongCache.set(id,(async()=>{
+    const r=await sb.from(_YT_TABLE).select('group_ko,song_keys').eq('id',id).limit(1);
+    const v=r&&r.data&&r.data[0];if(!v)return null;
+    const keys=(Array.isArray(v.song_keys)?v.song_keys:[]).slice()
+      .sort((a,b)=>(b.startsWith(v.group_ko+':')?1:0)-(a.startsWith(v.group_ko+':')?1:0)); // 영상 주인 곡 먼저
+    for(const k of keys){
+      const i=k.indexOf(':');if(i<1)continue;
+      const base=k.slice(i+1),own=_songOwnerByKey(k.slice(0,i));if(!own||!base)continue;
+      let disco=[];
+      if(own.artist){await _ensureMemberDisco(own.artist);disco=own.artist.discography||[];}
+      else{await _ensureGroupDisco(own.gko);disco=GROUPS[own.gko].discography||[];}
+      const hit=_findSongAlbum(disco,t=>_songBase(t.title)===base,null,own.artist||own.gko);
+      if(hit)return{a:hit.a,t:hit.t,disco,own};
+    }
+    return null;
+  })().catch(()=>null));
+  return _lbSongCache.get(id);
+}
+function _lbUpdateSong(s){
+  const btn=document.getElementById('yt-lb-song');if(!btn)return;
+  const my=++_lbSongReq;btn.hidden=true;btn._hit=null;
+  _lbResolveSong(s).then(h=>{
+    if(my!==_lbSongReq||!h)return;
+    const _ko=currentLang==='ko';
+    const cov=document.getElementById('yt-lb-song-cover');cov.src=h.a.cover||'';cov.hidden=!h.a.cover;
+    document.getElementById('yt-lb-song-t').textContent='♪ '+h.t.title;
+    const ownName=h.own.artist?_dispName(h.own.artist):(_ko?h.own.gko:(GROUPS[h.own.gko]?.en||h.own.gko));
+    document.getElementById('yt-lb-song-a').textContent=[ownName,h.a.title,String(h.a.releaseDate||'').slice(0,4)].filter(Boolean).join(' · ');
+    btn.setAttribute('aria-label',(_ko?'이 곡이 든 앨범 보기: ':'Album of this song: ')+h.a.title);
+    btn._hit=h;btn.hidden=false;
+  });
+}
+// 재생 화면에 붙여 연 앨범 창이면 재생 화면이 위로 올라와 덮지 않게 다시 맨 위로
+function _albKeepDocked(){
+  const d=document.getElementById('gc-discog-detail');
+  if(d&&d.classList.contains('open')&&d.classList.contains('lb-dock'))_bringToFront(d);
+}
+function _lbOpenSongAlbum(h){
+  if(!h)return;
+  const d=document.getElementById('gc-discog-detail');
+  if(isMob()){ // 폰: 영상은 위에 그대로 보이고 앨범 창은 그 아래 남은 높이만큼
+    const vb=document.getElementById('yt-lb-video-box')?.getBoundingClientRect();
+    d.style.setProperty('--lbdock-top',Math.round(vb&&vb.bottom>0?vb.bottom+8:innerHeight*0.38)+'px');
+  }
+  _gcDiscogList=h.disco;
+  _openGcDiscogDetail(h.a,h.disco.indexOf(h.a),{gko:h.own.gko,artist:h.own.artist});
+  d.classList.add('lb-dock');_bringToFront(d);
+  _albTrackClick(h.t.title);
+}
+document.getElementById('yt-lb-song')?.addEventListener('click',e=>{e.stopPropagation();_lbOpenSongAlbum(e.currentTarget._hit);});
 function _filterGcVideosByTrack(title){
   if(!_openGCko)return;
   // 그룹 카드 디스코에서 트랙 클릭 — 그룹 컨텍스트로 곡 상세 헤더 메타도 함께 넘긴다(2026-09-02).
@@ -14108,7 +14200,7 @@ function _renderSongVideoTabs(){
       document.getElementById('gc-track-videos-sort').textContent=st.sort==='views'?(_ko?'조회수순':'Most viewed'):(_ko?'최신순':'Newest');
     }
   }
-  if(_albSong&&listEl.parentElement?.id==='gc-discog-song-view'){const c=document.getElementById('gc-discog-video-count');if(c)c.textContent=rows.length?rows.length.toLocaleString():'';}
+  if(_albSong&&listEl.parentElement?.id==='gc-discog-song-view'){const c=document.getElementById('gc-discog-video-count');if(c)c.textContent=rows.length?rows.length.toLocaleString():'';requestAnimationFrame(_albScrollToPanel);}
   if(!rows.length){listEl.innerHTML=`<div class="tvf-empty">${_ko?'관련 영상이 없어요':'No matching videos'}</div>`;return;}
   const coverIds=new Set(st.cover.map(v=>v.id));
   const playlist=rows.map(_tvfPlaylistItem);
@@ -14135,7 +14227,7 @@ function _renderSongVideoTabs(){
     const metaTxt=[gLbl,_fmtVidMeta(v.published_at,v.view_count)].filter(Boolean).join(' · ');
     if(metaTxt){const m=document.createElement('div');m.className='tvf-meta';m.textContent=metaTxt;txt.appendChild(m);}
     item.appendChild(wrap);item.appendChild(txt);
-    item.addEventListener('click',()=>openLightbox(_tvfVidUrl(v),_isShortV(v),playlist,i,{groupKo:st.gko}));
+    item.addEventListener('click',()=>{openLightbox(_tvfVidUrl(v),_isShortV(v),playlist,i,{groupKo:st.gko});_albKeepDocked();});
     listEl.appendChild(item);
   });
 }
@@ -14145,6 +14237,7 @@ document.getElementById('gc-track-videos-play')?.addEventListener('click',e=>{
   const rows=st.rows,first=rows[0];
   // forceBrowseMode:true — 쇼츠가 섞여 있어도 목록 순서대로 이어보게(컬렉션·모아보기와 같은 규칙)
   openLightbox(_tvfVidUrl(first),_isShortV(first),rows.map(_tvfPlaylistItem),0,{groupKo:st.gko},false,true);
+  _albKeepDocked();
 });
 document.getElementById('gc-track-videos-sort')?.addEventListener('click',e=>{
   e.stopPropagation();

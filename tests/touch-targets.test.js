@@ -114,7 +114,8 @@ const server = http.createServer((req, res) => {
     const d = JSON.parse(await ev(cdp, `(function(){_updateProfileBtns();const r=document.getElementById('dh-right').getBoundingClientRect();
       return JSON.stringify({labels:[...document.querySelectorAll('#dh-right .dh-label')].filter(e=>e.getBoundingClientRect().width>0).map(e=>e.textContent),
         titles:['dh-random-btn','dh-fav-btn','dh-lang-btn','dh-settings-btn'].map(i=>document.getElementById(i).title),h:r.height,right:r.right});})()`));
-    if (d.labels.join(',') === '홈,검색,탐험,나') ok('③ 데스크톱 탭바 라벨 4개(프로필 갱신 뒤에도)'); else bad(`③ 라벨 ${JSON.stringify(d.labels)}`);
+    // 브라우저 언어가 영어면(CI 러너) 앱이 영어로 뜬다 — 두 언어 다 인정(2026-10-20 CI에서 이걸로 빨간불)
+    if (['홈,검색,탐험,나', 'Home,Search,Explore,Me'].includes(d.labels.join(','))) ok('③ 데스크톱 탭바 라벨 4개(프로필 갱신 뒤에도)'); else bad(`③ 라벨 ${JSON.stringify(d.labels)}`);
     if (d.titles.every(Boolean)) ok('③ 부가 버튼 툴팁 4개'); else bad(`③ 툴팁 ${JSON.stringify(d.titles)}`);
     if (d.h <= 44 && d.right <= 1280) ok(`③ 탭바 한 줄(${Math.round(d.h)}px)·화면 안`); else bad(`③ 탭바 높이 ${d.h}·오른쪽 ${d.right}`);
   } catch (e) {

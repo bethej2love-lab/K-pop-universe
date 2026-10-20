@@ -4754,7 +4754,30 @@
 .lb-person-av img{width:100%;height:100%;object-fit:cover;display:block;}
 .lb-person.is-group .lb-person-av{box-shadow:0 0 0 2px #0e1024,0 0 0 3px rgba(255,255,255,0.45);}
 .lb-person-nm{max-width:100%;font-size:11px;color:rgba(220,232,255,0.82);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center;}
-#yt-lightbox.lb-browse #yt-lb-uplist-preview{grid-column:1/-1;grid-row:5;}
+#yt-lightbox.lb-browse #yt-lb-uplist-preview{grid-column:1/-1;grid-row:6;}
+/* 곡 카드(2026-10-20) — 보던 영상의 곡이 든 앨범으로. 출연자 카드 아래 한 줄. 곡 키가 없는 영상은 hidden */
+#yt-lb-song{display:none;}
+#yt-lightbox.lb-browse #yt-lb-song:not([hidden]){grid-column:1/-1;grid-row:5;display:flex;align-items:center;gap:12px;width:100%;box-sizing:border-box;
+  margin:8px 0 0;padding:10px 10px 10px 12px;border:none;border-radius:14px;background:rgba(255,255,255,0.05);color:inherit;font-family:inherit;text-align:left;cursor:pointer;}
+#yt-lightbox.lb-browse #yt-lb-song:hover{background:rgba(255,255,255,0.08);}
+#yt-lb-song-cover{width:44px;height:44px;border-radius:7px;object-fit:cover;flex-shrink:0;background:rgba(255,255,255,0.06);}
+#yt-lb-song-cover[hidden]{display:none;}
+.lbs-txt{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px;}
+#yt-lb-song-t{font-size:14px;font-weight:600;color:rgba(236,242,255,0.94);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+#yt-lb-song-a{font-size:12px;color:rgba(160,182,224,0.72);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.lbs-go{width:18px;height:18px;flex-shrink:0;fill:none;stroke:rgba(200,214,245,0.6);stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+/* 재생 화면에 붙여 연 앨범 창(lb-dock) — 어둡게 덮지 않고 영상이 계속 보이게. 데스크톱은 오른쪽, 폰은 영상 아래 */
+#gc-discog-detail.lb-dock{pointer-events:none;}
+#gc-discog-detail.lb-dock #gc-discog-detail-bg{display:none;}
+#gc-discog-detail.lb-dock #gc-discog-detail-sheet,#gc-discog-detail.lb-dock #gc-discog-video-panel{pointer-events:auto;}
+#gc-discog-detail.lb-dock #gc-discog-detail-sheet{box-shadow:0 -10px 40px rgba(0,0,0,0.5);}
+@media(min-width:1024px){
+  #gc-discog-detail.lb-dock{justify-content:flex-end;padding-right:16px;}
+  #gc-discog-detail.lb-dock #gc-discog-detail-sheet{max-width:420px;box-shadow:-12px 0 40px rgba(0,0,0,0.5);}
+}
+@media(max-width:1023px){
+  #gc-discog-detail.lb-dock #gc-discog-detail-sheet{max-height:calc(100dvh - var(--lbdock-top,38dvh));}
+}
 #yt-lightbox.lb-browse .lb-menu-wrap{display:none!important;}
 @media(max-width:768px){
   #yt-lightbox.lb-browse.lb-has-chips #yt-lb-wrap{padding-top:calc(64px + env(safe-area-inset-top,0px));}

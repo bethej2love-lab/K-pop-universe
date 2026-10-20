@@ -147,6 +147,37 @@ const server = http.createServer((req, res) => {
         if (process.env.KPU_DEBUG) console.log(await ev(cdp, `JSON.stringify(window.__log)`));
         await shot(`${tag}-3-search-song`);
       }
+      // ⑧~⑫ 3단계: 재생 화면 곡 카드 → 재생 화면에 붙은 앨범 창
+      await ev(cdp, `(_closeGcDiscogDetail(),closeCards(),1)`); await sleep(1200);
+      await ev(cdp, `(showGC('아이브',innerWidth/2,innerHeight*0.4),1)`); await sleep(2500);
+      const vt = await ev(cdp, `(async()=>{const r=await sb.from(_YT_TABLE).select('id,title,group_ko,members,with_members,song_keys,category').eq('group_ko','아이브').eq('category','mv').contains('song_keys',['아이브:lovedive']).limit(1);const v=r.data&&r.data[0];if(!v)return null;openLightbox('https://www.youtube.com/watch?v='+v.id,false,[{t:v.title,u:'https://www.youtube.com/watch?v='+v.id,..._rowTags(v)}],0,{groupKo:'아이브'});return v.title;})()`);
+      await sleep(4000);
+      const lbs = () => ev(cdp, `(()=>{const d=document.getElementById('gc-discog-detail'),lb=document.getElementById('yt-lightbox'),b=document.getElementById('yt-lb-song'),sh=document.getElementById('gc-discog-detail-sheet');
+        return{lb:lb.classList.contains('open'),card:!b.hidden&&b.getBoundingClientRect().height>0,cardTxt:b.textContent,det:d.classList.contains('open'),dock:d.classList.contains('lb-dock'),
+          lbl:document.getElementById('gc-discog-video-lbl').textContent,items:document.querySelectorAll('#gc-discog-song-view .tvf-item').length,
+          zD:+getComputedStyle(d).zIndex,zL:+getComputedStyle(lb).zIndex,vid:String(_lbActiveVid||''),st:sh.scrollTop};})()`);
+      let l = await lbs();
+      if (vt && l.lb && l.card && /LOVE DIVE/.test(l.cardTxt)) ok(`[${tag}] ⑧ 재생 화면에 곡 카드 (${l.cardTxt.trim()})`); else bad(`[${tag}] ⑧ ${vt} ${JSON.stringify(l)}`);
+      await ev(cdp, `(document.getElementById('yt-lb-song').click(),1)`); await sleep(4500); l = await lbs();
+      if (l.lb && l.det && l.dock && /LOVE DIVE/.test(l.lbl) && l.items > 0 && l.zD > l.zL && (!mobile || l.st > 0))
+        ok(`[${tag}] ⑨ 곡 카드 → 재생 화면에 붙은 앨범 창, 곡 선택(${l.items}개)${mobile ? ', 영상 칸으로 스크롤' : ''}`);
+      else bad(`[${tag}] ⑨ ${JSON.stringify(l)}`);
+      await shot(`${tag}-4-lb-dock`);
+      const v0 = l.vid;
+      await ev(cdp, `(document.querySelectorAll('#gc-discog-song-view .tvf-item')[1].click(),1)`); await sleep(2500); l = await lbs();
+      if (l.lb && l.det && l.dock && l.vid !== v0 && l.zD > l.zL) ok(`[${tag}] ⑩ 앨범 창에서 다른 영상 → 재생 화면에서 바로, 앨범 창은 위에 그대로`); else bad(`[${tag}] ⑩ v0=${v0} ${JSON.stringify(l)}`);
+      await ev(cdp, `(_closeTopOverlay(),1)`); await sleep(900); l = await lbs();
+      if (l.lb && !l.det) ok(`[${tag}] ⑪ ESC = 앨범 창만, 영상은 그대로`); else bad(`[${tag}] ⑪ ${JSON.stringify(l)}`);
+      await ev(cdp, `(document.getElementById('yt-lb-song').click(),1)`); await sleep(2500);
+      await ev(cdp, `(closeLightbox(),1)`); await sleep(1200); l = await lbs();
+      const parts = await ev(cdp, `['gc-track-videos-list'].every(id=>document.getElementById(id).parentElement.id==='gc-track-videos-sheet')`);
+      if (!l.lb && !l.det && !l.dock && parts) ok(`[${tag}] ⑫ 영상 닫으면 붙어 있던 앨범 창도 함께 닫힘`); else bad(`[${tag}] ⑫ parts=${parts} ${JSON.stringify(l)}`);
+      // ⑬ 뒤로가기(폰 시스템 뒤로·브라우저 뒤로) — 한 번은 앨범 창만, 두 번째에 영상
+      await ev(cdp, `(async()=>{const r=await sb.from(_YT_TABLE).select('id,title,group_ko,members,with_members,song_keys').eq('group_ko','아이브').contains('song_keys',['아이브:lovedive']).limit(1);const v=r.data[0];openLightbox('https://www.youtube.com/watch?v='+v.id,false,[{t:v.title,u:'https://www.youtube.com/watch?v='+v.id,..._rowTags(v)}],0,{groupKo:'아이브'});return 1;})()`);
+      await sleep(3500); await ev(cdp, `(document.getElementById('yt-lb-song').click(),1)`); await sleep(2500);
+      await ev(cdp, `(history.back(),1)`); await sleep(1200); const b1 = await lbs();
+      await ev(cdp, `(history.back(),1)`); await sleep(1500); const b2 = await lbs();
+      if (b1.lb && !b1.det && !b2.lb) ok(`[${tag}] ⑬ 뒤로가기 한 번 = 앨범 창만, 두 번 = 영상`); else bad(`[${tag}] ⑬ 1회=${JSON.stringify(b1)} 2회=${JSON.stringify(b2)}`);
     }
   } catch (e) { bad('예외: ' + e.message); } finally { try { proc.kill(); } catch (e) {} server.close(); }
   console.log(`
