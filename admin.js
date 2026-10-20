@@ -11004,26 +11004,7 @@ document.getElementById('vid-tag-thumb-refresh').addEventListener('click',async 
 });
 
 
-// 카드 넓게 보기 토글
-(()=>{
-  const btn=document.getElementById('sp-wide-btn');
-  if(!btn)return;
-  const apply=wide=>{
-    document.body.classList.toggle('card-wide',wide);
-    btn.textContent=wide?'⇥':'⇤';
-    btn.title=wide?'카드 원래 크기로':'카드 넓게 보기';
-  };
-  apply(localStorage.getItem('kpu_card_wide')==='1');
-  btn.addEventListener('click',e=>{
-    e.stopPropagation();
-    const next=!document.body.classList.contains('card-wide');
-    apply(next);
-    localStorage.setItem('kpu_card_wide',next?'1':'0');
-    // 이미 그려진 영상 그리드는 넓이 전환만으로 재배치되지 않으므로, 지금 열린 카드의 영상 그리드를 새로고침
-    if(_openGCko)_gcChVidCtl.reloadIfShowing(_openGCko);
-    if(_openTArtist)_ttChVidCtl.reloadIfShowing(_openTArtist.group.ko);
-  });
-})();
+// 카드 넓게 보기(⇤) 토글은 2026-10-20 index.html로 옮겼다(일반 사용자 버튼인데 여기만 있어서 누르면 카드가 닫혔다).
 
 // Settings 배선
 (()=>{

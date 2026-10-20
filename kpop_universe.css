@@ -4786,3 +4786,20 @@
   .gc-ch-sort-btn::after{content:'';position:absolute;inset:-10px -4px;}
   .scrap-btn::after,.col-btn::after{content:'';position:absolute;top:-4px;right:-2px;bottom:-10px;left:-2px;}
 }
+
+/* ── 데스크톱 가로 화살표 정리(2026-10-20 사용자 — "웹은 가로가 넓으니 > 로, 오른쪽으로 라이트박스만 닫히게") ──
+   영상창 닫기 셰브런을 아래(∨)→오른쪽(›)으로 돌리고, 닫힐 때 오른쪽으로 밀려나며 사라진다(카드는 그대로).
+   모바일은 화면을 아래로 내려 닫는 시트라 ∨ 그대로. */
+@media(min-width:769px){
+  #yt-lightbox.lb-browse #yt-lb-close-chevron{transform:rotate(-90deg);}
+  #yt-lightbox.lb-browse #yt-lb-close{width:34px;height:34px;top:-34px;right:-4px;display:flex;align-items:center;justify-content:center;border-radius:50%;opacity:.75;}
+  #yt-lightbox.lb-browse #yt-lb-close:hover{background:rgba(255,255,255,0.08);opacity:1;}
+  #yt-lightbox.lb-browse.lb-closing{animation:lb-close-right .22s ease forwards;}
+  @keyframes lb-close-right{from{opacity:1;transform:translateX(0);}to{opacity:0;transform:translateX(6%);}}
+  /* 탐험 패널(왼쪽에서 열림) 닫기 = 왼쪽으로 접는 ‹ — 예전엔 데스크톱에 닫기 버튼이 아예 없어 상단 탐험 탭을 다시 눌러야 했다 */
+  #feed-close{display:flex;position:absolute;top:9px;right:8px;z-index:5;width:32px;height:32px;align-items:center;justify-content:center;
+    background:none;border:none;border-radius:50%;color:rgba(170,190,235,0.6);padding:0;cursor:pointer;}
+  #feed-close:hover{background:rgba(255,255,255,0.07);color:rgba(210,225,255,0.9);}
+  /* 카드 ×(9×15px) — 글자 위치는 그대로 두고 누르는 범위만 넓힌다 */
+  #ttx,#gcx{padding:6px 8px;margin:-6px -8px 0 0;}
+}

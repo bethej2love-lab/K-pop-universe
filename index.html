@@ -2189,7 +2189,7 @@ let regColorAttr=null,spkColorAttr=null;
 // 정작 앱 진입 시점에 그 언어 신호가 이어지지 않던 구조적 공백).
 let currentLang=localStorage.getItem('kpu_lang')||((navigator.language||'').toLowerCase().startsWith('en')?'en':'ko');
 const T={
-  ko:{tab_home:'홈',tab_search:'검색',tab_random:'랜덤',tab_explore:'탐험',tab_me:'나',dh_fav_title:'즐겨찾기 하이라이트',dh_lang_title:'언어 전환',dh_random_title:'랜덤 탐험',
+  ko:{tab_home:'홈',tab_search:'검색',tab_random:'랜덤',tab_explore:'탐험',tab_me:'나',dh_fav_title:'즐겨찾기 하이라이트',feedCloseTitle:'탐험 닫기',dh_lang_title:'언어 전환',dh_random_title:'랜덤 탐험',
       sp_title:'설정',debutYr:'데뷔 연도',birthYr:'멤버 생년',grpType:'그룹 유형',
       genLabel:'세대',genNote:'재미로 봐주세요',
       all:'전체',girl:'걸그룹',boy:'보이그룹',coed:'혼성그룹',inactive:'비활동/탈퇴 멤버',reset:'↺ 초기화',powerSave:'절전 모드',psAuto:'자동',psOn:'켬',psOff:'끔',psHintAuto:'기기 성능을 보고 알아서 조절해요',psHintAutoOn:'자동 — 지금 절전 중이에요',psHintOn:'화질과 부드러움을 낮춰 발열을 줄여요',psHintOff:'항상 최고 화질로 그려요',
@@ -2208,7 +2208,7 @@ const T={
       ucCardGenerating:'카드 생성 중…',ucCardNoFav:'카드를 만들려면 먼저 별을 하나 찜해보세요!',ucCardSaved:'이미지가 저장됐어요 — 앱에서 직접 공유해주세요',
       debutCardTitle:'데뷔 기념일 카드',debutCardFail:'카드를 만들 수 없어요',
       colCardTitle:'컬렉션 공유 카드',colCardFail:'카드를 만들 수 없어요'},
-  en:{tab_home:'Home',tab_search:'Search',tab_random:'Random',tab_explore:'Explore',tab_me:'Me',dh_fav_title:'Highlight favorites',dh_lang_title:'Language',dh_random_title:'Random explore',
+  en:{tab_home:'Home',tab_search:'Search',tab_random:'Random',tab_explore:'Explore',tab_me:'Me',dh_fav_title:'Highlight favorites',feedCloseTitle:'Close Explore',dh_lang_title:'Language',dh_random_title:'Random explore',
       sp_title:'Settings',debutYr:'Debut Year',birthYr:'Birth Year',grpType:'Group Type',
       genLabel:'Generation',genNote:'Just for fun',
       all:'All',girl:'Girl Groups',boy:'Boy Groups',coed:'Coed Groups',inactive:'Inactive / Left',reset:'↺ Reset',powerSave:'Power saving',psAuto:'Auto',psOn:'On',psOff:'Off',psHintAuto:'Adjusts itself based on your device',psHintAutoOn:'Auto — saving power right now',psHintOn:'Lowers quality and smoothness to run cooler',psHintOff:'Always render at full quality',
@@ -5984,7 +5984,8 @@ _si.addEventListener('input',e=>{
   document.getElementById('search-wrap')?.classList.toggle('has-q',!!e.target.value);
 });
 _si.addEventListener('focus',()=>doSearch(_si.value)); // 빈 채로 포커스되면 최근 검색 표시
-_wireListKeyboardNav(_si,_sr,'.sr-item',()=>{_si.value='';_sr.style.display='none';});
+// ESC: 글자가 있으면 지우기, 이미 비어 있으면 검색창 닫기(2026-10-20 — 예전엔 비어 있어도 ESC로 안 닫혀 마우스로 탭을 다시 눌러야 했다)
+_wireListKeyboardNav(_si,_sr,'.sr-item',()=>{if(!_si.value.trim()){_si.blur();closePanels();return;}_si.value='';_sr.style.display='none';});
 _si.addEventListener('click',e=>e.stopPropagation());
 _sr.addEventListener('click',e=>e.stopPropagation());
 document.getElementById('search-wrap').addEventListener('click',e=>e.stopPropagation());
@@ -6460,7 +6461,7 @@ function openLightbox(url,shorts,playlist,idx,ctx,isAdvance,forceBrowseMode){
   _lbActiveVid=vid;
   // 데스크톱에서 카드 3개(side+member+conn)가 모두 열려 있으면 남은 영상 공간이 너무 좁아진다.
   // side-panel만 닫고 member/conn을 오른쪽으로 당겨(right 0/440) 카드 2단 너비(880px) 안으로 압축한다.
-  if(!isMob()&&!isAdvance&&connPanelEl.classList.contains('open')&&sidePanelEl.classList.contains('open')){
+  if(!isMob()&&!isAdvance&&connPanelEl.classList.contains('open')&&sidePanelEl.classList.contains('open')&&memberPanelEl.classList.contains('open')){ // 세 장 다일 때만(멤버+연결 두 장에서 멤버 카드가 사라지던 것, 2026-10-20)
     closeSidePanel();
     memberPanelEl.style.right='0px';
     connPanelEl.style.right='440px';
@@ -6561,7 +6562,7 @@ function openLightbox(url,shorts,playlist,idx,ctx,isAdvance,forceBrowseMode){
   const _prog=_vidProg.get(vid);
   const _startSec=(_prog&&_prog.d>0&&_prog.t>5&&_prog.t/_prog.d<0.92)?Math.floor(_prog.t):0;
   iframe=_lbSetIframeSrc(`https://www.youtube.com/embed/${vid}?autoplay=1&mute=${startMuted}&controls=1&playsinline=1&modestbranding=1&iv_load_policy=3&rel=0&enablejsapi=1&vq=${_vq}${_startSec?'&start='+_startSec:''}`);
-  iframe.focus(); // iOS: 라이트박스 여는 제스처 컨텍스트에서 미리 focus → iframe 활성화 1번째 탭 선소비 시도
+  if(isMob())iframe.focus(); // iOS: 라이트박스 여는 제스처 컨텍스트에서 미리 focus → iframe 활성화 1번째 탭 선소비 시도. 데스크톱은 안 함 — 포커스가 유튜브 안으로 들어가 ESC·←→가 페이지에 안 왔다(2026-10-20)
   _lbYtHandshake(iframe); // 이게 없으면 유튜브가 재생 정보를 안 보낸다 — 시청 진행 바·재생 시작 감지가 죽는다
   clearTimeout(_lbAutoUnmuteT);
   // 소리 모드에서 isAdvance(스와이프·버튼) 전환: mute=1로 시작해서 자동재생 확보 후
@@ -8155,9 +8156,8 @@ function closeLightbox(){
   _lbSpeed=1;
   _lbConnCardOpenedFromLb=false; // 영상 자체를 닫아버렸으면 나중에 연결 카드를 닫아도 재생을 재개할 대상이 없음
   document.getElementById('yt-lb-speed-badge').classList.remove('is-on');
-  // 데스크톱: 라이트박스가 닫히면 Up Next side-panel도 같이 닫는다.
-  // 모바일은 side-panel이 라이트박스와 다른 레이어(카드 시트)라 건드리지 않음.
-  if(!isMob()&&typeof closeSidePanel==='function')closeSidePanel();
+  // ⚠️ 예전엔 여기서 데스크톱 side-panel을 같이 닫았다(그 자리에 Up Next 목록이 있던 시절). 지금 side-panel은 **그룹/멤버 카드**라
+  //    영상만 닫으려다 카드까지 사라지고 주소(#g=…)만 남았다(2026-10-20 사용자 제보). Up Next는 라이트박스 안에 있으므로 카드는 그대로 둔다.
   // 라이트박스가 카드 위를 완전히 덮고 있는 동안 영상을 클릭할 때의 자동 스크롤(scrollIntoView)이나
   // 카드 재렌더링으로 밑에 깔린 시트의 scrollTop이 사용자 모르게 바뀌어 있을 수 있음 — 그 상태에서
   // _lastScroll이 실제 위치와 어긋나면 닫은 뒤 위로 스크롤해도 탭바가 다시 안 뜨는 경우가 있었음.
@@ -11721,6 +11721,28 @@ document.getElementById('ttx').addEventListener('click',e=>{
   else if(connPanelEl.classList.contains('open'))closeConnCard();
   else closeCards();
 });
+// 카드 넓게 보기 토글(데스크톱 카드 왼쪽 위 ⇤) — 2026-10-20 admin.js에서 옮겨 옴. 버튼은 모두에게 보이는데 동작 코드가 관리자 전용
+// 스크립트에만 있어서, 일반 사용자가 누르면 클릭이 "카드 바깥 클릭"으로 처리돼 카드가 통째로 닫혔다.
+(()=>{
+  const btn=document.getElementById('sp-wide-btn');
+  if(!btn)return;
+  const apply=wide=>{
+    document.body.classList.toggle('card-wide',wide);
+    btn.textContent=wide?'⇥':'⇤';
+    btn.title=wide?(currentLang==='ko'?'카드 원래 크기로':'Normal width'):(currentLang==='ko'?'카드 넓게 보기':'Wider card');
+  };
+  let saved=false;try{saved=localStorage.getItem('kpu_card_wide')==='1';}catch(e){}
+  apply(saved);
+  btn.addEventListener('click',e=>{
+    e.stopPropagation();
+    const next=!document.body.classList.contains('card-wide');
+    apply(next);
+    try{localStorage.setItem('kpu_card_wide',next?'1':'0');}catch(e){}
+    // 이미 그려진 영상 그리드는 넓이 전환만으로 재배치되지 않으므로, 지금 열린 카드의 영상 그리드를 새로고침
+    if(_openGCko&&typeof _gcChVidCtl!=='undefined')_gcChVidCtl.reloadIfShowing(_openGCko);
+    if(_openTArtist&&typeof _ttChVidCtl!=='undefined')_ttChVidCtl.reloadIfShowing(_openTArtist.group.ko);
+  });
+})();
 document.getElementById('tt-collapse').addEventListener('click',e=>{
   e.stopPropagation();
   closeMemberPanel(true);
@@ -11849,6 +11871,8 @@ function _closeTopOverlay(){
   if(cp&&cp.classList.contains('open')){if(typeof _closeColPicker==='function')_closeColPicker();else cp.classList.remove('open');return true;}
   if(typeof _connAnchor!=='undefined'&&_connAnchor){closeConnCard();return true;}
   if(document.getElementById('search-wrap').classList.contains('open')||document.getElementById('settings-panel').classList.contains('open')||document.getElementById('journal-sidebar')?.classList.contains('open')){closePanels();return true;}
+  // 데스크톱에서 그룹 카드 위에 멤버 카드가 겹쳐 있으면 위의 멤버 카드만(멤버 카드 접기 ›와 같은 동작) — 예전엔 두 장이 한꺼번에 닫혔다(2026-10-20)
+  if(!isMob()&&memberPanelEl.classList.contains('open')&&sidePanelEl.classList.contains('open')){closeMemberPanel(true);return true;}
   if(_openTArtist||_openGCko){_maybeSuggestNext();closeCards();return true;}
   return false;
 }
@@ -28380,7 +28404,7 @@ _totopBtn.addEventListener('click',e=>{
 <div id="feed-overlay" data-modal>
   <div id="feed-peek-handle"></div>
   <div id="feed-hd">
-    <button id="feed-close">✕</button>
+    <button id="feed-close" aria-label="탐험 닫기" data-i18n-title="feedCloseTitle" title="탐험 닫기"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></button>
   </div>
   <div id="feed-body">
     <!-- 2탭 재구성(2026-08-29): For You(내 즐겨찾기·최신·이어보기) / Discover(차트·디스커버리).
