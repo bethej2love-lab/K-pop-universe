@@ -142047,6 +142047,29 @@
     "left": "2020.01.06",
     "discography": [
       {
+        "title": "Come into my world!",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/149/63/148/14963148_20261019152829_500.jpg",
+        "releaseDate": "2026.10.20",
+        "trackCount": 2,
+        "titleTrack": "Come into my world!",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Come into my world!",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Come into my world! (Inst.)",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "14963148"
+      },
+      {
         "title": "40th Anniversary Tribute Duet VOICE TO VOICE",
         "type": "싱글",
         "isMain": true,
