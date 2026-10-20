@@ -12684,7 +12684,8 @@ function _igMagIndex(){
       const j=await fetch('ig_media_accounts.json',{cache:'no-cache'}).then(r=>r.ok?r.json():null);
       ((j&&j.accounts)||[]).forEach(x=>{if(x&&x.h)_igMagNames.set(String(x.h).toLowerCase(),x.name||x.h);});
       if(!_igMagNames.size||!sb)return idx;
-      const{data}=await sb.from('ig_accounts').select('handle,media').in('handle',[..._igMagNames.keys()]).eq('status','ok');
+      const{data,error}=await _sbSelectAll(()=>sb.from('ig_accounts').select('handle,media').in('handle',[..._igMagNames.keys()]).eq('status','ok').order('handle'));
+      if(error)throw error;
       (data||[]).forEach(r=>(r.media||[]).forEach(m=>{
         if(!m||!m.u||!m.p||!Array.isArray(m.m)||!m.m.length)return;
         const it={...m,ts:Date.parse(m.t)||0,h:r.handle,src:_igMagNames.get(r.handle)||r.handle};
@@ -23065,7 +23066,7 @@ async function _buildFeedIg(){
     const mag=document.getElementById('feed-igmag');if(mag){mag.innerHTML='';mag.hidden=true;}
     // 매거진 계정은 팔로워가 많아 '팔로워 순 60곳'을 차지한다 — 목록을 먼저 읽고 그만큼 더 받는다(1행은 _igPhotos가 아이돌 계정만 남김)
     const magIdx=await _igMagIndex().catch(()=>new Map());
-    const{data,error}=await sb.from('ig_accounts').select('handle,media').eq('status','ok').order('followers',{ascending:false,nullsFirst:false}).limit(60+_igMagNames.size);
+    const{data,error}=await sb.from('ig_accounts').select('handle,media').eq('status','ok').order('followers',{ascending:false,nullsFirst:false}).order('handle').range(0,59+_igMagNames.size);
     const photos=error?[]:_igPhotos(data,3,15);
     // 2행: 공식 외 계정의 최근 14일 게시물(우리 아이돌이 태그된 것) — 같은 게시물이 여러 핸들에 걸려 있어 주소로 한 번만
     const seen=new Set(),magRecent=[];

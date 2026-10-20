@@ -78,6 +78,22 @@
                 echo "push 성공 (시도 $i)"
                 exit 0
               fi
+              # 빌드에 10분 이상 걸려 그 사이 문서·앱·자동 데이터 커밋이 올라오면 매번
+              # 재빌드만 하다 3회 모두 실패했다(2026-10-19 run 39209699739).
+              # 생성물과 안 겹치는 변경은 먼저 rebase해서 보존한다. 산출물/소스가
+              # 겹치면 abort 후 기존 재빌드 경로로 돌아가며 강제 push는 하지 않는다.
+              git fetch origin main
+              # 빌드 입력이 바뀌었으면 깨끗하게 rebase되더라도 옛 산출물을 올리면 안 된다.
+              if git diff --quiet HEAD origin/main -- artists.json groups.json index.html admin.js shared.js build_group_pages.js tools/seo_extra.js tools/m2_harness.js tools/build_og_thumbs.mjs tours_boxscore.json group_awards.json group_certifications.json artist_credits.json og_thumbs_pin.json; then
+                if git rebase origin/main; then
+                  if git push; then
+                    echo "최신 main 변경 보존 후 push 성공 (시도 $i)"
+                    exit 0
+                  fi
+                else
+                  git rebase --abort
+                fi
+              fi
               echo "push 경합 — 최신 main 위에서 재시도 ($i/3)"
               sleep $((i * 5))
             done
