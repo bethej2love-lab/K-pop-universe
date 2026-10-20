@@ -202,7 +202,7 @@
   </div>
 </div>
 <div id="fav-hint-callout" role="button" tabindex="0"><span id="fhc-main">최애가 있나요?</span><span id="fhc-sub">설정하면 팬캠·무대를 자동으로 모아줘요</span><span id="fhc-arrow"></span></div>
-<div id="ob-tips" hidden><p id="ob-tips-text"></p><button id="ob-tips-cta" style="display:none" onclick="_tipsPrimaryAction()">지금 설정하기</button><div id="ob-tips-dots"></div><div id="ob-tips-btns"><button id="ob-tips-skip" onclick="_dismissTips()">건너뛰기</button><button id="ob-tips-next" onclick="_nextTip()">다음</button></div></div>
+<div id="ob-tips" hidden><div id="ob-tips-dim"></div><div id="ob-tips-ring"></div><div id="ob-tips-dot1" class="ob-tips-dot"></div><div id="ob-tips-line"></div><div id="ob-tips-dot2" class="ob-tips-dot"></div><div id="ob-tips-box" role="dialog" aria-live="polite"><div id="ob-tips-step"></div><div id="ob-tips-h"></div><div id="ob-tips-b"></div><div id="ob-tips-act"><button id="ob-tips-next" type="button" onclick="_tipsPrimaryAction()"></button><button id="ob-tips-prev" type="button"></button><button id="ob-tips-skip" type="button" onclick="_dismissTips()">건너뛰기</button></div></div></div>
 <div id="tt"><div id="tt-bar"></div><button id="tt-back" class="conn-back-btn" style="display:none" aria-label="이전 멤버로 돌아가기">‹</button><span id="ttx" role="button" tabindex="0" aria-label="멤버 카드 닫기">×</span><div id="tt-pic-info-row"><a id="tt-insta-pic-wrap" style="display:none" target="_blank" rel="noopener noreferrer" aria-label="Instagram 프로필"><span class="tt-insta-ring"><img id="tt-insta-pic" alt="프로필"></span></a>
 <div id="tt-info-side"><div id="tt-name-row"><span id="tt-glyph" class="card-glyph"></span><div class="tn" id="tn"></div><button id="tt-fav" class="fav-btn" aria-label="즐겨찾기"><svg viewBox="0 0 24 24"><path d="M12 21L10.55 19.7C5.4 15.1 2 12.1 2 8.5 2 5.4 4.4 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.6 3 22 5.4 22 8.5c0 3.6-3.4 6.6-8.55 11.2L12 21z"/></svg></button><button id="tt-trophy" class="trophy-btn" style="display:none" aria-label="트로피 기록"><svg viewBox="0 0 24 24"><path d="M8 3h8v7a4 4 0 0 1-8 0V3z"/><path d="M8 5H5a1 1 0 0 0-1 1v1a3 3 0 0 0 3 3"/><path d="M16 5h3a1 1 0 0 1 1 1v1a3 3 0 0 1-3 3"/><path d="M12 14v3M9 17h6M8 20h8"/></svg></button><button id="tt-share" class="share-btn" aria-label="공유"><svg viewBox="0 0 24 24"><path d="M12 15V4M12 4l-3.5 3.5M12 4l3.5 3.5"/><path d="M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"/></svg></button><button id="tt-card-menu" class="share-btn card-menu-btn" aria-label="카드 메뉴" aria-haspopup="true">+</button></div><div id="tg-row" class="hscroll-drag"><div id="tt-links"></div><div class="tg" id="tg"></div><button id="tt-conn-btn" class="tt-conn-btn" style="display:none">연결</button></div><div class="tco hscroll-drag" id="tco"></div></div></div><div id="tt-info-grid" style="display:none"><div class="row"><span class="lbl" data-i18n="gcDebut">데뷔</span><span class="val" id="tt-debut"></span></div><div class="row" id="tt-fandom-row" style="display:none"><span class="lbl" data-i18n="gcFandom">팬덤</span><span class="val" id="tt-fandom"></span></div></div><div id="tt-status-line" class="gc-status-line"></div><div class="tm" id="tm"></div><div id="tt-nav"><button class="tt-nav-btn" id="tt-prev" aria-label="이전 멤버"><span class="nav-arr">‹</span><span id="tt-prev-name" class="nav-name"></span></button><span id="tt-counter"></span><button class="tt-nav-btn" id="tt-next" aria-label="다음 멤버"><span id="tt-next-name" class="nav-name"></span><span class="nav-arr">›</span></button></div><div id="tt-discog-row" class="gc-discog-row" style="display:none">
   <div class="gc-discog-hd">
@@ -18743,64 +18743,134 @@ function _dismissFavHint(){
 var _TIPS_KEY='kpu_tips_v1';
 var _TIPS_STEP=0;
 var _tipsOpenedFeed=false;
+// 2026-10-20 개편(사용자 — "Who's your bias 안내가 먼저, 행성 툴팁은 그다음" + 툴팁 디자인 시안 1안 확정).
+// 화면 가운데 상자 대신 **대상(검색창·행성·탭) 주변만 밝히고 나머지는 어둡게**(시안 1안과 스포트라이트 사이 0.7), 대상에서 점과
+// 가는 선을 그어 짧은 글로 잇는다(연결 모티프 — TASTE 4장). 글씨는 Pretendard 보통 굵기(굵고 큰 제목은 부담스럽고 AI 같다는 피드백).
+// 어둠은 클릭을 막지 않는다 — 안내 중에 행성을 눌러 카드가 열리거나 검색을 열면 안내는 거기서 끝(_tipsTick).
+// 행성은 우주가 돌아가도 따라가도록 매 프레임 위치를 다시 잰다. 행성 단계 문구의 거리=데뷔 연도는 debutToRadius 규칙 그대로.
 var _TIPS_STEPS=[
-  '행성 하나를 누르면 직캠·앨범·멤버 프로필을 볼 수 있어요. 잘 모르겠다면 아티스트 검색으로 바로 시작해 보세요.',
-  '차트·생일·신보, 케이팝 오늘의 흐름이 다 모여 있어요.',
-  '최애를 저장하면 새 영상이 올라올 때 For You 탭에 자동으로 모여요.',
+  {t:'search',h:'최애 이름부터 찾아보세요',b:'그 사람이 나온 직캠과 무대가 한곳에 모여요.',p:'찾아보기',s:'둘러볼게요'},
+  {t:'planet',h:'행성 하나가 그룹 하나예요',b:'누르면 멤버·직캠·앨범이 펼쳐져요. 가운데에 가까울수록 최근에 데뷔한 그룹이에요.',p:'다음',s:'이전'},
+  {t:'feed',h:'오늘의 케이팝은 탐험에',b:'차트·생일·신보가 한곳에 모여 있어요.',p:'다음',s:'이전'},
+  {t:'me',h:'최애를 저장해 두세요',b:'새 영상이 올라오면 For You에 모여요.',p:'지금 설정하기',s:'이전'},
 ];
+let _tipsRaf=0,_tipPlanet=null;
 function _initTips(){
   if(localStorage.getItem(_TIPS_KEY))return;
   // 즐겨찾기 있거나 닉네임 설정된 기존 유저는 팁 스킵
   if(favGroups.size>0||favMembers.size>0||myProfile?.nickname){localStorage.setItem(_TIPS_KEY,'1');return;}
   _showTipStep(0);
 }
+function _tipVisRect(id){
+  const el=document.getElementById(id);if(!el)return null;
+  const r=el.getBoundingClientRect();
+  if(r.width<=0||r.height<=0||r.bottom<0||r.top>innerHeight)return null;
+  const cs=getComputedStyle(el);if(cs.visibility==='hidden'||+cs.opacity<0.05)return null;
+  return r;
+}
+// 안내할 행성 — 이름이 잘 알려진 쪽을 먼저, 화면 안 글자와 안 겹치는 자리(폰은 위쪽 절반)에 있는 것
+function _tipPickPlanet(){
+  if(typeof bubbleMeshes==='undefined'||!bubbleMeshes.length)return null;
+  const mob=isMob(),pref=['아이브','에스파','세븐틴','르세라핌','뉴진스','방탄소년단','엔하이픈','투어스','블랙핑크','라이즈'];
+  const ok=b=>{const p=b.mesh.position.clone().project(camera);if(p.z>1)return false;const x=(p.x+1)/2*innerWidth,y=(1-p.y)/2*innerHeight;
+    return x>innerWidth*0.15&&x<innerWidth*0.85&&y>innerHeight*(mob?0.2:0.25)&&y<innerHeight*(mob?0.55:0.7);};
+  for(const k of pref){const b=bubbleMeshes.find(x=>x.ko===k);if(b&&ok(b))return b;}
+  return bubbleMeshes.find(ok)||null;
+}
+function _tipTargetRect(t){
+  if(t==='search')return _tipVisRect('ob-top-search')||_tipVisRect('dh-search-btn')||_tipVisRect('tab-search');
+  if(t==='feed')return _tipVisRect('tab-feed')||_tipVisRect('dh-feed-btn');
+  if(t==='me')return _tipVisRect('tab-profile')||_tipVisRect('dh-profile-btn');
+  if(t==='planet'){
+    if(!_tipPlanet)_tipPlanet=_tipPickPlanet();
+    if(!_tipPlanet)return null;
+    const p=_tipPlanet.mesh.position.clone().project(camera);
+    const x=(p.x+1)/2*innerWidth,y=(1-p.y)/2*innerHeight,R=20;
+    return{left:x-R,top:y-R,right:x+R,bottom:y+R,width:R*2,height:R*2};
+  }
+  return null;
+}
+function _tipsLayout(){
+  const el=document.getElementById('ob-tips');if(!el||el.hidden)return;
+  const st=_TIPS_STEPS[_TIPS_STEP],r=_tipTargetRect(st.t);
+  const $=id=>document.getElementById(id);
+  const dim=$('ob-tips-dim'),ring=$('ob-tips-ring'),d1=$('ob-tips-dot1'),d2=$('ob-tips-dot2'),line=$('ob-tips-line'),box=$('ob-tips-box');
+  const mob=isMob(),W=innerWidth,H=innerHeight,bh=box.offsetHeight||150,bw=mob?W-56:320;
+  box.style.width=bw+'px';
+  if(!r){ // 대상을 못 찾음(화면 밖 등) — 어둠만 깔고 글은 아래쪽에
+    dim.style.background='rgba(4,5,14,0.6)';[ring,d1,d2,line].forEach(e=>e.style.display='none');
+    box.style.left=(mob?28:Math.round((W-bw)/2))+'px';box.style.top=Math.round(H*0.62-bh/2)+'px';return;
+  }
+  [ring,d1,line].forEach(e=>e.style.display='');
+  line.style.width='';line.classList.remove('is-h');
+  const cx=(r.left+r.right)/2,cy=(r.top+r.bottom)/2;
+  // 어둠: 대상 둘레는 투명, 바깥으로 갈수록 0.7까지(시안 1안 0.62·부드러움 ↔ 스포트라이트 0.78·딱 끊김의 중간)
+  dim.style.background=`radial-gradient(ellipse ${Math.round(r.width/2+70)}px ${Math.round(r.height/2+70)}px at ${Math.round(cx)}px ${Math.round(cy)}px, rgba(4,5,14,0) 0, rgba(4,5,14,0) 52%, rgba(4,5,14,0.7) 100%), linear-gradient(rgba(4,5,14,0),rgba(4,5,14,0))`;
+  const pad=5;
+  Object.assign(ring.style,{left:(r.left-pad)+'px',top:(r.top-pad)+'px',width:(r.width+pad*2)+'px',height:(r.height+pad*2)+'px'});
+  const wide=r.width>200; // 폰 상단 검색창처럼 넓은 대상은 왼쪽에서 선을 내린다
+  const lx=Math.round(wide?r.left+30:cx);
+  let boxLeft=mob?28:Math.min(Math.max(24,lx-28),W-bw-24);
+  let ly0,ly1,boxTop;
+  const fromBottom=cy>H*0.6; // 탭바 같은 아래쪽 대상 — 글을 위에 두고 선을 위로
+  if(st.t==='planet'&&!mob){ // 데스크톱 행성: 가운데 행성 무리 위에 글이 얹히지 않게 선을 옆으로 길게 빼서 무리 바깥에
+    const right=cx<W*0.62,x0=right?r.right+pad+4:r.left-pad-4;
+    const len=Math.max(40,Math.round(Math.min(W*0.2,right?W-24-bw-18-x0:x0-18-bw-24))); // 글 상자가 화면 끝에 붙지 않게
+    const x1=right?x0+len:x0-len;
+    line.classList.add('is-h');
+    Object.assign(line.style,{left:Math.round(Math.min(x0,x1))+'px',top:Math.round(cy)+'px',width:len+'px',height:'1px'});
+    Object.assign(d1.style,{left:Math.round(x0)+'px',top:Math.round(cy)+'px'});
+    d2.style.display='';Object.assign(d2.style,{left:Math.round(x1)+'px',top:Math.round(cy)+'px'});
+    box.style.left=Math.round(right?x1+18:x1-18-bw)+'px';box.style.top=Math.round(Math.min(Math.max(12,cy-34),H-12-bh))+'px';
+    return;
+  }
+  if(st.t==='planet'&&mob){ // 폰 행성: 행성이 빽빽한 가운데를 피해 글을 아래쪽 빈 곳에, 행성에서 긴 선을 내린다
+    boxTop=Math.round(H-bh-Math.max(110,(H-(_tipVisRect('tabbar')?.top||H))+40));
+    ly0=r.bottom+pad+4;ly1=boxTop-14;
+  }else if(fromBottom){
+    ly0=r.top-pad-4;ly1=ly0-52;boxTop=Math.round(ly1-14-bh);
+    [ly0,ly1]=[ly1,ly0];
+  }else{
+    ly0=r.bottom+pad+4;ly1=ly0+(st.t==='planet'?72:52);boxTop=Math.round(ly1+14);
+  }
+  if(boxTop+bh>H-12)boxTop=H-12-bh;if(boxTop<12)boxTop=12;
+  Object.assign(line.style,{left:lx+'px',top:Math.round(ly0)+'px',height:Math.max(0,Math.round(ly1-ly0))+'px'});
+  const dotY=fromBottom?ly1:ly0;Object.assign(d1.style,{left:lx+'px',top:Math.round(dotY)+'px'});
+  d2.style.display=(st.t==='planet'&&mob)?'':'none';Object.assign(d2.style,{left:lx+'px',top:Math.round(ly1)+'px'});
+  if(mob&&st.t!=='planet'&&!wide)boxLeft=Math.min(Math.max(28,lx-40),W-bw-28);
+  box.style.left=Math.round(boxLeft)+'px';box.style.top=boxTop+'px';
+}
+function _tipsTick(){
+  _tipsRaf=0;
+  const el=document.getElementById('ob-tips');if(!el||el.hidden||!el.classList.contains('show'))return;
+  // 안내 중에 사용자가 직접 움직였으면(카드·검색을 열었으면) 안내는 끝 — 가르치려던 걸 이미 하고 있다
+  const open=id=>document.getElementById(id)?.classList.contains('open');
+  if(open('side-panel')||open('member-panel')||document.getElementById('mob-sheet')?.classList.contains('bs-open')||open('search-wrap')||(typeof _obSearchMode!=='undefined'&&_obSearchMode)||(typeof _msIsOpen==='function'&&_msIsOpen())){_dismissTips();return;}
+  _tipsLayout();
+  _tipsRaf=requestAnimationFrame(_tipsTick);
+}
 function _showTipStep(n){
   _TIPS_STEP=n;
-  const el=document.getElementById('ob-tips');
-  const txt=document.getElementById('ob-tips-text');
-  const dotsEl=document.getElementById('ob-tips-dots');
-  const nxtBtn=document.getElementById('ob-tips-next');
-  const skipBtn=document.getElementById('ob-tips-skip');
-  const ctaEl=document.getElementById('ob-tips-cta');
-  if(!el||!txt||!dotsEl||!nxtBtn||!skipBtn)return;
-  txt.textContent=_TIPS_STEPS[n];
-  // 이전/건너뛰기 전환
-  if(n===0){skipBtn.textContent='건너뛰기';skipBtn.onclick=_dismissTips;}
-  else{skipBtn.textContent='이전';skipBtn.onclick=_prevTip;}
-  nxtBtn.textContent=n===_TIPS_STEPS.length-1?'확인':'다음';
-  // 첫 단계에는 지도에서 길을 잃지 않도록 검색 시작점을, 마지막에는 최애 설정을 안내한다.
-  if(ctaEl){
-    ctaEl.style.display=(n===0||n===_TIPS_STEPS.length-1)?'block':'none';
-    ctaEl.textContent=n===0?'아티스트 찾아보기':'지금 설정하기';
-  }
-  dotsEl.innerHTML='';
-  for(let i=0;i<_TIPS_STEPS.length;i++){
-    const d=document.createElement('span');
-    d.className='ob-dot'+(i===n?' active':'');
-    dotsEl.appendChild(d);
-  }
+  const el=document.getElementById('ob-tips');if(!el)return;
+  const st=_TIPS_STEPS[n],$=id=>document.getElementById(id);
+  if(st.t!=='planet')_tipPlanet=null;
+  $('ob-tips-step').textContent=(n+1)+' / '+_TIPS_STEPS.length;
+  $('ob-tips-h').textContent=st.h;$('ob-tips-b').textContent=st.b;
+  $('ob-tips-next').textContent=st.p+' →';
+  const prev=$('ob-tips-prev');prev.textContent=st.s;prev.onclick=n===0?_nextTip:_prevTip; // 첫 단계의 "둘러볼게요" = 다음
+  $('ob-tips-skip').hidden=n===_TIPS_STEPS.length-1;
   el.removeAttribute('hidden');
-  requestAnimationFrame(()=>requestAnimationFrame(()=>el.classList.add('show')));
-  // 탐색 탭 열기/닫기·내부 탭 전환 (데스크톱, 2번째 단계만)
-  if(!isMob()){
-    if(n===1){
-      const feedEl=document.getElementById('feed-overlay');
-      if(feedEl&&!feedEl.classList.contains('open')){_tipsOpenedFeed=true;_openFeedOverlay();}
-      // 탐색(disc) 탭으로 전환 — 차트·생일·신보가 바로 보이게
-      try{_feedSwitchTab('disc',true);}catch(e){}
-    }else if(n===2&&document.getElementById('feed-overlay')?.classList.contains('open')){
-      // 3단계는 For You 탭 맥락 — 다시 전환
-      try{_feedSwitchTab('rec',true);}catch(e){}
-    }else if(_tipsOpenedFeed){_tipsOpenedFeed=false;_closeFeedOverlay();}
-  }
+  _tipsLayout();
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{el.classList.add('show');if(!_tipsRaf)_tipsRaf=requestAnimationFrame(_tipsTick);}));
 }
 function _dismissTips(){
   const el=document.getElementById('ob-tips');
   if(!el)return;
   el.classList.remove('show');
+  if(_tipsRaf){cancelAnimationFrame(_tipsRaf);_tipsRaf=0;}
+  _tipPlanet=null;
   setTimeout(()=>el.setAttribute('hidden',''),320);
   try{localStorage.setItem(_TIPS_KEY,'1');}catch(e){}
-  if(_tipsOpenedFeed){_tipsOpenedFeed=false;_closeFeedOverlay();}
   _updateFavHintCallout();
 }
 function _tipsPrimaryAction(){
@@ -18810,6 +18880,7 @@ function _tipsPrimaryAction(){
     if(isMob())openMobSearchSheet(); else document.getElementById('dh-search-btn')?.click();
     return;
   }
+  if(_TIPS_STEP<_TIPS_STEPS.length-1){_nextTip();return;}
   _dismissTips();
   openProfilePanel();
 }
@@ -18820,6 +18891,11 @@ function _nextTip(){
 function _prevTip(){
   if(_TIPS_STEP>0)_showTipStep(_TIPS_STEP-1);
 }
+document.addEventListener('keydown',e=>{
+  if(e.key!=='Escape')return;
+  const el=document.getElementById('ob-tips');
+  if(el&&!el.hidden&&el.classList.contains('show')){e.stopPropagation();_dismissTips();}
+},true);
 
 function _daysUntilBday(bdayStr){
   if(!bdayStr)return null;

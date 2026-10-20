@@ -297,40 +297,30 @@
     transform:rotate(45deg);
   }
   @media(max-width:768px){#fav-hint-callout{display:none!important;}}
-  /* 온보딩 팁 시퀀스 — 데스크톱: 화면 정중앙. 모바일: 탭바 위 하단 고정 */
-  #ob-tips{
-    position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);
-    z-index:150;
-    background:rgba(16,20,40,0.94);
-    backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
-    border:0.5px solid rgba(140,175,255,0.20);border-radius:16px;
-    padding:24px 28px 20px;
-    width:360px;
-    box-shadow:0 12px 40px rgba(0,0,0,0.60);
-    opacity:0;transition:opacity .3s ease;
-  }
+  /* 온보딩 팁(2026-10-20 개편) — 상자 없이 대상만 비추고 점·가는 선으로 짧은 글을 잇는다. 어둠은 클릭을 막지 않음(글 상자만 눌림).
+     글씨는 차분하게(보통 굵기 17/13.5px) — 굵고 큰 한글 제목은 부담스럽고 AI 같다는 피드백. 위치는 _tipsLayout이 매 프레임 계산 */
+  #ob-tips{position:fixed;inset:0;z-index:150;pointer-events:none;opacity:0;transition:opacity .35s ease;}
   #ob-tips.show{opacity:1;}
-  #ob-tips-text{font-size:15px;line-height:1.65;color:rgba(235,242,255,0.92);margin:0 0 18px;}
-  #ob-tips-dots{display:flex;gap:6px;margin-bottom:18px;}
-  .ob-dot{width:5px;height:5px;border-radius:50%;background:rgba(140,175,255,0.22);transition:background .2s;}
-  .ob-dot.active{background:rgba(140,175,255,0.78);}
-  #ob-tips-cta{width:100%;background:rgba(100,140,255,0.10);border:0.5px solid rgba(100,140,255,0.22);color:rgba(200,220,255,0.85);font-size:13px;font-weight:600;padding:10px;border-radius:10px;cursor:pointer;margin-bottom:16px;transition:background .15s;text-align:center;}
-  #ob-tips-cta:hover{background:rgba(100,140,255,0.20);}
-  #ob-tips-btns{display:flex;justify-content:space-between;align-items:center;}
-  #ob-tips-skip{background:none;border:none;color:rgba(180,200,240,0.42);font-size:12px;cursor:pointer;padding:4px 0;}
-  #ob-tips-skip:hover{color:rgba(180,200,240,0.68);}
-  #ob-tips-next{background:rgba(100,140,255,0.14);border:0.5px solid rgba(100,140,255,0.28);color:rgba(200,220,255,0.90);font-size:13px;font-weight:600;padding:8px 22px;border-radius:8px;cursor:pointer;transition:background .15s;}
-  #ob-tips-next:hover{background:rgba(100,140,255,0.24);}
-  @media(max-width:768px){
-    #ob-tips{
-      top:auto;left:16px;right:16px;
-      bottom:calc(max(11px,env(safe-area-inset-bottom,0px)) + 60px + 12px);
-      width:auto;transform:none;
-      padding:18px 20px 16px;
-    }
-    #ob-tips-text{font-size:14px;margin-bottom:14px;}
-    #ob-tips-dots{margin-bottom:14px;}
-  }
+  #ob-tips-dim{position:absolute;inset:0;}
+  #ob-tips-ring{position:absolute;border-radius:999px;border:1px solid rgba(214,226,255,0.55);}
+  .ob-tips-dot{position:absolute;width:5px;height:5px;border-radius:50%;background:#dfe8ff;box-shadow:0 0 8px 2px rgba(138,176,255,0.55);transform:translate(-50%,-50%);}
+  #ob-tips-dot2{width:3px;height:3px;}
+  #ob-tips-line{position:absolute;width:1px;background:linear-gradient(180deg,rgba(214,226,255,0.6),rgba(214,226,255,0.1));}
+  body:has(#ob-tips.show) #zoom-ctrl{opacity:0;pointer-events:none;transition:opacity .3s;} /* 안내 중엔 줌 막대를 숨긴다 — 폰 '나' 탭 선·글과 겹침 */
+  #ob-tips-line.is-h{background:linear-gradient(90deg,rgba(214,226,255,0.55),rgba(214,226,255,0.15));}
+  #ob-tips-box{position:absolute;pointer-events:auto;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
+  #ob-tips-box::before{content:'';position:absolute;inset:-28px;background:radial-gradient(ellipse at 35% 50%,rgba(4,5,14,0.72),rgba(4,5,14,0) 70%);z-index:-1;pointer-events:none;}
+  #ob-tips-step{font-size:11px;color:rgba(214,224,248,0.42);font-variant-numeric:tabular-nums;letter-spacing:.02em;margin-bottom:10px;}
+  #ob-tips-h{font-size:17px;font-weight:500;line-height:1.45;color:rgba(240,244,255,0.94);letter-spacing:-.01em;}
+  #ob-tips-b{font-size:13.5px;font-weight:400;line-height:1.65;color:rgba(214,224,248,0.66);margin-top:6px;}
+  #ob-tips-act{display:flex;align-items:center;gap:22px;margin-top:14px;}
+  #ob-tips-act button{background:none;border:none;padding:8px 0;font:inherit;font-size:13px;cursor:pointer;}
+  #ob-tips-next{color:#a9c3ff;font-weight:500;}
+  #ob-tips-next:hover{color:#c8d8ff;}
+  #ob-tips-prev{color:rgba(214,224,248,0.45);}
+  #ob-tips-skip{color:rgba(214,224,248,0.32);font-size:12px!important;} /* 오른쪽 끝에 두면 폰 줌 막대와 겹친다 */
+  #ob-tips-act button:hover{text-decoration:underline;text-underline-offset:3px;}
+  #ob-tips-act button:focus-visible{outline:1px solid rgba(169,195,255,0.8);outline-offset:3px;border-radius:2px;}
   #dh-right{pointer-events:all;}
   #dh-right{
     background:rgba(18,22,40,0.82);
