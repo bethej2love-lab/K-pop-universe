@@ -6619,11 +6619,26 @@ function _ecUpdateOwnerGkoOptions(){
     if(ms.length)ms.forEach(a=>groupSet.add(_ytGroupKoFor(a)));
     else groupSet.add(nm); // GROUPS 밖 솔로 — 이름 자체가 그룹 키
   });
-  if(!anyAmbiguous&&groupSet.size<=1){gkoSel.style.display='none';gkoSel.innerHTML='';return;}
+  if(!anyAmbiguous&&groupSet.size<=1){gkoSel.style.display='none';gkoSel.innerHTML='';_ecSyncTargetGko(names.length?[...groupSet][0]:'');return;}
   gkoSel.innerHTML='<option value="">그룹 선택…(동명이인/공동소유)</option>'+[...groupSet].map(g=>`<option value="${g}">${g}</option>`).join('');
   gkoSel.style.display='';
+  _ecSyncTargetGko(''); // 갈리면 비워 두고 위 드롭다운에서 고르게(고르면 그 값으로 맞춘다)
+}
+// 멤버 이름을 넣으면 '대상 그룹'을 그 멤버의 그룹으로 자동 선택(2026-10-20 사용자 요청 — 이름 넣고 그룹을 또 고르던 것).
+// 동명이인·공동소유자 그룹이 갈릴 때만 비워 두고 바로 위 그룹 선택 드롭다운으로 고른다. 손으로 바꾸면 그 값이 우선.
+let _ecTargetAuto=false; // 지금 대상 그룹 값이 자동으로 들어간 것인지(손으로 고른 값은 안 덮어씀)
+function _ecSyncTargetGko(gko){
+  const sel=document.getElementById('vm-ch-add-target-gko');
+  if(!sel)return;
+  if(sel.value&&!_ecTargetAuto)return;
+  _fillChTargetGko();
+  const has=gko&&[...sel.options].some(o=>o.value===gko);
+  sel.value=has?gko:'';
+  _ecTargetAuto=!!has;
 }
 document.getElementById('vm-ch-add-owner')?.addEventListener('input',_ecUpdateOwnerGkoOptions);
+document.getElementById('vm-ch-add-owner-gko')?.addEventListener('change',e=>_ecSyncTargetGko(e.target.value));
+document.getElementById('vm-ch-add-target-gko')?.addEventListener('change',()=>{_ecTargetAuto=false;});
 async function _ecAddChannel(){
   if(!sb)return;
   const handleEl=document.getElementById('vm-ch-add-handle');
@@ -6685,7 +6700,8 @@ async function _ecAddChannel(){
   if(handleEl)handleEl.value='';if(nameEl)nameEl.value='';if(ownerEl)ownerEl.value='';if(tierEl)tierEl.value='variety';
   if(ownerGkoEl){ownerGkoEl.value='';ownerGkoEl.style.display='none';ownerGkoEl.innerHTML='';}
   if(targetGkoEl){targetGkoEl.value='';targetGkoEl.style.display='none';}
-  if(defCatEl)defCatEl.value='';
+  _ecTargetAuto=false;
+  if(defCatEl){defCatEl.value='';delete defCatEl.dataset.auto;}
   if(primaryEl)primaryEl.checked=false;
   const primWrap=document.getElementById('vm-ch-add-primary-wrap');if(primWrap)primWrap.style.display='none';
   _vmRenderChannels(document.getElementById('vm-search')?.value||'');
@@ -6714,7 +6730,16 @@ document.getElementById('vm-ch-add-tier')?.addEventListener('change',e=>{
   const primWrap=document.getElementById('vm-ch-add-primary-wrap');
   if(primWrap)primWrap.style.display=e.target.value==='idol'?'inline-flex':'none';
   if(e.target.value!=='idol'){const p=document.getElementById('vm-ch-add-primary');if(p)p.checked=false;}
+  // 팬 채널은 직캠이 대부분 — '팬'을 고르면 기본 탭을 바로 퍼포먼스(live)로(2026-10-20 사용자 요청). 다른 유형으로
+  // 바꾸면 자동으로 넣은 경우만 되돌린다. 이미 입력해 둔 멤버 이름이 있으면 대상 그룹도 그 자리에서 맞춘다.
+  const defCat=document.getElementById('vm-ch-add-defcat');
+  if(defCat){
+    if(e.target.value==='fans'){defCat.value='live';defCat.dataset.auto='1';}
+    else if(defCat.dataset.auto==='1'){defCat.value='';delete defCat.dataset.auto;}
+  }
+  if(e.target.value==='fans'||e.target.value==='idol')_ecUpdateOwnerGkoOptions();
 });
+document.getElementById('vm-ch-add-defcat')?.addEventListener('change',e=>{delete e.target.dataset.auto;});
 
 // 그룹 우선순위(A>B>C) — 어드민 전용 데이터 관리 우선순위 표시, 유저에게는 절대 노출 안 됨(2026-08-12).
 // 레벨 없는 그룹은 group_priority 테이블에 행 자체가 없음(= 미지정).
