@@ -7,6 +7,9 @@ name: 인스타 공식 계정 정보 수집 (2시간마다)
 on:
   schedule:
     - cron: '23 */2 * * *'   # 2시간마다 :23 — 라운드 분 회피
+  push:
+    branches: [main]
+    paths: ['ig_media_accounts.json']   # 공식 외 계정 목록을 바꾸면 바로 한 번(2026-10-20 — 새 계정이 실제로 있는지 확인)
   workflow_dispatch:
     inputs:
       max:

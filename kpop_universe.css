@@ -1525,6 +1525,10 @@
   :root{--ig-thumb:calc((100cqw - 5px) / 2);} /* cqw는 패딩을 뺀 줄 너비(=카드 본문 폭) */ /* cqw = 인스타 줄 너비 기준(% 는 높이·겹친 묶음 안에서 기준이 바뀌어 못 씀) */
   .ig-item{position:relative;flex:0 0 auto;width:var(--ig-thumb);height:calc(var(--ig-thumb) * 1.25);border-radius:8px;overflow:hidden;background:rgba(255,255,255,0.05);display:block;}
   .ig-item img{width:100%;height:100%;object-fit:cover;display:block;}
+  /* 2행(공식 외 계정) — 1행과 같은 크기, 칸 아래쪽에 매체 이름 */
+  .ig-strip[hidden]{display:none;}
+  .ig-mag-strip{margin-top:5px;}
+  .ig-src{position:absolute;left:6px;bottom:6px;z-index:4;max-width:calc(100% - 12px);font-size:10.5px;font-weight:600;line-height:1.3;color:#fff;background:rgba(6,8,18,0.55);padding:2px 6px;border-radius:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;pointer-events:none;}
   .ig-play{position:absolute;top:4px;right:5px;z-index:4;font-size:10px;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,0.7);pointer-events:none;}
   /* 인스타 사진은 세로 4:5가 표준이라 칸도 4:5(2026-10-19, 사용자: "정사각이 최선일까?") — 세로 사진은 거의 안 잘리고, 정사각·가로만 양옆이 조금 잘린다 */
   /* 여러 장 게시물 묶음 — 디스코 활동기 묶음(.gc-discog-deck)과 같은 겹침 */
@@ -1573,7 +1577,10 @@
   #feed-ig.feed-album-grid>.feed-card .feed-card-thumb-wrap,#feed-favig.feed-album-grid>.feed-card .feed-card-thumb-wrap{aspect-ratio:4/5;position:relative;}
   /* 인스타 선반 칸 = 탐험 영상 그리드의 쇼츠 한 칸 너비(2026-10-20 사용자 — 카드 인스타를 쇼츠 크기로 키운 것과 같이). 앨범 레일(3.3칸)보다 크게 2칸,
      오른쪽 여백만큼 셋째 칸이 살짝 보인다. 비율은 4:5 그대로 */
-  #feed-ig.feed-album-rail,#feed-favig.feed-album-rail{grid-auto-columns:calc((100% - 10px) / 2);gap:4px;} /* -10px: 쇼츠 그리드 실측(웹 190·폰 169)에 맞춤 */
+  #feed-ig.feed-album-rail,#feed-favig.feed-album-rail,#feed-igmag.feed-album-rail,#feed-favigmag.feed-album-rail{grid-auto-columns:calc((100% - 10px) / 2);gap:4px;}
+  #feed-igmag.feed-album-grid>.feed-card .feed-card-thumb-wrap,#feed-favigmag.feed-album-grid>.feed-card .feed-card-thumb-wrap{aspect-ratio:4/5;position:relative;}
+  .ig-mag-rail{margin-top:-10px;} /* 1행과 붙여 한 섹션으로 읽히게 */
+  .ig-mag-rail[hidden]{display:none;} /* -10px: 쇼츠 그리드 실측(웹 190·폰 169)에 맞춤 */
   /* 틱톡 아이콘의 원형 콘텐츠가 x=5~15(24단위 기준) 좌측에 치우쳐 있어 우측 여백이 크고(16px 아이콘
      기준 ≈6px), 바로 뒤 나무위키 아이콘과의 시각적 gap이 다른 쌍보다 넓어 보임(2026-08-14, 사용자 제보).
      margin:-7px 기본값보다 더 음수로 설정해 나무위키 아이콘을 왼쪽으로 당겨야 gap이 줄어든다

@@ -225,7 +225,7 @@
     </div>
   </div>
   <div id="tt-discog-strip" class="gc-discog-strip hscroll-drag"></div>
-  <div id="tt-ig-section" class="ig-section" hidden><div class="tt-timeline-hd">Instagram</div><div id="tt-ig-strip" class="ig-strip hscroll-drag"></div></div>
+  <div id="tt-ig-section" class="ig-section" hidden><div class="tt-timeline-hd">Instagram</div><div id="tt-ig-strip" class="ig-strip hscroll-drag"></div><div id="tt-igmag-strip" class="ig-strip ig-mag-strip hscroll-drag" hidden></div></div>
   <div id="tt-timeline-section" style="display:none"><div class="tt-timeline-hd">History</div><div id="tt-timeline"></div></div>
 </div><div id="tt-concert-row" class="concert-row"></div><div id="tt-collection-row" class="gc-collection-row" style="display:none"><div class="gc-collection-hd">Collections</div><div class="gc-collection-list hscroll-drag"></div></div><div id="tv"></div></div>
 <div id="gc">
@@ -274,7 +274,7 @@
       </div>
       <div id="gc-discog-strip" class="gc-discog-strip hscroll-drag"></div>
     </div>
-    <div id="gc-ig-section" class="ig-section" hidden><div class="tt-timeline-hd">Instagram</div><div id="gc-ig-strip" class="ig-strip hscroll-drag"></div></div>
+    <div id="gc-ig-section" class="ig-section" hidden><div class="tt-timeline-hd">Instagram</div><div id="gc-ig-strip" class="ig-strip hscroll-drag"></div><div id="gc-igmag-strip" class="ig-strip ig-mag-strip hscroll-drag" hidden></div></div>
     <div id="gc-timeline-section" style="display:none"><div class="tt-timeline-hd">History</div><div id="gc-timeline"></div></div>
     <div id="gc-concert-row" class="concert-row"></div>
     <div id="gc-collection-row" class="gc-collection-row" style="display:none">
@@ -12070,6 +12070,7 @@ function showT(a,cx,cy,keepNavStack,urlMode,_unusedPushMobNav,noFly){
   _appendDeceasedStar(tnEl,a);_appendSubName(tnEl,a);
   _renderGcLinks(_withIdolChannelLink(a),'tt-links');
   _renderIgStrip('tt',a.links?.instagram);
+  _renderIgMagStrip('tt',[_igHandle(a.links?.instagram)].filter(Boolean));
   const tgEl=document.getElementById('tg');
   tgEl.innerHTML='';tgEl.onclick=null;
   function _makeGcClickFn(gKo){
@@ -12670,6 +12671,58 @@ function _fmtFollowers(n){
   if(n>=1e3)return Math.floor(n/1e3)+'K';
   return String(n);
 }
+// ══ 인스타 2행 — 공식 외 계정(매거진·디지털 매거진, 2026-10-20 사용자 — "데페뉴·아이즈 같은 계정에 아이돌 직접 출연 콘텐츠가 많다,
+// 공식 인스타 1행 아래 2행으로, 카드든 탐험 패널이든") ══
+// 계정 목록은 ig_media_accounts.json, 수집은 tools/ig_business_discovery.mjs(매거진은 최근 50개 중 **본문에 우리 아이돌 공식 계정 @핸들을
+// 태그한 게시물만** m=[핸들…]로 저장). 여기선 그 m으로 카드 주인 핸들과 맞춘다 — 이름 추측이 아니라 계정 태그라 동명이인 오연결이 없다.
+// 사진·캐러셀은 사이트 안 뷰어, 영상은 재생 파일이 없어 인스타 원본으로(공식 1행과 같은 규칙). 칸 아래쪽에 매체 이름을 작게 붙인다.
+let _igMagP=null;const _igMagNames=new Map();
+function _igMagIndex(){
+  return _igMagP||(_igMagP=(async()=>{
+    const idx=new Map();
+    try{
+      const j=await fetch('ig_media_accounts.json',{cache:'no-cache'}).then(r=>r.ok?r.json():null);
+      ((j&&j.accounts)||[]).forEach(x=>{if(x&&x.h)_igMagNames.set(String(x.h).toLowerCase(),x.name||x.h);});
+      if(!_igMagNames.size||!sb)return idx;
+      const{data}=await sb.from('ig_accounts').select('handle,media').in('handle',[..._igMagNames.keys()]).eq('status','ok');
+      (data||[]).forEach(r=>(r.media||[]).forEach(m=>{
+        if(!m||!m.u||!m.p||!Array.isArray(m.m)||!m.m.length)return;
+        const it={...m,ts:Date.parse(m.t)||0,h:r.handle,src:_igMagNames.get(r.handle)||r.handle};
+        m.m.forEach(t=>{(idx.get(t)||idx.set(t,[]).get(t)).push(it);});
+      }));
+      idx.forEach(a=>a.sort((x,y)=>y.ts-x.ts));
+    }catch(e){console.warn('[ig] 공식 외 계정 로드 실패 — 2행만 빠집니다',e);}
+    return idx;
+  })());
+}
+async function _igMagFor(handles){
+  const idx=await _igMagIndex(),seen=new Set(),out=[];
+  (handles||[]).forEach(h=>(idx.get(h)||[]).forEach(m=>{if(seen.has(m.p))return;seen.add(m.p);out.push(m);}));
+  return out.sort((a,b)=>b.ts-a.ts);
+}
+function _igSecSync(sec){if(sec)sec.hidden=!sec.querySelector('.ig-item');}
+function _igMagTile(m){
+  const a=document.createElement('a');a.className='ig-item ig-mag-item';a.href=m.p;a.target='_blank';a.rel='noopener noreferrer';
+  a.addEventListener('click',e=>{e.stopPropagation();if(m.ty==='VIDEO')return;e.preventDefault();_openIgViewer(m,m.h,0);});
+  const img=document.createElement('img');img.loading='lazy';img.alt='';img.src=m.u;
+  img.addEventListener('error',()=>{const sec=a.closest('.ig-section'),st=a.parentElement;a.remove();if(st&&!st.children.length)st.hidden=true;_igSecSync(sec);});
+  a.appendChild(img);
+  if(m.ty==='VIDEO'){const b=document.createElement('span');b.className='ig-play';b.textContent='▶';a.appendChild(b);}
+  else if(Array.isArray(m.c)&&m.c.length>1){const b=document.createElement('span');b.className='ig-play';b.textContent='❐ '+m.c.length;a.appendChild(b);}
+  const src=document.createElement('span');src.className='ig-src';src.textContent=m.src;a.appendChild(src);
+  return a;
+}
+async function _renderIgMagStrip(prefix,handles){
+  const sec=document.getElementById(prefix+'-ig-section'),strip=document.getElementById(prefix+'-igmag-strip');
+  if(!sec||!strip)return;
+  const key=(handles||[]).join(',');strip.dataset.k=key;strip.innerHTML='';strip.hidden=true;
+  if(!key)return;
+  const list=await _igMagFor(handles);
+  if(strip.dataset.k!==key||!list.length)return; // 그새 다른 카드로 넘어갔으면 버린다
+  list.slice(0,20).forEach(m=>strip.appendChild(_igMagTile(m)));
+  strip.hidden=false;sec.hidden=false;strip.scrollLeft=0;
+  _enableDragScroll(strip);
+}
 // 카드 "Instagram" 줄 — 최근 게시물(최대 6) 썸네일. 이미지는 인스타 주소 그대로(매일 새로 받음), 깨지면 그 칸만 뺀다
 async function _renderIgStrip(prefix,url){
   const sec=document.getElementById(prefix+'-ig-section'),strip=document.getElementById(prefix+'-ig-strip');
@@ -12687,7 +12740,7 @@ async function _renderIgStrip(prefix,url){
     const a=document.createElement('a');a.className='ig-item';a.href=href;a.target='_blank';a.rel='noopener noreferrer';
     a.addEventListener('click',e=>{e.stopPropagation();if(ty==='VIDEO')return;e.preventDefault();_openIgViewer(m,h,i||0);});
     const img=document.createElement('img');img.loading='lazy';img.alt='';img.src=src;
-    img.addEventListener('error',()=>{a.remove();if(!strip.children.length)sec.hidden=true;});
+    img.addEventListener('error',()=>{a.remove();if(!strip.children.length)_igSecSync(sec);});
     a.appendChild(img);
     if(ty==='VIDEO'){const b=document.createElement('span');b.className='ig-play';b.textContent='▶';a.appendChild(b);}
     return a;
@@ -12700,7 +12753,7 @@ async function _renderIgStrip(prefix,url){
       d.title=ko?`사진 ${m.c.length}장 — 눌러서 펼치기`:`${m.c.length} photos — tap to expand`;
       m.c.slice(1,3).reverse().forEach((src,i,arr)=>{const b=document.createElement('img');b.className='ig-deck-back d'+(arr.length-i);b.src=src;b.alt='';b.loading='lazy';b.addEventListener('error',()=>b.remove());d.appendChild(b);});
       const f=document.createElement('img');f.className='ig-deck-front';f.src=m.c[0]||m.u;f.alt='';f.loading='lazy';
-      f.addEventListener('error',()=>{d.remove();if(!strip.children.length)sec.hidden=true;});
+      f.addEventListener('error',()=>{d.remove();if(!strip.children.length)_igSecSync(sec);});
       d.appendChild(f);
       const n=document.createElement('span');n.className='ig-play';n.textContent='❐ '+m.c.length;d.appendChild(n);
       d.addEventListener('click',e=>{
@@ -15203,6 +15256,8 @@ function showGC(ko,cx,cy,keepMemberPanel,skipRipple,urlMode,_unusedPushMobNav){
   else leaderRow.style.display='none';
   _renderGcLinks(info.links);
   _renderIgStrip('gc',info.links?.instagram);
+  // 2행(공식 외): 그룹 계정 + 멤버 개인 계정이 태그된 게시물
+  _renderIgMagStrip('gc',[...new Set([_igHandle(info.links?.instagram),...ARTISTS.filter(x=>(_artistGroups(x)||[]).some(g=>g&&g.ko===ko)).map(x=>_igHandle(x.links?.instagram))].filter(Boolean))]);
   // 그룹 프로필 사진 + 관리자 업로드 버튼(2026-08-28) — 멤버 카드와 같은 함수를 쓴다.
   _loadGroupPic(ko);
   _mountPicCamBtn(_gcPicCfg(ko));
@@ -22903,7 +22958,7 @@ function _openIgViewer(m,handle,idx){
   }
   _igv={m,pics,i:Math.max(0,Math.min(idx||0,pics.length-1))};
   const ko=currentLang==='ko',own=_igOwners().get(handle),ig=_igMap.get(handle);
-  ov.querySelector('#igv-name').textContent=own?own.name:('@'+handle);
+  ov.querySelector('#igv-name').textContent=own?own.name:(_igMagNames.get(handle)||('@'+handle));
   ov.querySelector('#igv-meta').textContent=['@'+handle,_igAgo(m.t),m.lk!=null?(ko?'좋아요 ':'♥ ')+_fmtFollowers(m.lk):'',m.cm!=null?(ko?'댓글 ':'💬 ')+_fmtFollowers(m.cm):''].filter(Boolean).join(' · ');
   const av=ov.querySelector('#igv-av');if(ig&&ig.pic){av.src=ig.pic;av.hidden=false;}else av.hidden=true;
   const cap=ov.querySelector('#igv-cap');cap.textContent=m.cap||'';cap.hidden=!m.cap;
@@ -22960,6 +23015,22 @@ function _igRenderRail(list,photos){
   });
   list.scrollLeft=0;_enableDragScroll(list);
 }
+// 탐험 인스타 2행(공식 외) — 칸 제목은 태그된 우리 아이돌 이름, 아래에 매체·시간. 영상은 인스타 원본으로
+function _igRenderMagRail(list,items){
+  const own=_igOwners();
+  items.forEach(m=>{
+    const names=[...new Set((m.m||[]).map(h=>own.get(h)?.name).filter(Boolean))];
+    const ttl=names.length>2?names.slice(0,2).join(' · ')+(currentLang==='ko'?` 외 ${names.length-2}`:` +${names.length-2}`):names.join(' · ');
+    const open=m.ty==='VIDEO'?()=>window.open(m.p,'_blank','noopener'):()=>_openIgViewer(m,m.h,0);
+    const card=_appendFeedCard(list,'📷',ttl||m.src,'',open,m.u,null,{meta:m.src+' · '+_igAgo(m.t)});
+    const img=card&&card.querySelector('img');
+    if(img)img.addEventListener('error',()=>card.remove());
+    const tw=card&&card.querySelector('.feed-card-thumb-wrap');
+    if(tw&&m.ty==='VIDEO'){const b=document.createElement('span');b.className='ig-play';b.textContent='▶';tw.appendChild(b);}
+    else if(tw&&Array.isArray(m.c)&&m.c.length>1){const b=document.createElement('span');b.className='ig-play';b.textContent='❐ '+m.c.length;tw.appendChild(b);}
+  });
+  list.hidden=!list.children.length;list.scrollLeft=0;_enableDragScroll(list);
+}
 // For You — 즐겨찾기 그룹·멤버의 최근 2주 사진
 async function _buildFeedFavIg(){
   const section=document.getElementById('feed-favig-section'),list=document.getElementById('feed-favig');
@@ -22971,11 +23042,17 @@ async function _buildFeedFavIg(){
     favGroups.forEach(k=>{const h=_igHandle(GROUPS[k]?.links?.instagram);if(h)hs.add(h);});
     ARTISTS.forEach(a=>{if(a.group&&favMembers.has(_mFavKey(a))){const h=_igHandle(a.links?.instagram);if(h)hs.add(h);}});
     if(!hs.size)return;
-    const{data,error}=await sb.from('ig_accounts').select('handle,media').in('handle',[...hs].slice(0,300)).eq('status','ok').limit(300);
-    if(error)return;
-    const photos=_igPhotos(data,14,15);if(!photos.length)return;
+    const mag=document.getElementById('feed-favigmag');if(mag){mag.innerHTML='';mag.hidden=true;}
+    const[{data,error},magItems]=await Promise.all([
+      sb.from('ig_accounts').select('handle,media').in('handle',[...hs].slice(0,300)).eq('status','ok').limit(300),
+      _igMagFor([...hs]).catch(()=>[])]);
+    const photos=error?[]:_igPhotos(data,14,15);
+    const magRecent=magItems.filter(m=>m.ts>Date.now()-30*86400000).slice(0,15); // 매거진은 올리는 간격이 길어 30일
+    if(!photos.length&&!magRecent.length)return;
     const ttl=document.getElementById('feed-favig-ttl');if(ttl)ttl.textContent=currentLang==='ko'?'📷 즐겨찾기 인스타':'📷 Instagram from Your Favorites';
-    _igRenderRail(list,photos);section.style.display='';
+    if(photos.length)_igRenderRail(list,photos);
+    if(mag&&magRecent.length)_igRenderMagRail(mag,magRecent);
+    section.style.display='';
   }catch(e){console.warn('[feed] 즐겨찾기 인스타 선반 실패 — 이 선반만 빠집니다',e);}
 }
 // Discover — 팔로워 많은 계정 60곳의 최근 3일 사진
@@ -22985,9 +23062,16 @@ async function _buildFeedIg(){
   list.innerHTML='';section.style.display='none';
   if(!sb)return;
   try{
-    const{data,error}=await sb.from('ig_accounts').select('handle,media').eq('status','ok').order('followers',{ascending:false,nullsFirst:false}).limit(60);
-    if(error)return;
-    const photos=_igPhotos(data,3,15);if(!photos.length)return;
+    const mag=document.getElementById('feed-igmag');if(mag){mag.innerHTML='';mag.hidden=true;}
+    // 매거진 계정은 팔로워가 많아 '팔로워 순 60곳'을 차지한다 — 목록을 먼저 읽고 그만큼 더 받는다(1행은 _igPhotos가 아이돌 계정만 남김)
+    const magIdx=await _igMagIndex().catch(()=>new Map());
+    const{data,error}=await sb.from('ig_accounts').select('handle,media').eq('status','ok').order('followers',{ascending:false,nullsFirst:false}).limit(60+_igMagNames.size);
+    const photos=error?[]:_igPhotos(data,3,15);
+    // 2행: 공식 외 계정의 최근 14일 게시물(우리 아이돌이 태그된 것) — 같은 게시물이 여러 핸들에 걸려 있어 주소로 한 번만
+    const seen=new Set(),magRecent=[];
+    [...magIdx.values()].flat().sort((a,b)=>b.ts-a.ts).forEach(m=>{if(m.ts<Date.now()-14*86400000||seen.has(m.p))return;seen.add(m.p);magRecent.push(m);});
+    if(mag&&magRecent.length)_igRenderMagRail(mag,magRecent.slice(0,15));
+    if(!photos.length){if(magRecent.length)section.style.display='';return;}
     _igRenderRail(list,photos);section.style.display='';
   }catch(e){console.warn('[feed] 인스타 선반 실패 — 이 선반만 빠집니다',e);}
 }
@@ -28774,6 +28858,7 @@ _totopBtn.addEventListener('click',e=>{
       <div class="feed-section" id="feed-favig-section" style="display:none">
         <div class="feed-section-ttl" id="feed-favig-ttl">📷 Instagram from Your Favorites</div>
         <div id="feed-favig" class="feed-album-grid feed-album-rail feed-album-rail-1 hscroll-drag"></div>
+        <div id="feed-favigmag" class="feed-album-grid feed-album-rail feed-album-rail-1 hscroll-drag ig-mag-rail" hidden></div>
       </div>
       <!-- 내 최애 차트(2026-10-15) — 이번 주 차트(주간 직캠 TOP 20·월간 퍼포먼스 TOP 30)에 든 최애 무대. 누르면 그 차트 목록 -->
       <div class="feed-section" id="feed-favchart-section" style="display:none">
@@ -28817,6 +28902,7 @@ _totopBtn.addEventListener('click',e=>{
       <div class="feed-section" id="feed-ig-section" style="display:none">
         <div class="feed-section-ttl" id="feed-ig-ttl">📷 Instagram</div>
         <div id="feed-ig" class="feed-album-grid feed-album-rail feed-album-rail-1 hscroll-drag"></div>
+        <div id="feed-igmag" class="feed-album-grid feed-album-rail feed-album-rail-1 hscroll-drag ig-mag-rail" hidden></div>
       </div>
       <div class="feed-section" id="feed-anniv-section" style="display:none">
         <div class="feed-section-ttl">🎂 Today's Anniversary</div>
