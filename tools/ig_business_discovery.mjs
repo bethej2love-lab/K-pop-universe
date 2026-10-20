@@ -87,6 +87,8 @@ for (const h of queue) {
     const c = j.error.code, sc = j.error.error_subcode;
     if (c === 190) { console.error('❌ 토큰 만료/무효 — META_IG_TOKEN을 새로 발급해 Secrets에 넣어야 한다:', j.error.message); process.exitCode = 2; break; }
     if ([4, 17, 32, 613, 80002].includes(c)) { stoppedBy = `호출 한도(${c})`; break; }
+    // "API access blocked."(200)은 권한 누락이 아니라 메타가 앱 자체를 막은 것(10-19 저녁 180개 수집 직후부터) — 토큰 재발급으론 안 풀린다
+    if (c === 200 && /access blocked/i.test(j.error.message || '')) { console.error('❌ 메타가 앱 API 접근을 차단 — developers.facebook.com 앱 대시보드의 알림·제한 사항을 확인해야 한다:', j.error.message); process.exitCode = 3; break; }
     if (c === 10 || c === 200) { console.error('❌ 권한 오류 — instagram_manage_insights·ads_read 등 권한이 빠진 토큰:', j.error.message); process.exitCode = 3; break; }
     // 계정 없음·개인 계정(비즈니스/크리에이터 아님)·연령 제한 → 기록만 남기고 다음 바퀴에 다시
     acc.push({ handle: h, status: 'not_found', note: String(j.error.message || '').slice(0, 200) + (sc ? ' #' + sc : ''), fetched_at: new Date().toISOString() });
