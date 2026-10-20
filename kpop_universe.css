@@ -4556,7 +4556,8 @@
 .card-hero-skel .chs-s{width:55%;}
 /* 대표 칸 제목은 마퀴(한 줄 흐름) 대신 두 줄 줄바꿈 — 안쪽 span이 nowrap이라 두 줄이 안 됐다 */
 .card-hero .tv-sm-title .tv-title-inner{white-space:normal!important;display:inline;transform:none!important;animation:none!important;}
-.card-hero .tv-sm-title{max-height:calc(1.35em * 2);}
+/* 한 줄 제목(10-19)으로 바꾸며 overflow:hidden이 빠져 둘째 줄이 날짜 줄 위로 비어져 나왔다(2026-10-20 제보) — 한 줄 높이로 자르고 말줄임 */
+.card-hero .tv-sm-title{max-height:1.3em;overflow:hidden;}
 /* 시청 진행 바 — 썸네일 래퍼가 있는 곳(탐험 선반 카드·검색 영상 줄). 카드 그리드의 .gc-ch-prog와 같은 빨간 3px(2026-10-13) */
 .vid-prog{position:absolute;left:0;bottom:0;height:3px;background:#f00;z-index:4;pointer-events:none;border-radius:0 1px 1px 0;}
 .feed-card-thumb-wrap,.sr-vt{position:relative;}
