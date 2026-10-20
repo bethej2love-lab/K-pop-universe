@@ -34,6 +34,16 @@ t('크레딧 — 원곡이 시스템 밖(Mika Nakashima)이면 커버지만 cove
 t('크레딧 — 외부 원곡자(Tim) 명시 시 곡명 우연일치로 유니버스 멤버 안 붙임',R("🎤김재환&크래비티 민희 - 사랑합니다 (원곡 : Tim-사랑합니다)ㅣ딩고뮤직ㅣdingo Music",'크래비티',{members:['민희']}),r=>!!r&&r.isCover&&!r.origin);
 // 크레딧 없는 "La La La Love Song" Cover가 빅뱅 'LOVE SONG'에 부분일치로 안 붙음
 t('부분일치 방지 — La La La Love Song Cover는 빅뱅 LOVE SONG 아님',R("SEONGMIN 성민 'La La La Love Song' Cover",'크래비티',{members:['성민']}),r=>!r||!r.origin||r.origin.gko!=='빅뱅');
+// 원곡자 표기의 **일부 낱말**이 우리 멤버 이름과 같아도 원곡자로 잡지 않는다(2026-10-20 사용자 제보 — Bobby Helms가 아이콘 BOBBY로)
+t('크레딧 부분일치 — (원곡: Bobby Helms)는 아이콘 BOBBY 아님(외부 원곡)',R("‘루돌프즈’ CORTIS - Jingle Bell Rock (원곡: Bobby Helms)♬",'코르티스'),r=>!!r&&!r.origin);
+t('크레딧 — 그룹 멤버 이름만 쓴 원곡자(원곡: BOBBY)는 그대로 아이콘',R("[LIVE] 테스트 - 사랑 그게 뭔데 (원곡: BOBBY)",'코르티스'),r=>!!r&&!!r.origin&&r.origin.gko==='아이콘');
+t('크레딧 부분일치 — (Original Song by Michael Jackson)은 갓세븐 잭슨 아님',R("CLOSE YOUR EYES 'Dangerous' (Original Song by Michael Jackson) Dance Practice | ACON 2026",'클로즈유어아이즈'),r=>!!r&&!r.origin);
+t('크레딧 부분일치 — (원곡: James Arthur)는 코르티스 제임스 아님',R("VERIVERY l 민찬 - Say You Won't Let Go (원곡: James Arthur) (Produced by MINCHAN)",'베리베리'),r=>!!r&&!r.origin);
+t('크레딧 괄호 중첩 — (원곡 : (여자)아이들)은 아이들',R("[쇼챔직캠 4K] WEi KIM DONGHAN - TOMBOY (위아이 김동한 - 톰보이 (원곡: (여자)아이들)) | Show Champion | EP.437",'위아이'),r=>covG(r,'아이들'));
+t('크레딧 괄호 중첩 — (Original song: (G)I-DLE)은 아이들',R("ONEWE, LATATA (Original song: (G)I-DLE) [THE SHOW 191001]",'원위'),r=>covG(r,'아이들'));
+t('크레딧 한영 병기 — (원곡: 로제 ROSÉ)는 로제',R("[ALLIVE] FLARE U(최립우X강우진) - number one girl (원곡: 로제 ROSÉ) | #MBCRADIO",'플레어유'),r=>!!r&&!!r.origin&&r.origin.mko==='로제');
+t('크레딧 유닛 — (원곡 : 부석순)은 세븐틴',R("TWS (투어스) ‘청바지’ (원곡 : 부석순) Stage Cam @ 1ST FANMEETING",'투어스'),r=>covG(r,'세븐틴'));
+t('크레딧 영문 그룹 — (원곡: FTISLAND)의 FT를 feat로 떼지 않음',R("[KCON JAPAN 2026] INI X P1Harmony - 사랑 사랑 사랑 (원곡: FTISLAND) | Mnet 260529 방송",'피원하모니'),r=>covG(r,'에프티아일랜드'));
 t('크레딧 — 자기 곡(원곡: 코르티스)은 커버 아님',R("[LIVE] CORTIS 성현&건호 - JoyRide (원곡: 코르티스) | 우쥬레코드 코르티스 편",'코르티스',{members:['성현','건호']}),r=>!r||!r.origin);
 t('크레딧 — 자기 곡(ZEROBASEONE 원곡) 커버 아님',R("[LIVE] ZEROBASEONE 장하오&김태래 - SLAM DUNK (원곡: ZEROBASEONE) | 우쥬레코드 제로베이스원 편",'제로베이스원'),r=>!r||!r.origin);
 t('크레딧 — 멤버 솔로곡 원곡(태민)은 "태민(샤이니)" 또는 동명이인으로 origin null',R("[#퀸덤퍼즐/Full CAM] ♬ Advice - 수윤 (SU YUN) (원곡 : 태민 (TAEMIN)) @업다운배틀 #QUEENDOMPUZZLE",'로켓펀치'),r=>!r||!r.origin||covM(r,'태민(샤이니)'));

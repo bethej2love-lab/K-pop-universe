@@ -138,6 +138,7 @@ function load(){
     if(/^function _coverCreditReassign\(/m.test(adminSrc)){
       S(/^const _cvNorm=/m,'_cvNorm');
       F(/^function _coverCreditExact\(/m,'_coverCreditExact');
+      if(/^function _coverOriginStrict\(/m.test(adminSrc))F(/^function _coverOriginStrict\(/m,'_coverOriginStrict'); // 2026-10-20 원곡자 표기 전체 일치
       F(/^function _coverCreditReassign\(/m,'_coverCreditReassign');
     }
   }

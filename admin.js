@@ -1816,7 +1816,9 @@ function _coverCandidates(title){
   // ── 크레딧 절 ──
   // (원곡: X) / (원곡 : X) / (Original song by X) / (Original by X) / (원곡자: X) / 原曲 : X
   // ⚠️ "by?"는 리터럴 b+옵션 y라 'H.O.T.'·'소녀시대'를 못 잡았다(2026-08-30 테스트로 발견) — (?:by\.?)?로.
-  const creditRe=/[\(（\[【]\s*(?:\*?\s*원곡자?|original(?:\s*song|\s*track)?(?:\s*by\.?|\s*:)?|原曲)\s*[:：]?\s*([^\)）\]】]{1,60})[\)）\]】]/gi;
+  // 원곡자 안의 괄호 한 겹 허용 — "(원곡: (G)I-DLE)"·"(원곡 : (여자)아이들)"·"(Original Song: 태민(TAEMIN))"이
+  // 첫 ")"에서 잘려 "(G"·"태민(TAEMIN"만 남아 외부 원곡으로 떨어지던 것(2026-10-20 전수 대조에서 발견)
+  const creditRe=/[\(（\[【]\s*(?:\*?\s*원곡자?|original(?:\s*song|\s*track)?(?:\s*by\.?|\s*:)?|原曲)\s*[:：]?\s*((?:[^\(（\)）\]】]|[\(（][^\(（\)）]{0,30}[\)）]){1,60})[\)）\]】]/gi;
   let m;const credits=[];
   while((m=creditRe.exec(t))){credits.push({artist:m[1].trim(),idx:m.index,end:m.index+m[0].length});}
   // 크레딧 바로 앞의 곡명: "…'곡명' (원곡: X)" 또는 "… - 곡명 (원곡: X)" 또는 "♬ 곡명 - 그룹 (원곡: X)"
@@ -1858,7 +1860,7 @@ function _coverCandidates(title){
     let cleaned=inner.replace(/\s*[\(（][^)）]*(?:원곡|original)[^)）]*[\)）]/i,'');
     // "'HOT(LE SSERAFIM)'"처럼 따옴표 안 괄호가 아티스트명이면 곡명과 분리
     const pa=cleaned.match(/^(.+?)\s*[\(（]([^)）]{1,40})[\)）]\s*$/);
-    if(pa&&_coverOriginFromText(pa[2])){push(pa[1],'quote',pa[2]);continue;}
+    if(pa&&_coverOriginStrict(pa[2])){push(pa[1],'quote',pa[2]);continue;}
     // "방탄소년단(BTS)-Dynamite"·"TWICE - MORE & MORE"처럼 따옴표 안에 아티스트-곡명이 같이 든 관례 — 양쪽을 각각 후보로
     const qd=cleaned.match(/^\s*(.{1,40}?)\s*[-–—]\s*(.{1,60}?)\s*$/);
     if(qd){push(qd[2],'quote',qd[1]);push(qd[1],'quote',qd[2]);}
@@ -1948,13 +1950,40 @@ function _coverDebutYear(gko){const g=GROUPS[gko];return g?(parseInt(g.debut)||0
 // — 실측: `원곡 : 서태지와 아이들`이 (여자)**아이들**로 해석돼서 cover_of에 엉뚱하게 붙었다.
 // 괄호 병기(`TWICE(트와이스)`)나 슬래시 나열은 조각으로 쪼개 각각을 본다.
 const _cvNorm=s=>String(s||'').toLowerCase().normalize('NFKC').replace(/[^a-z0-9가-힣]/g,'');
+// 2026-10-20 확장: 원곡자 문구에서 이름 **일부**만 맞아도 원곡자로 잡던 것을 전 경로에서 막는다(_coverOriginStrict).
+// 실측: "CORTIS - Jingle Bell Rock (원곡: Bobby Helms)"가 아이콘 BOBBY로 해석돼 원곡=아이콘으로 붙었다(사용자 제보).
+// 그래서 그룹 원곡자면 그 그룹 (전)멤버 이름도 정식 표기로 인정하고("원곡: 바비"→아이콘), "그룹 멤버" 붙여 쓰기
+// ("방탄소년단 진")와 &·x·feat 나열도 조각으로 본다. 정식 표기에 없는 낱말이 붙으면(Helms) 외부 아티스트.
 function _coverCreditExact(cred,origin){
-  const names=[];
-  if(origin.kind==='group'){const g=GROUPS[origin.gko]||{};names.push(origin.gko,g.en,...(g.altNames||[]));}
-  else{const a=ARTISTS.find(x=>x.name&&x.name.ko===origin.mko);names.push(origin.mko,a&&a.name&&a.name.en);}
-  const set=new Set(names.filter(Boolean).map(_cvNorm));
-  const parts=String(cred||'').split(/[()（）/·,]/).map(s=>s.trim()).filter(Boolean);
-  return [cred,...parts].some(p=>set.has(_cvNorm(p)));
+  const names=[],gnames=[];
+  const gko=origin.gko&&GROUPS[origin.gko]?origin.gko:null;
+  const pushA=a=>{if(a&&a.name)names.push(a.name.ko,a.name.en,...(a.matchAliases||[]));};
+  if(gko){const g=GROUPS[gko]||{};gnames.push(gko,g.en,...(g.altNames||[]));}
+  if(origin.kind==='group'){
+    names.push(...gnames);
+    ARTISTS.forEach(a=>{try{const gs=typeof _artistGroups==='function'?_artistGroups(a):[a.group||{}];if(gs.some(y=>y&&y.ko===gko))pushA(a);}catch(e){}});
+    // 유닛 이름(부석순·태티서·EXO-K…)도 그 그룹 표기로 — 예전 해석(_m2ParseTitle)이 유닛을 소속 그룹으로 풀던 것과 맞춘다
+    if(typeof _PROJECT_UNITS==='object'&&_PROJECT_UNITS)Object.entries(_PROJECT_UNITS).forEach(([u,d])=>{if((d.members||[]).some(m=>m.gko===gko))names.push(u,...(d.names||[]));});
+  }else{pushA(ARTISTS.find(x=>x.name&&x.name.ko===origin.mko));names.push(origin.mko);}
+  const norms=names.filter(Boolean).map(_cvNorm).filter(Boolean);
+  const set=new Set(norms);
+  // 낱말 순서만 다른 표기("Yerin Baek" ↔ "Baek Yerin")
+  const tokKey=s=>String(s||'').toLowerCase().normalize('NFKC').split(/[^a-z0-9가-힣]+/).filter(Boolean).sort().join(' ');
+  const tokSet=new Set(names.filter(Boolean).map(tokKey).filter(Boolean));
+  const gn=gnames.filter(Boolean).map(_cvNorm).filter(Boolean);
+  // 그룹명+멤버명 붙여 쓰기("방탄소년단 진"), 성을 붙인 영문 표기("JEON SOMI" ↔ Somi)
+  const SUR=/^(?:kim|lee|yi|park|choi|jung|jeong|kang|cho|jo|yoon|yun|jang|lim|im|han|oh|seo|shin|kwon|hwang|ahn|an|song|yoo|yu|hong|jeon|jun|bae|baek|nam|moon|mun|son|go|ko|ha|heo|nam|noh|roh|ryu|cha|ji|joo|ju|woo|min|byun|chae|do|kwak|seong|sung|bang|pyo|na)$/;
+  const combo=k=>gn.some(g=>k.startsWith(g)&&(set.has(k.slice(g.length))||(g.length>=3&&k.length-g.length<=1)))||norms.some(m=>m.length>=3&&k.endsWith(m)&&(gn.includes(k.slice(0,k.length-m.length))||SUR.test(k.slice(0,k.length-m.length))));
+  // 표기 다듬기: 해시태그·(feat./prod./with …) 괄호 제거, 조각 앞의 by/feat./원곡 같은 군더더기 제거
+  const clean=String(cred||'').normalize('NFKC').replace(/#/g,' ').replace(/^.*커버한\s*/,'').replace(/[\(（]\s*(?:feat|ft|prod|with|duet)\b[^)）]*[\)）]/gi,' ');
+  const strip=p=>p.replace(/^(?:(?:by|original(?:\s*song)?(?:\s*by)?|orig|feat|ft|prod)\b|원곡자?|노래)\s*[.:：,]?\s*/i,'').trim(); // \b — "FTISLAND"의 FT를 feat로 떼던 것
+  const parts=[clean,...clean.split(/[()（）/·,&＆+×|│]|\s[-–—lㅣ]\s|\s(?:x|feat\.?|ft\.?|with|and|of|by)\s/i)].flatMap(s=>[s.trim(),strip(s.trim())]).filter(Boolean); // 군더더기 뗀 것·안 뗀 것 둘 다("FT Island")
+  return parts.some(p=>{const k=_cvNorm(p);return k&&(set.has(k)||combo(k)||tokSet.has(tokKey(p))||p.split(/\s+/).every(w=>set.has(_cvNorm(w))));});
+}
+// 아티스트 표기 → 원곡자. 표기 **전체**가 그 원곡자의 정식 표기(위)일 때만 — 일부 낱말 매칭은 외부 아티스트로 본다.
+function _coverOriginStrict(text){
+  let o=null;try{o=_coverOriginFromText(text);}catch(e){}
+  return o&&_coverCreditExact(text,o)?o:null;
 }
 function _coverCreditReassign(v){
   const title=v.title||'';
@@ -1993,7 +2022,8 @@ function _coverResolve(row,opts){
   let creditOrigin=null,creditSong=null,creditExternal=false,reassign=null;
   for(const c of cands){
     if(c.strength!=='credit')continue;
-    const o=_coverOriginFromText(c.artistText);
+    const o0=_coverOriginFromText(c.artistText);
+    const o=o0&&(_coverCreditExact(c.artistText,o0)||_coverIsSelf(o0,performer,members))?o0:null;
     if(o){
       if(_coverIsSelf(o,performer,members)){
         // "(원곡: 저장된 그룹)"인데 with_*에 다른 그룹(멤버)이 붙어 있으면 옛 오저장 — 원곡자가 group_ko에, 실제 공연자가
@@ -2010,7 +2040,7 @@ function _coverResolve(row,opts){
   // 대시/따옴표 옆 아티스트 텍스트가 시스템 안 원곡자로 풀리면 그 원곡자 항목을 크게 가산(크레딧 다음 강도)
   const selfKeys=_coverSelfKeys(performer,members); // 공연자 재배정(reassign) 뒤 값 기준
   const sideBoost=new Map();
-  cands.forEach(c=>{if(c.strength==='credit'||!c.artistText)return;const o=_coverOriginFromText(c.artistText);if(o&&!_coverIsSelf(o,performer,members))sideBoost.set(_coverOriginId(o),8);});
+  cands.forEach(c=>{if(c.strength==='credit'||!c.artistText)return;const o=_coverOriginStrict(c.artistText);if(o&&!_coverIsSelf(o,performer,members))sideBoost.set(_coverOriginId(o),8);});
   const scored=[];
   const weightS={credit:6,tag:5,quote:4,dash:2,bare:1};
   let selfHit=false; // 강한 후보(크레딧/태그/따옴표)가 공연자 자기 곡에 걸림 → 자기 곡 무대, 커버 아님
@@ -2057,7 +2087,7 @@ function _coverResolve(row,opts){
   let externalArtist=false;
   cands.forEach(c=>{
     if(c.strength==='credit')return;
-    const lock=c.artistText?_coverOriginFromText(c.artistText):null;
+    const lock=c.artistText?_coverOriginStrict(c.artistText):null;
     if(c.artistText&&!lock){
       // 문장부호만 남는 조각("'", "-" 등)은 아티스트 표기가 아니다 — 이름처럼 생긴 것만 본다
       const nameLike=c.artistText.replace(/[^\p{L}\p{N} ]/gu,' ').trim();
@@ -2095,9 +2125,9 @@ function _coverResolve(row,opts){
   else if(creditExternal){origin=null;song=creditSong||null;reason='external';}
   else if(!ranked.some(x=>x.strength!=='bare')&&ctx.cover&&sideBoost.size===1){
     // 디스코에 없는 곡("BIGBANG '봄여름가을겨울' COVER")이라도 아티스트 표기가 시스템 안 원곡자 하나로 풀리면 그대로 인정
-    const id=[...sideBoost.keys()][0];const pool=cands.filter(x=>x.artistText&&!_coverOriginFromText(x.text)&&_coverOriginFromText(x.artistText)&&_coverOriginId(_coverOriginFromText(x.artistText))===id);
+    const id=[...sideBoost.keys()][0];const pool=cands.filter(x=>x.artistText&&!_coverOriginFromText(x.text)&&_coverOriginStrict(x.artistText)&&_coverOriginId(_coverOriginStrict(x.artistText))===id);
     const c=pool.find(x=>x.strength==='quote')||pool[0];if(!c)return null;
-    origin=_coverOriginFromText(c.artistText);song=c.text;reason='artist';
+    origin=_coverOriginStrict(c.artistText);song=c.text;reason='artist';
   }
   else if(ranked.length){
     const top=ranked[0],second=ranked[1];
