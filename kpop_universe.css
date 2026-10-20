@@ -1518,7 +1518,11 @@
   .ig-section[hidden]{display:none;}
   .ig-strip{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding:6px 0 2px;}
   .ig-strip::-webkit-scrollbar{display:none;}
-  :root{--ig-thumb:126px;}
+  /* 칸 너비 = 카드 영상 그리드의 쇼츠 한 칸(2열·간격 5px)과 같게(2026-10-20 사용자 — "인스타에선 훨씬 크게 보이잖아, 쇼츠 크기와 비슷하게").
+     비율은 인스타 표준 4:5 그대로(쇼츠처럼 9:16으로 맞추면 사진 양옆이 30% 넘게 잘린다). 줄 너비에서 계산해 폰·웹 카드 폭을 따라간다 */
+  /* 줄을 카드 오른쪽 끝(여백 28px)까지 늘려 셋째 칸이 살짝 보이게 — 두 칸이 폭을 꽉 채우면 옆으로 더 있다는 게 안 보인다. 칸 크기는 그만큼 빼서 쇼츠와 같게 */
+  .ig-strip{gap:5px;container-type:inline-size;margin-right:-28px;padding-right:28px;}
+  :root{--ig-thumb:calc((100cqw - 5px) / 2);} /* cqw는 패딩을 뺀 줄 너비(=카드 본문 폭) */ /* cqw = 인스타 줄 너비 기준(% 는 높이·겹친 묶음 안에서 기준이 바뀌어 못 씀) */
   .ig-item{position:relative;flex:0 0 auto;width:var(--ig-thumb);height:calc(var(--ig-thumb) * 1.25);border-radius:8px;overflow:hidden;background:rgba(255,255,255,0.05);display:block;}
   .ig-item img{width:100%;height:100%;object-fit:cover;display:block;}
   .ig-play{position:absolute;top:4px;right:5px;z-index:4;font-size:10px;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,0.7);pointer-events:none;}
