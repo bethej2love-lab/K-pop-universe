@@ -493,7 +493,7 @@
   }
   #tt{
     position:fixed;display:none;max-width:320px;
-    padding:16px 28px 14px 28px;font-size:14px;line-height:1.55;
+    padding:16px var(--card-pad,28px) 14px var(--card-pad,28px);font-size:14px;line-height:1.55;
     color:#ccd8ee;z-index:61;pointer-events:all;
     font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;
     transition:opacity 0.22s ease,transform 0.22s ease;
@@ -1445,7 +1445,10 @@
     transition:opacity 0.22s ease,transform 0.22s ease;}
   #gc.gc-enter{opacity:0;transform:translateY(6px) scale(0.97);}
   #gc-bar{height:3px;width:calc(100% - 8px);margin:0 4px;}
-  #gc-inner{padding:16px 28px 14px 28px;}
+  #gc-inner{padding:16px var(--card-pad) 14px var(--card-pad);}
+  /* 카드 좌우 여백 — 폰(바텀시트·카드 스택)은 탐험 패널과 같은 20px(2026-10-21 사용자 — 여백 차이로 쇼츠가 카드 164·탐험 169px이던 것) */
+  #tt,#gc{--card-pad:28px;}
+  #mob-sheet-inner>#tt,#mob-sheet-inner>#gc,#mob-card-stack-inner>#tt,#mob-card-stack-inner>#gc{--card-pad:20px;}
   #gc-bar-mob{display:none;height:3px;width:calc(100% - 8px);border-radius:2px;margin:0 4px 10px;}
   #gc-inner:not(:has(.gc-status-line.show)) #gc-bar-mob{margin-top:12px;}
   @media(max-width:768px){
@@ -1520,8 +1523,8 @@
   .ig-strip::-webkit-scrollbar{display:none;}
   /* 칸 너비 = 카드 영상 그리드의 쇼츠 한 칸(2열·간격 5px)과 같게(2026-10-20 사용자 — "인스타에선 훨씬 크게 보이잖아, 쇼츠 크기와 비슷하게").
      비율은 인스타 표준 4:5 그대로(쇼츠처럼 9:16으로 맞추면 사진 양옆이 30% 넘게 잘린다). 줄 너비에서 계산해 폰·웹 카드 폭을 따라간다 */
-  /* 줄을 카드 오른쪽 끝(여백 28px)까지 늘려 셋째 칸이 살짝 보이게 — 두 칸이 폭을 꽉 채우면 옆으로 더 있다는 게 안 보인다. 칸 크기는 그만큼 빼서 쇼츠와 같게 */
-  .ig-strip{gap:5px;container-type:inline-size;margin-right:-28px;padding-right:28px;}
+  /* 줄을 카드 오른쪽 끝(여백 --card-pad, 웹 28·폰 20px)까지 늘려 셋째 칸이 살짝 보이게 — 두 칸이 폭을 꽉 채우면 옆으로 더 있다는 게 안 보인다. 칸 크기는 그만큼 빼서 쇼츠와 같게 */
+  .ig-strip{gap:5px;container-type:inline-size;margin-right:calc(-1 * var(--card-pad,28px));padding-right:var(--card-pad,28px);}
   :root{--ig-thumb:calc((100cqw - 5px) / 2);} /* cqw는 패딩을 뺀 줄 너비(=카드 본문 폭) */ /* cqw = 인스타 줄 너비 기준(% 는 높이·겹친 묶음 안에서 기준이 바뀌어 못 씀) */
   .ig-item{position:relative;flex:0 0 auto;width:var(--ig-thumb);height:calc(var(--ig-thumb) * 1.25);border-radius:8px;overflow:hidden;background:rgba(255,255,255,0.05);display:block;}
   .ig-item img{width:100%;height:100%;object-fit:cover;display:block;}
