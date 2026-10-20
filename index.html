@@ -1372,7 +1372,8 @@
     <div id="gc-discog-detail-credits"></div>
   </div>
   <div id="gc-discog-video-panel" hidden>
-    <div class="adv-hdr">Videos <span id="gc-discog-video-count"></span></div>
+    <div class="adv-hdr"><button id="gc-discog-song-back" type="button" class="adv-back" hidden aria-label="앨범 전체 영상"><svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg></button><span id="gc-discog-video-lbl">Videos</span> <span id="gc-discog-video-count"></span></div>
+    <div id="gc-discog-song-view" hidden></div>
     <div id="gc-discog-video-chips" class="adv-chips" hidden></div>
     <div id="gc-discog-video-list"></div>
   </div>
@@ -13547,7 +13548,8 @@ function _openGcDiscogDetail(a,idx){
         ly.title=currentLang==='ko'?'멜론에서 가사·크레딧 보기':'Lyrics & credits on Melon';ly.setAttribute('aria-label',ly.title);
         ly.innerHTML='<svg viewBox="0 0 24 24"><path d="M5 6h10M5 11h10M5 16h6"/><path d="M19 5v9.5"/><circle cx="17" cy="15.5" r="2"/></svg>';
         ly.addEventListener('click',e=>e.stopPropagation());row.appendChild(ly);}
-      row.addEventListener('click',()=>_filterGcVideosByTrack(t.title));
+      row.dataset.title=t.title;
+      row.addEventListener('click',()=>_albTrackClick(t.title));
       tracksEl.appendChild(row);
     });
   }else if(a.titleTrack){
@@ -13557,14 +13559,16 @@ function _openGcDiscogDetail(a,idx){
     const nameEl=document.createElement('span');nameEl.className='gc-discog-track-name';nameEl.textContent=a.titleTrack;
     row.appendChild(nameEl);
     _appendGcDiscogTrackBadges(row,a.titleTrack);
+    row.dataset.title=a.titleTrack;
     tracksEl.appendChild(row);
-    row.addEventListener('click',()=>_filterGcVideosByTrack(a.titleTrack));
+    row.addEventListener('click',()=>_albTrackClick(a.titleTrack));
   }else{
     trackLbl.style.display='none';tracksEl.style.display='none';
   }
   {const _d=document.getElementById('gc-discog-detail');_d.classList.add('open');_bringToFront(_d);}
   _updateDiscogFlagBtn();
   {const _vp=document.getElementById('gc-discog-video-panel');if(_vp)_vp.hidden=true;}
+  _albSong=null;_albSongMount(false);_albSongApply();
   _loadAlbumVideos(a,_discogDetailGko);
   const credEl=document.getElementById('gc-discog-detail-credits');
   if(credEl){
@@ -13690,6 +13694,7 @@ function _closeGcDiscogDetail(){
     if(_vp.parentElement!==_det)_det.appendChild(_vp);
   }
   _albVidReq++; // 늦게 온 결과가 닫힌 패널을 다시 열지 않게
+  _albSong=null;_albSongMount(false);_albSongApply();
 }
 // 앨범 ↔ 영상(2026-10-19) — 연결은 거의 안 바뀌는 정보라 매번 DB를 검색하지 않는다. tools/build_album_videos.mjs가 매일(신규분)·주 1회(전량)
 // 주인(영상 group_ko)별로 "곡 기본형 → 영상"·"앨범명 → 영상"을 미리 계산해 album_videos/에 두고, 여기선 그 파일을 읽은 뒤
@@ -13719,7 +13724,9 @@ async function _loadAlbumVideos(album,gko){
   if(!isMob()&&document.getElementById('feed-overlay')?.classList.contains('open')){panel.hidden=true;return;}
   if(isMob()){
     const sheet=document.getElementById('gc-discog-detail-sheet');
-    if(sheet&&panel.parentElement!==sheet)sheet.appendChild(panel);
+    // 영상 칸은 수록곡 바로 아래(긴 크레딧 목록 위) — 곡을 눌러 내려갈 때 늦게 그려지는 크레딧이 영상 칸을 밀어내지 않게(2026-10-20)
+    const _cr=document.getElementById('gc-discog-detail-credits');
+    if(sheet&&panel.parentElement!==sheet){if(_cr&&_cr.parentElement===sheet)sheet.insertBefore(panel,_cr);else sheet.appendChild(panel);}
   }
   const owners=_albumVideoOwners(gko);
   // 공동 앨범이면 함께 낸 사람 쪽 영상도(온유 카드에서 연 'Tic Tac Toe'에 지코 쪽 무대가 빠지던 것, 2026-10-19)
@@ -13752,10 +13759,11 @@ async function _loadAlbumVideos(album,gko){
   const show=keep=>{
     if(!document.getElementById('gc-discog-detail')?.classList.contains('open')){panel.hidden=true;return;}
     const list=_filterBannedVideos(all,gko);
-    if(!list.length){panel.hidden=true;return;}
+    if(!list.length){_albVid=null;if(!_albSong)panel.hidden=true;return;}
     list.sort((a,b)=>pri(a)-pri(b)||String(b.published_at||'').localeCompare(String(a.published_at||'')));
     _albVid={list,fmt:keep&&_albVid?_albVid.fmt:'all',shown:0,gko};
     panel.hidden=false;
+    if(_albSong)return; // 곡 보기 중 — 앨범 목록은 "앨범 전체"로 돌아올 때 그린다
     _renderAlbumVideos();
   };
   show(false);
@@ -13788,7 +13796,7 @@ function _renderAlbumVideos(more){
   const fmts=_TVF_FMTS.filter(([k])=>cnt[k]);
   if(st.fmt!=='all'&&!cnt[st.fmt])st.fmt='all';
   const rows=st.fmt==='all'?st.list:st.list.filter(v=>_tvfFmt(v)===st.fmt);
-  if(cntEl)cntEl.textContent=rows.length.toLocaleString();
+  if(cntEl&&!_albSong)cntEl.textContent=rows.length.toLocaleString();
   if(!more){
     chipsEl.innerHTML='';
     chipsEl.hidden=fmts.length<2;
@@ -13838,6 +13846,53 @@ document.getElementById('gc-discog-detail-flag').addEventListener('click',e=>{
 // 그리드를 건드리는 대신, 앨범 상세 팝업(gc-discog-detail) 위에 새 시트를 하나 더 얹는 방식으로
 // 변경. 앨범 상세는 뒤에서 그대로 살아있으니 ×로 닫기만 하면 원래 화면으로 바로 복귀됨.
 // 디스코그래피 트랙 클릭 — 현재 열린 그룹 카드의 그 곡 영상을 곡 오버레이로 연다(래퍼).
+// ══ 앨범 창 = 곡 창(2026-10-20 사용자 요청 "앨범·곡·영상을 잇는 하나의 풀") ══
+// 예전엔 앨범 창에서 곡을 누르면 곡 오버레이(gc-track-videos-overlay)가 한 장 더 떴다. 이제 앨범 창 옆(폰은 아래) 영상 패널이
+// 그 곡 영상으로 바뀐다 — 곡 오버레이의 조회·탭·정렬·목록 코드(_openSongVideos·_renderSongVideoTabs)를 그대로 쓰고,
+// 부품(크레딧·탭·액션·목록 DOM)만 패널 안 #gc-discog-song-view로 옮겨 단다. 같은 곡을 다시 누르거나 ‹ 를 누르면 앨범 전체로.
+// ⚠️ 데스크톱 탐험 패널이 열려 있으면 이 패널은 CSS로 숨겨지므로 그땐 예전처럼 곡 오버레이로 연다.
+let _albSong=null;
+const _ALB_SONG_PARTS=['gc-track-videos-credits','gc-track-videos-tabs','gc-track-videos-actions','gc-track-videos-list'];
+function _albSongMount(inAlbum){
+  const host=document.getElementById(inAlbum?'gc-discog-song-view':'gc-track-videos-sheet');if(!host)return;
+  _ALB_SONG_PARTS.forEach(id=>{const el=document.getElementById(id);if(el&&el.parentElement!==host)host.appendChild(el);});
+}
+function _albSongApply(){
+  const panel=document.getElementById('gc-discog-video-panel');if(!panel)return;
+  const on=!!_albSong,_ko=currentLang==='ko';
+  const sv=document.getElementById('gc-discog-song-view');if(sv)sv.hidden=!on;
+  const back=document.getElementById('gc-discog-song-back');if(back)back.hidden=!on;
+  const lbl=document.getElementById('gc-discog-video-lbl');if(lbl)lbl.textContent=on?_albSong:'Videos';
+  panel.classList.toggle('is-song',on);
+  document.getElementById('gc-discog-video-list').hidden=on;
+  const chips=document.getElementById('gc-discog-video-chips');
+  if(on){chips.hidden=true;panel.hidden=false;document.getElementById('gc-discog-video-count').textContent='';}
+  else if(_albVid&&_albVid.list.length){panel.hidden=false;_renderAlbumVideos();}
+  else if(document.getElementById('gc-discog-detail')?.classList.contains('open'))panel.hidden=true;
+  document.querySelectorAll('#gc-discog-detail-tracks .gc-discog-track').forEach(r=>r.classList.toggle('is-active',on&&r.dataset.title===_albSong));
+  panel.scrollTop=0;
+}
+// 앨범 창의 곡 주인 — 그룹 카드면 그룹, 멤버(솔로) 카드면 그 멤버
+function _albSongOwner(title){
+  if(_openGCko&&_discogDetailGko===_openGCko)return{owner:{gko:_openGCko,memberKo:null},meta:{ownerType:'group',gko:_openGCko,artist:null,album:'',ownerName:_openGCko}};
+  const a=_openTArtist;
+  if(a&&a.name)return{owner:{gko:_ytGroupKoFor(a),memberKo:a.name.ko},meta:{ownerType:'member',gko:a.group&&a.group.ko,artist:a,album:'',ownerName:_dispName?_dispName(a):a.name.ko}};
+  if(_openGCko)return{owner:{gko:_openGCko,memberKo:null},meta:{ownerType:'group',gko:_openGCko,artist:null,album:'',ownerName:_openGCko}};
+  return null;
+}
+function _albTrackClick(title){
+  const o=_albSongOwner(title);if(!o)return;
+  const al=_gcDiscogList[_gcDiscogIdx];if(al)o.meta.album=al.title||'';
+  if(!isMob()&&document.getElementById('feed-overlay')?.classList.contains('open')){_openSongVideos(title,o.owner,o.meta);return;}
+  if(_albSong===title){_albSong=null;_albSongApply();return;} // 같은 곡 다시 누름 = 앨범 전체로
+  _albSong=title;_albSongMount(true);_albSongApply();
+  _openSongVideos(title,o.owner,o.meta,{inAlbum:true});
+  if(isMob()){ // 폰: 시트 안 아래쪽 영상 칸으로 내려 준다(scrollIntoView는 바깥까지 밀 수 있어 직접 계산)
+    const sheet=document.getElementById('gc-discog-detail-sheet'),panel=document.getElementById('gc-discog-video-panel');
+    if(sheet&&panel&&panel.parentElement===sheet)requestAnimationFrame(()=>sheet.scrollTo({top:Math.max(0,panel.offsetTop-8),behavior:'smooth'}));
+  }
+}
+document.getElementById('gc-discog-song-back')?.addEventListener('click',e=>{e.stopPropagation();_albSong=null;_albSongApply();});
 function _filterGcVideosByTrack(title){
   if(!_openGCko)return;
   // 그룹 카드 디스코에서 트랙 클릭 — 그룹 컨텍스트로 곡 상세 헤더 메타도 함께 넘긴다(2026-09-02).
@@ -13878,9 +13933,13 @@ async function _fillSongMeta(title,o,myReq){
   if(m){metaEl.textContent=[o.ownerName,m.album,m.year].filter(Boolean).join(' · ');
     if(coverEl&&m.cover){coverEl.src=m.cover;coverEl.hidden=false;}}
 }
-async function _openSongVideos(title,owner,songMeta){
+async function _openSongVideos(title,owner,songMeta,opt){
   const gko=owner&&owner.gko,memberKo=(owner&&owner.memberKo)||null;
   if(!gko||!sb)return;
+  const inAlbum=!!(opt&&opt.inAlbum);
+  // 따로 여는 곡 오버레이면 앨범 패널에 옮겨 둔 부품을 되찾아 온다
+  if(!inAlbum){if(_albSong){_albSong=null;_albSongApply();}_albSongMount(false);}
+  const _hostOpen=()=>inAlbum?(_albSong===title&&document.getElementById('gc-discog-detail')?.classList.contains('open')):overlay.classList.contains('open');
   const myReq=++_songVidReq;
   const overlay=document.getElementById('gc-track-videos-overlay');
   const listEl=document.getElementById('gc-track-videos-list');
@@ -13892,7 +13951,7 @@ async function _openSongVideos(title,owner,songMeta){
   tabsEl.classList.add('hidden');tabsEl.innerHTML='';
   document.getElementById('gc-track-videos-actions')?.classList.add('hidden');
   listEl.innerHTML=`<div class="tvf-empty">${currentLang==='ko'?'불러오는 중…':'Loading…'}</div>`;
-  overlay.classList.add('open');_bringToFront(overlay); // 곡→영상 오버레이 열리면 맨 위(그 위 재생 플레이어는 또 위로)
+  if(!inAlbum){overlay.classList.add('open');_bringToFront(overlay);} // 곡→영상 오버레이 열리면 맨 위(그 위 재생 플레이어는 또 위로)
   const like=`%${_titleNorm(title)}%`;
   // view_count·duration_sec 추가(2026-09-21) — 이 목록만 썸네일+제목뿐이라 같은 영상인데도 검색 결과
   // (_fmtVidMeta로 "날짜 · 조회수"를 찍는다)와 표기가 갈렸다. 컬럼 2개라 조회 비용은 사실상 그대로.
@@ -13924,7 +13983,7 @@ async function _openSongVideos(title,owner,songMeta){
   let settled;
   try{settled=await Promise.all([keyP,origP,mvP,...coverQs].map(q=>q.then(r=>r,()=>({data:null}))));}
   catch(e){settled=null;}
-  if(!overlay.classList.contains('open')||myReq!==_songVidReq)return; // 그 사이 닫힘/다른 곡 클릭
+  if(!_hostOpen()||myReq!==_songVidReq)return; // 그 사이 닫힘/다른 곡 클릭
   if(!settled){listEl.innerHTML=`<div class="tvf-empty">${currentLang==='ko'?'불러오기 실패':'Failed to load'}</div>`;return;}
   const[keyR,origR,mvR,...coverRs]=settled;
   const origSeen=new Set();
@@ -14015,6 +14074,7 @@ function _renderSongVideoTabs(){
       document.getElementById('gc-track-videos-sort').textContent=st.sort==='views'?(_ko?'조회수순':'Most viewed'):(_ko?'최신순':'Newest');
     }
   }
+  if(_albSong&&listEl.parentElement?.id==='gc-discog-song-view'){const c=document.getElementById('gc-discog-video-count');if(c)c.textContent=rows.length?rows.length.toLocaleString():'';}
   if(!rows.length){listEl.innerHTML=`<div class="tvf-empty">${_ko?'관련 영상이 없어요':'No matching videos'}</div>`;return;}
   const coverIds=new Set(st.cover.map(v=>v.id));
   const playlist=rows.map(_tvfPlaylistItem);

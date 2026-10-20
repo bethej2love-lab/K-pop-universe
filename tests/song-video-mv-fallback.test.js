@@ -31,7 +31,7 @@ const el = () => ({ classList: { add() {}, contains: () => true }, hidden: false
 const ctx = {
   sb: { from: query }, _YT_TABLE: 'yt_channel_videos', _songVidReq: 0, _songKeysCol: true,
   document: { getElementById: el }, currentLang: 'ko',
-  _fillSongMeta() {}, _renderCreditsInto() {}, _bringToFront() {}, _renderSongVideoTabs() {},
+  _albSong: null, _albSongApply() {}, _albSongMount() {}, _fillSongMeta() {}, _renderCreditsInto() {}, _bringToFront() {}, _renderSongVideoTabs() {},
   _titleNorm: s => s.toLowerCase(), _songBase: s => s.toLowerCase().replace(/ /g, ''), _pgFilterVal: s => s,
   _coverOfQueryKeys: () => ({ personKeys: [], groupKey: null }),
   _filterBannedVideos: rows => rows.filter(v => !v.content_flag),

@@ -3016,7 +3016,26 @@
     .adv-empty,.adv-loading{padding:24px 16px;}
     .adv-chips{padding:0 12px 8px;}
     .adv-more{margin:6px 12px 14px;width:calc(100% - 24px);}
+    #gc-discog-song-view{padding:0 12px 12px;}
+    #gc-discog-video-panel.is-song{width:340px;}
   }
+  /* 앨범 창 = 곡 창(2026-10-20) — 곡을 고르면 이 패널이 곡 영상으로. 곡 오버레이 부품을 옮겨 달되 썸네일은 패널 크기로 */
+  .adv-hdr{display:flex;align-items:center;gap:4px;}
+  .adv-hdr #gc-discog-video-lbl{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  #gc-discog-video-panel.is-song .adv-hdr #gc-discog-video-lbl{text-transform:none;letter-spacing:0;font-size:13px;color:#e4ecff;}
+  .adv-back{flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;margin:-5px 2px -5px -6px;padding:0;border:none;border-radius:8px;background:none;color:rgba(190,205,240,0.75);cursor:pointer;}
+  .adv-back:hover{background:rgba(255,255,255,0.08);color:#fff;}
+  .adv-back svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;}
+  #gc-discog-song-view[hidden]{display:none;}
+  #gc-discog-song-view #gc-track-videos-credits{padding:2px 0 0;}
+  #gc-discog-song-view #gc-track-videos-tabs{margin-top:6px;}
+  #gc-discog-song-view #gc-track-videos-list{overflow:visible;flex:none;margin-top:10px;gap:2px;}
+  #gc-discog-song-view .tvf-item{flex-direction:column;gap:7px;padding:6px 0 10px;}
+  #gc-discog-song-view .tvf-thumb-wrap{width:100%;}
+  #gc-discog-song-view .tvf-thumb{border-radius:8px;}
+  #gc-discog-video-list[hidden]{display:none;}
+  .gc-discog-track.is-active{background:rgba(120,150,255,0.16);}
+  .gc-discog-track.is-active .gc-discog-track-name{color:#fff;}
   #gc-discog-detail-close{position:absolute;top:10px;right:12px;background:none;border:none;color:rgba(190,205,240,0.4);cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><path d='M11,1 L12.3,9.7 L21,11 L12.3,12.3 L11,21 L9.7,12.3 L1,11 L9.7,9.7Z' fill='%23FFB0D0' opacity='.97'/></svg>") 11 11,pointer;padding:4px;line-height:1;z-index:2;display:inline-flex;} /* ×텍스트(밝음)→얇은 SVG, 대비 낮춤(2026-08-22 사용자 요청 — 닫기는 은은하게) */
   #gc-discog-detail-close svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;}
   #gc-discog-detail-covrow{display:flex;align-items:center;justify-content:center;gap:14px;margin:4px 0 14px;}
