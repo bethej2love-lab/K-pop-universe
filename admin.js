@@ -7824,6 +7824,9 @@ function _atmMatchesMember(m,title,tokens,groupKo){
         return new RegExp(`(?<![a-z0-9.])${seq}(?![a-z0-9.])`,'i').test(title);
       }
       for(let i=0;i<=tokens.length-parts.length;i++){if(parts.every((p,j)=>tokens[i+j]===p))return true;}
+      // 성+이름을 띄어쓰기 없이 붙여 쓴 토큰("KimChaeWon.SSS"·"JeongHaYeon.SSS" — 트리플에스 개인 영상 제목 형식)도 정확 일치면 그 사람
+      // (2026-10-20: 이게 안 잡혀 1인 영상이 설명란 전원 해시태그로만 태깅되고 있었다). 6자 이상만 — 짧은 결합은 우연 일치 위험.
+      {const joined=parts.join('');if(joined.length>=6&&tokens.includes(joined))return true;}
       // 영문명도 한글과 같은 이유로 "성" 파트(보통 첫 단어)를 뺀 나머지만 제목에 있어도 잡히게 함
       const rest=parts.slice(1);
       // ⚠️ 위 한글 givenOnly 가드와 **같은 규칙의 영문판**. 장혜리(en:'Jang Hyeri')의 성 뗀 "hyeri"가
@@ -7863,6 +7866,21 @@ function _atmStripDescNoise(description){
   if(!description)return description;
   return String(description).split('\n').filter(l=>!_ATM_DESC_NOISE_LINE.test(l)).join('\n');
 }
+// 설명란 "멤버 해시태그 묶음"(#SeoYeon #HyeRin #JiWoo … 처럼 멤버 이름 해시태그가 9개 이상 연달아 붙은 줄)을 지운다.
+// 트리플에스 공식 채널은 모든 영상 설명 끝에 **그 시점 멤버 전원**을 이렇게 붙여서, 몇 명만 나오는 SIGNAL·SIGNAL LIVE마다
+// 전원(5·12·16·20·24명)이 태그됐다(2026-10-20 순찰, SIGNAL 1,020건 중 600건+). 묶음은 출연 근거가 아니다 — 제목·나머지 설명만 본다.
+// 16명 이상 그룹만: 6~13명 그룹은 공항·단체 예능처럼 실제로 전원이 나오는 영상에 같은 묶음을 붙이는 게 대부분이라(엔하이픈 등
+// 299건이 비워질 뻔한 걸 실측으로 확인) 지금처럼 전원 태그가 맞다.
+function _atmStripRosterHashtagRuns(desc,roster,groupKo){
+  if(!desc||roster.filter(m=>!m.left).length<16)return desc;
+  return desc.replace(/(?:#[^\s#]+[ \t]*){4,}/g,run=>{
+    const tags=run.match(/#[^\s#]+/g)||[];
+    const hit=tags.filter(tg=>roster.some(m=>_atmMatchesMember(m,tg,_atmTokenize(tg),groupKo))).length;
+    // 9명 이상 묶음만 — 유닛 영상(LOVElution·EVOLution 8명, AAA·Glow 4명 등)의 묶음은 그 유닛 출연진이라 진짜 근거다.
+    // 그래서 9명 미만 시절(2022년 초 SIGNAL)의 전원 묶음은 그대로 남는다(그때는 대부분 전원 출연이기도 했다).
+    return hit>=9&&hit>=tags.length*0.6?' ':run;
+  });
+}
 function _atmResolveMembers(title,description,roster,groupKo,publishedAt){
   // publishedAt(영상 발행일, "YYYY-MM-DD")이 주어지면 그 시점에 이미 탈퇴한 멤버는 매칭 후보에서 제외
   // (_memberLeftCutoffDate 참고) — 그룹은 활동 중이어도 탈퇴 멤버는 그 이후 영상에 안 나오는 게 정상.
@@ -7870,7 +7888,7 @@ function _atmResolveMembers(title,description,roster,groupKo,publishedAt){
   const rawT=title||'';
   const t=_atmStripCommonNounCtx(rawT); // "○○의 하루" 등 일반명사 문맥의 "하루" 제거 후 매칭
   const hitTitle=roster2.filter(m=>_atmMatchesMember(m,t,_atmTokenize(t),groupKo)).map(m=>m.ko);
-  const desc=_atmStripDescNoise(description); // 트랙리스트·크레딧·링크 줄은 출연 근거가 아니다
+  const desc=_atmStripRosterHashtagRuns(_atmStripDescNoise(description),roster2,groupKo); // 트랙리스트·크레딧·링크 줄·멤버 해시태그 묶음은 출연 근거가 아니다
   const searchText=_atmStripCommonNounCtx(desc?`${rawT}\n${desc}`:rawT);
   const hitFull=roster2.filter(m=>_atmMatchesMember(m,searchText,_atmTokenize(searchText),groupKo)).map(m=>m.ko);
   if(roster2.length>0&&hitFull.length===roster2.length&&hitTitle.length<roster2.length)return hitTitle;

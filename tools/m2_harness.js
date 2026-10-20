@@ -82,6 +82,7 @@ function load(){
     F(/^function _atmStripDescNoise\(/m,'_atmStripDescNoise');
   }
   F(/^function _memberLeftCutoffDate\(/m,'_memberLeftCutoffDate');
+  if(/^function _atmStripRosterHashtagRuns\(/m.test(adminSrc))F(/^function _atmStripRosterHashtagRuns\(/m,'_atmStripRosterHashtagRuns'); // 2026-10-20 멤버 해시태그 묶음
   F(/^function _atmResolveMembers\(/m,'_atmResolveMembers');
   S(/^const _m2VariantsCache\s*=/m,'_m2VariantsCache');
   F(/^function _m2NameVariants\(/m,'_m2NameVariants');
