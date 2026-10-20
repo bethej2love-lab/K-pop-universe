@@ -80,6 +80,7 @@ pieces.push('let _atmFullNameIdx=null;');
 pieces.push('let _atmRomanFullIdx=null;');
 pieces.push(extractStatement(adminSrc, /^const _ATM_NAME_SYL\s*=/m, '_ATM_NAME_SYL'));
 pieces.push(extractByBraces(adminSrc, /^function _atmKoSylCount\(/m, '_atmKoSylCount'));
+pieces.push(extractByBraces(adminSrc, /^function _atmTextHasGroupName\(/m, '_atmTextHasGroupName'));
 pieces.push(extractByBraces(adminSrc, /^function _atmNormalizeRegisteredRomanNames\(/m, '_atmNormalizeRegisteredRomanNames'));
 pieces.push(extractStatement(adminSrc, /^const _ATM_BRAND_PHRASES\s*=/m, '_ATM_BRAND_PHRASES'));
 pieces.push(extractStatement(adminSrc, /^const _ATM_INITIAL_WORDS\s*=/m, '_ATM_INITIAL_WORDS'));

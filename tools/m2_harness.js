@@ -69,6 +69,7 @@ function load(){
   pieces.push('let _atmRomanFullIdx=null;');
   S(/^const _ATM_NAME_SYL\s*=/m,'_ATM_NAME_SYL');
   F(/^function _atmKoSylCount\(/m,'_atmKoSylCount');
+  F(/^function _atmTextHasGroupName\(/m,'_atmTextHasGroupName');
   F(/^function _atmNormalizeRegisteredRomanNames\(/m,'_atmNormalizeRegisteredRomanNames');
   S(/^const _ATM_BRAND_PHRASES\s*=/m,'_ATM_BRAND_PHRASES');
   S(/^const _ATM_INITIAL_WORDS\s*=/m,'_ATM_INITIAL_WORDS');

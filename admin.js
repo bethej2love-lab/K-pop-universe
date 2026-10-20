@@ -7469,6 +7469,15 @@ function _atmKoSylCount(w){
   }
   return best[s.length]===Infinity?0:best[s.length];
 }
+// 그룹명이 텍스트에 있는가(풀네임 지우기 예외 판정용) — 영문 그룹명은 단어 경계로 본다. 글자 포함으로 보면
+// "[LIVE]" 안의 IVE가 아이브로 읽혀 "[LIVE] 전유진(Jeon Yujin)"의 Yujin이 안 지워지고 아이브 안유진이 됐다(2026-10-21).
+// 한글 그룹명은 조사가 붙으므로("아이브의") 포함 검사 그대로.
+function _atmTextHasGroupName(tu,name){
+  const y=String(name||'').toUpperCase();
+  if(!/[A-Z0-9]/.test(y))return tu.includes(y);
+  if(tu.indexOf(y)<0)return false;
+  return new RegExp('(?<![A-Z0-9])'+y.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'(?![A-Z0-9])').test(tu);
+}
 function _atmNormalizeRegisteredRomanNames(t){
   if(!t||typeof ARTISTS==='undefined'||!ARTISTS.length||!/[A-Za-z]/.test(t))return t;
   if(!_atmRomanFullIdx){
@@ -7600,7 +7609,7 @@ function _atmNormalizeRegisteredRomanNames(t){
       const ko1=[...new Set(hit)].length===1?hit[0]:null;
       // ② 성 없이 등록된 2글자 이름 — "TREASURE … CHOI HYUN SUK"=현석('Hyunsuk'). 실명 성을 모르므로 **그 사람 그룹명이
       //    같은 텍스트에 있을 때만** — 아니면 "LEE EUNCHAE"(이은채)가 다이아 은채('Eunchae')가 된다.
-      const go=!ko1?(givenOnly.get(rest)||[]).filter(a=>_artistGroups(a).some(g=>{const G=GROUPS[g.ko];return !!G&&[g.ko,G.en].filter(y=>y&&y.length>=2).some(y=>tu.includes(y.toUpperCase()));})):[];
+      const go=!ko1?(givenOnly.get(rest)||[]).filter(a=>_artistGroups(a).some(g=>{const G=GROUPS[g.ko];return !!G&&[g.ko,G.en].filter(y=>y&&y.length>=2).some(y=>_atmTextHasGroupName(tu,y));})):[];
       const ko2=[...new Set(go.map(a=>a.name.ko))].length===1?go[0].name.ko:null;
       const ko0=idx.get(whole)||mShort.get(whole)||null; // JiU·San처럼 짧은 등록명은 런 전체일 때만
       if(ko0||ko1||ko2){reps.push({s:toks[run.a].s,e:toks[b].e,txt:repTxt(run.a,b,ko0||ko1||ko2)});return;}
@@ -7617,7 +7626,7 @@ function _atmNormalizeRegisteredRomanNames(t){
       if(givenNoSur.has(rest)&&!claimed){reps.push({s:toks[run.a].s,e:toks[b].e,txt:toks[run.a].w+' '+rest});return;}
     }
     const cut=Math.min(run.b,run.a+2); // 지울 땐 한국 이름 길이(성+2음절)까지만 — 뒤에 붙은 영어 낱말은 남긴다
-    const ctx=toks.slice(run.a,cut+1).some(x=>(single.get(x.w)||[]).some(a=>_artistGroups(a).some(g=>{const G=GROUPS[g.ko];return !!G&&[g.ko,G.en].filter(y=>y&&y.length>=2).some(y=>tu.includes(y.toUpperCase()));})));
+    const ctx=toks.slice(run.a,cut+1).some(x=>(single.get(x.w)||[]).some(a=>_artistGroups(a).some(g=>{const G=GROUPS[g.ko];return !!G&&[g.ko,G.en].filter(y=>y&&y.length>=2).some(y=>_atmTextHasGroupName(tu,y));})));
     if(ctx)return;
     reps.push({s:toks[run.a].s,e:toks[cut].e,txt:' '});
   });
@@ -7683,7 +7692,7 @@ function _atmStripOtherPersonFullNames(t){
   const{en,ko,sur,reg}=_atmFullNameIdx;
   const tu=t.toUpperCase();
   const keep=(arts,full)=>reg.has(nk(full))||arts.some(a=>(a.matchAliases||[]).some(al=>nk(al)===nk(full))||
-    _artistGroups(a).some(g=>{const G=GROUPS[g.ko];return !!G&&[g.ko,G.en].filter(x=>x&&x.length>=2).some(x=>tu.includes(x.toUpperCase()));}));
+    _artistGroups(a).some(g=>{const G=GROUPS[g.ko];return !!G&&[g.ko,G.en].filter(x=>x&&x.length>=2).some(x=>_atmTextHasGroupName(tu,x));}));
   // 영문 — 이름 토큰만 같은 길이 공백으로(뒤 성 토큰은 혼자 남아도 매칭 근거가 안 된다)
   t=t.replace(/\b([A-Za-z]{3,})(?=\s+([A-Za-z]{2,})\b)/g,(m,g,s)=>{
     const arts=en.get(g.toLowerCase());

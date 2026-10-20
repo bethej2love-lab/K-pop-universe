@@ -11,6 +11,7 @@
 ## 2026-10-21 (Claude Code — 어제 미결 점검)
 - **[이슈·사용자 확인 필요] [tools/ig_business_discovery.mjs]** ig-stats(인스타 수집)가 10-19 17:02 UTC부터 **전부 실패**(7회). 로그: `API access blocked.`(코드 200) — 10-19 19시 KST 180개 수집(성공 167) 직후부터. 권한 누락이 아니라 메타가 앱 접근 자체를 막은 것이라 코드·토큰 재발급으론 안 풀림 → developers.facebook.com 앱 "K-POP UNIVERSE" 대시보드의 알림/제한 확인 필요. 그동안 매거진 2행(10-20)도 첫 수집이 안 돼 not_found 정리는 못 함. 오류 문구가 "권한 빠진 토큰"으로 오해하게 돼 있어 차단은 따로 안내하도록 수정. 참고: Actions 로그는 `git credential fill` 토큰으로 API에서 받을 수 있음.
 - **[완료] [kpop_universe.css]** 사용자 결정 "카드 여백 탐험에 맞춰": 폰 카드(그룹·멤버, 바텀시트·카드 스택) 좌우 여백 28→20px(`--card-pad`, 웹 카드는 28 그대로), 인스타 줄 오른쪽 끝 늘림도 같은 값. 390 실측: 카드 내용 21px(시트 테두리 1px)·탐험 20px, 쇼츠 칸 카드 172·탐험 169px(남은 3px는 칸 사이 간격 차이 — 카드 5·탐험 10px).
+- **[완료·SQL 실행 대기] [admin.js] [tools/m2_harness.js] [tools/matcher_harness.cjs] [tests/group-name-boundary.test.js] [sql/yujin_live_substring_fix_2026-10-21.sql]** 폰 여백 확인 중 안유진 카드 대표 영상이 **전유진**(트로트) 라디오 무대인 걸 발견. 원인: 다른 사람 영문 풀네임("Jeon Yujin")을 지우는 정규화에 "그 이름 주인의 그룹명이 제목에 있으면 남긴다" 예외가 있는데, 그룹명을 글자 포함으로 봐서 **"[LIVE]"의 IVE**를 아이브로 읽음 → Yujin이 살아 안유진. `_atmTextHasGroupName`(영문 그룹명은 단어 경계, 한글은 조사 때문에 포함 그대로)으로 세 군데 교체. 이전/새 매처 차분: 일반 4만 건 0건·LIVE 제목 20,288건 3건(전유진 1·신유진 2, 전부 개선). DB 정리 SQL 4건(3건 '무관'+검수, 이미 무관인 1건 멤버 비움).
 - **[확인]** 10-20 SQL 3개(한 글자 이름·로스터 해시태그 묶음·커버 원곡자 부분이름) DB 반영 확인. group_priority 잠금(SUPABASE_GROUP_PRIORITY_LOCKDOWN.sql)도 rls 테스트로 적용 확인(읽기 0행·쓰기 차단).
 
 ## 2026-10-20 (Codex — 오늘 마감·세대 제한 해제·샤이니 팬 채널 3개)
