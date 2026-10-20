@@ -5116,7 +5116,7 @@ function _makeSearchItem(h,res,mobSearch,obSearch){
         const sMeta=t==='group'
           ?{ownerType:'group',gko:d,artist:null,album:h.alias||'',ownerName:h.sub}
           :{ownerType:'member',gko:(d.group&&d.group.ko),artist:d,album:h.alias||'',ownerName:h.sub};
-        _openSongVideos(h.name,owner,sMeta);
+        _openSongHub(h.name,owner,sMeta); // 곡이 든 앨범 창을 그 곡이 선택된 채로(못 찾으면 곡 오버레이) — 2026-10-20
       }
     };
     if(obSearch){
@@ -13568,7 +13568,10 @@ function _openGcDiscogDetail(a,idx){
   {const _d=document.getElementById('gc-discog-detail');_d.classList.add('open');_bringToFront(_d);}
   _updateDiscogFlagBtn();
   {const _vp=document.getElementById('gc-discog-video-panel');if(_vp)_vp.hidden=true;}
-  _albSong=null;_albSongMount(false);_albSongApply();
+  // 같은 앨범을 다시 그리는 경우(음방 1위 뱃지가 늦게 와서 다시 그림 등)엔 고른 곡을 유지한다 — 안 그러면 검색에서 곡을 눌러
+  // 열자마자 곡 선택이 풀려 앨범 전체로 돌아갔다(2026-10-20 헤드리스에서 간헐 재현)
+  if(!(_albSong&&_albSongFor===a)){_albSong=null;_albSongMount(false);}
+  _albSongApply();
   _loadAlbumVideos(a,_discogDetailGko);
   const credEl=document.getElementById('gc-discog-detail-credits');
   if(credEl){
@@ -13754,7 +13757,7 @@ async function _loadAlbumVideos(album,gko){
   // 미리 계산분을 먼저 바로 그리고, 신규 영상은 도착하면 덧붙인다(카드가 막 열려 요청이 몰릴 땐 조회가 몇 초 밀린다 — 2026-10-19 실측)
   // 순서: 뮤비 본편 > 앨범 자체 영상(하이라이트 메들리·트레일러) > 뮤비 비하인드·리액션 등 > 무대 > 나머지 > 쇼츠, 같은 칸 안은 최신순
   // (category 'mv'엔 비하인드·리액션·티저도 들어 있어서 그대로 앞에 두면 본편이 묻혔다)
-  const _mvSide=/behind|reaction|making|teaser|trailer|preview|sketch|비하인드|리액션|메이킹|티저|촬영|현장/i;
+  const _mvSide=_MV_SIDE_RE;
   const pri=v=>_isShortV(v)?5:v.category==='mv'&&!_mvSide.test(v.title||'')?0:v._albHit?1:v.category==='mv'?2:v.category==='live'?3:4;
   const show=keep=>{
     if(!document.getElementById('gc-discog-detail')?.classList.contains('open')){panel.hidden=true;return;}
@@ -13784,6 +13787,8 @@ async function _loadAlbumVideos(album,gko){
   });
   if(all.length>n0)show(true);
 }
+// 뮤비 본편이 아닌 mv 분류(비하인드·리액션·티저…) — 앨범 패널·곡 목록이 본편을 맨 앞에 둘 때 쓴다
+const _MV_SIDE_RE=/behind|reaction|making|teaser|trailer|preview|sketch|비하인드|리액션|메이킹|티저|촬영|현장/i;
 const _ADV_PAGE=60;
 function _renderAlbumVideos(more){
   const st=_albVid;if(!st)return;
@@ -13851,7 +13856,7 @@ document.getElementById('gc-discog-detail-flag').addEventListener('click',e=>{
 // 그 곡 영상으로 바뀐다 — 곡 오버레이의 조회·탭·정렬·목록 코드(_openSongVideos·_renderSongVideoTabs)를 그대로 쓰고,
 // 부품(크레딧·탭·액션·목록 DOM)만 패널 안 #gc-discog-song-view로 옮겨 단다. 같은 곡을 다시 누르거나 ‹ 를 누르면 앨범 전체로.
 // ⚠️ 데스크톱 탐험 패널이 열려 있으면 이 패널은 CSS로 숨겨지므로 그땐 예전처럼 곡 오버레이로 연다.
-let _albSong=null;
+let _albSong=null,_albSongFor=null; // 고른 곡 제목·그 곡을 고른 앨범 객체
 const _ALB_SONG_PARTS=['gc-track-videos-credits','gc-track-videos-tabs','gc-track-videos-actions','gc-track-videos-list'];
 function _albSongMount(inAlbum){
   const host=document.getElementById(inAlbum?'gc-discog-song-view':'gc-track-videos-sheet');if(!host)return;
@@ -13859,18 +13864,18 @@ function _albSongMount(inAlbum){
 }
 function _albSongApply(){
   const panel=document.getElementById('gc-discog-video-panel');if(!panel)return;
-  const on=!!_albSong,_ko=currentLang==='ko';
+  const on=!!_albSong,_ko=currentLang==='ko',was=panel.classList.contains('is-song');
   const sv=document.getElementById('gc-discog-song-view');if(sv)sv.hidden=!on;
   const back=document.getElementById('gc-discog-song-back');if(back)back.hidden=!on;
   const lbl=document.getElementById('gc-discog-video-lbl');if(lbl)lbl.textContent=on?_albSong:'Videos';
   panel.classList.toggle('is-song',on);
   document.getElementById('gc-discog-video-list').hidden=on;
   const chips=document.getElementById('gc-discog-video-chips');
-  if(on){chips.hidden=true;panel.hidden=false;document.getElementById('gc-discog-video-count').textContent='';}
+  if(on){chips.hidden=true;panel.hidden=false;if(!was)document.getElementById('gc-discog-video-count').textContent='';}
   else if(_albVid&&_albVid.list.length){panel.hidden=false;_renderAlbumVideos();}
   else if(document.getElementById('gc-discog-detail')?.classList.contains('open'))panel.hidden=true;
   document.querySelectorAll('#gc-discog-detail-tracks .gc-discog-track').forEach(r=>r.classList.toggle('is-active',on&&r.dataset.title===_albSong));
-  panel.scrollTop=0;
+  if(!(on&&was))panel.scrollTop=0;
 }
 // 앨범 창의 곡 주인 — 그룹 카드면 그룹, 멤버(솔로) 카드면 그 멤버
 function _albSongOwner(title){
@@ -13885,7 +13890,7 @@ function _albTrackClick(title){
   const al=_gcDiscogList[_gcDiscogIdx];if(al)o.meta.album=al.title||'';
   if(!isMob()&&document.getElementById('feed-overlay')?.classList.contains('open')){_openSongVideos(title,o.owner,o.meta);return;}
   if(_albSong===title){_albSong=null;_albSongApply();return;} // 같은 곡 다시 누름 = 앨범 전체로
-  _albSong=title;_albSongMount(true);_albSongApply();
+  _albSong=title;_albSongFor=al||null;_albSongMount(true);_albSongApply();
   _openSongVideos(title,o.owner,o.meta,{inAlbum:true});
   if(isMob()){ // 폰: 시트 안 아래쪽 영상 칸으로 내려 준다(scrollIntoView는 바깥까지 밀 수 있어 직접 계산)
     const sheet=document.getElementById('gc-discog-detail-sheet'),panel=document.getElementById('gc-discog-video-panel');
@@ -13893,6 +13898,33 @@ function _albTrackClick(title){
   }
 }
 document.getElementById('gc-discog-song-back')?.addEventListener('click',e=>{e.stopPropagation();_albSong=null;_albSongApply();});
+// 곡 → 그 곡이 든 앨범 고르기. 같은 곡이 싱글·미니·정규·일본반에 다 들어 있으므로
+// ① 검색이 알려 준 앨범명 ② 일본반 아닌 것 ③ 타이틀곡으로 실린 것 ④ 가장 먼저 낸 것(곡이 처음 나온 앨범) 순.
+function _findSongAlbum(disco,title,albumHint,jpOwner){
+  const key=_songKey(title);if(!key)return null;
+  const cands=[];
+  (disco||[]).forEach(a=>{const t=(a&&a.tracks||[]).find(t=>t&&_songKey(t.title)===key);if(t)cands.push({a,t});});
+  if(!cands.length)return null;
+  if(albumHint){const h=cands.find(c=>c.a.title===albumHint);if(h)return h;}
+  const jp=c=>{try{return _isJpRelease(c.a,jpOwner)?1:0;}catch(e){return 0;}};
+  cands.sort((x,y)=>jp(x)-jp(y)||(y.t.isTitle?1:0)-(x.t.isTitle?1:0)||String(x.a.releaseDate||'9').localeCompare(String(y.a.releaseDate||'9')));
+  return cands[0];
+}
+// 검색에서 곡을 누름 — 주인 카드가 열린 뒤 그 곡이 든 앨범 창을 곡이 선택된 상태로 연다(곡 영상 + 같은 앨범 다른 곡이 한 화면).
+// 앨범을 못 찾으면(디스코에 없는 곡) 예전처럼 곡 오버레이.
+async function _openSongHub(title,owner,songMeta){
+  let disco=[],jpOwner=null;
+  try{
+    if(songMeta&&songMeta.ownerType==='member'&&songMeta.artist){await _ensureMemberDisco(songMeta.artist);disco=songMeta.artist.discography||[];jpOwner=songMeta.artist;}
+    else if(owner&&GROUPS[owner.gko]){await _ensureGroupDisco(owner.gko);disco=GROUPS[owner.gko].discography||[];jpOwner=owner.gko;}
+  }catch(e){}
+  const hit=_findSongAlbum(disco,title,songMeta&&songMeta.album,jpOwner);
+  if(!hit){_openSongVideos(title,owner,songMeta);return;}
+  setTimeout(()=>{ // 카드가 열린 뒤(앨범 상세가 카드 맥락을 쓴다 — _openCollabExtAlbum과 같은 이유)
+    _gcDiscogList=disco;_openGcDiscogDetail(hit.a,disco.indexOf(hit.a));
+    _albTrackClick(hit.t.title);
+  },450);
+}
 function _filterGcVideosByTrack(title){
   if(!_openGCko)return;
   // 그룹 카드 디스코에서 트랙 클릭 — 그룹 컨텍스트로 곡 상세 헤더 메타도 함께 넘긴다(2026-09-02).
@@ -14060,9 +14092,11 @@ function _renderSongVideoTabs(){
   }
   // ── 정렬: 최신순(기존 동작) ⇄ 조회수순. 전체 탭에서는 원곡 묶음과 커버 묶음의 **순서를 유지한 채**
   //    각 묶음 안에서만 정렬한다 — 섞어버리면 "이 곡의 원본 영상"이 남의 커버 사이로 사라진다.
+  // 최신순이어도 주인의 뮤비 본편은 맨 앞(2026-10-20) — 검색에서 곡을 누르면 라디오 클립이 첫 영상이던 것
+  const _mvMain=v=>v.category==='mv'&&!_isShortV(v)&&v.group_ko===st.gko&&!_MV_SIDE_RE.test(v.title||'')?0:1;
   const cmp=st.sort==='views'
     ?(a,b)=>(b.view_count||0)-(a.view_count||0)
-    :(a,b)=>String(b.published_at||'').localeCompare(String(a.published_at||''));
+    :(a,b)=>_mvMain(a)-_mvMain(b)||String(b.published_at||'').localeCompare(String(a.published_at||''));
   const filt=arr=>(st.fmt==='all'?arr.slice():arr.filter(v=>_tvfFmt(v)===st.fmt)).sort(cmp);
   const rows=st.tab==='all'?[...filt(st.orig),...filt(st.cover)]:filt(base);
   st.rows=rows;

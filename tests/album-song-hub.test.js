@@ -106,6 +106,9 @@ const server = http.createServer((req, res) => {
         if (vis) ok(`[${tag}] ②-1 폰: 영상 칸으로 스크롤됨`); else bad(`[${tag}] ②-1 폰: 영상 칸이 화면 아래에 남음`);
       }
       await shot(`${tag}-2-song`);
+      // ②-2 같은 앨범을 다시 그려도(음방 1위 뱃지 늦게 도착 시 실제로 이렇게 다시 그린다) 곡 선택 유지
+      await ev(cdp, `(_openGcDiscogDetail(_gcDiscogList[_gcDiscogIdx],_gcDiscogIdx),1)`); await sleep(1500); s = await st();
+      if (s.song && s.songItems > 0 && s.active[0] === tt) ok(`[${tag}] ②-2 앨범 다시 그려도 곡 선택 유지`); else bad(`[${tag}] ②-2 ${JSON.stringify(s)}`);
       // 영상 누르면 라이트박스, 앨범 창 유지
       await ev(cdp, `(document.querySelector('#gc-discog-song-view .tvf-item').click(),1)`); await sleep(1800);
       const lb = await ev(cdp, `document.getElementById('yt-lightbox').classList.contains('open')`);
@@ -126,6 +129,24 @@ const server = http.createServer((req, res) => {
       const ov = await ev(cdp, `(()=>{const o=document.getElementById('gc-track-videos-overlay');return o.classList.contains('open')&&o.querySelectorAll('.tvf-item').length>0;})()`);
       if (back && ov) ok(`[${tag}] ⑥ 앨범 창 닫으면 곡 목록 부품 원위치·곡 오버레이 단독 정상`); else bad(`[${tag}] ⑥ back=${back} ov=${ov}`);
       await ev(cdp, `(document.getElementById('gc-track-videos-overlay').classList.remove('open'),1)`);
+      // ⑦ 2단계: 검색에서 곡 누르면 그 곡이 든 앨범 창이 곡 선택된 채로
+      await ev(cdp, `(closeCards(),1)`); await sleep(1200);
+      if (process.env.KPU_DEBUG) await ev(cdp, `(()=>{window.__log=[];["_openGcDiscogDetail","_albTrackClick","_closeGcDiscogDetail","_openSongHub","showGC","_openSongVideos"].forEach(n=>{const o=window[n];window[n]=function(...a){__log.push(n+" "+Math.round(performance.now())+" "+String(a[0]&&a[0].title||a[0]).slice(0,20));return o.apply(this,a);};});return 1})()`);
+      await ev(cdp, `(document.getElementById(${JSON.stringify(mobile ? 'tab-search' : 'dh-search-btn')}).click(),1)`); await sleep(1200);
+      const inp = await ev(cdp, `(()=>{const i=[document.getElementById('msheet-input'),document.getElementById('search-input')].find(x=>x&&x.offsetParent);if(!i)return null;i.value='LOVE DIVE';i.dispatchEvent(new Event('input',{bubbles:true}));return i.id;})()`);
+      await sleep(2500);
+      const picked = await ev(cdp, `(()=>{const e=[...document.querySelectorAll('.sr-item[data-type=song]')].find(e=>e.offsetParent&&/LOVE DIVE/i.test(e.textContent)&&/IVE|아이브/.test(e.textContent));if(!e)return null;e.click();return e.textContent;})()`);
+      if (!picked) bad(`[${tag}] ⑦ 검색 곡 결과 없음 (입력창 ${inp})`);
+      else {
+        await sleep(9000); s = await st();
+        const at = await ev(cdp, `document.getElementById('gc-discog-detail-title').textContent`);
+        const firstMv = await ev(cdp, '_songVid&&_songVid.rows[0]&&_songVid.rows[0].category==="mv"');
+        if (s.detail && s.song && !s.overlay && /LOVE DIVE/i.test(s.lbl) && s.active.length === 1 && s.songItems > 0 && firstMv)
+          ok(`[${tag}] ⑦ 검색 곡 → 앨범 창(${at}) + 곡 선택(${s.songItems}개, 첫 영상 뮤비)`);
+        else bad(`[${tag}] ⑦ ${JSON.stringify(s)} 앨범=${at} 첫뮤비=${firstMv}`);
+        if (process.env.KPU_DEBUG) console.log(await ev(cdp, `JSON.stringify(window.__log)`));
+        await shot(`${tag}-3-search-song`);
+      }
     }
   } catch (e) { bad('예외: ' + e.message); } finally { try { proc.kill(); } catch (e) {} server.close(); }
   console.log(`
