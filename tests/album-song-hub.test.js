@@ -158,6 +158,9 @@ const server = http.createServer((req, res) => {
           zD:+getComputedStyle(d).zIndex,zL:+getComputedStyle(lb).zIndex,vid:String(_lbActiveVid||''),st:sh.scrollTop};})()`);
       let l = await lbs();
       if (vt && l.lb && l.card && /LOVE DIVE/.test(l.cardTxt)) ok(`[${tag}] ⑧ 재생 화면에 곡 카드 (${l.cardTxt.trim()})`); else bad(`[${tag}] ⑧ ${vt} ${JSON.stringify(l)}`);
+      // ⑧-1 "이 영상에 나온 사람" 그룹 사진 = 카드와 같은 사진(2026-10-20 — 예전엔 그룹은 색 원만)
+      const pp = await ev(cdp, `(async()=>{const b=[...document.querySelectorAll('#yt-lb-people .lb-person.is-group')][0];const want=await _groupAvUrl('아이브');const img=b&&b.querySelector('img');return{want:!!want,got:img?img.src:null,same:!!(img&&want&&(img.src===want||img.src===_avBackup.get(want)))};})()`);
+      if (pp.same) ok(`[${tag}] ⑧-1 출연자 그룹 사진 = 카드 사진`); else bad(`[${tag}] ⑧-1 ${JSON.stringify(pp)}`);
       await ev(cdp, `(document.getElementById('yt-lb-song').click(),1)`); await sleep(4500); l = await lbs();
       if (l.lb && l.det && l.dock && /LOVE DIVE/.test(l.lbl) && l.items > 0 && l.zD > l.zL && (!mobile || l.st > 0))
         ok(`[${tag}] ⑨ 곡 카드 → 재생 화면에 붙은 앨범 창, 곡 선택(${l.items}개)${mobile ? ', 영상 칸으로 스크롤' : ''}`);

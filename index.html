@@ -4765,7 +4765,7 @@ function _appendTrendingSection(hits,res,mobSearch,obSearch){
       // 그룹 프로필 사진 — 데뷔 기념일 카드와 동일 규칙(_groupPicKey → info.img). 검색부터 열면 캐시가 아직
       // 안 채워져 앨범커버로 폴백되던 문제 → 워밍을 여기서 보장(_instaPicPreloadP 없으면 시작해 기다림).
       try{ _instaPicPreloadP=_instaPicPreloadP||_warmInstaPicCache(); await _instaPicPreloadP; }catch(e){}
-      let url=_instaPicCache.get(_groupPicKey(ko))||(GROUPS[ko]&&GROUPS[ko].img)||'';
+      let url=(await _groupAvUrl(ko).catch(()=>null))||'';
       if(!url){ try{ await _ensureGroupDisco(ko); url=_latestCover((GROUPS[ko]||{}).discography); }catch(e){} } // 그래도 없으면 최신 앨범 커버
       if(!url)return;
       const im=new Image(); // 로드 완료 후에만 교체 — 깨진 이미지·빈칸 방지
@@ -4929,13 +4929,41 @@ const _srAvMemo=new WeakMap();
 // 영상으로 떨어진 경우였다. 후보를 순서대로 보고 이미 다른 사람이 차지한 URL은 건너뛴다.
 const _srAvTaken=new Map(); // url → 아티스트
 const _srAvShort=new Set(); // 쇼츠 썸네일 url — 양옆 검은 띠라 더 크게 확대해 그린다
+// ⭐ 사진 순서는 카드(_loadProfilePic)와 같아야 한다(2026-10-20 사용자 — "재생 화면 '이 영상에 나온 사람' 사진이 카드 프로필이랑
+//    연동돼야지, 사진 있는데 색깔만 있다"): 공식 인스타 프로필 사진 → 등록 사진(artist_pics) → 직캠 썸네일. 예전엔 인스타를 안 봐서
+//    등록 사진 없이 인스타 사진만 있는 사람은 카드엔 얼굴, 다른 화면엔 색 원/직캠 썸네일이었다. 그룹은 _groupAvUrl.
+//    인스타 주소(fbcdn)는 며칠 뒤 깨질 수 있어 등록 사진을 대체로 기억해 둔다(_avBackup — 카드 onerror와 같은 대체).
+const _avBackup=new Map();
+const _groupAvMemo=new Map();
+function _groupAvUrl(g){
+  if(!g||!GROUPS[g])return Promise.resolve(null);
+  let p=_groupAvMemo.get(g);if(p)return p;
+  p=(async()=>{
+    try{_instaPicPreloadP=_instaPicPreloadP||_warmInstaPicCache();await _instaPicPreloadP;}catch(e){}
+    const reg=_instaPicCache.get(_groupPicKey(g))||GROUPS[g].img||'';
+    let ig=null;try{const e=await _igEntry(GROUPS[g].links?.instagram);ig=e&&e.pic||null;}catch(e){}
+    if(ig){if(reg)_avBackup.set(ig,reg);return ig;}
+    return reg||null;
+  })();
+  _groupAvMemo.set(g,p);return p;
+}
+// 아바타 이미지 — 깨지면 기억해 둔 대체 사진으로 한 번 더
+function _avImg(url,onOk){
+  const img=new Image();img.alt='';img.referrerPolicy='no-referrer';
+  img.onload=()=>onOk(img);
+  img.onerror=()=>{const b=_avBackup.get(url);if(b&&b!==url){img.onerror=null;img.src=b;}};
+  img.src=url;return img;
+}
 function _srAvUrl(a){
   let p=_srAvMemo.get(a);
   if(p)return p;
   p=(async()=>{
     try{_instaPicPreloadP=_instaPicPreloadP||_warmInstaPicCache();await _instaPicPreloadP;}catch(e){}
-    for(const g of _artistGroups(a)){const u=_instaPicCache.get(_picKey(a.name.ko,g.ko));if(u)return u;}
-    {const u=_instaPicCache.get(_picKey(a.name.ko,''));if(u)return u;}
+    let reg=null;
+    for(const g of _artistGroups(a)){const u=_instaPicCache.get(_picKey(a.name.ko,g.ko));if(u){reg=u;break;}}
+    if(!reg)reg=_instaPicCache.get(_picKey(a.name.ko,''))||null;
+    if(a.links&&a.links.instagram){try{const e=await _igEntry(a.links.instagram);if(e&&e.pic){if(reg)_avBackup.set(e.pic,reg);return e.pic;}}catch(e){}}
+    if(reg)return reg;
     const pickFrom=list=>{for(const v of list){const o=_srAvTaken.get(v.thumb);if(!o||o===a){_srAvTaken.set(v.thumb,a);if(v.is_short)_srAvShort.add(v.thumb);return v.thumb;}}return null;};
     return pickFrom(await _fetchSoloCamThumbs(a))||pickFrom(await _fetchGroupThumbs(_ytGroupKoFor(a),a.name.ko))||null;
   })();
@@ -5025,6 +5053,7 @@ function _srAvPaint(av,url){
   // 똑같아 보였다(클유아 김성민·전민욱 Mnet 직캠). 쇼츠는 양옆 검은 띠까지 있어 더 크게.
   if(/ytimg\.com/.test(url))av.classList.add(_srAvShort.has(url)?'is-short':'is-thumb');
   img.onload=()=>{av.appendChild(img);av.classList.add('has-img');};
+  img.onerror=()=>{const b=_avBackup.get(url);if(b&&b!==url){img.onerror=null;img.src=b;}};
   img.src=url;
 }
 function _srAvatarEl(h){
@@ -5032,9 +5061,7 @@ function _srAvatarEl(h){
   const c=h.type==='group'?(GROUPS[h.data]&&GROUPS[h.data].color):(h.data&&h.data.color);
   if(Array.isArray(c))av.style.background=`radial-gradient(circle at 34% 28%, rgb(${c[0]},${c[1]},${c[2]}), rgba(6,9,20,0.6))`;
   if(h.type==='group'){
-    const sync=_instaPicCache.get(_groupPicKey(h.data))||(GROUPS[h.data]&&GROUPS[h.data].img)||'';
-    if(sync)_srAvPaint(av,sync);
-    else if(_instaPicPreloadP)_instaPicPreloadP.then(()=>_srAvPaint(av,_instaPicCache.get(_groupPicKey(h.data))||'')).catch(()=>{});
+    _groupAvUrl(h.data).then(u=>_srAvPaint(av,u)).catch(()=>{}); // 카드와 같은 순서(인스타→등록 사진→img)
     return av;
   }
   const a=h.data;if(!a||!a.name)return av;
@@ -6752,11 +6779,11 @@ function _lbRenderPeople({artist,groupKo,gName,multi,withList,anchorG}){
     const av=document.createElement('span');av.className='lb-person-av';
     const col=it.kind==='group'?GROUPS[it.g]?.color:it.a.color;
     av.style.setProperty('--orb',Array.isArray(col)?'rgb('+col[0]+','+col[1]+','+col[2]+')':'rgb(120,130,190)');
-    if(it.kind==='member'){
-      const load=u=>{if(!u)return;const img=new Image();img.alt='';img.referrerPolicy='no-referrer';img.onload=()=>{if(av.isConnected||true)av.replaceChildren(img);av.classList.add('has-pic');};img.src=u;};
-      const sync=_instaPicCache.get(_picKey(it.a.name.ko,it.a.group.ko))||_instaPicCache.get(_picKey(it.a.name.ko,''));
-      if(sync)load(sync);else _srAvUrl(it.a).then(load).catch(()=>{});
-    }
+    // 사진은 카드와 같은 순서(_srAvUrl·_groupAvUrl — 인스타 → 등록 사진 → 직캠 썸네일/그룹 img). 예전엔 멤버는 등록 사진만,
+    // 그룹은 아예 사진을 안 찾아서 색 원만 뜨곤 했다(2026-10-20 사용자 제보)
+    const load=u=>{if(!u)return;_avImg(u,img=>{av.replaceChildren(img);av.classList.add('has-pic');
+      if(/ytimg\.com/.test(u))av.classList.add(_srAvShort.has(u)?'is-short':'is-thumb');});};
+    (it.kind==='member'?_srAvUrl(it.a):_groupAvUrl(it.g)).then(load).catch(()=>{});
     const nm=document.createElement('span');nm.className='lb-person-nm';
     nm.textContent=it.kind==='group'?(isKo?it.g:(GROUPS[it.g]?.en||it.g)):_dispName(it.a,groupKo);
     b.append(av,nm);
@@ -16778,8 +16805,7 @@ function _mxRender(){
     // 사진이 없으면 이름 첫 글자 대신 멤버 색의 민무늬 구슬(우주의 행성처럼) — 사용자: "한 글자 표기보다 민무늬 행성이 낫다"(2026-10-16)
     const avDiv=document.createElement('div');avDiv.className='mx-card-av is-orb';avDiv.style.setProperty('--orb',col);
     {const _loadMxPic=u=>{if(!u)return;const img=new Image();img.alt='';img.referrerPolicy='no-referrer';img.style.cssText='width:100%;height:100%;object-fit:cover;';img.onload=()=>avDiv.replaceChildren(img);img.src=u;};
-     const sync=_instaPicCache.get(_picKey(a.name.ko,a.group.ko))||_instaPicCache.get(_picKey(a.name.ko,''));
-     if(sync)_loadMxPic(sync);else _srAvUrl(a).then(_loadMxPic).catch(()=>{});}
+     _srAvUrl(a).then(_loadMxPic).catch(()=>{});} // 카드와 같은 사진 순서
     const nmDiv=document.createElement('div');nmDiv.className='mx-card-name';nmDiv.textContent=a.name.ko;
     const gpDiv=document.createElement('div');gpDiv.className='mx-card-group';gpDiv.textContent=a.group.ko;
     const mtDiv=document.createElement('div');mtDiv.className='mx-card-meta';
@@ -18897,10 +18923,13 @@ function _openFavKebab(dk,btn){
   _favKebabOutside=ev=>{if(_favKebabEl&&!_favKebabEl.contains(ev.target))_closeFavKebab();};
   setTimeout(()=>document.addEventListener('click',_favKebabOutside,true),0);
 }
-function _appendFavRow(el,{tag,name,sub,imgUrl,colorArr,people,bdayDays,annivDays,dk,onClick,_picRetryKey}){
+function _appendFavRow(el,{tag,name,sub,imgUrl,colorArr,people,bdayDays,annivDays,dk,onClick,_picRetryKey,_picP}){
   const row=document.createElement('div');row.className='fav-item';row.dataset.dk=dk; // 재정렬용 식별자(케밥 메뉴)
-  const avatar=people?_favAvatarStackEl(people):_favAvatarEl(imgUrl,colorArr);
+  let avatar=people?_favAvatarStackEl(people):_favAvatarEl(imgUrl,colorArr);
   row.appendChild(avatar);
+  // 카드와 같은 순서의 사진(인스타 우선, 2026-10-20) — 지금 그린 것과 다르면 바꿔 단다. 직캠 썸네일은 작은 원에서 얼굴이 안 보여 등록 사진·색 원을 덮지 않는다
+  if(!people&&_picP)_picP().then(u=>{if(!u||u===imgUrl||/ytimg\.com/.test(u)||!row.isConnected)return;
+    _avImg(u,()=>{if(!row.isConnected)return;const nv=_favAvatarEl(u,colorArr);avatar.replaceWith(nv);avatar=nv;});}).catch(()=>{});
   // _instaPicCache는 인증 직후 비동기로 채워지는데(_warmInstaPicCache) 이 목록은 캐시를 **동기로** 읽는다
   // — 프로필 패널을 워밍 완료 전에 열면 사진 자리가 빈 채로 굳고, 워밍이 끝나도 다시 그리는 곳이 없었다
   // (2026-08-27 사용자 제보 — "사진 등록했는데 프로필 패널이 업데이트 안 된다"). 워밍을 기다렸다 한 번만
@@ -18909,7 +18938,7 @@ function _appendFavRow(el,{tag,name,sub,imgUrl,colorArr,people,bdayDays,annivDay
     const _k=_picRetryKey;
     _instaPicPreloadP.then(()=>{
       const late=_instaPicCache.get(_k);
-      if(late&&row.isConnected)avatar.replaceWith(_favAvatarEl(late,colorArr));
+      if(late&&row.isConnected&&avatar.classList.contains('fav-avatar-color')){const nv=_favAvatarEl(late,colorArr);avatar.replaceWith(nv);avatar=nv;}
     });
   }
   const main=document.createElement('div');main.className='fav-main';
@@ -18948,7 +18977,7 @@ async function renderFavList(){
       // 그룹도 프로필 사진을 붙일 수 있게 되면서(2026-08-28) 멤버와 같은 캐시를 본다 — 사진이
       // 없으면 예전처럼 그룹 고유 색상 원으로 폴백된다(_favAvatarEl).
       imgUrl:_instaPicCache.get(_groupPicKey(ko))||info.img||null,colorArr:info.color,
-      _picRetryKey:_groupPicKey(ko),
+      _picRetryKey:_groupPicKey(ko),_picP:()=>_groupAvUrl(ko),
       bdayDays:null,annivDays:_daysSince(favDates['g:'+ko]),dk:'g:'+ko,
       onClick:()=>{
         const bm=bubbleMeshes.find(b=>b.ko===ko);
@@ -18966,7 +18995,7 @@ async function renderFavList(){
     const sub=currentLang==='ko'?gko:(GROUPS[gko]?.en||gko);
     _appendFavRow(el,{
       tag:currentLang==='ko'?'멤버':'Member',name,sub,
-      imgUrl:_instaPicCache.get(_picKey(mko,gko))||null,colorArr:artist.color,_picRetryKey:_picKey(mko,gko),
+      imgUrl:_instaPicCache.get(_picKey(mko,gko))||null,colorArr:artist.color,_picRetryKey:_picKey(mko,gko),_picP:()=>_srAvUrl(artist),
       bdayDays:_daysUntilBday(artist.bday),annivDays:_daysSince(favDates['m:'+key]),dk:'m:'+key,
       onClick:()=>{
         const bm=bubbleMeshes.find(b=>b.ko===gko);
@@ -22303,7 +22332,7 @@ document.getElementById('feed-list-overlay')?.addEventListener('pointerdown',e=>
 // 이미지)으로 떴다(2026-10-16 사용자 제보). 검색 아바타(_groupPicKey)와 같은 규칙으로 맞춘다.
 async function _fetchGroupPicOrThumb(ko){
   try{_instaPicPreloadP=_instaPicPreloadP||_warmInstaPicCache();await _instaPicPreloadP;}catch(e){}
-  const pic=_instaPicCache.get(_groupPicKey(ko))||(GROUPS[ko]&&GROUPS[ko].img)||'';
+  const pic=(await _groupAvUrl(ko).catch(()=>null))||'';
   return pic||_fetchTopVideoThumb(ko,null);
 }
 async function _fetchTopVideoThumb(gko,memberKo){
