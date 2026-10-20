@@ -1571,6 +1571,9 @@
   }
   /* 탐험 패널 인스타 레일도 4:5 */
   #feed-ig.feed-album-grid>.feed-card .feed-card-thumb-wrap,#feed-favig.feed-album-grid>.feed-card .feed-card-thumb-wrap{aspect-ratio:4/5;position:relative;}
+  /* 인스타 선반 칸 = 탐험 영상 그리드의 쇼츠 한 칸 너비(2026-10-20 사용자 — 카드 인스타를 쇼츠 크기로 키운 것과 같이). 앨범 레일(3.3칸)보다 크게 2칸,
+     오른쪽 여백만큼 셋째 칸이 살짝 보인다. 비율은 4:5 그대로 */
+  #feed-ig.feed-album-rail,#feed-favig.feed-album-rail{grid-auto-columns:calc((100% - 10px) / 2);gap:4px;} /* -10px: 쇼츠 그리드 실측(웹 190·폰 169)에 맞춤 */
   /* 틱톡 아이콘의 원형 콘텐츠가 x=5~15(24단위 기준) 좌측에 치우쳐 있어 우측 여백이 크고(16px 아이콘
      기준 ≈6px), 바로 뒤 나무위키 아이콘과의 시각적 gap이 다른 쌍보다 넓어 보임(2026-08-14, 사용자 제보).
      margin:-7px 기본값보다 더 음수로 설정해 나무위키 아이콘을 왼쪽으로 당겨야 gap이 줄어든다
@@ -4137,7 +4140,7 @@
      열 폭 = (보이는 폭 − 간격 3개) ÷ 3.3 — 4번째 커버가 살짝 걸쳐 보여 옆으로 더 있다는 게 읽힌다. 웹도 패널 폭 기준 같은 비율.
      세로 2열 그리드(.feed-album-grid)를 덮어쓰는 수식 클래스. For You "즐겨찾기 신보"(#feed-favalbum)도 같은 레일 1줄(.feed-album-rail-1). */
   .feed-album-grid.feed-album-rail{grid-template-columns:none;grid-auto-flow:column;grid-template-rows:repeat(2,1fr); /* 두 줄 높이 같게 — 제목 줄 수가 달라 2행만 키가 컸다 */
-    grid-auto-columns:calc((100% - 24px) / 3.3);overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:none;
+    grid-auto-columns:var(--card-thumb);overflow-x:auto; /* 커버 크기 = 카드 디스코그래피 커버(--card-thumb, 폰 110·웹 111)와 같게(2026-10-20 사용자 — "같은 포맷은 카드·탐험 크기 통일"). 예전 (폭−24)÷3.3은 폰 98px로 카드(110)보다 작았다 */overscroll-behavior-x:contain;scrollbar-width:none;
     scroll-snap-type:x proximity;scroll-padding-left:20px;}
   .feed-album-rail::-webkit-scrollbar{display:none;}
   /* For You "즐겨찾기 신보"는 **1줄**(사용자: "여긴 1행이면 충분") — 앨범 수가 적어 2줄이면 휑하다 */
