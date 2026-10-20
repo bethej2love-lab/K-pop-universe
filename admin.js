@@ -7410,7 +7410,8 @@ function _atmRosterFor(gko){
 // "가인"(브라운아이드걸스)의 "성+이름" 매칭에서 흔한 성씨 "송"이 우연히 걸려 무관한 트롯 가수 "송가인"이
 // 대량으로 오태깅됨 — 가인의 실명은 "손가인"이라 "손"은 그대로 인정하고 "송"만 예외 처리한다
 // (2026-08-04, 사용자 제보). 이름별로 특정 성씨만 배제해야 하는 경우가 더 생기면 여기에 추가.
-const _ATM_SURNAME_EXCLUDE={'가인':new Set(['송'])};
+// '오'+'케이' = 일상어 "오케이"(OK). 앤팀 케이가 "오케이~"(예능 제목)마다 붙던 것(2026-10-20 순찰, 424건 표본에서 발견)
+const _ATM_SURNAME_EXCLUDE={'가인':new Set(['송']),'케이':new Set(['오'])};
 // 흔한단어 보호 목록 중 고인이 된 멤버들(종현/문빈/구하라/설리)은 "흔한 단어와 겹쳐서"가 아니라 "평문
 // 언급만으로 새 영상이 계속 태깅되는 걸 원치 않는다"는 별개의 이유로 해시태그 전용이라(2026-08-04 사용자
 // 요청), 아래 "그룹명+직캠 문맥이면 평문도 인정" 완화 대상에서 반드시 제외해야 함 — 문맥이 아무리 맞아도
@@ -7785,6 +7786,17 @@ function _atmMatchesMember(m,title,tokens,groupKo){
       return compact?new RegExp(`#${_atmEscRe(compact)}(?![가-힣a-z0-9])`,'i').test(title):false;
     }
     if(parts.length===1){
+      // 한 글자 영문명(V·J·Q·K·L·Y·N·U — 뷔·재이·큐·케이·엘·Y·엔·유)은 토큰 대조를 쓰면 안 된다 — 토큰화가
+      // "K-POP"·"K-Choreo"·"M/V"·"Q&A"·"L.A"·"#k_link"를 k/v/q/l로 쪼개 그 멤버로 잡는다. 실측(2026-10-20 순찰):
+      // 앤팀 케이만 붙은 영상 424건 대부분이 설명란 "K-POP"·KCON "'K' Festival"이었다. 원문에서 **대문자 한 글자가
+      // 홀로**(아래 앞뒤 규칙) 있을 때만 인정 — "&TEAM K FanCam"·"BTS V"·"#BTS_V"는 통과.
+      if(parts[0].length===1){
+        const L=parts[0].toUpperCase(); // 영문 한 글자라 이스케이프 불필요
+        // 앞: 글자·숫자·./-가 붙으면 아님("M/V", "L.A"의 A). &·#·_·따옴표·공백·괄호는 허용("V&Jungkook", "VIXX_N", "'N & Hyuk'").
+        // 뒤: 글자·숫자·-/_ 아님("K-POP", "KCON"), 마침표는 문장 끝일 때만("of V."), 한글은 조사일 때만("V가"; "K팝" 제외), "Q&A"류·KCON 구호 "'K' Festival" 제외.
+        if(new RegExp("#"+L+"(?![A-Za-z0-9_])","i").test(title))return true;
+        return new RegExp("(?<![A-Za-z0-9가-힣./-])"+L+"(?![A-Za-z0-9_/-])(?![.][A-Za-z0-9])(?!&[A-Za-z](?![A-Za-z]))(?!['’] *Festival)(?![가-힣](?<!(?:이|가|은|는|을|를|의|와|과|도|랑|만|님|씨)))").test(title);
+      }
       if(tokens.includes(parts[0]))return true;
       // 성+이름 사이 띄어쓰기 대응 (예: "seong hyeon" → "seonghyeon")
       for(let i=0;i<tokens.length;i++){
@@ -8511,8 +8523,11 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
   //    앤팀 케이(영문명 K)로 잡혀 KOREAPEDIA 같은 영상이 앤팀으로 역추론됐다(2026-09-28 순위표 24/61).
   function hitHashtag(name){
     if(!name)return false;
-    return new RegExp(`#${_atmEscRe(name)}(?![가-힣a-zA-Z0-9]|[-‐][가-힣a-zA-Z0-9])`,'i').test(title)
-      ||new RegExp(`#${_atmEscRe(name.replace(/[^가-힣a-zA-Z0-9]/g,''))}(?![가-힣a-zA-Z0-9]|[-‐][가-힣a-zA-Z0-9])`,'i').test(title);
+    // 한 글자 영문명(K·V…)은 밑줄로 이어진 태그도 다른 낱말이다 — "#k_link_Festival"(THE K-POP 채널 쇼츠 꼬리표)이 앤팀 케이로 잡혀
+    // ITZY·에스파·라이즈 쇼츠가 앤팀 영상이 됐다(2026-10-20 순찰). 한글 "#카리나_직캠"류는 그대로 인정.
+    const tail=/^[A-Za-z]$/.test(name)?'(?![가-힣a-zA-Z0-9_]|[-‐][가-힣a-zA-Z0-9])':'(?![가-힣a-zA-Z0-9]|[-‐][가-힣a-zA-Z0-9])';
+    return new RegExp('#'+_atmEscRe(name)+tail,'i').test(title)
+      ||new RegExp('#'+_atmEscRe(name.replace(/[^가-힣a-zA-Z0-9]/g,''))+tail,'i').test(title);
   }
   // 이 이름 변형들이 "feat 구간 안에서만" 등장하는가 — 위 feat 강등 판정용(true면 게스트로 본다).
   // 해시태그로 명시된 이름은 업로더가 직접 특정해준 근거라 강등하지 않는다(#BOBBY로 박아둔 콜라보 등).

@@ -22878,6 +22878,9 @@ async function _buildFeedDailyNews(){
     window._discoverNewsItems=items;
     _updateNewsWidgets(items);
   }catch(e){console.warn('[feed] 오늘의 소식 선반 실패 — 이 선반만 빠집니다',e);}
+  // ⚠️ 2026-10-19 발견탭 개편 때 빠졌던 줄 — 앨범 빌더가 먼저 끝나 "앨범 없음"으로 섹션을 숨기면, 소식이 뒤늦게 채워져도
+  //    다시 안 보였다(2026-10-20 tests/feed-dailynews 빨간불로 발견). 두 빌더 모두 끝날 때 동기화한다.
+  finally{_syncDailyNewsSection();}
 }
 // For You '내 최애 소식'(2026-10-16, 사용자: "클유아 즐겨찾기했으면 지난주 1위를 For You에서 알아야지") — 위 소식 중
 // 즐겨찾기 그룹 + 즐겨찾기 멤버의 소속 그룹 + 즐겨찾기 멤버 본인(솔로 1위·솔로 영상) 것만. 모양은 발견 탭과 같은 1면 레이아웃.
