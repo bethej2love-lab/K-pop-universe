@@ -1,6 +1,7 @@
 name: 매일 루틴 (무인 자동)
 
-# 동기화 + 스윕 전체. 3시간마다.
+# 동기화 + 스윕 전체. 6시간마다(2026-10-21 3→6시간 — Supabase "Disk IO Budget 소진 중" 경고 메일, 회차당 40~96분 스윕이 하루 8번이라
+# IO 대부분을 차지했고 이미 일부 단계가 statement timeout으로 실패. 부족하면 하루 2번(0 19,7 * * *)으로 더 줄이기로 사용자와 합의).
 # ⚠️ 신규 영상 수집만 따로 **매시간** 도는 워크플로가 따로 있다(sync-hourly.yml, MODE=sync).
 #    둘은 같은 크롬 프로필(체크포인트)을 쓰므로 concurrency 그룹 'daily-routine'을 공유해 직렬로 돈다.
 #    여기 cron을 매시간으로 올리지 말 것 — 37만 행 스윕이 하루 24번 돌고 YouTube 쿼터가 넘친다
@@ -8,7 +9,7 @@ name: 매일 루틴 (무인 자동)
 
 on:
   schedule:
-    - cron: '0 */3 * * *'
+    - cron: '0 */6 * * *'
   workflow_dispatch:
     inputs:
       mode:

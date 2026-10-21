@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2026-10-21 (Claude Code — Supabase Disk IO 경고)
+- **[완료] [.github/workflows/daily-routine.yml]** Supabase 메일 "Disk IO Budget 소진 중"(이대로 다 쓰면 응답 지연·CPU IO 대기·먹통). 지난 7일 워크플로 실측: 관리자 일일 루틴(동기화+전체 스윕, 헤드리스 관리자 화면) **3시간마다·평균 96분**(하루 7시간+ DB 훑기), 최근 회차 42분 중 동명이인 스캔 20분·조회수 마일스톤 10분, 그리고 단계 5·7이 statement timeout으로 실패 — IO 압박 신호. 사용자 결정: 루틴 3시간 → **6시간**(새 영상 수집 sync-hourly는 그대로). 부족하면 하루 2번으로 더 줄이기로.
+- **[참고]** 그 외 상시 부하: data-and-tests 하루 ~30회(짧음)·sync-hourly 16회(7분)·SEO 빌드 4회(9.5분, 안에서 공유 썸네일 생성기가 그룹·솔로 키 ~520개를 group_ko 조회). 실제 디스크 읽기 상위 쿼리는 `~/Downloads/disk_io_top_queries.sql`(pg_stat_statements, 읽기 전용)로 확인 가능 — 결과 받으면 인덱스·쿼리 단위로 추가 대응.
+
 ## 2026-10-21 (Claude Code — 블랙핑크 공유 링크가 연습생 무대)
 - **[완료] [tools/build_og_thumbs.mjs] [og_thumbs.json]** 사용자 "블랙핑크 공유 링크 아예 틀렸네, 연습생 무대". 공유 미리보기가 리벤지배틀 배예람 페이스캠("♬뚜두뚜두-BLACKPINK")이었다. 원인 둘: ① 생성기가 숨김을 `'hidden'/'irrelevant'`(영어)로만 걸렀는데 실제 DB 값은 한글(무관·보류·기타·개별출연) — 이미 '보류'인 영상이 뽑힘 ② "♬곡 - 원곡자" 크레딧을 커버로 못 봄. `isHiddenFlag`(확인 외 모든 표시) + COVER_CREDIT에 ♬ 크레딧 추가, 기존 캐시 검증(dirty)에도 표시 반영. 전수 점검: 2,415개 중 156개가 숨김·커버 영상이었음 → `--keep-existing --no-probe`로 180개 교체, 재점검 0. 블랙핑크는 인기가요 'Lovesick Girls' 교차편집. 맞는 영상이 없어진 26곳은 프로필 사진/기본 이미지로. og_thumbs.json push로 SEO 페이지 재빌드.
 - **[완료] [admin.js] [tests/song-credit-strip.test.js]** 같은 유형이 새로 안 들어오게: `_stripProgramNames`에서 "♬곡 - 원곡자" 크레딧을 출연 근거에서 지움(다음 구분자 @ # | ｜까지). ⚠️ 킹덤·로드투킹덤·퀸덤 계열은 같은 표기가 "♬곡 - **실제 공연자** (원곡: X)"라 제외(킹덤|KINGDOM|퀸덤|QUEENDOM|킹'|로투킹|원곡). ♬ 제목 1,000건 이전/새 매처 차분: 165건 변화 — 원곡자 그룹 → 보류 145·실제 공연자 그룹 17(장하오→제로베이스원, 이환희→업텐션 등), 손실은 크레딧 자리에 공연자가 적힌 1~2건(퀸이 나 등)뿐. matching 193/193 등 통과.
