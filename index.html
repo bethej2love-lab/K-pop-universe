@@ -22641,8 +22641,15 @@ function _annivAllGroupsOver(a){
   if(!gs.length)return false;
   return gs.every(g=>!_activeInGroup(a,g.ko)||_groupIsOver(g.ko));
 }
+// 본인 이름으로 낸 앨범이 최근(같은 2년 창) 안에 있는가 — 영상 수집이 비어 있어도 활동 중인 사람을 가린다.
+// 츄(이달의소녀 탈퇴, active:false)는 2026년 솔로 싱글이 있는데 공식 채널이 수집 대상이 아니라 영상 0건 → 흐려졌다(2026-10-21 제보).
+function _annivRecentRelease(a){
+  const since=new Date(Date.now()-_ANNIV_DORMANT_DAYS*86400000).toISOString().slice(0,10).replace(/-/g,'.');
+  return Array.isArray(a&&a.discography)&&a.discography.some(d=>d&&String(d.releaseDate||'')>=since);
+}
 async function _annivIsDormant(a){
   if(!sb||!a||!a.name||!_annivAllGroupsOver(a))return false;
+  if(_annivRecentRelease(a))return false;
   const key=a.name.ko+'|'+((a.group&&a.group.ko)||'');
   if(_annivDormantCache.has(key))return _annivDormantCache.get(key);
   const p=(async()=>{
@@ -22709,7 +22716,7 @@ function _buildFeedAnniversaries(){
       if(isMob()){showT(a,window.innerWidth/2,window.innerHeight*0.4,false,false,false);}
       else showT(a,window.innerWidth/2,window.innerHeight/2);
     }),undefined,sub2);
-    if(a.active===false)item.classList.add('anniv-inactive');
+    if(a.active===false&&!_annivRecentRelease(a))item.classList.add('anniv-inactive');
     // 소속 그룹이 전부 끝난 사람만 실제 영상 활동으로 한 번 더 본다(위 _annivIsDormant 주석 참고).
     else _annivIsDormant(a).then(d=>{if(d)item.classList.add('anniv-inactive');}).catch(()=>{});
     // 사진 없을 때 영상 폴백: 퍼포먼스(live) 단독 태깅 → 없으면 일반 top 영상 순

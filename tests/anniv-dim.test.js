@@ -34,8 +34,11 @@ console.log('\n── Discover 오늘의 기념일 · 생일 카드 dim ──')
 
 // ── 1. 배선: 생일 항목이 활동 판정을 거치는가 ────────────────────────────────
 const build = extractBraces(html, /^function _buildFeedAnniversaries\(/m, '_buildFeedAnniversaries');
-ck(/if\(a\.active===false\)item\.classList\.add\('anniv-inactive'\)/.test(build),
-  '기존 판정 유지: a.active===false면 즉시 dim');
+// 2026-10-21: active:false여도 최근 2년 안에 본인 앨범이 있으면 밝게(츄 — 이달의소녀 탈퇴 후 솔로, 공식 채널 미수집이라 영상 0건)
+ck(/if\(a\.active===false&&!_annivRecentRelease\(a\)\)item\.classList\.add\('anniv-inactive'\)/.test(build),
+  'a.active===false면 dim — 단 최근 2년 본인 앨범이 있으면 제외');
+ck(/if\(_annivRecentRelease\(a\)\)return false/.test(html),
+  '_annivIsDormant도 최근 본인 앨범이 있으면 활동 중');
 ck(/_annivIsDormant\(a\)[\s\S]{0,120}anniv-inactive/.test(build),
   '생일 카드가 _annivIsDormant 결과로도 dim된다 (이게 이번 수정의 본체)');
 ck(/_isGrpDisbanded\(ko\)\)item\.classList\.add\('anniv-inactive'\)/.test(build),

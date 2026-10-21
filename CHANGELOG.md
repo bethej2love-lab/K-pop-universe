@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2026-10-21 (Claude Code — 사용자 요청 묶음: 기념일·라벨·추천·카드 표기 등)
+- **[완료] [index.html] [tests/anniv-dim.test.js]** "츄 활동 열심히 하는데 투데이 애니버서리에 왜 어둡게". 원인 둘: ① 츄는 artists.json `active:false`(이달의소녀 탈퇴)라 생일 카드가 **즉시** 흐려짐 ② 2022 탈퇴 이후 츄 본인 태깅 영상 0건 — 공식 채널 **@CHUUOfficial**("CHUU 츄 Official Youtube Channel", 유튜브 채널 검색·소개글로 확인)이 수집 대상이 아님(GROUPS에 있는 전 소속 그룹을 가진 사람은 솔로 경로가 안 타고, 개인 채널 ext_channels tier=idol에도 없음). 수정: 최근 2년(`_ANNIV_DORMANT_DAYS`) 안에 본인 디스코가 있으면 활동 중으로(`_annivRecentRelease`) — active:false 151명 중 36명이 밝아짐(츄·우즈·원호·라비·박재범·B.I 등, 전부 실제 솔로 발매자).
+- **⏳ 덜 된 일·사용자/관리자 UI**: 츄 공식 채널 @CHUUOfficial을 관리자 `동기화 채널→직접 관리`에 개인 채널(idol, 소속 이달의소녀·멤버 츄)로 등록해야 솔로 영상이 수집됨. 지켜츄(@ChuuCanDoIt)는 예능 채널이라 등록 여부는 판단 필요.
+
 ## 2026-10-21 (Claude Code — 카드 인스타 줄 세로 스크롤·묶음 접기)
 - **[완료] [index.html] [kpop_universe.css]** 사용자 "인스타 썸네일 위아래로 움직여지면 안 됨, 옆으로만" + "여러 장 겹친 거 펼치긴 쉬운데 접는 법을 모르겠음". ① overflow-x:auto면 세로도 auto가 돼 겹친 묶음 뒷장(위로 기울어 삐져나옴)만큼 세로로 스크롤됐다 → `.ig-strip{overflow-y:hidden}` + 위 여백 18px(바깥은 -4px 상쇄). ② 펼치면 묶음이 사진으로 바뀌고 끝이라 접을 길이 없었다 → 디스코 활동기 묶음과 같은 괄호선 머리줄 "사진 N장 ──── 접기"(`.ig-series`, 클래스 gc-discog-series-head 재사용), 누르면 원래 겹친 묶음으로. 390 헤드리스(리센느): 펼치기→머리줄 줄 안·접기→묶음 복귀 확인.
 
