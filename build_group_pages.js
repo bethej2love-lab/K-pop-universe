@@ -42,8 +42,9 @@ const artists = JSON.parse(fs.readFileSync(path.join(ROOT, 'artists.json'), 'utf
 // index.html에 이미 있는 소속사 한/영 매핑표를 그대로 재사용(중복 유지보수 방지) — 신뢰할 수 있는
 // 내 파일에서 안전하게 추출하는 것이므로 정규식으로 블록을 잘라 eval.
 const indexSrc = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
-const agencyMatch = indexSrc.match(/const _AGENCY_EN=\{[\s\S]*?\n\};/);
-const AGENCY_EN = agencyMatch ? new Function('return ' + agencyMatch[0].replace(/^const _AGENCY_EN=/, ''))() : {};
+const {agencySource} = require('./tools/seo_inputs_unchanged.cjs');
+const agencyBlock = agencySource(indexSrc);
+const AGENCY_EN = agencyBlock ? new Function('return ' + agencyBlock.replace(/^const _AGENCY_EN=/, ''))() : {};
 // 페이지 보강(2026-10-16) — 음방 1위·인기 직캠(DB)과 투어·대상·밀리언·작사작곡(정적 파일). tools/seo_extra.js 주석 참고.
 const SEO = require('./tools/seo_extra.js');
 // 동명이인 솔로 주소 규칙은 앱과 같은 함수(shared.js _soloPageSuffix)를 쓴다(2026-10-19)

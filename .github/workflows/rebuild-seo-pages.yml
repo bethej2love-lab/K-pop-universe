@@ -84,7 +84,8 @@
               # 겹치면 abort 후 기존 재빌드 경로로 돌아가며 강제 push는 하지 않는다.
               git fetch origin main
               # 빌드 입력이 바뀌었으면 깨끗하게 rebase되더라도 옛 산출물을 올리면 안 된다.
-              if git diff --quiet HEAD origin/main -- artists.json groups.json index.html admin.js shared.js build_group_pages.js tools/seo_extra.js tools/m2_harness.js tools/build_og_thumbs.mjs tours_boxscore.json group_awards.json group_certifications.json artist_credits.json og_thumbs_pin.json; then
+              # index.html은 빌더가 실제로 읽는 소속사 표만 비교(화면 수정·캐시버스터는 무관).
+              if node tools/seo_inputs_unchanged.cjs; then
                 if git rebase origin/main; then
                   if git push; then
                     echo "최신 main 변경 보존 후 push 성공 (시도 $i)"
