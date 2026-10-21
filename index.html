@@ -26218,6 +26218,7 @@ const _chVidPageCache=new Map(); // key -> {data,count,featuredFromDB,ts}
 // 15분→1분(2026-08-19, 사용자 요청) — '추천순' 기본 오픈이 이제 청크 랜덤 샘플링을 타므로(위 load()
 // 참고) 캐시가 만료돼야 새로 샘플링됨. 15분은 너무 길어서 재방문해도 계속 똑같아 보였던 원인 중 하나.
 const _CH_VID_CACHE_TTL=60000;
+const _fmtCache=new Map(); // "그룹␟멤버" → 콘텐츠 포맷 목록(⋮ 메뉴 "콘텐츠별 보기") — 세션 동안 유지(2026-10-21 Disk IO)
 // ── 카드 첫 화면 대표 영상(문제2 확정안 — 2026-09-03 사용자 결정 "대표 영상 1개만 위로", 2026-10-13 시안) ──
 // 첫 방문 실측: 그룹 카드 첫 화면에 영상 0개(첫 영상이 한 화면 아래), 사진 없는 멤버는 얼굴도 없었다.
 // 대표 영상 한 칸을 헤더 바로 아래 둔다. 나머지 영상 그리드는 원래 자리 그대로.
@@ -27416,8 +27417,15 @@ function _makeChVidController(contId){
       const sortWrapEl=cont.querySelector('.gc-ch-sort-wrap');
       sortWrapEl.parentElement.insertBefore(onlyBtn,sortWrapEl);
     }
-    // 이 그룹/멤버가 태그된 콘텐츠 포맷이 있으면 ⋮ 메뉴에 "콘텐츠별 보기" 노출
-    _loadAvailableFormats(ko,memberKo).then(formats=>{
+    // 이 그룹/멤버가 태그된 콘텐츠 포맷이 있으면 ⋮ 메뉴에 "콘텐츠별 보기" 노출 — **⋮ 메뉴를 열 때만** 집계한다(2026-10-21).
+    // 카드를 열 때마다 돌던 get_content_formats(그룹 영상 전체 DISTINCT)가 Supabase 디스크 읽기 1위였다 — 1,676GB·14,000회·평균 5초,
+    // 2위~15위를 합친 것보다 많았다(pg_stat_statements 실측, "Disk IO Budget 소진" 경고 메일). 대부분은 이 메뉴를 열지도 않는다.
+    // 같은 카드는 세션 동안 기억(_fmtCache).
+    let _fmtReq=null;
+    const _ensureFormats=()=>{
+      if(_fmtReq)return _fmtReq;
+      const ck=ko+'␟'+(memberKo||'');
+      _fmtReq=(_fmtCache.has(ck)?Promise.resolve(_fmtCache.get(ck)):_loadAvailableFormats(ko,memberKo).then(fl=>{_fmtCache.set(ck,fl);return fl;})).then(formats=>{
       if(state.ko!==ko||state.memberKo!==(memberKo||null))return; // 그 사이 다른 카드로 전환됨
       state.formats=formats;
       const viewToggleBtn=cont.querySelector('.gc-ch-view-toggle');
@@ -27426,7 +27434,9 @@ function _makeChVidController(contId){
         if(viewToggleBtn)viewToggleBtn.style.display='';
         if(divider)divider.style.display='';
       }
-    });
+      });
+      return _fmtReq;
+    };
     _loadCoverOfSection(cont,ko,memberKo);
     const refBtn=cont.querySelector('.gc-ch-refresh');
     refBtn?.addEventListener('click',e=>{
@@ -27440,6 +27450,7 @@ function _makeChVidController(contId){
     sortBtn?.addEventListener('click',e=>{
       e.stopPropagation();
       const open=!sortMenu.classList.contains('open');
+      if(open)_ensureFormats(); // "콘텐츠별 보기" 항목은 메뉴를 열 때 확인(위 주석)
       sortMenu.classList.toggle('open',open);
       sortBtn.classList.toggle('active',open);
       sortBtn.setAttribute('aria-expanded',open?'true':'false');

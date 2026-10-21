@@ -2,6 +2,7 @@
 
 ## 2026-10-21 (Claude Code — Supabase Disk IO 경고)
 - **[완료] [.github/workflows/daily-routine.yml]** Supabase 메일 "Disk IO Budget 소진 중"(이대로 다 쓰면 응답 지연·CPU IO 대기·먹통). 지난 7일 워크플로 실측: 관리자 일일 루틴(동기화+전체 스윕, 헤드리스 관리자 화면) **3시간마다·평균 96분**(하루 7시간+ DB 훑기), 최근 회차 42분 중 동명이인 스캔 20분·조회수 마일스톤 10분, 그리고 단계 5·7이 statement timeout으로 실패 — IO 압박 신호. 사용자 결정: 루틴 3시간 → **6시간**(새 영상 수집 sync-hourly는 그대로). 부족하면 하루 2번으로 더 줄이기로.
+- **[완료] [index.html]** 사용자가 돌린 pg_stat_statements 결과: 디스크 읽기 1위 `get_content_formats` RPC — **1,676GB·13,980회·평균 5.1초**, 2~15위 합보다 많음. 카드를 열 때마다 그룹(멤버) 영상 전체 DISTINCT를 돌려 ⋮ 메뉴 "콘텐츠별 보기" 노출 여부만 정하고 있었다. → ⋮ 메뉴를 **열 때만** 집계 + 세션 캐시(`_fmtCache`). 헤드리스: 카드 열기 0회 · ⋮ 첫 열기 1회 · 다시 열기 0회, 항목 정상 노출.
 - **[참고]** 그 외 상시 부하: data-and-tests 하루 ~30회(짧음)·sync-hourly 16회(7분)·SEO 빌드 4회(9.5분, 안에서 공유 썸네일 생성기가 그룹·솔로 키 ~520개를 group_ko 조회). 실제 디스크 읽기 상위 쿼리는 `~/Downloads/disk_io_top_queries.sql`(pg_stat_statements, 읽기 전용)로 확인 가능 — 결과 받으면 인덱스·쿼리 단위로 추가 대응.
 
 ## 2026-10-21 (Claude Code — 블랙핑크 공유 링크가 연습생 무대)
