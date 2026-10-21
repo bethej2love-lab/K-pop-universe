@@ -132,7 +132,7 @@ const recentAlbumGroups = [...new Set(ALBUMS
   const SHELVES = `(function(){
     const sec=id=>{const e=document.getElementById(id);if(!e)return null;
       return {shown:getComputedStyle(e).display!=='none',
-        items:[...e.querySelectorAll('.feed-strip>*,.feed-grid>*')].map(x=>x.innerText.replace(/\\n+/g,' | ').trim())};};
+        items:[...e.querySelectorAll('.feed-strip>*,.feed-grid>*,.feed-album-grid>*')].map(x=>x.innerText.replace(/\\n+/g,' | ').trim())};};
     const order=[...document.querySelectorAll('#feed-pane-rec .feed-section')]
       .filter(s=>getComputedStyle(s).display!=='none').map(s=>s.id);
     return {anniv:sec('feed-foryou-anniv-section'),album:sec('feed-favalbum-section'),

@@ -23082,7 +23082,7 @@ async function _buildFeedFavIg(){
     const photos=error?[]:_igPhotos(data,14,15);
     const magRecent=magItems.filter(m=>m.ts>Date.now()-30*86400000).slice(0,15); // 매거진은 올리는 간격이 길어 30일
     if(!photos.length&&!magRecent.length)return;
-    const ttl=document.getElementById('feed-favig-ttl');if(ttl)ttl.textContent=currentLang==='ko'?'📷 즐겨찾기 인스타':'📷 Instagram from Your Favorites';
+    const ttl=document.getElementById('feed-favig-ttl');if(ttl)ttl.textContent='📷 On Instagram';
     if(photos.length)_igRenderRail(list,photos);
     if(mag&&magRecent.length)_igRenderMagRail(mag,magRecent);
     section.style.display='';
@@ -23133,7 +23133,7 @@ async function _buildFeedFavAlbums(){
     if(!picked.length)return;
     const isKo=currentLang==='ko';
     const ttl=document.getElementById('feed-favalbum-ttl');
-    if(ttl)ttl.textContent=isKo?'💿 즐겨찾기 신보':'💿 New Releases from Your Favorites';
+    if(ttl)ttl.textContent='💿 New Music'; // 선반 제목은 영어 한 가지(2026-10-21 사용자 "즐겨찾기 신보 개구림, 영어 한글 통일")
     picked.forEach(a=>{
       // 캡션 3줄: 앨범명 / 아티스트 / 타입 · 발매일. 예전엔 아티스트와 타입이 한 줄로 붙어 마퀴로
       // 흘렀는데, 나누니 아티스트가 독립해 읽히고 발매일도 자리가 생겼다(2026-09-21).
@@ -28882,28 +28882,28 @@ _totopBtn.addEventListener('click',e=>{
       </div>
       <!-- 내 최애 소식(2026-10-16) — 발견 탭 This Week's K-pop(음방 1위·MV·티저·조회수 돌파)을 즐겨찾기로 거른 것. 일주일이면 지나가는 소식이라 기념일 바로 밑 -->
       <div class="feed-section" id="feed-favnews-section" style="display:none">
-        <div class="feed-section-ttl">📰 This Week for Your Favorites</div>
+        <div class="feed-section-ttl">📰 This Week</div>
         <div id="feed-favnews" class="feed-news-list"></div>
       </div>
       <!-- 즐겨찾기 신보(2026-09-18) — 영상 그리드와 섞지 않고 별도 가로 선반(비율이 1:1 vs 16:9라
            섞으면 행 패커가 무너진다). 시간 민감도 순으로 기념일 바로 밑, 신작 영상 위. -->
       <div class="feed-section" id="feed-favalbum-section" style="display:none">
-        <div class="feed-section-ttl" id="feed-favalbum-ttl">💿 New Releases from Your Favorites</div>
+        <div class="feed-section-ttl" id="feed-favalbum-ttl">💿 New Music</div>
         <div id="feed-favalbum" class="feed-album-grid feed-album-rail feed-album-rail-1 hscroll-drag"></div>
       </div>
       <!-- 즐겨찾기 인스타 사진(2026-10-19) — 영상은 유튜브에서 이미 모으니 **사진 게시물만**(사용자 결정). 신보 레일과 같은 정사각 카드 -->
       <div class="feed-section" id="feed-favig-section" style="display:none">
-        <div class="feed-section-ttl" id="feed-favig-ttl">📷 Instagram from Your Favorites</div>
+        <div class="feed-section-ttl" id="feed-favig-ttl">📷 On Instagram</div>
         <div id="feed-favig" class="feed-album-grid feed-album-rail feed-album-rail-1 hscroll-drag"></div>
         <div id="feed-favigmag" class="feed-album-grid feed-album-rail feed-album-rail-1 hscroll-drag ig-mag-rail" hidden></div>
       </div>
       <!-- 내 최애 차트(2026-10-15) — 이번 주 차트(주간 직캠 TOP 20·월간 퍼포먼스 TOP 30)에 든 최애 무대. 누르면 그 차트 목록 -->
       <div class="feed-section" id="feed-favchart-section" style="display:none">
-        <div class="feed-section-ttl" id="feed-favchart-ttl">📈 Your Favorites on the Charts</div>
+        <div class="feed-section-ttl" id="feed-favchart-ttl">📈 On the Charts</div>
         <div id="feed-favchart" class="feed-strip hscroll-drag"></div>
       </div>
       <div class="feed-section" id="feed-favnew-section" style="display:none">
-        <div class="feed-section-ttl">💖 New from Your Favorites</div>
+        <div class="feed-section-ttl">💖 New Videos</div>
         <div id="feed-favnew" class="feed-grid"></div>
       </div>
       <div class="feed-section" id="feed-recent-section" style="display:none">
@@ -28966,7 +28966,7 @@ _totopBtn.addEventListener('click',e=>{
         <div id="feed-trend" class="feed-grid"></div>
       </div>
       <div class="feed-section">
-        <div class="feed-section-ttl">✨ 추천</div>
+        <div class="feed-section-ttl">✨ Picks</div>
         <div id="feed-discovery" class="feed-grid"></div>
       </div>
       <div id="feed-empty-disc" class="feed-empty" hidden><div class="feed-empty-txt"></div><button class="feed-empty-retry" type="button"></button></div>
