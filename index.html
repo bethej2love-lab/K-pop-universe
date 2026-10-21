@@ -12761,9 +12761,16 @@ async function _renderIgStrip(prefix,url){
       const n=document.createElement('span');n.className='ig-play';n.textContent='❐ '+m.c.length;d.appendChild(n);
       d.addEventListener('click',e=>{
         e.stopPropagation();
-        const frag=document.createDocumentFragment();
-        m.c.forEach((src,i)=>{const it=mk(src,m,i);it.classList.add('ig-pop');it.style.animationDelay=(i*45)+'ms';frag.appendChild(it);});
-        d.replaceWith(frag);
+        // 펼친 묶음 — 디스코 활동기 묶음과 같은 얇은 괄호선 머리줄 "사진 N장 ──── 접기", 누르면 다시 겹친 묶음으로(2026-10-21 사용자 "어떻게 접는지 모르겠음")
+        const wrap=document.createElement('div');wrap.className='ig-series';
+        const head=document.createElement('button');head.type='button';head.className='gc-discog-series-head';
+        head.innerHTML='<span class="gds-name"></span><span class="gds-line"></span><span class="gds-fold"></span>';
+        head.querySelector('.gds-name').textContent=ko?`사진 ${m.c.length}장`:`${m.c.length} photos`;
+        head.querySelector('.gds-fold').textContent=ko?'접기':'Collapse';
+        head.addEventListener('click',ev=>{ev.stopPropagation();wrap.replaceWith(d);});
+        wrap.appendChild(head);
+        m.c.forEach((src,i)=>{const it=mk(src,m,i);it.classList.add('ig-pop');it.style.animationDelay=(i*45)+'ms';wrap.appendChild(it);});
+        d.replaceWith(wrap);
       });
       strip.appendChild(d);
     }else{
