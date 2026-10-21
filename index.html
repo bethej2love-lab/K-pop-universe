@@ -1342,6 +1342,7 @@
   <div id="venue-panel">
     <div class="pp-title" id="venue-panel-title"></div>
     <button id="venue-panel-close" class="conn-back-btn" aria-label="닫기">×</button>
+    <div id="venue-panel-info" hidden></div>
     <div id="venue-panel-list"></div>
   </div>
 </div>
@@ -4687,7 +4688,7 @@ function _searchRemote(q,res,mobSearch,obSearch,hint){
   _remoteSearchTimer=setTimeout(async()=>{
     if(!sb||token!==_remoteSearchToken)return;
     const like='%'+q.replace(/[%_]/g,'')+'%';
-    const out={event:[],video:[]};
+    const out={event:[],venue:[],video:[]};
     try{
       // ── 영상 검색: 제목이 아니라 **태그**로 찾는다(2026-09-02) ──────────────────
       // 예전엔 title_norm ilike뿐이라 "카리나"를 치면 제목에 그 글자가 든 영상만 나왔다. 그런데
@@ -4720,6 +4721,26 @@ function _searchRemote(q,res,mobSearch,obSearch,hint){
           pos:owner?bubbleMeshes.find(b=>b.ko===owner)?.mesh.position.clone():null});
       });
       (vidR.data||[]).forEach(v=>out.video.push(_srVidHit(v)));
+      // 공연장(2026-10-21) — venues_info.json 이름·시설·홀·영문 표기로. 같은 곳 다른 이름은 하나로(alias_of)
+      try{
+        const vi=await _ensureVenuesInfo();
+        const nq=String(q).toLowerCase().replace(/\s+/g,'');
+        if(nq.length>=2&&token===_remoteSearchToken){
+          const hits=[];
+          for(const [name,v] of Object.entries(vi)){
+            if(!v)continue;
+            const hay=[name,v.facility,v.hall,v.label,v.ko].filter(Boolean).map(x=>String(x).toLowerCase().replace(/\s+/g,''));
+            if(!hay.some(x=>x.includes(nq)))continue;
+            const idk=_venueIdKey(name);
+            const prev=hits.find(h=>h.idk===idk);
+            if(prev){prev.n+=v.events||0;continue;} // 같은 공연장의 다른 이름 — 공연 수만 합친다
+            const root=v.alias_of||name;
+            hits.push({idk,name:root,v:vi[root]||v,n:v.events||0});
+          }
+          hits.sort((a,b)=>b.n-a.n).slice(0,4).forEach(h=>out.venue.push({type:'venue',name:_venueName(h.name),data:h.name,
+            sub:[h.v.seats?(currentLang==='ko'?h.v.seats.toLocaleString('ko-KR')+'석':h.v.seats.toLocaleString('en-US')+' seats'):'',h.v.city||''].filter(Boolean).join(' · ')}));
+        }
+      }catch(e){}
     }catch(e){return;} // 조용히 — 동기 결과는 이미 화면에 있다
     if(token!==_remoteSearchToken)return;
     _appendSearchSections(out,res,mobSearch,obSearch);
@@ -4788,12 +4809,12 @@ function _appendTrendingSection(hits,res,mobSearch,obSearch){
 // 서버에서 늦게 도착한 결과를 기존 목록 **뒤에** 섹션으로 붙인다(화면을 다시 그리지 않는다 —
 // 사용자가 이미 보고 있는 동기 결과가 깜빡이면 안 되고, 스크롤 위치도 유지돼야 한다).
 function _appendSearchSections(out,res,mobSearch,obSearch){
-  const label={video:{ko:'영상',en:'Videos'},event:{ko:'공연',en:'Events'},
+  const label={video:{ko:'영상',en:'Videos'},event:{ko:'공연',en:'Events'},venue:{ko:'공연장',en:'Venues'},
     group:{ko:'그룹',en:'Groups'},member:{ko:'멤버',en:'Members'},song:{ko:'곡',en:'Songs'},
     program:{ko:'컬렉션',en:'Collections'},between:{ko:'둘 사이',en:'Between'}};
   // 이전 요청이 붙여둔 서버 섹션은 걷어낸다(같은 검색어로 두 번 붙는 것 방지)
   res.querySelectorAll('.sr-remote').forEach(el=>el.remove());
-  const hasAny=(out.event&&out.event.length)||(out.video&&out.video.length);
+  const hasAny=(out.event&&out.event.length)||(out.venue&&out.venue.length)||(out.video&&out.video.length);
   // 동기 결과가 한 종류뿐이라 헤더를 안 붙였는데 서버 결과가 도착했으면, 그제서야 위쪽에도 헤더를 끼운다
   // (안 그러면 "영상"만 헤더가 있고 위 목록은 무제목이라 어색하다)
   const sole=res.dataset.soleType;
@@ -4803,7 +4824,7 @@ function _appendSearchSections(out,res,mobSearch,obSearch){
     res.insertBefore(top,res.firstChild);
   }
   let added=0;
-  for(const t of ['event','video']){
+  for(const t of ['event','venue','video']){
     const arr=out[t];if(!arr||!arr.length)continue;
     const lb=document.createElement('div');lb.className='sr-sec-label sr-remote';lb.dataset.type=t;
     lb.textContent=(label[t]||{})[currentLang==='ko'?'ko':'en']||t;
@@ -5095,7 +5116,7 @@ function _makeSearchItem(h,res,mobSearch,obSearch){
   div.dataset.type=h.type||''; // 풀스크린 시트 탭 필터가 이 값으로 세고 감춘다
   if(h._expanded)div.dataset.expanded='1'; // 그룹명으로 딸려온 멤버(이름이 직접 걸린 게 아님) — 회귀 테스트가 이걸 센다
   // 타입별 아이콘 — 섹션 헤더가 없는 경우(최근검색·온보딩)에도 한눈에 구분되게 한다
-  const _ico={song:'♪ ',video:'▶ ',event:'📍 ',program:'🎬 ',between:'🔗 '}[h.type]||'';
+  const _ico={song:'♪ ',video:'▶ ',event:'📍 ',venue:'🏟️ ',program:'🎬 ',between:'🔗 '}[h.type]||'';
   // 영상은 썸네일 + 2줄(제목·그룹·조회수)로 그린다(2026-09-02) — 텍스트 한 줄만으로는 어떤
   // 영상인지 알기 어렵고, 검색 결과가 콘텐츠처럼 보이지 않는다. 썸네일은 DB thumb(mqdefault).
   // ⚠️ 썸네일이 없는 행도 있으므로(구 데이터) 자리만 잡아두고 이미지는 있을 때만 넣는다 —
@@ -5127,6 +5148,14 @@ function _makeSearchItem(h,res,mobSearch,obSearch){
       else if(typeof _msIsOpen==='function'&&_msIsOpen())closeMobSearchSheet(); // 풀스크린 검색 시트 닫고 재생
       else{document.getElementById('search-input').value='';res.style.display='none';}
       openLightbox(h.url,!!h.isShort,_pl,_pi,{groupKo:h.item?.groupKo||''});
+      return;
+    }
+    // 공연장 — 공연장 창(정보 + 공연 목록)만 연다(2026-10-21)
+    if(h.type==='venue'){
+      if(obSearch)exitObSearch();else if(mobSearch)exitMobSearch();
+      else if(typeof _msIsOpen==='function'&&_msIsOpen())closeMobSearchSheet();
+      else{document.getElementById('search-input').value='';res.style.display='none';}
+      _openVenueEvents(h.data);
       return;
     }
     // 프로그램 컬렉션 — 영상과 마찬가지로 카드/카메라 흐름을 안 타고 목록 오버레이만 연다(2026-09-05).
@@ -28332,18 +28361,67 @@ function _renderProgramRow(containerId,picks,ctx){
   row.style.display='';
 }
 
+// 공연장 정보(2026-10-21 사용자 "공연장 좌석수·위치 찾아두기, 검색도") — tools/build_venues.mjs가 만든 venues_info.json
+// (국내 KOPIS 공연시설·해외 Wikidata). 같은 곳의 다른 이름(KSPO Dome = 올림픽공원 체조경기장)은 alias_of로 묶여 있어 공연 목록을 합친다.
+let _venuesInfo=null,_venuesInfoP=null;
+function _ensureVenuesInfo(){
+  if(_venuesInfo)return Promise.resolve(_venuesInfo);
+  return _venuesInfoP||(_venuesInfoP=fetch('venues_info.json').then(r=>r.ok?r.json():null).then(j=>(_venuesInfo=(j&&j.venues)||{})).catch(()=>(_venuesInfo={})));
+}
+// 같은 공연장 판정 키 — 같은 Wikidata 항목·같은 KOPIS 홀·별칭·대소문자/띄어쓰기만 다른 이름("Tokyo Dome"/"TOKYO DOME")을 하나로
+function _venueIdKey(name){
+  const v=(_venuesInfo||{})[name];if(v&&v.alias_of)return _venueIdKey(v.alias_of);
+  if(v&&v.wikidata)return 'wd:'+v.wikidata;
+  if(v&&v.kopis_id)return 'kp:'+v.kopis_id+'|'+(v.hall||'');
+  return 'n:'+String(name).toLowerCase().replace(/s+/g,'');
+}
+function _venueSameNames(venue){
+  const k=_venueIdKey(venue);
+  return [...new Set([venue,...Object.keys(_venuesInfo||{}).filter(n=>_venueIdKey(n)===k)])];
+}
+function _renderVenueInfo(venue){
+  const box=document.getElementById('venue-panel-info');if(!box)return;
+  const v=(_venuesInfo||{})[venue];box.innerHTML='';
+  if(!v||!v.src){box.hidden=true;return;}
+  const ko=currentLang==='ko';
+  const rows=[];
+  if(v.seats)rows.push([ko?'좌석':'Seats',(ko?v.seats.toLocaleString('ko-KR')+'석':v.seats.toLocaleString('en-US'))+(v.src==='wikidata'?(ko?' (최대 수용)':' (max capacity)'):'')]);
+  const place=v.hall&&v.facility?`${v.facility} · ${v.hall}`:(v.facility||v.label||'');
+  if(place&&place!==venue)rows.push([ko?'시설':'Venue',place]);
+  const where=v.addr||[v.city,v.country].filter(Boolean).join(', ');
+  if(where)rows.push([ko?'위치':'Location',where]);
+  rows.forEach(([k,val])=>{const r=document.createElement('div');r.className='venue-info-row';
+    const a=document.createElement('span');a.className='vi-k';a.textContent=k;const b=document.createElement('span');b.className='vi-v';b.textContent=val;r.append(a,b);box.appendChild(r);});
+  const q=v.lat&&v.lng?`${v.lat},${v.lng}`:[v.facility||v.label||venue,v.city].filter(Boolean).join(' ');
+  const map=document.createElement('a');map.className='venue-map-link';map.target='_blank';map.rel='noopener noreferrer';
+  map.href='https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(q);map.textContent=ko?'지도 ↗':'Map ↗';
+  map.addEventListener('click',e=>e.stopPropagation());box.appendChild(map);
+  const src=document.createElement('div');src.className='venue-info-src';
+  src.textContent=v.src==='kopis'?(ko?'시설 정보 · 공연예술통합전산망(KOPIS)':'Facility data · KOPIS'):'Wikidata';box.appendChild(src);
+  box.hidden=false;
+}
 async function _openVenueEvents(venue){
   const overlay=document.getElementById('venue-overlay');
   const titleEl=document.getElementById('venue-panel-title');
   const listEl=document.getElementById('venue-panel-list');
   titleEl.textContent=_venueName(venue); // 조회는 원래 값으로, 표시만 별칭(위 _VENUE_ALIAS 주석)
   listEl.innerHTML='<div class="gc-ch-msg">불러오는 중…</div>';
-  overlay.classList.add('open');
+  document.getElementById('venue-panel-info').hidden=true;
+  overlay.classList.add('open');_bringToFront(overlay);
+  await _ensureVenuesInfo();
+  _renderVenueInfo(venue);
   if(!sb)return;
-  const{data,error}=await sb.from('kpop_events').select('*').eq('venue',venue).order('date_start',{ascending:false});
+  const{data,error}=await sb.from('kpop_events').select('*').in('venue',_venueSameNames(venue)).order('date_start',{ascending:false});
   listEl.innerHTML='';
   if(error||!data||!data.length){listEl.innerHTML='<div class="gc-ch-msg">이 장소의 다른 공연 정보가 없어요</div>';return;}
-  data.forEach(ev=>{
+  // 예정(가까운 순) → 지난(최근 순)
+  const today=new Date().toISOString().slice(0,10);
+  const up=data.filter(ev=>(ev.date_end||ev.date_start)>=today).reverse(),past=data.filter(ev=>(ev.date_end||ev.date_start)<today);
+  const sec=(t,n)=>{if(!n)return;const l=document.createElement('div');l.className='concert-sec-lbl';l.textContent=t+' '+n;listEl.appendChild(l);};
+  sec(currentLang==='ko'?'예정':'Upcoming',up.length);
+  up.forEach(ev=>listEl.appendChild(_makeConcertItem(ev)));
+  sec(currentLang==='ko'?'지난 공연':'Past',past.length);
+  past.forEach(ev=>{
     const it=document.createElement('div');it.className='venue-item';
     const t=document.createElement('div');t.className='venue-item-title';t.textContent=ev.title;
     const meta=document.createElement('div');meta.className='concert-item-meta';
