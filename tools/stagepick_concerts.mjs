@@ -22,6 +22,16 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { matchEvent } from './kopis_events.mjs';
+import crypto from 'crypto';
+
+// kpop_events.id는 uuid다 — "sp_219980"을 넣어 10-09 첫 실행부터 저장이 매번 통째로 실패했는데(22P02) 워크플로는 초록불이었다
+// (2026-10-21 발견). StagePick 공연 번호로 항상 같은 uuid를 만들어 매일 돌려도 같은 행(중복 없음).
+const spUuid = id => { const h = crypto.createHash('sha1').update('stagepick:' + id).digest('hex');
+  return `${h.slice(0, 8)}-${h.slice(8, 12)}-5${h.slice(13, 16)}-${((parseInt(h[16], 16) & 3) | 8).toString(16)}${h.slice(17, 20)}-${h.slice(20, 32)}`; };
+// type은 NOT NULL + CHECK(콘서트·팬미팅·팬콘·페스티벌) — 기존 어휘만 쓴다
+const spType = (title, cat) => /팬\s?미팅|FAN\s?MEETING/i.test(title) ? '팬미팅'
+  : /팬\s?콘|FAN\s?CON/i.test(title) ? '팬콘'
+  : (/페스티벌|FESTIVAL|FEST\b/i.test(title) || /페스티벌/.test(cat || '')) ? '페스티벌' : '콘서트';
 
 const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
 const args = Object.fromEntries(process.argv.slice(2).map(s => {
@@ -72,16 +82,17 @@ async function fetchCalendar(year, month) {
 
 function parseCalendar(html) {
   const events = new Map(); // ID → { id, title, category, venue, href, dates: Set }
-  const re = /data-cal-title="([^"]+)"\s+data-cal-perfs="([^"]+)"/g;
+  // 2026-10-12부터 data-cal-perfs가 작은따옴표로 감싸진다 — 큰따옴표만 찾아 매일 "성공·0건"이었다(10-21 발견). 둘 다 받는다
+  const re = /data-cal-title="([^"]+)"\s+data-cal-perfs=(?:"([^"]+)"|'([^']+)')/g;
   let m;
   while ((m = re.exec(html)) !== null) {
     const date = parseKoDate(unent(m[1]));
     if (!date) continue;
     let perfs;
-    try { perfs = JSON.parse(unent(m[2])); } catch { continue; }
+    try { perfs = JSON.parse(unent(m[2] ?? m[3])); } catch { continue; }
     for (const p of perfs) {
       if (!events.has(p.ID)) {
-        events.set(p.ID, { id: p.ID, title: p.Title, category: p.Category, venue: p.Venue, href: p.Href, dates: new Set() });
+        events.set(p.ID, { id: p.ID, title: unent(p.Title), category: p.Category, venue: p.Venue, href: p.Href, image: p.ImageURL || null, dates: new Set() });
       }
       events.get(p.ID).dates.add(date);
     }
@@ -110,6 +121,8 @@ for (let i = 0; i < MONTHS; i++) {
 }
 
 process.stderr.write(`[stagepick] 총 ${allEvents.size}건 수집 완료, 매칭 중...\n`);
+// 4개월치가 0건이면 사이트 구조가 바뀐 것 — 10-12~21 매일 '성공·0건'으로 묻혔다(따옴표 변경). 실패로 알린다
+if (!allEvents.size) { process.stderr.write('⚠️ 0건 — StagePick 페이지 구조 변경 의심(parseCalendar)\n'); process.exitCode = 1; }
 
 // ── 매칭 ──────────────────────────────────────────────────────────────────────
 const rows = [];
@@ -127,8 +140,10 @@ for (const ev of allEvents.values()) {
 
   const dates = [...ev.dates].sort();
   rows.push({
-    id: `sp_${ev.id}`,
+    id: spUuid(ev.id),
     title: ev.title,
+    type: spType(ev.title, ev.category),
+    poster_url: ev.image,
     groups: result.groups,
     date_start: dates[0],
     date_end: dates[dates.length - 1],
@@ -167,6 +182,7 @@ if (DIRECT) {
     if (!resp.ok) {
       const err = await resp.text();
       process.stderr.write(`⚠️ upsert 실패 [${i}~${i + chunk.length}]: ${resp.status} ${err.slice(0, 200)}\n`);
+      process.exitCode = 1; // 저장 실패를 초록불로 숨기지 않는다
     } else {
       inserted += chunk.length;
     }
@@ -180,8 +196,8 @@ if (DIRECT) {
   console.log();
   for (const r of rows) {
     console.log(
-      `insert into kpop_events (id,title,groups,date_start,date_end,venue,city,official_url) values (` +
-      `${sq(r.id)},${sq(r.title)},array[${r.groups.map(sq).join(',')}],` +
+      `insert into kpop_events (id,title,type,poster_url,groups,date_start,date_end,venue,city,official_url) values (` +
+      `${sq(r.id)},${sq(r.title)},${sq(r.type)},${sq(r.poster_url)},array[${r.groups.map(sq).join(',')}],` +
       `${sq(r.date_start)},${sq(r.date_end)},${sq(r.venue)},${sq(r.city)},${sq(r.official_url)}) on conflict (id) do nothing;`
     );
   }

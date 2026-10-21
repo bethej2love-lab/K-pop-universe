@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 2026-10-21 (Claude Code — 공연 수집 복구)
+- **[완료] [tools/stagepick_concerts.mjs] [tools/kopis_events.mjs] [tools/solo_whitelist.json]** 사용자 "공연 정보 잘 수집되나? 홍성준 2026 SEONGJUN's REQUEST LIVE IN SEOUL". StagePick 매일 수집이 **10-09 첫 실행부터 DB에 0건** — 원인 셋: ① `kpop_events.id`가 uuid인데 "sp_219980" → 매번 22P02로 저장 통째 실패(워크플로는 초록불) ② 10-12부터 StagePick이 data-cal-perfs를 작은따옴표로 감싸 파서가 0건(역시 초록불) ③ 필수 type(콘서트·팬미팅·팬콘·페스티벌) 미지정. 수정: 공연 번호로 결정적 uuid(sha1, 매일 같은 행)·type 추정·poster_url(ImageURL)·두 따옴표 다 파싱·**저장 실패나 0건이면 exit 1**. 홍성준: 솔로 허용 목록 항목을 {ko, alias}로 확장(제목 맨 앞일 때만 — 튜넥스·블랭키 성준과 혼동 방지)해 "SEONGJUN" 추가. 로컬: 4개월 1,278건 수집·119건 연결(콘서트 80·팬미팅 7·팬콘 6…).
+
 ## 2026-10-21 (Claude Code — 웹 레이아웃: 재생 화면 윗줄·앨범 창 "무대")
 - **[완료] [kpop_universe.css]** 사용자 스크린샷 "라이트박스 재생모드 윗줄과 카드 윗줄이 일치해야". 카드 1개일 때 재생 화면이 영상 상자를 세로 가운데 정렬 → 화면보다 높으면 위로 34px 삐져나와(1875×900: 상자 30px·카드 패널 64px·색 막대 108px) 로고까지 덮음. 카드 2개 모드처럼 위에서부터(align-items:flex-start·padding-top 44px) → 상자 윗변 108px = 카드 색 막대.
 - **[완료] [index.html] [kpop_universe.css] [tests/album-song-hub.test.js]** 사용자 "웹 앨범 창 중구난방·카드 가림 — 넓으니 애매하게 가리지 말고 필요하면 닫혔다 열렸다 숨었다 드러나게". 웹(≥1024) **무대** 모델: 카드 왼쪽 빈자리(재생 화면 자리)를 무대로, 앨범 창은 어두운 배경 없이 무대 오른쪽(카드 쪽)에 붙고 윗줄 108px = 카드, 두 칸(정보 440·영상 380, 좁으면 비율로 줄어듦) 같은 높이·각자 스크롤 → 곡 눌러도 폭 안 흔들림. 자리는 `_albPlace`(열린 카드·탐험 패널 실측, 열려 있는 동안 400ms마다). 차례 `_setStageFront`(body[data-stage-front]): 나중에 부른 쪽만 앞, 뒤는 닫지 않고 숨김 — 앨범에서 영상 → 재생 화면 앞·앨범 비킴, 재생 닫기 → 앨범 복귀, 재생 중 곡 카드 → 앨범 앞(소리 유지) + "▶ 재생 화면으로". 폰(<1024) 예전 그대로(`_albKeepDocked` 웹 제외). 1875·1280 헤드리스 동선 7단계 확인, album-song-hub ⑩ 웹 기대값을 새 동작으로(31/31), desktop-close-layers 7/7·overlay-front·onboard-tips·폰 끌어 닫기 통과. ⏳ 실제 화면 손맛 확인.

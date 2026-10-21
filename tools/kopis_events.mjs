@@ -137,8 +137,12 @@ export function matchEvent(title) {
   // ①.5 확정된 솔로 아티스트 — 사람이 확인한 이름만(위 SOLO_WHITELIST 주석 참고).
   // 이름이 **제목 맨 앞**일 때만 인정한다: 솔로 공연명은 거의 항상 아티스트명으로 시작하고
   // ("이창섭 단독콘서트: SPACE", "류수정 첫 단독 콘서트"), 뒤쪽에 나오면 게스트·부제일 확률이 높다.
-  for (const ko of SOLO_WHITELIST) {
-    if (!hasTok(nu, ko) || !isLeadToken(nu, ko)) continue;
+  // 항목은 "이름" 또는 {ko, alias:[제목 표기]} — 영문 공연명("2026 SEONGJUN's REQUEST LIVE" = 홍성준, 2026-10-21 사용자 확인)은
+  // 한글 이름으로 못 잡는다. 별칭도 제목 맨 앞일 때만(동명 성준이 튜넥스·블랭키에 있어 이름만으로 자동 확장하지 않는다).
+  for (const ent of SOLO_WHITELIST) {
+    const ko = typeof ent === 'string' ? ent : ent.ko;
+    const names = typeof ent === 'string' ? [ent] : [ent.ko, ...(ent.alias || [])];
+    if (!names.some(n => hasTok(nu, n) && isLeadToken(nu, n))) continue;
     return { groups: [ko], confidence: 'strong', why: why.concat(`solo:${ko}(화이트리스트)`) };
   }
 
