@@ -26433,6 +26433,8 @@ function _makeChVidController(contId){
       }
       return null;
     }
+    // 그룹 카드에서 자기 그룹 영상에 그룹 이름 칩은 군더더기(2026-10-21 사용자) — 다른 그룹 채널 영상일 때만
+    if(v.group_ko===state.ko)return null;
     if(!chip&&v.group_ko&&GROUPS[v.group_ko])chip=_makeGCChip(v.group_ko,currentLang==='ko'?v.group_ko:(GROUPS[v.group_ko].en||v.group_ko));
     if(!chip)return null;
     const line=document.createElement('div');line.className='tv-with-line';line.appendChild(chip);
@@ -26526,7 +26528,9 @@ function _makeChVidController(contId){
       }
       // 태깅 줄도 항상 — "함께한" 정보가 없을 때(그룹 전원·그룹 채널 무태깅·멤버 카드 본인 단독)는 비어 있었다.
       // 그땐 이 영상의 주인(그룹명 또는 카드 주인 멤버)을 같은 칩 모양으로 적는다.
-      const withLine=_makeWithLine(s,ctx)||_gridOwnerLine(v);
+      // 멤버 카드의 그룹 전체 영상은 다른 멤버 이름 나열 대신 그룹 이름 하나(2026-10-21 사용자) — 멤버 태그가 비었거나(그룹 전체) 본인 포함 전원, 다른 그룹 출연 없음.
+      const _grpWide=!!state.memberKo&&v.group_ko===state.ko&&!!GROUPS[state.ko]&&!(v.with_members||[]).length&&!(v.with_groups||[]).length&&(!(v.members||[]).length||_withIsFullGroup(state.ko,ARTISTS.filter(a=>(v.members||[]).includes(a.name.ko)&&_artistGroups(a).some(g=>g.ko===state.ko))));
+      const withLine=_grpWide?(()=>{const l=document.createElement('div');l.className='tv-with-line';l.appendChild(_makeGCChip(state.ko,currentLang==='ko'?state.ko:(GROUPS[state.ko].en||state.ko)));return l;})():(_makeWithLine(s,ctx)||_gridOwnerLine(v));
       if(withLine)item.appendChild(withLine);
       item.appendChild(_makeScrapBtn(s,ctx));
       item.appendChild(_makeColBtn(s,ctx));
