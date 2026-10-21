@@ -4169,7 +4169,10 @@ function animate(){
     // 크기 영향을 최대 1.94배로 눌러서, 어드민 큐레이션 등급(A×4 / B×1.5 / C×0.6)이 확실히 이기게 한다.
     // pri는 group_priority 테이블을 groups.json에 구운 값(admin 전용 RLS라 앱이 직접 못 읽음).
     const pri=(GROUPS[ko]&&GROUPS[ko].pri)||1;
-    _farCands.push({el,ko,sx,sy,fa,phase:_lblPhase(ko),score:Math.sqrt(bm?bm.radius:1)*pri/Math.max(d,0.001)});
+    // 해체 그룹은 ×0.4 — A등급이 114팀이라 등급만으론 현역과 안 갈렸고, 11인 프로젝트 그룹(엑스원)이 큰 행성 덕에
+    // 계속 이겼다(2026-10-21 사용자 "왜 엑스원이 진짜 자주 보이지? 메인 그룹은 아닌데"). 숨기진 않고 순번만 뒤로.
+    const _over=GROUPS[ko]&&GROUPS[ko].disbanded?0.4:1;
+    _farCands.push({el,ko,sx,sy,fa,phase:_lblPhase(ko),score:Math.sqrt(bm?bm.radius:1)*pri*_over/Math.max(d,0.001)});
   });
   // 점수 높은 순으로 놓되, 이미 놓인 라벨과 화면상 사각형이 겹치면 건너뛴다(그리디 충돌 회피).
   // 상한을 두는 건 밀도가 목적이 아니라 "읽히는 것"이 목적이기 때문 — 좁은 화면일수록 적게.
