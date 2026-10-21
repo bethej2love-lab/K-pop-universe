@@ -25044,6 +25044,16 @@ async function _coverEligibleGroups(){
   if(_coverEligibleCache)return _coverEligibleCache;
   const stored=_coverEligibleFromStore();
   if(stored){_coverEligibleCache=stored;return _coverEligibleCache;}
+  // 서버가 매일 만든 파일 먼저(2026-10-21) — 아래 DB 집계가 호출당 평균 19.6초로 Supabase 디스크 읽기 상위권이었고
+  // 자주 시간 초과였다(tools/build_cover_groups.mjs · album-videos.yml). 파일이 없거나 실패하면 예전 경로.
+  try{
+    const r=await fetch('cover_groups.json',{cache:'no-cache'});
+    if(r.ok){const j=await r.json();const c=j&&j.counts;
+      if(c&&Object.keys(c).length){
+        _coverEligibleCache=Object.keys(c).filter(ko=>c[ko]>=_COVER_MIN&&GROUPS[ko]);
+        if(_coverEligibleCache.length){try{localStorage.setItem(_COVER_ELIG_KEY,JSON.stringify({ts:Date.now(),list:_coverEligibleCache}));}catch(e){}return _coverEligibleCache;}
+      }}
+  }catch(e){}
   const counts={};let from=0;
   while(from<4000){
     const{data,error}=await sb.from(_YT_TABLE).select('group_ko')

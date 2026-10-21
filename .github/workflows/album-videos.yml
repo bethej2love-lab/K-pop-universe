@@ -45,7 +45,10 @@ jobs:
             git fetch origin main
             git reset --hard origin/main
             node tools/build_album_videos.mjs $ARGS | tee -a "$GITHUB_STEP_SUMMARY" || exit 1
+            # 발견 탭 커버곡 선반 후보 그룹(2026-10-21 Disk IO) — 실패해도 앨범 갱신은 계속(파일이 없으면 앱이 예전 경로)
+            node tools/build_cover_groups.mjs | tee -a "$GITHUB_STEP_SUMMARY" || echo "커버 그룹 목록 실패 — 기존 파일 유지"
             git add -A album_videos/
+            git add cover_groups.json 2>/dev/null || true
             # _meta.json(기준 시각)만 바뀐 날도 커밋한다 — 앱이 "이 시각 이후 신규"만 조회하므로 시각이 묵으면 조회가 커진다
             if git diff --cached --quiet; then
               echo "변경 없음"
