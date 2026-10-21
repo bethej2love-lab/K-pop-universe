@@ -308,7 +308,7 @@ if (groupFiltered) console.log(`[og-thumbs] 그룹 ${groupFiltered}팀은 대표
 
 console.log(`\n[og-thumbs] 그룹 ${Object.keys(groupOut).length}/${gkos.length} · 멤버 ${Object.keys(memberOut).length}/${artists.length} (솔로 본인키 ${memSolo} · 소속영상 ${memHit} · 타그룹폴백 ${memFallback} · 없음 ${memMiss})`);
 
-// maxresdefault(1280×720)가 있으면 그걸, 없으면 hqdefault(480×360)
+// maxresdefault(1280×720)가 있으면 그걸, 없으면 hqdefault(480×360) — hqdefault는 아래 '검은 띠 없는 16:9' 단계에서 다시 바꾼다
 const ids = [...new Set([...Object.values(groupOut), ...Object.values(memberOut)])];
 const maxres = {};
 if (PROBE) {
@@ -359,6 +359,33 @@ if (args.includes('--keep-existing') && fs.existsSync(OUT)) {
     }
     console.log(`[og-thumbs] --keep-existing: 기존 값 ${kept}개 유지 · 새로 채운 키 ${added}개 · 커버라서 교체 ${replaced}개`);
   } catch (e) { console.warn('[og-thumbs] 기존 파일 병합 실패 — 전체 새로 씀:', e.message); }
+}
+// ── 검은 띠 없는 16:9 썸네일로(2026-10-21 사용자 제보 "공유 링크 썸네일 위쪽 검은색 라인") ──────────────
+// hqdefault(480×360)는 4:3이라 16:9 영상의 위아래에 검은 띠가 박혀 있고, 공유 미리보기에 그대로 보였다(2,389개 중 2,010개).
+// 순서: maxresdefault(1280×720) → hq720(1280×720, HD 업로드면 대개 있음) → mqdefault(320×180, 항상 있고 16:9).
+// --no-probe(SEO 빌드가 새 키만 채울 때)면 확인 없이 mqdefault — 띠보다는 작은 게 낫다. 주간 갱신(확인 모드)이 큰 걸로 올린다.
+{
+  const hqRe = /img\.youtube\.com\/vi\/([\w-]+)\/hqdefault\.jpg/;
+  const need = new Set();
+  for (const obj of [groupsOut, membersOut]) for (const k in obj) { const m = hqRe.exec(obj[k] || ''); if (m) need.add(m[1]); }
+  const best = {};
+  if (PROBE && need.size) {
+    const list = [...need]; let i = 0, big = 0;
+    const worker = async () => {
+      while (i < list.length) {
+        const id = list[i++];
+        for (const v of ['maxresdefault', 'hq720']) {
+          try { const r = await fetch(`https://img.youtube.com/vi/${id}/${v}.jpg`, { method: 'HEAD' }); if (r.ok) { best[id] = v; big++; break; } } catch (e) { }
+        }
+      }
+    };
+    await Promise.all(Array.from({ length: 24 }, worker));
+    console.log(`[og-thumbs] 4:3 썸네일 ${need.size}개 → 1280px 16:9 ${big}개 · 나머지 mqdefault`);
+  }
+  for (const obj of [groupsOut, membersOut]) for (const k in obj) {
+    const m = hqRe.exec(obj[k] || ''); if (!m) continue;
+    obj[k] = `https://img.youtube.com/vi/${m[1]}/${best[m[1]] || 'mqdefault'}.jpg`;
+  }
 }
 // 고정 썸네일(og_thumbs_pin.json, 2026-10-14) — 사람이 고른 값은 주간 랜덤 갱신이 덮어쓰지 않게 마지막에 얹는다.
 // 예: 설리는 카드 위쪽 영상(Red Light 직캠)으로(사용자 요청), 디모렉스는 개명 후 SAY MY NAME MV로.
