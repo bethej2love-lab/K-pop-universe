@@ -33,6 +33,7 @@ const fs = require('fs');
 const path = require('path');
 const os = require('os');
 const { spawn, execSync } = require('child_process');
+const { routineLogResult } = require('./routine_log_result.cjs');
 
 const SITE_URL = process.env.SITE_URL || 'https://kpop-universe.kr';
 const ADMIN_EMAIL = (process.env.KPU_ADMIN_EMAIL || 'bethej2love@gmail.com').trim();
@@ -245,10 +246,11 @@ async function main() {
       }
       console.log(`[routine] 청소 루틴 진행 중… (최대 ${Math.round(ROUTINE_TIMEOUT_MS / 60000)}분 대기)`);
       const finished = await pollUntil(cdp, `_admCleanupRunning===false`, ROUTINE_TIMEOUT_MS, v => v === true, 3000);
-      summary = (await evalExpr(cdp, `document.getElementById('adm-routine-log')?.innerText || ''`)) || '';
+      const logResult = await evalExpr(cdp, `(${routineLogResult.toString()})(document)`);
+      summary = logResult?.summary || '';
       if (!finished) throw new Error('청소 루틴이 시간 안에 끝나지 않음(타임아웃)\n--- 그때까지 로그 ---\n' + summary);
-      // 청소 모드도 ❌ 줄 수로 성공을 판정한다(2026-09-28). 예전엔 ok를 안 세워 기본값 false → 워크플로가 항상 실패였다.
-      ok = (summary.match(/^❌/gm) || []).length === 0;
+      if (!logResult?.hasLog) throw new Error('청소 루틴 결과 로그가 없음 — 성공으로 판정할 수 없음');
+      ok = logResult.failedSteps === 0;
       console.log('\n===== 청소 루틴 결과 =====\n' + summary + '\n=====================');
     } else {
     await evalExpr(cdp, `_admRunRoutine(${WITH_SYNC ? 'true' : 'false'}${SYNC_ONLY ? `,{only:'sync'}` : ''})`);
@@ -261,10 +263,12 @@ async function main() {
     // 완료 대기 — running이 false로 돌아올 때까지
     console.log(`[routine] 진행 중… (최대 ${Math.round(ROUTINE_TIMEOUT_MS / 60000)}분 대기)`);
     const finished = await pollUntil(cdp, `_admRoutineRunning===false`, ROUTINE_TIMEOUT_MS, v => v === true, 3000);
-    summary = (await evalExpr(cdp, `document.getElementById('adm-routine-log')?.innerText || ''`)) || '';
+    const logResult = await evalExpr(cdp, `(${routineLogResult.toString()})(document)`);
+    summary = logResult?.summary || '';
     if (!finished) throw new Error('루틴이 시간 안에 끝나지 않음(타임아웃)\n--- 그때까지 로그 ---\n' + summary);
+    if (!logResult?.hasLog) throw new Error('루틴 결과 로그가 없음 — 성공으로 판정할 수 없음');
 
-    const failedSteps = (summary.match(/^❌/gm) || []).length;
+    const failedSteps = logResult.failedSteps;
     ok = failedSteps === 0;
     console.log('\n===== 루틴 결과 =====\n' + summary + '\n=====================');
     if (perfLines.length) console.log('\n----- 동기화 속도 계측 -----\n' + perfLines.join('\n'));

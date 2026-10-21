@@ -2272,7 +2272,9 @@ async function _ytSweepCoverV2(){
     const _covSince=_admRoutineScopeSince('cover');
     const _q=()=>{let q=sb.from(_YT_TABLE).select(_sel()).or(orExpr);if(_covSince)q=q.gt('created_at',_covSince);return q.order('id');};
     // 전량(7일마다)은 구간별로 — 제목 ILIKE 8개 OR가 드물어 키셋 한 요청이 수만 행을 훑다 타임아웃(2026-10-16 루틴 ❌)
-    const _fetch=()=>_covSince?_sbFetchAll(_q):_sbFetchAllWindowed(_q,5000,(n)=>_ytSetProg(`[원곡 v2] 대상 조회 중… ${n}개`));
+    // 증분도 created_at 조건+희소 OR+id 정렬 때문에 PK를 오래 훑을 수 있다(#171 실제 timeout).
+    // 전량/증분 모두 동일한 ID 구간 상한을 사용하고 created_at 필터는 _q에서 그대로 유지한다.
+    const _fetch=()=>_sbFetchAllWindowed(_q,5000,(n)=>_ytSetProg(`[원곡 v2] 대상 조회 중… ${n}개`));
     let{data:rows,error}=await _fetch();
     if(error&&_coverManualColMissing(error))({data:rows,error}=await _fetch());
     if(error){_ytSetProg('조회 실패: '+error.message);return;}

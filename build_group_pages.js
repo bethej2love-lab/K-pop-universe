@@ -918,18 +918,41 @@ function namesOverlap(a, b) {
 
 async function fetchRelationRows() {
   const cols = 'id,title,group_ko,with_groups,cover_of_groups,content_flag,published_at';
-  const filter = 'or=(with_groups.neq.%7B%7D,cover_of_groups.neq.%7B%7D)';
-  const out = [];
-  let last = '';
-  for (let i = 0; i < 20; i++) {
-    const q = `${SB_URL}/rest/v1/yt_channel_videos?select=${cols}&${filter}&order=id&limit=1000${last ? `&id=gt.${encodeURIComponent(last)}` : ''}`;
-    const res = await fetch(q, { headers: { apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}` } });
-    if (!res.ok) throw new Error(`Supabase ${res.status}`);
+  // 희소 OR를 만족하는 1000개를 찾느라 PK 전체를 훑던 조회가 Supabase 500/57014로
+  // 실패했다. admin.js의 windowed 읽기와 동일하게 먼저 ID 구간을 정해 요청마다 5000행 상한.
+  const read = async (select, after, end, limit, offset, filtered) => {
+    const q = new URL(`${SB_URL}/rest/v1/yt_channel_videos`);
+    q.searchParams.set('select', select);
+    q.searchParams.set('order', 'id');
+    q.searchParams.set('limit', String(limit));
+    if (offset) q.searchParams.set('offset', String(offset));
+    if (filtered) q.searchParams.set('or', '(with_groups.neq.{},cover_of_groups.neq.{})');
+    if (after !== null) q.searchParams.append('id', `gt.${after}`);
+    if (end !== null) q.searchParams.append('id', `lte.${end}`);
+    const res = await fetch(q, { headers: { apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}` }, signal: AbortSignal.timeout(45000) });
+    if (!res.ok) {
+      let why = ''; try { const body = await res.json(); why = body.code ? `/${body.code}: ${body.message}` : ''; } catch {}
+      throw new Error(`Supabase ${res.status}${why}`);
+    }
     const rows = await res.json();
-    if (!Array.isArray(rows) || !rows.length) break;
-    out.push(...rows);
-    last = rows[rows.length - 1].id;
-    if (rows.length < 1000) break;
+    if (!Array.isArray(rows)) throw new Error('Supabase 관계 조회 응답이 배열이 아님');
+    return rows;
+  };
+  const out = [];
+  let cursor = null, windows = 0;
+  for (;;) {
+    const edge = await read('id', cursor, null, 1, 4999, false);
+    const end = edge[0]?.id || null;
+    let pageCursor = cursor;
+    for (;;) {
+      const rows = await read(cols, pageCursor, end, 1000, 0, true);
+      out.push(...rows);
+      if (rows.length < 1000) break;
+      pageCursor = rows[rows.length - 1].id;
+    }
+    if (++windows % 20 === 0) console.log(`  관계 후보 조회: ${windows}구간 · ${out.length}행`);
+    if (end === null) break;
+    cursor = end;
   }
   return out.filter(r => !r.content_flag && groups[r.group_ko]);
 }
