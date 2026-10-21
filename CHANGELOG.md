@@ -1,7 +1,7 @@
 # CHANGELOG
 
 ## 2026-10-21 (Claude Code — 퇴근 시점 미결 모음)
-- **⏳ SQL 실행 대기**: `sql/stagepick_event_cleanup_2026-10-21.sql` — StagePick 공연 오연결 11건 삭제(TOO HOT SHOW→티오원, 권진아→러블리즈 JIN 등).
+- **[완료·SQL 실행됨(DB 확인)]** `sql/stagepick_event_cleanup_2026-10-21.sql` — StagePick 공연 오연결 11건 삭제(TOO HOT SHOW→티오원, 권진아→러블리즈 JIN 등).
 - **⏳ 공연장 정보 자동화**: `tools/build_venues.mjs`는 지금 수동 실행(새 공연장만 조회, 캐시 tools/venues_cache.json). GitHub Secret `KOPIS_KEY`를 넣으면 stagepick-concerts.yml 뒤에 붙여 자동 갱신 가능. 못 찾은 301곳(작은 클럽·해외 소형·이름 깨진 행 "–")은 ALIAS/SEARCH 추가로 보강.
 - **⏳ 옛 공연 데이터 점검**: KOPIS 출처(2018~) 공연 행에도 이번 같은 오연결(흔한 단어·동명이인 멤버)이 있을 수 있음 — 고친 `matchEvent`로 재판정해 연결이 사라지는 행만 골라 SQL로(이번 StagePick 정리와 같은 방법, `$TEMP/evclean.mjs` 패턴). 제목이 "Fanmeetings"·"Set list"인 깨진 행(나무위키 수집분)도 정리 대상.
 - **⏳ 사용자 대기**: 메타 앱 차단(API access blocked) 해제 — 풀리면 ig-stats 재실행·매거진 2행 not_found 정리. Disk IO는 며칠 뒤 `~/Downloads/disk_io_top_queries.sql`로 재측정(1위 get_content_formats 제거·루틴 6시간·인덱스 효과 확인, 부족하면 루틴 하루 2번).
