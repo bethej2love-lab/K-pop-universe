@@ -21243,12 +21243,15 @@ async function initSupabaseSync(){
       const lastKnownUid=localStorage.getItem(SB_LAST_UID_KEY);
       const isNewDeviceForThisAccount=lastKnownUid!==session.user.id;
       await _pullServerToLocal(session.user.id);
+      const _mergedN=await _mergeStashedLocal(session.user.id); // 다른 계정으로 로그인했으면 이 기기 기록을 계정에 더한다
       localStorage.setItem(SB_LAST_UID_KEY,session.user.id);
       if(isNewDeviceForThisAccount)_gaEvent('link_account_success',{});
       // 막 로그인/연결하고 돌아온 경우에만 한 줄 안내(앱을 열 때마다 뜨면 안 된다) — 예전엔 성공해도 아무 말이 없었다(2026-10-21)
       if(hadOAuthCode||_xDone){
         const ko=currentLang==='ko';
-        setTimeout(()=>{try{_showShareToast(isNewDeviceForThisAccount?(ko?'로그인했어요 — 내 별과 즐겨찾기를 불러왔어요':'Logged in — your star and favorites are back'):(ko?'계정을 연결했어요':'Account connected'));}catch(e){}},600);
+        const _msg=_mergedN?(ko?`로그인했어요 — 이 기기 기록 ${_mergedN}개도 합쳤어요`:`Logged in — merged ${_mergedN} items from this device`)
+          :isNewDeviceForThisAccount?(ko?'로그인했어요 — 내 별과 즐겨찾기를 불러왔어요':'Logged in — your star and favorites are back'):(ko?'계정을 연결했어요':'Account connected');
+        setTimeout(()=>{try{_showShareToast(_msg);}catch(e){}},600);
         try{if(history.replaceState&&/[?&](code|state)=/.test(location.search))history.replaceState(null,'',location.pathname+location.hash);}catch(e){}
       }
       try{updateMyPage();if(typeof renderFavList==='function')renderFavList();}catch(e){}
@@ -21288,14 +21291,55 @@ document.getElementById('link-confirm-cancel').addEventListener('click',e=>{e.st
 document.getElementById('link-confirm-overlay').addEventListener('click',e=>{e.stopPropagation();if(e.target===e.currentTarget)_closeLinkConfirm(false);});
 document.getElementById('link-confirm-overlay').addEventListener('pointerdown',e=>e.stopPropagation());
 
+// ── 로그인 시 이 기기 기록 합치기(2026-10-21 사용자 결정 "합치기") ─────────────────────────────
+// 익명으로 모은 뒤 **이미 쓰던 계정**으로 로그인하면 예전엔 계정 데이터로 통째로 대체됐다(확인 창으로 경고만).
+// 떠나기 전에 이 기기 기록을 남겨 두고, 돌아와서 계정이 바뀌었으면(=다른 계정으로 로그인) 계정 데이터에 겹치지 않게 더한다.
+// 같은 계정에 연결만 된 경우(익명 uid 그대로)는 기록이 이미 그 계정에 있어 할 일이 없다.
+const _PREMERGE_KEY='kpu_premerge';
+function _stashLocalForMerge(){
+  const any=favGroups.size||favMembers.size||favConnections.size||scraps.length||collections.length||concertLog.length;
+  if(!any)return;
+  try{localStorage.setItem(_PREMERGE_KEY,JSON.stringify({uid:(window._sbSession&&window._sbSession.user&&window._sbSession.user.id)||null,ts:Date.now(),
+    fg:[...favGroups],fm:[...favMembers],fc:[...favConnections],fo:favOrder,fd:favDates,fh:favHistory,sc:scraps,co:collections,cl:concertLog}));}catch(e){}
+}
+// 돌아온 뒤(서버 데이터를 받은 다음) 호출. 더한 항목 수를 돌려준다.
+async function _mergeStashedLocal(uid){
+  let pm=null;try{pm=JSON.parse(localStorage.getItem(_PREMERGE_KEY)||'null');localStorage.removeItem(_PREMERGE_KEY);}catch(e){}
+  if(!pm||pm.uid===uid||Date.now()-(pm.ts||0)>60*60*1000)return 0; // 같은 계정이거나 오래된 보관분은 버린다
+  let added=0;
+  const addSet=(set,arr)=>(arr||[]).forEach(k=>{if(!set.has(k)){set.add(k);added++;}});
+  addSet(favGroups,pm.fg);addSet(favMembers,pm.fm);addSet(favConnections,pm.fc);
+  (pm.fo||[]).forEach(k=>{if(!favOrder.includes(k))favOrder.push(k);});
+  for(const k in (pm.fd||{}))if(!(k in favDates))favDates[k]=pm.fd[k];
+  const hSeen=new Set(favHistory.map(h=>h&&(h.dk+'|'+h.action+'|'+h.at)));
+  (pm.fh||[]).forEach(h=>{const k=h&&(h.dk+'|'+h.action+'|'+h.at);if(k&&!hSeen.has(k)){favHistory.push(h);hSeen.add(k);}});
+  favHistory.sort((a,b)=>String(a.at||'').localeCompare(String(b.at||'')));
+  const uSeen=new Set(scraps.map(x=>x&&x.u));
+  (pm.sc||[]).forEach(x=>{if(x&&x.u&&!uSeen.has(x.u)){scraps.push(x);uSeen.add(x.u);added++;}});
+  const cSeen=new Set(collections.map(c=>c&&c.id));
+  (pm.co||[]).forEach(c=>{if(c&&(!c.id||!cSeen.has(c.id))){collections.push(c);if(c.id)cSeen.add(c.id);added++;}});
+  const lSeen=new Set(concertLog.map(c=>c&&c.id));
+  (pm.cl||[]).forEach(c=>{if(c&&c.id&&!lSeen.has(c.id)){concertLog.push(c);lSeen.add(c.id);}});
+  if(!added)return 0;
+  localStorage.setItem(FAV_KEY_G,JSON.stringify([...favGroups]));
+  localStorage.setItem(FAV_KEY_M,JSON.stringify([...favMembers]));
+  localStorage.setItem(FAV_KEY_C,JSON.stringify([...favConnections]));
+  localStorage.setItem(FAV_ORDER_KEY,JSON.stringify(favOrder));
+  localStorage.setItem(FAV_DATE_KEY,JSON.stringify(favDates));
+  localStorage.setItem(FAV_HISTORY_KEY,JSON.stringify(favHistory));
+  localStorage.setItem(SCRAP_KEY,JSON.stringify(scraps));
+  localStorage.setItem(COLLECTION_KEY,JSON.stringify(collections));
+  localStorage.setItem(CONCERT_LOG_KEY,JSON.stringify(concertLog));
+  const{error}=await sb.from('user_data').update({fav_groups:[...favGroups],fav_members:[...favMembers],fav_connections:[...favConnections],fav_order:favOrder,fav_dates:favDates,fav_history:favHistory,scraps,collections,concert_log:concertLog}).eq('user_id',uid);
+  if(error)console.error('merge push failed',error);
+  return added;
+}
+
 async function _handleAccountLink(provider){
   if(!sb){console.error('Supabase client not initialized');return;}
   _gaEvent('login_start',{provider}); // 30일 계획 C1 — 재방문 선행지표(로그인=즐겨찾기/컬렉션 전제). 리다이렉트 전에 먼저 전송.
-  const hasLocalData=favGroups.size>0||favMembers.size>0||scraps.length>0;
-  if(hasLocalData){
-    const ok=await _confirmLinkOverwrite();
-    if(!ok)return;
-  }
+  // 예전엔 기록이 있으면 "계정 데이터로 대체돼요" 확인 창을 먼저 띄웠다 — 이제 합치므로 묻지 않고 보관만 해 둔다(2026-10-21)
+  _stashLocalForMerge();
   // X는 이메일 없는 계정을 위해 커스텀 PKCE 흐름 사용
   if(provider==='x'){await _xStartLogin('link');return;}
   const redirectTo=location.origin+location.pathname;
