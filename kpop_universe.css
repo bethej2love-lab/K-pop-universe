@@ -134,6 +134,11 @@
      본편이 다른 브랜드처럼 보였다 — 민트는 로딩 밖에선 .trace-dot(실시간 흔적) 말고 안 쓰인다.
      이 값은 .uc-btn-primary의 rgba(126,156,255) 계열이고, 바로 위 .ld-l2 글로우와도 같은 색이다. */
   #loading .ld-ac{ color:#7e9cff;text-shadow:0 0 24px rgba(126,156,255,0.38); }
+  /* 슬로건 앞짝(2026-10-21) — 제목 뒤로 한 박자 늦게, 작고 흐리게. 로딩이 짧으면 덜 보이고 마는 정도가 의도(은은하게) */
+  #loading .ld-l3{margin-top:10px;padding-left:0.1em;font-size:clamp(11px,2.8vw,13px);font-weight:500;letter-spacing:0.06em;color:rgba(170,188,232,0.55);opacity:0;animation:ld-tag .9s ease .35s forwards;}
+  @keyframes ld-tag{from{opacity:0;transform:translateY(3px);}to{opacity:1;transform:none;}}
+  /* 슬로건 뒷짝 — For You 맨 끝, 다 내려본 사람만 보는 서명 한 줄 */
+  .feed-signoff{padding:28px 20px calc(36px + env(safe-area-inset-bottom,0px));text-align:center;font-size:11.5px;letter-spacing:0.06em;color:rgba(150,170,215,0.42);font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
   @keyframes ld-in{from{opacity:0;transform:translate(-50%,-44%);}to{opacity:1;transform:translate(-50%,-50%);}}
   @keyframes loading-shimmer{0%{background-position:160% 0;}100%{background-position:-60% 0;}}
   #loading.loading-error{
