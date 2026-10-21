@@ -4099,6 +4099,10 @@
   .feed-news-thumb{flex-shrink:0;width:60px;height:38px;object-fit:cover;border-radius:5px;opacity:0;transition:opacity .25s ease;}
   .feed-news-thumb.loaded{opacity:1;}
   .feed-news-thumb.is-square{width:38px;height:38px;}
+  /* 썸네일 키우고 제목 두 줄(2026-10-21 사용자 "MV 제목 영역 너무 길고 썸네일은 되려 작음") — 60×38 → 16:9 112×63, 앨범 정사각 52 */
+  .feed-news-row:not(.is-milestone) .feed-news-thumb{width:112px;height:63px;border-radius:6px;}
+  .feed-news-row:not(.is-milestone) .feed-news-thumb.is-square{width:52px;height:52px;}
+  .feed-news-row:not(.is-break) .feed-news-title{white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;line-height:1.35;}
   /* 조회수 돌파 — 썸네일 전폭 상단, 뱃지+텍스트 하단 */
   .feed-news-row.is-milestone{flex-direction:column;align-items:stretch;padding:0;margin:4px 16px 2px;border-radius:12px;overflow:hidden;background:rgba(255,255,255,0.028);border-top:none!important;}
   .feed-news-row.is-milestone+.feed-news-row{border-top:0.5px solid rgba(255,255,255,0.06);}
