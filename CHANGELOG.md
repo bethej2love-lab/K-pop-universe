@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2026-10-21 (Claude Code — 자컨 탭에 공식 채널 영상)
+- **[완료] [index.html] [tests/jacon-tab.test.js]** 사용자 "심각한 오류 — 자컨 탭에 그룹 공식 유튜브 채널 영상 쫙, 개인 채널 있는 멤버 카드엔 그것까지". 자컨 탭이 멤버 개인 채널(source_tier='idol')만 보고 공식 채널(official·grpsub)은 09-04 결정으로 빼둬서, 개인 채널 없는 그룹은 탭 자체가 없고 있어도 개인 채널 영상 몇 개뿐이었다. 공식 채널 수집 상태 실측: 유튜브 링크 있는 241그룹 중 236곳 official 행 있음(아이브 2,665건·2021 로고 영상부터). 없는 5곳: 유니티·워너원·엘라스트·판타지보이즈·배드빌런.
+  수정: `_applyJaconQuery` 하나로(대표영상·목록·탭 판정·탭 삽입) = source_tier official·grpsub·idol + group_ko가 카드 주인(그룹·솔로 키·옛 그룹)인 것만(남의 채널 게스트 출연 제외). 멤버 카드: 개인 채널 영상은 본인 태깅이거나 **본인 채널 핸들**일 때만(ext_channels owner_mko → `_idolHandlesByMember`) — 08-25 이관분은 개인 채널인데 members가 빈 게 많아(따라해볼레이 179건) 이게 없으면 레이 채널 영상이 장원영 카드에 섞이고 레이 카드에선 빠졌다. 헤드리스 확인: 아이브 그룹=공식+레이·가을 채널, 레이 카드=공식+본인 채널(미태깅 포함), 장원영 카드=남의 개인 채널 미태깅 0, 세븐틴=공식 48/48. smoke·fan-tab-order·program-collection 통과.
+
 ## 2026-10-21 (Claude Code — 퇴근 시점 미결 모음)
 - **[완료·SQL 실행됨(DB 확인)]** `sql/stagepick_event_cleanup_2026-10-21.sql` — StagePick 공연 오연결 11건 삭제(TOO HOT SHOW→티오원, 권진아→러블리즈 JIN 등).
 - **⏳ 공연장 정보 자동화**: `tools/build_venues.mjs`는 지금 수동 실행(새 공연장만 조회, 캐시 tools/venues_cache.json). GitHub Secret `KOPIS_KEY`를 넣으면 stagepick-concerts.yml 뒤에 붙여 자동 갱신 가능. 못 찾은 301곳(작은 클럽·해외 소형·이름 깨진 행 "–")은 ALIAS/SEARCH 추가로 보강.
