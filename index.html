@@ -1352,6 +1352,7 @@
 <div id="gc-discog-detail">
   <div id="gc-discog-detail-bg"></div>
   <div id="gc-discog-detail-sheet">
+    <div id="gc-discog-detail-handle" aria-hidden="true"></div>
     <button id="gc-discog-detail-close" aria-label="닫기"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
     <div id="gc-discog-detail-covrow">
       <button id="gc-discog-detail-prev" class="gc-discog-nav-btn" aria-label="이전 앨범">‹</button>
@@ -14933,6 +14934,11 @@ function _gcDiscogDetailGo(delta){
 }
 document.getElementById('gc-discog-detail-bg').addEventListener('click',_closeGcDiscogDetail);
 document.getElementById('gc-discog-detail-close').addEventListener('click',_closeGcDiscogDetail);
+// 폰: 앨범 창도 카드 시트처럼 맨 위에서 아래로 끌어 닫기(2026-10-21 사용자 — "닫기 버튼 말고 카드형으로, 스와이프로 닫는 게 떠오르게").
+// 손잡이 막대를 달고 ✕는 폰에서 숨긴다(CSS). 제스처 코드는 탐험 패널과 같은 것(문턱 44px·튕김 속도).
+{const _ads=document.getElementById('gc-discog-detail-sheet');
+ _wireFeedSwipeDismiss(_ads,_ads,()=>{_ads.style.transition='transform 0.22s cubic-bezier(0.32,0.72,0,1)';_ads.style.transform=`translateY(${window.innerHeight}px)`;
+   setTimeout(()=>{_closeGcDiscogDetail();_ads.style.transition='';_ads.style.transform='';},220);});}
 document.getElementById('gc-discog-detail-prev').addEventListener('click',e=>{e.stopPropagation();_gcDiscogDetailGo(-1);});
 document.getElementById('gc-discog-detail-next').addEventListener('click',e=>{e.stopPropagation();_gcDiscogDetailGo(1);});
 document.getElementById('gc-discog-detail').addEventListener('pointerdown',e=>e.stopPropagation());
@@ -21663,7 +21669,7 @@ function _wireFeedTabSwipe(body){
 // _wireSheetSwipe(카드용)와 달리 중간(peek로 되돌아가기) 단계 없이 바로 닫는다.
 // 위로 끄는 건 peek 상태일 때만 의미가 있음 — 전체 펼침(하단 탭바 "탐험"과 완전히 같은 화면)으로
 // 전환, 임계값 넘기면 .peek 제거 → top/height CSS 트랜지션으로 부드럽게 커짐(2026-08-13, 사용자 요청).
-function _wireFeedSwipeDismiss(el,body){
+function _wireFeedSwipeDismiss(el,body,onClose){ // onClose: 기본은 탐험 패널 닫기(앨범 창도 이 제스처를 쓴다, 2026-10-21)
   let dragY=0,dragging=false,dragActive=false,_rafId=0,_applyFn=null,_armed=false,_lastDy=0,_vY=0,_vT=0,_vel=0;
   el.addEventListener('touchstart',e=>{
     if(!isMob())return;
@@ -21709,7 +21715,7 @@ function _wireFeedSwipeDismiss(el,body){
     const vel=performance.now()-_vT<80?_vel:0; // 손을 멈췄다 떼면 튕김 아님
     _lastDy=0;_vT=0;_vel=0;
     if(dy>80||(dy>24&&vel>0.6)){
-      _slideDownCloseFeed();
+      (onClose||_slideDownCloseFeed)();
     }else{
       el.style.transition='transform 0.22s cubic-bezier(0.32,0.72,0,1)';
       el.style.transform='';

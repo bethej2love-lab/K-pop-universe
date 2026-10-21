@@ -2969,6 +2969,12 @@
   #gc-discog-detail{position:fixed;inset:0;z-index:102;display:none;align-items:flex-end;justify-content:center;}
   #gc-discog-detail.open{display:flex;}
   #gc-discog-detail-bg{position:absolute;inset:0;background:rgba(0,0,0,0.55);}
+  /* 폰: 카드 시트와 같은 손잡이 — 아래로 끌어 닫는 창이라는 신호. ✕는 숨김(배경 탭·끌기로 닫힘, 2026-10-21) */
+  #gc-discog-detail-handle{display:none;}
+  @media(max-width:768px){
+    #gc-discog-detail-handle{display:block;width:36px;height:4px;background:rgba(255,255,255,0.18);border-radius:2px;margin:-12px auto 12px;}
+    #gc-discog-detail #gc-discog-detail-close{display:none;}
+  }
   #gc-discog-detail-sheet{position:relative;width:100%;background:rgba(14,18,38,0.98);backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);border-radius:20px 20px 0 0;padding:22px 22px calc(22px + env(safe-area-inset-bottom,0px));box-sizing:border-box;z-index:1;text-align:center;}
   /* 데스크톱: 상단 기준으로 고정한다(2026-09-15 사용자 제보 — "곡 수마다 창 세로 길이가 바뀌어도
      위줄 위치는 고정돼야 한다"). 예전엔 컨테이너가 align-items:flex-end라 시트가 **아래에 붙어 위로
