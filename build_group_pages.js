@@ -813,6 +813,13 @@ function redirectStaleMemberPages() {
 // 그래서 그룹 페이지들도 멤버 페이지와 똑같이 sitemap에만 존재하는 고아였다. 이 허브가 그래프를 닫는다:
 //   sitemap → /g/ (허브) → 그룹 페이지 → 멤버 페이지 → 소속 그룹으로 되돌아감
 // 순수 텍스트 목록이라 가볍고, 데뷔연도를 같이 실어 "2015년 데뷔 걸그룹" 류 쿼리도 받는다.
+function relationHubSection(lang, relLinks) {
+  if (!relLinks?.length) return '';
+  return `\n  <h2>${lang === 'en' ? 'Collaborations & covers' : '콜라보 · 커버'}</h2>
+  <ul>
+      ${relLinks.map(r => `<li><a href="${r.href}">${escHtml(r.label)}</a>${r.n == null ? '' : ` <span class="yr">${r.n}</span>`}</li>`).join('\n      ')}
+  </ul>`;
+}
 function hubPageHtml(lang, relLinks) {
   const isEn = lang === 'en';
   const selfUrl = `${SITE}/${isEn ? 'en/g/' : 'g/'}`;
@@ -867,11 +874,7 @@ function hubPageHtml(lang, relLinks) {
   <ul>
       ${items}
   </ul>
-${(relLinks && relLinks.length) ? `
-  <h2>${isEn ? 'Collaborations & covers' : '콜라보 · 커버'}</h2>
-  <ul>
-      ${relLinks.map(r => `<li><a href="${r.href}">${escHtml(r.label)}</a> <span class="yr">${r.n}</span></li>`).join('\n      ')}
-  </ul>` : ''}
+${relationHubSection(lang, relLinks)}
   <div class="lang-switch"><a href="${altUrl}">${isEn ? '한국어로 보기' : 'View in English'}</a></div>
 </div>
 </body>
@@ -1156,18 +1159,25 @@ async function buildRelationPages() {
   return { sitemap: relPages, hubLinks };
 }
 
-// 실패해도 나머지 빌드는 그대로 — 기존 관계 페이지를 스캔해 sitemap 항목만 유지한다
+// DB 실패 시 기존 관계 페이지와 허브 진입 링크를 함께 보존한다(수량은 재조회 없이 추정하지 않음).
 function existingRelPages() {
-  const out = [];
+  const out = [], hubLinks = { ko: [], en: [] };
   for (const base of ['collab', 'cover', 'en/collab', 'en/cover']) {
     const dir = path.join(ROOT, base);
     if (!fs.existsSync(dir)) continue;
     for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
-      if (e.isDirectory() && fs.existsSync(path.join(dir, e.name, 'index.html')))
-        out.push({ loc: `${SITE}/${base}/${e.name}/`, priority: '0.5' });
+      if (e.isDirectory() && fs.existsSync(path.join(dir, e.name, 'index.html'))) {
+        const loc = `${SITE}/${base}/${e.name}/`;
+        out.push({ loc, priority: '0.5' });
+        const html = fs.readFileSync(path.join(dir, e.name, 'index.html'), 'utf8');
+        const title = html.match(/<h1[^>]*>([^<]*)<\/h1>/i)?.[1] || e.name;
+        // 빌더의 escHtml이 사용하는 엔티티만 역변환, 렌더 시 다시 이스케이프한다.
+        const label = title.replace(/&(amp|lt|gt|quot|#39);/g, (_, k) => ({amp:'&',lt:'<',gt:'>',quot:'"','#39':"'"}[k]));
+        hubLinks[base.startsWith('en/') ? 'en' : 'ko'].push({ href: loc, label, n: null });
+      }
     }
   }
-  return out;
+  return { sitemap: out, hubLinks };
 }
 
 // ── 곡별 정적 페이지(2026-10-16, 검색노출 2단계) ─────────────────────────────────────────────
@@ -1353,9 +1363,10 @@ function buildSongPages() {
     relPages = r.sitemap; hubLinks = r.hubLinks;
     console.log(`관계 페이지 ${relPageCount}개 생성 (/collab/, /cover/ · 양 언어)`);
   } catch (e) {
-    relPages = existingRelPages();
-    console.warn(`⚠️ 관계 페이지 건너뜀 (${e.message}) — 기존 ${relPages.length}개를 sitemap에만 유지`);
-    console.warn('   회사망이면 NODE_TLS_REJECT_UNAUTHORIZED=0 node build_group_pages.js 로 재실행');
+    const existing = existingRelPages();
+    relPages = existing.sitemap; hubLinks = existing.hubLinks;
+    console.warn(`⚠️ 관계 페이지 건너뜀 (${e.message}) — 기존 ${relPages.length}개와 허브 링크 유지`);
+    console.warn('   인증서 오류면 node --use-system-ca build_group_pages.js 로 재실행');
   }
 
   // 허브는 관계 페이지 목록을 실어야 하므로 여기서 쓴다(위 pages.push는 sitemap 기록용)

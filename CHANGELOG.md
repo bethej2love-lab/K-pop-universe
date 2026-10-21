@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-10-21 (Codex — SEO 조회 실패 시 허브 링크 보존)
+- **[수정] [build_group_pages.js] [tests/seo-relation-fallback.test.js]** 09:54 CI #39523759536 실패는 static-links 7/8: 기존 한국어 관계 페이지 105개에 허브 진입 링크 없음. 관계 DB 실패 fallback이 sitemap만 복원하고 hubLinks는 빈 배열로 덮어쓴 원인. 기존 파일에서 한/영 h1과 URL을 복구해 sitemap·허브를 함께 보존, 조회 실패 시 수량은 추정하지 않고 생략. 성공 경로의 수량 표기는 유지. TLS 비활성화 안내는 system CA 사용으로 교체.
+- **[복구] [g/index.html] [en/g/index.html]** 전체 DB 재수집 없이 실제 기존 관계 파일 210개(언어별 105)의 목록 링크만 복원. 페이지 본문·영상·태그·DB·Claude UI는 무변경. 이후 생성도 동일 helper 사용.
+- **[검증 통과]** 새 fallback 회귀(실제 기존 210페이지·양 언어·라벨 escape·성공 경로 수량), 수정 전 코드 실패 확인, seo-relation-query, syntax, validate-data 오류 0/경고 142, Chrome desktop/390px 신규 프로필 smoke. static-links 8/8: 내부 링크 341,295개 실재·한국어 관계 105개 전부 허브 연결. Windows 반복 existsSync 지연으로 원본 실행 중단 후 동일 불변 파일의 실측 존재 결과만 메모이제이션해 같은 검사 실행(판정/기준 변경 없음); CI는 원본 그대로 실행.
+- **⏳ 덜 된 일**: GitHub `Data validation & tests`에서 static-links 포함 전 항목 정상 완료 확인 전에는 운영 복구 완료로 단정 금지. 장시간 SEO 전량 재생성/정기 수집은 이번 소규모 수정의 검증 범위 아님.
+
 ## 2026-10-21 (Claude Code — 사용자 요청 묶음: 기념일·라벨·추천·카드 표기 등)
 - **[완료] [index.html] [tests/anniv-dim.test.js]** "츄 활동 열심히 하는데 투데이 애니버서리에 왜 어둡게". 원인 둘: ① 츄는 artists.json `active:false`(이달의소녀 탈퇴)라 생일 카드가 **즉시** 흐려짐 ② 2022 탈퇴 이후 츄 본인 태깅 영상 0건 — 공식 채널 **@CHUUOfficial**("CHUU 츄 Official Youtube Channel", 유튜브 채널 검색·소개글로 확인)이 수집 대상이 아님(GROUPS에 있는 전 소속 그룹을 가진 사람은 솔로 경로가 안 타고, 개인 채널 ext_channels tier=idol에도 없음). 수정: 최근 2년(`_ANNIV_DORMANT_DAYS`) 안에 본인 디스코가 있으면 활동 중으로(`_annivRecentRelease`) — active:false 151명 중 36명이 밝아짐(츄·우즈·원호·라비·박재범·B.I 등, 전부 실제 솔로 발매자).
 - **[완료] [index.html]** "우주 행성 이름 라벨 랜덤 아냐? 왜 엑스원이 자주 보이지?" — 랜덤 아님: 점수 = √반지름(멤버 수) × 관리자 등급(A×4) ÷ 거리, 느린 물결로 몇 개씩 교대. A등급이 114팀이라 등급으로 안 갈리고 11인 엑스원·워너원이 큰 행성으로 계속 이김. 해체 그룹 라벨 점수 ×0.4(숨김 아님, 순번만 뒤로). 390 헤드리스 첫 화면 40초 표본: 전 워너원 35·엑스원 35·에이티즈 25… → 후 트레저 28·아이덴티티 22·트리플에스 18·클로즈유어아이즈 17·에이티즈 16… (해체 그룹 0).
