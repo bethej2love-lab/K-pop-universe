@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2026-10-21 (Claude Code — 나침반 패널 더 빨리)
+- **[완료] [index.html]** 사용자 "나침반 패널 3초 뒤에 뜨나? 조금만 더 빨리". 자동 열림 대기 `REVEAL.panel` 1300→500ms(우주 열림 clip 700ms 끝나자마자). 헤드리스 폰(390, 재방문 조건) 접속~feed-open 실측 3.5·3.7초 → 2.7·3.1초. syntax·chrome-reveal·onboard-tips 8/8 통과.
+- **[이슈·기존]** tests/reveal.test.js([3] veil/ring CSS 잔존)·tests/feed-tabbar-hide.test.js(10/17, 탭바 안 숨음)는 **이번 변경 전 코드에서도 똑같이 실패** — 원인 미조사.
+
 ## 2026-10-21 (Claude Code — 아이폰 스크린샷 6건)
 - **[완료] [kpop_universe.css] [index.html]** 사용자 아이폰 스크린샷 6건(Downloads, 파일 제목=문제). 390px 헤드리스로 재현·확인:
   ① 그룹 카드 영문명·SNS 줄이 두 줄로 나뉠 때(gc-en-stack) 가운데로 쏠림 — `#gc.has-gc-pic #gc-en-row{align-items:center}`가 우선순위로 이김 → `#gc #gc-en-row.gc-en-stack`로 왼쪽 정렬(이름 줄 시작과 같은 103px). 아이폰은 글자가 넓어 리센느처럼 헤드리스에선 한 줄인 그룹도 두 줄이 된다.

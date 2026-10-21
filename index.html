@@ -3576,7 +3576,8 @@ async function buildUniverse(){
 // 2026-09-02 5차("더 빨라야"): clip 1000→850, 텍스트도 800/450으로(위 _minShow). 첫 ~1.65초+로드버퍼.
 // panel: 탐험(나침반) 패널 peek 자동오픈까지의 대기. hint(별똥별·기념일 연출)와 분리해서 따로 둔다 —
 // 2026-09-21 제보 "첫 화면에서 패널이 조금만 더 빨리 열렸으면". 2500ms(clip+hint) → 2000ms(clip+panel).
-const REVEAL={clip:700,text:350,label:500,hint:1800,panel:1300};
+// 2026-10-21 "3초 뒤에 뜨나? 조금만 더 빨리" — panel 1300→500(우주 열림 clip이 끝나자마자). 헤드리스 폰 실측 접속~열림 3.5초→2.7초.
+const REVEAL={clip:700,text:350,label:500,hint:1800,panel:500};
 // 부팅 중 숨겨둔 UI 크롬(탭바·줌·헤더)을 우주와 **같이** 드러낸다. 리빌이 끝난 뒤가 아니라
 // 클립이 시작되는 순간 함께 나타나야 "열리면서 다 보인다"가 된다.
 function _endBooting(){try{document.documentElement.classList.remove('booting');}catch(e){}}
