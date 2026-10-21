@@ -109,10 +109,18 @@ function dataHealthMd() {
 }
 
 async function safeCount(query) {
-  try { const { count } = await query; return count; } catch { return null; }
+  try {
+    const { count, error } = await query;
+    if (error) { console.warn('[weekly] 집계 실패: ' + error.message); return null; }
+    return count;
+  } catch (e) { console.warn('[weekly] 집계 실패: ' + e.message); return null; }
 }
 async function safeData(query) {
-  try { const { data } = await query; return data; } catch { return null; }
+  try {
+    const { data, error } = await query;
+    if (error) { console.warn('[weekly] 조회 실패: ' + error.message); return null; }
+    return data;
+  } catch (e) { console.warn('[weekly] 조회 실패: ' + e.message); return null; }
 }
 
 async function main() {
@@ -126,7 +134,7 @@ async function main() {
     safeCount(sb.from('yt_channel_videos').select('id', { count: 'exact', head: true }).eq('content_flag', '보류')),
     safeCount(sb.from('yt_channel_videos').select('id', { count: 'exact', head: true }).eq('content_flag', 'hidden')),
     safeCount(sb.from('tag_review_queue').select('id', { count: 'exact', head: true }).is('resolved_at', null)),
-    safeCount(sb.from('yt_view_milestones').select('id', { count: 'exact', head: true }).gte('crossed_at', weekAgoStr).eq('seeded', false)),
+    safeCount(sb.from('yt_view_milestones').select('video_id', { count: 'exact', head: true }).gte('crossed_at', weekAgoStr).eq('seeded', false)),
     safeCount(sb.from('music_show_wins').select('id', { count: 'exact', head: true }).gte('win_date', weekAgoStr)),
     safeCount(sb.from('yt_channel_videos').select('id', { count: 'exact', head: true })),
   ]);
