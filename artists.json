@@ -77220,6 +77220,39 @@
     ],
     "discography": [
       {
+        "title": "스트릿 월드 파이터 : 디렉터스 워 (SDF) Original Vol. 6 (FINAL)",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/150/09/460/15009460_20261020145929_500.jpg",
+        "releaseDate": "2026.10.21",
+        "trackCount": 4,
+        "titleTrack": "Underwater (Prod By THE HUB)",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Underwater (Prod By THE HUB)",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Run Alone, But Never Alone (Prod By THE HUB)",
+            "isTitle": true
+          },
+          {
+            "no": 3,
+            "title": "En Garde (Prod By THE HUB)",
+            "isTitle": true
+          },
+          {
+            "no": 4,
+            "title": "Trojan Horse (Prod By THE HUB)",
+            "isTitle": true
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "15009460"
+      },
+      {
         "title": "Live My Life (Feat. Anderson .Paak, Nic D)",
         "type": "정규",
         "isMain": true,
@@ -280306,6 +280339,29 @@
     },
     "left": "2018.12.26",
     "discography": [
+      {
+        "title": "나를 숨쉬게 만드는 너",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/147/48/756/14748756_20261015095849_500.jpg",
+        "releaseDate": "2026.10.21",
+        "trackCount": 2,
+        "titleTrack": "나를 숨쉬게 만드는 너",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "나를 숨쉬게 만드는 너",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "나를 숨쉬게 만드는 너 (Inst.)",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "14748756"
+      },
       {
         "title": "너와 참 행복했는데",
         "type": "싱글",
