@@ -5,6 +5,7 @@ const path = require('path');
 const assert = require('assert/strict');
 const {execFileSync, spawnSync} = require('child_process');
 const yaml = fs.readFileSync(path.join(__dirname, '../.github/workflows/rebuild-seo-pages.yml'), 'utf8');
+assert(yaml.includes("- 'tools/seo_inputs_unchanged.cjs'"), '공유 추출기 변경도 SEO 재빌드 트리거에 포함');
 const start = yaml.indexOf('              git commit -m');
 const end = yaml.indexOf('              echo "push 경합', start);
 assert(start >= 0 && end > start, '실제 publish 구간 추출');
