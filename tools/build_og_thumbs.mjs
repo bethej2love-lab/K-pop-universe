@@ -113,7 +113,11 @@ const gkos = Object.keys(groups);
 // 그게 고쳐지기 전에도 **대표 이미지가 남의 무대가 되는 일은 막아야 한다**.
 // 제목에 원곡 크레딧이 있거나 cover_of_*가 붙은 행은 후보에서 뺀다 — 자기 곡을 자기가 부른 정상
 // 커버여도(CORTIS의 JoyRide 등) 대표 이미지로는 MV·직캠이 낫고, 후보는 어차피 넉넉하다.
-const COVER_CREDIT = /원곡|\bcover(ed)?\b|original\s+(song\s+)?by|歌ってみた/i;
+// ♬곡 - 원곡자: Mnet 서바이벌(아이랜드2·보이즈플래닛·리벤지배틀·퀸덤퍼즐…)의 곡 크레딧 표기. 연습생이 부른 남의 곡이
+// 원곡자 그룹으로 붙어 블랙핑크 공유 이미지가 리벤지배틀 연습생 페이스캠이었다(2026-10-21 사용자 제보).
+const COVER_CREDIT = /원곡|\bcover(ed)?\b|original\s+(song\s+)?by|歌ってみた|♬[^@#|]*?[-–—]\s*\S/i;
+// 숨김 표시 — DB 값은 한글(무관·보류·기타·개별출연)인데 예전엔 영어(hidden/irrelevant)만 걸러 이미 숨긴 영상이 대표로 뽑혔다(2026-10-21, 2,415개 중 156개).
+const isHiddenFlag = fl => !!fl && fl !== '확인';
 const isCoverish = v => COVER_CREDIT.test(v.title || '')
   || (v.cover_of_members || []).length > 0 || (v.cover_of_groups || []).length > 0;
 const dirtyIds = new Set(); // 예전 캐시가 이런 영상을 물고 있으면 --keep-existing이어도 새로 뽑는다
@@ -136,7 +140,7 @@ for (const { key: gko, solo } of queryKeys) {
   try { rows = await fetchJson(SB + '?' + q); } catch (e) { console.warn(`  ! ${gko} 조회 실패: ${e.message}`); }
   for (const v of rows) {
     if (!v.id) continue;
-    if (v.content_flag === 'hidden' || v.content_flag === 'irrelevant') continue; // 숨김/무관 처리분 제외
+    if (isHiddenFlag(v.content_flag)) continue; // 숨김/무관 처리분 제외
     if (isCoverish(v)) { dirtyIds.add(v.id); continue; } // 커버 무대는 대표 썸네일 후보에서 제외(위 주석)
     const elig = ELIGIBLE.has(v.category);
     if (solo) {
@@ -188,7 +192,7 @@ if (prevForAudit) {
   for (let i = 0; i < ids.length; i += 100) {
     const batch = ids.slice(i, i + 100);
     let rows = [];
-    try { rows = await fetchJson(SB + '?' + new URLSearchParams({ select: 'id,title,cover_of_members,cover_of_groups,with_members,with_groups,members,group_ko,is_short', id: 'in.(' + batch.join(',') + ')', limit: '200' })); }
+    try { rows = await fetchJson(SB + '?' + new URLSearchParams({ select: 'id,title,cover_of_members,cover_of_groups,with_members,with_groups,members,group_ko,is_short,content_flag', id: 'in.(' + batch.join(',') + ')', limit: '200' })); }
     catch (e) { console.warn(`  ! 캐시 검증 배치 실패: ${e.message}`); continue; }
     for (const v of rows) {
       // 커버뿐 아니라 **대표성 규칙 위반**도 오염으로 본다(2026-09-15). 규칙을 새로 넣었는데
@@ -198,7 +202,7 @@ if (prevForAudit) {
       const gko = usedAsGroup ? (idToKeys.get(v.id).find(k => k.startsWith('groups|')) || '').split('|')[1] : null;
       const violates = usedAsGroup && badForGroup(v, memberCountOf[gko] || 0);
       // 쇼츠(세로)도 다시 뽑는다(2026-10-19, 사용자: "공유 썸네일은 가로 영상 위주" — A2O LITE가 세로 쇼츠였다). 가로가 없으면 다시 쇼츠가 뽑힐 뿐
-      if (!isCoverish(v) && !violates && !v.is_short) continue;
+      if (!isCoverish(v) && !violates && !v.is_short && !isHiddenFlag(v.content_flag)) continue;
       dirtyIds.add(v.id);
       for (const key of (idToKeys.get(v.id) || [])) {
         const name = key.startsWith('members|') ? key.split('|').pop() : null; // "members|소녀시대|태연" → 태연
@@ -218,7 +222,7 @@ if (prevForAudit) {
     try { rows = await fetchJson(SB + '?' + q); } catch (e) { console.warn(`  ! ${name} 재조회 실패: ${e.message}`); continue; }
     for (const v of rows) {
       if (!v.id) continue;
-      if (v.content_flag === 'hidden' || v.content_flag === 'irrelevant') continue;
+      if (isHiddenFlag(v.content_flag)) continue;
       if (isCoverish(v)) { dirtyIds.add(v.id); continue; }
       soloPick[name] = better(soloPick[name], v);
       if (ELIGIBLE.has(v.category)) (soloCands[name] ??= []).push(v);
@@ -279,7 +283,7 @@ if (misses.length) {
     let best = null; const cands = [];
     for (const v of rows) {
       if (!v.id) continue;
-      if (v.content_flag === 'hidden' || v.content_flag === 'irrelevant') continue;
+      if (isHiddenFlag(v.content_flag)) continue;
       if (isCoverish(v)) { dirtyIds.add(v.id); continue; }
       best = better(best, v);
       if (ELIGIBLE.has(v.category)) cands.push(v);

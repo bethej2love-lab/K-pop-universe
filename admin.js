@@ -8463,8 +8463,13 @@ function _m2DebutBlocks(gko,publishedAt){
 // ⚠️ 매처(_m2ParseTitle)와 재배정 스윕의 "저장 그룹이 제목에 있나" 판정(_mtNorm)이 **같은 함수**를 써야 한다.
 //    한쪽만 지우면 스윕이 "제목에 애프터스쿨 근거 있음"으로 보고 오염 행을 전부 건너뛴다(실제로 그럴 뻔했다).
 // 브랜드명도 같은 이유로 지운다(2026-10-12): "LOUIS VUITTON"의 Louis가 블랭키 루이(en Louis)로 잡혔다(티오원 전수 중 발견).
+// Mnet 서바이벌의 곡 크레딧 "♬곡 - 원곡자"도 출연 근거가 아니다(2026-10-21) — 리벤지배틀·보이즈플래닛·아이랜드2 연습생이 부른
+// 블랙핑크 곡이 group_ko=블랙핑크가 됐다(블랙핑크 67건, 공유 미리보기까지 연습생 페이스캠). 크레딧은 다음 구분자(@ # | ｜)까지.
+// ⚠️ 킹덤·로드투킹덤·퀸덤 계열은 같은 ♬ 표기가 "♬곡 - **실제 공연자** (원곡: X)"라 지우면 안 된다(하드캐리 - TOO, Sovereign Shadows - 원어스).
+//    ♬ 제목 1,000건 이전/새 매처 차분으로 갈랐다 — 그 계열과 "원곡" 표기가 같이 있는 제목은 건드리지 않는다.
 function _stripProgramNames(t){
-  return String(t||'')
+  const s0=String(t||'');
+  return (/킹덤|KINGDOM|퀸덤|QUEENDOM|킹['’]|로투킹|원곡/i.test(s0)?s0:s0.replace(/♬[^@#|｜]*?[-–—][^@#|｜]*/g,' '))
     .replace(/\b(after|before)\s*school\s*club\b/gi,' ')
     .replace(/(애프터|비포)\s*스쿨\s*클럽/g,' ')
     .replace(/\blouis\s*vuitton\b/gi,' ').replace(/루이\s*비통/g,' ');
