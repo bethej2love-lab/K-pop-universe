@@ -65,7 +65,16 @@ function cleanCell(raw) {
 function parseDate(s) {
   const m = s.match(/([A-Za-z]+)\s+(\d{1,2}),?\s+(\d{4})/);
   if (m && MONTHS[m[1].toLowerCase()]) return `${m[3]}-${String(MONTHS[m[1].toLowerCase()]).padStart(2, '0')}-${String(+m[2]).padStart(2, '0')}`;
-  return null;
+  return parseDateRange(s)[0];
+}
+// 날짜 범위 "July 6–7, 2024"·"July 30 – August 1, 2024" → [시작, 끝] (2026-10-22: 에이티즈 팬미팅 표가 전부 범위라 통째로 빠졌다)
+function parseDateRange(s) {
+  const ymd = (mo, d, y) => MONTHS[mo.toLowerCase()] ? `${y}-${String(MONTHS[mo.toLowerCase()]).padStart(2, '0')}-${String(+d).padStart(2, '0')}` : null;
+  const r = s.match(/([A-Za-z]+)\s+(\d{1,2})\s*[–—-]\s*(?:([A-Za-z]+)\s+)?(\d{1,2}),?\s+(\d{4})/);
+  if (r) return [ymd(r[1], r[2], r[5]), ymd(r[3] || r[1], r[4], r[5])];
+  const one = s.match(/([A-Za-z]+)\s+(\d{1,2}),?\s+(\d{4})/);
+  const d = one ? ymd(one[1], one[2], one[3]) : null;
+  return [d, d];
 }
 
 // ── 한 표를 행렬로(rowspan/colspan 캐리) ───────────────
@@ -80,11 +89,18 @@ function parseTable(tblText) {
   });
   const idx = name => headerCells.findIndex(h => new RegExp('^' + name, 'i').test(h));
   const di = idx('Date'), ci = idx('City'), coi = idx('Country'), vi = idx('Venue');
+  // 공연명 열(목록 문서의 "Title"·"Event" 등) — 있으면 행마다 이게 진짜 공연명이다. 없을 때만 헤딩으로 추정(2026-10-22:
+  // "List of Got7 live performances"의 팬미팅 110회가 전부 섹션명 "Fanmeeting tours"로 저장돼 있었다)
+  const ti = idx('(Title|Event|Name|Concert|Tour|Show)');
   if (di < 0 || ci < 0) return null; // 일정표 아님
   const nCols = headerCells.length;
   const pending = {}; // col -> {value, rows}
   const out = [];
+  let cancelled = false;
   for (const rowText of rows.slice(hIdx + 1)) {
+    // 표 중간의 "! colspan=6 | List of cancelled dates" 구분줄 — 그 아래는 취소된 공연이다(2026-10-22)
+    if (/^\s*!.*(cancel|postpone)/im.test(rowText)) cancelled = true;
+    if (cancelled) continue;
     // 셀 추출: 줄이 '|'로 시작(‖ 또는 개별줄), '||'로 다중
     const cells = [];
     for (const ln of rowText.split('\n')) {
@@ -117,9 +133,9 @@ function parseTable(tblText) {
       }
       col += cell.colspan;
     }
-    const date = parseDate(rowArr[di] || '');
+    const [date, dateEnd] = parseDateRange(rowArr[di] || '');
     if (!date) continue;
-    out.push({ date, city: rowArr[ci] || '', country: coi >= 0 ? (rowArr[coi] || '') : '', venue: vi >= 0 ? (rowArr[vi] || '') : '' });
+    out.push({ date, dateEnd,city: rowArr[ci] || '', country: coi >= 0 ? (rowArr[coi] || '') : '', venue: vi >= 0 ? (rowArr[vi] || '') : '', title: ti >= 0 ? (rowArr[ti] || '') : '' });
   }
   return out;
 }
@@ -157,14 +173,27 @@ function parseToursFromWt(wt) {
   const shows = [];
   const parts = wt.split(/\{\|/);
   let prefix = parts[0];
-  const GENERIC = /^(concert tours?|tours?|headlining|co-headlining|concerts?|joint|fan meetings?|live performances?|showcases?|promotional)/i;
+  const GENERIC = /^(concert tours?|tours?|headlining|co-headlining|concerts?|joint|fan ?meetings?|fanmeeting tours?|live performances?|(live )?showcases?|promotional|special concerts?|world tours?)/i;
+  // 투어 문서 본문의 목차 제목 — 투어명이 아니다(2026-10-22 실측: "Background" 22·"Set lists" 74·"Commercial performance" 43·
+  // "Impact"·"Europe"·"Surprise encore songs"가 그대로 공연명으로 저장돼 있었다). 건너뛰고 더 위로, 끝까지 없으면 문서 제목.
+  const JUNK = /^(background|set ?lists?|commercial (performance|reception)|critical reception|reception|impact|releases?|europe|asia|(north |south |latin )?americas?|oceania|japan|middle east|surprise encore songs?|personnel|notes|references|overview|development|history|broadcasts?|box ?office|controvers(y|ies)|songs? performed|encore|summary|media)$/i;
   for (let i = 1; i < parts.length; i++) {
     const tbl = parts[i].split(/\n\|\}/)[0];
-    if (/\|\s*Date/i.test(tbl) && /\|\s*City/i.test(tbl)) {
+    if (/[|!]\s*Date/i.test(tbl) && /[|!]\s*City/i.test(tbl)) { // 헤더가 "!Date"(줄 시작)인 표도(2026-10-22)
       // 이 표 직전의 마지막 헤딩(=== 투어명 ===)을 섹션명으로
       const hm = [...prefix.matchAll(/^={2,4}\s*(.+?)\s*={2,4}\s*$/gm)];
+      const near = hm.length ? cleanCell(hm[hm.length - 1][1]) : '';
+      // 취소 공연 표·여러 가수 페스티벌 표는 통째로 건너뛴다(페스티벌 표는 열 구성이 달라 공연장 칸에 도시, 국가 칸에 곡 목록이 들어갔었다)
+      if (/cancel|postpone|festivals?$/i.test(near)) { prefix += '{|' + parts[i]; continue; }
       let sec = ''; // 위로 올라가며 첫 비일반 헤딩 = 투어명("Tour dates"·"Concert tours"는 건너뜀)
-      for (let h = hm.length - 1; h >= 0; h--) { const t = cleanCell(hm[h][1]); if (t && !GENERIC.test(t) && !/tour dates|setlist|shows?$/i.test(t)) { sec = t; break; } }
+      for (let h = hm.length - 1; h >= 0; h--) {
+        const t = cleanCell(hm[h][1]);
+        if (!t || JUNK.test(t) || /(tour|concert|show) dates|^dates$|setlist|shows?$/i.test(t)) continue;
+        // 일반 헤딩("Concerts"·"Fanmeeting tours")은 이 표 자신의 분류다 — 그 위의 투어명을 끌어오면 남의 투어가 된다(GOT7 단독 콘서트가
+        // 바로 위 "Keep Spinning World Tour"로 들어갔었다). 여기서 멈추고 행의 공연명 열이나 문서 제목을 쓴다.
+        if (GENERIC.test(t)) break;
+        sec = t; break;
+      }
       const rows = parseTable(tbl);
       if (rows) for (const r of rows) shows.push({ ...r, section: sec });
     }
@@ -289,6 +318,26 @@ if (argv.includes('--search-all')) {
   }
   fs.writeFileSync('/tmp/tours_raw2.json', JSON.stringify(out));
   console.log(`\n\n검색발견 완료 — ${Object.keys(out).length}그룹 · ${tot}회차 → /tmp/tours_raw2.json`);
+  process.exit(0);
+}
+// 기존 kpop_events 제목 재판정용(2026-10-22): 그룹 목록 파일(한 줄에 한글명) → 그룹별 공연(+문서 제목). 중간에 끊겨도 이어서.
+if (argv.includes('--retitle')) {
+  const G = JSON.parse(fs.readFileSync(ROOT + '/groups.json', 'utf8'));
+  const list = fs.readFileSync(argv[argv.indexOf('--retitle') + 1], 'utf8').split(/\r?\n/).filter(Boolean);
+  const outFile = argv[argv.indexOf('--retitle') + 2];
+  const out = fs.existsSync(outFile) ? JSON.parse(fs.readFileSync(outFile, 'utf8')) : {};
+  let gi = 0;
+  for (const ko of list) {
+    gi++; if (out[ko]) continue;
+    const en = G[ko]?.en; if (!en) { out[ko] = []; continue; }
+    const shows = [];
+    for (const a of tourArticles(en)) for (const s of parseTours(a)) shows.push({ ...s, tour: a });
+    try { shows.push(...discoverGroup(resolveTitle(en))); } catch (e) {}
+    out[ko] = shows;
+    fs.writeFileSync(outFile, JSON.stringify(out));
+    process.stderr.write(`\r[${gi}/${list.length}] ${ko} ${shows.length}회    `);
+  }
+  console.log('\n완료 → ' + outFile);
   process.exit(0);
 }
 console.log('사용: --tour "제목" | --group 한글명 | --all | --search 한글명 | --search-all');

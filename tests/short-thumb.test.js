@@ -72,17 +72,26 @@ const run = steps => {
   need(/oardefault\.jpg$/.test(r.img.src) && r.log.join() === 'ready' && !r.img.cls.has('is-fallback') && /oardefault/.test(r.bg.style.backgroundImage || ''),
     '세로 원본 있음 → 그대로 표시 + 블러 배경도 세로 원본');
 }
+// 2026-10-22: 세로 원본이 없으면 hqdefault 전에 oar2(1080×1920 세로 프레임) — hqdefault를 9:16로 키우면 뿌옇다
 {
-  const r = run([[120, 90], [480, 360]]);
-  need(/hqdefault\.jpg$/.test(r.img.src) && r.img.cls.has('is-fallback') && r.log.join() === 'ready',
-    '120×90 플레이스홀더 → hqdefault + .is-fallback 후 ready');
+  const r = run([[120, 90], [1080, 1920]]);
+  need(/oar2\.jpg$/.test(r.img.src) && !r.img.cls.has('is-fallback') && r.log.join() === 'ready',
+    '120×90 플레이스홀더 → oar2(세로 프레임) 후 ready');
 }
 {
-  const r = run(['error', [480, 360]]);
-  need(/hqdefault\.jpg$/.test(r.img.src) && r.img.cls.has('is-fallback') && r.log.join() === 'ready', 'oardefault 404 → hqdefault 폴백');
+  const r = run(['error', [1080, 1920]]);
+  need(/oar2\.jpg$/.test(r.img.src) && !r.img.cls.has('is-fallback') && r.log.join() === 'ready', 'oardefault 404 → oar2');
 }
 {
-  const r = run(['error', 'error']);
+  const r = run(['error', 'error', [480, 360]]);
+  need(/hqdefault\.jpg$/.test(r.img.src) && r.img.cls.has('is-fallback') && r.log.join() === 'ready', 'oardefault·oar2 둘 다 없음 → hqdefault 폴백');
+}
+{
+  const r = run([[120, 90], [120, 90], [480, 360]]);
+  need(/hqdefault\.jpg$/.test(r.img.src) && r.img.cls.has('is-fallback') && r.log.join() === 'ready', '둘 다 플레이스홀더 → hqdefault 폴백');
+}
+{
+  const r = run(['error', 'error', 'error']);
   need(r.log.join() === 'fail', '폴백까지 실패 → onFail(아이콘 폴백 등 호출부 처리)');
 }
 

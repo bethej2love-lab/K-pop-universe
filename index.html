@@ -6284,14 +6284,21 @@ function _isLegacyShortCat(v){return !!v&&v.category==='short';}
 function _mountShortThumb(img,id,opts){
   const o=opts||{};
   const setBg=()=>{if(o.bg)o.bg.style.backgroundImage=`url(${img.src})`;};
-  const fallback=()=>{img.classList.add('is-fallback');img.src=`https://i.ytimg.com/vi/${id}/hqdefault.jpg`;};
+  // ② 세로 원본이 없으면 oar2(1080×1920 세로 프레임) — 2026-10-22 사용자 "Trend 쇼츠 일부 썸네일이 뿌옇다". hqdefault는 쇼츠면
+  //    480×360 안에 세로 화면(≈202×360)이 있고 양옆은 유튜브가 블러로 채운 것이라, 9:16 카드(2배율 338×600)에 키우면 흐렸다.
+  //    실측: oardefault 404인 쇼츠 3/3에 oar2가 있었고 가로 영상엔 없다(404). ③ 그것도 없을 때만 hqdefault.
+  const isOar=()=>/\/oar(default|2)\.jpg$/.test(img.src);
+  const fallback=()=>{
+    if(img.src.includes('oardefault')){img.src=`https://i.ytimg.com/vi/${id}/oar2.jpg`;return;}
+    img.classList.add('is-fallback');img.src=`https://i.ytimg.com/vi/${id}/hqdefault.jpg`;
+  };
   img.onload=()=>{
-    if(img.src.includes('oardefault')&&img.naturalWidth===120&&img.naturalHeight===90){fallback();return;}
+    if(isOar()&&img.naturalWidth===120&&img.naturalHeight===90){fallback();return;}
     setBg();
     if(o.onReady)o.onReady(img);
   };
   img.onerror=()=>{
-    if(img.src.includes('oardefault')){fallback();return;}
+    if(isOar()){fallback();return;}
     img.onerror=null;img.onload=null;
     if(o.onFail)o.onFail(img);
   };
@@ -22126,7 +22133,9 @@ function _setFeedCardThumb(item,thumbUrl){
   // oardefault가 없으면 유튜브가 404 대신 120×90 회색 플레이스홀더를 정상 이미지로 응답하므로 onload에서 크기로 감지해 폴백.
   const vid=isShort?(String(thumbUrl||'').match(/\/vi\/([^/]+)\//)||[])[1]:null;
   // 쇼츠 카드는 썸네일 뒤에 블러 배경을 깔아 좌우 여백을 채움(그룹/멤버 카드 .gc-ch-thumb-bg와 동일, 2026-08-22)
-  if(thumbUrl&&isShort&&!wrap.querySelector('.feed-card-thumb-bg')){const bg=document.createElement('div');bg.className='feed-card-thumb-bg';bg.style.backgroundImage=`url(${thumbUrl})`;wrap.insertBefore(bg,wrap.firstChild);}
+  // ⚠️ 배경 이미지는 미리 깔지 않는다(2026-10-22, 사용자 "쇼츠 썸네일이 뿌옜다가 팍 좋아진다") — 세로 원본을 받는 동안 이 블러 배경이
+  //    셔머 대신 보여 "흐린 썸네일"로 읽혔다. _mountShortThumb가 실제로 뜬 이미지로 채운다(셔머는 그때까지 유지).
+  if(thumbUrl&&isShort&&!wrap.querySelector('.feed-card-thumb-bg')){const bg=document.createElement('div');bg.className='feed-card-thumb-bg';wrap.insertBefore(bg,wrap.firstChild);}
   if(!thumbUrl){
     const sh=wrap.querySelector('.feed-card-shimmer');
     if(sh){wrap.innerHTML='<div class="feed-card-icon-fallback">'+(sh.dataset.icon||'🎵')+'</div>';}
@@ -23553,7 +23562,10 @@ async function _buildFeedDailyNews(){
         const dd=Math.round((Date.parse(todayK)-Date.parse(b.date))/86400000);
         if(dd>7||dd<-7)return;
         const d=new Date(b.date+'T00:00:00Z'),lbl=`${d.getUTCMonth()+1}/${d.getUTCDate()}(${dw[d.getUTCDay()]})`;
-        items.push({type:'break',title:b.show,sub:dd<0?(ko?lbl+' 결방 예정':lbl+' · not airing'):(ko?lbl+' 결방':lbl+' · not aired'),thumb:null,nav:()=>{},score:dd<0?46:99});
+        // 순서(2026-10-22 사용자: "화요일 이후엔 결방이 위에 혼자 있을 필요 없다, 1위 쪽으로") — 다음 날(월요일)까지만 맨 위,
+        // 그 뒤로는 같은 날 1위와 같은 점수(100-경과일×20)에서 살짝 아래 = 그날 음방 1위들 옆에 선다.
+        const sc=dd<0?46:dd<=1?99:Math.max(0,100-dd*20)-0.5;
+        items.push({type:'break',title:b.show,sub:dd<0?(ko?lbl+' 결방 예정':lbl+' · not airing'):(ko?lbl+' 결방':lbl+' · not aired'),thumb:null,nav:()=>{},score:sc});
       });
     }catch(e){}
     _renderNewsList(list,items);
@@ -23667,7 +23679,9 @@ function _appendNewsRow(container,{type,title,sub,thumb,nav,square}){
   const LABELS={album:'💿 신보',win:'🏆 1위',mv:'🎬 MV',teaser:'🎬 티저',milestone:'📈 조회수',break:'결방'};
   const CLS={album:'fnb-album',win:'fnb-win',mv:'fnb-mv',teaser:'fnb-teaser',milestone:'fnb-milestone',break:'fnb-break'};
   const row=document.createElement('div');
-  row.className='feed-news-row'+(type==='milestone'?' is-milestone':'')+(type==='break'?' is-break':'');
+  // 썸네일이 주인공인 소식 — 조회수 돌파와 MV·티저(2026-10-22 사용자: "MV도 조회수처럼 썸네일 위 배지로, 지금은 눈에 안 들어온다")
+  const isMedia=!!thumb&&(type==='milestone'||type==='mv'||type==='teaser');
+  row.className='feed-news-row'+(isMedia?' is-media':'')+(type==='break'?' is-break':'');
   const badge=document.createElement('div');
   badge.className='feed-news-badge '+(CLS[type]||'');
   badge.textContent=LABELS[type]||type;
@@ -23678,14 +23692,17 @@ function _appendNewsRow(container,{type,title,sub,thumb,nav,square}){
   titleEl.textContent=_cleanTitle(title);
   body.appendChild(titleEl);
   if(sub){const subEl=document.createElement('div');subEl.className='feed-news-sub';subEl.textContent=sub;body.appendChild(subEl);}
-  if(type==='milestone'&&thumb){
-    // 조회수 돌파는 썸네일이 주인공 — 이미지를 맨 위 전폭으로, 배지는 썸네일 위 오버레이
+  if(isMedia){
+    // 이미지를 맨 위 전폭으로, 배지는 썸네일 위 오버레이
     const imgWrap=document.createElement('div');imgWrap.className='fnr-media';
     const img=document.createElement('img');
-    img.className='feed-news-thumb feed-news-thumb--milestone';
+    img.className='feed-news-thumb feed-news-thumb--media';
     img.loading='lazy';img.alt='';
     img.addEventListener('load',()=>img.classList.add('loaded'));
-    img.src=thumb;
+    // 전폭이라 mqdefault(320×180)는 2배율 화면에서 흐리다 → hqdefault(480×360, 위아래 띠는 cover로 잘림). 실패하면 원래 것으로
+    const hq=String(thumb).replace(/\/mqdefault(_live)?\.jpg$/,'/hqdefault$1.jpg');
+    if(hq!==thumb)img.addEventListener('error',()=>{if(img.src!==thumb)img.src=thumb;},{once:true});
+    img.src=hq;
     imgWrap.appendChild(img);imgWrap.appendChild(badge);
     const cap=document.createElement('div');cap.className='fnr-cap';
     cap.appendChild(body);

@@ -43,7 +43,11 @@ const CC = { 'Japan': '일본', 'United States': '미국', 'South Korea': '대�
   const CITY_FIX = { 'Hong Kong': '홍콩', 'Kowloon': '홍콩', 'Macau': '마카오', 'Macao': '마카오', 'Taipei': '대만', 'Kaohsiung': '대만', 'Taoyuan': '대만' };
   for (const s of shows) {
     const country = CITY_FIX[s.city] || CC[s.country] || s.country;
-    const tour = (s.section && s.section.trim()) ? s.section
+    // 개별 투어 문서면 문서 제목이 곧 공연명(본문 헤딩은 "Background"·"Americas" 같은 목차라 쓰지 않는다).
+    // "List of …" 목록 문서만 행의 공연명 열 > 섹션 헤딩 > 문서 제목 순(2026-10-22)
+    const single = s.tour && !/^List of /i.test(s.tour);
+    const tour = single ? String(s.tour).replace(/\s*\([^()0-9]*\)$/, '') /* 문서 구분용 괄호 "(Monsta X)"·"(tour)" — 연도는 남김 */
+      : (s.title && s.title.trim()) ? s.title : (s.section && s.section.trim()) ? s.section
       : String(s.tour || '').replace(/^List of /, '').replace(/ (concert tours|live performances)$/i, '');
     sql += `INSERT INTO kpop_events (id,title,type,date_start,date_end,venue,city,country,groups) VALUES (gen_random_uuid(),${esc(tour)},'콘서트',${esc(s.date)},${esc(s.date)},${esc(cleanVenue(s.venue))},${esc(s.city)},${esc(country)},ARRAY[${esc(s.group)}]);\n`;
   }
