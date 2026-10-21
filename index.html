@@ -14831,7 +14831,12 @@ function _discoverHops(a,cofavHop){
     const conns=_shuffle(_rawConnData.filter(c=>c.type==='member'&&(c.a===nm||c.b===nm)));
     for(const c of conns){
       const other=c.a===nm?c.b:c.a;
-      const oa=ARTISTS.find(x=>x.name&&x.group&&x.name.ko===other&&(!c.group||x.group.ko===c.group));
+      // connections의 member 관계 = **같은 그룹 멤버끼리**(우주 연결선과 같은 해석). 이름만으로 찾으면 동명이인 관계를
+      // 끌어온다 — A2O SOUL 에이든의 관계(문·테오…)가 이펙스 에이든 카드에 "같이 작업해요"로 떴다(2026-10-21 제보).
+      // 그래서 지금 사람과 상대가 그 그룹(c.group, 없으면 실존 공통 그룹)을 실제로 공유할 때만 인정한다.
+      const myG=_artistGroups(a).map(x=>x&&x.ko).filter(Boolean);
+      if(c.group&&!myG.includes(c.group))continue;
+      const oa=ARTISTS.find(x=>x.name&&x.group&&x.name.ko===other&&(c.group?_artistGroups(x).some(y=>y&&y.ko===c.group):_artistGroups(x).some(y=>y&&GROUPS[y.ko]&&myG.includes(y.ko))));
       if(oa&&oa.group.ko!==gko&&bubbleMeshes.some(b=>b.ko===oa.group.ko)){out.push({type:'tt',artist:oa,label:_dispName(oa),sub:_gLabelKo(oa.group.ko),note:currentLang==='ko'?'같이 작업해요':'Worked together'});used.add(oa.group.ko);break;}
     }
   }
