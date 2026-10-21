@@ -1357,6 +1357,7 @@
   <div id="gc-discog-detail-bg"></div>
   <div id="gc-discog-detail-sheet">
     <div id="gc-discog-detail-handle" aria-hidden="true"></div>
+    <button id="gc-discog-to-lb" type="button" aria-label="재생 화면으로"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg><span>재생 화면으로</span></button>
     <button id="gc-discog-detail-close" aria-label="닫기"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
     <div id="gc-discog-detail-covrow">
       <button id="gc-discog-detail-prev" class="gc-discog-nav-btn" aria-label="이전 앨범">‹</button>
@@ -6569,6 +6570,7 @@ function openLightbox(url,shorts,playlist,idx,ctx,isAdvance,forceBrowseMode){
   // 라이트박스를 먼저 열어 iframe이 visible한 상태로 만든 뒤 src를 설정해야 autoplay가 허용됨.
   clearTimeout(_lbCloseT);lb.classList.remove('lb-closing'); // 직전 닫기 애니메이션이 이 새 라이트박스를 닫지 않게(closeLightbox 주석)
   lb.classList.add('open');_bringToFront(lb);
+  _setStageFront('lb'); // 웹 무대 — 앨범 창이 열려 있으면 뒤로 비킨다(위 _stageWide 주석)
   _lbPushHist(); // 재생 플레이어는 열릴 때 항상 최상단(곡영상·조합 위, 그 위 어드민 편집은 또 위로)
   // 멤버 카드 접기 탭(›)은 카드 왼쪽 바깥(=라이트박스 오른쪽 끝)에 걸려 있어 라이트박스에 덮였다 — 재생 중 멤버 카드만
   // 닫을 길이 없었음(2026-10-16 제보). 탭만 라이트박스 바로 위 층으로 올린다(자리는 그대로, 새 버튼 없음).
@@ -8181,6 +8183,7 @@ function _lbPushHist(){
 function closeLightbox(){
   // 영상에 붙여 연 앨범 창(곡 카드)은 영상과 함께 닫는다 — 영상 없이 남으면 어디에 붙은 창인지 모호하다
   {const _ad=document.getElementById('gc-discog-detail');if(_ad&&_ad.classList.contains('open')&&_ad.classList.contains('lb-dock'))_closeGcDiscogDetail();}
+  _setStageFront('alb'); // 웹 무대 — 비켜 있던 앨범 창이 다시 앞으로
   if(_lbHistPushed){
     _lbHistPushed=false;
     if(!_lbFromPop&&history.state&&history.state.kpuLb){_lbIgnorePop=true;try{history.back();}catch(_){_lbIgnorePop=false;}}
@@ -13684,6 +13687,7 @@ function _openGcDiscogDetail(a,idx,ctx){
     trackLbl.style.display='none';tracksEl.style.display='none';
   }
   {const _d=document.getElementById('gc-discog-detail');_d.classList.add('open');_bringToFront(_d);}
+  _setStageFront('alb');_albPlace();if(!_albPlaceT&&_stageWide())_albPlaceT=setInterval(_albPlace,400);
   _updateDiscogFlagBtn();
   {const _vp=document.getElementById('gc-discog-video-panel');if(_vp)_vp.hidden=true;}
   // 같은 앨범을 다시 그리는 경우(음방 1위 뱃지가 늦게 와서 다시 그림 등)엔 고른 곡을 유지한다 — 안 그러면 검색에서 곡을 눌러
@@ -13813,7 +13817,33 @@ async function _openCollabExtAlbum(w){
 // 멜론 링크 — 웹 주소 그대로 쓴다(모바일은 멜론이 알아서 모바일 페이지·앱으로 넘긴다)
 function _melonAlbumUrl(id){return 'https://www.melon.com/album/detail.htm?albumId='+encodeURIComponent(id);}
 function _melonSongUrl(id){return 'https://www.melon.com/song/detail.htm?songId='+encodeURIComponent(id);}
+// ── 웹 "무대"(2026-10-21 사용자 — "웹은 화면이 넓으니 애매하게 가리지 말고, 필요하면 닫혔다가 다시 열리고 숨었다가 드러나게") ──
+// 카드 왼쪽 빈자리(재생 화면이 열리는 자리)를 무대로 쓰고, 재생 화면과 앨범 창 중 **나중에 부른 쪽 하나만** 앞에 둔다.
+// 뒤로 간 쪽은 닫지 않고 숨기기만 한다 — 앨범에서 영상을 누르면 앨범이 비켰다가 재생을 닫으면 돌아오고, 재생 중 곡 카드로
+// 앨범을 열면 소리는 그대로 두고 앨범이 앞으로(앨범 창 "재생 화면으로"로 되돌아감). 폰(<1024)은 예전 방식 그대로.
+function _stageWide(){return window.innerWidth>=1024;}
+function _setStageFront(w){
+  if(!_stageWide()){delete document.body.dataset.stageFront;return;}
+  document.body.dataset.stageFront=w;
+}
+// 앨범 창을 무대(카드들 왼쪽 ~ 탐험 패널 오른쪽)에 맞춘다 — 카드가 열리고 닫힐 때마다 따라가야 해서 열려 있는 동안 주기적으로 잰다
+let _albPlaceT=null;
+function _albPlace(){
+  const d=document.getElementById('gc-discog-detail');if(!d)return;
+  if(!_stageWide()||!d.classList.contains('open')){d.style.left='';d.style.right='';return;}
+  let right=window.innerWidth;
+  for(const id of ['side-panel','member-panel','conn-panel']){
+    const el=document.getElementById(id);
+    if(el&&el.classList.contains('open')){const r=el.getBoundingClientRect();if(r.width>0&&r.left>window.innerWidth*0.3&&r.left<right)right=r.left;}
+  }
+  let left=0;
+  const fo=document.getElementById('feed-overlay');
+  if(fo&&fo.classList.contains('open')){const r=fo.getBoundingClientRect();if(r.width>0&&r.width<window.innerWidth*0.5&&r.left<10)left=r.right;}
+  d.style.left=left+'px';d.style.right=Math.max(0,window.innerWidth-right)+'px';
+}
 function _closeGcDiscogDetail(){
+  clearInterval(_albPlaceT);_albPlaceT=null;
+  _setStageFront('lb');
   document.getElementById('gc-discog-detail').classList.remove('open','lb-dock');
   _discogCtx=null;_albScrollPending=false;
   const _vp=document.getElementById('gc-discog-video-panel');
@@ -14111,6 +14141,7 @@ function _lbUpdateSong(s){
 }
 // 재생 화면에 붙여 연 앨범 창이면 재생 화면이 위로 올라와 덮지 않게 다시 맨 위로
 function _albKeepDocked(){
+  if(_stageWide())return; // 웹은 무대 차례(_setStageFront)로 — 재생 화면이 앞이면 앨범은 뒤
   const d=document.getElementById('gc-discog-detail');
   if(d&&d.classList.contains('open')&&d.classList.contains('lb-dock'))_bringToFront(d);
 }
@@ -14942,6 +14973,8 @@ function _gcDiscogDetailGo(delta){
 }
 document.getElementById('gc-discog-detail-bg').addEventListener('click',_closeGcDiscogDetail);
 document.getElementById('gc-discog-detail-close').addEventListener('click',_closeGcDiscogDetail);
+document.getElementById('gc-discog-to-lb')?.addEventListener('click',e=>{e.stopPropagation();_setStageFront('lb');});
+window.addEventListener('resize',()=>{_albPlace();if(!_stageWide())delete document.body.dataset.stageFront;});
 // 폰: 앨범 창도 카드 시트처럼 맨 위에서 아래로 끌어 닫기(2026-10-21 사용자 — "닫기 버튼 말고 카드형으로, 스와이프로 닫는 게 떠오르게").
 // 손잡이 막대를 달고 ✕는 폰에서 숨긴다(CSS). 제스처 코드는 탐험 패널과 같은 것(문턱 44px·튕김 속도).
 {const _ads=document.getElementById('gc-discog-detail-sheet');

@@ -4907,3 +4907,24 @@
 .pp-link-row .pp-link-btn[style*="display: none"]+.pp-link-btn,.pp-link-row .pp-link-btn[style*="display:none"]+.pp-link-btn{flex:1;}
 .pp-oauth-btn{display:flex!important;align-items:center;justify-content:center;gap:8px;}
 .pp-oauth-ic{width:16px;height:16px;flex:none;}
+
+/* ── 웹 무대(2026-10-21) — 재생 화면 윗줄 = 카드 윗줄, 앨범 창은 카드 왼쪽 빈자리에 붙고 재생 화면과 차례로 앞에 ── */
+@media(min-width:769px){
+  /* 카드 1개일 때 영상 상자가 세로 가운데 정렬이라 화면보다 높으면 위로 34px 삐져나와 카드 윗줄(색 막대)보다 위에 있었다 — 위에서부터 */
+  body:has(#side-panel.open) #yt-lightbox.lb-browse{align-items:flex-start;overflow-y:auto;padding:44px 28px 32px;}
+}
+#gc-discog-to-lb{display:none;}
+@media(min-width:1024px){
+  #gc-discog-detail{inset:64px 0 0 0;padding:44px 28px 20px;align-items:stretch;justify-content:flex-end;pointer-events:none;transition:opacity .2s ease,transform .22s ease;}
+  #gc-discog-detail #gc-discog-detail-bg{display:none;}
+  #gc-discog-detail #gc-discog-detail-sheet,#gc-discog-detail #gc-discog-video-panel{pointer-events:auto;}
+  #gc-discog-detail #gc-discog-detail-sheet{flex:1 1 440px;width:auto;min-width:0;max-width:440px;margin-top:0;max-height:none;height:100%;box-shadow:0 12px 44px rgba(0,0,0,0.5);}
+  #gc-discog-detail #gc-discog-video-panel{flex:1 1 380px;width:auto;min-width:0;max-width:380px;margin-top:0;max-height:none;height:100%;box-sizing:border-box;}
+  #gc-discog-detail.lb-dock{justify-content:flex-end;padding-right:28px;}
+  #gc-discog-detail.lb-dock #gc-discog-detail-sheet{max-width:440px;}
+  /* 무대 차례 — 뒤로 간 쪽은 닫지 않고 숨긴다(재생 화면은 소리 그대로) */
+  body[data-stage-front="lb"] #gc-discog-detail.open{opacity:0;transform:translateX(24px);visibility:hidden;}
+  body[data-stage-front="alb"] #yt-lightbox.open{opacity:0;visibility:hidden;pointer-events:none;}
+  body[data-stage-front="alb"]:has(#yt-lightbox.open) #gc-discog-to-lb{display:inline-flex;align-items:center;gap:6px;position:absolute;top:12px;left:16px;z-index:2;padding:5px 11px 5px 9px;border-radius:999px;border:0.5px solid rgba(126,156,255,0.4);background:rgba(126,156,255,0.14);color:#cfdbff;font:600 11.5px/1 inherit;font-family:inherit;cursor:pointer;}
+  #gc-discog-to-lb svg{width:12px;height:12px;fill:currentColor;}
+}

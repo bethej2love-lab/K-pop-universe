@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2026-10-21 (Claude Code — 웹 레이아웃: 재생 화면 윗줄·앨범 창 "무대")
+- **[완료] [kpop_universe.css]** 사용자 스크린샷 "라이트박스 재생모드 윗줄과 카드 윗줄이 일치해야". 카드 1개일 때 재생 화면이 영상 상자를 세로 가운데 정렬 → 화면보다 높으면 위로 34px 삐져나와(1875×900: 상자 30px·카드 패널 64px·색 막대 108px) 로고까지 덮음. 카드 2개 모드처럼 위에서부터(align-items:flex-start·padding-top 44px) → 상자 윗변 108px = 카드 색 막대.
+- **[완료] [index.html] [kpop_universe.css] [tests/album-song-hub.test.js]** 사용자 "웹 앨범 창 중구난방·카드 가림 — 넓으니 애매하게 가리지 말고 필요하면 닫혔다 열렸다 숨었다 드러나게". 웹(≥1024) **무대** 모델: 카드 왼쪽 빈자리(재생 화면 자리)를 무대로, 앨범 창은 어두운 배경 없이 무대 오른쪽(카드 쪽)에 붙고 윗줄 108px = 카드, 두 칸(정보 440·영상 380, 좁으면 비율로 줄어듦) 같은 높이·각자 스크롤 → 곡 눌러도 폭 안 흔들림. 자리는 `_albPlace`(열린 카드·탐험 패널 실측, 열려 있는 동안 400ms마다). 차례 `_setStageFront`(body[data-stage-front]): 나중에 부른 쪽만 앞, 뒤는 닫지 않고 숨김 — 앨범에서 영상 → 재생 화면 앞·앨범 비킴, 재생 닫기 → 앨범 복귀, 재생 중 곡 카드 → 앨범 앞(소리 유지) + "▶ 재생 화면으로". 폰(<1024) 예전 그대로(`_albKeepDocked` 웹 제외). 1875·1280 헤드리스 동선 7단계 확인, album-song-hub ⑩ 웹 기대값을 새 동작으로(31/31), desktop-close-layers 7/7·overlay-front·onboard-tips·폰 끌어 닫기 통과. ⏳ 실제 화면 손맛 확인.
+
 ## 2026-10-21 (Codex — 썸네일 프로필 구도 소규모 점검)
 - **[수정·운영 화면 확인] [kpop_universe.css] [tests/profile-thumb-crop.test.js]** 개인 Instagram 링크 및 artist_pics 등록 사진이 없는 후보만 공개 목록으로 추림(작은 프로필 목록 읽기, 영상 전수 조회 없음). 실제 카드 썸네일 5명: NCT WISH 유우시·료, KiiiKiii 이솔·지유·수이. 이솔(ZX9fFQkhtO4)은 유지, 4명은 원본 영상 변경 없이 썸네일별 focal/scale만 보정. K7Ox3iVo8uw(턱 잘림), noKS6ECLJMo(얼굴 치우침), kMhIOMIQN-g(상단·좌측 얼굴), xMX_wK0osU0(얼굴 치우침/너무 작은 구도).
 - **[범위]** 카드 .tt-pic-fromvid/검색 .is-thumb + 정확한 video ID 두 조건만 적용. 인스타·등록 프로필·다른 영상/쇼츠·다른 멤버 전체에는 적용하지 않음. 영상이 교체되면 구 보정은 자동 비적용. DB/artist_pics·대표 영상 선정·원본 사진 바이트·Claude JS 변경 없음. 하루·신유·동화는 인스타는 없지만 이미 등록 프로필이 있어 썸네일 보정 대상에서 제외. 전수 완료 아님.

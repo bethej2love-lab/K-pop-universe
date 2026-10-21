@@ -168,7 +168,9 @@ const server = http.createServer((req, res) => {
       await shot(`${tag}-4-lb-dock`);
       const v0 = l.vid;
       await ev(cdp, `(document.querySelectorAll('#gc-discog-song-view .tvf-item')[1].click(),1)`); await sleep(2500); l = await lbs();
-      if (l.lb && l.det && l.dock && l.vid !== v0 && l.zD > l.zL) ok(`[${tag}] ⑩ 앨범 창에서 다른 영상 → 재생 화면에서 바로, 앨범 창은 위에 그대로`); else bad(`[${tag}] ⑩ v0=${v0} ${JSON.stringify(l)}`);
+      // 2026-10-21 웹 "무대": 재생 화면이 앞으로, 앨범 창은 닫지 않고 뒤로 비킴(body.dataset.stageFront='lb'). 폰은 예전대로 앨범 창이 위
+      const front = await ev(cdp, `document.body.dataset.stageFront||''`);
+      if (l.lb && l.det && l.dock && l.vid !== v0 && (mobile ? l.zD > l.zL : front === 'lb')) ok(`[${tag}] ⑩ 앨범 창에서 다른 영상 → 재생 화면에서 바로, ${mobile ? '앨범 창은 위에 그대로' : '앨범 창은 뒤로 비킴(무대)'}`); else bad(`[${tag}] ⑩ v0=${v0} front=${front} ${JSON.stringify(l)}`);
       await ev(cdp, `(_closeTopOverlay(),1)`); await sleep(900); l = await lbs();
       if (l.lb && !l.det) ok(`[${tag}] ⑪ ESC = 앨범 창만, 영상은 그대로`); else bad(`[${tag}] ⑪ ${JSON.stringify(l)}`);
       await ev(cdp, `(document.getElementById('yt-lb-song').click(),1)`); await sleep(2500);
