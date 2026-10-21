@@ -1570,7 +1570,8 @@
   #igv-open:hover{background:rgba(255,255,255,0.12);}
   .ig-cap1{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   @media(max-width:768px){
-    #igv-panel{flex-direction:column;width:100vw;max-width:100vw;height:100dvh;border-radius:0;}
+    /* 사진이 화면 맨 위(상태바 밑)에 딱 붙어 보기 불편했다(2026-10-21 제보) — 위에 닫기 버튼 줄만큼 띄운다. 닫기 버튼도 사진 위가 아니라 그 줄에 */
+    #igv-panel{flex-direction:column;width:100vw;max-width:100vw;height:100dvh;border-radius:0;padding-top:calc(env(safe-area-inset-top,0px) + 52px);box-sizing:border-box;}
     #igv-media{flex:0 0 auto;min-width:0;max-height:62dvh;}
     #igv-img{max-width:100vw;max-height:62dvh;}
     #igv-side{width:auto;flex:1;min-height:0;border-left:none;border-top:0.5px solid rgba(255,255,255,0.08);}
@@ -1775,6 +1776,8 @@
      건드리지 않고 CSS로 강제한다: 가로=span 2, 쇼츠는 넓히지 않음(gc-ch-wide 무시), 빈칸은 dense가 뒤 쇼츠로 메움. */
   .gc-ch-grid>.gc-ch-item:not(.is-short){grid-column:span 2;}
   .gc-ch-grid>.gc-ch-item.is-short.gc-ch-wide:not(.featured){grid-column:auto;}
+  /* 대표로 뽑힌 쇼츠도 2열 한 칸·세로 비율 그대로(2026-10-21 사용자 — "쇼츠는 항상 비율 그대로 2열"). 예전엔 전체폭 16:9 상자라 가로 썸네일처럼 보였다 */
+  .gc-ch-grid>.gc-ch-item.is-short.featured{grid-column:auto;}
   /* 순위 배지 — 순위와 변동은 다른 정보라 크기·굵기·색으로 위계를 나눈다(2026-09-18).
      baseline 정렬이라 폰트 크기가 달라도 숫자 밑선이 맞는다. tabular-nums로 자릿수가 바뀌어도 안 흔들림. */
   .gc-ch-rank-badge{position:absolute;top:4px;left:4px;z-index:2;display:flex;align-items:baseline;gap:3px;padding:2px 6px;border-radius:4px;background:rgba(10,14,24,0.72);backdrop-filter:blur(2px);font-variant-numeric:tabular-nums;}
@@ -1804,10 +1807,6 @@
   /* 세로 원본이 없어 가로 썸네일(좌우 검은 띠 포함)로 폴백한 쇼츠 — cover로 가운데 세로 화면만 남긴다(_shortThumbFallback) */
   .gc-ch-item.is-short .gc-ch-thumb.is-fallback{object-fit:cover;}
   .gc-ch-item.is-short .gc-ch-thumb-bg{position:absolute;inset:0;background-size:cover;background-position:center;filter:blur(18px) brightness(0.45);transform:scale(1.08);z-index:0;}
-  /* 쇼츠가 대표(featured)로 뽑히면 2열 폭 전체를 채워 9:16 비율로 최대 크기로 표시한다(사용자 요청).
-     버튼은 기본값(right/left 4px)을 그대로 사용 — 썸네일이 전체 폭이라 별도 조정 불필요. */
-  .gc-ch-item.featured.is-short .gc-ch-thumb{width:100%;aspect-ratio:16/9;}
-  /* ↑ 2026-10-02: 대표 쇼츠도 16:9 상자(세로 영상은 contain + 뒤 흐린 배경) — 전체폭 9:16은 ≈680px로 카드를 통째로 먹었다 */
   /* ── 관리자 전용: 영상 출연 멤버 태깅 (그룹/멤버/연결 카드 썸네일 공용) ───────────────── */
   .vid-edit-btn{
     width:22px;height:22px;border-radius:50%;
@@ -1894,6 +1893,11 @@
   /* 모바일: 키보드 단축키 안내는 의미 없고, 일괄 버튼 7개가 세 줄을 차지해 목록이 화면 절반도 안 됐다 → 한 줄 가로 스크롤 */
   @media(max-width:768px){
     #vm-panel{height:calc(100dvh - 24px);max-height:calc(100dvh - 24px);} /* 검색 전엔 작았다가 결과가 오면 커지던 것 — 높이 고정 */
+    /* 폰에선 관리자 홈(#adm-home-panel)과 같이 전체 화면 + 머리줄을 상태바 아래로 — 가운데 정렬 패널의 머리줄(✕)이
+       상태바 밑에 깔려 닫을 수 없었다(2026-10-21 제보) */
+    #vm-panel{width:100vw;max-width:100vw;height:100dvh;max-height:100dvh;border-radius:0;border:none;}
+    #vm-hd{padding-top:calc(env(safe-area-inset-top,0px) + 18px);}
+    #vm-close{min-width:40px;min-height:40px;}
     #vm-kbd-hint{display:none!important;}
     #vm-toolbar{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;}
     #vm-toolbar::-webkit-scrollbar{display:none;}
@@ -3082,9 +3086,10 @@
   .ecx-m{font-size:10px;color:rgba(130,150,200,0.5);margin-top:1px;}
   @media(max-width:768px){#ecx-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:12px 10px;}}
   /* 멜론 링크(2026-10-14) — 가사·전체 크레딧은 멜론에서. 앨범 정보 밑 작은 알약, 곡 줄 끝엔 선 아이콘 */
-  .melon-link-btn{display:inline-flex;align-items:center;gap:4px;margin-top:9px;padding:4px 10px;border-radius:999px;font-size:11px;font-weight:600;
-    color:rgba(150,225,170,0.9);background:rgba(0,205,60,0.08);border:0.5px solid rgba(0,205,60,0.28);text-decoration:none;transition:background .15s;}
-  .melon-link-btn:hover{background:rgba(0,205,60,0.16);}
+  /* 작고 덜 띄게(2026-10-21 사용자 — 앨범 창에서 멜론 버튼이 제목만큼 눈에 띄었다) */
+  .melon-link-btn{display:inline-flex;align-items:center;gap:3px;margin-top:8px;padding:2px 8px;border-radius:999px;font-size:10px;font-weight:500;
+    color:rgba(150,205,170,0.62);background:transparent;border:0.5px solid rgba(0,205,60,0.2);text-decoration:none;transition:background .15s,color .15s;}
+  .melon-link-btn:hover{background:rgba(0,205,60,0.1);color:rgba(150,225,170,0.9);}
   .gc-discog-track-lyric{flex-shrink:0;align-self:center;display:inline-flex;width:24px;height:24px;margin:-4px -2px -4px 0;border-radius:6px;align-items:center;justify-content:center;opacity:.55;transition:opacity .15s,background .15s;}
   .gc-discog-track-lyric svg{width:15px;height:15px;fill:none;stroke:rgba(170,195,245,0.95);stroke-width:1.8;stroke-linecap:round;}
   .gc-discog-track-lyric:hover{opacity:1;background:rgba(255,255,255,0.06);}
@@ -3563,7 +3568,8 @@
   #gc.has-gc-pic #gc-en-row{align-items:center;gap:14px;}
   #gc.has-gc-pic #gc-en{max-width:100%;}
   /* 지정 그룹(영문명 김)은 강제로 영문/SNS를 세로 분리 = 4줄 허용(index.html gc-en-stack 토글). */
-  #gc-en-row.gc-en-stack{flex-direction:column;align-items:flex-start;}
+  /* #gc 접두 — 사진 있는 카드의 #gc.has-gc-pic #gc-en-row{align-items:center}가 이기면 두 줄일 때 영문명·SNS가 가운데로 쏠렸다(2026-10-21 제보, 리센느) */
+  #gc #gc-en-row.gc-en-stack{flex-direction:column;align-items:flex-start;}
   /* 강제 4줄일 땐 영문이 flex:1로 세로 늘지 않게, 전체 표시되게 */
   #gc-en-row.gc-en-stack #gc-en{flex:none;max-width:100%;}
   /* 사진이 없을 때 뜨는 관리자 업로드 버튼(점선 원)도 같은 크기여야 자리 교대가 자연스럽다.
@@ -4564,7 +4570,8 @@
 /* 대표 칸 제목은 마퀴(한 줄 흐름) 대신 두 줄 줄바꿈 — 안쪽 span이 nowrap이라 두 줄이 안 됐다 */
 .card-hero .tv-sm-title .tv-title-inner{white-space:normal!important;display:inline;transform:none!important;animation:none!important;}
 /* 한 줄 제목(10-19)으로 바꾸며 overflow:hidden이 빠져 둘째 줄이 날짜 줄 위로 비어져 나왔다(2026-10-20 제보) — 한 줄 높이로 자르고 말줄임 */
-.card-hero .tv-sm-title{max-height:1.3em;overflow:hidden;}
+/* 위아래 padding 4px가 border-box 한 줄 높이 안에 들어가 글자 윗부분이 잘렸다(2026-10-21 제보) — 여백은 margin으로 */
+.card-hero .tv-sm-title{max-height:1.3em;overflow:hidden;padding-top:0;padding-bottom:0;margin:4px 0;}
 /* 시청 진행 바 — 썸네일 래퍼가 있는 곳(탐험 선반 카드·검색 영상 줄). 카드 그리드의 .gc-ch-prog와 같은 빨간 3px(2026-10-13) */
 .vid-prog{position:absolute;left:0;bottom:0;height:3px;background:#f00;z-index:4;pointer-events:none;border-radius:0 1px 1px 0;}
 .feed-card-thumb-wrap,.sr-vt{position:relative;}

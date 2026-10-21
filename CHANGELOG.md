@@ -1,5 +1,15 @@
 # CHANGELOG
 
+## 2026-10-21 (Claude Code — 아이폰 스크린샷 6건)
+- **[완료] [kpop_universe.css] [index.html]** 사용자 아이폰 스크린샷 6건(Downloads, 파일 제목=문제). 390px 헤드리스로 재현·확인:
+  ① 그룹 카드 영문명·SNS 줄이 두 줄로 나뉠 때(gc-en-stack) 가운데로 쏠림 — `#gc.has-gc-pic #gc-en-row{align-items:center}`가 우선순위로 이김 → `#gc #gc-en-row.gc-en-stack`로 왼쪽 정렬(이름 줄 시작과 같은 103px). 아이폰은 글자가 넓어 리센느처럼 헤드리스에선 한 줄인 그룹도 두 줄이 된다.
+  ② 카드 상단 대표 영상 제목 윗부분 잘림 — border-box 한 줄 높이(15.6px) 안에 위아래 padding 4px가 들어가 있었다 → padding을 margin으로.
+  ③ 앨범 창 아티스트 — 여러 명 앨범만 이름이 떴다 → 혼자 낸 앨범도 주인(`_dArtist`/`_dGko`) 이름, 누르면 그 카드로(`goCard`). 멜론에서 보기 버튼 작고 흐리게(.melon-link-btn 전역, 84×18px).
+  ④ 인스타 뷰어(폰) 사진이 화면 맨 위에 붙음 → 패널 위에 상태바+52px 닫기 줄, 사진은 그 아래부터.
+  ⑤ 카드 쇼츠 탭에 대표(featured) 쇼츠만 전체폭 16:9 상자(가로 썸네일처럼 보임) → 대표 쇼츠도 다른 쇼츠처럼 2열 한 칸·세로(높이 계산 JS 포함). 선우 카드 쇼츠 탭 6칸 전부 171×303 확인.
+  ⑥ 폰 어드민 영상 관리 창 머리줄(✕)이 상태바 밑에 깔려 못 닫음 → 관리자 홈과 같이 전체 화면 + 머리줄 상태바 아래(+18px), ✕ 40×40.
+- **[검증]** syntax·album-song-hub 31/31·vm-panel-ui 50/50·vm-panel·admin-dock 통과. ⏳ 실기기(아이폰) 확인 대기 — 특히 ①은 아이폰 글꼴에서만 두 줄이 돼 헤드리스는 강제로 두 줄 모드를 켜서 확인했다.
+
 ## 2026-10-21 (Codex — 실패 알림 원인 조사·복구)
 - **[진행중] [index.html] [tests/rls.test.js] [.github/workflows/rebuild-seo-pages.yml]** Gmail 실패 알림을 실제 Actions 로그와 대조. select-pagination 2곳, ig_accounts RLS 기대값 누락, SEO 산출물 push 경합을 최소 범위 수정 예정. 주간 보고 문법은 dff5132d에서 이미 수정돼 최신 코드 재실행 확인. daily-routine #170은 hosted runner 통신 상실·로그 BlobNotFound로 애플리케이션 원인 미확정, 최신 실행 상태부터 확인. Meta 인증/수집기·관리자 코드·DB 정책·수동 태그는 변경하지 않음.
 - **[수정·로컬 검증] [index.html] [tests/rls.test.js]** CI run 39515393218의 유일 실패 select-pagination 2건: 매거진은 `_sbSelectAll`+handle 정렬/오류 처리, 탐험은 기존 60+매거진 수 제한을 명시적 range+동률 handle 정렬로 표현. select-pagination 77/77. RLS run 39393944149는 새 ig_accounts 기대값 누락만 실패: 기존 SQL의 public SELECT/locked INSERT 기준 추가, `node --use-system-ca tests/rls.test.js` 30개 표 통과. DB 정책·Meta 인증 변경 없음, TLS 검증 유지(기본 Node 인증서 저장소로는 회사망 fetch failed, Windows 신뢰 저장소로 해결). 로그인 사용자 간 격리는 테스트 계정 토큰이 없어 미검증.

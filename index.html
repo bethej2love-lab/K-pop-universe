@@ -13699,8 +13699,22 @@ function _renderDiscogDetailArtists(al){
   const box=document.getElementById('gc-discog-detail-artists');if(!box)return;
   box.innerHTML='';
   const names=_albumArtistNames(al);
-  box.hidden=!names.length;
-  if(!names.length)return;
+  const goCard=(art,gk)=>{
+    _closeGcDiscogDetail();
+    const cx=window.innerWidth/2,cy=isMob()?window.innerHeight*0.4:window.innerHeight/2;
+    if(art){if(isMob())showT(art,cx,cy,false,false,false);else showT(art,cx,cy);}
+    else{if(isMob())showGC(gk,cx,cy,false,false,null,false);else showGC(gk,cx,cy);}
+  };
+  if(!names.length){
+    // 혼자 낸 앨범도 주인 이름(2026-10-21 사용자 "앨범 창에 아티스트 정보가 안 보임") — 누르면 그 카드로
+    const art=_dArtist(),gk=!art&&_dGko()&&GROUPS[_dGko()]?_dGko():null;
+    const label=art?_dispName(art):gk?_gLabelKo(gk):'';
+    box.hidden=!label;if(!label)return;
+    const b=document.createElement('button');b.type='button';b.className='gc-discog-artist-link';b.textContent=label;
+    b.addEventListener('click',e=>{e.stopPropagation();goCard(art,gk);});
+    box.appendChild(b);return;
+  }
+  box.hidden=false;
   al.byline.forEach((x,i)=>{
     if(i)box.appendChild(document.createTextNode(', '));
     const art=x.ako?ARTISTS.find(a=>a.name&&a.name.ko===x.ako&&(a.group?.ko===x.ag||(a.groups||[]).some(g=>g&&g.ko===x.ag))):null;
@@ -13713,13 +13727,7 @@ function _renderDiscogDetailArtists(al){
       const sp=document.createElement('span');sp.textContent=names[i];box.appendChild(sp);return;
     }
     const b=document.createElement('button');b.type='button';b.className='gc-discog-artist-link';b.textContent=names[i];
-    b.addEventListener('click',e=>{
-      e.stopPropagation();
-      _closeGcDiscogDetail();
-      const cx=window.innerWidth/2,cy=isMob()?window.innerHeight*0.4:window.innerHeight/2;
-      if(art){if(isMob())showT(art,cx,cy,false,false,false);else showT(art,cx,cy);}
-      else{if(isMob())showGC(gk,cx,cy,false,false,null,false);else showGC(gk,cx,cy);}
-    });
+    b.addEventListener('click',e=>{e.stopPropagation();goCard(art,gk);});
     box.appendChild(b);
   });
   // 외부 아티스트 모음은 처음 한 번만 받는다 — 받은 뒤 같은 앨범이 아직 열려 있으면 링크로 다시 그린다
@@ -26458,7 +26466,7 @@ function _makeChVidController(contId){
         // DB 분류상 가로지만 실제로는 쇼츠(세로)일 수 있어 백그라운드에서 재확인한다.
         // 대표(featured)도 포함한다 — 예전엔 제외했는데, 세로인데 가로로 잘못 찍힌 대표 영상이 큰 16:9 칸에
         // 영영 갇히는 문제가 반복됐다(2026-09-04 사용자 제보). 대표가 세로로 정정되면 settlePage가 그 자리에서
-        // 다시 그려 .featured.is-short(큰 9:16)로 바뀐다.
+        // 다시 그려 .featured.is-short(다른 쇼츠와 같은 한 칸 세로)로 바뀐다.
         pendingProbe.push(v);
       }
       img.alt=_cleanTitle(v.title);img.loading='lazy';img.decoding='async';
@@ -26547,7 +26555,7 @@ function _makeChVidController(contId){
       if(!w)return;
       // 대표(featured) 쇼츠는 16:9 상자 안에 세로 영상 + 흐린 배경(2026-10-02) — 전체폭 9:16이면 높이가 ~680px라
       // 카드 한 화면을 통째로 먹었다. 일반 쇼츠 칸만 9:16.
-      const h=item.classList.contains('is-short')&&!item.classList.contains('featured')?w*16/9:w*9/16;
+      const h=item.classList.contains('is-short')?w*16/9:w*9/16; // 대표 쇼츠도 한 칸 세로(2026-10-21)
       img.style.height=h+'px';
       _placeDurBadge(item,h); // 재생시간 배지를 썸네일 밑변에 맞춤 — 이미 잰 높이를 그대로 재사용
       _placeProgBar(item,h);
@@ -28585,7 +28593,7 @@ async function _probeShortsBatch(refs){
 }
 
 // 대표(featured) 영상 후보: 뮤비만 제외하고 스크랩(하트) 최다 영상을 뽑는다. 쇼츠도 후보에 포함되며,
-// 쇼츠가 뽑히면 2열 폭 전체를 9:16 비율로 최대 크기로 표시한다(.gc-ch-item.featured.is-short).
+// 쇼츠가 뽑혀도 다른 쇼츠와 같은 2열 한 칸·세로 비율(2026-10-21 사용자 — 전체폭으로 키우지 않음).
 function _pickMainChVid(videos){
   if(!videos.length)return null;
   // 뮤비·예능/연기(other)는 대표영상 후보에서 제외 — 라이브(직캠)가 대표 위주가 되도록.
