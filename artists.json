@@ -59014,6 +59014,29 @@
     "id": "a0263",
     "discography": [
       {
+        "title": "처음 그 자리에",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/149/60/051/14960051_20261019141346_500.jpg",
+        "releaseDate": "2026.10.21",
+        "trackCount": 2,
+        "titleTrack": "처음 그 자리에",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "처음 그 자리에",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "처음 그 자리에(Inst.)",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "14960051"
+      },
+      {
         "title": "Love Story (청춘계시록 X 송하영 (프로미스나인))",
         "type": "OST",
         "isMain": false,
@@ -69149,6 +69172,29 @@
       "instagram": "https://www.instagram.com/daniel.k.here"
     },
     "discography": [
+      {
+        "title": "Blue",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/147/63/898/14763898_20261015181047_500.jpg",
+        "releaseDate": "2026.10.21",
+        "trackCount": 2,
+        "titleTrack": "Blue",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Blue",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Blue (Inst.)",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "14763898"
+      },
       {
         "title": "Stay",
         "type": "싱글",
@@ -143779,6 +143825,39 @@
       }
     ],
     "discography": [
+      {
+        "title": "꿈의 정원",
+        "type": "미니",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/149/65/746/14965746_20261019163342_500.jpg",
+        "releaseDate": "2026.10.21",
+        "trackCount": 4,
+        "titleTrack": "꿈의 정원",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "이유",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "꿈의 정원",
+            "isTitle": true
+          },
+          {
+            "no": 3,
+            "title": "아이가 될래요",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "사랑보다 더 크게 사랑해",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "14965746"
+      },
       {
         "title": "Beautiful Sunshine",
         "type": "싱글",

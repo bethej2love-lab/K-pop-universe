@@ -187378,6 +187378,24 @@
   },
   "discography": [
    {
+    "title": "Masterpiece",
+    "type": "싱글",
+    "isMain": true,
+    "cover": "https://cdnimg.melon.co.kr/cm2/album/images/150/07/233/15007233_20261020135543_500.jpg",
+    "releaseDate": "2026.10.21",
+    "trackCount": 1,
+    "titleTrack": "Masterpiece",
+    "tracks": [
+     {
+      "no": 1,
+      "title": "Masterpiece",
+      "isTitle": true
+     }
+    ],
+    "src": "melon",
+    "melonAlbumId": "15007233"
+   },
+   {
     "title": "Fire With Fire (Inspired by the Original Motion Picture K-POPS!)",
     "type": "싱글",
     "isMain": true,
