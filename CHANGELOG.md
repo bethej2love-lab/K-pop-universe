@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 2026-10-21 (Claude Code — 나침반 MV 소식 거르기·중복 뮤비)
+- **[완료] [index.html]** 사용자: 나침반 MV에서 ① #shorts·세로 영상 제외 ② "100m RUN MV"(콘텐츠) 제외 ③ 같은 뮤비가 원더케이+공식 채널 두 곳이면 나침반엔 공식 채널 것만 ④ 카드·재생목록은 둘 다 두되 나란히 붙지 않게. 구현: `_mvDupKey`(그룹+따옴표 곡명, 없으면 "그룹 - 곡명 Official MV" 대시 뒤) · MV 소식은 is_short/#shorts/1분 이하 MV/예능·쇼·팬 채널(source_tier — 100m RUN은 woodadaclub variety 쇼츠 시리즈) 제외 + 같은 키는 official>idol>music 하나만 · 카드 그리드 페이지마다 `_spreadDupMvs`(같은 형식 다음 영상과 자리 교환, 앞 페이지 마지막과도 비교 — 라이트박스 재생목록도 이 순서). `_ORIG_MV_KEEP`에 reality 추가("Self-Produced M/V Reality Show"). 실데이터 이번 주 MV 소식 40 → 16(트리플에스 Andless 5개 → 공식 1, A2O SOUL SUPERSTAR 4 → 1, 100m RUN·#Shorts 전부 빠짐). feed-dailynews·orig-shelf 65/65 통과.
+
 ## 2026-10-21 (Codex — SEO 조회 실패 시 허브 링크 보존)
 - **[수정] [build_group_pages.js] [tests/seo-relation-fallback.test.js]** 09:54 CI #39523759536 실패는 static-links 7/8: 기존 한국어 관계 페이지 105개에 허브 진입 링크 없음. 관계 DB 실패 fallback이 sitemap만 복원하고 hubLinks는 빈 배열로 덮어쓴 원인. 기존 파일에서 한/영 h1과 URL을 복구해 sitemap·허브를 함께 보존, 조회 실패 시 수량은 추정하지 않고 생략. 성공 경로의 수량 표기는 유지. TLS 비활성화 안내는 system CA 사용으로 교체.
 - **[복구] [g/index.html] [en/g/index.html]** 전체 DB 재수집 없이 실제 기존 관계 파일 210개(언어별 105)의 목록 링크만 복원. 페이지 본문·영상·태그·DB·Claude UI는 무변경. 이후 생성도 동일 helper 사용.

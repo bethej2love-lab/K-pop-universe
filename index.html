@@ -23183,7 +23183,7 @@ function _collectWeekNews(){
     // 1위 영상 후보(winVid)는 1위가 없어도 그냥 받는다(가벼운 1주 창 조회) — 기다리는 것보다 싸다.
     const [winsRes,mvRes,milesRes,winVidRes]=await Promise.all([
       sb.from('music_show_wins').select('*').gte('win_date',sevenDaysAgo).lte('win_date',today).order('win_date',{ascending:false}).order('show',{ascending:true}).then(r=>r,()=>({data:[]})),
-      sb.from(_YT_TABLE).select('id,title,thumb,is_short,group_ko,content_flag,published_at')
+      sb.from(_YT_TABLE).select('id,title,thumb,is_short,group_ko,content_flag,published_at,source_tier'+_durCol())
         .gte('published_at',sevenDaysAgo).lt('published_at',tomorrow)
         .or('title.ilike.%m/v%,title.ilike.%[mv]%,title.ilike.% mv%,title.ilike.%mv %,title.ilike.%music video%,title.ilike.%뮤직비디오%,title.ilike.%뮤비%,title.ilike.%리릭%,title.ilike.%lyric%,title.ilike.%티저%,title.ilike.%teaser%,title.ilike.%예고편%')
         // ⚠️ .not(in)만 쓰면 content_flag가 비어 있는(NULL) 행 — 즉 거의 전부 — 이 같이 빠진다(SQL NULL NOT IN = 거짓).
@@ -23289,12 +23289,29 @@ function _collectWeekNews(){
       return {type:'win',title:w.song_title||'',sub,thumb,square,nav,gko:w.group_ko,mko:w.member_ko||null,show:w.show,date:w.win_date,score:Math.max(0,100-daysOld*20)};
     }));
     items.push(..._winItems);
+    // MV 소식 거르기(2026-10-21 사용자): ① 쇼츠(is_short·#shorts·1분 이하 MV) ② 예능·쇼·팬 채널 콘텐츠("100m RUN MV" 같은 코너명)
+    // ③ 같은 뮤비가 공식 채널과 유통사(원더케이 등)에 따로 있으면 공식 채널 것 하나만
+    const _mvTierRank={official:0,idol:1,music:2};
+    const _mvBest=new Map();
+    (mvRes.data||[]).forEach(v=>{
+      const t=v.title||'';
+      if(v.is_short||/#shorts?\b/i.test(t))return;
+      if(['variety','show','fans'].includes(v.source_tier))return;
+      if(!/티저|teaser|예고편/i.test(t)&&_isMusicVideoTitle(t)&&v.duration_sec&&v.duration_sec<=61)return;
+      const k=_mvDupKey(v);if(!k)return;
+      const cur=_mvBest.get(k),r=_mvTierRank[v.source_tier]??3;
+      if(!cur||r<(_mvTierRank[cur.source_tier]??3))_mvBest.set(k,v);
+    });
     (mvRes.data||[]).forEach(v=>{
       if(v.content_flag==='보류'||v.content_flag==='hidden')return;
       const t=v.title||'';
+      if(v.is_short||/#shorts?\b/i.test(t))return;
+      if(['variety','show','fans'].includes(v.source_tier))return;
       const isTeaser=/티저|teaser|예고편/i.test(t);
       const isMv=_isMusicVideoTitle(t);
       if(!isTeaser&&!isMv)return;
+      if(isMv&&!isTeaser&&v.duration_sec&&v.duration_sec<=61)return;
+      {const k=_mvDupKey(v);if(k&&_mvBest.get(k)!==v)return;}
       const vidUrl=v.is_short?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;
       const pubDate=(v.published_at||'').slice(0,10);
       const mvScore=(isTeaser?50:80)-Math.round((new Date(today)-new Date(pubDate||today))/86400000)*2;
@@ -23556,8 +23573,30 @@ async function _buildFeedNewAlbums(){
 //       그래서 제외 키워드에 걸려도 이 구제 키워드가 있으면 남긴다. 티저/예고는 구제 대상이 아니다.
 //    (구제 키워드는 실측으로 늘렸다 — 처음엔 "M/V Shoot Sketch"(청하 촬영 스케치)·"MV Commentary"(효연
 //     코멘터리)·"Lyrics Breakdown"(제니 가사 해설) 3건이 오제외됐다. 새 유형이 보이면 여기에 더할 것.)
-const _ORIG_MV_KEEP=/behind|making|rehearsal|reaction|sketch|shoot|commentary|breakdown|리액션|비하인드|메이킹|촬영|스케치|코멘터리|해설|리뷰|review|vlog|브이로그/i;
+const _ORIG_MV_KEEP=/behind|making|rehearsal|reaction|reality|sketch|shoot|commentary|breakdown|리액션|비하인드|메이킹|촬영|스케치|코멘터리|해설|리뷰|review|vlog|브이로그/i;
 const _ORIG_MV_DROP=/(^|[^a-z])(m\/v|mv)([^a-z]|$)|lyric|music\s*video|뮤직\s*비디오|뮤비|리릭/i;
+// 같은 뮤비 판정 키 — 그룹 + 제목 따옴표 안 곡명. 공식 채널과 원더케이(1theK) 등 유통사 채널에 같은 뮤비가 따로 올라온다(2026-10-21 트리플에스 'Andless').
+function _mvDupKey(v){
+  if(!v||!_isMusicVideoTitle(v.title))return null;
+  const t=String(v.title||'');
+  // 따옴표 곡명, 없으면 "그룹 - 곡명 Official MV" 형식의 대시 뒤(A2O SOUL - SUPERSTAR Official Music Video)
+  const m=/['‘’"“”]([^'‘’"“”]{1,80})['‘’"“”]/.exec(t)||/\s[-–—]\s*(.+?)\s*(?:official|m\/v|\bmv\b|music\s*video|[([｜|]|$)/i.exec(t);
+  const k=m?m[1].toLowerCase().replace(/[^0-9a-z가-힣]/g,''):'';
+  return k?(v.group_ko||'')+'|'+k:null;
+}
+// 목록에서 같은 뮤비가 바로 붙어 나오지 않게 떨어뜨린다(카드·재생목록은 둘 다 두되 나란히는 별로 — 2026-10-21 사용자).
+// 같은 형식(가로/쇼츠)인 다음 영상과 자리를 바꿔 그리드 배치는 그대로. prevKey: 앞 페이지 마지막 영상의 키.
+function _spreadDupMvs(list,prevKey){
+  const out=list.slice();
+  for(let i=0;i<out.length;i++){
+    const k=_mvDupKey(out[i]);if(!k)continue;
+    const before=i?_mvDupKey(out[i-1]):prevKey;
+    if(k!==before)continue;
+    const j=out.findIndex((x,jj)=>jj>i&&!!x.is_short===!!out[i].is_short&&_mvDupKey(x)!==k);
+    if(j>0){const t=out[i];out[i]=out[j];out[j]=t;}
+  }
+  return out;
+}
 function _isMusicVideoTitle(t){
   const s=String(t||'');
   return _ORIG_MV_DROP.test(s)&&!_ORIG_MV_KEEP.test(s);
@@ -27021,6 +27060,7 @@ function _makeChVidController(contId){
       // 위쪽 영상(대표 칸)과 겹쳐도 그리드에서 빼지 않는다(2026-10-14 사용자 — "중복이어도 둘 다 노출이 낫다"). 위쪽은 첫인상,
       // 아래는 탭·정렬로 훑는 목록이라 거기서 사라지면 오히려 못 찾는다.
       vids=vids.filter(v=>{if(state.seenIds.has(v.id))return false;state.seenIds.add(v.id);return true;});
+      vids=_spreadDupMvs(vids,state.allVids&&state.allVids.length?_mvDupKey(state.allVids[state.allVids.length-1]):null);
       // 이 페이지 안에서는 (셔플된) 순서를 유지하면서 같은 비율끼리만 같은 행에 짝짓는다. featured는 풀로우(2열)를
       // 실제로 차지하므로 state.pos/cat으로 그리드상 현재 위치를 정확히 추적해 페이지("더보기") 경계에서도
       // 가로/세로가 한 행에 섞이지 않도록 하고, 홀수로 남는 카드는 빈 스페이서 대신 폭을 넓혀 채운다
