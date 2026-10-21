@@ -98,14 +98,13 @@ console.log('\n── Part 3: 오리지널 선반 쇼츠 제외 잠금 ──');
   ck(/\.eq\('source_tier','idol'\)/.test(fn), "_buildFeedJacon: source_tier='idol'(개인채널) 유지");
 })();
 
-// ── Part 4: '자컨'→'Original' 라벨 + 빈 탭 방지 구조 ──────────────────────────
-console.log("\n── Part 4: 카드 'Original' 탭 구조 ──");
+// ── Part 4: 자컨 탭 라벨 + 빈 탭 방지 구조 ──────────────────────────
+// 2026-10-21 사용자 결정 뒤집힘: 한국어에선 다른 탭이 다 한글이라 '자컨', 영어는 'Original' — 라벨은 _CAT_LABEL 한 곳
+console.log("\n── Part 4: 카드 자컨 탭 구조 ──");
 (() => {
-  ck(/catTabs\.splice\(1,0,\['jacon','Original'\]\)/.test(html), "개인채널 영상 있을 때만 'Original' 탭 삽입(빈 탭·깜빡임 방지)");
+  ck(/catTabs\.splice\(1,0,\['jacon',_catLabel\('jacon'\)\]\)/.test(html), "개인채널 영상 있을 때만 자컨 탭 삽입(빈 탭·깜빡임 방지)");
   ck(!/_jaconTab/.test(html), "옛 _jaconTab(초기 배열 상주) 잔재 없음");
-  // 탭 라벨(배열 튜플)에 한글 '자컨'을 쓰지 않는다(다른 탭과 톤 통일). 주석 속 설명은 허용하므로
-  // 배열 리터럴 [...자컨...] 안에만 없으면 통과 — 주석의 서술형 '자컨'까지 잡지 않게 범위를 좁힌다.
-  ck(!/\[[^\]]*자컨[^\]]*\]/.test(html), "탭 라벨 배열에 '자컨' 미사용(다른 탭과 톤 통일)");
+  ck(/jacon:\['자컨','Original'\]/.test(html), "_CAT_LABEL.jacon = 자컨/Original");
 })();
 
 // ── Part 5: 프로그램 컬렉션 배선(검색 hit + 카드 행 + 오프너) ─────────────────

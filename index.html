@@ -7062,7 +7062,8 @@ function _closeQueueSheet(){
 // 차트 이름도 '퍼포먼스 TOP'으로 통일(2026-10-13 사용자 결정 — 집계는 여전히 방송 무대 위주, _applyLiveExclude).
 // ⚠️ 카드의 팬 영상 탭은 팬덤명으로 바뀌는 라벨("by MY")이라 예외(그 자리에서 따로 만든다).
 const _CAT_LABEL={all:['전체','All'],mv:['MV','MV'],live:['퍼포먼스','Performance'],cover:['커버','Cover'],short:['쇼츠','Shorts'],
-  challenge:['챌린지','Challenge'],variety:['예능','Variety'],show:['드라마·영화','Show'],fan:['팬 영상','Fan-made'],other:['기타','Other']};
+  challenge:['챌린지','Challenge'],variety:['예능','Variety'],show:['드라마·영화','Show'],fan:['팬 영상','Fan-made'],other:['기타','Other'],
+  jacon:['자컨','Original']}; // 자컨: 한국어에서 이 탭만 영어(Original)로 남아 있던 것(2026-10-21 사용자)
 function _catLabel(v){const l=_CAT_LABEL[v];return l?(currentLang==='ko'?l[0]:l[1]):v;}
 const _SURF_LENSES=[['live',_CAT_LABEL.live[0],_CAT_LABEL.live[1]],['cam','직캠','Fancam'],['mv','MV','MV'],['variety','예능','Variety'],['all','전체','All']];
 const _SURF_SHOW=4; // 묶음 펼침 시 처음 보이는 타일 수(나머지는 "N개 더 보기")
@@ -22969,7 +22970,7 @@ function _openIgViewer(m,handle,idx){
   _igv={m,pics,i:Math.max(0,Math.min(idx||0,pics.length-1))};
   const ko=currentLang==='ko',own=_igOwners().get(handle),ig=_igMap.get(handle);
   ov.querySelector('#igv-name').textContent=own?own.name:(_igMagNames.get(handle)||('@'+handle));
-  ov.querySelector('#igv-meta').textContent=['@'+handle,_igAgo(m.t),m.lk!=null?(ko?'좋아요 ':'♥ ')+_fmtFollowers(m.lk):'',m.cm!=null?(ko?'댓글 ':'💬 ')+_fmtFollowers(m.cm):''].filter(Boolean).join(' · ');
+  ov.querySelector('#igv-meta').textContent=['@'+handle,_igAgo(m.t),m.lk!=null?(ko?'좋아요 ':'♥ ')+_fmtVC(m.lk):'',m.cm!=null?(ko?'댓글 ':'💬 ')+_fmtVC(m.cm):''].filter(Boolean).join(' · '); // 좋아요·댓글은 유튜브 조회수와 같은 표기(100+·1K+, 2026-10-21 사용자)
   const av=ov.querySelector('#igv-av');if(ig&&ig.pic){av.src=ig.pic;av.hidden=false;}else av.hidden=true;
   const cap=ov.querySelector('#igv-cap');cap.textContent=m.cap||'';cap.hidden=!m.cap;
   const op=ov.querySelector('#igv-open');op.href=m.p;op.textContent=ko?'Instagram에서 보기 ↗':'View on Instagram ↗';
@@ -27117,7 +27118,7 @@ function _makeChVidController(contId){
     // 없을 수 있지만, 'variety'처럼 그룹/멤버 카드에 항상 노출되는 고정 탭으로 둠(팬영상 탭과 다르게
     // "있을 때만" 동적으로 끼워 넣지 않음).
     // 자컨(Original) 탭 — 멤버 **개인 채널**(source_tier='idol', 예: 가을의 온도·따라해볼레이) 업로드만.
-    // 공식 그룹 채널(official)은 양이 너무 많아 제외(2026-09-04 사용자). 라벨은 다른 탭과 톤 맞춰 'Original'로
+    // 공식 그룹 채널(official)은 양이 너무 많아 제외(2026-09-04 사용자). 라벨은 _CAT_LABEL.jacon(한국어 '자컨'·영어 'Original')
     // 통일(2026-09-05 — '자컨'만 한글이라 튄다는 지적). ⚠️ 초기 배열에 넣지 않고 **개인채널 영상이 실제로
     // 있을 때만** 아래 probe로 끼워 넣는다(fan 탭과 같은 방식) — 빈 탭이 잠깐 떴다 사라지는 깜빡임 방지.
     // 'Live' → 'Performance'(2026-09-14, 사용자 결정). 안무영상·댄스프랙티스가 이 탭에 들어오면서
@@ -27180,7 +27181,7 @@ function _makeChVidController(contId){
         if(!data?.length)return;
         if(state.ko!==ko||state.memberKo!==(memberKo||null))return;
         if(catTabs.some(([v])=>v==='jacon'))return;
-        catTabs.splice(1,0,['jacon','Original']);
+        catTabs.splice(1,0,['jacon',_catLabel('jacon')]);
         renderFilterTabs();
       });
     }

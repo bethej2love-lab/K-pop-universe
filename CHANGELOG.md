@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2026-10-21 (Claude Code — 자컨 탭 라벨·인스타 좋아요 표기)
+- **[완료] [index.html] [tests/program-collection.test.js]** 사용자 "카드 영상 카테고리 Original 말고 '자컨', 나머지는 다 한글인데 자컨만 영어". `_CAT_LABEL.jacon=['자컨','Original']` 추가, 탭 삽입이 _catLabel을 쓰게. 09-04 "Original로 톤 통일" 결정을 뒤집은 것이라 그걸 고정하던 테스트도 새 결정으로. 탐험 선반 제목 "Original Contents"는 제목(영어 규칙)이라 그대로.
+- **[완료] [index.html]** 사용자 "인스타 좋아요·댓글 거의 정확하게 말고 유튜브 조회수처럼 100+, 1K". 인스타 뷰어 좋아요·댓글 표기 `_fmtFollowers`(1.8만) → `_fmtVC`(18K+·200+). 수집값은 그대로 정확값, 화면 표기만.
+
 ## 2026-10-21 (Claude Code — 나침반 패널 더 빨리)
 - **[완료] [index.html]** 사용자 "나침반 패널 3초 뒤에 뜨나? 조금만 더 빨리". 자동 열림 대기 `REVEAL.panel` 1300→500ms(우주 열림 clip 700ms 끝나자마자). 헤드리스 폰(390, 재방문 조건) 접속~feed-open 실측 3.5·3.7초 → 2.7·3.1초. syntax·chrome-reveal·onboard-tips 8/8 통과.
 - **[이슈·기존]** tests/reveal.test.js([3] veil/ring CSS 잔존)·tests/feed-tabbar-hide.test.js(10/17, 탭바 안 숨음)는 **이번 변경 전 코드에서도 똑같이 실패** — 원인 미조사.
