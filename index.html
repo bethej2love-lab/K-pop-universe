@@ -129,11 +129,13 @@
       </div>
       <button id="my-page-edit">편집</button>
     </div>
+    <!-- 계정 줄(2026-10-21) — 손님: "이미 계정이 있나요? 로그인" · 별만 만든 익명: "이 기기에만 저장돼요 · 계정 연결" · 연결됨: 숨김 -->
+    <div id="my-page-acct" hidden></div>
     <div id="my-page-bias"></div>
     <!-- 전부 비었을 때(신규 유저) 4개 "없어요" 대신 하나로(디자인리뷰 Q4, 사용자 동의). 문구는 임시 — 최종은 유저 결정. -->
     <div id="profile-empty" style="display:none">
       <div id="profile-empty-star">✦</div>
-      <div id="profile-empty-title">아직 내 별이 없어요</div>
+      <div id="profile-empty-title">아직 즐겨찾기가 없어요</div>
       <div id="profile-empty-sub">마음에 드는 그룹·멤버를 즐겨찾기하면 여기 모여요</div>
       <button id="profile-empty-cta">그룹·멤버 찾아보기</button>
     </div>
@@ -1019,19 +1021,21 @@
         <label class="sw"><input type="checkbox" id="pp-fav-pub" checked><span class="sw-track"><span class="sw-thumb"></span></span></label>
       </div>
     </div>
-    <div class="pp-section" id="pp-link-section" style="margin-bottom:8px">
+    <button id="pp-save" class="pp-save-btn pp-save-primary" data-i18n="ppSave">저장</button>
+    <div class="pp-section" id="pp-link-section">
       <div class="pp-fav-row">
         <div class="pp-fav-info">
           <div class="pp-fav-label" data-i18n="ppSyncLabel">기기 간 동기화</div>
           <div class="pp-fav-sub" data-i18n="ppSyncSub">다른 기기에서도 좋아요가 유지돼요</div>
         </div>
       </div>
-      <button id="pp-x-link" class="pp-save-btn" data-i18n="ppXBtn">X로 연결하기</button>
-      <button id="pp-google-link" class="pp-save-btn" data-i18n="ppGoogleBtn">구글로 연결하기</button>
+      <div class="pp-link-row">
+        <button id="pp-google-link" class="pp-link-btn" data-i18n="ppGoogleBtn">구글로 연결하기</button>
+        <button id="pp-x-link" class="pp-link-btn" data-i18n="ppXBtn">X로 연결하기</button>
+      </div>
       <div id="pp-linked-state" style="display:none"></div>
       <button id="pp-logout-btn" class="pp-save-btn" style="display:none;color:rgba(255,160,170,0.85);border-color:rgba(255,95,110,0.20)" data-i18n="ppLogout">로그아웃</button>
     </div>
-    <button id="pp-save" class="pp-save-btn" data-i18n="ppSave">저장</button>
   </div>
 </div>
 <div id="link-confirm-overlay" data-modal>
@@ -1104,10 +1108,10 @@
 </div>
 <div id="welcome-login-overlay" data-modal>
   <div id="welcome-login-panel">
-    <div class="pp-title">로그인</div>
+    <div class="pp-title" id="welcome-login-title">로그인</div>
     <div id="welcome-login-msg">가입할 때 썼던 계정으로 로그인하면 프로필과 좋아요가 그대로 돌아와요.</div>
-    <button id="welcome-login-google" class="pp-save-btn">구글로 로그인</button>
-    <button id="welcome-login-x" class="pp-save-btn">X로 로그인</button>
+    <button id="welcome-login-google" class="pp-save-btn pp-oauth-btn"><svg class="pp-oauth-ic" viewBox="0 0 24 24" aria-hidden="true"><path fill="#EA4335" d="M12 10.2v3.9h5.4c-.24 1.4-1.66 4.1-5.4 4.1-3.25 0-5.9-2.7-5.9-6s2.65-6 5.9-6c1.85 0 3.1.79 3.8 1.47l2.6-2.5C16.75 3.6 14.6 2.6 12 2.6 6.8 2.6 2.6 6.8 2.6 12s4.2 9.4 9.4 9.4c5.43 0 9.03-3.82 9.03-9.2 0-.62-.07-1.09-.15-1.56z"/></svg><span>구글로 계속하기</span></button>
+    <button id="welcome-login-x" class="pp-save-btn pp-oauth-btn"><svg class="pp-oauth-ic" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M18.24 2.25h3.31L14.32 10.5l8.5 11.25H16.2l-4.72-6.23-5.4 6.23H2.75l7.73-8.84L2 2.25h6.06l4.26 5.63L18.24 2.25zm-1.16 17.52h1.83L7.08 4.13H5.12L17.08 19.77z"/></svg><span>X로 계속하기</span></button>
     <div id="welcome-login-btns">
       <button id="welcome-login-back" class="uc-btn">뒤로</button>
     </div>
@@ -2201,7 +2205,7 @@ const T={
       chSortRec:'추천순',chSortNew:'최신순',chSortOld:'날짜순',chSortPop:'인기순',chViewsPfx:'',chViewsSfx:'',chViewCon:'콘텐츠별 보기',chSearch:'영상 검색…',
       idxTitle:'인덱스',idxGroupTab:'그룹',idxMemberTab:'멤버',idxSearchPH:'그룹명 검색…',idxSearchPHMember:'멤버명 검색…',
       idxSortName:'이름 (가나다순)',idxSortDebut:'데뷔연도',idxSortAgency:'소속사',idxSortMembers:'멤버 수',
-      idxSortBirth:'생년',idxSortGroup:'그룹명',idxSortNation:'국적',ppTitle:'내 프로필',ppNick:'닉네임',ppNickPH:'닉네임을 입력하세요',ppNickErr:'닉네임을 입력해주세요',ppBio:'한 줄 소개',ppBioPH:'선택사항',ppColor:'내 별 색상',ppFavLabel:'좋아요 공개',ppFavSub:'다른 사람들이 볼 수 있어요',ppSyncLabel:'다른 기기와 동기화',ppSyncSub:'다른 기기에서도 좋아요가 유지돼요',ppGoogleBtn:'구글로 연결하기',ppXBtn:'X로 연결하기',ppLinked:'계정에 연결됨 ✓',ppLogout:'로그아웃',ppSave:'저장',
+      idxSortBirth:'생년',idxSortGroup:'그룹명',idxSortNation:'국적',ppTitle:'내 프로필',ppNick:'닉네임',ppNickPH:'닉네임을 입력하세요',ppNickErr:'닉네임을 입력해주세요',ppBio:'한 줄 소개',ppBioPH:'선택사항',ppColor:'내 별 색상',ppFavLabel:'좋아요 공개',ppFavSub:'다른 사람들이 볼 수 있어요',ppSyncLabel:'계정',ppSyncSub:'연결해 두면 다른 기기에서도 그대로 이어져요',ppGoogleBtn:'구글로 연결하기',ppXBtn:'X로 연결하기',ppLinked:'계정에 연결됨 ✓',ppLogout:'로그아웃',ppSave:'저장',
       fbBtnLabel:'💬 피드백 보내기',fbTitle:'피드백 보내기',fbCatBug:'버그 제보',fbCatSuggest:'제안',fbCatEtc:'기타',fbTextPH:'어떤 내용인지 편하게 적어주세요',fbContactPH:'답장 받을 이메일(선택)',fbErrEmpty:'내용을 입력해주세요',fbCancel:'취소',fbSubmit:'보내기',fbSending:'보내는 중…',fbSent:'전달됐어요!',fbSendFail:'전송에 실패했어요. 잠시 후 다시 시도해주세요.',
       cancel:'취소',colNewBtn:'+ 새 컬렉션',colNewPhotoBtn:'+ 사진 컬렉션',colTypeVideo:'영상',colTypePhoto:'사진',colNewFullBtn:'+ 새 컬렉션 만들기',colNamePH:'이름 입력',colEmpty:'아직 모아둔 컬렉션이 없어요',colCreateConfirm:'만들기',
       favEmpty:'아직 즐겨찾기가 없어요',scrapEmpty:'아직 담아둔 영상이 없어요',concertEmpty:'아직 기록한 공연이 없어요',colAddedSuffix:'에 추가됨',colChangeBtn:'다른 컬렉션',
@@ -2220,7 +2224,7 @@ const T={
       chSortRec:'Recommended',chSortNew:'Latest',chSortOld:'Oldest',chSortPop:'Popular',chViewsPfx:'',chViewsSfx:' views',chViewCon:'By Content',chSearch:'Search videos…',
       idxTitle:'Index',idxGroupTab:'Groups',idxMemberTab:'Members',idxSearchPH:'Search group name…',idxSearchPHMember:'Search member name…',
       idxSortName:'Name (A–Z)',idxSortDebut:'Debut Year',idxSortAgency:'Agency',idxSortMembers:'Member Count',
-      idxSortBirth:'Birth Year',idxSortGroup:'Group',idxSortNation:'Nationality',ppTitle:'My Profile',ppNick:'Nickname',ppNickPH:'Enter nickname',ppNickErr:'Nickname is required',ppBio:'Bio',ppBioPH:'Optional',ppColor:'Star Color',ppFavLabel:'Public Likes',ppFavSub:'Others can see your likes',ppSyncLabel:'Sync Across Devices',ppSyncSub:'Likes stay synced across your devices',ppGoogleBtn:'Connect with Google',ppXBtn:'Connect with X',ppLinked:'Account Connected ✓',ppLogout:'Log Out',ppSave:'Save',
+      idxSortBirth:'Birth Year',idxSortGroup:'Group',idxSortNation:'Nationality',ppTitle:'My Profile',ppNick:'Nickname',ppNickPH:'Enter nickname',ppNickErr:'Nickname is required',ppBio:'Bio',ppBioPH:'Optional',ppColor:'Star Color',ppFavLabel:'Public Likes',ppFavSub:'Others can see your likes',ppSyncLabel:'Account',ppSyncSub:'Connect to keep everything on every device',ppGoogleBtn:'Connect with Google',ppXBtn:'Connect with X',ppLinked:'Account Connected ✓',ppLogout:'Log Out',ppSave:'Save',
       fbBtnLabel:'💬 Send Feedback',fbTitle:'Send Feedback',fbCatBug:'Bug Report',fbCatSuggest:'Suggestion',fbCatEtc:'Other',fbTextPH:'Write anything on your mind',fbContactPH:'Email for a reply (optional)',fbErrEmpty:'Please enter a message',fbCancel:'Cancel',fbSubmit:'Send',fbSending:'Sending…',fbSent:'Sent, thank you!',fbSendFail:'Failed to send. Please try again in a moment.',
       cancel:'Cancel',colNewBtn:'+ New Collection',colNewPhotoBtn:'+ Photo Collection',colTypeVideo:'Video',colTypePhoto:'Photo',colNewFullBtn:'+ Create Collection',colNamePH:'Enter name',colEmpty:'No collections yet',colCreateConfirm:'Create',
       favEmpty:'No favorites yet',scrapEmpty:'No saved videos yet',concertEmpty:'No concerts logged yet',colAddedSuffix:' added',colChangeBtn:'Change collection',
@@ -20259,6 +20263,10 @@ function openProfilePanel(){
   document.getElementById('pp-google-link').style.display=_isLinked?'none':'';
   document.getElementById('pp-x-link').style.display=_isLinked?'none':'';
   document.getElementById('pp-logout-btn').style.display=_isLinked?'':'none';
+  // 처음 별을 만드는 사람에겐 연결 버튼을 안 보인다 — 저장과 연결이 나란히 있으면 뭘 눌러야 할지 헷갈렸다(2026-10-21).
+  // 저장하면 나 화면 계정 줄("이 기기에만 저장돼요 · 계정 연결")에서 이어진다. 연결된 사람은 연결 상태·로그아웃을 본다.
+  document.getElementById('pp-link-section').style.display=(_isLinked||myProfile?.nickname)?'':'none';
+  {const sub=document.querySelector('#pp-link-section .pp-fav-sub');if(sub)sub.style.display=_isLinked?'none':'';}
   const linkedEl=document.getElementById('pp-linked-state');
   if(_isLinked){
     const u=window._sbSession.user;
@@ -20522,7 +20530,8 @@ function updateMyPage(){
     }
   }
   if(nickEl){
-    nickEl.textContent=nick||'–';
+    nickEl.textContent=nick||(currentLang==='ko'?'게스트':'Guest'); // '–'만 덩그러니 있던 자리(2026-10-21)
+    nickEl.classList.toggle('is-guest',!nick);
     nickEl.style.color='';
     nickEl.classList.remove('my-star-sel');
     nickEl.onclick=e=>{e.stopPropagation();_toggleMyStarFocus();};
@@ -20533,6 +20542,23 @@ function updateMyPage(){
   // 홈 화면에 딱 하나 남은 한글이 이 버튼이었다).
   if(editBtn)editBtn.textContent=currentLang==='ko'?(nick?'편집':'내 별 만들기'):(nick?'Edit':'Create My Star');
   if(bioEl)bioEl.textContent=myProfile?.bio||'';
+  // 계정 줄 — 다른 기기에서 쓰던 사람이 로그인할 입구가 "내 별 만들기 → 이미 계정이 있어요" 두 단계 뒤에 숨어 있었고,
+  // 연결 안 한 사람은 기록이 이 기기에만 있다는 걸 알 길이 없었다(2026-10-21 사용자 "로그인 과정 개선").
+  const acct=document.getElementById('my-page-acct');
+  if(acct){
+    const linked=!!(window._sbSession&&window._sbSession.user.is_anonymous===false);
+    const ko=currentLang==='ko';
+    acct.hidden=linked;
+    if(!linked){
+      acct.innerHTML='';
+      const t=document.createElement('span');t.className='mpa-txt';
+      t.textContent=nick?(ko?'이 기기에만 저장돼요':'Saved on this device only'):(ko?'이미 계정이 있나요?':'Have an account?');
+      const b=document.createElement('button');b.type='button';b.className='mpa-btn';
+      b.textContent=nick?(ko?'계정 연결':'Connect'):(ko?'로그인':'Log in');
+      b.addEventListener('click',e=>{e.stopPropagation();_openLoginSheet(nick?'link':'login',false);});
+      acct.append(t,b);
+    }
+  }
   _myStarSelected=false;
   _renderBiasChips();
 }
@@ -20705,9 +20731,22 @@ document.getElementById('dh-profile-btn').addEventListener('click',e=>{
 document.getElementById('my-page-edit').addEventListener('click',e=>{
   e.stopPropagation();
   const _isLinked=window._sbSession&&window._sbSession.user.is_anonymous===false;
-  if(_isLinked)openProfilePanel();
+  if(_isLinked||myProfile?.nickname)openProfilePanel(); // 별을 이미 만들었으면 바로 편집(2026-10-21 — 다시 "이미 만든 별이 있나요?"를 물었다)
   else document.getElementById('welcome-choice-overlay').classList.add('open');
 });
+// 로그인/계정 연결 시트 — 같은 시트를 두 말로 쓴다(둘 다 _handleAccountLink: 처음 쓰는 계정이면 연결, 이미 쓰던 계정이면 그 계정으로 로그인).
+// fromChoice: "별 만들기" 선택 화면에서 왔으면 뒤로 = 선택 화면, 나 화면 계정 줄에서 왔으면 뒤로 = 닫기.
+let _wlFromChoice=false;
+function _openLoginSheet(mode,fromChoice){
+  _wlFromChoice=!!fromChoice;
+  const ko=currentLang==='ko',link=mode==='link';
+  document.getElementById('welcome-login-title').textContent=link?(ko?'계정 연결':'Connect account'):(ko?'로그인':'Log in');
+  document.getElementById('welcome-login-msg').textContent=link
+    ?(ko?'연결해 두면 다른 기기에서도 즐겨찾기·컬렉션·내 별이 그대로 이어져요.':'Keep your favorites, collections and star on every device.')
+    :(ko?'쓰던 구글·X 계정으로 로그인하면 내 별과 즐겨찾기가 그대로 돌아와요.':'Log in with the account you used before to bring back your star and favorites.');
+  document.getElementById('welcome-login-back').textContent=fromChoice?(ko?'뒤로':'Back'):(ko?'닫기':'Close');
+  const ov=document.getElementById('welcome-login-overlay');ov.classList.add('open');_bringToFront(ov);
+}
 document.getElementById('welcome-choice-new').addEventListener('click',e=>{
   e.stopPropagation();
   document.getElementById('welcome-choice-overlay').classList.remove('open');
@@ -20716,12 +20755,12 @@ document.getElementById('welcome-choice-new').addEventListener('click',e=>{
 document.getElementById('welcome-choice-login').addEventListener('click',e=>{
   e.stopPropagation();
   document.getElementById('welcome-choice-overlay').classList.remove('open');
-  document.getElementById('welcome-login-overlay').classList.add('open');
+  _openLoginSheet('login',true);
 });
 document.getElementById('welcome-login-back').addEventListener('click',e=>{
   e.stopPropagation();
   document.getElementById('welcome-login-overlay').classList.remove('open');
-  document.getElementById('welcome-choice-overlay').classList.add('open');
+  if(_wlFromChoice){const c=document.getElementById('welcome-choice-overlay');c.classList.add('open');_bringToFront(c);}
 });
 // 로그인 버튼은 기존 프로필 패널의 "연결하기"와 완전히 같은 함수를 재사용 — _handleAccountLink가
 // 이미 "이 계정이 다른 곳에 연결돼 있으면 연결 대신 로그인으로 전환" 처리까지 다 해준다(10064번줄 부근).
@@ -20878,7 +20917,10 @@ if(sb)sb.from('yt_channel_videos').select('id').limit(1).then(()=>{}).catch(()=>
 // ── OAuth 리디렉트 진단용 임시 로깅 (기기별 로그인 실패 원인 파악용, 확인되면 제거) ──
 function _authAlert(msg){
   console.error('[Auth Debug]',msg);
-  try{alert('[Auth Debug] '+msg);}catch(e){}
+  // 일반 사용자에게 "[Auth Debug] …" 경고창이 그대로 떴다(2026-10-21) — 짧은 안내로. 자세한 내용은 콘솔·디버그 플래그로만.
+  let dbg=false;try{dbg=localStorage.getItem('kpu_auth_debug')==='1';}catch(e){}
+  if(dbg){try{alert('[Auth Debug] '+msg);}catch(e){}return;}
+  try{_showShareToast(currentLang==='ko'?'로그인이 잘 안 됐어요 — 다시 시도해 주세요':'Sign-in didn’t go through — please try again');}catch(e){}
 }
 
 // linkIdentity 리디렉트 왕복 중엔 어떤 provider(google/twitter)로 연결을 시도했는지 컨텍스트가
@@ -21203,6 +21245,13 @@ async function initSupabaseSync(){
       await _pullServerToLocal(session.user.id);
       localStorage.setItem(SB_LAST_UID_KEY,session.user.id);
       if(isNewDeviceForThisAccount)_gaEvent('link_account_success',{});
+      // 막 로그인/연결하고 돌아온 경우에만 한 줄 안내(앱을 열 때마다 뜨면 안 된다) — 예전엔 성공해도 아무 말이 없었다(2026-10-21)
+      if(hadOAuthCode||_xDone){
+        const ko=currentLang==='ko';
+        setTimeout(()=>{try{_showShareToast(isNewDeviceForThisAccount?(ko?'로그인했어요 — 내 별과 즐겨찾기를 불러왔어요':'Logged in — your star and favorites are back'):(ko?'계정을 연결했어요':'Account connected'));}catch(e){}},600);
+        try{if(history.replaceState&&/[?&](code|state)=/.test(location.search))history.replaceState(null,'',location.pathname+location.hash);}catch(e){}
+      }
+      try{updateMyPage();if(typeof renderFavList==='function')renderFavList();}catch(e){}
     }
     // v2 Surf 학습 기록 — 익명 방문자(대부분)도 계정 행이 있으니 동기화한다. 위 pull은 구글/X 연결 계정에서만 돌아서
     // 익명 유저는 컬럼 존재 확인을 못 해 기록이 기기에만 남았다(2026-09-29 발견). 컬럼이 없으면(SQL 전) 조용히 건너뜀.
