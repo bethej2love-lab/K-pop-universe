@@ -3568,6 +3568,16 @@
   /* 가로 직캠 썸네일은 왼쪽 아래에 자막·로고가 몰리고 얼굴이 살짝 오른쪽이라(사용자 관찰, 2026-10-14) 잘라 쓰는 창을 오른쪽으로 */
   #tt-insta-pic-wrap.tt-pic-fromvid #tt-insta-pic{border:none;object-position:66% 50%;transform:scale(1.3);transform-origin:58% 32%;}
   #tt-insta-pic-wrap.tt-pic-fromshort #tt-insta-pic{border:none;transform:scale(2.6);transform-origin:50% 34%;}
+  /* 2026-10-21 profile pilot: inspected thumbnail IDs only, not member-wide overrides.
+     Keep card/search framing aligned. A different video or Instagram/registered photo does not inherit this crop. */
+  .sr-av.is-thumb img[src*="/vi/K7Ox3iVo8uw/"],
+  #tt-insta-pic-wrap.tt-pic-fromvid #tt-insta-pic[src*="/vi/K7Ox3iVo8uw/"]{object-position:58% 50%;transform:scale(1.1);transform-origin:50% 100%;} /* Yushi: retain chin */
+  .sr-av.is-thumb img[src*="/vi/noKS6ECLJMo/"],
+  #tt-insta-pic-wrap.tt-pic-fromvid #tt-insta-pic[src*="/vi/noKS6ECLJMo/"]{object-position:50% 50%;transform:scale(1.1);transform-origin:50% 50%;} /* Ryo: center face */
+  .sr-av.is-thumb img[src*="/vi/kMhIOMIQN-g/"],
+  #tt-insta-pic-wrap.tt-pic-fromvid #tt-insta-pic[src*="/vi/kMhIOMIQN-g/"]{object-position:42% 50%;transform:scale(1.2);transform-origin:50% 0%;} /* Jiyu: upper-left face */
+  .sr-av.is-thumb img[src*="/vi/xMX_wK0osU0/"],
+  #tt-insta-pic-wrap.tt-pic-fromvid #tt-insta-pic[src*="/vi/xMX_wK0osU0/"]{object-position:50% 50%;transform:scale(1.55);transform-origin:50% 0%;} /* Sui: center and raise face */
   #tt-insta-pic-wrap.tt-pic-ready #tt-insta-pic,#gc-pic-wrap.tt-pic-ready #gc-pic{opacity:1;}
   #tt-insta-pic-wrap:hover,#gc-pic-wrap:hover{transform:scale(1.07);transition:transform .15s;}
   #tt.has-insta-pic{max-width:288px!important;}

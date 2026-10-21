@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 2026-10-21 (Codex — 썸네일 프로필 구도 소규모 점검)
+- **[수정·화면 검증 대기] [kpop_universe.css] [tests/profile-thumb-crop.test.js]** 개인 Instagram 링크 및 artist_pics 등록 사진이 없는 후보만 공개 목록으로 추림(작은 프로필 목록 읽기, 영상 전수 조회 없음). 실제 카드 썸네일 5명: NCT WISH 유우시·료, KiiiKiii 이솔·지유·수이. 이솔(ZX9fFQkhtO4)은 유지, 4명은 원본 영상 변경 없이 썸네일별 focal/scale만 보정. K7Ox3iVo8uw(턱 잘림), noKS6ECLJMo(얼굴 치우침), kMhIOMIQN-g(상단·좌측 얼굴), xMX_wK0osU0(얼굴 치우침/너무 작은 구도).
+- **[범위]** 카드 .tt-pic-fromvid/검색 .is-thumb + 정확한 video ID 두 조건만 적용. 인스타·등록 프로필·다른 영상/쇼츠·다른 멤버 전체에는 적용하지 않음. 영상이 교체되면 구 보정은 자동 비적용. DB/artist_pics·대표 영상 선정·원본 사진 바이트·Claude JS 변경 없음. 하루·신유·동화는 인스타는 없지만 이미 등록 프로필이 있어 썸네일 보정 대상에서 제외. 전수 완료 아님.
+- **⏳ 덜 된 일**: syntax/validate-data/desktop+390px smoke 및 신규 회귀 통과 후 게시, 실제 카드에서 네 구도 재확인. 인스타 미연결+등록 사진 없는 나머지 후보는 같은 방식으로 소규모 후속 점검; 자연스러운 얼굴 구도를 확보 못 하면 영상 교체를 추측하지 말고 보류. CSS 비교용 data URL 미리보기는 브라우저 정책으로 거부되어 사용 안 함.
+
 ## 2026-10-21 (Claude Code — Supabase Disk IO 경고)
 - **[완료] [.github/workflows/daily-routine.yml]** Supabase 메일 "Disk IO Budget 소진 중"(이대로 다 쓰면 응답 지연·CPU IO 대기·먹통). 지난 7일 워크플로 실측: 관리자 일일 루틴(동기화+전체 스윕, 헤드리스 관리자 화면) **3시간마다·평균 96분**(하루 7시간+ DB 훑기), 최근 회차 42분 중 동명이인 스캔 20분·조회수 마일스톤 10분, 그리고 단계 5·7이 statement timeout으로 실패 — IO 압박 신호. 사용자 결정: 루틴 3시간 → **6시간**(새 영상 수집 sync-hourly는 그대로). 부족하면 하루 2번으로 더 줄이기로.
 - **[완료] [index.html]** 사용자가 돌린 pg_stat_statements 결과: 디스크 읽기 1위 `get_content_formats` RPC — **1,676GB·13,980회·평균 5.1초**, 2~15위 합보다 많음. 카드를 열 때마다 그룹(멤버) 영상 전체 DISTINCT를 돌려 ⋮ 메뉴 "콘텐츠별 보기" 노출 여부만 정하고 있었다. → ⋮ 메뉴를 **열 때만** 집계 + 세션 캐시(`_fmtCache`). 헤드리스: 카드 열기 0회 · ⋮ 첫 열기 1회 · 다시 열기 0회, 항목 정상 노출.
