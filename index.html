@@ -4999,10 +4999,14 @@ function _fetchSoloCamThumbs(a){
       const{data,error}=await q.order('published_at',{ascending:false}).limit(60);
       if(error||!data)return [];
       const isCam=v=>_isFancamLike(v.title)&&!_FANCAM_PROMO_RE.test(v.title||'');
-      // 가로 우선 정렬: is_short=false가 앞에, 같은 조건이면 직캠>라이브>조회수 순
+      // 제목에 본인 이름(한글·영문·별칭·그룹 시절 활동명)이 있는 영상을 맨 앞으로(2026-10-21 사용자 "대표 영상 썸네일 얼굴 안 맞는 애들") —
+      // 본인만 태깅된 단체 영상(릴레이댄스·공항)·남의 영상이 조회수로 대표가 되던 것. 영문은 단어 경계(V·Q·N 같은 한 글자 이름).
+      const _nm=[a.name.ko,a.name.en,...(a.matchAliases||[]),...(_artistGroups(a)||[]).flatMap(g=>[g&&g.name,g&&g.nameEn])].filter(Boolean);
+      const nameHit=v=>{const t=String(v.title||'');const tu=t.toUpperCase();return _nm.some(n=>/[A-Za-z]/.test(n)?new RegExp('(?<![A-Z0-9])'+String(n).toUpperCase().replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'(?![A-Z0-9])').test(tu):t.includes(n));};
+      // 가로 우선 정렬: is_short=false가 앞에, 같은 조건이면 이름 든 제목>직캠>라이브>조회수 순
       const horiz=data.filter(v=>v.thumb&&!v.is_short);
       const pool=(horiz.length?horiz:data.filter(v=>v.thumb));
-      return pool.sort((x,y)=>(isCam(y)-isCam(x))||((y.category==='live')-(x.category==='live'))||((y.view_count||0)-(x.view_count||0)));
+      return pool.sort((x,y)=>(nameHit(y)-nameHit(x))||(isCam(y)-isCam(x))||((y.category==='live')-(x.category==='live'))||((y.view_count||0)-(x.view_count||0)));
     }catch(e){return [];}
   })();
   _soloCamMemo.set(a,p);
