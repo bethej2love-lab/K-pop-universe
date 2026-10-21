@@ -1,9 +1,11 @@
 # CHANGELOG
 
 ## 2026-10-21 (Codex — 썸네일 프로필 구도 소규모 점검)
-- **[수정·화면 검증 대기] [kpop_universe.css] [tests/profile-thumb-crop.test.js]** 개인 Instagram 링크 및 artist_pics 등록 사진이 없는 후보만 공개 목록으로 추림(작은 프로필 목록 읽기, 영상 전수 조회 없음). 실제 카드 썸네일 5명: NCT WISH 유우시·료, KiiiKiii 이솔·지유·수이. 이솔(ZX9fFQkhtO4)은 유지, 4명은 원본 영상 변경 없이 썸네일별 focal/scale만 보정. K7Ox3iVo8uw(턱 잘림), noKS6ECLJMo(얼굴 치우침), kMhIOMIQN-g(상단·좌측 얼굴), xMX_wK0osU0(얼굴 치우침/너무 작은 구도).
+- **[수정·운영 화면 확인] [kpop_universe.css] [tests/profile-thumb-crop.test.js]** 개인 Instagram 링크 및 artist_pics 등록 사진이 없는 후보만 공개 목록으로 추림(작은 프로필 목록 읽기, 영상 전수 조회 없음). 실제 카드 썸네일 5명: NCT WISH 유우시·료, KiiiKiii 이솔·지유·수이. 이솔(ZX9fFQkhtO4)은 유지, 4명은 원본 영상 변경 없이 썸네일별 focal/scale만 보정. K7Ox3iVo8uw(턱 잘림), noKS6ECLJMo(얼굴 치우침), kMhIOMIQN-g(상단·좌측 얼굴), xMX_wK0osU0(얼굴 치우침/너무 작은 구도).
 - **[범위]** 카드 .tt-pic-fromvid/검색 .is-thumb + 정확한 video ID 두 조건만 적용. 인스타·등록 프로필·다른 영상/쇼츠·다른 멤버 전체에는 적용하지 않음. 영상이 교체되면 구 보정은 자동 비적용. DB/artist_pics·대표 영상 선정·원본 사진 바이트·Claude JS 변경 없음. 하루·신유·동화는 인스타는 없지만 이미 등록 프로필이 있어 썸네일 보정 대상에서 제외. 전수 완료 아님.
-- **⏳ 덜 된 일**: syntax/validate-data/desktop+390px smoke 및 신규 회귀 통과 후 게시, 실제 카드에서 네 구도 재확인. 인스타 미연결+등록 사진 없는 나머지 후보는 같은 방식으로 소규모 후속 점검; 자연스러운 얼굴 구도를 확보 못 하면 영상 교체를 추측하지 말고 보류. CSS 비교용 data URL 미리보기는 브라우저 정책으로 거부되어 사용 안 함.
+- **[검증]** 04b6a1bdd 게시, 자동 cache bump 32d5ec4b6 보존. syntax, validate-data 오류 0/경고 142, desktop+390px 신규 프로필 smoke, 신규 회귀/원본 CSS red 확인. Pages #39546089491 success. 실제 서비스에서 네 src/계산 CSS/카드 스크린샷 확인(수이 before/after 증빙 `C:/Users/user/Downloads/kpu-profile-sui-{before,after}-20261021.png`). 유우시·료·수이 구도 개선 확인, 지유는 잘림 완화했으나 원본 기울기·큰 자막이 남아 교체 후보로 보류. 인스타 없는 등록 사진(하루·신유·동화)은 그대로 유지.
+- **[이슈·범위 밖]** CI #39546058220/job119044376469에서 profile-thumb-crop PASS, 전체는 og-coverage FAIL: `g/배틀/`, `en/g/battle/` 기본 공유 이미지 2/4290. 배틀에 검증된 영상/등록 프로필을 확보한 뒤 `node tools/build_og_thumbs.mjs --keep-existing && node build_group_pages.js`, og-coverage/전체 CI 확인 필요. 검사 완화·임의 사진 교체 안 함. 이번 프로필 작업의 전체 CI green 주장 금지.
+- **⏳ 덜 된 일**: 지유는 제목으로 본인 확인 가능한 자막 적은 근접 직캠/공식 프로필 후보를 찾아 실제 카드에서 확인 후 교체 여부 결정. 나머지 인스타 미연결+등록 사진 없는 후보도 소규모 후속 점검(전수 완료 아님). 사진이 바뀌면 기존 video ID 보정은 적용되지 않음. iPhone 실기 육안은 미확인. CSS 비교용 data URL 미리보기는 브라우저 정책으로 거부되어 사용 안 함; 실제 서비스 카드만 확인.
 
 ## 2026-10-21 (Claude Code — Supabase Disk IO 경고)
 - **[완료] [.github/workflows/daily-routine.yml]** Supabase 메일 "Disk IO Budget 소진 중"(이대로 다 쓰면 응답 지연·CPU IO 대기·먹통). 지난 7일 워크플로 실측: 관리자 일일 루틴(동기화+전체 스윕, 헤드리스 관리자 화면) **3시간마다·평균 96분**(하루 7시간+ DB 훑기), 최근 회차 42분 중 동명이인 스캔 20분·조회수 마일스톤 10분, 그리고 단계 5·7이 statement timeout으로 실패 — IO 압박 신호. 사용자 결정: 루틴 3시간 → **6시간**(새 영상 수집 sync-hourly는 그대로). 부족하면 하루 2번으로 더 줄이기로.
