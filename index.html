@@ -24772,6 +24772,64 @@ function _evUpcomingCard(list,u,s){
   card.addEventListener('click',e=>{e.stopPropagation();_feedNav(()=>_openEventPage(s.id));});
   list.appendChild(card);
 }
+// ── 나침반 공연 선반(2026-10-21) ─────────────────────────────────────────────
+// 다가오는 공연 한 번 받아 두고(10분) 발견·For You 두 선반이 같이 쓴다. 포스터가 없으면 그 그룹 대표 썸네일.
+let _upConcertsP=null,_upConcertsAt=0;
+function _loadUpcomingConcerts(){
+  if(_upConcertsP&&Date.now()-_upConcertsAt<600000)return _upConcertsP;
+  if(!sb)return Promise.resolve([]);
+  const today=new Date().toISOString().slice(0,10),until=new Date(Date.now()+45*864e5).toISOString().slice(0,10);
+  _upConcertsAt=Date.now();
+  _upConcertsP=sb.from('kpop_events').select('id,title,type,groups,date_start,date_end,venue,city,country,poster_url,official_url')
+    .gte('date_end',today).lte('date_start',until).order('date_start',{ascending:true}).limit(150)
+    .then(r=>r.data||[],()=>[]);
+  return _upConcertsP;
+}
+// 공연 하나를 작은 창으로 — 카드의 공연 항목(공연장·예매·다녀왔어요)을 그대로 쓴다. 공연장 창과 같은 틀
+function _openConcertSheet(ev){
+  const overlay=document.getElementById('venue-overlay');
+  document.getElementById('venue-panel-title').textContent=(ev.groups||[]).map(_gLabelKo).filter(Boolean).join(', ')||ev.title;
+  const listEl=document.getElementById('venue-panel-list');listEl.innerHTML='';
+  const vi=document.getElementById('venue-panel-info');if(vi)vi.hidden=true;
+  listEl.appendChild(_makeConcertItem(ev));
+  overlay.classList.add('open');_bringToFront(overlay);
+}
+function _appendConcertCard(list,ev){
+  const own=(ev.groups||[])[0];
+  const who=(ev.groups||[]).map(_gLabelKo).filter(Boolean).join(', ');
+  const d=_dDay(ev.date_start);
+  const meta=[d<=0?(currentLang==='ko'?'진행 중':'Now'):'D-'+d,_venueName(ev.venue)].filter(Boolean).join(' · ');
+  const thumb=_posterUrl(ev.poster_url)||(_ogThumbs&&own&&_ogThumbs[own])||null;
+  _appendFeedCard(list,'🎟️',ev.title,who,()=>_openConcertSheet(ev),thumb,null,{meta});
+}
+async function _buildFeedConcerts(){
+  const section=document.getElementById('feed-concerts-section'),list=document.getElementById('feed-concerts');
+  if(!section||!list)return;
+  list.replaceChildren();section.style.display='none';
+  try{
+    await _ensureOgThumbs();
+    const evs=await _loadUpcomingConcerts();
+    // 같은 그룹이 연달아 여러 회차면 한 칸만(투어 도시별 행 — 선반이 한 그룹으로 도배되지 않게)
+    const seen=new Set();
+    evs.filter(e=>{const k=(e.groups||[]).join(',')+'|'+(e.title||'').slice(0,12);if(seen.has(k))return false;seen.add(k);return true;})
+      .slice(0,20).forEach(e=>_appendConcertCard(list,e));
+    if(list.children.length){section.style.display='';list.scrollLeft=0;_enableDragScroll(list);}
+  }catch(e){console.warn('[feed] 공연 선반 실패 — 이 선반만 빠집니다',e);}
+}
+async function _buildFeedFavConcerts(){
+  const section=document.getElementById('feed-favconcert-section'),list=document.getElementById('feed-favconcert');
+  if(!section||!list)return;
+  list.replaceChildren();section.style.display='none';
+  if(!favGroups.size&&!favMembers.size)return;
+  try{
+    await _ensureOgThumbs();
+    const evs=await _loadUpcomingConcerts();
+    const favM=new Set([...favMembers].map(k=>String(k).split(':').pop())); // 즐겨찾기 멤버 키 "그룹:이름" — 솔로 공연은 groups에 이름
+    const mine=evs.filter(e=>(e.groups||[]).some(g=>favGroups.has(g)||favM.has(g)));
+    mine.slice(0,15).forEach(e=>_appendConcertCard(list,e));
+    if(list.children.length){section.style.display='';list.scrollLeft=0;_enableDragScroll(list);}
+  }catch(e){console.warn('[feed] 즐겨찾기 공연 선반 실패',e);}
+}
 async function _buildFeedEvents(){
   const section=document.getElementById('feed-events-section'),list=document.getElementById('feed-events');
   if(!section||!list)return;
@@ -25965,6 +26023,7 @@ function _buildFeedRec(){
   _buildFeedForYouAnniv();  // 다가오는 기념일(즐겨찾기 그룹·멤버 교차 D-7~D-DAY) — 시간 민감이라 최상단
   _buildFeedFavNews();      // 내 최애 소식(이번 주 1위·MV·티저·조회수 돌파 중 즐겨찾기 것) — 일주일짜리 소식이라 기념일 다음
   _buildFeedFavAlbums();    // 즐겨찾기 신보(최근 30일) — 유튜브 영상 말고도 우리가 모으는 걸 드러낸다
+  _buildFeedFavConcerts();  // 즐겨찾기 예정 공연(45일 안) — 2026-10-21
   _buildFeedFavIg();        // 즐겨찾기 인스타 사진(최근 2주, 영상 제외) — 2026-10-19
   _buildFeedFavCharts();    // 내 최애 차트(2026-10-15) — 이번 주 차트에 든 최애 무대(발견 탭 Charts와 같은 계산)
   // 즐겨찾기 신작(비동기)이 자리를 잡은 뒤에 이어보기를 그린다 — 예전엔 이어보기(로컬·즉시)가 먼저 위에
@@ -25999,6 +26058,7 @@ function _buildFeedDisc(){
   _feedDailyNewsP=_buildFeedDailyNews(); // 오늘의 소식이 Discover 맨 첫 섹션(2026-09-23) — 기념일보다도 먼저. 앨범 블록이 이걸 기다린다
   _buildFeedIg(); // 인스타 사진(팔로워 많은 계정 최근 3일, 영상 제외) — 2026-10-19
   _buildFeedAnniversaries(); // 기념일 선반은 그 다음(2026-08-30 이동)
+  _buildFeedConcerts(); // 다가오는 공연(단독 콘서트·팬미팅, 45일) — 2026-10-21
   _buildFeedEvents(); // Events — 다가오는 행사 D-day + 최근 행사 회차(2026-10-16)
   document.getElementById('feed-empty-disc').hidden=true;
   const list=document.getElementById('feed-discovery');
@@ -29088,6 +29148,11 @@ _totopBtn.addEventListener('click',e=>{
         <div class="feed-section-ttl" id="feed-favalbum-ttl">💿 New Music</div>
         <div id="feed-favalbum" class="feed-album-grid feed-album-rail feed-album-rail-1 hscroll-drag"></div>
       </div>
+      <!-- 즐겨찾기 공연(2026-10-21 사용자 "나침반 패널에 공연 정보도") — 즐겨찾기 그룹·멤버의 예정 공연, 가까운 순. 누르면 공연 창 -->
+      <div class="feed-section" id="feed-favconcert-section" style="display:none">
+        <div class="feed-section-ttl">🎟️ Concerts</div>
+        <div id="feed-favconcert" class="feed-album-grid feed-album-rail feed-album-rail-1 hscroll-drag"></div>
+      </div>
       <!-- 즐겨찾기 인스타 사진(2026-10-19) — 영상은 유튜브에서 이미 모으니 **사진 게시물만**(사용자 결정). 신보 레일과 같은 정사각 카드 -->
       <div class="feed-section" id="feed-favig-section" style="display:none">
         <div class="feed-section-ttl" id="feed-favig-ttl">📷 On Instagram</div>
@@ -29143,6 +29208,11 @@ _totopBtn.addEventListener('click',e=>{
       <div class="feed-section" id="feed-anniv-section" style="display:none">
         <div class="feed-section-ttl">🎂 Today's Anniversary</div>
         <div id="feed-anniv" class="feed-strip hscroll-drag"></div>
+      </div>
+      <!-- 다가오는 공연(2026-10-21) — 전체 그룹·솔로의 단독 콘서트·팬미팅(kpop_events) 45일 안, 가까운 순 -->
+      <div class="feed-section" id="feed-concerts-section" style="display:none">
+        <div class="feed-section-ttl">🎟️ Upcoming Concerts</div>
+        <div id="feed-concerts" class="feed-album-grid feed-album-rail feed-album-rail-1 hscroll-drag"></div>
       </div>
       <!-- Events(2026-10-16, 행사 3단계) — 다가오는 시상식·연말 무대(확정 일정만, D-day) + 최근 열린 행사 회차(누르면 그 회차 무대 모음). -->
       <div class="feed-section" id="feed-events-section" style="display:none">

@@ -1,6 +1,8 @@
 # CHANGELOG
 
 ## 2026-10-21 (Claude Code — 공연 수집 복구)
+- **[완료] [index.html]** 사용자 "나침반 패널에 공연 정보도 나오면 좋겠다". 기존 🎤 Events는 시상식·페스티벌 시리즈만이라 단독 콘서트·팬미팅(kpop_events)은 없었다 → 발견 탭 **🎟️ Upcoming Concerts**(45일 안 전체, 가까운 순, 같은 그룹·같은 공연 회차는 한 칸, 20개)·For You **🎟️ Concerts**(즐겨찾기 그룹·멤버). 카드 = 포스터(없으면 그룹 대표 썸네일)·D-day·공연장, 누르면 공연 창(`_openConcertSheet` — 카드의 공연 항목 그대로: 공연장·예매·다녀왔어요). 한 번 받아 두고 10분 공유(`_loadUpcomingConcerts`). 실측 45일 안 66건.
+- **[완료·SQL 실행 대기] [tools/kopis_events.mjs] [sql/stagepick_event_cleanup_2026-10-21.sql]** 6개월치 연결 결과 점검 중 오연결: "TOO HOT SHOW"→티오원, "KWON JIN AH"(권진아)×3·"JIN YOUNG"→러블리즈 JIN, "사가라 마유"→트리플에스 마유, "제물포구문화체육센터 노을"→레인보우 노을, "소담 단독 콘서트"→블랭키 소담, "정승환 10주년"→ATBO 정승환×2, "THE BATTLE OF LEGENDS"→배틀. 규칙: TOO·BATTLE 흔한 단어, 멤버 이름만으로 잇는 건 맨 앞+3글자 이하 영문 제외+솔로 활동(솔로 표시·본인 앨범)일 때만. 이미 들어간 11건 삭제 SQL(고친 규칙으로 재판정해 연결이 사라진 것만). kopis-match 셀프테스트 통과.
 - **[완료] [tools/stagepick_concerts.mjs] [tools/kopis_events.mjs] [tools/solo_whitelist.json]** 사용자 "공연 정보 잘 수집되나? 홍성준 2026 SEONGJUN's REQUEST LIVE IN SEOUL". StagePick 매일 수집이 **10-09 첫 실행부터 DB에 0건** — 원인 셋: ① `kpop_events.id`가 uuid인데 "sp_219980" → 매번 22P02로 저장 통째 실패(워크플로는 초록불) ② 10-12부터 StagePick이 data-cal-perfs를 작은따옴표로 감싸 파서가 0건(역시 초록불) ③ 필수 type(콘서트·팬미팅·팬콘·페스티벌) 미지정. 수정: 공연 번호로 결정적 uuid(sha1, 매일 같은 행)·type 추정·poster_url(ImageURL)·두 따옴표 다 파싱·**저장 실패나 0건이면 exit 1**. 홍성준: 솔로 허용 목록 항목을 {ko, alias}로 확장(제목 맨 앞일 때만 — 튜넥스·블랭키 성준과 혼동 방지)해 "SEONGJUN" 추가. 로컬: 4개월 1,278건 수집·119건 연결(콘서트 80·팬미팅 7·팬콘 6…).
 
 ## 2026-10-21 (Claude Code — 웹 레이아웃: 재생 화면 윗줄·앨범 창 "무대")

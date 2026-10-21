@@ -46,7 +46,8 @@ const isLeadToken = (nu, tok) => {
 };
 
 // 흔한 단어라 단독으로는 못 믿는 토큰(영상 태깅 쪽에서 사고가 났던 계열 + 공연명에 흔한 일반어)
-const COMMON = new Set(['ONE', 'LOVE', 'STAR', 'DAY', 'THE', 'SHOW', 'LIVE', 'TOUR', 'CONCERT', 'FANMEETING',
+// TOO(티오원 옛 이름): 영어 낱말이라 공연명에서 단독 매칭 금지 — "TOO HOT SHOW(투핫쇼)"가 티오원 공연이 됐다(2026-10-21)
+const COMMON = new Set(['TOO', 'BATTLE', 'ONE', 'LOVE', 'STAR', 'DAY', 'THE', 'SHOW', 'LIVE', 'TOUR', 'CONCERT', 'FANMEETING',
   'WORLD', 'SEOUL', 'KOREA', 'SPECIAL', 'BEST', 'NEW', 'IN', 'ON', 'UP', 'AND', 'GIRL', 'BOY',
   '콘서트', '팬미팅', '단독', '전국투어', '앙코르', '월드투어', '내한', '공연', '페스티벌']);
 
@@ -160,6 +161,14 @@ export function matchEvent(title) {
     // 그룹 '앨리스'에선 막히고 **멤버 '앨리스'로** 또 새어나갔다 — 같은 이름은 같은 위험을 갖는다.
     if (AMBIGUOUS_GROUPS.has(ko) && !isLeadToken(nu, ko)) { why.push(`skip:member ${ko}(흔한단어 · 맨 앞 아님)`); continue; }
     if (people.length >= 2) { why.push(`member:${ko}(동명이인 ${people.length}명 — 버림)`); continue; }
+    // 2026-10-21 StagePick 6개월치 점검: 이름이 제목 어디든 있으면 붙여 "KWON JIN AH"(권진아)→러블리즈 JIN, "사가라 마유"→트리플에스 마유,
+    // "제물포구문화체육센터 노을 단독 콘서트"(발라드 그룹 노을)→레인보우 노을이 됐다. 멤버 이름만으로 잇는 건
+    // ① 제목 맨 앞 ② 3글자 이하 영문 이름 제외 ③ 그 사람이 솔로로 활동(솔로 표시·본인 앨범)할 때만. 그 밖의 솔로 공연은 SOLO_WHITELIST로.
+    if (!isLeadToken(nu, ko)) { why.push(`skip:member ${ko}(맨 앞 아님)`); continue; }
+    if (/^[A-Za-z.]{1,3}$/.test(ko)) { why.push(`skip:member ${ko}(짧은 영문 이름)`); continue; }
+    const p = people[0];
+    const soloActive = p && (p.group?.ko === '솔로' || p.soloDisplay === true || (Array.isArray(p.discography) && p.discography.length > 0));
+    if (!soloActive) { why.push(`skip:member ${ko}(솔로 활동 기록 없음)`); continue; }
     return { groups: [ko], confidence: 'weak', why: why.concat(`member:${ko}`) };
   }
   return { groups: [], confidence: 'none', why };
