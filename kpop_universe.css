@@ -1545,6 +1545,10 @@
   .ig-play{position:absolute;top:4px;right:5px;z-index:4;font-size:10px;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,0.7);pointer-events:none;}
   /* 인스타 사진은 세로 4:5가 표준이라 칸도 4:5(2026-10-19, 사용자: "정사각이 최선일까?") — 세로 사진은 거의 안 잘리고, 정사각·가로만 양옆이 조금 잘린다 */
   /* 여러 장 게시물 묶음 — 디스코 활동기 묶음(.gc-discog-deck)과 같은 겹침 */
+  /* 여러 장 막대 줄(X 스타일, 2026-10-22) — 앞 장 위쪽 가로로, 첫 막대만 밝게 */
+  .ig-bars{position:absolute;top:6px;left:6px;z-index:4;display:flex;gap:3px;width:calc(var(--ig-thumb) - 12px);max-width:calc(100% - 12px);pointer-events:none;}
+  .ig-bars i{flex:0 1 14px;height:3px;border-radius:2px;background:rgba(255,255,255,0.45);box-shadow:0 0 3px rgba(0,0,0,0.45);}
+  .ig-bars i.on{flex-basis:22px;background:#fff;}
   .ig-deck{width:calc(var(--ig-thumb) + 20px);background:none;overflow:visible;cursor:pointer;}
   .ig-deck img{position:absolute;top:0;left:0;width:var(--ig-thumb);height:100%;object-fit:cover;border-radius:8px;transition:transform .2s ease;}
   .ig-deck-front{z-index:3;box-shadow:0 3px 10px rgba(0,0,0,0.35);}

@@ -12820,6 +12820,13 @@ async function _renderIgStrip(prefix,url){
     if(ty==='VIDEO'){const b=document.createElement('span');b.className='ig-play';b.textContent='▶';a.appendChild(b);}
     return a;
   };
+  // 여러 장 표시(2026-10-22, 사용자: "네모+숫자 구리다, X 사진 줄 바 어때") — X 게시물처럼 썸네일 위쪽에 짧은 막대 줄.
+  // 막대 수 = 장수(최대 6), 첫 막대만 밝게. 장수를 모르면(안 사진 목록 없음) 막대 3개로 "여러 장"만 알린다.
+  function _igBars(n){
+    const w=document.createElement('span');w.className='ig-bars';
+    for(let i=0;i<Math.min(n||3,6);i++){const b=document.createElement('i');if(!i)b.className='on';w.appendChild(b);}
+    return w;
+  }
   media.forEach(m=>{
     // 여러 장 게시물(캐러셀, 2026-10-19 사용자 제안) — 앨범 활동기 묶음처럼 첫 장 뒤로 두 장을 비스듬히 겹쳐 두고,
     // 누르면 그 자리에서 안의 사진이 전부 펼쳐진다(펼친 사진을 누르면 원본 게시물). 안 사진 목록(m.c)이 없으면 한 장 + ❐ 표시
@@ -12830,7 +12837,7 @@ async function _renderIgStrip(prefix,url){
       const f=document.createElement('img');f.className='ig-deck-front';f.src=m.c[0]||m.u;f.alt='';f.loading='lazy';
       f.addEventListener('error',()=>{d.remove();if(!strip.children.length)_igSecSync(sec);});
       d.appendChild(f);
-      const n=document.createElement('span');n.className='ig-play';n.textContent='❐ '+m.c.length;d.appendChild(n);
+      d.appendChild(_igBars(m.c.length));
       d.addEventListener('click',e=>{
         e.stopPropagation();
         // 펼친 묶음 — 디스코 활동기 묶음과 같은 얇은 괄호선 머리줄 "사진 N장 ──── 접기", 누르면 다시 겹친 묶음으로(2026-10-21 사용자 "어떻게 접는지 모르겠음")
@@ -12847,7 +12854,7 @@ async function _renderIgStrip(prefix,url){
       strip.appendChild(d);
     }else{
       const a=mk(m.u,m,0);
-      if(m.ty==='CAROUSEL_ALBUM'){const b=document.createElement('span');b.className='ig-play';b.textContent='❐';a.appendChild(b);}
+      if(m.ty==='CAROUSEL_ALBUM')a.appendChild(_igBars(0));
       strip.appendChild(a);
     }
   });
@@ -14309,12 +14316,18 @@ async function _openSongVideos(title,owner,songMeta,opt){
   //    무순서 커버가 최대 50개 붙어 "스크롤할수록 뒤죽박죽"으로 보였다. 원곡과 같은 기준으로 맞춘다.
   personKeys.forEach(k=>coverQs.push(_excl(sb.from(_YT_TABLE).select(COLS).contains('cover_of_members',[k])).ilike('title_norm',like).order('published_at',{ascending:false}).limit(50)));
   if(groupKey)coverQs.push(_excl(sb.from(_YT_TABLE).select(COLS).contains('cover_of_groups',[groupKey])).ilike('title_norm',like).order('published_at',{ascending:false}).limit(50));
+  // 커버 태깅(cover_of_*)이 안 된 커버도 찾는다(2026-10-22, 사용자 "곡 정보 창에 커버 영상까지") — 아이유 '잔소리'의 아이즈원 불후의 명곡·
+  // 츄×10CM·호이유 영상이 DB엔 있는데 원곡자 표시가 없어 커버 탭이 아예 안 떴다. 주인 제한 없는 제목 검색(트라이그램, 0.1초대)으로 받아
+  // 아래 _songCoverByTitle로 "곡으로 부른 영상"만 남긴다.
+  // 검색어는 괄호 앞 기본 곡명 — 멜론 곡명 '잔소리 (With 2AM 슬옹)' 그대로면 커버 제목에 그 꼬리가 없어 0건이었다
+  const _baseQ=_titleNorm(_songStripTail(title).split(/\s*[\(\[]/)[0].trim()||title);
+  const titleAllP=_excl(sb.from(_YT_TABLE).select(COLS)).ilike('title_norm',`%${_baseQ}%`).order('published_at',{ascending:false}).limit(200);
   let settled;
-  try{settled=await Promise.all([keyP,origP,mvP,...coverQs].map(q=>q.then(r=>r,()=>({data:null}))));}
+  try{settled=await Promise.all([keyP,origP,mvP,titleAllP,...coverQs].map(q=>q.then(r=>r,()=>({data:null}))));}
   catch(e){settled=null;}
   if(!_hostOpen()||myReq!==_songVidReq)return; // 그 사이 닫힘/다른 곡 클릭
   if(!settled){listEl.innerHTML=`<div class="tvf-empty">${currentLang==='ko'?'불러오기 실패':'Failed to load'}</div>`;return;}
-  const[keyR,origR,mvR,...coverRs]=settled;
+  const[keyR,origR,mvR,titleAllR,...coverRs]=settled;
   const origSeen=new Set();
   // 곡 키 연결분 + 제목 검색분. 제목 검색분 중 **다른 곡으로 연결된 영상은 뺀다** — 'ON'을 눌렀는데 'ON' 글자가 든 다른 곡 영상이
   // 섞이던 것. 아직 아무 곡에도 연결 안 된 영상(song_keys 비어 있음)은 예전처럼 남겨 둔다(한글 곡명 표기 등 규칙이 못 잡은 것).
@@ -14325,6 +14338,20 @@ async function _openSongVideos(title,owner,songMeta,opt){
   const coverSeen=new Set();
   // 원곡 목록에 이미 있는 영상은 커버서 제외(주인 채널 자체 커버 영상 등이 양쪽에 걸릴 때 중복 방지)
   const cover=_filterBannedVideos(coverRs.flatMap(r=>(r&&r.data)||[])).filter(v=>!origSeen.has(v.id)&&!coverSeen.has(v.id)&&coverSeen.add(v.id));
+  // 제목으로 찾은 것: 원곡자 이름이 든 남의 채널 영상(음방 채널의 "IU & Seul Ong - 잔소리")은 원곡, 나머지는 커버
+  {
+    const ownerNames=[gko,GROUPS[gko]?.en,memberKo,memberKo&&ARTISTS.find(a=>a.name&&a.name.ko===memberKo)?.name?.en].filter(Boolean).map(_songNorm).filter(n=>n.length>=2);
+    const base=_songBase(title);
+    _filterBannedVideos((titleAllR&&titleAllR.data)||[]).forEach(v=>{
+      if(origSeen.has(v.id)||coverSeen.has(v.id)||!_songCoverByTitle(v,base))return;
+      const tn=_songNorm(v.title);
+      // "[원곡:아이유(IU)]"·"cover"처럼 원곡자를 크레딧으로 적은 건 이름이 들어 있어도 커버(업텐션 쿨룩 LIVE)
+      if(ownerNames.some(n=>tn.includes(n))&&!/원곡|\bcover(ed)?\b|original\s+(song\s+)?by/i.test(v.title||'')){origSeen.add(v.id);orig.push(v);}
+      else{coverSeen.add(v.id);cover.push(v);}
+    });
+    orig.sort((a,b)=>String(b.published_at||'').localeCompare(String(a.published_at||'')));
+    cover.sort((a,b)=>String(b.published_at||'').localeCompare(String(a.published_at||'')));
+  }
   _songVid={gko,orig,cover,tab:'all',fmt:'all',sort:'latest',rows:[]};
   _renderSongVideoTabs();
 }

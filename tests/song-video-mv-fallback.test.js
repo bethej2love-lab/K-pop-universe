@@ -35,6 +35,9 @@ const ctx = {
   _titleNorm: s => s.toLowerCase(), _songBase: s => s.toLowerCase().replace(/ /g, ''), _pgFilterVal: s => s,
   _coverOfQueryKeys: () => ({ personKeys: [], groupKey: null }),
   _filterBannedVideos: rows => rows.filter(v => !v.content_flag),
+  // 2026-10-22 제목으로 찾은 커버(주인 제한 없는 검색) — 이 테스트는 원곡 보충만 보므로 커버 판정은 늘 false
+  _songStripTail: s => s, _songNorm: s => String(s || '').toLowerCase().replace(/[^a-z0-9가-힣]/g, ''), _songCoverByTitle: () => false,
+  GROUPS: {}, ARTISTS: [],
 };
 vm.createContext(ctx);
 vm.runInContext(html.slice(start, end), ctx);

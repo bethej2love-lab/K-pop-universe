@@ -499,6 +499,20 @@ function _songLinkBases(title,songs,blockNames){
   }
   return out;
 }
+// 곡 창의 "제목으로 찾은 커버"(2026-10-22) — 주인 제한 없는 제목 검색 결과 중 **그 곡을 부른 영상**만 true.
+// 제목에 곡명이 그냥 들어 있는 건 안 믿는다('엄마 잔소리'·'잔소리 STOP 챌린지'). 인정하는 건
+//   ① 다른 주인의 같은 곡 키(song_keys '아이즈원:잔소리') ② 따옴표·꺾쇠 안 곡명 ③ "가수 - 곡명" 대시 뒤가 곡명으로 시작(짧은·흔한 곡명 제외)
+// 다른 곡에만 연결된 영상(song_keys에 이 곡 없음)은 버린다.
+function _songCoverByTitle(v,base){
+  if(!v||!base)return false;
+  const t=String(v.title||'');
+  const keys=Array.isArray(v.song_keys)?v.song_keys:[];
+  if(keys.length)return keys.some(k=>String(k).slice(String(k).indexOf(':')+1)===base);
+  const Q=/['‘’"“”「」『』<>＜＞《》〈〉]([^'‘’"“”「」『』<>＜＞《》〈〉\n]{1,60})['‘’"“”「」『』<>＜＞《》〈〉]/g;
+  for(const m of t.matchAll(Q))if(_songBase(m[1])===base)return true;
+  if((/^[가-힣]+$/.test(base)?base.length<3:base.length<4)||_SONG_COMMON.has(base))return false;
+  return t.split(/\s[-–—]\s/).slice(1).some(seg=>_songNorm(seg).startsWith(base));
+}
 // ── 앨범 ↔ 영상(2026-10-19) ─────────────────────────────────────────────────────────────────
 // 앨범 카드 영상 패널은 "수록곡 song_keys" + "제목에 앨범명이 든 영상(하이라이트 메들리·트레일러·쇼케이스)"을 합친다.
 // 앨범명 쪽 판정 규칙 — tools/build_album_videos.mjs(매일 미리 계산)와 앱(그 뒤 들어온 신규 영상)이 같이 쓴다.
