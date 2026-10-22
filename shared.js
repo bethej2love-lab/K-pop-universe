@@ -34,6 +34,15 @@ function _leftCutoffDate(left){
   if(!m[3])return `${m[1]}-${p2(m[2])}-${new Date(+m[1],+m[2],0).getDate()}`;
   return `${m[1]}-${p2(m[2])}-${p2(m[3])}`;
 }
+// 그룹 활동 중단일(pausedFrom, 2026-10-22) — 탈퇴는 아니지만 그룹 활동에서 빠진 멤버(펜타곤 옌안·유토, 2023.10 계약 종료 후
+// 2026 10주년 싱글 7인). 멤버 표기는 현역으로 두고, 멤버 카드의 **미태깅 그룹 전체 영상**만 그날까지로 자른다.
+// 그 그룹 항목(groups[].pausedFrom) 우선, 없으면 주 소속일 때 최상위 a.pausedFrom. 반환 'YYYY-MM-DD' 또는 null.
+function _memberPausedCutoff(a,gko){
+  if(!a)return null;
+  const e=(a.groups||[]).find(g=>g&&g.ko===gko);
+  const v=(e&&e.pausedFrom)||(a.group&&a.group.ko===gko?a.pausedFrom:null);
+  return _leftCutoffDate(v);
+}
 // 유튜브 채널 동기화 조회에 쓰는 키: 실존하는 그룹 소속이면 그 그룹 키를, 아이유처럼 소속 그룹이 없는
 // 솔로 아티스트면 본인 이름을 키로 써서 본인 채널을 동기화/조회한다(그룹별 group_ko 컬럼 재사용).
 // ⚠️ 동명이인(2026-10-19): 이름 키(group_ko=사람 이름) 영상은 이름이 같은 사람끼리 구분이 안 된다(포미닛·나인뮤지스 현아 등).

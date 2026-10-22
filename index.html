@@ -9794,8 +9794,10 @@ async function _enrichMemberVideosFromApi(a,tv,baseSongs,basePersonalSongs){
       sb.from(_YT_TABLE).select('id,title,category,is_short,group_ko,members,with_members,cover_of_members,cover_of_groups,content_flag'+_durCol()).in('group_ko',_ownKeys).contains('members',[memberKo]),
       sb.from(_YT_TABLE).select('id,title,category,is_short,group_ko,members,with_members,cover_of_members,cover_of_groups,content_flag'+_durCol()).contains('with_members',[withKey]),
       // 멤버 태깅 없는 그룹 전체 영상 — 모든 멤버 카드에 노출(그룹 히스토리 전체 키로)
-      sb.from(_YT_TABLE).select('id,title,category,is_short,group_ko,members,with_members,cover_of_members,cover_of_groups,content_flag'+_durCol()).in('group_ko',_ownKeys).filter('members','eq','{}'),
+      sb.from(_YT_TABLE).select('id,title,category,is_short,group_ko,members,with_members,cover_of_members,cover_of_groups,content_flag,published_at'+_durCol()).in('group_ko',_ownKeys).filter('members','eq','{}'),
     ]);
+    // 그룹 활동 중단 멤버(pausedFrom)는 중단일 이후 미태깅 그룹 영상을 뺀다 — 채널 그리드(_memberVideoCutoff)와 같은 기준
+    if(generalQ.data)generalQ.data=generalQ.data.filter(v=>{const c=_memberPausedCutoff(a,v.group_ko);return !c||!v.published_at||String(v.published_at).slice(0,10)<=c;});
     if(ownQ.error)throw new Error(ownQ.error.message);
     if(withQ.error)throw new Error(withQ.error.message);
     if(generalQ.error)throw new Error(generalQ.error.message);
@@ -26592,6 +26594,10 @@ function _makeChVidController(contId){
     // joined(그 그룹 합류일, 2026-10-12 — 티오원 여정·다이고·렌타 2022.06.17): 있으면 미태깅 그룹 영상을 그날 이후로만.
     const r=_memberVideoCutoffCore(a,gEntry,activeHere,ko);
     if(gEntry.joined)r.joined=String(gEntry.joined).replace(/\./g,'-').slice(0,10);
+    // pausedFrom(그룹 활동 중단일, 2026-10-22 — 펜타곤 옌안·유토: 2023.10 계약 종료, 탈퇴 발표는 없음, 2026 10주년 싱글은 7인).
+    // 멤버 표기는 현역 그대로 두고, 미태깅 그룹 전체 영상만 그날까지로 자른다(사용자: "옌안 카드에 옌안이 안 한 펜타곤 영상이 나오면 안 된다").
+    const _pz=_memberPausedCutoff(a,ko);
+    if(_pz&&r.active)return Object.assign(r,{active:false,left:_pz});
     return r;
   }
   function _memberVideoCutoffCore(a,gEntry,activeHere,ko){
