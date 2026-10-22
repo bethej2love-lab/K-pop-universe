@@ -80314,7 +80314,16 @@
     "trackCount": 1,
     "titleTrack": "Know My Name (Feat. Coco Jones, SOYEON, i-dle)",
     "feat": true,
-    "byline": [
+    "tracks": [
+     {
+      "no": 1,
+      "title": "Know My Name (Feat. Coco Jones, SOYEON, i-dle)",
+      "isTitle": true
+     }
+    ],
+    "src": "melon",
+    "melonAlbumId": "14634449",
+    "host": [
      {
       "n": "True Damage",
       "aid": "2753877"
@@ -80330,23 +80339,8 @@
      {
       "n": "Vic Mensa",
       "aid": "777214"
-     },
-     {
-      "n": "아이들",
-      "aid": "2137482",
-      "en": "(G)I-DLE",
-      "gko": "아이들"
      }
-    ],
-    "tracks": [
-     {
-      "no": 1,
-      "title": "Know My Name (Feat. Coco Jones, SOYEON, i-dle)",
-      "isTitle": true
-     }
-    ],
-    "src": "melon",
-    "melonAlbumId": "14634449"
+    ]
    },
    {
     "title": "We made",

@@ -168,7 +168,7 @@ for (const [k, v] of Object.entries(map)) {
 // 주인이 우리 쪽이 아닌 앨범이라 위 aid 대조에 안 걸린다. 멜론은 피처링 가수를 앨범·트랙 아티스트로 안 붙이고(삐그덕 상세 = Crush만)
 // 제목에만 적는다. 그래서 ① 제목의 "(Feat./with …)" 이름으로 우리 후보를 고르고 ② 그 후보의 멜론 '참여'(listType=F) 탭 첫 페이지에
 // 같은 앨범 ID가 있을 때만 확정한다 — 이름은 후보 고르기에만 쓰고 확정은 멜론 ID라 동명이인이 안 들어온다. 후보 1명 = 요청 1번.
-// 넣을 땐 feat:true·isMain:false(디스코 기본 숨김 — '부가 앨범 포함'으로 펼침) + byline(주인 → 우리 아티스트 순).
+// 넣을 땐 feat:true·isMain:false(디스코 기본 숨김 — '부가 앨범 포함'으로 펼침) + host(앨범 주인, 멜론 표기 순).
 const FEAT_RE = /[(\[]\s*(?:feat\.?|ft\.?|with)\s+([^)\]]+)[)\]]/i;
 const featRows = [];
 const nameIdx = new Map(); // 정규화 이름 → aid[]
@@ -277,11 +277,9 @@ for (const x of found) {
   const type = typeOf(x.melonType, tracks.length || x.trackCount, x.title);
   const region = regionFromGenre(d.genre) || detectRegion(x.title, tracks.map(t => t.title));
   const extra = variant || x.feat || /OST|컴필레이션|라이브/.test(type);
-  // 참여 앨범: 주인(멜론 표기 순서) → 우리 아티스트. 앨범 상세의 '함께한 사람' 줄·소식 선반 주인 표기가 이걸 읽는다
-  const selfB = x.t.kind === 'solo'
-    ? { n: x.t.obj.name?.ko, aid: [...byAid].find(([, t]) => t === x.t)?.[0], en: x.t.obj.name?.en, ako: x.t.obj.name?.ko, ...(groups[x.t.obj.group?.ko] ? { ag: x.t.obj.group.ko } : {}) }
-    : { n: x.t.label, aid: [...byAid].find(([, t]) => t === x.t)?.[0], en: x.t.obj.en, gko: x.t.label };
-  const featByline = x.feat ? [...(x.names || []).map(o => ({ n: o.n, aid: o.aid })), selfB] : null;
+  // 참여 앨범의 주인(멜론 표기 순서) — byline(공동 앨범 표기)이 아니라 host에 둔다: "피처링과 공동 앨범은 다르다"(2026-10-19 사용자 결정,
+  // tests/album-byline). 소식 선반 주인 표기가 host를 읽는다.
+  const featHost = x.feat ? (x.names || []).map(o => ({ n: o.n, aid: o.aid })) : null;
   const titleTrack = (tracks.find(t => t.isTitle) || (tracks.length === 1 ? tracks[0] : null) || {}).title || null;
   const entry = {
     title: cleanTitle(x.title),
@@ -293,7 +291,7 @@ for (const x of found) {
     titleTrack,
     ...(region ? { region } : {}),
     ...(variant ? { variant: true } : {}),
-    ...(x.feat ? { feat: true, byline: featByline } : {}),
+    ...(x.feat ? { feat: true, host: featHost } : {}),
     tracks,
     src: 'melon',
     melonAlbumId: x.albumId,

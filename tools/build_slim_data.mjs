@@ -287,7 +287,7 @@ const RECENT_ALBUMS = 400;
       if (Array.isArray(al.byline) && al.byline.length >= 2) row.w = al.byline.map(x => x.n); // 공동 앨범 표기(멜론 순서, 2026-10-19)
       // 참여(피처링) 앨범 — 남의 앨범에 우리 아티스트가 참여(2026-10-22, melon_new_releases). 소식 선반은 '피처링' 표기 + 본인 앨범 뒤로.
       // OST는 원래 feat:true로 들어와 있어 제외(타입 라벨 'OST'가 이미 구분해 준다).
-      if (al.feat && !/OST/.test(al.type || '')) row.f = 1;
+      if (al.feat && !/OST/.test(al.type || '')) { row.f = 1; if (Array.isArray(al.host) && al.host.length) row.h = al.host.map(x => x.n); } // h = 앨범 주인(크러쉬)
       rows.push(row);
     }
   };

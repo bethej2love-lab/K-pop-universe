@@ -23389,7 +23389,7 @@ async function _buildFeedFavAlbums(){
     picked.forEach(a=>{
       // 캡션 3줄: 앨범명 / 아티스트 / 타입 · 발매일. 예전엔 아티스트와 타입이 한 줄로 붙어 마퀴로
       // 흘렀는데, 나누니 아티스트가 독립해 읽히고 발매일도 자리가 생겼다(2026-09-21).
-      const ownerDisp=Array.isArray(a.w)&&a.w.length>1?a.w.join(', '):a.k==='g'?_gLabelKo(a.o):a.o; // 공동 앨범은 멜론 표기 순서대로 쉼표(2026-10-19)
+      const ownerDisp=a.f&&Array.isArray(a.h)&&a.h.length?a.h.join(', '):Array.isArray(a.w)&&a.w.length>1?a.w.join(', '):a.k==='g'?_gLabelKo(a.o):a.o; // 공동 앨범은 멜론 표기 순서대로 쉼표(2026-10-19) · 참여 앨범은 앨범 주인(h — 제목에 'Feat. 아이유'가 이미 있다)
       const meta=_albumShelfMeta(a);
       _appendFeedCard(list,'💿',a.t,ownerDisp,_albumCardNav(a),a.c,null,{meta,metaFresh:_albumIsFresh(a.d),metaNew:_albumIsNew(a.d)});
     });
@@ -23805,7 +23805,7 @@ async function _buildFeedNewAlbums(){
     try{await Promise.race([_feedDailyNewsP,new Promise(r=>setTimeout(r,2500))]);}catch(e){}
     if(list.children.length)return; // 기다리는 사이 다시 그려졌으면(패널 재오픈) 이번 건 버림
     picked.forEach(a=>{
-      const ownerDisp=Array.isArray(a.w)&&a.w.length>1?a.w.join(', '):a.k==='g'?_gLabelKo(a.o):a.o; // 공동 앨범은 멜론 표기 순서대로 쉼표(2026-10-19)
+      const ownerDisp=a.f&&Array.isArray(a.h)&&a.h.length?a.h.join(', '):Array.isArray(a.w)&&a.w.length>1?a.w.join(', '):a.k==='g'?_gLabelKo(a.o):a.o; // 공동 앨범은 멜론 표기 순서대로 쉼표(2026-10-19) · 참여 앨범은 앨범 주인(h — 제목에 'Feat. 아이유'가 이미 있다)
       const meta=_albumShelfMeta(a);
       _appendFeedCard(list,'💿',a.t,ownerDisp,_albumCardNav(a),a.c,null,{meta,metaFresh:_albumIsFresh(a.d),metaNew:_albumIsNew(a.d)});
     });

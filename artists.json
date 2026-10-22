@@ -23449,7 +23449,16 @@
         "trackCount": 1,
         "titleTrack": "Know My Name (Feat. Coco Jones, SOYEON, i-dle)",
         "feat": true,
-        "byline": [
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Know My Name (Feat. Coco Jones, SOYEON, i-dle)",
+            "isTitle": true
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "14634449",
+        "host": [
           {
             "n": "True Damage",
             "aid": "2753877"
@@ -23465,24 +23474,8 @@
           {
             "n": "Vic Mensa",
             "aid": "777214"
-          },
-          {
-            "n": "소연",
-            "aid": "1050107",
-            "en": "Soyeon",
-            "ako": "소연",
-            "ag": "아이들"
           }
-        ],
-        "tracks": [
-          {
-            "no": 1,
-            "title": "Know My Name (Feat. Coco Jones, SOYEON, i-dle)",
-            "isTitle": true
-          }
-        ],
-        "src": "melon",
-        "melonAlbumId": "14634449"
+        ]
       },
       {
         "title": "끝내주는 인생",
@@ -51429,18 +51422,6 @@
         "trackCount": 1,
         "titleTrack": "삐그덕 (Feat. 아이유)",
         "feat": true,
-        "byline": [
-          {
-            "n": "Crush",
-            "aid": "674710"
-          },
-          {
-            "n": "아이유",
-            "aid": "261143",
-            "en": "IU",
-            "ako": "아이유"
-          }
-        ],
         "tracks": [
           {
             "no": 1,
@@ -51449,7 +51430,13 @@
           }
         ],
         "src": "melon",
-        "melonAlbumId": "14955418"
+        "melonAlbumId": "14955418",
+        "host": [
+          {
+            "n": "Crush",
+            "aid": "674710"
+          }
+        ]
       },
       {
         "title": "이 별로부터",
