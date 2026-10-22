@@ -417,6 +417,17 @@ try {
   }
   console.log(`[og-thumbs] 영상 없는 곳 프로필 사진으로: 그룹 ${gp} · 멤버 ${mp}`);
 } catch (e) { console.warn('[og-thumbs] 프로필 사진 대체 실패:', e.message); }
+// 그래도 없는 그룹은 마지막 정규·대표 앨범 커버(2026-10-22) — 영상도 사진도 없는 옛 그룹(배틀, 2006~2008)이 기본 이미지로 남아
+// tests/og-coverage가 10-20부터 매 푸시 빨간불이었다. 멜론 커버 URL은 안 만료된다.
+{
+  let ac = 0;
+  for (const [gko, g] of Object.entries(groups)) {
+    if (groupsOut[gko] || !Array.isArray(g.discography)) continue;
+    const al = g.discography.filter(a => a && a.cover).sort((a, b) => (b.isMain === true) - (a.isMain === true) || String(b.releaseDate || '').localeCompare(String(a.releaseDate || '')))[0];
+    if (al) { groupsOut[gko] = al.cover; ac++; }
+  }
+  if (ac) console.log(`[og-thumbs] 영상·사진 없는 그룹 앨범 커버로: ${ac}`);
+}
 const out = {
   _generated: 'tools/build_og_thumbs.mjs',
   _note: '공유 미리보기용 대표 영상 썸네일(MV·라이브 인기 상위 중 랜덤 — 실행할 때마다 바뀜). build_group_pages.js가 읽는다. 주간 자동갱신: .github/workflows/rotate-og-thumbs.yml · 빠진 곳만 메우려면 --keep-existing',
