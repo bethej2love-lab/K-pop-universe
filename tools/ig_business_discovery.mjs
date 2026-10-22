@@ -59,12 +59,19 @@ async function sbUpsert(table, rows, conflict) {
   if (!r.ok) throw new Error(`${table} 저장 실패 ${r.status} ${(await r.text()).slice(0, 300)}`);
 }
 
-// 순서: 한 번도 안 받은 계정 → 오래전에 받은 계정
+// 순서: 오래전에 받은 계정과 한 번도 안 받은 계정을 번갈아(아래 주석)
 let prev = [];
 try { prev = await sbGetAll('ig_accounts?select=handle,fetched_at&order=handle'); }
 catch (e) { console.error(e.message + '\n→ sql/2026-10-19_ig_stats.sql을 먼저 실행해야 한다'); process.exit(1); }
 const last = new Map(prev.map(r => [r.handle, r.fetched_at]));
-let queue = ONLY ? [ONLY.toLowerCase()] : [...handles].sort((a, b) => String(last.get(a) || '').localeCompare(String(last.get(b) || '')));
+// ⚠️ 새 계정 → 오래된 계정 "순서대로"만 하면 굶는다(2026-10-22 사용자 제보: 코르티스 최근 게시물이 여러 장인데 1장만). 멤버 개인 계정
+//    940여 개가 한꺼번에 목록에 들어오자 회당 70개 남짓(사용량 90%에서 멈춤)이 전부 새 계정에 쓰였고, 이미 받은 계정은 10-19 이후 한 번도
+//    다시 안 받혔다 — 코르티스는 캐러셀 사진·본문을 받기 전 형식 그대로 멈춰 있었다. 새 계정과 오래된 계정을 번갈아 받는다.
+const known = [...handles].filter(h => last.get(h)).sort((a, b) => String(last.get(a)).localeCompare(String(last.get(b))));
+const fresh = [...handles].filter(h => !last.get(h));
+const mixed = [];
+for (let i = 0; i < Math.max(known.length, fresh.length); i++) { if (i < known.length) mixed.push(known[i]); if (i < fresh.length) mixed.push(fresh[i]); }
+let queue = ONLY ? [ONLY.toLowerCase()] : mixed;
 queue = queue.slice(0, MAX);
 
 const day = new Date(Date.now() + 9 * 3600e3).toISOString().slice(0, 10); // KST 날짜

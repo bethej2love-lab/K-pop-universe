@@ -12777,17 +12777,37 @@ async function _igMagFor(handles){
   (handles||[]).forEach(h=>(idx.get(h)||[]).forEach(m=>{if(seen.has(m.p))return;seen.add(m.p);out.push(m);}));
   return out.sort((a,b)=>b.ts-a.ts);
 }
+// 여러 장 표시(2026-10-22, 사용자: "네모+숫자 구리다, X 사진 줄 바 어때") — X 게시물처럼 썸네일 위쪽에 짧은 막대 줄.
+// X처럼 "지금 몇 번째 사진인지" — 막대 수 = 장수(최대 10), at번째 막대만 길고 밝게. 접힌 묶음은 첫 장이 보이니 첫 막대,
+// 펼친 사진은 각자 자기 순서 막대(사용자: "두 번째 사진 보면 두 번째 막대가 길고"). 장수를 모르면 막대 3개.
+// 카드 인스타 줄·발견/For You 인스타 선반·매거진 줄이 전부 이걸 쓴다(예전 "❐ N" 표기 대체).
+function _igBars(n,at){
+  const w=document.createElement('span');w.className='ig-bars';
+  const k=Math.min(n||3,10),on=n>k?Math.round((at||0)*(k-1)/(n-1)):(at||0);
+  for(let i=0;i<k;i++){const b=document.createElement('i');if(i===on)b.className='on';w.appendChild(b);}
+  return w;
+}
+// 카드 인스타 칸 아래 3줄(2026-10-22, 사용자: "발견 탭처럼 1줄 아티스트 이름+계정(흐리게·작게), 2줄 내용, 3줄 n시간 전")
+function _igCaption(who,handle,m){
+  const c=document.createElement('div');c.className='ig-cap';
+  const l1=document.createElement('div');l1.className='ig-cap-who';l1.textContent=who||'';
+  if(handle){const hs=document.createElement('span');hs.className='ig-cap-h';hs.textContent='@'+handle;l1.appendChild(hs);}
+  const l2=document.createElement('div');l2.className='ig-cap-txt';
+  l2.textContent=String(m.cap||'').split(/\r?\n/).map(x=>x.trim()).find(Boolean)||'\u00a0'; // 본문 없으면 빈 줄(칸 높이 맞춤)
+  const l3=document.createElement('div');l3.className='ig-cap-ago';l3.textContent=m.t?_igAgo(m.t):'\u00a0';
+  c.append(l1,l2,l3);return c;
+}
+function _igCell(item,cap){const c=document.createElement('div');c.className='ig-cell';c.append(item,cap);return c;}
 function _igSecSync(sec){if(sec)sec.hidden=!sec.querySelector('.ig-item');}
 function _igMagTile(m){
   const a=document.createElement('a');a.className='ig-item ig-mag-item';a.href=m.p;a.target='_blank';a.rel='noopener noreferrer';
   a.addEventListener('click',e=>{e.stopPropagation();if(m.ty==='VIDEO')return;e.preventDefault();_openIgViewer(m,m.h,0);});
   const img=document.createElement('img');img.loading='lazy';img.alt='';img.src=m.u;
-  img.addEventListener('error',()=>{const sec=a.closest('.ig-section'),st=a.parentElement;a.remove();if(st&&!st.children.length)st.hidden=true;_igSecSync(sec);});
+  img.addEventListener('error',()=>{const sec=a.closest('.ig-section'),cell=a.closest('.ig-cell')||a,st=cell.parentElement;cell.remove();if(st&&!st.children.length)st.hidden=true;_igSecSync(sec);});
   a.appendChild(img);
   if(m.ty==='VIDEO'){const b=document.createElement('span');b.className='ig-play';b.textContent='▶';a.appendChild(b);}
-  else if(Array.isArray(m.c)&&m.c.length>1){const b=document.createElement('span');b.className='ig-play';b.textContent='❐ '+m.c.length;a.appendChild(b);}
-  const src=document.createElement('span');src.className='ig-src';src.textContent=m.src;a.appendChild(src);
-  return a;
+  else if(Array.isArray(m.c)&&m.c.length>1)a.appendChild(_igBars(m.c.length));
+  return _igCell(a,_igCaption(m.src,m.h,m)); // 매체 이름 + @계정 / 본문 / 시간(예전엔 사진 위에 매체 이름만 겹쳐 있었다)
 }
 async function _renderIgMagStrip(prefix,handles){
   const sec=document.getElementById(prefix+'-ig-section'),strip=document.getElementById(prefix+'-igmag-strip');
@@ -12811,26 +12831,18 @@ async function _renderIgStrip(prefix,url){
   try{const{data}=await sb.from('ig_accounts').select('media').eq('handle',h).maybeSingle();media=data&&data.media;}catch(e){}
   if(strip.dataset.h!==h||!Array.isArray(media)||!media.length)return; // 그새 다른 카드로 넘어갔으면 버린다
   const ko=currentLang==='ko';
+  const who=(_igOwners().get(h)||{}).name||h;
   // 사진 한 칸 — 사진은 사이트 안 뷰어(_openIgViewer, 2026-10-19), 영상은 재생 파일이 없어 인스타 원본으로
   const mk=(src,m,i)=>{
     const href=m.p,ty=i?'IMAGE':m.ty;
     const a=document.createElement('a');a.className='ig-item';a.href=href;a.target='_blank';a.rel='noopener noreferrer';
     a.addEventListener('click',e=>{e.stopPropagation();if(ty==='VIDEO')return;e.preventDefault();_openIgViewer(m,h,i||0);});
     const img=document.createElement('img');img.loading='lazy';img.alt='';img.src=src;
-    img.addEventListener('error',()=>{a.remove();if(!strip.children.length)_igSecSync(sec);});
+    img.addEventListener('error',()=>{(a.closest('.ig-cell')||a).remove();if(!strip.children.length)_igSecSync(sec);});
     a.appendChild(img);
     if(ty==='VIDEO'){const b=document.createElement('span');b.className='ig-play';b.textContent='▶';a.appendChild(b);}
     return a;
   };
-  // 여러 장 표시(2026-10-22, 사용자: "네모+숫자 구리다, X 사진 줄 바 어때") — X 게시물처럼 썸네일 위쪽에 짧은 막대 줄.
-  // X처럼 "지금 몇 번째 사진인지" — 막대 수 = 장수(최대 10), at번째 막대만 길고 밝게. 접힌 묶음은 첫 장이 보이니 첫 막대,
-  // 펼친 사진은 각자 자기 순서 막대(2026-10-22 사용자: "두 번째 사진 보면 두 번째 막대가 길고"). 장수를 모르면 막대 3개.
-  function _igBars(n,at){
-    const w=document.createElement('span');w.className='ig-bars';
-    const k=Math.min(n||3,10),on=n>k?Math.round((at||0)*(k-1)/(n-1)):(at||0);
-    for(let i=0;i<k;i++){const b=document.createElement('i');if(i===on)b.className='on';w.appendChild(b);}
-    return w;
-  }
   media.forEach(m=>{
     // 여러 장 게시물(캐러셀, 2026-10-19 사용자 제안) — 앨범 활동기 묶음처럼 첫 장 뒤로 두 장을 비스듬히 겹쳐 두고,
     // 누르면 그 자리에서 안의 사진이 전부 펼쳐진다(펼친 사진을 누르면 원본 게시물). 안 사진 목록(m.c)이 없으면 한 장 + ❐ 표시
@@ -12839,7 +12851,7 @@ async function _renderIgStrip(prefix,url){
       d.title=ko?`사진 ${m.c.length}장 — 눌러서 펼치기`:`${m.c.length} photos — tap to expand`;
       m.c.slice(1,3).reverse().forEach((src,i,arr)=>{const b=document.createElement('img');b.className='ig-deck-back d'+(arr.length-i);b.src=src;b.alt='';b.loading='lazy';b.addEventListener('error',()=>b.remove());d.appendChild(b);});
       const f=document.createElement('img');f.className='ig-deck-front';f.src=m.c[0]||m.u;f.alt='';f.loading='lazy';
-      f.addEventListener('error',()=>{d.remove();if(!strip.children.length)_igSecSync(sec);});
+      f.addEventListener('error',()=>{(d.closest('.ig-cell')||d).remove();if(!strip.children.length)_igSecSync(sec);});
       d.appendChild(f);
       d.appendChild(_igBars(m.c.length));
       d.addEventListener('click',e=>{
@@ -12850,16 +12862,18 @@ async function _renderIgStrip(prefix,url){
         head.innerHTML='<span class="gds-name"></span><span class="gds-line"></span><span class="gds-fold"></span>';
         head.querySelector('.gds-name').textContent=ko?`사진 ${m.c.length}장`:`${m.c.length} photos`;
         head.querySelector('.gds-fold').textContent=ko?'접기':'Collapse';
-        head.addEventListener('click',ev=>{ev.stopPropagation();wrap.replaceWith(d);});
+        head.addEventListener('click',ev=>{ev.stopPropagation();wrap.replaceWith(cell);cell.prepend(d);});
         wrap.appendChild(head);
-        m.c.forEach((src,i)=>{const it=mk(src,m,i);it.appendChild(_igBars(m.c.length,i));it.classList.add('ig-pop');it.style.animationDelay=(i*45)+'ms';wrap.appendChild(it);});
-        d.replaceWith(wrap);
+        // 캡션은 첫 장 아래에만(같은 게시물이라 반복하면 지저분하다)
+        m.c.forEach((src,i)=>{const it=mk(src,m,i);it.appendChild(_igBars(m.c.length,i));it.classList.add('ig-pop');it.style.animationDelay=(i*45)+'ms';wrap.appendChild(i?it:_igCell(it,_igCaption(who,h,m)));});
+        cell.replaceWith(wrap);
       });
-      strip.appendChild(d);
+      const cell=_igCell(d,_igCaption(who,h,m));
+      strip.appendChild(cell);
     }else{
       const a=mk(m.u,m,0);
       if(m.ty==='CAROUSEL_ALBUM')a.appendChild(_igBars(0));
-      strip.appendChild(a);
+      strip.appendChild(_igCell(a,_igCaption(who,h,m)));
     }
   });
   sec.hidden=false;
@@ -23281,7 +23295,7 @@ function _igRenderRail(list,photos){
     const img=card&&card.querySelector('img');
     if(img)img.addEventListener('error',()=>card.remove()); // 만료된 인스타 주소면 그 카드만 뺀다
     const tw=card&&card.querySelector('.feed-card-thumb-wrap');
-    if(tw&&Array.isArray(m.c)&&m.c.length>1){const b=document.createElement('span');b.className='ig-play';b.textContent='❐ '+m.c.length;tw.appendChild(b);}
+    if(tw&&Array.isArray(m.c)&&m.c.length>1)tw.appendChild(_igBars(m.c.length));
   });
   list.scrollLeft=0;_enableDragScroll(list);
 }
@@ -23297,7 +23311,7 @@ function _igRenderMagRail(list,items){
     if(img)img.addEventListener('error',()=>card.remove());
     const tw=card&&card.querySelector('.feed-card-thumb-wrap');
     if(tw&&m.ty==='VIDEO'){const b=document.createElement('span');b.className='ig-play';b.textContent='▶';tw.appendChild(b);}
-    else if(tw&&Array.isArray(m.c)&&m.c.length>1){const b=document.createElement('span');b.className='ig-play';b.textContent='❐ '+m.c.length;tw.appendChild(b);}
+    else if(tw&&Array.isArray(m.c)&&m.c.length>1)tw.appendChild(_igBars(m.c.length));
   });
   list.hidden=!list.children.length;list.scrollLeft=0;_enableDragScroll(list);
 }
