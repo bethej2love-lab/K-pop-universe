@@ -28040,7 +28040,9 @@ function _makeConcertItem(ev){
   const attendBtn=document.createElement('button');attendBtn.type='button';
   attendBtn.className='concert-attend-btn'+(entry?' on':'');
   attendBtn.textContent=_attendText(!!entry);
-  chips.appendChild(attendBtn);
+  // 공연 당일(KST)부터만 — 아직 안 한 공연에 "다녀왔어요"는 어색하다(2026-10-22 사용자). 이미 기록한 건 날짜와 무관하게 남겨 둔다(취소할 수 있게)
+  const _todayKst=new Date(Date.now()+9*3600e3).toISOString().slice(0,10);
+  if(entry||!ev.date_start||String(ev.date_start).slice(0,10)<=_todayKst)chips.appendChild(attendBtn);
   body.appendChild(chips);
   const reactionRow=document.createElement('div');reactionRow.className='concert-reaction-row'+(entry?' open':'');
   CONCERT_REACTIONS.forEach(emo=>{
