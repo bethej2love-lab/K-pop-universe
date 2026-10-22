@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-10-23 (Claude Code — Codex 10-21~22 팬 채널 295개 점검·정리 SQL)
+- **[발견] [DB: ext_channels, yt_channel_videos]** 사용자 제보 "해린에 미네르바 대학". 10-21~22 신규 팬 채널 295개·영상 26,743개를 채널별 제목 표본으로 전수 점검. ① 엉뚱한 채널: `Minerva`(미네르바 대학 282개 → 뉴진스/해린), `Minerva04`(트와이스·위클리 64개 → 해린) — 둘 다 채널 행은 이미 없고 영상만 남음. ② 다그룹 종합 직캠(주인 멤버로 강제 태깅돼 남의 직캠이 그 멤버로 뜸): eclipse.delicious(78% 타그룹)·o.0_zz2(51%)·Luz_Liz(40%, 199/500)·Fury_33(15%, 304/2001 + 지선 직캠도 하영으로). ③ 주인 입력 실수 27개: 멤버칸에 그룹명/"(그룹 팬채널)"(members=["에스파"] 가짜 태그, Coating-ae 1,920개 등), 우리 데이터에 없는 이름(명재현·윤진·유연·매튜·젤리·오드 → 가짜 그룹 키라 어느 카드에도 안 뜸), 예지동아리를 솔로 Yezi(a1131)로, 주인은 고쳤지만 영상은 옛 값(ct4jw 박지원·Minute_jh 한지훈·myHARUbear 솔로 하루).
+- **[SQL 대기] [~/Downloads/kpu_fan_channel_cleanup_20261023.sql]** ①② 영상·채널 삭제(2,927개), ③ 주인 고치고 영상 삭제(수동 태그 제외, 4,877개) → 실행 후 관리자 "팬 다시 훑기" 1번으로 재수집. 타그룹 소수 섞인 MERCURY_VW(12%)·fernhoon_12psh59(11%)·STAYwithZHANGHAO(8%)·maxaieni(7%)는 유지.
+- **[완료] [admin.js]** 재발 방지: 팬 채널 등록 시 멤버칸 이름이 ARTISTS에 없으면 막음(그룹 전체면 멤버칸 비우고 대상 그룹만).
+- **⏳ Codex 팬 채널 등록 시**: 멤버칸은 카드 표기 이름 그대로(성 붙이지 말 것), 그룹 팬채널은 멤버칸 비우기, 다그룹 직캠 채널 금지 재확인.
+
 ## 2026-10-22 (Claude Code — 퇴근 시점 미결 모음)
 - **[완료]** 인스타 코르티스: 수집 순서 수정 후 gh로 수동 실행 → 캐러셀 3개 각 10장·본문 6/6 확인. GitHub CLI 로그인 완료(`"/c/Program Files/GitHub CLI/gh.exe"`, PATH 없음) — 워크플로 실행·로그 읽기 가능.
 - **⏳ 10-23 09시 이후 확인**: stagepick-concerts.yml에 붙인 공연장 정보 갱신 단계 첫 실행(KOPIS_KEY 등록됨) — `gh run list --workflow=stagepick-concerts.yml`·로그에서 venues 단계 결과, venues_info.json 커밋 여부.

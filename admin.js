@@ -6693,6 +6693,10 @@ async function _ecAddChannel(){
   const memberOwned=(tier==='idol')||(tier==='fans'&&ownerNames.length>0);
   if(memberOwned){
     if(tier==='idol'&&!ownerNames.length){_showShareToast('아이돌개인 유형은 소유자 이름이 필요해요');return;}
+    // 팬 채널은 우리 멤버 이름만 받는다 — "명재현"·"에스파"·"트와이스 (그룹 팬채널)"을 멤버칸에 넣으면 아래 솔로 규칙으로
+    // 가짜 그룹 키가 돼 영상이 어느 카드에도 안 뜨거나 members에 그룹명이 붙었음(2026-10-22 Codex 등록 27개)
+    const unknown=tier==='fans'?ownerNames.filter(nm=>!ARTISTS.some(a=>a.name.ko===nm)):[];
+    if(unknown.length){_showShareToast(`멤버 이름을 못 찾았어요: ${unknown.join(', ')} — 카드에 보이는 이름 그대로, 그룹 전체 팬채널이면 멤버칸 비우고 대상 그룹만`);return;}
     // 공동운영이면 소유자 여러 명 — 그룹(owner_gko)은 공동소유자가 공유한다고 보고 하나로 확정한다.
     const gkoSet=new Set();let anyAmbiguous=false;
     ownerNames.forEach(nm=>{
