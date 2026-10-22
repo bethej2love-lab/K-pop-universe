@@ -12821,10 +12821,12 @@ async function _renderIgStrip(prefix,url){
     return a;
   };
   // 여러 장 표시(2026-10-22, 사용자: "네모+숫자 구리다, X 사진 줄 바 어때") — X 게시물처럼 썸네일 위쪽에 짧은 막대 줄.
-  // 막대 수 = 장수(최대 6), 첫 막대만 밝게. 장수를 모르면(안 사진 목록 없음) 막대 3개로 "여러 장"만 알린다.
-  function _igBars(n){
+  // X처럼 "지금 몇 번째 사진인지" — 막대 수 = 장수(최대 10), at번째 막대만 길고 밝게. 접힌 묶음은 첫 장이 보이니 첫 막대,
+  // 펼친 사진은 각자 자기 순서 막대(2026-10-22 사용자: "두 번째 사진 보면 두 번째 막대가 길고"). 장수를 모르면 막대 3개.
+  function _igBars(n,at){
     const w=document.createElement('span');w.className='ig-bars';
-    for(let i=0;i<Math.min(n||3,6);i++){const b=document.createElement('i');if(!i)b.className='on';w.appendChild(b);}
+    const k=Math.min(n||3,10),on=n>k?Math.round((at||0)*(k-1)/(n-1)):(at||0);
+    for(let i=0;i<k;i++){const b=document.createElement('i');if(i===on)b.className='on';w.appendChild(b);}
     return w;
   }
   media.forEach(m=>{
@@ -12848,7 +12850,7 @@ async function _renderIgStrip(prefix,url){
         head.querySelector('.gds-fold').textContent=ko?'접기':'Collapse';
         head.addEventListener('click',ev=>{ev.stopPropagation();wrap.replaceWith(d);});
         wrap.appendChild(head);
-        m.c.forEach((src,i)=>{const it=mk(src,m,i);it.classList.add('ig-pop');it.style.animationDelay=(i*45)+'ms';wrap.appendChild(it);});
+        m.c.forEach((src,i)=>{const it=mk(src,m,i);it.appendChild(_igBars(m.c.length,i));it.classList.add('ig-pop');it.style.animationDelay=(i*45)+'ms';wrap.appendChild(it);});
         d.replaceWith(wrap);
       });
       strip.appendChild(d);
