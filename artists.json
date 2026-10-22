@@ -11248,6 +11248,29 @@
     ],
     "discography": [
       {
+        "title": "크래시2 : 분노의 도로 OST Part.1",
+        "type": "OST",
+        "isMain": false,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/150/10/992/15010992_20261022151120_500.jpg",
+        "releaseDate": "2026.10.22",
+        "trackCount": 2,
+        "titleTrack": "Smash It",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Smash It",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Smash It (Inst.)",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "15010992"
+      },
+      {
         "title": "灿",
         "type": "싱글",
         "releaseDate": "2025.05.05",

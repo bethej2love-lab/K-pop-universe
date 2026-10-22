@@ -98325,6 +98325,34 @@
   },
   "discography": [
    {
+    "title": "Talk to me",
+    "type": "싱글",
+    "isMain": true,
+    "cover": "https://cdnimg.melon.co.kr/cm2/album/images/148/15/426/14815426_20261016175942_500.jpg",
+    "releaseDate": "2026.10.22",
+    "trackCount": 3,
+    "titleTrack": "Talk to me (Dance Break Ver.)",
+    "tracks": [
+     {
+      "no": 1,
+      "title": "Talk to me",
+      "isTitle": false
+     },
+     {
+      "no": 2,
+      "title": "Talk to me (Dance Break Ver.)",
+      "isTitle": true
+     },
+     {
+      "no": 3,
+      "title": "Talk to me (Instrumental)",
+      "isTitle": false
+     }
+    ],
+    "src": "melon",
+    "melonAlbumId": "14815426"
+   },
+   {
     "title": "UNBREAKABLE : 少年BEAST (LEO Ver.)",
     "type": "미니",
     "isMain": false,
