@@ -188353,6 +188353,25 @@
   },
   "discography": [
    {
+    "title": "어떡해 (Doshite KR ver.)",
+    "type": "싱글",
+    "isMain": false,
+    "cover": "https://cdnimg.melon.co.kr/cm2/album/images/149/56/248/14956248_20261022141052_500.jpg",
+    "releaseDate": "2026.10.22",
+    "trackCount": 1,
+    "titleTrack": "어떡해 (Doshite KR ver.)",
+    "variant": true,
+    "tracks": [
+     {
+      "no": 1,
+      "title": "어떡해 (Doshite KR ver.)",
+      "isTitle": true
+     }
+    ],
+    "src": "melon",
+    "melonAlbumId": "14956248"
+   },
+   {
     "title": "Re:idol",
     "type": "미니",
     "isMain": true,
