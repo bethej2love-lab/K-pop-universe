@@ -50991,6 +50991,49 @@
     },
     "discography": [
       {
+        "title": "PRESS PLAY",
+        "type": "정규",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/150/67/618/15067618_20261022023224_500.jpg",
+        "releaseDate": "2026.10.23",
+        "trackCount": 6,
+        "titleTrack": "Tarantino",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "SaWaDiKa",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "V12",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "Cobra",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Tarantino",
+            "isTitle": true
+          },
+          {
+            "no": 5,
+            "title": "Cut U Off",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "Sweat",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "15067618"
+      },
+      {
         "title": "SaWaDiKa",
         "type": "싱글",
         "isMain": true,
