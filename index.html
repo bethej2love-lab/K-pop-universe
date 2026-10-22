@@ -13121,6 +13121,8 @@ function _isJpRelease(a,owner){
   if(owner&&owner.name)return _isKoNat(owner);   // 멤버/솔로 카드: 본인 국적 기준(일본인 멤버의 일본 발매는 원곡)
   return true;                                    // 주인을 모르면(피드 선반 등) 숨기는 쪽
 }
+// 앨범 하나의 타입 라벨 — 참여 앨범(남의 앨범에 피처링, feat:true·OST 아님)은 '싱글' 대신 '피처링'(2026-10-22). OST는 원래 feat:true라 타입 그대로.
+function _discogAlbumTypeLabel(a){return a&&a.feat&&!/OST/.test(a.type||'')?(currentLang==='ko'?'피처링':'Featuring'):_discogTypeLabel(a&&a.type);}
 function _discogTypeLabel(type){
   const t=type||'';
   if(currentLang==='en'){
@@ -13222,7 +13224,7 @@ function _renderDiscography(prefix,albums){
       img.className='gc-discog-cover';img.loading='lazy';img.decoding='async';
       img.src=a.cover;img.alt=a.title;
       const typeEl=document.createElement('div');typeEl.className='gc-discog-type';
-      const typeLabel=_discogTypeLabel(a.type);
+      const typeLabel=_discogAlbumTypeLabel(a);
       const yr=a.releaseDate?a.releaseDate.slice(0,4):'';
       const jp=(a.region==='jp'||_JP_RELEASE_RE.test(a.title||''));
       typeEl.textContent=yr?`${typeLabel} · ${yr}${jp?' · JP':''}`:typeLabel+(jp?' · JP':'');
@@ -13596,7 +13598,7 @@ function _renderDiscogStacks(strip,list,prefix){
     const img=document.createElement('img');img.className='gc-discog-cover';img.loading='lazy';img.decoding='async';img.src=a.cover;img.alt=a.title;
     const typeEl=document.createElement('div');typeEl.className='gc-discog-type';
     const yr=a.releaseDate?a.releaseDate.slice(0,4):'';
-    typeEl.textContent=yr?`${_discogTypeLabel(a.type)} · ${yr}`:_discogTypeLabel(a.type);
+    typeEl.textContent=yr?`${_discogAlbumTypeLabel(a)} · ${yr}`:_discogAlbumTypeLabel(a);
     admBtn(a,typeEl);
     const titleEl=document.createElement('div');titleEl.className='gc-discog-item-title';titleEl.textContent=a.title;
     item.append(img,typeEl,titleEl);
@@ -13716,7 +13718,7 @@ function _openGcDiscogDetail(a,idx,ctx){
   document.getElementById('gc-discog-detail-prev').disabled=_gcDiscogIdx<=0;
   document.getElementById('gc-discog-detail-next').disabled=_gcDiscogIdx<0||_gcDiscogIdx>=_gcDiscogList.length-1;
   document.getElementById('gc-discog-detail-cover').src=a.cover;
-  document.getElementById('gc-discog-detail-type').textContent=_discogTypeLabel(a.type)+(a.trackCount?' · '+a.trackCount+'곡':'');
+  document.getElementById('gc-discog-detail-type').textContent=_discogAlbumTypeLabel(a)+(a.trackCount?' · '+a.trackCount+'곡':'');
   document.getElementById('gc-discog-detail-title').textContent=a.title;
   _renderDiscogDetailArtists(a);
   document.getElementById('gc-discog-detail-meta').textContent=a.releaseDate;
@@ -23121,6 +23123,8 @@ function _ensureRecentAlbums(){
   return _recentAlbumsP=fetch('albums_recent.json',{cache:'no-cache'})
     .then(r=>r.ok?r.json():[]).catch(()=>[]);
 }
+// 발매 선반 카드 셋째 줄 "타입 · 발매일". 참여 앨범(f, 남의 앨범에 피처링 — 크러쉬 '삐그덕 (Feat. 아이유)')은 타입 자리에 '피처링'(2026-10-22)
+function _albumShelfMeta(a){return[a.f?(currentLang==='ko'?'피처링':'Featuring'):_discogTypeLabel(a.y),_albumDateLabel(a.d)].filter(Boolean).join(' · ');}
 // "YYYY.MM.DD" → epoch ms (데이터의 유일한 날짜 표기)
 function _albumDate(s){const m=/^(\d{4})\.(\d{2})\.(\d{2})$/.exec(String(s||''));return m?Date.UTC(+m[1],+m[2]-1,+m[3]):NaN;}
 // ⚠️ 창을 7일로 **고정하지 않는다**. 수집이 아직 얇을 땐(2026-09-15 실측: 최근 7일 1장) 선반이
@@ -23364,6 +23368,7 @@ async function _buildFeedFavAlbums(){
       return a.g?favGroups.has(a.g):false;        // 즐겨찾기 그룹 멤버의 솔로 앨범도 "내 것"이다
     }).slice(0,_FEED_ALBUM_MAX); // albums_recent.json이 이미 최신순
     if(!picked.length)return;
+    picked.sort((x,y)=>(x.f?1:0)-(y.f?1:0)); // 참여(피처링) 앨범은 본인 앨범 뒤로(안정 정렬이라 각각 최신순 유지)
     const isKo=currentLang==='ko';
     const ttl=document.getElementById('feed-favalbum-ttl');
     if(ttl)ttl.textContent='💿 New Music'; // 선반 제목은 영어 한 가지(2026-10-21 사용자 "즐겨찾기 신보 개구림, 영어 한글 통일")
@@ -23371,7 +23376,7 @@ async function _buildFeedFavAlbums(){
       // 캡션 3줄: 앨범명 / 아티스트 / 타입 · 발매일. 예전엔 아티스트와 타입이 한 줄로 붙어 마퀴로
       // 흘렀는데, 나누니 아티스트가 독립해 읽히고 발매일도 자리가 생겼다(2026-09-21).
       const ownerDisp=Array.isArray(a.w)&&a.w.length>1?a.w.join(', '):a.k==='g'?_gLabelKo(a.o):a.o; // 공동 앨범은 멜론 표기 순서대로 쉼표(2026-10-19)
-      const meta=[_discogTypeLabel(a.y),_albumDateLabel(a.d)].filter(Boolean).join(' · ');
+      const meta=_albumShelfMeta(a);
       _appendFeedCard(list,'💿',a.t,ownerDisp,_albumCardNav(a),a.c,null,{meta,metaFresh:_albumIsFresh(a.d),metaNew:_albumIsNew(a.d)});
     });
     section.style.display='';
@@ -23776,6 +23781,7 @@ async function _buildFeedNewAlbums(){
     }
     if(!picked.length)return;
     picked=picked.slice(0,_FEED_ALBUM_MAX); // albums_recent.json이 이미 최신순
+    picked.sort((x,y)=>(x.f?1:0)-(y.f?1:0)); // 참여(피처링) 앨범은 본인 앨범 뒤로 — '한 단계 아래'(2026-10-22 사용자 결정)
     const isKo=currentLang==='ko';
     const ttl=document.getElementById('feed-newalbum-ttl');
     if(ttl)ttl.textContent=days<=7?(isKo?'💿 이번 주 발매':'💿 Released This Week')
@@ -23786,7 +23792,7 @@ async function _buildFeedNewAlbums(){
     if(list.children.length)return; // 기다리는 사이 다시 그려졌으면(패널 재오픈) 이번 건 버림
     picked.forEach(a=>{
       const ownerDisp=Array.isArray(a.w)&&a.w.length>1?a.w.join(', '):a.k==='g'?_gLabelKo(a.o):a.o; // 공동 앨범은 멜론 표기 순서대로 쉼표(2026-10-19)
-      const meta=[_discogTypeLabel(a.y),_albumDateLabel(a.d)].filter(Boolean).join(' · ');
+      const meta=_albumShelfMeta(a);
       _appendFeedCard(list,'💿',a.t,ownerDisp,_albumCardNav(a),a.c,null,{meta,metaFresh:_albumIsFresh(a.d),metaNew:_albumIsNew(a.d)});
     });
     _updateAlbumWidget(picked);

@@ -121,8 +121,12 @@ function parseNewList(html) {
     const albumId = (li.match(/goAlbumDetail\('(\d+)'\)/) || [])[1];
     if (!albumId) continue;
     const aids = [...new Set([...li.matchAll(/goArtistDetail\('(\d+)'\)/g)].map(m => m[1]))];
+    // 앨범 아티스트 표기(aids와 같은 순서) — 참여 앨범의 byline(주인 이름)에 쓴다
+    const names = [];
+    for (const m of li.matchAll(/goArtistDetail\('(\d+)'\)[^>]*title="([^"]*?)(?: - 페이지 이동)?"/g)) if (!names.some(n => n.aid === m[1])) names.push({ aid: m[1], n: dec(m[2]) });
     out.push({
       albumId,
+      names,
       title: dec((li.match(/class="ellipsis album_name" title="([\s\S]*?) - 페이지 이동"/) || [])[1]),
       aids,
       melonType: (li.match(/class="vdo_name">\[([^\]]*)\]/) || [])[1] || '',
@@ -160,6 +164,31 @@ for (const [k, v] of Object.entries(map)) {
   if (t) byAid.set(String(v.aid), t);
 }
 
+// ── 참여 앨범(2026-10-22, 사용자: "크러쉬 신곡(Feat. 아이유)도 수집하면 좋겠다 — 디스코는 숨김, 소식엔 노출") ──
+// 주인이 우리 쪽이 아닌 앨범이라 위 aid 대조에 안 걸린다. 멜론은 피처링 가수를 앨범·트랙 아티스트로 안 붙이고(삐그덕 상세 = Crush만)
+// 제목에만 적는다. 그래서 ① 제목의 "(Feat./with …)" 이름으로 우리 후보를 고르고 ② 그 후보의 멜론 '참여'(listType=F) 탭 첫 페이지에
+// 같은 앨범 ID가 있을 때만 확정한다 — 이름은 후보 고르기에만 쓰고 확정은 멜론 ID라 동명이인이 안 들어온다. 후보 1명 = 요청 1번.
+// 넣을 땐 feat:true·isMain:false(디스코 기본 숨김 — '부가 앨범 포함'으로 펼침) + byline(주인 → 우리 아티스트 순).
+const FEAT_RE = /[(\[]\s*(?:feat\.?|ft\.?|with)\s+([^)\]]+)[)\]]/i;
+const featRows = [];
+const nameIdx = new Map(); // 정규화 이름 → aid[]
+{
+  const addN = (n, aid) => { const k = nk(n); if (k.length < 2) return; if (!nameIdx.has(k)) nameIdx.set(k, new Set()); nameIdx.get(k).add(aid); };
+  for (const [aid, t] of byAid) {
+    const mn = (map[Object.keys(map).find(k => String(map[k]?.aid) === aid)] || {}).melonName || '';
+    addN(mn, aid); for (const p of mn.split(/[()]/)) addN(p, aid);
+    if (t.kind === 'solo') { addN(t.obj.name?.ko, aid); addN(t.obj.name?.en, aid); }
+    else { addN(t.label, aid); addN(t.obj.en, aid); }
+  }
+}
+const featCache = new Map(); // aid → Set(albumId) — 참여 탭 첫 페이지
+async function featAlbumsOf(aid) {
+  if (featCache.has(aid)) return featCache.get(aid);
+  const html = await get(`https://www.melon.com/artist/songPaging.htm?startIndex=1&pageSize=50&listType=F&orderBy=ISSUE_DATE&artistId=${aid}`, 1000);
+  const s = new Set([...html.matchAll(/goAlbumDetail\('(\d+)'\)/g)].map(m => m[1]));
+  featCache.set(aid, s); return s;
+}
+
 const today = new Date();
 const cutoff = new Date(today.getTime() - DAYS * 86400000).toISOString().slice(0, 10).replace(/-/g, '.');
 const found = [];
@@ -174,8 +203,27 @@ for (const area of ['I', 'O']) {   // I=국내, O=해외(일본반 등)
       if (r.date && r.date < cutoff) continue;
       const ts = r.aids.map(a => byAid.get(a)).filter(Boolean);
       for (const t of ts) found.push({ ...r, t, collab: r.aids.length > 1 });
+      if (!ts.length && FEAT_RE.test(r.title)) featRows.push(r);
     }
     if (rows.every(r => r.date && r.date < cutoff)) break; // 이 페이지 전부가 기간 밖 → 다음 지역
+  }
+}
+
+// 참여 후보 확정 — 제목 이름 → 우리 aid 후보 → 그 사람 참여 탭에 이 앨범이 있으면
+const featChecked = [];
+for (const r of featRows) {
+  if (aborted) break;
+  const inner = (r.title.match(FEAT_RE) || [])[1] || '';
+  const cands = new Set();
+  for (const part of inner.split(/\s*(?:,|&|×|\/|\s+x\s+|\s+and\s+)\s*/i)) {
+    const k = nk(part.replace(/\(.*?\)/g, ' ')); const k2 = nk(part);
+    for (const kk of [k, k2, ...(part.match(/\(([^)]+)\)/g) || []).map(s => nk(s))]) for (const aid of nameIdx.get(kk) || []) cands.add(aid);
+  }
+  for (const aid of cands) {
+    if (r.aids.includes(aid)) continue;
+    const ok = (await featAlbumsOf(aid)).has(r.albumId);
+    featChecked.push(`${r.title} → ${byAid.get(aid).label} ${ok ? '✓' : '✗(참여 탭에 없음)'}`);
+    if (ok) found.push({ ...r, t: byAid.get(aid), collab: true, feat: true });
   }
 }
 
@@ -228,7 +276,12 @@ for (const x of found) {
     || found.some(o => o !== x && o.t === x.t && mkey(o.title) === baseKey)));
   const type = typeOf(x.melonType, tracks.length || x.trackCount, x.title);
   const region = regionFromGenre(d.genre) || detectRegion(x.title, tracks.map(t => t.title));
-  const extra = variant || /OST|컴필레이션|라이브/.test(type);
+  const extra = variant || x.feat || /OST|컴필레이션|라이브/.test(type);
+  // 참여 앨범: 주인(멜론 표기 순서) → 우리 아티스트. 앨범 상세의 '함께한 사람' 줄·소식 선반 주인 표기가 이걸 읽는다
+  const selfB = x.t.kind === 'solo'
+    ? { n: x.t.obj.name?.ko, aid: [...byAid].find(([, t]) => t === x.t)?.[0], en: x.t.obj.name?.en, ako: x.t.obj.name?.ko, ...(groups[x.t.obj.group?.ko] ? { ag: x.t.obj.group.ko } : {}) }
+    : { n: x.t.label, aid: [...byAid].find(([, t]) => t === x.t)?.[0], en: x.t.obj.en, gko: x.t.label };
+  const featByline = x.feat ? [...(x.names || []).map(o => ({ n: o.n, aid: o.aid })), selfB] : null;
   const titleTrack = (tracks.find(t => t.isTitle) || (tracks.length === 1 ? tracks[0] : null) || {}).title || null;
   const entry = {
     title: cleanTitle(x.title),
@@ -240,6 +293,7 @@ for (const x of found) {
     titleTrack,
     ...(region ? { region } : {}),
     ...(variant ? { variant: true } : {}),
+    ...(x.feat ? { feat: true, byline: featByline } : {}),
     tracks,
     src: 'melon',
     melonAlbumId: x.albumId,
@@ -252,7 +306,7 @@ for (const x of found) {
     dl.sort((a, b) => String(b.releaseDate || '').localeCompare(String(a.releaseDate || '')));
     touched.add(x.t.file);
   }
-  added.push(`${x.t.label} · ${entry.releaseDate} · ${entry.type} · ${entry.title}${titleTrack ? '' : ' (타이틀곡 미상)'}${region ? ' · ' + region : ''}`);
+  added.push(`${x.t.label} · ${entry.releaseDate} · ${entry.type} · ${entry.title}${x.feat ? ' · 참여(' + (x.names || []).map(o => o.n).join(', ') + ')' : ''}${titleTrack ? '' : ' (타이틀곡 미상)'}${region ? ' · ' + region : ''}`);
 }
 
 function writeKeepingStyle(file, obj) {
@@ -270,6 +324,7 @@ const lines = [
   `- 우리 아티스트 발매 **${found.length}**건 · 추가 **${added.length}장** · 이미 있음 ${skipped.length}`,
   '', ...added.map(s => '  - ' + s),
   ...(filled.length ? ['', '타이틀곡 채움 ' + filled.length + '건', ...filled.map(s => '  - ' + s)] : []),
+  ...(featChecked.length ? ['', '참여(피처링) 후보 확인 ' + featChecked.length + '건', ...featChecked.map(s => '  - ' + s)] : []),
   ...(problems.length ? ['', '<details><summary>문제 ' + problems.length + '건</summary>', '', ...problems.map(s => '  - ' + s), '', '</details>'] : []),
 ];
 console.log(lines.join('\n'));

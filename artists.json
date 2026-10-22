@@ -23441,6 +23441,50 @@
     },
     "discography": [
       {
+        "title": "Know My Name (Feat. Coco Jones, SOYEON, i-dle)",
+        "type": "OST",
+        "isMain": false,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/146/34/449/14634449_20261009000511_500.jpg",
+        "releaseDate": "2026.10.08",
+        "trackCount": 1,
+        "titleTrack": "Know My Name (Feat. Coco Jones, SOYEON, i-dle)",
+        "feat": true,
+        "byline": [
+          {
+            "n": "True Damage",
+            "aid": "2753877"
+          },
+          {
+            "n": "League of Legends",
+            "aid": "2006592"
+          },
+          {
+            "n": "Sofia Reyes",
+            "aid": "3193842"
+          },
+          {
+            "n": "Vic Mensa",
+            "aid": "777214"
+          },
+          {
+            "n": "소연",
+            "aid": "1050107",
+            "en": "Soyeon",
+            "ako": "소연",
+            "ag": "아이들"
+          }
+        ],
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Know My Name (Feat. Coco Jones, SOYEON, i-dle)",
+            "isTitle": true
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "14634449"
+      },
+      {
         "title": "끝내주는 인생",
         "type": "정규",
         "isMain": true,
@@ -51376,6 +51420,37 @@
       "en": "UAENA"
     },
     "discography": [
+      {
+        "title": "삐그덕 (Feat. 아이유)",
+        "type": "싱글",
+        "isMain": false,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/149/55/418/14955418_20261019111743_500.jpg",
+        "releaseDate": "2026.10.21",
+        "trackCount": 1,
+        "titleTrack": "삐그덕 (Feat. 아이유)",
+        "feat": true,
+        "byline": [
+          {
+            "n": "Crush",
+            "aid": "674710"
+          },
+          {
+            "n": "아이유",
+            "aid": "261143",
+            "en": "IU",
+            "ako": "아이유"
+          }
+        ],
+        "tracks": [
+          {
+            "no": 1,
+            "title": "삐그덕 (Feat. 아이유)",
+            "isTitle": true
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "14955418"
+      },
       {
         "title": "이 별로부터",
         "type": "싱글",
