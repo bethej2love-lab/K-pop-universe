@@ -1,0 +1,3 @@
+-- 엔하이픈 정원 일반명사 오탐 정리(2026-10-22) — "꿈의 정원"·"정원 확대/부족"·"다육 정원"·소프라노 Choi Jungwon 등. 고친 매처로 다시 보면 엔하이픈 근거가 없는 것만.
+-- 수동 편집(tags_manual) 행은 건드리지 않는다. 보류로 돌려 화면에서 빠지게(검수 큐에서 되살릴 수 있음).
+UPDATE yt_channel_videos SET content_flag='보류', flag_source='auto', flagged_at=now(), members='{}' WHERE group_ko='엔하이픈' AND tags_manual=false AND content_flag IS NULL AND id IN ('TPJNMuP3DUU','-CdrH-yNCxw','VQo9Tl37tUE','MSQr_WISWtc','q29T-uZPLOw','cdccBkglTho','Yeqf27cyVoA','GONfEet8wDU','j5MxDR5lqEs','DmTgvZZaGgU','8OOe7VZxIcA','Yd2JGn2e9WE','E3FNPqq1klM','tiLuM1XDtyc','QICVuwEUHJQ','uof0DczxhyA','DhS8Mg-x2vg','py6DYGoe5pM');

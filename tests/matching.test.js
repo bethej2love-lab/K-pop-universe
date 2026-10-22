@@ -47,6 +47,13 @@ test("TOO — 니쥬 'Too Bad'는 니쥬 단독", 'NiziU 「Too Bad」 MAYA FanC
 test("TOO — G-DRAGON 'TOO BAD'(대문자)도 근거 없으면 티오원 아님", '[One Take/4K] G-DRAGON - TOO BAD #엠카운트다운 EP.877', undefined, r => !_to1(r));
 test('TOO — 전부 대문자 문장(디스패치)', 'PARK JIHOON TOO CUTE. ILLEGALLY CUTE!!', undefined, r => !_to1(r));
 test('TOO — 멤버명 동반 직캠은 티오원', "[MPD직캠] TOO 제이유 직캠 4K '오늘은 이만큼(Take It Slow)'", undefined, r => !!r && r.primaryGroup === '티오원');
+// ── 정원(엔하이픈 ↔ garden·입학 정원) 일반명사 문맥(2026-10-22 사용자 제보) ─────────────────────
+const _enh = r => !!r && (r.primaryGroup === '엔하이픈' || (r.withGroups || []).includes('엔하이픈'));
+test('정원 — "꿈의 정원"은 곡명, 이은상 단독', '[MV] Lee Eun Sang(이은상) _ Garden of Dreams(꿈의 정원)', undefined, r => !!r && r.primaryGroup === '이은상' && !_enh(r));
+test('정원 — 입학 정원 뉴스는 엔하이픈 아님', '[KUTV NEWS] 전공 강의 정원 부족에 학생들 불만 속출', undefined, r => !_enh(r));
+test('정원 — 소프라노 Choi Jungwon은 엔하이픈 아님', 'AIreport VOL.20 | Choi Jungwon - First Love | K-Pop Live Session', undefined, r => !_enh(r));
+test('정원 — 영문 JUNGWON 직캠은 그대로 엔하이픈', "[2025 가요대전 4K] 정원 'A Christmas Nightmare' (JUNGWON FullCam) @SBS GayoDaejeon", undefined, r => !!r && r.primaryGroup === '엔하이픈');
+test('정원 — 합동무대 "미연 & 정원 & 제이"는 엔하이픈 포함', '길 (원곡: god) - 미연 & 정원 & 제이 & 리즈 & 성호 [2024 KBS 가요대축제 글로벌페스티벌] | KBS 방송', undefined, r => _enh(r));
 test('TOO — 시절 곡명 동반은 티오원', "(Full Focused) TOO '하나 둘 세고 (Count 1, 2)' 4K | BE ORIGINAL", undefined, r => _to1(r));
 test('TOO — 더쇼 제목 맨 앞 아티스트 표기는 티오원', 'TOO, TOO YOU [THE SHOW, Fancam, 200421] 60P', undefined, r => _to1(r));
 test("여정 — 일반명사 '여정'은 전여여정 역추론 안 함", "인간 펜디 한예슬의 특별한 여정 / Han Ye Seul with FENDI", undefined, r => !r || (r.primaryGroup !== '티오원' && r.primaryGroup !== '뉴비트'));
