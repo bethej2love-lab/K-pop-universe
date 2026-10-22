@@ -63,7 +63,7 @@ const server = http.createServer((req, res) => {
   if (!BROWSER_PATH) { console.log('⏭️  브라우저를 못 찾음 — 스킵'); process.exit(0); }
   server.listen(PORT);
   const profile = fs.mkdtempSync(path.join(os.tmpdir(), 'kpu-dcl-'));
-  const proc = spawn(BROWSER_PATH, ['--headless=new', `--remote-debugging-port=${CDP_PORT}`, `--user-data-dir=${profile}`, '--no-first-run', '--no-default-browser-check', '--disable-gpu', '--window-size=1280,800', 'about:blank'], { stdio: 'ignore' });
+  const proc = spawn(BROWSER_PATH, ['--headless=new', '--no-sandbox', `--remote-debugging-port=${CDP_PORT}`, `--user-data-dir=${profile}`, '--no-first-run', '--no-default-browser-check', '--disable-gpu', '--window-size=1280,800', 'about:blank'], { stdio: 'ignore' });
   console.log(`[desktop-close-layers] 헤드리스 PID=${proc.pid} (전용 프로필, 이 PID만 kill)`);
   try {
     await waitForCdp();

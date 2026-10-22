@@ -72,7 +72,7 @@ const server = http.createServer((req, res) => {
   server.listen(PORT);
   const profile = fs.mkdtempSync(path.join(os.tmpdir(), 'kpu-lbe-'));
   const proc = spawn(BROWSER_PATH, [
-    '--headless=new', `--remote-debugging-port=${CDP_PORT}`, `--user-data-dir=${profile}`,
+    '--headless=new', '--no-sandbox', `--remote-debugging-port=${CDP_PORT}`, `--user-data-dir=${profile}`,
     '--no-first-run', '--no-default-browser-check', '--disable-gpu', '--window-size=390,844', 'about:blank',
   ], { stdio: 'ignore' });
   console.log(`[lb-every-entry] 헤드리스 PID=${proc.pid} (전용 프로필, 이 PID만 kill)`);
