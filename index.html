@@ -16268,6 +16268,63 @@ function _wireScrollStabilizer(sc){
   if(window.ResizeObserver){const ro=new ResizeObserver(kick);const obs=()=>[...sc.children].forEach(c=>ro.observe(c));obs();new MutationObserver(obs).observe(sc,{childList:true});}
 }
 _sheetScrollers.forEach(_wireScrollStabilizer);
+// ── 맨 위에서 시작하는 첫 스크롤만 둔하게(2026-10-23, 사용자 "계속 스크롤할 때 말고 첫 스크롤만 덜 되게, 둔감하게") ──
+// 카드는 반쯤 열린 상태에서 첫 위로 스와이프 한 번에 **시트 펼침(_wireSheetSwipe)과 본문 네이티브 스크롤+관성이 동시에** 일어나
+// 첫 스크롤만 훅 넘어갔다. 그래서 맨 위(scrollTop≈0)에서 시작한 제스처 하나만 네이티브 스크롤을 막고(preventDefault) 손가락
+// 이동의 일부(factorFn)만큼 직접 움직인 뒤, 손을 떼면 짧은 관성으로 마무리한다. 반쯤 열린 카드는 배율 0 — 첫 스와이프는 펼치기만.
+// 다음 제스처부터는 원래 네이티브 그대로(예전 _wireSlowScroll처럼 전체를 재구현하면 "인스타처럼 안 된다" 제보가 났다).
+// ⚠️ 막을 수 있는(passive:false) touchmove 리스너는 **맨 위에 있을 때만** 붙인다 — 카드 본문 스크롤을 passive로 바꿔 부드럽게 만든
+//    이유(_wireSheetSwipe 주석, 2026-09-02)를 지키려고. 내려가 있으면 리스너가 없어 네이티브 스크롤이 지금과 같다.
+//    overflow:hidden으로 잠그는 방식은 크롬 실측에서 이미 시작된 스크롤을 못 막았다(2026-10-23).
+const _FIRST_SCROLL_FACTOR=0.5;
+function _wireFirstScrollDamp(sc,factorFn){
+  if(!sc||sc._dampWired)return;sc._dampWired=true;
+  let on=false,x0=0,y0=0,top0=0,lastY=0,lastT=0,vel=0,raf=0,att=false;
+  const stopFling=()=>{if(raf){cancelAnimationFrame(raf);raf=0;}};
+  const onMove=e=>{
+    if(!on)return;
+    if(!e.cancelable){on=false;return;} // 네이티브 스크롤이 이미 시작됨 → 이번 제스처는 손 뗌
+    const y=e.touches[0].clientY,now=performance.now();
+    // 가로가 먼저 크게 움직이면(나침반 탭 넘기기 등) 세로 스크롤 제스처가 아니다 — 손 뗌
+    if(Math.abs(e.touches[0].clientX-x0)>Math.abs(y-y0)+6){on=false;return;}
+    // 맨 위에서 아래로 당기는 건 시트 끌어내리기 몫 — 건드리지 않는다
+    if(y>y0&&sc.scrollTop<=0)return;
+    e.preventDefault();
+    const f=Math.max(0,factorFn?factorFn():_FIRST_SCROLL_FACTOR);
+    const max=sc.scrollHeight-sc.clientHeight;
+    sc.scrollTop=Math.max(0,Math.min(max,top0+(y0-y)*f));
+    const dt=now-lastT;if(dt>0)vel=vel*0.3+(((lastY-y)*f)/dt)*0.7;
+    lastY=y;lastT=now;
+  };
+  const attach=()=>{if(!att){sc.addEventListener('touchmove',onMove,{passive:false});att=true;}};
+  const detach=()=>{if(att&&!on&&!raf){sc.removeEventListener('touchmove',onMove);att=false;}};
+  sc.addEventListener('scroll',()=>{if(sc.scrollTop<=2)attach();else detach();},{passive:true});
+  attach();
+  sc.addEventListener('touchstart',e=>{
+    stopFling();on=false;
+    // 가로 스크롤 줄(.hscroll-drag) 위에서 시작해도 대상 — 가로로 먼저 움직이면 onMove가 손을 뗀다
+    if(e.touches.length!==1)return;
+    if(sc.scrollTop>2||sc.scrollHeight-sc.clientHeight<4)return;
+    attach();
+    on=true;x0=e.touches[0].clientX;y0=lastY=e.touches[0].clientY;top0=sc.scrollTop;lastT=performance.now();vel=0;
+  },{passive:true});
+  sc.addEventListener('touchend',()=>{
+    if(!on)return;on=false;
+    let v=performance.now()-lastT<80?vel:0; // 멈췄다 떼면 관성 없음
+    if(Math.abs(v)<0.05){if(sc.scrollTop>2)detach();return;}
+    let t=performance.now();
+    const step=now=>{
+      const dt=Math.min(32,now-t);t=now;
+      const max=sc.scrollHeight-sc.clientHeight,nx=Math.max(0,Math.min(max,sc.scrollTop+v*dt));
+      sc.scrollTop=nx;v*=Math.pow(0.92,dt/16);
+      raf=(Math.abs(v)>0.02&&nx>0&&nx<max)?requestAnimationFrame(step):0;
+      if(!raf&&nx>2)detach();
+    };
+    raf=requestAnimationFrame(step);
+  },{passive:true});
+  sc.addEventListener('touchcancel',()=>{on=false;},{passive:true});
+}
+_sheetScrollers.forEach(sc=>_wireFirstScrollDamp(sc,()=>_sheetFull?_FIRST_SCROLL_FACTOR:0));
 function _tlog(){}
 // ── 카드를 "열 때"의 불변식: 새 카드는 scrollTop=0에서 시작하므로 탭바는 반드시 보이는 상태여야 한다.
 // 원래 tab-hidden을 떼는 코드는 **닫기 경로 4곳**(closeMobSheet / 스택 pop / 연결카드 닫기 / 라이트박스
@@ -21845,7 +21902,7 @@ function _openFeedOverlay(){
     // ⚠️ 여기서 바인딩하는 이유는 위 el._bound 블록과 같다(#feed-pane-*는 스크립트보다 나중에 파싱됨).
     //    _sheetScrollers에도 넣어야 _rebaseSheetScroll(탭바 토글 직후 기준선 재설정)이 이 컨테이너도 챙긴다.
     [document.getElementById('feed-pane-rec'),document.getElementById('feed-pane-disc')].forEach(fp=>{
-      if(fp&&!_sheetScrollers.includes(fp)){_sheetScrollers.push(fp);_wireSheetTabbarHide(fp);_wireScrollStabilizer(fp);}
+      if(fp&&!_sheetScrollers.includes(fp)){_sheetScrollers.push(fp);_wireSheetTabbarHide(fp);_wireScrollStabilizer(fp);_wireFirstScrollDamp(fp);}
     });
     // 카드와 똑같은 "맨 위로" 버튼을 탐험 패널에도(2026-08-27 사용자 요청). 카드용으로 이미 있던
     // _wireTotop을 그대로 재사용 — 스크롤 컨테이너만 넘기면 되고, 버튼(z-index 66)이 이 오버레이
