@@ -4035,7 +4035,11 @@
   #feed-panes-track{flex:1;min-height:0;display:flex;flex-direction:row;transition:transform .28s cubic-bezier(.4,0,.2,1);will-change:transform;}
   #feed-panes-track.at-disc{transform:translateX(-100%);}
   .feed-pane{min-width:100%;width:100%;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;padding-bottom:calc(var(--sheet-bottom,73px) + 8px);transition:padding-bottom .32s cubic-bezier(0.32,0.72,0,1);}
-  .feed-pull-refresh{height:0;overflow:hidden;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12px;color:rgba(190,210,250,0.8);pointer-events:none;}
+  .feed-pull-refresh{height:0;overflow:hidden;flex-shrink:0;display:flex;align-items:center;justify-content:center;pointer-events:none;transition:height .22s ease;}
+  .feed-pulling .feed-pull-refresh{transition:none;}
+  .feed-pull-spinner{display:block;width:26px;height:26px;box-sizing:border-box;border:2.5px solid rgba(190,210,250,0.18);border-top-color:rgba(220,232,255,0.95);border-right-color:rgba(220,232,255,0.95);border-radius:50%;opacity:0;}
+  .feed-pull-refresh.is-refreshing .feed-pull-spinner{opacity:1;animation:feed-pull-spin .7s linear infinite;}
+  @keyframes feed-pull-spin{to{transform:rotate(360deg);}}
   .feed-pane.feed-pulling{overflow-anchor:none;}
   /* 즐겨찾기 신작 온보딩 — 아직 하트 누른 게 없을 때 이 선반이 비지 않게 안내 카드로 채운다. */
   .feed-onboard-card{flex:0 0 auto;max-width:min(300px,78vw);display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:14px;background:rgba(255,255,255,0.05);border:0.5px solid rgba(255,255,255,0.10);}

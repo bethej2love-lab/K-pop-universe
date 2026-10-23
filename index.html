@@ -21901,7 +21901,7 @@ async function _showTraceCount(kind,key,rpcFn){
   }
 }
 
-buildUniverse().then(_restoreFeedAfterPull).catch(err=>{
+buildUniverse().catch(err=>{
   console.error(err);
   try{document.documentElement.classList.remove('booting');document.documentElement.classList.remove('chrome-wait');}catch(_){} // 에러 화면에선 크롬이 보여야 한다
   const loadingEl=document.getElementById('loading');
@@ -21924,6 +21924,7 @@ buildUniverse().then(_restoreFeedAfterPull).catch(err=>{
 // 다시 보고 싶어도 못 찾음 — 마지막 생성 후 3분 안에는 같은 내용을 유지하고, 3분 지나야 새로 뽑는다.
 let _feedDiscoveryBuiltAt=0; // Discover 탭 마지막 빌드 시각
 let _feedRecBuiltAt=0;       // For You 탭 마지막 빌드 시각
+let _feedRecPending=null,_feedDiscPending=null,_feedPullRefreshP=null;
 const _FEED_DISCOVERY_TTL=3*60*1000;
 // 2탭 전환 — rec(For You) / disc(Discover). disc는 처음 볼 때만 지연 빌드(TTL 캐시).
 function _feedSwitchTab(tab,silent){
@@ -22116,27 +22117,28 @@ function _slideDownCloseFeed(){
     el.style.transition='';el.style.transform='';
   },220);
 }
-// 모바일 나침반 안의 최상위 2탭은, 탭 버튼을 정확히 누르지 않아도 좌우로 넘길 수 있다.
-// 가로 선반은 원래 자기 안에서 스크롤돼야 하고, 세로 움직임은 본문 스크롤/아래로 닫기에 양보한다.
-// 페이지를 다시 불러와 메모리 캐시/멈춘 요청도 초기화하고, 준비되면 같은 탐험 탭으로 복귀한다.
-function _reloadFeedFromPull(which){
-  try{sessionStorage.setItem('kpu_feed_pull_resume',JSON.stringify({tab:which,at:Date.now()}));}catch(e){}
-  location.reload();
-}
-function _restoreFeedAfterPull(){
-  let saved;
-  try{saved=JSON.parse(sessionStorage.getItem('kpu_feed_pull_resume')||'null');sessionStorage.removeItem('kpu_feed_pull_resume');}catch(e){return;}
-  if(!saved||!['rec','disc'].includes(saved.tab)||Date.now()-saved.at>60000)return;
-  _openFeedOverlay();_feedSwitchTab(saved.tab,true);_obEngaged();
+// 페이지/인트로는 다시 열지 않는다. 진행 중 빌드와 겹치지 않게 기다린 후 현재 탭만 갱신한다.
+function _refreshFeedFromPull(which){
+  if(_feedPullRefreshP)return _feedPullRefreshP;
+  _feedPullRefreshP=(async()=>{
+    await (which==='rec'?_feedRecPending:_feedDiscPending);
+    _weekNewsAt=0;_recentAlbumsP=null;_upConcertsAt=0;
+    if(which==='rec'){_feedRecBuiltAt=Date.now();await _buildFeedRec();}
+    else{_feedTrendAt=0;_feedDiscoveryBuiltAt=Date.now();await _buildFeedDisc();}
+  })().finally(()=>{_feedPullRefreshP=null;});
+  return _feedPullRefreshP;
 }
 function _wireFeedPullRefresh(pane){
   if(!pane||pane._pullRefreshWired)return;pane._pullRefreshWired=true;
   const hint=document.createElement('div');hint.className='feed-pull-refresh';hint.setAttribute('role','status');
+  hint.setAttribute('aria-label',currentLang==='ko'?'새로고침':'Refresh');
+  const spinner=document.createElement('span');spinner.className='feed-pull-spinner';spinner.setAttribute('aria-hidden','true');hint.appendChild(spinner);
   pane.prepend(hint);
   let tracking=false,pulling=false,busy=false,x0=0,y0=0,dy=0,suppressUntil=0;
   const threshold=220;
-  const reset=()=>{tracking=false;pulling=false;dy=0;hint.style.height='0px';hint.textContent='';pane.classList.remove('feed-pulling');};
+  const reset=()=>{tracking=false;pulling=false;dy=0;hint.style.height='0px';hint.classList.remove('is-refreshing');pane.classList.remove('feed-pulling');};
   pane.addEventListener('touchstart',e=>{
+    if(busy)return;
     reset();
     if(busy||!isMob()||e.touches.length!==1||pane.scrollTop>2||e.target.closest('input,textarea,select,[contenteditable="true"]'))return;
     tracking=true;x0=e.touches[0].clientX;y0=e.touches[0].clientY;
@@ -22152,21 +22154,28 @@ function _wireFeedPullRefresh(pane){
     }
     dy=Math.max(0,nextY);
     e.preventDefault();e.stopPropagation();pane.scrollTop=0;
-    hint.style.height=Math.min(90,dy*0.35)+'px';
-    hint.textContent=currentLang==='ko'?(dy>=threshold?'놓으면 새로고침':'아래로 더 당겨 새로고침'):(dy>=threshold?'Release to refresh':'Pull further to refresh');
+    hint.style.height=Math.min(180,dy*0.65)+'px';
+    spinner.style.transform=`rotate(${dy*1.5}deg)`;
+    spinner.style.opacity=String(Math.min(1,dy/80));
   },{passive:false,capture:true});
   pane.addEventListener('touchend',e=>{
+    if(busy)return;
     if(!pulling){reset();return;}
     e.stopPropagation();suppressUntil=Date.now()+500;
     const refresh=dy>=threshold;reset();
     if(refresh){
-      busy=true;hint.style.height='52px';hint.textContent=currentLang==='ko'?'새로고침 중…':'Refreshing…';
-      setTimeout(()=>_reloadFeedFromPull(pane.id==='feed-pane-disc'?'disc':'rec'),120);
+      busy=true;hint.style.height='64px';spinner.style.transform='';hint.classList.add('is-refreshing');pane.setAttribute('aria-busy','true');
+      Promise.all([
+        _refreshFeedFromPull(pane.id==='feed-pane-disc'?'disc':'rec').catch(e=>console.warn('[feed] refresh failed',e)),
+        new Promise(resolve=>setTimeout(resolve,500))
+      ])
+        .finally(()=>{busy=false;pane.removeAttribute('aria-busy');reset();});
     }
   },{passive:true,capture:true});
-  pane.addEventListener('touchcancel',()=>{if(pulling)suppressUntil=Date.now()+500;reset();},{passive:true,capture:true});
+  pane.addEventListener('touchcancel',()=>{if(busy)return;if(pulling)suppressUntil=Date.now()+500;reset();},{passive:true,capture:true});
   pane.addEventListener('click',e=>{if(Date.now()<suppressUntil){e.preventDefault();e.stopPropagation();}},{capture:true});
 }
+// 모바일 나침반의 두 탭은 좌우로 넘긴다. 가로 선반과 세로 스크롤/새로고침은 각 처리에 양보한다.
 function _wireFeedTabSwipe(body){
   // X식 가로 페이징(2026-10-23) — 손을 뗀 뒤 넘기던 방식에서, 가로로 움직이는 순간부터 두 화면이 손가락을 1:1로 따라온다.
   // 방향은 처음 8px로 한 번만 정한다(세로면 이 제스처는 끝까지 세로 스크롤). 가로로 정해지면 세로 스크롤을 막고 끈다.
@@ -26513,16 +26522,13 @@ function _buildFeedRec(){
   // For You 선반 순서는 **시간 민감도** 순이다 — 오늘 지나면 의미가 없어지는 것일수록 위(2026-09-18).
   //   기념일(D-DAY가 지나면 끝) → 신보(발매 주간) → 신작 영상(최근 7일) → 이어보기(언제 봐도 됨)
   _buildFeedForYouAnniv();  // 다가오는 기념일(즐겨찾기 그룹·멤버 교차 D-7~D-DAY) — 시간 민감이라 최상단
-  _buildFeedFavNews();      // 내 최애 소식(이번 주 1위·MV·티저·조회수 돌파 중 즐겨찾기 것) — 일주일짜리 소식이라 기념일 다음
-  _buildFeedFavAlbums();    // 즐겨찾기 신보(최근 30일) — 유튜브 영상 말고도 우리가 모으는 걸 드러낸다
-  _buildFeedFavConcerts();  // 즐겨찾기 예정 공연(45일 안) — 2026-10-21
-  _buildFeedFavIg();        // 즐겨찾기 인스타 사진(최근 2주, 영상 제외) — 2026-10-19
-  _buildFeedFavCharts();    // 내 최애 차트(2026-10-15) — 이번 주 차트에 든 최애 무대(발견 탭 Charts와 같은 계산)
+  const jobs=[_buildFeedFavNews(),_buildFeedFavAlbums(),_buildFeedFavConcerts(),_buildFeedFavIg(),_buildFeedFavCharts()];
   // 즐겨찾기 신작(비동기)이 자리를 잡은 뒤에 이어보기를 그린다 — 예전엔 이어보기(로컬·즉시)가 먼저 위에
   // 떴다가 favnew가 나중에 그 위로 끼어들며 이어보기를 아래로 밀어 덜컹거렸다(2026-09-13 사용자 제보).
-  _buildFeedFavNew().finally(()=>_buildFeedRecentlyViewed()); // 즐겨찾기 신작 → 이어보기 순서 확정
+  jobs.push(_buildFeedFavNew().finally(()=>_buildFeedRecentlyViewed())); // 즐겨찾기 신작 → 이어보기 순서 확정
 
   setTimeout(()=>_feedCheckEmpty('rec'),1800); // 비동기 선반들이 다 실패해 빈 화면이면 재시도 노출
+  return _feedRecPending=Promise.allSettled(jobs);
 }
 // 발견(Discover) 탭 빌드 — 무거운 차트+디스커버리. Discover 탭을 처음 누를 때만 지연 호출(_feedSwitchTab).
 // 열자마자 34개 선반을 동시에 치던 걸 나눠서 추천 탭은 빠르게, 발견은 볼 때만 로드(덜컹거림·중복 완화).
@@ -26545,13 +26551,17 @@ function _feedBuildPump(){
       .finally(()=>{_feedBuildRunning--;_feedBuildPump();});
   }
 }
+function _feedBuildIdle(){
+  return new Promise(resolve=>{
+    const check=()=>{if(!_feedBuildRunning&&!_feedBuildQ.length)resolve();else setTimeout(check,50);};check();
+  });
+}
 function _buildFeedDisc(){
   _feedBuildQ=[]; // 패널을 다시 열면 이전 대기분은 버린다(중복 그리기·유령 요청 방지)
   _feedDailyNewsP=_buildFeedDailyNews(); // 오늘의 소식이 Discover 맨 첫 섹션(2026-09-23) — 기념일보다도 먼저. 앨범 블록이 이걸 기다린다
-  _buildFeedIg(); // 인스타 사진(팔로워 많은 계정 최근 3일, 영상 제외) — 2026-10-19
+  const jobs=[_feedDailyNewsP,_buildFeedIg()]; // 인스타 사진(팔로워 많은 계정 최근 3일, 영상 제외)
   _buildFeedAnniversaries(); // 기념일 선반은 그 다음(2026-08-30 이동)
-  _buildFeedConcerts(); // 다가오는 공연(단독 콘서트·팬미팅, 45일) — 2026-10-21
-  _buildFeedEvents(); // Events — 다가오는 행사 D-day + 최근 행사 회차(2026-10-16)
+  jobs.push(_buildFeedConcerts(),_buildFeedEvents());
   document.getElementById('feed-empty-disc').hidden=true;
   const list=document.getElementById('feed-discovery');
   const chartList=document.getElementById('feed-chart');
@@ -26601,6 +26611,8 @@ function _buildFeedDisc(){
   _feedEnqueue(()=>_buildFeedRandomVideo(list));
   _wireFeedDiscoveryInfiniteScroll();
   setTimeout(()=>_feedCheckEmpty('disc'),1800); // 차트+디스커버리 전부 실패해 빈 화면이면 재시도 노출
+  jobs.push(_feedBuildIdle());
+  return _feedDiscPending=Promise.allSettled(jobs);
 }
 
 // ── 탐험 패널 "모아보기" 무한스크롤 ──────────────────────────────────────

@@ -1,16 +1,23 @@
-// Node runtime regression: refresh threshold, cancellation, and one-time tab restoration.
+// Node runtime regression: gesture guards and in-place refresh without page navigation.
 const fs = require('fs');
 const path = require('path');
 const vm = require('vm');
 const assert = require('assert/strict');
 const html = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
-const start = html.indexOf('function _reloadFeedFromPull(');
+const start = html.indexOf('function _refreshFeedFromPull(');
 const end = html.indexOf('function _wireFeedTabSwipe(', start);
 assert(start >= 0 && end > start);
 
 function setup({mobile = true, top = 0, tab = 'rec'} = {}) {
-  const listeners = new Map(), hints = [], storage = new Map(), calls = [];
+  const listeners = new Map(), hints = [], calls = [];
+  let finish;
+  const node = () => {
+    const classes = new Set(), attrs = new Map();
+    return {style: {}, children: [], classList: {add: x => classes.add(x), remove: x => classes.delete(x), contains: x => classes.has(x)},
+      appendChild(x) { this.children.push(x); }, setAttribute: (k,v) => attrs.set(k,v), removeAttribute: k => attrs.delete(k)};
+  };
   const pane = {
+    ...node(),
     id: 'feed-pane-' + tab, scrollTop: top,
     classList: {add() {}, remove() {}},
     prepend(hint) { hints.push(hint); },
@@ -21,13 +28,13 @@ function setup({mobile = true, top = 0, tab = 'rec'} = {}) {
   };
   const ctx = {
     isMob: () => mobile, currentLang: 'en', Date, JSON,
-    document: {createElement: () => ({style: {}, setAttribute() {}})},
-    sessionStorage: {setItem: (k, v) => storage.set(k, v), getItem: k => storage.get(k), removeItem: k => storage.delete(k)},
-    location: {reload: () => calls.push('reload')},
+    document: {createElement: node},
+    location: {reload: () => { throw new Error('must not reload the page'); }},
     setTimeout: fn => fn(),
-    _openFeedOverlay: () => calls.push('open'),
-    _feedSwitchTab: t => calls.push(t),
-    _obEngaged: () => calls.push('engaged')
+    _feedRecPending: null, _feedDiscPending: null, _feedPullRefreshP: null,
+    _weekNewsAt: 123, _recentAlbumsP: {}, _upConcertsAt: 123, _feedTrendAt: 123,
+    _buildFeedRec: () => { calls.push('rec'); return new Promise(resolve => { finish = resolve; }); },
+    _buildFeedDisc: () => { calls.push('disc'); return new Promise(resolve => { finish = resolve; }); }
   };
   vm.createContext(ctx);
   vm.runInContext(html.slice(start, end), ctx);
@@ -41,9 +48,10 @@ function setup({mobile = true, top = 0, tab = 'rec'} = {}) {
     for (const fn of listeners.get(type) || []) fn(e);
     return e;
   }
-  return {ctx, pane, calls, storage, send};
+  return {ctx, pane, calls, hints, send, complete: () => finish()};
 }
 
+async function main() {
 for (const tab of ['rec', 'disc']) {
   for (const [name, dx, dy, options, refresh] of [
     ['large pull', 0, 240, {}, true],
@@ -61,21 +69,32 @@ for (const tab of ['rec', 'disc']) {
     h.send('touchmove', 100 + dx, 100 + dy, options.multi ? {touches: [{clientX: 100, clientY: 340}, {}]} : {});
     if (options.reverse) h.send('touchmove', 100, 130);
     h.send(options.cancel ? 'touchcancel' : 'touchend', 100 + dx, 100 + dy);
-    assert.equal(h.calls.includes('reload'), refresh, `${tab}: ${name}`);
+    await new Promise(setImmediate);
+    assert.equal(h.calls.length, refresh ? 1 : 0, `${tab}: ${name}`);
     if (refresh) {
       const click = h.send('click', 100, 340);
       assert(click.prevented && click.stopped, 'pull must not click a video');
-      h.ctx._restoreFeedAfterPull();
-      assert.deepEqual(h.calls, ['reload', 'open', tab, 'engaged']);
-      h.ctx._restoreFeedAfterPull();
-      assert.equal(h.calls.length, 4, 'restore only once');
+      assert.deepEqual(h.calls, [tab], 'rebuild only the current tab');
+      assert(h.hints[0].classList.contains('is-refreshing'));
+      assert.equal(h.hints[0].textContent, undefined, 'no visible text instruction');
+      h.send('touchstart', 100, 100); h.send('touchend', 100, 100);
+      assert.equal(h.hints[0].style.height, '64px', 'keep spinner visible while loading');
+      assert.equal(h.ctx._weekNewsAt, 0); assert.equal(h.ctx._recentAlbumsP, null);
+      h.complete(); await new Promise(setImmediate);
+      assert.equal(h.hints[0].style.height, '0px', 'collapse after completion');
     }
   }
 }
-for (const value of ['broken json', JSON.stringify({tab: 'other', at: Date.now()}), JSON.stringify({tab: 'disc', at: Date.now() - 120000})]) {
-  const h = setup();
-  h.storage.set('kpu_feed_pull_resume', value);
-  h.ctx._restoreFeedAfterPull();
-  assert.equal(h.calls.length, 0, 'ignore invalid or expired resume');
+const waiting = setup();
+let releaseInitial;
+waiting.ctx._feedRecPending = new Promise(resolve => { releaseInitial = resolve; });
+const first = waiting.ctx._refreshFeedFromPull('rec');
+assert.equal(waiting.ctx._refreshFeedFromPull('rec'), first, 'coalesce overlapping refreshes');
+await new Promise(setImmediate);
+assert.equal(waiting.calls.length, 0, 'wait for the existing build');
+releaseInitial(); await new Promise(setImmediate);
+assert.deepEqual(waiting.calls, ['rec']);
+waiting.complete(); await first;
+console.log('PASS mobile feed pull refresh: gestures, spinner lifecycle, current-tab rebuild without navigation');
 }
-console.log('PASS mobile feed pull refresh: gestures, click suppression, and tab restoration');
+main().catch(e => { console.error(e); process.exitCode = 1; });
