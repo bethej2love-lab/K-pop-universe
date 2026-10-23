@@ -42,6 +42,7 @@ const artistHandles = new Set(handles);
 const MAG = new Set((readJson('ig_media_accounts.json').accounts || []).map(x => String(x.h || '').toLowerCase()).filter(Boolean));
 for (const h of MAG) handles.add(h);
 const mentionsOf = cap => [...new Set((String(cap || '').match(/@([A-Za-z0-9._]+)/g) || []).map(x => x.slice(1).toLowerCase().replace(/\.+$/, '')))].filter(h => artistHandles.has(h));
+const INVALID_USER_RECHECK_MS = 7 * 24 * 3600e3; // Invalid user id는 매 회차 재시도하지 않고 주 1회만 확인
 
 const SBH = { apikey: SKEY, Authorization: 'Bearer ' + SKEY, 'Content-Type': 'application/json' };
 async function sbGetAll(qs) {
@@ -61,13 +62,18 @@ async function sbUpsert(table, rows, conflict) {
 
 // 순서: 오래전에 받은 계정과 한 번도 안 받은 계정을 번갈아(아래 주석)
 let prev = [];
-try { prev = await sbGetAll('ig_accounts?select=handle,fetched_at&order=handle'); }
+try { prev = await sbGetAll('ig_accounts?select=handle,status,note,fetched_at&order=handle'); }
 catch (e) { console.error(e.message + '\n→ sql/2026-10-19_ig_stats.sql을 먼저 실행해야 한다'); process.exit(1); }
+const previous = new Map(prev.map(r => [r.handle, r]));
 const last = new Map(prev.map(r => [r.handle, r.fetched_at]));
+const coolingInvalidUser = r => r?.status === 'not_found' && /^Invalid user id\b/i.test(String(r.note || '')) && Date.now() - Date.parse(r.fetched_at) < INVALID_USER_RECHECK_MS;
+const coolingCount = [...handles].filter(h => coolingInvalidUser(previous.get(h))).length;
 // ⚠️ 새 계정 → 오래된 계정 "순서대로"만 하면 굶는다(2026-10-22 사용자 제보: 코르티스 최근 게시물이 여러 장인데 1장만). 멤버 개인 계정
 //    940여 개가 한꺼번에 목록에 들어오자 회당 70개 남짓(사용량 90%에서 멈춤)이 전부 새 계정에 쓰였고, 이미 받은 계정은 10-19 이후 한 번도
 //    다시 안 받혔다 — 코르티스는 캐러셀 사진·본문을 받기 전 형식 그대로 멈춰 있었다. 새 계정과 오래된 계정을 번갈아 받는다.
-const known = [...handles].filter(h => last.get(h)).sort((a, b) => String(last.get(a)).localeCompare(String(last.get(b))));
+// Meta가 "Invalid user id"로 응답한 핸들은 재시도마다 쿼터를 쓰지만 새 정보가 없었다(2026-10-23 집계: 178 not_found 중 176).
+// 계정 상태가 바뀌었을 가능성은 남겨 두고, 7일 뒤 다시 시도한다. 다른 오류/조회 불가 유형은 기존대로 순환 재시도한다.
+const known = [...handles].filter(h => last.get(h) && !coolingInvalidUser(previous.get(h))).sort((a, b) => String(last.get(a)).localeCompare(String(last.get(b))));
 const fresh = [...handles].filter(h => !last.get(h));
 const mixed = [];
 for (let i = 0; i < Math.max(known.length, fresh.length); i++) { if (i < known.length) mixed.push(known[i]); if (i < fresh.length) mixed.push(fresh[i]); }
@@ -130,4 +136,4 @@ const byShape = new Map();
 for (const row of acc) { const k = Object.keys(row).sort().join(','); (byShape.get(k) || byShape.set(k, []).get(k)).push(row); }
 for (const rows of byShape.values()) await sbUpsert('ig_accounts', rows, 'handle');
 await sbUpsert('ig_follower_daily', daily, 'handle,day');
-console.log(`인스타 계정 ${handles.size}개 중 이번 ${acc.length}개 — 성공 ${ok} · 조회 불가 ${nf}${stoppedBy ? ' · 중단: ' + stoppedBy : ''}`);
+console.log(`인스타 계정 ${handles.size}개 중 이번 ${acc.length}개 — 성공 ${ok} · 조회 불가 ${nf}${coolingCount ? ' · Invalid user 재시도 대기 ' + coolingCount : ''}${stoppedBy ? ' · 중단: ' + stoppedBy : ''}`);
