@@ -16130,6 +16130,35 @@ function updateSheetBottom(){
   _applySheetMetrics();
   _ensureTabbarIfUnscrollable(); // 회전/뷰포트 변화로 카드가 더는 안 스크롤되게 됐으면 탭바 복구
 }
+// ── 아이폰 웹앱(홈 화면) 화면이 상태바 높이만큼 위로 밀려 그려지는 것 보정(2026-10-23 사용자 제보 "위는 잘리고 아래 여백이 크다") ──
+// 사용자 캡처 실측: 아래 47px이 페이지 배경색(#060612) 띠, 카드 손잡이·사진이 정상 위치(헤드리스 58·92px)보다 정확히 47px 위.
+// 즉 iOS가 이 앱에 화면 높이를 상태바만큼 덜 주고(innerHeight = 화면 − 47) 상단 세이프에어리어도 0으로 알려 주면서 맨 위부터 그린다.
+// 그 상태일 때만(웹앱 + 세로 + 상단 인셋 0 + 모자란 높이 15~80px) 페이지 전체를 모자란 만큼 내린다(html.vp-shift → body transform).
+// 3D 클릭 판정은 캔버스 getBoundingClientRect 기준이라 같이 내려가도 맞는다. 키보드가 올라와 높이가 크게 줄면 범위 밖이라 안 건드린다.
+let _vpProbe=null;
+function _pwaViewportFix(){
+  const de=document.documentElement;
+  const standalone=(window.matchMedia&&matchMedia('(display-mode: standalone)').matches)||navigator.standalone===true;
+  if(!_vpProbe){_vpProbe=document.createElement('div');_vpProbe.style.cssText='position:absolute;left:0;top:0;width:1px;height:env(safe-area-inset-top,0px);visibility:hidden;pointer-events:none';de.appendChild(_vpProbe);}
+  const envTop=_vpProbe.offsetHeight;
+  const portrait=window.innerHeight>window.innerWidth;
+  const screenH=portrait?Math.max(screen.height,screen.width):Math.min(screen.height,screen.width);
+  const gap=Math.round(screenH-window.innerHeight);
+  const on=standalone&&portrait&&envTop<5&&gap>=15&&gap<=80;
+  de.classList.toggle('vp-shift',on);
+  de.style.setProperty('--vp-gap',on?gap+'px':'0px');
+  _pwaVpInfo={standalone,envTop,innerH:window.innerHeight,screenH,gap,on};
+}
+let _pwaVpInfo=null;
+_pwaViewportFix();
+window.addEventListener('resize',_pwaViewportFix);
+window.addEventListener('orientationchange',()=>setTimeout(_pwaViewportFix,300));
+// 관리자가 웹앱으로 열면 처음 3번만 측정값을 잠깐 보여준다 — 보정이 안 먹을 때 캡처 한 장으로 원인을 알 수 있게
+setTimeout(()=>{try{
+  if(!_pwaVpInfo||!_pwaVpInfo.standalone||typeof _isAdmin!=='function'||!_isAdmin())return;
+  const n=+(localStorage.getItem('kpu_vpdiag_n')||0);if(n>=3)return;localStorage.setItem('kpu_vpdiag_n',n+1);
+  const v=_pwaVpInfo;_showShareToast(`화면 진단: 높이 ${v.innerH}/${v.screenH} · 상단 ${v.envTop} · 보정 ${v.on?v.gap+'px':'없음'}`);
+}catch(e){}},4000);
 // 시트 기하를 결정하는 단 두 개의 변수를 한 곳에서만 쓴다(kpop_universe.css의 #mob-sheet 주석 참고).
 function _applySheetMetrics(){
   const rs=document.documentElement.style;

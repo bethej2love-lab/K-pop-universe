@@ -33,6 +33,14 @@
   /* 더블탭 시 브라우저 네이티브 확대가 실수로 걸리는 걸 막음(2026-08-13, 사용자 제보) — pinch-zoom은
      허용값이라 3D 지도의 OrbitControls 핀치 확대에는 영향 없음, manipulation은 더블탭줌만 끈다. */
   html{background:#060612;-webkit-text-size-adjust:100%;text-size-adjust:100%;touch-action:manipulation;}
+  /* 아이폰 웹앱이 화면을 상태바만큼 위로 밀어 그리는 상태에서만(_pwaViewportFix가 감지해 html.vp-shift) 페이지 전체를 그만큼 내린다(2026-10-23).
+     body에 transform을 걸면 fixed 요소들의 기준이 body가 되므로 높이를 화면(100%)으로 못박아 둔다 — 안 그러면 inset:0 오버레이가 접힌다. */
+  html.vp-shift,html.vp-shift body{height:100%;}
+  html.vp-shift body{transform:translateY(var(--vp-gap,0px));}
+  /* 탭바는 같이 내려가면 버튼이 iOS가 터치를 받는 영역(innerHeight) 밖으로 나가 안 눌릴 수 있다(헤드리스 실측: 그 좌표는 hit 없음).
+     그래서 버튼은 영역 안(bottom:gap)에 두고, 홈 인디케이터 몫 아래 여백 대신 배경만 화면 맨 아래까지 이어 붙여(::after) 빈 띠가 안 보이게 한다. */
+  html.vp-shift #tabbar{bottom:var(--vp-gap,0px);padding-bottom:11px;}
+  html.vp-shift #tabbar::after{content:'';position:absolute;left:0;right:0;top:100%;height:var(--vp-gap,0px);background:rgba(14,18,36,0.92);pointer-events:none;}
   body{
     background:radial-gradient(ellipse at 50% 38%,
       #12112a 0%,
