@@ -3044,9 +3044,9 @@
   .adv-item>.tv-with-line{margin-top:4px;}
   .adv-empty,.adv-loading{padding:24px 0;text-align:center;font-size:12px;color:rgba(130,150,200,0.4);}
   #gc-discog-video-count{margin-left:4px;font-weight:600;letter-spacing:0;color:rgba(130,150,205,0.42);}
-  .adv-chips{display:flex;flex-wrap:wrap;gap:6px;padding:0 0 8px;}
+  .adv-chips{display:flex;flex-shrink:0;flex-wrap:nowrap;gap:4px;padding:0 0 8px;overflow-x:auto;scrollbar-width:none;}
   .adv-chips[hidden]{display:none;}
-  .adv-chips .tvf-tab{font-size:11px;padding:4px 11px;}
+  .adv-chips .gc-ch-filter{flex-shrink:0;}
   .adv-more{display:block;margin:6px 0 14px;width:100%;padding:9px 0;border:none;border-radius:10px;background:rgba(255,255,255,0.06);color:rgba(190,205,240,0.78);font:600 12px/1 inherit;font-family:inherit;cursor:pointer;}
   .adv-more:hover{background:rgba(255,255,255,0.1);}
   /* 데스크톱: 시트 오른쪽 측면 패널 */
@@ -3076,6 +3076,18 @@
     #gc-discog-video-panel.is-song{width:340px;}
   }
   /* 앨범 창 = 곡 창(2026-10-20) — 곡을 고르면 이 패널이 곡 영상으로. 곡 오버레이 부품을 옮겨 달되 썸네일은 패널 크기로 */
+  /* 카드 영상과 동일: 가로 1열(16:9), 쇼츠 2열(9:16). 곡으로 좁혀도 같은 격자. */
+  #gc-discog-video-list{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:6px;align-items:start;}
+  #gc-discog-video-list>.adv-item{min-width:0;padding:0;border-radius:6px;overflow:hidden;background:rgba(255,255,255,0.04);}
+  #gc-discog-video-list>.adv-item:not(.is-short),#gc-discog-video-list>.adv-more{grid-column:1/-1;}
+  #gc-discog-video-list .adv-thumb-wrap{aspect-ratio:16/9;overflow:hidden;}
+  #gc-discog-video-list .adv-item.is-short .adv-thumb-wrap{aspect-ratio:9/16;}
+  #gc-discog-video-list .adv-thumb{position:absolute;inset:0;width:100%;height:100%;aspect-ratio:auto;border-radius:0;}
+  #gc-discog-video-list .adv-txt{font-size:11.5px;line-height:1.3;margin:0;padding:4px;color:#a8bcd8;}
+  #gc-discog-video-list .adv-meta{margin:0;padding:0 4px 4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  #gc-discog-video-list .tv-with-line{padding:0 4px 4px;}
+  #gc-discog-video-list>.adv-more{width:100%;margin:6px 0 14px;}
+  @media(min-width:1024px){#gc-discog-video-list{padding:0 12px 12px;}}
   .adv-hdr{display:flex;align-items:center;gap:4px;}
   .adv-hdr #gc-discog-video-lbl{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
   #gc-discog-video-panel.is-song .adv-hdr #gc-discog-video-lbl{text-transform:none;letter-spacing:0;font-size:13px;color:#e4ecff;}
@@ -3085,10 +3097,16 @@
   #gc-discog-song-view[hidden]{display:none;}
   #gc-discog-song-view #gc-track-videos-credits{padding:2px 0 0;}
   #gc-discog-song-view #gc-track-videos-tabs{margin-top:6px;}
-  #gc-discog-song-view #gc-track-videos-list{overflow:visible;flex:none;margin-top:10px;gap:2px;}
-  #gc-discog-song-view .tvf-item{flex-direction:column;gap:7px;padding:6px 0 10px;}
-  #gc-discog-song-view .tvf-thumb-wrap{width:100%;}
-  #gc-discog-song-view .tvf-thumb{border-radius:8px;}
+  #gc-discog-song-view #gc-track-videos-list{overflow:visible;flex:none;margin-top:10px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:6px;align-items:start;}
+  #gc-discog-song-view .tvf-item{min-width:0;flex-direction:column;gap:0;padding:0;overflow:hidden;border-radius:6px;background:rgba(255,255,255,0.04);}
+  #gc-discog-song-view .tvf-item:not(.is-short),#gc-discog-song-view .tvf-empty{grid-column:1/-1;}
+  #gc-discog-song-view .tvf-thumb-wrap{width:100%;aspect-ratio:16/9;overflow:hidden;}
+  #gc-discog-song-view .tvf-item.is-short .tvf-thumb-wrap{aspect-ratio:9/16;}
+  #gc-discog-song-view .tvf-thumb{position:absolute;inset:0;height:100%;aspect-ratio:auto;border-radius:0;}
+  #gc-discog-song-view .tvf-txt{width:100%;box-sizing:border-box;padding:4px;}
+  #gc-discog-song-view .tvf-title{font-size:11.5px;line-height:1.3;}
+  #gc-discog-song-view .tvf-meta{font-size:11px;color:rgba(150,175,215,0.66);}
+  #gc-discog-song-view .gc-ch-filter{flex-shrink:0;}
   #gc-discog-video-list[hidden]{display:none;}
   .gc-discog-track.is-active{background:rgba(120,150,255,0.16);}
   .gc-discog-track.is-active .gc-discog-track-name{color:#fff;}

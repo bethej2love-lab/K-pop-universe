@@ -14133,7 +14133,7 @@ function _renderAlbumVideos(more){
   const chipsEl=document.getElementById('gc-discog-video-chips');
   const cntEl=document.getElementById('gc-discog-video-count');
   const _ko=currentLang==='ko';
-  // 형식 칩 — 곡 오버레이와 같은 분류(_tvfFmt·_TVF_FMTS). 두 종류 이상일 때만
+  // 카드와 같은 순서/필터 버튼. 앨범·곡에 실제로 있는 분류만 노출한다.
   const cnt={};st.list.forEach(v=>{const f=_tvfFmt(v);cnt[f]=(cnt[f]||0)+1;});
   const fmts=_TVF_FMTS.filter(([k])=>cnt[k]);
   if(st.fmt!=='all'&&!cnt[st.fmt])st.fmt='all';
@@ -14143,7 +14143,8 @@ function _renderAlbumVideos(more){
     chipsEl.innerHTML='';
     chipsEl.hidden=fmts.length<2;
     if(fmts.length>=2)[['all','전체','All'],...fmts].forEach(([k,ko,en])=>{
-      const b=document.createElement('button');b.type='button';b.className='tvf-tab'+(st.fmt===k?' active':'');b.textContent=_ko?ko:en;
+      const b=document.createElement('button');b.type='button';b.className='gc-ch-filter'+(st.fmt===k?' active':'');b.dataset.val=k;
+      b.textContent=k==='fan'?`by ${GROUPS[st.gko]?.fandom?.en||'Fans'}`:(_ko?ko:en);
       b.addEventListener('click',e=>{e.stopPropagation();st.fmt=k;_renderAlbumVideos();});
       chipsEl.appendChild(b);
     });
@@ -14156,12 +14157,14 @@ function _renderAlbumVideos(more){
   const pageItems=[];
   for(let i=st.shown;i<end;i++){
     const v=rows[i];
-    const item=document.createElement('div');item.className='adv-item';
+    const isShort=_isShortV(v);
+    const item=document.createElement('div');item.className='adv-item'+(isShort?' is-short':'');
     // 썸네일 아래 표기는 카드 영상 그리드와 같게(2026-10-23 사용자): 재생시간 배지 · 날짜 yyyy.mm.dd · 조회수 · 멤버 줄(개별 멤버 태깅일 때만)
     const tw=document.createElement('span');tw.className='adv-thumb-wrap';
-    const thumb=document.createElement('img');thumb.className='adv-thumb'+(_isShortV(v)?' is-short':'');thumb.src=v.thumb||'';thumb.alt='';thumb.loading='lazy';
+    const thumb=document.createElement('img');thumb.className='adv-thumb'+(isShort?' is-short':'');thumb.alt='';thumb.loading='lazy';thumb.decoding='async';
+    if(isShort)_mountShortThumb(thumb,v.id);else thumb.src=v.thumb||'';
     tw.appendChild(thumb);_vdur(tw,v.id,v.duration_sec);
-    const txt=document.createElement('div');txt.className='adv-txt';txt.textContent=v.title;
+    const txt=document.createElement('div');txt.className='adv-txt';txt.textContent=_cleanTitle(v.title);
     const meta=document.createElement('div');meta.className='adv-meta';
     meta.textContent=_fmtVidMeta(v.published_at?String(v.published_at).slice(0,10):'',v.view_count);
     item.appendChild(tw);item.appendChild(txt);item.appendChild(meta);
@@ -14500,12 +14503,10 @@ async function _openSongVideos(title,owner,songMeta,opt){
 // 형식 칩(2026-09-21) — 값은 그룹/멤버 카드 영상 탭과 같은 DB category 그대로 쓴다.
 // ⚠️ 'cover'는 칩에 넣지 않는다 — 이 시트엔 이미 "원곡/커버"(cover_of 태깅 기준) 탭이 있어서 같은
 //    낱말이 두 가지를 뜻하게 된다. 칩은 좁히기용일 뿐이라, 칩에 없는 형식도 '전체'에선 그대로 보인다.
-const _TVF_FMTS=['mv','live','short','challenge','variety','show'].map(k=>[k,_CAT_LABEL[k][0],_CAT_LABEL[k][1]]);
+const _TVF_FMTS=['mv','live','fan','jacon','cover','short','variety','show'].map(k=>[k,k==='fan'?'by Fans':_CAT_LABEL[k][0],k==='fan'?'by Fans':_CAT_LABEL[k][1]]);
 function _tvfFmt(v){
-  if(_isShortV(v)){
-    if(/챌린지|challenge/i.test(v.title||''))return 'challenge';
-    return 'short';
-  }
+  // 챌린지는 별도 탭으로 나누지 않는다. 원본의 실제 세로 여부는 _isShortV로만 판단한다.
+  if(_isShortV(v)||v.category==='challenge')return 'short';
   return v.category||'other';
 }
 function _tvfVidUrl(v){return _isShortV(v)?`https://www.youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;}
@@ -14520,6 +14521,7 @@ function _renderSongVideoTabs(){
   const tabsEl=document.getElementById('gc-track-videos-tabs');
   const actEl=document.getElementById('gc-track-videos-actions');
   const listEl=document.getElementById('gc-track-videos-list');
+  const inAlbum=listEl.parentElement?.id==='gc-discog-song-view';
   const _ko=currentLang==='ko';
   if(!st.cover.length)st.tab='all'; // 커버가 없으면 원곡/커버 구분 자체가 없다
   const base=st.tab==='orig'?st.orig:st.tab==='cover'?st.cover:[...st.orig,...st.cover];
@@ -14535,7 +14537,7 @@ function _renderSongVideoTabs(){
     tabsEl.classList.remove('hidden');
     const mk=(lbl,active,on)=>{
       const b=document.createElement('button');b.type='button';
-      b.className='tvf-tab'+(active?' active':'');b.textContent=lbl;
+      b.className=(inAlbum?'gc-ch-filter':'tvf-tab')+(active?' active':'');b.textContent=lbl;
       b.addEventListener('click',on);tabsEl.appendChild(b);
     };
     if(showOC)[['all',_ko?'전체':'All'],['orig',_ko?'원곡':'Original'],['cover',_ko?'커버':'Covers']].forEach(([k,lbl])=>{
@@ -14549,7 +14551,7 @@ function _renderSongVideoTabs(){
     _enableDragScroll(tabsEl); // 가로 목록은 드래그로도 넘길 수 있어야 한다(프로젝트 공통)
     // 방금 고른 칩이 화면 밖에 반쯤 걸쳐 있으면 "눌렀는데 어디가 켜졌는지" 안 보인다 — 보이는 데까지만
     // 최소로 민다(scrollIntoView는 바깥 스크롤까지 건드릴 수 있어 직접 계산).
-    const _acts=tabsEl.querySelectorAll('.tvf-tab.active'),_last=_acts[_acts.length-1];
+    const _acts=tabsEl.querySelectorAll('.tvf-tab.active,.gc-ch-filter.active'),_last=_acts[_acts.length-1];
     if(_last&&tabsEl.scrollWidth>tabsEl.clientWidth){
       const l=_last.offsetLeft,r=l+_last.offsetWidth;
       if(r>tabsEl.scrollLeft+tabsEl.clientWidth)tabsEl.scrollLeft=r-tabsEl.clientWidth+8;
@@ -14580,12 +14582,13 @@ function _renderSongVideoTabs(){
   const playlist=rows.map(_tvfPlaylistItem);
   listEl.innerHTML='';
   rows.forEach((v,i)=>{
-    const item=document.createElement('div');item.className='tvf-item';
+    const isShort=_isShortV(v);
+    const item=document.createElement('div');item.className='tvf-item'+(isShort?' is-short':'');
     // 썸네일 래퍼 — 재생시간 배지를 썸네일 밑변에 붙이기 위한 것(다른 목록은 형제 나열 구조라 JS로
     // 높이를 재야 하지만, 여기는 이 시트 전용 마크업이라 래퍼 하나로 CSS만으로 붙는다).
     const wrap=document.createElement('span');wrap.className='tvf-thumb-wrap';
     const img=document.createElement('img');img.className='tvf-thumb';img.loading='lazy';
-    img.src=v.thumb||`https://i.ytimg.com/vi/${v.id}/mqdefault.jpg`;img.alt='';
+    if(isShort&&inAlbum)_mountShortThumb(img,v.id);else img.src=v.thumb||`https://i.ytimg.com/vi/${v.id}/mqdefault.jpg`;img.alt='';
     wrap.appendChild(img);
     const durTxt=_fmtDur(v.duration_sec);
     if(durTxt){const d=document.createElement('span');d.className='tvf-dur';d.textContent=durTxt;wrap.appendChild(d);}
