@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 2026-10-23 (Codex — 탐험 새로고침 스피너·제자리 갱신)
+- **[진행중] [index.html] [kpop_universe.css] [tests/feed-pull-refresh.test.js]** 텍스트를 원형 회전 표시로 교체, 당김 시 화면 이동 확대. 페이지 재로딩/인트로 재생을 없애고 현재 탭만 다시 빌드하는 경로 검증 중.
+
 ## 2026-10-23 (Codex — 모바일 탐험 당겨 새로고침)
 - **[완료] [index.html] [kpop_universe.css]** 모바일 양쪽 탐험 본문 맨 위에서 220px 이상 당긴 뒤 놓으면 안내와 함께 페이지 새로고침, 준비 후 같은 탭 복귀(세션에 1회·60초만 기억). 짧은 당기기·중간 스크롤·가로/위로 이동·취소·다중 터치는 실행하지 않음. 본문에서 기존 창 닫기를 양보하고 헤더/앨범 창 닫기는 유지. 카테고리 순서 설정은 아이디어 논의 단계.
 - **[검증] [tests/feed-pull-refresh.test.js]** Node 회귀 추가: 임계값·취소·모바일 한정·한 번만 복귀·오래된/잘못된 복귀값·클릭 오작동 방지. 실제 Edge DOM 이벤트로 본문 새로고침/헤더 닫기 분리 확인. 실제 앱 390px 신규 프로필에서 재로딩 후 rec/disc 복귀·콘솔 오류 0 확인. smoke(PC+390)·syntax·feed-tab-swipe·feed-dismiss-engaged·diff 통과.
