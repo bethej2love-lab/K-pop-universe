@@ -21901,7 +21901,7 @@ async function _showTraceCount(kind,key,rpcFn){
   }
 }
 
-buildUniverse().catch(err=>{
+buildUniverse().then(_restoreFeedAfterPull).catch(err=>{
   console.error(err);
   try{document.documentElement.classList.remove('booting');document.documentElement.classList.remove('chrome-wait');}catch(_){} // 에러 화면에선 크롬이 보여야 한다
   const loadingEl=document.getElementById('loading');
@@ -22054,6 +22054,7 @@ function _openFeedOverlay(){
     const _feedScrollProxy={get scrollTop(){const _t=document.getElementById('feed-panes-track');return(document.getElementById(_t&&_t.classList.contains('at-disc')?'feed-pane-disc':'feed-pane-rec')||{scrollTop:0}).scrollTop;}};
     _wireFeedSwipeDismiss(el,_feedScrollProxy);
     _wireFeedTabSwipe(document.getElementById('feed-body'));
+    ['feed-pane-rec','feed-pane-disc'].forEach(id=>_wireFeedPullRefresh(document.getElementById(id)));
     // 카드 시트와 **같은** 스크롤 자동숨김을 재사용한다(2026-09-18). 새로 구현하지 않는 이유: 이 함수엔
     // iOS 고무줄 구간 방향 반전, 탭바가 숨을 때 브라우저가 스크롤을 당기는 양 상쇄(clampShift),
     // 방향 전환 시 누적 리셋, 최상단 40px 안전망 — 네 번의 버그 수정이 이미 녹아 있다.
@@ -22117,6 +22118,55 @@ function _slideDownCloseFeed(){
 }
 // 모바일 나침반 안의 최상위 2탭은, 탭 버튼을 정확히 누르지 않아도 좌우로 넘길 수 있다.
 // 가로 선반은 원래 자기 안에서 스크롤돼야 하고, 세로 움직임은 본문 스크롤/아래로 닫기에 양보한다.
+// 페이지를 다시 불러와 메모리 캐시/멈춘 요청도 초기화하고, 준비되면 같은 탐험 탭으로 복귀한다.
+function _reloadFeedFromPull(which){
+  try{sessionStorage.setItem('kpu_feed_pull_resume',JSON.stringify({tab:which,at:Date.now()}));}catch(e){}
+  location.reload();
+}
+function _restoreFeedAfterPull(){
+  let saved;
+  try{saved=JSON.parse(sessionStorage.getItem('kpu_feed_pull_resume')||'null');sessionStorage.removeItem('kpu_feed_pull_resume');}catch(e){return;}
+  if(!saved||!['rec','disc'].includes(saved.tab)||Date.now()-saved.at>60000)return;
+  _openFeedOverlay();_feedSwitchTab(saved.tab,true);_obEngaged();
+}
+function _wireFeedPullRefresh(pane){
+  if(!pane||pane._pullRefreshWired)return;pane._pullRefreshWired=true;
+  const hint=document.createElement('div');hint.className='feed-pull-refresh';hint.setAttribute('role','status');
+  pane.prepend(hint);
+  let tracking=false,pulling=false,busy=false,x0=0,y0=0,dy=0,suppressUntil=0;
+  const threshold=220;
+  const reset=()=>{tracking=false;pulling=false;dy=0;hint.style.height='0px';hint.textContent='';pane.classList.remove('feed-pulling');};
+  pane.addEventListener('touchstart',e=>{
+    reset();
+    if(busy||!isMob()||e.touches.length!==1||pane.scrollTop>2||e.target.closest('input,textarea,select,[contenteditable="true"]'))return;
+    tracking=true;x0=e.touches[0].clientX;y0=e.touches[0].clientY;
+  },{passive:true,capture:true});
+  pane.addEventListener('touchmove',e=>{
+    if(!tracking)return;
+    if(e.touches.length!==1||!e.cancelable){reset();return;}
+    const dx=e.touches[0].clientX-x0,nextY=e.touches[0].clientY-y0;
+    if(!pulling){
+      if(Math.max(Math.abs(dx),Math.abs(nextY))<12)return;
+      if(nextY<=0||Math.abs(dx)>nextY*0.8){reset();return;}
+      pulling=true;pane.classList.add('feed-pulling');
+    }
+    dy=Math.max(0,nextY);
+    e.preventDefault();e.stopPropagation();pane.scrollTop=0;
+    hint.style.height=Math.min(90,dy*0.35)+'px';
+    hint.textContent=currentLang==='ko'?(dy>=threshold?'놓으면 새로고침':'아래로 더 당겨 새로고침'):(dy>=threshold?'Release to refresh':'Pull further to refresh');
+  },{passive:false,capture:true});
+  pane.addEventListener('touchend',e=>{
+    if(!pulling){reset();return;}
+    e.stopPropagation();suppressUntil=Date.now()+500;
+    const refresh=dy>=threshold;reset();
+    if(refresh){
+      busy=true;hint.style.height='52px';hint.textContent=currentLang==='ko'?'새로고침 중…':'Refreshing…';
+      setTimeout(()=>_reloadFeedFromPull(pane.id==='feed-pane-disc'?'disc':'rec'),120);
+    }
+  },{passive:true,capture:true});
+  pane.addEventListener('touchcancel',()=>{if(pulling)suppressUntil=Date.now()+500;reset();},{passive:true,capture:true});
+  pane.addEventListener('click',e=>{if(Date.now()<suppressUntil){e.preventDefault();e.stopPropagation();}},{capture:true});
+}
 function _wireFeedTabSwipe(body){
   // X식 가로 페이징(2026-10-23) — 손을 뗀 뒤 넘기던 방식에서, 가로로 움직이는 순간부터 두 화면이 손가락을 1:1로 따라온다.
   // 방향은 처음 8px로 한 번만 정한다(세로면 이 제스처는 끝까지 세로 스크롤). 가로로 정해지면 세로 스크롤을 막고 끈다.
@@ -22169,6 +22219,8 @@ function _wireFeedSwipeDismiss(el,body,onClose){ // onClose: 기본은 탐험 �
   let dragY=0,dragging=false,dragActive=false,_rafId=0,_applyFn=null,_armed=false,_lastDy=0,_vY=0,_vT=0,_vel=0;
   el.addEventListener('touchstart',e=>{
     if(!isMob())return;
+    // 탐험 본문 아래로 당기기는 새로고침 몫. 헤더 및 별도 앨범 창의 닫기는 기존 동작.
+    if(el.id==='feed-overlay'&&e.target.closest('.feed-pane')){dragging=false;return;}
     // 자체적으로 가로 스크롤되는 영역(.hscroll-drag — 기념일 스트립 등)은 여기서 추적 안 함(_wireSheetSwipe와
     // 같은 이유, 2026-08-18).
     if(e.target.closest('.hscroll-drag')){dragging=false;return;}
