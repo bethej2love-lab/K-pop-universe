@@ -4308,6 +4308,17 @@
     #feed-recent>.feed-recent-item{width:calc((100% + 10px) / 1.5);}
     #feed-recent .feed-recent-thumb-wrap{width:100%;}
   }
+  @media(max-width:768px){
+    /* 모바일: 영상 1.5장, 앨범·공연 2⅔장, 기념일 프로필 3.5장. */
+    #feed-chart>.feed-card,#feed-jacon>.feed-card,#feed-favchart>.feed-card,#feed-events>.feed-card,#feed-recent>.feed-recent-item{width:calc((100% + 10px) / 1.5);}
+    #feed-recent .feed-recent-thumb-wrap{width:100%;}
+    #feed-newalbum.feed-album-rail,#feed-favalbum.feed-album-rail,#feed-concerts.feed-album-rail,#feed-favconcert.feed-album-rail{grid-auto-columns:calc((100% + 4px) * 3 / 8);}
+    #feed-anniv .feed-strip-item{width:calc((100% + 5px) / 3.5);}
+    #feed-anniv .feed-strip-thumb-wrap{width:100%;height:auto;aspect-ratio:1;box-sizing:border-box;}
+    #feed-anniv .feed-strip-name{font-size:12px;max-width:100%;}
+    #feed-anniv .feed-strip-sub{font-size:11px;max-width:100%;}
+    #feed-anniv .feed-strip-date{font-size:10px;max-width:100%;}
+  }
   .feed-recent-title{font-size:10px;color:rgba(200,215,245,0.75);line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
   .feed-card-title{font-size:13px;font-weight:600;color:rgba(220,232,255,0.92);line-height:1.4;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
   /* ⚠️ 한글은 같은 px·같은 알파에서 라틴보다 훨씬 빈약해 보인다(획이 많아 작은 크기에서 뭉갠다) —
