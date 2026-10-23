@@ -7218,7 +7218,7 @@ function _surfCandidates(raw){
 }
 // 제목의 feat./ft./with/X 뒤 인물. "방예담 (BANG YEDAM) X 윈터 (WINTER of aespa)" → 윈터
 const _SURF_NOT_PERSON=/^(live|band|ver\.?|version|mv|m\/v|official|cover|remix|prod\.?|acoustic|special|stage|full|4k|hd|the|a|me|you|us|my|love|friends?)$/i;
-function _surfTitlePeople(title){
+function _surfTitlePeople(title,isCover=false){
   const t=(title||'').replace(/[‘’“”'"「」『』]/g,' '),out=[];
   const grab=s=>s.split(/\s+(?:x|×|&|and)\s+|,|\s&\s/i).forEach(p=>{
     // ' - ' 뒤는 곡명이다("白石麻衣 × 絢香 - にじいろ" → 絢香)
@@ -7227,7 +7227,9 @@ function _surfTitlePeople(title){
     if(p&&p.length<=20&&!_SURF_NOT_PERSON.test(p)&&!/^\d+$/.test(p)&&!(/[가-힣]/.test(p)&&/\s/.test(p)))out.push(p);
   });
   let m;
-  const re=/(?:\bfeat\.?|\bft\.|\bfeaturing|\bwith)\s+([^()\[\]|/]+)/gi;
+  // 커버 곡명의 Feat.는 원곡 참여자일 수 있어 출연 근거로 추측하지 않는다. 실제 with_members 태그는 호출부에서 유지.
+  const re=(isCover||/\bcover(ed)?\b|커버|원곡|original\s*(?:by|:)/i.test(title||''))?/\bwith\s+([^()\[\]|/]+)/gi:
+    /(?:\bfeat\.?|\bft\.|\bfeaturing|\bwith)\s+([^()\[\]|/]+)/gi;
   while((m=re.exec(t)))grab(m[1]);
   const rx=/(?:^|\s|\))(?:X|×)\s+([^()\[\]|/]+)/g; // 대문자 X만 — 소문자 x는 "JIHOON x JUNKYU"(같은 그룹 유닛)가 대부분
   while((m=rx.exec(t)))grab(m[1]);
@@ -7391,7 +7393,20 @@ async function _surfFetch(vid,ctx){
   // 같은 무대 — 프로그램 컬렉션 어휘(_PROGRAM_COLLECTIONS) 재사용
   const tn=_titleNorm(v.title);
   const prog=_PROGRAM_COLLECTIONS.find(p=>p.kw.some(k=>tn.includes(k)));
-  if(prog)jobs.stage=run(Q(60).or(prog.kw.map(k=>`title_norm.ilike.*${k}*`).join(',')));
+  const stageOwn=a?_surfOwnKeys(a):(g?[g]:[]);
+  const stageLabel=stageOwn.length?_surfGName(stageOwn.find(k=>GROUPS[k])||stageOwn[0]):label;
+  if(prog){
+    const programOr=prog.kw.map(k=>`title_norm.ilike.*${k}*`).join(',');
+    jobs.stage=run(Q(60).or(programOr));
+    // 전체 조회수 상위 60개에 내 영상이 없어도 확보한다. 멤버 카드에서는 단체 또는 본인 태그 영상만.
+    const ownOr=stageOwn.length?[
+      a?`and(group_ko.in.(${stageOwn.map(f).join(',')}),or(members.eq.{},members.cs.{${f(a.name.ko)}}))`:
+        `group_ko.in.(${stageOwn.map(f).join(',')})`,
+      ...stageOwn.map(k=>`with_groups.cs.{${f(k)}}`),
+      ...(a?_surfPersonKeys(a).map(k=>`with_members.cs.{${f(k)}}`):[])
+    ].join(','):null;
+    if(ownOr)jobs.stageSelf=run(Q(60).or(programOr).or(ownOr));
+  }
   const keys=Object.keys(jobs).filter(k=>jobs[k]);
   const res=await Promise.all(keys.map(k=>jobs[k]));
   const R={};keys.forEach((k,i)=>R[k]=res[i].filter(x=>x.id!==vid&&!_isShortV(x)));
@@ -7438,7 +7453,7 @@ async function _surfFetch(vid,ctx){
       const _gFull=new Set([..._gBy.entries()].filter(([g,ms])=>!selfGroups.has(g)&&_withIsFullGroup(g,ms)).map(([g])=>g));
       _gFull.forEach(g=>ps.push(_surfGName(g)));
       (x.with_members||[]).forEach(n=>{const t=_findArtistByConnName(n,x.group_ko);if(t&&_gFull.has(_withGroupOf(n,t,x.group_ko)))return;take(ps,n,x.group_ko);});
-      const tp=[];_surfTitlePeople(x.title).forEach(n=>take(tp,n,x.group_ko));ps.push(...dropDupLatin(tp));
+      const tp=[];_surfTitlePeople(x.title,x.category==='cover'||(x.cover_of_members||[]).length>0||(x.cover_of_groups||[]).length>0).forEach(n=>take(tp,n,x.group_ko));ps.push(...dropDupLatin(tp));
       const u=[...new Set(ps)];
       if(u.length&&!seen.has(x.id)){seen.add(x.id);collab.push(Object.assign({},x,{_ps:u}));}
     });
@@ -7507,10 +7522,12 @@ async function _surfFetch(vid,ctx){
   mk('self',selfLabel||label||'같은 채널',R.self);
   // ④ 원 소속/그룹
   if(groupRow&&R.group)mk('group',groupRow.rel,R.group,groupRow.sub);
-  // ⑤ 같은 무대 — 다른 가수만
+  // ⑤ 같은 무대 — 현재 아티스트 출연분을 기본으로, 전체는 칩으로 확장.
   if(R.stage){
-    const other=R.stage.filter(x=>!selfGroups.has(x.group_ko)&&!(a&&(x.with_members||[]).some(n=>_surfPersonKeys(a).includes(n))));
-    mk('stage','같은 무대',other.map(x=>Object.assign({},x,{_ps:[_surfPerformer(x)]})).map(x=>(x._stage=prog.label,x)));
+    const own=R.stageSelf||[],ownIds=new Set(own.map(x=>x.id));
+    const items=[...own,...R.stage.filter(x=>!ownIds.has(x.id))];
+    mk('stage','같은 무대',items.map(x=>Object.assign({},x,{_ps:[ownIds.has(x.id)?stageLabel:_surfPerformer(x)],_stage:prog.label,_stageOwn:ownIds.has(x.id)})));
+    const row=rows.find(r=>r.key==='stage');if(row&&stageOwn.length)row.defaultPick=stageLabel;
   }
   // v3 다음에 많이 본 — 이어 본 인원 많은 순
   if(R.trail&&nextIds.length){
@@ -7725,7 +7742,7 @@ function _surfRender(){
   _SURF_LENSES.forEach(([k,kl,el])=>{
     const b=document.createElement('button');b.type='button';b.className='seg-btn'+(k===_surfLens?' active':'');
     b.textContent=ko?kl:el;
-    b.addEventListener('click',e=>{e.stopPropagation();_surfLens=k;_surfExpanded=false;_surfPick=null;_surfRender();});
+    b.addEventListener('click',e=>{e.stopPropagation();_surfLens=k;_surfExpanded=false;_surfPick=_surfOpen==='stage'?(_surfRows.find(r=>r.key==='stage')?.defaultPick||null):null;_surfRender();});
     seg.appendChild(b);btns.push(b);
   });
   box.appendChild(seg);
@@ -7768,6 +7785,7 @@ function _surfRender(){
     btn.addEventListener('click',e=>{
       e.stopPropagation();
       _surfOpen=_surfOpen===row.key?null:row.key;_surfExpanded=false;_surfPick=null;
+      if(_surfOpen==='stage')_surfPick=row.defaultPick||null;
       if(_surfOpen)_surfNotePref(row.key,0.3); // v2 — 펼쳐 봄
       _surfRender();
       if(_surfOpen){const g2=document.querySelector('#yt-lb-surf .surf-grp.open');g2&&g2.scrollIntoView({block:'nearest',behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});}
@@ -7777,7 +7795,7 @@ function _surfRender(){
       // 직캠 필터에서 이름 줄·그룹 줄은 "전체 / 단체 / 멤버…" 칩으로 가른다(2026-10-01) — 다른 줄은 원래대로 사람 칩
       const camSplit=_surfLens==='cam'&&(row.key==='self'||row.key==='group');
       const whoOf=x=>camSplit?_surfCamWho(x):(x._ps||[]);
-      const chipList=camSplit?_surfCamChipList(items):people;
+      const chipList=camSplit?_surfCamChipList(items):(row.key==='stage'&&row.defaultPick?[...new Set([row.defaultPick,...people])]:people);
       if(chipList.length>1&&(camSplit||(row.key!=='self'&&row.key!=='group'))){
         const chips=document.createElement('div');chips.className='surf-chips';
         [null,...chipList].forEach(p=>{
@@ -7790,7 +7808,7 @@ function _surfRender(){
         grp.appendChild(chips);
         _enableDragScroll(chips);
       }
-      const shown=(_surfPick&&chipList.includes(_surfPick))?items.filter(x=>whoOf(x).includes(_surfPick)):items;
+      const shown=(_surfPick&&chipList.includes(_surfPick))?items.filter(x=>row.key==='stage'&&_surfPick===row.defaultPick?x._stageOwn:whoOf(x).includes(_surfPick)):items;
       const grid=document.createElement('div');grid.className='surf-grid';
       const seenIds=new Set(_surfPath.map(p=>ytId(p.u)));
       shown.slice(0,_surfExpanded?shown.length:_SURF_SHOW).forEach((x,i)=>{
@@ -7868,7 +7886,7 @@ async function _surfUpdate(){
   document.getElementById('yt-lb-uplist')?.classList.add('surf-on');
   if(!_surfPath.length)_surfPath.push({label:null,via:null,u:s.u,song:s});
   else Object.assign(_surfPath[_surfPath.length-1],{u:s.u,song:s}); // 목록 안 이전/다음은 같은 칸에서 영상만 바뀐다
-  const ck=vid+'|'+((_lbCtx&&_lbCtx.memberKo)||'');
+  const ck=vid+'|'+((_lbCtx&&_lbCtx.groupKo)||'')+'|'+((_lbCtx&&_lbCtx.memberKo)||'');
   if(_surfRowsFor===ck&&_surfRows){_surfRender();_surfMaybeRecap();return;}
   const my=++_surfReq;
   _surfRowsFor=ck;
