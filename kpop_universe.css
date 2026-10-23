@@ -3998,13 +3998,13 @@
   #feed-tabs{position:sticky;top:0;z-index:3;display:flex;flex-shrink:0;gap:0;padding:0;background:rgba(8,11,24,0.92);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-bottom:0.5px solid rgba(255,255,255,0.09);}
   .feed-tab{flex:1 1 0;display:flex;align-items:center;justify-content:center;padding:14px 4px 0;border:none;border-radius:0;background:none;color:rgba(200,215,250,0.52);font-size:14px;font-weight:700;letter-spacing:.01em;cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><path d='M11,1 L12.3,9.7 L21,11 L12.3,12.3 L11,21 L9.7,12.3 L1,11 L9.7,9.7Z' fill='%23FFB0D0' opacity='.97'/></svg>") 11 11,pointer;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;-webkit-tap-highlight-color:transparent;transition:color .16s,background .16s;}
   .feed-tab>span{position:relative;display:inline-block;padding-bottom:13px;white-space:nowrap;}
-  .feed-tab>span::after{content:'';position:absolute;left:0;right:0;bottom:0;height:3px;border-radius:3px 3px 0 0;background:rgba(140,175,255,0.95);opacity:0;transform:scaleX(0.4);transition:opacity .16s,transform .16s cubic-bezier(0.32,0.72,0,1);}
+  /* 밑줄은 탭마다 따로가 아니라 하나(#feed-tab-ind)가 두 글자 사이를 미끄러진다(2026-10-23, X식 가로 페이징 — 위치·폭은 _feedTabPos가 계산) */
+  #feed-tab-ind{position:absolute;left:0;bottom:0;width:0;height:3px;border-radius:3px 3px 0 0;background:rgba(140,175,255,0.95);pointer-events:none;will-change:transform;transition:transform .28s cubic-bezier(.4,0,.2,1),width .28s cubic-bezier(.4,0,.2,1);}
   .feed-tab.active{color:#fff;}
-  .feed-tab.active>span::after{opacity:1;transform:scaleX(1);}
   .feed-tab:hover:not(.active){color:rgba(220,232,255,0.78);background:rgba(255,255,255,0.03);}
   .feed-tab:active{background:rgba(255,255,255,0.06);}
   .feed-pane[hidden]{display:none;}
-  #feed-panes-track{flex:1;min-height:0;display:flex;flex-direction:row;transition:transform .28s cubic-bezier(.4,0,.2,1);}
+  #feed-panes-track{flex:1;min-height:0;display:flex;flex-direction:row;transition:transform .28s cubic-bezier(.4,0,.2,1);will-change:transform;}
   #feed-panes-track.at-disc{transform:translateX(-100%);}
   .feed-pane{min-width:100%;width:100%;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;padding-bottom:calc(var(--sheet-bottom,73px) + 8px);transition:padding-bottom .32s cubic-bezier(0.32,0.72,0,1);}
   /* 즐겨찾기 신작 온보딩 — 아직 하트 누른 게 없을 때 이 선반이 비지 않게 안내 카드로 채운다. */

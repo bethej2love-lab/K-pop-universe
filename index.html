@@ -21799,14 +21799,39 @@ function _feedSwitchTab(tab,silent){
   document.getElementById('feed-tab-disc').classList.toggle('active',!rec);
   const track=document.getElementById('feed-panes-track');
   if(track)track.classList.toggle('at-disc',!rec);
-  const inPane=document.getElementById(rec?'feed-pane-rec':'feed-pane-disc');
-  if(inPane)inPane.scrollTop=0;
-  if(!rec){
-    const now=Date.now();
-    if(now-_feedDiscoveryBuiltAt>_FEED_DISCOVERY_TTL){_buildFeedDisc();_feedDiscoveryBuiltAt=now;}
-  }
+  // 패널을 열 때(silent)만 맨 위로 — 탭끼리 오갈 땐 X처럼 각 탭이 보던 위치를 그대로 둔다(나란히 붙은 두 화면이 같이
+  // 미끄러지는데, 들어오는 화면이 도착 순간 맨 위로 튀면 이상하다)
+  if(silent){const inPane=document.getElementById(rec?'feed-pane-rec':'feed-pane-disc');if(inPane)inPane.scrollTop=0;}
+  _feedTabPos(rec?0:1,!silent);
+  if(!rec)_feedEnsureDisc();
   if(!silent)_gaEvent('feed_tab',{tab:rec?'rec':'disc'});
 }
+function _feedEnsureDisc(){
+  const now=Date.now();
+  if(now-_feedDiscoveryBuiltAt>_FEED_DISCOVERY_TTL){_buildFeedDisc();_feedDiscoveryBuiltAt=now;}
+}
+// 탭 위치 p(0=For You, 1=발견, 사이값=끌고 있는 중) — 두 화면 트랙·밑줄 인디케이터·글자색을 **같은 p로** 함께 움직인다
+// (2026-10-23 사용자 "X 추천/팔로우 탭처럼 — 두 탭 콘텐츠가 가로로 붙어 같이 미끄러지고, 인디케이터도 따라 이동").
+// 밑줄은 탭마다 따로 켜고 끄던 것(::after)을 하나로 합쳐 두 글자 위치·폭 사이를 보간한다. anim=false면 손가락을 1:1로 따라감.
+function _feedTabPos(p,anim){
+  const track=document.getElementById('feed-panes-track'),ind=document.getElementById('feed-tab-ind');
+  const tabs=document.getElementById('feed-tabs'),tr=document.getElementById('feed-tab-rec'),td=document.getElementById('feed-tab-disc');
+  if(track){track.style.transition=anim?'':'none';track.style.transform=`translateX(${-p*100}%)`;}
+  if(ind&&tabs&&tr&&td){
+    const base=tabs.getBoundingClientRect(),a=tr.firstElementChild.getBoundingClientRect(),b=td.firstElementChild.getBoundingClientRect();
+    if(!a.width){requestAnimationFrame(()=>{if(tabs.getBoundingClientRect().width)_feedTabPos(p,false);});return;} // 아직 안 보이는 패널 — 다음 프레임에
+    const q=Math.max(0,Math.min(1,p));
+    ind.style.transition=anim?'':'none';
+    ind.style.width=(a.width+(b.width-a.width)*q)+'px';
+    ind.style.transform=`translateX(${a.left-base.left+(b.left-a.left)*q}px)`;
+  }
+  // 끄는 중엔 글자색도 비율대로, 멈추면 .active 규칙에 맡긴다
+  const mix=t=>`rgba(${Math.round(200+55*t)},${Math.round(215+40*t)},${Math.round(250+5*t)},${(0.52+0.48*t).toFixed(3)})`;
+  const settled=anim||p===0||p===1;
+  if(tr)tr.style.color=settled?'':mix(1-Math.max(0,Math.min(1,p)));
+  if(td)td.style.color=settled?'':mix(Math.max(0,Math.min(1,p)));
+}
+window.addEventListener('resize',()=>{const tr=document.getElementById('feed-tab-rec');if(tr)_feedTabPos(tr.classList.contains('active')?0:1,false);});
 // 빈/오류 상태 — 빌드 후 선반이 하나도 안 뜨면(대개 Supabase 실패) "다시 시도"를 보여준다. 예전엔 제목만
 // 남고 빈 화면이었음(2026-08-29 Step4). For You는 즐겨찾기 온보딩 카드가 항상 있어 거의 안 뜨고, 실제로는
 // Discover(차트+디스커버리)가 통째로 실패했을 때 뜬다.
@@ -21960,25 +21985,46 @@ function _slideDownCloseFeed(){
 // 모바일 나침반 안의 최상위 2탭은, 탭 버튼을 정확히 누르지 않아도 좌우로 넘길 수 있다.
 // 가로 선반은 원래 자기 안에서 스크롤돼야 하고, 세로 움직임은 본문 스크롤/아래로 닫기에 양보한다.
 function _wireFeedTabSwipe(body){
-  let startX=0,startY=0,tracking=false;
+  // X식 가로 페이징(2026-10-23) — 손을 뗀 뒤 넘기던 방식에서, 가로로 움직이는 순간부터 두 화면이 손가락을 1:1로 따라온다.
+  // 방향은 처음 8px로 한 번만 정한다(세로면 이 제스처는 끝까지 세로 스크롤). 가로로 정해지면 세로 스크롤을 막고 끈다.
+  // 손을 떼면: 빠르게 튕겼으면(0.35px/ms) 그 방향, 아니면 절반 넘었는지로 넘어갈지 정한다. 양 끝은 고무줄(0.3배).
+  let startX=0,startY=0,tracking=false,axis=null,p0=0,w=1,lastX=0,lastT=0,vx=0;
+  const curP=dx=>{let p=p0-dx/w;if(p<0)p*=0.3;else if(p>1)p=1+(p-1)*0.3;return p;};
   body.addEventListener('touchstart',e=>{
     if(!isMob()||e.touches.length!==1||e.target.closest?.('.hscroll-drag,input,textarea,select,[contenteditable="true"]')){
       tracking=false;return;
     }
-    startX=e.touches[0].clientX;startY=e.touches[0].clientY;tracking=true;
+    startX=lastX=e.touches[0].clientX;startY=e.touches[0].clientY;tracking=true;axis=null;vx=0;lastT=performance.now();
+    p0=document.getElementById('feed-tab-rec').classList.contains('active')?0:1;
+    w=body.clientWidth||window.innerWidth;
   },{passive:true});
-  body.addEventListener('touchend',e=>{
+  body.addEventListener('touchmove',e=>{
     if(!tracking)return;
-    tracking=false;
-    const touch=e.changedTouches[0];if(!touch)return;
-    const dx=touch.clientX-startX,dy=touch.clientY-startY;
-    // 짧은 손떨림·대각/세로 스와이프는 탭 전환으로 오해하지 않는다.
-    if(Math.abs(dx)<56||Math.abs(dx)<=Math.abs(dy)*1.25)return;
-    const isRec=document.getElementById('feed-tab-rec').classList.contains('active');
-    if(dx<0&&isRec)_feedSwitchTab('disc');       // For You → 발견: 손가락을 왼쪽으로
-    else if(dx>0&&!isRec)_feedSwitchTab('rec');  // 발견 → For You: 손가락을 오른쪽으로
-  },{passive:true});
-  body.addEventListener('touchcancel',()=>{tracking=false;},{passive:true});
+    const x=e.touches[0].clientX,y=e.touches[0].clientY,dx=x-startX,dy=y-startY;
+    if(!axis){
+      if(Math.abs(dx)<8&&Math.abs(dy)<8)return;
+      // 짧은 손떨림·대각/세로 스와이프는 탭 전환으로 오해하지 않는다.
+      axis=Math.abs(dx)>Math.abs(dy)*1.25?'x':'y';
+      if(axis==='y'||!e.cancelable){tracking=false;return;} // 세로이거나 이미 네이티브 스크롤 중
+      if(p0===0)_feedEnsureDisc(); // 끌어오는 동안 발견 화면이 비어 있지 않게 미리
+    }
+    e.preventDefault();
+    const now=performance.now(),dt=now-lastT;if(dt>0)vx=vx*0.3+((x-lastX)/dt)*0.7;lastX=x;lastT=now;
+    _feedTabPos(curP(dx),false);
+  },{passive:false});
+  const end=e=>{
+    if(!tracking)return;tracking=false;
+    if(axis!=='x')return;
+    const touch=e&&e.changedTouches&&e.changedTouches[0];
+    const dx=touch?touch.clientX-startX:0;
+    const v=performance.now()-lastT<80?vx:0;
+    let target=curP(dx)>0.5?1:0;
+    if(Math.abs(v)>0.35&&Math.abs(dx)>20)target=v<0?1:0; // 튕김: 손가락 왼쪽(v<0) = 발견, 오른쪽 = For You
+    if(target!==p0)_feedSwitchTab(target?'disc':'rec');
+    else _feedTabPos(p0,true); // 제자리로 되돌아감
+  };
+  body.addEventListener('touchend',end,{passive:true});
+  body.addEventListener('touchcancel',()=>end(null),{passive:true});
 }
 // 모바일: 카드(mob-sheet 등)처럼 콘텐츠 맨 위에서 아래로 쭉 내리면 어디서 시작했든 닫힘(2026-08-12,
 // 사용자 요청 — "카드처럼 어느 위치에서든 위→아래로 내리면 꺼지면 좋겠다"). peek(50%)든 전체 펼침이든
@@ -29386,6 +29432,7 @@ _totopBtn.addEventListener('click',e=>{
            보인다. 버튼은 반반을 차지하고, 밑줄은 그 안의 글자 밑에만 깔린다(2026-08-31 사용자 요청). -->
       <button id="feed-tab-rec" class="feed-tab active" type="button"><span>For You</span></button>
       <button id="feed-tab-disc" class="feed-tab" type="button"><span>발견</span></button>
+      <i id="feed-tab-ind" aria-hidden="true"></i>
     </div>
     <!-- For You = "나": 즐겨찾기 신작 → 이어보기 (2026-08-30 재배치. Trend는 "전체·탐색"이라 Discover로 이동). -->
     <div id="feed-panes-track">
