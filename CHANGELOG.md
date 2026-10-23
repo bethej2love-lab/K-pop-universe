@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2026-10-23 (Codex — 발견 MV 홀짝 배치 보정)
+- **[완료] [index.html]** 사용자 의도 정정: 발견 MV 총수가 홀수면 최신 1개, 짝수면 최신 2개만 전폭, 나머지는 2열로 빈칸 없이 배치. 더보기 경계도 MV 한 쌍을 나누지 않게 조정. For You는 전폭 유지.
+- **[검증] [index.html]** 실제 렌더러로 MV 0~12개 × MV/음방 헤드라인 26가지 확인: 홀짝 전폭 수·전체 MV 수·더보기 전후 짝수 격자·For You 유지 통과. syntax·feed-dailynews·diff 검사 통과.
+
 ## 2026-10-23 (Codex — 발견 MV 2열·기념일 확대)
 - **[완료] [index.html] [kpop_universe.css]** 발견 This Week의 가로 MV는 최신 2개만 전폭, 나머지는 16:9 2열로 렌더(더보기 포함). For You MV는 기존 전폭 유지. 기존 날짜 기반 소식 정렬·클릭 경로 재사용.
 - **[완료] [kpop_universe.css]** 웹 발견 Today's Anniversary만 프로필 약 95px, 4명 전체+5번째 약 10px 노출. 이름 12px·보조정보 11px·날짜 10px로 확대. 모바일 및 For You 기념일은 기존 크기 유지.

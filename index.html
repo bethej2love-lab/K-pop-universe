@@ -23947,9 +23947,10 @@ function _renderNewsList(list,items){
   const _PRI={win:100,mv:80,teaser:50};
   items.forEach((r,i)=>{r._s=(r.score!=null?r.score:(_PRI[r.type]||0))-i*0.001;});
   items.sort((a,b)=>b._s-a._s);
-  // 발견의 최신 MV 2개만 전폭. For You는 같은 렌더러를 써도 전폭을 유지한다.
+  // 발견 MV는 홀수면 최신 1개, 짝수면 최신 2개를 전폭으로 남겨 나머지를 짝수로 맞춘다.
+  const mvWideCount=items.filter(r=>r.type==='mv'&&!r.isShort&&r.thumb).length%2?1:2;
   let mvCount=0;
-  items.forEach(r=>{r._compactMv=list.id==='feed-dailynews'&&r.type==='mv'&&!r.isShort&&!!r.thumb&&++mvCount>2;});
+  items.forEach(r=>{r._compactMv=list.id==='feed-dailynews'&&r.type==='mv'&&!r.isShort&&!!r.thumb&&++mvCount>mvWideCount;});
   // 헤드라인은 이미지가 있는 것 중 최상위 — 단 쇼츠는 제외(헤드라인 틀이 16:9라 세로 썸네일이 잘린다)
   const heroIdx=items.findIndex(r=>r.thumb&&!r.isShort);
   const rest=items.slice();
@@ -23958,6 +23959,8 @@ function _renderNewsList(list,items){
   let SHOW=4;
   // 쇼츠 2열 한 쌍이 "더보기" 경계에서 갈라지지 않게
   if(rest.length>SHOW&&_isNewsShortCard(rest[SHOW-1])&&_isNewsShortCard(rest[SHOW])&&rest[SHOW]._pair===rest[SHOW-1])SHOW++;
+  // 더보기 앞에서도 MV 2열의 한 쌍을 갈라 놓지 않는다.
+  if(rest.length>SHOW&&rest[SHOW-1]._compactMv&&rest[SHOW]._compactMv&&rest.slice(0,SHOW).filter(r=>r._compactMv).length%2)SHOW++;
   _appendNewsItems(list,rest.slice(0,SHOW));
   if(rest.length>SHOW){
     const more=document.createElement('button');more.type='button';more.className='feed-news-more';
