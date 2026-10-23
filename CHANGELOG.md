@@ -2,7 +2,8 @@
 
 ## 2026-10-23 (Codex — 그룹 카드 좋아요 줄 위치)
 - **[완료] [index.html] [kpop_universe.css]** 그룹 상태 줄(`#gc-status-line`, 좋아요 수/시청자/흔적 교차 표시)을 사진 옆 `#gc-header-text`에서 빼 `#gc-header` 바로 아래 독립 행으로 이동. 멤버 상태 줄과 위아래 여백·왼쪽 안쪽 여백 공유, 모바일 기존 왼쪽6px 보정·컬러바 순서 유지. 집계/교차 표시 로직은 그대로. syntax·diff 검사 통과.
-- **⏳ 덜 된 일 [index.html] [kpop_universe.css]** 배포 후 웹/모바일 그룹 카드에서 사진 영역 아래 상태 한 줄이 왼쪽 정렬되고 대표 영상·컬러바 위에 있는지 확인. 모바일 카드 스택도 같은 DOM을 이동하므로 함께 확인. 이상 시 `#gc-status-line`의 부모(`#gc-inner`)·`#gc-header`와의 순서·모바일 margin-left부터 확인.
+- **[완료·화면 확인] [index.html] [kpop_universe.css]** Pages39908977686 성공. 실제 코르티스 카드 웹857px: 상태 줄 부모gc-inner·헤더 아래10px·사진 영역 왼쪽 정렬(기존 사진 옆72px 들여쓰기 제거). 모바일390px 재로딩 후 mob-sheet-inner에서도 독립 행·왼쪽 정렬·컬러바/대표 영상 위 순서 확인, 좋아요103/흔적 교차 표시 정상.
+- **⏳ 덜 된 일 [index.html] [kpop_universe.css]** 모바일 카드 스택에서만 배치 이상 제보 시 `#gc-status-line` 부모(`#gc-inner`)·`#gc-header`와의 순서·`#mob-card-stack-inner #gc-status-line` margin-left 확인. 스택은 같은 DOM을 이동하나 이번 실제 화면 확인은 첫 그룹 카드 기준.
 
 ## 2026-10-23 (Codex — 첫 스크롤 자체 관성 제거)
 - **[검토] [index.html]** 사용자 재제보: 카드·탐험 첫 터치/곧바로 재터치 시 과민, 간헐적이라 조건 특정 어려움. `_wireFirstScrollDamp`는 손가락 이동을0.5배로 줄인 뒤 처리 시각(performance.now)으로 계산한 속도에 상한 없는 자체 관성을 추가하고 있었음. 기존 식의 단일20px 이동 계산은 이벤트 처리 간격16ms→총94px, 1ms→총1406px(실기기 발생을 계측한 수치가 아닌 식 기반 위험 재현). 또한 맨 위2px 이내에서만 적용되어 중간 위치 재시작은 별도 경로임.
