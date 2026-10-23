@@ -4136,7 +4136,7 @@
   #feed-chart>.feed-card,#feed-jacon>.feed-card,#feed-favchart>.feed-card,#feed-events>.feed-card{flex:0 0 auto;width:158px;border-bottom:none;border-radius:8px;background:rgba(255,255,255,0.03);}
   /* 웹 발견 선반: 첫 장 전체와 두 번째 절반이 보이게 같은 크기로. */
   @media(min-width:769px){
-    #feed-chart>.feed-card,#feed-jacon>.feed-card{width:calc((100% + 10px) / 1.5);}
+    #feed-chart>.feed-card,#feed-jacon>.feed-card,#feed-favchart>.feed-card,#feed-events>.feed-card{width:calc((100% + 10px) / 1.5);}
   }
   #feed-chart>.feed-card .feed-card-cap,#feed-favchart>.feed-card .feed-card-cap,#feed-events>.feed-card .feed-card-cap{padding:8px 10px 12px;background:rgba(0,0,0,0.22);border-radius:0 0 8px 8px;}
   #feed-jacon>.feed-card .feed-card-cap,#feed-favnew>.feed-card .feed-card-cap{padding:8px 10px 12px;}
@@ -4241,6 +4241,13 @@
   .feed-album-rail>.feed-card .feed-card-cap{padding:6px 7px 9px;}
   .feed-album-rail>.feed-card .feed-card-title{font-size:11px;}
   .feed-album-rail>.feed-card .feed-card-sub,.feed-album-rail>.feed-card .feed-card-meta{font-size:10px;}
+  /* 공연 포스터는 세로 틀에 전체를 담는다. 양쪽 탭에서 같은 규칙을 쓴다. */
+  #feed-concerts>.feed-card .feed-card-thumb-wrap,#feed-favconcert>.feed-card .feed-card-thumb-wrap{aspect-ratio:2/3;}
+  #feed-concerts>.feed-card .feed-card-thumb,#feed-favconcert>.feed-card .feed-card-thumb{object-fit:contain;}
+  @media(min-width:769px){
+    /* 앨범·공연은 같은 너비: 두 장 전체와 세 번째 절반. 간격은 8px. */
+    #feed-newalbum.feed-album-rail,#feed-favalbum.feed-album-rail,#feed-concerts.feed-album-rail,#feed-favconcert.feed-album-rail{grid-auto-columns:calc((100% + 4px) / 2.5);}
+  }
   /* 앨범 카드 아티스트 — 메타 줄보다 위계가 위(2026-10-15, 사용자: "new 미니 1일전이 아티스트보다 훨씬 눈에 띈다") */
   .feed-album-grid>.feed-card .feed-card-sub{color:rgba(185,205,245,0.9);font-weight:500;}
   /* 캡션 셋째 줄 — "싱글 · 9.14"(2026-09-21). 앨범 커버 위에는 아무것도 얹지 않는다(커버는 그 자체가
@@ -4287,6 +4294,10 @@
   .feed-recent-item{display:flex;flex-direction:column;gap:5px;flex-shrink:0;width:158px;cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><path d='M11,1 L12.3,9.7 L21,11 L12.3,12.3 L11,21 L9.7,12.3 L1,11 L9.7,9.7Z' fill='%23FFB0D0' opacity='.97'/></svg>") 11 11,pointer;-webkit-tap-highlight-color:transparent;position:relative;}
   .feed-recent-thumb-wrap{width:158px;aspect-ratio:16/9;border-radius:8px;overflow:hidden;background:rgba(255,255,255,0.05);}
   .feed-recent-thumb{width:100%;height:100%;object-fit:cover;display:block;}
+  @media(min-width:769px){
+    #feed-recent>.feed-recent-item{width:calc((100% + 10px) / 1.5);}
+    #feed-recent .feed-recent-thumb-wrap{width:100%;}
+  }
   .feed-recent-title{font-size:10px;color:rgba(200,215,245,0.75);line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
   .feed-card-title{font-size:13px;font-weight:600;color:rgba(220,232,255,0.92);line-height:1.4;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
   /* ⚠️ 한글은 같은 px·같은 알파에서 라틴보다 훨씬 빈약해 보인다(획이 많아 작은 크기에서 뭉갠다) —

@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 2026-10-23 (Codex — 양쪽 탐험 탭 선반 크기·공연 포스터)
+- **[완료] [kpop_universe.css]** 웹 On the Charts·Events·Recently Viewed도 Charts/Original Contents와 같은 1.5장 너비(기본 약 266px). New Releases/New Music·Upcoming Concerts/Concerts는 공통 2.5장 너비(약 157px). 앨범 1:1, 공연은 두 탭 모두 2:3 + contain으로 포스터 전체 표시. 모바일 너비 유지.
+- **[검증] [kpop_universe.css]** Edge 390·857·1280px에서 기존 CSS와 비교: 웹 영상 두 번째 50%, 앨범/공연 세 번째 50%, 양쪽 탭 동일 너비·각 비율, 모바일 너비·인스타 기존값 유지 확인. syntax·diff 공백 검사 통과.
+- **[이슈] [tests/desktop-close-layers.test.js]** 직전 변경 CI 39892453012는 `CDP 준비 실패`로 브라우저 테스트 시작 전에 실패. 해당 실행의 다른 Node 검사·syntax는 통과. 이번 선반 CSS와 별개로 CI 브라우저 실행 환경 확인 필요.
+
 ## 2026-10-23 (Codex — 웹 발견 가로 썸네일 추가 확대)
 - **[완료] [kpop_universe.css]** 사용자 추가 요청: Charts·Original Contents 웹 카드 184.5→약 266px(기본 429px 선반), 첫 장 전체와 두 번째 절반 노출. 웹 두 선반의 너비 규칙만 조정.
 - **[검증] [kpop_universe.css]** Edge 857·1280px에서 두 번째 노출 비율 50%·두 선반 동일 너비·16:9 확인, 390px 및 다른 선반 158px 유지. syntax·diff 공백 검사 통과.
