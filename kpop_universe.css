@@ -2336,6 +2336,8 @@
      사용자 요청)를 위해 2열로 통일하고, 제목도 카드처럼 다시 보이게 함(원래 여기서만 숨겨져 있었음). */
   #feed-list-grid.gc-ch-grid{grid-template-columns:repeat(2,1fr);gap:4px;align-items:start;}
   #feed-list-grid .gc-ch-item{border-radius:4px;}
+  /* 목록의 높이 계산(renderNextBatch)과 쇼츠 이미지 비율을 맞춘다. */
+  #feed-list-grid .gc-ch-item.is-short .gc-ch-thumb{aspect-ratio:9/16;}
   /* 차트: 1위는 전체폭, 2위부터 2열 */
   #feed-list-grid.gc-ch-grid-ranked>.gc-ch-item:not(.is-short):not(.featured){grid-column:auto;}
   /* TOP 버튼 */

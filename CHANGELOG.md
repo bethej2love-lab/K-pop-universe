@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2026-10-23 (Codex — 컬렉션 쇼츠 썸네일 비율)
+- **[완료] [kpop_universe.css]** ‘엄쁘’ 6개 쇼츠가 공통 정사각형 CSS를 따라 잘리고, 목록 높이 계산(9:16)과 달라 아래 블러 여백이 생김. `#feed-list-grid` 안 쇼츠 이미지에만 9:16 지정. 일반 영상·목록 밖 카드·재생 및 데이터 로직 변경 없음.
+- **[검증] [kpop_universe.css]** Edge 390px·1280px에서 실제 CSS 레이아웃 확인: 쇼츠·폴백 9:16, 일반 영상 16:9, 목록 밖 기존 비율 유지. `node tests/syntax.test.js`, `node tests/short-thumb.test.js`, `git diff --check` 통과. 아이폰 실기기 미확인.
+
 ## 2026-10-23 (Codex — 수집·공유·공연 후속 점검)
 - **[완료] [tools/ig_business_discovery.mjs]** 공개 읽기 DB 집계: Instagram 대상 1,530개, 저장 833개(성공 655·조회 불가 178), 최근 48시간 갱신 796개. 최근 5회 정기 실행은 61·92·106·146·86개 처리 후 전부 Meta 사용량 90%에서 정상 종료. 조회 불가 178개 중 176개가 `Invalid user id`라 매 회차 재시도 비용을 줄이도록 해당 오류만 7일 후 재확인하도록 변경. 그 외 조회 불가 사유와 새/정상 계정 순환은 기존 동작 유지. 다음 Actions 실행에서 호출 절약과 신규 계정 진척 확인 필요(아직 로컬 변경).
 - **[완료] [tests/og-coverage.test.js] [og_thumbs.json]** CHANGELOG의 배틀 2개 공유 페이지 누락은 현재 해결된 상태. `node tests/og-coverage.test.js` 통과: 그룹·멤버·솔로 4,290페이지 모두 대표 이미지 확인. `og_thumbs.json`에 배틀 앨범 커버가 이미 있어 추가 변경 불필요.
