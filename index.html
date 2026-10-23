@@ -4631,7 +4631,7 @@ const _SEARCH_CAT_WORDS=[
 // ── 영상 검색 쿼리(2026-09-21 분리) ──────────────────────────────────────────
 // 첫 페이지(6건)와 '더보기'(30건씩)가 **같은 조건**을 써야 해서 쿼리 조립을 한 곳으로 모았다.
 // 예전엔 _searchRemote 안에 인라인이라, 더보기를 붙이려면 같은 조건을 한 벌 더 베껴야 했다.
-const _SR_VID_COLS='id,title,group_ko,members,with_members,is_short,category,content_flag,view_count,thumb,published_at';
+const _SR_VID_COLS='id,title,group_ko,members,with_members,with_groups,is_short,category,content_flag,view_count,thumb,published_at';
 const _SR_VID_FIRST=6;   // 첫 페이지 — 검색 결과 목록에 영상이 화면을 다 먹지 않을 만큼만
 const _SR_VID_STEP=30;   // 더보기 한 번에 가져오는 양
 let _srVidMore=null;     // 더보기가 이어받을 조회 상태(쿼리·오프셋·이미 그린 id)
@@ -6283,7 +6283,9 @@ function _isLegacyShortCat(v){return !!v&&v.category==='short';}
 //  opts: {bg, onReady(img), onFail(img)}
 function _mountShortThumb(img,id,opts){
   const o=opts||{};
-  const setBg=()=>{if(o.bg)o.bg.style.backgroundImage=`url(${img.src})`;};
+  // 블러 배경은 작은 가로 썸네일로 — 세로 원본(1080×1920)을 배경에도 깔면 카드 하나에 큰 그림 두 장을 풀어 둬서, 쇼츠 수십 개인
+  // Trend에서 아이폰이 앞 그림을 버리고 블러 배경만 남겼다(2026-10-23 사용자 "모바일에서 쇼츠 썸네일이 뿌옇다"). 흐리게 깔 거라 화질 무관.
+  const setBg=()=>{if(o.bg&&!o.bg.style.backgroundImage)o.bg.style.backgroundImage=`url(https://i.ytimg.com/vi/${id}/mqdefault.jpg)`;};
   // ② 세로 원본이 없으면 oar2(1080×1920 세로 프레임) — 2026-10-22 사용자 "Trend 쇼츠 일부 썸네일이 뿌옇다". hqdefault는 쇼츠면
   //    480×360 안에 세로 화면(≈202×360)이 있고 양옆은 유튜브가 블러로 채운 것이라, 9:16 카드(2배율 338×600)에 키우면 흐렸다.
   //    실측: oardefault 404인 쇼츠 3/3에 oar2가 있었고 가로 영상엔 없다(404). ③ 그것도 없을 때만 hqdefault.
@@ -6295,6 +6297,7 @@ function _mountShortThumb(img,id,opts){
   img.onload=()=>{
     if(isOar()&&img.naturalWidth===120&&img.naturalHeight===90){fallback();return;}
     setBg();
+    _shortThumbWatch(img);
     if(o.onReady)o.onReady(img);
   };
   img.onerror=()=>{
@@ -6304,6 +6307,16 @@ function _mountShortThumb(img,id,opts){
   };
   img.src=`https://i.ytimg.com/vi/${id}/oardefault.jpg`;
 }
+// 화면에서 멀리(위아래 2화면 밖) 벗어난 세로 원본은 src를 잠시 떼고, 다시 다가오면 붙인다 — 큰 그림이 한꺼번에 수십 장
+// 풀려 있지 않게(위 setBg 주석과 같은 아이폰 메모리 문제). 다시 붙일 땐 이미 확정된 주소라 폴백 단계를 다시 타지 않는다.
+const _shortThumbIO=typeof IntersectionObserver==='function'?new IntersectionObserver(es=>es.forEach(e=>{
+  const im=e.target;
+  // 떼어진 카드(다시 붙을 수도 있음)는 주소를 돌려놓고 감시 해제 — 빈 그림으로 다시 붙는 일 없게
+  if(!im.isConnected){_shortThumbIO.unobserve(im);delete im.dataset.keepWatch;if(!im.getAttribute('src')&&im.dataset.keepSrc)im.src=im.dataset.keepSrc;return;}
+  if(e.isIntersecting){if(!im.getAttribute('src')&&im.dataset.keepSrc)im.src=im.dataset.keepSrc;}
+  else if(im.getAttribute('src')&&im.isConnected){im.dataset.keepSrc=im.src;im.removeAttribute('src');}
+}),{rootMargin:'200% 100%'}):null;
+function _shortThumbWatch(img){if(_shortThumbIO&&!img.dataset.keepWatch){img.dataset.keepWatch='1';_shortThumbIO.observe(img);}}
 function isMob(){return window.innerWidth<=768;}
 // 유튜브 API로 동기화된 일부 영상(주로 인스타 릴스 크로스포스트) 제목엔 실제 줄바꿈 문자가 들어있어서,
 // 한 줄 말줄임(white-space:nowrap)이 안 먹고 제목 영역이 여러 줄로 확 커져 보이는 문제가 있었음 — 표시 직전에 제거.
@@ -6844,7 +6857,7 @@ function _lbRenderPeople({artist,groupKo,gName,multi,withList,anchorG}){
   const gc=GROUPS[groupKo]?.color||(artist&&artist.color);
   if(lb){if(Array.isArray(gc))lb.style.setProperty('--lb-tint',gc.slice(0,3).join(','));else lb.style.removeProperty('--lb-tint');}
   if(!items.length)return;
-  const hd=document.createElement('div');hd.className='lb-people-hd';hd.textContent=isKo?'이 영상에 나온 사람':'In this video';box.appendChild(hd);
+  const hd=document.createElement('div');hd.className='lb-people-hd';hd.textContent=isKo?'이 영상에 나온 아티스트':'Artists in this video';box.appendChild(hd);
   const row=document.createElement('div');row.className='lb-people-row hscroll-drag';
   items.forEach(it=>{
     const b=document.createElement('button');b.type='button';b.className='lb-person'+(it.kind==='group'?' is-group':'');
@@ -6939,7 +6952,7 @@ function _lbUpdateMemberInfo(){
   if(mName&&gName){const sep=document.createElement('span');sep.className='lb-anchor-sep';sep.textContent='·';anchorEl.appendChild(sep);}
   if(gName&&GROUPS[groupKo])anchorEl.appendChild(_mkPart(gName,()=>_openLbHalf('group',groupKo)));
   else if(gName)anchorEl.appendChild(document.createTextNode(gName));
-  wrap.style.display=(mName||gName||(s&&((s.with&&s.with.length)||(s.withMembers&&s.withMembers.length))))?'':'none';
+  wrap.style.display=(mName||gName||(s&&((s.with&&s.with.length)||(s.withMembers&&s.withMembers.length)||(s.withGroups&&s.withGroups.length))))?'':'none';
   withEl.innerHTML='';
   // 한 그룹이 전원 나온 영상은 멤버 칩 대신 그룹 칩 하나로(2026-09-29 — 빅톤 6명이 칩 6개로 늘어서던 것).
   // 묶음·전원 판정은 카드 목록 함께한 줄과 같은 헬퍼(_withGroupOf/_withIsFullGroup). 앵커 자신의 그룹은 접지 않는다.
@@ -6963,6 +6976,12 @@ function _lbUpdateMemberInfo(){
     const g=p.t?_withGroupOf(p.n,p.t,_anchorG):null;
     if(g&&_wFull.has(g)){if(!_wDone.has(g)){_wDone.add(g);_withList.push({group:g});}return;}
     _withList.push({n:p.n});
+  });
+  // 함께 나온 그룹 전체(with_groups) — 예전엔 멤버 단위(with_members)만 읽어서 "CLOSE YOUR EYES, 원어스, NiziU, CRAVITY…" 같은
+  // 합동 예능이 주인 그룹 하나만 떴다(2026-10-23 사용자 제보). 이미 멤버 칩으로 나온 그룹은 그룹 칩으로 또 붙이지 않는다.
+  (s?.withGroups||[]).forEach(g=>{
+    if(!g||g===groupKo||!GROUPS[g]||_wDone.has(g)||_wBy.has(g))return;
+    _wDone.add(g);_withList.push({group:g});
   });
   _withList.forEach(it=>{
     if(it.group){
@@ -7272,7 +7291,7 @@ function _surfCoverSong(title){
   return song;
 }
 async function _surfFetch(vid,ctx){
-  const COLS='id,title,thumb,category,is_short,group_ko,members,with_members,cover_of_members,cover_of_groups,cover_of_song,content_formats,content_flag,published_at,view_count'+_durCol();
+  const COLS='id,title,thumb,category,is_short,group_ko,members,with_members,with_groups,cover_of_members,cover_of_groups,cover_of_song,content_formats,content_flag,published_at,view_count'+_durCol();
   const excl=q=>q.or('content_flag.is.null,content_flag.neq.무관').or('content_flag.is.null,content_flag.neq.보류').or('content_flag.is.null,content_flag.neq.hidden');
   // 조회수순 — 2026-09-29 실측 group_ko·members·with_members·cover_of_*·title_norm 조건 모두 0.25~0.45초
   const Q=(lim)=>excl(sb.from(_YT_TABLE).select(COLS)).order('view_count',{ascending:false,nullsFirst:false}).limit(lim);
@@ -9720,7 +9739,7 @@ function _dedupSongs(songs){
 // DB 행의 태그(그룹·멤버·콜라보·행 id)를 song 객체에 싣는 공용 헬퍼(2026-10-01). 차트·선반 빌더 10여 곳이 song을
 // 제각각 손으로 만들면서 groupKo/memberKos를 빼먹어, 탐험 Discover 차트에서 영상을 열면 재생 화면 상단에 멤버·그룹이
 // 아예 안 떴다(사용자 제보). 새 목록을 만들 땐 **song을 직접 조립하지 말고 이걸 펼쳐 넣을 것** — tests/lb-song-tags.test.js.
-function _rowTags(v){return{groupKo:v.group_ko||'',memberKos:v.members||[],withMembers:v.with_members||[],_apiId:v.id,_apiGroupKo:v.group_ko};}
+function _rowTags(v){return{groupKo:v.group_ko||'',memberKos:v.members||[],withMembers:v.with_members||[],withGroups:v.with_groups||[],_apiId:v.id,_apiGroupKo:v.group_ko};}
 function _apiVidToSong(v,memberKo,groupKo){
   const withList=[];
   // '개별출연' — 연말 가요제 무대를 순서대로 이어붙였거나, 엠카 비하인드처럼 여러 그룹/멤버가 한 영상
@@ -14570,7 +14589,7 @@ async function _comboSearch(){
   _fpPush({type:'combo',members:_comboSel.map(m=>({name:m.name,group:m.group})),label:_comboSel.map(m=>m.name).join('·')}); // 발자국 기록
   _comboRenderResults('loading');
   const esc=s=>String(s).replace(/["\\]/g,'');
-  const COLS='id,title,thumb,category,is_short,group_ko,members,with_members,cover_of_members,cover_of_groups,content_flag,published_at';
+  const COLS='id,title,thumb,category,is_short,group_ko,members,with_members,with_groups,cover_of_members,cover_of_groups,content_flag,published_at';
   const _excl=q=>q.or('content_flag.is.null,content_flag.neq.무관').or('content_flag.is.null,content_flag.neq.보류').or('content_flag.is.null,content_flag.neq.hidden');
   // "전원이 함께"(교집합)만 보면 3명 이상에선 거의 안 나옴 → 선택 멤버가 엮인 영상을 싹(2명 이상) 가져온다:
   // 같은그룹=members[], 타그룹 게스트=with_members["이름(그룹)"], 커버=cover_of_members["이름(그룹)"]. OR로 한 번에.
@@ -25644,7 +25663,7 @@ function _buildFeedRandomConnection(list){
 // 피드가 통째로 안 뜬다. 첫 조회에서 감지해 끄고, 이후엔 시각 없이(달력 표기로) 정상 동작한다.
 // 컬럼을 추가하면 새로고침 후 자동으로 다시 켜진다. 이 값이 필요한 건 피드 두 곳뿐이라 거기서만 붙인다.
 let _hasPubTs=true;
-const _FEED_COLS=()=>'id,title,thumb,category,is_short,content_flag,group_ko,members,source_tier,view_count,published_at'+_durCol()+_liveCol()+(_hasPubTs?',published_ts':'');
+const _FEED_COLS=()=>'id,title,thumb,category,is_short,content_flag,group_ko,members,with_members,with_groups,source_tier,view_count,published_at'+_durCol()+_liveCol()+(_hasPubTs?',published_ts':'');
 // 피드 카드 캡션의 "누구" 자리(2026-09-28 사용자 지적). **아이돌 개인 채널**(source_tier='idol') 영상은 주어가
 // 채널 주인(멤버)이다 — 슬기 개인 채널 영상 밑에 "레드벨벳"만 뜨면 그룹 채널처럼 읽힌다. 그래서 멤버 먼저,
 // 그룹은 뒤에 작고 흐리게(.feed-sub-grp). 공동운영 채널은 주인이 여럿이라 전부 적는다. 그룹 채널 영상과
@@ -25667,15 +25686,18 @@ function _songWhoLine(song){
   line.textContent=[names.slice(0,3).join(', ')+(more?(currentLang==='ko'?` 외 ${more}`:` +${more}`):''),gLabel].filter(Boolean).join(' · ');
   return line;
 }
+// 2026-10-23 사용자: 개인 채널만이 아니라 **멤버가 태깅된 영상이면 전부** 같은 표기("켄신 클로즈유어아이즈") — 그룹 채널의
+// 멤버 쇼츠 밑에 그룹명만 떠서 누구 영상인지 몰랐다. 전원 태깅(=그룹 전체 영상)은 그룹명만, 4명 이상은 "외 N".
 function _feedWhoSub(song){
   const g=_gLabelKo(song.groupKo);
-  if(!song.ownerCh)return g;
-  const ms=(song.memberKos||[]).map(mko=>{
-    const a=ARTISTS.find(x=>x.name.ko===mko&&(!song.groupKo||_artistGroups(x).some(gg=>gg.ko===song.groupKo)))||ARTISTS.find(x=>x.name.ko===mko);
-    return a?_dispName(a,song.groupKo):mko;
-  }).filter(Boolean);
-  if(!ms.length)return g;
-  return ms.join(', ')+(g?` <span class="feed-sub-grp">${g}</span>`:'');
+  const arts=(song.memberKos||[]).map(mko=>({mko,a:ARTISTS.find(x=>x.name.ko===mko&&(!song.groupKo||_artistGroups(x).some(gg=>gg.ko===song.groupKo)))||ARTISTS.find(x=>x.name.ko===mko)}));
+  if(!arts.length)return g;
+  if(!song.ownerCh&&song.groupKo&&_withIsFullGroup(song.groupKo,arts.map(x=>x.a).filter(Boolean)))return g;
+  const ms=arts.map(x=>x.a?_dispName(x.a,song.groupKo):x.mko).filter(Boolean);
+  const more=ms.length>3?ms.length-3:0;
+  const who=ms.slice(0,3).join(', ')+(more?(currentLang==='ko'?` 외 ${more}`:` +${more}`):'');
+  // 솔로(그룹명=본인)면 이름 한 번만
+  return who+(g&&g!==who?` <span class="feed-sub-grp">${g}</span>`:'');
 }
 const _isPubTsMissing=err=>!!err&&/published_ts/.test(err.message||'');
 function _fmtVidAgo(iso){

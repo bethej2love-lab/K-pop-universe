@@ -14,15 +14,20 @@ const end = html.indexOf('\n}\n', start);
 need(start > 0 && end > start, '_feedWhoSub 헬퍼가 있음');
 const ARTISTS = [
   { name: { ko: '슬기', en: 'SEULGI' }, group: { ko: '레드벨벳' } },
+  { name: { ko: '웬디', en: 'WENDY' }, group: { ko: '레드벨벳' } },
   { name: { ko: '다영', en: 'DAYOUNG' }, group: { ko: '우주소녀' } },
 ];
-const fn = new Function('ARTISTS', '_gLabelKo', '_artistGroups', '_dispName',
+const _withIsFullGroup = (g, ms) => g === '레드벨벳' && ['슬기', '웬디'].every(n => ms.some(a => a.name.ko === n));
+const fn = new Function('ARTISTS', '_gLabelKo', '_artistGroups', '_dispName', '_withIsFullGroup', 'currentLang',
   html.slice(start, end + 2) + '; return _feedWhoSub;')(
-  ARTISTS, ko => ko || '', a => a.groups || [a.group], a => a.name.ko);
+  ARTISTS, ko => ko || '', a => a.groups || [a.group], a => a.name.ko, _withIsFullGroup, 'ko');
 
 need(fn({ groupKo: '레드벨벳', memberKos: ['슬기'], ownerCh: true }) === '슬기 <span class="feed-sub-grp">레드벨벳</span>',
   '개인 채널: 멤버 먼저 + 그룹은 작게');
-need(fn({ groupKo: '레드벨벳', memberKos: ['슬기'], ownerCh: false }) === '레드벨벳', '그룹 채널 영상은 예전처럼 그룹만');
+// 2026-10-23 사용자: 그룹 채널이어도 멤버가 태깅돼 있으면 자컨처럼 멤버 먼저(켄신 쇼츠 밑에 그룹명만 뜨던 것)
+need(fn({ groupKo: '레드벨벳', memberKos: ['슬기'], ownerCh: false }) === '슬기 <span class="feed-sub-grp">레드벨벳</span>', '그룹 채널이어도 멤버 태깅 영상은 멤버 먼저');
+need(fn({ groupKo: '레드벨벳', memberKos: ['슬기', '웬디'], ownerCh: false }) === '레드벨벳', '전원 태깅(그룹 전체 영상)은 그룹만');
+need(fn({ groupKo: '레드벨벳', memberKos: [], ownerCh: false }) === '레드벨벳', '멤버 태그 없는 영상은 그룹만');
 need(fn({ groupKo: '우주소녀', memberKos: [], ownerCh: true }) === '우주소녀', '멤버 태그 없는 개인 채널(팬 tier 등)은 그룹만');
 need(fn({ groupKo: '우주소녀', memberKos: ['다영', '슬기'], ownerCh: true }).startsWith('다영, 슬기 '), '공동운영 채널은 주인 전부');
 

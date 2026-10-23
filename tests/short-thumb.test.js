@@ -60,7 +60,7 @@ const run = steps => {
   const img = { src: '', naturalWidth: 0, naturalHeight: 0, cls: new Set(), classList: { add: c => img.cls.add(c) } };
   const bg = { style: {} };
   const log = [];
-  vm.runInNewContext(helper + ';_mountShortThumb(img,"VID",{bg,onReady:()=>log.push("ready"),onFail:()=>log.push("fail")});', { img, bg, log });
+  vm.runInNewContext(helper + ';_mountShortThumb(img,"VID",{bg,onReady:()=>log.push("ready"),onFail:()=>log.push("fail")});', { img, bg, log, _shortThumbWatch: () => {} });
   for (const st of steps) {
     if (st === 'error') img.onerror && img.onerror();
     else { [img.naturalWidth, img.naturalHeight] = st; img.onload && img.onload(); }
@@ -69,8 +69,8 @@ const run = steps => {
 };
 {
   const r = run([[1080, 1920]]);
-  need(/oardefault\.jpg$/.test(r.img.src) && r.log.join() === 'ready' && !r.img.cls.has('is-fallback') && /oardefault/.test(r.bg.style.backgroundImage || ''),
-    '세로 원본 있음 → 그대로 표시 + 블러 배경도 세로 원본');
+  need(/oardefault\.jpg$/.test(r.img.src) && r.log.join() === 'ready' && !r.img.cls.has('is-fallback') && /mqdefault/.test(r.bg.style.backgroundImage || ''),
+    '세로 원본 있음 → 그대로 표시 + 블러 배경은 작은 썸네일(큰 그림 두 장이면 아이폰이 앞 그림을 버림, 2026-10-23)');
 }
 // 2026-10-22: 세로 원본이 없으면 hqdefault 전에 oar2(1080×1920 세로 프레임) — hqdefault를 9:16로 키우면 뿌옇다
 {
