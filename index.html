@@ -392,7 +392,8 @@
     </div>
     <div id="sp-push-status" style="font-size:10px;color:rgba(155,178,228,0.5);margin-top:2px;display:none"></div>
     <div class="sp-subsec-lbl" style="margin-top:10px;">동기화</div>
-    <input type="text" class="sp-yt-key" id="sp-yt-key" placeholder="API 키 (AIzaSy...)" autocomplete="off" spellcheck="false">
+    <!-- 키는 가려서 표시(2026-10-23) — 일반 글자칸이라 화면 읽기(Codex 등)·화면 공유에 키가 그대로 노출됐다 -->
+    <input type="password" class="sp-yt-key" id="sp-yt-key" placeholder="API 키 (AIzaSy...)" autocomplete="new-password" spellcheck="false">
     <button class="sp-yt-sync" id="sp-yt-sync">전체 동기화 (공식 + 외부 채널)</button>
     <div class="sp-btn-hint">공식 채널 전체 + 외부 채널의 새 영상을 가져와요. 평소엔 이것부터 누르면 돼요.</div>
     <!-- 조회수·재생시간 수동 버튼 5개는 09-28 제거 — 루틴이 자동으로 돈다(admin.js 바인딩 자리 주석 참고) -->
