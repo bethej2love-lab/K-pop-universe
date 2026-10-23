@@ -273846,6 +273846,26 @@
           }
         ]
       }
+    ],
+    "discography": [
+      {
+        "title": "Golden Pages",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/150/12/564/15012564_20261020162517_500.jpg",
+        "releaseDate": "2026.10.23",
+        "trackCount": 1,
+        "titleTrack": "Golden Pages",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Golden Pages",
+            "isTitle": true
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "15012564"
+      }
     ]
   },
   {
