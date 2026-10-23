@@ -6676,7 +6676,7 @@ function openLightbox(url,shorts,playlist,idx,ctx,isAdvance,forceBrowseMode){
   // 이전에 봤던 위치가 있으면 거기서 시작(5초 미만이거나 92% 이상 봤으면 처음부터)
   const _prog=_vidProg.get(vid);
   const _startSec=(_prog&&_prog.d>0&&_prog.t>5&&_prog.t/_prog.d<0.92)?Math.floor(_prog.t):0;
-  iframe=_lbSetIframeSrc(`https://www.youtube.com/embed/${vid}?autoplay=1&mute=${startMuted}&controls=1&playsinline=1&modestbranding=1&iv_load_policy=3&rel=0&enablejsapi=1&vq=${_vq}${_startSec?'&start='+_startSec:''}`);
+  iframe=_lbSetIframeSrc(`https://www.youtube.com/embed/${vid}?autoplay=1&mute=${startMuted}&controls=1&playsinline=1&modestbranding=1&iv_load_policy=3&rel=0&cc_load_policy=0&enablejsapi=1&vq=${_vq}${_startSec?'&start='+_startSec:''}`);
   if(isMob())iframe.focus(); // iOS: 라이트박스 여는 제스처 컨텍스트에서 미리 focus → iframe 활성화 1번째 탭 선소비 시도. 데스크톱은 안 함 — 포커스가 유튜브 안으로 들어가 ESC·←→가 페이지에 안 왔다(2026-10-20)
   _lbYtHandshake(iframe); // 이게 없으면 유튜브가 재생 정보를 안 보낸다 — 시청 진행 바·재생 시작 감지가 죽는다
   clearTimeout(_lbAutoUnmuteT);
@@ -8121,6 +8121,7 @@ window.addEventListener('message',e=>{
     // YouTube sends {event:'infoDelivery', info:{playerState:1}} when playback starts
     if(d.info.playerState===1){
       _lbHideLoading();
+      _lbCaptionsOffOnce();
       _lbCancelAutoNext(); // 되감기/재생 등으로 다시 재생 상태가 되면 대기 중이던 카운트다운은 취소
       if(_lbNeedUnmute){
         _lbNeedUnmute=false;
@@ -8136,6 +8137,16 @@ window.addEventListener('message',e=>{
     }
   }catch(_){}
 });
+// 자막 기본 끔(2026-10-23 사용자 "자동으로 자막 켜지는데 디폴트 off였으면"). 유튜브는 영상 언어가 보는 사람 언어와 다르거나 채널이
+// 자막 기본 표시로 올리면 알아서 켠다 — cc_load_policy=0은 공식 보장이 없어서, 영상마다 **처음 재생될 때 한 번만** 자막 모듈을 내린다.
+// 자막은 재생 직후 늦게 붙기도 해서 1.5초 뒤 한 번 더. 그 뒤 사용자가 CC로 켜면 다시 끄지 않는다(영상당 한 번).
+let _lbCcOffVid=null;
+function _lbCaptionsOffOnce(){
+  if(!_lbActiveVid||_lbCcOffVid===_lbActiveVid)return;
+  const vid=_lbActiveVid;_lbCcOffVid=vid;
+  const send=()=>{const f=document.getElementById('yt-lb-iframe');if(f&&f.contentWindow&&_lbActiveVid===vid)try{f.contentWindow.postMessage(JSON.stringify({event:'command',func:'unloadModule',args:['captions']}),'*');}catch(_){}};
+  send();setTimeout(send,1500);
+}
 // 회전 버튼(세로/가로 전환)은 지금 보는 영상에만 적용한다 — 예전엔 영상 ID를 폰에 영구 저장해서, 가로 영상에서
 // 한 번 잘못 눌리면 그 뒤로 열 때마다 세로 틀(9:16)에 갇혀 크게 잘려 보였고 되돌릴 단서도 없었다(2026-10-20 사용자 제보,
 // 코르티스 성현 가요대제전 직캠). 세로/가로 판정은 서버(tools/shorts_promote.mjs)가 정본. 남아 있던 저장분은 지운다.
