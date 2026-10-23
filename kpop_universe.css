@@ -4134,9 +4134,9 @@
      그리드 카드는 아래 `.feed-grid .feed-card`(1fr, 유연)를 그대로 쓴다(Trend와 동일). */
   /* #feed-jacon(오리지널 콘텐츠 선반)도 차트와 동일한 고정폭 카드(2026-09-04 사용자 — "썸네일 크기 차트랑 동일하게"). */
   #feed-chart>.feed-card,#feed-jacon>.feed-card,#feed-favchart>.feed-card,#feed-events>.feed-card{flex:0 0 auto;width:158px;border-bottom:none;border-radius:8px;background:rgba(255,255,255,0.03);}
-  /* 웹 발견 선반: 두 장을 온전히, 세 번째는 20px만 보이게 같은 크기로. */
+  /* 웹 발견 선반: 첫 장 전체와 두 번째 절반이 보이게 같은 크기로. */
   @media(min-width:769px){
-    #feed-chart>.feed-card,#feed-jacon>.feed-card{width:calc(50% - 10px);}
+    #feed-chart>.feed-card,#feed-jacon>.feed-card{width:calc((100% + 10px) / 1.5);}
   }
   #feed-chart>.feed-card .feed-card-cap,#feed-favchart>.feed-card .feed-card-cap,#feed-events>.feed-card .feed-card-cap{padding:8px 10px 12px;background:rgba(0,0,0,0.22);border-radius:0 0 8px 8px;}
   #feed-jacon>.feed-card .feed-card-cap,#feed-favnew>.feed-card .feed-card-cap{padding:8px 10px 12px;}

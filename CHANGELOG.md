@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2026-10-23 (Codex — 웹 발견 가로 썸네일 추가 확대)
+- **[완료] [kpop_universe.css]** 사용자 추가 요청: Charts·Original Contents 웹 카드 184.5→약 266px(기본 429px 선반), 첫 장 전체와 두 번째 절반 노출. 웹 두 선반의 너비 규칙만 조정.
+- **[검증] [kpop_universe.css]** Edge 857·1280px에서 두 번째 노출 비율 50%·두 선반 동일 너비·16:9 확인, 390px 및 다른 선반 158px 유지. syntax·diff 공백 검사 통과.
+
 ## 2026-10-23 (Codex — 웹 발견 가로 썸네일 확대)
 - **[완료] [kpop_universe.css]** 웹(769px 이상) 발견의 Charts·Original Contents 카드 너비를 같은 `calc(50% - 10px)`로 확대. 기본 429px 선반에서 158→184.5px(16:9), 두 장 전체 + 세 번째 20px 노출. 모바일 및 다른 선반 크기 유지.
 - **[검증] [kpop_universe.css]** Edge 390·857·1280px 레이아웃에서 두 영역 동일 너비·16:9·웹 세 번째 20px 노출·모바일/다른 선반 158px 확인. syntax·diff 공백 검사 통과.
