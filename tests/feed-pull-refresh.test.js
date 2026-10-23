@@ -9,7 +9,8 @@ const end = html.indexOf('function _wireFeedTabSwipe(', start);
 assert(start >= 0 && end > start);
 
 function setup({mobile = true, top = 0, tab = 'rec'} = {}) {
-  const listeners = new Map(), hints = [], calls = [];
+  const listeners = new Map(), hints = [], calls = [], timers = new Map(), notices = [];
+  let timerId = 0;
   let finish;
   const node = () => {
     const classes = new Set(), attrs = new Map();
@@ -30,7 +31,9 @@ function setup({mobile = true, top = 0, tab = 'rec'} = {}) {
     isMob: () => mobile, currentLang: 'en', Date, JSON,
     document: {createElement: node},
     location: {reload: () => { throw new Error('must not reload the page'); }},
-    setTimeout: fn => fn(),
+    setTimeout: (fn, ms) => { if(ms === 500) { fn(); return 0; } const id=++timerId; timers.set(id,fn); return id; },
+    clearTimeout: id => timers.delete(id),
+    _showShareToast: msg => notices.push(msg),
     _feedRecPending: null, _feedDiscPending: null, _feedPullRefreshP: null,
     _weekNewsAt: 123, _recentAlbumsP: {}, _upConcertsAt: 123, _feedTrendAt: 123,
     _buildFeedRec: () => { calls.push('rec'); return new Promise(resolve => { finish = resolve; }); },
@@ -48,7 +51,7 @@ function setup({mobile = true, top = 0, tab = 'rec'} = {}) {
     for (const fn of listeners.get(type) || []) fn(e);
     return e;
   }
-  return {ctx, pane, calls, hints, send, complete: () => finish()};
+  return {ctx, pane, calls, hints, send, timers, notices, expire: () => {const jobs=[...timers.values()];timers.clear();jobs.forEach(fn=>fn());}, complete: () => finish()};
 }
 
 async function main() {
@@ -82,6 +85,8 @@ for (const tab of ['rec', 'disc']) {
       assert.equal(h.ctx._weekNewsAt, 0); assert.equal(h.ctx._recentAlbumsP, null);
       h.complete(); await new Promise(setImmediate);
       assert.equal(h.hints[0].style.height, '0px', 'collapse after completion');
+      assert.equal(h.timers.size, 0, 'clear deadline timer after completion');
+      assert.equal(h.notices.length, 0, 'no slow-loading notice on completion');
     }
   }
 }
@@ -91,10 +96,27 @@ waiting.ctx._feedRecPending = new Promise(resolve => { releaseInitial = resolve;
 const first = waiting.ctx._refreshFeedFromPull('rec');
 assert.equal(waiting.ctx._refreshFeedFromPull('rec'), first, 'coalesce overlapping refreshes');
 await new Promise(setImmediate);
-assert.equal(waiting.calls.length, 0, 'wait for the existing build');
+assert.equal(waiting.calls.length, 0, 'reuse the existing build');
 releaseInitial(); await new Promise(setImmediate);
-assert.deepEqual(waiting.calls, ['rec']);
-waiting.complete(); await first;
+assert.deepEqual(waiting.calls, [], 'do not repeat the entire build after initial loading');
+await first;
+assert.equal(waiting.ctx._feedPullRefreshP, null);
+for(const tab of ['rec','disc']) {
+  const slow=setup({tab});
+  const pull=()=>{slow.send('touchstart',100,100);slow.send('touchmove',100,340);slow.send('touchend',100,340);};
+  pull();await new Promise(setImmediate);
+  assert(slow.hints[0].classList.contains('is-refreshing'));
+  slow.expire();await new Promise(setImmediate);
+  assert.equal(slow.hints[0].style.height,'0px','stop spinner even when a request never settles');
+  assert.equal(slow.notices.length,1,'explain that background loading continues');
+  assert(slow.ctx._feedPullRefreshP,'keep actual build locked after UI deadline');
+  pull();await new Promise(setImmediate);
+  assert.deepEqual(slow.calls,[tab],'repeated pull must not duplicate slow requests');
+  slow.complete();await new Promise(setImmediate);
+  assert.equal(slow.ctx._feedPullRefreshP,null,'release lock when actual work finishes');
+  assert.equal(slow.hints[0].style.height,'0px');
+  assert.equal(slow.timers.size,0);
+}
 console.log('PASS mobile feed pull refresh: gestures, spinner lifecycle, current-tab rebuild without navigation');
 }
 main().catch(e => { console.error(e); process.exitCode = 1; });

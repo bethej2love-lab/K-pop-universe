@@ -22120,16 +22120,24 @@ function _slideDownCloseFeed(){
     el.style.transition='';el.style.transform='';
   },220);
 }
-// 페이지/인트로는 다시 열지 않는다. 진행 중 빌드와 겹치지 않게 기다린 후 현재 탭만 갱신한다.
+// 이미 로딩 중이면 같은 결과를 쓴다. 완료를 기다렸다가 전체를 다시 요청하지 않는다.
 function _refreshFeedFromPull(which){
   if(_feedPullRefreshP)return _feedPullRefreshP;
   _feedPullRefreshP=(async()=>{
-    await (which==='rec'?_feedRecPending:_feedDiscPending);
+    const pending=which==='rec'?_feedRecPending:_feedDiscPending;
+    if(pending){await pending;return;}
     _weekNewsAt=0;_recentAlbumsP=null;_upConcertsAt=0;
     if(which==='rec'){_feedRecBuiltAt=Date.now();await _buildFeedRec();}
     else{_feedTrendAt=0;_feedDiscoveryBuiltAt=Date.now();await _buildFeedDisc();}
   })().finally(()=>{_feedPullRefreshP=null;});
   return _feedPullRefreshP;
+}
+// 느린 하단 선반은 백그라운드에서 계속 채운다. UI 대기만 끝내고 실제 빌드 잠금은 유지한다.
+function _waitFeedPullRefresh(work){
+  return new Promise((resolve,reject)=>{
+    const timer=setTimeout(()=>resolve(false),5000);
+    Promise.resolve(work).then(()=>{clearTimeout(timer);resolve(true);},e=>{clearTimeout(timer);reject(e);});
+  });
 }
 function _wireFeedPullRefresh(pane){
   if(!pane||pane._pullRefreshWired)return;pane._pullRefreshWired=true;
@@ -22169,7 +22177,9 @@ function _wireFeedPullRefresh(pane){
     if(refresh){
       busy=true;hint.style.height='64px';spinner.style.transform='';hint.classList.add('is-refreshing');pane.setAttribute('aria-busy','true');
       Promise.all([
-        _refreshFeedFromPull(pane.id==='feed-pane-disc'?'disc':'rec').catch(e=>console.warn('[feed] refresh failed',e)),
+        _waitFeedPullRefresh(_refreshFeedFromPull(pane.id==='feed-pane-disc'?'disc':'rec'))
+          .then(done=>{if(!done)_showShareToast(currentLang==='ko'?'느린 콘텐츠는 계속 불러오는 중이야.':'More content is still loading.');})
+          .catch(e=>{console.warn('[feed] refresh failed',e);_showShareToast(currentLang==='ko'?'불러오지 못했어. 잠시 후 다시 시도해줘.':'Could not refresh. Please try again.');}),
         new Promise(resolve=>setTimeout(resolve,500))
       ])
         .finally(()=>{busy=false;pane.removeAttribute('aria-busy');reset();});
@@ -26521,6 +26531,7 @@ async function _buildFeedFavNew(){
 }
 // 추천(For You) 탭 빌드 — 가볍게(이어보기=로컬, 즐겨찾기신작·Trend=Supabase). 나침반 열 때마다 호출(TTL 캐시).
 function _buildFeedRec(){
+  if(_feedRecPending)return _feedRecPending;
   document.getElementById('feed-empty-rec').hidden=true;
   // For You 선반 순서는 **시간 민감도** 순이다 — 오늘 지나면 의미가 없어지는 것일수록 위(2026-09-18).
   //   기념일(D-DAY가 지나면 끝) → 신보(발매 주간) → 신작 영상(최근 7일) → 이어보기(언제 봐도 됨)
@@ -26531,7 +26542,8 @@ function _buildFeedRec(){
   jobs.push(_buildFeedFavNew().finally(()=>_buildFeedRecentlyViewed())); // 즐겨찾기 신작 → 이어보기 순서 확정
 
   setTimeout(()=>_feedCheckEmpty('rec'),1800); // 비동기 선반들이 다 실패해 빈 화면이면 재시도 노출
-  return _feedRecPending=Promise.allSettled(jobs);
+  const pending=Promise.allSettled(jobs).finally(()=>{if(_feedRecPending===pending)_feedRecPending=null;});
+  return _feedRecPending=pending;
 }
 // 발견(Discover) 탭 빌드 — 무거운 차트+디스커버리. Discover 탭을 처음 누를 때만 지연 호출(_feedSwitchTab).
 // 열자마자 34개 선반을 동시에 치던 걸 나눠서 추천 탭은 빠르게, 발견은 볼 때만 로드(덜컹거림·중복 완화).
@@ -26560,6 +26572,7 @@ function _feedBuildIdle(){
   });
 }
 function _buildFeedDisc(){
+  if(_feedDiscPending)return _feedDiscPending;
   _feedBuildQ=[]; // 패널을 다시 열면 이전 대기분은 버린다(중복 그리기·유령 요청 방지)
   _feedDailyNewsP=_buildFeedDailyNews(); // 오늘의 소식이 Discover 맨 첫 섹션(2026-09-23) — 기념일보다도 먼저. 앨범 블록이 이걸 기다린다
   const jobs=[_feedDailyNewsP,_buildFeedIg()]; // 인스타 사진(팔로워 많은 계정 최근 3일, 영상 제외)
@@ -26615,7 +26628,8 @@ function _buildFeedDisc(){
   _wireFeedDiscoveryInfiniteScroll();
   setTimeout(()=>_feedCheckEmpty('disc'),1800); // 차트+디스커버리 전부 실패해 빈 화면이면 재시도 노출
   jobs.push(_feedBuildIdle());
-  return _feedDiscPending=Promise.allSettled(jobs);
+  const pending=Promise.allSettled(jobs).finally(()=>{if(_feedDiscPending===pending)_feedDiscPending=null;});
+  return _feedDiscPending=pending;
 }
 
 // ── 탐험 패널 "모아보기" 무한스크롤 ──────────────────────────────────────
