@@ -4069,6 +4069,13 @@
   .feed-strip-sub+.feed-strip-sub{margin-top:-7px;}
   .feed-strip-sub{font-size:var(--fz-meta);color:rgba(120,148,200,0.61);text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:78px;margin-top:-4px;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
   .feed-strip-date{font-size:9px;color:rgba(180,205,240,0.72);text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:78px;margin-top:-5px;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
+  @media(min-width:769px){
+    #feed-anniv .feed-strip-item{width:calc(25% - 2.5px);}
+    #feed-anniv .feed-strip-thumb-wrap{width:100%;height:auto;aspect-ratio:1;box-sizing:border-box;}
+    #feed-anniv .feed-strip-name{font-size:12px;max-width:100%;}
+    #feed-anniv .feed-strip-sub{font-size:11px;max-width:100%;}
+    #feed-anniv .feed-strip-date{font-size:10px;max-width:100%;}
+  }
   /* Discovery 피드(인스타 피드 스타일 세로 스크롤 큰 카드) */
   .feed-card{cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><path d='M11,1 L12.3,9.7 L21,11 L12.3,12.3 L11,21 L9.7,12.3 L1,11 L9.7,9.7Z' fill='%23FFB0D0' opacity='.97'/></svg>") 11 11,pointer;position:relative;overflow:hidden;-webkit-tap-highlight-color:transparent;border-bottom:0.5px solid rgba(255,255,255,0.06);transition:background .13s;animation:feed-card-appear .28s ease both;}
   /* 2열 그리드(2026-08-21, Fable UX 감사 반영 — "화면당 1장은 발견량이 너무 적다") — 풀블리드 1열 목록에서
@@ -4174,6 +4181,9 @@
   .feed-news-row.is-media{flex-direction:column;align-items:stretch;padding:0;margin:4px 16px 2px;border-radius:12px;overflow:hidden;background:rgba(255,255,255,0.028);border-top:none!important;}
   .feed-news-row.is-media+.feed-news-row{border-top:0.5px solid rgba(255,255,255,0.06);}
   .feed-news-row.is-media:active{background:rgba(255,255,255,0.055);}
+  #feed-dailynews .feed-news-mvs{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px;margin:4px 16px 2px;}
+  #feed-dailynews .feed-news-mvs>.feed-news-row{margin:0;min-width:0;}
+  #feed-dailynews .feed-news-mvs .fnr-cap{padding:8px;}
   .fnr-media{position:relative;overflow:hidden;}
   .feed-news-thumb--media{width:100%;height:auto;aspect-ratio:16/9;border-radius:0;flex-shrink:0;display:block;}
   .fnr-cap{display:flex;align-items:center;gap:10px;padding:8px 12px 10px;}

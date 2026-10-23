@@ -23947,6 +23947,9 @@ function _renderNewsList(list,items){
   const _PRI={win:100,mv:80,teaser:50};
   items.forEach((r,i)=>{r._s=(r.score!=null?r.score:(_PRI[r.type]||0))-i*0.001;});
   items.sort((a,b)=>b._s-a._s);
+  // 발견의 최신 MV 2개만 전폭. For You는 같은 렌더러를 써도 전폭을 유지한다.
+  let mvCount=0;
+  items.forEach(r=>{r._compactMv=list.id==='feed-dailynews'&&r.type==='mv'&&!r.isShort&&!!r.thumb&&++mvCount>2;});
   // 헤드라인은 이미지가 있는 것 중 최상위 — 단 쇼츠는 제외(헤드라인 틀이 16:9라 세로 썸네일이 잘린다)
   const heroIdx=items.findIndex(r=>r.thumb&&!r.isShort);
   const rest=items.slice();
@@ -23991,8 +23994,14 @@ function _pairNewsShorts(arr){
   }
 }
 function _appendNewsItems(container,arr){
-  let grid=null;
+  let grid=null,mvGrid=null;
   arr.forEach(r=>{
+    if(r._compactMv){
+      grid=null;
+      if(!mvGrid){mvGrid=document.createElement('div');mvGrid.className='feed-news-mvs';container.appendChild(mvGrid);}
+      _appendNewsRow(mvGrid,r);return;
+    }
+    mvGrid=null;
     if(!_isNewsShortCard(r)){grid=null;_appendNewsRow(container,r);return;}
     if(!grid||grid.children.length>=2){grid=document.createElement('div');grid.className='feed-grid feed-news-shorts';container.appendChild(grid);}
     const card=_appendFeedCard(grid,'📈',r.title,r.sub,r.nav,r.thumb,null,{short:true});
