@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2026-10-23 (Codex — 웹 발견 가로 썸네일 확대)
+- **[완료] [kpop_universe.css]** 웹(769px 이상) 발견의 Charts·Original Contents 카드 너비를 같은 `calc(50% - 10px)`로 확대. 기본 429px 선반에서 158→184.5px(16:9), 두 장 전체 + 세 번째 20px 노출. 모바일 및 다른 선반 크기 유지.
+- **[검증] [kpop_universe.css]** Edge 390·857·1280px 레이아웃에서 두 영역 동일 너비·16:9·웹 세 번째 20px 노출·모바일/다른 선반 158px 확인. syntax·diff 공백 검사 통과.
+
 ## 2026-10-23 (Codex — 컬렉션 쇼츠 썸네일 비율)
 - **[완료] [kpop_universe.css]** ‘엄쁘’ 6개 쇼츠가 공통 정사각형 CSS를 따라 잘리고, 목록 높이 계산(9:16)과 달라 아래 블러 여백이 생김. `#feed-list-grid` 안 쇼츠 이미지에만 9:16 지정. 일반 영상·목록 밖 카드·재생 및 데이터 로직 변경 없음.
 - **[검증] [kpop_universe.css]** Edge 390px·1280px에서 실제 CSS 레이아웃 확인: 쇼츠·폴백 9:16, 일반 영상 16:9, 목록 밖 기존 비율 유지. `node tests/syntax.test.js`, `node tests/short-thumb.test.js`, `git diff --check` 통과. 아이폰 실기기 미확인.
