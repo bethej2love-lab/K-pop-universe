@@ -566,8 +566,9 @@
   .gc-status-inner.anim-out{animation:status-slide-out 0.38s cubic-bezier(0.64,0,0.78,0.2) forwards;}
   /* 멤버 카드는 내용이 없어도 자리를 항상 차지(2026-10-15, 사용자 — 줄이 데이터 따라 나타났다 사라져 대표 영상이 위아래로
      흔들렸고, 이 줄이 있을 때 프로필 사진과 영상 사이 간격이 더 보기 좋았다) */
-  #tt-status-line{display:block;margin:10px 0 6px;}
-  #tt-status-line .gc-status-inner{padding-left:4px;}
+  #tt-status-line{display:block;}
+  #gc-status-line,#tt-status-line{margin:10px 0 6px;}
+  #gc-status-line .gc-status-inner,#tt-status-line .gc-status-inner{padding-left:4px;}
   .presence-dot{width:6px;height:6px;border-radius:50%;background:rgb(255,140,120);box-shadow:0 0 5px rgba(255,140,120,0.8);animation:presence-pulse 1.6s ease-in-out infinite;flex:none;}
   .favcount-dot{width:6px;height:6px;border-radius:50%;background:rgb(255,110,165);box-shadow:0 0 5px rgba(255,110,165,0.8);animation:presence-pulse 1.6s ease-in-out infinite;flex:none;}
   /* 흔적(이번 주 N명이 흔적 M개) 전용 점 — 예전엔 .favcount-dot을 그대로 재사용해서 "N명이 좋아해요"와
