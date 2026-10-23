@@ -23339,7 +23339,7 @@ const _FAV_ALBUM_DAYS=30;
 // ── 사이트 안 인스타 사진 뷰어(2026-10-19, 사용자: "인스타 창으로 나가지 않고 라이트박스처럼") ─────────────
 // 데이터는 이미 받아둔 것(ig_accounts.media: 사진 주소·여러 장 c·본문 cap·좋아요 lk·댓글 cm). 출처 계정과 원본 링크를 항상 같이 보여주고
 // 다운로드 기능은 두지 않는다. 메타 공식 표시 방식(oEmbed)은 앱 심사가 필요해서 보류. 영상은 재생 파일이 없어 여기 안 온다.
-let _igv=null;
+let _igv=null,_igvDrag=false; // _igvDrag: 이번 터치가 아래로 쓸어 닫기로 정해졌는지(좌우 사진 넘기기와 겹치지 않게)
 function _openIgViewer(m,handle,idx){
   const pics=Array.isArray(m.c)&&m.c.length?m.c:[m.u];
   let ov=document.getElementById('igv-overlay');
@@ -23356,7 +23356,43 @@ function _openIgViewer(m,handle,idx){
     ov.querySelector('#igv-next').addEventListener('click',e=>{e.stopPropagation();_igvGo(1);});
     const md=ov.querySelector('#igv-media');let sx=null;
     md.addEventListener('touchstart',e=>{sx=e.touches[0].clientX;},{passive:true});
-    md.addEventListener('touchend',e=>{if(sx==null)return;const dx=e.changedTouches[0].clientX-sx;sx=null;if(Math.abs(dx)>40)_igvGo(dx<0?1:-1);},{passive:true});
+    md.addEventListener('touchend',e=>{if(sx==null)return;const dx=e.changedTouches[0].clientX-sx;sx=null;if(_igvDrag)return;if(Math.abs(dx)>40)_igvGo(dx<0?1:-1);},{passive:true});
+    // 모바일: 아래로 쓸어 닫기(2026-10-23 사용자 — "닫기 버튼은 최후의 수단, 모바일은 자연스러운 터치 동작으로"). 닫기 버튼은 모바일에서
+    // 숨기고(PC는 유지) 위에 손잡이 막대로 끌 수 있다는 걸 보인다. 처음 8px로 방향을 정해 좌우(사진 넘기기)·위(본문 스크롤)와 안 싸운다.
+    // 본문을 내려 읽던 중이면(scrollTop>0) 그 터치는 본문 스크롤 몫.
+    const pn=ov.querySelector('#igv-panel');let y0=null,x0=0,ax=null,dragY=0,vY=0,tY=0;
+    pn.addEventListener('touchstart',e=>{
+      _igvDrag=false;
+      if(!isMob()||e.touches.length!==1){y0=null;return;}
+      const cap=ov.querySelector('#igv-cap');if(cap.contains(e.target)&&cap.scrollTop>0){y0=null;return;}
+      y0=e.touches[0].clientY;x0=e.touches[0].clientX;ax=null;dragY=0;vY=0;tY=performance.now();
+    },{passive:true});
+    pn.addEventListener('touchmove',e=>{
+      if(y0==null)return;
+      const y=e.touches[0].clientY,dy=y-y0,dx=e.touches[0].clientX-x0;
+      if(!ax){
+        if(Math.abs(dy)<8&&Math.abs(dx)<8)return;
+        ax=(dy>0&&Math.abs(dy)>Math.abs(dx)*1.2)?'y':'n';
+        if(ax==='n'||!e.cancelable){y0=null;return;}
+        _igvDrag=true;
+      }
+      e.preventDefault();
+      const now=performance.now(),nd=Math.max(0,dy);if(now>tY)vY=vY*0.3+((nd-dragY)/(now-tY))*0.7;tY=now;dragY=nd;
+      pn.style.transition='none';pn.style.transform='translateY('+dragY+'px)';
+      ov.style.background='rgba(0,0,0,'+(0.78*Math.max(0.15,1-dragY/420)).toFixed(3)+')';
+    },{passive:false});
+    const pnEnd=()=>{
+      if(y0==null||ax!=='y'){y0=null;return;}y0=null;
+      const fast=performance.now()-tY<80&&vY>0.6;
+      if(dragY>110||(dragY>30&&fast)){
+        pn.style.transition='transform .2s ease-out';pn.style.transform='translateY(100%)';
+        setTimeout(_closeIgViewer,200);
+      }else{
+        pn.style.transition='transform .22s cubic-bezier(0.32,0.72,0,1)';pn.style.transform='';ov.style.background='';
+      }
+    };
+    pn.addEventListener('touchend',pnEnd,{passive:true});
+    pn.addEventListener('touchcancel',pnEnd,{passive:true});
     document.addEventListener('keydown',e=>{
       if(!ov.classList.contains('open'))return;
       if(e.key==='ArrowLeft')_igvGo(-1); // Esc는 _closeTopOverlay가 맡는다else if(e.key==='ArrowRight')_igvGo(1);
@@ -23382,7 +23418,11 @@ function _igvShow(){
   if(pics[i+1]){const pre=new Image();pre.src=pics[i+1];} // 다음 장 미리 받기
 }
 function _igvGo(d){if(!_igv)return;const n=_igv.i+d;if(n<0||n>=_igv.pics.length)return;_igv.i=n;_igvShow();}
-function _closeIgViewer(){document.getElementById('igv-overlay')?.classList.remove('open');_igv=null;}
+function _closeIgViewer(){
+  const ov=document.getElementById('igv-overlay');
+  if(ov){ov.classList.remove('open');ov.style.background='';const pn=ov.querySelector('#igv-panel');if(pn){pn.style.transition='';pn.style.transform='';}}
+  _igv=null;_igvDrag=false;
+}
 // 핸들 → 주인 이름(그룹/멤버) — 캡션용. 링크는 artists/groups의 links.instagram
 let _igOwnerMap=null;
 function _igOwners(){
