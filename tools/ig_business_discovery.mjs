@@ -3,9 +3,9 @@
 // 왜: 아이돌 인스타(그룹 253 + 멤버 1,247 링크)의 프로필 사진·팔로워·게시물 수를 공식 API로 받는다. 사진은 지금 관리자가
 // 손으로 등록하고(artist_pics), 팔로워는 아예 없었다. 날짜별 팔로워를 쌓아 두면 증가·돌파 같은 소식을 만들 수 있다.
 //
-// 동작: 2시간마다(ig-stats.yml) **가장 오래전에 받은 계정부터** 회당 최대 180개. Business Discovery는 앱 기준 시간당 약 200회라
+// 동작: 2시간마다(ig-stats.yml) 최근 활동·기존 전체 순환·미수집 계정을 섞어 회당 최대 180개. Business Discovery는 앱 기준 시간당 약 200회라
 // 한 회차가 한 시간 몫을 넘지 않게 한다(응답 헤더 x-app-usage / x-business-use-case-usage가 90%를 넘으면 그 자리에서 멈춤).
-// 하루 12회 × 180 = 2,160 > 1,500이라 하루에 한 바퀴 돈다 — 프로필 사진 주소(fbcdn, oe= 만료)가 상하기 전에 새로 받는 주기.
+// 실제로는 스케줄 지연·사용량 제한으로 180개 전에 멈출 수 있다. 전체가 하루에 한 바퀴 돈다고 가정하지 않는다.
 //
 // 최근 게시물 6개(썸네일·원본 링크)도 같이 받는다(사용자: "게시물 몇 개라도 미리보기로") — 이미지는 저장하지 않고 인스타 주소 그대로.
 // 저장: Supabase ig_accounts(핸들별 최신, media jsonb 포함) + ig_follower_daily(핸들·날짜별 팔로워) — sql/2026-10-19_ig_stats.sql.
@@ -25,7 +25,8 @@ const GRAPH = 'https://graph.facebook.com/v26.0';
 const arg = k => (process.argv.find(a => a.startsWith('--' + k + '=')) || '').split('=')[1];
 const MAX = +(arg('max') || process.env.IG_MAX || 180);
 const ONLY = arg('only');
-if (!TOKEN || !SKEY) { console.error('META_IG_TOKEN / SUPABASE_SERVICE_ROLE 없음'); process.exit(1); }
+const DRY = process.argv.includes('--dry-run'); // 공개 DB로 순서만 미리보기 — Meta 호출·DB 쓰기 없음
+if (!DRY && (!TOKEN || !SKEY)) { console.error('META_IG_TOKEN / SUPABASE_SERVICE_ROLE 없음'); process.exit(1); }
 
 const readJson = p => JSON.parse(fs.readFileSync(path.join(ROOT, p), 'utf8'));
 const groups = readJson('groups.json'), artistsRaw = readJson('artists.json');
@@ -44,7 +45,8 @@ for (const h of MAG) handles.add(h);
 const mentionsOf = cap => [...new Set((String(cap || '').match(/@([A-Za-z0-9._]+)/g) || []).map(x => x.slice(1).toLowerCase().replace(/\.+$/, '')))].filter(h => artistHandles.has(h));
 const INVALID_USER_RECHECK_MS = 7 * 24 * 3600e3; // Invalid user id는 매 회차 재시도하지 않고 주 1회만 확인
 
-const SBH = { apikey: SKEY, Authorization: 'Bearer ' + SKEY, 'Content-Type': 'application/json' };
+const DBKEY = DRY ? 'sb_publishable_SjNC-N_9TUqaQcCxhVinGA_ULyX6tA0' : SKEY;
+const SBH = { apikey: DBKEY, Authorization: 'Bearer ' + DBKEY, 'Content-Type': 'application/json' };
 async function sbGetAll(qs) {
   const out = [];
   for (let from = 0; ; from += 1000) {
@@ -60,25 +62,49 @@ async function sbUpsert(table, rows, conflict) {
   if (!r.ok) throw new Error(`${table} 저장 실패 ${r.status} ${(await r.text()).slice(0, 300)}`);
 }
 
-// 순서: 오래전에 받은 계정과 한 번도 안 받은 계정을 번갈아(아래 주석)
+// 최근 게시 시각으로 활동 계정을 판정한다(팔로워 수·그룹 인기도는 사용하지 않는다).
 let prev = [];
-try { prev = await sbGetAll('ig_accounts?select=handle,status,note,fetched_at&order=handle'); }
+try { prev = await sbGetAll('ig_accounts?select=handle,status,note,fetched_at,media&order=handle'); }
 catch (e) { console.error(e.message + '\n→ sql/2026-10-19_ig_stats.sql을 먼저 실행해야 한다'); process.exit(1); }
 const previous = new Map(prev.map(r => [r.handle, r]));
 const last = new Map(prev.map(r => [r.handle, r.fetched_at]));
 const coolingInvalidUser = r => r?.status === 'not_found' && /^Invalid user id\b/i.test(String(r.note || '')) && Date.now() - Date.parse(r.fetched_at) < INVALID_USER_RECHECK_MS;
 const coolingCount = [...handles].filter(h => coolingInvalidUser(previous.get(h))).length;
-// ⚠️ 새 계정 → 오래된 계정 "순서대로"만 하면 굶는다(2026-10-22 사용자 제보: 코르티스 최근 게시물이 여러 장인데 1장만). 멤버 개인 계정
-//    940여 개가 한꺼번에 목록에 들어오자 회당 70개 남짓(사용량 90%에서 멈춤)이 전부 새 계정에 쓰였고, 이미 받은 계정은 10-19 이후 한 번도
-//    다시 안 받혔다 — 코르티스는 캐러셀 사진·본문을 받기 전 형식 그대로 멈춰 있었다. 새 계정과 오래된 계정을 번갈아 받는다.
+// 앞쪽부터 [전체 순환, 활동, 신규, 활동]을 반복한다. 실제 호출 한도로 중간에 멈춰도 세 몫을 처리한다.
+// 활동: 최근 7일 게시물이 있고 마지막 수집이 4시간 이상 전. 활동끼리도 수집이 오래된 순서.
+// 전체 순환/신규 자리는 활동 계정으로 대체하지 않아 비활동·미수집 계정도 계속 전진한다.
 // Meta가 "Invalid user id"로 응답한 핸들은 재시도마다 쿼터를 쓰지만 새 정보가 없었다(2026-10-23 집계: 178 not_found 중 176).
 // 계정 상태가 바뀌었을 가능성은 남겨 두고, 7일 뒤 다시 시도한다. 다른 오류/조회 불가 유형은 기존대로 순환 재시도한다.
 const known = [...handles].filter(h => last.get(h) && !coolingInvalidUser(previous.get(h))).sort((a, b) => String(last.get(a)).localeCompare(String(last.get(b))));
 const fresh = [...handles].filter(h => !last.get(h));
-const mixed = [];
-for (let i = 0; i < Math.max(known.length, fresh.length); i++) { if (i < known.length) mixed.push(known[i]); if (i < fresh.length) mixed.push(fresh[i]); }
-let queue = ONLY ? [ONLY.toLowerCase()] : mixed;
-queue = queue.slice(0, MAX);
+const now = Date.now();
+const active = known.filter(h => {
+  const r = previous.get(h);
+  return r.status === 'ok' && now - Date.parse(r.fetched_at) >= 4 * 3600e3
+    && (r.media || []).some(m => { const t = Date.parse(m.t); return t <= now && t >= now - 7 * 86400e3; });
+});
+const pools = { rotation: known, active, fresh }, cursor = { rotation: 0, active: 0, fresh: 0 };
+const selected = new Set(), lanes = new Map(), queue = [];
+function take(lane) {
+  const pool = pools[lane];
+  while (cursor[lane] < pool.length) {
+    const h = pool[cursor[lane]++];
+    if (!selected.has(h)) { selected.add(h); lanes.set(h, lane); return h; }
+  }
+}
+if (ONLY) { queue.push(ONLY.toLowerCase()); lanes.set(queue[0], 'only'); }
+else for (let i = 0; queue.length < MAX; i++) {
+  const lane = ['rotation', 'active', 'fresh', 'active'][i % 4];
+  const h = take(lane) || take('rotation') || take('fresh') || take('active');
+  if (!h) break;
+  queue.push(h);
+}
+const laneCounts = hs => hs.reduce((n, h) => { const lane = lanes.get(h); n[lane] = (n[lane] || 0) + 1; return n; }, {});
+if (DRY) {
+  console.log(JSON.stringify({ total: handles.size, activeEligible: active.length, rotationEligible: known.length, neverFetched: fresh.length,
+    coolingInvalidUser: coolingCount, planned: laneCounts(queue), first16: queue.slice(0, 16).map(h => ({ handle: h, lane: lanes.get(h) })) }, null, 2));
+  process.exit(0);
+}
 
 const day = new Date(Date.now() + 9 * 3600e3).toISOString().slice(0, 10); // KST 날짜
 const usagePct = h => { let m = 0; for (const k of ['x-app-usage', 'x-business-use-case-usage']) { const v = h.get(k); if (!v) continue; try { JSON.stringify(JSON.parse(v)).replace(/"(call_count|total_time|total_cputime)":(\d+)/g, (_, __, n) => { m = Math.max(m, +n); }); } catch { } } return m; };
@@ -137,3 +163,4 @@ for (const row of acc) { const k = Object.keys(row).sort().join(','); (byShape.g
 for (const rows of byShape.values()) await sbUpsert('ig_accounts', rows, 'handle');
 await sbUpsert('ig_follower_daily', daily, 'handle,day');
 console.log(`인스타 계정 ${handles.size}개 중 이번 ${acc.length}개 — 성공 ${ok} · 조회 불가 ${nf}${coolingCount ? ' · Invalid user 재시도 대기 ' + coolingCount : ''}${stoppedBy ? ' · 중단: ' + stoppedBy : ''}`);
+console.log('실제 처리 배분 ' + JSON.stringify(laneCounts(acc.map(r => r.handle))));

@@ -23710,7 +23710,7 @@ async function _buildFeedFavIg(){
     section.style.display='';
   }catch(e){console.warn('[feed] 즐겨찾기 인스타 선반 실패 — 이 선반만 빠집니다',e);}
 }
-// Discover — 팔로워 많은 계정 60곳의 최근 3일 사진
+// Discover — 전체 공식 계정의 최근 3일 사진, 게시 시각 최신순(팔로워 수 무관).
 async function _buildFeedIg(){
   const section=document.getElementById('feed-ig-section'),list=document.getElementById('feed-ig');
   if(!section||!list)return;
@@ -23718,10 +23718,10 @@ async function _buildFeedIg(){
   if(!sb)return;
   try{
     const mag=document.getElementById('feed-igmag');if(mag){mag.innerHTML='';mag.hidden=true;}
-    // 매거진 계정은 팔로워가 많아 '팔로워 순 60곳'을 차지한다 — 목록을 먼저 읽고 그만큼 더 받는다(1행은 _igPhotos가 아이돌 계정만 남김)
+    // 전체 페이지를 받아야 1,000계정 이후도 빠지지 않는다. 매거진은 기존 별도 행 유지.
     const magIdx=await _igMagIndex().catch(()=>new Map());
-    const{data,error}=await sb.from('ig_accounts').select('handle,media').eq('status','ok').order('followers',{ascending:false,nullsFirst:false}).order('handle').range(0,59+_igMagNames.size);
-    const photos=error?[]:_igPhotos(data,3,15);
+    const{data,error}=await _sbSelectAll(()=>sb.from('ig_accounts').select('handle,media').eq('status','ok').order('handle'));
+    const photos=error?[]:_igPhotos((data||[]).filter(r=>!_igMagNames.has(r.handle)),3,15);
     // 2행: 공식 외 계정의 최근 14일 게시물(우리 아이돌이 태그된 것) — 같은 게시물이 여러 핸들에 걸려 있어 주소로 한 번만
     const seen=new Set(),magRecent=[];
     [...magIdx.values()].flat().sort((a,b)=>b.ts-a.ts).forEach(m=>{if(m.ts<Date.now()-14*86400000||seen.has(m.p))return;seen.add(m.p);magRecent.push(m);});

@@ -1,7 +1,10 @@
 # CHANGELOG
 
 ## 2026-10-23 (Codex — 인스타 전체 최신 사진·활동 계정 우선 수집)
-- **[진행중] [index.html] [tools/ig_business_discovery.mjs]** 사용자 승인: 발견 사진 후보를 전체 공식 계정으로 확대, 최근 활동 계정 우선 재갱신+기존/신규 전체 순환 유지. 수집 한도·매거진 출연 태그 기준·사진 전용 노출 유지. 수집 큐를 앞부분부터 섞어 API 한도로 일찍 멈춰도 순환 몫이 남도록 수정 예정.
+- **[완료] [index.html]** 사용자 승인에 따라 발견 인스타의 팔로워 상위 제한 제거, 전체 ok 계정을 handle 순 페이지 조회 후 등록된 공식 주인의 최근 3일 사진을 최신순 15장 노출. 매거진은 별도 행에 유지, 영상 제외·원본 뷰어·기존 카드 크기 유지.
+- **[완료] [tools/ig_business_discovery.mjs] [.github/workflows/ig-stats.yml]** 최근 7일 게시물+4시간 이상 미갱신인 활동 계정 우선 배분. 앞부터 [전체 순환, 활동, 신규, 활동] 반복(기본 25/50/25%), 활동끼리도 오래된 수집부터·회차 내 중복 제외·빈 몫은 다른 대기 계정으로 채움. Invalid user 7일 대기·180개 상한·사용량90% 중단 유지. 실제 처리 배분 로그 추가, 하루 전체 순환 보장이라는 낡은 주석 정정.
+- **[확인] [tools/ig_business_discovery.mjs]** Meta 호출/DB 쓰기 없는 `node --use-system-ca tools/ig_business_discovery.mjs --dry-run` 추가. 실제 DB 기준 대상 1,532·활동 후보342·기존 순환657·신규699·재시도 대기176, 180개 배분 활동90/순환45/신규45. syntax·수집기 문법·diff 검사 통과.
+- **⏳ 덜 된 일 [index.html] [tools/ig_business_discovery.mjs]** 이번 커밋 배포 후 발견 `#feed-ig`가 전체 최신 사진을 노출하는지 확인하고 `gh workflow run ig-stats.yml --ref main -f max=180` 1회 실행해 실제 처리 배분·DB fetched_at 갱신 확인 예정. 2시간 예약의 실제 지연/Meta 한도는 남아 있어 모든 활동 계정 4시간 갱신을 보장하지 않음. 이후 `--dry-run` 및 run 로그의 실제 처리 배분으로 순환/신규 몫이 계속 전진하는지 판단.
 
 ## 2026-10-23 (Codex — 인스타 수집·발견 노출 현황 점검)
 - **[완료] [.github/workflows/ig-stats.yml] [tools/ig_business_discovery.mjs]** 14:20 KST 기준 읽기 조사: 워크플로 active·설정은 2시간마다지만 최근 실행은 10/22 14:04→21:07→10/23 02:21→06:46→09:44 KST로 간격이 벌어짐. 최근 3회 처리 106/146/86개(성공 85/115/69), 모두 사용량 90%에서 중단하고 success 처리. 2시간마다 모든 1,530계정을 갱신하는 구조가 아님.

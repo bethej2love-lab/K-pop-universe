@@ -1,7 +1,9 @@
 name: 인스타 공식 계정 정보 수집 (2시간마다)
 
 # tools/ig_business_discovery.mjs — Business Discovery API로 아이돌 인스타 프로필 사진·팔로워·게시물 수를 DB(ig_accounts·
-# ig_follower_daily)에 쌓는다(2026-10-19). 앱 기준 시간당 약 200회라 회당 180개, 하루 12회면 1,500개가 하루에 한 바퀴.
+# ig_follower_daily)에 쌓는다(2026-10-19). 회당 최대 180개, 실제 API 사용량에 따라 조기 종료한다.
+# 최근 7일 활동 계정(4시간 이상 미갱신) 우선 슬롯 + 기존 전체 순환 + 신규 계정을 앞부분부터 섞는다.
+# 2시간은 예약 간격이며 GitHub 스케줄 지연·API 한도에 따라 전체 계정 갱신에는 더 오래 걸릴 수 있다.
 # 실패(빨간불)는 대개 토큰 만료(60일) — Secrets의 META_IG_TOKEN을 새로 발급해 넣을 것(방법은 CHANGELOG 10-19).
 
 on:
