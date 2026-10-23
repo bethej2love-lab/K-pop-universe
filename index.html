@@ -27851,7 +27851,8 @@ function _makeChVidController(contId){
       if(isFormat&&!state.formatFilter&&tabs.length)state.formatFilter=tabs[0][0];
     }
     renderFilterTabs();
-    // 자컨(Original) 탭 — 공식·개인 채널 영상이 실제로 있을 때만 'All' 바로 뒤에 끼운다
+    // 자컨 탭 — 공식·개인 채널 영상이 실제로 있을 때만 끼운다. 자리는 팬 영상 탭(by 팬덤) 바로 뒤, 팬 탭이 없으면 퍼포먼스 뒤
+    // (2026-10-23 사용자 — 예전엔 '전체' 바로 뒤). 팬 탭이 나중에 들어와도 퍼포먼스 바로 뒤에 끼므로 순서가 퍼포먼스·팬·자컨으로 유지된다.
     // (빈 탭·깜빡임 방지, 2026-09-05). 멤버 카드는 그 멤버 태깅분 + 멤버 미태깅 공식 영상(목록과 같은 범위)으로 확인.
     if(sb){
       let _jq=_applyJaconQuery(sb.from(_YT_TABLE).select('id').limit(1),ko,memberKo,state.histKos,state.unitKey);
@@ -27861,7 +27862,8 @@ function _makeChVidController(contId){
         if(!data?.length)return;
         if(state.ko!==ko||state.memberKo!==(memberKo||null))return;
         if(catTabs.some(([v])=>v==='jacon'))return;
-        catTabs.splice(1,0,['jacon',_catLabel('jacon')]);
+        const _after=catTabs.findIndex(([v])=>v==='fan')>=0?catTabs.findIndex(([v])=>v==='fan'):catTabs.findIndex(([v])=>v==='live');
+        catTabs.splice(_after<0?1:_after+1,0,['jacon',_catLabel('jacon')]);
         renderFilterTabs();
       });
     }

@@ -102,7 +102,8 @@ console.log('\n── Part 3: 오리지널 선반 쇼츠 제외 잠금 ──');
 // 2026-10-21 사용자 결정 뒤집힘: 한국어에선 다른 탭이 다 한글이라 '자컨', 영어는 'Original' — 라벨은 _CAT_LABEL 한 곳
 console.log("\n── Part 4: 카드 자컨 탭 구조 ──");
 (() => {
-  ck(/catTabs\.splice\(1,0,\['jacon',_catLabel\('jacon'\)\]\)/.test(html), "개인채널 영상 있을 때만 자컨 탭 삽입(빈 탭·깜빡임 방지)");
+  // 2026-10-23 사용자: 자리는 팬 탭(by 팬덤) 바로 뒤, 팬 탭이 없으면 퍼포먼스 뒤(예전엔 '전체' 바로 뒤)
+  ck(/catTabs\.splice\(_after<0\?1:_after\+1,0,\['jacon',_catLabel\('jacon'\)\]\)/.test(html) && /v==='fan'\)>=0\?catTabs\.findIndex/.test(html), "개인채널 영상 있을 때만 자컨 탭 삽입(빈 탭·깜빡임 방지) — 팬 탭 뒤");
   ck(!/_jaconTab/.test(html), "옛 _jaconTab(초기 배열 상주) 잔재 없음");
   ck(/jacon:\['자컨','Original'\]/.test(html), "_CAT_LABEL.jacon = 자컨/Original");
 })();
