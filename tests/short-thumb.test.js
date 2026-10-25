@@ -57,12 +57,14 @@ need(uses >= 3, `_mountShortThumb 호출 ${uses}곳(그리드·모아보기·탐
 const helper = fnBody('_mountShortThumb');
 const run = steps => {
   if (!helper) return { img: { src: '', cls: new Set() }, bg: { style: {} }, log: [] };
-  const img = { src: '', naturalWidth: 0, naturalHeight: 0, cls: new Set(), classList: { add: c => img.cls.add(c) } };
+  const img = { src: '', naturalWidth: 0, naturalHeight: 0, cls: new Set(), classList: { add: c => img.cls.add(c) }, dataset: {}, getAttribute: a => (a === 'src' && img.src) || null };
   const bg = { style: {} };
   const log = [];
   vm.runInNewContext(helper + ';_mountShortThumb(img,"VID",{bg,onReady:()=>log.push("ready"),onFail:()=>log.push("fail")});', { img, bg, log, _shortThumbWatch: () => {} });
   for (const st of steps) {
     if (st === 'error') img.onerror && img.onerror();
+    // 화면 밖이라 _shortThumbIO가 src를 뗌 — 사파리는 이때 error를 쏜다
+    else if (st === 'unload') { img.src = ''; img.onerror && img.onerror(); }
     else { [img.naturalWidth, img.naturalHeight] = st; img.onload && img.onload(); }
   }
   return { img, bg, log };
@@ -89,6 +91,15 @@ const run = steps => {
 {
   const r = run([[120, 90], [120, 90], [480, 360]]);
   need(/hqdefault\.jpg$/.test(r.img.src) && r.img.cls.has('is-fallback') && r.log.join() === 'ready', '둘 다 플레이스홀더 → hqdefault 폴백');
+}
+// 2026-10-26: 사파리는 src를 떼면 error를 쏜다 — 그걸 실패로 받아 그림을 지우면 블러 배경만 남아 뿌옇게 굳었다
+{
+  const r = run([[1080, 1920], 'unload']);
+  need(r.log.join() === 'ready', '뜬 뒤 화면 밖에서 src 뗄 때 error → onFail 안 부름(그림 유지)');
+}
+{
+  const r = run([[1080, 1920], 'error']);
+  need(r.log.join() === 'ready', '한 번 뜬 그림은 이후 error로 지우지 않음');
 }
 {
   const r = run(['error', 'error', 'error']);

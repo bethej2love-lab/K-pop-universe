@@ -1,5 +1,22 @@
 # CHANGELOG
 
+## 2026-10-26 (Claude Code — 커버 탭 vogue cover 제외·발견 탭 위쪽 쇼츠 뿌연 썸네일 재발)
+- **[완료] [index.html]** 카드 커버 탭 제외 키워드에 'vogue cover' 추가(`_COVER_EXCLUDE`, 잡지 표지 촬영). 목록·대표영상·탭 노출·재검증이 같은 배열을 써서 한 곳만.
+- **[완료] [index.html] [tests/short-thumb.test.js]** 사용자 캡처(발견 Trend 위쪽 쇼츠만 뿌옇고 아래는 잠깐 뿌옜다 선명). 캡처 속 WAYF 쇼츠(uU8MjA5j2Ns)를 받아 대조 → 보인 건 뒤에 깐 블러 배경(mqdefault 가운데)이고 **앞 그림이 사라진 상태**. 원인 2개: ① `_shortThumbIO`(10-23)는 rootMargin 200%로 "2화면 여유"를 둔 줄 알았지만 rootMargin은 화면에만 붙고 탐험 패널 스크롤 상자는 제 테두리로 자른다(크롬 실측: 상자 밖 100px에서 바로 false) → 스크롤하자마자 src를 뗐다 돌아오면 다시 받느라 잠깐 뿌옜다. ② 그렇게 뗐다 붙일 때(또는 LTE 재다운로드 실패) 나는 error를 `_mountShortThumb`가 실패로 받아 onFail이 img를 지움 → 블러 배경만 남아 굳음(먼저 뜬 위쪽 카드가 여러 번 뗐다 붙어 주로 당함). 수정: 한 번 뜬 그림(`data-thumb-ok`)은 error로 안 지움 + 감시 root를 가장 가까운 스크롤 상자로(`_shortThumbRoot`/`_shortThumbIOFor`). 헤드리스 390px 발견 탭 1,200px 스크롤: 이전 12장 떼임 → 0장, 멀리 가면 떼고 돌아오면 붙음, 앞 그림 없는 쇼츠 카드 0. 테스트에 "뜬 뒤 src 뗄 때 error → onFail 안 부름" 추가(옛 코드에서 실패 확인).
+- **⏳ 덜 된 일** 아이폰에서 발견 탭 위쪽 쇼츠 확인(사파리가 src 제거 때 error를 쏘는지는 WebKit 설치가 회사망에서 막혀 직접 확인 못 함 — ①만으로도 잠깐 뿌연 건 설명됨). 또 재발하면 `.feed-card.is-short .feed-card-thumb-wrap` 안에 img.feed-card-thumb가 남아 있는지부터(없으면 onFail 경로, 있으면 디코드/메모리).
+
+## 2026-10-26 (Codex — TWINKLEsh Subteam 업로드 제외 SQL)
+- **[완료·읽기 확인] [DB: yt_channel_videos/ext_channels]** YouTube oEmbed의 영상 ygFIeiE6JfU로 채널명 TWINKLEsh Subteam·핸들 twinklesh.eom0113 대조. 해당 source_handle 영상9개 모두 이미 무관/manual(10/23 16:26 KST 처리), ext_channels 등록0개 확인. 이번 세션 DB 쓰기 없음. 출처 없는 영상까지 해당 채널이라고 추정하지 않음.
+- **[완료] [sql/twinklesh_subteam_exclude_2026-10-26.sql] [sql/twinklesh_subteam_exclude_2026-10-26_undo.sql]** 사용자 요청으로 미적용 SQL 작성: 정확한 source_handle 일치만 대상으로 실행 전 목록/수량 확인→실제 변경분 관리자 전용 백업→무관/manual 지정→결과 확인. 이미 처리된 행은 변경0, 카테고리·출연 태그·영상 행 삭제 없음. 복구 SQL은 이 SQL의 최근 변경 배치만, 이후 별도 수정이 없는 행만 복구. 앱 코드·Claude Code 작업 파일은 수정하지 않음.
+- **⏳ 덜 된 일 [TWINKLEsh 제외]** 현재9개는 이미 제외됐으므로 추가 실행 불필요. 추가 누락이 의심되면 적용 SQL 첫 SELECT의 대상/needs_update와 실제 업로드 원본 출처를 대조한 뒤 실행 여부 판단. source_handle 없는 누락은 검증한 영상ID 목록이 필요하며 제목 키워드로 확대 금지. 기존 화면/캐시에서 보이는지 여부는 이번 DB 조회와 별도 확인 대상.
+
+## 2026-10-26 (Codex — 실사용 지표 개선 방향·코드 변경 보류)
+- **[완료·사용자 지침] [CHANGELOG.md]** Claude Code가 코드 작업 중이므로 Codex는 코드·설정·DB를 변경하지 않는다. 방향 검토만 한 경우에도 매번 CHANGELOG에는 판단·미결 과제를 남긴다(사용자 명시 요청). 이번 변경은 이 문서만.
+- **[검토] [index.html] [admin.js] [sql/2026-10-13_app_events_metrics.sql]** 기존 GA4+app_events 계측/관리자 지표는 존재. 10/23 관리자 화면 집계는 당시 최근7일 값이며 10/26 최신 실측으로 취급하지 않음. GA보다 큰 집계를 테스트 오염만으로 확정하지 말고 같은 기간·집계 단위·차단/누락 차이를 먼저 대조. 기기/익명 계정 수를 실제 사람 수로 단정하지 않는다.
+- **[권장 방향·미구현] [index.html] [sql/2026-10-13_app_events_metrics.sql]** ①운영 지표에서 로컬/자동화 테스트 제외, 관리자 로그인 전 내부 테스트도 구분하고 일반/내부/자동화 출처 분리 ②마지막 이벤트 후4초 전송의 종료 시 누락·실패 재시도·중복 방지 보완 ③카드→영상 열기→실제 시청→관계 추천 이동→최애/좋아요/컬렉션 저장→다른 날 재방문을 분모·분자와 함께 집계. 영상창 열기(video_play)를 실제 재생/시청 완료로 해석하지 말 것. 실제 시청 시간 문턱·세션 정의는 구현 전 확정 필요.
+- **[판단] [실사용 지표]** 과거 app_events는 출처/테스트 표식이 부족해 정확한 소급 분리가 어려움. 의심 기록을 임의 삭제하지 않고 새 계측 적용일부터 별도 기준선을 만들어1~2주 관측하는 방향 권장. 신규 첫날 저장 전환율0%를 전체 이용자 저장0건으로, 방문일당 카드/영상 중앙값을 평균 세션 깊이로 해석하지 않는다. 일반 출처도 실사람임을 보장하지 않음.
+- **⏳ 덜 된 일 [index.html] [admin.js] [sql/2026-10-13_app_events_metrics.sql]** 코드 작업 종료·구현 범위 합의 후 `rg -a -n "_gaEvent|_appEvent|_appEvFlush|_appVisit|_kpuNewVisitor" index.html`, `rg -n "_admLoadUserMetrics" admin.js` 및 SQL RPC를 대조. 현재 관리자 홈 최근7일 수치와 GA의 동일 기간 값을 다시 읽고, 테스트 유입 차단/종료 직전 전송/짧은 방문/로그인 전환/재방문이 정의대로 집계되는지 확인한 뒤 새 기준선 시작일 기록. 현재는 방향 기록만 승인됐으며 계측 구현·데이터 삭제는 진행하지 않음.
+
 ## 2026-10-23 (Codex — 그룹 카드 좋아요 줄 위치)
 - **[완료] [index.html] [kpop_universe.css]** 그룹 상태 줄(`#gc-status-line`, 좋아요 수/시청자/흔적 교차 표시)을 사진 옆 `#gc-header-text`에서 빼 `#gc-header` 바로 아래 독립 행으로 이동. 멤버 상태 줄과 위아래 여백·왼쪽 안쪽 여백 공유, 모바일 기존 왼쪽6px 보정·컬러바 순서 유지. 집계/교차 표시 로직은 그대로. syntax·diff 검사 통과.
 - **[완료·화면 확인] [index.html] [kpop_universe.css]** Pages39908977686 성공. 실제 코르티스 카드 웹857px: 상태 줄 부모gc-inner·헤더 아래10px·사진 영역 왼쪽 정렬(기존 사진 옆72px 들여쓰기 제거). 모바일390px 재로딩 후 mob-sheet-inner에서도 독립 행·왼쪽 정렬·컬러바/대표 영상 위 순서 확인, 좋아요103/흔적 교차 표시 정상.

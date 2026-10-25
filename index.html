@@ -6298,11 +6298,15 @@ function _mountShortThumb(img,id,opts){
   };
   img.onload=()=>{
     if(isOar()&&img.naturalWidth===120&&img.naturalHeight===90){fallback();return;}
-    setBg();
+    setBg();img.dataset.thumbOk='1';
     _shortThumbWatch(img);
     if(o.onReady)o.onReady(img);
   };
   img.onerror=()=>{
+    // 한 번 뜬 그림은 이후 error로 지우지 않는다(2026-10-26 사용자 "발견 탭 위쪽 쇼츠만 뿌옇다" 재발). 아래 감시가 화면 밖
+    // 그림의 src를 뗐다 붙이는데, 그때(또는 LTE에서 다시 받다 실패할 때) 나는 error를 실패로 받아 onFail이 그림을 지우면
+    // 뒤의 블러 배경(mqdefault)만 남아 뿌연 채로 굳는다 — 캡처 속 WAYF 쇼츠가 정확히 mqdefault 가운데를 블러한 모양이었다.
+    if(!img.getAttribute('src')||img.dataset.thumbOk)return;
     if(isOar()){fallback();return;}
     img.onerror=null;img.onload=null;
     if(o.onFail)o.onFail(img);
@@ -6311,14 +6315,33 @@ function _mountShortThumb(img,id,opts){
 }
 // 화면에서 멀리(위아래 2화면 밖) 벗어난 세로 원본은 src를 잠시 떼고, 다시 다가오면 붙인다 — 큰 그림이 한꺼번에 수십 장
 // 풀려 있지 않게(위 setBg 주석과 같은 아이폰 메모리 문제). 다시 붙일 땐 이미 확정된 주소라 폴백 단계를 다시 타지 않는다.
-const _shortThumbIO=typeof IntersectionObserver==='function'?new IntersectionObserver(es=>es.forEach(e=>{
-  const im=e.target;
-  // 떼어진 카드(다시 붙을 수도 있음)는 주소를 돌려놓고 감시 해제 — 빈 그림으로 다시 붙는 일 없게
-  if(!im.isConnected){_shortThumbIO.unobserve(im);delete im.dataset.keepWatch;if(!im.getAttribute('src')&&im.dataset.keepSrc)im.src=im.dataset.keepSrc;return;}
-  if(e.isIntersecting){if(!im.getAttribute('src')&&im.dataset.keepSrc)im.src=im.dataset.keepSrc;}
-  else if(im.getAttribute('src')&&im.isConnected){im.dataset.keepSrc=im.src;im.removeAttribute('src');}
-}),{rootMargin:'200% 100%'}):null;
-function _shortThumbWatch(img){if(_shortThumbIO&&!img.dataset.keepWatch){img.dataset.keepWatch='1';_shortThumbIO.observe(img);}}
+// ⚠️ 감시 기준(root)은 그림을 담은 **가장 가까운 스크롤 상자**다(2026-10-26). 예전엔 화면(root 없음)+rootMargin 200%였는데,
+//    rootMargin은 화면에만 붙고 탐험 패널 같은 스크롤 상자는 제 테두리로 그대로 자른다(크롬 실측: 상자 밖으로 100px 나가자마자
+//    isIntersecting=false). 그래서 "2화면 여유"가 없이 스크롤하자마자 떼였다가 돌아오면 다시 받느라 잠깐씩 뿌옜다.
+const _shortThumbIOs=new Map();
+function _shortThumbRoot(img){
+  for(let el=img.parentElement;el&&el!==document.body&&el!==document.documentElement;el=el.parentElement){
+    const cs=getComputedStyle(el);
+    if(/(auto|scroll)/.test(cs.overflowY+' '+cs.overflowX))return el;
+  }
+  return null;
+}
+function _shortThumbIOFor(root){
+  if(_shortThumbIOs.has(root))return _shortThumbIOs.get(root);
+  const io=new IntersectionObserver(es=>es.forEach(e=>{
+    const im=e.target;
+    // 떼어진 카드(다시 붙을 수도 있음)는 주소를 돌려놓고 감시 해제 — 빈 그림으로 다시 붙는 일 없게
+    if(!im.isConnected){io.unobserve(im);delete im.dataset.keepWatch;if(!im.getAttribute('src')&&im.dataset.keepSrc)im.src=im.dataset.keepSrc;return;}
+    if(e.isIntersecting){if(!im.getAttribute('src')&&im.dataset.keepSrc)im.src=im.dataset.keepSrc;}
+    else if(im.getAttribute('src')&&im.isConnected){im.dataset.keepSrc=im.src;im.removeAttribute('src');}
+  }),{root,rootMargin:'200% 100%'});
+  _shortThumbIOs.set(root,io);
+  return io;
+}
+function _shortThumbWatch(img){
+  if(typeof IntersectionObserver!=='function'||img.dataset.keepWatch||!img.isConnected)return;
+  img.dataset.keepWatch='1';_shortThumbIOFor(_shortThumbRoot(img)).observe(img);
+}
 function isMob(){return window.innerWidth<=768;}
 // 유튜브 API로 동기화된 일부 영상(주로 인스타 릴스 크로스포스트) 제목엔 실제 줄바꿈 문자가 들어있어서,
 // 한 줄 말줄임(white-space:nowrap)이 안 먹고 제목 영역이 여러 줄로 확 커져 보이는 문제가 있었음 — 표시 직전에 제거.
@@ -6412,7 +6435,9 @@ const _COVER_EXCLUDE=['be original','original ver','cover story','커버 촬영'
   '메시지','인사',
   // 2026-09-02 사용자 요청 — '커버 스토리'(띄어쓰기, 잡지 화보. 붙여쓴 '커버스토리'는 위에 이미 있음),
   // 'covering'(노래 커버가 아닌 촬영/기사 맥락). 노래 커버 탭에서 뺀다.
-  '커버 스토리','covering'];
+  '커버 스토리','covering',
+  // 2026-10-26 사용자 요청 — 보그 잡지 표지 촬영. 노래 커버 아님.
+  'vogue cover'];
 function _applyCoverExcludeQuery(q){
   // 제목 키워드(cover/커버/원곡/original)나 content_formats='cover'뿐 아니라, 원곡을 명시적으로 태깅한 행
   // (cover_of_groups/cover_of_members 비어있지 않음)도 커버로 인정 — 제목에 '커버/원곡' 단어가 없어도
