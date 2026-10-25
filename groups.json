@@ -115090,6 +115090,29 @@
   },
   "discography": [
    {
+    "title": "신인감독 김연경 2 OST",
+    "type": "OST",
+    "isMain": false,
+    "cover": "https://cdnimg.melon.co.kr/cm2/album/images/150/69/791/15069791_20261022153934_500.jpg",
+    "releaseDate": "2026.10.25",
+    "trackCount": 2,
+    "titleTrack": "FLY HIGH",
+    "tracks": [
+     {
+      "no": 1,
+      "title": "FLY HIGH",
+      "isTitle": true
+     },
+     {
+      "no": 2,
+      "title": "FLY HIGH (Inst.)",
+      "isTitle": false
+     }
+    ],
+    "src": "melon",
+    "melonAlbumId": "15069791"
+   },
+   {
     "title": "일기예보",
     "type": "싱글",
     "isMain": true,
