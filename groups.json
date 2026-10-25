@@ -53951,6 +53951,24 @@
   },
   "discography": [
    {
+    "title": "Insomnia",
+    "type": "싱글",
+    "isMain": true,
+    "cover": "https://cdnimg.melon.co.kr/cm2/album/images/150/74/721/15074721_20261023150339_500.jpg",
+    "releaseDate": "2026.10.26",
+    "trackCount": 1,
+    "titleTrack": "Insomnia",
+    "tracks": [
+     {
+      "no": 1,
+      "title": "Insomnia",
+      "isTitle": true
+     }
+    ],
+    "src": "melon",
+    "melonAlbumId": "15074721"
+   },
+   {
     "title": "Sunburst",
     "type": "싱글",
     "isMain": true,
