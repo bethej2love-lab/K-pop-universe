@@ -1,14 +1,13 @@
 -- 감사6차 SQL이 실제 변경한 행만 복구. 관리자 역할로 파일 전체 실행.
 -- 적용 이후 태그/제목/제외 상태가 바뀐 행이 있으면 전체 중단(후속 수정 덮어쓰기 방지).
 -- 백업에 없던 기존 정정 행은 복구하지 않음. 반복 실행은 변경0.
-BEGIN;
-SET LOCAL lock_timeout = '5s';
-SET LOCAL statement_timeout = '30s';
 DO $undo$
 DECLARE
   b record; current_state jsonb; actual_state jsonb;
   desired public.yt_channel_videos%ROWTYPE; n_restored integer := 0;
 BEGIN
+  PERFORM set_config('lock_timeout','5s',true);
+  PERFORM set_config('statement_timeout','30s',true);
   FOR b IN SELECT * FROM public.ops_codex_audit6_backup_20261026 WHERE undone_at IS NULL ORDER BY video_id FOR UPDATE LOOP
     SELECT to_jsonb(v) INTO current_state FROM public.yt_channel_videos v WHERE v.id=b.video_id FOR UPDATE;
     IF NOT FOUND THEN RAISE EXCEPTION 'Missing video; cannot restore: %',b.video_id; END IF;
@@ -44,4 +43,3 @@ $undo$;
 SELECT count(*) FILTER (WHERE undone_at IS NULL) AS not_restored,
        count(*) FILTER (WHERE undone_at IS NOT NULL) AS restored
 FROM public.ops_codex_audit6_backup_20261026;
-COMMIT;
