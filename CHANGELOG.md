@@ -2,6 +2,12 @@
 
 
 
+## 2026-10-27 (Codex — 넥스지 공식 영문명·검색/태깅 재발 방지)
+- **[진행중] [artists.json] [artists.slim.json]** 공식 JYP `https://nexz.jype.com/profile` 대조: 유우 Yuu→YU, 소건 So Ken→SO GEON, 휴이 Hui→HYUI 필요. 현재 _m2NameVariants는 각각 잘못된 영문명만 반환. 배포 사이트 모바일 폭390×844에서 HYUI 검색 시 휴이의 공식 영문 일치 결과 없이 Hui(펜타곤)가 첫째·Hui(넥스지)가 둘째로 노출됨(오타 보정 후보). 영어 제목 개인커버 멤버 누락3건의 상류 재발 방지와 공식 영문 검색 정확도를 위해 이3필드와 파생물만 정정 예정. 앱 JS 로직 변경 없음. 실기기 검증 아님.
+- **[완료·최신화]** main `3115f7f0`까지4개 자동 신보 수집 커밋을 merge. 최신 main 코드의 _m2ParseTitle로 후이 후보10개 모두 펜타곤/후이를 반환함(weak9·ambiguous1); 이10건 자체는 저장된 예전 오태깅으로 판단하며 광범위 매처 규칙 변경 불필요. validate-data 재검증 오류0·경고144.
+- **⏳ 덜 된 일:** 영문명 정정 전후 실제 제목 매처 비교, matching 전체·syntax·validate-data·파생물 검사. headless smoke 실행 환경 제약이 남으면 main에 배포하지 않고 PR #40에 리뷰 가능한 상태로 push. 운영 DB 정정20건은 이미 반영·백업·공개 API 대조 완료.
+
+
 ## 2026-10-26 (Codex — 콘텐츠 감사9차·후이/휴이 식별)
 - **[완료·10건 운영 반영] [yt_channel_videos]** 배포 사이트 휴이 검색 결과에서 펜타곤 후이의 흠뻑 라이브가 넥스지로 노출되는 것 발견. 넥스지 primary 중 후이/HUI 후보를 묶어 조회해10건 확인: `gc4mENAhkgc,GVWL1-wFZmA,gw8Xx72BPiE,KyGcMaBVnPY,N6iwF1UA30w,OC9ELUq4rls,pmj2BbrzwuA,uyNt5IRdXaw,Y6AS0P_Jvow,yvIy-3c6zvE`. 10개 원본 YouTube watch videoDetails 제목·업로더·설명을 각각 대조(전체 시청 아님), 전부 후이(HUI) 솔로 무대/직캠/인터뷰. ALL THE K-POP·1theK Originals·it's Live·Mnet K-POP·M2 공식 업로드. 1theK 설명 #PENTAGON도 확인. 넥스지 휴이(HYUI)와 다른 인물. TAGGING.md 실존 그룹 멤버 규칙으로 primary 펜타곤/members 후이로 정정. 원곡·category·기타 필드 보존.
 - **[완료·로컬 검증/운영 백업·반영] [sql/codex_audit9_fix_2026-10-26.sql] [sql/codex_audit9_verify_2026-10-26.sql] [sql/codex_audit9_undo_2026-10-26.sql]** 앞선 것과 같은 PGlite+운영 보호 트리거 검증 전부 통과(10건 적용/백업/재실행/복구 및 후속 수정·누락·잠금 가드). 배치 `codex-audit9-20261026-hui-identity-10`. 수동 태그 변경 없음 확인 후 현재 상태 가드로 실행. 운영 verify `target_count=10,not_correct=0,backed_up=10`, 공개 anon REST GET도10건 전 필드 목표값 일치(mismatches0).
