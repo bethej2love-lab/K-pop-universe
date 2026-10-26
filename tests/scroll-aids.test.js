@@ -24,7 +24,13 @@ async function shot(c,name){const r=await c.send('Page.captureScreenshot',{forma
   if(!BROWSER){console.log("⏭️  브라우저를 못 찾음 — 스킵");process.exit(0);}
   server.listen(PORT);
   const prof=fs.mkdtempSync(path.join(os.tmpdir(),'kpu-vui-'));
-  const proc=spawn(BROWSER,['--headless=new','--no-sandbox',`--remote-debugging-port=${CDP_PORT}`,`--user-data-dir=${prof}`,'--no-first-run','--disable-gpu','--window-size=390,844','about:blank'],{stdio:'ignore'});
+  // Linux 헤드리스는 기본 포인터가 none일 수 있다. Playwright와 같은 마우스 입력 기본값을 주고,
+  // 모바일 구간은 아래 touch emulation으로 전환한다. CSS 미디어 feature에 pointer를 넣는 것만으로는
+  // 실제 입력 장치가 바뀌지 않는다. 애니메이션도 백그라운드 렌더러 절전에 묶이지 않게 한다.
+  const proc=spawn(BROWSER,['--headless=new','--no-sandbox',`--remote-debugging-port=${CDP_PORT}`,`--user-data-dir=${prof}`,'--no-first-run','--disable-gpu',
+    '--blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4',
+    '--disable-background-timer-throttling','--disable-renderer-backgrounding','--disable-backgrounding-occluded-windows',
+    '--window-size=390,844','about:blank'],{stdio:'ignore'});
   try{
     await waitCdp();
     const{webSocketDebuggerUrl}=await (await fetch(`http://127.0.0.1:${CDP_PORT}/json/new?about:blank`,{method:'PUT'})).json();
@@ -117,8 +123,10 @@ if(rail.on)ok(`스크롤하자 막대 표시(손잡이 ${rail.thumb.h.toFixed(0)
       await shot(c,'v_album_totop.png');
       const sw=await ev(c,`(()=>{const p=document.getElementById('gc-discog-video-panel');return p.offsetWidth-p.clientWidth;})()`);
       if(sw>=8)ok(`데스크톱 스크롤바 표시(폭 ${sw}px, 끌 수 있음)`);else bad(`데스크톱 스크롤바 폭 ${sw}px `+JSON.stringify(await ev(c,`(()=>{const p=document.getElementById('gc-discog-video-panel'),s=getComputedStyle(p);return {standard:s.scrollbarWidth,pseudo:getComputedStyle(p,'::-webkit-scrollbar').width,border:s.borderLeftWidth};})()`)));
-      await ev(c,`(document.getElementById('gc-totop').click(),1)`);await sleep(600);
-      const top0=await ev(c,`document.getElementById('gc-discog-video-panel').scrollTop`);
+      await ev(c,`(document.getElementById('gc-totop').click(),1)`);
+      // 완료 조건은 그대로 맨 위(<2px). 느린 CI의 rAF가 600ms 안에 끝난다고 가정하지 않는다.
+      let top0;const topDeadline=Date.now()+3000;
+      do{await sleep(100);top0=await ev(c,`document.getElementById('gc-discog-video-panel').scrollTop`);}while(top0>=2&&Date.now()<topDeadline);
       if(top0<2)ok('버튼 누르면 패널 맨 위로');else bad('맨 위로 안 감 '+top0+' '+JSON.stringify(await ev(c,`({target:_totopScrollTarget?.id,visibility:document.visibilityState,button:getComputedStyle(_totopBtn).display})`)));
       await ev(c,`(()=>{const p=document.getElementById('gc-discog-video-panel');p.scrollTop=600;p.dispatchEvent(new Event('scroll'));})()`);await sleep(300);
       await ev(c,`(_closeGcDiscogDetail(),1)`);await sleep(900);
