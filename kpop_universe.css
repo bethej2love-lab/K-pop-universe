@@ -4463,7 +4463,9 @@
     /* 전체 열림(non-peek): 오버레이 바닥을 --sheet-bottom에 물려서 카드 시트처럼 탭바 숨을 때 같이 확장.
        padding-bottom도 맞춰 줄여 빈칸 없이 / safe-area는 오버레이가 덮지 않는 구간이므로 env()로 보정. */
     #feed-overlay.open:not(.peek){bottom:var(--sheet-bottom,73px);}
-    #feed-overlay.open:not(.peek) #feed-body{padding-bottom:calc(env(safe-area-inset-bottom,0px) + 8px);}
+    /* ⚠️ 안전영역(env)을 더하지 않는다(2026-10-26 사용자 "탐험 패널도 탭바 위로 여백") — 패널 바닥이 이미 탭바 윗변(--sheet-bottom)이라
+       아래 안전영역은 탭바가 품고 있다. 더하면 아이폰에서 34+8=42px 빈 띠(웹앱 흉내 헤드리스 실측 41px). */
+    #feed-overlay.open:not(.peek) #feed-body{padding-bottom:8px;}
     /* 완전 불투명(2026-10-15, 사용자 — 우주가 비침). 10-09 스크롤 성능 때문에 #feed-body 블러를 빼면서 0.88만 남아
        별이 또렷하게 비쳤다. 0.97로도 행성이 희미하게 남았고, 손잡이 줄(#feed-overlay 자체)은 배경이 없어 그대로 보였다.
        블러는 계속 빼고(성능) 패널 바탕·헤더·본문을 같은 불투명 색으로. */
