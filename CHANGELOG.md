@@ -2,11 +2,12 @@
 
 ## 2026-10-27 (Codex — PR40 인수인계·배포 전 검사 보완)
 - **[완료·수정/로컬 검증] [PR #40] [tests/scroll-aids.test.js] [tests/smoke.test.js] [tests/seo-url.test.js] [정적 페이지]** 사용자 코드 수정 포함 이어받기 승인. 기존 codex/audit7-20261026 브랜치에 최신 main 8b0842196a 병합. 영문명 변경 후 정적 경로3개 누락과 CI 스크롤 검사 환경을 보완. 앱 JS/CSS·빌더 소스 변경 없음, 운영 DB20건 재적용 없음. PR 설명은 영문명·공유 주소·검사 보완·운영 기록을 포함하도록 갱신.
-- **[완료·로컬 검증] [tests/scroll-aids.test.js] [tests/smoke.test.js]** Windows scroll-aids17/17 통과, Linux CI 진단에서 pointer fine/coarse/hover 모두false·스크롤바 pseudo2px 확인. Playwright와 같은 headless 마우스 기본 설정/백그라운드 절전 방지 플래그를 시험 브라우저에만 적용하고 PC 애니메이션 완료를 최대3초 폴링(최종 <2px 기준 유지). 수정 후 로컬17/17, Linux CI 재확인 중. smoke는 For You만 연 채 발견 차트를 검사한 낡은 경로 수정→실제 발견 탭 선택 후 PC/모바일 로딩·차트2개·콘솔 오류0 통과. 앱 JS/CSS 변경 불필요.
+- **[완료·로컬/CI 검증] [tests/scroll-aids.test.js] [tests/smoke.test.js]** Windows scroll-aids17/17 통과, Linux CI 진단에서 pointer fine/coarse/hover 모두false·스크롤바 pseudo2px 확인. Playwright와 같은 headless 마우스 기본 설정/백그라운드 절전 방지 플래그를 시험 브라우저에만 적용하고 PC 애니메이션 완료와 닫기 후 숨김 감시를 최대3초 폴링(최종 <2px·실제 숨김 기준 유지). 최종 로컬17/17 및 Linux 전체 CI40422185629 통과. smoke는 For You만 연 채 발견 차트를 검사한 낡은 경로 수정→실제 발견 탭 선택 후 PC/모바일 로딩·차트2개·콘솔 오류0 통과. 앱 JS/CSS 변경 불필요.
 - **[완료·페이지/옛 링크] [en/g/nexz/] [g/넥스지/] [sitemap.xml] [tests/seo-url.test.js]** 정식 빌더의 그룹·멤버 생성 단계로 새 yu/so-geon/hyui3개 및 관련 프로필/그룹 링크 재생성. 불필요한 전체 관계 재수집 단계는 이 작업 PID만 확인해 중단, 다른 생성물 변경은 원복해 관련11개만 반영. 옛 yuu/so-ken/hui 주소는 canonical/noindex/즉시 새 주소 연결로 보존. sitemap도 해당3개 URL만 정정. 현재 주소4340개+옛 주소3개 회귀4343/4343 통과. 데이터 변경 삭제줄 재확인: 기존3개 name.en 정정만.
 - **[완료·DB 재확인/쓰기 없음] [sql/codex_audit7_verify_2026-10-26.sql] [sql/codex_audit8_verify_2026-10-26.sql] [sql/codex_audit9_verify_2026-10-26.sql]** 연결된 Supabase SELECT로 각각7/0/7·3/0/3·10/0/10 재확인(대상/불일치/백업). 정정20건 정상, 재실행 안 함. validate-data 오류0·경고144, matching224/224, slim --check 일치.
 - **[완료·추가 검증] [정적 링크]** static-links8/8: 내부 링크369,777개 깨짐0·관계 페이지106개 허브 연결 정상. 생성기 출력의 새3개 페이지 후행 공백만 정리, 캐시 버전 수동 변경 없음. 최종 Linux CI 결과는 PR40 check 참조(로컬 통과를 CI 통과로 대신하지 않음).
-- **⏳ 덜 된 일 [배포/추가 감사]** `gh pr checks 40 --repo bethej2love-lab/K-pop-universe` 최종 revision 통과 후 main 반영하고 공개 배포의 YU/SO GEON/HYUI 검색·새/옛 영문 주소 재확인. iOS/Android 실기기 확인과 보류영상4개 본편 크레딧 검증은 별도(이전 감사7차 항목). 기존 정정 SQL 재실행 불필요.
+- **[완료·main/공개 배포] [PR #40]** 최종 head d64f354692의 전체 CI40422185629 통과 후 PR40 병합(main1994576cd7). Pages40422793337 배포 성공. 공개 GET으로 새 yu/so-geon/hyui3주소 HTTP200·canonical/표기 일치, 옛 yuu/so-ken/hui3주소 HTTP200·새 주소 연결 확인. 배포 artists.slim.json도 a1101/a1103/a1105의 YU/SO GEON/HYUI 확인. 검색 UI는 집 노트북 모바일 폭 검수와 이번 matching224/224 근거이며 배포 후 실제 클릭 재검수로 과장하지 않음.
+- **⏳ 덜 된 일 [추가 감사]** iOS/Android 실기기 확인과 보류영상4개 본편 크레딧 검증은 별도(이전 감사7차 항목). 다음 감사에서 공개 사이트의 영어 검색3개·카드 커버를 직접 클릭해 이어서 확인. 기존 정정 SQL20건 재실행 불필요. 필요 시 sql/codex_audit7/8/9_verify_2026-10-26.sql의 SELECT만 실행해 불일치0·백업7/3/10 확인.
 
 
 
