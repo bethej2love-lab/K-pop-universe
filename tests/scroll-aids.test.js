@@ -103,6 +103,7 @@ if(rail.on)ok(`스크롤하자 막대 표시(손잡이 ${rail.thumb.h.toFixed(0)
     await c.send('Emulation.setDeviceMetricsOverride',{width:1440,height:900,deviceScaleFactor:1,mobile:false});
     await c.send('Page.navigate',{url:`http://127.0.0.1:${PORT}/index.html`});await sleep(8000);
     ok('데스크톱 앱 로드');
+    console.log('  데스크톱 입력/화면 조건 '+JSON.stringify(await ev(c,`({fine:matchMedia('(pointer:fine)').matches,coarse:matchMedia('(pointer:coarse)').matches,hover:matchMedia('(hover:hover)').matches,touch:navigator.maxTouchPoints,visibility:document.visibilityState})`)));
     await ev(c,`(showGC('아이브',innerWidth/2,innerHeight*0.4),1)`);await sleep(3500);
     const alb=await ev(c,`(async()=>{await _ensureGroupDisco('아이브');const L=GROUPS['아이브'].discography||[];const i=L.findIndex(a=>(a.tracks||[]).length>=3);_gcDiscogList=L;_openGcDiscogDetail(L[i],i);return L[i]&&L[i].title;})()`);
     await sleep(5000);
@@ -115,10 +116,10 @@ if(rail.on)ok(`스크롤하자 막대 표시(손잡이 ${rail.thumb.h.toFixed(0)
       if(tb.d==='flex'&&inside)ok(`앨범 영상 패널(${alb}, 영상 ${vp.n}개) 스크롤 → 맨 위로 버튼이 패널 안 오른쪽 아래에`);else bad(`앨범 패널 버튼 ${JSON.stringify(tb)} 패널 ${JSON.stringify(vp.r)}`);
       await shot(c,'v_album_totop.png');
       const sw=await ev(c,`(()=>{const p=document.getElementById('gc-discog-video-panel');return p.offsetWidth-p.clientWidth;})()`);
-      if(sw>=8)ok(`데스크톱 스크롤바 표시(폭 ${sw}px, 끌 수 있음)`);else bad(`데스크톱 스크롤바 폭 ${sw}px`);
+      if(sw>=8)ok(`데스크톱 스크롤바 표시(폭 ${sw}px, 끌 수 있음)`);else bad(`데스크톱 스크롤바 폭 ${sw}px `+JSON.stringify(await ev(c,`(()=>{const p=document.getElementById('gc-discog-video-panel'),s=getComputedStyle(p);return {standard:s.scrollbarWidth,pseudo:getComputedStyle(p,'::-webkit-scrollbar').width,border:s.borderLeftWidth};})()`)));
       await ev(c,`(document.getElementById('gc-totop').click(),1)`);await sleep(600);
       const top0=await ev(c,`document.getElementById('gc-discog-video-panel').scrollTop`);
-      if(top0<2)ok('버튼 누르면 패널 맨 위로');else bad('맨 위로 안 감 '+top0);
+      if(top0<2)ok('버튼 누르면 패널 맨 위로');else bad('맨 위로 안 감 '+top0+' '+JSON.stringify(await ev(c,`({target:_totopScrollTarget?.id,visibility:document.visibilityState,button:getComputedStyle(_totopBtn).display})`)));
       await ev(c,`(()=>{const p=document.getElementById('gc-discog-video-panel');p.scrollTop=600;p.dispatchEvent(new Event('scroll'));})()`);await sleep(300);
       await ev(c,`(_closeGcDiscogDetail(),1)`);await sleep(900);
       const d2=await ev(c,`getComputedStyle(document.getElementById('gc-totop')).display`);
