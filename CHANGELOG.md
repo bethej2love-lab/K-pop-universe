@@ -1,5 +1,12 @@
 # CHANGELOG
 
+
+## 2026-10-26 (Codex — 콘텐츠 감사8차·넥스지 개인커버)
+- **[진행중·원본 대조/SQL 검증 완료] [yt_channel_videos]** 앞선 감사4차 미해결 후보3건의 현재 DB를 재조회. `ej4VlE2AioM` YU yours, `jLy2xHJ8OiU` SO GEON 좋아해.., `IegsJ5mWaww` HYUI Flower는 NEXZ 공식 제목·설명에서 개인 커버로 확인(전체 영상 시청 아님). JYP 공식 `https://nexz.jype.com/profile`의 YU=유우·SO GEON=소 건·HYUI=휴이를 artists.json 표준명 유우/소건/휴이와 대조. 빈 members를 각 개인으로 보완해 다른 넥스지 멤버 카드로 단체 영상처럼 확대되는 것을 방지. 원곡 메타데이터·cover_manual은 원상 보존.
+- **[완료·로컬 검증/운영 적용 대기] [sql/codex_audit8_fix_2026-10-26.sql] [sql/codex_audit8_verify_2026-10-26.sql] [sql/codex_audit8_undo_2026-10-26.sql]** PGlite+운영 보호 트리거 정의로 적용3·필드대조·타컬럼 보존·백업3·재적용 중복0·복구/재복구·후속 수정/원본 변경/누락/새 수동잠금 시 전체 중단 통과. 전용 batch `codex-audit8-20261026-nexz-members-3`. 적용 전 현재 상태 가드 유지, 적용 후 verify 3/0/3 및 공개 API 대조 예정.
+- **[완료·감사7차 공개 경로]** 감사7차 운영 정정7건은 공개 anon REST GET으로도 7건 전 필드 목표값 일치 확인(mismatches0). 운영 SQL 검증과 공개 API 검증을 모두 통과. 실제 카드 노출 검수는 별도 진행.
+
+
 ## 2026-10-26 (Codex — 집 노트북 콘텐츠 감사7차·원곡/출연자 정정)
 - **[완료·7건 운영 반영] [콘텐츠 감사]** 회사 Codex 최신 인수인계(`76db61d9`)를 이어받음. 사용자: 처음 검수/기록만 요청했다가 원본으로 확정 가능한 오류의 소량 정정과 즉시 GitHub push까지 승인. 앱 코드·매처·JSON은 이번 작업 범위 아님. DB/문서/정정·검증·복구 SQL만 다룸. 기존 감사6차26건은 read-only verify로 `target_count=26,not_correct=0,manually_excluded=10` 재확인.
 - **[완료·원본 대조/운영 반영] [sql/codex_audit7_fix_2026-10-26.sql]** 공식 YouTube watch 페이지의 `videoDetails` 제목·업로더·설명을11개 수집/대조(전체 영상 시청 아님). 그중 출연자/원곡 명확한7건: `l_B_8UC60zI` ONEUS 서호 Epiphany, `0TwOk9EeJSY` 드림노트 보니 상남자, `47ci_on2iLY` 체리블렛 MIC Drop, `zzo7P967fd4` 엔하이픈 Dynamite, `BUzlgKS7a8o`·`6BibMYh3vhs` 베리베리×TOO ON(TOO=티오원 옛 이름 데이터 대조), `LcWL5qpllyg` 미래소년 BTS6곡 메들리. 전부 방탄소년단 primary를 실제 출연 그룹으로 옮기고 원곡을 BTS로 분리. 보니를 원곡자로 둔 역전 및 미래소년/엔하이픈 SHOUT OUT 오원곡 제거. 메들리는 단일곡명 null. 원본 링크 `https://www.youtube.com/watch?v=<ID>`.
