@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2026-10-26 (Codex — SQL 직접 실행 연결 안내)
+- **[완료·연결/권한 확인] [운영 방식]** 사용자가 Supabase 플러그인 설치/연결 완료. `get_project`로 기존 프로젝트 ref `dukgguehegnembimqvkm`(bethej2love-lab's Project, ACTIVE_HEALTHY) 확인. `execute_sql` SELECT 결과 postgres 역할·transaction_read_only=off·해당 영상 테이블 SELECT/UPDATE 권한 true. 이제 승인된 정정 SQL을 직접 실행 가능. 연결 확인 중 실제 DB 변경/권한 확대는 하지 않음. 연결 전체의 접근 범위를 이 프로젝트로 제한했다고 주장하지 않으며 작업 대상은 이 프로젝트로 고정.
+- **[완료·백업 확인] [ops_codex_audit6_backup_20261026]** 연결된 SQL 도구로 관리자 전용 백업까지 읽기 확인: backed_up=26·undone=0·changed_after_apply=0. 앞선 사용자 실행의26건 모두 백업돼 있고 이후 태그 변경도 없음. 이후 확정 정정은 원본 검증→현재 상태/백업→승인 범위 내 실행→사후 대조→CHANGELOG 순서. 새 범위의 삭제·구조/권한 변경은 별도로 판단.
+
 ## 2026-10-26 (Codex — 감사 정정 SQL 임시표 오류 후 상태 확인)
 - **[완료·운영 DB 읽기 확인] [yt_channel_videos]** 사용자 실행 중 `42P01 relation codex_audit6_plan does not exist` 제보. 기존26건을 공개 GET으로 전 필드 재대조: 준비 전 상태0·목표 상태26·기타0. **정정16/수동 무관10 모두 이미 적용돼 있어 재정정 불필요.** 정확히 어느 SQL 문에서 오류가 났는지는 미확인, 오류만 보고 전체 미적용이라고 단정하지 않음.
 - **[완료] [sql/codex_audit6_fix_2026-10-26.sql] [sql/codex_audit6_fix_2026-10-26_undo.sql] [sql/codex_audit6_verify_2026-10-26.sql]** 정정 계획을 임시표에서 DO 블록 내부 JSON으로 바꿔 임시표/별도 트랜잭션 문장 의존 제거. 대상26건·목표 태그·사전 변경 가드·관리자 전용 백업 정책 동일. 읽기 전용 확인 SQL 별도 제공(정상26/0/10). 복구도 한 DO 안에서 처리. PGlite에서 정정/재실행/복구/후속 수정 차단 및 DO·확인 SELECT를 각 별도 호출로 자동 커밋해 검증. 이번 대응에서 운영 DB 쓰기 없음.
