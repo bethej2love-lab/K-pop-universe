@@ -2,8 +2,8 @@
 
 
 ## 2026-10-26 (Codex — 콘텐츠 감사8차·넥스지 개인커버)
-- **[진행중·원본 대조/SQL 검증 완료] [yt_channel_videos]** 앞선 감사4차 미해결 후보3건의 현재 DB를 재조회. `ej4VlE2AioM` YU yours, `jLy2xHJ8OiU` SO GEON 좋아해.., `IegsJ5mWaww` HYUI Flower는 NEXZ 공식 제목·설명에서 개인 커버로 확인(전체 영상 시청 아님). JYP 공식 `https://nexz.jype.com/profile`의 YU=유우·SO GEON=소 건·HYUI=휴이를 artists.json 표준명 유우/소건/휴이와 대조. 빈 members를 각 개인으로 보완해 다른 넥스지 멤버 카드로 단체 영상처럼 확대되는 것을 방지. 원곡 메타데이터·cover_manual은 원상 보존.
-- **[완료·로컬 검증/운영 적용 대기] [sql/codex_audit8_fix_2026-10-26.sql] [sql/codex_audit8_verify_2026-10-26.sql] [sql/codex_audit8_undo_2026-10-26.sql]** PGlite+운영 보호 트리거 정의로 적용3·필드대조·타컬럼 보존·백업3·재적용 중복0·복구/재복구·후속 수정/원본 변경/누락/새 수동잠금 시 전체 중단 통과. 전용 batch `codex-audit8-20261026-nexz-members-3`. 적용 전 현재 상태 가드 유지, 적용 후 verify 3/0/3 및 공개 API 대조 예정.
+- **[완료·3건 운영 반영] [yt_channel_videos]** 앞선 감사4차 미해결 후보3건의 현재 DB를 재조회. `ej4VlE2AioM` YU yours, `jLy2xHJ8OiU` SO GEON 좋아해.., `IegsJ5mWaww` HYUI Flower는 NEXZ 공식 제목·설명에서 개인 커버로 확인(전체 영상 시청 아님). JYP 공식 `https://nexz.jype.com/profile`의 YU=유우·SO GEON=소 건·HYUI=휴이를 artists.json 표준명 유우/소건/휴이와 대조. 빈 members를 각 개인으로 보완해 다른 넥스지 멤버 카드로 단체 영상처럼 확대되는 것을 방지. 원곡 메타데이터·cover_manual은 원상 보존.
+- **[완료·로컬 검증/운영 백업·반영] [sql/codex_audit8_fix_2026-10-26.sql] [sql/codex_audit8_verify_2026-10-26.sql] [sql/codex_audit8_undo_2026-10-26.sql]** PGlite+운영 보호 트리거 정의로 적용3·필드대조·타컬럼 보존·백업3·재적용 중복0·복구/재복구·후속 수정/원본 변경/누락/새 수동잠금 시 전체 중단 통과. 전용 batch `codex-audit8-20261026-nexz-members-3`. 적용 전 현재 상태 가드 유지, 운영 적용 후 verify `target_count=3,not_correct=0,backed_up=3`. 별도 공개 anon REST GET도 3건 전 필드 목표값 일치(mismatches0).
 - **[완료·감사7차 공개 경로]** 감사7차 운영 정정7건은 공개 anon REST GET으로도 7건 전 필드 목표값 일치 확인(mismatches0). 운영 SQL 검증과 공개 API 검증을 모두 통과. 실제 카드 노출 검수는 별도 진행.
 
 
