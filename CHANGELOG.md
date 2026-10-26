@@ -2,6 +2,9 @@
 
 ## 2026-10-27 (Codex — PR40 인수인계·배포 전 검사 보완)
 - **[진행중] [PR #40] [build_group_pages.js] [tests/scroll-aids.test.js] [app.js] [kpop_universe.css]** 사용자 코드 수정 포함 이어받기 승인. 기존 codex/audit7-20261026 브랜치에 최신 main 8b0842196a 병합. 영문명 변경 후 정적 경로3개 누락, scroll-aids 스크롤바 폭/맨위로 이동 실패를 재현해 실제 원인에 맞춰 수정하고 smoke·관련 회귀·CI 재확인. 운영 DB20건은 재적용하지 않음. PR 설명을 최종 변경 범위에 맞춰 갱신할 예정.
+- **[완료·로컬 검증] [tests/scroll-aids.test.js] [tests/smoke.test.js]** Windows scroll-aids17/17 통과, Linux CI 진단에서 pointer fine/coarse/hover 모두false·스크롤바 pseudo2px 확인. Playwright와 같은 headless 마우스 기본 설정/백그라운드 절전 방지 플래그를 시험 브라우저에만 적용하고 PC 애니메이션 완료를 최대3초 폴링(최종 <2px 기준 유지). 수정 후 로컬17/17, Linux CI 재확인 중. smoke는 For You만 연 채 발견 차트를 검사한 낡은 경로 수정→실제 발견 탭 선택 후 PC/모바일 로딩·차트2개·콘솔 오류0 통과. 앱 JS/CSS 변경 불필요.
+- **[완료·페이지/옛 링크] [en/g/nexz/] [g/넥스지/] [sitemap.xml] [tests/seo-url.test.js]** 정식 빌더의 그룹·멤버 생성 단계로 새 yu/so-geon/hyui3개 및 관련 프로필/그룹 링크 재생성. 불필요한 전체 관계 재수집 단계는 이 작업 PID만 확인해 중단, 다른 생성물 변경은 원복해 관련11개만 반영. 옛 yuu/so-ken/hui 주소는 canonical/noindex/즉시 새 주소 연결로 보존. sitemap도 해당3개 URL만 정정. 현재 주소4340개+옛 주소3개 회귀4343/4343 통과. 데이터 변경 삭제줄 재확인: 기존3개 name.en 정정만.
+- **[완료·DB 재확인/쓰기 없음] [sql/codex_audit7_verify_2026-10-26.sql] [sql/codex_audit8_verify_2026-10-26.sql] [sql/codex_audit9_verify_2026-10-26.sql]** 연결된 Supabase SELECT로 각각7/0/7·3/0/3·10/0/10 재확인(대상/불일치/백업). 정정20건 정상, 재실행 안 함. validate-data 오류0·경고144, matching224/224, slim --check 일치.
 
 
 
