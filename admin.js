@@ -103,7 +103,13 @@ function _ytClassify(title,{isShort=false}={}){
   // "M/V"(슬래시 표기)를 놓치고 있었음 — M.V./MV/M V는 잡혔는데 슬래시형만 빠져서, 이렇게 쓴 진짜
   // 뮤직비디오가 mv로 안 걸러지고 live 등 다른 카테고리로 새서 무대/직캠 모음에 섞여 들어감
   // (2026-08-20, 사용자 제보 — 전소미 영상이 남돌 무대 모음에 낀 사고).
-  if(/\bM[.\/]?V\.?\b|\bMUSIC\s+VIDEO\b|뮤직?\s*비디오|뮤비/.test(t))return'mv';
+  // MV 비하인드·메이킹·리액션·촬영 스케치·코멘터리는 MV가 아니다(2026-10-26 Codex 점검 — 에스파 MV 탭에 비하인드/리액션 다수,
+  // 실측 category=mv 중 4,880건). 'MV' 낱말 판정이 먼저라 전부 mv로 들어갔다. 단 "(Making Ver.)"·"Making M/V"(메이킹 영상으로
+  // 만든 정식 MV)와 곡 제목 'BEHIND YOU'는 진짜 MV라 남긴다(후보 4,880건 중 이 9건뿐). 비하인드 포맷 태그는 _YT_FORMAT_RULES가 붙인다.
+  if(/\bM[.\/]?V\.?\b|\bMUSIC\s+VIDEO\b|뮤직?\s*비디오|뮤비/.test(t)){
+    if(/BEHIND|비하인드|MAKING|메이킹|REACTION|리액션|SKETCH|스케치|COMMENTARY|코멘터리|촬영/.test(t)&&!/MAKING\s*VER|MAKING\s*M\/?V|BEHIND\s+YOU/.test(t))return'other';
+    return'mv';
+  }
   if(_YT_BROADCAST_RE.test(t))return'other';
   // 직캠 브랜드 낱말은 **가장 강한 신호**라 다른 어떤 판정보다 먼저 본다(2026-09-14).
   // 원래 이 자리가 없어서 페이스캠·원픽캠·풀캠류가 통째로 other로 샜다(_YT_CAM_BRAND_RE 주석 참고).
