@@ -33,6 +33,11 @@ const spType = (title, cat) => /팬\s?미팅|FAN\s?MEETING/i.test(title) ? '팬�
   : /팬\s?콘|FAN\s?CON/i.test(title) ? '팬콘'
   : (/페스티벌|FESTIVAL|FEST\b/i.test(title) || /페스티벌/.test(cat || '')) ? '페스티벌' : '콘서트';
 
+// 온라인으로만 보는 것 — 제목(VOD·다시보기·온라인 콘서트)이나 공연장 칸(온라인…·판매 페이지 주소 xxx.shop/live)으로 판정.
+// "콘서트 + 온라인 생중계"처럼 실제 공연장이 있는 공연은 남긴다.
+const ONLINE_TITLE = /\bVOD\b|다시\s?보기|온라인\s?(공연|콘서트|상영)|ONLINE\s?(CONCERT|LIVE)\b/i;
+const ONLINE_VENUE = /^\s*(온라인|online\b)|\bVOD\b|\b[a-z0-9-]+\.(shop|com|net|kr)\/\S*/i;
+
 const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
 const args = Object.fromEntries(process.argv.slice(2).map(s => {
   const m = s.match(/^--([^=]+)(?:=(.*))?$/); return m ? [m[1], m[2] ?? true] : [s, true];
@@ -131,6 +136,8 @@ const unmatchedList = [];
 for (const ev of allEvents.values()) {
   // 내한공연은 외국 아티스트가 국내에 오는 공연 — K팝 그룹과 무관
   if (ev.category === '내한공연') continue;
+  // 온라인 VOD·스트리밍은 가는 공연이 아니다(2026-10-26 사용자 — 빅오션 "온라인 VOD · bigocean.shop/live"가 공연으로 들어옴)
+  if (ONLINE_TITLE.test(ev.title) || ONLINE_VENUE.test(ev.venue || '')) continue;
 
   const result = matchEvent(ev.title);
   if (!result.groups.length) {

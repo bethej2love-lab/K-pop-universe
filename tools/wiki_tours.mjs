@@ -135,7 +135,10 @@ function parseTable(tblText) {
     }
     const [date, dateEnd] = parseDateRange(rowArr[di] || '');
     if (!date) continue;
-    out.push({ date, dateEnd,city: rowArr[ci] || '', country: coi >= 0 ? (rowArr[coi] || '') : '', venue: vi >= 0 ? (rowArr[vi] || '') : '', title: ti >= 0 ? (rowArr[ti] || '') : '' });
+    // 동시 중계 표기가 공연장 이름에 붙어 온다("Jamsil ArenaBeyond Live") → 떼고, 온라인 전용(Online/Online event)은 가는 공연이 아니라 뺀다(2026-10-26)
+    const venue = (vi >= 0 ? (rowArr[vi] || '') : '').replace(/\s*(Beyond Live|V Live|Weverse)\s*$/i, '').trim();
+    if (/^online\b/i.test(venue) || /^online\b/i.test(rowArr[ci] || '')) continue;
+    out.push({ date, dateEnd,city: rowArr[ci] || '', country: coi >= 0 ? (rowArr[coi] || '') : '', venue, title: ti >= 0 ? (rowArr[ti] || '') : '' });
   }
   return out;
 }
