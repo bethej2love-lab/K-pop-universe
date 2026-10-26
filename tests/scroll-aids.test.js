@@ -129,9 +129,11 @@ if(rail.on)ok(`스크롤하자 막대 표시(손잡이 ${rail.thumb.h.toFixed(0)
       do{await sleep(100);top0=await ev(c,`document.getElementById('gc-discog-video-panel').scrollTop`);}while(top0>=2&&Date.now()<topDeadline);
       if(top0<2)ok('버튼 누르면 패널 맨 위로');else bad('맨 위로 안 감 '+top0+' '+JSON.stringify(await ev(c,`({target:_totopScrollTarget?.id,visibility:document.visibilityState,button:getComputedStyle(_totopBtn).display})`)));
       await ev(c,`(()=>{const p=document.getElementById('gc-discog-video-panel');p.scrollTop=600;p.dispatchEvent(new Event('scroll'));})()`);await sleep(300);
-      await ev(c,`(_closeGcDiscogDetail(),1)`);await sleep(900);
-      const d2=await ev(c,`getComputedStyle(document.getElementById('gc-totop')).display`);
-      if(d2==='none')ok('앨범 창을 닫으면 버튼도 사라짐(0.4초 점검)');else bad('닫은 뒤 버튼 남음');
+      await ev(c,`(_closeGcDiscogDetail(),1)`);
+      // 같은 숨김 감시도 CI가 정확히 900ms 안에 실행한다고 가정하지 않는다. 숨김 조건은 유지.
+      let d2;const hideDeadline=Date.now()+3000;
+      do{await sleep(100);d2=await ev(c,`getComputedStyle(document.getElementById('gc-totop')).display`);}while(d2!=='none'&&Date.now()<hideDeadline);
+      if(d2==='none')ok('앨범 창을 닫으면 버튼도 사라짐(0.4초 점검)');else bad('닫은 뒤 버튼 남음 '+JSON.stringify(await ev(c,`({target:_totopScrollTarget?.id,watch:!!_totopWatch,albumOpen:document.getElementById('gc-discog-detail').classList.contains('open'),panelHidden:document.getElementById('gc-discog-video-panel').hidden})`)));
     }
     // 기존 카드 버튼 회귀: 그룹 카드(side-panel) 스크롤
     const sp=JSON.parse(await ev(c,`(async()=>{const p=document.getElementById('side-panel');p.scrollTop=500;p.dispatchEvent(new Event('scroll'));await new Promise(r=>setTimeout(r,200));const b=document.getElementById('gc-totop');return JSON.stringify({d:getComputedStyle(b).display,st:p.scrollTop});})()`));
