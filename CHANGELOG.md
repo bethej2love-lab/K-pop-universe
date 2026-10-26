@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 2026-10-27 (Codex — PR40 인수인계·배포 전 검사 보완)
+- **[진행중] [PR #40] [build_group_pages.js] [tests/scroll-aids.test.js] [app.js] [kpop_universe.css]** 사용자 코드 수정 포함 이어받기 승인. 기존 codex/audit7-20261026 브랜치에 최신 main 8b0842196a 병합. 영문명 변경 후 정적 경로3개 누락, scroll-aids 스크롤바 폭/맨위로 이동 실패를 재현해 실제 원인에 맞춰 수정하고 smoke·관련 회귀·CI 재확인. 운영 DB20건은 재적용하지 않음. PR 설명을 최종 변경 범위에 맞춰 갱신할 예정.
+
 
 
 ## 2026-10-27 (Codex — 넥스지 공식 영문명·검색/태깅 재발 방지)
