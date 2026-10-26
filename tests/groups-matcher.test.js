@@ -32,6 +32,9 @@ const STRICT_SYNC_KOS = new Set(
 const COMMON_NOUN_GATE = new Set(['카드', '아이콘', '시그니처', '위너']);
 // 해시태그 전용 토큰 그룹 (admin.js _GROUP_TOKEN_HASHTAG_ONLY)
 const HASHTAG_ONLY_GROUPS = new Set(['에이스', '하이라이트']);
+// 근거 동반 그룹 (admin.js _GROUP_TOKEN_NEEDS_CORROBORATION) — 그룹명 단독은 null, 멤버명·곡명이 같이 있어야 인정
+// 퍼즐(2026-10-26): 곡명 puzzle·퀸덤퍼즐·드라마 나인 퍼즐이 그룹으로 잡히던 것
+const CORROBORATION_GROUPS = new Set(['퍼즐']);
 
 // CLI 옵션
 const args = process.argv.slice(2);
@@ -77,7 +80,7 @@ for (const [ko, data] of targetEntries) {
   const en = data.en || '';
 
   // 1. 한국어 그룹명 — strictSync/공통명사/해시태그 전용 그룹은 경고만
-  const koWarnOnly = STRICT_SYNC_KOS.has(ko) || COMMON_NOUN_GATE.has(ko) || HASHTAG_ONLY_GROUPS.has(ko);
+  const koWarnOnly = STRICT_SYNC_KOS.has(ko) || COMMON_NOUN_GATE.has(ko) || HASHTAG_ONLY_GROUPS.has(ko) || CORROBORATION_GROUPS.has(ko);
   check(`${ko}/KO`, `${ko} 직캠`, ko, koWarnOnly);
 
   // 2. 영문 그룹명 (null이면 경고만 — 한국어 그룹명이 없는 외국 채널 타이틀은 채널 기반으로만 매칭)

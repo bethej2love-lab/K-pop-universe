@@ -65,6 +65,8 @@ pieces.push(extractByBraces(adminSrc, /^function _atmStripSurname\(/m, '_atmStri
 pieces.push(extractByBraces(adminSrc, /^function _isHashtagOnlyName\(/m, '_isHashtagOnlyName'));
 pieces.push(extractStatement(adminSrc, /^const _m2VariantsCache\s*=/m, '_m2VariantsCache'));
 pieces.push(extractByBraces(adminSrc, /^function _m2NameVariants\(/m, '_m2NameVariants'));
+// 성 뗀 이름 역추론 제외 목록(2026-10-26) — 옛 admin.js로 전/후 차분을 돌릴 때도 뜨게 있으면만 싣는다
+if (/^const _ATM_NO_GIVEN_ONLY\s*=/m.test(adminSrc)) pieces.push(extractStatement(adminSrc, /^const _ATM_NO_GIVEN_ONLY\s*=/m, '_ATM_NO_GIVEN_ONLY'));
 pieces.push(extractStatement(adminSrc, /^const _GROUP_TITLE_CONFLICT_EXCLUDE\s*=/m, '_GROUP_TITLE_CONFLICT_EXCLUDE'));
 pieces.push(extractStatement(adminSrc, /^const _GROUP_AMBIGUOUS_IF_COMATCHED\s*=/m, '_GROUP_AMBIGUOUS_IF_COMATCHED'));
 // 로테이션 유닛(NCT U) 판정 헬퍼 — _m2ParseTitle이 유닛 확장에서 호출한다(2026-08-25 신설).

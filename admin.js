@@ -7424,6 +7424,9 @@ function _atmRosterFor(gko){
 // (2026-08-04, 사용자 제보). 이름별로 특정 성씨만 배제해야 하는 경우가 더 생기면 여기에 추가.
 // '오'+'케이' = 일상어 "오케이"(OK). 앤팀 케이가 "오케이~"(예능 제목)마다 붙던 것(2026-10-20 순찰, 424건 표본에서 발견)
 const _ATM_SURNAME_EXCLUDE={'가인':new Set(['송']),'케이':new Set(['오'])};
+// 성 뗀 이름만으로는 잡지 않는 사람 — 그 이름이 다른 유명인과 같아서(2026-10-26 Codex 점검).
+// 허영지(카라)·이영지(솔로): 둘 다 '영지'인데 가수 영지(Young Ji)까지 있어 영지만으론 누군지 모른다 — 카라로 40건 오태깅.
+const _ATM_NO_GIVEN_ONLY=new Set(['허영지','이영지']);
 // 흔한단어 보호 목록 중 고인이 된 멤버들(종현/문빈/구하라/설리)은 "흔한 단어와 겹쳐서"가 아니라 "평문
 // 언급만으로 새 영상이 계속 태깅되는 걸 원치 않는다"는 별개의 이유로 해시태그 전용이라(2026-08-04 사용자
 // 요청), 아래 "그룹명+직캠 문맥이면 평문도 인정" 완화 대상에서 반드시 제외해야 함 — 문맥이 아무리 맞아도
@@ -7468,7 +7471,9 @@ let _atmRomanFullIdx=null;
 const _ATM_NAME_SYL=new Set(('a ah ae bin bit bo bom byul beom bum chae chan cheol chul da dam dong eon eun eum gi gu gun gyu gyeong gwang ha hae han hee heon ho '
   +'hoon hun hwa hwan hwi hye hyeon hyun hyuk hyeok hyung hyo in ja jae jeong jung ji jin jo joo ju jun kyung kyu kyeong kang kwan mi min mo mun myung '
   +'na nam ra rae ran rang rin ro ryeong ryung rim ri sa san se seo seob seop sub seok suk seon sun seong sung seung si sik so sol soo su sook ta tae '
-  +'u woo won woong wook ye yeon yeong young yi yoon yun yu yul yeol yong nyeong ryeon ryun won hwi eui ui').split(' '));
+  +'u woo won woong wook ye yeon yeong young yi yoon yun yu yul yeol yong nyeong ryeon ryun won hwi eui ui '
+  // 근·건(2026-10-26): "Han Dong Geun(한동근)"이 geun을 이름 끝으로 못 봐 'Han Dong'만 남고 드림캐쳐 한동(Handong)이 됐다(1theK 18건)
+  +'geun keun geon').split(' '));
 // 로마자 토큰을 한국어 음절로 쪼갤 때 최소 음절 수(안 쪼개지면 0) — seo=1, ryeong=1, seungwoo=2, arena=3
 function _atmKoSylCount(w){
   const s=String(w||'').toLowerCase();
@@ -7802,7 +7807,7 @@ function _atmMatchesMember(m,title,tokens,groupKo){
     // 장혜리→"혜리"가 같은 걸스데이 현 멤버 혜리(name.ko='혜리')와 같아, 혜리 영상마다 장혜리가
     // 딸려붙던 오태깅의 원인(2026-09-01 실측 388건). 평문·해시태그 둘 다 막는다 — '#혜리'도 현 혜리를
     // 가리킴. 그룹 한정인 이유는 _atmNameTakenByGroupmate 주석 참고(전역으로 걸었다가 188명 오차단).
-    if(givenOnly&&givenOnly.length>=2&&!_atmNameTakenByGroupmate(givenOnly,groupKo)){
+    if(givenOnly&&givenOnly.length>=2&&!_ATM_NO_GIVEN_ONLY.has(name)&&!_atmNameTakenByGroupmate(givenOnly,groupKo)){
       if(new RegExp(`(?<![가-힣])${_atmEscRe(givenOnly)}(?:${particles}){0,2}(?![가-힣])`).test(title))return true; // 등록명이 성+이름인데 제목엔 이름만
       if(new RegExp(`#${_atmEscRe(givenOnly)}(?![가-힣])`).test(title))return true; // #이름(성 뺀 버전)
     }
@@ -7830,7 +7835,10 @@ function _atmMatchesMember(m,title,tokens,groupKo){
       }
       if(tokens.includes(parts[0]))return true;
       // 성+이름 사이 띄어쓰기 대응 (예: "seong hyeon" → "seonghyeon")
-      for(let i=0;i<tokens.length;i++){
+      // ⚠️ 제목의 한글 이름이 이 멤버 이름보다 긴 이름이면(한동 ↔ "Han Dong Geun(한동근)") 붙여 맞추지 않는다 — han+dong이
+      //    handong이 돼 1theK 한동근 영상 18건이 드림캐쳐 한동이 됐다(2026-10-26 Codex 점검). 한글 이름+조사는 그대로 인정.
+      const _koLonger=name&&new RegExp(`(?<![가-힣])${_atmEscRe(name)}[가-힣]`).test(title)&&!new RegExp(`(?<![가-힣])${_atmEscRe(name)}(?:${particles}){0,2}(?![가-힣])`).test(title);
+      if(!_koLonger)for(let i=0;i<tokens.length;i++){
         let joined=tokens[i];
         for(let j=i+1;j<tokens.length&&joined.length<parts[0].length;j++)joined+=tokens[j];
         if(joined===parts[0])return true;
@@ -7865,7 +7873,7 @@ function _atmMatchesMember(m,title,tokens,groupKo){
       // 2026-09-01 수정이 한글("#혜리")만 막고 이 영문 경로는 빠뜨려서 오태깅 292건이 그대로 남아
       // 있었다(2026-09-02 실측·재현). 토큰 비교라 대소문자는 이미 무시됨 — "#HYERI"도 같은 구멍.
       const restKey=rest.join(' ');
-      if(!_atmNameTakenByGroupmate(restKey,groupKo,true)){
+      if(!_ATM_NO_GIVEN_ONLY.has(name)&&!_atmNameTakenByGroupmate(restKey,groupKo,true)){
         if(rest.length===1){
           if(tokens.includes(rest[0]))return true;
         }else if(rest.length>1){
@@ -8492,7 +8500,9 @@ function _stripProgramNames(t){
   return (/킹덤|KINGDOM|퀸덤|QUEENDOM|킹['’]|로투킹|원곡/i.test(s0)?s0:s0.replace(/♬[^@#|｜]*?[-–—][^@#|｜]*/g,' '))
     .replace(/\b(after|before)\s*school\s*club\b/gi,' ')
     .replace(/(애프터|비포)\s*스쿨\s*클럽/g,' ')
-    .replace(/\blouis\s*vuitton\b/gi,' ').replace(/루이\s*비통/g,' ');
+    .replace(/\blouis\s*vuitton\b/gi,' ').replace(/루이\s*비통/g,' ')
+    // 퀸덤퍼즐의 '퍼즐'은 그룹 퍼즐(PUZZLE)이 아니다(2026-10-26) — 퀸덤 계열 판정이 남도록 '퀸덤'만 남긴다
+    .replace(/퀸덤\s*퍼즐/g,'퀸덤').replace(/queendom\s*puzzle/gi,'QUEENDOM');
 }
 function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
   const _trace=[];
@@ -8749,7 +8759,10 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
   // '하이라이트'(2026-10-12): 한글 해시태그 #하이라이트는 '요약 영상'이란 뜻으로 훨씬 많이 쓴다 — 골든디스크 무대 10건·아이돌라디오
   // "#하이라이트 몰아보기"가 전부 함께한 그룹 하이라이트가 됐다. 진짜 하이라이트 콜라보는 #HIGHLIGHT·멤버명(#YANGYOSEOP)이 같이 붙는다.
   const _GROUP_TOKEN_NEEDS_CORROBORATION={'TOO':{gko:'티오원',ctx:['하나 둘 세고','COUNT 1','MAGNOLIA','매그놀리아','오늘은 이만큼','TAKE IT SLOW','제롬','JEROME','웅기','WOONG','ROAD TO KINGDOM','로드 투 킹덤']},
-    '하이라이트':{gko:'하이라이트',hashtag:true,ctx:[],ctxUpper:['HIGHLIGHT','BEAST','B2ST']}};
+    '하이라이트':{gko:'하이라이트',hashtag:true,ctx:[],ctxUpper:['HIGHLIGHT','BEAST','B2ST']},
+    // 퍼즐(PUZZLE, 2023 혼성·해체, 2026-10-26 Codex 점검): 곡명 'puzzle'(홍이삭·비와이·하성운)·퀸덤퍼즐 '퍼즐 팀'·드라마 '나인 퍼즐'·
+    // 로에베 퍼즐 백이 전부 그룹 퍼즐로(외부 채널 64건 대부분). 멤버명이나 곡명(SAVIOR)이 같이 있어야 인정.
+    '퍼즐':{gko:'퍼즐',ctx:[]},'PUZZLE':{gko:'퍼즐',ctx:[]}};
   function hitCorroborated(t){
     const {gko,ctx,ctxUpper,hashtag}=_GROUP_TOKEN_NEEDS_CORROBORATION[t];
     if(hashtag?!hitHashtag(t):!new RegExp('(^|[^A-Za-z])'+_atmEscRe(t)+'(?![A-Za-z])').test(title||''))return false; // 대소문자 그대로
@@ -9032,7 +9045,11 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
       // 그대로 키로 써도 여러 솔로 아티스트가 "솔로"라는 같은 값을 공유해서 한 그룹처럼 묶이지만, 아래
       // membersByGroup은 그 버킷 안 이름 목록을 그대로 with_members에 "이름(솔로)" 형식으로 펼쳐 넣을
       // 뿐이라 문제 없음 — _findArtistByConnName/_apiVidToSong의 withKey가 기대하는 것과 정확히 같은 형식.
-      const names=_m2NameVariants(a);
+      // 성 뗀 이름만으로 역추론하지 않는 사람(_ATM_NO_GIVEN_ONLY — 영지 = 허영지·이영지·가수 영지, 2026-10-26 Codex 점검: 카라로 40건).
+      // ⚠️ "겹치는 성 뗀 이름 전부(채원 5명·지우 등 61명)"로 넓히는 안은 이전/새 매처 차분(DB 제목 31,180개 → 718개 변화)에서
+      //    "CLASS:y 채원 직캠"이 르세라핌 김채원으로 가는 등 회귀가 나와 버렸다 — 대부분은 개선(르세라핌 영상의 '채원'→클라씨 윤채원 제거)이라
+      //    다시 할 땐 그룹 근거(CLASS:y 표기 인식 등)부터 보강하고 차분으로 확인할 것.
+      const names=_ATM_NO_GIVEN_ONLY.has(a.name.ko)?_m2NameVariants(a).filter(t=>t!==_atmStripSurname([...a.name.ko])):_m2NameVariants(a);
       // strict 채널(예능/잡지)에서는 그룹명 literal 매칭이 아예 없으므로, 멤버 이름도 해시태그로
       // 명시된 경우만 인정 — 평문 매칭(memberHit의 일반 분기)은 여기서 아예 시도하지 않는다.
       const _matchedToks=strict?names.filter(t=>hitHashtag(t)):memberHitTokens(a,names);

@@ -54,6 +54,26 @@ test('정원 — 입학 정원 뉴스는 엔하이픈 아님', '[KUTV NEWS] 전�
 test('정원 — 소프라노 Choi Jungwon은 엔하이픈 아님', 'AIreport VOL.20 | Choi Jungwon - First Love | K-Pop Live Session', undefined, r => !_enh(r));
 test('정원 — 영문 JUNGWON 직캠은 그대로 엔하이픈', "[2025 가요대전 4K] 정원 'A Christmas Nightmare' (JUNGWON FullCam) @SBS GayoDaejeon", undefined, r => !!r && r.primaryGroup === '엔하이픈');
 test('정원 — 합동무대 "미연 & 정원 & 제이"는 엔하이픈 포함', '길 (원곡: god) - 미연 & 정원 & 제이 & 리즈 & 성호 [2024 KBS 가요대축제 글로벌페스티벌] | KBS 방송', undefined, r => _enh(r));
+// ── 2026-10-26 Codex 화면 점검: 한동근→한동, 영지→허영지, 곡명/프로그램 puzzle→그룹 퍼즐 ─────────────────────
+// 한동(en Handong): "Han Dong Geun"을 토큰으로 쪼개 han+dong을 붙여 handong이 됐다(뒤 geun 무시) — 1theK 한동근 18건이 드림캐쳐로.
+const _dc = r => !!r && (r.primaryGroup === '드림캐쳐' || (r.withGroups || []).includes('드림캐쳐'));
+test('한동 — 한동근 MV는 드림캐쳐 아님', '[MV] Han Dong Geun(한동근) _ Relationship(관계)', undefined, r => !_dc(r));
+test('한동 — 한동근 컬러라이브도 아님', 'Color LIVE(컬러라이브): Han Dong Geun(한동근)_Crazy(미치고싶다)', undefined, r => !_dc(r));
+test('한동 — 드림캐쳐 한동 직캠은 그대로', '[MPD직캠] 드림캐쳐 한동 직캠 4K', undefined, r => _mem(r, '드림캐쳐', '한동'));
+test('한동 — 영문 Han Dong 띄어쓰기도 그대로', 'DREAMCATCHER Han Dong FanCam', undefined, r => _mem(r, '드림캐쳐', '한동'));
+// 허영지: 성 뗀 '영지'가 래퍼 이영지(지구오락실·워터밤)·가수 영지(Young Ji)와 같아 카라로 40건.
+const _kara = r => !!r && (r.primaryGroup === '카라' || (r.withGroups || []).includes('카라'));
+test('허영지 — 가수 영지(Young Ji) MV는 카라 아님', '[MV] Young Ji(영지) _ Love Story(사랑 얘기)', undefined, r => !_kara(r));
+test('허영지 — 지구오락실 영지(이영지)는 카라 아님', '12키로 뺀 지구오락실2 영지🔥', undefined, r => !_kara(r));
+test('허영지 — 참소녀 Youngji(영지)는 카라 아님', '[MV] Chamsonyeo(참소녀) (Sohyun(권소현), G.na, Lizzy(리지), Youngji(영지)) _ Magic Words(올해의 주문)', undefined, r => !_kara(r));
+test('허영지 — 카라 허영지 직캠은 그대로', '[MPD직캠] 카라 허영지 직캠 4K', undefined, r => _mem(r, '카라', '허영지'));
+// 퍼즐(PUZZLE, 2023 혼성): 곡명 puzzle·퀸덤퍼즐·드라마 나인 퍼즐이 그룹으로. 멤버명/곡명(SAVIOR) 근거가 있어야 인정.
+const _pz = r => !!r && (r.primaryGroup === '퍼즐' || (r.withGroups || []).includes('퍼즐'));
+test('퍼즐 — 곡명 puzzle(홍이삭)은 그룹 퍼즐 아님', '홍이삭 – puzzle l 피크닉 라이브 소풍 EP.152', undefined, r => !_pz(r));
+test('퍼즐 — 퀸덤퍼즐 퍼즐 팀은 아님', '[#퀸덤퍼즐/풀버전] ♬ BAD BLOOD - 퍼즐 팀 (나나, 상아, 수윤, 예은, 우연, 케이) @올라운더배틀 #QUEENDOMPUZZLE', undefined, r => !_pz(r));
+test('퍼즐 — 드라마 나인 퍼즐은 아님', '김다미·손석구, “10년간 이어져 온 서사👀 ’나인 퍼즐’ 제작발표회”', undefined, r => !_pz(r));
+test('퍼즐 — 퀸덤퍼즐 채린 직캠은 그룹 퍼즐 아님(이전/새 차분에서 발견)', '[#퀸덤퍼즐/풀버전] ♬ Glow-up - 퀸덤 팀 (소은, 엘리, 연희, 주이, 쥬리, 채린, 휘서) @올라운더배틀 #QUEENDOMPUZZLE', undefined, r => !_pz(r));
+test('퍼즐 — PUZZLE(퍼즐) SAVIOR MV는 퍼즐', '[MV] PUZZLE(퍼즐) _ SAVIOR', undefined, r => _pz(r));
 test('TOO — 시절 곡명 동반은 티오원', "(Full Focused) TOO '하나 둘 세고 (Count 1, 2)' 4K | BE ORIGINAL", undefined, r => _to1(r));
 test('TOO — 더쇼 제목 맨 앞 아티스트 표기는 티오원', 'TOO, TOO YOU [THE SHOW, Fancam, 200421] 60P', undefined, r => _to1(r));
 test("여정 — 일반명사 '여정'은 전여여정 역추론 안 함", "인간 펜디 한예슬의 특별한 여정 / Han Ye Seul with FENDI", undefined, r => !r || (r.primaryGroup !== '티오원' && r.primaryGroup !== '뉴비트'));
