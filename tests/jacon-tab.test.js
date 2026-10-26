@@ -10,7 +10,7 @@ const ctx={_pgFilterVal:v=>'"'+v+'"',_soloKeyUsable:()=>null,_idolHandlesByMembe
 vm.createContext(ctx);vm.runInContext(src+';this._applyJaconQuery=_applyJaconQuery;',ctx);
 let n=0;
 {const q=ctx._applyJaconQuery(mk(),'아이브',null,null,null);
- assert.deepEqual(q.ops[0],['in','source_tier',['official','grpsub','idol']]);assert.deepEqual(q.ops[1],['eq','group_ko','아이브']);assert.equal(q.ops.length,2);n++;}
+ assert.deepEqual(q.ops[0],['or','source_tier.in.(official,grpsub,idol),category.eq.jacon'],'공식·개인 채널 + 관리자가 자컨으로 지정한 영상(2026-10-26)');assert.deepEqual(q.ops[1],['eq','group_ko','아이브']);assert.equal(q.ops.length,2);n++;}
 {const q=ctx._applyJaconQuery(mk(),'아이브','레이',null,null);
  assert.equal(q.ops[2][1],'source_tier.neq.idol,members.cs.{"레이"},source_handle.in.("Follow_Rei")');n++;}
 {const q=ctx._applyJaconQuery(mk(),'아이브','장원영',null,null);

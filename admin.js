@@ -10457,7 +10457,7 @@ async function _openVidTagModal(v,ko,originKo){
   // 카드에 넘어온 v에는 members/with_members가 안 실려있는 경우가 많아서(그룹 카드 그리드는 해당 컬럼을
   // 아예 select하지 않음), 모달을 열 때 저장된 값을 DB에서 직접 불러와 체크박스/칩에 반영한다.
   if(sb){
-    const{data,error}=await sb.from(_YT_TABLE).select('group_ko,members,with_members,with_groups,cover_of_members,cover_of_groups,cover_of_song,category,is_short,content_flag,tags_manual,content_formats').eq('id',v.id).maybeSingle();
+    const{data,error}=await sb.from(_YT_TABLE).select('group_ko,members,with_members,with_groups,cover_of_members,cover_of_groups,cover_of_song,category,is_short,content_flag,tags_manual,content_formats'+(_ytHasSourceCols===false?'':',source_tier')).eq('id',v.id).maybeSingle();
     if(!_vidTagTarget||_vidTagTarget.id!==v.id)return; // 응답 오는 사이 모달이 닫히거나 다른 영상으로 전환됨
     if(!error&&data){
       const savedMembers=new Set(data.members||[]);
@@ -10506,7 +10506,7 @@ async function _openVidTagModal(v,ko,originKo){
       _vidTagOrigManual=!!data.tags_manual;
       _vidTagLoadedFormats=data.content_formats||[];
       // 편집 이력용 원본 — 여기서 떠두지 않으면 저장 시점엔 이미 화면 값밖에 없어서 "뭘 고쳤는지"를 못 남긴다.
-      _vidTagBefore={group_ko:data.group_ko,members:data.members||[],with_members:data.with_members||[],with_groups:data.with_groups||[],cover_of_members:data.cover_of_members||[],cover_of_groups:data.cover_of_groups||[],cover_of_song:data.cover_of_song||null,content_flag:data.content_flag||null,category:data.category||null,is_short:_isShortV(data)};
+      _vidTagBefore={group_ko:data.group_ko,members:data.members||[],with_members:data.with_members||[],with_groups:data.with_groups||[],cover_of_members:data.cover_of_members||[],cover_of_groups:data.cover_of_groups||[],cover_of_song:data.cover_of_song||null,content_flag:data.content_flag||null,category:data.category||null,is_short:_isShortV(data),source_tier:data.source_tier};
       _renderVidTagChips();
       const catEl=document.getElementById('vid-tag-cat');
       // category='short'는 직교화 전 레거시 — 장르 select엔 더 이상 short 옵션이 없으므로 빈 값으로
@@ -10959,7 +10959,7 @@ document.getElementById('vid-tag-save').addEventListener('click',async e=>{
   // group_ko도 같이 실어보내야 함 — patchItem 내부의 _buildGridWithList가 "이 영상이 실제로 속한
   // 그룹"과 "지금 보는 카드의 그룹"이 다른지 판단할 때 필요(없으면 게스트 출연 영상의 함께한 멤버 줄이
   // "이름(undefined)"처럼 잘못 그려짐, 2026-08-04).
-  const patchedRow={title:document.getElementById('vid-tag-vidtitle').textContent,group_ko:newGko||ko,members,with_members:withMembers,with_groups:withGroups,cover_of_members:coverMembers,cover_of_groups:coverGroups,content_flag:contentFlag,category:category||null,is_short:isShort===undefined?false:isShort};
+  const patchedRow={title:document.getElementById('vid-tag-vidtitle').textContent,group_ko:newGko||ko,members,with_members:withMembers,with_groups:withGroups,cover_of_members:coverMembers,cover_of_groups:coverGroups,content_flag:contentFlag,category:category||null,is_short:isShort===undefined?false:isShort,source_tier:_vidTagBefore?.source_tier};
   _vidTagLastEditedId=id; // 연속 편집이 "방금 이 행을 고쳤다"를 알아야 다음으로 넘어갈 수 있다
   setTimeout(()=>{
     _closeVidTagModal();
