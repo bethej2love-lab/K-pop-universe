@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 2026-10-26 (Claude Code — 공연 수집에서 온라인 VOD 제외)
+- **[완료] [tools/stagepick_concerts.mjs]** 사용자 "빅오션 온라인 VOD가 공연으로 들어옴"(StagePick, 공연장 칸 "온라인 VOD · bigocean.shop/live"). 제목(VOD·다시보기·온라인 콘서트/공연/상영·ONLINE CONCERT/LIVE) 또는 공연장 칸(온라인…/Online·VOD·판매 페이지 주소)이면 건너뜀. "콘서트 + 온라인 생중계"처럼 실제 공연장 있는 건 유지, VODKA 같은 단어 안 걸림. DB 3,137건에 돌려 걸린 건 3건뿐(빅오션·비투비 2021 온라인 콘서트·갓세븐 2020 온라인 팬미팅).
+- **[완료] [tools/wiki_tours.mjs]** 위키 투어 표의 공연장에 동시 중계 표기가 붙어 오던 것("Jamsil ArenaBeyond Live" 9건) 떼고, 공연장/도시가 Online인 행 건너뜀.
+- **[SQL 대기] [~/Downloads/kpu_online_events_cleanup_20261026.sql]** 위 3건 삭제 + Beyond Live 9건 공연장 이름 정리. 다녀왔어요 기록은 user_data에 따로 있어 FK 영향 없음.
+
 ## 2026-10-26 (Codex — 여러 카드 콘텐츠 노출 감사)
 - **[진행중] [화면/콘텐츠 점검]** 사용자 요청으로 앱 내 브라우저에서 여러 그룹·멤버 카드/영상 탭/발견을 연속 점검. 실제 노출→원본 출처 대조→확정/의심 구분. 코드·DB 쓰기 없이 이 문서만 기록하며 Claude Code 작업 파일은 건드리지 않음. 로컬 코드 변경이 진행 중이라 공유 작업 트리 커밋·push는 하지 않음.
 - **[이슈·확정] [아이브 레이/커버]** Dispatch 공항 영상5개가 음악 커버 탭에 노출: BtBywvamhHI / vxekEL36g9Q / BaYEi8UfjzA / _Yqg_cKLdxo / Thhtq0PiOAg. 공개 YouTube oEmbed로 원본 제목·업로더 koreadispatch 대조(모두200), 공항/covered up 문맥의 covered를 커버로 오인한 노출. DB category=other·cover_of 비어 있음 → 저장 카테고리 변경보다 커버 조회 제목 조건부터 검토. 링크는 https://www.youtube.com/watch?v=각ID .
