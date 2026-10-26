@@ -56475,6 +56475,39 @@
   },
   "discography": [
    {
+    "title": "BREAK EVEN",
+    "type": "미니",
+    "isMain": true,
+    "cover": "https://cdnimg.melon.co.kr/cm2/album/images/150/81/373/15081373_20261026102240_500.jpg",
+    "releaseDate": "2026.10.26",
+    "trackCount": 4,
+    "titleTrack": "체포하겠어",
+    "tracks": [
+     {
+      "no": 1,
+      "title": "Super in Love",
+      "isTitle": false
+     },
+     {
+      "no": 2,
+      "title": "More",
+      "isTitle": false
+     },
+     {
+      "no": 3,
+      "title": "체포하겠어",
+      "isTitle": true
+     },
+     {
+      "no": 4,
+      "title": "Pop",
+      "isTitle": false
+     }
+    ],
+    "src": "melon",
+    "melonAlbumId": "15081373"
+   },
+   {
     "title": "Swingin’ Magic",
     "type": "싱글",
     "isMain": true,

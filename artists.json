@@ -89795,6 +89795,24 @@
     ],
     "discography": [
       {
+        "title": "Blue Sky",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/150/75/287/15075287_20261023173104_500.jpg",
+        "releaseDate": "2026.10.26",
+        "trackCount": 1,
+        "titleTrack": "Blue Sky",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Blue Sky",
+            "isTitle": true
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "15075287"
+      },
+      {
         "title": "TIMESCAPE",
         "type": "미니 2집",
         "releaseDate": "2025.02.12",
