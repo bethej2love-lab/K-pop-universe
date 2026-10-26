@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## 2026-10-26 (Codex — 집 노트북 콘텐츠 감사7차·원곡/출연자 정정)
+- **[진행중] [콘텐츠 감사]** 회사 Codex 최신 인수인계(`76db61d9`)를 이어받음. 사용자: 처음 검수/기록만 요청했다가 원본으로 확정 가능한 오류의 소량 정정과 즉시 GitHub push까지 승인. 앱 코드·매처·JSON은 이번 작업 범위 아님. DB/문서/정정·검증·복구 SQL만 다룸. 기존 감사6차26건은 read-only verify로 `target_count=26,not_correct=0,manually_excluded=10` 재확인.
+- **[원본 확인·적용 대기] [sql/codex_audit7_fix_2026-10-26.sql]** 공식 YouTube watch 페이지의 `videoDetails` 제목·업로더·설명을11개 수집/대조(전체 영상 시청 아님). 그중 출연자/원곡 명확한7건: `l_B_8UC60zI` ONEUS 서호 Epiphany, `0TwOk9EeJSY` 드림노트 보니 상남자, `47ci_on2iLY` 체리블렛 MIC Drop, `zzo7P967fd4` 엔하이픈 Dynamite, `BUzlgKS7a8o`·`6BibMYh3vhs` 베리베리×TOO ON(TOO=티오원 옛 이름 데이터 대조), `LcWL5qpllyg` 미래소년 BTS6곡 메들리. 전부 방탄소년단 primary를 실제 출연 그룹으로 옮기고 원곡을 BTS로 분리. 보니를 원곡자로 둔 역전 및 미래소년/엔하이픈 SHOUT OUT 오원곡 제거. 메들리는 단일곡명 null. 원본 링크 `https://www.youtube.com/watch?v=<ID>`.
+- **[검증·운영 미적용] [SQL]** 로컬 PGlite(PostgreSQL)에서 운영의 실제 UPDATE 보호 트리거2개 정의를 읽어 JWT 없는 관리자 호출 조건으로 재현: 적용7건 필드일치·타 컬럼 불변·백업7, 재실행 중복0, 복구7 원상일치/반복0, 후속 수정시 undo 전체 중단, 원본 변경/누락/새 수동잠금시 정정 전체 중단 통과. 운영 전체 권한/네트워크 환경 재현은 아님. 새 백업 테이블/권한 변경 없이 기존 `admin_bulk_snapshots`에 batch `codex-audit7-20261026-bts-origin-7`로 저장하도록 준비. 과거26건 전용 백업/undo에는 추가하지 않음. `codex_audit7_verify_2026-10-26.sql`·`codex_audit7_undo_2026-10-26.sql` 제공(복구 후에도 백업 유지, 후속 수정 보호 가드 있음).
+- **[보류·미수정]** `1soCjDZs-9M` AOA 빙글뱅글 TOZ Dance TV: 업로더 MBCkpop이나 실제 댄서 이름 불명. `p7czpctf0cY` AOA2곡 모음: 공식 설명이 다른 아이돌 커버임은 밝히지만 팀별 명단 없음. `fdDwNU7cvHU` 아이키 Mmmh: 공식 설명에 미주·오마이걸 승희도 있어 실제 동반 출연 범위 추가 확인. `SteRn4oKv1I` 윤하+니콜라스+유마: M2 공식 제목은 합동 커버 확인, 윤하 등록 여부·개인/합동 귀속 규약과 본편 확인 후 판단. 제목의 원곡 이름만 보고 삭제/무관 처리하지 않음.
+- **⏳ 덜 된 일:** 위7건 SQL을 현재 상태 가드·백업·사후 검증과 함께 적용하고 verify `7/0/7` 및 공개 API/진 카드 노출 확인. 적용 전 다른 세션이 바꿨으면 강제하지 말고 재대조. 복구 시 일반 어드민 undo보다 전용 `_undo.sql`의 후속 수정 가드 사용. 이후 보류4건 본편/크레딧 대조 및 추가 콘텐츠 감사 계속. 이 항목의 적용 여부는 후속 `[완료]` 줄로 확정할 것.
+
+
 ## 2026-10-26 (Codex — SQL 직접 실행 연결 안내)
 - **[완료·연결/권한 확인] [운영 방식]** 사용자가 Supabase 플러그인 설치/연결 완료. `get_project`로 기존 프로젝트 ref `dukgguehegnembimqvkm`(bethej2love-lab's Project, ACTIVE_HEALTHY) 확인. `execute_sql` SELECT 결과 postgres 역할·transaction_read_only=off·해당 영상 테이블 SELECT/UPDATE 권한 true. 이제 승인된 정정 SQL을 직접 실행 가능. 연결 확인 중 실제 DB 변경/권한 확대는 하지 않음. 연결 전체의 접근 범위를 이 프로젝트로 제한했다고 주장하지 않으며 작업 대상은 이 프로젝트로 고정.
 - **[완료·백업 확인] [ops_codex_audit6_backup_20261026]** 연결된 SQL 도구로 관리자 전용 백업까지 읽기 확인: backed_up=26·undone=0·changed_after_apply=0. 앞선 사용자 실행의26건 모두 백업돼 있고 이후 태그 변경도 없음. 이후 확정 정정은 원본 검증→현재 상태/백업→승인 범위 내 실행→사후 대조→CHANGELOG 순서. 새 범위의 삭제·구조/권한 변경은 별도로 판단.
