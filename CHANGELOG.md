@@ -1,6 +1,13 @@
 # CHANGELOG
 
 
+
+## 2026-10-26 (Codex — 콘텐츠 감사9차·후이/휴이 식별)
+- **[진행중·원본 대조/SQL 검증 완료] [yt_channel_videos]** 배포 사이트 휴이 검색 결과에서 펜타곤 후이의 흠뻑 라이브가 넥스지로 노출되는 것 발견. 넥스지 primary 중 후이/HUI 후보를 묶어 조회해10건 확인: `gc4mENAhkgc,GVWL1-wFZmA,gw8Xx72BPiE,KyGcMaBVnPY,N6iwF1UA30w,OC9ELUq4rls,pmj2BbrzwuA,uyNt5IRdXaw,Y6AS0P_Jvow,yvIy-3c6zvE`. 10개 원본 YouTube watch videoDetails 제목·업로더·설명을 각각 대조(전체 시청 아님), 전부 후이(HUI) 솔로 무대/직캠/인터뷰. ALL THE K-POP·1theK Originals·it's Live·Mnet K-POP·M2 공식 업로드. 1theK 설명 #PENTAGON도 확인. 넥스지 휴이(HYUI)와 다른 인물. TAGGING.md 실존 그룹 멤버 규칙으로 primary 펜타곤/members 후이 예정. 원곡·category·기타 필드 보존.
+- **[완료·로컬 검증/운영 적용 대기] [sql/codex_audit9_fix_2026-10-26.sql] [sql/codex_audit9_verify_2026-10-26.sql] [sql/codex_audit9_undo_2026-10-26.sql]** 앞선 것과 같은 PGlite+운영 보호 트리거 검증 전부 통과(10건 적용/백업/재실행/복구 및 후속 수정·누락·잠금 가드). 배치 `codex-audit9-20261026-hui-identity-10`. 수동 태그 변경 없음 확인 후 현재 상태 가드로만 실행.
+- **[완료·감사8차 화면]** 휴이 카드 커버22건에서 본인 Flower 존재 확인, YU yours·SO GEON 좋아해..는 보이지 않음(최초 로드 전체22건 범위). 공개 API 검증3건과 구분. 추가로 후이/HUI 식별 규칙의 상류 재발 방지 필요 여부를 매처에서 read-only 검토 예정.
+
+
 ## 2026-10-26 (Codex — 콘텐츠 감사8차·넥스지 개인커버)
 - **[완료·3건 운영 반영] [yt_channel_videos]** 앞선 감사4차 미해결 후보3건의 현재 DB를 재조회. `ej4VlE2AioM` YU yours, `jLy2xHJ8OiU` SO GEON 좋아해.., `IegsJ5mWaww` HYUI Flower는 NEXZ 공식 제목·설명에서 개인 커버로 확인(전체 영상 시청 아님). JYP 공식 `https://nexz.jype.com/profile`의 YU=유우·SO GEON=소 건·HYUI=휴이를 artists.json 표준명 유우/소건/휴이와 대조. 빈 members를 각 개인으로 보완해 다른 넥스지 멤버 카드로 단체 영상처럼 확대되는 것을 방지. 원곡 메타데이터·cover_manual은 원상 보존.
 - **[완료·로컬 검증/운영 백업·반영] [sql/codex_audit8_fix_2026-10-26.sql] [sql/codex_audit8_verify_2026-10-26.sql] [sql/codex_audit8_undo_2026-10-26.sql]** PGlite+운영 보호 트리거 정의로 적용3·필드대조·타컬럼 보존·백업3·재적용 중복0·복구/재복구·후속 수정/원본 변경/누락/새 수동잠금 시 전체 중단 통과. 전용 batch `codex-audit8-20261026-nexz-members-3`. 적용 전 현재 상태 가드 유지, 운영 적용 후 verify `target_count=3,not_correct=0,backed_up=3`. 별도 공개 anon REST GET도 3건 전 필드 목표값 일치(mismatches0).
