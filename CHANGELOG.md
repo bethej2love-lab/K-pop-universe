@@ -1,5 +1,44 @@
 # CHANGELOG
 
+## 2026-10-27 (Codex — PR40 인수인계·배포 전 검사 보완)
+- **[완료·수정/로컬 검증] [PR #40] [tests/scroll-aids.test.js] [tests/smoke.test.js] [tests/seo-url.test.js] [정적 페이지]** 사용자 코드 수정 포함 이어받기 승인. 기존 codex/audit7-20261026 브랜치에 최신 main 8b0842196a 병합. 영문명 변경 후 정적 경로3개 누락과 CI 스크롤 검사 환경을 보완. 앱 JS/CSS·빌더 소스 변경 없음, 운영 DB20건 재적용 없음. PR 설명은 영문명·공유 주소·검사 보완·운영 기록을 포함하도록 갱신.
+- **[완료·로컬 검증] [tests/scroll-aids.test.js] [tests/smoke.test.js]** Windows scroll-aids17/17 통과, Linux CI 진단에서 pointer fine/coarse/hover 모두false·스크롤바 pseudo2px 확인. Playwright와 같은 headless 마우스 기본 설정/백그라운드 절전 방지 플래그를 시험 브라우저에만 적용하고 PC 애니메이션 완료를 최대3초 폴링(최종 <2px 기준 유지). 수정 후 로컬17/17, Linux CI 재확인 중. smoke는 For You만 연 채 발견 차트를 검사한 낡은 경로 수정→실제 발견 탭 선택 후 PC/모바일 로딩·차트2개·콘솔 오류0 통과. 앱 JS/CSS 변경 불필요.
+- **[완료·페이지/옛 링크] [en/g/nexz/] [g/넥스지/] [sitemap.xml] [tests/seo-url.test.js]** 정식 빌더의 그룹·멤버 생성 단계로 새 yu/so-geon/hyui3개 및 관련 프로필/그룹 링크 재생성. 불필요한 전체 관계 재수집 단계는 이 작업 PID만 확인해 중단, 다른 생성물 변경은 원복해 관련11개만 반영. 옛 yuu/so-ken/hui 주소는 canonical/noindex/즉시 새 주소 연결로 보존. sitemap도 해당3개 URL만 정정. 현재 주소4340개+옛 주소3개 회귀4343/4343 통과. 데이터 변경 삭제줄 재확인: 기존3개 name.en 정정만.
+- **[완료·DB 재확인/쓰기 없음] [sql/codex_audit7_verify_2026-10-26.sql] [sql/codex_audit8_verify_2026-10-26.sql] [sql/codex_audit9_verify_2026-10-26.sql]** 연결된 Supabase SELECT로 각각7/0/7·3/0/3·10/0/10 재확인(대상/불일치/백업). 정정20건 정상, 재실행 안 함. validate-data 오류0·경고144, matching224/224, slim --check 일치.
+- **[완료·추가 검증] [정적 링크]** static-links8/8: 내부 링크369,777개 깨짐0·관계 페이지106개 허브 연결 정상. 생성기 출력의 새3개 페이지 후행 공백만 정리, 캐시 버전 수동 변경 없음. 최종 Linux CI 결과는 PR40 check 참조(로컬 통과를 CI 통과로 대신하지 않음).
+- **⏳ 덜 된 일 [배포/추가 감사]** `gh pr checks 40 --repo bethej2love-lab/K-pop-universe` 최종 revision 통과 후 main 반영하고 공개 배포의 YU/SO GEON/HYUI 검색·새/옛 영문 주소 재확인. iOS/Android 실기기 확인과 보류영상4개 본편 크레딧 검증은 별도(이전 감사7차 항목). 기존 정정 SQL 재실행 불필요.
+
+
+
+## 2026-10-27 (Codex — 넥스지 공식 영문명·검색/태깅 재발 방지)
+- **[완료·PR 브랜치/미배포] [artists.json] [artists.slim.json]** 공식 JYP `https://nexz.jype.com/profile` 대조: 유우 Yuu→YU, 소건 So Ken→SO GEON, 휴이 Hui→HYUI로 정정. 현재 _m2NameVariants는 정정 전 각각 잘못된 영문명만 반환. 배포 사이트 모바일 폭390×844에서 HYUI 검색 시 휴이의 공식 영문 일치 결과 없이 Hui(펜타곤)가 첫째·Hui(넥스지)가 둘째로 노출됨(오타 보정 후보). 영어 제목 개인커버 멤버 누락3건의 상류 재발 방지와 공식 영문 검색 정확도를 위해 이3필드와 파생물만 정정. JSON 구조 대조로 양쪽 파일 모두 이3개 name.en 외 변경0·인물 수 불변 확인. 배드빌런 동명이인 휴이는 보존. 앱 JS 로직 변경 없음. 실기기 검증 아님.
+- **[완료·최신화]** main `3115f7f0`까지4개 자동 신보 수집 커밋을 merge. 최신 main 코드의 _m2ParseTitle로 후이 후보10개 모두 펜타곤/후이를 반환함(weak9·ambiguous1); 이10건 자체는 저장된 예전 오태깅으로 판단하며 광범위 매처 규칙 변경 불필요. validate-data 재검증 오류0·경고144.
+- **[완료·검증] [tests/matching.test.js]** 실제 공식 제목3개와 후이/HUI 구분1개 회귀 추가. 정정 전221/224(3개 신규 케이스 실패)→정정 후224/224. syntax 통과·validate-data 오류0/경고144·build_slim_data --check 원본/생성물 일치. 전체 재직렬화 전 원본 포맷 일치 확인, diff 삭제 줄은 Yuu/So Ken/Hui3개뿐.
+- **[완료·모바일 폭 검수/실기기 아님]** 관리형 인앱 브라우저의 viewport를390×844·412×915 CSS px로 설정, 로컬 정적 서버에서 수정 데이터를 로드. 첫 안내 건너뛰기→검색→HYUI/SO GEON/YU 입력→HYUI 결과 선택→넥스지 휴이 카드→커버 탭 클릭을 검수. HYUI·SO GEON 각 해당 멤버1개 정확 매칭, YU는 동명 Yu(아워벌스데이)도 있어 소속 NEXZ로 구분되는 것 확인. 412px에서 문서 scrollWidth412·검색창 우측365px로 가로 넘침 없음. 원격 배포판 정정 전 HYUI 검색은 펜타곤 Hui가 먼저였고 로컬 정정 후 HYUI/NEXZ만 일치. iOS Safari/WebKit·Android Chrome 실기기·터치/OS 키보드·안전영역 검증은 하지 않음. 관리형 Chromium 화면 크기 검수만 의미함.
+- **[제약·미배포]** headless smoke를 수정 후 재실행했지만 이 환경에서 CDP 포트 미개방 exit2 동일. 기능 실패라고 확정하지 않으나 통과로 간주하지 않음. main 배포하지 않고 PR #40에 영문명/파생물/회귀 검증까지 push. 운영 DB 정정20건과 구분. 후속 담당자는 smoke 가능한 환경에서 `node tests/smoke.test.js` 통과 후 main 반영, 배포판에서 영문 검색3개 재확인. 원칙에 따라 캐시 버전 수동 변경 없음.
+
+
+## 2026-10-26 (Codex — 콘텐츠 감사9차·후이/휴이 식별)
+- **[완료·10건 운영 반영] [yt_channel_videos]** 배포 사이트 휴이 검색 결과에서 펜타곤 후이의 흠뻑 라이브가 넥스지로 노출되는 것 발견. 넥스지 primary 중 후이/HUI 후보를 묶어 조회해10건 확인: `gc4mENAhkgc,GVWL1-wFZmA,gw8Xx72BPiE,KyGcMaBVnPY,N6iwF1UA30w,OC9ELUq4rls,pmj2BbrzwuA,uyNt5IRdXaw,Y6AS0P_Jvow,yvIy-3c6zvE`. 10개 원본 YouTube watch videoDetails 제목·업로더·설명을 각각 대조(전체 시청 아님), 전부 후이(HUI) 솔로 무대/직캠/인터뷰. ALL THE K-POP·1theK Originals·it's Live·Mnet K-POP·M2 공식 업로드. 1theK 설명 #PENTAGON도 확인. 넥스지 휴이(HYUI)와 다른 인물. TAGGING.md 실존 그룹 멤버 규칙으로 primary 펜타곤/members 후이로 정정. 원곡·category·기타 필드 보존.
+- **[완료·로컬 검증/운영 백업·반영] [sql/codex_audit9_fix_2026-10-26.sql] [sql/codex_audit9_verify_2026-10-26.sql] [sql/codex_audit9_undo_2026-10-26.sql]** 앞선 것과 같은 PGlite+운영 보호 트리거 검증 전부 통과(10건 적용/백업/재실행/복구 및 후속 수정·누락·잠금 가드). 배치 `codex-audit9-20261026-hui-identity-10`. 수동 태그 변경 없음 확인 후 현재 상태 가드로 실행. 운영 verify `target_count=10,not_correct=0,backed_up=10`, 공개 anon REST GET도10건 전 필드 목표값 일치(mismatches0).
+- **[완료·감사8차 화면]** 휴이 카드 커버22건에서 본인 Flower 존재 확인, YU yours·SO GEON 좋아해..는 보이지 않음(최초 로드 전체22건 범위). 공개 API 검증3건과 구분. 추가로 후이/HUI 식별 규칙의 상류 재발 방지 필요 여부를 매처에서 read-only 검토 예정.
+
+
+## 2026-10-26 (Codex — 콘텐츠 감사8차·넥스지 개인커버)
+- **[완료·3건 운영 반영] [yt_channel_videos]** 앞선 감사4차 미해결 후보3건의 현재 DB를 재조회. `ej4VlE2AioM` YU yours, `jLy2xHJ8OiU` SO GEON 좋아해.., `IegsJ5mWaww` HYUI Flower는 NEXZ 공식 제목·설명에서 개인 커버로 확인(전체 영상 시청 아님). JYP 공식 `https://nexz.jype.com/profile`의 YU=유우·SO GEON=소 건·HYUI=휴이를 artists.json 표준명 유우/소건/휴이와 대조. 빈 members를 각 개인으로 보완해 다른 넥스지 멤버 카드로 단체 영상처럼 확대되는 것을 방지. 원곡 메타데이터·cover_manual은 원상 보존.
+- **[완료·로컬 검증/운영 백업·반영] [sql/codex_audit8_fix_2026-10-26.sql] [sql/codex_audit8_verify_2026-10-26.sql] [sql/codex_audit8_undo_2026-10-26.sql]** PGlite+운영 보호 트리거 정의로 적용3·필드대조·타컬럼 보존·백업3·재적용 중복0·복구/재복구·후속 수정/원본 변경/누락/새 수동잠금 시 전체 중단 통과. 전용 batch `codex-audit8-20261026-nexz-members-3`. 적용 전 현재 상태 가드 유지, 운영 적용 후 verify `target_count=3,not_correct=0,backed_up=3`. 별도 공개 anon REST GET도 3건 전 필드 목표값 일치(mismatches0).
+- **[완료·감사7차 공개 경로]** 감사7차 운영 정정7건은 공개 anon REST GET으로도 7건 전 필드 목표값 일치 확인(mismatches0). 운영 SQL 검증과 공개 API 검증을 모두 통과. 실제 카드 노출 검수는 별도 진행.
+
+
+## 2026-10-26 (Codex — 집 노트북 콘텐츠 감사7차·원곡/출연자 정정)
+- **[완료·7건 운영 반영] [콘텐츠 감사]** 회사 Codex 최신 인수인계(`76db61d9`)를 이어받음. 사용자: 처음 검수/기록만 요청했다가 원본으로 확정 가능한 오류의 소량 정정과 즉시 GitHub push까지 승인. 앱 코드·매처·JSON은 이번 작업 범위 아님. DB/문서/정정·검증·복구 SQL만 다룸. 기존 감사6차26건은 read-only verify로 `target_count=26,not_correct=0,manually_excluded=10` 재확인.
+- **[완료·원본 대조/운영 반영] [sql/codex_audit7_fix_2026-10-26.sql]** 공식 YouTube watch 페이지의 `videoDetails` 제목·업로더·설명을11개 수집/대조(전체 영상 시청 아님). 그중 출연자/원곡 명확한7건: `l_B_8UC60zI` ONEUS 서호 Epiphany, `0TwOk9EeJSY` 드림노트 보니 상남자, `47ci_on2iLY` 체리블렛 MIC Drop, `zzo7P967fd4` 엔하이픈 Dynamite, `BUzlgKS7a8o`·`6BibMYh3vhs` 베리베리×TOO ON(TOO=티오원 옛 이름 데이터 대조), `LcWL5qpllyg` 미래소년 BTS6곡 메들리. 전부 방탄소년단 primary를 실제 출연 그룹으로 옮기고 원곡을 BTS로 분리. 보니를 원곡자로 둔 역전 및 미래소년/엔하이픈 SHOUT OUT 오원곡 제거. 메들리는 단일곡명 null. 원본 링크 `https://www.youtube.com/watch?v=<ID>`.
+- **[완료·로컬 검증/운영 백업·반영] [SQL]** 로컬 PGlite(PostgreSQL)에서 운영의 실제 UPDATE 보호 트리거2개 정의를 읽어 JWT 없는 관리자 호출 조건으로 재현: 적용7건 필드일치·타 컬럼 불변·백업7, 재실행 중복0, 복구7 원상일치/반복0, 후속 수정시 undo 전체 중단, 원본 변경/누락/새 수동잠금시 정정 전체 중단 통과. 운영 전체 권한/네트워크 환경 재현은 아님. 새 백업 테이블/권한 변경 없이 기존 `admin_bulk_snapshots`에 batch `codex-audit7-20261026-bts-origin-7`로 7건 저장 후 같은 트랜잭션에서 적용. 운영 read-only verify 결과 `target_count=7,not_correct=0,backed_up=7`; 별도 SELECT로 7개 ID의 필드별 결과도 재대조. 과거26건 전용 백업/undo에는 추가하지 않음. `codex_audit7_verify_2026-10-26.sql`·`codex_audit7_undo_2026-10-26.sql` 제공(복구 후에도 백업 유지, 후속 수정 보호 가드 있음).
+- **[보류·미수정]** `1soCjDZs-9M` AOA 빙글뱅글 TOZ Dance TV: 업로더 MBCkpop이나 실제 댄서 이름 불명. `p7czpctf0cY` AOA2곡 모음: 공식 설명이 다른 아이돌 커버임은 밝히지만 팀별 명단 없음. `fdDwNU7cvHU` 아이키 Mmmh: 공식 설명에 미주·오마이걸 승희도 있어 실제 동반 출연 범위 추가 확인. `SteRn4oKv1I` 윤하+니콜라스+유마: M2 공식 제목은 합동 커버 확인, 윤하 등록 여부·개인/합동 귀속 규약과 본편 확인 후 판단. 제목의 원곡 이름만 보고 삭제/무관 처리하지 않음.
+- **[검증 범위/배포]** `node tests/syntax.test.js` 통과, `node tests/validate-data.js` 오류0·경고144. `node tests/smoke.test.js`는 이 노트북 실행 환경에서 Chromium CDP 포트가 열리지 않아 exit2로 중단(기능 통과 아님). 앱/JSON 수정은 없으며 자동 배포되는 main 대신 `codex/audit7-20261026`에 SQL·기록을 즉시 push. 운영 DB 정정7건은 이미 적용됨.
+- **⏳ 덜 된 일:** 공개 API/진 카드 노출 재확인, 보류4건 본편/크레딧 대조 및 추가 콘텐츠 감사. 복구 시 일반 어드민 undo보다 전용 `_undo.sql`의 후속 수정 가드 사용.
+
+
 ## 2026-10-26 (Codex — SQL 직접 실행 연결 안내)
 - **[완료·연결/권한 확인] [운영 방식]** 사용자가 Supabase 플러그인 설치/연결 완료. `get_project`로 기존 프로젝트 ref `dukgguehegnembimqvkm`(bethej2love-lab's Project, ACTIVE_HEALTHY) 확인. `execute_sql` SELECT 결과 postgres 역할·transaction_read_only=off·해당 영상 테이블 SELECT/UPDATE 권한 true. 이제 승인된 정정 SQL을 직접 실행 가능. 연결 확인 중 실제 DB 변경/권한 확대는 하지 않음. 연결 전체의 접근 범위를 이 프로젝트로 제한했다고 주장하지 않으며 작업 대상은 이 프로젝트로 고정.
 - **[완료·백업 확인] [ops_codex_audit6_backup_20261026]** 연결된 SQL 도구로 관리자 전용 백업까지 읽기 확인: backed_up=26·undone=0·changed_after_apply=0. 앞선 사용자 실행의26건 모두 백업돼 있고 이후 태그 변경도 없음. 이후 확정 정정은 원본 검증→현재 상태/백업→승인 범위 내 실행→사후 대조→CHANGELOG 순서. 새 범위의 삭제·구조/권한 변경은 별도로 판단.

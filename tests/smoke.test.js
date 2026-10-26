@@ -133,6 +133,10 @@ async function main() {
     await evalExpr(cdp, `document.getElementById('tab-feed')?.click()`);
     const feedOpen = await pollUntil(cdp, `document.getElementById('feed-overlay')?.classList.contains('open')`, 5000);
     if (!feedOpen) fail('탐험 패널이 안 열림(#feed-overlay.open 없음)'); else ok('탐험 패널 열기 성공');
+    // 첫 탭은 For You이고 발견 선반은 탭을 선택할 때 로드한다. 실제 사용자 경로로 발견을 연 뒤 확인.
+    await evalExpr(cdp, `document.getElementById('feed-tab-disc')?.click()`);
+    const discoveryOpen = await pollUntil(cdp, `document.getElementById('feed-tab-disc')?.classList.contains('active')`, 5000);
+    if (!discoveryOpen) fail('발견 탭 전환 실패'); else ok('발견 탭 전환 성공');
     const chartCardCount = await pollUntil(cdp, `document.querySelectorAll('#feed-chart .feed-card').length`, 8000, v => v > 0);
     if (chartCardCount) ok(`Charts 섹션 카드 ${chartCardCount}개 렌더 확인`);
     else fail('Charts 섹션에 카드가 하나도 안 뜸(8초 대기)');

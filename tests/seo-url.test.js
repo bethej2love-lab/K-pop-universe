@@ -59,6 +59,20 @@ for (const lang of ['ko', 'en']) {
   });
 }
 
+// 공식 영문명 정정 전 공유된 주소도 현재 이름의 페이지로 이어져야 한다.
+sandbox.currentLang = 'en';
+for (const [id, oldSlug] of [['a1101','yuu'],['a1103','so-ken'],['a1105','hui']]) {
+  checked++;
+  sandbox.__a = artists.find(a => a.id === id);
+  const url = vm.runInContext('_seoUrlForMember(__a)', sandbox);
+  const oldFile = path.join(ROOT, 'en/g/nexz', oldSlug, 'index.html');
+  const html = fs.existsSync(oldFile) ? fs.readFileSync(oldFile, 'utf8') : '';
+  const canonical = html.match(/<link rel="canonical" href="([^"]+)"/);
+  if (!canonical || canonical[1] !== url || !html.includes(`content="0; url=${url}"`) || !html.includes('content="noindex"')) {
+    fail++; miss.push(`옛 NEXZ 주소 ${oldSlug} → 현재 공식 영문명 URL로 연결되지 않음`);
+  }
+}
+
 console.log(`[seo-url] 검사 ${checked}건 (그룹 ${Object.keys(groups).length} + 멤버 ${artists.length}, ko/en 각각)`);
 if (fail) {
   console.error(`\n❌ ${fail}건이 실제 생성된 정적 페이지와 어긋남:`);
