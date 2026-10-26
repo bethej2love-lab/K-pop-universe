@@ -16286,20 +16286,29 @@ function _pwaViewportFix(){
   const portrait=window.innerHeight>window.innerWidth;
   const screenH=portrait?Math.max(screen.height,screen.width):Math.min(screen.height,screen.width);
   const gap=Math.round(screenH-window.innerHeight);
-  const on=standalone&&portrait&&envTop<5&&gap>=15&&gap<=80;
+  // 2026-10-26 사용자 캡처 "위 라인이 너무 많이 내려왔다": 높이는 여전히 47 모자란데 상단 인셋은 47로 제대로 들어온 상태가 있었다
+  // (탭바 위치는 헤드리스 보정 상태와 일치, 탐험 탭 줄만 정확히 47 더 아래 = 페이지 내림 + 세이프에어리어 이중). 그래서
+  // 아래 띠 메우기(--vp-gap)는 높이가 모자라면 늘 하고, 페이지 내림(--vp-shift)은 상단 인셋이 못 채운 만큼만 한다.
+  // 실행 직후엔 인셋 0이었다가 나중에 들어오는 경우가 있어(높이는 그대로라 resize가 안 남) 아래에서 몇 번 더 다시 잰다.
+  const on=standalone&&portrait&&gap>=15&&gap<=80;
+  const shift=on?Math.max(0,gap-envTop):0;
   de.classList.toggle('vp-shift',on);
   de.style.setProperty('--vp-gap',on?gap+'px':'0px');
-  _pwaVpInfo={standalone,envTop,innerH:window.innerHeight,screenH,gap,on};
+  de.style.setProperty('--vp-shift',shift+'px');
+  _pwaVpInfo={standalone,envTop,innerH:window.innerHeight,screenH,gap,on,shift};
 }
 let _pwaVpInfo=null;
 _pwaViewportFix();
 window.addEventListener('resize',_pwaViewportFix);
 window.addEventListener('orientationchange',()=>setTimeout(_pwaViewportFix,300));
+[500,1500,4000].forEach(t=>setTimeout(_pwaViewportFix,t));
+window.addEventListener('pageshow',_pwaViewportFix);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)_pwaViewportFix();});
 // 관리자가 웹앱으로 열면 처음 3번만 측정값을 잠깐 보여준다 — 보정이 안 먹을 때 캡처 한 장으로 원인을 알 수 있게
 setTimeout(()=>{try{
   if(!_pwaVpInfo||!_pwaVpInfo.standalone||typeof _isAdmin!=='function'||!_isAdmin())return;
   const n=+(localStorage.getItem('kpu_vpdiag_n')||0);if(n>=3)return;localStorage.setItem('kpu_vpdiag_n',n+1);
-  const v=_pwaVpInfo;_showShareToast(`화면 진단: 높이 ${v.innerH}/${v.screenH} · 상단 ${v.envTop} · 보정 ${v.on?v.gap+'px':'없음'}`);
+  const v=_pwaVpInfo;_showShareToast(`화면 진단: 높이 ${v.innerH}/${v.screenH} · 상단 ${v.envTop} · 띠 ${v.on?v.gap+'px':'없음'} · 내림 ${v.shift}px`);
 }catch(e){}},4000);
 // 시트 기하를 결정하는 단 두 개의 변수를 한 곳에서만 쓴다(kpop_universe.css의 #mob-sheet 주석 참고).
 function _applySheetMetrics(){
