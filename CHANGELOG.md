@@ -1,7 +1,7 @@
 # CHANGELOG
 
 ## 2026-10-26 (Claude Code — 관리자 영상 포맷에 '자컨')
-- **[완료] [index.html] [admin.js] [tests/jacon-tab.test.js]** 사용자 "연필 편집 '영상 포맷(관리자)'과 카드 영상 탭을 거의 일치". 포맷 옵션에 자컨(category='jacon') 추가(퍼포먼스 다음). 자컨 탭은 채널(source_tier official·grpsub·idol)로 정해지던 것 → 가 category='jacon'도 받음(대표영상·목록·탭 노출 판정 공통) — 다른 채널에 올라온 자컨을 손으로 넣는 용도. 앨범 영상 패널(_tvfFmt)도 category를 그대로 써서 자동으로 자컨에 들어감. 실제 DB: 아이브 자컨 조건 새 식/옛 식 모두 3,382건(아직 jacon 지정 0), 쿼리 오류 없음.
+- **[완료] [index.html] [admin.js] [tests/jacon-tab.test.js]** 사용자 "연필 편집 '영상 포맷(관리자)'과 카드 영상 탭을 거의 일치". 포맷 옵션에 자컨(category='jacon') 추가(퍼포먼스 다음). 자컨 탭은 채널(source_tier official·grpsub·idol)로 정해지던 것 → `_applyJaconQuery`가 category='jacon'도 받음(대표영상·목록·탭 노출 판정 공통) — 다른 채널에 올라온 자컨을 손으로 넣는 용도. 앨범 영상 패널(_tvfFmt)도 category를 그대로 써서 자동으로 자컨에 들어감. 실제 DB: 아이브 자컨 조건 새 식/옛 식 모두 3,382건(아직 jacon 지정 0), 쿼리 오류 없음.
 - **[완료·버그] [index.html] [admin.js]** 자컨 탭에서 영상을 편집·저장하면 그 영상이 목록에서 사라지던 것 — 저장 직후 재확인(patchItem)이 자컨을 일반 장르처럼 category===탭 으로 비교. 모달이 source_tier를 같이 읽어 넘기고 채널 또는 자컨 지정이면 유지.
 - **⏳ 덜 된 일** 첫 '자컨' 저장 때 DB가 받는지 확인(레포 SQL엔 category 값 제약 없음, 저장 실패 시 모달 상태줄에 오류). 일괄 편집에서도 같은 select라 자컨 지정 가능. 채널 추가 화면의 '기본 탭'(vm-ch-add-defcat)엔 안 넣음 — 공식·개인 채널은 이미 자동으로 자컨.
 
