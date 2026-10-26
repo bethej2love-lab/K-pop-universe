@@ -14,6 +14,17 @@ const cases = [];
 // publishedAt: 탈퇴 게이트(_atmLeftBefore) 검증용 4번째 인자. 안 주면 기존처럼 날짜 없이 파싱.
 function test(name, title, selfGko, check, publishedAt) { cases.push({ name, title, selfGko, check, publishedAt }); }
 
+// 공식 영문명으로 올린 개인 커버는 다른 멤버에게 단체 영상처럼 노출하지 않는다.
+// 원본 NEXZ 업로드 3건 + 후이/HUI 동명이인 회귀 (JYP 공식 프로필 대조, 2026-10-27).
+test('NEXZ YU 개인 커버 → 유우', 'yours (데이먼스 이어) Covered by NEXZ YU | #YU', undefined,
+  r => !!r && r.primaryGroup === '넥스지' && JSON.stringify(r.membersByGroup['넥스지']) === '["유우"]');
+test('NEXZ SO GEON 개인 커버 → 소건', '좋아해.. (죠지) Covered by NEXZ SO GEON | #SOGEON', undefined,
+  r => !!r && r.primaryGroup === '넥스지' && JSON.stringify(r.membersByGroup['넥스지']) === '["소건"]');
+test('NEXZ HYUI 개인 커버 → 휴이', 'Flower (Johnny Stimson) Covered by NEXZ HYUI | #HYUI', undefined,
+  r => !!r && r.primaryGroup === '넥스지' && JSON.stringify(r.membersByGroup['넥스지']) === '["휴이"]');
+test('HUI 후이 무대는 NEXZ HYUI와 구분', '[LIVE] 후이(HUI) - 흠뻑(Hmm BOP) | dancEAR', undefined,
+  r => !!r && r.primaryGroup === '펜타곤' && JSON.stringify(r.membersByGroup['펜타곤']) === '["후이"]' && !(r.withGroups || []).includes('넥스지'));
+
 // ── 하이라이트(옛 BEAST) 일반어 게이트(2026-10-12) ─────────────────────
 // 함께한 그룹 하이라이트 34건 중 23건이 오태깅: '#하이라이트'(요약 영상)·'#Highlight_shorts'·소문자 '#Highlight'/'#Beast'·곡명 'Son of Beast'.
 const _hl = r => !!r && (r.primaryGroup === '하이라이트' || (r.withGroups || []).includes('하이라이트'));

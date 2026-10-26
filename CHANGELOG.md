@@ -3,9 +3,11 @@
 
 
 ## 2026-10-27 (Codex — 넥스지 공식 영문명·검색/태깅 재발 방지)
-- **[진행중] [artists.json] [artists.slim.json]** 공식 JYP `https://nexz.jype.com/profile` 대조: 유우 Yuu→YU, 소건 So Ken→SO GEON, 휴이 Hui→HYUI 필요. 현재 _m2NameVariants는 각각 잘못된 영문명만 반환. 배포 사이트 모바일 폭390×844에서 HYUI 검색 시 휴이의 공식 영문 일치 결과 없이 Hui(펜타곤)가 첫째·Hui(넥스지)가 둘째로 노출됨(오타 보정 후보). 영어 제목 개인커버 멤버 누락3건의 상류 재발 방지와 공식 영문 검색 정확도를 위해 이3필드와 파생물만 정정 예정. 앱 JS 로직 변경 없음. 실기기 검증 아님.
+- **[완료·PR 브랜치/미배포] [artists.json] [artists.slim.json]** 공식 JYP `https://nexz.jype.com/profile` 대조: 유우 Yuu→YU, 소건 So Ken→SO GEON, 휴이 Hui→HYUI로 정정. 현재 _m2NameVariants는 정정 전 각각 잘못된 영문명만 반환. 배포 사이트 모바일 폭390×844에서 HYUI 검색 시 휴이의 공식 영문 일치 결과 없이 Hui(펜타곤)가 첫째·Hui(넥스지)가 둘째로 노출됨(오타 보정 후보). 영어 제목 개인커버 멤버 누락3건의 상류 재발 방지와 공식 영문 검색 정확도를 위해 이3필드와 파생물만 정정. JSON 구조 대조로 양쪽 파일 모두 이3개 name.en 외 변경0·인물 수 불변 확인. 배드빌런 동명이인 휴이는 보존. 앱 JS 로직 변경 없음. 실기기 검증 아님.
 - **[완료·최신화]** main `3115f7f0`까지4개 자동 신보 수집 커밋을 merge. 최신 main 코드의 _m2ParseTitle로 후이 후보10개 모두 펜타곤/후이를 반환함(weak9·ambiguous1); 이10건 자체는 저장된 예전 오태깅으로 판단하며 광범위 매처 규칙 변경 불필요. validate-data 재검증 오류0·경고144.
-- **⏳ 덜 된 일:** 영문명 정정 전후 실제 제목 매처 비교, matching 전체·syntax·validate-data·파생물 검사. headless smoke 실행 환경 제약이 남으면 main에 배포하지 않고 PR #40에 리뷰 가능한 상태로 push. 운영 DB 정정20건은 이미 반영·백업·공개 API 대조 완료.
+- **[완료·검증] [tests/matching.test.js]** 실제 공식 제목3개와 후이/HUI 구분1개 회귀 추가. 정정 전221/224(3개 신규 케이스 실패)→정정 후224/224. syntax 통과·validate-data 오류0/경고144·build_slim_data --check 원본/생성물 일치. 전체 재직렬화 전 원본 포맷 일치 확인, diff 삭제 줄은 Yuu/So Ken/Hui3개뿐.
+- **[완료·모바일 폭 검수/실기기 아님]** 관리형 인앱 브라우저의 viewport를390×844·412×915 CSS px로 설정, 로컬 정적 서버에서 수정 데이터를 로드. 첫 안내 건너뛰기→검색→HYUI/SO GEON/YU 입력→HYUI 결과 선택→넥스지 휴이 카드→커버 탭 클릭을 검수. HYUI·SO GEON 각 해당 멤버1개 정확 매칭, YU는 동명 Yu(아워벌스데이)도 있어 소속 NEXZ로 구분되는 것 확인. 412px에서 문서 scrollWidth412·검색창 우측365px로 가로 넘침 없음. 원격 배포판 정정 전 HYUI 검색은 펜타곤 Hui가 먼저였고 로컬 정정 후 HYUI/NEXZ만 일치. iOS Safari/WebKit·Android Chrome 실기기·터치/OS 키보드·안전영역 검증은 하지 않음. 관리형 Chromium 화면 크기 검수만 의미함.
+- **[제약·미배포]** headless smoke를 수정 후 재실행했지만 이 환경에서 CDP 포트 미개방 exit2 동일. 기능 실패라고 확정하지 않으나 통과로 간주하지 않음. main 배포하지 않고 PR #40에 영문명/파생물/회귀 검증까지 push. 운영 DB 정정20건과 구분. 후속 담당자는 smoke 가능한 환경에서 `node tests/smoke.test.js` 통과 후 main 반영, 배포판에서 영문 검색3개 재확인. 원칙에 따라 캐시 버전 수동 변경 없음.
 
 
 ## 2026-10-26 (Codex — 콘텐츠 감사9차·후이/휴이 식별)
