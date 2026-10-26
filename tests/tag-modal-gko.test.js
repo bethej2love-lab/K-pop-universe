@@ -27,7 +27,8 @@ const bad = m => { pass = false; console.log(`❌ ${m}`); };
 const need = (c, m) => c ? ok(m) : bad(m);
 
 // ── ① 모달이 실제 group_ko를 읽는가 ──────────────────────────────────────────
-const modalSelect = (admin.match(/\.select\('([^']*tags_manual[^']*content_formats)'\)\.eq\('id',v\.id\)/) || [])[1] || '';
+// 뒤에 선택 컬럼(source_tier — 자컨 판정용, 2026-10-26)을 조건부로 덧붙이는 형태도 같이 인식
+const modalSelect = (admin.match(/\.select\('([^']*tags_manual[^']*content_formats)'(?:\+\([^)]*\))?\)\.eq\('id',v\.id\)/) || [])[1] || '';
 need(modalSelect.length > 0, '모달의 단일 영상 조회 select를 찾음');
 need(modalSelect.split(',').map(s => s.trim()).includes('group_ko'),
   `  · select에 group_ko 포함(이게 빠져서 사고가 났다) — ${modalSelect.slice(0, 60)}…`);

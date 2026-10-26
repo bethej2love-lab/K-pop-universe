@@ -88,6 +88,8 @@ function load(){
   F(/^function _atmResolveMembers\(/m,'_atmResolveMembers');
   S(/^const _m2VariantsCache\s*=/m,'_m2VariantsCache');
   F(/^function _m2NameVariants\(/m,'_m2NameVariants');
+  S(/^let _m2FullNameOwnersCache\s*=/m,'_m2FullNameOwnersCache'); // 전체 이름 그림자 규칙(2026-10-26)
+  F(/^function _m2FullNameShadowed\(/m,'_m2FullNameShadowed');
   S(/^const _GROUP_TITLE_CONFLICT_EXCLUDE\s*=/m,'_GROUP_TITLE_CONFLICT_EXCLUDE');
   S(/^const _GROUP_AMBIGUOUS_IF_COMATCHED\s*=/m,'_GROUP_AMBIGUOUS_IF_COMATCHED');
   F(/^function _unitMemberNamedInTitle\(/m,'_unitMemberNamedInTitle');

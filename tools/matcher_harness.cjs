@@ -65,6 +65,10 @@ pieces.push(extractByBraces(adminSrc, /^function _atmStripSurname\(/m, '_atmStri
 pieces.push(extractByBraces(adminSrc, /^function _isHashtagOnlyName\(/m, '_isHashtagOnlyName'));
 pieces.push(extractStatement(adminSrc, /^const _m2VariantsCache\s*=/m, '_m2VariantsCache'));
 pieces.push(extractByBraces(adminSrc, /^function _m2NameVariants\(/m, '_m2NameVariants'));
+if (/^function _m2FullNameShadowed\(/m.test(adminSrc)) { // 전체 이름 그림자 규칙(2026-10-26)
+  pieces.push(extractStatement(adminSrc, /^let _m2FullNameOwnersCache\s*=/m, '_m2FullNameOwnersCache'));
+  pieces.push(extractByBraces(adminSrc, /^function _m2FullNameShadowed\(/m, '_m2FullNameShadowed'));
+}
 // 성 뗀 이름 역추론 제외 목록(2026-10-26) — 옛 admin.js로 전/후 차분을 돌릴 때도 뜨게 있으면만 싣는다
 if (/^const _ATM_NO_GIVEN_ONLY\s*=/m.test(adminSrc)) pieces.push(extractStatement(adminSrc, /^const _ATM_NO_GIVEN_ONLY\s*=/m, '_ATM_NO_GIVEN_ONLY'));
 pieces.push(extractStatement(adminSrc, /^const _GROUP_TITLE_CONFLICT_EXCLUDE\s*=/m, '_GROUP_TITLE_CONFLICT_EXCLUDE'));

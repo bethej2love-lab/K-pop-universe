@@ -8254,6 +8254,28 @@ function _m2NameVariants(a){
   _m2VariantsCache.set(a,variants);
   return variants;
 }
+// 제목에 다른 사람의 전체 이름(홍은채·안유진)이 있는데, 그 사람의 성 뗀 이름과 같은 토큰(은채·유진)으로
+// 또 다른 사람(다이아 은채·S.E.S. 유진)을 붙이고 있으면 true — "#은채의스타일기 #홍은채"에 다이아 은채가
+// 같이 붙던 것(2026-10-26, 동명이인 애매 판정 확장을 보류하고 대신 넣은 좁은 규칙).
+let _m2FullNameOwnersCache=null;
+function _m2FullNameShadowed(tok,a,text){
+  if(!tok||!/^[가-힣]{2,}$/.test(tok)||!text)return false;
+  if(!_m2FullNameOwnersCache){
+    _m2FullNameOwnersCache=new Map(); // 성 뗀 이름 → 그 이름을 가진 전체 이름(3자 이상) 목록
+    for(const o of ARTISTS){
+      const full=o.name&&o.name.ko;
+      if(!full||[...full].length<3)continue;
+      const s=_atmStripSurname([...full]);
+      if(!s||s===full)continue;
+      if(!_m2FullNameOwnersCache.has(s))_m2FullNameOwnersCache.set(s,new Set());
+      _m2FullNameOwnersCache.get(s).add(full);
+    }
+  }
+  const owners=_m2FullNameOwnersCache.get(tok);
+  if(!owners)return false;
+  for(const full of owners)if(full!==a.name.ko&&text.includes(full))return true;
+  return false;
+}
 // 제목에서 그룹/멤버 매칭. 토큰 경계 기준으로 GROUPS/ARTISTS 데이터와 대조.
 // 그룹명이 실제로는 다른 유명한 곡/개념과 완전히 겹쳐서 오매칭 위험이 큰 경우 — 발견될 때마다 여기 추가.
 // 슈퍼노바(초신성, 2007년 데뷔 1세대 보이그룹)의 영문명 "Supernova"가 아이브×David Guetta의 2024년 곡
@@ -9052,7 +9074,7 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
       const names=_ATM_NO_GIVEN_ONLY.has(a.name.ko)?_m2NameVariants(a).filter(t=>t!==_atmStripSurname([...a.name.ko])):_m2NameVariants(a);
       // strict 채널(예능/잡지)에서는 그룹명 literal 매칭이 아예 없으므로, 멤버 이름도 해시태그로
       // 명시된 경우만 인정 — 평문 매칭(memberHit의 일반 분기)은 여기서 아예 시도하지 않는다.
-      const _matchedToks=strict?names.filter(t=>hitHashtag(t)):memberHitTokens(a,names);
+      const _matchedToks=(strict?names.filter(t=>hitHashtag(t)):memberHitTokens(a,names)).filter(t=>!_m2FullNameShadowed(t,a,title));
       const nameMatched=_matchedToks.length>0;
       if(nameMatched&&!names.some(t=>hasForeignGroupSuffix(t,names))){
         // 겸임 멤버(NCT 마크·해찬, 아이즈원 안유진 등)는 자기 소속 그룹 전부(_artistGroups)에 귀속시켜야

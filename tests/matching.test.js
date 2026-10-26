@@ -74,6 +74,12 @@ test('퍼즐 — 퀸덤퍼즐 퍼즐 팀은 아님', '[#퀸덤퍼즐/풀버전] 
 test('퍼즐 — 드라마 나인 퍼즐은 아님', '김다미·손석구, “10년간 이어져 온 서사👀 ’나인 퍼즐’ 제작발표회”', undefined, r => !_pz(r));
 test('퍼즐 — 퀸덤퍼즐 채린 직캠은 그룹 퍼즐 아님(이전/새 차분에서 발견)', '[#퀸덤퍼즐/풀버전] ♬ Glow-up - 퀸덤 팀 (소은, 엘리, 연희, 주이, 쥬리, 채린, 휘서) @올라운더배틀 #QUEENDOMPUZZLE', undefined, r => !_pz(r));
 test('퍼즐 — PUZZLE(퍼즐) SAVIOR MV는 퍼즐', '[MV] PUZZLE(퍼즐) _ SAVIOR', undefined, r => _pz(r));
+// 전체 이름 그림자(2026-10-26): 제목에 홍은채·최예나·권은비처럼 전체 이름이 있으면, 성 뗀 '은채'·'예나'·'은비'로 다른 사람을 붙이지 않는다.
+const _has = (r, g) => !!r && (r.primaryGroup === g || (r.withGroups || []).includes(g));
+test('전체 이름 — #홍은채 영상에 다이아 은채 안 붙음', '피어나와 지구미를 위한 은채 & 예나의 모닝콜❤ #shorts #은채의스타일기 #홍은채 #최예나', undefined, r => _mem(r, '르세라핌', '홍은채') && !_has(r, '다이아'));
+test('전체 이름 — 최예나 무대 모음에 양예나(에이프릴) 안 붙음', '예나 지금이나 변함없는 사랑스러움💖 최예나 무대 몰아보기 | YENA Stage Compilation', undefined, r => !_has(r, '에이프릴'));
+test('전체 이름 — 권은비 영상에 레이디스코드 은비 안 붙음', '권은비 충격 고백?! 요즘 워터밤 대신 OOO에 눈떠…ㅣ은비 the Yapper', undefined, r => !_has(r, '레이디스 코드'));
+test('전체 이름 — 다이아 은채 직캠은 그대로', '다이아 은채 직캠', undefined, r => _mem(r, '다이아', '은채'));
 test('TOO — 시절 곡명 동반은 티오원', "(Full Focused) TOO '하나 둘 세고 (Count 1, 2)' 4K | BE ORIGINAL", undefined, r => _to1(r));
 test('TOO — 더쇼 제목 맨 앞 아티스트 표기는 티오원', 'TOO, TOO YOU [THE SHOW, Fancam, 200421] 60P', undefined, r => _to1(r));
 test("여정 — 일반명사 '여정'은 전여여정 역추론 안 함", "인간 펜디 한예슬의 특별한 여정 / Han Ye Seul with FENDI", undefined, r => !r || (r.primaryGroup !== '티오원' && r.primaryGroup !== '뉴비트'));
