@@ -4887,6 +4887,9 @@ const _COVER_EXCLUDE=['be original','original ver','cover story','커버 촬영'
   '커버 스토리','covering',
   // 2026-10-26 사용자 요청 — 보그 잡지 표지 촬영. 노래 커버 아님.
   'vogue cover',
+  // 2026-10-26 Codex 감사 — 앨범 재킷·잡지 표지 촬영(빅스 Album Cover Picture Making·W Korea 9월호 커버 소개·GQ 커버). 노래 커버 아님.
+  // ⚠️ 이 목록 주석엔 작은따옴표를 쓰지 말 것 — 테스트가 따옴표 안을 키워드로 읽는다.
+  'album cover','cover picture','magazine cover','매거진 커버','월호 커버','커버 소개','커버 화보','cover shoot',
   // 2026-10-26 Codex 화면 점검 — 가렸다는 뜻의 covered(디스패치 공항 영상 "Even if they covered", "covered up"),
   // 의류 브랜드 커버낫, 컨셉 필름(IVE "COVER GIRLS HAVE SECRETS"). "covered by"(진짜 커버 표기)는 안 걸리게 문맥 단위로만 넣었다.
   // 실측: 커버 탭 후보 중 93건 빠짐, 디스패치 밖은 커버낫 7·컨셉필름 1·캣츠아이 공지 1·산들 문신 예능 1 — 실제 커버 0

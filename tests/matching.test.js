@@ -80,6 +80,13 @@ test('전체 이름 — #홍은채 영상에 다이아 은채 안 붙음', '피�
 test('전체 이름 — 최예나 무대 모음에 양예나(에이프릴) 안 붙음', '예나 지금이나 변함없는 사랑스러움💖 최예나 무대 몰아보기 | YENA Stage Compilation', undefined, r => !_has(r, '에이프릴'));
 test('전체 이름 — 권은비 영상에 레이디스코드 은비 안 붙음', '권은비 충격 고백?! 요즘 워터밤 대신 OOO에 눈떠…ㅣ은비 the Yapper', undefined, r => !_has(r, '레이디스 코드'));
 test('전체 이름 — 다이아 은채 직캠은 그대로', '다이아 은채 직캠', undefined, r => _mem(r, '다이아', '은채'));
+// 보석 다이아(2026-10-26 Codex 감사) — 캐럿·반지·수저·테스터기는 그룹 다이아가 아니다. 진짜 다이아 영상은 그대로.
+const _dia = r => !!r && (r.primaryGroup === '다이아' || (r.withGroups || []).includes('다이아'));
+test('다이아 — 8캐럿 다이아 귀걸이는 그룹 아님', '“형이 가져갔지?” 추성훈, 사라진 8캐럿 다이아 귀걸이의 행방♨', undefined, r => !_dia(r));
+test('다이아 — 다이아 수저는 그룹 아님', '앗! 서장훈 라이벌 등장?! 거인한테 재산 배틀 신청한(?) ㄹㅇ 다이아 수저 여에스더💎｜아는 형님', undefined, r => !_dia(r));
+test('다이아 — 다이아 반지는 그룹 아님', '“처음 만져봐요” 홍윤화, 인생 첫 다이아 반지 착용에 설렘 가득♥', undefined, r => !_dia(r));
+test('다이아 — 다이아 정채연 직캠은 그대로', '[MPD직캠] 다이아 정채연 직캠 4K', undefined, r => _mem(r, '다이아', '정채연'));
+test('다이아 — DIA(다이아) MV는 그대로', 'DIA(다이아) - 우와 MV', undefined, r => _dia(r));
 test('TOO — 시절 곡명 동반은 티오원', "(Full Focused) TOO '하나 둘 세고 (Count 1, 2)' 4K | BE ORIGINAL", undefined, r => _to1(r));
 test('TOO — 더쇼 제목 맨 앞 아티스트 표기는 티오원', 'TOO, TOO YOU [THE SHOW, Fancam, 200421] 60P', undefined, r => _to1(r));
 test("여정 — 일반명사 '여정'은 전여여정 역추론 안 함", "인간 펜디 한예슬의 특별한 여정 / Han Ye Seul with FENDI", undefined, r => !r || (r.primaryGroup !== '티오원' && r.primaryGroup !== '뉴비트'));
