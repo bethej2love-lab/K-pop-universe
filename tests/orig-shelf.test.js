@@ -17,7 +17,7 @@
 const fs=require('fs');
 const path=require('path');
 const vm=require('vm');
-const src=fs.readFileSync(path.join(__dirname,'..','index.html'),'utf8');
+const src=require('../tools/index_source.cjs').readIndexSource();
 const admin=fs.readFileSync(path.join(__dirname,'..','admin.js'),'utf8');
 
 let pass=0,fail=0;

@@ -27,7 +27,7 @@ let pass = true;
 const ok = m => console.log(`✅ ${m}`);
 const bad = (m, extra) => { pass = false; console.log(`❌ ${m}` + (extra ? `\n   → ${extra}` : '')); };
 
-const html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
+const html = require('../tools/index_source.cjs').readIndexSource();
 const GROUPS = JSON.parse(fs.readFileSync(path.join(ROOT, 'groups.json'), 'utf8'));
 const ARTISTS = Object.values(JSON.parse(fs.readFileSync(path.join(ROOT, 'artists.json'), 'utf8')));
 const CONNS = JSON.parse(fs.readFileSync(path.join(ROOT, 'connections.json'), 'utf8')).filter(c => c.type === 'member');

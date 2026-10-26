@@ -21,7 +21,7 @@ for (const a of A) {
   }
 }
 // 앱 쪽이 같은 함수를 부르는지(따로 계산하면 공유 링크가 페이지와 갈린다)
-const html = fs.readFileSync(path.join(ROOT, 'index.html'), 'latin1');
+const html = require('../tools/index_source.cjs').readIndexSource();
 if (!/_soloPageSuffix\(a,ARTISTS,GROUPS\)/.test(html)) { fail++; console.log('❌ index.html _seoUrlForMember가 _soloPageSuffix를 안 쓴다'); }
 const builder = fs.readFileSync(path.join(ROOT, 'build_group_pages.js'), 'latin1');
 if (!/soloSuffix\(a\)\.ko/.test(builder) || !/soloSuffix\(a\)\.en/.test(builder)) { fail++; console.log('❌ build_group_pages.js memberPagePath가 soloSuffix를 안 쓴다'); }

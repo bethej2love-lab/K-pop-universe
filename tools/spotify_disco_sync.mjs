@@ -63,7 +63,7 @@ state.checked = state.checked || {};
 // 신원 미확인으로 보류 중인 대상(사람이 볼 것). 리포트는 회차마다 사라지지만 이건 남는다 — 해결되면 지운다.
 state.pending = state.pending || {};
 // 영상 대조(videoEvidence)용 — 공개(anon) 키라 index.html에 이미 박혀 있는 값을 그대로 읽는다(비밀 아님).
-const SB_KEY = (fs.readFileSync(P('index.html'), 'utf8').match(/sb_publishable_[A-Za-z0-9_-]+/) || [])[0] || '';
+const SB_KEY = (['index.html', 'app.js'].filter(f => fs.existsSync(P(f))).map(f => fs.readFileSync(P(f), 'utf8')).join('\n').match(/sb_publishable_[A-Za-z0-9_-]+/) || [])[0] || '';
 // 우주 안 사람·그룹 이름 — 트랙명이 사람 이름이면(예: `Jisu`) 영상 대조 증거로 치지 않는다
 const PERSON_NAMES = new Set([
   ...artists.flatMap(a => [a.name?.ko, a.name?.en]),

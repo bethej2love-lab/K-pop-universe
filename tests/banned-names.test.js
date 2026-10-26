@@ -13,7 +13,7 @@
 const fs = require('fs');
 const path = require('path');
 const ROOT = path.join(__dirname, '..');
-const html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
+const html = require('../tools/index_source.cjs').readIndexSource();
 
 // 실제 배포 코드를 그대로 잘라와 실행한다(로직을 베껴 쓰면 조용히 어긋난다 — matching.test.js와 같은 방식).
 function grab(re, label) {

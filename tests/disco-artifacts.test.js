@@ -41,7 +41,7 @@ const groups = JSON.parse(fs.readFileSync(path.join(ROOT, 'groups.slim.json'), '
 const artists = JSON.parse(fs.readFileSync(path.join(ROOT, 'artists.slim.json'), 'utf8'));
 
 // 앱 쪽 규칙을 index.html 소스에서 그대로 떼어 와 실행한다(재구현하면 "테스트만 맞는" 상태가 된다).
-const src = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
+const src = require('../tools/index_source.cjs').readIndexSource();
 const grab = name => {
   const i = src.indexOf(name);
   if (i < 0) return '';

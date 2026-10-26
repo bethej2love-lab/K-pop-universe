@@ -25,7 +25,7 @@ ARTISTS.forEach(a => { if (a.name && a.group) { const k = a.name.ko + '\u0000' +
 const ref = a => { const k = a.name.ko + '\u0000' + a.group.ko; return cnt[k] > 1 && a.id ? k + '\u0000' + a.id : k; };
 
 // ① 앱 함수를 꺼내 실행
-const html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
+const html = require('../tools/index_source.cjs').readIndexSource();
 const m = html.match(/let _creditDup=null;\s*function _creditKey\(a\)\{[\s\S]*?\n\}/);
 if (!m) bad('index.html에서 _creditKey를 못 찾음(이름이 바뀌었으면 이 테스트도 같이 고칠 것)');
 else {

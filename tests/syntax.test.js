@@ -58,7 +58,7 @@ for (const rel of HTML_FILES) {
 
 // ── 2. 외부 JS 파일 ─────────────────────────────────────────────────────────
 // admin.js는 클래식 스크립트(모듈 아님)라 그대로 파싱된다. sw.js도 부팅에 영향을 주므로 같이 본다.
-for (const rel of ['admin.js', 'shared.js', 'sw.js']) {
+for (const rel of ['app.js', 'admin.js', 'shared.js', 'sw.js']) { // app.js = 메인 앱 코드(2026-10-26 index.html에서 분리)
   const file = path.join(root, rel);
   if (!fs.existsSync(file)) continue;
   try {
@@ -82,7 +82,7 @@ try {
 // index.html의 큰 인라인 블록은 전역 스코프라, 최상위 `const _X=` / `let _X=`가 두 번 나오면 곧 죽음이다.
 // ⚠️ 들여쓰기 없는(= 최상위) 선언만 본다. 함수 안의 같은 이름은 정상이다.
 {
-  const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
+  const html = require('../tools/index_source.cjs').readIndexSource(); // app.js를 제자리에 끼운 원본(최상위 = 같은 전역 스코프)
   const seen = new Map();
   const dups = [];
   html.split('\n').forEach((l, i) => {

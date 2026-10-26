@@ -17,7 +17,7 @@ const fs = require('fs');
 const path = require('path');
 
 const src = fs.readFileSync(path.join(__dirname, '..', 'admin.js'), 'utf8');
-const html = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+const html = require('../tools/index_source.cjs').readIndexSource();
 let pass = true;
 const ok = m => console.log(`✅ ${m}`);
 const bad = m => { pass = false; console.log(`❌ ${m}`); };

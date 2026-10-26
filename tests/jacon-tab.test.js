@@ -1,7 +1,7 @@
 // 자컨 탭 = 그룹 공식 채널 + 멤버 개인 채널 (2026-10-21 사용자 "자컨 탭엔 그룹 공식 유튜브 영상 쫙, 개인 채널 있는 멤버 카드엔 그것까지")
 // 예전엔 개인 채널(idol)만 봐서 공식 채널 영상이 하나도 안 나왔다. 대표영상·목록·탭 노출 판정 세 곳이 같은 함수를 써야 한다.
 const fs=require('fs'),path=require('path'),vm=require('vm'),assert=require('assert');
-const html=fs.readFileSync(path.join(__dirname,'..','index.html'),'utf8');
+const html=require('../tools/index_source.cjs').readIndexSource();
 const src=html.match(/const _JACON_TIERS=[\s\S]*?\nfunction _applyJaconQuery[\s\S]*?\n}\n/)[0];
 assert.equal((html.match(/_applyJaconQuery\(/g)||[]).length,5,'정의 1 + 대표영상·목록·탭 판정·탭 삽입 4곳');
 assert.ok(!/filter==='jacon'\)\{\s*q=q\.eq\('source_tier','idol'\)/.test(html),'자컨 목록이 개인 채널만 보던 옛 조건 없음');

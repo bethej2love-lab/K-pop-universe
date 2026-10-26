@@ -18,7 +18,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const html = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+const html = require('../tools/index_source.cjs').readIndexSource();
 let fail = 0;
 const ck = (c, msg) => { console.log((c ? '✓ ' : '✗ 실패: ') + msg); if (!c) fail++; };
 

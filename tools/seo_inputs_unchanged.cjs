@@ -18,7 +18,9 @@ try {
     console.log('SEO 원본 변경 — 최신 입력으로 재빌드 필요'); process.exit(1);
   }
   const agency = ref => {
-    const src = execFileSync('git', ['show', ref + ':index.html'], {encoding: 'utf8', maxBuffer: 8 * 1024 * 1024});
+    // 2026-10-26부터 앱 코드는 app.js(_AGENCY_EN도 거기) — 분리 전 리비전엔 app.js가 없으니 있으면 붙인다
+    const show = f => { try { return execFileSync('git', ['show', ref + ':' + f], {encoding: 'utf8', maxBuffer: 8 * 1024 * 1024, stdio: ['ignore', 'pipe', 'ignore']}); } catch (e) { return ''; } };
+    const src = show('index.html') + '\n' + show('app.js');
     const block = agencySource(src);
     if (!block) throw new Error('_AGENCY_EN 추출 실패: ' + ref);
     return block;

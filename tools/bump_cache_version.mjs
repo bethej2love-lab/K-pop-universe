@@ -36,46 +36,44 @@ const cssSrc = read('kpop_universe.css');
 const sharedSrc = read('shared.js');
 const adminSrc = read('admin.js');
 let indexSrc = read('index.html');
+// 메인 앱 코드는 2026-10-26부터 app.js(index.html의 <script src="app.js?v=">) — _DATA_VER·_ADMIN_JS_VER도 그 안에 있다.
+let appSrc = read('app.js');
 let swSrc = read('sw.js');
 
 const ver = s => `${today}-${hash8(s)}`;
-// 해시 입력에서 "버전 문자열 자리"만 지운다(값이 아니라 자리를 지우는 것 — 위 CACHE_VERSION 주석 참고)
 const stripVersions = s => s
   .replace(/(kpop_universe\.css\?v=)[^"]*/g, '$1@')
   .replace(/(shared\.js\?v=)[^"]*/g, '$1@')
+  .replace(/(app\.js\?v=)[^"]*/g, '$1@')
   .replace(/(const _ADMIN_JS_VER=')[^']*/g, '$1@')
   .replace(/(const _DATA_VER=')[^']*/g, '$1@');
+const SRC = { 'index.html': () => indexSrc, 'app.js': () => appSrc, 'sw.js': () => swSrc };
+const SET = { 'index.html': s => { indexSrc = s; }, 'app.js': s => { appSrc = s; }, 'sw.js': s => { swSrc = s; } };
+// 순서가 중요하다: app.js 안의 _DATA_VER·_ADMIN_JS_VER를 먼저 갱신한 **최종** app.js로 app.js?v=를 정한다
+// (버전 상수만 바뀐 경우에도 app.js?v=가 바뀌어야 새 데이터 버전이 브라우저에 닿는다).
 const targets = [
-  // [파일, 찾을 정규식, 새 값 만들기, 설명]
-  ['index.html', /(<link rel="stylesheet" href="kpop_universe\.css\?v=)([^"]*)(">)/,
-    ver(cssSrc), 'kpop_universe.css?v='],
-  ['index.html', /(<script src="shared\.js\?v=)([^"]*)(">)/,
-    ver(sharedSrc), 'shared.js?v='],
-  ['index.html', /(const _DATA_VER=')([^']*)(';)/,
-    ver(dataSrc), '_DATA_VER'],
-  ['index.html', /(const _ADMIN_JS_VER=')([^']*)(';)/,
-    ver(adminSrc), '_ADMIN_JS_VER'],
-  // ⚠️ CACHE_VERSION은 index.html까지 해시에 넣는데(서비스워커 캐시 대상은 앱 셸 전체),
-  // index.html 안에는 방금 우리가 바꾼 `?v=`/_ADMIN_JS_VER 값이 들어있다. 그대로 해시하면
-  // "값을 바꿈 → 해시가 바뀜 → 다음 실행에서 또 바뀜"으로 **멱등이 깨져** Action이 매번 새 커밋을
-  // 만든다(실제로 처음 짰을 때 그렇게 됐음). 버전 문자열 자리를 고정 placeholder로 지운 뒤 해시한다.
+  ['index.html', /(<link rel="stylesheet" href="kpop_universe\.css\?v=)([^"]*)(">)/, () => ver(cssSrc), 'kpop_universe.css?v='],
+  ['index.html', /(<script src="shared\.js\?v=)([^"]*)(">)/, () => ver(sharedSrc), 'shared.js?v='],
+  ['app.js', /(const _DATA_VER=')([^']*)(';)/, () => ver(dataSrc), '_DATA_VER'],
+  ['app.js', /(const _ADMIN_JS_VER=')([^']*)(';)/, () => ver(adminSrc), '_ADMIN_JS_VER'],
+  ['index.html', /(<script src="app\.js\?v=)([^"]*)(">)/, () => ver(appSrc), 'app.js?v='],
   ['sw.js', /(const CACHE_VERSION=')([^']*)(';)/,
-    'kpu-' + ver(cssSrc + sharedSrc + adminSrc + stripVersions(indexSrc)), 'CACHE_VERSION'],
+    () => 'kpu-' + ver(cssSrc + sharedSrc + adminSrc + stripVersions(indexSrc) + stripVersions(appSrc)), 'CACHE_VERSION'],
 ];
 
 const changes = [];
-for (const [file, re, next, label] of targets) {
-  const src = file === 'sw.js' ? swSrc : indexSrc;
+for (const [file, re, nextFn, label] of targets) {
+  const src = SRC[file]();
   const m = src.match(re);
   if (!m) {
     console.error(`❌ 패턴을 못 찾음: ${label} (${file})`);
-    console.error('   index.html/sw.js가 리팩터링됐을 수 있음 — tools/bump_cache_version.mjs의 정규식을 갱신할 것.');
+    console.error('   index.html/app.js/sw.js가 리팩터링됐을 수 있음 — tools/bump_cache_version.mjs의 정규식을 갱신할 것.');
     process.exit(2);
   }
+  const next = nextFn();
   if (m[2] === next) continue;
   changes.push({ file, label, from: m[2], to: next });
-  const replaced = src.replace(re, `$1${next}$3`);
-  if (file === 'sw.js') swSrc = replaced; else indexSrc = replaced;
+  SET[file](src.replace(re, `$1${next}$3`));
 }
 
 if (!changes.length) {
@@ -88,5 +86,6 @@ if (CHECK_ONLY) {
   process.exit(1);
 }
 fs.writeFileSync(path.join(ROOT, 'index.html'), indexSrc);
+fs.writeFileSync(path.join(ROOT, 'app.js'), appSrc);
 fs.writeFileSync(path.join(ROOT, 'sw.js'), swSrc);
 console.log(`\n✅ ${changes.length}건 갱신 완료`);

@@ -16,7 +16,7 @@
 const fs = require('fs');
 const path = require('path');
 const ROOT = path.join(__dirname, '..');
-const src = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
+const src = require('../tools/index_source.cjs').readIndexSource();
 
 // tests/matching.test.js와 같은 "이름으로 잘라오기" — 선언 줄부터 균형이 맞는 지점까지 그대로 실행한다.
 function extractStatement(declStartRe, label) {

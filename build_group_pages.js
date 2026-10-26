@@ -41,7 +41,7 @@ const artists = JSON.parse(fs.readFileSync(path.join(ROOT, 'artists.json'), 'utf
 
 // index.html에 이미 있는 소속사 한/영 매핑표를 그대로 재사용(중복 유지보수 방지) — 신뢰할 수 있는
 // 내 파일에서 안전하게 추출하는 것이므로 정규식으로 블록을 잘라 eval.
-const indexSrc = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
+const indexSrc = require('./tools/index_source.cjs').readIndexSource();
 const {agencySource} = require('./tools/seo_inputs_unchanged.cjs');
 const agencyBlock = agencySource(indexSrc);
 const AGENCY_EN = agencyBlock ? new Function('return ' + agencyBlock.replace(/^const _AGENCY_EN=/, ''))() : {};

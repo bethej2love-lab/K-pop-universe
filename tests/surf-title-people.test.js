@@ -8,7 +8,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const src = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+const src = require('../tools/index_source.cjs').readIndexSource();
 const a = src.indexOf('const _SURF_NOT_PERSON=');
 const b = src.indexOf('\nfunction _surfPersonLabel(');
 if (a < 0 || b < 0) { console.log('❌ _SURF_NOT_PERSON/_surfTitlePeople 블록을 못 찾음'); process.exit(1); }

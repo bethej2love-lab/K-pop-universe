@@ -59,7 +59,7 @@ async function pollUntil(cdp, expr, ms, ready = v => !!v) {
 }
 
 function sourceChecks() {
-  const html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
+  const html = require('../tools/index_source.cjs').readIndexSource();
   if (!/data-sort=\\?"popular\\?"/.test(html)) fail('[1] 정렬 메뉴에 popular 항목이 없음');
   else ok('[1] 정렬 메뉴에 인기순 항목 존재');
   if (!/sortMode==='popular'[\s\S]{0,200}view_count[\s\S]{0,80}nullsFirst:false/.test(html))

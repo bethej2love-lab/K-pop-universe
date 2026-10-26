@@ -3,7 +3,7 @@
 // 괄호 안의 ';'(불가사의; 不可思議)는 곡명 일부다. 화면의 "같은 곡 커버" 묶음이 이 헬퍼로 곡을 나눈다.
 // 실행: node tests/cover-song-parts.test.js
 const fs = require('fs'), path = require('path');
-const src = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+const src = require('../tools/index_source.cjs').readIndexSource();
 const m = /function _coverSongParts\(s\)\{[\s\S]*?\n\}/.exec(src);
 let fail = 0;
 const ck = (c, msg) => { console.log((c ? '✓ ' : '✗ 실패: ') + msg); if (!c) fail++; };

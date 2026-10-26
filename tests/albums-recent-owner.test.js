@@ -32,7 +32,7 @@ else if (wrong.length) bad(`i의 아티스트 이름이 o와 다름 ${wrong.leng
 else ok(`멤버 항목 ${mem.length}개 전부 i 있음 · 이름 일치`);
 
 // ②
-const html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
+const html = require('../tools/index_source.cjs').readIndexSource();
 const m = html.match(/function _albumOwnerArt\(a\)\{[\s\S]*?\n\}/);
 if (!m) bad('index.html에서 _albumOwnerArt를 못 찾음(이름이 바뀌었으면 이 테스트도 같이 고칠 것)');
 else {

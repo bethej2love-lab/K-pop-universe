@@ -50,7 +50,9 @@ const M = load();
 async function loadRules() {
   if (args.includes('--no-rules')) return { skipped: true };
   try {
-    const html = fs.readFileSync(path.join(path.dirname(new URL(import.meta.url).pathname).replace(/^\/([A-Za-z]:)/, '$1'), '..', 'index.html'), 'utf8');
+    // 앱 코드는 2026-10-26부터 app.js(접속 정보 상수도 거기)
+    const _root = path.join(path.dirname(new URL(import.meta.url).pathname).replace(/^\/([A-Za-z]:)/, '$1'), '..');
+    const html = ['index.html', 'app.js'].filter(f => fs.existsSync(path.join(_root, f))).map(f => fs.readFileSync(path.join(_root, f), 'utf8')).join('\n');
     const url = (/SUPABASE_URL='([^']+)'/.exec(html) || [])[1];
     const key = (/SUPABASE_ANON_KEY='([^']+)'/.exec(html) || [])[1];
     if (!url || !key) return { error: 'index.html에서 Supabase 접속 정보를 못 찾음' };

@@ -102,7 +102,7 @@ const EXPECT = {
 };
 
 // ── 코드에서 테이블 자동 추출 ─────────────────────────────────────────────────
-const src = ['index.html', 'admin.js', 'shared.js']
+const src = ['index.html', 'app.js', 'admin.js', 'shared.js']
   .filter(f => fs.existsSync(path.join(ROOT, f)))
   .map(f => fs.readFileSync(path.join(ROOT, f), 'utf8')).join('\n');
 const tables = [...new Set([...src.matchAll(/\.from\('([a-z0-9_]+)'\)/g)].map(m => m[1]))].sort();

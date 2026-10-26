@@ -9,7 +9,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const src = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+const src = require('../tools/index_source.cjs').readIndexSource();
 let pass = true;
 const ok = m => console.log('✅ ' + m);
 const bad = m => { pass = false; console.log('❌ ' + m); };

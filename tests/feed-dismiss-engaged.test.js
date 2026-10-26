@@ -21,7 +21,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const src = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+const src = require('../tools/index_source.cjs').readIndexSource();
 
 let pass = 0, fail = 0;
 const need = (c, m, d) => { if (c) { pass++; console.log(`✅ ${m}`); } else { fail++; console.log(`❌ ${m}`); if (d) console.log('   ' + d); } };

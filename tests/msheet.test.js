@@ -68,7 +68,7 @@ async function pollUntil(cdp, expr, timeoutMs, isReady = v => !!v) {
 }
 
 function sourceChecks() {
-  const html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
+  const html = require('../tools/index_source.cjs').readIndexSource();
   if (/_FULLSCREEN_OVERLAY_IDS=\[[\s\S]{0,400}'msheet'/.test(html)) ok('[6] _FULLSCREEN_OVERLAY_IDS에 등록됨(열려 있으면 3D 렌더 스킵)');
   else fail('[6] _FULLSCREEN_OVERLAY_IDS에 msheet 없음 — 시트가 화면을 덮는데 뒤에서 3D를 계속 그린다');
   if (/closest\('#feed-overlay[^)]*#msheet'\)/.test(html)) ok('[6] 탐험 패널 자동닫힘 capture 제외 목록에 등록됨');

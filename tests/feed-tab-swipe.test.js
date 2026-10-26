@@ -5,7 +5,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const html = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+const html = require('../tools/index_source.cjs').readIndexSource();
 const css = fs.readFileSync(path.join(__dirname, '..', 'kpop_universe.css'), 'utf8');
 let pass = true;
 function fail(message) { pass = false; console.log(`❌ ${message}`); }

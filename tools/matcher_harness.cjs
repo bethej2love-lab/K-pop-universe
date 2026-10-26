@@ -106,7 +106,7 @@ pieces.push(extractByBraces(adminSrc, /^function _m2DebutBlocks\(/m, '_m2DebutBl
 // 없다"를 판단할 때 부른다. 계산 본체 _groupEndDate는 index.html에 있고(멤버 카드 컷오프와 공유),
 // admin.js의 _disbandCutoffDate가 그걸 그대로 감싼다 — 두 벌로 복제하지 않으려고 이렇게 돼 있으므로
 // 하네스도 양쪽에서 각각 잘라온다.
-const indexSrc = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
+const indexSrc = require('./index_source.cjs').readIndexSource();
 pieces.push(extractByBraces(indexSrc, /^function _groupEndDate\(/m, '_groupEndDate'));
 pieces.push(extractByBraces(adminSrc, /^function _disbandCutoffDate\(/m, '_disbandCutoffDate'));
 // 프로그램명 제거(2026-09-30) — 있으면 싣는다(옛 admin.js로 전/후 차분을 돌릴 때도 하네스가 뜨게)

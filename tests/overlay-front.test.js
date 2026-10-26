@@ -17,7 +17,7 @@
 const fs = require('fs');
 const path = require('path');
 const ROOT = path.join(__dirname, '..');
-const html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
+const html = require('../tools/index_source.cjs').readIndexSource();
 const admin = fs.readFileSync(path.join(ROOT, 'admin.js'), 'utf8');
 
 let fail = 0;

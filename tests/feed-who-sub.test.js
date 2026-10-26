@@ -5,7 +5,7 @@
 // 공용 헬퍼(_feedWhoSub)를 실제로 실행해 보고, 세 선반이 전부 그걸 쓰는지 확인한다.
 const fs = require('fs');
 const path = require('path');
-const html = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+const html = require('../tools/index_source.cjs').readIndexSource();
 let pass = true;
 const need = (c, m) => { console.log((c ? '✅ ' : '❌ ') + m); if (!c) pass = false; };
 

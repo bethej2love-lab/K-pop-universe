@@ -1,6 +1,6 @@
 // Fan tabs belong immediately after performance, independent of async Original insertion.
 const fs=require('fs'),path=require('path'),vm=require('vm'),assert=require('assert');
-const html=fs.readFileSync(path.join(__dirname,'..','index.html'),'utf8');
+const html=require('../tools/index_source.cjs').readIndexSource();
 const init=html.match(/let catTabs=([^;]+);/)[1];
 const insert=html.match(/const liveAt=catTabs\.findIndex[^\n]+\n\s*catTabs\.splice[^\n]+/)[0];
 let count=0;

@@ -7,7 +7,7 @@
 const fs = require('fs');
 const path = require('path');
 let bad = [];
-for (const f of ['index.html', 'admin.js', 'shared.js']) {
+for (const f of ['index.html', 'app.js', 'admin.js', 'shared.js']) {
   const src = fs.readFileSync(path.join(__dirname, '..', f), 'utf8');
   // 빌더 체인 메서드 바로 뒤에 .catch( — 사이에 .then(이 없으면 빌더에 직접 붙인 것
   const re = /\.(limit|eq|neq|in|is|gte|lte|gt|lt|order|select|single|maybeSingle|range|or|not|like|ilike|contains|match|upsert|insert|update|delete)\([^()]*(?:\([^()]*\)[^()]*)*\)\s*\.catch\(/g;

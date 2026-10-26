@@ -86,7 +86,7 @@ need(/_BULK_SNAP_COLS=\[[^\]]*'is_short'[^\]]*\]/.test(src),
 // ─────────────────────────────────────────────────────────────────────────────
 // ⑥ short 직교화(2026-08-27) — 형식 플래그가 장르(category)와 분리돼 있는지
 // ─────────────────────────────────────────────────────────────────────────────
-const html = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+const html = require('../tools/index_source.cjs').readIndexSource();
 
 need(/function _isShortV\(v\)\{return !!v&&\(v\.is_short===true\|\|v\.category==='short'\)/.test(html),
   '_isShortV 헬퍼 — is_short 우선 + category===\'short\' 레거시 폴백');

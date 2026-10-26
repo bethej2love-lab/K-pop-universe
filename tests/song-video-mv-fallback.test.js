@@ -1,6 +1,6 @@
 // Old official MVs imported from a new channel must survive the newest-50 title limit.
 const fs = require('fs'), path = require('path'), vm = require('vm'), assert = require('assert');
-const html = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+const html = require('../tools/index_source.cjs').readIndexSource();
 const start = html.indexOf('async function _openSongVideos(');
 const end = html.indexOf('// 형식 칩', start);
 assert(start >= 0 && end > start, 'song-video function boundary');

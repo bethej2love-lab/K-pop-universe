@@ -8,7 +8,7 @@
 const fs = require('fs');
 const path = require('path');
 const ROOT = path.join(__dirname, '..');
-const html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
+const html = require('../tools/index_source.cjs').readIndexSource();
 const G = JSON.parse(fs.readFileSync(path.join(ROOT, 'groups.json'), 'utf8'));
 const _slim = JSON.parse(fs.readFileSync(path.join(ROOT, 'artists.slim.json'), 'utf8'));
 const ARTISTS = Array.isArray(_slim) ? _slim : (_slim.artists || []);

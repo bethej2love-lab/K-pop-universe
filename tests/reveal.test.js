@@ -70,7 +70,7 @@ async function pollUntil(cdp, expr, timeoutMs, isReady = v => !!v) {
 
 // ── 소스 레벨 검사 (브라우저 없이도 도는 부분) ─────────────────────────────
 function sourceChecks() {
-  const html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
+  const html = require('../tools/index_source.cjs').readIndexSource();
   const css = fs.readFileSync(path.join(ROOT, 'kpop_universe.css'), 'utf8');
 
   if (/id=["']loading-veil["']|id=["']loading-ring["']/.test(html)) fail('[3] veil/ring DOM이 다시 생김 — 리빌 연출이 또 겹칠 수 있다');

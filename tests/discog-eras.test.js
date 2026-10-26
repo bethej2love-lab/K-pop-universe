@@ -11,7 +11,7 @@ const fs = require('fs');
 const path = require('path');
 const vm = require('vm');
 const ROOT = path.join(__dirname, '..');
-const src = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
+const src = require('../tools/index_source.cjs').readIndexSource();
 const groups = require(path.join(ROOT, 'groups.json'));
 const artists = require(path.join(ROOT, 'artists.json'));
 

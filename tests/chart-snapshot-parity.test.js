@@ -30,7 +30,7 @@ if (!fs.existsSync(CRON)) {
   process.exit(0);
 }
 
-const html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
+const html = require('../tools/index_source.cjs').readIndexSource();
 const cron = fs.readFileSync(CRON, 'utf8');
 
 let pass = 0, fail = 0;

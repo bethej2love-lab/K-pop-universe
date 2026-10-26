@@ -33,7 +33,7 @@ let pass = 0, fail = 0;
 const ok = (c, m) => { if (c) { pass++; } else { fail++; console.error('  ✗ ' + m); } };
 
 const found = [];
-for (const f of ['index.html', 'admin.js']) {
+for (const f of ['index.html', 'app.js', 'admin.js']) {
   const src = fs.readFileSync(path.join(ROOT, f), 'utf8');
   const re = /sb\s*\.?\s*\n?\s*from\(\s*(['"`])([^'"`]+)\1\s*\)/g;
   let m;
@@ -79,7 +79,7 @@ for (const c of found) {
 }
 
 // 워밍 4곳은 반드시 페이지네이션(별도로 한 번 더 못 박음 — 여기가 실제로 터진 자리다)
-const html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
+const html = require('../tools/index_source.cjs').readIndexSource();
 for (const fn of ['_warmInstaPicCache', '_warmScrapCounts', '_warmColLikes', '_warmPubCollections']) {
   const m = new RegExp(`async function ${fn}\\(\\)\\{[\\s\\S]*?\\n\\}`).exec(html);
   ok(!!m && /_sbSelectAll/.test(m[0]), `${fn}이 _sbSelectAll을 안 씀`);
