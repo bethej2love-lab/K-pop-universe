@@ -29,7 +29,7 @@ const need = (c, m, d) => { if (c) { pass++; console.log(`✅ ${m}`); } else { f
 // ── ① 사용 시 온보딩 수명 종료 ────────────────────────────────────────────────
 need(/function _obEngaged\(\)\{[\s\S]{0,200}_obActive=false;[\s\S]{0,80}_feedEngaged=true;/.test(src),
   '_obEngaged가 _obActive와 _feedEngaged를 함께 처리');
-need(/closest\('#feed-overlay,#tab-feed,#dh-feed-btn,#gc-totop,#yt-lightbox,#msheet'\)\)\{_obEngaged\(\);return;\}/.test(src),
+need(/closest\('#feed-overlay,#tab-feed,#dh-feed-btn,#gc-totop,#kpu-rail,#yt-lightbox,#msheet'\)\)\{_obEngaged\(\);return;\}/.test(src),
   '패널·라이트박스를 건드리면 return이 아니라 _obEngaged()를 부른다(예전엔 그냥 return이라 무장이 유지됐다)');
 // ⚠️ _OB_KEY는 "검색바 글라스 힌트를 본 적 있는지"만 뜻한다 — 패널을 썼다고 같이 찍으면 힌트가 조용히 사라진다.
 // (정규식으로 범위를 어림하면 바로 뒤 _dismissOnboardHint의 _OB_KEY를 잘못 집는다 — 본문만 잘라서 본다)

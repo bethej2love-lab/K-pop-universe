@@ -1,5 +1,15 @@
 # CHANGELOG
 
+## 2026-10-26 (Claude Code — 맨 위로 자동·스크롤 막대·검색 시트 틈·직캠 창 높이·순위 그림 접기)
+- **[완료] [app.js] [kpop_universe.css]** 사용자 요청 4건.
+  - **맨 위로 버튼 자동**: "앨범 패널 옆 영상 패널에 top 버튼 필요, 빠진 경우 또 있나". `_wireTotop`을 카드마다 손으로 붙이던 방식이라 앨범 영상 패널·트로피·공연장·검색 결과 등에서 빠졌다 → 문서 scroll(capture)로 **보이는 높이 240px+·내용 1.6배+인 세로 스크롤 영역이면 자동**(`_totopAutoOnScroll`). 화면 끝까지 안 내려오는 패널은 패널 안쪽 아래에. 떠 있는 동안 0.4초마다 대상이 보이는지·다른 창에 덮였는지 확인해 닫힌 패널 위에 안 남게. 손으로 붙인 컨테이너(`_totopWired`)·자체 버튼이 있는 목록(#feed-list-grid)은 건너뜀. `[data-no-totop]`로 제외 가능.
+  - **스크롤바**: "스크롤 길어질 수 있는 경우 스크롤바도, 웹도 모바일도, 동작은 기기에 맞게". 전역 2px·알파 0.07은 안 보이고 못 잡았다 → 마우스(pointer:fine) 9px(보이는 막대 3px, 올리면 굵게, 끌기 가능), 파이어폭스는 표준 속성. 손가락: 3배 이상 긴 영역에서 스크롤할 때 오른쪽에 끌 수 있는 막대(#kpu-rail, 손잡이 44px+), 1.2초 멈추면 숨김. 막대를 끄는 동안 시트 끌기·탐험 닫기가 같이 반응하지 않게 이벤트 차단(탐험 자동닫힘 제외 목록에 #kpu-rail).
+  - **검색 시트 틈**: 캡처 "하단 탭바 위쪽 우주 살짝 보임" — 웹앱에선 탭바 아래 여백이 안전영역(34) 대신 11px이라 고정값(64+안전영역)과 탭바 윗변 사이 34px 틈 → `bottom:var(--sheet-bottom)`(실측 탭바 높이, 웹앱 보정 포함). 위는 상태바에 붙어 보여 6px 더.
+  - **주간 개인 직캠 창**: "좀 더 위까지 열려야" — 목록 칸이 flex-basis 0이라 창이 min-height 600px에서 멈춤 → 모바일 height 88vh.
+  - **순위 그림 A안**(사용자 선택): 기본 접힘(96px, 상위 3개만 색·이름, 주석 숨김) → 그림이나 '크게 보기'로 펼침(220px), '접기'로 다시. 펼친 상태는 이 기기에 기억(localStorage kpu_cs_exp).
+  - 검증: 새 회귀 테스트 `tests/scroll-aids.test.js` 17/17(앨범 영상 패널 실제 데이터 60개로 버튼 위치·누르면 맨 위·닫으면 사라짐, 모바일 막대 터치 끌기 400→6465, 검색 시트 틈 0 일반/웹앱, 창 743px=88%, 그림 접기/펼치기), msheet·smoke·touch-targets·album-song-hub·desktop-close-layers·overlay-front·tabbar-open 통과, feed-dismiss-engaged 낡은 정규식 갱신.
+  - ⏳ 실기기 확인: 아이폰 웹앱에서 검색 화면 아래 틈·막대 끌기 감·직캠 창 높이.
+
 ## 2026-10-26 (Claude Code — 메인 페이지 경량화: 앱 코드 app.js 분리)
 - **[완료] [index.html] [app.js] [tools/index_source.cjs] [tests/* 70곳] [tools/*] [build_group_pages.js] [.github/workflows/bump-cache-version.yml]** 사용자: 네이버 블로그에 kpop-universe.kr 링크를 넣으면 "링크 정보를 불러오는 데 실패". og 태그·이미지는 정상(네이버 수집기 UA로 받아도 200)이고 그룹·멤버 정적 페이지(14KB)는 잘 떠서 원인은 **메인 페이지 2MB**(인라인 앱 코드 1.5MB). 앱 코드를 `app.js`로 빼고 index.html엔 `<script src="app.js?v=…"></script>` 한 줄 — 같은 자리·defer 없음이라 실행 순서·시점 동일. **index.html 2,093KB → 137KB(gzip 37KB)**.
   - ⚠️ **앱 코드를 읽는 테스트·도구는 `require('tools/index_source.cjs').readIndexSource()`** — app.js를 제자리에 끼운 "분리 전과 글자 하나까지 같은" index.html을 돌려준다(왕복 일치 확인). 새 테스트에서 `fs.readFileSync('index.html')`로 앱 코드를 찾으면 못 찾는다. 파일 목록을 도는 검사(rls·sb-builder-catch·select-pagination·syntax)엔 app.js 추가.

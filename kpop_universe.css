@@ -2350,7 +2350,9 @@
      패널에 인라인으로 넣는다(_openFeedListOverlay / _closeFeedListOverlay / _wireFeedListSwipe). */
   @media(max-width:768px){
     #feed-list-overlay{align-items:flex-end;}
-    #feed-list-panel{position:relative;width:100%;max-width:100%;max-height:88vh;border-radius:18px 18px 0 0;padding-top:8px;}
+    /* 높이를 88vh로 못박는다(2026-10-26 사용자 "주간 개인 직캠 창 좀 더 위까지 열려야") — 목록 칸이 flex-basis 0이라
+       창 높이가 min-height(600px)에서 멈춰 화면 3할이 비어 있었다. */
+    #feed-list-panel{position:relative;width:100%;max-width:100%;max-height:88vh;height:88vh;border-radius:18px 18px 0 0;padding-top:8px;}
     #feed-list-panel::before{content:'';position:absolute;top:7px;left:50%;transform:translateX(-50%);width:36px;height:4px;border-radius:2px;background:rgba(255,255,255,0.2);z-index:3;pointer-events:none;}
   }
   .ec-item{display:flex;align-items:center;gap:8px;padding:7px 16px;transition:background .12s;}
@@ -2557,12 +2559,15 @@
   #msheet{
     /* 하단 탭바를 덮지 않고 그 위에서 멈춘다(2026-09-03 제보 — 검색 중에도 탭 이동이 편하게).
        bottom = 탭바 높이(≈64px)+안전영역. 값은 실기기서 미세조정 가능. */
+    /* 2026-10-26 사용자 캡처 "하단 탭바 위쪽 우주 살짝 보임": 웹앱(vp-shift)에선 탭바 아래 여백이 안전영역(34) 대신 11px이라
+       고정값(64+안전영역)과 실제 탭바 윗변 사이에 34px 틈이 났다 → 실측 탭바 높이(--sheet-bottom, 웹앱 보정 포함)에 붙인다.
+       위쪽은 상태바에 검색창이 바짝 붙어 보여 6px 더 띄운다. */
     position:fixed;top:0;left:0;right:0;
-    bottom:calc(64px + env(safe-area-inset-bottom,0px));
+    bottom:var(--sheet-bottom,calc(64px + env(safe-area-inset-bottom,0px)));
     z-index:69;display:none;flex-direction:column;
     background:rgba(9,12,26,0.97);
     backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);
-    padding-top:env(safe-area-inset-top,0px);
+    padding-top:calc(env(safe-area-inset-top,0px) + 6px);
   }
   #msheet.open{display:flex;}
   #msheet-top{display:flex;align-items:center;gap:6px;padding:8px 12px 8px 6px;flex:none;}
@@ -3518,6 +3523,28 @@
   ::-webkit-scrollbar-track{background:transparent;}
   ::-webkit-scrollbar-thumb{-webkit-appearance:none;background:rgba(180,200,240,0.07);border-radius:2px;}
   ::-webkit-scrollbar-thumb:hover{background:rgba(180,200,240,0.14);}
+  /* 스크롤바 — 기기별(2026-10-26, 사용자 "스크롤 길어질 수 있는 경우 스크롤바도 있는 게 맞을 것 같아, 웹도 모바일도,
+     동작은 각 기기에 맞게"). 위 전역 2px·알파 0.07은 사실상 안 보이고 잡을 수도 없었다.
+     · 마우스(pointer:fine): 평소 얇게(보이는 막대 3px) 보이다가 올리면 굵어져서 끌기 쉽다. 테두리 투명 + background-clip으로
+       잡는 영역(9px)은 넓게 두고 보이는 굵기만 바꾼다. 가로 띠(칩·스트립)는 각자 display:none이 더 구체적이라 그대로 숨김.
+     · 손가락(pointer:coarse): 기본 표시기는 끌리지 않으므로 긴 영역엔 JS 막대(#kpu-rail)를 스크롤할 때만 띄운다. */
+  @media (pointer:fine){
+    ::-webkit-scrollbar{width:9px;height:9px;}
+    ::-webkit-scrollbar-thumb{background:rgba(180,200,240,0.22);border:3px solid transparent;border-radius:6px;background-clip:content-box;}
+    ::-webkit-scrollbar-thumb:hover{background:rgba(190,210,245,0.42);border-width:1px;background-clip:content-box;}
+    ::-webkit-scrollbar-thumb:active{background:rgba(205,220,250,0.55);border-width:1px;background-clip:content-box;}
+    ::-webkit-scrollbar-corner{background:transparent;}
+  }
+  /* 파이어폭스(::-webkit-scrollbar 미지원)만 표준 속성으로 */
+  @supports not selector(::-webkit-scrollbar){
+    @media (pointer:fine){*{scrollbar-width:thin;scrollbar-color:rgba(180,200,240,0.3) transparent;}}
+  }
+  #kpu-rail{position:fixed;left:0;top:0;width:24px;height:0;z-index:66;pointer-events:none;opacity:0;transition:opacity .25s;}
+  #kpu-rail.on{opacity:1;}
+  #kpu-rail .kpu-rail-thumb{position:absolute;right:0;top:0;width:24px;pointer-events:none;touch-action:none;}
+  #kpu-rail.on .kpu-rail-thumb{pointer-events:auto;}
+  #kpu-rail .kpu-rail-thumb::after{content:'';position:absolute;right:3px;top:0;bottom:0;width:4px;border-radius:3px;background:rgba(200,215,245,0.5);box-shadow:0 0 0 0.5px rgba(0,0,0,0.3);transition:width .15s,background .15s;}
+  #kpu-rail.drag .kpu-rail-thumb::after{width:7px;background:rgba(220,232,255,0.8);}
   /* ── Favorites ───────────────────────────────────── */
   .fav-btn{position:relative;background:none;border:none;outline:none;cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><path d='M11,1 L12.3,9.7 L21,11 L12.3,12.3 L11,21 L9.7,12.3 L1,11 L9.7,9.7Z' fill='%23FFB0D0' opacity='.97'/></svg>") 11 11,pointer;padding:2px 3px;border-radius:6px;flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;color:rgba(255,110,140,0.48);transition:color .15s,transform .12s;}
   .fav-btn svg{width:13px;height:13px;display:block;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linejoin:round;transition:fill .15s;}
@@ -4723,7 +4750,10 @@
 /* ── 차트 스토리(2026-10-15, Charts ②) — 목록 맨 위 14일 순위 궤적 + 숫자 3칸. 그리드 첫 칸 전체 폭.
    톤: 장식 없이 데이터가 주인공 — 얇은 점선 격자, 회색 배경선 위에 상위 5개만 그룹 색, 숫자는 가볍고 크게. */
 #feed-list-grid>.cs-story{grid-column:1/-1;margin:2px 0 10px;}
-#feed-list-grid>.cs-story.is-loading{height:318px;}
+#feed-list-grid>.cs-story.is-loading{height:196px;} /* 접힌 미니 그림 기준(2026-10-26 A안) — 자리부터 잡아 목록이 안 튀게 */
+#feed-list-grid>.cs-story.is-loading.cs-exp{height:318px;}
+.cs-svg.cs-mini{cursor:pointer;}
+.cs-svg.cs-mini .cs-line{cursor:pointer;}
 .cs-fig{position:relative;}
 .cs-svg-wrap{overflow-x:auto;scrollbar-width:none;}
 .cs-svg-wrap::-webkit-scrollbar{display:none;}
@@ -4747,7 +4777,8 @@
 .cs-svg.has-on .cs-line:not(.is-on) .cs-path{opacity:.18;}
 .cs-svg.has-on .cs-line:not(.is-on) .cs-lbl,.cs-svg.has-on .cs-line:not(.is-on) .cs-dot{opacity:.2;}
 .cs-line.is-on .cs-path{filter:drop-shadow(0 0 4px var(--c));}
-.cs-cap{margin:4px 2px 0;font-size:10.5px;color:rgba(255,255,255,0.38);text-align:center;}
+.cs-cap{all:unset;box-sizing:border-box;display:block;width:100%;margin:4px 0 0;padding:4px 2px;font-size:10.5px;color:rgba(255,255,255,0.42);text-align:center;cursor:pointer;-webkit-tap-highlight-color:transparent;}
+.cs-cap:hover{color:rgba(255,255,255,0.7);}
 .cs-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:0;margin-top:12px;border-top:1px solid rgba(255,255,255,0.08);border-bottom:1px solid rgba(255,255,255,0.08);}
 .cs-stat{all:unset;box-sizing:border-box;display:flex;flex-direction:column;gap:2px;padding:11px 10px 12px;cursor:pointer;min-width:0;transition:background .15s;}
 .cs-stat+.cs-stat{border-left:1px solid rgba(255,255,255,0.08);}

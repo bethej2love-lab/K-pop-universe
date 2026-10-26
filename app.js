@@ -16046,7 +16046,7 @@ window.addEventListener('pointerdown',e=>{
   // 패널(과 패널에서 파생된 라이트박스·시트)을 건드렸다면 그건 "패널 아닌 걸 건드린" 게 아니라 **사용**이다.
   // 예전엔 그냥 return만 해서 자동닫힘이 계속 무장된 채 남았고, 영상을 보고 나온 뒤 배경을 한 번 탭하면
   // 읽던 위치째로 패널이 닫혔다(2026-09-16 제보). 이제 한 번 쓰면 일반 패널과 똑같이 동작한다.
-  if(e.target.closest('#feed-overlay,#tab-feed,#dh-feed-btn,#gc-totop,#yt-lightbox,#msheet')){_obEngaged();return;}
+  if(e.target.closest('#feed-overlay,#tab-feed,#dh-feed-btn,#gc-totop,#kpu-rail,#yt-lightbox,#msheet')){_obEngaged();return;}
   _dismissOnboardHint();
 },true);
 
@@ -23166,7 +23166,7 @@ function _openChartStory(chartType,label,sub,songs,tab){
     const grid=document.getElementById('feed-list-grid');if(!grid)return;
     const box=document.createElement('div');box.className='cs-story';
     grid.insertBefore(box,grid.firstChild);
-    if(hist===undefined){box.classList.add('is-loading');return box;}
+    if(hist===undefined){box.classList.add('is-loading');if(_csExpanded)box.classList.add('cs-exp');return box;}
     _renderChartStory(box,st,hist,size,tab,v=>_openChartStory(chartType,label,sub,songs,v));
     if(tab!=='all'&&!list.length){
       const e=document.createElement('div');e.className='cs-empty';
@@ -23186,6 +23186,9 @@ function _openChartStory(chartType,label,sub,songs,tab){
     _renderChartStory(tmp,st,h,size,tab,v=>_openChartStory(chartType,label,sub,songs,v));
   });
 }
+// 접힌 미니 그림이 기본(2026-10-26 사용자 "그래프가 너무 자리 차지를 많이 한다" → A안): 높이 220→96, 상위 3개만 색·이름,
+// 주석은 숨김. 그림이나 '크게 보기'를 누르면 지금 크기로 펼친다. 펼친 상태는 탭을 바꿔도·다음에 열어도 유지(이 기기에만).
+let _csExpanded=(()=>{try{return localStorage.getItem('kpu_cs_exp')==='1';}catch(e){return false;}})();
 function _renderChartStory(box,st,hist,size,tab,onTab){
   const isKo=currentLang==='ko';
   const NS='http://www.w3.org/2000/svg';
@@ -23193,7 +23196,14 @@ function _renderChartStory(box,st,hist,size,tab,onTab){
   const today=new Date(Date.now()+9*3600e3).toISOString().slice(0,10);
   const span=size===30?14:7; // 주간 차트는 7일 업로드 창이라 그보다 길게 그리면 왼쪽이 빈다
   const days=[...((hist&&hist.dates)||[]).filter(d=>d<today).slice(-span),today];
-  const W=Math.max(300,Math.min(640,(box.parentElement?.clientWidth||360)-28)),H=size===30?250:220;
+  const exp=_csExpanded;
+  const _toggleExp=()=>{
+    _csExpanded=!_csExpanded;try{localStorage.setItem('kpu_cs_exp',_csExpanded?'1':'0');}catch(e){}
+    if(_csExpanded)_renderChartStory._drawn=false; // 펼칠 땐 선이 그려지는 연출을 한 번 더
+    box.classList.toggle('cs-exp',_csExpanded);
+    box.innerHTML='';_renderChartStory(box,st,hist,size,tab,onTab);
+  };
+  const W=Math.max(300,Math.min(640,(box.parentElement?.clientWidth||360)-28)),H=exp?(size===30?250:220):(size===30?112:96);
   const L=22,R=96,T=12,B=22;
   const x=i=>L+(days.length<2?0:i*(W-L-R)/(days.length-1));
   const y=r=>T+(r-1)*(H-T-B)/(size-1);
@@ -23202,7 +23212,7 @@ function _renderChartStory(box,st,hist,size,tab,onTab){
   const fig=document.createElement('div');fig.className='cs-fig';
   const svg=mk('svg',{viewBox:`0 0 ${W} ${H}`,width:W,height:H,class:'cs-svg',role:'img','aria-label':isKo?'순위 궤적':'Rank paths'});
   const grid=mk('g',{class:'cs-grid'});
-  [1,5,10,15,20,25,30].filter(r=>r<=size).forEach(r=>{
+  (exp?[1,5,10,15,20,25,30]:[1,10,size]).filter(r=>r<=size).forEach(r=>{
     grid.appendChild(mk('line',{x1:L,x2:W-R+6,y1:y(r),y2:y(r)}));
     const t=mk('text',{x:L-6,y:y(r)+3.5,'text-anchor':'end'});t.textContent=r;grid.appendChild(t);
   });
@@ -23226,7 +23236,7 @@ function _renderChartStory(box,st,hist,size,tab,onTab){
       prev=p;
     });
     const star=o===riseO;
-    const top=o.s.rank<=5||star;
+    const top=exp?(o.s.rank<=5||star):o.s.rank<=3;
     const g=mk('g',{class:'cs-line'+(top?' is-top':'')+(star?' is-star':''),style:`--c:${gcol(o.s)}`});
     const path=mk('path',{d:dstr,class:'cs-path'});
     const hit=mk('path',{d:dstr,class:'cs-hit'});
@@ -23234,7 +23244,7 @@ function _renderChartStory(box,st,hist,size,tab,onTab){
     // 진입점(처음 나타난 점)은 작은 고리 — "여기서 들어왔다"
     const fi=pts.findIndex(Boolean);
     if(fi>0)g.appendChild(mk('circle',{cx:pts[fi][0],cy:pts[fi][1],r:2.4,class:'cs-entry'}));
-    if(star&&fi>=0){
+    if(exp&&star&&fi>=0){
       const ex=pts[fi][0],ey=pts[fi][1],right=ex>W-R-70;
       const a=mk('text',{x:right?ex-7:ex+7,y:Math.min(ey+13,H-B-2),'text-anchor':right?'end':'start',class:'cs-ann'});
       a.textContent=isKo?`${o.climb+o.s.rank}위로 진입 → ${o.s.rank}위`:`entered #${o.climb+o.s.rank} → #${o.s.rank}`;
@@ -23248,7 +23258,7 @@ function _renderChartStory(box,st,hist,size,tab,onTab){
       t.textContent=who.length>10?who.slice(0,10)+'…':who;
       g.appendChild(t);
     }
-    g.addEventListener('click',e=>{e.stopPropagation();const on=g.classList.contains('is-on');svg.querySelectorAll('.cs-line.is-on').forEach(n=>n.classList.remove('is-on'));svg.classList.toggle('has-on',!on);if(!on){g.classList.add('is-on');g.parentNode.appendChild(g);}});
+    g.addEventListener('click',e=>{e.stopPropagation();if(!exp){_toggleExp();return;}const on=g.classList.contains('is-on');svg.querySelectorAll('.cs-line.is-on').forEach(n=>n.classList.remove('is-on'));svg.classList.toggle('has-on',!on);if(!on){g.classList.add('is-on');g.parentNode.appendChild(g);}});
     g.addEventListener('mouseenter',()=>{if(!svg.classList.contains('has-on'))g.classList.add('is-hover');});
     g.addEventListener('mouseleave',()=>g.classList.remove('is-hover'));
     svg.appendChild(g);lines.push(path);
@@ -23256,11 +23266,15 @@ function _renderChartStory(box,st,hist,size,tab,onTab){
   // 상위 5개 라벨은 순위가 붙어 있으면 겹친다 — 위에서부터 최소 간격만큼 밀어 내린다(점은 제자리, 글자만)
   {let prevY=-1e9;[...svg.querySelectorAll('.cs-line.is-top .cs-lbl')].sort((a,b)=>a.getAttribute('y')-b.getAttribute('y')).forEach(t=>{
     const yy=Math.max(+t.getAttribute('y'),prevY+11.5);t.setAttribute('y',yy.toFixed(1));prevY=yy;});}
-  svg.addEventListener('click',()=>{svg.classList.remove('has-on');svg.querySelectorAll('.cs-line.is-on').forEach(n=>n.classList.remove('is-on'));});
+  svg.addEventListener('click',()=>{if(!exp){_toggleExp();return;}svg.classList.remove('has-on');svg.querySelectorAll('.cs-line.is-on').forEach(n=>n.classList.remove('is-on'));});
   const scroller=document.createElement('div');scroller.className='cs-svg-wrap';scroller.appendChild(svg);
   fig.appendChild(scroller);
-  const cap=document.createElement('div');cap.className='cs-cap';
-  cap.textContent=isKo?`최근 ${days.length}일 순위 궤적 · 선을 누르면 그 무대만`:`Rank paths, last ${days.length} days · tap a line`;
+  if(!exp)svg.classList.add('cs-mini');
+  const cap=document.createElement('button');cap.type='button';cap.className='cs-cap';
+  cap.textContent=exp
+    ?(isKo?`최근 ${days.length}일 순위 궤적 · 선을 누르면 그 무대만 · 접기 ⌃`:`Rank paths, last ${days.length} days · tap a line · Collapse ⌃`)
+    :(isKo?`최근 ${days.length}일 순위 흐름 크게 보기 ⌄`:`Show ${days.length}-day rank paths ⌄`);
+  cap.addEventListener('click',e=>{e.stopPropagation();_toggleExp();});
   fig.appendChild(cap);
   // 그려지는 연출 — 첫 열람 때만(탭 전환마다 다시 그리면 산만하다)
   if(!_renderChartStory._drawn&&!(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches)){
@@ -28115,10 +28129,13 @@ const TOTOP_SHOW_AT=80;
 let _totopScrollTarget=null;
 function _hideTotop(){
   _totopBtn.style.display='none';
+  _totopBtn.style.bottom=''; // 자동 대상(아래 _placeTotop)이 패널 안쪽 아래로 옮겨둔 위치 원복
   _totopScrollTarget=null;
 }
+const _totopWired=new WeakSet(); // 손으로 붙인 컨테이너 — 아래 자동 인식(_totopAutoOnScroll)이 건너뛴다
 function _wireTotop(scrollEl){
   if(!scrollEl)return;
+  _totopWired.add(scrollEl);
   scrollEl.addEventListener('scroll',()=>{
     if(scrollEl.scrollTop>TOTOP_SHOW_AT){
       // 나타나는 순간 맨 위로 올린다(2026-09-03). 이 버튼은 정적 z-index:66인데, 자기가 붙는 패널들이
@@ -28162,4 +28179,119 @@ _totopBtn.addEventListener('click',e=>{
     if(p<1)requestAnimationFrame(_step);
   })(performance.now());
 });
+// ── 긴 스크롤 영역 공통: 맨 위로 + 모바일 스크롤 막대(2026-10-26) ─────────────────────────────
+// 사용자: "앨범 패널 옆 영상 패널에 top 버튼 필요… 스크롤 길어질 수 있는 경우 스크롤바도 있는 게 맞을 것 같아,
+// 웹도 모바일도, 동작은 각 기기에 맞게". 위 _wireTotop은 카드마다 손으로 붙여서 새 패널(앨범 영상·트로피·
+// 공연장·검색 결과…)이 생길 때마다 빠졌다 → 문서 전체 scroll을 capture로 받아 **충분히 긴 세로 스크롤 영역이면
+// 자동으로** 같은 버튼을 띄운다. 명시 등록 컨테이너는 위 리스너가 이미 처리하므로 건너뛴다.
+//  · 길다 = 보이는 높이 240px 이상 + 내용이 1.6배 이상(작은 드롭다운·자동완성은 제외)
+//  · 데스크톱 스크롤바는 CSS(@media (pointer:fine) — 평소 얇게, 올리면 굵게, 끌기 가능)
+//  · 모바일(손가락)은 기본 스크롤 표시가 끌리지 않아서 3배 이상 긴 영역에만 끌 수 있는 막대(#kpu-rail)를
+//    스크롤할 때 띄우고 1.2초 멈추면 숨긴다(안드로이드 빠른 스크롤·iOS 표시기와 같은 동작).
+// ⚠️ 버튼/막대가 떠 있는 동안 0.4초마다 대상이 아직 보이는지·맨 위에 있는지 확인해 닫힌 패널 위에 남지 않게 한다
+//    (패널마다 닫기 코드에 _hideTotop을 넣던 방식은 새 패널에서 또 빠진다).
+const _TOTOP_AUTO_MIN_H=240;
+function _scrollVisibleRect(el){
+  if(!el||!el.isConnected)return null;
+  if(typeof el.checkVisibility==='function'&&!el.checkVisibility({checkOpacity:true,checkVisibilityCSS:true}))return null;
+  const r=el.getBoundingClientRect();
+  const top=Math.max(r.top,0),bottom=Math.min(r.bottom,window.innerHeight),left=Math.max(r.left,0),right=Math.min(r.right,window.innerWidth);
+  if(bottom-top<40||right-left<40)return null;
+  // 다른 창이 위를 덮었으면(라이트박스 등) 숨김 — 보이는 부분 가운데 점이 이 영역(또는 버튼·막대) 소속인지
+  const hit=document.elementFromPoint((left+right)/2,(top+bottom)/2);
+  if(hit&&!el.contains(hit)&&!hit.closest('#gc-totop,#kpu-rail'))return null;
+  return {top,bottom,left,right,raw:r};
+}
+function _placeTotop(el){
+  const v=_scrollVisibleRect(el);if(!v)return false;
+  _totopBtn.style.right=(window.innerWidth-v.right+16)+'px';
+  // 화면 아래까지 안 내려오는 패널(데스크톱 앨범 영상 패널 등)은 패널 안쪽 아래에 — 끝까지 오는 시트는 CSS 기본(탭바 위)
+  const gap=window.innerHeight-v.bottom;
+  _totopBtn.style.bottom=gap>24?(gap+14)+'px':'';
+  return true;
+}
+let _totopWatch=0;
+function _totopWatchStart(){
+  if(_totopWatch)return;
+  _totopWatch=setInterval(()=>{
+    const el=_totopScrollTarget;
+    if(!el){clearInterval(_totopWatch);_totopWatch=0;return;}
+    if(!_placeTotop(el))_hideTotop();
+  },400);
+}
+function _totopAutoOnScroll(el){
+  if(el.scrollTop>TOTOP_SHOW_AT){
+    const _wasHidden=_totopScrollTarget!==el;
+    if(!_placeTotop(el)){if(_totopScrollTarget===el)_hideTotop();return;}
+    _totopScrollTarget=el;
+    _totopBtn.style.display='flex';
+    if(_wasHidden)_bringToFront(_totopBtn);
+    _totopWatchStart();
+  }else if(_totopScrollTarget===el){
+    _hideTotop();
+  }
+}
+// 모바일 스크롤 막대
+const _railEl=document.createElement('div');
+_railEl.id='kpu-rail';_railEl.setAttribute('aria-hidden','true');
+_railEl.innerHTML='<div class="kpu-rail-thumb"></div>';
+document.body.appendChild(_railEl);
+const _railThumb=_railEl.firstChild;
+let _railTarget=null,_railHideT=0,_railDrag=null;
+function _railPlace(){
+  const el=_railTarget;const v=el&&_scrollVisibleRect(el);
+  if(!v){_railHide(true);return;}
+  const r=v.raw,h=Math.max(r.height,1);
+  const th=Math.max(44,Math.min(h*0.5,h*el.clientHeight/el.scrollHeight));
+  const max=el.scrollHeight-el.clientHeight;
+  const ratio=max>0?el.scrollTop/max:0;
+  _railEl.style.top=r.top+'px';_railEl.style.height=h+'px';
+  _railEl.style.left=(r.right-24)+'px';
+  _railThumb.style.height=th+'px';
+  _railThumb.style.transform=`translateY(${ratio*(h-th)}px)`;
+}
+function _railHide(now){
+  clearTimeout(_railHideT);
+  if(now){_railEl.classList.remove('on');_railTarget=null;return;}
+  _railHideT=setTimeout(()=>{if(!_railDrag){_railEl.classList.remove('on');_railTarget=null;}},1200);
+}
+function _railShow(el){
+  const _was=_railTarget!==el||!_railEl.classList.contains('on');
+  _railTarget=el;_railPlace();
+  if(!_railTarget)return;
+  _railEl.classList.add('on');
+  if(_was)_bringToFront(_railEl);
+  _railHide(false);
+}
+// 막대를 끄는 동안 카드 시트 끌어내리기·탐험 패널 닫기 등이 같이 반응하지 않게 이벤트를 여기서 끊는다
+['pointerdown','touchstart','mousedown'].forEach(t=>_railEl.addEventListener(t,e=>e.stopPropagation(),{passive:true}));
+_railEl.addEventListener('touchmove',e=>{e.stopPropagation();if(e.cancelable)e.preventDefault();},{passive:false});
+_railThumb.addEventListener('pointerdown',e=>{
+  const el=_railTarget;if(!el)return;
+  e.preventDefault();
+  const tr=_railThumb.getBoundingClientRect();
+  _railDrag={id:e.pointerId,off:e.clientY-tr.top};
+  try{_railThumb.setPointerCapture(e.pointerId);}catch(_){}
+  _railEl.classList.add('drag');
+});
+_railThumb.addEventListener('pointermove',e=>{
+  const el=_railTarget;if(!_railDrag||!el||e.pointerId!==_railDrag.id)return;
+  const r=el.getBoundingClientRect(),th=_railThumb.offsetHeight;
+  const ratio=Math.min(1,Math.max(0,(e.clientY-_railDrag.off-r.top)/Math.max(1,r.height-th)));
+  el.scrollTop=ratio*(el.scrollHeight-el.clientHeight);
+  _railPlace();
+});
+const _railEnd=e=>{if(!_railDrag)return;_railDrag=null;_railEl.classList.remove('drag');_railHide(false);};
+_railThumb.addEventListener('pointerup',_railEnd);
+_railThumb.addEventListener('pointercancel',_railEnd);
+document.addEventListener('scroll',e=>{
+  const el=e.target;
+  if(!el||el.nodeType!==1||el===document.documentElement||el===document.body)return;
+  if(el.clientHeight<_TOTOP_AUTO_MIN_H||el.closest('[data-no-totop]'))return;
+  // 자체 맨 위로 버튼이 있는 영역(직캠·차트 목록 #feed-list-top-btn 등)은 건너뛴다 — 버튼 두 개가 겹쳐 떴다(헤드리스 실측)
+  if(!_totopWired.has(el)&&el.scrollHeight>el.clientHeight*1.6&&!el.querySelector(':scope>[aria-label="맨 위로"]')&&!el.parentElement?.querySelector(':scope>[aria-label="맨 위로"]'))_totopAutoOnScroll(el);
+  if(_isTouchPrimary()&&el.scrollHeight>el.clientHeight*3)_railShow(el);
+  else if(_railTarget===el)_railPlace();
+},{capture:true,passive:true});
+window.addEventListener('resize',()=>{if(_railTarget)_railPlace();},{passive:true});
 
