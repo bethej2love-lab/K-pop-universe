@@ -26435,6 +26435,16 @@ function _makeChVidController(contId){
       else{selBtn.classList.add('active');selBtn.textContent=T[currentLang].cancel;}
     });
     cont.querySelector('.gc-ch-hd').appendChild(selBtn);
+    // 영상 줄 정리(2026-10-27 사용자 "카드 영상 탭 한 줄에 뭐가 너무 많다") — 탭 오른쪽에 단독만·🔍·⋮·선택 넷이 붙박이라 폭 절반을
+    // 먹고 탭은 3개만 보였다. 🔍(자주 씀)만 밖에 두고 선택·단독만은 ⋮ 메뉴 항목으로 켠다. 켜져 있는 동안만 줄에 "취소"/"단독만 ✕"로
+    // 보여서 바로 끌 수 있다(CSS .gc-ch-hd .gc-ch-sel-btn:not(.active) 숨김). 버튼 자체는 그대로라 일괄 선택 바 연결은 안 바뀐다.
+    {
+      const selItem=document.createElement('button');
+      selItem.className='gc-ch-sort-item gc-ch-sel-item';selItem.type='button';
+      selItem.innerHTML='<span class="chk" style="visibility:hidden">✓</span><span>'+(currentLang==='ko'?'여러 개 선택':'Select videos')+'</span>';
+      selItem.addEventListener('click',e=>{e.stopPropagation();closeSortMenu();if(!_selMode)selBtn.click();});
+      cont.querySelector('.gc-ch-refresh')?.before(selItem); // 도구 묶음(선택·새로고침)은 메뉴 맨 아래
+    }
     if(_isAdmin()){
       // 지금 이 탭/검색 기준으로 그리드에 로드돼있는 영상 전체를 한 번에 선택(어드민 전용, 2026-08-18
       // 사용자 요청) — state.allVids는 탭 전환·검색 시마다 비워지고(_makeChVidController 필터 변경
@@ -26594,12 +26604,24 @@ function _makeChVidController(contId){
       onlyBtn.textContent='단독만';
       onlyBtn.title='이 멤버만 단독 출연한 영상만 보기';
       onlyBtn.setAttribute('aria-pressed','false');
-      onlyBtn.addEventListener('click',()=>{
-        state.onlyMe=!state.onlyMe;state.offset=0;
+      // ⋮ 메뉴 "단독만" 항목(2026-10-27 영상 줄 정리) — 평소엔 줄에서 숨기고(CSS), 켜지면 줄 맨 앞쪽에 "단독만 ✕"로 떠서 누르면 꺼진다
+      const onlyItem=document.createElement('button');
+      onlyItem.className='gc-ch-sort-item gc-ch-only-item';onlyItem.type='button';
+      onlyItem.innerHTML='<span class="chk">✓</span><span>'+(currentLang==='ko'?'단독만':'Solo only')+'</span>';
+      const _syncOnly=()=>{
         onlyBtn.classList.toggle('active',state.onlyMe);
         onlyBtn.setAttribute('aria-pressed',state.onlyMe?'true':'false');
+        onlyBtn.textContent=state.onlyMe?(currentLang==='ko'?'단독만 ✕':'Solo ✕'):'단독만';
+        onlyItem.classList.toggle('active',state.onlyMe);
+      };
+      onlyBtn.addEventListener('click',()=>{
+        state.onlyMe=!state.onlyMe;state.offset=0;
+        _syncOnly();
         load(ko,true);
       });
+      onlyItem.addEventListener('click',e=>{e.stopPropagation();closeSortMenu();onlyBtn.click();});
+      const _refDiv=cont.querySelector('.gc-ch-refresh-div');
+      if(_refDiv){const dv=document.createElement('div');dv.className='gc-ch-sort-divider';_refDiv.before(dv);_refDiv.before(onlyItem);}
       // 스크롤되는 필터 알약 줄 밖으로 빼서, 돋보기 아이콘 왼쪽에 항상 고정 노출되게 함
       const sortWrapEl=cont.querySelector('.gc-ch-sort-wrap');
       sortWrapEl.parentElement.insertBefore(onlyBtn,sortWrapEl);
@@ -26642,13 +26664,14 @@ function _makeChVidController(contId){
       sortBtn.classList.toggle('active',open);
       sortBtn.setAttribute('aria-expanded',open?'true':'false');
     });
-    cont.querySelectorAll('.gc-ch-sort-item').forEach(it=>{
+    // [data-sort]만 — 예전엔 메뉴 항목 전부(새로고침 포함)에 붙어서 새로고침을 누르면 정렬 값이 비었다(2026-10-27 단독만·선택 항목 추가하며 발견)
+    cont.querySelectorAll('.gc-ch-sort-item[data-sort]').forEach(it=>{
       it.classList.toggle('active',it.dataset.sort===state.sortMode);
       it.addEventListener('click',e=>{
         e.stopPropagation();
         if(state.sortMode===it.dataset.sort){closeSortMenu();return;}
         state.sortMode=it.dataset.sort;state.offset=0;
-        cont.querySelectorAll('.gc-ch-sort-item').forEach(x=>x.classList.toggle('active',x===it));
+        cont.querySelectorAll('.gc-ch-sort-item[data-sort]').forEach(x=>x.classList.toggle('active',x===it));
         closeSortMenu();
         load(ko,true);
       });

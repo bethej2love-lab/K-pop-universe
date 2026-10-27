@@ -92,7 +92,7 @@ const server = http.createServer((req, res) => {
 
     await ev(cdp, `(showT(ARTISTS.find(a=>a.name&&a.name.ko==='카리나'&&a.group&&a.group.ko==='에스파')||ARTISTS.find(a=>a._worldPos&&a.group&&GROUPS[a.group.ko])),1)`);
     await sleep(6000);
-    const HIT = `(function(sel){const el=sel==='SORT'?(document.querySelector('#mob-sheet .gc-ch-only')?.parentElement?.querySelector('.gc-ch-sort-btn')):document.querySelector(sel);if(!el)return -1;const r=el.getBoundingClientRect();if(!r.height)return -1;
+    const HIT = `(function(sel){const el=sel==='SORT'?document.querySelector('#mob-sheet #tv .gc-ch-sort-btn'):document.querySelector(sel);if(!el)return -1;const r=el.getBoundingClientRect();if(!r.height)return -1;
       const cx=r.left+r.width/2,cy=r.top+r.height/2;const reach=dy=>{let d=0;for(let k=1;k<=30;k++){const t=document.elementFromPoint(cx,cy+dy*k);if(t&&(t===el||el.contains(t)))d=k;else break;}return d;};
       return reach(-1)+reach(1)+1;})`;
     const hit = async sel => ev(cdp, `${HIT}(${JSON.stringify(sel)})`);
@@ -100,7 +100,8 @@ const server = http.createServer((req, res) => {
       const h = await hit(sel);
       if (h < 0) console.log(`  (건너뜀: ${sel} 안 보임)`); else if (h >= min) ok(`② ${sel} 눌리는 높이 ${h}px`); else bad(`② ${sel} 눌리는 높이 ${h}px (< ${min})`);
     }
-    await ev(cdp, `(document.querySelector('#mob-sheet .gc-ch-only')?.scrollIntoView({block:'center'}),1)`); await sleep(1500);
+    // 영상 줄 기준으로 스크롤(2026-10-27) — 단독만·선택은 이제 ⋮ 메뉴에서 켜고 꺼져 있을 땐 줄에서 숨어서(건너뜀), 숨은 단독만으로 스크롤하면 🔍·⋮가 화면 밖에서 재져 1px이 됐다
+    await ev(cdp, `(document.querySelector('#mob-sheet #tv .gc-ch-hd')?.scrollIntoView({block:'center'}),1)`); await sleep(1500);
     for (const sel of ['#mob-sheet .gc-ch-only', '#mob-sheet .gc-ch-search-toggle', 'SORT', '#mob-sheet .gc-ch-sel-btn']) {
       const h = await hit(sel);
       if (h < 0) console.log(`  (건너뜀: ${sel} 안 보임)`); else if (h >= 40) ok(`② ${sel.split(' ').pop()} 눌리는 높이 ${h}px`); else bad(`② ${sel} 눌리는 높이 ${h}px (< 40)`);

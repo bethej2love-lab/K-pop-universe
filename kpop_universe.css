@@ -1784,6 +1784,9 @@
     color:rgba(192,214,240,0.51);cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><path d='M11,1 L12.3,9.7 L21,11 L12.3,12.3 L11,21 L9.7,12.3 L1,11 L9.7,9.7Z' fill='%23FFB0D0' opacity='.97'/></svg>") 11 11,pointer;transition:color .14s;flex-shrink:0;white-space:nowrap;}
   .gc-ch-only:hover{color:rgba(220,235,255,0.8);}
   .gc-ch-only.active{color:#c8ddff;text-decoration:underline;text-underline-offset:2px;}
+  /* 영상 줄 정리(2026-10-27) — 단독만·선택은 ⋮ 메뉴에서 켜고, 켜져 있을 때만 줄에 보인다(끄는 버튼 역할). 관리자 '전체선택'은 그대로. */
+  .gc-ch-hd>.gc-ch-only:not(.active),.gc-ch-hd>.gc-ch-sel-btn:not(.active):not(.gc-ch-selall-btn){display:none;}
+  .gc-ch-hd>.gc-ch-only.active{text-decoration:none;background:rgba(140,170,255,0.14);border-radius:12px;padding:4px 9px;}
   @media(min-width:769px){.gc-ch-only{font-size:9px;}}
   /* bottom도 탭바를 따라간다(2026-09-18) — 78px로 박아두면 탭바가 숨었을 때 버튼만 허공에 떠 있다.
      ⚠️ max()로 안전영역 하한을 건다 — 탭바가 숨으면 --sheet-bottom이 0이 되는데, 그대로 두면 버튼이
