@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 2026-10-27 (Claude Code — 14차: NEW VIDEOS 최애 이모지 · MV 차트)
+- **[결정]** 배지(MV·1위·신보·조회수)는 **소식 카드에만**(발견·For You 소식) — 카드 등 다른 곳엔 안 붙임. 지금 상태가 맞아서 변경 없음.
+- **[완료·배포] [app.js _feedBiasMatchers().favEmoji·_buildFeedFavNew] [css .feed-fav-emo, 후광 규칙 삭제]** NEW VIDEOS 최애 표시 — 후광("구림") 제거, 캡션 이름 앞에 그 최애에 정해 둔 이모지(내 정보 최애 칩의 emoji, 없으면 🤍). 멤버 최애가 그룹 최애보다 먼저. 이모지는 사용자 입력이라 태그 문자 제거. 순서(최애 맨 앞)는 그대로.
+- **[완료·배포] [app.js _CHART_DEFS.mv·_fetchMvPool·_buildChartCard(selOv)]** MV TOP 100(category=mv·쇼츠 제외, 조회수 순, 그룹당 상한 없음) — 성별·세대·기간 칩 공용. Charts 선반에 "최근 30일 MV TOP 100"(=신곡 MV)·"역대 MV TOP 100" 두 장. 실측 10-27: 역대 1위 BTS Boy With Luv 19.7억, 30일 1위 베이비몬스터 DESERVE 3,950만. "이번 주 가장 많이 오른 MV"는 조회수 일일 기록이 있어야 해서 보류.
+- **[완료·배포] [app.js _LB_LONG_CHARTS·_lbUpdateChartChips]** 재생 화면 차트 순위에 MV(역대 floor 1억 / 30일 floor 20만, 30일 안 영상만). 영상 종류(category)를 기본키로 먼저 한 번 조회해 맞는 차트만 계산 — 뮤비가 직캠·퍼포먼스 풀(최대 13초)까지 돌던 것 제거, 트리플에스 Andless "최근 30일 MV 2위" 1.5초.
+- 테스트: feed-bias-layout·foryou-shelves 10/10·smoke·vid-ago 25/25.
+
 ## 2026-10-27 (Claude Code — 13차: 레이아웃 점검 후속 — 윗줄 넘침·맨위로·날짜 규칙·제목 2줄·셋째 줄·재생 화면 출연자)
 - **[점검]** 폰 화면 35장 캡처 검토(다운로드 kpu_review_1027). 사용자 결정: ① ② 수정, ④ 날짜 통일, ⑤(제목 줄 수) Claude 추천 2줄, ⑥ 불필요한 셋째 줄 삭제, ⑧ 배지 통일(방식 결정 대기), ⑨ 재생 화면 출연자, ③ 섹션 제목 언어 섞임은 그대로 둠.
 - **[완료·배포] [kpop_universe.css #tg-row]** ① 멤버 카드 윗줄(SNS·그룹·유닛·연결)이 넘치면 가로로 밀려 끝의 "연결" 버튼이 잘려 보이던 것 → 그룹·유닛 글자만 말줄임, 나머지는 항상 보임.

@@ -5412,6 +5412,8 @@ let _lbChartReq=0;
 const _LB_LONG_CHARTS=[
   {id:'soloCam',era:'all',floor:1e6},{id:'soloCam',era:'y',floor:1e5,recent:true},
   {id:'stage',era:'all',floor:7e6},{id:'stage',era:'y',floor:1e6,recent:true},
+  // MV(10-27 실측 컷: 역대 100위 약 3억, 최근 30일 25위 약 200만) — 30일 차트는 30일 안 영상만
+  {id:'mv',era:'all',floor:1e8},{id:'mv',era:'m',floor:2e5,recentDays:31},
 ];
 async function _lbUpdateChartChips(s,pa){
   const box=document.getElementById('yt-lb-charts');if(!box)return;
@@ -5447,7 +5449,10 @@ async function _lbUpdateChartChips(s,pa){
   // ② 역대·최근 1년 TOP 100 — 같은 차트(직캠/퍼포먼스)는 역대에 들면 1년은 생략(둘 다 띄우면 줄만 길어진다)
   const vc=Number(s.vc)||0;
   // 동시에 조회(처음엔 하나에 최대 13초 — 차례로 하면 20초 넘게 걸려 영상 다 볼 때쯤 떴다), 표시는 정의 순서대로
-  const cands=_LB_LONG_CHARTS.filter(c=>vc>=c.floor&&!(c.recent&&!(age<=365*86400000)));
+  let cands=_LB_LONG_CHARTS.filter(c=>vc>=c.floor&&!(c.recent&&!(age<=365*86400000))&&!(c.recentDays&&!(age<=c.recentDays*86400000)));
+  // 영상 종류를 먼저 한 줄로 확인(기본키 조회라 가볍다) — 뮤비에 직캠·퍼포먼스 풀(최대 13초)을 돌리지 않게. 직캠·퍼포먼스=live, MV=mv
+  if(cands.length){try{const{data:cr}=await sb.from(_YT_TABLE).select('category').eq('id',id).maybeSingle();if(my!==_lbChartReq)return;
+    const cat=cr&&cr.category;if(cat)cands=cands.filter(c=>(c.id==='mv'?'mv':'live')===cat);}catch(e){}}
   const res=await Promise.all(cands.map(c=>{const sel={..._CHART_SEL_DEFAULT,era:c.era};return _chartSongs(c.id,sel).then(songs=>({c,sel,songs}),()=>null);}));
   if(my!==_lbChartReq)return;
   const done=new Set();
@@ -23843,6 +23848,11 @@ const _CHART_DEFS={
   stage:{icon:'🎤',nameKo:'퍼포먼스 TOP 100',nameEn:'Performance TOP 100',
     axes:['gender','gen','era'],ranked:true,cap:100,
     pool:sel=>_fetchStagePool(_chartGkos(sel),1000,15,_chartSince(sel.era))},
+  // MV TOP 100(2026-10-27 사용자 "뮤비 관련 차트"). 조회수 순 그대로(그룹당 상한 없음 — 역대는 BTS·블랙핑크가 많은 게 사실 그대로).
+  // 기간 칩 '최근 30일'이 곧 신곡 MV 차트라 Charts 선반엔 카드 두 장(역대 / 최근 30일)으로 낸다.
+  mv:{icon:'🎞️',nameKo:'MV TOP 100',nameEn:'MV TOP 100',
+    axes:['gender','gen','era'],ranked:true,cap:100,
+    pool:sel=>_fetchMvPool(_chartGkos(sel),400,_chartSince(sel.era))},
   festYE:{icon:'🎄',nameKo:'연말 무대 모음 TOP 100',nameEn:'Year-End Stage TOP 100',
     axes:['fest'],ranked:true,cap:100,
     pool:sel=>_fetchFestivalPool(_FEST_Q[sel.fest],sel.fest==='all'?_festNoSummer:null,1000,15,true)},
@@ -24097,18 +24107,18 @@ function _matchEventSeries(q){
 }
 // 차트 카드 한 장 — 직캠·무대·축제가 쓰던 빌더 3개를 합쳤다. 카드는 기본 조합을 미리 받아 썸네일과
 // 부제를 채우고, 그 결과를 캐시에 넣어 칩 첫 클릭에서 재조회가 없게 한다.
-async function _buildChartCard(list,id){
+async function _buildChartCard(list,id,selOv){
   if(!sb)return;
   const d=_CHART_DEFS[id];
   try{
-    const sel=Object.assign({},_CHART_SEL_DEFAULT);
+    const sel=Object.assign({},_CHART_SEL_DEFAULT,selOv||{});
     const songs=await _chartSongs(id,sel);
     if(songs.length<10)return; // 후보가 너무 적으면 카드 자체를 생략
     const label=_chartLabel(id,sel);
     // 순위 목록은 1위 썸네일과 '1위 · N회' 부제를, 모아보기는 임의 썸네일에 부제 없이(순위가 없으니).
     const sub=d.ranked?_feedRankSub(label,songs[0].vc):'';
     const thumb=d.ranked?songs[0].thumb:songs[Math.floor(Math.random()*songs.length)].thumb;
-    _appendFeedCard(list,d.icon,label,sub,()=>_openChartList(id),thumb,d.kind,d.ranked&&list&&list.id==='feed-chart'?{preview:songs.slice(0,3).map((x,i)=>({...x,rank:i+1})),prio:({soloCam:4,stage:5,festYE:7})[id]??6}:undefined);
+    _appendFeedCard(list,d.icon,label,sub,()=>_openChartList(id,selOv),thumb,d.kind,d.ranked&&list&&list.id==='feed-chart'?{preview:songs.slice(0,3).map((x,i)=>({...x,rank:i+1})),prio:({soloCam:4,stage:5,festYE:7})[id]??6}:undefined);
   }catch(e){console.warn(`[feed] 차트 카드(${id}) 실패 — 이 카드만 빠집니다`,e);}
 }
 
@@ -24118,6 +24128,21 @@ async function _buildChartCard(list,id){
 // 중복 카드를 새로 안 만들고, 레전드 100이 그 역할을 그대로 겸하게 둔다 — 여기선 여돌/남돌/세대별
 // 세 가지만 추가. 그룹당 상한(capPerGroup)을 둬서 인기 그룹 영상이 100자리를 독점하지 않게 함
 // (기존 "Trend" 카드의 _capByGroup 재사용).
+async function _fetchMvPool(groupKos,fetchLimit,sinceDate){
+  let q=sb.from(_YT_TABLE)
+    .select('id,title,thumb,category,is_short,content_flag,group_ko,members,view_count,published_at'+_durCol())
+    .eq('category','mv')
+    .not('view_count','is',null)
+    .or('is_short.is.null,is_short.eq.false')
+    .or('content_flag.is.null,content_flag.neq.기타')
+    .or('content_flag.is.null,content_flag.neq.무관').or('content_flag.is.null,content_flag.neq.보류')
+    .or('content_flag.is.null,content_flag.neq.hidden');
+  if(groupKos)q=q.in('group_ko',groupKos);
+  if(sinceDate)q=q.gte('published_at',sinceDate);
+  const{data,error}=await q.order('view_count',{ascending:false}).limit(fetchLimit);
+  if(error||!data?.length)return[];
+  return _filterBannedVideos(data);
+}
 async function _fetchStagePool(groupKos,fetchLimit,capPerGroup,sinceDate){
   let q=_applyLiveExclude(sb.from(_YT_TABLE)
     .select('id,title,thumb,category,is_short,content_flag,group_ko,members,view_count,published_at'+_durCol())
@@ -25092,7 +25117,15 @@ function _feedBiasMatchers(){
     const c=(a&&a.color)||(GROUPS[song.groupKo]&&GROUPS[song.groupKo].color);
     return Array.isArray(c)&&c.length===3?c.join(','):'255,120,170';
   };
+  // 최애에 정해 둔 이모지(2026-10-27 사용자 — "하트 대신 그 유저가 정한 이모티콘, 없으면 하트"). 멤버 최애가 먼저, 다음 그룹 최애.
+  const favEmoji=song=>{
+    const mk=(song.memberKos||[]);
+    const hit=bias.find(b=>b&&b.ko&&(b.type||'member')!=='group'&&mk.includes(b.ko)&&(!b.groupKo||b.groupKo===song.groupKo))
+      ||bias.find(b=>b&&(b.type||'member')==='group'&&b.ko===song.groupKo);
+    return(hit&&hit.emoji)||'🤍';
+  };
   return{
+    favEmoji,
     wide:song=>gset.has(song.groupKo)||mGroups.has(song.groupKo)||memberHit(song),
     short:memberHit,
     fav:song=>gset.has(song.groupKo)||memberHit(song),
@@ -25235,7 +25268,8 @@ async function _buildFeedFavNew(){
     const flat=rows.flatMap(r=>r.items); // 라이트박스 재생목록 순서를 화면 순서와 일치
     rows.forEach(row=>row.items.forEach(song=>{
       const isShort=_songIsShort(song);
-      const sub=[_feedWhoSub(song),song.paFull?_fmtVidAgo(song.paFull):(song.pa?_fmtVidAgo(song.pa):null)].filter(Boolean).join(' · ');
+      const _emo=_isFav(song)?String(_bias.favEmoji(song)).replace(/[<>&"']/g,''):''; // 이모지는 사용자가 친 글자 — 태그 문자 제거
+      const sub=(_emo?`<span class="feed-fav-emo">${_emo}</span>`:'')+[_feedWhoSub(song),song.paFull?_fmtVidAgo(song.paFull):(song.pa?_fmtVidAgo(song.pa):null)].filter(Boolean).join(' · ');
       _appendFeedCard(strip,'💖',song.t,sub,
         ()=>openLightbox(song.u,isShort,flat,flat.indexOf(song),{groupKo:song.groupKo,memberKo:(song.memberKos||[])[0]},false,true),
         song.thumb,null, Object.assign({dur:song.dur}, row.wide?{wide:true,short:!!row.short}:(isShort?{short:true}:{}),
@@ -25319,6 +25353,8 @@ function _buildFeedDisc(){
   _feedEnqueue(()=>_buildFeedLegend100(chart));
   _feedEnqueue(()=>_buildChartCard(chart,'soloCam'));
   _feedEnqueue(()=>_buildChartCard(chart,'stage'));
+  _feedEnqueue(()=>_buildChartCard(chart,'mv',{era:'m'})); // 최근 30일 MV = 신곡 MV 차트
+  _feedEnqueue(()=>_buildChartCard(chart,'mv'));
   // "연말 무대 모음 TOP 100"은 라벨에 랭킹(TOP)이 붙어있는 이상 다른 TOP류와 마찬가지로 Charts로
   // (2026-08-21, 사용자 요청 — "TOP 들어가면 다 discover 아닌 charts 쪽으로"). KBS/MBC/SBS/썸머는
   // "모아보기"라 TOP이 없어서 그대로 Discovery에 남긴다.
