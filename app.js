@@ -28534,13 +28534,30 @@ _totopBtn.addEventListener('click',e=>{
   const _el=_totopScrollTarget;
   if(!_el)return;
   // behavior:'smooth'는 거리에 비례해 속도가 달라져서 일관성 없음 — 고정 시간+ease-out으로 교체
+  // ⚠️ 아이폰 관성(2026-10-28 사용자 "끝까지 안 올라가는 경우"): 10-27부터 버튼이 "위로 올릴 때" 뜨니 손가락으로 튕긴 관성이 도는 중에
+  //   누르게 되는데, iOS는 관성 중 코드로 넣은 scrollTop을 관성이 덮어써 중간에 멈췄다(크롬 헤드리스는 4350→0 정상 — 관성 재현 불가).
+  //   → 터치 기기면 올리는 동안 overflow:hidden으로 관성을 끊고, 끝난 뒤 0.6초는 손대지 않는 한 0을 지킨다. 그 사이 손가락이 닿으면 즉시 양보.
+  const _touch=_isTouchPrimary();
+  let _cancel=false;const _onTouch=()=>{_cancel=true;};
+  const _ov0=_el.style.overflowY;if(_touch){_el.style.overflowY='hidden';_el.addEventListener('touchstart',_onTouch,{passive:true,once:true});}
+  const _done=()=>{
+    if(_touch)_el.style.overflowY=_ov0;
+    if(_cancel){_el.removeEventListener('touchstart',_onTouch);return;}
+    const _g0=performance.now();
+    (function _guard(now){
+      if(_cancel||now-_g0>600){_el.removeEventListener('touchstart',_onTouch);return;}
+      if(_el.scrollTop>0)_el.scrollTop=0;
+      requestAnimationFrame(_guard);
+    })(_g0);
+  };
   const _start=_el.scrollTop;
   const _dur=340;
   const _t0=performance.now();
   (function _step(now){
+    if(_cancel){_done();return;}
     const p=Math.min((now-_t0)/_dur,1);
     _el.scrollTop=_start*(1-p*p*(3-2*p)); // smoothstep ease
-    if(p<1)requestAnimationFrame(_step);
+    if(p<1)requestAnimationFrame(_step);else _done();
   })(performance.now());
 });
 // ── 긴 스크롤 영역 공통: 맨 위로 + 모바일 스크롤 막대(2026-10-26) ─────────────────────────────
