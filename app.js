@@ -5401,36 +5401,61 @@ function _lbUpdateToolbar(){
 // 우리 유니버스 내 모든 정보가 유기적으로 연결"). 탐험·For You 차트와 **같은 계산**(_fetchWeeklyChartRows 3분 캐시 + _wkCamPick/_wkStagePick)이라
 // 여기 순위와 눌러서 열리는 차트가 어긋나지 않는다. 두 차트 다 최근 7·30일 영상만 들어가므로 그보다 오래된 영상은 조회 자체를 안 한다.
 let _lbChartReq=0;
+// 2026-10-27 ③ 역대·최근 1년 차트(개인 직캠·퍼포먼스 TOP 100)까지. 이 차트들은 조회수 순이라 기록 없이도 지금 순위가 나오지만
+// 한 번 계산에 2~13초 걸려(1,000행) 조회수가 컷 근처도 못 가는 영상은 아예 안 본다. floor는 실측 컷(10-27: 직캠 역대 361만·1년 29만,
+// 퍼포먼스 역대 2,216만·1년 346만)의 1/3쯤 — 컷은 올라가기만 하니 놓치는 일은 없다. 결과는 _chartSongs 캐시라 차트 화면과 같은 순위.
+const _LB_LONG_CHARTS=[
+  {id:'soloCam',era:'all',floor:1e6},{id:'soloCam',era:'y',floor:1e5,recent:true},
+  {id:'stage',era:'all',floor:7e6},{id:'stage',era:'y',floor:1e6,recent:true},
+];
 async function _lbUpdateChartChips(s,pa){
   const box=document.getElementById('yt-lb-charts');if(!box)return;
   const my=++_lbChartReq;
   box.hidden=true;box.replaceChildren();
   const id=s&&s.u?ytId(s.u):null;
   if(!id||!sb)return;
-  const t=pa?Date.parse(pa):NaN;
-  if(isFinite(t)&&Date.now()-t>32*86400000)return;
-  try{
+  const isKo=currentLang==='ko';
+  const t=pa?Date.parse(pa):NaN,age=isFinite(t)?Date.now()-t:NaN;
+  const add=(text,onClick)=>{
+    const b=document.createElement('button');b.type='button';b.className='lb-chart-chip';
+    b.innerHTML='<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 12l4-4 3 3 5-6"/><path d="M10 5h4v4"/></svg><span></span><span class="go">›</span>';
+    b.querySelector('span').textContent=text;
+    b.addEventListener('click',e=>{e.stopPropagation();onClick();});
+    box.appendChild(b);box.hidden=false;
+  };
+  // ① 주간·월간(최근 7·30일 영상만 들어가는 차트)
+  if(!(age>32*86400000))try{
     const[r7,r30]=await _fetchWeeklyChartRows();
     if(my!==_lbChartReq)return;
-    const isKo=currentLang==='ko';
     const charts=[];
     if(r7.status==='fulfilled'&&r7.value.data)charts.push({key:'solo_cam',label:isKo?'주간 개인 직캠':'Weekly Fancam',full:isKo?'주간 개인 직캠 TOP 20':'Weekly Solo Fancam TOP 20',vids:_wkCamPick(r7.value.data)});
     if(r30.status==='fulfilled'&&r30.value.data)charts.push({key:'monthly_stage',label:isKo?'월간 퍼포먼스':'Monthly Performance',full:isKo?'월간 퍼포먼스 TOP 30':'Monthly Performance TOP 30',vids:_wkStagePick(r30.value.data)});
     const vidUrl=v=>_isShortV(v)?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;
     charts.forEach(c=>{
       const i=c.vids.findIndex(v=>v.id===id);if(i<0)return;
-      const b=document.createElement('button');b.type='button';b.className='lb-chart-chip';
-      b.innerHTML='<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 12l4-4 3 3 5-6"/><path d="M10 5h4v4"/></svg><span></span><span class="go">›</span>';
-      b.querySelector('span').textContent=isKo?`${c.label} ${i+1}위`:`#${i+1} ${c.label}`;
-      b.addEventListener('click',e=>{
-        e.stopPropagation();
+      add(isKo?`${c.label} ${i+1}위`:`#${i+1} ${c.label}`,()=>{
         const list=c.vids.map((x,k)=>({..._rowTags(x),t:x.title,u:vidUrl(x),thumb:x.thumb,vc:x.view_count,dur:x.duration_sec,pa:x.published_at?.slice(0,10),rank:k+1}));
         _openChartStory(c.key,c.full,'',list);
       });
-      box.appendChild(b);
     });
-    box.hidden=!box.children.length;
   }catch(e){}
+  // ② 역대·최근 1년 TOP 100 — 같은 차트(직캠/퍼포먼스)는 역대에 들면 1년은 생략(둘 다 띄우면 줄만 길어진다)
+  const vc=Number(s.vc)||0;
+  // 동시에 조회(처음엔 하나에 최대 13초 — 차례로 하면 20초 넘게 걸려 영상 다 볼 때쯤 떴다), 표시는 정의 순서대로
+  const cands=_LB_LONG_CHARTS.filter(c=>vc>=c.floor&&!(c.recent&&!(age<=365*86400000)));
+  const res=await Promise.all(cands.map(c=>{const sel={..._CHART_SEL_DEFAULT,era:c.era};return _chartSongs(c.id,sel).then(songs=>({c,sel,songs}),()=>null);}));
+  if(my!==_lbChartReq)return;
+  const done=new Set();
+  for(const r of res){
+    if(!r||done.has(r.c.id))continue;
+    const c=r.c,sel=r.sel;
+    try{
+      const i=r.songs.findIndex(x=>x._apiId===id);if(i<0)continue;
+      done.add(c.id);
+      const label=_chartLabel(c.id,sel).replace(/\s*TOP\s*\d+$/i,'');
+      add(isKo?`${label} ${i+1}위`:`#${i+1} ${label}`,()=>_openChartList(c.id,sel));
+    }catch(e){}
+  }
 }
 // ── 영상 아래 "이 영상에 나온 사람"(2026-10-16, 라이트박스 D안) ──────────────────────────────────────
 // 가로 재생(브라우즈) 화면에서 출연자를 텍스트 칩 대신 동그란 프로필 + 이름 줄로 보여준다. 누르면 예전 칩과 같은 하프카드.
