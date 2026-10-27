@@ -238467,6 +238467,33 @@
     "melonAlbumId": "10086581"
    },
    {
+    "title": "Be my shine ～君を離さない～",
+    "type": "싱글",
+    "isMain": true,
+    "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music/v4/0f/45/5c/0f455ca5-6d57-bbf0-32c0-cb8604ad2242/JBCB-4001JK.jpg/600x600bb.jpg",
+    "releaseDate": "2012.08.22",
+    "trackCount": 3,
+    "titleTrack": "Be my shine ～君を離さない～",
+    "tracks": [
+     {
+      "no": 1,
+      "title": "Be my shine ～君を離さない～",
+      "isTitle": true
+     },
+     {
+      "no": 2,
+      "title": "君の知らない Story",
+      "isTitle": false
+     },
+     {
+      "no": 3,
+      "title": "BOYFRIEND ～JAPANESE VER.～",
+      "isTitle": false
+     }
+    ],
+    "region": "jp"
+   },
+   {
     "title": "Summer",
     "type": "미니",
     "isMain": true,
