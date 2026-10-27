@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-10-27 (Claude Code — 8차: 탈퇴 멤버 연결선·인스타 2행·더보이즈 선우 팬미팅)
+- **[완료·배포] [connections.json] [tests/validate-data.js]** 사용자 "에반 탈퇴했으니까 엔하이픈 선 빼야지". 솔로 전향 탈퇴자 314명 중 295명은 옛 그룹 선이 이미 없음 — 그룹은 활동 중인데 본인만 나간 **에반(엔하이픈 2026.03)·승한(라이즈 2024.10)·디모렉스(트레저 2022.11)** 선 23개 제거(해체 그룹 아이오아이·뉴이스트·프리스틴·레이디스 코드는 유지). 원인: validate-data "그룹 내 멤버 연결선 누락" 검사가 groups[]의 탈퇴 기록(active:false·left)까지 활동 멤버로 세서 선을 다시 넣게 만들었다 → 활동 중 겸임만 세게 수정. 오류 0.
+- **[완료·배포] [index.html] [app.js]** 사용자 "인스타 더 노출" — For You·발견 인스타 1행 레일(feed-album-rail-1) → 2행, 사진 15→24장. 헤드리스: For You 7장/2줄, 발견 24장/2줄.
+- **[완료·배포] [tools/solo_whitelist.json] [app.js _loadMemberConcertRow·_buildFeedFavConcerts]** 사용자 NOL 링크 "선우 팬미팅 수집 안 됨"(더보이즈 선우 2026 SUNWOO FANMEETING 〈UNCHAINED〉 11.21~22 명화라이브홀). StagePick엔 있었으나 미매칭(tools/stagepick_unmatched.txt) — 멤버 매칭이 한글 이름만 보고, 한글이어도 선우가 엔하이픈·더보이즈 동명이인이라 버려짐. **동명이인 솔로 공연은 groups에 "이름(소속)"**: 화이트리스트 {ko:"선우(더보이즈)",alias:["SUNWOO"]}, 멤버 카드·For You 공연 선반이 "이름"과 "이름(소속)" 둘 다 찾게. 수집 워크플로 수동 실행 → 행 들어옴(포스터·StagePick 링크). 헤드리스: 더보이즈 선우 카드 D-25 표시, 엔하이픈 선우 카드엔 없음.
+- **⏳ 우선순위(사용자와 방향 합의 대기)** ① 영상 아래 "우리 차트 순위 ›" 표시+차트 연결(rank_snapshots 재사용) ② NEW VIDEOS 최애 표현(후광 대신 — 시안 필요) ③ 카드 "추천순" 실제 추천 로직(지금은 하트 많은 대표 1개 + 청크 무작위) ④ 멜론 실시간 차트(멜론 차단·약관 위험 — 가능성 실험부터) ⑤ 끝까지 내리기 버튼(무한 스크롤 목록엔 '끝'이 없음 — 필요한 화면부터 확인).
+
 ## 2026-10-27 (Claude Code — 7차: 카드 영상 줄 밑줄 탭 + ♪ 곡 고르기)
 - **[완료·배포] [kpop_universe.css .gc-vid-hd]** 사용자 시안 A 선택("유리 알약이 별로 안 예쁘다") — 카드 영상 줄 형식 탭을 **밑줄 글자 탭**으로(탐험 For You/발견 계열). 카드 영상 헤더에만(.gc-vid-hd 표식), 곡 화면·차트 칩 등 다른 알약은 그대로. 시안 페이지 https://claude.ai/artifact/BtguywUXtYWmgARdCR9Y8A (실제 카드 캡처 비교: 지금·밑줄·세그먼트·납작한 칩).
 - **[완료·배포] [app.js _vidSongList/_openVidSongSheet]** 큰 그림 "영상 = 누가·무슨 곡·어떤 형식" 2단계. 탭 줄 왼쪽에 글자형 "♪ 곡 ▾" + 구분선(형식 탭과 종류가 다른 '좁히기'라 알약 아님 — 사용자 결정 ①). 누르면 아래에서 곡 목록 시트(영상 많은 순, 카드 주인 곡만 — 그룹·본인·옛 그룹 키, 2건 이상, 이름은 디스코그래피 표기). 고르면 "♪ REDRED ✕", 다시 누르면 해제. 조회는 `song_keys` 포함 조건(GIN idx_ytv_song_keys), 캐시 키에 songKey, 곡 고른 상태에선 대표 영상 고정 안 함. 유닛 카드는 범위가 달라 제외. 헤드리스: 성현 카드 곡 목록 REDRED 40·FaSHioN 28·What You Want 22·ACAI 10…, REDRED+퍼포먼스 → 40개 전부 REDRED, 해제 복귀 / 코르티스 그룹 카드 REDRED 272·What You Want 214·FaSHioN 199.
