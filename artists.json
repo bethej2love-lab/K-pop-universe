@@ -136632,6 +136632,29 @@
     ],
     "discography": [
       {
+        "title": "Chptr. 1",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/150/81/388/15081388_20261026105129_500.jpg",
+        "releaseDate": "2026.10.27",
+        "trackCount": 2,
+        "titleTrack": "Honeydew",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Honeydew",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Sweetie",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "15081388"
+      },
+      {
         "title": "2018.12.25",
         "type": "정규",
         "isMain": true,

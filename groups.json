@@ -210214,6 +210214,44 @@
   },
   "discography": [
    {
+    "title": "Sequence 02: Attraction",
+    "type": "미니",
+    "isMain": true,
+    "cover": "https://cdnimg.melon.co.kr/cm2/album/images/147/59/700/14759700_20261015154243_500.jpg",
+    "releaseDate": "2026.10.27",
+    "trackCount": 5,
+    "titleTrack": "French Kissing",
+    "tracks": [
+     {
+      "no": 1,
+      "title": "Haunted",
+      "isTitle": false
+     },
+     {
+      "no": 2,
+      "title": "French Kissing",
+      "isTitle": true
+     },
+     {
+      "no": 3,
+      "title": "Potion",
+      "isTitle": false
+     },
+     {
+      "no": 4,
+      "title": "Beautiful",
+      "isTitle": false
+     },
+     {
+      "no": 5,
+      "title": "Worth It",
+      "isTitle": false
+     }
+    ],
+    "src": "melon",
+    "melonAlbumId": "14759700"
+   },
+   {
     "title": "Sequence 01: Curiosity",
     "type": "미니 1집",
     "isMain": true,
