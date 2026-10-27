@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## 2026-10-27 (Claude Code — 3차: DB 직접 실행 시작 + Codex 감사 10·11차 확정분 정정)
+- **[완료·운영] [Supabase 직접 실행]** 사용자가 개인 액세스 토큰 권한 부여(사용자 홈의 .kpu_supabase_token.txt, 레포 밖). Management API database/query로 실행. ⚠️윈도 Git Bash에서 SQL을 node argv로 넘기면 **한글이 깨진다**(조회가 조용히 0건) → 파일/stdin으로 넘길 것.
+- **[SQL 실행됨·DB 확인] [~/Downloads/shorts_with_guest_challenge_2026-10-27.sql]** 쇼츠 "곡 w/ #게스트" 기타→challenge: 남은 기타 0(일반 656·수동 72건이 challenge).
+- **[SQL 실행됨·DB 확인] [sql/claude_audit10_11_fix_2026-10-27.sql]** 백업 91건(ops_claude_fix_20261027, RLS 켬·공개 키로 안 보임 확인), 되돌리기 sql/claude_audit10_11_undo_2026-10-27.sql. ① 무관 10: 미등록 출연자(차이진신·홍진영·이무진2·범진→러블리즈 JIN 오태깅, 하이엘 이진, 2Z)·브랜드/스태프 오인식(ALEXANDER MCQUEEN 2 → 유키스 알렉산더/준)·메이크업 튜토리얼(FYMemblZQXw). ② 재배정 19(tags/cover_manual=true): 다이아 with_groups 제거(gduuajhODOU), 앤팀 니콜라스·유마/BTS 원곡, BAE173 퀴즈·We Go Up, 러블리즈 이미주/Butter, 저스트비, 미야오/Dynamite, 앰퍼샌드원 최지호·김승모/하지하지마, 갓세븐 진영, 아이딧 진보민(JIN·진 with 제거), 키오프 벨/Psycho, 리센느/행복, 스테이씨 6인/블랙핑크·레드벨벳·선미·청하, 미래소년/오르골, 엔시티 위시/TAP+NCT DREAM, 시그니처/Candy, 엔싸인/ISTJ, 크래비티 성민·형준/NCT DREAM·하이라이트, 넥스지 특(with_groups→원곡). ③ **같은 유형 확장**: 트렌드지 카멜레온 챌린지 **42건 전부** 헬로비너스 동명곡 원곡 연결 제거(트렌드지 자기 곡 Chameleon — 한글 '카멜레온'이 영문 등록곡과 안 맞아 자기 곡 차단이 안 걸림. 곡 별칭 기능 없음, 활동기 끝나 코드는 그대로). ④ 윤지성 솔로 무대 **20건**이 엔시티 드림 지성 primary(Codex는 2건 발견) → 워너원 윤지성(기존 79건 저장 방식). 지금 매처는 윤지성·JIN 유형을 맞게 판정(예전 매처 시절 저장분). 결과: 무관 10/10·재배정 19/19·카멜레온 남음 0·지성 남음 0. 제외(수동잠금·보류): 6F8rhnuhLjg,-64vS7m-qUc,q6YptOGuAps,RhQhmyVKHd4,-l5rrycEzwE / acGjVx1xoGY,KtZJR1wD8mc,fdDwNU7cvHU,L0YXTMcM5iE,VrDK49b7o38,DVOzjxtYTPk,2_6LHOtns2g,rzHoN3LiNNE,bHQTUk7xgGw.
+- **[완료·배포] [groups.json]** 보이프렌드 History "2017.07 일본 데뷔 [Summer]" 오류 → 실제 일본 데뷔 싱글 「Be my shine ～君を離さない～」(2012.08.22, JBCB-4001, 3곡) 추가. iTunes JP 552862939로 발매일·수록곡·커버 확인(Codex Billboard JAPAN/Tower 근거와 일치). _tlJpDebut는 첫 일본반을 그대로 쓰므로 코드 변경 없음. disco/g는 rebuild-disco-artifacts가 생성.
+- **[확인·이미 끝남]** 10-23 팬 채널 정리 SQL: 문제 채널 0·영상 0·주인 정정 반영돼 있음(실행됐던 것). 비공개/삭제 cqOyrPLyN_Y·4YjazT9iW40: 둘 다 hidden. '자컨' category: DB 값 제약 없음(저장 가능).
+- **⏳ 남은 일** 감사 보류분(위 제외 목록) 원본 크레딧 확인 · 이무진/하이엘처럼 약한 판정 오태깅은 검수 큐로 감 · 붙여 쓴 그룹 해시태그(#NCTDREAM 등) 미인식은 게스트 누락 위험 때문에 별도 설계 필요.
+
 ## 2026-10-27 (Claude Code — 2차: 직캠 차트 칩·로딩, 검색창 블러, 좋아요 줄, 붙여 쓴 해시태그 게스트, 쇼츠 챌린지)
 - **[완료·배포] [index.html #feed-list-facets]** 역대 직캠 TOP 100 세대 칩 6개가 줄바꿈 → 칩 줄이 헤더 왼쪽 칸(오른쪽 선택·저장·닫기 버튼 옆, 폭 ~250px) 안에 있었음. 헤더 밑 전체 폭으로 이동(헤드리스 390폭: 1세대 오른쪽 끝 355). 더 좁은 폰 대비 세대 줄만 가로 밀기(scroll:key==='gen').
 - **[완료·배포] [app.js _renderFeedListFacet]** 칩 누르면 새 목록 받는 동안 표시 없음 → 누른 칩 즉시 켜짐 + 목록 흐림 + 가운데 원 회전(#feed-list-panel.fl-loading), 끝나면 해제(실패해도 finally).
