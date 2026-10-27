@@ -17614,6 +17614,14 @@ function _favBurst(btn){
     p.addEventListener('animationend',()=>p.remove());
   }
 }
+// 즐겨찾기가 바뀌면 For You를 새로 짠다(2026-10-27 사용자 "즐겨찾기 해제했는데 For You에 계속 노출되지 않나"). 예전엔 **추가**할 때만
+// (하트 날리기 _pulseFeedTab) 3분 캐시를 풀어서, **해제**한 뒤 3분 안에 탐험을 열거나 탐험 위에서 카드를 열고 해제하면 해제한 아티스트 영상이
+// 그대로 남았다. 탐험이 열려 있으면 바로 다시 그린다. 서버에서 즐겨찾기를 받아올 때(_pullServerToLocal)도 같은 이유로 부른다.
+function _onFavsChanged(){
+  _feedRecBuiltAt=0;
+  const ov=document.getElementById('feed-overlay');
+  if(ov&&ov.classList.contains('open')&&typeof _buildFeedRec==='function'){_buildFeedRec();_feedRecBuiltAt=Date.now();}
+}
 function toggleFavGroup(ko){
   const dk='g:'+ko;
   const doToggle=()=>{
@@ -17627,6 +17635,7 @@ function toggleFavGroup(ko){
     _saveFavs();
     _syncFavBtn('group',ko);
     renderFavList();
+    _onFavsChanged();
     if(!wasFav){
       _preHeartCard={heartedType:'group',heartedKey:ko,card:_currentOpenCard()};
       _favBurst(document.getElementById('gc-fav'));
@@ -17654,6 +17663,7 @@ function toggleFavMember(artist){
     _saveFavs();
     _syncFavBtn('member',artist);
     renderFavList();
+    _onFavsChanged();
     if(!wasFav){
       _preHeartCard={heartedType:'member',heartedKey:k,card:_currentOpenCard()};
       _favBurst(document.getElementById('tt-fav'));
@@ -20026,6 +20036,7 @@ async function _pullServerToLocal(userId){
   if(!data)return false;
   favGroups=new Set(data.fav_groups||[]);
   favMembers=new Set(data.fav_members||[]);
+  try{_onFavsChanged();}catch(e){}
   favConnections=new Set(data.fav_connections||[]);
   favOrder=data.fav_order||[];
   favDates=data.fav_dates||{};
@@ -25045,13 +25056,31 @@ async function _buildFeedFavNew(){
       .or('content_flag.is.null,content_flag.neq.hidden')
       .order('published_at',{ascending:false})
       .limit(400);
-    let{data,error}=await _q();
-    if(_isPubTsMissing(error)){_hasPubTs=false;({data,error}=await _q());} // 컬럼 추가 전이면 빼고 재조회
-    if(error||!data?.length)return;
+    // 다른 그룹 영상에 게스트로 나온 즐겨찾기(2026-10-27 Codex 팬 불편 검토 — "with_members로 출연한 최애까지 수집한다고 단정 불가"):
+    // 위 조회는 영상 주인(group_ko)만 봐서, 카리나를 즐겨찾기해도 다른 그룹 챌린지 쇼츠 "#AWA with #CRAVITY #형준 선배님"(하입프린세스 영상)
+    // 같은 게스트 출연은 한 번도 안 떴다. 같은 7일·같은 제외 조건으로 함께한 멤버("이름(그룹)")·함께한 그룹 칸을 따로 한 번 더 본다(GIN 인덱스, 실측 21ms).
+    const _gMem=[],_gGrp=[];
+    favMembers.forEach(k=>{const a=ARTISTS.find(x=>_mFavKey(x)===k);if(a)_gMem.push(`${a.name.ko}(${GROUPS[a.group.ko]?a.group.ko:a.name.ko})`);});
+    passAll.forEach(g=>{if(GROUPS[g])_gGrp.push(g);else _gMem.push(`${g}(${g})`);});
+    const _pgArr=a=>'{'+a.slice(0,60).map(x=>'"'+String(x).replace(/"/g,'\\"')+'"').join(',')+'}';
+    const _qGuest=(_gMem.length||_gGrp.length)?()=>_applyLiveExclude(sb.from(_YT_TABLE).select(_FEED_COLS()))
+      .or([_gMem.length?`with_members.ov.${_pgArr(_gMem)}`:null,_gGrp.length?`with_groups.ov.${_pgArr(_gGrp)}`:null].filter(Boolean).join(','))
+      .gte('published_at',since)
+      .or('content_flag.is.null,content_flag.neq.기타')
+      .or('content_flag.is.null,content_flag.neq.무관').or('content_flag.is.null,content_flag.neq.보류')
+      .or('content_flag.is.null,content_flag.neq.hidden')
+      .order('published_at',{ascending:false})
+      .limit(200):null;
+    let[{data,error},guest]=await Promise.all([_q(),_qGuest?_qGuest().then(r=>r,()=>({data:null})):Promise.resolve({data:null})]);
+    if(_isPubTsMissing(error)){_hasPubTs=false;({data,error}=await _q());guest=_qGuest?await _qGuest().then(r=>r,()=>({data:null})):{data:null};} // 컬럼 추가 전이면 빼고 재조회
+    if(error)return;
+    const _guestIds=new Set();
+    if(guest&&guest.data&&guest.data.length){const seen=new Set((data||[]).map(v=>v.id));guest.data.forEach(v=>{if(!seen.has(v.id)){seen.add(v.id);_guestIds.add(v.id);(data=data||[]).push(v);}});}
+    if(!data?.length)return;
     // 최신순 유지(셔플 안 함), 쇼츠 포함(그리드라 9:16 그대로 렌더), 멤버필터 적용, 그룹당 캡 없음(즐겨찾기라 "싹 다").
     // ⚠️ published_at은 날짜만이라 같은 날 안에서 시간순 정렬이 안 됐다 — 어제 저녁(20시간 전)이 어제 오전
     //    영상 아래로 밀리는 역전이 생김(2026-09-13 제보). 정확한 시각(published_ts)으로 다시 내림차순 정렬한다.
-    const vids=_filterBannedVideos(data).filter(_favMatch)
+    const vids=_filterBannedVideos(data).filter(v=>_guestIds.has(v.id)||_favMatch(v))
       .sort((a,b)=>String(b.published_ts||b.published_at||'').localeCompare(String(a.published_ts||a.published_at||'')))
       .slice(0,_FEED_FAVNEW_MAX);
     if(!vids.length)return;
