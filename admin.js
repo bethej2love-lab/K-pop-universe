@@ -136,7 +136,9 @@ function _ytClassify(title,{isShort=false}={}){
   // 안무영상/댄스프랙티스/퍼포먼스비디오/릴레이댄스 — 2026-08-06엔 "무대가 아니다"라며 other로 보냈지만
   // 2026-09-14 사용자 결정으로 live로 온다(_YT_PRERECORDED_RE 주석에 되돌리는 법까지 적어둠).
   if(_YT_PRERECORDED_RE.test(t)||_YT_PRERECORDED_RE.test(title||''))return'live';
-  if(isShort&&/챌린지|CHALLENGE/.test(t))return'challenge';
+  // "곡 w/ #게스트" 쇼츠도 챌린지다(2026-10-27 사용자 — 크래비티 "더 뜨겁게 Drive me louder w/ #LEECHAEYEON"이 기타). 실측: 쇼츠 중 제목에
+  // "w/ #"가 든 기타 511건 표본 60건이 전부 곡+게스트 챌린지(Looks Can Kill w/ #…·#HOTLINE w/ #…·#SNEAKERS w/ #…), 이미 챌린지로 간 게 135건.
+  if(isShort&&(/챌린지|CHALLENGE/.test(t)||/(?:^|[^A-Z0-9])W[/] *[#@]/.test(t)))return'challenge';
   if(/\bLIVE\b|\bCONCERT\b|\bPERFORMANCE\b|\bFANCAM\b|라이브|직캠|팬캠/.test(t))return'live';
   if(_YT_LIVE_SHOW_RE.test(t))return'live';
   return'other';
@@ -7548,6 +7550,38 @@ function _atmNormalizeRegisteredRomanNames(t){
     _atmRomanFullIdx={m,mShort,single,sur,surH,surGiven,givenOnly,givenKeys,givenNoSur,runSur};
   }
   const{m:idx,mShort,single,sur,surH,surGiven,givenOnly,givenKeys,givenNoSur,runSur}=_atmRomanFullIdx;
+  // 붙여 쓴 해시태그 한 덩어리(2026-10-27 사용자 — 크래비티 "Drive me louder w/ #LEECHAEYEON"에 이채연이 안 붙음).
+  // "#LEECHAEYEON"(성+이름)·"#JunHan"(등록명 'Jun Han')은 아래 런 대조가 **띄어 쓴 토큰
+  // 여러 개**만 보고 한 토큰짜리는 안 봐서 통째로 놓쳤다. 해시태그 하나가 띄어쓰기·점을 뺀 등록명 전체이거나 "성 로마자+이름 로마자"로
+  // 등록자 한 명과 맞을 때만 그 등록명을 **끝에 덧붙인다** — 원문은 그대로라 기존에 잡히던 건 안 바뀐다. 주인이 둘 이상이면 안 붙인다.
+  // ⚠️ 그룹 해시태그(#XdinaryHeroes·#NCTDREAM)는 일부러 안 푼다 — 4만 건 차분에서 그룹이 새로 잡히면 "(With. #지코)"·"#TEN 선배님"처럼
+  //    그룹 표시 없이 이름만 쓴 게스트를 매처가 버려서(그룹이 있으면 이름만으로 역추론 안 하는 기존 규칙) 공식 채널 게스트가 빠졌다.
+  if(t.indexOf('#')>=0){
+    const add=[];
+    t.split('#').slice(1).forEach(seg=>{
+      const k=((seg.match(/^[A-Za-z0-9가-힣_.]+/)||[''])[0]).toLowerCase().replace(/[^a-z0-9가-힣]/g,'');
+      if(k.length<5)return;
+      if(!/^[a-z]+$/.test(k))return;
+      const ko0=idx.get(k);
+      // 띄어 쓴 영문 등록명(Lee Know·Jun Han)은 **그 영문 그대로** 덧붙인다 — 한글(리노)을 붙이면 두 글자 이름이 모호하다고 보고
+      // 영문 풀네임으로 잡던 그룹까지 버린다(위 repTxt 주석과 같은 함정, 차분에서 "#straykids #leeknow"의 리노가 빠졌다)
+      if(ko0&&!single.has(k)){
+        const a=ARTISTS.find(x=>x.name&&x.name.ko===ko0&&[x.name.en,...(x.matchAliases||[])].some(y=>String(y||'').toLowerCase().replace(/[^a-z]/g,'')===k));
+        const en=a&&[a.name.en,...(a.matchAliases||[])].find(y=>String(y||'').toLowerCase().replace(/[^a-z]/g,'')===k);
+        if(en)add.push(en);
+        return;
+      } // 한 토큰 등록명은 원래 그대로 잡힌다
+      if(ko0||idx.has(k)||single.has(k))return;
+      const hit=new Set();
+      sur.forEach(r=>{
+        if(r.length<2||!k.startsWith(r))return;
+        const rest=k.slice(r.length);if(rest.length<3)return;
+        (surH.get(r)||[]).forEach(h=>{const ko=surGiven.get(h+'|'+rest);if(ko)hit.add(ko);});
+      });
+      if(hit.size===1)add.push('#'+[...hit][0]);
+    });
+    if(add.length)t=t+' '+add.join(' ');
+  }
   const toks=[];const re=/[A-Za-z]+/g;let mm;
   // 런에 드는 토큰: 성 로마자이거나 **1~2음절** 로마자(yoon·seo·ryeong·seungwoo). 3음절↑(arena·korea·killing?)은 이름 음절로 안 본다.
   while((mm=re.exec(t))){const w=mm[0].toLowerCase();const sc=_atmKoSylCount(w);toks.push({s:mm.index,e:mm.index+mm[0].length,w,ko:(sc>=1&&sc<=2)||sur.has(w)});}

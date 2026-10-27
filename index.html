@@ -804,11 +804,6 @@
           <span id="feed-list-desc"></span>
           <button id="feed-list-desc-edit" type="button" style="display:none" aria-label="한줄평 수정">✎</button>
         </div>
-        <!-- 차트 필터 칩(2026-09-04) — 같은 차트를 축만 바꿔 다시 자른다. 예전엔 "역대 개인 직캠
-             TOP 100"·"역대 여돌 …"·"역대 남돌 …"이 **각각 다른 카드**로 나란히 놓여 있었는데,
-             셋은 같은 쿼리에 groupKos만 다른 것이라 카드를 세 장 쓸 이유가 없었다. 카드는 하나로
-             접고 자르는 건 여기서 한다. 필터가 없는 목록에선 이 줄이 통째로 숨는다. -->
-        <div id="feed-list-facets" style="display:none"></div>
       </div>
       <div id="feed-list-hd-actions">
         <button id="feed-list-sel-btn" class="gc-ch-sel-btn" type="button" title="영상 여러 개 선택" data-i18n="selLabel" data-i18n-title="selBtnTitle">선택</button>
@@ -818,6 +813,12 @@
         <button id="feed-list-close" aria-label="닫기"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
       </div>
     </div>
+    <!-- 차트 필터 칩(2026-09-04) — 같은 차트를 축만 바꿔 다시 자른다. 예전엔 "역대 개인 직캠
+         TOP 100"·"역대 여돌 …"·"역대 남돌 …"이 **각각 다른 카드**로 나란히 놓여 있었는데,
+         셋은 같은 쿼리에 groupKos만 다른 것이라 카드를 세 장 쓸 이유가 없었다. 카드는 하나로
+         접고 자르는 건 여기서 한다. 필터가 없는 목록에선 이 줄이 통째로 숨는다.
+             2026-10-27: 헤더 왼쪽 칸(오른쪽 선택·저장·닫기 버튼 옆) 안에 있어 폭이 ~250px뿐이라 세대 칩 6개가 줄바꿈됐다 → 헤더 밑 전체 폭으로 뺌. -->
+    <div id="feed-list-facets" style="display:none"></div>
     <div id="feed-list-save-row" style="display:none">
       <span id="feed-list-owner"></span>
       <div id="feed-list-action-btns">

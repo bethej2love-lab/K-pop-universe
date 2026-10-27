@@ -1472,7 +1472,8 @@
     #gc-bar-mob{display:block;}
     #mob-sheet-inner #gc-grid,#mob-card-stack-inner #gc-grid{border-top:none;padding-top:0;margin-top:0;}
     /* 모바일에서는 gc-grid의 border-top이 아니라 gc-bar-mob(색상 바)가 "n명이 좋아해요" 아래 구분선 역할을 함 */
-    #mob-sheet-inner #gc-status-line,#mob-card-stack-inner #gc-status-line{margin-bottom:3px;}
+    /* 2026-10-27 사용자 "n명이 좋아해요가 줄 위에 딱 붙어 있다": 위 10·아래 3이라 글자가 밑 색 줄에 붙어 보였다 → 위아래 비슷하게 */
+    #mob-sheet-inner #gc-status-line,#mob-card-stack-inner #gc-status-line{margin-top:8px;margin-bottom:9px;}
     #mob-sheet-inner #gc-name-row,
     #mob-sheet-inner #gc-en-row,
     #mob-sheet-inner #gc-status-line,
@@ -1750,7 +1751,11 @@
   /* 차트 목록의 필터 칩 줄(2026-09-04). 칩 자체는 .gc-ch-filter를 그대로 쓴다 — 이 앱에서 "고르는
      알약"은 이미 그 모양이라 새 스타일을 만들면 같은 뜻의 UI가 두 벌이 된다. */
   /* 축이 여럿이면 줄을 나눈다 — 한 줄에 섞으면 어느 알약이 어느 축인지 안 읽힌다. */
-  #feed-list-facets{display:flex;flex-direction:column;gap:5px;margin-top:7px;}
+  #feed-list-facets{display:flex;flex-direction:column;gap:5px;padding:0 18px 10px;margin-top:-4px;flex-shrink:0;}
+  /* 칩을 누르면 새 목록을 받는 동안(수 초) 아무 표시가 없었다(2026-10-27 사용자) — 누른 칩은 바로 켜고, 목록은 흐리게 + 가운데 원 돌기 */
+  #feed-list-panel{position:relative;}
+  #feed-list-panel.fl-loading #feed-list-grid{opacity:.35;pointer-events:none;transition:opacity .15s;}
+  #feed-list-panel.fl-loading::after{content:'';position:absolute;left:50%;top:50%;width:28px;height:28px;margin:-14px 0 0 -14px;border-radius:50%;border:2.5px solid rgba(160,190,255,0.22);border-top-color:rgba(190,212,255,0.9);animation:gc-ch-spin .8s linear infinite;pointer-events:none;z-index:3;}
   #feed-list-facets .fl-facet-row{display:flex;flex-wrap:wrap;gap:5px;align-items:center;}
   /* 칩이 많은 축(행사 회차 2009~2025 등)은 줄바꿈 대신 가로 한 줄 스크롤(2026-10-15) — 세 줄을 차지해 목록이 밀렸다 */
   #feed-list-facets .fl-facet-row.fl-facet-scroll{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;padding-bottom:2px;}
@@ -2567,8 +2572,11 @@
     z-index:69;display:none;flex-direction:column;
     background:rgba(9,12,26,0.97);
     backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);
+    /* 2026-10-27 "검색창 맨 윗부분이 살짝 블러": iOS 웹앱이 상태바 아래 ~65px을 스스로 흐리게 덮는다(캡처 픽셀: 위 0~64px이 시트색보다 어두운 그라데이션).
+       +6px(검색창 윗변 61px)로는 검색창 윗부분이 그 안에 걸려 뿌옜다 → 웹앱에선 윗변 ~77px로 흐림 구간 밖에 둔다. */
     padding-top:calc(env(safe-area-inset-top,0px) + 6px);
   }
+  @media (display-mode: standalone) and (max-width:768px){#msheet{padding-top:calc(env(safe-area-inset-top,0px) + 22px);}} /* 웹앱만 — 일반 사파리는 흐림 덮개가 없다 */
   #msheet.open{display:flex;}
   #msheet-top{display:flex;align-items:center;gap:6px;padding:8px 12px 8px 6px;flex:none;}
   #msheet-back{

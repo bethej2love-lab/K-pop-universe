@@ -21267,7 +21267,12 @@ function _renderFeedListFacet(ctx){
       const b=document.createElement('button');b.type='button';
       b.className='gc-ch-filter'+(o.v===f.sel?' active':'');
       b.textContent=currentLang==='ko'?o.ko:(o.en||o.ko);
-      b.addEventListener('click',e=>{e.stopPropagation();if(o.v===f.sel)return;f.onPick(o.v);});
+      b.addEventListener('click',e=>{
+        e.stopPropagation();if(o.v===f.sel)return;
+        row.querySelectorAll('.gc-ch-filter.active').forEach(x=>x.classList.remove('active'));b.classList.add('active');
+        const pn=document.getElementById('feed-list-panel');pn?.classList.add('fl-loading');
+        Promise.resolve().then(()=>f.onPick(o.v)).catch(()=>{}).finally(()=>pn?.classList.remove('fl-loading'));
+      });
       row.appendChild(b);
     });
     el.appendChild(row);
@@ -23737,7 +23742,7 @@ async function _openChartList(id,sel){
   // 되돌아갈 길이 없어 막다른 골목이 된다.
   const sub=!songs.length?(currentLang==='ko'?'이 조건에 맞는 영상이 없어요 — 위 필터를 바꿔보세요':'No videos for this filter — try changing it above')
     :d.ranked?_feedRankSub(label,songs[0].vc):'';
-  const mk=key=>({key,labelKo:'',labelEn:'',options:_CHART_AXES[key],sel:sel[key],
+  const mk=key=>({key,labelKo:'',labelEn:'',options:_CHART_AXES[key],sel:sel[key],scroll:key==='gen', // 세대 6개는 390폭에 딱 맞아 더 좁은 폰에선 줄바꿈 대신 가로 밀기
     onPick:nv=>_openChartList(id,Object.assign({},sel,{[key]:nv}))});
   // ⚠️ 순위 목록 여부는 원래 **카드 클릭 핸들러**에서만 세워졌다(선반이 feed-chart인지로 판단). 그래서
   //    칩으로 다시 열면 플래그가 이미 소비돼 순위 목록이 조용히 '발견용'으로 렌더됐다 — 조회수 2위
