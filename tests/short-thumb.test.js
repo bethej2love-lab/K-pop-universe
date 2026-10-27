@@ -53,6 +53,9 @@ need(!/_shortThumbFallback/.test(html), '옛 부분 헬퍼(_shortThumbFallback) 
 const uses = (html.match(/_mountShortThumb\(/g) || []).length - 1;
 need(uses >= 3, `_mountShortThumb 호출 ${uses}곳(그리드·모아보기·탐험 피드)`);
 
+// 큰 세로 원본(1080×1920)은 카드 크기로 줄여 다시 끼운다 — 아이폰이 큰 그림 수십 장을 버려 블러 배경만 남던 것(2026-10-27)
+need(/_shrinkShortThumb\(img\)/.test(fnBody('_mountShortThumb')||'') && !!fnBody('_shrinkShortThumb'), '세로 원본은 로드 후 카드 크기로 축소(_shrinkShortThumb)');
+
 // ② _mountShortThumb 동작 — 가짜 img로 실제 실행
 const helper = fnBody('_mountShortThumb');
 const run = steps => {
@@ -60,7 +63,7 @@ const run = steps => {
   const img = { src: '', naturalWidth: 0, naturalHeight: 0, cls: new Set(), classList: { add: c => img.cls.add(c) }, dataset: {}, getAttribute: a => (a === 'src' && img.src) || null };
   const bg = { style: {} };
   const log = [];
-  vm.runInNewContext(helper + ';_mountShortThumb(img,"VID",{bg,onReady:()=>log.push("ready"),onFail:()=>log.push("fail")});', { img, bg, log, _shortThumbWatch: () => {} });
+  vm.runInNewContext(helper + ';_mountShortThumb(img,"VID",{bg,onReady:()=>log.push("ready"),onFail:()=>log.push("fail")});', { img, bg, log, _shortThumbWatch: () => {}, _shrinkShortThumb: () => {} });
   for (const st of steps) {
     if (st === 'error') img.onerror && img.onerror();
     // 화면 밖이라 _shortThumbIO가 src를 뗌 — 사파리는 이때 error를 쏜다

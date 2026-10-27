@@ -4747,6 +4747,7 @@ function _mountShortThumb(img,id,opts){
   };
   img.onload=()=>{
     if(isOar()&&img.naturalWidth===120&&img.naturalHeight===90){fallback();return;}
+    if(isOar())_shrinkShortThumb(img); // 원본은 바로 보이고, 줄인 그림(blob)으로 갈아끼우면 onload가 한 번 더 온다(멱등)
     setBg();img.dataset.thumbOk='1';
     _shortThumbWatch(img);
     if(o.onReady)o.onReady(img);
@@ -4761,6 +4762,37 @@ function _mountShortThumb(img,id,opts){
     if(o.onFail)o.onFail(img);
   };
   img.src=`https://i.ytimg.com/vi/${id}/oardefault.jpg`;
+}
+// 세로 원본(oar2·oardefault 대부분 1080×1920, 펼치면 장당 8MB)을 카드 크기로 줄여 다시 끼운다(2026-10-27 사용자 "발견 탭 위쪽 쇼츠 뿌연 썸네일" 4번째 재발).
+// 헤드리스에선 그림이 늘 제대로 붙어 있는데 아이폰에서만 앞 그림이 사라지고 뒤 블러 배경만 남았다 — 큰 그림 수십 장이 메모리 한도를 넘어
+// iOS가 펼친 그림을 버리는 것. 감시(아래)로 떼는 것만으론 화면 근처 2~3화면 분량이 여전히 수백 MB라 원본 크기 자체를 줄인다.
+// 줄이는 동안엔 원본이 그대로 보이고, 실패하면(CORS·메모리) 원본을 그냥 쓴다.
+function _shrinkShortThumb(img){
+  if(img.dataset.shrunk||typeof fetch!=='function')return;
+  const dpr=Math.min(window.devicePixelRatio||1,3);
+  // 숨은 패널에서 뜨면 폭이 0 — 그땐 2열 카드 폭(화면 절반)으로 잡는다
+  const cw=Math.max(img.clientWidth||0,img.parentElement?img.parentElement.clientWidth:0)||window.innerWidth/2;
+  const tw=Math.round(Math.max(cw,150)*dpr);
+  if(img.naturalWidth<=tw*1.2)return;
+  img.dataset.shrunk='1';
+  const src=img.src,th=Math.round(tw*img.naturalHeight/img.naturalWidth);
+  fetch(src,{mode:'cors'}).then(r=>{if(!r.ok)throw 0;return r.blob();}).then(b=>new Promise((res,rej)=>{
+    const u=URL.createObjectURL(b),big=new Image();
+    big.onload=()=>{
+      const c=document.createElement('canvas');c.width=tw;c.height=th;
+      const g=c.getContext('2d');g.imageSmoothingQuality='high';g.drawImage(big,0,0,tw,th);
+      big.onload=big.onerror=null;big.src='';URL.revokeObjectURL(u); // 핸들러 먼저 떼기 — src=''가 error를 쏴서 다 만든 걸 버렸다
+      c.toBlob(s=>{c.width=c.height=0;s?res(s):rej();},'image/jpeg',0.88);
+    };
+    big.onerror=()=>{URL.revokeObjectURL(u);rej();};
+    big.src=u;
+  })).then(s=>{
+    // 그새 다른 주소로 바뀌었거나(폴백·재사용) 감시가 떼어 둔 상태면 그 자리 주소만 바꿔 둔다
+    const small=URL.createObjectURL(s);
+    if(img.getAttribute('src')===src)img.src=small;
+    else if(!img.getAttribute('src')&&img.dataset.keepSrc===src)img.dataset.keepSrc=small;
+    else URL.revokeObjectURL(small);
+  }).catch(()=>{});
 }
 // 화면에서 멀리(위아래 2화면 밖) 벗어난 세로 원본은 src를 잠시 떼고, 다시 다가오면 붙인다 — 큰 그림이 한꺼번에 수십 장
 // 풀려 있지 않게(위 setBg 주석과 같은 아이폰 메모리 문제). 다시 붙일 땐 이미 확정된 주소라 폴백 단계를 다시 타지 않는다.
@@ -14751,6 +14783,9 @@ function _pwaViewportFix(){
   de.style.setProperty('--vp-gap',on?gap+'px':'0px');
   de.style.setProperty('--vp-shift',shift+'px');
   _pwaVpInfo={standalone,envTop,innerH:window.innerHeight,screenH,gap,on,shift};
+  // 2026-10-27 "검색 화면 아래 틈 아직도": 늦게 들어온 인셋으로 내림이 47→0이 돼 탭바는 내려갔는데 시트 아래 여백(--sheet-bottom)은
+  // 처음 잰 113px(탭바 66+옛 내림 47) 그대로라 시트와 탭바 사이 47px으로 우주가 보였다. 탭바 위치가 바뀌었으니 같이 다시 잰다.
+  if(typeof updateSheetBottom==='function')updateSheetBottom();
 }
 let _pwaVpInfo=null;
 _pwaViewportFix();
