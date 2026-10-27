@@ -650,7 +650,7 @@ let currentLang=localStorage.getItem('kpu_lang')||((navigator.language||'').toLo
 const T={
   ko:{tab_home:'홈',tab_search:'검색',tab_random:'랜덤',tab_explore:'탐험',tab_me:'나',dh_fav_title:'즐겨찾기 하이라이트',feedCloseTitle:'탐험 닫기',dh_lang_title:'언어 전환',dh_random_title:'랜덤 탐험',
       sp_title:'설정',debutYr:'데뷔 연도',birthYr:'멤버 생년',grpType:'그룹 유형',
-      genLabel:'세대',genNote:'재미로 봐주세요',
+      genLabel:'세대',genNote:'데뷔 연도 기준. 재미로 봐주세요 !',
       all:'전체',girl:'걸그룹',boy:'보이그룹',coed:'혼성그룹',inactive:'비활동/탈퇴 멤버',reset:'↺ 초기화',powerSave:'절전 모드',psAuto:'자동',psOn:'켬',psOff:'끔',psHintAuto:'기기 성능을 보고 알아서 조절해요',psHintAutoOn:'자동 — 지금 절전 중이에요',psHintOn:'화질과 부드러움을 낮춰 발열을 줄여요',psHintOff:'항상 최고 화질로 그려요',
       searchPH:'그룹 · 멤버 검색…',mobileTitle:'케이팝 아이돌 지형도',srGroup:'그룹',
       preparing:'준비 중',gcAgency:'소속',gcDebut:'데뷔',gcFandom:'팬덤',gcLeader:'리더',gcMember:'멤버',gcSNS:'공식',
@@ -669,7 +669,7 @@ const T={
       colCardTitle:'컬렉션 공유 카드',colCardFail:'카드를 만들 수 없어요'},
   en:{tab_home:'Home',tab_search:'Search',tab_random:'Random',tab_explore:'Explore',tab_me:'Me',dh_fav_title:'Highlight favorites',feedCloseTitle:'Close Explore',dh_lang_title:'Language',dh_random_title:'Random explore',
       sp_title:'Settings',debutYr:'Debut Year',birthYr:'Birth Year',grpType:'Group Type',
-      genLabel:'Generation',genNote:'Just for fun',
+      genLabel:'Generation',genNote:'By debut year. Just for fun!',
       all:'All',girl:'Girl Groups',boy:'Boy Groups',coed:'Coed Groups',inactive:'Inactive / Left',reset:'↺ Reset',powerSave:'Power saving',psAuto:'Auto',psOn:'On',psOff:'Off',psHintAuto:'Adjusts itself based on your device',psHintAutoOn:'Auto — saving power right now',psHintOn:'Lowers quality and smoothness to run cooler',psHintOff:'Always render at full quality',
       searchPH:'Search groups · members…',mobileTitle:'K-pop Idol Map',srGroup:'Group',
       preparing:'Coming soon',gcAgency:'Agency',gcDebut:'Debut',gcFandom:'Fandom',gcLeader:'Leader',gcMember:'Members',gcSNS:'Official',
@@ -5309,6 +5309,7 @@ function _lbUpdateToolbar(){
       const metaStr=_fmtVidMeta(_pa,s.vc);
       metaEl.textContent=metaStr;
       metaEl.style.display=metaStr?'':'none';
+      _lbUpdateChartChips(s,_pa);
       infoWrap.style.display=(metaStr||s.t)?'':'none';
     }else{
       infoWrap.style.display='none';
@@ -5356,6 +5357,41 @@ function _lbUpdateToolbar(){
   }else{
     _renderReactions();
   }
+}
+// ── 영상 아래 "우리 차트 순위 ›"(2026-10-27 사용자 "랭크된 영상을 보고 있으면 그 정보가 영상 하단에, 그 차트로 연결되면 더 좋고 —
+// 우리 유니버스 내 모든 정보가 유기적으로 연결"). 탐험·For You 차트와 **같은 계산**(_fetchWeeklyChartRows 3분 캐시 + _wkCamPick/_wkStagePick)이라
+// 여기 순위와 눌러서 열리는 차트가 어긋나지 않는다. 두 차트 다 최근 7·30일 영상만 들어가므로 그보다 오래된 영상은 조회 자체를 안 한다.
+let _lbChartReq=0;
+async function _lbUpdateChartChips(s,pa){
+  const box=document.getElementById('yt-lb-charts');if(!box)return;
+  const my=++_lbChartReq;
+  box.hidden=true;box.replaceChildren();
+  const id=s&&s.u?ytId(s.u):null;
+  if(!id||!sb)return;
+  const t=pa?Date.parse(pa):NaN;
+  if(isFinite(t)&&Date.now()-t>32*86400000)return;
+  try{
+    const[r7,r30]=await _fetchWeeklyChartRows();
+    if(my!==_lbChartReq)return;
+    const isKo=currentLang==='ko';
+    const charts=[];
+    if(r7.status==='fulfilled'&&r7.value.data)charts.push({key:'solo_cam',label:isKo?'주간 개인 직캠':'Weekly Fancam',full:isKo?'주간 개인 직캠 TOP 20':'Weekly Solo Fancam TOP 20',vids:_wkCamPick(r7.value.data)});
+    if(r30.status==='fulfilled'&&r30.value.data)charts.push({key:'monthly_stage',label:isKo?'월간 퍼포먼스':'Monthly Performance',full:isKo?'월간 퍼포먼스 TOP 30':'Monthly Performance TOP 30',vids:_wkStagePick(r30.value.data)});
+    const vidUrl=v=>_isShortV(v)?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;
+    charts.forEach(c=>{
+      const i=c.vids.findIndex(v=>v.id===id);if(i<0)return;
+      const b=document.createElement('button');b.type='button';b.className='lb-chart-chip';
+      b.innerHTML='<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 12l4-4 3 3 5-6"/><path d="M10 5h4v4"/></svg><span></span><span class="go">›</span>';
+      b.querySelector('span').textContent=isKo?`${c.label} ${i+1}위`:`#${i+1} ${c.label}`;
+      b.addEventListener('click',e=>{
+        e.stopPropagation();
+        const list=c.vids.map((x,k)=>({..._rowTags(x),t:x.title,u:vidUrl(x),thumb:x.thumb,vc:x.view_count,dur:x.duration_sec,pa:x.published_at?.slice(0,10),rank:k+1}));
+        _openChartStory(c.key,c.full,'',list);
+      });
+      box.appendChild(b);
+    });
+    box.hidden=!box.children.length;
+  }catch(e){}
 }
 // ── 영상 아래 "이 영상에 나온 사람"(2026-10-16, 라이트박스 D안) ──────────────────────────────────────
 // 가로 재생(브라우즈) 화면에서 출연자를 텍스트 칩 대신 동그란 프로필 + 이름 줄로 보여준다. 누르면 예전 칩과 같은 하프카드.
