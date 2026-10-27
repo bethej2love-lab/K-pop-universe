@@ -366,7 +366,9 @@ Object.entries(GROUPS).forEach(([gko, info]) => {
 // 관례: 해체 안 한 그룹의 활동 멤버(active!==false)끼리는 전부 member 연결이 있다(에스파 4명→6개). 그룹을 등록하면서
 // connections.json을 빠뜨리면 별만 있고 선이 없다 — 2026-10-14 실측 56개 그룹 959쌍 누락(09-27 일괄 등록분 전부 0개).
 {
-  const inG = (a, k) => a.group.ko === k || (a.groups || []).some(g => g && g.ko === k);
+  // 옛 소속(groups[])은 그 그룹에서 아직 활동 중일 때만 — 탈퇴 기록(active:false·left)이 있는 사람까지 세면 에반(엔하이픈 2026.03 탈퇴)·승한·디모렉스처럼
+  // 솔로가 된 사람의 옛 그룹 선을 '누락'이라며 다시 넣게 만든다(2026-10-27 사용자 "에반 탈퇴했으니까 선 빼야지"). 겸임(활동 중인 두 번째 그룹)은 그대로 센다.
+  const inG = (a, k) => a.group.ko === k || (a.groups || []).some(g => g && g.ko === k && g.active !== false && !g.left);
   const key = (x, y, k) => [x, y].sort().join('|') + '|' + (k || '');
   const has = new Set(CONNECTIONS.map(c => key(c.a, c.b, c.group)));
   // 해체 그룹은 선을 안 그린다(index.html 연결선 루프, 사용자 결정 2026-10-14) — 검사 제외.

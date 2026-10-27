@@ -22251,7 +22251,7 @@ async function _buildFeedFavIg(){
     const[{data,error},magItems]=await Promise.all([
       sb.from('ig_accounts').select('handle,media').in('handle',[...hs].slice(0,300)).eq('status','ok').limit(300),
       _igMagFor([...hs]).catch(()=>[])]);
-    const photos=error?[]:_igPhotos(data,14,15);
+    const photos=error?[]:_igPhotos(data,14,24); // 2행 레일(2026-10-27 사용자 "인스타 더 노출") — 15장이면 2줄에서 8칸 만에 끝나 24장
     const magRecent=magItems.filter(m=>m.ts>Date.now()-30*86400000).slice(0,15); // 매거진은 올리는 간격이 길어 30일
     if(!photos.length&&!magRecent.length)return;
     const ttl=document.getElementById('feed-favig-ttl');if(ttl)ttl.textContent='📷 On Instagram';
@@ -22271,7 +22271,7 @@ async function _buildFeedIg(){
     // 전체 페이지를 받아야 1,000계정 이후도 빠지지 않는다. 매거진은 기존 별도 행 유지.
     const magIdx=await _igMagIndex().catch(()=>new Map());
     const{data,error}=await _sbSelectAll(()=>sb.from('ig_accounts').select('handle,media').eq('status','ok').order('handle'));
-    const photos=error?[]:_igPhotos((data||[]).filter(r=>!_igMagNames.has(r.handle)),3,15);
+    const photos=error?[]:_igPhotos((data||[]).filter(r=>!_igMagNames.has(r.handle)),3,24); // 2행 레일(2026-10-27)
     // 2행: 공식 외 계정의 최근 14일 게시물(우리 아이돌이 태그된 것) — 같은 게시물이 여러 핸들에 걸려 있어 주소로 한 번만
     const seen=new Set(),magRecent=[];
     [...magIdx.values()].flat().sort((a,b)=>b.ts-a.ts).forEach(m=>{if(m.ts<Date.now()-14*86400000||seen.has(m.p))return;seen.add(m.p);magRecent.push(m);});
