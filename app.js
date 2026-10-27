@@ -10926,7 +10926,7 @@ function showT(a,cx,cy,keepNavStack,urlMode,_unusedPushMobNav,noFly){
   // 그룹 멤버 카드: 소속 그룹 콘서트는 그룹 카드에서만, 멤버 카드엔 멤버 이름으로 태깅된 솔로 이벤트만.
   // 솔로 아티스트(hasRealGroup=false)는 본인 채널 = 본인 그룹이라 기존 _loadConcertRow 그대로.
   // DB에 kpop_events.groups=['멤버명'] 형태로 솔로 공연 데이터가 추가되면 자동으로 표시된다.
-  if(_hasRealGroup)_loadMemberConcertRow(a.name.ko,'tt-concert-row');
+  if(_hasRealGroup)_loadMemberConcertRow(a.name.ko,'tt-concert-row',a.group.ko);
   else _loadConcertRow(_ttGroupQueryKo,'tt-concert-row');
   _loadCollectionRow(_ttGroupQueryKo,'tt-collection-row',_hasRealGroup?a.name.ko:null,a.name.ko);
   _renderTtDiscography(a);
@@ -23899,7 +23899,7 @@ async function _buildFeedFavConcerts(){
   try{
     await _ensureOgThumbs();
     const evs=await _loadUpcomingConcerts();
-    const favM=new Set([...favMembers].map(k=>String(k).split(':').pop())); // 즐겨찾기 멤버 키 "그룹:이름" — 솔로 공연은 groups에 이름
+    const favM=new Set([...favMembers].flatMap(k=>{const s=String(k),i=s.indexOf(':'),n=s.slice(i+1),g=s.slice(0,i);return i>0?[n,n+'('+g+')']:[n];})); // 즐겨찾기 멤버 키 "그룹:이름" — 솔로 공연은 groups에 이름 또는 "이름(소속)"(동명이인)
     const mine=evs.filter(e=>(e.groups||[]).some(g=>favGroups.has(g)||favM.has(g)));
     mine.slice(0,15).forEach(e=>_appendConcertCard(list,e));
     if(list.children.length){section.style.display='';list.scrollLeft=0;_enableDragScroll(list);}
@@ -27297,11 +27297,14 @@ async function _loadConcertRow(gko,containerId){
 // 멤버 이름으로 직접 이벤트를 조회 — 그룹 멤버의 솔로 콘서트용.
 // groups 배열에 멤버 이름(ko)이 포함된 이벤트를 찾는다. GROUPS 체크 없이 이름으로 바로 쿼리하므로,
 // DB에 groups=['지민'] 형태로 데이터가 추가되는 즉시 해당 멤버 카드에 자동 표시된다.
-async function _loadMemberConcertRow(memberKo,containerId){
+// 동명이인(선우 = 엔하이픈·더보이즈)은 groups에 "이름(소속)"으로 넣는다(2026-10-27 더보이즈 선우 팬미팅 — 이름만 넣으면 엔하이픈 선우 카드에도 떴다).
+// 그래서 이름 그대로와 "이름(소속)" 둘 다 찾는다. 화이트리스트(tools/solo_whitelist.json)에 {ko:"선우(더보이즈)",alias:["SUNWOO"]}처럼 등록.
+async function _loadMemberConcertRow(memberKo,containerId,groupKo){
   const row=document.getElementById(containerId);
   if(row)row.innerHTML='';
   if(!sb||!memberKo)return;
-  const{data,error}=await sb.from('kpop_events').select('*').contains('groups',[memberKo]).order('date_start',{ascending:false});
+  const _keys=[memberKo,groupKo?memberKo+'('+groupKo+')':null].filter(Boolean);
+  const{data,error}=await sb.from('kpop_events').select('*').or(_keys.map(k=>'groups.cs.{'+_pgFilterVal(k)+'}').join(',')).order('date_start',{ascending:false});
   if(error||!data?.length)return;
   _renderConcertRow(containerId,data);
 }
