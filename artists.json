@@ -128132,6 +128132,29 @@
     ],
     "discography": [
       {
+        "title": "Hysteric / Adam",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/150/52/254/15052254_20261021154842_500.jpg",
+        "releaseDate": "2026.10.27",
+        "trackCount": 2,
+        "titleTrack": "Hysteric",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Hysteric",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Adam",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "15052254"
+      },
+      {
         "title": "NAIL",
         "type": "미니 7집",
         "releaseDate": "2026.04.17",
