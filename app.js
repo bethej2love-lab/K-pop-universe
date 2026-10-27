@@ -3916,21 +3916,21 @@ async function _renderCreditsInto(el,titles,showSongs=false,ownerName=null){
   const map=new Map();
   for(const[k,v]of Object.entries(ac)){
     const name=k.split(NUL)[0];
-    for(const s of(v.lyrics||[])){const orig=_chk(s);if(orig){const e=map.get(name)||{name,l:0,c:0,lSongs:[],cSongs:[]};if(!e.lSongs.includes(orig))e.lSongs.push(orig);e.l++;map.set(name,e);}}
-    for(const s of(v.compose||[])){const orig=_chk(s);if(orig){const e=map.get(name)||{name,l:0,c:0,lSongs:[],cSongs:[]};if(!e.cSongs.includes(orig))e.cSongs.push(orig);e.c++;map.set(name,e);}}
+    for(const s of(v.lyrics||[])){const orig=_chk(s);if(orig){const e=map.get(name)||{name,l:0,c:0,lSongs:[],cSongs:[],keys:new Set()};e.keys.add(k);if(!e.lSongs.includes(orig))e.lSongs.push(orig);e.l++;map.set(name,e);}}
+    for(const s of(v.compose||[])){const orig=_chk(s);if(orig){const e=map.get(name)||{name,l:0,c:0,lSongs:[],cSongs:[],keys:new Set()};e.keys.add(k);if(!e.cSongs.includes(orig))e.cSongs.push(orig);e.c++;map.set(name,e);}}
   }
   if(!map.size)return;
   const sorted=[...map.values()].sort((a,b)=>(b.l+b.c)-(a.l+a.c));
   const lbl=document.createElement('div');lbl.className='gcdc-lbl';lbl.textContent='크레딧';
   const list=document.createElement('div');list.className=showSongs?'gcdc-list':'gcdc-chips';
-  sorted.slice(0,14).forEach(({name,l,c,lSongs,cSongs})=>{
+  sorted.slice(0,14).forEach(({name,l,c,lSongs,cSongs,keys})=>{
     const role=l&&c?'작사/작곡':l?'작사':'작곡';
     if(showSongs){
       // 앨범 모드: 이름·역할·곡 목록을 한 행으로
       const row=document.createElement('div');row.className='gcdc-row';
       const head=document.createElement('button');head.type='button';head.className='gcdc-row-head';
       head.innerHTML=`<span class="gcdc-name">${name}</span><span class="gcdc-role">${role}</span>`;
-      head.addEventListener('click',e=>{e.stopPropagation();const q=`${name} ${role}`;const si=document.getElementById('search-input')||document.getElementById('mob-search-input');if(si)si.value=q;doSearch(q);});
+      head.addEventListener('click',e=>{e.stopPropagation();_openCreditSongsSheet(name,keys,ac);});
       row.appendChild(head);
       // 곡 목록: 작사·작곡 겹치면 합쳐서, 아니면 분리
       const allSongs=l&&c?[...new Set([...lSongs,...cSongs])]:l?lSongs:cSongs;
@@ -3943,11 +3943,50 @@ async function _renderCreditsInto(el,titles,showSongs=false,ownerName=null){
     }else{
       const chip=document.createElement('button');chip.type='button';chip.className='gcdc-chip';
       chip.innerHTML=`<span class="gcdc-name">${name}</span><span class="gcdc-role">${role}</span>`;
-      chip.addEventListener('click',e=>{e.stopPropagation();const q=`${name} ${role}`;const si=document.getElementById('search-input')||document.getElementById('mob-search-input');if(si)si.value=q;doSearch(q);});
+      chip.addEventListener('click',e=>{e.stopPropagation();_openCreditSongsSheet(name,keys,ac);});
       list.appendChild(chip);
     }
   });
   el.appendChild(lbl);el.appendChild(list);el.style.display='';
+}
+// 크레딧 이름 → 그 사람이 쓴 곡 목록(2026-10-27). 예전엔 검색을 돌렸는데 곡 화면·앨범 창 **뒤에** 결과가 떠서 눌러도 아무 일 없어 보였다.
+// 같은 아래 시트(_openPickSheet)를 위에 띄우고, 곡을 누르면 그 곡 화면으로 바로 간다. 부른 가수가 우리 우주에 없으면(한동근 등) 흐리게만.
+function _creditOwnerOf(artists,homeGko){
+  const norm=x=>String(x||'').toLowerCase().replace(/\s+/g,'');
+  for(const r of artists||[]){
+    const toks=[r.name,...String(r.name||'').split(/[()]/)].map(norm).filter(Boolean);
+    for(const t of toks){
+      const g=Object.keys(GROUPS).find(k=>norm(k)===t||norm(GROUPS[k].en)===t);
+      if(g)return{owner:{gko:g,memberKo:null},meta:{ownerType:'group',gko:g,artist:null,album:'',ownerName:g},label:g};
+    }
+    for(const t of toks){
+      const ms=ARTISTS.filter(a=>a.name&&(norm(a.name.ko)===t||norm(a.name.en)===t||norm(a.displayName)===t));
+      const a=ms.length===1?ms[0]:ms.find(a=>a.group&&a.group.ko===homeGko); // 동명이인이면 쓴 사람 소속 쪽만, 그래도 모르면 안 연다
+      if(a){const nm=_dispName(a);return{owner:{gko:_ytGroupKoFor(a),memberKo:a.name.ko},meta:{ownerType:'member',gko:a.group&&a.group.ko,artist:a,album:'',ownerName:nm},label:nm};}
+    }
+  }
+  return null;
+}
+function _openCreditSongsSheet(name,keys,ac){
+  const NUL=String.fromCharCode(0),ko_=currentLang==='ko';
+  const seen=new Set(),songs=[];let home=null;
+  for(const k of keys||[]){
+    const v=ac[k];if(!v)continue;home=home||k.split(NUL)[1]||null;
+    for(const[role,arr]of[['l',v.lyrics||[]],['c',v.compose||[]]])for(const s of arr){
+      if(!s.title||/\((inst\.?|instrumental|mr)\)/i.test(s.title))continue; // 반주 버전은 같은 곡이라 뺀다
+      const id=s.songId||s.title;
+      const ex=songs.find(x=>x.id===id);if(ex){ex.roles.add(role);continue;}
+      if(seen.has(id))continue;seen.add(id);songs.push({id,title:s.title,artists:s.artists,roles:new Set([role])});
+    }
+  }
+  const owners=new Map();
+  const items=songs.map(s=>{const o=_creditOwnerOf(s.artists,home);if(o)owners.set(s.id,{...o,title:s.title});
+    const who=o?o.label:String((s.artists||[])[0]?.name||'').replace(/\s*\(.*\)\s*$/,'');
+    return{key:o?s.id:null,label:s.title,n:who,_o:o?0:1};}).sort((a,b)=>a._o-b._o);
+  _openPickSheet(name+' · '+(ko_?songs.length+'곡':songs.length+' songs'),ko_?'쓴 곡이 아직 없어요':'No songs yet',Promise.resolve(items),k=>{
+    const o=owners.get(k);if(!o)return;
+    _openSongVideos(o.title,o.owner,o.meta); // 지금 화면 위에 곡 화면(가장 최근 것이 맨 위)
+  });
 }
 const _CREDIT_KW={
   '작사작곡':'both','작사/작곡':'both','작사 작곡':'both',
@@ -25596,8 +25635,9 @@ function _openPickSheet(title,emptyText,itemsP,onPick){
     items.forEach(it=>{
       const b=document.createElement('button');b.type='button';b.className='vss-item';
       b.innerHTML='<span class="t"></span><span class="n"></span>';
-      b.querySelector('.t').textContent=it.label;b.querySelector('.n').textContent=it.n.toLocaleString();
-      b.addEventListener('click',()=>{close();onPick(it.key,it.label);});
+      b.querySelector('.t').textContent=it.label;b.querySelector('.n').textContent=typeof it.n==='number'?it.n.toLocaleString():(it.n||'');
+      if(it.key==null){b.disabled=true;b.classList.add('off');} // 우리 우주에 없는 가수의 곡 — 보여만 준다
+      else b.addEventListener('click',()=>{close();onPick(it.key,it.label);});
       list.appendChild(b);
     });
   });

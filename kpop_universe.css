@@ -1832,6 +1832,8 @@
   .vss-item .t{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
   .vss-item .n{flex:none;color:rgba(170,190,230,0.55);font-size:12px;font-variant-numeric:tabular-nums;}
   .vss-item:active{background:rgba(255,255,255,0.05);}
+  .vss-item.off{opacity:.42;cursor:default;}
+  .vss-item.off:active{background:none;}
   .vss-empty{padding:22px 4px;color:rgba(170,190,230,0.6);font-size:13px;}
   @media(min-width:769px){.gc-ch-only{font-size:9px;}}
   /* bottom도 탭바를 따라간다(2026-09-18) — 78px로 박아두면 탭바가 숨었을 때 버튼만 허공에 떠 있다.
