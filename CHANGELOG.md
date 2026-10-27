@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 2026-10-27 (Codex — 콘텐츠 감사13차·주인 오타와 유닛 정정 후 검수)
+- **[진행중] [콘텐츠 감사]** Claude Code 코드 작업 재개에 따라 사용자 지시는 검수만. 코드·JSON·SQL 파일·DB 쓰기 없이 CHANGELOG만 기록. 최신 origin/main d5c32ec784 확인, 효연/우지/옛 그룹명/JX·부석순/형준 정정585건의 백업·현재 태그·카드 노출 범위 대조 및 원곡 오류 후속 검수. 확정 오류와 단순 후보를 구분하고 기존 감사 기록의 중복 집계 금지.
+
 ## 2026-10-27 (Codex — 다그룹 팬 직캠 채널 삭제)
 - **[완료·범위 확정] [ext_channels/yt_channel_videos]** 사용자 승인: 여러 그룹을 지속 촬영하는 종합 팬채널은 등록과 수집 영상 전체 삭제. 전용 팬채널의 만우절 타 그룹 영상은 예외로 유지(사용자 답변 확인). 팬채널 461개 DB 대조 후 다그룹 표기 35개를 재분류, 확실한 Day_DayCAM·LEAARONFIM·FancamLab·singing7532·MERCURY_VW 5개만 대상으로 백업→삭제→파생 목록 재생성 완료. 커버곡 제목·동일 멤버 NCT 겸임·게스트/반응 영상은 종합 채널로 오판하지 않음.
 - **[완료·DB 직접 실행] [sql/codex_multifan_delete_fix_2026-10-27.sql]** 채널 5개·영상 1,908건(Day_DayCAM530/LEAARONFIM274/FancamLab300/singing7532 698/MERCURY_VW106)·영상 FK 조회수 이정표159건을 한 트랜잭션으로 백업 후 삭제. admin_bulk_snapshots batch=`codex-multifan-delete-20261027`, op_label=`multifan:channel/video/milestone`, 백업5/1908/159 및 distinct ID 동일 확인. 삭제 후 채널/영상/이정표 잔존0/0/0, 팬채널461→456, 만우절 예외 전용6개 유지 확인. 영상 ID 목록 MD5=`accf1945ea5ac5639785e41380da1531`. 다른 영상·사용자 데이터·앱 코드는 수정하지 않음.
