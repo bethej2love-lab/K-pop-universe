@@ -3255,6 +3255,16 @@
   .tvf-tab{flex-shrink:0;font-size:12px;font-weight:600;color:rgba(190,205,240,0.72);background:rgba(255,255,255,0.06);border:none;border-radius:14px;padding:5px 14px;cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><path d='M11,1 L12.3,9.7 L21,11 L12.3,12.3 L11,21 L9.7,12.3 L1,11 L9.7,9.7Z' fill='%23FFB0D0' opacity='.97'/></svg>") 11 11,pointer;transition:background .13s,color .13s;font-family:inherit;white-space:nowrap;}
   .tvf-tab.active{background:rgba(120,150,255,0.92);color:#fff;}
   /* 원곡/커버(어느 쪽 영상인가)와 형식(무엇을 찍은 영상인가)은 서로 다른 축이라 같은 줄에서도 구분선으로 가른다 */
+  /* 곡 화면 탭도 카드 영상 줄과 같은 밑줄 탭(2026-10-27 — 누가·곡·형식 고르는 모양 통일). 따로 연 곡 화면(.tvf-tab)·앨범 안(.gc-ch-filter) 둘 다 */
+  #gc-track-videos-tabs{gap:14px;align-items:center;border-bottom:0.5px solid rgba(255,255,255,0.08);}
+  #gc-track-videos-tabs .tvf-tab,#gc-track-videos-tabs .gc-ch-filter{background:none;border:none;box-shadow:none;backdrop-filter:none;-webkit-backdrop-filter:none;border-radius:0;
+    padding:8px 0 9px;font-size:12.5px;font-weight:500;color:rgba(200,215,250,0.55);position:relative;flex-shrink:0;}
+  #gc-track-videos-tabs .tvf-tab.active,#gc-track-videos-tabs .gc-ch-filter.active{background:none;box-shadow:none;color:#fff;font-weight:600;}
+  #gc-track-videos-tabs .tvf-tab.active::after,#gc-track-videos-tabs .gc-ch-filter.active::after{content:'';position:absolute;left:0;right:0;bottom:0;height:2.5px;border-radius:2px 2px 0 0;background:rgba(140,175,255,0.95);}
+  #gc-track-videos-tabs .tvf-tab:active,#gc-track-videos-tabs .gc-ch-filter:active{transform:none;opacity:.7;}
+  #gc-track-videos-tabs .gc-vid-pick{max-width:38%;}
+  #gc-track-videos-tabs .gc-vid-pick svg.ic{width:12px;height:12px;fill:none;stroke:currentColor;stroke-width:1.5;opacity:.8;}
+  #gc-track-videos-tabs .gc-vid-pick-sep{margin:0 -4px 0 0;}
   .tvf-tab-sep{flex-shrink:0;align-self:center;width:1px;height:16px;background:rgba(140,170,240,0.22);margin:0 3px;}
   .tvf-cover-chip{display:inline-block;margin-right:6px;font-size:10px;font-weight:700;color:#c7d2ff;background:rgba(120,150,255,0.2);border-radius:6px;padding:1px 5px;vertical-align:middle;}
   /* 액션 줄(2026-09-21) — 전체 재생 + 정렬 토글 */

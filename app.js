@@ -13010,7 +13010,7 @@ async function _openSongVideos(title,owner,songMeta,opt){
   if(_songKeysCol===null){try{const pr=await sb.from(_YT_TABLE).select('song_keys').limit(1);_songKeysCol=!pr.error;}catch(e){_songKeysCol=false;}}
   if(myReq!==_songVidReq)return;
   const songKey=gko+':'+_songBase(title);
-  const COLS='id,title,thumb,category,is_short,group_ko,cover_of_members,cover_of_groups,content_flag,published_at,view_count,duration_sec'+(_songKeysCol?',song_keys':'');
+  const COLS='id,title,thumb,category,is_short,group_ko,members,with_members,cover_of_members,cover_of_groups,content_flag,published_at,view_count,duration_sec'+(_songKeysCol?',song_keys':''); // members·with_members: "멤버 ▾"(2026-10-27)
   // 그룹/멤버 카드 영상 그리드와 동일한 노출 조건(무관/보류/숨김 제외)
   const _excl=q=>q.or('content_flag.is.null,content_flag.neq.무관').or('content_flag.is.null,content_flag.neq.보류').or('content_flag.is.null,content_flag.neq.hidden');
   // 원곡: 주인 채널 영상 + 주인이 게스트(with_groups)로 나온 영상
@@ -13067,7 +13067,7 @@ async function _openSongVideos(title,owner,songMeta,opt){
     orig.sort((a,b)=>String(b.published_at||'').localeCompare(String(a.published_at||'')));
     cover.sort((a,b)=>String(b.published_at||'').localeCompare(String(a.published_at||'')));
   }
-  _songVid={gko,orig,cover,tab:'all',fmt:'all',sort:'latest',rows:[]};
+  _songVid={gko,orig,cover,tab:'all',fmt:'all',sort:'latest',rows:[],member:null};
   _renderSongVideoTabs();
 }
 // 형식 칩(2026-09-21) — 값은 그룹/멤버 카드 영상 탭과 같은 DB category 그대로 쓴다.
@@ -13094,17 +13094,36 @@ function _renderSongVideoTabs(){
   const inAlbum=listEl.parentElement?.id==='gc-discog-song-view';
   const _ko=currentLang==='ko';
   if(!st.cover.length)st.tab='all'; // 커버가 없으면 원곡/커버 구분 자체가 없다
-  const base=st.tab==='orig'?st.orig:st.tab==='cover'?st.cover:[...st.orig,...st.cover];
+  // "멤버 ▾"(2026-10-27 — 카드 "♪ 곡 ▾"의 반대편. 곡이 정해진 화면에서 '누가'를 고른다). 주인 그룹 멤버가 나온 영상만:
+  // 주인 채널 영상의 members 또는 남의 영상 with_members "이름(그룹)". 커버(남이 부른 것)는 멤버 고르기에서 빠진다.
+  const _memOf=v=>{const out=new Set();if(v.group_ko===st.gko)(v.members||[]).forEach(m=>out.add(m));(v.with_members||[]).forEach(x=>{const m=/^(.+)\((.+)\)$/.exec(x);if(m&&m[2]===st.gko)out.add(m[1]);});return out;};
+  const _memCnt=new Map();st.orig.forEach(v=>_memOf(v).forEach(m=>_memCnt.set(m,(_memCnt.get(m)||0)+1)));
+  if(st.member&&!_memCnt.has(st.member))st.member=null;
+  const _byMem=arr=>st.member?arr.filter(v=>_memOf(v).has(st.member)):arr;
+  const base=_byMem(st.tab==='orig'?st.orig:st.tab==='cover'?st.cover:[...st.orig,...st.cover]);
   const fmtCnt={};base.forEach(v=>{const f=_tvfFmt(v);fmtCnt[f]=(fmtCnt[f]||0)+1;});
   const fmts=_TVF_FMTS.filter(([k])=>fmtCnt[k]);
   if(st.fmt!=='all'&&!fmtCnt[st.fmt])st.fmt='all'; // 탭을 바꿔 그 형식이 사라졌으면 전체로 되돌린다
   // ── 탭 줄: [전체/원곡/커버] + 구분선 + [형식 칩]. 둘 다 없을 일이 흔해서(커버 없고 형식 한 종류)
   //    그때는 줄 자체를 감춘다 — 고를 게 하나뿐인 필터는 화면만 먹는다.
   tabsEl.innerHTML='';
-  const showOC=st.cover.length>0,showFmt=fmts.length>=2;
-  if(!showOC&&!showFmt)tabsEl.classList.add('hidden');
+  const showOC=st.cover.length>0,showFmt=fmts.length>=2,showMem=_memCnt.size>0&&!!GROUPS[st.gko];
+  if(!showOC&&!showFmt&&!showMem)tabsEl.classList.add('hidden');
   else{
     tabsEl.classList.remove('hidden');
+    if(showMem){
+      const mb=document.createElement('button');mb.type='button';mb.className='gc-vid-pick'+(st.member?' on':'');
+      mb.innerHTML='<svg class="ic" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="5.5" r="2.7"/><path d="M3 13.5c.6-2.6 2.7-4 5-4s4.4 1.4 5 4"/></svg><span class="lbl"></span><span class="x">'+(st.member?'✕':'▾')+'</span>';
+      mb.querySelector('.lbl').textContent=st.member||(_ko?'멤버':'Member');
+      mb.addEventListener('click',e=>{
+        e.stopPropagation();
+        if(st.member){st.member=null;_renderSongVideoTabs();return;}
+        const items=[..._memCnt.entries()].sort((a,b)=>b[1]-a[1]).map(([m,n])=>({key:m,label:m,n}));
+        _openPickSheet(_ko?'멤버로 보기':'Filter by member',_ko?'멤버가 태그된 영상이 아직 없어요':'No member-tagged videos yet',Promise.resolve(items),k=>{if(_songVid!==st)return;st.member=k;_renderSongVideoTabs();});
+      });
+      tabsEl.appendChild(mb);
+      const sp=document.createElement('span');sp.className='gc-vid-pick-sep';tabsEl.appendChild(sp);
+    }
     const mk=(lbl,active,on)=>{
       const b=document.createElement('button');b.type='button';
       b.className=(inAlbum?'gc-ch-filter':'tvf-tab')+(active?' active':'');b.textContent=lbl;
@@ -13136,7 +13155,7 @@ function _renderSongVideoTabs(){
     ?(a,b)=>(b.view_count||0)-(a.view_count||0)
     :(a,b)=>_mvMain(a)-_mvMain(b)||String(b.published_at||'').localeCompare(String(a.published_at||''));
   const filt=arr=>(st.fmt==='all'?arr.slice():arr.filter(v=>_tvfFmt(v)===st.fmt)).sort(cmp);
-  const rows=st.tab==='all'?[...filt(st.orig),...filt(st.cover)]:filt(base);
+  const rows=st.tab==='all'?[...filt(_byMem(st.orig)),...filt(_byMem(st.cover))]:filt(base);
   st.rows=rows;
   if(actEl){
     if(!rows.length)actEl.classList.add('hidden');
@@ -25548,10 +25567,17 @@ async function _vidSongList(ko,memberKo,histKos){
   return p;
 }
 function _openVidSongSheet(ko,memberKo,histKos,onPick){
+  const ko_=currentLang==='ko';
+  _openPickSheet(ko_?'곡으로 보기':'Filter by song',ko_?'연결된 곡이 아직 없어요':'No songs linked yet',_vidSongList(ko,memberKo,histKos),onPick);
+}
+// 아래에서 올라오는 고르기 목록(공용) — 카드 "♪ 곡 ▾"·곡 화면 "멤버 ▾"가 같은 모양을 쓴다(영상 = 누가·무슨 곡·어떤 형식).
+// itemsP: Promise<[{key,label,n}]>. 고르면 onPick(key,label).
+function _openPickSheet(title,emptyText,itemsP,onPick){
   document.getElementById('vid-song-sheet-ov')?.remove();
   const ko_=currentLang==='ko';
   const ov=document.createElement('div');ov.id='vid-song-sheet-ov';ov.setAttribute('data-modal',''); // data-modal 없으면 누르는 순간 우주 클릭으로 읽혀 카드가 닫힌다
-  ov.innerHTML='<div class="vid-song-sheet" role="dialog" aria-label="'+(ko_?'곡으로 보기':'Filter by song')+'"><div class="vss-handle"></div><div class="vss-hd">'+(ko_?'곡으로 보기':'Filter by song')+'</div><div class="vss-list"><div class="vss-empty">'+(ko_?'불러오는 중…':'Loading…')+'</div></div></div>';
+  ov.innerHTML='<div class="vid-song-sheet" role="dialog"><div class="vss-handle"></div><div class="vss-hd"></div><div class="vss-list"><div class="vss-empty">'+(ko_?'불러오는 중…':'Loading…')+'</div></div></div>';
+  ov.querySelector('.vid-song-sheet').setAttribute('aria-label',title);ov.querySelector('.vss-hd').textContent=title;
   document.body.appendChild(ov);
   _bringToFront(ov);
   const sheet=ov.querySelector('.vid-song-sheet'),list=ov.querySelector('.vss-list');
@@ -25563,9 +25589,9 @@ function _openVidSongSheet(ko,memberKo,histKos,onPick){
   sheet.addEventListener('touchstart',e=>{if(list.scrollTop>0)return;y0=e.touches[0].clientY;dy=0;sheet.style.transition='none';},{passive:true});
   sheet.addEventListener('touchmove',e=>{if(y0==null)return;dy=Math.max(0,e.touches[0].clientY-y0);sheet.style.transform=dy?'translateY('+dy+'px)':'';},{passive:true});
   sheet.addEventListener('touchend',()=>{if(y0==null)return;sheet.style.transition='';if(dy>80)close();else sheet.style.transform='';y0=null;});
-  _vidSongList(ko,memberKo,histKos).then(items=>{
+  Promise.resolve(itemsP).then(items=>{
     if(!ov.isConnected)return;
-    if(!items.length){list.innerHTML='<div class="vss-empty">'+(ko_?'연결된 곡이 아직 없어요':'No songs linked yet')+'</div>';return;}
+    if(!items||!items.length){list.innerHTML='<div class="vss-empty"></div>';list.firstChild.textContent=emptyText;return;}
     list.innerHTML='';
     items.forEach(it=>{
       const b=document.createElement('button');b.type='button';b.className='vss-item';

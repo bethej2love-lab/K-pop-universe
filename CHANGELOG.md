@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 2026-10-27 (Claude Code — 11차: 곡 화면 "멤버 ▾" — 누가·곡·형식 고르기 완성)
+- **[완료·배포] [app.js _renderSongVideoTabs·_openPickSheet] [kpop_universe.css #gc-track-videos-tabs]** 곡 화면(따로 연 것·앨범 안 둘 다) 탭 줄 맨 앞에 카드 "♪ 곡 ▾"와 같은 글자형 "멤버 ▾" + 구분선, 형식·원곡/커버 탭도 카드처럼 밑줄 탭. 멤버 목록은 그 곡 원곡 영상에서 주인 그룹 멤버(주인 채널 members + 남의 영상 with_members "이름(그룹)") 영상 수순, 커버(남이 부른 것)는 멤버 고르기에서 빠짐. 고르기 시트를 공용 _openPickSheet로(카드 곡·곡 화면 멤버 같은 모양). 곡 화면 조회에 members·with_members 칸 추가. 헤드리스: REDRED 319개 → 멤버 목록 성현 43·건호 37·주훈 32·마틴 32·제임스 27 → 성현 43 → +퍼포먼스 20개 전부 성현 직캠. album-song-hub 31/31 등 통과.
+- 이로써 "성현 REDRED 무대"를 카드(성현 → ♪ REDRED → 퍼포먼스)에서도, 곡 화면(REDRED → 멤버 성현 → 퍼포먼스)에서도 타이핑 없이 같은 모양으로 고른다.
+- **⏳ 다음(사용자와 합의한 순서)** ② 작사·작곡 크레딧 카드 연결 → ③ 연도별·역대 차트도 플레이어 순위 표시(순위 기록부터) → 보류분(최애 표현·추천순·멜론·끝까지 버튼).
+
 ## 2026-10-27 (Claude Code — 10차: 영상 아래 우리 차트 순위 + 세대 안내 문구)
 - **[완료·배포] [app.js _lbUpdateChartChips] [index.html #yt-lb-charts]** 사용자 "랭크된 영상을 보고 있으면 그 정보가 영상 하단에, 그 차트로 연결되면 더 좋고". 플레이어 날짜·조회수 줄 밑에 "📈 주간 개인 직캠 3위 ›"(두 차트 다 들면 둘 다). 계산은 탐험·For You와 같은 _fetchWeeklyChartRows(3분 캐시)+_wkCamPick/_wkStagePick이라 순위와 열리는 차트가 일치, 누르면 _openChartStory로 그 차트. 32일보다 오래된 영상은 조회 안 함. 순위 기록(rank_snapshots)은 solo_cam·monthly_stage 두 차트뿐이라 연도별·역대 TOP100은 이번 범위 밖. 헤드리스: 장원영 Looks Can Kill MPD 직캠 → "주간 개인 직캠 3위›" → 클릭 시 주간 개인 직캠 TOP 20 열림, 2023년 영상은 숨김.
 - **[완료·배포] [app.js T.genNote] [index.html]** 세대 필터 안내 "재미로 봐주세요" → "데뷔 연도 기준. 재미로 봐주세요 !"(사용자 문구 그대로), 영어 "By debut year. Just for fun!".
