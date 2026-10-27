@@ -5284,6 +5284,11 @@ function _wonkokStripClause(title){
     }
     out+=title[i];i++;
   }
+  // 괄호 없는 원곡 표기도 다음 구분자까지 걷어낸다(2026-10-27) — STATION Z "빌리의 '불장난' | 원곡: 블랙핑크(BLACKPINK) | STATION Z"는
+  // 괄호 규칙에 안 걸려 블랙핑크가 남고, 공연자 빌리보다 먼저 주인으로 잡혀 원곡자 영상으로 저장됐다(원곡 표기 제목 차분에서 확인).
+  if(/원곡\s*[:：]|original\s*(?:song|artist)?\s*(?:by|[:：])/i.test(out)&&!_isBeOriginal(out)){
+    out=out.replace(/원곡\s*[:：][^|｜\]\n/【】]*/g,' ').replace(/original\s*(?:song|artist)?\s*(?:by\.?|[:：])[^|｜\]\n/【】]*/gi,' ');
+  }
   return out;
 }
 function _wonkokNorm(title){return' '+(title||'').toUpperCase().replace(/[^가-힣a-zA-Z0-9]/g,' ').replace(/\s+/g,' ')+' ';}
@@ -7770,6 +7775,23 @@ const _ATM_BRAND_PHRASES=/\basahi\s*super\s*dry\b|\basahi\s*beer\b|\basahibeer\b
 const _ATM_INITIAL_WORDS=new Set(['in','is','it','on','up','at','an','as','be','by','do','go','he','me','my','no','of','or','so','to','us','we','if','am']);
 function _atmStripCommonNounCtx(title){
   let t=title||'';
+  // 한글 그룹명 + 소유격 "의"(2026-10-27 사용자 "원곡 크레딧 문제 진짜 많다"). STATION Z 노래방 "템페스트의 'Really Really' | 원곡:위너"·
+  // "빌리의 '불장난'"처럼 공연자를 "○○의 '곡'"으로만 쓰는 제목에서 토큰이 "템페스트의"가 돼 그룹이 안 잡히고, 원곡자(위너)만 잡혀
+  // 원곡자 영상으로 저장됐다(원곡 표기 제목 2,859개 중 이 꼴 ~80개). 등록 그룹명 바로 뒤 "의" + (띄어쓰기) + **곡 따옴표**일 때만 띄운다 — "비투비의 키스 더 라디오"·"악뮤의 오날오밤"처럼 진행자 이름이 붙은 프로그램명까지 띄우면 진행자가 주인이 되고 게스트가 빠졌다(4만 건 차분 196행).
+  // 멤버 이름은 일상어와 겹쳐서(하늘의·여름의) 안 하고, 흔한 단어 그룹(strictSync·제목 충돌 예외)도 뺀다.
+  if(t.indexOf('의')>=0&&typeof GROUPS!=='undefined'){
+    if(!_atmStripCommonNounCtx._possRe){
+      const skip=new Set(Object.keys(typeof _GROUP_TITLE_CONFLICT_EXCLUDE!=='undefined'?_GROUP_TITLE_CONFLICT_EXCLUDE:{}));
+      const names=[];
+      Object.entries(GROUPS).forEach(([gko,g])=>{
+        if(!g||g.strictSync||skip.has(gko))return;
+        [gko,...(g.altNames||[])].forEach(n=>{if(n&&/^[가-힣]{2,}$/.test(n))names.push(n);});
+      });
+      names.sort((a,b)=>b.length-a.length);
+      _atmStripCommonNounCtx._possRe=names.length?new RegExp('(?<![가-힣])('+names.join('|')+')의(?=\\s*[\'"‘’“”「『<])','g'):null;
+    }
+    if(_atmStripCommonNounCtx._possRe)t=t.replace(_atmStripCommonNounCtx._possRe,'$1 의');
+  }
   // "bts of ○○" = behind the scenes. 방탄소년단(BTS)과 철자가 같아 콜라보로 잘못 잡힌다 —
   // 실측(2026-08-31): 제목에 'bts of'가 든 62건 중 **55건이 방탄소년단 태그**였고 전부 오탐이었다
   // (`bts of impossible: day 3 #RIIZE`, `bts of We are FIFTY FIFTY` …). 관용구라 정밀하게 걷어낼 수
