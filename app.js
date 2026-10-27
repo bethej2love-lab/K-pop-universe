@@ -25479,8 +25479,69 @@ async function _cardHeroLoad(contId,ko,state,renderItems){
   {const im=grid.querySelector('img.gc-ch-thumb');if(im){im.loading='eager';try{im.fetchPriority='high';}catch(e){}}}
   state.allVids=[v].concat((state.allVids||[]).filter(x=>x.id!==v.id));
 }
+// ♪ 곡 고르기 시트(2026-10-27) — 이 카드 영상에 연결된 곡(song_keys)을 영상 많은 순으로. 카드 주인 곡만(그룹·본인 솔로·옛 그룹),
+// 남의 곡(커버 원곡 키)은 뺀다. 곡 이름은 디스코그래피 표기, 없으면 키 그대로. 목록은 같은 카드 동안 기억(_vidSongListCache).
+const _vidSongListCache=new Map();
+async function _vidSongList(ko,memberKo,histKos){
+  const ck=ko+'␟'+(memberKo||'');
+  if(_vidSongListCache.has(ck))return _vidSongListCache.get(ck);
+  const p=(async()=>{
+    if(!sb||_songKeysCol===false)return [];
+    let q=sb.from(_YT_TABLE).select('song_keys').neq('song_keys','{}')
+      .or('content_flag.is.null,content_flag.neq.무관').or('content_flag.is.null,content_flag.neq.보류').or('content_flag.is.null,content_flag.neq.hidden');
+    q=memberKo
+      ?q.or(`and(group_ko.eq.${_pgFilterVal(ko)},members.cs.{${_pgFilterVal(memberKo)}}),with_members.cs.{${_pgFilterVal(memberKo+'('+ko+')')}}`)
+      :q.or(`group_ko.eq.${_pgFilterVal(ko)},with_groups.cs.{${_pgFilterVal(ko)}}`);
+    const{data,error}=await q.limit(4000);
+    if(error){if(/song_keys/.test(error.message||''))_songKeysCol=false;return [];}
+    const owners=new Set([ko,memberKo,...(histKos||[])].filter(Boolean));
+    const cnt=new Map();
+    (data||[]).forEach(r=>(r.song_keys||[]).forEach(k=>{const o=k.slice(0,k.indexOf(':'));if(owners.has(o))cnt.set(k,(cnt.get(k)||0)+1);}));
+    // 곡 이름 — 그룹·멤버 디스코그래피에서 기본형이 같은 첫 표기(꼬리·두 번째 괄호 표기 뗌)
+    const names=new Map();
+    const take=(owner,disco)=>(disco||[]).forEach(al=>[al.titleTrack,...(al.tracks||[]).map(t=>t&&(t.title||t))].forEach(t=>{
+      if(!t)return;const key=owner+':'+_songBase(t);if(!names.has(key))names.set(key,_songStripTail(String(t)).split(/\s*[\(\[]/)[0].trim()||String(t));
+    }));
+    owners.forEach(o=>{if(GROUPS[o])take(o,GROUPS[o].discography);const a=ARTISTS.find(x=>x.name&&x.name.ko===o&&(!GROUPS[x.group&&x.group.ko]||x.group.ko===ko));if(a)take(o,a.discography);});
+    if(memberKo){const a=ARTISTS.find(x=>x.name&&x.name.ko===memberKo&&x.group&&x.group.ko===ko);if(a)take(memberKo,a.discography);}
+    return [...cnt.entries()].filter(([,n])=>n>=2).sort((a,b)=>b[1]-a[1]).slice(0,40)
+      .map(([key,n])=>({key,n,label:names.get(key)||key.slice(key.indexOf(':')+1)}));
+  })();
+  _vidSongListCache.set(ck,p);
+  p.then(v=>{if(!v.length)_vidSongListCache.delete(ck);},()=>_vidSongListCache.delete(ck));
+  return p;
+}
+function _openVidSongSheet(ko,memberKo,histKos,onPick){
+  document.getElementById('vid-song-sheet-ov')?.remove();
+  const ko_=currentLang==='ko';
+  const ov=document.createElement('div');ov.id='vid-song-sheet-ov';ov.setAttribute('data-modal',''); // data-modal 없으면 누르는 순간 우주 클릭으로 읽혀 카드가 닫힌다
+  ov.innerHTML='<div class="vid-song-sheet" role="dialog" aria-label="'+(ko_?'곡으로 보기':'Filter by song')+'"><div class="vss-handle"></div><div class="vss-hd">'+(ko_?'곡으로 보기':'Filter by song')+'</div><div class="vss-list"><div class="vss-empty">'+(ko_?'불러오는 중…':'Loading…')+'</div></div></div>';
+  document.body.appendChild(ov);
+  _bringToFront(ov);
+  const sheet=ov.querySelector('.vid-song-sheet'),list=ov.querySelector('.vss-list');
+  const close=()=>{ov.classList.remove('open');setTimeout(()=>ov.remove(),220);};
+  requestAnimationFrame(()=>{ov.classList.add('open');_bringToFront(ov);});
+  ov.addEventListener('click',e=>{if(e.target===ov)close();});
+  // 아래로 쓸어 닫기(모바일 기본 제스처 — 닫기 버튼 대신)
+  let y0=null,dy=0;
+  sheet.addEventListener('touchstart',e=>{if(list.scrollTop>0)return;y0=e.touches[0].clientY;dy=0;sheet.style.transition='none';},{passive:true});
+  sheet.addEventListener('touchmove',e=>{if(y0==null)return;dy=Math.max(0,e.touches[0].clientY-y0);sheet.style.transform=dy?'translateY('+dy+'px)':'';},{passive:true});
+  sheet.addEventListener('touchend',()=>{if(y0==null)return;sheet.style.transition='';if(dy>80)close();else sheet.style.transform='';y0=null;});
+  _vidSongList(ko,memberKo,histKos).then(items=>{
+    if(!ov.isConnected)return;
+    if(!items.length){list.innerHTML='<div class="vss-empty">'+(ko_?'연결된 곡이 아직 없어요':'No songs linked yet')+'</div>';return;}
+    list.innerHTML='';
+    items.forEach(it=>{
+      const b=document.createElement('button');b.type='button';b.className='vss-item';
+      b.innerHTML='<span class="t"></span><span class="n"></span>';
+      b.querySelector('.t').textContent=it.label;b.querySelector('.n').textContent=it.n.toLocaleString();
+      b.addEventListener('click',()=>{close();onPick(it.key,it.label);});
+      list.appendChild(b);
+    });
+  });
+}
 function _chVidCacheKey(contId,ko,state){
-  return[contId,ko,state.memberKo||'',state.filter,state.sortMode,state.viewMode,state.formatFilter||'',state.onlyMe?1:0,state.unitFilter||'',state.searchQ||''].join('|');
+  return[contId,ko,state.memberKo||'',state.filter,state.sortMode,state.viewMode,state.formatFilter||'',state.onlyMe?1:0,state.unitFilter||'',state.searchQ||'',state.songKey||''].join('|');
 }
 // 관리자가 태그를 고치는 등 이 채널(ko)의 영상 데이터가 실제로 바뀌었을 때 호출 — 필터/정렬 조합별로
 // 여러 캐시 키가 있을 수 있어 그 ko로 시작하는 항목을 전부 지운다(부분적으로만 맞는 캐시를 남겨두는
@@ -26116,6 +26177,7 @@ function _makeChVidController(contId){
       // count도 멤버 카드일 때만 '기타'를 같이 빼야 실제 노출 개수와 맞음
       if(state.memberKo)q=q.or('content_flag.is.null,content_flag.neq.기타');
       if(state.searchQ)q=q.ilike('title_norm',`%${_titleNorm(state.searchQ)}%`);
+      if(state.songKey&&_songKeysCol!==false)q=q.contains('song_keys',[state.songKey]); // ♪ 곡 고르기(2026-10-27) — GIN idx_ytv_song_keys
       if(state.viewMode==='format'){
         if(state.formatFilter)q=q.contains('content_formats',[state.formatFilter]);
       }else if(filter==='cover'){
@@ -26160,7 +26222,7 @@ function _makeChVidController(contId){
       // 매번 같은 "하트 최다" 영상이 맨 앞에 박혀있으면 인위적으로 느껴진다는 사용자 피드백(2026-08-20).
       const _featuredEligibleTab=filter==='all'||filter==='live';
       const featuredP=cacheHit?Promise.resolve(cached.featuredFromDB)
-        :(reset&&state.sortMode==='recommend'&&!randomize&&_featuredEligibleTab)
+        :(reset&&state.sortMode==='recommend'&&!randomize&&_featuredEligibleTab&&!state.songKey)
         ?_withTimeout(()=>_pickFeaturedVidFromDB(ko,state.memberKo,state.onlyMe,filter,state.viewMode,state.formatFilter,state.searchQ),6000,undefined,1).catch(()=>null)
         :Promise.resolve(null);
       // '미태깅 우선'(admin 전용): Postgres 배열 비교는 원소 없는 '{}'가 항상 더 작다고/크다고 취급하므로,
@@ -26419,9 +26481,9 @@ function _makeChVidController(contId){
     if(!sb)return;
     // 멤버 카드는 미태깅 그룹 영상(MV·Shorts·토크쇼 등)이 뒤섞여 첫 화면이 지저분해지지 않도록
     // "라이브"(무대 직캠 위주) 탭에서 시작 — 그룹 카드는 그대로 "전체"
-    state={ko,memberKo:memberKo||null,filter:memberKo?'live':'all',onlyMe:false,searchQ:'',sortMode:'recommend',viewMode:'category',formatFilter:null,formats:[],offset:0,total:0,pos:0,cat:null,gen:state.gen+1,appendLock:false,trailingEl:null,hasMore:false,allVids:[],_liveFallbackDone:false,wrapEnd:0,wrapPhase:false,unitFilter:null,histKos:(histKos&&histKos.length)?histKos:null,unitKey:(opts&&opts.unit)||null};
+    state={ko,memberKo:memberKo||null,filter:memberKo?'live':'all',onlyMe:false,searchQ:'',songKey:null,sortMode:'recommend',viewMode:'category',formatFilter:null,formats:[],offset:0,total:0,pos:0,cat:null,gen:state.gen+1,appendLock:false,trailingEl:null,hasMore:false,allVids:[],_liveFallbackDone:false,wrapEnd:0,wrapPhase:false,unitFilter:null,histKos:(histKos&&histKos.length)?histKos:null,unitKey:(opts&&opts.unit)||null};
     const _t=T[currentLang];
-    cont.innerHTML=`<div class="gc-ch-hd"><div class="gc-ch-filters hscroll-drag"></div><div class="gc-ch-sort-wrap"><button class="gc-ch-sort-btn" title="${_t.sortTitle}" data-i18n-title="sortTitle" aria-haspopup="true" aria-expanded="false">⋮</button><div class="gc-ch-sort-menu"><button class="gc-ch-sort-item" data-sort="recommend"><span class="chk">✓</span><span data-i18n="chSortRec">${_t.chSortRec}</span></button><button class="gc-ch-sort-item" data-sort="popular"><span class="chk">✓</span><span data-i18n="chSortPop">${_t.chSortPop}</span></button><button class="gc-ch-sort-item" data-sort="latest"><span class="chk">✓</span><span data-i18n="chSortNew">${_t.chSortNew}</span></button><button class="gc-ch-sort-item" data-sort="oldest"><span class="chk">✓</span><span data-i18n="chSortOld">${_t.chSortOld}</span></button><div class="gc-ch-sort-divider gc-ch-refresh-div"></div><button class="gc-ch-refresh gc-ch-sort-item"><span class="chk" style="visibility:hidden">✓</span><span data-i18n="refreshTitle">${_t.refreshTitle}</span></button><div class="gc-ch-sort-divider" style="display:none"></div><button class="gc-ch-view-toggle" style="display:none"><span class="chk">✓</span><span data-i18n="chViewCon">${_t.chViewCon}</span></button></div></div></div><div class="gc-ch-search-wrap" style="display:none"><input class="gc-ch-search" placeholder="${_t.chSearch}" data-i18n-ph="chSearch" autocomplete="off" spellcheck="false"><button class="gc-ch-search-clear" aria-label="${_t.searchClearLabel}">\xD7</button></div><div class="gc-ch-grid"></div><div class="gc-ch-more-wrap"></div><div class="tv-cover-of-wrap" style="display:none"></div>`;
+    cont.innerHTML=`<div class="gc-ch-hd gc-vid-hd"><div class="gc-ch-filters hscroll-drag"></div><div class="gc-ch-sort-wrap"><button class="gc-ch-sort-btn" title="${_t.sortTitle}" data-i18n-title="sortTitle" aria-haspopup="true" aria-expanded="false">⋮</button><div class="gc-ch-sort-menu"><button class="gc-ch-sort-item" data-sort="recommend"><span class="chk">✓</span><span data-i18n="chSortRec">${_t.chSortRec}</span></button><button class="gc-ch-sort-item" data-sort="popular"><span class="chk">✓</span><span data-i18n="chSortPop">${_t.chSortPop}</span></button><button class="gc-ch-sort-item" data-sort="latest"><span class="chk">✓</span><span data-i18n="chSortNew">${_t.chSortNew}</span></button><button class="gc-ch-sort-item" data-sort="oldest"><span class="chk">✓</span><span data-i18n="chSortOld">${_t.chSortOld}</span></button><div class="gc-ch-sort-divider gc-ch-refresh-div"></div><button class="gc-ch-refresh gc-ch-sort-item"><span class="chk" style="visibility:hidden">✓</span><span data-i18n="refreshTitle">${_t.refreshTitle}</span></button><div class="gc-ch-sort-divider" style="display:none"></div><button class="gc-ch-view-toggle" style="display:none"><span class="chk">✓</span><span data-i18n="chViewCon">${_t.chViewCon}</span></button></div></div></div><div class="gc-ch-search-wrap" style="display:none"><input class="gc-ch-search" placeholder="${_t.chSearch}" data-i18n-ph="chSearch" autocomplete="off" spellcheck="false"><button class="gc-ch-search-clear" aria-label="${_t.searchClearLabel}">\xD7</button></div><div class="gc-ch-grid"></div><div class="gc-ch-more-wrap"></div><div class="tv-cover-of-wrap" style="display:none"></div>`;
     _exitSelMode();
     const filEl=cont.querySelector('.gc-ch-filters');
     // 영상 여러 개 선택 버튼 — 예전엔 어드민 태깅 편집용으로만 있었는데, 이제 일반 유저도 여러 영상을
@@ -26476,6 +26538,29 @@ function _makeChVidController(contId){
     // 세로 휠 델타를 가로 스크롤로 옮겨주는 것 + 클릭 후 드래그로도 넘길 수 있는 것, 두 방식 다 지원
     // (2026-08-11, 사용자 요청). filEl은 카드를 열 때마다 innerHTML로 새로 그려지는 요소라 매번 새로 바인딩.
     _enableDragScroll(filEl);
+    // ♪ 곡 고르기(2026-10-27 사용자 결정 — 영상은 "누가·무슨 곡·어떤 형식"으로 고른다. 카드는 '누가'가 정해져 있으니 곡·형식을 고른다).
+    // 형식 탭(밑줄)과 종류가 다른 "좁히기"라 알약이 아닌 글자형 + 구분선으로 둔다. 누르면 아래에서 곡 목록이 올라오고, 고르면 "♪ REDRED ✕".
+    // 곡 화면(_openSongVideos)엔 같은 모양으로 "멤버"가 들어갈 자리다. 유닛 카드는 범위가 달라 빼 둔다.
+    if(!state.unitKey){
+      const songBtn=document.createElement('button');songBtn.type='button';songBtn.className='gc-vid-pick';
+      const songSep=document.createElement('span');songSep.className='gc-vid-pick-sep';
+      const _paint=()=>{
+        songBtn.classList.toggle('on',!!state.songKey);
+        songBtn.innerHTML='<span class="ic">♪</span><span class="lbl"></span><span class="x">'+(state.songKey?'✕':'▾')+'</span>';
+        songBtn.querySelector('.lbl').textContent=state.songKey?(state.songLabel||state.songKey.split(':').pop()):(currentLang==='ko'?'곡':'Song');
+        songBtn.setAttribute('aria-label',state.songKey?(currentLang==='ko'?'곡 고르기 해제':'Clear song'):(currentLang==='ko'?'곡으로 보기':'Filter by song'));
+      };
+      _paint();
+      songBtn.addEventListener('click',e=>{
+        e.stopPropagation();
+        if(state.songKey){state.songKey=null;state.songLabel=null;state.offset=0;_paint();load(ko,true);return;} // 고른 상태에서 누르면 해제(✕)
+        _openVidSongSheet(ko,state.memberKo,state.histKos,(key,label)=>{
+          if(state.ko!==ko)return;
+          state.songKey=key;state.songLabel=label;state.offset=0;_paint();load(ko,true);
+        });
+      });
+      filEl.before(songBtn);filEl.before(songSep);
+    }
     // 멤버 카드는 MV 탭 제외 — 뮤비는 그룹 단위 콘텐츠라 그룹 카드 MV 탭에서 이미 다뤄지고, 멤버 개인 태깅 영상엔 거의 안 나옴
     // 'show'(드라마/영화 — 예능 아닌 연기 위주) 탭 신설(2026-08-12, 사용자 요청) — 'variety'와 같은
     // 방식(채널 화이트리스트 기반)으로 채워질 예정. 아직 채널 화이트리스트가 비어있어 실제 영상은

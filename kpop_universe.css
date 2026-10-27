@@ -1787,6 +1787,43 @@
   /* 영상 줄 정리(2026-10-27) — 단독만·선택은 ⋮ 메뉴에서 켜고, 켜져 있을 때만 줄에 보인다(끄는 버튼 역할). 관리자 '전체선택'은 그대로. */
   .gc-ch-hd>.gc-ch-only:not(.active),.gc-ch-hd>.gc-ch-sel-btn:not(.active):not(.gc-ch-selall-btn){display:none;}
   .gc-ch-hd>.gc-ch-only.active{text-decoration:none;background:rgba(140,170,255,0.14);border-radius:12px;padding:4px 9px;}
+  /* 카드 영상 줄 = 밑줄 글자 탭(2026-10-27 사용자 시안 A — "유리 알약이 별로 안 예쁘다"). 탐험 패널 For You/발견 탭과 같은 계열.
+     카드 영상 헤더(.gc-vid-hd)에만 — 곡 화면·차트 칩 등 다른 .gc-ch-filter 알약은 그대로. */
+  .gc-vid-hd{flex-wrap:nowrap;gap:4px;border-bottom:0.5px solid rgba(255,255,255,0.08);margin-bottom:10px;}
+  .gc-vid-hd>.gc-ch-filters{gap:16px;align-items:stretch;padding:0 2px;}
+  .gc-vid-hd .gc-ch-filter{background:none;border:none;box-shadow:none;backdrop-filter:none;-webkit-backdrop-filter:none;border-radius:0;
+    padding:9px 0 10px;font-size:13px;color:rgba(200,215,250,0.55);position:relative;flex-shrink:0;}
+  .gc-vid-hd .gc-ch-filter:hover{background:none;color:rgba(225,235,255,0.85);}
+  .gc-vid-hd .gc-ch-filter:active{transform:none;opacity:.7;}
+  .gc-vid-hd .gc-ch-filter.active{background:none;box-shadow:none;color:#fff;font-weight:600;}
+  .gc-vid-hd .gc-ch-filter.active::after{content:'';position:absolute;left:0;right:0;bottom:0;height:2.5px;border-radius:2px 2px 0 0;background:rgba(140,175,255,0.95);}
+  @media(min-width:769px){.gc-vid-hd .gc-ch-filter{font-size:11.5px;padding:7px 0 8px;}.gc-vid-hd>.gc-ch-filters{gap:12px;}}
+  /* ♪ 곡 고르기 — 형식 탭과 종류가 다른 "좁히기"라 글자형 + 구분선 */
+  .gc-vid-pick{flex:0 0 auto;display:inline-flex;align-items:center;gap:4px;background:none;border:none;font-family:inherit;white-space:nowrap;
+    color:rgba(200,218,240,0.72);font-size:12.5px;padding:6px 2px;position:relative;max-width:42%;}
+  .gc-vid-pick .lbl{overflow:hidden;text-overflow:ellipsis;min-width:0;}
+  .gc-vid-pick .ic{opacity:.75;font-size:11px;}.gc-vid-pick .x{opacity:.6;font-size:11px;}
+  .gc-vid-pick.on{color:#bcd3ff;}
+  .gc-vid-pick::after{content:'';position:absolute;inset:-10px -4px;}
+  .gc-vid-pick-sep{flex:0 0 auto;width:0.5px;height:16px;background:rgba(255,255,255,0.16);margin:0 6px 0 4px;}
+  @media(min-width:769px){.gc-vid-pick{font-size:11px;}}
+  /* 곡 목록 시트 — 아래에서 올라옴(데스크톱은 가운데 좁은 시트) */
+  #vid-song-sheet-ov{position:fixed;inset:0;z-index:140;background:rgba(4,6,16,0);transition:background .22s;}
+  #vid-song-sheet-ov.open{background:rgba(4,6,16,0.45);}
+  .vid-song-sheet{position:absolute;left:0;right:0;bottom:0;max-width:480px;margin:0 auto;max-height:70vh;display:flex;flex-direction:column;
+    background:rgba(18,22,40,0.99);border-radius:18px 18px 0 0;border:0.5px solid rgba(255,255,255,0.08);border-bottom:none;
+    padding:8px 16px calc(14px + env(safe-area-inset-bottom,0px));box-shadow:0 -10px 30px rgba(0,0,0,0.5);
+    transform:translateY(100%);transition:transform .24s cubic-bezier(0.32,0.72,0,1);}
+  #vid-song-sheet-ov.open .vid-song-sheet{transform:translateY(0);}
+  .vss-handle{width:38px;height:4px;border-radius:2px;background:rgba(255,255,255,0.25);margin:2px auto 10px;flex:none;}
+  .vss-hd{font-size:13px;font-weight:600;color:#d8e4f6;margin:0 2px 6px;flex:none;}
+  .vss-list{overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;}
+  .vss-item{display:flex;justify-content:space-between;align-items:center;gap:12px;width:100%;background:none;border:none;border-bottom:0.5px solid rgba(255,255,255,0.06);
+    padding:13px 4px;font-family:inherit;font-size:14px;color:#cfdcf2;text-align:left;}
+  .vss-item .t{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .vss-item .n{flex:none;color:rgba(170,190,230,0.55);font-size:12px;font-variant-numeric:tabular-nums;}
+  .vss-item:active{background:rgba(255,255,255,0.05);}
+  .vss-empty{padding:22px 4px;color:rgba(170,190,230,0.6);font-size:13px;}
   @media(min-width:769px){.gc-ch-only{font-size:9px;}}
   /* bottom도 탭바를 따라간다(2026-09-18) — 78px로 박아두면 탭바가 숨었을 때 버튼만 허공에 떠 있다.
      ⚠️ max()로 안전영역 하한을 건다 — 탭바가 숨으면 --sheet-bottom이 0이 되는데, 그대로 두면 버튼이
