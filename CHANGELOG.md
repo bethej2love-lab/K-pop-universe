@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-10-28 (Claude Code — 카드 쇼츠 제목 가림 · 셋째 줄 찔끔 · 출연자 판 · 앨범 영상 탭)
+- [완료] **카드 쇼츠 제목이 첫 글자만 보이고 사라지던 것(재발)** — 10-27 제목 2줄(.tv-2l)에서 오른쪽 페이드 마스크를 빼자 쌓임 맥락이 없어져, 쇼츠 칸 블러 배경(.gc-ch-thumb-bg, absolute·z0) 밑으로 깔렸다. 제목·메타 줄에 position+z-index:1. ⚠️마스크/opacity를 빼면 쇼츠 칸에선 이 문제가 다시 난다 [kpop_universe.css]
+- [완료] **2줄 제목 아래 셋째 줄이 찔끔 보이던 것** — line-clamp 칸에 위아래 padding이 있으면 잘림선이 padding 끝이라 셋째 줄 윗부분이 비쳤다 → 위아래는 margin으로. patchItem 경로도 2줄 제목엔 마퀴(1줄 흐르기) 안 씌움 [kpop_universe.css][app.js]
+- [완료] **재생 화면 "이 영상에 나온 아티스트" 판** — 바깥(member-info) 판과 안쪽 판이 겹쳐 이중 박스·위 여백 과다 → 바깥은 투명 틀, 안쪽 판은 내용 폭만큼(fit-content) [kpop_universe.css]
+- [완료] **앨범 영상 패널 분류 칩(.adv-chips)도 밑줄 탭** — 카드 영상 줄·곡 화면 탭과 같은 모양 [kpop_universe.css]
+
 ## 2026-10-27 (Claude Code — 14차: NEW VIDEOS 최애 이모지 · MV 차트)
 - **[결정]** 배지(MV·1위·신보·조회수)는 **소식 카드에만**(발견·For You 소식) — 카드 등 다른 곳엔 안 붙임. 지금 상태가 맞아서 변경 없음.
 - **[완료·배포] [app.js _feedBiasMatchers().favEmoji·_buildFeedFavNew] [css .feed-fav-emo, 후광 규칙 삭제]** NEW VIDEOS 최애 표시 — 후광("구림") 제거, 캡션 이름 앞에 그 최애에 정해 둔 이모지(내 정보 최애 칩의 emoji, 없으면 🤍). 멤버 최애가 그룹 최애보다 먼저. 이모지는 사용자 입력이라 태그 문자 제거. 순서(최애 맨 앞)는 그대로.

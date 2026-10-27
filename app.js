@@ -27137,7 +27137,7 @@ function _makeChVidController(contId){
     if(titleEl){
       const clean=_cleanTitle(newRow.title||'');
       titleEl.textContent=clean;
-      addMarquee(titleEl);
+      if(!titleEl.classList.contains('tv-2l'))addMarquee(titleEl); // 2줄 제목은 흐르기 없음
       const img=el.querySelector('.gc-ch-thumb');
       if(img)img.alt=clean;
     }
