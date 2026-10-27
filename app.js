@@ -5307,8 +5307,13 @@ function _fmtDur(sec){
 }
 // 업로드일(MM.DD)·조회수(1.2M/34K+/800+) 한 줄로 — _openFeedListOverlay의 .gc-ch-meta와 동일한 포맷 규칙
 // (2026-08-10, 라이트박스에도 재사용). pa/vc 둘 다 없으면 빈 문자열 반환(호출부가 그 경우 줄 자체를 숨김).
+// 날짜 표기 규칙(2026-10-27 사용자 "유튜브·인스타 기준과 통일, 적당히 오래되면 yyyy.mm.dd") — 인스타그램처럼 7일 안은
+// "n분/시간/일 전", 그 뒤로는 날짜. 피드(_fmtVidAgo)·카드·곡 화면·재생 화면이 전부 이 한 규칙을 쓴다.
+const _VID_AGO_DAYS=7;
+const _fmtYmd=s=>{s=String(s||'');return /^\d{4}-\d{2}-\d{2}/.test(s)?s.slice(0,4)+'.'+s.slice(5,7)+'.'+s.slice(8,10):'';};
+function _fmtVidDate(pa){return pa?(_fmtVidAgo(pa)||_fmtYmd(pa)):'';}
 function _fmtVidMeta(pa,vc){
-  const datePart=pa?(pa.slice(0,4)+'.'+pa.slice(5,7)+'.'+pa.slice(8,10)):'';
+  const datePart=_fmtVidDate(pa);
   return[datePart,_fmtVC(vc)].filter(Boolean).join(' · ');
 }
 // 세션 모드(_lbSessionMode)와 같은 타입(쇼츠/일반)의 항목만 대상으로 delta 방향의 다음 인덱스를 찾음 —
@@ -5461,7 +5466,7 @@ async function _lbUpdateChartChips(s,pa){
 // 가로 재생(브라우즈) 화면에서 출연자를 텍스트 칩 대신 동그란 프로필 + 이름 줄로 보여준다. 누르면 예전 칩과 같은 하프카드.
 // 쇼츠(스와이프) 화면은 상단 바의 앵커 텍스트를 그대로 쓴다(그쪽은 CSS로 이 줄을 숨김). 데이터는 _lbUpdateMemberInfo가 이미 정리한 것.
 // 배경: 그룹 고유색을 화면 위쪽에 은은하게(--lb-tint) — 스포티파이가 앨범 색을 까는 것처럼 "누구 영상인지"가 색으로 먼저 읽힌다.
-function _lbRenderPeople({artist,groupKo,gName,multi,withList,anchorG}){
+function _lbRenderPeople({artist,groupKo,gName,multi,withList,anchorG,fullTagged}){
   const box=document.getElementById('yt-lb-people');if(!box)return;
   const isKo=currentLang==='ko';
   const items=[],seen=new Set();
@@ -5469,6 +5474,13 @@ function _lbRenderPeople({artist,groupKo,gName,multi,withList,anchorG}){
   const addG=g=>{if(!g||!GROUPS[g])return;const k='g:'+g;if(seen.has(k))return;seen.add(k);items.push({kind:'group',g});};
   addM(artist);if(gName)addG(groupKo);
   (multi||[]).forEach(addM);
+  // 그룹 영상(뮤비 등 — 멤버 1명 주인이 아니고 일부 멤버 칩도 없음)이면 그 그룹 멤버도 같이(2026-10-27 사용자
+  // "뮤비에 출연자 정보가 왜 없어? 그룹이면 멤버도 같이"). 태그가 있으면(전원 태깅) 태그 그대로, 없으면 현재 멤버.
+  if(!artist&&gName&&GROUPS[groupKo]&&!(multi||[]).length){
+    const tagged=(fullTagged||[]).filter(Boolean);
+    const _dis=!!GROUPS[groupKo].disbanded; // 해체 그룹은 전원이 '전 멤버'라 개인 탈퇴자만 뺀다
+    (tagged.length?tagged:ARTISTS.filter(a=>{const gi=(a.groups||[]).find(g=>g.ko===groupKo);if(a.group.ko!==groupKo&&!gi)return false;return _dis?!(gi&&gi.left)&&!(a.group.ko===groupKo&&a.left):!_isFormerOf(a,groupKo);})).forEach(addM);
+  }
   (withList||[]).forEach(it=>{if(it.group)addG(it.group);else addM(_findArtistByConnName(it.n,artist?artist.group.ko:groupKo));});
   box.replaceChildren();
   const lb=document.getElementById('yt-lightbox');
@@ -5625,7 +5637,7 @@ function _lbUpdateMemberInfo(){
     chip.textContent=label;
     withEl.appendChild(chip);
   });
-  _lbRenderPeople({artist,groupKo,gName,multi:_multiChips?_multi:[],withList:_withList,anchorG:_anchorG});
+  _lbRenderPeople({artist,groupKo,gName,multi:_multiChips?_multi:[],withList:_withList,anchorG:_anchorG,fullTagged:_multiChips?[]:_multi});
   const hasCollab=!!(artist&&_getCollabMembers(artist).length>0);
   connBtn.style.display=hasCollab?'':'none';
   document.getElementById('yt-lightbox')?.classList.toggle('lb-has-chips',withEl.children.length>0); // 칩 줄만큼 영상 내림(CSS 주석)
@@ -24765,15 +24777,17 @@ function _fmtVidAgo(iso){
     // 시각(published_ts)이 없는 오늘 유입분 — "오늘"은 "N시간 전"과 어긋나 어색하다는 제보(2026-09-13).
     // 시각을 모르면 시간칩을 아예 안 단다(정확한 시각이 backfill되면 자동으로 "N시간 전"으로 뜬다).
     if(days<=0)return'';
+    if(days>=_VID_AGO_DAYS)return _fmtYmd(s);
     if(days===1)return currentLang==='ko'?'1일 전':'1d ago';
     return currentLang==='ko'?`${days}일 전`:`${days}d ago`;
   }
   const now=Date.now();
   const h=Math.floor((now-then)/3600000);
-  if(h<1)return currentLang==='ko'?'방금':'just now';
+  if(h<1){const mi=Math.floor((now-then)/60000);return mi<1?(currentLang==='ko'?'방금':'just now'):(currentLang==='ko'?`${mi}분 전`:`${mi}m ago`);}
   if(h<24)return currentLang==='ko'?`${h}시간 전`:`${h}h ago`;
   if(h<48)return currentLang==='ko'?'1일 전':'1d ago';
   const d=Math.floor(h/24);
+  if(d>=_VID_AGO_DAYS)return _fmtYmd(new Date(then-new Date(then).getTimezoneOffset()*60000).toISOString());
   return currentLang==='ko'?`${d}일 전`:`${d}d ago`;
 }
 // 랜덤 영상 — 그룹 영상 + 멤버 영상을 한 풀에 섞어서 뽑는다 (2026-08-19 독립 함수로 분리)
@@ -26011,8 +26025,7 @@ function _makeChVidController(contId){
       }
       img.alt=_cleanTitle(v.title);img.loading='lazy';img.decoding='async';
       const tEl=document.createElement('div');
-      tEl.className='tv-sm-title';tEl.textContent=_cleanTitle(v.title);
-      addMarquee(tEl);
+      tEl.className='tv-sm-title tv-2l';tEl.textContent=_cleanTitle(v.title); // 2줄(2026-10-27 — 피드·곡 화면과 같게, 1줄 흐르기 대신)
       item.appendChild(img);item.appendChild(tEl);
       _attachDurBadge(item,v.duration_sec); // 자리 잡기는 아래 높이 못박기 루프에서(_placeDurBadge)
       _attachProgBar(item,v.id);
@@ -26034,7 +26047,7 @@ function _makeChVidController(contId){
       {
         const _tt=T[currentLang]||T.ko;
         const _pa=v.published_at?.slice(0,10);
-        const _dp=_pa?_pa.slice(0,4)+'.'+_pa.slice(5,7)+'.'+_pa.slice(8,10):'';
+        const _dp=_fmtVidDate(v.published_at?String(v.published_at):''); // 7일 안은 "n일 전"(_fmtVidDate 한 규칙)
         const _vcRaw=v.view_count!=null?_fmtVC(v.view_count):'';
         const _vc=_vcRaw?(_tt.chViewsPfx||'')+_vcRaw+(_tt.chViewsSfx||''):'';
         const metaTxt=[_dp,_vc].filter(Boolean).join(' · ');
@@ -26044,7 +26057,8 @@ function _makeChVidController(contId){
       // 그땐 이 영상의 주인(그룹명 또는 카드 주인 멤버)을 같은 칩 모양으로 적는다.
       // 멤버 카드의 그룹 전체 영상은 다른 멤버 이름 나열 대신 그룹 이름 하나(2026-10-21 사용자) — 멤버 태그가 비었거나(그룹 전체) 본인 포함 전원, 다른 그룹 출연 없음.
       const _grpWide=!!state.memberKo&&v.group_ko===state.ko&&!!GROUPS[state.ko]&&!(v.with_members||[]).length&&!(v.with_groups||[]).length&&(!(v.members||[]).length||_withIsFullGroup(state.ko,ARTISTS.filter(a=>(v.members||[]).includes(a.name.ko)&&_artistGroups(a).some(g=>g.ko===state.ko))));
-      const withLine=_grpWide?(()=>{const l=document.createElement('div');l.className='tv-with-line';l.appendChild(_makeGCChip(state.ko,currentLang==='ko'?state.ko:(GROUPS[state.ko].en||state.ko)));return l;})():(_makeWithLine(s,ctx)||_gridOwnerLine(v));
+      // 2026-10-27 사용자 "불필요한 경우 셋째 줄 삭제" — 그룹 전체 영상은 카드 주인 소속 그룹명만 반복돼서 줄 자체를 안 단다
+      const withLine=_grpWide?null:(_makeWithLine(s,ctx)||_gridOwnerLine(v));
       if(withLine)item.appendChild(withLine);
       item.appendChild(_makeScrapBtn(s,ctx));
       item.appendChild(_makeColBtn(s,ctx));
@@ -28436,6 +28450,10 @@ _totopBtn.id='gc-totop';_totopBtn.className='gc-totop';_totopBtn.setAttribute('a
 _totopBtn.textContent='↑';
 document.body.appendChild(_totopBtn);
 const TOTOP_SHOW_AT=80;
+// 스크롤 방향(2026-10-27 — 버튼이 오른쪽 아래 썸네일 재생시간을 가렸다): 아래로 내리는 중엔 비켜 있고, 위로 올리면(=돌아가고 싶을 때) 나타난다.
+{const _ttLast=new WeakMap();document.addEventListener('scroll',e=>{const el=e.target;if(!el||el.nodeType!==1)return;
+  const y=el.scrollTop,p=_ttLast.get(el);_ttLast.set(el,y);if(p==null||el!==_totopScrollTarget)return;
+  if(y-p>6)_totopBtn.classList.add('tt-away');else if(p-y>6)_totopBtn.classList.remove('tt-away');},{capture:true,passive:true});}
 let _totopScrollTarget=null;
 function _hideTotop(){
   _totopBtn.style.display='none';

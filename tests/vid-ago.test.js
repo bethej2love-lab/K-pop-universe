@@ -32,6 +32,9 @@ function slice(s,re,label){
 
 const ctx={currentLang:'ko'};
 vm.createContext(ctx);
+// 2026-10-27 날짜 규칙 통일 — 7일 안은 상대표기, 그 뒤는 yyyy.mm.dd(_VID_AGO_DAYS·_fmtYmd)
+vm.runInContext(/const _VID_AGO_DAYS=[0-9]+;/.exec(src)[0].replace('const ','var '),ctx);
+vm.runInContext(/const _fmtYmd=.*;/.exec(src)[0].replace('const ','var '),ctx);
 vm.runInContext(slice(src,/function _fmtVidAgo\(/,'_fmtVidAgo'),ctx);
 need(typeof ctx._fmtVidAgo==='function','_fmtVidAgo 로드됨');
 
@@ -40,7 +43,10 @@ const daysAgoDate=n=>{const d=new Date();d.setDate(d.getDate()-n);
   return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;};
 
 // ── ① 시각이 있는 값(published_ts) — 여기서만 "N시간 전"을 쓴다 ────────────────
-need(ctx._fmtVidAgo(hoursAgo(0.5))==='방금','30분 전 → 방금',ctx._fmtVidAgo(hoursAgo(0.5)));
+need(ctx._fmtVidAgo(hoursAgo(0.5))==='30분 전','30분 전 → "30분 전"(2026-10-27 인스타식)',ctx._fmtVidAgo(hoursAgo(0.5)));
+need(ctx._fmtVidAgo(hoursAgo(0.005))==='방금','1분 안 → 방금',ctx._fmtVidAgo(hoursAgo(0.005)));
+need(/^[0-9]{4}[.][0-9]{2}[.][0-9]{2}$/.test(ctx._fmtVidAgo(hoursAgo(24*9))),'7일 넘으면 yyyy.mm.dd(시각 있음)',ctx._fmtVidAgo(hoursAgo(24*9)));
+need(ctx._fmtVidAgo(daysAgoDate(10))===daysAgoDate(10).replace(/-/g,'.'),'7일 넘으면 yyyy.mm.dd(날짜만)',ctx._fmtVidAgo(daysAgoDate(10)));
 need(ctx._fmtVidAgo(hoursAgo(3))==='3시간 전','3시간 전',ctx._fmtVidAgo(hoursAgo(3)));
 // 사용자가 제보한 바로 그 케이스
 need(ctx._fmtVidAgo(hoursAgo(17))==='17시간 전','17시간 전 영상은 "17시간 전"(제보 케이스)',ctx._fmtVidAgo(hoursAgo(17)));
