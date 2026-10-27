@@ -1,7 +1,12 @@
 # CHANGELOG
 
 ## 2026-10-27 (Codex — 다그룹 팬 직캠 채널 삭제)
-- **[진행중] [ext_channels/yt_channel_videos]** 사용자 승인: 여러 그룹을 지속 촬영하는 종합 팬채널은 등록과 수집 영상 전체 삭제. 전용 팬채널의 만우절 타 그룹 영상은 예외로 유지(사용자 답변 확인). 팬채널 461개 DB 대조 후 다그룹 표기 35개를 재분류, 확실한 Day_DayCAM·LEAARONFIM·FancamLab·singing7532·MERCURY_VW 5개만 대상으로 백업→삭제→파생 목록 재생성 예정. 커버곡 제목·동일 멤버 NCT 겸임·게스트/반응 영상은 종합 채널로 오판하지 않음.
+- **[완료·범위 확정] [ext_channels/yt_channel_videos]** 사용자 승인: 여러 그룹을 지속 촬영하는 종합 팬채널은 등록과 수집 영상 전체 삭제. 전용 팬채널의 만우절 타 그룹 영상은 예외로 유지(사용자 답변 확인). 팬채널 461개 DB 대조 후 다그룹 표기 35개를 재분류, 확실한 Day_DayCAM·LEAARONFIM·FancamLab·singing7532·MERCURY_VW 5개만 대상으로 백업→삭제→파생 목록 재생성 완료. 커버곡 제목·동일 멤버 NCT 겸임·게스트/반응 영상은 종합 채널로 오판하지 않음.
+- **[완료·DB 직접 실행] [sql/codex_multifan_delete_fix_2026-10-27.sql]** 채널 5개·영상 1,908건(Day_DayCAM530/LEAARONFIM274/FancamLab300/singing7532 698/MERCURY_VW106)·영상 FK 조회수 이정표159건을 한 트랜잭션으로 백업 후 삭제. admin_bulk_snapshots batch=`codex-multifan-delete-20261027`, op_label=`multifan:channel/video/milestone`, 백업5/1908/159 및 distinct ID 동일 확인. 삭제 후 채널/영상/이정표 잔존0/0/0, 팬채널461→456, 만우절 예외 전용6개 유지 확인. 영상 ID 목록 MD5=`accf1945ea5ac5639785e41380da1531`. 다른 영상·사용자 데이터·앱 코드는 수정하지 않음.
+- **[완료·복구 준비] [sql/codex_multifan_delete_verify_2026-10-27.sql] [sql/codex_multifan_delete_undo_2026-10-27.sql]** 실행/검증/복구 SQL 저장. fix는 사전 건수·ID해시·팬 등급 불일치나 재실행 시 중단, undo는 채널→영상→이정표 순서로 전체 원본 행 복구하며 PK 충돌 시 전체 롤백. undo는 실행하지 않음.
+- **[완료·파생 목록] [album_videos]** 기존 album-videos.yml full=true 실행 성공(10분20초): https://github.com/bethej2love-lab/K-pop-universe/actions/runs/40443662111 . 596,806개 전량 조회·255,069개 연결·362개 파일 생성, 자동 커밋 db18287202 반영. 갱신 후 album_videos/g/disco JSON·HTML을 삭제 ID1,908개와 대조하여 잔존 파일0/ID0 확인. 채널 등록 삭제로 정상 수집 목록에서 제외, 약10분 후 DB 재검증도 잔존0/0/0. 캐시버스터 수동 수정 없음.
+- **[완료·검증] [tests/syntax.test.js] [tests/validate-data.js] [tests/smoke.test.js]** 문법 통과·데이터 오류0/기존 경고144(이번 데이터 변경 없음)·모바일390px 및 기본 탐험/발견 동작 스모크 통과. 백업 전체2,072행의 jsonb_populate_record 왕복 비교 true로 현재 스키마 복구 적합성 확인(실제 undo 미실행).
+- **[완료·공개 파일 확인] [album_videos]** kpop-universe.kr에 배포된 리센느·르세라핌·아이브·엔믹스·트와이스 JSON 직접 조회에서도 삭제 ID 잔존0건 확인. 이미 열린 화면의 메모리 목록은 사이트 새로고침 후 갱신됨. 삭제한 것은 사이트 DB 등록/수집 행이며 유튜브 원본 업로드는 대상 아님.
 
 ## 2026-10-27 (Claude Code — 5차: For You 게스트 출연·즐겨찾기 해제 반영, 고아 그룹 값·채널 주인 오입력 정리)
 - **[완료·배포] [app.js _buildFeedFavNew]** Codex 팬 불편 검토의 "with_members로 출연한 최애까지 수집한다고 단정 불가" 실측 확인 — For You 신작은 group_ko만 조회해서 다른 그룹 영상의 게스트 출연(예: 하입프린세스 "#AWA with #CRAVITY #형준 선배님")이 한 번도 안 떴다. 같은 7일·제외 조건으로 with_members("이름(그룹)", 솔로는 "이름(이름)")·with_groups(즐겨찾기 그룹) 겹침 조회를 병렬로 추가해 합침(GIN 인덱스, 실측 21ms). 헤드리스: 형준 즐겨찾기 시 게스트 영상 2개 노출 확인.
