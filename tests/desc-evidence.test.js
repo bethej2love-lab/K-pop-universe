@@ -150,5 +150,16 @@ notBlocked.forEach(([gko,ko,text])=>{
   t(`다른 그룹 동명이인은 안 막음 — ${gko} ${ko} "${text}"`,m1(mem,text,gko),true);
 });
 
+// ── 2026-10-28 Codex 감사16차: 단체곡 MV에 멤버 1명 — 제작 크레딧(스태프 'JinWoo Lee' → 진)·가사('Jennie' → 제니) ──
+const butterDesc="BTS (방탄소년단) 'Butter' Official MV \n\n\nCredits: \nDirector: Yong Seok Choi (Lumpens)\nAnimation director: JinWoo Lee (studio pivote)\nStoryboards: JinWoo Lee\n\n#BTS #방탄소년단";
+t('크레딧 머리줄 아래 스태프 줄은 제거, 해시태그 줄은 유지',_atmStripDescNoise(butterDesc),"BTS (방탄소년단) 'Butter' Official MV \n\n\n#BTS #방탄소년단");
+t('크레딧 머리줄 변형(대괄호·한글)',_atmStripDescNoise('[Credits]\nDirector: JinWoo Lee'),'');
+t('크레딧 머리줄 없는 평문은 그대로',keep('Credits to my friend Jin for the idea'),true);
+t('BTS Butter 공식 MV(크레딧에 JinWoo) → 멤버 없음',_atmResolveMembers("BTS (방탄소년단) 'Butter' Official MV",butterDesc,roster('방탄소년단'),'방탄소년단'),[]);
+t('블랙핑크 붐바야 M/V(가사에 Jennie) → 멤버 없음',_atmResolveMembers("BLACKPINK - '붐바야 (BOOMBAYAH)' M/V","BLACKPINK - 붐바야 (BOOMBAYAH)\n\nBLACKPINK in your area\nBeen a bad girl I know I am\nAnd I'm so hot I need a fan\n문을 박차면 모두 날 바라봄\n굳이 애써 노력 안 해도\n지금 날 위한 축배를 짠짠짠\n네가 말로만 듣던 걔가 나야\nJennie\n춤추는 불빛은 날 감싸고 도네\nBlack to the pink",roster('블랙핑크'),'블랙핑크'),[]);
+t('유닛 MV 출연 멤버 나열(2명 이상)은 가사 규칙과 무관하게 유지',_atmResolveMembers("SEVENTEEN (세븐틴) 'Ready to love' Official MV","출연: 원우, 민규",roster('세븐틴'),'세븐틴').length>=2,true);
+t('솔로 MV는 제목으로 그대로 잡힘(LISA LALISA)',has(_atmResolveMembers("LISA - 'LALISA' M/V","LALISA\nlyrics…",roster('블랙핑크'),'블랙핑크'),'리사'),true);
+t('MV가 아닌 영상은 설명란 근거 그대로(출연자 해시태그)',has(_atmResolveMembers('BTS 달려라 방탄 EP.1','#진 #JIN',roster('방탄소년단'),'방탄소년단'),'진'),true);
+
 console.log(`\n${pass}/${pass+fail} 통과`);
 process.exit(fail?1:0);

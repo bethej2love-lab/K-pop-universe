@@ -7962,9 +7962,37 @@ function _atmMatchesMember(m,title,tokens,groupKo){
 // ⚠️ 이름 목록이 아니라 **포맷 마커**로 자른다(줄 단위). 새 사례에 일반화되고, 설명란 끝의 출연자
 //    해시태그 나열(#세림 #앨런 …)은 마커가 없어 그대로 살아남는다 — 그건 진짜 출연 근거다.
 const _ATM_DESC_NOISE_LINE=/https?:\/\/|^\s*[・･·]|MULTI[ _-]?ANGLE|\bfeat\.|\bft\.|\bProd\.|作詞|作曲|編曲|\bLyrics?\s*by\b|\bCompos(?:ed|er)\b|\bArranged?\b|작사|작곡|편곡|Track\s*list|트랙\s*리스트|^\s*\d{1,2}[.\x29]\s/i; // ⚠️ 닫는 괄호는 반드시 \x29로 쓸 것 — 리터럴로 두면 m2_harness가 괄호 깊이를 세다 슬라이스가 깨진다(2026-08-31 실제로 겪음)
+// 제작 크레딧 머리줄('Credits:'·'Staff'·'크레딧') — 그 아래는 감독·스태프 이름이라 출연 근거가 아니다(2026-10-28 Codex 감사16차:
+// BTS 'Butter' MV 설명란 스태프 'JinWoo Lee'의 Jin이 진으로 잡혀 단체 MV에 [진]만 붙었다). 머리줄 뒤로는 해시태그 줄(출연자 나열)만 남긴다.
+const _ATM_DESC_CREDITS_HEAD=/^\s*[\[【]?\s*(?:credits?|staff|크레딧|스태프|제작진)\s*[\]】]?\s*:?\s*$/i;
 function _atmStripDescNoise(description){
   if(!description)return description;
-  return String(description).split('\n').filter(l=>!_ATM_DESC_NOISE_LINE.test(l)).join('\n');
+  let credits=false;
+  return String(description).split('\n').filter(l=>{
+    if(_ATM_DESC_CREDITS_HEAD.test(l)){credits=true;return false;}
+    if(credits)return /^\s*#/.test(l);
+    return !_ATM_DESC_NOISE_LINE.test(l);
+  }).join('\n');
+}
+// 공식 MV 제목('… M/V'·'Official MV'·'Music Video'·'뮤직비디오')이면 설명란을 출연 근거로 안 쓴다(2026-10-28) — MV 설명란은 가사 전문
+// (붐바야 가사 속 'Jennie' → 제니)이나 제작 크레딧이지 출연자 목록이 아니다. 솔로·피처링 MV는 제목에 이름이 있어 제목만으로 잡힌다.
+// 실측: 단체곡 MV인데 멤버 1명만 붙은 공식 MV 118개(BTS·블랙핑크·엔하이픈·세븐틴·TXT·베이비몬스터·코르티스 등)가 전부 이 경로.
+const _ATM_MV_TITLE=/\bM\/V\b|\bMV\b|music\s*video|뮤직\s*비디오|뮤비/i;
+// ⚠️ 설명란을 통째로 버리거나 해시태그 줄만 남기면 안 된다 — 유닛 MV(씨스타19·VIXX LR·첸백시·AOA 크림·JJ Project…)는 출연 멤버가
+// 설명란 일반 줄에 적혀 있어 실측 3,420개 중 수백 개의 맞는 태그가 빠졌다. 그래서 **가사 덩어리**만 뺀다: 해시태그·링크·콜론 없는
+// 짧은 줄(40자 이하)이 8줄 넘게 이어지면 가사로 본다.
+function _atmStripLyricRuns(desc){
+  if(!desc)return desc;
+  const nl=String.fromCharCode(10),lines=String(desc).split(nl);
+  const isLyric=l=>{const s=l.trim();return s.length>0&&s.length<=40&&!s.startsWith('#')&&!s.includes(':')&&!s.includes('http');};
+  const drop=new Set();
+  for(let i=0;i<lines.length;){
+    if(!isLyric(lines[i])){i++;continue;}
+    let j=i;while(j<lines.length&&(isLyric(lines[j])||(!lines[j].trim()&&j+1<lines.length&&isLyric(lines[j+1]))))j++;
+    if(lines.slice(i,j).filter(isLyric).length>=8)for(let k=i;k<j;k++)drop.add(k);
+    i=j;
+  }
+  return lines.filter((_,k)=>!drop.has(k)).join(nl);
 }
 // 설명란 "멤버 해시태그 묶음"(#SeoYeon #HyeRin #JiWoo … 처럼 멤버 이름 해시태그가 9개 이상 연달아 붙은 줄)을 지운다.
 // 트리플에스 공식 채널은 모든 영상 설명 끝에 **그 시점 멤버 전원**을 이렇게 붙여서, 몇 명만 나오는 SIGNAL·SIGNAL LIVE마다
@@ -7988,9 +8016,13 @@ function _atmResolveMembers(title,description,roster,groupKo,publishedAt){
   const rawT=title||'';
   const t=_atmStripCommonNounCtx(rawT); // "○○의 하루" 등 일반명사 문맥의 "하루" 제거 후 매칭
   const hitTitle=roster2.filter(m=>_atmMatchesMember(m,t,_atmTokenize(t),groupKo)).map(m=>m.ko);
-  const desc=_atmStripRosterHashtagRuns(_atmStripDescNoise(description),roster2,groupKo); // 트랙리스트·크레딧·링크 줄·멤버 해시태그 묶음은 출연 근거가 아니다
-  const searchText=_atmStripCommonNounCtx(desc?`${rawT}\n${desc}`:rawT);
-  const hitFull=roster2.filter(m=>_atmMatchesMember(m,searchText,_atmTokenize(searchText),groupKo)).map(m=>m.ko);
+  const _d0=_atmStripDescNoise(description);
+  const desc=_atmStripRosterHashtagRuns(_d0,roster2,groupKo); // 트랙리스트·크레딧·링크 줄·멤버 해시태그 묶음은 출연 근거가 아니다
+  const hitIn=d=>{const s=_atmStripCommonNounCtx(d?`${rawT}\n${d}`:rawT);return roster2.filter(m=>_atmMatchesMember(m,s,_atmTokenize(s),groupKo)).map(m=>m.ko);};
+  let hitFull=hitIn(desc);
+  // 공식 MV에서 **설명란에서만 딱 1명**이 잡히면 가사 덩어리를 빼고 다시 본다(2026-10-28) — 붐바야 가사 'Jennie' → [제니] 같은
+  // 단체곡 MV 1인 태그. 2명 이상(유닛 MV 출연 멤버 나열)은 그대로 둔다(통째로 막으면 맞는 유닛 태그 수백 개가 빠졌다).
+  if(hitFull.length===1&&!hitTitle.length&&_ATM_MV_TITLE.test(rawT))hitFull=hitIn(_atmStripRosterHashtagRuns(_atmStripLyricRuns(_d0),roster2,groupKo));
   if(roster2.length>0&&hitFull.length===roster2.length&&hitTitle.length<roster2.length)return hitTitle;
   return hitFull;
 }

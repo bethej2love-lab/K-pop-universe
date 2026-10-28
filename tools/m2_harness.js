@@ -81,8 +81,10 @@ function load(){
   // 설명란 노이즈 제거(2026-08-31) — 있으면 싣는다
   if(/^const _ATM_DESC_NOISE_LINE\s*=/m.test(adminSrc)){
     S(/^const _ATM_DESC_NOISE_LINE\s*=/m,'_ATM_DESC_NOISE_LINE');
+    if(/^const _ATM_DESC_CREDITS_HEAD\s*=/m.test(adminSrc))S(/^const _ATM_DESC_CREDITS_HEAD\s*=/m,'_ATM_DESC_CREDITS_HEAD'); // 2026-10-28 제작 크레딧 머리줄
     F(/^function _atmStripDescNoise\(/m,'_atmStripDescNoise');
   }
+  if(/^const _ATM_MV_TITLE\s*=/m.test(adminSrc)){S(/^const _ATM_MV_TITLE\s*=/m,'_ATM_MV_TITLE');F(/^function _atmStripLyricRuns\(/m,'_atmStripLyricRuns');} // 2026-10-28 공식 MV는 가사 덩어리 제외
   F(/^function _memberLeftCutoffDate\(/m,'_memberLeftCutoffDate');
   if(/^function _atmStripRosterHashtagRuns\(/m.test(adminSrc))F(/^function _atmStripRosterHashtagRuns\(/m,'_atmStripRosterHashtagRuns'); // 2026-10-20 멤버 해시태그 묶음
   F(/^function _atmResolveMembers\(/m,'_atmResolveMembers');
