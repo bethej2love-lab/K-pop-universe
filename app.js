@@ -3759,6 +3759,7 @@ const _PROGRAM_COLLECTIONS=[
   {key:'isac', label:'아이돌스타 선수권대회', en:'Idol Star Athletics', kw:['아육대','아이돌스타 선수권','아이돌 스타 선수권','육상선수권']}, // 139건 76팀
   {key:'tingle', label:'팅글인터뷰', en:'Tingle Interview', kw:['팅글인터뷰','팅글 인터뷰']}, // 132건 49팀
   {key:'workman', label:'워크맨', en:'Workman', kw:['워크맨','workman']}, // 111건 44팀
+  {key:'voicecam', label:'보이스캠', en:'Voice Cam', kw:['보이스캠','voice cam','voicecam']}, // 744건 36팀(2026-10-28 사용자 "보이스캠 위주로 보고 싶을 수도")
   // ── 개인 진행 자체 콘텐츠(2026-09-11 사용자 요청) ─────────────────────────────
   // 위 항목들과 성격이 다르다. 멤버 **개인이 호스트**인 시리즈라 게스트가 매회 바뀌고, 그래서 영상의
   // group_ko가 진행자가 아니라 **게스트 그룹**으로 태깅된다(실측: '사나의 냉터뷰' 19건이 14팀에
@@ -3794,24 +3795,70 @@ async function _openProgramCollection(p,ctx){
   ctx=ctx||{};
   const vidUrl=v=>_isShortV(v)?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;
   const label=currentLang==='ko'?`${p.label} 모아보기`:`${p.en||p.label} Collection`;
-  try{
-    const or=p.kw.map(k=>`title_norm.ilike.*${k}*`).join(',');
-    let query=sb.from(_YT_TABLE)
-      .select('id,title,thumb,category,is_short,content_flag,group_ko,members,view_count,published_at'+_durCol())
+  const or=p.kw.map(k=>`title_norm.ilike.*${k}*`).join(',');
+  // sort: 'latest'(기본) | 'popular'. 형식 화면 칩이 같은 조건으로 다시 부른다.
+  const mkQ=sort=>{
+    let q=sb.from(_YT_TABLE)
+      .select('id,title,thumb,category,is_short,content_flag,group_ko,members,with_members,with_groups,view_count,published_at'+_durCol()) // with_*: 형식 화면 '누가' 칩(게스트 포함)
       .or(or)
       .or('content_flag.is.null,content_flag.neq.기타')
-      .or('content_flag.is.null,content_flag.neq.무관').or('content_flag.is.null,content_flag.neq.보류')
-      .order('published_at',{ascending:false})
-      .limit(500);
+      .or('content_flag.is.null,content_flag.neq.무관').or('content_flag.is.null,content_flag.neq.보류');
+    q=sort==='popular'?q.order('view_count',{ascending:false,nullsFirst:false}):q.order('published_at',{ascending:false});
+    return q.limit(999); // 한 요청 상한 1,000
+  };
+  const toSongs=vids=>vids.map(v=>({..._rowTags(v),t:v.title,u:vidUrl(v),thumb:v.thumb,vc:v.view_count,dur:v.duration_sec,pa:v.published_at?.slice(0,10),_apiId:v.id,_apiGroupKo:v.group_ko}));
+  try{
+    let query=mkQ('latest');
     if(ctx.gko)query=query.eq('group_ko',ctx.gko);
     if(ctx.memberKo)query=query.contains('members',[ctx.memberKo]);
     const{data,error}=await query;
     const rows=error?[]:_filterBannedVideos(data||[]);
     // 항상 최신순(쿼리가 published_at desc) — 검색·카드 모두 최신 영상부터(2026-09-05 사용자 요청).
-    const vids=rows;
-    const songs=vids.map(v=>({..._rowTags(v),t:v.title,u:vidUrl(v),thumb:v.thumb,vc:v.view_count,dur:v.duration_sec,pa:v.published_at?.slice(0,10),_apiId:v.id,_apiGroupKo:v.group_ko}));
-    _openFeedListOverlay(label,'',songs);
+    if(ctx.gko||ctx.memberKo){_openFeedListOverlay(label,'',toSongs(rows));return;}
+    const cnt={};rows.forEach(v=>{if(v.group_ko)cnt[v.group_ko]=(cnt[v.group_ko]||0)+1;});
+    const st={label,mkQ,toSongs,rows,tops:Object.keys(cnt).sort((a,b)=>cnt[b]-cnt[a]).slice(0,20),cache:new Map()};
+    st.cache.set('all|latest',rows);
+    await _programFacetView(st,'all','latest');
   }catch(e){ _openFeedListOverlay(label,'',[]); }
+}
+// 형식에서 시작하기(2026-10-28 사용자 "영상의 세 요소 누가·곡·형식 — 형식에서 시작해 즐겨찾기 아티스트를 한꺼번에 '누가'에 넣고 훑기").
+// 검색에서 연 프로그램 모아보기에만 붙는다(카드 안 모아보기는 이미 '누가'가 정해져 있다).
+// 누가: 전체 · ★ 즐겨찾기(즐겨찾기 그룹 영상 + 즐겨찾기 멤버가 나온 영상, 게스트 포함) · 이 프로그램에 많이 나온 그룹 순. 정렬: 최신·조회수.
+// 칩을 고르면 그 조건으로 서버에서 다시 받는다 — 잇츠라이브(2,500개↑)처럼 큰 프로그램은 최신 999개 안에 그 그룹이 없을 수 있다(르세라핌 0개였다).
+// 서버에선 소속(group_ko)·함께한 그룹(with_groups)까지만 거를 수 있어, 게스트 멤버(with_members '이름(그룹)')는 받은 행에서 한 번 더 고른다.
+const _PF_INGROUP=(v,g)=>v.group_ko===g||(v.with_groups||[]).includes(g)||(v.with_members||[]).some(w=>String(w).endsWith('('+g+')'));
+const _PF_FAVHIT=v=>favGroups.has(v.group_ko)||(v.with_groups||[]).some(g=>favGroups.has(g))
+  ||(v.members||[]).some(m=>favMembers.has(v.group_ko+':'+m))
+  ||(v.with_members||[]).some(w=>{const i=String(w).lastIndexOf('(');return i>0&&favMembers.has(String(w).slice(i+1,-1)+':'+String(w).slice(0,i));});
+async function _programFacetView(st,who,sort){
+  const isKo=currentLang==='ko';
+  const favGs=[...new Set([...favGroups,...[...favMembers].map(k=>String(k).split(':')[0])])].filter(Boolean);
+  if(who==='fav'&&!favGs.length)who='all';
+  const key=who+'|'+sort;
+  let list=st.cache.get(key);
+  if(!list){
+    let q=st.mkQ(sort);
+    const gs=who==='all'?null:who==='fav'?favGs:[who];
+    if(gs){const inList=gs.map(_pgFilterVal).join(',');q=q.or(`group_ko.in.(${inList}),with_groups.ov.{${inList}}`);}
+    const{data,error}=await q;
+    let got=error?[]:_filterBannedVideos(data||[]);
+    if(gs){
+      const hit=who==='fav'?_PF_FAVHIT:v=>_PF_INGROUP(v,who);
+      const seen=new Set();list=[];
+      // 서버 결과 + 처음 받은 최신 목록에서 게스트로 나온 것(with_members)을 합친다
+      [...got,...st.rows].forEach(v=>{if(!seen.has(v.id)&&hit(v)){seen.add(v.id);list.push(v);}});
+      list.sort(sort==='popular'?(a,b)=>(b.view_count||0)-(a.view_count||0):(a,b)=>String(b.published_at||'').localeCompare(String(a.published_at||'')));
+    }else list=got;
+    st.cache.set(key,list);
+  }
+  const whoOpts=[{v:'all',ko:'전체',en:'All'}];
+  if(favGs.length)whoOpts.push({v:'fav',ko:'★ 즐겨찾기',en:'★ Favorites'});
+  st.tops.forEach(g=>whoOpts.push({v:g,ko:g,en:(GROUPS[g]&&GROUPS[g].en)||g}));
+  const facets=[
+    {key:'who',labelKo:'',labelEn:'',scroll:whoOpts.length>5,sel:who,options:whoOpts,onPick:v=>_programFacetView(st,v,sort)},
+    {key:'sort',labelKo:'',labelEn:'',sel:sort,options:[{v:'latest',ko:'최신',en:'Latest'},{v:'popular',ko:'조회수',en:'Most viewed'}],onPick:v=>_programFacetView(st,who,v)},
+  ];
+  _openFeedListOverlay(st.label,isKo?`영상 ${list.length}개`:`${list.length} videos`,st.toSongs(list),{facets});
 }
 // "카리나, 장원영" 같은 두-사람 검색용 — 이름 문자열 하나를 아티스트로 해석(정확 ko/표시명/영문, 없으면
 // 정규화 영문). 활동 중을 우선. 못 찾으면 null.

@@ -1,0 +1,55 @@
+// 형식에서 시작하기(2026-10-28 사용자 "누가·곡·형식 — 형식에서 시작해 즐겨찾기 아티스트를 한꺼번에 '누가'에 넣고 훑기").
+// 검색에서 연 프로그램 모아보기에 누가 칩(전체·★ 즐겨찾기·많이 나온 그룹)·정렬 칩(최신·조회수)이 붙고, 즐겨찾기로 좁혀지는지.
+// ⚠️ 실DB를 읽는 브라우저 테스트 — CI 스킵 목록(browser)에 등록. 브라우저가 없으면 스킵.
+// 실행: node tests/program-facets.test.js
+const fs=require('fs'),path=require('path'),http=require('http'),os=require('os');const{spawn}=require('child_process');
+const ROOT=path.join(__dirname,'..');
+const PORT=8998,CDP_PORT=9398;
+const BROWSER=['C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe','C:\\Program Files\\Microsoft\\Edge\\Application\\msedge.exe','C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe','/Applications/Google Chrome.app/Contents/MacOS/Google Chrome','/usr/bin/google-chrome','/usr/bin/chromium-browser','/usr/bin/chromium'].find(p=>fs.existsSync(p));
+const MIME={'.html':'text/html','.js':'text/javascript','.json':'application/json','.css':'text/css','.png':'image/png','.svg':'image/svg+xml'};
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+let pass=0,fail=0;const ok=m=>{pass++;console.log('✅ '+m)},bad=m=>{fail++;console.log('❌ '+m)};
+const server=http.createServer((req,res)=>{const p=decodeURIComponent(req.url.split('?')[0]);const f=path.join(ROOT,p==='/'?'index.html':p);
+  if(!fs.existsSync(f)||fs.statSync(f).isDirectory()){res.writeHead(404);res.end();return;}res.writeHead(200,{'Content-Type':MIME[path.extname(f)]||'application/octet-stream'});fs.createReadStream(f).pipe(res);});
+async function waitCdp(){for(let i=0;i<40;i++){try{await (await fetch(`http://127.0.0.1:${CDP_PORT}/json/version`)).json();return;}catch(e){await sleep(300);}}throw new Error('cdp');}
+function conn(url){return new Promise((res,rej)=>{const ws=new WebSocket(url);let id=0;const w=new Map();
+  ws.addEventListener('open',()=>res({send:(m,p)=>new Promise((a,b)=>{const i=++id;w.set(i,{a,b});ws.send(JSON.stringify({id:i,method:m,params:p}));}),close:()=>ws.close()}));
+  ws.addEventListener('message',e=>{const m=JSON.parse(e.data);if(m.id&&w.has(m.id)){const{a,b}=w.get(m.id);w.delete(m.id);m.error?b(new Error(m.error.message)):a(m.result);}});ws.addEventListener('error',rej);});}
+async function ev(c,x){const r=await c.send('Runtime.evaluate',{expression:x,returnByValue:true,awaitPromise:true});if(r.exceptionDetails)throw new Error(r.exceptionDetails.exception?.description||r.exceptionDetails.text);return r.result.value;}
+(async()=>{
+  if(!BROWSER){console.log("⏭️  브라우저를 못 찾음 — 스킵");process.exit(0);}
+  server.listen(PORT);
+  const prof=fs.mkdtempSync(path.join(os.tmpdir(),'kpu-pf-'));
+  const proc=spawn(BROWSER,['--headless=new','--no-sandbox',`--remote-debugging-port=${CDP_PORT}`,`--user-data-dir=${prof}`,'--no-first-run','--disable-gpu','--window-size=1400,900','about:blank'],{stdio:'ignore'});
+  try{
+    await waitCdp();
+    const{webSocketDebuggerUrl}=await (await fetch(`http://127.0.0.1:${CDP_PORT}/json/new?about:blank`,{method:'PUT'})).json();
+    const c=await conn(webSocketDebuggerUrl);await c.send('Page.enable');await c.send('Runtime.enable');
+    await c.send('Page.navigate',{url:`http://127.0.0.1:${PORT}/index.html`});
+    for(let i=0;i<60;i++){await sleep(500);try{if(await ev(c,`typeof _openProgramCollection==='function'&&ARTISTS.length>0&&!!sb`))break;}catch(e){}}
+    const r=JSON.parse(await ev(c,`(async()=>{
+      const S=ms=>new Promise(r=>setTimeout(r,ms));
+      favGroups.clear();favMembers.clear();favGroups.add('르세라핌'); // 이 세션에서만(저장 안 함)
+      await _openProgramCollection(_PROGRAM_COLLECTIONS.find(x=>x.key==='itslive'));await S(800);
+      const rows=()=>[...document.querySelectorAll('#feed-list-facets .fl-facet-row')].map(r=>[...r.querySelectorAll('.gc-ch-filter')].map(b=>b.textContent));
+      const sub=()=>document.getElementById('feed-list-sub').textContent;
+      const out={facets:rows(),all:sub()};
+      [...document.querySelectorAll('#feed-list-facets .gc-ch-filter')].find(b=>b.textContent==='★ 즐겨찾기')?.click();await S(600);
+      out.fav=sub();out.favActive=document.querySelector('#feed-list-facets .fl-facet-row .gc-ch-filter.active')?.textContent;
+      const sortRow=document.querySelectorAll('#feed-list-facets .fl-facet-row')[1];
+      sortRow.querySelectorAll('.gc-ch-filter')[1].click();await S(600);
+      out.sortActive=sortRow.querySelector('.gc-ch-filter.active')?.textContent;
+      out.vcSearch=_matchPrograms('보이스캠','보이스캠','').map(x=>x.key);
+      return JSON.stringify(out);})()`));
+    const n=s=>+String(s).replace(/[^0-9]/g,'');
+    if(r.facets.length===2&&r.facets[0][0]==='전체'&&r.facets[0][1]==='★ 즐겨찾기'&&r.facets[0].length>4)ok('누가 칩: 전체·★ 즐겨찾기·그룹들 ('+r.facets[0].length+'개: '+r.facets[0].slice(0,6).join(', ')+' …)');else bad('누가 칩 '+JSON.stringify(r.facets));
+    if(r.facets[1]&&r.facets[1].join()==='최신,조회수')ok('정렬 칩: 최신·조회수');else bad('정렬 칩 '+JSON.stringify(r.facets[1]));
+    if(n(r.all)>500)ok('전체 '+r.all+' (예전 최신 500개 제한 풀림)');else bad('전체 '+r.all);
+    if(r.favActive==='★ 즐겨찾기'&&n(r.fav)>0&&n(r.fav)<n(r.all))ok('★ 즐겨찾기(르세라핌)로 좁힘: '+r.fav);else bad('즐겨찾기 '+JSON.stringify(r));
+    if(r.sortActive==='조회수')ok('조회수 정렬 전환');else bad('정렬 '+r.sortActive);
+    if(r.vcSearch.includes('voicecam'))ok('검색 "보이스캠" → 보이스캠 모아보기');else bad('보이스캠 검색 '+r.vcSearch);
+    c.close();
+  }catch(e){bad('예외: '+e.message);}
+  finally{try{proc.kill();}catch(e){}server.close();}
+  console.log(`\n${pass} 통과 / ${fail} 실패`);process.exit(fail?1:0);
+})();
