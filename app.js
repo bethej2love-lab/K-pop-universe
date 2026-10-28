@@ -24146,7 +24146,9 @@ function _openConcertSheet(ev){
   const listEl=document.getElementById('venue-panel-list');listEl.innerHTML='';
   const vi=document.getElementById('venue-panel-info');if(vi)vi.hidden=true;
   listEl.appendChild(_makeConcertItem(ev));
+  document.getElementById('venue-panel').classList.add('vp-concert'); // 공연 → 공연장 정보(좌석·위치·지도) 순(CSS order)
   overlay.classList.add('open');_bringToFront(overlay);
+  if(ev.venue)_ensureVenuesInfo().then(()=>{if(overlay.classList.contains('open')&&listEl.firstChild&&listEl.childElementCount===1)_renderVenueInfo(ev.venue);}).catch(()=>{});
 }
 function _appendConcertCard(list,ev){
   const own=(ev.groups||[])[0];
@@ -27415,10 +27417,14 @@ async function renderConcertLogList(){
   });
 }
 
+// '2026.10.28 (수) – 10.31 (토)' — 요일까지(2026-10-28 공연 창 키우며, fable 개선안의 "날짜 포맷·요일" 다음 단계)
 function _fmtConcertDate(ev){
   const s=ev.date_start,e=ev.date_end;
-  if(!e||e===s)return s;
-  return `${s} ~ ${e.slice(5)}`;
+  if(!s)return '';
+  const wd=d=>{const t=new Date(String(d).slice(0,10)+'T00:00:00Z');if(isNaN(t))return'';return' ('+(currentLang==='ko'?[...'일월화수목금토']:['Sun','Mon','Tue','Wed','Thu','Fri','Sat'])[t.getUTCDay()]+')';};
+  const dot=d=>String(d).slice(0,10).replace(/-/g,'.');
+  if(!e||e===s)return dot(s)+wd(s);
+  return dot(s)+wd(s)+' – '+dot(e).slice(5)+wd(e);
 }
 function _dDay(dateStr){
   const today=new Date();today.setHours(0,0,0,0);
@@ -27940,6 +27946,7 @@ async function _openVenueEvents(venue){
   const titleEl=document.getElementById('venue-panel-title');
   const listEl=document.getElementById('venue-panel-list');
   titleEl.textContent=_venueName(venue); // 조회는 원래 값으로, 표시만 별칭(위 _VENUE_ALIAS 주석)
+  document.getElementById('venue-panel').classList.remove('vp-concert'); // 공연장 창은 정보 → 공연 목록 순
   listEl.innerHTML='<div class="gc-ch-msg">불러오는 중…</div>';
   document.getElementById('venue-panel-info').hidden=true;
   overlay.classList.add('open');_bringToFront(overlay);

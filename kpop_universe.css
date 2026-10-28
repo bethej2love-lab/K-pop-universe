@@ -5152,3 +5152,28 @@
 .venue-info-row .vi-v{flex:1;min-width:0;color:rgba(222,232,255,0.92);word-break:keep-all;}
 .venue-map-link{display:inline-block;margin-top:8px;font-size:12px;font-weight:600;color:#9fb6ff;text-decoration:none;}
 .venue-info-src{margin-top:6px;font-size:10px;color:rgba(140,160,205,0.45);}
+/* 공연 창 크게(2026-10-28 사용자 "공연 창 쓸데없이 너무 작아, 넓은 웹에서조차") — 폭 320px 고정이라 포스터 60px·글자 11~13px였다.
+   카드 안 공연 목록(.concert-list)은 그대로 두고 이 창(#venue-panel) 안만 키운다. 공연 하나 창(vp-concert)은 공연 → 공연장 정보 순. */
+#venue-panel{width:min(560px,calc(100vw - 32px));max-height:min(780px,calc(100vh - 64px));padding:24px 26px;display:flex;flex-direction:column;}
+#venue-panel>*{flex-shrink:0;}
+#venue-panel .pp-title{font-size:19px;padding-right:36px;}
+#venue-panel-list{gap:12px;margin-top:10px;}
+#venue-panel.vp-concert #venue-panel-info{order:3;margin:14px 0 0;}
+#venue-panel .concert-item{padding:14px;border-radius:14px;font-size:13px;}
+#venue-panel .concert-item.has-poster{gap:18px;}
+#venue-panel .concert-poster{width:128px;height:182px;border-radius:10px;}
+#venue-panel .concert-item-title{font-size:17px;line-height:1.35;}
+#venue-panel .concert-item-date{font-size:13.5px;}
+#venue-panel .concert-item-chips{gap:8px;margin-top:6px;}
+#venue-panel .concert-venue-chip,#venue-panel .concert-ticket-btn,#venue-panel .concert-attend-btn{font-size:12.5px;padding:7px 12px;border-radius:10px;}
+#venue-panel .concert-reaction-btn{font-size:19px;}
+#venue-panel .concert-sec-lbl{font-size:11.5px;}
+#venue-panel .venue-item{padding:11px 14px;font-size:12.5px;border-radius:12px;}
+#venue-panel .venue-item-title{font-size:14px;}
+#venue-panel .venue-info-row{font-size:13.5px;}
+#venue-panel .venue-map-link{font-size:13px;}
+@media (max-width:600px){
+  #venue-panel{padding:20px 18px;}
+  #venue-panel .concert-poster{width:96px;height:136px;}
+  #venue-panel .concert-item-title{font-size:15.5px;}
+}
