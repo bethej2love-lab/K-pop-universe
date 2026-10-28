@@ -40,6 +40,13 @@ async function ev(c,x){const r=await c.send('Runtime.evaluate',{expression:x,ret
       sortRow.querySelectorAll('.gc-ch-filter')[1].click();await S(600);
       out.sortActive=sortRow.querySelector('.gc-ch-filter.active')?.textContent;
       out.vcSearch=_matchPrograms('보이스캠','보이스캠','').map(x=>x.key);
+      // 시상식 창도 같은 '누가' 줄 — MMA 2025 + 즐겨찾기 에스파
+      favGroups.clear();favGroups.add('에스파');
+      await _openEventPage('mma','2025');await S(800);
+      out.evRows=rows();
+      [...document.querySelectorAll('#feed-list-facets .gc-ch-filter')].find(b=>b.textContent==='★ 즐겨찾기')?.click();await S(800);
+      out.evFavSub=sub();
+      out.evFavTitles=[...document.querySelectorAll('#feed-list-grid > *')].map(x=>x.textContent||'').slice(0,10);
       return JSON.stringify(out);})()`));
     const n=s=>+String(s).replace(/[^0-9]/g,'');
     if(r.facets.length===2&&r.facets[0][0]==='전체'&&r.facets[0][1]==='★ 즐겨찾기'&&r.facets[0].length>4)ok('누가 칩: 전체·★ 즐겨찾기·그룹들 ('+r.facets[0].length+'개: '+r.facets[0].slice(0,6).join(', ')+' …)');else bad('누가 칩 '+JSON.stringify(r.facets));
@@ -47,6 +54,9 @@ async function ev(c,x){const r=await c.send('Runtime.evaluate',{expression:x,ret
     if(n(r.all)>500)ok('전체 '+r.all+' (예전 최신 500개 제한 풀림)');else bad('전체 '+r.all);
     if(r.favActive==='★ 즐겨찾기'&&n(r.fav)>0&&n(r.fav)<n(r.all))ok('★ 즐겨찾기(르세라핌)로 좁힘: '+r.fav);else bad('즐겨찾기 '+JSON.stringify(r));
     if(r.sortActive==='조회수')ok('조회수 정렬 전환');else bad('정렬 '+r.sortActive);
+    const evWho=(r.evRows||[]).find(x=>x[0]==='전체'&&x.includes('★ 즐겨찾기'));
+    if(r.evRows&&r.evRows.length===3&&evWho)ok('시상식 창(MMA 2025): 연도·무대/직캠/전체·누가 3줄');else bad('시상식 칩 '+JSON.stringify(r.evRows));
+    if(n(r.evFavSub)>0&&r.evFavTitles.length&&r.evFavTitles.every(t=>/aespa|에스파/i.test(t)))ok('시상식 ★ 즐겨찾기(에스파): '+r.evFavSub);else bad('시상식 즐겨찾기 '+JSON.stringify({sub:r.evFavSub,t:r.evFavTitles}));
     if(r.vcSearch.includes('voicecam'))ok('검색 "보이스캠" → 보이스캠 모아보기');else bad('보이스캠 검색 '+r.vcSearch);
     c.close();
   }catch(e){bad('예외: '+e.message);}

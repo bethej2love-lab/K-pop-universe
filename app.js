@@ -24068,7 +24068,8 @@ const _evKind=v=>{
   return'other';
 };
 const _evIsStage=v=>_evKind(v)==='stage';
-async function _openEventPage(id,ed,view){
+// who: 'all' | 'fav'(★ 즐겨찾기) | 그룹 키 — 프로그램 모아보기(_programFacetView)와 같은 '누가' 줄(2026-10-28 사용자 "시상식 창도 칩 구성 맞추기")
+async function _openEventPage(id,ed,view,who){
   const s=_EVENT_SERIES.find(x=>x.id===id);if(!s)return;
   const isKo=currentLang==='ko';
   let rows=[];
@@ -24082,7 +24083,13 @@ async function _openEventPage(id,ed,view){
     ed=eds.find(e=>(stN[e]||0)>=10)||eds.find(e=>stN[e])||eds[0]||null;
   }
   if(!view)view='stage';
-  const inEd=rows.filter(v=>v._ed===ed);
+  const edAll=rows.filter(v=>v._ed===ed);
+  // 누가 — 이 회차에 나온 그룹(게스트 포함) 영상 수 순 20개, 즐겨찾기는 이 회차에 하나라도 있을 때만
+  const hasFav=(favGroups.size+favMembers.size)>0&&edAll.some(_PF_FAVHIT);
+  const gCnt={};edAll.forEach(v=>{if(v.group_ko)gCnt[v.group_ko]=(gCnt[v.group_ko]||0)+1;});
+  const tops=Object.keys(gCnt).sort((a,b)=>gCnt[b]-gCnt[a]).slice(0,20);
+  if(!who||(who==='fav'&&!hasFav)||(who!=='all'&&who!=='fav'&&!gCnt[who]))who='all';
+  const inEd=who==='all'?edAll:who==='fav'?edAll.filter(_PF_FAVHIT):edAll.filter(v=>_PF_INGROUP(v,who));
   // 고른 칸이 비면(비하인드만 있는 회차) 직캠 → 전체 — 빈 화면을 만들지 않는다
   if(view==='stage'&&!inEd.some(_evIsStage))view=inEd.some(v=>_evKind(v)==='fancam')?'fancam':'all';
   if(view==='fancam'&&!inEd.some(v=>_evKind(v)==='fancam'))view='all';
@@ -24092,8 +24099,14 @@ async function _openEventPage(id,ed,view){
   const sub=!ed?(isKo?'아직 모인 영상이 없어요':'No videos yet')
     :`${_evEdLabel(ed)} · ${isKo?`영상 ${list.length}개`:`${list.length} videos`}`;
   const facets=[];
-  if(eds.length)facets.push({key:'ed',labelKo:'',labelEn:'',scroll:eds.length>6,sel:ed,options:eds.map(e=>({v:e,ko:_evEdLabel(e),en:_evEdLabel(e)})),onPick:v=>_openEventPage(id,v,view)});
-  if(ed)facets.push({key:'view',labelKo:'',labelEn:'',sel:view,options:[{v:'stage',ko:'무대',en:'Stages'},{v:'fancam',ko:'직캠',en:'Fancams'},{v:'all',ko:'전체',en:'All'}].filter(o=>o.v!=='fancam'||inEd.some(v=>_evKind(v)==='fancam')),onPick:v=>_openEventPage(id,ed,v)});
+  if(eds.length)facets.push({key:'ed',labelKo:'',labelEn:'',scroll:eds.length>6,sel:ed,options:eds.map(e=>({v:e,ko:_evEdLabel(e),en:_evEdLabel(e)})),onPick:v=>_openEventPage(id,v,view,who)});
+  if(ed)facets.push({key:'view',labelKo:'',labelEn:'',sel:view,options:[{v:'stage',ko:'무대',en:'Stages'},{v:'fancam',ko:'직캠',en:'Fancams'},{v:'all',ko:'전체',en:'All'}].filter(o=>o.v!=='fancam'||inEd.some(v=>_evKind(v)==='fancam')),onPick:v=>_openEventPage(id,ed,v,who)});
+  if(ed&&(hasFav||tops.length>1)){
+    const whoOpts=[{v:'all',ko:'전체',en:'All'}];
+    if(hasFav)whoOpts.push({v:'fav',ko:'★ 즐겨찾기',en:'★ Favorites'});
+    tops.forEach(g=>whoOpts.push({v:g,ko:g,en:(GROUPS[g]&&GROUPS[g].en)||g}));
+    facets.push({key:'who',labelKo:'',labelEn:'',scroll:whoOpts.length>5,sel:who,options:whoOpts,onPick:v=>_openEventPage(id,ed,view,v)});
+  }
   _feedListRankedNext=false;
   _openFeedListOverlay(s.ko,sub,songs,{facets});
 }
