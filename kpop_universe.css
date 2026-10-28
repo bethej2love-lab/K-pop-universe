@@ -4185,8 +4185,8 @@
   .feed-strip::-webkit-scrollbar{display:none;}
 /* 투데이 애니버서리 스트립만 프로필 간 가로 간격 더 좁게(2026-08-26 사용자 요청) — 공유 .feed-strip은
    그대로 두고 #feed-anniv에만 gap·아이템 폭 축소(썸네일 76px보다 작아지면 안 됨). 실기기서 미세조정 가능. */
-#feed-anniv{gap:5px;}
-#feed-anniv .feed-strip-item{width:72px;}
+#feed-anniv,#feed-foryou-anniv{gap:5px;}
+#feed-anniv .feed-strip-item,#feed-foryou-anniv .feed-strip-item{width:72px;}
   .feed-strip-item{display:flex;flex-direction:column;align-items:center;gap:6px;flex-shrink:0;width:78px;cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><path d='M11,1 L12.3,9.7 L21,11 L12.3,12.3 L11,21 L9.7,12.3 L1,11 L9.7,9.7Z' fill='%23FFB0D0' opacity='.97'/></svg>") 11 11,pointer;position:relative;-webkit-tap-highlight-color:transparent;}
   /* 로딩 중(이미지 뜨기 전)엔 이 배경이 생으로 다 보여서 원색 무지개 동그라미처럼 튀어 보이던 문제
      (2026-08-10, 사용자 제보) — 톤을 확 낮춰 은은한 테두리 느낌만 남김(보일듯말듯).
@@ -4204,11 +4204,11 @@
   .feed-strip-sub{font-size:var(--fz-meta);color:rgba(120,148,200,0.61);text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:78px;margin-top:-4px;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
   .feed-strip-date{font-size:9px;color:rgba(180,205,240,0.72);text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:78px;margin-top:-5px;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
   @media(min-width:769px){
-    #feed-anniv .feed-strip-item{width:calc(25% - 2.5px);}
-    #feed-anniv .feed-strip-thumb-wrap{width:100%;height:auto;aspect-ratio:1;box-sizing:border-box;}
-    #feed-anniv .feed-strip-name{font-size:12px;max-width:100%;}
-    #feed-anniv .feed-strip-sub{font-size:11px;max-width:100%;}
-    #feed-anniv .feed-strip-date{font-size:10px;max-width:100%;}
+    #feed-anniv .feed-strip-item,#feed-foryou-anniv .feed-strip-item{width:calc(25% - 2.5px);}
+    #feed-anniv .feed-strip-thumb-wrap,#feed-foryou-anniv .feed-strip-thumb-wrap{width:100%;height:auto;aspect-ratio:1;box-sizing:border-box;}
+    #feed-anniv .feed-strip-name,#feed-foryou-anniv .feed-strip-name{font-size:12px;max-width:100%;}
+    #feed-anniv .feed-strip-sub,#feed-foryou-anniv .feed-strip-sub{font-size:11px;max-width:100%;}
+    #feed-anniv .feed-strip-date,#feed-foryou-anniv .feed-strip-date{font-size:10px;max-width:100%;}
   }
   /* Discovery 피드(인스타 피드 스타일 세로 스크롤 큰 카드) */
   .feed-card{cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><path d='M11,1 L12.3,9.7 L21,11 L12.3,12.3 L11,21 L9.7,12.3 L1,11 L9.7,9.7Z' fill='%23FFB0D0' opacity='.97'/></svg>") 11 11,pointer;position:relative;overflow:hidden;-webkit-tap-highlight-color:transparent;border-bottom:0.5px solid rgba(255,255,255,0.06);transition:background .13s;animation:feed-card-appear .28s ease both;}
@@ -4440,11 +4440,11 @@
     #feed-chart>.feed-card,#feed-jacon>.feed-card,#feed-favchart>.feed-card,#feed-events>.feed-card,#feed-recent>.feed-recent-item{width:calc((100% + 10px) / 1.5);}
     #feed-recent .feed-recent-thumb-wrap{width:100%;}
     #feed-newalbum.feed-album-rail,#feed-favalbum.feed-album-rail,#feed-concerts.feed-album-rail,#feed-favconcert.feed-album-rail{grid-auto-columns:calc((100% + 4px) * 3 / 8);}
-    #feed-anniv .feed-strip-item{width:calc((100% + 5px) / 3.5);}
-    #feed-anniv .feed-strip-thumb-wrap{width:100%;height:auto;aspect-ratio:1;box-sizing:border-box;}
-    #feed-anniv .feed-strip-name{font-size:12px;max-width:100%;}
-    #feed-anniv .feed-strip-sub{font-size:11px;max-width:100%;}
-    #feed-anniv .feed-strip-date{font-size:10px;max-width:100%;}
+    #feed-anniv .feed-strip-item,#feed-foryou-anniv .feed-strip-item{width:calc((100% + 5px) / 3.5);}
+    #feed-anniv .feed-strip-thumb-wrap,#feed-foryou-anniv .feed-strip-thumb-wrap{width:100%;height:auto;aspect-ratio:1;box-sizing:border-box;}
+    #feed-anniv .feed-strip-name,#feed-foryou-anniv .feed-strip-name{font-size:12px;max-width:100%;}
+    #feed-anniv .feed-strip-sub,#feed-foryou-anniv .feed-strip-sub{font-size:11px;max-width:100%;}
+    #feed-anniv .feed-strip-date,#feed-foryou-anniv .feed-strip-date{font-size:10px;max-width:100%;}
   }
   .feed-recent-title{font-size:10px;color:rgba(200,215,245,0.75);line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
   .feed-card-title{font-size:13px;font-weight:600;color:rgba(220,232,255,0.92);line-height:1.4;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
