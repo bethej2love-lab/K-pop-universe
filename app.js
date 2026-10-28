@@ -10829,9 +10829,8 @@ function _closeTopOverlay(){
   // 재생 화면에 붙여 연 앨범 창(곡 카드, 2026-10-20)이 영상보다 위 층
   {const _ad=document.getElementById('gc-discog-detail');if(_ad&&_ad.classList.contains('open')&&_ad.classList.contains('lb-dock')){_closeGcDiscogDetail();return true;}}
   // 웹 무대 — 재생 화면 앞에 나와 있는 창이 있으면 그것부터(뒤에 비켜 있는 재생 화면을 먼저 닫지 않게)
-  {const _sf=document.body.dataset.stageFront;
-   if(_sf==='venue'&&document.getElementById('venue-overlay')?.classList.contains('open')){_closeVenueOverlay();return true;}
-   if(_sf==='list'&&document.getElementById('feed-list-overlay')?.classList.contains('open')){_closeFeedListOverlay();return true;}}
+  {const _sf=document.body.dataset.stageFront,_ov={venue:'venue-overlay',list:'feed-list-overlay',trophy:'trophy-overlay'}[_sf];
+   if(_ov&&document.getElementById(_ov)?.classList.contains('open')){_SW_CLOSERS[_sf]();return true;}}
   if(lb&&lb.classList.contains('open')){closeLightbox();return true;}
   // 2026-09-05 UX감사 #4: 바깥클릭으론 닫히는데 Esc 목록엔 빠져 있던 오버레이들을 추가(데스크톱 일관성).
   //   welcome-*(온보딩 선택 게이트)는 일부러 제외 — 아무 선택 없이 Esc로 건너뛰면 안 되므로.
@@ -11750,6 +11749,8 @@ const _LINK_DEFS=[
   {key:'instagram2',label:'Instagram',svg:'<svg viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="5" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="12" r="4.2" stroke="currentColor" stroke-width="1.6"/><circle cx="17.2" cy="6.8" r="1.2" fill="currentColor"/></svg>'},
   {key:'x',label:'X',svg:'<svg viewBox="-3 -3 30 30" fill="currentColor"><path d="M18.24 2.25h3.31L14.32 10.5l8.5 11.25H16.2l-4.72-6.23-5.4 6.23H2.75l7.73-8.84L2 2.25h6.06l4.26 5.63L18.24 2.25zm-1.16 17.52h1.83L7.08 4.13H5.12L17.08 19.77z"/></svg>'},
   {key:'weverse',label:'Weverse',svg:'<svg viewBox="0 0 24 24" fill="none"><path d="M12 21C6 17 2 13 2 9 2 6 4.5 4 7.5 4 9.5 4 11.2 5.8 12 7.5 12.8 5.8 14.5 4 16.5 4 19.5 4 22 6 22 9 22 13 18 17 12 21z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>'},
+  // 공식 홈페이지(2026-10-28 엑스러브 b.stage 팬 페이지 — 사용자 추가). 지구본
+  {key:'homepage',label:'Homepage',svg:'<svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.6"/><path d="M3 12h18M12 3c2.5 2.6 3.8 5.6 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.6-3.8-9S9.5 5.6 12 3z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>'},
   {key:'tiktok',label:'TikTok',svg:'<svg viewBox="0 0 24 24" fill="none"><path d="M15 17a5 5 0 1 1-5-5V2h3.3c.4 3 2.8 5.4 5.7 5.8v3.2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>'},
   {key:'namu',label:'나무위키',svg:'<svg viewBox="0 0 24 24" fill="none"><path d="M12 2L6 11h4L5 19h6v3h2v-3h6l-5-8h4L12 2z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>'}
 ];
@@ -12780,7 +12781,7 @@ function _setStageFront(w){
   if(!_stageWide()){delete document.body.dataset.stageFront;return;}
   document.body.dataset.stageFront=w;
 }
-// 무대에 올라간 창의 차례(2026-10-28 목록 창도 무대로) — 'alb'(앨범)·'list'(목록 창)·'venue'(공연·공연장 창). 재생 화면('lb')은 늘 맨 앞 후보라 따로 둔다.
+// 무대에 올라간 창의 차례(2026-10-28 목록 창도 무대로) — 'alb'(앨범)·'list'(목록 창)·'venue'(공연·공연장)·'trophy'(트로피)·'igv'(인스타 사진) — 아래 _swOpen. 재생 화면('lb')은 늘 맨 앞 후보라 따로 둔다.
 // 창 하나를 닫으면 남은 것 중 가장 나중에 연 창이 다시 앞으로 온다(재생 화면이 열려 있으면 재생 화면).
 let _stageOrder=[];
 function _stageOpen(w){_stageOrder=_stageOrder.filter(x=>x!==w);_stageOrder.push(w);_setStageFront(w);}
@@ -12840,7 +12841,7 @@ function _flStageClose(){
 // 하나라도 열리면 440px로 줄어 무대 자리를 내주고, 닫히면 다시 넓어진다. 여는 길이 많아서(카드 클릭·검색·딥링크·재생목록 넘김·
 // 뒤로가기…) 호출부마다 부르지 않고 **이 창들의 class 변화를 한 곳에서 지켜본다**(MutationObserver). 폰·태블릿(<1024)은 그대로.
 // ⚠️ 폭이 바뀌면 칸 수가 바뀌어 글이 다시 흐르므로, 보고 있던 자리(위쪽에 걸친 요소)를 기억했다가 같은 높이로 되돌린다.
-const _FW_BLOCKERS=['side-panel','member-panel','conn-panel','yt-lightbox','feed-list-overlay','gc-discog-detail','venue-overlay',
+const _FW_BLOCKERS=['side-panel','member-panel','conn-panel','yt-lightbox','feed-list-overlay','gc-discog-detail','venue-overlay','trophy-overlay','igv-overlay',
   'uc-card-overlay','adm-home-overlay','hnn-overlay','vm-overlay','gp-overlay'];
 function _feedWideScroller(){
   const fo=document.getElementById('feed-overlay');if(!fo)return null;
@@ -22456,7 +22457,7 @@ function _openIgViewer(m,handle,idx){
     ov=document.createElement('div');ov.id='igv-overlay';ov.setAttribute('data-modal','');
     ov.innerHTML='<div id="igv-panel"><button id="igv-close" type="button" aria-label="닫기">✕</button>'
       +'<div id="igv-media"><img id="igv-img" alt=""><button id="igv-prev" type="button" aria-label="이전 사진">‹</button><button id="igv-next" type="button" aria-label="다음 사진">›</button><div id="igv-dots"></div></div>'
-      +'<div id="igv-side"><div id="igv-hd"><img id="igv-av" alt=""><div class="igv-hd-txt"><div id="igv-name"></div><div id="igv-meta"></div></div></div>'
+      +'<div id="igv-side"><div id="igv-hd"><img id="igv-av" alt=""><div class="igv-hd-txt"><div id="igv-name"></div><div id="igv-meta"></div></div><button class="sw-to-lb" type="button"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg><span></span></button></div>'
       +'<div id="igv-cap"></div><a id="igv-open" target="_blank" rel="noopener noreferrer"></a></div></div>';
     document.body.appendChild(ov);
     ov.addEventListener('click',e=>{if(e.target===ov)_closeIgViewer();});
@@ -22514,8 +22515,10 @@ function _openIgViewer(m,handle,idx){
   const av=ov.querySelector('#igv-av');if(ig&&ig.pic){av.src=ig.pic;av.hidden=false;}else av.hidden=true;
   const cap=ov.querySelector('#igv-cap');cap.textContent=m.cap||'';cap.hidden=!m.cap;
   const op=ov.querySelector('#igv-open');op.href=m.p;op.textContent=ko?'Instagram에서 보기 ↗':'View on Instagram ↗';
+  ov.querySelector('.sw-to-lb span').textContent=ko?'재생 화면으로':'Back to player';
   _igvShow();
-  ov.classList.add('open');_bringToFront(ov);
+  // 웹 무대 — 무대가 좁으면(카드+나침반 사이 520px 등) 사진 위·본문 아래로 쌓는다(igv-narrow)
+  _swOpen('igv',ov,ov.querySelector('#igv-panel'),{onPlace:w=>ov.classList.toggle('igv-narrow',w<900)});
 }
 function _igvShow(){
   const ov=document.getElementById('igv-overlay');if(!ov||!_igv)return;
@@ -22529,7 +22532,7 @@ function _igvShow(){
 function _igvGo(d){if(!_igv)return;const n=_igv.i+d;if(n<0||n>=_igv.pics.length)return;_igv.i=n;_igvShow();}
 function _closeIgViewer(){
   const ov=document.getElementById('igv-overlay');
-  if(ov){ov.classList.remove('open');ov.style.background='';const pn=ov.querySelector('#igv-panel');if(pn){pn.style.transition='';pn.style.transform='';}}
+  if(ov){ov.style.background='';_swClose('igv',ov,ov.querySelector('#igv-panel'),{fin:()=>ov.classList.remove('igv-narrow')});}
   _igv=null;_igvDrag=false;
 }
 // 핸들 → 주인 이름(그룹/멤버) — 캡션용. 링크는 artists/groups의 links.instagram
@@ -28055,64 +28058,49 @@ async function _openVenueEvents(venue,_back){
     listEl.appendChild(it);
   });
 }
-// ── 공연·공연장 창 — 웹은 무대, 폰은 바텀시트(2026-10-28 창 레이아웃 개편 3단계, 위 _flPlace 주석과 같은 방향) ──
-// 웹(≥1024): 가운데 작은 창 + 어두운 배경 대신 카드 왼쪽 무대에 붙고, 재생 화면·앨범·목록 창과 나중에 연 차례로 앞에 선다.
-// 폰(≤768): 아래에서 올라오는 시트, 맨 위에서 아래로 끌면 닫힘. 그 사이 폭은 예전 가운데 창.
-// 공연 → 공연장 칩처럼 창 안에서 이어 열면 앞 화면을 쌓아 두고 '‹'로 돌아간다(_vpHist). 창을 닫으면 비운다.
-let _vpHist=[],_vpCur=null,_vpTok=0,_vpPlaceT=null;
-function _vpPlace(){
-  const ov=document.getElementById('venue-overlay');if(!ov)return;
+// ── 무대 창 공용(2026-10-28 창 레이아웃 개편 3~4단계, 위 _flPlace 주석과 같은 방향) — 공연·공연장(venue)·트로피(trophy)·인스타 사진(igv) ──
+// 웹(≥1024): 가운데 작은 창 + 어두운 배경 대신 카드 왼쪽 무대에 붙고(자리는 _stageRegion을 0.4초마다), 재생 화면·앨범·목록 창과
+// 나중에 연 차례로 앞에 선다(body[data-stage-front]=key — 숨김 규칙은 CSS). 폰(≤768): sheet면 아래에서 올라오는 시트. 그 사이 폭은 예전 가운데 창.
+const _swT={};
+function _swPlace(ov,onPlace){
   if(!_stageWide()||!ov.classList.contains('open')){ov.style.left='';ov.style.right='';return;}
   const{left,right}=_stageRegion();
   ov.style.left=left+'px';ov.style.right=Math.max(0,window.innerWidth-right)+'px';
+  if(onPlace)onPlace(right-left);
 }
-function _vpSame(a,b){return!!a&&!!b&&a.k===b.k&&(a.k==='v'?a.venue===b.venue:a.ev===b.ev);}
-// 창을 열거나 내용을 바꾸기 전에 — 차례 기록·뒤로 버튼·열기 연출. 돌려주는 값(차례 번호)으로 늦게 온 비동기 결과를 거른다.
-function _vpEnter(view,back){
-  const ov=document.getElementById('venue-overlay'),panel=document.getElementById('venue-panel');
-  const was=ov.classList.contains('open');
-  if(!was)_vpHist=[];
-  else if(!back&&_vpCur&&!_vpSame(_vpCur,view))_vpHist.push(_vpCur);
-  _vpCur=view;
-  const bk=document.getElementById('venue-panel-back');if(bk)bk.hidden=!_vpHist.length;
-  panel.scrollTop=0;
-  if(!was){
-    if(isMob()){
-      panel.style.transition='none';panel.style.transform='translateY(100%)';ov.classList.add('open');_bringToFront(ov);
-      requestAnimationFrame(()=>requestAnimationFrame(()=>{panel.style.transition='transform 0.26s cubic-bezier(0.32,0.72,0,1)';panel.style.transform='';}));
-    }else{ov.classList.add('open');_bringToFront(ov);}
-  }else _bringToFront(ov); // 이미 열려 있어도(다른 공연으로 바꿈) 맨 위로
-  if(_stageWide()){_stageOpen('venue');_vpPlace();if(!_vpPlaceT)_vpPlaceT=setInterval(_vpPlace,400);}
-  return ++_vpTok;
+// 돌려주는 값: 이미 열려 있었는지(내용만 바뀜)
+function _swOpen(key,ov,panel,o){
+  o=o||{};const was=ov.classList.contains('open');
+  if(!was&&o.sheet&&isMob()){
+    panel.style.transition='none';panel.style.transform='translateY(100%)';ov.classList.add('open');_bringToFront(ov);
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{panel.style.transition='transform 0.26s cubic-bezier(0.32,0.72,0,1)';panel.style.transform='';}));
+  }else if(!was){ov.classList.add('open');_bringToFront(ov);}
+  else _bringToFront(ov); // 이미 열려 있어도(다른 공연으로 바꿈 등) 맨 위로
+  if(_stageWide()){
+    _stageOpen(key);_swPlace(ov,o.onPlace);
+    if(!_swT[key])_swT[key]=setInterval(()=>_swPlace(ov,o.onPlace),400);
+  }
+  _feedWideSync(); // 늦게 만들어지는 창(인스타 보기)은 나침반 폭 감시(MutationObserver)에 안 걸려 있다
+  return was;
 }
-function _vpBack(){
-  const prev=_vpHist.pop();if(!prev)return;
-  if(prev.k==='c')_openConcertSheet(prev.ev,true);else _openVenueEvents(prev.venue,true);
-}
-function _closeVenueOverlay(){
-  const ov=document.getElementById('venue-overlay'),panel=document.getElementById('venue-panel');
+function _swClose(key,ov,panel,o){
+  o=o||{};
   const fin=()=>{
     ov.classList.remove('open');panel.style.transition='';panel.style.transform='';
-    _vpHist=[];_vpCur=null;_vpTok++;
-    clearInterval(_vpPlaceT);_vpPlaceT=null;ov.style.left='';ov.style.right='';
-    _stageClose('venue');
+    clearInterval(_swT[key]);_swT[key]=null;ov.style.left='';ov.style.right='';
+    _stageClose(key);if(o.fin)o.fin();_feedWideSync();
   };
-  if(isMob()&&ov.classList.contains('open')){
+  if(o.sheet&&isMob()&&ov.classList.contains('open')){
     panel.style.transition='transform 0.24s cubic-bezier(0.32,0.72,0,1)';panel.style.transform='translateY(100%)';
     setTimeout(fin,240);
   }else fin();
 }
-document.getElementById('venue-panel-close').addEventListener('click',e=>{e.stopPropagation();_closeVenueOverlay();});
-document.getElementById('venue-panel-back')?.addEventListener('click',e=>{e.stopPropagation();_vpBack();});
-document.getElementById('venue-to-lb')?.addEventListener('click',e=>{e.stopPropagation();_setStageFront('lb');});
-document.getElementById('venue-overlay').addEventListener('click',e=>{if(e.target===e.currentTarget)_closeVenueOverlay();});
-// 폰 시트 끌어 닫기 — 목록 창(_wireFeedListSwipe)과 같은 규칙: 머리줄을 잡으면 언제나, 본문은 맨 위일 때만
-{
-  const panel=document.getElementById('venue-panel');
+// 폰 시트 끌어 닫기 — 목록 창(_wireFeedListSwipe)과 같은 규칙: 머리줄(hdSel)을 잡으면 언제나, 본문은 맨 위일 때만
+function _swWireDrag(panel,hdSel,onClose){
   let y0=0,dragging=false,active=false,raf=0,dy=0;
   panel.addEventListener('touchstart',e=>{
     if(!isMob()||e.target.closest('.hscroll-drag')){dragging=false;return;}
-    y0=e.touches[0].clientY;dragging=true;active=!!e.target.closest('#venue-panel-hd')||panel.scrollTop<=0;dy=0;
+    y0=e.touches[0].clientY;dragging=true;active=!!e.target.closest(hdSel)||panel.scrollTop<=0;dy=0;
   },{passive:true});
   panel.addEventListener('touchmove',e=>{
     if(!dragging)return;
@@ -28126,10 +28114,42 @@ document.getElementById('venue-overlay').addEventListener('click',e=>{if(e.targe
     if(!dragging)return;dragging=false;
     if(raf){cancelAnimationFrame(raf);raf=0;}
     if(!active)return;active=false;
-    if(dy>80)_closeVenueOverlay();
+    if(dy>80)onClose();
     else{panel.style.transition='transform 0.22s cubic-bezier(0.32,0.72,0,1)';panel.style.transform='';setTimeout(()=>{panel.style.transition='';},220);}
   },{passive:true});
 }
+// 무대 앞에 나온 창의 닫기 — Esc(_closeTopOverlay)가 뒤에 비켜 있는 재생 화면보다 이것부터 닫는다
+const _SW_CLOSERS={venue:()=>_closeVenueOverlay(),list:()=>_closeFeedListOverlay(),trophy:()=>_closeTrophyOverlay()};
+// 무대 창 머리줄의 "▶ 재생 화면으로"(재생 중에 이 창이 앞일 때만 CSS로 보임)
+document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('.sw-to-lb');if(b){e.stopPropagation();_setStageFront('lb');}});
+
+// ── 공연·공연장 창(무대 key 'venue', 폰 시트) ──
+// 공연 → 공연장 칩처럼 창 안에서 이어 열면 앞 화면을 쌓아 두고 '‹'로 돌아간다(_vpHist). 창을 닫으면 비운다.
+let _vpHist=[],_vpCur=null,_vpTok=0;
+function _vpSame(a,b){return!!a&&!!b&&a.k===b.k&&(a.k==='v'?a.venue===b.venue:a.ev===b.ev);}
+// 창을 열거나 내용을 바꾸기 전에 — 차례 기록·뒤로 버튼·열기. 돌려주는 값(차례 번호)으로 늦게 온 비동기 결과를 거른다.
+function _vpEnter(view,back){
+  const ov=document.getElementById('venue-overlay'),panel=document.getElementById('venue-panel');
+  const was=ov.classList.contains('open');
+  if(!was)_vpHist=[];
+  else if(!back&&_vpCur&&!_vpSame(_vpCur,view))_vpHist.push(_vpCur);
+  _vpCur=view;
+  const bk=document.getElementById('venue-panel-back');if(bk)bk.hidden=!_vpHist.length;
+  panel.scrollTop=0;
+  _swOpen('venue',ov,panel,{sheet:true});
+  return ++_vpTok;
+}
+function _vpBack(){
+  const prev=_vpHist.pop();if(!prev)return;
+  if(prev.k==='c')_openConcertSheet(prev.ev,true);else _openVenueEvents(prev.venue,true);
+}
+function _closeVenueOverlay(){
+  _swClose('venue',document.getElementById('venue-overlay'),document.getElementById('venue-panel'),{sheet:true,fin:()=>{_vpHist=[];_vpCur=null;_vpTok++;}});
+}
+document.getElementById('venue-panel-close').addEventListener('click',e=>{e.stopPropagation();_closeVenueOverlay();});
+document.getElementById('venue-panel-back')?.addEventListener('click',e=>{e.stopPropagation();_vpBack();});
+document.getElementById('venue-overlay').addEventListener('click',e=>{if(e.target===e.currentTarget)_closeVenueOverlay();});
+_swWireDrag(document.getElementById('venue-panel'),'#venue-panel-hd',_closeVenueOverlay);
 
 // ── 트로피(객관적 성취 기록 — 콘서트와 달리 개인화 없이 단순 카운트+리스트만) ──
 // 음악방송 1위 / 멜론 연간 TOP100 / 스포티파이 마일스톤 세 종류를 같은 모달(#trophy-overlay)에서
@@ -28547,7 +28567,7 @@ function _openTrophyPanel(dataByKind,startKind){
     tabsEl.style.display='none';
   }
   _renderTrophyKind(k0);
-  {const _t=document.getElementById('trophy-overlay');_t.classList.add('open');_bringToFront(_t);} // 카드 위로(정적 z:80)
+  {const _t=document.getElementById('trophy-overlay'),_p=document.getElementById('trophy-panel');_p.scrollTop=0;_swOpen('trophy',_t,_p,{sheet:true});} // 웹 무대·폰 시트(위 _swOpen)
 }
 function _renderTrophyKind(kind){
   _trophyActiveKind=kind;
@@ -28587,8 +28607,10 @@ function _renderTrophyKind(kind){
     listEl.appendChild(it);
   });
 }
-document.getElementById('trophy-panel-close').addEventListener('click',e=>{e.stopPropagation();document.getElementById('trophy-overlay').classList.remove('open');});
-document.getElementById('trophy-overlay').addEventListener('click',e=>{if(e.target===e.currentTarget)e.currentTarget.classList.remove('open');});
+function _closeTrophyOverlay(){_swClose('trophy',document.getElementById('trophy-overlay'),document.getElementById('trophy-panel'),{sheet:true});}
+document.getElementById('trophy-panel-close').addEventListener('click',e=>{e.stopPropagation();_closeTrophyOverlay();});
+document.getElementById('trophy-overlay').addEventListener('click',e=>{if(e.target===e.currentTarget)_closeTrophyOverlay();});
+_swWireDrag(document.getElementById('trophy-panel'),'#trophy-panel-hd,#trophy-panel-tabs',_closeTrophyOverlay);
 
 // DB category가 부정확한(가로로 저장됐지만 실제론 쇼츠인) 영상을 화면 표시 후 백그라운드에서 확인.
 // 네트워크가 느릴 때 프로브 요청이 동시에 몰리면 개별 요청이 크게 지연되므로 동시 개수를 제한한다.

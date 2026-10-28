@@ -5167,29 +5167,44 @@
   #venue-panel .concert-poster{width:96px;height:136px;}
   #venue-panel .concert-item-title{font-size:15.5px;}
 }
-/* ── 공연·공연장 창 머리줄(2026-10-28 창 개편 3단계) — '‹'(창 안에서 이어 연 앞 화면으로)·제목·'재생 화면으로' ── */
-#venue-panel-hd{display:flex;align-items:center;gap:8px;padding-right:36px;min-width:0;}
-#venue-panel-hd .pp-title{flex:1;min-width:0;padding-right:0;}
+/* ── 무대 창 공용(2026-10-28 창 개편 3~4단계) — 공연·공연장(#venue-overlay)·트로피(#trophy-overlay)·인스타 사진(#igv-overlay) ──
+   머리줄(.sw-hd): '‹'(공연 창 — 창 안에서 이어 연 앞 화면으로)·제목·'▶ 재생 화면으로'(.sw-to-lb, 재생 중 이 창이 앞일 때만) */
+.sw-hd{display:flex;align-items:center;gap:8px;padding-right:36px;min-width:0;}
+.sw-hd .pp-title{flex:1;min-width:0;padding-right:0;}
 #venue-panel-back{flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;margin-left:-6px;border:none;border-radius:50%;background:none;color:rgba(200,215,250,0.85);cursor:pointer;}
 #venue-panel-back:hover{background:rgba(255,255,255,0.08);}
 #venue-panel-back[hidden]{display:none;}
 #venue-panel-back svg{width:20px;height:20px;fill:currentColor;}
-#venue-to-lb{display:none;}
-/* 폰: 아래에서 올라오는 시트(목록 창과 같은 모양 — 손잡이·위 모서리만 둥글게). 열고 닫는 transform은 JS(_vpEnter·_closeVenueOverlay) */
+.sw-to-lb{display:none;}
+/* 폰: 아래에서 올라오는 시트(목록 창과 같은 모양 — 손잡이·위 모서리만 둥글게). 열고 닫는 transform은 JS(_swOpen·_swClose).
+   인스타 사진 보기는 원래 폰 전체 화면 + 쓸어 닫기라 그대로 */
 @media(max-width:768px){
-  #venue-overlay{align-items:flex-end;}
-  #venue-panel{width:100%;max-width:100%;max-height:88vh;border-radius:18px 18px 0 0;padding-top:22px;overscroll-behavior:contain;}
-  #venue-panel::before{content:'';position:absolute;top:7px;left:50%;transform:translateX(-50%);width:36px;height:4px;border-radius:2px;background:rgba(255,255,255,0.2);pointer-events:none;}
+  #venue-overlay,#trophy-overlay{align-items:flex-end;}
+  #venue-panel,#trophy-panel{width:100%;max-width:100%;max-height:88vh;border-radius:18px 18px 0 0;padding-top:22px;overscroll-behavior:contain;box-sizing:border-box;}
+  #venue-panel::before,#trophy-panel::before{content:'';position:absolute;top:7px;left:50%;transform:translateX(-50%);width:36px;height:4px;border-radius:2px;background:rgba(255,255,255,0.2);pointer-events:none;}
 }
-/* 웹: 무대(카드 왼쪽 빈자리)에 붙고 어두운 배경 없음. 자리(left/right)는 JS _vpPlace. 재생 화면·앨범·목록 창과 나중에 연 쪽이 앞 */
+/* 웹: 무대(카드 왼쪽 빈자리)에 붙고 어두운 배경 없음. 자리(left/right)는 JS _swPlace. 재생 화면·앨범·목록 창과 나중에 연 쪽이 앞(body[data-stage-front]) */
 @media(min-width:1024px){
-  #venue-overlay{inset:64px 0 0 0;padding:44px 28px 20px;background:none;backdrop-filter:none;-webkit-backdrop-filter:none;align-items:flex-start;justify-content:flex-end;pointer-events:none;transition:opacity .2s ease,transform .22s ease;}
-  #venue-panel{pointer-events:auto;width:min(560px,100%);max-height:100%;box-sizing:border-box;box-shadow:0 12px 44px rgba(0,0,0,0.5);}
-  body[data-stage-front]:not([data-stage-front="venue"]) #venue-overlay.open{opacity:0;transform:translateX(24px);visibility:hidden;}
-  body[data-stage-front="venue"] #yt-lightbox.open{opacity:0;visibility:hidden;pointer-events:none;}
-  body[data-stage-front="venue"] #gc-discog-detail.open,body[data-stage-front="venue"] #feed-list-overlay.open{opacity:0;transform:translateX(24px);visibility:hidden;}
-  body[data-stage-front="venue"]:has(#yt-lightbox.open) #venue-to-lb{display:inline-flex;align-items:center;gap:6px;flex-shrink:0;padding:5px 11px 5px 9px;border-radius:999px;border:0.5px solid rgba(126,156,255,0.4);background:rgba(126,156,255,0.14);color:#cfdbff;font:600 11.5px/1 inherit;font-family:inherit;cursor:pointer;white-space:nowrap;}
-  #venue-to-lb svg{width:12px;height:12px;fill:currentColor;}
+  #venue-overlay,#trophy-overlay,#igv-overlay{inset:64px 0 0 0;padding:44px 28px 20px;background:none;backdrop-filter:none;-webkit-backdrop-filter:none;align-items:flex-start;justify-content:flex-end;pointer-events:none;transition:opacity .2s ease,transform .22s ease;}
+  #venue-panel,#trophy-panel{pointer-events:auto;width:min(560px,100%);max-height:100%;box-sizing:border-box;box-shadow:0 12px 44px rgba(0,0,0,0.5);}
+  #igv-panel{pointer-events:auto;max-width:100%;height:100%;box-sizing:border-box;box-shadow:0 12px 44px rgba(0,0,0,0.5);}
+  #igv-media{flex:0 1 auto;min-width:320px;}
+  #igv-img{max-width:100%;}
+  /* 무대가 좁으면(카드+나침반 사이 등, JS가 igv-narrow) 사진 위·본문 아래 */
+  #igv-overlay.igv-narrow #igv-panel{flex-direction:column;width:min(560px,100%);}
+  #igv-overlay.igv-narrow #igv-media{flex:0 1 auto;min-height:0;}
+  #igv-overlay.igv-narrow #igv-img{max-height:min(56vh,620px);}
+  #igv-overlay.igv-narrow #igv-side{width:auto;flex:1 1 auto;min-height:120px;border-left:none;border-top:0.5px solid rgba(255,255,255,0.08);}
+  /* 차례 — 뒤로 간 쪽은 닫지 않고 숨긴다(재생 화면은 소리 그대로) */
+  body[data-stage-front]:not([data-stage-front="venue"]) #venue-overlay.open,
+  body[data-stage-front]:not([data-stage-front="trophy"]) #trophy-overlay.open,
+  body[data-stage-front]:not([data-stage-front="igv"]) #igv-overlay.open{opacity:0;transform:translateX(24px);visibility:hidden;}
+  body:is([data-stage-front="venue"],[data-stage-front="trophy"],[data-stage-front="igv"]) #yt-lightbox.open{opacity:0;visibility:hidden;pointer-events:none;}
+  body:is([data-stage-front="venue"],[data-stage-front="trophy"],[data-stage-front="igv"]) :is(#gc-discog-detail,#feed-list-overlay).open{opacity:0;transform:translateX(24px);visibility:hidden;}
+  body[data-stage-front="venue"]:has(#yt-lightbox.open) #venue-overlay .sw-to-lb,
+  body[data-stage-front="trophy"]:has(#yt-lightbox.open) #trophy-overlay .sw-to-lb,
+  body[data-stage-front="igv"]:has(#yt-lightbox.open) #igv-overlay .sw-to-lb{display:inline-flex;align-items:center;gap:6px;flex-shrink:0;padding:5px 11px 5px 9px;border-radius:999px;border:0.5px solid rgba(126,156,255,0.4);background:rgba(126,156,255,0.14);color:#cfdbff;font:600 11.5px/1 inherit;font-family:inherit;cursor:pointer;white-space:nowrap;}
+  .sw-to-lb svg{width:12px;height:12px;fill:currentColor;}
 }
 /* ── 웹 무대: 목록 창(2026-10-28 사용자 "창이 가운데 열리는 게 최선의 레이아웃이 아닌 것 같다, 궁극적 개선") ──
    차트·모아보기·시상식·컬렉션(#feed-list-overlay)을 화면 가운데 작은 창 + 어두운 배경 대신 앨범 창과 같은 무대(카드 왼쪽 빈자리)에.
@@ -5235,4 +5250,20 @@
 /* 넓은 나침반 영상 칸: 가로 영상이 2칸(높이 1.1칸)이면 옆 쇼츠(1.8칸)보다 짧아 밑이 크게 비었다 — 3칸이면 높이 ≈ 1.7칸으로 쇼츠(1.8칸)와 맞물린다 — 5칸 그리드에서 가로3+쇼츠2 / 쇼츠5 */
 @media(min-width:1024px){
   body.fw-home .feed-grid .feed-card.feed-wide:not(.is-short){grid-column:span 3;}
+}
+/* 넓은 나침반 For You — 내용이 적으면 오른쪽이 텅 비던 것(2026-10-28 사용자 캡처: 기념일 1명·This Week 2개가 왼쪽 끝에만, 나머지 700px 빈칸).
+   ① 기념일이 적으면 This Week가 그 옆으로 올라온다(기념일 칸은 내용 폭만큼 — 많으면 한 줄을 다 쓰고 This Week는 아래로)
+   ② This Week 안의 가로 소식(2칸)·쇼츠(1칸)를 묶음별 줄이 아니라 한 흐름으로(8칸 기준 — 가로 4개/줄, 발견과 같은 크기) */
+@media(min-width:1024px){
+  body.fw-home #feed-pane-rec:not([hidden]){display:flex;flex-wrap:wrap;align-content:flex-start;}
+  body.fw-home #feed-pane-rec>*{flex:1 1 100%;min-width:0;}
+  body.fw-home #feed-pane-rec>#feed-foryou-anniv-section{flex:0 1 auto;max-width:100%;}
+  body.fw-home #feed-pane-rec>#feed-favnews-section{flex:1 1 420px;}
+  body.fw-home #feed-foryou-anniv .feed-strip-item{width:112px;}
+  body.fw-home .feed-news-list{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));align-items:start;gap:8px;padding:4px 16px 2px;}
+  body.fw-home .feed-news-list>*{grid-column:1/-1;min-width:0;}
+  body.fw-home .feed-news-list>:is(.feed-news-mvs,.feed-news-shorts){display:contents;}
+  body.fw-home .feed-news-mvs>.feed-news-row{grid-column:span 2;min-width:0;margin:0;}
+  body.fw-home .feed-news-shorts>.feed-card{grid-column:span 1;min-width:0;}
+  body.fw-home .feed-news-list>.feed-news-row:not(.is-media){margin:0 -16px;}
 }

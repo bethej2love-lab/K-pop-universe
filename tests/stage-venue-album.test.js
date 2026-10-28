@@ -1,5 +1,5 @@
-// 웹 무대 3단계(2026-10-28) — ① 공연·공연장 창이 카드 옆 무대에(어두운 배경 없음)·재생 화면과 차례·창 안 '‹ 뒤로'·폰은 바텀시트
-// ② 나침반이 열려 있어도 앨범에서 곡을 누르면 옆 영상 패널로(예전엔 곡 오버레이로 빠졌다), 무대가 좁으면 앨범 창이 나침반 위로 넓어짐.
+// 웹 무대 3~4단계(2026-10-28) — ① 공연·공연장 창이 카드 옆 무대에(어두운 배경 없음)·재생 화면과 차례·창 안 '‹ 뒤로'·폰은 바텀시트
+// ② 나침반이 열려 있어도 앨범에서 곡을 누르면 옆 영상 패널로(예전엔 곡 오버레이로 빠졌다), 무대가 좁으면 앨범 창이 나침반 위로 넓어짐. ③ 트로피·인스타 사진 보기도 같은 무대(Esc는 앞 창부터).
 // ⚠️ 실DB 브라우저 테스트 — CI 스킵 목록(browser). 실행: node tests/stage-venue-album.test.js  (KPU_SHOT=폴더 → 캡처 저장)
 const fs=require('fs'),path=require('path'),http=require('http'),os=require('os');const{spawn}=require('child_process');
 const ROOT=path.join(__dirname,'..');
@@ -65,7 +65,7 @@ const R=`(el)=>{const r=el.getBoundingClientRect();return{l:Math.round(r.left),r
       const r2=JSON.parse(await ev(c,`(async()=>{const S=ms=>new Promise(r=>setTimeout(r,ms));const res={};
         document.getElementById('venue-panel-back').click();await S(800);
         res.back={title:document.getElementById('venue-panel-title').textContent,back:document.getElementById('venue-panel-back').hidden};
-        (document.querySelector('#side-panel .gc-ch-item')||document.querySelector('#tv .gc-ch-item'))?.click();await S(2500);res.lbOpened=document.getElementById('yt-lightbox').classList.contains('open');
+        for(let k=0;k<20&&!document.querySelector('#side-panel .gc-ch-item');k++)await S(300);(document.querySelector('#side-panel .gc-ch-item')||document.querySelector('#tv .gc-ch-item'))?.click();await S(2500);res.lbOpened=document.getElementById('yt-lightbox').classList.contains('open');
         const lb=document.getElementById('yt-lightbox'),ov=document.getElementById('venue-overlay');
         res.lbFront={fo:document.getElementById('feed-overlay').classList.contains('open'),front:document.body.dataset.stageFront,venueVis:getComputedStyle(ov).visibility};
         _openConcertSheet(__ev);await S(800);
@@ -91,6 +91,33 @@ const R=`(el)=>{const r=el.getBoundingClientRect();return{l:Math.round(r.left),r
       if(r2.toLb.front==='lb'&&r2.toLb.venueVis==='hidden')ok(`[${W}] '재생 화면으로' → 재생 앞`);else bad(`[${W}] toLb `+JSON.stringify(r2.toLb));
       if(!r2.afterLb.lbOpen&&r2.afterLb.front==='venue'&&r2.afterLb.venueVis==='visible')ok(`[${W}] 재생 닫으면 공연 창 다시 앞`);else bad(`[${W}] 재생 닫기 `+JSON.stringify(r2.afterLb));
       if(!r2.closed.open&&!r2.closed.left&&r2.wide)ok(`[${W}] 닫기 → 정리, 카드까지 닫으면 나침반 다시 넓게`);else bad(`[${W}] 닫기 `+JSON.stringify([r2.closed,r2.wide,r2.wide2,r2.foOpen,r2.openIds]));
+      // 4단계 — 트로피·인스타 사진 보기도 같은 무대
+      const r3=JSON.parse(await ev(c,`(async()=>{const S=ms=>new Promise(r=>setTimeout(r,ms));const R=${R};const res={};
+        const fo=document.getElementById('feed-overlay'),card=document.getElementById('side-panel'),lb=document.getElementById('yt-lightbox');
+        showGC('아이브',innerWidth/2,innerHeight*0.4);await S(2500);
+        _openTrophyPanel({music_show:[{win_date:'2026-10-01',show:'TEST',song_title:'LUCID DREAM'}]});await S(800);
+        const tov=document.getElementById('trophy-overlay');
+        res.t1={open:tov.classList.contains('open'),front:document.body.dataset.stageFront,panel:R(document.getElementById('trophy-panel')),card:R(card),fo:R(fo),bg:getComputedStyle(tov).backgroundColor};
+        (document.querySelector('#side-panel .gc-ch-item'))?.click();await S(2500);
+        res.t2={front:document.body.dataset.stageFront,vis:getComputedStyle(tov).visibility};
+        _openTrophyPanel({music_show:[{win_date:'2026-10-01',show:'TEST',song_title:'LUCID DREAM'}]});await S(600);
+        res.t3={front:document.body.dataset.stageFront,lbVis:getComputedStyle(lb).visibility,toLb:getComputedStyle(document.getElementById('trophy-to-lb')).display};
+        document.dispatchEvent(new KeyboardEvent('keydown',{key:'Escape',bubbles:true}));await S(600);
+        res.t4={trophyOpen:tov.classList.contains('open'),lbOpen:lb.classList.contains('open'),front:document.body.dataset.stageFront};
+        _openIgViewer({u:'https://example.invalid/x.jpg',p:'https://www.instagram.com/p/x/',t:new Date().toISOString(),cap:'TEST CAPTION'},'ivestarship',0);await S(900);
+        const iov=document.getElementById('igv-overlay');
+        res.i1={open:iov.classList.contains('open'),front:document.body.dataset.stageFront,panel:R(document.getElementById('igv-panel')),card:R(card),fo:R(fo),narrow:iov.classList.contains('igv-narrow'),lbVis:getComputedStyle(lb).visibility,toLb:getComputedStyle(iov.querySelector('.sw-to-lb')).display};
+        _closeIgViewer();await S(600);
+        res.i2={open:iov.classList.contains('open'),front:document.body.dataset.stageFront,lbVis:getComputedStyle(lb).visibility};
+        closeLightbox();await S(800);closeCards();await S(1500);
+        return JSON.stringify(res);})()`));
+      const{t1,t2,t3,t4,i1,i2}=r3;
+      if(t1.open&&t1.front==='trophy'&&t1.panel.r<=t1.card.l+1&&t1.panel.l>=t1.fo.r-1&&/rgba\(0, 0, 0, 0\)|transparent/.test(t1.bg))ok(`[${W}] 트로피 창 = 무대(${t1.panel.l}~${t1.panel.r}, 배경 없음)`);else bad(`[${W}] 트로피 `+JSON.stringify(t1));
+      if(t2.front==='lb'&&t2.vis==='hidden'&&t3.front==='trophy'&&t3.lbVis==='hidden'&&t3.toLb!=='none')ok(`[${W}] 트로피 ↔ 재생 화면 차례·'재생 화면으로'`);else bad(`[${W}] 트로피 차례 `+JSON.stringify([t2,t3]));
+      if(!t4.trophyOpen&&t4.lbOpen&&t4.front==='lb')ok(`[${W}] Esc = 앞에 나온 트로피만 닫고 재생 화면은 유지`);else bad(`[${W}] Esc `+JSON.stringify(t4));
+      if(i1.open&&i1.front==='igv'&&i1.panel.r<=i1.card.l+1&&i1.panel.l>=i1.fo.r-1&&i1.lbVis==='hidden'&&i1.toLb!=='none'&&i1.narrow===(i1.card.l-i1.fo.r<900))ok(`[${W}] 인스타 사진 = 무대(${i1.panel.l}~${i1.panel.r}${i1.narrow?', 좁아서 세로로':''})`);else bad(`[${W}] 인스타 `+JSON.stringify(i1));
+      if(!i2.open&&i2.front==='lb'&&i2.lbVis==='visible')ok(`[${W}] 인스타 닫으면 재생 화면 다시 앞`);else bad(`[${W}] 인스타 닫기 `+JSON.stringify(i2));
+      await shot(c,`stage-trophy-${W}`);
     }
     // 폰: 바텀시트
     await load(390,844,true);
@@ -103,6 +130,11 @@ const R=`(el)=>{const r=el.getBoundingClientRect();return{l:Math.round(r.left),r
     const m2=JSON.parse(await ev(c,`(async()=>{_closeVenueOverlay();await new Promise(r=>setTimeout(r,500));return JSON.stringify({closed:!document.getElementById('venue-overlay').classList.contains('open')});})()`));
     if(Math.abs(m.b-m.h)<=1&&m.w===390&&m.rad==='0px')ok(`[390] 공연 창 = 바텀시트(바닥 붙음·폭 꽉)`);else bad('[390] 시트 '+JSON.stringify(m));
     if(m.back&&m2.closed)ok('[390] 공연장으로 이어 열면 ‹, 닫기 정리');else bad('[390] '+JSON.stringify([m,m2]));
+    const tm=JSON.parse(await ev(c,`(async()=>{const S=ms=>new Promise(r=>setTimeout(r,ms));
+      _openTrophyPanel({music_show:[{win_date:'2026-10-01',show:'TEST',song_title:'LUCID DREAM'}]});await S(900);
+      const p=document.getElementById('trophy-panel').getBoundingClientRect();const res={b:Math.round(p.bottom),w:Math.round(p.width),h:innerHeight};
+      _closeTrophyOverlay();await S(500);res.closed=!document.getElementById('trophy-overlay').classList.contains('open');return JSON.stringify(res);})()`));
+    if(Math.abs(tm.b-tm.h)<=1&&tm.w===390&&tm.closed)ok('[390] 트로피 창 = 바텀시트, 닫기 정리');else bad('[390] 트로피 '+JSON.stringify(tm));
     c.close();
   }catch(e){bad('예외: '+e.message);}
   finally{try{proc.kill();}catch(e){}server.close();}
