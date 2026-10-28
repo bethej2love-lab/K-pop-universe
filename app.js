@@ -24006,7 +24006,21 @@ async function _eventRows(s){
   return p;
 }
 const _evEdLabel=ed=>{const[y,c]=String(ed).split('-');return c?(c==='Summer'?(currentLang==='ko'?`${y} 썸머`:`${y} Summer`):`${y} ${c}`):y;};
-const _evIsStage=v=>v.category==='live'||v.category==='mv';
+// 행사 영상 가르기(2026-10-28 사용자 "지난 무대 보기 눌렀을 때 영상 제대로 필터링 안 된 것 같다") — 시상식 공식 무대
+// ('[#MMA2025] EXO - 늑대와 미녀 + …'·'[#2025MAMA] CORTIS - GO!')가 수집 분류로는 대부분 category 'other'라, 예전 기준(live·mv)으론
+// MMA 2025 영상 211개 중 무대가 8개(그마저 연습·리허설·수상소감)뿐이었고 비면 '전체'로 넘어가 비하인드·브이로그가 섞였다.
+// 이제 제목·형식 태그로: 쇼츠·비하인드류는 '그 밖', 직캠은 '직캠', 곡 표기가 있는 공연은 '무대'.
+const _EV_NOT_STAGE_RE=/behind|비하인드|브이로그|vlog|practice|연습|리허설|rehearsal|소감|speech|interview|인터뷰|line-?up|라인업|teaser|티저|red ?carpet|레드카펫|포토월|reaction|리액션|episode|에피소드|preview|예고|챌린지|challenge|moment|모먼트|메이킹|making|포토|photo|직캠 ?모음|모음집|공항|출국|입국|airport|\.zip|cut\b|컷/i;
+const _EV_FANCAM_RE=/fancam|직캠|choreo|focus|페이스캠|facecam|세로캠|vertical/i;
+const _EV_STAGE_RE=/ - | – |stage|무대|performance|퍼포먼스|\(4k\)|\[4k\]|@sbs|@kbs|@mbc|mnet [0-9]{6}|방송|full ver|special/i;
+const _evKind=v=>{
+  const t=v.title||'',cf=v.content_formats||[];
+  if(_isShortV(v)||_EV_NOT_STAGE_RE.test(t)||cf.some(f=>f==='비하인드'||f==='브이로그'||f==='인터뷰'||f==='챌린지'))return'other'; // 안무영상 태그는 방송사 공식 안무캠(K-Choreo)에도 붙어 빼지 않는다 — 연습실 영상은 제목(practice·연습)으로 거른다
+  if(v.category==='fan'||_EV_FANCAM_RE.test(t))return'fancam';
+  if(v.category==='live'||v.category==='mv'||_EV_STAGE_RE.test(t))return'stage';
+  return'other';
+};
+const _evIsStage=v=>_evKind(v)==='stage';
 async function _openEventPage(id,ed,view){
   const s=_EVENT_SERIES.find(x=>x.id===id);if(!s)return;
   const isKo=currentLang==='ko';
@@ -24015,19 +24029,24 @@ async function _openEventPage(id,ed,view){
   // 회차: 최신 연도 먼저(같은 해면 이름순)
   const counts={};rows.forEach(v=>{counts[v._ed]=(counts[v._ed]||0)+1;});
   const eds=Object.keys(counts).sort((a,b)=>(+b.slice(0,4))-(+a.slice(0,4))||a.localeCompare(b));
-  if(!ed||!counts[ed])ed=eds[0]||null;
+  // 회차를 안 정했으면 무대가 10개↑ 모인 가장 최근 회차 — "지난 무대 보기"가 아직 안 열린 올해(라인업·예고만)로 열리던 것
+  if(!ed||!counts[ed]){
+    const stN={};rows.forEach(v=>{if(_evIsStage(v))stN[v._ed]=(stN[v._ed]||0)+1;});
+    ed=eds.find(e=>(stN[e]||0)>=10)||eds.find(e=>stN[e])||eds[0]||null;
+  }
   if(!view)view='stage';
   const inEd=rows.filter(v=>v._ed===ed);
-  // '무대만'이 비면(비하인드만 있는 회차) 전체로 — 빈 화면을 만들지 않는다
-  if(view==='stage'&&!inEd.some(_evIsStage))view='all';
-  const list=(view==='stage'?inEd.filter(_evIsStage):inEd).sort((a,b)=>(b.view_count||0)-(a.view_count||0));
+  // 고른 칸이 비면(비하인드만 있는 회차) 직캠 → 전체 — 빈 화면을 만들지 않는다
+  if(view==='stage'&&!inEd.some(_evIsStage))view=inEd.some(v=>_evKind(v)==='fancam')?'fancam':'all';
+  if(view==='fancam'&&!inEd.some(v=>_evKind(v)==='fancam'))view='all';
+  const list=(view==='all'?inEd:inEd.filter(v=>_evKind(v)===view)).sort((a,b)=>(b.view_count||0)-(a.view_count||0));
   const vidUrl=x=>_isShortV(x)?`https://youtube.com/shorts/${x.id}`:`https://www.youtube.com/watch?v=${x.id}`;
   const songs=list.slice(0,300).map(x=>({..._rowTags(x),t:x.title,u:vidUrl(x),thumb:x.thumb,vc:x.view_count,dur:x.duration_sec,pa:x.published_at?.slice(0,10),_apiId:x.id,_apiGroupKo:x.group_ko}));
   const sub=!ed?(isKo?'아직 모인 영상이 없어요':'No videos yet')
     :`${_evEdLabel(ed)} · ${isKo?`영상 ${list.length}개`:`${list.length} videos`}`;
   const facets=[];
   if(eds.length)facets.push({key:'ed',labelKo:'',labelEn:'',scroll:eds.length>6,sel:ed,options:eds.map(e=>({v:e,ko:_evEdLabel(e),en:_evEdLabel(e)})),onPick:v=>_openEventPage(id,v,view)});
-  if(ed)facets.push({key:'view',labelKo:'',labelEn:'',sel:view,options:[{v:'stage',ko:'무대',en:'Stages'},{v:'all',ko:'전체',en:'All'}],onPick:v=>_openEventPage(id,ed,v)});
+  if(ed)facets.push({key:'view',labelKo:'',labelEn:'',sel:view,options:[{v:'stage',ko:'무대',en:'Stages'},{v:'fancam',ko:'직캠',en:'Fancams'},{v:'all',ko:'전체',en:'All'}].filter(o=>o.v!=='fancam'||inEd.some(v=>_evKind(v)==='fancam')),onPick:v=>_openEventPage(id,ed,v)});
   _feedListRankedNext=false;
   _openFeedListOverlay(s.ko,sub,songs,{facets});
 }
