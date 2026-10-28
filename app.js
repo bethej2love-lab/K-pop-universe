@@ -7771,7 +7771,7 @@ async function _recMarkRising(vids){
   const day=n=>new Date(Date.now()-n*864e5).toISOString().slice(0,10);
   const rs=await Promise.allSettled([
     _withTimeout(()=>sb.from('yt_view_milestones').select('video_id').in('video_id',ids).eq('seeded',false).gte('crossed_at',day(14)),3000,undefined,0),
-    _withTimeout(()=>sb.from('rank_snapshots').select('video_id').in('video_id',ids).gte('snapshot_date',day(7)),3000,undefined,0),
+    _withTimeout(()=>sb.from('rank_snapshots').select('video_id').in('video_id',ids).gte('snapshot_date',day(7)).limit(999),3000,undefined,0),
   ]);
   const up=new Set();
   rs.forEach(r=>{if(r.status==='fulfilled'&&r.value&&!r.value.error)(r.value.data||[]).forEach(x=>up.add(x.video_id));});
