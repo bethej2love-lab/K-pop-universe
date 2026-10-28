@@ -1,0 +1,2 @@
+-- guest_backfill_2026-10-28b.sql 되돌리기(이 25개만)
+update yt_channel_videos y set with_members=b.with_members from ops_guest_backfill_bak_20261028 b where b.id=y.id and y.id in ('1FTnvXhb8Sk','1ozpxnDvX-A','1ICIn_CS9C8','5D7f5BXr-E8','6u4YBDYqPn8','BCB2pYh49To','KohxaWdzCK0','KiTXwjGALOs','KXI5zNI4540','bQuCww60JWE','bmAvmrj2cY8','cTrVaSftukU','dHX8pKC9fA0','fTNZ-nTRhq4','kaS3ywGRph4','mJ3XYhGxuJY','n4JZZWg0WgI','oD3SfgGMuR8','pF2roUWPz0U','pG6UhrwBc8I','qrhpQMmj6mE','uqdyiA6p04Y','uunvy4vOae4','vHtpBQHVu28','MYzKXqq9GbA');

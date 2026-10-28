@@ -153,6 +153,8 @@ expectGuest('#싱글즈_랭킹_어워즈 4월 3주차 주제! 가장 잘 어울�
 expectGuest('#효린 선배님의 #이게사랑이지뭐야 🫶🏻#Thislovechallenge #HYOLYN  #최유진 #YUJIN #Kep1er #케플러', '씨스타', '효린', true);
 expectGuest('𝒗𝒊𝒃𝒆 𝒔𝒐 𝒌𝒊𝒍𝒍𝒆𝒓💘 with #DAYOUNG #다영 선배님🔥 #BADVILLAIN #배드빌런 #THRILLER', '우주소녀', '다영', true);
 expectGuest('요리 개척자 등장  #덕밥집  #최강창민 #트레저', '동방신기', '최강창민', true);
+// 함께 표시가 없어도 그 사람 그룹명이 같이 있으면 인정
+expectGuest('What The #Potential#FANTASYBOYS#히카루#HIKARU #김규래#KIMGYURAE #다크비 #DKB #희찬 #HEECHAN', '판타지보이즈', '김규래', true);
 
 console.log(pass ? '\n🎉 다른 사람 풀네임·협찬 크레딧 테스트 통과' : '\n❌ 다른 사람 풀네임·협찬 크레딧 테스트 실패');
 process.exit(pass ? 0 : 1);

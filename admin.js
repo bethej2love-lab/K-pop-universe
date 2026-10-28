@@ -9523,8 +9523,12 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
       const _cueNear=t=>{const k=String(t).toLowerCase();for(let i=_lt0.indexOf(k);i>=0;i=_lt0.indexOf(k,i+1)){if(/(with|w[/]|feat|ft[.]|님|선배|함께|[&＆×]| x )/.test(_lt0.slice(Math.max(0,i-22),i+k.length+12)))return true;}return false;};
       // ③ 4차: 함께 표시 없는 해시태그만으론 세 글자↑도 12%가 오답(#아이유 #홀씨·#백예린 #Square 곡 표기, 배우 박정민·이준혁) → 해시태그는 함께 표시가
       //    있을 때만. 예외는 진행자가 정해진 고정 코너(제목에 코너명 + 그 진행자 해시태그) — 덕밥집·재친구·MC쭌 주간챌린지.
+      // 그 사람 그룹명(한글·영문, 붙여 쓴 꼴 포함)이 제목에 같이 있으면 함께 표시가 없어도 인정 — #FANTASYBOYS #이한빈·#CLOSEYOUREYES #전민욱
+      // (함께 표시 없이 빠진 434건 중 25건, 표본 전부 정답. 곡 표기·동명이인 오답엔 그룹명이 없었다)
+      const _nrm=x=>String(x||'').toLowerCase().replace(/[^a-z0-9가-힣]/g,''),_tn=_nrm(title);
+      const _coTag=t=>gs.some(g=>[g,GROUPS[g]&&GROUPS[g].en].map(_nrm).some(k=>k.length>=3&&k!==_nrm(t)&&_tn.includes(k)));
       const _host=Object.entries({'덕밥집':'최강창민','재친구':'김재중','mc쭌':'이장준'}).some(([k,v])=>v===a.name.ko&&_lt0.includes(k));
-      const tok=(_isHashtagOnlyName(a.name.ko)||_M2_GUEST_DENY.has(a.name.ko))?null:toks.find(t=>!_inGroupName(t)&&!_isHashtagOnlyName(t)&&!(/^[가-힣]{2}$/.test(t)&&t!==a.name.ko)&&(_isLat(t)?(_alias(t)&&(_adj(t)||(_exactTag(t)&&_cueNear(t)))):(([...t].length>=3&&_adj(t))||(_exactTag(t)&&(_cueNear(t)||_host)))));
+      const tok=(_isHashtagOnlyName(a.name.ko)||_M2_GUEST_DENY.has(a.name.ko))?null:toks.find(t=>!_inGroupName(t)&&!_isHashtagOnlyName(t)&&!(/^[가-힣]{2}$/.test(t)&&t!==a.name.ko)&&(_isLat(t)?(_alias(t)&&(_adj(t)||(_exactTag(t)&&_cueNear(t)))):(([...t].length>=3&&_adj(t))||(_exactTag(t)&&(_cueNear(t)||_host||_coTag(t))))));
       if(!tok)continue;
       const gk=gs.find(g=>GROUPS[g])||a.name.ko;
       if(gk===selfGko||a.name.ko===selfGko)continue; // 솔로 이름 키 채널(디모렉스)의 자기 영상에 자기를 전 그룹 게스트로 붙이던 것
