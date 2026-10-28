@@ -1,7 +1,56 @@
 # CHANGELOG
 
 ## 2026-10-28 (Codex — 누락된 그룹 공식 X 링크 보강)
-- **[진행중] [groups.json]** 사용자가 Claude 작업 종료 후 직접 수정 승인. 앞선 감사는 메모로 인계하고 이 작업을 우선. 16:30 KST까지 마무리 목표, 공식 홈페이지·공식 채널의 외부 링크·공식 X 프로필을 근거로 누락 계정만 추가. 개인/팬 계정·추정 핸들 제외, 기존 링크와 다른 그룹 정보 보존.
+- **[완료] [groups.json] [groups.slim.json]** 사용자가 Claude 작업 종료 후 직접 수정 승인. 앞선 감사는 메모로 인계하고 이 작업을 우선. 16:30 KST까지 마무리 목표, 공식 홈페이지·공식 채널의 외부 링크·공식 X 프로필을 근거로 누락 계정만 추가. 개인/팬 계정·추정 핸들 제외, 기존 링크와 다른 그룹 정보 보존.
+
+- **[완료] [groups.json] [groups.slim.json]** CHANGELOG의 현역 누락42팀 조사→공식 X39팀 추가(전체289팀 중 X 보유207→246, 전체 누락82→43). 원본과 초기 로드용 경량 데이터의 links.x만 같은 값으로 보강. 기존그룹/기존링크/앨범/멤버/영상/캐시버스터 변경 없음. JSON 전후 대조에서 추가한39개 x 필드만 제거하면 원본과 완전히 동일함을 확인.
+- **[완료·근거] [공식 계정 검증]** 공식 유튜브 채널 소개/대표 영상 설명의 SNS 링크를 우선 대조하고, 추가39개 전부 X 실제 프로필까지 열어 그룹명·공식 소개·연계 홈페이지를 확인. 검색 결과의 오래된 핸들을 복사하지 않음. 우아 WOOAH_HM, 나우즈 CUBE_NOWZ, 크나큰 KNKOfficial220, 네이즈 NAZE_officl(공식 철자 그대로). TNX/LUN8은 멤버용이 아닌 그룹 공지 계정 선택. FT_FANCLUB은 FTISLAND 공식 채널이 안내하는 운영 계정이며 개인 팬계정 아님. 올아워즈는 공식 유튜브가 안내하는 ALL_H_OURS를 선택(공식 허브에 별도 at_ALL_H_OURS도 있음).
+- **[완료·추가 출처] [공식 계정 검증]** [아홉 공식 허브](https://linktr.ee/official_AHOF)·[빅뱅 공식 허브](https://linktr.ee/ygbigbang)·[튜넥스 공식 허브](https://tunexx.lnk.to/TUNEINTOOURFREQUENCY)·[네이즈 공식 허브](https://litt.ly/naze.official)·[플레어유 FNC SNS 안내](https://fncent.com/?bid=korea&cat=2&m=bbs&uid=65085)·[하입프린세스 공식 허브](https://linktr.ee/hiipe_princess)·[하이파이유니콘 공식 SNS 개설 안내](https://www.hifiunicorn.com/post/news_1)·[A2O MAY 배급사 직접 보도자료](https://prtimes.jp/main/html/rd/p/000001831.000055377.html)도 대조. 씨엔블루는 [공식 앨범 소개 SNS 목록](https://m.melon.com/musicstory/detail.htm?mstorySeq=11793), 빅스는 [공식 위버스 영상 설명](https://weverse.io/vixx/highlight?hl=zh-cn)과 대조. 위키 사이트 보안 차단을 우회하지 않고 다른 공식 출처로 검증.
+- **⏳ 덜 된 일 [groups.json]** 현역 누락42팀 중 티아라·god·핑클3팀은 이번 조사에서 그룹 공식 X를 확정하지 못해 미입력(계정이 세상에 없다는 확정 아님). 멤버 개인 계정·소속사 전체 계정·팬 계정으로 대신 채우지 말 것. 향후 그룹/소속사 공식 홈페이지·공식 채널에서 X로 연결한 주소와 실제 X 프로필을 함께 확인한 경우에만 links.x 추가. 해체 등 나머지40팀은 이번 현역42팀 보강 범위 밖, 일괄 추정 추가 금지.
+
+| 그룹 | 추가한 공식 X |
+| --- | --- |
+| 빅뱅 | https://x.com/YG_GlobalVIP |
+| 에프티아일랜드 | https://x.com/FT_FANCLUB |
+| 빅스 | https://x.com/RealVIXX |
+| 아홉 | https://x.com/AHOF_official |
+| 앳하트 | https://x.com/atheart_titan |
+| 캣츠아이 | https://x.com/katseyeworld |
+| 큐더블유이알 | https://x.com/official_QWER |
+| 넥스지 | https://x.com/NEXZ_official |
+| 누에라 | https://x.com/nouera_official |
+| 올아워즈 | https://x.com/ALL_H_OURS |
+| 엑스디너리 히어로즈 | https://x.com/XH_official |
+| 우아 | https://x.com/WOOAH_HM |
+| 영파씨 | https://x.com/youngposseup |
+| 아이덴티티 | https://x.com/idntt_cosmo |
+| 씨엔블루 | https://x.com/official_CNBLUE |
+| 언차일드 | https://x.com/officialUNCHILD |
+| 티엔엑스 | https://x.com/TNX_Official |
+| 튜넥스 | https://x.com/TUNEXX_official |
+| 뉴비트 | https://x.com/NewBeat_twt |
+| 이프아이 | https://x.com/ifeye_official |
+| 베이비돈크라이 | https://x.com/BabyDONTCry_BDC |
+| 걸셋 | https://x.com/GIRLSETofficial |
+| 퀸즈아이 | https://x.com/Queenz_Eye |
+| 플레어유 | https://x.com/flareu_official |
+| 하입프린세스 | https://x.com/hiipe_princess |
+| 네이즈 | https://x.com/NAZE_officl |
+| 루네이트 | https://x.com/LUN8_official |
+| 나우즈 | https://x.com/CUBE_NOWZ |
+| 파우 | https://x.com/POW_grid |
+| 크나큰 | https://x.com/KNKOfficial220 |
+| 시크릿넘버 | https://x.com/5ecretNumber |
+| 엠씨엔디 | https://x.com/McndOfficial_ |
+| 앨리스 | https://x.com/IOK_ALICE |
+| 엔플라잉 | https://x.com/NFlyingofficial |
+| 아이칠린 | https://x.com/ichillin_km |
+| 엔싸인 | https://x.com/nSSign_official |
+| A2O MAY | https://x.com/A2O_MAY |
+| B.D.U | https://x.com/BDU4official |
+| 하이파이유니콘 | https://x.com/HFU_official |
+
+- **[완료·검증] [groups.json] [groups.slim.json]** 원본 들여쓰기/개행 유지. git 원본 대비39개 links.x 추가 외 의미 차이0, 삭제 줄은 기존 마지막 링크 뒤 쉼표 추가뿐. node tests/syntax.test.js 통과, node tests/validate-data.js 오류0/기존경고144, node tests/disco-artifacts.test.js 통과, git diff --check 통과. 전용 Chrome으로 tests/smoke.test.js 데스크톱·모바일390px 신규 환경 로딩/캔버스/탐험/콘솔오류0 통과(첫 제한 환경 실행은 브라우저 CDP 실행 실패→동일 테스트를 허용된 환경에서 재실행하여 통과).
 
 ## 2026-10-28 (Claude Code — 창 개편 4단계: 트로피·인스타 사진 무대 · For You 넓은 화면 오른쪽 여백 · 엑스러브 링크)
 - [완료] **무대 창 공용화 + 트로피·인스타 사진 보기** [app.js _swOpen·_swClose·_swWireDrag·_swPlace·_SW_CLOSERS, css 무대 창 공용 블록, index.html .sw-hd·.sw-to-lb] 공연 창 전용이던 무대/시트 코드를 공용으로 묶고 트로피(key 'trophy', 폰 시트·끌어 닫기)·인스타 사진 보기(key 'igv', 폰은 기존 전체 화면 그대로)에 적용. 웹은 카드 왼쪽 무대·배경 없음·재생 화면과 차례·"▶ 재생 화면으로". 인스타는 무대가 900px보다 좁으면 사진 위·본문 아래(igv-narrow). Esc는 무대 앞 창부터(_SW_CLOSERS). 나침반 폭 감시에 trophy·igv 추가(늦게 만들어지는 igv는 _swOpen이 직접 _feedWideSync).
