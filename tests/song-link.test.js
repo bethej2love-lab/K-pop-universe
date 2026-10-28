@@ -66,5 +66,14 @@ eq(ctx.f("[입덕직캠] 르세라핌 직캠 'BOYS PLANET - Hot Summer' (LE SSER
 eq(ctx.f('[릴레이댄스] LE SSERAFIM(르세라핌) - HOT (4K)', LS, ['르세라핌', 'LE SSERAFIM']), ['hot'], '가수 - HOT (4K)');
 // 새 규칙 키는 뒤에 붙는다 — 예전 키 순서가 바뀌면 전량 재계산 때 안 바뀐 행까지 다시 쓴다
 eq(nj('Ditto - 뉴진스(NewJeans) [뮤직뱅크/Music Bank] | KBS 230127 방송')[0], 'ditto', '예전 규칙으로 잡던 키가 앞');
+// 한글 소리 표기 별칭(_SONG_KO_NICK, 2026-10-28) — 그 그룹 곡 목록에만 붙는다
+vm.runInContext('this.N=_songAddNicks;', ctx);
+const CTN = ctx.N(songsOf('코르티스'), '코르티스');
+eq(ctx.f('레드레드 밴드라이브 (완전 찢크크) | it\'s Live #CORTIS #잇츠라이브', CTN, ['코르티스', 'CORTIS']), ['redred'], "애칭 '레드레드' = REDRED");
+eq(ctx.f('레드레드 밴드라이브', songsOf('코르티스'), ['코르티스', 'CORTIS']), [], '애칭 표를 안 붙인 곡 목록엔 안 걸림');
+const GI = ctx.N(songsOf('아이들'), '아이들');
+eq(ctx.f('[I-LIVE] 4랑하는 네버랜드💜 (여자)아이들 데뷔 4주년 됐어요', GI, ['아이들', '(G)I-DLE']), [], "'네버랜드'는 (여자)아이들 팬덤 이름 — 곡 Neverland로 잇지 않음");
+const LSN = ctx.N(songsOf('르세라핌'), '르세라핌');
+eq(ctx.f('큰 무대에서 보니 더 좋은 붐팔라 #엠카운트다운 #MCOUNTDOWN #LE_SSERAFIM', LSN, ['르세라핌', 'LE SSERAFIM']), ['boompala'], "애칭 '붐팔라'");
 console.log(fail ? `💥 곡 연결 테스트 실패 ${fail}건 (통과 ${pass})` : `✅ 곡 연결 테스트 통과 ${pass}건`);
 process.exit(fail ? 1 : 0);

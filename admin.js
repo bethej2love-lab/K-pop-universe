@@ -4855,7 +4855,7 @@ async function _ytSweepSongLinks(){
     const probe=await sb.from(_YT_TABLE).select('song_keys').limit(1);
     if(probe.error){_ytSetProg('[곡 연결] song_keys 칸이 아직 없어요 — sql/song_keys_2026-10-16.sql 실행 후 동작');return;}
     // 규칙(shared.js _songLinkBases·_SONG_COMMON)이나 곡 목록 해석을 바꾸면 이 문자열도 바꿀 것 → 다음 한 번 전량
-    const _SONG_RULES_VER='2026-10-28-v3'; // v2: 유닛 곡·별칭(한영 표기·약자)·한글 3글자·기본형=첫 괄호 앞 / v3: '가수 - 곡'·🎵곡·폭 0 문자
+    const _SONG_RULES_VER='2026-10-28-v4'; // v2: 유닛 곡·별칭(한영 표기·약자)·한글 3글자·기본형=첫 괄호 앞 / v3: '가수 - 곡'·🎵곡·폭 0 문자 / v4: 한글 소리 표기(_SONG_KO_NICK)
     // ⚠️ 전량은 50만 행이라 한 회차에 안 끝난다(2026-10-16 첫 실행: 루틴 끝자락에 시작 → 135분 제한에 잘려 0건 저장 —
     //    다 읽은 뒤 한꺼번에 쓰는 구조라 잘리면 아무것도 안 남았다). 그래서 전량은 **1000개씩 읽고→계산→저장하고 커서를 남기는**
     //    이어달리기로 돈다. 커서는 localStorage(러너 프로필은 매 회차 캐시로 이어짐 — daily-routine.yml always() 저장).
@@ -4899,7 +4899,7 @@ async function _ytSweepSongLinks(){
           if(a){await _ensureMemberDisco(a);albums=a.discography||[];if(a.name?.en)names.push(a.name.en);if(a.name?.ko)names.push(a.name.ko);}
         }
       }catch(e){}
-      const v={songs:_songListFromDisco(albums,persons),names};
+      const v={songs:_songAddNicks(_songListFromDisco(albums,persons),gko),names}; // 한글 소리 표기 별칭(_SONG_KO_NICK)
       songCache.set(gko,v);return v;
     };
     let linked=0,seen=0,changed=0,failed=0;

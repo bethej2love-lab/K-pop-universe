@@ -593,6 +593,25 @@ function _songListFromDisco(albums,persons){
   }));
   return [...seen.values()];
 }
+// 영어 곡명의 한글 소리 표기(팬·방송 제목 관례 — '레드레드'·'붐팔라')(2026-10-28 사용자 "한글 애칭 연결").
+// 디스코엔 영어로만 있어 별칭이 안 생긴다. 자동 음역은 그룹명(크래비티=Gravity)·흔한 말(포커스=FOCUS·드라마=Drama)까지 걸려서
+// 미연결 제목에서 실제로 자주 나온 것만 손으로 고른다. **그 그룹 곡 목록에만** 별칭으로 붙으니 다른 그룹 영상엔 안 걸린다.
+// 2글자('직진')는 본문 포함으론 안 잡히고(길이 문턱) 따옴표·해시태그로만. 곡 기본형(_songBase)이 그 그룹 디스코에 있어야 붙는다.
+const _SONG_KO_NICK={
+  '코르티스':{redred:['레드레드'],acai:['아사이']},
+  '트레저':{jikjin:['직진']},
+  '르세라핌':{boompala:['붐팔라']},
+  '라이즈':{boomboombass:['붐붐베이스']},
+  '하츠투하츠':{lemontang:['레몬탱']},
+  '케플러':{tipitap:['티피탭']},
+  '에스파':{whiplash:['위플래시','위플래쉬']},
+  '샤이니':{sherlock:['셜록'],everybody:['에브리바디']},
+};
+function _songAddNicks(songs,gko){
+  const t=_SONG_KO_NICK[gko];if(!t)return songs;
+  songs.forEach(s=>(t[s.b]||[]).forEach(raw=>{const n=_songNorm(raw);s.alias=s.alias||[];if(!s.alias.some(x=>x.n===n))s.alias.push({n,raw});}));
+  return songs;
+}
 
 // ── 동명이인 솔로 정적 페이지 주소 구분(2026-10-19) ─────────────────────────────────────────────
 // 솔로(소속 그룹이 GROUPS에 없음) 페이지는 member/<이름>/ · en/member/<영문 slug>/인데, 이름이 같은 솔로가 둘 이상이면
