@@ -301,26 +301,27 @@ async function main() {
     await closeAll();
 
     // ── [버그G] 탐험 패널 "맨 위로" 버튼(2026-08-27 사용자 요청) ────────────────────────
+    // (2026-10-28) 스크롤 주체는 탭별 화면(#feed-pane-rec/disc) — #feed-body는 overflow:hidden이라 예전 테스트가 낡아 실패했다.
     // 카드에만 있던 _wireTotop을 탐험 패널(#feed-body)에도 붙였다. #feed-body는 본문 스크립트보다
     // 나중에 파싱돼서 스크립트 최상단에선 DOM에 없다 — 그래서 패널이 처음 열릴 때 lazy-bind하는데,
     // 이 프로젝트에서 탐험 패널 lazy-bind는 이미 한 번 빠뜨린 전례가 있어(스와이프 닫기) 실제로
     // 열고·스크롤하고·닫아보며 확인한다.
     await ev(cdp, `document.getElementById('tab-feed')?.click()`);
     await pollUntil(cdp, `document.getElementById('feed-overlay')?.classList.contains('open')`, 6000);
-    await pollUntil(cdp, `(function(){var b=document.getElementById('feed-body');return !!b&&b.scrollHeight>b.clientHeight+120})()`, 12000);
+    await pollUntil(cdp, `(function(){var b=(document.getElementById(document.getElementById('feed-panes-track')?.classList.contains('at-disc')?'feed-pane-disc':'feed-pane-rec'));return !!b&&b.scrollHeight>b.clientHeight+120})()`, 12000);
     const totopBefore = await ev(cdp, `getComputedStyle(document.getElementById('gc-totop')).display`);
-    await ev(cdp, `(function(){var b=document.getElementById('feed-body');b.scrollTop=400;b.dispatchEvent(new Event('scroll'));return 1})()`);
+    await ev(cdp, `(function(){var b=(document.getElementById(document.getElementById('feed-panes-track')?.classList.contains('at-disc')?'feed-pane-disc':'feed-pane-rec'));b.scrollTop=400;b.dispatchEvent(new Event('scroll'));return 1})()`);
     const totopAfter = await pollUntil(cdp, `getComputedStyle(document.getElementById('gc-totop')).display`, 3000, v => v === 'flex');
     if (totopBefore === 'none' && totopAfter === 'flex') ok('[버그G] 탐험 패널 스크롤 시 "맨 위로" 버튼 등장(스크롤 전엔 숨김)');
     else fail(`[버그G] 탐험 패널 맨위로 버튼 — 스크롤 전=${totopBefore}(none 기대) 후=${totopAfter}(flex 기대)`);
 
     await ev(cdp, `document.getElementById('gc-totop').click()`);
-    const backTop = await pollUntil(cdp, `document.getElementById('feed-body').scrollTop`, 3000, v => v === 0);
+    const backTop = await pollUntil(cdp, `(document.getElementById(document.getElementById('feed-panes-track')?.classList.contains('at-disc')?'feed-pane-disc':'feed-pane-rec')).scrollTop`, 3000, v => v === 0);
     if (backTop === 0) ok('[버그G] 버튼 클릭 시 탐험 패널이 맨 위로 이동');
     else fail(`[버그G] 버튼을 눌러도 안 올라감 — scrollTop=${backTop}`);
 
     // 스크롤을 내려둔 채 닫으면 버튼이 화면에 그대로 남으면 안 된다(연결 패널에서 겪었던 문제).
-    await ev(cdp, `(function(){var b=document.getElementById('feed-body');b.scrollTop=400;b.dispatchEvent(new Event('scroll'));return 1})()`);
+    await ev(cdp, `(function(){var b=(document.getElementById(document.getElementById('feed-panes-track')?.classList.contains('at-disc')?'feed-pane-disc':'feed-pane-rec'));b.scrollTop=400;b.dispatchEvent(new Event('scroll'));return 1})()`);
     await pollUntil(cdp, `getComputedStyle(document.getElementById('gc-totop')).display`, 2000, v => v === 'flex');
     await ev(cdp, `_closeFeedOverlay()`);
     const totopClosed = await pollUntil(cdp, `getComputedStyle(document.getElementById('gc-totop')).display`, 3000, v => v === 'none');

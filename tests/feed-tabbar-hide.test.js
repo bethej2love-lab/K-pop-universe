@@ -8,6 +8,7 @@
 // 이 테스트가 지키는 것:
 //  ① 전체 열림에서만 동작하고 **peek(반 열림)에선 안 한다** — peek는 "이거 볼래? 아님 말고" 수준의 가벼운
 //     제안 상태라 높이가 짧고, 거기서 탭바까지 사라지면 "닫혔나?"로 읽힌다(사용자 확인).
+//  (2026-10-28) 스크롤은 #feed-body가 아니라 탭별 화면(#feed-pane-rec/disc)이 한다 — 탭 나란히 붙이기 이후 테스트가 낡아 실패하던 것 갱신
 //  ② 탭바가 숨으면 #feed-body 아래 여백과 .gc-totop 위치가 **같이** 따라온다 — 안 따라오면 빈칸만 남아
 //     숨긴 의미가 없고, 버튼은 허공에 뜬다.
 //  ③ 탐험 패널 위에 카드가 열리면 **카드가** 탭바를 쥔다(_activeSheetScroller 중재) — 안 그러면 두
@@ -78,7 +79,7 @@ const server = http.createServer((req, res) => {
 // 실측 상태 묶음. --sheet-bottom / 오버레이 바닥 / totop을 같이 봐야 "따라오는 것들"까지 검증된다.
 // 오버레이 바닥(foBottom): 전체 열림에선 --sheet-bottom에 물려 탭바 숨을 때 0으로 확장(카드 시트와 동일).
 const STATE = `(function(){
-  const tb=document.getElementById('tabbar'),fb=document.getElementById('feed-body'),fo=document.getElementById('feed-overlay');
+  const tb=document.getElementById('tabbar'),fb=(document.getElementById(document.getElementById('feed-panes-track')?.classList.contains('at-disc')?'feed-pane-disc':'feed-pane-rec')),fo=document.getElementById('feed-overlay');
   const tt=document.querySelector('.gc-totop');
   return {hidden:tb.classList.contains('tab-hidden'),
     foBottom:parseFloat(getComputedStyle(fo).bottom)||0,
@@ -91,7 +92,7 @@ const STATE = `(function(){
 // scrollTop 직접 설정은 렌더 스레드에서 scroll 이벤트 발화가 보장 안 되므로 명시적으로 dispatch.
 const scrollBy = async (cdp, from, step, n) => {
   for (let i = 1; i <= n; i++) {
-    await ev(cdp, `(function(){const fb=document.getElementById('feed-body');fb.scrollTop=${from + step * i};fb.dispatchEvent(new Event('scroll'));return 1;})()`);
+    await ev(cdp, `(function(){const fb=(document.getElementById(document.getElementById('feed-panes-track')?.classList.contains('at-disc')?'feed-pane-disc':'feed-pane-rec'));fb.scrollTop=${from + step * i};fb.dispatchEvent(new Event('scroll'));return 1;})()`);
     await sleep(90);
   }
   await sleep(700);
@@ -140,7 +141,7 @@ const scrollBy = async (cdp, from, step, n) => {
     !open.hidden ? ok('④ 열린 직후 탭바 보임(진입 시점 못박기)') : bad('④ 열자마자 탭바가 숨어 있음');
 
     // ── ① 아래로 스크롤 → 숨김 + ② 따라오는 것들 ──
-    await ev(cdp, `(function(){document.getElementById('feed-body').scrollTop=0;return 1;})()`); await sleep(400);
+    await ev(cdp, `(function(){(document.getElementById(document.getElementById('feed-panes-track')?.classList.contains('at-disc')?'feed-pane-disc':'feed-pane-rec')).scrollTop=0;return 1;})()`); await sleep(400);
     await scrollBy(cdp, 0, 40, 8);
     const down = await ev(cdp, STATE);
     down.hidden ? ok('① 아래로 스크롤하면 탭바 숨김') : bad('① 아래로 스크롤해도 탭바가 그대로');
@@ -174,7 +175,7 @@ const scrollBy = async (cdp, from, step, n) => {
     if (hasWebGL) {
       await ev(cdp, `(function(){const bm=bubbleMeshes[0];showGC(bm.ko,195,400);return 1;})()`);
       await sleep(1600);
-      const arb = await ev(cdp, `(function(){const fb=document.getElementById('feed-body');
+      const arb = await ev(cdp, `(function(){const fb=(document.getElementById(document.getElementById('feed-panes-track')?.classList.contains('at-disc')?'feed-pane-disc':'feed-pane-rec'));
         return {feed:_activeSheetScroller()===fb,card:_activeSheetScroller()===mobSheetInner};})()`);
       (arb.card && !arb.feed) ? ok('③ 카드가 위에 열리면 카드가 탭바를 쥠(서로 안 싸움)')
                               : bad(`③ 중재 실패 ${JSON.stringify(arb)}`);
