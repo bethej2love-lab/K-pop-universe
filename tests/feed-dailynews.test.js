@@ -55,7 +55,8 @@ ck(/finally\{_syncDailyNewsSection\(\);\}/.test(fn) && /finally\{_syncDailyNewsS
   '두 빌더 모두 끝날 때 섹션 표시를 동기화(한쪽만 있어도 섹션이 뜸)');
 // 조회수 돌파 쇼츠: is_short를 받아와 세로 2열 카드로(2026-10-12 — 16:9 전폭+흐린 패딩으로 보이던 버그)
 ck(/yt_channel_videos!inner\([^)]*is_short/.test(fn), '조회수 마일스톤 조회에 is_short 포함');
-ck(/findIndex\(r=>r\.thumb&&!r\.isShort\)/.test(fn), '헤드라인(16:9)에 쇼츠를 올리지 않음');
+// 전폭 헤드라인은 2026-10-28에 뺐다(사용자 "1열 너무 크다") — 가로 소식은 2열, 쇼츠는 그 칸에 안 섞음
+ck(!fn.includes('_appendNewsHero') && fn.includes('_compactMv=!r.isShort&&'), '가로 소식(MV·티저·조회수)은 2열, 쇼츠는 그 칸에 안 섞음');
 ck(/_appendNewsItems\(list,/.test(fn) && !/_appendNewsRow\(list,r\)/.test(fn), '소식 렌더가 쇼츠 2열 경로(_appendNewsItems)를 탐');
 ck(/if\(!items\.length\)return;/.test(fn), '세 소스 다 비면 섹션을 그대로 숨김(억지로 안 채움)');
 

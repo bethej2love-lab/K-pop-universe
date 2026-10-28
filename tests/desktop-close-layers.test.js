@@ -104,7 +104,7 @@ const server = http.createServer((req, res) => {
     await reset();
     // ⑥
     await ev(cdp, `(document.getElementById('dh-feed-btn').click(),1)`); await sleep(2500);
-    const fc = await ev(cdp, `(()=>{const r=document.getElementById('feed-close').getBoundingClientRect();return r.width>0&&r.right<=440;})()`);
+    const fc = await ev(cdp, `(()=>{const r=document.getElementById('feed-close').getBoundingClientRect();return r.width>0&&r.right<=document.getElementById('feed-overlay').getBoundingClientRect().right;})()`); // 2026-10-28부터 나침반만 열리면 넓어져(fw-home) 440 고정 기준 대신 패널 오른쪽 끝
     await ev(cdp, `(document.getElementById('feed-close').click(),1)`); await sleep(900); o = await open();
     if (fc && !has(o, 'feed-overlay')) ok('⑥ 탐험 패널 닫기 버튼 보이고 동작'); else bad(`⑥ 버튼=${fc} ${o}`);
     // ⑦

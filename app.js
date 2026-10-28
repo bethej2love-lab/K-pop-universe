@@ -10828,6 +10828,10 @@ function _closeTopOverlay(){
   if(lb&&lb.classList.contains('lb-half-open')){_closeLbHalf();return true;}
   // 재생 화면에 붙여 연 앨범 창(곡 카드, 2026-10-20)이 영상보다 위 층
   {const _ad=document.getElementById('gc-discog-detail');if(_ad&&_ad.classList.contains('open')&&_ad.classList.contains('lb-dock')){_closeGcDiscogDetail();return true;}}
+  // 웹 무대 — 재생 화면 앞에 나와 있는 창이 있으면 그것부터(뒤에 비켜 있는 재생 화면을 먼저 닫지 않게)
+  {const _sf=document.body.dataset.stageFront;
+   if(_sf==='venue'&&document.getElementById('venue-overlay')?.classList.contains('open')){_closeVenueOverlay();return true;}
+   if(_sf==='list'&&document.getElementById('feed-list-overlay')?.classList.contains('open')){_closeFeedListOverlay();return true;}}
   if(lb&&lb.classList.contains('open')){closeLightbox();return true;}
   // 2026-09-05 UX감사 #4: 바깥클릭으론 닫히는데 Esc 목록엔 빠져 있던 오버레이들을 추가(데스크톱 일관성).
   //   welcome-*(온보딩 선택 게이트)는 일부러 제외 — 아무 선택 없이 Esc로 건너뛰면 안 되므로.
@@ -12776,7 +12780,7 @@ function _setStageFront(w){
   if(!_stageWide()){delete document.body.dataset.stageFront;return;}
   document.body.dataset.stageFront=w;
 }
-// 무대에 올라간 창의 차례(2026-10-28 목록 창도 무대로) — 'alb'(앨범)·'list'(목록 창). 재생 화면('lb')은 늘 맨 앞 후보라 따로 둔다.
+// 무대에 올라간 창의 차례(2026-10-28 목록 창도 무대로) — 'alb'(앨범)·'list'(목록 창)·'venue'(공연·공연장 창). 재생 화면('lb')은 늘 맨 앞 후보라 따로 둔다.
 // 창 하나를 닫으면 남은 것 중 가장 나중에 연 창이 다시 앞으로 온다(재생 화면이 열려 있으면 재생 화면).
 let _stageOrder=[];
 function _stageOpen(w){_stageOrder=_stageOrder.filter(x=>x!==w);_stageOrder.push(w);_setStageFront(w);}
@@ -12804,7 +12808,11 @@ let _albPlaceT=null;
 function _albPlace(){
   const d=document.getElementById('gc-discog-detail');if(!d)return;
   if(!_stageWide()||!d.classList.contains('open')){d.style.left='';d.style.right='';return;}
-  const{left,right}=_stageRegion();
+  let{left,right}=_stageRegion();
+  // 영상 패널까지 펼친 앨범 창(시트 440 + 패널 380 + 여백 56)이 무대에 안 들어가면 왼쪽(나침반) 위로 넓힌다 — 나중에 연 창이 앞
+  const vp=document.getElementById('gc-discog-video-panel');
+  const need=440+(vp&&!vp.hidden&&!isMob()?380:0)+56;
+  if(right-left<need)left=Math.max(0,right-need);
   d.style.left=left+'px';d.style.right=Math.max(0,window.innerWidth-right)+'px';
 }
 // 목록 창(차트·모아보기·시상식·컬렉션 — _openFeedListOverlay 하나)을 웹 무대에(2026-10-28 사용자 "창이 가운데 열리는 게 최선의
@@ -12832,7 +12840,7 @@ function _flStageClose(){
 // 하나라도 열리면 440px로 줄어 무대 자리를 내주고, 닫히면 다시 넓어진다. 여는 길이 많아서(카드 클릭·검색·딥링크·재생목록 넘김·
 // 뒤로가기…) 호출부마다 부르지 않고 **이 창들의 class 변화를 한 곳에서 지켜본다**(MutationObserver). 폰·태블릿(<1024)은 그대로.
 // ⚠️ 폭이 바뀌면 칸 수가 바뀌어 글이 다시 흐르므로, 보고 있던 자리(위쪽에 걸친 요소)를 기억했다가 같은 높이로 되돌린다.
-const _FW_BLOCKERS=['side-panel','member-panel','conn-panel','yt-lightbox','feed-list-overlay','gc-discog-detail',
+const _FW_BLOCKERS=['side-panel','member-panel','conn-panel','yt-lightbox','feed-list-overlay','gc-discog-detail','venue-overlay',
   'uc-card-overlay','adm-home-overlay','hnn-overlay','vm-overlay','gp-overlay'];
 function _feedWideScroller(){
   const fo=document.getElementById('feed-overlay');if(!fo)return null;
@@ -12906,7 +12914,6 @@ async function _loadAlbumVideos(album,gko){
   const listEl=document.getElementById('gc-discog-video-list');
   const myReq=++_albVidReq;
   if(!panel||!listEl||!album||!gko){if(panel)panel.hidden=true;return;}
-  if(!isMob()&&document.getElementById('feed-overlay')?.classList.contains('open')){panel.hidden=true;return;}
   if(isMob()){
     const sheet=document.getElementById('gc-discog-detail-sheet');
     // 영상 칸은 수록곡 바로 아래(긴 크레딧 목록 위) — 곡을 눌러 내려갈 때 늦게 그려지는 크레딧이 영상 칸을 밀어내지 않게(2026-10-20)
@@ -13073,7 +13080,9 @@ document.getElementById('gc-discog-detail-flag').addEventListener('click',e=>{
 // 예전엔 앨범 창에서 곡을 누르면 곡 오버레이(gc-track-videos-overlay)가 한 장 더 떴다. 이제 앨범 창 옆(폰은 아래) 영상 패널이
 // 그 곡 영상으로 바뀐다 — 곡 오버레이의 조회·탭·정렬·목록 코드(_openSongVideos·_renderSongVideoTabs)를 그대로 쓰고,
 // 부품(크레딧·탭·액션·목록 DOM)만 패널 안 #gc-discog-song-view로 옮겨 단다. 같은 곡을 다시 누르거나 ‹ 를 누르면 앨범 전체로.
-// ⚠️ 데스크톱 탐험 패널이 열려 있으면 이 패널은 CSS로 숨겨지므로 그땐 예전처럼 곡 오버레이로 연다.
+// 데스크톱 탐험 패널(나침반)이 열려 있어도 같다(2026-10-28 사용자 "앨범에서 곡 누르면 옆 영상 패널 — 일부만 적용된 듯, 전체 다").
+// 예전엔 나침반이 열려 있으면 패널을 숨기고 곡 오버레이로 열었는데, 나침반이 웹 홈이 되면서 그게 대부분의 경우가 됐다.
+// 무대가 좁으면(카드 440 + 나침반 440) 앨범 창이 나침반 위로 넓어진다(_albPlace).
 let _albSong=null,_albSongFor=null; // 고른 곡 제목·그 곡을 고른 앨범 객체
 const _ALB_SONG_PARTS=['gc-track-videos-credits','gc-track-videos-tabs','gc-track-videos-actions','gc-track-videos-list'];
 function _albSongMount(inAlbum){
@@ -13106,7 +13115,6 @@ function _albSongOwner(title){
 function _albTrackClick(title){
   const o=_albSongOwner(title);if(!o)return;
   const al=_gcDiscogList[_gcDiscogIdx];if(al)o.meta.album=al.title||'';
-  if(!isMob()&&document.getElementById('feed-overlay')?.classList.contains('open')){_openSongVideos(title,o.owner,o.meta);return;}
   if(_albSong===title){_albSong=null;_albSongApply();return;} // 같은 곡 다시 누름 = 앨범 전체로
   _albSong=title;_albSongFor=al||null;_albSongMount(true);_albSongApply();
   _openSongVideos(title,o.owner,o.meta,{inAlbum:true});
@@ -22913,16 +22921,12 @@ function _renderNewsList(list,items){
   const _PRI={win:100,mv:80,teaser:50};
   items.forEach((r,i)=>{r._s=(r.score!=null?r.score:(_PRI[r.type]||0))-i*0.001;});
   items.sort((a,b)=>b._s-a._s);
-  // 발견 MV는 홀수면 최신 1개, 짝수면 최신 2개를 전폭으로 남겨 나머지를 짝수로 맞춘다.
-  const mvWideCount=items.filter(r=>r.type==='mv'&&!r.isShort&&r.thumb).length%2?1:2;
-  let mvCount=0;
-  items.forEach(r=>{r._compactMv=list.id==='feed-dailynews'&&r.type==='mv'&&!r.isShort&&!!r.thumb&&++mvCount>mvWideCount;});
-  // 헤드라인은 이미지가 있는 것 중 최상위 — 단 쇼츠는 제외(헤드라인 틀이 16:9라 세로 썸네일이 잘린다)
-  const heroIdx=items.findIndex(r=>r.thumb&&!r.isShort);
+  // 썸네일이 주인공인 가로 소식(MV·티저·조회수 돌파)은 For You·발견 둘 다 2열(넓은 나침반 4열). 맨 위 전폭 헤드라인과
+  // 전폭 MV 줄은 뺐다(2026-10-28 사용자 "this week 뮤비 1열 배치 너무 부담스럽게 크다" — 440px 폭에서도 16:9 전폭이 화면 절반).
+  items.forEach(r=>{r._compactMv=!r.isShort&&!!r.thumb&&(r.type==='mv'||r.type==='teaser'||r.type==='milestone');});
   const rest=items.slice();
-  if(heroIdx>=0)_appendNewsHero(list,rest.splice(heroIdx,1)[0]);
   _pairNewsShorts(rest);
-  let SHOW=4;
+  let SHOW=8; // 2열·4열 어느 쪽이든 줄이 꽉 차게
   // 쇼츠 2열 한 쌍이 "더보기" 경계에서 갈라지지 않게
   if(rest.length>SHOW&&_isNewsShortCard(rest[SHOW-1])&&_isNewsShortCard(rest[SHOW])&&rest[SHOW]._pair===rest[SHOW-1])SHOW++;
   // 더보기 앞에서도 MV 2열의 한 쌍을 갈라 놓지 않는다.
@@ -22977,29 +22981,6 @@ function _appendNewsItems(container,arr){
     const tw=card.querySelector('.feed-card-thumb-wrap');
     if(tw){const b=document.createElement('span');b.className='feed-news-badge fnb-milestone';b.textContent='📈 조회수';tw.appendChild(b);}
   });
-}
-// 1면 헤드라인 카드(2026-09-28). 캡션은 **이미지 아래** — 앨범 커버는 그 자체가 작품이라 위에 얹지 않는다는
-// 원칙(영상도 같은 틀로 통일). 앨범은 정사각 커버를 가운데 두고 양옆을 흐린 커버로 채운다(자르지 않음).
-function _appendNewsHero(container,{type,title,sub,thumb,nav,square}){
-  const LABELS={album:'💿 신보',win:'🏆 1위',mv:'🎬 MV',teaser:'🎬 티저',milestone:'📈 조회수',break:'결방'};
-  const CLS={album:'fnb-album',win:'fnb-win',mv:'fnb-mv',teaser:'fnb-teaser',milestone:'fnb-milestone',break:'fnb-break'};
-  const card=document.createElement('div');card.className='feed-news-hero'+(type==='album'||square?' is-album':'');
-  const media=document.createElement('div');media.className='fnh-media';
-  if(type==='album'||square){const bg=document.createElement('div');bg.className='fnh-bg';bg.style.backgroundImage=`url(${thumb})`;media.appendChild(bg);}
-  const img=document.createElement('img');img.alt='';img.loading='lazy';img.className='fnh-img';
-  img.addEventListener('load',()=>img.classList.add('loaded'));img.src=thumb;media.appendChild(img);
-  const badge=document.createElement('span');badge.className='feed-news-badge '+(CLS[type]||'');badge.textContent=LABELS[type]||type;
-  media.appendChild(badge); // 썸네일 위 오버레이
-  if(!(type==='album'||square))_vdur(media,_thumbVid(thumb));
-  const cap=document.createElement('div');cap.className='fnh-cap';
-  const t=document.createElement('div');t.className='fnh-title';t.textContent=_cleanTitle(title);
-  cap.appendChild(t);
-  if(sub){const s=document.createElement('div');s.className='fnh-sub';s.textContent=sub;cap.appendChild(s);}
-  card.appendChild(media);card.appendChild(cap);
-  card.addEventListener('click',nav);
-  card.addEventListener('touchstart',e=>_lbRipple(card,e),{passive:true});
-  card.addEventListener('mousedown',e=>_lbRipple(card,e));
-  container.appendChild(card);
 }
 function _appendNewsRow(container,{type,title,sub,thumb,nav,square}){
   const LABELS={album:'💿 신보',win:'🏆 1위',mv:'🎬 MV',teaser:'🎬 티저',milestone:'📈 조회수',break:'결방'};
@@ -24240,15 +24221,15 @@ function _loadUpcomingConcerts(){
   return _upConcertsP;
 }
 // 공연 하나를 작은 창으로 — 카드의 공연 항목(공연장·예매·다녀왔어요)을 그대로 쓴다. 공연장 창과 같은 틀
-function _openConcertSheet(ev){
+function _openConcertSheet(ev,_back){
   const overlay=document.getElementById('venue-overlay');
+  const tok=_vpEnter({k:'c',ev},_back);
   document.getElementById('venue-panel-title').textContent=(ev.groups||[]).map(_gLabelKo).filter(Boolean).join(', ')||ev.title;
   const listEl=document.getElementById('venue-panel-list');listEl.innerHTML='';
   const vi=document.getElementById('venue-panel-info');if(vi)vi.hidden=true;
   listEl.appendChild(_makeConcertItem(ev));
   document.getElementById('venue-panel').classList.add('vp-concert'); // 공연 → 공연장 정보(좌석·위치·지도) 순(CSS order)
-  overlay.classList.add('open');_bringToFront(overlay);
-  if(ev.venue)_ensureVenuesInfo().then(()=>{if(overlay.classList.contains('open')&&listEl.firstChild&&listEl.childElementCount===1)_renderVenueInfo(ev.venue);}).catch(()=>{});
+  if(ev.venue)_ensureVenuesInfo().then(()=>{if(tok===_vpTok&&overlay.classList.contains('open'))_renderVenueInfo(ev.venue);}).catch(()=>{});
 }
 function _appendConcertCard(list,ev){
   const own=(ev.groups||[])[0];
@@ -28041,19 +28022,21 @@ function _renderVenueInfo(venue){
   src.textContent=v.src==='kopis'?(ko?'시설 정보 · 공연예술통합전산망(KOPIS)':'Facility data · KOPIS'):'Wikidata';box.appendChild(src);
   box.hidden=false;
 }
-async function _openVenueEvents(venue){
+async function _openVenueEvents(venue,_back){
   const overlay=document.getElementById('venue-overlay');
+  const tok=_vpEnter({k:'v',venue},_back);
   const titleEl=document.getElementById('venue-panel-title');
   const listEl=document.getElementById('venue-panel-list');
   titleEl.textContent=_venueName(venue); // 조회는 원래 값으로, 표시만 별칭(위 _VENUE_ALIAS 주석)
   document.getElementById('venue-panel').classList.remove('vp-concert'); // 공연장 창은 정보 → 공연 목록 순
   listEl.innerHTML='<div class="gc-ch-msg">불러오는 중…</div>';
   document.getElementById('venue-panel-info').hidden=true;
-  overlay.classList.add('open');_bringToFront(overlay);
   await _ensureVenuesInfo();
+  if(tok!==_vpTok)return; // 그 사이 ‹ 뒤로·다른 공연으로 바뀌었으면 늦게 온 결과는 버린다
   _renderVenueInfo(venue);
   if(!sb)return;
   const{data,error}=await sb.from('kpop_events').select('*').in('venue',_venueSameNames(venue)).order('date_start',{ascending:false});
+  if(tok!==_vpTok)return;
   listEl.innerHTML='';
   if(error||!data||!data.length){listEl.innerHTML='<div class="gc-ch-msg">이 장소의 다른 공연 정보가 없어요</div>';return;}
   // 예정(가까운 순) → 지난(최근 순)
@@ -28072,8 +28055,81 @@ async function _openVenueEvents(venue){
     listEl.appendChild(it);
   });
 }
-document.getElementById('venue-panel-close').addEventListener('click',e=>{e.stopPropagation();document.getElementById('venue-overlay').classList.remove('open');});
-document.getElementById('venue-overlay').addEventListener('click',e=>{if(e.target===e.currentTarget)e.currentTarget.classList.remove('open');});
+// ── 공연·공연장 창 — 웹은 무대, 폰은 바텀시트(2026-10-28 창 레이아웃 개편 3단계, 위 _flPlace 주석과 같은 방향) ──
+// 웹(≥1024): 가운데 작은 창 + 어두운 배경 대신 카드 왼쪽 무대에 붙고, 재생 화면·앨범·목록 창과 나중에 연 차례로 앞에 선다.
+// 폰(≤768): 아래에서 올라오는 시트, 맨 위에서 아래로 끌면 닫힘. 그 사이 폭은 예전 가운데 창.
+// 공연 → 공연장 칩처럼 창 안에서 이어 열면 앞 화면을 쌓아 두고 '‹'로 돌아간다(_vpHist). 창을 닫으면 비운다.
+let _vpHist=[],_vpCur=null,_vpTok=0,_vpPlaceT=null;
+function _vpPlace(){
+  const ov=document.getElementById('venue-overlay');if(!ov)return;
+  if(!_stageWide()||!ov.classList.contains('open')){ov.style.left='';ov.style.right='';return;}
+  const{left,right}=_stageRegion();
+  ov.style.left=left+'px';ov.style.right=Math.max(0,window.innerWidth-right)+'px';
+}
+function _vpSame(a,b){return!!a&&!!b&&a.k===b.k&&(a.k==='v'?a.venue===b.venue:a.ev===b.ev);}
+// 창을 열거나 내용을 바꾸기 전에 — 차례 기록·뒤로 버튼·열기 연출. 돌려주는 값(차례 번호)으로 늦게 온 비동기 결과를 거른다.
+function _vpEnter(view,back){
+  const ov=document.getElementById('venue-overlay'),panel=document.getElementById('venue-panel');
+  const was=ov.classList.contains('open');
+  if(!was)_vpHist=[];
+  else if(!back&&_vpCur&&!_vpSame(_vpCur,view))_vpHist.push(_vpCur);
+  _vpCur=view;
+  const bk=document.getElementById('venue-panel-back');if(bk)bk.hidden=!_vpHist.length;
+  panel.scrollTop=0;
+  if(!was){
+    if(isMob()){
+      panel.style.transition='none';panel.style.transform='translateY(100%)';ov.classList.add('open');_bringToFront(ov);
+      requestAnimationFrame(()=>requestAnimationFrame(()=>{panel.style.transition='transform 0.26s cubic-bezier(0.32,0.72,0,1)';panel.style.transform='';}));
+    }else{ov.classList.add('open');_bringToFront(ov);}
+  }else _bringToFront(ov); // 이미 열려 있어도(다른 공연으로 바꿈) 맨 위로
+  if(_stageWide()){_stageOpen('venue');_vpPlace();if(!_vpPlaceT)_vpPlaceT=setInterval(_vpPlace,400);}
+  return ++_vpTok;
+}
+function _vpBack(){
+  const prev=_vpHist.pop();if(!prev)return;
+  if(prev.k==='c')_openConcertSheet(prev.ev,true);else _openVenueEvents(prev.venue,true);
+}
+function _closeVenueOverlay(){
+  const ov=document.getElementById('venue-overlay'),panel=document.getElementById('venue-panel');
+  const fin=()=>{
+    ov.classList.remove('open');panel.style.transition='';panel.style.transform='';
+    _vpHist=[];_vpCur=null;_vpTok++;
+    clearInterval(_vpPlaceT);_vpPlaceT=null;ov.style.left='';ov.style.right='';
+    _stageClose('venue');
+  };
+  if(isMob()&&ov.classList.contains('open')){
+    panel.style.transition='transform 0.24s cubic-bezier(0.32,0.72,0,1)';panel.style.transform='translateY(100%)';
+    setTimeout(fin,240);
+  }else fin();
+}
+document.getElementById('venue-panel-close').addEventListener('click',e=>{e.stopPropagation();_closeVenueOverlay();});
+document.getElementById('venue-panel-back')?.addEventListener('click',e=>{e.stopPropagation();_vpBack();});
+document.getElementById('venue-to-lb')?.addEventListener('click',e=>{e.stopPropagation();_setStageFront('lb');});
+document.getElementById('venue-overlay').addEventListener('click',e=>{if(e.target===e.currentTarget)_closeVenueOverlay();});
+// 폰 시트 끌어 닫기 — 목록 창(_wireFeedListSwipe)과 같은 규칙: 머리줄을 잡으면 언제나, 본문은 맨 위일 때만
+{
+  const panel=document.getElementById('venue-panel');
+  let y0=0,dragging=false,active=false,raf=0,dy=0;
+  panel.addEventListener('touchstart',e=>{
+    if(!isMob()||e.target.closest('.hscroll-drag')){dragging=false;return;}
+    y0=e.touches[0].clientY;dragging=true;active=!!e.target.closest('#venue-panel-hd')||panel.scrollTop<=0;dy=0;
+  },{passive:true});
+  panel.addEventListener('touchmove',e=>{
+    if(!dragging)return;
+    const y=e.touches[0].clientY;
+    if(!active){if(panel.scrollTop<=0){active=true;y0=y;}else return;}
+    dy=y-y0;if(dy<0){dy=0;return;}
+    if(e.cancelable)e.preventDefault();
+    if(!raf)raf=requestAnimationFrame(()=>{raf=0;panel.style.transition='none';panel.style.transform='translateY('+dy+'px)';});
+  },{passive:false});
+  panel.addEventListener('touchend',()=>{
+    if(!dragging)return;dragging=false;
+    if(raf){cancelAnimationFrame(raf);raf=0;}
+    if(!active)return;active=false;
+    if(dy>80)_closeVenueOverlay();
+    else{panel.style.transition='transform 0.22s cubic-bezier(0.32,0.72,0,1)';panel.style.transform='';setTimeout(()=>{panel.style.transition='';},220);}
+  },{passive:true});
+}
 
 // ── 트로피(객관적 성취 기록 — 콘서트와 달리 개인화 없이 단순 카운트+리스트만) ──
 // 음악방송 1위 / 멜론 연간 TOP100 / 스포티파이 마일스톤 세 종류를 같은 모달(#trophy-overlay)에서

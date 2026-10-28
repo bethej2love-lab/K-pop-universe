@@ -3127,7 +3127,6 @@
   .adv-more:hover{background:rgba(255,255,255,0.1);}
   /* 데스크톱: 시트 오른쪽 측면 패널 */
   @media(min-width:1024px){
-    body:has(#feed-overlay.open) #gc-discog-video-panel{display:none!important;}
     #gc-discog-detail.open{gap:0;}
     /* 영상 패널 있을 때 앨범 시트 오른쪽 radius 제거 */
     #gc-discog-detail:has(#gc-discog-video-panel:not([hidden])) #gc-discog-detail-sheet{border-radius:18px 0 0 18px;}
@@ -4308,28 +4307,19 @@
   .feed-news-row.is-media{flex-direction:column;align-items:stretch;padding:0;margin:4px 16px 2px;border-radius:12px;overflow:hidden;background:rgba(255,255,255,0.028);border-top:none!important;}
   .feed-news-row.is-media+.feed-news-row{border-top:0.5px solid rgba(255,255,255,0.06);}
   .feed-news-row.is-media:active{background:rgba(255,255,255,0.055);}
-  #feed-dailynews .feed-news-mvs{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px;margin:4px 16px 2px;}
-  #feed-dailynews .feed-news-mvs>.feed-news-row{margin:0;min-width:0;}
-  #feed-dailynews .feed-news-mvs .fnr-cap{padding:8px;}
+  .feed-news-mvs{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px;margin:4px 16px 2px;}
+  .feed-news-mvs>.feed-news-row{margin:0;min-width:0;}
+  .feed-news-mvs .fnr-cap{padding:8px;}
   .fnr-media{position:relative;overflow:hidden;}
   .feed-news-thumb--media{width:100%;height:auto;aspect-ratio:16/9;border-radius:0;flex-shrink:0;display:block;}
   .fnr-cap{display:flex;align-items:center;gap:10px;padding:8px 12px 10px;}
   .fnr-cap .feed-news-body{flex:1;min-width:0;}
   /* 투데이스 케이팝 1면(2026-09-28) — 헤드라인 1 + 요약 4 + 더보기 */
-  .feed-news-hero{margin:2px 16px 6px;border-radius:14px;overflow:hidden;background:rgba(255,255,255,0.035);cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><path d='M11,1 L12.3,9.7 L21,11 L12.3,12.3 L11,21 L9.7,12.3 L1,11 L9.7,9.7Z' fill='%23FFB0D0' opacity='.97'/></svg>") 11 11,pointer;position:relative;-webkit-tap-highlight-color:transparent;}
-  .feed-news-hero .fnh-media{position:relative;aspect-ratio:16/9;background:rgba(255,255,255,0.04);overflow:hidden;}
-  .feed-news-hero .fnh-img{width:100%;height:100%;object-fit:cover;display:block;opacity:0;transition:opacity .25s ease;}
-  .feed-news-hero .fnh-img.loaded{opacity:1;}
-  .feed-news-hero.is-album .fnh-bg{position:absolute;inset:-20px;background-size:cover;background-position:center;filter:blur(22px) brightness(.55);}
-  .feed-news-hero.is-album .fnh-img{position:relative;width:auto;height:100%;margin:0 auto;object-fit:contain;}
-  .feed-news-hero .fnh-cap{padding:10px 14px 12px;}
   /* 배지 썸네일 오버레이 — hero .fnh-media, row .fnr-media, shorts .feed-card-thumb-wrap 공용 */
   .fnh-media .feed-news-badge,.fnr-media .feed-news-badge,.feed-card-thumb-wrap .feed-news-badge{position:absolute;top:8px;left:8px;z-index:2;min-width:0;}
   /* 썸네일 위 뱃지는 배경을 어둡게(2026-10-15, 사용자: 조회수 뱃지 글자가 안 보임) — 색 배경 0.13은 사진이 그대로 비쳐 글자가 묻혔다.
      종류 구분은 글자색으로 그대로 둔다. 목록 줄 안 뱃지(.fnr-row 등)는 바탕이 어두워 원래 값 유지. */
   .fnh-media .feed-news-badge,.fnr-media .feed-news-badge,.feed-card-thumb-wrap .feed-news-badge{background:rgba(10,14,28,0.72);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);}
-  .feed-news-hero .fnh-title{margin-top:7px;font-size:15px;font-weight:700;line-height:1.35;color:rgba(232,240,255,0.95);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
-  .feed-news-hero .fnh-sub{margin-top:3px;font-size:11.5px;color:rgba(150,175,222,0.75);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
   .feed-news-more{display:block;margin:4px 20px 2px;padding:8px 0;width:calc(100% - 40px);background:none;border:0;border-top:0.5px solid rgba(255,255,255,0.06);color:rgba(150,175,222,0.8);font-size:12px;font-weight:600;cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><path d='M11,1 L12.3,9.7 L21,11 L12.3,12.3 L11,21 L9.7,12.3 L1,11 L9.7,9.7Z' fill='%23FFB0D0' opacity='.97'/></svg>") 11 11,pointer;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
   /* 조회수 돌파 쇼츠 2열(2026-10-12) — 영상 그리드(.feed-grid)와 같은 세로 카드. 좌우는 아래 앨범 그리드(20px)에 맞춘다. */
   .feed-news-shorts{padding:6px 20px 4px;}
@@ -5177,6 +5167,30 @@
   #venue-panel .concert-poster{width:96px;height:136px;}
   #venue-panel .concert-item-title{font-size:15.5px;}
 }
+/* ── 공연·공연장 창 머리줄(2026-10-28 창 개편 3단계) — '‹'(창 안에서 이어 연 앞 화면으로)·제목·'재생 화면으로' ── */
+#venue-panel-hd{display:flex;align-items:center;gap:8px;padding-right:36px;min-width:0;}
+#venue-panel-hd .pp-title{flex:1;min-width:0;padding-right:0;}
+#venue-panel-back{flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;margin-left:-6px;border:none;border-radius:50%;background:none;color:rgba(200,215,250,0.85);cursor:pointer;}
+#venue-panel-back:hover{background:rgba(255,255,255,0.08);}
+#venue-panel-back[hidden]{display:none;}
+#venue-panel-back svg{width:20px;height:20px;fill:currentColor;}
+#venue-to-lb{display:none;}
+/* 폰: 아래에서 올라오는 시트(목록 창과 같은 모양 — 손잡이·위 모서리만 둥글게). 열고 닫는 transform은 JS(_vpEnter·_closeVenueOverlay) */
+@media(max-width:768px){
+  #venue-overlay{align-items:flex-end;}
+  #venue-panel{width:100%;max-width:100%;max-height:88vh;border-radius:18px 18px 0 0;padding-top:22px;overscroll-behavior:contain;}
+  #venue-panel::before{content:'';position:absolute;top:7px;left:50%;transform:translateX(-50%);width:36px;height:4px;border-radius:2px;background:rgba(255,255,255,0.2);pointer-events:none;}
+}
+/* 웹: 무대(카드 왼쪽 빈자리)에 붙고 어두운 배경 없음. 자리(left/right)는 JS _vpPlace. 재생 화면·앨범·목록 창과 나중에 연 쪽이 앞 */
+@media(min-width:1024px){
+  #venue-overlay{inset:64px 0 0 0;padding:44px 28px 20px;background:none;backdrop-filter:none;-webkit-backdrop-filter:none;align-items:flex-start;justify-content:flex-end;pointer-events:none;transition:opacity .2s ease,transform .22s ease;}
+  #venue-panel{pointer-events:auto;width:min(560px,100%);max-height:100%;box-sizing:border-box;box-shadow:0 12px 44px rgba(0,0,0,0.5);}
+  body[data-stage-front]:not([data-stage-front="venue"]) #venue-overlay.open{opacity:0;transform:translateX(24px);visibility:hidden;}
+  body[data-stage-front="venue"] #yt-lightbox.open{opacity:0;visibility:hidden;pointer-events:none;}
+  body[data-stage-front="venue"] #gc-discog-detail.open,body[data-stage-front="venue"] #feed-list-overlay.open{opacity:0;transform:translateX(24px);visibility:hidden;}
+  body[data-stage-front="venue"]:has(#yt-lightbox.open) #venue-to-lb{display:inline-flex;align-items:center;gap:6px;flex-shrink:0;padding:5px 11px 5px 9px;border-radius:999px;border:0.5px solid rgba(126,156,255,0.4);background:rgba(126,156,255,0.14);color:#cfdbff;font:600 11.5px/1 inherit;font-family:inherit;cursor:pointer;white-space:nowrap;}
+  #venue-to-lb svg{width:12px;height:12px;fill:currentColor;}
+}
 /* ── 웹 무대: 목록 창(2026-10-28 사용자 "창이 가운데 열리는 게 최선의 레이아웃이 아닌 것 같다, 궁극적 개선") ──
    차트·모아보기·시상식·컬렉션(#feed-list-overlay)을 화면 가운데 작은 창 + 어두운 배경 대신 앨범 창과 같은 무대(카드 왼쪽 빈자리)에.
    자리(left/right)는 JS _flPlace가 카드·탐험 패널을 따라 잰다. 재생 화면·앨범 창과는 나중에 연 쪽이 앞(body[data-stage-front]).
@@ -5206,7 +5220,7 @@
   body.fw-home #zoom-ctrl.zoom-feed-open{left:calc(min(960px,100vw - 360px) - 2px);}
   body.fw-home .feed-grid{grid-template-columns:repeat(5,1fr);} /* 가로 영상 3칸 + 쇼츠 1칸×2 = 한 줄(아래 span 3) */
   body.fw-home .feed-album-grid:not(.feed-album-rail){grid-template-columns:repeat(4,1fr);}
-  body.fw-home #feed-dailynews .feed-news-mvs{grid-template-columns:repeat(4,minmax(0,1fr));}
+  body.fw-home .feed-news-mvs{grid-template-columns:repeat(4,minmax(0,1fr));}
   body.fw-home .feed-grid .feed-card.feed-wide.is-short .feed-card-thumb-wrap{max-height:min(64svh,560px);}
 }
 /* 넓은 나침반 안 크기 — 좁을 때(440) 크기를 지키고 한 줄에 더 많이 보이게. 비율로 크기가 정해진 칸(선반 1.5장·기념일 4명·앨범 2.5장·인스타 2장)은
@@ -5217,7 +5231,6 @@
   body.fw-home #feed-anniv .feed-strip-item,body.fw-home #feed-foryou-anniv .feed-strip-item{width:calc((100% + 5px) / 8);}
   body.fw-home #feed-newalbum.feed-album-rail,body.fw-home #feed-favalbum.feed-album-rail,body.fw-home #feed-concerts.feed-album-rail,body.fw-home #feed-favconcert.feed-album-rail{grid-auto-columns:calc((100% + 4px) / 5.5);}
   body.fw-home #feed-ig.feed-album-rail,body.fw-home #feed-favig.feed-album-rail,body.fw-home #feed-igmag.feed-album-rail,body.fw-home #feed-favigmag.feed-album-rail{grid-auto-columns:calc((100% - 10px) / 4.4);}
-  body.fw-home .feed-news-hero .fnh-media{aspect-ratio:auto;height:min(340px,38vh);}
 }
 /* 넓은 나침반 영상 칸: 가로 영상이 2칸(높이 1.1칸)이면 옆 쇼츠(1.8칸)보다 짧아 밑이 크게 비었다 — 3칸이면 높이 ≈ 1.7칸으로 쇼츠(1.8칸)와 맞물린다 — 5칸 그리드에서 가로3+쇼츠2 / 쇼츠5 */
 @media(min-width:1024px){
