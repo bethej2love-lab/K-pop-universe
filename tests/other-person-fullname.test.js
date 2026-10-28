@@ -21,6 +21,13 @@ const has = (r, gko, mem) => {
 };
 // 태그는 두 경로의 합집합으로 붙는다 — 외부 채널 역추론(_m2ParseTitle) + 그 그룹 자체 채널 매칭(_atmResolveMembers).
 // "잡혀야"는 둘 중 하나라도, "안 잡혀야"는 둘 다 안 잡혀야 통과.
+// 제목 파서(다른 그룹 게스트 단계)만 — 그 그룹 자체 채널 경로(_atmResolveMembers)는 안 본다
+const expectGuest = (title, gko, mem, want) => {
+  const r = _m2ParseTitle(title, undefined, false);
+  const ok = has(r, gko, mem) === want;
+  if (!ok) pass = false;
+  console.log((ok ? '✅' : '❌') + ' 게스트 ' + (want ? '잡혀야' : '안 잡혀야') + ' ' + gko + ' ' + mem + ' ← ' + title + (ok ? '' : ' → 결과: ' + JSON.stringify(r)));
+};
 const expect = (title, gko, mem, want) => {
   const r = _m2ParseTitle(title, undefined, false);
   const own = (mem && GROUPS[gko]) ? M2._atmResolveMembers(title, '', rosterFor(gko), gko) : [];
@@ -135,6 +142,17 @@ expect('TWICE ROOM TOUR 🏠 #TWICE #트와이스 #TEN_The_Story_Goes_On #MEplus
 expect('크아앙🐱☘️ #UNIS #유니스#KOTOKO #코토코', '다이아', null, false);
 expect('CLC 승연&예은, 몬스타엑스 기현&형원과 함께한 려행퀴! / 160331[슈퍼주니어의 키스 더 라디오]', '원더걸스', null, false);
 expect('둘리가 엄마를 잃어버린 것인가? #shorts #은채의스타일기 #더보이즈 #theboyz #선우 #에릭 #현재 #은채', '다이아', null, false);
+// 기존 24만 개 소급 표본(10-28)에서 나온 오답 — 곡 표기·커버 원곡 가수·동명이인·함께 표시 없는 해시태그
+expectGuest('3D👌🏻#정국 #JungKook #JungKook_3D#온앤오프 #ONF #제이어스 #J_US', '방탄소년단', '정국', false);
+expectGuest('홀씨가 됐다구~💨🧚‍♀️#PRIMROSE #프림로즈 #NAHYUN #나현 #IU #아이유 #홀씨 #challenge #dance', '아이유', '아이유', false);
+expectGuest('If ROSÉ-Toxic till the end was in Korean🎶#GHOST9 #CHOIJUNSEONG #ROSÉ #로제 #toxictilltheend #Shorts', '블랙핑크', '로제', false);
+expectGuest('존경하는 #태연 선배님💕 Letter To Myself 🎵 #CRAXY #크랙시 #SWAN #Challenge #taeyeon #songcover', '소녀시대', '태연', false);
+expectGuest('#LOVEEFFECTChallenge With #박소현 선배님🥰#온앤오프 #ONF #제이어스 #J_US', '트리플에스', '박소현', false);
+expectGuest('#싱글즈_랭킹_어워즈 4월 3주차 주제! 가장 잘 어울리는 스타는 누구일까요? #현재 #디오 #라이즈 #원우', '엑소', '디오', false);
+// 함께 표시(with·선배님·님과)·고정 코너 진행자는 그대로
+expectGuest('#효린 선배님의 #이게사랑이지뭐야 🫶🏻#Thislovechallenge #HYOLYN  #최유진 #YUJIN #Kep1er #케플러', '씨스타', '효린', true);
+expectGuest('𝒗𝒊𝒃𝒆 𝒔𝒐 𝒌𝒊𝒍𝒍𝒆𝒓💘 with #DAYOUNG #다영 선배님🔥 #BADVILLAIN #배드빌런 #THRILLER', '우주소녀', '다영', true);
+expectGuest('요리 개척자 등장  #덕밥집  #최강창민 #트레저', '동방신기', '최강창민', true);
 
 console.log(pass ? '\n🎉 다른 사람 풀네임·협찬 크레딧 테스트 통과' : '\n❌ 다른 사람 풀네임·협찬 크레딧 테스트 실패');
 process.exit(pass ? 0 : 1);

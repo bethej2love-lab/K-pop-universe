@@ -8352,7 +8352,9 @@ function _m2NameVariants(a){
 // 같이 붙던 것(2026-10-26, 동명이인 애매 판정 확장을 보류하고 대신 넣은 좁은 규칙).
 let _m2FullNameOwnersCache=null;
 // 게스트 감지에서만 빼는 이름 — '#아이엠'은 거의 항상 아이브 곡 'I AM' 해시태그(몬스타엑스 아이엠 아님)
-const _M2_GUEST_DENY=new Set(['아이엠']);
+// 이현=에이트 이현·박소현=방송인(러브게임 DJ)·다니엘=동명 인플루언서가 챌린지 상대로 훨씬 많다(10-28 기존 24만 개 소급 표본)
+// 박세미=서준맘 코미디언·이준=WAKER 이준·박정민·이준혁·김주호=배우(뮤지컬)·김나영=방송인
+const _M2_GUEST_DENY=new Set(['아이엠','이현','박소현','다니엘','박세미','이준','박정민','이준혁','김주호','김나영']);
 let _m2GuestNameIdx=null; // _m2ParseTitle 다른 그룹 게스트 감지용 이름 수 색인(2026-10-28)
 let _m2GroupNameSet=null;
 // 그룹 이름(한글 키·영문)과 같은 사람 이름 — #UNIS가 다이아 유니스로, #MIRAE가 체리블렛 미래로 잡히던 것(게스트 감지 전용)
@@ -9508,13 +9510,24 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
       // 2차(제목 4만 개 차분 256건 검토): 영문 해시태그는 그 그룹의 미등록 멤버(#LEON·#SEOHEE·#LOUIS)·곡명(#THUNDER·#IAM)·
       // 다른 채원(#CHAEWON)이 대부분이라 빼고 **손으로 등록한 별칭(GD)만**. 원곡 표기('원곡: 레드벨벳-아이린&슬기')는 걷어낸 제목(title)으로 본다.
       const _exactTag=t=>new RegExp('#'+_esc(t)+'(?![가-힣A-Za-z0-9_-])','i').test(title);
-      const _isLat=t=>/^[A-Za-z][A-Za-z .'-]*$/.test(t),_alias=t=>(a.matchAliases||[]).includes(t);
+      const _isLat=t=>/^[A-Za-zÀ-ÿ][A-Za-zÀ-ÿ .'-]*$/.test(t),_alias=t=>(a.matchAliases||[]).includes(t);
       const _inGroupName=t=>{const n=String(t).toLowerCase().replace(/[^a-z0-9가-힣]/g,'');return matchedGroupKos.some(g=>[g,GROUPS[g]&&GROUPS[g].en].some(x=>x&&String(x).toLowerCase().replace(/[^a-z0-9가-힣]/g,'').includes(n)));}; // #WISH ⊂ NCT WISH
       // 해시태그 전용 보호 이름(아이엠=I AM 곡명 등)은 게스트로 안 받고, 두 글자 한글은 등록 본명 그대로일 때만(#혜주 → 클라씨 홍혜주 ✗)
-      const tok=(_isHashtagOnlyName(a.name.ko)||_M2_GUEST_DENY.has(a.name.ko))?null:toks.find(t=>!_inGroupName(t)&&!_isHashtagOnlyName(t)&&!(/^[가-힣]{2}$/.test(t)&&t!==a.name.ko)&&(_isLat(t)?(_alias(t)&&(_exactTag(t)||_adj(t))):(_exactTag(t)||([...t].length>=3&&_adj(t)))));
+      // 3차(기존 24만 개 소급 표본 90개 중 12개 오답): 곡 해시태그가 원곡 가수 이름과 같이 붙은 챌린지(#정국 #JungKook_3D·#ROSÉ #APT·
+      // #태연 #투엑스)와 투표 후보 나열(#현재 #디오)이 대부분 — ① 그 사람 이름_곡 꼴 해시태그(#jhope_onthestreet)가 있으면 곡 표기로 보고 제외
+      // ② 두 글자 한글·영문 해시태그는 이름 근처에 같이 했다는 말(with·님·선배·함께·&·×·x)이 있을 때만. 세 글자↑ 한글 전체 이름은 그대로.
+      const _lt0=title.toLowerCase();
+      // 커버 영상의 이름은 대개 원곡 가수(#태연 선배님 … #songcover·ROSÉ - 'stay a little longer' Cover by) — 바로 옆 콜라보 표시(&·X·with)일 때만
+      if(/cover|커버/.test(_lt0)&&!toks.some(t=>_adj(t)))continue;
+      if(_m2NameVariants(a).some(v=>v&&_lt0.includes('#'+String(v).toLowerCase()+'_')))continue;
+      const _cueNear=t=>{const k=String(t).toLowerCase();for(let i=_lt0.indexOf(k);i>=0;i=_lt0.indexOf(k,i+1)){if(/(with|w[/]|feat|ft[.]|님|선배|함께|[&＆×]| x )/.test(_lt0.slice(Math.max(0,i-22),i+k.length+12)))return true;}return false;};
+      // ③ 4차: 함께 표시 없는 해시태그만으론 세 글자↑도 12%가 오답(#아이유 #홀씨·#백예린 #Square 곡 표기, 배우 박정민·이준혁) → 해시태그는 함께 표시가
+      //    있을 때만. 예외는 진행자가 정해진 고정 코너(제목에 코너명 + 그 진행자 해시태그) — 덕밥집·재친구·MC쭌 주간챌린지.
+      const _host=Object.entries({'덕밥집':'최강창민','재친구':'김재중','mc쭌':'이장준'}).some(([k,v])=>v===a.name.ko&&_lt0.includes(k));
+      const tok=(_isHashtagOnlyName(a.name.ko)||_M2_GUEST_DENY.has(a.name.ko))?null:toks.find(t=>!_inGroupName(t)&&!_isHashtagOnlyName(t)&&!(/^[가-힣]{2}$/.test(t)&&t!==a.name.ko)&&(_isLat(t)?(_alias(t)&&(_adj(t)||(_exactTag(t)&&_cueNear(t)))):(([...t].length>=3&&_adj(t))||(_exactTag(t)&&(_cueNear(t)||_host)))));
       if(!tok)continue;
       const gk=gs.find(g=>GROUPS[g])||a.name.ko;
-      if(gk===selfGko)continue;
+      if(gk===selfGko||a.name.ko===selfGko)continue; // 솔로 이름 키 채널(디모렉스)의 자기 영상에 자기를 전 그룹 게스트로 붙이던 것
       (membersByGroup[gk]=membersByGroup[gk]||[]).includes(a.name.ko)||membersByGroup[gk].push(a.name.ko);
       if(!matchedGroupKos.includes(gk))matchedGroupKos.push(gk);
       _trace.push({rule:'cross_group_guest',token:tok,effect:gk+':'+a.name.ko});
