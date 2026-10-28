@@ -439,6 +439,8 @@ function _eventTags(title,publishedAt){
 //   ② 쇼츠 해시태그 나열(#ATTITUDE #REBELHEART)은 아무 곡이나 걸린다 → 해시태그는 딱 한 곡만 나올 때만
 //   ③ 메들리('LOVE DIVE + 해야')는 곡이 여럿 → 키를 여러 개(최대 5)
 const _SONG_TAIL_RE=/\s*[\(\[][^)\]]*(?:feat|with|remix|ver\b|version|inst|mix\b|edit\b|prod\b|english|japanese|korean|acoustic|live\b|sped|slowed|demo|op\.|solo\b|unit\b)[^)\]]*[\)\]]/gi; // '(JUN Solo)'·'(HOSHI Solo)' 같은 멤버 솔로 표기도 꼬리
+// 폭 0 문자 — 'YOUNG(폭0)CREATOR(폭0)CREW'처럼 보이지 않게 띄운 제목이 단어 경계 검사에서 떨어졌다(2026-10-28)
+const _SONG_ZW=/[\u200b-\u200d\u2060\ufeff]/g;
 function _songNorm(s){return String(s||'').toLowerCase().normalize('NFKC').replace(/[^a-z0-9가-힣ぁ-んァ-ヶ一-龥]/g,'');}
 // 꼬리 떼기 — 괄호 꼬리 + 일본반의 대시 표기('Chk Chk Boom -Japanese ver.-')
 function _songStripTail(title){return String(title||'').replace(_SONG_TAIL_RE,'').replace(/\s*-[^-]*\bver(?:sion)?\b\.?[^-]*-\s*$/i,'');}
@@ -468,10 +470,29 @@ function _songLinkBases(title,songs,blockNames){
     // 따옴표 안이 '아낀다 (Adore U)'처럼 두 표기면 괄호 안도 본다
     const inner=/[\(\[]([^)\]]+)[\)\]]/.exec(m[1]);if(inner)add(look(_songNorm(inner[1])));
   }
+  // ①-2 "가수 - 곡" / "곡 - 가수"(음방·직캠 제목 관례, 2026-10-28): 대시 한쪽이 주인 이름을 품고 다른 쪽이 곡이면 짧은 곡명('GO!'·'TNT')도 믿는다.
+  //   실측: 코르티스 퍼포먼스 미연결 207개 중 'CORTIS (코르티스) - TNT |'·'– GO! FanCam'·'GO! - CORTIS [뮤직뱅크'가 수십 개.
+  //   곡 쪽은 앞에서부터 낱말을 줄여 가며 곡 목록과 **정확히** 맞는 것만('TNT FanCam' → 'TNT'). 원곡 표기가 따로 있는 커버('MIC Drop … - CORTIS')는 곡 목록에 없어 안 걸린다.
+  //   🎵 뒤(보이스캠 '🎵GO!｜')도 같은 방식.
+  const dash=[]; // 아래 ②까지 끝난 뒤에 붙인다 — 예전 규칙으로 잡던 키의 순서를 안 바꿔야 전량 재계산 때 안 바뀐 행을 다시 쓰지 않는다
+  // 곡 쪽 끊기: 구분자(| ｜ [ ] ( ) # @ , 따옴표, 낱말 ' l '·'ㅣ')까지. 앞 따옴표는 벗긴다('“FOREVER” 미방분').
+  const _cut=x=>x.replace(/^\s*['‘’"“”]/,'').split(/[|｜\[\]【】#@(（)）「『,'‘’"“”]|\s[lㅣ]\s/)[0].trim();
+  // 낱말을 뒤에서부터 줄여 맞추되, 떼어 낸 뒷말이 군말(직캠·FanCam·4K…)일 때만 — 'Hot Summer'(커버)가 'HOT'으로 잡히던 것 막기
+  const _NOISE=/^(?:fan\s*cam|full\s*cam|face\s*cam|focus|cam|직캠|풀캠|페이스캠|세로|가로|ver\.?|version|\d+k|\d+p|60fps|mv|m\/v|stage|live|무대|교차편집|클린|clean|원픽캠|직캠모먼트|by|of|the|[a-z가-힣]+캠)$/i;
+  const _lead=x=>{const w=_cut(x.replace(_SONG_ZW,'')).split(/\s+/).filter(Boolean).slice(0,8);
+    for(let k=w.length;k>0;k--){if(w.slice(k).some(z=>!_NOISE.test(z)))continue;const b=look(_songBase(w.slice(0,k).join(' ')));if(b)return b;}return null;};
+  const _hasOwner=x=>{const n=_songNorm(x);return [...blocked].some(o=>o.length>=2&&n.includes(o));};
+  for(const m of t.matchAll(/\s[-–—－]\s/g)){
+    const L=t.slice(0,m.index),R=t.slice(m.index+m[0].length);
+    const Lseg=L.split(/[|｜\]】」』]/).pop();
+    if(_hasOwner(Lseg))dash.push(_lead(R));
+    else if(_hasOwner(_cut(R).split(/\s+/).slice(0,4).join(' ')))dash.push(look(_songBase(Lseg.replace(_SONG_ZW,'').trim())));
+  }
+  for(const m of t.matchAll(/🎵\s*([^\n]+)/g))dash.push(_lead(m[1]));
   // ② 해시태그를 뺀 본문에서 곡명 포함 — 4글자 이상·흔한 낱말 아님·주인 이름 아님. 긴 곡명 안에 든 짧은 곡명은 버린다
   const noTags=t.replace(/#[^\s#]+/g,' ');
   const body=_songNorm(noTags);
-  const tl=noTags.toLowerCase().normalize('NFKC'); // 단어 경계 검사용(공백·기호 살아 있는 소문자)
+  const tl=noTags.toLowerCase().normalize('NFKC').replace(_SONG_ZW,''); // 단어 경계 검사용(공백·기호 살아 있는 소문자, 폭 0 문자는 뺌)
   const hits=[];
   for(const s of songs){
     // 길이 문턱: 한글만으로 된 곡명은 3글자부터('아낀다'·'손오공'), 나머지는 4글자부터(영어 'ON'·'HOT' 같은 짧은 낱말 오탐)
@@ -481,7 +502,7 @@ function _songLinkBases(title,songs,blockNames){
     if(/^[a-z0-9]+$/.test(s.b)&&s.title){
       if(s.re===undefined){
         const core=_songStripTail(s.title).replace(/\s*[\(\[][^)\]]*[\)\]]\s*$/,'')||s.title;
-        const w=String(core).toLowerCase().normalize('NFKC').match(/[a-z0-9]+/g);
+        const w=String(core).toLowerCase().normalize('NFKC').replace(_SONG_ZW,'').match(/[a-z0-9]+/g);
         s.re=w?new RegExp('(^|[^a-z0-9])'+w.join('[^a-z0-9]*')+'(?![a-z0-9])'):null;
       }
       if(s.re&&!s.re.test(tl))continue;
@@ -500,6 +521,7 @@ function _songLinkBases(title,songs,blockNames){
     }
   }
   hits.sort((a,b)=>b.length-a.length).forEach(b=>{if(!out.some(o=>o.includes(b)))add(b);});
+  dash.forEach(add);
   // ③ 아무것도 못 찾았을 때만 해시태그 — 곡과 정확히 같은 태그가 딱 한 곡일 때만(나열형 쇼츠 오탐 방지)
   if(!out.length){
     const tags=[...t.matchAll(/#([^\s#]+)/g)].map(m=>{const n=_songNorm(m[1]);return bset.has(n)?n:(amap.get(n)||null);}).filter(b=>b&&!blocked.has(b));

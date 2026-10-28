@@ -50,5 +50,21 @@ eq(ctx.AN('New Jeans', new Set(['attention']), ['뉴진스', 'NewJeans']), null,
 eq(ctx.AN('LOVE', new Set(), []), null, '흔한 낱말 앨범명은 안 찾음');
 eq(ctx.AH("IVE 'REVIVE+' Highlight Medley", 'REVIVE+', 'revive'), true, '하이라이트 메들리는 앨범 영상');
 eq(ctx.AH('IVE ICONIC REVIVEplus? no — DREVIVED', 'REVIVE+', 'revive'), false, '영어 앨범명은 단어 단위로만');
+const ZW = String.fromCharCode(0x200b);
+// "가수 - 곡" / "곡 - 가수" / 🎵곡 (2026-10-28 — 코르티스 퍼포먼스 미연결 207개 중 'GO!'·'TNT'가 대부분이었다)
+const CT = songsOf('코르티스'), ct = t => ctx.f(t, CT, ['코르티스', 'CORTIS']);
+eq(ct('CORTIS (코르티스) - TNT | Show! MusicCore | MBC260509방송'), ['tnt'], '가수 - 짧은 곡명');
+eq(ct('[#음중직캠] CORTIS JUHOON (코르티스 주훈) – GO! FanCam | 쇼! 음악중심 | MBC250823'), ['go'], '멤버 직캠 – 곡 + 군말(FanCam)');
+eq(ct('GO! - CORTIS (코르티스) [뮤직뱅크/Music Bank] | KBS 250822 방송'), ['go'], '곡 - 가수(뮤직뱅크 순서)');
+eq(ct('[보이스캠] 건호 (CORTIS)｜Voice Focused FanCam｜KEONHO of CORTIS 🎵GO!｜VoiceCam360˚'), ['go'], '🎵 뒤 곡명');
+eq(ct('[보이스캠] 건호 (CORTIS)｜KEONHO of CORTIS 🎵YOUNG__ZW__CREATOR__ZW__CREW｜VoiceCam360˚'.split('__ZW__').join(ZW)), ['youngcreatorcrew'], '폭 0 문자로 띄운 곡명');
+eq(ct('MIC Drop (Steve Aoki Remix) (원곡: BTS) - CORTIS [2025 뮤직뱅크 글로벌페스티벌 IN JAPAN]'), [], '남의 곡 커버는 안 잡음');
+eq(ct('제임스안 (James An) - Blue Ink | K-Pop Live Session'), [], '대시 앞에 주인 이름이 없으면 안 봄');
+eq(ct('[LIVE] 코르티스, "인천국제공항 출국"ㅣCORTIS, "ICN INT Airport Departure" [공항]'), [], '공항 영상은 곡 없음');
+const LS = songsOf('르세라핌');
+eq(ctx.f("[입덕직캠] 르세라핌 직캠 'BOYS PLANET - Hot Summer' (LE SSERAFIM FanCam)", LS, ['르세라핌', 'LE SSERAFIM']), [], "커버 'Hot Summer'에서 낱말을 줄여 'HOT'을 만들지 않음(떼는 말은 군말만)");
+eq(ctx.f('[릴레이댄스] LE SSERAFIM(르세라핌) - HOT (4K)', LS, ['르세라핌', 'LE SSERAFIM']), ['hot'], '가수 - HOT (4K)');
+// 새 규칙 키는 뒤에 붙는다 — 예전 키 순서가 바뀌면 전량 재계산 때 안 바뀐 행까지 다시 쓴다
+eq(nj('Ditto - 뉴진스(NewJeans) [뮤직뱅크/Music Bank] | KBS 230127 방송')[0], 'ditto', '예전 규칙으로 잡던 키가 앞');
 console.log(fail ? `💥 곡 연결 테스트 실패 ${fail}건 (통과 ${pass})` : `✅ 곡 연결 테스트 통과 ${pass}건`);
 process.exit(fail ? 1 : 0);

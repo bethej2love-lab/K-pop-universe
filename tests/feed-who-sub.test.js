@@ -31,7 +31,8 @@ need(fn({ groupKo: '레드벨벳', memberKos: [], ownerCh: false }) === '레드�
 need(fn({ groupKo: '우주소녀', memberKos: [], ownerCh: true }) === '우주소녀', '멤버 태그 없는 개인 채널(팬 tier 등)은 그룹만');
 need(fn({ groupKo: '우주소녀', memberKos: ['다영', '슬기'], ownerCh: true }).startsWith('다영, 슬기 '), '공동운영 채널은 주인 전부');
 
-const uses = (html.match(/const sub=\[_feedWhoSub\(song\),/g) || []).length;
+// 2026-10-28: NEW VIDEOS는 앞에 최애 이모지를 붙여 "const sub=(이모지)+[_feedWhoSub(song)," 꼴 — 헬퍼 호출 배열만 센다
+const uses = (html.match(/\[_feedWhoSub\(song\),/g) || []).length;
 need(uses >= 3, `오리지널 콘텐츠·Trend·For You 세 선반이 같은 헬퍼를 씀(${uses}곳)`);
 need(!/const sub=\[_gLabelKo\(song\.groupKo\),song\.paFull/.test(html), '그룹만 적는 옛 캡션 조립이 남아 있지 않음');
 need(/source_tier/.test((/const _FEED_COLS=\(\)=>'([^']*)'/.exec(html) || [])[1] || ''), '피드 조회가 source_tier를 가져옴(개인 채널 판정 근거)');

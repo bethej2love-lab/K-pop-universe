@@ -5451,7 +5451,7 @@ async function _lbUpdateChartChips(s,pa){
   // 동시에 조회(처음엔 하나에 최대 13초 — 차례로 하면 20초 넘게 걸려 영상 다 볼 때쯤 떴다), 표시는 정의 순서대로
   let cands=_LB_LONG_CHARTS.filter(c=>vc>=c.floor&&!(c.recent&&!(age<=365*86400000))&&!(c.recentDays&&!(age<=c.recentDays*86400000)));
   // 영상 종류를 먼저 한 줄로 확인(기본키 조회라 가볍다) — 뮤비에 직캠·퍼포먼스 풀(최대 13초)을 돌리지 않게. 직캠·퍼포먼스=live, MV=mv
-  if(cands.length){try{const{data:cr}=await sb.from(_YT_TABLE).select('category').eq('id',id).maybeSingle();if(my!==_lbChartReq)return;
+  if(cands.length){try{const{data:cr}=await sb.from(_YT_TABLE).select('category,is_short').eq('id',id).maybeSingle();if(my!==_lbChartReq)return;
     const cat=cr&&cr.category;if(cat)cands=cands.filter(c=>(c.id==='mv'?'mv':'live')===cat);}catch(e){}}
   const res=await Promise.all(cands.map(c=>{const sel={..._CHART_SEL_DEFAULT,era:c.era};return _chartSongs(c.id,sel).then(songs=>({c,sel,songs}),()=>null);}));
   if(my!==_lbChartReq)return;
