@@ -12827,6 +12827,45 @@ function _flStageClose(){
   const ov=document.getElementById('feed-list-overlay');if(ov){ov.style.left='';ov.style.right='';}
   _stageClose('list');
 }
+// ── 나침반(탐험 패널) 폭 — 웹 홈(2026-10-28 사용자 "재방문 유저는 우주 보고 있을 게 아니라 웹에서 나침반 패널 너비를 키워야") ──
+// 웹(≥1024)에서 나침반**만** 열려 있으면 넓게(body.fw-home — 화면 약 2/3, 최대 960px), 카드·재생 화면·목록 창·앨범 창·관리 창 중
+// 하나라도 열리면 440px로 줄어 무대 자리를 내주고, 닫히면 다시 넓어진다. 여는 길이 많아서(카드 클릭·검색·딥링크·재생목록 넘김·
+// 뒤로가기…) 호출부마다 부르지 않고 **이 창들의 class 변화를 한 곳에서 지켜본다**(MutationObserver). 폰·태블릿(<1024)은 그대로.
+// ⚠️ 폭이 바뀌면 칸 수가 바뀌어 글이 다시 흐르므로, 보고 있던 자리(위쪽에 걸친 요소)를 기억했다가 같은 높이로 되돌린다.
+const _FW_BLOCKERS=['side-panel','member-panel','conn-panel','yt-lightbox','feed-list-overlay','gc-discog-detail',
+  'uc-card-overlay','adm-home-overlay','hnn-overlay','vm-overlay','gp-overlay'];
+function _feedWideScroller(){
+  const fo=document.getElementById('feed-overlay');if(!fo)return null;
+  return [...fo.querySelectorAll('.feed-pane,#feed-body')].find(el=>el.offsetParent&&el.scrollHeight>el.clientHeight+2)||null;
+}
+function _feedWideSync(){
+  const fo=document.getElementById('feed-overlay');if(!fo)return;
+  const on=_stageWide()&&fo.classList.contains('open')&&!_FW_BLOCKERS.some(id=>document.getElementById(id)?.classList.contains('open'));
+  if(document.body.classList.contains('fw-home')===on)return;
+  // 보고 있던 자리: 스크롤 칸 맨 위에서 조금 아래 점에 걸린 요소
+  const sc=_feedWideScroller();let anchor=null,off=0;
+  // 좁아질 때 잡은 기준을 기억해 두고, 그 사이 스크롤하지 않았으면 넓어질 때도 같은 기준으로(새로 잡으면 매번 조금씩 밀린다 — 실측 192px)
+  const m=_feedWideScroller._mem;
+  if(sc&&m&&m.sc===sc&&m.el.isConnected&&Math.abs(sc.scrollTop-m.top)<4){anchor=m.el;off=m.off;}
+  else if(sc&&sc.scrollTop>0){
+    const r=sc.getBoundingClientRect();
+    const hit=document.elementFromPoint(r.left+Math.min(60,r.width/4),r.top+24);
+    if(hit&&sc.contains(hit)){anchor=hit.closest('.feed-card,section,.feed-section,[id^="feed-"]')||hit;off=anchor.getBoundingClientRect().top-r.top;}
+  }
+  document.body.classList.toggle('fw-home',on);
+  if(anchor&&sc){
+    const fix=()=>{if(!anchor.isConnected)return;const d=anchor.getBoundingClientRect().top-sc.getBoundingClientRect().top-off;if(Math.abs(d)>1)sc.scrollTop+=d;};
+    fix();requestAnimationFrame(()=>{fix();requestAnimationFrame(()=>{fix();_feedWideScroller._mem={sc,el:anchor,off,top:sc.scrollTop};});});
+  }else _feedWideScroller._mem=null;
+}
+{
+  const _fwMo=new MutationObserver(()=>_feedWideSync());
+  ['feed-overlay',..._FW_BLOCKERS].forEach(id=>{const el=document.getElementById(id);if(el)_fwMo.observe(el,{attributes:true,attributeFilter:['class']});});
+  window.addEventListener('resize',()=>_feedWideSync(),{passive:true});
+  // 안전망 — 감시 대상 밖의 경로(시작 직후 자동 열림 등)로 상태가 바뀌어도 1초 안에 맞춘다(바뀔 게 없으면 아무것도 안 함)
+  setInterval(_feedWideSync,1000);_feedWideSync();
+}
+
 function _closeGcDiscogDetail(){
   clearInterval(_albPlaceT);_albPlaceT=null;
   _stageClose('alb');

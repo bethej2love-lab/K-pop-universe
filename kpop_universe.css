@@ -4112,7 +4112,7 @@
       border-right:0.5px solid rgba(255,255,255,0.10);
       box-shadow:4px 0 24px rgba(0,0,0,0.35);
       z-index:66;
-      transform:translateX(-440px);
+      transform:translateX(-100%); /* 폭이 넓어질 수 있어(body.fw-home) 고정 440 대신 자기 폭만큼 */
       transition:transform 0.32s cubic-bezier(0.4,0,0.2,1);
     }
     #feed-overlay.open{transform:translateX(0);}
@@ -5198,4 +5198,28 @@
   #feed-list-grid.gc-ch-grid>.gc-ch-item:not(.is-short){grid-column:span 2;}
   #feed-list-grid.gc-ch-grid>.gc-ch-item.featured:not(.is-short){grid-column:1/-1;}
   #feed-list-grid.gc-ch-grid-ranked>.gc-ch-item:not(.is-short):not(.featured){grid-column:span 2;}
+}
+/* ── 나침반 웹 홈 폭(2026-10-28) — 나침반만 열려 있으면 넓게(body.fw-home, JS _feedWideSync가 판정), 다른 창이 열리면 440 ──
+   안의 영상 칸도 폭에 맞춰: 4칸 그리드(가로 영상 2·쇼츠 4), 갈래 배치(masonry)·앨범은 칸 수만 늘린다. 가로 선반은 그대로 더 많이 보인다. */
+@media(min-width:1024px){
+  body.fw-home #feed-overlay{width:min(960px,calc(100vw - 360px));}
+  body.fw-home #zoom-ctrl.zoom-feed-open{left:calc(min(960px,100vw - 360px) - 2px);}
+  body.fw-home .feed-grid{grid-template-columns:repeat(5,1fr);} /* 가로 영상 3칸 + 쇼츠 1칸×2 = 한 줄(아래 span 3) */
+  body.fw-home .feed-album-grid:not(.feed-album-rail){grid-template-columns:repeat(4,1fr);}
+  body.fw-home #feed-dailynews .feed-news-mvs{grid-template-columns:repeat(4,minmax(0,1fr));}
+  body.fw-home .feed-grid .feed-card.feed-wide.is-short .feed-card-thumb-wrap{max-height:min(64svh,560px);}
+}
+/* 넓은 나침반 안 크기 — 좁을 때(440) 크기를 지키고 한 줄에 더 많이 보이게. 비율로 크기가 정해진 칸(선반 1.5장·기념일 4명·앨범 2.5장·인스타 2장)은
+   그대로 두면 폭에 비례해 2배 넘게 커졌다(앨범 한 장 360px·이번 주 대표 영상 900×506 — 2026-10-28 캡처). */
+@media(min-width:1024px){
+  body.fw-home #feed-chart>.feed-card,body.fw-home #feed-jacon>.feed-card,body.fw-home #feed-favchart>.feed-card,body.fw-home #feed-events>.feed-card,
+  body.fw-home #feed-recent>.feed-recent-item{width:calc((100% + 10px) / 3.4);}
+  body.fw-home #feed-anniv .feed-strip-item,body.fw-home #feed-foryou-anniv .feed-strip-item{width:calc((100% + 5px) / 8);}
+  body.fw-home #feed-newalbum.feed-album-rail,body.fw-home #feed-favalbum.feed-album-rail,body.fw-home #feed-concerts.feed-album-rail,body.fw-home #feed-favconcert.feed-album-rail{grid-auto-columns:calc((100% + 4px) / 5.5);}
+  body.fw-home #feed-ig.feed-album-rail,body.fw-home #feed-favig.feed-album-rail,body.fw-home #feed-igmag.feed-album-rail,body.fw-home #feed-favigmag.feed-album-rail{grid-auto-columns:calc((100% - 10px) / 4.4);}
+  body.fw-home .feed-news-hero .fnh-media{aspect-ratio:auto;height:min(340px,38vh);}
+}
+/* 넓은 나침반 영상 칸: 가로 영상이 2칸(높이 1.1칸)이면 옆 쇼츠(1.8칸)보다 짧아 밑이 크게 비었다 — 3칸이면 높이 ≈ 1.7칸으로 쇼츠(1.8칸)와 맞물린다 — 5칸 그리드에서 가로3+쇼츠2 / 쇼츠5 */
+@media(min-width:1024px){
+  body.fw-home .feed-grid .feed-card.feed-wide:not(.is-short){grid-column:span 3;}
 }
