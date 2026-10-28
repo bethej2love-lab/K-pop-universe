@@ -5177,3 +5177,25 @@
   #venue-panel .concert-poster{width:96px;height:136px;}
   #venue-panel .concert-item-title{font-size:15.5px;}
 }
+/* ── 웹 무대: 목록 창(2026-10-28 사용자 "창이 가운데 열리는 게 최선의 레이아웃이 아닌 것 같다, 궁극적 개선") ──
+   차트·모아보기·시상식·컬렉션(#feed-list-overlay)을 화면 가운데 작은 창 + 어두운 배경 대신 앨범 창과 같은 무대(카드 왼쪽 빈자리)에.
+   자리(left/right)는 JS _flPlace가 카드·탐험 패널을 따라 잰다. 재생 화면·앨범 창과는 나중에 연 쪽이 앞(body[data-stage-front]).
+   폰(<1024)은 위 바텀시트 그대로. */
+#feed-list-to-lb{display:none;}
+@media(min-width:1024px){
+  #feed-list-overlay{inset:64px 0 0 0;padding:44px 28px 20px;background:none;backdrop-filter:none;-webkit-backdrop-filter:none;align-items:stretch;justify-content:flex-end;pointer-events:none;transition:opacity .2s ease,transform .22s ease;}
+  #feed-list-panel{pointer-events:auto;width:min(680px,100%);max-height:none;min-height:0;height:100%;box-sizing:border-box;box-shadow:0 12px 44px rgba(0,0,0,0.5);}
+  body[data-stage-front="lb"] #feed-list-overlay.open,body[data-stage-front="alb"] #feed-list-overlay.open{opacity:0;transform:translateX(24px);visibility:hidden;}
+  body[data-stage-front="list"] #yt-lightbox.open{opacity:0;visibility:hidden;pointer-events:none;}
+  body[data-stage-front="list"] #gc-discog-detail.open{opacity:0;transform:translateX(24px);visibility:hidden;}
+  body[data-stage-front="list"]:has(#yt-lightbox.open) #feed-list-to-lb{display:inline-flex;align-items:center;gap:6px;padding:5px 11px 5px 9px;border-radius:999px;border:0.5px solid rgba(126,156,255,0.4);background:rgba(126,156,255,0.14);color:#cfdbff;font:600 11.5px/1 inherit;font-family:inherit;cursor:pointer;white-space:nowrap;}
+  #feed-list-to-lb svg{width:12px;height:12px;fill:currentColor;}
+}
+/* 무대 목록 창은 폭이 넓어(680px) 가로 영상이 한 줄에 하나씩(640px)이면 한 화면에 1.5개뿐 — 웹은 4칸: 가로 영상 2개·쇼츠 4개, 대표(featured)만 한 줄.
+   높이는 renderNextBatch가 실제 너비로 재서 못박으므로 칸 수만 바꿔도 겹치지 않는다. */
+@media(min-width:1024px){
+  #feed-list-grid.gc-ch-grid{grid-template-columns:repeat(4,1fr);}
+  #feed-list-grid.gc-ch-grid>.gc-ch-item:not(.is-short){grid-column:span 2;}
+  #feed-list-grid.gc-ch-grid>.gc-ch-item.featured:not(.is-short){grid-column:1/-1;}
+  #feed-list-grid.gc-ch-grid-ranked>.gc-ch-item:not(.is-short):not(.featured){grid-column:span 2;}
+}

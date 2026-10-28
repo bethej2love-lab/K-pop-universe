@@ -40,6 +40,13 @@ async function ev(c,x){const r=await c.send('Runtime.evaluate',{expression:x,ret
       sortRow.querySelectorAll('.gc-ch-filter')[1].click();await S(600);
       out.sortActive=sortRow.querySelector('.gc-ch-filter.active')?.textContent;
       out.vcSearch=_matchPrograms('보이스캠','보이스캠','').map(x=>x.key);
+      // 웹 무대(1400px) — 어두운 배경 없이 무대에, 재생 화면과 차례(2026-10-28)
+      {const ov=document.getElementById('feed-list-overlay');
+       out.stage={front:document.body.dataset.stageFront,bg:getComputedStyle(ov).backgroundColor,pe:getComputedStyle(ov).pointerEvents};
+       document.querySelector('#feed-list-grid .gc-ch-item')?.click();await S(2000);
+       out.stage.afterPlay=[document.body.dataset.stageFront,getComputedStyle(ov).visibility];
+       closeLightbox();await S(900);
+       out.stage.afterClose=[document.body.dataset.stageFront,getComputedStyle(ov).visibility];}
       // 시상식 창도 같은 '누가' 줄 — MMA 2025 + 즐겨찾기 에스파
       favGroups.clear();favGroups.add('에스파');
       await _openEventPage('mma','2025');await S(800);
@@ -54,6 +61,10 @@ async function ev(c,x){const r=await c.send('Runtime.evaluate',{expression:x,ret
     if(n(r.all)>500)ok('전체 '+r.all+' (예전 최신 500개 제한 풀림)');else bad('전체 '+r.all);
     if(r.favActive==='★ 즐겨찾기'&&n(r.fav)>0&&n(r.fav)<n(r.all))ok('★ 즐겨찾기(르세라핌)로 좁힘: '+r.fav);else bad('즐겨찾기 '+JSON.stringify(r));
     if(r.sortActive==='조회수')ok('조회수 정렬 전환');else bad('정렬 '+r.sortActive);
+    const st=r.stage||{};
+    if(st.front==='list'&&/rgba\(0, 0, 0, 0\)|transparent/.test(st.bg)&&st.pe==='none')ok('웹 무대: 목록 창이 앞·어두운 배경 없음·뒤 화면 클릭 통과');else bad('웹 무대 '+JSON.stringify(st));
+    if(st.afterPlay&&st.afterPlay[0]==='lb'&&st.afterPlay[1]==='hidden')ok('영상 누르면 재생 화면이 앞, 목록은 뒤로(닫지 않음)');else bad('재생 차례 '+JSON.stringify(st.afterPlay));
+    if(st.afterClose&&st.afterClose[0]==='list'&&st.afterClose[1]==='visible')ok('재생 화면 닫으면 목록이 다시 앞');else bad('닫은 뒤 차례 '+JSON.stringify(st.afterClose));
     const evWho=(r.evRows||[]).find(x=>x[0]==='전체'&&x.includes('★ 즐겨찾기'));
     if(r.evRows&&r.evRows.length===3&&evWho)ok('시상식 창(MMA 2025): 연도·무대/직캠/전체·누가 3줄');else bad('시상식 칩 '+JSON.stringify(r.evRows));
     if(n(r.evFavSub)>0&&r.evFavTitles.length&&r.evFavTitles.every(t=>/aespa|에스파/i.test(t)))ok('시상식 ★ 즐겨찾기(에스파): '+r.evFavSub);else bad('시상식 즐겨찾기 '+JSON.stringify({sub:r.evFavSub,t:r.evFavTitles}));

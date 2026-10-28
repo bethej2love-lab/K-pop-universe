@@ -6975,7 +6975,7 @@ function _lbPushHist(){
 function closeLightbox(){
   // 영상에 붙여 연 앨범 창(곡 카드)은 영상과 함께 닫는다 — 영상 없이 남으면 어디에 붙은 창인지 모호하다
   {const _ad=document.getElementById('gc-discog-detail');if(_ad&&_ad.classList.contains('open')&&_ad.classList.contains('lb-dock'))_closeGcDiscogDetail();}
-  _setStageFront('alb'); // 웹 무대 — 비켜 있던 앨범 창이 다시 앞으로
+  _stageAfterLb(); // 웹 무대 — 비켜 있던 앨범·목록 창 중 나중에 연 것이 다시 앞으로
   if(_lbHistPushed){
     _lbHistPushed=false;
     if(!_lbFromPop&&history.state&&history.state.kpuLb){_lbIgnorePop=true;try{history.back();}catch(_){_lbIgnorePop=false;}}
@@ -12637,7 +12637,7 @@ function _openGcDiscogDetail(a,idx,ctx){
     trackLbl.style.display='none';tracksEl.style.display='none';
   }
   {const _d=document.getElementById('gc-discog-detail');_d.classList.add('open');_bringToFront(_d);}
-  _setStageFront('alb');_albPlace();if(!_albPlaceT&&_stageWide())_albPlaceT=setInterval(_albPlace,400);
+  _stageOpen('alb');_albPlace();if(!_albPlaceT&&_stageWide())_albPlaceT=setInterval(_albPlace,400);
   _updateDiscogFlagBtn();
   {const _vp=document.getElementById('gc-discog-video-panel');if(_vp)_vp.hidden=true;}
   // 같은 앨범을 다시 그리는 경우(음방 1위 뱃지가 늦게 와서 다시 그림 등)엔 고른 곡을 유지한다 — 안 그러면 검색에서 곡을 눌러
@@ -12776,11 +12776,19 @@ function _setStageFront(w){
   if(!_stageWide()){delete document.body.dataset.stageFront;return;}
   document.body.dataset.stageFront=w;
 }
-// 앨범 창을 무대(카드들 왼쪽 ~ 탐험 패널 오른쪽)에 맞춘다 — 카드가 열리고 닫힐 때마다 따라가야 해서 열려 있는 동안 주기적으로 잰다
-let _albPlaceT=null;
-function _albPlace(){
-  const d=document.getElementById('gc-discog-detail');if(!d)return;
-  if(!_stageWide()||!d.classList.contains('open')){d.style.left='';d.style.right='';return;}
+// 무대에 올라간 창의 차례(2026-10-28 목록 창도 무대로) — 'alb'(앨범)·'list'(목록 창). 재생 화면('lb')은 늘 맨 앞 후보라 따로 둔다.
+// 창 하나를 닫으면 남은 것 중 가장 나중에 연 창이 다시 앞으로 온다(재생 화면이 열려 있으면 재생 화면).
+let _stageOrder=[];
+function _stageOpen(w){_stageOrder=_stageOrder.filter(x=>x!==w);_stageOrder.push(w);_setStageFront(w);}
+function _stageClose(w){
+  _stageOrder=_stageOrder.filter(x=>x!==w);
+  const lbOpen=!!document.getElementById('yt-lightbox')?.classList.contains('open');
+  _setStageFront(lbOpen?'lb':(_stageOrder[_stageOrder.length-1]||'lb'));
+}
+// 재생 화면을 닫을 때 — 뒤에 비켜 있던 창 중 가장 나중 것을 앞으로
+function _stageAfterLb(){_setStageFront(_stageOrder[_stageOrder.length-1]||'alb');}
+// 무대 자리 — 카드 패널(오른쪽) 왼쪽 ~ 왼쪽에 붙은 탐험 패널 오른쪽
+function _stageRegion(){
   let right=window.innerWidth;
   for(const id of ['side-panel','member-panel','conn-panel']){
     const el=document.getElementById(id);
@@ -12789,11 +12797,39 @@ function _albPlace(){
   let left=0;
   const fo=document.getElementById('feed-overlay');
   if(fo&&fo.classList.contains('open')){const r=fo.getBoundingClientRect();if(r.width>0&&r.width<window.innerWidth*0.5&&r.left<10)left=r.right;}
+  return{left,right};
+}
+// 앨범 창을 무대(카드들 왼쪽 ~ 탐험 패널 오른쪽)에 맞춘다 — 카드가 열리고 닫힐 때마다 따라가야 해서 열려 있는 동안 주기적으로 잰다
+let _albPlaceT=null;
+function _albPlace(){
+  const d=document.getElementById('gc-discog-detail');if(!d)return;
+  if(!_stageWide()||!d.classList.contains('open')){d.style.left='';d.style.right='';return;}
+  const{left,right}=_stageRegion();
   d.style.left=left+'px';d.style.right=Math.max(0,window.innerWidth-right)+'px';
+}
+// 목록 창(차트·모아보기·시상식·컬렉션 — _openFeedListOverlay 하나)을 웹 무대에(2026-10-28 사용자 "창이 가운데 열리는 게 최선의
+// 레이아웃이 아닌 것 같다, 궁극적 개선") — 어두운 배경 없이 카드 왼쪽 빈자리에 붙고, 재생 화면·앨범 창과 나중에 연 차례로 앞에 선다.
+// 폰(<1024)은 예전 바텀시트 그대로.
+let _flPlaceT=null;
+function _flPlace(){
+  const ov=document.getElementById('feed-list-overlay');if(!ov)return;
+  if(!_stageWide()||!ov.classList.contains('open')){ov.style.left='';ov.style.right='';return;}
+  const{left,right}=_stageRegion();
+  ov.style.left=left+'px';ov.style.right=Math.max(0,window.innerWidth-right)+'px';
+}
+function _flStageOpen(){
+  if(!_stageWide())return;
+  _stageOpen('list');_flPlace();
+  if(!_flPlaceT)_flPlaceT=setInterval(_flPlace,400);
+}
+function _flStageClose(){
+  clearInterval(_flPlaceT);_flPlaceT=null;
+  const ov=document.getElementById('feed-list-overlay');if(ov){ov.style.left='';ov.style.right='';}
+  _stageClose('list');
 }
 function _closeGcDiscogDetail(){
   clearInterval(_albPlaceT);_albPlaceT=null;
-  _setStageFront('lb');
+  _stageClose('alb');
   document.getElementById('gc-discog-detail').classList.remove('open','lb-dock');
   _discogCtx=null;_albScrollPending=false;
   const _vp=document.getElementById('gc-discog-video-panel');
@@ -21571,6 +21607,7 @@ function _openFeedListOverlay(title,sub,songs,ctx){
     // 컬렉션 칩에서 열 때). 다른 오버레이들처럼 열릴 때 맨 위로 올린다. 그 위 재생 플레이어(openLightbox)는
     // 자기도 _bringToFront라 여전히 이 오버레이 위로 뜬다(두더지잡기 없음).
     _bringToFront(_flOv);
+    _flStageOpen(); // 웹: 무대로(위 _flPlace 주석)
   }
   _setupFeedListSaveRow(ctx);
   _setupFeedListDescRow(ctx);
@@ -21811,6 +21848,7 @@ function _closeFeedListOverlay(){
     _flPanel.style.transition='';_flPanel.style.transform='';
     if(_feedListObserver){_feedListObserver.disconnect();_feedListObserver=null;}
     document.getElementById('user-bulk-bar')?.classList.add('hidden'); // 선택 중이었으면 같이 정리
+    _flStageClose();
   };
   // 모바일: 아래로 슬라이드아웃 후 정리(열기와 대칭). 데스크톱은 즉시.
   if(isMob()&&_flOv.classList.contains('open')){
@@ -21864,6 +21902,16 @@ _wireFeedListSwipe();
   }
 }
 document.getElementById('feed-list-close')?.addEventListener('click',e=>{e.stopPropagation();_closeFeedListOverlay();});
+{
+  const acts=document.getElementById('feed-list-hd-actions');
+  if(acts&&!document.getElementById('feed-list-to-lb')){
+    const b=document.createElement('button');b.id='feed-list-to-lb';b.type='button';
+    b.innerHTML='<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg><span></span>';
+    b.querySelector('span').textContent=currentLang==='ko'?'재생 화면으로':'Back to player';
+    b.addEventListener('click',e=>{e.stopPropagation();_setStageFront('lb');});
+    acts.insertBefore(b,acts.firstChild);
+  }
+}
 document.getElementById('feed-list-overlay')?.addEventListener('click',e=>{if(e.target===e.currentTarget)_closeFeedListOverlay();});
 document.getElementById('feed-list-overlay')?.addEventListener('pointerdown',e=>e.stopPropagation());
 // 그룹/멤버를 대표하는 영상 썸네일 하나(스크랩 최다, 없으면 랜덤)를 비동기로 가져온다 —
