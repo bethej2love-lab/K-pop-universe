@@ -69,6 +69,12 @@ if (/^function _m2FullNameShadowed\(/m.test(adminSrc)) { // 전체 이름 그림
   pieces.push(extractStatement(adminSrc, /^let _m2FullNameOwnersCache\s*=/m, '_m2FullNameOwnersCache'));
   pieces.push(extractByBraces(adminSrc, /^function _m2FullNameShadowed\(/m, '_m2FullNameShadowed'));
 }
+if (/^let _m2GuestNameIdx\s*=/m.test(adminSrc)) { // 다른 그룹 게스트 감지(2026-10-28)
+  pieces.push(extractStatement(adminSrc, /^const _M2_GUEST_DENY\s*=/m, '_M2_GUEST_DENY'));
+  pieces.push(extractStatement(adminSrc, /^let _m2GuestNameIdx\s*=/m, '_m2GuestNameIdx'));
+  pieces.push(extractStatement(adminSrc, /^let _m2GroupNameSet\s*=/m, '_m2GroupNameSet'));
+  pieces.push(extractByBraces(adminSrc, /^function _m2IsGroupName\(/m, '_m2IsGroupName'));
+}
 // 성 뗀 이름 역추론 제외 목록(2026-10-26) — 옛 admin.js로 전/후 차분을 돌릴 때도 뜨게 있으면만 싣는다
 if (/^const _ATM_NO_GIVEN_ONLY\s*=/m.test(adminSrc)) pieces.push(extractStatement(adminSrc, /^const _ATM_NO_GIVEN_ONLY\s*=/m, '_ATM_NO_GIVEN_ONLY'));
 pieces.push(extractStatement(adminSrc, /^const _GROUP_TITLE_CONFLICT_EXCLUDE\s*=/m, '_GROUP_TITLE_CONFLICT_EXCLUDE'));

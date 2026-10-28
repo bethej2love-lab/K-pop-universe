@@ -120,5 +120,21 @@ expect('石崎ひゅーい - 花束 / THE FIRST TAKE powered by ASAHI SUPER DRY'
 // 진짜 아사히는 그대로
 expect('#HELLOchallenge (YOON JAE HYUK & ASAHI ver.) #TREASURE', '트레저', null, true);
 
+// ── 2026-10-28 Codex 감사17차: 정은지 직캠의 'EunJi'가 브브걸 은지로 ─────────────────────────────
+expect("[MPD직캠] 정은지 직캠 4K '파도 (i love LOVE)' (EunJi FanCam) | @MCOUNTDOWN_2026.8.20", '에이핑크', '정은지', true);
+expect("[MPD직캠] 정은지 직캠 4K '파도 (i love LOVE)' (EunJi FanCam) | @MCOUNTDOWN_2026.8.20", '브브걸', null, false); // 외부 채널(MPD) 역추론 경로만 — 브브걸 자체 채널 경로는 해당 없음
+// 진짜 브브걸 은지는 그대로
+expect('[MPD직캠] 브브걸 은지 직캠 4K ‘롤린(Rollin`)’ (Brave Girls EUNJI FanCam) | @MCOUNTDOWN_2021.3.18', '브브걸', '은지', true);
+// ── 그룹이 잡혀도 다른 그룹 멤버 게스트(근거 분명할 때만) ─────────────────────────────
+expect('👖청바지 챌린지 (GD & 부석순)👖#굿데이', '빅뱅', '지디', true);
+expect('연예인의 연예인 GD랑 네컷사진 찍고 텐션 미쳐버린 부석순 #굿데이 #GD #부석순', '빅뱅', '지디', true);
+expect('[아돌라/이대휘•킥플립] 이대휘 + 킥플립 나야나 실존. #나야나 #KickFlip #킥플립 #이대휘 #아이돌라디오', '워너원', '이대휘', true);
+// 4만 제목 차분에서 나온 오탐은 막힌다
+expect('INSIDE MEOVV | THE 1st EP [MY EYES OPEN VVIDE] TAIPEI & HONG KONG FAN SIGN EVENT BEHIND', '파우', null, false);
+expect('TWICE ROOM TOUR 🏠 #TWICE #트와이스 #TEN_The_Story_Goes_On #MEplusYOU', '웨이션브이', null, false);
+expect('크아앙🐱☘️ #UNIS #유니스#KOTOKO #코토코', '다이아', null, false);
+expect('CLC 승연&예은, 몬스타엑스 기현&형원과 함께한 려행퀴! / 160331[슈퍼주니어의 키스 더 라디오]', '원더걸스', null, false);
+expect('둘리가 엄마를 잃어버린 것인가? #shorts #은채의스타일기 #더보이즈 #theboyz #선우 #에릭 #현재 #은채', '다이아', null, false);
+
 console.log(pass ? '\n🎉 다른 사람 풀네임·협찬 크레딧 테스트 통과' : '\n❌ 다른 사람 풀네임·협찬 크레딧 테스트 실패');
 process.exit(pass ? 0 : 1);

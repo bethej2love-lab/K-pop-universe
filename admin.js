@@ -8351,7 +8351,19 @@ function _m2NameVariants(a){
 // 또 다른 사람(다이아 은채·S.E.S. 유진)을 붙이고 있으면 true — "#은채의스타일기 #홍은채"에 다이아 은채가
 // 같이 붙던 것(2026-10-26, 동명이인 애매 판정 확장을 보류하고 대신 넣은 좁은 규칙).
 let _m2FullNameOwnersCache=null;
+// 게스트 감지에서만 빼는 이름 — '#아이엠'은 거의 항상 아이브 곡 'I AM' 해시태그(몬스타엑스 아이엠 아님)
+const _M2_GUEST_DENY=new Set(['아이엠']);
+let _m2GuestNameIdx=null; // _m2ParseTitle 다른 그룹 게스트 감지용 이름 수 색인(2026-10-28)
+let _m2GroupNameSet=null;
+// 그룹 이름(한글 키·영문)과 같은 사람 이름 — #UNIS가 다이아 유니스로, #MIRAE가 체리블렛 미래로 잡히던 것(게스트 감지 전용)
+function _m2IsGroupName(t){
+  if(!_m2GroupNameSet){_m2GroupNameSet=new Set();Object.keys(GROUPS).forEach(k=>{_m2GroupNameSet.add(k.toLowerCase().replace(/[^a-z0-9가-힣]/g,''));const e=GROUPS[k]&&GROUPS[k].en;if(e)_m2GroupNameSet.add(String(e).toLowerCase().replace(/[^a-z0-9가-힣]/g,''));});}
+  return _m2GroupNameSet.has(String(t).toLowerCase().replace(/[^a-z0-9가-힣]/g,''));
+}
 function _m2FullNameShadowed(tok,a,text){
+  // 영문 토큰이 그 사람 등록 영문명과 같으면 한글 이름으로 바꿔 같은 규칙을 태운다(2026-10-28 Codex 감사17차) —
+  // "[MPD직캠] 정은지 직캠 … (EunJi FanCam)"의 EunJi가 브브걸 은지(영문 Eunji)로 잡혀 정은지 직캠 4개가 브브걸로 갔다.
+  if(tok&&a&&a.name&&a.name.en&&!/[가-힣]/.test(tok)&&tok.toLowerCase().replace(/[^a-z0-9]/g,'')===a.name.en.toLowerCase().replace(/[^a-z0-9]/g,''))tok=a.name.ko;
   if(!tok||!/^[가-힣]{2,}$/.test(tok)||!text)return false;
   if(!_m2FullNameOwnersCache){
     _m2FullNameOwnersCache=new Map(); // 성 뗀 이름 → 그 이름을 가진 전체 이름(3자 이상) 목록
@@ -9471,6 +9483,42 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
     // 이 경로. 실패한 채널은 북마크도 못 전진해 매 회차 40페이지씩 같은 구간을 다시 훑었고, 그 12곳이
     // 회차 예산을 다 먹어 목록 뒤쪽 채널(음방 직캠·아이돌 개인 채널)이 9/21부터 한 건도 못 들어왔다(2026-09-28).
     if(!matchedGroupKos.length)return null;
+  }
+  // 다른 그룹 멤버 게스트(2026-10-28 Codex 감사17차) — 그룹이 잡히면 위 역추론을 아예 안 타서, "지디 X 부석순"·"(GD & 부석순)"·
+  // "#GD #부석순"의 지디가 영원히 with_로 안 붙었다. 근거가 분명할 때만 넣는다: 해시태그(#GD) 또는 콜라보 표시(X·&·×·with·랑·와·과)가
+  // 바로 옆에 붙은 이름. 잡힌 그룹의 멤버·동명이인 있는 이름·흔한 말·한 글자는 제외(역추론과 같은 보수 기준).
+  if(matchedGroupKos.length){
+    const _esc=s=>String(s).replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+    const _B='(^|[^가-힣A-Za-z0-9])',_E='([^가-힣A-Za-z0-9]|$)';
+    const _adj=t=>new RegExp(_B+_esc(t)+'([ ]*[&＆×][ ]*|[ ]+(X|x|with)[ ]+|(랑|와|과|하고)'+_E+')','i').test(title)
+      ||new RegExp('([ ]*[&＆×][ ]*|[ ]+(X|x|with)[ ]+)'+_esc(t)+_E,'i').test(title);
+    if(!_m2GuestNameIdx){ // 이름 변형(소문자) → 그 이름을 가진 사람 수. 한 번만 만든다(제목마다 만들면 동기화가 느려진다)
+      _m2GuestNameIdx=new Map();ARTISTS.forEach(o=>_m2NameVariants(o).forEach(t=>{const k=String(t).toLowerCase();_m2GuestNameIdx.set(k,(_m2GuestNameIdx.get(k)||0)+1);}));
+    }
+    const _lt=rawTitle.toLowerCase();
+    for(const a of ARTISTS){
+      const toks=_m2NameVariants(a).filter(t=>t&&[...t].length>=2&&_lt.includes(String(t).toLowerCase())); // 제목에 글자가 있는 이름만 정밀 검사
+      if(!toks.length)continue;
+      const gs=_artistGroups(a).map(g=>g&&g.ko).filter(Boolean);
+      if(gs.some(g=>matchedGroupKos.includes(g))||_atmInferExcluded(a))continue;
+      toks.splice(0,toks.length,...toks.filter(t=>!_ATM_COMMON_KO_WORDS.has(t)&&_m2GuestNameIdx.get(String(t).toLowerCase())===1&&!_m2FullNameShadowed(t,a,title)&&!_m2IsGroupName(t)
+        &&!(/^[가-힣]{2}$/.test(t)&&_m2FullNameOwnersCache&&[...(_m2FullNameOwnersCache.get(t)||[])].some(f=>f!==a.name.ko)))); // 2글자 한글이 다른 사람 성 뗀 이름이면(은채=홍은채) 동명이인 — 제외
+      // 4만 제목 차분에서 나온 오탐을 막는 조건(2026-10-28): 해시태그는 태그 전체가 이름과 같을 때만(#TEN_The_Story·#은채의스타일기 ✗),
+      // 영문은 4글자↑ 해시태그거나 손으로 등록한 별칭(GD)일 때만("TAIPEI & HONG KONG"의 HONG ✗), 한글 2글자는 해시태그일 때만("승연&예은" ✗)
+      // 2차(제목 4만 개 차분 256건 검토): 영문 해시태그는 그 그룹의 미등록 멤버(#LEON·#SEOHEE·#LOUIS)·곡명(#THUNDER·#IAM)·
+      // 다른 채원(#CHAEWON)이 대부분이라 빼고 **손으로 등록한 별칭(GD)만**. 원곡 표기('원곡: 레드벨벳-아이린&슬기')는 걷어낸 제목(title)으로 본다.
+      const _exactTag=t=>new RegExp('#'+_esc(t)+'(?![가-힣A-Za-z0-9_-])','i').test(title);
+      const _isLat=t=>/^[A-Za-z][A-Za-z .'-]*$/.test(t),_alias=t=>(a.matchAliases||[]).includes(t);
+      const _inGroupName=t=>{const n=String(t).toLowerCase().replace(/[^a-z0-9가-힣]/g,'');return matchedGroupKos.some(g=>[g,GROUPS[g]&&GROUPS[g].en].some(x=>x&&String(x).toLowerCase().replace(/[^a-z0-9가-힣]/g,'').includes(n)));}; // #WISH ⊂ NCT WISH
+      // 해시태그 전용 보호 이름(아이엠=I AM 곡명 등)은 게스트로 안 받고, 두 글자 한글은 등록 본명 그대로일 때만(#혜주 → 클라씨 홍혜주 ✗)
+      const tok=(_isHashtagOnlyName(a.name.ko)||_M2_GUEST_DENY.has(a.name.ko))?null:toks.find(t=>!_inGroupName(t)&&!_isHashtagOnlyName(t)&&!(/^[가-힣]{2}$/.test(t)&&t!==a.name.ko)&&(_isLat(t)?(_alias(t)&&(_exactTag(t)||_adj(t))):(_exactTag(t)||([...t].length>=3&&_adj(t)))));
+      if(!tok)continue;
+      const gk=gs.find(g=>GROUPS[g])||a.name.ko;
+      if(gk===selfGko)continue;
+      (membersByGroup[gk]=membersByGroup[gk]||[]).includes(a.name.ko)||membersByGroup[gk].push(a.name.ko);
+      if(!matchedGroupKos.includes(gk))matchedGroupKos.push(gk);
+      _trace.push({rule:'cross_group_guest',token:tok,effect:gk+':'+a.name.ko});
+    }
   }
   // confidence:'strong' — 제목에 그룹명(공식명/영문명/altNames) 리터럴이나 해시태그가 실제로 있어서
   // 그룹을 특정한 경로. 위 역추론(약한 근거) 경로와 대비되는 값.

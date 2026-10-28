@@ -92,6 +92,9 @@ function load(){
   F(/^function _m2NameVariants\(/m,'_m2NameVariants');
   S(/^let _m2FullNameOwnersCache\s*=/m,'_m2FullNameOwnersCache'); // 전체 이름 그림자 규칙(2026-10-26)
   F(/^function _m2FullNameShadowed\(/m,'_m2FullNameShadowed');
+  if(/^const _M2_GUEST_DENY\s*=/m.test(adminSrc))S(/^const _M2_GUEST_DENY\s*=/m,'_M2_GUEST_DENY'); // 게스트 감지 제외 이름(2026-10-28)
+  if(/^let _m2GuestNameIdx\s*=/m.test(adminSrc))S(/^let _m2GuestNameIdx\s*=/m,'_m2GuestNameIdx'); // 다른 그룹 게스트 색인(2026-10-28)
+  if(/^let _m2GroupNameSet\s*=/m.test(adminSrc)){S(/^let _m2GroupNameSet\s*=/m,'_m2GroupNameSet');F(/^function _m2IsGroupName\(/m,'_m2IsGroupName');}
   S(/^const _GROUP_TITLE_CONFLICT_EXCLUDE\s*=/m,'_GROUP_TITLE_CONFLICT_EXCLUDE');
   S(/^const _GROUP_AMBIGUOUS_IF_COMATCHED\s*=/m,'_GROUP_AMBIGUOUS_IF_COMATCHED');
   F(/^function _unitMemberNamedInTitle\(/m,'_unitMemberNamedInTitle');
