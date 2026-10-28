@@ -112,9 +112,9 @@ async function main() {
     else fail(`섹션 제목이 없음 — "${hd}"`);
 
     // ── 3) Cover 탭이 실제로 노출되는지(비=Rain은 본인 커버 0건이라 예전엔 탭째로 숨겨졌다) ──
-    // 탭 알약은 .gc-ch-filter + textContent 라벨(별도 data 속성 없음) — 실제로 눌러서 섹션이
+    // 탭 알약은 .gc-ch-filter[data-val] — 라벨은 언어마다 달라(커버/Cover) 값으로 찾는다(2026-10-28, 예전엔 라벨 Cover로 찾아 한국어 화면에서 실패) — 실제로 눌러서 섹션이
     // 보이게 되는지까지 확인한다. 섹션은 Cover 탭일 때만 display되므로 이게 최종 사용자 경로다.
-    const CLICK_COVER = `(function(){const b=[...document.querySelectorAll('#tv .gc-ch-filter')].find(x=>x.textContent.trim()==='Cover');if(!b)return 'no-tab';b.click();return 'clicked';})()`;
+    const CLICK_COVER = `(function(){const b=document.querySelector('#tv .gc-ch-filter[data-val="cover"]');if(!b)return 'no-tab';b.click();return 'clicked';})()`;
     const WRAP_VISIBLE = `(function(){const w=document.querySelector('#tv .tv-cover-of-wrap');return !!w&&w.style.display!=='none'&&w.querySelectorAll('.tv-mix-grid > *').length>0;})()`;
     const iuClick = await pollUntil(cdp, CLICK_COVER, 8000, v => v === 'clicked');
     if (iuClick !== 'clicked') fail('아이유 카드에 Cover 탭이 없음(탭 노출 판정에서 숨겨짐)');
