@@ -1753,6 +1753,10 @@ function _coverBuildIndex(chartRows){
     const origin={kind:'group',gko};
     (g.discography||[]).filter(indexable).forEach(al=>(al.tracks||[]).forEach(t=>t&&t.title&&put(origin,t.title,albumTier(al,t.isTitle?'B':'C'),albumIsTitle(al,t.isTitle),al.releaseDate)));
     (g.songs||[]).forEach(s=>s&&s.t&&put(origin,s.t,'B',true,null));
+    // 한글 제목 별칭(shared.js _SONG_KO_NICK) — 디스코엔 영어로만 있는 자기 곡('FXX OFF'='꺼져')을 자기 곡으로 알아보게.
+    // 가장 약한 근거(C)로만 넣어 같은 이름의 원래 곡(씨스타 '꺼져')이 남의 커버에선 그대로 원곡으로 이긴다.
+    const nk=typeof _SONG_KO_NICK!=='undefined'&&_SONG_KO_NICK[gko];
+    if(nk)Object.values(nk).forEach(arr=>(arr||[]).forEach(raw=>put(origin,raw,'C',false,null)));
   });
   ARTISTS.forEach(a=>{
     const origin=_coverArtistOriginOf(a);
@@ -9518,7 +9522,14 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
       // ② 두 글자 한글·영문 해시태그는 이름 근처에 같이 했다는 말(with·님·선배·함께·&·×·x)이 있을 때만. 세 글자↑ 한글 전체 이름은 그대로.
       const _lt0=title.toLowerCase();
       // 커버 영상의 이름은 대개 원곡 가수(#태연 선배님 … #songcover·ROSÉ - 'stay a little longer' Cover by) — 바로 옆 콜라보 표시(&·X·with)일 때만
-      if(/cover|커버/.test(_lt0)&&!toks.some(t=>_adj(t)))continue;
+      // 콜라보 표시가 있어도 원곡 크레딧 자리면 원곡 가수 — "박우진 & 이대휘 - Candle … VOCAL COVER"(대시 앞)·"백예린 ‘Square’ 커버"(바로 뒤 따옴표)(Codex 감사18차)
+      const _credit=t=>{const k=String(t).toLowerCase(),i=_lt0.indexOf(k);if(i<0)return false;
+        if(/^\s?['‘"“]/.test(_lt0.slice(i+k.length,i+k.length+3)))return true;const d=_lt0.search(/ [-–] /);return d>i;};
+      if(/cover|커버/.test(_lt0)&&(!toks.some(t=>_adj(t))||toks.some(_credit)))continue;
+      // 우리 로스터에 없는 그룹의 같은 이름 멤버 — 그 그룹 표기가 제목에 있으면 우리 동명이인으로 안 붙인다(Codex 감사18차:
+      // BXB 하민·현우 ≠ 플레이브 하민·싸이커스 현우, LUCY 신예찬 ≠ 티아이오티 신예찬, 아이몬드 아현 ≠ 베이비몬스터 아현). 새로 보이면 여기에 한 줄.
+      if(Object.entries({'bxb':['하민','현우'],'비엑스비':['하민','현우'],'lucy':['신예찬'],'루시':['신예찬'],'i_mond':['아현'],'아이몬드':['아현'],'queenz_eye':['나린'],'퀸즈아이':['나린']})
+        .some(([k,ns])=>ns.includes(a.name.ko)&&_lt0.includes(k)))continue;
       if(_m2NameVariants(a).some(v=>v&&_lt0.includes('#'+String(v).toLowerCase()+'_')))continue;
       const _cueNear=t=>{const k=String(t).toLowerCase();for(let i=_lt0.indexOf(k);i>=0;i=_lt0.indexOf(k,i+1)){if(/(with|w[/]|feat|ft[.]|님|선배|함께|[&＆×]| x )/.test(_lt0.slice(Math.max(0,i-22),i+k.length+12)))return true;}return false;};
       // ③ 4차: 함께 표시 없는 해시태그만으론 세 글자↑도 12%가 오답(#아이유 #홀씨·#백예린 #Square 곡 표기, 배우 박정민·이준혁) → 해시태그는 함께 표시가

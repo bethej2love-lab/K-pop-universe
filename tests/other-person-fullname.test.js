@@ -153,6 +153,14 @@ expectGuest('#싱글즈_랭킹_어워즈 4월 3주차 주제! 가장 잘 어울�
 expectGuest('#효린 선배님의 #이게사랑이지뭐야 🫶🏻#Thislovechallenge #HYOLYN  #최유진 #YUJIN #Kep1er #케플러', '씨스타', '효린', true);
 expectGuest('𝒗𝒊𝒃𝒆 𝒔𝒐 𝒌𝒊𝒍𝒍𝒆𝒓💘 with #DAYOUNG #다영 선배님🔥 #BADVILLAIN #배드빌런 #THRILLER', '우주소녀', '다영', true);
 expectGuest('요리 개척자 등장  #덕밥집  #최강창민 #트레저', '동방신기', '최강창민', true);
+// Codex 감사18차 — 로스터 밖 그룹의 같은 이름 멤버·커버 원곡 크레딧 자리
+expectGuest('검은 고양이?🖤 빨간 고양이?❤️ #BXB #현우 #하민 님과 #좋겠다_Challenge #ONEPACT #원팩트 #좋겠다#태그 #예담 #비엑스비', '플레이브', '하민', false);
+expectGuest('#루시 #신예찬 #신광일 님도 Z-Z-Z #ZAP💥 #LUCY #HARAM #하람 #SUHYEON #수현 #Billlie #빌리', '티아이오티', '신예찬', false);
+expectGuest('#I_MOND #이설 #아현 님과 함께 #꺼져Challenge🎣💖#아이몬드 #ONEPACT #원팩트 #JONGWOO #종우', '베이비몬스터', '아현', false);
+expectGuest('[DKZ] 박우진 & 이대휘 - Candle (SEHYEON & MINGYU ver.) | VOCAL COVER', '워너원', '박우진', false);
+expectGuest('위클리 지한이 찐팬이라 고백한 선배 아이돌!?ㅣ이달의 소녀 ‘Why Not?’ & 백예린 ‘Square’ 커버ㅣRole Model Cover VS', '피프틴앤드', '백예린', false);
+// 합동 챌린지(원곡 가수가 실제로 함께)는 그대로
+expectGuest('#WheeIn #휘인 선배님과 #InTheMoodchallenge 🖤 @wheeintheblank #Plave #플레이브 #하민 #Hamin', '마마무', '휘인', true);
 // 함께 표시가 없어도 그 사람 그룹명이 같이 있으면 인정
 expectGuest('What The #Potential#FANTASYBOYS#히카루#HIKARU #김규래#KIMGYURAE #다크비 #DKB #희찬 #HEECHAN', '판타지보이즈', '김규래', true);
 

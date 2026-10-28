@@ -606,6 +606,9 @@ const _SONG_KO_NICK={
   '케플러':{tipitap:['티피탭']},
   '에스파':{whiplash:['위플래시','위플래쉬']},
   '샤이니':{sherlock:['셜록'],everybody:['에브리바디']},
+  // 소리 표기가 아니라 공식 한글 제목 — 멜론엔 'FXX OFF'로만 있어 '#꺼져Challenge'가 씨스타 '꺼져' 커버로 잡혔다(Codex 감사18차, 30행).
+  // 커버 판정(admin.js _coverBuildIndex)도 이 표를 자기 곡으로 읽는다.
+  '원팩트':{fxxoff:['꺼져']},
 };
 function _songAddNicks(songs,gko){
   const t=_SONG_KO_NICK[gko];if(!t)return songs;

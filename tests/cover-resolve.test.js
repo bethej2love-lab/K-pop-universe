@@ -36,6 +36,8 @@ t('크레딧 — 외부 원곡자(Tim) 명시 시 곡명 우연일치로 유니�
 t('부분일치 방지 — La La La Love Song Cover는 빅뱅 LOVE SONG 아님',R("SEONGMIN 성민 'La La La Love Song' Cover",'크래비티',{members:['성민']}),r=>!r||!r.origin||r.origin.gko!=='빅뱅');
 // 원곡자 표기의 **일부 낱말**이 우리 멤버 이름과 같아도 원곡자로 잡지 않는다(2026-10-20 사용자 제보 — Bobby Helms가 아이콘 BOBBY로)
 t('크레딧 부분일치 — (원곡: Bobby Helms)는 아이콘 BOBBY 아님(외부 원곡)',R("‘루돌프즈’ CORTIS - Jingle Bell Rock (원곡: Bobby Helms)♬",'코르티스'),r=>!!r&&!r.origin);
+// 자기 곡의 한글 제목(_SONG_KO_NICK) — 멜론엔 'FXX OFF'로만 있는 원팩트 '꺼져'가 씨스타 커버로 잡히던 것(Codex 감사18차, 30행)
+t('자기 곡 한글 제목 — 원팩트 #꺼져Challenge는 씨스타 커버 아님',R("#I_MOND #이설 #아현 님과 함께 #꺼져Challenge🎣💖#아이몬드 #ONEPACT #원팩트 #JONGWOO #종우 #PARADOXX #꺼져",'원팩트',{members:['종우']}),r=>!r||!r.origin||r.origin.gko!=='씨스타');
 t('크레딧 — 그룹 멤버 이름만 쓴 원곡자(원곡: BOBBY)는 그대로 아이콘',R("[LIVE] 테스트 - 사랑 그게 뭔데 (원곡: BOBBY)",'코르티스'),r=>!!r&&!!r.origin&&r.origin.gko==='아이콘');
 t('크레딧 부분일치 — (Original Song by Michael Jackson)은 갓세븐 잭슨 아님',R("CLOSE YOUR EYES 'Dangerous' (Original Song by Michael Jackson) Dance Practice | ACON 2026",'클로즈유어아이즈'),r=>!!r&&!r.origin);
 t('크레딧 부분일치 — (원곡: James Arthur)는 코르티스 제임스 아님',R("VERIVERY l 민찬 - Say You Won't Let Go (원곡: James Arthur) (Produced by MINCHAN)",'베리베리'),r=>!!r&&!r.origin);
