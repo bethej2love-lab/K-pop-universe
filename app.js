@@ -9925,6 +9925,38 @@ let _histSuppress=false;
 // 브라우저는 원래 URL 프래그먼트에 유니코드를 그대로 넣으면 주소창에 예쁘게 그대로 보여주므로(네이버 등
 // 흔한 방식), 해시 구분자로 실제 쓰는 문자(&=#%+, 공백)만 최소로 이스케이프하고 한글은 그대로 둔다.
 function _hashEsc(s){return String(s).replace(/[ &=#%+]/g,encodeURIComponent);}
+// 영상 목록 공유(2026-10-28 사용자 "성현 직캠 모음 링크를 공유하고 싶다") — 카드 링크 뒤에 지금 보는 탭·곡·검색·정렬·단독만을 붙인다.
+// 받는 쪽은 _openFromHash가 _pendingVidPreset에 담아 두고, 카드가 영상 목록을 처음 그릴 때(_makeChVidController build) 한 번 꺼내 쓴다.
+// 공개 조건만 싣는다 — 내 즐겨찾기·For You·비공개 컬렉션은 안 실음. 값은 아래 허용 목록으로만 받는다(주소창에서 아무 값이나 못 넣게).
+const _VID_SHARE_KEYS={vf:'filter',vfm:'formatFilter',vs:'sortMode',vq:'searchQ',vk:'songKey',vkl:'songLabel',vo:'onlyMe'};
+const _VID_SHARE_FILTERS=new Set(['all','mv','live','cover','short','variety','show','fan','jacon']);
+const _VID_SHARE_SORTS=new Set(['recommend','popular','latest','oldest']);
+let _pendingVidPreset=null;
+function _vidShareHash(st){
+  let h='&vf='+_hashEsc(st.filter||'all');
+  if(st.viewMode==='format'&&st.formatFilter)h+='&vfm='+_hashEsc(st.formatFilter);
+  if(st.sortMode&&st.sortMode!=='recommend'&&_VID_SHARE_SORTS.has(st.sortMode))h+='&vs='+st.sortMode;
+  if(st.songKey){h+='&vk='+_hashEsc(st.songKey);if(st.songLabel)h+='&vkl='+_hashEsc(st.songLabel);}
+  if(st.searchQ)h+='&vq='+_hashEsc(st.searchQ);
+  if(st.onlyMe)h+='&vo=1';
+  return h;
+}
+function _setPendingVidPreset(params,kind){
+  if(!params.has('vf')){_pendingVidPreset=null;return;}
+  const p={};
+  for(const[k,f]of Object.entries(_VID_SHARE_KEYS)){const v=params.get(k);if(v!=null&&v!=='')p[f]=v;}
+  if(!_VID_SHARE_FILTERS.has(p.filter))p.filter=null;
+  if(!_VID_SHARE_SORTS.has(p.sortMode))p.sortMode=null;
+  if(p.searchQ)p.searchQ=String(p.searchQ).slice(0,80);
+  p.onlyMe=p.onlyMe==='1';
+  _pendingVidPreset={kind,at:Date.now(),p};
+}
+function _takeVidPreset(kind){
+  const x=_pendingVidPreset;
+  if(!x||x.kind!==kind||Date.now()-x.at>20000)return null; // 링크로 연 그 카드에만 — 나중에 연 다른 카드엔 안 묻어나게
+  _pendingVidPreset=null;
+  return x.p;
+}
 // URL은 "지금 화면 맨 위에 보이는 카드"를 가리켜야 한다(2026-08-26 감사).
 // 예전엔 _openTArtist를 무조건 먼저 봤는데, 모바일에서 그룹→멤버로 쌓았다가 되돌아오면 showGC가
 // _openTArtist를 안 지우기 때문에 화면은 그룹 카드인데 URL은 계속 멤버를 가리켰다. 그 상태로
@@ -10010,6 +10042,7 @@ function _openFromHash(){
   const comboParam=params.get('combo');
   if(comboParam){_comboFromHash(comboParam);return;} // 조합 패널 공유 링크(#combo=이름(그룹),…)
   const gko=params.get('g'),mko=params.get('m');
+  _setPendingVidPreset(params,mko?'tv':'gc'); // 영상 목록 공유 링크(&vf=…) — 카드가 목록을 그릴 때 꺼내 씀
   // 솔로 전용 해시(#m=이름, g= 없음) — 새 포맷. 구 포맷(#g=솔로&m=이름)도 아래에서 계속 지원.
   if(!gko&&mko){
     const artist=ARTISTS.find(x=>x.name.ko===mko&&!GROUPS[x.group.ko]);
@@ -10024,7 +10057,7 @@ function _openFromHash(){
   if(_isUnitKey(gko)){showGC(gko,window.innerWidth/2,window.innerHeight*0.4,false,false,'skip');return;} // 유닛 카드 공유 링크(#g=unit:이름)
   if(gko!=='솔로'&&!GROUPS[gko])return;
   // 진입 GA — 공유 링크·SEO 페이지 딥링크 모두 여기서 카드가 열린다
-  try{const ref=document.referrer?new URL(document.referrer).hostname:'(direct)';_gaEvent('deeplink_open',{target:mko?'member':'group',gko,ref});}catch(e){}
+  try{const ref=document.referrer?new URL(document.referrer).hostname:'(direct)';_gaEvent('deeplink_open',{target:mko?'member':'group',gko,ref,list:params.has('vf')?1:0});}catch(e){}
   if(mko){
     const artist=ARTISTS.find(x=>x.group.ko===gko&&x.name.ko===mko);
     if(!artist)return;
@@ -10153,8 +10186,8 @@ function _copyShareLink(url){
 // 이걸로 구분. 데스크톱은 네이티브 시트에 "복사" 확장이 있는지 시스템 설정에 좌우돼 신뢰할 수 없어서
 // (2026-08-19, 사용자 제보 — macOS 시트에 링크 복사 옵션 자체가 없던 사례) 무조건 즉시 클립보드 복사로 통일.
 function _isTouchPrimary(){try{return matchMedia('(pointer: coarse)').matches;}catch(e){return false;}}
-function _shareCurrentView(url,title){
-  _gaEvent('share_card',{kind:'view',target:title||'',method:navigator.share&&_isTouchPrimary()?'native':'link'}); // 30일 계획 계측(C1)
+function _shareCurrentView(url,title,kind){
+  _gaEvent('share_card',{kind:kind||'view',target:title||'',method:navigator.share&&_isTouchPrimary()?'native':'link'}); // 30일 계획 계측(C1)
   if(navigator.share&&_isTouchPrimary()){
     navigator.share({title:title||'K-POP Universe',url}).catch(()=>{}); // 취소/실패 시 아무것도 안 함 — 몰래 클립보드로 대체하지 않음
   }else{
@@ -26716,6 +26749,16 @@ function _makeChVidController(contId){
     // 멤버 카드는 미태깅 그룹 영상(MV·Shorts·토크쇼 등)이 뒤섞여 첫 화면이 지저분해지지 않도록
     // "라이브"(무대 직캠 위주) 탭에서 시작 — 그룹 카드는 그대로 "전체"
     state={ko,memberKo:memberKo||null,filter:memberKo?'live':'all',onlyMe:false,searchQ:'',songKey:null,sortMode:'recommend',viewMode:'category',formatFilter:null,formats:[],offset:0,total:0,pos:0,cat:null,gen:state.gen+1,appendLock:false,trailingEl:null,hasMore:false,allVids:[],_liveFallbackDone:false,wrapEnd:0,wrapPhase:false,unitFilter:null,histKos:(histKos&&histKos.length)?histKos:null,unitKey:(opts&&opts.unit)||null};
+    // 공유받은 목록 링크로 연 카드면 그 조건으로 시작(_vidShareHash·_takeVidPreset). 유닛 카드는 공유 대상 아님.
+    const _pre=state.unitKey?null:_takeVidPreset(contId==='tv'?'tv':contId==='gc-ch-vid'?'gc':'');
+    if(_pre){
+      if(_pre.filter)state.filter=_pre.filter;
+      if(_pre.sortMode)state.sortMode=_pre.sortMode;
+      if(_pre.songKey){state.songKey=_pre.songKey;state.songLabel=_pre.songLabel||null;}
+      if(_pre.searchQ)state.searchQ=_pre.searchQ;
+      if(_pre.onlyMe&&memberKo)state.onlyMe=true;
+      if(_pre.formatFilter){state.viewMode='format';state.formatFilter=_pre.formatFilter;}
+    }
     const _t=T[currentLang];
     cont.innerHTML=`<div class="gc-ch-hd gc-vid-hd"><div class="gc-ch-filters hscroll-drag"></div><div class="gc-ch-sort-wrap"><button class="gc-ch-sort-btn" title="${_t.sortTitle}" data-i18n-title="sortTitle" aria-haspopup="true" aria-expanded="false">⋮</button><div class="gc-ch-sort-menu"><button class="gc-ch-sort-item" data-sort="recommend"><span class="chk">✓</span><span data-i18n="chSortRec">${_t.chSortRec}</span></button><button class="gc-ch-sort-item" data-sort="popular"><span class="chk">✓</span><span data-i18n="chSortPop">${_t.chSortPop}</span></button><button class="gc-ch-sort-item" data-sort="latest"><span class="chk">✓</span><span data-i18n="chSortNew">${_t.chSortNew}</span></button><button class="gc-ch-sort-item" data-sort="oldest"><span class="chk">✓</span><span data-i18n="chSortOld">${_t.chSortOld}</span></button><div class="gc-ch-sort-divider gc-ch-refresh-div"></div><button class="gc-ch-refresh gc-ch-sort-item"><span class="chk" style="visibility:hidden">✓</span><span data-i18n="refreshTitle">${_t.refreshTitle}</span></button><div class="gc-ch-sort-divider" style="display:none"></div><button class="gc-ch-view-toggle" style="display:none"><span class="chk">✓</span><span data-i18n="chViewCon">${_t.chViewCon}</span></button></div></div></div><div class="gc-ch-search-wrap" style="display:none"><input class="gc-ch-search" placeholder="${_t.chSearch}" data-i18n-ph="chSearch" autocomplete="off" spellcheck="false"><button class="gc-ch-search-clear" aria-label="${_t.searchClearLabel}">\xD7</button></div><div class="gc-ch-grid"></div><div class="gc-ch-more-wrap"></div><div class="tv-cover-of-wrap" style="display:none"></div>`;
     _exitSelMode();
@@ -26740,6 +26783,22 @@ function _makeChVidController(contId){
       selItem.innerHTML='<span class="chk" style="visibility:hidden">✓</span><span>'+(currentLang==='ko'?'여러 개 선택':'Select videos')+'</span>';
       selItem.addEventListener('click',e=>{e.stopPropagation();closeSortMenu();if(!_selMode)selBtn.click();});
       cont.querySelector('.gc-ch-refresh')?.before(selItem); // 도구 묶음(선택·새로고침)은 메뉴 맨 아래
+      // "이 목록 공유" — 지금 탭·곡·검색·정렬·단독만 그대로 열리는 카드 링크(_vidShareHash). 유닛 카드는 카드 링크 형식이 달라 뺀다.
+      if(!state.unitKey){
+        const shareItem=document.createElement('button');
+        shareItem.className='gc-ch-sort-item gc-ch-share-item';shareItem.type='button';
+        shareItem.innerHTML='<span class="chk" style="visibility:hidden">✓</span><span>'+(currentLang==='ko'?'이 목록 공유':'Share this list')+'</span>';
+        shareItem.addEventListener('click',e=>{
+          e.stopPropagation();closeSortMenu();
+          const base=_cardHash();
+          if(!base)return;
+          const who=state.memberKo||ko;
+          const parts=[who,state.viewMode==='format'&&state.formatFilter?state.formatFilter:(state.filter!=='all'?_catLabel(state.filter):null),
+            state.songKey?'♪ '+(state.songLabel||state.songKey.split(':').pop()):null,state.searchQ?'“'+state.searchQ+'”':null].filter(Boolean);
+          _shareCurrentView(location.origin+'/'+base+_vidShareHash(state),parts.join(' · ')+' · K-POP Universe','list');
+        });
+        selItem.before(shareItem);
+      }
     }
     if(_isAdmin()){
       // 지금 이 탭/검색 기준으로 그리드에 로드돼있는 영상 전체를 한 번에 선택(어드민 전용, 2026-08-18
@@ -26944,6 +27003,7 @@ function _makeChVidController(contId){
       // 스크롤되는 필터 알약 줄 밖으로 빼서, 돋보기 아이콘 왼쪽에 항상 고정 노출되게 함
       const sortWrapEl=cont.querySelector('.gc-ch-sort-wrap');
       sortWrapEl.parentElement.insertBefore(onlyBtn,sortWrapEl);
+      if(state.onlyMe)_syncOnly(); // 공유받은 목록 링크(&vo=1)로 연 경우
     }
     // 이 그룹/멤버가 태그된 콘텐츠 포맷이 있으면 ⋮ 메뉴에 "콘텐츠별 보기" 노출 — **⋮ 메뉴를 열 때만** 집계한다(2026-10-21).
     // 카드를 열 때마다 돌던 get_content_formats(그룹 영상 전체 DISTINCT)가 Supabase 디스크 읽기 1위였다 — 1,676GB·14,000회·평균 5초,
@@ -27048,6 +27108,9 @@ function _makeChVidController(contId){
       searchClear.classList.remove('visible');
       load(ko,true);
     });
+    // 공유받은 목록 링크로 연 경우 — 검색어·콘텐츠별 보기를 화면에도 그대로 보여 준다(조건은 위 _pre에서 state에 이미 들어감)
+    if(state.searchQ&&searchInput){searchInput.value=state.searchQ;searchWrap.style.display='';searchToggleBtn.classList.add('active');searchClear?.classList.add('visible');}
+    if(state.viewMode==='format'){viewToggleBtn?.classList.add('active');_ensureFormats().then(()=>{if(state.ko===ko)renderFilterTabs();});}
     if(observer)observer.disconnect();
     if(_cleanupScroll){_cleanupScroll();_cleanupScroll=null;}
     const moreWrap=cont.querySelector('.gc-ch-more-wrap');
