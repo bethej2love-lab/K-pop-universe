@@ -236192,6 +236192,59 @@
   },
   "discography": [
    {
+    "title": "i=!",
+    "type": "미니",
+    "isMain": true,
+    "cover": "https://cdnimg.melon.co.kr/cm2/album/images/150/86/776/15086776_20261027153450_500.jpg",
+    "releaseDate": "2026.10.28",
+    "trackCount": 8,
+    "titleTrack": "Hush",
+    "tracks": [
+     {
+      "no": 1,
+      "title": "Cat Move",
+      "isTitle": false
+     },
+     {
+      "no": 2,
+      "title": "Hush",
+      "isTitle": true
+     },
+     {
+      "no": 3,
+      "title": "All Tied Up (Rui & Haru)",
+      "isTitle": false
+     },
+     {
+      "no": 4,
+      "title": "투스젬치와와",
+      "isTitle": true
+     },
+     {
+      "no": 5,
+      "title": "Silence (Wumuti & Hyun)",
+      "isTitle": false
+     },
+     {
+      "no": 6,
+      "title": "투스젬치와와 (Sped Up)",
+      "isTitle": false
+     },
+     {
+      "no": 7,
+      "title": "Hush (Instrumental)",
+      "isTitle": false
+     },
+     {
+      "no": 8,
+      "title": "투스젬치와와 (Instrumental)",
+      "isTitle": false
+     }
+    ],
+    "src": "melon",
+    "melonAlbumId": "15086776"
+   },
+   {
     "title": "I,God",
     "type": "미니 2집",
     "isMain": true,

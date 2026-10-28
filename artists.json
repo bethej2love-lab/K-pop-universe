@@ -168474,6 +168474,29 @@
     ],
     "discography": [
       {
+        "title": "투비(鬪悲)",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/150/85/847/15085847_20261027100940_500.jpg",
+        "releaseDate": "2026.10.28",
+        "trackCount": 2,
+        "titleTrack": "투비(鬪悲)",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "투비(鬪悲)",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "투비(鬪悲) (Inst.)",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "15085847"
+      },
+      {
         "title": "함께 떠나볼까 (Kei(케이) X 트립뮤직 2)",
         "type": "싱글",
         "releaseDate": "2026.08.16",
@@ -209447,6 +209470,24 @@
       "namu": "https://namu.wiki/w/임슬옹"
     },
     "discography": [
+      {
+        "title": "Vibes (Feat. 권은비(KWON EUNBI))",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/150/86/931/15086931_20261027155358_500.jpg",
+        "releaseDate": "2026.10.28",
+        "trackCount": 1,
+        "titleTrack": "Vibes (Feat. 권은비(KWON EUNBI))",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Vibes (Feat. 권은비(KWON EUNBI))",
+            "isTitle": true
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "15086931"
+      },
       {
         "title": "Fearless",
         "type": "싱글",
