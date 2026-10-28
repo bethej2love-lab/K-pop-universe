@@ -7738,6 +7738,45 @@ function _weightedShuffleByCat(arr,catOf){
     .sort((a,b)=>b.k-a.k)
     .map(x=>x.v);
 }
+// ── 카드 영상 "추천순" 점수(2026-10-28 사용자 "적당히 최신·조회수(상승)·즐겨찾기나 깃발까지") ──
+// 예전 추천순 = 무작위 표본 + 분류 가중 셔플 + 하트 최다 대표 1개 — 사실상 랜덤이었다. 첫 화면만 점수로 세운다:
+//   최신(45일 반감 느낌의 지수 감쇠) · 조회수(후보 안 최댓값 대비 로그) · 상승(_rise: 14일 안 조회수 단계 돌파 또는 7일 안 우리 차트 진입)
+//   · 하트(_scrapCounts, 로그) · 최애(그룹 카드에서 내 즐겨찾기·최애 멤버가 나온 영상) · 분류(직캠 > 쇼츠 > MV > 예능, 예전 가중치) · 무작위(열 때마다 조금씩 다르게).
+// 깃발(입덕 영상)은 지금 계정별로만 저장돼 있고 쓴 사람이 1명이라(10-28 실측) 집계를 만들지 않았다 — 쌓이면 user_data.flag_videos 집계로 추가.
+// 하트도 10-28 기준 115개 영상뿐이라 가중치는 작게. 다양성(같은 멤버·같은 날 몰림 방지)은 호출부의 기존 단계가 그대로 이어 받는다.
+const _REC_W={fresh:0.28,pop:0.22,rise:0.18,heart:0.12,fav:0.10,cat:0.10,rnd:0.20};
+function _recOrder(vids,memberKo){
+  if(!vids.length)return vids;
+  const now=Date.now();
+  const maxLog=Math.max(1,...vids.map(v=>Math.log10(1+(v.view_count||0))));
+  const bias=new Set(((myProfile&&myProfile.bias)||[]).filter(b=>b&&b.ko&&(b.type||'member')!=='group').map(b=>(b.groupKo||'')+':'+b.ko));
+  const url=v=>_isShortV(v)?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;
+  const score=v=>{
+    const t=Date.parse(v.published_ts||v.published_at||'');
+    const d=isNaN(t)?365:Math.max(0,(now-t)/864e5);
+    const fresh=Math.exp(-d/45);
+    const pop=v.view_count!=null?Math.log10(1+v.view_count)/maxLog:0.25;
+    const h=(_scrapCounts&&(_scrapCounts.get(url(v))||_scrapCounts.get(`https://www.youtube.com/watch?v=${v.id}`)))||0;
+    const heart=Math.min(1,Math.log2(1+h)/3);
+    const fav=!memberKo&&(v.members||[]).some(m=>{const k=(v.group_ko||'')+':'+m;return favMembers.has(k)||bias.has(k);})?1:0;
+    const cat=_vidCatWeight(v.category)/4;
+    return _REC_W.fresh*fresh+_REC_W.pop*pop+_REC_W.rise*(v._rise?1:0)+_REC_W.heart*heart+_REC_W.fav*fav+_REC_W.cat*cat+_REC_W.rnd*Math.random();
+  };
+  return vids.map(v=>({v,s:score(v)})).sort((a,b)=>b.s-a.s).map(x=>x.v);
+}
+// 상승 신호 — 후보 id만 짧게 조회(각 3초, 실패하면 신호 없이). 결과는 행에 _rise로 붙여 첫 페이지 캐시에도 같이 남는다.
+async function _recMarkRising(vids){
+  if(!sb||!vids.length)return;
+  const ids=vids.map(v=>v.id);
+  const day=n=>new Date(Date.now()-n*864e5).toISOString().slice(0,10);
+  const rs=await Promise.allSettled([
+    _withTimeout(()=>sb.from('yt_view_milestones').select('video_id').in('video_id',ids).eq('seeded',false).gte('crossed_at',day(14)),3000,undefined,0),
+    _withTimeout(()=>sb.from('rank_snapshots').select('video_id').in('video_id',ids).gte('snapshot_date',day(7)),3000,undefined,0),
+  ]);
+  const up=new Set();
+  rs.forEach(r=>{if(r.status==='fulfilled'&&r.value&&!r.value.error)(r.value.data||[]).forEach(x=>up.add(x.video_id));});
+  vids.forEach(v=>{if(up.has(v.id))v._rise=true;});
+}
 // 같은 key 영상이 연속 maxConsec회를 넘으면 look 범위 안에서 다른 key 영상을 앞으로 당겨온다.
 // 라운드로빈 방식 대비 카테고리 가중치 순서를 훨씬 잘 보존 — 예능이 "자기 차례"에 강제로 끌려오는 현상 제거.
 // (2026-08-31 일반화 — 멤버/날짜 등 여러 기준의 인접 방지에 재사용)
@@ -26498,6 +26537,23 @@ function _makeChVidController(contId){
         // 15초 총량 안에서) 조용히 자동 재시도하도록 바꿔서, 진짜로 다 실패했을 때만 에러가 보이게 함.
         mainP=_withTimeout(()=>ordered(buildBaseQuery()).range(offset,offset+_YT_PAGE-1),5000,undefined,2);
       }
+      // 추천순 첫 화면 후보 보강(2026-10-28 사용자 "적당히 최신·조회수(상승)·즐겨찾기까지") — 무작위 표본만으론 최신·인기 영상이
+      // 첫 화면에 올 확률이 낮다. 같은 조건(탭·검색·곡)으로 최신 16 + 조회수 16을 더 받아 합치고, 상승 신호(_rise)를 붙인다.
+      // 순서는 아래 _recOrder가 점수로 정한다. 보강이 실패·지연돼도 원래 표본 그대로(각 4초, allSettled).
+      if(reset&&!cacheHit&&state.sortMode==='recommend'){
+        // 본 조회와 **동시에** 보낸다(이어서 보내면 첫 화면이 1.8→4.9초로 늦어졌다 — 헤드리스 실측)
+        const exP=Promise.allSettled([
+          _withTimeout(()=>buildBaseQuery().order('published_at',{ascending:false}).order('id',{ascending:false}).range(0,15),4000,undefined,0),
+          _withTimeout(()=>buildBaseQuery().order('view_count',{ascending:false,nullsFirst:false}).order('id',{ascending:false}).range(0,15),4000,undefined,0),
+        ]);
+        mainP=Promise.all([mainP,exP]).then(async([r,ex])=>{
+          if(!r||r.error||!r.data)return r;
+          const seen=new Set(),merged=[];
+          [r.data,...ex.map(x=>x.status==='fulfilled'&&x.value&&!x.value.error?x.value.data:null)].forEach(list=>(list||[]).forEach(v=>{if(!seen.has(v.id)){seen.add(v.id);merged.push(v);}}));
+          await _recMarkRising(merged);
+          return{...r,data:merged};
+        });
+      }
       // 카드를 처음 열 때(reset, randomize 아님, 캐시도 아님)만: 정확한 총 개수를 그리드 렌더링과
       // 분리된 별도 요청으로 백그라운드에서 가져와 나중에(총 개수 라벨/다음 셔플용) state.total을
       // 채워 넣는다 — await 안 하므로 첫 화면 표시를 전혀 막지 않는다. '추천순'은 바로 위에서 이미
@@ -26545,7 +26601,8 @@ function _makeChVidController(contId){
       let vids=_filterBannedVideos(data||[],ko);
       // 멤버 카드에서는 '기타' 플래그 영상을 아예 노출하지 않음(그룹 카드에서는 후순위로만 밀림)
       if(state.memberKo)vids=vids.filter(v=>v.content_flag!=='기타');
-      if(state.sortMode==='recommend')vids=_weightedShuffleByCat(vids,v=>v.category);
+      // 추천순 첫 화면은 점수 순(_recOrder), 이어 불러오는 페이지는 예전처럼 분류 가중 셔플
+      if(state.sortMode==='recommend')vids=reset?_recOrder(vids,state.memberKo):_weightedShuffleByCat(vids,v=>v.category);
       // 멤버 카드(state.memberKo 있음)는 그 멤버 콘텐츠라 멤버 다양성 개입은 방해라 건너뜀
       if(state.sortMode==='recommend'&&!state.memberKo)vids=_diversifyByMember(vids);
       // 같은 날(=같은 콘서트/이벤트/컴백일) 영상이 인접하지 않게 흩는다 — 멤버·그룹 카드 모두.

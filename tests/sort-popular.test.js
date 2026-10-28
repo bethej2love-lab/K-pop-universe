@@ -100,7 +100,8 @@ async function main() {
       await pollUntil(cdp, `typeof ARTISTS!=='undefined'&&ARTISTS.length>0`, 20000);
       // ⚠️ .gc-ch-grid는 그룹용·멤버용 둘 다 DOM에 있고 하나는 비어 있다 — querySelector로 첫 번째를
       //    잡으면 늘 0개가 나온다(실제로 그렇게 헛돌았다). 항목이 들어찬 쪽을 고른다.
-      const GRID = `[...document.querySelectorAll('.gc-ch-grid')].find(function(g){return g.children.length;})`;
+      // (2026-10-28) 카드 맨 위 대표 칸(.card-hero)도 .gc-ch-grid라 1칸짜리를 목록으로 읽던 것 — 대표 칸 제외. 날짜 줄은 7일 안 'n일 전'도 인정
+      const GRID = `[...document.querySelectorAll('.gc-ch-grid')].find(function(g){return g.children.length&&!g.closest('.card-hero');})`;
       const gridReady = await pollUntil(cdp, `(${GRID}||{children:[]}).children.length`, 20000, v => v > 0);
       if (!gridReady) { fail(`[2] ${label}: 영상 그리드가 안 뜸(네트워크?) — 이 항목 검증 생략`); continue; }
 
@@ -142,7 +143,7 @@ async function main() {
       await ev(cdp, `document.querySelector('.gc-ch-sort-item[data-sort="recommend"]').click()`);
       await sleep(2600);
       const tiles = await ev(cdp, `document.querySelectorAll('.gc-ch-grid .gc-ch-item').length`);
-      const metaRec = await ev(cdp, `[...document.querySelectorAll('.gc-ch-grid .gc-ch-meta')].filter(e=>/[0-9]{4}[.][0-9]{2}[.][0-9]{2}/.test(e.textContent)).length`);
+      const metaRec = await ev(cdp, `[...document.querySelectorAll('.gc-ch-grid .gc-ch-meta')].filter(e=>/[0-9]{4}[.][0-9]{2}[.][0-9]{2}|[0-9]+(분|시간|일) 전|[0-9]+ ?(m|h|d|min|hr|day)s? ago/.test(e.textContent)).length`);
       if (!tiles || metaRec < tiles) fail(`[5] ${label}: 추천순에서 업로드일 줄이 ${metaRec}/${tiles}개뿐(항상 보여야 한다)`);
       else ok(`[5] ${label}: 추천순에서도 업로드일·조회수 줄 ${metaRec}/${tiles}개`);
     }
