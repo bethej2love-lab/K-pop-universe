@@ -25,6 +25,25 @@ test('NEXZ HYUI 개인 커버 → 휴이', 'Flower (Johnny Stimson) Covered by N
 test('HUI 후이 무대는 NEXZ HYUI와 구분', '[LIVE] 후이(HUI) - 흠뻑(Hmm BOP) | dancEAR', undefined,
   r => !!r && r.primaryGroup === '펜타곤' && JSON.stringify(r.membersByGroup['펜타곤']) === '["후이"]' && !(r.withGroups || []).includes('넥스지'));
 
+// 개인 직캠의 따옴표 안 멤버를 곡명으로 지워 단체 영상처럼 저장하던 회귀(회사19차).
+for (const [m,song] of [['마이','METRONOME'],['최정은','Mamma Mia'],['정세비','R.I.P']]) {
+ const title=`[4K 멤버직캠] 고려대 축제 이즈나(izna) "${m}" - ${song} | 260929 고연전 전야제`;
+ test('멤버직캠의 따옴표 이름 보존: '+m,title,undefined,
+  r => !!r && r.primaryGroup==='이즈나' && JSON.stringify(r.membersByGroup['이즈나'])===JSON.stringify([m]));
+ test('멤버직캠 곡명 구간: '+m,null,null,()=>_fancamParseTitle(title).songSeg===song);
+}
+test('멤버직캠도 다른 그룹의 동명 단어는 출연자로 쓰지 않음',
+ '[4K 멤버직캠] 이즈나(izna) "카리나" - Encore | 260929',undefined,
+ r => !!r && r.primaryGroup==='이즈나' && !(r.withGroups||[]).includes('에스파') && !(r.membersByGroup['이즈나']||[]).length);
+test('일반 직캠의 따옴표 곡명 규칙 보존', '[4K 직캠] 이즈나 "SIGN" - Encore',undefined,
+ r => !!r && r.primaryGroup==='이즈나' && !(r.membersByGroup['이즈나']||[]).length);
+for (const title of [
+ "[플리캠 4K] ARrC CHOIHAN 'awesome' (아크 최한 직캠) l Simply K-Pop GateWayToKorea",
+ '[쇼챔직캠 4K] ARrC CHOIHAN(아크 최한) - S&S (sour and sweet) | Show Champion | EP.531 | 240904',
+ 'ARrC (아크) 최한 (CHOIHAN) | OFF직캠 하이라이트 | 4K | Off The Stage'
+]) test('아크 최한/CHOIHAN 개인 직캠을 한으로 식별: '+title,title,undefined,
+ r => !!r && r.primaryGroup==='아크' && JSON.stringify(r.membersByGroup['아크'])==='["한"]');
+
 // ── 하이라이트(옛 BEAST) 일반어 게이트(2026-10-12) ─────────────────────
 // 함께한 그룹 하이라이트 34건 중 23건이 오태깅: '#하이라이트'(요약 영상)·'#Highlight_shorts'·소문자 '#Highlight'/'#Beast'·곡명 'Son of Beast'.
 const _hl = r => !!r && (r.primaryGroup === '하이라이트' || (r.withGroups || []).includes('하이라이트'));

@@ -8509,12 +8509,24 @@ function _fancamParseTitle(rawTitle){
   }else{
     const base=m.index+m[0].length;
     const rest=t.slice(base);
+    // [멤버직캠] 그룹 "이름" - 곡명 형식은 따옴표 안이 촬영 대상이다.
+    // 이름과 앞쪽 그룹이 같은 등록자일 때만 인정해 일반 따옴표 곡명 규칙을 보존한다.
+    const focus=/멤버직캠/.test(m[0])&&/^(.*?)["“'‘]([^"”'’]{1,40})["”'’]\s*[-–—]\s*(.+?)(?=\s*(?:\||$))/.exec(rest);
+    const focusKnown=focus&&ARTISTS.some(a=>
+      [a.name.ko,a.name.en,...(a.matchAliases||[])].filter(Boolean).some(n=>_fancamNormTok(n)===_fancamNormTok(focus[2]))&&
+      _artistGroups(a).some(g=>[g.ko,GROUPS[g.ko]&&GROUPS[g.ko].en,...((GROUPS[g.ko]&&GROUPS[g.ko].altNames)||[])].filter(Boolean)
+        .some(n=>(' '+_fancamNormTok(focus[1])+' ').includes(' '+_fancamNormTok(n)+' '))));
+
     // 따옴표 곡명 — 여는 따옴표는 공백/시작 직후, 닫는 따옴표는 공백·괄호·구분자·끝 직전이어야 함
     // ("Don't Call Me"처럼 곡명 안의 아포스트로피에서 끊기지 않게, 가장 짧은 유효 스팬을 잡는다).
     const q1=/(?:^|\s)(['‘])(.+?)(['’])(?=[\s(|,)\]]|$)/.exec(rest);
     const q2=/(?:^|\s)(["“])(.+?)(["”])(?=[\s(|,)\]]|$)/.exec(rest);
     let q=q1&&q2?(q1.index<=q2.index?q1:q2):(q1||q2);
-    if(q){
+    if(focusKnown){
+      artistSeg=focus[1]+' '+focus[2];songSeg=focus[3];
+      const start=base+focus.index+focus[0].lastIndexOf(focus[3]);
+      songSpan=[start,start+focus[3].length];
+    }else if(q){
       const s=base+q.index+q[0].indexOf(q[2],1);
       songSeg=q[2];songSpan=[s,s+q[2].length];
       artistSeg=rest.slice(0,q.index);
