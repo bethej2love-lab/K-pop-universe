@@ -1092,8 +1092,9 @@ function _ensureTracksIndex(){
   if(_TIProm)return _TIProm;
   return _TIProm=fetch('tracks_index.json',{cache:'no-cache'}).then(r=>r.ok?r.json():null).then(d=>{_TI=d;return d;}).catch(()=>null);
 }
-function _artistByNameGroup(nm,gko){ // 검색 인덱스가 멤버 owner(ARTIST 객체)를 복원할 때
-  if(!_artByNG){_artByNG=new Map();ARTISTS.forEach(a=>{if(a.name&&a.group)_artByNG.set(a.name.ko+'\u0000'+a.group.ko,a);});}
+function _artistByNameGroup(nm,gko,id){ // 명시 ID 우선. 모호한 구형 이름 키는 다른 사람으로 대입하지 않는다.
+  if(id){const a=ARTISTS.find(a=>a.id===id);return a&&a.name.ko===nm&&a.group.ko===gko?a:null;}
+  if(!_artByNG){_artByNG=new Map();ARTISTS.forEach(a=>{if(a.name&&a.group){const k=a.name.ko+'\u0000'+a.group.ko;_artByNG.set(k,_artByNG.has(k)?null:a);}});}
   return _artByNG.get(nm+'\u0000'+gko);
 }
 let _loadDone=0;
@@ -3012,15 +3013,15 @@ function _buildSongIndex(){
   const INST_RE=/\((?:inst\.?|instrumental|mr)\)\s*$/i;
   const add=(title,album,isTitle,koPho,ownerType,owner,ownerName)=>{
     if(!title||INST_RE.test(title))return;
-    const k=ownerName+' '+_songKey(title);
+    const k=ownerType+'\u0000'+(ownerType==='member'?(owner.id||ownerName):ownerName)+'\u0000'+_songKey(title);
     const prev=byKey.get(k);
     // 타이틀곡을 우선 남긴다 — 같은 곡이면 수록 앨범이 여럿이어도 대표 하나만 보여준다
     if(prev&&!(isTitle&&!prev.isTitle))return;
     byKey.set(k,{title,album,isTitle,koPho,ownerType,owner,ownerName});
   };
-  if(_TI){ // 경량 인덱스(초기 로드엔 discography 없음). t=[title,isTitle01,album,koPho?]
+  if(_TI){ // 경량 인덱스(초기 로드엔 discography 없음). t=[title,isTitle01,album,koPho?,artistId?] (ID는 동명 솔로만)
     for(const gko in _TI.groups)for(const t of _TI.groups[gko])add(t[0],t[2],!!t[1],t[3]||'','group',gko,gko);
-    for(const key in _TI.members){const i=key.indexOf('\u0000');const nm=key.slice(0,i),gko=key.slice(i+1);const a=_artistByNameGroup(nm,gko);if(a)for(const t of _TI.members[key])add(t[0],t[2],!!t[1],t[3]||'','member',a,a.name.ko);}
+    for(const key in _TI.members){const i=key.indexOf('\u0000');const nm=key.slice(0,i),gko=key.slice(i+1);for(const t of _TI.members[key]){const a=_artistByNameGroup(nm,gko,t[4]);if(a)add(t[0],t[2],!!t[1],t[3]||'','member',a,a.name.ko);}}
   }else{ // 폴백: 인메모리 discography(원본 json이 통째로 로드된 경우)
     Object.keys(GROUPS).forEach(gko=>(GROUPS[gko].discography||[]).forEach(al=>(al.tracks||[]).forEach(t=>add(t&&t.title,al.title,!!(t&&t.isTitle),'','group',gko,gko))));
     ARTISTS.forEach(a=>(a.discography||[]).forEach(al=>(al.tracks||[]).forEach(t=>add(t&&t.title,al.title,!!(t&&t.isTitle),'','member',a,a.name.ko))));
@@ -3034,12 +3035,16 @@ function _loadRecentSearches(){
   try{return JSON.parse(localStorage.getItem(RECENT_SEARCH_KEY)||'[]');}catch(e){return[];}
 }
 function _recordRecentSearch(h){
-  const entry=h.type==='group'?{type:'group',ko:h.data}:{type:'member',ko:h.data.name.ko,groupKo:h.data.group.ko};
-  const list=_loadRecentSearches().filter(e=>!(e.type===entry.type&&e.ko===entry.ko&&e.groupKo===entry.groupKo));
+  const entry=h.type==='group'?{type:'group',ko:h.data}:{type:'member',ko:h.data.name.ko,groupKo:h.data.group.ko,artistId:h.data.id};
+  const list=_loadRecentSearches().filter(e=>{
+    if(e.type!==entry.type)return true;
+    if(e.type==='member'&&e.artistId&&entry.artistId)return e.artistId!==entry.artistId;
+    return !(e.ko===entry.ko&&e.groupKo===entry.groupKo);
+  });
   list.unshift(entry);
   localStorage.setItem(RECENT_SEARCH_KEY,JSON.stringify(list.slice(0,RECENT_SEARCH_MAX)));
 }
-// 저장된 최근 검색 항목(그룹 ko / 멤버 이름+그룹)을 doSearch의 hits와 같은 형태로 다시 조립.
+// 최근 검색은 멤버 ID로 복원하고 구형의 명확한 이름/그룹 키도 지원한다.
 // 그룹이 삭제됐거나 멤버를 못 찾으면(데이터 갱신 등) 조용히 건너뜀.
 function _resolveRecentSearches(){
   return _loadRecentSearches().map(e=>{
@@ -3051,7 +3056,7 @@ function _resolveRecentSearches(){
       const dispSub=(enN&&enN!==dispName)?enN:'';
       return{type:'group',name:dispName,sub:dispSub,pos:bm.mesh.position.clone(),data:e.ko};
     }
-    const a=ARTISTS.find(x=>x.name.ko===e.ko&&x.group.ko===e.groupKo);
+    const a=e.artistId?ARTISTS.find(x=>x.id===e.artistId):_artistByNameGroup(e.ko,e.groupKo);
     if(!a)return null;
     const enN=a.name.en||'';
     const dispName=_dispName(a);
@@ -10009,10 +10014,15 @@ function _takeVidPreset(kind){
 // _openTArtist를 안 지우기 때문에 화면은 그룹 카드인데 URL은 계속 멤버를 가리켰다. 그 상태로
 // 새로고침/공유하면 사용자가 방금 빠져나온 멤버 카드가 다시 열렸음. 모바일은 카드 스택이 곧 화면
 // 순서이므로 스택 최상단을 진실로 삼는다(데스크톱은 스택 개념이 없어 기존 로직 유지).
+// 동명 솔로는 이름만으로 구별할 수 없다. 기존 주소에 필요한 경우만 ID를 덧붙인다.
+function _memberIdParam(a){
+  if(!a||!a.id||GROUPS[a.group.ko])return '';
+  return ARTISTS.some(x=>x!==a&&x.name.ko===a.name.ko&&!GROUPS[x.group.ko])?'&mid='+_hashEsc(a.id):'';
+}
 function _cardHash(){
   function _memberHash(a){
     // 솔로(그룹 없는 독립 아티스트)는 g= 없이 m= 만으로 — 주소창에 "솔로" 노출 방지
-    if(!GROUPS[a.group.ko])return'#m='+_hashEsc(a.name.ko);
+    if(!GROUPS[a.group.ko])return'#m='+_hashEsc(a.name.ko)+_memberIdParam(a);
     return'#g='+_hashEsc(a.group.ko)+'&m='+_hashEsc(a.name.ko);
   }
   if(isMob()&&_cardStack.length){
@@ -10031,6 +10041,11 @@ function _stackIndexForHash(hash){
   if(!isMob()||!_cardStack.length||!hash)return -1;
   const params=new URLSearchParams(String(hash).slice(1));
   const gko=params.get('g'),mko=params.get('m');
+  const mid=params.get('mid');
+  if(mid){
+    for(let i=_cardStack.length-1;i>=0;i--){const e=_cardStack[i];if(e.type==='tt'&&e.data&&e.data.id===mid)return i;}
+    return -1;
+  }
   // 솔로 전용 해시(#m=이름, g= 없음) 처리
   if(!gko&&mko){
     for(let i=_cardStack.length-1;i>=0;i--){
@@ -10089,10 +10104,12 @@ function _openFromHash(){
   const comboParam=params.get('combo');
   if(comboParam){_comboFromHash(comboParam);return;} // 조합 패널 공유 링크(#combo=이름(그룹),…)
   const gko=params.get('g'),mko=params.get('m');
+  const mid=params.get('mid'),exact=mid?ARTISTS.find(x=>x.id===mid):null;
+  if(mid&&!exact)return; // 명시 ID가 사라졌으면 다른 동명이인으로 대체하지 않는다.
   _setPendingVidPreset(params,mko?'tv':'gc'); // 영상 목록 공유 링크(&vf=…) — 카드가 목록을 그릴 때 꺼내 씀
   // 솔로 전용 해시(#m=이름, g= 없음) — 새 포맷. 구 포맷(#g=솔로&m=이름)도 아래에서 계속 지원.
   if(!gko&&mko){
-    const artist=ARTISTS.find(x=>x.name.ko===mko&&!GROUPS[x.group.ko]);
+    const artist=exact||ARTISTS.find(x=>x.name.ko===mko&&!GROUPS[x.group.ko]);
     if(!artist)return;
     try{const ref=document.referrer?new URL(document.referrer).hostname:'(direct)';_gaEvent('deeplink_open',{target:'member',gko:'(solo)',ref});}catch(e){}
     if(artist._worldPos)flyTo(artist._worldPos);
@@ -10106,7 +10123,7 @@ function _openFromHash(){
   // 진입 GA — 공유 링크·SEO 페이지 딥링크 모두 여기서 카드가 열린다
   try{const ref=document.referrer?new URL(document.referrer).hostname:'(direct)';_gaEvent('deeplink_open',{target:mko?'member':'group',gko,ref,list:params.has('vf')?1:0});}catch(e){}
   if(mko){
-    const artist=ARTISTS.find(x=>x.group.ko===gko&&x.name.ko===mko);
+    const artist=exact||ARTISTS.find(x=>x.group.ko===gko&&x.name.ko===mko);
     if(!artist)return;
     if(artist._worldPos)flyTo(artist._worldPos); // 솔로는 3D 버블 배치가 없어 _worldPos가 없음 — showT는 이 값 없이도 정상 동작
     showT(artist,window.innerWidth/2,window.innerHeight*0.4,false,'skip');
@@ -10134,7 +10151,7 @@ function _openFromHash(){
 }
 // ── 공유 버튼 (그룹/멤버/연결 카드 공통) ─────────────
 function _connShareHash(){
-  let h='#g='+_hashEsc(_connAnchor.group.ko)+'&m='+_hashEsc(_connAnchor.name.ko)+'&c=1';
+  let h='#g='+_hashEsc(_connAnchor.group.ko)+'&m='+_hashEsc(_connAnchor.name.ko)+_memberIdParam(_connAnchor)+'&c=1';
   if(_connSelected.length)h+='&s='+_connSelected.map(_hashEsc).join(',');
   return h;
 }

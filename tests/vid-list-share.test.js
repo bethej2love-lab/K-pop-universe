@@ -32,6 +32,7 @@ const WAIT_GRID=sel=>`(async()=>{const S=ms=>new Promise(r=>setTimeout(r,ms));fo
   server.listen(PORT);
   const prof=fs.mkdtempSync(path.join(os.tmpdir(),'kpu-vls-'));
   const proc=spawn(BROWSER,['--headless=new','--no-sandbox',`--remote-debugging-port=${CDP_PORT}`,`--user-data-dir=${prof}`,'--no-first-run','--disable-gpu',
+    '--enable-unsafe-swiftshader','--use-gl=angle','--use-angle=swiftshader',
     '--disable-background-timer-throttling','--disable-renderer-backgrounding','--window-size=1400,900','about:blank'],{stdio:'ignore'});
   try{
     await waitCdp();

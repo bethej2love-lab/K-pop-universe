@@ -28,3 +28,5 @@ jobs:
         env:
           KPU_BROWSER_PATH: /usr/bin/google-chrome
         run: node tests/smoke.test.js
+      - name: Video list sharing compatibility
+        run: node tests/vid-list-share.test.js

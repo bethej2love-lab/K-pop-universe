@@ -129,11 +129,13 @@ const groupBuckets = {};                     // gko -> {g:[]|null, m:{이름:{d,
 const soloFiles = [];                        // {name, data}
 const tracks = { groups: {}, members: {} };  // tracks_index 원자료
 let trackCount = 0;
-const pushTracks = (dest, disco) => {
+const pushTracks = (dest, disco, artistId) => {
   for (const al of (disco || [])) for (const t of (al.tracks || [])) {
     if (t && t.title) {
       const ko = enKoPho(t.title);
-      dest.push(ko ? [t.title, t.isTitle ? 1 : 0, al.title || '', ko] : [t.title, t.isTitle ? 1 : 0, al.title || '']);
+      const row = ko ? [t.title, t.isTitle ? 1 : 0, al.title || '', ko] : [t.title, t.isTitle ? 1 : 0, al.title || ''];
+      if (artistId) { row[3] ??= ''; row[4] = artistId; }
+      dest.push(row);
       trackCount++;
     }
   }
@@ -184,7 +186,7 @@ for (const a of artists) {
   const hasD = d && d.length, hasU = u && u.length;
   if (!hasD && !hasU) continue;
   if (!nm || !gko) { collisions.push('이름/그룹 없는 아티스트: ' + JSON.stringify(a.name)); continue; }
-  if (hasD) pushTracks(tracks.members[nm + '\u0000' + gko] ??= [], d); // 검색은 솔로 discography만(unitDiscography는 인덱스 안 함)
+  if (hasD) pushTracks(tracks.members[nm + '\u0000' + gko] ??= [], d, soloDupKeys.has(fileKey(gko) + '__' + fileKey(nm)) ? a.id : undefined); // 검색은 솔로 discography만(unitDiscography는 인덱스 안 함)
   if (groups[gko]) {                          // 실존 그룹 → 그룹 파일에 번들
     const b = (groupBuckets[gko] ??= { g: null, m: {} });
     if (b.m[nm]) collisions.push('그룹 내 동명 멤버: ' + gko + '/' + nm);
