@@ -1,5 +1,13 @@
 # CHANGELOG
 
+
+## 2026-10-29 (Codex — 회사 감사20차 후속·소희 프로필 오연결 최소 수정)
+- **[완료·브랜치/미배포] [artists.json a0520] [artists.slim.json]** 최신 main `ff57d9f73`에서 회사 감사20차와 PR40 병합/배포 완료 상태를 먼저 대조. 원더걸스 이력·1992.06.27생 소희(a0520)의 `links.namu`가 라이즈 소희(a0125,2003.04.17)와 같은 `/소희(RIIZE)`인 현재 데이터 확인. 잘못된 링크1개만 제거. 대체 `/안소희`는 직접 접근 불가로 원문을 확인하지 못해 추정 추가하지 않음. 원래 Instagram ssoheean·라이즈 소희의 정상 namu·나머지 모든 인물/필드 보존. 전후 JSON 구조 비교로 두 데이터 파일 각각 a0520.links.namu 제거 외 차이0·인물 수 불변 확인. DB 쓰기 없음.
+- **[완료·파생 페이지] [member/소희-원더걸스/index.html] [en/member/sohee-wonder-girls/index.html]** 초기 데이터는 기존 build_slim_data로 생성. 전체 SEO 빌드는 보강 DB 대기 단계에서 중단(파일 생성 전). 저장소 빌더의 기존 buildMemberPages 렌더러를 임시 검증 명령에서 a0520만 선택해 실행(네트워크 main 진입점 제외, 빌더 파일 수정 없음). 한영2페이지의 잘못된 링크 버튼과 Person.sameAs 항목만 제거됐고 나머지 HTML은 기존 파일과 문자 단위 일치 확인. 다른 생성 페이지·사이트맵·캐시 버전 변경 없음.
+- **[완료·검증]** syntax 통과, validate-data 오류0·기존경고144, slim --check 일치, disco-artifacts 통과, static-links8/8·seo-url 통과. 원본 JSON 삭제 diff는 잘못된 namu 한 줄뿐. 새 앱 로직/테스트 파일 추가 없음.
+- **[제약·미배포]** 최신 smoke.test.js도 이 노트북에서 Chromium CDP 포트가 열리지 않아 exit2(기능 실패로 단정하지 않으며 통과 주장 없음). 변경/메모를 별도 PR로 push하고 main 배포 보류. 후속은 브라우저 실행 가능한 환경에서 `node tests/smoke.test.js` 통과 후, 원더걸스 소희의 Instagram 유지·잘못된 namu 버튼 제거와 라이즈 소희 namu 보존을 각각 확인. 이번 소량 정정은 확정 오연결 해소이며 회사20차의 AAA/NTX/DXTEEN/동명이인 소유자·공연 중복 후보를 일괄 수정하지 않음.
+
+
 ## 2026-10-28 (Codex — 누락된 그룹 공식 X 링크 보강)
 - **[완료] [groups.json] [groups.slim.json]** 사용자가 Claude 작업 종료 후 직접 수정 승인. 앞선 감사는 메모로 인계하고 이 작업을 우선. 16:30 KST까지 마무리 목표, 공식 홈페이지·공식 채널의 외부 링크·공식 X 프로필을 근거로 누락 계정만 추가. 개인/팬 계정·추정 핸들 제외, 기존 링크와 다른 그룹 정보 보존.
 
