@@ -6285,6 +6285,8 @@ function _vmRenderVideoList(){
     const info=document.createElement('div');info.className='vm-info';
     const grp=document.createElement('div');grp.className='vm-group';grp.textContent=v.group_ko||'';
     const ttl=document.createElement('div');ttl.className='vm-title';ttl.textContent=v.title||'';
+    // 검수 탭: 그룹명이 빗댐으로만 쓰인 제목이면 '출연 의심' 배지(2026-10-30, '코르티스룩'·'트로트계 리센느' — shared.js _parodyRefCue)
+    if(tab==='review'&&typeof _parodyRefCueFor==='function'){const cue=_parodyRefCueFor(v.title,v.group_ko);if(cue){const b=document.createElement('span');b.className='vm-parody-badge';b.textContent='출연 의심';b.title='제목에서 그룹명이 빗댐으로만 쓰임: '+cue;grp.appendChild(b);}}
     info.appendChild(grp);info.appendChild(ttl);
     const tagsLine=_vmTagsLine(v);
     if(tagsLine){
@@ -9693,7 +9695,9 @@ function _extBuildRows(vids,strict,tier,owner,defaultCat,handle){
     // 오염 실측 확인 후 도입).
     // 옵션 A(2026-08-26): 그룹표시 없는 동명이인(영문토큰 교차-ko)은 자신있게 배정하지 않고 검수+숨김으로.
     const ambiguous=!owner&&match.confidence==='ambiguous';
-    const needsReview=!owner&&(match.confidence==='weak'||ambiguous);
+    // 그룹명이 빗댐으로만 쓰인 제목('코르티스룩'·'트로트계 리센느', 2026-10-30)도 검수 큐로 — 멤버 이름이 잡혔으면 진짜 출연 근거가 있어 제외. 숨기지 않는다.
+    const parodyCue=!owner&&!members.length&&typeof _parodyRefCueFor==='function'&&!!_parodyRefCueFor(v.title,match.primaryGroup);
+    const needsReview=!owner&&(match.confidence==='weak'||ambiguous||parodyCue);
     // "] 뒤 미지 그룹" fancam(match.hold) → 그룹 배정 안 하고 content_flag='보류'+검수(2026-09-03 사용자 요청).
     // 크랙시 혜진·핫이슈 예원처럼 우리에 없는 그룹인데 동명이인 멤버로 엉뚱하게 끌려오던 것을 보류로.
     const held=!owner&&!!(match&&match.hold);

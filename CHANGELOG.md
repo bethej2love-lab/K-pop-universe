@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 2026-10-30 (Claude Code — 그룹명 빗댐 제목 '출연 의심' 검수 큐)
+- **[완료·배포] [shared.js _parodyRefCue·_parodyRefCueFor] [admin.js _extBuildRows·_vmRenderVideoList] [kpop_universe.css] [tests/parody-ref.test.js]** 사용자 "50대 코르티스룩 #할명수 #박명수 #코르티스 — 코르티스는 안 나온다", "개그계 리센느처럼 '~계 그룹명'도". 제목만으론 출연/언급을 못 가르니 **자동 숨김 없이 검수 큐에 '출연 의심'으로만**(사용자 결정). 판정: ① 그룹명+룩/st/스타일/메이크업/코디/재질/짝퉁/따라하기/흉내/성대모사/닮은꼴/패러디(뒷말이 단어 끝 — "룩스 캔 킬"·"스타일리스트"·"StageMix" 제외) ② ~계(의) 그룹명(세계·가요계·연예계·아이돌계 등 제외) ③ 제2의 그룹명. 외부 동기화는 주인 채널·멤버가 잡힌 영상 제외하고 needs_review만 켬, 검수 탭 행에 배지. 실DB 후보 85,011건 재판정 → 34건(멤버 태깅·수동·무관/숨김 제외). 절반은 진짜 빗댐(트로트계 리센느·수학계 BTS·트롯계 블랙핑크·앨리스 메이크업·제2의 엔하이픈 등), 나머지는 그룹 자체 콘텐츠(갓세븐 '룩' 직캠·엔믹스 패러디 극장 등 — 옛 행은 source_tier가 비어 자체 채널을 못 가림) → 검수에서 '정상'으로 넘기면 됨.
+- **[완료·DB] [sql/parody_review_2026-10-30.sql]** 위 34건 needs_review=true 실행·확인(queued 34/34). 되돌리기 `sql/parody_review_2026-10-30_undo.sql`. 할명수 코르티스룩(tlfJ6qYAELc)은 10-28 수동 무관이라 대상 아님.
+
+
 ## 2026-10-30 (Claude Code — 발견 탭 쇼츠 썸네일 모자이크·뿌옇다 짠 5번째 재발)
 - **[완료·배포] [app.js _mountShortThumb·_shortThumbShrink·_shortThumbQueue·_shortThumbWhenNear] [tests/short-thumb.test.js]** 사용자 "Trend 위쪽 쇼츠는 모자이크처럼 뿌옇고, 아래 쇼츠는 뿌옇다가 갑자기 짠 선명(아이폰)". 원인: 10-27 축소 방식이 **큰 원본(1080×1920)을 먼저 화면 img에 띄우고 같은 걸 또 받아 줄여 갈아끼우는** 구조 — Trend 위쪽 수십 장이 한꺼번에 뜰 때 원본+축소용 사본이 겹쳐 메모리가 오히려 두 배로 튀고(사파리는 이때 큰 그림을 저해상도로 깎아 그림=모자이크), 아래쪽은 원본→축소본 교체와 페이드 중 비치는 블러 배경이 "뿌옇다 짠"으로 보였다. 수정: ① 큰 원본은 화면 밖 Image(crossOrigin)로만 받아 카드 폭×DPR(최대 2)로 줄인 blob만 화면에 붙임 ② 큰 그림 동시 처리 2장 제한(10초 지나면 자리 비움) ③ 스크롤 상자 근처에 온 카드만 받기 시작 ④ decode 끝난 뒤 onReady→0.3초 페이드, 그때까지 셔머 유지 ⑤ 블러 배경은 페이드 끝난 뒤(400ms)에 깔기. 폴백 순서(oardefault→oar2→hqdefault→onFail)·뜬 뒤 error 무시는 그대로. 헤드리스 390px DPR3 발견 탭: 화면 img에 원본이 붙은 횟수 0, 동시 처리 최대 2, 표시 그림 332px(카드 166px), 4,200px 내려가도 보이는 쇼츠 전부 표시·셔머 잔존 0. short-thumb·card-title-visibility·feed-trend·syntax 통과. ⏳아이폰 확인 대기 — 또 재발하면 카드 img src가 blob:인지, naturalWidth가 카드폭×2 수준인지부터.
 

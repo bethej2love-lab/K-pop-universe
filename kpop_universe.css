@@ -2076,6 +2076,7 @@
   .vm-flag-btn{font-size:10px;padding:3px 7px;border-radius:7px;border:0.5px solid;cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><path d='M11,1 L12.3,9.7 L21,11 L12.3,12.3 L11,21 L9.7,12.3 L1,11 L9.7,9.7Z' fill='%23FFB0D0' opacity='.97'/></svg>") 11 11,pointer;font-family:inherit;white-space:nowrap;transition:opacity .12s;}
   .vm-flag-btn:hover{opacity:.75;}
   .vm-flag-normal{background:rgba(100,180,120,0.12);border-color:rgba(100,180,120,0.35);color:rgba(145,220,165,0.9);}
+  .vm-parody-badge{display:inline-block;margin-left:6px;padding:0 5px;border-radius:4px;font-size:10px;background:rgba(255,160,80,0.14);color:rgba(255,190,120,0.95);}
   .vm-flag-nomem{background:rgba(255,160,80,0.12);border-color:rgba(255,160,80,0.35);color:rgba(255,190,120,0.9);}
   .vm-flag-hidden{background:rgba(220,90,90,0.12);border-color:rgba(220,90,90,0.35);color:rgba(240,150,150,0.9);}
   .vm-flag-hold{background:rgba(180,140,230,0.12);border-color:rgba(180,140,230,0.35);color:rgba(205,175,240,0.9);}

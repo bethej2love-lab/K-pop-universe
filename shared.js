@@ -641,3 +641,41 @@ function _soloPageSuffix(a,artists,groups){
   if(enDup.length>1){const h=hint(a),hs=h?(slug(groups[h].en||h)||h):'';res.en='-'+(hs&&enDup.filter(x=>hint(x)===h).length===1?hs:(a.id||hs||'x'));}
   return res;
 }
+
+// 그룹명이 출연이 아니라 **빗댐**으로만 쓰인 제목인지(2026-10-30 사용자 "50대 코르티스룩 #할명수 #박명수 #코르티스 — 코르티스는 안 나온다",
+// "개그계 리센느"처럼 '~계 그룹명'도). 박명수가 코르티스처럼 입은 쇼츠, "트로트계 리센느 김용빈"·"수학계 BTS 정승제"처럼 다른 사람을
+// 그룹에 빗댄 영상은 해시태그까지 달려 매처가 출연으로 본다. 진짜 출연에도 "○○ 스타일"을 쓰는 일이 있어 **자동으로 숨기지 않고**
+// 검수 큐에 '출연 의심'으로만 올린다(외부 채널 동기화 _extBuildRows + 관리자 검수 목록 배지 + 소급 스윕이 이 한 함수를 쓴다).
+// 걸리는 꼴: ① 그룹명+룩/st/스타일/메이크업/코디/재질/짝퉁/따라하기/흉내/성대모사/닮은꼴/패러디 — 뒷말이 단어 끝이어야 한다
+//              (갓세븐 '룩'은 곡명 Look이라 걸리지만 "룩스 캔 킬"·"스타일리스트"·"메이크업포에버"는 안 걸리게)
+//            ② ~계(의) 그룹명 — 세계·가요계·연예계·아이돌계처럼 진짜 그 그룹을 가리키는 말은 뺀다
+//            ③ 제2의 그룹명
+// 반환: 걸린 문구(없으면 ''). names: 확인할 그룹 표기(한글 키·영문명).
+// ⚠️ 정규식 문자열에 백슬래시를 쓰지 않는다(편집 도구가 이스케이프를 풀어 깨진 사고 — 공백은 ' ?', 이스케이프는 fromCharCode(92)).
+const _PARODY_AFTER='(?:룩|st|스타일|메이크업|화장법|코디|재질|짝퉁|따라하기|흉내|성대모사|닮은꼴|닮은|패러디)';
+const _PARODY_END='(?=$|[^가-힣A-Za-z0-9]|의|을|를|은|는|이|으로|로|도)';
+const _PARODY_KYE_SKIP=/(세|가요|연예|아이돌|케이팝|음악|음반|방송|관|체|시|단)$/;
+const _parodyReCache=new Map();
+function _parodyRefCue(title,names){
+  const t=String(title||'');
+  if(!t)return '';
+  const BS=String.fromCharCode(92);
+  for(const n of names||[]){
+    if(!n||n.length<2)continue;
+    let r=_parodyReCache.get(n);
+    if(!r){
+      const e=[...n].map(c=>('.*+?^$|()[]{}'.includes(c)||c===BS)?BS+c:c).join('');
+      r=[new RegExp(e+' ?'+_PARODY_AFTER+_PARODY_END,'i'),new RegExp('([가-힣]{1,6})계의? ?'+e+'(?![A-Za-z가-힣])','i'),new RegExp('제 ?2의 ?'+e,'i')];
+      _parodyReCache.set(n,r);
+    }
+    const a=t.match(r[0]);if(a)return a[0];
+    const b=t.match(r[1]);if(b&&!_PARODY_KYE_SKIP.test(b[1]))return b[0];
+    const c=t.match(r[2]);if(c)return c[0];
+  }
+  return '';
+}
+// 그 영상의 그룹 표기들(group_ko 키 + 영문명)로 바로 판정
+function _parodyRefCueFor(title,gko){
+  const g=(typeof GROUPS!=='undefined'&&GROUPS)?GROUPS[gko]:null;
+  return _parodyRefCue(title,[gko,g&&g.en]);
+}
