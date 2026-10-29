@@ -126,6 +126,11 @@ function _soloReattribGko(gko,memberKos,publishedAt){
 // 챌린지가 정식 해시태그 #GoodBoy를 달아서 지디·태양이 게스트로 계속 붙었다(순위표 14~15건). 곡 제목은 유닛
 // 이름이 아니다 — 진짜 지디×태양 콘텐츠는 제목에 "GD X TAEYANG"이 있다.
 const _UNIT_HASHTAG_ONLY_TOKENS=new Set(['AAA','EVOLution','Glow','hatch!','NXT','M&N']);
+// 시상식 제목의 #AAA는 유닛 출연 근거가 아니다. 정식 Acid Angel from Asia 이름은 그대로 인정한다.
+// 자체 채널/외부 채널 경로가 같은 판정을 쓰며, 시상식 단서 없는 기존 #AAA 유닛 표기는 보존한다.
+function _unitTokenContextOk(token,title){
+  return token!=='AAA'||!/(?:ASIA\s*ARTIST\s*AWARDS?|아시아\s*(?:아티스트\s*어워즈|셀러브리티)|#?AAA\s*(?:19|20)\d\d|(?:19|20)\d\d\s*#?AAA\b)/i.test(title||'');
+}
 // ⚠️ **해시태그마저 근거가 못 되는** 유닛 트리거(2026-09-03 신설). 다른 그룹이 같은 단어를 곡명으로 쓰고
 // 그 그룹 콘텐츠에 정식 해시태그로 달면, 위 hashtag-only 가드를 그냥 통과한다.
 // 실사고: 트렌드지의 곡 "GLOW" 홍보 영상에 `#TRENDZ #GLOW #GLOWchallenge`가 달렸고, 트리플에스 유닛

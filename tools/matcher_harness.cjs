@@ -83,6 +83,7 @@ pieces.push(extractStatement(adminSrc, /^const _GROUP_AMBIGUOUS_IF_COMATCHED\s*=
 // ⚠️ 이 하네스는 "이름으로 잘라오기" 방식이라, _m2ParseTitle이 새 최상위 함수를 부르게 되면
 // 여기에도 반드시 추가해야 함(안 하면 "... is not defined"로 전 케이스가 실패한다).
 pieces.push(extractByBraces(adminSrc, /^function _unitMemberNamedInTitle\(/m, '_unitMemberNamedInTitle'));
+pieces.push(extractByBraces(adminSrc, /^function _unitMembersFromTitle\(/m, '_unitMembersFromTitle'));
 pieces.push(extractByBraces(adminSrc, /^function _atmLeftBefore\(/m, '_atmLeftBefore')); // 탈퇴 게이트(2026-08-25)
 // 다른 사람 풀네임("제임스 안 (James An)") 제거(2026-09-29) — _atmStripCommonNounCtx가 부른다
 if (!/^const _ATM_SURNAME_ROMAJI\s*=/m.test(pieces.join('\n'))) pieces.push(extractStatement(adminSrc, /^const _ATM_SURNAME_ROMAJI\s*=/m, '_ATM_SURNAME_ROMAJI'));
@@ -130,7 +131,7 @@ const _ATM_DYNAMIC_AMBIGUOUS_COMATCH=new Set();
 const _ATM_DYNAMIC_LITERAL_ONLY=new Set();
 const _STRICT_SYNC_GROUPS=new Set(Object.entries(GROUPS).filter(([,v])=>v&&v.strictSync).map(([ko])=>ko));
 ${pieces.join('\n')}
-module.exports={_m2ParseTitle,_PROJECT_UNITS,_fancamParseTitle,_m2NameVariants,_atmStripSurname,_isHashtagOnlyName,GROUPS,ARTISTS};
+module.exports={_m2ParseTitle,_unitMembersFromTitle,_PROJECT_UNITS,_fancamParseTitle,_m2NameVariants,_atmStripSurname,_isHashtagOnlyName,GROUPS,ARTISTS};
 `;
 
 let mod;

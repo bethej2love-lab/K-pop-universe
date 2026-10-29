@@ -8313,7 +8313,7 @@ function _unitMembersFromTitle(title,ko){
   const hitHashtag=name=>new RegExp(`#${_atmEscRe(name)}(?![가-힣a-zA-Z0-9])`,'i').test(title||'');
   const result=new Set();
   Object.values(_PROJECT_UNITS).forEach(unit=>{
-    if(!unit.names.some(t=>_UNIT_HASHTAG_ONLY_TOKENS.has(t)?hitHashtag(t):hit(t)))return;
+    if(!unit.names.some(t=>_unitTokenContextOk(t,title)&&(_UNIT_HASHTAG_ONLY_TOKENS.has(t)?hitHashtag(t):hit(t))))return;
     // 로테이션 유닛(NCT U 등, shared.js 주석 참고)은 members가 "참여한 적 있는 사람 명단"이라
     // 전원 확장하면 안 됨 — 제목에 이름이 따로 언급된 멤버만 인정한다.
     if(unit.rotating){
@@ -9009,7 +9009,7 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
     // 충돌해 대량 오매칭되는 게 발견됨).
     // 유닛명이 정규화 후 실존 그룹 토큰과 같아지는 경우("마마무+"→"마마무", 2026-08-29 시뮬로 발견 — 마마무
     // 단체 직캠마다 솔라·문별이 붙었음)는 특수문자가 살아있는 원문 리터럴(hitLiteral)로만 인정한다.
-    if(!unit.names.some(t=>_UNIT_HASHTAG_ONLY_TOKENS.has(t)?hitHashtag(t):(_unitTokIsGroup(t)?hitLiteral(t):hit(t))))return;
+    if(!unit.names.some(t=>_unitTokenContextOk(t,rawTitle)&&(_UNIT_HASHTAG_ONLY_TOKENS.has(t)?hitHashtag(t):(_unitTokIsGroup(t)?hitLiteral(t):hit(t)))))return;
     // _UNIT_NEED_PARENT_TOKENS(shared.js) — 해시태그도 근거가 못 되는 트리거는 **유닛 소속 그룹이
     // 따로 매칭됐을 때만** 확장한다. 트렌드지 곡 "GLOW" 해시태그에 트리플에스 유닛이 걸려 4명 × 36건이
     // 붙던 사고(2026-09-03 실측). 여기(외부 채널 경로)만 필요하다 — 자체 채널 경로

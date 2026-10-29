@@ -6,7 +6,7 @@
 // 실행: node tests/matching.test.js
 
 const mod = { exports: require('../tools/matcher_harness.cjs') };
-const { _m2ParseTitle, _PROJECT_UNITS, _fancamParseTitle } = mod.exports;
+const { _m2ParseTitle, _unitMembersFromTitle, _PROJECT_UNITS, _fancamParseTitle } = mod.exports;
 
 // ── 테스트 케이스 ──────────────────────────────────────────────
 // 각 케이스는 실제 사고/수정 이력(CHANGELOG 2026-07~08) 기반. check(result)가 true를 반환해야 통과.
@@ -185,6 +185,29 @@ test(
   '#AAA 챌린지 모음', undefined,
   r => !!(r && r.membersByGroup['트리플에스'] && r.membersByGroup['트리플에스'].length)
 );
+// 시상식의 #AAA는 Acid Angel from Asia 출연진을 뜻하지 않는다(회사 감사20차).
+for (const [label,title] of [
+  ['수호 LINE-UP','[AAA 2024 LINE-UP] SUHO 수호 | The 9th Asia Artist Awards IN BANGKOK #AAA #AAA2024'],
+  ['쯔위 LINE-UP','[AAA 2026 LINE-UP] TZUYU 쯔위 | Asia Artist Awards IN KAOHSIUNG #AAA #aaa2026 (Mandarin ver.)'],
+  ['올데이프로젝트 LINE-UP','[AAA 2026 LINE-UP] ALLDAY PROJECT올데이프로젝트 | Asia Artist Awards IN KAOHSIUNG #AAA #aaa2026'],
+  ['시상식 수상 쇼츠','#REPLAAAY 2022 #AAA 아시아 셀러브리티 #비퍼스트 #BEFIRST'],
+  ['트리플에스 시상식은 유닛4인 확장 금지','tripleS at Asia Artist Awards #AAA #AAA2026']
+]) test('시상식 AAA 구분 — '+label,title,undefined,
+  r => !r || !((r.membersByGroup || {})['트리플에스'] || []).length);
+test('시상식에서도 정식 Acid Angel from Asia 이름은 보존',
+  'Acid Angel from Asia Generation at Asia Artist Awards #AAA2026',undefined,
+  r => !!r && ((r.membersByGroup || {})['트리플에스'] || []).length === 4);
+
+for (const title of [
+  '[AAA 2024 LINE-UP] SUHO 수호 | Asia Artist Awards #AAA #AAA2024',
+  'tripleS at Asia Artist Awards #AAA #AAA2026',
+  '#REPLAAAY 2022 #AAA 아시아 셀러브리티 #BEFIRST'
+]) test('자체 채널도 시상식 AAA를 유닛으로 확장하지 않음: '+title,null,null,
+  () => _unitMembersFromTitle(title,'트리플에스').size === 0);
+for (const title of ['tripleS Generation #AAA','Acid Angel from Asia at Asia Artist Awards #AAA2026'])
+  test('자체 채널 진짜 AAA 유닛 보존: '+title,null,null,
+    () => _unitMembersFromTitle(title,'트리플에스').size === 4);
+
 test(
   'Aria 유닛 완전 제거 확인(트리거 자체가 없어야 함)',
   null, null,
