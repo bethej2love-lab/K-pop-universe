@@ -211,7 +211,12 @@ for (const s of soloFiles) { wr(path.join(discoDir, 'a', s.name + '.json'), s.da
 const groupsSlim = JSON.parse(JSON.stringify(groups));
 for (const k of Object.keys(groupsSlim)) delete groupsSlim[k].discography;
 const artistsSlim = JSON.parse(JSON.stringify(artists));
-for (const a of artistsSlim) { delete a.discography; delete a.unitDiscography; }
+for (const a of artistsSlim) {
+  const emptySolo = !groups[a.group?.ko] && !(a.discography?.length) && !(a.unitDiscography?.length);
+  delete a.discography; delete a.unitDiscography;
+  // 파일을 생성하지 않는 솔로는 빈 목록임을 알려 존재하지 않는 disco/a 파일 요청을 막는다.
+  if (emptySolo) { a.discography = []; a.unitDiscography = []; }
+}
 
 // ── 집계·시각화용 파생 필드 (2026-09-02) ────────────────────────────────────
 // 원본 co/nat/disbanded는 그대로 두고 여기서 파생만 붙인다. 화면은 원본을 쓰고(_dispAgency·

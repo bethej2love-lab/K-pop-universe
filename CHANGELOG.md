@@ -15,6 +15,8 @@
 - **[완료·로컬 검증] [tests/song-owner-identity.test.js] [tests/member-link-identity.test.js] [tests/recent-search-identity.test.js]** 실제 코드·데이터로 곡 소유자11·링크/소개/모바일 스택77·최근 검색7검증 모두 통과. 앱 수정을 되돌리면 각각10/49/6실패를 재현. 구형/없는 ID·동명 동일곡·같은 이름 그룹/개인·연결 공유 왕복·17등록행의 한영소개를 포함. syntax·slim --check 및 생성물 구조/범위 대조 통과.
 - **[진행중·브라우저 검증] [tests/smoke.test.js] [.github/workflows/browser-smoke.yml]** 클린 Linux 실제 브라우저에서 데스크톱/모바일 각각 두 유주의 명시 ID 딥링크·경량 곡 검색의 유주/현아 소유자를 추가 검수. 기존 영상 목록 공유 왕복 및 회사의 최근 공연/공연장·앨범/곡·트로피/사진 창(1400/1920/390px) 검수도 CI에 추가, 그 전용 브라우저의 software WebGL 설정만 기존 smoke와 맞춤. 로컬 Mac에서는 CDP 실행 실패(스모크/목록공유)라 CI 결과로 판정. 이 작업은 아직 main 미반영.
 
+- **[완료·브랜치/미배포] [tools/build_slim_data.mjs] [artists.slim.json]** 실제 Chrome PC/390px에서 두 유주 딥링크와 곡 소유자 모두 일치했으나, 앨범 미등록 유주a1475의 존재하지 않는 disco/a 파일 요청404를 발견(브라우저 검사는 이를 실패 처리). 파일을 만들지 않는 솔로160등록행에만 slim 빈 discography/unitDiscography를 명시하여 불필요한 요청 차단. 앨범/유닛이 있는180등록행은 기존 자기 파일 로드 보존. 원본 artists.json 변경 없음. 실제 slim→앱 loader→파일 회귀340등록행(빈 목록 요청0·기존 원본 일치·재요청0) 통과, 생성물/문법/데이터 검증 통과. 브라우저 재검증 예정.
+
 
 ## 2026-10-29 (Codex — 검수23차·오디션 동기 오연결)
 - **[완료·브랜치/미배포] [app.js _surfWeakLinks] [tests/surf-show-peers.test.js]** shows의 candidates(n>=5)를 확정 참가자와 합쳐 '동기'로 추천하던 것을 확인. 원본 후보/참가자 데이터는 보존하고 이 추천 경로만 contestants를 사용. 방지민에게 I-LAND1 제이, 넥스지 유키에게 보이즈플래닛/퀸덤퍼즐 동기를 붙이는 경로 차단. 기존 확정 참가자의 다른 그룹 연결·MC 기간 겹침 연결은 보존. 실제 추천 함수를 추출해 실제 shows와 통제 데이터로7검증, 수정 전5실패→후0실패. 후보가 진짜 참가자인 경우도 확인 전에는 '동기'로 확정하지 않는 한계가 있으며, 빠진 실제 참가자는 별도 공식 크레딧 대조 후 contestants에 큐레이션할 후속 대상. 결과그룹만으로 참가자를 삭제하거나 candidates 원본을 지우지 않음.
