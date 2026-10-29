@@ -6,7 +6,7 @@
 // 실행: node tests/matching.test.js
 
 const mod = { exports: require('../tools/matcher_harness.cjs') };
-const { _m2ParseTitle, _PROJECT_UNITS, _fancamParseTitle } = mod.exports;
+const { _m2ParseTitle, _unitMembersFromTitle, _PROJECT_UNITS, _fancamParseTitle } = mod.exports;
 
 // ── 테스트 케이스 ──────────────────────────────────────────────
 // 각 케이스는 실제 사고/수정 이력(CHANGELOG 2026-07~08) 기반. check(result)가 true를 반환해야 통과.
@@ -24,6 +24,25 @@ test('NEXZ HYUI 개인 커버 → 휴이', 'Flower (Johnny Stimson) Covered by N
   r => !!r && r.primaryGroup === '넥스지' && JSON.stringify(r.membersByGroup['넥스지']) === '["휴이"]');
 test('HUI 후이 무대는 NEXZ HYUI와 구분', '[LIVE] 후이(HUI) - 흠뻑(Hmm BOP) | dancEAR', undefined,
   r => !!r && r.primaryGroup === '펜타곤' && JSON.stringify(r.membersByGroup['펜타곤']) === '["후이"]' && !(r.withGroups || []).includes('넥스지'));
+
+// 개인 직캠의 따옴표 안 멤버를 곡명으로 지워 단체 영상처럼 저장하던 회귀(회사19차).
+for (const [m,song] of [['마이','METRONOME'],['최정은','Mamma Mia'],['정세비','R.I.P']]) {
+ const title=`[4K 멤버직캠] 고려대 축제 이즈나(izna) "${m}" - ${song} | 260929 고연전 전야제`;
+ test('멤버직캠의 따옴표 이름 보존: '+m,title,undefined,
+  r => !!r && r.primaryGroup==='이즈나' && JSON.stringify(r.membersByGroup['이즈나'])===JSON.stringify([m]));
+ test('멤버직캠 곡명 구간: '+m,null,null,()=>_fancamParseTitle(title).songSeg===song);
+}
+test('멤버직캠도 다른 그룹의 동명 단어는 출연자로 쓰지 않음',
+ '[4K 멤버직캠] 이즈나(izna) "카리나" - Encore | 260929',undefined,
+ r => !!r && r.primaryGroup==='이즈나' && !(r.withGroups||[]).includes('에스파') && !(r.membersByGroup['이즈나']||[]).length);
+test('일반 직캠의 따옴표 곡명 규칙 보존', '[4K 직캠] 이즈나 "SIGN" - Encore',undefined,
+ r => !!r && r.primaryGroup==='이즈나' && !(r.membersByGroup['이즈나']||[]).length);
+for (const title of [
+ "[플리캠 4K] ARrC CHOIHAN 'awesome' (아크 최한 직캠) l Simply K-Pop GateWayToKorea",
+ '[쇼챔직캠 4K] ARrC CHOIHAN(아크 최한) - S&S (sour and sweet) | Show Champion | EP.531 | 240904',
+ 'ARrC (아크) 최한 (CHOIHAN) | OFF직캠 하이라이트 | 4K | Off The Stage'
+]) test('아크 최한/CHOIHAN 개인 직캠을 한으로 식별: '+title,title,undefined,
+ r => !!r && r.primaryGroup==='아크' && JSON.stringify(r.membersByGroup['아크'])==='["한"]');
 
 // ── 하이라이트(옛 BEAST) 일반어 게이트(2026-10-12) ─────────────────────
 // 함께한 그룹 하이라이트 34건 중 23건이 오태깅: '#하이라이트'(요약 영상)·'#Highlight_shorts'·소문자 '#Highlight'/'#Beast'·곡명 'Son of Beast'.
@@ -185,6 +204,29 @@ test(
   '#AAA 챌린지 모음', undefined,
   r => !!(r && r.membersByGroup['트리플에스'] && r.membersByGroup['트리플에스'].length)
 );
+// 시상식의 #AAA는 Acid Angel from Asia 출연진을 뜻하지 않는다(회사 감사20차).
+for (const [label,title] of [
+  ['수호 LINE-UP','[AAA 2024 LINE-UP] SUHO 수호 | The 9th Asia Artist Awards IN BANGKOK #AAA #AAA2024'],
+  ['쯔위 LINE-UP','[AAA 2026 LINE-UP] TZUYU 쯔위 | Asia Artist Awards IN KAOHSIUNG #AAA #aaa2026 (Mandarin ver.)'],
+  ['올데이프로젝트 LINE-UP','[AAA 2026 LINE-UP] ALLDAY PROJECT올데이프로젝트 | Asia Artist Awards IN KAOHSIUNG #AAA #aaa2026'],
+  ['시상식 수상 쇼츠','#REPLAAAY 2022 #AAA 아시아 셀러브리티 #비퍼스트 #BEFIRST'],
+  ['트리플에스 시상식은 유닛4인 확장 금지','tripleS at Asia Artist Awards #AAA #AAA2026']
+]) test('시상식 AAA 구분 — '+label,title,undefined,
+  r => !r || !((r.membersByGroup || {})['트리플에스'] || []).length);
+test('시상식에서도 정식 Acid Angel from Asia 이름은 보존',
+  'Acid Angel from Asia Generation at Asia Artist Awards #AAA2026',undefined,
+  r => !!r && ((r.membersByGroup || {})['트리플에스'] || []).length === 4);
+
+for (const title of [
+  '[AAA 2024 LINE-UP] SUHO 수호 | Asia Artist Awards #AAA #AAA2024',
+  'tripleS at Asia Artist Awards #AAA #AAA2026',
+  '#REPLAAAY 2022 #AAA 아시아 셀러브리티 #BEFIRST'
+]) test('자체 채널도 시상식 AAA를 유닛으로 확장하지 않음: '+title,null,null,
+  () => _unitMembersFromTitle(title,'트리플에스').size === 0);
+for (const title of ['tripleS Generation #AAA','Acid Angel from Asia at Asia Artist Awards #AAA2026'])
+  test('자체 채널 진짜 AAA 유닛 보존: '+title,null,null,
+    () => _unitMembersFromTitle(title,'트리플에스').size === 4);
+
 test(
   'Aria 유닛 완전 제거 확인(트리거 자체가 없어야 함)',
   null, null,

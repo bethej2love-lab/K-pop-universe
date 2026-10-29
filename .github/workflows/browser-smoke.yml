@@ -1,0 +1,30 @@
+name: Browser smoke
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: browser-smoke-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Check runner Chromium
+        run: /usr/bin/google-chrome --version
+      - name: Desktop and fresh mobile smoke
+        env:
+          KPU_BROWSER_PATH: /usr/bin/google-chrome
+        run: node tests/smoke.test.js

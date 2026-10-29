@@ -8313,7 +8313,7 @@ function _unitMembersFromTitle(title,ko){
   const hitHashtag=name=>new RegExp(`#${_atmEscRe(name)}(?![가-힣a-zA-Z0-9])`,'i').test(title||'');
   const result=new Set();
   Object.values(_PROJECT_UNITS).forEach(unit=>{
-    if(!unit.names.some(t=>_UNIT_HASHTAG_ONLY_TOKENS.has(t)?hitHashtag(t):hit(t)))return;
+    if(!unit.names.some(t=>_unitTokenContextOk(t,title)&&(_UNIT_HASHTAG_ONLY_TOKENS.has(t)?hitHashtag(t):hit(t))))return;
     // 로테이션 유닛(NCT U 등, shared.js 주석 참고)은 members가 "참여한 적 있는 사람 명단"이라
     // 전원 확장하면 안 됨 — 제목에 이름이 따로 언급된 멤버만 인정한다.
     if(unit.rotating){
@@ -8509,12 +8509,24 @@ function _fancamParseTitle(rawTitle){
   }else{
     const base=m.index+m[0].length;
     const rest=t.slice(base);
+    // [멤버직캠] 그룹 "이름" - 곡명 형식은 따옴표 안이 촬영 대상이다.
+    // 이름과 앞쪽 그룹이 같은 등록자일 때만 인정해 일반 따옴표 곡명 규칙을 보존한다.
+    const focus=/멤버직캠/.test(m[0])&&/^(.*?)["“'‘]([^"”'’]{1,40})["”'’]\s*[-–—]\s*(.+?)(?=\s*(?:\||$))/.exec(rest);
+    const focusKnown=focus&&ARTISTS.some(a=>
+      [a.name.ko,a.name.en,...(a.matchAliases||[])].filter(Boolean).some(n=>_fancamNormTok(n)===_fancamNormTok(focus[2]))&&
+      _artistGroups(a).some(g=>[g.ko,GROUPS[g.ko]&&GROUPS[g.ko].en,...((GROUPS[g.ko]&&GROUPS[g.ko].altNames)||[])].filter(Boolean)
+        .some(n=>(' '+_fancamNormTok(focus[1])+' ').includes(' '+_fancamNormTok(n)+' '))));
+
     // 따옴표 곡명 — 여는 따옴표는 공백/시작 직후, 닫는 따옴표는 공백·괄호·구분자·끝 직전이어야 함
     // ("Don't Call Me"처럼 곡명 안의 아포스트로피에서 끊기지 않게, 가장 짧은 유효 스팬을 잡는다).
     const q1=/(?:^|\s)(['‘])(.+?)(['’])(?=[\s(|,)\]]|$)/.exec(rest);
     const q2=/(?:^|\s)(["“])(.+?)(["”])(?=[\s(|,)\]]|$)/.exec(rest);
     let q=q1&&q2?(q1.index<=q2.index?q1:q2):(q1||q2);
-    if(q){
+    if(focusKnown){
+      artistSeg=focus[1]+' '+focus[2];songSeg=focus[3];
+      const start=base+focus.index+focus[0].lastIndexOf(focus[3]);
+      songSpan=[start,start+focus[3].length];
+    }else if(q){
       const s=base+q.index+q[0].indexOf(q[2],1);
       songSeg=q[2];songSpan=[s,s+q[2].length];
       artistSeg=rest.slice(0,q.index);
@@ -9009,7 +9021,7 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
     // 충돌해 대량 오매칭되는 게 발견됨).
     // 유닛명이 정규화 후 실존 그룹 토큰과 같아지는 경우("마마무+"→"마마무", 2026-08-29 시뮬로 발견 — 마마무
     // 단체 직캠마다 솔라·문별이 붙었음)는 특수문자가 살아있는 원문 리터럴(hitLiteral)로만 인정한다.
-    if(!unit.names.some(t=>_UNIT_HASHTAG_ONLY_TOKENS.has(t)?hitHashtag(t):(_unitTokIsGroup(t)?hitLiteral(t):hit(t))))return;
+    if(!unit.names.some(t=>_unitTokenContextOk(t,rawTitle)&&(_UNIT_HASHTAG_ONLY_TOKENS.has(t)?hitHashtag(t):(_unitTokIsGroup(t)?hitLiteral(t):hit(t)))))return;
     // _UNIT_NEED_PARENT_TOKENS(shared.js) — 해시태그도 근거가 못 되는 트리거는 **유닛 소속 그룹이
     // 따로 매칭됐을 때만** 확장한다. 트렌드지 곡 "GLOW" 해시태그에 트리플에스 유닛이 걸려 4명 × 36건이
     // 붙던 사고(2026-09-03 실측). 여기(외부 채널 경로)만 필요하다 — 자체 채널 경로
