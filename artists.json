@@ -250939,6 +250939,50 @@
     },
     "discography": [
       {
+        "title": "HEO YOUNGSAENG Mini Album『LOOK BACK』",
+        "type": "미니",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/150/90/648/15090648_20261028112959_500.jpg",
+        "releaseDate": "2026.10.29",
+        "trackCount": 6,
+        "titleTrack": "Sayonara (Japanese)",
+        "region": "jp",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Sayonara (Japanese)",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "만약에 우리 (Korean)",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "작별인사 (Sayonara) (Korean ver.)",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "もしも (만약에 우리) (Japanese ver.)",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Sayonara (Inst.)",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "もしも (Inst.)",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "15090648"
+      },
+      {
         "title": "Find",
         "type": "싱글",
         "releaseDate": "2026.05.12",

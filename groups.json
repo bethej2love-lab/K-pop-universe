@@ -263113,6 +263113,39 @@
   "id": "g282",
   "discography": [
    {
+    "title": "HYPER LINK : Vol.4",
+    "type": "미니",
+    "isMain": true,
+    "cover": "https://cdnimg.melon.co.kr/cm2/album/images/150/90/474/15090474_20261028105450_500.jpg",
+    "releaseDate": "2026.10.29",
+    "trackCount": 4,
+    "titleTrack": "RING IT",
+    "tracks": [
+     {
+      "no": 1,
+      "title": "RING IT",
+      "isTitle": true
+     },
+     {
+      "no": 2,
+      "title": "NUNA",
+      "isTitle": false
+     },
+     {
+      "no": 3,
+      "title": "HABIBI",
+      "isTitle": false
+     },
+     {
+      "no": 4,
+      "title": "NUNA (Feat. Tr.D)",
+      "isTitle": false
+     }
+    ],
+    "src": "melon",
+    "melonAlbumId": "15090474"
+   },
+   {
     "title": "HYPER LINK : Vol.3",
     "type": "싱글",
     "isMain": true,
