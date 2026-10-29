@@ -6280,10 +6280,10 @@ async function _surfWeakLinks(a,g){
       if(o===r||o.show!==r.show||(o.memberKo===a.name.ko&&ownG.has(o.groupKo)))return;
       if(String(o.start)<=String(r.end||'9999')&&String(r.start)<=String(o.end||'9999'))add({kind:'person',name:o.memberKo,group:o.groupKo,rel:'MC 짝꿍'},2,c1);
     }));
-    // 서바이벌 동기 — 같은 오디션 출신(참가자 + 영상에 자주 나온 후보), 지금 다른 그룹
+    // 서바이벌 동기 — 확인된 참가자만. 영상 출현 빈도는 검수 후보이며 참가 사실이 아니다.
     const c2={n:0};
     Object.entries(shows).forEach(([prog,s])=>{
-      const names=[...(s.contestants||[]),...((s.candidates||[]).filter(c=>c.n>=5).map(c=>c.name))];
+      const names=s.contestants||[];
       const me=names.some(n=>{const m=n.match(/^(.+)\((.+)\)$/);return m&&m[1]===a.name.ko&&ownG.has(m[2]);});
       if(!me)return;
       names.forEach(n=>{const m=n.match(/^(.+)\((.+)\)$/);if(!m||ownG.has(m[2]))return;add({kind:'person',name:m[1],group:m[2],rel:prog+' 동기'},2,c2);});
