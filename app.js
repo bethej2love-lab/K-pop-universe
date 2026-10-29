@@ -4820,65 +4820,91 @@ function _isLegacyShortCat(v){return !!v&&v.category==='short';}
 //  opts: {bg, onReady(img), onFail(img)}
 function _mountShortThumb(img,id,opts){
   const o=opts||{};
+  const base=`https://i.ytimg.com/vi/${id}/`;
   // 블러 배경은 작은 가로 썸네일로 — 세로 원본(1080×1920)을 배경에도 깔면 카드 하나에 큰 그림 두 장을 풀어 둬서, 쇼츠 수십 개인
   // Trend에서 아이폰이 앞 그림을 버리고 블러 배경만 남겼다(2026-10-23 사용자 "모바일에서 쇼츠 썸네일이 뿌옇다"). 흐리게 깔 거라 화질 무관.
-  const setBg=()=>{if(o.bg&&!o.bg.style.backgroundImage)o.bg.style.backgroundImage=`url(https://i.ytimg.com/vi/${id}/mqdefault.jpg)`;};
-  // ② 세로 원본이 없으면 oar2(1080×1920 세로 프레임) — 2026-10-22 사용자 "Trend 쇼츠 일부 썸네일이 뿌옇다". hqdefault는 쇼츠면
-  //    480×360 안에 세로 화면(≈202×360)이 있고 양옆은 유튜브가 블러로 채운 것이라, 9:16 카드(2배율 338×600)에 키우면 흐렸다.
-  //    실측: oardefault 404인 쇼츠 3/3에 oar2가 있었고 가로 영상엔 없다(404). ③ 그것도 없을 때만 hqdefault.
-  const isOar=()=>/\/oar(default|2)\.jpg$/.test(img.src);
-  const fallback=()=>{
-    if(img.src.includes('oardefault')){img.src=`https://i.ytimg.com/vi/${id}/oar2.jpg`;return;}
-    img.classList.add('is-fallback');img.src=`https://i.ytimg.com/vi/${id}/hqdefault.jpg`;
-  };
-  img.onload=()=>{
-    if(isOar()&&img.naturalWidth===120&&img.naturalHeight===90){fallback();return;}
-    if(isOar())_shrinkShortThumb(img); // 원본은 바로 보이고, 줄인 그림(blob)으로 갈아끼우면 onload가 한 번 더 온다(멱등)
-    setBg();img.dataset.thumbOk='1';
-    _shortThumbWatch(img);
-    if(o.onReady)o.onReady(img);
-  };
-  img.onerror=()=>{
-    // 한 번 뜬 그림은 이후 error로 지우지 않는다(2026-10-26 사용자 "발견 탭 위쪽 쇼츠만 뿌옇다" 재발). 아래 감시가 화면 밖
-    // 그림의 src를 뗐다 붙이는데, 그때(또는 LTE에서 다시 받다 실패할 때) 나는 error를 실패로 받아 onFail이 그림을 지우면
-    // 뒤의 블러 배경(mqdefault)만 남아 뿌연 채로 굳는다 — 캡처 속 WAYF 쇼츠가 정확히 mqdefault 가운데를 블러한 모양이었다.
-    if(!img.getAttribute('src')||img.dataset.thumbOk)return;
-    if(isOar()){fallback();return;}
-    img.onerror=null;img.onload=null;
-    if(o.onFail)o.onFail(img);
-  };
-  img.src=`https://i.ytimg.com/vi/${id}/oardefault.jpg`;
-}
-// 세로 원본(oar2·oardefault 대부분 1080×1920, 펼치면 장당 8MB)을 카드 크기로 줄여 다시 끼운다(2026-10-27 사용자 "발견 탭 위쪽 쇼츠 뿌연 썸네일" 4번째 재발).
-// 헤드리스에선 그림이 늘 제대로 붙어 있는데 아이폰에서만 앞 그림이 사라지고 뒤 블러 배경만 남았다 — 큰 그림 수십 장이 메모리 한도를 넘어
-// iOS가 펼친 그림을 버리는 것. 감시(아래)로 떼는 것만으론 화면 근처 2~3화면 분량이 여전히 수백 MB라 원본 크기 자체를 줄인다.
-// 줄이는 동안엔 원본이 그대로 보이고, 실패하면(CORS·메모리) 원본을 그냥 쓴다.
-function _shrinkShortThumb(img){
-  if(img.dataset.shrunk||typeof fetch!=='function')return;
-  const dpr=Math.min(window.devicePixelRatio||1,3);
-  // 숨은 패널에서 뜨면 폭이 0 — 그땐 2열 카드 폭(화면 절반)으로 잡는다
-  const cw=Math.max(img.clientWidth||0,img.parentElement?img.parentElement.clientWidth:0)||window.innerWidth/2;
-  const tw=Math.round(Math.max(cw,150)*dpr);
-  if(img.naturalWidth<=tw*1.2)return;
-  img.dataset.shrunk='1';
-  const src=img.src,th=Math.round(tw*img.naturalHeight/img.naturalWidth);
-  fetch(src,{mode:'cors'}).then(r=>{if(!r.ok)throw 0;return r.blob();}).then(b=>new Promise((res,rej)=>{
-    const u=URL.createObjectURL(b),big=new Image();
-    big.onload=()=>{
-      const c=document.createElement('canvas');c.width=tw;c.height=th;
-      const g=c.getContext('2d');g.imageSmoothingQuality='high';g.drawImage(big,0,0,tw,th);
-      big.onload=big.onerror=null;big.src='';URL.revokeObjectURL(u); // 핸들러 먼저 떼기 — src=''가 error를 쏴서 다 만든 걸 버렸다
-      c.toBlob(s=>{c.width=c.height=0;s?res(s):rej();},'image/jpeg',0.88);
+  // ⚠️ 앞 그림 페이드가 끝난 뒤에 깐다(2026-10-30) — 같이 깔면 페이드 0.3초 동안 블러가 비쳐 "뿌옇다가 짠 선명"으로 보였다.
+  const setBg=()=>{if(o.bg&&!o.bg.style.backgroundImage)o.bg.style.backgroundImage=`url(${base}mqdefault.jpg)`;};
+  // 최종 그림만 화면 img에 붙인다. 다 펼쳐진(decode) 뒤에 onReady → 호출부가 .loaded로 페이드인
+  const show=(src,fb)=>{
+    if(fb)img.classList.add('is-fallback');
+    img.onload=()=>{
+      if(img.dataset.thumbOk)return; // 감시가 뗐다 다시 붙일 때 또 오는 onload
+      img.dataset.thumbOk='1';
+      const fin=()=>{_shortThumbWatch(img);if(o.onReady)o.onReady(img);setTimeout(setBg,400);};
+      (img.decode?img.decode():Promise.resolve()).then(fin,fin);
     };
-    big.onerror=()=>{URL.revokeObjectURL(u);rej();};
-    big.src=u;
-  })).then(s=>{
-    // 그새 다른 주소로 바뀌었거나(폴백·재사용) 감시가 떼어 둔 상태면 그 자리 주소만 바꿔 둔다
-    const small=URL.createObjectURL(s);
-    if(img.getAttribute('src')===src)img.src=small;
-    else if(!img.getAttribute('src')&&img.dataset.keepSrc===src)img.dataset.keepSrc=small;
-    else URL.revokeObjectURL(small);
-  }).catch(()=>{});
+    img.onerror=()=>{
+      // 한 번 뜬 그림은 이후 error로 지우지 않는다(2026-10-26 사용자 "발견 탭 위쪽 쇼츠만 뿌옇다" 재발). 아래 감시가 화면 밖
+      // 그림의 src를 뗐다 붙이는데, 그때(또는 LTE에서 다시 받다 실패할 때) 나는 error를 실패로 받아 onFail이 그림을 지우면
+      // 뒤의 블러 배경(mqdefault)만 남아 뿌연 채로 굳는다.
+      if(!img.getAttribute('src')||img.dataset.thumbOk)return;
+      img.onerror=null;img.onload=null;
+      if(o.onFail)o.onFail(img);
+    };
+    img.src=src;
+  };
+  // ① oardefault → ② oar2(1080×1920 세로 프레임, 2026-10-22 — hqdefault를 9:16로 키우면 뿌옇다) → ③ hqdefault + .is-fallback(cover)
+  //    oar 계열은 120×90 회색 플레이스홀더를 정상 이미지로 주기도 해서 크기로 거른다.
+  // ⭐ 큰 세로 원본은 **화면 img에 절대 붙이지 않는다**(2026-10-30, 5번째 재발 "위쪽 쇼츠 모자이크·아래는 뿌옇다 짠"). 예전(10-27)엔
+  //    원본을 먼저 띄우고 같은 걸 또 받아 줄여 갈아끼웠다 — Trend 위쪽 수십 장이 한꺼번에 뜨는 순간 원본+축소용 사본이 겹쳐 아이폰
+  //    메모리가 오히려 두 배로 튀었고, 사파리는 그때 큰 그림을 저해상도로 깎아 그린다(모자이크). 아래쪽은 원본→축소본 교체가 보였다.
+  //    지금: 화면 밖 Image로 받아 → 카드 크기 캔버스로 줄여 → 작은 blob만 표시. 큰 그림은 동시에 2장까지만 펼친다(_shortThumbQueue).
+  const tryUrl=names=>{
+    if(!names.length){show(base+'hqdefault.jpg',true);return;}
+    const u=base+names[0]+'.jpg';
+    _shortThumbQueue(release=>{
+      const big=new Image();big.crossOrigin='anonymous'; // 유튜브 썸네일은 CORS 허용(*) — 캔버스가 오염되지 않게
+      const end=()=>{big.onload=big.onerror=null;big.src='';release();}; // 핸들러 먼저 떼기 — src=''가 error를 쏜다
+      big.onerror=()=>{end();tryUrl(names.slice(1));};
+      big.onload=()=>{
+        if(big.naturalWidth===120&&big.naturalHeight===90){end();tryUrl(names.slice(1));return;}
+        _shortThumbShrink(big,img,small=>show(small||u,false)); // 줄이기 실패(메모리·CORS)면 원본 그대로
+        end();
+      };
+      big.src=u;
+    });
+  };
+  _shortThumbWhenNear(img,()=>tryUrl(['oardefault','oar2']));
+}
+// 큰 세로 원본을 카드 폭×DPR(최대 2)로 줄인 blob 주소를 cb로 돌려준다. drawImage는 이 함수 안에서 동기로 끝나므로 호출 직후 원본을 놓아도 된다.
+// DPR 3 화면도 2배면 썸네일로는 차이가 안 보이고 메모리는 절반 이하(2026-10-30).
+function _shortThumbShrink(big,img,cb){
+  try{
+    const dpr=Math.min(window.devicePixelRatio||1,2);
+    // 숨은 패널에서 뜨면 폭이 0 — 그땐 2열 카드 폭(화면 절반)으로 잡는다
+    const cw=Math.max(img.clientWidth||0,img.parentElement?img.parentElement.clientWidth:0)||window.innerWidth/2;
+    const tw=Math.round(Math.max(cw,150)*dpr);
+    if(big.naturalWidth<=tw*1.2){cb(null);return;}
+    const th=Math.round(tw*big.naturalHeight/big.naturalWidth);
+    const c=document.createElement('canvas');c.width=tw;c.height=th;
+    const g=c.getContext('2d');g.imageSmoothingQuality='high';g.drawImage(big,0,0,tw,th);
+    c.toBlob(s=>{c.width=c.height=0;cb(s?URL.createObjectURL(s):null);},'image/jpeg',0.88);
+  }catch(e){cb(null);}
+}
+// 큰 그림을 동시에 펼치는 수를 2장으로 묶는다. 느린 망에서 한 장이 안 끝나도 10초 뒤엔 자리를 비워 줄이 막히지 않게.
+const _shortThumbJobs=[];let _shortThumbBusy=0;
+function _shortThumbQueue(job){_shortThumbJobs.push(job);_shortThumbPump();}
+function _shortThumbPump(){
+  while(_shortThumbBusy<2&&_shortThumbJobs.length){
+    _shortThumbBusy++;let freed=false;
+    const release=()=>{if(freed)return;freed=true;_shortThumbBusy--;_shortThumbPump();};
+    setTimeout(release,10000);
+    try{_shortThumbJobs.shift()(release);}catch(e){release();}
+  }
+}
+// 화면(정확히는 그림을 담은 스크롤 상자) 근처에 올 때만 받기 시작 — 위쪽 카드부터 차례로 뜨고, 안 볼 카드는 안 받는다.
+// 호출 시점엔 아직 문서에 안 붙은 경우가 많아 잠깐(최대 1초) 기다렸다가 감시, 끝내 안 붙으면 그냥 시작.
+function _shortThumbWhenNear(img,fn){
+  if(typeof IntersectionObserver!=='function'){fn();return;}
+  let tries=0;
+  const go=()=>{
+    if(!img.isConnected){if(++tries<10){setTimeout(go,100);return;}fn();return;}
+    const tgt=img.parentElement||img; // src 없는 img는 크기가 0일 수 있어 감싸는 틀을 본다
+    const io=new IntersectionObserver(es=>{if(es.some(e=>e.isIntersecting)){io.disconnect();fn();}},{root:_shortThumbRoot(img),rootMargin:'100% 50%'});
+    io.observe(tgt);
+  };
+  go();
 }
 // 화면에서 멀리(위아래 2화면 밖) 벗어난 세로 원본은 src를 잠시 떼고, 다시 다가오면 붙인다 — 큰 그림이 한꺼번에 수십 장
 // 풀려 있지 않게(위 setBg 주석과 같은 아이폰 메모리 문제). 다시 붙일 땐 이미 확정된 주소라 폴백 단계를 다시 타지 않는다.

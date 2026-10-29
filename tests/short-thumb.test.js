@@ -54,23 +54,41 @@ const uses = (html.match(/_mountShortThumb\(/g) || []).length - 1;
 need(uses >= 3, `_mountShortThumb 호출 ${uses}곳(그리드·모아보기·탐험 피드)`);
 
 // 큰 세로 원본(1080×1920)은 카드 크기로 줄여 다시 끼운다 — 아이폰이 큰 그림 수십 장을 버려 블러 배경만 남던 것(2026-10-27)
-need(/_shrinkShortThumb\(img\)/.test(fnBody('_mountShortThumb')||'') && !!fnBody('_shrinkShortThumb'), '세로 원본은 로드 후 카드 크기로 축소(_shrinkShortThumb)');
+need(/_shortThumbShrink\(big,img/.test(fnBody('_mountShortThumb')||'') && !!fnBody('_shortThumbShrink'), '세로 원본은 카드 크기로 축소(_shortThumbShrink)');
+// 큰 원본은 화면 img에 붙이지 않고 화면 밖 Image로만 받는다 + 동시 2장 제한(2026-10-30 5번째 재발 "위쪽 모자이크·아래 뿌옇다 짠" —
+// 원본을 먼저 띄우고 같은 걸 또 받아 축소본으로 갈아끼우던 게 메모리를 두 배로 튀게 했다)
+{
+  const b = fnBody('_mountShortThumb') || '';
+  need(/new Image\(\)/.test(b) && /_shortThumbQueue\(/.test(b) && !/img\.src\s*=\s*`[^`]*oar/.test(b) && !/_shrinkShortThumb/.test(html), '큰 세로 원본은 화면 밖 Image로만 받고 줄 세워 처리');
+  need(/\.decode\(/.test(b) && /setTimeout\(setBg/.test(b), '다 펼친 뒤 표시 + 블러 배경은 페이드 끝난 뒤(뿌옇다 짠 방지)');
+}
 
 // ② _mountShortThumb 동작 — 가짜 img로 실제 실행
 const helper = fnBody('_mountShortThumb');
 const run = steps => {
   if (!helper) return { img: { src: '', cls: new Set() }, bg: { style: {} }, log: [] };
-  const img = { src: '', naturalWidth: 0, naturalHeight: 0, cls: new Set(), classList: { add: c => img.cls.add(c) }, dataset: {}, getAttribute: a => (a === 'src' && img.src) || null };
+  // decode()는 바로 끝난 것으로(동기 thenable) — 결과를 같은 틱에 검사하려고
+  const img = { src: '', naturalWidth: 0, naturalHeight: 0, cls: new Set(), classList: { add: c => img.cls.add(c) }, dataset: {}, getAttribute: a => (a === 'src' && img.src) || null, decode: () => ({ then: f => f() }) };
   const bg = { style: {} };
-  const log = [];
-  vm.runInNewContext(helper + ';_mountShortThumb(img,"VID",{bg,onReady:()=>log.push("ready"),onFail:()=>log.push("fail")});', { img, bg, log, _shortThumbWatch: () => {}, _shrinkShortThumb: () => {} });
-  for (const st of steps) {
-    if (st === 'error') img.onerror && img.onerror();
-    // 화면 밖이라 _shortThumbIO가 src를 뗌 — 사파리는 이때 error를 쏜다
+  const log = [], bigs = [];
+  class FakeImage { constructor() { bigs.push(this); this.src = ''; } }
+  vm.runInNewContext(helper + ';_mountShortThumb(img,"VID",{bg,onReady:()=>log.push("ready"),onFail:()=>log.push("fail")});', {
+    img, bg, log, Image: FakeImage, Promise, setTimeout: f => f(),
+    _shortThumbWatch: () => {}, _shortThumbWhenNear: (el, f) => f(), _shortThumbQueue: job => job(() => {}), _shortThumbShrink: (b, i, cb) => cb(null),
+  });
+  // 화면 img에 아직 아무것도 안 붙었으면 화면 밖 Image(큰 원본 프로브) 단계, 붙었으면 화면 img 단계
+  let loadedSrc = '';
+  steps.forEach((st, i) => {
+    const big = !img.src && bigs[bigs.length - 1];
+    const t = big || img;
+    if (st === 'error') t.onerror && t.onerror();
+    // 화면 밖이라 감시가 src를 뗌 — 사파리는 이때 error를 쏜다
     else if (st === 'unload') { img.src = ''; img.onerror && img.onerror(); }
-    else { [img.naturalWidth, img.naturalHeight] = st; img.onload && img.onload(); }
-  }
-  return { img, bg, log };
+    else { [t.naturalWidth, t.naturalHeight] = st; t.onload && t.onload(); }
+    // 화면 img에 주소가 막 붙었으면 다음 단계가 error가 아닌 한 정상 로드
+    if (img.src && img.src !== loadedSrc && steps[i + 1] !== 'error') { loadedSrc = img.src; img.onload && img.onload(); }
+  });
+  return { img, bg, log, bigs };
 };
 {
   const r = run([[1080, 1920]]);
@@ -101,7 +119,7 @@ const run = steps => {
   need(r.log.join() === 'ready', '뜬 뒤 화면 밖에서 src 뗄 때 error → onFail 안 부름(그림 유지)');
 }
 {
-  const r = run([[1080, 1920], 'error']);
+  const r = run([[1080, 1920], [1080, 1920], 'error']) // 프로브 로드 → 화면 로드 → 나중 error;
   need(r.log.join() === 'ready', '한 번 뜬 그림은 이후 error로 지우지 않음');
 }
 {

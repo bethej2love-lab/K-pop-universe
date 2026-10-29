@@ -1,6 +1,10 @@
 # CHANGELOG
 
-## 2026-10-30 (Codex — 검수24차·노트북 후속과 개인캠 출연 범위)
+## 2026-10-30 (Claude Code — 발견 탭 쇼츠 썸네일 모자이크·뿌옇다 짠 5번째 재발)
+- **[완료·배포] [app.js _mountShortThumb·_shortThumbShrink·_shortThumbQueue·_shortThumbWhenNear] [tests/short-thumb.test.js]** 사용자 "Trend 위쪽 쇼츠는 모자이크처럼 뿌옇고, 아래 쇼츠는 뿌옇다가 갑자기 짠 선명(아이폰)". 원인: 10-27 축소 방식이 **큰 원본(1080×1920)을 먼저 화면 img에 띄우고 같은 걸 또 받아 줄여 갈아끼우는** 구조 — Trend 위쪽 수십 장이 한꺼번에 뜰 때 원본+축소용 사본이 겹쳐 메모리가 오히려 두 배로 튀고(사파리는 이때 큰 그림을 저해상도로 깎아 그림=모자이크), 아래쪽은 원본→축소본 교체와 페이드 중 비치는 블러 배경이 "뿌옇다 짠"으로 보였다. 수정: ① 큰 원본은 화면 밖 Image(crossOrigin)로만 받아 카드 폭×DPR(최대 2)로 줄인 blob만 화면에 붙임 ② 큰 그림 동시 처리 2장 제한(10초 지나면 자리 비움) ③ 스크롤 상자 근처에 온 카드만 받기 시작 ④ decode 끝난 뒤 onReady→0.3초 페이드, 그때까지 셔머 유지 ⑤ 블러 배경은 페이드 끝난 뒤(400ms)에 깔기. 폴백 순서(oardefault→oar2→hqdefault→onFail)·뜬 뒤 error 무시는 그대로. 헤드리스 390px DPR3 발견 탭: 화면 img에 원본이 붙은 횟수 0, 동시 처리 최대 2, 표시 그림 332px(카드 166px), 4,200px 내려가도 보이는 쇼츠 전부 표시·셔머 잔존 0. short-thumb·card-title-visibility·feed-trend·syntax 통과. ⏳아이폰 확인 대기 — 또 재발하면 카드 img src가 blob:인지, naturalWidth가 카드폭×2 수준인지부터.
+
+
+## 2026-10-30 (Codex — 검수25차·노트북 후속과 개인캠 출연 범위)
 - **[진행중·읽기 전용] [콘텐츠 감사]** 최신 origin/main 48c097d9c5 및 노트북21~23차 기록 확인. 사용자 요청으로 Claude 코드 작업 중 앱/JSON/SQL/DB 수정 없이 검수만 진행. 이미 운영 정정된14건을 새 오류로 중복 집계하지 않고, 다른 개인캠의 출연 범위와 후속 미결 사항을 확인해 CHANGELOG에만 근거·판단 기준 기록.
 
 
