@@ -10,7 +10,114 @@
 
 
 ## 2026-10-30 (Codex — 검수25차·노트북 후속과 개인캠 출연 범위)
-- **[진행중·읽기 전용] [콘텐츠 감사]** 최신 origin/main 48c097d9c5 및 노트북21~23차 기록 확인. 사용자 요청으로 Claude 코드 작업 중 앱/JSON/SQL/DB 수정 없이 검수만 진행. 이미 운영 정정된14건을 새 오류로 중복 집계하지 않고, 다른 개인캠의 출연 범위와 후속 미결 사항을 확인해 CHANGELOG에만 근거·판단 기준 기록.
+- **[완료·검수 범위] [CHANGELOG.md]** 앱 코드·데이터 파일·DB 쓰기 없이 공개 카드 7명/그룹(예온·승관·이정현·김유연·김세정·아린·레인보우 등)과 원본 영상 30개의 제목/공식 업로더를 대표 대조. 전편 재생 검증 아님. 개인캠 정정 검토 후보는 9개 그룹 고유 86행이며, 기존 운영 정정 14행 및 msnz 확대 후보 72행과 단순 합산 금지.
+- **[완료·노트북 인계 대조] [CHANGELOG.md]** PR46은 2026-10-30 KST 병합 완료로 확인, 기록의 '브랜치/미배포'는 당시 상태임. 운영 정정14건을 현재 SELECT로 재조회: 아크3·이즈나3은 개인 멤버만, DXTEEN협업5는 잘못된 쇼타로만 제거, AAA3은 실제 주인 유지·모두 tags_manual=true/공개. 재정정하지 않음. 별도 PR48(동명이인 소유자/링크)은 OPEN이므로 중복 작업 제외. PR48이 노트북 검수24차여서 이번 번호를25차로 정정.
+- **[이슈·하츠투하츠 예온 카드 오노출21건] [yt_channel_videos]** 공개 UNFILTERED CAM24행(3곡×8명) 대조→예온 본인3행은 정상, 다른7명×3곡21행에 [실제 개인,예온] 잔존. 예온 카드 전체→UNFILTERED 검색에서24개가 실제 노출됨. 공식 STUDIOCHOOM 원본 이안 RUDE! nDPhVp_m0Lg, 유하 RUDE! SzOj2elsby8, 에이나 FOCUS 5MvSYAI5dmY, 이안 TheChase 0-VLTMGBFAM 및 정상 예온 HDJSpEXmodI 제목/업로더 대조. 현재 하네스는21행을 개인1명으로 반환하므로 예전 태그 재고 유형. 정상 예온 HDJSpEXmodI,xC0w_5k76RQ,E_uzYyEPp-4와 단체 영상은 보존.
+- **[이슈·유닛명 개인캠 범위8건] [yt_channel_videos] [admin.js _m2ParseTitle]** 레드벨벳 아이린&슬기 TILT 2행(7aok72GmrTM→아이린,dYN1EUYF_fQ→슬기), 세븐틴 호시X우지4행(NIeq_ExVRsM,Rdzd1AfGogA→호시 / MVnkX6f0dAo,edxcLHcs2no→우지), 도겸X승관2행(07n12WVVDbk→도겸,YoPS8wJdj_s→승관). 현재 DB는 각 유닛2명 동시 태그. 승관 카드→DK FaceCam 검색에 도겸 개인캠07n12WVVDbk 실제 노출, 해당 SBSKPOP ZOOM 원본 제목 확인. 현재 파서는 레드벨벳2·호시우지4는 개인으로 좁히지만 도겸승관2는 여전히 두 명을 반환. 제목이 유닛+괄호(SEVENTEEN)+개인인 경우를 고정유닛 정상 단체 영상과 구별하는 후속 필요.
+- **[이슈·이븐 문정현 캠에 이정현2건] [yt_channel_videos]** AU6rnJ1uFlI(HowCanIDo),uo6dokrUmck(HOTMESS)는 [문정현,이정현]·공개. 공식 STUDIOCHOOM 원본 두 제목 모두 MUN JUNGHYUN(문정현), 이정현 카드→UNFILTERED에 두 영상과 이정현 정상 개인캠이 함께 노출됨. 현재 파서는 문정현만 반환, 예전 태그 재고 유형. 동명 일부를 근거로 인물 자체를 합치거나 정상 LEE JEONGHYEON 개인캠을 제외하지 말 것.
+- **[이슈·msnz 개인캠과 유닛 범위 충돌] [shared.js _PROJECT_UNITS.msnz] [admin.js:9052] [yt_channel_videos]** 우선 확인한 개인캠6행 ioCJfRelmWc,vrTgq5TlqFs,ZJGKYtZAh9o,CHCkQSL7GFA,RRwArZ8JNno,jBOrUYdltkI는 본인+다른8명으로9명 저장/현재 파서도9명 반환. 김유연 카드 ChristmasAlone 검색에 윤서연·김나경·카에데 등의 개인캠이 실제 노출, SBS 박소현 원본 및 KBS 카에데/윤서연 제목 대조. _uNamed가 기존 유닛8명 안에서만 개인 이름을 찾으므로 박소현 등 명시된 촬영 대상이 그 명단 밖이면 '이름 없음'으로 보고8명 전원 확장하는 구조. 공개 msnz294행 중 다중멤버+캠 문구72행은 확대 검수 후보일 뿐72건 모두 개인캠 오류 확정 아님(sun/moon/neptune/zenith 단체캠도 포함). msnz를 고정8명으로 둔 데이터와 당시4개 디멘션/전원 곡의 관계도 공식 발매 당시 자료 대조 필요. 현재8명을 무조건24명으로 바꿔 일괄 확장하거나, 상위294행을 전부 숨기지 말 것.
+- **[이슈·옛 활동명/합류 그룹 개인캠9건] [yt_channel_videos] [artists.json]** 구구단 미나 hGZgf4cFUzM는 정작 미나 없이 [김세정,김나영], 혜연3행 XhXM782_wLE,yOvckQbf59w,QRQJ_SlXGM4는8명. 오마이걸 비니2행 xOOuoXeBopg,yw5xawWPDHI는 반하나3명. 유앤비 찬 S9lhjf3YewY·필독 cpCAKx9C0eU는9명, 프리스틴V 나영 HjQR4-ca34Y는5명. 각각 실제 원본 제목/공식 MBC WORLD 업로더 대조(전편 시청 아님). 현재 등록ID의 대응은 강미나 a0319,조아람/HYEYEON a1612,유빈 a0440,강유찬 a0757,오광석/Pildog a1553,임나영 a0312. 원제목·당시 활동명 보존, 이름 변경/전역 성 제거/다른 유빈과 병합 금지. 발행일을4번째 인자로 넣어도9행 모두 좁혀지지 않음, 특히 미나 행은 날짜 없으면3명이나2018.07.17을 넣으면 다시 미나 누락2명. 유닛 전원 확장과 당시 소속/표기 인식 경로 함께 확인할 것.
+- **[이슈·비니 개인캠 확대 후보42건] [yt_channel_videos] [artists.json a0440]** 오마이걸·공개·개인캠 접두사·비니/BINNIE 촬영대상 표기·멤버수!=1 조건42행=미지정39+반하나3명3, 수동잠금0. 위9건 중 비니2개와 중복이므로 신규40행, 앞 묶음46개와 합쳐 개인캠 후보 고유86개. 아린 카드 BINNIE 검색에 Dolphin/다섯번째계절/DunDunDance 등 비니 개인캠 실제 노출. KBS OOATIM5Wh5M/SBS eL-G56KozGQ/M2 qOEdvexx06Q 원본 제목·채널 확인. a0440 매칭 변형은 유빈/Yubin뿐이라 비니/BINNIE 빠짐, 최신5개 원제목+발행일 매처도 멤버빈배열. [WM의 활동명 변경 발표를 직접 취재한 뉴스1(2022.01.19)](https://www.news1.kr/entertain/celebrity-topic/4559128)에서 비니→본명 유빈 확인. 이미 있는 matchAliases 등을 해당 인물·오마이걸 문맥에 한정해 검토하고 정상 유빈 개인캠/반하나 단체/원더걸스 유빈은 보존.42행 전편 재생 검증이나 자동 일괄 정정 승인은 아님.
+- **[이슈·호우 일반어가 god 게스트로] [yt_channel_videos]** 0Lx0NriNYWk 세븐틴13명 얼빡직캠 합본에 with=[손호영(god),김태우(god)] 및 준 누락(나머지12명). 공식 원본의 설명/챕터는13명 개인캠 목록이며10:27 준 손오공 구간 명시, 제목 '호우 주의'만으로 god 유닛 확장이 현재 매처에서도 strong 재현. 합본을 개인1명으로 줄이지 말고 실제13명 범위 확인+허위 god 연결을 분리할 후속. iKMu8hA3_yc MONSTA X 원본 '[몬 먹어도 고] 호우~↗'도 같은 god2명 with 후보이나 실제 쇼츠 출연 확인 전 오류 확정 보류. 반대로 DizntQpN_wE 공식1theK '호우_우린이제우리그냥'은 실제 손호영·김태우 라이브이므로 이 두 사람 연결을 지우면 안 됨; 다만 현재 primary=레인보우/멤버빈배열이라 레인보우 카드 HoooW 검색에도 해당 영상이 실제 노출됨. 레인보우 귀속은 별도 정정 후보.
+- **[이슈·미배포 PR48 CI 상태 구분] [.github/workflows/browser-smoke.yml]** [실패 실행40963804426](https://github.com/bethej2love-lab/K-pop-universe/actions/runs/40963804426)의 로그를 읽음: Chrome실행·PC/390px 유주2인 딥링크/실제 유주·현아 곡 검색 소유자 검사는 통과. 실패는 Charts 카드0개(8초 대기). 단순 Chromium 실행 불가로 기록하거나 동명이인 수정이 실패했다고 단정하지 말 것. 외부 데이터/네트워크/렌더 경로를 PR 기준에서 분리 재현한 뒤 판단. 이번 PR 수정·병합·CI 재실행 없음.
+- **⏳ 덜 된 일 [명령·파일·판단 기준]** 아래86개 후보 ID를 SELECT id,title,group_ko,members,with_members,with_groups,cover_of_members,cover_of_groups,tags_manual,cover_manual,content_flag,published_at FROM yt_channel_videos WHERE id IN (...) 로 재조회. 대표 원본+개인 촬영대상/정상 단체 비교 확인 후, 현재값·수동잠금·발행일 가드가 있는 소량 members 정정으로 계획(이번 SQL파일/DB쓰기 없음). 재발형은 tools/matcher_harness.cjs의 _m2ParseTitle(title,undefined,undefined,published_at)·_unitMembersFromTitle 두 경로 비교, 정상 본인/유닛 단체/프로젝트 그룹 귀속 보존. 제목 매처만으로 합본 출연자 전원을 덮어쓰지 말 것. 신규 후보를 기존14개 운영 정정에 다시 섞지 않음.
+
+
+<details>
+<summary>개인캠 정정 검토 후보 고유 86행 — 이번 정정 없음</summary>
+
+| 영상 ID | 현재 그룹 | 촬영 대상(검토 기준) | 현재 members |
+|---|---|---|---|
+| `dYN1EUYF_fQ` | 레드벨벳 | 슬기 | 아이린, 슬기 |
+| `7aok72GmrTM` | 레드벨벳 | 아이린 | 아이린, 슬기 |
+| `YoPS8wJdj_s` | 세븐틴 | 승관 | 도겸, 승관 |
+| `07n12WVVDbk` | 세븐틴 | 도겸 | 도겸, 승관 |
+| `Rdzd1AfGogA` | 세븐틴 | 호시 | 호시, 우지 |
+| `NIeq_ExVRsM` | 세븐틴 | 호시 | 호시, 우지 |
+| `MVnkX6f0dAo` | 세븐틴 | 우지 | 우지, 호시 |
+| `edxcLHcs2no` | 세븐틴 | 우지 | 우지, 호시 |
+| `AU6rnJ1uFlI` | 이븐 | 문정현 | 문정현, 이정현 |
+| `uo6dokrUmck` | 이븐 | 문정현 | 문정현, 이정현 |
+| `ioCJfRelmWc` | 트리플에스 | 박소현 | 박소현, 김유연, 코토네, 니엔, 린, 정하연, 박시온, 김채원, 지연 |
+| `ZJGKYtZAh9o` | 트리플에스 | 윤서연 | 윤서연, 김유연, 코토네, 니엔, 린, 정하연, 박시온, 김채원, 지연 |
+| `vrTgq5TlqFs` | 트리플에스 | 김나경 | 김나경, 김유연, 코토네, 니엔, 린, 정하연, 박시온, 김채원, 지연 |
+| `jBOrUYdltkI` | 트리플에스 | 윤서연 | 윤서연, 김유연, 코토네, 니엔, 린, 정하연, 박시온, 김채원, 지연 |
+| `RRwArZ8JNno` | 트리플에스 | 서다현 | 서다현, 김유연, 코토네, 니엔, 린, 정하연, 박시온, 김채원, 지연 |
+| `CHCkQSL7GFA` | 트리플에스 | 카에데 | 카에데, 김유연, 코토네, 니엔, 린, 정하연, 박시온, 김채원, 지연 |
+| `SzOj2elsby8` | 하츠투하츠 | 유하 | 유하, 예온 |
+| `Pm-2W5Yb0ts` | 하츠투하츠 | 주은 | 주은, 예온 |
+| `4ITevvFMDOU` | 하츠투하츠 | 에이나 | 에이나, 예온 |
+| `DRzwnzGzUGg` | 하츠투하츠 | 지우 | 지우, 예온 |
+| `hHrfox2QPF0` | 하츠투하츠 | 카르멘 | 카르멘, 예온 |
+| `gfuctaPhVTw` | 하츠투하츠 | 스텔라 | 스텔라, 예온 |
+| `nDPhVp_m0Lg` | 하츠투하츠 | 이안 | 이안, 예온 |
+| `5jYEvMS_5js` | 하츠투하츠 | 유하 | 유하, 예온 |
+| `rYeNs0XejcU` | 하츠투하츠 | 이안 | 이안, 예온 |
+| `l3qFBPTAZ2U` | 하츠투하츠 | 카르멘 | 카르멘, 예온 |
+| `5MvSYAI5dmY` | 하츠투하츠 | 에이나 | 에이나, 예온 |
+| `0LOd5ex_wME` | 하츠투하츠 | 지우 | 지우, 예온 |
+| `grHljv72AR4` | 하츠투하츠 | 스텔라 | 스텔라, 예온 |
+| `MW1W4tlUW4o` | 하츠투하츠 | 주은 | 주은, 예온 |
+| `frXM7ftowLo` | 하츠투하츠 | 에이나 | 에이나, 예온 |
+| `0-VLTMGBFAM` | 하츠투하츠 | 이안 | 이안, 예온 |
+| `zXyEVShzOcQ` | 하츠투하츠 | 주은 | 주은, 예온 |
+| `DJSDyaOOR5o` | 하츠투하츠 | 유하 | 유하, 예온 |
+| `ljjBxYR1PJY` | 하츠투하츠 | 카르멘 | 카르멘, 예온 |
+| `3OL5rk9I9P8` | 하츠투하츠 | 지우 | 지우, 예온 |
+| `-7ZeM8zuwOg` | 하츠투하츠 | 스텔라 | 스텔라, 예온 |
+| `cpCAKx9C0eU` | 유앤비 | 오광석 | 강유찬, 고호정, 준, 이의진, 오광석, 박대원, 이형근, 지한솔, 김기중 |
+| `hGZgf4cFUzM` | 구구단 | 강미나 | 김세정, 김나영 |
+| `HjQR4-ca34Y` | 프리스틴 | 임나영 | 임나영, 로아, 은우, 레나, 주결경 |
+| `QRQJ_SlXGM4` | 구구단 | 조아람 | 조아람, 신보라, 장소진, 류셰닝, 정미미, 김세정, 강미나, 김나영 |
+| `S9lhjf3YewY` | 유앤비 | 강유찬 | 강유찬, 고호정, 준, 이의진, 오광석, 박대원, 이형근, 지한솔, 김기중 |
+| `XhXM782_wLE` | 구구단 | 조아람 | 조아람, 신보라, 장소진, 류셰닝, 정미미, 김세정, 강미나, 김나영 |
+| `xOOuoXeBopg` | 오마이걸 | 유빈 | 효정, 유빈, 아린 |
+| `yOvckQbf59w` | 구구단 | 조아람 | 조아람, 신보라, 장소진, 류셰닝, 정미미, 김세정, 강미나, 김나영 |
+| `yw5xawWPDHI` | 오마이걸 | 유빈 | 효정, 유빈, 아린 |
+| `OOATIM5Wh5M` | 오마이걸 | 유빈 | 미지정 |
+| `r75ogwr5p_I` | 오마이걸 | 유빈 | 미지정 |
+| `eL-G56KozGQ` | 오마이걸 | 유빈 | 미지정 |
+| `WMc_O1M1UOk` | 오마이걸 | 유빈 | 미지정 |
+| `kUcltZfuA_g` | 오마이걸 | 유빈 | 미지정 |
+| `7U7ByV2EuFc` | 오마이걸 | 유빈 | 미지정 |
+| `QFoSww7nHa8` | 오마이걸 | 유빈 | 미지정 |
+| `Jkc1Leb0MNQ` | 오마이걸 | 유빈 | 미지정 |
+| `1vK-Nl6yWKw` | 오마이걸 | 유빈 | 미지정 |
+| `nk81Wf5tM_0` | 오마이걸 | 유빈 | 미지정 |
+| `k3k86Y3WoJc` | 오마이걸 | 유빈 | 미지정 |
+| `SRa7UhnMoYA` | 오마이걸 | 유빈 | 미지정 |
+| `07TSo0puDv0` | 오마이걸 | 유빈 | 미지정 |
+| `4pHbg0I5PZ0` | 오마이걸 | 유빈 | 미지정 |
+| `_gu5C60djNo` | 오마이걸 | 유빈 | 미지정 |
+| `hw3KR_YHYZY` | 오마이걸 | 유빈 | 미지정 |
+| `okXD7yHU6sA` | 오마이걸 | 유빈 | 미지정 |
+| `EMQoaJlr9fs` | 오마이걸 | 유빈 | 미지정 |
+| `_NLbYkDi5dE` | 오마이걸 | 유빈 | 미지정 |
+| `M_HSc6cRWyc` | 오마이걸 | 유빈 | 미지정 |
+| `xN0pd_pC1PA` | 오마이걸 | 유빈 | 미지정 |
+| `IldMJOWjEsk` | 오마이걸 | 유빈 | 미지정 |
+| `BbZn0ViHvRc` | 오마이걸 | 유빈 | 미지정 |
+| `hDbq42KWjGs` | 오마이걸 | 유빈 | 미지정 |
+| `NV78aaUxwr4` | 오마이걸 | 유빈 | 미지정 |
+| `Rm2HxJN_SAM` | 오마이걸 | 유빈 | 미지정 |
+| `qOEdvexx06Q` | 오마이걸 | 유빈 | 효정, 유빈, 아린 |
+| `A_NAoiKDP_o` | 오마이걸 | 유빈 | 미지정 |
+| `G9oFqrnx640` | 오마이걸 | 유빈 | 미지정 |
+| `s2vs3Z7LH9U` | 오마이걸 | 유빈 | 미지정 |
+| `L1_wWby4rRw` | 오마이걸 | 유빈 | 미지정 |
+| `PaKauTXn-hg` | 오마이걸 | 유빈 | 미지정 |
+| `2NXmz3gDLDE` | 오마이걸 | 유빈 | 미지정 |
+| `s9z-AEe7KRs` | 오마이걸 | 유빈 | 미지정 |
+| `8s4v89gbwDg` | 오마이걸 | 유빈 | 미지정 |
+| `LaBtTJkVYv8` | 오마이걸 | 유빈 | 미지정 |
+| `knsMOXduu98` | 오마이걸 | 유빈 | 미지정 |
+| `S_APlMo2UUI` | 오마이걸 | 유빈 | 미지정 |
+| `q682AkfxQfQ` | 오마이걸 | 유빈 | 미지정 |
+| `bPQpNy6i-v8` | 오마이걸 | 유빈 | 미지정 |
+
+</details>
+
+- **[완료·읽기 전용] [CHANGELOG.md]** 노트북21~24차 인계와 현재 운영 상태를 대조하고 위 근거·86개 ID·정상 비교·후속 판단 기준을 기록. 이번 작업의 변경 파일은 CHANGELOG.md뿐이며 앱/JSON/SQL/DB 정정 없음.
 
 
 
