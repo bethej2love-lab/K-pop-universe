@@ -1,7 +1,158 @@
 # CHANGELOG
 
 ## 2026-10-30 (Codex — 검수30차·다른 동명이인과 원곡 출연 구분)
-- **[진행중·읽기 전용] [CHANGELOG.md]** 사용자 추가 요청. 검수29차76개는 중복 제외하고 다른 동명이인·원곡/출연자 구분 및 앞선 보류 근거를 추가 점검. 코드·JSON·SQL·DB 수정 없이 이 문서에만 인계.
+- **[완료·읽기 전용] [CHANGELOG.md] [yt_channel_videos]** 검수29차76 ID와 겹치지 않는 **82개 고유 영상**을 후속 추적 목록으로 정리: 진영 제목 선별58 + 유니코드21(앞58과2개 중복) + 추가 오태그5. **82개가 전부 오류 확정이라는 뜻은 아님**. 공개77·비공개5(무관3/hidden2), 정상 primary 보존 비교·누락 후보 포함. 공개 중 `qSWG39_aff8`만 tags_manual/cover_manual 둘 다true이므로 보호, 나머지81은 두 잠금false. 코드·JSON·SQL 파일/DB 정정·채널 삭제·수집/스윕 없음. 브라우저는 별도 임시 탭에서 갓세븐 진영→배진영→OnlyOneOf3카드 검색, 공식 원본 제목/업로더·일부 설명/장면 대조; 전편 재생·출연자 전원 확인 아님.
+- **[이슈·공개 카드 오귀속] [artists.json a0601/a0715/a0328]** 갓세븐 진영(1994.09.22, a0601), 비원에이포 출신 정진영(1991.11.18, a0715), 배진영(a0328)을 구분해야 함. 갓세븐 진영 카드에 ‘구르미’5개, ‘경찰수업’2개(h7+아래COSMO), ‘에릭’1개가 실제 노출. [KBS 경찰수업 라디오](https://www.youtube.com/watch?v=h7TDaKA7vx8)는 KBS CoolFM 공식·차태현/진영/정수정 회차, [ELLE 구르미 숏츠](https://www.youtube.com/watch?v=aEMx1feuLpU)도 공식 업로더와 배우 출연 제목 확인. 아래23개는 정진영 이력/작품/곡과 연결되는 **재귀속 후보**이며 모두 개별 장면까지 확정한 것은 아님. [KBS 공식 경찰수업 소개](https://mylovekbs.kbs.co.kr/index.html?contents_id=70000000396202&sname=mylovekbs&source=mylovekbs&stype=magazine)와 [KBS 공식 구르미 소개](https://mylovekbs.kbs.co.kr/index.html?contents_id=70000000283656&sname=mylovekbs&source=mylovekbs&stype=magazine), 정진영/경찰수업 및 @jinyoung0423를 명시한 COSMO 원본 설명으로 식별. 스위트홈·착한여자부세미·그시절소녀·광고 Making·OST는 같은 사람 여부/실제 동반 출연자를 소스별 최종 확인, 단순히 배우 인터뷰라는 이유로 무관 처리하지 않음.
+- **[이슈·배진영을 갓세븐 진영으로] [UBxjyvjsJRk]** 갓세븐 진영 카드에 노출된 [MBC 아이돌라디오 EP168 원본](https://www.youtube.com/watch?v=UBxjyvjsJRk)의 펼친 공식 설명은 #배진영 #BAEJINYOUNG #STILL_YOUNG #Round_Round 및 더보이즈 에릭. 실제 배진영과 에릭의 회차이지 갓세븐 진영이 아님. primary/진영을 배진영 본인과 실제 진행자 에릭 문맥으로 정정 검토. 배진영은 이미 a0328/워너원·CIX 이력/soloDisplay로 존재하므로 새 인물 생성 금지.
+- **[이슈·탈퇴 후 활동을 동명이인에게 넘기는 경로] [artists.json a0715] [admin.js _atmLeftBefore/_m2ParseTitle]** a0715는 group=비원에이포, active=false, left=2018.06.30만 있고 솔로 그룹 이력이 없음. 현재 매처에 실제 발행일을4번째 인자로 주면 경찰수업 h7·2021 업로드 슈가맨 sPo·UNICODE7MI가 모두 갓세븐 진영 weak. 기존 솔로 표현(솔로 primary+기존 그룹 left 보존+active=true)을 **하네스 메모리에서만** a0715에 적용해 비교하니3개 모두null로 바뀜: 오확정을 막더라도 매칭 유실이 남아 **이 변경 하나가 완성된 해법은 아님**. ‘같은 ko를 가진 솔로’ 식별·실제 그룹 문맥·검수 큐/수동 출처 판단을 함께 검토해야 함. 단순 active=true만으로 옛 B1A4 현 멤버 취급을 되살리는 수정도 금지. sPo는 제목상2015방송을2021년에 다시 올린 것으로, 업로드일과 실제 공연 시점도 구별할 것(모든 탈퇴 게이트 무력화 금지).
+- **[이슈·동명이인 아닌 타인 풀네임] [UWXW4wryzKQ]** 갓세븐 진영 카드 ‘현진영’ 검색에 [KBS WORLD TV 현진영 Go 진영 Go](https://www.youtube.com/watch?v=UWXW4wryzKQ)1개 실제 노출. 원본 제목·업로더의 Hyun Jin Young/현진영은 별도 가수. 현재 매처도 갓세븐 진영 weak 유지. 로스터 검색상 현진영 미등록이므로 기존 진영에게 강제 재배정하지 말고 등록 기준/무관·보류 정책에 따라 분리.
+- **[이슈·프로듀서 ≠ 무대 출연자] [UNICODE21] [groups.json]** 로컬 groups/artist 그룹·별칭에 유니코드 미등록. [ARIRANG EP614 원본](https://www.youtube.com/watch?v=7MIwpx4FP0U)의 제목·공식 설명은 일본인5인 걸그룹 UNICODE의 한국어 ‘돌아봐줄래’ 무대이고, 0:37 장면의 UNICODE 방송 자막/걸그룹 공연까지 확인. `Prod.by Jin Young`는 제작 크레딧으로 갓세븐 진영 출연 근거가 아님. 조회21개 중 단독 무대/직캠 **공개10개**(갓세븐2·러블리즈3·워너원2·온리원오프3)가 다른 팀 카드로 노출. 갓세븐 카드 ‘유니코드’5개, 배진영 카드 ‘UNICODE’2개, 온리원오프 카드 ‘유니코드’3개를 실제 확인. [HANA 플리캠](https://www.youtube.com/watch?v=B8geEH-C4s0)도 ARIRANG 공식 원본의 UNICODE HANA 개인캠인데 워너원/배진영. 수동 미확정 상태에서 비원에이포 진영으로만 옮겨도 공연자 오귀속은 그대로이므로 금지. **음악방송 출연·한국어 무대 근거가 있어 유니코드 그룹/멤버 등록을 우선 검토**한 뒤, 실제 주인으로 재귀속하거나 미등록 큐로 분리하는 후속 권장. 단독 영상10개 모두 전편 검증한 것은 아님.
+- **[이슈·UNICODE 협업6/비공개5는 별도] [yt_channel_videos]** 공개 나머지6은 타 아티스트와의 챌린지3·라디오1·출근길1·월간모음1로 주인 전체 삭제 금지. `i4oVF6eCbIc` 어센트 챌린지의 유니코드 하나가 with 하나(피프티피프티)로 저장돼 있어 해당 원본 확인 후 타인 태그 제거·실제 유니코드 출연 보완. `ZxNof6o8Hbc` 유니코드 유라를 현재 매처는 걸스데이 유라 weak로 바꿈(현재 저장 primary는 판타지보이즈)→재스윕만으로 고쳐지지 않음. `fc6hrulpxck` 드리핀 실제 주인은 보존하면서 유니코드 에린·수아를 기존 동명이인에게 붙이지 말 것. 친친 `m_FDOrh0Dcg`의 영재는 실제 진행 여부 확인 후 보존, 프로그램명만으로 주인 삭제 금지. 출근길·월간모음은 각 구간 실제 등장/개별출연 판단. 비공개5(ShowChamp무관3·베이비몬스터hidden2)는 현재 유저 미노출이므로 공개 오류10과 별도, 이번 임의 복구/해제하지 않음.
+- **[이슈·원곡자가 아닌 실제 제작/심사 역할] [소년판타지4]** 아래4개는 갓세븐 진영으로 저장돼 있으나 [MBC 제작발표회 원본](https://www.youtube.com/watch?v=qRr9ym87yCY) 공식 업로더 대조, [iMBC 공식 기사](https://enews.imbc.com/News/RetrieveNewsInfo/377664)는 B1A4 출신 진영을 명시. qRr은 실제 프로듀서 출연이므로 타인 오귀속 정정 후보. k6/CJ는 실제 심사·대화 장면의 범위를 소스별 확인(제목 강승윤/전소연을 무조건 전원 출연으로 채우지 않음). Vv는 설명의 ‘소년판타지 주마등 - 꽉잡아’ 공연 링크가 있어 **‘진영 작곡곡’과 ‘진영이 화면에 실제 등장’ 구별이 선행**. 네 개를 전부 B1A4 primary나 새 데뷔조로 일괄 배정하지 말고 당시 참가자/제작자 역할을 구별, 미등록 참가자 처리 정책 유지.
+- **[이슈·진짜 GOT7 영상도 누락 있음7] [JAY B a0598] [JJ Project]** 아래7편은 갓세븐 primary 보존하되 members에 진영만 있고 제목의 JB가 빠짐. [딩고 내일 오늘 원본](https://www.youtube.com/watch?v=f2FNGzvCVM0) 업로더/제목 JJ Project·JB·진영 확인. 현재 a0598 variants는 JAY B/제이비이며 JB가 없음(짧은 전역 별칭을 무조건 추가하면 새 오탐 가능). 하네스는 hwT만 두 멤버 반환, 나머지 JJ Project4개는 계속 진영만. GOT2DAY JB2개는 배진영/워너원 ambiguous로 잘못 기울기도 하므로 정상 주인 재스윕 금지. 유닛·공식 시리즈·당시 별칭 문맥에서 JB=JAY B를 확인 후 누락 보완. 아래 나머지17은 정상 primary 보존 비교이며 전체 태그 완전성 통과를 뜻하지 않음. 최유리와의6개/1theK DIVE 예고를 B1A4 영상으로 뭉뚱그리지 말 것: [유리의 숲2 EP01 원본](https://www.youtube.com/watch?v=0DaB2xalsVs)은 박진영으로 명시한 GOT7 비교 소스. DIVE예고 qSW는 두 수동잠금true 유지.
+- **[이슈·일반 단어·소속 혼합] [추가5]** [W KOREA rDp](https://www.youtube.com/watch?v=rDp_g65oF-Q)의 ‘갓세븐 진영 X 정의가 **정한** 마녀 커플명’이 세븐틴/정한 주인으로 저장돼 실제 배우 인터뷰를 오귀속. 현재 제목 매처는 갓세븐 진영 strong으로 돌아오므로 옛 재고 정정 후보. QUW도 JAY B 인터뷰가 엔하이픈 제이 주인이지만 현재 매처는 GOT7/JAY B·진영을 반환: 설명상 진영은 섭섭하다고 연락한 **에피소드 언급**일 수 있어 실제 출연/전화 등장 확인 전 with 진영 보존을 확정하지 않음. 5q9는 경찰수업 인터뷰가 러블리즈 JIN/with 갓세븐 진영(설명에 강선호 역); COSMO0tq는 이즈나 유사랑 primary/with갓세븐 진영인데 설명 #정진영/@jinyoung0423라 B1A4출신 진영 본인. [ZEROBASEONE 공식 fYB 원본](https://www.youtube.com/watch?v=fYBWe3OKTS4)은 진짜 GOT7 잭슨·진영 챌린지 초대이며 수집 설명에 #ZHANGHAO/#장하오. 현재 ZB1 members=[잭슨,진영]으로 타 그룹 인물을 자기 멤버에 저장한 상태. 실제 장하오와 GOT7 게스트를 그룹별로 나누고, 제작자 오태그를 지운다는 이유로 진짜 게스트를 없애지 말 것.
+- **[이슈·그룹명 한글 오타] [groups.json] [artists.json] [shared.js] [admin.js]** OnlyOneOf의 내부키/카드명이 ‘온리원오프’인데 [THE K-POP 공식 libidO 원본](https://www.youtube.com/watch?v=cA-KV4lUOgU), [Bugs 아티스트](https://music.bugs.co.kr/artist/20084212)는 ‘온리원오브’. 실제 그룹 카드 이름/공식SNS 작성자 줄도 온리원오프로 표시되며 같은 화면의 공식게시글 제목은 온리원오브로 표기. 로컬 정본 groups1·artists7, slim각1/7, shared1·admin8번에 잘못된 문자열 존재, groups 해당 개체에 올바른 한글 별칭도 없음. DB group_ko에 이 키를 쓰는 영상2,944(공개2,456)지만 **모두 실제 OnlyOneOf 영상이라는 뜻은 아님**(위 유니코드 혼입 포함). 한 파일 표시명 치환만 하면 로스터/DB/수집기/공유링크가 갈라지므로 기존 키 호환·old→new 그룹/with/cover/채널/유저 저장값 등 참조 이전을 계획한 뒤 수정할 것. 이번에는 오타 확인과 범위 메모만, 이름·슬림·DB 일괄치환 안 함. 이전 인계에도 잘못된 이름이 그대로 쓰여 있었으므로 새 그룹 추가 문제가 아닌 기존 키 정정으로 접근.
+- **[완료·재현/검증 범위] [tools/matcher_harness.cjs]** 실제 발행일로58제목과 공개UNICODE16+추가5를 메모리 재파싱(중복2 포함, 파일 변경 없음). Prod.by Jin Young의3개 러블리즈 저장값은 현재 갓세븐 weak로 바뀔 뿐 실제 유니코드로는 못 돌아감. B8/e9는 워너원·CIX·GOT7 ambiguous, e9는 걸스데이 유라까지 추가. COSMO는 갓세븐 strong 유지, 현진영도weak 유지. 구르미 일부는 ‘현재’→더보이즈 현재, ‘우정’→우당탕탕소녀단 우정까지 붙일 수 있으나 **이번 DB에는 이 추가 태그가 없으므로 현재 데이터 오류로 새로 집계하지 않음**. 하네스 동적 DB 화이트리스트는 비어 있어 서비스 런타임과의 차이는 감안, 현재 재파싱 결과를 곧바로 일괄 정정값으로 사용 금지. `node tests/validate-data.js` 오류0/기존경고144, `node tests/smoke.test.js` PC·390px모바일 통과(첫 샌드박스 실행은 CDP 실행불가→동일 테스트를 승인된 전용 헤드리스 환경에서 재실행해 통과; 종료 시 이미 끝난 자식 PID 정리 경고는 있었으나 테스트exit0). 신규 코드 변경/아이폰 실기기 검증을 뜻하지 않음.
+- **⏳ 덜 된 일 [명령·파일·판단 기준]** ① 아래82 ID를 `SELECT id,title,description,group_ko,members,with_members,with_groups,cover_of_groups,cover_of_members,cover_of_song,content_flag,tags_manual,cover_manual,published_at FROM yt_channel_videos WHERE id IN (...)`로 최신 재조회. 실제 원본 확인된 B1A4배우 인터뷰·배진영라디오·현진영·추가5부터 소량 백업/현재값 가드로 정정 계획; 두잠금qSW 보호. ② a0715의 기존 솔로/옛 그룹 이력 모델과 ko중복 정체성·재업로드 날짜를 함께 검토, 이번 하네스의 null 결과를 해결로 착각하지 않기. ③ 유니코드 공개단독10은 공식 로스터/한국어 음방 근거로 등록 여부 결정 후 처리, 협업6과비공개5 분리. `WHERE title ~* '(UNICODE|유니코드)'`로21재현, 작품 제작자(Jin Young)는 자동 출연자 추가하지 않음. ④ JB7는 유닛/공식시리즈 문맥으로 JAY B 보완, 정상GOT2DAY를배진영으로 옮기지 않음. ⑤ OnlyOneOf키 정정 전 `rg -n '온리원오프|온리원오브' groups.json artists.json shared.js admin.js`와 DB 참조·저장된 즐겨찾기/링크 호환 조사→구·신키 동시 호환과 데이터 이전/원복을 갖춘 별도 작업. 이번 후속 실행용 SQL·코드·데이터 변경은 하지 않음.
+
+<details>
+<summary>검수30차 — B1A4 출신 진영 이력/작품과 연결되는 재귀속 후보23 (일괄 확정 아님)</summary>
+
+| 영상 ID | 제목·구별 문맥 | 현재 primary / members / with |
+|---|---|---|
+| `aEMx1feuLpU` | 왔다 내 청춘들🩵💙 #구르미그린달빛 #박보검 #김유정 #진영 #채수빈 #곽동연 | 갓세븐 / 진영 / ∅ |
+| `0ktCxdl9FqE` | 박보검의 미담은 현재 진행형💝 #구르미그린달빛 #박보검 #김유정 #진영 #채수빈 #곽동연 #다이슨 #다이슨버건디우드에디션 #다이슨슈퍼소닉뉴럴 #다이슨에어랩 | 갓세븐 / 진영 / ∅ |
+| `YEoFokx-TUg` | “불허한다. 내 사람이다.” 과연 원조 박보검은 자리를 지킬 수 있을까? #구르미그린달빛 #구그달 #박보검 #김유정 #진영 #채수빈 #곽동연 | 갓세븐 / 진영 / ∅ |
+| `VqkdM-1BZfA` | 박보검, 김유정, 진영, 채수빈, 곽동연과 함께 2016년으로 돌아가 볼까요? #구르미그린달빛 #구그달 #박보검 #김유정 #진영 #채수빈 #곽동연 | 갓세븐 / 진영 / ∅ |
+| `utxlSkZv9ik` | 10년이 지나도 한결같은 우정! 다섯 멤버들이 다시 모였습니다🫶 #구르미그린달빛 #박보검 #김유정 #진영 #채수빈 #곽동연 | 갓세븐 / 진영 / ∅ |
+| `DPibQOUYY0Y` | [FULL] 안 볼 이유가 하나도 없는 ✨2025년 최고 기대작✨ 드라마 〈착한 여자 부세미〉의 배우 전여빈, 진영 보는 라디오 ／ 12시엔 주현영 ／ 250925 | 갓세븐 / 진영 / ∅ |
+| `aafpOImjIL8` | 고향에도 길을 잃을 만큼 심각한 길치라는 진영😵‍💫 | 갓세븐 / 진영 / ∅ |
+| `nfad9hzBxh0` | [FULL] 첫사랑의 설렘을 전파하러 온 💙영화 ‘그 시절, 우리가 좋아했던 소녀’ 배우 진영, 다현💙 보는 라디오 ／ 12시엔 주현영 ／ 250217 | 갓세븐 / 진영 / ∅ |
+| `9CaKolakVZY` | 여전한 예능감 다현의 한마디에 쓰러진 진영🤣 ／ 12시엔 주현영 | 갓세븐 / 진영 / ∅ |
+| `NTHiMBLuWPs` | #진영 이 추천하는 향수 바로 사러 나왔습니다💸💸 #스위트홈 #스위트홈3 | 갓세븐 / 진영 / ∅ |
+| `tuem_B5-_0E` | 진영, 완벽한 수트핏😭 #스위트홈3 #진영 | 갓세븐 / 진영 / ∅ |
+| `Vjaak3akR2U` | 볼륨 초대석 : 청초한 만남 with 고민시, 진영 full ver. / [청하의 볼륨을 높여요] I KBS 240715 방송 | 갓세븐 / 진영 / ∅ |
+| `-nK5QnYzO9g` | [FULL] 난리났네 난리났어!🔥🏠 3년 만에 돌아온 〈스위트홈〉 시즌2의 배우 진영, 고민시 보는 라디오 ／ 박소현의 러브게임 ／ 231205 | 갓세븐 / 진영 / ∅ |
+| `FdSV-NTRTCw` | 같은 곳에서 진영.ver | 갓세븐 / 진영 / ∅ |
+| `h7TDaKA7vx8` | 💙KBS 2TV 드라마 '경찰수업' 진영, 정수정 러브라인 예고? (ft. 단톡방 사건) /[정은지의 가요광장] l KBS 210809 방송 | 갓세븐 / 진영 / ∅ |
+| `ckbz3zfZXDI` | 만남의 광장 with 차태현, 진영, 정수정 full ver. /[정은지의 가요광장] l KBS 210809 방송 | 갓세븐 / 진영 / ∅ |
+| `JitWJLpv_HE` | 당신..그렇게 웃으면 유죄야...체포해도 되죠? 내 광대 은은하게 빛나게 만드는 진영 줌터뷰💖 l 줌터뷰 | 갓세븐 / 진영 / ∅ |
+| `sPoSPjvL6co` | 바로＆진영 ′2015 하얀 겨울′ ♪ 환상의 하모니 〈슈가맨1(SUGARMAN1) 1회〉 ／ JTBC 151020 방송 | 갓세븐 / 진영 / ∅ |
+| `g6szU6KSWWw` | [re슈가캠] 진영 '하얀겨울'♬ #투유프로젝트슈가맨 | 갓세븐 / 진영 / ∅ |
+| `YyQA_WL9m_0` | [MV] Jinyoung(진영) _ I'm into you, I mean Love you(좋아해, 아니 사랑해)(Webtoon YeonNom(웹툰 연놈)OST Part.4) | 갓세븐 / 진영 / ∅ |
+| `1Jtd6AxgJIk` | 진영 (Jin Young) - 약속하길 잘했다! (Together Promise) Making Film | 갓세븐 / 진영 / ∅ |
+| `X3tnRSBRD28` | ✨만능 엔터테이너 진영! 자꾸 듣고 싶은 '문자 왔다~' '잘 자! 내 꿈 꿔!' (ft. K-조니, 한 소절 라이브)  /[신예은의 볼륨을 높여요]ㅣKBS 211213 방송 | 갓세븐 / 진영 / ∅ |
+| `ZuuyGip6F20` | 볼륨 초대석 with 진영 full ver. /[신예은의 볼륨을 높여요]ㅣKBS 211213 방송 | 갓세븐 / 진영 / ∅ |
+
+</details>
+
+<details>
+<summary>검수30차 — 신원 추가 확인3 / 배진영 라디오1 / 현진영1</summary>
+
+| 영상 ID | 제목·구별 문맥 | 현재 primary / members / with |
+|---|---|---|
+| `E44GUmqcoLc` | #진영 의 최애 #향수 는 바로바로바로💖 | 갓세븐 / 진영 / ∅ |
+| `U8eBWSknuBc` | #진영 이 팬들에게, 그리고 모두에게 보내는 감동적인 메세지 | 갓세븐 / 진영 / ∅ |
+| `BZTsxYkszdY` | 계속 놀리고 싶은 타격감 좋은 진영 | 갓세븐 / 진영 / ∅ |
+| `UBxjyvjsJRk` | [FULL] EP#168 [에릭과 진영] 아돌라에서 피어난 미남들의 우정❣️｜아이돌 라디오(IDOL RADIO) 시즌4｜MBC 251027 방송 | 갓세븐 / 진영 / ∅ |
+| `UWXW4wryzKQ` | Hyun Jin Young(현진영) - 현진영 Go 진영 Go [Open Concert 열린음악회] KBS KOREA 260607 | 갓세븐 / 진영 / ∅ |
+
+</details>
+
+<details>
+<summary>검수30차 — 소년판타지4: 실제 제작자 등장과 곡 제작 크레딧 구분</summary>
+
+| 영상 ID | 제목·구별 문맥 | 현재 primary / members / with |
+|---|---|---|
+| `VvSzdlEaGdE` | [쇼! 음악중심] 너를 좋아해 너만 좋아해🥺 감성 폭팔 소년들의 신곡 꽉 잡아🌺  #소년판타지 #진영 #꽉잡아 #Shorts | 갓세븐 / 진영 / ∅ |
+| `k6n36-vM3yw` | [#소년판타지] 🌸벚꽃 연금🌸의 또다른 주인, 진영 프로듀서가 만든 신곡! 판타지 메이커분들의 마음도 꽉~잡아🎵 ／ #전소연 #진영 #강승윤 MBC230525방송 | 갓세븐 / 진영 / ∅ |
+| `CJ2Nje9bUGk` | [#소년판타지] 142만 팔로워 보유자부터 연습생 한달차 병아리까지..! 온탕과 냉탕 오가는 입학평가🔥ㅣ #전소연 #진영 #강승윤 MBC230406방송 | 갓세븐 / 진영 / ∅ |
+| `qRr9ym87yCY` | 엄.근.진 진영 프로듀서의 비장한 포토타임✨ #소년판타지 #제작발표회 #shorts | 갓세븐 / 진영 / ∅ |
+
+</details>
+
+<details>
+<summary>검수30차 — 유니코드 전체21: 공개 단독10 / 공개 협업·모음6 / 비공개5</summary>
+
+| 영상 ID | 제목·구별 문맥 | 현재 primary / members / with / flag |
+|---|---|---|
+| `OkHm9EtBmno` | [Monthly K-POP IDOLS] 82MAJOR, ASC2NT, E'LAST, TOZ, UNICODE, 1CHU, WHIB | 82메이저 / ∅ / ∅ / null |
+| `7MIwpx4FP0U` | [Simply K-Pop CON-TOUR] UNICODE(유니코드) - 'Let me Love (Prod.by Jin Young) (돌아봐줄래 (Prod.by 진영))'_Ep614 | 갓세븐 / 진영 / ∅ / null |
+| `i4oVF6eCbIc` | LOVE ME DO💓 with #유니코드 #에린 #하나 님 @UNICODE_XNET | 어센트 / 가람, 인준 / 하나(피프티피프티) / null |
+| `sk4tPhrgd6s` | [안방1열 직캠4K] 유니코드 하나 '돌아봐줄래' (UNICODE HANA 'Let me love' FanCam) @SBS Inkigayo 240512 | 베이비몬스터 / ∅ / ∅ / hidden |
+| `gk9MXZ7rNAs` | [안방1열 직캠4K] 유니코드 에린 '돌아봐줄래' (UNICODE Erin 'Let me love' FanCam) @SBS Inkigayo 240512 | 온리원오프 / ∅ / ∅ / null |
+| `ZxNof6o8Hbc` | Hey, 유니코드 유라 님이 나를 보고 웃잖아😊 @UNICODE_XNET  #shorts | 판타지보이즈 / ∅ / ∅ / null |
+| `WJbS0rrz7ps` | UNICODE, Let me love (Prod.by Jin Young) (유니코드, 돌아봐줄래 (Prod.by 진영)) [THE SHOW 240514] | 러블리즈 / JIN / 진영(갓세븐) / null |
+| `-eamZczfALc` | [안방1열 풀캠4K] 유니코드 '돌아봐줄래' (UNICODE 'Let me love' FullCam)│@SBS Inkigayo 240512 | 온리원오프 / ∅ / ∅ / null |
+| `2H89nXTlMXU` | UNICODE, Let me love (Prod.by Jin Young) (유니코드, 돌아봐줄래 (Prod.by 진영)) [THE SHOW 240507] | 러블리즈 / JIN / 진영(갓세븐) / null |
+| `lJ2cDCV4hmg` | UNICODE (유니코드) - Let me Love ／ Show! MusicCore ／ MBC240504방송 | 온리원오프 / ∅ / ∅ / null |
+| `m_FDOrh0Dcg` | [FULL] 쏠메들 ✨유니코드✨의 목소리가 들리면 돌아봐줄래?🥰 ／ GOT7 영재의 친한친구 ／ MBC 2405003 방송 | 갓세븐 / 영재 / ∅ / null |
+| `D0WE4vCADgo` | [4K] 240503 뮤직뱅크 출근길 ／ TIOT, TOZ, BEWAVE, UNICODE, 이진혁, FANTASY BOYS | 판타지보이즈 / ∅ / ∅ / null |
+| `DV0PQStIe0c` | 유니코드(UNICODE) - 돌아봐줄래 (Prod.by 진영) l Show Champion l EP.516 l 240501 | 갓세븐 / 진영 / ∅ / 무관 |
+| `4w7u9ku3V-k` | [Simply K-Pop CON-TOUR] UNICODE(유니코드) - 'Let me Love (Prod.by Jin Young) (돌아봐줄래 (Prod.by 진영))'_Ep611 | 갓세븐 / 진영 / ∅ / null |
+| `fc6hrulpxck` | 스쳐가듯 MAZE 속 나를 보며 돌아봐줄래👉👈 #유니코드 #에린 #수아 님과 #BeautifulMAZE_challenge | 드리핀 / ∅ / ∅ / null |
+| `qZyTzwFvhOU` | 유니코드(UNICODE) - 돌아봐줄래 (Prod.by 진영) l Show Champion l EP.515 l 240424 | 갓세븐 / 진영 / ∅ / 무관 |
+| `B8geEH-C4s0` | [플리캠 4K] UNICODE HANA 'Let me Love(Prod. by JinYoung)(돌아봐줄래)' (유니코드 하나) l Simply K-Pop CON-TOUR | 워너원 / 배진영 / ∅ / null |
+| `e9i1FDWivfE` | [플리캠 4K] UNICODE YURA 'Let me Love(Prod. by JinYoung)(돌아봐줄래)' (유니코드 유라) l Simply K-Pop CON-TOUR | 워너원 / 배진영 / ∅ / null |
+| `Prsh6OCg-MQ` | UNICODE, Let me love (Prod.by Jin Young) (유니코드, 돌아봐줄래 (Prod.by 진영)) [THE SHOW 240423] | 러블리즈 / JIN / 진영(갓세븐) / null |
+| `VDmIdSnHW9U` | [HOT DEBUT] 유니코드(UNICODE) - 돌아봐줄래 (Prod.by 진영) l Show Champion l EP.514 l 240417 | 갓세븐 / 진영 / ∅ / 무관 |
+| `tP-pDJCVfi0` | (EN/JP) [UNICODE ON&OFF] 에린·하나·미오의 OFF DAY☺♬ - EP.3 | 베이비몬스터 / ∅ / ∅ / hidden |
+
+</details>
+
+<details>
+<summary>검수30차 — 갓세븐 primary 보존·JB 누락 후보7</summary>
+
+| 영상 ID | 제목·구별 문맥 | 현재 primary / members / with |
+|---|---|---|
+| `5bHaStMLEBc` | JJ Project (JJ프로젝트), JB, 진영 표정차이 [SBS 이국주의 영스트리트] | 갓세븐 / 진영 / ∅ |
+| `ET0pSFuEbd0` | JJ Project (JJ프로젝트), JB, 진영 나랑 연애할래? [SBS 이국주의 영스트리트] | 갓세븐 / 진영 / ∅ |
+| `bTFM82bTylU` | JJ Project JB & 진영 엉덩이로 이름쓰기 벌칙 영상! / 170802[이홍기의 키스 더 라디오] | 갓세븐 / 진영 / ∅ |
+| `f2FNGzvCVM0` | JJ Project - 내일, 오늘 [세로라이브] JB, 진영 | 갓세븐 / 진영 / ∅ |
+| `hwT-WOe7QOY` | JJ Project JB & 진영의 애교 영상!! / 170802[이홍기의 키스 더 라디오] | 갓세븐 / 진영 / ∅ |
+| `B3mlcX7KulE` | [GOT2DAY 2016] 21. JB & Jinyoung | 갓세븐 / 진영 / ∅ |
+| `Zjaw_-O2kCc` | [GOT2DAY 2019] 21. JB & Jinyoung | 갓세븐 / 진영 / ∅ |
+
+</details>
+
+<details>
+<summary>검수30차 — 정상 primary 보존 비교17 (태그 완전성 전수 통과 아님)</summary>
+
+| 영상 ID | 제목·구별 문맥 | 현재 primary / members / with |
+|---|---|---|
+| `23iDuxwx8G0` | 진영 & 최유리 - 외사랑ㅣ들어봐! 유리의 숲 EP.01 | 갓세븐 / 진영 / ∅ |
+| `2H9H21iVHrI` | 진영 & 최유리 - 생각을 멈추다 보면ㅣ들어봐! 유리의 숲 EP.01 | 갓세븐 / 진영 / ∅ |
+| `8fNTil2pM7k` | [GOT2DAY 2019] 05. Jinyoung & Yugyeom | 갓세븐 / 진영, 유겸 / ∅ |
+| `ajko-Afe51I` | 진영 & 최유리 - 생각을 멈추다 보면 | 갓세븐 / 진영 / ∅ |
+| `C3csVyXmeC0` | [GOT2DAY 2016] 17. Jackson & Jinyoung | 갓세븐 / 잭슨, 진영 / ∅ |
+| `CbpyEcvUEqo` | [GOT2DAY 2016] 09. Jinyoung & Yugyeom | 갓세븐 / 진영, 유겸 / ∅ |
+| `DGKVGBvD20I` | [GOT2DAY 2019] 02. Jinyoung & BamBam | 갓세븐 / 진영, 뱀뱀 / ∅ |
+| `g1a2NWd27zo` | [GOT2DAY 2016] 05. Mark & Jinyoung | 갓세븐 / 마크, 진영 / ∅ |
+| `GfAEInM5FmA` | [GOT2DAY 2016] 13. Jinyoung & Youngjae | 갓세븐 / 진영, 영재 / ∅ |
+| `nWW6GH4GBAw` | [선공개] 진영 & 최유리 - 외사랑 | 갓세븐 / 진영 / ∅ |
+| `pVJbkGJ3ftM` | [GOT2DAY 2019] 10. Mark & Jinyoung | 갓세븐 / 마크, 진영 / ∅ |
+| `qSWG39_aff8` | [1theK Preview] 진영(Jin Young) _ 스페셜클립(Special Clip) #shorts | 갓세븐 / 진영 / ∅ |
+| `rWJx6X6LFmQ` | [GOT2DAY 2019] 13. Jackson & Jinyoung | 갓세븐 / 잭슨, 진영 / ∅ |
+| `sIsDnQq8FD8` | [GOT2DAY 2016] 03. Jinyoung & BamBam | 갓세븐 / 진영, 뱀뱀 / ∅ |
+| `TfwwZzFhEbk` | [GOT2DAY 2019] 18. Jinyoung & Youngjae | 갓세븐 / 진영, 영재 / ∅ |
+| `to3sjq-CAvA` | 🎤진영&최유리 - 생각을 멈추다 보면 ／ 들어봐! 유리의 숲2 EP.01 진영 편 | 갓세븐 / 진영 / ∅ |
+| `Z8BJr3MEqXQ` | [선공개] 진영&최유리 - 외사랑 ／ 들어봐! 유리의 숲2 EP.01 진영 편 | 갓세븐 / 진영 / ∅ |
+
+</details>
+
+<details>
+<summary>검수30차 — 추가5: 일반단어/멤버 소속 혼합/동명이인</summary>
+
+| 영상 ID | 제목·구별 문맥 | 현재 primary / members / with |
+|---|---|---|
+| `0tqSHiDkKcI` | 촬영 중에도 계속되는 진영의 OO 사랑?😻 #경찰수업 본캐 #진영 의 TMI를 공개합니다! (feat. 귀염뽀짝 반려묘 블리 사진도 방출) l COSMOTMI | 이즈나 / 유사랑 / 진영(갓세븐) |
+| `5q9K524kWr4` | 충!성! 진영 팝퀴즈를 명 받았습니다 🎈JIN YOUNG POP QUIZ🎈(Eng Sub) | 러블리즈 / JIN / 진영(갓세븐) |
+| `fYBWe3OKTS4` | 𝑫𝒐𝒄𝒕𝒐𝒓! 𝑫𝒐𝒄𝒕𝒐𝒓! #GOT7 #잭슨 #진영 선생님 Help me! 🫢 It's the L-O-V-Emergency ❤‍🩹 | 제로베이스원 / 잭슨, 진영 / ∅ |
+| `QUWqRV31QQs` | 진영 “형 나 섭섭해😥” 낚시 광 제이비에게 닥친 시련👀?!🎣월척 인터뷰 월간낚시왕 with GOT7 JAY B🐟(Eng sub) | 엔하이픈 / 제이 / JAY B(갓세븐), 진영(갓세븐) |
+| `rDp_g65oF-Q` | 갓세븐 진영 X 정의가 정한 ‘마녀’ 커플명 | 세븐틴 / 정한 / 진영(갓세븐) |
+
+</details>
+
 
 ## 2026-10-30 (Codex — 검수29차·동명이인 영상과 공식 링크)
 - **[완료·읽기 전용 검수] [CHANGELOG.md] [yt_channel_videos]** 신규 ID 중심으로 동명이인 귀속/공식 카드 노출을 대조. 아래 **76개 고유 ID는 오류 확정 수가 아님**: 오귀속·누락 후보와 정상 보존 비교가 함께 있음(라디오7 + HUTA14 + 몬채널5 + 싱어송라이터36 + 기타14). 전부 조회 당시 content_flag null, tags_manual=false, cover_manual=false. 기존 10-27 검수의 `15n2tuRr8MI,Vcl8kLOO1VU`는 문제 유형의 선행 사례로만 참고하고 신규76에 미포함. 코드/JSON/SQL/DB 수정·수집/스윕 실행 없음.
