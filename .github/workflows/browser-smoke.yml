@@ -35,11 +35,13 @@ jobs:
     timeout-minutes: 10
     strategy:
       fail-fast: false
+      max-parallel: 2
       matrix:
         include:
           - suite: vid-list-share
           - suite: stage-venue-album
           - suite: deeplink-song
+          - suite: phone-landscape
           - suite: compass-width
           - suite: program-facets
             lang: ko

@@ -34,7 +34,7 @@ async function setup(c,W,H){
   if(!BROWSER){console.log('⏭️  브라우저를 못 찾음 — 스킵');process.exit(0);}
   server.listen(PORT);
   const prof=fs.mkdtempSync(path.join(os.tmpdir(),'kpu-land-'));
-  const proc=spawn(BROWSER,['--headless=new','--no-sandbox',`--remote-debugging-port=${CDP_PORT}`,`--user-data-dir=${prof}`,'--no-first-run','--disable-gpu','--window-size=844,390','about:blank'],{stdio:'ignore'});
+  const proc=spawn(BROWSER,['--headless=new','--no-sandbox',`--remote-debugging-port=${CDP_PORT}`,`--user-data-dir=${prof}`,'--no-first-run','--disable-gpu','--enable-unsafe-swiftshader','--use-gl=angle','--use-angle=swiftshader','--window-size=844,390','about:blank'],{stdio:'ignore'});
   try{
     await waitCdp();
     const{webSocketDebuggerUrl}=await (await fetch(`http://127.0.0.1:${CDP_PORT}/json/new?about:blank`,{method:'PUT'})).json();
