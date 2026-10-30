@@ -50308,6 +50308,24 @@
     },
     "discography": [
       {
+        "title": "ADDICTED",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/151/00/921/15100921_20261029110031_500.jpg",
+        "releaseDate": "2026.10.30",
+        "trackCount": 1,
+        "titleTrack": "ADDICTED",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "ADDICTED",
+            "isTitle": true
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "15100921"
+      },
+      {
         "title": "CLICK",
         "type": "싱글",
         "isMain": true,
@@ -129526,6 +129544,24 @@
       "namu": "https://namu.wiki/w/윤채원"
     },
     "discography": [
+      {
+        "title": "산이가 하고 싶은 거 할게요 VOL.1",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/150/91/347/15091347_20261028152149_500.jpg",
+        "releaseDate": "2026.10.30",
+        "trackCount": 1,
+        "titleTrack": "LOVE ME MORE!",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "LOVE ME MORE!",
+            "isTitle": true
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "15091347"
+      },
       {
         "title": "아메리카노 한잔에 빗소리",
         "type": "싱글",
@@ -305136,6 +305172,24 @@
       "instagram": "https://www.instagram.com/ireahand_"
     },
     "discography": [
+      {
+        "title": "Live To Go",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/150/87/328/15087328_20261027164210_500.jpg",
+        "releaseDate": "2026.10.30",
+        "trackCount": 1,
+        "titleTrack": "Live To Go",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Live To Go",
+            "isTitle": true
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "15087328"
+      },
       {
         "title": "사랑해 악마 OST X 이레 of 세븐어스(SEVENUS)",
         "type": "OST",
