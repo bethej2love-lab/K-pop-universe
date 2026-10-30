@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 2026-10-30 (Codex — 검수28차·동명 솔로와 언급된 그룹 오귀속)
+- **[진행중·읽기 전용] [CHANGELOG.md]** 사용량 갱신 후 검수 이어감. 25~27차 후보는 중복 제외하고 태양/유태양 등 동명 경계와 인터뷰에서 언급만 된 그룹의 출연 오귀속을 추가 대조. 코드·JSON·SQL·DB 쓰기 없이 이 파일만 기록.
+
 ## 2026-10-30 (Claude Code — 곡 페이지 → 앱 곡 영상 패널 바로 열기 · 카드 조회수 줄 · CI 빨간불 2건)
 - **[완료·배포] [app.js _openFromHash·_openSongVideos opt.member] [build_group_pages.js] [tests/deeplink-song.test.js]** 사용자 "곡 페이지의 '직캠·영상 아카이브 보기'를 누르면 그룹 카드만 열린다 — Drop That 곡 영상 패널까지 이어져야". 딥링크에 `&song=곡 이름` 추가: 카드를 연 뒤 그 곡 영상 패널을 연다. 멤버×곡 페이지는 `#g=코르티스&m=성현&song=ACAI` → 멤버 카드 + ACAI 패널을 "멤버 ▾ 성현"으로 미리 골라 둔 채(_openSongVideos opt.member). 정적 페이지 버튼 주소에 &song= 반영(CI 재생성). 함정: `const gko=params.get('g'),mko=params.get('m');`가 _stackIndexForHash에도 있어 첫 번째 쪽에 정의가 들어가 `openSongAfter is not defined` — 문법 검사는 통과하고 실행 때만 터졌다 → 새 브라우저 테스트가 잡음(클로즈유어아이즈 Drop That! 164개, 성현 ACAI 17개·멤버 성현). 실DB라 CI 브라우저 건너뛰기 목록에 등록.
 - **[완료·배포] [build_group_pages.js]** 사용자 "'조회수 많은 직캠·무대'인데 업로드일 줄 옆에 조회수도". 카드 썸네일 위 조회수 배지를 빼고 날짜 줄을 "2026.10.01 · 조회수 6만회"(영어 "60K views")로.
