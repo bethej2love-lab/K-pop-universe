@@ -258486,14 +258486,17 @@
         "ko": "퍼플키스",
         "en": "PURPLE KISS",
         "active": false,
-        "left": "2025.11.16"
+        "left": "2025.11.16",
+        "matchNames": [
+          "SWAN"
+        ]
       }
     ]
   },
   {
     "name": {
       "ko": "박지은",
-      "en": "Swan"
+      "en": "Park Jieun"
     },
     "group": {
       "ko": "솔로",
@@ -258527,7 +258530,7 @@
         "ko": "퍼플키스",
         "en": "PURPLE KISS",
         "active": false,
-        "left": "2025.11.16"
+        "left": "2022.11.18"
       }
     ]
   },
@@ -280732,7 +280735,10 @@
     },
     "group": {
       "ko": "나우즈",
-      "en": "NOWZ"
+      "en": "NOWZ",
+      "matchNames": [
+        "HYEONBIN"
+      ]
     },
     "co": "큐브엔터테인먼트",
     "active": true,

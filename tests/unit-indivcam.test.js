@@ -44,5 +44,18 @@ eq('(Interview) Interview with DK X SEUNGKWAN [Music Bank] | KBS WORLD TV 260109
 eq('호우(god 손호영&김태우) HoooW - 친구는 이제 끝내기로 해ㅣ세로라이브', 'god', ['손호영', '김태우']);
 eq('[IDOL RADIO] 191223 Hooow: 호우 ★메들리 댄스★ /아이돌 라디오 직캠', 'god', ['손호영', '김태우']);
 
+// ⑤ 짝 표기 개인캠(2026-10-30 Codex 검수27차) — 다시 쓴 한 명만, 듀오 직캠은 둘 다
+eq("[MPD직캠] 셔누X형원 형원 직캠 4K 'Do You Love Me' (SHOWNU X HYUNGWON HYUNGWON FanCam) | @MCOUNTDOWN", '몬스타엑스', ['형원']);
+eq("[페이스캠4K] 웨이션브이-쿤&샤오쥔 쿤 'Back To You' (WayV-KUN&XIAOJUN KUN FaceCam)│@SBS Inkigayo", '웨이션브이', ['쿤']);
+eq("[K-Fancam] 정한X조슈아 세븐틴 정한 직캠 '12 o'clock' (JEONGHAN X JOSHUA JEONGHAN Fancam)@뮤직뱅크", '세븐틴', ['정한']);
+eq("[MPD직캠] 셔누X형원 직캠 4K 'Do You Love Me' (SHOWNU X HYUNGWON FanCam) | @MCOUNTDOWN", '몬스타엑스', ['셔누', '형원']);
+// ⑥ 이름 데이터(2026-10-30 Codex 검수27차) — 퍼플키스 SWAN=수안(박지은 아님), NOWADAYS=나우즈, 라↗️디오≠디오, '알고 보니'≠보니
+eq("[K-Fancam] 퍼플키스 수안 직캠 'BBB' (PURPLE KISS SWAN Fancam) @뮤직뱅크(Music Bank) 240322", '퍼플키스', ['수안'], '2024-03-22');
+eq("[UNFILTERED CAM] NOWADAYS HYEONBIN(현빈) 'OoWee' 4K | STUDIO CHOOM ORIGINAL", '나우즈', ['현빈']);
+{ const m = _m2ParseTitle('🌱쮜디💚 그는 이미 완벽한 라↗️디오 디제이였다 NCT 지성 비하인드 | 친한친구 방송반');
+  const d = m && (m.membersByGroup || {})['엑소']; console.log((!d ? '✅ ' : '❌ ') + "'라↗️디오'에 엑소 디오 없음"); if (d) fail++; }
+{ const m = _m2ParseTitle('[FULL] 연기 천재인 줄 알았는데 알고 보니 예능 천재');
+  const d = m && (m.membersByGroup || {})['드림노트']; console.log((!d ? '✅ ' : '❌ ') + "'알고 보니'에 드림노트 보니 없음"); if (d) fail++; }
+
 console.log(fail ? `\n❌ ${fail}개 실패` : '\n✅ 유닛 개인캠·옛 활동명·호우 테스트 통과');
 process.exit(fail ? 1 : 0);

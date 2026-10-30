@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-10-30 (Claude Code — Codex 검수26·27차 후속 1단계: 매처 재발 방지만, DB 정정은 다음 세션) [사용자 요청으로 중간 정지]
+- **[완료·배포] [admin.js _m2ParseTitle 짝 표기 개인캠·_GROUP_TOKEN_NEEDS_CORROBORATION·_ATM_HASHTAG_ONLY_NAMES·_atmStripCommonNounCtx] [artists.json] [groups.json] [tests/unit-indivcam.test.js]** ① 짝 표기 개인캠: 직캠 표시 + "A X B / A&B" 짝 표기가 있으면 이름이 혼자 가장 많이 나온 사람만(셔누X형원 형원·쿤&샤오쥔 쿤·정한X조슈아 정한·진진&라키 진진), 같으면 둘 다(듀오 "SHOWNU X HYUNGWON FanCam"). 등록 유닛이 아닌 짝도 처리. ② 퍼플키스 SWAN: a1151 박지은 영문명 "Swan"→"Park Jieun", a1150 수안 퍼플키스 문맥 matchNames SWAN, 박지은 퍼플키스 left 2025.11.16→2022.11.18(RBW 공지 기사). ③ NOWADAYS: 나우즈 altNames + 대문자 그대로·멤버명 동반일 때만(흔한 영단어), a1456 현빈 matchNames HYEONBIN. ④ '라↗️디오' 이모지 낀 라디오를 붙여 엑소 디오 오매칭 차단. ⑤ '보니'(드림노트) 해시태그·그룹 동반 전용 — '알고 보니'.
+- **[완료·검증] 이전/새 매처 차분** 관련 제목 14,310개 중 526개 변화: 보니 제거 181(일상어)·박지은 제거 155(수안 개인캠)·NOWADAYS 나우즈 귀속(98 그룹 변경·현빈/윤/시윤/연우/진혁 추가, 레이니·애슐리·유나이트 오태그 제거)·짝 표기 개인캠 좁힘(셔누/형원 22·호시/우지 6·쿤/샤오쥔 6·진진/라키 6·에스쿱스X민규 4·연준X수빈·MOON SUA X SIYOON·모모&사나 "MOMO Fancam"·세은 focus·경민 FANCAM 등 표본 전부 촬영대상과 일치). 27차 개인캠 26건+유닛 12건 = 현재 매처 38/38 정답. matching 246/246·groups-matcher 2080/0·validate-data 오류0/경고144·slim --check·unit-indivcam(새 사례 8개)·vm-panel-ui·admin-dock-close 통과.
+- **⏳ 다음 세션(DB 정정 — 아직 안 함)** ① 27차 개인캠 26건+유닛 12건 members를 현재 매처 결과(촬영대상 1명)로(수동잠금 없음 확인됨, 백업·가드). ② 차분 526행 중 DB값=옛 매처 결과인 자동 태깅 행만 새 결과로(오늘 오전 138건과 같은 방식). ③ SWAN 223후보: 수안 개인15 등은 ②로 대부분 해결 — LOUD Black Swan 4행(`fKMV1tgzI1E,Yfj9aAxygqc,vskgJn8D87I,0iVbJVllkXY`)·수동잠금 `yzSemElyFls`는 따로. ④ 26차 원곡/출연 역할: 유스피어 16행 cover 3필드만 정리(tags_manual=true라 3단계), Floral Sense 예성 4행 주인 정정, 1theK 3행 primary=공연자, feat 오인 4행(지젤·지민·유태양·도겸·태용 제거), DND·m_Ns7·Jl2g 원곡 필드, jIwl9 cover_of_song=프락치, 아스트로 바이바이 2행 윤산하 추가, HANA nWsCYW4G9UI 잘못된 with 4명 제거·아일릿 모카 단체 영상(MV·안무·음방·비하인드) members 정정(ykJ2xlYdCBQ MOKA&JISOO는 유지), 비공개 5행 처리 방식. ⑤ 사용자 결정 필요: HANA 그룹 등록 여부, 한영 제목 충돌 2개(`8PhRFkqvajs`·`NvWPIEEK2sI`), LOUD 참가자 처리. 조회 결과는 이번 세션 스크래치(r2627.json)라 다음엔 다시 조회할 것.
+
+
 ## 2026-10-30 (Codex — 검수28차·동명 솔로와 언급된 그룹 오귀속)
 - **[진행중·읽기 전용] [CHANGELOG.md]** 사용량 갱신 후 검수 이어감. 25~27차 후보는 중복 제외하고 태양/유태양 등 동명 경계와 인터뷰에서 언급만 된 그룹의 출연 오귀속을 추가 대조. 코드·JSON·SQL·DB 쓰기 없이 이 파일만 기록.
 

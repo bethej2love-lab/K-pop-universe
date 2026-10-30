@@ -7350,6 +7350,7 @@ function _atmTokenize(title){return(title||'').toLowerCase().split(/[^a-z0-9]+/)
 // 나머지는 DB(name_match_whitelist)로 이전 — 이제 보호 목록 화면에서 × 눌러 즉시 제거 가능해짐
 // (SQL은 대화 참고, admin이 직접 실행).
 const _ATM_HASHTAG_ONLY_NAMES=new Set(['종현','문빈','구하라','설리',
+  '보니', // 드림노트 보니 — '알고 보니'·'보니까' 일상어(2026-10-30 Codex 검수27차 TMI NEWS 예고편이 드림노트 보니로)
   // 흔한 한국어 어휘와 겹치는 멤버명(2026-09-03, 실데이터 감사로 확인). 평문에서 대량 오매칭됨:
   //  · '이런'(에버글로우 E:U 김이런) — "바로 이런 것"·"이런 거 처음이야"
   //  · '온다'(에버글로우 Onda) — "비가 온다"·"봄이 온다" 등 동사
@@ -7783,6 +7784,8 @@ const _ATM_BRAND_PHRASES=/\basahi\s*super\s*dry\b|\basahi\s*beer\b|\basahibeer\b
 const _ATM_INITIAL_WORDS=new Set(['in','is','it','on','up','at','an','as','be','by','do','go','he','me','my','no','of','or','so','to','us','we','if','am']);
 function _atmStripCommonNounCtx(title){
   let t=title||'';
+  // 글자 사이에 이모지·기호가 낀 '라↗️디오'는 '라디오'로 붙인다(2026-10-30 Codex 검수27차 — 떨어진 '디오'가 엑소 디오로 잡혔다)
+  t=t.replace(/라[^가-힣A-Za-z0-9 ]{1,4}디오/g,'라디오');
   // 한글 그룹명 + 소유격 "의"(2026-10-27 사용자 "원곡 크레딧 문제 진짜 많다"). STATION Z 노래방 "템페스트의 'Really Really' | 원곡:위너"·
   // "빌리의 '불장난'"처럼 공연자를 "○○의 '곡'"으로만 쓰는 제목에서 토큰이 "템페스트의"가 돼 그룹이 안 잡히고, 원곡자(위너)만 잡혀
   // 원곡자 영상으로 저장됐다(원곡 표기 제목 2,859개 중 이 꼴 ~80개). 등록 그룹명 바로 뒤 "의" + (띄어쓰기) + **곡 따옴표**일 때만 띄운다 — "비투비의 키스 더 라디오"·"악뮤의 오날오밤"처럼 진행자 이름이 붙은 프로그램명까지 띄우면 진행자가 주인이 되고 게스트가 빠졌다(4만 건 차분 196행).
@@ -8913,7 +8916,9 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
     '하이라이트':{gko:'하이라이트',hashtag:true,ctx:[],ctxUpper:['HIGHLIGHT','BEAST','B2ST']},
     // 퍼즐(PUZZLE, 2023 혼성·해체, 2026-10-26 Codex 점검): 곡명 'puzzle'(홍이삭·비와이·하성운)·퀸덤퍼즐 '퍼즐 팀'·드라마 '나인 퍼즐'·
     // 로에베 퍼즐 백이 전부 그룹 퍼즐로(외부 채널 64건 대부분). 멤버명이나 곡명(SAVIOR)이 같이 있어야 인정.
-    '퍼즐':{gko:'퍼즐',ctx:[]},'PUZZLE':{gko:'퍼즐',ctx:[]}};
+    '퍼즐':{gko:'퍼즐',ctx:[]},'PUZZLE':{gko:'퍼즐',ctx:[]},
+    // NOWADAYS(나우즈 옛 영문명, 2026-10-30 Codex 검수27차 — STUDIO CHOOM 'NOWADAYS HYEONBIN(현빈)'이 올아워즈 현빈으로). 흔한 영단어라 대문자 그대로 + 멤버명 동반일 때만
+    'NOWADAYS':{gko:'나우즈',ctx:['HYEONBIN']}};
   function hitCorroborated(t){
     const {gko,ctx,ctxUpper,hashtag}=_GROUP_TOKEN_NEEDS_CORROBORATION[t];
     if(hashtag?!hitHashtag(t):!new RegExp('(^|[^A-Za-z])'+_atmEscRe(t)+'(?![A-Za-z])').test(title||''))return false; // 대소문자 그대로
@@ -9465,6 +9470,24 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
           if(top===1){const L=Math.max(...win.map(x=>x.bestLen));win=win.filter(x=>x.bestLen===L);}
           win.forEach(x=>{if(!matched.includes(x.mko))matched.push(x.mko);});
         }
+      }
+    }
+    // 짝 표기 개인캠(2026-10-30, Codex 검수27차 유닛 개인캠 12건) — "셔누X형원 형원 직캠 (SHOWNU X HYUNGWON HYUNGWON FanCam)"·"쿤&샤오쥔 샤오쥔"·
+    // "정한X조슈아 세븐틴 정한 직캠"처럼 두 사람을 X·&로 잇고 그중 한 명을 다시 쓴 개인캠은 그 한 명만. 등록 유닛이 아닌 짝(정한X조슈아)도 같은
+    // 꼴이라 유닛 이름이 아니라 이름 횟수로 가른다: 직캠 표시 + 짝 표기(A X B / A&B)가 있을 때 혼자 가장 많이 나온 사람만 남긴다.
+    // 같으면(듀오 직캠 "SHOWNU X HYUNGWON FanCam") 둘 다 그대로.
+    if(matched.length>=2&&/(focused|직캠|fan ?cam|face ?cam|페이스캠|얼빡|unfiltered cam|focus ?cam)/i.test(rawTitle||'')){
+      const _pT=String(rawTitle||'').toUpperCase();
+      const _pV=mko=>{const a=ARTISTS.find(x=>x.name.ko===mko&&_artistGroups(x).some(g=>g.ko===gko));if(!a)return [String(mko).toUpperCase()];
+        const ge=_artistGroups(a).find(g=>g&&g.ko===gko)||{};
+        return [...new Set([a.name.ko,a.name.en,ge.name,ge.nameEn].filter(v=>v&&(String(v).length>=2||/[가-힣]/.test(v))).map(v=>String(v).toUpperCase()))];}; // 한 글자 한글 이름(쿤)도 — 이미 잡힌 멤버끼리 비교라 안전
+      const _pRe=v=>/[A-Z]/.test(v)?'(?<![A-Z])'+_atmEscRe(v)+'(?![A-Z])':_atmEscRe(v);
+      const _pCnt=mko=>_pV(mko).reduce((n,v)=>n+(_pT.match(new RegExp(_pRe(v),'g'))||[]).length,0);
+      const _pVs=matched.map(m=>[m,_pV(m)]);
+      const _pPair=_pVs.some(([m1,a1])=>_pVs.some(([m2,a2])=>m1!==m2&&a1.some(x=>a2.some(y=>new RegExp(_pRe(x)+' ?[X×&+] ?'+_pRe(y)).test(_pT)))));
+      if(_pPair){
+        const cs=matched.map(m=>[m,_pCnt(m)]),mx=Math.max(...cs.map(c=>c[1])),top=cs.filter(c=>c[1]===mx);
+        if(top.length===1&&cs.some(c=>c[1]<mx)){_trace.push({rule:'pair_cam_narrow',token:top[0][0],effect:'kept_repeated_name'});matched.splice(0,matched.length,top[0][0]);}
       }
     }
     membersByGroup[gko]=matched;
