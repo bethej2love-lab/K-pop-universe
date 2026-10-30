@@ -22484,12 +22484,13 @@ function _openIgViewer(m,handle,idx){
     ov.innerHTML='<div id="igv-panel"><button id="igv-close" type="button" aria-label="닫기">✕</button>'
       +'<div id="igv-media"><img id="igv-img" alt=""><button id="igv-prev" type="button" aria-label="이전 사진">‹</button><button id="igv-next" type="button" aria-label="다음 사진">›</button><div id="igv-dots"></div></div>'
       +'<div id="igv-side"><div id="igv-hd"><img id="igv-av" alt=""><div class="igv-hd-txt"><div id="igv-name"></div><div id="igv-meta"></div></div><button class="sw-to-lb" type="button"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg><span></span></button></div>'
-      +'<div id="igv-cap"></div><a id="igv-open" target="_blank" rel="noopener noreferrer"></a></div></div>';
+      +'<div id="igv-cap"></div><button id="igv-capall" type="button" hidden></button><a id="igv-open" target="_blank" rel="noopener noreferrer"></a></div></div>';
     document.body.appendChild(ov);
     ov.addEventListener('click',e=>{if(e.target===ov)_closeIgViewer();});
     ov.querySelector('#igv-close').addEventListener('click',e=>{e.stopPropagation();_closeIgViewer();});
     ov.querySelector('#igv-prev').addEventListener('click',e=>{e.stopPropagation();_igvGo(-1);});
     ov.querySelector('#igv-next').addEventListener('click',e=>{e.stopPropagation();_igvGo(1);});
+    ov.querySelector('#igv-capall').addEventListener('click',e=>{e.stopPropagation();if(!_igv)return;_igv.full=!_igv.full;_igvShow();});
     const md=ov.querySelector('#igv-media');let sx=null;
     md.addEventListener('touchstart',e=>{sx=e.touches[0].clientX;},{passive:true});
     md.addEventListener('touchend',e=>{if(sx==null)return;const dx=e.changedTouches[0].clientX-sx;sx=null;if(_igvDrag)return;if(Math.abs(dx)>40)_igvGo(dx<0?1:-1);},{passive:true});
@@ -22534,12 +22535,20 @@ function _openIgViewer(m,handle,idx){
       if(e.key==='ArrowLeft')_igvGo(-1); // Esc는 _closeTopOverlay가 맡는다else if(e.key==='ArrowRight')_igvGo(1);
     },true);
   }
-  _igv={m,pics,i:Math.max(0,Math.min(idx||0,pics.length-1))};
+  // 사진별 글(2026-10-30 사용자 "인스타는 사진마다 글을 달 수 있는데 우리는 우두두 나열된다"). 인스타는 장별 글을 따로 주지 않는다 —
+  // API·공개 페이지 모두 본문 한 덩어리(장원영 20장 게시물 실측: 장별 필드는 자동 이미지 설명뿐). 그래서 빈 줄로 나눈 문단 수가
+  // 사진 수와 **정확히 같을 때만** k번째 문단을 k번째 사진 글로 보여준다. 다르면 지금처럼 본문 전체. 아래 버튼으로 언제든 전체 보기.
+  const paras=String(m.cap||'').split(/\n[ \t]*\n/).map(s=>s.trim()).filter(Boolean);
+  _igv={m,pics,i:Math.max(0,Math.min(idx||0,pics.length-1)),per:pics.length>1&&paras.length===pics.length?paras:null,full:false};
+  // 사진 틀 비율 = 첫 장 비율(인스타와 같게, 2026-10-30 사용자 "가로 사진은 위에 붙이지 말고 가운데"). 장마다 틀 높이가 바뀌면 가로 사진이
+  // 위로 붙고 본문이 따라 올라왔다. 여러 장일 때만 — 한 장은 그 사진 비율 그대로. 인스타 허용 범위(1.91:1~3:4)로 자른다.
+  {const md=ov.querySelector('#igv-media');md.classList.remove('igv-framed');md.style.removeProperty('--igv-ar');
+   if(pics.length>1){const f=new Image();f.onload=()=>{if(!_igv||_igv.pics!==pics||!f.naturalWidth)return;md.style.setProperty('--igv-ar',String(Math.min(Math.max(f.naturalHeight/f.naturalWidth,0.52),1.34)));md.classList.add('igv-framed');};f.src=pics[0];}}
   const ko=currentLang==='ko',own=_igOwners().get(handle),ig=_igMap.get(handle);
   ov.querySelector('#igv-name').textContent=own?own.name:(_igMagNames.get(handle)||('@'+handle));
   ov.querySelector('#igv-meta').textContent=['@'+handle,_igAgo(m.t),m.lk!=null?(ko?'좋아요 ':'♥ ')+_fmtVC(m.lk):'',m.cm!=null?(ko?'댓글 ':'💬 ')+_fmtVC(m.cm):''].filter(Boolean).join(' · '); // 좋아요·댓글은 유튜브 조회수와 같은 표기(100+·1K+, 2026-10-21 사용자)
   const av=ov.querySelector('#igv-av');if(ig&&ig.pic){av.src=ig.pic;av.hidden=false;}else av.hidden=true;
-  const cap=ov.querySelector('#igv-cap');cap.textContent=m.cap||'';cap.hidden=!m.cap;
+  ov.querySelector('#igv-cap').hidden=!m.cap;
   const op=ov.querySelector('#igv-open');op.href=m.p;op.textContent=ko?'Instagram에서 보기 ↗':'View on Instagram ↗';
   ov.querySelector('.sw-to-lb span').textContent=ko?'재생 화면으로':'Back to player';
   _igvShow();
@@ -22553,6 +22562,10 @@ function _igvShow(){
   ov.querySelector('#igv-prev').hidden=i<=0;ov.querySelector('#igv-next').hidden=i>=pics.length-1;
   const dots=ov.querySelector('#igv-dots');dots.innerHTML='';dots.hidden=pics.length<2;
   pics.forEach((_,k)=>{const d=document.createElement('span');if(k===i)d.className='on';dots.appendChild(d);});
+  // 본문: 사진별 글이면 지금 장의 문단만, 아니면(또는 '본문 전체'를 눌렀으면) 전체
+  const cap=ov.querySelector('#igv-cap'),all=ov.querySelector('#igv-capall'),ko=currentLang==='ko';
+  cap.textContent=_igv.per&&!_igv.full?_igv.per[i]:(_igv.m.cap||'');cap.scrollTop=0;
+  all.hidden=!_igv.per;all.textContent=_igv.full?(ko?'사진별 글 보기':'Per-photo text'):(ko?'본문 전체 보기':'Show full caption');
   if(pics[i+1]){const pre=new Image();pre.src=pics[i+1];} // 다음 장 미리 받기
 }
 function _igvGo(d){if(!_igv)return;const n=_igv.i+d;if(n<0||n>=_igv.pics.length)return;_igv.i=n;_igvShow();}

@@ -1620,6 +1620,9 @@
   #igv-meta{font-size:11.5px;color:rgba(150,170,210,0.7);margin-top:2px;}
   #igv-cap{flex:1;overflow-y:auto;padding:14px 16px;font-size:13px;line-height:1.55;color:rgba(215,226,250,0.9);white-space:pre-wrap;word-break:break-word;overscroll-behavior:contain;}
   #igv-cap[hidden]{display:block;visibility:hidden;}
+  /* 사진별 글일 때 본문 전체 보기 토글(2026-10-30) — 작은 글자 링크로만 */
+  #igv-capall{align-self:flex-start;margin:0 16px 10px;padding:4px 0;background:none;border:none;color:rgba(150,170,210,0.75);font-size:12px;cursor:pointer;}
+  #igv-capall[hidden]{display:none;}
   #igv-open{display:block;margin:0 16px 16px;padding:10px 0;text-align:center;border-radius:10px;background:rgba(255,255,255,0.07);color:rgba(220,230,255,0.9);font-size:12.5px;font-weight:600;text-decoration:none;}
   #igv-open:hover{background:rgba(255,255,255,0.12);}
   .ig-cap1{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
@@ -1628,6 +1631,9 @@
     #igv-panel{flex-direction:column;width:100vw;max-width:100vw;height:100dvh;border-radius:0;padding-top:calc(env(safe-area-inset-top,0px) + 52px);box-sizing:border-box;}
     #igv-media{flex:0 0 auto;min-width:0;max-height:62dvh;}
     #igv-img{max-width:100vw;max-height:62dvh;}
+    /* 여러 장이면 틀을 첫 장 비율로 고정하고 가로 사진은 그 가운데(인스타와 같게, 2026-10-30) */
+    #igv-media.igv-framed{width:100%;aspect-ratio:1 / var(--igv-ar);max-height:62dvh;}
+    #igv-media.igv-framed #igv-img{max-width:100%;max-height:100%;}
     #igv-side{width:auto;flex:1;min-height:0;border-left:none;border-top:0.5px solid rgba(255,255,255,0.08);}
     /* 모바일은 닫기 버튼 대신 아래로 쓸어 닫기(2026-10-23 사용자) — 위 여백 줄 가운데 손잡이 막대로 끌 수 있다는 걸 보인다. PC는 버튼 유지 */
     #igv-close{display:none;}
@@ -5195,6 +5201,8 @@
   #igv-overlay.igv-narrow #igv-panel{flex-direction:column;width:min(560px,100%);}
   #igv-overlay.igv-narrow #igv-media{flex:0 1 auto;min-height:0;}
   #igv-overlay.igv-narrow #igv-img{max-height:min(56vh,620px);}
+  #igv-overlay.igv-narrow #igv-media.igv-framed{width:100%;aspect-ratio:1 / var(--igv-ar);max-height:min(56vh,620px);}
+  #igv-overlay.igv-narrow #igv-media.igv-framed #igv-img{max-width:100%;max-height:100%;}
   #igv-overlay.igv-narrow #igv-side{width:auto;flex:1 1 auto;min-height:120px;border-left:none;border-top:0.5px solid rgba(255,255,255,0.08);}
   /* 차례 — 뒤로 간 쪽은 닫지 않고 숨긴다(재생 화면은 소리 그대로) */
   body[data-stage-front]:not([data-stage-front="venue"]) #venue-overlay.open,
