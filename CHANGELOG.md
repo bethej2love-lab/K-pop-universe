@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2026-10-30 (Claude Code — 멤버 페이지 "성현 직캠 모음")
+- **[완료·배포(페이지는 CI 재생성)] [build_group_pages.js memberFancams·멤버 페이지 제목/본문] [tools/seo_extra.js .mf-grid] [tests/song-page-design.test.js]** 사용자 "'성현 직캠'만 검색해도 우리 사이트가 뜨고, 성현 직캠 모아진 페이지로". 멤버 페이지(g/코르티스/성현/)를 그 검색어의 착지 페이지로: 개인 직캠(그 멤버 한 명만 태깅 + 제목에 직캠·FaceCam·Focused 등 표시)이 3개 이상이면 제목을 "성현 직캠 모음·프로필 - 코르티스 성현(CORTIS Seonghyeon)"(동명이인이 많아 그룹명 동반), 설명 맨 앞 "코르티스 성현 직캠 119개를 조회수 순으로", 페이지 맨 위에 직캠 썸네일 카드 그리드(조회수 순 24개, 날짜·조회수 줄). 기존 프로필·곡별 직캠·작사작곡은 그 아래 그대로. 로컬 실DB 빌드: 멤버 1,902명 중 1,272명이 직캠 모음 제목, 390px 캡처 확인. 개인 직캠 3개 미만이면 예전 제목 유지.
+
+
 ## 2026-10-30 (Claude Code — Codex 검수26차 후속: 원곡↔실제 출연 역할 DB 정정)
 - **[완료·DB] [sql/audit26_cover_role_fix_2026-10-30.sql]** 실제 출연자는 남기고 잘못 붙은 관계만 정리(현재값 가드·백업 `_bak_audit26_20261030`·되돌리기 `_undo.sql`). ① 예성 Floral Sense 4건 에스파/윈터→예성/[예성], 본인곡이라 원곡 칸 비움(GgbjDi0gtBk 방송본의 윈터 실제 등장은 미확인이라 with 추가 안 함). ② 1theK 커버 3건 주인=공연자: 이서(아이브)·세은(스테이씨)·환웅(원어스), 원곡 그룹은 cover_of_groups(방탄·몬엑/블랙핑크·세븐틴/에스파·NCT127). ③ 원곡 피처링을 출연자로 4건: with에서 지젤·지민·도겸·태용 제거(원곡 칸 유지), 다원 VIBE 커버 members 유태양 제거. ④ 원곡 칸: DND 자기곡 챌린지·BIG Naughty/Post Malone 외부 원곡 2건·seOul drift 'Speed up' 비움, 프락치 cover_of_song 정정. ⑤ 출연자: 아스트로 바이바이 2건 윤산하 추가, HANA 협업 nWsCYW4G9UI 잘못된 with 4명 제거, 아일릿 단체 영상 15건 모카 단독 태그 비움(ykJ2xlYdCBQ 'MOKA & JISOO' 유지), pb1SbjOzifY 'YUNAH & MOMOKA' 윤아만. ⑥ 수동잠금: 유스피어 16건(협업 with 유지)·IVE Baddie·Nxde 직캠 모음 원곡 칸만 정리 후 잠금 복원. ⑦ 원본 비공개 5건 hidden(manual). 58행 결과 확인.
 - **⏳ 남김** 원곡 해석기(_coverResolve) 근본 수정(원곡 괄호 feat vs Cover by 뒤 feat·선배님 소유격·외부 원곡 동명)은 다음 — 이번은 데이터만. HANA 그룹 등록 여부·한영 제목 충돌 2개·LOUD Black Swan 4행·CIX 포럽 챌린지 원곡은 사용자 판단/추가 확인 대기. unavailable 표식 1,196행 일괄 판정은 안 함.
