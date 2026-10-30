@@ -3816,7 +3816,7 @@ async function _openProgramCollection(p,ctx){
     // 항상 최신순(쿼리가 published_at desc) — 검색·카드 모두 최신 영상부터(2026-09-05 사용자 요청).
     if(ctx.gko||ctx.memberKo){_openFeedListOverlay(label,'',toSongs(rows));return;}
     const cnt={};rows.forEach(v=>{if(v.group_ko)cnt[v.group_ko]=(cnt[v.group_ko]||0)+1;});
-    const st={label,mkQ,toSongs,rows,tops:Object.keys(cnt).sort((a,b)=>cnt[b]-cnt[a]).slice(0,20),cache:new Map()};
+    const st={label,mkQ,toSongs,rows,tops:Object.keys(cnt).sort((a,b)=>cnt[b]-cnt[a]),cnt,cache:new Map()};
     st.cache.set('all|latest',rows);
     await _programFacetView(st,'all','latest');
   }catch(e){ _openFeedListOverlay(label,'',[]); }
@@ -3853,10 +3853,11 @@ async function _programFacetView(st,who,sort){
   }
   const whoOpts=[{v:'all',ko:'전체',en:'All'}];
   if(favGs.length)whoOpts.push({v:'fav',ko:'★ 즐겨찾기',en:'★ Favorites'});
-  st.tops.forEach(g=>whoOpts.push({v:g,ko:g,en:(GROUPS[g]&&GROUPS[g].en)||g}));
+  // 팀은 고르기 시트로(2026-10-30) — 물방울 줄엔 상위 20팀만 넣었지만 시트는 검색이 돼서 전부 넣는다. 개수는 처음 받은 최신 999개 기준
+  st.tops.forEach(g=>whoOpts.push({v:g,ko:g,en:(GROUPS[g]&&GROUPS[g].en)||g,n:st.cnt&&st.cnt[g]}));
   const facets=[
-    {key:'who',labelKo:'',labelEn:'',scroll:whoOpts.length>5,sel:who,options:whoOpts,onPick:v=>_programFacetView(st,v,sort)},
-    {key:'sort',labelKo:'',labelEn:'',sel:sort,options:[{v:'latest',ko:'최신',en:'Latest'},{v:'popular',ko:'조회수',en:'Most viewed'}],onPick:v=>_programFacetView(st,who,v)},
+    {key:'who',ui:'pick',sel:who,options:whoOpts,onPick:v=>_programFacetView(st,v,sort)},
+    {key:'sort',ui:'sort',sel:sort,options:[{v:'latest',ko:'최신순',en:'Newest'},{v:'popular',ko:'조회수순',en:'Most viewed'}],onPick:v=>_programFacetView(st,who,v)},
   ];
   _openFeedListOverlay(st.label,isKo?`영상 ${list.length}개`:`${list.length} videos`,st.toSongs(list),{facets});
 }
@@ -21625,39 +21626,69 @@ function _setupFeedListDescRow(ctx){
 }
 let _feedListObserver=null; // 무한스크롤 IntersectionObserver — 끝까지 스크롤하기 전에 오버레이를 닫으면
 // renderNextBatch()의 disconnect()가 절대 안 불려서 관찰자가 계속 살아있던 누수를 막기 위해 참조해둠.
-// 차트 목록의 필터 칩(2026-09-04) — ctx.facet={key,labelKo,labelEn,options:[{v,ko,en}],sel,onPick(v)}
-// 같은 차트를 축만 바꿔 다시 자르는 장치. "역대 개인 직캠 TOP 100 / 역대 여돌 … / 역대 남돌 …"이
-// 예전엔 각각 다른 카드였는데, 셋은 같은 쿼리에 groupKos만 다른 것이라 카드를 세 장 쓸 이유가 없었다.
-// 카드는 하나로 접고 자르는 건 목록 안에서 한다 — 차트가 "고정 자리"를 갖고, 축은 유저가 고른다.
-// ⚠️ 칩을 눌러도 오버레이를 다시 열지 않는다(닫았다 여는 애니메이션이 끼면 튄다). 목록만 다시 그린다.
+// 목록 창 위 고르기 줄(2026-09-04 칩 → 2026-10-30 카드·곡 화면과 같은 모양으로 통일).
+// ctx.facets = [{key,options:[{v,ko,en,n?}],sel,onPick(v), ui?}] — ui로 모양을 고른다:
+//  · ui:'pick'  — "👥 전체 ▾" 글자 버튼 → 아래에서 올라오는 고르기 시트(_openPickSheet, 많으면 검색창). 고른 뒤엔 "앤팀 ✕"(✕ = 전체로).
+//                  곡 화면 "멤버 ▾"·카드 "♪ 곡 ▾"와 같은 버튼(.gc-vid-pick). 팀이 36개면 물방울 36개가 가로로 늘어서 고르기 힘들었다(사용자).
+//  · ui:'sort'  — 곡 화면과 같은 "최신순" 버튼(.tvf-sort) — 누를 때마다 다음 정렬로. 고르기 버튼과 같은 줄 오른쪽 끝.
+//  · 그 외      — 카드·곡 화면과 같은 밑줄 탭(가로 스크롤). 예전 물방울(알약) 칩은 목록 창에서 없앴다.
+// ⚠️ 눌러도 오버레이를 다시 열지 않는다(닫았다 여는 애니메이션이 끼면 튄다). 목록만 다시 그린다(onPick).
 function _renderFeedListFacet(ctx){
   const el=document.getElementById('feed-list-facets');
   if(!el)return;
-  // ctx.facets = [{key,labelKo,labelEn,options:[{v,ko,en}],sel,onPick(v)}] — 축이 여럿이면 줄을 나눈다.
-  // (ctx.facet 단수도 받는다 — 축 하나짜리 호출부를 굳이 배열로 바꾸게 하지 않으려고)
-  const facets=(ctx&&ctx.facets)||((ctx&&ctx.facet)?[ctx.facet]:null);
-  if(!facets||!facets.length){el.style.display='none';el.innerHTML='';return;}
+  const facets=((ctx&&ctx.facets)||((ctx&&ctx.facet)?[ctx.facet]:[])).filter(f=>f&&f.options&&f.options.length);
+  if(!facets.length){el.style.display='none';el.innerHTML='';return;}
   el.innerHTML='';
   el.style.display='flex';
-  facets.forEach(f=>{
-    if(!f||!f.options||!f.options.length)return;
-    const row=document.createElement('div');row.className='fl-facet-row'+(f.scroll?' fl-facet-scroll hscroll-drag':'');
-    const t=(currentLang==='ko'?f.labelKo:f.labelEn)||'';
-    if(t){const lbl=document.createElement('span');lbl.className='fl-facet-lbl';lbl.textContent=t;row.appendChild(lbl);}
+  const ko=currentLang==='ko';
+  const pn=document.getElementById('feed-list-panel');
+  const run=(f,v)=>{pn?.classList.add('fl-loading');Promise.resolve().then(()=>f.onPick(v)).catch(()=>{}).finally(()=>pn?.classList.remove('fl-loading'));};
+  const lbl=o=>ko?o.ko:(o.en||o.ko);
+  // 고르기·정렬은 한 줄(bar)에, 탭은 각자 한 줄
+  const barFs=facets.filter(f=>f.ui==='pick'||f.ui==='sort');
+  if(barFs.length){
+    const bar=document.createElement('div');bar.className='fl-facet-row fl-bar';
+    barFs.forEach(f=>{
+      if(f.ui==='pick'){
+        const allOpt=f.options.find(o=>o.v==='all');
+        const cur=f.options.find(o=>o.v===f.sel)||allOpt||f.options[0];
+        const on=!!allOpt&&cur!==allOpt;
+        const b=document.createElement('button');b.type='button';b.className='gc-vid-pick'+(on?' on':'');
+        b.innerHTML='<svg class="ic" viewBox="0 0 16 16" aria-hidden="true"><circle cx="6" cy="5.6" r="2.4"/><path d="M1.8 13.2c.5-2.3 2.2-3.6 4.2-3.6s3.7 1.3 4.2 3.6"/><circle cx="11.2" cy="6.2" r="1.9"/><path d="M10.6 9.7c1.7.1 3 1.2 3.5 3.1"/></svg><span class="lbl"></span><span class="x">'+(on?'✕':'▾')+'</span>';
+        b.querySelector('.lbl').textContent=lbl(cur);
+        b.addEventListener('click',e=>{
+          e.stopPropagation();
+          if(on){run(f,allOpt.v);return;}
+          const items=f.options.filter(o=>o!==allOpt).map(o=>({key:o.v,label:lbl(o),n:o.n,alt:[o.ko,o.en,o.v].filter(Boolean).join(' ')}));
+          _openPickSheet(f.pickTitle||(ko?'누구 영상 볼까요':'Show videos of'),ko?'고를 수 있는 팀이 없어요':'Nothing to pick',Promise.resolve(items),k=>run(f,k));
+        });
+        bar.appendChild(b);
+      }else{
+        const i=Math.max(0,f.options.findIndex(o=>o.v===f.sel));
+        const b=document.createElement('button');b.type='button';b.className='tvf-sort';b.setAttribute('aria-label',ko?'정렬':'Sort');
+        b.textContent=lbl(f.options[i]);
+        b.addEventListener('click',e=>{e.stopPropagation();const nx=f.options[(i+1)%f.options.length];b.textContent=lbl(nx);run(f,nx.v);});
+        bar.appendChild(b);
+      }
+    });
+    el.appendChild(bar);
+  }
+  facets.filter(f=>f.ui!=='pick'&&f.ui!=='sort').forEach(f=>{
+    const row=document.createElement('div');row.className='fl-facet-row fl-tabs hscroll-drag';
     f.options.forEach(o=>{
       const b=document.createElement('button');b.type='button';
       b.className='gc-ch-filter'+(o.v===f.sel?' active':'');
-      b.textContent=currentLang==='ko'?o.ko:(o.en||o.ko);
+      b.textContent=lbl(o);
       b.addEventListener('click',e=>{
         e.stopPropagation();if(o.v===f.sel)return;
         row.querySelectorAll('.gc-ch-filter.active').forEach(x=>x.classList.remove('active'));b.classList.add('active');
-        const pn=document.getElementById('feed-list-panel');pn?.classList.add('fl-loading');
-        Promise.resolve().then(()=>f.onPick(o.v)).catch(()=>{}).finally(()=>pn?.classList.remove('fl-loading'));
+        run(f,o.v);
       });
       row.appendChild(b);
     });
     el.appendChild(row);
-    if(f.scroll){_enableDragScroll(row);const on=row.querySelector('.gc-ch-filter.active');if(on)row.scrollLeft=Math.max(0,on.offsetLeft-row.offsetLeft-40);} // f.scroll: 칩이 많은 축은 가로 한 줄
+    _enableDragScroll(row);
+    const on=row.querySelector('.gc-ch-filter.active');if(on&&on.offsetLeft>row.clientWidth-40)row.scrollLeft=Math.max(0,on.offsetLeft-row.offsetLeft-40);
   });
 }
 function _openFeedListOverlay(title,sub,songs,ctx){
@@ -24220,7 +24251,7 @@ async function _openEventPage(id,ed,view,who){
     const whoOpts=[{v:'all',ko:'전체',en:'All'}];
     if(hasFav)whoOpts.push({v:'fav',ko:'★ 즐겨찾기',en:'★ Favorites'});
     tops.forEach(g=>whoOpts.push({v:g,ko:g,en:(GROUPS[g]&&GROUPS[g].en)||g}));
-    facets.push({key:'who',labelKo:'',labelEn:'',scroll:whoOpts.length>5,sel:who,options:whoOpts,onPick:v=>_openEventPage(id,ed,view,v)});
+    facets.push({key:'who',ui:'pick',sel:who,options:whoOpts,onPick:v=>_openEventPage(id,ed,view,v)});
   }
   _feedListRankedNext=false;
   _openFeedListOverlay(s.ko,sub,songs,{facets});
@@ -25975,10 +26006,16 @@ function _openPickSheet(title,emptyText,itemsP,onPick){
     if(!ov.isConnected)return;
     if(!items||!items.length){list.innerHTML='<div class="vss-empty"></div>';list.firstChild.textContent=emptyText;return;}
     list.innerHTML='';
+    // 항목이 많으면(팀 36개 등) 위에 검색창(2026-10-30 사용자 "고르기 불편하면 검색 가능하게"). 한글·영문·키 어느 것으로도
+    if(items.length>8){
+      const q=document.createElement('input');q.type='search';q.className='vss-search';q.placeholder=ko_?'이름으로 찾기':'Search';q.setAttribute('enterkeyhint','search');
+      list.before(q);
+      q.addEventListener('input',()=>{const t=q.value.trim().toLowerCase();list.querySelectorAll('.vss-item').forEach(b=>{b.style.display=!t||(b.dataset.alt||'').toLowerCase().includes(t)?'':'none';});});
+    }
     items.forEach(it=>{
       const b=document.createElement('button');b.type='button';b.className='vss-item';
       b.innerHTML='<span class="t"></span><span class="n"></span>';
-      b.querySelector('.t').textContent=it.label;b.querySelector('.n').textContent=typeof it.n==='number'?it.n.toLocaleString():(it.n||'');
+      b.querySelector('.t').textContent=it.label;b.querySelector('.n').textContent=typeof it.n==='number'?it.n.toLocaleString():(it.n||'');b.dataset.alt=(it.alt||it.label||'');
       if(it.key==null){b.disabled=true;b.classList.add('off');} // 우리 우주에 없는 가수의 곡 — 보여만 준다
       else b.addEventListener('click',()=>{close();onPick(it.key,it.label);});
       list.appendChild(b);
