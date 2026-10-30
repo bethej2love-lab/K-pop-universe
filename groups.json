@@ -84210,6 +84210,29 @@
   },
   "discography": [
    {
+    "title": "포켓몬스터 | 원더보야지",
+    "type": "OST",
+    "isMain": false,
+    "cover": "https://cdnimg.melon.co.kr/cm2/album/images/150/91/540/15091540_20261028153551_500.jpg",
+    "releaseDate": "2026.10.30",
+    "trackCount": 2,
+    "titleTrack": "Fly Away",
+    "tracks": [
+     {
+      "no": 1,
+      "title": "Fly Away",
+      "isTitle": true
+     },
+     {
+      "no": 2,
+      "title": "Fly Away (Inst.)",
+      "isTitle": false
+     }
+    ],
+    "src": "melon",
+    "melonAlbumId": "15091540"
+   },
+   {
     "title": "HOME: DELUXE",
     "type": "정규",
     "isMain": true,
