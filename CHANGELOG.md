@@ -1,7 +1,134 @@
 # CHANGELOG
 
 ## 2026-10-30 (Codex — 검수29차·동명이인 영상과 공식 링크)
-- **[진행중·읽기 전용] [CHANGELOG.md]** 사용자 요청으로 검수 확대. 25~28차 인계와 Claude 후속은 중복 제외, 동명이인 멤버의 다른 팀 귀속 및 카드 공식 링크/프로필을 점검. 코드·JSON·SQL·DB 쓰기 없이 이 파일에만 발견 근거·보류 기준 기록.
+- **[완료·읽기 전용 검수] [CHANGELOG.md] [yt_channel_videos]** 신규 ID 중심으로 동명이인 귀속/공식 카드 노출을 대조. 아래 **76개 고유 ID는 오류 확정 수가 아님**: 오귀속·누락 후보와 정상 보존 비교가 함께 있음(라디오7 + HUTA14 + 몬채널5 + 싱어송라이터36 + 기타14). 전부 조회 당시 content_flag null, tags_manual=false, cover_manual=false. 기존 10-27 검수의 `15n2tuRr8MI,Vcl8kLOO1VU`는 문제 유형의 선행 사례로만 참고하고 신규76에 미포함. 코드/JSON/SQL/DB 수정·수집/스윕 실행 없음.
+- **[이슈·공개 노출 확인] [몬스타엑스 민혁 a0400] [비투비 이민혁 a0800]** 몬스타엑스 민혁 카드에서 ‘본업존잘’ 검색 시 비투비 은광·민혁 듀오가1개, ‘은광’ 검색 시 해당 듀오/푸시업/사랑했나봐3개 노출. KBS CoolFM 원본 [x6oBXTcnpaQ](https://www.youtube.com/watch?v=x6oBXTcnpaQ)의 제목·방송일·설명은 비투비 은광과의230531회차. DJ 민혁을 몬스타엑스로 잡은 오귀속. 아래7개를 호스트/초대손님 구분하여 확인할 것. h2는 **실제 서은광 듀엣과 원곡 YB**를 분리 보완(현재 cover 필드 모두 비어 있음); AE의 기존 서은광 출연을 삭제하면 안 됨. qek의 수빈은 수집 설명에 TXT 초대석이 명시되지만, 최종 멤버 추가 전 해당 원본 확인. 니엘·예나도 실제 출연자 보완 대상이며 같은 이름만으로 다른 멤버를 넣지 않음.
+- **[이슈·반대 방향 오귀속5] [비투비 카드] [STARSHIP 몬채널]** 비투비 이민혁 카드 ‘식사해요’ 검색에 아래5편 전부 노출. [EP91 원본](https://www.youtube.com/watch?v=2a0Lv1d1xm8) 업로더 STARSHIP, 제목은 이민혁·유기현, 수집 설명5편 모두 Artist: MONSTA X/THE CONNECT. 이민혁은 여기서 몬스타엑스 민혁 본명이며 비투비 사람이 아님. 몬스타엑스/민혁·기현으로 재귀속 검토(각 영상 실제 출연범위 확인); 기현을 지운 채 민혁만 복구하지 말 것.
+- **[이슈·HUTA14 후보] [yt_channel_videos] [artists.json]** 아래 HUTA/YA/BOOM·비투비 관련14편의 primary가 몬스타엑스 또는 단독문자열 ‘민혁’. [ARIRANG YA 직캠](https://www.youtube.com/watch?v=3lK_aIU37GQ) 원본 제목/업로더 확인. HUTA 정체성과 BOOM·HUTAZONE/YA 연결은 [KBS WORLD 공식 소개](https://world.kbs.co.kr/service/contents_view.htm?board_seq=426007&lang=f&menu_cate=artist)로 교차 확인. KCON `VfbcijJfyig` 수집 설명은 #BTOB #비투비, Weekly391 `W2rYrRlIFNY`는 비투비 데뷔무대 ‘비밀’ 명시. 이2편은 원본 장면 최종 확인이 남음. Simply4편은 같은 실제 이민혁을 primary 몬스타엑스 민혁+with 비투비 이민혁 두 사람처럼 저장. 단독 group_ko='민혁'인6편도 현재 몬스타엑스 민혁 카드 ‘이민혁’ 검색에서 여러 YA/BOOM 영상으로 실제 노출. 전량 자동 확정이 아니라 소스별로 HUTA a0800을 확인하여 정정 계획.
+- **[이슈·제3의 동명이인36 후보] [싱어송라이터 이민혁]** 아래36개는 비투비32/레인보우3/‘민혁’1로 저장. [MUSE ON 원본](https://www.youtube.com/watch?v=RJ5xHc1iBp8)(SBSKPOP)과 [I'm LIVE130 원본](https://www.youtube.com/watch?v=R6ymIqveP9A)(ARIRANG K-POP)의 펼친 설명에서 **2016년 ‘너와 나의 별이야기’ 데뷔·새봄 협업·소행성** 이력을 확인. 비투비 HUTA/몬스타엑스 민혁과 별도 가수. 비투비 카드 “I'm LIVE” 검색에는 EP130과VR3602편이 실제 노출. I'm LIVE 공식 세트리스트에도 ‘취기를 빌려/이 밤 꿈꾸는 듯한/우리 오늘 만날까’가 명시되어 있고 [우리 오늘 만날까 KBS 원본](https://www.youtube.com/watch?v=oa9oZ8PbN14)도 확인: 레인보우 primary+비투비 with 조합은 잘못 연결된 후보. **36개 전부 장면 검증한 것은 아님**. 나머지 MV/티저·인터뷰·플레이리스트는 곡명/채널/같은 활동 이력으로 좁힌 후속 목록. 정당한 피처링(스웨덴세탁소·스텔라장 등)과 원곡/컴필레이션 관계를 따로 확인하고, 36개를 통째로 새 primary 하나로 덮어쓰지 말 것. 기존 group_ko='이민혁' 영상이 비투비 카드로 새는 선행 조회 문제도 같이 보아야 하므로 DB 귀속과 이름만 쓰는 조회를 분리 검사.
+- **[이슈·‘함께한 멤버’ 오염 후보] [몬스타엑스 본명] [블락비 비범]** `gxAMhuKgKH4,7WTVPBq7HiM,DZGGP2ilxQk,66ftlDYWu50`는 몬스타엑스 영상에 with 이민혁(비투비). [gx 원본](https://www.youtube.com/watch?v=gxAMhuKgKH4)은 MONSTA X 공식 업로더·입대 전 촬영 안내·본인 전시 VLOG까지 확인. 실제 본명의 중복을 타인 게스트로 만든 경로를 점검. 66은 ‘방송 외’ 모음이라 전체 수록회차 확인 전 다른 출연자를 일괄 제거하지 않음. 또 [weT 원본](https://www.youtube.com/watch?v=weT-k9SXbFs)(KBS CoolFM)의 ‘병헌 & 이민혁 (**블락비 비범**)’도 비투비 with로 저장: 비범 본명 문맥은 비투비 출연 근거가 아님. 긴 본편의 실제 게스트 확인 후 잘못 추가한 비투비 태그만 정정.
+- **[이슈·원곡/출연자 역전] [3T6_2KKh4DY] [agYkaH71jfU]** KBS 원본 [OMG챌린지](https://www.youtube.com/watch?v=3T6_2KKh4DY)는 몬스타엑스 민혁·아이엠이 뉴진스 곡을 추는 영상인데 primary 뉴진스/빈members/with 몬스타엑스 민혁만. 원곡 뉴진스·OMG는 cover 필드로, 실제 출연자 민혁·아이엠은 출연 태그로 분리 검토. 같은230125 [귀여워서미안해](https://www.youtube.com/watch?v=agYkaH71jfU)는 KBS 설명도 원샷초대석 with 몬스타엑스이며 primary 몬스타엑스는 보존, 누락 아이엠만 검토. **프로그램명 ‘비투비의 키스 더 라디오’를 근거로 이 회차를 비투비로 통째로 옮기면 재오류.** `akEMD1rDoK4,8BSgYmDBC2M,2KLhBbYEa_U` 실제 몬스타엑스 게스트/그룹 귀속과 `Jwnhla4j74s` 본명 민혁 출연도 보존 비교.
+- **[이슈·실제 협업과 개별출연 구분] [-G6u49tWrVE] [MnUAZZ5uIKM] [5Y3PFO858jc]** [Bora 챌린지 -G6 원본](https://www.youtube.com/watch?v=-G6u49tWrVE)은 BTOB COMPANY 업로더, 수집 설명은 이민혁/HUTA와 셔누. 비투비 members에 셔누·민혁·이민혁이 함께 들어 있어 소속 혼합 정리 대상이지만, 실제 with 셔누(몬스타엑스)는 보존. MnU도 구공탄 서은광·이민혁+셔누 문맥으로 정상 협업 보존 비교. [1theK 수트 쇼츠 5Y](https://www.youtube.com/watch?v=5Y3PFO858jc)는 셔누·형원/DoYouLoveMe와 이민혁·HUTA/Bora 해시태그 혼합. 전반0:05와 후반0:46에서 서로 다른 복장·무대 컷 편집을 확인했으나 얼굴만으로 출연 신원을 확정하지 않았음. **Bora는 이민혁의 곡 문맥**이며 인물 보라로 추가 금지; 원본 전체 구간 확인 후 몬스타엑스 민혁 오태그와 HUTA 개별출연 보완을 검토. 단순 with 추가로 가짜 합동무대/친분을 만들지 말 것.
+- **[완료·재발 경로 비교] [tools/matcher_harness.cjs] [admin.js _m2ParseTitle]** 메모리에서 실제 발행일을4번째 인자로 주어32개 제목 재파싱(소스/DB 변경 없음). x6는 여전히 몬스타엑스 민혁+비투비 서은광, h2는 몬스타엑스 민혁으로 반환. gx·7W는 오히려 비투비 이민혁 weak로 이동, DZG는 몬스타엑스+비투비 이민혁 strong을 만들어 오태그를 강화. 반면 Simply YA 등은 비투비 weak로 돌아옴. -G6/MnU는 제목에 있는 셔누만 strong으로 잡고 원래 비투비 출연자를 잃음. 5Y는 솔로 ‘보라’까지 ambiguous로 반환. **현재 매처 재실행만으로 일괄 해결 불가**, full name 이민혁·HUTA·공식 주인·방송 출연자·곡 제목을 함께 구분해야 함. trace/로컬 런타임은 실서비스 호출환경과 다를 수 있어 정정값의 근거로 단독 사용하지 않음.
+- **[완료·공식 링크 검사 한계] [artists.json] [groups.json] [app.js _renderGcLinks]** URL 문법/서로 다른 그룹의 중복 링크를 읽기 전용으로 점검. 날짜인 links.left18건은 URL이 아니고 실제 링크 렌더러의 고정 _LINK_DEFS 대상도 아니므로 ‘깨진 링크18개’로 집계하지 않음. 오메가엑스 혁/빅스 혁의 hsh0705, 장유빈/E-VAN의 jangyub1n 중복은 이미 검수20차 인계와 겹쳐 신규 발견에서 제외. 장유빈/E-VAN 동일인 추정은 2차 프로필 자료만 추가 확인했으며 **공식 연결 근거 없이 ID 병합 제안 확정·자동 병합하지 않음**. URL 문법 정상만으로 공식 소유자/현재 접속 가능까지 통과한 것은 아님.
+- **⏳ 덜 된 일 [명령·파일·판단 기준]** ① 아래76 ID를 `SELECT id,title,description,group_ko,members,with_members,with_groups,cover_of_groups,cover_of_members,cover_of_song,tags_manual,cover_manual,content_flag,published_at FROM yt_channel_videos WHERE id IN (...)`로 최신 재조회(정정 전후 잠금/값 변경 재확인). 라디오7/HUTA14/몬채널5/역전1은 공식 출연·소유자 확인된 소량부터 백업+현재값 가드로 계획, 정상230125·실제 협업 보존. ② artists.json/admin.js의 a0400/a0800 및 블락비 비범 본명, 같은 영문 Minhyuk를 그룹 문맥으로 구별. `tools/matcher_harness.cjs` 재현은 조회/메모리에서만 하고 스윕 실행 금지. ③ 싱어송라이터36는 MUSE/I'm LIVE 이력과 곡별 원본 확인→실제 소유자·피처링·티저·컴필레이션 분리; 등록 필요 여부와 이름만으로 새는 app.js 조회를 별도 결정. 새 인물을 기존 비투비 ID로 재활용하지 않음. ④ 잘못된 with만 제거할 때 다른 실제 출연자를 보존; compilation은 개별출연/원본 구간을 확인. 이번 세션은 후속 실행용 SQL 작성이나 DB 정정까지 승인받은 범위가 아니므로 실행하지 않음.
+
+<details>
+<summary>검수29차 — 라디오 DJ 오귀속 후보7 (제목·방송명만으로 일괄 변경 금지)</summary>
+
+| 영상 ID | 제목·구별할 문맥 | 현재 primary / members / with |
+|---|---|---|
+| `x6oBXTcnpaQ` | 역시 BTOB는 본업존잘😻 ✨I AM 은광 & 민혁 아카펠라 듀오✨ / [비투비의 키스 더 라디오] ／ KBS 230531 방송 | 몬스타엑스 / 민혁 / ∅ |
+| `h2DkSB5A-y0` | 도토리들을 위한 민혁 & 은광의 깜짝 듀엣 선물😻 '사랑했나봐' 라이브 [원곡: YB] / [비투비의 키스 더 라디오] ／ KBS 230531 방송 | 몬스타엑스 / 민혁 / ∅ |
+| `DfSSDvpyn5s` | ✨BACK TO 2009✨민혁 & 니엘의 아브라카다브라 댄스🎥 / [비투비의 키스 더 라디오] I KBS 230225 방송 | 몬스타엑스 / 민혁 / ∅ |
+| `mtkXLqsClms` | [ㅋㅋ팝 벌칙영상] 민혁 그리워하다 댄스💙/ [비투비의 키스 더 라디오] ／ KBS 230121 방송 | 몬스타엑스 / 민혁 / ∅ |
+| `JJB-YPLjBYQ` | 민혁 & 예나의 LOVE WAR 챌린지💖 / [비투비의 키스 더 라디오] I KBS 230120 방송 | 몬스타엑스 / 민혁 / ∅ |
+| `qekx9vnPkcM` | 비키라 호기심천국👀 오늘의 궁금증~! 닮은꼴 민혁&수빈 서로의 얼굴로 Face ID 열 수 있을까?🧐✨ / [비투비의 키스 더 라디오] l KBS 220520 방송 | 몬스타엑스 / 민혁 / ∅ |
+| `AE_iMBR67WA` | [벌칙영상] DJ 민혁! 푸시업 + 노래 부르기! (ft. 서은광 견제✨) /[비투비의 키스 더 라디오] l KBS 211101 방송 | 몬스타엑스 / 민혁 / 서은광(비투비) |
+
+</details>
+
+<details>
+<summary>검수29차 — HUTA/비투비 이민혁 관련 오귀속 후보14</summary>
+
+| 영상 ID | 제목·구별할 문맥 | 현재 primary / members / with |
+|---|---|---|
+| `QoQ0xbD_im8` | WATERBOMB SEOUL 2024 HUTA(MINHYUK) 워터밤 서울 2024 허타(민혁) | 몬스타엑스 / 민혁 / ∅ |
+| `TUXNZxzregQ` | [BOYS PLANET] 스타 마스터 이민혁의 파워 넘치는 '난 빛나'🕺 #난빛나챌린지 #HereIAmChallenge I #이민혁 ver. #LEE_MINHYUK | 몬스타엑스 / 민혁 / ∅ |
+| `3lK_aIU37GQ` | [Simply K-Pop] LEE MINHYUK 'YA' (이민혁 직캠) Ep.349 | 몬스타엑스 / 민혁 / 이민혁(비투비) |
+| `FQ45kBFREJM` | [Simply K-Pop] LEE MINHYUK 'YA' (이민혁 직캠) Close Up ver. Ep.349 | 몬스타엑스 / 민혁 / 이민혁(비투비) |
+| `3IebN5LQwiQ` | [Simply K-Pop] LEE MINHYUK 'YA' (이민혁 직캠) Close Up ver. Ep.348 | 몬스타엑스 / 민혁 / 이민혁(비투비) |
+| `Gyu21Na4Rfg` | [Simply K-Pop] LEE MINHYUK 'YA' (이민혁 직캠) Ep.348 | 몬스타엑스 / 민혁 / 이민혁(비투비) |
+| `-88NEaNw9JM` | [K-Choreo 8k] 이민혁 직캠 'BOOM' (LEE MINHYUK Choreography) l @MusicBank 220701 | 민혁 / 민혁 / ∅ |
+| `AnWMn40Jqdw` | HUTA(LEE MINHYUK), THE SHOW 174 behind 2 [BEHIND THE SHOW] | 민혁 / 민혁 / ∅ |
+| `FoY1HczBDMw` | HUTA(LEE MINHYUK), YA [THE SHOW, FanCam, 190122] 60P | 민혁 / 민혁 / ∅ |
+| `vtAAQYQfwF4` | [HOT] LEE MINHYUK - YA , 이민혁 - YA show Music core 20190126 | 민혁 / 민혁 / ∅ |
+| `AgcZHQ7BP9E` | HUTA(LEE MINHYUK), YA [THE SHOW 190122] | 민혁 / 민혁 / ∅ |
+| `6OVy7Rh-PHA` | [Solo Debut]  LEE MINHYUK - YA , 이민혁 - YA Show Music core 20190119 | 민혁 / 민혁 / ∅ |
+| `W2rYrRlIFNY` | [Weekly Idol EP.391] LEE MINHYUK is nervous about he debut stage | 몬스타엑스 / 민혁 / 이민혁(비투비) |
+| `VfbcijJfyig` | LEE MINHYUK🐿 wants to make eye contact with you!👀💌 #shorts | 몬스타엑스 / 민혁 / 이민혁(비투비) |
+
+</details>
+
+<details>
+<summary>검수29차 — 비투비 카드에 노출된 몬채널 식사해요5편</summary>
+
+| 영상 ID | 제목·구별할 문맥 | 현재 primary / members / with |
+|---|---|---|
+| `0UTKMztOLq0` | [몬채널][B] EP.94 이민혁.유기현의.식사해요 #epilogue | 비투비 / 이민혁 / ∅ |
+| `j2NOr6OH6Ko` | [몬채널][B] EP.93 이민혁.유기현의.식사해요 #3 | 비투비 / 이민혁 / ∅ |
+| `4ye0W8_9GCg` | [몬채널][B] EP.92 이민혁.유기현의.식사해요 #2 | 비투비 / 이민혁 / ∅ |
+| `2a0Lv1d1xm8` | [몬채널][B] EP.91 이민혁.유기현의.식사해요 #1 | 비투비 / 이민혁 / ∅ |
+| `kIGPf49TCx4` | [몬채널][B] EP.90 이민혁.유기현의.식사해요 #prologue | 비투비 / 이민혁 / ∅ |
+
+</details>
+
+<details>
+<summary>검수29차 — 싱어송라이터 이민혁 후속 후보36 (MUSE/I'm LIVE 원본 이력 확인, 나머지는 곡별 검증 필요)</summary>
+
+| 영상 ID | 제목·구별할 문맥 | 현재 primary / members / with |
+|---|---|---|
+| `SmUg2-FkV7c` | [MV] Lee MinHyuk(이민혁) _ Dream(목소리) | 비투비 / 이민혁 / ∅ |
+| `IuSsMmrdDlY` | [5분 OST PLAYLIST🎧] ’아는 여자애’ OST｜‘Back to You’ OST｜로시,이현, 이민혁, 바비 킴, 데이브레이크, 유키카｜Stone Music PLAYLIST | 비투비 / 이민혁 / ∅ |
+| `oa9oZ8PbN14` | 이민혁 - 우리 오늘 만날까 [유희열의 스케치북/You Heeyeol’s Sketchbook] ／ KBS 220107 방송 | 레인보우 / ∅ / 이민혁(비투비) |
+| `G6xk_cZPB0g` | [세로 직캠] 이민혁 - 우리 오늘 만날까 (Lee Min hyuk - FAN CAM) [유희열의 스케치북/You Heeyeol’s Sketchbook] ／ KBS 방송 | 레인보우 / ∅ / 이민혁(비투비) |
+| `gtKnBVsumoo` | [MV] Lee MinHyuk(이민혁) _ Your love for me(너의 사랑이 날 웃게 해) | 비투비 / 이민혁 / ∅ |
+| `2_sZTp1S4Fo` | [PLAYLIST] 전율이 흐르는 요즘 핫한 드라마 OST｜이민혁,윤미래,HYNN (박혜원),Kriz,프라이머리,케빈오,Meego,Renee｜Stone Music PLAYLIST | 비투비 / 이민혁 / ∅ |
+| `XoJwzi4jFJc` | [PLAYLIST] 잔잔한 가을 감성을 듬뿍 담은 노래｜다비치,이해리,김윤아,원슈타인,이민혁,어반자카파,정승환,펀치 (Punch),매드클라운｜Stone Music PLAYLIST | 비투비 / 이민혁 / ∅ |
+| `36Y6Sn5kXS0` | [ENG SUB] [금주의 노래] 💿 9월 둘째 주｜이민혁, 이하이, 온리원오브, 갯마을 차차차 OST 케이시｜Stone Music+ | 비투비 / 이민혁 / ∅ |
+| `zCSQBmqNsMQ` | 이민혁 (Lee MinHyuk) - 그렇게 됐나 봐 (아는 여자애 X 이민혁) [Love Diary (Back to You X Lee MinHyuk)] Preview | 비투비 / 이민혁 / ∅ |
+| `euiCZv28qic` | [MV] Lee MinHyuk(이민혁) _ PLAY(재생) | 비투비 / 이민혁 / ∅ |
+| `6YkFpoq5p3Q` | 찐! 선곡로드 with 백아연, 이민혁 full ver.  /[강한나의 볼륨을 높여요] l kbs 20125 방송 | 비투비 / 이민혁 / ∅ |
+| `vKHGeh6XHXM` | [곧크리스마스인디] 이민혁 - 우리 오늘 만날까 | 레인보우 / ∅ / 이민혁(비투비) |
+| `ddhrALeyA_M` | 쿨룩 LIVE ▷ 이민혁 ‘시선’ /[설레는 밤, 박소현입니다]l KBS 201211 방송 | 비투비 / 이민혁 / ∅ |
+| `ZkPVVoF6iP4` | 쿨룩 LIVE ▷ 이민혁 ‘이밤, 꿈 꾸는 듯한’ /[설레는 밤, 박소현입니다]l KBS 201211 방송 | 비투비 / 이민혁 / ∅ |
+| `nnwTGRSIIb4` | [MV] Lee MinHyuk(이민혁) _ Kissing you(겨울을 건너) | 비투비 / 이민혁 / ∅ |
+| `jGShQDKaT6Q` | [MV] Lee MinHyuk(이민혁) _ Only You Don't Know(너만 몰라)  (나를 사랑한 스파이 OST Part.2) | 비투비 / 이민혁 / ∅ |
+| `_tdgGbxP-SA` | [수습정방] Unofficial MV / 취기를 빌려(Slightly Tipsy) – Vocal. 이민혁 | 비투비 / 이민혁 / ∅ |
+| `RJ5xHc1iBp8` | [MUSE ON] 이민혁 Lee MinHyuk - 눈치 없게 To My Friend | 민혁 / 민혁 / ∅ |
+| `xPs5w2cpGXM` | 쿨룩 LIVE ▷이민혁 '취기를 빌려' /200828[설레는 밤, 박소현입니다] | 비투비 / 이민혁 / ∅ |
+| `wVlvAhKWiNc` | 쿨룩 LIVE ▷이민혁 '눈치 없게' /200828[설레는 밤, 박소현입니다] | 비투비 / 이민혁 / ∅ |
+| `CwYuzFiark8` | [Music Access] Lee MinHyuk (이민혁)'s Singin' Live 'To My Friend (눈치 없게)' | 비투비 / 이민혁 / ∅ |
+| `C1pTXuI1J7M` | [Music Access] Lee MinHyuk (이민혁)'s Full Episode on Arirang Radio! | 비투비 / 이민혁 / ∅ |
+| `1GB_07O-7Tg` | [MV] Lee MinHyuk(이민혁) _ To My Friend(눈치 없게) | 비투비 / 이민혁 / ∅ |
+| `8sJJs8drzsQ` | [Teaser2] Lee MinHyuk(이민혁) _ To My Friend(눈치 없게) | 비투비 / 이민혁 / ∅ |
+| `6F94t0AL17g` | [MV] Stella Jang(스텔라장), Lee MinHyuk(이민혁) _ Beautiful Mint Life(인생 봄날) | 비투비 / 이민혁 / ∅ |
+| `OSZ9M2e3tNg` | [MV] Lee MinHyuk(이민혁) _ Serenade in May(그렇게, 봄) | 비투비 / 이민혁 / ∅ |
+| `o7NEI6S4G_w` | [Teaser2] Lee MinHyuk(이민혁) _ Serenade in May(그렇게, 봄) | 비투비 / 이민혁 / ∅ |
+| `NTWha0hm6bg` | 마! 악기가 뭐가 중요하나! 성대가 악긴데!!!ㅣ이민혁 - 사랑한적없어ㅣ네모라이브ㅣLEE MIN HYUKㅣ딩고뮤직ㅣdingomusic | 비투비 / 이민혁 / ∅ |
+| `qp6xzUeAuwk` | [MV] Lee MinHyuk(이민혁) _ Still Love You(사랑한 적 없어) | 비투비 / 이민혁 / ∅ |
+| `0AKd6J1XR6s` | 이별을 받아들이는 다섯가지 단계ㅣBest5ㅣ이민혁ㅣLEE MIN HYUKㅣ사랑한적없어, 사랑이잘, All Of My Life, 허전해, 잔나비ㅣ딩고뮤직ㅣDingo Music | 비투비 / 이민혁 / ∅ |
+| `jnxQBOYMjMQ` | [I'm LIVE × VR360°] Lee Min-hyuk (이민혁)  - 'Slightly Tipsy / My Star / How Can I Love the Heartbreak, | 비투비 / 이민혁 / ∅ |
+| `R6ymIqveP9A` | [I'm LIVE] Lee Min-hyuk (이민혁) _ Full Episode (Ep.130) | 비투비 / 이민혁 / ∅ |
+| `d05qeVyYpw8` | [MV] Sweden Laundry(스웨덴세탁소) _ Late goodbye(긴 긴 인사) (Feat. Lee MinHyuk(이민혁)) | 비투비 / 이민혁 / ∅ |
+| `Bij5uIdXCUQ` | [MV] Lee MinHyuk(이민혁) _ Good Night(이 밤, 꿈꾸는 듯한) | 비투비 / 이민혁 / ∅ |
+| `i2Jb_oN6J0g` | [MV] Lee MinHyuk(이민혁) _ Always with You(좋은 날엔 언제나) | 비투비 / 이민혁 / ∅ |
+| `DOuswMbnRDs` | [MV] Lee MinHyuk(이민혁) _ Blue Night(기적) | 비투비 / 이민혁 / ∅ |
+
+</details>
+
+<details>
+<summary>검수29차 — 잘못된 with/원곡 역전/실제 협업 및 정상 보존 비교14</summary>
+
+| 영상 ID | 제목·구별할 문맥 | 현재 primary / members / with |
+|---|---|---|
+| `gxAMhuKgKH4` | [Let’s GO!5rae] EP.7 VLOG : The Whale Takes You Again #2ㅣ작가 '이민혁' 데뷔전 | 몬스타엑스 / 민혁 / 이민혁(비투비) |
+| `7WTVPBq7HiM` | [몬 먹어도 고] 몬엑의 몰락을 예고한 X몬 이민혁? ／ 유기현의 역사특강 #shorts | 몬스타엑스 / 민혁, 기현 / 이민혁(비투비) |
+| `DZGGP2ilxQk` | [킬포장인] ★몬스타엑스 이민혁★ 킬링파트 모아보기 ／ MONSTA X LEE MINHYUK Killing Part Compilation | 몬스타엑스 / 민혁 / 이민혁(비투비) |
+| `66ftlDYWu50` | ＂말 좀 예쁘게 해!😡＂ 몬스타엑스 (채)형원 X 이민혁, 생방송 직전 싸운 썰 풉니다.｜아는형님｜JTBC 230401 방송 외 | 몬스타엑스 / 형원, 민혁, 기현, 주헌, 아이엠 / 이민혁(비투비) |
+| `3T6_2KKh4DY` | 몬스타엑스 민혁 & 아이엠의 뉴진스 OMG 챌린지 / 비투비의 키스 더 라디오 230125 | 뉴진스 / ∅ / 민혁(몬스타엑스) |
+| `agYkaH71jfU` | [벌칙영상] 이건.. 몬베베에게 평생 미안해야할 귀여움이잖아...💞 민혁 & 아이엠의 귀여워서 미안해 챌린지❣ / [비투비의 키스 더 라디오] I KBS 230125 방송 | 몬스타엑스 / 민혁 / ∅ |
+| `-G6u49tWrVE` | #몬스타엑스 #셔누 후배님과 B.. Bee.. Beep…🫵🚨 | 비투비 / 셔누, 민혁, 이민혁 / 셔누(몬스타엑스) |
+| `MnUAZZ5uIKM` | #셔누 후배님과 함께 조준 발사 🔫 헬스장에서도 아‼️달려가야 돼〰️💨 #몬스타엑스 #MONSTAX #SHOWNU #탕탕탕_챌린지 | 비투비 / 서은광, 이민혁 / 셔누(몬스타엑스) |
+| `5Y3PFO858jc` | 미남들의 수트는 좋은 느낌을 줌..😎#SHOWNU #셔누 #HYUNGWON #형원 #MONSTAX #DoYouLoveMe #이민혁 #HUTA #Bora #수트댄스 | 몬스타엑스 / 셔누, 형원, 민혁 / ∅ |
+| `weT-k9SXbFs` | 좋아요 with 병헌 & 이민혁 (블락비 비범) Full ver. /180212[김예원의 볼륨을 높여요] | 블락비 / 비범 / 이민혁(비투비) |
+| `akEMD1rDoK4` | 최근 밈 다 알고 있는 몬스타엑스...✌😁 1년치 애교 탈탈💕 / [비투비의 키스 더 라디오] I KBS 230125 방송 | 몬스타엑스 / ∅ / ∅ |
+| `8BSgYmDBC2M` | 몬스타엑스(MONSTA X) Beautiful Liar 챌린지❤ / [비투비의 키스 더 라디오] I KBS 230125 방송 | 몬스타엑스 / ∅ / ∅ |
+| `2KLhBbYEa_U` | 비투비의 키스더라디오(BTOB Kiss the radio) with 몬스타엑스(MONSTA X) 230125 | 몬스타엑스 / ∅ / ∅ |
+| `Jwnhla4j74s` | [몬스타엑스] 주헌 : 이민혁 랩 찢어라 #shorts | 몬스타엑스 / 민혁, 주헌 / ∅ |
+
+</details>
+
 
 ## 2026-10-30 (Claude Code — Codex 검수26·27차 후속 1단계: 매처 재발 방지만, DB 정정은 다음 세션) [사용자 요청으로 중간 정지]
 - **[완료·배포] [admin.js _m2ParseTitle 짝 표기 개인캠·_GROUP_TOKEN_NEEDS_CORROBORATION·_ATM_HASHTAG_ONLY_NAMES·_atmStripCommonNounCtx] [artists.json] [groups.json] [tests/unit-indivcam.test.js]** ① 짝 표기 개인캠: 직캠 표시 + "A X B / A&B" 짝 표기가 있으면 이름이 혼자 가장 많이 나온 사람만(셔누X형원 형원·쿤&샤오쥔 쿤·정한X조슈아 정한·진진&라키 진진), 같으면 둘 다(듀오 "SHOWNU X HYUNGWON FanCam"). 등록 유닛이 아닌 짝도 처리. ② 퍼플키스 SWAN: a1151 박지은 영문명 "Swan"→"Park Jieun", a1150 수안 퍼플키스 문맥 matchNames SWAN, 박지은 퍼플키스 left 2025.11.16→2022.11.18(RBW 공지 기사). ③ NOWADAYS: 나우즈 altNames + 대문자 그대로·멤버명 동반일 때만(흔한 영단어), a1456 현빈 matchNames HYEONBIN. ④ '라↗️디오' 이모지 낀 라디오를 붙여 엑소 디오 오매칭 차단. ⑤ '보니'(드림노트) 해시태그·그룹 동반 전용 — '알고 보니'.
