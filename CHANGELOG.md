@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2026-10-30 (Claude Code — 검색 유입 페이지 남은 것 보류 메모)
+- **[보류·사용자 결정] ⑧ 앨범 페이지 ⑨ 작사·작곡 페이지** — "{그룹} {앨범} 수록곡·뮤비·무대"(디스코그래피 disco/g + 곡 페이지 연결), "{멤버} 작사 작곡 곡"(artist_credits.json). 만든 것: 곡·멤버×곡·멤버 직캠 모음·그룹 직캠·무대 모음·직캠 순위 11종·프로그램 30+739·생년 32·데뷔연도 22·소속사 27·연도별 음방 1위 19. 재개 전 확인할 것: 서치콘솔 색인·노출(어떤 유형이 실제로 들어오는지), 사이트 용량(약 490MB/1GB), CI rebuild-seo-pages 소요 시간(로컬 전체 빌드 28분+). X 자동 게시(주간 순위 카드·음방 1위)는 사용자 X 계정·개발자 키 확인 후.
+
+
 ## 2026-10-30 (Claude Code — 검색 유입 확대 4차: 소속사 · 연도별 음방 1위 페이지)
 - **[완료·배포(페이지는 CI 재생성)] [build_group_pages.js buildAgencyPages·buildWinsPages·simplePageHtml·groupTileHtml] [tools/seo_extra.js allWins] [song-page.css v4] [.github/workflows/rebuild-seo-pages.yml] [tests/song-page-design.test.js]** ⑥ `agency/{이름}/` 27곳("SM엔터테인먼트 소속 아이돌 - 하츠투하츠·엔시티 위시·라이즈·에스파 등 16팀", 그룹 썸네일 → 그룹 페이지, 해체 표시). groups.json co를 '/'로 나눠 레이블·모회사 둘 다(빅히트 뮤직 / HYBE), 표기 흔들림 합침(Starship→스타쉽엔터테인먼트·SM→SM엔터테인먼트·Cube·Modhaus·Fantagio·High Up·Loen·nCH), 무소속 제외, 3팀 이상. ⑦ `wins/{년}/` 19개(2008~2026, "2026 음악방송 1위 목록 - 방탄소년단 15회·코르티스 12회·에이티즈 10회", 최다 1위 아티스트 20 + 날짜·방송·아티스트·곡 전체 표, 그룹/솔로 페이지 링크). music_show_wins 전체를 seo_extra prefetch에서 allWins로(예전엔 그룹 것만 묶었다). 그룹 허브에 소속사·연도별 1위 목록. 합쳐 1MB 미만. 실DB 빌드·static-links 8/8.
 - **[수정]** CI josa 테스트 3회 실패 — 프로그램×그룹 페이지 설명의 "${gko}가 나온" 고정 조사를 josa(gko, '이/가')로(세븐틴이 나온·코르티스가 나온).
