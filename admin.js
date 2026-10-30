@@ -7433,7 +7433,9 @@ function _atmRosterFor(gko){
     // 그 그룹 시절 활동명(groups[].name/nameEn — 성민의 티오원 시절 "제롬/JEROME")도 별칭으로(2026-10-12, 사용자: "티오원 시절
     // 영상에 제롬 태깅 안 됨"). **이 그룹 로스터에만** 넣는다 — 디모렉스의 트레저 시절 "예담"은 원팩트 예담과 같은 이름이라
     // 전역 변형(_m2NameVariants)에 넣으면 원팩트 영상까지 끌어온다.
-    const _stage=[e.name,e.nameEn].filter(Boolean);
+    // matchNames는 **매칭 전용**(표시엔 안 씀) — 오마이걸 유빈의 옛 활동명 "비니"처럼 지금 그 그룹에서 다른 이름으로 활동 중이라
+    // 표시 오버라이드(name)를 쓰면 안 되는 경우(2026-10-30). "비니"는 모자 이름이라 전역 matchAliases에도 못 넣는다.
+    const _stage=[e.name,e.nameEn,...(e.matchNames||[])].filter(Boolean);
     return{ko:a.name.ko,en:a.name.en,left:(e.left!==undefined?e.left:a.left),aliases:_stage.length?[...(a.matchAliases||[]),..._stage]:a.matchAliases};
   });
 }
@@ -9051,12 +9053,26 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
     // 행성이 따로 있는 프로젝트 그룹(B.D.U·UNB)은 그룹 경로가 소속을 정하므로 기존 동작 유지 — 여기서 좁히면
     // "#BDU #승훈" 영상이 B.D.U가 아니라 씨아이엑스로 빠진다.
     const _unitIsPlanet=unit.names.some(n=>_groupTokNormSet.has(_uNrm(n)));
-    const _uNamed=(unit.rotating||_unitIsPlanet)?[]:unit.members.filter(({mko,gko})=>{
+    // 개인캠 표시가 있으면 유닛 단체 영상이 아니라 한 사람 영상이다(2026-10-30, Codex 검수25차 개인캠 86건 — 유앤비 "필독 Focused"·
+    // 미소녀즈 "박소현 FaceCam"·구구단 오구오구 "혜연 Focused"에 유닛 전원이 붙었다). 이때만 프로젝트 그룹(UNB)도 이름 난 사람으로 좁힌다
+    // — 소속 키가 그 프로젝트 그룹 자체라(gko='유앤비') 위 B.D.U 걱정(다른 그룹으로 빠짐)이 없다.
+    const _uCam=/(focused|직캠|fan ?cam|face ?cam|페이스캠|얼빡|unfiltered cam|focus ?cam)/i.test(rawTitle||'');
+    const _uNamedIn=(mko,gko)=>{
       const a=ARTISTS.find(x=>x.name.ko===mko&&_artistGroups(x).some(g=>g.ko===gko));
+      if(!a)return false;
       // 성 뗀 이름(원지민→지민·이한빈→한빈)은 전역에선 동명이인 때문에 빠지지만, 여긴 이 유닛 멤버로 범위가 좁혀져 있어 인정한다.
-      const _st=a&&_atmStripSurname([...a.name.ko]);
-      return !!a&&[..._m2NameVariants(a),...(_st&&_st.length>=2?[_st]:[])].some(v=>_uHash(v)||(/[가-힣]/.test(v)?_uHit(v):v.replace(/[^A-Za-z0-9]/g,'').length>=4&&_uHit(v)));
-    });
+      const _st=_atmStripSurname([...a.name.ko]);
+      // 그 그룹 시절 활동명·매칭 전용 이름(groups[].name·nameEn·matchNames — 혜연·필독·비니)도 이 그룹 안에서만
+      const _gs=_artistGroups(a).filter(g=>g&&g.ko===gko).flatMap(g=>[g.name,g.nameEn,...(g.matchNames||[])]).filter(Boolean);
+      return [..._m2NameVariants(a),...(_st&&_st.length>=2?[_st]:[]),..._gs].some(v=>_uHash(v)||(/[가-힣]/.test(v)?_uHit(v):v.replace(/[^A-Za-z0-9]/g,'').length>=4&&_uHit(v)));
+    };
+    let _uNamed=(unit.rotating||(_unitIsPlanet&&!_uCam))?[]:unit.members.filter(({mko,gko})=>_uNamedIn(mko,gko));
+    // 개인캠인데 명단 안에서 이름을 못 찾았으면 같은 그룹의 **명단 밖** 멤버가 주인인지 본다(msnz 박소현·윤서연 — 명단 8명에
+    // 없다고 '이름 없음'으로 보고 8명 전원을 붙였다). 찾으면 그 사람만. 유닛 명단 자체는 건드리지 않는다.
+    if(!_uNamed.length&&_uCam&&!unit.rotating){
+      const _uGks=[...new Set(unit.members.map(m=>m.gko))];
+      _uNamed=_uGks.flatMap(gko=>ARTISTS.filter(x=>_artistGroups(x).some(g=>g&&g.ko===gko)&&!unit.members.some(m=>m.mko===x.name.ko&&m.gko===gko)&&_uNamedIn(x.name.ko,gko)).map(x=>({mko:x.name.ko,gko})));
+    }
     const named=unit.rotating
       ? unit.members.filter(({mko,gko})=>_unitMemberNamedInTitle(mko,gko,hit,hitHashtag))
       : (_uNamed.length?_uNamed:unit.members);
@@ -9401,8 +9417,8 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
     const _aliasHit=al=>{const n=(al||'').toUpperCase().replace(/[^가-힣a-zA-Z0-9]/g,' ').replace(/\s+/g,' ').trim();return !!n&&normMinusUnits.includes(' '+n+' ');};
     // 탈퇴 게이트(위 _atmLeftBefore 주석 참고) — 이 영상이 올라온 시점에 이미 그 그룹을 떠난 사람은 제외.
     const matched=ARTISTS.filter(a=>_artistGroups(a).some(g=>g.ko===gko)&&!_atmLeftBefore(a,gko,publishedAt)&&(_m2NameVariants(a).some(t=>hit(t,normMinusUnits)||hitHashtagSubstring(t))||(a.matchAliases||[]).some(_aliasHit)
-      // 그 그룹 시절 활동명(제롬) — 그룹이 확정된 이 블록에서만(위 _atmRosterFor 주석과 같은 이유)
-      ||(()=>{const e=_artistGroups(a).find(g=>g&&g.ko===gko)||{};return [e.name,e.nameEn].filter(Boolean).some(_aliasHit);})())).map(a=>a.name.ko);
+      // 그 그룹 시절 활동명(제롬)·매칭 전용 이름(matchNames — 오마이걸 비니) — 그룹이 확정된 이 블록에서만(위 _atmRosterFor 주석과 같은 이유)
+      ||(()=>{const e=_artistGroups(a).find(g=>g&&g.ko===gko)||{};return [e.name,e.nameEn,...(e.matchNames||[])].filter(Boolean).some(_aliasHit);})())).map(a=>a.name.ko);
     const extra=unitExtraMembers[gko];
     if(extra){
       const extraArr=[...extra];

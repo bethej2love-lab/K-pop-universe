@@ -187,7 +187,7 @@ const _PROJECT_UNITS={
   '정한X원우':{names:['정한X원우','JeongWon'],members:[{mko:'정한',gko:'세븐틴'},{mko:'원우',gko:'세븐틴'}]},
   '호시X우지':{names:['호시X우지'],members:[{mko:'호시',gko:'세븐틴'},{mko:'우지',gko:'세븐틴'}]},
   '에스쿱스X민규':{names:['에스쿱스X민규'],members:[{mko:'에스쿱스',gko:'세븐틴'},{mko:'민규',gko:'세븐틴'}]},
-  '도겸X승관':{names:['도겸X승관'],members:[{mko:'도겸',gko:'세븐틴'},{mko:'승관',gko:'세븐틴'}]},
+  '도겸X승관':{names:['도겸X승관','DK X SEUNGKWAN'],members:[{mko:'도겸',gko:'세븐틴'},{mko:'승관',gko:'세븐틴'}]},
   '아이린&슬기':{names:['아이린&슬기','레드벨벳 아이린&슬기','IRENE & SEULGI'],members:[{mko:'아이린',gko:'레드벨벳'},{mko:'슬기',gko:'레드벨벳'}]},
   'SM THE BALLAD':{names:['SM THE BALLAD','에스엠 더 발라드'],members:[{mko:'규현',gko:'슈퍼주니어'},{mko:'종현',gko:'샤이니'},{mko:'예성',gko:'슈퍼주니어'},{mko:'최강창민',gko:'동방신기'},{mko:'태연',gko:'소녀시대'},{mko:'첸',gko:'엑소'},{mko:'크리스탈',gko:'에프엑스'}]},
   // WayV 서브유닛 — 텐&양양(Ten & Yangyang) 음방 공동 활동(직캠 다수)
@@ -250,7 +250,9 @@ const _PROJECT_UNITS={
   // 1세대 그룹 서브유닛
   'jtL':{names:['jtL'],members:[{mko:'장우혁',gko:'H.O.T.'},{mko:'토니안',gko:'H.O.T.'},{mko:'이재원',gko:'H.O.T.'}]},
   'J-Walk':{names:['J-Walk','제이워크'],members:[{mko:'김재덕',gko:'젝스키스'},{mko:'장수원',gko:'젝스키스'}]},
-  '호우':{names:['호우'],members:[{mko:'손호영',gko:'god'},{mko:'김태우',gko:'god'}]},
+  // '호우'(한글)는 유닛 이름으로 쓰지 않는다(2026-10-30, Codex 검수25차) — '호우 주의'(폭우)·몬스타엑스 '호우~' 같은 일반 단어로 세븐틴 직캠 합본 등에
+  // 손호영·김태우가 붙었다. 영문 HOOW·HoooW(공식 표기)만 인정하고, 한글만 쓴 진짜 호우 영상은 멤버 실명(손호영·김태우)으로 잡힌다.
+  '호우':{names:['HOOW','HoooW'],members:[{mko:'손호영',gko:'god'},{mko:'김태우',gko:'god'}]},
   '신화 WDJ':{names:['신화 WDJ','WDJ'],members:[{mko:'이민우',gko:'신화'},{mko:'김동완',gko:'신화'},{mko:'전진',gko:'신화'}]},
   // 아스트로 서브유닛
   '문빈&산하':{names:['문빈&산하','Moon Bin & San Ha'],members:[{mko:'문빈',gko:'아스트로'},{mko:'윤산하',gko:'아스트로'}]},
@@ -268,7 +270,7 @@ const _PROJECT_UNITS={
   '빈챈현스':{names:['빈챈현스'],members:[{mko:'유니스',gko:'다이아'},{mko:'기희현',gko:'다이아'},{mko:'백예빈',gko:'다이아'},{mko:'정채연',gko:'다이아'}]},
   'L.U.B':{names:['L.U.B','엘유비'],members:[{mko:'주은',gko:'다이아'},{mko:'은채',gko:'다이아'}]},
   // 프리스틴 서브유닛
-  'PRISTIN V':{names:['PRISTIN V','프리스틴 V'],members:[{mko:'로아',gko:'프리스틴'},{mko:'은우',gko:'프리스틴'},{mko:'레나',gko:'프리스틴'},{mko:'주결경',gko:'프리스틴'}]},
+  'PRISTIN V':{names:['PRISTIN V','프리스틴 V'],members:[{mko:'임나영',gko:'프리스틴'},{mko:'로아',gko:'프리스틴'},{mko:'은우',gko:'프리스틴'},{mko:'레나',gko:'프리스틴'},{mko:'주결경',gko:'프리스틴'}]},
   // 포미닛 서브유닛
   '2YOON':{names:['2YOON','투윤'],members:[{mko:'허가윤',gko:'포미닛'},{mko:'전지윤',gko:'포미닛'}]},
   // 에이핑크 서브유닛
@@ -310,7 +312,7 @@ const _PROJECT_UNITS={
   'FIVE O ONE':{names:['FIVE O ONE','파이브 오 원'],members:[{mko:'김현중',gko:'SS501'},{mko:'허영생',gko:'SS501'},{mko:'김규종',gko:'SS501'}]},
   // 구구단 서브유닛
   '구구단 오구오구':{names:['구구단 오구오구','gugudan OGUOGU'],members:[{mko:'신보라',gko:'구구단'},{mko:'장소진',gko:'구구단'},{mko:'류셰닝',gko:'구구단'},{mko:'정미미',gko:'구구단'},{mko:'김세정',gko:'구구단'},{mko:'강미나',gko:'구구단'},{mko:'김나영',gko:'구구단'}]},
-  '구구단 세미나':{names:['구구단 세미나','gugudan SEMINA'],members:[{mko:'김세정',gko:'구구단'},{mko:'김나영',gko:'구구단'}]},
+  '구구단 세미나':{names:['구구단 세미나','gugudan SEMINA'],members:[{mko:'김세정',gko:'구구단'},{mko:'강미나',gko:'구구단'},{mko:'김나영',gko:'구구단'}]},
   // B.D.U — 빌드업 서바이벌 프로젝트 보이그룹(2024.06~2026.03). 워너원·UNB처럼 서바이벌 프로젝트 그룹이라 행성 있음(groups.json).
   // 행성 있는 프로젝트 그룹(B.D.U·UNB)은 멤버 gko를 전원 그 그룹으로 — 원소속(씨아이엑스 등)으로 두면 B.D.U 무대에서 승훈이
   // 게스트로 빠지고, '솔로'로 두면 "빛새온(솔로)" 같은 유령 태그가 붙었다(2026-10-14 실측 66건).
