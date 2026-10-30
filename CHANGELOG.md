@@ -6,7 +6,75 @@
 
 
 ## 2026-10-30 (Codex — 검수27차·개인캠 잔여와 제목 충돌)
-- **[진행중·읽기 전용] [CHANGELOG.md]** 25차 운영 정정86건과26차 인계는 중복 제외. 다중 멤버가 붙은 공개 직캠 표본에서 새 잔여·다른 그룹 동명이인·한영 제목 충돌을 검수. Claude의 코드 작업은 보존하고 코드/JSON/SQL/DB 쓰기 없이 근거와 정상 비교만 이 파일에 남김.
+- **[완료·범위/중복 방지] [CHANGELOG.md]** 공개·다중멤버·개인캠형 접두사 최신100행을 읽기 전용 하네스로 대조. 이전25차 정정86건과26차 후보는 신규 집계에서 제외. 제목 파서와 DB 집합 차이30행은 정확도/자동정정 성공수 아님(아래 마크·NCT지성 반례 포함). 대표 원본의 제목/공식 업로더·공개 카드 검색으로 교차검증, 전편 시청 아님. 앱/JSON/SQL/DB·수집/스윕 변경 없이 이 파일에만 기록.
+- **[이슈·퍼플키스 SWAN을 박지은으로 등록한 근본 데이터 오류] [artists.json a1150/a1151] [yt_channel_videos]** a1150=수안/en Suan, a1151=박지은/en Swan. 실제 공식 KBS `atgjmlQxEIk`·M2 `QMHVacn_zdA`의 제목은 한글 수안↔SWAN을 함께 명시하고, 정상 박지은 SBSKPOP ZOOM `yr0F_Qwj3go`는 박지은↔PARK JI EUN. 공식 PURPLE KISS `s5QpyTQ8UGQ` 투어 SWAN 클립 및 `8TJeLk8TUWc` HAPPY SWAN DAY도 제목/업로더 대조. 박지은 카드(`#m=박지은`, 그룹제약 없이 검색으로 열어 확인) SWAN 검색에 수안 DO REMI/Sweet Juice 개인캠 실제 노출. 한글 수안 제목은 [수안,박지은], 영문 SWAN만 적힌 제목은 박지은 단독으로도 저장되어 있음. 현재 파서도 수안+박지은을 재현하므로 DB만 정리하면 재발 가능. a1151 영문 표기와 a1150의 공식 활동명 매칭을 ID/그룹 문맥별로 정리하는 후속 필요, 크랙시의 실제 SWAN(a1758)이나 정상 박지은 인물/영상은 보존.
+- **[이슈·SWAN 확대 범위는223행 후보, 일괄 수안 치환 금지] [yt_channel_videos]** 조회 조건 `group_ko='퍼플키스' AND content_flag IS NULL AND title ~* '(SWAN|수안)'` 276행, 그중 members에 박지은 포함223(단독11), 대상223의 tags_manual=true1(`yzSemElyFls`, 나고은·채인·수안 Blueming 무대). 엄격한 접두사(입덕/MPD/페이스/얼빡/K-Fancam/UNFILTERED CAM)와 수안 제목이 맞는 아래15행은 우선 정정 검토, 전편 모두 대조한 것 아님. 전체223에는 실제 단체/협업·사람이 잠근 무대·아래 LOUD4행까지 섞였으므로 members 전체를 수안1명으로 바꾸거나 박지은 문자열을 전량 수안으로 치환하지 말 것. 영어만 있는 단독11행도 SWAN 본인 콘텐츠7/아래 LOUD4로 분기해야 함.
+- **[이슈·Black Swan 곡명 때문에 박지은 카드에 LOUD4개] [yt_channel_videos]** `fKMV1tgzI1E,Yfj9aAxygqc,vskgJn8D87I`는 각각 이수재·남윤승·조두현의 Black Swan 팀포커스, `0iVbJVllkXY`는 남윤승 소개 'A swan in born'. 네 행 모두 퍼플키스/[박지은]/공개/수동잠금false. 박지은 카드 LOUD 검색에4개 실제 노출. SBS 공식 원본 남윤승 소개 제목·업로더를 확인했고 나머지는 현재 제목·방송 설명으로 참가자/프로그램 문맥 대조(전편 참가자 식별 아님). 현재 제목 매처는 대표 fKM/0iV 모두 null이므로 새 파서가 못 잡는다고 기존 오귀속이 자동 정리되지는 않음. 수안으로 옮기지 말고 LOUD 참가자 신원/등록 여부와 보류·재귀속 정책을 별도로 판단.
+- **[이슈·박지은 탈퇴일도 그룹 종료일로 저장] [artists.json a1151.groups]** 퍼플키스 이력 left=2025.11.16은 당시 그룹 활동 종료일과 같지만 박지은 개인 탈퇴는 [RBW 공지 전문을 실은 2022.11.18 기사](https://www.soompi.com/article/1554858wpp/purple-kisss-agency-announces-park-ji-euns-departure-from-group)와 불일치. 기사에 연결된 공식 원문 https://cafe.daum.net/PURPLEKISS/Ah2A/169 는 이번 도구에서 열리지 않아 1차 원문 직접 확인은 미완료. 날짜 보정은 나머지6명의 종료일과 분리 검토, 그룹을 떠났다는 이유로 데뷔~탈퇴 전 정상 박지은 영상을 지우지 말 것.
+- **[이슈·NOWADAYS 현빈을 ALL(H)OURS 현빈으로] [yt_channel_videos Jxly0A-hFss] [groups.json 나우즈] [artists.json a1456/a1119]** STUDIO CHOOM 공식 'NOWADAYS HYEONBIN(현빈) OoWee' 개인캠이 올아워즈/[현빈,온], 올아워즈 현빈 카드 OoWee 검색에도 실제 노출. 설명은 나우어데이즈 현빈과 NOWADAYS 원본으로 명시. 실제 주인은 현재 나우즈 현빈(a1456), 올아워즈 현빈(a1119)/파우 현빈(a1462)/트라이비 현빈(a1683)과 별개. 로컬 나우즈 데이터에 한국어 altNames/formerNames 나우어데이즈는 있으나 영문 NOWADAYS는 없음, 해당 인물 영문 변형은 Hyunbin뿐(HYEONBIN 누락). 현재 파서는 무문맥 null, 잘못된 기존 selfGko=올아워즈를 주면 올아워즈 현빈으로 weak 유지→기존 주인 문맥을 신뢰한 재실행만으로 해결되지 않음. `nO3vCwkVMQM`은 반대로 ALL(H)OURS 공식 채널의 현빈×NOWADAYS 현빈 협업(설명 #HYUNBIN/#HYEONBIN)이라 primary 올아워즈를 무조건 나우즈로 옮기면 안 됨; 실제 게스트 누락은 별도 검토.
+- **[이슈·일반어 라↗️디오가 엑소 디오로] [yt_channel_videos AUdVO7_t1UE]** Mhz/MBC RADIO 공식 원본 'NCT 지성 비하인드 | 친한친구 방송반' 제목·업로더와 설명 #NCTDREAM/#지성 확인. DB 엑소/[디오]/공개/잠금false, 엑소 카드 '지성 비하인드' 검색에도 실제 노출. 현재 제목 파서도 엑소/디오 weak 재현. NCT 지성(a0031)과 도경수/디오를 분리해야 하며, 원본 설명의 실제 주인부터 보정 검토. `YWrEqWunyCM` TMI NEWS 마크&지성 예고편도 '알고 보니' 제목에 드림노트/[보니] weak를 재현하는 별도 후보; Mnet 원본 제목/업로더·말미 표본만 확인해 전체 예고편 속 보니 등장 부재까지 확정하지 않음.
+- **[이슈·제목/설명으로 멤버 확대된 개인캠 잔여] [yt_channel_videos]** 아래26행은 현재 다중멤버지만 제목이 특정 개인 촬영대상을 명시. 대표 STUDIO CHOOM NCT 지성 `2RuQPA_kWig`는 설명에 전체 MIX&MAX 마크&지성 무대 링크, 방지민 `Moiw5A7VqWQ`는 설명에 별도 코코 UNFILTERED 제목이 섞임→설명 속 공용 원본/다른 개인캠을 개인 영상의 모든 촬영대상으로 확장하지 않는 후속 검토. 이26은 제목/DB 대조 후보이며 모두 원본 전편 검증한 확정26건 아님. 정상 MIX&MAX 듀오 원본·단체캠·실제 동반출연 정보는 보존하고 개인캠 주인 필드와 분리.
+- **[이슈·유닛 개인캠 잔여12행] [yt_channel_videos] [shared.js _PROJECT_UNITS]** 아래26 밖에 셔누/형원 개인캠8개 `SU_9aLGWBT0,0W3XBoX7yiY,fAxdF86DF24,QKIePjs5Z6I,VpyK8fU_f24,3msojvpAxTo,LGBmjXJE_D8,tyQz9myh1Ag`가 둘 다 태그, 웨이션브이 샤오쥔 `oCWEVoOiRWA`/쿤 `Dmp8WSY9IX8`도 둘, 아스트로 진진 `1Bw1JbtxQkY`도 라키 포함, 정한 `a7UeivNNbvg`도 조슈아 포함. 공식 M2 형원 SU·KBS 정한 a7 제목/업로더 대조, 현재 파서는 이 유닛명 반복형을 여전히 두 명으로 반환. shared.js에 셔누X형원 유닛은 이미 있으므로 단순 유닛 신설로만 해결된다고 단정하지 말 것. 같은 무대 정상 단체 M2 `9Rrxnn-Itsk`는 제목 SHOWNU X HYUNGWON FanCam/둘 태그가 맞는 비교 사례(원본 제목·업로더 확인); 단체를 개인 한명으로 줄이지 않음.
+- **[보류·원본 한영 제목 충돌2개] [yt_channel_videos]** KBS 공식 `8PhRFkqvajs` 한글=조슈아 개인캠/영문=JEONGHAN Fancam, 설명 #JOSHUA/#조슈아; `NvWPIEEK2sI` 한글=골든차일드 김동현/영문=TAG Fancam, DB 설명=KIM_DONG_HYUN. 원본 페이지 제목에도 동일 충돌. 실제 촬영대상을 화면 자막/공식 해당 무대 자료로 확정하기 전 한 언어만 믿고 단일 멤버로 자동 정정하지 말 것. 둘 태그를 그대로 두는 게 정답이라는 뜻도 아님.
+- **[이슈·무조건 재매칭하면 악화되는 반례] [tools/matcher_harness.cjs]** 발행일4번째 인자로 실제 제목 비교: `2RuQPA_kWig` 무문맥→워너원 윤지성, selfGko=엔시티 드림→지성만. 현재 DB 엔시티 드림 주인은 맞으므로 윤지성으로 옮기면 안 됨. `KtzJev1oxUc,AFQl5kCafq4,aREBcdp2Owg`는 제목 MARK FanCam인데 무문맥→해찬만, 기존 엔시티127 문맥→마크+해찬. 공식 M2 Ktz 제목/설명은 마크 개인캠. 피처링/공동곡 정보와 촬영대상을 구분해야 하며 마크를 지우는 패치는 금지. 위100개 차분을 정답 목록으로 바로 SQL화하거나 weak 판정 전체를 숨기지 말 것.
+- **⏳ 덜 된 일 [명령·파일·판단 기준]** ① `SELECT id,title,group_ko,members,with_members,cover_of_members,cover_of_groups,tags_manual,cover_manual,content_flag,published_at FROM yt_channel_videos WHERE group_ko='퍼플키스' AND content_flag IS NULL AND title ~* '(SWAN|수안)' AND members @> ARRAY['박지은']`로223후보 최신값 재조회→수안 개인15·영어만7·LOUD4·실제 단체/협업·수동잠금1을 분리. artists.json a1150/a1151 공식 이름·그룹 이력부터 확정→필요 시 slim 재생성/정상 박지은·크랙시 SWAN 보존 검사 후 소량 DB 정정 계획(이번 승인 범위는 메모만). ② 아래26+유닛12는 원본 개인 촬영대상과 정상 단체 비교 후 현재값 가드·백업·보존해야 할 실제 멤버를 갖춘 계획으로. ③ 현재 매처 `_m2ParseTitle(title,undefined,false,published_at)`와 기존 selfGko를 넣은 결과를 반드시 나란히 확인, 잘못된 DB 주인을 전제하면 고정되는 현빈/디오와 반대로 문맥을 잃으면 틀리는 NCT지성/마크를 회귀 비교. 한영 제목 충돌2개는 수동 확인으로 남김. 이번 코드/JSON/SQL/DB 수정·수집기/매처 일괄 실행 없음.
+
+<details>
+<summary>SWAN 수안 개인캠 우선 검토 15행 — 현재 수안+박지은, 이번 정정 없음</summary>
+
+- `atgjmlQxEIk` — [K-Fancam] 퍼플키스 수안 직캠 'DOREMI'(PURPLE KISS SWAN Fancam) @뮤직뱅크(Music Bank) 250718
+- `k8P4Ok7OI80` — [K-Fancam] 퍼플키스 수안 직캠 'BBB' (PURPLE KISS SWAN Fancam) @뮤직뱅크(Music Bank) 240322
+- `rR5dNTIu27Q` — [K-Fancam] 퍼플키스 수안 직캠 'intro Save Me+ Sweet Juice' (PURPLE KISS SWAN Fancam) @MusicBank 230224
+- `0BHgTJICw7s` — [페이스캠4K] 퍼플키스 수안 'Intro : Save Me + Sweet Juice' (PURPLE KISS SWAN FaceCam) @SBS Inkigayo 230219
+- `BpuGbZdV7lo` — [K-Fancam] 퍼플키스 수안 직캠 'intro Save Me+ Sweet Juice' (PURPLE KISS SWAN Fancam) @MusicBank 230217
+- `QMHVacn_zdA` — [MPD직캠] 퍼플키스 수안 직캠 4K 'Sweet Juice' (PURPLE KISS SWAN FanCam) | @MCOUNTDOWN_2023.2.16
+- `ITf69h5dDwE` — [페이스캠4K] 퍼플키스 수안 'Nerdy' (PURPLE KISS SWAN FaceCam) @SBS Inkigayo 220731
+- `R0YqO5wSUjI` — [K-Fancam] 퍼플키스 수안 직캠 'NERDY' (PURPLE KISS SWAN Fancam) l @MusicBank 220729
+- `dPclBsZa7hc` — [MPD직캠] 퍼플키스 수안 직캠 4K 'Nerdy' (PURPLE KISS SWAN FanCam) | @MCOUNTDOWN_2022.7.28
+- `8P1Cbal1USg` — [얼빡직캠 4K] 퍼플키스 수안 'Pretty Psycho' (PURPLE KISS SWAN Facecam) @뮤직뱅크(Music Bank) 220429
+- `OKV5t82ChJ0` — [K-Fancam] 퍼플키스 수안 직캠 'Pretty Psycho' (PURPLE KISS SWAN Fancam) l @MusicBank 220429
+- `cn9goWEnTgQ` — [페이스캠4K] 퍼플키스 수안 'Pretty Psycho' (PURPLE KISS SWAN FaceCam)│@SBS Inkigayo_2022.04.24.
+- `XkEgSlXLwmU` — [K-Fancam] 퍼플키스 수안 직캠 'memeM (맴맴)' (PURPLE KISS SWAN Fancam) l @MusicBank 220415
+- `I1p6yNcpbc8` — [페이스캠4K] 퍼플키스 수안 '맴맴' (PURPLE KISS SWAN 'memeM' FaceCam)│@SBS Inkigayo_2022.04.10.
+- `XZeR6_tQQ50` — [MPD직캠] 퍼플키스 수안 직캠 4K 'Zombie' (PURPLE KISS SWAN FanCam) | @MCOUNTDOWN_2021.9.9
+
+</details>
+
+<details>
+<summary>개인 촬영대상과 다중 태그 대조 26행 — 원본 추가 검토 후보</summary>
+
+| 영상 ID | 그룹 | 제목 기준 촬영 대상 | 현재 members |
+|---|---|---|---|
+| `qAZgk5n9M7Q` | 세븐틴 | 승관 | 승관, 도겸 |
+| `fNCSXX6y-yg` | 세븐틴 | 도겸 | 도겸, 승관 |
+| `gh6dNfiaYj0` | 세븐틴 | 우지 | 우지, 호시 |
+| `OF-MawXpHic` | 세븐틴 | 우지 | 우지, 호시 |
+| `OAABSksCtVM` | 세븐틴 | 호시 | 호시, 우지 |
+| `Tw9Ys55-XZc` | 세븐틴 | 호시 | 호시, 우지 |
+| `oJ_PM7N-ouI` | 슈퍼주니어 | 은혁 | 은혁, 신동 |
+| `Moiw5A7VqWQ` | 이즈나 | 방지민 | 방지민, 코코 |
+| `2RuQPA_kWig` | 엔시티 드림 | 지성 | 지성, 마크 |
+| `OmmMcMzNQ_s` | 투모로우바이투게더 | 휴닝카이 | 휴닝카이, 연준 |
+| `H4tTSjkRKrc` | 씨스타 | 소유 | 보라, 소유 |
+| `WWV2RwNiAB8` | 씨스타 | 소유 | 보라, 소유 |
+| `tIMJknTbSFU` | 씨스타 | 소유 | 보라, 소유 |
+| `IoDvf0gsRis` | 더보이즈 | 큐 | 큐, 뉴 |
+| `6a7M3iOMTn0` | 더보이즈 | 선우 | 선우, 큐, 뉴 |
+| `SMfso9ah72Q` | 티오원 | 찬 | 찬, 재윤, 제이유, 렌타 |
+| `y3kHaSmbFfM` | 티오원 | 렌타 | 렌타, 찬, 재윤, 제이유 |
+| `iGHwACpwckY` | 있지 | 류진 | 류진, 예지 |
+| `rqzC5Lm1G6k` | 있지 | 예지 | 예지, 류진 |
+| `j6h7mDdXuo4` | 엔하이픈 | 정원 | 정원, 니키 |
+| `RdejEj_QHPg` | 엔하이픈 | 니키 | 니키, 정원 |
+| `P3XQsZ7jrDM` | 엘라스트 | 원혁 | 원혁, 최인 |
+| `lyoq6OIRGmA` | 더보이즈 | 주연 | 주연, 뉴 |
+| `eOIPJHVCPfc` | 프로미스나인 | 하영 | 하영, 새롬 |
+| `rfDlUzvAo_w` | 있지 | 채령 | 채령, 예지 |
+| `Jb5-jox7Tgw` | 엔하이픈 | 제이크 | 제이크, 제이 |
+
+</details>
+
+- **[완료·읽기 전용] [CHANGELOG.md]** 25차 운영 정정86건과26차 인계는 중복 제외. 다중 태그 직캠100행·SWAN 확대223후보·대표 공식 원본과 공개 카드 노출을 대조하고 위 근거/ID/정상 비교/보류 기준 기록. 이 작업의 변경은 CHANGELOG.md뿐이며 Claude의 코드 작업·기존 미추적 파일은 보존.
 
 ## 2026-10-30 (Claude Code — 인스타 뷰어 사진별 글·가로 사진 가운데·캐러셀 20장)
 - **[완료·배포] [tools/ig_business_discovery.mjs]** 장원영 배리 게시물(DfAHFJYD0wc)이 실제 20장인데 10장만 보였다 — 수집기가 캐러셀을 `slice(0,10)`, 본문을 600자에서 잘랐다. 20장(인스타 최대)·2,200자(인스타 최대)로. 다음 수집 회차(ig-stats 2시간 주기)부터 반영.
