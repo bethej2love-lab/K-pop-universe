@@ -11595,10 +11595,13 @@ async function _saveInstaPic(koName,groupKo,picUrl,sourceUrl){
   return!error;
 }
 // 멤버 카드를 열지 않고도(예: 애니버서리 스트립) 저장된 인스타 프로필 사진만 조회
-async function _fetchInstaPicUrl(koName,groupKo){
+async function _fetchInstaPicUrl(koName,groupKo,artistId){
   if(!sb)return null;
+  if(artistId&&!ARTISTS.some(a=>a.id===artistId&&a.name.ko===koName&&(!groupKo||_artistGroups(a).some(g=>g.ko===groupKo))))return null;
   // 공식 인스타 사진이 먼저(2026-10-19) — 검색·기념일·즐겨찾기 아바타도 카드와 같은 사진
-  const igPic=await _igPicFor(koName,groupKo);if(igPic)return igPic;
+  const igPic=await _igPicFor(koName,groupKo,artistId);if(igPic)return igPic;
+  // artist_pics의 이름/그룹 복합키로 구별할 수 없는 동명이인은 타인의 등록 사진을 공유하지 않는다.
+  if(koName&&ARTISTS.filter(a=>a.name.ko===koName&&(groupKo?_artistGroups(a).some(g=>g.ko===groupKo):!GROUPS[a.group?.ko])).length>1)return null;
   const cacheKey=_picKey(koName,groupKo);
   if(_instaPicPreloadP)await _instaPicPreloadP;
   if(_instaPicCache.has(cacheKey))return _instaPicCache.get(cacheKey);
@@ -11615,7 +11618,7 @@ async function _fetchArtistPicAnyGroup(a){
   const gs=_artistGroups(a).map(g=>g.ko);
   if(!gs.length)gs.push('');
   for(const gko of gs){
-    const url=await _fetchInstaPicUrl(a.name.ko,gko||'');
+    const url=await _fetchInstaPicUrl(a.name.ko,gko||'',a.id);
     if(url)return url;
   }
   return null;
@@ -11640,12 +11643,12 @@ function _igWarm(){
 }
 async function _igEntry(url){const h=_igHandle(url);if(!h)return null;await _igWarm();return _igMap.get(h)||null;}
 // 등록 사진(artist_pics)이 없을 때의 대체 — 이름+그룹으로 그 사람(그룹)의 인스타 링크를 찾아 공식 프로필 사진
-async function _igPicFor(koName,groupKo){
+async function _igPicFor(koName,groupKo,artistId){
   let url=null;
   if(!koName&&groupKo)url=GROUPS[groupKo]?.links?.instagram;
   else{
-    const a=ARTISTS.find(x=>x.name&&x.name.ko===koName&&(groupKo?_artistGroups(x).some(g=>g&&g.ko===groupKo):!GROUPS[x.group?.ko]));
-    url=a?.links?.instagram;
+    const candidates=ARTISTS.filter(x=>(!artistId||x.id===artistId)&&x.name&&x.name.ko===koName&&(groupKo?_artistGroups(x).some(g=>g&&g.ko===groupKo):!GROUPS[x.group?.ko]));
+    url=candidates.length===1?candidates[0].links?.instagram:null;
   }
   const e=url?await _igEntry(url):null;return e&&e.pic||null;
 }
