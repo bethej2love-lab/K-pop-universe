@@ -21,7 +21,7 @@ function conn(url){return new Promise((res,rej)=>{const ws=new WebSocket(url);le
 async function ev(c,x){const r=await c.send('Runtime.evaluate',{expression:x,returnByValue:true,awaitPromise:true});if(r.exceptionDetails)throw new Error(r.exceptionDetails.exception?.description||r.exceptionDetails.text);return r.result.value;}
 const STATE=`JSON.stringify((()=>{const ov=document.getElementById('gc-track-videos-overlay');const t=document.getElementById('gc-track-videos-title');
   const pick=document.querySelector('#gc-track-videos-tabs .gc-vid-pick .lbl');
-  return {open:!!(ov&&ov.classList.contains('open')),title:t?t.textContent.trim():'',member:pick?pick.textContent:'',items:document.querySelectorAll('#gc-track-videos-list .tv-sm-item,#gc-track-videos-list > *').length,gc:typeof _openGCko!=='undefined'?_openGCko:null,tt:typeof _openTArtist!=='undefined'&&_openTArtist?_openTArtist.name.ko:null};})())`;
+  return {open:!!(ov&&ov.classList.contains('open')),title:t?t.textContent.trim():'',member:pick?pick.textContent:'',items:document.querySelectorAll('#gc-track-videos-list .tvf-item').length,empty:document.querySelector('#gc-track-videos-list .tvf-empty')?.textContent||'',gc:typeof _openGCko!=='undefined'?_openGCko:null,tt:typeof _openTArtist!=='undefined'&&_openTArtist?_openTArtist.name.ko:null};})())`;
 (async()=>{
   if(!BROWSER){console.log('⏭️  브라우저를 못 찾음 — 스킵');process.exit(fail?1:0);}
   server.listen(PORT);
@@ -34,7 +34,7 @@ const STATE=`JSON.stringify((()=>{const ov=document.getElementById('gc-track-vid
     await c.send('Emulation.setDeviceMetricsOverride',{width:390,height:844,deviceScaleFactor:2,mobile:true});
     for(const [hash,want] of [['#g=클로즈유어아이즈&song=Drop That!',{title:/Drop That/i}],['#g=코르티스&m=성현&song=ACAI',{title:/ACAI/i,member:'성현'}]]){
       await c.send('Page.navigate',{url:`http://127.0.0.1:${PORT}/index.html${encodeURI(hash)}`});
-      let st={};for(let i=0;i<40;i++){await sleep(500);try{st=JSON.parse(await ev(c,STATE));if(st.open&&st.items>1&&(!want.member||st.member===want.member))break;}catch(e){}}
+      let st={};for(let i=0;i<80;i++){await sleep(500);try{st=JSON.parse(await ev(c,STATE));if(st.open&&st.items>1&&(!want.member||st.member===want.member))break;}catch(e){}}
       if(st.open&&want.title.test(st.title)&&st.items>1&&(!want.member||st.member===want.member))ok(`${hash} → 곡 패널 '${st.title}' 열림·영상 ${st.items}${want.member?` · 멤버 ${st.member}`:''}`);
       else bad(`${hash} → ${JSON.stringify(st)}`);
     }

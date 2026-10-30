@@ -42,7 +42,10 @@ async function ev(c,x){const r=await c.send('Runtime.evaluate',{expression:x,ret
       document.querySelector('#tv .gc-ch-item')?.click();await S(2500);res.cardLb=W();
       closeLightbox();await S(1000);res.cardStill=W();
       closeCards();await S(1200);res.allClosed=W();
+      // 비동기 선반이 그려지는 중의 이동을 폭 변경 탓으로 재지 않도록 먼저 렌더 큐를 기다린다.
+      for(let i=0;i<300&&(_feedBuildRunning||_feedBuildQ.length);i++)await S(100);
       const sc=_feedWideScroller();
+      res.feedBusy={running:_feedBuildRunning,queued:_feedBuildQ.length};
       if(sc){sc.scrollTop=1800;await S(600);
         const rr=sc.getBoundingClientRect();const a=document.elementFromPoint(rr.left+60,rr.top+24)?.closest('.feed-card,section,.feed-section,[id^="feed-"]');
         const off0=a?a.getBoundingClientRect().top-rr.top:0;
@@ -58,7 +61,7 @@ async function ev(c,x){const r=await c.send('Runtime.evaluate',{expression:x,ret
     chk('영상 재생',r.lb,false);chk('재생 닫기',r.lbClosed,true);
     chk('목록 창 열기',r.list,false);chk('목록 창 닫기',r.listClosed,true);
     chk('카드+재생',r.cardLb,false);chk('재생만 닫기(카드 남음)',r.cardStill,false);chk('카드까지 닫기',r.allClosed,true);
-    if(r.anchorNarrow!=null&&Math.abs(r.anchorNarrow)<=4&&Math.abs(r.anchorBack)<=4)ok(`폭이 바뀌어도 보던 자리 유지(좁힘 ${r.anchorNarrow}px · 되넓힘 ${r.anchorBack}px)`);else bad('보던 자리 '+JSON.stringify([r.anchorNarrow,r.anchorBack]));
+    if(r.anchorNarrow!=null&&Math.abs(r.anchorNarrow)<=4&&Math.abs(r.anchorBack)<=4)ok(`폭이 바뀌어도 보던 자리 유지(좁힘 ${r.anchorNarrow}px · 되넓힘 ${r.anchorBack}px)`);else bad('보던 자리 '+JSON.stringify({narrow:r.anchorNarrow,back:r.anchorBack,busy:r.feedBusy}));
     if(r.feedClosed&&!r.feedClosed.wide&&!r.feedClosed.open)ok('나침반 닫으면 넓은 상태 해제');else bad('닫기 '+JSON.stringify(r.feedClosed));
     c.close();
   }catch(e){bad('예외: '+e.message);}

@@ -40,7 +40,9 @@ async function ev(c,x){const r=await c.send('Runtime.evaluate',{expression:x,ret
       const pickBtn=()=>document.querySelector('#feed-list-facets .fl-bar .gc-vid-pick');
       const sortBtn=()=>document.querySelector('#feed-list-facets .fl-bar .tvf-sort');
       const pickItems=async()=>{pickBtn().click();await S(400);const it=[...document.querySelectorAll('#vid-song-sheet-ov .vss-item .t')].map(x=>x.textContent);return {it,search:!!document.querySelector('#vid-song-sheet-ov .vss-search')};};
-      const pickFav=async()=>{const b=[...document.querySelectorAll('#vid-song-sheet-ov .vss-item')].find(x=>x.querySelector('.t').textContent===(currentLang==='ko'?'★ 즐겨찾기':'★ Favorites'));b&&b.click();await S(800);};
+      const pickFav=async()=>{const b=[...document.querySelectorAll('#vid-song-sheet-ov .vss-item')].find(x=>x.querySelector('.t').textContent===(currentLang==='ko'?'★ 즐겨찾기':'★ Favorites'));if(!b)throw new Error('즐겨찾기 선택 항목 없음');b.click();
+        for(let i=0;i<150;i++){await S(100);if(pickBtn()?.querySelector('.lbl').textContent===(currentLang==='ko'?'★ 즐겨찾기':'★ Favorites')&&!document.getElementById('feed-list-panel').classList.contains('fl-loading'))return;}
+        throw new Error('즐겨찾기 응답/렌더가 15초 안에 완료되지 않음');};
       const sub=()=>document.getElementById('feed-list-sub').textContent;
       const out={pickLbl:pickBtn()?.querySelector('.lbl').textContent,sort0:sortBtn()?.textContent,all:sub(),pillRows:rows().length};
       Object.assign(out,{sheet:await pickItems()});

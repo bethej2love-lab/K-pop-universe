@@ -3839,6 +3839,8 @@ async function _programFacetView(st,who,sort){
   const isKo=currentLang==='ko';
   const favGs=[...new Set([...favGroups,...[...favMembers].map(k=>String(k).split(':')[0])])].filter(Boolean);
   if(who==='fav'&&!favGs.length)who='all';
+  const request=st.viewRequest=(st.viewRequest||0)+1;
+  st.who=who;st.sort=sort; // 로딩 중에도 다음 선택은 마지막 의도를 기준으로 한다.
   const key=who+'|'+sort;
   let list=st.cache.get(key);
   if(!list){
@@ -3856,13 +3858,14 @@ async function _programFacetView(st,who,sort){
     }else list=got;
     st.cache.set(key,list);
   }
+  if(st.viewRequest!==request)return; // 늦게 끝난 이전 선택이 새 화면을 덮지 않는다.
   const whoOpts=[{v:'all',ko:'전체',en:'All'}];
   if(favGs.length)whoOpts.push({v:'fav',ko:'★ 즐겨찾기',en:'★ Favorites'});
   // 팀은 고르기 시트로(2026-10-30) — 물방울 줄엔 상위 20팀만 넣었지만 시트는 검색이 돼서 전부 넣는다. 개수는 처음 받은 최신 999개 기준
   st.tops.forEach(g=>whoOpts.push({v:g,ko:g,en:(GROUPS[g]&&GROUPS[g].en)||g,n:st.cnt&&st.cnt[g]}));
   const facets=[
-    {key:'who',ui:'pick',sel:who,options:whoOpts,onPick:v=>_programFacetView(st,v,sort)},
-    {key:'sort',ui:'sort',sel:sort,options:[{v:'latest',ko:'최신순',en:'Newest'},{v:'popular',ko:'조회수순',en:'Most viewed'}],onPick:v=>_programFacetView(st,who,v)},
+    {key:'who',ui:'pick',sel:who,options:whoOpts,onPick:v=>_programFacetView(st,v,st.sort||sort)},
+    {key:'sort',ui:'sort',sel:sort,options:[{v:'latest',ko:'최신순',en:'Newest'},{v:'popular',ko:'조회수순',en:'Most viewed'}],onPick:v=>_programFacetView(st,st.who||who,v)},
   ];
   _openFeedListOverlay(st.label,isKo?`영상 ${list.length}개`:`${list.length} videos`,st.toSongs(list),{facets});
 }
