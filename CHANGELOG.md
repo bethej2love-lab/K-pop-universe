@@ -10,7 +10,75 @@
 
 
 ## 2026-10-30 (Codex — 검수26차·원곡과 실제 출연 구분 후속)
-- **[진행중·읽기 전용] [CHANGELOG.md]** 사용자 요청으로 검수25차 86건은 Claude 정정 작업에 맡기고 중복 제외. 원곡자/실제 출연 연결과 다른 공개 콘텐츠의 정확성을 추가 검수하며 코드·JSON·SQL·DB 쓰기 없이 이 파일에만 근거와 후속 판단 기준 기록.
+- **[완료·실제 동반출연을 남기는 추가 비교] [yt_channel_videos]** `Gpv0zeOGqis` SF9 공식 'Crush 잊어버리지마(Feat. 태연) Cover by DAWON (Feat. 설현)'은 with 설현(에이오에이)/cover 태연(소녀시대)로 현재 정상 분리, 원본 제목·업로더 대조. 이 정상값을 feat 일괄 제거로 망가뜨리지 말 것. `_Y3uhUBAcnI` IVE 공식 BaddieChallenge는 안유진·키가 함께하는 첫 장면 확인→with 키(샤이니)는 보존하되 cover 키는 자기 곡 챌린지 오표시 검토. `gjSR9TgTzQE` OnlyOneOf 공식 seOul drift Challenge도 유정·키노2인 장면/제목 확인→with 키노 보존, title의 'Speed up'에 cover 스피드·멜로디데이/SPEED UP이 붙은 부분 검토. `V7oihd6y3dg` Mnet 공식 Nxde 직캠 모음 제목은 나나·도화·수윤·지한 실제 공연자4인 명시→with 찬미/김수윤/지한과 원곡 아이들은 보존 검토, cover_of_members의 김수윤/지한을 원곡자로 보는 건 별도 오류. 본인곡/실제 합동 무대를 원곡 배열 중복이라는 이유만으로 삭제하지 말 것.
+- **[이슈·원곡자 이름을 곡명에 저장] [yt_channel_videos]** `jIwl9k4ZRmI` IDID 공식 '마크(MARK) - 프락치(Fraktsiya) (Feat. 이영지) Covered by PARK SEONGHYEON' 원본 제목·업로더 확인. primary 아이딧/[박성현]은 보존하되 cover_of_song='마크 (MARK)'는 곡명 프락치와 불일치, cover_of_members 이영지만 있어 주 아티스트 마크의 원곡 관계도 누락 검토. 태그가 비어 있던 원곡자에게 출연 with를 새로 붙이는 방식으로 고치지 말 것.
+- **⏳ HANA 후속 [파일·판단 기준]** 아래16행과 `pb1SbjOzifY,nWsCYW4G9UI,WeCTw-QLgyU` 최신값/잠금 재조회→실제 단체/개인/듀엣 촬영 범위부터 확인. HANA의 정식 등록 여부는 groups.json/PRINCIPLES.md의 한국어 음방 포함 기준·공식 멤버 명단 대조 후 사용자와 방향 결정. 등록 없이 동명이인4명의 with를 제거하는 정확성 정정과, HANA 본인 보류4행의 재귀속·공개 결정은 별도 단계. 실제 아일릿 모카 개인 영상/윤아·원희·민주·이로하 정상 개인캠8행 및 기존 단체8K 빈 members 보존. 제목의 MOMOKA 문자열만으로 부분일치가 원인이었다고 확정하지 말 것(현재 제목 파서는 이미 개선된 결과).
+- **[이슈·HANA 이름이 등록 동명이인4명으로 연결] [yt_channel_videos] [groups.json] [artists.json]** `nWsCYW4G9UI` KiiiKiii 공식 'Pop Off Pop Off with HANA JISOO MOMOKA'는 primary 키키/[지유]인데 with에 지수(블랙핑크)·서지수(러블리즈)·하나(피프티피프티)·신보라(신보라)4명이 잘못 붙음. 공식 원본 제목/업로더·설명 #JIYU 및 @HANA_BRAVE_Official·3인 장면 확인, 블랙핑크 지수 멤버 카드의 전체→Pop Off 검색에도 실제 노출 확인. 현재 groups 키/en에는 HANA 그룹 없음(솔로 HANA/신보라·피프티 하나와 구별). 현재 제목 파서는 블랙핑크를 primary로 잡아4명을 ambiguous로 반환하므로 그 결과를 그대로 적용하면 정상 지유까지 잃음. 원래 키키/지유 보존, HANA 소속 이름으로 등록 외 인물을 대신 연결한4개 with만 분리 검토.
+- **[이슈·HANA 모모카와 아일릿 모카 경계] [yt_channel_videos]** HANA+JISOO/MOMOKA 제목 최근40행 표본에서 아일릿 members=[모카]16행 발견(아래표). 단체 MV/음방/비하인드가 섞여 **16개 전부 개인 태그 오류 확정 아님**. 대표 `EL2lwHLePHc` 공식 Dance Practice는 원본 제목·ILLIT 업로더와4인이 춤추는 장면 확인, 모카 카드 I Got Your Back 검색에도 노출. `_Pk6xfju3l0` 공식 MV와 `-i5di_Tx7tM` Mnet 한국어 단체 무대 역시 현재 모카 단독 태그→범위 정정 우선 검토. `ykJ2xlYdCBQ`처럼 실제 MOKA & JISOO 제목은 모카 태그 정상일 수 있으므로 묶음 전체 members=[] 덮어쓰기 금지. 별도 `pb1SbjOzifY` 제목 YUNAH & MOMOKA인데 members=[윤아,모카]로 모모카를 모카로 오인한 후보, 공식 원본 제목/첫 윤아 장면 대조·윤아 카드 검색 노출은 정상(윤아 누락으로 기록하지 않음). 현재 파서는 단체3행 members=[], pb1→윤아만 반환하므로 일부는 예전 DB 태그 잔존 유형, 정확한 원인/출연 전원은 추가 검토.
+- **[완료·HANA 정상/보류 경계와 등록 검토 근거] [yt_channel_videos] [PRINCIPLES.md]** 정상 비교 아일릿 윤아/민주/원희/이로하 개인캠8개는 각 본인만, 단체8K `GFcUYXq0sSw`는 빈 members로 유지. 공식 M2 윤아 `4X14i6ebu14` 제목/업로더 확인. HANA 본인 개인캠 `2SZN3rVIfWo,yomDGDCVkiE,QoEjd_Rz-Vo,w5I_ygSq2CI`는 타그룹 귀속이 틀려도 이미 보류라 새 공개 오노출로 세지 않음. 뒤2개 공식 M2 원본은 HANA MOMOKA/JISOO라고 명시, Mnet `-i5di_Tx7tM` 원본 제목·설명은 Korean Ver./EP942/260820 방송으로 한국어 음악방송 협업 근거. HANA를 향후 등록 검토 후보로 올릴 수 있으나 전체 명단·공식 그룹/개인 신원·원칙 적용 확정 전 즉시 등록/보류 전량해제 금지. 협업 표기 HANA를 피프티 하나나 솔로 신보라로 대체하지 말 것. `WeCTw-QLgyU`는 제목 SAKURA+HONGEUNCHAE인데 현재 사쿠라만/현재 매처 둘 반환인 별도 누락 후보(원본 출연 장면 미확인).
+- **[완료·원곡 오표시 실제 UI 추가 확인] [yt_channel_videos]** 오메가엑스 카드 I Had Some Help 검색에서 `Jl2gXuWRJJU`에 '원곡: 김동현(에이비식스)' 실노출을 확인. 원본에 명시된 Post Malone/Morgan Wallen과 다르므로 메타데이터 비교에 그치지 않는 화면 오류 사례.
+
+<details>
+<summary>HANA 관련 아일릿 모카 단독 태그 16행 — 제목별 검토 후보, 일괄 제거 금지</summary>
+
+| 영상 ID | 현재 제목 | 상태 |
+|---|---|---|
+| `eYmGDQ1VjU8` | 글릿 여기 내가 있어🩵 l ‘I Got Your Back (Feat. JISOO, MOMOKA of HANA)’ 음악 방송 비하인드 l ILLIT (아일릿) [BEHIND-IT] | 공개 / members 모카 |
+| `blsnUII2KD4` | ♡#엔딩요정컬렉션🧚#아일릿 #ILLIT - I Got Your Back (Feat. JISOO, MOMOKA of HANA) (Korean Ver.)✨ #MCOUNTDOWN | 공개 / members 모카 |
+| `EL2lwHLePHc` | ILLIT (아일릿) 'I Got Your Back (Feat. JISOO, MOMOKA of HANA)' Dance Practice | 공개 / members 모카 |
+| `-i5di_Tx7tM` | 아일릿 - I Got Your Back(Feat. JISOO, MOMOKA of HANA) (Korean Ver.) #엠카운트다운 EP.942 ／ Mnet 260820 방송 | 공개 / members 모카 |
+| `R2HEJVwO0bE` | 𝟐𝟔𝟎𝟖𝟐𝟎 𝑶𝒖𝒕𝒇𝒊𝒕 𝑶𝒇 𝑻𝒉𝒆 𝑴𝑪𝑫 : 𝑶𝑶𝑻𝑴 with #ILLIT, #JISOO, #MOMOKA of HANA✌️#MCOUNTDOWN #엠카운트다운 #OOTM | 공개 / members 모카 |
+| `ykJ2xlYdCBQ` | MOKA & JISOO Got Your Back🎀🌹 #I_Got_Your_Back #ILLIT #아일릿 #MOKA #HANA | 공개 / members 모카 |
+| `jGvihirVVQg` | ILLIT ／ I Got Your Back (Feat. JISOO, MOMOKA of HANA) Korean Ver. ／ Special Video 📣 | 공개 / members 모카 |
+| `x3e2e2IOhmI` | ILLIT (아일릿) 'I Got Your Back (Feat. JISOO, MOMOKA of HANA)' @ MEZAMASHI WANGAN FES | 공개 / members 모카 |
+| `edJxw9I8j5k` | ILLIT (아일릿) 'I Got Your Back (Feat. JISOO, MOMOKA of HANA)' @ LuckyFes'26 | 공개 / members 모카 |
+| `pKGw85EABAk` | 저 됐어요, 록커 됐어요!!! l ‘I Got Your Back (Feat. JISOO, MOMOKA of HANA)’ 녹음 비하인드 l ILLIT (아일릿) [BEHIND-IT] | 공개 / members 모카 |
+| `XQWhr4F9vbo` | ILLIT & JISOO & MOMOKA Got Your Back🤝🏙️🦕 #I_Got_Your_Back #ILLIT #아일릿 #HANA | 공개 / members 모카 |
+| `YzSVnaHz2r8` | 마법소녀, 세상을 구하라✨ l ‘I Got Your Back (Feat. JISOO, MOMOKA of HANA)’ MV 비하인드 l ILLIT (아일릿) [BEHIND-IT] | 공개 / members 모카 |
+| `dp18Jb3cK8s` | ILLIT (아일릿) ‘I Got Your Back (Feat. JISOO, MOMOKA of HANA)’ @ PRESS START♥ | 공개 / members 모카 |
+| `GIN6QFoGYCM` | 'I Got Your Back (Feat. JISOO, MOMOKA of HANA) ' 🎀🌹#I_Got_Your_Back#PRESS_START_JAPAN#ILLIT#아일릿#HANA | 공개 / members 모카 |
+| `RnerBUsjaUM` | ILLIT & JISOO & MOMOKA Got Your Back🤝🎀🌹#I_Got_Your_Back #ILLIT #아일릿 #HANA | 공개 / members 모카 |
+| `_Pk6xfju3l0` | ILLIT (아일릿) 'I Got Your Back (Feat. JISOO, MOMOKA of HANA)' Official MV | 공개 / members 모카 |
+
+</details>
+
+- **[이슈·원곡 feat를 실제 게스트로 오인] [yt_channel_videos]** 신규4행: `ONyyfNq1UO8` 이정현 Skrr 커버→with 지젤(에스파), `Df1P2WiYSms` 다원 VIBE 커버→members 다원+유태양/with 지민(방탄소년단), `mi-Wj3jFLjg` 민준 Go! 커버→with 도겸(세븐틴), `sZV7NFhI0Q0` 원혁 관둬 커버→with 태용(엔시티127). 공식 EVNNE/SF9/NINE.i/E'LAST 원본 제목·업로더 및 DB 설명이 촬영/가창 주체와 원곡 크레딧을 구분함. 도겸 카드 전체→민준 검색에는 Go! 커버1개 노출도 확인(단, 다른 아티스트 커버 섹션의 정상 노출 자체와 잘못된 with 태그는 구분). 지젤·지민·태용·도겸의 원곡 관계는 실제 합동 출연과 분리하고, 다원 커버에서 유태양(SF9)과 원곡 태양(빅뱅)을 구별해야 함. 전편 출연 확인/실행 SQL 작성 아님.
+- **[이슈·원곡/출연 역할이 뒤바뀐 1theK3행] [yt_channel_videos]** `NiVRVDVhZbY` 이서 롤모델 커버 Preview는 primary 방탄소년단/with 이서/cover 이서+몬스타엑스, `vnwE2jIPgWI` 세은 커버는 primary 세븐틴/with 세은/cover 세은+블랙핑크, `uk9rO3KQgco` 환웅 커버는 primary 엔시티127/with 환웅/cover 환웅+에스파. 세 원본의 1theK Originals 제목·업로더 확인. 환웅 원본 펼친 설명은 Black Mamba vs Kick It 투표와 ONEUS 공식 풀버전 예고로, 환웅은 공연자이고 두 그룹이 커버 대상임. 현재 제목 하네스도 원곡 그룹을 primary로 반환(이서→몬스타엑스 strong, 세은→세븐틴 strong, 환웅→엔시티127 strong). primary를 실제 공연자에 맞추고 원곡 배열에 본인이 들어간 오류를 분리 검토하되 원곡 그룹 연결 자체까지 삭제하지 말 것.
+- **[이슈·Floral Sense 예성 영상4행이 윈터 주인] [yt_channel_videos]** `WfkOdlW8Va4,nOnwBLSDS9w,dy84rKkxEG0,GgbjDi0gtBk` 모두 primary 에스파/[윈터]. 앞3행은 예성을 with와 원곡에 동시 저장, 마지막 방송본은 예성 태그도 없음. 윈터 카드 Floral 검색에서4개 모두 실제 노출. SBS 공식 FullCam `nOnwBLSDS9w` 제목/업로더 및 첫 무대 장면은 예성+연주자, FaceCam 제목도 YESUNG 대상. 제목의 곡 크레딧 '(Feat. 윈터 of aespa)'를 촬영대상보다 먼저 보는 경로를 검토할 것. 전편의 윈터 등장 여부를 모두 확인한 것은 아니므로 부재 확정으로 적지 않되, 예성 개인캠을 윈터 개인캠처럼 귀속시키고 본인곡 라이브를 예성 커버로 표시하는 오류는 분리. 정상 MPD 예성 `qBxx2thi6AI,YmjFbAr-C-k` 및 실제 예성/려욱 듀엣 `a3-3iJpLOKc` 보존.
+- **[이슈·유스피어 본인곡에 스피드/게스트 원곡16행] [yt_channel_videos]** 공개 group_ko=유스피어 AND cover_of_groups @> ARRAY['스피드']는16행. 전부 ZOOM/SPEED_ZONE 제목, 실제 협업 상대가 with와 cover_of_members 양쪽에 중복(16명 관계). 공식 USPEER 원본 `03awIYsmtnE` 윤·서유, `GpnHypDJ9-g` 유빈·유스피어 및 정상 MV `7WSmAo7kSoo` 대조; 유빈 원본 첫 장면에 함께한 멤버들 확인. 유스피어 카드 SPEED_ZONE 검색에서 '원곡: 스피드' 실노출. groups.json의 SPEED ZONE(2025.06.04)/타이틀 ZOOM도 대조. tags_manual=true16행/cover_manual=false16행이므로 자동 태그 덮어쓰기 금지. 실제 with/수동 멤버는 보존하고 불필요한 cover 세 필드만 별도 판단할 대상.
+- **[이슈·자기곡/일반 문구 오탐2행] [yt_channel_videos]** `7FoKicIz_Jc` Apink 공식 정은지 DND챌린지는 primary 에이핑크/정은지는 맞지만 with·cover에 은지(브브걸), cover_group SS501, song 'Find (파인드)'까지 붙음. 원본 제목·업로더·첫 장면 및 설명 #정은지/#Apink/#DND 대조, 'Find your way'는 자기곡 챌린지 문구. 정상 공식 D N D MV `X6MAjL5LvuE` 원곡필드 빈 상태 보존. `ACqe3KrXhpo` CIX 공식 '포럽 챌린지 with 우주소녀 설아'는 실제 현석·설아가 같이 서 있는 원본 장면/제목 확인→with 설아는 보존; cover_song '곁(웹툰 막내황녀님 X 설아)'는 제목의 우주소녀가 곡 사전 별칭처럼 걸리는 경로로 재현돼 원곡 관계 재검토. 실제 챌린지 사용곡까지 이 검수에서 확정하지 않음.
+- **[이슈·시스템 밖 원곡을 동명 K-pop곡에 오귀속2행] [yt_channel_videos]** `m_Ns7lTLiS8` 키나 'BIG Naughty - MUSIC' 커버가 바다(S.E.S.)/Music, `Jl2gXuWRJJU` OX:N 'Post Malone - I Had Some Help (feat. Morgan Wallen)'이 김동현(에이비식스)/썸탈래 나랑(SOME). FIFTY FIFTY/OMEGA X 원본 제목·업로더 대조, DB 설명에도 명시된 원곡이 있음. 로컬 사전 해석기는 각각 MUSIC 동명/Some 부분을 잡고 externalArtist=true 후보를 재현. 미등록 원곡자를 등록된 다른 사람으로 대신 채우지 말 것. 실제 공연자/멤버 손실 없이 잘못된 원곡 세 필드만 정리 여부 판단.
+- **[이슈·실제 커버 feat 보존 비교2행] [yt_channel_videos]** `SHqot3nOYi0,SJbUq4RHXfM` 아스트로 공식 '바이 바이 ... Cover by MJ (Feat. YOON SAN-HA)'는 DB MJ만 있고 윤산하 누락 후보. 같은 곡의 쇼츠 `NVH6R8APhQE`는 MJ+윤산하로 정상 비교. 원본 두 제목/업로더와 긴 버전 첫 장면의2인 확인, Gift Clip 전편은 미확인. 제목 파서는 두 개 모두 윤산하만 반환하여 MJ까지 손실될 수 있음. 원곡 괄호의 이무진과 Cover by 뒤 실제 피처링 윤산하를 문맥별로 구분할 필요가 있으며 feat를 전역 삭제하면 이 정상 동반출연도 사라짐.
+- **[완료·재현 범위와 자동 실행 구분] [tools/matcher_harness.cjs] [tools/m2_harness.js] [admin.js _coverResolve·_coverHasCollabSignal·_coverRestoreSignal]** 실제 원제목+발행일로 읽기 전용 비교. 원곡 해석기는 `M= require('./tools/m2_harness').load(); M._coverBuildIndex([]); M._coverResolve(row)`로 **로컬 아티스트/디스코만 사용·실운영 차트 추가행 없이** 재현했으므로 전체 루틴 동일 결과/자동 적용으로 단정 금지. Skrr/VIBE 원곡 괄호 feat와 관둬 '선배님'이 collab/restore 신호로 잡혀 잘못된 with를 보존, 관둬는 추가로 FTISLAND 동명곡 후보도 제시. 반면 USPEER16·DND·Go!는 resolver null, v2 스윕의 if(!r)continue 경로라 '현재 매처가 덜 틀림=기존 DB가 자동 청소됨'이 아님. externalArtist 후보는 별도 _coverConfidence/검수큐 가드가 있어 이 결과만으로 자동 재오염을 단정하지 말 것. Claude 작업 중 소스 스냅샷 결과임.
+- **[이슈·비공개 원본이 공개 카드에 잔존5행] [yt_channel_videos]** 아래 상위12표본 중5개는 원본 YouTube가 '동영상을 재생할 수 없음 / 비공개 동영상입니다'이고 각 그룹 카드 정확 검색에도 해당 영상 노출: `0HSvBs73UXA` 블랙핑크 The Station(10 YEARS), `XAomU4u1BxE` 에이티즈 BAD Japanese TBS, `xzd24Ik62E0` 아일릿 I Got Your Back TBS, `nocqSj3bnmQ` 코르티스 REDRED TBS, `heItpRvGzVU` TXT Setsuna Hanabi CDTV. 모두 content_flag=null/unavailable_at 있음. 제목이 같은 정상 MV Reaction·다른 무대·쇼츠를 함께 제외하지 말 것.
+- **[완료·사용불가 표식=삭제 확정 아님] [yt_channel_videos]** content_flag IS NULL AND unavailable_at IS NOT NULL 전체1201행(조회시점), 조회수 상위12개를 실제 원본으로 대조한 결과5개 비공개·7개는 제목/공식 업로더/플레이어를 현재 열 수 있음. 정상 대조7개 `1NX1J6JdXwY,FqijFDKALg4,TqMBhhqMqQs,1nzhBnJHPjQ,1nlzudyh138,4jlxmuYjeQM,1QBGLDE0RAQ`. 전편 재생/YouTube API 복구 판정은 아님. 전체1201개를 비공개/깨진 링크로 보고 일괄 숨기거나 지우면 정상 영상 손실 위험. 표식 재확인과 실제 비공개 노출 제거를 별도 작업으로 계획.
+- **⏳ 덜 된 일 [파일·조회·판단 기준]** ① 아래 ID와 각 본문의 ID를 `SELECT id,title,group_ko,members,with_members,with_groups,cover_of_members,cover_of_groups,cover_of_song,tags_manual,cover_manual,content_flag,unavailable_at,published_at FROM yt_channel_videos WHERE id IN (...)` 재조회, 코드 작업 완료 후 소량 원곡/출연 역할 정정 계획. 유스피어 수동잠금과 실제 협업/예성 본인캠/원곡 피처링 관계 보존. ② tests/cover-resolve.test.js·tests/cover-cleanup.test.js·tests/song-credit-strip.test.js를 참고해 **원곡 괄호 feat vs Cover by 뒤 feat**, 선배님 소유격, 외부 원곡 동명/부분일치, 다중곡 커버의 공연자↔원곡 방향을 각각 비교. 이번 테스트 파일 수정/실행 스윕 없음. ③ 공개+unavailable 쿼리는 조회수순12표본을 시작점으로 비공개5개만 API/실제 플레이어 재확인→soft-hide 등 기존 운영 절차 검토, 열리는7개는 표식 복구 확인 대상으로 분리. 'null flag=항상 플레이 가능' 또는 'unavailable=항상 삭제' 둘 다 가정하지 말 것. 이번 코드/JSON/SQL/DB 정정 없음.
+
+<details>
+<summary>유스피어 원곡 오표시 후보 16행 — 실제 게스트는 보존</summary>
+
+| 영상 ID | 현재 with (보존 검토) | 현재 cover_of_members (잘못된 원곡 후보) |
+|---|---|---|
+| `03awIYsmtnE` | 윤(스테이씨) | 윤(스테이씨) |
+| `3o3-UD2XP3U` | 산들(비원에이포) | 산들(비원에이포) |
+| `5KGQB7IefC8` | 공찬(비원에이포) | 공찬(비원에이포) |
+| `3C1-gyXnbN8` | 신우(비원에이포) | 신우(비원에이포) |
+| `-8lzxu0qw4o` | 케이주(킥플립) | 케이주(킥플립) |
+| `DCeauZCNlPc` | 리이나(하이키) | 리이나(하이키) |
+| `cQiHnkiHL8A` | 최리(아르테미스) | 최리(아르테미스) |
+| `8b7gzW9WkB0` | 시윤(나우즈) | 시윤(나우즈) |
+| `FsqtcWE9nw8` | 이서(아이브) | 이서(아이브) |
+| `JK2j9qwcrqo` | 성화(에이티즈) | 성화(에이티즈) |
+| `TrQqCEhe3cQ` | 코코(이즈나) | 코코(이즈나) |
+| `YVN5ojqQDa0` | 도훈(투어스) | 도훈(투어스) |
+| `6rDxfyXEgmc` | 혜린(힛지스) | 혜린(힛지스) |
+| `GpnHypDJ9-g` | 유빈(오마이걸) | 유빈(오마이걸) |
+| `BHFLkMrJROg` | 도연(키라스) | 도연(키라스) |
+| `IRnP2QDbaV0` | 환웅(원어스) | 환웅(원어스) |
+
+</details>
+
+- **[완료·읽기 전용 검수] [CHANGELOG.md]** 검수25차 86건은 Claude 정정 작업에 맡기고 이번 신규 집계에서 제외. 원본30개 이상의 제목/공식 업로더와 대표 재생 장면, 공개 그룹·멤버 카드, 사용 불가 표식 상위12행을 대조(전편 시청 아님). 확인 오류·추가 검토 후보·정상 보존 사례를 구분해 이 파일에만 기록. 코드·JSON·SQL·DB 쓰기/수집기·스윕 실행 없음. Claude의 동시 변경 파일·커밋은 보존.
 
 ## 2026-10-30 (Claude Code — 그룹명 빗댐 제목 '출연 의심' 검수 큐)
 - **[완료·배포] [shared.js _parodyRefCue·_parodyRefCueFor] [admin.js _extBuildRows·_vmRenderVideoList] [kpop_universe.css] [tests/parody-ref.test.js]** 사용자 "50대 코르티스룩 #할명수 #박명수 #코르티스 — 코르티스는 안 나온다", "개그계 리센느처럼 '~계 그룹명'도". 제목만으론 출연/언급을 못 가르니 **자동 숨김 없이 검수 큐에 '출연 의심'으로만**(사용자 결정). 판정: ① 그룹명+룩/st/스타일/메이크업/코디/재질/짝퉁/따라하기/흉내/성대모사/닮은꼴/패러디(뒷말이 단어 끝 — "룩스 캔 킬"·"스타일리스트"·"StageMix" 제외) ② ~계(의) 그룹명(세계·가요계·연예계·아이돌계 등 제외) ③ 제2의 그룹명. 외부 동기화는 주인 채널·멤버가 잡힌 영상 제외하고 needs_review만 켬, 검수 탭 행에 배지. 실DB 후보 85,011건 재판정 → 34건(멤버 태깅·수동·무관/숨김 제외). 절반은 진짜 빗댐(트로트계 리센느·수학계 BTS·트롯계 블랙핑크·앨리스 메이크업·제2의 엔하이픈 등), 나머지는 그룹 자체 콘텐츠(갓세븐 '룩' 직캠·엔믹스 패러디 극장 등 — 옛 행은 source_tier가 비어 자체 채널을 못 가림) → 검수에서 '정상'으로 넘기면 됨.
