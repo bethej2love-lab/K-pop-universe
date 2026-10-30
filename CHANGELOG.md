@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 2026-10-30 (Claude Code — 검색 유입 확대 2차: 그룹 제목에 실제 멤버 이름 · 프로그램별 모음 페이지)
+- **[완료·배포(페이지는 CI 재생성)] [build_group_pages.js] [.github/workflows/rebuild-seo-pages.yml]** ① 그룹 제목(사용자 "'멤버·음방 1위 기록'이 적절한가, 멤버라는 말은 왜?"): "코르티스(CORTIS) 직캠·무대 모음 - 마틴·제임스·주훈·성현·건호" — 검색어를 맨 앞, 그룹명 한 번, 일반어 '멤버' 대신 현재 멤버 이름(활동 중·탈퇴 제외, 그 그룹 시절 활동명). 7명 이상은 "멤버 13명·음방 1위·투어"(세븐틴)로 줄이고 이름 전체는 설명 문구에. '기록' 삭제.
+  ② **프로그램별 모음**: 앱 _PROGRAM_COLLECTIONS(app.js)를 빌더가 그대로 읽어(앱 모아보기와 같은 키워드 기준) `p/{키}/` 30종("보이스캠 모음 - 아이돌 보이스캠 영상 518개", 조회수 순 48개 + 팀별 개수) + 그 프로그램에 영상 5개 이상인 팀 `p/{키}/{그룹}/` 746개("82메이저 잇츠라이브 모음 - 82메이저(82MAJOR) 잇츠라이브 영상 12개") × 2개 언어(18MB). 그룹 허브(g/)에 프로그램 링크, 사이트맵 종류 programs 추가(1,552), CI 커밋 경로에 p·en/p.
+  - 실DB 임시 작업본 빌드: 사이트맵 core 5,843·songs 11,634·member-songs 18,006·programs 1,552, static-links 8/8, 보이스캠 390px 캡처 확인.
+- **⏳ 다음** ⑤ 생년·데뷔연도 ⑥ 소속사 ⑦ 음방 1위 기록 ⑧ 앨범 ⑨ 작사·작곡. X 자동 게시(주간 순위 카드·음방 1위)는 사용자 X 계정·개발자 키 확인 후.
+
+
 ## 2026-10-30 (Claude Code — 검색 유입 확대 1차: 사이트맵 분할 · 그룹 "직캠·무대 모음" · 직캠 조회수 순위 페이지)
 - **[완료·배포(페이지는 CI 재생성)] [build_group_pages.js] [song-page.css v2] [tools/seo_extra.js] [.github/workflows/rebuild-seo-pages.yml] [tests/_sitemap.cjs·og-coverage·static-links·song-page-design]** 사용자 "검색 유입을 늘리게, 우리 정보로 잘 정리해 보여줄 수 있는 페이지는 다 만들자" — 합의한 순서 1~3.
   - ① **사이트맵 분할**: sitemap.xml = 목록(sitemapindex), `sitemaps/core.xml`(루트·허브·그룹·멤버·관계·순위)·`songs.xml`·`member-songs.xml`, 파일당 4만 넘으면 -2,-3. 구글 한도(파일당 5만)를 3만 6천에서 곧 넘을 참이었다. robots.txt·서치콘솔 주소는 sitemap.xml 그대로. CI 커밋 경로에 `sitemaps`·`rank`·`en/rank` 추가. 테스트는 공용 `tests/_sitemap.cjs`로 목록→조각까지 읽음. 빌드: core 5,843·songs 11,834·member-songs 18,456.

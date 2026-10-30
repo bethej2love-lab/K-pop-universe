@@ -363,15 +363,20 @@ groupKos.forEach(ko => {
     // 제목·설명은 실제 검색어에 맞춘다(2026-10-16) — '아이브(IVE) 멤버·음방 1위·직캠·투어 기록'. 설명엔 이 그룹만의 숫자(1위 N회·대상·최대 투어)
     const xg = SEO.groupExtra(ko, lang, EX, ST);
     const bits = isEn ? ['Members', ...xg.titleBits] : ['멤버', ...xg.titleBits];
+    // 현재 멤버 이름(2026-10-30 사용자 — '멤버'라는 일반어 대신 실제 이름이 검색에 걸린다). 6명 이하면 제목에, 넘으면 '멤버 N명'+설명에
+    const curMembers = members.filter(a => { const e = (a.groups && a.groups.length ? a.groups : [a.group]).find(g => g && g.ko === ko) || {}; return e.active !== false && !e.left && !(a.group.ko === ko && a.active === false); })
+      .map(a => { const e = (a.groups || []).find(g => g && g.ko === ko) || {}; return isEn ? (e.nameEn || a.name.en || a.name.ko) : (e.name || a.displayName || a.name.ko); });
+    const memTitle = curMembers.length && curMembers.length <= 6 ? curMembers.join('·') : [curMembers.length ? (isEn ? `${curMembers.length} members` : `멤버 ${curMembers.length}명`) : '', ...bits.filter(b => !['멤버', 'Members', '직캠', 'Fancams'].includes(b))].filter(Boolean).join(isEn ? ', ' : '·');
     const stageVids = groupStageVids(ko);
     const hasStage = stageVids.length >= GROUP_STAGE_MIN;
     const title = hasStage
-      ? (isEn ? `${en} Fancams & Stages - ${en}${ko !== en ? ` (${ko})` : ''} ${bits.join(', ')} | K-POP UNIVERSE` : `${ko} 직캠·무대 모음 - ${ko}${info.en && info.en !== ko ? `(${info.en})` : ''} ${bits.filter(b => b !== '직캠').join('·')} 기록 | K-POP UNIVERSE`)
+      // '코르티스(CORTIS) 직캠·무대 모음 - 멤버·음방 1위·투어'(2026-10-30 사용자 — 예전 '… - 코르티스(CORTIS) 멤버·음방 1위 기록'은 그룹명이 두 번·'기록'이 어색)
+      ? (isEn ? `${en}${ko !== en ? ` (${ko})` : ''} Fancams & Stages - ${memTitle} | K-POP UNIVERSE` : `${ko}${info.en && info.en !== ko ? `(${info.en})` : ''} 직캠·무대 모음 - ${memTitle} | K-POP UNIVERSE`)
       : isEn
       ? `${en}${ko !== en ? ` (${ko})` : ''} ${bits.join(', ')} | K-POP UNIVERSE`
       : `${ko}${info.en && info.en !== ko ? `(${info.en})` : ''} ${bits.join('·')} 기록 | K-POP UNIVERSE`;
     const factLine = xg.facts.length ? (isEn ? ' ' + xg.facts.join(', ') + '.' : ' ' + xg.facts.join(', ') + '.') : '';
-    const desc = (hasStage ? (isEn ? `${stageVids.length} ${en} fancams and stages, most viewed first. ` : `${ko} 직캠·무대 영상 ${stageVids.length}개를 조회수 순으로. `) : '') + (isEn
+    const desc = (hasStage ? (isEn ? `${stageVids.length} ${en} fancams and stages, most viewed first${curMembers.length > 6 ? ` (${curMembers.join(', ')})` : ''}. ` : `${ko} 직캠·무대 영상 ${stageVids.length}개를 조회수 순으로${curMembers.length > 6 ? `(${curMembers.join('·')})` : ''}. `) : '') + (isEn
       ? `${en}: members, debut ${info.debut || ''}, ${agencyEn(info.co) || ''}.${factLine} Fancams, stages and discography on K-POP UNIVERSE.`
       : `${ko} 멤버·데뷔일(${info.debut || '-'})·소속사(${info.co || '-'}).${factLine} 직캠·무대 영상과 디스코그래피를 K-POP UNIVERSE에서.`);
     const selfUrl = isEn ? enUrl : koUrl;
@@ -895,6 +900,10 @@ function hubPageHtml(lang, relLinks) {
 ${RANK_LINKS[lang].length ? `  <h2>${isEn ? 'Fancam rankings' : '직캠 조회수 순위'}</h2>
   <ul>
       ${RANK_LINKS[lang].map(l => `<li><a href="${l.href}">${escHtml(l.label)}</a></li>`).join('')}
+  </ul>
+` : ''}${PROGRAM_LINKS[lang].length ? `  <h2>${isEn ? 'By show & series' : '프로그램별 모음'}</h2>
+  <ul>
+      ${PROGRAM_LINKS[lang].map(l => `<li><a href="${l.href}">${escHtml(l.label)}</a></li>`).join('')}
   </ul>
 ` : ''}${relationHubSection(lang, relLinks)}
   <div class="lang-switch"><a href="${altUrl}">${isEn ? '한국어로 보기' : 'View in English'}</a></div>
@@ -1564,6 +1573,123 @@ function buildRankPages() {
   console.log(`직캠 순위 페이지 ${built.length}종 × 2개 언어 (개인 직캠 ${all.length}개 중)`);
 }
 
+// ── 프로그램별 모음 페이지(2026-10-30, 검색 유입 ④ — "보이스캠 직캠"·"잇츠라이브 코르티스"·"아이돌라디오 직캠") ────────────────────
+// 프로그램 목록은 앱의 _PROGRAM_COLLECTIONS를 app.js에서 그대로 읽는다(앱 모아보기와 같은 기준 — 두 벌로 갈리지 않게).
+// 영상은 곡 페이지와 같은 VIDS(쇼츠 제외·공개). 제목을 앱과 같이 NFKC+소문자로 맞춰 키워드 포함이면 그 프로그램.
+// 경로: p/{키}/ (프로그램 전체) · p/{키}/{그룹}/ (그 프로그램에 그 그룹 영상 PROGRAM_GROUP_MIN개 이상) + en/
+const PROGRAM_GROUP_MIN = 5;
+let PROGRAM_LINKS = { ko: [], en: [] };
+function loadPrograms() {
+  try {
+    const src = fs.readFileSync(path.join(ROOT, 'app.js'), 'utf8');
+    const a = src.indexOf('const _PROGRAM_COLLECTIONS=['); if (a < 0) return [];
+    const b = src.indexOf('\n];', a);
+    const vm = require('vm'); const ctx = {}; vm.createContext(ctx);
+    vm.runInContext(src.slice(a, b + 3).replace('const _PROGRAM_COLLECTIONS=', 'this.P='), ctx);
+    return Array.isArray(ctx.P) ? ctx.P : [];
+  } catch (e) { console.warn('[programs] 목록 읽기 실패:', e.message); return []; }
+}
+function programPagePath(key, gko, lang) { return `${lang === 'en' ? 'en/' : ''}p/${key}/${gko ? urlSafeKo(gko) + '/' : ''}`; }
+function buildProgramPages() {
+  const progs = loadPrograms();
+  const norm = t => String(t || '').normalize('NFKC').toLowerCase();
+  const hit = (p, t) => p.kw.some(k => t.includes(norm(k)));
+  const built = [];
+  for (const p of progs) {
+    const rows = [];
+    for (const gko of Object.keys(VIDS)) { if (!groups[gko]) continue; for (const v of VIDS[gko]) { const t = norm(v.title); if (hit(p, t)) rows.push({ v, gko }); } }
+    if (rows.length < 8) continue;
+    rows.sort((x, y) => (y.v.view_count || 0) - (x.v.view_count || 0));
+    const byG = new Map(); rows.forEach(r => { if (!byG.has(r.gko)) byG.set(r.gko, []); byG.get(r.gko).push(r); });
+    const teams = [...byG.entries()].sort((x, y) => y[1].length - x[1].length);
+    const subs = teams.filter(([, l]) => l.length >= PROGRAM_GROUP_MIN).map(([g]) => g);
+    built.push({ p, rows, teams, subs });
+  }
+  PROGRAM_LINKS = { ko: built.map(b => ({ href: `${SITE}/${programPagePath(b.p.key, null, 'ko')}`, label: `${b.p.label} 모음` })), en: built.map(b => ({ href: `${SITE}/${programPagePath(b.p.key, null, 'en')}`, label: `${b.p.en || b.p.label} collection` })) };
+  let nSub = 0;
+  for (const { p, rows, teams, subs } of built) {
+    const subSet = new Set(subs);
+    const render = (lang, gko) => {
+      const isEn = lang === 'en';
+      const pName = isEn ? (p.en || p.label) : p.label;
+      const list = gko ? rows.filter(r => r.gko === gko) : rows;
+      const gName = gko ? (isEn ? (groups[gko].en || gko) : gko) : '';
+      const gFull = gko ? (isEn ? gName : `${gko}${groups[gko].en && groups[gko].en !== gko ? `(${groups[gko].en})` : ''}`) : '';
+      const rel = programPagePath(p.key, gko, lang);
+      const selfUrl = `${SITE}/${rel}`, altUrl = `${SITE}/${programPagePath(p.key, gko, isEn ? 'ko' : 'en')}`, koUrl = `${SITE}/${programPagePath(p.key, gko, 'ko')}`;
+      const h1 = gko ? (isEn ? `${gName} × ${pName}` : `${gko} ${p.label} 모음`) : (isEn ? `${pName} — K-pop idol videos` : `${p.label} 모음`);
+      const title = gko
+        ? (isEn ? `${gName} ${pName} Videos (${list.length}) | K-POP UNIVERSE` : `${gko} ${p.label} 모음 - ${gFull} ${p.label} 영상 ${list.length}개 | K-POP UNIVERSE`)
+        : (isEn ? `${pName} — ${rows.length} K-pop Idol Videos | K-POP UNIVERSE` : `${p.label} 모음 - 아이돌 ${p.label} 영상 ${rows.length}개 | K-POP UNIVERSE`);
+      const desc = gko
+        ? (isEn ? `${list.length} ${pName} videos of ${gName}, most viewed first.` : `${gko}가 나온 ${p.label} 영상 ${list.length}개를 조회수 순으로 모았어요.`)
+        : (isEn ? `${rows.length} ${pName} videos of ${teams.length} K-pop groups, most viewed first.` : `아이돌 ${teams.length}팀의 ${p.label} 영상 ${rows.length}개를 조회수 순으로. 팀별로도 볼 수 있어요.`);
+      const top = list.slice(0, gko ? 36 : 48);
+      const cards = top.map(r => `<a class="card" href="https://www.youtube.com/watch?v=${r.v.id}" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/${r.v.id}/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">${escHtml(r.v.title)}</span><span class="card-y">${gko ? '' : escHtml(isEn ? (groups[r.gko].en || r.gko) : r.gko) + ' · '}${[r.v.published_at ? String(r.v.published_at).slice(0, 10).replace(/-/g, '.') : '', r.v.view_count ? (isEn ? `${SEO.fmtViews(r.v.view_count, true)} views` : `조회수 ${SEO.fmtViews(r.v.view_count, false)}`) : ''].filter(Boolean).join(' · ')}</span></a>`).join('\n    ');
+      const teamChips = gko ? '' : `
+  <h2>${isEn ? 'By group' : '팀별로 보기'}</h2>
+  <ul class="chips">
+    ${teams.slice(0, 60).map(([g, l]) => { const nm = isEn ? (groups[g].en || g) : g; return subSet.has(g) ? `<li><a href="${SITE}/${programPagePath(p.key, g, lang)}"><b>${escHtml(nm)}</b>${l.length}</a></li>` : `<li><b>${escHtml(nm)}</b>${l.length}</li>`; }).join('\n    ')}
+  </ul>`;
+      const back = gko ? `<div class="crumbs"><a href="${SITE}/${programPagePath(p.key, null, lang)}">${escHtml(isEn ? `${pName} collection` : `${p.label} 모음`)}</a> › <a href="${SITE}/${groupPagePath(gko, lang)}">${escHtml(gName)}</a></div>` : '';
+      const jsonLd = { '@context': 'https://schema.org', '@type': 'CollectionPage', name: h1, url: selfUrl, description: desc,
+        mainEntity: { '@type': 'ItemList', itemListElement: top.slice(0, 10).map((r, i) => ({ '@type': 'ListItem', position: i + 1, url: `https://www.youtube.com/watch?v=${r.v.id}`, name: r.v.title })) } };
+      return `<!DOCTYPE html>
+<html lang="${isEn ? 'en' : 'ko'}">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>${escHtml(title)}</title>
+<meta name="description" content="${escHtml(desc)}">
+<link rel="canonical" href="${selfUrl}">
+<link rel="alternate" hreflang="${isEn ? 'ko' : 'en'}" href="${altUrl}">
+<link rel="alternate" hreflang="${isEn ? 'en' : 'ko'}" href="${selfUrl}">
+<link rel="alternate" hreflang="x-default" href="${koUrl}">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="K-POP UNIVERSE">
+<meta property="og:title" content="${escHtml(h1)}">
+<meta property="og:description" content="${escHtml(desc)}">
+<meta property="og:url" content="${selfUrl}">
+<meta property="og:image" content="https://i.ytimg.com/vi/${list[0].v.id}/hqdefault.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="${SITE}/icons/icon-192.png" type="image/png">
+<link rel="preconnect" href="https://i.ytimg.com">
+<script type="application/ld+json">${JSON.stringify(jsonLd)}</script>
+<link rel="stylesheet" href="${SITE}/song-page.css?v=${SONG_CSS_V}">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-Z5NTV6X3YF"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-Z5NTV6X3YF');document.addEventListener('DOMContentLoaded',function(){gtag('event','seo_land',{entity_name:${JSON.stringify(h1)},page_type:'${gko ? 'program_group' : 'program'}'});});</script>
+</head>
+<body>
+<div class="wrap">
+  <a class="brand" href="${SITE}/">K-POP UNIVERSE</a>
+  <h1 class="rank-h1">${escHtml(h1)}</h1>
+  ${back}
+  <p class="lead">${escHtml(desc)}</p>
+  <div class="grid">
+    ${cards}
+  </div>
+  ${list.length > top.length ? `<p class="note">${isEn ? `Top ${top.length} of ${list.length} videos` : `영상 ${list.length}개 중 상위 ${top.length}개`}</p>` : ''}
+  ${teamChips}
+  <div class="lang-switch"><a href="${altUrl}">${isEn ? '한국어로 보기' : 'View in English'}</a></div>
+  <div class="cta-dock"><a class="cta" href="${SITE}/${gko ? `#g=${hashEsc(gko)}` : ''}">${isEn ? 'Explore the K-POP UNIVERSE →' : (gko ? `${escHtml(gko)} 영상 아카이브 보기 →` : 'K-POP UNIVERSE에서 더 보기 →')}</a></div>
+</div>
+</body>
+</html>
+`;
+    };
+    for (const gko of [null, ...subs]) {
+      for (const lang of ['ko', 'en']) {
+        const rel = programPagePath(p.key, gko, lang);
+        fs.mkdirSync(path.join(ROOT, rel), { recursive: true });
+        fs.writeFileSync(path.join(ROOT, rel, 'index.html'), render(lang, gko));
+        pages.push({ loc: `${SITE}/${rel}`, priority: gko ? '0.5' : '0.7' });
+      }
+      if (gko) nSub++;
+    }
+  }
+  console.log(`프로그램 모음 페이지 ${built.length}종 + 프로그램×그룹 ${nSub}개 × 2개 언어`);
+}
+
 (async () => {
   // 1) DB 보강(음방 1위·인기 직캠) → 2) 그룹·멤버 페이지. DB가 안 되면(회사망 등) 정적 정보만으로 만든다.
   try {
@@ -1586,6 +1712,7 @@ function buildRankPages() {
   writeSoloDisambigPages();
   buildSongPages();
   buildRankPages();
+  buildProgramPages();
   console.log(`곡 페이지 ${songPageCount}곡 · 멤버×곡 페이지 ${memberSongPageCount}개 × 2개 언어`);
   let relPages = [], hubLinks = { ko: [], en: [] };
   try {
@@ -1616,6 +1743,7 @@ function buildRankPages() {
     const p = decodeURI(loc.slice(SITE.length + 1));
     if (/^(en\/)?g\/[^/]+\/[^/]+\/s\/[^/]+\/$/.test(p)) return 'member-songs';
     if (/^(en\/)?g\/[^/]+\/s\/[^/]+\/$/.test(p)) return 'songs';
+    if (/^(en\/)?p\//.test(p)) return 'programs';
     return 'core';
   };
   const SM_MAX = 40000;
@@ -1625,7 +1753,7 @@ function buildRankPages() {
   fs.rmSync(smDir, { recursive: true, force: true }); // 지난 빌드의 조각(개수가 줄었을 때 남는 -3 등) 정리
   fs.mkdirSync(smDir, { recursive: true });
   const smFiles = [];
-  for (const k of ['core', 'songs', 'member-songs']) {
+  for (const k of ['core', 'songs', 'member-songs', 'programs']) {
     const list = smBuckets[k] || [];
     for (let i = 0; i * SM_MAX < list.length; i++) {
       const name = `${k}${i ? '-' + (i + 1) : ''}.xml`;
