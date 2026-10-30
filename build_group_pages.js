@@ -1640,7 +1640,7 @@ function buildProgramPages() {
         ? (isEn ? `${gName} ${pName} Videos (${list.length}) | K-POP UNIVERSE` : `${gko} ${p.label} 모음 - ${gFull} ${p.label} 영상 ${list.length}개 | K-POP UNIVERSE`)
         : (isEn ? `${pName} — ${rows.length} K-pop Idol Videos | K-POP UNIVERSE` : `${p.label} 모음 - 아이돌 ${p.label} 영상 ${rows.length}개 | K-POP UNIVERSE`);
       const desc = gko
-        ? (isEn ? `${list.length} ${pName} videos of ${gName}, most viewed first.` : `${gko}가 나온 ${p.label} 영상 ${list.length}개를 조회수 순으로 모았어요.`)
+        ? (isEn ? `${list.length} ${pName} videos of ${gName}, most viewed first.` : `${gko}${josa(gko, '이/가')} 나온 ${p.label} 영상 ${list.length}개를 조회수 순으로 모았어요.`)
         : (isEn ? `${rows.length} ${pName} videos of ${teams.length} K-pop groups, most viewed first.` : `아이돌 ${teams.length}팀의 ${p.label} 영상 ${rows.length}개를 조회수 순으로. 팀별로도 볼 수 있어요.`);
       const top = list.slice(0, gko ? 36 : 48);
       const cards = top.map(r => `<a class="card" href="https://www.youtube.com/watch?v=${r.v.id}" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/${r.v.id}/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">${escHtml(r.v.title)}</span><span class="card-y">${gko ? '' : escHtml(isEn ? (groups[r.gko].en || r.gko) : r.gko) + ' · '}${[r.v.published_at ? String(r.v.published_at).slice(0, 10).replace(/-/g, '.') : '', r.v.view_count ? (isEn ? `${SEO.fmtViews(r.v.view_count, true)} views` : `조회수 ${SEO.fmtViews(r.v.view_count, false)}`) : ''].filter(Boolean).join(' · ')}</span></a>`).join('\n    ');
