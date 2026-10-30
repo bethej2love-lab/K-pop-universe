@@ -26,7 +26,7 @@ need(/\.card-th\{[^}]*display:block[^}]*aspect-ratio:16\/9/.test(css) && /\.face
 // ④ 멤버 페이지 '성현 직캠 모음'(2026-10-30): 개인 직캠 MEMBER_FANCAM_MIN개 이상이면 제목 맨 앞 '{이름} 직캠 모음·프로필 - {그룹} {이름}', 맨 위 썸네일 그리드
 need(/const MEMBER_FANCAM_MIN = \d+;/.test(b) && b.includes('function memberFancams(a, gko)') && b.includes('직캠 모음·프로필 - ') && b.includes('mf-grid') && ex.includes('.mf-grid{'), '④ 멤버 페이지 직캠 모음 제목·그리드');
 // ⑤ 그룹 직캠·무대 모음·직캠 순위 페이지·사이트맵 분할(2026-10-30)
-need(b.includes('function groupStageVids(gko)') && b.includes("직캠·무대 모음 - ${bits") && !b.includes("join('·')} 기록 | K-POP UNIVERSE`)"), '⑤ 그룹 페이지 "코르티스(CORTIS) 직캠·무대 모음 - 멤버·…"');
+need(b.includes('function groupStageVids(gko)') && b.includes('직캠·무대 모음 - ${memTitle}') && b.includes('const curMembers = members.filter('), '⑤ 그룹 페이지 "코르티스(CORTIS) 직캠·무대 모음 - 마틴·제임스…"(6명 이하 이름·넘으면 멤버 N명)');
 need(b.includes('function buildRankPages()') && b.includes('buildRankPages();') && b.includes('rank/fancam/') && css.includes('.rank-n{'), '⑤ 직캠 조회수 순위 페이지');
 need(b.includes('<sitemapindex') && b.includes('sitemaps/') && b.includes('const SM_MAX = 40000;'), '⑤ 사이트맵 목록+분할(파일당 4만)');
 const wf = fs.readFileSync(path.join(ROOT, '.github/workflows/rebuild-seo-pages.yml'), 'utf8');
