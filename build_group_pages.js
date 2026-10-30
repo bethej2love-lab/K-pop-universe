@@ -504,6 +504,8 @@ groupKos.forEach(ko => {
 let memberPageCount = 0;
 // 같은 해 태어난 현역 아이돌(멤버 페이지 내부 링크용) — 연도별 목록을 한 번만 만든다
 const byBirthYear = {};
+const bornAllCount = {}; // 생년 페이지가 있는 해(전체 5명 이상)인지 — 멤버 페이지 '2009년생 아이돌' 제목을 그 페이지 링크로(2026-10-30)
+artists.forEach(x => { const y = String(x.bday || '').slice(0, 4); bornAllCount[y] = (bornAllCount[y] || 0) + 1; });
 artists.forEach(x => { const y = String(x.bday || '').slice(0, 4); if (/^\d{4}$/.test(y) && x.active !== false) (byBirthYear[y] = byBirthYear[y] || []).push(x); });
 function buildMemberPages() {
 artists.forEach(a => {
@@ -712,7 +714,7 @@ artists.forEach(a => {
   ${memberDiscogHtml(lang)}
   ${linksHtml(lang)}
   ${(() => { const y = String(a.bday || '').slice(0, 4); const peers = (byBirthYear[y] || []).filter(x => x !== a && x.name.ko !== ko).sort((p, q) => (+(groups[q.group.ko]?.pri || 0)) - (+(groups[p.group.ko]?.pri || 0))).slice(0, 10); return peers.length ? `
-    <h2>${isEn ? `Other idols born in ${y}` : `${y}년생 아이돌`}</h2>
+    <h2>${(bornAllCount[y] || 0) >= 5 ? `<a href="${SITE}/${yearPagePath('born', y, lang)}">${isEn ? `Other idols born in ${y}` : `${y}년생 아이돌`} ›</a>` : (isEn ? `Other idols born in ${y}` : `${y}년생 아이돌`)}</h2>
     <ul class="member-list rel">
       ${peers.map(p => `<li><a href="${SITE}/${memberPagePath(p, lang)}">${escHtml(isEn ? (p.name.en || p.name.ko) : p.name.ko)}</a>${groups[p.group.ko] ? ` <span class="tag">${escHtml(isEn ? (groups[p.group.ko].en || p.group.ko) : p.group.ko)}</span>` : ''}</li>`).join('\n      ')}
     </ul>` : ''; })()}
@@ -900,6 +902,14 @@ function hubPageHtml(lang, relLinks) {
 ${RANK_LINKS[lang].length ? `  <h2>${isEn ? 'Fancam rankings' : '직캠 조회수 순위'}</h2>
   <ul>
       ${RANK_LINKS[lang].map(l => `<li><a href="${l.href}">${escHtml(l.label)}</a></li>`).join('')}
+  </ul>
+` : ''}${YEAR_LINKS.born.length ? `  <h2>${isEn ? 'Idols by birth year' : '생년별 아이돌'}</h2>
+  <ul>
+      ${YEAR_LINKS.born.slice().reverse().map(y => `<li><a href="${SITE}/${yearPagePath('born', y, lang)}">${isEn ? `Born in ${y}` : `${y}년생`}</a></li>`).join('')}
+  </ul>
+  <h2>${isEn ? 'Groups by debut year' : '데뷔연도별 그룹'}</h2>
+  <ul>
+      ${YEAR_LINKS.debut.slice().reverse().map(y => `<li><a href="${SITE}/${yearPagePath('debut', y, lang)}">${isEn ? `Debuted ${y}` : `${y}년 데뷔`}</a></li>`).join('')}
   </ul>
 ` : ''}${PROGRAM_LINKS[lang].length ? `  <h2>${isEn ? 'By show & series' : '프로그램별 모음'}</h2>
   <ul>
@@ -1335,7 +1345,7 @@ function memberFaceUrl(a, gko) {
   return id ? ytThumb(id, 'mqdefault') : null;
 }
 // 스타일은 저장소의 song-page.css 한 파일(페이지마다 넣으면 3만 쪽 × 5KB) — 바꾸면 SONG_CSS_V를 올릴 것
-const SONG_CSS_V = 2;
+const SONG_CSS_V = 3;
 function songLikePageHtml({ gko, info, s, lang, others, member }) {
   const credit = (arr) => (arr || []).map(x => Array.isArray(x) ? x[0] : x).filter(Boolean);
   const isEn = lang === 'en';
@@ -1690,6 +1700,94 @@ function buildProgramPages() {
   console.log(`프로그램 모음 페이지 ${built.length}종 + 프로그램×그룹 ${nSub}개 × 2개 언어`);
 }
 
+// ── 생년·데뷔연도 페이지(2026-10-30, 검색 유입 ⑤ — "2009년생 아이돌"·"2025년 데뷔 아이돌") ─────────────────────────────────
+// idols/born/{년}/ — 그 해 태어난 아이돌(그룹 소속·솔로) 얼굴 카드 → 각 멤버 페이지(직캠 모음). 5명 이상인 해만.
+// idols/debut/{년}/ — 그 해 데뷔한 그룹 카드 → 그룹 페이지(직캠·무대 모음). 3팀 이상인 해만.
+let YEAR_LINKS = { born: [], debut: [] };
+function yearPagePath(kind, y, lang) { return `${lang === 'en' ? 'en/' : ''}idols/${kind}/${y}/`; }
+function buildYearPages() {
+  const gPri = gko => +(groups[gko] && groups[gko].pri || 0);
+  const born = {}, debut = {};
+  artists.forEach(a => { const y = String(a.bday || '').slice(0, 4); if (/^(19[7-9]\d|20[0-2]\d)$/.test(y)) (born[y] = born[y] || []).push(a); });
+  groupKos.forEach(g => { const y = String(groups[g].debut || '').slice(0, 4); if (/^(19[89]\d|20[0-2]\d)$/.test(y)) (debut[y] = debut[y] || []).push(g); });
+  const bornYs = Object.keys(born).filter(y => born[y].length >= 5).sort();
+  const debutYs = Object.keys(debut).filter(y => debut[y].length >= 3).sort();
+  YEAR_LINKS = { born: bornYs, debut: debutYs };
+  const page = (lang, kind, y) => {
+    const isEn = lang === 'en';
+    const rel = yearPagePath(kind, y, lang);
+    const selfUrl = `${SITE}/${rel}`, altUrl = `${SITE}/${yearPagePath(kind, y, isEn ? 'ko' : 'en')}`, koUrl = `${SITE}/${yearPagePath(kind, y, 'ko')}`;
+    let h1, title, desc, cards, n;
+    if (kind === 'born') {
+      const list = born[y].slice().sort((p, q) => (q.active !== false) - (p.active !== false) || gPri(q.group.ko) - gPri(p.group.ko) || String(p.bday).localeCompare(String(q.bday)));
+      n = list.length;
+      const label = a => { const g = groups[a.group.ko]; const nm = isEn ? (a.name.en || a.name.ko) : (a.displayName || a.name.ko); return { nm, gn: g ? (isEn ? (g.en || a.group.ko) : a.group.ko) : (isEn ? 'Solo' : '솔로') }; };
+      const top = list.slice(0, 6).map(a => { const l = label(a); return isEn ? `${l.nm} (${l.gn})` : `${l.gn} ${l.nm}`; });
+      h1 = isEn ? `K-pop idols born in ${y}` : `${y}년생 아이돌`;
+      title = isEn ? `K-pop Idols Born in ${y} — ${n} idols incl. ${top.slice(0, 3).join(', ')} | K-POP UNIVERSE` : `${y}년생 아이돌 - ${top.slice(0, 3).join('·')} 등 ${n}명 | K-POP UNIVERSE`;
+      desc = isEn ? `${n} K-pop idols born in ${y}: ${top.join(', ')} and more. Birthdays, groups and fancams.` : `${y}년에 태어난 아이돌 ${n}명 — ${top.join(', ')} 등. 생일·소속 그룹·직캠 모음으로 바로 가요.`;
+      cards = list.map(a => { const l = label(a); const gk = groups[a.group.ko] ? a.group.ko : null; const img = memberFaceUrl(a, gk || a.group.ko);
+        return `<a class="face" href="${SITE}/${memberPagePath(a, lang)}"><span class="face-img">${img ? `<img src="${img}" alt="${escHtml(l.nm)}" loading="lazy">` : ''}</span><span class="face-nm">${escHtml(l.nm)}</span><span class="face-n">${escHtml(l.gn)} · ${escHtml(String(a.bday).slice(5).replace('.', '/'))}</span></a>`; }).join('\n    ');
+    } else {
+      const list = debut[y].slice().sort((p, q) => gPri(q) - gPri(p) || String(groups[p].debut).localeCompare(String(groups[q].debut)));
+      n = list.length;
+      const nm = g => isEn ? (groups[g].en || g) : g;
+      h1 = isEn ? `K-pop groups that debuted in ${y}` : `${y}년 데뷔 아이돌 그룹`;
+      title = isEn ? `K-pop Groups Debuted in ${y} — ${list.slice(0, 3).map(nm).join(', ')} and more | K-POP UNIVERSE` : `${y}년 데뷔 아이돌 - ${list.slice(0, 4).map(nm).join('·')} 등 ${n}팀 | K-POP UNIVERSE`;
+      desc = isEn ? `${n} K-pop groups that debuted in ${y}: ${list.slice(0, 8).map(nm).join(', ')}. Debut dates, members and fancams.` : `${y}년에 데뷔한 아이돌 그룹 ${n}팀 — ${list.slice(0, 8).map(nm).join(', ')}. 데뷔일·멤버·직캠 모음.`;
+      cards = list.map(g => { const t = OG_THUMBS.groups && OG_THUMBS.groups[g]; const id = t && (String(t).match(/\/vi\/([^/]+)\//) || [])[1];
+        return `<a class="sp-tile" href="${SITE}/${groupPagePath(g, lang)}">${id ? `<img src="https://i.ytimg.com/vi/${id}/mqdefault.jpg" alt="" loading="lazy" style="aspect-ratio:16/9">` : '<span class="sp-tile-ph" style="aspect-ratio:16/9"></span>'}<span class="sp-tile-t">${escHtml(nm(g))}</span><span class="sp-tile-n">${escHtml(String(groups[g].debut || ''))}</span></a>`; }).join('\n    ');
+    }
+    const ys = kind === 'born' ? bornYs : debutYs;
+    const tabs = ys.slice().reverse().map(o => o === y ? `<li class="on">${o}</li>` : `<li><a href="${SITE}/${yearPagePath(kind, o, lang)}">${o}</a></li>`).join('');
+    return `<!DOCTYPE html>
+<html lang="${isEn ? 'en' : 'ko'}">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>${escHtml(title)}</title>
+<meta name="description" content="${escHtml(desc)}">
+<link rel="canonical" href="${selfUrl}">
+<link rel="alternate" hreflang="${isEn ? 'ko' : 'en'}" href="${altUrl}">
+<link rel="alternate" hreflang="${isEn ? 'en' : 'ko'}" href="${selfUrl}">
+<link rel="alternate" hreflang="x-default" href="${koUrl}">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="K-POP UNIVERSE">
+<meta property="og:title" content="${escHtml(h1)}">
+<meta property="og:description" content="${escHtml(desc)}">
+<meta property="og:url" content="${selfUrl}">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="${SITE}/icons/icon-192.png" type="image/png">
+<link rel="preconnect" href="https://i.ytimg.com">
+<link rel="stylesheet" href="${SITE}/song-page.css?v=${SONG_CSS_V}">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-Z5NTV6X3YF"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-Z5NTV6X3YF');document.addEventListener('DOMContentLoaded',function(){gtag('event','seo_land',{entity_name:${JSON.stringify(h1)},page_type:'year_${kind}'});});</script>
+</head>
+<body>
+<div class="wrap">
+  <a class="brand" href="${SITE}/">K-POP UNIVERSE</a>
+  <h1 class="rank-h1">${escHtml(h1)}</h1>
+  <p class="lead">${escHtml(desc)}</p>
+  <ul class="rank-tabs">${tabs}</ul>
+  <div class="${kind === 'born' ? 'people' : 'sp-tiles'}">
+    ${cards}
+  </div>
+  <div class="lang-switch"><a href="${altUrl}">${isEn ? '한국어로 보기' : 'View in English'}</a></div>
+  <div class="cta-dock"><a class="cta" href="${SITE}/">${isEn ? 'Explore the K-POP UNIVERSE →' : 'K-POP UNIVERSE에서 더 보기 →'}</a></div>
+</div>
+</body>
+</html>
+`;
+  };
+  for (const [kind, ys] of [['born', bornYs], ['debut', debutYs]]) for (const y of ys) for (const lang of ['ko', 'en']) {
+    const rel = yearPagePath(kind, y, lang);
+    fs.mkdirSync(path.join(ROOT, rel), { recursive: true });
+    fs.writeFileSync(path.join(ROOT, rel, 'index.html'), page(lang, kind, y));
+    pages.push({ loc: `${SITE}/${rel}`, priority: '0.6' });
+  }
+  console.log(`생년 페이지 ${bornYs.length}개 · 데뷔연도 페이지 ${debutYs.length}개 × 2개 언어`);
+}
+
 (async () => {
   // 1) DB 보강(음방 1위·인기 직캠) → 2) 그룹·멤버 페이지. DB가 안 되면(회사망 등) 정적 정보만으로 만든다.
   try {
@@ -1713,6 +1811,7 @@ function buildProgramPages() {
   buildSongPages();
   buildRankPages();
   buildProgramPages();
+  buildYearPages();
   console.log(`곡 페이지 ${songPageCount}곡 · 멤버×곡 페이지 ${memberSongPageCount}개 × 2개 언어`);
   let relPages = [], hubLinks = { ko: [], en: [] };
   try {
