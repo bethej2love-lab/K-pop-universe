@@ -911,6 +911,14 @@ ${RANK_LINKS[lang].length ? `  <h2>${isEn ? 'Fancam rankings' : '직캠 조회�
   <ul>
       ${YEAR_LINKS.debut.slice().reverse().map(y => `<li><a href="${SITE}/${yearPagePath('debut', y, lang)}">${isEn ? `Debuted ${y}` : `${y}년 데뷔`}</a></li>`).join('')}
   </ul>
+` : ''}${AGENCY_LINKS.length ? `  <h2>${isEn ? 'By agency' : '소속사별 아이돌'}</h2>
+  <ul>
+      ${AGENCY_LINKS.map(a => `<li><a href="${SITE}/${agencyPagePath(a.name, lang)}">${escHtml(isEn ? (agencyEn(a.name) || a.name) : a.name)}</a> <span class="yr">${a.n}</span></li>`).join('')}
+  </ul>
+` : ''}${WIN_YEARS.length ? `  <h2>${isEn ? 'Music show wins by year' : '연도별 음악방송 1위'}</h2>
+  <ul>
+      ${WIN_YEARS.slice().reverse().map(y => `<li><a href="${SITE}/${winsPagePath(y, lang)}">${isEn ? `${y} wins` : `${y} 음방 1위`}</a></li>`).join('')}
+  </ul>
 ` : ''}${PROGRAM_LINKS[lang].length ? `  <h2>${isEn ? 'By show & series' : '프로그램별 모음'}</h2>
   <ul>
       ${PROGRAM_LINKS[lang].map(l => `<li><a href="${l.href}">${escHtml(l.label)}</a></li>`).join('')}
@@ -1345,7 +1353,7 @@ function memberFaceUrl(a, gko) {
   return id ? ytThumb(id, 'mqdefault') : null;
 }
 // 스타일은 저장소의 song-page.css 한 파일(페이지마다 넣으면 3만 쪽 × 5KB) — 바꾸면 SONG_CSS_V를 올릴 것
-const SONG_CSS_V = 3;
+const SONG_CSS_V = 4;
 function songLikePageHtml({ gko, info, s, lang, others, member }) {
   const credit = (arr) => (arr || []).map(x => Array.isArray(x) ? x[0] : x).filter(Boolean);
   const isEn = lang === 'en';
@@ -1788,6 +1796,124 @@ function buildYearPages() {
   console.log(`생년 페이지 ${bornYs.length}개 · 데뷔연도 페이지 ${debutYs.length}개 × 2개 언어`);
 }
 
+// ── 소속사 페이지(2026-10-30, 검색 유입 ⑥ — "SM 소속 아이돌"·"하이브 아이돌 그룹") ───────────────────────────────────────────
+// groups.json co("빅히트 뮤직 / HYBE")를 '/'로 나눠 각 이름에 그룹을 넣는다(레이블과 모회사 둘 다). 표기 흔들림은 아래 표로 합친다.
+// 3팀 이상인 소속사만. 경로: agency/{이름}/ (+ en/)
+const AGENCY_ALIAS = { 'SM': 'SM엔터테인먼트', 'Cube': '큐브엔터테인먼트', 'Starship': '스타쉽엔터테인먼트', '플레디스 엔터테인먼트': '플레디스',
+  'Modhaus': '모드하우스', 'Fantagio': '판타지오', 'High Up': '하이업엔터테인먼트', 'Loen Entertainment': '로엔엔터테인먼트', 'nCH엔터테인먼트': 'n.CH엔터테인먼트' };
+const AGENCY_SKIP = new Set(['무소속']);
+let AGENCY_LINKS = [];
+function agencyPagePath(name, lang) { return `${lang === 'en' ? 'en/' : ''}agency/${urlSafeKo(name)}/`; }
+function groupTileHtml(g, lang, sub) {
+  const t = OG_THUMBS.groups && OG_THUMBS.groups[g]; const id = t && (String(t).match(/\/vi\/([^/]+)\//) || [])[1];
+  const nm = lang === 'en' ? (groups[g].en || g) : g;
+  return `<a class="sp-tile" href="${SITE}/${groupPagePath(g, lang)}">${id ? `<img src="https://i.ytimg.com/vi/${id}/mqdefault.jpg" alt="" loading="lazy" style="aspect-ratio:16/9">` : '<span class="sp-tile-ph" style="aspect-ratio:16/9"></span>'}<span class="sp-tile-t">${escHtml(nm)}</span><span class="sp-tile-n">${escHtml(sub || '')}</span></a>`;
+}
+function simplePageHtml({ lang, selfUrl, altUrl, koUrl, title, h1, desc, body, kind, ogImage }) {
+  const isEn = lang === 'en';
+  return `<!DOCTYPE html>
+<html lang="${isEn ? 'en' : 'ko'}">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>${escHtml(title)}</title>
+<meta name="description" content="${escHtml(desc)}">
+<link rel="canonical" href="${selfUrl}">
+<link rel="alternate" hreflang="${isEn ? 'ko' : 'en'}" href="${altUrl}">
+<link rel="alternate" hreflang="${isEn ? 'en' : 'ko'}" href="${selfUrl}">
+<link rel="alternate" hreflang="x-default" href="${koUrl}">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="K-POP UNIVERSE">
+<meta property="og:title" content="${escHtml(h1)}">
+<meta property="og:description" content="${escHtml(desc)}">
+<meta property="og:url" content="${selfUrl}">
+${ogImage ? `<meta property="og:image" content="${ogImage}">\n<meta name="twitter:card" content="summary_large_image">` : '<meta name="twitter:card" content="summary">'}
+<link rel="icon" href="${SITE}/icons/icon-192.png" type="image/png">
+<link rel="preconnect" href="https://i.ytimg.com">
+<link rel="stylesheet" href="${SITE}/song-page.css?v=${SONG_CSS_V}">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-Z5NTV6X3YF"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-Z5NTV6X3YF');document.addEventListener('DOMContentLoaded',function(){gtag('event','seo_land',{entity_name:${JSON.stringify(h1)},page_type:'${kind}'});});</script>
+</head>
+<body>
+<div class="wrap">
+  <a class="brand" href="${SITE}/">K-POP UNIVERSE</a>
+  <h1 class="rank-h1">${escHtml(h1)}</h1>
+  <p class="lead">${escHtml(desc)}</p>
+${body}
+  <div class="lang-switch"><a href="${altUrl}">${isEn ? '한국어로 보기' : 'View in English'}</a></div>
+  <div class="cta-dock"><a class="cta" href="${SITE}/">${isEn ? 'Explore the K-POP UNIVERSE →' : 'K-POP UNIVERSE에서 더 보기 →'}</a></div>
+</div>
+</body>
+</html>
+`;
+}
+function writeSimple(rel, html, priority) {
+  fs.mkdirSync(path.join(ROOT, rel), { recursive: true });
+  fs.writeFileSync(path.join(ROOT, rel, 'index.html'), html);
+  pages.push({ loc: `${SITE}/${rel}`, priority });
+}
+function buildAgencyPages() {
+  const by = {};
+  groupKos.forEach(g => String(groups[g].co || '').split('/').map(s => s.trim()).filter(Boolean).forEach(a => {
+    const n = AGENCY_ALIAS[a] || a; if (AGENCY_SKIP.has(n)) return; (by[n] = by[n] || new Set()).add(g);
+  }));
+  const gPri = g => +(groups[g].pri || 0);
+  const list = Object.entries(by).filter(([, s]) => s.size >= 3).map(([n, s]) => [n, [...s].sort((p, q) => (groups[q].active !== false) - (groups[p].active !== false) || gPri(q) - gPri(p) || String(groups[q].debut || '').localeCompare(String(groups[p].debut || '')))]).sort((x, y) => y[1].length - x[1].length);
+  AGENCY_LINKS = list.map(([n, gs]) => ({ name: n, n: gs.length }));
+  for (const [name, gs] of list) for (const lang of ['ko', 'en']) {
+    const isEn = lang === 'en';
+    const nameEn = agencyEn(name) || name;
+    const disp = isEn ? nameEn : name;
+    const nm = g => isEn ? (groups[g].en || g) : g;
+    const rel = agencyPagePath(name, lang);
+    const h1 = isEn ? `${disp} K-pop groups` : `${name} 소속 아이돌`;
+    const title = isEn ? `${disp} K-pop Groups — ${gs.slice(0, 4).map(nm).join(', ')} (${gs.length}) | K-POP UNIVERSE` : `${name} 소속 아이돌 - ${gs.slice(0, 4).map(nm).join('·')} 등 ${gs.length}팀 | K-POP UNIVERSE`;
+    const desc = isEn ? `${gs.length} K-pop groups from ${disp}: ${gs.slice(0, 10).map(nm).join(', ')}. Members, debut dates and fancams.` : `${name} 소속(출신) 아이돌 그룹 ${gs.length}팀 — ${gs.slice(0, 10).map(nm).join(', ')}. 멤버·데뷔일·직캠 모음으로 바로 가요.`;
+    const body = `  <div class="sp-tiles">
+    ${gs.map(g => groupTileHtml(g, lang, `${String(groups[g].debut || '').slice(0, 4)}${groups[g].active === false ? (isEn ? ' · disbanded' : ' · 해체') : ''}`)).join('\n    ')}
+  </div>`;
+    writeSimple(rel, simplePageHtml({ lang, selfUrl: `${SITE}/${rel}`, altUrl: `${SITE}/${agencyPagePath(name, isEn ? 'ko' : 'en')}`, koUrl: `${SITE}/${agencyPagePath(name, 'ko')}`, title, h1, desc, body, kind: 'agency' }), '0.6');
+  }
+  console.log(`소속사 페이지 ${list.length}개 × 2개 언어`);
+}
+
+// ── 음악방송 1위 목록(2026-10-30, 검색 유입 ⑦ — "2026 음방 1위"·"음악방송 1위 목록") ────────────────────────────────────────────
+// music_show_wins(매일 자동 수집)를 해마다 한 장: 1위 많은 아티스트 순 + 날짜순 전체 목록. 20회 이상인 해만. 경로: wins/{년}/ (+ en/)
+let WIN_YEARS = [];
+function winsPagePath(y, lang) { return `${lang === 'en' ? 'en/' : ''}wins/${y}/`; }
+function buildWinsPages() {
+  const all = (EX.allWins || []).filter(w => w.win_date && w.song_title);
+  const byY = {};
+  all.forEach(w => { const y = String(w.win_date).slice(0, 4); (byY[y] = byY[y] || []).push(w); });
+  WIN_YEARS = Object.keys(byY).filter(y => byY[y].length >= 20).sort();
+  const who = (w, isEn) => { const g = w.group_ko && groups[w.group_ko] ? w.group_ko : null;
+    if (g) return { name: isEn ? (groups[g].en || g) : g, href: `${SITE}/${groupPagePath(g, isEn ? 'en' : 'ko')}` };
+    const a = w.member_ko && artists.find(x => x.name.ko === w.member_ko);
+    return { name: a ? (isEn ? (a.name.en || a.name.ko) : a.name.ko) : (w.member_ko || w.group_ko || ''), href: a ? `${SITE}/${memberPagePath(a, isEn ? 'en' : 'ko')}` : '' }; };
+  for (const y of WIN_YEARS) for (const lang of ['ko', 'en']) {
+    const isEn = lang === 'en';
+    const list = byY[y].slice().sort((a, b) => String(b.win_date).localeCompare(String(a.win_date)));
+    const cnt = new Map(); list.forEach(w => { const k = who(w, isEn); const key = k.name; const c = cnt.get(key) || { k, n: 0, songs: new Set() }; c.n++; c.songs.add(w.song_title); cnt.set(key, c); });
+    const top = [...cnt.values()].sort((a, b) => b.n - a.n);
+    const rel = winsPagePath(y, lang);
+    const h1 = isEn ? `K-pop music show wins in ${y}` : `${y} 음악방송 1위 목록`;
+    const title = isEn ? `${y} K-pop Music Show Wins — ${top.slice(0, 3).map(x => `${x.k.name} ${x.n}`).join(', ')} | K-POP UNIVERSE` : `${y} 음악방송 1위 목록 - ${top.slice(0, 3).map(x => `${x.k.name} ${x.n}회`).join('·')} | K-POP UNIVERSE`;
+    const desc = isEn ? `All ${list.length} K-pop music show wins of ${y} (Music Bank, Inkigayo, M Countdown…). Most wins: ${top.slice(0, 5).map(x => `${x.k.name} (${x.n})`).join(', ')}.` : `${y}년 음악방송 1위 ${list.length}회 전체(뮤직뱅크·인기가요·엠카운트다운 등). 최다 1위: ${top.slice(0, 5).map(x => `${x.k.name} ${x.n}회`).join(', ')}.`;
+    const link = (k, t) => k.href ? `<a href="${k.href}">${escHtml(t)}</a>` : escHtml(t);
+    const body = `  <ul class="rank-tabs">${WIN_YEARS.slice().reverse().map(o => o === y ? `<li class="on">${o}</li>` : `<li><a href="${SITE}/${winsPagePath(o, lang)}">${o}</a></li>`).join('')}</ul>
+  <h2>${isEn ? 'Most wins' : '1위 많이 한 아티스트'}</h2>
+  <ol class="win-top">
+    ${top.slice(0, 20).map(x => `<li>${link(x.k, x.k.name)} <b>${x.n}${isEn ? '' : '회'}</b> <span>${escHtml([...x.songs].slice(0, 3).join(', '))}</span></li>`).join('\n    ')}
+  </ol>
+  <h2>${isEn ? 'All wins by date' : '날짜별 전체 1위'}</h2>
+  <table class="win-tbl"><thead><tr><th>${isEn ? 'Date' : '날짜'}</th><th>${isEn ? 'Show' : '방송'}</th><th>${isEn ? 'Artist' : '아티스트'}</th><th>${isEn ? 'Song' : '곡'}</th></tr></thead><tbody>
+    ${list.map(w => { const k = who(w, isEn); return `<tr><td>${escHtml(String(w.win_date).slice(5).replace('-', '.'))}</td><td>${escHtml(w.show || '')}</td><td>${link(k, k.name)}</td><td>${escHtml(w.song_title)}</td></tr>`; }).join('\n    ')}
+  </tbody></table>`;
+    writeSimple(rel, simplePageHtml({ lang, selfUrl: `${SITE}/${rel}`, altUrl: `${SITE}/${winsPagePath(y, isEn ? 'ko' : 'en')}`, koUrl: `${SITE}/${winsPagePath(y, 'ko')}`, title, h1, desc, body, kind: 'wins' }), y >= String(+TODAY_ISO.slice(0, 4) - 1) ? '0.7' : '0.5');
+  }
+  console.log(`음방 1위 연도 페이지 ${WIN_YEARS.length}개 × 2개 언어 (1위 기록 ${all.length}건)`);
+}
+
 (async () => {
   // 1) DB 보강(음방 1위·인기 직캠) → 2) 그룹·멤버 페이지. DB가 안 되면(회사망 등) 정적 정보만으로 만든다.
   try {
@@ -1812,6 +1938,8 @@ function buildYearPages() {
   buildRankPages();
   buildProgramPages();
   buildYearPages();
+  buildAgencyPages();
+  buildWinsPages();
   console.log(`곡 페이지 ${songPageCount}곡 · 멤버×곡 페이지 ${memberSongPageCount}개 × 2개 언어`);
   let relPages = [], hubLinks = { ko: [], en: [] };
   try {

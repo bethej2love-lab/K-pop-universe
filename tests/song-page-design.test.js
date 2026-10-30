@@ -31,5 +31,8 @@ need(b.includes('function buildRankPages()') && b.includes('buildRankPages();') 
 need(b.includes('<sitemapindex') && b.includes('sitemaps/') && b.includes('const SM_MAX = 40000;'), '⑤ 사이트맵 목록+분할(파일당 4만)');
 const wf = fs.readFileSync(path.join(ROOT, '.github/workflows/rebuild-seo-pages.yml'), 'utf8');
 need(wf.includes(' rank en/rank ') && wf.includes(' sitemaps '), '⑤ CI가 rank·sitemaps 폴더도 커밋');
+// ⑥ 프로그램·생년·데뷔연도·소속사·음방 1위 페이지(2026-10-30)와 CI 커밋 경로
+for (const [fn, dir] of [['buildProgramPages', ' p en/p '], ['buildYearPages', ' idols en/idols '], ['buildAgencyPages', ' agency en/agency '], ['buildWinsPages', ' wins en/wins ']]) need(b.includes('function ' + fn + '()') && b.includes('  ' + fn + '();') && wf.includes(dir), '⑥ ' + fn + ' 생성·호출·CI 경로(' + dir.trim() + ')');
+need(ex.includes('ex.allWins.push(w)'), '⑥ 음방 1위 전체(솔로 포함) 수집');
 console.log(fail ? `\n❌ ${fail}개 실패` : '\n✅ 곡 페이지 테스트 통과');
 process.exit(fail ? 1 : 0);

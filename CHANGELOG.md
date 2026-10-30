@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 2026-10-30 (Claude Code — 검색 유입 확대 4차: 소속사 · 연도별 음방 1위 페이지)
+- **[완료·배포(페이지는 CI 재생성)] [build_group_pages.js buildAgencyPages·buildWinsPages·simplePageHtml·groupTileHtml] [tools/seo_extra.js allWins] [song-page.css v4] [.github/workflows/rebuild-seo-pages.yml] [tests/song-page-design.test.js]** ⑥ `agency/{이름}/` 27곳("SM엔터테인먼트 소속 아이돌 - 하츠투하츠·엔시티 위시·라이즈·에스파 등 16팀", 그룹 썸네일 → 그룹 페이지, 해체 표시). groups.json co를 '/'로 나눠 레이블·모회사 둘 다(빅히트 뮤직 / HYBE), 표기 흔들림 합침(Starship→스타쉽엔터테인먼트·SM→SM엔터테인먼트·Cube·Modhaus·Fantagio·High Up·Loen·nCH), 무소속 제외, 3팀 이상. ⑦ `wins/{년}/` 19개(2008~2026, "2026 음악방송 1위 목록 - 방탄소년단 15회·코르티스 12회·에이티즈 10회", 최다 1위 아티스트 20 + 날짜·방송·아티스트·곡 전체 표, 그룹/솔로 페이지 링크). music_show_wins 전체를 seo_extra prefetch에서 allWins로(예전엔 그룹 것만 묶었다). 그룹 허브에 소속사·연도별 1위 목록. 합쳐 1MB 미만. 실DB 빌드·static-links 8/8.
+- **⏳ 다음** ⑧ 앨범 ⑨ 작사·작곡. 로컬 전체 빌드가 28분 넘게 걸리기 시작(관계 페이지 DB 조회 구간) — CI 소요 시간 확인 필요.
+
+
 ## 2026-10-30 (Claude Code — 검색 유입 확대 3차: 생년·데뷔연도 페이지)
 - **[완료·배포(페이지는 CI 재생성)] [build_group_pages.js buildYearPages] [song-page.css v3 .people] [.github/workflows/rebuild-seo-pages.yml]** ⑤ `idols/born/{년}/` 32개("2009년생 아이돌 - 코르티스 성현·트리플에스 주빈·코르티스 건호 등 35명", 얼굴 카드 → 멤버 직캠 모음, 생일 표시, 5명 이상인 해)·`idols/debut/{년}/` 22개("2025년 데뷔 아이돌 - 킥플립·키키·하츠투하츠·누에라 등 20팀", 그룹 썸네일 → 그룹 직캠·무대 모음, 3팀 이상인 해) × 2개 언어(약 2MB), 연도 탭. 멤버 페이지 하단 "2009년생 아이돌"을 그 페이지 링크로, 그룹 허브(g/)에 생년·데뷔연도 목록, CI 커밋 경로에 idols·en/idols. 실DB 빌드·static-links 8/8·390px 캡처(데뷔 2025) 확인.
 - **⏳ 다음** ⑥ 소속사 ⑦ 음방 1위 기록 ⑧ 앨범 ⑨ 작사·작곡.

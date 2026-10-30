@@ -32,13 +32,14 @@ async function sbGet(SB_URL, SB_KEY, q) {
 
 // DB에서: 음방 1위 전체, 그룹별 인기 무대·MV(조회수 상위). 그룹당 1요청(동시 8개).
 async function prefetch({ SB_URL, SB_KEY, groupKos }) {
-  const ex = { wins: {}, memberWins: {}, top: {} };
+  const ex = { wins: {}, memberWins: {}, top: {}, allWins: [] }; // allWins: 솔로 포함 전체(연도별 음방 1위 페이지, 2026-10-30)
   try {
     let last = 0;
     for (let i = 0; i < 20; i++) {
       const rows = await sbGet(SB_URL, SB_KEY, `music_show_wins?select=id,show,win_date,song_title,group_ko,member_ko&order=id&limit=1000&offset=${last}`);
       if (!Array.isArray(rows) || !rows.length) break;
       rows.forEach(w => {
+        ex.allWins.push(w);
         const key = w.group_ko === '솔로' || !w.group_ko ? null : w.group_ko;
         const bucket = key ? (ex.wins[key] = ex.wins[key] || []) : null;
         if (bucket) bucket.push(w);
