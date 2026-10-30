@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 2026-10-30 (Codex — 검수31차·보류 사례 원본 보강)
+- **[진행중·읽기 전용] [CHANGELOG.md]** 사용자 추가 요청으로 앞선 신원 미확정/실제 출연 보류 사례의 원본을 더 확인. 기존 발견을 새 오류로 중복 집계하지 않고 정정·보존 판단 근거를 보강, 코드·JSON·SQL·DB 변경 없음.
+
 ## 2026-10-30 (Codex — 검수30차·다른 동명이인과 원곡 출연 구분)
 - **[완료·읽기 전용] [CHANGELOG.md] [yt_channel_videos]** 검수29차76 ID와 겹치지 않는 **82개 고유 영상**을 후속 추적 목록으로 정리: 진영 제목 선별58 + 유니코드21(앞58과2개 중복) + 추가 오태그5. **82개가 전부 오류 확정이라는 뜻은 아님**. 공개77·비공개5(무관3/hidden2), 정상 primary 보존 비교·누락 후보 포함. 공개 중 `qSWG39_aff8`만 tags_manual/cover_manual 둘 다true이므로 보호, 나머지81은 두 잠금false. 코드·JSON·SQL 파일/DB 정정·채널 삭제·수집/스윕 없음. 브라우저는 별도 임시 탭에서 갓세븐 진영→배진영→OnlyOneOf3카드 검색, 공식 원본 제목/업로더·일부 설명/장면 대조; 전편 재생·출연자 전원 확인 아님.
 - **[이슈·공개 카드 오귀속] [artists.json a0601/a0715/a0328]** 갓세븐 진영(1994.09.22, a0601), 비원에이포 출신 정진영(1991.11.18, a0715), 배진영(a0328)을 구분해야 함. 갓세븐 진영 카드에 ‘구르미’5개, ‘경찰수업’2개(h7+아래COSMO), ‘에릭’1개가 실제 노출. [KBS 경찰수업 라디오](https://www.youtube.com/watch?v=h7TDaKA7vx8)는 KBS CoolFM 공식·차태현/진영/정수정 회차, [ELLE 구르미 숏츠](https://www.youtube.com/watch?v=aEMx1feuLpU)도 공식 업로더와 배우 출연 제목 확인. 아래23개는 정진영 이력/작품/곡과 연결되는 **재귀속 후보**이며 모두 개별 장면까지 확정한 것은 아님. [KBS 공식 경찰수업 소개](https://mylovekbs.kbs.co.kr/index.html?contents_id=70000000396202&sname=mylovekbs&source=mylovekbs&stype=magazine)와 [KBS 공식 구르미 소개](https://mylovekbs.kbs.co.kr/index.html?contents_id=70000000283656&sname=mylovekbs&source=mylovekbs&stype=magazine), 정진영/경찰수업 및 @jinyoung0423를 명시한 COSMO 원본 설명으로 식별. 스위트홈·착한여자부세미·그시절소녀·광고 Making·OST는 같은 사람 여부/실제 동반 출연자를 소스별 최종 확인, 단순히 배우 인터뷰라는 이유로 무관 처리하지 않음.
