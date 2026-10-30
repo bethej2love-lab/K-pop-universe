@@ -41,10 +41,11 @@ let checked = 0; const missing = new Map();
 for (const p of pages) {
   const html = fs.readFileSync(p, 'utf8');
   for (const m of html.matchAll(/href="https:\/\/kpop-universe\.kr\/([^"#]*)"/g)) {
-    const rel = m[1];
+    const rel = m[1].split('?')[0];
     if (!rel || rel.startsWith('icons/')) continue;      // 루트·아이콘은 대상 아님
     checked++;
-    const target = path.join(ROOT, rel, 'index.html');
+    // 파일(곡 페이지 공용 스타일 song-page.css?v=1 등, 2026-10-30)은 그 파일 자체, 폴더 주소는 그 안의 index.html
+    const target = /\.[a-z0-9]+$/i.test(rel) ? path.join(ROOT, rel) : path.join(ROOT, rel, 'index.html');
     if (!fs.existsSync(target)) {
       const k = rel;
       if (!missing.has(k)) missing.set(k, path.relative(ROOT, p));
