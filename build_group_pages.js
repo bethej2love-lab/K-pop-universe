@@ -1358,7 +1358,7 @@ function songLikePageHtml({ gko, info, s, lang, others, member }) {
   </ul>`;
   const creditRow = (k, arr) => arr.length ? `<span><b>${k}</b>${escHtml(arr.slice(0, 6).join(', '))}</span> ` : '';
   const creditsHtml = (L.length || C.length || A.length) ? `<p class="credits">${creditRow(isEn ? 'Lyrics' : '작사', L)}${creditRow(isEn ? 'Composition' : '작곡', C)}${creditRow(isEn ? 'Arrangement' : '편곡', A)}</p>` : '';
-  const grid = top.slice(1).map(v => `<a class="card" href="https://www.youtube.com/watch?v=${v.id}" target="_blank" rel="noopener"><span class="card-th"><img src="${ytThumb(v.id, 'mqdefault')}" alt="" loading="lazy"><span class="card-v">${SEO.fmtViews(v.view_count, isEn)}</span></span><span class="card-t">${escHtml(v.title)}</span><span class="card-y">${v.published_at ? String(v.published_at).slice(0, 10).replace(/-/g, '.') : ''}</span></a>`).join('\n    ');
+  const grid = top.slice(1).map(v => `<a class="card" href="https://www.youtube.com/watch?v=${v.id}" target="_blank" rel="noopener"><span class="card-th"><img src="${ytThumb(v.id, 'mqdefault')}" alt="" loading="lazy"></span><span class="card-t">${escHtml(v.title)}</span><span class="card-y">${[v.published_at ? String(v.published_at).slice(0, 10).replace(/-/g, '.') : '', v.view_count ? (isEn ? `${SEO.fmtViews(v.view_count, isEn)} views` : `조회수 ${SEO.fmtViews(v.view_count, isEn)}`) : ''].filter(Boolean).join(' · ')}</span></a>`).join('\n    ');
   // 멤버×곡 페이지엔 '그룹의 다른 곡'을 싣지 않는다 — 곡 페이지에 있고, 1만 쪽에 같은 타일을 반복하면 용량만 커진다
   const otherTiles = !ms && (others || []).length ? `
   <h2>${isEn ? `More songs by ${gName}` : `${gko}의 다른 곡`}</h2>
@@ -1418,7 +1418,7 @@ function songLikePageHtml({ gko, info, s, lang, others, member }) {
   ${otherTiles}
   ${creditsHtml}
   <div class="lang-switch"><a href="${altUrl}">${isEn ? '한국어로 보기' : 'View in English'}</a></div>
-  <div class="cta-dock"><a class="cta" href="${SITE}/#g=${hashEsc(gko)}${ms ? '&m=' + hashEsc(ms.a.name.ko) : ''}">${isEn ? 'View videos in the Universe →' : '직캠·영상 아카이브 보기 →'}</a></div>
+  <div class="cta-dock"><a class="cta" href="${SITE}/#g=${hashEsc(gko)}${ms ? '&m=' + hashEsc(ms.a.name.ko) : ''}&song=${hashEsc(s.title)}">${isEn ? 'View videos in the Universe →' : '직캠·영상 아카이브 보기 →'}</a></div>
 </div>
 </body>
 </html>

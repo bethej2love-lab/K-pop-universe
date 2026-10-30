@@ -10121,6 +10121,10 @@ function _openFromHash(){
   const comboParam=params.get('combo');
   if(comboParam){_comboFromHash(comboParam);return;} // 조합 패널 공유 링크(#combo=이름(그룹),…)
   const gko=params.get('g'),mko=params.get('m');
+  // &song=곡 이름(2026-10-30 사용자 "곡 페이지의 '직캠·영상 아카이브 보기'를 누르면 그룹 카드만 열린다 — 그 곡 영상 패널까지").
+  // 카드를 연 뒤 그 곡 영상 패널을 열고, 멤버(m=)가 있으면 '멤버 ▾'를 그 멤버로 미리 골라 둔다(멤버×곡 페이지 성현 ACAI).
+  const songParam=params.get('song');
+  const openSongAfter=()=>{if(songParam&&GROUPS[gko])setTimeout(()=>_openSongVideos(songParam,{gko},null,mko?{member:mko}:undefined),700);};
   _setPendingVidPreset(params,mko?'tv':'gc'); // 영상 목록 공유 링크(&vf=…) — 카드가 목록을 그릴 때 꺼내 씀
   // 솔로 전용 해시(#m=이름, g= 없음) — 새 포맷. 구 포맷(#g=솔로&m=이름)도 아래에서 계속 지원.
   if(!gko&&mko){
@@ -10136,12 +10140,13 @@ function _openFromHash(){
   if(_isUnitKey(gko)){showGC(gko,window.innerWidth/2,window.innerHeight*0.4,false,false,'skip');return;} // 유닛 카드 공유 링크(#g=unit:이름)
   if(gko!=='솔로'&&!GROUPS[gko])return;
   // 진입 GA — 공유 링크·SEO 페이지 딥링크 모두 여기서 카드가 열린다
-  try{const ref=document.referrer?new URL(document.referrer).hostname:'(direct)';_gaEvent('deeplink_open',{target:mko?'member':'group',gko,ref,list:params.has('vf')?1:0});}catch(e){}
+  try{const ref=document.referrer?new URL(document.referrer).hostname:'(direct)';_gaEvent('deeplink_open',{target:mko?'member':'group',gko,ref,list:params.has('vf')?1:0,song:songParam?1:0});}catch(e){}
   if(mko){
     const artist=ARTISTS.find(x=>x.group.ko===gko&&x.name.ko===mko);
     if(!artist)return;
     if(artist._worldPos)flyTo(artist._worldPos); // 솔로는 3D 버블 배치가 없어 _worldPos가 없음 — showT는 이 값 없이도 정상 동작
     showT(artist,window.innerWidth/2,window.innerHeight*0.4,false,'skip');
+    openSongAfter();
     // c=1: 연결 카드까지 함께 공유된 링크 — 멤버 카드를 연 뒤 연결 카드를 열고, s가 있으면 선택된 콜라보까지 복원
     if(params.get('c')==='1'){
       openConnCard(artist);
@@ -10162,6 +10167,7 @@ function _openFromHash(){
     const bm=bubbleMeshes.find(b=>b.ko===gko);
     if(bm)flyToBubble(bm.mesh.position,bm.radius);
     showGC(gko,window.innerWidth/2,window.innerHeight*0.4,false,true,'skip');
+    openSongAfter();
   }
 }
 // ── 공유 버튼 (그룹/멤버/연결 카드 공통) ─────────────
@@ -13383,7 +13389,7 @@ async function _openSongVideos(title,owner,songMeta,opt){
     orig.sort((a,b)=>String(b.published_at||'').localeCompare(String(a.published_at||'')));
     cover.sort((a,b)=>String(b.published_at||'').localeCompare(String(a.published_at||'')));
   }
-  _songVid={gko,orig,cover,tab:'all',fmt:'all',sort:'latest',rows:[],member:null};
+  _songVid={gko,orig,cover,tab:'all',fmt:'all',sort:'latest',rows:[],member:(opt&&opt.member)||null}; // opt.member: 멤버 미리 고르기(멤버×곡 정적 페이지에서 들어올 때)
   _renderSongVideoTabs();
 }
 // 형식 칩(2026-09-21) — 값은 그룹/멤버 카드 영상 탭과 같은 DB category 그대로 쓴다.

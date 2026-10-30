@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-10-30 (Claude Code — 곡 페이지 → 앱 곡 영상 패널 바로 열기 · 카드 조회수 줄 · CI 빨간불 2건)
+- **[완료·배포] [app.js _openFromHash·_openSongVideos opt.member] [build_group_pages.js] [tests/deeplink-song.test.js]** 사용자 "곡 페이지의 '직캠·영상 아카이브 보기'를 누르면 그룹 카드만 열린다 — Drop That 곡 영상 패널까지 이어져야". 딥링크에 `&song=곡 이름` 추가: 카드를 연 뒤 그 곡 영상 패널을 연다. 멤버×곡 페이지는 `#g=코르티스&m=성현&song=ACAI` → 멤버 카드 + ACAI 패널을 "멤버 ▾ 성현"으로 미리 골라 둔 채(_openSongVideos opt.member). 정적 페이지 버튼 주소에 &song= 반영(CI 재생성). 함정: `const gko=params.get('g'),mko=params.get('m');`가 _stackIndexForHash에도 있어 첫 번째 쪽에 정의가 들어가 `openSongAfter is not defined` — 문법 검사는 통과하고 실행 때만 터졌다 → 새 브라우저 테스트가 잡음(클로즈유어아이즈 Drop That! 164개, 성현 ACAI 17개·멤버 성현). 실DB라 CI 브라우저 건너뛰기 목록에 등록.
+- **[완료·배포] [build_group_pages.js]** 사용자 "'조회수 많은 직캠·무대'인데 업로드일 줄 옆에 조회수도". 카드 썸네일 위 조회수 배지를 빼고 날짜 줄을 "2026.10.01 · 조회수 6만회"(영어 "60K views")로.
+- **[완료·수정] CI(data-and-tests) 빨간불 2건 — 폰 가로 커밋(9b354a07)부터 4회 연속 실패를 놓쳤다** ① admin-dock-close: admin.js를 isMob()으로 바꿨는데 테스트가 admin.js만 떼어 돌려 `isMob is not defined` → `typeof isMob==='function'?isMob():innerWidth<=768`. ② vm-panel-ui: `@media(min-width:769px){#vm-panel…}`를 글자 그대로 찾아서, 폰 가로 제외 조건이 붙은 뒤 실패 → 조건 허용 정규식. phone-landscape도 브라우저 테스트라 건너뛰기 목록에 등록(다른 브라우저 테스트와 같은 관례). 교훈: 배포 후 data-and-tests 결과까지 확인할 것.
+
+
 ## 2026-10-30 (Claude Code — 목록 창 고르기 줄을 카드·곡 화면 모양으로 통일)
 - **[완료·배포] [app.js _renderFeedListFacet·_programFacetView·_openEventPage·_openPickSheet] [kpop_universe.css #feed-list-facets·.vss-search] [tests/program-facets.test.js]** 사용자 "보이스캠 모아보기의 팀 물방울 줄이 고르기 불편 — 토글이나 검색으로, 물방울 레이아웃은 안 쓰는 방향인데 최신·조회수에까지 쓰는 건 아니다. 카드 영상·곡 영상 패널과 통일". 목록 창(모아보기·차트·시상식) 고르기 줄을 세 모양으로: ① 누구(ui:'pick') = 곡 화면 "멤버 ▾"·카드 "♪ 곡 ▾"와 같은 글자 버튼 "👥 전체 ▾" → 공용 고르기 시트(★ 즐겨찾기 + 팀, 영상 수), 고른 뒤 "클로즈유어아이즈 ✕"(✕=전체). 프로그램 모아보기는 상위 20팀 제한 없이 전부(보이스캠 36팀). ② 정렬(ui:'sort') = 곡 화면과 같은 "최신순" 버튼(.tvf-sort), 누를 때마다 최신순↔조회수순, 같은 줄 오른쪽. ③ 그 밖의 축(차트 성별·세대·기간, 시상식 연도·무대/직캠/전체, 차트 스토리) = 카드·곡 화면과 같은 밑줄 탭. 목록 창에서 알약(물방울) 칩은 없어짐. 공용 고르기 시트(_openPickSheet)에 항목 9개 이상이면 검색창(한글·영문 둘 다, 글자 16px — 아이폰 입력 확대 방지) — 카드 "♪ 곡"·곡 화면 "멤버"에도 같이 적용됨. 카드 영상 칸 정렬은 위 줄이 이미 차 있어 ⋮ 안 그대로.
 - **[완료·검증]** 390px 캡처: 보이스캠 "👥 전체 ▾ … 최신순" 한 줄, 시트 검색 "클로즈" → 클로즈유어아이즈 58, 고른 뒤 ✕·조회수순, 차트 밑줄 탭 3줄. program-facets 11/11(새 UI로 갱신), smoke·compass-width·feed-trend·card-title-visibility·stage-venue-album·syntax 통과, phone-landscape 5/5(연달아 돌릴 때 1회 타이밍 실패 후 단독 재실행 통과).
