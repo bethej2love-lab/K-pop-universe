@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 2026-10-30 (Codex — 검수29차·동명이인 영상과 공식 링크)
+- **[진행중·읽기 전용] [CHANGELOG.md]** 사용자 요청으로 검수 확대. 25~28차 인계와 Claude 후속은 중복 제외, 동명이인 멤버의 다른 팀 귀속 및 카드 공식 링크/프로필을 점검. 코드·JSON·SQL·DB 쓰기 없이 이 파일에만 발견 근거·보류 기준 기록.
+
 ## 2026-10-30 (Claude Code — Codex 검수26·27차 후속 1단계: 매처 재발 방지만, DB 정정은 다음 세션) [사용자 요청으로 중간 정지]
 - **[완료·배포] [admin.js _m2ParseTitle 짝 표기 개인캠·_GROUP_TOKEN_NEEDS_CORROBORATION·_ATM_HASHTAG_ONLY_NAMES·_atmStripCommonNounCtx] [artists.json] [groups.json] [tests/unit-indivcam.test.js]** ① 짝 표기 개인캠: 직캠 표시 + "A X B / A&B" 짝 표기가 있으면 이름이 혼자 가장 많이 나온 사람만(셔누X형원 형원·쿤&샤오쥔 쿤·정한X조슈아 정한·진진&라키 진진), 같으면 둘 다(듀오 "SHOWNU X HYUNGWON FanCam"). 등록 유닛이 아닌 짝도 처리. ② 퍼플키스 SWAN: a1151 박지은 영문명 "Swan"→"Park Jieun", a1150 수안 퍼플키스 문맥 matchNames SWAN, 박지은 퍼플키스 left 2025.11.16→2022.11.18(RBW 공지 기사). ③ NOWADAYS: 나우즈 altNames + 대문자 그대로·멤버명 동반일 때만(흔한 영단어), a1456 현빈 matchNames HYEONBIN. ④ '라↗️디오' 이모지 낀 라디오를 붙여 엑소 디오 오매칭 차단. ⑤ '보니'(드림노트) 해시태그·그룹 동반 전용 — '알고 보니'.
 - **[완료·검증] 이전/새 매처 차분** 관련 제목 14,310개 중 526개 변화: 보니 제거 181(일상어)·박지은 제거 155(수안 개인캠)·NOWADAYS 나우즈 귀속(98 그룹 변경·현빈/윤/시윤/연우/진혁 추가, 레이니·애슐리·유나이트 오태그 제거)·짝 표기 개인캠 좁힘(셔누/형원 22·호시/우지 6·쿤/샤오쥔 6·진진/라키 6·에스쿱스X민규 4·연준X수빈·MOON SUA X SIYOON·모모&사나 "MOMO Fancam"·세은 focus·경민 FANCAM 등 표본 전부 촬영대상과 일치). 27차 개인캠 26건+유닛 12건 = 현재 매처 38/38 정답. matching 246/246·groups-matcher 2080/0·validate-data 오류0/경고144·slim --check·unit-indivcam(새 사례 8개)·vm-panel-ui·admin-dock-close 통과.
