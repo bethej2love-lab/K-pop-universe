@@ -7,7 +7,94 @@
 
 
 ## 2026-10-30 (Codex — 검수28차·동명 솔로와 언급된 그룹 오귀속)
-- **[진행중·읽기 전용] [CHANGELOG.md]** 사용량 갱신 후 검수 이어감. 25~27차 후보는 중복 제외하고 태양/유태양 등 동명 경계와 인터뷰에서 언급만 된 그룹의 출연 오귀속을 추가 대조. 코드·JSON·SQL·DB 쓰기 없이 이 파일만 기록.
+- **[완료·읽기 전용 범위] [CHANGELOG.md]** 25~27차 ID는 신규 집계에서 제외하고, 동명 솔로/롤모델 언급/진행자 누락을 별도로 대조. 공개 카드 검색·플레이어 아티스트 표시와 대표 공식 원본의 제목·설명·재생 장면을 비교(전편 시청 아님). 검수 중 Claude의 27차 1단계 커밋8545ed3b37 및 SEO/앱 작업을 확인했으나 해당 코드/생성물 수정·수집·스윕·DB 쓰기 없음. 아래의 '후보' 수는 전부 오류 확정/자동 정정 승인 수가 아님.
+- **[이슈·유태양 개인캠이 빅뱅으로2행] [yt_channel_videos]** `VPqdQbZSsAw,yYYyBWzwJTs`는 SBS 가요대전 남자스페셜 '주문' 유태양(YOO TAEYANG) FaceCam/FanCam인데 primary 빅뱅/members 빈 배열/공개/잠금false. SBSKPOP 원본 두 제목·업로더와 빅뱅 카드 '유태양' 검색2개 실노출 대조. 실제 SF9 유태양으로 귀속/개인 촬영대상을 정정할 후보이며 빅뱅 태양과 별개. 현재 발행일 포함 제목 파서는 에스에프나인/유태양을 반환하므로 DB에 잔존한 예전 태그 유형. '주문' 원곡/합동 무대 전체의 다른 참여자와 개인캠 초점은 분리 검토. 26차 다원 VIBE 커버 `Df1P2WiYSms`와 다른 ID들이며 중복 신규 집계하지 않음.
+- **[이슈·마이클 잭슨을 갓세븐 잭슨으로12후보] [yt_channel_videos] [admin.js _m2ParseTitle]** 공개·마이클 잭슨/Michael Jackson 제목·갓세븐/잭슨 태그 조건으로 아래12행 조회, 전부 현재 갓세븐/[잭슨]. 태민/방예담/투어스/장우혁/천둥/외부 출연자 등의 콘텐츠이며 실제 갓세븐 잭슨과 구분해야 함. 잭슨 카드 '마이클' 검색에서 태민·방예담 선공개·이승국 성대모사·힙팝프린세스 예고 등이 실제 노출. 대표 KBS `nDYPKgTF_eQ` 제목/업로더·태민과 성시경 대화 표본, 스튜디오:D `ZJ_r2A_Gw1k` 방예담 커버, ALL THE K-POP `lutO5ZSawrk` 투어스 EP669, SBS Radio `WejY_nwVn5Y,eSIYUkjvLes` 장우혁/천둥 원본 제목·업로더 대조. 현재 제목 매처는12개 모두 갓세븐 잭슨 weak를 재현. 특히 영어 Michael Jackson이 들어간 장우혁 제목도 갓세븐을 primary/H.O.T. 장우혁을 with로 둠→한국어만의 문제가 아님.
+- **[이슈·예담 새 인물 생성 금지] [artists.json a0294] [yt_channel_videos]** 위 방예담4행 `6mhgmyqUAb0,ZJ_r2A_Gw1k,s3ZICmkU8Zs,O4HsOL6OpaM`의 본인은 이미 디모렉스(a0294, subName 방예담, matchAliases 예담/방예담/Yedam/Bang Yedam)로 등록. 현재 로컬 이름만 검색하면 방예담이 안 나와 신규 인물로 잘못 판단할 수 있으니 subName/별칭/그룹 이력까지 대조할 것. 원팩트 예담(a1324)으로 옮기거나 별도 방예담 카드를 중복 생성하지 않음. 디모렉스 카드 'You Are Not Alone' 정확 검색은 '아직 등록된 영상이 없어요', 잭슨 카드에는 해당 커버들이 노출되어 주인 카드 누락과 타인 카드 오노출이 같이 있음. 현재 정상 디모렉스 `KiLwH_fjd8s,D9-6qcFqPYs,tmIeNPp31cg` 등의 본인 귀속은 보존.
+- **[보류·마이클 잭슨12행 안의 외부/오디션 구분] [yt_channel_videos]** `KRS_6Ia7Ado`는 설명상 힙팝프린세스9회 예고로 실제 출연자/멘토를 더 확인해야 함. `jY7Wcz2M8m0` 설명은 노이즈 김학규·한상일의 JAM 댄스(멤버 등록 여부/원본 장면 추가 확인), `0FDEuCdszFA`는 Ben Akers의 Music Access 커버, `QxPILj37mbY`는 이승국 성대모사. 이4개는 실제 등록자와 외부인·모음/예고 정책을 나눠 처리, 갓세븐에서 다른 유명 동명이인으로 대신 옮기지 말 것. 외부 Michael Jackson 원곡 관계를 갓세븐 cover_of_members 잭슨으로 새로 채우는 것도 금지. 정상 GOT7 잭슨 PYTHON 개인캠 `uq5kSpmUyTY,IR6vO8A4I8o,dyjKuZK87dI,a2sT-WwkO2o`는 보존 비교.
+- **[이슈·롤모델은 실제 출연자가 아님4후보] [yt_channel_videos]** `Vh_KqO7J8yI` SBS Radio SF9 다원의 '롤모델 빅뱅' 발언이 primary 빅뱅/with 다원, `EXetQ20ZO2Y` 케이스타뉴스 데일리:디렉션 쇼케이스(2026.10.14)가 primary BTS/빈 멤버, `QeSv1qRtPAA` MBC Radio 세마넴 도희의 롤모델 발언이 아이브 장원영, `6jYNJRwVrHo` ARIRANG 아이몬드의 호랑이 헌정이 세븐틴 호시로 저장. 네 공식 원본 제목·업로더 대조, 도희 원본 첫 장면은 '도희가 원영이를 사랑해' 자막과 라디오 발언, 아이몬드 원본은 그룹의 호랑이 퍼포먼스 표본. 다원/데일리디렉션/세이마이네임 도희(a0693)를 실제 주인으로 검토하고 원팩트/시그니처 등 이름만 같은 사람으로 대체 금지. 아이몬드는 기존 미등록 그룹 정책과 분리 검토(26차/18차 관련 사례 참조). 현재 매처는 이4개의 기존 잘못된 주인도 그대로 반환(다원·BTS·장원영 strong/호시 weak). 데일리디렉션 로컬 en=DAILY:DIRECTION/ko=데일리디렉션과 제목의 데일리:디렉션 표기 차이도 함께 비교할 것.
+- **[보류·추가 언급/일반어 후보5행] [yt_channel_videos]** `zJHf4sMVyFw` '소연의 롤모델 서인영'은 primary 서인영이지만 실제 소연의 정확한 신원과 원본 출연 범위 미확정→그냥 유명 소연에게 옮기지 않음. `DvKvL4Jb47M` 요서비의 요즘것들 EP3 선공개는 primary 보이넥스트도어/빈 태그, 설명은 양요섭·하이라이트 프로그램으로 실제 게스트 구분 필요. `z0IJ0ezbpS4` 워터밤 조서형 셰프 프로모션이 '최애는 라이즈' 때문에 라이즈 귀속 후보. `zaPIIVg-0-8` 놀토 박나래의 '백호 사랑' 영상은 이즈나/[유사랑]/with 백호로 저장, 현재 매처는 백호만 반환. `N7YTzRndWj4` '최애가 소원 들어주기' tvN 드라마 티저는 여자친구/빈 멤버, 현재 매처 null. 이5행은 제목·현재 DB·설명 기반 후보이며 원본 전편/실제 출연 확정 검수가 남음. 특히 [tvN 공식 최애의 사원](https://tvn.cjenm.com/ko/mybiasmyboss/)과 [tvN이 확인한 ITZY 유나 캐스팅 보도](https://isplus.com/article/view/isp202511240058)가 있어 프로그램 전체를 '아이돌 없음'으로 무관 처리하지 말고 해당 클립의 실제 등장 인물부터 대조.
+- **[이슈·핑크캐비닛 MC 민주 누락45후보] [yt_channel_videos]** 공개 title~'민주의 핑크.?캐비닛' AND title~'EP[.] *[0-9]+' AND duration_sec>=600 조건49행 중, primary 아일릿/members 민주 또는 with 민주(아일릿)가 없는45행(전부 with 빈 배열/수동잠금false). 이는 이 조회 조건의49행이며 프로그램 전체 수집 완료/49개 전편 정상 검증을 뜻하지 않음. 아래표는 추가 확인 후보. 대표 `6Qc87_vrJ6M` 사나 EP30 원본 초반/2:35에 민주와 사나 동반 인터뷰 확인, `M9Y1UO7snXU` 코르티스 EP37 원본 제목·공식 KBS 업로더·5:50 민주 진행 장면·설명 초대손님 마틴/주훈 확인. 앱 플레이어 '이 영상에 나온 아티스트'는 각각 사나1명/마틴·주훈2명만 표시, 민주 카드 '사나 여신' 검색도0. 게스트 primary와 멤버는 보존하고 실제 출연 MC 민주(a0140/아일릿)를 해당 회차 with로 보완하는 후속 검토. 같은 en Minju인 김민주(a0307)/다른 민주(a0471)로 연결하지 말 것. 진행자 대체·부재 회차/티저·공용 설명만으로 전량 추가하지 않음.
+- **[이슈·진행자 존재4행도 전체 정상은 아님] [yt_channel_videos]** 위49행 중 MC가 이미 들어있는4행(`FhLJhgzKek8,NmrXoEP42_M,a4kO0Mk8BkI,n87rJElC89Y`)은 'MC 누락 아님'이지 전체 멤버 정확성 통과가 아님. 특히 `a4kO0Mk8BkI` EP22는 primary 아일릿/[민주]/빈 with지만 공식 KBS 원본 제목은 i-dle, 수집 설명의 초대손님은 슈화·펼친 원본 크레딧에도 예슈화 확인→실제 게스트 슈화가 누락된 별도 후보. `n87rJElC89Y` EP14도 초대손님 ILLIT인데 민주1명이라 실제 다른 멤버 범위 추가 확인. 그룹명 하나만 보고 멤버 전원을 채우지 말 것. 정상에 가까운 EP46 원희/이로하/민주·EP26 민주/윤아/모카도 각자 원본 출연 범위를 유지.
+- **[이슈·BEST 모음의 출연을 실제 합동으로 오인하면 안 됨] [yt_channel_videos PsfznzMtEdU]** 현재 하이라이트/[양요섭]/빈 with/flag null. KBS 원본 제목/업로더·펼친 설명은 EP09 앤팀 조, EP35 아이브 가을, EP19 양요섭, EP13 엔믹스 지우, EP37 코르티스 주훈, EP30 사나의 **서로 다른 회차** 모음으로 명시. 양요섭도 실제 한 구간 출연자이므로 단순 '하이라이트 단어 오탐'으로 양요섭을 지우지 말고 진행자/각 구간 촬영대상 범위를 별도 검토. 본편 EP37 마틴 등 다른 구간에 안 나왔을 수 있는 동반 게스트까지 자동 복사하지 않음. 여러 회차의 사람을 전부 with로 묶어 한자리 합동 출연 관계를 만들지 말고, 기존 `개별출연` 플래그 및 원래 각 회차 링크 활용 검토(app.js _gridWithList는 해당 플래그에서 함께한 줄을 제외하고 공통 출연 조회에도 제외 조건이 있음).
+- **[완료·원곡/언급과 실제 만남의 정상 경계] [yt_channel_videos]** 사나 EP30은 '롤모델'이 제목에 있어도 실제 민주와 만나는 영상이므로 사나를 지우면 안 됨. `TTXUKLmXrlg` 셔누 Hidden Singer6 '롤모델 비 앞에서 나쁜남자'도 설명상 실제 비 앞 퍼포먼스(원본 장면 미대조)라 롤모델 키워드만으로 가짜 게스트로 처리 금지. '다른 사람이 언급됨'과 '실제 같이 나옴'은 단어 하나로 일괄 구분하지 않음.
+- **[완료·재발 경로 비교] [tools/matcher_harness.cjs]** 실제 발행일4번째 인자로 현재12행 Michael Jackson→갓세븐 잭슨 weak 재현. 메모리의 입력에서 외부 풀네임만 제거한 비교(원본/DB/코드 변경 아님)는 장우혁→H.O.T./장우혁으로 회복하지만 태민·방예담 커버·Ben Akers는 null. 단독 '방예담'은 디모렉스/a0294를 찾지만 '방예담이 부르는 You Are Not Alone'은 null→별칭 데이터 존재만으로 모든 문장의 옛 활동명 처리가 된다는 뜻은 아님. 원곡/언급 오태그를 제거한 뒤 실제 주인 복구를 별도 확인, null/weak를 그대로 전량 숨기거나 제목을 조작해 저장하지 말 것.
+- **⏳ 덜 된 일 [조회·파일·판단 기준]** 아래12+45 ID 및 본문 별도 ID를 `SELECT id,title,group_ko,members,with_members,with_groups,cover_of_members,cover_of_groups,cover_of_song,tags_manual,cover_manual,content_flag,published_at FROM yt_channel_videos WHERE id IN (...)`로 최신 재조회. ① 실제 주인 확인된 유태양2/디모렉스4/투어스/장우혁/천둥·언급 사례부터 원본/잠금/현재값 가드·백업을 갖춘 소량 재귀속 계획, 실제 갓세븐 잭슨 보존. ② Pink45는 초대손님/진행자 확인된 긴 본편부터 민주(a0140) with 보완·guest members 보존, EP22 슈화와 EP14 누락은 별도 비교. BEST 모음은 개별출연으로 다중회차 관계 오염을 막고 원본 회차 연결을 살림. ③ admin.js 이름/그룹 매칭 회귀 검토 시 외부 풀네임·롤모델 문장의 주체/대상·옛 활동명+조사·실제 MC의 동명이인 구분을 나눠 검사. 이번 코드/JSON/SQL/DB 정정·수집/스윕 실행 없음.
+
+<details>
+<summary>갓세븐 잭슨으로 저장된 Michael Jackson 관련 12후보 — 실제 주인/외부인 분리 필요</summary>
+
+| 영상 ID | 제목상 실제 주체 또는 문맥 |
+|---|---|
+| `nDYPKgTF_eQ` | 태민이 존경하는 마이클 잭슨 질투하는(?) 성시경 ㅋㅋㅋ [더 시즌즈-성시경의 고막남친] ／ KBS 방송 |
+| `6mhgmyqUAb0` | [풀버전] 미쳤다... 이렇게 잘 어울린다고?🫢 방예담만의 음색과 감성으로 재해석한 마이클 잭슨 'Loving You'🎵 ／ 케이시의 백스테이지팝 |
+| `ZJ_r2A_Gw1k` | [풀버전] '리틀 마이클 잭슨'이라 불렸던 소년, 2026년의 방예담이 부르는 'You Are Not Alone'🎵 ／ 케이시의 백스테이지팝 |
+| `s3ZICmkU8Zs` | [선공개클립] 방예담이 부르는 마이클 잭슨 명곡... 'You Are Not Alone'🎵 ／ 케이시의 백스테이지팝 |
+| `O4HsOL6OpaM` | [선공개] '리틀 마이클 잭슨'이라 불렸던 방예담의 2026년 MJ 커버 #shorts |
+| `KRS_6Ia7Ado` | 마이클 잭슨? 못 참지 ／ 9회 선공개 |
+| `lutO5ZSawrk` | (ENG) [Weekly Idol] 마이클 잭슨 빙의한 산소 같은 투어스의 과몰입 노래방😎🎙 l EP.669 |
+| `WejY_nwVn5Y` | feel like Michael Jackson🕺 장우혁(jang woo hyuk)의 'I feel Hope' 하이라이트 안무 ／ 두시탈출 컬투쇼 |
+| `QxPILj37mbY` | 오랜만에 파랑방에서 마이클 잭슨 성대모사하는 천재이승국💙 ／ 김영철의 파워FM #shorts |
+| `jY7Wcz2M8m0` | 20년 전 ′마이클 잭슨 - JAM′ 댄스 완벽 호흡! 뭉클하네~ 〈슈가맨1(SUGARMAN1) 13회〉 |
+| `0FDEuCdszFA` | [Music Access] The Way You Make Me Feel (Michael Jackson) - Cover by Ben Akers |
+| `eSIYUkjvLes` | [SBS]김창렬의올드스쿨,천둥, "마이클 잭슨 교과서 삼아 연습했다" |
+
+</details>
+
+<details>
+<summary>민주의 핑크캐비닛 긴 정규회차 MC 누락 검토 45행 — 실제 진행자 확인 후 보완</summary>
+
+| 영상 ID | 회차 | 현재 primary | 현재 members(보존 검토) |
+|---|---|---|---|
+| `EOd9pG0Kjj8` | EP.50 | 아이들 | 미연, 우기 |
+| `94CqNcJcr7k` | EP.49 | 엑소 | 수호, 찬열 |
+| `ZxIwNeoL864` | EP.48 | 알파드라이브원 | 상원, 리오 |
+| `Y3p7fGrfr-Q` | EP.47 | 프로미스나인 | 채영, 나경 |
+| `nTuk769dT0U` | EP.45 | 더보이즈 | 현재, 주연 |
+| `DwEGeiZWZNc` | EP.44 | 있지 | 예지, 류진 |
+| `oJ8sK820Amk` | EP.43 | 앤팀 | 니콜라스, 유마, 케이 |
+| `WZT55Bm9KTc` | EP.42 | 르세라핌 | 사쿠라, 카즈하 |
+| `cGlBqQBJrjU` | EP.41 | 보이넥스트도어 | 태산, 운학 |
+| `nk4zobQSShs` | EP.40 | 투어스 | 신유, 영재 |
+| `MqPPmfG54Vg` | EP.38 | 배드빌런 | 윤서, 빈 |
+| `M9Y1UO7snXU` | EP.37 | 코르티스 | 마틴, 주훈 |
+| `s_hVGm6vvTw` | EP.36 | 엔시티 위시 | 료, 사쿠야 |
+| `TZmveieC0y8` | EP.35 | 아이브 | 가을, 이서 |
+| `nozqTuV43_w` | EP.34 | 슈퍼주니어 | 희철 |
+| `J6XJk3a2zf0` | EP.33 | 이븐 | 박지후, 지윤서 |
+| `zWQK22IBGH4` | EP.32 | 아이즈원 | 최예나, 김민주 |
+| `jPzAkJbjTHY` | EP.31 | 누에라 | 준표, 판 |
+| `6Qc87_vrJ6M` | EP.30 | 트와이스 | 사나 |
+| `N7hcX758IPY` | EP.29 | 클로즈유어아이즈 | 전민욱, 송승호 |
+| `2HfSMDztN7c` | EP.28 | 아홉 | 스티븐, 차웅기 |
+| `r7EPFR_qhX4` | EP.27 | 베이비돈크라이 | 미지정 |
+| `-LFpAYRYkJI` | EP.25 | 에이티즈 | 여상, 산 |
+| `IArj08TtRHE` | EP.24 | 엔하이픈 | 선우 |
+| `JSeKv2hPuKg` | EP.23 | 보이넥스트도어 | 리우, 성호 |
+| `uNr3Mu5Ik18` | EP.21 | 트리플에스 | 윤서연, 김나경 |
+| `_GN_yII7hiM` | EP.20 | 피원하모니 | 지웅, 인탁 |
+| `m_e6hAaNjkY` | EP.19 | 하이라이트 | 윤두준, 이기광 |
+| `XmNyghOUYno` | EP.18 | 투어스 | 지훈, 경민 |
+| `AxAC7CpNjrE` | EP.17 | 싸이커스 | 민재, 유준 |
+| `ZoXpmCJQjvE` | EP.16 | 니쥬 | 마코, 리쿠 |
+| `UzB3bjI0nNc` | EP.15 | 뉴비트 | 미지정 |
+| `PjYpOIR07YY` | EP.13 | 엔믹스 | 설윤, 지우 |
+| `Htfq661zOwY` | EP.12 | 더보이즈 | 뉴, 큐 |
+| `QsSSGmJqD1U` | EP.11 | 제로베이스원 | 장하오, 김규빈 |
+| `61EQ6ZcvoUE` | EP.10 | 이븐 | 케이타, 박지후 |
+| `FYoSn8BrJ6k` | EP.9 | 앤팀 | 케이, 의주, 조 |
+| `CHUYm9B9uJM` | EP.8 | 민니 | 민니 |
+| `fkJv2bkwWX8` | EP.7 | 키스오브라이프 | 하늘 |
+| `iXIzguURFCI` | EP.6 | 보이넥스트도어 | 재현, 이한 |
+| `sv5Q2brKdGU` | EP.5 | 트리플에스 | 김채연, 박소현 |
+| `PZILMfDh4no` | EP.4 | 엔하이픈 | 성훈, 정원 |
+| `lYkPcETD4iY` | EP.3 | 더보이즈 | 선우, 에릭 |
+| `xdZ46j-Omuc` | EP. 2 | 에이티즈 | 윤호 |
+| `Jk8yGDw0IDA` | EP. 1 | 다이아 | 은채 |
+
+</details>
+
+- **[완료·읽기 전용] [CHANGELOG.md]** 25~27차 ID는 신규 집계에서 제외하고 동명/언급 오귀속과 실제 MC 누락을 추가 대조. 아래 원본·플레이어·후속 판단 기준을 기록, 코드·JSON·SQL·DB 수정·수집/스윕 실행 없이 이 파일만 변경. Claude의 동시 코드/SEO 생성물 작업은 보존.
 
 ## 2026-10-30 (Claude Code — 곡 페이지 → 앱 곡 영상 패널 바로 열기 · 카드 조회수 줄 · CI 빨간불 2건)
 - **[완료·배포] [app.js _openFromHash·_openSongVideos opt.member] [build_group_pages.js] [tests/deeplink-song.test.js]** 사용자 "곡 페이지의 '직캠·영상 아카이브 보기'를 누르면 그룹 카드만 열린다 — Drop That 곡 영상 패널까지 이어져야". 딥링크에 `&song=곡 이름` 추가: 카드를 연 뒤 그 곡 영상 패널을 연다. 멤버×곡 페이지는 `#g=코르티스&m=성현&song=ACAI` → 멤버 카드 + ACAI 패널을 "멤버 ▾ 성현"으로 미리 골라 둔 채(_openSongVideos opt.member). 정적 페이지 버튼 주소에 &song= 반영(CI 재생성). 함정: `const gko=params.get('g'),mko=params.get('m');`가 _stackIndexForHash에도 있어 첫 번째 쪽에 정의가 들어가 `openSongAfter is not defined` — 문법 검사는 통과하고 실행 때만 터졌다 → 새 브라우저 테스트가 잡음(클로즈유어아이즈 Drop That! 164개, 성현 ACAI 17개·멤버 성현). 실DB라 CI 브라우저 건너뛰기 목록에 등록.
