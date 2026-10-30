@@ -242,7 +242,7 @@
   /* ── Desktop header ──────────────────────────────── */
   /* ── Mobile top bar ─────────────────────────────── */
   #mob-top-bar{display:none;}
-  @media(max-width:768px){
+  @media(max-width:768px),(pointer:coarse) and (max-height:500px){
     #mob-top-bar{
       position:fixed;top:0;left:0;right:0;
       display:flex;align-items:center;justify-content:space-between;
@@ -280,7 +280,7 @@
        덮지만 풀스크린 모달이 열려있을 때는 어차피 네비게이션이 가려지는 게 자연스러움. */
     padding:0 16px;z-index:55;pointer-events:none;
   }
-  @media(max-width:768px){#desktop-header{display:none;}}
+  @media(max-width:768px),(pointer:coarse) and (max-height:500px){#desktop-header{display:none;}}
   #dh-title{
     margin-right:auto;margin-left:10px;font-size:13px;font-weight:700;letter-spacing:.06em;
     color:rgba(180,200,240,0.61);
@@ -310,7 +310,7 @@
     border-left:0.5px solid rgba(140,175,255,0.22);border-top:0.5px solid rgba(140,175,255,0.22);
     transform:rotate(45deg);
   }
-  @media(max-width:768px){#fav-hint-callout{display:none!important;}}
+  @media(max-width:768px),(pointer:coarse) and (max-height:500px){#fav-hint-callout{display:none!important;}}
   /* 온보딩 팁(2026-10-20 개편) — 상자 없이 대상만 비추고 점·가는 선으로 짧은 글을 잇는다. 어둠은 클릭을 막지 않음(글 상자만 눌림).
      글씨는 차분하게(보통 굵기 17/13.5px) — 굵고 큰 한글 제목은 부담스럽고 AI 같다는 피드백. 위치는 _tipsLayout이 매 프레임 계산 */
   #ob-tips{position:fixed;inset:0;z-index:150;pointer-events:none;opacity:0;transition:opacity .35s ease;}
@@ -460,7 +460,7 @@
   .klp-favicon{width:14px;height:14px;object-fit:contain;border-radius:3px;flex-shrink:0;}
   .co-ext-link{color:rgba(130,155,220,0.6);text-decoration:none;font-size:11px;margin-left:4px;vertical-align:middle;transition:color .15s;}
   .co-ext-link:hover{color:rgba(180,200,255,0.9);}
-  @media(max-width:768px){
+  @media(max-width:768px),(pointer:coarse) and (max-height:500px){
     #kpop-links-overlay{align-items:flex-end;}
     #kpop-links-panel{width:100%;max-width:100%;max-height:88vh;border-radius:18px 18px 0 0;position:relative;}
     #kpop-links-panel::before{content:'';position:absolute;top:7px;left:50%;transform:translateX(-50%);width:36px;height:4px;border-radius:2px;background:rgba(255,255,255,0.2);z-index:3;pointer-events:none;}
@@ -700,7 +700,7 @@
     transform:none!important;transition:none!important;
     box-sizing:border-box!important;overflow-x:hidden!important;
   }
-  @media(min-width:769px){#mob-card-stack{display:none!important;}}
+  @media(min-width:769px) and (pointer:fine),(min-width:769px) and (min-height:501px){#mob-card-stack{display:none!important;}}
   /* tt-back과 같은 top:-2px를 썼었는데, 그룹 카드는 맨 위가 색상 라인이 아니라 그룹 이름 텍스트라
      3px만큼 중심이 안 맞았음(2026-08-13, 사용자 제보 — 실측으로 확인) — 이름 텍스트 중심에 맞춤. */
   #gc-back{position:absolute;top:1px;left:-2px;z-index:2;padding:14px 16px;}
@@ -722,7 +722,7 @@
      여기선 루트를 물리적으로 줄여 pointer-events 조작조차 불필요). 카드가 없으면 그대로 풀스크린.
      min(…,100vw-480px)로 좁은 데스크톱에선 영상이 최소 480px는 유지(그 경우만 카드 일부를 덮음).
      :has()는 이미 어드민 도킹(#adm-home-overlay 등)에서 쓰는 기법 — 데스크톱 지원 확인됨. */
-  @media(min-width:769px){
+  @media(min-width:769px) and (pointer:fine),(min-width:769px) and (min-height:501px){
     /* 카드 열린 만큼 라이트박스 오른쪽·위쪽을 카드 영역에 맞춰 비운다.
        side-panel 없이 member/conn만 남은 경우(side 닫고 이동) — member가 right:0으로 당겨지므로
        라이트박스는 남은 카드 1장(440px)만 비우면 됨. */
@@ -1012,7 +1012,7 @@
   #yt-lb-queue-sheet-handle{width:36px;height:4px;background:rgba(255,255,255,0.18);
     border-radius:2px;margin:12px auto 8px;flex-shrink:0;cursor:grab;}
 
-  @media(min-width:769px){
+  @media(min-width:769px) and (pointer:fine),(min-width:769px) and (min-height:501px){
     /* 데스크톱: 좌측(재생 중) + 우측(추천 목록) 2열 — 모바일 세로 스택과 다르게 별도 설계 */
     #yt-lightbox.lb-browse #yt-lb-wrap{width:min(92vw,1080px);display:flex;align-items:flex-start;gap:26px;}
     #yt-lightbox.lb-browse #yt-lb-main{flex:1;min-width:0;}
@@ -1079,7 +1079,7 @@
     body:has(#feed-overlay.open) #yt-lightbox.lb-browse.lb-shorts-desk #yt-lb-video-box{height:min(calc(100vh - 72px),660px);}
     body:has(#feed-overlay.open) #yt-lightbox.lb-browse.lb-shorts-desk #yt-lb-uplist{max-height:min(calc(100vh - 72px),660px);}
   }
-  @media(max-width:768px){
+  @media(max-width:768px),(pointer:coarse) and (max-height:500px){
     /* 발열 완화(2026-08-28, PERFORMANCE.md): 영상 위 backdrop-filter blur는 매 프레임 GPU 부하가 커서
        모바일에선 뺀다. autonext(하단 "다음 영상" 바)는 재생 중 상시 떠있어 특히 영향 큼, menu-panel은
        더보기 메뉴 열 때만. 배경 반투명(rgba)은 그대로라 시각차는 거의 없다. */
@@ -1333,7 +1333,7 @@
     transform:none!important;transition:none!important;
     box-sizing:border-box!important;overflow-x:hidden!important;
   }
-  @media(max-width:768px){
+  @media(max-width:768px),(pointer:coarse) and (max-height:500px){
     #tt,#gc{display:none;} /* 카드는 bottom sheet 안에서만 표시 */
     #settings-panel{
       top:calc(48px + env(safe-area-inset-top,0px));bottom:auto;right:12px;left:auto;
@@ -1367,7 +1367,7 @@
   }
   #side-panel>#gc{padding-top:44px;}
   #side-panel>#tt{padding-top:40px;}
-  @media(max-width:768px){#side-panel{display:none;}}
+  @media(max-width:768px),(pointer:coarse) and (max-height:500px){#side-panel{display:none;}}
   /* 라이트박스 칩 클릭 시 이미 열린 카드 번쩍 */
   @keyframes panel-flash{0%,100%{box-shadow:-6px 0 32px rgba(0,0,0,0.45);}50%{box-shadow:-6px 0 0 0 rgba(200,218,255,0.35),0 0 28px 4px rgba(200,218,255,0.18);}}
   .panel-flash{animation:panel-flash .4s ease;}
@@ -1436,7 +1436,7 @@
   }
   #conn-panel.open~#conn-collapse{opacity:1;pointer-events:all;transform:translateY(-50%) translateX(0);}
   #conn-collapse:hover{background:rgba(40,50,80,0.96);color:rgba(200,220,255,0.95);}
-  @media(max-width:768px){#member-panel{display:none;}#tt-collapse{display:none;}#ttx{display:none;}#gcx{display:none;}#conn-collapse{display:none;}}
+  @media(max-width:768px),(pointer:coarse) and (max-height:500px){#member-panel{display:none;}#tt-collapse{display:none;}#ttx{display:none;}#gcx{display:none;}#conn-collapse{display:none;}}
   /* ── 카드 넓게 보기 (wide mode) ──────────────────────── */
   body.card-wide #side-panel{width:640px;}
   body.card-wide #member-panel{right:640px;}
@@ -1469,7 +1469,7 @@
   }
   .nav-name{display:none;}
   .nav-arr{line-height:1;}
-  @media(max-width:768px){
+  @media(max-width:768px),(pointer:coarse) and (max-height:500px){
     #tt-nav{display:none!important;}
   }
   .tt-nav-btn:hover{color:rgba(200,218,255,0.75);}
@@ -1484,7 +1484,7 @@
   #mob-sheet-inner>#tt,#mob-sheet-inner>#gc,#mob-card-stack-inner>#tt,#mob-card-stack-inner>#gc{--card-pad:20px;}
   #gc-bar-mob{display:none;height:3px;width:calc(100% - 8px);border-radius:2px;margin:0 4px 10px;}
   #gc-inner:not(:has(.gc-status-line.show)) #gc-bar-mob{margin-top:12px;}
-  @media(max-width:768px){
+  @media(max-width:768px),(pointer:coarse) and (max-height:500px){
     #mob-sheet-inner #gc-bar,#mob-card-stack-inner #gc-bar{display:none;}
     #gc-bar-mob{display:block;}
     #mob-sheet-inner #gc-grid,#mob-card-stack-inner #gc-grid{border-top:none;padding-top:0;margin-top:0;}
@@ -1549,7 +1549,7 @@
   /* 카드 안 정사각 썸네일(디스코그래피·인스타·컬렉션) 공통 크기(2026-10-19, 사용자: "나침반 패널 앨범 커버 크기로 통일") —
      탐험 패널 이번 주 발매 커버 실측과 같게: 웹 111px · 모바일 98px(예전 80~84px). 크기를 바꿀 땐 여기 한 곳만. */
   :root{--card-thumb:110px;}
-  @media(min-width:769px){:root{--card-thumb:111px;}}
+  @media(min-width:769px) and (pointer:fine),(min-width:769px) and (min-height:501px){:root{--card-thumb:111px;}}
   /* 카드 "Instagram" 줄 — 최근 게시물 썸네일 가로 스크롤 */
   .ig-section{margin-top:14px;}
   .ig-section[hidden]{display:none;}
@@ -1626,7 +1626,7 @@
   #igv-open{display:block;margin:0 16px 16px;padding:10px 0;text-align:center;border-radius:10px;background:rgba(255,255,255,0.07);color:rgba(220,230,255,0.9);font-size:12.5px;font-weight:600;text-decoration:none;}
   #igv-open:hover{background:rgba(255,255,255,0.12);}
   .ig-cap1{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-  @media(max-width:768px){
+  @media(max-width:768px),(pointer:coarse) and (max-height:500px){
     /* 사진이 화면 맨 위(상태바 밑)에 딱 붙어 보기 불편했다(2026-10-21 제보) — 위에 닫기 버튼 줄만큼 띄운다. 닫기 버튼도 사진 위가 아니라 그 줄에 */
     #igv-panel{flex-direction:column;width:100vw;max-width:100vw;height:100dvh;border-radius:0;padding-top:calc(env(safe-area-inset-top,0px) + 52px);box-sizing:border-box;}
     #igv-media{flex:0 0 auto;min-width:0;max-height:62dvh;}
@@ -1712,7 +1712,7 @@
     color:rgba(220,238,255,1.0);
     text-shadow:0 0 14px rgba(200,228,255,0.8),0 0 6px rgba(200,228,255,0.5);
   }
-  @media(min-width:769px){
+  @media(min-width:769px) and (pointer:fine),(min-width:769px) and (min-height:501px){
     /* 모바일은 그대로 두고, 웹에서만 멤버 이름 글로우를 살짝 줄임 */
     .gc-mem-name{text-shadow:0 0 8px rgba(170,210,255,0.53),0 0 3px rgba(170,210,255,0.26);}
     .gc-mem-name:hover{text-shadow:0 0 11px rgba(200,228,255,0.7),0 0 4.5px rgba(200,228,255,0.43);}
@@ -1792,7 +1792,7 @@
     color:#eef4ff;border-color:rgba(205,222,255,0.5);font-weight:600;
     box-shadow:inset 0 1px 1px rgba(255,255,255,0.4),inset 0 -6px 10px -6px rgba(120,150,220,0.3),0 3px 10px rgba(120,150,220,0.3);
   }
-  @media(min-width:769px){
+  @media(min-width:769px) and (pointer:fine),(min-width:769px) and (min-height:501px){
     .gc-ch-filter{font-size:9px;}
     .gc-ch-sort-btn{font-size:13px;}
     /* 데스크톱 사이드 카드 폭이 좁아 필터 알약(전체/MV/라이브/Shorts)이 두 줄로 밀리기 쉬움 —
@@ -1820,7 +1820,7 @@
   .gc-vid-hd .gc-ch-filter:active{transform:none;opacity:.7;}
   .gc-vid-hd .gc-ch-filter.active{background:none;box-shadow:none;color:#fff;font-weight:600;}
   .gc-vid-hd .gc-ch-filter.active::after{content:'';position:absolute;left:0;right:0;bottom:0;height:2.5px;border-radius:2px 2px 0 0;background:rgba(140,175,255,0.95);}
-  @media(min-width:769px){.gc-vid-hd .gc-ch-filter{font-size:11.5px;padding:7px 0 8px;}.gc-vid-hd>.gc-ch-filters{gap:12px;}}
+  @media(min-width:769px) and (pointer:fine),(min-width:769px) and (min-height:501px){.gc-vid-hd .gc-ch-filter{font-size:11.5px;padding:7px 0 8px;}.gc-vid-hd>.gc-ch-filters{gap:12px;}}
   /* ♪ 곡 고르기 — 형식 탭과 종류가 다른 "좁히기"라 글자형 + 구분선 */
   .gc-vid-pick{flex:0 0 auto;display:inline-flex;align-items:center;gap:4px;background:none;border:none;font-family:inherit;white-space:nowrap;
     color:rgba(200,218,240,0.72);font-size:12.5px;padding:6px 2px;position:relative;max-width:42%;}
@@ -1829,7 +1829,7 @@
   .gc-vid-pick.on{color:#bcd3ff;}
   .gc-vid-pick::after{content:'';position:absolute;inset:-10px -4px;}
   .gc-vid-pick-sep{flex:0 0 auto;width:0.5px;height:16px;background:rgba(255,255,255,0.16);margin:0 6px 0 4px;}
-  @media(min-width:769px){.gc-vid-pick{font-size:11px;}}
+  @media(min-width:769px) and (pointer:fine),(min-width:769px) and (min-height:501px){.gc-vid-pick{font-size:11px;}}
   /* 곡 목록 시트 — 아래에서 올라옴(데스크톱은 가운데 좁은 시트) */
   #vid-song-sheet-ov{position:fixed;inset:0;z-index:140;background:rgba(4,6,16,0);transition:background .22s;}
   #vid-song-sheet-ov.open{background:rgba(4,6,16,0.45);}
@@ -1849,7 +1849,7 @@
   .vss-item.off{opacity:.42;cursor:default;}
   .vss-item.off:active{background:none;}
   .vss-empty{padding:22px 4px;color:rgba(170,190,230,0.6);font-size:13px;}
-  @media(min-width:769px){.gc-ch-only{font-size:9px;}}
+  @media(min-width:769px) and (pointer:fine),(min-width:769px) and (min-height:501px){.gc-ch-only{font-size:9px;}}
   /* bottom도 탭바를 따라간다(2026-09-18) — 78px로 박아두면 탭바가 숨었을 때 버튼만 허공에 떠 있다.
      ⚠️ max()로 안전영역 하한을 건다 — 탭바가 숨으면 --sheet-bottom이 0이 되는데, 그대로 두면 버튼이
      홈 인디케이터 제스처 영역으로 내려간다(헤드리스 캡처에서 발견). 탭바가 보일 땐 그 값이 이미
@@ -1926,7 +1926,7 @@
   .vid-edit-btn:hover{background:rgba(30,40,70,0.85);}
   .gc-ch-item .vid-edit-btn{position:absolute;top:4px;left:4px;z-index:2;}
   /* 모바일은 손가락 탭 대상이라 22px는 너무 작아서 잘 안 눌림 — 터치 타겟 권장 최소치에 가깝게 키움 */
-  @media(max-width:768px){.vid-edit-btn{width:32px;height:32px;font-size:15px;}}
+  @media(max-width:768px),(pointer:coarse) and (max-height:500px){.vid-edit-btn{width:32px;height:32px;font-size:15px;}}
   /* ── 어드민 일괄 선택 모드 ── */
   .gc-ch-item.admin-selected,.tv-conn-selectable.admin-selected{outline:2px solid rgba(100,180,255,0.9);outline-offset:-2px;}
   .gc-ch-item.admin-selected::after,.tv-conn-selectable.admin-selected::after{content:'✓';position:absolute;top:4px;right:4px;width:20px;height:20px;border-radius:50%;background:rgba(60,140,255,0.92);color:#fff;font-size:12px;font-weight:700;line-height:20px;text-align:center;z-index:5;pointer-events:none;}
@@ -1979,7 +1979,7 @@
      width는 원래 560px 고정이었고 max-height라 **높이만** 내용에 따라 늘었다 줄었다 했다 — 탭을 옮길 때마다
      패널이 출렁이고, 목록이 짧으면 스크롤바도 사라져 위치 감각이 리셋된다. 모바일은 화면이 좁아 짧은 목록에
      빈 공간을 크게 남기는 게 손해라 기존 max-height 그대로 둔다. */
-  @media(min-width:769px){#vm-panel{height:86vh;}}
+  @media(min-width:769px) and (pointer:fine),(min-width:769px) and (min-height:501px){#vm-panel{height:86vh;}}
   #vm-hd{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;flex-shrink:0;border-bottom:0.5px solid rgba(255,255,255,0.07);}
   #vm-hd-title{font-size:13px;font-weight:700;color:rgba(220,230,255,0.9);letter-spacing:-.01em;}
   #vm-close{background:none;border:none;color:rgba(180,195,230,0.56);font-size:18px;cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><path d='M11,1 L12.3,9.7 L21,11 L12.3,12.3 L11,21 L9.7,12.3 L1,11 L9.7,9.7Z' fill='%23FFB0D0' opacity='.97'/></svg>") 11 11,pointer;padding:0;line-height:1;}
@@ -2000,7 +2000,7 @@
   #vm-tabs::-webkit-scrollbar{display:none;}
   .vm-tab{flex:0 0 auto;padding:5px 10px;white-space:nowrap;}
   /* 모바일: 키보드 단축키 안내는 의미 없고, 일괄 버튼 7개가 세 줄을 차지해 목록이 화면 절반도 안 됐다 → 한 줄 가로 스크롤 */
-  @media(max-width:768px){
+  @media(max-width:768px),(pointer:coarse) and (max-height:500px){
     #vm-panel{height:calc(100dvh - 24px);max-height:calc(100dvh - 24px);} /* 검색 전엔 작았다가 결과가 오면 커지던 것 — 높이 고정 */
     /* 폰에선 관리자 홈(#adm-home-panel)과 같이 전체 화면 + 머리줄을 상태바 아래로 — 가운데 정렬 패널의 머리줄(✕)이
        상태바 밑에 깔려 닫을 수 없었다(2026-10-21 제보) */
@@ -2160,7 +2160,7 @@
   .adm-log-step{padding:7px 10px;border-radius:9px;background:rgba(255,255,255,0.035);margin-bottom:6px;border-left:2px solid rgba(120,170,255,0.4);}
   .adm-log-step.adm-log-done{border-left-color:rgba(100,180,120,0.6);}
   .adm-log-step.adm-log-fail{border-left-color:rgba(230,110,110,0.6);}
-  @media(max-width:768px){
+  @media(max-width:768px),(pointer:coarse) and (max-height:500px){
     #adm-home-panel{width:100vw;max-width:100vw;max-height:100dvh;height:100dvh;border-radius:0;border:none;}
     #adm-home-hd{padding-top:calc(env(safe-area-inset-top,0px) + 14px);}
     #adm-home-body{padding-bottom:calc(env(safe-area-inset-bottom,0px) + 28px);}
@@ -2294,7 +2294,7 @@
          자동으로 무력화된다 (도킹은 배경 클릭으로 닫히면 안 되므로 의도한 결과)
      즉 data-modal 속성/가드 코드는 손대지 않아도 도킹 의미론이 그대로 성립한다.
      ⚠️ 도킹 패널에 _bringToFront()를 쓰면 안 된다 — 카드보다 위로 올라가 목적이 뒤집힌다. */
-  @media(min-width:769px){
+  @media(min-width:769px) and (pointer:fine),(min-width:769px) and (min-height:501px){
     #adm-home-overlay,#hnn-overlay,#vm-overlay,#gp-overlay{
       background:none;backdrop-filter:none;-webkit-backdrop-filter:none;
       z-index:58;pointer-events:none;
@@ -2330,7 +2330,7 @@
   /* 도킹 패널 헤더의 "관리자 홈으로" 되돌아가기 — 홈과 슬롯을 공유하므로 진입 후 복귀 경로가 필요 */
   .adm-back-home{background:rgba(255,255,255,0.05);border:0.5px solid rgba(255,255,255,0.10);border-radius:7px;color:rgba(200,215,245,0.72);font-size:12px;line-height:1;padding:5px 7px;cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><path d='M11,1 L12.3,9.7 L21,11 L12.3,12.3 L11,21 L9.7,12.3 L1,11 L9.7,9.7Z' fill='%23FFB0D0' opacity='.97'/></svg>") 11 11,pointer;flex-shrink:0;margin-left:auto;margin-right:8px;}
   .adm-back-home:hover{background:rgba(255,255,255,0.10);color:rgba(220,232,255,0.92);}
-  @media(max-width:768px){.adm-back-home{display:none;}}
+  @media(max-width:768px),(pointer:coarse) and (max-height:500px){.adm-back-home{display:none;}}
 
   #fbv-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.52);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:81;display:none;align-items:center;justify-content:center;}
   #fbv-overlay.open{display:flex;}
@@ -2420,7 +2420,7 @@
   /* 모바일: 가운데 팝업 대신 아래에서 올라오는 바텀시트로(2026-08-27, 사용자 요청 — 탐험 패널·카드 시트와
      일관되게, 아래로 스와이프해서 닫기). 데스크톱은 위 센터 모달 그대로. 슬라이드 인/아웃 transform은 JS가
      패널에 인라인으로 넣는다(_openFeedListOverlay / _closeFeedListOverlay / _wireFeedListSwipe). */
-  @media(max-width:768px){
+  @media(max-width:768px),(pointer:coarse) and (max-height:500px){
     #feed-list-overlay{align-items:flex-end;}
     /* 높이를 88vh로 못박는다(2026-10-26 사용자 "주간 개인 직캠 창 좀 더 위까지 열려야") — 목록 칸이 flex-basis 0이라
        창 높이가 min-height(600px)에서 멈춰 화면 3할이 비어 있었다. */
@@ -2589,7 +2589,7 @@
     transition:opacity .12s;
   }
   #search-wrap.has-q #search-kbd{opacity:0;}
-  @media(max-width:768px){#search-kbd{display:none;}}
+  @media(max-width:768px),(pointer:coarse) and (max-height:500px){#search-kbd{display:none;}}
   #search-wrap.open{
     display:block;
     background:rgba(16,20,40,0.96);
@@ -2610,7 +2610,7 @@
   #search-input:focus{background:rgba(255,255,255,0.03);}
   #search-input::placeholder{color:rgba(140,160,200,0.38);}
   /* iOS Safari: font-size < 16px 이면 input 포커스 시 자동 줌인 — 모바일에서 16px로 고정해서 방지 */
-  @media(max-width:768px){
+  @media(max-width:768px),(pointer:coarse) and (max-height:500px){
     #search-input,#tab-sb-input,#idx-search-inp,.pp-input{font-size:16px!important;}
   }
   #search-results{
@@ -2643,7 +2643,7 @@
        +6px(검색창 윗변 61px)로는 검색창 윗부분이 그 안에 걸려 뿌옜다 → 웹앱에선 윗변 ~77px로 흐림 구간 밖에 둔다. */
     padding-top:calc(env(safe-area-inset-top,0px) + 6px);
   }
-  @media (display-mode: standalone) and (max-width:768px){#msheet{padding-top:calc(env(safe-area-inset-top,0px) + 22px);}} /* 웹앱만 — 일반 사파리는 흐림 덮개가 없다 */
+  @media (display-mode: standalone) and (max-width:768px),(display-mode: standalone) and (pointer:coarse) and (max-height:500px){#msheet{padding-top:calc(env(safe-area-inset-top,0px) + 22px);}} /* 웹앱만 — 일반 사파리는 흐림 덮개가 없다 */
   #msheet.open{display:flex;}
   #msheet-top{display:flex;align-items:center;gap:6px;padding:8px 12px 8px 6px;flex:none;}
   #msheet-back{
@@ -2789,7 +2789,7 @@
   #msheet-body .sr-more[hidden]{display:none!important;}
   #msheet-body .sr-more{margin:5px 16px 8px;width:calc(100% - 32px);padding:10px 0;font-size:12.5px;}
   /* ── Responsive: desktop panel positions ────────── */
-  @media(min-width:769px){
+  @media(min-width:769px) and (pointer:fine),(min-width:769px) and (min-height:501px){
     #tabbar{display:none;}
     #settings-panel{top:58px;bottom:auto;right:0;width:380px;border-radius:16px 0 0 16px;max-height:calc(100vh - 78px);overflow-y:auto;}
     /* 어드민 레이아웃(2026-08-30, 사용자 확정): 설정 패널을 맨 왼쪽에 두고, 어드민 작업패널(adm-home/vm/hnn/gp)은
@@ -2867,7 +2867,7 @@
     backdrop-filter:blur(40px) saturate(190%);-webkit-backdrop-filter:blur(40px) saturate(190%);
     box-shadow:-6px 0 32px rgba(0,0,0,0.45);
   }
-  @media(max-width:768px){#conn-panel{display:none;}}
+  @media(max-width:768px),(pointer:coarse) and (max-height:500px){#conn-panel{display:none;}}
   #conn-panel .conn-inner{padding:56px 23px 20px 26px;}
   #conn-sheet{
     display:none;position:fixed;left:0;right:0;
@@ -2887,7 +2887,7 @@
      (mob-sheet/mob-card-stack의 bs-full 이어받기와 같은 패턴, 2026-08-04 사용자 요청). */
   #conn-sheet.bs-full{min-height:calc(var(--mob-vh,100vh) - var(--sheet-bottom,73px));max-height:calc(var(--mob-vh,100vh) - var(--sheet-bottom,73px));border-radius:0;box-sizing:border-box;padding-top:var(--safe-top);}
   #conn-sheet.bs-full #conn-sheet-inner{max-height:calc(var(--mob-vh,100vh) - var(--sheet-bottom,73px) - 24px - var(--safe-top));}
-  @media(min-width:769px){#conn-sheet{display:none!important;}}
+  @media(min-width:769px) and (pointer:fine),(min-width:769px) and (min-height:501px){#conn-sheet{display:none!important;}}
   #conn-sheet-inner{overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;max-height:calc(60vh + var(--sheet-grow,0px) - 24px);overscroll-behavior:contain;transition:max-height .32s cubic-bezier(0.32,0.72,0,1);}
   #conn-sheet .conn-inner{padding:16px 28px 14px 28px;}
   /* ── Mob filter sheet ───────────────────────────── */
@@ -2905,7 +2905,7 @@
     font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;
   }
   #mob-filter-sheet.bs-open{transform:translateY(0);}
-  @media(min-width:769px){#mob-filter-sheet{display:none!important;}}
+  @media(min-width:769px) and (pointer:fine),(min-width:769px) and (min-height:501px){#mob-filter-sheet{display:none!important;}}
   #mob-filter-sheet-inner{overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;max-height:calc(58vh - 40px);overscroll-behavior:contain;padding:0 20px 16px;}
   #mob-filter-sheet #filter-panel{display:block!important;}
   .conn-handle{width:36px;height:4px;background:rgba(255,255,255,0.14);border-radius:2px;margin:10px auto 6px;display:block;}
@@ -2913,7 +2913,7 @@
   .conn-back-btn{background:none;border:none;cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><path d='M11,1 L12.3,9.7 L21,11 L12.3,12.3 L11,21 L9.7,12.3 L1,11 L9.7,9.7Z' fill='%23FFB0D0' opacity='.97'/></svg>") 11 11,pointer;padding:2px 5px;color:rgba(155,178,228,0.75);font-size:22px;line-height:1;font-family:inherit;font-weight:600;transition:color .15s;}
   .conn-back-btn:hover{color:rgba(200,220,255,0.90);}
   /* 연결 카드 자체의 닫기(×)는 데스크톱에선 왼쪽 접기 탭(#conn-collapse)이 대신하므로 헤더 버튼은 모바일에서만 노출 */
-  @media(min-width:769px){.conn-panel-close{display:none;}}
+  @media(min-width:769px) and (pointer:fine),(min-width:769px) and (min-height:501px){.conn-panel-close{display:none;}}
   .conn-anchor-chip{padding:3px 11px;border-radius:20px;font-size:11px;font-weight:700;background:rgba(255,255,255,0.055);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:0.5px solid rgba(255,255,255,0.14);color:rgba(210,228,255,0.96);letter-spacing:.02em;box-shadow:inset 0 1px 0 rgba(255,255,255,0.12);}
   .conn-lbl{font-size:var(--fz-meta);font-weight:700;letter-spacing:.20em;text-transform:uppercase;color:rgba(148,175,225,0.72);margin-bottom:8px;}
   .conn-lbl-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
@@ -3086,7 +3086,7 @@
   #gc-discog-detail-bg{position:absolute;inset:0;background:rgba(0,0,0,0.55);}
   /* 폰: 카드 시트와 같은 손잡이 — 아래로 끌어 닫는 창이라는 신호. ✕는 숨김(배경 탭·끌기로 닫힘, 2026-10-21) */
   #gc-discog-detail-handle{display:none;}
-  @media(max-width:768px){
+  @media(max-width:768px),(pointer:coarse) and (max-height:500px){
     #gc-discog-detail-handle{display:block;width:36px;height:4px;background:rgba(255,255,255,0.18);border-radius:2px;margin:-12px auto 12px;}
     #gc-discog-detail #gc-discog-detail-close{display:none;}
   }
@@ -3098,7 +3098,7 @@
      → flex-start + 고정 margin-top. 이제 높이는 아래로만 자란다.
      ⚠️ 모바일은 바꾸지 않는다 — 거긴 바텀시트(아래에서 올라오는) 패턴이 의도된 것이고, 거기서
         상단을 고정하면 시트가 화면 중간에 떠 버린다. */
-  @media(min-width:769px){
+  @media(min-width:769px) and (pointer:fine),(min-width:769px) and (min-height:501px){
     #gc-discog-detail{align-items:flex-start;}
     #gc-discog-detail-sheet{
       max-width:480px;border-radius:18px;
@@ -3229,7 +3229,7 @@
   .ecx-t{font-size:12px;color:rgba(220,230,255,0.9);margin-top:6px;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
   .ecx-b{font-size:10.5px;color:rgba(170,190,225,0.7);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   .ecx-m{font-size:10px;color:rgba(130,150,200,0.5);margin-top:1px;}
-  @media(max-width:768px){#ecx-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:12px 10px;}}
+  @media(max-width:768px),(pointer:coarse) and (max-height:500px){#ecx-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:12px 10px;}}
   /* 멜론 링크(2026-10-14) — 가사·전체 크레딧은 멜론에서. 앨범 정보 밑 작은 알약, 곡 줄 끝엔 선 아이콘 */
   /* 작고 덜 띄게(2026-10-21 사용자 — 앨범 창에서 멜론 버튼이 제목만큼 눈에 띄었다) */
   .melon-link-btn{display:inline-flex;align-items:center;gap:3px;margin-top:8px;padding:2px 8px;border-radius:999px;font-size:10px;font-weight:500;
@@ -3252,7 +3252,7 @@
   /* 고정 높이 — 내용 로드에 따라 창이 커지는 "점프"를 없앤다(2026-09-02 제보 "채워진 정도와 무관하게 크기 고정").
      열리는 순간부터 78vh, 리스트가 내부 스크롤로 채워진다(#...-list flex:1). 큰 콘텐츠 창의 표준 패턴. */
   #gc-track-videos-sheet{position:relative;width:100%;height:78vh;display:flex;flex-direction:column;background:rgba(14,18,38,0.98);backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);border-radius:20px 20px 0 0;padding:22px 22px calc(16px + env(safe-area-inset-bottom,0px));box-sizing:border-box;z-index:1;}
-  @media(min-width:769px){
+  @media(min-width:769px) and (pointer:fine),(min-width:769px) and (min-height:501px){
     #gc-track-videos-overlay{align-items:center;}
     #gc-track-videos-sheet{max-width:580px;width:580px;height:min(85vh,780px);border-radius:18px;margin-bottom:0;}
   }
@@ -3301,7 +3301,7 @@
   #combo-overlay.open{display:flex;}
   #combo-bg{position:absolute;inset:0;background:rgba(0,0,0,0.55);}
   #combo-sheet{position:relative;width:100%;height:82vh;display:flex;flex-direction:column;background:rgba(14,18,38,0.98);backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);border-radius:20px 20px 0 0;padding:20px 20px calc(16px + env(safe-area-inset-bottom,0px));box-sizing:border-box;}
-  @media(min-width:769px){#combo-sheet{max-width:430px;height:min(82vh,640px);border-radius:18px;margin-bottom:70px;}}
+  @media(min-width:769px) and (pointer:fine),(min-width:769px) and (min-height:501px){#combo-sheet{max-width:430px;height:min(82vh,640px);border-radius:18px;margin-bottom:70px;}}
   #combo-close{position:absolute;top:10px;right:12px;background:none;border:none;color:rgba(190,205,240,0.66);font-size:20px;cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><path d='M11,1 L12.3,9.7 L21,11 L12.3,12.3 L11,21 L9.7,12.3 L1,11 L9.7,9.7Z' fill='%23FFB0D0' opacity='.97'/></svg>") 11 11,pointer;padding:4px;line-height:1;z-index:2;}
   #combo-hd{display:flex;align-items:baseline;gap:8px;flex-shrink:0;padding-right:24px;}
   #combo-title{font-size:15px;font-weight:800;color:#e9eeff;}
@@ -3531,7 +3531,7 @@
      라이트박스·검색 등 **뭐라도 열려 있으면 숨긴다** — 우주가 실제로 보일 때만 뜨는 게 핵심이라
      상태를 하나라도 빠뜨리면 다른 화면 위에 떠버린다.
      위치는 하단 탭바 바로 위 오른쪽 끝(엄지 닿는 쪽). 데스크톱은 왼쪽 그대로. */
-  @media(max-width:768px){
+  @media(max-width:768px),(pointer:coarse) and (max-height:500px){
     #zoom-ctrl{display:none;}
     body:not(.feed-open):not(:has(#mob-sheet.bs-open)):not(:has(#mob-card-stack.bs-open)):not(:has(#yt-lightbox.open)):not(:has(#tabbar.search-mode)):not(:has(#settings-panel.open)):not(:has(#profile-panel.open)):not(:has(#conn-panel.open)) #zoom-ctrl{
       display:flex;
@@ -3658,11 +3658,11 @@
   }
   .fav-btn.fav-hint{color:rgba(255,120,150,0.68);animation:fav-hint-pulse 2.2s ease-in-out infinite;}
   .fav-btn+.trophy-btn{margin-left:-6px;position:relative;top:-0.25px;}
-  @media(max-width:768px){.fav-btn+.trophy-btn{top:0.5px;}}
+  @media(max-width:768px),(pointer:coarse) and (max-height:500px){.fav-btn+.trophy-btn{top:0.5px;}}
   .trophy-btn+.trophy-btn{margin-left:-6px;position:relative;top:-0.25px;}
-  @media(max-width:768px){.trophy-btn+.trophy-btn{top:0.5px;}}
+  @media(max-width:768px),(pointer:coarse) and (max-height:500px){.trophy-btn+.trophy-btn{top:0.5px;}}
   .fav-btn+.share-btn{margin-left:-6px;position:relative;top:-0.25px;}
-  @media(max-width:768px){.fav-btn+.share-btn{top:0.5px;}}
+  @media(max-width:768px),(pointer:coarse) and (max-height:500px){.fav-btn+.share-btn{top:0.5px;}}
   .share-btn{background:none;border:none;outline:none;cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><path d='M11,1 L12.3,9.7 L21,11 L12.3,12.3 L11,21 L9.7,12.3 L1,11 L9.7,9.7Z' fill='%23FFB0D0' opacity='.97'/></svg>") 11 11,pointer;padding:2px 3px;border-radius:6px;flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;color:rgba(190,205,240,0.54);transition:color .15s,transform .12s;}
   .share-btn svg{width:13px;height:13px;display:block;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;}
   .share-btn:hover{color:rgba(210,222,255,0.95);transform:scale(1.18);}
@@ -3672,10 +3672,10 @@
   /* 카드 단위 ⋮ 메뉴 버튼(2026-08-30) — 공유 아이콘 옆. 텍스트 글리프라 크기/정렬만 별도로. */
   .card-menu-btn{font-size:17px;line-height:1;letter-spacing:0;color:rgba(190,205,240,0.5);}
   .share-btn+.card-menu-btn{margin-left:-3px;position:relative;top:-1px;}
-  @media(max-width:768px){.trophy-btn+.share-btn{top:0.5px;}}
+  @media(max-width:768px),(pointer:coarse) and (max-height:500px){.trophy-btn+.share-btn{top:0.5px;}}
   /* UX감사 #2(2026-09-05): 카드 상단 버튼(하트·트로피·공유·⋮)이 ~17px에 -6px로 겹쳐 폰에서 오터치 잦음.
      폰에서만 패딩으로 히트영역을 키우고 음수 마진(겹침)을 완화한다(시각 배치는 크게 안 흔들리게). */
-  @media(max-width:768px){
+  @media(max-width:768px),(pointer:coarse) and (max-height:500px){
     #tt-name-row .fav-btn,#tt-name-row .trophy-btn,#tt-name-row .share-btn,
     #gc-name-row .fav-btn,#gc-name-row .trophy-btn,#gc-name-row .share-btn{padding:7px 6px;}
     #tt-name-row .card-menu-btn,#gc-name-row .card-menu-btn{padding:6px 6px;}
@@ -3693,7 +3693,7 @@
   #link-nudge .ln-btns{display:flex;gap:8px;margin-top:12px;align-items:center;}
   #link-nudge .ln-go{flex:1;background:rgba(130,155,255,0.9);color:#0b0d20;border:none;border-radius:11px;padding:9px 0;font-size:13px;font-weight:600;font-family:inherit;cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><path d='M11,1 L12.3,9.7 L21,11 L12.3,12.3 L11,21 L9.7,12.3 L1,11 L9.7,9.7Z' fill='%23FFB0D0' opacity='.97'/></svg>") 11 11,pointer;}
   #link-nudge .ln-later{background:none;border:none;color:rgba(170,190,255,0.85);font-size:13px;font-family:inherit;cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><path d='M11,1 L12.3,9.7 L21,11 L12.3,12.3 L11,21 L9.7,12.3 L1,11 L9.7,9.7Z' fill='%23FFB0D0' opacity='.97'/></svg>") 11 11,pointer;padding:9px 6px;}
-  @media(max-width:768px){#link-nudge{bottom:calc(84px + env(safe-area-inset-bottom,0px));}}
+  @media(max-width:768px),(pointer:coarse) and (max-height:500px){#link-nudge{bottom:calc(84px + env(safe-area-inset-bottom,0px));}}
   #share-toast{position:fixed;left:50%;bottom:32px;transform:translateX(-50%) translateY(12px);background:rgba(20,24,40,0.94);color:rgba(230,238,255,0.95);font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;font-size:13px;font-weight:600;padding:9px 16px;border-radius:20px;box-shadow:0 6px 24px rgba(0,0,0,0.35);z-index:200;opacity:0;pointer-events:none;transition:opacity .2s ease,transform .2s ease;white-space:nowrap;}
   #share-toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
   #discover-toast{position:fixed;left:50%;bottom:32px;transform:translateX(-50%) translateY(12px);display:flex;align-items:center;gap:9px;background:rgba(20,24,40,0.94);color:rgba(230,238,255,0.95);font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;font-size:12px;font-weight:600;padding:6px 16px 6px 6px;border-radius:24px;box-shadow:0 6px 24px rgba(0,0,0,0.35);z-index:200;opacity:0;pointer-events:none;transition:opacity .25s ease,transform .25s ease;white-space:nowrap;cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><path d='M11,1 L12.3,9.7 L21,11 L12.3,12.3 L11,21 L9.7,12.3 L1,11 L9.7,9.7Z' fill='%23FFB0D0' opacity='.97'/></svg>") 11 11,pointer;}
@@ -3717,11 +3717,11 @@
   .tt-insta-cam-btn.cam-uploading{opacity:.5;pointer-events:none;}
   #tt-insta-pic-wrap{display:block;position:relative;flex-shrink:0;width:78px;height:78px;border-radius:50%;cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><path d='M11,1 L12.3,9.7 L21,11 L12.3,12.3 L11,21 L9.7,12.3 L1,11 L9.7,9.7Z' fill='%23FFB0D0' opacity='.97'/></svg>") 11 11,pointer;text-decoration:none;}
   /* 모바일에서만 아주 살짝 키움(2026-08-12, 사용자 요청 — 웹은 그대로 두고 모바일만) */
-  @media(max-width:768px){#tt-insta-pic-wrap,.tt-insta-cam-btn{width:82px;height:82px;}}
+  @media(max-width:768px),(pointer:coarse) and (max-height:500px){#tt-insta-pic-wrap,.tt-insta-cam-btn{width:82px;height:82px;}}
   /* 모바일에서 위치도 오른쪽으로 아주 살짝(2026-08-12, 사용자 요청) — transform이라 옆 텍스트 블록의
      레이아웃(간격)엔 영향 없이 원만 시각적으로 이동함. hover의 scale(1.07)은 transform을 통째로
      덮어써서 그대로 두면 이동분이 사라지므로, 모바일 hover에도 같이 옮긴 채로 커지게 맞춰줌. */
-  @media(max-width:768px){
+  @media(max-width:768px),(pointer:coarse) and (max-height:500px){
     #tt-insta-pic-wrap{transform:translateX(4px);}
     #tt-insta-pic-wrap:hover{transform:translateX(4px) scale(1.07);}
   }
@@ -3780,7 +3780,7 @@
   #gc-pic-cam-admin{width:62px;height:62px;}
   #gc-pic-cam-admin.cam-overlay{width:18px;height:18px;left:44px;top:44px;}
   #gc-pic-cam-admin.cam-overlay svg{width:10px;height:10px;}
-  @media(max-width:768px){#gc-pic-wrap,#gc-pic-cam-admin{width:66px;height:66px;}
+  @media(max-width:768px),(pointer:coarse) and (max-height:500px){#gc-pic-wrap,#gc-pic-cam-admin{width:66px;height:66px;}
     #gc-pic-cam-admin.cam-overlay{width:18px;height:18px;left:48px;top:48px;}}
   #tt-name-row{display:inline-flex;align-items:center;gap:8px;margin-bottom:3px;padding-left:0;max-width:100%;}
   #tt-name-row .tn{margin-bottom:0;padding-left:4px;padding-right:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
@@ -3800,7 +3800,7 @@
   /* 섹션 헤더 오른쪽 묶음(공유 아이콘 + Highlight 토글). 아이콘은 카드/라이트박스와 같은 .share-btn을
      그대로 재사용 — 새 컴포넌트를 만들지 않는다. 모바일은 무형 확장으로 탭 타겟만 27px 확보. */
   .fav-hd-right{display:flex;align-items:center;gap:6px;}
-  @media(max-width:768px){.fav-hd-right .share-btn{padding:7px 6px;margin:-7px -3px;}}
+  @media(max-width:768px),(pointer:coarse) and (max-height:500px){.fav-hd-right .share-btn{padding:7px 6px;margin:-7px -3px;}}
   /* 2026-08-18 — ANNIVERSARIES 섹션을 여기로 통합하면서 아바타(사진/색상원)+기념일 배지가 들어간
      카드형으로 재설계. 멤버=인스타/위버스 사진, 그룹=groups.json img 필드(없으면 그룹 색상 원형). */
   .fav-item{display:flex;align-items:center;gap:9px;padding:6px 4px;border-radius:10px;cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><path d='M11,1 L12.3,9.7 L21,11 L12.3,12.3 L11,21 L9.7,12.3 L1,11 L9.7,9.7Z' fill='%23FFB0D0' opacity='.97'/></svg>") 11 11,pointer;transition:background .13s;}
@@ -3945,7 +3945,7 @@
   .col-row-del{background:none;border:none;color:rgba(140,165,220,0.34);font-size:14px;cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><path d='M11,1 L12.3,9.7 L21,11 L12.3,12.3 L11,21 L9.7,12.3 L1,11 L9.7,9.7Z' fill='%23FFB0D0' opacity='.97'/></svg>") 11 11,pointer;padding:2px 6px;flex-shrink:0;}
   /* UX감사 #6(2026-09-05): 컬렉션 피커 행 끝 아이콘 3개(삭제·공개·커버)가 ~18px로 다닥다닥 → 폰서 오터치.
      폰에서만 패딩으로 히트영역을 키운다(데스크톱은 마우스라 그대로). */
-  @media(max-width:768px){ .col-row-del,.col-row-cam,.col-row-pub{padding:8px 9px;} }
+  @media(max-width:768px),(pointer:coarse) and (max-height:500px){ .col-row-del,.col-row-cam,.col-row-pub{padding:8px 9px;} }
   .col-row-del:hover{color:rgba(255,100,120,0.7);}
   .col-row-cam{background:none;border:none;color:rgba(140,165,220,0.34);cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><path d='M11,1 L12.3,9.7 L21,11 L12.3,12.3 L11,21 L9.7,12.3 L1,11 L9.7,9.7Z' fill='%23FFB0D0' opacity='.97'/></svg>") 11 11,pointer;padding:2px 5px;flex-shrink:0;display:flex;align-items:center;}
   .col-row-cam svg{width:14px;height:14px;stroke:currentColor;}
@@ -4024,13 +4024,13 @@
   #col-picker.open{display:flex;}
   #col-picker-bg{position:absolute;inset:0;background:rgba(0,0,0,0.5);}
   #col-picker-sheet{position:relative;width:100%;background:rgba(14,18,38,0.98);backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);border-radius:20px 20px 0 0;padding-bottom:env(safe-area-inset-bottom,0px);max-height:72vh;display:flex;flex-direction:column;z-index:1;}
-  @media(min-width:769px){#col-picker-sheet{max-width:380px;border-radius:18px;margin-bottom:100px;}}
+  @media(min-width:769px) and (pointer:fine),(min-width:769px) and (min-height:501px){#col-picker-sheet{max-width:380px;border-radius:18px;margin-bottom:100px;}}
   .col-picker-hd{padding:16px 18px 10px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
   .col-picker-title{font-size:13px;font-weight:700;color:rgba(200,220,255,0.88);letter-spacing:.03em;}
   #col-picker-close{background:none;border:none;color:rgba(150,175,230,0.62);font-size:23px;cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><path d='M11,1 L12.3,9.7 L21,11 L12.3,12.3 L11,21 L9.7,12.3 L1,11 L9.7,9.7Z' fill='%23FFB0D0' opacity='.97'/></svg>") 11 11,pointer;line-height:1;width:36px;height:36px;display:flex;align-items:center;justify-content:center;padding:0;margin:-8px -8px -8px 0;border-radius:50%;-webkit-tap-highlight-color:transparent;}
   #col-picker-close:active{background:rgba(255,255,255,0.08);}
   /* 모바일 바텀시트: 위에서 아래로 스와이프해 닫을 수 있다는 힌트로 손잡이 줄을 얹는다(2026-08-29 사용자 제보). */
-  @media(max-width:768px){
+  @media(max-width:768px),(pointer:coarse) and (max-height:500px){
     #col-picker-sheet::before{content:'';position:absolute;top:8px;left:50%;transform:translateX(-50%);width:38px;height:4px;border-radius:2px;background:rgba(255,255,255,0.20);pointer-events:none;}
     .col-picker-hd{padding-top:22px;}
   }
@@ -4108,7 +4108,7 @@
   #feed-overlay{position:fixed;inset:0;z-index:39;display:none;flex-direction:column;}
   #feed-overlay.open{display:flex;}
   /* 데스크톱은 전체화면 오버레이 대신 저널 사이드바와 같은 방식의 왼쪽 슬라이드 패널로 표시 */
-  @media(min-width:769px){
+  @media(min-width:769px) and (pointer:fine),(min-width:769px) and (min-height:501px){
     #feed-overlay{
       /* 오른쪽 카드 레일(#side-panel)과 좌우 짝이라 폭을 맞춘다: 320→380(2026-09-09) → 440(2026-10-02).
          ⚠️ 카드 폭을 바꾸면 여기·아래 translateX·#zoom-ctrl.zoom-feed-open도 같이 바꿀 것. */
@@ -4209,7 +4209,7 @@
   .feed-strip-sub+.feed-strip-sub{margin-top:-7px;}
   .feed-strip-sub{font-size:var(--fz-meta);color:rgba(120,148,200,0.61);text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:78px;margin-top:-4px;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
   .feed-strip-date{font-size:9px;color:rgba(180,205,240,0.72);text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:78px;margin-top:-5px;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
-  @media(min-width:769px){
+  @media(min-width:769px) and (pointer:fine),(min-width:769px) and (min-height:501px){
     #feed-anniv .feed-strip-item,#feed-foryou-anniv .feed-strip-item{width:calc(25% - 2.5px);}
     #feed-anniv .feed-strip-thumb-wrap,#feed-foryou-anniv .feed-strip-thumb-wrap{width:100%;height:auto;aspect-ratio:1;box-sizing:border-box;}
     #feed-anniv .feed-strip-name,#feed-foryou-anniv .feed-strip-name{font-size:12px;max-width:100%;}
@@ -4275,7 +4275,7 @@
   /* #feed-jacon(오리지널 콘텐츠 선반)도 차트와 동일한 고정폭 카드(2026-09-04 사용자 — "썸네일 크기 차트랑 동일하게"). */
   #feed-chart>.feed-card,#feed-jacon>.feed-card,#feed-favchart>.feed-card,#feed-events>.feed-card{flex:0 0 auto;width:158px;border-bottom:none;border-radius:8px;background:rgba(255,255,255,0.03);}
   /* 웹 발견 선반: 첫 장 전체와 두 번째 절반이 보이게 같은 크기로. */
-  @media(min-width:769px){
+  @media(min-width:769px) and (pointer:fine),(min-width:769px) and (min-height:501px){
     #feed-chart>.feed-card,#feed-jacon>.feed-card,#feed-favchart>.feed-card,#feed-events>.feed-card{width:calc((100% + 10px) / 1.5);}
   }
   #feed-chart>.feed-card .feed-card-cap,#feed-favchart>.feed-card .feed-card-cap,#feed-events>.feed-card .feed-card-cap{padding:8px 10px 12px;background:rgba(0,0,0,0.22);border-radius:0 0 8px 8px;}
@@ -4378,7 +4378,7 @@
   /* 공연 포스터는 세로 틀에 전체를 담는다. 양쪽 탭에서 같은 규칙을 쓴다. */
   #feed-concerts>.feed-card .feed-card-thumb-wrap,#feed-favconcert>.feed-card .feed-card-thumb-wrap{aspect-ratio:2/3;}
   #feed-concerts>.feed-card .feed-card-thumb,#feed-favconcert>.feed-card .feed-card-thumb{object-fit:contain;}
-  @media(min-width:769px){
+  @media(min-width:769px) and (pointer:fine),(min-width:769px) and (min-height:501px){
     /* 앨범·공연은 같은 너비: 두 장 전체와 세 번째 절반. 간격은 8px. */
     #feed-newalbum.feed-album-rail,#feed-favalbum.feed-album-rail,#feed-concerts.feed-album-rail,#feed-favconcert.feed-album-rail{grid-auto-columns:calc((100% + 4px) / 2.5);}
   }
@@ -4428,11 +4428,11 @@
   .feed-recent-item{display:flex;flex-direction:column;gap:5px;flex-shrink:0;width:158px;cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><path d='M11,1 L12.3,9.7 L21,11 L12.3,12.3 L11,21 L9.7,12.3 L1,11 L9.7,9.7Z' fill='%23FFB0D0' opacity='.97'/></svg>") 11 11,pointer;-webkit-tap-highlight-color:transparent;position:relative;}
   .feed-recent-thumb-wrap{width:158px;aspect-ratio:16/9;border-radius:8px;overflow:hidden;background:rgba(255,255,255,0.05);}
   .feed-recent-thumb{width:100%;height:100%;object-fit:cover;display:block;}
-  @media(min-width:769px){
+  @media(min-width:769px) and (pointer:fine),(min-width:769px) and (min-height:501px){
     #feed-recent>.feed-recent-item{width:calc((100% + 10px) / 1.5);}
     #feed-recent .feed-recent-thumb-wrap{width:100%;}
   }
-  @media(max-width:768px){
+  @media(max-width:768px),(pointer:coarse) and (max-height:500px){
     /* 모바일: 영상 1.5장, 앨범·공연 2⅔장, 기념일 프로필 3.5장. */
     #feed-chart>.feed-card,#feed-jacon>.feed-card,#feed-favchart>.feed-card,#feed-events>.feed-card,#feed-recent>.feed-recent-item{width:calc((100% + 10px) / 1.5);}
     #feed-recent .feed-recent-thumb-wrap{width:100%;}
@@ -4518,7 +4518,7 @@
      아래로 끄는 건 "줄이기"가 아니라 "닫기"라는 의도). top/height를 전환해서 카드 바텀시트처럼
      크기 자체가 부드럽게 CSS 트랜지션되게 한다(진입 슬라이드업은 JS에서 처리, 아래 참고).
      세로 여백 없이 카드 바텀시트(#mob-sheet)와 톤을 맞추려고 #feed-hd 배경/구분선은 없앰(아래). */
-  @media(max-width:768px){
+  @media(max-width:768px),(pointer:coarse) and (max-height:500px){
     #feed-overlay{transition:transform .32s cubic-bezier(0.32,0.72,0,1),top .32s cubic-bezier(0.32,0.72,0,1),height .32s cubic-bezier(0.32,0.72,0,1),border-radius .32s cubic-bezier(0.32,0.72,0,1),bottom .32s cubic-bezier(0.32,0.72,0,1);}
     #feed-overlay.open.peek{
       top:44%;height:56%;
@@ -4551,7 +4551,7 @@
      "설치된 웹앱일 때만" 걸리므로 사파리엔 영향 없음. env(safe-area-inset-top)은 그대로 쓰고 기본 여백만
      14→24px로 키워 상태바에 바짝 붙는 느낌을 완화. 이 규칙은 파일 끝(소스 순서 마지막)이라 위 #mob-top-bar
      패딩을 확실히 덮어씀. ⚠️ 실기기(홈화면 추가한 아이폰)에서 보고 아래 24px만 조정하면 됨. */
-  @media (display-mode: standalone) and (max-width:768px){
+  @media (display-mode: standalone) and (max-width:768px),(display-mode: standalone) and (pointer:coarse) and (max-height:500px){
     #mob-top-bar{padding-top:calc(24px + env(safe-area-inset-top,0px));}
     /* 시트(카드)도 같은 처리(2026-08-31 사용자 제보 — "웹앱에서 카드 열면 상단 핸들이랑 왼쪽 화살표가
        너무 위에 있어서 클릭할 수가 없다"). 2026-08-27에 --safe-top으로 위치는 맞춰뒀지만 **여유가 0**
@@ -4727,7 +4727,7 @@
 #mx-overlay.open{visibility:visible;opacity:1;}
 #mx-panel{width:100%;max-height:93dvh;background:#0e0e12;border-radius:18px 18px 0 0;display:flex;flex-direction:column;overflow:hidden;transform:translateY(40px);transition:transform 0.25s cubic-bezier(0.32,0.72,0,1);}
 #mx-overlay.open #mx-panel{transform:translateY(0);}
-@media(min-width:768px){
+@media(min-width:768px) and (pointer:fine),(min-width:768px) and (min-height:501px){
   #mx-overlay{align-items:center;}
   #mx-panel{width:min(940px,94vw);max-height:88dvh;border-radius:18px;}
 }
@@ -4758,7 +4758,7 @@
 .mx-bar-val{font-size:9px;fill:rgba(255,255,255,0.45);font-family:inherit;}
 #mx-grid{flex:1;overflow-y:auto;padding:10px 10px 28px;display:grid;grid-template-columns:repeat(auto-fill,minmax(88px,1fr));gap:8px;align-content:start;}
 @media(min-width:480px){#mx-grid{grid-template-columns:repeat(auto-fill,minmax(108px,1fr));gap:10px;}}
-@media(min-width:768px){#mx-grid{grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:12px;padding:12px 14px 32px;}}
+@media(min-width:768px) and (pointer:fine),(min-width:768px) and (min-height:501px){#mx-grid{grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:12px;padding:12px 14px 32px;}}
 .mx-card{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:12px 8px 10px;display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;transition:background 0.14s,transform 0.1s;text-align:center;}
 .mx-card:hover{background:rgba(255,255,255,0.09);transform:translateY(-2px);}
 .mx-card:active{transform:scale(0.96);}
@@ -5038,7 +5038,7 @@
   #gc-discog-detail.lb-dock #gc-discog-detail-sheet{max-height:calc(100dvh - var(--lbdock-top,38dvh));}
 }
 #yt-lightbox.lb-browse .lb-menu-wrap{display:none!important;}
-@media(max-width:768px){
+@media(max-width:768px),(pointer:coarse) and (max-height:500px){
   #yt-lightbox.lb-browse.lb-has-chips #yt-lb-wrap{padding-top:calc(64px + env(safe-area-inset-top,0px));}
   #yt-lightbox.lb-browse #yt-lb-wrap{padding-top:calc(64px + env(safe-area-inset-top,0px));}
   #yt-lightbox.lb-browse #yt-lb-info{padding-top:14px;}
@@ -5091,7 +5091,7 @@
 /* ── 데스크톱 가로 화살표 정리(2026-10-20 사용자 — "웹은 가로가 넓으니 > 로, 오른쪽으로 라이트박스만 닫히게") ──
    영상창 닫기 셰브런을 아래(∨)→오른쪽(›)으로 돌리고, 닫힐 때 오른쪽으로 밀려나며 사라진다(카드는 그대로).
    모바일은 화면을 아래로 내려 닫는 시트라 ∨ 그대로. */
-@media(min-width:769px){
+@media(min-width:769px) and (pointer:fine),(min-width:769px) and (min-height:501px){
   #yt-lightbox.lb-browse #yt-lb-close-chevron{transform:rotate(-90deg);}
   #yt-lightbox.lb-browse #yt-lb-close{width:34px;height:34px;top:-34px;right:-4px;display:flex;align-items:center;justify-content:center;border-radius:50%;opacity:.75;}
   #yt-lightbox.lb-browse #yt-lb-close:hover{background:rgba(255,255,255,0.08);opacity:1;}
@@ -5121,7 +5121,7 @@
 .pp-oauth-ic{width:16px;height:16px;flex:none;}
 
 /* ── 웹 무대(2026-10-21) — 재생 화면 윗줄 = 카드 윗줄, 앨범 창은 카드 왼쪽 빈자리에 붙고 재생 화면과 차례로 앞에 ── */
-@media(min-width:769px){
+@media(min-width:769px) and (pointer:fine),(min-width:769px) and (min-height:501px){
   /* 카드 1개일 때 영상 상자가 세로 가운데 정렬이라 화면보다 높으면 위로 34px 삐져나와 카드 윗줄(색 막대)보다 위에 있었다 — 위에서부터 */
   body:has(#side-panel.open) #yt-lightbox.lb-browse{align-items:flex-start;overflow-y:auto;padding:44px 28px 32px;}
 }
@@ -5185,7 +5185,7 @@
 .sw-to-lb{display:none;}
 /* 폰: 아래에서 올라오는 시트(목록 창과 같은 모양 — 손잡이·위 모서리만 둥글게). 열고 닫는 transform은 JS(_swOpen·_swClose).
    인스타 사진 보기는 원래 폰 전체 화면 + 쓸어 닫기라 그대로 */
-@media(max-width:768px){
+@media(max-width:768px),(pointer:coarse) and (max-height:500px){
   #venue-overlay,#trophy-overlay{align-items:flex-end;}
   #venue-panel,#trophy-panel{width:100%;max-width:100%;max-height:88vh;border-radius:18px 18px 0 0;padding-top:22px;overscroll-behavior:contain;box-sizing:border-box;}
   #venue-panel::before,#trophy-panel::before{content:'';position:absolute;top:7px;left:50%;transform:translateX(-50%);width:36px;height:4px;border-radius:2px;background:rgba(255,255,255,0.2);pointer-events:none;}
@@ -5275,4 +5275,38 @@
   body.fw-home .feed-news-mvs>.feed-news-row{grid-column:span 2;min-width:0;margin:0;}
   body.fw-home .feed-news-shorts>.feed-card{grid-column:span 1;min-width:0;}
   body.fw-home .feed-news-list>.feed-news-row:not(.is-media){margin:0 -16px;}
+}
+
+/* ── 폰 가로(2026-10-30 사용자 "모바일을 가로로 돌리면 막 겹친다 — 유튜브처럼 가로에 맞게") ─────────────────────────────
+   폰 판정 자체는 isMob()/@media(max-width:768px),(pointer:coarse) and (max-height:500px) 쪽에서 세로 배치를 그대로 쓰게 했고,
+   여기는 높이 390 안팎에서 세로 배치가 안 맞는 곳만 가로 전용으로 바꾼다.
+   ① 탭바: 아이콘·라벨을 한 줄로 얇게 ② 재생 화면: 왼쪽 영상(화면에 고정) + 오른쪽 제목·출연자·이어서 보기(스크롤) — 유튜브 가로 시청 화면
+   ③ 쇼츠: 왼쪽 화면 높이 세로 영상 + 오른쪽 제목·반응. 노치 쪽 여백(safe-area 좌우)도 챙긴다. */
+@media (pointer:coarse) and (max-height:500px) and (orientation:landscape){
+  #tabbar{padding:3px max(env(safe-area-inset-left,0px),8px) max(4px, env(safe-area-inset-bottom,0px)) max(env(safe-area-inset-right,0px),8px);}
+  .tab-btn{flex-direction:row;gap:6px;padding:4px;}
+  .tab-btn svg{width:19px;height:19px;}
+
+  /* ② 가로 영상 재생 — 영상만 왼쪽에 고정(position:fixed, 화면 높이 가운데)하고, 제목·하트·반응·출연자·곡·이어서 보기는 원래 그리드 그대로
+     오른쪽 영역에서 흐르며 스크롤된다(유튜브 가로 시청 화면). 영상 폭 = 화면 56% 또는 화면 높이에 맞는 16:9 중 작은 쪽. */
+  #yt-lightbox.lb-browse{--lv-w:min(56vw, calc((100svh - 24px) * 16 / 9));--lv-l:max(env(safe-area-inset-left,0px),56px);}
+  #yt-lightbox.lb-browse #yt-lb-wrap,#yt-lightbox.lb-browse.lb-has-chips #yt-lb-wrap{display:block;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;
+    padding:10px max(env(safe-area-inset-right,0px),14px) 16px calc(var(--lv-l) + var(--lv-w) + 18px);}
+  #yt-lightbox.lb-browse #yt-lb-video-box:not(.is-shorts){position:fixed;left:var(--lv-l);top:calc((100svh - var(--lv-w) * 9 / 16) / 2);
+    width:var(--lv-w);height:auto;aspect-ratio:16/9;z-index:2;}
+  #yt-lightbox.lb-browse #yt-lb-info{padding-top:0;}
+  #yt-lightbox.lb-browse #yt-lb-uplist{flex:none;height:auto;max-height:none;overflow:visible;}
+
+  /* ③ 쇼츠 — 세로 영상은 화면 높이에 맞춰 왼쪽, 오른쪽에 제목·출연자·반응을 세로 가운데로. 오른쪽 끝 세로 버튼 줄(고정)과 안 겹치게 여백. */
+  #yt-lightbox.lb-shorts:not(.lb-browse){align-items:stretch;}
+  #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-wrap{
+    width:100vw;max-width:100vw;height:100svh;box-sizing:border-box;padding:10px 64px 10px max(env(safe-area-inset-left,0px),56px);}
+  #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-main{height:100%;display:grid;grid-template-columns:auto minmax(0,300px);grid-template-rows:minmax(0,1fr) max-content max-content max-content minmax(0,1fr);
+    column-gap:18px;justify-content:center;}
+  #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-main>*{grid-column:2;min-width:0;}
+  #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-video-box.is-shorts{grid-column:1;grid-row:1 / -1;height:calc(100svh - 20px);width:auto;aspect-ratio:9/16;}
+  #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-video-box.is-shorts~#yt-lb-info{width:auto;margin:0;grid-row:2;}
+  #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-member-info{position:static;transform:none;grid-row:3;justify-self:start;margin-top:8px;width:auto;max-width:100%;}
+  #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-reactions{grid-row:4;justify-content:flex-start;padding-top:10px;}
+  #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-toolbar{grid-row:5;align-self:start;height:0;overflow:visible;} /* 버튼은 오른쪽 끝에 고정 배치라 칸만 비워 둔다 */
 }

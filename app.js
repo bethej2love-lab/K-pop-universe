@@ -4935,7 +4935,12 @@ function _shortThumbWatch(img){
   if(typeof IntersectionObserver!=='function'||img.dataset.keepWatch||!img.isConnected)return;
   img.dataset.keepWatch='1';_shortThumbIOFor(_shortThumbRoot(img)).observe(img);
 }
-function isMob(){return window.innerWidth<=768;}
+// 폰 가로(2026-10-30 사용자 "모바일을 가로로 돌리면 막 겹친다") — 아이폰 가로는 844×390이라 폭(768)만 보면 PC도 폰도 아닌 구간에 걸려
+// 두 배치가 섞였다. 터치 화면이면서 높이 500 이하면 폰으로 본다(아이패드는 높이 744 이상, PC 창은 터치가 아니라 해당 없음).
+// CSS도 같은 조건: @media(max-width:768px),(pointer:coarse) and (max-height:500px). 가로 전용 배치는 body.ph-land.
+const _PH_LAND_MQ="(pointer:coarse) and (max-height:500px)";
+function _phoneLand(){try{return matchMedia(_PH_LAND_MQ).matches;}catch(e){return false;}}
+function isMob(){return window.innerWidth<=768||_phoneLand();}
 // 유튜브 API로 동기화된 일부 영상(주로 인스타 릴스 크로스포스트) 제목엔 실제 줄바꿈 문자가 들어있어서,
 // 한 줄 말줄임(white-space:nowrap)이 안 먹고 제목 영역이 여러 줄로 확 커져 보이는 문제가 있었음 — 표시 직전에 제거.
 // (정규식 리터럴에 U+2028/2029를 직접 쓰면 소스 파일 자체가 깨지므로 charCode로 안전하게 구성)
@@ -15116,7 +15121,7 @@ let _tabbarOff=false; // 지금 탭바가 숨겨져 있어서 시트가 그 자�
 // (iOS는 주소창 접힘/펼침 때 resize가 수시로 발화하므로 실제로 그 타이밍에 걸림). 레이아웃 높이인
 // offsetHeight + CSS bottom 오프셋으로 재는 게 transform과 무관해서 안전하다.
 function updateSheetBottom(){
-  if(window.innerWidth>768)return;
+  if(!isMob())return;
   const tb=document.getElementById('tabbar');if(!tb)return;
   const off=parseFloat(getComputedStyle(tb).bottom)||0; // 검색 모드(bottom:4px) 같은 띄움 보정
   _tabbarH=Math.round(tb.offsetHeight+off);
@@ -20910,7 +20915,7 @@ function _placeFeedTabs(){
   else if(tabs.parentElement!==body)body.insertBefore(tabs,body.firstChild);
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',_placeFeedTabs);else _placeFeedTabs();
-try{matchMedia('(max-width:768px)').addEventListener('change',_placeFeedTabs);}catch(e){}
+try{matchMedia('(max-width:768px)').addEventListener('change',_placeFeedTabs);matchMedia(_PH_LAND_MQ).addEventListener('change',_placeFeedTabs);}catch(e){}
 function _openFeedOverlay(){
   _placeFeedTabs();
   const el=document.getElementById('feed-overlay');

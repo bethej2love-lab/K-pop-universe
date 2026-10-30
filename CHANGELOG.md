@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 2026-10-30 (Claude Code — 폰 가로 화면 배치)
+- **[완료·배포] [app.js isMob·_phoneLand·updateSheetBottom] [admin.js] [kpop_universe.css] [tests/phone-landscape.test.js]** 사용자 캡처 "모바일을 가로로 돌리면 막 겹친다 — 저번에 요청했는데 반영 안 됐다". 원인: 화면을 폭으로만 나눠(768 이하=폰, 769~ PC 규칙, 1024~ 웹 무대) 아이폰 가로(844×390)가 그 사이에 걸려 탐험 패널은 PC식 왼쪽 반쪽, 재생 화면은 무대식 떠 있는 창이 섞였다(헤드리스 844×390 터치로 그대로 재현). 수정: **폰 = 폭 768 이하 또는 (터치 화면 + 높이 500 이하)** — JS isMob()·CSS `@media(max-width:768px)` 38곳에 같은 조건 추가, PC 전용 `@media(min-width:769px/768px)` 28곳은 폰 가로에서 꺼지게(pointer:fine 또는 높이 501 이상일 때만). 아이패드(높이 744+)·PC(마우스) 영향 없음. 그 위에 가로 전용(`(pointer:coarse) and (max-height:500px) and (orientation:landscape)`): ① 탭바 아이콘·라벨 한 줄로 얇게 ② 가로 영상 재생 = 유튜브 가로 시청 화면처럼 영상은 왼쪽 고정(화면 56% 또는 높이에 맞는 16:9), 제목·하트·반응·출연자·곡·이어서 보기는 기존 그리드 그대로 오른쪽에서 스크롤 ③ 쇼츠 = 화면 높이 세로 영상 왼쪽 + 제목·출연자·반응 오른쪽 세로 가운데. 노치 쪽 safe-area 여백 반영. 함정: 재생 화면 #yt-lb-main이 이미 자체 그리드(하트·반응·버튼 칸 고정)라 display:contents로 풀면 겹친다 → 영상만 position:fixed로 빼는 방식. 쇼츠 정보 줄은 overflow:hidden이라 auto 행이 8px로 눌려 제목이 사라졌다 → max-content 행.
+- **[완료·검증]** 새 브라우저 테스트(가로: 폰 판정·탐험 패널 전체 폭·영상/제목 겹침 없음·쇼츠 제목 화면 안 / 세로: 제목이 영상 아래 유지) 5/5. lb-topbar·compass-width(웹 무대)·card-title-visibility·feed-trend·smoke·stage-venue-album·syntax 통과. ⏳ 아이폰 가로 실기기 확인 대기(헤드리스는 safe-area 노치 여백을 0으로 봄).
+
+
 ## 2026-10-30 (Codex — 검수27차·개인캠 잔여와 제목 충돌)
 - **[진행중·읽기 전용] [CHANGELOG.md]** 25차 운영 정정86건과26차 인계는 중복 제외. 다중 멤버가 붙은 공개 직캠 표본에서 새 잔여·다른 그룹 동명이인·한영 제목 충돌을 검수. Claude의 코드 작업은 보존하고 코드/JSON/SQL/DB 쓰기 없이 근거와 정상 비교만 이 파일에 남김.
 

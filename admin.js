@@ -5890,7 +5890,7 @@ function _admDockShow(id){
   ['adm-home-overlay','hnn-overlay','vm-overlay','gp-overlay'].forEach(o=>{
     document.getElementById(o)?.classList[o===id?'add':'remove']('open');
   });
-  if(window.innerWidth<=768){const el=document.getElementById(id);if(el&&typeof _bringToFront==='function')_bringToFront(el);}
+  if(isMob()){const el=document.getElementById(id);if(el&&typeof _bringToFront==='function')_bringToFront(el);}
 }
 function _vmOpen(tab){
   // vm개선 3(c): tab 인자 없이(설정 버튼으로) 열면 마지막 탭·검색어·스크롤 복원. 홈 카드처럼 tab을
