@@ -9480,9 +9480,11 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
       const _pT=String(rawTitle||'').toUpperCase();
       const _pV=mko=>{const a=ARTISTS.find(x=>x.name.ko===mko&&_artistGroups(x).some(g=>g.ko===gko));if(!a)return [String(mko).toUpperCase()];
         const ge=_artistGroups(a).find(g=>g&&g.ko===gko)||{};
-        return [...new Set([a.name.ko,a.name.en,ge.name,ge.nameEn].filter(v=>v&&(String(v).length>=2||/[가-힣]/.test(v))).map(v=>String(v).toUpperCase()))];}; // 한 글자 한글 이름(쿤)도 — 이미 잡힌 멤버끼리 비교라 안전
-      const _pRe=v=>/[A-Z]/.test(v)?'(?<![A-Z])'+_atmEscRe(v)+'(?![A-Z])':_atmEscRe(v);
-      const _pCnt=mko=>_pV(mko).reduce((n,v)=>n+(_pT.match(new RegExp(_pRe(v),'g'))||[]).length,0);
+        const _pSt=_atmStripSurname([...a.name.ko]); // 성 뗀 이름(유연정→연정)도 — "다원&연정 직캠(DAWON&YEONJUNG)" 듀오를 다원 한 명으로 줄였다
+        return [...new Set([a.name.ko,a.name.en,ge.name,ge.nameEn,_pSt&&_pSt.length>=2?_pSt:null].filter(v=>v&&(String(v).length>=2||/[가-힣]/.test(v))).map(v=>String(v).toUpperCase()))];}; // 한 글자 한글 이름(쿤)도 — 이미 잡힌 멤버끼리 비교라 안전
+      // 한글은 앞뒤에 다른 한글이 없을 때만(성 뗀 '아이'가 '아이돌' 속에서 세어졌다), 긴 표기부터 세고 센 자리는 지운다('기희현' 안의 '희현'을 또 셌다)
+      const _pRe=v=>/[A-Z]/.test(v)?'(?<![A-Z])'+_atmEscRe(v)+'(?![A-Z])':'(?<![가-힣])'+_atmEscRe(v)+'(?![가-힣])';
+      const _pCnt=mko=>{let t=_pT,n=0;_pV(mko).sort((x,y)=>y.length-x.length).forEach(v=>{const re=new RegExp(_pRe(v),'g');n+=(t.match(re)||[]).length;t=t.replace(re,' ');});return n;};
       const _pVs=matched.map(m=>[m,_pV(m)]);
       const _pPair=_pVs.some(([m1,a1])=>_pVs.some(([m2,a2])=>m1!==m2&&a1.some(x=>a2.some(y=>new RegExp(_pRe(x)+' ?[X×&+] ?'+_pRe(y)).test(_pT)))));
       if(_pPair){

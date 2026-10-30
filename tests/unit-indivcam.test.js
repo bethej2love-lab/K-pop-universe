@@ -49,6 +49,10 @@ eq("[MPD직캠] 셔누X형원 형원 직캠 4K 'Do You Love Me' (SHOWNU X HYUNGW
 eq("[페이스캠4K] 웨이션브이-쿤&샤오쥔 쿤 'Back To You' (WayV-KUN&XIAOJUN KUN FaceCam)│@SBS Inkigayo", '웨이션브이', ['쿤']);
 eq("[K-Fancam] 정한X조슈아 세븐틴 정한 직캠 '12 o'clock' (JEONGHAN X JOSHUA JEONGHAN Fancam)@뮤직뱅크", '세븐틴', ['정한']);
 eq("[MPD직캠] 셔누X형원 직캠 4K 'Do You Love Me' (SHOWNU X HYUNGWON FanCam) | @MCOUNTDOWN", '몬스타엑스', ['셔누', '형원']);
+// 듀오 직캠은 그대로 — 성 뗀 이름(유연정→연정)으로 세고, 한글은 다른 한글 사이에선 안 센다(성 뗀 '아이'가 '아이돌' 속에, '기희현' 안 '희현' 중복)
+eq("[MPD직캠] 우주소녀 다원&연정 직캠 8K 'Stronger' (WJSN DAWON&YEONJUNG FanCam) | @WJSN CHOCOME COMEBACK SHOW", '우주소녀', ['유연정', '다원']);
+eq('[IDOL RADIO] 200703 드림노트 유아이&라라 - 여행 (cover) /아이돌 라디오 직캠', '드림노트', ['라라', '유아이']);
+eq('[IDOL RADIO] 200316 다이아(DIA) 기희현&은채 - 날라리 cover /아이돌 라디오 직캠', '다이아', ['기희현', '은채']);
 // ⑥ 이름 데이터(2026-10-30 Codex 검수27차) — 퍼플키스 SWAN=수안(박지은 아님), NOWADAYS=나우즈, 라↗️디오≠디오, '알고 보니'≠보니
 eq("[K-Fancam] 퍼플키스 수안 직캠 'BBB' (PURPLE KISS SWAN Fancam) @뮤직뱅크(Music Bank) 240322", '퍼플키스', ['수안'], '2024-03-22');
 eq("[UNFILTERED CAM] NOWADAYS HYEONBIN(현빈) 'OoWee' 4K | STUDIO CHOOM ORIGINAL", '나우즈', ['현빈']);
