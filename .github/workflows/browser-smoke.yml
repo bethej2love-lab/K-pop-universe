@@ -36,8 +36,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        suite: [vid-list-share, stage-venue-album, deeplink-song, compass-width, program-facets]
         include:
+          - suite: vid-list-share
+          - suite: stage-venue-album
+          - suite: deeplink-song
+          - suite: compass-width
+          - suite: program-facets
+            lang: ko
           - suite: program-facets
             lang: en
     steps:
