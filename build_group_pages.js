@@ -591,15 +591,20 @@ artists.forEach(a => {
     const xm = SEO.memberExtra(a, isSolo ? ko : primaryGko, lang, EX, ST);
     const ag = SEO.ages(a, (a.groups && a.groups.length ? a.groups : [a.group]).map(g => groups[g.ko]));
     const who = isEn ? `${en}${groupDisplay ? ` (${groupDisplay})` : ''}` : `${ko}${groupDisplay ? `(${groupDisplay})` : ''}`;
-    const title = isEn
+    // 개인 직캠이 MEMBER_FANCAM_MIN개 이상이면 제목 맨 앞을 '성현 직캠 모음'으로(2026-10-30) — 동명이인이 많아 그룹 이름도 같이
+    const fancams = isSolo ? [] : memberFancams(a, primaryGko);
+    const hasFancams = fancams.length >= MEMBER_FANCAM_MIN;
+    const title = hasFancams
+      ? (isEn ? `${en} Fancams & Profile - ${groupInfo.en || primaryGko} ${en} | K-POP UNIVERSE` : `${ko} 직캠 모음·프로필 - ${primaryGko} ${ko}(${groupInfo.en || primaryGko} ${en}) | K-POP UNIVERSE`)
+      : isEn
       ? `${who} Profile, Age, ${xm.titleBits.length ? 'Fancams, ' : ''}Birthday | K-POP UNIVERSE`
       : `${who} 프로필·나이·${xm.titleBits.length ? '직캠·' : ''}생일 | K-POP UNIVERSE`;
     const ageBits = isEn
       ? [bdayIso ? `born ${a.bday}` : '', ag.debutAge ? `debuted at ${ag.debutAge}` : '', ...xm.facts].filter(Boolean).join(', ')
       : [bdayIso ? `${a.bday} 생` : '', ag.debutAge ? `${ag.debutAge}세 데뷔` : '', ...xm.facts].filter(Boolean).join(', ');
-    const desc = isEn
+    const desc = (hasFancams ? (isEn ? `${fancams.length} ${en} (${groupInfo.en || primaryGko}) fancams, most viewed first. ` : `${primaryGko} ${ko} 직캠 ${fancams.length}개를 조회수 순으로. `) : '') + (isEn
       ? `${en}${groupDisplay ? ` of ${groupDisplay}` : ''}: ${ageBits || 'profile'}. Fancams, stages and connections on K-POP UNIVERSE.`
-      : `${ko}${groupDisplay ? `(${groupDisplay})` : ''}: ${ageBits || '프로필'}. 직캠·무대 영상과 함께한 아이돌을 K-POP UNIVERSE에서.`;
+      : `${ko}${groupDisplay ? `(${groupDisplay})` : ''}: ${ageBits || '프로필'}. 직캠·무대 영상과 함께한 아이돌을 K-POP UNIVERSE에서.`);
     const selfUrl = isEn ? enUrl : koUrl;
     const altUrl = isEn ? koUrl : enUrl;
     const jsonLd = {
@@ -682,6 +687,11 @@ artists.forEach(a => {
     ${agency ? `<span><b>${agencyLabel}</b> ${escHtml(agency)}</span>` : ''}
     <span><b>${statusLbl}</b> ${escHtml(statusLabel)}</span>
   </div>
+  ${hasFancams ? `
+  <h2>${isEn ? `${escHtml(en)} fancams` : `${escHtml(ko)} 직캠`}</h2>
+  <div class="mf-grid">
+    ${fancams.slice(0, 24).map(v => `<a class="mf-card" href="https://www.youtube.com/watch?v=${v.id}" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/${v.id}/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">${escHtml(v.title)}</span><span class="mf-y">${[v.published_at ? String(v.published_at).slice(0, 10).replace(/-/g, '.') : '', v.view_count ? (isEn ? `${SEO.fmtViews(v.view_count, isEn)} views` : `조회수 ${SEO.fmtViews(v.view_count, isEn)}`) : ''].filter(Boolean).join(' · ')}</span></a>`).join('\n    ')}
+  </div>${fancams.length > 24 ? `<p class="note">${isEn ? `Top 24 of ${fancams.length} fancams` : `직캠 ${fancams.length}개 중 상위 24개`}</p>` : ''}` : ''}
   ${memberIntroHtml(a, affiliations, lang)}
   ${affiliationHtml(lang)}
   ${xm.html}
@@ -1186,6 +1196,7 @@ function existingRelPages() {
 // 닿을 자리가 없었다. 곡 목록·영상 묶기는 tools/seo_extra.js buildSongs(앱과 같은 shared.js 규칙) — 영상 4개 이상인 곡만.
 // 경로: g/{그룹}/s/{곡 기본형}/ · en/g/{slug}/s/{곡 기본형}/ (기본형 = _songBase, 소문자·기호 제거라 주소에 안전)
 let SONGS = {};
+let VIDS = {}; // 그룹별 영상(prefetchGroupVideos) — 멤버 페이지 "직캠 모음"(2026-10-30)
 let songPageCount = 0;
 function songPagePath(gko, b, lang) {
   const gp = groupPagePath(gko, lang);
@@ -1238,6 +1249,15 @@ const MEMBER_SONG_MIN = 3;
 const MEMBER_SONGS_BY_SONG = new Map(); // 'gko|b' → [{a, nm, vids}]
 const MEMBER_SONGS_BY_ARTIST = new Map(); // artist → [{gko, s, n}]
 let memberSongPageCount = 0;
+// 멤버 개인 직캠(2026-10-30 사용자 "'성현 직캠'만 검색해도 우리 성현 직캠 모음 페이지로") — 그 멤버 한 명만 태깅 + 제목에 직캠 표시, 조회수 순
+const MEMBER_FANCAM_MIN = 3;
+const FANCAM_RE = /(직캠|페이스캠|얼빡|fan ?cam|face ?cam|focus(ed)?|unfiltered cam|세로캠|close-?up ?cam)/i;
+function memberFancams(a, gko) {
+  const ge = (a.groups || []).find(g => g && g.ko === gko);
+  const names = new Set([a.name.ko, ge && ge.name].filter(Boolean));
+  return (VIDS[gko] || []).filter(v => Array.isArray(v.members) && v.members.length === 1 && names.has(v.members[0]) && FANCAM_RE.test(v.title || ''))
+    .sort((x, y) => (y.view_count || 0) - (x.view_count || 0));
+}
 function memberSongPagePath(a, b, lang) { return `${memberPagePath(a, lang)}s/${b}/`; }
 function computeMemberSongs() {
   const made = new Set();
@@ -1436,6 +1456,7 @@ function songLikePageHtml({ gko, info, s, lang, others, member }) {
     const vids = await SEO.prefetchGroupVideos({ SB_URL, SB_KEY, groupKos });
     const emptyVidGroups = groupKos.filter(g => !vids[g] || !vids[g].length);
     if (emptyVidGroups.length) console.warn(`⚠️ 영상 0개 그룹 ${emptyVidGroups.length}개: ${emptyVidGroups.slice(0, 10).join(', ')}${emptyVidGroups.length > 10 ? ' ...' : ''}`);
+    VIDS = vids;
     SONGS = SEO.buildSongs({ ROOT, groups, artists, EX, vids });
     console.log(`곡 데이터: ${Object.keys(SONGS).length}그룹 · ${Object.values(SONGS).reduce((n, l) => n + l.length, 0)}곡`);
     computeMemberSongs(); // 멤버 페이지에 '곡별 직캠'을 실어야 하므로 멤버 페이지보다 먼저

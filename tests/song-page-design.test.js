@@ -23,5 +23,7 @@ need(/class="hero"/.test(b) && /class="grid"/.test(b) && /class="faces"/.test(b)
 need(/cover: al\.cover/.test(ex) || /m\.cover = al\.cover/.test(ex), '② 곡 타일용 앨범 커버');
 need(/\.card-th\{[^}]*display:block[^}]*aspect-ratio:16\/9/.test(css) && /\.face-img\{[^}]*display:block/.test(css) && /\.card-y\{[^}]*display:block/.test(css), '③ span 칸 display:block(비율 유지)');
 
+// ④ 멤버 페이지 '성현 직캠 모음'(2026-10-30): 개인 직캠 MEMBER_FANCAM_MIN개 이상이면 제목 맨 앞 '{이름} 직캠 모음·프로필 - {그룹} {이름}', 맨 위 썸네일 그리드
+need(/const MEMBER_FANCAM_MIN = \d+;/.test(b) && b.includes('function memberFancams(a, gko)') && b.includes('직캠 모음·프로필 - ') && b.includes('mf-grid') && ex.includes('.mf-grid{'), '④ 멤버 페이지 직캠 모음 제목·그리드');
 console.log(fail ? `\n❌ ${fail}개 실패` : '\n✅ 곡 페이지 테스트 통과');
 process.exit(fail ? 1 : 0);
