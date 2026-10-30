@@ -137,9 +137,15 @@ async function main() {
     await evalExpr(cdp, `document.getElementById('feed-tab-disc')?.click()`);
     const discoveryOpen = await pollUntil(cdp, `document.getElementById('feed-tab-disc')?.classList.contains('active')`, 5000);
     if (!discoveryOpen) fail('발견 탭 전환 실패'); else ok('발견 탭 전환 성공');
-    const chartCardCount = await pollUntil(cdp, `document.querySelectorAll('#feed-chart .feed-card').length`, 8000, v => v > 0);
+    let chartCardCount = await pollUntil(cdp, `document.querySelectorAll('#feed-chart .feed-card').length`, 8000, v => v > 0);
+    if(!chartCardCount){
+      const pending=await evalExpr(cdp, `JSON.stringify({running:_feedBuildRunning,queued:_feedBuildQ.length,discPending:!!_feedDiscPending})`);
+      console.log('[smoke] Charts 8초 시점 상태: '+pending);
+      // 실제 데이터 선반은 앞선 네트워크 작업과 4개 슬롯을 공유한다. 추가 대기도 같은 렌더 조건으로 판정.
+      chartCardCount=await pollUntil(cdp, `document.querySelectorAll('#feed-chart .feed-card').length`, 22000, v=>v>0);
+    }
     if (chartCardCount) ok(`Charts 섹션 카드 ${chartCardCount}개 렌더 확인`);
-    else fail('Charts 섹션에 카드가 하나도 안 뜸(8초 대기)');
+    else fail('Charts 섹션에 카드가 하나도 안 뜸(총 30초 대기)');
     if (errors.length > errBefore) fail(`탐험 패널 여는 동안 새 콘솔 에러 ${errors.length - errBefore}건: ${errors.slice(errBefore, errBefore + 5).join(' | ')}`);
     else ok('탐험 패널 여는 동안 새 콘솔 에러 0건');
 

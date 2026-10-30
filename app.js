@@ -1127,7 +1127,7 @@ async function buildUniverse(){
   // 일관됨(검색·b-side 폴백 분기가 이 플래그를 봄).
   // 데이터 JSON 캐시버스터 — tools/bump_cache_version.mjs가 groups/artists/connections 내용 해시로 자동
   // 갱신한다(손으로 고치지 말 것, css/js의 ?v=와 같은 방식).
-  const _DATA_VER='20261029-6371aae9';
+  const _DATA_VER='20261030-69d65b27';
   // ⚠️ 데이터 JSON에도 **캐시버스터를 붙인다**(_DATA_VER, 2026-09-03). `cache:'no-cache'`는 브라우저에게
   // "재검증하라"는 힌트일 뿐이라 **중간 프록시/CDN이 들고 있는 사본은 못 뚫는다.** 실제 사고:
   // artists.json을 고쳐 배포했는데(서버엔 반영 확인됨) 강력 새로고침을 두 번 해도 어드민 도구가 계속
@@ -3821,7 +3821,7 @@ async function _openProgramCollection(p,ctx){
     // 항상 최신순(쿼리가 published_at desc) — 검색·카드 모두 최신 영상부터(2026-09-05 사용자 요청).
     if(ctx.gko||ctx.memberKo){_openFeedListOverlay(label,'',toSongs(rows));return;}
     const cnt={};rows.forEach(v=>{if(v.group_ko)cnt[v.group_ko]=(cnt[v.group_ko]||0)+1;});
-    const st={label,mkQ,toSongs,rows,tops:Object.keys(cnt).sort((a,b)=>cnt[b]-cnt[a]).slice(0,20),cache:new Map()};
+    const st={label,mkQ,toSongs,rows,tops:Object.keys(cnt).sort((a,b)=>cnt[b]-cnt[a]),cnt,cache:new Map()};
     st.cache.set('all|latest',rows);
     await _programFacetView(st,'all','latest');
   }catch(e){ _openFeedListOverlay(label,'',[]); }
@@ -3858,10 +3858,11 @@ async function _programFacetView(st,who,sort){
   }
   const whoOpts=[{v:'all',ko:'전체',en:'All'}];
   if(favGs.length)whoOpts.push({v:'fav',ko:'★ 즐겨찾기',en:'★ Favorites'});
-  st.tops.forEach(g=>whoOpts.push({v:g,ko:g,en:(GROUPS[g]&&GROUPS[g].en)||g}));
+  // 팀은 고르기 시트로(2026-10-30) — 물방울 줄엔 상위 20팀만 넣었지만 시트는 검색이 돼서 전부 넣는다. 개수는 처음 받은 최신 999개 기준
+  st.tops.forEach(g=>whoOpts.push({v:g,ko:g,en:(GROUPS[g]&&GROUPS[g].en)||g,n:st.cnt&&st.cnt[g]}));
   const facets=[
-    {key:'who',labelKo:'',labelEn:'',scroll:whoOpts.length>5,sel:who,options:whoOpts,onPick:v=>_programFacetView(st,v,sort)},
-    {key:'sort',labelKo:'',labelEn:'',sel:sort,options:[{v:'latest',ko:'최신',en:'Latest'},{v:'popular',ko:'조회수',en:'Most viewed'}],onPick:v=>_programFacetView(st,who,v)},
+    {key:'who',ui:'pick',sel:who,options:whoOpts,onPick:v=>_programFacetView(st,v,sort)},
+    {key:'sort',ui:'sort',sel:sort,options:[{v:'latest',ko:'최신순',en:'Newest'},{v:'popular',ko:'조회수순',en:'Most viewed'}],onPick:v=>_programFacetView(st,who,v)},
   ];
   _openFeedListOverlay(st.label,isKo?`영상 ${list.length}개`:`${list.length} videos`,st.toSongs(list),{facets});
 }
@@ -4825,65 +4826,91 @@ function _isLegacyShortCat(v){return !!v&&v.category==='short';}
 //  opts: {bg, onReady(img), onFail(img)}
 function _mountShortThumb(img,id,opts){
   const o=opts||{};
+  const base=`https://i.ytimg.com/vi/${id}/`;
   // 블러 배경은 작은 가로 썸네일로 — 세로 원본(1080×1920)을 배경에도 깔면 카드 하나에 큰 그림 두 장을 풀어 둬서, 쇼츠 수십 개인
   // Trend에서 아이폰이 앞 그림을 버리고 블러 배경만 남겼다(2026-10-23 사용자 "모바일에서 쇼츠 썸네일이 뿌옇다"). 흐리게 깔 거라 화질 무관.
-  const setBg=()=>{if(o.bg&&!o.bg.style.backgroundImage)o.bg.style.backgroundImage=`url(https://i.ytimg.com/vi/${id}/mqdefault.jpg)`;};
-  // ② 세로 원본이 없으면 oar2(1080×1920 세로 프레임) — 2026-10-22 사용자 "Trend 쇼츠 일부 썸네일이 뿌옇다". hqdefault는 쇼츠면
-  //    480×360 안에 세로 화면(≈202×360)이 있고 양옆은 유튜브가 블러로 채운 것이라, 9:16 카드(2배율 338×600)에 키우면 흐렸다.
-  //    실측: oardefault 404인 쇼츠 3/3에 oar2가 있었고 가로 영상엔 없다(404). ③ 그것도 없을 때만 hqdefault.
-  const isOar=()=>/\/oar(default|2)\.jpg$/.test(img.src);
-  const fallback=()=>{
-    if(img.src.includes('oardefault')){img.src=`https://i.ytimg.com/vi/${id}/oar2.jpg`;return;}
-    img.classList.add('is-fallback');img.src=`https://i.ytimg.com/vi/${id}/hqdefault.jpg`;
-  };
-  img.onload=()=>{
-    if(isOar()&&img.naturalWidth===120&&img.naturalHeight===90){fallback();return;}
-    if(isOar())_shrinkShortThumb(img); // 원본은 바로 보이고, 줄인 그림(blob)으로 갈아끼우면 onload가 한 번 더 온다(멱등)
-    setBg();img.dataset.thumbOk='1';
-    _shortThumbWatch(img);
-    if(o.onReady)o.onReady(img);
-  };
-  img.onerror=()=>{
-    // 한 번 뜬 그림은 이후 error로 지우지 않는다(2026-10-26 사용자 "발견 탭 위쪽 쇼츠만 뿌옇다" 재발). 아래 감시가 화면 밖
-    // 그림의 src를 뗐다 붙이는데, 그때(또는 LTE에서 다시 받다 실패할 때) 나는 error를 실패로 받아 onFail이 그림을 지우면
-    // 뒤의 블러 배경(mqdefault)만 남아 뿌연 채로 굳는다 — 캡처 속 WAYF 쇼츠가 정확히 mqdefault 가운데를 블러한 모양이었다.
-    if(!img.getAttribute('src')||img.dataset.thumbOk)return;
-    if(isOar()){fallback();return;}
-    img.onerror=null;img.onload=null;
-    if(o.onFail)o.onFail(img);
-  };
-  img.src=`https://i.ytimg.com/vi/${id}/oardefault.jpg`;
-}
-// 세로 원본(oar2·oardefault 대부분 1080×1920, 펼치면 장당 8MB)을 카드 크기로 줄여 다시 끼운다(2026-10-27 사용자 "발견 탭 위쪽 쇼츠 뿌연 썸네일" 4번째 재발).
-// 헤드리스에선 그림이 늘 제대로 붙어 있는데 아이폰에서만 앞 그림이 사라지고 뒤 블러 배경만 남았다 — 큰 그림 수십 장이 메모리 한도를 넘어
-// iOS가 펼친 그림을 버리는 것. 감시(아래)로 떼는 것만으론 화면 근처 2~3화면 분량이 여전히 수백 MB라 원본 크기 자체를 줄인다.
-// 줄이는 동안엔 원본이 그대로 보이고, 실패하면(CORS·메모리) 원본을 그냥 쓴다.
-function _shrinkShortThumb(img){
-  if(img.dataset.shrunk||typeof fetch!=='function')return;
-  const dpr=Math.min(window.devicePixelRatio||1,3);
-  // 숨은 패널에서 뜨면 폭이 0 — 그땐 2열 카드 폭(화면 절반)으로 잡는다
-  const cw=Math.max(img.clientWidth||0,img.parentElement?img.parentElement.clientWidth:0)||window.innerWidth/2;
-  const tw=Math.round(Math.max(cw,150)*dpr);
-  if(img.naturalWidth<=tw*1.2)return;
-  img.dataset.shrunk='1';
-  const src=img.src,th=Math.round(tw*img.naturalHeight/img.naturalWidth);
-  fetch(src,{mode:'cors'}).then(r=>{if(!r.ok)throw 0;return r.blob();}).then(b=>new Promise((res,rej)=>{
-    const u=URL.createObjectURL(b),big=new Image();
-    big.onload=()=>{
-      const c=document.createElement('canvas');c.width=tw;c.height=th;
-      const g=c.getContext('2d');g.imageSmoothingQuality='high';g.drawImage(big,0,0,tw,th);
-      big.onload=big.onerror=null;big.src='';URL.revokeObjectURL(u); // 핸들러 먼저 떼기 — src=''가 error를 쏴서 다 만든 걸 버렸다
-      c.toBlob(s=>{c.width=c.height=0;s?res(s):rej();},'image/jpeg',0.88);
+  // ⚠️ 앞 그림 페이드가 끝난 뒤에 깐다(2026-10-30) — 같이 깔면 페이드 0.3초 동안 블러가 비쳐 "뿌옇다가 짠 선명"으로 보였다.
+  const setBg=()=>{if(o.bg&&!o.bg.style.backgroundImage)o.bg.style.backgroundImage=`url(${base}mqdefault.jpg)`;};
+  // 최종 그림만 화면 img에 붙인다. 다 펼쳐진(decode) 뒤에 onReady → 호출부가 .loaded로 페이드인
+  const show=(src,fb)=>{
+    if(fb)img.classList.add('is-fallback');
+    img.onload=()=>{
+      if(img.dataset.thumbOk)return; // 감시가 뗐다 다시 붙일 때 또 오는 onload
+      img.dataset.thumbOk='1';
+      const fin=()=>{_shortThumbWatch(img);if(o.onReady)o.onReady(img);setTimeout(setBg,400);};
+      (img.decode?img.decode():Promise.resolve()).then(fin,fin);
     };
-    big.onerror=()=>{URL.revokeObjectURL(u);rej();};
-    big.src=u;
-  })).then(s=>{
-    // 그새 다른 주소로 바뀌었거나(폴백·재사용) 감시가 떼어 둔 상태면 그 자리 주소만 바꿔 둔다
-    const small=URL.createObjectURL(s);
-    if(img.getAttribute('src')===src)img.src=small;
-    else if(!img.getAttribute('src')&&img.dataset.keepSrc===src)img.dataset.keepSrc=small;
-    else URL.revokeObjectURL(small);
-  }).catch(()=>{});
+    img.onerror=()=>{
+      // 한 번 뜬 그림은 이후 error로 지우지 않는다(2026-10-26 사용자 "발견 탭 위쪽 쇼츠만 뿌옇다" 재발). 아래 감시가 화면 밖
+      // 그림의 src를 뗐다 붙이는데, 그때(또는 LTE에서 다시 받다 실패할 때) 나는 error를 실패로 받아 onFail이 그림을 지우면
+      // 뒤의 블러 배경(mqdefault)만 남아 뿌연 채로 굳는다.
+      if(!img.getAttribute('src')||img.dataset.thumbOk)return;
+      img.onerror=null;img.onload=null;
+      if(o.onFail)o.onFail(img);
+    };
+    img.src=src;
+  };
+  // ① oardefault → ② oar2(1080×1920 세로 프레임, 2026-10-22 — hqdefault를 9:16로 키우면 뿌옇다) → ③ hqdefault + .is-fallback(cover)
+  //    oar 계열은 120×90 회색 플레이스홀더를 정상 이미지로 주기도 해서 크기로 거른다.
+  // ⭐ 큰 세로 원본은 **화면 img에 절대 붙이지 않는다**(2026-10-30, 5번째 재발 "위쪽 쇼츠 모자이크·아래는 뿌옇다 짠"). 예전(10-27)엔
+  //    원본을 먼저 띄우고 같은 걸 또 받아 줄여 갈아끼웠다 — Trend 위쪽 수십 장이 한꺼번에 뜨는 순간 원본+축소용 사본이 겹쳐 아이폰
+  //    메모리가 오히려 두 배로 튀었고, 사파리는 그때 큰 그림을 저해상도로 깎아 그린다(모자이크). 아래쪽은 원본→축소본 교체가 보였다.
+  //    지금: 화면 밖 Image로 받아 → 카드 크기 캔버스로 줄여 → 작은 blob만 표시. 큰 그림은 동시에 2장까지만 펼친다(_shortThumbQueue).
+  const tryUrl=names=>{
+    if(!names.length){show(base+'hqdefault.jpg',true);return;}
+    const u=base+names[0]+'.jpg';
+    _shortThumbQueue(release=>{
+      const big=new Image();big.crossOrigin='anonymous'; // 유튜브 썸네일은 CORS 허용(*) — 캔버스가 오염되지 않게
+      const end=()=>{big.onload=big.onerror=null;big.src='';release();}; // 핸들러 먼저 떼기 — src=''가 error를 쏜다
+      big.onerror=()=>{end();tryUrl(names.slice(1));};
+      big.onload=()=>{
+        if(big.naturalWidth===120&&big.naturalHeight===90){end();tryUrl(names.slice(1));return;}
+        _shortThumbShrink(big,img,small=>show(small||u,false)); // 줄이기 실패(메모리·CORS)면 원본 그대로
+        end();
+      };
+      big.src=u;
+    });
+  };
+  _shortThumbWhenNear(img,()=>tryUrl(['oardefault','oar2']));
+}
+// 큰 세로 원본을 카드 폭×DPR(최대 2)로 줄인 blob 주소를 cb로 돌려준다. drawImage는 이 함수 안에서 동기로 끝나므로 호출 직후 원본을 놓아도 된다.
+// DPR 3 화면도 2배면 썸네일로는 차이가 안 보이고 메모리는 절반 이하(2026-10-30).
+function _shortThumbShrink(big,img,cb){
+  try{
+    const dpr=Math.min(window.devicePixelRatio||1,2);
+    // 숨은 패널에서 뜨면 폭이 0 — 그땐 2열 카드 폭(화면 절반)으로 잡는다
+    const cw=Math.max(img.clientWidth||0,img.parentElement?img.parentElement.clientWidth:0)||window.innerWidth/2;
+    const tw=Math.round(Math.max(cw,150)*dpr);
+    if(big.naturalWidth<=tw*1.2){cb(null);return;}
+    const th=Math.round(tw*big.naturalHeight/big.naturalWidth);
+    const c=document.createElement('canvas');c.width=tw;c.height=th;
+    const g=c.getContext('2d');g.imageSmoothingQuality='high';g.drawImage(big,0,0,tw,th);
+    c.toBlob(s=>{c.width=c.height=0;cb(s?URL.createObjectURL(s):null);},'image/jpeg',0.88);
+  }catch(e){cb(null);}
+}
+// 큰 그림을 동시에 펼치는 수를 2장으로 묶는다. 느린 망에서 한 장이 안 끝나도 10초 뒤엔 자리를 비워 줄이 막히지 않게.
+const _shortThumbJobs=[];let _shortThumbBusy=0;
+function _shortThumbQueue(job){_shortThumbJobs.push(job);_shortThumbPump();}
+function _shortThumbPump(){
+  while(_shortThumbBusy<2&&_shortThumbJobs.length){
+    _shortThumbBusy++;let freed=false;
+    const release=()=>{if(freed)return;freed=true;_shortThumbBusy--;_shortThumbPump();};
+    setTimeout(release,10000);
+    try{_shortThumbJobs.shift()(release);}catch(e){release();}
+  }
+}
+// 화면(정확히는 그림을 담은 스크롤 상자) 근처에 올 때만 받기 시작 — 위쪽 카드부터 차례로 뜨고, 안 볼 카드는 안 받는다.
+// 호출 시점엔 아직 문서에 안 붙은 경우가 많아 잠깐(최대 1초) 기다렸다가 감시, 끝내 안 붙으면 그냥 시작.
+function _shortThumbWhenNear(img,fn){
+  if(typeof IntersectionObserver!=='function'){fn();return;}
+  let tries=0;
+  const go=()=>{
+    if(!img.isConnected){if(++tries<10){setTimeout(go,100);return;}fn();return;}
+    const tgt=img.parentElement||img; // src 없는 img는 크기가 0일 수 있어 감싸는 틀을 본다
+    const io=new IntersectionObserver(es=>{if(es.some(e=>e.isIntersecting)){io.disconnect();fn();}},{root:_shortThumbRoot(img),rootMargin:'100% 50%'});
+    io.observe(tgt);
+  };
+  go();
 }
 // 화면에서 멀리(위아래 2화면 밖) 벗어난 세로 원본은 src를 잠시 떼고, 다시 다가오면 붙인다 — 큰 그림이 한꺼번에 수십 장
 // 풀려 있지 않게(위 setBg 주석과 같은 아이폰 메모리 문제). 다시 붙일 땐 이미 확정된 주소라 폴백 단계를 다시 타지 않는다.
@@ -4914,7 +4941,12 @@ function _shortThumbWatch(img){
   if(typeof IntersectionObserver!=='function'||img.dataset.keepWatch||!img.isConnected)return;
   img.dataset.keepWatch='1';_shortThumbIOFor(_shortThumbRoot(img)).observe(img);
 }
-function isMob(){return window.innerWidth<=768;}
+// 폰 가로(2026-10-30 사용자 "모바일을 가로로 돌리면 막 겹친다") — 아이폰 가로는 844×390이라 폭(768)만 보면 PC도 폰도 아닌 구간에 걸려
+// 두 배치가 섞였다. 터치 화면이면서 높이 500 이하면 폰으로 본다(아이패드는 높이 744 이상, PC 창은 터치가 아니라 해당 없음).
+// CSS도 같은 조건: @media(max-width:768px),(pointer:coarse) and (max-height:500px). 가로 전용 배치는 body.ph-land.
+const _PH_LAND_MQ="(pointer:coarse) and (max-height:500px)";
+function _phoneLand(){try{return matchMedia(_PH_LAND_MQ).matches;}catch(e){return false;}}
+function isMob(){return window.innerWidth<=768||_phoneLand();}
 // 유튜브 API로 동기화된 일부 영상(주로 인스타 릴스 크로스포스트) 제목엔 실제 줄바꿈 문자가 들어있어서,
 // 한 줄 말줄임(white-space:nowrap)이 안 먹고 제목 영역이 여러 줄로 확 커져 보이는 문제가 있었음 — 표시 직전에 제거.
 // (정규식 리터럴에 U+2028/2029를 직접 쓰면 소스 파일 자체가 깨지므로 charCode로 안전하게 구성)
@@ -10106,6 +10138,10 @@ function _openFromHash(){
   const gko=params.get('g'),mko=params.get('m');
   const mid=params.get('mid'),exact=mid?ARTISTS.find(x=>x.id===mid):null;
   if(mid&&!exact)return; // 명시 ID가 사라졌으면 다른 동명이인으로 대체하지 않는다.
+  // &song=곡 이름(2026-10-30 사용자 "곡 페이지의 '직캠·영상 아카이브 보기'를 누르면 그룹 카드만 열린다 — 그 곡 영상 패널까지").
+  // 카드를 연 뒤 그 곡 영상 패널을 열고, 멤버(m=)가 있으면 '멤버 ▾'를 그 멤버로 미리 골라 둔다(멤버×곡 페이지 성현 ACAI).
+  const songParam=params.get('song');
+  const openSongAfter=()=>{if(songParam&&GROUPS[gko])setTimeout(()=>_openSongVideos(songParam,{gko},null,mko?{member:mko}:undefined),700);};
   _setPendingVidPreset(params,mko?'tv':'gc'); // 영상 목록 공유 링크(&vf=…) — 카드가 목록을 그릴 때 꺼내 씀
   // 솔로 전용 해시(#m=이름, g= 없음) — 새 포맷. 구 포맷(#g=솔로&m=이름)도 아래에서 계속 지원.
   if(!gko&&mko){
@@ -10121,12 +10157,13 @@ function _openFromHash(){
   if(_isUnitKey(gko)){showGC(gko,window.innerWidth/2,window.innerHeight*0.4,false,false,'skip');return;} // 유닛 카드 공유 링크(#g=unit:이름)
   if(gko!=='솔로'&&!GROUPS[gko])return;
   // 진입 GA — 공유 링크·SEO 페이지 딥링크 모두 여기서 카드가 열린다
-  try{const ref=document.referrer?new URL(document.referrer).hostname:'(direct)';_gaEvent('deeplink_open',{target:mko?'member':'group',gko,ref,list:params.has('vf')?1:0});}catch(e){}
+  try{const ref=document.referrer?new URL(document.referrer).hostname:'(direct)';_gaEvent('deeplink_open',{target:mko?'member':'group',gko,ref,list:params.has('vf')?1:0,song:songParam?1:0});}catch(e){}
   if(mko){
     const artist=exact||ARTISTS.find(x=>x.group.ko===gko&&x.name.ko===mko);
     if(!artist)return;
     if(artist._worldPos)flyTo(artist._worldPos); // 솔로는 3D 버블 배치가 없어 _worldPos가 없음 — showT는 이 값 없이도 정상 동작
     showT(artist,window.innerWidth/2,window.innerHeight*0.4,false,'skip');
+    openSongAfter();
     // c=1: 연결 카드까지 함께 공유된 링크 — 멤버 카드를 연 뒤 연결 카드를 열고, s가 있으면 선택된 콜라보까지 복원
     if(params.get('c')==='1'){
       openConnCard(artist);
@@ -10147,6 +10184,7 @@ function _openFromHash(){
     const bm=bubbleMeshes.find(b=>b.ko===gko);
     if(bm)flyToBubble(bm.mesh.position,bm.radius);
     showGC(gko,window.innerWidth/2,window.innerHeight*0.4,false,true,'skip');
+    openSongAfter();
   }
 }
 // ── 공유 버튼 (그룹/멤버/연결 카드 공통) ─────────────
@@ -13368,7 +13406,7 @@ async function _openSongVideos(title,owner,songMeta,opt){
     orig.sort((a,b)=>String(b.published_at||'').localeCompare(String(a.published_at||'')));
     cover.sort((a,b)=>String(b.published_at||'').localeCompare(String(a.published_at||'')));
   }
-  _songVid={gko,orig,cover,tab:'all',fmt:'all',sort:'latest',rows:[],member:null};
+  _songVid={gko,orig,cover,tab:'all',fmt:'all',sort:'latest',rows:[],member:(opt&&opt.member)||null}; // opt.member: 멤버 미리 고르기(멤버×곡 정적 페이지에서 들어올 때)
   _renderSongVideoTabs();
 }
 // 형식 칩(2026-09-21) — 값은 그룹/멤버 카드 영상 탭과 같은 DB category 그대로 쓴다.
@@ -15107,7 +15145,7 @@ let _tabbarOff=false; // 지금 탭바가 숨겨져 있어서 시트가 그 자�
 // (iOS는 주소창 접힘/펼침 때 resize가 수시로 발화하므로 실제로 그 타이밍에 걸림). 레이아웃 높이인
 // offsetHeight + CSS bottom 오프셋으로 재는 게 transform과 무관해서 안전하다.
 function updateSheetBottom(){
-  if(window.innerWidth>768)return;
+  if(!isMob())return;
   const tb=document.getElementById('tabbar');if(!tb)return;
   const off=parseFloat(getComputedStyle(tb).bottom)||0; // 검색 모드(bottom:4px) 같은 띄움 보정
   _tabbarH=Math.round(tb.offsetHeight+off);
@@ -20901,7 +20939,7 @@ function _placeFeedTabs(){
   else if(tabs.parentElement!==body)body.insertBefore(tabs,body.firstChild);
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',_placeFeedTabs);else _placeFeedTabs();
-try{matchMedia('(max-width:768px)').addEventListener('change',_placeFeedTabs);}catch(e){}
+try{matchMedia('(max-width:768px)').addEventListener('change',_placeFeedTabs);matchMedia(_PH_LAND_MQ).addEventListener('change',_placeFeedTabs);}catch(e){}
 function _openFeedOverlay(){
   _placeFeedTabs();
   const el=document.getElementById('feed-overlay');
@@ -21611,39 +21649,69 @@ function _setupFeedListDescRow(ctx){
 }
 let _feedListObserver=null; // 무한스크롤 IntersectionObserver — 끝까지 스크롤하기 전에 오버레이를 닫으면
 // renderNextBatch()의 disconnect()가 절대 안 불려서 관찰자가 계속 살아있던 누수를 막기 위해 참조해둠.
-// 차트 목록의 필터 칩(2026-09-04) — ctx.facet={key,labelKo,labelEn,options:[{v,ko,en}],sel,onPick(v)}
-// 같은 차트를 축만 바꿔 다시 자르는 장치. "역대 개인 직캠 TOP 100 / 역대 여돌 … / 역대 남돌 …"이
-// 예전엔 각각 다른 카드였는데, 셋은 같은 쿼리에 groupKos만 다른 것이라 카드를 세 장 쓸 이유가 없었다.
-// 카드는 하나로 접고 자르는 건 목록 안에서 한다 — 차트가 "고정 자리"를 갖고, 축은 유저가 고른다.
-// ⚠️ 칩을 눌러도 오버레이를 다시 열지 않는다(닫았다 여는 애니메이션이 끼면 튄다). 목록만 다시 그린다.
+// 목록 창 위 고르기 줄(2026-09-04 칩 → 2026-10-30 카드·곡 화면과 같은 모양으로 통일).
+// ctx.facets = [{key,options:[{v,ko,en,n?}],sel,onPick(v), ui?}] — ui로 모양을 고른다:
+//  · ui:'pick'  — "👥 전체 ▾" 글자 버튼 → 아래에서 올라오는 고르기 시트(_openPickSheet, 많으면 검색창). 고른 뒤엔 "앤팀 ✕"(✕ = 전체로).
+//                  곡 화면 "멤버 ▾"·카드 "♪ 곡 ▾"와 같은 버튼(.gc-vid-pick). 팀이 36개면 물방울 36개가 가로로 늘어서 고르기 힘들었다(사용자).
+//  · ui:'sort'  — 곡 화면과 같은 "최신순" 버튼(.tvf-sort) — 누를 때마다 다음 정렬로. 고르기 버튼과 같은 줄 오른쪽 끝.
+//  · 그 외      — 카드·곡 화면과 같은 밑줄 탭(가로 스크롤). 예전 물방울(알약) 칩은 목록 창에서 없앴다.
+// ⚠️ 눌러도 오버레이를 다시 열지 않는다(닫았다 여는 애니메이션이 끼면 튄다). 목록만 다시 그린다(onPick).
 function _renderFeedListFacet(ctx){
   const el=document.getElementById('feed-list-facets');
   if(!el)return;
-  // ctx.facets = [{key,labelKo,labelEn,options:[{v,ko,en}],sel,onPick(v)}] — 축이 여럿이면 줄을 나눈다.
-  // (ctx.facet 단수도 받는다 — 축 하나짜리 호출부를 굳이 배열로 바꾸게 하지 않으려고)
-  const facets=(ctx&&ctx.facets)||((ctx&&ctx.facet)?[ctx.facet]:null);
-  if(!facets||!facets.length){el.style.display='none';el.innerHTML='';return;}
+  const facets=((ctx&&ctx.facets)||((ctx&&ctx.facet)?[ctx.facet]:[])).filter(f=>f&&f.options&&f.options.length);
+  if(!facets.length){el.style.display='none';el.innerHTML='';return;}
   el.innerHTML='';
   el.style.display='flex';
-  facets.forEach(f=>{
-    if(!f||!f.options||!f.options.length)return;
-    const row=document.createElement('div');row.className='fl-facet-row'+(f.scroll?' fl-facet-scroll hscroll-drag':'');
-    const t=(currentLang==='ko'?f.labelKo:f.labelEn)||'';
-    if(t){const lbl=document.createElement('span');lbl.className='fl-facet-lbl';lbl.textContent=t;row.appendChild(lbl);}
+  const ko=currentLang==='ko';
+  const pn=document.getElementById('feed-list-panel');
+  const run=(f,v)=>{pn?.classList.add('fl-loading');Promise.resolve().then(()=>f.onPick(v)).catch(()=>{}).finally(()=>pn?.classList.remove('fl-loading'));};
+  const lbl=o=>ko?o.ko:(o.en||o.ko);
+  // 고르기·정렬은 한 줄(bar)에, 탭은 각자 한 줄
+  const barFs=facets.filter(f=>f.ui==='pick'||f.ui==='sort');
+  if(barFs.length){
+    const bar=document.createElement('div');bar.className='fl-facet-row fl-bar';
+    barFs.forEach(f=>{
+      if(f.ui==='pick'){
+        const allOpt=f.options.find(o=>o.v==='all');
+        const cur=f.options.find(o=>o.v===f.sel)||allOpt||f.options[0];
+        const on=!!allOpt&&cur!==allOpt;
+        const b=document.createElement('button');b.type='button';b.className='gc-vid-pick'+(on?' on':'');
+        b.innerHTML='<svg class="ic" viewBox="0 0 16 16" aria-hidden="true"><circle cx="6" cy="5.6" r="2.4"/><path d="M1.8 13.2c.5-2.3 2.2-3.6 4.2-3.6s3.7 1.3 4.2 3.6"/><circle cx="11.2" cy="6.2" r="1.9"/><path d="M10.6 9.7c1.7.1 3 1.2 3.5 3.1"/></svg><span class="lbl"></span><span class="x">'+(on?'✕':'▾')+'</span>';
+        b.querySelector('.lbl').textContent=lbl(cur);
+        b.addEventListener('click',e=>{
+          e.stopPropagation();
+          if(on){run(f,allOpt.v);return;}
+          const items=f.options.filter(o=>o!==allOpt).map(o=>({key:o.v,label:lbl(o),n:o.n,alt:[o.ko,o.en,o.v].filter(Boolean).join(' ')}));
+          _openPickSheet(f.pickTitle||(ko?'누구 영상 볼까요':'Show videos of'),ko?'고를 수 있는 팀이 없어요':'Nothing to pick',Promise.resolve(items),k=>run(f,k));
+        });
+        bar.appendChild(b);
+      }else{
+        const i=Math.max(0,f.options.findIndex(o=>o.v===f.sel));
+        const b=document.createElement('button');b.type='button';b.className='tvf-sort';b.setAttribute('aria-label',ko?'정렬':'Sort');
+        b.textContent=lbl(f.options[i]);
+        b.addEventListener('click',e=>{e.stopPropagation();const nx=f.options[(i+1)%f.options.length];b.textContent=lbl(nx);run(f,nx.v);});
+        bar.appendChild(b);
+      }
+    });
+    el.appendChild(bar);
+  }
+  facets.filter(f=>f.ui!=='pick'&&f.ui!=='sort').forEach(f=>{
+    const row=document.createElement('div');row.className='fl-facet-row fl-tabs hscroll-drag';
     f.options.forEach(o=>{
       const b=document.createElement('button');b.type='button';
       b.className='gc-ch-filter'+(o.v===f.sel?' active':'');
-      b.textContent=currentLang==='ko'?o.ko:(o.en||o.ko);
+      b.textContent=lbl(o);
       b.addEventListener('click',e=>{
         e.stopPropagation();if(o.v===f.sel)return;
         row.querySelectorAll('.gc-ch-filter.active').forEach(x=>x.classList.remove('active'));b.classList.add('active');
-        const pn=document.getElementById('feed-list-panel');pn?.classList.add('fl-loading');
-        Promise.resolve().then(()=>f.onPick(o.v)).catch(()=>{}).finally(()=>pn?.classList.remove('fl-loading'));
+        run(f,o.v);
       });
       row.appendChild(b);
     });
     el.appendChild(row);
-    if(f.scroll){_enableDragScroll(row);const on=row.querySelector('.gc-ch-filter.active');if(on)row.scrollLeft=Math.max(0,on.offsetLeft-row.offsetLeft-40);} // f.scroll: 칩이 많은 축은 가로 한 줄
+    _enableDragScroll(row);
+    const on=row.querySelector('.gc-ch-filter.active');if(on&&on.offsetLeft>row.clientWidth-40)row.scrollLeft=Math.max(0,on.offsetLeft-row.offsetLeft-40);
   });
 }
 function _openFeedListOverlay(title,sub,songs,ctx){
@@ -22475,12 +22543,13 @@ function _openIgViewer(m,handle,idx){
     ov.innerHTML='<div id="igv-panel"><button id="igv-close" type="button" aria-label="닫기">✕</button>'
       +'<div id="igv-media"><img id="igv-img" alt=""><button id="igv-prev" type="button" aria-label="이전 사진">‹</button><button id="igv-next" type="button" aria-label="다음 사진">›</button><div id="igv-dots"></div></div>'
       +'<div id="igv-side"><div id="igv-hd"><img id="igv-av" alt=""><div class="igv-hd-txt"><div id="igv-name"></div><div id="igv-meta"></div></div><button class="sw-to-lb" type="button"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg><span></span></button></div>'
-      +'<div id="igv-cap"></div><a id="igv-open" target="_blank" rel="noopener noreferrer"></a></div></div>';
+      +'<div id="igv-cap"></div><button id="igv-capall" type="button" hidden></button><a id="igv-open" target="_blank" rel="noopener noreferrer"></a></div></div>';
     document.body.appendChild(ov);
     ov.addEventListener('click',e=>{if(e.target===ov)_closeIgViewer();});
     ov.querySelector('#igv-close').addEventListener('click',e=>{e.stopPropagation();_closeIgViewer();});
     ov.querySelector('#igv-prev').addEventListener('click',e=>{e.stopPropagation();_igvGo(-1);});
     ov.querySelector('#igv-next').addEventListener('click',e=>{e.stopPropagation();_igvGo(1);});
+    ov.querySelector('#igv-capall').addEventListener('click',e=>{e.stopPropagation();if(!_igv)return;_igv.full=!_igv.full;_igvShow();});
     const md=ov.querySelector('#igv-media');let sx=null;
     md.addEventListener('touchstart',e=>{sx=e.touches[0].clientX;},{passive:true});
     md.addEventListener('touchend',e=>{if(sx==null)return;const dx=e.changedTouches[0].clientX-sx;sx=null;if(_igvDrag)return;if(Math.abs(dx)>40)_igvGo(dx<0?1:-1);},{passive:true});
@@ -22525,12 +22594,20 @@ function _openIgViewer(m,handle,idx){
       if(e.key==='ArrowLeft')_igvGo(-1); // Esc는 _closeTopOverlay가 맡는다else if(e.key==='ArrowRight')_igvGo(1);
     },true);
   }
-  _igv={m,pics,i:Math.max(0,Math.min(idx||0,pics.length-1))};
+  // 사진별 글(2026-10-30 사용자 "인스타는 사진마다 글을 달 수 있는데 우리는 우두두 나열된다"). 인스타는 장별 글을 따로 주지 않는다 —
+  // API·공개 페이지 모두 본문 한 덩어리(장원영 20장 게시물 실측: 장별 필드는 자동 이미지 설명뿐). 그래서 빈 줄로 나눈 문단 수가
+  // 사진 수와 **정확히 같을 때만** k번째 문단을 k번째 사진 글로 보여준다. 다르면 지금처럼 본문 전체. 아래 버튼으로 언제든 전체 보기.
+  const paras=String(m.cap||'').split(/\n[ \t]*\n/).map(s=>s.trim()).filter(Boolean);
+  _igv={m,pics,i:Math.max(0,Math.min(idx||0,pics.length-1)),per:pics.length>1&&paras.length===pics.length?paras:null,full:false};
+  // 사진 틀 비율 = 첫 장 비율(인스타와 같게, 2026-10-30 사용자 "가로 사진은 위에 붙이지 말고 가운데"). 장마다 틀 높이가 바뀌면 가로 사진이
+  // 위로 붙고 본문이 따라 올라왔다. 여러 장일 때만 — 한 장은 그 사진 비율 그대로. 인스타 허용 범위(1.91:1~3:4)로 자른다.
+  {const md=ov.querySelector('#igv-media');md.classList.remove('igv-framed');md.style.removeProperty('--igv-ar');
+   if(pics.length>1){const f=new Image();f.onload=()=>{if(!_igv||_igv.pics!==pics||!f.naturalWidth)return;md.style.setProperty('--igv-ar',String(Math.min(Math.max(f.naturalHeight/f.naturalWidth,0.52),1.34)));md.classList.add('igv-framed');};f.src=pics[0];}}
   const ko=currentLang==='ko',own=_igOwners().get(handle),ig=_igMap.get(handle);
   ov.querySelector('#igv-name').textContent=own?own.name:(_igMagNames.get(handle)||('@'+handle));
   ov.querySelector('#igv-meta').textContent=['@'+handle,_igAgo(m.t),m.lk!=null?(ko?'좋아요 ':'♥ ')+_fmtVC(m.lk):'',m.cm!=null?(ko?'댓글 ':'💬 ')+_fmtVC(m.cm):''].filter(Boolean).join(' · '); // 좋아요·댓글은 유튜브 조회수와 같은 표기(100+·1K+, 2026-10-21 사용자)
   const av=ov.querySelector('#igv-av');if(ig&&ig.pic){av.src=ig.pic;av.hidden=false;}else av.hidden=true;
-  const cap=ov.querySelector('#igv-cap');cap.textContent=m.cap||'';cap.hidden=!m.cap;
+  ov.querySelector('#igv-cap').hidden=!m.cap;
   const op=ov.querySelector('#igv-open');op.href=m.p;op.textContent=ko?'Instagram에서 보기 ↗':'View on Instagram ↗';
   ov.querySelector('.sw-to-lb span').textContent=ko?'재생 화면으로':'Back to player';
   _igvShow();
@@ -22544,6 +22621,10 @@ function _igvShow(){
   ov.querySelector('#igv-prev').hidden=i<=0;ov.querySelector('#igv-next').hidden=i>=pics.length-1;
   const dots=ov.querySelector('#igv-dots');dots.innerHTML='';dots.hidden=pics.length<2;
   pics.forEach((_,k)=>{const d=document.createElement('span');if(k===i)d.className='on';dots.appendChild(d);});
+  // 본문: 사진별 글이면 지금 장의 문단만, 아니면(또는 '본문 전체'를 눌렀으면) 전체
+  const cap=ov.querySelector('#igv-cap'),all=ov.querySelector('#igv-capall'),ko=currentLang==='ko';
+  cap.textContent=_igv.per&&!_igv.full?_igv.per[i]:(_igv.m.cap||'');cap.scrollTop=0;
+  all.hidden=!_igv.per;all.textContent=_igv.full?(ko?'사진별 글 보기':'Per-photo text'):(ko?'본문 전체 보기':'Show full caption');
   if(pics[i+1]){const pre=new Image();pre.src=pics[i+1];} // 다음 장 미리 받기
 }
 function _igvGo(d){if(!_igv)return;const n=_igv.i+d;if(n<0||n>=_igv.pics.length)return;_igv.i=n;_igvShow();}
@@ -24193,7 +24274,7 @@ async function _openEventPage(id,ed,view,who){
     const whoOpts=[{v:'all',ko:'전체',en:'All'}];
     if(hasFav)whoOpts.push({v:'fav',ko:'★ 즐겨찾기',en:'★ Favorites'});
     tops.forEach(g=>whoOpts.push({v:g,ko:g,en:(GROUPS[g]&&GROUPS[g].en)||g}));
-    facets.push({key:'who',labelKo:'',labelEn:'',scroll:whoOpts.length>5,sel:who,options:whoOpts,onPick:v=>_openEventPage(id,ed,view,v)});
+    facets.push({key:'who',ui:'pick',sel:who,options:whoOpts,onPick:v=>_openEventPage(id,ed,view,v)});
   }
   _feedListRankedNext=false;
   _openFeedListOverlay(s.ko,sub,songs,{facets});
@@ -25948,10 +26029,16 @@ function _openPickSheet(title,emptyText,itemsP,onPick){
     if(!ov.isConnected)return;
     if(!items||!items.length){list.innerHTML='<div class="vss-empty"></div>';list.firstChild.textContent=emptyText;return;}
     list.innerHTML='';
+    // 항목이 많으면(팀 36개 등) 위에 검색창(2026-10-30 사용자 "고르기 불편하면 검색 가능하게"). 한글·영문·키 어느 것으로도
+    if(items.length>8){
+      const q=document.createElement('input');q.type='search';q.className='vss-search';q.placeholder=ko_?'이름으로 찾기':'Search';q.setAttribute('enterkeyhint','search');
+      list.before(q);
+      q.addEventListener('input',()=>{const t=q.value.trim().toLowerCase();list.querySelectorAll('.vss-item').forEach(b=>{b.style.display=!t||(b.dataset.alt||'').toLowerCase().includes(t)?'':'none';});});
+    }
     items.forEach(it=>{
       const b=document.createElement('button');b.type='button';b.className='vss-item';
       b.innerHTML='<span class="t"></span><span class="n"></span>';
-      b.querySelector('.t').textContent=it.label;b.querySelector('.n').textContent=typeof it.n==='number'?it.n.toLocaleString():(it.n||'');
+      b.querySelector('.t').textContent=it.label;b.querySelector('.n').textContent=typeof it.n==='number'?it.n.toLocaleString():(it.n||'');b.dataset.alt=(it.alt||it.label||'');
       if(it.key==null){b.disabled=true;b.classList.add('off');} // 우리 우주에 없는 가수의 곡 — 보여만 준다
       else b.addEventListener('click',()=>{close();onPick(it.key,it.label);});
       list.appendChild(b);
@@ -28838,7 +28925,7 @@ function _updateAdminUI(){
 // 옛 버전을 계속 서빙해서 고친 코드가 반영 안 되는 것처럼 보이는 사고가 남(2026-08-18, HTML 엔티티 정리
 // 버튼 타임아웃 재수정 후에도 계속 재현된다는 제보로 발견). admin.js 내용을 바꿀 때마다 이 버전 문자열도
 // 같이 올릴 것(sw.js의 CACHE_VERSION과 같은 수동 관리 방식).
-const _ADMIN_JS_VER='20261029-361cc534';
+const _ADMIN_JS_VER='20261030-9594eca8';
 function _loadAdminScript(){
   if(!_isAdmin()||document.getElementById('admin-js-script'))return;
   const s=document.createElement('script');

@@ -1704,10 +1704,14 @@
     "id": "2ec7y2L98sHDYFylr7KqEx",
     "spotifyName": "MAVE:",
     "kind": "group",
-    "confidence": "medium",
-    "why": "이름 유일 일치",
+    "confidence": "high",
+    "why": "이름 유일 일치 · 수집 전 검증 통과(겹침 2)",
     "evidence": {
-      "titleOverlap": null
+      "titleOverlap": null,
+      "verifyOverlap": 2,
+      "verifyYears": [
+        2023
+      ]
     },
     "checkedAt": "2026-09-20"
   },
@@ -4859,10 +4863,15 @@
     "id": "08OoIISROuIG0Hw8pVhYE6",
     "spotifyName": "ISEGYE IDOL",
     "kind": "group",
-    "confidence": "medium",
-    "why": "이름 유일 일치",
+    "confidence": "high",
+    "why": "이름 유일 일치 · 수집 전 검증 통과(겹침 1)",
     "evidence": {
-      "titleOverlap": null
+      "titleOverlap": null,
+      "verifyOverlap": 1,
+      "verifyYears": [
+        2026,
+        2025
+      ]
     },
     "checkedAt": "2026-09-19"
   },

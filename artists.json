@@ -50308,6 +50308,24 @@
     },
     "discography": [
       {
+        "title": "ADDICTED",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/151/00/921/15100921_20261029110031_500.jpg",
+        "releaseDate": "2026.10.30",
+        "trackCount": 1,
+        "titleTrack": "ADDICTED",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "ADDICTED",
+            "isTitle": true
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "15100921"
+      },
+      {
         "title": "CLICK",
         "type": "싱글",
         "isMain": true,
@@ -64536,7 +64554,10 @@
       },
       {
         "ko": "프리스틴",
-        "en": "PRISTIN"
+        "en": "PRISTIN",
+        "matchNames": [
+          "나영"
+        ]
       }
     ],
     "co": "플레디스 엔터테인먼트",
@@ -67346,7 +67367,11 @@
       },
       {
         "ko": "구구단",
-        "en": "gugudan"
+        "en": "gugudan",
+        "matchNames": [
+          "미나",
+          "MINA"
+        ]
       }
     ],
     "id": "a0319",
@@ -107523,7 +107548,11 @@
     },
     "group": {
       "ko": "오마이걸",
-      "en": "OH MY GIRL"
+      "en": "OH MY GIRL",
+      "matchNames": [
+        "비니",
+        "BINNIE"
+      ]
     },
     "co": "WM엔터테인먼트",
     "active": true,
@@ -129515,6 +129544,24 @@
       "namu": "https://namu.wiki/w/윤채원"
     },
     "discography": [
+      {
+        "title": "산이가 하고 싶은 거 할게요 VOL.1",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/150/91/347/15091347_20261028152149_500.jpg",
+        "releaseDate": "2026.10.30",
+        "trackCount": 1,
+        "titleTrack": "LOVE ME MORE!",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "LOVE ME MORE!",
+            "isTitle": true
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "15091347"
+      },
       {
         "title": "아메리카노 한잔에 빗소리",
         "type": "싱글",
@@ -160487,7 +160534,10 @@
         "ko": "유앤비",
         "en": "UNB",
         "active": false,
-        "left": "2019"
+        "left": "2019",
+        "matchNames": [
+          "CHAN"
+        ]
       }
     ],
     "discography": [
@@ -258472,14 +258522,17 @@
         "ko": "퍼플키스",
         "en": "PURPLE KISS",
         "active": false,
-        "left": "2025.11.16"
+        "left": "2025.11.16",
+        "matchNames": [
+          "SWAN"
+        ]
       }
     ]
   },
   {
     "name": {
       "ko": "박지은",
-      "en": "Swan"
+      "en": "Park Jieun"
     },
     "group": {
       "ko": "솔로",
@@ -258513,7 +258566,7 @@
         "ko": "퍼플키스",
         "en": "PURPLE KISS",
         "active": false,
-        "left": "2025.11.16"
+        "left": "2022.11.18"
       }
     ]
   },
@@ -280718,7 +280771,10 @@
     },
     "group": {
       "ko": "나우즈",
-      "en": "NOWZ"
+      "en": "NOWZ",
+      "matchNames": [
+        "HYEONBIN"
+      ]
     },
     "co": "큐브엔터테인먼트",
     "active": true,
@@ -291431,7 +291487,11 @@
         "ko": "유앤비",
         "en": "UNB",
         "active": false,
-        "left": "2019"
+        "left": "2019",
+        "matchNames": [
+          "필독",
+          "FEELDOG"
+        ]
       }
     ]
   },
@@ -295306,7 +295366,10 @@
         "ko": "구구단",
         "en": "gugudan",
         "active": false,
-        "left": "2020.12.31"
+        "left": "2020.12.31",
+        "matchNames": [
+          "혜연"
+        ]
       }
     ]
   },
@@ -305109,6 +305172,24 @@
       "instagram": "https://www.instagram.com/ireahand_"
     },
     "discography": [
+      {
+        "title": "Live To Go",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/150/87/328/15087328_20261027164210_500.jpg",
+        "releaseDate": "2026.10.30",
+        "trackCount": 1,
+        "titleTrack": "Live To Go",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Live To Go",
+            "isTitle": true
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "15087328"
+      },
       {
         "title": "사랑해 악마 OST X 이레 of 세븐어스(SEVENUS)",
         "type": "OST",

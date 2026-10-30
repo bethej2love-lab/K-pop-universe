@@ -64,7 +64,8 @@ ok(hitBlock && !/_vmCacheSync\(\)/.test(hitBlock[0]),
   '캐시 히트 경로에서 _vmCacheSync를 부름 — ts가 갱신돼 "N분 전" 표시·디스크 캐시 갱신 판단이 어긋남');
 
 // ── ③ 패널 높이 고정 / ④ 스크롤바 ────────────────────────────────
-ok(/@media\(min-width:769px\)\{#vm-panel\{height:86vh;\}\}/.test(css),
+// 2026-10-30: PC 전용 규칙엔 폰 가로(터치+높이 500 이하)를 빼는 조건이 붙었다 — (pointer:fine)·(min-height:501px)
+ok(/@media\(min-width:769px\)[^{]*\{#vm-panel\{height:86vh;\}\}/.test(css),
   '데스크톱 패널 높이 고정 규칙이 없음');
 ok(/#vm-panel\{width:min\(560px/.test(css) && /max-height:86vh/.test(css),
   '모바일용 max-height가 사라짐 — 짧은 목록에서 빈 공간이 커짐');

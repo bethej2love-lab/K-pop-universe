@@ -32,13 +32,14 @@ async function sbGet(SB_URL, SB_KEY, q) {
 
 // DB에서: 음방 1위 전체, 그룹별 인기 무대·MV(조회수 상위). 그룹당 1요청(동시 8개).
 async function prefetch({ SB_URL, SB_KEY, groupKos }) {
-  const ex = { wins: {}, memberWins: {}, top: {} };
+  const ex = { wins: {}, memberWins: {}, top: {}, allWins: [] }; // allWins: 솔로 포함 전체(연도별 음방 1위 페이지, 2026-10-30)
   try {
     let last = 0;
     for (let i = 0; i < 20; i++) {
       const rows = await sbGet(SB_URL, SB_KEY, `music_show_wins?select=id,show,win_date,song_title,group_ko,member_ko&order=id&limit=1000&offset=${last}`);
       if (!Array.isArray(rows) || !rows.length) break;
       rows.forEach(w => {
+        ex.allWins.push(w);
         const key = w.group_ko === '솔로' || !w.group_ko ? null : w.group_ko;
         const bucket = key ? (ex.wins[key] = ex.wins[key] || []) : null;
         if (bucket) bucket.push(w);
@@ -245,10 +246,11 @@ function buildSongs({ ROOT, groups, artists, EX, vids, minVids = 4 }) {
       if (!tr || !tr.title) return;
       const b = S.B(tr.title); if (!b) return;
       // 표시 이름은 가장 먼저 나온 원곡 제목(띄어 쓴 첫 괄호 앞 — 붙은 괄호는 이름의 일부: FRI(END)S) — 곡 목록 순서대로 쓰면 'LOVE DIVE -Japanese version-'이 이름이 됐다
-      const m = meta[b] || (meta[b] = { name: String(tr.title).replace(/\s*-[^-]*\bver(?:sion)?\b\.?[^-]*-\s*$/i, '').split(/\s+[\(\[]/)[0].trim(), album: al.title, date: al.releaseDate || '', isTitle: false, cr: null, melonId: null });
+      const m = meta[b] || (meta[b] = { name: String(tr.title).replace(/\s*-[^-]*\bver(?:sion)?\b\.?[^-]*-\s*$/i, '').split(/\s+[\(\[]/)[0].trim(), album: al.title, date: al.releaseDate || '', isTitle: false, cr: null, melonId: null, cover: al.cover || null });
       if (tr.isTitle) m.isTitle = true;
       if (!m.cr && tr.cr) m.cr = tr.cr;
       if (!m.melonId && tr.songId) m.melonId = tr.songId;
+      if (!m.cover && al.cover) m.cover = al.cover; // 곡 타일 이미지(2026-10-30)
     }));
     const bucket = new Map(songs.map(s => [s.b, { b: s.b, title: s.title.replace(/\s*[\(\[].*$/, '') || s.title, vids: [] }]));
     const names = [g, groups[g].en || ''];
@@ -266,6 +268,6 @@ function buildSongs({ ROOT, groups, artists, EX, vids, minVids = 4 }) {
 // 조회수는 두 자리 유효숫자로 — 페이지가 매번 바뀌면 재생성마다 수천 파일이 커밋돼 저장소가 불어난다(2026-10-16)
 const roundViews = n => { if (!n) return 0; const p = Math.pow(10, Math.max(0, Math.floor(Math.log10(n)) - 1)); return Math.round(n / p) * p; };
 
-const EXTRA_CSS =`.vid-list{padding-left:20px;margin:0;}.vid-list li{font-size:13.5px;margin-bottom:7px;}.vid-list a{color:rgba(210,225,255,0.95);text-decoration:none;}.note{font-size:11px;color:rgba(150,170,210,0.55);margin:6px 0 0;}.rel a{color:rgba(210,225,255,0.95);text-decoration:none;}`;
+const EXTRA_CSS =`.vid-list{padding-left:20px;margin:0;}.vid-list li{font-size:13.5px;margin-bottom:7px;}.vid-list a{color:rgba(210,225,255,0.95);text-decoration:none;}.note{font-size:11px;color:rgba(150,170,210,0.55);margin:6px 0 0;}.rel a{color:rgba(210,225,255,0.95);text-decoration:none;}.sp-tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px 10px;}@media(min-width:620px){.sp-tiles{grid-template-columns:repeat(5,minmax(0,1fr));}}.sp-tile{display:block;text-decoration:none;min-width:0;}.sp-tile img,.sp-tile-ph{display:block;width:100%;aspect-ratio:1;border-radius:10px;object-fit:cover;background:#1a1d33;}.sp-tile-t{display:block;font-size:12.5px;margin-top:6px;color:rgba(228,236,255,0.92);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}.sp-tile-n{display:block;font-size:11px;color:rgba(160,180,230,0.6);}.mf-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 10px;margin-bottom:6px;}@media(min-width:620px){.mf-grid{grid-template-columns:repeat(3,minmax(0,1fr));}}.mf-card{display:block;min-width:0;text-decoration:none;}.mf-th{display:block;position:relative;aspect-ratio:16/9;border-radius:10px;overflow:hidden;background:#14162c;}.mf-th img{width:100%;height:100%;object-fit:cover;display:block;}.mf-t{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-size:13px;line-height:1.38;margin-top:7px;color:rgba(228,236,255,0.94);}.mf-y{display:block;font-size:11.5px;color:rgba(160,180,230,0.6);margin-top:2px;}`;
 
 module.exports = { loadStatic, prefetch, groupExtra, memberExtra, ages, EXTRA_CSS, fmtViews, prefetchGroupVideos, buildSongs, roundViews, esc };

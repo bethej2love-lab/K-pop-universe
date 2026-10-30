@@ -7680,6 +7680,25 @@
   },
   "discography": [
    {
+    "title": "Looks Can Kill (Alawn Remix) (feat. Tiger JK)",
+    "type": "싱글",
+    "isMain": false,
+    "cover": "https://cdnimg.melon.co.kr/cm2/album/images/151/02/088/15102088_20261029160945_500.jpg",
+    "releaseDate": "2026.10.30",
+    "trackCount": 1,
+    "titleTrack": "Looks Can Kill (Alawn Remix) (feat. Tiger JK)",
+    "variant": true,
+    "tracks": [
+     {
+      "no": 1,
+      "title": "Looks Can Kill (Alawn Remix) (feat. Tiger JK)",
+      "isTitle": true
+     }
+    ],
+    "src": "melon",
+    "melonAlbumId": "15102088"
+   },
+   {
     "title": "Looks Can Kill",
     "type": "싱글",
     "isMain": true,
@@ -84190,6 +84209,29 @@
    "namu": "https://namu.wiki/w/BOYNEXTDOOR"
   },
   "discography": [
+   {
+    "title": "포켓몬스터 | 원더보야지",
+    "type": "OST",
+    "isMain": false,
+    "cover": "https://cdnimg.melon.co.kr/cm2/album/images/150/91/540/15091540_20261028153551_500.jpg",
+    "releaseDate": "2026.10.30",
+    "trackCount": 2,
+    "titleTrack": "Fly Away",
+    "tracks": [
+     {
+      "no": 1,
+      "title": "Fly Away",
+      "isTitle": true
+     },
+     {
+      "no": 2,
+      "title": "Fly Away (Inst.)",
+      "isTitle": false
+     }
+    ],
+    "src": "melon",
+    "melonAlbumId": "15091540"
+   },
    {
     "title": "HOME: DELUXE",
     "type": "정규",
@@ -234426,6 +234468,25 @@
   },
   "discography": [
    {
+    "title": "STARBOUND",
+    "type": "싱글",
+    "isMain": true,
+    "cover": "https://i.scdn.co/image/ab67616d0000b2730ff888abcb490872fef4cad7",
+    "releaseDate": "2026.10.28",
+    "trackCount": 1,
+    "titleTrack": "STARBOUND",
+    "tracks": [
+     {
+      "no": 1,
+      "title": "STARBOUND",
+      "isTitle": true
+     }
+    ],
+    "src": "spotify",
+    "spotifyId": "4hVkx2ulyTiTEwpB7OaABt",
+    "copyright": "2026 K-Time"
+   },
+   {
     "title": "Smile For You",
     "type": "싱글",
     "isMain": true,
@@ -240915,7 +240976,8 @@
    }
   ],
   "altNames": [
-   "나우어데이즈"
+   "나우어데이즈",
+   "NOWADAYS"
   ],
   "formerNames": [
    "나우어데이즈"
@@ -259809,6 +259871,25 @@
    "namu": "https://namu.wiki/w/MAVE:"
   },
   "discography": [
+   {
+    "title": "PARADOX",
+    "type": "싱글",
+    "isMain": true,
+    "cover": "https://i.scdn.co/image/ab67616d0000b27354a8285a462a92a14cc702f4",
+    "releaseDate": "2026.10.28",
+    "trackCount": 1,
+    "titleTrack": "PARADOX",
+    "tracks": [
+     {
+      "no": 1,
+      "title": "PARADOX",
+      "isTitle": true
+     }
+    ],
+    "src": "spotify",
+    "spotifyId": "4NIOmW1j3o2HTv4CwNvMwK",
+    "copyright": "2026 K-Time"
+   },
    {
     "title": "MAVE: 1st EP 'What's My Name'",
     "type": "미니 1집",

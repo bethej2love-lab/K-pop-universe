@@ -34,7 +34,7 @@ const rosterFor = g => {
   if (!rosterCache.has(g)) rosterCache.set(g, ARTISTS.filter(a => ag(a).some(x => x.ko === g)).map(a => {
     const e = ag(a).find(x => x.ko === g) || {};
     // admin.js _atmRosterFor와 같게 — 그 그룹 시절 활동명(groups[].name/nameEn, 성민의 티오원 시절 '제롬')도 별칭(2026-10-12)
-    const st = [e.name, e.nameEn].filter(Boolean);
+    const st = [e.name, e.nameEn, ...(e.matchNames || [])].filter(Boolean);
     return { ko: a.name.ko, en: a.name.en, left: (e.left !== undefined ? e.left : a.left), aliases: st.length ? [...(a.matchAliases || []), ...st] : a.matchAliases };
   }));
   return rosterCache.get(g);

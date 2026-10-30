@@ -5890,7 +5890,7 @@ function _admDockShow(id){
   ['adm-home-overlay','hnn-overlay','vm-overlay','gp-overlay'].forEach(o=>{
     document.getElementById(o)?.classList[o===id?'add':'remove']('open');
   });
-  if(window.innerWidth<=768){const el=document.getElementById(id);if(el&&typeof _bringToFront==='function')_bringToFront(el);}
+  if(typeof isMob==='function'?isMob():window.innerWidth<=768){const el=document.getElementById(id);if(el&&typeof _bringToFront==='function')_bringToFront(el);}
 }
 function _vmOpen(tab){
   // vm개선 3(c): tab 인자 없이(설정 버튼으로) 열면 마지막 탭·검색어·스크롤 복원. 홈 카드처럼 tab을
@@ -6285,6 +6285,8 @@ function _vmRenderVideoList(){
     const info=document.createElement('div');info.className='vm-info';
     const grp=document.createElement('div');grp.className='vm-group';grp.textContent=v.group_ko||'';
     const ttl=document.createElement('div');ttl.className='vm-title';ttl.textContent=v.title||'';
+    // 검수 탭: 그룹명이 빗댐으로만 쓰인 제목이면 '출연 의심' 배지(2026-10-30, '코르티스룩'·'트로트계 리센느' — shared.js _parodyRefCue)
+    if(tab==='review'&&typeof _parodyRefCueFor==='function'){const cue=_parodyRefCueFor(v.title,v.group_ko);if(cue){const b=document.createElement('span');b.className='vm-parody-badge';b.textContent='출연 의심';b.title='제목에서 그룹명이 빗댐으로만 쓰임: '+cue;grp.appendChild(b);}}
     info.appendChild(grp);info.appendChild(ttl);
     const tagsLine=_vmTagsLine(v);
     if(tagsLine){
@@ -7348,6 +7350,7 @@ function _atmTokenize(title){return(title||'').toLowerCase().split(/[^a-z0-9]+/)
 // 나머지는 DB(name_match_whitelist)로 이전 — 이제 보호 목록 화면에서 × 눌러 즉시 제거 가능해짐
 // (SQL은 대화 참고, admin이 직접 실행).
 const _ATM_HASHTAG_ONLY_NAMES=new Set(['종현','문빈','구하라','설리',
+  '보니', // 드림노트 보니 — '알고 보니'·'보니까' 일상어(2026-10-30 Codex 검수27차 TMI NEWS 예고편이 드림노트 보니로)
   // 흔한 한국어 어휘와 겹치는 멤버명(2026-09-03, 실데이터 감사로 확인). 평문에서 대량 오매칭됨:
   //  · '이런'(에버글로우 E:U 김이런) — "바로 이런 것"·"이런 거 처음이야"
   //  · '온다'(에버글로우 Onda) — "비가 온다"·"봄이 온다" 등 동사
@@ -7431,7 +7434,9 @@ function _atmRosterFor(gko){
     // 그 그룹 시절 활동명(groups[].name/nameEn — 성민의 티오원 시절 "제롬/JEROME")도 별칭으로(2026-10-12, 사용자: "티오원 시절
     // 영상에 제롬 태깅 안 됨"). **이 그룹 로스터에만** 넣는다 — 디모렉스의 트레저 시절 "예담"은 원팩트 예담과 같은 이름이라
     // 전역 변형(_m2NameVariants)에 넣으면 원팩트 영상까지 끌어온다.
-    const _stage=[e.name,e.nameEn].filter(Boolean);
+    // matchNames는 **매칭 전용**(표시엔 안 씀) — 오마이걸 유빈의 옛 활동명 "비니"처럼 지금 그 그룹에서 다른 이름으로 활동 중이라
+    // 표시 오버라이드(name)를 쓰면 안 되는 경우(2026-10-30). "비니"는 모자 이름이라 전역 matchAliases에도 못 넣는다.
+    const _stage=[e.name,e.nameEn,...(e.matchNames||[])].filter(Boolean);
     return{ko:a.name.ko,en:a.name.en,left:(e.left!==undefined?e.left:a.left),aliases:_stage.length?[...(a.matchAliases||[]),..._stage]:a.matchAliases};
   });
 }
@@ -7779,6 +7784,8 @@ const _ATM_BRAND_PHRASES=/\basahi\s*super\s*dry\b|\basahi\s*beer\b|\basahibeer\b
 const _ATM_INITIAL_WORDS=new Set(['in','is','it','on','up','at','an','as','be','by','do','go','he','me','my','no','of','or','so','to','us','we','if','am']);
 function _atmStripCommonNounCtx(title){
   let t=title||'';
+  // 글자 사이에 이모지·기호가 낀 '라↗️디오'는 '라디오'로 붙인다(2026-10-30 Codex 검수27차 — 떨어진 '디오'가 엑소 디오로 잡혔다)
+  t=t.replace(/라[^가-힣A-Za-z0-9 ]{1,4}디오/g,'라디오');
   // 한글 그룹명 + 소유격 "의"(2026-10-27 사용자 "원곡 크레딧 문제 진짜 많다"). STATION Z 노래방 "템페스트의 'Really Really' | 원곡:위너"·
   // "빌리의 '불장난'"처럼 공연자를 "○○의 '곡'"으로만 쓰는 제목에서 토큰이 "템페스트의"가 돼 그룹이 안 잡히고, 원곡자(위너)만 잡혀
   // 원곡자 영상으로 저장됐다(원곡 표기 제목 2,859개 중 이 꼴 ~80개). 등록 그룹명 바로 뒤 "의" + (띄어쓰기) + **곡 따옴표**일 때만 띄운다 — "비투비의 키스 더 라디오"·"악뮤의 오날오밤"처럼 진행자 이름이 붙은 프로그램명까지 띄우면 진행자가 주인이 되고 게스트가 빠졌다(4만 건 차분 196행).
@@ -8909,7 +8916,9 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
     '하이라이트':{gko:'하이라이트',hashtag:true,ctx:[],ctxUpper:['HIGHLIGHT','BEAST','B2ST']},
     // 퍼즐(PUZZLE, 2023 혼성·해체, 2026-10-26 Codex 점검): 곡명 'puzzle'(홍이삭·비와이·하성운)·퀸덤퍼즐 '퍼즐 팀'·드라마 '나인 퍼즐'·
     // 로에베 퍼즐 백이 전부 그룹 퍼즐로(외부 채널 64건 대부분). 멤버명이나 곡명(SAVIOR)이 같이 있어야 인정.
-    '퍼즐':{gko:'퍼즐',ctx:[]},'PUZZLE':{gko:'퍼즐',ctx:[]}};
+    '퍼즐':{gko:'퍼즐',ctx:[]},'PUZZLE':{gko:'퍼즐',ctx:[]},
+    // NOWADAYS(나우즈 옛 영문명, 2026-10-30 Codex 검수27차 — STUDIO CHOOM 'NOWADAYS HYEONBIN(현빈)'이 올아워즈 현빈으로). 흔한 영단어라 대문자 그대로 + 멤버명 동반일 때만
+    'NOWADAYS':{gko:'나우즈',ctx:['HYEONBIN']}};
   function hitCorroborated(t){
     const {gko,ctx,ctxUpper,hashtag}=_GROUP_TOKEN_NEEDS_CORROBORATION[t];
     if(hashtag?!hitHashtag(t):!new RegExp('(^|[^A-Za-z])'+_atmEscRe(t)+'(?![A-Za-z])').test(title||''))return false; // 대소문자 그대로
@@ -9049,12 +9058,26 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
     // 행성이 따로 있는 프로젝트 그룹(B.D.U·UNB)은 그룹 경로가 소속을 정하므로 기존 동작 유지 — 여기서 좁히면
     // "#BDU #승훈" 영상이 B.D.U가 아니라 씨아이엑스로 빠진다.
     const _unitIsPlanet=unit.names.some(n=>_groupTokNormSet.has(_uNrm(n)));
-    const _uNamed=(unit.rotating||_unitIsPlanet)?[]:unit.members.filter(({mko,gko})=>{
+    // 개인캠 표시가 있으면 유닛 단체 영상이 아니라 한 사람 영상이다(2026-10-30, Codex 검수25차 개인캠 86건 — 유앤비 "필독 Focused"·
+    // 미소녀즈 "박소현 FaceCam"·구구단 오구오구 "혜연 Focused"에 유닛 전원이 붙었다). 이때만 프로젝트 그룹(UNB)도 이름 난 사람으로 좁힌다
+    // — 소속 키가 그 프로젝트 그룹 자체라(gko='유앤비') 위 B.D.U 걱정(다른 그룹으로 빠짐)이 없다.
+    const _uCam=/(focused|직캠|fan ?cam|face ?cam|페이스캠|얼빡|unfiltered cam|focus ?cam)/i.test(rawTitle||'');
+    const _uNamedIn=(mko,gko)=>{
       const a=ARTISTS.find(x=>x.name.ko===mko&&_artistGroups(x).some(g=>g.ko===gko));
+      if(!a)return false;
       // 성 뗀 이름(원지민→지민·이한빈→한빈)은 전역에선 동명이인 때문에 빠지지만, 여긴 이 유닛 멤버로 범위가 좁혀져 있어 인정한다.
-      const _st=a&&_atmStripSurname([...a.name.ko]);
-      return !!a&&[..._m2NameVariants(a),...(_st&&_st.length>=2?[_st]:[])].some(v=>_uHash(v)||(/[가-힣]/.test(v)?_uHit(v):v.replace(/[^A-Za-z0-9]/g,'').length>=4&&_uHit(v)));
-    });
+      const _st=_atmStripSurname([...a.name.ko]);
+      // 그 그룹 시절 활동명·매칭 전용 이름(groups[].name·nameEn·matchNames — 혜연·필독·비니)도 이 그룹 안에서만
+      const _gs=_artistGroups(a).filter(g=>g&&g.ko===gko).flatMap(g=>[g.name,g.nameEn,...(g.matchNames||[])]).filter(Boolean);
+      return [..._m2NameVariants(a),...(_st&&_st.length>=2?[_st]:[]),..._gs].some(v=>_uHash(v)||(/[가-힣]/.test(v)?_uHit(v):v.replace(/[^A-Za-z0-9]/g,'').length>=4&&_uHit(v)));
+    };
+    let _uNamed=(unit.rotating||(_unitIsPlanet&&!_uCam))?[]:unit.members.filter(({mko,gko})=>_uNamedIn(mko,gko));
+    // 개인캠인데 명단 안에서 이름을 못 찾았으면 같은 그룹의 **명단 밖** 멤버가 주인인지 본다(msnz 박소현·윤서연 — 명단 8명에
+    // 없다고 '이름 없음'으로 보고 8명 전원을 붙였다). 찾으면 그 사람만. 유닛 명단 자체는 건드리지 않는다.
+    if(!_uNamed.length&&_uCam&&!unit.rotating){
+      const _uGks=[...new Set(unit.members.map(m=>m.gko))];
+      _uNamed=_uGks.flatMap(gko=>ARTISTS.filter(x=>_artistGroups(x).some(g=>g&&g.ko===gko)&&!unit.members.some(m=>m.mko===x.name.ko&&m.gko===gko)&&_uNamedIn(x.name.ko,gko)).map(x=>({mko:x.name.ko,gko})));
+    }
     const named=unit.rotating
       ? unit.members.filter(({mko,gko})=>_unitMemberNamedInTitle(mko,gko,hit,hitHashtag))
       : (_uNamed.length?_uNamed:unit.members);
@@ -9399,8 +9422,8 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
     const _aliasHit=al=>{const n=(al||'').toUpperCase().replace(/[^가-힣a-zA-Z0-9]/g,' ').replace(/\s+/g,' ').trim();return !!n&&normMinusUnits.includes(' '+n+' ');};
     // 탈퇴 게이트(위 _atmLeftBefore 주석 참고) — 이 영상이 올라온 시점에 이미 그 그룹을 떠난 사람은 제외.
     const matched=ARTISTS.filter(a=>_artistGroups(a).some(g=>g.ko===gko)&&!_atmLeftBefore(a,gko,publishedAt)&&(_m2NameVariants(a).some(t=>hit(t,normMinusUnits)||hitHashtagSubstring(t))||(a.matchAliases||[]).some(_aliasHit)
-      // 그 그룹 시절 활동명(제롬) — 그룹이 확정된 이 블록에서만(위 _atmRosterFor 주석과 같은 이유)
-      ||(()=>{const e=_artistGroups(a).find(g=>g&&g.ko===gko)||{};return [e.name,e.nameEn].filter(Boolean).some(_aliasHit);})())).map(a=>a.name.ko);
+      // 그 그룹 시절 활동명(제롬)·매칭 전용 이름(matchNames — 오마이걸 비니) — 그룹이 확정된 이 블록에서만(위 _atmRosterFor 주석과 같은 이유)
+      ||(()=>{const e=_artistGroups(a).find(g=>g&&g.ko===gko)||{};return [e.name,e.nameEn,...(e.matchNames||[])].filter(Boolean).some(_aliasHit);})())).map(a=>a.name.ko);
     const extra=unitExtraMembers[gko];
     if(extra){
       const extraArr=[...extra];
@@ -9447,6 +9470,26 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
           if(top===1){const L=Math.max(...win.map(x=>x.bestLen));win=win.filter(x=>x.bestLen===L);}
           win.forEach(x=>{if(!matched.includes(x.mko))matched.push(x.mko);});
         }
+      }
+    }
+    // 짝 표기 개인캠(2026-10-30, Codex 검수27차 유닛 개인캠 12건) — "셔누X형원 형원 직캠 (SHOWNU X HYUNGWON HYUNGWON FanCam)"·"쿤&샤오쥔 샤오쥔"·
+    // "정한X조슈아 세븐틴 정한 직캠"처럼 두 사람을 X·&로 잇고 그중 한 명을 다시 쓴 개인캠은 그 한 명만. 등록 유닛이 아닌 짝(정한X조슈아)도 같은
+    // 꼴이라 유닛 이름이 아니라 이름 횟수로 가른다: 직캠 표시 + 짝 표기(A X B / A&B)가 있을 때 혼자 가장 많이 나온 사람만 남긴다.
+    // 같으면(듀오 직캠 "SHOWNU X HYUNGWON FanCam") 둘 다 그대로.
+    if(matched.length>=2&&/(focused|직캠|fan ?cam|face ?cam|페이스캠|얼빡|unfiltered cam|focus ?cam)/i.test(rawTitle||'')){
+      const _pT=String(rawTitle||'').toUpperCase();
+      const _pV=mko=>{const a=ARTISTS.find(x=>x.name.ko===mko&&_artistGroups(x).some(g=>g.ko===gko));if(!a)return [String(mko).toUpperCase()];
+        const ge=_artistGroups(a).find(g=>g&&g.ko===gko)||{};
+        const _pSt=_atmStripSurname([...a.name.ko]); // 성 뗀 이름(유연정→연정)도 — "다원&연정 직캠(DAWON&YEONJUNG)" 듀오를 다원 한 명으로 줄였다
+        return [...new Set([a.name.ko,a.name.en,ge.name,ge.nameEn,_pSt&&_pSt.length>=2?_pSt:null].filter(v=>v&&(String(v).length>=2||/[가-힣]/.test(v))).map(v=>String(v).toUpperCase()))];}; // 한 글자 한글 이름(쿤)도 — 이미 잡힌 멤버끼리 비교라 안전
+      // 한글은 앞뒤에 다른 한글이 없을 때만(성 뗀 '아이'가 '아이돌' 속에서 세어졌다), 긴 표기부터 세고 센 자리는 지운다('기희현' 안의 '희현'을 또 셌다)
+      const _pRe=v=>/[A-Z]/.test(v)?'(?<![A-Z])'+_atmEscRe(v)+'(?![A-Z])':'(?<![가-힣])'+_atmEscRe(v)+'(?![가-힣])';
+      const _pCnt=mko=>{let t=_pT,n=0;_pV(mko).sort((x,y)=>y.length-x.length).forEach(v=>{const re=new RegExp(_pRe(v),'g');n+=(t.match(re)||[]).length;t=t.replace(re,' ');});return n;};
+      const _pVs=matched.map(m=>[m,_pV(m)]);
+      const _pPair=_pVs.some(([m1,a1])=>_pVs.some(([m2,a2])=>m1!==m2&&a1.some(x=>a2.some(y=>new RegExp(_pRe(x)+' ?[X×&+] ?'+_pRe(y)).test(_pT)))));
+      if(_pPair){
+        const cs=matched.map(m=>[m,_pCnt(m)]),mx=Math.max(...cs.map(c=>c[1])),top=cs.filter(c=>c[1]===mx);
+        if(top.length===1&&cs.some(c=>c[1]<mx)){_trace.push({rule:'pair_cam_narrow',token:top[0][0],effect:'kept_repeated_name'});matched.splice(0,matched.length,top[0][0]);}
       }
     }
     membersByGroup[gko]=matched;
@@ -9693,7 +9736,9 @@ function _extBuildRows(vids,strict,tier,owner,defaultCat,handle){
     // 오염 실측 확인 후 도입).
     // 옵션 A(2026-08-26): 그룹표시 없는 동명이인(영문토큰 교차-ko)은 자신있게 배정하지 않고 검수+숨김으로.
     const ambiguous=!owner&&match.confidence==='ambiguous';
-    const needsReview=!owner&&(match.confidence==='weak'||ambiguous);
+    // 그룹명이 빗댐으로만 쓰인 제목('코르티스룩'·'트로트계 리센느', 2026-10-30)도 검수 큐로 — 멤버 이름이 잡혔으면 진짜 출연 근거가 있어 제외. 숨기지 않는다.
+    const parodyCue=!owner&&!members.length&&typeof _parodyRefCueFor==='function'&&!!_parodyRefCueFor(v.title,match.primaryGroup);
+    const needsReview=!owner&&(match.confidence==='weak'||ambiguous||parodyCue);
     // "] 뒤 미지 그룹" fancam(match.hold) → 그룹 배정 안 하고 content_flag='보류'+검수(2026-09-03 사용자 요청).
     // 크랙시 혜진·핫이슈 예원처럼 우리에 없는 그룹인데 동명이인 멤버로 엉뚱하게 끌려오던 것을 보류로.
     const held=!owner&&!!(match&&match.hold);

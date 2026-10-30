@@ -28,7 +28,21 @@ jobs:
         env:
           KPU_BROWSER_PATH: /usr/bin/google-chrome
         run: node tests/smoke.test.js
-      - name: Video list sharing compatibility
-        run: node tests/vid-list-share.test.js
-      - name: Stage windows and mobile sheets
-        run: node tests/stage-venue-album.test.js
+
+  flows:
+    name: browser (${{ matrix.suite }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        suite: [vid-list-share, stage-venue-album, deeplink-song, compass-width, program-facets]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Check runner Chromium
+        run: /usr/bin/google-chrome --version
+      - name: Browser user flow
+        run: node tests/${{ matrix.suite }}.test.js

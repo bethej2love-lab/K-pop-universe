@@ -187,7 +187,7 @@ const _PROJECT_UNITS={
   '정한X원우':{names:['정한X원우','JeongWon'],members:[{mko:'정한',gko:'세븐틴'},{mko:'원우',gko:'세븐틴'}]},
   '호시X우지':{names:['호시X우지'],members:[{mko:'호시',gko:'세븐틴'},{mko:'우지',gko:'세븐틴'}]},
   '에스쿱스X민규':{names:['에스쿱스X민규'],members:[{mko:'에스쿱스',gko:'세븐틴'},{mko:'민규',gko:'세븐틴'}]},
-  '도겸X승관':{names:['도겸X승관'],members:[{mko:'도겸',gko:'세븐틴'},{mko:'승관',gko:'세븐틴'}]},
+  '도겸X승관':{names:['도겸X승관','DK X SEUNGKWAN'],members:[{mko:'도겸',gko:'세븐틴'},{mko:'승관',gko:'세븐틴'}]},
   '아이린&슬기':{names:['아이린&슬기','레드벨벳 아이린&슬기','IRENE & SEULGI'],members:[{mko:'아이린',gko:'레드벨벳'},{mko:'슬기',gko:'레드벨벳'}]},
   'SM THE BALLAD':{names:['SM THE BALLAD','에스엠 더 발라드'],members:[{mko:'규현',gko:'슈퍼주니어'},{mko:'종현',gko:'샤이니'},{mko:'예성',gko:'슈퍼주니어'},{mko:'최강창민',gko:'동방신기'},{mko:'태연',gko:'소녀시대'},{mko:'첸',gko:'엑소'},{mko:'크리스탈',gko:'에프엑스'}]},
   // WayV 서브유닛 — 텐&양양(Ten & Yangyang) 음방 공동 활동(직캠 다수)
@@ -250,7 +250,9 @@ const _PROJECT_UNITS={
   // 1세대 그룹 서브유닛
   'jtL':{names:['jtL'],members:[{mko:'장우혁',gko:'H.O.T.'},{mko:'토니안',gko:'H.O.T.'},{mko:'이재원',gko:'H.O.T.'}]},
   'J-Walk':{names:['J-Walk','제이워크'],members:[{mko:'김재덕',gko:'젝스키스'},{mko:'장수원',gko:'젝스키스'}]},
-  '호우':{names:['호우'],members:[{mko:'손호영',gko:'god'},{mko:'김태우',gko:'god'}]},
+  // '호우'(한글)는 유닛 이름으로 쓰지 않는다(2026-10-30, Codex 검수25차) — '호우 주의'(폭우)·몬스타엑스 '호우~' 같은 일반 단어로 세븐틴 직캠 합본 등에
+  // 손호영·김태우가 붙었다. 영문 HOOW·HoooW(공식 표기)만 인정하고, 한글만 쓴 진짜 호우 영상은 멤버 실명(손호영·김태우)으로 잡힌다.
+  '호우':{names:['HOOW','HoooW'],members:[{mko:'손호영',gko:'god'},{mko:'김태우',gko:'god'}]},
   '신화 WDJ':{names:['신화 WDJ','WDJ'],members:[{mko:'이민우',gko:'신화'},{mko:'김동완',gko:'신화'},{mko:'전진',gko:'신화'}]},
   // 아스트로 서브유닛
   '문빈&산하':{names:['문빈&산하','Moon Bin & San Ha'],members:[{mko:'문빈',gko:'아스트로'},{mko:'윤산하',gko:'아스트로'}]},
@@ -268,7 +270,7 @@ const _PROJECT_UNITS={
   '빈챈현스':{names:['빈챈현스'],members:[{mko:'유니스',gko:'다이아'},{mko:'기희현',gko:'다이아'},{mko:'백예빈',gko:'다이아'},{mko:'정채연',gko:'다이아'}]},
   'L.U.B':{names:['L.U.B','엘유비'],members:[{mko:'주은',gko:'다이아'},{mko:'은채',gko:'다이아'}]},
   // 프리스틴 서브유닛
-  'PRISTIN V':{names:['PRISTIN V','프리스틴 V'],members:[{mko:'로아',gko:'프리스틴'},{mko:'은우',gko:'프리스틴'},{mko:'레나',gko:'프리스틴'},{mko:'주결경',gko:'프리스틴'}]},
+  'PRISTIN V':{names:['PRISTIN V','프리스틴 V'],members:[{mko:'임나영',gko:'프리스틴'},{mko:'로아',gko:'프리스틴'},{mko:'은우',gko:'프리스틴'},{mko:'레나',gko:'프리스틴'},{mko:'주결경',gko:'프리스틴'}]},
   // 포미닛 서브유닛
   '2YOON':{names:['2YOON','투윤'],members:[{mko:'허가윤',gko:'포미닛'},{mko:'전지윤',gko:'포미닛'}]},
   // 에이핑크 서브유닛
@@ -310,7 +312,7 @@ const _PROJECT_UNITS={
   'FIVE O ONE':{names:['FIVE O ONE','파이브 오 원'],members:[{mko:'김현중',gko:'SS501'},{mko:'허영생',gko:'SS501'},{mko:'김규종',gko:'SS501'}]},
   // 구구단 서브유닛
   '구구단 오구오구':{names:['구구단 오구오구','gugudan OGUOGU'],members:[{mko:'신보라',gko:'구구단'},{mko:'장소진',gko:'구구단'},{mko:'류셰닝',gko:'구구단'},{mko:'정미미',gko:'구구단'},{mko:'김세정',gko:'구구단'},{mko:'강미나',gko:'구구단'},{mko:'김나영',gko:'구구단'}]},
-  '구구단 세미나':{names:['구구단 세미나','gugudan SEMINA'],members:[{mko:'김세정',gko:'구구단'},{mko:'김나영',gko:'구구단'}]},
+  '구구단 세미나':{names:['구구단 세미나','gugudan SEMINA'],members:[{mko:'김세정',gko:'구구단'},{mko:'강미나',gko:'구구단'},{mko:'김나영',gko:'구구단'}]},
   // B.D.U — 빌드업 서바이벌 프로젝트 보이그룹(2024.06~2026.03). 워너원·UNB처럼 서바이벌 프로젝트 그룹이라 행성 있음(groups.json).
   // 행성 있는 프로젝트 그룹(B.D.U·UNB)은 멤버 gko를 전원 그 그룹으로 — 원소속(씨아이엑스 등)으로 두면 B.D.U 무대에서 승훈이
   // 게스트로 빠지고, '솔로'로 두면 "빛새온(솔로)" 같은 유령 태그가 붙었다(2026-10-14 실측 66건).
@@ -640,4 +642,42 @@ function _soloPageSuffix(a,artists,groups){
   const enDup=artists.filter(x=>isSolo(x)&&enKey(x)===enKey(a));
   if(enDup.length>1){const h=hint(a),hs=h?(slug(groups[h].en||h)||h):'';res.en='-'+(hs&&enDup.filter(x=>hint(x)===h).length===1?hs:(a.id||hs||'x'));}
   return res;
+}
+
+// 그룹명이 출연이 아니라 **빗댐**으로만 쓰인 제목인지(2026-10-30 사용자 "50대 코르티스룩 #할명수 #박명수 #코르티스 — 코르티스는 안 나온다",
+// "개그계 리센느"처럼 '~계 그룹명'도). 박명수가 코르티스처럼 입은 쇼츠, "트로트계 리센느 김용빈"·"수학계 BTS 정승제"처럼 다른 사람을
+// 그룹에 빗댄 영상은 해시태그까지 달려 매처가 출연으로 본다. 진짜 출연에도 "○○ 스타일"을 쓰는 일이 있어 **자동으로 숨기지 않고**
+// 검수 큐에 '출연 의심'으로만 올린다(외부 채널 동기화 _extBuildRows + 관리자 검수 목록 배지 + 소급 스윕이 이 한 함수를 쓴다).
+// 걸리는 꼴: ① 그룹명+룩/st/스타일/메이크업/코디/재질/짝퉁/따라하기/흉내/성대모사/닮은꼴/패러디 — 뒷말이 단어 끝이어야 한다
+//              (갓세븐 '룩'은 곡명 Look이라 걸리지만 "룩스 캔 킬"·"스타일리스트"·"메이크업포에버"는 안 걸리게)
+//            ② ~계(의) 그룹명 — 세계·가요계·연예계·아이돌계처럼 진짜 그 그룹을 가리키는 말은 뺀다
+//            ③ 제2의 그룹명
+// 반환: 걸린 문구(없으면 ''). names: 확인할 그룹 표기(한글 키·영문명).
+// ⚠️ 정규식 문자열에 백슬래시를 쓰지 않는다(편집 도구가 이스케이프를 풀어 깨진 사고 — 공백은 ' ?', 이스케이프는 fromCharCode(92)).
+const _PARODY_AFTER='(?:룩|st|스타일|메이크업|화장법|코디|재질|짝퉁|따라하기|흉내|성대모사|닮은꼴|닮은|패러디)';
+const _PARODY_END='(?=$|[^가-힣A-Za-z0-9]|의|을|를|은|는|이|으로|로|도)';
+const _PARODY_KYE_SKIP=/(세|가요|연예|아이돌|케이팝|음악|음반|방송|관|체|시|단)$/;
+const _parodyReCache=new Map();
+function _parodyRefCue(title,names){
+  const t=String(title||'');
+  if(!t)return '';
+  const BS=String.fromCharCode(92);
+  for(const n of names||[]){
+    if(!n||n.length<2)continue;
+    let r=_parodyReCache.get(n);
+    if(!r){
+      const e=[...n].map(c=>('.*+?^$|()[]{}'.includes(c)||c===BS)?BS+c:c).join('');
+      r=[new RegExp(e+' ?'+_PARODY_AFTER+_PARODY_END,'i'),new RegExp('([가-힣]{1,6})계의? ?'+e+'(?![A-Za-z가-힣])','i'),new RegExp('제 ?2의 ?'+e,'i')];
+      _parodyReCache.set(n,r);
+    }
+    const a=t.match(r[0]);if(a)return a[0];
+    const b=t.match(r[1]);if(b&&!_PARODY_KYE_SKIP.test(b[1]))return b[0];
+    const c=t.match(r[2]);if(c)return c[0];
+  }
+  return '';
+}
+// 그 영상의 그룹 표기들(group_ko 키 + 영문명)로 바로 판정
+function _parodyRefCueFor(title,gko){
+  const g=(typeof GROUPS!=='undefined'&&GROUPS)?GROUPS[gko]:null;
+  return _parodyRefCue(title,[gko,g&&g.en]);
 }

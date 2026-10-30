@@ -1,5 +1,747 @@
 # CHANGELOG
 
+## 2026-10-30 (Codex — 회사 최신 작업 통합·검수24차 후속)
+- **[진행중]** 사용자가 회사 추가 작업을 알리고 검수/정정/푸시 계속 승인. origin/main83f951b079까지 확인: 회사 검수25~31·Claude 정정/화면/검색 유입 페이지 확장을 보존해 PR48에 통합. 회사가 PR48 OPEN을 인지하고 중복 제외한 기록 확인. 나침반 너비의 첫 프레임 변경·앨범/작사작곡 페이지는 사용자 보류 상태 그대로이며 이번에 구현하지 않음.
+- **[완료·통합 소스/로컬]** 해시 수신에서 회사의 &song= 곡 패널과 노트북 mid= 인물 ID 보존을 함께 유지. tracks_index/artists.slim 충돌은 최신 원본+합친 빌더로 재생성. 원본 개인캠 별칭·회사 아티스트 데이터/자동 수집 앨범을 구버전으로 되돌리지 않음. 곡 소유자11·링크77·최근검색7·솔로 디스코340 등록행 회귀 및 syntax 통과. 새 곡 딥링크 브라우저 검사는 Mac CDP 실행 제한으로 실패하여 Linux CI에서 판정.
+- **[진행중·브라우저 판정]** PR48 이전 headab8d21e71의 verify 성공, smoke는 실제 PC/390px 인물/곡 소유자 전부 성공·404 해소, Charts 8초 카드0으로 실패(회사25차 확인과 일치). 원인은 아직 네트워크/렌더 대기 경로 구별 필요. 8초 시점 큐 상태를 기록하고 총30초까지 동일 렌더 조건을 확인하도록 진단 추가(빈 차트 통과 처리 없음). 다른 흐름은 smoke 실패로 실행조차 못한 것을 막기 위해 목록 공유·무대/시트·곡 딥링크·나침반 폭·프로그램 고르기 검사를 독립 CI 작업으로 실행. 테스트 브라우저에만 기존 software WebGL 플래그 적용. 실기기 iOS/Android 통과라는 뜻 아님.
+
+
+## 2026-10-30 (Claude Code — 나침반 웹 넓은 폭 "띡" 원인 확인·수정 보류)
+- **[원인 확인·미배포] [app.js _openFeedOverlay·_feedWideSync]** 사용자 "웹에서 나침반이 수정 전 너비로 열렸다가 띡 하고 넓게 바뀐다". PC 1440×900 헤드리스로 프레임마다 측정: 다른 창이 하나도 안 열렸는데도 440px로 끝까지 미끄러져 들어온 뒤 0.45~0.5초에 960px(fw-home)로 바뀜 = 상태 감시기(MutationObserver, `['feed-overlay',..._FW_BLOCKERS]` 요소에 load 때 붙임)가 나침반 열림을 못 잡고 1초 안전망(setInterval)에서야 판정. 수정안: `_openFeedOverlay` 데스크톱 분기에서 `el.classList.add('open')` 바로 뒤 `_feedWideSync()` 직접 호출 → 측정상 첫 프레임부터 960으로 들어옴(2회 모두). **보류 이유**: 수정 후 compass-width(10/12↔12/12)·program-facets(7~9/11)가 실행마다 통과·실패가 갈려, 수정 전 코드도 같은 흔들림이 있는지 가리기 전에 퇴근 시간이라 배포 안 함(코드 되돌림). 다음: 두 테스트를 수정 전/후 각 3회씩 단독 실행해 흔들림이 원래 있던 것인지 확인 → 위 한 줄 넣고 배포. 감시기가 왜 못 잡는지(요소 교체 여부)도 확인.
+
+
+## 2026-10-30 (Claude Code — 검색 유입 페이지 남은 것 보류 메모)
+- **[보류·사용자 결정] ⑧ 앨범 페이지 ⑨ 작사·작곡 페이지** — "{그룹} {앨범} 수록곡·뮤비·무대"(디스코그래피 disco/g + 곡 페이지 연결), "{멤버} 작사 작곡 곡"(artist_credits.json). 만든 것: 곡·멤버×곡·멤버 직캠 모음·그룹 직캠·무대 모음·직캠 순위 11종·프로그램 30+739·생년 32·데뷔연도 22·소속사 27·연도별 음방 1위 19. 재개 전 확인할 것: 서치콘솔 색인·노출(어떤 유형이 실제로 들어오는지), 사이트 용량(약 490MB/1GB), CI rebuild-seo-pages 소요 시간(로컬 전체 빌드 28분+). X 자동 게시(주간 순위 카드·음방 1위)는 사용자 X 계정·개발자 키 확인 후.
+
+
+## 2026-10-30 (Claude Code — 검색 유입 확대 4차: 소속사 · 연도별 음방 1위 페이지)
+- **[완료·배포(페이지는 CI 재생성)] [build_group_pages.js buildAgencyPages·buildWinsPages·simplePageHtml·groupTileHtml] [tools/seo_extra.js allWins] [song-page.css v4] [.github/workflows/rebuild-seo-pages.yml] [tests/song-page-design.test.js]** ⑥ `agency/{이름}/` 27곳("SM엔터테인먼트 소속 아이돌 - 하츠투하츠·엔시티 위시·라이즈·에스파 등 16팀", 그룹 썸네일 → 그룹 페이지, 해체 표시). groups.json co를 '/'로 나눠 레이블·모회사 둘 다(빅히트 뮤직 / HYBE), 표기 흔들림 합침(Starship→스타쉽엔터테인먼트·SM→SM엔터테인먼트·Cube·Modhaus·Fantagio·High Up·Loen·nCH), 무소속 제외, 3팀 이상. ⑦ `wins/{년}/` 19개(2008~2026, "2026 음악방송 1위 목록 - 방탄소년단 15회·코르티스 12회·에이티즈 10회", 최다 1위 아티스트 20 + 날짜·방송·아티스트·곡 전체 표, 그룹/솔로 페이지 링크). music_show_wins 전체를 seo_extra prefetch에서 allWins로(예전엔 그룹 것만 묶었다). 그룹 허브에 소속사·연도별 1위 목록. 합쳐 1MB 미만. 실DB 빌드·static-links 8/8.
+- **[수정]** CI josa 테스트 3회 실패 — 프로그램×그룹 페이지 설명의 "${gko}가 나온" 고정 조사를 josa(gko, '이/가')로(세븐틴이 나온·코르티스가 나온).
+- **⏳ 다음** ⑧ 앨범 ⑨ 작사·작곡. 로컬 전체 빌드가 28분 넘게 걸리기 시작(관계 페이지 DB 조회 구간) — CI 소요 시간 확인 필요.
+
+
+## 2026-10-30 (Claude Code — 검색 유입 확대 3차: 생년·데뷔연도 페이지)
+- **[완료·배포(페이지는 CI 재생성)] [build_group_pages.js buildYearPages] [song-page.css v3 .people] [.github/workflows/rebuild-seo-pages.yml]** ⑤ `idols/born/{년}/` 32개("2009년생 아이돌 - 코르티스 성현·트리플에스 주빈·코르티스 건호 등 35명", 얼굴 카드 → 멤버 직캠 모음, 생일 표시, 5명 이상인 해)·`idols/debut/{년}/` 22개("2025년 데뷔 아이돌 - 킥플립·키키·하츠투하츠·누에라 등 20팀", 그룹 썸네일 → 그룹 직캠·무대 모음, 3팀 이상인 해) × 2개 언어(약 2MB), 연도 탭. 멤버 페이지 하단 "2009년생 아이돌"을 그 페이지 링크로, 그룹 허브(g/)에 생년·데뷔연도 목록, CI 커밋 경로에 idols·en/idols. 실DB 빌드·static-links 8/8·390px 캡처(데뷔 2025) 확인.
+- **⏳ 다음** ⑥ 소속사 ⑦ 음방 1위 기록 ⑧ 앨범 ⑨ 작사·작곡.
+
+
+## 2026-10-30 (Claude Code — 검색 유입 확대 2차: 그룹 제목에 실제 멤버 이름 · 프로그램별 모음 페이지)
+- **[완료·배포(페이지는 CI 재생성)] [build_group_pages.js] [.github/workflows/rebuild-seo-pages.yml]** ① 그룹 제목(사용자 "'멤버·음방 1위 기록'이 적절한가, 멤버라는 말은 왜?"): "코르티스(CORTIS) 직캠·무대 모음 - 마틴·제임스·주훈·성현·건호" — 검색어를 맨 앞, 그룹명 한 번, 일반어 '멤버' 대신 현재 멤버 이름(활동 중·탈퇴 제외, 그 그룹 시절 활동명). 7명 이상은 "멤버 13명·음방 1위·투어"(세븐틴)로 줄이고 이름 전체는 설명 문구에. '기록' 삭제.
+  ② **프로그램별 모음**: 앱 _PROGRAM_COLLECTIONS(app.js)를 빌더가 그대로 읽어(앱 모아보기와 같은 키워드 기준) `p/{키}/` 30종("보이스캠 모음 - 아이돌 보이스캠 영상 518개", 조회수 순 48개 + 팀별 개수) + 그 프로그램에 영상 5개 이상인 팀 `p/{키}/{그룹}/` 746개("82메이저 잇츠라이브 모음 - 82메이저(82MAJOR) 잇츠라이브 영상 12개") × 2개 언어(18MB). 그룹 허브(g/)에 프로그램 링크, 사이트맵 종류 programs 추가(1,552), CI 커밋 경로에 p·en/p.
+  - 실DB 임시 작업본 빌드: 사이트맵 core 5,843·songs 11,634·member-songs 18,006·programs 1,552, static-links 8/8, 보이스캠 390px 캡처 확인.
+- **⏳ 다음** ⑤ 생년·데뷔연도 ⑥ 소속사 ⑦ 음방 1위 기록 ⑧ 앨범 ⑨ 작사·작곡. X 자동 게시(주간 순위 카드·음방 1위)는 사용자 X 계정·개발자 키 확인 후.
+
+
+## 2026-10-30 (Claude Code — 검색 유입 확대 1차: 사이트맵 분할 · 그룹 "직캠·무대 모음" · 직캠 조회수 순위 페이지)
+- **[완료·배포(페이지는 CI 재생성)] [build_group_pages.js] [song-page.css v2] [tools/seo_extra.js] [.github/workflows/rebuild-seo-pages.yml] [tests/_sitemap.cjs·og-coverage·static-links·song-page-design]** 사용자 "검색 유입을 늘리게, 우리 정보로 잘 정리해 보여줄 수 있는 페이지는 다 만들자" — 합의한 순서 1~3.
+  - ① **사이트맵 분할**: sitemap.xml = 목록(sitemapindex), `sitemaps/core.xml`(루트·허브·그룹·멤버·관계·순위)·`songs.xml`·`member-songs.xml`, 파일당 4만 넘으면 -2,-3. 구글 한도(파일당 5만)를 3만 6천에서 곧 넘을 참이었다. robots.txt·서치콘솔 주소는 sitemap.xml 그대로. CI 커밋 경로에 `sitemaps`·`rank`·`en/rank` 추가. 테스트는 공용 `tests/_sitemap.cjs`로 목록→조각까지 읽음. 빌드: core 5,843·songs 11,834·member-songs 18,456.
+  - ② **그룹 페이지 "코르티스 직캠·무대 모음 - 코르티스(CORTIS) 멤버·음방 1위 기록"**: 퍼포먼스 분류(live) 또는 직캠 표시 영상(뮤비 제외)이 6개 이상이면 제목 맨 앞, 설명 맨 앞에 개수, 맨 위 썸네일 24개(멤버 페이지와 같은 .mf-grid·공용 vidCardsHtml). 290 중 285팀.
+  - ③ **직캠 조회수 순위**: `rank/fancam/`(역대)·`girls/`·`boys/`·연도별 2019~2026(+ en/) 11종 × 2개 언어, 각 TOP 100(개인 직캠 77,674개 중), 카드에 순위 숫자·멤버·그룹·조회수, 아래 순위권 멤버 얼굴 → 멤버 직캠 모음 페이지, 순위 종류 밑줄 탭, ItemList 구조화 데이터, 그룹 허브(g/)에 순위 링크. 갱신은 SEO 재생성(매주 월 06:30 KST + 데이터/빌더 푸시 때), 조회수 두 자리 반올림이라 작은 변동엔 안 바뀜. 1위 방탄소년단 뷔 1.5억회, 2026 1위 에이티즈 산 430만회.
+  - 실DB 임시 작업본 빌드 2회·390px 캡처(순위·그룹·멤버) 확인, static-links 8/8·og-coverage 4,340·seo-url·song-page-design(⑤ 4건 추가) 통과.
+- **⏳ 다음(합의한 목록)** ④ 프로그램별 모음(아이돌 라디오 직캠·보이스캠·잇츠라이브 등) ⑤ 생년·데뷔연도 ⑥ 소속사 ⑦ 음방 1위 기록 ⑧ 앨범 ⑨ 작사·작곡. 얇은 페이지 noindex 기준·서치콘솔 노출 확인 후 확대. 용량은 사이트 약 470MB(Pages 1GB).
+
+
+## 2026-10-30 (Claude Code — 멤버 페이지 "성현 직캠 모음")
+- **[완료·배포(페이지는 CI 재생성)] [build_group_pages.js memberFancams·멤버 페이지 제목/본문] [tools/seo_extra.js .mf-grid] [tests/song-page-design.test.js]** 사용자 "'성현 직캠'만 검색해도 우리 사이트가 뜨고, 성현 직캠 모아진 페이지로". 멤버 페이지(g/코르티스/성현/)를 그 검색어의 착지 페이지로: 개인 직캠(그 멤버 한 명만 태깅 + 제목에 직캠·FaceCam·Focused 등 표시)이 3개 이상이면 제목을 "성현 직캠 모음·프로필 - 코르티스 성현(CORTIS Seonghyeon)"(동명이인이 많아 그룹명 동반), 설명 맨 앞 "코르티스 성현 직캠 119개를 조회수 순으로", 페이지 맨 위에 직캠 썸네일 카드 그리드(조회수 순 24개, 날짜·조회수 줄). 기존 프로필·곡별 직캠·작사작곡은 그 아래 그대로. 로컬 실DB 빌드: 멤버 1,902명 중 1,272명이 직캠 모음 제목, 390px 캡처 확인. 개인 직캠 3개 미만이면 예전 제목 유지.
+
+
+## 2026-10-30 (Claude Code — Codex 검수26차 후속: 원곡↔실제 출연 역할 DB 정정)
+- **[완료·DB] [sql/audit26_cover_role_fix_2026-10-30.sql]** 실제 출연자는 남기고 잘못 붙은 관계만 정리(현재값 가드·백업 `_bak_audit26_20261030`·되돌리기 `_undo.sql`). ① 예성 Floral Sense 4건 에스파/윈터→예성/[예성], 본인곡이라 원곡 칸 비움(GgbjDi0gtBk 방송본의 윈터 실제 등장은 미확인이라 with 추가 안 함). ② 1theK 커버 3건 주인=공연자: 이서(아이브)·세은(스테이씨)·환웅(원어스), 원곡 그룹은 cover_of_groups(방탄·몬엑/블랙핑크·세븐틴/에스파·NCT127). ③ 원곡 피처링을 출연자로 4건: with에서 지젤·지민·도겸·태용 제거(원곡 칸 유지), 다원 VIBE 커버 members 유태양 제거. ④ 원곡 칸: DND 자기곡 챌린지·BIG Naughty/Post Malone 외부 원곡 2건·seOul drift 'Speed up' 비움, 프락치 cover_of_song 정정. ⑤ 출연자: 아스트로 바이바이 2건 윤산하 추가, HANA 협업 nWsCYW4G9UI 잘못된 with 4명 제거, 아일릿 단체 영상 15건 모카 단독 태그 비움(ykJ2xlYdCBQ 'MOKA & JISOO' 유지), pb1SbjOzifY 'YUNAH & MOMOKA' 윤아만. ⑥ 수동잠금: 유스피어 16건(협업 with 유지)·IVE Baddie·Nxde 직캠 모음 원곡 칸만 정리 후 잠금 복원. ⑦ 원본 비공개 5건 hidden(manual). 58행 결과 확인.
+- **⏳ 남김** 원곡 해석기(_coverResolve) 근본 수정(원곡 괄호 feat vs Cover by 뒤 feat·선배님 소유격·외부 원곡 동명)은 다음 — 이번은 데이터만. HANA 그룹 등록 여부·한영 제목 충돌 2개·LOUD Black Swan 4행·CIX 포럽 챌린지 원곡은 사용자 판단/추가 확인 대기. unavailable 표식 1,196행 일괄 판정은 안 함.
+
+
+## 2026-10-30 (Claude Code — Codex 검수27차 후속 2단계: DB 정정 216건 + 짝 표기 듀오 보호)
+- **[완료·DB] [sql/audit27_indivcam_pair_2026-10-30.sql]** ① 수정 전후 매처 차분(관련 제목 14,310개) 중 DB값이 옛 매처 결과 그대로인 자동 태깅 행만 새 결과로 189건: 퍼플키스 SWAN 수안 영상에서 박지은 제거 142(박지은만 있던 SWAN 챌린지 4건은 수안으로), 짝 표기 개인캠 셔누X형원 22·호시X우지 6·쿤&샤오쥔 6·진진&라키 3·에스쿱스X민규 4·정한X조슈아·연준X수빈·문수아X시윤·세은 focus, '알고 보니' 드림노트 보니 등. 공식 드림노트 '보니&라라' 영상은 실제 보니라 제외. ② 27차 개인캠 26건 members=촬영대상 1명(오전 매처로 이미 정답이던 것). ③ NOWADAYS 오귀속 2건 그룹 정정: `Jxly0A-hFss` 올아워즈→나우즈 현빈, `FP-0aW9g8fc` 빌리→나우즈 시윤. 216/216 + 2건 확인, 수동잠금 17건 제외. 백업 `_bak_audit27_20261030`, 되돌리기 `_undo.sql`. 그룹이 바뀌는 나머지 35건(다른 그룹 채널 챌린지에 나우즈 게스트 등)은 채널 주인이 맞아 손대지 않음.
+- **[완료·배포] [admin.js 짝 표기 개인캠]** 1단계 규칙이 듀오를 한 명으로 줄이던 것 2가지 수정: 성 뗀 이름도 셈(다원&연정 — 등록명 유연정), 한글 이름은 앞뒤에 다른 한글이 없을 때만·긴 표기부터 세고 센 자리는 지움(성 뗀 '아이'가 '아이돌' 속에서, '기희현' 안 '희현'을 또 셈 → IDOL RADIO 듀오들이 한 명으로). unit-indivcam에 듀오 3건 추가.
+
+
+## 2026-10-30 (Codex — 검수31차·보류 사례 원본 보강)
+- **[완료·읽기 전용] [CHANGELOG.md]** 사용자 추가 요청으로 30차 신원 보류3건과 출연/언급 보류1건의 공식 원본 연결·설명·자막을 추가 대조. 기존4개를 새 오류4건으로 재집계하지 않음. 별도 임시 브라우저 탭만 사용 후 정리. 코드·JSON·SQL·DB 변경·수집/스윕·정정 실행 없음. 검수 중 Claude의27차/26차 후속 커밋이 추가된 것을 확인하고 해당 코드·SQL은 건드리지 않음.
+- **[이슈·신원 보류→정정 근거 확보2] [yt_channel_videos E44GUmqcoLc/U8eBWSknuBc]** 두 행은 여전히 갓세븐/[진영]/빈with, 공개·tags_manual=false·cover_manual=false. 싱글즈 공식 쇼츠 화면에서 [향수 E44](https://www.youtube.com/shorts/E44GUmqcoLc)와 [메시지 U8](https://www.youtube.com/shorts/U8eBWSknuBc)가 **같은 공식 본편 [cPvjY6KSBy4](https://www.youtube.com/watch?v=cPvjY6KSBy4)**을 관련 영상으로 직접 연결하는 것을 확인. 본편 제목은 ‘진영이 사랑앓이 중인 그분?! … 싱사이드캠’, 업로더 싱글즈(@singlesmania), 설명은 **스위트홈3에서 박찬영 역을 맡은 진영**을 명시. 30차에서 확인한 정진영(a0715, B1A4 출신/IG jinyoung0423) 쪽 콘텐츠이므로 갓세븐 진영(a0601) 귀속은 정정 대상. 얼굴 비교·향수 취향 유사성·게시일 추정으로 확정한 것이 아님. 원본의 ‘사랑앓이’ 문구를 실제 연애/친분 관계 태그로 해석하지 말 것. 아티스트 솔로 이력/동명이인 키 정리와 함께 소량 정정할 근거 보강, 이번 변경 없음.
+- **[완료·신원 보류→정상 primary 보존1] [yt_channel_videos BZTsxYkszdY]** [W KOREA 쇼츠](https://www.youtube.com/shorts/BZTsxYkszdY) ‘계속 놀리고 싶은 타격감 좋은 진영’은 설명이 비어 있어30차에 신원 보류했으나, 쇼츠 화면이 직접 연결한 [공식 본편 ecVqZDpFNLE](https://www.youtube.com/watch?v=ecVqZDpFNLE)의 제목/설명은 **박진영·노정의 ‘마녀’ 인터뷰**이며 구황작물 촬영 에피소드까지 해당 쇼츠 내용과 연결. 따라서 이 영상은 현재 갓세븐/[진영] primary를 보존할 정상 비교로 분류(태그 완전성 전체 통과 의미 아님). 비슷한 시기의 배우 인터뷰라는 이유로 위 E44/U8와 함께 B1A4로 옮기지 말 것. 원본의 ‘커플’은 작품/인터뷰 문맥이며 검증되지 않은 실제 연애 관계로 확대하지 않음.
+- **[이슈·동반출연 아닌 과거 통화 소개 근거 보강] [yt_channel_videos QUWqRV31QQs]** [Marie Claire 공식 JAY B 인터뷰](https://www.youtube.com/watch?v=QUWqRV31QQs)의 3:11 질문은 ‘가장 최근에 통화한 GOT7 멤버는?’이고 3:13~3:50 자막/실제 장면은 **전날 진영과 통화한 사연을 JAY B가 설명**하는 구조. 현장에서 진영에게 전화를 연결하는 장면을 확인한 것이 아님. 제목의 진영 대사를 실제 동반출연 근거로 삼지 말 것. 현재 엔하이픈/[제이]/with JAY B(갓세븐),진영(갓세븐)이며 두잠금false·공개. 실제 주인 JAY B(a0598) 정정은 별개로 검토하고, with 진영은 이 언급만으로 보존할 수 없음. 최종 with 제거 시 다른 구간 실제 출연 유무까지 판단하되 ‘전화’ 단어가 들어간 모든 콘텐츠를 자동 제외하지 않음(실제 전화 연결·영상통화 출연과 과거 사연 소개는 다름).
+- **[완료·판단법/한계] [원본 연결]** shorts 화면에는 watch 화면의 단순 제목/설명 조회에서 보이지 않던 **업로더가 직접 지정한 관련 본편 링크**가 노출됨. 신원 애매한 숏츠는 이 링크→본편의 이름·작품·공식 설명을 먼저 대조하는 것이 얼굴 추정/검색 반복보다 정확하고 효율적. cPv/ecV 두 본편은 이번 yt_channel_videos ID 조회에서 행이 없었으나 YouTube 공식 원본은 정상 열람됨: 우리 DB에 없음≠깨진 링크/비공개. 연결 원본의 출연자를 짧은 파생본에 무조건 전원 복사하는 방식도 금지. 29차66ftlDYWu50 모음/5Y3PFO858jc 합본 출연범위는 이번에 해결했다고 주장하지 않으며 기존 보류 유지.
+- **[완료·Claude26차 정정 후 읽기 전용 재확인] [sql/audit26_cover_role_fix_2026-10-30.sql] [yt_channel_videos] [_bak_audit26_20261030]** 실행하지 않고 SQL 파일을 읽은 뒤 백업↔현재값 SELECT 대조. 백업58행, 원래 tags_manual=true였던18행 전부 현재도true. 유스피어16행의 with_members/with_groups 변경0, IVE Baddie·Nxde 모음2행도 실제 with 변경0. 원본 비공개5행은 모두 hidden/flag_source=manual, 아스트로 듀엣2행은 모두 members=[MJ,윤산하]. Floral Sense4행은 primary 예성/[예성]/with·with_groups·cover빈값 확인, 키노 seOul drift 협업은 with 키노 유지, 키키HANA의 잘못된 with4명 제거·ILLIT YUNAH&MOMOKA의 모카 제거 확인. **이 값 검사는58편 전부 출연자를 새로 시청해 무오류 판정한 뜻이 아님**. GgbjDi0gtBk 윈터 실제 등장 여부 등 Claude가 남긴 보류는 유지. 이번 조회 범위에서 의도한 정정값과 보존 조건이 어긋난 항목은 못 찾음.
+- **⏳ 덜 된 일 [명령·파일·판단 기준]** ① `SELECT id,title,group_ko,members,with_members,with_groups,tags_manual,cover_manual,content_flag FROM yt_channel_videos WHERE id IN ('E44GUmqcoLc','U8eBWSknuBc','BZTsxYkszdY','QUWqRV31QQs')`로 최신값/잠금 재확인→E44/U8는 정진영 솔로·옛 그룹 식별 계획에 편입, BZ는 현재갓세븐을보존, QUW는 JAY B 주인과 과거언급 with를 분리해 계획. ② 기존29차 모음2개는 회차/구간별 원본 확인 후 개별출연 처리, 이번4개와 같은 신원 확정으로 묶지 않음. ③ Claude26차 후속은 `_bak_audit26_20261030 b JOIN yt_channel_videos v USING(id)`로 위 잠금·with·hidden·듀엣 조건을 재현할 수 있음. 백업을 덮어쓰거나 정정 SQL을 재실행하지 말 것. 이번 쓰기는 이 문서뿐.
+
+## 2026-10-30 (Codex — 검수30차·다른 동명이인과 원곡 출연 구분)
+- **[완료·읽기 전용] [CHANGELOG.md] [yt_channel_videos]** 검수29차76 ID와 겹치지 않는 **82개 고유 영상**을 후속 추적 목록으로 정리: 진영 제목 선별58 + 유니코드21(앞58과2개 중복) + 추가 오태그5. **82개가 전부 오류 확정이라는 뜻은 아님**. 공개77·비공개5(무관3/hidden2), 정상 primary 보존 비교·누락 후보 포함. 공개 중 `qSWG39_aff8`만 tags_manual/cover_manual 둘 다true이므로 보호, 나머지81은 두 잠금false. 코드·JSON·SQL 파일/DB 정정·채널 삭제·수집/스윕 없음. 브라우저는 별도 임시 탭에서 갓세븐 진영→배진영→OnlyOneOf3카드 검색, 공식 원본 제목/업로더·일부 설명/장면 대조; 전편 재생·출연자 전원 확인 아님.
+- **[이슈·공개 카드 오귀속] [artists.json a0601/a0715/a0328]** 갓세븐 진영(1994.09.22, a0601), 비원에이포 출신 정진영(1991.11.18, a0715), 배진영(a0328)을 구분해야 함. 갓세븐 진영 카드에 ‘구르미’5개, ‘경찰수업’2개(h7+아래COSMO), ‘에릭’1개가 실제 노출. [KBS 경찰수업 라디오](https://www.youtube.com/watch?v=h7TDaKA7vx8)는 KBS CoolFM 공식·차태현/진영/정수정 회차, [ELLE 구르미 숏츠](https://www.youtube.com/watch?v=aEMx1feuLpU)도 공식 업로더와 배우 출연 제목 확인. 아래23개는 정진영 이력/작품/곡과 연결되는 **재귀속 후보**이며 모두 개별 장면까지 확정한 것은 아님. [KBS 공식 경찰수업 소개](https://mylovekbs.kbs.co.kr/index.html?contents_id=70000000396202&sname=mylovekbs&source=mylovekbs&stype=magazine)와 [KBS 공식 구르미 소개](https://mylovekbs.kbs.co.kr/index.html?contents_id=70000000283656&sname=mylovekbs&source=mylovekbs&stype=magazine), 정진영/경찰수업 및 @jinyoung0423를 명시한 COSMO 원본 설명으로 식별. 스위트홈·착한여자부세미·그시절소녀·광고 Making·OST는 같은 사람 여부/실제 동반 출연자를 소스별 최종 확인, 단순히 배우 인터뷰라는 이유로 무관 처리하지 않음.
+- **[이슈·배진영을 갓세븐 진영으로] [UBxjyvjsJRk]** 갓세븐 진영 카드에 노출된 [MBC 아이돌라디오 EP168 원본](https://www.youtube.com/watch?v=UBxjyvjsJRk)의 펼친 공식 설명은 #배진영 #BAEJINYOUNG #STILL_YOUNG #Round_Round 및 더보이즈 에릭. 실제 배진영과 에릭의 회차이지 갓세븐 진영이 아님. primary/진영을 배진영 본인과 실제 진행자 에릭 문맥으로 정정 검토. 배진영은 이미 a0328/워너원·CIX 이력/soloDisplay로 존재하므로 새 인물 생성 금지.
+- **[이슈·탈퇴 후 활동을 동명이인에게 넘기는 경로] [artists.json a0715] [admin.js _atmLeftBefore/_m2ParseTitle]** a0715는 group=비원에이포, active=false, left=2018.06.30만 있고 솔로 그룹 이력이 없음. 현재 매처에 실제 발행일을4번째 인자로 주면 경찰수업 h7·2021 업로드 슈가맨 sPo·UNICODE7MI가 모두 갓세븐 진영 weak. 기존 솔로 표현(솔로 primary+기존 그룹 left 보존+active=true)을 **하네스 메모리에서만** a0715에 적용해 비교하니3개 모두null로 바뀜: 오확정을 막더라도 매칭 유실이 남아 **이 변경 하나가 완성된 해법은 아님**. ‘같은 ko를 가진 솔로’ 식별·실제 그룹 문맥·검수 큐/수동 출처 판단을 함께 검토해야 함. 단순 active=true만으로 옛 B1A4 현 멤버 취급을 되살리는 수정도 금지. sPo는 제목상2015방송을2021년에 다시 올린 것으로, 업로드일과 실제 공연 시점도 구별할 것(모든 탈퇴 게이트 무력화 금지).
+- **[이슈·동명이인 아닌 타인 풀네임] [UWXW4wryzKQ]** 갓세븐 진영 카드 ‘현진영’ 검색에 [KBS WORLD TV 현진영 Go 진영 Go](https://www.youtube.com/watch?v=UWXW4wryzKQ)1개 실제 노출. 원본 제목·업로더의 Hyun Jin Young/현진영은 별도 가수. 현재 매처도 갓세븐 진영 weak 유지. 로스터 검색상 현진영 미등록이므로 기존 진영에게 강제 재배정하지 말고 등록 기준/무관·보류 정책에 따라 분리.
+- **[이슈·프로듀서 ≠ 무대 출연자] [UNICODE21] [groups.json]** 로컬 groups/artist 그룹·별칭에 유니코드 미등록. [ARIRANG EP614 원본](https://www.youtube.com/watch?v=7MIwpx4FP0U)의 제목·공식 설명은 일본인5인 걸그룹 UNICODE의 한국어 ‘돌아봐줄래’ 무대이고, 0:37 장면의 UNICODE 방송 자막/걸그룹 공연까지 확인. `Prod.by Jin Young`는 제작 크레딧으로 갓세븐 진영 출연 근거가 아님. 조회21개 중 단독 무대/직캠 **공개10개**(갓세븐2·러블리즈3·워너원2·온리원오프3)가 다른 팀 카드로 노출. 갓세븐 카드 ‘유니코드’5개, 배진영 카드 ‘UNICODE’2개, 온리원오프 카드 ‘유니코드’3개를 실제 확인. [HANA 플리캠](https://www.youtube.com/watch?v=B8geEH-C4s0)도 ARIRANG 공식 원본의 UNICODE HANA 개인캠인데 워너원/배진영. 수동 미확정 상태에서 비원에이포 진영으로만 옮겨도 공연자 오귀속은 그대로이므로 금지. **음악방송 출연·한국어 무대 근거가 있어 유니코드 그룹/멤버 등록을 우선 검토**한 뒤, 실제 주인으로 재귀속하거나 미등록 큐로 분리하는 후속 권장. 단독 영상10개 모두 전편 검증한 것은 아님.
+- **[이슈·UNICODE 협업6/비공개5는 별도] [yt_channel_videos]** 공개 나머지6은 타 아티스트와의 챌린지3·라디오1·출근길1·월간모음1로 주인 전체 삭제 금지. `i4oVF6eCbIc` 어센트 챌린지의 유니코드 하나가 with 하나(피프티피프티)로 저장돼 있어 해당 원본 확인 후 타인 태그 제거·실제 유니코드 출연 보완. `ZxNof6o8Hbc` 유니코드 유라를 현재 매처는 걸스데이 유라 weak로 바꿈(현재 저장 primary는 판타지보이즈)→재스윕만으로 고쳐지지 않음. `fc6hrulpxck` 드리핀 실제 주인은 보존하면서 유니코드 에린·수아를 기존 동명이인에게 붙이지 말 것. 친친 `m_FDOrh0Dcg`의 영재는 실제 진행 여부 확인 후 보존, 프로그램명만으로 주인 삭제 금지. 출근길·월간모음은 각 구간 실제 등장/개별출연 판단. 비공개5(ShowChamp무관3·베이비몬스터hidden2)는 현재 유저 미노출이므로 공개 오류10과 별도, 이번 임의 복구/해제하지 않음.
+- **[이슈·원곡자가 아닌 실제 제작/심사 역할] [소년판타지4]** 아래4개는 갓세븐 진영으로 저장돼 있으나 [MBC 제작발표회 원본](https://www.youtube.com/watch?v=qRr9ym87yCY) 공식 업로더 대조, [iMBC 공식 기사](https://enews.imbc.com/News/RetrieveNewsInfo/377664)는 B1A4 출신 진영을 명시. qRr은 실제 프로듀서 출연이므로 타인 오귀속 정정 후보. k6/CJ는 실제 심사·대화 장면의 범위를 소스별 확인(제목 강승윤/전소연을 무조건 전원 출연으로 채우지 않음). Vv는 설명의 ‘소년판타지 주마등 - 꽉잡아’ 공연 링크가 있어 **‘진영 작곡곡’과 ‘진영이 화면에 실제 등장’ 구별이 선행**. 네 개를 전부 B1A4 primary나 새 데뷔조로 일괄 배정하지 말고 당시 참가자/제작자 역할을 구별, 미등록 참가자 처리 정책 유지.
+- **[이슈·진짜 GOT7 영상도 누락 있음7] [JAY B a0598] [JJ Project]** 아래7편은 갓세븐 primary 보존하되 members에 진영만 있고 제목의 JB가 빠짐. [딩고 내일 오늘 원본](https://www.youtube.com/watch?v=f2FNGzvCVM0) 업로더/제목 JJ Project·JB·진영 확인. 현재 a0598 variants는 JAY B/제이비이며 JB가 없음(짧은 전역 별칭을 무조건 추가하면 새 오탐 가능). 하네스는 hwT만 두 멤버 반환, 나머지 JJ Project4개는 계속 진영만. GOT2DAY JB2개는 배진영/워너원 ambiguous로 잘못 기울기도 하므로 정상 주인 재스윕 금지. 유닛·공식 시리즈·당시 별칭 문맥에서 JB=JAY B를 확인 후 누락 보완. 아래 나머지17은 정상 primary 보존 비교이며 전체 태그 완전성 통과를 뜻하지 않음. 최유리와의6개/1theK DIVE 예고를 B1A4 영상으로 뭉뚱그리지 말 것: [유리의 숲2 EP01 원본](https://www.youtube.com/watch?v=0DaB2xalsVs)은 박진영으로 명시한 GOT7 비교 소스. DIVE예고 qSW는 두 수동잠금true 유지.
+- **[이슈·일반 단어·소속 혼합] [추가5]** [W KOREA rDp](https://www.youtube.com/watch?v=rDp_g65oF-Q)의 ‘갓세븐 진영 X 정의가 **정한** 마녀 커플명’이 세븐틴/정한 주인으로 저장돼 실제 배우 인터뷰를 오귀속. 현재 제목 매처는 갓세븐 진영 strong으로 돌아오므로 옛 재고 정정 후보. QUW도 JAY B 인터뷰가 엔하이픈 제이 주인이지만 현재 매처는 GOT7/JAY B·진영을 반환: 설명상 진영은 섭섭하다고 연락한 **에피소드 언급**일 수 있어 실제 출연/전화 등장 확인 전 with 진영 보존을 확정하지 않음. 5q9는 경찰수업 인터뷰가 러블리즈 JIN/with 갓세븐 진영(설명에 강선호 역); COSMO0tq는 이즈나 유사랑 primary/with갓세븐 진영인데 설명 #정진영/@jinyoung0423라 B1A4출신 진영 본인. [ZEROBASEONE 공식 fYB 원본](https://www.youtube.com/watch?v=fYBWe3OKTS4)은 진짜 GOT7 잭슨·진영 챌린지 초대이며 수집 설명에 #ZHANGHAO/#장하오. 현재 ZB1 members=[잭슨,진영]으로 타 그룹 인물을 자기 멤버에 저장한 상태. 실제 장하오와 GOT7 게스트를 그룹별로 나누고, 제작자 오태그를 지운다는 이유로 진짜 게스트를 없애지 말 것.
+- **[이슈·그룹명 한글 오타] [groups.json] [artists.json] [shared.js] [admin.js]** OnlyOneOf의 내부키/카드명이 ‘온리원오프’인데 [THE K-POP 공식 libidO 원본](https://www.youtube.com/watch?v=cA-KV4lUOgU), [Bugs 아티스트](https://music.bugs.co.kr/artist/20084212)는 ‘온리원오브’. 실제 그룹 카드 이름/공식SNS 작성자 줄도 온리원오프로 표시되며 같은 화면의 공식게시글 제목은 온리원오브로 표기. 로컬 정본 groups1·artists7, slim각1/7, shared1·admin8번에 잘못된 문자열 존재, groups 해당 개체에 올바른 한글 별칭도 없음. DB group_ko에 이 키를 쓰는 영상2,944(공개2,456)지만 **모두 실제 OnlyOneOf 영상이라는 뜻은 아님**(위 유니코드 혼입 포함). 한 파일 표시명 치환만 하면 로스터/DB/수집기/공유링크가 갈라지므로 기존 키 호환·old→new 그룹/with/cover/채널/유저 저장값 등 참조 이전을 계획한 뒤 수정할 것. 이번에는 오타 확인과 범위 메모만, 이름·슬림·DB 일괄치환 안 함. 이전 인계에도 잘못된 이름이 그대로 쓰여 있었으므로 새 그룹 추가 문제가 아닌 기존 키 정정으로 접근.
+- **[완료·재현/검증 범위] [tools/matcher_harness.cjs]** 실제 발행일로58제목과 공개UNICODE16+추가5를 메모리 재파싱(중복2 포함, 파일 변경 없음). Prod.by Jin Young의3개 러블리즈 저장값은 현재 갓세븐 weak로 바뀔 뿐 실제 유니코드로는 못 돌아감. B8/e9는 워너원·CIX·GOT7 ambiguous, e9는 걸스데이 유라까지 추가. COSMO는 갓세븐 strong 유지, 현진영도weak 유지. 구르미 일부는 ‘현재’→더보이즈 현재, ‘우정’→우당탕탕소녀단 우정까지 붙일 수 있으나 **이번 DB에는 이 추가 태그가 없으므로 현재 데이터 오류로 새로 집계하지 않음**. 하네스 동적 DB 화이트리스트는 비어 있어 서비스 런타임과의 차이는 감안, 현재 재파싱 결과를 곧바로 일괄 정정값으로 사용 금지. `node tests/validate-data.js` 오류0/기존경고144, `node tests/smoke.test.js` PC·390px모바일 통과(첫 샌드박스 실행은 CDP 실행불가→동일 테스트를 승인된 전용 헤드리스 환경에서 재실행해 통과; 종료 시 이미 끝난 자식 PID 정리 경고는 있었으나 테스트exit0). 신규 코드 변경/아이폰 실기기 검증을 뜻하지 않음.
+- **⏳ 덜 된 일 [명령·파일·판단 기준]** ① 아래82 ID를 `SELECT id,title,description,group_ko,members,with_members,with_groups,cover_of_groups,cover_of_members,cover_of_song,content_flag,tags_manual,cover_manual,published_at FROM yt_channel_videos WHERE id IN (...)`로 최신 재조회. 실제 원본 확인된 B1A4배우 인터뷰·배진영라디오·현진영·추가5부터 소량 백업/현재값 가드로 정정 계획; 두잠금qSW 보호. ② a0715의 기존 솔로/옛 그룹 이력 모델과 ko중복 정체성·재업로드 날짜를 함께 검토, 이번 하네스의 null 결과를 해결로 착각하지 않기. ③ 유니코드 공개단독10은 공식 로스터/한국어 음방 근거로 등록 여부 결정 후 처리, 협업6과비공개5 분리. `WHERE title ~* '(UNICODE|유니코드)'`로21재현, 작품 제작자(Jin Young)는 자동 출연자 추가하지 않음. ④ JB7는 유닛/공식시리즈 문맥으로 JAY B 보완, 정상GOT2DAY를배진영으로 옮기지 않음. ⑤ OnlyOneOf키 정정 전 `rg -n '온리원오프|온리원오브' groups.json artists.json shared.js admin.js`와 DB 참조·저장된 즐겨찾기/링크 호환 조사→구·신키 동시 호환과 데이터 이전/원복을 갖춘 별도 작업. 이번 후속 실행용 SQL·코드·데이터 변경은 하지 않음.
+
+<details>
+<summary>검수30차 — B1A4 출신 진영 이력/작품과 연결되는 재귀속 후보23 (일괄 확정 아님)</summary>
+
+| 영상 ID | 제목·구별 문맥 | 현재 primary / members / with |
+|---|---|---|
+| `aEMx1feuLpU` | 왔다 내 청춘들🩵💙 #구르미그린달빛 #박보검 #김유정 #진영 #채수빈 #곽동연 | 갓세븐 / 진영 / ∅ |
+| `0ktCxdl9FqE` | 박보검의 미담은 현재 진행형💝 #구르미그린달빛 #박보검 #김유정 #진영 #채수빈 #곽동연 #다이슨 #다이슨버건디우드에디션 #다이슨슈퍼소닉뉴럴 #다이슨에어랩 | 갓세븐 / 진영 / ∅ |
+| `YEoFokx-TUg` | “불허한다. 내 사람이다.” 과연 원조 박보검은 자리를 지킬 수 있을까? #구르미그린달빛 #구그달 #박보검 #김유정 #진영 #채수빈 #곽동연 | 갓세븐 / 진영 / ∅ |
+| `VqkdM-1BZfA` | 박보검, 김유정, 진영, 채수빈, 곽동연과 함께 2016년으로 돌아가 볼까요? #구르미그린달빛 #구그달 #박보검 #김유정 #진영 #채수빈 #곽동연 | 갓세븐 / 진영 / ∅ |
+| `utxlSkZv9ik` | 10년이 지나도 한결같은 우정! 다섯 멤버들이 다시 모였습니다🫶 #구르미그린달빛 #박보검 #김유정 #진영 #채수빈 #곽동연 | 갓세븐 / 진영 / ∅ |
+| `DPibQOUYY0Y` | [FULL] 안 볼 이유가 하나도 없는 ✨2025년 최고 기대작✨ 드라마 〈착한 여자 부세미〉의 배우 전여빈, 진영 보는 라디오 ／ 12시엔 주현영 ／ 250925 | 갓세븐 / 진영 / ∅ |
+| `aafpOImjIL8` | 고향에도 길을 잃을 만큼 심각한 길치라는 진영😵‍💫 | 갓세븐 / 진영 / ∅ |
+| `nfad9hzBxh0` | [FULL] 첫사랑의 설렘을 전파하러 온 💙영화 ‘그 시절, 우리가 좋아했던 소녀’ 배우 진영, 다현💙 보는 라디오 ／ 12시엔 주현영 ／ 250217 | 갓세븐 / 진영 / ∅ |
+| `9CaKolakVZY` | 여전한 예능감 다현의 한마디에 쓰러진 진영🤣 ／ 12시엔 주현영 | 갓세븐 / 진영 / ∅ |
+| `NTHiMBLuWPs` | #진영 이 추천하는 향수 바로 사러 나왔습니다💸💸 #스위트홈 #스위트홈3 | 갓세븐 / 진영 / ∅ |
+| `tuem_B5-_0E` | 진영, 완벽한 수트핏😭 #스위트홈3 #진영 | 갓세븐 / 진영 / ∅ |
+| `Vjaak3akR2U` | 볼륨 초대석 : 청초한 만남 with 고민시, 진영 full ver. / [청하의 볼륨을 높여요] I KBS 240715 방송 | 갓세븐 / 진영 / ∅ |
+| `-nK5QnYzO9g` | [FULL] 난리났네 난리났어!🔥🏠 3년 만에 돌아온 〈스위트홈〉 시즌2의 배우 진영, 고민시 보는 라디오 ／ 박소현의 러브게임 ／ 231205 | 갓세븐 / 진영 / ∅ |
+| `FdSV-NTRTCw` | 같은 곳에서 진영.ver | 갓세븐 / 진영 / ∅ |
+| `h7TDaKA7vx8` | 💙KBS 2TV 드라마 '경찰수업' 진영, 정수정 러브라인 예고? (ft. 단톡방 사건) /[정은지의 가요광장] l KBS 210809 방송 | 갓세븐 / 진영 / ∅ |
+| `ckbz3zfZXDI` | 만남의 광장 with 차태현, 진영, 정수정 full ver. /[정은지의 가요광장] l KBS 210809 방송 | 갓세븐 / 진영 / ∅ |
+| `JitWJLpv_HE` | 당신..그렇게 웃으면 유죄야...체포해도 되죠? 내 광대 은은하게 빛나게 만드는 진영 줌터뷰💖 l 줌터뷰 | 갓세븐 / 진영 / ∅ |
+| `sPoSPjvL6co` | 바로＆진영 ′2015 하얀 겨울′ ♪ 환상의 하모니 〈슈가맨1(SUGARMAN1) 1회〉 ／ JTBC 151020 방송 | 갓세븐 / 진영 / ∅ |
+| `g6szU6KSWWw` | [re슈가캠] 진영 '하얀겨울'♬ #투유프로젝트슈가맨 | 갓세븐 / 진영 / ∅ |
+| `YyQA_WL9m_0` | [MV] Jinyoung(진영) _ I'm into you, I mean Love you(좋아해, 아니 사랑해)(Webtoon YeonNom(웹툰 연놈)OST Part.4) | 갓세븐 / 진영 / ∅ |
+| `1Jtd6AxgJIk` | 진영 (Jin Young) - 약속하길 잘했다! (Together Promise) Making Film | 갓세븐 / 진영 / ∅ |
+| `X3tnRSBRD28` | ✨만능 엔터테이너 진영! 자꾸 듣고 싶은 '문자 왔다~' '잘 자! 내 꿈 꿔!' (ft. K-조니, 한 소절 라이브)  /[신예은의 볼륨을 높여요]ㅣKBS 211213 방송 | 갓세븐 / 진영 / ∅ |
+| `ZuuyGip6F20` | 볼륨 초대석 with 진영 full ver. /[신예은의 볼륨을 높여요]ㅣKBS 211213 방송 | 갓세븐 / 진영 / ∅ |
+
+</details>
+
+<details>
+<summary>검수30차 — 신원 추가 확인3 / 배진영 라디오1 / 현진영1</summary>
+
+| 영상 ID | 제목·구별 문맥 | 현재 primary / members / with |
+|---|---|---|
+| `E44GUmqcoLc` | #진영 의 최애 #향수 는 바로바로바로💖 | 갓세븐 / 진영 / ∅ |
+| `U8eBWSknuBc` | #진영 이 팬들에게, 그리고 모두에게 보내는 감동적인 메세지 | 갓세븐 / 진영 / ∅ |
+| `BZTsxYkszdY` | 계속 놀리고 싶은 타격감 좋은 진영 | 갓세븐 / 진영 / ∅ |
+| `UBxjyvjsJRk` | [FULL] EP#168 [에릭과 진영] 아돌라에서 피어난 미남들의 우정❣️｜아이돌 라디오(IDOL RADIO) 시즌4｜MBC 251027 방송 | 갓세븐 / 진영 / ∅ |
+| `UWXW4wryzKQ` | Hyun Jin Young(현진영) - 현진영 Go 진영 Go [Open Concert 열린음악회] KBS KOREA 260607 | 갓세븐 / 진영 / ∅ |
+
+</details>
+
+<details>
+<summary>검수30차 — 소년판타지4: 실제 제작자 등장과 곡 제작 크레딧 구분</summary>
+
+| 영상 ID | 제목·구별 문맥 | 현재 primary / members / with |
+|---|---|---|
+| `VvSzdlEaGdE` | [쇼! 음악중심] 너를 좋아해 너만 좋아해🥺 감성 폭팔 소년들의 신곡 꽉 잡아🌺  #소년판타지 #진영 #꽉잡아 #Shorts | 갓세븐 / 진영 / ∅ |
+| `k6n36-vM3yw` | [#소년판타지] 🌸벚꽃 연금🌸의 또다른 주인, 진영 프로듀서가 만든 신곡! 판타지 메이커분들의 마음도 꽉~잡아🎵 ／ #전소연 #진영 #강승윤 MBC230525방송 | 갓세븐 / 진영 / ∅ |
+| `CJ2Nje9bUGk` | [#소년판타지] 142만 팔로워 보유자부터 연습생 한달차 병아리까지..! 온탕과 냉탕 오가는 입학평가🔥ㅣ #전소연 #진영 #강승윤 MBC230406방송 | 갓세븐 / 진영 / ∅ |
+| `qRr9ym87yCY` | 엄.근.진 진영 프로듀서의 비장한 포토타임✨ #소년판타지 #제작발표회 #shorts | 갓세븐 / 진영 / ∅ |
+
+</details>
+
+<details>
+<summary>검수30차 — 유니코드 전체21: 공개 단독10 / 공개 협업·모음6 / 비공개5</summary>
+
+| 영상 ID | 제목·구별 문맥 | 현재 primary / members / with / flag |
+|---|---|---|
+| `OkHm9EtBmno` | [Monthly K-POP IDOLS] 82MAJOR, ASC2NT, E'LAST, TOZ, UNICODE, 1CHU, WHIB | 82메이저 / ∅ / ∅ / null |
+| `7MIwpx4FP0U` | [Simply K-Pop CON-TOUR] UNICODE(유니코드) - 'Let me Love (Prod.by Jin Young) (돌아봐줄래 (Prod.by 진영))'_Ep614 | 갓세븐 / 진영 / ∅ / null |
+| `i4oVF6eCbIc` | LOVE ME DO💓 with #유니코드 #에린 #하나 님 @UNICODE_XNET | 어센트 / 가람, 인준 / 하나(피프티피프티) / null |
+| `sk4tPhrgd6s` | [안방1열 직캠4K] 유니코드 하나 '돌아봐줄래' (UNICODE HANA 'Let me love' FanCam) @SBS Inkigayo 240512 | 베이비몬스터 / ∅ / ∅ / hidden |
+| `gk9MXZ7rNAs` | [안방1열 직캠4K] 유니코드 에린 '돌아봐줄래' (UNICODE Erin 'Let me love' FanCam) @SBS Inkigayo 240512 | 온리원오프 / ∅ / ∅ / null |
+| `ZxNof6o8Hbc` | Hey, 유니코드 유라 님이 나를 보고 웃잖아😊 @UNICODE_XNET  #shorts | 판타지보이즈 / ∅ / ∅ / null |
+| `WJbS0rrz7ps` | UNICODE, Let me love (Prod.by Jin Young) (유니코드, 돌아봐줄래 (Prod.by 진영)) [THE SHOW 240514] | 러블리즈 / JIN / 진영(갓세븐) / null |
+| `-eamZczfALc` | [안방1열 풀캠4K] 유니코드 '돌아봐줄래' (UNICODE 'Let me love' FullCam)│@SBS Inkigayo 240512 | 온리원오프 / ∅ / ∅ / null |
+| `2H89nXTlMXU` | UNICODE, Let me love (Prod.by Jin Young) (유니코드, 돌아봐줄래 (Prod.by 진영)) [THE SHOW 240507] | 러블리즈 / JIN / 진영(갓세븐) / null |
+| `lJ2cDCV4hmg` | UNICODE (유니코드) - Let me Love ／ Show! MusicCore ／ MBC240504방송 | 온리원오프 / ∅ / ∅ / null |
+| `m_FDOrh0Dcg` | [FULL] 쏠메들 ✨유니코드✨의 목소리가 들리면 돌아봐줄래?🥰 ／ GOT7 영재의 친한친구 ／ MBC 2405003 방송 | 갓세븐 / 영재 / ∅ / null |
+| `D0WE4vCADgo` | [4K] 240503 뮤직뱅크 출근길 ／ TIOT, TOZ, BEWAVE, UNICODE, 이진혁, FANTASY BOYS | 판타지보이즈 / ∅ / ∅ / null |
+| `DV0PQStIe0c` | 유니코드(UNICODE) - 돌아봐줄래 (Prod.by 진영) l Show Champion l EP.516 l 240501 | 갓세븐 / 진영 / ∅ / 무관 |
+| `4w7u9ku3V-k` | [Simply K-Pop CON-TOUR] UNICODE(유니코드) - 'Let me Love (Prod.by Jin Young) (돌아봐줄래 (Prod.by 진영))'_Ep611 | 갓세븐 / 진영 / ∅ / null |
+| `fc6hrulpxck` | 스쳐가듯 MAZE 속 나를 보며 돌아봐줄래👉👈 #유니코드 #에린 #수아 님과 #BeautifulMAZE_challenge | 드리핀 / ∅ / ∅ / null |
+| `qZyTzwFvhOU` | 유니코드(UNICODE) - 돌아봐줄래 (Prod.by 진영) l Show Champion l EP.515 l 240424 | 갓세븐 / 진영 / ∅ / 무관 |
+| `B8geEH-C4s0` | [플리캠 4K] UNICODE HANA 'Let me Love(Prod. by JinYoung)(돌아봐줄래)' (유니코드 하나) l Simply K-Pop CON-TOUR | 워너원 / 배진영 / ∅ / null |
+| `e9i1FDWivfE` | [플리캠 4K] UNICODE YURA 'Let me Love(Prod. by JinYoung)(돌아봐줄래)' (유니코드 유라) l Simply K-Pop CON-TOUR | 워너원 / 배진영 / ∅ / null |
+| `Prsh6OCg-MQ` | UNICODE, Let me love (Prod.by Jin Young) (유니코드, 돌아봐줄래 (Prod.by 진영)) [THE SHOW 240423] | 러블리즈 / JIN / 진영(갓세븐) / null |
+| `VDmIdSnHW9U` | [HOT DEBUT] 유니코드(UNICODE) - 돌아봐줄래 (Prod.by 진영) l Show Champion l EP.514 l 240417 | 갓세븐 / 진영 / ∅ / 무관 |
+| `tP-pDJCVfi0` | (EN/JP) [UNICODE ON&OFF] 에린·하나·미오의 OFF DAY☺♬ - EP.3 | 베이비몬스터 / ∅ / ∅ / hidden |
+
+</details>
+
+<details>
+<summary>검수30차 — 갓세븐 primary 보존·JB 누락 후보7</summary>
+
+| 영상 ID | 제목·구별 문맥 | 현재 primary / members / with |
+|---|---|---|
+| `5bHaStMLEBc` | JJ Project (JJ프로젝트), JB, 진영 표정차이 [SBS 이국주의 영스트리트] | 갓세븐 / 진영 / ∅ |
+| `ET0pSFuEbd0` | JJ Project (JJ프로젝트), JB, 진영 나랑 연애할래? [SBS 이국주의 영스트리트] | 갓세븐 / 진영 / ∅ |
+| `bTFM82bTylU` | JJ Project JB & 진영 엉덩이로 이름쓰기 벌칙 영상! / 170802[이홍기의 키스 더 라디오] | 갓세븐 / 진영 / ∅ |
+| `f2FNGzvCVM0` | JJ Project - 내일, 오늘 [세로라이브] JB, 진영 | 갓세븐 / 진영 / ∅ |
+| `hwT-WOe7QOY` | JJ Project JB & 진영의 애교 영상!! / 170802[이홍기의 키스 더 라디오] | 갓세븐 / 진영 / ∅ |
+| `B3mlcX7KulE` | [GOT2DAY 2016] 21. JB & Jinyoung | 갓세븐 / 진영 / ∅ |
+| `Zjaw_-O2kCc` | [GOT2DAY 2019] 21. JB & Jinyoung | 갓세븐 / 진영 / ∅ |
+
+</details>
+
+<details>
+<summary>검수30차 — 정상 primary 보존 비교17 (태그 완전성 전수 통과 아님)</summary>
+
+| 영상 ID | 제목·구별 문맥 | 현재 primary / members / with |
+|---|---|---|
+| `23iDuxwx8G0` | 진영 & 최유리 - 외사랑ㅣ들어봐! 유리의 숲 EP.01 | 갓세븐 / 진영 / ∅ |
+| `2H9H21iVHrI` | 진영 & 최유리 - 생각을 멈추다 보면ㅣ들어봐! 유리의 숲 EP.01 | 갓세븐 / 진영 / ∅ |
+| `8fNTil2pM7k` | [GOT2DAY 2019] 05. Jinyoung & Yugyeom | 갓세븐 / 진영, 유겸 / ∅ |
+| `ajko-Afe51I` | 진영 & 최유리 - 생각을 멈추다 보면 | 갓세븐 / 진영 / ∅ |
+| `C3csVyXmeC0` | [GOT2DAY 2016] 17. Jackson & Jinyoung | 갓세븐 / 잭슨, 진영 / ∅ |
+| `CbpyEcvUEqo` | [GOT2DAY 2016] 09. Jinyoung & Yugyeom | 갓세븐 / 진영, 유겸 / ∅ |
+| `DGKVGBvD20I` | [GOT2DAY 2019] 02. Jinyoung & BamBam | 갓세븐 / 진영, 뱀뱀 / ∅ |
+| `g1a2NWd27zo` | [GOT2DAY 2016] 05. Mark & Jinyoung | 갓세븐 / 마크, 진영 / ∅ |
+| `GfAEInM5FmA` | [GOT2DAY 2016] 13. Jinyoung & Youngjae | 갓세븐 / 진영, 영재 / ∅ |
+| `nWW6GH4GBAw` | [선공개] 진영 & 최유리 - 외사랑 | 갓세븐 / 진영 / ∅ |
+| `pVJbkGJ3ftM` | [GOT2DAY 2019] 10. Mark & Jinyoung | 갓세븐 / 마크, 진영 / ∅ |
+| `qSWG39_aff8` | [1theK Preview] 진영(Jin Young) _ 스페셜클립(Special Clip) #shorts | 갓세븐 / 진영 / ∅ |
+| `rWJx6X6LFmQ` | [GOT2DAY 2019] 13. Jackson & Jinyoung | 갓세븐 / 잭슨, 진영 / ∅ |
+| `sIsDnQq8FD8` | [GOT2DAY 2016] 03. Jinyoung & BamBam | 갓세븐 / 진영, 뱀뱀 / ∅ |
+| `TfwwZzFhEbk` | [GOT2DAY 2019] 18. Jinyoung & Youngjae | 갓세븐 / 진영, 영재 / ∅ |
+| `to3sjq-CAvA` | 🎤진영&최유리 - 생각을 멈추다 보면 ／ 들어봐! 유리의 숲2 EP.01 진영 편 | 갓세븐 / 진영 / ∅ |
+| `Z8BJr3MEqXQ` | [선공개] 진영&최유리 - 외사랑 ／ 들어봐! 유리의 숲2 EP.01 진영 편 | 갓세븐 / 진영 / ∅ |
+
+</details>
+
+<details>
+<summary>검수30차 — 추가5: 일반단어/멤버 소속 혼합/동명이인</summary>
+
+| 영상 ID | 제목·구별 문맥 | 현재 primary / members / with |
+|---|---|---|
+| `0tqSHiDkKcI` | 촬영 중에도 계속되는 진영의 OO 사랑?😻 #경찰수업 본캐 #진영 의 TMI를 공개합니다! (feat. 귀염뽀짝 반려묘 블리 사진도 방출) l COSMOTMI | 이즈나 / 유사랑 / 진영(갓세븐) |
+| `5q9K524kWr4` | 충!성! 진영 팝퀴즈를 명 받았습니다 🎈JIN YOUNG POP QUIZ🎈(Eng Sub) | 러블리즈 / JIN / 진영(갓세븐) |
+| `fYBWe3OKTS4` | 𝑫𝒐𝒄𝒕𝒐𝒓! 𝑫𝒐𝒄𝒕𝒐𝒓! #GOT7 #잭슨 #진영 선생님 Help me! 🫢 It's the L-O-V-Emergency ❤‍🩹 | 제로베이스원 / 잭슨, 진영 / ∅ |
+| `QUWqRV31QQs` | 진영 “형 나 섭섭해😥” 낚시 광 제이비에게 닥친 시련👀?!🎣월척 인터뷰 월간낚시왕 with GOT7 JAY B🐟(Eng sub) | 엔하이픈 / 제이 / JAY B(갓세븐), 진영(갓세븐) |
+| `rDp_g65oF-Q` | 갓세븐 진영 X 정의가 정한 ‘마녀’ 커플명 | 세븐틴 / 정한 / 진영(갓세븐) |
+
+</details>
+
+
+## 2026-10-30 (Codex — 검수29차·동명이인 영상과 공식 링크)
+- **[완료·읽기 전용 검수] [CHANGELOG.md] [yt_channel_videos]** 신규 ID 중심으로 동명이인 귀속/공식 카드 노출을 대조. 아래 **76개 고유 ID는 오류 확정 수가 아님**: 오귀속·누락 후보와 정상 보존 비교가 함께 있음(라디오7 + HUTA14 + 몬채널5 + 싱어송라이터36 + 기타14). 전부 조회 당시 content_flag null, tags_manual=false, cover_manual=false. 기존 10-27 검수의 `15n2tuRr8MI,Vcl8kLOO1VU`는 문제 유형의 선행 사례로만 참고하고 신규76에 미포함. 코드/JSON/SQL/DB 수정·수집/스윕 실행 없음.
+- **[이슈·공개 노출 확인] [몬스타엑스 민혁 a0400] [비투비 이민혁 a0800]** 몬스타엑스 민혁 카드에서 ‘본업존잘’ 검색 시 비투비 은광·민혁 듀오가1개, ‘은광’ 검색 시 해당 듀오/푸시업/사랑했나봐3개 노출. KBS CoolFM 원본 [x6oBXTcnpaQ](https://www.youtube.com/watch?v=x6oBXTcnpaQ)의 제목·방송일·설명은 비투비 은광과의230531회차. DJ 민혁을 몬스타엑스로 잡은 오귀속. 아래7개를 호스트/초대손님 구분하여 확인할 것. h2는 **실제 서은광 듀엣과 원곡 YB**를 분리 보완(현재 cover 필드 모두 비어 있음); AE의 기존 서은광 출연을 삭제하면 안 됨. qek의 수빈은 수집 설명에 TXT 초대석이 명시되지만, 최종 멤버 추가 전 해당 원본 확인. 니엘·예나도 실제 출연자 보완 대상이며 같은 이름만으로 다른 멤버를 넣지 않음.
+- **[이슈·반대 방향 오귀속5] [비투비 카드] [STARSHIP 몬채널]** 비투비 이민혁 카드 ‘식사해요’ 검색에 아래5편 전부 노출. [EP91 원본](https://www.youtube.com/watch?v=2a0Lv1d1xm8) 업로더 STARSHIP, 제목은 이민혁·유기현, 수집 설명5편 모두 Artist: MONSTA X/THE CONNECT. 이민혁은 여기서 몬스타엑스 민혁 본명이며 비투비 사람이 아님. 몬스타엑스/민혁·기현으로 재귀속 검토(각 영상 실제 출연범위 확인); 기현을 지운 채 민혁만 복구하지 말 것.
+- **[이슈·HUTA14 후보] [yt_channel_videos] [artists.json]** 아래 HUTA/YA/BOOM·비투비 관련14편의 primary가 몬스타엑스 또는 단독문자열 ‘민혁’. [ARIRANG YA 직캠](https://www.youtube.com/watch?v=3lK_aIU37GQ) 원본 제목/업로더 확인. HUTA 정체성과 BOOM·HUTAZONE/YA 연결은 [KBS WORLD 공식 소개](https://world.kbs.co.kr/service/contents_view.htm?board_seq=426007&lang=f&menu_cate=artist)로 교차 확인. KCON `VfbcijJfyig` 수집 설명은 #BTOB #비투비, Weekly391 `W2rYrRlIFNY`는 비투비 데뷔무대 ‘비밀’ 명시. 이2편은 원본 장면 최종 확인이 남음. Simply4편은 같은 실제 이민혁을 primary 몬스타엑스 민혁+with 비투비 이민혁 두 사람처럼 저장. 단독 group_ko='민혁'인6편도 현재 몬스타엑스 민혁 카드 ‘이민혁’ 검색에서 여러 YA/BOOM 영상으로 실제 노출. 전량 자동 확정이 아니라 소스별로 HUTA a0800을 확인하여 정정 계획.
+- **[이슈·제3의 동명이인36 후보] [싱어송라이터 이민혁]** 아래36개는 비투비32/레인보우3/‘민혁’1로 저장. [MUSE ON 원본](https://www.youtube.com/watch?v=RJ5xHc1iBp8)(SBSKPOP)과 [I'm LIVE130 원본](https://www.youtube.com/watch?v=R6ymIqveP9A)(ARIRANG K-POP)의 펼친 설명에서 **2016년 ‘너와 나의 별이야기’ 데뷔·새봄 협업·소행성** 이력을 확인. 비투비 HUTA/몬스타엑스 민혁과 별도 가수. 비투비 카드 “I'm LIVE” 검색에는 EP130과VR3602편이 실제 노출. I'm LIVE 공식 세트리스트에도 ‘취기를 빌려/이 밤 꿈꾸는 듯한/우리 오늘 만날까’가 명시되어 있고 [우리 오늘 만날까 KBS 원본](https://www.youtube.com/watch?v=oa9oZ8PbN14)도 확인: 레인보우 primary+비투비 with 조합은 잘못 연결된 후보. **36개 전부 장면 검증한 것은 아님**. 나머지 MV/티저·인터뷰·플레이리스트는 곡명/채널/같은 활동 이력으로 좁힌 후속 목록. 정당한 피처링(스웨덴세탁소·스텔라장 등)과 원곡/컴필레이션 관계를 따로 확인하고, 36개를 통째로 새 primary 하나로 덮어쓰지 말 것. 기존 group_ko='이민혁' 영상이 비투비 카드로 새는 선행 조회 문제도 같이 보아야 하므로 DB 귀속과 이름만 쓰는 조회를 분리 검사.
+- **[이슈·‘함께한 멤버’ 오염 후보] [몬스타엑스 본명] [블락비 비범]** `gxAMhuKgKH4,7WTVPBq7HiM,DZGGP2ilxQk,66ftlDYWu50`는 몬스타엑스 영상에 with 이민혁(비투비). [gx 원본](https://www.youtube.com/watch?v=gxAMhuKgKH4)은 MONSTA X 공식 업로더·입대 전 촬영 안내·본인 전시 VLOG까지 확인. 실제 본명의 중복을 타인 게스트로 만든 경로를 점검. 66은 ‘방송 외’ 모음이라 전체 수록회차 확인 전 다른 출연자를 일괄 제거하지 않음. 또 [weT 원본](https://www.youtube.com/watch?v=weT-k9SXbFs)(KBS CoolFM)의 ‘병헌 & 이민혁 (**블락비 비범**)’도 비투비 with로 저장: 비범 본명 문맥은 비투비 출연 근거가 아님. 긴 본편의 실제 게스트 확인 후 잘못 추가한 비투비 태그만 정정.
+- **[이슈·원곡/출연자 역전] [3T6_2KKh4DY] [agYkaH71jfU]** KBS 원본 [OMG챌린지](https://www.youtube.com/watch?v=3T6_2KKh4DY)는 몬스타엑스 민혁·아이엠이 뉴진스 곡을 추는 영상인데 primary 뉴진스/빈members/with 몬스타엑스 민혁만. 원곡 뉴진스·OMG는 cover 필드로, 실제 출연자 민혁·아이엠은 출연 태그로 분리 검토. 같은230125 [귀여워서미안해](https://www.youtube.com/watch?v=agYkaH71jfU)는 KBS 설명도 원샷초대석 with 몬스타엑스이며 primary 몬스타엑스는 보존, 누락 아이엠만 검토. **프로그램명 ‘비투비의 키스 더 라디오’를 근거로 이 회차를 비투비로 통째로 옮기면 재오류.** `akEMD1rDoK4,8BSgYmDBC2M,2KLhBbYEa_U` 실제 몬스타엑스 게스트/그룹 귀속과 `Jwnhla4j74s` 본명 민혁 출연도 보존 비교.
+- **[이슈·실제 협업과 개별출연 구분] [-G6u49tWrVE] [MnUAZZ5uIKM] [5Y3PFO858jc]** [Bora 챌린지 -G6 원본](https://www.youtube.com/watch?v=-G6u49tWrVE)은 BTOB COMPANY 업로더, 수집 설명은 이민혁/HUTA와 셔누. 비투비 members에 셔누·민혁·이민혁이 함께 들어 있어 소속 혼합 정리 대상이지만, 실제 with 셔누(몬스타엑스)는 보존. MnU도 구공탄 서은광·이민혁+셔누 문맥으로 정상 협업 보존 비교. [1theK 수트 쇼츠 5Y](https://www.youtube.com/watch?v=5Y3PFO858jc)는 셔누·형원/DoYouLoveMe와 이민혁·HUTA/Bora 해시태그 혼합. 전반0:05와 후반0:46에서 서로 다른 복장·무대 컷 편집을 확인했으나 얼굴만으로 출연 신원을 확정하지 않았음. **Bora는 이민혁의 곡 문맥**이며 인물 보라로 추가 금지; 원본 전체 구간 확인 후 몬스타엑스 민혁 오태그와 HUTA 개별출연 보완을 검토. 단순 with 추가로 가짜 합동무대/친분을 만들지 말 것.
+- **[완료·재발 경로 비교] [tools/matcher_harness.cjs] [admin.js _m2ParseTitle]** 메모리에서 실제 발행일을4번째 인자로 주어32개 제목 재파싱(소스/DB 변경 없음). x6는 여전히 몬스타엑스 민혁+비투비 서은광, h2는 몬스타엑스 민혁으로 반환. gx·7W는 오히려 비투비 이민혁 weak로 이동, DZG는 몬스타엑스+비투비 이민혁 strong을 만들어 오태그를 강화. 반면 Simply YA 등은 비투비 weak로 돌아옴. -G6/MnU는 제목에 있는 셔누만 strong으로 잡고 원래 비투비 출연자를 잃음. 5Y는 솔로 ‘보라’까지 ambiguous로 반환. **현재 매처 재실행만으로 일괄 해결 불가**, full name 이민혁·HUTA·공식 주인·방송 출연자·곡 제목을 함께 구분해야 함. trace/로컬 런타임은 실서비스 호출환경과 다를 수 있어 정정값의 근거로 단독 사용하지 않음.
+- **[완료·공식 링크 검사 한계] [artists.json] [groups.json] [app.js _renderGcLinks]** URL 문법/서로 다른 그룹의 중복 링크를 읽기 전용으로 점검. 날짜인 links.left18건은 URL이 아니고 실제 링크 렌더러의 고정 _LINK_DEFS 대상도 아니므로 ‘깨진 링크18개’로 집계하지 않음. 오메가엑스 혁/빅스 혁의 hsh0705, 장유빈/E-VAN의 jangyub1n 중복은 이미 검수20차 인계와 겹쳐 신규 발견에서 제외. 장유빈/E-VAN 동일인 추정은 2차 프로필 자료만 추가 확인했으며 **공식 연결 근거 없이 ID 병합 제안 확정·자동 병합하지 않음**. URL 문법 정상만으로 공식 소유자/현재 접속 가능까지 통과한 것은 아님.
+- **⏳ 덜 된 일 [명령·파일·판단 기준]** ① 아래76 ID를 `SELECT id,title,description,group_ko,members,with_members,with_groups,cover_of_groups,cover_of_members,cover_of_song,tags_manual,cover_manual,content_flag,published_at FROM yt_channel_videos WHERE id IN (...)`로 최신 재조회(정정 전후 잠금/값 변경 재확인). 라디오7/HUTA14/몬채널5/역전1은 공식 출연·소유자 확인된 소량부터 백업+현재값 가드로 계획, 정상230125·실제 협업 보존. ② artists.json/admin.js의 a0400/a0800 및 블락비 비범 본명, 같은 영문 Minhyuk를 그룹 문맥으로 구별. `tools/matcher_harness.cjs` 재현은 조회/메모리에서만 하고 스윕 실행 금지. ③ 싱어송라이터36는 MUSE/I'm LIVE 이력과 곡별 원본 확인→실제 소유자·피처링·티저·컴필레이션 분리; 등록 필요 여부와 이름만으로 새는 app.js 조회를 별도 결정. 새 인물을 기존 비투비 ID로 재활용하지 않음. ④ 잘못된 with만 제거할 때 다른 실제 출연자를 보존; compilation은 개별출연/원본 구간을 확인. 이번 세션은 후속 실행용 SQL 작성이나 DB 정정까지 승인받은 범위가 아니므로 실행하지 않음.
+
+<details>
+<summary>검수29차 — 라디오 DJ 오귀속 후보7 (제목·방송명만으로 일괄 변경 금지)</summary>
+
+| 영상 ID | 제목·구별할 문맥 | 현재 primary / members / with |
+|---|---|---|
+| `x6oBXTcnpaQ` | 역시 BTOB는 본업존잘😻 ✨I AM 은광 & 민혁 아카펠라 듀오✨ / [비투비의 키스 더 라디오] ／ KBS 230531 방송 | 몬스타엑스 / 민혁 / ∅ |
+| `h2DkSB5A-y0` | 도토리들을 위한 민혁 & 은광의 깜짝 듀엣 선물😻 '사랑했나봐' 라이브 [원곡: YB] / [비투비의 키스 더 라디오] ／ KBS 230531 방송 | 몬스타엑스 / 민혁 / ∅ |
+| `DfSSDvpyn5s` | ✨BACK TO 2009✨민혁 & 니엘의 아브라카다브라 댄스🎥 / [비투비의 키스 더 라디오] I KBS 230225 방송 | 몬스타엑스 / 민혁 / ∅ |
+| `mtkXLqsClms` | [ㅋㅋ팝 벌칙영상] 민혁 그리워하다 댄스💙/ [비투비의 키스 더 라디오] ／ KBS 230121 방송 | 몬스타엑스 / 민혁 / ∅ |
+| `JJB-YPLjBYQ` | 민혁 & 예나의 LOVE WAR 챌린지💖 / [비투비의 키스 더 라디오] I KBS 230120 방송 | 몬스타엑스 / 민혁 / ∅ |
+| `qekx9vnPkcM` | 비키라 호기심천국👀 오늘의 궁금증~! 닮은꼴 민혁&수빈 서로의 얼굴로 Face ID 열 수 있을까?🧐✨ / [비투비의 키스 더 라디오] l KBS 220520 방송 | 몬스타엑스 / 민혁 / ∅ |
+| `AE_iMBR67WA` | [벌칙영상] DJ 민혁! 푸시업 + 노래 부르기! (ft. 서은광 견제✨) /[비투비의 키스 더 라디오] l KBS 211101 방송 | 몬스타엑스 / 민혁 / 서은광(비투비) |
+
+</details>
+
+<details>
+<summary>검수29차 — HUTA/비투비 이민혁 관련 오귀속 후보14</summary>
+
+| 영상 ID | 제목·구별할 문맥 | 현재 primary / members / with |
+|---|---|---|
+| `QoQ0xbD_im8` | WATERBOMB SEOUL 2024 HUTA(MINHYUK) 워터밤 서울 2024 허타(민혁) | 몬스타엑스 / 민혁 / ∅ |
+| `TUXNZxzregQ` | [BOYS PLANET] 스타 마스터 이민혁의 파워 넘치는 '난 빛나'🕺 #난빛나챌린지 #HereIAmChallenge I #이민혁 ver. #LEE_MINHYUK | 몬스타엑스 / 민혁 / ∅ |
+| `3lK_aIU37GQ` | [Simply K-Pop] LEE MINHYUK 'YA' (이민혁 직캠) Ep.349 | 몬스타엑스 / 민혁 / 이민혁(비투비) |
+| `FQ45kBFREJM` | [Simply K-Pop] LEE MINHYUK 'YA' (이민혁 직캠) Close Up ver. Ep.349 | 몬스타엑스 / 민혁 / 이민혁(비투비) |
+| `3IebN5LQwiQ` | [Simply K-Pop] LEE MINHYUK 'YA' (이민혁 직캠) Close Up ver. Ep.348 | 몬스타엑스 / 민혁 / 이민혁(비투비) |
+| `Gyu21Na4Rfg` | [Simply K-Pop] LEE MINHYUK 'YA' (이민혁 직캠) Ep.348 | 몬스타엑스 / 민혁 / 이민혁(비투비) |
+| `-88NEaNw9JM` | [K-Choreo 8k] 이민혁 직캠 'BOOM' (LEE MINHYUK Choreography) l @MusicBank 220701 | 민혁 / 민혁 / ∅ |
+| `AnWMn40Jqdw` | HUTA(LEE MINHYUK), THE SHOW 174 behind 2 [BEHIND THE SHOW] | 민혁 / 민혁 / ∅ |
+| `FoY1HczBDMw` | HUTA(LEE MINHYUK), YA [THE SHOW, FanCam, 190122] 60P | 민혁 / 민혁 / ∅ |
+| `vtAAQYQfwF4` | [HOT] LEE MINHYUK - YA , 이민혁 - YA show Music core 20190126 | 민혁 / 민혁 / ∅ |
+| `AgcZHQ7BP9E` | HUTA(LEE MINHYUK), YA [THE SHOW 190122] | 민혁 / 민혁 / ∅ |
+| `6OVy7Rh-PHA` | [Solo Debut]  LEE MINHYUK - YA , 이민혁 - YA Show Music core 20190119 | 민혁 / 민혁 / ∅ |
+| `W2rYrRlIFNY` | [Weekly Idol EP.391] LEE MINHYUK is nervous about he debut stage | 몬스타엑스 / 민혁 / 이민혁(비투비) |
+| `VfbcijJfyig` | LEE MINHYUK🐿 wants to make eye contact with you!👀💌 #shorts | 몬스타엑스 / 민혁 / 이민혁(비투비) |
+
+</details>
+
+<details>
+<summary>검수29차 — 비투비 카드에 노출된 몬채널 식사해요5편</summary>
+
+| 영상 ID | 제목·구별할 문맥 | 현재 primary / members / with |
+|---|---|---|
+| `0UTKMztOLq0` | [몬채널][B] EP.94 이민혁.유기현의.식사해요 #epilogue | 비투비 / 이민혁 / ∅ |
+| `j2NOr6OH6Ko` | [몬채널][B] EP.93 이민혁.유기현의.식사해요 #3 | 비투비 / 이민혁 / ∅ |
+| `4ye0W8_9GCg` | [몬채널][B] EP.92 이민혁.유기현의.식사해요 #2 | 비투비 / 이민혁 / ∅ |
+| `2a0Lv1d1xm8` | [몬채널][B] EP.91 이민혁.유기현의.식사해요 #1 | 비투비 / 이민혁 / ∅ |
+| `kIGPf49TCx4` | [몬채널][B] EP.90 이민혁.유기현의.식사해요 #prologue | 비투비 / 이민혁 / ∅ |
+
+</details>
+
+<details>
+<summary>검수29차 — 싱어송라이터 이민혁 후속 후보36 (MUSE/I'm LIVE 원본 이력 확인, 나머지는 곡별 검증 필요)</summary>
+
+| 영상 ID | 제목·구별할 문맥 | 현재 primary / members / with |
+|---|---|---|
+| `SmUg2-FkV7c` | [MV] Lee MinHyuk(이민혁) _ Dream(목소리) | 비투비 / 이민혁 / ∅ |
+| `IuSsMmrdDlY` | [5분 OST PLAYLIST🎧] ’아는 여자애’ OST｜‘Back to You’ OST｜로시,이현, 이민혁, 바비 킴, 데이브레이크, 유키카｜Stone Music PLAYLIST | 비투비 / 이민혁 / ∅ |
+| `oa9oZ8PbN14` | 이민혁 - 우리 오늘 만날까 [유희열의 스케치북/You Heeyeol’s Sketchbook] ／ KBS 220107 방송 | 레인보우 / ∅ / 이민혁(비투비) |
+| `G6xk_cZPB0g` | [세로 직캠] 이민혁 - 우리 오늘 만날까 (Lee Min hyuk - FAN CAM) [유희열의 스케치북/You Heeyeol’s Sketchbook] ／ KBS 방송 | 레인보우 / ∅ / 이민혁(비투비) |
+| `gtKnBVsumoo` | [MV] Lee MinHyuk(이민혁) _ Your love for me(너의 사랑이 날 웃게 해) | 비투비 / 이민혁 / ∅ |
+| `2_sZTp1S4Fo` | [PLAYLIST] 전율이 흐르는 요즘 핫한 드라마 OST｜이민혁,윤미래,HYNN (박혜원),Kriz,프라이머리,케빈오,Meego,Renee｜Stone Music PLAYLIST | 비투비 / 이민혁 / ∅ |
+| `XoJwzi4jFJc` | [PLAYLIST] 잔잔한 가을 감성을 듬뿍 담은 노래｜다비치,이해리,김윤아,원슈타인,이민혁,어반자카파,정승환,펀치 (Punch),매드클라운｜Stone Music PLAYLIST | 비투비 / 이민혁 / ∅ |
+| `36Y6Sn5kXS0` | [ENG SUB] [금주의 노래] 💿 9월 둘째 주｜이민혁, 이하이, 온리원오브, 갯마을 차차차 OST 케이시｜Stone Music+ | 비투비 / 이민혁 / ∅ |
+| `zCSQBmqNsMQ` | 이민혁 (Lee MinHyuk) - 그렇게 됐나 봐 (아는 여자애 X 이민혁) [Love Diary (Back to You X Lee MinHyuk)] Preview | 비투비 / 이민혁 / ∅ |
+| `euiCZv28qic` | [MV] Lee MinHyuk(이민혁) _ PLAY(재생) | 비투비 / 이민혁 / ∅ |
+| `6YkFpoq5p3Q` | 찐! 선곡로드 with 백아연, 이민혁 full ver.  /[강한나의 볼륨을 높여요] l kbs 20125 방송 | 비투비 / 이민혁 / ∅ |
+| `vKHGeh6XHXM` | [곧크리스마스인디] 이민혁 - 우리 오늘 만날까 | 레인보우 / ∅ / 이민혁(비투비) |
+| `ddhrALeyA_M` | 쿨룩 LIVE ▷ 이민혁 ‘시선’ /[설레는 밤, 박소현입니다]l KBS 201211 방송 | 비투비 / 이민혁 / ∅ |
+| `ZkPVVoF6iP4` | 쿨룩 LIVE ▷ 이민혁 ‘이밤, 꿈 꾸는 듯한’ /[설레는 밤, 박소현입니다]l KBS 201211 방송 | 비투비 / 이민혁 / ∅ |
+| `nnwTGRSIIb4` | [MV] Lee MinHyuk(이민혁) _ Kissing you(겨울을 건너) | 비투비 / 이민혁 / ∅ |
+| `jGShQDKaT6Q` | [MV] Lee MinHyuk(이민혁) _ Only You Don't Know(너만 몰라)  (나를 사랑한 스파이 OST Part.2) | 비투비 / 이민혁 / ∅ |
+| `_tdgGbxP-SA` | [수습정방] Unofficial MV / 취기를 빌려(Slightly Tipsy) – Vocal. 이민혁 | 비투비 / 이민혁 / ∅ |
+| `RJ5xHc1iBp8` | [MUSE ON] 이민혁 Lee MinHyuk - 눈치 없게 To My Friend | 민혁 / 민혁 / ∅ |
+| `xPs5w2cpGXM` | 쿨룩 LIVE ▷이민혁 '취기를 빌려' /200828[설레는 밤, 박소현입니다] | 비투비 / 이민혁 / ∅ |
+| `wVlvAhKWiNc` | 쿨룩 LIVE ▷이민혁 '눈치 없게' /200828[설레는 밤, 박소현입니다] | 비투비 / 이민혁 / ∅ |
+| `CwYuzFiark8` | [Music Access] Lee MinHyuk (이민혁)'s Singin' Live 'To My Friend (눈치 없게)' | 비투비 / 이민혁 / ∅ |
+| `C1pTXuI1J7M` | [Music Access] Lee MinHyuk (이민혁)'s Full Episode on Arirang Radio! | 비투비 / 이민혁 / ∅ |
+| `1GB_07O-7Tg` | [MV] Lee MinHyuk(이민혁) _ To My Friend(눈치 없게) | 비투비 / 이민혁 / ∅ |
+| `8sJJs8drzsQ` | [Teaser2] Lee MinHyuk(이민혁) _ To My Friend(눈치 없게) | 비투비 / 이민혁 / ∅ |
+| `6F94t0AL17g` | [MV] Stella Jang(스텔라장), Lee MinHyuk(이민혁) _ Beautiful Mint Life(인생 봄날) | 비투비 / 이민혁 / ∅ |
+| `OSZ9M2e3tNg` | [MV] Lee MinHyuk(이민혁) _ Serenade in May(그렇게, 봄) | 비투비 / 이민혁 / ∅ |
+| `o7NEI6S4G_w` | [Teaser2] Lee MinHyuk(이민혁) _ Serenade in May(그렇게, 봄) | 비투비 / 이민혁 / ∅ |
+| `NTWha0hm6bg` | 마! 악기가 뭐가 중요하나! 성대가 악긴데!!!ㅣ이민혁 - 사랑한적없어ㅣ네모라이브ㅣLEE MIN HYUKㅣ딩고뮤직ㅣdingomusic | 비투비 / 이민혁 / ∅ |
+| `qp6xzUeAuwk` | [MV] Lee MinHyuk(이민혁) _ Still Love You(사랑한 적 없어) | 비투비 / 이민혁 / ∅ |
+| `0AKd6J1XR6s` | 이별을 받아들이는 다섯가지 단계ㅣBest5ㅣ이민혁ㅣLEE MIN HYUKㅣ사랑한적없어, 사랑이잘, All Of My Life, 허전해, 잔나비ㅣ딩고뮤직ㅣDingo Music | 비투비 / 이민혁 / ∅ |
+| `jnxQBOYMjMQ` | [I'm LIVE × VR360°] Lee Min-hyuk (이민혁)  - 'Slightly Tipsy / My Star / How Can I Love the Heartbreak, | 비투비 / 이민혁 / ∅ |
+| `R6ymIqveP9A` | [I'm LIVE] Lee Min-hyuk (이민혁) _ Full Episode (Ep.130) | 비투비 / 이민혁 / ∅ |
+| `d05qeVyYpw8` | [MV] Sweden Laundry(스웨덴세탁소) _ Late goodbye(긴 긴 인사) (Feat. Lee MinHyuk(이민혁)) | 비투비 / 이민혁 / ∅ |
+| `Bij5uIdXCUQ` | [MV] Lee MinHyuk(이민혁) _ Good Night(이 밤, 꿈꾸는 듯한) | 비투비 / 이민혁 / ∅ |
+| `i2Jb_oN6J0g` | [MV] Lee MinHyuk(이민혁) _ Always with You(좋은 날엔 언제나) | 비투비 / 이민혁 / ∅ |
+| `DOuswMbnRDs` | [MV] Lee MinHyuk(이민혁) _ Blue Night(기적) | 비투비 / 이민혁 / ∅ |
+
+</details>
+
+<details>
+<summary>검수29차 — 잘못된 with/원곡 역전/실제 협업 및 정상 보존 비교14</summary>
+
+| 영상 ID | 제목·구별할 문맥 | 현재 primary / members / with |
+|---|---|---|
+| `gxAMhuKgKH4` | [Let’s GO!5rae] EP.7 VLOG : The Whale Takes You Again #2ㅣ작가 '이민혁' 데뷔전 | 몬스타엑스 / 민혁 / 이민혁(비투비) |
+| `7WTVPBq7HiM` | [몬 먹어도 고] 몬엑의 몰락을 예고한 X몬 이민혁? ／ 유기현의 역사특강 #shorts | 몬스타엑스 / 민혁, 기현 / 이민혁(비투비) |
+| `DZGGP2ilxQk` | [킬포장인] ★몬스타엑스 이민혁★ 킬링파트 모아보기 ／ MONSTA X LEE MINHYUK Killing Part Compilation | 몬스타엑스 / 민혁 / 이민혁(비투비) |
+| `66ftlDYWu50` | ＂말 좀 예쁘게 해!😡＂ 몬스타엑스 (채)형원 X 이민혁, 생방송 직전 싸운 썰 풉니다.｜아는형님｜JTBC 230401 방송 외 | 몬스타엑스 / 형원, 민혁, 기현, 주헌, 아이엠 / 이민혁(비투비) |
+| `3T6_2KKh4DY` | 몬스타엑스 민혁 & 아이엠의 뉴진스 OMG 챌린지 / 비투비의 키스 더 라디오 230125 | 뉴진스 / ∅ / 민혁(몬스타엑스) |
+| `agYkaH71jfU` | [벌칙영상] 이건.. 몬베베에게 평생 미안해야할 귀여움이잖아...💞 민혁 & 아이엠의 귀여워서 미안해 챌린지❣ / [비투비의 키스 더 라디오] I KBS 230125 방송 | 몬스타엑스 / 민혁 / ∅ |
+| `-G6u49tWrVE` | #몬스타엑스 #셔누 후배님과 B.. Bee.. Beep…🫵🚨 | 비투비 / 셔누, 민혁, 이민혁 / 셔누(몬스타엑스) |
+| `MnUAZZ5uIKM` | #셔누 후배님과 함께 조준 발사 🔫 헬스장에서도 아‼️달려가야 돼〰️💨 #몬스타엑스 #MONSTAX #SHOWNU #탕탕탕_챌린지 | 비투비 / 서은광, 이민혁 / 셔누(몬스타엑스) |
+| `5Y3PFO858jc` | 미남들의 수트는 좋은 느낌을 줌..😎#SHOWNU #셔누 #HYUNGWON #형원 #MONSTAX #DoYouLoveMe #이민혁 #HUTA #Bora #수트댄스 | 몬스타엑스 / 셔누, 형원, 민혁 / ∅ |
+| `weT-k9SXbFs` | 좋아요 with 병헌 & 이민혁 (블락비 비범) Full ver. /180212[김예원의 볼륨을 높여요] | 블락비 / 비범 / 이민혁(비투비) |
+| `akEMD1rDoK4` | 최근 밈 다 알고 있는 몬스타엑스...✌😁 1년치 애교 탈탈💕 / [비투비의 키스 더 라디오] I KBS 230125 방송 | 몬스타엑스 / ∅ / ∅ |
+| `8BSgYmDBC2M` | 몬스타엑스(MONSTA X) Beautiful Liar 챌린지❤ / [비투비의 키스 더 라디오] I KBS 230125 방송 | 몬스타엑스 / ∅ / ∅ |
+| `2KLhBbYEa_U` | 비투비의 키스더라디오(BTOB Kiss the radio) with 몬스타엑스(MONSTA X) 230125 | 몬스타엑스 / ∅ / ∅ |
+| `Jwnhla4j74s` | [몬스타엑스] 주헌 : 이민혁 랩 찢어라 #shorts | 몬스타엑스 / 민혁, 주헌 / ∅ |
+
+</details>
+
+
+## 2026-10-30 (Claude Code — Codex 검수26·27차 후속 1단계: 매처 재발 방지만, DB 정정은 다음 세션) [사용자 요청으로 중간 정지]
+- **[완료·배포] [admin.js _m2ParseTitle 짝 표기 개인캠·_GROUP_TOKEN_NEEDS_CORROBORATION·_ATM_HASHTAG_ONLY_NAMES·_atmStripCommonNounCtx] [artists.json] [groups.json] [tests/unit-indivcam.test.js]** ① 짝 표기 개인캠: 직캠 표시 + "A X B / A&B" 짝 표기가 있으면 이름이 혼자 가장 많이 나온 사람만(셔누X형원 형원·쿤&샤오쥔 쿤·정한X조슈아 정한·진진&라키 진진), 같으면 둘 다(듀오 "SHOWNU X HYUNGWON FanCam"). 등록 유닛이 아닌 짝도 처리. ② 퍼플키스 SWAN: a1151 박지은 영문명 "Swan"→"Park Jieun", a1150 수안 퍼플키스 문맥 matchNames SWAN, 박지은 퍼플키스 left 2025.11.16→2022.11.18(RBW 공지 기사). ③ NOWADAYS: 나우즈 altNames + 대문자 그대로·멤버명 동반일 때만(흔한 영단어), a1456 현빈 matchNames HYEONBIN. ④ '라↗️디오' 이모지 낀 라디오를 붙여 엑소 디오 오매칭 차단. ⑤ '보니'(드림노트) 해시태그·그룹 동반 전용 — '알고 보니'.
+- **[완료·검증] 이전/새 매처 차분** 관련 제목 14,310개 중 526개 변화: 보니 제거 181(일상어)·박지은 제거 155(수안 개인캠)·NOWADAYS 나우즈 귀속(98 그룹 변경·현빈/윤/시윤/연우/진혁 추가, 레이니·애슐리·유나이트 오태그 제거)·짝 표기 개인캠 좁힘(셔누/형원 22·호시/우지 6·쿤/샤오쥔 6·진진/라키 6·에스쿱스X민규 4·연준X수빈·MOON SUA X SIYOON·모모&사나 "MOMO Fancam"·세은 focus·경민 FANCAM 등 표본 전부 촬영대상과 일치). 27차 개인캠 26건+유닛 12건 = 현재 매처 38/38 정답. matching 246/246·groups-matcher 2080/0·validate-data 오류0/경고144·slim --check·unit-indivcam(새 사례 8개)·vm-panel-ui·admin-dock-close 통과.
+- **⏳ 다음 세션(DB 정정 — 아직 안 함)** ① 27차 개인캠 26건+유닛 12건 members를 현재 매처 결과(촬영대상 1명)로(수동잠금 없음 확인됨, 백업·가드). ② 차분 526행 중 DB값=옛 매처 결과인 자동 태깅 행만 새 결과로(오늘 오전 138건과 같은 방식). ③ SWAN 223후보: 수안 개인15 등은 ②로 대부분 해결 — LOUD Black Swan 4행(`fKMV1tgzI1E,Yfj9aAxygqc,vskgJn8D87I,0iVbJVllkXY`)·수동잠금 `yzSemElyFls`는 따로. ④ 26차 원곡/출연 역할: 유스피어 16행 cover 3필드만 정리(tags_manual=true라 3단계), Floral Sense 예성 4행 주인 정정, 1theK 3행 primary=공연자, feat 오인 4행(지젤·지민·유태양·도겸·태용 제거), DND·m_Ns7·Jl2g 원곡 필드, jIwl9 cover_of_song=프락치, 아스트로 바이바이 2행 윤산하 추가, HANA nWsCYW4G9UI 잘못된 with 4명 제거·아일릿 모카 단체 영상(MV·안무·음방·비하인드) members 정정(ykJ2xlYdCBQ MOKA&JISOO는 유지), 비공개 5행 처리 방식. ⑤ 사용자 결정 필요: HANA 그룹 등록 여부, 한영 제목 충돌 2개(`8PhRFkqvajs`·`NvWPIEEK2sI`), LOUD 참가자 처리. 조회 결과는 이번 세션 스크래치(r2627.json)라 다음엔 다시 조회할 것.
+
+
+## 2026-10-30 (Codex — 검수28차·동명 솔로와 언급된 그룹 오귀속)
+- **[완료·읽기 전용 범위] [CHANGELOG.md]** 25~27차 ID는 신규 집계에서 제외하고, 동명 솔로/롤모델 언급/진행자 누락을 별도로 대조. 공개 카드 검색·플레이어 아티스트 표시와 대표 공식 원본의 제목·설명·재생 장면을 비교(전편 시청 아님). 검수 중 Claude의 27차 1단계 커밋8545ed3b37 및 SEO/앱 작업을 확인했으나 해당 코드/생성물 수정·수집·스윕·DB 쓰기 없음. 아래의 '후보' 수는 전부 오류 확정/자동 정정 승인 수가 아님.
+- **[이슈·유태양 개인캠이 빅뱅으로2행] [yt_channel_videos]** `VPqdQbZSsAw,yYYyBWzwJTs`는 SBS 가요대전 남자스페셜 '주문' 유태양(YOO TAEYANG) FaceCam/FanCam인데 primary 빅뱅/members 빈 배열/공개/잠금false. SBSKPOP 원본 두 제목·업로더와 빅뱅 카드 '유태양' 검색2개 실노출 대조. 실제 SF9 유태양으로 귀속/개인 촬영대상을 정정할 후보이며 빅뱅 태양과 별개. 현재 발행일 포함 제목 파서는 에스에프나인/유태양을 반환하므로 DB에 잔존한 예전 태그 유형. '주문' 원곡/합동 무대 전체의 다른 참여자와 개인캠 초점은 분리 검토. 26차 다원 VIBE 커버 `Df1P2WiYSms`와 다른 ID들이며 중복 신규 집계하지 않음.
+- **[이슈·마이클 잭슨을 갓세븐 잭슨으로12후보] [yt_channel_videos] [admin.js _m2ParseTitle]** 공개·마이클 잭슨/Michael Jackson 제목·갓세븐/잭슨 태그 조건으로 아래12행 조회, 전부 현재 갓세븐/[잭슨]. 태민/방예담/투어스/장우혁/천둥/외부 출연자 등의 콘텐츠이며 실제 갓세븐 잭슨과 구분해야 함. 잭슨 카드 '마이클' 검색에서 태민·방예담 선공개·이승국 성대모사·힙팝프린세스 예고 등이 실제 노출. 대표 KBS `nDYPKgTF_eQ` 제목/업로더·태민과 성시경 대화 표본, 스튜디오:D `ZJ_r2A_Gw1k` 방예담 커버, ALL THE K-POP `lutO5ZSawrk` 투어스 EP669, SBS Radio `WejY_nwVn5Y,eSIYUkjvLes` 장우혁/천둥 원본 제목·업로더 대조. 현재 제목 매처는12개 모두 갓세븐 잭슨 weak를 재현. 특히 영어 Michael Jackson이 들어간 장우혁 제목도 갓세븐을 primary/H.O.T. 장우혁을 with로 둠→한국어만의 문제가 아님.
+- **[이슈·예담 새 인물 생성 금지] [artists.json a0294] [yt_channel_videos]** 위 방예담4행 `6mhgmyqUAb0,ZJ_r2A_Gw1k,s3ZICmkU8Zs,O4HsOL6OpaM`의 본인은 이미 디모렉스(a0294, subName 방예담, matchAliases 예담/방예담/Yedam/Bang Yedam)로 등록. 현재 로컬 이름만 검색하면 방예담이 안 나와 신규 인물로 잘못 판단할 수 있으니 subName/별칭/그룹 이력까지 대조할 것. 원팩트 예담(a1324)으로 옮기거나 별도 방예담 카드를 중복 생성하지 않음. 디모렉스 카드 'You Are Not Alone' 정확 검색은 '아직 등록된 영상이 없어요', 잭슨 카드에는 해당 커버들이 노출되어 주인 카드 누락과 타인 카드 오노출이 같이 있음. 현재 정상 디모렉스 `KiLwH_fjd8s,D9-6qcFqPYs,tmIeNPp31cg` 등의 본인 귀속은 보존.
+- **[보류·마이클 잭슨12행 안의 외부/오디션 구분] [yt_channel_videos]** `KRS_6Ia7Ado`는 설명상 힙팝프린세스9회 예고로 실제 출연자/멘토를 더 확인해야 함. `jY7Wcz2M8m0` 설명은 노이즈 김학규·한상일의 JAM 댄스(멤버 등록 여부/원본 장면 추가 확인), `0FDEuCdszFA`는 Ben Akers의 Music Access 커버, `QxPILj37mbY`는 이승국 성대모사. 이4개는 실제 등록자와 외부인·모음/예고 정책을 나눠 처리, 갓세븐에서 다른 유명 동명이인으로 대신 옮기지 말 것. 외부 Michael Jackson 원곡 관계를 갓세븐 cover_of_members 잭슨으로 새로 채우는 것도 금지. 정상 GOT7 잭슨 PYTHON 개인캠 `uq5kSpmUyTY,IR6vO8A4I8o,dyjKuZK87dI,a2sT-WwkO2o`는 보존 비교.
+- **[이슈·롤모델은 실제 출연자가 아님4후보] [yt_channel_videos]** `Vh_KqO7J8yI` SBS Radio SF9 다원의 '롤모델 빅뱅' 발언이 primary 빅뱅/with 다원, `EXetQ20ZO2Y` 케이스타뉴스 데일리:디렉션 쇼케이스(2026.10.14)가 primary BTS/빈 멤버, `QeSv1qRtPAA` MBC Radio 세마넴 도희의 롤모델 발언이 아이브 장원영, `6jYNJRwVrHo` ARIRANG 아이몬드의 호랑이 헌정이 세븐틴 호시로 저장. 네 공식 원본 제목·업로더 대조, 도희 원본 첫 장면은 '도희가 원영이를 사랑해' 자막과 라디오 발언, 아이몬드 원본은 그룹의 호랑이 퍼포먼스 표본. 다원/데일리디렉션/세이마이네임 도희(a0693)를 실제 주인으로 검토하고 원팩트/시그니처 등 이름만 같은 사람으로 대체 금지. 아이몬드는 기존 미등록 그룹 정책과 분리 검토(26차/18차 관련 사례 참조). 현재 매처는 이4개의 기존 잘못된 주인도 그대로 반환(다원·BTS·장원영 strong/호시 weak). 데일리디렉션 로컬 en=DAILY:DIRECTION/ko=데일리디렉션과 제목의 데일리:디렉션 표기 차이도 함께 비교할 것.
+- **[보류·추가 언급/일반어 후보5행] [yt_channel_videos]** `zJHf4sMVyFw` '소연의 롤모델 서인영'은 primary 서인영이지만 실제 소연의 정확한 신원과 원본 출연 범위 미확정→그냥 유명 소연에게 옮기지 않음. `DvKvL4Jb47M` 요서비의 요즘것들 EP3 선공개는 primary 보이넥스트도어/빈 태그, 설명은 양요섭·하이라이트 프로그램으로 실제 게스트 구분 필요. `z0IJ0ezbpS4` 워터밤 조서형 셰프 프로모션이 '최애는 라이즈' 때문에 라이즈 귀속 후보. `zaPIIVg-0-8` 놀토 박나래의 '백호 사랑' 영상은 이즈나/[유사랑]/with 백호로 저장, 현재 매처는 백호만 반환. `N7YTzRndWj4` '최애가 소원 들어주기' tvN 드라마 티저는 여자친구/빈 멤버, 현재 매처 null. 이5행은 제목·현재 DB·설명 기반 후보이며 원본 전편/실제 출연 확정 검수가 남음. 특히 [tvN 공식 최애의 사원](https://tvn.cjenm.com/ko/mybiasmyboss/)과 [tvN이 확인한 ITZY 유나 캐스팅 보도](https://isplus.com/article/view/isp202511240058)가 있어 프로그램 전체를 '아이돌 없음'으로 무관 처리하지 말고 해당 클립의 실제 등장 인물부터 대조.
+- **[이슈·핑크캐비닛 MC 민주 누락45후보] [yt_channel_videos]** 공개 title~'민주의 핑크.?캐비닛' AND title~'EP[.] *[0-9]+' AND duration_sec>=600 조건49행 중, primary 아일릿/members 민주 또는 with 민주(아일릿)가 없는45행(전부 with 빈 배열/수동잠금false). 이는 이 조회 조건의49행이며 프로그램 전체 수집 완료/49개 전편 정상 검증을 뜻하지 않음. 아래표는 추가 확인 후보. 대표 `6Qc87_vrJ6M` 사나 EP30 원본 초반/2:35에 민주와 사나 동반 인터뷰 확인, `M9Y1UO7snXU` 코르티스 EP37 원본 제목·공식 KBS 업로더·5:50 민주 진행 장면·설명 초대손님 마틴/주훈 확인. 앱 플레이어 '이 영상에 나온 아티스트'는 각각 사나1명/마틴·주훈2명만 표시, 민주 카드 '사나 여신' 검색도0. 게스트 primary와 멤버는 보존하고 실제 출연 MC 민주(a0140/아일릿)를 해당 회차 with로 보완하는 후속 검토. 같은 en Minju인 김민주(a0307)/다른 민주(a0471)로 연결하지 말 것. 진행자 대체·부재 회차/티저·공용 설명만으로 전량 추가하지 않음.
+- **[이슈·진행자 존재4행도 전체 정상은 아님] [yt_channel_videos]** 위49행 중 MC가 이미 들어있는4행(`FhLJhgzKek8,NmrXoEP42_M,a4kO0Mk8BkI,n87rJElC89Y`)은 'MC 누락 아님'이지 전체 멤버 정확성 통과가 아님. 특히 `a4kO0Mk8BkI` EP22는 primary 아일릿/[민주]/빈 with지만 공식 KBS 원본 제목은 i-dle, 수집 설명의 초대손님은 슈화·펼친 원본 크레딧에도 예슈화 확인→실제 게스트 슈화가 누락된 별도 후보. `n87rJElC89Y` EP14도 초대손님 ILLIT인데 민주1명이라 실제 다른 멤버 범위 추가 확인. 그룹명 하나만 보고 멤버 전원을 채우지 말 것. 정상에 가까운 EP46 원희/이로하/민주·EP26 민주/윤아/모카도 각자 원본 출연 범위를 유지.
+- **[이슈·BEST 모음의 출연을 실제 합동으로 오인하면 안 됨] [yt_channel_videos PsfznzMtEdU]** 현재 하이라이트/[양요섭]/빈 with/flag null. KBS 원본 제목/업로더·펼친 설명은 EP09 앤팀 조, EP35 아이브 가을, EP19 양요섭, EP13 엔믹스 지우, EP37 코르티스 주훈, EP30 사나의 **서로 다른 회차** 모음으로 명시. 양요섭도 실제 한 구간 출연자이므로 단순 '하이라이트 단어 오탐'으로 양요섭을 지우지 말고 진행자/각 구간 촬영대상 범위를 별도 검토. 본편 EP37 마틴 등 다른 구간에 안 나왔을 수 있는 동반 게스트까지 자동 복사하지 않음. 여러 회차의 사람을 전부 with로 묶어 한자리 합동 출연 관계를 만들지 말고, 기존 `개별출연` 플래그 및 원래 각 회차 링크 활용 검토(app.js _gridWithList는 해당 플래그에서 함께한 줄을 제외하고 공통 출연 조회에도 제외 조건이 있음).
+- **[완료·원곡/언급과 실제 만남의 정상 경계] [yt_channel_videos]** 사나 EP30은 '롤모델'이 제목에 있어도 실제 민주와 만나는 영상이므로 사나를 지우면 안 됨. `TTXUKLmXrlg` 셔누 Hidden Singer6 '롤모델 비 앞에서 나쁜남자'도 설명상 실제 비 앞 퍼포먼스(원본 장면 미대조)라 롤모델 키워드만으로 가짜 게스트로 처리 금지. '다른 사람이 언급됨'과 '실제 같이 나옴'은 단어 하나로 일괄 구분하지 않음.
+- **[완료·재발 경로 비교] [tools/matcher_harness.cjs]** 실제 발행일4번째 인자로 현재12행 Michael Jackson→갓세븐 잭슨 weak 재현. 메모리의 입력에서 외부 풀네임만 제거한 비교(원본/DB/코드 변경 아님)는 장우혁→H.O.T./장우혁으로 회복하지만 태민·방예담 커버·Ben Akers는 null. 단독 '방예담'은 디모렉스/a0294를 찾지만 '방예담이 부르는 You Are Not Alone'은 null→별칭 데이터 존재만으로 모든 문장의 옛 활동명 처리가 된다는 뜻은 아님. 원곡/언급 오태그를 제거한 뒤 실제 주인 복구를 별도 확인, null/weak를 그대로 전량 숨기거나 제목을 조작해 저장하지 말 것.
+- **⏳ 덜 된 일 [조회·파일·판단 기준]** 아래12+45 ID 및 본문 별도 ID를 `SELECT id,title,group_ko,members,with_members,with_groups,cover_of_members,cover_of_groups,cover_of_song,tags_manual,cover_manual,content_flag,published_at FROM yt_channel_videos WHERE id IN (...)`로 최신 재조회. ① 실제 주인 확인된 유태양2/디모렉스4/투어스/장우혁/천둥·언급 사례부터 원본/잠금/현재값 가드·백업을 갖춘 소량 재귀속 계획, 실제 갓세븐 잭슨 보존. ② Pink45는 초대손님/진행자 확인된 긴 본편부터 민주(a0140) with 보완·guest members 보존, EP22 슈화와 EP14 누락은 별도 비교. BEST 모음은 개별출연으로 다중회차 관계 오염을 막고 원본 회차 연결을 살림. ③ admin.js 이름/그룹 매칭 회귀 검토 시 외부 풀네임·롤모델 문장의 주체/대상·옛 활동명+조사·실제 MC의 동명이인 구분을 나눠 검사. 이번 코드/JSON/SQL/DB 정정·수집/스윕 실행 없음.
+
+<details>
+<summary>갓세븐 잭슨으로 저장된 Michael Jackson 관련 12후보 — 실제 주인/외부인 분리 필요</summary>
+
+| 영상 ID | 제목상 실제 주체 또는 문맥 |
+|---|---|
+| `nDYPKgTF_eQ` | 태민이 존경하는 마이클 잭슨 질투하는(?) 성시경 ㅋㅋㅋ [더 시즌즈-성시경의 고막남친] ／ KBS 방송 |
+| `6mhgmyqUAb0` | [풀버전] 미쳤다... 이렇게 잘 어울린다고?🫢 방예담만의 음색과 감성으로 재해석한 마이클 잭슨 'Loving You'🎵 ／ 케이시의 백스테이지팝 |
+| `ZJ_r2A_Gw1k` | [풀버전] '리틀 마이클 잭슨'이라 불렸던 소년, 2026년의 방예담이 부르는 'You Are Not Alone'🎵 ／ 케이시의 백스테이지팝 |
+| `s3ZICmkU8Zs` | [선공개클립] 방예담이 부르는 마이클 잭슨 명곡... 'You Are Not Alone'🎵 ／ 케이시의 백스테이지팝 |
+| `O4HsOL6OpaM` | [선공개] '리틀 마이클 잭슨'이라 불렸던 방예담의 2026년 MJ 커버 #shorts |
+| `KRS_6Ia7Ado` | 마이클 잭슨? 못 참지 ／ 9회 선공개 |
+| `lutO5ZSawrk` | (ENG) [Weekly Idol] 마이클 잭슨 빙의한 산소 같은 투어스의 과몰입 노래방😎🎙 l EP.669 |
+| `WejY_nwVn5Y` | feel like Michael Jackson🕺 장우혁(jang woo hyuk)의 'I feel Hope' 하이라이트 안무 ／ 두시탈출 컬투쇼 |
+| `QxPILj37mbY` | 오랜만에 파랑방에서 마이클 잭슨 성대모사하는 천재이승국💙 ／ 김영철의 파워FM #shorts |
+| `jY7Wcz2M8m0` | 20년 전 ′마이클 잭슨 - JAM′ 댄스 완벽 호흡! 뭉클하네~ 〈슈가맨1(SUGARMAN1) 13회〉 |
+| `0FDEuCdszFA` | [Music Access] The Way You Make Me Feel (Michael Jackson) - Cover by Ben Akers |
+| `eSIYUkjvLes` | [SBS]김창렬의올드스쿨,천둥, "마이클 잭슨 교과서 삼아 연습했다" |
+
+</details>
+
+<details>
+<summary>민주의 핑크캐비닛 긴 정규회차 MC 누락 검토 45행 — 실제 진행자 확인 후 보완</summary>
+
+| 영상 ID | 회차 | 현재 primary | 현재 members(보존 검토) |
+|---|---|---|---|
+| `EOd9pG0Kjj8` | EP.50 | 아이들 | 미연, 우기 |
+| `94CqNcJcr7k` | EP.49 | 엑소 | 수호, 찬열 |
+| `ZxIwNeoL864` | EP.48 | 알파드라이브원 | 상원, 리오 |
+| `Y3p7fGrfr-Q` | EP.47 | 프로미스나인 | 채영, 나경 |
+| `nTuk769dT0U` | EP.45 | 더보이즈 | 현재, 주연 |
+| `DwEGeiZWZNc` | EP.44 | 있지 | 예지, 류진 |
+| `oJ8sK820Amk` | EP.43 | 앤팀 | 니콜라스, 유마, 케이 |
+| `WZT55Bm9KTc` | EP.42 | 르세라핌 | 사쿠라, 카즈하 |
+| `cGlBqQBJrjU` | EP.41 | 보이넥스트도어 | 태산, 운학 |
+| `nk4zobQSShs` | EP.40 | 투어스 | 신유, 영재 |
+| `MqPPmfG54Vg` | EP.38 | 배드빌런 | 윤서, 빈 |
+| `M9Y1UO7snXU` | EP.37 | 코르티스 | 마틴, 주훈 |
+| `s_hVGm6vvTw` | EP.36 | 엔시티 위시 | 료, 사쿠야 |
+| `TZmveieC0y8` | EP.35 | 아이브 | 가을, 이서 |
+| `nozqTuV43_w` | EP.34 | 슈퍼주니어 | 희철 |
+| `J6XJk3a2zf0` | EP.33 | 이븐 | 박지후, 지윤서 |
+| `zWQK22IBGH4` | EP.32 | 아이즈원 | 최예나, 김민주 |
+| `jPzAkJbjTHY` | EP.31 | 누에라 | 준표, 판 |
+| `6Qc87_vrJ6M` | EP.30 | 트와이스 | 사나 |
+| `N7hcX758IPY` | EP.29 | 클로즈유어아이즈 | 전민욱, 송승호 |
+| `2HfSMDztN7c` | EP.28 | 아홉 | 스티븐, 차웅기 |
+| `r7EPFR_qhX4` | EP.27 | 베이비돈크라이 | 미지정 |
+| `-LFpAYRYkJI` | EP.25 | 에이티즈 | 여상, 산 |
+| `IArj08TtRHE` | EP.24 | 엔하이픈 | 선우 |
+| `JSeKv2hPuKg` | EP.23 | 보이넥스트도어 | 리우, 성호 |
+| `uNr3Mu5Ik18` | EP.21 | 트리플에스 | 윤서연, 김나경 |
+| `_GN_yII7hiM` | EP.20 | 피원하모니 | 지웅, 인탁 |
+| `m_e6hAaNjkY` | EP.19 | 하이라이트 | 윤두준, 이기광 |
+| `XmNyghOUYno` | EP.18 | 투어스 | 지훈, 경민 |
+| `AxAC7CpNjrE` | EP.17 | 싸이커스 | 민재, 유준 |
+| `ZoXpmCJQjvE` | EP.16 | 니쥬 | 마코, 리쿠 |
+| `UzB3bjI0nNc` | EP.15 | 뉴비트 | 미지정 |
+| `PjYpOIR07YY` | EP.13 | 엔믹스 | 설윤, 지우 |
+| `Htfq661zOwY` | EP.12 | 더보이즈 | 뉴, 큐 |
+| `QsSSGmJqD1U` | EP.11 | 제로베이스원 | 장하오, 김규빈 |
+| `61EQ6ZcvoUE` | EP.10 | 이븐 | 케이타, 박지후 |
+| `FYoSn8BrJ6k` | EP.9 | 앤팀 | 케이, 의주, 조 |
+| `CHUYm9B9uJM` | EP.8 | 민니 | 민니 |
+| `fkJv2bkwWX8` | EP.7 | 키스오브라이프 | 하늘 |
+| `iXIzguURFCI` | EP.6 | 보이넥스트도어 | 재현, 이한 |
+| `sv5Q2brKdGU` | EP.5 | 트리플에스 | 김채연, 박소현 |
+| `PZILMfDh4no` | EP.4 | 엔하이픈 | 성훈, 정원 |
+| `lYkPcETD4iY` | EP.3 | 더보이즈 | 선우, 에릭 |
+| `xdZ46j-Omuc` | EP. 2 | 에이티즈 | 윤호 |
+| `Jk8yGDw0IDA` | EP. 1 | 다이아 | 은채 |
+
+</details>
+
+- **[완료·읽기 전용] [CHANGELOG.md]** 25~27차 ID는 신규 집계에서 제외하고 동명/언급 오귀속과 실제 MC 누락을 추가 대조. 아래 원본·플레이어·후속 판단 기준을 기록, 코드·JSON·SQL·DB 수정·수집/스윕 실행 없이 이 파일만 변경. Claude의 동시 코드/SEO 생성물 작업은 보존.
+
+## 2026-10-30 (Claude Code — 곡 페이지 → 앱 곡 영상 패널 바로 열기 · 카드 조회수 줄 · CI 빨간불 2건)
+- **[완료·배포] [app.js _openFromHash·_openSongVideos opt.member] [build_group_pages.js] [tests/deeplink-song.test.js]** 사용자 "곡 페이지의 '직캠·영상 아카이브 보기'를 누르면 그룹 카드만 열린다 — Drop That 곡 영상 패널까지 이어져야". 딥링크에 `&song=곡 이름` 추가: 카드를 연 뒤 그 곡 영상 패널을 연다. 멤버×곡 페이지는 `#g=코르티스&m=성현&song=ACAI` → 멤버 카드 + ACAI 패널을 "멤버 ▾ 성현"으로 미리 골라 둔 채(_openSongVideos opt.member). 정적 페이지 버튼 주소에 &song= 반영(CI 재생성). 함정: `const gko=params.get('g'),mko=params.get('m');`가 _stackIndexForHash에도 있어 첫 번째 쪽에 정의가 들어가 `openSongAfter is not defined` — 문법 검사는 통과하고 실행 때만 터졌다 → 새 브라우저 테스트가 잡음(클로즈유어아이즈 Drop That! 164개, 성현 ACAI 17개·멤버 성현). 실DB라 CI 브라우저 건너뛰기 목록에 등록.
+- **[완료·배포] [build_group_pages.js]** 사용자 "'조회수 많은 직캠·무대'인데 업로드일 줄 옆에 조회수도". 카드 썸네일 위 조회수 배지를 빼고 날짜 줄을 "2026.10.01 · 조회수 6만회"(영어 "60K views")로.
+- **[완료·수정] CI(data-and-tests) 빨간불 2건 — 폰 가로 커밋(9b354a07)부터 4회 연속 실패를 놓쳤다** ① admin-dock-close: admin.js를 isMob()으로 바꿨는데 테스트가 admin.js만 떼어 돌려 `isMob is not defined` → `typeof isMob==='function'?isMob():innerWidth<=768`. ② vm-panel-ui: `@media(min-width:769px){#vm-panel…}`를 글자 그대로 찾아서, 폰 가로 제외 조건이 붙은 뒤 실패 → 조건 허용 정규식. phone-landscape도 브라우저 테스트라 건너뛰기 목록에 등록(다른 브라우저 테스트와 같은 관례). 교훈: 배포 후 data-and-tests 결과까지 확인할 것.
+
+
+## 2026-10-30 (Claude Code — 목록 창 고르기 줄을 카드·곡 화면 모양으로 통일)
+- **[완료·배포] [app.js _renderFeedListFacet·_programFacetView·_openEventPage·_openPickSheet] [kpop_universe.css #feed-list-facets·.vss-search] [tests/program-facets.test.js]** 사용자 "보이스캠 모아보기의 팀 물방울 줄이 고르기 불편 — 토글이나 검색으로, 물방울 레이아웃은 안 쓰는 방향인데 최신·조회수에까지 쓰는 건 아니다. 카드 영상·곡 영상 패널과 통일". 목록 창(모아보기·차트·시상식) 고르기 줄을 세 모양으로: ① 누구(ui:'pick') = 곡 화면 "멤버 ▾"·카드 "♪ 곡 ▾"와 같은 글자 버튼 "👥 전체 ▾" → 공용 고르기 시트(★ 즐겨찾기 + 팀, 영상 수), 고른 뒤 "클로즈유어아이즈 ✕"(✕=전체). 프로그램 모아보기는 상위 20팀 제한 없이 전부(보이스캠 36팀). ② 정렬(ui:'sort') = 곡 화면과 같은 "최신순" 버튼(.tvf-sort), 누를 때마다 최신순↔조회수순, 같은 줄 오른쪽. ③ 그 밖의 축(차트 성별·세대·기간, 시상식 연도·무대/직캠/전체, 차트 스토리) = 카드·곡 화면과 같은 밑줄 탭. 목록 창에서 알약(물방울) 칩은 없어짐. 공용 고르기 시트(_openPickSheet)에 항목 9개 이상이면 검색창(한글·영문 둘 다, 글자 16px — 아이폰 입력 확대 방지) — 카드 "♪ 곡"·곡 화면 "멤버"에도 같이 적용됨. 카드 영상 칸 정렬은 위 줄이 이미 차 있어 ⋮ 안 그대로.
+- **[완료·검증]** 390px 캡처: 보이스캠 "👥 전체 ▾ … 최신순" 한 줄, 시트 검색 "클로즈" → 클로즈유어아이즈 58, 고른 뒤 ✕·조회수순, 차트 밑줄 탭 3줄. program-facets 11/11(새 UI로 갱신), smoke·compass-width·feed-trend·card-title-visibility·stage-venue-album·syntax 통과, phone-landscape 5/5(연달아 돌릴 때 1회 타이밍 실패 후 단독 재실행 통과).
+- **[참고] 곡 페이지 CI 빌드** 앞 커밋(멤버×곡 페이지)의 rebuild-seo-pages가 곡 5,916·멤버×곡 9,841 × 2개 언어·sitemap 36,075 URL로 로컬과 같은 수 생성·푸시 완료.
+
+
+## 2026-10-30 (Claude Code — 멤버×곡 검색 페이지 + 곡 페이지 이미지 중심 개편)
+- **[완료·배포(페이지는 CI 재생성)] [build_group_pages.js computeMemberSongs·memberSongPagePath·memberSongLinksHtml·songLikePageHtml] [tools/seo_extra.js] [song-page.css] [tests/song-page-design.test.js] [tests/static-links.test.js]** 사용자 "'성현 acai'(본명 엄성현은 데이터에 없음)만 검색해도 우리 성현 ACAI 직캠 모음이 나오게", "곡 페이지가 썸네일 하나에 텍스트만 많아 안 끌린다". ① **멤버×곡 페이지 신설**: 곡 영상 중 members가 그 멤버 한 명뿐인 개인 직캠이 3개 이상이면 `{멤버 페이지}s/{곡}/`(예 g/코르티스/성현/s/acai/, en/g/cortis/seonghyeon/s/acai/). 제목 "성현 ACAI 직캠 모음 - 코르티스 성현(CORTIS Seonghyeon)", CollectionPage 구조화 데이터, 같은 곡 다른 멤버 직캠·곡 전체 페이지·멤버 페이지로 이어지는 링크, 멤버 페이지엔 "곡별 직캠" 커버 타일. 로컬 빌드 9,841쌍(기준 4개면 7,416·5개면 5,982). '코르티스 acai'는 기존 곡 페이지("ACAI 직캠·무대 모음 - 코르티스(CORTIS)")가 이미 겨냥. ② **곡 페이지 화면**: 대표 영상 큰 썸네일 위에 곡 제목, 정보는 칩 한 줄, 영상 30개는 썸네일 카드 2열(넓으면 3열)+조회수 배지, 출연 멤버는 얼굴 동그라미(og_thumbs 멤버 대표 영상), 다른 곡은 앨범 커버 타일(seo_extra buildSongs에 cover 추가). 검색엔진이 읽는 제목·설명은 그대로. ③ 용량: 스타일을 페이지마다 넣으면 곡 계열 3만 쪽 586MB → 공용 `song-page.css`로 빼고 멤버×곡 페이지는 다른 곡 타일 생략 → 361MB(사이트 전체 288MB→약 470MB, Pages 한도 1GB). 함정: 카드·얼굴 칸이 span이라 aspect-ratio가 안 먹어 제목이 다음 줄과 겹쳤다 → display:block(테스트로 고정). static-links 검사기가 `song-page.css?v=1`을 폴더로 보던 것 수정.
+- **[완료·검증]** 임시 작업본에서 실제 DB로 전체 빌드(곡 5,916 · 멤버×곡 9,841 · 정적 페이지 35,856) → 390px 캡처로 곡·멤버×곡·멤버 페이지 확인. seo-url·static-links 8/8·seo-relation·workflow-seo-publish·새 song-page-design 통과. ⏳ CI 빌드 후 곡 페이지 수가 로컬보다 적게 나오는 기존 문제([[project_kpop_song_pages_gap]])는 그대로 — 멤버×곡 페이지도 같은 데이터라 CI 쪽이 적을 수 있음. 구글 노출은 색인 후(서치콘솔에서 새 주소 색인 요청 권장).
+
+
+## 2026-10-30 (Claude Code — 폰 가로 화면 배치)
+- **[완료·배포] [app.js isMob·_phoneLand·updateSheetBottom] [admin.js] [kpop_universe.css] [tests/phone-landscape.test.js]** 사용자 캡처 "모바일을 가로로 돌리면 막 겹친다 — 저번에 요청했는데 반영 안 됐다". 원인: 화면을 폭으로만 나눠(768 이하=폰, 769~ PC 규칙, 1024~ 웹 무대) 아이폰 가로(844×390)가 그 사이에 걸려 탐험 패널은 PC식 왼쪽 반쪽, 재생 화면은 무대식 떠 있는 창이 섞였다(헤드리스 844×390 터치로 그대로 재현). 수정: **폰 = 폭 768 이하 또는 (터치 화면 + 높이 500 이하)** — JS isMob()·CSS `@media(max-width:768px)` 38곳에 같은 조건 추가, PC 전용 `@media(min-width:769px/768px)` 28곳은 폰 가로에서 꺼지게(pointer:fine 또는 높이 501 이상일 때만). 아이패드(높이 744+)·PC(마우스) 영향 없음. 그 위에 가로 전용(`(pointer:coarse) and (max-height:500px) and (orientation:landscape)`): ① 탭바 아이콘·라벨 한 줄로 얇게 ② 가로 영상 재생 = 유튜브 가로 시청 화면처럼 영상은 왼쪽 고정(화면 56% 또는 높이에 맞는 16:9), 제목·하트·반응·출연자·곡·이어서 보기는 기존 그리드 그대로 오른쪽에서 스크롤 ③ 쇼츠 = 화면 높이 세로 영상 왼쪽 + 제목·출연자·반응 오른쪽 세로 가운데. 노치 쪽 safe-area 여백 반영. 함정: 재생 화면 #yt-lb-main이 이미 자체 그리드(하트·반응·버튼 칸 고정)라 display:contents로 풀면 겹친다 → 영상만 position:fixed로 빼는 방식. 쇼츠 정보 줄은 overflow:hidden이라 auto 행이 8px로 눌려 제목이 사라졌다 → max-content 행.
+- **[완료·검증]** 새 브라우저 테스트(가로: 폰 판정·탐험 패널 전체 폭·영상/제목 겹침 없음·쇼츠 제목 화면 안 / 세로: 제목이 영상 아래 유지) 5/5. lb-topbar·compass-width(웹 무대)·card-title-visibility·feed-trend·smoke·stage-venue-album·syntax 통과. ⏳ 아이폰 가로 실기기 확인 대기(헤드리스는 safe-area 노치 여백을 0으로 봄).
+
+
+## 2026-10-30 (Codex — 검수27차·개인캠 잔여와 제목 충돌)
+- **[완료·범위/중복 방지] [CHANGELOG.md]** 공개·다중멤버·개인캠형 접두사 최신100행을 읽기 전용 하네스로 대조. 이전25차 정정86건과26차 후보는 신규 집계에서 제외. 제목 파서와 DB 집합 차이30행은 정확도/자동정정 성공수 아님(아래 마크·NCT지성 반례 포함). 대표 원본의 제목/공식 업로더·공개 카드 검색으로 교차검증, 전편 시청 아님. 앱/JSON/SQL/DB·수집/스윕 변경 없이 이 파일에만 기록.
+- **[이슈·퍼플키스 SWAN을 박지은으로 등록한 근본 데이터 오류] [artists.json a1150/a1151] [yt_channel_videos]** a1150=수안/en Suan, a1151=박지은/en Swan. 실제 공식 KBS `atgjmlQxEIk`·M2 `QMHVacn_zdA`의 제목은 한글 수안↔SWAN을 함께 명시하고, 정상 박지은 SBSKPOP ZOOM `yr0F_Qwj3go`는 박지은↔PARK JI EUN. 공식 PURPLE KISS `s5QpyTQ8UGQ` 투어 SWAN 클립 및 `8TJeLk8TUWc` HAPPY SWAN DAY도 제목/업로더 대조. 박지은 카드(`#m=박지은`, 그룹제약 없이 검색으로 열어 확인) SWAN 검색에 수안 DO REMI/Sweet Juice 개인캠 실제 노출. 한글 수안 제목은 [수안,박지은], 영문 SWAN만 적힌 제목은 박지은 단독으로도 저장되어 있음. 현재 파서도 수안+박지은을 재현하므로 DB만 정리하면 재발 가능. a1151 영문 표기와 a1150의 공식 활동명 매칭을 ID/그룹 문맥별로 정리하는 후속 필요, 크랙시의 실제 SWAN(a1758)이나 정상 박지은 인물/영상은 보존.
+- **[이슈·SWAN 확대 범위는223행 후보, 일괄 수안 치환 금지] [yt_channel_videos]** 조회 조건 `group_ko='퍼플키스' AND content_flag IS NULL AND title ~* '(SWAN|수안)'` 276행, 그중 members에 박지은 포함223(단독11), 대상223의 tags_manual=true1(`yzSemElyFls`, 나고은·채인·수안 Blueming 무대). 엄격한 접두사(입덕/MPD/페이스/얼빡/K-Fancam/UNFILTERED CAM)와 수안 제목이 맞는 아래15행은 우선 정정 검토, 전편 모두 대조한 것 아님. 전체223에는 실제 단체/협업·사람이 잠근 무대·아래 LOUD4행까지 섞였으므로 members 전체를 수안1명으로 바꾸거나 박지은 문자열을 전량 수안으로 치환하지 말 것. 영어만 있는 단독11행도 SWAN 본인 콘텐츠7/아래 LOUD4로 분기해야 함.
+- **[이슈·Black Swan 곡명 때문에 박지은 카드에 LOUD4개] [yt_channel_videos]** `fKMV1tgzI1E,Yfj9aAxygqc,vskgJn8D87I`는 각각 이수재·남윤승·조두현의 Black Swan 팀포커스, `0iVbJVllkXY`는 남윤승 소개 'A swan in born'. 네 행 모두 퍼플키스/[박지은]/공개/수동잠금false. 박지은 카드 LOUD 검색에4개 실제 노출. SBS 공식 원본 남윤승 소개 제목·업로더를 확인했고 나머지는 현재 제목·방송 설명으로 참가자/프로그램 문맥 대조(전편 참가자 식별 아님). 현재 제목 매처는 대표 fKM/0iV 모두 null이므로 새 파서가 못 잡는다고 기존 오귀속이 자동 정리되지는 않음. 수안으로 옮기지 말고 LOUD 참가자 신원/등록 여부와 보류·재귀속 정책을 별도로 판단.
+- **[이슈·박지은 탈퇴일도 그룹 종료일로 저장] [artists.json a1151.groups]** 퍼플키스 이력 left=2025.11.16은 당시 그룹 활동 종료일과 같지만 박지은 개인 탈퇴는 [RBW 공지 전문을 실은 2022.11.18 기사](https://www.soompi.com/article/1554858wpp/purple-kisss-agency-announces-park-ji-euns-departure-from-group)와 불일치. 기사에 연결된 공식 원문 https://cafe.daum.net/PURPLEKISS/Ah2A/169 는 이번 도구에서 열리지 않아 1차 원문 직접 확인은 미완료. 날짜 보정은 나머지6명의 종료일과 분리 검토, 그룹을 떠났다는 이유로 데뷔~탈퇴 전 정상 박지은 영상을 지우지 말 것.
+- **[이슈·NOWADAYS 현빈을 ALL(H)OURS 현빈으로] [yt_channel_videos Jxly0A-hFss] [groups.json 나우즈] [artists.json a1456/a1119]** STUDIO CHOOM 공식 'NOWADAYS HYEONBIN(현빈) OoWee' 개인캠이 올아워즈/[현빈,온], 올아워즈 현빈 카드 OoWee 검색에도 실제 노출. 설명은 나우어데이즈 현빈과 NOWADAYS 원본으로 명시. 실제 주인은 현재 나우즈 현빈(a1456), 올아워즈 현빈(a1119)/파우 현빈(a1462)/트라이비 현빈(a1683)과 별개. 로컬 나우즈 데이터에 한국어 altNames/formerNames 나우어데이즈는 있으나 영문 NOWADAYS는 없음, 해당 인물 영문 변형은 Hyunbin뿐(HYEONBIN 누락). 현재 파서는 무문맥 null, 잘못된 기존 selfGko=올아워즈를 주면 올아워즈 현빈으로 weak 유지→기존 주인 문맥을 신뢰한 재실행만으로 해결되지 않음. `nO3vCwkVMQM`은 반대로 ALL(H)OURS 공식 채널의 현빈×NOWADAYS 현빈 협업(설명 #HYUNBIN/#HYEONBIN)이라 primary 올아워즈를 무조건 나우즈로 옮기면 안 됨; 실제 게스트 누락은 별도 검토.
+- **[이슈·일반어 라↗️디오가 엑소 디오로] [yt_channel_videos AUdVO7_t1UE]** Mhz/MBC RADIO 공식 원본 'NCT 지성 비하인드 | 친한친구 방송반' 제목·업로더와 설명 #NCTDREAM/#지성 확인. DB 엑소/[디오]/공개/잠금false, 엑소 카드 '지성 비하인드' 검색에도 실제 노출. 현재 제목 파서도 엑소/디오 weak 재현. NCT 지성(a0031)과 도경수/디오를 분리해야 하며, 원본 설명의 실제 주인부터 보정 검토. `YWrEqWunyCM` TMI NEWS 마크&지성 예고편도 '알고 보니' 제목에 드림노트/[보니] weak를 재현하는 별도 후보; Mnet 원본 제목/업로더·말미 표본만 확인해 전체 예고편 속 보니 등장 부재까지 확정하지 않음.
+- **[이슈·제목/설명으로 멤버 확대된 개인캠 잔여] [yt_channel_videos]** 아래26행은 현재 다중멤버지만 제목이 특정 개인 촬영대상을 명시. 대표 STUDIO CHOOM NCT 지성 `2RuQPA_kWig`는 설명에 전체 MIX&MAX 마크&지성 무대 링크, 방지민 `Moiw5A7VqWQ`는 설명에 별도 코코 UNFILTERED 제목이 섞임→설명 속 공용 원본/다른 개인캠을 개인 영상의 모든 촬영대상으로 확장하지 않는 후속 검토. 이26은 제목/DB 대조 후보이며 모두 원본 전편 검증한 확정26건 아님. 정상 MIX&MAX 듀오 원본·단체캠·실제 동반출연 정보는 보존하고 개인캠 주인 필드와 분리.
+- **[이슈·유닛 개인캠 잔여12행] [yt_channel_videos] [shared.js _PROJECT_UNITS]** 아래26 밖에 셔누/형원 개인캠8개 `SU_9aLGWBT0,0W3XBoX7yiY,fAxdF86DF24,QKIePjs5Z6I,VpyK8fU_f24,3msojvpAxTo,LGBmjXJE_D8,tyQz9myh1Ag`가 둘 다 태그, 웨이션브이 샤오쥔 `oCWEVoOiRWA`/쿤 `Dmp8WSY9IX8`도 둘, 아스트로 진진 `1Bw1JbtxQkY`도 라키 포함, 정한 `a7UeivNNbvg`도 조슈아 포함. 공식 M2 형원 SU·KBS 정한 a7 제목/업로더 대조, 현재 파서는 이 유닛명 반복형을 여전히 두 명으로 반환. shared.js에 셔누X형원 유닛은 이미 있으므로 단순 유닛 신설로만 해결된다고 단정하지 말 것. 같은 무대 정상 단체 M2 `9Rrxnn-Itsk`는 제목 SHOWNU X HYUNGWON FanCam/둘 태그가 맞는 비교 사례(원본 제목·업로더 확인); 단체를 개인 한명으로 줄이지 않음.
+- **[보류·원본 한영 제목 충돌2개] [yt_channel_videos]** KBS 공식 `8PhRFkqvajs` 한글=조슈아 개인캠/영문=JEONGHAN Fancam, 설명 #JOSHUA/#조슈아; `NvWPIEEK2sI` 한글=골든차일드 김동현/영문=TAG Fancam, DB 설명=KIM_DONG_HYUN. 원본 페이지 제목에도 동일 충돌. 실제 촬영대상을 화면 자막/공식 해당 무대 자료로 확정하기 전 한 언어만 믿고 단일 멤버로 자동 정정하지 말 것. 둘 태그를 그대로 두는 게 정답이라는 뜻도 아님.
+- **[이슈·무조건 재매칭하면 악화되는 반례] [tools/matcher_harness.cjs]** 발행일4번째 인자로 실제 제목 비교: `2RuQPA_kWig` 무문맥→워너원 윤지성, selfGko=엔시티 드림→지성만. 현재 DB 엔시티 드림 주인은 맞으므로 윤지성으로 옮기면 안 됨. `KtzJev1oxUc,AFQl5kCafq4,aREBcdp2Owg`는 제목 MARK FanCam인데 무문맥→해찬만, 기존 엔시티127 문맥→마크+해찬. 공식 M2 Ktz 제목/설명은 마크 개인캠. 피처링/공동곡 정보와 촬영대상을 구분해야 하며 마크를 지우는 패치는 금지. 위100개 차분을 정답 목록으로 바로 SQL화하거나 weak 판정 전체를 숨기지 말 것.
+- **⏳ 덜 된 일 [명령·파일·판단 기준]** ① `SELECT id,title,group_ko,members,with_members,cover_of_members,cover_of_groups,tags_manual,cover_manual,content_flag,published_at FROM yt_channel_videos WHERE group_ko='퍼플키스' AND content_flag IS NULL AND title ~* '(SWAN|수안)' AND members @> ARRAY['박지은']`로223후보 최신값 재조회→수안 개인15·영어만7·LOUD4·실제 단체/협업·수동잠금1을 분리. artists.json a1150/a1151 공식 이름·그룹 이력부터 확정→필요 시 slim 재생성/정상 박지은·크랙시 SWAN 보존 검사 후 소량 DB 정정 계획(이번 승인 범위는 메모만). ② 아래26+유닛12는 원본 개인 촬영대상과 정상 단체 비교 후 현재값 가드·백업·보존해야 할 실제 멤버를 갖춘 계획으로. ③ 현재 매처 `_m2ParseTitle(title,undefined,false,published_at)`와 기존 selfGko를 넣은 결과를 반드시 나란히 확인, 잘못된 DB 주인을 전제하면 고정되는 현빈/디오와 반대로 문맥을 잃으면 틀리는 NCT지성/마크를 회귀 비교. 한영 제목 충돌2개는 수동 확인으로 남김. 이번 코드/JSON/SQL/DB 수정·수집기/매처 일괄 실행 없음.
+
+<details>
+<summary>SWAN 수안 개인캠 우선 검토 15행 — 현재 수안+박지은, 이번 정정 없음</summary>
+
+- `atgjmlQxEIk` — [K-Fancam] 퍼플키스 수안 직캠 'DOREMI'(PURPLE KISS SWAN Fancam) @뮤직뱅크(Music Bank) 250718
+- `k8P4Ok7OI80` — [K-Fancam] 퍼플키스 수안 직캠 'BBB' (PURPLE KISS SWAN Fancam) @뮤직뱅크(Music Bank) 240322
+- `rR5dNTIu27Q` — [K-Fancam] 퍼플키스 수안 직캠 'intro Save Me+ Sweet Juice' (PURPLE KISS SWAN Fancam) @MusicBank 230224
+- `0BHgTJICw7s` — [페이스캠4K] 퍼플키스 수안 'Intro : Save Me + Sweet Juice' (PURPLE KISS SWAN FaceCam) @SBS Inkigayo 230219
+- `BpuGbZdV7lo` — [K-Fancam] 퍼플키스 수안 직캠 'intro Save Me+ Sweet Juice' (PURPLE KISS SWAN Fancam) @MusicBank 230217
+- `QMHVacn_zdA` — [MPD직캠] 퍼플키스 수안 직캠 4K 'Sweet Juice' (PURPLE KISS SWAN FanCam) | @MCOUNTDOWN_2023.2.16
+- `ITf69h5dDwE` — [페이스캠4K] 퍼플키스 수안 'Nerdy' (PURPLE KISS SWAN FaceCam) @SBS Inkigayo 220731
+- `R0YqO5wSUjI` — [K-Fancam] 퍼플키스 수안 직캠 'NERDY' (PURPLE KISS SWAN Fancam) l @MusicBank 220729
+- `dPclBsZa7hc` — [MPD직캠] 퍼플키스 수안 직캠 4K 'Nerdy' (PURPLE KISS SWAN FanCam) | @MCOUNTDOWN_2022.7.28
+- `8P1Cbal1USg` — [얼빡직캠 4K] 퍼플키스 수안 'Pretty Psycho' (PURPLE KISS SWAN Facecam) @뮤직뱅크(Music Bank) 220429
+- `OKV5t82ChJ0` — [K-Fancam] 퍼플키스 수안 직캠 'Pretty Psycho' (PURPLE KISS SWAN Fancam) l @MusicBank 220429
+- `cn9goWEnTgQ` — [페이스캠4K] 퍼플키스 수안 'Pretty Psycho' (PURPLE KISS SWAN FaceCam)│@SBS Inkigayo_2022.04.24.
+- `XkEgSlXLwmU` — [K-Fancam] 퍼플키스 수안 직캠 'memeM (맴맴)' (PURPLE KISS SWAN Fancam) l @MusicBank 220415
+- `I1p6yNcpbc8` — [페이스캠4K] 퍼플키스 수안 '맴맴' (PURPLE KISS SWAN 'memeM' FaceCam)│@SBS Inkigayo_2022.04.10.
+- `XZeR6_tQQ50` — [MPD직캠] 퍼플키스 수안 직캠 4K 'Zombie' (PURPLE KISS SWAN FanCam) | @MCOUNTDOWN_2021.9.9
+
+</details>
+
+<details>
+<summary>개인 촬영대상과 다중 태그 대조 26행 — 원본 추가 검토 후보</summary>
+
+| 영상 ID | 그룹 | 제목 기준 촬영 대상 | 현재 members |
+|---|---|---|---|
+| `qAZgk5n9M7Q` | 세븐틴 | 승관 | 승관, 도겸 |
+| `fNCSXX6y-yg` | 세븐틴 | 도겸 | 도겸, 승관 |
+| `gh6dNfiaYj0` | 세븐틴 | 우지 | 우지, 호시 |
+| `OF-MawXpHic` | 세븐틴 | 우지 | 우지, 호시 |
+| `OAABSksCtVM` | 세븐틴 | 호시 | 호시, 우지 |
+| `Tw9Ys55-XZc` | 세븐틴 | 호시 | 호시, 우지 |
+| `oJ_PM7N-ouI` | 슈퍼주니어 | 은혁 | 은혁, 신동 |
+| `Moiw5A7VqWQ` | 이즈나 | 방지민 | 방지민, 코코 |
+| `2RuQPA_kWig` | 엔시티 드림 | 지성 | 지성, 마크 |
+| `OmmMcMzNQ_s` | 투모로우바이투게더 | 휴닝카이 | 휴닝카이, 연준 |
+| `H4tTSjkRKrc` | 씨스타 | 소유 | 보라, 소유 |
+| `WWV2RwNiAB8` | 씨스타 | 소유 | 보라, 소유 |
+| `tIMJknTbSFU` | 씨스타 | 소유 | 보라, 소유 |
+| `IoDvf0gsRis` | 더보이즈 | 큐 | 큐, 뉴 |
+| `6a7M3iOMTn0` | 더보이즈 | 선우 | 선우, 큐, 뉴 |
+| `SMfso9ah72Q` | 티오원 | 찬 | 찬, 재윤, 제이유, 렌타 |
+| `y3kHaSmbFfM` | 티오원 | 렌타 | 렌타, 찬, 재윤, 제이유 |
+| `iGHwACpwckY` | 있지 | 류진 | 류진, 예지 |
+| `rqzC5Lm1G6k` | 있지 | 예지 | 예지, 류진 |
+| `j6h7mDdXuo4` | 엔하이픈 | 정원 | 정원, 니키 |
+| `RdejEj_QHPg` | 엔하이픈 | 니키 | 니키, 정원 |
+| `P3XQsZ7jrDM` | 엘라스트 | 원혁 | 원혁, 최인 |
+| `lyoq6OIRGmA` | 더보이즈 | 주연 | 주연, 뉴 |
+| `eOIPJHVCPfc` | 프로미스나인 | 하영 | 하영, 새롬 |
+| `rfDlUzvAo_w` | 있지 | 채령 | 채령, 예지 |
+| `Jb5-jox7Tgw` | 엔하이픈 | 제이크 | 제이크, 제이 |
+
+</details>
+
+- **[완료·읽기 전용] [CHANGELOG.md]** 25차 운영 정정86건과26차 인계는 중복 제외. 다중 태그 직캠100행·SWAN 확대223후보·대표 공식 원본과 공개 카드 노출을 대조하고 위 근거/ID/정상 비교/보류 기준 기록. 이 작업의 변경은 CHANGELOG.md뿐이며 Claude의 코드 작업·기존 미추적 파일은 보존.
+
+## 2026-10-30 (Claude Code — 인스타 뷰어 사진별 글·가로 사진 가운데·캐러셀 20장)
+- **[완료·배포] [tools/ig_business_discovery.mjs]** 장원영 배리 게시물(DfAHFJYD0wc)이 실제 20장인데 10장만 보였다 — 수집기가 캐러셀을 `slice(0,10)`, 본문을 600자에서 잘랐다. 20장(인스타 최대)·2,200자(인스타 최대)로. 다음 수집 회차(ig-stats 2시간 주기)부터 반영.
+- **[완료·배포] [app.js _openIgViewer·_igvShow] [kpop_universe.css] [tests/ig-viewer-percap.test.js]** 사용자 "인스타는 사진마다 글을 달 수 있는데 우리는 우두두 나열", "가로 사진은 위에 붙이지 말고 가운데". 확인: 인스타는 장별 글을 따로 주지 않는다 — Graph API는 본문 한 덩어리, 공개 페이지 데이터(carousel_media 20개)도 장별 필드는 자동 이미지 설명(accessibility_caption)뿐. 그 게시물은 빈 줄로 나눈 문단이 정확히 20개 = 사진 20장. 그래서 **문단 수 = 사진 수일 때만** k번째 문단을 k번째 사진 글로, 아래 "본문 전체 보기" 토글. 다르면 지금처럼 전체. 사진 틀은 여러 장일 때 첫 장 비율로 고정(1.91:1~3:4로 자름, 인스타와 같음), 사진은 그 가운데(모바일·웹 좁은 무대). 헤드리스 390px: 세로 첫 장→가로 둘째 장 넘겨도 틀 517px 고정, 가로 사진 위아래 129px씩 가운데, 본문 위치 그대로, 문단≠장 수면 전체+토글 숨김.
+- **⏳ 아이폰 확인 대기** 실제 20장 게시물은 다음 수집 후에 사진별 글로 보인다(지금 DB엔 10장이라 문단 수와 안 맞아 전체가 나옴). 문단 매칭은 추정이라 작성자가 장별 글 없이 문단을 많이 쓴 게시물에서 우연히 개수가 같으면 엉뚱하게 나뉠 수 있음 — 그땐 "본문 전체 보기".
+
+
+## 2026-10-30 (Claude Code — Codex 검수25차 후속: 개인캠 86건·유닛 개인캠 재발 방지·호우)
+- **[완료·DB] [sql/codex25_indivcam_fix_2026-10-30.sql]** 검수25차 표의 개인캠 86건(하츠투하츠 예온21·오마이걸 비니42·msnz6·유닛8·구구단/유앤비/프리스틴 등)을 재조회 — 전부 수동잠금 없음, 제목에 촬영 대상 1명 명시. members=촬영 대상 1명 + tags_manual=true. 실행 86/86 확인. 백업 `_bak_codex25_indivcam_20261030`, 되돌리기 `_undo.sql`.
+- **[완료·배포] [admin.js _m2ParseTitle 유닛 확장·멤버 추출·_atmRosterFor] [shared.js _PROJECT_UNITS] [artists.json matchNames] [tools/tag_patrol.mjs] [tests/unit-indivcam.test.js]** 같은 86개 제목을 수정 전 엔진에 돌리면 57개가 또 틀렸다(29/86) → 수정 후 86/86. ① 개인캠 표시(직캠·Focused·FaceCam·얼빡·UNFILTERED CAM)가 있으면 프로젝트 그룹(UNB)도 이름 난 사람으로 좁힘, 유닛 명단 밖 같은 그룹 멤버가 직캠 주인이면 그 사람만(msnz 박소현 — 명단 자체는 안 바꿈) ② `groups[].matchNames` 신설 = 그 그룹 문맥에서만 쓰는 **매칭 전용** 이름(표시 안 함): 오마이걸 비니/BINNIE=유빈(비니는 모자라 전역 별칭 금지), 구구단 혜연=조아람·미나=강미나, 유앤비 필독/FEELDOG=오광석·CHAN=강유찬, 프리스틴 나영=임나영 ③ 유닛 명단 보정: 구구단 세미나+강미나(세정·미나·나영), PRISTIN V+임나영(나영·로아·은우·레나·결경), 도겸X승관에 영문 'DK X SEUNGKWAN' ④ god 유닛 '호우' 트리거를 한글 '호우'→'HOOW'·'HoooW'(공식 표기)로 — '호우 주의'(폭우)·'국지성 호우'·감탄사 '호우~'·드라마 넘버스 인물 '호우'가 god으로 갔다. 한글만 쓴 진짜 호우 영상은 실명으로 잡힘(김태우는 기존 동명이인 게이트로 빠질 수 있음).
+- **[완료·검증] 이전/새 매처 차분** 유닛명·옛 활동명 포함 제목 12,895개: 244개 변화 — 좁힘 64(개인캠 전부 정답), 넓힘 176(비니 오마이걸 98·PRISTIN V 단체 나영 50·세미나 단체 미나 25 등, 그룹명 없는 '비니' 0), 기타 4(msnz 유빈→공유빈·혜린→정혜린 등 정답). matching 246/246·groups-matcher 2080/0·validate-data 오류0/경고144·slim --check·syntax·stage-name·fullname·hashtag 계열 통과.
+- **[완료·DB] [sql/unit_indivcam_rematch_2026-10-30.sql]** 차분 행 중 현재 DB값이 옛 매처 결과 그대로(자동 태깅)이고 수동잠금 아닌 138건만 새 매처 members로(현재값 가드 포함, 잠금은 안 검). 수동잠금 57건·무관/숨김 1건·DB값이 옛 결과와 다른 46건은 손대지 않음. 138/138 확인. 백업 `_bak_unit_rematch_20261030`.
+- **[완료·DB] [sql/hoow_god_fix_2026-10-30.sql]** 제목에 '호우'가 있고 god이 붙은 14건 전수: 진짜 호우 5건 유지, DizntQpN_wE(레인보우→god 손호영·김태우), 0Lx0NriNYWk 세븐틴 합본(god with 제거+준 추가=13명), 바다 '국지성 호우' 2건→S.E.S. 바다(기존 바다(BADA) 관례), 주간아 투어스 회차→투어스, 넘버스 드라마 2건·출처불명 "???: 호우~" 1건→무관. 1UFYiyX0p1Y는 이미 보류라 제외. 백업 `_bak_hoow_god_20261030`.
+- **⏳ 남김** 검수25차의 PR48(노트북 동명이인 소유자) CI 실패 판단은 Codex 쪽 진행 사항이라 손대지 않음. 검수26차(원곡 feat를 게스트로 오인 등)는 Codex가 작성 중이라 이번 범위 밖.
+
+
+## 2026-10-30 (Codex — 검수26차·원곡과 실제 출연 구분 후속)
+- **[완료·실제 동반출연을 남기는 추가 비교] [yt_channel_videos]** `Gpv0zeOGqis` SF9 공식 'Crush 잊어버리지마(Feat. 태연) Cover by DAWON (Feat. 설현)'은 with 설현(에이오에이)/cover 태연(소녀시대)로 현재 정상 분리, 원본 제목·업로더 대조. 이 정상값을 feat 일괄 제거로 망가뜨리지 말 것. `_Y3uhUBAcnI` IVE 공식 BaddieChallenge는 안유진·키가 함께하는 첫 장면 확인→with 키(샤이니)는 보존하되 cover 키는 자기 곡 챌린지 오표시 검토. `gjSR9TgTzQE` OnlyOneOf 공식 seOul drift Challenge도 유정·키노2인 장면/제목 확인→with 키노 보존, title의 'Speed up'에 cover 스피드·멜로디데이/SPEED UP이 붙은 부분 검토. `V7oihd6y3dg` Mnet 공식 Nxde 직캠 모음 제목은 나나·도화·수윤·지한 실제 공연자4인 명시→with 찬미/김수윤/지한과 원곡 아이들은 보존 검토, cover_of_members의 김수윤/지한을 원곡자로 보는 건 별도 오류. 본인곡/실제 합동 무대를 원곡 배열 중복이라는 이유만으로 삭제하지 말 것.
+- **[이슈·원곡자 이름을 곡명에 저장] [yt_channel_videos]** `jIwl9k4ZRmI` IDID 공식 '마크(MARK) - 프락치(Fraktsiya) (Feat. 이영지) Covered by PARK SEONGHYEON' 원본 제목·업로더 확인. primary 아이딧/[박성현]은 보존하되 cover_of_song='마크 (MARK)'는 곡명 프락치와 불일치, cover_of_members 이영지만 있어 주 아티스트 마크의 원곡 관계도 누락 검토. 태그가 비어 있던 원곡자에게 출연 with를 새로 붙이는 방식으로 고치지 말 것.
+- **⏳ HANA 후속 [파일·판단 기준]** 아래16행과 `pb1SbjOzifY,nWsCYW4G9UI,WeCTw-QLgyU` 최신값/잠금 재조회→실제 단체/개인/듀엣 촬영 범위부터 확인. HANA의 정식 등록 여부는 groups.json/PRINCIPLES.md의 한국어 음방 포함 기준·공식 멤버 명단 대조 후 사용자와 방향 결정. 등록 없이 동명이인4명의 with를 제거하는 정확성 정정과, HANA 본인 보류4행의 재귀속·공개 결정은 별도 단계. 실제 아일릿 모카 개인 영상/윤아·원희·민주·이로하 정상 개인캠8행 및 기존 단체8K 빈 members 보존. 제목의 MOMOKA 문자열만으로 부분일치가 원인이었다고 확정하지 말 것(현재 제목 파서는 이미 개선된 결과).
+- **[이슈·HANA 이름이 등록 동명이인4명으로 연결] [yt_channel_videos] [groups.json] [artists.json]** `nWsCYW4G9UI` KiiiKiii 공식 'Pop Off Pop Off with HANA JISOO MOMOKA'는 primary 키키/[지유]인데 with에 지수(블랙핑크)·서지수(러블리즈)·하나(피프티피프티)·신보라(신보라)4명이 잘못 붙음. 공식 원본 제목/업로더·설명 #JIYU 및 @HANA_BRAVE_Official·3인 장면 확인, 블랙핑크 지수 멤버 카드의 전체→Pop Off 검색에도 실제 노출 확인. 현재 groups 키/en에는 HANA 그룹 없음(솔로 HANA/신보라·피프티 하나와 구별). 현재 제목 파서는 블랙핑크를 primary로 잡아4명을 ambiguous로 반환하므로 그 결과를 그대로 적용하면 정상 지유까지 잃음. 원래 키키/지유 보존, HANA 소속 이름으로 등록 외 인물을 대신 연결한4개 with만 분리 검토.
+- **[이슈·HANA 모모카와 아일릿 모카 경계] [yt_channel_videos]** HANA+JISOO/MOMOKA 제목 최근40행 표본에서 아일릿 members=[모카]16행 발견(아래표). 단체 MV/음방/비하인드가 섞여 **16개 전부 개인 태그 오류 확정 아님**. 대표 `EL2lwHLePHc` 공식 Dance Practice는 원본 제목·ILLIT 업로더와4인이 춤추는 장면 확인, 모카 카드 I Got Your Back 검색에도 노출. `_Pk6xfju3l0` 공식 MV와 `-i5di_Tx7tM` Mnet 한국어 단체 무대 역시 현재 모카 단독 태그→범위 정정 우선 검토. `ykJ2xlYdCBQ`처럼 실제 MOKA & JISOO 제목은 모카 태그 정상일 수 있으므로 묶음 전체 members=[] 덮어쓰기 금지. 별도 `pb1SbjOzifY` 제목 YUNAH & MOMOKA인데 members=[윤아,모카]로 모모카를 모카로 오인한 후보, 공식 원본 제목/첫 윤아 장면 대조·윤아 카드 검색 노출은 정상(윤아 누락으로 기록하지 않음). 현재 파서는 단체3행 members=[], pb1→윤아만 반환하므로 일부는 예전 DB 태그 잔존 유형, 정확한 원인/출연 전원은 추가 검토.
+- **[완료·HANA 정상/보류 경계와 등록 검토 근거] [yt_channel_videos] [PRINCIPLES.md]** 정상 비교 아일릿 윤아/민주/원희/이로하 개인캠8개는 각 본인만, 단체8K `GFcUYXq0sSw`는 빈 members로 유지. 공식 M2 윤아 `4X14i6ebu14` 제목/업로더 확인. HANA 본인 개인캠 `2SZN3rVIfWo,yomDGDCVkiE,QoEjd_Rz-Vo,w5I_ygSq2CI`는 타그룹 귀속이 틀려도 이미 보류라 새 공개 오노출로 세지 않음. 뒤2개 공식 M2 원본은 HANA MOMOKA/JISOO라고 명시, Mnet `-i5di_Tx7tM` 원본 제목·설명은 Korean Ver./EP942/260820 방송으로 한국어 음악방송 협업 근거. HANA를 향후 등록 검토 후보로 올릴 수 있으나 전체 명단·공식 그룹/개인 신원·원칙 적용 확정 전 즉시 등록/보류 전량해제 금지. 협업 표기 HANA를 피프티 하나나 솔로 신보라로 대체하지 말 것. `WeCTw-QLgyU`는 제목 SAKURA+HONGEUNCHAE인데 현재 사쿠라만/현재 매처 둘 반환인 별도 누락 후보(원본 출연 장면 미확인).
+- **[완료·원곡 오표시 실제 UI 추가 확인] [yt_channel_videos]** 오메가엑스 카드 I Had Some Help 검색에서 `Jl2gXuWRJJU`에 '원곡: 김동현(에이비식스)' 실노출을 확인. 원본에 명시된 Post Malone/Morgan Wallen과 다르므로 메타데이터 비교에 그치지 않는 화면 오류 사례.
+
+<details>
+<summary>HANA 관련 아일릿 모카 단독 태그 16행 — 제목별 검토 후보, 일괄 제거 금지</summary>
+
+| 영상 ID | 현재 제목 | 상태 |
+|---|---|---|
+| `eYmGDQ1VjU8` | 글릿 여기 내가 있어🩵 l ‘I Got Your Back (Feat. JISOO, MOMOKA of HANA)’ 음악 방송 비하인드 l ILLIT (아일릿) [BEHIND-IT] | 공개 / members 모카 |
+| `blsnUII2KD4` | ♡#엔딩요정컬렉션🧚#아일릿 #ILLIT - I Got Your Back (Feat. JISOO, MOMOKA of HANA) (Korean Ver.)✨ #MCOUNTDOWN | 공개 / members 모카 |
+| `EL2lwHLePHc` | ILLIT (아일릿) 'I Got Your Back (Feat. JISOO, MOMOKA of HANA)' Dance Practice | 공개 / members 모카 |
+| `-i5di_Tx7tM` | 아일릿 - I Got Your Back(Feat. JISOO, MOMOKA of HANA) (Korean Ver.) #엠카운트다운 EP.942 ／ Mnet 260820 방송 | 공개 / members 모카 |
+| `R2HEJVwO0bE` | 𝟐𝟔𝟎𝟖𝟐𝟎 𝑶𝒖𝒕𝒇𝒊𝒕 𝑶𝒇 𝑻𝒉𝒆 𝑴𝑪𝑫 : 𝑶𝑶𝑻𝑴 with #ILLIT, #JISOO, #MOMOKA of HANA✌️#MCOUNTDOWN #엠카운트다운 #OOTM | 공개 / members 모카 |
+| `ykJ2xlYdCBQ` | MOKA & JISOO Got Your Back🎀🌹 #I_Got_Your_Back #ILLIT #아일릿 #MOKA #HANA | 공개 / members 모카 |
+| `jGvihirVVQg` | ILLIT ／ I Got Your Back (Feat. JISOO, MOMOKA of HANA) Korean Ver. ／ Special Video 📣 | 공개 / members 모카 |
+| `x3e2e2IOhmI` | ILLIT (아일릿) 'I Got Your Back (Feat. JISOO, MOMOKA of HANA)' @ MEZAMASHI WANGAN FES | 공개 / members 모카 |
+| `edJxw9I8j5k` | ILLIT (아일릿) 'I Got Your Back (Feat. JISOO, MOMOKA of HANA)' @ LuckyFes'26 | 공개 / members 모카 |
+| `pKGw85EABAk` | 저 됐어요, 록커 됐어요!!! l ‘I Got Your Back (Feat. JISOO, MOMOKA of HANA)’ 녹음 비하인드 l ILLIT (아일릿) [BEHIND-IT] | 공개 / members 모카 |
+| `XQWhr4F9vbo` | ILLIT & JISOO & MOMOKA Got Your Back🤝🏙️🦕 #I_Got_Your_Back #ILLIT #아일릿 #HANA | 공개 / members 모카 |
+| `YzSVnaHz2r8` | 마법소녀, 세상을 구하라✨ l ‘I Got Your Back (Feat. JISOO, MOMOKA of HANA)’ MV 비하인드 l ILLIT (아일릿) [BEHIND-IT] | 공개 / members 모카 |
+| `dp18Jb3cK8s` | ILLIT (아일릿) ‘I Got Your Back (Feat. JISOO, MOMOKA of HANA)’ @ PRESS START♥ | 공개 / members 모카 |
+| `GIN6QFoGYCM` | 'I Got Your Back (Feat. JISOO, MOMOKA of HANA) ' 🎀🌹#I_Got_Your_Back#PRESS_START_JAPAN#ILLIT#아일릿#HANA | 공개 / members 모카 |
+| `RnerBUsjaUM` | ILLIT & JISOO & MOMOKA Got Your Back🤝🎀🌹#I_Got_Your_Back #ILLIT #아일릿 #HANA | 공개 / members 모카 |
+| `_Pk6xfju3l0` | ILLIT (아일릿) 'I Got Your Back (Feat. JISOO, MOMOKA of HANA)' Official MV | 공개 / members 모카 |
+
+</details>
+
+- **[이슈·원곡 feat를 실제 게스트로 오인] [yt_channel_videos]** 신규4행: `ONyyfNq1UO8` 이정현 Skrr 커버→with 지젤(에스파), `Df1P2WiYSms` 다원 VIBE 커버→members 다원+유태양/with 지민(방탄소년단), `mi-Wj3jFLjg` 민준 Go! 커버→with 도겸(세븐틴), `sZV7NFhI0Q0` 원혁 관둬 커버→with 태용(엔시티127). 공식 EVNNE/SF9/NINE.i/E'LAST 원본 제목·업로더 및 DB 설명이 촬영/가창 주체와 원곡 크레딧을 구분함. 도겸 카드 전체→민준 검색에는 Go! 커버1개 노출도 확인(단, 다른 아티스트 커버 섹션의 정상 노출 자체와 잘못된 with 태그는 구분). 지젤·지민·태용·도겸의 원곡 관계는 실제 합동 출연과 분리하고, 다원 커버에서 유태양(SF9)과 원곡 태양(빅뱅)을 구별해야 함. 전편 출연 확인/실행 SQL 작성 아님.
+- **[이슈·원곡/출연 역할이 뒤바뀐 1theK3행] [yt_channel_videos]** `NiVRVDVhZbY` 이서 롤모델 커버 Preview는 primary 방탄소년단/with 이서/cover 이서+몬스타엑스, `vnwE2jIPgWI` 세은 커버는 primary 세븐틴/with 세은/cover 세은+블랙핑크, `uk9rO3KQgco` 환웅 커버는 primary 엔시티127/with 환웅/cover 환웅+에스파. 세 원본의 1theK Originals 제목·업로더 확인. 환웅 원본 펼친 설명은 Black Mamba vs Kick It 투표와 ONEUS 공식 풀버전 예고로, 환웅은 공연자이고 두 그룹이 커버 대상임. 현재 제목 하네스도 원곡 그룹을 primary로 반환(이서→몬스타엑스 strong, 세은→세븐틴 strong, 환웅→엔시티127 strong). primary를 실제 공연자에 맞추고 원곡 배열에 본인이 들어간 오류를 분리 검토하되 원곡 그룹 연결 자체까지 삭제하지 말 것.
+- **[이슈·Floral Sense 예성 영상4행이 윈터 주인] [yt_channel_videos]** `WfkOdlW8Va4,nOnwBLSDS9w,dy84rKkxEG0,GgbjDi0gtBk` 모두 primary 에스파/[윈터]. 앞3행은 예성을 with와 원곡에 동시 저장, 마지막 방송본은 예성 태그도 없음. 윈터 카드 Floral 검색에서4개 모두 실제 노출. SBS 공식 FullCam `nOnwBLSDS9w` 제목/업로더 및 첫 무대 장면은 예성+연주자, FaceCam 제목도 YESUNG 대상. 제목의 곡 크레딧 '(Feat. 윈터 of aespa)'를 촬영대상보다 먼저 보는 경로를 검토할 것. 전편의 윈터 등장 여부를 모두 확인한 것은 아니므로 부재 확정으로 적지 않되, 예성 개인캠을 윈터 개인캠처럼 귀속시키고 본인곡 라이브를 예성 커버로 표시하는 오류는 분리. 정상 MPD 예성 `qBxx2thi6AI,YmjFbAr-C-k` 및 실제 예성/려욱 듀엣 `a3-3iJpLOKc` 보존.
+- **[이슈·유스피어 본인곡에 스피드/게스트 원곡16행] [yt_channel_videos]** 공개 group_ko=유스피어 AND cover_of_groups @> ARRAY['스피드']는16행. 전부 ZOOM/SPEED_ZONE 제목, 실제 협업 상대가 with와 cover_of_members 양쪽에 중복(16명 관계). 공식 USPEER 원본 `03awIYsmtnE` 윤·서유, `GpnHypDJ9-g` 유빈·유스피어 및 정상 MV `7WSmAo7kSoo` 대조; 유빈 원본 첫 장면에 함께한 멤버들 확인. 유스피어 카드 SPEED_ZONE 검색에서 '원곡: 스피드' 실노출. groups.json의 SPEED ZONE(2025.06.04)/타이틀 ZOOM도 대조. tags_manual=true16행/cover_manual=false16행이므로 자동 태그 덮어쓰기 금지. 실제 with/수동 멤버는 보존하고 불필요한 cover 세 필드만 별도 판단할 대상.
+- **[이슈·자기곡/일반 문구 오탐2행] [yt_channel_videos]** `7FoKicIz_Jc` Apink 공식 정은지 DND챌린지는 primary 에이핑크/정은지는 맞지만 with·cover에 은지(브브걸), cover_group SS501, song 'Find (파인드)'까지 붙음. 원본 제목·업로더·첫 장면 및 설명 #정은지/#Apink/#DND 대조, 'Find your way'는 자기곡 챌린지 문구. 정상 공식 D N D MV `X6MAjL5LvuE` 원곡필드 빈 상태 보존. `ACqe3KrXhpo` CIX 공식 '포럽 챌린지 with 우주소녀 설아'는 실제 현석·설아가 같이 서 있는 원본 장면/제목 확인→with 설아는 보존; cover_song '곁(웹툰 막내황녀님 X 설아)'는 제목의 우주소녀가 곡 사전 별칭처럼 걸리는 경로로 재현돼 원곡 관계 재검토. 실제 챌린지 사용곡까지 이 검수에서 확정하지 않음.
+- **[이슈·시스템 밖 원곡을 동명 K-pop곡에 오귀속2행] [yt_channel_videos]** `m_Ns7lTLiS8` 키나 'BIG Naughty - MUSIC' 커버가 바다(S.E.S.)/Music, `Jl2gXuWRJJU` OX:N 'Post Malone - I Had Some Help (feat. Morgan Wallen)'이 김동현(에이비식스)/썸탈래 나랑(SOME). FIFTY FIFTY/OMEGA X 원본 제목·업로더 대조, DB 설명에도 명시된 원곡이 있음. 로컬 사전 해석기는 각각 MUSIC 동명/Some 부분을 잡고 externalArtist=true 후보를 재현. 미등록 원곡자를 등록된 다른 사람으로 대신 채우지 말 것. 실제 공연자/멤버 손실 없이 잘못된 원곡 세 필드만 정리 여부 판단.
+- **[이슈·실제 커버 feat 보존 비교2행] [yt_channel_videos]** `SHqot3nOYi0,SJbUq4RHXfM` 아스트로 공식 '바이 바이 ... Cover by MJ (Feat. YOON SAN-HA)'는 DB MJ만 있고 윤산하 누락 후보. 같은 곡의 쇼츠 `NVH6R8APhQE`는 MJ+윤산하로 정상 비교. 원본 두 제목/업로더와 긴 버전 첫 장면의2인 확인, Gift Clip 전편은 미확인. 제목 파서는 두 개 모두 윤산하만 반환하여 MJ까지 손실될 수 있음. 원곡 괄호의 이무진과 Cover by 뒤 실제 피처링 윤산하를 문맥별로 구분할 필요가 있으며 feat를 전역 삭제하면 이 정상 동반출연도 사라짐.
+- **[완료·재현 범위와 자동 실행 구분] [tools/matcher_harness.cjs] [tools/m2_harness.js] [admin.js _coverResolve·_coverHasCollabSignal·_coverRestoreSignal]** 실제 원제목+발행일로 읽기 전용 비교. 원곡 해석기는 `M= require('./tools/m2_harness').load(); M._coverBuildIndex([]); M._coverResolve(row)`로 **로컬 아티스트/디스코만 사용·실운영 차트 추가행 없이** 재현했으므로 전체 루틴 동일 결과/자동 적용으로 단정 금지. Skrr/VIBE 원곡 괄호 feat와 관둬 '선배님'이 collab/restore 신호로 잡혀 잘못된 with를 보존, 관둬는 추가로 FTISLAND 동명곡 후보도 제시. 반면 USPEER16·DND·Go!는 resolver null, v2 스윕의 if(!r)continue 경로라 '현재 매처가 덜 틀림=기존 DB가 자동 청소됨'이 아님. externalArtist 후보는 별도 _coverConfidence/검수큐 가드가 있어 이 결과만으로 자동 재오염을 단정하지 말 것. Claude 작업 중 소스 스냅샷 결과임.
+- **[이슈·비공개 원본이 공개 카드에 잔존5행] [yt_channel_videos]** 아래 상위12표본 중5개는 원본 YouTube가 '동영상을 재생할 수 없음 / 비공개 동영상입니다'이고 각 그룹 카드 정확 검색에도 해당 영상 노출: `0HSvBs73UXA` 블랙핑크 The Station(10 YEARS), `XAomU4u1BxE` 에이티즈 BAD Japanese TBS, `xzd24Ik62E0` 아일릿 I Got Your Back TBS, `nocqSj3bnmQ` 코르티스 REDRED TBS, `heItpRvGzVU` TXT Setsuna Hanabi CDTV. 모두 content_flag=null/unavailable_at 있음. 제목이 같은 정상 MV Reaction·다른 무대·쇼츠를 함께 제외하지 말 것.
+- **[완료·사용불가 표식=삭제 확정 아님] [yt_channel_videos]** content_flag IS NULL AND unavailable_at IS NOT NULL 전체1201행(조회시점), 조회수 상위12개를 실제 원본으로 대조한 결과5개 비공개·7개는 제목/공식 업로더/플레이어를 현재 열 수 있음. 정상 대조7개 `1NX1J6JdXwY,FqijFDKALg4,TqMBhhqMqQs,1nzhBnJHPjQ,1nlzudyh138,4jlxmuYjeQM,1QBGLDE0RAQ`. 전편 재생/YouTube API 복구 판정은 아님. 전체1201개를 비공개/깨진 링크로 보고 일괄 숨기거나 지우면 정상 영상 손실 위험. 표식 재확인과 실제 비공개 노출 제거를 별도 작업으로 계획.
+- **⏳ 덜 된 일 [파일·조회·판단 기준]** ① 아래 ID와 각 본문의 ID를 `SELECT id,title,group_ko,members,with_members,with_groups,cover_of_members,cover_of_groups,cover_of_song,tags_manual,cover_manual,content_flag,unavailable_at,published_at FROM yt_channel_videos WHERE id IN (...)` 재조회, 코드 작업 완료 후 소량 원곡/출연 역할 정정 계획. 유스피어 수동잠금과 실제 협업/예성 본인캠/원곡 피처링 관계 보존. ② tests/cover-resolve.test.js·tests/cover-cleanup.test.js·tests/song-credit-strip.test.js를 참고해 **원곡 괄호 feat vs Cover by 뒤 feat**, 선배님 소유격, 외부 원곡 동명/부분일치, 다중곡 커버의 공연자↔원곡 방향을 각각 비교. 이번 테스트 파일 수정/실행 스윕 없음. ③ 공개+unavailable 쿼리는 조회수순12표본을 시작점으로 비공개5개만 API/실제 플레이어 재확인→soft-hide 등 기존 운영 절차 검토, 열리는7개는 표식 복구 확인 대상으로 분리. 'null flag=항상 플레이 가능' 또는 'unavailable=항상 삭제' 둘 다 가정하지 말 것. 이번 코드/JSON/SQL/DB 정정 없음.
+
+<details>
+<summary>유스피어 원곡 오표시 후보 16행 — 실제 게스트는 보존</summary>
+
+| 영상 ID | 현재 with (보존 검토) | 현재 cover_of_members (잘못된 원곡 후보) |
+|---|---|---|
+| `03awIYsmtnE` | 윤(스테이씨) | 윤(스테이씨) |
+| `3o3-UD2XP3U` | 산들(비원에이포) | 산들(비원에이포) |
+| `5KGQB7IefC8` | 공찬(비원에이포) | 공찬(비원에이포) |
+| `3C1-gyXnbN8` | 신우(비원에이포) | 신우(비원에이포) |
+| `-8lzxu0qw4o` | 케이주(킥플립) | 케이주(킥플립) |
+| `DCeauZCNlPc` | 리이나(하이키) | 리이나(하이키) |
+| `cQiHnkiHL8A` | 최리(아르테미스) | 최리(아르테미스) |
+| `8b7gzW9WkB0` | 시윤(나우즈) | 시윤(나우즈) |
+| `FsqtcWE9nw8` | 이서(아이브) | 이서(아이브) |
+| `JK2j9qwcrqo` | 성화(에이티즈) | 성화(에이티즈) |
+| `TrQqCEhe3cQ` | 코코(이즈나) | 코코(이즈나) |
+| `YVN5ojqQDa0` | 도훈(투어스) | 도훈(투어스) |
+| `6rDxfyXEgmc` | 혜린(힛지스) | 혜린(힛지스) |
+| `GpnHypDJ9-g` | 유빈(오마이걸) | 유빈(오마이걸) |
+| `BHFLkMrJROg` | 도연(키라스) | 도연(키라스) |
+| `IRnP2QDbaV0` | 환웅(원어스) | 환웅(원어스) |
+
+</details>
+
+- **[완료·읽기 전용 검수] [CHANGELOG.md]** 검수25차 86건은 Claude 정정 작업에 맡기고 이번 신규 집계에서 제외. 원본30개 이상의 제목/공식 업로더와 대표 재생 장면, 공개 그룹·멤버 카드, 사용 불가 표식 상위12행을 대조(전편 시청 아님). 확인 오류·추가 검토 후보·정상 보존 사례를 구분해 이 파일에만 기록. 코드·JSON·SQL·DB 쓰기/수집기·스윕 실행 없음. Claude의 동시 변경 파일·커밋은 보존.
+
+## 2026-10-30 (Claude Code — 그룹명 빗댐 제목 '출연 의심' 검수 큐)
+- **[완료·배포] [shared.js _parodyRefCue·_parodyRefCueFor] [admin.js _extBuildRows·_vmRenderVideoList] [kpop_universe.css] [tests/parody-ref.test.js]** 사용자 "50대 코르티스룩 #할명수 #박명수 #코르티스 — 코르티스는 안 나온다", "개그계 리센느처럼 '~계 그룹명'도". 제목만으론 출연/언급을 못 가르니 **자동 숨김 없이 검수 큐에 '출연 의심'으로만**(사용자 결정). 판정: ① 그룹명+룩/st/스타일/메이크업/코디/재질/짝퉁/따라하기/흉내/성대모사/닮은꼴/패러디(뒷말이 단어 끝 — "룩스 캔 킬"·"스타일리스트"·"StageMix" 제외) ② ~계(의) 그룹명(세계·가요계·연예계·아이돌계 등 제외) ③ 제2의 그룹명. 외부 동기화는 주인 채널·멤버가 잡힌 영상 제외하고 needs_review만 켬, 검수 탭 행에 배지. 실DB 후보 85,011건 재판정 → 34건(멤버 태깅·수동·무관/숨김 제외). 절반은 진짜 빗댐(트로트계 리센느·수학계 BTS·트롯계 블랙핑크·앨리스 메이크업·제2의 엔하이픈 등), 나머지는 그룹 자체 콘텐츠(갓세븐 '룩' 직캠·엔믹스 패러디 극장 등 — 옛 행은 source_tier가 비어 자체 채널을 못 가림) → 검수에서 '정상'으로 넘기면 됨.
+- **[완료·DB] [sql/parody_review_2026-10-30.sql]** 위 34건 needs_review=true 실행·확인(queued 34/34). 되돌리기 `sql/parody_review_2026-10-30_undo.sql`. 할명수 코르티스룩(tlfJ6qYAELc)은 10-28 수동 무관이라 대상 아님.
+
+
+## 2026-10-30 (Claude Code — 발견 탭 쇼츠 썸네일 모자이크·뿌옇다 짠 5번째 재발)
+- **[완료·배포] [app.js _mountShortThumb·_shortThumbShrink·_shortThumbQueue·_shortThumbWhenNear] [tests/short-thumb.test.js]** 사용자 "Trend 위쪽 쇼츠는 모자이크처럼 뿌옇고, 아래 쇼츠는 뿌옇다가 갑자기 짠 선명(아이폰)". 원인: 10-27 축소 방식이 **큰 원본(1080×1920)을 먼저 화면 img에 띄우고 같은 걸 또 받아 줄여 갈아끼우는** 구조 — Trend 위쪽 수십 장이 한꺼번에 뜰 때 원본+축소용 사본이 겹쳐 메모리가 오히려 두 배로 튀고(사파리는 이때 큰 그림을 저해상도로 깎아 그림=모자이크), 아래쪽은 원본→축소본 교체와 페이드 중 비치는 블러 배경이 "뿌옇다 짠"으로 보였다. 수정: ① 큰 원본은 화면 밖 Image(crossOrigin)로만 받아 카드 폭×DPR(최대 2)로 줄인 blob만 화면에 붙임 ② 큰 그림 동시 처리 2장 제한(10초 지나면 자리 비움) ③ 스크롤 상자 근처에 온 카드만 받기 시작 ④ decode 끝난 뒤 onReady→0.3초 페이드, 그때까지 셔머 유지 ⑤ 블러 배경은 페이드 끝난 뒤(400ms)에 깔기. 폴백 순서(oardefault→oar2→hqdefault→onFail)·뜬 뒤 error 무시는 그대로. 헤드리스 390px DPR3 발견 탭: 화면 img에 원본이 붙은 횟수 0, 동시 처리 최대 2, 표시 그림 332px(카드 166px), 4,200px 내려가도 보이는 쇼츠 전부 표시·셔머 잔존 0. short-thumb·card-title-visibility·feed-trend·syntax 통과. ⏳아이폰 확인 대기 — 또 재발하면 카드 img src가 blob:인지, naturalWidth가 카드폭×2 수준인지부터.
+
+
+## 2026-10-30 (Codex — 검수25차·노트북 후속과 개인캠 출연 범위)
+- **[완료·검수 범위] [CHANGELOG.md]** 앱 코드·데이터 파일·DB 쓰기 없이 공개 카드 7명/그룹(예온·승관·이정현·김유연·김세정·아린·레인보우 등)과 원본 영상 30개의 제목/공식 업로더를 대표 대조. 전편 재생 검증 아님. 개인캠 정정 검토 후보는 9개 그룹 고유 86행이며, 기존 운영 정정 14행 및 msnz 확대 후보 72행과 단순 합산 금지.
+- **[완료·노트북 인계 대조] [CHANGELOG.md]** PR46은 2026-10-30 KST 병합 완료로 확인, 기록의 '브랜치/미배포'는 당시 상태임. 운영 정정14건을 현재 SELECT로 재조회: 아크3·이즈나3은 개인 멤버만, DXTEEN협업5는 잘못된 쇼타로만 제거, AAA3은 실제 주인 유지·모두 tags_manual=true/공개. 재정정하지 않음. 별도 PR48(동명이인 소유자/링크)은 OPEN이므로 중복 작업 제외. PR48이 노트북 검수24차여서 이번 번호를25차로 정정.
+- **[이슈·하츠투하츠 예온 카드 오노출21건] [yt_channel_videos]** 공개 UNFILTERED CAM24행(3곡×8명) 대조→예온 본인3행은 정상, 다른7명×3곡21행에 [실제 개인,예온] 잔존. 예온 카드 전체→UNFILTERED 검색에서24개가 실제 노출됨. 공식 STUDIOCHOOM 원본 이안 RUDE! nDPhVp_m0Lg, 유하 RUDE! SzOj2elsby8, 에이나 FOCUS 5MvSYAI5dmY, 이안 TheChase 0-VLTMGBFAM 및 정상 예온 HDJSpEXmodI 제목/업로더 대조. 현재 하네스는21행을 개인1명으로 반환하므로 예전 태그 재고 유형. 정상 예온 HDJSpEXmodI,xC0w_5k76RQ,E_uzYyEPp-4와 단체 영상은 보존.
+- **[이슈·유닛명 개인캠 범위8건] [yt_channel_videos] [admin.js _m2ParseTitle]** 레드벨벳 아이린&슬기 TILT 2행(7aok72GmrTM→아이린,dYN1EUYF_fQ→슬기), 세븐틴 호시X우지4행(NIeq_ExVRsM,Rdzd1AfGogA→호시 / MVnkX6f0dAo,edxcLHcs2no→우지), 도겸X승관2행(07n12WVVDbk→도겸,YoPS8wJdj_s→승관). 현재 DB는 각 유닛2명 동시 태그. 승관 카드→DK FaceCam 검색에 도겸 개인캠07n12WVVDbk 실제 노출, 해당 SBSKPOP ZOOM 원본 제목 확인. 현재 파서는 레드벨벳2·호시우지4는 개인으로 좁히지만 도겸승관2는 여전히 두 명을 반환. 제목이 유닛+괄호(SEVENTEEN)+개인인 경우를 고정유닛 정상 단체 영상과 구별하는 후속 필요.
+- **[이슈·이븐 문정현 캠에 이정현2건] [yt_channel_videos]** AU6rnJ1uFlI(HowCanIDo),uo6dokrUmck(HOTMESS)는 [문정현,이정현]·공개. 공식 STUDIOCHOOM 원본 두 제목 모두 MUN JUNGHYUN(문정현), 이정현 카드→UNFILTERED에 두 영상과 이정현 정상 개인캠이 함께 노출됨. 현재 파서는 문정현만 반환, 예전 태그 재고 유형. 동명 일부를 근거로 인물 자체를 합치거나 정상 LEE JEONGHYEON 개인캠을 제외하지 말 것.
+- **[이슈·msnz 개인캠과 유닛 범위 충돌] [shared.js _PROJECT_UNITS.msnz] [admin.js:9052] [yt_channel_videos]** 우선 확인한 개인캠6행 ioCJfRelmWc,vrTgq5TlqFs,ZJGKYtZAh9o,CHCkQSL7GFA,RRwArZ8JNno,jBOrUYdltkI는 본인+다른8명으로9명 저장/현재 파서도9명 반환. 김유연 카드 ChristmasAlone 검색에 윤서연·김나경·카에데 등의 개인캠이 실제 노출, SBS 박소현 원본 및 KBS 카에데/윤서연 제목 대조. _uNamed가 기존 유닛8명 안에서만 개인 이름을 찾으므로 박소현 등 명시된 촬영 대상이 그 명단 밖이면 '이름 없음'으로 보고8명 전원 확장하는 구조. 공개 msnz294행 중 다중멤버+캠 문구72행은 확대 검수 후보일 뿐72건 모두 개인캠 오류 확정 아님(sun/moon/neptune/zenith 단체캠도 포함). msnz를 고정8명으로 둔 데이터와 당시4개 디멘션/전원 곡의 관계도 공식 발매 당시 자료 대조 필요. 현재8명을 무조건24명으로 바꿔 일괄 확장하거나, 상위294행을 전부 숨기지 말 것.
+- **[이슈·옛 활동명/합류 그룹 개인캠9건] [yt_channel_videos] [artists.json]** 구구단 미나 hGZgf4cFUzM는 정작 미나 없이 [김세정,김나영], 혜연3행 XhXM782_wLE,yOvckQbf59w,QRQJ_SlXGM4는8명. 오마이걸 비니2행 xOOuoXeBopg,yw5xawWPDHI는 반하나3명. 유앤비 찬 S9lhjf3YewY·필독 cpCAKx9C0eU는9명, 프리스틴V 나영 HjQR4-ca34Y는5명. 각각 실제 원본 제목/공식 MBC WORLD 업로더 대조(전편 시청 아님). 현재 등록ID의 대응은 강미나 a0319,조아람/HYEYEON a1612,유빈 a0440,강유찬 a0757,오광석/Pildog a1553,임나영 a0312. 원제목·당시 활동명 보존, 이름 변경/전역 성 제거/다른 유빈과 병합 금지. 발행일을4번째 인자로 넣어도9행 모두 좁혀지지 않음, 특히 미나 행은 날짜 없으면3명이나2018.07.17을 넣으면 다시 미나 누락2명. 유닛 전원 확장과 당시 소속/표기 인식 경로 함께 확인할 것.
+- **[이슈·비니 개인캠 확대 후보42건] [yt_channel_videos] [artists.json a0440]** 오마이걸·공개·개인캠 접두사·비니/BINNIE 촬영대상 표기·멤버수!=1 조건42행=미지정39+반하나3명3, 수동잠금0. 위9건 중 비니2개와 중복이므로 신규40행, 앞 묶음46개와 합쳐 개인캠 후보 고유86개. 아린 카드 BINNIE 검색에 Dolphin/다섯번째계절/DunDunDance 등 비니 개인캠 실제 노출. KBS OOATIM5Wh5M/SBS eL-G56KozGQ/M2 qOEdvexx06Q 원본 제목·채널 확인. a0440 매칭 변형은 유빈/Yubin뿐이라 비니/BINNIE 빠짐, 최신5개 원제목+발행일 매처도 멤버빈배열. [WM의 활동명 변경 발표를 직접 취재한 뉴스1(2022.01.19)](https://www.news1.kr/entertain/celebrity-topic/4559128)에서 비니→본명 유빈 확인. 이미 있는 matchAliases 등을 해당 인물·오마이걸 문맥에 한정해 검토하고 정상 유빈 개인캠/반하나 단체/원더걸스 유빈은 보존.42행 전편 재생 검증이나 자동 일괄 정정 승인은 아님.
+- **[이슈·호우 일반어가 god 게스트로] [yt_channel_videos]** 0Lx0NriNYWk 세븐틴13명 얼빡직캠 합본에 with=[손호영(god),김태우(god)] 및 준 누락(나머지12명). 공식 원본의 설명/챕터는13명 개인캠 목록이며10:27 준 손오공 구간 명시, 제목 '호우 주의'만으로 god 유닛 확장이 현재 매처에서도 strong 재현. 합본을 개인1명으로 줄이지 말고 실제13명 범위 확인+허위 god 연결을 분리할 후속. iKMu8hA3_yc MONSTA X 원본 '[몬 먹어도 고] 호우~↗'도 같은 god2명 with 후보이나 실제 쇼츠 출연 확인 전 오류 확정 보류. 반대로 DizntQpN_wE 공식1theK '호우_우린이제우리그냥'은 실제 손호영·김태우 라이브이므로 이 두 사람 연결을 지우면 안 됨; 다만 현재 primary=레인보우/멤버빈배열이라 레인보우 카드 HoooW 검색에도 해당 영상이 실제 노출됨. 레인보우 귀속은 별도 정정 후보.
+- **[이슈·미배포 PR48 CI 상태 구분] [.github/workflows/browser-smoke.yml]** [실패 실행40963804426](https://github.com/bethej2love-lab/K-pop-universe/actions/runs/40963804426)의 로그를 읽음: Chrome실행·PC/390px 유주2인 딥링크/실제 유주·현아 곡 검색 소유자 검사는 통과. 실패는 Charts 카드0개(8초 대기). 단순 Chromium 실행 불가로 기록하거나 동명이인 수정이 실패했다고 단정하지 말 것. 외부 데이터/네트워크/렌더 경로를 PR 기준에서 분리 재현한 뒤 판단. 이번 PR 수정·병합·CI 재실행 없음.
+- **⏳ 덜 된 일 [명령·파일·판단 기준]** 아래86개 후보 ID를 SELECT id,title,group_ko,members,with_members,with_groups,cover_of_members,cover_of_groups,tags_manual,cover_manual,content_flag,published_at FROM yt_channel_videos WHERE id IN (...) 로 재조회. 대표 원본+개인 촬영대상/정상 단체 비교 확인 후, 현재값·수동잠금·발행일 가드가 있는 소량 members 정정으로 계획(이번 SQL파일/DB쓰기 없음). 재발형은 tools/matcher_harness.cjs의 _m2ParseTitle(title,undefined,undefined,published_at)·_unitMembersFromTitle 두 경로 비교, 정상 본인/유닛 단체/프로젝트 그룹 귀속 보존. 제목 매처만으로 합본 출연자 전원을 덮어쓰지 말 것. 신규 후보를 기존14개 운영 정정에 다시 섞지 않음.
+
+
+<details>
+<summary>개인캠 정정 검토 후보 고유 86행 — 이번 정정 없음</summary>
+
+| 영상 ID | 현재 그룹 | 촬영 대상(검토 기준) | 현재 members |
+|---|---|---|---|
+| `dYN1EUYF_fQ` | 레드벨벳 | 슬기 | 아이린, 슬기 |
+| `7aok72GmrTM` | 레드벨벳 | 아이린 | 아이린, 슬기 |
+| `YoPS8wJdj_s` | 세븐틴 | 승관 | 도겸, 승관 |
+| `07n12WVVDbk` | 세븐틴 | 도겸 | 도겸, 승관 |
+| `Rdzd1AfGogA` | 세븐틴 | 호시 | 호시, 우지 |
+| `NIeq_ExVRsM` | 세븐틴 | 호시 | 호시, 우지 |
+| `MVnkX6f0dAo` | 세븐틴 | 우지 | 우지, 호시 |
+| `edxcLHcs2no` | 세븐틴 | 우지 | 우지, 호시 |
+| `AU6rnJ1uFlI` | 이븐 | 문정현 | 문정현, 이정현 |
+| `uo6dokrUmck` | 이븐 | 문정현 | 문정현, 이정현 |
+| `ioCJfRelmWc` | 트리플에스 | 박소현 | 박소현, 김유연, 코토네, 니엔, 린, 정하연, 박시온, 김채원, 지연 |
+| `ZJGKYtZAh9o` | 트리플에스 | 윤서연 | 윤서연, 김유연, 코토네, 니엔, 린, 정하연, 박시온, 김채원, 지연 |
+| `vrTgq5TlqFs` | 트리플에스 | 김나경 | 김나경, 김유연, 코토네, 니엔, 린, 정하연, 박시온, 김채원, 지연 |
+| `jBOrUYdltkI` | 트리플에스 | 윤서연 | 윤서연, 김유연, 코토네, 니엔, 린, 정하연, 박시온, 김채원, 지연 |
+| `RRwArZ8JNno` | 트리플에스 | 서다현 | 서다현, 김유연, 코토네, 니엔, 린, 정하연, 박시온, 김채원, 지연 |
+| `CHCkQSL7GFA` | 트리플에스 | 카에데 | 카에데, 김유연, 코토네, 니엔, 린, 정하연, 박시온, 김채원, 지연 |
+| `SzOj2elsby8` | 하츠투하츠 | 유하 | 유하, 예온 |
+| `Pm-2W5Yb0ts` | 하츠투하츠 | 주은 | 주은, 예온 |
+| `4ITevvFMDOU` | 하츠투하츠 | 에이나 | 에이나, 예온 |
+| `DRzwnzGzUGg` | 하츠투하츠 | 지우 | 지우, 예온 |
+| `hHrfox2QPF0` | 하츠투하츠 | 카르멘 | 카르멘, 예온 |
+| `gfuctaPhVTw` | 하츠투하츠 | 스텔라 | 스텔라, 예온 |
+| `nDPhVp_m0Lg` | 하츠투하츠 | 이안 | 이안, 예온 |
+| `5jYEvMS_5js` | 하츠투하츠 | 유하 | 유하, 예온 |
+| `rYeNs0XejcU` | 하츠투하츠 | 이안 | 이안, 예온 |
+| `l3qFBPTAZ2U` | 하츠투하츠 | 카르멘 | 카르멘, 예온 |
+| `5MvSYAI5dmY` | 하츠투하츠 | 에이나 | 에이나, 예온 |
+| `0LOd5ex_wME` | 하츠투하츠 | 지우 | 지우, 예온 |
+| `grHljv72AR4` | 하츠투하츠 | 스텔라 | 스텔라, 예온 |
+| `MW1W4tlUW4o` | 하츠투하츠 | 주은 | 주은, 예온 |
+| `frXM7ftowLo` | 하츠투하츠 | 에이나 | 에이나, 예온 |
+| `0-VLTMGBFAM` | 하츠투하츠 | 이안 | 이안, 예온 |
+| `zXyEVShzOcQ` | 하츠투하츠 | 주은 | 주은, 예온 |
+| `DJSDyaOOR5o` | 하츠투하츠 | 유하 | 유하, 예온 |
+| `ljjBxYR1PJY` | 하츠투하츠 | 카르멘 | 카르멘, 예온 |
+| `3OL5rk9I9P8` | 하츠투하츠 | 지우 | 지우, 예온 |
+| `-7ZeM8zuwOg` | 하츠투하츠 | 스텔라 | 스텔라, 예온 |
+| `cpCAKx9C0eU` | 유앤비 | 오광석 | 강유찬, 고호정, 준, 이의진, 오광석, 박대원, 이형근, 지한솔, 김기중 |
+| `hGZgf4cFUzM` | 구구단 | 강미나 | 김세정, 김나영 |
+| `HjQR4-ca34Y` | 프리스틴 | 임나영 | 임나영, 로아, 은우, 레나, 주결경 |
+| `QRQJ_SlXGM4` | 구구단 | 조아람 | 조아람, 신보라, 장소진, 류셰닝, 정미미, 김세정, 강미나, 김나영 |
+| `S9lhjf3YewY` | 유앤비 | 강유찬 | 강유찬, 고호정, 준, 이의진, 오광석, 박대원, 이형근, 지한솔, 김기중 |
+| `XhXM782_wLE` | 구구단 | 조아람 | 조아람, 신보라, 장소진, 류셰닝, 정미미, 김세정, 강미나, 김나영 |
+| `xOOuoXeBopg` | 오마이걸 | 유빈 | 효정, 유빈, 아린 |
+| `yOvckQbf59w` | 구구단 | 조아람 | 조아람, 신보라, 장소진, 류셰닝, 정미미, 김세정, 강미나, 김나영 |
+| `yw5xawWPDHI` | 오마이걸 | 유빈 | 효정, 유빈, 아린 |
+| `OOATIM5Wh5M` | 오마이걸 | 유빈 | 미지정 |
+| `r75ogwr5p_I` | 오마이걸 | 유빈 | 미지정 |
+| `eL-G56KozGQ` | 오마이걸 | 유빈 | 미지정 |
+| `WMc_O1M1UOk` | 오마이걸 | 유빈 | 미지정 |
+| `kUcltZfuA_g` | 오마이걸 | 유빈 | 미지정 |
+| `7U7ByV2EuFc` | 오마이걸 | 유빈 | 미지정 |
+| `QFoSww7nHa8` | 오마이걸 | 유빈 | 미지정 |
+| `Jkc1Leb0MNQ` | 오마이걸 | 유빈 | 미지정 |
+| `1vK-Nl6yWKw` | 오마이걸 | 유빈 | 미지정 |
+| `nk81Wf5tM_0` | 오마이걸 | 유빈 | 미지정 |
+| `k3k86Y3WoJc` | 오마이걸 | 유빈 | 미지정 |
+| `SRa7UhnMoYA` | 오마이걸 | 유빈 | 미지정 |
+| `07TSo0puDv0` | 오마이걸 | 유빈 | 미지정 |
+| `4pHbg0I5PZ0` | 오마이걸 | 유빈 | 미지정 |
+| `_gu5C60djNo` | 오마이걸 | 유빈 | 미지정 |
+| `hw3KR_YHYZY` | 오마이걸 | 유빈 | 미지정 |
+| `okXD7yHU6sA` | 오마이걸 | 유빈 | 미지정 |
+| `EMQoaJlr9fs` | 오마이걸 | 유빈 | 미지정 |
+| `_NLbYkDi5dE` | 오마이걸 | 유빈 | 미지정 |
+| `M_HSc6cRWyc` | 오마이걸 | 유빈 | 미지정 |
+| `xN0pd_pC1PA` | 오마이걸 | 유빈 | 미지정 |
+| `IldMJOWjEsk` | 오마이걸 | 유빈 | 미지정 |
+| `BbZn0ViHvRc` | 오마이걸 | 유빈 | 미지정 |
+| `hDbq42KWjGs` | 오마이걸 | 유빈 | 미지정 |
+| `NV78aaUxwr4` | 오마이걸 | 유빈 | 미지정 |
+| `Rm2HxJN_SAM` | 오마이걸 | 유빈 | 미지정 |
+| `qOEdvexx06Q` | 오마이걸 | 유빈 | 효정, 유빈, 아린 |
+| `A_NAoiKDP_o` | 오마이걸 | 유빈 | 미지정 |
+| `G9oFqrnx640` | 오마이걸 | 유빈 | 미지정 |
+| `s2vs3Z7LH9U` | 오마이걸 | 유빈 | 미지정 |
+| `L1_wWby4rRw` | 오마이걸 | 유빈 | 미지정 |
+| `PaKauTXn-hg` | 오마이걸 | 유빈 | 미지정 |
+| `2NXmz3gDLDE` | 오마이걸 | 유빈 | 미지정 |
+| `s9z-AEe7KRs` | 오마이걸 | 유빈 | 미지정 |
+| `8s4v89gbwDg` | 오마이걸 | 유빈 | 미지정 |
+| `LaBtTJkVYv8` | 오마이걸 | 유빈 | 미지정 |
+| `knsMOXduu98` | 오마이걸 | 유빈 | 미지정 |
+| `S_APlMo2UUI` | 오마이걸 | 유빈 | 미지정 |
+| `q682AkfxQfQ` | 오마이걸 | 유빈 | 미지정 |
+| `bPQpNy6i-v8` | 오마이걸 | 유빈 | 미지정 |
+
+</details>
+
+- **[완료·읽기 전용] [CHANGELOG.md]** 노트북21~24차 인계와 현재 운영 상태를 대조하고 위 근거·86개 ID·정상 비교·후속 판단 기준을 기록. 이번 작업의 변경 파일은 CHANGELOG.md뿐이며 앱/JSON/SQL/DB 정정 없음.
+
 
 
 

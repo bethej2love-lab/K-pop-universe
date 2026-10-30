@@ -140,12 +140,12 @@ for (const h of queue) {
     const media = ((b.media && b.media.data) || []).map(m => {
       const o = { u: img(m), p: m.permalink, t: m.timestamp, ty: m.media_type };
       if (isMag) { o.m = mentionsOf(m.caption); } // 태그 판정은 자르기 전 전체 본문으로
-      // 본문·반응(2026-10-19 — 사이트 안 사진 뷰어용). 본문은 길면 600자에서 자른다(DB·전송량)
-      if (m.caption) o.cap = String(m.caption).slice(0, 600);
+      // 본문·반응(2026-10-19 — 사이트 안 사진 뷰어용). 본문은 인스타 최대치 2,200자까지(2026-10-30 — 600자에서 자르면 사진별 글(문단)이 잘려 장 수와 안 맞았다)
+      if (m.caption) o.cap = String(m.caption).slice(0, 2200);
       if (m.like_count != null) o.lk = m.like_count;
       if (m.comments_count != null) o.cm = m.comments_count;
       const cs = ((m.children && m.children.data) || []).map(img).filter(Boolean);
-      if (cs.length > 1) o.c = cs.slice(0, 10); // 캐러셀 안 사진들(첫 장 포함, 최대 10)
+      if (cs.length > 1) o.c = cs.slice(0, 20); // 캐러셀 안 사진들(첫 장 포함) — 인스타 최대 20장. 10장에서 자르던 것(2026-10-30, 장원영 20장 게시물이 10장만 보였다)
       return o;
     }).filter(m => m.u && m.p && (!isMag || m.m.length)).slice(0, isMag ? 50 : 6);
     acc.push({ handle: h, ig_id: b.id || null, name: b.name || null, followers: b.followers_count ?? null, media_count: b.media_count ?? null, pic_url: b.profile_picture_url || null, media, status: 'ok', note: null, fetched_at: new Date().toISOString() });
