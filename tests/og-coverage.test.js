@@ -7,8 +7,8 @@
 const fs = require('fs'), path = require('path');
 const ROOT = path.join(__dirname, '..');
 const SITE = 'https://kpop-universe.kr';
-const xml = fs.readFileSync(path.join(ROOT, 'sitemap.xml'), 'utf8');
-const locs = [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map(m => m[1]);
+// sitemap.xml은 목록 파일(2026-10-30 분할) — 가리키는 sitemaps/*.xml을 로컬에서 읽어 주소를 모은다
+const locs = require('./_sitemap.cjs').sitemapLocs(ROOT);
 const target = locs.filter(u => /\/(en\/)?(g\/[^/]+\/([^/]+\/)?|member\/[^/]+\/)$/.test(u.replace(SITE, '')) && !/\/(en\/)?g\/$/.test(u));
 const bad = [];
 let checked = 0;

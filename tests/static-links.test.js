@@ -84,7 +84,8 @@ if (relKo.length) {
 } else console.log('ℹ️ 관계 페이지 없음 — DB 조회 실패 시 정상(기존 페이지 유지)');
 
 // sitemap에 허브가 들어갔는가
-const sm = fs.readFileSync(path.join(ROOT, 'sitemap.xml'), 'utf8');
+// 목록 파일(sitemap.xml) + 쪼갠 파일(sitemaps/*.xml)을 합친 주소 목록(2026-10-30 분할)
+const sm = require('./_sitemap.cjs').sitemapLocs(ROOT).map(u => `<loc>${u}</loc>`).join('\n');
 sm.includes(`<loc>${SITE}/g/</loc>`) ? ok('sitemap에 허브 포함') : bad('sitemap에 허브 없음');
 // 콜라보는 태깅 품질 대기로 기본 비활성이므로 /cover/ 기준으로 확인한다(REL_COLLAB=1이면 둘 다 생김)
 (sm.includes('/cover/') || sm.includes('/collab/'))

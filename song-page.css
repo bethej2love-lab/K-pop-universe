@@ -48,3 +48,11 @@ h2{font-size:17px;margin:26px 0 12px;color:#fff;}
 .cta{display:block;text-align:center;padding:13px 22px;border-radius:24px;background:rgba(140,165,255,0.2);border:0.5px solid rgba(150,175,255,0.42);color:#fff;text-decoration:none;font-size:14.5px;font-weight:600;}
 .lang-switch{margin-top:36px;font-size:12px;}
 .lang-switch a{color:rgba(150,175,255,0.7);}
+/* 직캠 순위 페이지(2026-10-30) — 순위 숫자·순위 종류 탭 */
+.rank-h1{font-size:clamp(22px,5.4vw,30px);line-height:1.25;margin:14px 0 8px;color:#fff;}
+.rank-n{position:absolute;left:6px;top:6px;min-width:26px;padding:2px 7px;border-radius:8px;background:rgba(9,9,26,0.82);color:#fff;font-size:13px;font-weight:800;text-align:center;}
+.rank-tabs{display:flex;flex-wrap:nowrap;overflow-x:auto;gap:16px;list-style:none;margin:0 0 16px;padding:0;border-bottom:0.5px solid rgba(255,255,255,0.08);scrollbar-width:none;}
+.rank-tabs::-webkit-scrollbar{display:none;}
+.rank-tabs li{flex-shrink:0;font-size:13px;padding:8px 0 9px;color:rgba(200,215,250,0.55);}
+.rank-tabs li a{text-decoration:none;color:inherit;}
+.rank-tabs li.on{color:#fff;font-weight:600;box-shadow:inset 0 -2.5px 0 rgba(140,175,255,0.95);}

@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## 2026-10-30 (Claude Code — 검색 유입 확대 1차: 사이트맵 분할 · 그룹 "직캠·무대 모음" · 직캠 조회수 순위 페이지)
+- **[완료·배포(페이지는 CI 재생성)] [build_group_pages.js] [song-page.css v2] [tools/seo_extra.js] [.github/workflows/rebuild-seo-pages.yml] [tests/_sitemap.cjs·og-coverage·static-links·song-page-design]** 사용자 "검색 유입을 늘리게, 우리 정보로 잘 정리해 보여줄 수 있는 페이지는 다 만들자" — 합의한 순서 1~3.
+  - ① **사이트맵 분할**: sitemap.xml = 목록(sitemapindex), `sitemaps/core.xml`(루트·허브·그룹·멤버·관계·순위)·`songs.xml`·`member-songs.xml`, 파일당 4만 넘으면 -2,-3. 구글 한도(파일당 5만)를 3만 6천에서 곧 넘을 참이었다. robots.txt·서치콘솔 주소는 sitemap.xml 그대로. CI 커밋 경로에 `sitemaps`·`rank`·`en/rank` 추가. 테스트는 공용 `tests/_sitemap.cjs`로 목록→조각까지 읽음. 빌드: core 5,843·songs 11,834·member-songs 18,456.
+  - ② **그룹 페이지 "코르티스 직캠·무대 모음 - 코르티스(CORTIS) 멤버·음방 1위 기록"**: 퍼포먼스 분류(live) 또는 직캠 표시 영상(뮤비 제외)이 6개 이상이면 제목 맨 앞, 설명 맨 앞에 개수, 맨 위 썸네일 24개(멤버 페이지와 같은 .mf-grid·공용 vidCardsHtml). 290 중 285팀.
+  - ③ **직캠 조회수 순위**: `rank/fancam/`(역대)·`girls/`·`boys/`·연도별 2019~2026(+ en/) 11종 × 2개 언어, 각 TOP 100(개인 직캠 77,674개 중), 카드에 순위 숫자·멤버·그룹·조회수, 아래 순위권 멤버 얼굴 → 멤버 직캠 모음 페이지, 순위 종류 밑줄 탭, ItemList 구조화 데이터, 그룹 허브(g/)에 순위 링크. 갱신은 SEO 재생성(매주 월 06:30 KST + 데이터/빌더 푸시 때), 조회수 두 자리 반올림이라 작은 변동엔 안 바뀜. 1위 방탄소년단 뷔 1.5억회, 2026 1위 에이티즈 산 430만회.
+  - 실DB 임시 작업본 빌드 2회·390px 캡처(순위·그룹·멤버) 확인, static-links 8/8·og-coverage 4,340·seo-url·song-page-design(⑤ 4건 추가) 통과.
+- **⏳ 다음(합의한 목록)** ④ 프로그램별 모음(아이돌 라디오 직캠·보이스캠·잇츠라이브 등) ⑤ 생년·데뷔연도 ⑥ 소속사 ⑦ 음방 1위 기록 ⑧ 앨범 ⑨ 작사·작곡. 얇은 페이지 noindex 기준·서치콘솔 노출 확인 후 확대. 용량은 사이트 약 470MB(Pages 1GB).
+
+
 ## 2026-10-30 (Claude Code — 멤버 페이지 "성현 직캠 모음")
 - **[완료·배포(페이지는 CI 재생성)] [build_group_pages.js memberFancams·멤버 페이지 제목/본문] [tools/seo_extra.js .mf-grid] [tests/song-page-design.test.js]** 사용자 "'성현 직캠'만 검색해도 우리 사이트가 뜨고, 성현 직캠 모아진 페이지로". 멤버 페이지(g/코르티스/성현/)를 그 검색어의 착지 페이지로: 개인 직캠(그 멤버 한 명만 태깅 + 제목에 직캠·FaceCam·Focused 등 표시)이 3개 이상이면 제목을 "성현 직캠 모음·프로필 - 코르티스 성현(CORTIS Seonghyeon)"(동명이인이 많아 그룹명 동반), 설명 맨 앞 "코르티스 성현 직캠 119개를 조회수 순으로", 페이지 맨 위에 직캠 썸네일 카드 그리드(조회수 순 24개, 날짜·조회수 줄). 기존 프로필·곡별 직캠·작사작곡은 그 아래 그대로. 로컬 실DB 빌드: 멤버 1,902명 중 1,272명이 직캠 모음 제목, 390px 캡처 확인. 개인 직캠 3개 미만이면 예전 제목 유지.
 
