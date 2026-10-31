@@ -28,7 +28,7 @@ async function ev(c,x){const r=await c.send('Runtime.evaluate',{expression:x,ret
     for(let i=0;i<60;i++){await sleep(500);try{if(await ev(c,`typeof _openProgramCollection==='function'&&ARTISTS.length>0&&!!sb`))break;}catch(e){}}
     const r=JSON.parse(await ev(c,`(async()=>{const S=ms=>new Promise(r=>setTimeout(r,ms));
       const fo=document.getElementById('feed-overlay');
-      const W=()=>({wide:document.body.classList.contains('fw-home'),w:Math.round(fo.getBoundingClientRect().width)});
+      const W=()=>({wide:document.body.classList.contains('fw-home'),w:Math.round(fo.getBoundingClientRect().width),blockers:_FW_BLOCKERS.filter(id=>document.getElementById(id)?.classList.contains('open'))});
       const res={};
       if(!fo.classList.contains('open'))_openFeedOverlay();await S(3000);
       res.feedOnly=W();

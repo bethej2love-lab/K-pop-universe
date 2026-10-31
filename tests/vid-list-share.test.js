@@ -38,6 +38,7 @@ const WAIT_GRID=sel=>`(async()=>{const S=ms=>new Promise(r=>setTimeout(r,ms));fo
     await waitForBrowserCdp(proc,CDP_PORT);
     const{webSocketDebuggerUrl}=await (await fetch(`http://127.0.0.1:${CDP_PORT}/json/new?about:blank`,{method:'PUT'})).json();
     const c=await conn(webSocketDebuggerUrl);await c.send('Page.enable');await c.send('Runtime.enable');
+    await c.send('Page.addScriptToEvaluateOnNewDocument',{source:`window.__shareErrors=[];addEventListener('error',e=>window.__shareErrors.push(e.message));addEventListener('unhandledrejection',e=>window.__shareErrors.push(String(e.reason)));`});
     // ① 보내는 쪽
     await open(c,'#g=코르티스&m=성현');
     await ev(c,WAIT_GRID('#tv'));
@@ -77,7 +78,7 @@ const WAIT_GRID=sel=>`(async()=>{const S=ms=>new Promise(r=>setTimeout(r,ms));fo
     await ev(c,WAIT_GRID('#gc-ch-vid'));
     const q=JSON.parse(await ev(c,`(()=>{const cont=document.getElementById('gc-ch-vid');const inp=cont.querySelector('.gc-ch-search');
       const titles=[...cont.querySelectorAll('.gc-ch-grid .gc-ch-item')].map(x=>x.textContent);
-      return JSON.stringify({v:inp?.value,shown:cont.querySelector('.gc-ch-search-wrap')?.style.display!=='none',n:titles.length,hit:titles.filter(t=>/redred|레드레드/i.test(t)).length});})()`));
+      return JSON.stringify({v:inp?.value,shown:cont.querySelector('.gc-ch-search-wrap')?.style.display!=='none',n:titles.length,hit:titles.filter(t=>/redred|레드레드/i.test(t)).length,grid:cont.querySelector('.gc-ch-grid')?.textContent?.slice(0,700),skeletons:cont.querySelectorAll('.gc-ch-skeleton').length,errors:window.__shareErrors.slice(-3),requests:performance.getEntriesByType('resource').filter(x=>x.name.includes('/rest/v1/')).slice(-5).map(x=>({path:new URL(x.name).pathname,status:x.responseStatus,ms:Math.round(x.duration)}))});})()`));
     if(q.v==='REDRED'&&q.shown)ok('검색창 열림 + 검색어 REDRED');else bad('검색창 '+JSON.stringify(q));
     if(q.n>0&&q.hit>=Math.ceil(q.n*0.8))ok(`검색 결과 ${q.n}개 중 ${q.hit}개 제목에 REDRED`);else bad('검색 결과 '+JSON.stringify(q));
     // ④ 허용 목록 밖 값
