@@ -6704,10 +6704,15 @@
     "id": "6095rKDrPnRCro0ckAe9hY",
     "spotifyName": "Hi-Fi Un!corn",
     "kind": "group",
-    "confidence": "medium",
-    "why": "이름 유일 일치",
+    "confidence": "high",
+    "why": "이름 유일 일치 · 수집 전 검증 통과(겹침 9)",
     "evidence": {
-      "titleOverlap": null
+      "titleOverlap": null,
+      "verifyOverlap": 9,
+      "verifyYears": [
+        2026,
+        2025
+      ]
     },
     "checkedAt": "2026-09-27"
   },
