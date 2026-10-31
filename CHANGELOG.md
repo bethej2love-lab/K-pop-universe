@@ -1,6 +1,7 @@
 # CHANGELOG
 
 ## 2026-10-31 (Codex — 검수33차·명시 원곡자 소유격)
+- **[완료·사용성 PR48 main 반영]** 확정 head9e3774a060의 Node전체 [verify41157751627](https://github.com/bethej2love-lab/K-pop-universe/actions/runs/41157751627) 및 [Browser41157751680](https://github.com/bethej2love-lab/K-pop-universe/actions/runs/41157751680)의8흐름(smoke PC/390px·영상 목록 공유·공연/앨범/시트·곡 딥링크·나침반 폭·폰844×390/390×844·프로그램KO/EN) 모두 success 확인 후 [PR48](https://github.com/bethej2love-lab/K-pop-universe/pull/48)을 main60a40a604b에 병합. 24/32차의 '브랜치/미배포'·'진행중'은 당시 상태, 이 줄이 현재 반영 상태를 갱신. 이 검수는 Linux Chrome 화면/터치 에뮬레이션이며 실기기 iOS/Android 통과가 아님. 회사 최신 자동 앨범/구독자/썸네일 변경6edc82e686까지 보존. 공개 Pages 배포 반영은 별도 확인 중.
 - **[완료·브랜치/미배포] [admin.js _coverCreditExact] [tests/cover-honorific-origin.test.js]** 끝에 붙은 '선배님의/후배님의' 소유격만 정식 원곡자 이름에서 분리(뒤에는 공백/따옴표/이스케이프만 허용). 실제 태용 관둬 원제목의 명시 원곡자가 엄격 일치에서 탈락해 F.T.ISLAND 관둬(Quit)가15점 태용 대신11점 최고로 선택되던 경로를 수정: 이제 태용 관둬(GWANDO)15점·다른 원곡 그룹 추가0. 실제 출연 with 새로 추가 없음. '선배님과'·'선배님의 친구/선배님의무대'·다른태용·Bobby Helms 부분일치는 그대로 거절. 13회귀 수정 전6실패→후0, 기존 cover-resolve75/75·credit-reassign·cleanup17/17·manual·syntax 통과. DB/아티스트 원본/소속/다른 동반 출연 규칙 변경 없음. 회사26차가 정정한 운영행을 재수정하거나 일괄 스윕하지 않음.
 - **[진행중]** 검수32차 사용성 PR48은 최종 브라우저 대조 중. 해당 변경을 보존한 별도 후속 브랜치에서 회사26차의 실제 정정값을 재오염시키는 원곡 해석 경로만 검수. 최신 운영8행 SELECT/실제 원본 인계 근거를 대조했고 DB 쓰기는 하지 않음. 먼저 '태용 선배님의 관둬'가 같은 제목 F.T.ISLAND 곡으로 선택되는 것을 좁게 재현. 명시된 원곡자 이름 뒤 소유격과 실제 동반(선배님과)/다른 사람의 풀네임을 구분하는 회귀 준비. 원곡 feat와 실제 feat 출연 전체의 일괄 삭제·재스윕은 범위 밖.
 
