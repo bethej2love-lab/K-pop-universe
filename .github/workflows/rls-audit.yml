@@ -20,7 +20,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      # The probe reads as the public anon role and sends only invalid empty
-      # inserts. PostgreSQL rejects them, so no application row is persisted.
+      # Reads verify HTTP success and an exact count. The legacy write probe
+      # posts {} as anon: current constraints/policies reject it, but an empty
+      # object is not a guaranteed rollback if those constraints change.
       - name: Verify public Supabase access policies
         run: node tests/rls.test.js

@@ -12,14 +12,16 @@
 // ⚠️ 이 판별이 성립하는 근거: PostgreSQL은 **RLS WITH CHECK을 NOT NULL보다 먼저** 평가한다.
 //    실측으로 확인함 — yt_channel_videos는 PK(id)가 NOT NULL인데 빈 INSERT에서 23502가 아니라
 //    42501이 났다. 즉 23502가 났다는 건 RLS 관문을 이미 통과했다는 뜻이다.
-// 어느 쪽이든 트랜잭션이 중단되므로 **데이터는 한 줄도 쓰이지 않는다.**
+// ⚠️ 위 오류로 거절된 요청은 저장되지 않는다. 그러나 {} 자체가 반드시 잘못된 행인 것은 아니다.
+// 정책/기본값/제약이 바뀌면 POST가 실제 INSERT에 성공할 수 있으므로 완전한 비파괴 검사가 아니다.
+// 운영 실행 전 별도 쓰기 프로브 검토가 필요하다. 이번 읽기 응답 회귀 테스트는 모의 fetch만 사용한다.
 //
 // 대상 테이블은 코드에서 자동 추출한다(.from('...')) — 새 테이블을 코드에 쓰기 시작하면 자동으로
 // 검사 대상이 된다. (PostgREST의 스키마 introspection은 anon에게 401이라 서버에서 못 받아온다.)
 //
 // 실행: node tests/rls.test.js
-//   회사망처럼 MITM 인증서가 끼어 있으면 fetch가 전부 죽으므로 다음처럼 실행:
-//   NODE_TLS_REJECT_UNAUTHORIZED=0 node tests/rls.test.js
+//   회사망처럼 별도 인증서를 쓰는 환경에서 fetch가 실패하면
+//   인증서/네트워크 설정을 확인한다. TLS 인증서 검증을 끄고 통과시키지 않는다.
 //
 // ⚠️ 한계: 여기서 쓰는 건 "로그인하지 않은 anon 키"다. 익명 로그인/일반 로그인 세션까지는 검사하지
 //    않는다(테스트가 실서비스에 auth 유저를 만들게 되므로). 유저별 격리(내 데이터만 보이는지)는
@@ -27,6 +29,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const { parseExactCount } = require('../tools/rls_read_count.cjs');
 
 const ROOT = path.join(__dirname, '..');
 const SB = 'https://dukgguehegnembimqvkm.supabase.co/rest/v1';
@@ -114,11 +117,11 @@ const warn = m => console.log('⚠️  ' + m);
 
 const H = { apikey: KEY, Authorization: 'Bearer ' + KEY };
 
-async function readCount(t) {
-  const r = await fetch(`${SB}/${t}?select=*`, { headers: { ...H, Prefer: 'count=exact', Range: '0-0' } });
-  const cr = r.headers.get('content-range') || '';
-  const total = cr.split('/')[1];
-  return total === '*' ? 0 : parseInt(total || '0', 10);
+async function readCount(t, headers = H, where = '') {
+  const r = await fetch(`${SB}/${t}?select=*${where ? '&' + where : ''}`, {
+    method: 'HEAD', headers: { ...headers, Prefer: 'count=exact', Range: '0-0' }
+  });
+  return parseExactCount(r);
 }
 async function insertProbe(t) {
   const r = await fetch(`${SB}/${t}`, { method: 'POST', headers: { ...H, 'Content-Type': 'application/json' }, body: '{}' });
@@ -128,7 +131,7 @@ async function insertProbe(t) {
 }
 
 (async () => {
-  console.log(`[rls] 코드에서 추출한 테이블 ${tables.length}개 검사 (익명 키 기준, 데이터는 쓰이지 않음)\n`);
+  console.log(`[rls] 코드에서 추출한 테이블 ${tables.length}개 검사 (익명 키 기준, 실제 INSERT 프로브 포함)\n`);
 
   const unknown = tables.filter(t => !EXPECT[t]);
   if (unknown.length) {
@@ -142,7 +145,7 @@ async function insertProbe(t) {
     if (!exp) continue;
     let cnt, wr;
     try { cnt = await readCount(t); wr = await insertProbe(t); }
-    catch (e) { netFail = true; bad(`${t}: 네트워크 오류 (${e.message})`); continue; }
+    catch (e) { netFail = true; bad(`${t}: 검사 요청 오류 (${e.message})`); continue; }
 
     // 읽기
     const readState = cnt > 0 ? 'public' : 'locked';
@@ -182,15 +185,13 @@ async function insertProbe(t) {
     for (const [t, col] of Object.entries(OWNED)) {
       try {
         // A의 토큰으로 B의 소유행을 직접 조회 — 격리돼 있으면 0행이어야 한다
-        const rA = await fetch(`${SB}/${t}?select=${col}&${col}=eq.${uidB}`, { headers: { ...asUser(TOKEN_A), Prefer: 'count=exact', Range: '0-0' } });
-        const seenByA = parseInt((rA.headers.get('content-range') || '').split('/')[1] || '0', 10) || 0;
+        const seenByA = await readCount(t, asUser(TOKEN_A), `${col}=eq.${encodeURIComponent(uidB)}`);
         // B 자신으로 조회해 데이터 존재 여부 확인(0이면 판정 무의미)
-        const rB = await fetch(`${SB}/${t}?select=${col}&${col}=eq.${uidB}`, { headers: { ...asUser(TOKEN_B), Prefer: 'count=exact', Range: '0-0' } });
-        const ownedByB = parseInt((rB.headers.get('content-range') || '').split('/')[1] || '0', 10) || 0;
+        const ownedByB = await readCount(t, asUser(TOKEN_B), `${col}=eq.${encodeURIComponent(uidB)}`);
         if (seenByA > 0) bad(`${t}: 로그인 A가 B의 행 ${seenByA}개를 읽음 — 유저 격리 정책(USING auth.uid()=${col}) 누락/오류`);
         else if (!ownedByB) warn(`${t}: 계정 B에 데이터가 없어 격리 판정 무의미 — B로 즐겨찾기 등을 먼저 만들 것`);
         else ok(`${t}: A가 B의 행을 못 봄(B는 ${ownedByB}행 보유, A에겐 0행)`);
-      } catch (e) { netFail = true; warn(`${t}: 격리 검사 네트워크 오류 (${e.message})`); }
+      } catch (e) { netFail = true; bad(`${t}: 격리 검사 요청 오류 (${e.message})`); }
     }
   } else {
     console.log('\n[rls] ⏭️  로그인 유저 간 격리 검사 건너뜀 — KPU_TOKEN_A / KPU_TOKEN_B 환경변수 없음.');
@@ -199,8 +200,8 @@ async function insertProbe(t) {
   }
 
   if (netFail) {
-    console.log('\n네트워크 오류가 있었다. 회사망이라면 다음처럼 다시 실행:');
-    console.log('  NODE_TLS_REJECT_UNAUTHORIZED=0 node tests/rls.test.js');
+    console.log('\n검사 요청이 실패했으므로 접근 차단 여부를 통과로 판단하지 않는다.');
+    console.log('  응답 상태·네트워크·신뢰 인증서 설정을 확인할 것(TLS 검증 유지).');
   }
   console.log(pass ? '\n✅ RLS 테스트 통과' : '\n❌ RLS 테스트 실패');
   process.exit(pass ? 0 : 1);
