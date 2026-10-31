@@ -8,6 +8,7 @@
 // 실행: node tests/vid-list-share.test.js
 const fs=require('fs'),path=require('path'),http=require('http'),os=require('os');const{spawn}=require('child_process');
 const ROOT=path.join(__dirname,'..');
+const {waitForBrowserCdp}=require('../tools/browser_test_runtime.cjs');
 const PORT=8996,CDP_PORT=9396;
 const BROWSER=['C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe','C:\\Program Files\\Microsoft\\Edge\\Application\\msedge.exe','C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe','/Applications/Google Chrome.app/Contents/MacOS/Google Chrome','/usr/bin/google-chrome','/usr/bin/chromium-browser','/usr/bin/chromium'].find(p=>fs.existsSync(p));
 const MIME={'.html':'text/html','.js':'text/javascript','.json':'application/json','.css':'text/css','.png':'image/png','.svg':'image/svg+xml'};
@@ -15,7 +16,6 @@ const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 let pass=0,fail=0;const ok=m=>{pass++;console.log('✅ '+m)},bad=m=>{fail++;console.log('❌ '+m)};
 const server=http.createServer((req,res)=>{const p=decodeURIComponent(req.url.split('?')[0]);const f=path.join(ROOT,p==='/'?'index.html':p);
   if(!fs.existsSync(f)||fs.statSync(f).isDirectory()){res.writeHead(404);res.end();return;}res.writeHead(200,{'Content-Type':MIME[path.extname(f)]||'application/octet-stream'});fs.createReadStream(f).pipe(res);});
-async function waitCdp(){for(let i=0;i<40;i++){try{await (await fetch(`http://127.0.0.1:${CDP_PORT}/json/version`)).json();return;}catch(e){await sleep(300);}}throw new Error('cdp');}
 function conn(url){return new Promise((res,rej)=>{const ws=new WebSocket(url);let id=0;const w=new Map();
   ws.addEventListener('open',()=>res({send:(m,p)=>new Promise((a,b)=>{const i=++id;w.set(i,{a,b});ws.send(JSON.stringify({id:i,method:m,params:p}));}),close:()=>ws.close()}));
   ws.addEventListener('message',e=>{const m=JSON.parse(e.data);if(m.id&&w.has(m.id)){const{a,b}=w.get(m.id);w.delete(m.id);m.error?b(new Error(m.error.message)):a(m.result);}});ws.addEventListener('error',rej);});}
@@ -33,9 +33,9 @@ const WAIT_GRID=sel=>`(async()=>{const S=ms=>new Promise(r=>setTimeout(r,ms));fo
   const prof=fs.mkdtempSync(path.join(os.tmpdir(),'kpu-vls-'));
   const proc=spawn(BROWSER,['--headless=new','--no-sandbox',`--remote-debugging-port=${CDP_PORT}`,`--user-data-dir=${prof}`,'--no-first-run','--disable-gpu',
     '--enable-unsafe-swiftshader','--use-gl=angle','--use-angle=swiftshader',
-    '--disable-background-timer-throttling','--disable-renderer-backgrounding','--window-size=1400,900','about:blank'],{stdio:'ignore'});
+    '--disable-background-timer-throttling','--disable-renderer-backgrounding','--window-size=1400,900','about:blank'],{stdio:['ignore','ignore','pipe']});
   try{
-    await waitCdp();
+    await waitForBrowserCdp(proc,CDP_PORT);
     const{webSocketDebuggerUrl}=await (await fetch(`http://127.0.0.1:${CDP_PORT}/json/new?about:blank`,{method:'PUT'})).json();
     const c=await conn(webSocketDebuggerUrl);await c.send('Page.enable');await c.send('Runtime.enable');
     // ① 보내는 쪽
