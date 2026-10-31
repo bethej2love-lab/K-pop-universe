@@ -60,6 +60,24 @@ async function setup(c,W,H){
     await ev(c,"openLightbox('https://www.youtube.com/watch?v=koED8KSXfeo',false,[{u:'https://www.youtube.com/watch?v=koED8KSXfeo',t:'LAYOUT TEST — 가로 화면의 긴 영상 제목과 재생 영역이 겹치지 않아야 합니다',dur:230}],0)");await sleep(2500);
     v=await ev(c,`(${RECT})('yt-lb-video-box')`);t=await ev(c,`(${RECT})('yt-lb-title-text')`);
     if(v&&t&&t.y>=v.b-1)ok('세로 영상: 제목이 영상 아래(기존 배치 유지)');else bad('세로 배치가 바뀜 '+JSON.stringify({v,t}));
+    // 실제 조합 렌더러만 호출하며 검색 쿼리/운영 데이터 쓰기는 하지 않는다.
+    await ev(c,`document.getElementById('combo-overlay').classList.add('open');
+      _comboSel=['수빈','연준','범규','태현','휴닝카이','태용','도영','재현','마크','해찬'].map((name,i)=>({name,group:i<5?'투모로우바이투게더':'NCT 127'}));
+      _comboRenderChips();_comboRenderSuggest('민');
+      document.getElementById('combo-results').textContent='LAYOUT TEST — result area';`);
+    for(const [W,H] of [[320,568],[390,844],[844,390],[1280,800]]){
+      await c.send('Emulation.setDeviceMetricsOverride',{width:W,height:H,deviceScaleFactor:2,mobile:true});
+      await ev(c,`new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)))`);
+      const measure=await ev(c,`(()=>{
+        const sheet=document.getElementById('combo-sheet'),go=document.getElementById('combo-go'),results=document.getElementById('combo-results');
+        sheet.scrollTop=0;const overflowing=sheet.scrollHeight>sheet.clientHeight+1;
+        go.scrollIntoView({block:'center'});const button=(${RECT})('combo-go');
+        results.scrollIntoView({block:'end'});const area=(${RECT})('combo-results'),panel=(${RECT})('combo-sheet');
+        return {button,area,panel,overflowing,overflow:getComputedStyle(sheet).overflowY,suggestions:document.getElementById('combo-suggest').children.length};
+      })()`);
+      if(measure.suggestions>0&&inView(measure.button,W,H)&&inView(measure.area,W,H)&&measure.area.h>=Math.min(120,H*.25)-1&&measure.area.b<=measure.panel.b+1&&(!measure.overflowing||['auto','scroll'].includes(measure.overflow)))ok(`조합 ${W}×${H}: 10명+검색 후보에서도 버튼·결과 접근 가능`);
+      else bad(`조합 ${W}×${H} 잘림 `+JSON.stringify(measure));
+    }
     c.close();
   }catch(e){bad('예외: '+e.message);}
   finally{try{process.kill(proc.pid);}catch(e){}server.close();console.log(`\n${pass} 통과 / ${fail} 실패`);setTimeout(()=>process.exit(fail?1:0),300);}
