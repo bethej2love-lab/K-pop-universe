@@ -8,7 +8,7 @@ async function waitForBrowserCdp(child,port,maxMs=45000){
     if(spawnError||child.exitCode!==null||child.signalCode){
       throw new Error(`Chromium 시작 실패(exit=${child.exitCode},signal=${child.signalCode}): ${spawnError?.message||''} ${stderr}`);
     }
-    try{const r=await fetch(`http://127.0.0.1:${port}/json/version`);if(r.ok){const v=await r.json();if(v.webSocketDebuggerUrl)return;}}catch(e){}
+    try{const r=await fetch(`http://127.0.0.1:${port}/json/version`,{signal:AbortSignal.timeout(1500)});if(r.ok){const v=await r.json();if(v.webSocketDebuggerUrl)return;}}catch(e){}
     await new Promise(resolve=>setTimeout(resolve,300));
   }
   throw new Error(`Chromium CDP가 ${maxMs}ms 안에 열리지 않음: ${stderr}`);
