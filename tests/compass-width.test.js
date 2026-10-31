@@ -28,10 +28,15 @@ async function ev(c,x){const r=await c.send('Runtime.evaluate',{expression:x,ret
     for(let i=0;i<60;i++){await sleep(500);try{if(await ev(c,`typeof _openProgramCollection==='function'&&ARTISTS.length>0&&!!sb`))break;}catch(e){}}
     const r=JSON.parse(await ev(c,`(async()=>{const S=ms=>new Promise(r=>setTimeout(r,ms));
       const fo=document.getElementById('feed-overlay');
-      const W=()=>({wide:document.body.classList.contains('fw-home'),w:Math.round(fo.getBoundingClientRect().width)});
+      const W=()=>({wide:document.body.classList.contains('fw-home'),w:Math.round(fo.getBoundingClientRect().width),blockers:_FW_BLOCKERS.filter(id=>document.getElementById(id)?.classList.contains('open'))});
       const res={};
-      if(!fo.classList.contains('open'))_openFeedOverlay();await S(3000);
-      res.feedOnly=W();
+      res.firstFrames=[];
+      for(let i=0;i<3;i++){
+        _closeFeedOverlay();await S(250);_openFeedOverlay();
+        await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
+        res.firstFrames.push(W());
+      }
+      await S(3000);res.feedOnly=W();
       showT(ARTISTS.find(a=>a.name.ko==='성현'));await S(1500);res.card=W();
       closeCards();await S(1200);res.cardClosed=W();
       document.querySelector('#feed-overlay .feed-grid .feed-card')?.click();await S(2500);res.lb=W();
@@ -56,6 +61,7 @@ async function ev(c,x){const r=await c.send('Runtime.evaluate',{expression:x,ret
       _closeFeedOverlay();await S(900);res.feedClosed={wide:document.body.classList.contains('fw-home'),open:fo.classList.contains('open')};
       return JSON.stringify(res);})()`));
     const chk=(name,v,wide)=>{if(v&&v.wide===wide&&(wide?v.w>440:v.w===440))ok(name+' → '+(wide?'넓게 '+v.w:'440'));else bad(name+' '+JSON.stringify(v));};
+    r.firstFrames.forEach((v,i)=>chk('나침반 첫 렌더 '+(i+1),v,true));
     chk('나침반만',r.feedOnly,true);
     chk('카드 열기',r.card,false);chk('카드 닫기',r.cardClosed,true);
     chk('영상 재생',r.lb,false);chk('재생 닫기',r.lbClosed,true);
