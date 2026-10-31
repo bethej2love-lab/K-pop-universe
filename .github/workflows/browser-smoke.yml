@@ -62,6 +62,7 @@ jobs:
           - suite: stage-venue-album
           - suite: deeplink-song
           - suite: phone-landscape
+          - suite: mobile-first-visit
           - suite: compass-width
           - suite: program-facets
             lang: ko
@@ -77,4 +78,13 @@ jobs:
       - name: Browser user flow
         env:
           KPU_TEST_LANG: ${{ matrix.lang }}
+          KPU_BROWSER_ARTIFACT_DIR: ${{ runner.temp }}/kpu-first-visit-artifacts
         run: node tests/${{ matrix.suite }}.test.js
+      - name: Upload first-visit screenshots
+        if: always() && matrix.suite == 'mobile-first-visit'
+        uses: actions/upload-artifact@v4
+        with:
+          name: mobile-first-visit-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/kpu-first-visit-artifacts
+          if-no-files-found: ignore
+          retention-days: 3
