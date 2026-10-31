@@ -1,6 +1,12 @@
 # CHANGELOG
 
 ## 2026-10-31 (Codex — 검수40차·검색 유입 페이지와 검증 범위)
+- **[완료·로컬 검증/PR 준비] [tests/static-links.test.js]** 기존 폴더와 전체 사이트맵의 합집합을 검사하도록 확대. 정적 HTML 38,723개와 내부 참조 722,866개 모두 실재하고 기존 8검사 통과. 새 종류 1,808개/30,090참조도 포함하며 과거 페이지도 보존한다. 이는 로컬 파일 대조이며 외부 HTTP 전수 통과를 뜻하지 않는다. 생성 HTML·사이트맵·앱 데이터는 수정하지 않음.
+- **[완료] [tests/_sitemap.cjs·sitemap-reader.test.js]** 없어진 조각을 빈 배열로 숨기지 않고 실패하도록 정정. 동일 출처/프로젝트 내부 경로/인코딩된 조각 이름을 확인한다. 임시 파일 8검증에서 기존 5실패를 재현했고 수정 후 8/8 통과.
+- **[완료·불필요한 서비스 호출 축소] [.github/workflows/browser-smoke.yml] [tests/browser-ci-coverage.test.js]** tests/** 대신 실제 브라우저 8파일(프로그램 KO/EN 포함 9흐름)과 fixture 경로를 명시. 앱 JS/CSS/JSON·disco·vendor·시작 도구·브라우저 워크플로 변경은 계속 검사한다. Node 전용 RLS/사이트맵 테스트만 바꿀 때 Auth/영상 조회 9흐름을 중복 실행하지 않는다. PR/push 필터·매트릭스·Node 제외 목록 일치 7검증 통과. 기능 성공 기준·동시성·대기 시간은 변경하지 않음.
+- **[확인]** main 비보호·ruleset 0개를 재조회했다. 나중에 브라우저 검사를 필수 체크로 설정하면 경로 제외 시 Pending 문제도 함께 검토할 것. 이번 워크플로 수정 자체는 경로 필터에 포함되어 전체 브라우저 회귀를 실행한다.
+- **[이슈·조사만/미수정]** 조합의 솔로 이름 키와 현재 group 값 차이로 누락 가능성이 있으나, 채널 영상 members=[]를 본인 출연으로 단정할 수 없고 동명이인/옛 그룹/커버 오귀속도 섞여 자동 보완하지 않았다. 아이유 표본 d94ROK5HQAM/j8Y-lIXSfUg/gQENj0dcGa0은 잠금 false지만 현재 _coverResolve가 null이고 역매처도 약하거나 충돌한다. 운영 정정·행 백업 생성은 하지 않았다.
+- **⏳ 덜 된 일 [재현·판단 기준]** 위 3 ID를 `SELECT id,title,group_ko,members,with_members,cover_of_members,tags_manual,cover_manual,published_at FROM yt_channel_videos WHERE id IN ('d94ROK5HQAM','j8Y-lIXSfUg','gQENj0dcGa0')`로 재조회. 원본 실제 출연/커버/단순 언급을 확인하고 `_soloNameKeyOf`·nameKeyOwner 및 옛 그룹 표기와 대조한 뒤 소량 정정 여부를 결정한다. YouTube 원본 웹 조회는 실패해 직접 본 것으로 주장하지 않음. app.js의 첫 안내/조합 정적 라벨 중 영어 모드에서도 한국어인 부분도 별도 번역 범위 검토가 필요하다.
 - **[진행중] [tests/static-links.test.js·_sitemap.cjs] [.github/workflows/browser-smoke.yml]** 기존 정적 링크 검사는 g/member/collab/cover만 수집해 새 p/rank/idols/agency/wins 1,808개가 빠져 있었음. 전체 사이트맵37,941 URL의 로컬 페이지 존재, 추가30,090 내부 링크를 읽기 전용으로 확인해 현재 누락/깨진 링크0. 새 페이지 종류도 자동 검수하고 사이트맵 조각 누락을 조용히 무시하지 않도록 검증 범위를 보완한다. Node전용 테스트 변경만으로 실서비스를 읽는 브라우저9흐름을 반복 실행하지 않도록 경로 필터/매트릭스 등록 일치 검사도 검토한다. 앱 기능/DB/생성 페이지는 변경하지 않는 범위.
 
 ## 2026-10-31 (Codex — 검수39차·조합 조회 실패와 늦은 응답)
