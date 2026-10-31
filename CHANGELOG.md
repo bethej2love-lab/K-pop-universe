@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 2026-10-31 (Codex — 검수35차·복구 백업 권한 보호)
+- **[진행중·확정 구조 점검] [ops_guest_backfill_bak_20261028] [ops_codex_audit18_bak_20261028]** Supabase security advisor의 RLS미사용2건을 실제 pg_class/ACL/정책으로 대조: 두 검수 복구 백업 모두 RLS=false·정책0·anon/authenticated에SELECT/INSERT/UPDATE/DELETE/TRUNCATE 등 ALL 권한. 앱/복구SQL 사용처는 검수 백업과 관리자 SQL만이며 공개 앱에는 사용처 없음. RLS 활성화만으로 TRUNCATE를 막지 못하므로 두 백업의 클라이언트 권한도 회수하는 제한적 보호를 준비. 운영 영상 행은 수정하지 않음. 사전 백업 내용 지문: guest1063행/bba39a058616527d9441d75afb07dcb4, audit1847행/59b633ec197150fc50507177a031995a. 별도 Postgres 역할 테스트→내용 보존/관리자 복구 읽기→가드된 DDL migration→실제 ACL/RLS/지문 재확인 예정. 기존 SQL 생성부3곳의 재발도 막을 대상.
+- **[별도 검토·미수정]** performance advisor의 auth_rls_initplan36·multiple_permissive_policies48·duplicate_index7 및 그 밖의 알림은 그 자체로 최근 로그인 지연의 원인 확정이 아님. 개별 정책/인덱스의 실제 사용·쿼리 계획 대조 없이 일괄 삭제/권한 확장/인증 설정 변경하지 않음. [RLS 진단](https://supabase.com/docs/guides/database/database-linter?lint=0013_rls_disabled_in_public), [최소 권한](https://supabase.com/docs/guides/database/postgres/roles).
+
+
 ## 2026-10-31 (Codex — 검수32차·필터 비동기 순서와 모바일 검증)
 - **[진행중·브라우저 시작 진단] [tools/browser_test_runtime.cjs] [tests/*]** 다음 실행의 목록공유가 화면 진입 전 'cdp'로 실패. 이를 공유 기능 회귀로 단정하지 않음. 공용 시작 확인으로 초기화 최대45초(기존12초)·자식 Chromium 조기 종료/실행 오류·stderr 마지막4KB를 구별해 기록. 테스트 자식 PID만 관리하며 사용자 브라우저/계정에 접근하지 않음. phone fixture 두 URL은 운영 SELECT에서 정상 제목/공개값 확인: DB 미등록으로 확정한 것이 아니라2.5초 비동기 보강에 의존하던 배치 검사를 제목 포함 playlist로 바꾼 것임.
 - **[완료·head56bf0c236a 클라우드]** 병렬 제한 후 Node전체 verify·smoke·한영 프로그램·목록 공유·공연/앨범/시트·곡 딥링크·나침반 모두 success. phone-landscape만 제목0×0으로3실패(영상/패널 위치·폰 판정은 정상). URL만 여는 fixture는 DB의 제목 보강(_lbHydrateItem)을 받아야 제목이 생기는데, 테스트가 이와 별개인 배치 판정을2.5초 후 숨은 빈 제목에서 수행하던 것 확인. 실제 썸네일 클릭과 같은 제목 포함 playlist를 넣어 긴 제목의 위치/겹침을 재검증하도록 수정(배치 조건 완화 없음·앱 CSS 변경 없음). 현재값/나머지 결과는 이전 실패를 지운 것이 아니라 이 줄로 갱신.
