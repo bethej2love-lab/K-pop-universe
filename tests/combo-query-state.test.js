@@ -1,0 +1,27 @@
+// 실제 조합 함수를 통제된 비동기 응답으로 실행한다. 운영 DB/브라우저 네트워크를 사용하지 않는다.
+const fs=require('node:fs'),path=require('node:path'),vm=require('node:vm'),assert=require('node:assert/strict');
+const src=fs.readFileSync(path.join(__dirname,'../app.js'),'utf8');
+function part(a,b){const s=src.indexOf(a),e=src.indexOf(b,s);assert(s>=0&&e>s,a);return src.slice(s,e);}
+const code=part('function _openComboPanel(){','function _comboRenderChips(){')+part('async function _comboSearch(){','// Only 토글 반영:')+part('function _comboApplyAndRender(){','// ── 조합 그림');
+const members=[{name:'카리나',group:'에스파'},{name:'윈터',group:'에스파'}];
+const video=id=>({id,group_ko:'에스파',members:['카리나','윈터'],with_members:[],cover_of_members:[],published_at:'2026-01-01'});
+function node(){const classes=new Set();return{style:{},value:'',focus(){},setAttribute(){},classList:{add:x=>classes.add(x),remove:x=>classes.delete(x)}};}
+function fixture(){const pending=[],views=[],nodes=new Map();const box={_comboSel:members.map(x=>({...x})),_comboReq:0,_comboViz:{},_comboAllRows:null,_comboExactOnly:false,_COMBO_MAX:10,_YT_TABLE:'videos',_comboLastThumbs:[],_comboLastCount:0,_comboCardDataURL:null,
+ document:{getElementById:id=>{if(!nodes.has(id))nodes.set(id,node());return nodes.get(id);}},_fpPush(){},_fpUpdateVis(){},_bringToFront(){},_comboRenderSuggest(){},_comboRenderChips(){},_showShareToast(){},isMob:()=>true,setTimeout(){},currentLang:'ko',
+ _comboRenderResults:x=>views.push(x),_pgFilterVal:JSON.stringify,_filterBannedVideos:x=>x,_buildComboCardDataURL:async()=>null,
+ _withTimeout:(f,ms)=>{assert.equal(ms,15000);return f();},
+ sb:{from(){const q={select(){return q;},or(){return q;},order(){return q;},limit(){let resolve,reject;const p=new Promise((a,b)=>{resolve=a;reject=b;});pending.push({resolve,reject});return p;}};return q;}}};vm.createContext(box);vm.runInContext(code,box);return{box,pending,views};}
+let total=0,failed=0;async function check(name,fn){total++;try{await fn();}catch(e){failed++;console.error('FAIL '+name+': '+e.message);}}
+(async()=>{
+ for(const kind of ['server','throw','malformed'])await check('조회 '+kind+' 오류는 영상없음과 구분',async()=>{const f=fixture(),p=f.box._comboSearch();if(kind==='throw')f.pending[0].reject(new Error('offline'));else f.pending[0].resolve(kind==='server'?{data:null,error:{message:'timeout'}}:{data:null,error:null});await p;assert.equal(f.views.at(-1),'error');assert.equal(f.box._comboAllRows,null);});
+ await check('성공한0행은 기존 빈결과',async()=>{const f=fixture(),p=f.box._comboSearch();f.pending[0].resolve({data:[],error:null});await p;assert(Array.isArray(f.views.at(-1)));assert.equal(f.views.at(-1).length,0);});
+ await check('성공한함께출연 행 유지',async()=>{const f=fixture(),p=f.box._comboSearch();f.pending[0].resolve({data:[video('normal')],error:null});await p;assert.equal(f.views.at(-1)[0].v.id,'normal');});
+ for(const action of ['close','reopen','add','remove'])await check(action+' 뒤 늦은 응답은 화면을 덮지 않음',async()=>{const f=fixture(),p=f.box._comboSearch();if(action==='close')f.box._closeComboPanel();else if(action==='reopen')f.box._openComboPanel();else if(action==='add')f.box._comboAdd('지젤','에스파');else f.box._comboRemove('윈터','에스파');const before=f.views.length;f.pending[0].resolve({data:[video('outdated')],error:null});await p;assert.equal(f.views.length,before);});
+ await check('새조합 결과 후 오래된 오류를 무시',async()=>{const f=fixture(),a=f.box._comboSearch(),b=f.box._comboSearch();f.pending[1].resolve({data:[video('new')],error:null});await b;f.pending[0].reject(new Error('old error'));await a;assert.equal(f.views.at(-1)[0].v.id,'new');});
+ await check('선택 변경 때 이전 Only 결과도 초기화',async()=>{const f=fixture();f.box._comboAllRows=[{v:video('old'),who:members}];f.box._comboAdd('지젤','에스파');assert.equal(f.box._comboAllRows,null);assert.equal(f.views.at(-1),null);});
+ await check('선택 변경은 이전 공유 썸네일·건수도 무효화',async()=>{const f=fixture();f.box._comboLastCount=99;f.box._comboLastThumbs=['old-thumb'];f.box._comboCardDataURL='old-image';f.box._comboAdd('지젤','에스파');assert.equal(f.box._comboLastCount,0);assert.equal(f.box._comboLastThumbs.length,0);assert.equal(f.box._comboCardDataURL,null);});
+ await check('로딩 중 이전 결과·Only 토글을 표시하지 않음',async()=>{const f=fixture();f.box._comboAllRows=[{v:video('old'),who:members}];const p=f.box._comboSearch();assert.equal(f.box._comboAllRows,null);assert.equal(f.box.document.getElementById('combo-only').style.display,'none');assert.equal(f.views.at(-1),'loading');f.pending[0].resolve({data:[],error:null});await p;});
+ const renderCode=part('function _comboRenderResults(rows){','function _comboRenderList(');
+ for(const lang of ['ko','en'])await check(lang+' 오류는 재시도 버튼 표시·실제 콜백 연결',async()=>{const el={children:[],innerHTML:'',appendChild(n){this.children.push(n);}};let retried=0;const c={document:{getElementById:()=>el,createElement:tag=>({tag,children:[],appendChild(n){this.children.push(n);},addEventListener(t,fn){this[t]=fn;}})},currentLang:lang,_comboSearch:()=>retried++,_comboExactOnly:false,console:{warn(){}}};vm.createContext(c);vm.runInContext(renderCode,c);c._comboRenderResults('error');const button=el.children.find(n=>n.tag==='button');assert(button);assert.equal(button.textContent,lang==='ko'?'다시 시도':'Retry');button.click();assert.equal(retried,1);assert(!el.children[0].textContent.includes(lang==='ko'?'영상이 없어요':'No video'));});
+ console.log(total+'검증 / '+failed+'실패');if(failed)process.exitCode=1;
+})().catch(e=>{console.error(e);process.exitCode=1;});

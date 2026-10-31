@@ -13576,21 +13576,25 @@ function _openComboPanel(){
   const ov=document.getElementById('combo-overlay');if(!ov)return;
   ov.classList.add('open');_bringToFront(ov); // 조합 패널 열리면 맨 위
   const s=document.getElementById('combo-search');if(s)s.value='';
-  _comboExactOnly=false;_comboAllRows=null; // Only 토글 초기화
+  _comboExactOnly=false;_comboInvalidateResults(); // 새 화면에서 이전 응답/공유 이미지 무효화
   const _ob=document.getElementById('combo-only');if(_ob){_ob.classList.remove('active');_ob.setAttribute('aria-pressed','false');_ob.style.display='none';}
   _comboRenderSuggest('');_comboRenderChips();_comboRenderResults(null);
   setTimeout(()=>{try{if(!isMob()&&s)s.focus();}catch(e){}},60); // 모바일은 자동 키보드 안 띄움
 }
-function _closeComboPanel(){const ov=document.getElementById('combo-overlay');if(ov)ov.classList.remove('open');_fpUpdateVis();}
+function _closeComboPanel(){_comboInvalidateResults();const ov=document.getElementById('combo-overlay');if(ov)ov.classList.remove('open');_fpUpdateVis();}
+function _comboInvalidateResults(){
+  _comboReq++;_comboAllRows=null;
+  _comboCardDataURL=null;_comboLastThumbs=[];_comboLastCount=0;
+}
 function _comboAdd(name,group){
   if(!name||!group)return;
   if(_comboSel.some(m=>m.name===name&&m.group===group))return;
   if(_comboSel.length>=_COMBO_MAX){_showShareToast(currentLang==='ko'?('최대 '+_COMBO_MAX+'명까지'):('Up to '+_COMBO_MAX));return;}
-  _comboSel.push({name:name,group:group});
+  _comboSel.push({name:name,group:group});_comboInvalidateResults();
   const s=document.getElementById('combo-search');if(s){s.value='';s.focus();}
-  _comboRenderSuggest('');_comboRenderChips();
+  _comboRenderSuggest('');_comboRenderChips();_comboApplyAndRender();
 }
-function _comboRemove(name,group){_comboSel=_comboSel.filter(m=>!(m.name===name&&m.group===group));_comboRenderChips();}
+function _comboRemove(name,group){_comboSel=_comboSel.filter(m=>!(m.name===name&&m.group===group));_comboInvalidateResults();_comboRenderChips();_comboApplyAndRender();}
 function _comboRenderChips(){
   const el=document.getElementById('combo-chips');if(!el)return;
   el.innerHTML='';
@@ -13630,7 +13634,8 @@ function _comboRenderSuggest(q){
 }
 async function _comboSearch(){
   if(_comboSel.length<2||!sb)return;
-  const myReq=++_comboReq;
+  _comboInvalidateResults();const myReq=_comboReq;
+  _comboApplyAndRender(); // 로딩 중 이전 Only 결과를 다시 그리지 않도록 비운다
   _comboViz={pair:null,year:null}; // 새 조합이면 그림 선택 해제
   _fpPush({type:'combo',members:_comboSel.map(m=>({name:m.name,group:m.group})),label:_comboSel.map(m=>m.name).join('·')}); // 발자국 기록
   _comboRenderResults('loading');
@@ -13656,10 +13661,14 @@ async function _comboSearch(){
   _comboSel.forEach(m=>ors.push('cover_of_members.cs.{'+wk(m)+'}'));
   let data=null;
   try{
-    const r=await _excl(sb.from(_YT_TABLE).select(COLS).or(ors.join(',')))
-      .order('published_at',{ascending:false}).limit(600);
+    const r=await _withTimeout(()=>_excl(sb.from(_YT_TABLE).select(COLS).or(ors.join(',')))
+      .order('published_at',{ascending:false}).limit(600),15000);
+    if(r.error||!Array.isArray(r.data))throw new Error('조합 조회 실패');
     data=r.data;
-  }catch(e){}
+  }catch(e){
+    if(myReq===_comboReq)_comboRenderResults('error');
+    return;
+  }
   if(myReq!==_comboReq)return;
   const inMem=(v,m)=>v.group_ko===m.group&&(v.members||[]).indexOf(m.name)>=0;
   const inWith=(v,m)=>(v.with_members||[]).indexOf(m.name+'('+m.group+')')>=0;
@@ -13843,7 +13852,13 @@ function _comboRenderResults(rows){
   const el=document.getElementById('combo-results');if(!el)return;
   el.innerHTML='';
   const empty=t=>{const p=document.createElement('div');p.className='tvf-empty';p.textContent=t;el.appendChild(p);};
-  if(rows===null){empty(currentLang==='ko'?'멤버를 2명 이상 골라 조합 영상을 보세요':'Pick 2+ members to see their videos');return;}
+  if(rows===null){empty(_comboSel.length>=2?(currentLang==='ko'?'조합 영상 보기를 눌러 영상을 찾아보세요':'Press the button to find videos for this combo'):(currentLang==='ko'?'멤버를 2명 이상 골라 조합 영상을 보세요':'Pick 2+ members to see their videos'));return;}
+  if(rows==='error'){
+    empty(currentLang==='ko'?'영상을 불러오지 못했어요':'Could not load videos');
+    const retry=document.createElement('button');retry.type='button';retry.className='gc-ch-err-retry';
+    retry.textContent=currentLang==='ko'?'다시 시도':'Retry';retry.addEventListener('click',()=>_comboSearch());el.appendChild(retry);
+    return;
+  }
   if(rows==='loading'){empty(currentLang==='ko'?'불러오는 중…':'Loading…');return;}
   if(!rows.length){empty(_comboExactOnly?(currentLang==='ko'?'이 조합만 정확히 나온 영상이 없어요':'No video with only this combo'):(currentLang==='ko'?'이 멤버들이 함께·커버로 엮인 영상이 없어요':'No video connecting them (together or cover)'));return;}
   // 카드 안 영상 그리드와 동일하게(제각각 크기+쇼츠 비율+제목/with·원곡 2줄) — buildVideoSection 재사용(2026-09-02 제보).
