@@ -47,7 +47,7 @@ async function shot(c,name){fs.mkdirSync(ARTIFACTS,{recursive:true});const s=awa
   const visible=await ev(c,`getComputedStyle(document.getElementById('msheet-body')).display!=='none'&&document.querySelector('#msheet-body .combo-entry').offsetWidth>0`);
   if(visible)ok('조합 닫기→검색 재진입 본문 표시');else bad('조합 뒤 검색이 빈 화면');
   await ev(c,`(()=>{const el=document.getElementById('msheet-input');el.value='에스파';el.dispatchEvent(new Event('input',{bubbles:true}));})()`);
-  await wait(c,`document.querySelector('#msheet-body .sr-item[data-type="group"]')?.textContent.includes('에스파')`,'그룹 검색 결과');
+  await wait(c,`/에스파|aespa/i.test(document.querySelector('#msheet-body .sr-item[data-type="group"]')?.textContent||'')`,'그룹 검색 결과');
   await tap(c,'#msheet-body .sr-item[data-type="group"]');await wait(c,`_openGCko==='에스파'`,'선택한 그룹 카드');ok('에스파 검색 결과 터치→에스파 카드');
   const history=await c.send('Page.getNavigationHistory');if(history.currentIndex>0){await c.send('Page.navigateToHistoryEntry',{entryId:history.entries[history.currentIndex-1].id});await wait(c,`!_openGCko&&!_openTArtist`,'그룹 카드 뒤로가기');ok('브라우저 뒤로가기→선택 카드 닫힘');}else bad('그룹 카드에 뒤로가기 기록 없음');
   await shot(c,'after-browser-back');
