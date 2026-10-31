@@ -21,6 +21,7 @@ const path = require('path');
 const http = require('http');
 const { spawn, execSync } = require('child_process');
 const os = require('os');
+const {waitForBrowserCdp}=require('../tools/browser_test_runtime.cjs');
 
 const ROOT = path.join(__dirname, '..');
 const PORT = 8934;
@@ -78,11 +79,11 @@ async function main() {
     '--enable-unsafe-swiftshader', '--use-gl=angle', '--use-angle=swiftshader',
     `--remote-debugging-port=${CDP_PORT}`, `--user-data-dir=${profileDir}`,
     'about:blank',
-  ], { stdio: 'ignore' });
+  ], { stdio: ['ignore','ignore','pipe'] });
   console.log(`[smoke] 헤드리스 브라우저 PID=${child.pid} (전용 프로필, 종료 시 이 PID만 taskkill)`);
 
   try {
-    await waitForCdp();
+    await waitForBrowserCdp(child,CDP_PORT);
     const { webSocketDebuggerUrl } = await (await fetch(`http://127.0.0.1:${CDP_PORT}/json/new?about:blank`, { method: 'PUT' })).json();
     const cdp = await connectCdp(webSocketDebuggerUrl);
 
@@ -205,12 +206,7 @@ async function verifyMemberIdentity(cdp,label){
 }
 
 function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
-async function waitForCdp(retries = 30) {
-  for (let i = 0; i < retries; i++) {
-    try { await (await fetch(`http://127.0.0.1:${CDP_PORT}/json/version`)).json(); return; } catch (e) { await sleep(300); }
-  }
-  throw new Error('CDP 포트가 안 열림 — 브라우저 실행 실패');
-}
+
 function connectCdp(url) {
   return new Promise((resolve, reject) => {
     const ws = new WebSocket(url);
