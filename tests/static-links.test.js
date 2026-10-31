@@ -14,6 +14,18 @@ let pass = 0, fail = 0;
 const ok = m => { pass++; console.log('✅ ' + m); };
 const bad = m => { fail++; console.error('❌ ' + m); };
 
+// 새 페이지 종류도 사이트맵에 등록되면 자동으로 검사한다. 기존 폴더 수집은 과거 링크도 보존한다.
+const sitemapPages=[], missingSources=[];
+for (const loc of require('./_sitemap.cjs').sitemapLocs(ROOT)) {
+  const url=new URL(loc);
+  if(url.origin!==SITE) throw new Error('외부 페이지가 사이트맵에 포함됨: '+loc);
+  const rel=decodeURIComponent(url.pathname).replace(/^\/+/, '');
+  const target=path.resolve(ROOT, rel, /\.html$/i.test(rel)?'':'index.html');
+  if(!target.startsWith(ROOT+path.sep)) throw new Error('프로젝트 밖 정적 경로: '+loc);
+  if(fs.existsSync(target)) sitemapPages.push(target);else missingSources.push(loc);
+}
+if(missingSources.length){bad(`사이트맵 페이지 누락 ${missingSources.length}개`);missingSources.slice(0,10).forEach(u=>console.error('     '+u));}
+
 // 생성된 정적 페이지 전부 수집
 function walk(dir, out = []) {
   if (!fs.existsSync(dir)) return out;
@@ -24,10 +36,10 @@ function walk(dir, out = []) {
   }
   return out;
 }
-const pages = [...walk(path.join(ROOT, 'g')), ...walk(path.join(ROOT, 'en', 'g')),
+const pages = [...new Set([...walk(path.join(ROOT, 'g')), ...walk(path.join(ROOT, 'en', 'g')),
                ...walk(path.join(ROOT, 'member')), ...walk(path.join(ROOT, 'en', 'member')),
                ...walk(path.join(ROOT, 'collab')), ...walk(path.join(ROOT, 'en', 'collab')),
-               ...walk(path.join(ROOT, 'cover')), ...walk(path.join(ROOT, 'en', 'cover'))];
+               ...walk(path.join(ROOT, 'cover')), ...walk(path.join(ROOT, 'en', 'cover')), ...sitemapPages])];
 if (!pages.length) { console.error('정적 페이지가 없음 — 먼저 node build_group_pages.js'); process.exit(2); }
 ok(`정적 페이지 ${pages.length}개 수집`);
 
@@ -41,7 +53,7 @@ let checked = 0; const missing = new Map();
 for (const p of pages) {
   const html = fs.readFileSync(p, 'utf8');
   for (const m of html.matchAll(/href="https:\/\/kpop-universe\.kr\/([^"#]*)"/g)) {
-    const rel = m[1].split('?')[0];
+    const rel = decodeURIComponent(m[1].split('?')[0]);
     if (!rel || rel.startsWith('icons/')) continue;      // 루트·아이콘은 대상 아님
     checked++;
     // 파일(곡 페이지 공용 스타일 song-page.css?v=1 등, 2026-10-30)은 그 파일 자체, 폴더 주소는 그 안의 index.html

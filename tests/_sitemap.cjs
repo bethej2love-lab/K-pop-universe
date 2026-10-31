@@ -9,8 +9,13 @@ function sitemapLocs(ROOT) {
   const top = read('sitemap.xml');
   if (!/<sitemapindex/.test(top)) return locsOf(top);
   return locsOf(top).flatMap(u => {
-    const rel = u.replace(SITE + '/', '');
-    return fs.existsSync(path.join(ROOT, rel)) ? locsOf(read(rel)) : [];
+    const url = new URL(u);
+    if (url.origin !== SITE) throw new Error('외부 사이트맵은 로컬 검사할 수 없음: ' + u);
+    const base = path.resolve(ROOT);
+    const file = path.resolve(base, '.' + decodeURIComponent(url.pathname));
+    if (!file.startsWith(base + path.sep)) throw new Error('사이트맵 경로가 프로젝트 밖임: ' + u);
+    // 누락된 조각을 []로 바꾸면 해당 페이지 수천 개가 검사에서 빠진 채 통과한다.
+    return locsOf(fs.readFileSync(file, 'utf8'));
   });
 }
 module.exports = { sitemapLocs };
