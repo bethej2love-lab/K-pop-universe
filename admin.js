@@ -1645,6 +1645,21 @@ function _coverSongKeys(raw){
   const out=[];
   const verRe=/^(?:feat|ft|prod|with|duet|sung by|song by|vocal by|remix|inst|instrumental|acoustic|band|piano|live|korean|japanese|english|chinese|kor|jpn|eng|chn|jp|kr|en|cn|clean|explicit|remastered|remaster|original|ost|op|ed|sped up|slowed|demo|bonus|hidden|\d{4}|.*\bver\.?$|.*\bversion$|.*\bmix$|.*remix$|.*edit$|.*ver\.?\)?$)/;
   const isVerParen=inner=>verRe.test(inner.trim())||/(?:^|\s)(?:ver\.?|version|remix|edit|mix|remaster(?:ing|ed)?|inst\.?|instrumental|acoustic|feat\.?|ft\.?|prod\.?|ost|solo|special|bonus track|hidden track|clean|explicit)(?:\s|$)/.test(inner);
+  // 중첩 크레딧의 괄호 속 본명도 곡 별칭이 아니다. 완결된 feat/prod 괄호 전체를 먼저 제외.
+  let stripped='';
+  const closing={'(':')','[':']','【':'】'};
+  for(let i=0;i<s.length;i++){
+    if(closing[s[i]]){
+      const stack=[closing[s[i]]];let end=-1;
+      for(let j=i+1;j<s.length;j++){
+        if(closing[s[j]])stack.push(closing[s[j]]);
+        else if(')]】'.includes(s[j])){if(s[j]!==stack[stack.length-1])break;stack.pop();if(!stack.length){end=j;break;}}
+      }
+      if(end>=0&&/^(?:feat(?:uring)?|ft|prod(?:uced)?(?:\s+by)?|with|duet|sung by|song by|vocal by)(?=[\s.:])/.test(s.slice(i+1,end).trim())){stripped+=' ';i=end;continue;}
+    }
+    stripped+=s[i];
+  }
+  s=stripped;
   // 괄호 분해: 버전류는 버림, 아니면 별도 키
   const paren=[];
   s=s.replace(/[\(（\[【]([^()（）\[\]【】]*)[\)）\]】]/g,(m,inner)=>{if(!isVerParen(inner))paren.push(inner);return ' ';});
