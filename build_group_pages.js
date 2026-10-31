@@ -526,6 +526,7 @@ artists.forEach(a => {
   const ogImage = ogImageForMember(a);
   const bdayIso = isoDate(a.bday);
   const deepLinkHash = isSolo ? '#m=' + hashEsc(ko) : '#g=' + hashEsc(primaryGko) + '&m=' + hashEsc(ko);
+  const memberIdParam = isSolo && a.id && artists.some(x => x !== a && x.name.ko === ko && !groups[x.group.ko]) ? '&mid=' + hashEsc(a.id) : '';
 
   const discogItems = (a.discography || [])
     .filter(al => al.isMain !== false)
@@ -719,7 +720,7 @@ artists.forEach(a => {
       ${peers.map(p => `<li><a href="${SITE}/${memberPagePath(p, lang)}">${escHtml(isEn ? (p.name.en || p.name.ko) : p.name.ko)}</a>${groups[p.group.ko] ? ` <span class="tag">${escHtml(isEn ? (groups[p.group.ko].en || p.group.ko) : p.group.ko)}</span>` : ''}</li>`).join('\n      ')}
     </ul>` : ''; })()}
   <div class="lang-switch"><a href="${altUrl}">${isEn ? '한국어로 보기' : 'View in English'}</a></div>
-  <div class="cta-dock"><a class="cta" href="${SITE}/${deepLinkHash}">${isEn ? 'View fancams & videos →' : '직캠·무대 영상 보기 →'}</a></div>
+  <div class="cta-dock"><a class="cta" href="${SITE}/${deepLinkHash}${memberIdParam}">${isEn ? 'View fancams & videos →' : '직캠·무대 영상 보기 →'}</a></div>
 </div>
 </body>
 </html>

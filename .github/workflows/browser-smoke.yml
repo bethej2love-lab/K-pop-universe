@@ -28,3 +28,33 @@ jobs:
         env:
           KPU_BROWSER_PATH: /usr/bin/google-chrome
         run: node tests/smoke.test.js
+
+  flows:
+    name: browser (${{ matrix.suite }}${{ matrix.lang && format(' {0}', matrix.lang) || '' }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      max-parallel: 2
+      matrix:
+        include:
+          - suite: vid-list-share
+          - suite: stage-venue-album
+          - suite: deeplink-song
+          - suite: phone-landscape
+          - suite: compass-width
+          - suite: program-facets
+            lang: ko
+          - suite: program-facets
+            lang: en
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Check runner Chromium
+        run: /usr/bin/google-chrome --version
+      - name: Browser user flow
+        env:
+          KPU_TEST_LANG: ${{ matrix.lang }}
+        run: node tests/${{ matrix.suite }}.test.js

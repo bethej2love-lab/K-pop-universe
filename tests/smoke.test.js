@@ -137,11 +137,19 @@ async function main() {
     await evalExpr(cdp, `document.getElementById('feed-tab-disc')?.click()`);
     const discoveryOpen = await pollUntil(cdp, `document.getElementById('feed-tab-disc')?.classList.contains('active')`, 5000);
     if (!discoveryOpen) fail('발견 탭 전환 실패'); else ok('발견 탭 전환 성공');
-    const chartCardCount = await pollUntil(cdp, `document.querySelectorAll('#feed-chart .feed-card').length`, 8000, v => v > 0);
+    let chartCardCount = await pollUntil(cdp, `document.querySelectorAll('#feed-chart .feed-card').length`, 8000, v => v > 0);
+    if(!chartCardCount){
+      const pending=await evalExpr(cdp, `JSON.stringify({running:_feedBuildRunning,queued:_feedBuildQ.length,discPending:!!_feedDiscPending})`);
+      console.log('[smoke] Charts 8초 시점 상태: '+pending);
+      // 실제 데이터 선반은 앞선 네트워크 작업과 4개 슬롯을 공유한다. 추가 대기도 같은 렌더 조건으로 판정.
+      chartCardCount=await pollUntil(cdp, `document.querySelectorAll('#feed-chart .feed-card').length`, 22000, v=>v>0);
+    }
     if (chartCardCount) ok(`Charts 섹션 카드 ${chartCardCount}개 렌더 확인`);
-    else fail('Charts 섹션에 카드가 하나도 안 뜸(8초 대기)');
+    else fail('Charts 섹션에 카드가 하나도 안 뜸(총 30초 대기)');
     if (errors.length > errBefore) fail(`탐험 패널 여는 동안 새 콘솔 에러 ${errors.length - errBefore}건: ${errors.slice(errBefore, errBefore + 5).join(' | ')}`);
     else ok('탐험 패널 여는 동안 새 콘솔 에러 0건');
+
+    await verifyMemberIdentity(cdp, '데스크톱');
 
     // 5. 모바일 뷰포트 재검증(신규 유저) — isMob()으로 단락되는 최상위 즉시실행 코드는 데스크톱 뷰포트에선
     // 실행조차 안 돼서 크래시가 안 잡힌다(2026-08-22 모바일 전용 TDZ 크래시: 데스크톱 스모크·육안 다 통과했는데
@@ -160,6 +168,8 @@ async function main() {
     if (errors.length > errBeforeMobile) fail(`모바일 뷰포트 로드 중 콘솔 에러 ${errors.length - errBeforeMobile}건: ${errors.slice(errBeforeMobile, errBeforeMobile + 5).join(' | ')}`);
     else ok('모바일 뷰포트 로드 콘솔 에러 0건');
 
+    await verifyMemberIdentity(cdp, '모바일390px');
+
     cdp.close();
   } finally {
     server.close();
@@ -176,6 +186,22 @@ async function main() {
 
   console.log(`\n${pass ? '✅ 스모크 테스트 통과' : '❌ 스모크 테스트 실패'}`);
   process.exit(pass ? 0 : 1);
+}
+
+// 같은 이름의 솔로가 실제로 열린 카드와 경량 곡 검색에서도 같은 ID인지 확인한다.
+async function verifyMemberIdentity(cdp,label){
+  const before=errors.length;
+  for(const id of ['a0607','a1475']){
+    await cdp.send('Page.navigate',{url:`http://127.0.0.1:${PORT}/index.html?identity=${id}#m=${encodeURIComponent('유주')}&mid=${id}`});
+    const got=await pollUntil(cdp,`(()=>{try{return new URLSearchParams(_cardHash().slice(1)).get('mid');}catch(e){return null;}})()`,12000,v=>v===id);
+    if(got!==id)fail(`${label} 동명이인 딥링크가 다른 카드로 열림: ${id} → ${got}`);
+    else ok(`${label} 유주 딥링크의 등록 ID 보존 ${id}`);
+  }
+  const r=await cdp.send('Runtime.evaluate',{expression:`(async()=>{await _ensureTracksIndex();const rows=_buildSongIndex();return {yuju:rows.find(x=>x.ownerType==='member'&&x.title.startsWith('Love Gamer'))?.owner.id,hyuna:rows.find(x=>x.ownerType==='member'&&x.title.startsWith('Bubble Pop'))?.owner.id};})()`,returnByValue:true,awaitPromise:true});
+  const got=r?.result?.value;
+  if(got?.yuju!=='a0607'||got?.hyuna!=='a0524')fail(`${label} 경량 곡 인덱스 소유자 불일치: ${JSON.stringify(got)}`);
+  else ok(`${label} 실제 경량 곡 검색의 유주/현아 소유자 보존`);
+  if(errors.length>before)fail(`${label} 동명이인 경로의 새 콘솔 에러: ${errors.slice(before,before+5).join(' | ')}`);
 }
 
 function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }

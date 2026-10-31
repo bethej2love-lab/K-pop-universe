@@ -129,11 +129,13 @@ const groupBuckets = {};                     // gko -> {g:[]|null, m:{이름:{d,
 const soloFiles = [];                        // {name, data}
 const tracks = { groups: {}, members: {} };  // tracks_index 원자료
 let trackCount = 0;
-const pushTracks = (dest, disco) => {
+const pushTracks = (dest, disco, artistId) => {
   for (const al of (disco || [])) for (const t of (al.tracks || [])) {
     if (t && t.title) {
       const ko = enKoPho(t.title);
-      dest.push(ko ? [t.title, t.isTitle ? 1 : 0, al.title || '', ko] : [t.title, t.isTitle ? 1 : 0, al.title || '']);
+      const row = ko ? [t.title, t.isTitle ? 1 : 0, al.title || '', ko] : [t.title, t.isTitle ? 1 : 0, al.title || ''];
+      if (artistId) { row[3] ??= ''; row[4] = artistId; }
+      dest.push(row);
       trackCount++;
     }
   }
@@ -184,7 +186,7 @@ for (const a of artists) {
   const hasD = d && d.length, hasU = u && u.length;
   if (!hasD && !hasU) continue;
   if (!nm || !gko) { collisions.push('이름/그룹 없는 아티스트: ' + JSON.stringify(a.name)); continue; }
-  if (hasD) pushTracks(tracks.members[nm + '\u0000' + gko] ??= [], d); // 검색은 솔로 discography만(unitDiscography는 인덱스 안 함)
+  if (hasD) pushTracks(tracks.members[nm + '\u0000' + gko] ??= [], d, soloDupKeys.has(fileKey(gko) + '__' + fileKey(nm)) ? a.id : undefined); // 검색은 솔로 discography만(unitDiscography는 인덱스 안 함)
   if (groups[gko]) {                          // 실존 그룹 → 그룹 파일에 번들
     const b = (groupBuckets[gko] ??= { g: null, m: {} });
     if (b.m[nm]) collisions.push('그룹 내 동명 멤버: ' + gko + '/' + nm);
@@ -209,7 +211,12 @@ for (const s of soloFiles) { wr(path.join(discoDir, 'a', s.name + '.json'), s.da
 const groupsSlim = JSON.parse(JSON.stringify(groups));
 for (const k of Object.keys(groupsSlim)) delete groupsSlim[k].discography;
 const artistsSlim = JSON.parse(JSON.stringify(artists));
-for (const a of artistsSlim) { delete a.discography; delete a.unitDiscography; }
+for (const a of artistsSlim) {
+  const emptySolo = !groups[a.group?.ko] && !(a.discography?.length) && !(a.unitDiscography?.length);
+  delete a.discography; delete a.unitDiscography;
+  // 파일을 생성하지 않는 솔로는 빈 목록임을 알려 존재하지 않는 disco/a 파일 요청을 막는다.
+  if (emptySolo) { a.discography = []; a.unitDiscography = []; }
+}
 
 // ── 집계·시각화용 파생 필드 (2026-09-02) ────────────────────────────────────
 // 원본 co/nat/disbanded는 그대로 두고 여기서 파생만 붙인다. 화면은 원본을 쓰고(_dispAgency·
