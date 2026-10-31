@@ -2,6 +2,10 @@
 -- 빠진 게스트만 with_members에 **추가**(기존 값 삭제 없음). tags_manual=true·무관 행 제외, 이미 있는 이름 제외. 2차: 함께 표시는 없지만 그 사람 그룹명이 같이 적힌 것(25건, 전부 검토).
 -- 되돌리기: guest_backfill_2026-10-28b_undo.sql (백업 ops_guest_backfill_bak_20261028)
 create table if not exists ops_guest_backfill_bak_20261028 as select id,with_members from yt_channel_videos where false;
+-- audit35: SQL 복구 전용 백업은 공개 클라이언트 접근을 허용하지 않는다.
+alter table public.ops_guest_backfill_bak_20261028 enable row level security;
+revoke all on table public.ops_guest_backfill_bak_20261028 from public, anon, authenticated;
+-- audit35:end
 with v(id,adds) as (values
 ('1FTnvXhb8Sk',array['전민욱(클로즈유어아이즈)']::text[]),
 ('1ozpxnDvX-A',array['위연정(영파씨)']::text[]),
