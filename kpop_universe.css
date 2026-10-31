@@ -3315,7 +3315,7 @@
   #combo-overlay{position:fixed;inset:0;z-index:112;display:none;align-items:flex-end;justify-content:center;}
   #combo-overlay.open{display:flex;}
   #combo-bg{position:absolute;inset:0;background:rgba(0,0,0,0.55);}
-  #combo-sheet{position:relative;width:100%;height:82vh;display:flex;flex-direction:column;background:rgba(14,18,38,0.98);backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);border-radius:20px 20px 0 0;padding:20px 20px calc(16px + env(safe-area-inset-bottom,0px));box-sizing:border-box;}
+  #combo-sheet{position:relative;width:100%;height:82vh;display:flex;flex-direction:column;overflow-y:auto;background:rgba(14,18,38,0.98);backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);border-radius:20px 20px 0 0;padding:20px 20px calc(16px + env(safe-area-inset-bottom,0px));box-sizing:border-box;}
   @media(min-width:769px) and (pointer:fine),(min-width:769px) and (min-height:501px){#combo-sheet{max-width:430px;height:min(82vh,640px);border-radius:18px;margin-bottom:70px;}}
   #combo-close{position:absolute;top:10px;right:12px;background:none;border:none;color:rgba(190,205,240,0.66);font-size:20px;cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><path d='M11,1 L12.3,9.7 L21,11 L12.3,12.3 L11,21 L9.7,12.3 L1,11 L9.7,9.7Z' fill='%23FFB0D0' opacity='.97'/></svg>") 11 11,pointer;padding:4px;line-height:1;z-index:2;}
   #combo-hd{display:flex;align-items:baseline;gap:8px;flex-shrink:0;padding-right:24px;}
@@ -3338,7 +3338,7 @@
   #combo-go{flex:1;background:rgba(120,150,255,0.92);color:#fff;border:none;border-radius:12px;padding:10px;font-size:14px;font-weight:700;cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><path d='M11,1 L12.3,9.7 L21,11 L12.3,12.3 L11,21 L9.7,12.3 L1,11 L9.7,9.7Z' fill='%23FFB0D0' opacity='.97'/></svg>") 11 11,pointer;font-family:inherit;}
   #combo-go:disabled{background:rgba(255,255,255,0.08);color:rgba(200,215,250,0.4);cursor:default;}
   #combo-share{background:rgba(255,255,255,0.08);color:#c8d8f0;border:none;border-radius:12px;padding:10px 14px;font-size:13px;font-weight:600;cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><path d='M11,1 L12.3,9.7 L21,11 L12.3,12.3 L11,21 L9.7,12.3 L1,11 L9.7,9.7Z' fill='%23FFB0D0' opacity='.97'/></svg>") 11 11,pointer;white-space:nowrap;font-family:inherit;}
-  #combo-results{margin-top:14px;overflow-y:auto;display:block;min-height:0;flex:1;} /* buildVideoSection이 자체 레이아웃(대표영상+행패커 그리드)을 붙이므로 일반 블록 */
+  #combo-results{margin-top:14px;overflow-y:auto;display:block;min-height:min(120px,25vh);flex:1;} /* buildVideoSection이 자체 레이아웃(대표영상+행패커 그리드)을 붙이므로 일반 블록 */
   .combo-who{font-size:11px;color:rgba(150,175,235,0.62);margin-top:2px;} /* 이 영상에 나온 선택 멤버들 */
   .combo-entry{display:flex;width:calc(100% - 32px);align-items:center;gap:13px;margin:8px 16px 4px;padding:15px 18px;background:linear-gradient(130deg,rgba(55,85,220,0.13) 0%,rgba(100,55,220,0.09) 100%);border:0.5px solid rgba(120,148,255,0.2);border-radius:14px;cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><path d='M11,1 L12.3,9.7 L21,11 L12.3,12.3 L11,21 L9.7,12.3 L1,11 L9.7,9.7Z' fill='%23FFB0D0' opacity='.97'/></svg>") 11 11,pointer;text-align:left;-webkit-tap-highlight-color:transparent;transition:opacity .13s;}
   .combo-entry:active{opacity:.72;}
