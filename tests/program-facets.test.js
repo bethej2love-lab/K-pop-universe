@@ -48,7 +48,9 @@ async function ev(c,x){const r=await c.send('Runtime.evaluate',{expression:x,ret
       Object.assign(out,{sheet:await pickItems()});
       await pickFav();
       out.fav=sub();out.favActive=pickBtn()?.querySelector('.lbl').textContent;out.favX=pickBtn()?.classList.contains('on');
-      sortBtn().click();await S(800);
+      sortBtn().click();
+      for(let i=0;i<150;i++){await S(100);if(sortBtn()?.textContent===(currentLang==='ko'?'조회수순':'Most viewed')&&!document.getElementById('feed-list-panel').classList.contains('fl-loading'))break;}
+      if(document.getElementById('feed-list-panel').classList.contains('fl-loading'))throw new Error('정렬 응답이15초 안에 완료되지 않음');
       out.sortActive=sortBtn()?.textContent;
       out.vcSearch=_matchPrograms('보이스캠','보이스캠','').map(x=>x.key);
       // 웹 무대(1400px) — 어두운 배경 없이 무대에, 재생 화면과 차례(2026-10-28)

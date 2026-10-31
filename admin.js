@@ -1987,7 +1987,8 @@ function _coverCreditExact(cred,origin){
   const SUR=/^(?:kim|lee|yi|park|choi|jung|jeong|kang|cho|jo|yoon|yun|jang|lim|im|han|oh|seo|shin|kwon|hwang|ahn|an|song|yoo|yu|hong|jeon|jun|bae|baek|nam|moon|mun|son|go|ko|ha|heo|nam|noh|roh|ryu|cha|ji|joo|ju|woo|min|byun|chae|do|kwak|seong|sung|bang|pyo|na)$/;
   const combo=k=>gn.some(g=>k.startsWith(g)&&(set.has(k.slice(g.length))||(g.length>=3&&k.length-g.length<=1)))||norms.some(m=>m.length>=3&&k.endsWith(m)&&(gn.includes(k.slice(0,k.length-m.length))||SUR.test(k.slice(0,k.length-m.length))));
   // 표기 다듬기: 해시태그·(feat./prod./with …) 괄호 제거, 조각 앞의 by/feat./원곡 같은 군더더기 제거
-  const clean=String(cred||'').normalize('NFKC').replace(/#/g,' ').replace(/^.*커버한\s*/,'').replace(/[\(（]\s*(?:feat|ft|prod|with|duet)\b[^)）]*[\)）]/gi,' ');
+  // 명시 이름 뒤의 소유격만 정리: '태용 선배님의' ≠ 동반 '태용 선배님과'. 뒤에 다른 말이 붙으면 그대로 둔다.
+  const clean=String(cred||'').normalize('NFKC').replace(/#/g,' ').replace(/^.*커버한\s*/,'').replace(/(?:선배님|후배님)의(?=[\s'"“”‘’\\]*$)/,'').replace(/[\(（]\s*(?:feat|ft|prod|with|duet)\b[^)）]*[\)）]/gi,' ');
   const strip=p=>p.replace(/^(?:(?:by|original(?:\s*song)?(?:\s*by)?|orig|feat|ft|prod)\b|원곡자?|노래)\s*[.:：,]?\s*/i,'').trim(); // \b — "FTISLAND"의 FT를 feat로 떼던 것
   const parts=[clean,...clean.split(/[()（）/·,&＆+×|│]|\s[-–—lㅣ]\s|\s(?:x|feat\.?|ft\.?|with|and|of|by)\s/i)].flatMap(s=>[s.trim(),strip(s.trim())]).filter(Boolean); // 군더더기 뗀 것·안 뗀 것 둘 다("FT Island")
   return parts.some(p=>{const k=_cvNorm(p);return k&&(set.has(k)||combo(k)||tokSet.has(tokKey(p))||p.split(/\s+/).every(w=>set.has(_cvNorm(w))));});
