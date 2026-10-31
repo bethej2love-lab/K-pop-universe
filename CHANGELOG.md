@@ -1,6 +1,9 @@
 # CHANGELOG
 
 ## 2026-10-31 (Codex — 검수38차·모바일 첫 방문 탐색 동선)
+- **[완료·재현/修正·CI대기] [index.html ob-tips] [kpop_universe.css .combo-entry] [app.js _appendComboEntry]** 첫 방문 새origin 실제UI390px에서 배너271.76px/왼쪽16px/오른쪽102.24px 재현→폭calc(100%-32px) 적용 뒤320/360/390/430px에서 각각288/328/358/398px·좌우16px·넘침0 확인. 첫 안내에 data-modal이 없어 실제 window pointerdown이closePanels·click이raycaster로 전달되는 경로는 기존 실제코드4검증 중3실패→표시1개 추가 후4/4통과(우주 자체 클릭 보존). 첫 안내 UI버튼→검색 동선도 확인. 무관 카드가 항상 열리는 것은 배경 행성 위치에 따라 달라지므로 UI에서 모든 탭마다 재현했다고 주장하지 않음.
+- **[완료·추가 사용자동선 오류] [app.js _appendComboEntry] [tests/combo-search-navigation.test.js]** 검색→조합→닫기에서 검색창open인데 msheet-body display:none으로 빈 화면이 남는 실제UI 재현. 재검색도 숨김이 이어지는 원인은 전체검색시트를 구형 드롭다운처럼 res.style.display=none 처리한 것. msheet-body 진입이면 정상 closeMobSearchSheet를 호출하고 데스크톱 드롭다운/구형 탭검색은 기존 처리 보존. 실제 열기·닫기·배너 함수5검증은기존3실패→수정후5/5통과.
+- **[진행중·자동 UI 회귀] [tests/mobile-first-visit.test.js] [.github/workflows/browser-smoke.yml·data-and-tests.yml]** 새 프로필·390×844 터치에서 실제 touchStart/end로 첫 '찾아보기'→배경raycast0/카드0→4개폰폭배너→조합 진입·닫기→검색재진입→에스파결과→브라우저뒤로가기 검증을 추가. 서비스워커/브라우저캐시를 테스트에서만 우회하고 단계별 스크린샷을 GitHub artifact3일 보관, Node전용 CI는 이 브라우저 파일만 제외. 아직 CI결과 확인 전이며 실기기/iOS Safari 검증은 아님. 로컬IAB 첫 방문별 origin을 나누어 이전 서비스워커 캐시를 수정본 화면으로 오인하지 않음.
 - **[진행중·사용자 직접 제보] [index.html·kpop_universe.css·app.js]** 모바일 '멤버 조합 찾기' 배너 폭 불일치와 첫 안내 '찾아보기' 뒤 무관한 카드 열림을 우선 재현. 390px부터 좁은/넓은 폰 화면에서 새 로컬 origin의 저장 이력 없는 방문을 실제 UI로 따라가며 검색·조합·카드·뒤로가기/닫기 동선을 검수한다. 재현되는 오류만 작게 수정하고 새 디자인/카피의 임의 개편은 하지 않음. 화면 크기 에뮬레이션이며 실기기 iOS/Android 통과로 주장하지 않는다. 일반 첫 방문 Auth 초기화가 익명 게스트 세션을 생성할 수 있으나 영상·태그·개인정보 수정 검수는 실행하지 않음.
 
 ## 2026-10-31 (Codex — 검수34차·원곡 색인의 중첩 제작 크레딧)

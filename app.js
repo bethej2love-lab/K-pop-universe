@@ -13915,7 +13915,8 @@ function _appendComboEntry(res){
   b.addEventListener('click',e=>{
     e.stopPropagation();
     try{
-      if(document.getElementById('tabbar')?.classList.contains('search-mode')&&typeof exitMobSearch==='function')exitMobSearch();
+      if(res===document.getElementById('msheet-body'))closeMobSearchSheet();
+      else if(document.getElementById('tabbar')?.classList.contains('search-mode')&&typeof exitMobSearch==='function')exitMobSearch();
       else{const si=document.getElementById('search-input');if(si)si.value='';if(res)res.style.display='none';}
     }catch(e2){}
     _openComboPanel();
