@@ -1,0 +1,20 @@
+// 별도 임시 PGlite 의존성으로 실행: NODE_PATH=<node_modules> node tools/audit35_backup_rls_check.cjs
+// 테스트용 메모리 DB만 사용하며 운영 DB에 접속하지 않는다.
+const {PGlite}=require('@electric-sql/pglite');const fs=require('fs'),path=require('path'),assert=require('assert');const root=path.join(__dirname,'..');
+const sql=fs.readFileSync(path.join(root,'sql/audit35_backup_rls_2026-10-31.sql'),'utf8'),undo=fs.readFileSync(path.join(root,'sql/audit35_backup_rls_2026-10-31_undo.sql'),'utf8');
+const names=['ops_guest_backfill_bak_20261028','ops_codex_audit18_bak_20261028'];let checks=0;
+async function init(){const db=new PGlite();await db.exec(`create role anon;create role authenticated;create role service_role bypassrls;grant usage on schema public to anon,authenticated,service_role;`);for(const n of names)await db.exec(`create table ${n}(id text,with_members text[],marker text);insert into ${n} values('a',array['기존 게스트'],'원본'),('b',array[]::text[],'다른 원본');grant all on table ${n} to anon,authenticated,service_role;`);return db;}
+async function digest(db){return JSON.stringify((await db.query(`select '${names[0]}' as t,* from ${names[0]} union all select '${names[1]}',* from ${names[1]} order by t,id`)).rows);}
+async function denied(db,stmt){try{await db.exec(stmt);throw Error('권한이 차단되지 않음: '+stmt);}catch(e){if(!String(e.message).includes('permission denied'))throw e;checks++;}}
+(async()=>{
+ let db=await init(),before=await digest(db);await db.exec(sql);assert.equal(await digest(db),before);checks++;
+ for(const role of ['anon','authenticated'])for(const n of names){await db.exec('set role '+role);for(const q of [`select * from ${n}`,`insert into ${n} values('x','{}','오염')`,`update ${n} set marker='오염' where false`,`delete from ${n} where false`,`truncate ${n}`])await denied(db,q);await db.exec('reset role');}
+ for(const role of ['postgres','service_role']){await db.exec('set role '+role);assert.equal((await db.query(`select count(*)::int as n from ${names[0]}`)).rows[0].n,2);await db.exec('reset role');checks++;}
+ await db.exec(sql);assert.equal(await digest(db),before);checks++;
+ await db.exec(undo);await db.exec(undo);assert.equal(await digest(db),before);checks++;
+ await db.exec('set role anon');assert.equal((await db.query(`select count(*)::int as n from ${names[0]}`)).rows[0].n,2);await db.exec('reset role');checks++;await db.close();
+ for(const kind of ['missing','policy','column','service_role']){db=await init();if(kind==='missing')await db.exec(`drop table ${names[1]}`);if(kind==='policy')await db.exec(`create policy later_admin_policy on ${names[1]} using(true)`);if(kind==='column')await db.exec(`grant select(id) on ${names[1]} to anon`);if(kind==='service_role')await db.exec('alter role service_role nobypassrls');let failed=false;try{await db.exec(sql);}catch(e){failed=true;}assert(failed,'예상 밖 '+kind+' 상태 미차단');assert.equal((await db.query(`select relrowsecurity from pg_class where relname='${names[0]}'`)).rows[0].relrowsecurity,false,'부분 적용됨');checks++;await db.close();}
+ const producerFiles=['sql/guest_backfill_2026-10-28.sql','sql/guest_backfill_2026-10-28b.sql','sql/codex_audit18_fix_2026-10-28.sql'];
+ for(const f of producerFiles){db=new PGlite();await db.exec('create role anon;create role authenticated;create table yt_channel_videos(id text,group_ko text,members text[],with_members text[],with_groups text[],cover_of_members text[],cover_of_song text,cover_manual boolean,content_flag text,tags_manual boolean);');const s=fs.readFileSync(path.join(root,f),'utf8'),prefix=s.slice(0,s.indexOf('-- audit35:end')+'-- audit35:end'.length);assert(s.includes('-- audit35:end'));await db.exec(prefix);const n=f.includes('audit18')?names[1]:names[0];assert.equal((await db.query(`select relrowsecurity from pg_class where relname='${n}'`)).rows[0].relrowsecurity,true);await db.exec('set role anon');await denied(db,`select * from ${n}`);await db.exec('reset role');await db.close();checks++;}
+ console.log('백업 권한 '+checks+'검증 통과: anon/auth 읽기·쓰기·삭제·TRUNCATE 차단, 관리자 읽기, 내용 보존, 재실행/복구, 실패 원자성, 생성 SQL3곳');
+})().catch(e=>{console.error(e);process.exitCode=1;});

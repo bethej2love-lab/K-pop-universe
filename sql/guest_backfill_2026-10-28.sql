@@ -2,6 +2,10 @@
 -- 빠진 게스트만 with_members에 **추가**(기존 값 삭제 없음). tags_manual=true·무관 행 제외, 이미 있는 이름 제외. 표본 검토 오답 약 2~3%.
 -- 되돌리기: guest_backfill_2026-10-28_undo.sql (백업 ops_guest_backfill_bak_20261028)
 create table if not exists ops_guest_backfill_bak_20261028 as select id,with_members from yt_channel_videos where false;
+-- audit35: SQL 복구 전용 백업은 공개 클라이언트 접근을 허용하지 않는다.
+alter table public.ops_guest_backfill_bak_20261028 enable row level security;
+revoke all on table public.ops_guest_backfill_bak_20261028 from public, anon, authenticated;
+-- audit35:end
 with v(id,adds) as (values
 ('-z5WW2lTJLE',array['전효성(시크릿)']::text[]),
 ('-jMUjwvDoXA',array['이영지(이영지)']::text[]),

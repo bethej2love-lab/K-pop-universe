@@ -4,6 +4,10 @@
 -- ③ 박준희(솔로 a0755) Supernova 5행 — 10-28 정정 때 '무관'으로 숨긴 것을 박준희 솔로로 복원(태그 잠금)
 create table if not exists ops_codex_audit18_bak_20261028 as
   select id,group_ko,members,with_members,with_groups,cover_of_members,cover_of_song,cover_manual,content_flag,tags_manual from yt_channel_videos where false;
+-- audit35: SQL 복구 전용 백업은 공개 클라이언트 접근을 허용하지 않는다.
+alter table public.ops_codex_audit18_bak_20261028 enable row level security;
+revoke all on table public.ops_codex_audit18_bak_20261028 from public, anon, authenticated;
+-- audit35:end
 insert into ops_codex_audit18_bak_20261028
   select id,group_ko,members,with_members,with_groups,cover_of_members,cover_of_song,cover_manual,content_flag,tags_manual from yt_channel_videos
   where (id in ('-jslU5tVgrM','5CCfpnnkBV0','6DW2WRQPPb0','FaoJZUv1-0g','GyQou1z3aic','cIToocIVva0','fWeultLXmjc','fR-UTazKECA','j64iNxjmunA','u_K6h9LGHds','UkGNK8VJ3dM','UiltvNaBKPI','_m74X8nXGhY',
