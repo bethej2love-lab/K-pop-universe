@@ -261470,6 +261470,25 @@
   "id": "g277",
   "discography": [
    {
+    "title": "Boy",
+    "type": "싱글",
+    "isMain": true,
+    "cover": "https://i.scdn.co/image/ab67616d0000b2734712bceb53996ecb3d1bfd3b",
+    "releaseDate": "2026.10.30",
+    "trackCount": 1,
+    "titleTrack": "Boy",
+    "tracks": [
+     {
+      "no": 1,
+      "title": "Boy",
+      "isTitle": true
+     }
+    ],
+    "src": "spotify",
+    "spotifyId": "1N1b05jJmdKyVd8vXHZISH",
+    "copyright": "© 2026 FNC ENTERTAINMENT JAPAN"
+   },
+   {
     "title": "Smile",
     "type": "싱글",
     "isMain": true,
@@ -261540,6 +261559,26 @@
     "src": "spotify",
     "spotifyId": "6tXUYjkX690k0hCwsGCjOL",
     "melonAlbumId": "14460068"
+   },
+   {
+    "title": "Airplane",
+    "type": "싱글",
+    "isMain": true,
+    "cover": "https://i.scdn.co/image/ab67616d0000b2733096071195cfcd677d07ab4b",
+    "releaseDate": "2026.07.31",
+    "trackCount": 1,
+    "titleTrack": "Airplane",
+    "tracks": [
+     {
+      "no": 1,
+      "title": "Airplane",
+      "isTitle": true,
+      "songId": "602677321"
+     }
+    ],
+    "src": "spotify",
+    "spotifyId": "1HBI7VSg6vcsp6Zj9K3dDW",
+    "melonAlbumId": "14284317"
    },
    {
     "title": "INDIES COMPLETE ALBUM (Korean ver.)",
@@ -261620,26 +261659,6 @@
     "src": "spotify",
     "spotifyId": "73DIxIXlaOnmZLjHAzLVUW",
     "melonAlbumId": "13763479"
-   },
-   {
-    "title": "Airplane",
-    "type": "싱글",
-    "isMain": true,
-    "cover": "https://i.scdn.co/image/ab67616d0000b2733096071195cfcd677d07ab4b",
-    "releaseDate": "2026.07.31",
-    "trackCount": 1,
-    "titleTrack": "Airplane",
-    "tracks": [
-     {
-      "no": 1,
-      "title": "Airplane",
-      "isTitle": true,
-      "songId": "602677321"
-     }
-    ],
-    "src": "spotify",
-    "spotifyId": "1HBI7VSg6vcsp6Zj9K3dDW",
-    "melonAlbumId": "14284317"
    },
    {
     "title": "Why",

@@ -281094,6 +281094,29 @@
     "left": "2018.12.26",
     "discography": [
       {
+        "title": "사랑이 온다 OST Part.25",
+        "type": "OST",
+        "isMain": false,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/150/91/977/15091977_20261028180513_500.jpg",
+        "releaseDate": "2026.10.31",
+        "trackCount": 2,
+        "titleTrack": "사랑했잖아 어떻게 우리 이러니",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "사랑했잖아 어떻게 우리 이러니",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "사랑했잖아 어떻게 우리 이러니 (Inst.)",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "15091977"
+      },
+      {
         "title": "나를 숨쉬게 만드는 너",
         "type": "싱글",
         "isMain": true,
