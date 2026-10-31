@@ -3,8 +3,28 @@ name: Browser smoke
 on:
   pull_request:
     branches: [main]
+    paths:
+      - '*.html'
+      - '*.js'
+      - '*.css'
+      - '*.json'
+      - 'disco/**'
+      - 'vendor/**'
+      - 'tests/**'
+      - 'tools/browser_test_runtime.cjs'
+      - '.github/workflows/browser-smoke.yml'
   push:
     branches: [main]
+    paths:
+      - '*.html'
+      - '*.js'
+      - '*.css'
+      - '*.json'
+      - 'disco/**'
+      - 'vendor/**'
+      - 'tests/**'
+      - 'tools/browser_test_runtime.cjs'
+      - '.github/workflows/browser-smoke.yml'
 
 permissions:
   contents: read

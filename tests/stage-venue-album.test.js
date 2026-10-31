@@ -65,7 +65,10 @@ const R=`(el)=>{const r=el.getBoundingClientRect();return{l:Math.round(r.left),r
       const r2=JSON.parse(await ev(c,`(async()=>{const S=ms=>new Promise(r=>setTimeout(r,ms));const res={};
         document.getElementById('venue-panel-back').click();await S(800);
         res.back={title:document.getElementById('venue-panel-title').textContent,back:document.getElementById('venue-panel-back').hidden};
-        for(let k=0;k<20&&!document.querySelector('#side-panel .gc-ch-item');k++)await S(300);(document.querySelector('#side-panel .gc-ch-item')||document.querySelector('#tv .gc-ch-item'))?.click();await S(2500);res.lbOpened=document.getElementById('yt-lightbox').classList.contains('open');
+        for(let k=0;k<100&&!document.querySelector('#side-panel .gc-ch-item,#tv .gc-ch-item');k++)await S(200);
+        const firstVideo=document.querySelector('#side-panel .gc-ch-item')||document.querySelector('#tv .gc-ch-item');
+        if(!firstVideo)throw new Error('아이브 카드 영상 목록이20초 안에 준비되지 않음');
+        firstVideo.click();await S(2500);res.lbOpened=document.getElementById('yt-lightbox').classList.contains('open');
         const lb=document.getElementById('yt-lightbox'),ov=document.getElementById('venue-overlay');
         res.lbFront={fo:document.getElementById('feed-overlay').classList.contains('open'),front:document.body.dataset.stageFront,venueVis:getComputedStyle(ov).visibility};
         _openConcertSheet(__ev);await S(800);
