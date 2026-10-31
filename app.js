@@ -12929,11 +12929,17 @@ function _feedWideSync(){
   }else _feedWideScroller._mem=null;
 }
 {
-  const _fwMo=new MutationObserver(()=>_feedWideSync());
-  ['feed-overlay',..._FW_BLOCKERS].forEach(id=>{const el=document.getElementById(id);if(el)_fwMo.observe(el,{attributes:true,attributeFilter:['class']});});
+  // app.js는 feed-overlay보다 앞의 동기 script다. 파싱이 끝난 뒤 연결해야 첫 열림/닫힘도 감시한다.
+  const _fwObserve=()=>{
+    const _fwMo=new MutationObserver(()=>_feedWideSync());
+    ['feed-overlay',..._FW_BLOCKERS].forEach(id=>{const el=document.getElementById(id);if(el)_fwMo.observe(el,{attributes:true,attributeFilter:['class']});});
+    _feedWideSync();
+  };
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',_fwObserve,{once:true});
+  else _fwObserve();
   window.addEventListener('resize',()=>_feedWideSync(),{passive:true});
   // 안전망 — 감시 대상 밖의 경로(시작 직후 자동 열림 등)로 상태가 바뀌어도 1초 안에 맞춘다(바뀔 게 없으면 아무것도 안 함)
-  setInterval(_feedWideSync,1000);_feedWideSync();
+  setInterval(_feedWideSync,1000);
 }
 
 function _closeGcDiscogDetail(){
