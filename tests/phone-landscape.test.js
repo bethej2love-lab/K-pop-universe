@@ -92,6 +92,19 @@ async function setup(c,W,H){
       if(issue?.front){await c.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x:issue.x+issue.w/2,y:issue.y+issue.h/2}]});await c.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});}
     }
     if(await ev(c,'window.__songRetryTouches===2'))ok('곡 조회 실패/부분 결과 모두 실제 터치로 재시도 호출');else bad('곡 조회 재시도 터치 누락');
+    // 아이콘의 실제 그려진 크기와 별개로, 손가락으로 닫는 영역을 확인한다.
+    for(const [id,open,close,overlay] of [['combo-close','_openComboPanel()',"_closeComboPanel()",'combo-overlay'],['gc-track-videos-close',"document.getElementById('gc-track-videos-overlay').classList.add('open');_bringToFront(document.getElementById('gc-track-videos-overlay'))","document.getElementById('gc-track-videos-overlay').classList.remove('open')",'gc-track-videos-overlay']]){
+      await ev(c,open+';new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)))');
+      const target=await ev(c,`(()=>{const b=document.getElementById(${JSON.stringify(id)}),r=b.getBoundingClientRect(),x=r.x+r.width/2,y=r.y+r.height/2;return {x,y,w:r.width,h:r.height,coarse:matchMedia('(pointer:coarse)').matches,hits:[[-20,0],[20,0],[0,-20],[0,20]].map(([dx,dy])=>document.elementFromPoint(x+dx,y+dy)?.closest('#'+b.id)===b)};})()`);
+      if(target.coarse&&target.hits.every(Boolean))ok(id+' 중심에서20px 네 방향도 닫기 영역');else bad(id+' 좁은 터치 영역 '+JSON.stringify(target));
+      if(target.hits[0]){await c.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x:target.x-20,y:target.y}]});await c.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});await sleep(200);}
+      if(await ev(c,`!document.getElementById(${JSON.stringify(overlay)}).classList.contains('open')`))ok(id+' 아이콘 바깥쪽 터치로도 정상 닫힘');else bad(id+' 가장자리 터치가 닫지 못함');
+      await ev(c,close+';true');
+    }
+    for(const lang of ['en','ko']){
+      const metadata=await ev(c,`currentLang=${JSON.stringify(lang)};applyLang();({lang:document.documentElement.lang,english:document.body.classList.contains('lang-en')})`);
+      if(metadata.lang===lang&&metadata.english===(lang==='en'))ok(lang+' 화면/문서 언어 일치');else bad('언어 메타데이터 '+JSON.stringify(metadata));
+    }
     c.close();
   }catch(e){bad('예외: '+e.message);}
   finally{try{process.kill(proc.pid);}catch(e){}server.close();console.log(`\n${pass} 통과 / ${fail} 실패`);setTimeout(()=>process.exit(fail?1:0),300);}

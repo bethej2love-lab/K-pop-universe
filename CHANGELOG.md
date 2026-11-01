@@ -1,9 +1,12 @@
 # CHANGELOG
 
 ## 2026-11-01 (Codex — 검수47차·닫기 터치와 언어 메타데이터)
+- **[완료·브랜치/CI 대기] [kpop_universe.css·app.js]** coarse 포인터에서 조합/곡 영상 닫기 버튼에 중심44×44px의 투명 pseudo 영역만 추가. 아이콘·버튼의 원래 크기/위치·문구는 유지하며 데스크톱 fine 포인터에는 적용하지 않는다. applyLang은 body.lang-en과 함께 documentElement.lang도 설정해 영어 화면의 문서 언어가 ko로 남지 않도록 정정. 기존 미번역 문구를 임의 개편한 것은 아님.
+- **[완료·실제 입력 수정 전후] [tests/phone-landscape.test.js]** Chrome 터치 에뮬레이션에서 닫기 버튼은 원래19.6875×28px, 중심20px 사방 모두 클릭 대상이 아니고 가장자리 터치가 닫지 못함을 재현. 영어 body=true/문서lang=ko도 확인. 기존 폰12검사에 네 방향 hit-test·가장자리 실제 터치 닫기·한영 applyLang을 추가: 전13통과5실패→후18/18. 실제 iOS/Android 터치 오차나 VoiceOver/TalkBack 동작을 검증한 것으로 집계하지 않음.
 - **[진행중] [kpop_universe.css·app.js]** 조합/곡 영상 닫기 아이콘의 시각 배치는 유지하면서 모바일 가장자리 터치가 실제 버튼에 닿는지 검사한다. 영어 전환 시 화면의 lang-en과 문서 루트 lang이 일치하는지도 실제 applyLang으로 확인한다. 아이콘/문구/레이아웃을 새 디자인으로 바꾸지 않고 입력 영역과 언어 속성만 검토.
 
 ## 2026-11-01 (Codex — 검수46차·사용자 데이터 저장 순서)
+- **[완료·감사 도구 main 반영]** PR67 head8c91537040 Node124755274773 success 후 main9e6dd17f36에 병합. 제품 런타임 변경 없이 CHANGELOG와 재현 도구만 바뀌어 브라우저9흐름은 경로 필터로 실행하지 않았다. 두 경합은 미정정/후속 설계 대상으로 남는다.
 - **[완료·감사/제품 수정 보류] [tools/reproduce_user_sync_races.cjs]** 실제 _sbPushColumn/_sbFlushColumn/_pullServerToLocal을 합성 제공자로 실행: 같은 컬럼2요청이 동시에 시작되고 최신→이전 순으로 완료하면 최종값 old, startup pull 대기 중 바꾼 latest 로컬 값도 old로 덮임을 재현. 운영에서 실제 손실된 계정이 확인됐다는 뜻은 아니다. 옵션 없는 진단과 기존 PGlite0.5.11 새 메모리 DB의 실제 UPDATE 쿼리 모두 같은 결과이며 다른 합성 사용자 행은 유지. 도구는 실패 현상 진단용이고 초록 제품 회귀 검사로 등록하지 않았다.
 - **[확인·운영 읽기만]** user_data RLS 메타데이터 SELECT만 실행: SELECT/INSERT/UPDATE가 auth.uid()=user_id를 검사하고 UPDATE의 USING/WITH CHECK 모두 유지됨을 확인. 위 경합은 같은 사용자 안의 저장 순서 문제이며 권한 우회로 규정하지 않는다. Supabase changelog/현재 update 문서 확인, 계정/키/권한/운영 데이터 변경 없음.
 - **⏳ 덜 된 일 [재현·해결 기준]** `node tools/reproduce_user_sync_races.cjs`로 두 true 관찰 확인. 선택적으로 `KPU_PGLITE_MODULE=/absolute/path/to/@electric-sql/pglite node tools/reproduce_user_sync_races.cjs`로 메모리 SQL 재현. 탭 종료 전에 전송하던 _sbFlushAllPending의 성격을 보존해야 하므로 단순 직렬화만 추가하지 않음(종료 시 전송 지연 위험은 설계 판단). 사용자/컬럼별 최신 변경과 ACK 구분, 지속 저장 대기 기록의 재시작 복구, 동일 계정 pull 중 새 편집 보호를 함께 설계하고 역순 응답·오프라인/실패·pagehide/새로고침·계정 전환·여러 탭까지 통과한 뒤 정정할 것. 다른 계정/기기의 오래된 로컬 값을 무조건 병합하거나 RLS를 넓히지 말 것.

@@ -762,6 +762,7 @@ function _updateGenButtonsLang(){
   if(_openGenInfo!=null)_renderGenDetail(_openGenInfo);
 }
 function applyLang(){
+  document.documentElement.lang=currentLang;
   document.body.classList.toggle('lang-en',currentLang==='en');
   const t=T[currentLang];
   const _lt=currentLang.toUpperCase();
