@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-11-01 (Codex — 검수48차·로그아웃 실패 보존)
+- **[완료·브랜치/CI 대기] [app.js·tests/logout-failure-state.test.js]** signOut의 반환 error도 실패로 처리하고, 반환 오류/거절 시 로컬 상태와 현재 화면을 보존하며 한영 재시도 안내 후 종료. 취소·클라이언트 없음·성공 시 기존 동작과 signOut scope는 유지한다. 실제 함수6검사 전3실패→후0. 검증의 Auth/저장소는 합성이며 실제 사용자 로그아웃/계정 연결을 실행하지 않았다. SDK2.110.1 원문과 [현재 API 문서](https://supabase.com/docs/reference/javascript/auth-signout)의 {error} 반환 계약을 확인.
+- **[이슈·민감 경로/미정정] [tools/reproduce_user_sync_races.cjs]** 성공 로그아웃의 캐시 정리 목록에는 COLLECTION_KEY·_COLLECTION_KEY_OLD·FAV_ORDER_KEY가 빠져 있다. 실제 컬렉션 초기화와 신규 익명 마이그레이션 함수를 합성 Auth/저장소로 실행하니 현재/구형(kpu_playlists) 캐시 각각 이전 컬렉션1·정렬1이 새 합성 방문자 스냅샷으로 이어짐. PGlite 메모리 INSERT도 같은 결과. 같은 브라우저의 소유권 경계 문제이며 운영 계정에서 자료가 노출된 사실을 확인한 것은 아님.
+- **⏳ 덜 된 일 [캐시 경계·보존 조건]** 46차 진단 명령에 logoutCache 관찰을 추가했다. 이전 계정의 저장 완료 컬렉션이 새 익명 계정으로 들어가지 않아야 한다. 동시에 아직 ACK 없는 로컬 컬렉션을 단순 삭제해 잃지 않도록 사용자별 저장 대기 기록/복구와 함께 설계할 것. canonical/구형 키·정렬·취소/실패·재로그인·새 익명 마이그레이션을 모두 확인하며 localStorage 전체 삭제나 임의 서버 레코드 정정은 하지 말 것. 이번 패치는 실패 보존만 고쳤으며 성공 캐시 목록은 확대하지 않았다.
+- **[진행중] [app.js _handleLogout]** 고정 SDK supabase-js2.110.1의 실제 _signOut 구현/현재 공식 문서에서 오류가 {error}로 반환되고 세션 제거 전에 반환될 수 있음을 확인. 현재 호출부는 반환 오류를 무시하고 예외에도 로컬 값을 지워 reload하므로, 실제 Auth/사용자 자료에 접속하지 않는 함수 회귀로 실패·취소·성공을 구분해 정정한다. 로그아웃 scope와 기존 캐시 소유권 정책은 이 변경에서 확대하지 않는다.
+
 ## 2026-11-01 (Codex — 검수47차·닫기 터치와 언어 메타데이터)
 - **[완료·브랜치/CI 대기] [kpop_universe.css·app.js]** coarse 포인터에서 조합/곡 영상 닫기 버튼에 중심44×44px의 투명 pseudo 영역만 추가. 아이콘·버튼의 원래 크기/위치·문구는 유지하며 데스크톱 fine 포인터에는 적용하지 않는다. applyLang은 body.lang-en과 함께 documentElement.lang도 설정해 영어 화면의 문서 언어가 ko로 남지 않도록 정정. 기존 미번역 문구를 임의 개편한 것은 아님.
 - **[완료·실제 입력 수정 전후] [tests/phone-landscape.test.js]** Chrome 터치 에뮬레이션에서 닫기 버튼은 원래19.6875×28px, 중심20px 사방 모두 클릭 대상이 아니고 가장자리 터치가 닫지 못함을 재현. 영어 body=true/문서lang=ko도 확인. 기존 폰12검사에 네 방향 hit-test·가장자리 실제 터치 닫기·한영 applyLang을 추가: 전13통과5실패→후18/18. 실제 iOS/Android 터치 오차나 VoiceOver/TalkBack 동작을 검증한 것으로 집계하지 않음.

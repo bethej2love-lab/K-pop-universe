@@ -8,9 +8,24 @@ if(declStart<0||declEnd<declStart)throw new Error('Missing sync state declaratio
 const sync=src.slice(declStart,declEnd)+'\n'+fn('_sbPushColumn')+'\n'+fn('_sbFlushColumn');
 const noop=()=>{},completionTimer=setTimeout(()=>{console.error('diagnostic did not complete');process.exit(1);},15000);
 let db;
+async function logoutCacheObservation(legacy){
+ const keyNames=['FAV_KEY_G','FAV_KEY_M','FAV_KEY_C','FAV_ORDER_KEY','FAV_DATE_KEY','FAV_HISTORY_KEY','SCRAP_KEY','PROFILE_KEY','CONCERT_LOG_KEY','SB_LAST_UID_KEY'];
+ const cache=new Map(),ctx={console,currentLang:'ko',_confirmLogout:async()=>true,_showShareToast:noop,
+   sb:{auth:{signOut:async()=>({error:null})}},localStorage:{getItem:k=>cache.get(k)||null,removeItem:k=>cache.delete(k)},location:{reload:noop}};
+ for(const name of keyNames){ctx[name]='synthetic.'+name;cache.set(ctx[name],name==='FAV_ORDER_KEY'?'["synthetic-order"]':'[]');}
+ for(const name of ['COLLECTION_KEY','_COLLECTION_KEY_OLD']){const m=src.match(new RegExp("^const "+name+"='([^']+)';",'m'));if(!m)throw new Error('Missing '+name);ctx[name]=m[1];}
+ cache.set(ctx[legacy?'_COLLECTION_KEY_OLD':'COLLECTION_KEY'],JSON.stringify([{name:'synthetic private collection',items:[]}]));
+ vm.createContext(ctx);vm.runInContext(fn('_handleLogout'),ctx);await ctx._handleLogout();
+ Object.assign(ctx,{favGroups:new Set(),favMembers:new Set(),favConnections:new Set(),favOrder:JSON.parse(cache.get(ctx.FAV_ORDER_KEY)||'[]'),favDates:{},favHistory:[],scraps:[],myProfile:null,concertLog:[]});
+ let inserted;
+ ctx.sb.from=table=>{if(table!=='user_data')throw new Error('Unexpected migration target');return {insert:async payload=>{inserted=payload;if(db)await db.query('insert into logout_user_data values ($1,$2::jsonb,$3::jsonb)',[payload.user_id,JSON.stringify(payload.collections),JSON.stringify(payload.fav_order)]);return {error:null};}};};
+ const init=src.split('\n').find(line=>line.startsWith('let collections=JSON.parse('));if(!init)throw new Error('Missing collection cache initializer');
+ vm.runInContext(init+'\n'+fn('_migrateLocalToServer'),ctx);await ctx._migrateLocalToServer('synthetic-guest-'+(legacy?'legacy':'current'));
+ return {source:legacy?'legacy collection cache':'current collection cache',newGuestCollectionCount:inserted.collections.length,newGuestOrderCount:inserted.fav_order.length,privateCacheCarriedToNewGuest:inserted.collections.length>0};
+}
 (async()=>{
  const memory=new Map([['synthetic-a',[]],['synthetic-b',['untouched']]]);
- if(process.env.KPU_PGLITE_MODULE){const{PGlite}=require(process.env.KPU_PGLITE_MODULE);db=new PGlite();await db.exec('create table user_data(user_id text primary key, fav_groups jsonb not null)');await db.query('insert into user_data values ($1,$2::jsonb),($3,$4::jsonb)',['synthetic-a','[]','synthetic-b','["untouched"]']);}
+ if(process.env.KPU_PGLITE_MODULE){const{PGlite}=require(process.env.KPU_PGLITE_MODULE);db=new PGlite();await db.exec('create table user_data(user_id text primary key, fav_groups jsonb not null); create table logout_user_data(user_id text primary key, collections jsonb, fav_order jsonb)');await db.query('insert into user_data values ($1,$2::jsonb),($3,$4::jsonb)',['synthetic-a','[]','synthetic-b','["untouched"]']);}
  const write=async(uid,value)=>{memory.set(uid,value);if(db)await db.query('update user_data set fav_groups=$1::jsonb where user_id=$2',[JSON.stringify(value),uid]);};
  const read=async uid=>db?(await db.query('select fav_groups from user_data where user_id=$1',[uid])).rows[0].fav_groups:memory.get(uid);
  const requests=[],window={_sbSession:{user:{id:'synthetic-a'}}};
@@ -36,6 +51,7 @@ let db;
  pullCtx.favGroups=new Set(['latest']);pullCtx._sbPushColumn('fav_groups',['latest']);
  finishPull({data:{fav_groups:['old']},error:null});await pulling;
  const finalLocal=[...pullCtx.favGroups];
- console.log(JSON.stringify({mode:db?'pglite-memory':'synthetic-provider',requestsStartedBeforeFirstCompleted:concurrent,completionOrder:concurrent===2?['latest','old']:['old','latest'],finalServer:finalValue,expectedLatest:['latest'],staleWriteReproduced:JSON.stringify(finalValue)!=='["latest"]',otherUserUnchanged:JSON.stringify(await read('synthetic-b'))==='["untouched"]',localAfterDelayedPull:finalLocal,localEditOverwritten:JSON.stringify(finalLocal)!=='["latest"]',productionWrites:false},null,2));
+ const logoutCache=[await logoutCacheObservation(false),await logoutCacheObservation(true)];
+ console.log(JSON.stringify({mode:db?'pglite-memory':'synthetic-provider',requestsStartedBeforeFirstCompleted:concurrent,completionOrder:concurrent===2?['latest','old']:['old','latest'],finalServer:finalValue,expectedLatest:['latest'],staleWriteReproduced:JSON.stringify(finalValue)!=='["latest"]',otherUserUnchanged:JSON.stringify(await read('synthetic-b'))==='["untouched"]',localAfterDelayedPull:finalLocal,localEditOverwritten:JSON.stringify(finalLocal)!=='["latest"]',logoutCache,productionWrites:false},null,2));
  console.log('Diagnostic evidence only; this is not a passing product regression or a deployed fix.');
 })().catch(e=>{console.error(e);process.exitCode=1;}).finally(async()=>{clearTimeout(completionTimer);if(db)await db.close();});
