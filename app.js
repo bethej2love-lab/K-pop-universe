@@ -17037,6 +17037,7 @@ document.getElementById('generic-prompt-cancel').addEventListener('click',e=>{e.
 document.getElementById('generic-prompt-overlay').addEventListener('click',e=>{e.stopPropagation();if(e.target===e.currentTarget)_closeGenericPrompt(null);});
 document.getElementById('generic-prompt-overlay').addEventListener('pointerdown',e=>e.stopPropagation());
 document.getElementById('generic-prompt-input').addEventListener('keydown',e=>{
+  if(e.isComposing||e.keyCode===229)return;
   if(e.key==='Enter'){e.preventDefault();document.getElementById('generic-prompt-save').click();}
 });
 function _connFavKey(anchor,sel){return anchor.group.ko+':'+anchor.name.ko+'|'+_connSelKey(sel);}
@@ -20032,7 +20033,7 @@ function _confirmNewCol(){
   _renderColPickerList();
 }
 document.getElementById('col-new-confirm').addEventListener('click',_confirmNewCol);
-document.getElementById('col-new-name').addEventListener('keydown',e=>{if(e.key==='Enter')_confirmNewCol();});
+document.getElementById('col-new-name').addEventListener('keydown',e=>{if(e.isComposing||e.keyCode===229)return;if(e.key==='Enter')_confirmNewCol();});
 // 프로필 패널 새 컬렉션 버튼 — 영상/사진 종류를 한 다이얼로그에서 인라인 토글로 고른다(2026-08-26, 예전
 // '+ 사진 컬렉션' 버튼과 통합). 사진은 Supabase 업로드가 필요해 종류가 photo일 때만 로그인 확인.
 document.getElementById('col-create-btn').addEventListener('click',()=>{
@@ -20072,7 +20073,7 @@ document.getElementById('pp-save').addEventListener('click',e=>{e.stopPropagatio
 document.getElementById('pp-close').addEventListener('click',e=>{e.stopPropagation();closeProfilePanel();});
 document.getElementById('profile-overlay').addEventListener('click',e=>{e.stopPropagation();if(e.target===e.currentTarget)closeProfilePanel();});
 document.getElementById('profile-overlay').addEventListener('pointerdown',e=>e.stopPropagation());
-['pp-nick','pp-bio'].forEach(id=>document.getElementById(id).addEventListener('keydown',e=>{if(e.key==='Enter')saveProfile();}));
+['pp-nick','pp-bio'].forEach(id=>document.getElementById(id).addEventListener('keydown',e=>{if(e.isComposing||e.keyCode===229)return;if(e.key==='Enter')saveProfile();}));
 
 function _closeUnfavConfirm(ok){
   document.getElementById('unfav-confirm-overlay').classList.remove('open');
