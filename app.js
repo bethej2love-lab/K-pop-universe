@@ -6711,7 +6711,7 @@ async function _loadReactions(videoUrl){
   if(!videoUrl||!sb||!window._sbSession)return;
   try{
     const uid=window._sbSession.user.id;
-    const[{data:cntData},{data:myData}]=await Promise.all([
+    const[{data:cntData,error:cntError},{data:myData,error:myError}]=await Promise.all([
       sb.from('video_reaction_counts').select('emoji,cnt').eq('video_url',videoUrl),
       sb.from('video_reactions').select('emoji').eq('user_id',uid).eq('video_url',videoUrl)
     ]);
@@ -6719,8 +6719,12 @@ async function _loadReactions(videoUrl){
     // 이전 영상 응답이 _myReactions(Set 전체 교체 방식)를 덮어써서, 지금 보고 있는 영상의 "내가 누른"
     // 상태가 순간적으로 틀리게 표시될 수 있음(빠르게 여러 번 스와이프할 때 재현 가능한 레이스 컨디션).
     if(videoUrl!==_lbCurVideoUrl)return;
-    (cntData||[]).forEach(r=>_reactionCounts.set(videoUrl+'\x00'+r.emoji,r.cnt));
-    _myReactions=new Set((myData||[]).map(r=>videoUrl+'\x00'+r.emoji));
+    if(cntError||myError)throw cntError||myError;
+    if(!Array.isArray(cntData)||!Array.isArray(myData))throw new Error('Invalid reaction response');
+    const prefix=videoUrl+'\x00';
+    for(const key of _reactionCounts.keys())if(key.startsWith(prefix))_reactionCounts.delete(key);
+    cntData.forEach(r=>_reactionCounts.set(prefix+r.emoji,r.cnt));
+    _myReactions=new Set(myData.map(r=>prefix+r.emoji));
     _renderReactions();
   }catch(e){console.error('_loadReactions failed',e);}
 }
@@ -6735,8 +6739,10 @@ async function _toggleReaction(videoUrl,emoji){
   else{_myReactions.add(key);_reactionCounts.set(key,(_reactionCounts.get(key)||0)+1);}
   _renderReactions();
   try{
-    if(wasOn){await sb.from('video_reactions').delete().eq('user_id',uid).eq('video_url',videoUrl).eq('emoji',emoji);}
-    else{await sb.from('video_reactions').upsert({user_id:uid,video_url:videoUrl,emoji},{onConflict:'user_id,video_url,emoji'});}
+    const{error}=wasOn
+      ?await sb.from('video_reactions').delete().eq('user_id',uid).eq('video_url',videoUrl).eq('emoji',emoji)
+      :await sb.from('video_reactions').upsert({user_id:uid,video_url:videoUrl,emoji},{onConflict:'user_id,video_url,emoji'});
+    if(error)throw error;
   }catch(e){
     // rollback
     if(wasOn){_myReactions.add(key);_reactionCounts.set(key,(_reactionCounts.get(key)||0)+1);}
