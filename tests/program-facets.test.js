@@ -32,6 +32,29 @@ async function ev(c,x){const r=await c.send('Runtime.evaluate',{expression:x,ret
     await c.send('Page.addScriptToEvaluateOnNewDocument',{source:`try{localStorage.setItem('kpu_lang',${JSON.stringify(TEST_LANG)});}catch(e){}`});
     await c.send('Page.navigate',{url:`http://127.0.0.1:${PORT}/index.html`});
     for(let i=0;i<60;i++){await sleep(500);try{if(await ev(c,`typeof _openProgramCollection==='function'&&ARTISTS.length>0&&!!sb`))break;}catch(e){}}
+    // Real renderer/close lifecycle with controlled chart/event providers. Restore
+    // both providers before the existing live read-only program checks below.
+    try{
+      for(const [width,mobile] of [[1400,false],[390,true]]){
+        await c.send('Emulation.setDeviceMetricsOverride',{width,height:mobile?844:900,deviceScaleFactor:1,mobile});
+        const nav=JSON.parse(await ev(c,`(async()=>{
+          const S=ms=>new Promise(r=>setTimeout(r,ms)),ov=document.getElementById('feed-list-overlay'),title=()=>document.getElementById('feed-list-hd-title').textContent;
+          const savedChart=_chartSongs,savedEvent=_eventRows,key=Object.keys(_CHART_DEFS)[0];let done;
+          const open=()=>_openFeedListOverlay('NEW LIST','',[]),pending=()=>_openChartList(key);
+          const out={};
+          try{
+            _chartSongs=()=>new Promise(r=>done=r);_eventRows=async()=>[];
+            open();let p=pending();_closeFeedListOverlay();done([]);await p;await S(320);out.closed=!ov.classList.contains('open');
+            open();p=pending();open();done([]);await p;out.sync=title()==='NEW LIST';
+            p=pending();await _openEventPage(_EVENT_SERIES[0].id);const eventTitle=title();done([]);await p;out.event=title()===eventTitle;
+            _closeFeedListOverlay();open();await S(320);out.reopened=ov.classList.contains('open')&&title()==='NEW LIST';
+            _closeFeedListOverlay();p=pending();await S(320);const closedBefore=!ov.classList.contains('open');done([]);await p;out.newOpen=closedBefore&&ov.classList.contains('open');
+          }finally{_chartSongs=savedChart;_eventRows=savedEvent;_closeFeedListOverlay();await S(320);}
+          return JSON.stringify(out);
+        })()`));
+        for(const [key,value] of Object.entries(nav))value===true?ok(width+'px 목록 전환/닫기 '+key):bad(width+'px 목록 전환/닫기 '+key+' '+JSON.stringify(nav));
+      }
+    }finally{await c.send('Emulation.setDeviceMetricsOverride',{width:1400,height:900,deviceScaleFactor:1,mobile:false});}
     const r=JSON.parse(await ev(c,`(async()=>{
       const S=ms=>new Promise(r=>setTimeout(r,ms));
       favGroups.clear();favMembers.clear();favGroups.add('르세라핌'); // 이 세션에서만(저장 안 함)
