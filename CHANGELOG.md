@@ -1,5 +1,35 @@
 # CHANGELOG
 
+## 2026-11-01 (Codex — 검수54차·공연장 이름 비교)
+- **[완료·PR73에 함께 검증] [app.js _venueIdKey·tests/venue-name-key.test.js]** 주석/의도는 대소문자·띄어쓰기 무시인데 실제 fallback 정규식이 /s+/여서 공백을 남기고 s를 삭제했다. New Venue X/newvenuex 불일치와 Shall X/Hall X 오병합을 실제 함수로 재현: 9검사 전4실패→후0. 공백 정규식으로만 정정하며 Wikidata/KOPIS/홀 구분·별칭 해석은 보존한다. 기존 메타데이터818공연장/별칭19개에 순환 없음. 별칭3개는 canonical 메타데이터가 없어도 이름 fallback으로 같은 키를 얻으므로 이를 임의로 잘못된 데이터로 분류/삭제하지 않음.
+- **[검증 효율]** 정적 자료 복구와 같은 공연장 코드 영역의 작은 수정이라 별도 브라우저 행렬을 하나 더 만들지 않고 최종 PR73 head에 합친다. 이전 PR70–72의 실패/취소는 기록을 유지하고, 모두 포함된 최종 코드의 Node/브라우저 결과로 배포를 판정한다. 운영 자료·공연/공연장 JSON은 변경하지 않았다.
+
+## 2026-11-01 (Codex — 검수53차·조회 지연 읽기 진단)
+- **[확인·운영 SELECT/EXPLAIN만]** 48차 PR69 영어 프로그램 정렬이15초를 넘겨 실패 후 실패 작업1회 재확인에서 전체9흐름 success. 50차 PR71은 한영 프로그램/공유 검색에서 대기 실패가 추가 관찰돼 CI 완료 뒤 로그를 다시 판단한다. 같은 시간대 DB의 pg_stat_statements는 yt_channel_videos 포함340쿼리 형태, 표본상 최대 평균27,185.59ms/최대 관측29,994.78ms였다. 통계 시작은2026-10-31 12:51:27 UTC이고 이후 갱신되는 누적 표본이므로 특정 브라우저 요청/현재 전체 평균/원인으로 단정하지 않는다. 잘못된 과거 테이블명 youtube_cache로 조회한 첫 표본0은 영상 테이블 성능 근거로 사용하지 않음.
+- **[확인·인덱스 존재]** 잇츠라이브4키워드+르세라핌(group_ko 또는 with_groups)+조회수 정렬의 대표 SELECT를 ANALYZE 없이 EXPLAIN: BitmapAnd/BitmapOr가 idx_ytv_group_ko·idx_yt_channel_videos_with_groups_gin·idx_ytcv_title_norm_trgm을 선택. 최상단 추정66행/cost1754.05는 실행 시간(ms)이 아니며, 도구 권한의 대표 쿼리 계획을 실제 PostgREST/RLS 실행 계획과 동일시하지 않는다. 단순히 GIN이 없다는 진단은 근거 없음.
+- **⏳ 덜 된 일 [중복 인덱스·원인 미확정]** pg_indexes 정의상 title_norm gin_trgm_ops는 idx_yt_channel_videos_title_norm_trgm/idx_ytcv_title_norm_trgm, with_groups GIN은 idx_yt_channel_videos_with_groups_gin/idx_ytv_with_groups_gin으로 각각 중복. 삭제·통계 reset·VACUUM/ANALYZE·설정/RLS/DDL은 실행하지 않았다. 다음 검수는 같은 queryid의 calls/총 실행시간·동시성·I/O/버퍼·실제 API 역할 계획을 비교하고, 중복 인덱스의 사용량/크기/제약 의존성을 검증한 후 별도 마이그레이션으로 판단할 것. 테스트 대기 시간을 늘려 지연을 숨기지 않음.
+
+## 2026-11-01 (Codex — 검수52차·정적 자료 일시 실패)
+- **[완료·브랜치] [app.js·tests/static-load-recovery.test.js]** 그룹/솔로 앨범·곡 색인·크레딧·공연장5로더의 일시 HTTP/네트워크/JSON 실패는 성공 빈 자료로 캐시하지 않고 진행 Promise를 해제해 다음 진입/검색에서 다시 읽는다. 정상 빈 자료·앨범404의 기존 빈 결과·성공 캐시는 유지. 크레딧 동시 요청은 같은 진행 요청으로 합친다. 곡 색인 실패 후 검색이 불완전한 빈 곡 색인을 확정하지 않도록 성공 응답에서만 재검색한다. 자동 무한 재시도는 추가하지 않았다.
+- **[검증]** 초기 실제 로더36검사 전19실패→후0, 실제 검색 후속 콜백/크레딧 동시 요청까지 최종40/40. 기존 솔로340등록행(빈160 요청0·자료180 자기 파일·재요청0), 검색 수명16·중복 앨범·문법 통과. 원본 JSON·파일 키·동명이인 ID·캐시버스터 변경 없음.
+- **[브라우저 검증 경계] [tests/stage-venue-album.test.js]** 기존 스위트 끝에 공연장/크레딧 첫503→실제 로컬 JSON 회복→성공 캐시 재사용2검사를 추가. 전체 로컬 실행은 먼저 아이브 영상 목록20초 대기에서0통과/1실패로 종료했으므로 전체 통과로 적지 않는다. 해당2사례만 같은 기존 테스트 코드로 분리해 Chrome2/2 확인(첫 격리 실행은 SwiftShader 누락으로 앱 준비 실패, 기존과 동일 플래그 재실행 통과). 운영 응답에 장애를 주입한 것이 아니며 파일 경로에만 합성503을 반환한다. 전체 CI는 별도 판정.
+- **[진행중] [app.js lazy loader]** 앨범/트랙 색인·크레딧·공연장 JSON 첫 요청이 일시 실패하면 빈 객체/완료 Promise가 세션 내내 남아 다음 진입에도 회복하지 않는지 확인한다. HTTP 오류·네트워크/JSON 오류·정상 빈 자료·동시 요청·성공 캐시를 실제 로더로 구분하고 파일 키/동명이인 ID·원본 JSON은 유지한다. 운영 데이터나 캐시버스터는 변경하지 않는다.
+
+## 2026-11-01 (Codex — 검수51차·한글 입력 확정)
+- **[완료·브랜치/CI 대기] [app.js·tests/ime-submit-guard.test.js]** 공통 프롬프트·컬렉션 생성·프로필 이름/소개4입력의 실제 keydown에 기존 검색과 같은 isComposing/keyCode229 보호 추가. 일반 Enter·다른 키·저장 버튼 정책은 유지하며 글자 조합 확정 자체는 preventDefault하지 않는다. 실제 등록 핸들러20검사 전12실패→후0, 기존 목록 키보드9·취소15·문법 통과.
+- **[검증 경계] [tests/mobile-first-visit.test.js]** 기존 첫 방문17동선에 실제 공통 입력창의 합성 isComposing Enter→pending/open 유지, 별도 CDP 일반 Enter→값 반환/닫힘2검사를 추가해 로컬 Chrome19/19. 실제 프로필/컬렉션 저장은 호출하지 않았으며 OS 한글 키보드/iOS·Android IME 통과로 주장하지 않는다. Safari가 compositionend 직후 isComposing=false/keyCode13으로 내보내는 별도 패턴은 실기기 확인 대상.
+- **[진행중] [app.js 입력 keydown]** 검색 목록에는 이미 IME 조합 보호가 있으나 공통 이름 입력·컬렉션 생성·프로필 이름/소개는 조합 확정 Enter에도 저장을 호출한다. 실제 등록 핸들러를 합성 DOM으로 실행해 isComposing/keyCode229·일반 Enter·다른 키를 구분하고 기존 저장 정책은 유지한다. 실제 프로필/컬렉션 저장은 실행하지 않는다.
+
+## 2026-11-01 (Codex — 검수50차·이모지 저장 실패)
+- **[완료·브랜치/CI 대기] [app.js·tests/reaction-error-results.test.js]** 반응 추가/삭제가 반환한 error를 기존 rollback 경로로 전달. 집계/내 반응 조회 중 한쪽 오류·비배열 응답은 성공0건으로 해석하지 않고 직전 상태를 유지한다. 정상 빈 집계는 해당 영상 캐시만 비워 과거 숫자가 계속 남지 않게 하며 다른 영상 집계·사용자/영상/이모지 삭제 필터·upsert 키는 보존. 실제 함수14검사 전6실패→후0, 공유14·로그아웃6·문법 통과. 합성 DB 응답만 사용해 운영 반응은 추가/삭제하지 않았다.
+- **⏳ 덜 된 일 [별도 경합]** 이번 수정은 반환 error/정상0건의 구분이다. 같은 영상으로 되돌아온 오래된 조회, 조회 도중 클릭, 같은 키의 연속 클릭 역순 완료, 계정 변경 중 완료는 기존 URL 검사/낙관 업데이트만으로 완전 보호된다고 볼 수 없다. `app.js _loadReactions/_toggleReaction`에 요청 세대·사용자 범위와 동일 키 쓰기 순서를 통제한 재현이 필요하며, 중복 클릭을 무시할지 마지막 선택을 대기시킬지 UX와 함께 정할 것. 이 경합까지 해결했다고 집계하지 않는다.
+- **[진행중] [app.js _toggleReaction/_loadReactions]** Supabase가 반환한 error가 예외로 간주되지 않아 반응 저장 실패에도 켜짐/숫자가 남고, 조회 실패는 내 반응을 빈 값으로 덮는 경로를 실제 함수와 합성 응답으로 확인한다. 운영 반응·집계/정책은 변경하지 않으며 이모지3종·시각 디자인·정상 저장 경로는 유지. 빠른 연속 클릭/읽기-쓰기 순서 경합은 별도로 구분해 기록한다.
+
+## 2026-11-01 (Codex — 검수49차·공유 결과 안내)
+- **[완료·브랜치/CI 대기] [app.js·tests/share-copy-outcome.test.js]** execCommand=false/예외를 실패로 반환하고 임시 textarea는 선택 실패에도 finally로 제거. 기존 공유 호출은 같은 한영 안내를 유지하며, 조합 공유는 실제 복사 결과를 받아 이미지 다운로드 요청과 링크 복사 실패를 구분한다. 이미지 저장 완료 여부는 브라우저에서 확인할 수 없어 요청으로 표현. 네이티브 AbortError 취소 후 몰래 링크를 복사하지 않는다. URL/공유 파일 형식/다운로드 경로는 유지.
+- **[검증]** 실제 helper/조합 클릭 핸들러14검사 전11실패→후0(새 반환 계약 검사 포함). 미지원·거절·false·예외·선택 실패 정리·한영·네이티브 취소/성공/실패를 통제. 기존 phone-landscape에 실제 DOM 한영 실패 토스트·임시 textarea 제거2검사를 추가해 로컬 Chrome20/20. clipboard/execCommand/share/download는 합성이며 실제 클립보드/OS 시트/다운로드 성공은 검증하지 않음. [execCommand 반환값](https://developer.mozilla.org/en-US/docs/Web/API/Document/execCommand#return_value) 확인; deprecated API를 새 주 경로로 확대한 것이 아니고 기존 fallback의 결과만 검사한다.
+- **[진행중] [app.js 공유]** 링크 복사 fallback이 execCommand=false에도 성공 안내를 표시하고, 조합 이미지 공유는 클립보드 거절을 무시해 복사 완료로 안내하는 경로 확인. 실제 공유 함수/클릭 핸들러를 합성 클립보드로 실행해 성공·거절·미지원·네이티브 취소를 구분한다. 공유 URL·이미지 디자인·다운로드 정책은 유지하며 운영 계정이나 실제 클립보드 내용을 변경하지 않는다.
+
 ## 2026-11-01 (Codex — 검수48차·로그아웃 실패 보존)
 - **[완료·브랜치/CI 대기] [app.js·tests/logout-failure-state.test.js]** signOut의 반환 error도 실패로 처리하고, 반환 오류/거절 시 로컬 상태와 현재 화면을 보존하며 한영 재시도 안내 후 종료. 취소·클라이언트 없음·성공 시 기존 동작과 signOut scope는 유지한다. 실제 함수6검사 전3실패→후0. 검증의 Auth/저장소는 합성이며 실제 사용자 로그아웃/계정 연결을 실행하지 않았다. SDK2.110.1 원문과 [현재 API 문서](https://supabase.com/docs/reference/javascript/auth-signout)의 {error} 반환 계약을 확인.
 - **[이슈·민감 경로/미정정] [tools/reproduce_user_sync_races.cjs]** 성공 로그아웃의 캐시 정리 목록에는 COLLECTION_KEY·_COLLECTION_KEY_OLD·FAV_ORDER_KEY가 빠져 있다. 실제 컬렉션 초기화와 신규 익명 마이그레이션 함수를 합성 Auth/저장소로 실행하니 현재/구형(kpu_playlists) 캐시 각각 이전 컬렉션1·정렬1이 새 합성 방문자 스냅샷으로 이어짐. PGlite 메모리 INSERT도 같은 결과. 같은 브라우저의 소유권 경계 문제이며 운영 계정에서 자료가 노출된 사실을 확인한 것은 아님.

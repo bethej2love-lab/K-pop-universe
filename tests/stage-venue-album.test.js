@@ -145,6 +145,16 @@ const R=`(el)=>{const r=el.getBoundingClientRect();return{l:Math.round(r.left),r
       const p=document.getElementById('trophy-panel').getBoundingClientRect();const res={b:Math.round(p.bottom),w:Math.round(p.width),h:innerHeight};
       _closeTrophyOverlay();await S(500);res.closed=!document.getElementById('trophy-overlay').classList.contains('open');return JSON.stringify(res);})()`));
     if(Math.abs(tm.b-tm.h)<=1&&tm.w===390&&tm.closed)ok('[390] 트로피 창 = 바텀시트, 닫기 정리');else bad('[390] 트로피 '+JSON.stringify(tm));
+    // 정적 JSON의 첫503 후 실제 로컬 파일로 회복. 다른 네트워크/운영 자료는 가로채지 않는다.
+    for(const [file,reset,load,cache] of [['venues_info.json','_venuesInfo=null;_venuesInfoP=null','_ensureVenuesInfo()','_venuesInfo'],['artist_credits.json','_acData=null;_acDataP=null','_loadAcData()','_acData']]){
+      const recovery=await ev(c,`(async()=>{
+        const original=window.fetch;let calls=0;${reset};
+        window.fetch=(input,...args)=>{const url=typeof input==='string'?input:input.url;if(new URL(url,location.href).pathname.endsWith('/'+${JSON.stringify(file)})){calls++;if(calls===1)return Promise.resolve(new Response('synthetic unavailable',{status:503}));}return original(input,...args);};
+        try{await ${load};const failedCache=${cache};const data=await ${load};await ${load};return {calls,failedCache:failedCache===null,size:Object.keys(data||{}).length,cached:${cache}===data};}
+        finally{window.fetch=original;}
+      })()`);
+      if(recovery.calls===2&&recovery.failedCache&&recovery.size>0&&recovery.cached)ok(file+' 첫503 뒤 재진입 회복·성공 캐시 재사용');else bad(file+' 회복 '+JSON.stringify(recovery));
+    }
     c.close();
   }catch(e){bad('예외: '+e.message);}
   finally{try{proc.kill();}catch(e){}server.close();}

@@ -69,7 +69,14 @@ async function shot(c,name){fs.mkdirSync(ARTIFACTS,{recursive:true});const s=awa
    const state=await ev(c,`({open:document.getElementById(${JSON.stringify(id)}).classList.contains('open'),group:_openGCko})`);
    if(!state.open&&state.group==='에스파')ok(id+' 입력 중 Escape도 그 창만 닫음');else bad(id+' 입력 중 Escape '+JSON.stringify(state));
   }
-  await ev(c,'closeCards();true');
+  // 실제 프롬프트의 DOM 이벤트/Promise를 검사한다. OS IME나 실제 저장은 실행하지 않는다.
+  await ev(c,`window.__auditPromptResult='pending';_promptDialog({title:'INPUT TEST',value:''}).then(value=>window.__auditPromptResult=value);const input=document.getElementById('generic-prompt-input');input.value='테스트';input.focus();input.dispatchEvent(new KeyboardEvent('keydown',{key:'Enter',isComposing:true,bubbles:true,cancelable:true}));true`);
+  const composing=await ev(c,`({result:window.__auditPromptResult,open:document.getElementById('generic-prompt-overlay').classList.contains('open')})`);
+  if(composing.result==='pending'&&composing.open)ok('한글 조합 확정 Enter는 입력 창을 저장/닫지 않음');else bad('조합 Enter '+JSON.stringify(composing));
+  await c.send('Input.dispatchKeyEvent',{type:'keyDown',key:'Enter',code:'Enter',windowsVirtualKeyCode:13});await c.send('Input.dispatchKeyEvent',{type:'keyUp',key:'Enter',code:'Enter',windowsVirtualKeyCode:13});
+  const submitted=await ev(c,`({result:window.__auditPromptResult,open:document.getElementById('generic-prompt-overlay').classList.contains('open')})`);
+  if(submitted.result==='테스트'&&!submitted.open)ok('별도 일반 Enter는 입력값을 정상 반환');else bad('일반 Enter '+JSON.stringify(submitted));
+  await ev(c,'_closeGenericPrompt(null);closeCards();true');
  }catch(e){bad(e.message);if(c)try{await shot(c,'failure');}catch(_){}}
  finally{c?.close();try{proc.kill();}catch(_){}server.close();console.log(pass+' 통과 / '+fail+' 실패');process.exit(fail?1:0);}
 })();

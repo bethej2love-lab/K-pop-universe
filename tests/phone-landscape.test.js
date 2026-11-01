@@ -105,6 +105,19 @@ async function setup(c,W,H){
       const metadata=await ev(c,`currentLang=${JSON.stringify(lang)};applyLang();({lang:document.documentElement.lang,english:document.body.classList.contains('lang-en')})`);
       if(metadata.lang===lang&&metadata.english===(lang==='en'))ok(lang+' 화면/문서 언어 일치');else bad('언어 메타데이터 '+JSON.stringify(metadata));
     }
+    // 합성 clipboard/execCommand만 사용한다. 실제 클립보드를 읽거나 쓰지 않는다.
+    for(const lang of ['ko','en']){
+      const copy=await ev(c,`(async()=>{
+        const descriptor=Object.getOwnPropertyDescriptor(navigator,'clipboard'),exec=document.execCommand;
+        const count=document.querySelectorAll('textarea').length;
+        try{
+          Object.defineProperty(navigator,'clipboard',{configurable:true,value:{writeText:async()=>{throw new Error('synthetic denied');}}});document.execCommand=()=>false;
+          currentLang=${JSON.stringify(lang)};const copied=await _copyShareLink('https://example.test/synthetic');
+          const toast=document.getElementById('share-toast');return {copied,text:toast.textContent,visible:toast.classList.contains('show'),clean:document.querySelectorAll('textarea').length===count};
+        }finally{if(descriptor)Object.defineProperty(navigator,'clipboard',descriptor);else delete navigator.clipboard;document.execCommand=exec;}
+      })()`);
+      if(copy.copied===false&&copy.visible&&copy.clean&&(lang==='ko'?/복사에 실패/.test(copy.text):/Failed to copy/.test(copy.text)))ok(lang+' 복사 차단: 실제 실패 토스트·임시 입력 제거');else bad('복사 결과 '+JSON.stringify(copy));
+    }
     c.close();
   }catch(e){bad('예외: '+e.message);}
   finally{try{process.kill(proc.pid);}catch(e){}server.close();console.log(`\n${pass} 통과 / ${fail} 실패`);setTimeout(()=>process.exit(fail?1:0),300);}
