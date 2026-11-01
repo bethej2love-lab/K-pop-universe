@@ -26453,11 +26453,12 @@ function _makeChVidController(contId){
   // 이 그룹/멤버가 실제로 태그된 콘텐츠 포맷 목록을 가져온다 — ⋮ 메뉴에 "콘텐츠별 보기"를 보여줄지
   // 판단하고, 포맷 알약을 렌더링하는 데 씀. 없으면 빈 배열(메뉴 옵션 자체를 숨김).
   async function _loadAvailableFormats(ko,memberKo){
-    if(!sb)return[];
+    if(!sb)throw new Error('Content format provider unavailable');
     // DB에서 DISTINCT로 정확히 집계(get_content_formats RPC) — 예전엔 클라이언트에서 최대 1000개
     // 행만 가져와 추정했는데, 정렬 기준이 없어 영상 많은 그룹/멤버는 일부 포맷이 누락될 수 있었음
     const{data,error}=await sb.rpc('get_content_formats',{p_group_ko:ko,p_member_ko:memberKo||null});
-    if(error||!data)return[];
+    if(error)throw error;
+    if(!Array.isArray(data))throw new Error('Invalid content format response');
     return data.filter(Boolean);
   }
 
@@ -27445,9 +27446,12 @@ function _makeChVidController(contId){
     const _ensureFormats=()=>{
       if(_fmtReq)return _fmtReq;
       const ck=ko+'␟'+(memberKo||'');
-      _fmtReq=(_fmtCache.has(ck)?Promise.resolve(_fmtCache.get(ck)):_loadAvailableFormats(ko,memberKo).then(fl=>{_fmtCache.set(ck,fl);return fl;})).then(formats=>{
+      const formatsP=_fmtCache.has(ck)?Promise.resolve(_fmtCache.get(ck)):_loadAvailableFormats(ko,memberKo).then(fl=>{_fmtCache.set(ck,fl);return fl;});
+      _fmtReq=formatsP.catch(()=>{_fmtReq=null;return null;}).then(formats=>{
+      if(formats===null)return; // Retry a failed lookup on the next explicit menu open.
       if(state.ko!==ko||state.memberKo!==(memberKo||null))return; // 그 사이 다른 카드로 전환됨
       state.formats=formats;
+      if(state.viewMode==='format')renderFilterTabs();
       const viewToggleBtn=cont.querySelector('.gc-ch-view-toggle');
       const divider=cont.querySelector('.gc-ch-sort-divider');
       if(formats.length){
@@ -27542,7 +27546,7 @@ function _makeChVidController(contId){
     });
     // 공유받은 목록 링크로 연 경우 — 검색어·콘텐츠별 보기를 화면에도 그대로 보여 준다(조건은 위 _pre에서 state에 이미 들어감)
     if(state.searchQ&&searchInput){searchInput.value=state.searchQ;searchWrap.style.display='';searchToggleBtn.classList.add('active');searchClear?.classList.add('visible');}
-    if(state.viewMode==='format'){viewToggleBtn?.classList.add('active');_ensureFormats().then(()=>{if(state.ko===ko)renderFilterTabs();});}
+    if(state.viewMode==='format'){viewToggleBtn?.classList.add('active');_ensureFormats();}
     if(observer)observer.disconnect();
     if(_cleanupScroll){_cleanupScroll();_cleanupScroll=null;}
     const moreWrap=cont.querySelector('.gc-ch-more-wrap');
