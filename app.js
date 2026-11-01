@@ -22619,7 +22619,10 @@ function _openIgViewer(m,handle,idx){
     pn.addEventListener('touchcancel',pnEnd,{passive:true});
     document.addEventListener('keydown',e=>{
       if(!ov.classList.contains('open'))return;
-      if(e.key==='ArrowLeft')_igvGo(-1); // Esc는 _closeTopOverlay가 맡는다else if(e.key==='ArrowRight')_igvGo(1);
+      // 사진 넘기기는 뷰어에서 끝낸다. 뒤 카드/재생 화면의 방향키로도 새면 안 된다.
+      if(e.key!=='ArrowLeft'&&e.key!=='ArrowRight')return;
+      e.preventDefault();e.stopImmediatePropagation();
+      _igvGo(e.key==='ArrowLeft'?-1:1); // Esc는 _closeTopOverlay가 맡는다
     },true);
   }
   // 사진별 글(2026-10-30 사용자 "인스타는 사진마다 글을 달 수 있는데 우리는 우두두 나열된다"). 인스타는 장별 글을 따로 주지 않는다 —

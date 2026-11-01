@@ -107,9 +107,14 @@ const R=`(el)=>{const r=el.getBoundingClientRect();return{l:Math.round(r.left),r
         res.t3={front:document.body.dataset.stageFront,lbVis:getComputedStyle(lb).visibility,toLb:getComputedStyle(document.getElementById('trophy-to-lb')).display};
         document.dispatchEvent(new KeyboardEvent('keydown',{key:'Escape',bubbles:true}));await S(600);
         res.t4={trophyOpen:tov.classList.contains('open'),lbOpen:lb.classList.contains('open'),front:document.body.dataset.stageFront};
-        _openIgViewer({u:'https://example.invalid/x.jpg',p:'https://www.instagram.com/p/x/',t:new Date().toISOString(),cap:'TEST CAPTION'},'ivestarship',0);await S(900);
+        const pics=['#1d2848','#48283f'].map(color=>'data:image/svg+xml,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="600" height="800"><rect width="600" height="800" fill="'+color+'"/></svg>'));
+        _openIgViewer({u:pics[0],c:pics,p:'https://www.instagram.com/p/x/',t:new Date().toISOString(),cap:'FIRST PHOTO\\n\\nSECOND PHOTO'},'ivestarship',0);await S(900);
         const iov=document.getElementById('igv-overlay');
         res.i1={open:iov.classList.contains('open'),front:document.body.dataset.stageFront,panel:R(document.getElementById('igv-panel')),card:R(card),fo:R(fo),narrow:iov.classList.contains('igv-narrow'),lbVis:getComputedStyle(lb).visibility,toLb:getComputedStyle(iov.querySelector('.sw-to-lb')).display};
+        const behind={video:_lbIdx,group:_openGCko,member:_openTArtist?.name?.ko||null,hash:location.hash};
+        const keyState=()=>({index:_igv.i,caption:document.getElementById('igv-cap').textContent,background:JSON.stringify({video:_lbIdx,group:_openGCko,member:_openTArtist?.name?.ko||null,hash:location.hash})});
+        document.dispatchEvent(new KeyboardEvent('keydown',{key:'ArrowRight',bubbles:true,cancelable:true}));await S(300);res.keyRight=keyState();
+        document.dispatchEvent(new KeyboardEvent('keydown',{key:'ArrowLeft',bubbles:true,cancelable:true}));await S(300);res.keyLeft=keyState();res.behind=JSON.stringify(behind);
         _closeIgViewer();await S(600);
         res.i2={open:iov.classList.contains('open'),front:document.body.dataset.stageFront,lbVis:getComputedStyle(lb).visibility};
         closeLightbox();await S(800);closeCards();await S(1500);
@@ -119,6 +124,8 @@ const R=`(el)=>{const r=el.getBoundingClientRect();return{l:Math.round(r.left),r
       if(t2.front==='lb'&&t2.vis==='hidden'&&t3.front==='trophy'&&t3.lbVis==='hidden'&&t3.toLb!=='none')ok(`[${W}] 트로피 ↔ 재생 화면 차례·'재생 화면으로'`);else bad(`[${W}] 트로피 차례 `+JSON.stringify([t2,t3]));
       if(!t4.trophyOpen&&t4.lbOpen&&t4.front==='lb')ok(`[${W}] Esc = 앞에 나온 트로피만 닫고 재생 화면은 유지`);else bad(`[${W}] Esc `+JSON.stringify(t4));
       if(i1.open&&i1.front==='igv'&&i1.panel.r<=i1.card.l+1&&i1.panel.l>=i1.fo.r-1&&i1.lbVis==='hidden'&&i1.toLb!=='none'&&i1.narrow===(i1.card.l-i1.fo.r<900))ok(`[${W}] 인스타 사진 = 무대(${i1.panel.l}~${i1.panel.r}${i1.narrow?', 좁아서 세로로':''})`);else bad(`[${W}] 인스타 `+JSON.stringify(i1));
+      if(r3.keyRight.index===1&&r3.keyRight.caption==='SECOND PHOTO'&&r3.keyRight.background===r3.behind)ok(`[${W}] 오른쪽 키 = 다음 사진·해당 글, 배경 카드/영상 유지`);else bad(`[${W}] 인스타 다음 사진 `+JSON.stringify(r3.keyRight));
+      if(r3.keyLeft.index===0&&r3.keyLeft.caption==='FIRST PHOTO'&&r3.keyLeft.background===r3.behind)ok(`[${W}] 왼쪽 키 = 이전 사진·해당 글, 배경 카드/영상 유지`);else bad(`[${W}] 인스타 이전 사진 `+JSON.stringify(r3.keyLeft));
       if(!i2.open&&i2.front==='lb'&&i2.lbVis==='visible')ok(`[${W}] 인스타 닫으면 재생 화면 다시 앞`);else bad(`[${W}] 인스타 닫기 `+JSON.stringify(i2));
       await shot(c,`stage-trophy-${W}`);
     }
