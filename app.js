@@ -24428,8 +24428,13 @@ const _evKind=v=>{
 };
 const _evIsStage=v=>_evKind(v)==='stage';
 // who: 'all' | 'fav'(★ 즐겨찾기) | 그룹 키 — 프로그램 모아보기(_programFacetView)와 같은 '누가' 줄(2026-10-28 사용자 "시상식 창도 칩 구성 맞추기")
-async function _openEventPage(id,ed,view,who){
+async function _openEventPage(id,ed,view,who,_view){
   const s=_EVENT_SERIES.find(x=>x.id===id);if(!s)return;
+  const st=_view||{};
+  if(ed!==undefined)st.ed=ed;
+  if(view!==undefined)st.view=view;
+  if(who!==undefined)st.who=who;
+  ({ed,view,who}=st);
   const intent=++_feedListIntent;
   const isKo=currentLang==='ko';
   let rows=[];
@@ -24459,14 +24464,15 @@ async function _openEventPage(id,ed,view,who){
   const songs=list.slice(0,300).map(x=>({..._rowTags(x),t:x.title,u:vidUrl(x),thumb:x.thumb,vc:x.view_count,dur:x.duration_sec,pa:x.published_at?.slice(0,10),_apiId:x.id,_apiGroupKo:x.group_ko}));
   const sub=!ed?(isKo?'아직 모인 영상이 없어요':'No videos yet')
     :`${_evEdLabel(ed)} · ${isKo?`영상 ${list.length}개`:`${list.length} videos`}`;
+  Object.assign(st,{ed,view,who}); // 정규화된 선택도 다음 축 변경이 함께 유지한다.
   const facets=[];
-  if(eds.length)facets.push({key:'ed',labelKo:'',labelEn:'',scroll:eds.length>6,sel:ed,options:eds.map(e=>({v:e,ko:_evEdLabel(e),en:_evEdLabel(e)})),onPick:v=>_openEventPage(id,v,view,who)});
-  if(ed)facets.push({key:'view',labelKo:'',labelEn:'',sel:view,options:[{v:'stage',ko:'무대',en:'Stages'},{v:'fancam',ko:'직캠',en:'Fancams'},{v:'all',ko:'전체',en:'All'}].filter(o=>o.v!=='fancam'||inEd.some(v=>_evKind(v)==='fancam')),onPick:v=>_openEventPage(id,ed,v,who)});
+  if(eds.length)facets.push({key:'ed',labelKo:'',labelEn:'',scroll:eds.length>6,sel:ed,options:eds.map(e=>({v:e,ko:_evEdLabel(e),en:_evEdLabel(e)})),onPick:v=>_openEventPage(id,v,undefined,undefined,st)});
+  if(ed)facets.push({key:'view',labelKo:'',labelEn:'',sel:view,options:[{v:'stage',ko:'무대',en:'Stages'},{v:'fancam',ko:'직캠',en:'Fancams'},{v:'all',ko:'전체',en:'All'}].filter(o=>o.v!=='fancam'||inEd.some(v=>_evKind(v)==='fancam')),onPick:v=>_openEventPage(id,undefined,v,undefined,st)});
   if(ed&&(hasFav||tops.length>1)){
     const whoOpts=[{v:'all',ko:'전체',en:'All'}];
     if(hasFav)whoOpts.push({v:'fav',ko:'★ 즐겨찾기',en:'★ Favorites'});
     tops.forEach(g=>whoOpts.push({v:g,ko:g,en:(GROUPS[g]&&GROUPS[g].en)||g}));
-    facets.push({key:'who',ui:'pick',sel:who,options:whoOpts,onPick:v=>_openEventPage(id,ed,view,v)});
+    facets.push({key:'who',ui:'pick',sel:who,options:whoOpts,onPick:v=>_openEventPage(id,undefined,undefined,v,st)});
   }
   _feedListRankedNext=false;
   _openFeedListOverlay(s.ko,sub,songs,{facets});
