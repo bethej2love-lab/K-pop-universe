@@ -24443,10 +24443,17 @@ function _loadUpcomingConcerts(){
   if(!sb)return Promise.resolve([]);
   const today=new Date().toISOString().slice(0,10),until=new Date(Date.now()+45*864e5).toISOString().slice(0,10);
   _upConcertsAt=Date.now();
-  _upConcertsP=sb.from('kpop_events').select('id,title,type,groups,date_start,date_end,venue,city,country,poster_url,official_url')
-    .gte('date_end',today).lte('date_start',until).order('date_start',{ascending:true}).limit(150)
-    .then(r=>r.data||[],()=>[]);
-  return _upConcertsP;
+  const p=Promise.resolve(sb.from('kpop_events').select('id,title,type,groups,date_start,date_end,venue,city,country,poster_url,official_url')
+    .gte('date_end',today).lte('date_start',until).order('date_start',{ascending:true}).limit(150))
+    .then(r=>{
+      if(r?.error||!Array.isArray(r?.data))throw r?.error||new Error('Invalid concert response');
+      return r.data;
+    }).catch(()=>{
+      if(_upConcertsP===p){_upConcertsP=null;_upConcertsAt=0;}
+      return [];
+    });
+  _upConcertsP=p;
+  return p;
 }
 // 공연 하나를 작은 창으로 — 카드의 공연 항목(공연장·예매·다녀왔어요)을 그대로 쓴다. 공연장 창과 같은 틀
 function _openConcertSheet(ev,_back){
