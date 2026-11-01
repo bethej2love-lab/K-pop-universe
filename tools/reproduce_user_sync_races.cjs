@@ -1,4 +1,4 @@
-// Read-only production audit: executes the real client functions against synthetic providers.
+// Offline audit: executes the real client functions against synthetic providers.
 // Optional KPU_PGLITE_MODULE=/absolute/path/to/@electric-sql/pglite uses a new in-memory DB.
 const fs=require('node:fs'),path=require('node:path'),vm=require('node:vm');
 const src=fs.readFileSync(path.join(__dirname,'..','app.js'),'utf8');
@@ -8,6 +8,18 @@ if(declStart<0||declEnd<declStart)throw new Error('Missing sync state declaratio
 const sync=src.slice(declStart,declEnd)+'\n'+fn('_sbPushColumn')+'\n'+fn('_sbFlushColumn');
 const noop=()=>{},completionTimer=setTimeout(()=>{console.error('diagnostic did not complete');process.exit(1);},15000);
 let db;
+async function failedWriteObservation(reject){
+ let requests=0;const logs=[],timers=new Map();let nextTimer=0;
+ const ctx={window:{_sbSession:{user:{id:'synthetic-failed-write'}}},console:{error:(...args)=>logs.push(args)},
+  setTimeout:fn=>{const id=++nextTimer;timers.set(id,fn);return id;},clearTimeout:id=>timers.delete(id),
+  sb:{from(table){if(table!=='user_data')throw new Error('Unexpected table');return {update(){return {eq(field,uid){if(field!=='user_id'||uid!=='synthetic-failed-write')throw new Error('Missing ownership filter');requests++;if(reject)return Promise.reject(new Error('synthetic offline'));return Promise.resolve({error:{message:'synthetic unavailable'}});}};}};}}};
+ vm.createContext(ctx);vm.runInContext(sync+'\n'+fn('_sbFlushAllPending'),ctx);
+ ctx._sbPushColumn('fav_groups',['unsynced synthetic edit']);
+ let rejectedToCaller=false;try{await ctx._sbFlushColumn('fav_groups');}catch(e){rejectedToCaller=true;}
+ const pendingAfterFailure=vm.runInContext('Object.keys(_sbPushPending)',ctx);
+ ctx._sbFlushAllPending();for(let i=0;i<5;i++)await Promise.resolve();
+ return {failure:reject?'rejected request':'returned error',requestsAfterRepeatedFlush:requests,pendingAfterFailure,retryRetained:pendingAfterFailure.includes('fav_groups'),rejectedToCaller,errorsLogged:logs.length,productionCalls:0};
+}
 async function logoutCacheObservation(legacy){
  const keyNames=['FAV_KEY_G','FAV_KEY_M','FAV_KEY_C','FAV_ORDER_KEY','FAV_DATE_KEY','FAV_HISTORY_KEY','SCRAP_KEY','PROFILE_KEY','CONCERT_LOG_KEY','SB_LAST_UID_KEY'];
  const cache=new Map(),ctx={console,currentLang:'ko',_confirmLogout:async()=>true,_showShareToast:noop,
@@ -52,6 +64,7 @@ async function logoutCacheObservation(legacy){
  finishPull({data:{fav_groups:['old']},error:null});await pulling;
  const finalLocal=[...pullCtx.favGroups];
  const logoutCache=[await logoutCacheObservation(false),await logoutCacheObservation(true)];
- console.log(JSON.stringify({mode:db?'pglite-memory':'synthetic-provider',requestsStartedBeforeFirstCompleted:concurrent,completionOrder:concurrent===2?['latest','old']:['old','latest'],finalServer:finalValue,expectedLatest:['latest'],staleWriteReproduced:JSON.stringify(finalValue)!=='["latest"]',otherUserUnchanged:JSON.stringify(await read('synthetic-b'))==='["untouched"]',localAfterDelayedPull:finalLocal,localEditOverwritten:JSON.stringify(finalLocal)!=='["latest"]',logoutCache,productionWrites:false},null,2));
+ const failedWrites=[await failedWriteObservation(false),await failedWriteObservation(true)];
+ console.log(JSON.stringify({mode:db?'pglite-memory':'synthetic-provider',requestsStartedBeforeFirstCompleted:concurrent,completionOrder:concurrent===2?['latest','old']:['old','latest'],finalServer:finalValue,expectedLatest:['latest'],staleWriteReproduced:JSON.stringify(finalValue)!=='["latest"]',otherUserUnchanged:JSON.stringify(await read('synthetic-b'))==='["untouched"]',localAfterDelayedPull:finalLocal,localEditOverwritten:JSON.stringify(finalLocal)!=='["latest"]',logoutCache,failedWrites,productionWrites:false},null,2));
  console.log('Diagnostic evidence only; this is not a passing product regression or a deployed fix.');
 })().catch(e=>{console.error(e);process.exitCode=1;}).finally(async()=>{clearTimeout(completionTimer);if(db)await db.close();});
