@@ -1,6 +1,8 @@
 # CHANGELOG
 
 ## 2026-11-01 (Codex — 검수66차·방문자의 불필요한 쇼츠 저장 요청)
+- **[완료·브랜치 검증] [app.js·tests/shorts-visitor-write-gate.test.js]** 실제 멤버/연결 카드 프로브 후속 블록과 페이지 settle 함수를 실행한18검사에서 전10실패→후0. 비로그인·익명(관리자 이메일이 있어도 익명)·일반 계정은4곳의 DB 분류 저장만 생략하며 로컬 승격/강등과 재그룹핑은 그대로 수행한다. 관리자는 기존 id 필터·is_short 단일 필드 저장을 유지하고 서버 일괄 스윕은 변경하지 않았다. 보정 없음·지난 카드 응답·DB 미준비 페이지 경계도 확인. 기존 쇼츠 스윕·문법 통과. 합성 검사 운영 API 호출/쓰기0.
+- **[읽기 전용 운영 진단/미정정 경계]** 카탈로그에서 yt_channel_videos RLS enabled=true·admin write ALL은 authenticated+관리자 이메일·public read SELECT만 허용함을 확인했다(정책/권한 변경 없음). 13:40–14:12 UTC 로그에서 여러 공개 자료 조회에 높은 origin_time, PostgreSQL57014(query_canceled)62건을 확인했으나 개별 원인을 전부 timeout으로 단정하지 않는다. 성능 advisor의 initplan36·중복 인덱스7·여러 permissive 정책48 경고는 원인 확정 전 손대지 않는다. 단순 retry/대기시간 확대/RLS 완화/임의 인덱스 삭제는 하지 않는다. 불필요한 PATCH 감소는 기대 동작이며 실제 지연 개선량은 별도 측정 전 주장하지 않는다. [정책 원리](https://supabase.com/docs/guides/database/postgres/row-level-security), [initplan 안내](https://supabase.com/docs/guides/database/database-linter?lint=0003_auth_rls_initplan), [중복 인덱스 안내](https://supabase.com/docs/guides/database/database-linter?lint=0009_duplicate_index), [permissive 정책 안내](https://supabase.com/docs/guides/database/database-linter?lint=0006_multiple_permissive_policies).
 - **[진행중] [app.js 쇼츠 분류 보정4곳]** 13:40–14:12 UTC 고정 창의 운영 로그를 읽기 전용 집계했다. headless 클라이언트의 yt_channel_videos GET7024·PATCH1789·OPTIONS9156, GET500응답21건이 관찰됨. PATCH204는 실제 변경 행 수를 뜻하지 않으며 자료 오염 증거로 보지 않는다. 서버의 현재 쓰기 정책은 관리자 이메일만 허용하는데 일반 카드의 로컬 쇼츠 프로브 후에도 저장을 시도하는4지점이 있다. 일반/익명/세션 미준비 상태는 로컬 분류·재렌더를 유지하고 DB 저장만 기존 _isAdmin 기준으로 제한하는 최소 수정을 검사한다. 전체 지연의 원인이나 개선량은 이 집계만으로 단정하지 않는다. SQL/RLS/인덱스/운영 자료는 변경하지 않는다.
 
 ## 2026-11-01 (Codex — 검수65차·목록을 닫거나 바꾼 뒤 과거 조회)

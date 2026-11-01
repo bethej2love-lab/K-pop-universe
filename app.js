@@ -8763,9 +8763,11 @@ async function _enrichMemberVideosFromApi(a,tv,baseSongs,basePersonalSongs){
     if(uncertain.length){
       const {promoted:correctedIds}=await _probeShortsBatch(uncertain); // 여긴 non-short만 넘겨 promote만 발생
       if(correctedIds.length){
-        sb.from(_YT_TABLE).update({is_short:true}).in('id',correctedIds).then(({error})=>{
-          if(error)console.error('쇼츠 분류 보정 저장 실패',error.message);
-        });
+        if(_isAdmin()){
+          sb.from(_YT_TABLE).update({is_short:true}).in('id',correctedIds).then(({error})=>{
+            if(error)console.error('쇼츠 분류 보정 저장 실패',error.message);
+          });
+        }
         render();
       }
     }
@@ -8846,12 +8848,12 @@ async function _fetchApiCollabData(anchor){
     // 연결 버튼 자체가 몇 분씩 안 뜨는 것처럼 보이는 버그가 있었음(2026-08-10, 사용자 제보 — 다른
     // 두 호출부는 먼저 즉시 렌더링하고 이 보정을 백그라운드로 돌리는데 여기만 blocking이었음).
     // → 다른 두 호출부와 동일하게 fire-and-forget으로 바꿔서 song 조립을 안 막게 함. 대신 URL 형식이
-    // (shorts/ vs watch?v=) 이번 로드에서는 옛 category 그대로 반영될 수 있음 — DB는 백그라운드로
-    // 갱신되니 다음에 카드를 다시 열면 정확해짐(사소한 정확도보다 버튼이 바로 뜨는 게 우선).
+    // (shorts/ vs watch?v=) 이번 로드에서는 옛 category 그대로 반영될 수 있음. 영속 보정은 관리자
+    // 조회/서버 스윕이 담당한다(사소한 정확도보다 버튼이 바로 뜨는 게 우선).
     const uncertain=[...rows,...groupTagRows,...reverseGroupTagRows].filter(v=>!_isShortV(v));
     if(uncertain.length){
       _probeShortsBatch(uncertain).then(({promoted:correctedIds})=>{
-        if(correctedIds.length){
+        if(correctedIds.length&&_isAdmin()){
           sb.from(_YT_TABLE).update({is_short:true}).in('id',correctedIds).then(({error})=>{
             if(error)console.error('연결 카드 쇼츠 분류 보정 저장 실패',error.message);
           });
@@ -26713,12 +26715,12 @@ function _makeChVidController(contId){
   // 확인 중엔 state.appendLock으로 "더보기"를 막아 이 페이지가 항상 그리드의 마지막임을 보장한다.
   async function settlePage({myGen,grid,pageItems,featured,pageStartPos,pageStartCat,pageNodes,pendingProbe,hasMore,incomingTrailingEl}){
     const {promoted,demoted}=await _probeShortsBatch(pendingProbe);
-    if(promoted.length&&sb){
+    if(promoted.length&&sb&&_isAdmin()){
       sb.from(_YT_TABLE).update({is_short:true}).in('id',promoted).then(({error})=>{
         if(error)console.error('쇼츠 분류 보정 저장 실패',error.message);
       });
     }
-    if(demoted.length&&sb){
+    if(demoted.length&&sb&&_isAdmin()){
       sb.from(_YT_TABLE).update({is_short:false}).in('id',demoted).then(({error})=>{
         if(error)console.error('쇼츠 오분류(가로) 강등 저장 실패',error.message);
       });
