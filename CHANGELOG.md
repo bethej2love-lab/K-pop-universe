@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 2026-11-01 (Codex — 검수48차·로그아웃 실패 보존)
+- **[진행중] [app.js _handleLogout]** 고정 SDK supabase-js2.110.1의 실제 _signOut 구현/현재 공식 문서에서 오류가 {error}로 반환되고 세션 제거 전에 반환될 수 있음을 확인. 현재 호출부는 반환 오류를 무시하고 예외에도 로컬 값을 지워 reload하므로, 실제 Auth/사용자 자료에 접속하지 않는 함수 회귀로 실패·취소·성공을 구분해 정정한다. 로그아웃 scope와 기존 캐시 소유권 정책은 이 변경에서 확대하지 않는다.
+
 ## 2026-11-01 (Codex — 검수47차·닫기 터치와 언어 메타데이터)
 - **[완료·브랜치/CI 대기] [kpop_universe.css·app.js]** coarse 포인터에서 조합/곡 영상 닫기 버튼에 중심44×44px의 투명 pseudo 영역만 추가. 아이콘·버튼의 원래 크기/위치·문구는 유지하며 데스크톱 fine 포인터에는 적용하지 않는다. applyLang은 body.lang-en과 함께 documentElement.lang도 설정해 영어 화면의 문서 언어가 ko로 남지 않도록 정정. 기존 미번역 문구를 임의 개편한 것은 아님.
 - **[완료·실제 입력 수정 전후] [tests/phone-landscape.test.js]** Chrome 터치 에뮬레이션에서 닫기 버튼은 원래19.6875×28px, 중심20px 사방 모두 클릭 대상이 아니고 가장자리 터치가 닫지 못함을 재현. 영어 body=true/문서lang=ko도 확인. 기존 폰12검사에 네 방향 hit-test·가장자리 실제 터치 닫기·한영 applyLang을 추가: 전13통과5실패→후18/18. 실제 iOS/Android 터치 오차나 VoiceOver/TalkBack 동작을 검증한 것으로 집계하지 않음.
