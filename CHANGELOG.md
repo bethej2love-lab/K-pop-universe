@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 2026-11-01 (Codex — 검수49차·공유 결과 안내)
+- **[진행중] [app.js 공유]** 링크 복사 fallback이 execCommand=false에도 성공 안내를 표시하고, 조합 이미지 공유는 클립보드 거절을 무시해 복사 완료로 안내하는 경로 확인. 실제 공유 함수/클릭 핸들러를 합성 클립보드로 실행해 성공·거절·미지원·네이티브 취소를 구분한다. 공유 URL·이미지 디자인·다운로드 정책은 유지하며 운영 계정이나 실제 클립보드 내용을 변경하지 않는다.
+
 ## 2026-11-01 (Codex — 검수48차·로그아웃 실패 보존)
 - **[완료·브랜치/CI 대기] [app.js·tests/logout-failure-state.test.js]** signOut의 반환 error도 실패로 처리하고, 반환 오류/거절 시 로컬 상태와 현재 화면을 보존하며 한영 재시도 안내 후 종료. 취소·클라이언트 없음·성공 시 기존 동작과 signOut scope는 유지한다. 실제 함수6검사 전3실패→후0. 검증의 Auth/저장소는 합성이며 실제 사용자 로그아웃/계정 연결을 실행하지 않았다. SDK2.110.1 원문과 [현재 API 문서](https://supabase.com/docs/reference/javascript/auth-signout)의 {error} 반환 계약을 확인.
 - **[이슈·민감 경로/미정정] [tools/reproduce_user_sync_races.cjs]** 성공 로그아웃의 캐시 정리 목록에는 COLLECTION_KEY·_COLLECTION_KEY_OLD·FAV_ORDER_KEY가 빠져 있다. 실제 컬렉션 초기화와 신규 익명 마이그레이션 함수를 합성 Auth/저장소로 실행하니 현재/구형(kpu_playlists) 캐시 각각 이전 컬렉션1·정렬1이 새 합성 방문자 스냅샷으로 이어짐. PGlite 메모리 INSERT도 같은 결과. 같은 브라우저의 소유권 경계 문제이며 운영 계정에서 자료가 노출된 사실을 확인한 것은 아님.
