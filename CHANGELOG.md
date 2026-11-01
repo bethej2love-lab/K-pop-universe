@@ -1,10 +1,26 @@
 # CHANGELOG
 
+## 2026-11-01 (Codex — 검수58차·별 커서와 스크롤바)
+- **[검증·드래그 좌표] [tests/star-cursor.test.js]** fine 장치를 명시한 Linux에서 스타일/파트33검사는 통과, 고정 y=12 손잡이 드래그만 실패. OS별 스크롤 버튼/최소 손잡이 위치를 가정하지 않도록 상단8~56px 후보를 제한적으로 검사하고, 누름 시 이동을 빼서 실제 끌기 후 이동만200px 이상인지 단언한다. 제품 스크롤바 크기나 드래그 구현은 바꾸지 않고 입력 fixture를 정정한다.
+- **[검증·CI 환경 정정] [tests/star-cursor.test.js·tests/compass-width.test.js]** 실제 앱 로컬 나침반19/19와 새390px 포함 smoke 통과. 첫 CI의 별 전용26실패는 Linux headless가 pointer:fine 장치가 없는 상태(기본2px·표준thin 유지)에서 마우스 전용 스타일을 검사한 fixture 오류: Chromium primaryPointerType=4/hover=2 장치를 명시하고 fine 단언은 유지. Playwright도 사용하는 실행 설정이며 제품의 터치 분기를 바꾸지 않는다. 첫 CI smoke는 Supabase 인증 동기화 시간초과, vid-list-share는 응답200 이후 검색 skeleton 대기로 실패해 별도로 기록, 최종 head 전체 검증이 필요하다.
+- **[완료·브랜치 검증/배포 대기] [kpop_universe.css·app.js·index.html·admin.js]** 나침반/즐겨찾기/컬렉션/스크랩/영상 목록의 표준 scrollbar-width:thin·scrollbar-color가 Chromium에서 WebKit 파트 스타일을 우선하지 못하게 하여 OS 기본 스크롤바가 사용됨. 마우스+파트 지원 환경의 해당 7종만 auto로 되돌려 기존 6px/3px/10px/2px 디자인을 살리고 모든 스크롤바 파트(손잡이·트랙·트랙 조각·모서리·버튼)에 기존 분홍 SVG 별 명시. 숨긴 가로 레일 none·터치 thin·Firefox 표준 스크롤바는 유지한다. 근거: [Chromium 파트별 커서 처리](https://github.com/chromium/chromium/blob/main/third_party/blink/renderer/core/input/event_handler.cc), [Chrome 스크롤바 문서](https://developer.chrome.com/docs/css-ui/scrollbar-styling).
+- **[완료·동반 커서 오류] [동일 파일]** 모든 자식에 흰 별을 강제하던 전역 규칙을 상속으로 바꿔 클릭 버튼 안 span/SVG에서도 분홍 별 유지. 그룹/멤버 라벨·기존 CSS/동적 인라인 pointer를 같은 커서 변수로 통일, 비활성 버튼은 흰 별. 입력 text·가로 드래그 grab/grabbing 유지. 별 그림/색/크기·핫스폿은 기존 그대로, DOM 가상 커서나 스크롤바 JS를 추가하지 않음.
+- **[검증] [tests/star-cursor.test.js·tests/compass-width.test.js·CI]** 실제 제품 CSS를 격리한 Chrome CDP: 8종 scroller의 활성 스타일/모든 파트, 버튼 자식·SVG·라벨·동적 요소·disabled, 트랙 클릭과 손잡이 드래그, 터치/숨긴 레일 총34/34. 드래그는 fresh clone과 프레임 간격을 둔 CDP 버튼 입력으로 검증(처음 재사용 fixture의 입력 실패를 제품 오류로 세지 않음). 실제 앱 나침반 회귀에도 현재 scroller 커서 검사를 추가. 문법 통과, validate-data 오류0/경고144. 브라우저 새 테스트를 Node 제외 및 browser-smoke matrix에 등록. OS 커서 자체는 스크린샷에 찍히지 않으므로 계산 스타일/엔진 경로/실제 스크롤 입력의 검증이며 실물 Mac/Windows·Safari·Firefox 커서 표시 통과 주장은 안 함. YouTube 교차 출처 iframe 내부/브라우저 자체 UI 커서는 사이트 CSS로 제어할 수 없음.
+- **[진행중] [CI·main]** 최종 head의 필수 Node/전체 브라우저 smoke 및 나침반 검사를 확인 후 병합. 57차 PR75 c1fc2c5d1f는 Node+브라우저10종 모두 통과 후 9e32a2b422로 병합 완료(운영13건 오태그 무관 처리·ALLIVE1건 개별출연은 앞서 적용됨). 56차 반응 경합은 별도 codex/audit56-reaction-lifecycle-20261101 47c918774f에 저장, 아직 main 미반영이며 완료로 세지 않는다.
+
+## 2026-11-01 (Codex — 검수57차·주호 동명이인/개별출연)
+- **[완료·운영1건/로직 검증중] [admin.js·tests/individual-compilation.test.js·sql/flag_allive_compilation_2026-11-01.sql·undo]** 사용자 예시 QDm_Mb7nPhs를 제목·자동 태그·기존NULL·정확한 동반 그룹 조건으로 개별출연/auto 처리. 그룹·멤버·동반 태그는 그대로 보존. 공통 _ytUpsertVideos 입구에서 등록 그룹2개 이상(동반 멤버 소속 포함)+명시적 라이브/무대 모음집만 자동 판정하고, 합동/합창/콜라보/듀엣/with/feat/X 표기·단일 그룹·기존 플래그·수동 정상 확정은 보존한다. 실제 upsert 경계20검사 전5실패→후0, 입력 불변/동반 태그/중복 처리 옵션 보존 포함. 판정 필드는 기존 편집 UI에서 체크하는 content_flag이며 별도 스키마/체크 필드는 만들지 않았다.
+- **[검증]** 공통 매처246/246·주호11/11·개별출연20/20·기존 솔로 콜라보·다른 사람 풀네임·held8·flag-source22·보류·문법 통과. ⏳ DK×주호/드라마 주호는 다른 동명이인 후보로 남기며 추가 출처 확인 후 판단. 광범위 과거 모음집 일괄 변경은 실행하지 않았다.
+- **[완료·운영 정정13건] [sql/fix_juho_homonym_2026-11-01.sql·undo]** 사용자 신고 Juho(주호)/닐로 1theK13영상은 자동 태그·SF9/주호 단독·다른 동반 태그 없음 조건으로 SF9 연결 제거, source_handle 버킷/무관·수동 확정으로 보존해 재수집 오염을 막음. 적용13/해당 SF9 잔여0 재조회. 전체 영상/사용자 자료를 삭제하지 않았다. 변경 전 값의 조건부 undo 제공, PGlite 메모리에서13정정/13완전복원·무관 행 보존 확인. [벅스의 별도 가수 주호 프로필/발매 목록](https://music.bugs.co.kr/artist/20056076)도 대조. SF9주호 로컬 디스코에는 해당 발라드 앨범들이 없음을 확인.
+- **[검증중] [admin.js·tests/juho-homonym.test.js]** 공통 제목 전처리에서 SF9/ZUHO 명시 근거가 없는 JUHO(주호)/주호(JUHO)와 HAWW 주호를 SF9로 역추론하지 않게 정정. 실제 공통 매처11검사 전5실패→후0, 기존 솔로 콜라보·문법 통과. DK×주호/드라마 속 주호처럼 이름만으로는 확정하기 어려운 별도 후보는 운영 일괄 삭제하지 않음.
+- **[진행중·사용자 신고] [수집/태깅 로직·운영 영상]** 가수 Juho/닐로 영상이 SF9 주호로 수집된 내역을 운영 SELECT로 확인. 잘못된 SF9 연결을 정확한 ID/변경 전 조건으로 정리하고 재수집 방지 로직을 실제 태거로 검증한다. 추가 요청 ALLIVE 다팀 라이브 모음집은 content_flag=개별출연(각 카드에는 노출, 함께한 멤버/콜라보 연결에는 제외) 자동 판정을 검토. 정상 SF9 주호·실제 합동 출연·수동 태그를 보존하며 원본 영상 전체 삭제로 범위를 넓히지 않는다.
+
 ## 2026-11-01 (Codex — 검수56차·반응 요청 순서)
 - **[검증중·소유권 세대] [app.js·tests/reaction-lifecycle.test.js]** A→B→A로 바꾼 뒤 첫 A의 늦은 실패가 새 A의 클릭을 복원해 버리는 경계 추가 재현(17검사 중1실패). UID 일치뿐 아니라 현재 Map이 같은 runner를 소유하는지도 검사하여, 소유권을 잃은 응답/후속 쓰기를 버린다. 서버에 이미 보낸 요청 취소나 운영 반응 변경을 주장하지 않음. 수정 후17/17+오류14/14 통과.
 - **[검증중·추가 경계] [app.js·tests/reaction-lifecycle.test.js]** 실패 복원 렌더가 예약한 microtask의 새 입력이 이미 끝난 runner Promise에 붙어 전송되지 않는 경계를 실제 함수로 추가 재현(16검사 중1실패). Map 해제를 runner 내부 finally로 옮겨 종료 전에 마쳐16/16, 기존 오류14/14 통과. 58차 커서 PR76 CI와 분리, 이 브랜치는 아직 main 미반영. 전체 브라우저/Node 검증 전 배포하지 않는다.
 - **[검증중·별도 브랜치]** 실제 함수15검사 전13실패→후0, 기존 오류 결과14·문법 통과. 동명이인 주호 오태그 사용자 신고를 우선 처리하기 위해 codex/audit56-reaction-lifecycle-20261101에 보관; 브라우저/전체 CI·main 반영 전이다.
 - **[진행중] [app.js _loadReactions/_toggleReaction]** 최신 main09261e4f3a의 자동 신보 수집을 포함해 시작. 50차에 남긴 영상 왕복·조회 중 클릭·같은 반응 연속 클릭을 실제 함수와 통제된 응답 순서로 재현한다. 같은 사용자/영상/이모지 저장은 마지막 클릭을 유지하면서 순서를 보장하고, 오래된 조회/실패가 새 선택이나 다른 사용자의 화면을 덮지 않는지 확인한다. 운영 반응/사용자 자료를 변경하는 테스트는 수행하지 않는다.
+
 
 ## 2026-11-01 (Codex — 검수55차·저장 실패 후 대기열)
 - **[완료·49/50/51/52/54차 코드 main]** PR73 최종 head1fadbf805ebfef6cb0a050bbccfa1a19be286873의 Node124763114393 success와 브라우저41277699327 재확인 전체9흐름 success 후 mainf2cb67a091에 병합. 실제 무대/공연장/앨범 스위트는 복구2사례 포함41/41도 확인. 공유·반응 오류·IME·정적 자료·공연장 비교 수정이 모두 포함된다. 정상 브라우저 초기화의 익명 세션/검색 통계 가능성과 실기기 미검증 경계는 유지한다.

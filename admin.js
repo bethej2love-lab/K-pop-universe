@@ -4322,7 +4322,7 @@ async function _openTagReviewQueue(){
   document.body.appendChild(ov);
   const hd=document.createElement('div');hd.style.cssText='display:flex;align-items:center;gap:8px;padding:calc(14px + env(safe-area-inset-top,0px)) 16px 10px;';
   const ttl=document.createElement('div');ttl.style.cssText='flex:1;font-size:15px;font-weight:700;color:#eef4ff;';ttl.textContent='검수 대기';
-  const cls=document.createElement('button');cls.textContent='✕';cls.style.cssText='background:none;border:none;color:rgba(200,215,245,0.7);font-size:18px;cursor:pointer;padding:4px 8px;';cls.addEventListener('click',()=>ov.remove());
+  const cls=document.createElement('button');cls.textContent='✕';cls.style.cssText='background:none;border:none;color:rgba(200,215,245,0.7);font-size:18px;cursor:var(--kpu-cursor-pointer,pointer);padding:4px 8px;';cls.addEventListener('click',()=>ov.remove());
   hd.appendChild(ttl);hd.appendChild(cls);
   const list=document.createElement('div');list.style.cssText='flex:1;min-height:0;overflow-y:auto;padding:2px 12px 24px;color:rgba(200,215,245,0.6);font-size:13px;';
   ov.appendChild(hd);ov.appendChild(list);
@@ -4344,7 +4344,7 @@ async function _openTagReviewQueue(){
     meta.textContent=(v?`${v.group_ko||'?'} · `:'')+(_TAGQ_REASON_LABEL[r.reason]||r.reason);
     let _extraInfo=null; // 원곡 후보 행에만 붙는 근거 한 줄
     const btns=document.createElement('div');btns.style.cssText='display:flex;gap:6px;margin-top:7px;';
-    const mkb=(label,style,on)=>{const b=document.createElement('button');b.textContent=label;b.style.cssText='background:rgba(120,150,230,0.16);border:0.5px solid rgba(160,185,240,0.3);color:#dbe6ff;border-radius:12px;padding:5px 11px;font-size:11px;cursor:pointer;'+(style||'');b.addEventListener('click',on);return b;};
+    const mkb=(label,style,on)=>{const b=document.createElement('button');b.textContent=label;b.style.cssText='background:rgba(120,150,230,0.16);border:0.5px solid rgba(160,185,240,0.3);color:#dbe6ff;border-radius:12px;padding:5px 11px;font-size:11px;cursor:var(--kpu-cursor-pointer,pointer);'+(style||'');b.addEventListener('click',on);return b;};
     // 원곡 후보(cover_candidate)는 편집 모달까지 안 가고 여기서 바로 확정할 수 있게 후보 버튼을 준다
     // — 매처가 이미 후보와 점수를 계산해놨는데 사람이 다시 검색해서 고르게 하면 큐를 안 쓰게 된다.
     // 확정은 "선택-원곡지정"과 같은 경로(_coverManualApply)라 스냅샷·로그·cover_manual 잠금이 다 붙는다.
@@ -5842,7 +5842,7 @@ function _vmAppendCacheChrome(statusEl,ts,fromDisk){
   const label=ago<60000?'방금':ago<3600000?`${Math.round(ago/60000)}분 전`
     :ago<86400000?`${Math.round(ago/3600000)}시간 전`:`${Math.round(ago/86400000)}일 전`;
   const ref=document.createElement('span');
-  ref.innerHTML=` <span style="opacity:.55">· ${label} 조회${fromDisk?' (저장된 목록)':''}</span> <button class="vm-reload-btn" type="button" title="다시 조회" style="background:none;border:none;color:rgba(155,178,228,0.5);cursor:pointer;font-size:12px;padding:0 3px;vertical-align:middle;">↻</button>`;
+  ref.innerHTML=` <span style="opacity:.55">· ${label} 조회${fromDisk?' (저장된 목록)':''}</span> <button class="vm-reload-btn" type="button" title="다시 조회" style="background:none;border:none;color:rgba(155,178,228,0.5);cursor:var(--kpu-cursor-pointer,pointer);font-size:12px;padding:0 3px;vertical-align:middle;">↻</button>`;
   ref.querySelector('.vm-reload-btn')?.addEventListener('click',_vmForceReload);
   statusEl.appendChild(ref);
 }
@@ -7800,6 +7800,12 @@ const _ATM_BRAND_PHRASES=/\basahi\s*super\s*dry\b|\basahi\s*beer\b|\basahibeer\b
 const _ATM_INITIAL_WORDS=new Set(['in','is','it','on','up','at','an','as','be','by','do','go','he','me','my','no','of','or','so','to','us','we','if','am']);
 function _atmStripCommonNounCtx(title){
   let t=title||'';
+  // 가수 JUHO(주호)와 HAWW 주호는 SF9 ZUHO가 아니다. 명시 SF9/ZUHO 표기는 보존한다.
+  // 공통 전처리라 외부 수집·멤버 자동 태깅·제목 재검증이 같은 동명이인 방어를 쓴다.
+  if(!/\bSF9\b|에스에프나인|\bZU\s*HO\b/i.test(t)){
+    t=t.replace(/\bJUHO\s*[(（]\s*주호\s*[)）]|(?<![가-힣])주호\s*[(（]\s*JUHO\s*[)）]/gi,' ');
+    t=t.replace(/\bHAWW\s+JUHO\b|(?<![가-힣])하우\s+주호(?![가-힣])/gi,' ');
+  }
   // 글자 사이에 이모지·기호가 낀 '라↗️디오'는 '라디오'로 붙인다(2026-10-30 Codex 검수27차 — 떨어진 '디오'가 엑소 디오로 잡혔다)
   t=t.replace(/라[^가-힣A-Za-z0-9 ]{1,4}디오/g,'라디오');
   // 한글 그룹명 + 소유격 "의"(2026-10-27 사용자 "원곡 크레딧 문제 진짜 많다"). STATION Z 노래방 "템페스트의 'Really Really' | 원곡:위너"·
@@ -9666,7 +9672,18 @@ function _extOwnerGko(owner){
 // 안 돌렸으면(컬럼 없음) 첫 시도에서 감지해 그 필드만 빼고 재시도한다. 동기화가 절대 안 깨지게(2026-08-25).
 let _ytHasSourceCols=true;
 let _ytHasPubTs=true; // published_ts(정확한 업로드 시각) 컬럼 존재 여부 — 없으면 첫 upsert에서 감지해 끈다
+function _autoIndividualAppearance(row){
+  if(!row||row.tags_manual||row.content_flag)return row;
+  const title=String(row.title||'');
+  if(!/(?:라이브|무대|공연|직캠|댄스)\s*(?:모음(?:집)?|모아보기)|\blive\s+compilation\b/i.test(title))return row;
+  if(/합동|합창|콜라보|듀엣|\bcollab(?:oration)?\b|\bduet\b|\bwith\b|\bfeat(?:uring)?\b|\s[x×＆&]\s/i.test(title))return row;
+  const groups=new Set([row.group_ko,...(row.with_groups||[])].filter(g=>GROUPS[g]));
+  for(const member of row.with_members||[]){const m=String(member).match(/\(([^()]+)\)$/);if(m&&GROUPS[m[1]])groups.add(m[1]);}
+  return groups.size>=2?{...row,..._flagPatch('개별출연','auto')}:row;
+}
 async function _ytUpsertVideos(rows,opts){
+  // 여러 팀의 별도 무대를 이은 명시적 모음집만. 수동 판정/기존 플래그/합동 무대는 보존한다.
+  rows=rows.map(_autoIndividualAppearance);
   // 세로(쇼츠) 판별 보정 — API 썸네일 비율론 쇼츠도 16:9(letterbox)라 못 잡고(위 _ytFetchNewVideos 주석),
   // 지금까진 관리자 '가로→쇼츠 승격' 스윕이 나중에 실측했음. 그래서 Trend(최근 7일)처럼 스윕 전 구간은
   // 세로 영상이 가로 틀에 갇혀 보였다(2026-08-29 사용자 제보). 삽입 직전 oardefault.jpg를 실측(_probeShortsBatch,
