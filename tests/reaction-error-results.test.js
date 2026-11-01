@@ -1,7 +1,7 @@
 // Actual reaction read/write functions; synthetic Supabase only, no production writes.
 const fs=require('node:fs'),path=require('node:path'),vm=require('node:vm'),assert=require('node:assert/strict');
 const src=fs.readFileSync(path.join(__dirname,'..','app.js'),'utf8');
-const start=src.indexOf('async function _loadReactions(videoUrl){'),end=src.indexOf('\nfunction _renderReactions(){',start);assert(start>0&&end>start);
+const start=src.indexOf('let _reactionLoadSeq='),end=src.indexOf('\nfunction _renderReactions(){',start);assert(start>0&&end>start);
 const url='https://example.test/video',emoji='🥹',key=url+'\x00'+emoji;
 function fixture({on=false,count=4,result={error:null},readCounts={data:[{emoji,cnt:7}],error:null},readMine={data:[{emoji}],error:null},reject=false,session=true}={}){
  const mine=new Set(on?[key]:[]),counts=new Map([[key,count],['other\x00🥹',9]]),calls=[],logs=[];let renders=0;
