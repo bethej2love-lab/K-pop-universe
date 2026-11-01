@@ -24320,14 +24320,19 @@ const _evCache=new Map();
 const _EV_SEL='id,title,thumb,is_short,category,group_ko,members,with_members,with_groups,view_count,duration_sec,published_at,content_formats,content_flag';
 async function _eventRows(s){
   if(_evCache.has(s.id))return _evCache.get(s.id);
+  let complete=true;
   const p=(async()=>{
     const byId=new Map();
     const tag='EV:'+s.id;
     const r=await sb.from(_YT_TABLE).select(_EV_SEL).contains('content_formats',[tag]).limit(3000);
-    (r.data||[]).forEach(v=>byId.set(v.id,v));
+    if(r?.error||!Array.isArray(r?.data))complete=false;
+    (Array.isArray(r?.data)?r.data:[]).forEach(v=>byId.set(v.id,v));
     if(byId.size<60&&s.kw){
       const rs=await Promise.all(s.kw.map(k=>Promise.resolve(sb.from(_YT_TABLE).select(_EV_SEL).ilike('title_norm',`%${k}%`).limit(1500)).catch(()=>({data:null}))));
-      rs.forEach(r2=>(r2.data||[]).forEach(v=>{if(!byId.has(v.id)&&_eventTags(v.title,v.published_at).includes(tag))byId.set(v.id,v);}));
+      rs.forEach(r2=>{
+        if(r2?.error||!Array.isArray(r2?.data))complete=false;
+        (Array.isArray(r2?.data)?r2.data:[]).forEach(v=>{if(!byId.has(v.id)&&_eventTags(v.title,v.published_at).includes(tag))byId.set(v.id,v);});
+      });
     }
     // 회차는 저장된 태그가 있으면 그걸, 없으면 같은 규칙으로 계산
     const rows=_filterBannedVideos([...byId.values()]).filter(v=>v.content_flag!=='기타');
@@ -24338,7 +24343,9 @@ async function _eventRows(s){
     return rows.filter(v=>v._ed);
   })();
   _evCache.set(s.id,p);
-  p.catch(()=>_evCache.delete(s.id));
+  // 정상 빈 결과는 캐시하되, 오류가 섞인 부분 결과는 재진입 때 다시 조회한다.
+  const drop=()=>{if(_evCache.get(s.id)===p)_evCache.delete(s.id);};
+  p.then(()=>{if(!complete)drop();},drop);
   return p;
 }
 const _evEdLabel=ed=>{const[y,c]=String(ed).split('-');return c?(c==='Summer'?(currentLang==='ko'?`${y} 썸머`:`${y} Summer`):`${y} ${c}`):y;};
