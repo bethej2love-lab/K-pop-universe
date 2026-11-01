@@ -21618,7 +21618,8 @@ function _setFeedCardThumb(item,thumbUrl){
   // 쇼츠 카드는 썸네일 뒤에 블러 배경을 깔아 좌우 여백을 채움(그룹/멤버 카드 .gc-ch-thumb-bg와 동일, 2026-08-22)
   // ⚠️ 배경 이미지는 미리 깔지 않는다(2026-10-22, 사용자 "쇼츠 썸네일이 뿌옜다가 팍 좋아진다") — 세로 원본을 받는 동안 이 블러 배경이
   //    셔머 대신 보여 "흐린 썸네일"로 읽혔다. _mountShortThumb가 실제로 뜬 이미지로 채운다(셔머는 그때까지 유지).
-  if(thumbUrl&&isShort&&!wrap.querySelector('.feed-card-thumb-bg')){const bg=document.createElement('div');bg.className='feed-card-thumb-bg';wrap.insertBefore(bg,wrap.firstChild);}
+  // 블러 배경은 전체폭 쇼츠(틀이 9:16이 아니라 좌우가 빔)만 — 2열 쇼츠는 틀이 9:16이라 앞 그림이 다 덮어 안 보이는데, 카드마다 blur(16px) 레이어를 하나 더 들게 해 아이폰이 쇼츠를 저해상도로 그렸다(2026-11-02).
+  if(thumbUrl&&isShort&&item.classList.contains('feed-wide')&&!wrap.querySelector('.feed-card-thumb-bg')){const bg=document.createElement('div');bg.className='feed-card-thumb-bg';wrap.insertBefore(bg,wrap.firstChild);}
   if(!thumbUrl){
     const sh=wrap.querySelector('.feed-card-shimmer');
     if(sh){wrap.innerHTML='<div class="feed-card-icon-fallback">'+(sh.dataset.icon||'🎵')+'</div>';}

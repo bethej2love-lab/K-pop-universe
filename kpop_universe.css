@@ -4240,7 +4240,8 @@
     #feed-anniv .feed-strip-date,#feed-foryou-anniv .feed-strip-date{font-size:10px;max-width:100%;}
   }
   /* Discovery 피드(인스타 피드 스타일 세로 스크롤 큰 카드) */
-  .feed-card{cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><path d='M11,1 L12.3,9.7 L21,11 L12.3,12.3 L11,21 L9.7,12.3 L1,11 L9.7,9.7Z' fill='%23FFB0D0' opacity='.97'/></svg>") 11 11,pointer;position:relative;overflow:hidden;-webkit-tap-highlight-color:transparent;border-bottom:0.5px solid rgba(255,255,255,0.06);transition:background .13s;animation:feed-card-appear .28s ease both;}
+  .feed-card{cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><path d='M11,1 L12.3,9.7 L21,11 L12.3,12.3 L11,21 L9.7,12.3 L1,11 L9.7,9.7Z' fill='%23FFB0D0' opacity='.97'/></svg>") 11 11,pointer;position:relative;overflow:hidden;-webkit-tap-highlight-color:transparent;border-bottom:0.5px solid rgba(255,255,255,0.06);transition:background .13s;animation:feed-card-appear .28s ease backwards;}
+  /* ⚠️ fill은 backwards — both/forwards면 끝난 뒤에도 transform이 카드에 "걸린 채" 남아 아이폰 사파리가 카드마다 합성 레이어를 들고 있는다(2026-11-02 실측: 발견 탭 카드 319장 전부). 레이어가 수백 장이면 사파리가 저해상도로 그려 쇼츠 썸네일이 모자이크처럼 뿌옇고, 스크롤하면 뿌옇다가 짠 선명(6번째 재발의 진짜 원인). */
   /* 2열 그리드(2026-08-21, Fable UX 감사 반영 — "화면당 1장은 발견량이 너무 적다") — 풀블리드 1열 목록에서
      2열 타일 그리드로 전환. 카드 자체(_appendFeedCard)는 그대로 재사용하고 컨테이너 레이아웃만 바꾼다. */
   /* grid-auto-flow:dense — 전체폭(.feed-wide span 2) 카드가 홀수 위치 뒤에 오면 직전 행 오른쪽 칸이
@@ -4349,7 +4350,8 @@
   .fnh-media .feed-news-badge,.fnr-media .feed-news-badge,.feed-card-thumb-wrap .feed-news-badge{position:absolute;top:8px;left:8px;z-index:2;min-width:0;}
   /* 썸네일 위 뱃지는 배경을 어둡게(2026-10-15, 사용자: 조회수 뱃지 글자가 안 보임) — 색 배경 0.13은 사진이 그대로 비쳐 글자가 묻혔다.
      종류 구분은 글자색으로 그대로 둔다. 목록 줄 안 뱃지(.fnr-row 등)는 바탕이 어두워 원래 값 유지. */
-  .fnh-media .feed-news-badge,.fnr-media .feed-news-badge,.feed-card-thumb-wrap .feed-news-badge{background:rgba(10,14,28,0.72);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);}
+  .fnh-media .feed-news-badge,.fnr-media .feed-news-badge,.feed-card-thumb-wrap .feed-news-badge{background:rgba(10,14,28,0.8);}
+  /* backdrop-filter 금지(2026-11-02) — 뒤 썸네일을 별도 레이어로 떼어 블러 처리해야 해서 조회수 배지 달린 쇼츠가 아이폰에서 뿌옇게 그려졌다. 불투명도만 올림. */
   .feed-news-more{display:block;margin:4px 20px 2px;padding:8px 0;width:calc(100% - 40px);background:none;border:0;border-top:0.5px solid rgba(255,255,255,0.06);color:rgba(150,175,222,0.8);font-size:12px;font-weight:600;cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><path d='M11,1 L12.3,9.7 L21,11 L12.3,12.3 L11,21 L9.7,12.3 L1,11 L9.7,9.7Z' fill='%23FFB0D0' opacity='.97'/></svg>") 11 11,pointer;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
   /* 조회수 돌파 쇼츠 2열(2026-10-12) — 영상 그리드(.feed-grid)와 같은 세로 카드. 좌우는 아래 앨범 그리드(20px)에 맞춘다. */
   .feed-news-shorts{padding:6px 20px 4px;}
