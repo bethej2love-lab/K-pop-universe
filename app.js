@@ -1468,7 +1468,7 @@ async function buildUniverse(){
     div.className='group-label';
     div.textContent=ko;
     div.style.color='rgba(210,222,242,0.82)';
-    div.style.cursor='pointer';
+    div.style.cursor='var(--kpu-cursor-pointer,pointer)';
     div.style.position='absolute';
     div.style.left='50%';
     div.style.transform='translateX(-50%)';
@@ -4101,7 +4101,7 @@ function _renderCreditResults(container,cq,songs){
   const showBadge=cq.role==='both';
   songs.slice(0,20).forEach(s=>{
     const row=document.createElement('div');row.className='sr-item sr-credit-item';
-    row.style.cursor='pointer';
+    row.style.cursor='var(--kpu-cursor-pointer,pointer)';
     row.addEventListener('click',e=>{
       e.stopPropagation();
       const si=document.getElementById('search-input')||document.getElementById('mob-search-input');
@@ -9303,7 +9303,7 @@ function _buildConnContent(container){
       const row=document.createElement('div');row.className='conn-family-row';
       row.textContent=(currentLang==='ko'?'제작 ':'Produced by ')+entry.ko;
       if(entry.artist)row.addEventListener('click',e=>{e.stopPropagation();_gotoProducerArtist(entry);});
-      else row.style.cursor='default';
+      else row.style.cursor='var(--kpu-cursor-default,default)';
       prodSec.appendChild(row);
     });
     producedByAnchor.forEach(gko=>{
@@ -14627,7 +14627,7 @@ function showGC(ko,cx,cy,keepMemberPanel,skipRipple,urlMode,_unusedPushMobNav){
       units.forEach(([name],i)=>{
         if(i>0){const sep=document.createElement('span');sep.textContent=' · ';sep.style.cssText='color:rgba(150,170,210,0.45);pointer-events:none;';unitList.appendChild(sep);}
         const chip=document.createElement('span');chip.className='tg-unit';chip.textContent=name;
-        chip.style.cursor='pointer';
+        chip.style.cursor='var(--kpu-cursor-pointer,pointer)';
         chip.addEventListener('click',e=>{e.stopPropagation();_openUnitCard(name);}); // 유닛 카드(2026-10-14) — 예전엔 유닛원 한 명의 연결 카드가 열렸다
         unitList.appendChild(chip);
       });
@@ -17250,7 +17250,7 @@ function _openCardMenu(btn,ctx){
   document.getElementById('card-menu-pop')?.remove();
   const pop=document.createElement('div');pop.id='card-menu-pop';
   pop.style.cssText='position:fixed;background:rgba(20,25,44,0.98);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:0.5px solid rgba(255,255,255,0.12);border-radius:12px;box-shadow:0 8px 28px rgba(0,0,0,0.5);padding:5px;min-width:190px;';
-  const item=(label,onClick)=>{const b=document.createElement('button');b.textContent=label;b.style.cssText='display:block;width:100%;text-align:left;background:none;border:none;color:#e6edff;font-family:inherit;font-size:13px;padding:10px 12px;border-radius:8px;cursor:pointer;white-space:nowrap;';b.addEventListener('click',e=>{e.stopPropagation();pop.remove();onClick();});pop.appendChild(b);};
+  const item=(label,onClick)=>{const b=document.createElement('button');b.textContent=label;b.style.cssText='display:block;width:100%;text-align:left;background:none;border:none;color:#e6edff;font-family:inherit;font-size:13px;padding:10px 12px;border-radius:8px;cursor:var(--kpu-cursor-pointer,pointer);white-space:nowrap;';b.addEventListener('click',e=>{e.stopPropagation();pop.remove();onClick();});pop.appendChild(b);};
   item(currentLang==='ko'?'+ 사진 컬렉션 만들기':'+ New photo collection',()=>_createPhotoColFromCard(ctx));
   document.body.appendChild(pop);
   _bringToFront(pop);
@@ -17334,7 +17334,7 @@ function _pickColTarget(col,onDone){
   document.body.appendChild(ov);
   const hd=document.createElement('div');hd.style.cssText='display:flex;align-items:center;gap:8px;padding:calc(14px + env(safe-area-inset-top,0px)) 16px 8px;';
   const ttl=document.createElement('div');ttl.style.cssText='flex:1;font-size:15px;font-weight:700;color:#eef4ff;';ttl.textContent=currentLang==='ko'?'누구 사진인가요?':'Whose photos?';
-  const cls=document.createElement('button');cls.textContent='✕';cls.setAttribute('aria-label','닫기');cls.style.cssText='background:none;border:none;color:rgba(200,215,245,0.7);font-size:18px;cursor:pointer;padding:4px 8px;';
+  const cls=document.createElement('button');cls.textContent='✕';cls.setAttribute('aria-label','닫기');cls.style.cssText='background:none;border:none;color:rgba(200,215,245,0.7);font-size:18px;cursor:var(--kpu-cursor-pointer,pointer);padding:4px 8px;';
   cls.addEventListener('click',()=>ov.remove());
   hd.appendChild(ttl);hd.appendChild(cls);
   const inp=document.createElement('input');inp.type='text';inp.placeholder=currentLang==='ko'?'그룹 · 멤버 검색…':'Search group · member…';
@@ -17353,7 +17353,7 @@ function _pickColTarget(col,onDone){
     const t=document.createElement('span');t.textContent=lbl?(currentLang==='ko'?`현재 대상: ${lbl}`:`Current: ${lbl}`):(currentLang==='ko'?'대상 없음':'No target');
     curWrap.appendChild(t);
     if(lbl&&!col.isPublic){ // 공개 중이면 대상 필수라 지우기 숨김
-      const clr=document.createElement('button');clr.textContent=currentLang==='ko'?'지우기':'Clear';clr.style.cssText='background:none;border:none;color:rgba(180,150,150,0.8);font-size:11px;cursor:pointer;padding:0;text-decoration:underline;';
+      const clr=document.createElement('button');clr.textContent=currentLang==='ko'?'지우기':'Clear';clr.style.cssText='background:none;border:none;color:rgba(180,150,150,0.8);font-size:11px;cursor:var(--kpu-cursor-pointer,pointer);padding:0;text-decoration:underline;';
       clr.addEventListener('click',()=>{col.targetGroupKos=[];col.targetMemberKos=[];_saveCollections();renderCollectionSection();refreshCur();if(onDone)onDone();});
       curWrap.appendChild(clr);
     }
@@ -17361,7 +17361,7 @@ function _pickColTarget(col,onDone){
   function render(q){
     q=(q||'').trim().toLowerCase();list.innerHTML='';
     const addRow=(label,sub,onClick)=>{
-      const r=document.createElement('div');r.style.cssText='display:flex;align-items:center;padding:11px 8px;border-bottom:0.5px solid rgba(255,255,255,0.05);cursor:pointer;';
+      const r=document.createElement('div');r.style.cssText='display:flex;align-items:center;padding:11px 8px;border-bottom:0.5px solid rgba(255,255,255,0.05);cursor:var(--kpu-cursor-pointer,pointer);';
       const t=document.createElement('div');t.style.cssText='flex:1;min-width:0;';
       const a=document.createElement('div');a.style.cssText='font-size:14px;color:#eaf1ff;';a.textContent=label;
       const b=document.createElement('div');b.style.cssText='font-size:10.5px;color:rgba(150,175,225,0.6);margin-top:1px;';b.textContent=sub;
@@ -17389,16 +17389,16 @@ function _openPublicColPhotoGrid(col){
   const nm=document.createElement('div');nm.style.cssText='font-size:15px;font-weight:700;color:#eef4ff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;';nm.textContent=col.name;
   const sub=document.createElement('div');sub.style.cssText='font-size:11px;color:rgba(150,175,225,0.6);margin-top:2px;';sub.textContent=(col.ownerNick?`by ${col.ownerNick} · `:'')+(currentLang==='ko'?`${photos.length}장`:`${photos.length} photos`);
   tw.appendChild(nm);tw.appendChild(sub);
-  const rep=document.createElement('button');rep.textContent=currentLang==='ko'?'신고':'Report';rep.style.cssText='background:none;border:0.5px solid rgba(200,140,140,0.4);color:rgba(220,170,170,0.85);border-radius:14px;padding:5px 11px;font-size:11px;cursor:pointer;white-space:nowrap;';
+  const rep=document.createElement('button');rep.textContent=currentLang==='ko'?'신고':'Report';rep.style.cssText='background:none;border:0.5px solid rgba(200,140,140,0.4);color:rgba(220,170,170,0.85);border-radius:14px;padding:5px 11px;font-size:11px;cursor:var(--kpu-cursor-pointer,pointer);white-space:nowrap;';
   rep.addEventListener('click',()=>_reportPublicCollection(col));
-  const closeBtn=document.createElement('button');closeBtn.textContent='✕';closeBtn.setAttribute('aria-label','닫기');closeBtn.style.cssText='background:none;border:none;color:rgba(200,215,245,0.7);font-size:18px;cursor:pointer;padding:4px 8px;';
+  const closeBtn=document.createElement('button');closeBtn.textContent='✕';closeBtn.setAttribute('aria-label','닫기');closeBtn.style.cssText='background:none;border:none;color:rgba(200,215,245,0.7);font-size:18px;cursor:var(--kpu-cursor-pointer,pointer);padding:4px 8px;';
   closeBtn.addEventListener('click',()=>{ov.style.display='none';});
   hd.appendChild(tw);hd.appendChild(rep);hd.appendChild(closeBtn);
   const guide=document.createElement('div');guide.style.cssText='font-size:8.5px;color:rgba(150,175,225,0.22);padding:0 16px 6px;line-height:1.3;';guide.textContent=currentLang==='ko'?'비하·성적 대상화 금지 · 저작권자 요청 시 삭제':'No demeaning/sexualizing · removable on request';
   const grid=document.createElement('div');grid.style.cssText='padding:2px 12px 24px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;align-content:start;';
   const scrollWrap=document.createElement('div');scrollWrap.style.cssText='flex:1;min-height:0;overflow-y:auto;';scrollWrap.appendChild(grid);
   if(!photos.length){const em=document.createElement('div');em.style.cssText='grid-column:1/-1;text-align:center;color:rgba(150,175,225,0.45);padding:44px 0;font-size:13px;';em.textContent=currentLang==='ko'?'사진이 없어요':'No photos';grid.appendChild(em);}
-  else photos.forEach((ph,idx)=>{const cell=document.createElement('div');cell.style.cssText='position:relative;border-radius:8px;overflow:hidden;background:rgba(255,255,255,0.05);cursor:pointer;';const im=document.createElement('img');im.src=ph.u;im.loading='lazy';im.style.cssText='display:block;width:100%;aspect-ratio:1;object-fit:cover;';im.addEventListener('click',()=>_openPhotoFull(photos,idx));cell.appendChild(im);grid.appendChild(cell);});
+  else photos.forEach((ph,idx)=>{const cell=document.createElement('div');cell.style.cssText='position:relative;border-radius:8px;overflow:hidden;background:rgba(255,255,255,0.05);cursor:var(--kpu-cursor-pointer,pointer);';const im=document.createElement('img');im.src=ph.u;im.loading='lazy';im.style.cssText='display:block;width:100%;aspect-ratio:1;object-fit:cover;';im.addEventListener('click',()=>_openPhotoFull(photos,idx));cell.appendChild(im);grid.appendChild(cell);});
   ov.appendChild(hd);ov.appendChild(guide);ov.appendChild(scrollWrap);
   ov.style.display='flex';
 }
@@ -17426,15 +17426,15 @@ function _openColPhotoGrid(colId){
   const nm=document.createElement('div');nm.style.cssText='font-size:15px;font-weight:700;color:#eef4ff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;';nm.textContent=col.name;
   const cnt=document.createElement('div');cnt.style.cssText='font-size:11px;color:rgba(150,175,225,0.6);margin-top:2px;';
   // 대상(누구 사진인지) 라인 — 눌러서 지정/변경. 카드 노출 기준이자 공개 필수 조건(2026-08-30).
-  const tgt=document.createElement('div');tgt.style.cssText='font-size:11px;color:rgba(150,180,255,0.9);margin-top:3px;cursor:pointer;';
+  const tgt=document.createElement('div');tgt.style.cssText='font-size:11px;color:rgba(150,180,255,0.9);margin-top:3px;cursor:var(--kpu-cursor-pointer,pointer);';
   function refreshTgt(){const lbl=_colTargetLabel(col);tgt.textContent=(lbl?(currentLang==='ko'?`대상: ${lbl}`:`For: ${lbl}`):(currentLang==='ko'?'+ 대상 지정(누구 사진인지)':'+ Set target'))+' ›';}
   tgt.addEventListener('click',()=>_pickColTarget(col,refreshTgt));
   refreshTgt();
   tw.appendChild(nm);tw.appendChild(cnt);tw.appendChild(tgt);
   const addBtn=document.createElement('button');addBtn.textContent=currentLang==='ko'?'+ 사진':'+ Photo';
-  addBtn.style.cssText='background:rgba(120,150,230,0.22);border:0.5px solid rgba(160,185,240,0.35);color:#dbe6ff;border-radius:16px;padding:6px 13px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;';
+  addBtn.style.cssText='background:rgba(120,150,230,0.22);border:0.5px solid rgba(160,185,240,0.35);color:#dbe6ff;border-radius:16px;padding:6px 13px;font-size:12px;font-weight:600;cursor:var(--kpu-cursor-pointer,pointer);white-space:nowrap;';
   const closeBtn=document.createElement('button');closeBtn.textContent='✕';closeBtn.setAttribute('aria-label','닫기');
-  closeBtn.style.cssText='background:none;border:none;color:rgba(200,215,245,0.7);font-size:18px;cursor:pointer;padding:4px 8px;';
+  closeBtn.style.cssText='background:none;border:none;color:rgba(200,215,245,0.7);font-size:18px;cursor:var(--kpu-cursor-pointer,pointer);padding:4px 8px;';
   closeBtn.addEventListener('click',()=>{ov.style.display='none';});
   hd.appendChild(tw);hd.appendChild(addBtn);hd.appendChild(closeBtn);
   const guide=document.createElement('div');
@@ -17469,7 +17469,7 @@ function _openColPhotoGrid(colId){
     }
     col.photos.forEach((ph,idx)=>{
       const cell=document.createElement('div');
-      cell.style.cssText='position:relative;border-radius:8px;overflow:hidden;background:rgba(255,255,255,0.05);cursor:pointer;';
+      cell.style.cssText='position:relative;border-radius:8px;overflow:hidden;background:rgba(255,255,255,0.05);cursor:var(--kpu-cursor-pointer,pointer);';
       // aspect-ratio는 셀이 아니라 인플로 img에 준다 — 셀에 aspect-ratio + position:absolute img 조합은 셀의
       // 인플로 콘텐츠 높이가 0이라 그리드가 행 트랙을 0으로 재고, 이후 셀이 aspect-ratio로 커지며 다음 행을
       // 침범해 위아래로 겹쳤음(2026-08-22 데스크톱서 크게 재현). img 자체에 aspect-ratio를 주면 실제 높이를
@@ -17503,7 +17503,7 @@ function _openPhotoFull(photos,startIdx,onDelete){
   f.appendChild(im);
   const show=i=>{cur=(i+list.length)%list.length;im.src=list[cur].u;};
   const chrome=[]; // 주변 UI(버튼 전부) — 탭 토글 대상
-  const icon=(svg,pos,onClick,extra)=>{const btn=document.createElement('button');btn.innerHTML=svg;btn.style.cssText='position:fixed;display:flex;align-items:center;justify-content:center;border-radius:50%;cursor:pointer;background:rgba(255,255,255,0.13);border:0.5px solid rgba(255,255,255,0.22);color:#fff;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);z-index:2;-webkit-tap-highlight-color:transparent;transition:opacity .22s ease;'+pos+(extra||'');btn.addEventListener('click',e=>{e.stopPropagation();onClick();});f.appendChild(btn);btn.dataset.base=btn.style.opacity||'1';chrome.push(btn);return btn;};
+  const icon=(svg,pos,onClick,extra)=>{const btn=document.createElement('button');btn.innerHTML=svg;btn.style.cssText='position:fixed;display:flex;align-items:center;justify-content:center;border-radius:50%;cursor:var(--kpu-cursor-pointer,pointer);background:rgba(255,255,255,0.13);border:0.5px solid rgba(255,255,255,0.22);color:#fff;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);z-index:2;-webkit-tap-highlight-color:transparent;transition:opacity .22s ease;'+pos+(extra||'');btn.addEventListener('click',e=>{e.stopPropagation();onClick();});f.appendChild(btn);btn.dataset.base=btn.style.opacity||'1';chrome.push(btn);return btn;};
   const S={
     prev:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>',
     next:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>',
@@ -19575,7 +19575,7 @@ function placeMyStarInUniverse(){
   div.textContent=myProfile.nickname;
   div.style.color=_labelGlowColor(r,g,b);
   div.style.fontSize='11px';
-  div.style.cursor='pointer';
+  div.style.cursor='var(--kpu-cursor-pointer,pointer)';
   div.style.position='absolute';
   div.style.bottom='5px';
   div.style.left='50%';
