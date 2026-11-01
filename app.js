@@ -20669,7 +20669,7 @@ async function initSupabaseSync(){
     _loadAdminScript();
     _scrapCountsP=_warmScrapCounts(); // featured 선정 시 이 promise를 await해서 race condition 방지
     _instaPicPreloadP=_warmInstaPicCache(); // 멤버 카드를 열 때마다 DB 왕복 없이 바로 캐시에서 쓰도록 미리 로드
-    _pubCollectionsP=_warmPubCollections(); // 컬렉션 행도 마찬가지로 미리 로드(2026-08-11)
+    _warmPubCollections(); // 컬렉션 행도 마찬가지로 미리 로드(2026-08-11)
     _colLikesP=_warmColLikes(); // 콜렉션 좋아요 개수/내 좋아요 여부도 같이 미리 로드(2026-08-12)
     const isAnonymous=session.user.is_anonymous===true;
     if(!isAnonymous)_dismissFavHint(); // 구글 계정 연결(로그인) 상태면 즐겨찾기 시작 안내는 더 이상 필요 없음
@@ -28057,18 +28057,26 @@ async function _loadMemberConcertRow(memberKo,containerId,groupKo){
 let _pubCollectionsCache=null;
 let _pubCollectionsP=null;
 async function _warmPubCollections(){
-  if(!sb)return;
-  try{
-    // 유저가 공개하는 만큼 늘어나는 테이블이라 1,000행 함정 대상 — _sbSelectAll 주석 참고.
-    // updated_at은 동률이 날 수 있어 id를 2차 정렬로 붙인다(페이지 경계에서 행이 새거나 겹치는 것 방지).
-    // photos 컬럼(사진 컬렉션용, 2026-08-30 마이그레이션)은 있으면 같이 받고, 아직 없으면(마이그레이션 전)
-    // 기존 컬럼만으로 폴백해 영상 공개 컬렉션 로딩이 안 끊기게 한다 — 없는 컬럼을 select하면 쿼리 전체가 에러남.
-    const _base='id,owner_id,owner_nick,name,desc,items,cover_img,member_kos,group_kos,updated_at';
-    const _sel=cols=>_sbSelectAll(()=>sb.from('public_collections').select(cols).order('updated_at',{ascending:false}).order('id'));
-    let{data,error}=await _sel(_base+',photos');
-    if(error){({data,error}=await _sel(_base));if(error){console.error('public_collections warm failed',error);return;}}
-    _pubCollectionsCache=data||[];
-  }catch(e){console.error('_warmPubCollections failed',e);}
+  if(!sb)return Promise.resolve();
+  if(_pubCollectionsP)return _pubCollectionsP;
+  const p=(async()=>{
+    try{
+      // 유저가 공개하는 만큼 늘어나는 테이블이라 1,000행 함정 대상 — _sbSelectAll 주석 참고.
+      // updated_at은 동률이 날 수 있어 id를 2차 정렬로 붙인다(페이지 경계에서 행이 새거나 겹치는 것 방지).
+      // photos 컬럼(사진 컬렉션용, 2026-08-30 마이그레이션)은 있으면 같이 받고, 아직 없으면(마이그레이션 전)
+      // 기존 컬럼만으로 폴백해 영상 공개 컬렉션 로딩이 안 끊기게 한다 — 없는 컬럼을 select하면 쿼리 전체가 에러남.
+      const _base='id,owner_id,owner_nick,name,desc,items,cover_img,member_kos,group_kos,updated_at';
+      const _sel=cols=>_sbSelectAll(()=>sb.from('public_collections').select(cols).order('updated_at',{ascending:false}).order('id'));
+      let{data,error}=await _sel(_base+',photos');
+      if(error){({data,error}=await _sel(_base));if(error){console.error('public_collections warm failed',error);return;}}
+      if(!Array.isArray(data))throw new Error('Invalid public collection response');
+      _pubCollectionsCache=data;
+    }catch(e){console.error('_warmPubCollections failed',e);}
+  })();
+  _pubCollectionsP=p;
+  const clear=()=>{if(_pubCollectionsP===p)_pubCollectionsP=null;};
+  p.then(clear,clear);
+  return p;
 }
 async function _loadCollectionRow(ko,containerId,memberKo,cardMemberKo){
   const row=document.getElementById(containerId);
@@ -28090,6 +28098,7 @@ async function _loadCollectionRow(ko,containerId,memberKo,cardMemberKo){
   let pub=[];
   if(sb){
     if(_pubCollectionsP)await _pubCollectionsP;
+    else if(_pubCollectionsCache===null)await _warmPubCollections(); // 초기 실패/미시작은 다음 카드에서 복구
     if(_colLikesP)await _colLikesP; // 좋아요 많은 순 정렬에 필요
     const all=_pubCollectionsCache||[];
     const mineIds=new Set(mine.map(m=>m.id));

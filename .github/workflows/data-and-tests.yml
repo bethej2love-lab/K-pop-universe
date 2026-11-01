@@ -54,7 +54,7 @@
                 conn-lines.test.js|coverof.test.js|feed-trend.test.js|interaction.test.js|\
                 lb-swipe-ownership.test.js|lb-topbar.test.js|msheet.test.js|pwa-safearea.test.js|\
                 reveal.test.js|smoke.test.js|sort-popular.test.js|tabbar-open.test.js|\
-                desktop-search-front.test.js|unavailable-detect.test.js|vm-kbd-review.test.js|\
+                desktop-close-layers.test.js|lb-every-entry.test.js|desktop-search-front.test.js|unavailable-detect.test.js|vm-kbd-review.test.js|\
                 search-rank.test.js|uc-card-gate.test.js|first-fav-reveal.test.js|\
                 feed-tabbar-hide.test.js|foryou-shelves.test.js|heat-budget.test.js|\
                 album-song-hub.test.js|onboard-tips.test.js|card-title-visibility.test.js|vid-list-share.test.js|program-facets.test.js|compass-width.test.js|star-cursor.test.js|stage-venue-album.test.js|deeplink-song.test.js|phone-landscape.test.js|mobile-first-visit.test.js)

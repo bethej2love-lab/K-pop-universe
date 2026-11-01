@@ -15,6 +15,7 @@ const fs = require('fs');
 const path = require('path');
 const http = require('http');
 const { spawn } = require('child_process');
+const {waitForBrowserCdp}=require('../tools/browser_test_runtime.cjs');
 const os = require('os');
 
 const ROOT = path.join(__dirname, '..');
@@ -27,7 +28,7 @@ const BROWSER_CANDIDATES = [
   '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
   '/usr/bin/google-chrome', '/usr/bin/chromium-browser', '/usr/bin/chromium',
 ];
-const BROWSER_PATH = BROWSER_CANDIDATES.find(p => fs.existsSync(p));
+const BROWSER_PATH = process.env.KPU_BROWSER_PATH || BROWSER_CANDIDATES.find(p => fs.existsSync(p));
 const MIME = { '.html': 'text/html', '.js': 'text/javascript', '.json': 'application/json', '.css': 'text/css', '.png': 'image/png', '.svg': 'image/svg+xml', '.ico': 'image/x-icon' };
 
 let pass = 0, fail = 0;
@@ -35,10 +36,7 @@ const ok = m => { pass++; console.log(`✅ ${m}`); };
 const bad = m => { fail++; console.log(`❌ ${m}`); };
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
-async function waitForCdp(n = 40) {
-  for (let i = 0; i < n; i++) { try { await (await fetch(`http://127.0.0.1:${CDP_PORT}/json/version`)).json(); return; } catch (e) { await sleep(300); } }
-  throw new Error('CDP 준비 실패');
-}
+
 function connectCdp(url) {
   return new Promise((res, rej) => {
     const ws = new WebSocket(url); let id = 0; const waiting = new Map();
@@ -72,12 +70,12 @@ const server = http.createServer((req, res) => {
   server.listen(PORT);
   const profile = fs.mkdtempSync(path.join(os.tmpdir(), 'kpu-lbe-'));
   const proc = spawn(BROWSER_PATH, [
-    '--headless=new', '--no-sandbox', `--remote-debugging-port=${CDP_PORT}`, `--user-data-dir=${profile}`,
+    '--headless=new', '--no-sandbox', '--enable-unsafe-swiftshader', '--use-gl=angle', '--use-angle=swiftshader', `--remote-debugging-port=${CDP_PORT}`, `--user-data-dir=${profile}`,
     '--no-first-run', '--no-default-browser-check', '--disable-gpu', '--window-size=390,844', 'about:blank',
-  ], { stdio: 'ignore' });
+  ], { stdio: ['ignore','ignore','pipe'] });
   console.log(`[lb-every-entry] 헤드리스 PID=${proc.pid} (전용 프로필, 이 PID만 kill)`);
   try {
-    await waitForCdp();
+    await waitForBrowserCdp(proc,CDP_PORT);
     const { webSocketDebuggerUrl } = await (await fetch(`http://127.0.0.1:${CDP_PORT}/json/new?about:blank`, { method: 'PUT' })).json();
     const cdp = await connectCdp(webSocketDebuggerUrl);
     await cdp.send('Page.enable'); await cdp.send('Runtime.enable');
