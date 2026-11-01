@@ -1,6 +1,8 @@
 // 나침반 웹 홈 폭(2026-10-28 사용자 "폭 바뀌는 경우가 많잖아 카드·라이트박스 등 어떻게 열고 닫냐에 따라… 잘 확인") — 1400px 브라우저에서
 // 나침반만 → 넓게(body.fw-home), 카드·재생 화면·목록 창이 하나라도 열리면 440, 닫으면 다시 넓게. 조합(카드+재생→재생만 닫기 등)과
-// 폭이 바뀔 때 보던 자리 유지, 나침반 닫으면 해제까지. ⚠️ 실DB 브라우저 테스트 — CI 스킵 목록(browser). 실행: node tests/compass-width.test.js
+// 폭이 바뀔 때 보던 자리 유지, 나침반 닫으면 해제까지. 실제 앱 렌더러에 고정 영상/목록을 넘긴다.
+// 피드 첫 카드는 영상·앨범·연결 중 무엇일지 보장되지 않으므로 재생 검사 대상으로 쓰지 않는다.
+// 피드 자체는 평소처럼 데이터를 읽는다. 실행: node tests/compass-width.test.js
 const fs=require('fs'),path=require('path'),http=require('http'),os=require('os');const{spawn}=require('child_process');
 const ROOT=path.join(__dirname,'..');
 const {waitForBrowserCdp}=require('../tools/browser_test_runtime.cjs');
@@ -28,7 +30,9 @@ async function ev(c,x){const r=await c.send('Runtime.evaluate',{expression:x,ret
     for(let i=0;i<60;i++){await sleep(500);try{if(await ev(c,`typeof _openProgramCollection==='function'&&ARTISTS.length>0&&!!sb`))break;}catch(e){}}
     const r=JSON.parse(await ev(c,`(async()=>{const S=ms=>new Promise(r=>setTimeout(r,ms));
       const fo=document.getElementById('feed-overlay');
-      const W=()=>({wide:document.body.classList.contains('fw-home'),w:Math.round(fo.getBoundingClientRect().width),blockers:_FW_BLOCKERS.filter(id=>document.getElementById(id)?.classList.contains('open'))});
+      const W=()=>({wide:document.body.classList.contains('fw-home'),w:Math.round(fo.getBoundingClientRect().width),blockers:_FW_BLOCKERS.filter(id=>document.getElementById(id)?.classList.contains('open')),lbOpen:document.getElementById('yt-lightbox').classList.contains('open'),listOpen:document.getElementById('feed-list-overlay').classList.contains('open')});
+      const clip={u:'https://www.youtube.com/watch?v=koED8KSXfeo',t:'LAYOUT TEST — 나침반 폭 검증 영상',dur:230};
+      const play=()=>openLightbox(clip.u,false,[{...clip}],0);
       const res={};
       res.firstFrames=[];
       for(let i=0;i<3;i++){
@@ -39,12 +43,12 @@ async function ev(c,x){const r=await c.send('Runtime.evaluate',{expression:x,ret
       await S(3000);res.feedOnly=W();
       showT(ARTISTS.find(a=>a.name.ko==='성현'));await S(1500);res.card=W();
       closeCards();await S(1200);res.cardClosed=W();
-      document.querySelector('#feed-overlay .feed-grid .feed-card')?.click();await S(2500);res.lb=W();
+      play();await S(2500);res.lb=W();
       closeLightbox();await S(1200);res.lbClosed=W();
-      await _openProgramCollection(_PROGRAM_COLLECTIONS.find(x=>x.key==='itslive'));await S(1500);res.list=W();
+      _openFeedListOverlay('LAYOUT TEST — 영상 목록','',[{...clip}]);await S(1500);res.list=W();
       _closeFeedListOverlay();await S(800);res.listClosed=W();
       showT(ARTISTS.find(a=>a.name.ko==='성현'));await S(1500);
-      document.querySelector('#tv .gc-ch-item')?.click();await S(2500);res.cardLb=W();
+      play();await S(2500);res.cardLb=W();
       closeLightbox();await S(1000);res.cardStill=W();
       closeCards();await S(1200);res.allClosed=W();
       // 비동기 선반이 그려지는 중의 이동을 폭 변경 탓으로 재지 않도록 먼저 렌더 큐를 기다린다.
@@ -61,6 +65,9 @@ async function ev(c,x){const r=await c.send('Runtime.evaluate',{expression:x,ret
       _closeFeedOverlay();await S(900);res.feedClosed={wide:document.body.classList.contains('fw-home'),open:fo.classList.contains('open')};
       return JSON.stringify(res);})()`));
     const chk=(name,v,wide)=>{if(v&&v.wide===wide&&(wide?v.w>440:v.w===440))ok(name+' → '+(wide?'넓게 '+v.w:'440'));else bad(name+' '+JSON.stringify(v));};
+    for(const [label,opened] of [['영상 재생',r.lb?.lbOpen],['목록 창',r.list?.listOpen],['카드 위 영상',r.cardLb?.lbOpen]]){
+      if(opened)ok(label+' 실제 열림 확인');else bad(label+' 열리지 않음');
+    }
     r.firstFrames.forEach((v,i)=>chk('나침반 첫 렌더 '+(i+1),v,true));
     chk('나침반만',r.feedOnly,true);
     chk('카드 열기',r.card,false);chk('카드 닫기',r.cardClosed,true);
