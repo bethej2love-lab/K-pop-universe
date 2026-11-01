@@ -15,9 +15,9 @@ const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 let pass=0,fail=0;const ok=m=>{pass++;console.log('✅ '+m)},bad=m=>{fail++;console.log('❌ '+m)};
 const server=http.createServer((req,res)=>{const p=decodeURIComponent(req.url.split('?')[0]);const f=path.join(ROOT,p==='/'?'index.html':p);
   if(!fs.existsSync(f)||fs.statSync(f).isDirectory()){res.writeHead(404);res.end();return;}res.writeHead(200,{'Content-Type':MIME[path.extname(f)]||'application/octet-stream'});fs.createReadStream(f).pipe(res);});
-function conn(url){return new Promise((res,rej)=>{const ws=new WebSocket(url);let id=0;const w=new Map();
-  ws.addEventListener('open',()=>res({send:(m,p)=>new Promise((a,b)=>{const i=++id;w.set(i,{a,b});ws.send(JSON.stringify({id:i,method:m,params:p}));}),close:()=>ws.close()}));
-  ws.addEventListener('message',e=>{const m=JSON.parse(e.data);if(m.id&&w.has(m.id)){const{a,b}=w.get(m.id);w.delete(m.id);m.error?b(new Error(m.error.message)):a(m.result);}});ws.addEventListener('error',rej);});}
+function conn(url){return new Promise((res,rej)=>{const ws=new WebSocket(url);let id=0;const w=new Map(),events=new Map();
+  ws.addEventListener('open',()=>res({send:(m,p)=>new Promise((a,b)=>{const i=++id;w.set(i,{a,b});ws.send(JSON.stringify({id:i,method:m,params:p}));}),on:(name,fn)=>events.set(name,fn),close:()=>ws.close()}));
+  ws.addEventListener('message',e=>{const m=JSON.parse(e.data);if(m.id&&w.has(m.id)){const{a,b}=w.get(m.id);w.delete(m.id);m.error?b(new Error(m.error.message)):a(m.result);}else if(m.method)events.get(m.method)?.(m.params);});ws.addEventListener('error',rej);});}
 async function ev(c,x){const r=await c.send('Runtime.evaluate',{expression:x,returnByValue:true,awaitPromise:true});if(r.exceptionDetails)throw new Error(r.exceptionDetails.exception?.description||r.exceptionDetails.text);return r.result.value;}
 (async()=>{
   if(!BROWSER){console.log("⏭️  브라우저를 못 찾음 — 스킵");process.exit(0);}
@@ -28,6 +28,9 @@ async function ev(c,x){const r=await c.send('Runtime.evaluate',{expression:x,ret
     await waitForBrowserCdp(proc,CDP_PORT);
     const{webSocketDebuggerUrl}=await (await fetch(`http://127.0.0.1:${CDP_PORT}/json/new?about:blank`,{method:'PUT'})).json();
     const c=await conn(webSocketDebuggerUrl);await c.send('Page.enable');await c.send('Runtime.enable');
+    let classificationWrites=0;
+    c.on('Network.requestWillBeSent',({request})=>{if(request.method==='PATCH'&&new URL(request.url).pathname==='/rest/v1/yt_channel_videos')classificationWrites++;});
+    await c.send('Network.enable');
     // 라벨·즐겨찾기 선택의 언어는 명시한다. 러너 기본 언어에 기대지 않는다.
     await c.send('Page.addScriptToEvaluateOnNewDocument',{source:`try{localStorage.setItem('kpu_lang',${JSON.stringify(TEST_LANG)});}catch(e){}`});
     await c.send('Page.navigate',{url:`http://127.0.0.1:${PORT}/index.html`});
@@ -105,6 +108,7 @@ async function ev(c,x){const r=await c.send('Runtime.evaluate',{expression:x,ret
     if(r.evRows&&r.evRows.length===2&&r.evPick)ok('시상식 창(MMA 2025): 연도·무대/직캠/전체 밑줄 탭 2줄 + 누가 고르기');else bad('시상식 줄 '+JSON.stringify({rows:r.evRows,pick:r.evPick}));
     if(n(r.evFavSub)>0&&r.evFavTitles.length&&r.evFavTitles.every(t=>/aespa|에스파/i.test(t)))ok('시상식 ★ 즐겨찾기(에스파): '+r.evFavSub);else bad('시상식 즐겨찾기 '+JSON.stringify({sub:r.evFavSub,t:r.evFavTitles}));
     if(r.vcSearch.includes('voicecam'))ok('검색 "보이스캠" → 보이스캠 모아보기');else bad('보이스캠 검색 '+r.vcSearch);
+    if((await ev(c,'!_isAdmin()'))&&classificationWrites===0)ok('일반 방문자의 영상 분류 DB 저장 요청 0건(CDP 관찰)');else bad('방문자 분류 저장 요청 '+classificationWrites);
     c.close();
   }catch(e){bad('예외: '+e.message);}
   finally{try{proc.kill();}catch(e){}server.close();}
