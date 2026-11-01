@@ -16,11 +16,12 @@ async function ev(c,x){const r=await c.send('Runtime.evaluate',{expression:x,ret
 (async()=>{
  if(!BROWSER)throw new Error('Chromium required');
  server.listen(PORT);const prof=fs.mkdtempSync(path.join(os.tmpdir(),'kpu-cursor-'));
- const proc=spawn(BROWSER,['--headless=new','--no-sandbox',`--remote-debugging-port=${CDP_PORT}`,`--user-data-dir=${prof}`,'--no-first-run','--window-size=1400,900','about:blank'],{stdio:['ignore','ignore','pipe']});let c;
+ const proc=spawn(BROWSER,['--headless=new','--no-sandbox','--blink-settings=primaryPointerType=4,availablePointerTypes=4,primaryHoverType=2,availableHoverTypes=2',`--remote-debugging-port=${CDP_PORT}`,`--user-data-dir=${prof}`,'--no-first-run','--window-size=1400,900','about:blank'],{stdio:['ignore','ignore','pipe']});let c;
  try{
  await waitForBrowserCdp(proc,CDP_PORT);const page=await(await fetch(`http://127.0.0.1:${CDP_PORT}/json/new?about:blank`,{method:'PUT'})).json();c=await conn(page.webSocketDebuggerUrl);
  await c.send('Page.enable');await c.send('Page.navigate',{url:`http://127.0.0.1:${PORT}/kpop_universe.css`});
- await c.send('Emulation.setEmulatedMedia',{features:[{name:'pointer',value:'fine'},{name:'hover',value:'hover'}]});
+ // Linux headless에는 물리 마우스가 없으므로 실행 플래그로 fine/hover 장치를 명시한다.
+ // setEmulatedMedia(pointer)는 이 장치 설정을 대신하지 못한다.
  await ev(c,`new Promise(resolve=>{document.open();document.write('<html><head></head><body></body></html>');document.close();const l=document.createElement('link');l.rel='stylesheet';l.href='/kpop_universe.css';l.onload=resolve;document.head.append(l);})`);
  const result=await ev(c,`(()=>{
  const make=(tag,attrs={},parent=document.body)=>{const e=document.createElement(tag);Object.assign(e,attrs);parent.append(e);return e;};
