@@ -1,6 +1,7 @@
 # CHANGELOG
 
 ## 2026-11-01 (Codex — 검수59차·하우 주호 직캠 오연결)
+- **[완료·운영1건] [sql/fix_haww_juho_2026-11-01.sql·undo]** 공식 oEmbed의 제목/작성자와 운영 행의 정확한 ID·제목·채널·기존 SF9 단일 멤버·자동/NULL 플래그·빈 게스트·리뷰 true를 모두 조건으로 UPDATE1건, 후속SELECT에서 arirangworld/멤버빈배열/무관/manual/tags_manual=true/needs_review=false 확인. 57차13건과 합쳐 잘못된 SF9 연결14건 정리. 원본 영상/사용자 데이터 삭제 아님. PGlite 로컬 적용1·재적용0·복원1·재복원0·전체 필드 왕복 동일 및 무관행 보존 통과. HAWW 동명이인 재수집 방지는 이미57차 실제 태거 회귀에 포함. DK E2vMjLqKljM·드라마 Djaawgoru2A는 근거 추가 확인 전 유지. 이 SQL/기록의 main 병합은58차 커서 검증 후 진행.
 - **[진행중] [운영 영상·sql]** 57차 후보 njWMQI0v5qY는 YouTube 공식 oEmbed HTTP200으로 ARIRANG K-POP(@arirangworld)의 HAWW JUHO/하우 주호 직캠임을 확인. SF9 주호 자동 단일 태그의 정확한 변경 전 조건을 다시 확인하고, 원본 영상은 보존한 채 오연결을 무관/수동으로 처리한다. 롤백 SQL·로컬 왕복 검증 후 적용. DK/드라마 후보는 추정 수정하지 않는다.
 
 ## 2026-11-01 (Codex — 검수58차·별 커서와 스크롤바)
