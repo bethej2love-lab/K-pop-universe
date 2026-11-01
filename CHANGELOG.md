@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 2026-11-01 (Codex — 검수52차·정적 자료 일시 실패)
+- **[진행중] [app.js lazy loader]** 앨범/트랙 색인·크레딧·공연장 JSON 첫 요청이 일시 실패하면 빈 객체/완료 Promise가 세션 내내 남아 다음 진입에도 회복하지 않는지 확인한다. HTTP 오류·네트워크/JSON 오류·정상 빈 자료·동시 요청·성공 캐시를 실제 로더로 구분하고 파일 키/동명이인 ID·원본 JSON은 유지한다. 운영 데이터나 캐시버스터는 변경하지 않는다.
+
 ## 2026-11-01 (Codex — 검수51차·한글 입력 확정)
 - **[완료·브랜치/CI 대기] [app.js·tests/ime-submit-guard.test.js]** 공통 프롬프트·컬렉션 생성·프로필 이름/소개4입력의 실제 keydown에 기존 검색과 같은 isComposing/keyCode229 보호 추가. 일반 Enter·다른 키·저장 버튼 정책은 유지하며 글자 조합 확정 자체는 preventDefault하지 않는다. 실제 등록 핸들러20검사 전12실패→후0, 기존 목록 키보드9·취소15·문법 통과.
 - **[검증 경계] [tests/mobile-first-visit.test.js]** 기존 첫 방문17동선에 실제 공통 입력창의 합성 isComposing Enter→pending/open 유지, 별도 CDP 일반 Enter→값 반환/닫힘2검사를 추가해 로컬 Chrome19/19. 실제 프로필/컬렉션 저장은 호출하지 않았으며 OS 한글 키보드/iOS·Android IME 통과로 주장하지 않는다. Safari가 compositionend 직후 isComposing=false/keyCode13으로 내보내는 별도 패턴은 실기기 확인 대상.
