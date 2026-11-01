@@ -1,6 +1,8 @@
 # CHANGELOG
 
 ## 2026-11-01 (Codex — 검수49차·공유 결과 안내)
+- **[완료·브랜치/CI 대기] [app.js·tests/share-copy-outcome.test.js]** execCommand=false/예외를 실패로 반환하고 임시 textarea는 선택 실패에도 finally로 제거. 기존 공유 호출은 같은 한영 안내를 유지하며, 조합 공유는 실제 복사 결과를 받아 이미지 다운로드 요청과 링크 복사 실패를 구분한다. 이미지 저장 완료 여부는 브라우저에서 확인할 수 없어 요청으로 표현. 네이티브 AbortError 취소 후 몰래 링크를 복사하지 않는다. URL/공유 파일 형식/다운로드 경로는 유지.
+- **[검증]** 실제 helper/조합 클릭 핸들러14검사 전11실패→후0(새 반환 계약 검사 포함). 미지원·거절·false·예외·선택 실패 정리·한영·네이티브 취소/성공/실패를 통제. 기존 phone-landscape에 실제 DOM 한영 실패 토스트·임시 textarea 제거2검사를 추가해 로컬 Chrome20/20. clipboard/execCommand/share/download는 합성이며 실제 클립보드/OS 시트/다운로드 성공은 검증하지 않음. [execCommand 반환값](https://developer.mozilla.org/en-US/docs/Web/API/Document/execCommand#return_value) 확인; deprecated API를 새 주 경로로 확대한 것이 아니고 기존 fallback의 결과만 검사한다.
 - **[진행중] [app.js 공유]** 링크 복사 fallback이 execCommand=false에도 성공 안내를 표시하고, 조합 이미지 공유는 클립보드 거절을 무시해 복사 완료로 안내하는 경로 확인. 실제 공유 함수/클릭 핸들러를 합성 클립보드로 실행해 성공·거절·미지원·네이티브 취소를 구분한다. 공유 URL·이미지 디자인·다운로드 정책은 유지하며 운영 계정이나 실제 클립보드 내용을 변경하지 않는다.
 
 ## 2026-11-01 (Codex — 검수48차·로그아웃 실패 보존)

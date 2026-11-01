@@ -10284,20 +10284,24 @@ function _maybeSuggestNext(){
   },500);
 }
 
-function _fallbackCopy(url){
+function _fallbackCopy(url,quiet=false){
   const ta=document.createElement('textarea');
   ta.value=url;ta.style.position='fixed';ta.style.opacity='0';
-  document.body.appendChild(ta);ta.select();
-  try{document.execCommand('copy');_showShareToast(currentLang==='ko'?'링크가 복사되었어요':'Link copied');}
-  catch(e){_showShareToast(currentLang==='ko'?'링크 복사에 실패했어요':'Failed to copy link');}
-  document.body.removeChild(ta);
+  let copied=false;
+  try{document.body.appendChild(ta);ta.select();copied=document.execCommand('copy')===true;}
+  catch(e){}
+  finally{if(ta.parentNode)ta.parentNode.removeChild(ta);}
+  if(!quiet)_showShareToast(copied?(currentLang==='ko'?'링크가 복사되었어요':'Link copied'):(currentLang==='ko'?'링크 복사에 실패했어요':'Failed to copy link'));
+  return copied;
 }
-function _copyShareLink(url){
+async function _copyShareLink(url,quiet=false){
   if(navigator.clipboard&&navigator.clipboard.writeText){
-    navigator.clipboard.writeText(url).then(()=>_showShareToast(currentLang==='ko'?'링크가 복사되었어요':'Link copied')).catch(()=>_fallbackCopy(url));
-  }else{
-    _fallbackCopy(url);
+    try{await navigator.clipboard.writeText(url);}
+    catch(e){return _fallbackCopy(url,quiet);}
+    if(!quiet)_showShareToast(currentLang==='ko'?'링크가 복사되었어요':'Link copied');
+    return true;
   }
+  return _fallbackCopy(url,quiet);
 }
 // 터치가 주 입력 수단인 기기(폰/태블릿)에서만 OS 네이티브 공유 시트를 쓴다 — 마우스/트랙패드
 // 기기(맥북 포함)는 isMob()의 창너비 판정과 무관하게 pointer:coarse가 항상 false로 정확히 잡히므로
@@ -14029,13 +14033,13 @@ document.getElementById('combo-share')?.addEventListener('click',async e=>{
         if(navigator.canShare&&navigator.canShare({files:[file]})){ await navigator.share({files:[file],text:link,title:'K-POP Universe'}); return; }
       }
       const a=document.createElement('a');a.href=_comboCardDataURL;a.download='kpop-universe-combo.png';document.body.appendChild(a);a.click();a.remove();
-      try{await navigator.clipboard.writeText(link);}catch(e2){}
-      _showShareToast(currentLang==='ko'?'이미지 저장됨 · 링크 복사됨':'Image saved · Link copied');
+      const copied=await _copyShareLink(link,true);
+      _showShareToast(currentLang==='ko'?(copied?'이미지 저장 요청 · 링크 복사됨':'이미지 저장 요청 · 링크 복사 실패'):(copied?'Image download requested · Link copied':'Image download requested · Link copy failed'));
       return;
-    }catch(err){ /* 취소/실패 → 아래 링크 폴백 */ }
+    }catch(err){if(err?.name==='AbortError')return; /* 실패 → 아래 링크 폴백 */ }
   }
-  try{await navigator.clipboard.writeText(link);_showShareToast(currentLang==='ko'?'링크 복사됨':'Link copied');}
-  catch(err){_showShareToast(link);}
+  const copied=await _copyShareLink(link,true);
+  _showShareToast(copied?(currentLang==='ko'?'링크 복사됨':'Link copied'):link);
 });
 
 // ══ 발자국(2026-09-02) — 방금 본 카드로 되돌아가기. 기존 세션 스택(_cardStack/_memberNavStack)은 닫으면
