@@ -3137,6 +3137,11 @@ function _srVidHit(v){
     url,isShort:_isShortV(v),
     item:{..._rowTags(v),t:v.title,u:url,thumb:v.thumb||'',pa:v.published_at?.slice(0,10),vc:v.view_count}};
 }
+function _invalidateRemoteSearch(){
+  ++_remoteSearchToken;
+  clearTimeout(_remoteSearchTimer);_remoteSearchTimer=null;
+  _srVidMore=null;
+}
 function _searchRemote(q,res,mobSearch,obSearch,hint){
   const token=++_remoteSearchToken;
   clearTimeout(_remoteSearchTimer);
@@ -3158,16 +3163,17 @@ function _searchRemote(q,res,mobSearch,obSearch,hint){
       let vidR=vidR0,vidFallbackGroup=false;
       // 멤버 태그 + 형식으로 0건이면 그 멤버의 **그룹** 영상으로 한 번 더 본다 — 뮤비·예능처럼
       // 그룹 단위로 만드는 콘텐츠는 개별 멤버 태그가 안 붙어서, "카리나 뮤비"가 통째로 0건이 됐다.
-      if(hint&&hint.kind==='member'&&hint.gko&&!(vidR0.data||[]).length&&token===_remoteSearchToken){
+      if(hint&&hint.kind==='member'&&hint.gko&&!vidR0.error&&Array.isArray(vidR0.data)&&vidR0.data.length===0&&token===_remoteSearchToken){
         vidFallbackGroup=true;
         vidR=await _srVidPage(q,like,hint,true,0,_SR_VID_FIRST);
       }
+      if(token!==_remoteSearchToken)return; // 늦은 응답은 현재 더보기 상태도 덮으면 안 된다
       // 더보기가 이어서 같은 조건으로 다음 쪽을 가져올 수 있게 조회 조건을 그대로 기억해둔다(2026-09-21)
-      _srVidMore={q,like,hint,fallbackGroup:vidFallbackGroup,offset:(vidR.data||[]).length,
-        ids:new Set((vidR.data||[]).map(v=>v.id)),
-        done:(vidR.data||[]).length<_SR_VID_FIRST,loading:false,
-        res,mobSearch,obSearch};
-      if(token!==_remoteSearchToken)return; // 그 사이 다른 걸 쳤으면 버린다
+      const vidRows=!vidR?.error&&Array.isArray(vidR?.data)?vidR.data:null;
+      _srVidMore=vidRows?{q,like,hint,fallbackGroup:vidFallbackGroup,offset:vidRows.length,
+        ids:new Set(vidRows.map(v=>v.id)),
+        done:vidRows.length<_SR_VID_FIRST,loading:false,
+        res,mobSearch,obSearch}:null;
       (evR.data||[]).forEach(e=>{
         const gko=(e.groups||[])[0];
         const owner=GROUPS[gko]?gko:null;
@@ -3175,7 +3181,7 @@ function _searchRemote(q,res,mobSearch,obSearch,hint){
           sub:e.venue||gko||'',ownerType:'group',data:owner,
           pos:owner?bubbleMeshes.find(b=>b.ko===owner)?.mesh.position.clone():null});
       });
-      (vidR.data||[]).forEach(v=>out.video.push(_srVidHit(v)));
+      (vidRows||[]).forEach(v=>out.video.push(_srVidHit(v)));
       // 공연장(2026-10-21) — venues_info.json 이름·시설·홀·영문 표기로. 같은 곳 다른 이름은 하나로(alias_of)
       try{
         const vi=await _ensureVenuesInfo();
@@ -3349,7 +3355,11 @@ async function _srLoadMoreVideos(btn){
   st.loading=false;btn.disabled=false;btn.textContent=prevLabel;
   // 그 사이 다른 걸 쳤으면 이 버튼은 이미 화면에서 걷혔다(.sr-remote 정리) — 조용히 버린다
   if(!btn.isConnected||_srVidMore!==st)return;
-  const rows=(r&&r.data)||[];
+  if(r?.error||!Array.isArray(r?.data)){
+    btn.textContent=currentLang==='ko'?'다시 시도':'Retry';
+    return; // 실패를 마지막 페이지로 취급하면 더보기가 사라져 다시 받을 수 없다
+  }
+  const rows=r.data;
   st.offset+=rows.length;
   if(rows.length<_SR_VID_STEP)st.done=true;
   const fresh=rows.filter(v=>!st.ids.has(v.id)&&st.ids.add(v.id));
@@ -4165,6 +4175,7 @@ function doSearch(q){
   const mobSearch=!obSr&&!msOpen&&isMob()&&document.getElementById('tabbar').classList.contains('search-mode');
   const res=obSr||(msOpen?document.getElementById('msheet-body'):(mobSearch?document.getElementById('mob-sr'):document.getElementById('search-results')));
   q=q.trim();_curSearchQ=q;
+  _invalidateRemoteSearch(); // 빈 입력·한 글자·다른 결과 그릇도 이전 요청과 분리한다
   _srResetLimits(q); // 검색어가 바뀌었을 때만 '더보기'로 늘려둔 양을 되돌린다
   _srSongTotal=0;    // 곡 블록이 이번 패스에서 안 돌 수도 있다(온보딩 검색·1글자) — 지난 값이 남으면 헛더보기가 생긴다
   if(!q){
@@ -4700,6 +4711,7 @@ function openMobSearchSheet(){
 }
 function closeMobSearchSheet(){
   if(!_msEl)return;
+  _invalidateRemoteSearch();
   _msEl.classList.remove('open');_msEl.setAttribute('aria-hidden','true');
   _msInput.value='';_msBody.innerHTML='';_msTabs.innerHTML='';_msTab='all';
   _curSearchQ='';
