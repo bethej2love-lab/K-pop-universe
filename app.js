@@ -1071,13 +1071,15 @@ function _ensureGroupDisco(gko){
   if(!g||g.discography!==undefined)return Promise.resolve();
   if(_discoProm['g:'+gko])return _discoProm['g:'+gko];
   return _discoProm['g:'+gko]=fetch('disco/g/'+encodeURIComponent(_discoFileKey(gko))+'.json',{cache:'no-cache'})
-    .then(r=>r.ok?r.json():{g:null,m:{}})
+    .then(r=>{if(r.status===404)return {g:null,m:{}};if(!r.ok)throw new Error('Discography request failed');return r.json();})
     .then(d=>{
+      if(!d||typeof d!=='object'||Array.isArray(d)||!Object.prototype.hasOwnProperty.call(d,'g'))throw new Error('Invalid group discography');
       g.discography=d.g||[];
       const mm=d.m||{};
       for(const nm in mm){const a=ARTISTS.find(x=>x.name&&x.name.ko===nm&&x.group&&x.group.ko===gko);if(a){a.discography=mm[nm].d||[];a.unitDiscography=mm[nm].u||[];}} // u = 유닛 앨범(유닛 카드, 2026-10-14)
     })
-    .catch(()=>{g.discography=[];}); // 실패해도 카드는 뜸(디스코 섹션만 빔)
+    .catch(()=>{}) // 일시 실패는 빈 앨범으로 캐시하지 않는다. 다음 카드 진입에서 다시 읽는다.
+    .finally(()=>{delete _discoProm['g:'+gko];});
 }
 function _ensureMemberDisco(a){
   if(!a||a.discography!==undefined)return Promise.resolve();
@@ -1086,12 +1088,16 @@ function _ensureMemberDisco(a){
   const key=_soloDiscoKey(a),pk='a:'+key;
   if(_discoProm[pk])return _discoProm[pk];
   return _discoProm[pk]=fetch('disco/a/'+encodeURIComponent(key)+'.json',{cache:'no-cache'})
-    .then(r=>r.ok?r.json():{d:null}).then(d=>{a.discography=d.d||[];a.unitDiscography=d.u||[];}).catch(()=>{a.discography=[];});
+    .then(r=>{if(r.status===404)return {d:null};if(!r.ok)throw new Error('Discography request failed');return r.json();})
+    .then(d=>{if(!d||typeof d!=='object'||Array.isArray(d)||!Object.prototype.hasOwnProperty.call(d,'d'))throw new Error('Invalid member discography');a.discography=d.d||[];a.unitDiscography=d.u||[];})
+    .catch(()=>{}).finally(()=>{delete _discoProm[pk];});
 }
 function _ensureTracksIndex(){
   if(_TI)return Promise.resolve(_TI);
   if(_TIProm)return _TIProm;
-  return _TIProm=fetch('tracks_index.json',{cache:'no-cache'}).then(r=>r.ok?r.json():null).then(d=>{_TI=d;return d;}).catch(()=>null);
+  return _TIProm=fetch('tracks_index.json',{cache:'no-cache'}).then(r=>{if(!r.ok)throw new Error('Track index request failed');return r.json();})
+    .then(d=>{if(!d||typeof d!=='object'||Array.isArray(d)||!Object.prototype.hasOwnProperty.call(d,'groups')||!Object.prototype.hasOwnProperty.call(d,'members'))throw new Error('Invalid track index');_TI=d;return d;})
+    .catch(()=>null).finally(()=>{_TIProm=null;});
 }
 function _artistByNameGroup(nm,gko,id){ // 명시 ID 우선. 모호한 구형 이름 키는 다른 사람으로 대입하지 않는다.
   if(id){const a=ARTISTS.find(a=>a.id===id);return a&&a.name.ko===nm&&a.group.ko===gko?a:null;}
@@ -3912,11 +3918,16 @@ function _openBetweenConn(a,b){
 // ── 작사·작곡 크레딧 검색 ──────────────────────────────────────────────────────────────────
 // "백현 작사" / "찬열 작곡" 처럼 "[이름] [역할]" 패턴을 잡아 artist_credits.json에서 목록 표시.
 // JSON은 첫 조회 때 한 번만 로드하고 이후 캐시된 객체를 재사용한다(약 600KB — 지연 로드가 적절).
-let _acData=null;
+let _acData=null,_acDataP=null;
 async function _loadAcData(){
   if(_acData)return _acData;
-  try{const r=await fetch('artist_credits.json');_acData=await r.json();}catch(e){_acData={};}
-  return _acData;
+  if(_acDataP)return _acDataP;
+  return _acDataP=(async()=>{
+    try{
+      const r=await fetch('artist_credits.json');if(!r.ok)throw new Error('Credits request failed');
+      const d=await r.json();if(!d||typeof d!=='object'||Array.isArray(d))throw new Error('Invalid credits');return _acData=d;
+    }catch(e){return {};}
+  })().finally(()=>{_acDataP=null;});
 }
 // 앨범 곡 전체 크레딧(2026-10-14) — tools/melon_song_credits.mjs가 tracks[].cr = {l:[[이름,aid]],c:[...],a:[...]}(작사·작곡·편곡)로 채운다.
 // 사람(멜론 aid) 단위로 묶어 이름 · 역할 · 참여 곡. 우리 아이돌이면 그 멤버 카드로, 아니면 멜론 아티스트 페이지로.
@@ -4309,7 +4320,7 @@ function doSearch(q){
     // 슬림 모드에선 tracks_index가 있어야 곡을 넣는다. 아직 없으면 로드만 걸고 이번 패스는 건너뛴 뒤,
     // 도착하면 같은 쿼리로 재검색한다(폴백/원본 모드는 _TI 없이 인메모리로 바로 빌드).
     if(!_songIndex && (!_SLIM_MODE || _TI)) _songIndex=_buildSongIndex();
-    if(!_songIndex && _SLIM_MODE && !_TI) _ensureTracksIndex().then(()=>{if(_curSearchQ===q){_songIndex=_buildSongIndex();doSearch(q);}});
+    if(!_songIndex && _SLIM_MODE && !_TI) _ensureTracksIndex().then(index=>{if(index&&_curSearchQ===q){_songIndex=_buildSongIndex();doSearch(q);}});
     const songHits=[];
     const _songSeen=new Set();
     for(const s of (_songIndex||[])){
@@ -28205,7 +28216,9 @@ function _renderProgramRow(containerId,picks,ctx){
 let _venuesInfo=null,_venuesInfoP=null;
 function _ensureVenuesInfo(){
   if(_venuesInfo)return Promise.resolve(_venuesInfo);
-  return _venuesInfoP||(_venuesInfoP=fetch('venues_info.json').then(r=>r.ok?r.json():null).then(j=>(_venuesInfo=(j&&j.venues)||{})).catch(()=>(_venuesInfo={})));
+  return _venuesInfoP||(_venuesInfoP=fetch('venues_info.json').then(r=>{if(!r.ok)throw new Error('Venue info request failed');return r.json();})
+    .then(j=>{if(!j||!j.venues||typeof j.venues!=='object'||Array.isArray(j.venues))throw new Error('Invalid venue info');return _venuesInfo=j.venues;})
+    .catch(()=>({})).finally(()=>{_venuesInfoP=null;}));
 }
 // 같은 공연장 판정 키 — 같은 Wikidata 항목·같은 KOPIS 홀·별칭·대소문자/띄어쓰기만 다른 이름("Tokyo Dome"/"TOKYO DOME")을 하나로
 function _venueIdKey(name){
