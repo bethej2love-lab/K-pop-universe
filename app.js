@@ -28056,7 +28056,7 @@ async function _loadMemberConcertRow(memberKo,containerId,groupKo){
 // (2026-08-11 기준) 전체를 한 번에 미리 받아두고 카드 열 때는 메모리에서만 필터링한다.
 let _pubCollectionsCache=null;
 let _pubCollectionsP=null;
-function _warmPubCollections(){
+async function _warmPubCollections(){
   if(!sb)return Promise.resolve();
   if(_pubCollectionsP)return _pubCollectionsP;
   const p=(async()=>{

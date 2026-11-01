@@ -12,6 +12,8 @@ on:
       - 'vendor/**'
       - 'tests/smoke.test.js'
       - 'tests/vid-list-share.test.js'
+      - 'tests/desktop-close-layers.test.js'
+      - 'tests/lb-every-entry.test.js'
       - 'tests/stage-venue-album.test.js'
       - 'tests/deeplink-song.test.js'
       - 'tests/phone-landscape.test.js'
@@ -33,6 +35,8 @@ on:
       - 'vendor/**'
       - 'tests/smoke.test.js'
       - 'tests/vid-list-share.test.js'
+      - 'tests/desktop-close-layers.test.js'
+      - 'tests/lb-every-entry.test.js'
       - 'tests/stage-venue-album.test.js'
       - 'tests/deeplink-song.test.js'
       - 'tests/phone-landscape.test.js'
@@ -77,6 +81,8 @@ jobs:
       matrix:
         include:
           - suite: vid-list-share
+          - suite: desktop-close-layers
+          - suite: lb-every-entry
           - suite: stage-venue-album
           - suite: deeplink-song
           - suite: phone-landscape
