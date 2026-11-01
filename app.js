@@ -3812,8 +3812,12 @@ function _matchPrograms(q,ql,qln){
 }
 // 프로그램 컬렉션 열기 — 제목에 프로그램 키워드가 든 영상을 모아 오버레이로. ctx로 그룹/멤버 한정 가능
 // (카드 내 컬렉션에서 재사용). ctx.forceTiles=true면 2x2 정방형 타일 모드로 연다(그룹/멤버 카드용).
+// 목록 진입/닫기만 공유한다. 카드와 영상의 독립 창 상태는 건드리지 않는다.
+let _feedListIntent=0;
+let _feedListCloseSeq=0;
 async function _openProgramCollection(p,ctx){
   if(!sb||!p)return;
+  const intent=++_feedListIntent;
   ctx=ctx||{};
   const vidUrl=v=>_isShortV(v)?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;
   const label=currentLang==='ko'?`${p.label} 모아보기`:`${p.en||p.label} Collection`;
@@ -3834,6 +3838,7 @@ async function _openProgramCollection(p,ctx){
     if(ctx.gko)query=query.eq('group_ko',ctx.gko);
     if(ctx.memberKo)query=query.contains('members',[ctx.memberKo]);
     const{data,error}=await query;
+    if(intent!==_feedListIntent)return;
     const rows=error?[]:_filterBannedVideos(data||[]);
     // 항상 최신순(쿼리가 published_at desc) — 검색·카드 모두 최신 영상부터(2026-09-05 사용자 요청).
     if(ctx.gko||ctx.memberKo){_openFeedListOverlay(label,'',toSongs(rows));return;}
@@ -3841,7 +3846,7 @@ async function _openProgramCollection(p,ctx){
     const st={label,mkQ,toSongs,rows,tops:Object.keys(cnt).sort((a,b)=>cnt[b]-cnt[a]),cnt,cache:new Map()};
     st.cache.set('all|latest',rows);
     await _programFacetView(st,'all','latest');
-  }catch(e){ _openFeedListOverlay(label,'',[]); }
+  }catch(e){if(intent===_feedListIntent)_openFeedListOverlay(label,'',[]);}
 }
 // 형식에서 시작하기(2026-10-28 사용자 "영상의 세 요소 누가·곡·형식 — 형식에서 시작해 즐겨찾기 아티스트를 한꺼번에 '누가'에 넣고 훑기").
 // 검색에서 연 프로그램 모아보기에만 붙는다(카드 안 모아보기는 이미 '누가'가 정해져 있다).
@@ -3853,6 +3858,7 @@ const _PF_FAVHIT=v=>favGroups.has(v.group_ko)||(v.with_groups||[]).some(g=>favGr
   ||(v.members||[]).some(m=>favMembers.has(v.group_ko+':'+m))
   ||(v.with_members||[]).some(w=>{const i=String(w).lastIndexOf('(');return i>0&&favMembers.has(String(w).slice(i+1,-1)+':'+String(w).slice(0,i));});
 async function _programFacetView(st,who,sort){
+  const intent=++_feedListIntent;
   const isKo=currentLang==='ko';
   const favGs=[...new Set([...favGroups,...[...favMembers].map(k=>String(k).split(':')[0])])].filter(Boolean);
   if(who==='fav'&&!favGs.length)who='all';
@@ -3875,7 +3881,7 @@ async function _programFacetView(st,who,sort){
     }else list=got;
     st.cache.set(key,list);
   }
-  if(st.viewRequest!==request)return; // 늦게 끝난 이전 선택이 새 화면을 덮지 않는다.
+  if(st.viewRequest!==request||intent!==_feedListIntent)return; // 다른 목록/닫기와 이전 선택 모두 보호.
   const whoOpts=[{v:'all',ko:'전체',en:'All'}];
   if(favGs.length)whoOpts.push({v:'fav',ko:'★ 즐겨찾기',en:'★ Favorites'});
   // 팀은 고르기 시트로(2026-10-30) — 물방울 줄엔 상위 20팀만 넣었지만 시트는 검색이 돼서 전부 넣는다. 개수는 처음 받은 최신 999개 기준
@@ -10194,11 +10200,13 @@ function _syncUrl(mode){
 // public_collections에서 단건 조회. 비공개인데 남이 링크로 들어온 경우(주인이 나중에 비공개로
 // 돌렸거나 링크 자체가 잘못됨)는 조용히 무시(에러 노출 안 함, 흔한 "만료된 링크" 취급).
 async function _openCollectionFromHash(colId){
+  const intent=++_feedListIntent;
   const mineCol=collections.find(c=>c.id===colId);
   if(mineCol){_openFeedListOverlay(mineCol.name,_colVidCountText(mineCol.videos.length),mineCol.videos,{colId:mineCol.id,mine:true});return;}
   if(!sb)return;
   const uid=window._sbSession?.user?.id||null;
   const{data,error}=await sb.from('public_collections').select('id,owner_id,owner_nick,name,items,cover_img').eq('id',colId).maybeSingle();
+  if(intent!==_feedListIntent)return;
   if(error||!data)return;
   _openFeedListOverlay(data.name,_colVidCountText((data.items||[]).length),data.items||[],{colId:data.id,mine:data.owner_id===uid,ownerNick:data.owner_nick||null});
 }
@@ -21879,6 +21887,7 @@ function _renderFeedListFacet(ctx){
   });
 }
 function _openFeedListOverlay(title,sub,songs,ctx){
+  ++_feedListIntent;++_feedListCloseSeq;
   document.getElementById('feed-list-hd-title').textContent=title;
   document.getElementById('feed-list-sub').textContent=sub||'';
   _renderFeedListFacet(ctx);
@@ -22138,9 +22147,12 @@ function _openFeedListOverlay(title,sub,songs,ctx){
   renderNextBatch();
 }
 function _closeFeedListOverlay(){
+  ++_feedListIntent;
+  const closeSeq=++_feedListCloseSeq;
   const _flOv=document.getElementById('feed-list-overlay');
   const _flPanel=document.getElementById('feed-list-panel');
   const _fin=()=>{
+    if(closeSeq!==_feedListCloseSeq)return;
     _flOv.classList.remove('open');
     _flPanel.style.transition='';_flPanel.style.transform='';
     if(_feedListObserver){_feedListObserver.disconnect();_feedListObserver=null;}
@@ -24340,15 +24352,14 @@ async function _chartSongs(id,sel){
   if(d.ranked)_chartCache.set(k,out);
   return out;
 }
-let _chartViewSeq=0;
 async function _openChartList(id,sel,_view){
   const d=_CHART_DEFS[id];
   const st=_view||{sel:Object.assign({},_CHART_SEL_DEFAULT)};
   st.sel=Object.assign({},st.sel,sel||{});
   sel=Object.assign({},st.sel); // 진행 중 다른 축을 골라도 조회 조건 자체는 바뀌지 않는다.
-  const request=++_chartViewSeq;
+  const request=++_feedListIntent;
   const songs=await _chartSongs(id,sel);
-  if(request!==_chartViewSeq)return;
+  if(request!==_feedListIntent)return;
   const label=_chartLabel(id,sel);
   // 좁은 조합은 0건일 수 있다(5세대 남돌 최근 30일). 그때도 칩은 그대로 둔다 — 빈 화면에 칩이 없으면
   // 되돌아갈 길이 없어 막다른 골목이 된다.
@@ -24419,9 +24430,11 @@ const _evIsStage=v=>_evKind(v)==='stage';
 // who: 'all' | 'fav'(★ 즐겨찾기) | 그룹 키 — 프로그램 모아보기(_programFacetView)와 같은 '누가' 줄(2026-10-28 사용자 "시상식 창도 칩 구성 맞추기")
 async function _openEventPage(id,ed,view,who){
   const s=_EVENT_SERIES.find(x=>x.id===id);if(!s)return;
+  const intent=++_feedListIntent;
   const isKo=currentLang==='ko';
   let rows=[];
   try{rows=await _eventRows(s);}catch(e){console.warn('[행사] 조회 실패',e);}
+  if(intent!==_feedListIntent)return;
   // 회차: 최신 연도 먼저(같은 해면 이름순)
   const counts={};rows.forEach(v=>{counts[v._ed]=(counts[v._ed]||0)+1;});
   const eds=Object.keys(counts).sort((a,b)=>(+b.slice(0,4))-(+a.slice(0,4))||a.localeCompare(b));

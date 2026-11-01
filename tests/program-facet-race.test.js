@@ -5,7 +5,7 @@ function fixture(){
  const pending=[],views=[];const box={currentLang:'ko',favGroups:new Set(['에스파']),favMembers:new Set(),GROUPS:{에스파:{en:'aespa'},아이브:{en:'IVE'}},
  _pgFilterVal:x=>x,_filterBannedVideos:x=>x,_PF_FAVHIT:v=>v.group_ko==='에스파',_PF_INGROUP:(v,g)=>v.group_ko===g,
  _openFeedListOverlay:(label,sub,rows,ctx)=>views.push({sub,rows,facets:ctx.facets})};
- vm.createContext(box);vm.runInContext(fn,box);
+ vm.createContext(box);vm.runInContext((src.match(/^let _feedListIntent=0;$/m)?.[0]||'')+'\n'+fn,box);
  const st={label:'프로그램',tops:['에스파','아이브'],rows:[],cache:new Map(),toSongs:x=>x,mkQ:sort=>{
   let finish;const p=new Promise(r=>finish=r);p.or=()=>p;pending.push({sort,finish});return p;
  }};
