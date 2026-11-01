@@ -24340,17 +24340,22 @@ async function _chartSongs(id,sel){
   if(d.ranked)_chartCache.set(k,out);
   return out;
 }
-async function _openChartList(id,sel){
+let _chartViewSeq=0;
+async function _openChartList(id,sel,_view){
   const d=_CHART_DEFS[id];
-  sel=Object.assign({},_CHART_SEL_DEFAULT,sel||{});
+  const st=_view||{sel:Object.assign({},_CHART_SEL_DEFAULT)};
+  st.sel=Object.assign({},st.sel,sel||{});
+  sel=Object.assign({},st.sel); // 진행 중 다른 축을 골라도 조회 조건 자체는 바뀌지 않는다.
+  const request=++_chartViewSeq;
   const songs=await _chartSongs(id,sel);
+  if(request!==_chartViewSeq)return;
   const label=_chartLabel(id,sel);
   // 좁은 조합은 0건일 수 있다(5세대 남돌 최근 30일). 그때도 칩은 그대로 둔다 — 빈 화면에 칩이 없으면
   // 되돌아갈 길이 없어 막다른 골목이 된다.
   const sub=!songs.length?(currentLang==='ko'?'이 조건에 맞는 영상이 없어요 — 위 필터를 바꿔보세요':'No videos for this filter — try changing it above')
     :d.ranked?_feedRankSub(label,songs[0].vc):'';
   const mk=key=>({key,labelKo:'',labelEn:'',options:_CHART_AXES[key],sel:sel[key],scroll:key==='gen', // 세대 6개는 390폭에 딱 맞아 더 좁은 폰에선 줄바꿈 대신 가로 밀기
-    onPick:nv=>_openChartList(id,Object.assign({},sel,{[key]:nv}))});
+    onPick:nv=>_openChartList(id,{[key]:nv},st)});
   // ⚠️ 순위 목록 여부는 원래 **카드 클릭 핸들러**에서만 세워졌다(선반이 feed-chart인지로 판단). 그래서
   //    칩으로 다시 열면 플래그가 이미 소비돼 순위 목록이 조용히 '발견용'으로 렌더됐다 — 조회수 2위
   //    쇼츠가 뒤로 밀려 순위가 뒤섞였다(2026-09-04 실측). 칩 경로에선 차트 정의가 직접 세운다.
