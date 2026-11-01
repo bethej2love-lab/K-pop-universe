@@ -1,6 +1,6 @@
 // Actual chart controller, deferred local responses; no remote reads or writes.
 const fs=require('node:fs'),path=require('node:path'),vm=require('node:vm'),assert=require('node:assert/strict');
-const src=fs.readFileSync(path.join(__dirname,'..','app.js'),'utf8'),a=src.indexOf('let _chartViewSeq='),fn=src.slice(a,src.indexOf('\n}',a)+2);
+const src=fs.readFileSync(path.join(__dirname,'..','app.js'),'utf8'),a=src.indexOf('async function _openChartList('),fn=(src.match(/^let _chartViewSeq=0;$/m)?.[0]||'')+'\n'+src.slice(a,src.indexOf('\n}',a)+2);
 function fixture(){
  const pending=[],views=[];
  const box={currentLang:'ko',_chartViewSeq:0,_CHART_DEFS:{a:{axes:['gender','period'],ranked:true},b:{axes:['gender','period'],ranked:false}},_CHART_SEL_DEFAULT:{gender:'all',period:'all'},_CHART_AXES:{gender:[{v:'all'},{v:'female'}],period:[{v:'all'},{v:'month'}]},_chartLabel:(id,s)=>id+JSON.stringify(s),_chartSongs:(id,s)=>new Promise((resolve,reject)=>pending.push({id,s,resolve,reject})),_feedRankSub:()=>'',_openFeedListOverlay:(label,sub,songs,ctx)=>views.push({label,sub,songs,ctx,ranked:box._feedListRankedNext})};
