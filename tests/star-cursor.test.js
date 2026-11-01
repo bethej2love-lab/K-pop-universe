@@ -59,8 +59,18 @@ async function ev(c,x){const r=await c.send('Runtime.evaluate',{expression:x,ret
  const mouse=(type,x,y,buttons=0)=>c.send('Input.dispatchMouseEvent',{type,x,y,button:type==='mouseMoved'&&!buttons?'none':'left',buttons,clickCount:type==='mouseMoved'?0:1});
  await mouse('mouseMoved',geo.x,geo.y+geo.h*.8);await mouse('mousePressed',geo.x,geo.y+geo.h*.8,1);await mouse('mouseReleased',geo.x,geo.y+geo.h*.8);await sleep(300);
  check('compass track click scrolls',await ev(c,`document.querySelector('.feed-pane').scrollTop>0`));
- await ev(c,`(()=>{const e=document.querySelector('.feed-pane');e.replaceWith(e.cloneNode(true));document.querySelector('.feed-pane').scrollTop=0;})()`);await sleep(400);await mouse('mouseMoved',geo.x,geo.y+12);await mouse('mousePressed',geo.x,geo.y+12,1);await sleep(80);for(let y=24;y<=150;y+=14){await mouse('mouseMoved',geo.x,geo.y+y,1);await sleep(20);}await mouse('mouseReleased',geo.x,geo.y+150);await sleep(100);
- check('compass thumb drag scrolls',await ev(c,`document.querySelector('.feed-pane').scrollTop>200`));
+ // OS마다 위쪽 버튼/최소 손잡이 길이가 다르므로 고정 y=12를 손잡이로 가정하지 않는다.
+ // 누름 자체의 이동을 빼고, 그 뒤 드래그 이동만 검사한다(트랙 클릭을 성공으로 세지 않음).
+ const drags=[];
+ for(const offset of [8,20,32,44,56]){
+  await ev(c,`(()=>{const e=document.querySelector('.feed-pane');e.replaceWith(e.cloneNode(true));document.querySelector('.feed-pane').scrollTop=0;})()`);await sleep(120);
+  await mouse('mouseMoved',geo.x,geo.y+offset);await sleep(40);await mouse('mousePressed',geo.x,geo.y+offset,1);await sleep(50);
+  const down=await ev(c,`document.querySelector('.feed-pane').scrollTop`);
+  for(const y of [80,115,150]){await mouse('mouseMoved',geo.x,geo.y+y,1);await sleep(20);}
+  const moved=await ev(c,`document.querySelector('.feed-pane').scrollTop`);await mouse('mouseReleased',geo.x,geo.y+150);
+  drags.push({offset,down,moved});if(moved-down>200)break;
+ }
+ check('compass thumb drag moves beyond press alone '+JSON.stringify(drags),drags.some(x=>x.moved-x.down>200));
  await c.send('Emulation.setTouchEmulationEnabled',{enabled:true,maxTouchPoints:1});
  const coarse=await ev(c,`({base:getComputedStyle(document.body).cursor,width:getComputedStyle(document.querySelector('.feed-pane')).scrollbarWidth})`);
  check('touch has no forced SVG cursor',!coarse.base.includes('svg'));check('touch scrollbar mode preserved',coarse.width==='thin');

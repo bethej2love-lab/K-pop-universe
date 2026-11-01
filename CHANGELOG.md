@@ -1,6 +1,7 @@
 # CHANGELOG
 
 ## 2026-11-01 (Codex — 검수58차·별 커서와 스크롤바)
+- **[검증·드래그 좌표] [tests/star-cursor.test.js]** fine 장치를 명시한 Linux에서 스타일/파트33검사는 통과, 고정 y=12 손잡이 드래그만 실패. OS별 스크롤 버튼/최소 손잡이 위치를 가정하지 않도록 상단8~56px 후보를 제한적으로 검사하고, 누름 시 이동을 빼서 실제 끌기 후 이동만200px 이상인지 단언한다. 제품 스크롤바 크기나 드래그 구현은 바꾸지 않고 입력 fixture를 정정한다.
 - **[검증·CI 환경 정정] [tests/star-cursor.test.js·tests/compass-width.test.js]** 실제 앱 로컬 나침반19/19와 새390px 포함 smoke 통과. 첫 CI의 별 전용26실패는 Linux headless가 pointer:fine 장치가 없는 상태(기본2px·표준thin 유지)에서 마우스 전용 스타일을 검사한 fixture 오류: Chromium primaryPointerType=4/hover=2 장치를 명시하고 fine 단언은 유지. Playwright도 사용하는 실행 설정이며 제품의 터치 분기를 바꾸지 않는다. 첫 CI smoke는 Supabase 인증 동기화 시간초과, vid-list-share는 응답200 이후 검색 skeleton 대기로 실패해 별도로 기록, 최종 head 전체 검증이 필요하다.
 - **[완료·브랜치 검증/배포 대기] [kpop_universe.css·app.js·index.html·admin.js]** 나침반/즐겨찾기/컬렉션/스크랩/영상 목록의 표준 scrollbar-width:thin·scrollbar-color가 Chromium에서 WebKit 파트 스타일을 우선하지 못하게 하여 OS 기본 스크롤바가 사용됨. 마우스+파트 지원 환경의 해당 7종만 auto로 되돌려 기존 6px/3px/10px/2px 디자인을 살리고 모든 스크롤바 파트(손잡이·트랙·트랙 조각·모서리·버튼)에 기존 분홍 SVG 별 명시. 숨긴 가로 레일 none·터치 thin·Firefox 표준 스크롤바는 유지한다. 근거: [Chromium 파트별 커서 처리](https://github.com/chromium/chromium/blob/main/third_party/blink/renderer/core/input/event_handler.cc), [Chrome 스크롤바 문서](https://developer.chrome.com/docs/css-ui/scrollbar-styling).
 - **[완료·동반 커서 오류] [동일 파일]** 모든 자식에 흰 별을 강제하던 전역 규칙을 상속으로 바꿔 클릭 버튼 안 span/SVG에서도 분홍 별 유지. 그룹/멤버 라벨·기존 CSS/동적 인라인 pointer를 같은 커서 변수로 통일, 비활성 버튼은 흰 별. 입력 text·가로 드래그 grab/grabbing 유지. 별 그림/색/크기·핫스폿은 기존 그대로, DOM 가상 커서나 스크롤바 JS를 추가하지 않음.
