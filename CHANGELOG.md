@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 2026-11-01 (Codex — 검수47차·닫기 터치와 언어 메타데이터)
+- **[진행중] [kpop_universe.css·app.js]** 조합/곡 영상 닫기 아이콘의 시각 배치는 유지하면서 모바일 가장자리 터치가 실제 버튼에 닿는지 검사한다. 영어 전환 시 화면의 lang-en과 문서 루트 lang이 일치하는지도 실제 applyLang으로 확인한다. 아이콘/문구/레이아웃을 새 디자인으로 바꾸지 않고 입력 영역과 언어 속성만 검토.
+
 ## 2026-11-01 (Codex — 검수46차·사용자 데이터 저장 순서)
 - **[완료·감사/제품 수정 보류] [tools/reproduce_user_sync_races.cjs]** 실제 _sbPushColumn/_sbFlushColumn/_pullServerToLocal을 합성 제공자로 실행: 같은 컬럼2요청이 동시에 시작되고 최신→이전 순으로 완료하면 최종값 old, startup pull 대기 중 바꾼 latest 로컬 값도 old로 덮임을 재현. 운영에서 실제 손실된 계정이 확인됐다는 뜻은 아니다. 옵션 없는 진단과 기존 PGlite0.5.11 새 메모리 DB의 실제 UPDATE 쿼리 모두 같은 결과이며 다른 합성 사용자 행은 유지. 도구는 실패 현상 진단용이고 초록 제품 회귀 검사로 등록하지 않았다.
 - **[확인·운영 읽기만]** user_data RLS 메타데이터 SELECT만 실행: SELECT/INSERT/UPDATE가 auth.uid()=user_id를 검사하고 UPDATE의 USING/WITH CHECK 모두 유지됨을 확인. 위 경합은 같은 사용자 안의 저장 순서 문제이며 권한 우회로 규정하지 않는다. Supabase changelog/현재 update 문서 확인, 계정/키/권한/운영 데이터 변경 없음.
