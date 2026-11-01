@@ -34,5 +34,13 @@ let total=0,failed=0;async function check(name,task){total++;try{await task();}c
  await check('old account completion does not affect new account or send its queued intent',async()=>{const f=fixture(),ps=[f.ctx._toggleReaction(A,emoji),f.ctx._toggleReaction(A,emoji)];await tick();assert.equal(f.writes().length,1);f.ctx.window._sbSession={user:{id:'user-B'}};const reading=f.ctx._loadReactions(A);await tick();f.finishRead(f.reads(),false,4);await reading;f.finish(f.writes()[0]);await Promise.all(ps);assert(!f.on());assert.equal(f.count(),4);assert.equal(f.writes().length,1);});
  await check('read response from an old account is ignored',async()=>{const f=fixture(),p=f.ctx._loadReactions(A);await tick();f.ctx.window._sbSession={user:{id:'user-B'}};f.finishRead(f.reads(),true,20);await p;assert(!f.on());assert.equal(f.count(),4);});
  await check('malformed own-reaction row never partially replaces counts',async()=>{const f=fixture({on:true}),p=f.ctx._loadReactions(A);await tick();f.finish(f.reads().find(r=>r.kind==='counts'),{data:[{emoji,cnt:99}],error:null});f.finish(f.reads().find(r=>r.kind==='mine'),{data:[null],error:null});await p;assert(f.on());assert.equal(f.count(),4);});
+ await check('click queued by rollback render starts a fresh request',async()=>{
+  const f=fixture();let armed=false,next;
+  f.ctx._renderReactions=()=>{if(armed){armed=false;Promise.resolve().then(()=>{next=f.ctx._toggleReaction(A,emoji);});}};
+  const first=f.ctx._toggleReaction(A,emoji);await tick();armed=true;
+  f.finish(f.writes()[0],{error:{message:'denied'}});await first;await tick();
+  assert.equal(f.writes().length,2,'new input must not attach to a finished runner');
+  f.finish(f.writes()[1]);await next;assert(f.on());assert.equal(f.count(),5);
+ });
  console.log(total+' checks / '+failed+' failed');if(failed)process.exitCode=1;
 })().catch(e=>{console.error(e);process.exitCode=1;});

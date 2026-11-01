@@ -6731,6 +6731,8 @@ function _setReactionLocal(key,on){
   _reactionCounts.set(key,Math.max(0,(Number(_reactionCounts.get(key))||0)+(on?1:-1)));
 }
 async function _runReactionWrite(st){
+  const writeKey=st.uid+'\x00'+st.key;
+  try{
   let force=true;
   while(force||st.desired!==st.confirmed){
     if(!_reactionSameUser(st.uid))return;
@@ -6751,6 +6753,10 @@ async function _runReactionWrite(st){
       st.desired=st.confirmed;_setReactionLocal(st.key,st.confirmed);_renderReactions();return;
     }
     st.confirmed=desired;
+  }
+  }finally{
+    // 새 microtask 입력이 완료된 runner에 매달리지 않도록 Promise 종료 전에 해제한다.
+    if(_reactionWrites.get(writeKey)===st)_reactionWrites.delete(writeKey);
   }
 }
 
@@ -6793,7 +6799,7 @@ async function _toggleReaction(videoUrl,emoji){
   else{const on=_myReactions.has(key);st={uid,key,videoUrl,emoji,confirmed:on,desired:!on,revision:1};_reactionWrites.set(writeKey,st);}
   _setReactionLocal(key,st.desired);
   _renderReactions();
-  if(!st.promise)st.promise=_runReactionWrite(st).finally(()=>{if(_reactionWrites.get(writeKey)===st)_reactionWrites.delete(writeKey);});
+  if(!st.promise)st.promise=_runReactionWrite(st);
   return st.promise;
 }
 
