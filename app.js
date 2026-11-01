@@ -21817,13 +21817,18 @@ let _feedListObserver=null; // 무한스크롤 IntersectionObserver — 끝까�
 function _renderFeedListFacet(ctx){
   const el=document.getElementById('feed-list-facets');
   if(!el)return;
+  const pn=document.getElementById('feed-list-panel');
+  if(pn){pn._facetRunSeq=(pn._facetRunSeq||0)+1;pn.classList.remove('fl-loading');}
   const facets=((ctx&&ctx.facets)||((ctx&&ctx.facet)?[ctx.facet]:[])).filter(f=>f&&f.options&&f.options.length);
   if(!facets.length){el.style.display='none';el.innerHTML='';return;}
   el.innerHTML='';
   el.style.display='flex';
   const ko=currentLang==='ko';
-  const pn=document.getElementById('feed-list-panel');
-  const run=(f,v)=>{pn?.classList.add('fl-loading');Promise.resolve().then(()=>f.onPick(v)).catch(()=>{}).finally(()=>pn?.classList.remove('fl-loading'));};
+  const run=(f,v)=>{
+    const seq=pn?++pn._facetRunSeq:0;
+    pn?.classList.add('fl-loading');
+    Promise.resolve().then(()=>f.onPick(v)).catch(()=>{}).finally(()=>{if(pn&&pn._facetRunSeq===seq)pn.classList.remove('fl-loading');});
+  };
   const lbl=o=>ko?o.ko:(o.en||o.ko);
   // 고르기·정렬은 한 줄(bar)에, 탭은 각자 한 줄
   const barFs=facets.filter(f=>f.ui==='pick'||f.ui==='sort');
@@ -21845,10 +21850,10 @@ function _renderFeedListFacet(ctx){
         });
         bar.appendChild(b);
       }else{
-        const i=Math.max(0,f.options.findIndex(o=>o.v===f.sel));
+        let i=Math.max(0,f.options.findIndex(o=>o.v===f.sel));
         const b=document.createElement('button');b.type='button';b.className='tvf-sort';b.setAttribute('aria-label',ko?'정렬':'Sort');
         b.textContent=lbl(f.options[i]);
-        b.addEventListener('click',e=>{e.stopPropagation();const nx=f.options[(i+1)%f.options.length];b.textContent=lbl(nx);run(f,nx.v);});
+        b.addEventListener('click',e=>{e.stopPropagation();i=(i+1)%f.options.length;const nx=f.options[i];b.textContent=lbl(nx);run(f,nx.v);});
         bar.appendChild(b);
       }
     });
@@ -21856,12 +21861,13 @@ function _renderFeedListFacet(ctx){
   }
   facets.filter(f=>f.ui!=='pick'&&f.ui!=='sort').forEach(f=>{
     const row=document.createElement('div');row.className='fl-facet-row fl-tabs hscroll-drag';
+    let selected=f.sel;
     f.options.forEach(o=>{
       const b=document.createElement('button');b.type='button';
       b.className='gc-ch-filter'+(o.v===f.sel?' active':'');
       b.textContent=lbl(o);
       b.addEventListener('click',e=>{
-        e.stopPropagation();if(o.v===f.sel)return;
+        e.stopPropagation();if(o.v===selected)return;selected=o.v;
         row.querySelectorAll('.gc-ch-filter.active').forEach(x=>x.classList.remove('active'));b.classList.add('active');
         run(f,o.v);
       });
@@ -24334,17 +24340,22 @@ async function _chartSongs(id,sel){
   if(d.ranked)_chartCache.set(k,out);
   return out;
 }
-async function _openChartList(id,sel){
+let _chartViewSeq=0;
+async function _openChartList(id,sel,_view){
   const d=_CHART_DEFS[id];
-  sel=Object.assign({},_CHART_SEL_DEFAULT,sel||{});
+  const st=_view||{sel:Object.assign({},_CHART_SEL_DEFAULT)};
+  st.sel=Object.assign({},st.sel,sel||{});
+  sel=Object.assign({},st.sel); // 진행 중 다른 축을 골라도 조회 조건 자체는 바뀌지 않는다.
+  const request=++_chartViewSeq;
   const songs=await _chartSongs(id,sel);
+  if(request!==_chartViewSeq)return;
   const label=_chartLabel(id,sel);
   // 좁은 조합은 0건일 수 있다(5세대 남돌 최근 30일). 그때도 칩은 그대로 둔다 — 빈 화면에 칩이 없으면
   // 되돌아갈 길이 없어 막다른 골목이 된다.
   const sub=!songs.length?(currentLang==='ko'?'이 조건에 맞는 영상이 없어요 — 위 필터를 바꿔보세요':'No videos for this filter — try changing it above')
     :d.ranked?_feedRankSub(label,songs[0].vc):'';
   const mk=key=>({key,labelKo:'',labelEn:'',options:_CHART_AXES[key],sel:sel[key],scroll:key==='gen', // 세대 6개는 390폭에 딱 맞아 더 좁은 폰에선 줄바꿈 대신 가로 밀기
-    onPick:nv=>_openChartList(id,Object.assign({},sel,{[key]:nv}))});
+    onPick:nv=>_openChartList(id,{[key]:nv},st)});
   // ⚠️ 순위 목록 여부는 원래 **카드 클릭 핸들러**에서만 세워졌다(선반이 feed-chart인지로 판단). 그래서
   //    칩으로 다시 열면 플래그가 이미 소비돼 순위 목록이 조용히 '발견용'으로 렌더됐다 — 조회수 2위
   //    쇼츠가 뒤로 밀려 순위가 뒤섞였다(2026-09-04 실측). 칩 경로에선 차트 정의가 직접 세운다.
