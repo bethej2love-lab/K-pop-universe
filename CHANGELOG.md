@@ -1,7 +1,10 @@
 # CHANGELOG
 
 ## 2026-11-01 (Codex — 검수58차·별 커서와 스크롤바)
-- **[진행중] [kpop_universe.css·브라우저 검증]** 사용자 신고: 나침반 세로 스크롤바에서 별이 기본 화살표로 바뀜. 기존 OS SVG 커서와 스크롤 동작·모양을 유지하며 스크롤바 각 부분의 커서 누락 및 다른 패널/클릭 대상의 기본 커서 노출을 점검한다. 입력 I빔·가로 드래그 grab은 기존 용도를 보존. 실기기 커서 표시와 헤드리스 스타일/입력 검증을 구분한다.
+- **[완료·브랜치 검증/배포 대기] [kpop_universe.css·app.js·index.html·admin.js]** 나침반/즐겨찾기/컬렉션/스크랩/영상 목록의 표준 scrollbar-width:thin·scrollbar-color가 Chromium에서 WebKit 파트 스타일을 우선하지 못하게 하여 OS 기본 스크롤바가 사용됨. 마우스+파트 지원 환경의 해당 7종만 auto로 되돌려 기존 6px/3px/10px/2px 디자인을 살리고 모든 스크롤바 파트(손잡이·트랙·트랙 조각·모서리·버튼)에 기존 분홍 SVG 별 명시. 숨긴 가로 레일 none·터치 thin·Firefox 표준 스크롤바는 유지한다. 근거: [Chromium 파트별 커서 처리](https://github.com/chromium/chromium/blob/main/third_party/blink/renderer/core/input/event_handler.cc), [Chrome 스크롤바 문서](https://developer.chrome.com/docs/css-ui/scrollbar-styling).
+- **[완료·동반 커서 오류] [동일 파일]** 모든 자식에 흰 별을 강제하던 전역 규칙을 상속으로 바꿔 클릭 버튼 안 span/SVG에서도 분홍 별 유지. 그룹/멤버 라벨·기존 CSS/동적 인라인 pointer를 같은 커서 변수로 통일, 비활성 버튼은 흰 별. 입력 text·가로 드래그 grab/grabbing 유지. 별 그림/색/크기·핫스폿은 기존 그대로, DOM 가상 커서나 스크롤바 JS를 추가하지 않음.
+- **[검증] [tests/star-cursor.test.js·tests/compass-width.test.js·CI]** 실제 제품 CSS를 격리한 Chrome CDP: 8종 scroller의 활성 스타일/모든 파트, 버튼 자식·SVG·라벨·동적 요소·disabled, 트랙 클릭과 손잡이 드래그, 터치/숨긴 레일 총34/34. 드래그는 fresh clone과 프레임 간격을 둔 CDP 버튼 입력으로 검증(처음 재사용 fixture의 입력 실패를 제품 오류로 세지 않음). 실제 앱 나침반 회귀에도 현재 scroller 커서 검사를 추가. 문법 통과, validate-data 오류0/경고144. 브라우저 새 테스트를 Node 제외 및 browser-smoke matrix에 등록. OS 커서 자체는 스크린샷에 찍히지 않으므로 계산 스타일/엔진 경로/실제 스크롤 입력의 검증이며 실물 Mac/Windows·Safari·Firefox 커서 표시 통과 주장은 안 함. YouTube 교차 출처 iframe 내부/브라우저 자체 UI 커서는 사이트 CSS로 제어할 수 없음.
+- **[진행중] [CI·main]** 최종 head의 필수 Node/전체 브라우저 smoke 및 나침반 검사를 확인 후 병합. 57차 PR75 c1fc2c5d1f는 Node+브라우저10종 모두 통과 후 9e32a2b422로 병합 완료(운영13건 오태그 무관 처리·ALLIVE1건 개별출연은 앞서 적용됨). 56차 반응 경합은 별도 codex/audit56-reaction-lifecycle-20261101 47c918774f에 저장, 아직 main 미반영이며 완료로 세지 않는다.
 
 ## 2026-11-01 (Codex — 검수57차·주호 동명이인/개별출연)
 - **[완료·운영1건/로직 검증중] [admin.js·tests/individual-compilation.test.js·sql/flag_allive_compilation_2026-11-01.sql·undo]** 사용자 예시 QDm_Mb7nPhs를 제목·자동 태그·기존NULL·정확한 동반 그룹 조건으로 개별출연/auto 처리. 그룹·멤버·동반 태그는 그대로 보존. 공통 _ytUpsertVideos 입구에서 등록 그룹2개 이상(동반 멤버 소속 포함)+명시적 라이브/무대 모음집만 자동 판정하고, 합동/합창/콜라보/듀엣/with/feat/X 표기·단일 그룹·기존 플래그·수동 정상 확정은 보존한다. 실제 upsert 경계20검사 전5실패→후0, 입력 불변/동반 태그/중복 처리 옵션 보존 포함. 판정 필드는 기존 편집 UI에서 체크하는 content_flag이며 별도 스키마/체크 필드는 만들지 않았다.

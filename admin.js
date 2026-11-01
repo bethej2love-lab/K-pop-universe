@@ -4322,7 +4322,7 @@ async function _openTagReviewQueue(){
   document.body.appendChild(ov);
   const hd=document.createElement('div');hd.style.cssText='display:flex;align-items:center;gap:8px;padding:calc(14px + env(safe-area-inset-top,0px)) 16px 10px;';
   const ttl=document.createElement('div');ttl.style.cssText='flex:1;font-size:15px;font-weight:700;color:#eef4ff;';ttl.textContent='검수 대기';
-  const cls=document.createElement('button');cls.textContent='✕';cls.style.cssText='background:none;border:none;color:rgba(200,215,245,0.7);font-size:18px;cursor:pointer;padding:4px 8px;';cls.addEventListener('click',()=>ov.remove());
+  const cls=document.createElement('button');cls.textContent='✕';cls.style.cssText='background:none;border:none;color:rgba(200,215,245,0.7);font-size:18px;cursor:var(--kpu-cursor-pointer,pointer);padding:4px 8px;';cls.addEventListener('click',()=>ov.remove());
   hd.appendChild(ttl);hd.appendChild(cls);
   const list=document.createElement('div');list.style.cssText='flex:1;min-height:0;overflow-y:auto;padding:2px 12px 24px;color:rgba(200,215,245,0.6);font-size:13px;';
   ov.appendChild(hd);ov.appendChild(list);
@@ -4344,7 +4344,7 @@ async function _openTagReviewQueue(){
     meta.textContent=(v?`${v.group_ko||'?'} · `:'')+(_TAGQ_REASON_LABEL[r.reason]||r.reason);
     let _extraInfo=null; // 원곡 후보 행에만 붙는 근거 한 줄
     const btns=document.createElement('div');btns.style.cssText='display:flex;gap:6px;margin-top:7px;';
-    const mkb=(label,style,on)=>{const b=document.createElement('button');b.textContent=label;b.style.cssText='background:rgba(120,150,230,0.16);border:0.5px solid rgba(160,185,240,0.3);color:#dbe6ff;border-radius:12px;padding:5px 11px;font-size:11px;cursor:pointer;'+(style||'');b.addEventListener('click',on);return b;};
+    const mkb=(label,style,on)=>{const b=document.createElement('button');b.textContent=label;b.style.cssText='background:rgba(120,150,230,0.16);border:0.5px solid rgba(160,185,240,0.3);color:#dbe6ff;border-radius:12px;padding:5px 11px;font-size:11px;cursor:var(--kpu-cursor-pointer,pointer);'+(style||'');b.addEventListener('click',on);return b;};
     // 원곡 후보(cover_candidate)는 편집 모달까지 안 가고 여기서 바로 확정할 수 있게 후보 버튼을 준다
     // — 매처가 이미 후보와 점수를 계산해놨는데 사람이 다시 검색해서 고르게 하면 큐를 안 쓰게 된다.
     // 확정은 "선택-원곡지정"과 같은 경로(_coverManualApply)라 스냅샷·로그·cover_manual 잠금이 다 붙는다.
@@ -5842,7 +5842,7 @@ function _vmAppendCacheChrome(statusEl,ts,fromDisk){
   const label=ago<60000?'방금':ago<3600000?`${Math.round(ago/60000)}분 전`
     :ago<86400000?`${Math.round(ago/3600000)}시간 전`:`${Math.round(ago/86400000)}일 전`;
   const ref=document.createElement('span');
-  ref.innerHTML=` <span style="opacity:.55">· ${label} 조회${fromDisk?' (저장된 목록)':''}</span> <button class="vm-reload-btn" type="button" title="다시 조회" style="background:none;border:none;color:rgba(155,178,228,0.5);cursor:pointer;font-size:12px;padding:0 3px;vertical-align:middle;">↻</button>`;
+  ref.innerHTML=` <span style="opacity:.55">· ${label} 조회${fromDisk?' (저장된 목록)':''}</span> <button class="vm-reload-btn" type="button" title="다시 조회" style="background:none;border:none;color:rgba(155,178,228,0.5);cursor:var(--kpu-cursor-pointer,pointer);font-size:12px;padding:0 3px;vertical-align:middle;">↻</button>`;
   ref.querySelector('.vm-reload-btn')?.addEventListener('click',_vmForceReload);
   statusEl.appendChild(ref);
 }

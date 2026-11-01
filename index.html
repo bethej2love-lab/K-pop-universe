@@ -1126,10 +1126,10 @@
     <div class="pp-title"><span id="vid-tag-title-text">출연 멤버 지정</span></div>
     <div id="vid-tag-vidtitle"></div>
     <div id="vid-tag-single-hint" style="font-size:10px;color:rgba(155,178,228,0.45);margin-bottom:8px">선택 없음 = 그룹 전체 영상 (그룹·멤버 카드 모두 노출)</div>
-    <label id="vid-tag-bulk-overwrite-row" style="display:none;align-items:center;gap:6px;cursor:pointer;font-size:11.5px;color:rgba(255,190,140,0.85);margin-bottom:10px;padding:8px 10px;border-radius:8px;background:rgba(255,190,140,0.08);border:0.5px solid rgba(255,190,140,0.25)">
+    <label id="vid-tag-bulk-overwrite-row" style="display:none;align-items:center;gap:6px;cursor:var(--kpu-cursor-pointer,pointer);font-size:11.5px;color:rgba(255,190,140,0.85);margin-bottom:10px;padding:8px 10px;border-radius:8px;background:rgba(255,190,140,0.08);border:0.5px solid rgba(255,190,140,0.25)">
       <input type="checkbox" id="vid-tag-bulk-overwrite" style="accent-color:rgba(255,190,140,0.9)">멤버/콜라보 태그도 덮어쓰기(선택한 영상 전체를 아래 체크값으로 교체 — 끄면 태그는 그대로 두고 포맷·플래그만 적용)
     </label>
-    <label id="vid-tag-bulk-movegroup-row" style="display:none;align-items:center;gap:6px;cursor:pointer;font-size:11.5px;color:rgba(150,200,255,0.92);margin-bottom:10px;padding:8px 10px;border-radius:8px;background:rgba(120,170,255,0.08);border:0.5px solid rgba(120,170,255,0.28)">
+    <label id="vid-tag-bulk-movegroup-row" style="display:none;align-items:center;gap:6px;cursor:var(--kpu-cursor-pointer,pointer);font-size:11.5px;color:rgba(150,200,255,0.92);margin-bottom:10px;padding:8px 10px;border-radius:8px;background:rgba(120,170,255,0.08);border:0.5px solid rgba(120,170,255,0.28)">
       <input type="checkbox" id="vid-tag-bulk-movegroup" style="accent-color:rgba(150,200,255,0.95)">선택한 영상 전체를 아래 "소속 그룹"으로 이동(동명이인·오배정 일괄 교정 — 엑스원·펜타곤처럼 섞여 있어도 전부 그 그룹으로)
     </label>
     <div class="pp-section" style="margin-top:0 0 10px">
@@ -1143,7 +1143,7 @@
     </div>
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
       <label class="pp-label" style="margin:0">출연 멤버</label>
-      <button type="button" id="vid-tag-members-all" style="background:none;border:none;color:rgba(155,178,228,0.75);font-size:10.5px;cursor:pointer;text-decoration:underline;padding:0;">전체 선택</button>
+      <button type="button" id="vid-tag-members-all" style="background:none;border:none;color:rgba(155,178,228,0.75);font-size:10.5px;cursor:var(--kpu-cursor-pointer,pointer);text-decoration:underline;padding:0;">전체 선택</button>
     </div>
     <div id="vid-tag-members"></div>
     <div class="pp-section" style="margin-top:14px">
@@ -1171,7 +1171,7 @@
     <div class="pp-section" style="margin-top:14px">
       <label class="pp-label" for="vid-tag-cat">영상 포맷 (관리자)</label>
       <div style="display:flex;gap:8px;align-items:center">
-        <select id="vid-tag-cat" class="pp-input" style="cursor:pointer;flex:1">
+        <select id="vid-tag-cat" class="pp-input" style="cursor:var(--kpu-cursor-pointer,pointer);flex:1">
           <option value="">기본</option>
           <option value="mv">MV</option>
           <!-- 값은 'live' 그대로, 라벨만 '퍼포먼스'(2026-09-14) — 카드 탭 'Performance'와 같은 것을 가리킨다 -->
@@ -1195,18 +1195,18 @@
       </div>
       <!-- 쇼츠는 장르가 아니라 **형식**이라 위 select(장르 단일값)에서 빼내 별도 플래그로 뒀다
            (2026-08-27, is_short_migration.sql). 세로 직캠은 라이브+쇼츠 양쪽에 떠야 맞다. -->
-      <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:11.5px;color:rgba(185,205,245,0.75);margin-top:9px">
+      <label style="display:flex;align-items:center;gap:6px;cursor:var(--kpu-cursor-pointer,pointer);font-size:11.5px;color:rgba(185,205,245,0.75);margin-top:9px">
         <input type="checkbox" id="vid-tag-isshort" style="accent-color:rgba(155,178,228,0.9)">세로(쇼츠) — 9:16으로 표시, Shorts 탭 노출
       </label>
     </div>
     <div class="pp-section" style="margin-top:10px;display:flex;flex-wrap:wrap;gap:10px 18px">
-      <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:11.5px;color:rgba(185,205,245,0.75)">
+      <label style="display:flex;align-items:center;gap:6px;cursor:var(--kpu-cursor-pointer,pointer);font-size:11.5px;color:rgba(185,205,245,0.75)">
         <input type="checkbox" id="vid-tag-flag-etc" style="accent-color:rgba(155,178,228,0.9)">기타
       </label>
-      <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:11.5px;color:rgba(185,205,245,0.75)">
+      <label style="display:flex;align-items:center;gap:6px;cursor:var(--kpu-cursor-pointer,pointer);font-size:11.5px;color:rgba(185,205,245,0.75)">
         <input type="checkbox" id="vid-tag-flag-ext" style="accent-color:rgba(155,178,228,0.9)">외부인 포함
       </label>
-      <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:11.5px;color:rgba(185,205,245,0.75)">
+      <label style="display:flex;align-items:center;gap:6px;cursor:var(--kpu-cursor-pointer,pointer);font-size:11.5px;color:rgba(185,205,245,0.75)">
         <input type="checkbox" id="vid-tag-flag-indiv" style="accent-color:rgba(155,178,228,0.9)">개별출연(컴필레이션, 콜라보 아님)
       </label>
     </div>
@@ -1222,7 +1222,7 @@
     <!-- 연속 편집(2026-09-04) — 영상 관리 패널에서 J/K로 고른 뒤 E로 열어 저장하면 곧바로 다음 항목이
          열린다. 한 건마다 "저장 → 모달 닫힘 → 마우스로 다음 행 찾기"를 반복하던 왕복을 없애는 게 목적.
          패널이 안 열려 있거나(카드에서 바로 편집한 경우) 다음 항목이 없으면 그냥 닫힌다. -->
-    <label id="vid-tag-continuous-row" style="display:none;align-items:center;gap:6px;cursor:pointer;font-size:11px;color:rgba(155,178,228,0.62);margin:2px 0 8px;">
+    <label id="vid-tag-continuous-row" style="display:none;align-items:center;gap:6px;cursor:var(--kpu-cursor-pointer,pointer);font-size:11px;color:rgba(155,178,228,0.62);margin:2px 0 8px;">
       <input type="checkbox" id="vid-tag-continuous">저장하면 바로 다음 항목 열기 <span style="opacity:.65">(J/K로 고른 목록 순서대로)</span>
     </label>
     <div id="vid-tag-btns">

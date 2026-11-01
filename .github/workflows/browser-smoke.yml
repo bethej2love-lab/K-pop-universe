@@ -17,6 +17,7 @@ on:
       - 'tests/phone-landscape.test.js'
       - 'tests/mobile-first-visit.test.js'
       - 'tests/compass-width.test.js'
+      - 'tests/star-cursor.test.js'
       - 'tests/program-facets.test.js'
       - 'tests/fixtures/**'
       - 'tools/browser_test_runtime.cjs'
@@ -37,6 +38,7 @@ on:
       - 'tests/phone-landscape.test.js'
       - 'tests/mobile-first-visit.test.js'
       - 'tests/compass-width.test.js'
+      - 'tests/star-cursor.test.js'
       - 'tests/program-facets.test.js'
       - 'tests/fixtures/**'
       - 'tools/browser_test_runtime.cjs'
@@ -80,6 +82,7 @@ jobs:
           - suite: phone-landscape
           - suite: mobile-first-visit
           - suite: compass-width
+          - suite: star-cursor
           - suite: program-facets
             lang: ko
           - suite: program-facets
