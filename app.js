@@ -21817,13 +21817,18 @@ let _feedListObserver=null; // 무한스크롤 IntersectionObserver — 끝까�
 function _renderFeedListFacet(ctx){
   const el=document.getElementById('feed-list-facets');
   if(!el)return;
+  const pn=document.getElementById('feed-list-panel');
+  if(pn){pn._facetRunSeq=(pn._facetRunSeq||0)+1;pn.classList.remove('fl-loading');}
   const facets=((ctx&&ctx.facets)||((ctx&&ctx.facet)?[ctx.facet]:[])).filter(f=>f&&f.options&&f.options.length);
   if(!facets.length){el.style.display='none';el.innerHTML='';return;}
   el.innerHTML='';
   el.style.display='flex';
   const ko=currentLang==='ko';
-  const pn=document.getElementById('feed-list-panel');
-  const run=(f,v)=>{pn?.classList.add('fl-loading');Promise.resolve().then(()=>f.onPick(v)).catch(()=>{}).finally(()=>pn?.classList.remove('fl-loading'));};
+  const run=(f,v)=>{
+    const seq=pn?++pn._facetRunSeq:0;
+    pn?.classList.add('fl-loading');
+    Promise.resolve().then(()=>f.onPick(v)).catch(()=>{}).finally(()=>{if(pn&&pn._facetRunSeq===seq)pn.classList.remove('fl-loading');});
+  };
   const lbl=o=>ko?o.ko:(o.en||o.ko);
   // 고르기·정렬은 한 줄(bar)에, 탭은 각자 한 줄
   const barFs=facets.filter(f=>f.ui==='pick'||f.ui==='sort');
@@ -21845,10 +21850,10 @@ function _renderFeedListFacet(ctx){
         });
         bar.appendChild(b);
       }else{
-        const i=Math.max(0,f.options.findIndex(o=>o.v===f.sel));
+        let i=Math.max(0,f.options.findIndex(o=>o.v===f.sel));
         const b=document.createElement('button');b.type='button';b.className='tvf-sort';b.setAttribute('aria-label',ko?'정렬':'Sort');
         b.textContent=lbl(f.options[i]);
-        b.addEventListener('click',e=>{e.stopPropagation();const nx=f.options[(i+1)%f.options.length];b.textContent=lbl(nx);run(f,nx.v);});
+        b.addEventListener('click',e=>{e.stopPropagation();i=(i+1)%f.options.length;const nx=f.options[i];b.textContent=lbl(nx);run(f,nx.v);});
         bar.appendChild(b);
       }
     });
@@ -21856,12 +21861,13 @@ function _renderFeedListFacet(ctx){
   }
   facets.filter(f=>f.ui!=='pick'&&f.ui!=='sort').forEach(f=>{
     const row=document.createElement('div');row.className='fl-facet-row fl-tabs hscroll-drag';
+    let selected=f.sel;
     f.options.forEach(o=>{
       const b=document.createElement('button');b.type='button';
       b.className='gc-ch-filter'+(o.v===f.sel?' active':'');
       b.textContent=lbl(o);
       b.addEventListener('click',e=>{
-        e.stopPropagation();if(o.v===f.sel)return;
+        e.stopPropagation();if(o.v===selected)return;selected=o.v;
         row.querySelectorAll('.gc-ch-filter.active').forEach(x=>x.classList.remove('active'));b.classList.add('active');
         run(f,o.v);
       });
