@@ -28225,7 +28225,7 @@ function _venueIdKey(name){
   const v=(_venuesInfo||{})[name];if(v&&v.alias_of)return _venueIdKey(v.alias_of);
   if(v&&v.wikidata)return 'wd:'+v.wikidata;
   if(v&&v.kopis_id)return 'kp:'+v.kopis_id+'|'+(v.hall||'');
-  return 'n:'+String(name).toLowerCase().replace(/s+/g,'');
+  return 'n:'+String(name).toLowerCase().replace(/\s+/g,'');
 }
 function _venueSameNames(venue){
   const k=_venueIdKey(venue);

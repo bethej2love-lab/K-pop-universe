@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2026-11-01 (Codex — 검수54차·공연장 이름 비교)
+- **[완료·PR73에 함께 검증] [app.js _venueIdKey·tests/venue-name-key.test.js]** 주석/의도는 대소문자·띄어쓰기 무시인데 실제 fallback 정규식이 /s+/여서 공백을 남기고 s를 삭제했다. New Venue X/newvenuex 불일치와 Shall X/Hall X 오병합을 실제 함수로 재현: 9검사 전4실패→후0. 공백 정규식으로만 정정하며 Wikidata/KOPIS/홀 구분·별칭 해석은 보존한다. 기존 메타데이터818공연장/별칭19개에 순환 없음. 별칭3개는 canonical 메타데이터가 없어도 이름 fallback으로 같은 키를 얻으므로 이를 임의로 잘못된 데이터로 분류/삭제하지 않음.
+- **[검증 효율]** 정적 자료 복구와 같은 공연장 코드 영역의 작은 수정이라 별도 브라우저 행렬을 하나 더 만들지 않고 최종 PR73 head에 합친다. 이전 PR70–72의 실패/취소는 기록을 유지하고, 모두 포함된 최종 코드의 Node/브라우저 결과로 배포를 판정한다. 운영 자료·공연/공연장 JSON은 변경하지 않았다.
+
 ## 2026-11-01 (Codex — 검수53차·조회 지연 읽기 진단)
 - **[확인·운영 SELECT/EXPLAIN만]** 48차 PR69 영어 프로그램 정렬이15초를 넘겨 실패 후 실패 작업1회 재확인에서 전체9흐름 success. 50차 PR71은 한영 프로그램/공유 검색에서 대기 실패가 추가 관찰돼 CI 완료 뒤 로그를 다시 판단한다. 같은 시간대 DB의 pg_stat_statements는 yt_channel_videos 포함340쿼리 형태, 표본상 최대 평균27,185.59ms/최대 관측29,994.78ms였다. 통계 시작은2026-10-31 12:51:27 UTC이고 이후 갱신되는 누적 표본이므로 특정 브라우저 요청/현재 전체 평균/원인으로 단정하지 않는다. 잘못된 과거 테이블명 youtube_cache로 조회한 첫 표본0은 영상 테이블 성능 근거로 사용하지 않음.
 - **[확인·인덱스 존재]** 잇츠라이브4키워드+르세라핌(group_ko 또는 with_groups)+조회수 정렬의 대표 SELECT를 ANALYZE 없이 EXPLAIN: BitmapAnd/BitmapOr가 idx_ytv_group_ko·idx_yt_channel_videos_with_groups_gin·idx_ytcv_title_norm_trgm을 선택. 최상단 추정66행/cost1754.05는 실행 시간(ms)이 아니며, 도구 권한의 대표 쿼리 계획을 실제 PostgREST/RLS 실행 계획과 동일시하지 않는다. 단순히 GIN이 없다는 진단은 근거 없음.
