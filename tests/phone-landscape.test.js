@@ -78,6 +78,20 @@ async function setup(c,W,H){
       if(measure.suggestions>0&&inView(measure.button,W,H)&&inView(measure.area,W,H)&&measure.area.h>=Math.min(120,H*.25)-1&&measure.area.b<=measure.panel.b+1&&(!measure.overflowing||['auto','scroll'].includes(measure.overflow)))ok(`조합 ${W}×${H}: 10명+검색 후보에서도 버튼·결과 접근 가능`);
       else bad(`조합 ${W}×${H} 잘림 `+JSON.stringify(measure));
     }
+    // 오류/부분 결과 UI의 실제 렌더러·CSS·재시도 터치. 합성 상태만 쓰며 조회/저장을 호출하지 않는다.
+    // 이 아래는 곡 상태의 격리 fixture다. 첫 방문 안내 자체는 mobile-first-visit에서 검증한다.
+    await ev(c,`(async()=>{_dismissTips();for(let i=0;i<20&&!document.getElementById('ob-tips').hidden;i++)await new Promise(r=>setTimeout(r,25));_closeComboPanel();window.__songRetryTouches=0;return true;})()`);
+    for(const [W,H,lang,partial] of [[320,568,'ko',false],[390,844,'en',true]]){
+      await c.send('Emulation.setDeviceMetricsOverride',{width:W,height:H,deviceScaleFactor:2,mobile:true});
+      await ev(c,`currentLang=${JSON.stringify(lang)};
+        document.getElementById('gc-track-videos-overlay').classList.add('open');_bringToFront(document.getElementById('gc-track-videos-overlay'));
+        _songVid={gko:'에스파',orig:${partial?"[{id:'koED8KSXfeo',title:'LAYOUT TEST — retained video',group_ko:'에스파',category:'live'}]":'[]'},cover:[],tab:'all',fmt:'all',sort:'latest',rows:[],member:null,loadFailed:true,retry:()=>window.__songRetryTouches++};
+        _renderSongVideoTabs();new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));`);
+      const issue=await ev(c,`(()=>{const list=document.getElementById('gc-track-videos-list'),b=list.querySelector('.gc-ch-err-retry');if(!b)return null;const r=b.getBoundingClientRect();return{x:r.x,y:r.y,w:r.width,h:r.height,b:r.bottom,text:list.textContent,rows:list.querySelectorAll('.tvf-item').length,hit:document.elementFromPoint(r.x+r.width/2,r.y+r.height/2)?.closest('[id]')?.id,guide:!!document.elementFromPoint(r.x+r.width/2,r.y+r.height/2)?.closest('#ob-tips'),front:document.elementFromPoint(r.x+r.width/2,r.y+r.height/2)?.closest('.gc-ch-err-retry')===b};})()`);
+      if(issue&&issue.h>=44&&issue.y>=0&&issue.b<=H&&issue.front&&issue.rows===(partial?1:0)&&!(/No matching videos|관련 영상이 없어요/.test(issue.text)))ok(`곡 조회 ${W}px: 오류/부분 결과·44px 재시도 버튼`);else bad('곡 조회 복구 배치 '+JSON.stringify(issue));
+      if(issue?.front){await c.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x:issue.x+issue.w/2,y:issue.y+issue.h/2}]});await c.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});}
+    }
+    if(await ev(c,'window.__songRetryTouches===2'))ok('곡 조회 실패/부분 결과 모두 실제 터치로 재시도 호출');else bad('곡 조회 재시도 터치 누락');
     c.close();
   }catch(e){bad('예외: '+e.message);}
   finally{try{process.kill(proc.pid);}catch(e){}server.close();console.log(`\n${pass} 통과 / ${fail} 실패`);setTimeout(()=>process.exit(fail?1:0),300);}

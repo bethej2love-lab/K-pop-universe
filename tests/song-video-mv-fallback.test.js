@@ -29,6 +29,7 @@ function query() {
 }
 const el = () => ({ classList: { add() {}, contains: () => true }, hidden: false, innerHTML: '', textContent: '' });
 const ctx = {
+  setTimeout() { return 0; }, clearTimeout() {}, // deadlines are covered with controlled clocks in song-video-recovery
   sb: { from: query }, _YT_TABLE: 'yt_channel_videos', _songVidReq: 0, _songKeysCol: true,
   document: { getElementById: el }, currentLang: 'ko',
   _albSong: null, _albSongApply() {}, _albSongMount() {}, _fillSongMeta() {}, _renderCreditsInto() {}, _bringToFront() {}, _renderSongVideoTabs() {},
@@ -40,7 +41,9 @@ const ctx = {
   GROUPS: {}, ARTISTS: [],
 };
 vm.createContext(ctx);
-vm.runInContext(html.slice(start, end), ctx);
+const timeoutStart=html.indexOf('function _withTimeout('),timeoutEnd=html.indexOf('\n}',timeoutStart)+2;
+assert(timeoutStart>=0&&timeoutEnd>timeoutStart,'actual deadline helper');
+vm.runInContext(html.slice(timeoutStart,timeoutEnd)+'\n'+html.slice(start, end), ctx);
 (async () => {
   await ctx._openSongVideos('BANG BANG', { gko: '아이브' });
   assert(ctx._songVid.orig.some(v => v.id === 'official'), 'old MV supplements key/title results');

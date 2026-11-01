@@ -13378,6 +13378,7 @@ async function _openSongVideos(title,owner,songMeta,opt){
   if(!inAlbum){if(_albSong){_albSong=null;_albSongApply();}_albSongMount(false);}
   const _hostOpen=()=>inAlbum?(_albSong===title&&document.getElementById('gc-discog-detail')?.classList.contains('open')):overlay.classList.contains('open');
   const myReq=++_songVidReq;
+  _songVid=null;
   const overlay=document.getElementById('gc-track-videos-overlay');
   const listEl=document.getElementById('gc-track-videos-list');
   const tabsEl=document.getElementById('gc-track-videos-tabs');
@@ -13393,7 +13394,15 @@ async function _openSongVideos(title,owner,songMeta,opt){
   // view_count·duration_sec 추가(2026-09-21) — 이 목록만 썸네일+제목뿐이라 같은 영상인데도 검색 결과
   // (_fmtVidMeta로 "날짜 · 조회수"를 찍는다)와 표기가 갈렸다. 컬럼 2개라 조회 비용은 사실상 그대로.
   // 곡 키(song_keys, 2026-10-16 — 루틴 10단계가 박는다) 칸이 있는지 한 번만 확인. SQL 실행 전이면 예전 방식 그대로.
-  if(_songKeysCol===null){try{const pr=await sb.from(_YT_TABLE).select('song_keys').limit(1);_songKeysCol=!pr.error;}catch(e){_songKeysCol=false;}}
+  let keyProbeFailed=false;
+  if(_songKeysCol===null){
+    try{
+      const pr=await _withTimeout(()=>sb.from(_YT_TABLE).select('song_keys').limit(1),15000);
+      if(!pr.error&&Array.isArray(pr.data))_songKeysCol=true;
+      else if(pr.error?.code==='42703')_songKeysCol=false; // undefined_column만 세션 동안 기능 없음으로 기억
+      else keyProbeFailed=true;
+    }catch(e){keyProbeFailed=true;} // 일시 오류는 null 유지: 다음 열기/재시도에서 다시 확인
+  }
   if(myReq!==_songVidReq)return;
   const songKey=gko+':'+_songBase(title);
   const COLS='id,title,thumb,category,is_short,group_ko,members,with_members,cover_of_members,cover_of_groups,content_flag,published_at,view_count,duration_sec'+(_songKeysCol?',song_keys':''); // members·with_members: "멤버 ▾"(2026-10-27)
@@ -13424,11 +13433,11 @@ async function _openSongVideos(title,owner,songMeta,opt){
   const _baseQ=_titleNorm(_songStripTail(title).split(/\s*[\(\[]/)[0].trim()||title);
   const titleAllP=_excl(sb.from(_YT_TABLE).select(COLS)).ilike('title_norm',`%${_baseQ}%`).order('published_at',{ascending:false}).limit(200);
   let settled;
-  try{settled=await Promise.all([keyP,origP,mvP,titleAllP,...coverQs].map(q=>q.then(r=>r,()=>({data:null}))));}
+  try{settled=await Promise.all([keyP,origP,mvP,titleAllP,...coverQs].map(q=>_withTimeout(()=>q,15000).then(r=>r,()=>({data:null}))));}
   catch(e){settled=null;}
   if(!_hostOpen()||myReq!==_songVidReq)return; // 그 사이 닫힘/다른 곡 클릭
-  if(!settled){listEl.innerHTML=`<div class="tvf-empty">${currentLang==='ko'?'불러오기 실패':'Failed to load'}</div>`;return;}
-  const[keyR,origR,mvR,titleAllR,...coverRs]=settled;
+  const loadFailed=keyProbeFailed||!settled||settled.some(r=>r?.error||!Array.isArray(r?.data));
+  const[keyR,origR,mvR,titleAllR,...coverRs]=(settled||[]).map(r=>!r?.error&&Array.isArray(r?.data)?r:{data:[]});
   const origSeen=new Set();
   // 곡 키 연결분 + 제목 검색분. 제목 검색분 중 **다른 곡으로 연결된 영상은 뺀다** — 'ON'을 눌렀는데 'ON' 글자가 든 다른 곡 영상이
   // 섞이던 것. 아직 아무 곡에도 연결 안 된 영상(song_keys 비어 있음)은 예전처럼 남겨 둔다(한글 곡명 표기 등 규칙이 못 잡은 것).
@@ -13453,7 +13462,8 @@ async function _openSongVideos(title,owner,songMeta,opt){
     orig.sort((a,b)=>String(b.published_at||'').localeCompare(String(a.published_at||'')));
     cover.sort((a,b)=>String(b.published_at||'').localeCompare(String(a.published_at||'')));
   }
-  _songVid={gko,orig,cover,tab:'all',fmt:'all',sort:'latest',rows:[],member:(opt&&opt.member)||null}; // opt.member: 멤버 미리 고르기(멤버×곡 정적 페이지에서 들어올 때)
+  _songVid={gko,orig,cover,tab:'all',fmt:'all',sort:'latest',rows:[],member:(opt&&opt.member)||null,loadFailed,
+    retry:()=>{if(_hostOpen()&&myReq===_songVidReq)return _openSongVideos(title,owner,songMeta,opt);}}; // opt.member: 멤버×곡 정적 페이지에서 미리 고르기
   _renderSongVideoTabs();
 }
 // 형식 칩(2026-09-21) — 값은 그룹/멤버 카드 영상 탭과 같은 DB category 그대로 쓴다.
@@ -13471,6 +13481,14 @@ function _tvfVidUrl(v){return _isShortV(v)?`https://www.youtube.com/shorts/${v.i
 function _tvfPlaylistItem(v){
   return{t:v.title,u:_tvfVidUrl(v),thumb:v.thumb,pa:v.published_at?.slice(0,10),
     vc:v.view_count,dur:v.duration_sec,groupKo:v.group_ko,_apiId:v.id,_apiGroupKo:v.group_ko};
+}
+function _appendSongVideoLoadIssue(listEl,st){
+  const partial=st.orig.length+st.cover.length>0,ko=currentLang==='ko';
+  const issue=document.createElement('div');issue.className='gc-ch-err';issue.setAttribute('role','status');
+  issue.textContent=partial?(ko?'일부 영상을 불러오지 못했어요':'Some videos could not be loaded'):(ko?'영상을 불러오지 못했어요':'Videos could not be loaded');
+  const retry=document.createElement('button');retry.type='button';retry.className='gc-ch-err-retry';retry.textContent=ko?'다시 시도':'Retry';
+  retry.addEventListener('click',()=>{if(_songVid===st)st.retry();});
+  issue.appendChild(retry);listEl.appendChild(issue);
 }
 function _renderSongVideoTabs(){
   const st=_songVid;if(!st)return;
@@ -13552,10 +13570,16 @@ function _renderSongVideoTabs(){
     }
   }
   if(_albSong&&listEl.parentElement?.id==='gc-discog-song-view'){const c=document.getElementById('gc-discog-video-count');if(c)c.textContent=rows.length?rows.length.toLocaleString():'';requestAnimationFrame(_albScrollToPanel);}
-  if(!rows.length){listEl.innerHTML=`<div class="tvf-empty">${_ko?'관련 영상이 없어요':'No matching videos'}</div>`;return;}
+  if(!rows.length){
+    listEl.innerHTML='';
+    if(st.loadFailed)_appendSongVideoLoadIssue(listEl,st);
+    else listEl.innerHTML=`<div class="tvf-empty">${_ko?'관련 영상이 없어요':'No matching videos'}</div>`;
+    return;
+  }
   const coverIds=new Set(st.cover.map(v=>v.id));
   const playlist=rows.map(_tvfPlaylistItem);
   listEl.innerHTML='';
+  if(st.loadFailed)_appendSongVideoLoadIssue(listEl,st);
   rows.forEach((v,i)=>{
     const isShort=_isShortV(v);
     const item=document.createElement('div');item.className='tvf-item'+(isShort?' is-short':'');
@@ -26137,10 +26161,11 @@ function _withTimeout(promiseOrFactory,ms,msg,retries=0){
   const isFactory=typeof promiseOrFactory==='function';
   if(!isFactory||retries<=0){
     const p=isFactory?promiseOrFactory():promiseOrFactory;
+    let timer;
     return Promise.race([
       p,
-      new Promise((_,rej)=>setTimeout(()=>rej(new Error(msg||'응답이 없어요 — 네트워크 확인 후 다시 시도해주세요')),ms))
-    ]);
+      new Promise((_,rej)=>{timer=setTimeout(()=>rej(new Error(msg||'응답이 없어요 — 네트워크 확인 후 다시 시도해주세요')),ms);})
+    ]).finally(()=>clearTimeout(timer));
   }
   return new Promise((resolve,reject)=>{
     let attemptsLeft=retries+1,settled=false;
