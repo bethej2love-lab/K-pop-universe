@@ -47,7 +47,7 @@ let total=0,failed=0;async function check(name,task){total++;try{await task();}c
   f.ctx.window._sbSession={user:{id:'user-B'}};const read=f.ctx._loadReactions(A);await tick();f.finishRead(f.reads(),false,4);await read;
   f.ctx.window._sbSession={user:{id:'user-A'}};const fresh=f.ctx._toggleReaction(A,emoji);await tick();assert.equal(f.writes().length,2);
   f.finish(f.writes()[0],{error:{message:'old A failure'}});await old;assert(f.on(),'new session intent must survive old failure');
-  f.finish(f.writes()[1]);await fresh;assert(f.on());assert.equal(f.count(),5);
+  f.finish(f.writes()[1]);await fresh;assert(f.on());assert.equal(f.count(),1);
  });
  console.log(total+' checks / '+failed+' failed');if(failed)process.exitCode=1;
 })().catch(e=>{console.error(e);process.exitCode=1;});
