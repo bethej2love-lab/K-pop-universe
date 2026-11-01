@@ -6732,28 +6732,29 @@ function _setReactionLocal(key,on){
 }
 async function _runReactionWrite(st){
   const writeKey=st.uid+'\x00'+st.key;
+  const current=()=>_reactionSameUser(st.uid)&&_reactionWrites.get(writeKey)===st;
   try{
-  let force=true;
-  while(force||st.desired!==st.confirmed){
-    if(!_reactionSameUser(st.uid))return;
-    force=false;
-    const desired=st.desired,revision=st.revision;
-    let failed=false;
-    try{
-      const{error}=desired
-        ?await sb.from('video_reactions').upsert({user_id:st.uid,video_url:st.videoUrl,emoji:st.emoji},{onConflict:'user_id,video_url,emoji'})
-        :await sb.from('video_reactions').delete().eq('user_id',st.uid).eq('video_url',st.videoUrl).eq('emoji',st.emoji);
-      if(error)throw error;
-    }catch(e){failed=true;console.error('_toggleReaction failed',e);}
-    if(!_reactionSameUser(st.uid))return;
-    if(failed){
-      // 요청 실패 뒤에도 사용자가 다시 눌렀다면 마지막 의도를 한 번 더 보낸다.
-      // 새 입력이 없으면 기존처럼 마지막 확인 상태로 복구하며 자동 재시도하지 않는다.
-      if(st.revision!==revision){force=true;continue;}
-      st.desired=st.confirmed;_setReactionLocal(st.key,st.confirmed);_renderReactions();return;
+    let force=true;
+    while(force||st.desired!==st.confirmed){
+      if(!current())return;
+      force=false;
+      const desired=st.desired,revision=st.revision;
+      let failed=false;
+      try{
+        const{error}=desired
+          ?await sb.from('video_reactions').upsert({user_id:st.uid,video_url:st.videoUrl,emoji:st.emoji},{onConflict:'user_id,video_url,emoji'})
+          :await sb.from('video_reactions').delete().eq('user_id',st.uid).eq('video_url',st.videoUrl).eq('emoji',st.emoji);
+        if(error)throw error;
+      }catch(e){failed=true;console.error('_toggleReaction failed',e);}
+      if(!current())return;
+      if(failed){
+        // 요청 실패 뒤에도 사용자가 다시 눌렀다면 마지막 의도를 한 번 더 보낸다.
+        // 새 입력이 없으면 기존처럼 마지막 확인 상태로 복구하며 자동 재시도하지 않는다.
+        if(st.revision!==revision){force=true;continue;}
+        st.desired=st.confirmed;_setReactionLocal(st.key,st.confirmed);_renderReactions();return;
+      }
+      st.confirmed=desired;
     }
-    st.confirmed=desired;
-  }
   }finally{
     // 새 microtask 입력이 완료된 runner에 매달리지 않도록 Promise 종료 전에 해제한다.
     if(_reactionWrites.get(writeKey)===st)_reactionWrites.delete(writeKey);
