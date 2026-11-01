@@ -20764,7 +20764,14 @@ async function _handleLogout(){
   if(!sb)return;
   const ok=await _confirmLogout();
   if(!ok)return;
-  try{await sb.auth.signOut();}catch(e){console.error('signOut 실패',e);}
+  try{
+    const{error}=await sb.auth.signOut();
+    if(error)throw error;
+  }catch(e){
+    console.error('signOut 실패',e);
+    _showShareToast(currentLang==='ko'?'로그아웃하지 못했어요. 다시 시도해 주세요.':'Could not log out. Please try again.');
+    return;
+  }
   [FAV_KEY_G,FAV_KEY_M,FAV_KEY_C,FAV_DATE_KEY,FAV_HISTORY_KEY,SCRAP_KEY,PROFILE_KEY,CONCERT_LOG_KEY,SB_LAST_UID_KEY]
     .forEach(k=>localStorage.removeItem(k));
   location.reload();
